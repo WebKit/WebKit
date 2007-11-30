@@ -35,8 +35,7 @@ VPATH = \
     $(WebCore)/page \
     $(WebCore)/storage \
     $(WebCore)/xml \
-    $(WebCore)/ksvg2/svg \
-    $(WebCore)/ksvg2/events \
+    $(WebCore)/svg
 #
 
 .PHONY : all
@@ -596,14 +595,14 @@ all : \
 
 ifeq ($(findstring ENABLE_SVG,$(FEATURE_DEFINES)), ENABLE_SVG)
 
-CSSPropertyNames.h : css/CSSPropertyNames.in ksvg2/css/SVGCSSPropertyNames.in
-	if sort $< $(WebCore)/ksvg2/css/SVGCSSPropertyNames.in | uniq -d | grep -E '^[^#]'; then echo 'Duplicate value!'; exit 1; fi
-	cat $< $(WebCore)/ksvg2/css/SVGCSSPropertyNames.in > CSSPropertyNames.in
+CSSPropertyNames.h : css/CSSPropertyNames.in css/SVGCSSPropertyNames.in
+	if sort $< $(WebCore)/css/SVGCSSPropertyNames.in | uniq -d | grep -E '^[^#]'; then echo 'Duplicate value!'; exit 1; fi
+	cat $< $(WebCore)/css/SVGCSSPropertyNames.in > CSSPropertyNames.in
 	perl "$(WebCore)/css/makeprop.pl"
 
-CSSValueKeywords.h : css/CSSValueKeywords.in ksvg2/css/SVGCSSValueKeywords.in
+CSSValueKeywords.h : css/CSSValueKeywords.in css/SVGCSSValueKeywords.in
 	# Lower case all the values, as CSS values are case-insensitive
-	perl -ne 'print lc' $(WebCore)/ksvg2/css/SVGCSSValueKeywords.in > SVGCSSValueKeywords.in
+	perl -ne 'print lc' $(WebCore)/css/SVGCSSValueKeywords.in > SVGCSSValueKeywords.in
 	if sort $< SVGCSSValueKeywords.in | uniq -d | grep -E '^[^#]'; then echo 'Duplicate value!'; exit 1; fi
 	cat $< SVGCSSValueKeywords.in > CSSValueKeywords.in
 	perl "$(WebCore)/css/makevalues.pl"
@@ -687,11 +686,11 @@ CharsetData.cpp : platform/text/mac/make-charset-table.pl platform/text/mac/char
 
 # HTML tag and attribute names
 
-HTMLNames.cpp : ksvg2/scripts/make_names.pl html/HTMLTagNames.in html/HTMLAttributeNames.in
+HTMLNames.cpp : dom/make_names.pl html/HTMLTagNames.in html/HTMLAttributeNames.in
 	perl $< --tags $(WebCore)/html/HTMLTagNames.in --attrs $(WebCore)/html/HTMLAttributeNames.in \
             --namespace HTML --namespacePrefix xhtml --cppNamespace WebCore --namespaceURI "http://www.w3.org/1999/xhtml" --attrsNullNamespace --output .
 
-XMLNames.cpp : ksvg2/scripts/make_names.pl xml/xmlattrs.in
+XMLNames.cpp : dom/make_names.pl xml/xmlattrs.in
 	perl $< --attrs $(WebCore)/xml/xmlattrs.in \
             --namespace XML --cppNamespace WebCore --namespaceURI "http://www.w3.org/XML/1998/namespace" --output .
 
@@ -699,18 +698,18 @@ ifeq ($(findstring ENABLE_SVG,$(FEATURE_DEFINES)), ENABLE_SVG)
 
 ifeq ($(findstring ENABLE_SVG_EXPERIMENTAL_FEATURES,$(FEATURE_DEFINES)), ENABLE_SVG_EXPERIMENTAL_FEATURES)
 # SVG tag and attribute names (need to pass an extra flag if svg experimental features are enabled)
-SVGElementFactory.cpp SVGNames.cpp : ksvg2/scripts/make_names.pl ksvg2/svg/svgtags.in ksvg2/svg/svgattrs.in
-	perl $< --tags $(WebCore)/ksvg2/svg/svgtags.in --attrs $(WebCore)/ksvg2/svg/svgattrs.in --extraDefines "ENABLE_SVG_EXPERIMENTAL_FEATURES=1" \
+SVGElementFactory.cpp SVGNames.cpp : dom/make_names.pl svg/svgtags.in svg/svgattrs.in
+	perl $< --tags $(WebCore)/svg/svgtags.in --attrs $(WebCore)/svg/svgattrs.in --extraDefines "ENABLE_SVG_EXPERIMENTAL_FEATURES=1" \
             --namespace SVG --cppNamespace WebCore --namespaceURI "http://www.w3.org/2000/svg" --factory --attrsNullNamespace --output .
 else
 # SVG tag and attribute names
-SVGElementFactory.cpp SVGNames.cpp : ksvg2/scripts/make_names.pl ksvg2/svg/svgtags.in ksvg2/svg/svgattrs.in
-	perl $< --tags $(WebCore)/ksvg2/svg/svgtags.in --attrs $(WebCore)/ksvg2/svg/svgattrs.in \
+SVGElementFactory.cpp SVGNames.cpp : dom/make_names.pl svg/svgtags.in svg/svgattrs.in
+	perl $< --tags $(WebCore)/svg/svgtags.in --attrs $(WebCore)/svg/svgattrs.in \
             --namespace SVG --cppNamespace WebCore --namespaceURI "http://www.w3.org/2000/svg" --factory --attrsNullNamespace --output .
 endif
 
-XLinkNames.cpp : ksvg2/scripts/make_names.pl ksvg2/misc/xlinkattrs.in
-	perl $< --attrs $(WebCore)/ksvg2/misc/xlinkattrs.in \
+XLinkNames.cpp : dom/make_names.pl svg/xlinkattrs.in
+	perl $< --attrs $(WebCore)/svg/xlinkattrs.in \
             --namespace XLink --cppNamespace WebCore --namespaceURI "http://www.w3.org/1999/xlink" --output .
 
 # Add SVG Symbols to the WebCore exported symbols file
@@ -745,7 +744,7 @@ OBJC_BINDINGS_SCRIPTS = \
 #
 
 DOM%.h : %.idl $(OBJC_BINDINGS_SCRIPTS) bindings/objc/PublicDOMInterfaces.h
-	perl -I $(WebCore)/bindings/scripts $(WebCore)/bindings/scripts/generate-bindings.pl --defines "$(FEATURE_DEFINES) LANGUAGE_OBJECTIVE_C" --generator ObjC --include dom --include html --include css --include page --include xml --include ksvg2/svg --include ksvg2/events --outputdir . $<
+	perl -I $(WebCore)/bindings/scripts $(WebCore)/bindings/scripts/generate-bindings.pl --defines "$(FEATURE_DEFINES) LANGUAGE_OBJECTIVE_C" --generator ObjC --include dom --include html --include css --include page --include xml --include svg --outputdir . $<
 
 # new-style JavaScript bindings
 
@@ -758,4 +757,4 @@ JS_BINDINGS_SCRIPTS = \
 #
 
 JS%.h : %.idl $(JS_BINDINGS_SCRIPTS)
-	perl -I $(WebCore)/bindings/scripts $(WebCore)/bindings/scripts/generate-bindings.pl --defines "$(FEATURE_DEFINES) LANGUAGE_JAVASCRIPT" --generator JS --include dom --include html --include css --include page --include xml --include ksvg2/svg --include ksvg2/events --outputdir . $<
+	perl -I $(WebCore)/bindings/scripts $(WebCore)/bindings/scripts/generate-bindings.pl --defines "$(FEATURE_DEFINES) LANGUAGE_JAVASCRIPT" --generator JS --include dom --include html --include css --include page --include xml --include svg --outputdir . $<

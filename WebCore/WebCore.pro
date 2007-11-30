@@ -179,7 +179,7 @@ INCLUDEPATH +=  $$PWD \
                 $$PWD/platform/graphics/svg \
                 $$PWD/platform/graphics/svg/filters \
                 $$PWD/platform/sql \
-				$$PWD/platform/text \
+                $$PWD/platform/text \
                 $$PWD/storage \
                 $$PWD/loader $$PWD/loader/icon \
                 $$PWD/css \
@@ -192,7 +192,7 @@ INCLUDEPATH +=  $$PWD \
                 $$PWD/xml \
                 $$PWD/html \
                 $$PWD/bindings/js \
-                $$PWD/ksvg2 $$PWD/ksvg2/css $$PWD/ksvg2/svg $$PWD/ksvg2/misc $$PWD/ksvg2/events \
+                $$PWD/svg \
                 $$PWD/platform/image-decoders
 
 QT += network xml
@@ -219,9 +219,9 @@ WALDOCSSPROPS = $$PWD/css/CSSPropertyNames.in
 
 WALDOCSSVALUES = $$PWD/css/CSSValueKeywords.in
 
-SVGCSSPROPERTIES = $$PWD/ksvg2/css/SVGCSSPropertyNames.in
+SVGCSSPROPERTIES = $$PWD/css/SVGCSSPropertyNames.in
 
-SVGCSSVALUES = $$PWD/ksvg2/css/SVGCSSValueKeywords.in
+SVGCSSVALUES = $$PWD/css/SVGCSSValueKeywords.in
 
 STYLESHEETS_EMBED = $$PWD/css/html4.css
 
@@ -1111,7 +1111,7 @@ contains(DEFINES, ENABLE_XBL=1) {
 contains(DEFINES, ENABLE_SVG=1) {
     FEATURE_DEFINES_JAVASCRIPT += ENABLE_SVG=1
 
-    DEPENDPATH += ksvg2/css ksvg2/events ksvg2/misc ksvg2/svg platform/graphics/svg
+    DEPENDPATH += svg platform/graphics/svg
     qt-port {
     DEPENDPATH += platform/graphics/svg/qt
     }
@@ -1120,138 +1120,138 @@ contains(DEFINES, ENABLE_SVG=1) {
     DEPENDPATH += platform/graphics/svg/cairo
     }
 
-    SVG_NAMES = $$PWD/ksvg2/svg/svgtags.in
+    SVG_NAMES = $$PWD/svg/svgtags.in
 
-    XLINK_NAMES = $$PWD/ksvg2/misc/xlinkattrs.in
+    XLINK_NAMES = $$PWD/svg/xlinkattrs.in
 
-    IDL_BINDINGS += ksvg2/events/SVGZoomEvent.idl \
-        ksvg2/svg/SVGAElement.idl \
-        ksvg2/svg/SVGAngle.idl \
-        ksvg2/svg/SVGAnimateColorElement.idl \
-        ksvg2/svg/SVGAnimatedAngle.idl \
-        ksvg2/svg/SVGAnimatedBoolean.idl \
-        ksvg2/svg/SVGAnimatedEnumeration.idl \
-        ksvg2/svg/SVGAnimatedInteger.idl \
-        ksvg2/svg/SVGAnimatedLength.idl \
-        ksvg2/svg/SVGAnimatedLengthList.idl \
-        ksvg2/svg/SVGAnimatedNumber.idl \
-        ksvg2/svg/SVGAnimatedNumberList.idl \
-        ksvg2/svg/SVGAnimatedPreserveAspectRatio.idl \
-        ksvg2/svg/SVGAnimatedRect.idl \
-        ksvg2/svg/SVGAnimatedString.idl \
-        ksvg2/svg/SVGAnimatedTransformList.idl \
-        ksvg2/svg/SVGAnimateElement.idl \
-        ksvg2/svg/SVGAnimateTransformElement.idl \
-        ksvg2/svg/SVGAnimationElement.idl \
-        ksvg2/svg/SVGCircleElement.idl \
-        ksvg2/svg/SVGClipPathElement.idl \
-        ksvg2/svg/SVGColor.idl \
-        ksvg2/svg/SVGComponentTransferFunctionElement.idl \
-        ksvg2/svg/SVGCursorElement.idl \
-        ksvg2/svg/SVGDefinitionSrcElement.idl \
-        ksvg2/svg/SVGDefsElement.idl \
-        ksvg2/svg/SVGDescElement.idl \
-        ksvg2/svg/SVGDocument.idl \
-        ksvg2/svg/SVGElement.idl \
-        ksvg2/svg/SVGElementInstance.idl \
-        ksvg2/svg/SVGElementInstanceList.idl \
-        ksvg2/svg/SVGEllipseElement.idl \
-        ksvg2/svg/SVGException.idl \
-        ksvg2/svg/SVGFEBlendElement.idl \
-        ksvg2/svg/SVGFEColorMatrixElement.idl \
-        ksvg2/svg/SVGFEComponentTransferElement.idl \
-        ksvg2/svg/SVGFECompositeElement.idl \
-        ksvg2/svg/SVGFEDiffuseLightingElement.idl \
-        ksvg2/svg/SVGFEDisplacementMapElement.idl \
-        ksvg2/svg/SVGFEDistantLightElement.idl \
-        ksvg2/svg/SVGFEFloodElement.idl \
-        ksvg2/svg/SVGFEFuncAElement.idl \
-        ksvg2/svg/SVGFEFuncBElement.idl \
-        ksvg2/svg/SVGFEFuncGElement.idl \
-        ksvg2/svg/SVGFEFuncRElement.idl \
-        ksvg2/svg/SVGFEGaussianBlurElement.idl \
-        ksvg2/svg/SVGFEImageElement.idl \
-        ksvg2/svg/SVGFEMergeElement.idl \
-        ksvg2/svg/SVGFEMergeNodeElement.idl \
-        ksvg2/svg/SVGFEOffsetElement.idl \
-        ksvg2/svg/SVGFEPointLightElement.idl \
-        ksvg2/svg/SVGFESpecularLightingElement.idl \
-        ksvg2/svg/SVGFESpotLightElement.idl \
-        ksvg2/svg/SVGFETileElement.idl \
-        ksvg2/svg/SVGFETurbulenceElement.idl \
-        ksvg2/svg/SVGFilterElement.idl \
-        ksvg2/svg/SVGFontFaceElement.idl \
-        ksvg2/svg/SVGFontFaceFormatElement.idl \
-        ksvg2/svg/SVGFontFaceNameElement.idl \
-        ksvg2/svg/SVGFontFaceSrcElement.idl \
-        ksvg2/svg/SVGFontFaceUriElement.idl \
-        ksvg2/svg/SVGForeignObjectElement.idl \
-        ksvg2/svg/SVGGElement.idl \
-        ksvg2/svg/SVGGradientElement.idl \
-        ksvg2/svg/SVGImageElement.idl \
-        ksvg2/svg/SVGLength.idl \
-        ksvg2/svg/SVGLengthList.idl \
-        ksvg2/svg/SVGLinearGradientElement.idl \
-        ksvg2/svg/SVGLineElement.idl \
-        ksvg2/svg/SVGMarkerElement.idl \
-        ksvg2/svg/SVGMaskElement.idl \
-        ksvg2/svg/SVGMatrix.idl \
-        ksvg2/svg/SVGMetadataElement.idl \
-        ksvg2/svg/SVGNumber.idl \
-        ksvg2/svg/SVGNumberList.idl \
-        ksvg2/svg/SVGPaint.idl \
-        ksvg2/svg/SVGPathElement.idl \
-        ksvg2/svg/SVGPathSegArcAbs.idl \
-        ksvg2/svg/SVGPathSegArcRel.idl \
-        ksvg2/svg/SVGPathSegClosePath.idl \
-        ksvg2/svg/SVGPathSegCurvetoCubicAbs.idl \
-        ksvg2/svg/SVGPathSegCurvetoCubicRel.idl \
-        ksvg2/svg/SVGPathSegCurvetoCubicSmoothAbs.idl \
-        ksvg2/svg/SVGPathSegCurvetoCubicSmoothRel.idl \
-        ksvg2/svg/SVGPathSegCurvetoQuadraticAbs.idl \
-        ksvg2/svg/SVGPathSegCurvetoQuadraticRel.idl \
-        ksvg2/svg/SVGPathSegCurvetoQuadraticSmoothAbs.idl \
-        ksvg2/svg/SVGPathSegCurvetoQuadraticSmoothRel.idl \
-        ksvg2/svg/SVGPathSeg.idl \
-        ksvg2/svg/SVGPathSegLinetoAbs.idl \
-        ksvg2/svg/SVGPathSegLinetoHorizontalAbs.idl \
-        ksvg2/svg/SVGPathSegLinetoHorizontalRel.idl \
-        ksvg2/svg/SVGPathSegLinetoRel.idl \
-        ksvg2/svg/SVGPathSegLinetoVerticalAbs.idl \
-        ksvg2/svg/SVGPathSegLinetoVerticalRel.idl \
-        ksvg2/svg/SVGPathSegList.idl \
-        ksvg2/svg/SVGPathSegMovetoAbs.idl \
-        ksvg2/svg/SVGPathSegMovetoRel.idl \
-        ksvg2/svg/SVGPatternElement.idl \
-        ksvg2/svg/SVGPoint.idl \
-        ksvg2/svg/SVGPointList.idl \
-        ksvg2/svg/SVGPolygonElement.idl \
-        ksvg2/svg/SVGPolylineElement.idl \
-        ksvg2/svg/SVGPreserveAspectRatio.idl \
-        ksvg2/svg/SVGRadialGradientElement.idl \
-        ksvg2/svg/SVGRectElement.idl \
-        ksvg2/svg/SVGRect.idl \
-        ksvg2/svg/SVGRenderingIntent.idl \
-        ksvg2/svg/SVGScriptElement.idl \
-        ksvg2/svg/SVGSetElement.idl \
-        ksvg2/svg/SVGStopElement.idl \
-        ksvg2/svg/SVGStringList.idl \
-        ksvg2/svg/SVGStyleElement.idl \
-        ksvg2/svg/SVGSVGElement.idl \
-        ksvg2/svg/SVGSwitchElement.idl \
-        ksvg2/svg/SVGSymbolElement.idl \
-        ksvg2/svg/SVGTextContentElement.idl \
-        ksvg2/svg/SVGTextElement.idl \
-        ksvg2/svg/SVGTextPathElement.idl \
-        ksvg2/svg/SVGTextPositioningElement.idl \
-        ksvg2/svg/SVGTitleElement.idl \
-        ksvg2/svg/SVGTransform.idl \
-        ksvg2/svg/SVGTransformList.idl \
-        ksvg2/svg/SVGTRefElement.idl \
-        ksvg2/svg/SVGTSpanElement.idl \
-        ksvg2/svg/SVGUnitTypes.idl \
-        ksvg2/svg/SVGUseElement.idl \
-        ksvg2/svg/SVGViewElement.idl 
+    IDL_BINDINGS += dom/SVGZoomEvent.idl \
+        svg/SVGAElement.idl \
+        svg/SVGAngle.idl \
+        svg/SVGAnimateColorElement.idl \
+        svg/SVGAnimatedAngle.idl \
+        svg/SVGAnimatedBoolean.idl \
+        svg/SVGAnimatedEnumeration.idl \
+        svg/SVGAnimatedInteger.idl \
+        svg/SVGAnimatedLength.idl \
+        svg/SVGAnimatedLengthList.idl \
+        svg/SVGAnimatedNumber.idl \
+        svg/SVGAnimatedNumberList.idl \
+        svg/SVGAnimatedPreserveAspectRatio.idl \
+        svg/SVGAnimatedRect.idl \
+        svg/SVGAnimatedString.idl \
+        svg/SVGAnimatedTransformList.idl \
+        svg/SVGAnimateElement.idl \
+        svg/SVGAnimateTransformElement.idl \
+        svg/SVGAnimationElement.idl \
+        svg/SVGCircleElement.idl \
+        svg/SVGClipPathElement.idl \
+        svg/SVGColor.idl \
+        svg/SVGComponentTransferFunctionElement.idl \
+        svg/SVGCursorElement.idl \
+        svg/SVGDefinitionSrcElement.idl \
+        svg/SVGDefsElement.idl \
+        svg/SVGDescElement.idl \
+        svg/SVGDocument.idl \
+        svg/SVGElement.idl \
+        svg/SVGElementInstance.idl \
+        svg/SVGElementInstanceList.idl \
+        svg/SVGEllipseElement.idl \
+        svg/SVGException.idl \
+        svg/SVGFEBlendElement.idl \
+        svg/SVGFEColorMatrixElement.idl \
+        svg/SVGFEComponentTransferElement.idl \
+        svg/SVGFECompositeElement.idl \
+        svg/SVGFEDiffuseLightingElement.idl \
+        svg/SVGFEDisplacementMapElement.idl \
+        svg/SVGFEDistantLightElement.idl \
+        svg/SVGFEFloodElement.idl \
+        svg/SVGFEFuncAElement.idl \
+        svg/SVGFEFuncBElement.idl \
+        svg/SVGFEFuncGElement.idl \
+        svg/SVGFEFuncRElement.idl \
+        svg/SVGFEGaussianBlurElement.idl \
+        svg/SVGFEImageElement.idl \
+        svg/SVGFEMergeElement.idl \
+        svg/SVGFEMergeNodeElement.idl \
+        svg/SVGFEOffsetElement.idl \
+        svg/SVGFEPointLightElement.idl \
+        svg/SVGFESpecularLightingElement.idl \
+        svg/SVGFESpotLightElement.idl \
+        svg/SVGFETileElement.idl \
+        svg/SVGFETurbulenceElement.idl \
+        svg/SVGFilterElement.idl \
+        svg/SVGFontFaceElement.idl \
+        svg/SVGFontFaceFormatElement.idl \
+        svg/SVGFontFaceNameElement.idl \
+        svg/SVGFontFaceSrcElement.idl \
+        svg/SVGFontFaceUriElement.idl \
+        svg/SVGForeignObjectElement.idl \
+        svg/SVGGElement.idl \
+        svg/SVGGradientElement.idl \
+        svg/SVGImageElement.idl \
+        svg/SVGLength.idl \
+        svg/SVGLengthList.idl \
+        svg/SVGLinearGradientElement.idl \
+        svg/SVGLineElement.idl \
+        svg/SVGMarkerElement.idl \
+        svg/SVGMaskElement.idl \
+        svg/SVGMatrix.idl \
+        svg/SVGMetadataElement.idl \
+        svg/SVGNumber.idl \
+        svg/SVGNumberList.idl \
+        svg/SVGPaint.idl \
+        svg/SVGPathElement.idl \
+        svg/SVGPathSegArcAbs.idl \
+        svg/SVGPathSegArcRel.idl \
+        svg/SVGPathSegClosePath.idl \
+        svg/SVGPathSegCurvetoCubicAbs.idl \
+        svg/SVGPathSegCurvetoCubicRel.idl \
+        svg/SVGPathSegCurvetoCubicSmoothAbs.idl \
+        svg/SVGPathSegCurvetoCubicSmoothRel.idl \
+        svg/SVGPathSegCurvetoQuadraticAbs.idl \
+        svg/SVGPathSegCurvetoQuadraticRel.idl \
+        svg/SVGPathSegCurvetoQuadraticSmoothAbs.idl \
+        svg/SVGPathSegCurvetoQuadraticSmoothRel.idl \
+        svg/SVGPathSeg.idl \
+        svg/SVGPathSegLinetoAbs.idl \
+        svg/SVGPathSegLinetoHorizontalAbs.idl \
+        svg/SVGPathSegLinetoHorizontalRel.idl \
+        svg/SVGPathSegLinetoRel.idl \
+        svg/SVGPathSegLinetoVerticalAbs.idl \
+        svg/SVGPathSegLinetoVerticalRel.idl \
+        svg/SVGPathSegList.idl \
+        svg/SVGPathSegMovetoAbs.idl \
+        svg/SVGPathSegMovetoRel.idl \
+        svg/SVGPatternElement.idl \
+        svg/SVGPoint.idl \
+        svg/SVGPointList.idl \
+        svg/SVGPolygonElement.idl \
+        svg/SVGPolylineElement.idl \
+        svg/SVGPreserveAspectRatio.idl \
+        svg/SVGRadialGradientElement.idl \
+        svg/SVGRectElement.idl \
+        svg/SVGRect.idl \
+        svg/SVGRenderingIntent.idl \
+        svg/SVGScriptElement.idl \
+        svg/SVGSetElement.idl \
+        svg/SVGStopElement.idl \
+        svg/SVGStringList.idl \
+        svg/SVGStyleElement.idl \
+        svg/SVGSVGElement.idl \
+        svg/SVGSwitchElement.idl \
+        svg/SVGSymbolElement.idl \
+        svg/SVGTextContentElement.idl \
+        svg/SVGTextElement.idl \
+        svg/SVGTextPathElement.idl \
+        svg/SVGTextPositioningElement.idl \
+        svg/SVGTitleElement.idl \
+        svg/SVGTransform.idl \
+        svg/SVGTransformList.idl \
+        svg/SVGTRefElement.idl \
+        svg/SVGTSpanElement.idl \
+        svg/SVGUnitTypes.idl \
+        svg/SVGUseElement.idl \
+        svg/SVGViewElement.idl 
 
     SOURCES += \
 # TODO: this-one-is-not-auto-added! FIXME! tmp/SVGElementFactory.cpp \
@@ -1261,139 +1261,139 @@ contains(DEFINES, ENABLE_SVG=1) {
         bindings/js/JSSVGPathSegListCustom.cpp \
         bindings/js/JSSVGPointListCustom.cpp \
         bindings/js/JSSVGTransformListCustom.cpp \
-        ksvg2/css/SVGCSSComputedStyleDeclaration.cpp \
-        ksvg2/css/SVGCSSParser.cpp \
-        ksvg2/css/SVGCSSStyleSelector.cpp \
-        ksvg2/css/SVGRenderStyle.cpp \
-        ksvg2/css/SVGRenderStyleDefs.cpp \
-        ksvg2/events/JSSVGLazyEventListener.cpp \
-        ksvg2/events/SVGZoomEvent.cpp \
-        ksvg2/misc/PointerEventsHitRules.cpp \
-        ksvg2/misc/SVGDocumentExtensions.cpp \
-        ksvg2/misc/SVGImageLoader.cpp \
-        ksvg2/misc/SVGTimer.cpp \
-        ksvg2/misc/TimeScheduler.cpp \
-        ksvg2/svg/ColorDistance.cpp \
-        ksvg2/svg/SVGAElement.cpp \
-        ksvg2/svg/SVGAngle.cpp \
-        ksvg2/svg/SVGAnimateColorElement.cpp \
-        ksvg2/svg/SVGAnimatedPathData.cpp \
-        ksvg2/svg/SVGAnimatedPoints.cpp \
-        ksvg2/svg/SVGAnimateElement.cpp \
-        ksvg2/svg/SVGAnimateMotionElement.cpp \
-        ksvg2/svg/SVGAnimateTransformElement.cpp \
-        ksvg2/svg/SVGAnimationElement.cpp \
-        ksvg2/svg/SVGCircleElement.cpp \
-        ksvg2/svg/SVGClipPathElement.cpp \
-        ksvg2/svg/SVGColor.cpp \
-        ksvg2/svg/SVGComponentTransferFunctionElement.cpp \
-        ksvg2/svg/SVGCursorElement.cpp \
-        ksvg2/svg/SVGDefinitionSrcElement.cpp \
-        ksvg2/svg/SVGDefsElement.cpp \
-        ksvg2/svg/SVGDescElement.cpp \
-        ksvg2/svg/SVGDocument.cpp \
-        ksvg2/svg/SVGElement.cpp \
-        ksvg2/svg/SVGElementInstance.cpp \
-        ksvg2/svg/SVGElementInstanceList.cpp \
-        ksvg2/svg/SVGEllipseElement.cpp \
-        ksvg2/svg/SVGExternalResourcesRequired.cpp \
-        ksvg2/svg/SVGFEBlendElement.cpp \
-        ksvg2/svg/SVGFEColorMatrixElement.cpp \
-        ksvg2/svg/SVGFEComponentTransferElement.cpp \
-        ksvg2/svg/SVGFECompositeElement.cpp \
-        ksvg2/svg/SVGFEDiffuseLightingElement.cpp \
-        ksvg2/svg/SVGFEDisplacementMapElement.cpp \
-        ksvg2/svg/SVGFEDistantLightElement.cpp \
-        ksvg2/svg/SVGFEFloodElement.cpp \
-        ksvg2/svg/SVGFEFuncAElement.cpp \
-        ksvg2/svg/SVGFEFuncBElement.cpp \
-        ksvg2/svg/SVGFEFuncGElement.cpp \
-        ksvg2/svg/SVGFEFuncRElement.cpp \
-        ksvg2/svg/SVGFEGaussianBlurElement.cpp \
-        ksvg2/svg/SVGFEImageElement.cpp \
-        ksvg2/svg/SVGFELightElement.cpp \
-        ksvg2/svg/SVGFEMergeElement.cpp \
-        ksvg2/svg/SVGFEMergeNodeElement.cpp \
-        ksvg2/svg/SVGFEOffsetElement.cpp \
-        ksvg2/svg/SVGFEPointLightElement.cpp \
-        ksvg2/svg/SVGFESpecularLightingElement.cpp \
-        ksvg2/svg/SVGFESpotLightElement.cpp \
-        ksvg2/svg/SVGFETileElement.cpp \
-        ksvg2/svg/SVGFETurbulenceElement.cpp \
-        ksvg2/svg/SVGFilterElement.cpp \
-        ksvg2/svg/SVGFilterPrimitiveStandardAttributes.cpp \
-        ksvg2/svg/SVGFitToViewBox.cpp \
-        ksvg2/svg/SVGFontFaceElement.cpp \
-        ksvg2/svg/SVGFontFaceFormatElement.cpp \
-        ksvg2/svg/SVGFontFaceNameElement.cpp \
-        ksvg2/svg/SVGFontFaceSrcElement.cpp \
-        ksvg2/svg/SVGFontFaceUriElement.cpp \
-        ksvg2/svg/SVGForeignObjectElement.cpp \
-        ksvg2/svg/SVGGElement.cpp \
-        ksvg2/svg/SVGGradientElement.cpp \
-        ksvg2/svg/SVGImageElement.cpp \
-        ksvg2/svg/SVGLangSpace.cpp \
-        ksvg2/svg/SVGLength.cpp \
-        ksvg2/svg/SVGLengthList.cpp \
-        ksvg2/svg/SVGLinearGradientElement.cpp \
-        ksvg2/svg/SVGLineElement.cpp \
-        ksvg2/svg/SVGLocatable.cpp \
-        ksvg2/svg/SVGMarkerElement.cpp \
-        ksvg2/svg/SVGMaskElement.cpp \
-        ksvg2/svg/SVGMetadataElement.cpp \
-        ksvg2/svg/SVGMPathElement.cpp \
-        ksvg2/svg/SVGNumberList.cpp \
-        ksvg2/svg/SVGPaint.cpp \
-        ksvg2/svg/SVGParserUtilities.cpp \
-        ksvg2/svg/SVGPathElement.cpp \
-        ksvg2/svg/SVGPathSegArc.cpp \
-        ksvg2/svg/SVGPathSegClosePath.cpp \
-        ksvg2/svg/SVGPathSegCurvetoCubic.cpp \
-        ksvg2/svg/SVGPathSegCurvetoCubicSmooth.cpp \
-        ksvg2/svg/SVGPathSegCurvetoQuadratic.cpp \
-        ksvg2/svg/SVGPathSegCurvetoQuadraticSmooth.cpp \
-        ksvg2/svg/SVGPathSegLineto.cpp \
-        ksvg2/svg/SVGPathSegLinetoHorizontal.cpp \
-        ksvg2/svg/SVGPathSegLinetoVertical.cpp \
-        ksvg2/svg/SVGPathSegList.cpp \
-        ksvg2/svg/SVGPathSegMoveto.cpp \
-        ksvg2/svg/SVGPatternElement.cpp \
-        ksvg2/svg/SVGPointList.cpp \
-        ksvg2/svg/SVGPolyElement.cpp \
-        ksvg2/svg/SVGPolygonElement.cpp \
-        ksvg2/svg/SVGPolylineElement.cpp \
-        ksvg2/svg/SVGPreserveAspectRatio.cpp \
-        ksvg2/svg/SVGRadialGradientElement.cpp \
-        ksvg2/svg/SVGRectElement.cpp \
-        ksvg2/svg/SVGScriptElement.cpp \
-        ksvg2/svg/SVGSetElement.cpp \
-        ksvg2/svg/SVGStopElement.cpp \
-        ksvg2/svg/SVGStringList.cpp \
-        ksvg2/svg/SVGStylable.cpp \
-        ksvg2/svg/SVGStyledElement.cpp \
-        ksvg2/svg/SVGStyledLocatableElement.cpp \
-        ksvg2/svg/SVGStyledTransformableElement.cpp \
-        ksvg2/svg/SVGStyleElement.cpp \
-        ksvg2/svg/SVGSVGElement.cpp \
-        ksvg2/svg/SVGSwitchElement.cpp \
-        ksvg2/svg/SVGSymbolElement.cpp \
-        ksvg2/svg/SVGTests.cpp \
-        ksvg2/svg/SVGTextContentElement.cpp \
-        ksvg2/svg/SVGTextElement.cpp \
-        ksvg2/svg/SVGTextPathElement.cpp \
-        ksvg2/svg/SVGTextPositioningElement.cpp \
-        ksvg2/svg/SVGTitleElement.cpp \
-        ksvg2/svg/SVGTransformable.cpp \
-        ksvg2/svg/SVGTransform.cpp \
-        ksvg2/svg/SVGTransformDistance.cpp \
-        ksvg2/svg/SVGTransformList.cpp \
-        ksvg2/svg/SVGTRefElement.cpp \
-        ksvg2/svg/SVGTSpanElement.cpp \
-        ksvg2/svg/SVGURIReference.cpp \
-        ksvg2/svg/SVGUseElement.cpp \
-        ksvg2/svg/SVGViewElement.cpp \
-        ksvg2/svg/SVGViewSpec.cpp \
-        ksvg2/svg/SVGZoomAndPan.cpp \
+        css/SVGCSSComputedStyleDeclaration.cpp \
+        css/SVGCSSParser.cpp \
+        css/SVGCSSStyleSelector.cpp \
+        rendering/SVGRenderStyle.cpp \
+        rendering/SVGRenderStyleDefs.cpp \
+        bindings/js/JSSVGLazyEventListener.cpp \
+        dom/SVGZoomEvent.cpp \
+        rendering/PointerEventsHitRules.cpp \
+        svg/SVGDocumentExtensions.cpp \
+        svg/SVGImageLoader.cpp \
+        svg/SVGTimer.cpp \
+        svg/TimeScheduler.cpp \
+        svg/ColorDistance.cpp \
+        svg/SVGAElement.cpp \
+        svg/SVGAngle.cpp \
+        svg/SVGAnimateColorElement.cpp \
+        svg/SVGAnimatedPathData.cpp \
+        svg/SVGAnimatedPoints.cpp \
+        svg/SVGAnimateElement.cpp \
+        svg/SVGAnimateMotionElement.cpp \
+        svg/SVGAnimateTransformElement.cpp \
+        svg/SVGAnimationElement.cpp \
+        svg/SVGCircleElement.cpp \
+        svg/SVGClipPathElement.cpp \
+        svg/SVGColor.cpp \
+        svg/SVGComponentTransferFunctionElement.cpp \
+        svg/SVGCursorElement.cpp \
+        svg/SVGDefinitionSrcElement.cpp \
+        svg/SVGDefsElement.cpp \
+        svg/SVGDescElement.cpp \
+        svg/SVGDocument.cpp \
+        svg/SVGElement.cpp \
+        svg/SVGElementInstance.cpp \
+        svg/SVGElementInstanceList.cpp \
+        svg/SVGEllipseElement.cpp \
+        svg/SVGExternalResourcesRequired.cpp \
+        svg/SVGFEBlendElement.cpp \
+        svg/SVGFEColorMatrixElement.cpp \
+        svg/SVGFEComponentTransferElement.cpp \
+        svg/SVGFECompositeElement.cpp \
+        svg/SVGFEDiffuseLightingElement.cpp \
+        svg/SVGFEDisplacementMapElement.cpp \
+        svg/SVGFEDistantLightElement.cpp \
+        svg/SVGFEFloodElement.cpp \
+        svg/SVGFEFuncAElement.cpp \
+        svg/SVGFEFuncBElement.cpp \
+        svg/SVGFEFuncGElement.cpp \
+        svg/SVGFEFuncRElement.cpp \
+        svg/SVGFEGaussianBlurElement.cpp \
+        svg/SVGFEImageElement.cpp \
+        svg/SVGFELightElement.cpp \
+        svg/SVGFEMergeElement.cpp \
+        svg/SVGFEMergeNodeElement.cpp \
+        svg/SVGFEOffsetElement.cpp \
+        svg/SVGFEPointLightElement.cpp \
+        svg/SVGFESpecularLightingElement.cpp \
+        svg/SVGFESpotLightElement.cpp \
+        svg/SVGFETileElement.cpp \
+        svg/SVGFETurbulenceElement.cpp \
+        svg/SVGFilterElement.cpp \
+        svg/SVGFilterPrimitiveStandardAttributes.cpp \
+        svg/SVGFitToViewBox.cpp \
+        svg/SVGFontFaceElement.cpp \
+        svg/SVGFontFaceFormatElement.cpp \
+        svg/SVGFontFaceNameElement.cpp \
+        svg/SVGFontFaceSrcElement.cpp \
+        svg/SVGFontFaceUriElement.cpp \
+        svg/SVGForeignObjectElement.cpp \
+        svg/SVGGElement.cpp \
+        svg/SVGGradientElement.cpp \
+        svg/SVGImageElement.cpp \
+        svg/SVGLangSpace.cpp \
+        svg/SVGLength.cpp \
+        svg/SVGLengthList.cpp \
+        svg/SVGLinearGradientElement.cpp \
+        svg/SVGLineElement.cpp \
+        svg/SVGLocatable.cpp \
+        svg/SVGMarkerElement.cpp \
+        svg/SVGMaskElement.cpp \
+        svg/SVGMetadataElement.cpp \
+        svg/SVGMPathElement.cpp \
+        svg/SVGNumberList.cpp \
+        svg/SVGPaint.cpp \
+        svg/SVGParserUtilities.cpp \
+        svg/SVGPathElement.cpp \
+        svg/SVGPathSegArc.cpp \
+        svg/SVGPathSegClosePath.cpp \
+        svg/SVGPathSegCurvetoCubic.cpp \
+        svg/SVGPathSegCurvetoCubicSmooth.cpp \
+        svg/SVGPathSegCurvetoQuadratic.cpp \
+        svg/SVGPathSegCurvetoQuadraticSmooth.cpp \
+        svg/SVGPathSegLineto.cpp \
+        svg/SVGPathSegLinetoHorizontal.cpp \
+        svg/SVGPathSegLinetoVertical.cpp \
+        svg/SVGPathSegList.cpp \
+        svg/SVGPathSegMoveto.cpp \
+        svg/SVGPatternElement.cpp \
+        svg/SVGPointList.cpp \
+        svg/SVGPolyElement.cpp \
+        svg/SVGPolygonElement.cpp \
+        svg/SVGPolylineElement.cpp \
+        svg/SVGPreserveAspectRatio.cpp \
+        svg/SVGRadialGradientElement.cpp \
+        svg/SVGRectElement.cpp \
+        svg/SVGScriptElement.cpp \
+        svg/SVGSetElement.cpp \
+        svg/SVGStopElement.cpp \
+        svg/SVGStringList.cpp \
+        svg/SVGStylable.cpp \
+        svg/SVGStyledElement.cpp \
+        svg/SVGStyledLocatableElement.cpp \
+        svg/SVGStyledTransformableElement.cpp \
+        svg/SVGStyleElement.cpp \
+        svg/SVGSVGElement.cpp \
+        svg/SVGSwitchElement.cpp \
+        svg/SVGSymbolElement.cpp \
+        svg/SVGTests.cpp \
+        svg/SVGTextContentElement.cpp \
+        svg/SVGTextElement.cpp \
+        svg/SVGTextPathElement.cpp \
+        svg/SVGTextPositioningElement.cpp \
+        svg/SVGTitleElement.cpp \
+        svg/SVGTransformable.cpp \
+        svg/SVGTransform.cpp \
+        svg/SVGTransformDistance.cpp \
+        svg/SVGTransformList.cpp \
+        svg/SVGTRefElement.cpp \
+        svg/SVGTSpanElement.cpp \
+        svg/SVGURIReference.cpp \
+        svg/SVGUseElement.cpp \
+        svg/SVGViewElement.cpp \
+        svg/SVGViewSpec.cpp \
+        svg/SVGZoomAndPan.cpp \
         platform/graphics/svg/filters/SVGFEBlend.cpp \
         platform/graphics/svg/filters/SVGFEColorMatrix.cpp \
         platform/graphics/svg/filters/SVGFEComponentTransfer.cpp \
@@ -1467,7 +1467,7 @@ gtk-port:SOURCES += \
 
         # GENERATOR 5-C:
         svgnames_a.output = $$GENERATED_SOURCES_DIR/SVGNames.cpp
-        svgnames_a.commands = perl $$PWD/ksvg2/scripts/make_names.pl --tags $$PWD/ksvg2/svg/svgtags.in --attrs $$PWD/ksvg2/svg/svgattrs.in --namespace SVG --cppNamespace WebCore --namespaceURI 'http://www.w3.org/2000/svg' --factory --attrsNullNamespace --preprocessor \"$${QMAKE_MOC} -E\" --output $$GENERATED_SOURCES_DIR
+        svgnames_a.commands = perl $$PWD/dom/make_names.pl --tags $$PWD/svg/svgtags.in --attrs $$PWD/svg/svgattrs.in --namespace SVG --cppNamespace WebCore --namespaceURI 'http://www.w3.org/2000/svg' --factory --attrsNullNamespace --preprocessor \"$${QMAKE_MOC} -E\" --output $$GENERATED_SOURCES_DIR
         svgnames_a.input = SVG_NAMES
         svgnames_a.dependency_type = TYPE_C
         svgnames_a.CONFIG = target_predeps
@@ -1485,7 +1485,7 @@ gtk-port:SOURCES += \
 
         # GENERATOR 5-D:
         xlinknames.output = $$GENERATED_SOURCES_DIR/XLinkNames.cpp
-        xlinknames.commands = perl $$PWD/ksvg2/scripts/make_names.pl --attrs $$PWD/ksvg2/misc/xlinkattrs.in --namespace XLink --cppNamespace WebCore --namespaceURI 'http://www.w3.org/1999/xlink' --preprocessor \"$${QMAKE_MOC} -E\" --output $$GENERATED_SOURCES_DIR
+        xlinknames.commands = perl $$PWD/dom/make_names.pl --attrs $$PWD/svg/xlinkattrs.in --namespace XLink --cppNamespace WebCore --namespaceURI 'http://www.w3.org/1999/xlink' --preprocessor \"$${QMAKE_MOC} -E\" --output $$GENERATED_SOURCES_DIR
         xlinknames.input = XLINK_NAMES
         xlinknames.dependency_type = TYPE_C
         xlinknames.CONFIG = target_predeps
@@ -1533,7 +1533,7 @@ gtk-port:SOURCES += \
 idl.output = $$GENERATED_SOURCES_DIR/JS${QMAKE_FILE_BASE}.cpp
 idl.variable_out = GENERATED_SOURCES
 idl.input = IDL_BINDINGS
-idl.commands = perl -I$$PWD/bindings/scripts $$PWD/bindings/scripts/generate-bindings.pl --defines \"$${FEATURE_DEFINES_JAVASCRIPT}\" --generator JS --include $$PWD/dom --include $$PWD/html --include $$PWD/xml --include $$PWD/ksvg2/svg --outputdir $$GENERATED_SOURCES_DIR --preprocessor \"$${QMAKE_MOC} -E\" ${QMAKE_FILE_NAME}
+idl.commands = perl -I$$PWD/bindings/scripts $$PWD/bindings/scripts/generate-bindings.pl --defines \"$${FEATURE_DEFINES_JAVASCRIPT}\" --generator JS --include $$PWD/dom --include $$PWD/html --include $$PWD/xml --include $$PWD/svg --outputdir $$GENERATED_SOURCES_DIR --preprocessor \"$${QMAKE_MOC} -E\" ${QMAKE_FILE_NAME}
 idl.CONFIG += target_predeps
 idl.clean = ${QMAKE_VAR_GENERATED_SOURCES_DIR_SLASH}JS${QMAKE_FILE_BASE}.h ${QMAKE_FILE_OUT}
 addExtraCompiler(idl)
@@ -1580,7 +1580,7 @@ QMAKE_EXTRA_TARGETS += grammar_h_dep
 
 # GENERATOR 5-A:
 htmlnames.output = $$GENERATED_SOURCES_DIR/HTMLNames.cpp
-htmlnames.commands = perl $$PWD/ksvg2/scripts/make_names.pl --tags $$PWD/html/HTMLTagNames.in --attrs $$PWD/html/HTMLAttributeNames.in --namespace HTML --namespacePrefix xhtml --cppNamespace WebCore --namespaceURI 'http://www.w3.org/1999/xhtml' --attrsNullNamespace --preprocessor \"$${QMAKE_MOC} -E\" --output $$GENERATED_SOURCES_DIR
+htmlnames.commands = perl $$PWD/dom/make_names.pl --tags $$PWD/html/HTMLTagNames.in --attrs $$PWD/html/HTMLAttributeNames.in --namespace HTML --namespacePrefix xhtml --cppNamespace WebCore --namespaceURI 'http://www.w3.org/1999/xhtml' --attrsNullNamespace --preprocessor \"$${QMAKE_MOC} -E\" --output $$GENERATED_SOURCES_DIR
 htmlnames.input = HTML_NAMES
 htmlnames.dependency_type = TYPE_C
 htmlnames.CONFIG = target_predeps
@@ -1590,7 +1590,7 @@ addExtraCompiler(htmlnames)
 
 # GENERATOR 5-B:
 xmlnames.output = $$GENERATED_SOURCES_DIR/XMLNames.cpp
-xmlnames.commands = perl $$PWD/ksvg2/scripts/make_names.pl --attrs $$PWD/xml/xmlattrs.in --namespace XML --cppNamespace WebCore --namespaceURI 'http://www.w3.org/XML/1998/namespace' --preprocessor \"$${QMAKE_MOC} -E\" --output $$GENERATED_SOURCES_DIR
+xmlnames.commands = perl $$PWD/dom/make_names.pl --attrs $$PWD/xml/xmlattrs.in --namespace XML --cppNamespace WebCore --namespaceURI 'http://www.w3.org/XML/1998/namespace' --preprocessor \"$${QMAKE_MOC} -E\" --output $$GENERATED_SOURCES_DIR
 xmlnames.input = XML_NAMES
 xmlnames.dependency_type = TYPE_C
 xmlnames.CONFIG = target_predeps
