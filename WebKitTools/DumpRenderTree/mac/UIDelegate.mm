@@ -35,6 +35,7 @@
 #import <WebKit/WebFramePrivate.h>
 #import <WebKit/WebHTMLViewPrivate.h>
 #import <WebKit/WebView.h>
+#import <WebKit/WebSecurityOriginPrivate.h>
 #import <wtf/Assertions.h>
 
 DumpRenderTreeDraggingInfo *draggingInfo = nil;
@@ -120,6 +121,17 @@ DumpRenderTreeDraggingInfo *draggingInfo = nil;
     
     [window close];
 }
+
+- (unsigned long long)webView:(WebView *)sender quotaForSecurityOrigin:(WebSecurityOrigin *)origin toCreateDatabase:(NSString *)newDatabaseName withEstimatedSize:(unsigned long long)estimatedSize
+{
+    return estimatedSize;
+}
+
+- (unsigned long long)webView:(WebView *)sender quotaForSecurityOrigin:(WebSecurityOrigin *)origin fromProposedQuota:(unsigned long long)proposedNewQuota database:(NSString *)databaseIdentifier
+{
+    return proposedNewQuota;
+}
+
 
 - (void)dealloc
 {

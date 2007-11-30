@@ -1,3 +1,12 @@
+2007-11-29  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders.
+
+        Revert r28213 which added an error callback that was not needed and changed
+        the results.
+
+        * storage/transaction_callback_exception_crash.html:
+
 2007-11-29  Alice Liu  <alice.liu@apple.com>
 
         Reviewed by Adam.

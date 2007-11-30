@@ -1,7 +1,6 @@
 <html>
 <head>
 <script>
-
 if (window.layoutTestController) {
     layoutTestController.dumpAsText();
     layoutTestController.waitUntilDone();
@@ -9,15 +8,10 @@ if (window.layoutTestController) {
 
 var db = openDatabase("15976Test", "1.0", "Test for http://bugs.webkit.org/show_bug.cgi?id=15976", 1);
 db.transaction(function(tx) { 
-    if (window.layoutTestController)
-        setTimeout("layoutTestController.notifyDone()", 0);
-    throw "TransactionCallbackError";
-}, function(err) {
-    if (window.layoutTestController)
-        setTimout("layoutTestController.notifyDone()", 0);
-    document.body.innerText = "Transaction error occured";
+   if (window.layoutTestController)
+       window.setTimeout(function() { layoutTestController.notifyDone() }, 0);
+   throw "TransactionCallbackError";
 });
-
 </script>
 </head>
 <body>
