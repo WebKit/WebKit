@@ -1,5 +1,17 @@
 2007-11-30  Nikolas Zimmermann  <zimmermann@kde.org>
 
+        Rubber stamped by Darin.
+
+        Fix misplaced file. The name "FontStyle" is not correct though - it probably
+        needs yet another move - but this time inside platform/graphics - as soon
+        as we agree on a better name.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/graphics/FontStyle.h: Copied from platform/text/FontStyle.h.
+        * platform/text/FontStyle.h: Removed.
+
+2007-11-30  Nikolas Zimmermann  <zimmermann@kde.org>
+
         Reviewed by Sam.
 
         Rename "FontStyle FontStyle(...)" to "FontStyle fontStyle(...)".

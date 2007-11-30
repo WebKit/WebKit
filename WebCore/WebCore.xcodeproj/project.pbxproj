@@ -2837,6 +2837,7 @@
 		B25AE55F0B49D6630074C726 /* LinearGradientAttributes.h in Headers */ = {isa = PBXBuildFile; fileRef = B25AE55D0B49D6630074C726 /* LinearGradientAttributes.h */; };
 		B25AE5600B49D6630074C726 /* RadialGradientAttributes.h in Headers */ = {isa = PBXBuildFile; fileRef = B25AE55E0B49D6630074C726 /* RadialGradientAttributes.h */; };
 		B25DFAAF0B2E2929000E6510 /* JSSVGMatrixCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B25DFAAE0B2E2929000E6510 /* JSSVGMatrixCustom.cpp */; };
+		B25E96BE0D00975100CFD296 /* FontStyle.h in Headers */ = {isa = PBXBuildFile; fileRef = B25E96BD0D00975100CFD296 /* FontStyle.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		B26554C00B80AD6000A50EC3 /* SVGTextPathElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B26554BD0B80AD6000A50EC3 /* SVGTextPathElement.cpp */; };
 		B26554C10B80AD6000A50EC3 /* SVGTextPathElement.h in Headers */ = {isa = PBXBuildFile; fileRef = B26554BE0B80AD6000A50EC3 /* SVGTextPathElement.h */; };
 		B26554EA0B80D74900A50EC3 /* RenderSVGTextPath.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B26554E80B80D74900A50EC3 /* RenderSVGTextPath.cpp */; };
@@ -2920,7 +2921,6 @@
 		B2C3DA260D006C1D00EF6F26 /* CharacterNames.h in Headers */ = {isa = PBXBuildFile; fileRef = B2C3D9F50D006C1D00EF6F26 /* CharacterNames.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		B2C3DA270D006C1D00EF6F26 /* CString.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2C3D9F60D006C1D00EF6F26 /* CString.cpp */; };
 		B2C3DA280D006C1D00EF6F26 /* CString.h in Headers */ = {isa = PBXBuildFile; fileRef = B2C3D9F70D006C1D00EF6F26 /* CString.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		B2C3DA290D006C1D00EF6F26 /* FontStyle.h in Headers */ = {isa = PBXBuildFile; fileRef = B2C3D9F80D006C1D00EF6F26 /* FontStyle.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		B2C3DA2A0D006C1D00EF6F26 /* CharsetData.h in Headers */ = {isa = PBXBuildFile; fileRef = B2C3D9FA0D006C1D00EF6F26 /* CharsetData.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		B2C3DA2B0D006C1D00EF6F26 /* PlatformString.h in Headers */ = {isa = PBXBuildFile; fileRef = B2C3D9FB0D006C1D00EF6F26 /* PlatformString.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		B2C3DA2C0D006C1D00EF6F26 /* RegularExpression.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2C3D9FC0D006C1D00EF6F26 /* RegularExpression.cpp */; };
@@ -6702,6 +6702,7 @@
 		B25AE55D0B49D6630074C726 /* LinearGradientAttributes.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = LinearGradientAttributes.h; sourceTree = "<group>"; };
 		B25AE55E0B49D6630074C726 /* RadialGradientAttributes.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = RadialGradientAttributes.h; sourceTree = "<group>"; };
 		B25DFAAE0B2E2929000E6510 /* JSSVGMatrixCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSSVGMatrixCustom.cpp; sourceTree = "<group>"; };
+		B25E96BD0D00975100CFD296 /* FontStyle.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = FontStyle.h; sourceTree = "<group>"; };
 		B26554BD0B80AD6000A50EC3 /* SVGTextPathElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = SVGTextPathElement.cpp; sourceTree = "<group>"; };
 		B26554BE0B80AD6000A50EC3 /* SVGTextPathElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SVGTextPathElement.h; sourceTree = "<group>"; };
 		B26554BF0B80AD6000A50EC3 /* SVGTextPathElement.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = SVGTextPathElement.idl; sourceTree = "<group>"; };
@@ -6786,7 +6787,6 @@
 		B2C3D9F50D006C1D00EF6F26 /* CharacterNames.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CharacterNames.h; sourceTree = "<group>"; };
 		B2C3D9F60D006C1D00EF6F26 /* CString.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = CString.cpp; sourceTree = "<group>"; };
 		B2C3D9F70D006C1D00EF6F26 /* CString.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CString.h; sourceTree = "<group>"; };
-		B2C3D9F80D006C1D00EF6F26 /* FontStyle.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = FontStyle.h; sourceTree = "<group>"; };
 		B2C3D9FA0D006C1D00EF6F26 /* CharsetData.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CharsetData.h; sourceTree = "<group>"; };
 		B2C3D9FB0D006C1D00EF6F26 /* PlatformString.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = PlatformString.h; sourceTree = "<group>"; };
 		B2C3D9FC0D006C1D00EF6F26 /* RegularExpression.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = RegularExpression.cpp; sourceTree = "<group>"; };
@@ -10911,6 +10911,7 @@
 		B2A015910AF6CD53006BCE0E /* graphics */ = {
 			isa = PBXGroup;
 			children = (
+				B25E96BD0D00975100CFD296 /* FontStyle.h */,
 				B23540F00D00782E002382FA /* StringTruncator.cpp */,
 				B23540F10D00782E002382FA /* StringTruncator.h */,
 				B2C3DA4F0D006CD600EF6F26 /* Font.cpp */,
@@ -11040,7 +11041,6 @@
 				B2C3D9F50D006C1D00EF6F26 /* CharacterNames.h */,
 				B2C3D9F60D006C1D00EF6F26 /* CString.cpp */,
 				B2C3D9F70D006C1D00EF6F26 /* CString.h */,
-				B2C3D9F80D006C1D00EF6F26 /* FontStyle.h */,
 				B2C3D9F90D006C1D00EF6F26 /* mac */,
 				B2C3D9FB0D006C1D00EF6F26 /* PlatformString.h */,
 				B2C3D9FC0D006C1D00EF6F26 /* RegularExpression.cpp */,
@@ -13908,7 +13908,6 @@
 				B2C3DA250D006C1D00EF6F26 /* BidiResolver.h in Headers */,
 				B2C3DA260D006C1D00EF6F26 /* CharacterNames.h in Headers */,
 				B2C3DA280D006C1D00EF6F26 /* CString.h in Headers */,
-				B2C3DA290D006C1D00EF6F26 /* FontStyle.h in Headers */,
 				B2C3DA2A0D006C1D00EF6F26 /* CharsetData.h in Headers */,
 				B2C3DA2B0D006C1D00EF6F26 /* PlatformString.h in Headers */,
 				B2C3DA2D0D006C1D00EF6F26 /* RegularExpression.h in Headers */,
@@ -13940,6 +13939,7 @@
 				B2C3DA6E0D006CD600EF6F26 /* GlyphPageTreeNode.h in Headers */,
 				B2C3DA700D006CD600EF6F26 /* GlyphWidthMap.h in Headers */,
 				B23540F30D00782E002382FA /* StringTruncator.h in Headers */,
+				B25E96BE0D00975100CFD296 /* FontStyle.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
