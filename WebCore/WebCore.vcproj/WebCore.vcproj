@@ -9028,7 +9028,6 @@
 					RelativePath="..\svg\TimeScheduler.h"
 					>
 				</File>
-			</Filter>
 		</Filter>
 		<Filter
 			Name="ForwardingHeaders"
