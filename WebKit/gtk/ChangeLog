@@ -1,3 +1,26 @@
+2007-11-28  Alp Toker  <alp@atoker.com>
+
+        Reviewed by Timothy Hatcher.
+
+        http://bugs.webkit.org/show_bug.cgi?id=16174
+        [GTK] Use "URI" not "URL" in public API
+
+        Replace use of the term "URL" with "URI" in public headers,
+        documentation and some internal code to match GLib/GTK+ convention.
+
+        This is now mentioned in the API guidelines:
+          http://trac.webkit.org/projects/webkit/wiki/HackingGtk
+
+        API/ABI-breaking change.
+
+        * Api/webkitgtkframe.cpp:
+        * Api/webkitgtknetworkrequest.cpp:
+        * Api/webkitgtknetworkrequest.h:
+        * Api/webkitgtkpage.cpp:
+        * Api/webkitgtkpage.h:
+        * Api/webkitgtkprivate.h:
+        * Api/webkitgtksettings.h:
+
 2007-11-29  Brady Eidson  <beidson@apple.com>
 
         Better build fix for Gtk

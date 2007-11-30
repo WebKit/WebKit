@@ -107,16 +107,16 @@ WEBKIT_API void
 webkit_page_stop_loading (WebKitPage* page);
 
 WEBKIT_API void
-webkit_page_open (WebKitPage* page, const gchar* url);
+webkit_page_open (WebKitPage* page, const gchar* uri);
 
 WEBKIT_API void
 webkit_page_reload (WebKitPage *page);
 
 WEBKIT_API void
-webkit_page_load_string (WebKitPage* page, const gchar* content, const gchar* content_mime_type, const gchar* content_encoding, const gchar* base_url);
+webkit_page_load_string (WebKitPage* page, const gchar* content, const gchar* content_mime_type, const gchar* content_encoding, const gchar* base_uri);
 
 WEBKIT_API void
-webkit_page_load_html_string (WebKitPage* page, const gchar* content, const gchar* base_url);
+webkit_page_load_html_string (WebKitPage* page, const gchar* content, const gchar* base_uri);
 
 WEBKIT_API WebKitFrame*
 webkit_page_get_main_frame (WebKitPage* page);

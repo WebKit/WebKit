@@ -724,14 +724,14 @@ gboolean webkit_page_can_go_forward(WebKitPage* page)
     return frameData->frame->loader()->canGoBackOrForward(1);
 }
 
-void webkit_page_open(WebKitPage* page, const gchar* url)
+void webkit_page_open(WebKitPage* page, const gchar* uri)
 {
     g_return_if_fail(WEBKIT_IS_PAGE(page));
 
     WebKitPagePrivate* pageData = WEBKIT_PAGE_GET_PRIVATE(page);
     WebKitFramePrivate* frameData = WEBKIT_FRAME_GET_PRIVATE(pageData->mainFrame);
 
-    DeprecatedString string = DeprecatedString::fromUtf8(url);
+    DeprecatedString string = DeprecatedString::fromUtf8(uri);
     frameData->frame->loader()->load(ResourceRequest(KURL(string)));
 }
 
@@ -744,14 +744,14 @@ void webkit_page_reload(WebKitPage* page)
     frameData->frame->loader()->reload();
 }
 
-void webkit_page_load_string(WebKitPage* page, const gchar* content, const gchar* contentMimeType, const gchar* contentEncoding, const gchar* baseUrl)
+void webkit_page_load_string(WebKitPage* page, const gchar* content, const gchar* contentMimeType, const gchar* contentEncoding, const gchar* baseUri)
 {
     g_return_if_fail(WEBKIT_IS_PAGE(page));
 
     WebKitPagePrivate* pageData = WEBKIT_PAGE_GET_PRIVATE(page);
     WebKitFramePrivate* frameData = WEBKIT_FRAME_GET_PRIVATE(pageData->mainFrame);
 
-    KURL url(DeprecatedString::fromUtf8(baseUrl));
+    KURL url(DeprecatedString::fromUtf8(baseUri));
     RefPtr<SharedBuffer> sharedBuffer = new SharedBuffer(strdup(content), strlen(content));
     SubstituteData substituteData(sharedBuffer.release(), String(contentMimeType), String(contentEncoding), KURL("about:blank"), url);
 

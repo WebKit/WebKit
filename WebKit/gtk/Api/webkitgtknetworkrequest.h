@@ -55,13 +55,13 @@ WEBKIT_API GType
 webkit_network_request_get_type (void);
 
 WEBKIT_API WebKitNetworkRequest*
-webkit_network_request_new (const gchar* url);
+webkit_network_request_new (const gchar* uri);
 
 WEBKIT_API void
-webkit_network_request_set_url (WebKitNetworkRequest* request, const gchar* url);
+webkit_network_request_set_uri (WebKitNetworkRequest* request, const gchar* uri);
 
 WEBKIT_API const gchar*
-webkit_network_request_get_url (WebKitNetworkRequest* request);
+webkit_network_request_get_uri (WebKitNetworkRequest* request);
 
 G_END_DECLS
 

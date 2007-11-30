@@ -87,7 +87,7 @@ extern "C" {
     #define WEBKIT_NETWORK_REQUEST_GET_PRIVATE(obj)    (G_TYPE_INSTANCE_GET_PRIVATE((obj), WEBKIT_TYPE_NETWORK_REQUEST, WebKitNetworkRequestPrivate))
     typedef struct _WebKitNetworkRequestPrivate WebKitNetworkRequestPrivate;
     struct _WebKitNetworkRequestPrivate {
-        gchar* url;
+        gchar* uri;
     };
 
     WebKitFrame* webkit_frame_init_with_page(WebKitPage*, WebCore::HTMLFrameOwnerElement*);

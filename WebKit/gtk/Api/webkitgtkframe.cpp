@@ -286,7 +286,7 @@ WebKitFrame* webkit_frame_get_parent(WebKitFrame* frame)
  * @frame: a #WebKitFrame
  * @request: a #WebKitNetworkRequest
  *
- * Connects to a given URL by initiating an asynchronous client request.
+ * Connects to a given URI by initiating an asynchronous client request.
  *
  * Creates a provisional data source that will transition to a committed data
  * source once any data has been received. Use webkit_frame_stop_loading() to
@@ -301,7 +301,7 @@ void webkit_frame_load_request(WebKitFrame* frame, WebKitNetworkRequest* request
     g_return_if_fail(coreFrame);
 
     // TODO: Use the ResourceRequest carried by WebKitNetworkRequest when it gets implemented.
-    DeprecatedString string = DeprecatedString::fromUtf8(webkit_network_request_get_url(request));
+    DeprecatedString string = DeprecatedString::fromUtf8(webkit_network_request_get_uri(request));
     coreFrame->loader()->load(ResourceRequest(KURL(string)));
 }
 

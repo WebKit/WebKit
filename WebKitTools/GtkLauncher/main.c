@@ -29,7 +29,7 @@
 #include <gtk/gtk.h>
 
 static GtkWidget* main_window;
-static GtkWidget* url_entry;
+static GtkWidget* uri_entry;
 static GtkStatusbar* main_statusbar;
 static WebKitPage* web_page;
 static gchar* main_title;
@@ -37,11 +37,11 @@ static gint load_progress;
 static guint status_context_id;
 
 static void
-activate_url_entry_cb (GtkWidget* entry, gpointer data)
+activate_uri_entry_cb (GtkWidget* entry, gpointer data)
 {
-    const gchar* url = gtk_entry_get_text (GTK_ENTRY (entry));
-    g_assert (url);
-    webkit_page_open (web_page, url);
+    const gchar* uri = gtk_entry_get_text (GTK_ENTRY (entry));
+    g_assert (uri);
+    webkit_page_open (web_page, uri);
 }
 
 static void
@@ -66,9 +66,9 @@ link_hover_cb (WebKitPage* page, const gchar* title, const gchar* link, gpointer
 }
 
 static void
-title_change_cb (WebKitPage* page, const gchar* title, const gchar* url, gpointer data)
+title_change_cb (WebKitPage* page, const gchar* title, const gchar* uri, gpointer data)
 {
-    gtk_entry_set_text (GTK_ENTRY (url_entry), url);
+    gtk_entry_set_text (GTK_ENTRY (uri_entry), uri);
 
     if (main_title)
         g_free (main_title);
@@ -149,14 +149,14 @@ create_toolbar ()
     /* The URL entry */
     item = gtk_tool_item_new ();
     gtk_tool_item_set_expand (item, TRUE);
-    url_entry = gtk_entry_new ();
-    gtk_container_add (GTK_CONTAINER (item), url_entry);
-    g_signal_connect (G_OBJECT (url_entry), "activate", G_CALLBACK (activate_url_entry_cb), NULL);
+    uri_entry = gtk_entry_new ();
+    gtk_container_add (GTK_CONTAINER (item), uri_entry);
+    g_signal_connect (G_OBJECT (uri_entry), "activate", G_CALLBACK (activate_uri_entry_cb), NULL);
     gtk_toolbar_insert (GTK_TOOLBAR (toolbar), item, -1);
 
     /* The go button */
     item = gtk_tool_button_new_from_stock (GTK_STOCK_OK);
-    g_signal_connect_swapped (G_OBJECT (item), "clicked", G_CALLBACK (activate_url_entry_cb), (gpointer)url_entry);
+    g_signal_connect_swapped (G_OBJECT (item), "clicked", G_CALLBACK (activate_uri_entry_cb), (gpointer)uri_entry);
     gtk_toolbar_insert (GTK_TOOLBAR (toolbar), item, -1);
 
     return toolbar;
@@ -187,8 +187,8 @@ main (int argc, char* argv[])
     main_window = create_window ();
     gtk_container_add (GTK_CONTAINER (main_window), vbox);
 
-    gchar* url = (gchar*) (argc > 1 ? argv[1] : "http://www.google.com/");
-    webkit_page_open (web_page, url);
+    gchar* uri = (gchar*) (argc > 1 ? argv[1] : "http://www.google.com/");
+    webkit_page_open (web_page, uri);
 
     gtk_widget_grab_focus (GTK_WIDGET (web_page));
     gtk_widget_show_all (main_window);

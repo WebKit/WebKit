@@ -42,7 +42,7 @@ static void webkit_network_request_finalize(GObject* object)
 {
     WebKitNetworkRequestPrivate* requestPrivate = WEBKIT_NETWORK_REQUEST_GET_PRIVATE(object);
 
-    g_free(requestPrivate->url);
+    g_free(requestPrivate->uri);
 
     G_OBJECT_CLASS(webkit_network_request_parent_class)->finalize(object);
 }
@@ -58,17 +58,17 @@ static void webkit_network_request_init(WebKitNetworkRequest* request)
 {
 }
 
-WebKitNetworkRequest* webkit_network_request_new(const gchar* url)
+WebKitNetworkRequest* webkit_network_request_new(const gchar* uri)
 {
     WebKitNetworkRequest* request = WEBKIT_NETWORK_REQUEST(g_object_new(WEBKIT_TYPE_NETWORK_REQUEST, NULL));
     WebKitNetworkRequestPrivate* requestPrivate = WEBKIT_NETWORK_REQUEST_GET_PRIVATE(request);
 
-    requestPrivate->url = g_strdup(url);
+    requestPrivate->uri = g_strdup(uri);
 
     return request;
 }
 
-void webkit_network_request_set_url(WebKitNetworkRequest* request, const gchar* url)
+void webkit_network_request_set_uri(WebKitNetworkRequest* request, const gchar* uri)
 {
     WebKitNetworkRequestPrivate* requestPrivate;
 
@@ -76,11 +76,11 @@ void webkit_network_request_set_url(WebKitNetworkRequest* request, const gchar* 
 
     requestPrivate = WEBKIT_NETWORK_REQUEST_GET_PRIVATE(request);
 
-    g_free(requestPrivate->url);
-    requestPrivate->url = g_strdup(url);
+    g_free(requestPrivate->uri);
+    requestPrivate->uri = g_strdup(uri);
 }
 
-const gchar* webkit_network_request_get_url(WebKitNetworkRequest* request)
+const gchar* webkit_network_request_get_uri(WebKitNetworkRequest* request)
 {
     WebKitNetworkRequestPrivate* requestPrivate;
 
@@ -88,7 +88,7 @@ const gchar* webkit_network_request_get_url(WebKitNetworkRequest* request)
 
     requestPrivate = WEBKIT_NETWORK_REQUEST_GET_PRIVATE(request);
 
-    return requestPrivate->url;
+    return requestPrivate->uri;
 }
 
 }

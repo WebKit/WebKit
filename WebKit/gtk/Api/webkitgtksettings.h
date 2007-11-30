@@ -74,7 +74,7 @@ struct _WebKitSettings {
     WebKitEditableLinkBehaviour editable_link_behaviour;
     gboolean uses_page_cache;
     gboolean shrink_standalone_images_to_fit;
-    gboolean show_urls_in_tool_tips;
+    gboolean show_uris_in_tool_tips;
     gchar* ftp_directory_template_path;
     gboolean force_ftp_directory_listings;
     gboolean developer_extras_enabled;
