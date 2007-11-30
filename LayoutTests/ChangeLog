@@ -1,5 +1,11 @@
 2007-11-29  Alice Liu  <alice.liu@apple.com>
 
+        Reviewed by Adam.
+
+        * platform/win/Skipped: Removed two Mac-specific tests.
+
+2007-11-29  Alice Liu  <alice.liu@apple.com>
+
         Move incorrect, Mac-specific results of fast/dom/Window/window-resize.html into platform/mac and replace them with non-Mac results
 
         The incorrect results are tracked by <rdar://5563578>.

@@ -275,7 +275,6 @@ http/tests/security/javascriptURL/xss-DENIED-to-javascript-url-in-foreign-domain
 
 # DRT is not fully implemented in boomer <rdar://problem/5128261>
 fast/dom/Window/setting-properties-on-closed-window.html
-fast/events/objc-event-api.html
 svg/custom/use-events-crash.svg
 
 # dumpResourceLoadCallbacks is not implemented <rdar://5132003>
@@ -306,9 +305,6 @@ svg/custom/text-hit-test.svg
 
 # Emacs bindings are used in LayoutTests which fail on boomer. <rdar://problem/5137352>
 fast/events/keydown-1.html
-
-# fireKeyboardEventsToElement is not implemented in DRT <rdar://problem/5137198>
-fast/events/objc-keyboard-event-creation.html
 
 # setAuthorAndUserStylesEnabled is not implemented in DRT <rdar://problem/5614497>
 fast/css/disabled-author-styles.html
