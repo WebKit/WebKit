@@ -2,6 +2,12 @@
 
         Reviewed by Adam.
 
+        * platform/win/Skipped: Removed another passing test.
+
+2007-11-29  Alice Liu  <alice.liu@apple.com>
+
+        Reviewed by Adam.
+
         * platform/win/Skipped: Recategorized one failing test and removed a
         passing test.
 

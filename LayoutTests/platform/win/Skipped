@@ -298,9 +298,6 @@ svg/custom/pointer-events-path.svg
 svg/custom/pointer-events-text.svg
 svg/custom/text-hit-test.svg
 
-# window.layoutTestController.setWindowIsKey is not implemented in DRT in boomer <rdar://problem/5141186>
-editing/selection/caret-and-focus-ring.html
-
 # fast/events/drag-in-frames.html fails on boomer <rdar://problem/5137413>
 fast/events/drag-in-frames.html
 
