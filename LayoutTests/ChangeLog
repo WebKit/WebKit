@@ -1,5 +1,16 @@
 2007-11-29  Alice Liu  <alice.liu@apple.com>
 
+        Group drag-n-drop related failures under one bug
+
+        We don't know the specific causes of these failures, but we believe
+        they're due to bugs in DRT's drag-n-drop implementation.
+
+        Reviewed by Adam.
+
+        * platform/win/Skipped: 
+
+2007-11-29  Alice Liu  <alice.liu@apple.com>
+
         Reviewed by Adam.
 
         * platform/win/Skipped: Removed another passing test.
