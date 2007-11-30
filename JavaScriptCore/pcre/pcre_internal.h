@@ -235,112 +235,6 @@ static inline void put2ByteOpcodeValueAtOffsetAndAdvance(uschar*& opcodePtr, siz
     opcodePtr += 2;
 }
 
-#define LEAD_OFFSET (0xd800 - (0x10000 >> 10))
-#define SURROGATE_OFFSET (0x10000 - (0xd800 << 10) - 0xdc00)
-
-static inline bool isLeadingSurrogate(int c)
-{
-    return ((c & ~0x3ff) == 0xd800);
-}
-
-static inline bool isTrailingSurrogate(int c)
-{
-    return ((c & ~0x3ff) == 0xdc00);
-}
-
-static inline int decodeSurrogatePair(int leadingSurrogate, int trailingSurrogate)
-{
-    return ((leadingSurrogate << 10) + trailingSurrogate + SURROGATE_OFFSET);
-}
-
-static inline int getChar(const UChar* subjectPtr)
-{
-    int c = subjectPtr[0];
-    if (isLeadingSurrogate(c))
-        c = decodeSurrogatePair(c, subjectPtr[1]);
-    return c;
-}
-
-static inline int getCharAndAdvance(const UChar*& subjectPtr)
-{
-    int c = *subjectPtr++;
-    if (isLeadingSurrogate(c))
-        c = decodeSurrogatePair(c, *subjectPtr++);
-    return c;
-}
-
-static inline int getCharAndLength(const UChar*& subjectPtr, int& length)
-{
-    int c = subjectPtr[0];
-    if (isLeadingSurrogate(c)) {
-        c = decodeSurrogatePair(c, subjectPtr[1]);
-        length = 2;
-    } else
-        length = 1;
-    return c;
-}
-
-// FIXME: All (2) calls to this funtion should be removed and replaced with
-// calls to getCharAndAdvance
-static inline int getCharAndAdvanceIfSurrogate(const UChar*& subjectPtr)
-{
-    int c = subjectPtr[0];
-    if (isLeadingSurrogate(c)) {
-        c = decodeSurrogatePair(c, subjectPtr[1]);
-        subjectPtr++;
-    }
-    return c;
-}
-
-// This flavor checks to make sure we don't walk off the end
-// FIXME: This could also be removed and an end-aware getCharAndAdvance added instead.
-static inline int getCharAndAdvanceIfSurrogate(const UChar*& subjectPtr, const UChar* end)
-{
-    int c = subjectPtr[0];
-    if (isLeadingSurrogate(c)) {
-        if (subjectPtr + 1 < end)
-            c = decodeSurrogatePair(c, subjectPtr[1]);
-        else
-            c = decodeSurrogatePair(c, 0);
-        subjectPtr++;
-    }
-    return c;
-}
-
-static inline int getPreviousChar(const UChar* subjectPtr)
-{
-    int valueAtSubjectMinusOne = subjectPtr[-1];
-    if (isTrailingSurrogate(valueAtSubjectMinusOne))
-        return decodeSurrogatePair(subjectPtr[-2], valueAtSubjectMinusOne);
-    return valueAtSubjectMinusOne;
-}
-
-static inline void movePtrToPreviousChar(const UChar*& subjectPtr)
-{
-    subjectPtr--;
-    if (isTrailingSurrogate(*subjectPtr))
-        subjectPtr--;
-}
-
-static inline bool movePtrToNextChar(const UChar*& subjectPtr, const UChar* endSubject)
-{
-    if (subjectPtr < endSubject) {
-        subjectPtr++;
-        if (subjectPtr < endSubject && isTrailingSurrogate(*subjectPtr)) {
-            subjectPtr++;
-            return subjectPtr < endSubject;
-        }
-        return true;
-    }
-    return false;
-}
-
-static inline void movePtrToStartOfCurrentChar(const UChar*& subjectPtr)
-{
-    if (isTrailingSurrogate(*subjectPtr))
-        subjectPtr--;
-}
-
 // FIXME: These are really more of a "compiled regexp state" than "regexp options"
 enum RegExpOptions {
     UseFirstByteOptimizationOption = 0x40000000,  /* first_byte is set */
@@ -382,10 +276,9 @@ contain UTF-8 characters with values greater than 255. */
 /* These are escaped items that aren't just an encoding of a particular data
 value such as \n. They must have non-zero values, as check_escape() returns
 their negation. Also, they must appear in the same order as in the opcode
-definitions below, up to ESC_z. There's a dummy for OP_ANY_CHAR because it
-corresponds to "." rather than an escape sequence. The final one must be
+definitions below, up to ESC_w. The final one must be
 ESC_REF as subsequent values are used for \1, \2, \3, etc. There is are two
-tests in the code for an escape greater than ESC_b and less than ESC_Z to
+tests in the code for an escape > ESC_b and <= ESC_w to
 detect the types that may be repeated. These are the types that consume
 characters. If any new escapes are put in between that don't consume a
 character, that code will have to change. */
@@ -410,7 +303,7 @@ must also be updated to match. */
     macro(NOT_WORDCHAR) \
     macro(WORDCHAR) \
     \
-    macro(ANY_CHAR) \
+    macro(NOT_NEWLINE) \
     \
     macro(CIRC) \
     macro(DOLL) \

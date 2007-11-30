@@ -1,3 +1,14 @@
+2007-11-30  Darin Adler  <darin@apple.com>
+
+        Reviewed by Adam Roben.
+
+        - test for http://bugs.webkit.org/show_bug.cgi?id=16207
+          JavaScript regular expressions should match UTF-16 code units rather than characters
+
+        * fast/js/regexp-non-bmp-expected.txt: Added.
+        * fast/js/regexp-non-bmp.html: Added.
+        * fast/js/resources/regexp-non-bmp.js: Added.
+
 2007-11-30  Adele Peterson  <adele@apple.com>
 
         Reviewed by Darin.

@@ -1,3 +1,32 @@
+2007-11-30  Darin Adler  <darin@apple.com>
+
+        Reviewed by Adam Roben.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=16207
+          JavaScript regular expressions should match UTF-16 code units rather than characters
+
+        SunSpider says this is 5.5% faster on the regexp test, 0.4% faste overall.
+
+        Test: fast/js/regexp-non-bmp.html
+
+        Renamed ANY_CHAR to NOT_NEWLINE to more-accurately reflect its meaning.
+
+        * pcre/pcre_compile.cpp:
+        (compile_branch): Removed calls to the UTF-16 character accessor functions, replacing
+        them with simple pointer dereferences in some cases, and no code at all in others.
+        (calculateCompiledPatternLengthAndFlags): Ditto.
+
+        * pcre/pcre_exec.cpp:
+        (match): Fixed indentation of some case labels (including all the BEGIN_OPCODE).
+        Removed calls to the UTF-16 character accessor functions, replacing them with simple
+        pointer dereferences in some cases, and no code at all in others. Also removed some
+        explicit UTF-16 support code in a few cases. Removed the unneeded "UTF-8" code path
+        in the ANY_CHAR repeat code, and in another case, eliminated the code to check against
+        end_subject in because it is already done outside the loop.
+        (jsRegExpExecute):
+
+        * pcre/pcre_internal.h: Removed all the UTF-16 helper functions.
+
 2007-11-30  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Maciej.
