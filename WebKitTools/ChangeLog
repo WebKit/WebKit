@@ -1,5 +1,12 @@
 2007-11-30  Adam Roben  <aroben@apple.com>
 
+        Hopefully the final build fix
+
+        * Drosera/win/Drosera.vcproj/Drosera.vcproj: Link against WTF.lib to
+        pull in WTF's assertion/logging functions.
+
+2007-11-30  Adam Roben  <aroben@apple.com>
+
         Another build fix
 
         * Drosera/win/Drosera.vcproj/Drosera.vcproj: Use the right suffix for
