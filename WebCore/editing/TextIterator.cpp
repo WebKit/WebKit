@@ -553,16 +553,22 @@ bool TextIterator::shouldEmitSpaceBeforeAndAfterNode(Node* node)
 
 void TextIterator::representNodeOffsetZero()
 {
-    // emit a character to show the positioning of m_node
-    if (!shouldRepresentNodeOffsetZero())
-        return;
+    // Emit a character to show the positioning of m_node.
     
-    if (shouldEmitTabBeforeNode(m_node))
-        emitCharacter('\t', m_node->parentNode(), m_node, 0, 0);
-    else if (shouldEmitNewlineBeforeNode(m_node))
-        emitCharacter('\n', m_node->parentNode(), m_node, 0, 0);
-    else if (shouldEmitSpaceBeforeAndAfterNode(m_node))
-        emitCharacter(' ', m_node->parentNode(), m_node, 0, 0);
+    // When we haven't been emitting any characters, shouldRepresentNodeOffsetZero() can 
+    // create VisiblePositions, which is expensive.  So, we perform the inexpensive checks
+    // on m_node to see if it necessitates emitting a character first and will early return 
+    // before encountering shouldRepresentNodeOffsetZero()s worse case behavior.
+    if (shouldEmitTabBeforeNode(m_node)) {
+        if (shouldRepresentNodeOffsetZero())
+            emitCharacter('\t', m_node->parentNode(), m_node, 0, 0);
+    } else if (shouldEmitNewlineBeforeNode(m_node)) {
+        if (shouldRepresentNodeOffsetZero())
+            emitCharacter('\n', m_node->parentNode(), m_node, 0, 0);
+    } else if (shouldEmitSpaceBeforeAndAfterNode(m_node)) {
+        if (shouldRepresentNodeOffsetZero())
+            emitCharacter(' ', m_node->parentNode(), m_node, 0, 0);
+    }
 }
 
 bool TextIterator::handleNonTextNode()

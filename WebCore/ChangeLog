@@ -1,3 +1,16 @@
+2007-11-29  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/5620093> Brief hang when Safari caches page text of XML document
+
+        * editing/TextIterator.cpp:
+        (WebCore::TextIterator::representNodeOffsetZero): When we haven't been emitting any 
+        characters, shouldRepresentNodeOffsetZero() can create VisiblePositions, which is
+        expensive.  So, we perform the inexpensive checks on m_node to see if it necessitates 
+        emitting a character first and will early return before encountering 
+        shouldRepresentNodeOffsetZero()s worse case behavior.
+
 2007-11-29  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam.
