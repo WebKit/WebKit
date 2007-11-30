@@ -45,7 +45,6 @@ my @paths;
 find(\&wanted, "JavaScriptCore");
 find(\&wanted, "WebCore");
 find(\&wanted, "WebKit");
-find(\&wanted, "WebKitQt");
 
 sub wanted
 {
@@ -68,10 +67,10 @@ sub wanted
 }
 
 my %renames = (
-    "xxx" => "yyy",
-    #"KURL" => "PlatformURL",
-    #"KURLMac" => "PlatformURLMac",
-    #"KURL_H_" => "PlatformURL_h",
+    "KURL" => "URL",
+    "KURLMac" => "URLMac",
+    "KURL_H_" => "URL_h",
+    "TextStyle" => "FontStyle",
 );
 
 # rename files
