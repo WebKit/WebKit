@@ -1,5 +1,11 @@
 2007-11-30  Kevin Ollivier  <kevino@theolliviers.com>
 
+        wx build fix. Add WebCore/platform/graphics/wx to includes.
+
+        * wxwebkit.bkl:
+
+2007-11-30  Kevin Ollivier  <kevino@theolliviers.com>
+
         Fix method signatures to be members of ClientChromeWx class.
 
         * WebKitSupport/ChromeClientWx.cpp:

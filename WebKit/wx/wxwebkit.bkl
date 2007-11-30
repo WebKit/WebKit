@@ -61,6 +61,7 @@ This file builds the wxWebKit library.
         
         <set var="BUILDDIR">obj-$(FORMAT)</set>
         
+        <include>$(WK_ROOT)/WebCore/platform/graphics/wx</include>
         <include>$(WK_ROOT)/WebCore/platform/wx</include>
         <include>$(WK_ROOT)/WebCore/bridge/wx</include>
         <include>$(WK_ROOT)/WebCore/page/wx</include>

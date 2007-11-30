@@ -38,6 +38,7 @@ wxWebCore port Bakefile project file.
         <pic>on</pic>
         <threading>multi</threading>
         
+        <include>$(SRCDIR)/platform/graphics/wx</include>
         <include>$(SRCDIR)/platform/wx</include>
         <include>$(SRCDIR)/platform/wx/wxcode</include>
         <include>$(SRCDIR)/bridge/wx</include>
