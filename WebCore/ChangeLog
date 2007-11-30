@@ -1,3 +1,37 @@
+2007-11-30  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Geoff
+
+        Further hookup of Database API
+        With this change, any database operation that writes to the database (UPDATE, INSERT, CREATE, etc) will
+        result in a didModifyDatabase notification when the transaction is successfully committed
+
+        * storage/DatabaseAuthorizer.cpp: Global rename of "m_lastActionIncreasedSize" to "m_lastActionChangedDatabase"
+        (WebCore::DatabaseAuthorizer::reset):
+        (WebCore::DatabaseAuthorizer::createTable):
+        (WebCore::DatabaseAuthorizer::allowAlterTable):
+        (WebCore::DatabaseAuthorizer::createIndex):
+        (WebCore::DatabaseAuthorizer::createTrigger):
+        (WebCore::DatabaseAuthorizer::createVTable):
+        (WebCore::DatabaseAuthorizer::allowInsert):
+        (WebCore::DatabaseAuthorizer::allowUpdate):
+        * storage/DatabaseAuthorizer.h:
+        (WebCore::DatabaseAuthorizer::lastActionChangedDatabase):
+
+        * storage/DatabaseTracker.cpp:
+        (WebCore::DatabaseTracker::notifyDatabaseChanged): Added.  Allow external entities (SQLTransaction) to be able
+          to request a didModifyDatabase notification to the delegate
+        * storage/DatabaseTracker.h:
+
+        * storage/SQLTransaction.cpp: Added m_modifiedDatabase flag which tracks if any statement over the course of 
+          a transaction resulted in a change to the database.
+        (WebCore::SQLTransaction::SQLTransaction):
+        (WebCore::SQLTransaction::runCurrentStatement): Set m_modifiedDatabase to true if the authorizer reports a mutation
+          statement occurred
+        (WebCore::SQLTransaction::postflightAndCommit): If the transaction successfully commits, call DatabaseTracker::notifyDatabaseChanged
+        (WebCore::SQLTransaction::cleanupAfterTransactionErrorCallback): Ditto
+        * storage/SQLTransaction.h:
+
 2007-11-30  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Rubber stamped by David.

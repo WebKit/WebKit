@@ -542,4 +542,10 @@ unsigned long long DatabaseTracker::defaultOriginQuota() const
     return m_defaultQuota;
 }
 
+void DatabaseTracker::notifyDatabaseChanged(const SecurityOriginData& origin, const String& name)
+{
+    if (m_client)
+        m_client->dispatchDidModifyDatabase(origin, name);
+}
+
 } // namespace WebCore

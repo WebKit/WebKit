@@ -72,6 +72,8 @@ public:
     void setDefaultOriginQuota(unsigned long long);
     unsigned long long defaultOriginQuota() const;
     
+    void notifyDatabaseChanged(const SecurityOriginData& origin, const String& name);
+    
     static DatabaseTracker& tracker();
 private:
     DatabaseTracker();

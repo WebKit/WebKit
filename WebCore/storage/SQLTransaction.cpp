@@ -30,9 +30,11 @@
 
 #include "Database.h"
 #include "DatabaseAuthorizer.h"
+#include "DatabaseTracker.h"
 #include "ExceptionCode.h"
 #include "Logging.h"
 #include "PlatformString.h"
+#include "SecurityOriginData.h"
 #include "SQLError.h"
 #include "SQLiteTransaction.h"
 #include "SQLResultSet.h"
@@ -51,6 +53,7 @@ SQLTransaction::SQLTransaction(Database* db, PassRefPtr<SQLTransactionCallback> 
     , m_callback(callback)
     , m_errorCallback(errorCallback)
     , m_shouldCommitAfterErrorCallback(true)
+    , m_modifiedDatabase(false)
 {
     ASSERT(m_database);
 }
@@ -195,6 +198,10 @@ bool SQLTransaction::runCurrentStatement()
     m_database->m_databaseAuthorizer->reset();
     
     if (m_currentStatement->execute(m_database)) {
+        // Flag this transaction as having changed the database for later delegate notification
+        if (m_database->m_databaseAuthorizer->lastActionChangedDatabase())
+            m_modifiedDatabase = true;
+            
         if (m_currentStatement->hasStatementCallback()) {
             m_nextStep = &SQLTransaction::deliverStatementCallback;
             m_database->scheduleTransactionCallback(this);
@@ -261,6 +268,10 @@ void SQLTransaction::postflightAndCommit()
         return;
     }
     
+    // The commit was successful, notify the delegates if the transaction modified this database
+    if (m_modifiedDatabase)
+        DatabaseTracker::tracker().notifyDatabaseChanged(m_database->m_securityOrigin.securityOriginData(), m_database->m_name);
+    
     // Transaction Step 10 - End transaction steps
     // There is no next step
     m_nextStep = 0;
@@ -310,11 +321,15 @@ void SQLTransaction::cleanupAfterTransactionErrorCallback()
         if (m_shouldCommitAfterErrorCallback)
             m_sqliteTransaction->commit();
         
-        // Transaction Step 11 - If that fails, or if the callback couldn't be called 
-        // or if it didn't return false, then rollback the transaction.
-        if (m_sqliteTransaction->inProgress())
+        if (m_sqliteTransaction->inProgress()) {
+            // Transaction Step 11 - If that fails, or if the callback couldn't be called 
+            // or if it didn't return false, then rollback the transaction.
             m_sqliteTransaction->rollback();
-
+        } else if (m_modifiedDatabase) {
+            // But if the commit was successful, notify the delegates if the transaction modified this database
+            DatabaseTracker::tracker().notifyDatabaseChanged(m_database->m_securityOrigin.securityOriginData(), m_database->m_name);
+        }
+        
         m_sqliteTransaction.clear();
     }
     m_database->m_databaseAuthorizer->enable();

@@ -42,12 +42,12 @@ DatabaseAuthorizer::DatabaseAuthorizer()
 void DatabaseAuthorizer::reset()
 {
     m_lastActionWasInsert = false;
-    m_lastActionIncreasedSize = false;
+    m_lastActionChangedDatabase = false;
 }
 
 int DatabaseAuthorizer::createTable(const String& tableName)
 {
-    m_lastActionIncreasedSize = true;
+    m_lastActionChangedDatabase = true;
     return denyBasedOnTableName(tableName);
 }
 
@@ -68,13 +68,13 @@ int DatabaseAuthorizer::dropTempTable(const String& tableName)
 
 int DatabaseAuthorizer::allowAlterTable(const String& databaseName, const String& tableName)
 {
-    m_lastActionIncreasedSize = true;
+    m_lastActionChangedDatabase = true;
     return denyBasedOnTableName(tableName);
 }
 
 int DatabaseAuthorizer::createIndex(const String& indexName, const String& tableName)
 {
-    m_lastActionIncreasedSize = true;
+    m_lastActionChangedDatabase = true;
     return denyBasedOnTableName(tableName);
 }
 
@@ -95,7 +95,7 @@ int DatabaseAuthorizer::dropTempIndex(const String& indexName, const String& tab
 
 int DatabaseAuthorizer::createTrigger(const String& triggerName, const String& tableName)
 {
-    m_lastActionIncreasedSize = true;
+    m_lastActionChangedDatabase = true;
     return denyBasedOnTableName(tableName);
 }
 
@@ -116,7 +116,7 @@ int DatabaseAuthorizer::dropTempTrigger(const String& triggerName, const String&
 
 int DatabaseAuthorizer::createVTable(const String& tableName, const String& moduleName)
 {
-    m_lastActionIncreasedSize = true;
+    m_lastActionChangedDatabase = true;
     return m_securityEnabled ? SQLAuthDeny : SQLAuthAllow;
 }
 
@@ -132,14 +132,14 @@ int DatabaseAuthorizer::allowDelete(const String& tableName)
 
 int DatabaseAuthorizer::allowInsert(const String& tableName)
 {
-    m_lastActionIncreasedSize = true;
+    m_lastActionChangedDatabase = true;
     m_lastActionWasInsert = true;
     return denyBasedOnTableName(tableName);
 }
 
 int DatabaseAuthorizer::allowUpdate(const String& tableName, const String& columnName)
 {
-    m_lastActionIncreasedSize = true;
+    m_lastActionChangedDatabase = true;
     return denyBasedOnTableName(tableName);
 }
 

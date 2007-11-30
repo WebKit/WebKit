@@ -76,12 +76,12 @@ public:
     void reset();
 
     bool lastActionWasInsert() const { return m_lastActionWasInsert; }
-    bool lastActionIncreasedSize() const { return m_lastActionIncreasedSize; }
+    bool lastActionChangedDatabase() const { return m_lastActionChangedDatabase; }
 private:
     int denyBasedOnTableName(const String&);
     bool m_securityEnabled;
     bool m_lastActionWasInsert;
-    bool m_lastActionIncreasedSize;
+    bool m_lastActionChangedDatabase;
 };
 
 } // namespace WebCore
