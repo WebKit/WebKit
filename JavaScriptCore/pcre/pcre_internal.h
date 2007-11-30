@@ -558,8 +558,8 @@ struct JSRegExp {
     // jsRegExpExecute && jsRegExpCompile currently only how to handle ASCII
     // chars for thse optimizations, however it would be trivial to add support
     // for optimized UChar first_byte/req_byte scans
-    unsigned char first_byte;
-    unsigned char req_byte;
+    pcre_uint16 first_byte;
+    pcre_uint16 req_byte;
 };
 
 /* Internal shared data tables. These are tables that are used by more than one

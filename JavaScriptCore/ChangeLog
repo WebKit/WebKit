@@ -1,3 +1,14 @@
+2007-11-30  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Maciej.
+        
+        Fix layout test regressions caused by r28186
+        http://bugs.webkit.org/show_bug.cgi?id=16195
+        change first_byte and req_byte back to shorts instead of chars
+        (I think PCRE stuffs information in the high bits) 
+
+        * pcre/pcre_internal.h:
+
 2007-11-29  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Maciej and Darin.
