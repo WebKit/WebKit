@@ -1,3 +1,15 @@
+2007-11-29  Alice Liu  <alice.liu@apple.com>
+
+        Move incorrect, Mac-specific results of fast/dom/Window/window-resize.html into platform/mac and replace them with non-Mac results
+
+        The incorrect results are tracked by <rdar://5563578>.
+
+        Reviewed by Adam.
+
+        * fast/dom/Window/window-resize-expected.txt: Replaced.
+        * platform/mac/fast/dom/Window/window-resize-expected.txt: Copied from fast/dom/Window/window-resize-expected.txt.
+        * platform/win/Skipped: Removed window-resize tests.
+
 2007-11-29  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders.

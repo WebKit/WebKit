@@ -466,10 +466,6 @@ svg/custom/non-opaque-filters.svg
 svg/custom/text-filter.svg
 svg/custom/visibility-override-filter.svg
 
-# Window resize tests are failing <rdar://5563578>
-fast/dom/Window/window-resize-nan.html
-fast/dom/Window/window-resize.html
-
 # Results are wildly wrong <rdar://5563746>
 svg/css/glyph-orientation-rounding-test.xhtml
 
