@@ -36,7 +36,7 @@ namespace WebCore {
 
 void InspectorClientQt::inspectorDestroyed()
 {
-    notImplemented();
+    delete this;
 }
 
 Page* InspectorClientQt::createPage()

@@ -45,6 +45,7 @@ void DragClientQt::willPerformDragDestinationAction(DragDestinationAction, DragD
 
 void DragClientQt::dragControllerDestroyed()
 {
+    delete this;
 }
 
 DragSourceAction DragClientQt::dragSourceActionMaskForPoint(const IntPoint&)

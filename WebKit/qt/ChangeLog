@@ -1,3 +1,17 @@
+2007-11-30  Holger Hans Peter Freyther  <holger.freyther@trolltech.com>
+
+        Reviewed by Simon.
+
+        * Self destruct the clients like the ohter ports do
+        
+
+        * WebCoreSupport/ChromeClientQt.cpp:
+        (WebCore::ChromeClientQt::runBeforeUnloadConfirmPanel):
+        * WebCoreSupport/ContextMenuClientQt.cpp:
+        * WebCoreSupport/DragClientQt.cpp:
+        * WebCoreSupport/EditorClientQt.cpp:
+        * WebCoreSupport/InspectorClientQt.cpp:
+
 2007-11-29  Brady Eidson  <beidson@apple.com>
 
         Keep it building with new client method

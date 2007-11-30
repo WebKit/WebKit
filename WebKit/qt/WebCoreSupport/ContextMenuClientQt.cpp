@@ -38,7 +38,7 @@ namespace WebCore {
     
 void ContextMenuClientQt::contextMenuDestroyed()
 {
-    notImplemented();
+    delete this;
 }
 
 PlatformMenuDescription ContextMenuClientQt::getCustomMenuFromDefaultItems(ContextMenu* menu)
