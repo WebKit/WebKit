@@ -1,5 +1,11 @@
 2007-11-29  Alice Liu  <alice.liu@apple.com>
 
+        Reviewed by Adam.
+
+        * platform/win/Skipped: Removed a passing test.
+
+2007-11-29  Alice Liu  <alice.liu@apple.com>
+
         Group failures related to dumpResourceLoadCallbacks being unimplemented
 
         Reviewed by Adam.
