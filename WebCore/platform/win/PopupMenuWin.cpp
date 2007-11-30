@@ -510,7 +510,7 @@ void PopupMenu::paint(const IntRect& damageRect, HDC hdc)
             
         unsigned length = itemText.length();
         const UChar* string = itemText.characters();
-        FontStyle FontStyle(0, 0, 0, itemText.defaultWritingDirection() == WTF::Unicode::RightToLeft);
+        FontStyle fontStyle(0, 0, 0, itemText.defaultWritingDirection() == WTF::Unicode::RightToLeft);
         TextRun textRun(string, length);
 
         context.setFillColor(optionTextColor);
@@ -528,7 +528,7 @@ void PopupMenu::paint(const IntRect& damageRect, HDC hdc)
         if (itemStyle->visibility() != HIDDEN) {
             int textX = max(0, client()->clientPaddingLeft() - client()->clientInsetLeft());
             int textY = itemRect.y() + itemFont.ascent() + (itemRect.height() - itemFont.height()) / 2;
-            context.drawBidiText(textRun, IntPoint(textX, textY), FontStyle);
+            context.drawBidiText(textRun, IntPoint(textX, textY), fontStyle);
         }
     }
 

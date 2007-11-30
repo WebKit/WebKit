@@ -113,7 +113,7 @@ void RenderTextControl::setStyle(RenderStyle* style)
 
     if (m_innerText) {
         RenderBlock* textBlockRenderer = static_cast<RenderBlock*>(m_innerText->renderer());
-        RenderStyle* textBlockStyle = createInnerFontStyle(style);
+        RenderStyle* textBlockStyle = createInnerTextStyle(style);
         // We may have set the width and the height in the old style in layout(). Reset them now to avoid
         // getting a spurious layout hint.
         textBlockRenderer->style()->setHeight(Length());
@@ -156,7 +156,7 @@ RenderStyle* RenderTextControl::createInnerBlockStyle(RenderStyle* startStyle)
     return innerBlockStyle;
 }
 
-RenderStyle* RenderTextControl::createInnerFontStyle(RenderStyle* startStyle)
+RenderStyle* RenderTextControl::createInnerTextStyle(RenderStyle* startStyle)
 {
     RenderStyle* textBlockStyle = new (renderArena()) RenderStyle();
     HTMLGenericFormElement* element = static_cast<HTMLGenericFormElement*>(node());
@@ -344,7 +344,7 @@ void RenderTextControl::createSubtreeIfNeeded()
         RenderStyle* parentStyle = style();
         if (m_innerBlock)
             parentStyle = m_innerBlock->renderer()->style();
-        RenderStyle* textBlockStyle = createInnerFontStyle(parentStyle);
+        RenderStyle* textBlockStyle = createInnerTextStyle(parentStyle);
         textBlockRenderer->setStyle(textBlockStyle);
 
         // Add text block renderer to Render tree

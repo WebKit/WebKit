@@ -1,3 +1,27 @@
+2007-11-30  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Sam.
+
+        Rename "FontStyle FontStyle(...)" to "FontStyle fontStyle(...)".
+        I scripted a bit too much while doing the TextStyle -> FontStyle change.
+
+        * platform/win/PopupMenuWin.cpp:
+        (WebCore::PopupMenu::paint):
+        * rendering/EllipsisBox.cpp:
+        (WebCore::EllipsisBox::paint):
+        * rendering/RenderFileUploadControl.cpp:
+        (WebCore::RenderFileUploadControl::paintObject):
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::updateFromElement):
+        (WebCore::RenderListBox::paintItemForeground):
+        * rendering/RenderTextControl.cpp:
+        (WebCore::RenderTextControl::setStyle):
+        (WebCore::RenderTextControl::createInnerTextStyle):
+        (WebCore::RenderTextControl::createSubtreeIfNeeded):
+        * rendering/RenderTextControl.h:
+        * rendering/SVGRootInlineBox.cpp:
+        (WebCore::svgFontStyleForInlineTextBox):
+
 2007-11-30  Alp Toker  <alp@atoker.com>
 
         GTK+ build fix following the recent text reorganization.
