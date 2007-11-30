@@ -1,3 +1,10 @@
+2007-11-30  Adam Roben  <aroben@apple.com>
+
+        Copy some cross-platform results into platform/win to avoid picking up the platform/mac versions
+
+        * platform/win/fast/dom/Window/window-resize-expected.txt: Copied from LayoutTests/fast/dom/Window/window-resize-expected.txt.
+        * platform/win/fast/dom/wrapper-classes-expected.txt: Copied from LayoutTests/fast/dom/wrapper-classes-expected.txt.
+
 2007-11-30  Darin Adler  <darin@apple.com>
 
         Reviewed by Adam Roben.
