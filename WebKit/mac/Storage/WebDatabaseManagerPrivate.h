@@ -26,19 +26,19 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-extern const NSString *WebDatabaseDisplayNameKey;
-extern const NSString *WebDatabaseExpectedSizeKey;
-extern const NSString *WebDatabaseUsageKey;
+extern NSString *WebDatabaseDisplayNameKey;
+extern NSString *WebDatabaseExpectedSizeKey;
+extern NSString *WebDatabaseUsageKey;
 
 // Posted with an origin is created from scratch, gets a new database, has a database deleted, has a quota change, etc
 // The notification object will be a WebSecurityOrigin object corresponding to the origin.
-extern const NSString *WebDatabaseDidModifyOriginNotification;
+extern NSString *WebDatabaseDidModifyOriginNotification;
 
 // Posted when a database is created, its size increases, its display name changes, or its estimated size changes, or the database is removed
 // The notification object will be a WebSecurityOrigin object corresponding to the origin.
 // The notification userInfo will have a WebDatabaseNameKey whose value is the database name.
-extern const NSString *WebDatabaseDidModifyDatabaseNotification;
-extern const NSString *WebDatabaseIdentifierKey;
+extern NSString *WebDatabaseDidModifyDatabaseNotification;
+extern NSString *WebDatabaseIdentifierKey;
 
 @class WebSecurityOrigin;
 

@@ -1,3 +1,16 @@
+2007-11-30  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Darin
+        
+        Tweaks to newly-declared NSString * constants to make them usable from clients
+
+        * Storage/WebDatabaseManagerPrivate.h:
+        * Storage/WebDatabaseManager.mm:
+        removed "const" from new NSNotification names and userInfo keys; these generate compiler warnings when used
+        
+        * WebKit.exp:
+        export new NSNotification names and userInfo keys so clients can use them
+
 2007-11-29  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by John.

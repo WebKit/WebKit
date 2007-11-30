@@ -39,13 +39,13 @@ using namespace WebCore;
 
 const NSString *WebDatabaseDirectoryDefaultsKey = @"WebDatabaseDirectory";
 
-const NSString *WebDatabaseDisplayNameKey = @"WebDatabaseDisplayNameKey";
-const NSString *WebDatabaseExpectedSizeKey = @"WebDatabaseExpectedSizeKey";
-const NSString *WebDatabaseUsageKey = @"WebDatabaseUsageKey";
+NSString *WebDatabaseDisplayNameKey = @"WebDatabaseDisplayNameKey";
+NSString *WebDatabaseExpectedSizeKey = @"WebDatabaseExpectedSizeKey";
+NSString *WebDatabaseUsageKey = @"WebDatabaseUsageKey";
 
-const NSString *WebDatabaseDidModifyOriginNotification = @"WebDatabaseDidModifyOriginNotification";
-const NSString *WebDatabaseDidModifyDatabaseNotification = @"WebDatabaseDidModifyDatabaseNotification";
-const NSString *WebDatabaseIdentifierKey = @"WebDatabaseIdentifierKey";
+NSString *WebDatabaseDidModifyOriginNotification = @"WebDatabaseDidModifyOriginNotification";
+NSString *WebDatabaseDidModifyDatabaseNotification = @"WebDatabaseDidModifyDatabaseNotification";
+NSString *WebDatabaseIdentifierKey = @"WebDatabaseIdentifierKey";
 
 @implementation WebDatabaseManager
 
