@@ -1,3 +1,15 @@
+2007-11-29  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Mitz.
+        
+        Test for video aspect ratio calculation.
+
+        * media/video-aspect-ratio.html: Added.
+        * platform/mac/media: Added.
+        * platform/mac/media/video-aspect-ratio-expected.checksum: Added.
+        * platform/mac/media/video-aspect-ratio-expected.png: Added.
+        * platform/mac/media/video-aspect-ratio-expected.txt: Added.
+
 2007-11-29  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam.

@@ -1,3 +1,21 @@
+2007-11-29  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Mitz.
+
+        Fix aspect ratio calculation of video.
+        
+        Video should always be treated as a replaced element in size calculation.
+        
+        Test: media/video-aspect-ratio.html
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::calcWidth):
+        (WebCore::RenderBox::calcHeight):
+        * rendering/RenderBox.h:
+        (WebCore::RenderBox::shouldCalculateSizeAsReplaced):
+        * rendering/RenderMedia.h:
+        (WebCore::RenderMedia::shouldCalculateSizeAsReplaced):
+
 2007-11-29  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Oliver.

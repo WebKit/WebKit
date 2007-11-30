@@ -47,6 +47,8 @@ public:
     virtual void setStyle(RenderStyle* newStyle);
     
     virtual bool canHaveChildren() const { return false; }
+    
+    virtual bool shouldCalculateSizeAsReplaced() const { return true; }
 
     virtual const char* renderName() const { return "RenderMedia"; }
     virtual bool isMedia() const { return true; }
