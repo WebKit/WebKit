@@ -1,3 +1,10 @@
+2007-11-30  Kevin Ollivier  <kevino@theolliviers.com>
+
+        Build fix. Add platform/text to includes for targets that
+        need WebCore headers.
+
+        * presets/wxwebkit.bkl:
+
 2007-11-29  Brady Eidson  <beidson@apple.com>
 
         Keep it building with new client method
