@@ -1,5 +1,9 @@
 2007-11-30  Darin Adler  <darin@apple.com>
 
+        * Scripts/do-webcore-rename: WildFox already did the TextStyle -> FontStyle one.
+
+2007-11-30  Darin Adler  <darin@apple.com>
+
         * Scripts/do-webcore-rename: Get ready for some future renaming.
 
 2007-11-29  Kevin McCullough  <kmccullough@apple.com>
