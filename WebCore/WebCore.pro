@@ -886,11 +886,11 @@ qt-port {
     platform/qt/DragImageQt.cpp \
     platform/qt/FileChooserQt.cpp \
     platform/qt/FileSystemQt.cpp \
-    platform/qt/FontCacheQt.cpp \
-    platform/qt/FontCustomPlatformData.cpp \
-    platform/qt/FontDataQt.cpp \
-    platform/qt/FontQt.cpp \
-    platform/qt/GlyphPageTreeNodeQt.cpp \
+    platform/graphics/qt/FontCacheQt.cpp \
+    platform/graphics/qt/FontCustomPlatformData.cpp \
+    platform/graphics/qt/FontDataQt.cpp \
+    platform/graphics/qt/FontQt.cpp \
+    platform/graphics/qt/GlyphPageTreeNodeQt.cpp \
     platform/qt/Localizations.cpp \
     platform/qt/MIMETypeRegistryQt.cpp \
     platform/qt/PasteboardQt.cpp \
@@ -906,11 +906,11 @@ qt-port {
     platform/qt/SearchPopupMenuQt.cpp \
     platform/qt/SharedTimerQt.cpp \
     platform/qt/SoundQt.cpp \
-    platform/qt/StringQt.cpp \
+    platform/text/qt/StringQt.cpp \
     platform/qt/TemporaryLinkStubs.cpp \
-    platform/qt/TextBoundaries.cpp \
-    platform/qt/TextBreakIteratorQt.cpp \
-    platform/qt/TextCodecQt.cpp \
+    platform/text/qt/TextBoundaries.cpp \
+    platform/text/qt/TextBreakIteratorQt.cpp \
+    platform/text/qt/TextCodecQt.cpp \
     platform/qt/ThreadingQt.cpp \
     platform/qt/WheelEventQt.cpp \
     platform/qt/WidgetQt.cpp \
@@ -969,11 +969,11 @@ gtk-port {
         platform/gtk/DragImageGtk.cpp \
         platform/gtk/FileChooserGtk.cpp \
         platform/gtk/FileSystemGtk.cpp \
-        platform/gtk/FontCacheGtk.cpp \
-        platform/gtk/FontDataGtk.cpp \
-        platform/gtk/FontGtk.cpp \
-        platform/gtk/FontPlatformDataGtk.cpp \
-        platform/gtk/GlyphPageTreeNodeGtk.cpp \
+        platform/graphics/gtk/FontCacheGtk.cpp \
+        platform/graphics/gtk/FontDataGtk.cpp \
+        platform/graphics/gtk/FontGtk.cpp \
+        platform/graphics/gtk/FontPlatformDataGtk.cpp \
+        platform/graphics/gtk/GlyphPageTreeNodeGtk.cpp \
         platform/gtk/KeyEventGtk.cpp \
         platform/gtk/Language.cpp \
         platform/gtk/LocalizedStringsGtk.cpp \
@@ -991,7 +991,7 @@ gtk-port {
         platform/gtk/SoundGtk.cpp \
         platform/gtk/SystemTimeGtk.cpp \
         platform/gtk/TemporaryLinkStubs.cpp \
-        platform/gtk/TextBreakIteratorInternalICUGtk.cpp \
+        platform/text/gtk/TextBreakIteratorInternalICUGtk.cpp \
         platform/gtk/ThreadingGtk.cpp \
         platform/gtk/WheelEventGtk.cpp \
         platform/gtk/WidgetGtk.cpp \

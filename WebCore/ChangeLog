@@ -1,3 +1,143 @@
+2007-11-30  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Rubber stamped by David.
+
+        Next round of moves - platform reorganization.
+        Move text/font/glyph related files from the individual port directories
+        into platform/text/<port> or platform/graphics/<port>.
+
+        * DerivedSources.make:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/cf/StringCF.cpp: Removed.
+        * platform/cf/StringImplCF.cpp: Removed.
+        * platform/graphics/gtk/FontCacheGtk.cpp: Copied from platform/gtk/FontCacheGtk.cpp.
+        * platform/graphics/gtk/FontDataGtk.cpp: Copied from platform/gtk/FontDataGtk.cpp.
+        * platform/graphics/gtk/FontGtk.cpp: Copied from platform/gtk/FontGtk.cpp.
+        * platform/graphics/gtk/FontPlatformData.h: Copied from platform/gtk/FontPlatformData.h.
+        * platform/graphics/gtk/FontPlatformDataGtk.cpp: Copied from platform/gtk/FontPlatformDataGtk.cpp.
+        * platform/graphics/gtk/GlyphPageTreeNodeGtk.cpp: Copied from platform/gtk/GlyphPageTreeNodeGtk.cpp.
+        * platform/graphics/mac/FontCacheMac.mm: Copied from platform/mac/FontCacheMac.mm.
+        * platform/graphics/mac/FontCustomPlatformData.cpp: Copied from platform/mac/FontCustomPlatformData.cpp.
+        * platform/graphics/mac/FontCustomPlatformData.h: Copied from platform/mac/FontCustomPlatformData.h.
+        * platform/graphics/mac/FontDataMac.mm: Copied from platform/mac/FontDataMac.mm.
+        * platform/graphics/mac/FontMac.mm: Copied from platform/mac/FontMac.mm.
+        * platform/graphics/mac/FontPlatformData.h: Copied from platform/mac/FontPlatformData.h.
+        * platform/graphics/mac/FontPlatformDataMac.mm: Copied from platform/mac/FontPlatformDataMac.mm.
+        * platform/graphics/mac/GlyphPageTreeNodeMac.cpp: Copied from platform/mac/GlyphPageTreeNodeMac.cpp.
+        * platform/graphics/qt/FontCacheQt.cpp: Copied from platform/qt/FontCacheQt.cpp.
+        * platform/graphics/qt/FontCustomPlatformData.cpp: Copied from platform/qt/FontCustomPlatformData.cpp.
+        * platform/graphics/qt/FontCustomPlatformData.h: Copied from platform/qt/FontCustomPlatformData.h.
+        * platform/graphics/qt/FontDataQt.cpp: Copied from platform/qt/FontDataQt.cpp.
+        * platform/graphics/qt/FontPlatformData.h: Copied from platform/qt/FontPlatformData.h.
+        * platform/graphics/qt/FontQt.cpp: Copied from platform/qt/FontQt.cpp.
+        * platform/graphics/qt/GlyphPageTreeNodeQt.cpp: Copied from platform/qt/GlyphPageTreeNodeQt.cpp.
+        * platform/graphics/win/FontCacheWin.cpp: Copied from platform/win/FontCacheWin.cpp.
+        * platform/graphics/win/FontCustomPlatformData.cpp: Copied from platform/win/FontCustomPlatformData.cpp.
+        * platform/graphics/win/FontCustomPlatformData.h: Copied from platform/win/FontCustomPlatformData.h.
+        * platform/graphics/win/FontDataWin.cpp: Copied from platform/win/FontDataWin.cpp.
+        * platform/graphics/win/FontDatabase.cpp: Copied from platform/win/FontDatabase.cpp.
+        * platform/graphics/win/FontDatabase.h: Copied from platform/win/FontDatabase.h.
+        * platform/graphics/win/FontPlatformData.h: Copied from platform/win/FontPlatformData.h.
+        * platform/graphics/win/FontPlatformDataWin.cpp: Copied from platform/win/FontPlatformDataWin.cpp.
+        * platform/graphics/win/FontWin.cpp: Copied from platform/win/FontWin.cpp.
+        * platform/graphics/win/GlyphPageTreeNodeWin.cpp: Copied from platform/win/GlyphPageTreeNodeWin.cpp.
+        * platform/graphics/wx/FontCacheWx.cpp: Copied from platform/wx/FontCacheWx.cpp.
+        * platform/graphics/wx/FontDataWx.cpp: Copied from platform/wx/FontDataWx.cpp.
+        * platform/graphics/wx/FontPlatformData.h: Copied from platform/wx/FontPlatformData.h.
+        * platform/graphics/wx/FontPlatformDataWx.cpp: Copied from platform/wx/FontPlatformDataWx.cpp.
+        * platform/graphics/wx/FontWx.cpp: Copied from platform/wx/FontWx.cpp.
+        * platform/graphics/wx/GlyphMapWx.cpp: Copied from platform/wx/GlyphMapWx.cpp.
+        * platform/gtk/FontCacheGtk.cpp: Removed.
+        * platform/gtk/FontDataGtk.cpp: Removed.
+        * platform/gtk/FontGtk.cpp: Removed.
+        * platform/gtk/FontPlatformData.h: Removed.
+        * platform/gtk/FontPlatformDataGtk.cpp: Removed.
+        * platform/gtk/GlyphPageTreeNodeGtk.cpp: Removed.
+        * platform/gtk/TextBreakIteratorInternalICUGtk.cpp: Removed.
+        * platform/mac/FontCacheMac.mm: Removed.
+        * platform/mac/FontCustomPlatformData.cpp: Removed.
+        * platform/mac/FontCustomPlatformData.h: Removed.
+        * platform/mac/FontDataMac.mm: Removed.
+        * platform/mac/FontMac.mm: Removed.
+        * platform/mac/FontPlatformData.h: Removed.
+        * platform/mac/FontPlatformDataMac.mm: Removed.
+        * platform/mac/GlyphPageTreeNodeMac.cpp: Removed.
+        * platform/mac/ShapeArabic.c: Removed.
+        * platform/mac/ShapeArabic.h: Removed.
+        * platform/mac/StringImplMac.mm: Removed.
+        * platform/mac/StringMac.mm: Removed.
+        * platform/mac/TextBoundaries.mm: Removed.
+        * platform/mac/TextBreakIteratorInternalICUMac.mm: Removed.
+        * platform/mac/TextCodecMac.cpp: Removed.
+        * platform/mac/TextCodecMac.h: Removed.
+        * platform/mac/character-sets.txt: Removed.
+        * platform/mac/mac-encodings.txt: Removed.
+        * platform/mac/make-charset-table.pl: Removed.
+        * platform/qt/FontCacheQt.cpp: Removed.
+        * platform/qt/FontCustomPlatformData.cpp: Removed.
+        * platform/qt/FontCustomPlatformData.h: Removed.
+        * platform/qt/FontDataQt.cpp: Removed.
+        * platform/qt/FontPlatformData.h: Removed.
+        * platform/qt/FontQt.cpp: Removed.
+        * platform/qt/GlyphPageTreeNodeQt.cpp: Removed.
+        * platform/qt/StringQt.cpp: Removed.
+        * platform/qt/TextBoundaries.cpp: Removed.
+        * platform/qt/TextBreakIteratorQt.cpp: Removed.
+        * platform/qt/TextCodecQt.cpp: Removed.
+        * platform/qt/TextCodecQt.h: Removed.
+        * platform/symbian/StringImplSymbian.cpp: Removed.
+        * platform/symbian/StringSymbian.cpp: Removed.
+        * platform/text/cf: Added.
+        * platform/text/cf/StringCF.cpp: Copied from platform/cf/StringCF.cpp.
+        * platform/text/cf/StringImplCF.cpp: Copied from platform/cf/StringImplCF.cpp.
+        * platform/text/gtk: Added.
+        * platform/text/gtk/TextBreakIteratorInternalICUGtk.cpp: Copied from platform/gtk/TextBreakIteratorInternalICUGtk.cpp.
+        * platform/text/mac/ShapeArabic.c: Copied from platform/mac/ShapeArabic.c.
+        * platform/text/mac/ShapeArabic.h: Copied from platform/mac/ShapeArabic.h.
+        * platform/text/mac/StringImplMac.mm: Copied from platform/mac/StringImplMac.mm.
+        * platform/text/mac/StringMac.mm: Copied from platform/mac/StringMac.mm.
+        * platform/text/mac/TextBoundaries.mm: Copied from platform/mac/TextBoundaries.mm.
+        * platform/text/mac/TextBreakIteratorInternalICUMac.mm: Copied from platform/mac/TextBreakIteratorInternalICUMac.mm.
+        * platform/text/mac/TextCodecMac.cpp: Copied from platform/mac/TextCodecMac.cpp.
+        * platform/text/mac/TextCodecMac.h: Copied from platform/mac/TextCodecMac.h.
+        * platform/text/mac/character-sets.txt: Copied from platform/mac/character-sets.txt.
+        * platform/text/mac/mac-encodings.txt: Copied from platform/mac/mac-encodings.txt.
+        * platform/text/mac/make-charset-table.pl: Copied from platform/mac/make-charset-table.pl.
+        * platform/text/qt: Added.
+        * platform/text/qt/StringQt.cpp: Copied from platform/qt/StringQt.cpp.
+        * platform/text/qt/TextBoundaries.cpp: Copied from platform/qt/TextBoundaries.cpp.
+        * platform/text/qt/TextBreakIteratorQt.cpp: Copied from platform/qt/TextBreakIteratorQt.cpp.
+        * platform/text/qt/TextCodecQt.cpp: Copied from platform/qt/TextCodecQt.cpp.
+        * platform/text/qt/TextCodecQt.h: Copied from platform/qt/TextCodecQt.h.
+        * platform/text/symbian: Added.
+        * platform/text/symbian/StringImplSymbian.cpp: Copied from platform/symbian/StringImplSymbian.cpp.
+        * platform/text/symbian/StringSymbian.cpp: Copied from platform/symbian/StringSymbian.cpp.
+        * platform/text/win: Added.
+        * platform/text/win/TextBreakIteratorInternalICUWin.cpp: Copied from platform/win/TextBreakIteratorInternalICUWin.cpp.
+        * platform/text/wx: Added.
+        * platform/text/wx/StringWx.cpp: Copied from platform/wx/StringWx.cpp.
+        * platform/win/FontCacheWin.cpp: Removed.
+        * platform/win/FontCustomPlatformData.cpp: Removed.
+        * platform/win/FontCustomPlatformData.h: Removed.
+        * platform/win/FontDataWin.cpp: Removed.
+        * platform/win/FontDatabase.cpp: Removed.
+        * platform/win/FontDatabase.h: Removed.
+        * platform/win/FontPlatformData.h: Removed.
+        * platform/win/FontPlatformDataWin.cpp: Removed.
+        * platform/win/FontWin.cpp: Removed.
+        * platform/win/GlyphPageTreeNodeWin.cpp: Removed.
+        * platform/win/TextBreakIteratorInternalICUWin.cpp: Removed.
+        * platform/wx/FontCacheWx.cpp: Removed.
+        * platform/wx/FontDataWx.cpp: Removed.
+        * platform/wx/FontPlatformData.h: Removed.
+        * platform/wx/FontPlatformDataWx.cpp: Removed.
+        * platform/wx/FontWx.cpp: Removed.
+        * platform/wx/GlyphMapWx.cpp: Removed.
+        * platform/wx/StringWx.cpp: Removed.
+        * webcore-wx.bkl:
+
 2007-11-30  Kevin Ollivier  <kevino@theolliviers.com>
 
         Build fix for wx port. Adding editing/RemoveFormatCommand.cpp

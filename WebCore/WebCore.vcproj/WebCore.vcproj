@@ -3666,39 +3666,39 @@
 					>
 				</File>
 				<File
-					RelativePath="..\platform\win\FontCacheWin.cpp"
+					RelativePath="..\platform\graphics\win\FontCacheWin.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\platform\win\FontCustomPlatformData.cpp"
+					RelativePath="..\platform\graphics\win\FontCustomPlatformData.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\platform\win\FontCustomPlatformData.h"
+					RelativePath="..\platform\graphics\win\FontCustomPlatformData.h"
 					>
 				</File>
 				<File
-					RelativePath="..\platform\win\FontDatabase.cpp"
+					RelativePath="..\platform\graphics\win\FontDatabase.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\platform\win\FontDatabase.h"
+					RelativePath="..\platform\graphics\win\FontDatabase.h"
 					>
 				</File>
 				<File
-					RelativePath="..\platform\win\FontDataWin.cpp"
+					RelativePath="..\platform\graphics\win\FontDataWin.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\platform\win\FontPlatformData.h"
+					RelativePath="..\platform\graphics\win\FontPlatformData.h"
 					>
 				</File>
 				<File
-					RelativePath="..\platform\win\FontPlatformDataWin.cpp"
+					RelativePath="..\platform\graphics\win\FontPlatformDataWin.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\platform\win\FontWin.cpp"
+					RelativePath="..\platform\graphics\win\FontWin.cpp"
 					>
 					<FileConfiguration
 						Name="Debug|Win32"
@@ -3734,7 +3734,7 @@
 					>
 				</File>
 				<File
-					RelativePath="..\platform\win\GlyphPageTreeNodeWin.cpp"
+					RelativePath="..\platform\graphics\win\GlyphPageTreeNodeWin.cpp"
 					>
 				</File>
 				<File
@@ -3806,7 +3806,7 @@
 					>
 				</File>
 				<File
-					RelativePath="..\platform\win\TextBreakIteratorInternalICUWin.cpp"
+					RelativePath="..\platform\text\win\TextBreakIteratorInternalICUWin.cpp"
 					>
 				</File>
 				<File
