@@ -1,5 +1,11 @@
 2007-11-30  Nikolas Zimmermann  <zimmermann@kde.org>
 
+        Not reviewed. Try to fix qt/gtk build.
+
+        * WebCore.pro:
+
+2007-11-30  Nikolas Zimmermann  <zimmermann@kde.org>
+
         Rubber stamped by Eric.
 
         Final integration of ksvg2 in WebKit. Moving ksvg2/ to svg/ and killing all it's subdirectories,

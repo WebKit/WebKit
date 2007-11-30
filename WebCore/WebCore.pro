@@ -1124,7 +1124,7 @@ contains(DEFINES, ENABLE_SVG=1) {
 
     XLINK_NAMES = $$PWD/svg/xlinkattrs.in
 
-    IDL_BINDINGS += dom/SVGZoomEvent.idl \
+    IDL_BINDINGS += svg/SVGZoomEvent.idl \
         svg/SVGAElement.idl \
         svg/SVGAngle.idl \
         svg/SVGAnimateColorElement.idl \
@@ -1267,7 +1267,7 @@ contains(DEFINES, ENABLE_SVG=1) {
         rendering/SVGRenderStyle.cpp \
         rendering/SVGRenderStyleDefs.cpp \
         bindings/js/JSSVGLazyEventListener.cpp \
-        dom/SVGZoomEvent.cpp \
+        svg/SVGZoomEvent.cpp \
         rendering/PointerEventsHitRules.cpp \
         svg/SVGDocumentExtensions.cpp \
         svg/SVGImageLoader.cpp \
