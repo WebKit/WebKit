@@ -1012,7 +1012,7 @@ bool EventHandler::handleMouseMoveEvent(const PlatformMouseEvent& mouseEvent, Hi
             // Send mouse exited to the old scrollbar.
             if (m_lastScrollbarUnderMouse)
                 m_lastScrollbarUnderMouse->handleMouseOutEvent(mouseEvent);
-            m_lastScrollbarUnderMouse = scrollbar;
+            m_lastScrollbarUnderMouse = m_mousePressed ? 0 : scrollbar;
         }
     }
 

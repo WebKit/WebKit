@@ -1,3 +1,13 @@
+2007-11-30  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Darin.
+
+        Test for http://bugs.webkit.org/show_bug.cgi?id=16072
+        <rdar://problem/5463821> REGRESSION: Mousemove event isn't fired when mouse moves over scrollbar with pressed button
+
+        * fast/events/mousemove-after-drag-over-scrollbar-expected.txt: Added.
+        * fast/events/mousemove-after-drag-over-scrollbar.html: Added.
+
 2007-11-30  Alexey Proskuryakov  <ap@webkit.org>
 
         * platform/win/Skipped: Added editing/selection/5241148.html, which crashes for me.

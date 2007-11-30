@@ -1,0 +1,36 @@
+<html>
+    <head>
+        <script>
+            function test()
+            {
+                if (window.layoutTestController) {
+                    layoutTestController.dumpAsText();
+                    var d1 = document.getElementById('d1');
+                    var d2 = document.getElementById('d2');
+                    eventSender.dragMode = false;
+                    var left = d1.offsetLeft + 10;
+                    var top = d1.offsetTop + 10;
+                    
+                    eventSender.mouseMoveTo(left, top);
+                    eventSender.mouseDown();
+                    left = d2.offsetLeft - 10;
+                    eventSender.mouseMoveTo(left, top);
+                    left += 20;
+                    eventSender.mouseMoveTo(left, top);
+                    eventSender.mouseUp();
+                }
+            }
+                        
+            function log(msg)
+            {
+                document.getElementById('console').appendChild(document.createTextNode(msg + '\n'));
+            }
+        </script>
+    </head>
+    <body onload="test()">
+    This tests that we continue to get mouse events after dragging past a scrollbar.<br>
+    <div id="d1" style="height:120px; width:120px; overflow: auto; display: inline-block; background-color: red;" onmousemove="log('mousemove - box 1')">Start a drag in this square, and drag past the scrollbar to the green square.  Start a drag in this square, and drag past the scrollbar to the green square.  </div>
+    <div id="d2" style="height:120px; width:120px; display: inline-block; background-color: green;" onmousemove="log('mousemove - box 2')"></div><br><br>
+    <pre id="console"></pre>
+    </body>
+</html>

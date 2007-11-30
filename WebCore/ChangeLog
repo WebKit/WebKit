@@ -1,3 +1,16 @@
+2007-11-30  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Darin.
+
+        Fix for http://bugs.webkit.org/show_bug.cgi?id=16072
+        <rdar://problem/5463821> REGRESSION: Mousemove event isn't fired when mouse moves over scrollbar with pressed button (16072)
+
+        Test: fast/events/mousemove-after-drag-over-scrollbar.html
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleMouseMoveEvent): If the mouse is pressed, and we've moved over a new scrollbar, then we can clear m_lastScrollbarUnderMouse.
+         We should only need to show the hover effect when the mouse isn't pressed.
+
 2007-11-29  Brady Eidson <beidson@apple.com>
 
         Reviewed by Tim
