@@ -74,13 +74,13 @@
 			<Tool
 				Name="VCLinkerTool"
 				LinkLibraryDependencies="false"
-				AdditionalDependencies="CoreFoundation$(ConfigSuffix).lib CoreGraphics$(ConfigSuffix).lib WebKit$(ConfigSuffix).lib WebKitGUID$(ConfigSuffix).lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib"
+				AdditionalDependencies="CoreFoundation$(LibraryConfigSuffix).lib CoreGraphics$(LibraryConfigSuffix).lib WebKit$(WebKitConfigSuffix).lib WebKitGUID$(WebKitConfigSuffix).lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib"
 				OutputFile="$(OutDir)\$(ProjectName)$(ConfigSuffix).exe"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="&quot;$(WebKitOutputDir)\lib&quot;;&quot;$(WebKitLibrariesDir)\lib&quot;"
 				IgnoreAllDefaultLibraries="false"
 				EmbedManagedResourceFile=""
-				DelayLoadDLLs="WebCore$(ConfigSuffix).lib;WebKit$(ConfigSuffix).dll"
+				DelayLoadDLLs=""
 				GenerateDebugInformation="true"
 				SubSystem="2"
 				LinkTimeCodeGeneration="0"
@@ -169,16 +169,113 @@
 			<Tool
 				Name="VCLinkerTool"
 				LinkLibraryDependencies="false"
-				AdditionalDependencies="CoreFoundation$(ConfigSuffix).lib CoreGraphics$(ConfigSuffix).lib WebKit$(ConfigSuffix).lib WebKitGUID$(ConfigSuffix).lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib"
+				AdditionalDependencies="CoreFoundation$(LibraryConfigSuffix).lib CoreGraphics$(LibraryConfigSuffix).lib WebKit$(WebKitConfigSuffix).lib WebKitGUID$(WebKitConfigSuffix).lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib"
 				OutputFile="$(OutDir)\$(ProjectName)$(ConfigSuffix).exe"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="&quot;$(WebKitOutputDir)\lib&quot;;&quot;$(WebKitLibrariesDir)\lib&quot;"
-				DelayLoadDLLs="WebCore$(ConfigSuffix).lib;WebKit$(ConfigSuffix).dll"
+				DelayLoadDLLs=""
 				GenerateDebugInformation="true"
 				SubSystem="2"
 				OptimizeReferences="0"
 				EnableCOMDATFolding="2"
 				OptimizeForWindows98="1"
+				TargetMachine="1"
+			/>
+			<Tool
+				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCManifestTool"
+			/>
+			<Tool
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCAppVerifierTool"
+			/>
+			<Tool
+				Name="VCWebDeploymentTool"
+			/>
+			<Tool
+				Name="VCPostBuildEventTool"
+				CommandLine="mkdir 2&gt;NUL &quot;$(WebKitOutputDir)\bin&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(WebKitLibrariesDir)\bin\CFNetwork$(ConfigSuffix).dll&quot; &quot;$(WebKitOutputDir)\bin&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(WebKitLibrariesDir)\bin\CFNetwork$(ConfigSuffix).pdb&quot; &quot;$(WebKitOutputDir)\bin&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(WebKitLibrariesDir)\bin\CoreFoundation$(ConfigSuffix).dll&quot; &quot;$(WebKitOutputDir)\bin&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(WebKitLibrariesDir)\bin\CoreFoundation$(ConfigSuffix).pdb&quot; &quot;$(WebKitOutputDir)\bin&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(WebKitLibrariesDir)\bin\CoreGraphics$(ConfigSuffix).dll&quot; &quot;$(WebKitOutputDir)\bin&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(WebKitLibrariesDir)\bin\CoreGraphics$(ConfigSuffix).pdb&quot; &quot;$(WebKitOutputDir)\bin&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(WebKitLibrariesDir)\bin\icuin36$(ConfigSuffix).dll&quot; &quot;$(WebKitOutputDir)\bin&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(WebKitLibrariesDir)\bin\icuin36$(ConfigSuffix).pdb&quot; &quot;$(WebKitOutputDir)\bin&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(WebKitLibrariesDir)\bin\icuuc36$(ConfigSuffix).dll&quot; &quot;$(WebKitOutputDir)\bin&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(WebKitLibrariesDir)\bin\icuuc36$(ConfigSuffix).pdb&quot; &quot;$(WebKitOutputDir)\bin&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(WebKitLibrariesDir)\bin\libxml2$(ConfigSuffix).dll&quot; &quot;$(WebKitOutputDir)\bin&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(WebKitLibrariesDir)\bin\libxslt$(ConfigSuffix).dll&quot; &quot;$(WebKitOutputDir)\bin&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(WebKitLibrariesDir)\bin\pthreadVC2$(ConfigSuffix).dll&quot; &quot;$(WebKitOutputDir)\bin&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(WebKitLibrariesDir)\bin\pthreadVC2$(ConfigSuffix).pdb&quot; &quot;$(WebKitOutputDir)\bin&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(WebKitLibrariesDir)\bin\SQLite3$(ConfigSuffix).dll&quot; &quot;$(WebKitOutputDir)\bin&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(WebKitLibrariesDir)\bin\SQLite3$(ConfigSuffix).pdb&quot; &quot;$(WebKitOutputDir)\bin&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(WebKitLibrariesDir)\bin\zlib1$(ConfigSuffix).dll&quot; &quot;$(WebKitOutputDir)\bin&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(WebKitLibrariesDir)\bin\zlib1$(ConfigSuffix).pdb&quot; &quot;$(WebKitOutputDir)\bin&quot;&#x0D;&#x0A;&#x0D;&#x0A;mkdir 2&gt;NUL &quot;$(OutDir)\$(ProjectName).resources&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)..\Info.plist&quot; &quot;$(OutDir)\$(ProjectName).resources&quot;&#x0D;&#x0A;&#x0D;&#x0A;mkdir 2&gt;NUL &quot;$(OutDir)\$(ProjectName).resources\$(ProjectName)&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)..\..\*.css&quot; &quot;$(OutDir)\$(ProjectName).resources\$(ProjectName)&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)..\..\*.html&quot; &quot;$(OutDir)\$(ProjectName).resources\$(ProjectName)&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)..\..\*.js&quot; &quot;$(OutDir)\$(ProjectName).resources\$(ProjectName)&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)..\..\Images\*&quot; &quot;$(OutDir)\$(ProjectName).resources\$(ProjectName)&quot;&#x0D;&#x0A;"
+			/>
+		</Configuration>
+		<Configuration
+			Name="Debug_Internal|Win32"
+			OutputDirectory="$(WebKitOutputDir)\bin"
+			IntermediateDirectory="$(WebKitOutputDir)\obj\$(ProjectName)\$(ConfigurationName)"
+			ConfigurationType="1"
+			InheritedPropertySheets=".\debug_internal.vsprops"
+			CharacterSet="1"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+				CommandLine=""
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+			/>
+			<Tool
+				Name="VCCLCompilerTool"
+				Optimization="0"
+				AdditionalIncludeDirectories="&quot;$(ProjectDir)&quot;;&quot;$(ProjectDir)\..&quot;;&quot;$(ProjectDir)\..\..&quot;;&quot;$(ProjectDir)\..\..\ForwardingHeaders&quot;;&quot;$(WebKitOutputDir)\Include&quot;;&quot;$(WebKitOutputDir)\Include\JavaScriptCore&quot;;&quot;$(WebKitLibrariesDir)\Include&quot;;&quot;$(WebKitLibrariesDir)\Include\JavaScriptCore&quot;;&quot;$(IntDir)\include&quot;"
+				PreprocessorDefinitions="WIN32;_WINDOWS;STRICT;_DEBUG;_CRT_SECURE_NO_DEPRECATE;__APPLICATION_NAME__=\&quot;$(ProjectName)\&quot;"
+				MinimalRebuild="true"
+				ExceptionHandling="1"
+				BasicRuntimeChecks="3"
+				RuntimeLibrary="3"
+				RuntimeTypeInfo="false"
+				UsePrecompiledHeader="2"
+				PrecompiledHeaderThrough="DroseraPrefix.h"
+				WarningLevel="4"
+				WarnAsError="true"
+				Detect64BitPortabilityProblems="false"
+				DebugInformationFormat="3"
+				DisableSpecificWarnings="4127"
+				ForcedIncludeFiles="DroseraPrefix.h"
+			/>
+			<Tool
+				Name="VCManagedResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCResourceCompilerTool"
+				PreprocessorDefinitions="_DEBUG;__APPLICATION_NAME__=\&quot;$(ProjectName)\&quot;"
+				Culture="1033"
+				AdditionalIncludeDirectories="&quot;$(InputDir)\WTL75\include&quot;;&quot;$(IntDir)\include&quot;"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+				CommandLine="xcopy /y /d &quot;$(WebKitOutputDir)\obj\Drosera\$(ConfigurationName)\vc80.*&quot; &quot;$(WebKitOutputDir)\lib&quot;"
+			/>
+			<Tool
+				Name="VCLinkerTool"
+				LinkLibraryDependencies="false"
+				AdditionalDependencies="CoreFoundation$(LibraryConfigSuffix).lib CoreGraphics$(LibraryConfigSuffix).lib WebKit$(WebKitConfigSuffix).lib WebKitGUID$(WebKitConfigSuffix).lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib"
+				OutputFile="$(OutDir)\$(ProjectName)$(ConfigSuffix).exe"
+				LinkIncremental="2"
+				AdditionalLibraryDirectories="&quot;$(WebKitOutputDir)\lib&quot;;&quot;$(WebKitLibrariesDir)\lib&quot;"
+				IgnoreAllDefaultLibraries="false"
+				EmbedManagedResourceFile=""
+				DelayLoadDLLs=""
+				GenerateDebugInformation="true"
+				SubSystem="2"
+				LinkTimeCodeGeneration="0"
 				TargetMachine="1"
 			/>
 			<Tool
@@ -251,6 +348,14 @@
 						UsePrecompiledHeader="1"
 					/>
 				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug_Internal|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="1"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\ServerConnection.cpp"
@@ -317,6 +422,14 @@
 					<Tool
 						Name="VCResourceCompilerTool"
 						AdditionalIncludeDirectories="&quot;$(ProjectDir)..&quot;;&quot;$(ProjectDir)..\..\Images&quot;"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug_Internal|Win32"
+					>
+					<Tool
+						Name="VCResourceCompilerTool"
+						AdditionalIncludeDirectories="&quot;$(InputDir)\WTL75\include&quot;;&quot;$(IntDir)\include&quot;;&quot;$(ProjectDir)..&quot;;&quot;$(ProjectDir)..\..\Images&quot;"
 					/>
 				</FileConfiguration>
 			</File>

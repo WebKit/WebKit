@@ -1,3 +1,15 @@
+2007-11-30  Adam Roben  <aroben@apple.com>
+
+        Debug build fix
+
+        * Drosera/win/Drosera.vcproj/Drosera.vcproj: Added a Debug_Internal
+        configuration.
+        * Drosera/win/Drosera.vcproj/debug.vsprops: Updated to match other
+        projects.
+        * Drosera/win/Drosera.vcproj/release.vsprops: Ditto.
+        * Drosera/win/Drosera.vcproj/debug_internal.vsprops: Copied from
+        WebKitTools/DumpRenderTree/win/debug_internal.vsprops.
+
 2007-11-30  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Adam Roben.
