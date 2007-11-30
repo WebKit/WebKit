@@ -1,3 +1,31 @@
+2007-11-30  Alp Toker  <alp@atoker.com>
+
+        Reviewed by Maciej.
+
+        http://bugs.webkit.org/show_bug.cgi?id=16173
+        Licensing change
+
+        Change license from BSD to LGPL.
+
+        This is being done to encourage vendors to contribute their fixes back
+        upstream.
+
+        * platform/graphics/gtk/ColorGtk.cpp:
+        * platform/graphics/gtk/IntPointGtk.cpp:
+        * platform/graphics/gtk/IntRectGtk.cpp:
+        * platform/graphics/svg/cairo/RenderPathCairo.cpp:
+        * platform/graphics/svg/cairo/SVGPaintServerCairo.cpp:
+        * platform/graphics/svg/cairo/SVGPaintServerGradientCairo.cpp:
+        * platform/graphics/svg/cairo/SVGPaintServerPatternCairo.cpp:
+        * platform/graphics/svg/cairo/SVGPaintServerSolidCairo.cpp:
+        * platform/graphics/svg/cairo/SVGResourceClipperCairo.cpp:
+        * platform/graphics/svg/cairo/SVGResourceMaskerCairo.cpp:
+        * platform/gtk/Language.cpp:
+        * platform/gtk/LoggingGtk.cpp:
+        * platform/gtk/SoundGtk.cpp:
+        * platform/gtk/SystemTimeGtk.cpp:
+        * platform/gtk/TextBreakIteratorInternalICUGtk.cpp:
+
 2007-11-29  Darin Adler  <darin@apple.com>
 
         Reviewed by Adele.
