@@ -1,3 +1,18 @@
+2007-11-29  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Oliver.
+
+        Additional fix for <rdar://problem/5592988> / http://bugs.webkit.org/show_bug.cgi?id=15936
+        - More closely match IE's policy for frame navigation.
+
+        * bindings/js/kjs_window.cpp:
+        (KJS::WindowProtoFuncOpen::callAsFunction):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::shouldAllowNavigation):
+        * page/FrameTree.cpp:
+        (WebCore::FrameTree::top):
+        * page/FrameTree.h:
+
 2007-11-29  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Adam Roben and John Sullivan.

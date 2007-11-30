@@ -64,6 +64,8 @@ namespace WebCore {
 
         AtomicString uniqueChildName(const AtomicString& requestedName) const;
 
+        Frame* top() const;
+
     private:
         Frame* deepLastChild() const;
 

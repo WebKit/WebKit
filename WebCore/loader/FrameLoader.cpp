@@ -2308,41 +2308,35 @@ void FrameLoader::reload()
 
 bool FrameLoader::shouldAllowNavigation(Frame* targetFrame) const
 {
-    // This function prevents these exploits:
-    // <rdar://problem/3715785> multiple frame injection vulnerability reported by Secunia, affects almost all browsers
-    // http://bugs.webkit.org/show_bug.cgi?id=15936 Overly permissive frame navigation allows password theft
+    // The navigation change is safe if the active frame is:
+    //   - in the same security origin as the target or one of the target's ancestors
+    // Or the target frame is:
+    //   - a top-level frame in the frame hierarchy
 
-    // Allow if there is no specific target.
     if (!targetFrame)
         return true;
+
     if (m_frame == targetFrame)
         return true;
 
-    // The navigation change is safe if the active frame is:
-    //   - in the same security domain (satisfies same-origin policy)
-    //   - the opener frame
-    //   - an ancestor or a descendant in frame tree hierarchy
+    if (!targetFrame->tree()->parent())
+        return true;
 
-    // Same security domain case.
     Document* activeDocument = m_frame->document();
     ASSERT(activeDocument);
-    Document* targetDocument = targetFrame->document();
-    if (!targetDocument)
-        return true;
     const SecurityOrigin& activeSecurityOrigin = activeDocument->securityOrigin();
-    const SecurityOrigin& targetSecurityOrigin = targetDocument->securityOrigin();
-    if (activeSecurityOrigin.canAccess(targetSecurityOrigin))
-        return true;
+    for (Frame* ancestorFrame = targetFrame; ancestorFrame; ancestorFrame = ancestorFrame->tree()->parent()) {
+        Document* ancestorDocument = ancestorFrame->document();
+        if (!ancestorDocument)
+            return true;
 
-    // Opener case.
-    if (m_frame == targetFrame->loader()->opener())
-        return true;
-
-    // Ancestor or descendant case.
-    if (targetFrame->tree()->isDescendantOf(m_frame) || m_frame->tree()->isDescendantOf(targetFrame))
-        return true;
+        const SecurityOrigin& ancestorSecurityOrigin = ancestorDocument->securityOrigin();
+        if (activeSecurityOrigin.canAccess(ancestorSecurityOrigin))
+            return true;
+    }
 
     if (!targetFrame->settings()->privateBrowsingEnabled()) {
+        Document* targetDocument = targetFrame->document();
         // FIXME: this error message should contain more specifics of why the navigation change is not allowed.
         String message = String::format("Unsafe JavaScript attempt to initiate a navigation change for frame with URL %s from frame with URL %s.\n",
                                         targetDocument->URL().utf8().data(), activeDocument->URL().utf8().data());

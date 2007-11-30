@@ -1304,6 +1304,9 @@ JSValue* WindowProtoFuncOpen::callAsFunction(ExecState* exec, JSObject* thisObj,
     Frame* frame = window->impl()->frame();
     if (!frame)
         return jsUndefined();
+    Frame* activeFrame = Window::retrieveActive(exec)->impl()->frame();
+    if (!activeFrame)
+        return  jsUndefined();
 
     Page* page = frame->page();
 
@@ -1315,19 +1318,22 @@ JSValue* WindowProtoFuncOpen::callAsFunction(ExecState* exec, JSObject* thisObj,
     if (!allowPopUp(exec, window) && (frameName.isEmpty() || !frame->tree()->find(frameName)))
         return jsUndefined();
 
-    // Get the target frame for the special cases of _top and _parent
-    if (frameName == "_top")
-        while (frame->tree()->parent())
-              frame = frame->tree()->parent();
-    else if (frameName == "_parent")
-        if (frame->tree()->parent())
-            frame = frame->tree()->parent();
-
-    // In those cases, we can schedule a location change right now and return early
-    if (frameName == "_top" || frameName == "_parent") {
+    // Get the target frame for the special cases of _top and _parent.  In those 
+    // cases, we can schedule a location change right now and return early.
+    bool topOrParent = false;
+    if (frameName == "_top") {
+        frame = frame->tree()->top();
+        topOrParent = true;
+    } else if (frameName == "_parent") {
+        if (Frame* parent = frame->tree()->parent())
+            frame = parent;
+        if (!activeFrame->loader()->shouldAllowNavigation(frame))
+            return jsUndefined();
+        topOrParent = true;
+    }
+    if (topOrParent) {
         String completedURL;
-        Frame* activeFrame = Window::retrieveActive(exec)->impl()->frame();
-        if (!urlString.isEmpty() && activeFrame)
+        if (!urlString.isEmpty())
             completedURL = activeFrame->document()->completeURL(urlString);
 
         const Window* window = Window::retrieveWindow(frame);

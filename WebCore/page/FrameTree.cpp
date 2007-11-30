@@ -282,4 +282,15 @@ Frame* FrameTree::deepLastChild() const
     return result;
 }
 
+Frame* FrameTree::top() const
+{
+    if (Page* page = m_thisFrame->page())
+        return page->mainFrame();
+
+    Frame* frame = m_thisFrame;
+    while (Frame* parent = frame->tree()->parent())
+        frame = parent;
+    return frame;
 }
+
+} // namespace WebCore
