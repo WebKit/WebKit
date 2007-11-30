@@ -1,3 +1,24 @@
+2007-11-29  Darin Adler  <darin@apple.com>
+
+        Reviewed by Adele.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=16191
+          REGRESSION: cannot tab to radio input after setting checked to false
+
+        Test: fast/forms/input-radio-checked-tab.html
+
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::CheckedRadioButtons::addButton): Fix this code
+        so that it doesn't call setChecked(false) until after the map has been updated.
+        Otherwise, we can end up deallocating the map before manipulating it. As long
+        as I was changing the function, I decided to make it do only a single hash
+        table lookup.
+
+        * html/HTMLInputElement.cpp: (WebCore::HTMLInputElement::setChecked):
+        Remove the button from the radio buttons set before changing the checked
+        state. This matches the idiom used elsewhere and fixes the problem where
+        setting checked to false would not remove it from the set.
+
 2007-11-29  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Darin Adler.

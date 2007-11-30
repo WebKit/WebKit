@@ -1,3 +1,13 @@
+2007-11-29  Darin Adler  <darin@apple.com>
+
+        Reviewed by Adele.
+
+        - test for http://bugs.webkit.org/show_bug.cgi?id=16191
+          REGRESSION: cannot tab to radio input after setting checked to false
+
+        * fast/forms/input-radio-checked-tab-expected.txt: Added.
+        * fast/forms/input-radio-checked-tab.html: Added.
+
 2007-11-29  Alice Liu  <alice.liu@apple.com>
 
         Move Mac-specific results of fast/dom/wrapper-classes.html into platform/mac and replace them with non-Mac results

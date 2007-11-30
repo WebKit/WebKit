@@ -864,6 +864,8 @@ void HTMLInputElement::setChecked(bool nowChecked, bool sendChangeEvent)
     if (checked() == nowChecked)
         return;
 
+    checkedRadioButtons(this).removeButton(this);
+
     m_useDefaultChecked = false;
     m_checked = nowChecked;
     setChanged();

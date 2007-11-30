@@ -721,21 +721,26 @@ void HTMLFormElement::CheckedRadioButtons::addButton(HTMLGenericFormElement* ele
         return;
 
     HTMLInputElement* inputElement = static_cast<HTMLInputElement*>(element);
+
     // We only track checked buttons.
     if (!inputElement->checked())
         return;
 
     if (!m_nameToCheckedRadioButtonMap)
         m_nameToCheckedRadioButtonMap.set(new NameToInputMap);
-    else {
-        HTMLInputElement* currentCheckedRadio = m_nameToCheckedRadioButtonMap->get(element->name().impl());
-        if (currentCheckedRadio && currentCheckedRadio != element)
-            currentCheckedRadio->setChecked(false);
-    }
 
-    m_nameToCheckedRadioButtonMap->set(element->name().impl(), inputElement);    
-}
+    pair<NameToInputMap::iterator, bool> result = m_nameToCheckedRadioButtonMap->add(element->name().impl(), inputElement);
+    if (result.second)
+        return;
     
+    HTMLInputElement* oldCheckedButton = result.first->second;
+    if (oldCheckedButton == inputElement)
+        return;
+
+    result.first->second = inputElement;
+    oldCheckedButton->setChecked(false);
+}
+
 HTMLInputElement* HTMLFormElement::CheckedRadioButtons::checkedButtonForGroup(const AtomicString& name) const
 {
     if (!m_nameToCheckedRadioButtonMap)
