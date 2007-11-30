@@ -1,5 +1,14 @@
 2007-11-29  Alice Liu  <alice.liu@apple.com>
 
+        Move Mac-specific results of fast/dom/wrapper-classes.html into platform/mac and replace them with non-Mac results
+
+        Reviewed by Adam.
+
+        * fast/dom/wrapper-classes-expected.txt: Replaced.
+        * platform/mac/fast/dom/wrapper-classes-expected.txt: Copied from fast/dom/wrapper-classes-expected.txt.
+
+2007-11-29  Alice Liu  <alice.liu@apple.com>
+
         Group drag-n-drop related failures under one bug
 
         We don't know the specific causes of these failures, but we believe
