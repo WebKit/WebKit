@@ -1,3 +1,8 @@
+2007-11-29  Anders Carlsson  <andersca@apple.com>
+
+        * DumpRenderTree/win/DumpRenderTree.vcproj:
+        Add shlwapi.lib to all configurations.
+        
 2007-11-29  Kevin McCullough  <kmccullough@apple.com>
 
         - Build fix.  Added additional includes for VS Express to the Release
