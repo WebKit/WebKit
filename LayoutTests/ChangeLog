@@ -1,3 +1,7 @@
+2007-11-30  Alexey Proskuryakov  <ap@webkit.org>
+
+        * platform/win/Skipped: Added editing/selection/5241148.html, which crashes for me.
+
 2007-11-29  Holger Hans Peter Freyther  <holger.freyther@trolltech.com>
 
         Reviewed by Maciej.

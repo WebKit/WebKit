@@ -468,6 +468,9 @@ http/tests/security/dataURL/xss-DENIED-from-data-url-sub-frame-to-data-url-sub-f
 # The fix for this test is disabled on Windows <rdar://5611712>
 fast/xsl/sort-unicode.xml
 
+# This test intermittently crashes <rdar://5621979>
+editing/selection/5241148.html
+
 ################################################################################
 ####################### No bugs filed about the below yet#######################
 ################################################################################
