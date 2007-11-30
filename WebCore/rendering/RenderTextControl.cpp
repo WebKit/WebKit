@@ -1113,6 +1113,21 @@ Document* RenderTextControl::clientDocument() const
     return document();
 }
 
+int RenderTextControl::clientInsetLeft() const
+{
+    // Inset the menu by the radius of the cap on the left so that
+    // it only runs along the straight part of the bezel.
+    return height() / 2;
+}
+
+int RenderTextControl::clientInsetRight() const
+{
+    // Inset the menu by the radius of the cap on the right so that
+    // it only runs along the straight part of the bezel (unless it needs
+    // to be wider).
+    return height() / 2;
+}
+
 int RenderTextControl::clientPaddingLeft() const
 {
     return paddingLeft() + m_resultsButton->renderer()->width();

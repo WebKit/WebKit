@@ -198,17 +198,17 @@ void PopupMenu::calculatePositionAndSize(const IntRect& r, FrameView* v)
     // Add padding to align the popup text with the <select> text
     // Note: We can't add paddingRight() because that value includes the width
     // of the dropdown button, so we must use our own endOfLinePadding constant.
-    popupWidth += endOfLinePadding + client()->clientPaddingLeft();
+    popupWidth += max(0, endOfLinePadding - client()->clientInsetRight()) + max(0, client()->clientPaddingLeft() - client()->clientInsetLeft());
 
     // Leave room for the border
     popupWidth += 2 * popupWindowBorderWidth;
     popupHeight += 2 * popupWindowBorderWidth;
 
     // The popup should be at least as wide as the control on the page
-    popupWidth = max(rScreenCoords.width(), popupWidth);
+    popupWidth = max(rScreenCoords.width() - client()->clientInsetLeft() - client()->clientInsetRight(), popupWidth);
 
     // Always left-align items in the popup.  This matches popup menus on the mac.
-    int popupX = rScreenCoords.x();
+    int popupX = rScreenCoords.x() + client()->clientInsetLeft();
 
     IntRect popupRect(popupX, rScreenCoords.bottom(), popupWidth, popupHeight);
 
@@ -526,7 +526,7 @@ void PopupMenu::paint(const IntRect& damageRect, HDC hdc)
         
         // Draw the item text
         if (itemStyle->visibility() != HIDDEN) {
-            int textX = client()->clientPaddingLeft();
+            int textX = max(0, client()->clientPaddingLeft() - client()->clientInsetLeft());
             int textY = itemRect.y() + itemFont.ascent() + (itemRect.height() - itemFont.height()) / 2;
             context.drawBidiText(textRun, IntPoint(textX, textY), textStyle);
         }

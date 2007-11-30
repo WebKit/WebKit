@@ -40,6 +40,8 @@ public:
     virtual RenderStyle* itemStyle(unsigned listIndex) const = 0;
     virtual RenderStyle* clientStyle() const = 0;
     virtual Document* clientDocument() const = 0;
+    virtual int clientInsetLeft() const = 0;
+    virtual int clientInsetRight() const = 0;
     virtual int clientPaddingLeft() const = 0;
     virtual int clientPaddingRight() const = 0;
     virtual int listSize() const = 0;

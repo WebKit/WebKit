@@ -1,3 +1,26 @@
+2007-11-29  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Adam Roben and John Sullivan.
+
+        - make the recent searches popup extend only along the straight part of
+          the search field (unless it needs to be wider).
+
+        * platform/PopupMenuClient.h:
+          Added clientInsetLeft() and clientInsetRight() for clients to
+          specify desired horizontal insets for the menu.
+        * platform/win/PopupMenuWin.cpp:
+        (WebCore::PopupMenu::calculatePositionAndSize):
+        (WebCore::PopupMenu::paint):
+        * rendering/RenderMenuList.cpp:
+        (WebCore::RenderMenuList::clientInsetLeft): Added. Returns 0.
+        (WebCore::RenderMenuList::clientInsetRight): Ditto.
+        * rendering/RenderMenuList.h:
+        * rendering/RenderTextControl.cpp:
+        (WebCore::RenderTextControl::clientInsetLeft): Added. Returns half the
+        control's height, which is the radius of the cap on the left.
+        (WebCore::RenderTextControl::clientInsetRight): Added.
+        * rendering/RenderTextControl.h:
+
 2007-11-30  Alp Toker  <alp@atoker.com>
 
         Reviewed by Maciej.

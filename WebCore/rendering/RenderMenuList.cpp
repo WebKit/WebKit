@@ -350,6 +350,16 @@ Document* RenderMenuList::clientDocument() const
     return document();
 }
 
+int RenderMenuList::clientInsetLeft() const
+{
+    return 0;
+}
+
+int RenderMenuList::clientInsetRight() const
+{
+    return 0;
+}
+
 int RenderMenuList::clientPaddingLeft() const
 {
     return paddingLeft();
