@@ -86,6 +86,15 @@ using namespace WebCore;
     DatabaseTracker::tracker().setQuota(*reinterpret_cast<WebCoreSecurityOriginData*>(_private), quota);
 }
 
+- (BOOL)isEqual:(id)anObject
+{
+    if (![anObject isMemberOfClass:[WebSecurityOrigin class]]) {
+        return NO;
+    }
+    
+    return *[self _core] == *[anObject _core];
+}
+
 - (void)dealloc
 {
     delete reinterpret_cast<WebCoreSecurityOriginData*>(_private);

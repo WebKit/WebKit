@@ -1,3 +1,12 @@
+2007-11-30  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Geoff
+
+        Add isEqual operator to WebSecurityOrigin
+
+        * Storage/WebSecurityOrigin.mm:
+        (-[WebSecurityOrigin isEqual:]):
+
 2007-11-30  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Darin
