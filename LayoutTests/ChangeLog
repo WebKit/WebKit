@@ -1,3 +1,13 @@
+2007-11-30  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by darin.
+        
+        Test case for:
+        http://bugs.webkit.org/show_bug.cgi?id=16127
+
+        * fast/js/regexp-compile-crash-expected.txt: Added.
+        * fast/js/regexp-compile-crash.html: Added.
+
 2007-11-30  Adam Roben  <aroben@apple.com>
 
         Copy some cross-platform results into platform/win to avoid picking up the platform/mac versions

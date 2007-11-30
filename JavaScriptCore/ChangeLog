@@ -29,6 +29,18 @@
 
 2007-11-30  Eric Seidel  <eric@webkit.org>
 
+        Reviewed by darin.
+        
+        PCRE crashes under GuardMalloc
+        http://bugs.webkit.org/show_bug.cgi?id=16127
+        check against patternEnd to make sure we don't walk off the end of the string
+
+        * pcre/pcre_compile.cpp:
+        (compile_branch):
+        (calculateCompiledPatternLengthAndFlags):
+
+2007-11-30  Eric Seidel  <eric@webkit.org>
+
         Reviewed by Maciej.
         
         Fix layout test regressions caused by r28186
