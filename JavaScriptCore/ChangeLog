@@ -1,3 +1,22 @@
+2007-11-29  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Maciej and Darin.
+
+        Make the JS collector work with multiple threads 
+
+        Under heavy contention it was possible the GC to suspend other
+        threads inside the pthread spinlock, which could lead to the GC
+        thread blocking on the pthread spinlock itself.
+
+        We now determine and store each thread's stack base when it is
+        registered, thus removing the need for any calls to pthread_get_stackaddr_np
+        that needed the pthread spinlock.
+
+        * kjs/collector.cpp:
+        (KJS::Collector::Thread::Thread):
+        (KJS::Collector::registerThread):
+        (KJS::Collector::markOtherThreadConservatively):
+
 2007-11-29  Adam Roben  <aroben@apple.com>
 
         Windows build fix
