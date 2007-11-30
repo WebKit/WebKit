@@ -241,6 +241,7 @@ editing/pasteboard/drop-link.html
 editing/pasteboard/drop-text-without-selection.html
 editing/selection/selection-background.html
 fast/events/5056619.html
+fast/events/ondragenter.html
 fast/forms/textfield-drag-into-disabled.html
 editing/selection/4895428-1.html
 editing/selection/4895428-4.html
@@ -316,10 +317,6 @@ fast/css/disabled-author-styles.html
 fast/events/frame-tab-focus.html
 fast/events/option-tab.html
 fast/forms/focus2.html
-
-# window.eventSender doesn't appear to be working. <rdar://problem/5137154>
-fast/events/ondragenter.html
-fast/forms/focus-control-to-page.html
 
 # fast/frames/frame-src-attribute.html fails on boomer <rdar://problem/5134044>
 fast/frames/frame-src-attribute.html
