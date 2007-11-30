@@ -1,3 +1,31 @@
+2007-11-29  Brady Eidson <beidson@apple.com>
+
+        Reviewed by Tim
+
+        Part of <rdar://problem/5556377> - Need to accurately track and enforce database quota
+
+        SQLite has the ability to enforce the page usage for databases.  This gives us bulletproof
+        enforcement of the database size limit with reasonable granularity (within 1023 bytes by 
+        default on OS X with SQLite 3.4.0)
+
+        This also involved enhancing the ability to install/remove the authorizer to run the PRAGMA
+        statements involved
+
+        Note this patch does not actually use the new maximumSize() functionality of the 
+        SQLiteDatabase class - that can be reviewed/landed seperately
+        
+        * platform/sql/SQLiteDatabase.cpp:
+        (WebCore::SQLiteDatabase::SQLiteDatabase): 
+        (WebCore::SQLiteDatabase::maximumSize): Return the current maximum size in bytes
+        (WebCore::SQLiteDatabase::setMaximumSize): Based on m_pageSize, set the maximum page count
+          to enforce the maximum size in bytes
+        (WebCore::SQLiteDatabase::pageSize): Fetch m_pageSize if it hasn't been fetched, or return
+          the cached value
+        (WebCore::SQLiteDatabase::setAuthorizer): Use enableAuthorizer for the sqlite_* level 
+          authorizer setup
+        (WebCore::SQLiteDatabase::enableAuthorizer): Install or remove the sqlite authorizer handler
+        * platform/sql/SQLiteDatabase.h: Add the m_pageSize member so we only have to fetch it once
+
 2007-11-29  Holger Hans Peter Freyther  <holger.freyther@trolltech.com>
 
         Reviewed by Maciej.

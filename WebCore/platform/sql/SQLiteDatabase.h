@@ -81,6 +81,13 @@ public:
     // TODO - add pragma and sqlite_master accessors here
     void setFullsync(bool);
     
+    // Gets/sets the maximum size in bytes
+    // Depending on per-database attributes, the size will only be settable in units that are the page size of the database, which is established at creation
+    // These chunks will never be anything other than 512, 1024, 2048, 4096, 8192, 16384, or 32768 bytes in size.
+    // setMaximumSize() will round the size down to the next smallest chunk if the passed size doesn't align.
+    int64_t maximumSize();
+    void setMaximumSize(int64_t);
+    
     // The SQLite SYNCHRONOUS pragma can be either FULL, NORMAL, or OFF
     // FULL - Any writing calls to the DB block until the data is actually on the disk surface
     // NORMAL - SQLite pauses at some critical moments when writing, but much less than FULL
@@ -106,9 +113,14 @@ public:
 private:
     static int authorizerFunction(void*, int, const char*, const char*, const char*, const char*);
 
+    void enableAuthorizer(bool enable);
+    
+    int pageSize();
+    
     String   m_path;
     sqlite3* m_db;
     int m_lastError;
+    int m_pageSize;
     
     bool m_transactionInProgress;
     

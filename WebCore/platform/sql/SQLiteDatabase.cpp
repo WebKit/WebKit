@@ -44,6 +44,7 @@ const int SQLResultSchema = SQLITE_SCHEMA;
 
 SQLiteDatabase::SQLiteDatabase()
     : m_db(0)
+    , m_pageSize(-1)
     , m_transactionInProgress(false)
     , m_openingThread(0)
 {
@@ -96,6 +97,57 @@ void SQLiteDatabase::setFullsync(bool fsync)
         executeCommand("PRAGMA fullfsync = 1;");
     else
         executeCommand("PRAGMA fullfsync = 0;");
+}
+
+int64_t SQLiteDatabase::maximumSize()
+{
+    MutexLocker locker(m_authorizerLock);
+    enableAuthorizer(false);
+    
+    SQLiteStatement statement(*this, "PRAGMA max_page_count");
+    int64_t size = statement.getColumnInt64(0) * pageSize();
+    
+    enableAuthorizer(true);
+    return size;
+}
+
+void SQLiteDatabase::setMaximumSize(int64_t size)
+{
+    if (size < 0)
+        size = 0;
+    
+    int currentPageSize = pageSize();
+
+    ASSERT(currentPageSize);
+    int64_t newMaxPageCount = currentPageSize ? size / currentPageSize : 0;
+    
+    MutexLocker locker(m_authorizerLock);
+    enableAuthorizer(false);
+
+    SQLiteStatement statement(*this, "PRAGMA max_page_count = " + String::number(newMaxPageCount));
+    statement.prepare();
+    if (statement.step() != SQLResultRow)
+        LOG_ERROR("Failed to set maximum size of database to %lli bytes", size);
+
+    enableAuthorizer(true);
+
+}
+
+int SQLiteDatabase::pageSize()
+{
+    // Since the page size of a database is locked in at creation and therefore cannot be dynamic, 
+    // we can cache the value for future use
+    if (m_pageSize == -1) {
+        MutexLocker locker(m_authorizerLock);
+        enableAuthorizer(false);
+        
+        SQLiteStatement statement(*this, "PRAGMA page_size");
+        m_pageSize = statement.getColumnInt(0);
+        
+        enableAuthorizer(true);
+    }
+
+    return m_pageSize;
 }
 
 void SQLiteDatabase::setSynchronous(SynchronousPragma sync)
@@ -275,7 +327,13 @@ void SQLiteDatabase::setAuthorizer(PassRefPtr<SQLiteAuthorizer> auth)
     MutexLocker locker(m_authorizerLock);
 
     m_authorizer = auth;
-    if (m_authorizer)
+    
+    enableAuthorizer(true);
+}
+
+void SQLiteDatabase::enableAuthorizer(bool enable)
+{
+    if (m_authorizer && enable)
         sqlite3_set_authorizer(m_db, SQLiteDatabase::authorizerFunction, m_authorizer.get());
     else
         sqlite3_set_authorizer(m_db, NULL, 0);
