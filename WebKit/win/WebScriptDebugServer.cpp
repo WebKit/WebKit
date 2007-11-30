@@ -37,6 +37,7 @@ typedef HashSet<COMPtr<IWebScriptDebugListener> > ListenerSet;
 static ListenerSet s_Listeners;
 static unsigned s_ListenerCount = 0;
 static OwnPtr<WebScriptDebugServer> s_SharedWebScriptDebugServer;
+static bool s_dying = false;
 
 unsigned WebScriptDebugServer::listenerCount() { return s_ListenerCount; };
 
@@ -46,7 +47,6 @@ WebScriptDebugServer::WebScriptDebugServer()
     : m_refCount(0)
     , m_paused(false)
     , m_step(false)
-    , m_sharedInstance(false)
 {
     gClassCount++;
 }
@@ -66,8 +66,8 @@ WebScriptDebugServer* WebScriptDebugServer::createInstance()
 WebScriptDebugServer* WebScriptDebugServer::sharedWebScriptDebugServer()
 {
     if (!s_SharedWebScriptDebugServer) {
+        s_dying = false;
         s_SharedWebScriptDebugServer.set(WebScriptDebugServer::createInstance());
-        s_SharedWebScriptDebugServer->m_sharedInstance = true;
     }
 
     return s_SharedWebScriptDebugServer.get();
@@ -121,6 +121,9 @@ HRESULT STDMETHODCALLTYPE WebScriptDebugServer::sharedWebScriptDebugServer(
 HRESULT STDMETHODCALLTYPE WebScriptDebugServer::addListener(
     /* [in] */ IWebScriptDebugListener* listener)
 {
+    if (s_dying)
+        return E_FAIL;
+
     if (!listener)
         return E_POINTER;
 
@@ -133,6 +136,9 @@ HRESULT STDMETHODCALLTYPE WebScriptDebugServer::addListener(
 HRESULT STDMETHODCALLTYPE WebScriptDebugServer::removeListener(
     /* [in] */ IWebScriptDebugListener* listener)
 {
+    if (s_dying)
+        return S_OK;
+
     if (!listener)
         return E_POINTER;
 
@@ -194,7 +200,6 @@ void WebScriptDebugServer::suspendProcessIfPaused()
 
     MSG msg;
     while (m_paused && GetMessage(&msg, 0, 0, 0)) {
-        // FIXME: Listen for Drosera dying. You will get removeListener calls but what if it crashes?
         TranslateMessage(&msg);
         DispatchMessage(&msg);
     }
@@ -216,7 +221,8 @@ HRESULT STDMETHODCALLTYPE WebScriptDebugServer::didLoadMainResourceForDataSource
         return E_FAIL;
 
     ListenerSet listenersCopy = s_Listeners;
-    for (ListenerSet::iterator it = listenersCopy.begin(); it != listenersCopy.end(); ++it)
+    ListenerSet::iterator end = listenersCopy.end();
+    for (ListenerSet::iterator it = listenersCopy.begin(); it != end; ++it)
         (**it).didLoadMainResourceForDataSource(webView, dataSource);
 
     return S_OK;
@@ -234,7 +240,8 @@ HRESULT STDMETHODCALLTYPE WebScriptDebugServer::didParseSource(
         return E_FAIL;
 
     ListenerSet listenersCopy = s_Listeners;
-    for (ListenerSet::iterator it = listenersCopy.begin(); it != listenersCopy.end(); ++it)
+    ListenerSet::iterator end = listenersCopy.end();
+    for (ListenerSet::iterator it = listenersCopy.begin(); it != end; ++it)
         (**it).didParseSource(webView, sourceCode, baseLineNumber, url, sourceID, webFrame);
 
     return S_OK;
@@ -252,7 +259,8 @@ HRESULT STDMETHODCALLTYPE WebScriptDebugServer::failedToParseSource(
         return E_FAIL;
 
     ListenerSet listenersCopy = s_Listeners;
-    for (ListenerSet::iterator it = listenersCopy.begin(); it != listenersCopy.end(); ++it)
+    ListenerSet::iterator end = listenersCopy.end();
+    for (ListenerSet::iterator it = listenersCopy.begin(); it != end; ++it)
         (**it).failedToParseSource(webView, sourceCode, baseLineNumber, url, error, webFrame);
 
     return S_OK;
@@ -269,7 +277,8 @@ HRESULT STDMETHODCALLTYPE WebScriptDebugServer::didEnterCallFrame(
         return E_FAIL;
 
     ListenerSet listenersCopy = s_Listeners;
-    for (ListenerSet::iterator it = listenersCopy.begin(); it != listenersCopy.end(); ++it)
+    ListenerSet::iterator end = listenersCopy.end();
+    for (ListenerSet::iterator it = listenersCopy.begin(); it != end; ++it)
         (**it).didEnterCallFrame(webView, frame, sourceID, lineNumber, webFrame);
 
     suspendProcessIfPaused();
@@ -288,7 +297,8 @@ HRESULT STDMETHODCALLTYPE WebScriptDebugServer::willExecuteStatement(
         return E_FAIL;
 
     ListenerSet listenersCopy = s_Listeners;
-    for (ListenerSet::iterator it = listenersCopy.begin(); it != listenersCopy.end(); ++it)
+    ListenerSet::iterator end = listenersCopy.end();
+    for (ListenerSet::iterator it = listenersCopy.begin(); it != end; ++it)
         (**it).willExecuteStatement(webView, frame, sourceID, lineNumber, webFrame);
 
     suspendProcessIfPaused();
@@ -307,7 +317,8 @@ HRESULT STDMETHODCALLTYPE WebScriptDebugServer::willLeaveCallFrame(
         return E_FAIL;
 
     ListenerSet listenersCopy = s_Listeners;
-    for (ListenerSet::iterator it = listenersCopy.begin(); it != listenersCopy.end(); ++it)
+    ListenerSet::iterator end = listenersCopy.end();
+    for (ListenerSet::iterator it = listenersCopy.begin(); it != end; ++it)
         (**it).willLeaveCallFrame(webView, frame, sourceID, lineNumber, webFrame);
 
     suspendProcessIfPaused();
@@ -326,7 +337,8 @@ HRESULT STDMETHODCALLTYPE WebScriptDebugServer::exceptionWasRaised(
         return E_FAIL;
 
     ListenerSet listenersCopy = s_Listeners;
-    for (ListenerSet::iterator it = listenersCopy.begin(); it != listenersCopy.end(); ++it)
+    ListenerSet::iterator end = listenersCopy.end();
+    for (ListenerSet::iterator it = listenersCopy.begin(); it != end; ++it)
         (**it).exceptionWasRaised(webView, frame, sourceID, lineNumber, webFrame);
 
     suspendProcessIfPaused();
@@ -334,3 +346,16 @@ HRESULT STDMETHODCALLTYPE WebScriptDebugServer::exceptionWasRaised(
     return S_OK;
 }
 
+HRESULT STDMETHODCALLTYPE WebScriptDebugServer::serverDidDie()
+{
+    s_dying = true;
+
+    ListenerSet listenersCopy = s_Listeners;
+    ListenerSet::iterator end = listenersCopy.end();
+    for (ListenerSet::iterator it = listenersCopy.begin(); it != end; ++it) {
+        (**it).serverDidDie();
+        s_Listeners.remove((*it).get());
+    }
+
+    return S_OK;
+}

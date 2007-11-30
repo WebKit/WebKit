@@ -125,13 +125,14 @@ public:
         /* [in] */ int lineNumber,
         /* [in] */ IWebFrame*);
 
+    virtual HRESULT STDMETHODCALLTYPE serverDidDie();
+
     void suspendProcessIfPaused();
     static unsigned listenerCount();
 
 private:
     bool m_paused;
     bool m_step;
-    bool m_sharedInstance;
 
     ULONG m_refCount;
 };

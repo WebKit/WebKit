@@ -6,6 +6,7 @@ EXPORTS
         DllRegisterServer   PRIVATE
         DllUnregisterServer PRIVATE
         RunAsLocalServer    PRIVATE
+        LocalServerDidDie   PRIVATE
         JSCheckScriptSyntax
         JSClassCreate
         JSClassRelease

@@ -111,13 +111,14 @@ public:
         /* [in] */ int lineNumber,
         /* [in] */ IWebFrame*);
 
+    virtual HRESULT STDMETHODCALLTYPE serverDidDie();
+
     // Stack & Variables
     IWebScriptCallFrame* currentFrame() const;
     COMPtr<IWebScriptCallFrame> getCallerFrame(int callFrame) const;
 
 private:
     bool m_serverConnected;
-    std::wstring m_currentServerName;
 
     COMPtr<IWebScriptCallFrame> m_currentFrame;
     COMPtr<IWebScriptDebugServer> m_server;

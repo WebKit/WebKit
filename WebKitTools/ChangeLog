@@ -1,8 +1,26 @@
+2007-11-29  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Sam.
+
+        - <rdar://5618976> Drosera: should listen for the WebScriptDebugServer
+        dying and vice versa.
+        - This fix will allow Drosera and Safari to reconnect if either of them
+        closes correctly, but does not fix the case where one of them dies
+        silently.
+
+        * Drosera/win/ServerConnection.cpp:
+        (ServerConnection::attemptToCreateServerConnection): Added a safety
+        check, because it's possilbe to try to connect to a server that's dying.
+        (ServerConnection::serverDidDie): Implemented. This resets Drosera when
+        the server has died.
+        * Drosera/win/ServerConnection.h: Added the new function and removed
+        an unnecessary member.
+
 2007-11-29  Anders Carlsson  <andersca@apple.com>
 
         * DumpRenderTree/win/DumpRenderTree.vcproj:
         Add shlwapi.lib to all configurations.
-        
+
 2007-11-29  Kevin McCullough  <kmccullough@apple.com>
 
         - Build fix.  Added additional includes for VS Express to the Release

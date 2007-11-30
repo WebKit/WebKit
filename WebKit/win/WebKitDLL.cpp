@@ -31,6 +31,7 @@
 #include "ProgIDMacros.h"
 #include "WebKit.h"
 #include "WebKitClassFactory.h"
+#include "WebScriptDebugServer.h"
 #include "resource.h"
 #pragma warning( push, 0 )
 #include <WebCore/COMPtr.h>
@@ -257,12 +258,18 @@ STDAPI DllRegisterServer(void)
     return hr;
 }
 
-STDAPI RunAsLocalServer(void)
+STDAPI RunAsLocalServer()
 {
     DWORD reg;
     COMPtr<IUnknown> classFactory;
     DllGetClassObject(CLSID_WebScriptDebugServer, IID_IUnknown, (void**)&classFactory);
     CoRegisterClassObject(CLSID_WebScriptDebugServer, classFactory.get(), CLSCTX_LOCAL_SERVER, REGCLS_MULTIPLEUSE, &reg);
+    return 0;
+}
+
+STDAPI LocalServerDidDie()
+{
+    WebScriptDebugServer::sharedWebScriptDebugServer()->serverDidDie();
     return 0;
 }
 

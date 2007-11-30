@@ -113,7 +113,7 @@ void DebuggerDocument::getPlatformCurrentFunctionStack(JSContextRef context, Vec
 
 void DebuggerDocument::getPlatformLocalScopeVariableNamesForCallFrame(JSContextRef context, int callFrame, Vector<JSValueRef>& variableNames)
 {
-    // FIXME: Move the retrieval of local variables into IWebScriptCallFrame to reduce the number of RPCs and simplify the code.
+    // FIXME: <rdar://5619005> Move the retrieval of local variables into IWebScriptCallFrame to reduce the number of RPCs and simplify the code.
     COMPtr<IWebScriptCallFrame> cframe = m_server->getCallerFrame(callFrame);
     if (!cframe)
         return;

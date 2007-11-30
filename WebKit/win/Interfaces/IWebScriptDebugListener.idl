@@ -75,4 +75,5 @@ interface IWebScriptDebugListener : IUnknown
     HRESULT willExecuteStatement([in] IWebView* view, [in] IWebScriptCallFrame* frame, [in] int sourceID, [in] int lineNumber, [in] IWebFrame* forWebFrame);
     HRESULT willLeaveCallFrame([in] IWebView* view, [in] IWebScriptCallFrame* frame, [in] int sourceID, [in] int lineNumber, [in] IWebFrame* forWebFrame);
     HRESULT exceptionWasRaised([in] IWebView* view, [in] IWebScriptCallFrame* frame, [in] int sourceID, [in] int lineNumber, [in] IWebFrame* forWebFrame);
+    HRESULT serverDidDie();
 }

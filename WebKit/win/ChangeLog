@@ -1,3 +1,32 @@
+2007-11-29  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Sam.
+
+        - <rdar://5618976> Drosera: should listen for the WebScriptDebugServer
+        dying and vice versa.
+
+        * Interfaces/IWebScriptDebugListener.idl: Added the new function to the
+        interface.
+        * WebKit.vcproj/WebKit.def: Added the new function to the def file so
+        Safari can tell WebKit when the server is dying.
+        * WebKit.vcproj/WebKit_debug.def: Ditto.
+        * WebKitDLL.cpp: Added the new function for Safari to call.
+        (RunAsLocalServer):
+        (LocalServerDidDie):
+        * WebScriptDebugServer.cpp: 
+        (WebScriptDebugServer::WebScriptDebugServer): Removed unused member.
+        (WebScriptDebugServer::sharedWebScriptDebugServer): Ditto, and added new
+        member to prevent adding or removing listeners when the server is dying.
+        (WebScriptDebugServer::addListener): Don't let new listeners be added
+        when the server is dying.
+        (WebScriptDebugServer::removeListener): Don't let listeners remove
+        themselves when the server is dying.  The server will remove them all
+        anyways.
+        (WebScriptDebugServer::serverDidDie): Notify all listeners that the
+        server is dying and remove all listeners.
+        * WebScriptDebugServer.h: Added the new method and removed an unused
+        member.
+
 2007-11-29  Brady Eidson  <beidson@apple.com>
 
         Build fix that works...?
