@@ -1,3 +1,14 @@
+2007-11-29  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Reviewed by Adam.
+
+        Part of <rdar://problem/5506522> Seed: cannot type into text box in
+        Facebook, don't see plugin content (Adobe Flash)
+
+        * plugins/win/PluginViewWin.cpp:
+        (WebCore::PluginViewWin::handleMouseEvent): Focus the plugin's parent
+        frame  
+
 2007-11-30  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Not reviewed. Trying to fix gtk/qt/wx build. (I expected problems because of the moves)

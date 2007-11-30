@@ -44,6 +44,7 @@
 #include "MouseEvent.h"
 #include "NotImplemented.h"
 #include "Page.h"
+#include "FocusController.h"
 #include "PlatformMouseEvent.h"
 #include "PluginPackageWin.h"
 #include "kjs_binding.h"
@@ -519,12 +520,13 @@ void PluginViewWin::handleMouseEvent(MouseEvent* event)
             }
     }
     else if (event->type() == mousedownEvent) {
+        // Focus the plugin
+        if (Page* page = m_parentFrame->page())
+            page->focusController()->setFocusedFrame(m_parentFrame);
+        m_parentFrame->document()->setFocusedNode(m_element);
         switch (event->button()) {
             case 0:
                 npEvent.event = WM_LBUTTONDOWN;
-
-                // Focus the plugin
-                m_parentFrame->document()->setFocusedNode(m_element);
                 break;
             case 1:
                 npEvent.event = WM_MBUTTONDOWN;
