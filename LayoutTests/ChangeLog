@@ -1,3 +1,20 @@
+2007-11-29  Holger Hans Peter Freyther  <holger.freyther@trolltech.com>
+
+        Reviewed by Maciej.
+
+        * Fix fast/events/mousedown_in_scrollbar.html
+        * This test used to crash in PlatformScrollbarQt::mouse*Event due parent() returning 0.
+        * Extend the current check that the scrollbar in the mev can be go away.
+        This happens if we destroy a RenderLayer as the result of a click. In the
+        case of Qt we can have this scrollbar in m_lastScrollbarUnderMouse. The RenderLayer
+        is the ScrollbarClient, m_lastScrollbarUnderMouse is a RefPtr and keeps the
+        last reference. When calling into this scrollbar the m_client pointer is a dangling pointer.
+        We extend the check to set m_lastScrollbarUnderMouse back to zero when it was the
+        scrollbar in the old mev and is gone in the new one.
+        * This happens only on the Qt port because we send more/different move events.
+
+        * platform/qt/Skipped:
+
 2007-11-29  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Mitz.
