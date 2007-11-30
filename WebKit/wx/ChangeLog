@@ -1,5 +1,13 @@
 2007-11-30  Kevin Ollivier  <kevino@theolliviers.com>
 
+        Fix method signatures to be members of ClientChromeWx class.
+
+        * WebKitSupport/ChromeClientWx.cpp:
+        (WebCore::ChromeClientWx::requestQuotaIncreaseForNewDatabase):
+        (WebCore::ChromeClientWx::requestQuotaIncreaseForDatabaseOperation):
+
+2007-11-30  Kevin Ollivier  <kevino@theolliviers.com>
+
         Build fix. Add platform/text to includes for targets that
         need WebCore headers.
 
