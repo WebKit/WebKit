@@ -27,6 +27,7 @@
 .objc_class_name_WebRenderNode
 .objc_class_name_WebResource
 .objc_class_name_WebScriptCallFrame
+.objc_class_name_WebSecurityOrigin
 .objc_class_name_WebStringTruncator
 .objc_class_name_WebURLsWithTitles
 .objc_class_name_WebView
