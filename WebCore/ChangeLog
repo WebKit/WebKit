@@ -1,3 +1,13 @@
+2007-11-30  Simon Hausmann  <hausmann@webkit.org>
+
+        Reviewed by Adam Roben.
+
+        Fix the build with DATABASE=0.
+
+        * page/Settings.cpp:
+        (WebCore::Settings::setDefaultDatabaseOriginQuota):
+        (WebCore::Settings::defaultDatabaseOriginQuota):
+
 2007-11-30  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Rubber stamped by Darin.
