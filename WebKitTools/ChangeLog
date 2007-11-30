@@ -1,5 +1,12 @@
 2007-11-30  Adam Roben  <aroben@apple.com>
 
+        Another build fix
+
+        * Drosera/win/Drosera.vcproj/Drosera.vcproj: Use the right suffix for
+        WebKit.lib.
+
+2007-11-30  Adam Roben  <aroben@apple.com>
+
         Debug build fix
 
         * Drosera/win/Drosera.vcproj/Drosera.vcproj: Added a Debug_Internal

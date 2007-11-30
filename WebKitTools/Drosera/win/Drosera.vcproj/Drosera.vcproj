@@ -74,7 +74,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				LinkLibraryDependencies="false"
-				AdditionalDependencies="CoreFoundation$(LibraryConfigSuffix).lib CoreGraphics$(LibraryConfigSuffix).lib WebKit$(WebKitConfigSuffix).lib WebKitGUID$(WebKitConfigSuffix).lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib"
+				AdditionalDependencies="CoreFoundation$(LibraryConfigSuffix).lib CoreGraphics$(LibraryConfigSuffix).lib WebKit$(WebKitDLLConfigSuffix).lib WebKitGUID$(WebKitConfigSuffix).lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib"
 				OutputFile="$(OutDir)\$(ProjectName)$(ConfigSuffix).exe"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="&quot;$(WebKitOutputDir)\lib&quot;;&quot;$(WebKitLibrariesDir)\lib&quot;"
@@ -169,7 +169,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				LinkLibraryDependencies="false"
-				AdditionalDependencies="CoreFoundation$(LibraryConfigSuffix).lib CoreGraphics$(LibraryConfigSuffix).lib WebKit$(WebKitConfigSuffix).lib WebKitGUID$(WebKitConfigSuffix).lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib"
+				AdditionalDependencies="CoreFoundation$(LibraryConfigSuffix).lib CoreGraphics$(LibraryConfigSuffix).lib WebKit$(WebKitDLLConfigSuffix).lib WebKitGUID$(WebKitConfigSuffix).lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib"
 				OutputFile="$(OutDir)\$(ProjectName)$(ConfigSuffix).exe"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="&quot;$(WebKitOutputDir)\lib&quot;;&quot;$(WebKitLibrariesDir)\lib&quot;"
@@ -266,7 +266,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				LinkLibraryDependencies="false"
-				AdditionalDependencies="CoreFoundation$(LibraryConfigSuffix).lib CoreGraphics$(LibraryConfigSuffix).lib WebKit$(WebKitConfigSuffix).lib WebKitGUID$(WebKitConfigSuffix).lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib"
+				AdditionalDependencies="CoreFoundation$(LibraryConfigSuffix).lib CoreGraphics$(LibraryConfigSuffix).lib WebKit$(WebKitDLLConfigSuffix).lib WebKitGUID$(WebKitConfigSuffix).lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib"
 				OutputFile="$(OutDir)\$(ProjectName)$(ConfigSuffix).exe"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="&quot;$(WebKitOutputDir)\lib&quot;;&quot;$(WebKitLibrariesDir)\lib&quot;"
