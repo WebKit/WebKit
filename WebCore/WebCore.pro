@@ -955,6 +955,7 @@ gtk-port {
     SOURCES += \
         platform/graphics/StringTruncator.cpp \
         platform/text/TextCodecICU.cpp \
+        platform/text/TextBoundariesICU.cpp \
         platform/text/TextBreakIteratorICU.cpp \
         page/gtk/EventHandlerGtk.cpp \
         page/gtk/FrameGtk.cpp \
@@ -990,7 +991,6 @@ gtk-port {
         platform/gtk/SoundGtk.cpp \
         platform/gtk/SystemTimeGtk.cpp \
         platform/gtk/TemporaryLinkStubs.cpp \
-        platform/TextBoundariesICU.cpp \
         platform/gtk/TextBreakIteratorInternalICUGtk.cpp \
         platform/gtk/ThreadingGtk.cpp \
         platform/gtk/WheelEventGtk.cpp \
