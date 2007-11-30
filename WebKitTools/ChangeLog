@@ -1,3 +1,15 @@
+2007-11-29  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Adam.
+
+        - Removed some unnecessary functions and changed an unused return type. 
+
+        * Drosera/win/DebuggerClient.cpp:
+        (registerConsoleClass):
+        * Drosera/win/DebuggerClient.h:
+        * Drosera/win/Drosera.cpp:
+        (registerDroseraClass):
+
 2007-11-28  Alp Toker  <alp@atoker.com>
 
         Reviewed by Timothy Hatcher.

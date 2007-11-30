@@ -51,7 +51,7 @@ static HINSTANCE hInst;
 
 BSTR cfStringToBSTR(CFStringRef cfstr);
 
-ATOM registerDroseraClass(HINSTANCE hInstance);
+void registerDroseraClass(HINSTANCE hInstance);
 LRESULT CALLBACK droseraWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 INT_PTR CALLBACK aboutWndProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
 
@@ -114,7 +114,7 @@ void launchConsoleWindow()
 
 ////////////////// Setup Windows Specific Interface //////////////////
 
-ATOM registerDroseraClass(HINSTANCE hInstance)
+void registerDroseraClass(HINSTANCE hInstance)
 {
     WNDCLASSEX wcex;
 
@@ -132,7 +132,7 @@ ATOM registerDroseraClass(HINSTANCE hInstance)
     wcex.lpszClassName = szWindowClass;
     wcex.hIconSm       = LoadIcon(wcex.hInstance, MAKEINTRESOURCE(IDI_SMALL));
 
-    return RegisterClassEx(&wcex);
+    RegisterClassEx(&wcex);
 }
 
 //Processes messages for the main window.
