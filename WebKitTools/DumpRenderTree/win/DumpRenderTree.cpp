@@ -583,6 +583,11 @@ fail:
     done = true;
 }
 
+static bool shouldLogFrameLoadDelegates(const char* pathOrURL)
+{
+    return strstr(pathOrURL, "loading/");
+}
+
 static void runTest(const char* pathOrURL)
 {
     static BSTR methodBStr = SysAllocString(TEXT("GET"));
@@ -614,6 +619,9 @@ static void runTest(const char* pathOrURL)
     done = false;
     topLoadingFrame = 0;
     timedOut = false;
+
+    if (shouldLogFrameLoadDelegates(pathOrURL))
+        layoutTestController->setDumpFrameLoadCallbacks(true);
 
     COMPtr<IWebHistory> history(Create, CLSID_WebHistory);
     if (history)
@@ -667,6 +675,9 @@ static void runTest(const char* pathOrURL)
         if (printSeparators)
             puts("#EOF");
     }
+
+    frame->stopLoading();
+
 exit:
     SysFreeString(urlBStr);
     delete ::layoutTestController;
@@ -886,6 +897,8 @@ int main(int argc, char* argv[])
     COMPtr<FrameLoadDelegate> frameLoadDelegate;
     frameLoadDelegate.adoptRef(new FrameLoadDelegate);
     if (FAILED(webView->setFrameLoadDelegate(frameLoadDelegate.get())))
+        return -1;
+    if (FAILED(viewPrivate->setFrameLoadDelegatePrivate(frameLoadDelegate.get())))
         return -1;
 
     policyDelegate = new PolicyDelegate();

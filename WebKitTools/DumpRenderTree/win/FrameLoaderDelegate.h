@@ -30,11 +30,12 @@
 #define FrameLoaderDelegate_h
 
 #include <WebKit/IWebFrameLoadDelegate.h>
+#include <WebKit/IWebFrameLoadDelegatePrivate.h>
 #include <wtf/OwnPtr.h>
 
 class GCController;
 
-class FrameLoadDelegate : public IWebFrameLoadDelegate {
+class FrameLoadDelegate : public IWebFrameLoadDelegate2, public IWebFrameLoadDelegatePrivate {
 public:
     FrameLoadDelegate();
     virtual ~FrameLoadDelegate();
@@ -58,7 +59,7 @@ public:
     virtual HRESULT STDMETHODCALLTYPE didFailProvisionalLoadWithError( 
         /* [in] */ IWebView *webView,
         /* [in] */ IWebError *error,
-        /* [in] */ IWebFrame *frame) { return E_NOTIMPL; } 
+        /* [in] */ IWebFrame *frame);
 
     virtual HRESULT STDMETHODCALLTYPE didCommitLoadForFrame( 
         /* [in] */ IWebView *webView,
@@ -100,12 +101,32 @@ public:
 
     virtual HRESULT STDMETHODCALLTYPE willCloseFrame( 
         /* [in] */ IWebView *webView,
-        /* [in] */ IWebFrame *frame) { return E_NOTIMPL; } 
+        /* [in] */ IWebFrame *frame);
 
     virtual HRESULT STDMETHODCALLTYPE windowScriptObjectAvailable( 
         /* [in] */ IWebView *sender,
         /* [in] */ JSContextRef context,
-        /* [in] */ JSObjectRef windowObject);
+        /* [in] */ JSObjectRef windowObject) { return E_NOTIMPL; }
+
+    // IWebFrameLoadDelegatePrivate
+    virtual HRESULT STDMETHODCALLTYPE didFinishDocumentLoadForFrame( 
+        /* [in] */ IWebView *sender,
+        /* [in] */ IWebFrame *frame);
+        
+    virtual HRESULT STDMETHODCALLTYPE didFirstLayoutInFrame( 
+        /* [in] */ IWebView *sender,
+        /* [in] */ IWebFrame *frame) { return E_NOTIMPL; } 
+        
+    virtual HRESULT STDMETHODCALLTYPE didHandleOnloadEventsForFrame( 
+        /* [in] */ IWebView *sender,
+        /* [in] */ IWebFrame *frame);
+
+    // IWebFrameLoadDelegate2
+    virtual /* [local] */ HRESULT STDMETHODCALLTYPE didClearWindowObject( 
+        /* [in] */ IWebView* webView,
+        /* [in] */ JSContextRef context,
+        /* [in] */ JSObjectRef windowObject,
+        /* [in] */ IWebFrame* frame);
 
 protected:
     void locationChangeDone(IWebError*, IWebFrame*);

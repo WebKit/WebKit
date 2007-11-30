@@ -1,3 +1,30 @@
+2007-11-29  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam.
+
+        <rdar://problem/5230478>
+        FrameLoadDelegate callbacks are not dumped in DRT.
+        
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (shouldLogFrameLoadDelegates):
+        (runTest):
+        (main):
+        * DumpRenderTree/win/FrameLoaderDelegate.cpp:
+        (BSTRtoString):
+        (descriptionSuitableForTestResult):
+        (FrameLoadDelegate::QueryInterface):
+        (FrameLoadDelegate::didStartProvisionalLoadForFrame):
+        (FrameLoadDelegate::didFailProvisionalLoadWithError):
+        (FrameLoadDelegate::didCommitLoadForFrame):
+        (FrameLoadDelegate::didFinishLoadForFrame):
+        (FrameLoadDelegate::willCloseFrame):
+        (FrameLoadDelegate::didClearWindowObject):
+        (FrameLoadDelegate::didFinishDocumentLoadForFrame):
+        (FrameLoadDelegate::didHandleOnloadEventsForFrame):
+        * DumpRenderTree/win/FrameLoaderDelegate.h:
+        (FrameLoadDelegate::windowScriptObjectAvailable):
+        (FrameLoadDelegate::didFirstLayoutInFrame):
+
 2007-11-29  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders.
