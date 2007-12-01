@@ -120,4 +120,6 @@ interface IWebViewPrivate : IUnknown
     HRESULT setInitialFocus([in] BOOL forward);
 
     HRESULT inspector([out, retval] IWebInspector**);
+
+    HRESULT clearUndoRedoOperations();
 }

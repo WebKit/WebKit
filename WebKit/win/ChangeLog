@@ -1,3 +1,15 @@
+2007-11-30  Ada Chan  <adachan@apple.com>
+
+        <rdar://problem/5621373> Added a way for the client to clear undo/redo
+        operations from a WebView.
+
+        Reviewed by Steve.
+
+        * Interfaces/IWebViewPrivate.idl:
+        * WebView.cpp:
+        (WebView::clearUndoRedoOperations):
+        * WebView.h:
+
 2007-11-29  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam.
