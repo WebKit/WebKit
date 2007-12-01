@@ -1,3 +1,13 @@
+2007-12-01  Darin Adler  <darin@apple.com>
+
+        - remove the empty directories
+
+        * ksvg2: Removed.
+        * ksvg2/css: Removed.
+        * ksvg2/events: Removed.
+        * ksvg2/misc: Removed.
+        * ksvg2/scripts: Removed.
+
 2007-12-01  Julien Chaffraix  <julien.chaffraix@gmail.com>
 
         Bug 16189: XMLHttpRequest::setRequestHeader() should not set certain headers
