@@ -11,9 +11,11 @@
 
     req.setRequestHeader("ACCEPT-CHARSET", "foobar");
     req.setRequestHeader("ACCEPT-ENCODING", "foobar");
+    req.setRequestHeader("CONNECTION", "foobar");
     req.setRequestHeader("CONTENT-LENGTH", "123456");
-    req.setRequestHeader("EXPECT", "100-continue");
+    req.setRequestHeader("CONTENT-TRANSFER-ENCODING", "foobar");
     req.setRequestHeader("DATE", "foobar");
+    req.setRequestHeader("EXPECT", "100-continue");
     req.setRequestHeader("HOST", "foobar");
     req.setRequestHeader("KEEP-ALIVE", "foobar");
     req.setRequestHeader("REFERER", "foobar");
@@ -22,6 +24,10 @@
     req.setRequestHeader("TRANSFER-ENCODING", "foobar");
     req.setRequestHeader("UPGRADE", "foobar");
     req.setRequestHeader("VIA", "foobar");
+
+    req.setRequestHeader("Proxy-", "foobar");
+    req.setRequestHeader("Proxy-test", "foobar");
+    req.setRequestHeader("PROXY-FOO", "foobar");
 
     try {
         req.send("");

@@ -1,3 +1,14 @@
+2007-12-01  Julien Chaffraix  <julien.chaffraix@gmail.com>
+
+        Bug 16189: XMLHttpRequest::setRequestHeader() should not set certain headers
+
+        Reviewed by Darin Adler.
+
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::canSetRequestHeader):
+
+        Test: http/tests/xmlhttprequest/set-dangerous-headers.html
+
 2007-12-01  Rahul Abrol  <ra5ul@comcast.net>
 
         Reviewed by Adam Roben.

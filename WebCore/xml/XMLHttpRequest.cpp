@@ -92,13 +92,16 @@ static void removeFromRequestsByDocument(Document* doc, XMLHttpRequest* req)
 static bool canSetRequestHeader(const String& name)
 {
     static HashSet<String, CaseInsensitiveHash<String> > forbiddenHeaders;
+    static String proxyString("proxy-");
     
     if (forbiddenHeaders.isEmpty()) {
         forbiddenHeaders.add("accept-charset");
         forbiddenHeaders.add("accept-encoding");
+        forbiddenHeaders.add("connection");
         forbiddenHeaders.add("content-length");
-        forbiddenHeaders.add("expect");
+        forbiddenHeaders.add("content-transfer-encoding");
         forbiddenHeaders.add("date");
+        forbiddenHeaders.add("expect");
         forbiddenHeaders.add("host");
         forbiddenHeaders.add("keep-alive");
         forbiddenHeaders.add("referer");
@@ -109,7 +112,7 @@ static bool canSetRequestHeader(const String& name)
         forbiddenHeaders.add("via");
     }
     
-    return !forbiddenHeaders.contains(name);
+    return !forbiddenHeaders.contains(name) && !name.startsWith(proxyString, false);
 }
 
 // Determines if a string is a valid token, as defined by

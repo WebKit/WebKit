@@ -1,3 +1,12 @@
+2007-12-01  Julien Chaffraix  <julien.chaffraix@gmail.com>
+
+        Bug 16189: XMLHttpRequest::setRequestHeader() should not set certain headers
+
+        Reviewed by Darin Adler.
+
+        * http/tests/xmlhttprequest/set-dangerous-headers-expected.txt:
+        * http/tests/xmlhttprequest/set-dangerous-headers.html: Added tests for new headers
+
 2007-12-01  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.
