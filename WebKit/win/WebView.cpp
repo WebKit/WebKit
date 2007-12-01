@@ -2709,7 +2709,7 @@ HRESULT STDMETHODCALLTYPE WebView::generateSelectionImage(BOOL forceWhiteText, O
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE WebView::selectionImageRect(RECT* rc)
+HRESULT STDMETHODCALLTYPE WebView::selectionRect(RECT* rc)
 {
     WebCore::Frame* frame = m_page->focusController()->focusedOrMainFrame();
 

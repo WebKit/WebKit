@@ -577,7 +577,7 @@ public:
     virtual HRESULT STDMETHODCALLTYPE generateSelectionImage(
         BOOL forceWhiteText, OLE_HANDLE* hBitmap);
 
-    virtual HRESULT STDMETHODCALLTYPE selectionImageRect(
+    virtual HRESULT STDMETHODCALLTYPE selectionRect(
         RECT* rc);
     
     virtual HRESULT STDMETHODCALLTYPE DragEnter(

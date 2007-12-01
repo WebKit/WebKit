@@ -99,7 +99,7 @@ interface IWebViewPrivate : IUnknown
     HRESULT markAllMatchesForText([in] BSTR search, [in] BOOL caseSensitive, [in] BOOL highlight, [in] UINT limit, [out] UINT* matches);
     HRESULT unmarkAllTextMatches();
     HRESULT rectsForTextMatches([out]IEnumTextMatches** pmatches);
-    HRESULT selectionImageRect([in, out] RECT* rc);
+    HRESULT selectionRect([in, out] RECT* rc);
     HRESULT generateSelectionImage(BOOL forceWhiteText, [out, retval] OLE_HANDLE* hBitmap);
 
     HRESULT canHandleRequest([in] IWebURLRequest* request, [out, retval] BOOL* result);

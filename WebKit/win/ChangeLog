@@ -1,3 +1,14 @@
+2007-12-01  Sam Weinig  <sam@webkit.org>
+
+        Rename IWebViewPrivate::selectionImageRect to IWebViewPrivate::selectionRect.
+
+        Rubber stamped by Adam Roben.
+
+        * Interfaces/IWebViewPrivate.idl:
+        * WebView.cpp:
+        (WebView::selectionRect):
+        * WebView.h:
+
 2007-11-30  Ada Chan  <adachan@apple.com>
 
         <rdar://problem/5621373> Added a way for the client to clear undo/redo
