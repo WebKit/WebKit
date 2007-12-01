@@ -14,15 +14,16 @@
         <li><a href="/building/run.html">Running WebKit</a></li>
         <li><a href="/building/debug.html">Debugging WebKit</a></li>
         <li><a href="/coding/contributing.html">Contributing Code</a></li>
+        <li><a href="/coding/commit-review-policy.html">Commit and Review Policy</a></li>
 
         <li class="subtitle">Documentation</li>
 
+        <li><a href="http://trac.webkit.org/projects/webkit/wiki">Wiki</a></li>
         <li><a href="/projects/">Projects</a></li>
         <li><a href="/coding/coding-style.html">Code Style Guidelines</a></li>
         <li><a href="http://trac.webkit.org/projects/webkit/wiki/Drosera">Drosera</a></li>
         <li><a href="http://trac.webkit.org/projects/webkit/wiki/WebDevelopers">Web developer resources</a></li>
-        <li><a href='/docs/hierarchy.html'>DOM interfaces</a></li>
-        <li><a href="http://trac.webkit.org/projects/webkit/wiki">Wiki</a></li>
+        <li><a href="/docs/hierarchy.html">DOM interfaces</a></li>
 
         <li class="subtitle">Testing</li>
 
