@@ -45,6 +45,10 @@
 #include <limits.h>
 #include <signal.h>
 
+#if defined(__GLIBC__)
+#include <execinfo.h>
+#endif
+
 Q_IMPORT_PLUGIN(testplugin)
 
 void messageHandler(QtMsgType type, const char *message)
@@ -56,9 +60,36 @@ void messageHandler(QtMsgType type, const char *message)
     // do nothing
 }
 
+QString get_backtrace() {
+    QString s;
+
+#if defined(__GLIBC__)
+    void* array[256];
+    size_t size; /* number of stack frames */
+
+    size = backtrace(array, 256);
+
+    if (!size)
+        return s;
+
+    char** strings = backtrace_symbols(array, size);
+    for (int i = 0; i < size; ++i) {
+        s += QString::number(i) +
+             QLatin1String(": ") +
+             QLatin1String(strings[i]) + QLatin1String("\n");
+    }
+
+    if (strings)
+        free (strings);
+#endif
+
+    return s;
+}
+
 static void crashHandler(int sig)
 {
     fprintf(stderr, "%s\n", strsignal(sig));
+    fprintf(stderr, "%s\n", get_backtrace().toLatin1().constData());
     exit(128 + sig);
 }
 

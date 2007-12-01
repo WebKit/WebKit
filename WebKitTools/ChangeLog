@@ -1,3 +1,14 @@
+2007-12-01  Adam Treat  <treat@kde.org>
+
+        Reviewed by Simon.
+
+        * Don't hide symbols when in Debug mode
+        * On Linux (glibc) provide a backtrace in the test output for debugging purposes
+
+
+        * DumpRenderTree/qt/main.cpp:
+        (messageHandler):
+
 2007-11-30  Alp Toker  <alp@atoker.com>
 
         Reviewed by Adam Roben.
