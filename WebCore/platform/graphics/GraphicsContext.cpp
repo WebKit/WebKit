@@ -28,7 +28,6 @@
 
 #include "BidiResolver.h"
 #include "Font.h"
-#include "FontStyle.h"
 
 using namespace std;
 
@@ -243,26 +242,21 @@ void GraphicsContext::drawImage(Image* image, const IntRect& dest, const IntRect
 
 void GraphicsContext::drawText(const TextRun& run, const IntPoint& point, int from, int to)
 {
-    drawText(run, point, FontStyle(), from, to);
-}
-
-void GraphicsContext::drawText(const TextRun& run, const IntPoint& point, const FontStyle& style, int from, int to)
-{
     if (paintingDisabled())
         return;
     
-    font().drawText(this, run, style, point, from, to);
+    font().drawText(this, run, point, from, to);
 }
 
-void GraphicsContext::drawBidiText(const TextRun& run, const IntPoint& point, const FontStyle& style)
+void GraphicsContext::drawBidiText(const TextRun& run, const IntPoint& point)
 {
     if (paintingDisabled())
         return;
 
     BidiResolver<TextRunIterator, BidiCharacterRun> bidiResolver;
-    WTF::Unicode::Direction paragraphDirection = style.ltr() ? WTF::Unicode::LeftToRight : WTF::Unicode::RightToLeft;
+    WTF::Unicode::Direction paragraphDirection = run.ltr() ? WTF::Unicode::LeftToRight : WTF::Unicode::RightToLeft;
 
-    bidiResolver.setStatus(BidiStatus(paragraphDirection, paragraphDirection, paragraphDirection, new BidiContext(style.ltr() ? 0 : 1, paragraphDirection, style.directionalOverride())));
+    bidiResolver.setStatus(BidiStatus(paragraphDirection, paragraphDirection, paragraphDirection, new BidiContext(run.ltr() ? 0 : 1, paragraphDirection, run.directionalOverride())));
 
     bidiResolver.createBidiRunsForLine(TextRunIterator(&run, 0), TextRunIterator(&run, run.length()));
 
@@ -272,29 +266,29 @@ void GraphicsContext::drawBidiText(const TextRun& run, const IntPoint& point, co
     FloatPoint currPoint = point;
     BidiCharacterRun* bidiRun = bidiResolver.firstRun();
     while (bidiRun) {
-        FontStyle subrunStyle(style);
-        subrunStyle.setRTL(bidiRun->level() % 2);
-        subrunStyle.setDirectionalOverride(bidiRun->dirOverride(false));
 
-        TextRun subrun(run.data(bidiRun->start()), bidiRun->stop() - bidiRun->start());
+        TextRun subrun = run;
+        subrun.setText(run.data(bidiRun->start()), bidiRun->stop() - bidiRun->start());
+        subrun.setRTL(bidiRun->level() % 2);
+        subrun.setDirectionalOverride(bidiRun->dirOverride(false));
 
-        font().drawText(this, subrun, subrunStyle, currPoint);
+        font().drawText(this, subrun, currPoint);
 
         bidiRun = bidiRun->next();
         // FIXME: Have Font::drawText return the width of what it drew so that we don't have to re-measure here.
         if (bidiRun)
-            currPoint.move(font().floatWidth(subrun, subrunStyle), 0.f);
+            currPoint.move(font().floatWidth(subrun), 0.f);
     }
 
     bidiResolver.deleteRuns();
 }
 
-void GraphicsContext::drawHighlightForText(const TextRun& run, const IntPoint& point, int h, const FontStyle& style, const Color& backgroundColor, int from, int to)
+void GraphicsContext::drawHighlightForText(const TextRun& run, const IntPoint& point, int h, const Color& backgroundColor, int from, int to)
 {
     if (paintingDisabled())
         return;
 
-    fillRect(font().selectionRectForText(run, style, point, h, from, to), backgroundColor);
+    fillRect(font().selectionRectForText(run, point, h, from, to), backgroundColor);
 }
 
 void GraphicsContext::initFocusRing(int width, int offset)

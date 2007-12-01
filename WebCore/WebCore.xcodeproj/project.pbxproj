@@ -2971,7 +2971,6 @@
 		B24055650B5BE640002A28C0 /* DOMSVGElementInstanceInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = B24055630B5BE640002A28C0 /* DOMSVGElementInstanceInternal.h */; };
 		B24055660B5BE640002A28C0 /* DOMSVGElementInstanceListInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = B24055640B5BE640002A28C0 /* DOMSVGElementInstanceListInternal.h */; };
 		B25DFAAF0B2E2929000E6510 /* JSSVGMatrixCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B25DFAAE0B2E2929000E6510 /* JSSVGMatrixCustom.cpp */; };
-		B25E96BE0D00975100CFD296 /* FontStyle.h in Headers */ = {isa = PBXBuildFile; fileRef = B25E96BD0D00975100CFD296 /* FontStyle.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		B26554EA0B80D74900A50EC3 /* RenderSVGTextPath.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B26554E80B80D74900A50EC3 /* RenderSVGTextPath.cpp */; };
 		B26554EB0B80D74900A50EC3 /* RenderSVGTextPath.h in Headers */ = {isa = PBXBuildFile; fileRef = B26554E90B80D74900A50EC3 /* RenderSVGTextPath.h */; };
 		B266CD4D0C3AEC6500EB08D2 /* JSSVGException.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B266CD4B0C3AEC6500EB08D2 /* JSSVGException.cpp */; };
@@ -6960,7 +6959,6 @@
 		B24055630B5BE640002A28C0 /* DOMSVGElementInstanceInternal.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DOMSVGElementInstanceInternal.h; sourceTree = "<group>"; };
 		B24055640B5BE640002A28C0 /* DOMSVGElementInstanceListInternal.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DOMSVGElementInstanceListInternal.h; sourceTree = "<group>"; };
 		B25DFAAE0B2E2929000E6510 /* JSSVGMatrixCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSSVGMatrixCustom.cpp; sourceTree = "<group>"; };
-		B25E96BD0D00975100CFD296 /* FontStyle.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = FontStyle.h; sourceTree = "<group>"; };
 		B26554E80B80D74900A50EC3 /* RenderSVGTextPath.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = RenderSVGTextPath.cpp; sourceTree = "<group>"; };
 		B26554E90B80D74900A50EC3 /* RenderSVGTextPath.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = RenderSVGTextPath.h; sourceTree = "<group>"; };
 		B266CD4B0C3AEC6500EB08D2 /* JSSVGException.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSSVGException.cpp; sourceTree = "<group>"; };
@@ -11007,7 +11005,6 @@
 		B2A015910AF6CD53006BCE0E /* graphics */ = {
 			isa = PBXGroup;
 			children = (
-				B25E96BD0D00975100CFD296 /* FontStyle.h */,
 				B23540F00D00782E002382FA /* StringTruncator.cpp */,
 				B23540F10D00782E002382FA /* StringTruncator.h */,
 				B2C3DA4F0D006CD600EF6F26 /* Font.cpp */,
@@ -13923,7 +13920,6 @@
 				B2C3DA6E0D006CD600EF6F26 /* GlyphPageTreeNode.h in Headers */,
 				B2C3DA700D006CD600EF6F26 /* GlyphWidthMap.h in Headers */,
 				B23540F30D00782E002382FA /* StringTruncator.h in Headers */,
-				B25E96BE0D00975100CFD296 /* FontStyle.h in Headers */,
 				B2AFFC7E0D00A5C10030074D /* FontCustomPlatformData.h in Headers */,
 				B2AFFC810D00A5C10030074D /* FontPlatformData.h in Headers */,
 				B2AFFC940D00A5DF0030074D /* ShapeArabic.h in Headers */,

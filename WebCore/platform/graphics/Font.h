@@ -46,29 +46,76 @@ class GlyphBuffer;
 class GlyphPageTreeNode;
 class GraphicsContext;
 class IntPoint;
-class FontStyle;
 
 struct GlyphData;
 
 class TextRun {
 public:
-    TextRun(const UChar* c, int len)
-    :m_characters(c), m_len(len)
-    {}
+    TextRun(const UChar* c, int len, bool allowTabs = false, int xpos = 0, int padding = 0, bool rtl = false, bool directionalOverride = false,
+              bool applyRunRounding = true, bool applyWordRounding = true)
+        : m_characters(c)
+        , m_len(len)
+        , m_allowTabs(allowTabs)
+        , m_xpos(xpos)
+        , m_padding(padding)
+        , m_rtl(rtl)
+        , m_directionalOverride(directionalOverride)
+        , m_applyRunRounding(applyRunRounding)
+        , m_applyWordRounding(applyWordRounding)
+        , m_disableSpacing(false)
+    {
+    }
 
-    TextRun(const String& s)
-    :m_characters(s.characters()), m_len(s.length())
-    {}
+    TextRun(const String& s, bool allowTabs = false, int xpos = 0, int padding = 0, bool rtl = false, bool directionalOverride = false,
+              bool applyRunRounding = true, bool applyWordRounding = true)
+        : m_characters(s.characters())
+        , m_len(s.length())
+        , m_allowTabs(allowTabs)
+        , m_xpos(xpos)
+        , m_padding(padding)
+        , m_rtl(rtl)
+        , m_directionalOverride(directionalOverride)
+        , m_applyRunRounding(applyRunRounding)
+        , m_applyWordRounding(applyWordRounding)
+        , m_disableSpacing(false)
+    {
+    }
 
     const UChar operator[](int i) const { return m_characters[i]; }
     const UChar* data(int i) const { return &m_characters[i]; }
 
     const UChar* characters() const { return m_characters; }
     int length() const { return m_len; }
-   
+
+    void setText(const UChar* c, int len) { m_characters = c; m_len = len; }
+
+    bool allowTabs() const { return m_allowTabs; }
+    int xPos() const { return m_xpos; }
+    int padding() const { return m_padding; }
+    bool rtl() const { return m_rtl; }
+    bool ltr() const { return !m_rtl; }
+    bool directionalOverride() const { return m_directionalOverride; }
+    bool applyRunRounding() const { return m_applyRunRounding; }
+    bool applyWordRounding() const { return m_applyWordRounding; }
+    bool spacingDisabled() const { return m_disableSpacing; }
+
+    void disableSpacing() { m_disableSpacing = true; }
+    void disableRoundingHacks() { m_applyRunRounding = m_applyWordRounding = false; }
+    void setRTL(bool b) { m_rtl = b; }
+    void setDirectionalOverride(bool override) { m_directionalOverride = override; }
+    
 private:
     const UChar* m_characters;
     int m_len;
+
+    bool m_allowTabs;
+    int m_xpos;
+    int m_padding;
+    bool m_rtl;
+    bool m_directionalOverride;
+    bool m_applyRunRounding;
+    bool m_applyWordRounding;
+    bool m_disableSpacing;
 };
 
 class Font {
@@ -95,15 +142,13 @@ public:
     
     void update(PassRefPtr<FontSelector>) const;
 
-    void drawText(GraphicsContext*, const TextRun&, const FontStyle&, const FloatPoint&, int from = 0, int to = -1) const;
+    void drawText(GraphicsContext*, const TextRun&, const FloatPoint&, int from = 0, int to = -1) const;
 
-    int width(const TextRun&, const FontStyle&) const;
     int width(const TextRun&) const;
-    float floatWidth(const TextRun&, const FontStyle&) const;
     float floatWidth(const TextRun&) const;
     
-    int offsetForPosition(const TextRun&, const FontStyle&, int position, bool includePartialGlyphs) const;
-    FloatRect selectionRectForText(const TextRun&, const FontStyle&, const IntPoint&, int h, int from = 0, int to = -1) const;
+    int offsetForPosition(const TextRun&, int position, bool includePartialGlyphs) const;
+    FloatRect selectionRectForText(const TextRun&, const IntPoint&, int h, int from = 0, int to = -1) const;
 
     bool isSmallCaps() const { return m_fontDescription.smallCaps(); }
 
@@ -150,16 +195,16 @@ public:
 
 private:
     bool canUseGlyphCache(const TextRun&) const;
-    void drawSimpleText(GraphicsContext*, const TextRun&, const FontStyle&, const FloatPoint&, int from, int to) const;
+    void drawSimpleText(GraphicsContext*, const TextRun&, const FloatPoint&, int from, int to) const;
     void drawGlyphs(GraphicsContext*, const FontData*, const GlyphBuffer&, int from, int to, const FloatPoint&) const;
-    void drawGlyphBuffer(GraphicsContext*, const GlyphBuffer&, const TextRun&, const FontStyle&, const FloatPoint&) const;
-    void drawComplexText(GraphicsContext*, const TextRun&, const FontStyle&, const FloatPoint&, int from, int to) const;
-    float floatWidthForSimpleText(const TextRun&, const FontStyle&, GlyphBuffer*) const;
-    float floatWidthForComplexText(const TextRun&, const FontStyle&) const;
-    int offsetForPositionForSimpleText(const TextRun&, const FontStyle&, int position, bool includePartialGlyphs) const;
-    int offsetForPositionForComplexText(const TextRun&, const FontStyle&, int position, bool includePartialGlyphs) const;
-    FloatRect selectionRectForSimpleText(const TextRun&, const FontStyle&, const IntPoint&, int h, int from, int to) const;
-    FloatRect selectionRectForComplexText(const TextRun&, const FontStyle&, const IntPoint&, int h, int from, int to) const;
+    void drawGlyphBuffer(GraphicsContext*, const GlyphBuffer&, const TextRun&, const FloatPoint&) const;
+    void drawComplexText(GraphicsContext*, const TextRun&, const FloatPoint&, int from, int to) const;
+    float floatWidthForSimpleText(const TextRun&, GlyphBuffer*) const;
+    float floatWidthForComplexText(const TextRun&) const;
+    int offsetForPositionForSimpleText(const TextRun&, int position, bool includePartialGlyphs) const;
+    int offsetForPositionForComplexText(const TextRun&, int position, bool includePartialGlyphs) const;
+    FloatRect selectionRectForSimpleText(const TextRun&, const IntPoint&, int h, int from, int to) const;
+    FloatRect selectionRectForComplexText(const TextRun&, const IntPoint&, int h, int from, int to) const;
 #endif
     friend struct WidthIterator;
     

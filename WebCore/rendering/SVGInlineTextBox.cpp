@@ -35,7 +35,6 @@
 #include "SVGPaintServer.h"
 #include "SVGRootInlineBox.h"
 #include "Text.h"
-#include "FontStyle.h"
 
 #include <float.h>
 
@@ -74,7 +73,7 @@ SVGRootInlineBox* SVGInlineTextBox::svgRootInlineBox() const
 
 float SVGInlineTextBox::calculateGlyphWidth(RenderStyle* style, int offset) const
 {
-    return style->font().floatWidth(TextRun(textObject()->text()->characters() + offset, 1), svgFontStyleForInlineTextBox(style, this, 0));
+    return style->font().floatWidth(svgTextRunForInlineTextBox(textObject()->text()->characters() + offset, 1, style, this, 0));
 }
 
 float SVGInlineTextBox::calculateGlyphHeight(RenderStyle* style, int offset) const
@@ -379,10 +378,9 @@ void SVGInlineTextBox::paintCharacters(RenderObject::PaintInfo& paintInfo, int t
     }
 
     IntPoint origin((int) svgChar.x, (int) svgChar.y);
-    TextRun run(chars, length);
-    FontStyle style = svgFontStyleForInlineTextBox(styleToUse, this, svgChar.x);
+    TextRun run = svgTextRunForInlineTextBox(chars, length, styleToUse, this, svgChar.x);
 
-    paintInfo.context->drawText(run, origin, style);
+    paintInfo.context->drawText(run, origin);
 
     if (paintInfo.phase != PaintPhaseSelection) {
         paintDocumentMarkers(paintInfo.context, tx, ty, styleToUse, font, false);
@@ -460,10 +458,9 @@ void SVGInlineTextBox::paintSelection(int boxStartOffset, const SVGChar& svgChar
     p->save();
 
     int adjust = startPos >= boxStartOffset ? boxStartOffset : 0;
-    p->drawHighlightForText(TextRun(textObject()->text()->characters() + start() + boxStartOffset, length),
-                            IntPoint((int) svgChar.x, (int) svgChar.y - f->ascent()), f->ascent() + f->descent(),
-                            svgFontStyleForInlineTextBox(style, this, svgChar.x), color,
-                            startPos - adjust, endPos - adjust);
+    p->drawHighlightForText(svgTextRunForInlineTextBox(textObject()->text()->characters() + start() + boxStartOffset, length, style, this, svgChar.x),
+                            IntPoint((int) svgChar.x, (int) svgChar.y - f->ascent()),
+                            f->ascent() + f->descent(), color, startPos - adjust, endPos - adjust);
 
     p->restore();
 }

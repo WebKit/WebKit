@@ -46,7 +46,6 @@
 #include "Settings.h"
 #include "Text.h"
 #include "TextIterator.h"
-#include "FontStyle.h"
 #include "htmlediting.h"
 #include "visible_units.h"
 #include <math.h>
@@ -849,7 +848,7 @@ void RenderTextControl::calcPrefWidths()
         // Figure out how big a text control needs to be for a given number of characters
         // (using "0" as the nominal character).
         const UChar ch = '0';
-        float charWidth = style()->font().floatWidth(TextRun(&ch, 1), FontStyle(0, 0, 0, false, false, false));
+        float charWidth = style()->font().floatWidth(TextRun(&ch, 1, false, 0, 0, false, false, false));
         int factor;
         int scrollbarSize = 0;
         if (m_multiLine) {

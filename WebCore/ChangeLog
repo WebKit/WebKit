@@ -1,3 +1,131 @@
+2007-12-01  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        - fold FontStyle into TextRun
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/graphics/Font.cpp:
+        (WebCore::WidthIterator::WidthIterator):
+        (WebCore::WidthIterator::advance):
+        (WebCore::Font::width):
+        (WebCore::Font::drawSimpleText):
+        (WebCore::Font::drawGlyphBuffer):
+        (WebCore::Font::drawText):
+        (WebCore::Font::floatWidth):
+        (WebCore::Font::floatWidthForSimpleText):
+        (WebCore::Font::selectionRectForText):
+        (WebCore::Font::selectionRectForSimpleText):
+        (WebCore::Font::offsetForPosition):
+        (WebCore::Font::offsetForPositionForSimpleText):
+        * platform/graphics/Font.h:
+        (WebCore::TextRun::TextRun):
+        (WebCore::TextRun::setText):
+        (WebCore::TextRun::allowTabs):
+        (WebCore::TextRun::xPos):
+        (WebCore::TextRun::padding):
+        (WebCore::TextRun::rtl):
+        (WebCore::TextRun::ltr):
+        (WebCore::TextRun::directionalOverride):
+        (WebCore::TextRun::applyRunRounding):
+        (WebCore::TextRun::applyWordRounding):
+        (WebCore::TextRun::spacingDisabled):
+        (WebCore::TextRun::disableSpacing):
+        (WebCore::TextRun::disableRoundingHacks):
+        (WebCore::TextRun::setRTL):
+        (WebCore::TextRun::setDirectionalOverride):
+        * platform/graphics/FontStyle.h: Removed.
+        * platform/graphics/GraphicsContext.cpp:
+        (WebCore::GraphicsContext::drawText):
+        (WebCore::GraphicsContext::drawBidiText):
+        (WebCore::GraphicsContext::drawHighlightForText):
+        * platform/graphics/GraphicsContext.h:
+        * platform/graphics/StringTruncator.cpp:
+        (WebCore::stringWidth):
+        * platform/graphics/gtk/FontGtk.cpp:
+        (WebCore::Font::drawComplexText):
+        (WebCore::Font::floatWidthForComplexText):
+        (WebCore::Font::offsetForPositionForComplexText):
+        (WebCore::Font::selectionRectForComplexText):
+        * platform/graphics/mac/FontMac.mm:
+        (WebCore::ATSULayoutParameters::ATSULayoutParameters):
+        (WebCore::addDirectionalOverride):
+        (WebCore::overrideLayoutOperation):
+        (WebCore::ATSULayoutParameters::initialize):
+        (WebCore::Font::selectionRectForComplexText):
+        (WebCore::Font::drawComplexText):
+        (WebCore::Font::floatWidthForComplexText):
+        (WebCore::Font::offsetForPositionForComplexText):
+        * platform/graphics/qt/FontQt.cpp:
+        (WebCore::generateComponents):
+        (WebCore::Font::drawText):
+        (WebCore::Font::width):
+        (WebCore::Font::offsetForPosition):
+        (WebCore::cursorToX):
+        (WebCore::Font::selectionRectForText):
+        * platform/graphics/win/FontWin.cpp:
+        (WebCore::Font::selectionRectForComplexText):
+        (WebCore::Font::drawComplexText):
+        (WebCore::Font::floatWidthForComplexText):
+        (WebCore::Font::offsetForPositionForComplexText):
+        * platform/graphics/wx/FontWx.cpp:
+        (WebCore::Font::selectionRectForComplexText):
+        (WebCore::Font::drawComplexText):
+        (WebCore::Font::floatWidthForComplexText):
+        (WebCore::Font::offsetForPositionForComplexText):
+        * platform/mac/WebCoreTextRenderer.mm:
+        (WebCoreDrawTextAtPoint):
+        (WebCoreTextFloatWidth):
+        * platform/win/PopupMenuWin.cpp:
+        (WebCore::PopupMenu::paint):
+        * platform/win/UniscribeController.cpp:
+        (WebCore::UniscribeController::UniscribeController):
+        (WebCore::UniscribeController::offsetForPosition):
+        (WebCore::UniscribeController::advance):
+        (WebCore::UniscribeController::itemizeShapeAndPlace):
+        (WebCore::UniscribeController::resetControlAndState):
+        (WebCore::UniscribeController::shapeAndPlaceItem):
+        * platform/win/UniscribeController.h:
+        * platform/win/WebCoreTextRenderer.cpp:
+        (WebCore::doDrawTextAtPoint):
+        * rendering/EllipsisBox.cpp:
+        (WebCore::EllipsisBox::paint):
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::selectionRect):
+        (WebCore::InlineTextBox::paint):
+        (WebCore::InlineTextBox::paintSelection):
+        (WebCore::InlineTextBox::paintCompositionBackground):
+        (WebCore::InlineTextBox::paintSpellingOrGrammarMarker):
+        (WebCore::InlineTextBox::paintTextMatchMarker):
+        (WebCore::InlineTextBox::offsetForPosition):
+        (WebCore::InlineTextBox::positionForOffset):
+        * rendering/RenderFileUploadControl.cpp:
+        (WebCore::RenderFileUploadControl::paintObject):
+        (WebCore::RenderFileUploadControl::calcPrefWidths):
+        * rendering/RenderImage.cpp:
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::updateFromElement):
+        (WebCore::RenderListBox::paintItemForeground):
+        * rendering/RenderMenuList.cpp:
+        (WebCore::RenderMenuList::updateOptionsWidth):
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::widthFromCache):
+        (WebCore::RenderText::calcPrefWidths):
+        (WebCore::RenderText::width):
+        * rendering/RenderText.h:
+        (WebCore::RenderText::allowTabs):
+        * rendering/RenderTextControl.cpp:
+        (WebCore::RenderTextControl::calcPrefWidths):
+        * rendering/SVGInlineTextBox.cpp:
+        (WebCore::SVGInlineTextBox::calculateGlyphWidth):
+        (WebCore::SVGInlineTextBox::paintCharacters):
+        (WebCore::SVGInlineTextBox::paintSelection):
+        * rendering/SVGRootInlineBox.cpp:
+        (WebCore::SVGRootInlineBoxPaintWalker::chunkPortionCallback):
+        (WebCore::cummulatedWidthOfInlineBoxCharacterRange):
+        (WebCore::svgTextRunForInlineTextBox):
+        * rendering/SVGRootInlineBox.h:
+
 2007-12-01  Adam Treat  <treat@kde.org>
 
         Reviewed by Simon.

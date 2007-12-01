@@ -35,7 +35,6 @@
 #include "PlatformScrollBar.h"
 #include "RenderTheme.h"
 #include "RenderView.h"
-#include "FontStyle.h"
 #include <tchar.h>
 #include <windows.h>
 
@@ -510,8 +509,7 @@ void PopupMenu::paint(const IntRect& damageRect, HDC hdc)
             
         unsigned length = itemText.length();
         const UChar* string = itemText.characters();
-        FontStyle fontStyle(0, 0, 0, itemText.defaultWritingDirection() == WTF::Unicode::RightToLeft);
-        TextRun textRun(string, length);
+        TextRun textRun(string, length, false, 0, 0, itemText.defaultWritingDirection() == WTF::Unicode::RightToLeft);
 
         context.setFillColor(optionTextColor);
         
@@ -528,7 +526,7 @@ void PopupMenu::paint(const IntRect& damageRect, HDC hdc)
         if (itemStyle->visibility() != HIDDEN) {
             int textX = max(0, client()->clientPaddingLeft() - client()->clientInsetLeft());
             int textY = itemRect.y() + itemFont.ascent() + (itemRect.height() - itemFont.height()) / 2;
-            context.drawBidiText(textRun, IntPoint(textX, textY), fontStyle);
+            context.drawBidiText(textRun, IntPoint(textX, textY));
         }
     }
 

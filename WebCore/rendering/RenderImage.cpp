@@ -38,7 +38,6 @@
 #include "HitTestResult.h"
 #include "Page.h"
 #include "RenderView.h"
-#include "FontStyle.h"
 
 using namespace std;
 

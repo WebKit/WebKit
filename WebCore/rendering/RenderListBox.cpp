@@ -46,7 +46,6 @@
 #include "PlatformScrollBar.h" 
 #include "RenderTheme.h"
 #include "RenderView.h"
-#include "FontStyle.h"
 #include <math.h>
 
 using namespace std;
@@ -101,7 +100,6 @@ void RenderListBox::updateFromElement()
         int size = numItems();
         
         float width = 0;
-        FontStyle fontStyle(0, 0, 0, false, false, false, false);
         for (int i = 0; i < size; ++i) {
             HTMLElement* element = listItems[i];
             String text;
@@ -117,7 +115,7 @@ void RenderListBox::updateFromElement()
             }
                 
             if (!text.isEmpty()) {
-                float textWidth = itemFont.floatWidth(TextRun(text.impl()), fontStyle);
+                float textWidth = itemFont.floatWidth(TextRun(text.impl(), 0, 0, 0, false, false, false, false));
                 width = max(width, textWidth);
             }
         }
@@ -338,12 +336,11 @@ void RenderListBox::paintItemForeground(PaintInfo& paintInfo, int tx, int ty, in
     
     unsigned length = itemText.length();
     const UChar* string = itemText.characters();
-    FontStyle fontStyle(0, 0, 0, itemStyle->direction() == RTL, itemStyle->unicodeBidi() == Override, false, false);
-    TextRun textRun(string, length);
+    TextRun textRun(string, length, 0, 0, 0, itemStyle->direction() == RTL, itemStyle->unicodeBidi() == Override, false, false);
 
     // Draw the item text
     if (itemStyle->visibility() != HIDDEN)
-        paintInfo.context->drawBidiText(textRun, r.location(), fontStyle);
+        paintInfo.context->drawBidiText(textRun, r.location());
 }
 
 void RenderListBox::paintItemBackground(PaintInfo& paintInfo, int tx, int ty, int listIndex)
