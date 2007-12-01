@@ -1,5 +1,10 @@
 2007-11-30  Darin Adler  <darin@apple.com>
 
+        * coding/commit-review-policy.html: A couple more typos and very
+        minor grammatical stuff. No substantive change.
+
+2007-11-30  Darin Adler  <darin@apple.com>
+
         * coding/commit-review-policy.html: Fixed a typo, added a footer.
 
 2007-11-30  Matt Lilek  <webkit@mattlilek.com>
