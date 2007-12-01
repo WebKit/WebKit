@@ -1,5 +1,11 @@
 2007-11-30  Adam Roben  <aroben@apple.com>
 
+        Include all WebKit posts from Trolltech Labs
+
+        * config.ini:
+
+2007-11-30  Adam Roben  <aroben@apple.com>
+
         Initial checkin of Planet WebKit
 
         Rubberstamped by Sam.
