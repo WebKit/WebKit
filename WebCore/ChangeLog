@@ -1,3 +1,15 @@
+2007-12-01  Rahul Abrol  <ra5ul@comcast.net>
+
+        Reviewed by Adam Roben.
+
+        http://bugs.webkit.org/show_bug.cgi?id=16128
+        Ignore resizable=no for window.open().
+
+        * bindings/js/kjs_window.cpp:
+        (KJS::setWindowFeature):
+        (KJS::parseWindowFeatures):
+        * manual-tests/window-open-features-parsing.html:
+
 2007-12-01  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.

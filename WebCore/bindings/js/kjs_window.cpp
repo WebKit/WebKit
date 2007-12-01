@@ -1072,7 +1072,8 @@ static void setWindowFeature(const String& keyString, const String& valueString,
         value = 1;
     else
         value = valueString.toInt();
-    
+
+    // We ignore a keyString of "resizable", which is consistent with Firefox.
     if (keyString == "left" || keyString == "screenx") {
         windowFeatures.xSet = true;
         windowFeatures.x = value;
@@ -1093,8 +1094,6 @@ static void setWindowFeature(const String& keyString, const String& valueString,
         windowFeatures.locationBarVisible = value;
     else if (keyString == "status")
         windowFeatures.statusBarVisible = value;
-    else if (keyString == "resizable")
-        windowFeatures.resizable = value;
     else if (keyString == "fullscreen")
         windowFeatures.fullscreen = value;
     else if (keyString == "scrollbars")
@@ -1115,6 +1114,7 @@ static void parseWindowFeatures(const String& features, WindowFeatures& windowFe
      standard that applies to this method.)
      
      <http://msdn.microsoft.com/workshop/author/dhtml/reference/methods/open_0.asp>
+     We always allow a window to be resized, which is consistent with Firefox.
      */
     
     windowFeatures.dialog = false;
@@ -1141,7 +1141,7 @@ static void parseWindowFeatures(const String& features, WindowFeatures& windowFe
     windowFeatures.toolBarVisible = false;
     windowFeatures.locationBarVisible = false;
     windowFeatures.scrollbarsVisible = false;
-    windowFeatures.resizable = false;
+    windowFeatures.resizable = true;
     
     // Tread lightly in this code -- it was specifically designed to mimic Win IE's parsing behavior.
     int keyBegin, keyEnd;
