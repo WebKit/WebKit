@@ -1,5 +1,11 @@
 2007-11-30  Adam Roben  <aroben@apple.com>
 
+        Add another feed
+
+        * config.ini:
+
+2007-11-30  Adam Roben  <aroben@apple.com>
+
         Add a simple script to update the site
 
         * update.pl: Added.
