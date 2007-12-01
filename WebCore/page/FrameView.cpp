@@ -284,9 +284,9 @@ void FrameView::addRepaintInfo(RenderObject* o, const IntRect& r)
     d->repaintRects.append(RenderObject::RepaintInfo(o, r));
 }
 
-RenderObject* FrameView::layoutRoot() const
+RenderObject* FrameView::layoutRoot(bool onlyDuringLayout) const
 {
-    return layoutPending() ? 0 : d->layoutRoot;
+    return onlyDuringLayout && layoutPending() ? 0 : d->layoutRoot;
 }
 
 void FrameView::layout(bool allowSubtree)
@@ -737,10 +737,10 @@ void FrameView::scheduleRelayoutOfSubtree(RenderObject* o)
         if (d->layoutRoot != o) {
             if (isObjectAncestorContainerOf(d->layoutRoot, o)) {
                 // Keep the current root
-                o->markContainingBlocksForLayout(false);
+                o->markContainingBlocksForLayout(false, d->layoutRoot);
             } else if (d->layoutRoot && isObjectAncestorContainerOf(o, d->layoutRoot)) {
                 // Re-root at o
-                d->layoutRoot->markContainingBlocksForLayout(false);
+                d->layoutRoot->markContainingBlocksForLayout(false, o);
                 d->layoutRoot = o;
             } else {
                 // Just do a full relayout

@@ -2,6 +2,32 @@
 
         Reviewed by Darin Adler.
 
+        - fix <rdar://problem/5619240> REGRESSION (Leopard-r28069): Reproducible crash with a Mootools-based calendar picker (jump to null in FrameView::layout)
+
+        Test: fast/dynamic/subtree-common-root.html
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::layoutRoot): Added a parameter to let this method
+        return the layout root for a pending layout as well.
+        (WebCore::FrameView::scheduleRelayoutOfSubtree): Pass the new root
+        to markContainingBlocksForLayout(). Otherwise,
+        markContainingBlocksForLayout() could mark past the new root, if it had
+        previously been marked as having a normal child needing layout and then
+        was reached via a positioned child.
+        * page/FrameView.h:
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::calcWidth):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::~RenderObject): Fixed the ASSERT so that
+        it would really catch deletion of the layout root.
+        (WebCore::RenderObject::markContainingBlocksForLayout): Added the
+        newRoot parameter, which tells this method where to stop marking.
+        * rendering/RenderObject.h:
+
+2007-12-01  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
         - fold FontStyle into TextRun
 
         * WebCore.xcodeproj/project.pbxproj:

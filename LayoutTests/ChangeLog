@@ -1,3 +1,12 @@
+2007-12-01  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        - test for <rdar://problem/5619240> REGRESSION (Leopard-r28069): Reproducible crash with a Mootools-based calendar picker (jump to null in FrameView::layout)
+
+        * fast/dynamic/subtree-common-root-expected.txt: Added.
+        * fast/dynamic/subtree-common-root.html: Added.
+
 2007-11-30  Eric Seidel  <eric@webkit.org>
 
         Reviewed by darin.
