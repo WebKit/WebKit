@@ -2,6 +2,15 @@
 
         Reviewed by Simon.
 
+        * Check to see if the directory exists and exit if not.
+
+        * DumpRenderTree/qt/main.cpp:
+        (main):
+
+2007-12-01  Adam Treat  <treat@kde.org>
+
+        Reviewed by Simon.
+
         * Don't hide symbols when in Debug mode
         * On Linux (glibc) provide a backtrace in the test output for debugging purposes
 
