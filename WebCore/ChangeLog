@@ -1,3 +1,11 @@
+2007-12-01  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Beth Dakin.
+
+        Restored the test string in this test.
+
+        * manual-tests/window-open-features-parsing.html:
+
 2007-11-30  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Beth Dakin.
