@@ -35,15 +35,15 @@
 #include "CString.h"
 #include "HitTestResult.h"
 #include "KURL.h"
-#include "webkitgtkpage.h"
-#include "webkitgtkprivate.h"
+#include "webkitwebview.h"
+#include "webkitprivate.h"
 #include "NotImplemented.h"
 #include "WindowFeatures.h"
 
 using namespace WebCore;
 
 namespace WebKit {
-ChromeClient::ChromeClient(WebKitPage* page)
+ChromeClient::ChromeClient(WebKitWebView* page)
     : m_webPage(page)
 {
 }
@@ -93,12 +93,12 @@ Page* ChromeClient::createWindow(Frame*, const FrameLoadRequest&, const WindowFe
         return 0;
     } else {
         /* TODO: FrameLoadRequest is not used */
-        WebKitPage* page = WEBKIT_PAGE_GET_CLASS(m_webPage)->create_page(m_webPage);
+        WebKitWebView* page = WEBKIT_WEB_VIEW_GET_CLASS(m_webPage)->create_web_view(m_webPage);
         if (!page)
             return 0;
 
-        WebKitPagePrivate *privateData = WEBKIT_PAGE_GET_PRIVATE(WEBKIT_PAGE(page));
-        return privateData->page;
+        WebKitWebViewPrivate *privateData = WEBKIT_WEB_VIEW_GET_PRIVATE(WEBKIT_WEB_VIEW(page));
+        return privateData->corePage;
     }
 }
 

@@ -17,7 +17,7 @@ qt-port:!building-libs {
 gtk-port:!building-libs {
     QMAKE_LIBDIR = $$OUTPUT_DIR/lib $$QMAKE_LIBDIR
     LIBS += -lWebKitGtk
-    DEPENDPATH += $$PWD/WebKit/gtk/Api $$PWD/WebKit/gtk/WebCoreSupport
+    DEPENDPATH += $$PWD/WebKit/gtk/WebView $$PWD/WebKit/gtk/WebCoreSupport
 }
 
 gtk-port {
@@ -44,6 +44,9 @@ gtk-port {
 
     # This set of warnings is borrowed from the Mac build
     QMAKE_CXXFLAGS += -Wall -W -Wcast-align -Wchar-subscripts -Wformat-security -Wmissing-format-attribute -Wpointer-arith -Wwrite-strings -Wno-format-y2k -Wno-unused-parameter -Wundef
+
+    DEPENDPATH += $$PWD/JavaScriptCore/API
+    INCLUDEPATH += $$PWD
 }
 
 DEFINES += USE_SYSTEM_MALLOC
@@ -60,7 +63,7 @@ gtk-port:INCLUDEPATH += \
     $$BASE_DIR/WebCore/platform/graphics/cairo \
     $$BASE_DIR/WebCore/loader/gtk \
     $$BASE_DIR/WebCore/page/gtk \
-    $$BASE_DIR/WebKit/gtk/Api \
+    $$BASE_DIR/WebKit/gtk/WebView \
     $$BASE_DIR/WebKit/gtk/WebCoreSupport
 INCLUDEPATH += \
     $$BASE_DIR/JavaScriptCore/ \

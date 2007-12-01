@@ -32,7 +32,7 @@
 #include <glib.h>
 #include <glib-object.h>
 
-#include "webkitgtkdefines.h"
+#include "webkitdefines.h"
 
 G_BEGIN_DECLS
 
@@ -72,7 +72,7 @@ struct _WebKitSettings {
     gboolean should_print_backgrounds;
     gboolean text_areas_are_resizable;
     WebKitEditableLinkBehaviour editable_link_behaviour;
-    gboolean uses_page_cache;
+    gboolean uses_web_view_cache;
     gboolean shrink_standalone_images_to_fit;
     gboolean show_uris_in_tool_tips;
     gchar* ftp_directory_template_path;

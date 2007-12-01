@@ -1,3 +1,22 @@
+2007-11-30  Alp Toker  <alp@atoker.com>
+
+        Reviewed by Adam Roben.
+
+        http://bugs.webkit.org/show_bug.cgi?id=15691
+        [GTK] Public API does not follow GTK+ conventions
+
+        Refactor the WebKit/GTK+ public API. Changes:
+          WebKitPage -> WebKitWebView
+          WebKitFrame -> WebKitWebFrame
+
+        Public API source and header names have been updated to mirror the API
+        changes.
+
+        The API is now kept in WebKit/gtk/WebView to match other ports in the
+        same class such as Mac and Win.
+
+        * WebCore.pro:
+
 2007-11-30   Anders Carlsson  <andersca@apple.com>
 
         Add platform/text project group.

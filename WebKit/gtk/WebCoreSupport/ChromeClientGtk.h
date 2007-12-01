@@ -32,14 +32,14 @@
 #include "ChromeClient.h"
 #include "KURL.h"
 
-typedef struct _WebKitPage WebKitPage;
+typedef struct _WebKitWebView WebKitWebView;
 
 namespace WebKit {
 
     class ChromeClient : public WebCore::ChromeClient {
     public:
-        ChromeClient(WebKitPage*);
-        WebKitPage* webPage() const { return m_webPage; }
+        ChromeClient(WebKitWebView*);
+        WebKitWebView* webPage() const { return m_webPage; }
 
         virtual void chromeDestroyed();
 
@@ -106,7 +106,7 @@ namespace WebKit {
         virtual unsigned long long requestQuotaIncreaseForDatabaseOperation(WebCore::Frame*, const WebCore::SecurityOriginData&, const WebCore::String&, unsigned long long);
 
     private:
-        WebKitPage* m_webPage;
+        WebKitWebView* m_webPage;
         WebCore::KURL m_hoveredLinkURL;
     };
 }

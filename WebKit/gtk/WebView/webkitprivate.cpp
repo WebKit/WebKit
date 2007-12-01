@@ -26,16 +26,73 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WEBKIT_GLOBAL_H
-#define WEBKIT_GLOBAL_H
+#include "config.h"
 
-#include "webkitgtkdefines.h"
+#include "webkitprivate.h"
+#include "ChromeClientGtk.h"
+#include "FrameLoader.h"
+#include "FrameLoaderClientGtk.h"
+#include "NotImplemented.h"
 
-G_BEGIN_DECLS
+using namespace WebCore;
 
-WEBKIT_API void
-webkit_init (void);
+namespace WebKit {
+void apply(WebKitSettings*, WebCore::Settings*)
+{
+    notImplemented();
+}
 
-G_END_DECLS
+WebKitSettings* create(WebCore::Settings*)
+{
+    notImplemented();
+    return 0;
+}
 
-#endif
+WebKitWebFrame* getFrameFromView(WebKitWebView* webView)
+{
+    return webkit_web_view_get_main_frame(webView);
+}
+
+WebKitWebView* getViewFromFrame(WebKitWebFrame* frame)
+{
+    return webkit_web_frame_get_web_view(frame);
+}
+
+WebCore::Frame* core(WebKitWebFrame* frame)
+{
+    if (!frame)
+        return 0;
+
+    WebKitWebFramePrivate* frame_data = WEBKIT_WEB_FRAME_GET_PRIVATE(frame);
+    return frame_data ? frame_data->frame : 0;
+}
+
+WebKitWebFrame* kit(WebCore::Frame* coreFrame)
+{
+    if (!coreFrame)
+        return 0;
+
+    ASSERT(coreFrame->loader());
+    WebKit::FrameLoaderClient* client = static_cast<WebKit::FrameLoaderClient*>(coreFrame->loader()->client());
+    return client ? client->webFrame() : 0;
+}
+
+WebCore::Page* core(WebKitWebView* webView)
+{
+    if (!webView)
+        return 0;
+
+    WebKitWebViewPrivate* webViewData = WEBKIT_WEB_VIEW_GET_PRIVATE(webView);
+    return webViewData ? webViewData->corePage : 0;
+}
+
+WebKitWebView* kit(WebCore::Page* corePage)
+{
+    if (!corePage)
+        return 0;
+
+    ASSERT(webView->chrome());
+    WebKit::ChromeClient* client = static_cast<WebKit::ChromeClient*>(corePage->chrome()->client());
+    return client ? client->webPage() : 0;
+}
+}

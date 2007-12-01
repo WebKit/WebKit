@@ -31,13 +31,13 @@
 
 #include <glib.h>
 
-typedef struct _WebKitFrame WebKitFrame;
-typedef struct _WebKitFrameClass WebKitFrameClass;
+typedef struct _WebKitWebFrame WebKitWebFrame;
+typedef struct _WebKitWebFrameClass WebKitWebFrameClass;
 
-typedef struct _WebKitFrameData WebKitFrameData;
+typedef struct _WebKitWebFrameData WebKitWebFrameData;
 
-typedef struct _WebKitPage WebKitPage;
-typedef struct _WebKitPageClass WebKitPageClass;
+typedef struct _WebKitWebView WebKitWebView;
+typedef struct _WebKitWebViewClass WebKitWebViewClass;
 
 typedef struct _WebKitNetworkRequest WebKitNetworkRequest;
 typedef struct _WebKitNetworkRequestClass WebKitNetworkRequestClass;

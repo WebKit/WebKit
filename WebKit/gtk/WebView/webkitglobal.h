@@ -26,26 +26,16 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "webkitgtkglobal.h"
+#ifndef WEBKIT_GLOBAL_H
+#define WEBKIT_GLOBAL_H
 
-#include "Logging.h"
-#include "DatabaseTracker.h"
+#include "webkitdefines.h"
 
-#include <glib.h>
+G_BEGIN_DECLS
 
-extern "C" {
-void webkit_init(void)
-{
-    WebCore::InitializeLoggingChannelsIfNecessary();
+WEBKIT_API void
+webkit_init (void);
 
-    WebCore::initializeThreading();
+G_END_DECLS
 
-#if ENABLE(DATABASE)
-    // FIXME: It should be possible for client applications to override this default location
-    gchar* databaseDirectory = g_build_filename(g_get_user_data_dir(), "webkit", "databases", NULL);
-    WebCore::DatabaseTracker::tracker().setDatabasePath(databaseDirectory);
-    g_free(databaseDirectory);
 #endif
-}
-}

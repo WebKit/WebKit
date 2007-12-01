@@ -1,3 +1,82 @@
+2007-11-30  Alp Toker  <alp@atoker.com>
+
+        Reviewed by Adam Roben.
+
+        http://bugs.webkit.org/show_bug.cgi?id=15691
+        [GTK] Public API does not follow GTK+ conventions
+
+        Refactor the WebKit/GTK+ public API. Changes:
+          WebKitPage -> WebKitWebView
+          WebKitFrame -> WebKitWebFrame
+
+        Public API source and header names have been updated to mirror the API
+        changes.
+
+        The API is now kept in WebKit/gtk/WebView to match other ports in the
+        same class such as Mac and Win.
+
+        API/ABI-breaking change.
+
+        * Api: Removed.
+        * Api/headers.pri: Removed.
+        * Api/webkitgtk-marshal.list: Removed.
+        * Api/webkitgtkdefines.h: Removed.
+        * Api/webkitgtkframe.cpp: Removed.
+        * Api/webkitgtkframe.h: Removed.
+        * Api/webkitgtkglobal.cpp: Removed.
+        * Api/webkitgtkglobal.h: Removed.
+        * Api/webkitgtknetworkrequest.cpp: Removed.
+        * Api/webkitgtknetworkrequest.h: Removed.
+        * Api/webkitgtkpage.cpp: Removed.
+        * Api/webkitgtkpage.h: Removed.
+        * Api/webkitgtkprivate.cpp: Removed.
+        * Api/webkitgtkprivate.h: Removed.
+        * Api/webkitgtksettings.cpp: Removed.
+        * Api/webkitgtksettings.h: Removed.
+        * WebCoreSupport/ChromeClientGtk.cpp:
+        (WebKit::ChromeClient::ChromeClient):
+        (WebKit::ChromeClient::createWindow):
+        * WebCoreSupport/ChromeClientGtk.h:
+        (WebKit::ChromeClient::webPage):
+        * WebCoreSupport/EditorClientGtk.cpp:
+        (WebKit::EditorClient::isEditable):
+        (WebKit::EditorClient::EditorClient):
+        * WebCoreSupport/EditorClientGtk.h:
+        * WebCoreSupport/FrameLoaderClientGtk.cpp:
+        (WebKit::FrameLoaderClient::FrameLoaderClient):
+        (WebKit::FrameLoaderClient::postProgressStartedNotification):
+        (WebKit::FrameLoaderClient::postProgressEstimateChangedNotification):
+        (WebKit::FrameLoaderClient::postProgressFinishedNotification):
+        (WebKit::FrameLoaderClient::dispatchDecidePolicyForNavigationAction):
+        (WebKit::FrameLoaderClient::createFrame):
+        (WebKit::FrameLoaderClient::windowObjectCleared):
+        (WebKit::FrameLoaderClient::dispatchDidReceiveIcon):
+        (WebKit::FrameLoaderClient::setTitle):
+        * WebCoreSupport/FrameLoaderClientGtk.h:
+        (WebKit::FrameLoaderClient::webFrame):
+        * WebView: Added.
+        * WebView/headers.pri: Added.
+        * WebView/webkit-marshal.list: Added.
+        * WebView/webkitdefines.h: Added.
+        * WebView/webkitglobal.cpp: Added.
+        * WebView/webkitglobal.h: Added.
+        * WebView/webkitnetworkrequest.cpp: Added.
+        * WebView/webkitnetworkrequest.h: Added.
+        * WebView/webkitprivate.cpp: Added.
+        (WebKit::apply):
+        (WebKit::create):
+        (WebKit::getFrameFromView):
+        (WebKit::getViewFromFrame):
+        (WebKit::core):
+        (WebKit::kit):
+        * WebView/webkitprivate.h: Added.
+        * WebView/webkitsettings.cpp: Added.
+        * WebView/webkitsettings.h: Added.
+        * WebView/webkitwebframe.cpp: Added.
+        * WebView/webkitwebframe.h: Added.
+        * WebView/webkitwebview.cpp: Added.
+        * WebView/webkitwebview.h: Added.
+
 2007-11-28  Alp Toker  <alp@atoker.com>
 
         Reviewed by Timothy Hatcher.

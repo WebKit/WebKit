@@ -32,17 +32,17 @@
 #include "FrameLoaderClient.h"
 #include "ResourceResponse.h"
 
-typedef struct _WebKitFrame WebKitFrame;
+typedef struct _WebKitWebFrame WebKitWebFrame;
 
 namespace WebKit {
 
     class FrameLoaderClient : public WebCore::FrameLoaderClient {
     public:
-        FrameLoaderClient(WebKitFrame*);
+        FrameLoaderClient(WebKitWebFrame*);
         virtual ~FrameLoaderClient() { }
         virtual void frameLoaderDestroyed();
 
-        WebKitFrame*  webFrame() const { return m_frame; }
+        WebKitWebFrame*  webFrame() const { return m_frame; }
 
         virtual bool hasWebView() const;
         virtual bool hasFrameView() const;
@@ -178,7 +178,7 @@ namespace WebKit {
         virtual bool canCachePage() const;
         virtual void download(WebCore::ResourceHandle*, const WebCore::ResourceRequest&, const WebCore::ResourceRequest&, const WebCore::ResourceResponse&);
     private:
-        WebKitFrame* m_frame;
+        WebKitWebFrame* m_frame;
         WebCore::ResourceResponse m_response;
         WebCore::String m_userAgent;
     };

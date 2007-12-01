@@ -31,7 +31,7 @@
 
 #include <glib-object.h>
 
-#include "webkitgtkdefines.h"
+#include "webkitdefines.h"
 
 G_BEGIN_DECLS
 

@@ -24,14 +24,14 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "webkitgtkpage.h"
-#include "webkitgtkglobal.h"
+#include "webkitwebview.h"
+#include "webkitglobal.h"
 #include <gtk/gtk.h>
 
 static GtkWidget* main_window;
 static GtkWidget* uri_entry;
 static GtkStatusbar* main_statusbar;
-static WebKitPage* web_page;
+static WebKitWebView* web_view;
 static gchar* main_title;
 static gint load_progress;
 static guint status_context_id;
@@ -41,7 +41,7 @@ activate_uri_entry_cb (GtkWidget* entry, gpointer data)
 {
     const gchar* uri = gtk_entry_get_text (GTK_ENTRY (entry));
     g_assert (uri);
-    webkit_page_open (web_page, uri);
+    webkit_web_view_open (web_view, uri);
 }
 
 static void
@@ -57,7 +57,7 @@ update_title (GtkWindow* window)
 }
 
 static void
-link_hover_cb (WebKitPage* page, const gchar* title, const gchar* link, gpointer data)
+link_hover_cb (WebKitWebView* page, const gchar* title, const gchar* link, gpointer data)
 {
     /* underflow is allowed */
     gtk_statusbar_pop (main_statusbar, status_context_id);
@@ -66,7 +66,7 @@ link_hover_cb (WebKitPage* page, const gchar* title, const gchar* link, gpointer
 }
 
 static void
-title_change_cb (WebKitPage* page, const gchar* title, const gchar* uri, gpointer data)
+title_change_cb (WebKitWebView* page, const gchar* title, const gchar* uri, gpointer data)
 {
     gtk_entry_set_text (GTK_ENTRY (uri_entry), uri);
 
@@ -77,7 +77,7 @@ title_change_cb (WebKitPage* page, const gchar* title, const gchar* uri, gpointe
 }
 
 static void
-progress_change_cb (WebKitPage* page, gint progress, gpointer data)
+progress_change_cb (WebKitWebView* page, gint progress, gpointer data)
 {
     load_progress = progress;
     update_title (GTK_WINDOW (main_window));
@@ -92,13 +92,13 @@ destroy_cb (GtkWidget* widget, gpointer data)
 static void
 go_back_cb (GtkWidget* widget, gpointer data)
 {
-    webkit_page_go_backward (web_page);
+    webkit_web_view_go_backward (web_view);
 }
 
 static void
 go_forward_cb (GtkWidget* widget, gpointer data)
 {
-    webkit_page_go_forward (web_page);
+    webkit_web_view_go_forward (web_view);
 }
 
 static GtkWidget*
@@ -107,12 +107,12 @@ create_browser ()
     GtkWidget* scrolled_window = gtk_scrolled_window_new (NULL, NULL);
     gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrolled_window), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
 
-    web_page = WEBKIT_PAGE (webkit_page_new ());
-    gtk_container_add (GTK_CONTAINER (scrolled_window), GTK_WIDGET (web_page));
+    web_view = WEBKIT_WEB_VIEW (webkit_web_view_new ());
+    gtk_container_add (GTK_CONTAINER (scrolled_window), GTK_WIDGET (web_view));
 
-    g_signal_connect (G_OBJECT (web_page), "title-changed", G_CALLBACK (title_change_cb), web_page);
-    g_signal_connect (G_OBJECT (web_page), "load-progress-changed", G_CALLBACK (progress_change_cb), web_page);
-    g_signal_connect (G_OBJECT (web_page), "hovering-over-link", G_CALLBACK (link_hover_cb), web_page);
+    g_signal_connect (G_OBJECT (web_view), "title-changed", G_CALLBACK (title_change_cb), web_view);
+    g_signal_connect (G_OBJECT (web_view), "load-progress-changed", G_CALLBACK (progress_change_cb), web_view);
+    g_signal_connect (G_OBJECT (web_view), "hovering-over-link", G_CALLBACK (link_hover_cb), web_view);
 
     return scrolled_window;
 }
@@ -188,9 +188,9 @@ main (int argc, char* argv[])
     gtk_container_add (GTK_CONTAINER (main_window), vbox);
 
     gchar* uri = (gchar*) (argc > 1 ? argv[1] : "http://www.google.com/");
-    webkit_page_open (web_page, uri);
+    webkit_web_view_open (web_view, uri);
 
-    gtk_widget_grab_focus (GTK_WIDGET (web_page));
+    gtk_widget_grab_focus (GTK_WIDGET (web_view));
     gtk_widget_show_all (main_window);
     gtk_main ();
 

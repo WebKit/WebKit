@@ -1,3 +1,30 @@
+2007-11-30  Alp Toker  <alp@atoker.com>
+
+        Reviewed by Adam Roben.
+
+        http://bugs.webkit.org/show_bug.cgi?id=15691
+        [GTK] Public API does not follow GTK+ conventions
+
+        Refactor the WebKit/GTK+ public API. Changes:
+          WebKitPage -> WebKitWebView
+          WebKitFrame -> WebKitWebFrame
+
+        Public API source and header names have been updated to mirror the API
+        changes.
+
+        The API is now kept in WebKit/gtk/WebView to match other ports in the
+        same class such as Mac and Win.
+
+        * GtkLauncher/main.c:
+        (activate_uri_entry_cb):
+        (link_hover_cb):
+        (title_change_cb):
+        (progress_change_cb):
+        (go_back_cb):
+        (go_forward_cb):
+        (create_browser):
+        (main):
+
 2007-11-30  Adam Roben  <aroben@apple.com>
 
         Hopefully the final build fix

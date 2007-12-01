@@ -31,9 +31,9 @@
 
 #include "config.h"
 
-#include "webkitgtkpage.h"
-#include "webkitgtk-marshal.h"
-#include "webkitgtkprivate.h"
+#include "webkitwebview.h"
+#include "webkit-marshal.h"
+#include "webkitprivate.h"
 
 #include "NotImplemented.h"
 #include "ChromeClientGtk.h"
@@ -77,13 +77,13 @@ enum {
     LAST_SIGNAL
 };
 
-static guint webkit_page_signals[LAST_SIGNAL] = { 0, };
+static guint webkit_web_view_signals[LAST_SIGNAL] = { 0, };
 
-G_DEFINE_TYPE(WebKitPage, webkit_page, GTK_TYPE_CONTAINER)
+G_DEFINE_TYPE(WebKitWebView, webkit_web_view, GTK_TYPE_CONTAINER)
 
-static gboolean webkit_page_expose_event(GtkWidget* widget, GdkEventExpose* event)
+static gboolean webkit_web_view_expose_event(GtkWidget* widget, GdkEventExpose* event)
 {
-    Frame* frame = core(getFrameFromPage(WEBKIT_PAGE(widget)));
+    Frame* frame = core(getFrameFromView(WEBKIT_WEB_VIEW(widget)));
     GdkRectangle clip;
     gdk_region_get_clipbox(event->region, &clip);
     cairo_t* cr = gdk_cairo_create(event->window);
@@ -98,9 +98,9 @@ static gboolean webkit_page_expose_event(GtkWidget* widget, GdkEventExpose* even
     return FALSE;
 }
 
-static gboolean webkit_page_key_event(GtkWidget* widget, GdkEventKey* event)
+static gboolean webkit_web_view_key_event(GtkWidget* widget, GdkEventKey* event)
 {
-    Frame* frame = core(getFrameFromPage(WEBKIT_PAGE(widget)));
+    Frame* frame = core(getFrameFromView(WEBKIT_WEB_VIEW(widget)));
     PlatformKeyboardEvent keyboardEvent(event);
 
     if (frame->eventHandler()->keyEvent(keyboardEvent))
@@ -135,9 +135,9 @@ static gboolean webkit_page_key_event(GtkWidget* widget, GdkEventKey* event)
     return FALSE;
 }
 
-static gboolean webkit_page_button_event(GtkWidget* widget, GdkEventButton* event)
+static gboolean webkit_web_view_button_event(GtkWidget* widget, GdkEventButton* event)
 {
-    Frame* frame = core(getFrameFromPage(WEBKIT_PAGE(widget)));
+    Frame* frame = core(getFrameFromView(WEBKIT_WEB_VIEW(widget)));
 
     if (event->type == GDK_BUTTON_RELEASE)
         return frame->eventHandler()->handleMouseReleaseEvent(PlatformMouseEvent(event));
@@ -147,31 +147,31 @@ static gboolean webkit_page_button_event(GtkWidget* widget, GdkEventButton* even
     return frame->eventHandler()->handleMousePressEvent(PlatformMouseEvent(event));
 }
 
-static gboolean webkit_page_motion_event(GtkWidget* widget, GdkEventMotion* event)
+static gboolean webkit_web_view_motion_event(GtkWidget* widget, GdkEventMotion* event)
 {
-    Frame* frame = core(getFrameFromPage(WEBKIT_PAGE(widget)));
+    Frame* frame = core(getFrameFromView(WEBKIT_WEB_VIEW(widget)));
     return frame->eventHandler()->mouseMoved(PlatformMouseEvent(event));
 }
 
-static gboolean webkit_page_scroll_event(GtkWidget* widget, GdkEventScroll* event)
+static gboolean webkit_web_view_scroll_event(GtkWidget* widget, GdkEventScroll* event)
 {
-    Frame* frame = core(getFrameFromPage(WEBKIT_PAGE(widget)));
+    Frame* frame = core(getFrameFromView(WEBKIT_WEB_VIEW(widget)));
     PlatformWheelEvent wheelEvent(event);
     return frame->eventHandler()->handleWheelEvent(wheelEvent);
 }
 
-static void webkit_page_size_allocate(GtkWidget* widget, GtkAllocation* allocation)
+static void webkit_web_view_size_allocate(GtkWidget* widget, GtkAllocation* allocation)
 {
-    GTK_WIDGET_CLASS(webkit_page_parent_class)->size_allocate(widget,allocation);
+    GTK_WIDGET_CLASS(webkit_web_view_parent_class)->size_allocate(widget,allocation);
 
-    Frame* frame = core(getFrameFromPage(WEBKIT_PAGE(widget)));
+    Frame* frame = core(getFrameFromView(WEBKIT_WEB_VIEW(widget)));
     frame->view()->resize(allocation->width, allocation->height);
     frame->forceLayout();
     frame->view()->adjustViewSize();
     frame->sendResizeEvent();
 }
 
-static void webkit_page_realize(GtkWidget* widget)
+static void webkit_web_view_realize(GtkWidget* widget)
 {
     GTK_WIDGET_SET_FLAGS(widget, GTK_REALIZED);
 
@@ -201,26 +201,26 @@ static void webkit_page_realize(GtkWidget* widget)
     gdk_window_set_user_data(widget->window, widget);
 }
 
-static void webkit_page_set_scroll_adjustments(WebKitPage* page, GtkAdjustment* hadj, GtkAdjustment* vadj)
+static void webkit_web_view_set_scroll_adjustments(WebKitWebView* webView, GtkAdjustment* hadj, GtkAdjustment* vadj)
 {
-    FrameView* view = core(getFrameFromPage(page))->view();
+    FrameView* view = core(getFrameFromView(webView))->view();
     view->setGtkAdjustments(hadj, vadj);
 }
 
-static void webkit_page_container_add(GtkContainer* container, GtkWidget* widget)
+static void webkit_web_view_container_add(GtkContainer* container, GtkWidget* widget)
 {
-    WebKitPage* page = WEBKIT_PAGE(container);
-    WebKitPagePrivate* private_data = WEBKIT_PAGE_GET_PRIVATE(page);
+    WebKitWebView* webView = WEBKIT_WEB_VIEW(container);
+    WebKitWebViewPrivate* private_data = WEBKIT_WEB_VIEW_GET_PRIVATE(webView);
 
     private_data->children.add(widget);
     if (GTK_WIDGET_REALIZED(container))
-        gtk_widget_set_parent_window(widget, GTK_WIDGET(page)->window);
+        gtk_widget_set_parent_window(widget, GTK_WIDGET(webView)->window);
     gtk_widget_set_parent(widget, GTK_WIDGET(container));
 }
 
-static void webkit_page_container_remove(GtkContainer* container, GtkWidget* widget)
+static void webkit_web_view_container_remove(GtkContainer* container, GtkWidget* widget)
 {
-    WebKitPagePrivate* private_data = WEBKIT_PAGE_GET_PRIVATE(WEBKIT_PAGE(container));
+    WebKitWebViewPrivate* private_data = WEBKIT_WEB_VIEW_GET_PRIVATE(WEBKIT_WEB_VIEW(container));
 
     if (private_data->children.contains(widget)) {
         gtk_widget_unparent(widget);
@@ -228,9 +228,9 @@ static void webkit_page_container_remove(GtkContainer* container, GtkWidget* wid
     }
 }
 
-static void webkit_page_container_forall(GtkContainer* container, gboolean, GtkCallback callback, gpointer callbackData)
+static void webkit_web_view_container_forall(GtkContainer* container, gboolean, GtkCallback callback, gpointer callbackData)
 {
-    WebKitPagePrivate* privateData = WEBKIT_PAGE_GET_PRIVATE(WEBKIT_PAGE(container));
+    WebKitWebViewPrivate* privateData = WEBKIT_WEB_VIEW_GET_PRIVATE(WEBKIT_WEB_VIEW(container));
 
     HashSet<GtkWidget*> children = privateData->children;
     HashSet<GtkWidget*>::const_iterator end = children.end();
@@ -238,24 +238,24 @@ static void webkit_page_container_forall(GtkContainer* container, gboolean, GtkC
         (*callback)(*current, callbackData);
 }
 
-static WebKitPage* webkit_page_real_create_page(WebKitPage*)
+static WebKitWebView* webkit_web_view_real_create_web_view(WebKitWebView*)
 {
     notImplemented();
     return 0;
 }
 
-static WebKitNavigationResponse webkit_page_real_navigation_requested(WebKitPage*, WebKitFrame* frame, WebKitNetworkRequest*)
+static WebKitNavigationResponse webkit_web_view_real_navigation_requested(WebKitWebView*, WebKitWebFrame* frame, WebKitNetworkRequest*)
 {
     notImplemented();
     return WEBKIT_NAVIGATION_RESPONSE_ACCEPT;
 }
 
-static void webkit_page_real_window_object_cleared(WebKitPage*, WebKitFrame*, JSGlobalContextRef context, JSObjectRef window_object)
+static void webkit_web_view_real_window_object_cleared(WebKitWebView*, WebKitWebFrame*, JSGlobalContextRef context, JSObjectRef window_object)
 {
     notImplemented();
 }
 
-static gchar* webkit_page_real_choose_file(WebKitPage*, WebKitFrame*, const gchar* old_name)
+static gchar* webkit_web_view_real_choose_file(WebKitWebView*, WebKitWebFrame*, const gchar* old_name)
 {
     notImplemented();
     return g_strdup(old_name);
@@ -267,7 +267,7 @@ typedef enum {
     WEBKIT_SCRIPT_DIALOG_PROMPT
  } WebKitScriptDialogType;
 
-static gboolean webkit_page_script_dialog(WebKitPage* page, WebKitFrame* frame, const gchar* message, WebKitScriptDialogType type, const gchar* defaultValue, gchar** value)
+static gboolean webkit_web_view_script_dialog(WebKitWebView* webView, WebKitWebFrame* frame, const gchar* message, WebKitScriptDialogType type, const gchar* defaultValue, gchar** value)
 {
     GtkMessageType messageType;
     GtkButtonsType buttons;
@@ -298,9 +298,9 @@ static gboolean webkit_page_script_dialog(WebKitPage* page, WebKitFrame* frame, 
         return FALSE;
     }
 
-    window = gtk_widget_get_toplevel(GTK_WIDGET(page));
+    window = gtk_widget_get_toplevel(GTK_WIDGET(webView));
     dialog = gtk_message_dialog_new(GTK_WIDGET_TOPLEVEL(window) ? GTK_WINDOW(window) : 0, GTK_DIALOG_DESTROY_WITH_PARENT, messageType, buttons, "%s", message);
-    gchar* title = g_strconcat("JavaScript - ", webkit_frame_get_location(frame), NULL);
+    gchar* title = g_strconcat("JavaScript - ", webkit_web_frame_get_location(frame), NULL);
     gtk_window_set_title(GTK_WINDOW(dialog), title);
     g_free(title);
 
@@ -336,56 +336,56 @@ static gboolean webkit_page_script_dialog(WebKitPage* page, WebKitFrame* frame, 
     return didConfirm;
 }
 
-static gboolean webkit_page_real_script_alert(WebKitPage* page, WebKitFrame* frame, const gchar* message)
+static gboolean webkit_web_view_real_script_alert(WebKitWebView* webView, WebKitWebFrame* frame, const gchar* message)
 {
-    webkit_page_script_dialog(page, frame, message, WEBKIT_SCRIPT_DIALOG_ALERT, 0, 0);
+    webkit_web_view_script_dialog(webView, frame, message, WEBKIT_SCRIPT_DIALOG_ALERT, 0, 0);
     return TRUE;
 }
 
-static gboolean webkit_page_real_script_confirm(WebKitPage* page, WebKitFrame* frame, const gchar* message, gboolean* didConfirm)
+static gboolean webkit_web_view_real_script_confirm(WebKitWebView* webView, WebKitWebFrame* frame, const gchar* message, gboolean* didConfirm)
 {
-    *didConfirm = webkit_page_script_dialog(page, frame, message, WEBKIT_SCRIPT_DIALOG_CONFIRM, 0, 0);
+    *didConfirm = webkit_web_view_script_dialog(webView, frame, message, WEBKIT_SCRIPT_DIALOG_CONFIRM, 0, 0);
     return TRUE;
 }
 
-static gboolean webkit_page_real_script_prompt(WebKitPage* page, WebKitFrame* frame, const gchar* message, const gchar* defaultValue, gchar** value)
+static gboolean webkit_web_view_real_script_prompt(WebKitWebView* webView, WebKitWebFrame* frame, const gchar* message, const gchar* defaultValue, gchar** value)
 {
-    if (!webkit_page_script_dialog(page, frame, message, WEBKIT_SCRIPT_DIALOG_PROMPT, defaultValue, value))
+    if (!webkit_web_view_script_dialog(webView, frame, message, WEBKIT_SCRIPT_DIALOG_PROMPT, defaultValue, value))
         *value = NULL;
     return TRUE;
 }
 
-static gboolean webkit_page_real_console_message(WebKitPage* page, const gchar* message, unsigned int line, const gchar* sourceId)
+static gboolean webkit_web_view_real_console_message(WebKitWebView* webView, const gchar* message, unsigned int line, const gchar* sourceId)
 {
     g_print("console message: %s @%d: %s\n", sourceId, line, message);
     return TRUE;
 }
 
-static void webkit_page_finalize(GObject* object)
+static void webkit_web_view_finalize(GObject* object)
 {
-    webkit_page_stop_loading(WEBKIT_PAGE(object));
+    webkit_web_view_stop_loading(WEBKIT_WEB_VIEW(object));
 
-    WebKitPagePrivate* pageData = WEBKIT_PAGE_GET_PRIVATE(WEBKIT_PAGE(object));
-    delete pageData->page;
-    delete pageData->settings;
-    g_object_unref(pageData->mainFrame);
-    delete pageData->userAgent;
+    WebKitWebViewPrivate* webViewData = WEBKIT_WEB_VIEW_GET_PRIVATE(WEBKIT_WEB_VIEW(object));
+    delete webViewData->corePage;
+    delete webViewData->settings;
+    g_object_unref(webViewData->mainFrame);
+    delete webViewData->userAgent;
 
-    G_OBJECT_CLASS(webkit_page_parent_class)->finalize(object);
+    G_OBJECT_CLASS(webkit_web_view_parent_class)->finalize(object);
 }
 
-static void webkit_page_class_init(WebKitPageClass* pageClass)
+static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
 {
-    g_type_class_add_private(pageClass, sizeof(WebKitPagePrivate));
+    g_type_class_add_private(webViewClass, sizeof(WebKitWebViewPrivate));
 
     /*
      * Signals
      */
 
-    webkit_page_signals[NAVIGATION_REQUESTED] = g_signal_new("navigation_requested",
-            G_TYPE_FROM_CLASS(pageClass),
+    webkit_web_view_signals[NAVIGATION_REQUESTED] = g_signal_new("navigation_requested",
+            G_TYPE_FROM_CLASS(webViewClass),
             (GSignalFlags)(G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION),
-            G_STRUCT_OFFSET (WebKitPageClass, navigation_requested),
+            G_STRUCT_OFFSET (WebKitWebViewClass, navigation_requested),
             NULL,
             NULL,
             webkit_marshal_INT__OBJECT_OBJECT,
@@ -394,58 +394,56 @@ static void webkit_page_class_init(WebKitPageClass* pageClass)
             G_TYPE_OBJECT);
 
     /**
-     * WebKitPage::window-object-cleared:
-     * @page: the object on which the signal is emitted
-     * @frame: the #WebKitFrame to which @window_object belongs
+     * WebKitWebView::window-object-cleared:
+     * @web_view: the object on which the signal is emitted
+     * @frame: the #WebKitWebFrame to which @window_object belongs
      * @context: the #JSGlobalContextRef holding the global object and other
      * execution state; equivalent to the return value of
-     * webkit_frame_get_global_context(@frame)
+     * webkit_web_frame_get_global_context(@frame)
      *
      * @window_object: the #JSObjectRef representing the frame's JavaScript
      * window object
      *
-     * Emitted when the JavaScript window object in a #WebKitFrame has been
+     * Emitted when the JavaScript window object in a #WebKitWebFrame has been
      * cleared in preparation for a new load. This is the preferred place to
      * set custom properties on the window object using the JavaScriptCore API.
      */
-    webkit_page_signals[WINDOW_OBJECT_CLEARED] = g_signal_new("window_object_cleared",
-            G_TYPE_FROM_CLASS(pageClass),
+    webkit_web_view_signals[WINDOW_OBJECT_CLEARED] = g_signal_new("window_object_cleared",
+            G_TYPE_FROM_CLASS(webViewClass),
             (GSignalFlags)(G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION),
-            G_STRUCT_OFFSET (WebKitPageClass, window_object_cleared),
+            G_STRUCT_OFFSET (WebKitWebViewClass, window_object_cleared),
             NULL,
             NULL,
             webkit_marshal_VOID__OBJECT_POINTER_POINTER,
             G_TYPE_NONE, 3,
-            WEBKIT_TYPE_FRAME,
+            WEBKIT_TYPE_WEB_FRAME,
             G_TYPE_POINTER,
             G_TYPE_POINTER);
 
     /**
-     * WebKitPage::load-started:
-     *
-     * @page: the object on which the signal is emitted
+     * WebKitWebView::load-started:
+     * @web_view: the object on which the signal is emitted
      * @frame: the frame going to do the load
      *
-     * When a #WebKitFrame begins to load this signal is emitted.
+     * When a #WebKitWebFrame begins to load this signal is emitted.
      */
-    webkit_page_signals[LOAD_STARTED] = g_signal_new("load_started",
-            G_TYPE_FROM_CLASS(pageClass),
+    webkit_web_view_signals[LOAD_STARTED] = g_signal_new("load_started",
+            G_TYPE_FROM_CLASS(webViewClass),
             (GSignalFlags)(G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION),
             0,
             NULL,
             NULL,
             g_cclosure_marshal_VOID__OBJECT,
             G_TYPE_NONE, 1,
-            WEBKIT_TYPE_FRAME);
+            WEBKIT_TYPE_WEB_FRAME);
 
     /**
-     * WebKitPage::load-progress-changed:
-     *
-     * @page: the #WebKitPage
+     * WebKitWebView::load-progress-changed:
+     * @web_view: the #WebKitWebView
      * @progress: the global progress
      */
-    webkit_page_signals[LOAD_PROGRESS_CHANGED] = g_signal_new("load_progress_changed",
-            G_TYPE_FROM_CLASS(pageClass),
+    webkit_web_view_signals[LOAD_PROGRESS_CHANGED] = g_signal_new("load_progress_changed",
+            G_TYPE_FROM_CLASS(webViewClass),
             (GSignalFlags)(G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION),
             0,
             NULL,
@@ -454,18 +452,18 @@ static void webkit_page_class_init(WebKitPageClass* pageClass)
             G_TYPE_NONE, 1,
             G_TYPE_INT);
 
-    webkit_page_signals[LOAD_FINISHED] = g_signal_new("load_finished",
-            G_TYPE_FROM_CLASS(pageClass),
+    webkit_web_view_signals[LOAD_FINISHED] = g_signal_new("load_finished",
+            G_TYPE_FROM_CLASS(webViewClass),
             (GSignalFlags)(G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION),
             0,
             NULL,
             NULL,
             g_cclosure_marshal_VOID__OBJECT,
             G_TYPE_NONE, 1,
-            WEBKIT_TYPE_FRAME);
+            WEBKIT_TYPE_WEB_FRAME);
 
-    webkit_page_signals[TITLE_CHANGED] = g_signal_new("title_changed",
-            G_TYPE_FROM_CLASS(pageClass),
+    webkit_web_view_signals[TITLE_CHANGED] = g_signal_new("title_changed",
+            G_TYPE_FROM_CLASS(webViewClass),
             (GSignalFlags)(G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION),
             0,
             NULL,
@@ -474,8 +472,8 @@ static void webkit_page_class_init(WebKitPageClass* pageClass)
             G_TYPE_NONE, 2,
             G_TYPE_STRING, G_TYPE_STRING);
 
-    webkit_page_signals[HOVERING_OVER_LINK] = g_signal_new("hovering_over_link",
-            G_TYPE_FROM_CLASS(pageClass),
+    webkit_web_view_signals[HOVERING_OVER_LINK] = g_signal_new("hovering_over_link",
+            G_TYPE_FROM_CLASS(webViewClass),
             (GSignalFlags)(G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION),
             0,
             NULL,
@@ -485,8 +483,8 @@ static void webkit_page_class_init(WebKitPageClass* pageClass)
             G_TYPE_STRING,
             G_TYPE_STRING);
 
-    webkit_page_signals[STATUS_BAR_TEXT_CHANGED] = g_signal_new("status_bar_text_changed",
-            G_TYPE_FROM_CLASS(pageClass),
+    webkit_web_view_signals[STATUS_BAR_TEXT_CHANGED] = g_signal_new("status_bar_text_changed",
+            G_TYPE_FROM_CLASS(webViewClass),
             (GSignalFlags)(G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION),
             0,
             NULL,
@@ -495,8 +493,8 @@ static void webkit_page_class_init(WebKitPageClass* pageClass)
             G_TYPE_NONE, 1,
             G_TYPE_STRING);
 
-    webkit_page_signals[ICOND_LOADED] = g_signal_new("icon_loaded",
-            G_TYPE_FROM_CLASS(pageClass),
+    webkit_web_view_signals[ICOND_LOADED] = g_signal_new("icon_loaded",
+            G_TYPE_FROM_CLASS(webViewClass),
             (GSignalFlags)(G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION),
             0,
             NULL,
@@ -504,8 +502,8 @@ static void webkit_page_class_init(WebKitPageClass* pageClass)
             g_cclosure_marshal_VOID__VOID,
             G_TYPE_NONE, 0);
 
-    webkit_page_signals[SELECTION_CHANGED] = g_signal_new("selection_changed",
-            G_TYPE_FROM_CLASS(pageClass),
+    webkit_web_view_signals[SELECTION_CHANGED] = g_signal_new("selection_changed",
+            G_TYPE_FROM_CLASS(webViewClass),
             (GSignalFlags)(G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION),
             0,
             NULL,
@@ -514,9 +512,8 @@ static void webkit_page_class_init(WebKitPageClass* pageClass)
             G_TYPE_NONE, 0);
 
     /**
-     * WebKitPage::console-message:
-     *
-     * @page: the object on which the signal is emitted
+     * WebKitWebView::console-message:
+     * @web_view: the object on which the signal is emitted
      * @message: the message text
      * @line: the line where the error occured
      * @source_id: the source id
@@ -524,10 +521,10 @@ static void webkit_page_class_init(WebKitPageClass* pageClass)
      *
      * A JavaScript console message was created.
      */
-    webkit_page_signals[CONSOLE_MESSAGE] = g_signal_new("console_message",
-            G_TYPE_FROM_CLASS(pageClass),
+    webkit_web_view_signals[CONSOLE_MESSAGE] = g_signal_new("console_message",
+            G_TYPE_FROM_CLASS(webViewClass),
             (GSignalFlags)(G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION),
-            G_STRUCT_OFFSET(WebKitPageClass, console_message),
+            G_STRUCT_OFFSET(WebKitWebViewClass, console_message),
             g_signal_accumulator_true_handled,
             NULL,
             webkit_marshal_BOOLEAN__STRING_INT_STRING,
@@ -535,19 +532,18 @@ static void webkit_page_class_init(WebKitPageClass* pageClass)
             G_TYPE_STRING, G_TYPE_INT, G_TYPE_STRING);
 
     /**
-     * WebKitPage::script-alert:
-     *
-     * @page: the object on which the signal is emitted
+     * WebKitWebView::script-alert:
+     * @web_view: the object on which the signal is emitted
      * @frame: the relevant frame
      * @message: the message text
      * @return: TRUE to stop other handlers from being invoked for the event. FALSE to propagate the event further.
      *
      * A JavaScript alert dialog was created.
      */
-    webkit_page_signals[SCRIPT_ALERT] = g_signal_new("script-alert",
-            G_TYPE_FROM_CLASS(pageClass),
+    webkit_web_view_signals[SCRIPT_ALERT] = g_signal_new("script-alert",
+            G_TYPE_FROM_CLASS(webViewClass),
             (GSignalFlags)(G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION),
-            G_STRUCT_OFFSET(WebKitPageClass, script_alert),
+            G_STRUCT_OFFSET(WebKitWebViewClass, script_alert),
             g_signal_accumulator_true_handled,
             NULL,
             webkit_marshal_BOOLEAN__OBJECT_STRING,
@@ -555,9 +551,8 @@ static void webkit_page_class_init(WebKitPageClass* pageClass)
             G_TYPE_OBJECT, G_TYPE_STRING);
 
     /**
-     * WebKitPage::script-confirm:
-     *
-     * @page: the object on which the signal is emitted
+     * WebKitWebView::script-confirm:
+     * @web_view: the object on which the signal is emitted
      * @frame: the relevant frame
      * @message: the message text
      * @confirmed: whether the dialog has been confirmed
@@ -565,10 +560,10 @@ static void webkit_page_class_init(WebKitPageClass* pageClass)
      *
      * A JavaScript confirm dialog was created, providing Yes and No buttons.
      */
-    webkit_page_signals[SCRIPT_CONFIRM] = g_signal_new("script_confirm",
-            G_TYPE_FROM_CLASS(pageClass),
+    webkit_web_view_signals[SCRIPT_CONFIRM] = g_signal_new("script_confirm",
+            G_TYPE_FROM_CLASS(webViewClass),
             (GSignalFlags)(G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION),
-            G_STRUCT_OFFSET(WebKitPageClass, script_confirm),
+            G_STRUCT_OFFSET(WebKitWebViewClass, script_confirm),
             g_signal_accumulator_true_handled,
             NULL,
             webkit_marshal_BOOLEAN__OBJECT_STRING_BOOLEAN,
@@ -576,9 +571,8 @@ static void webkit_page_class_init(WebKitPageClass* pageClass)
             G_TYPE_OBJECT, G_TYPE_STRING, G_TYPE_BOOLEAN);
 
     /**
-     * WebKitPage::script-prompt:
-     *
-     * @page: the object on which the signal is emitted
+     * WebKitWebView::script-prompt:
+     * @web_view: the object on which the signal is emitted
      * @frame: the relevant frame
      * @message: the message text
      * @default: the default value
@@ -587,10 +581,10 @@ static void webkit_page_class_init(WebKitPageClass* pageClass)
      *
      * A JavaScript prompt dialog was created, providing an entry to input text.
      */
-    webkit_page_signals[SCRIPT_PROMPT] = g_signal_new("script_prompt",
-            G_TYPE_FROM_CLASS(pageClass),
+    webkit_web_view_signals[SCRIPT_PROMPT] = g_signal_new("script_prompt",
+            G_TYPE_FROM_CLASS(webViewClass),
             (GSignalFlags)(G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION),
-            G_STRUCT_OFFSET(WebKitPageClass, script_prompt),
+            G_STRUCT_OFFSET(WebKitWebViewClass, script_prompt),
             g_signal_accumulator_true_handled,
             NULL,
             webkit_marshal_BOOLEAN__OBJECT_STRING_STRING_STRING,
@@ -601,53 +595,53 @@ static void webkit_page_class_init(WebKitPageClass* pageClass)
     /*
      * implementations of virtual methods
      */
-    pageClass->create_page = webkit_page_real_create_page;
-    pageClass->navigation_requested = webkit_page_real_navigation_requested;
-    pageClass->window_object_cleared = webkit_page_real_window_object_cleared;
-    pageClass->choose_file = webkit_page_real_choose_file;
-    pageClass->script_alert = webkit_page_real_script_alert;
-    pageClass->script_confirm = webkit_page_real_script_confirm;
-    pageClass->script_prompt = webkit_page_real_script_prompt;
-    pageClass->console_message = webkit_page_real_console_message;
+    webViewClass->create_web_view = webkit_web_view_real_create_web_view;
+    webViewClass->navigation_requested = webkit_web_view_real_navigation_requested;
+    webViewClass->window_object_cleared = webkit_web_view_real_window_object_cleared;
+    webViewClass->choose_file = webkit_web_view_real_choose_file;
+    webViewClass->script_alert = webkit_web_view_real_script_alert;
+    webViewClass->script_confirm = webkit_web_view_real_script_confirm;
+    webViewClass->script_prompt = webkit_web_view_real_script_prompt;
+    webViewClass->console_message = webkit_web_view_real_console_message;
 
-    G_OBJECT_CLASS(pageClass)->finalize = webkit_page_finalize;
+    G_OBJECT_CLASS(webViewClass)->finalize = webkit_web_view_finalize;
 
-    GtkWidgetClass* widgetClass = GTK_WIDGET_CLASS(pageClass);
-    widgetClass->realize = webkit_page_realize;
-    widgetClass->expose_event = webkit_page_expose_event;
-    widgetClass->key_press_event = webkit_page_key_event;
-    widgetClass->key_release_event = webkit_page_key_event;
-    widgetClass->button_press_event = webkit_page_button_event;
-    widgetClass->button_release_event = webkit_page_button_event;
-    widgetClass->motion_notify_event = webkit_page_motion_event;
-    widgetClass->scroll_event = webkit_page_scroll_event;
-    widgetClass->size_allocate = webkit_page_size_allocate;
+    GtkWidgetClass* widgetClass = GTK_WIDGET_CLASS(webViewClass);
+    widgetClass->realize = webkit_web_view_realize;
+    widgetClass->expose_event = webkit_web_view_expose_event;
+    widgetClass->key_press_event = webkit_web_view_key_event;
+    widgetClass->key_release_event = webkit_web_view_key_event;
+    widgetClass->button_press_event = webkit_web_view_button_event;
+    widgetClass->button_release_event = webkit_web_view_button_event;
+    widgetClass->motion_notify_event = webkit_web_view_motion_event;
+    widgetClass->scroll_event = webkit_web_view_scroll_event;
+    widgetClass->size_allocate = webkit_web_view_size_allocate;
 
-    GtkContainerClass* containerClass = GTK_CONTAINER_CLASS(pageClass);
-    containerClass->add = webkit_page_container_add;
-    containerClass->remove = webkit_page_container_remove;
-    containerClass->forall = webkit_page_container_forall;
+    GtkContainerClass* containerClass = GTK_CONTAINER_CLASS(webViewClass);
+    containerClass->add = webkit_web_view_container_add;
+    containerClass->remove = webkit_web_view_container_remove;
+    containerClass->forall = webkit_web_view_container_forall;
 
     /*
      * make us scrollable (e.g. addable to a GtkScrolledWindow)
      */
-    pageClass->set_scroll_adjustments = webkit_page_set_scroll_adjustments;
-    GTK_WIDGET_CLASS(pageClass)->set_scroll_adjustments_signal = g_signal_new("set_scroll_adjustments",
-            G_TYPE_FROM_CLASS(pageClass),
+    webViewClass->set_scroll_adjustments = webkit_web_view_set_scroll_adjustments;
+    GTK_WIDGET_CLASS(webViewClass)->set_scroll_adjustments_signal = g_signal_new("set_scroll_adjustments",
+            G_TYPE_FROM_CLASS(webViewClass),
             (GSignalFlags)(G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION),
-            G_STRUCT_OFFSET(WebKitPageClass, set_scroll_adjustments),
+            G_STRUCT_OFFSET(WebKitWebViewClass, set_scroll_adjustments),
             NULL, NULL,
             webkit_marshal_VOID__OBJECT_OBJECT,
             G_TYPE_NONE, 2,
             GTK_TYPE_ADJUSTMENT, GTK_TYPE_ADJUSTMENT);
 }
 
-static void webkit_page_init(WebKitPage* page)
+static void webkit_web_view_init(WebKitWebView* webView)
 {
-    WebKitPagePrivate* pageData = WEBKIT_PAGE_GET_PRIVATE(WEBKIT_PAGE(page));
-    pageData->page = new Page(new WebKit::ChromeClient(page), new WebKit::ContextMenuClient, new WebKit::EditorClient(page), new WebKit::DragClient, new WebKit::InspectorClient);
+    WebKitWebViewPrivate* webViewData = WEBKIT_WEB_VIEW_GET_PRIVATE(WEBKIT_WEB_VIEW(webView));
+    webViewData->corePage = new Page(new WebKit::ChromeClient(webView), new WebKit::ContextMenuClient, new WebKit::EditorClient(webView), new WebKit::DragClient, new WebKit::InspectorClient);
 
-    Settings* settings = pageData->page->settings();
+    Settings* settings = webViewData->corePage->settings();
     settings->setLoadsImagesAutomatically(true);
     settings->setMinimumFontSize(5);
     settings->setMinimumLogicalFontSize(5);
@@ -660,96 +654,96 @@ static void webkit_page_init(WebKitPage* page)
     settings->setFixedFontFamily("Courier New");
     settings->setStandardFontFamily("Arial");
 
-    GTK_WIDGET_SET_FLAGS(page, GTK_CAN_FOCUS);
-    pageData->mainFrame = WEBKIT_FRAME(webkit_frame_new(page));
-    pageData->editable = false;
+    GTK_WIDGET_SET_FLAGS(webView, GTK_CAN_FOCUS);
+    webViewData->mainFrame = WEBKIT_WEB_FRAME(webkit_web_frame_new(webView));
+    webViewData->editable = false;
 }
 
-GtkWidget* webkit_page_new(void)
+GtkWidget* webkit_web_view_new(void)
 {
-    WebKitPage* page = WEBKIT_PAGE(g_object_new(WEBKIT_TYPE_PAGE, NULL));
+    WebKitWebView* webView = WEBKIT_WEB_VIEW(g_object_new(WEBKIT_TYPE_WEB_VIEW, NULL));
 
-    return GTK_WIDGET(page);
+    return GTK_WIDGET(webView);
 }
 
-void webkit_page_set_settings(WebKitPage* page, WebKitSettings* settings)
+void webkit_web_view_set_settings(WebKitWebView* webView, WebKitSettings* settings)
 {
-    g_return_if_fail(WEBKIT_IS_PAGE(page));
+    g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
     g_return_if_fail(settings);
 
     notImplemented();
 }
 
-WebKitSettings* webkit_page_get_settings(WebKitPage* page)
+WebKitSettings* webkit_web_view_get_settings(WebKitWebView* webView)
 {
-    g_return_val_if_fail(WEBKIT_IS_PAGE(page), NULL);
+    g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), NULL);
 
     notImplemented();
     return NULL;
 }
 
-void webkit_page_go_backward(WebKitPage* page)
+void webkit_web_view_go_backward(WebKitWebView* webView)
 {
-    g_return_if_fail(WEBKIT_IS_PAGE(page));
+    g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
 
-    WebKitPagePrivate* pageData = WEBKIT_PAGE_GET_PRIVATE(page);
-    WebKitFramePrivate* frameData = WEBKIT_FRAME_GET_PRIVATE(pageData->mainFrame);
+    WebKitWebViewPrivate* webViewData = WEBKIT_WEB_VIEW_GET_PRIVATE(webView);
+    WebKitWebFramePrivate* frameData = WEBKIT_WEB_FRAME_GET_PRIVATE(webViewData->mainFrame);
     frameData->frame->loader()->goBackOrForward(-1);
 }
 
-void webkit_page_go_forward(WebKitPage* page)
+void webkit_web_view_go_forward(WebKitWebView* webView)
 {
-    g_return_if_fail(WEBKIT_IS_PAGE(page));
+    g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
 
-    WebKitPagePrivate* pageData = WEBKIT_PAGE_GET_PRIVATE(page);
-    WebKitFramePrivate* frameData = WEBKIT_FRAME_GET_PRIVATE(pageData->mainFrame);
+    WebKitWebViewPrivate* webViewData = WEBKIT_WEB_VIEW_GET_PRIVATE(webView);
+    WebKitWebFramePrivate* frameData = WEBKIT_WEB_FRAME_GET_PRIVATE(webViewData->mainFrame);
     frameData->frame->loader()->goBackOrForward(1);
 }
 
-gboolean webkit_page_can_go_backward(WebKitPage* page)
+gboolean webkit_web_view_can_go_backward(WebKitWebView* webView)
 {
-    g_return_val_if_fail(WEBKIT_IS_PAGE(page), FALSE);
+    g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), FALSE);
 
-    WebKitPagePrivate* pageData = WEBKIT_PAGE_GET_PRIVATE(page);
-    WebKitFramePrivate* frameData = WEBKIT_FRAME_GET_PRIVATE(pageData->mainFrame);
+    WebKitWebViewPrivate* webViewData = WEBKIT_WEB_VIEW_GET_PRIVATE(webView);
+    WebKitWebFramePrivate* frameData = WEBKIT_WEB_FRAME_GET_PRIVATE(webViewData->mainFrame);
     return frameData->frame->loader()->canGoBackOrForward(-1);
 }
 
-gboolean webkit_page_can_go_forward(WebKitPage* page)
+gboolean webkit_web_view_can_go_forward(WebKitWebView* webView)
 {
-    g_return_val_if_fail(WEBKIT_IS_PAGE(page), FALSE);
+    g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), FALSE);
 
-    WebKitPagePrivate* pageData = WEBKIT_PAGE_GET_PRIVATE(page);
-    WebKitFramePrivate* frameData = WEBKIT_FRAME_GET_PRIVATE(pageData->mainFrame);
+    WebKitWebViewPrivate* webViewData = WEBKIT_WEB_VIEW_GET_PRIVATE(webView);
+    WebKitWebFramePrivate* frameData = WEBKIT_WEB_FRAME_GET_PRIVATE(webViewData->mainFrame);
     return frameData->frame->loader()->canGoBackOrForward(1);
 }
 
-void webkit_page_open(WebKitPage* page, const gchar* uri)
+void webkit_web_view_open(WebKitWebView* webView, const gchar* uri)
 {
-    g_return_if_fail(WEBKIT_IS_PAGE(page));
+    g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
 
-    WebKitPagePrivate* pageData = WEBKIT_PAGE_GET_PRIVATE(page);
-    WebKitFramePrivate* frameData = WEBKIT_FRAME_GET_PRIVATE(pageData->mainFrame);
+    WebKitWebViewPrivate* webViewData = WEBKIT_WEB_VIEW_GET_PRIVATE(webView);
+    WebKitWebFramePrivate* frameData = WEBKIT_WEB_FRAME_GET_PRIVATE(webViewData->mainFrame);
 
     DeprecatedString string = DeprecatedString::fromUtf8(uri);
     frameData->frame->loader()->load(ResourceRequest(KURL(string)));
 }
 
-void webkit_page_reload(WebKitPage* page)
+void webkit_web_view_reload(WebKitWebView* webView)
 {
-    g_return_if_fail(WEBKIT_IS_PAGE(page));
+    g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
 
-    WebKitPagePrivate* pageData = WEBKIT_PAGE_GET_PRIVATE(page);
-    WebKitFramePrivate* frameData = WEBKIT_FRAME_GET_PRIVATE(pageData->mainFrame);
+    WebKitWebViewPrivate* webViewData = WEBKIT_WEB_VIEW_GET_PRIVATE(webView);
+    WebKitWebFramePrivate* frameData = WEBKIT_WEB_FRAME_GET_PRIVATE(webViewData->mainFrame);
     frameData->frame->loader()->reload();
 }
 
-void webkit_page_load_string(WebKitPage* page, const gchar* content, const gchar* contentMimeType, const gchar* contentEncoding, const gchar* baseUri)
+void webkit_web_view_load_string(WebKitWebView* webView, const gchar* content, const gchar* contentMimeType, const gchar* contentEncoding, const gchar* baseUri)
 {
-    g_return_if_fail(WEBKIT_IS_PAGE(page));
+    g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
 
-    WebKitPagePrivate* pageData = WEBKIT_PAGE_GET_PRIVATE(page);
-    WebKitFramePrivate* frameData = WEBKIT_FRAME_GET_PRIVATE(pageData->mainFrame);
+    WebKitWebViewPrivate* webViewData = WEBKIT_WEB_VIEW_GET_PRIVATE(webView);
+    WebKitWebFramePrivate* frameData = WEBKIT_WEB_FRAME_GET_PRIVATE(webViewData->mainFrame);
 
     KURL url(DeprecatedString::fromUtf8(baseUri));
     RefPtr<SharedBuffer> sharedBuffer = new SharedBuffer(strdup(content), strlen(content));
@@ -758,105 +752,105 @@ void webkit_page_load_string(WebKitPage* page, const gchar* content, const gchar
     frameData->frame->loader()->load(ResourceRequest(url), substituteData);
 }
 
-void webkit_page_load_html_string(WebKitPage* page, const gchar* content, const gchar* baseUrl)
+void webkit_web_view_load_html_string(WebKitWebView* webView, const gchar* content, const gchar* baseUrl)
 {
-    g_return_if_fail(WEBKIT_IS_PAGE(page));
+    g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
 
-    webkit_page_load_string(page, content, "text/html", "UTF-8", baseUrl);
+    webkit_web_view_load_string(webView, content, "text/html", "UTF-8", baseUrl);
 }
 
-void webkit_page_stop_loading(WebKitPage* page)
+void webkit_web_view_stop_loading(WebKitWebView* webView)
 {
-    g_return_if_fail(WEBKIT_IS_PAGE(page));
+    g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
 
-    WebKitPagePrivate* pageData = WEBKIT_PAGE_GET_PRIVATE(page);
-    WebKitFramePrivate* frameData = WEBKIT_FRAME_GET_PRIVATE(pageData->mainFrame);
+    WebKitWebViewPrivate* webViewData = WEBKIT_WEB_VIEW_GET_PRIVATE(webView);
+    WebKitWebFramePrivate* frameData = WEBKIT_WEB_FRAME_GET_PRIVATE(webViewData->mainFrame);
 
     if (FrameLoader* loader = frameData->frame->loader())
         loader->stopAllLoaders();
 }
 
-WebKitFrame* webkit_page_get_main_frame(WebKitPage* page)
+WebKitWebFrame* webkit_web_view_get_main_frame(WebKitWebView* webView)
 {
-    g_return_val_if_fail(WEBKIT_IS_PAGE(page), NULL);
+    g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), NULL);
 
-    WebKitPagePrivate* pageData = WEBKIT_PAGE_GET_PRIVATE(page);
-    return pageData->mainFrame;
+    WebKitWebViewPrivate* webViewData = WEBKIT_WEB_VIEW_GET_PRIVATE(webView);
+    return webViewData->mainFrame;
 }
 
-void webkit_page_execute_script(WebKitPage* page, const gchar* script)
+void webkit_web_view_execute_script(WebKitWebView* webView, const gchar* script)
 {
-    g_return_if_fail(WEBKIT_IS_PAGE(page));
+    g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
     g_return_if_fail(script);
 
-    WebKitPagePrivate* pageData = WEBKIT_PAGE_GET_PRIVATE(page);
-    WebKitFramePrivate* frameData = WEBKIT_FRAME_GET_PRIVATE(pageData->mainFrame);
+    WebKitWebViewPrivate* webViewData = WEBKIT_WEB_VIEW_GET_PRIVATE(webView);
+    WebKitWebFramePrivate* frameData = WEBKIT_WEB_FRAME_GET_PRIVATE(webViewData->mainFrame);
 
     if (FrameLoader* loader = frameData->frame->loader())
         loader->executeScript(String::fromUTF8(script), true);
 }
 
 /**
- * webkit_page_get_editable:
- * @page: a #WebKitPage
+ * webkit_web_view_get_editable:
+ * @web_view: a #WebKitWebView
  *
  * Returns whether the user is allowed to edit the document.
  *
- * Returns %TRUE if @page allows the user to edit the HTML document, %FALSE if
- * it doesn't. You can change @page's document programmatically regardless of
+ * Returns %TRUE if @web_view allows the user to edit the HTML document, %FALSE if
+ * it doesn't. You can change @web_view's document programmatically regardless of
  * this setting.
  *
  * Return value: a #gboolean indicating the editable state
  */
-gboolean webkit_page_get_editable(WebKitPage* page)
+gboolean webkit_web_view_get_editable(WebKitWebView* webView)
 {
-    g_return_val_if_fail(WEBKIT_IS_PAGE(page), FALSE);
+    g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), FALSE);
 
-    WebKitPagePrivate* pageData = WEBKIT_PAGE_GET_PRIVATE(page);
-    ASSERT(pageData);
+    WebKitWebViewPrivate* webViewData = WEBKIT_WEB_VIEW_GET_PRIVATE(webView);
+    ASSERT(webViewData);
 
-    return pageData->editable;
+    return webViewData->editable;
 }
 
 /**
- * webkit_page_set_editable:
- * @page: a #WebKitPage
+ * webkit_web_view_set_editable:
+ * @web_view: a #WebKitWebView
  * @flag: a #gboolean indicating the editable state
  *
- * Sets whether @page allows the user to edit its HTML document.
+ * Sets whether @web_view allows the user to edit its HTML document.
  *
- * If @flag is %TRUE, @page allows the user to edit the document. If @flag is
- * %FALSE, an element in @page's document can only be edited if the
+ * If @flag is %TRUE, @web_view allows the user to edit the document. If @flag is
+ * %FALSE, an element in @web_view's document can only be edited if the
  * CONTENTEDITABLE attribute has been set on the element or one of its parent
- * elements. You can change @page's document programmatically regardless of
- * this setting. By default a #WebKitPage is not editable.
+ * elements. You can change @web_view's document programmatically regardless of
+ * this setting. By default a #WebKitWebView is not editable.
 
  * Normally, an HTML document is not editable unless the elements within the
  * document are editable. This function provides a low-level way to make the
- * contents of a #WebKitPage editable without altering the document or DOM
+ * contents of a #WebKitWebView editable without altering the document or DOM
  * structure.
  */
-void webkit_page_set_editable(WebKitPage* page, gboolean flag)
+void webkit_web_view_set_editable(WebKitWebView* webView, gboolean flag)
 {
-    g_return_if_fail(WEBKIT_IS_PAGE(page));
+    g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
     flag = flag != FALSE;
 
-    WebKitPagePrivate* pageData = WEBKIT_PAGE_GET_PRIVATE(page);
-    ASSERT(pageData);
+    WebKitWebViewPrivate* webViewData = WEBKIT_WEB_VIEW_GET_PRIVATE(webView);
+    ASSERT(webViewData);
 
-    Frame* mainFrame = core(pageData->mainFrame);
+    Frame* mainFrame = core(webViewData->mainFrame);
     g_return_if_fail(mainFrame);
 
     // TODO: What happens when the frame is replaced?
-    if (flag == pageData->editable)
+    if (flag == webViewData->editable)
         return;
 
-    pageData->editable = flag;
+    webViewData->editable = flag;
 
     if (flag) {
         mainFrame->applyEditingStyleToBodyElement();
-        // TODO: If the WebKitPage is made editable and the selection is empty, set it to something.
-        //if (!webkit_page_get_selected_dom_range(page))
+        // TODO: If the WebKitWebView is made editable and the selection is empty, set it to something.
+        //if (!webkit_web_view_get_selected_dom_range(webView))
         //    mainFrame->setSelectionFromNone();
     } else
         mainFrame->removeEditingStyleFromBodyElement();

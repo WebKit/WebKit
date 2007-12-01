@@ -28,8 +28,8 @@
 
 #include "config.h"
 
-#include "webkitgtknetworkrequest.h"
-#include "webkitgtkprivate.h"
+#include "webkitnetworkrequest.h"
+#include "webkitprivate.h"
 
 using namespace WebKit;
 using namespace WebCore;

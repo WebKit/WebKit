@@ -28,71 +28,46 @@
 
 #include "config.h"
 
-#include "webkitgtkprivate.h"
-#include "ChromeClientGtk.h"
-#include "FrameLoader.h"
-#include "FrameLoaderClientGtk.h"
-#include "NotImplemented.h"
+#include "webkitsettings.h"
 
-using namespace WebCore;
-
-namespace WebKit {
-void apply(WebKitSettings*, WebCore::Settings*)
+extern "C" {
+GType webkit_web_settings_get_type(void)
 {
-    notImplemented();
+    return GType();
 }
 
-WebKitSettings* create(WebCore::Settings*)
+WebKitSettings* webkit_web_settings_copy(WebKitSettings* setting)
 {
-    notImplemented();
     return 0;
 }
 
-WebKitFrame* getFrameFromPage(WebKitPage* page)
+void webkit_web_settings_free(WebKitSettings* setting)
 {
-    return webkit_page_get_main_frame(page);
 }
 
-WebKitPage* getPageFromFrame(WebKitFrame* frame)
+WebKitSettings* webkit_web_settings_get_global(void)
 {
-    return webkit_frame_get_page(frame);
+    return 0;
 }
 
-WebCore::Frame* core(WebKitFrame* frame)
+void webkit_web_settings_set_global (WebKitSettings* setting)
 {
-    if (!frame)
-        return 0;
-
-    WebKitFramePrivate* frame_data = WEBKIT_FRAME_GET_PRIVATE(frame);
-    return frame_data ? frame_data->frame : 0;
 }
 
-WebKitFrame* kit(WebCore::Frame* coreFrame)
+void webkit_web_settings_set_font_family(WebKitSettings*, WebKitFontFamily family, gchar* family_name)
 {
-    if (!coreFrame)
-        return 0;
-
-    ASSERT(coreFrame->loader());
-    WebKit::FrameLoaderClient* client = static_cast<WebKit::FrameLoaderClient*>(coreFrame->loader()->client());
-    return client ? client->webFrame() : 0;
 }
 
-WebCore::Page* core(WebKitPage* page)
+const gchar* webkit_web_settings_get_font_family(WebKitSettings*, WebKitFontFamily family)
 {
-    if (!page)
-        return 0;
-
-    WebKitPagePrivate* page_data = WEBKIT_PAGE_GET_PRIVATE(page);
-    return page_data ? page_data->page : 0;
+    return 0;
 }
 
-WebKitPage* kit(WebCore::Page* page)
+void webkit_web_settings_set_user_style_sheet_location(WebKitSettings*, gchar*)
 {
-    if (!page)
-        return 0;
+}
 
-    ASSERT(page->chrome());
-    WebKit::ChromeClient* client = static_cast<WebKit::ChromeClient*>(page->chrome()->client());
-    return client ? client->webPage() : 0;
+void webkit_set_ftp_directory_template_path(WebKitSettings*, gchar*)
+{
 }
 }

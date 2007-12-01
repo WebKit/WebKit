@@ -27,47 +27,25 @@
  */
 
 #include "config.h"
+#include "webkitglobal.h"
 
-#include "webkitgtksettings.h"
+#include "Logging.h"
+#include "DatabaseTracker.h"
+
+#include <glib.h>
 
 extern "C" {
-GType webkit_web_settings_get_type(void)
+void webkit_init(void)
 {
-    return GType();
-}
+    WebCore::InitializeLoggingChannelsIfNecessary();
 
-WebKitSettings* webkit_web_settings_copy(WebKitSettings* setting)
-{
-    return 0;
-}
+    WebCore::initializeThreading();
 
-void webkit_web_settings_free(WebKitSettings* setting)
-{
-}
-
-WebKitSettings* webkit_web_settings_get_global(void)
-{
-    return 0;
-}
-
-void webkit_web_settings_set_global (WebKitSettings* setting)
-{
-}
-
-void webkit_web_settings_set_font_family(WebKitSettings*, WebKitFontFamily family, gchar* family_name)
-{
-}
-
-const gchar* webkit_web_settings_get_font_family(WebKitSettings*, WebKitFontFamily family)
-{
-    return 0;
-}
-
-void webkit_web_settings_set_user_style_sheet_location(WebKitSettings*, gchar*)
-{
-}
-
-void webkit_set_ftp_directory_template_path(WebKitSettings*, gchar*)
-{
+#if ENABLE(DATABASE)
+    // FIXME: It should be possible for client applications to override this default location
+    gchar* databaseDirectory = g_build_filename(g_get_user_data_dir(), "webkit", "databases", NULL);
+    WebCore::DatabaseTracker::tracker().setDatabasePath(databaseDirectory);
+    g_free(databaseDirectory);
+#endif
 }
 }
