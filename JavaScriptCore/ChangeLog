@@ -1,3 +1,31 @@
+2007-11-30  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Beth Dakin.
+        
+        Reversed the ownership relationship between Interpreter and JSGlobalObject.
+        Now, the JSGlobalObject owns the Interpreter, and top-level objects
+        that need the two to persist just protect the JSGlobalObject from GC.
+        
+        Global object bootstrapping looks a little odd right now, but it will
+        make much more sense soon, after further rounds of refactoring.
+
+        * bindings/runtime_root.h: Made this class inherit from RefCounted,
+        to avoid code duplication.
+
+        * kjs/collector.cpp:
+        (KJS::Collector::collect): No need to give special GC treatment to 
+        Interpreters, since we mark their global objects, which mark them.
+
+        * kjs/interpreter.cpp:
+        (KJS::Interpreter::mark): No need to mark our global object, since it
+        marks us.
+        * kjs/interpreter.h: Don't inherit from RefCounted -- JSGlobalObject 
+        owns us directly.
+
+        * kjs/testkjs.cpp: Modified to follow the new rules.
+        (createGlobalObject):
+        (runWithScripts):
+
 2007-11-30  Brent Fulgham  <bfulgham@gmail.com>
 
         Reviewed by Eric.

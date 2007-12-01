@@ -940,14 +940,6 @@ bool Collector::collect()
   fastMallocForbid();
 #endif
 
-  if (Interpreter::s_hook) {
-    Interpreter* scr = Interpreter::s_hook;
-    do {
-      scr->mark();
-      scr = scr->next;
-    } while (scr != Interpreter::s_hook);
-  }
-
   markStackObjectsConservatively();
   markProtectedObjects();
   List::markProtectedLists();

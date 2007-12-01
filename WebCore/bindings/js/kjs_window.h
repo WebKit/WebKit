@@ -103,8 +103,6 @@ namespace KJS {
 
     void timerFired(DOMWindowTimer*);
     
-    KJS::ScriptInterpreter *interpreter() const;
-        
     bool isSafeScript(ExecState*) const;
     static bool isSafeScript(const ScriptInterpreter *origin, const ScriptInterpreter *target);
 

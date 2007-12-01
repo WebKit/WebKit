@@ -29,6 +29,7 @@
 #include <CoreFoundation/CoreFoundation.h>
 
 #include <JavaVM/jni.h>
+#include <wtf/RefPtr.h>
 
 #define jlong_to_ptr(a) ((void*)(uintptr_t)(a))
 #define jlong_to_impptr(a) (static_cast<KJS::JSObject*>(((void*)(uintptr_t)(a))))

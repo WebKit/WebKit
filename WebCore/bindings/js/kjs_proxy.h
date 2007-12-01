@@ -21,6 +21,7 @@
 #ifndef kjs_proxy_h
 #define kjs_proxy_h
 
+#include <kjs/protect.h>
 #include <wtf/RefPtr.h>
 
 namespace KJS {
@@ -33,8 +34,12 @@ namespace WebCore {
 class Event;
 class EventListener;
 class Frame;
+class JSDOMWindow;
 class Node;
 class String;
+
+// FIXME: Rename this class to JSController and merge functions from 
+// ScriptInterpreter into it.
 
 class KJSProxy {
 public:
@@ -53,12 +58,12 @@ public:
 
     void initScriptIfNeeded();
 
-    bool haveInterpreter() const { return m_script; }
+    bool haveInterpreter() const { return m_globalObject; }
     
     void clearDocumentWrapper();
 
 private:
-    RefPtr<KJS::ScriptInterpreter> m_script;
+    KJS::ProtectedPtr<JSDOMWindow> m_globalObject;
     Frame* m_frame;
     int m_handlerLineno;
 };

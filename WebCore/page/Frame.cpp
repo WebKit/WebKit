@@ -1110,18 +1110,18 @@ KJS::Bindings::RootObject* Frame::bindingRootObject()
 
     if (!d->m_bindingRootObject) {
         JSLock lock;
-        d->m_bindingRootObject = KJS::Bindings::RootObject::create(0, scriptProxy()->interpreter());
+        d->m_bindingRootObject = KJS::Bindings::RootObject::create(0, scriptProxy()->interpreter()->globalObject());
     }
     return d->m_bindingRootObject.get();
 }
 
-PassRefPtr<KJS::Bindings::RootObject> Frame::createRootObject(void* nativeHandle, PassRefPtr<KJS::Interpreter> interpreter)
+PassRefPtr<KJS::Bindings::RootObject> Frame::createRootObject(void* nativeHandle, KJS::JSGlobalObject* globalObject)
 {
     RootObjectMap::iterator it = d->m_rootObjects.find(nativeHandle);
     if (it != d->m_rootObjects.end())
         return it->second;
     
-    RefPtr<KJS::Bindings::RootObject> rootObject = KJS::Bindings::RootObject::create(nativeHandle, interpreter);
+    RefPtr<KJS::Bindings::RootObject> rootObject = KJS::Bindings::RootObject::create(nativeHandle, globalObject);
     
     d->m_rootObjects.set(nativeHandle, rootObject);
     return rootObject.release();

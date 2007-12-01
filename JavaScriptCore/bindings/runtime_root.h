@@ -26,7 +26,6 @@
 #ifndef RUNTIME_ROOT_H_
 #define RUNTIME_ROOT_H_
 
-#include "interpreter.h"
 #if PLATFORM(MAC)
 #include "jni_jsobject.h"
 #endif
@@ -34,11 +33,14 @@
 
 #include <wtf/HashSet.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/RefCounted.h>
 
 namespace KJS {
 
+class Interpreter;
+class JSGlobalObject;
 class RuntimeObjectImp;
-    
+
 namespace Bindings {
 
 class RootObject;
@@ -49,18 +51,13 @@ typedef HashCountedSet<JSObject*> ProtectCountSet;
 extern RootObject* findRootObject(JSObject*);
 extern RootObject* findRootObject(Interpreter*);
 
-class RootObject : Noncopyable
-{
-friend class JavaJSObject;
-public:
-    static PassRefPtr<RootObject> create(const void* nativeHandle, PassRefPtr<Interpreter> interpreter);
+class RootObject : public RefCounted<RootObject> {
+    friend class JavaJSObject;
 
-    void ref() { m_refCount++; }
-    void deref()
-    {
-        if (--m_refCount == 0)
-            delete this;
-    }
+public:
+    ~RootObject();
+    
+    static PassRefPtr<RootObject> create(const void* nativeHandle, JSGlobalObject*);
 
     bool isValid() { return m_isValid; }
     void invalidate();
@@ -88,14 +85,12 @@ public:
     void addRuntimeObject(RuntimeObjectImp*);
     void removeRuntimeObject(RuntimeObjectImp*);
 private:
-    RootObject(const void* nativeHandle, PassRefPtr<Interpreter> interpreter);
-    ~RootObject();
+    RootObject(const void* nativeHandle, JSGlobalObject*);
     
-    unsigned m_refCount;
     bool m_isValid;
     
     const void* m_nativeHandle;
-    RefPtr<Interpreter> m_interpreter;
+    ProtectedPtr<JSGlobalObject> m_globalObject;
     ProtectCountSet m_protectCountSet;
 
     HashSet<RuntimeObjectImp*> m_runtimeObjects;

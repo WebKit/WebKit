@@ -41,11 +41,15 @@
 struct NPObject;
 
 namespace KJS {
+
     class Interpreter;
+    class JSGlobalObject;
+
     namespace Bindings {
         class Instance;
         class RootObject;
     }
+
 }
 
 #if PLATFORM(MAC)
@@ -169,7 +173,7 @@ public:
     KJS::Bindings::Instance* createScriptInstanceForWidget(Widget*);
     KJS::Bindings::RootObject* bindingRootObject();
     
-    PassRefPtr<KJS::Bindings::RootObject> createRootObject(void* nativeHandle, PassRefPtr<KJS::Interpreter>);
+    PassRefPtr<KJS::Bindings::RootObject> createRootObject(void* nativeHandle, KJS::JSGlobalObject*);
 
 #if PLATFORM(MAC)
     WebScriptObject* windowScriptObject();

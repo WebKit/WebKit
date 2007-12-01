@@ -1,3 +1,35 @@
+2007-11-30  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Beth Dakin.
+        
+        Modified WebCore to follow the new JSGlobalObject/Interpreter ownership
+        rules in JavaScriptCore.
+
+        * bindings/js/kjs_binding.cpp:
+        * bindings/js/kjs_binding.h: Removed stale, unused 
+        interpreterForGlobalObject().
+
+        * bindings/js/kjs_proxy.cpp: Changed to store a global object, rather
+        than an interpreter.
+        (WebCore::KJSProxy::finishedWithEvent): Need to NULL check 
+        m_globalObject here because we no longer unnecessarily instantiate it.
+
+        * bindings/js/kjs_window.cpp:
+        (KJS::ScheduledAction::execute):
+        * bindings/js/kjs_window.h: Removed redundant and less efficient 
+        interpreter() function -- global objects have direct access to their
+        interpreters now.
+
+        Changed these functions to pass around JSGlobalObjects instead of 
+        Interpreters:
+
+        * page/Frame.cpp:
+        (WebCore::Frame::bindingRootObject):
+        (WebCore::Frame::createRootObject):
+        * page/Frame.h:
+        * page/mac/WebCoreFrameBridge.mm:
+        (createRootObject):
+
 2007-12-01  Darin Adler  <darin@apple.com>
 
         Reviewed by Mitz.

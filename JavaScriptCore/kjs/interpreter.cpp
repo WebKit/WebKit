@@ -256,7 +256,7 @@ void Interpreter::createObjectsForGlobalObjectProperties()
 void Interpreter::setGlobalObjectProperties()
 {
     ASSERT(m_globalObject);
-    m_globalObject->setInterpreter(this);
+    m_globalObject->setInterpreter(std::auto_ptr<Interpreter>(this));
 
     // Set global object prototype
     JSObject* o = m_globalObject;
@@ -551,9 +551,6 @@ void Interpreter::mark()
 
     if (m_globalExec.exception() && !m_globalExec.exception()->marked())
         m_globalExec.exception()->mark();
-
-    if (m_globalObject && !m_globalObject->marked())
-        m_globalObject->mark();
 
     if (m_Object && !m_Object->marked())
         m_Object->mark();

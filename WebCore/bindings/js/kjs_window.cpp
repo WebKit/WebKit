@@ -249,15 +249,6 @@ Window::~Window()
         i1->second->clearWindowObj();
 }
 
-ScriptInterpreter* Window::interpreter() const
-{
-    Frame* frame = impl()->frame();
-    if (!frame)
-        return 0;
-
-    return frame->scriptProxy()->interpreter();
-}
-
 Window *Window::retrieveWindow(Frame *f)
 {
     JSObject *o = retrieve(f)->getObject();
@@ -1663,7 +1654,7 @@ void ScheduledAction::execute(Window* window)
     if (!scriptProxy)
         return;
 
-    RefPtr<ScriptInterpreter> interpreter = scriptProxy->interpreter();
+    ScriptInterpreter* interpreter = scriptProxy->interpreter();
 
     interpreter->setProcessingTimerCallback(true);
 

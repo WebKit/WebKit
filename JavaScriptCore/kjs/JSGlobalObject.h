@@ -1,6 +1,7 @@
 // -*- c-basic-offset: 4 -*-
 /*
  *  Copyright (C) 2007 Eric Seidel <eric@webkit.org>
+ *  Copyright (C) 2007 Apple Ince. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -25,19 +26,29 @@
 #include "object.h"
 
 namespace KJS {
+
     class Interpreter;
+
     class JSGlobalObject : public JSObject {
     public:
         JSGlobalObject() { }
         JSGlobalObject(JSValue* proto) : JSObject(proto) { }
-        
+
         virtual bool isGlobalObject() const { return true; }
-        
-        Interpreter* interpreter() const { return m_interpreter; }
-        void setInterpreter(Interpreter* i) { m_interpreter = i; }
+
+        virtual void mark()
+        {
+            JSObject::mark();
+            m_interpreter->mark();
+        }
+
+        Interpreter* interpreter() const { return m_interpreter.get(); }
+        void setInterpreter(std::auto_ptr<Interpreter> i) { m_interpreter = i; }
+
     private:
-        Interpreter* m_interpreter;
+        std::auto_ptr<Interpreter> m_interpreter;
     };
+
 } // namespace KJS
 
 #endif // KJS_GlobalObject_h

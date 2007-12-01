@@ -130,7 +130,7 @@ static PassRefPtr<RootObject> createRootObject(void* nativeHandle)
         return 0;
 
     Frame* frame = [bridge _frame];
-    return frame->createRootObject(nativeHandle, frame->scriptProxy()->interpreter());
+    return frame->createRootObject(nativeHandle, frame->scriptProxy()->interpreter()->globalObject());
 }
 
 static pthread_t mainThread = 0;

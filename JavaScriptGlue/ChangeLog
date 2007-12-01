@@ -1,3 +1,21 @@
+2007-11-30  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Beth Dakin.
+        
+        Modified to follow new JSGlobalObject/Interpreter ownership rules 
+        in JavaScriptCore.
+
+        * JSRun.cpp:
+        (JSRun::JSRun):
+        (JSRun::GetInterpreter):
+        (JSRun::Evaluate):
+        (JSRun::CheckSyntax):
+        * JSRun.h:
+        * JSValueWrapper.cpp:
+        (unprotectGlobalObject):
+        (initializeGlobalObjectKey):
+        (getThreadGlobalExecState):
+
 2007-11-29  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Maciej.

@@ -76,7 +76,7 @@ namespace KJS {
    * evaluation, and also provides access to built-in properties such as
    * " Object" and "Number".
    */
-  class Interpreter : public RefCounted<Interpreter> {
+  class Interpreter {
     friend class Collector;
   public:
     /**

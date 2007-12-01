@@ -25,10 +25,10 @@
 #include "config.h"
 #include "runtime_root.h"
 
+#include "JSGlobalObject.h"
 #include "object.h"
 #include "runtime.h"
 #include "runtime_object.h"
-
 #include <wtf/HashCountedSet.h>
 #include <wtf/HashSet.h>
 
@@ -195,18 +195,17 @@ void RootObject::setCreateRootObject(CreateRootObjectFunction createRootObject) 
 
 #endif
 
-PassRefPtr<RootObject> RootObject::create(const void* nativeHandle, PassRefPtr<Interpreter> interpreter)
+PassRefPtr<RootObject> RootObject::create(const void* nativeHandle, JSGlobalObject* globalObject)
 {
-    return new RootObject(nativeHandle, interpreter);
+    return new RootObject(nativeHandle, globalObject);
 }
 
-RootObject::RootObject(const void* nativeHandle, PassRefPtr<Interpreter> interpreter)
-    : m_refCount(0)
-    , m_isValid(true)
+RootObject::RootObject(const void* nativeHandle, JSGlobalObject* globalObject)
+    : m_isValid(true)
     , m_nativeHandle(nativeHandle)
-    , m_interpreter(interpreter)
+    , m_globalObject(globalObject)
 {
-    ASSERT(m_interpreter);
+    ASSERT(globalObject);
     rootObjectSet()->add(this);
 }
 
@@ -232,7 +231,7 @@ void RootObject::invalidate()
     m_isValid = false;
 
     m_nativeHandle = 0;
-    m_interpreter = 0;
+    m_globalObject = 0;
 
     ProtectCountSet::iterator end = m_protectCountSet.end();
     for (ProtectCountSet::iterator it = m_protectCountSet.begin(); it != end; ++it) {
@@ -284,7 +283,7 @@ const void* RootObject::nativeHandle() const
 Interpreter* RootObject::interpreter() const 
 { 
     ASSERT(m_isValid);
-    return m_interpreter.get(); 
+    return m_globalObject->interpreter();
 }
 
 void RootObject::addRuntimeObject(RuntimeObjectImp* object)
