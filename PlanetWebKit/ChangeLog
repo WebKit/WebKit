@@ -1,3 +1,9 @@
+2007-12-01  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        * config.ini: Correct blog name.
+
 2007-11-30  Adam Roben  <aroben@apple.com>
 
         Add another feed
