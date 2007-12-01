@@ -1,3 +1,10 @@
+2007-11-30  Jan Michael Alonzo  <jmalonzo@unpluggable.com>
+
+        Fix for GTK+ Debug build breakage introduced in r28273.
+
+        * WebView/webkitprivate.cpp:
+        (WebKit::kit):
+
 2007-11-30  Alp Toker  <alp@atoker.com>
 
         Reviewed by Adam Roben.
