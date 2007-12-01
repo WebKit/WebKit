@@ -1,3 +1,11 @@
+2007-11-30  Matt Lilek  <webkit@mattlilek.com>
+
+        Reviewed by Maciej.
+
+        Clean up a couple of typos from Maciej's last patch.
+
+        * coding/commit-review-policy.html:
+
 2007-11-30  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Bertrand.
