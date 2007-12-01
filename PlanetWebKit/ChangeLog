@@ -1,5 +1,11 @@
 2007-11-30  Adam Roben  <aroben@apple.com>
 
+        Add a simple script to update the site
+
+        * update.pl: Added.
+
+2007-11-30  Adam Roben  <aroben@apple.com>
+
         Include all WebKit posts from Trolltech Labs
 
         * config.ini:
