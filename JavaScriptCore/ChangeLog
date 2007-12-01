@@ -1,3 +1,13 @@
+2007-11-30  Eric Seidel  <eric@webkit.org>
+
+        No review, build fix only.
+        
+        Fix uninitialized var warnings in release build.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * pcre/pcre_compile.cpp:
+        (compile_regex):
+
 2007-11-30  Darin Adler  <darin@apple.com>
 
         Reviewed by Adam Roben.

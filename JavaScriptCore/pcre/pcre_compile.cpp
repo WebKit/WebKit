@@ -1909,10 +1909,8 @@ compile_regex(int options, int* brackets, uschar** codeptr,
     uschar* code = *codeptr;
     uschar* last_branch = code;
     uschar* start_bracket = code;
-    int firstbyte, reqbyte;
-    int branchfirstbyte, branchreqbyte;
-    
-    firstbyte = reqbyte = REQ_UNSET;
+    int firstbyte = REQ_UNSET;
+    int reqbyte = REQ_UNSET;
     
     /* Offset is set zero to mark that this bracket is still open */
     
@@ -1924,6 +1922,8 @@ compile_regex(int options, int* brackets, uschar** codeptr,
     while (true) {
         /* Now compile the branch */
         
+        int branchfirstbyte = REQ_UNSET;
+        int branchreqbyte = REQ_UNSET;
         if (!compile_branch(options, brackets, &code, &ptr, patternEnd, errorcodeptr,
                             &branchfirstbyte, &branchreqbyte, cd)) {
             *ptrptr = ptr;
