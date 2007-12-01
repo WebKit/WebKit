@@ -1,3 +1,11 @@
+2007-11-30  Brent Fulgham  <bfulgham@gmail.com>
+
+        Reviewed by Eric.
+
+        * ChangeLog:
+        * pcre/pcre_compile.cpp:
+        (compile_branch):
+
 2007-11-30  Eric Seidel  <eric@webkit.org>
 
         No review, build fix only.
