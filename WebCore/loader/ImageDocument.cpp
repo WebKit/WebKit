@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -56,8 +56,8 @@ using namespace HTMLNames;
 class ImageEventListener : public EventListener {
 public:
     ImageEventListener(ImageDocument* doc) : m_doc(doc) { }
-    
     virtual void handleEvent(Event*, bool isWindowEvent);
+
 private:
     ImageDocument* m_doc;
 };
@@ -65,16 +65,29 @@ private:
 class ImageTokenizer : public Tokenizer {
 public:
     ImageTokenizer(ImageDocument* doc) : m_doc(doc) {}
-        
+
     virtual bool write(const SegmentedString&, bool appendData);
     virtual void finish();
     virtual bool isWaitingForScripts() const;
     
     virtual bool wantsRawData() const { return true; }
     virtual bool writeRawData(const char* data, int len);
+
 private:
     ImageDocument* m_doc;
 };
+
+class ImageDocumentElement : public HTMLImageElement {
+public:
+    ImageDocumentElement(ImageDocument* doc) : HTMLImageElement(doc), m_imageDocument(doc) { }
+    virtual ~ImageDocumentElement();
+    virtual void willMoveToNewOwnerDocument();
+
+private:
+    ImageDocument* m_imageDocument;
+};
+
+// --------
 
 bool ImageTokenizer::write(const SegmentedString& s, bool appendData)
 {
@@ -123,6 +136,8 @@ bool ImageTokenizer::isWaitingForScripts() const
     return false;
 }
     
+// --------
+
 ImageDocument::ImageDocument(DOMImplementation* implementation, Frame* frame)
     : HTMLDocument(implementation, frame)
     , m_imageElement(0)
@@ -150,12 +165,11 @@ void ImageDocument::createDocumentStructure()
     
     rootElement->appendChild(body, ec);
     
-    RefPtr<Element> imageElement = createElementNS(xhtmlNamespaceURI, "img", ec);
+    RefPtr<ImageDocumentElement> imageElement = new ImageDocumentElement(this);
     
-    m_imageElement = static_cast<HTMLImageElement *>(imageElement.get());
-    m_imageElement->setAttribute(styleAttr, "-webkit-user-select: none");        
-    m_imageElement->setLoadManually(true);
-    m_imageElement->setSrc(URL());
+    imageElement->setAttribute(styleAttr, "-webkit-user-select: none");        
+    imageElement->setLoadManually(true);
+    imageElement->setSrc(URL());
     
     body->appendChild(imageElement, ec);
     
@@ -163,12 +177,17 @@ void ImageDocument::createDocumentStructure()
         // Add event listeners
         RefPtr<EventListener> listener = new ImageEventListener(this);
         addWindowEventListener("resize", listener, false);
-        m_imageElement->addEventListener("click", listener.release(), false);
+        imageElement->addEventListener("click", listener.release(), false);
     }
+
+    m_imageElement = imageElement.get();
 }
 
 float ImageDocument::scale() const
 {
+    if (!m_imageElement)
+        return 1.0f;
+
     IntSize imageSize = m_imageElement->cachedImage()->imageSize();
     IntSize windowSize = IntSize(frame()->view()->width(), frame()->view()->height());
     
@@ -180,6 +199,9 @@ float ImageDocument::scale() const
 
 void ImageDocument::resizeImageToFit()
 {
+    if (!m_imageElement)
+        return;
+
     IntSize imageSize = m_imageElement->cachedImage()->imageSize();
 
     float scale = this->scale();
@@ -233,7 +255,7 @@ void ImageDocument::imageChanged()
 
 void ImageDocument::restoreImageSize()
 {
-    if (!m_imageSizeIsKnown)
+    if (!m_imageElement || !m_imageSizeIsKnown)
         return;
     
     m_imageElement->setWidth(m_imageElement->cachedImage()->imageSize().width());
@@ -250,6 +272,9 @@ void ImageDocument::restoreImageSize()
 
 bool ImageDocument::imageFitsInWindow() const
 {
+    if (!m_imageElement)
+        return true;
+
     IntSize imageSize = m_imageElement->cachedImage()->imageSize();
     IntSize windowSize = IntSize(frame()->view()->width(), frame()->view()->height());
     
@@ -258,7 +283,7 @@ bool ImageDocument::imageFitsInWindow() const
 
 void ImageDocument::windowSizeChanged()
 {
-    if (!m_imageSizeIsKnown)
+    if (!m_imageElement || !m_imageSizeIsKnown)
         return;
 
     bool fitsInWindow = imageFitsInWindow();
@@ -305,6 +330,8 @@ bool ImageDocument::shouldShrinkToFit() const
         frame()->page()->mainFrame() == frame();
 }
 
+// --------
+
 void ImageEventListener::handleEvent(Event* event, bool isWindowEvent)
 {
     if (event->type() == resizeEvent)
@@ -313,6 +340,23 @@ void ImageEventListener::handleEvent(Event* event, bool isWindowEvent)
         MouseEvent* mouseEvent = static_cast<MouseEvent*>(event);
         m_doc->imageClicked(mouseEvent->x(), mouseEvent->y());
     }
+}
+
+// --------
+
+ImageDocumentElement::~ImageDocumentElement()
+{
+    if (m_imageDocument)
+        m_imageDocument->disconnectImageElement();
+}
+
+void ImageDocumentElement::willMoveToNewOwnerDocument()
+{
+    if (m_imageDocument) {
+        m_imageDocument->disconnectImageElement();
+        m_imageDocument = 0;
+    }
+    HTMLImageElement::willMoveToNewOwnerDocument();
 }
 
 }

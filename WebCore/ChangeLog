@@ -1,5 +1,32 @@
 2007-12-01  Darin Adler  <darin@apple.com>
 
+        Reviewed by Mitz.
+
+        - fix problem tracked by these bugs:
+          http://bugs.webkit.org/show_bug.cgi?id=16097
+          <rdar://problem/5619305> Safari crashes during load of LexisNexis search results
+          <rdar://problem/5510779> CrashTracer: [USER] 25 crashes in Safari at
+          WebCore::DocumentLoader::isLoadingMultipartContent const
+
+        * loader/ImageDocument.cpp:
+        (WebCore::ImageDocument::createDocumentStructure): Create an ImageDocumentElement
+        instead of an HTMLImageElement.
+        (WebCore::ImageDocument::scale): Added a null check for m_imageElement.
+        (WebCore::ImageDocument::resizeImageToFit): Ditto.
+        (WebCore::ImageDocument::restoreImageSize): Ditto.
+        (WebCore::ImageDocument::imageFitsInWindow): Ditto.
+        (WebCore::ImageDocument::windowSizeChanged): Ditto.
+        (WebCore::ImageDocumentElement::~ImageDocumentElement): Call
+        disconnectImageElement so m_imageElement will be set to 0
+         if we're still connected to the document.
+        (WebCore::ImageDocumentElement::willMoveToNewOwnerDocument): Ditto.
+
+        * loader/ImageDocument.h: Changed image element type to be
+        ImageDocumentElement instead of HTMLImageElement. Also added
+        a disconnectImageElement function that sets m_imageElement to 0.
+
+2007-12-01  Darin Adler  <darin@apple.com>
+
         - remove the empty directories
 
         * ksvg2: Removed.
@@ -191,7 +218,6 @@
 
         * Don't hide symbols when in Debug mode
         * On Linux (glibc) provide a backtrace in the test output for debugging purposes
-
 
         * WebCore.pro:
 
