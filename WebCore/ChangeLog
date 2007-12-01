@@ -1,5 +1,11 @@
 2007-11-30   Anders Carlsson  <andersca@apple.com>
 
+        Add platform/text project group.
+        
+        * WebCore.vcproj/WebCore.vcproj:
+
+2007-11-30   Anders Carlsson  <andersca@apple.com>
+
         Remove extra </Filter> tag which prevented the vcproj from being parsed correctly.
         
         * WebCore.vcproj/WebCore.vcproj:
