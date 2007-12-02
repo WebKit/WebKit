@@ -199,7 +199,7 @@ public:
     
     typedef HashMap<AtomicStringImpl*, CSSRuleDataList*> AtomRuleMap;
     
-    void addRulesFromSheet(CSSStyleSheet*, MediaQueryEvaluator*, CSSStyleSelector* = 0);
+    void addRulesFromSheet(CSSStyleSheet*, const MediaQueryEvaluator&, CSSStyleSelector* = 0);
     
     void addRule(CSSStyleRule* rule, CSSSelector* sel);
     void addToRuleSet(AtomicStringImpl* key, AtomRuleMap& map,
@@ -234,6 +234,18 @@ CSSStyleSheet *CSSStyleSelector::svgSheet = 0;
 
 static CSSStyleSelector::Encodedurl *currentEncodedURL = 0;
 static PseudoState pseudoState;
+
+static const MediaQueryEvaluator& screenEval()
+{
+    static const MediaQueryEvaluator staticScreenEval("screen");
+    return staticScreenEval;
+}
+
+static const MediaQueryEvaluator& printEval()
+{
+    static const MediaQueryEvaluator staticPrintEval("print");
+    return staticPrintEval;
+}
 
 CSSStyleSelector::CSSStyleSelector(Document* doc, const String& userStyleSheet, StyleSheetList *styleSheets, CSSStyleSheet* mappedElementSheet, bool _strictParsing, bool matchAuthorAndUserStyles)
 {
@@ -277,7 +289,7 @@ CSSStyleSelector::CSSStyleSelector(Document* doc, const String& userStyleSheet, 
         m_userSheet->parseString(userStyleSheet, strictParsing);
 
         m_userStyle = new CSSRuleSet();
-        m_userStyle->addRulesFromSheet(m_userSheet.get(), m_medium, this);
+        m_userStyle->addRulesFromSheet(m_userSheet.get(), *m_medium, this);
     }
 
     // add stylesheets from document
@@ -285,12 +297,12 @@ CSSStyleSelector::CSSStyleSelector(Document* doc, const String& userStyleSheet, 
     
     // Add rules from elments like SVG's <font-face>
     if (mappedElementSheet)
-        m_authorStyle->addRulesFromSheet(mappedElementSheet, m_medium, this);
+        m_authorStyle->addRulesFromSheet(mappedElementSheet, *m_medium, this);
 
     DeprecatedPtrListIterator<StyleSheet> it(styleSheets->styleSheets);
     for (; it.current(); ++it)
         if (it.current()->isCSSStyleSheet() && !it.current()->disabled())
-            m_authorStyle->addRulesFromSheet(static_cast<CSSStyleSheet*>(it.current()), m_medium, this);
+            m_authorStyle->addRulesFromSheet(static_cast<CSSStyleSheet*>(it.current()), *m_medium, this);
 
     // Just delete our font selector if we end up with nothing but invalid @font-face rules.
     if (m_fontSelector && m_fontSelector->isEmpty())
@@ -357,28 +369,18 @@ void CSSStyleSelector::loadDefaultStyle()
     defaultQuirksStyle = new CSSRuleSet;
     defaultViewSourceStyle = new CSSRuleSet;
 
-    MediaQueryEvaluator screenEval("screen");
-    MediaQueryEvaluator printEval("print");
-
     // Strict-mode rules.
     defaultSheet = parseUASheet(html4UserAgentStyleSheet);
-    defaultStyle->addRulesFromSheet(defaultSheet, &screenEval);
-    defaultPrintStyle->addRulesFromSheet(defaultSheet, &printEval);
-
-#if ENABLE(SVG)
-    // SVG rules.
-    svgSheet = parseUASheet(svgUserAgentStyleSheet);
-    defaultStyle->addRulesFromSheet(svgSheet, &screenEval);
-    defaultPrintStyle->addRulesFromSheet(svgSheet, &printEval);
-#endif
+    defaultStyle->addRulesFromSheet(defaultSheet, screenEval());
+    defaultPrintStyle->addRulesFromSheet(defaultSheet, printEval());
 
     // Quirks-mode rules.
     quirksSheet = parseUASheet(quirksUserAgentStyleSheet);
-    defaultQuirksStyle->addRulesFromSheet(quirksSheet, &screenEval);
+    defaultQuirksStyle->addRulesFromSheet(quirksSheet, screenEval());
     
     // View source rules.
     viewSourceSheet = parseUASheet(sourceUserAgentStyleSheet);
-    defaultViewSourceStyle->addRulesFromSheet(viewSourceSheet, &screenEval);
+    defaultViewSourceStyle->addRulesFromSheet(viewSourceSheet, screenEval());
 }
 
 void CSSStyleSelector::matchRules(CSSRuleSet* rules, int& firstRuleIndex, int& lastRuleIndex)
@@ -826,6 +828,15 @@ RenderStyle* CSSStyleSelector::styleForElement(Element* e, RenderStyle* defaultP
         style->inheritFrom(parentStyle);
     else
         parentStyle = style;
+
+#if ENABLE(SVG)
+    if (e->isSVGElement() && !svgSheet) {
+        // SVG rules.
+        svgSheet = parseUASheet(svgUserAgentStyleSheet);
+        defaultStyle->addRulesFromSheet(svgSheet, screenEval());
+        defaultPrintStyle->addRulesFromSheet(svgSheet, printEval());
+    }
+#endif
 
     int firstUARule = -1, lastUARule = -1;
     int firstUserRule = -1, lastUserRule = -1;
@@ -1691,14 +1702,14 @@ void CSSRuleSet::addRule(CSSStyleRule* rule, CSSSelector* sel)
         m_universalRules->append(m_ruleCount++, rule, sel);
 }
 
-void CSSRuleSet::addRulesFromSheet(CSSStyleSheet* sheet,  MediaQueryEvaluator* medium, CSSStyleSelector* styleSelector)
+void CSSRuleSet::addRulesFromSheet(CSSStyleSheet* sheet, const MediaQueryEvaluator& medium, CSSStyleSelector* styleSelector)
 {
     if (!sheet || !sheet->isCSSStyleSheet())
         return;
 
     // No media implies "all", but if a media list exists it must
     // contain our current medium
-    if (sheet->media() && !medium->eval(sheet->media()))
+    if (sheet->media() && !medium.eval(sheet->media()))
         return; // the style sheet doesn't apply
 
     int len = sheet->length();
@@ -1712,14 +1723,14 @@ void CSSRuleSet::addRulesFromSheet(CSSStyleSheet* sheet,  MediaQueryEvaluator* m
         }
         else if (item->isImportRule()) {
             CSSImportRule* import = static_cast<CSSImportRule*>(item);
-            if (!import->media() || medium->eval(import->media()))
+            if (!import->media() || medium.eval(import->media()))
                 addRulesFromSheet(import->styleSheet(), medium, styleSelector);
         }
         else if (item->isMediaRule()) {
             CSSMediaRule* r = static_cast<CSSMediaRule*>(item);
             CSSRuleList* rules = r->cssRules();
 
-            if ((!r->media() || medium->eval(r->media())) && rules) {
+            if ((!r->media() || medium.eval(r->media())) && rules) {
                 // Traverse child elements of the @media rule.
                 for (unsigned j = 0; j < rules->length(); j++) {
                     CSSRule *childItem = rules->item(j);
