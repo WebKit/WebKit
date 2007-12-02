@@ -1310,7 +1310,7 @@ KJS::Bindings::Instance* PluginViewWin::bindingInstance()
     if (npErr != NPERR_NO_ERROR || !object)
         return 0;
 
-    RefPtr<KJS::Bindings::RootObject> root = m_parentFrame->createRootObject(this, m_parentFrame->scriptProxy()->interpreter());
+    RefPtr<KJS::Bindings::RootObject> root = m_parentFrame->createRootObject(this, m_parentFrame->scriptProxy()->interpreter()->globalObject());
     KJS::Bindings::Instance *instance = KJS::Bindings::Instance::createBindingForLanguageInstance(KJS::Bindings::Instance::CLanguage, object, root.release());
 
     _NPN_ReleaseObject(object);
