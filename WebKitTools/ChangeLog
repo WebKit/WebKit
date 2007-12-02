@@ -1,5 +1,15 @@
 2007-12-02  Sam Weinig  <sam@webkit.org>
 
+        Rubber stamped by Anders.
+
+        Use [NSURL absoluteString] instead of [NSURL description] in order to get
+        more uniform results cross platform.
+
+        * DumpRenderTree/mac/ResourceLoadDelegate.mm:
+        (-[NSURL _drt_descriptionSuitableForTestResult]):
+
+2007-12-02  Sam Weinig  <sam@webkit.org>
+
         Rubber stamped by Niko.
 
         Rename FrameLoaderDelegate.h/cpp to FrameLoadDelegate.h/cpp.

@@ -69,7 +69,7 @@
 - (NSString *)_drt_descriptionSuitableForTestResult 
 {
     if (![self isFileURL])
-        return [self description];
+        return [self absoluteString];
 
     WebDataSource *dataSource = [mainFrame dataSource];
     if (!dataSource)
