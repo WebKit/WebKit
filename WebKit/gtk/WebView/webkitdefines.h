@@ -31,17 +31,6 @@
 
 #include <glib.h>
 
-typedef struct _WebKitWebFrame WebKitWebFrame;
-typedef struct _WebKitWebFrameClass WebKitWebFrameClass;
-
-typedef struct _WebKitWebFrameData WebKitWebFrameData;
-
-typedef struct _WebKitWebView WebKitWebView;
-typedef struct _WebKitWebViewClass WebKitWebViewClass;
-
-typedef struct _WebKitNetworkRequest WebKitNetworkRequest;
-typedef struct _WebKitNetworkRequestClass WebKitNetworkRequestClass;
-
 #ifdef G_OS_WIN32
     #ifdef BUILDING_WEBKIT
         #define WEBKIT_API __declspec(dllexport)
@@ -55,5 +44,18 @@ typedef struct _WebKitNetworkRequestClass WebKitNetworkRequestClass;
 #ifndef WEBKIT_API
 #define WEBKIT_API
 #endif
+
+G_BEGIN_DECLS
+
+typedef struct _WebKitWebFrame WebKitWebFrame;
+typedef struct _WebKitWebFrameClass WebKitWebFrameClass;
+
+typedef struct _WebKitWebView WebKitWebView;
+typedef struct _WebKitWebViewClass WebKitWebViewClass;
+
+typedef struct _WebKitNetworkRequest WebKitNetworkRequest;
+typedef struct _WebKitNetworkRequestClass WebKitNetworkRequestClass;
+
+G_END_DECLS
 
 #endif

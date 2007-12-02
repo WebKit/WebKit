@@ -2,6 +2,21 @@
 
         Reviewed by Adam Roben.
 
+        Wrap type definitions in webkitdefines.h with G_BEGIN_DECLS, which
+        takes care of extern "C".
+
+        Introduce a webkit.h convenience header.
+
+        Remove another left-over from the old API.
+
+        * WebView/headers.pri:
+        * WebView/webkit.h: Added.
+        * WebView/webkitdefines.h:
+
+2007-12-01  Alp Toker  <alp@atoker.com>
+
+        Reviewed by Adam Roben.
+
         http://bugs.webkit.org/show_bug.cgi?id=15687
         [Gtk] Allow API clients to interact with JavaScript in web pages
 

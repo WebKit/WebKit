@@ -941,6 +941,7 @@ qt-port {
 gtk-port {
     HEADERS += \
         ../WebCore/platform/gtk/ClipboardGtk.h \
+        ../WebKit/gtk/WebView/webkit.h \
         ../WebKit/gtk/WebView/webkitdefines.h \
         ../WebKit/gtk/WebView/webkitglobal.h \
         ../WebKit/gtk/WebView/webkitnetworkrequest.h \

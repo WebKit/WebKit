@@ -1,3 +1,11 @@
+2007-12-01  Alp Toker  <alp@atoker.com>
+
+        Reviewed by Adam Roben.
+
+        Add the newly introduced webkit.h convenience header.
+
+        * WebCore.pro:
+
 2007-12-01  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Adam.

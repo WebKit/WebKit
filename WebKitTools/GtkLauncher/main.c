@@ -24,9 +24,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "webkitwebview.h"
-#include "webkitglobal.h"
 #include <gtk/gtk.h>
+#include <webkit.h>
 
 static GtkWidget* main_window;
 static GtkWidget* uri_entry;

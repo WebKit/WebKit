@@ -1,3 +1,11 @@
+2007-12-01  Alp Toker  <alp@atoker.com>
+
+        Reviewed by Adam Roben.
+
+        Make use of the newly introduced webkit.h convenience header.
+
+        * GtkLauncher/main.c:
+
 2007-12-01  Adam Treat  <treat@kde.org>
 
         Reviewed by Simon.
