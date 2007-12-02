@@ -1,3 +1,12 @@
+2007-12-01  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Tim
+
+        Added a default database quota of 5mb to the default WebPreferences
+
+        * WebView/WebPreferences.m:
+        (+[WebPreferences initialize]):
+
 2007-11-30  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Geoff Garen

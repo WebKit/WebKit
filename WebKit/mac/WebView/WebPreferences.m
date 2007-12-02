@@ -332,6 +332,7 @@ static WebCacheModel cacheModelForMainBundle(void)
         [NSNumber numberWithInt:cacheModelForMainBundle()], WebKitCacheModelPreferenceKey,
         [NSNumber numberWithBool:NO],  WebKitDeveloperExtrasEnabledPreferenceKey,
         [NSNumber numberWithBool:YES],  WebKitAuthorAndUserStylesEnabledPreferenceKey,
+        [NSNumber numberWithUnsignedLongLong:5242880], WebKitDefaultDatabaseQuotaKey,
         nil];
 
     // This value shouldn't ever change, which is assumed in the initialization of WebKitPDFDisplayModePreferenceKey above
