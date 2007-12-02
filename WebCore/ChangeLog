@@ -1,3 +1,27 @@
+2007-12-02  Brady Eidson <beidson@apple.com>
+
+        Reviewed by Darin
+
+        databaseChanged notifications were being sent out on the database thread - they need to be on the main thread
+        like all other notifications we send out!
+
+        * platform/SecurityOriginData.cpp:
+        (WebCore::SecurityOriginData::copy): Add a deep copy method, for when an object thread hops
+        * platform/SecurityOriginData.h:
+
+        * storage/DatabaseTracker.cpp:
+        (WebCore::notificationMutex):
+        (WebCore::notificationQueue):
+        (WebCore::DatabaseTracker::scheduleNotifyDatabaseChanged): Add the origin/name pair to a queue
+        (WebCore::DatabaseTracker::scheduleForNotification): Schedule to deliver this queue of notifications
+          on the main thread
+        (WebCore::DatabaseTracker::notifyDatabasesChanged): Deliver all notifications in the queue
+        * storage/DatabaseTracker.h:
+
+        * storage/SQLTransaction.cpp:
+        (WebCore::SQLTransaction::postflightAndCommit): scheduleNotifyDatabaseChanged() instead of "notify now!"
+        (WebCore::SQLTransaction::cleanupAfterTransactionErrorCallback): Ditto
+
 2007-12-02  Rob Buis  <buis@kde.org>
 
         Reviewed by Darin.

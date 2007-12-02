@@ -542,10 +542,59 @@ unsigned long long DatabaseTracker::defaultOriginQuota() const
     return m_defaultQuota;
 }
 
-void DatabaseTracker::notifyDatabaseChanged(const SecurityOriginData& origin, const String& name)
+static Mutex& notificationMutex()
 {
-    if (m_client)
-        m_client->dispatchDidModifyDatabase(origin, name);
+    static Mutex mutex;
+    return mutex;
 }
+
+static Vector<pair<SecurityOriginData, String> >& notificationQueue()
+{
+    static Vector<pair<SecurityOriginData, String> > queue;
+    return queue;
+}
+
+void DatabaseTracker::scheduleNotifyDatabaseChanged(const SecurityOriginData& origin, const String& name)
+{
+    MutexLocker locker(notificationMutex());
+
+    notificationQueue().append(pair<SecurityOriginData, String>(origin.copy(), name.copy()));
+    scheduleForNotification();
+}
+
+static bool notificationScheduled = false;
+
+void DatabaseTracker::scheduleForNotification()
+{
+    ASSERT(!notificationMutex().tryLock());
+
+    if (!notificationScheduled) {
+        callOnMainThread(DatabaseTracker::notifyDatabasesChanged);
+        notificationScheduled = true;
+    }
+}
+
+void DatabaseTracker::notifyDatabasesChanged()
+{
+    // Note that if DatabaseTracker ever becomes non-singleton, we'll have to ammend this notification
+    // mechanism to inclue which tracker the notification goes out on, as well
+    DatabaseTracker& theTracker(tracker());
+
+    Vector<pair<SecurityOriginData, String> > notifications;
+    {
+        MutexLocker locker(notificationMutex());
+
+        notifications.swap(notificationQueue());
+
+        notificationScheduled = false;
+    }
+
+    if (!theTracker.m_client)
+        return;
+
+    for (unsigned i = 0; i < notifications.size(); ++i)
+        theTracker.m_client->dispatchDidModifyDatabase(notifications[i].first, notifications[i].second);
+}
+
 
 } // namespace WebCore
