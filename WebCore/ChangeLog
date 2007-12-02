@@ -1,3 +1,21 @@
+2007-12-02  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Maciej.
+
+        Fix IDL lookup in subdirectories. Missing 'my' prefix for the 'thisDir' variable.
+        When entering subdirectories the 'thisDir' variable got altered - see snippet:
+
+        THISDIR: WebCore/page FOUND FILE: FrameView.h (endCondition: 0)
+        ..
+        -> ENTER: WebCore/page/gtk (THIS DIR: WebCore/page)
+        ...
+        <- LEAVE: WebCore/page/gtk (THIS DIR: WebCore/page/gtk)
+        THISDIR: WebCore/page/gtk FOUND FILE: History.cpp (endCondition: 0)
+
+        'History.cpp' is located in WebCore/page not WebCore/page/gtk.
+
+        * bindings/scripts/CodeGenerator.pm:
+
 2007-12-01  Alp Toker  <alp@atoker.com>
 
         Reviewed by Adam Roben.
