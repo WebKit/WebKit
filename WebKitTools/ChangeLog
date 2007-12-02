@@ -1,3 +1,16 @@
+2007-12-02  Sam Weinig  <sam@webkit.org>
+
+        Rubber stamped by Niko.
+
+        Rename FrameLoaderDelegate.h/cpp to FrameLoadDelegate.h/cpp.
+
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        * DumpRenderTree/win/DumpRenderTree.vcproj:
+        * DumpRenderTree/win/FrameLoadDelegate.cpp: Copied from DumpRenderTree/win/FrameLoaderDelegate.cpp.
+        * DumpRenderTree/win/FrameLoadDelegate.h: Copied from DumpRenderTree/win/FrameLoaderDelegate.h.
+        * DumpRenderTree/win/FrameLoaderDelegate.cpp: Removed.
+        * DumpRenderTree/win/FrameLoaderDelegate.h: Removed.
+
 2007-12-01  Alp Toker  <alp@atoker.com>
 
         Reviewed by Adam Roben.

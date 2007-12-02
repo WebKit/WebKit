@@ -29,7 +29,7 @@
 #include "DumpRenderTree.h"
 
 #include "EditingDelegate.h"
-#include "FrameLoaderDelegate.h"
+#include "FrameLoadDelegate.h"
 #include "LayoutTestController.h"
 #include "PixelDumpSupport.h"
 #include "PolicyDelegate.h"

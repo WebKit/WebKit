@@ -27,7 +27,7 @@
  */
 
 #include "DumpRenderTree.h"
-#include "FrameLoaderDelegate.h"
+#include "FrameLoadDelegate.h"
 
 #include "EventSender.h"
 #include "GCController.h"

@@ -313,11 +313,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\FrameLoaderDelegate.cpp"
+				RelativePath=".\FrameLoadDelegate.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\FrameLoaderDelegate.h"
+				RelativePath=".\FrameLoadDelegate.h"
 				>
 			</File>
 			<File
