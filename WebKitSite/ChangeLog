@@ -1,3 +1,12 @@
+2007-12-02  Adam Roben  <aroben@apple.com>
+
+        Add some Inspector screenshots for an upcoming blog post
+
+        Rubberstamped by Mark Rowe.
+
+        * blog-files/InspectorCSSEditing.png: Added.
+        * blog-files/InspectorFonts.png: Added.
+
 2007-11-30  Matt Lilek  <webkit@mattlilek.com>
 
         Reviewed by Adam.
