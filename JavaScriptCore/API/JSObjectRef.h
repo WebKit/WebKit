@@ -368,7 +368,7 @@ typedef struct {
 JSClassDefinition definition = kJSClassDefinitionEmpty;
 definition.finalize = Finalize;
 */
-extern const JSClassDefinition kJSClassDefinitionEmpty;
+JS_EXPORT extern const JSClassDefinition kJSClassDefinitionEmpty;
 
 /*!
 @function

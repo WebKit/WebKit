@@ -1,3 +1,29 @@
+2007-12-01  Alp Toker  <alp@atoker.com>
+
+        Reviewed by Adam Roben.
+
+        http://bugs.webkit.org/show_bug.cgi?id=16228
+        kJSClassDefinitionEmpty is not exported with JS_EXPORT
+
+        Add JS_EXPORT to kJSClassDefinitionEmpty.
+
+        Make the gcc compiler check take precedence over the WIN32||_WIN32
+        check to ensure that symbols are exported on Windows when using gcc.
+
+        Add a TODO referencing the bug about JS_EXPORT in the Win build
+        (http://bugs.webkit.org/show_bug.cgi?id=16227)
+
+        Don't define JS_EXPORT as 'extern' when the compiler is unknown since
+        it would result in the incorrect expansion:
+
+          extern extern const JSClassDefinition kJSClassDefinitionEmpty;
+
+        (This was something we inherited from CFBase.h that doesn't make sense
+        for JSBase.h)
+
+        * API/JSBase.h:
+        * API/JSObjectRef.h:
+
 2007-11-30  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Beth Dakin.
