@@ -1,3 +1,27 @@
+2007-12-01  Alp Toker  <alp@atoker.com>
+
+        Reviewed by Adam Roben.
+
+        http://bugs.webkit.org/show_bug.cgi?id=15687
+        [Gtk] Allow API clients to interact with JavaScript in web pages
+
+        Include the necessary JavaScriptCore headers directly in the public
+        API headers.
+
+        This is the last of a series of changes needed to allow GTK+
+        applications to access the JS API.
+
+        Until http://bugs.webkit.org/show_bug.cgi?id=16029 is resolved,
+        developers will still have to include the individual JS API headers
+        individually if they want to use it in their applications.
+
+        Patch also removes some old legacy use of GDK that was in
+        WebKitWebFrame. No ABI change.
+
+        * WebView/webkitdefines.h:
+        * WebView/webkitwebframe.h:
+        * WebView/webkitwebview.h:
+
 2007-11-30  Jan Michael Alonzo  <jmalonzo@unpluggable.com>
 
         Fix for GTK+ Debug build breakage introduced in r28273.

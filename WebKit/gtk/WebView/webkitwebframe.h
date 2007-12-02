@@ -31,7 +31,7 @@
 #define WEBKIT_WEB_FRAME_H
 
 #include <glib-object.h>
-#include <gdk/gdk.h>
+#include <JavaScriptCore/JSBase.h>
 
 #include "webkitdefines.h"
 
@@ -54,14 +54,11 @@ struct _WebKitWebFrameClass {
 
     void (*title_changed) (WebKitWebFrame* frame, gchar* title, gchar* location);
 
-    /*
-     * protected virtual methods
-     */
-    void (*mouse_move_event)  (WebKitWebFrame* frame, GdkEvent* move_event);
-    void (*mouse_press_event) (WebKitWebFrame* frame, GdkEvent* press_event);
-    void (*mouse_release_event) (WebKitWebFrame* frame, GdkEvent* mouse_release_event);
-    void (*mouse_double_click_event) (WebKitWebFrame* frame, GdkEvent* double_click_event);
-    void (*mouse_wheel_event) (WebKitWebFrame* frame, GdkEvent* wheel_event);
+    void (*_webkit_reserved1) (void);
+    void (*_webkit_reserved2) (void);
+    void (*_webkit_reserved3) (void);
+    void (*_webkit_reserved4) (void);
+    void (*_webkit_reserved5) (void);
 };
 
 WEBKIT_API GType

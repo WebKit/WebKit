@@ -30,9 +30,9 @@
 #define WEBKIT_WEB_VIEW_H
 
 #include <gtk/gtk.h>
+#include <JavaScriptCore/JSBase.h>
 
 #include "webkitdefines.h"
-#include "webkitsettings.h"
 
 G_BEGIN_DECLS
 
