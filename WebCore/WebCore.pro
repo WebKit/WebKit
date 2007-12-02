@@ -119,7 +119,7 @@ INCLUDEPATH += \
                 $$PWD/platform/qt \
                 $$PWD/platform/network/qt \
                 $$PWD/platform/graphics/qt \
-                $$PWD/platform/graphics/svg/qt \
+                $$PWD/svg/graphics/qt \
                 $$PWD/loader/qt \
                 $$PWD/page/qt \
                 $$PWD/../WebKit/qt/WebCoreSupport \
@@ -136,7 +136,7 @@ gtk-port {
     $$PWD/platform/gtk \
     $$PWD/platform/graphics/gtk \
     $$PWD/platform/graphics/cairo \
-    $$PWD/platform/graphics/svg/cairo \
+    $$PWD/svg/graphics/cairo \
     $$PWD/platform/network/curl \
     $$PWD/platform/image-decoders \
     $$PWD/platform/image-decoders/bmp \
@@ -154,7 +154,7 @@ gtk-port {
     platform/gtk \
     platform/graphics/gtk \
     platform/graphics/cairo \
-    platform/graphics/svg/cairo \
+    svg/graphics/cairo \
     platform/network/curl \
     platform/image-decoders \
     platform/image-decoders/bmp \
@@ -178,8 +178,8 @@ INCLUDEPATH +=  $$PWD \
                 $$PWD/platform \
                 $$PWD/platform/network \
                 $$PWD/platform/graphics \
-                $$PWD/platform/graphics/svg \
-                $$PWD/platform/graphics/svg/filters \
+                $$PWD/svg/graphics \
+                $$PWD/svg/graphics/filters \
                 $$PWD/platform/sql \
                 $$PWD/platform/text \
                 $$PWD/storage \
@@ -1114,13 +1114,13 @@ contains(DEFINES, ENABLE_XBL=1) {
 contains(DEFINES, ENABLE_SVG=1) {
     FEATURE_DEFINES_JAVASCRIPT += ENABLE_SVG=1
 
-    DEPENDPATH += svg platform/graphics/svg
+    DEPENDPATH += svg svg/graphics
     qt-port {
-    DEPENDPATH += platform/graphics/svg/qt
+    DEPENDPATH += svg/graphics/qt
     }
 
     gtk-port {
-    DEPENDPATH += platform/graphics/svg/cairo
+    DEPENDPATH += svg/graphics/cairo
     }
 
     SVG_NAMES = $$PWD/svg/svgtags.in
@@ -1397,35 +1397,35 @@ contains(DEFINES, ENABLE_SVG=1) {
         svg/SVGViewElement.cpp \
         svg/SVGViewSpec.cpp \
         svg/SVGZoomAndPan.cpp \
-        platform/graphics/svg/filters/SVGFEBlend.cpp \
-        platform/graphics/svg/filters/SVGFEColorMatrix.cpp \
-        platform/graphics/svg/filters/SVGFEComponentTransfer.cpp \
-        platform/graphics/svg/filters/SVGFEComposite.cpp \
-        platform/graphics/svg/filters/SVGFEConvolveMatrix.cpp \
-        platform/graphics/svg/filters/SVGFEDiffuseLighting.cpp \
-        platform/graphics/svg/filters/SVGFEDisplacementMap.cpp \
-        platform/graphics/svg/filters/SVGFEFlood.cpp \
-        platform/graphics/svg/filters/SVGFEGaussianBlur.cpp \
-        platform/graphics/svg/filters/SVGFEImage.cpp \
-        platform/graphics/svg/filters/SVGFEMerge.cpp \
-        platform/graphics/svg/filters/SVGFEMorphology.cpp \
-        platform/graphics/svg/filters/SVGFEOffset.cpp \
-        platform/graphics/svg/filters/SVGFESpecularLighting.cpp \
-        platform/graphics/svg/filters/SVGFETurbulence.cpp \
-        platform/graphics/svg/filters/SVGFilterEffect.cpp \
-        platform/graphics/svg/filters/SVGLightSource.cpp \
-        platform/graphics/svg/SVGImage.cpp \
-        platform/graphics/svg/SVGPaintServer.cpp \
-        platform/graphics/svg/SVGPaintServerGradient.cpp \
-        platform/graphics/svg/SVGPaintServerLinearGradient.cpp \
-        platform/graphics/svg/SVGPaintServerPattern.cpp \
-        platform/graphics/svg/SVGPaintServerRadialGradient.cpp \
-        platform/graphics/svg/SVGPaintServerSolid.cpp \
-        platform/graphics/svg/SVGResourceClipper.cpp \
-        platform/graphics/svg/SVGResource.cpp \
-        platform/graphics/svg/SVGResourceFilter.cpp \
-        platform/graphics/svg/SVGResourceMarker.cpp \
-        platform/graphics/svg/SVGResourceMasker.cpp \
+        svg/graphics/filters/SVGFEBlend.cpp \
+        svg/graphics/filters/SVGFEColorMatrix.cpp \
+        svg/graphics/filters/SVGFEComponentTransfer.cpp \
+        svg/graphics/filters/SVGFEComposite.cpp \
+        svg/graphics/filters/SVGFEConvolveMatrix.cpp \
+        svg/graphics/filters/SVGFEDiffuseLighting.cpp \
+        svg/graphics/filters/SVGFEDisplacementMap.cpp \
+        svg/graphics/filters/SVGFEFlood.cpp \
+        svg/graphics/filters/SVGFEGaussianBlur.cpp \
+        svg/graphics/filters/SVGFEImage.cpp \
+        svg/graphics/filters/SVGFEMerge.cpp \
+        svg/graphics/filters/SVGFEMorphology.cpp \
+        svg/graphics/filters/SVGFEOffset.cpp \
+        svg/graphics/filters/SVGFESpecularLighting.cpp \
+        svg/graphics/filters/SVGFETurbulence.cpp \
+        svg/graphics/filters/SVGFilterEffect.cpp \
+        svg/graphics/filters/SVGLightSource.cpp \
+        svg/graphics/SVGImage.cpp \
+        svg/graphics/SVGPaintServer.cpp \
+        svg/graphics/SVGPaintServerGradient.cpp \
+        svg/graphics/SVGPaintServerLinearGradient.cpp \
+        svg/graphics/SVGPaintServerPattern.cpp \
+        svg/graphics/SVGPaintServerRadialGradient.cpp \
+        svg/graphics/SVGPaintServerSolid.cpp \
+        svg/graphics/SVGResourceClipper.cpp \
+        svg/graphics/SVGResource.cpp \
+        svg/graphics/SVGResourceFilter.cpp \
+        svg/graphics/SVGResourceMarker.cpp \
+        svg/graphics/SVGResourceMasker.cpp \
         rendering/RenderForeignObject.cpp \
         rendering/RenderPath.cpp \
         rendering/RenderSVGBlock.cpp \
@@ -1448,25 +1448,25 @@ contains(DEFINES, ENABLE_SVG=1) {
         rendering/SVGRootInlineBox.cpp
 
 qt-port:SOURCES += \
-        platform/graphics/svg/qt/RenderPathQt.cpp \
-        platform/graphics/svg/qt/SVGPaintServerGradientQt.cpp \
-        platform/graphics/svg/qt/SVGPaintServerLinearGradientQt.cpp \
-        platform/graphics/svg/qt/SVGPaintServerPatternQt.cpp \
-        platform/graphics/svg/qt/SVGPaintServerQt.cpp \
-        platform/graphics/svg/qt/SVGPaintServerRadialGradientQt.cpp \
-        platform/graphics/svg/qt/SVGPaintServerSolidQt.cpp \
-        platform/graphics/svg/qt/SVGResourceClipperQt.cpp \
-        platform/graphics/svg/qt/SVGResourceFilterQt.cpp \
-        platform/graphics/svg/qt/SVGResourceMaskerQt.cpp
+        svg/graphics/qt/RenderPathQt.cpp \
+        svg/graphics/qt/SVGPaintServerGradientQt.cpp \
+        svg/graphics/qt/SVGPaintServerLinearGradientQt.cpp \
+        svg/graphics/qt/SVGPaintServerPatternQt.cpp \
+        svg/graphics/qt/SVGPaintServerQt.cpp \
+        svg/graphics/qt/SVGPaintServerRadialGradientQt.cpp \
+        svg/graphics/qt/SVGPaintServerSolidQt.cpp \
+        svg/graphics/qt/SVGResourceClipperQt.cpp \
+        svg/graphics/qt/SVGResourceFilterQt.cpp \
+        svg/graphics/qt/SVGResourceMaskerQt.cpp
 
 gtk-port:SOURCES += \
-        platform/graphics/svg/cairo/RenderPathCairo.cpp \
-        platform/graphics/svg/cairo/SVGPaintServerCairo.cpp \
-        platform/graphics/svg/cairo/SVGPaintServerGradientCairo.cpp \
-        platform/graphics/svg/cairo/SVGPaintServerPatternCairo.cpp \
-        platform/graphics/svg/cairo/SVGPaintServerSolidCairo.cpp \
-        platform/graphics/svg/cairo/SVGResourceClipperCairo.cpp \
-        platform/graphics/svg/cairo/SVGResourceMaskerCairo.cpp
+        svg/graphics/cairo/RenderPathCairo.cpp \
+        svg/graphics/cairo/SVGPaintServerCairo.cpp \
+        svg/graphics/cairo/SVGPaintServerGradientCairo.cpp \
+        svg/graphics/cairo/SVGPaintServerPatternCairo.cpp \
+        svg/graphics/cairo/SVGPaintServerSolidCairo.cpp \
+        svg/graphics/cairo/SVGResourceClipperCairo.cpp \
+        svg/graphics/cairo/SVGResourceMaskerCairo.cpp
 
         # GENERATOR 5-C:
         svgnames_a.output = $$GENERATED_SOURCES_DIR/SVGNames.cpp
