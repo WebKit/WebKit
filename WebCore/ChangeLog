@@ -1,3 +1,16 @@
+2007-12-01  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Adam.
+        
+        - Fix crash when removing a loading media element from the tree.
+        - Follow the spec by invoking pause() when element is removed from the tree instead of unloading.
+
+        Tests: http/tests/media/remove-while-loading.html
+               media/remove-from-document.html
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::removedFromDocument):
+
 2007-12-01  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Beth Dakin.

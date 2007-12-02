@@ -1,3 +1,15 @@
+2007-12-01  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Adam.
+        
+        Test that removing a media element when it is loading does not crash.
+        Test that media is paused when it is removed from the tree.
+
+        * http/tests/media/remove-while-loading-expected.txt: Added.
+        * http/tests/media/remove-while-loading.html: Added.
+        * media/remove-from-document-expected.txt: Added.
+        * media/remove-from-document.html: Added.
+
 2007-12-01  Julien Chaffraix  <julien.chaffraix@gmail.com>
 
         Bug 16189: XMLHttpRequest::setRequestHeader() should not set certain headers

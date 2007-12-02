@@ -1,0 +1,10 @@
+<video></video>
+<p>Test that removing a media element from the tree while loading does not crash.</p>
+<script src=../../../media/video-test.js></script>
+<script>
+waitForEvent('loadedmetadata', function () {
+    run("document.body.removeChild(video)");
+    endTestLater();
+} );
+video.src = "http://127.0.0.1:8000/media/video-load-and-stall.cgi?name=../../../media/content/test.mp4&stallAt=80000";
+</script>
