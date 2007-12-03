@@ -173,7 +173,7 @@ JSValue* WebScriptCallFrame::valueByEvaluatingJavaScriptFromString(BSTR script)
 {
     ExecState* state = m_state;
     Interpreter* interp  = state->dynamicInterpreter();
-    JSObject* globObj = interp->globalObject();
+    JSGlobalObject* globObj = interp->globalObject();
 
     // find "eval"
     JSObject* eval = 0;
