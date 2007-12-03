@@ -1,3 +1,9 @@
+2007-12-03  Geoffrey Garen  <ggaren@apple.com>
+
+        Build fix: added symbols to the right .exp file.
+
+        * WebCore.base.exp:
+
 2007-12-02  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Eric Seidel.
