@@ -24,6 +24,7 @@
 #include "collector.h"
 
 #include "ExecState.h"
+#include "JSGlobalObject.h"
 #include "internal.h"
 #include "list.h"
 #include "value.h"
