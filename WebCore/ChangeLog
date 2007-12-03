@@ -1,3 +1,9 @@
+2007-12-03  Steve Falkenburg  <sfalken@apple.com>
+
+        Fix build.
+
+        * WebCore.vcproj/WebCore.vcproj:
+
 2007-12-03  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by David.
