@@ -60,7 +60,7 @@ WebScriptDebugger::WebScriptDebugger(WebFrame* frame)
     m_frame->webView(&m_webView);
     ASSERT(m_webView);
 
-    callEvent(interp->globalExec(), -1, -1, 0, List());
+    callEvent(proxy->globalObject()->globalExec(), -1, -1, 0, List());
 }
 
 bool WebScriptDebugger::sourceParsed(ExecState*, int sourceId, const UString& sourceURL,

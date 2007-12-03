@@ -1,3 +1,13 @@
+2007-12-03  Adam Roben  <aroben@apple.com>
+
+        Speculative Windows build fix
+
+        * WebFrame.cpp:
+        (WebFrame::globalContext):
+        (WebFrame::windowObjectCleared):
+        * WebScriptDebugger.cpp:
+        (WebScriptDebugger::WebScriptDebugger):
+
 2007-12-01  Sam Weinig  <sam@webkit.org>
 
         Rename IWebViewPrivate::selectionImageRect to IWebViewPrivate::selectionRect.
