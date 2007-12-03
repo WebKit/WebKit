@@ -1252,7 +1252,8 @@ bool CSSStyleSelector::checkSelector(CSSSelector* sel)
 
     // Check the selector
     SelectorMatch match = checkSelector(sel, element, true, false);
-    if (match != SelectorMatches) return false;
+    if (match != SelectorMatches)
+        return false;
 
     if (pseudoStyle != RenderStyle::NOPSEUDO && pseudoStyle != dynamicPseudo)
         return false;
@@ -1265,8 +1266,15 @@ bool CSSStyleSelector::checkSelector(CSSSelector* sel)
 // * SelectorMatches         - the selector matches the element e
 // * SelectorFailsLocally    - the selector fails for the element e
 // * SelectorFailsCompletely - the selector fails for e and any sibling or ancestor of e
-CSSStyleSelector::SelectorMatch CSSStyleSelector::checkSelector(CSSSelector* sel, Element *e, bool isAncestor, bool isSubSelector)
+CSSStyleSelector::SelectorMatch CSSStyleSelector::checkSelector(CSSSelector* sel, Element* e, bool isAncestor, bool isSubSelector)
 {
+#if ENABLE(SVG)
+    // Spec: CSS2 selectors cannot be applied to the (conceptually) cloned DOM tree
+    // because its contents are not part of the formal document structure.
+    if (e->isSVGElement() && e->isShadowNode())
+        return SelectorFailsCompletely;
+#endif
+
     // first selector has to match
     if (!checkOneSelector(sel, e, isAncestor, isSubSelector))
         return SelectorFailsLocally;
@@ -1276,7 +1284,8 @@ CSSStyleSelector::SelectorMatch CSSStyleSelector::checkSelector(CSSSelector* sel
 
     // Prepare next sel
     sel = sel->m_tagHistory;
-    if (!sel) return SelectorMatches;
+    if (!sel)
+        return SelectorMatches;
 
     if (relation != CSSSelector::SubSelector)
         // Bail-out if this selector is irrelevant for the pseudoStyle

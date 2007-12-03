@@ -1,3 +1,13 @@
+2007-12-03  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by David.
+
+        Fixes: http://bugs.webkit.org/show_bug.cgi?id=15645
+        Don't allow selectors to interfere with the SVG shadow tree (<use> internal non-exposed tree).
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::checkSelector):
+
 2007-12-03  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Adam Roben.

@@ -1,5 +1,16 @@
 2007-12-03  Nikolas Zimmermann  <zimmermann@kde.org>
 
+        Reviewed by David.
+
+        Add new testcase verifying that CSS selectors don't affect the non-exposed SVG shadow tree.
+
+        * platform/mac/svg/custom/use-css-no-effect-on-shadow-tree-expected.checksum: Added.
+        * platform/mac/svg/custom/use-css-no-effect-on-shadow-tree-expected.png: Added.
+        * platform/mac/svg/custom/use-css-no-effect-on-shadow-tree-expected.txt: Added.
+        * svg/custom/use-css-no-effect-on-shadow-tree.svg: Added.
+
+2007-12-03  Nikolas Zimmermann  <zimmermann@kde.org>
+
         Rubber stamped by Mark.
 
         Commit missing layout test results from my last commit (fix for bug 15403)
