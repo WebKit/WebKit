@@ -129,6 +129,10 @@ void QWebSettingsPrivate::apply()
                                       global->attributes.value(QWebSettings::JavascriptCanAccessClipboard));
         settings->setDOMPasteAllowed(value);
 
+        value = attributes.value(QWebSettings::DeveloperExtrasEnabled,
+                                      global->attributes.value(QWebSettings::DeveloperExtrasEnabled));
+        settings->setDeveloperExtrasEnabled(value);
+
         QString location = (!userStyleSheetLocation.isEmpty()) ? userStyleSheetLocation : global->userStyleSheetLocation;
         settings->setUserStyleSheetLocation(WebCore::KURL(location));
     } else {

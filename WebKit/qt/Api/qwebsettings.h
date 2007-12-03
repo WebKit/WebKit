@@ -55,7 +55,8 @@ public:
         PluginsEnabled,
         PrivateBrowsingEnabled,
         JavascriptCanOpenWindows,
-        JavascriptCanAccessClipboard
+        JavascriptCanAccessClipboard,
+        DeveloperExtrasEnabled
     };
     enum WebGraphic {
         MissingImageGraphic,

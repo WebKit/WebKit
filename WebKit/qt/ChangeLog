@@ -1,3 +1,19 @@
+2007-12-03  Holger Hans Peter Freyther  <holger.freyther@trolltech.com>
+
+        Reviewed by Simon.
+
+        * Add the Developer Extras to the WebAttribute and propagate it
+        to WebCore::Settings. This will enable the Inspect Element menu item
+        * CodingStyle fixes in QWebSettings
+        * Enable the Developer Extras in the QtLauncher
+        
+
+        * Api/qwebsettings.cpp:
+        (QWebSettingsPrivate::apply):
+        * Api/qwebsettings.h:
+        * QtLauncher/main.cpp:
+        (main):
+
 2007-12-03  Geoffrey Garen  <ggaren@apple.com>
 
         Removed unnecessary and possibly incorrect #include from my last 

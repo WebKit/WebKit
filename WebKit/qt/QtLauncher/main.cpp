@@ -379,6 +379,7 @@ int main(int argc, char **argv)
     QApplication app(argc, argv);
 
     QWebSettings::defaultSettings()->setAttribute(QWebSettings::PluginsEnabled);
+    QWebSettings::defaultSettings()->setAttribute(QWebSettings::DeveloperExtrasEnabled);
 
     const QStringList args = app.arguments();
     if (args.count() > 1)
