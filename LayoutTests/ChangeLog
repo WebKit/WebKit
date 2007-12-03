@@ -1,3 +1,33 @@
+2007-12-02  Darin Adler  <darin@apple.com>
+
+        Reviewed by Mitz.
+
+        - tests for table-related HTMLCollection classes for misnested
+          tables and for <rdar://problem/5601995> Hang/crash on http://ebay-uk.custhelp.com/
+
+        * fast/dom/HTMLTableElement/resources: Added.
+        * fast/dom/HTMLTableElement/resources/TEMPLATE.html: Added.
+        * fast/dom/HTMLTableElement/resources/rows.js: Added.
+        * fast/dom/HTMLTableElement/resources/tBodies.js: Added.
+        * fast/dom/HTMLTableElement/rows-expected.txt: Added.
+        * fast/dom/HTMLTableElement/rows.html: Added.
+        * fast/dom/HTMLTableElement/tBodies-expected.txt: Added.
+        * fast/dom/HTMLTableElement/tBodies.html: Added.
+        * fast/dom/HTMLTableRowElement: Added.
+        * fast/dom/HTMLTableRowElement/cells-expected.txt: Added.
+        * fast/dom/HTMLTableRowElement/cells.html: Added.
+        * fast/dom/HTMLTableRowElement/insertCell-expected.txt: Added.
+        * fast/dom/HTMLTableRowElement/insertCell.html: Added.
+        * fast/dom/HTMLTableRowElement/resources: Added.
+        * fast/dom/HTMLTableRowElement/resources/TEMPLATE.html: Added.
+        * fast/dom/HTMLTableRowElement/resources/cells.js: Added.
+        * fast/dom/HTMLTableSectionElement: Added.
+        * fast/dom/HTMLTableSectionElement/resources: Added.
+        * fast/dom/HTMLTableSectionElement/resources/TEMPLATE.html: Added.
+        * fast/dom/HTMLTableSectionElement/resources/rows.js: Added.
+        * fast/dom/HTMLTableSectionElement/rows-expected.txt: Added.
+        * fast/dom/HTMLTableSectionElement/rows.html: Added.
+
 2007-12-01  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Adam.

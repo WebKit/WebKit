@@ -1,9 +1,7 @@
-/**
- * This file is part of the DOM implementation for KDE.
- *
+/*
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
- * Copyright (C) 2003, 2004, 2005, 2006 Apple Computer, Inc.
+ * Copyright (C) 2003, 2004, 2005, 2006, 2007 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -37,42 +35,55 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-HTMLCollection::HTMLCollection(Node *_base, HTMLCollection::Type _type)
-    : m_base(_base),
-      type(_type),
-      info(0),
-      idsDone(false),
-      m_ownsInfo(false)
+HTMLCollection::HTMLCollection(PassRefPtr<Node> base, Type type)
+    : m_idsDone(false)
+    , m_base(base)
+    , m_type(type)
+    , m_info(m_base->isDocumentNode() ? static_cast<Document*>(m_base.get())->collectionInfo(type) : 0)
+    , m_ownsInfo(false)
 {
-    if (_base->isDocumentNode())
-        info = _base->document()->collectionInfo(type);
+}
+
+HTMLCollection::HTMLCollection(PassRefPtr<Node> base, Type type, CollectionInfo* info)
+    : m_idsDone(false)
+    , m_base(base)
+    , m_type(type)
+    , m_info(info)
+    , m_ownsInfo(false)
+{
 }
 
 HTMLCollection::~HTMLCollection()
 {
     if (m_ownsInfo)
-        delete info;
+        delete m_info;
 }
 
-HTMLCollection::CollectionInfo::CollectionInfo() :
-    version(0)
+HTMLCollection::CollectionInfo::CollectionInfo()
+    : version(0)
 {
     reset();
 }
 
-HTMLCollection::CollectionInfo::CollectionInfo(const CollectionInfo& other)
+inline void HTMLCollection::CollectionInfo::copyCacheMap(NodeCacheMap& dest, const NodeCacheMap& src)
 {
-    version = other.version;
-    current = other.current;
-    position = other.position;
-    length = other.length;
-    elementsArrayPosition = other.elementsArrayPosition;
-    
+    ASSERT(dest.isEmpty());
+    NodeCacheMap::const_iterator end = src.end();
+    for (NodeCacheMap::const_iterator it = src.begin(); it != end; ++it)
+        dest.add(it->first, new Vector<Element*>(*it->second));
+}
+
+HTMLCollection::CollectionInfo::CollectionInfo(const CollectionInfo& other)
+    : version(other.version)
+    , current(other.current)
+    , position(other.position)
+    , length(other.length)
+    , elementsArrayPosition(other.elementsArrayPosition)
+    , hasLength(other.hasLength)
+    , hasNameCache(other.hasNameCache)
+{
     copyCacheMap(idCache, other.idCache);
     copyCacheMap(nameCache, other.nameCache);
-    
-    haslength = other.haslength;
-    hasNameCache = other.hasNameCache;
 }
 
 void HTMLCollection::CollectionInfo::swap(CollectionInfo& other)
@@ -86,7 +97,7 @@ void HTMLCollection::CollectionInfo::swap(CollectionInfo& other)
     idCache.swap(other.idCache);
     nameCache.swap(other.nameCache);
     
-    std::swap(haslength, other.haslength);
+    std::swap(hasLength, other.hasLength);
     std::swap(hasNameCache, other.hasNameCache);
 }
 
@@ -101,7 +112,7 @@ void HTMLCollection::CollectionInfo::reset()
     current = 0;
     position = 0;
     length = 0;
-    haslength = false;
+    hasLength = false;
     elementsArrayPosition = 0;
     deleteAllValues(idCache);
     idCache.clear();
@@ -112,131 +123,160 @@ void HTMLCollection::CollectionInfo::reset()
 
 void HTMLCollection::resetCollectionInfo() const
 {
-    unsigned int docversion = static_cast<HTMLDocument*>(m_base->document())->domTreeVersion();
+    unsigned docversion = static_cast<HTMLDocument*>(m_base->document())->domTreeVersion();
 
-    if (!info) {
-        info = new CollectionInfo;
+    if (!m_info) {
+        m_info = new CollectionInfo;
         m_ownsInfo = true;
-        info->version = docversion;
+        m_info->version = docversion;
         return;
     }
 
-    if (info->version != docversion) {
-        info->reset();
-        info->version = docversion;
+    if (m_info->version != docversion) {
+        m_info->reset();
+        m_info->version = docversion;
     }
 }
 
-
-Node *HTMLCollection::traverseNextItem(Node *current) const
+static bool isTableSection(Element* element)
 {
-    ASSERT(current);
+    return element->hasLocalName(tbodyTag) || element->hasLocalName(tfootTag) || element->hasLocalName(theadTag);
+}
 
-    if (type == NodeChildren && m_base.get() != current)
-        current = current->nextSibling();
+static Node* nextNodeOrSibling(Node* base, Node* node, bool includeChildren)
+{
+    return includeChildren ? node->traverseNextNode(base) : node->traverseNextSibling(base);
+}
+
+Element* HTMLCollection::itemAfter(Element* previous) const
+{
+    bool deep = true;
+
+    switch (m_type) {
+        case DocAll:
+        case DocAnchors:
+        case DocApplets:
+        case DocEmbeds:
+        case DocForms:
+        case DocImages:
+        case DocLinks:
+        case DocObjects:
+        case DocScripts:
+        case DocumentNamedItems:
+        case FormElements:
+        case MapAreas:
+        case SelectOptions:
+        case WindowNamedItems:
+            break;
+        case NodeChildren:
+        case TRCells:
+        case TSectionRows:
+        case TableTBodies:
+            deep = false;
+            break;
+        case TableRows:
+            // Look for table rows inside table sections that are immediately inside
+            // the table, but not in nested table sections.
+            deep = previous && previous->parent() == m_base && isTableSection(previous);
+            break;
+    }
+
+    Node* current;
+    if (!previous)
+        current = m_base->firstChild();
     else
-        current = current->traverseNextNode(m_base.get());
+        current = nextNodeOrSibling(m_base.get(), previous, deep);
 
-    while (current) {
-        if (current->isElementNode()) {
-            bool found = false;
-            bool deep = true;
-            HTMLElement *e = static_cast<HTMLElement *>(current);
-            switch(type) {
+    for (; current; current = nextNodeOrSibling(m_base.get(), current, deep)) {
+        if (!current->isElementNode())
+            continue;
+        Element* e = static_cast<Element*>(current);
+        switch (m_type) {
             case DocImages:
                 if (e->hasLocalName(imgTag))
-                    found = true;
+                    return e;
                 break;
             case DocScripts:
                 if (e->hasLocalName(scriptTag))
-                    found = true;
+                    return e;
                 break;
             case DocForms:
-                if(e->hasLocalName(formTag))
-                    found = true;
+                if (e->hasLocalName(formTag))
+                    return e;
                 break;
             case TableTBodies:
                 if (e->hasLocalName(tbodyTag))
-                    found = true;
-                else if (e->hasLocalName(tableTag))
-                    deep = false;
+                    return e;
                 break;
             case TRCells:
                 if (e->hasLocalName(tdTag) || e->hasLocalName(thTag))
-                    found = true;
-                else if (e->hasLocalName(tableTag))
-                    deep = false;
+                    return e;
                 break;
             case TableRows:
+                // Look for table rows inside table sections that are immediately inside
+                // the table, but not in nested table sections. Accept only rows that are
+                // in those table sections.
+                if (e->parent() == m_base)
+                    deep = isTableSection(e);
+                else {
+                    if (e->hasLocalName(trTag))
+                        return e;
+                    deep = false;
+                }
+                break;
             case TSectionRows:
                 if (e->hasLocalName(trTag))
-                    found = true;
-                else if (e->hasLocalName(tableTag))
-                    deep = false;
+                    return e;
                 break;
             case SelectOptions:
                 if (e->hasLocalName(optionTag))
-                    found = true;
+                    return e;
                 break;
             case MapAreas:
                 if (e->hasLocalName(areaTag))
-                    found = true;
+                    return e;
                 break;
-            case DocApplets:   // all APPLET elements and OBJECT elements that contain Java Applets
-                if (e->hasLocalName(appletTag) || 
-                    (e->hasLocalName(objectTag) && static_cast<HTMLObjectElement*>(e)->containsJavaApplet()))
-                    found = true;
+            case DocApplets: // all <applet> elements and <object> elements that contain Java Applets
+                if (e->hasLocalName(appletTag))
+                    return e;
+                if (e->hasLocalName(objectTag) && static_cast<HTMLObjectElement*>(e)->containsJavaApplet())
+                    return e;
                 break;
-            case DocEmbeds:   // all EMBED elements
+            case DocEmbeds:
                 if (e->hasLocalName(embedTag))
-                    found = true;
+                    return e;
                 break;
-            case DocObjects:   // all OBJECT elements
+            case DocObjects:
                 if (e->hasLocalName(objectTag))
-                    found = true;
+                    return e;
                 break;
-            case DocLinks:     // all A _and_ AREA elements with a value for href
-                if (e->hasLocalName(aTag) || e->hasLocalName(areaTag))
-                    if (!e->getAttribute(hrefAttr).isNull())
-                        found = true;
+            case DocLinks: // all <a> and <area> elements with a value for href
+                if ((e->hasLocalName(aTag) || e->hasLocalName(areaTag)) && (!e->getAttribute(hrefAttr).isNull()))
+                    return e;
                 break;
-            case DocAnchors:      // all A elements with a value for name or an id attribute
-                if (e->hasLocalName(aTag))
-                    if (!e->getAttribute(nameAttr).isNull())
-                        found = true;
+            case DocAnchors: // all <a> elements with a value for name
+                if (e->hasLocalName(aTag) && !e->getAttribute(nameAttr).isNull())
+                    return e;
                 break;
             case DocAll:
-                found = true;
-                break;
             case NodeChildren:
-                found = true;
-                deep = false;
+                return e;
+            case DocumentNamedItems:
+            case FormElements:
+            case WindowNamedItems:
+                ASSERT_NOT_REACHED();
                 break;
-            default:
-                break;
-            }
-
-            if (found)
-                return current;
-            if (deep) {
-                current = current->traverseNextNode(m_base.get());
-                continue;
-            } 
         }
-        current = current->traverseNextSibling(m_base.get());
     }
+
     return 0;
 }
-
 
 unsigned HTMLCollection::calcLength() const
 {
     unsigned len = 0;
-
-    for (Node *current = traverseNextItem(m_base.get()); current; current = traverseNextItem(current)) {
-        len++;
-    }
-
+    for (Element* current = itemAfter(0); current; current = itemAfter(current))
+        ++len;
     return len;
 }
 
@@ -245,64 +285,61 @@ unsigned HTMLCollection::calcLength() const
 unsigned HTMLCollection::length() const
 {
     resetCollectionInfo();
-    if (!info->haslength) {
-        info->length = calcLength();
-        info->haslength = true;
+    if (!m_info->hasLength) {
+        m_info->length = calcLength();
+        m_info->hasLength = true;
     }
-    return info->length;
+    return m_info->length;
 }
 
-Node *HTMLCollection::item( unsigned index ) const
+Node* HTMLCollection::item(unsigned index) const
 {
      resetCollectionInfo();
-     if (info->current && info->position == index) {
-         return info->current;
-     }
-     if (info->haslength && info->length <= index) {
+     if (m_info->current && m_info->position == index)
+         return m_info->current;
+     if (m_info->hasLength && m_info->length <= index)
          return 0;
-     }
-     if (!info->current || info->position > index) {
-         info->current = traverseNextItem(m_base.get());
-         info->position = 0;
-         if (!info->current)
+     if (!m_info->current || m_info->position > index) {
+         m_info->current = itemAfter(0);
+         m_info->position = 0;
+         if (!m_info->current)
              return 0;
      }
-     Node *node = info->current;
-     for (unsigned pos = info->position; node && pos < index; pos++) {
-         node = traverseNextItem(node);
-     }     
-     info->current = node;
-     info->position = index;
-     return info->current;
+     Element* e = m_info->current;
+     for (unsigned pos = m_info->position; e && pos < index; pos++)
+         e = itemAfter(e);
+     m_info->current = e;
+     m_info->position = index;
+     return m_info->current;
 }
 
-Node *HTMLCollection::firstItem() const
+Node* HTMLCollection::firstItem() const
 {
      return item(0);
 }
 
-Node *HTMLCollection::nextItem() const
+Node* HTMLCollection::nextItem() const
 {
      resetCollectionInfo();
  
      // Look for the 'second' item. The first one is currentItem, already given back.
-     Node *retval = traverseNextItem(info->current);
-     info->current = retval;
-     info->position++;
+     Element* retval = itemAfter(m_info->current);
+     m_info->current = retval;
+     m_info->position++;
      return retval;
 }
 
-bool HTMLCollection::checkForNameMatch(Node *node, bool checkName, const String &name, bool caseSensitive) const
+bool HTMLCollection::checkForNameMatch(Element* element, bool checkName, const String& name, bool caseSensitive) const
 {
-    if (!node->isHTMLElement())
+    if (!element->isHTMLElement())
         return false;
     
-    HTMLElement *e = static_cast<HTMLElement*>(node);
+    HTMLElement* e = static_cast<HTMLElement*>(element);
     if (caseSensitive) {
         if (checkName) {
             // document.all returns only images, forms, applets, objects and embeds
             // by name (though everything by id)
-            if (type == DocAll && 
+            if (m_type == DocAll && 
                 !(e->hasLocalName(imgTag) || e->hasLocalName(formTag) ||
                   e->hasLocalName(appletTag) || e->hasLocalName(objectTag) ||
                   e->hasLocalName(embedTag) || e->hasLocalName(inputTag) ||
@@ -316,7 +353,7 @@ bool HTMLCollection::checkForNameMatch(Node *node, bool checkName, const String 
         if (checkName) {
             // document.all returns only images, forms, applets, objects and embeds
             // by name (though everything by id)
-            if (type == DocAll && 
+            if (m_type == DocAll && 
                 !(e->hasLocalName(imgTag) || e->hasLocalName(formTag) ||
                   e->hasLocalName(appletTag) || e->hasLocalName(objectTag) ||
                   e->hasLocalName(embedTag) || e->hasLocalName(inputTag) ||
@@ -340,68 +377,68 @@ Node *HTMLCollection::namedItem(const String &name, bool caseSensitive) const
     // object with a matching name attribute, but only on those elements
     // that are allowed a name attribute.
     resetCollectionInfo();
-    idsDone = false;
+    m_idsDone = false;
 
-    Node *n;
-    for (n = traverseNextItem(m_base.get()); n; n = traverseNextItem(n)) {
-        if (checkForNameMatch(n, idsDone, name, caseSensitive))
-            break;
+    for (Element* e = itemAfter(0); e; e = itemAfter(e)) {
+        if (checkForNameMatch(e, m_idsDone, name, caseSensitive)) {
+            m_info->current = e;
+            return e;
+        }
     }
         
-    info->current = n;
-    if(info->current)
-        return info->current;
-    idsDone = true;
+    m_idsDone = true;
 
-    for (n = traverseNextItem(m_base.get()); n; n = traverseNextItem(n)) {
-        if (checkForNameMatch(n, idsDone, name, caseSensitive))
-            break;
+    for (Element* e = itemAfter(0); e; e = itemAfter(e)) {
+        if (checkForNameMatch(e, m_idsDone, name, caseSensitive)) {
+            m_info->current = e;
+            return e;
+        }
     }
 
-    info->current = n;
-    return info->current;
+    m_info->current = 0;
+    return 0;
 }
 
 void HTMLCollection::updateNameCache() const
 {
-    if (info->hasNameCache)
+    if (m_info->hasNameCache)
         return;
     
-    for (Node *n = traverseNextItem(m_base.get()); n; n = traverseNextItem(n)) {
-        if (!n->isHTMLElement())
+    for (Element* element = itemAfter(0); element; element = itemAfter(element)) {
+        if (!element->isHTMLElement())
             continue;
-        HTMLElement* e = static_cast<HTMLElement*>(n);
+        HTMLElement* e = static_cast<HTMLElement*>(element);
         const AtomicString& idAttrVal = e->getAttribute(idAttr);
         const AtomicString& nameAttrVal = e->getAttribute(nameAttr);
         if (!idAttrVal.isEmpty()) {
             // add to id cache
-            Vector<Node*>* idVector = info->idCache.get(idAttrVal.impl());
+            Vector<Element*>* idVector = m_info->idCache.get(idAttrVal.impl());
             if (!idVector) {
-                idVector = new Vector<Node*>;
-                info->idCache.add(idAttrVal.impl(), idVector);
+                idVector = new Vector<Element*>;
+                m_info->idCache.add(idAttrVal.impl(), idVector);
             }
-            idVector->append(n);
+            idVector->append(e);
         }
         if (!nameAttrVal.isEmpty() && idAttrVal != nameAttrVal
-            && (type != DocAll || 
+            && (m_type != DocAll || 
                 (e->hasLocalName(imgTag) || e->hasLocalName(formTag) ||
                  e->hasLocalName(appletTag) || e->hasLocalName(objectTag) ||
                  e->hasLocalName(embedTag) || e->hasLocalName(inputTag) ||
                  e->hasLocalName(selectTag)))) {
             // add to name cache
-            Vector<Node*>* nameVector = info->nameCache.get(nameAttrVal.impl());
+            Vector<Element*>* nameVector = m_info->nameCache.get(nameAttrVal.impl());
             if (!nameVector) {
-                nameVector = new Vector<Node*>;
-                info->nameCache.add(nameAttrVal.impl(), nameVector);
+                nameVector = new Vector<Element*>;
+                m_info->nameCache.add(nameAttrVal.impl(), nameVector);
             }
-            nameVector->append(n);
+            nameVector->append(e);
         }
     }
 
-    info->hasNameCache = true;
+    m_info->hasNameCache = true;
 }
 
-void HTMLCollection::namedItems(const AtomicString &name, Vector<RefPtr<Node> >& result) const
+void HTMLCollection::namedItems(const AtomicString& name, Vector<RefPtr<Node> >& result) const
 {
     ASSERT(result.isEmpty());
     
@@ -411,8 +448,8 @@ void HTMLCollection::namedItems(const AtomicString &name, Vector<RefPtr<Node> >&
     resetCollectionInfo();
     updateNameCache();
     
-    Vector<Node*>* idResults = info->idCache.get(name.impl());
-    Vector<Node*>* nameResults = info->nameCache.get(name.impl());
+    Vector<Element*>* idResults = m_info->idCache.get(name.impl());
+    Vector<Element*>* nameResults = m_info->nameCache.get(name.impl());
     
     for (unsigned i = 0; idResults && i < idResults->size(); ++i)
         result.append(idResults->at(i));
@@ -422,27 +459,27 @@ void HTMLCollection::namedItems(const AtomicString &name, Vector<RefPtr<Node> >&
 }
 
 
-Node *HTMLCollection::nextNamedItem(const String &name) const
+Node* HTMLCollection::nextNamedItem(const String& name) const
 {
     resetCollectionInfo();
 
-    for (Node *n = traverseNextItem(info->current ? info->current : m_base.get()); n; n = traverseNextItem(n)) {
-        if (checkForNameMatch(n, idsDone, name, true)) {
-            info->current = n;
-            return n;
+    for (Element* e = itemAfter(m_info->current); e; e = itemAfter(e)) {
+        if (checkForNameMatch(e, m_idsDone, name, true)) {
+            m_info->current = e;
+            return e;
         }
     }
     
-    if (idsDone) {
-        info->current = 0; 
+    if (m_idsDone) {
+        m_info->current = 0; 
         return 0;
     }
-    idsDone = true;
+    m_idsDone = true;
 
-    for (Node *n = traverseNextItem(info->current ? info->current : m_base.get()); n; n = traverseNextItem(n)) {
-        if (checkForNameMatch(n, idsDone, name, true)) {
-            info->current = n;
-            return n;
+    for (Element* e = itemAfter(m_info->current); e; e = itemAfter(e)) {
+        if (checkForNameMatch(e, m_idsDone, name, true)) {
+            m_info->current = e;
+            return e;
         }
     }
 
@@ -451,7 +488,7 @@ Node *HTMLCollection::nextNamedItem(const String &name) const
 
 PassRefPtr<NodeList> HTMLCollection::tags(const String& name)
 {
-    return base()->getElementsByTagName(name);
+    return m_base->getElementsByTagName(name);
 }
 
 } // namespace WebCore

@@ -131,7 +131,7 @@ KJS::JSValue* toJS(KJS::ExecState* exec, HTMLCollection* collection)
     if (ret)
         return ret;
 
-    switch (collection->collectionType()) {
+    switch (collection->type()) {
         case HTMLCollection::SelectOptions:
             ret = new JSHTMLOptionsCollection(exec, static_cast<HTMLOptionsCollection*>(collection));
             break;

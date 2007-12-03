@@ -1,3 +1,136 @@
+2007-12-02  Darin Adler  <darin@apple.com>
+
+        Reviewed by Mitz.
+
+        - fix <rdar://problem/5601995> Hang/crash on http://ebay-uk.custhelp.com/
+
+        There were two problems here:
+
+            1) Incorrect HTMLCollection behavior led to us trying to insert a
+               new row inside an existing row instead of next to it. The fix for
+               this is to make HTMLCollection work better for table-related
+               collections.
+
+            2) HTMLTableRowElement::insertCell would return a bad pointer if
+               the insertion failed. The code should have failed, but not crashed,
+               so it's worth fixing that too.
+
+        While fixing the HTMLCollection issues, I did some clean-up of that
+        class and its derived classes.
+
+        Test: fast/dom/HTMLTableElement/rows.html
+        Test: fast/dom/HTMLTableElement/tBodies.html
+        Test: fast/dom/HTMLTableRowElement/cells.html
+        Test: fast/dom/HTMLTableRowElement/insertCell.html
+        Test: fast/dom/HTMLTableSectionElement/rows.html
+
+        * bindings/js/JSHTMLCollectionCustom.cpp:
+        (WebCore::toJS): Updated because collectionType() was renamed to type().
+
+        * html/HTMLCollection.cpp:
+        (WebCore::HTMLCollection::HTMLCollection): Updated for data member name
+        changes. Also added a protected constructor for use by derived classes
+        that pass in a CollectionInfo.
+        (WebCore::HTMLCollection::CollectionInfo::copyCacheMap): Moved out of
+        the header.
+        (WebCore::isTableSection): Added.
+        (WebCore::HTMLCollection::itemAfter): Renamed from traverseNextItem,
+        because the old name was grammatically incorrect and thus a bit confusing.
+        Changed to operate on Element* instead of Node*, and use 0 to start
+        rather than passing in the base node (required since the base node can be
+        a document, which is not an element). Generalized the code that made
+        NodeChildren not descend into deeper descendants so it can be used for
+        TRCells, TSectionRows, TableTBodies, and TableRows. Reformatted the
+        switch statement and got rid of the "found" boolean since we can just
+        return when we find something. Got rid of the default case, and instead
+        listed all the enum values. Also changed to use a for loop for clarity.
+        (WebCore::HTMLCollection::calcLength): Updated for itemAfter changes.
+        (WebCore::HTMLCollection::item): Ditto.
+        (WebCore::HTMLCollection::nextItem): Ditto.
+        (WebCore::HTMLCollection::checkForNameMatch): Updated to take an Element
+        instead of a Node pointer.
+        (WebCore::HTMLCollection::namedItem): More of the same.
+        (WebCore::HTMLCollection::updateNameCache): Ditto.
+        (WebCore::HTMLCollection::namedItems): Ditto.
+        (WebCore::HTMLCollection::nextNamedItem): Ditto.
+        (WebCore::HTMLCollection::tags): Ditto.
+
+        * html/HTMLCollection.h: Added a type FormElements, so that the
+        HTMLFormCollection would not have a type of DocImages, which is what
+        it previously did. Changed the base parameter to be a PassRefPtr to
+        make it clear we take ownership of it. Added a comment explaining
+        why we should change the name CollectionInfo. Made a lot more members
+        private instead of protected. Renamed traverseNextItem to itemAfter.
+        Changed most functions to take Element* instead of Node*.
+
+        * html/HTMLFormCollection.cpp:
+        (WebCore::HTMLFormCollection::formCollectionInfo): Added.
+        (WebCore::HTMLFormCollection::HTMLFormCollection): Updated to pass
+        collection info into the base class.
+        (WebCore::HTMLFormCollection::calcLength): Updated to use base() so we
+        don't need to get at m_base directly.
+        (WebCore::HTMLFormCollection::item): Same, but for info().
+        (WebCore::HTMLFormCollection::getNamedItem): Removed unused first
+        argument.
+        (WebCore::HTMLFormCollection::getNamedFormItem): Got rid of unneeded
+        checks that the base is still an element and still a form, since that's
+        guaranteed.
+        (WebCore::HTMLFormCollection::nextItem): Use info().
+        (WebCore::HTMLFormCollection::nextNamedItemInternal): Node instead of
+        Element, some name changes.
+        (WebCore::HTMLFormCollection::namedItem): Update for changes elsewhere.
+        (WebCore::HTMLFormCollection::nextNamedItem): Ditto, also rewrote loop
+        to be much simpler.
+        (WebCore::HTMLFormCollection::updateNameCache): More of the same.
+
+        * html/HTMLFormCollection.h: Changed constructor to take an
+        HTMLFormElement, using a PassRefPtr to communicate transfer of
+        ownership. Made everything private instead of protected. Removed
+        unneeded override of firstItem. Made getNamedItem and
+        nextNamedItemInternal non-virtual. Removed unused first argument of
+        getNamedItem. Added declaration of formCollectionInfo.
+
+        * html/HTMLNameCollection.cpp:
+        (WebCore::HTMLNameCollection::HTMLNameCollection): Updated to pass
+        collection info into the base class.
+        (WebCore::HTMLNameCollection::itemAfter): Reformatted a bit and
+        changed into a for loop.
+
+        * html/HTMLNameCollection.h: Updated for name changes. Made function
+        private instead of public. Used PassRefPtr in constructor.
+
+        * html/HTMLOptionsCollection.cpp:
+        (WebCore::HTMLOptionsCollection::HTMLOptionsCollection): Updated to
+        pass collection info into the base class.
+        (WebCore::HTMLOptionsCollection::add): Updated for public/private
+        changes in the base class.
+        (WebCore::HTMLOptionsCollection::selectedIndex): Ditto.
+        (WebCore::HTMLOptionsCollection::setSelectedIndex): Ditto.
+        (WebCore::HTMLOptionsCollection::setLength): Ditto.
+
+        * html/HTMLOptionsCollection.h: Changed constructor parameter to be a
+        PassRefPtr.
+
+        * html/HTMLTableRowElement.cpp:
+        (WebCore::HTMLTableRowElement::insertCell): Changed code to use RefPtr
+        and PassRefPtr since this creates a new object. This alone fixed the
+        crash. Also cleaned up logic a bit to be more readable.
+
+        * html/HTMLTableRowElement.h: Changed insertCell to return a PassRefPtr.
+        Also reordered functions a bit to make things a little more logical and
+        removed the unused ncols data member.
+
+        * html/HTMLTableSectionElement.cpp:
+        (WebCore::HTMLTableSectionElement::rows): Pass TSectionRows, not
+        TableRows. This mistake was harmless before because TableRows and
+        TSectionRows were handled identically inside HTMLCollection, but that is
+        no longer the case with this fix.
+
+        * bindings/scripts/CodeGeneratorJS.pm: Add an include to cope with the
+        fact that HTMLOptionsCollection no longer includes HTMLOptionElement.
+        I don't think this really should be a special case -- might be worth
+        returning later to see if this can be optimized.
+
 2007-12-02  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Adam.

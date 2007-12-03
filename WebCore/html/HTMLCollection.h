@@ -1,9 +1,7 @@
 /*
- * This file is part of the DOM implementation for KDE.
- *
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
- * Copyright (C) 2003, 2004, 2005, 2006 Apple Computer, Inc.
+ * Copyright (C) 2003, 2004, 2005, 2006, 2007 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -34,6 +32,7 @@ namespace WebCore {
 
 class AtomicString;
 class AtomicStringImpl;
+class Element;
 class Node;
 class NodeList;
 class String;
@@ -41,55 +40,65 @@ class String;
 class HTMLCollection : public RefCounted<HTMLCollection> {
 public:
     enum Type {
-        // from JSHTMLDocument
-        DocImages = 0, // all IMG elements in the document
-        DocApplets,   // all OBJECT and APPLET elements
-        DocEmbeds,    // all EMBED elements
-        DocObjects,   // all OBJECT elements
-        DocForms,     // all FORMS
-        DocLinks,     // all A _and_ AREA elements with a value for href
-        DocAnchors,      // all A elements with a value for name
-        DocScripts,   // all SCRIPT element
-        // from HTMLTable, HTMLTableSection, HTMLTableRow
-        TableRows,    // all rows in this table or tablesection
-        TableTBodies, // all TBODY elements in this table
-        TSectionRows, // all rows elements in this table section
-        TRCells,      // all CELLS in this row
-        // from SELECT
-        SelectOptions,
-        // from HTMLMap
-        MapAreas,
-        DocAll,        // "all" elements (IE)
-        NodeChildren,   // first-level children (IE)
+        // unnamed collection types cached in the document
+
+        DocImages,    // all <img> elements in the document
+        DocApplets,   // all <object> and <applet> elements
+        DocEmbeds,    // all <embed> elements
+        DocObjects,   // all <object> elements
+        DocForms,     // all <form> elements
+        DocLinks,     // all <a> _and_ <area> elements with a value for href
+        DocAnchors,   // all <a> elements with a value for name
+        DocScripts,   // all <script> elements
+
+        DocAll,       // "all" elements (IE)
+        NodeChildren, // first-level children (IE)
+
+        // named collection types cached in the document
+
         WindowNamedItems,
-        DocumentNamedItems
+        DocumentNamedItems,
+
+        // types not cached in the document; these are types that can't be used on a document
+
+        TableRows,    // all rows in this table or table section
+        TableTBodies, // all <tbody> elements in this table
+        TSectionRows, // all row elements in this table section
+        TRCells,      // all cells in this row
+        SelectOptions,
+        MapAreas,
+        FormElements
     };
 
-    enum {
-        UnnamedCollectionTypes = NodeChildren + 1,
-        CollectionTypes = DocumentNamedItems + 1
-    };
+    static const Type FirstUnnamedDocumentCachedType = DocImages;
+    static const unsigned NumUnnamedDocumentCachedTypes = NodeChildren - DocImages + 1;
 
-    HTMLCollection(Node *_base, HTMLCollection::Type _type);
+    static const Type FirstNamedDocumentCachedType = WindowNamedItems;
+    static const unsigned NumNamedDocumentCachedTypes = DocumentNamedItems - WindowNamedItems + 1;
+
+    HTMLCollection(PassRefPtr<Node> base, Type);
     virtual ~HTMLCollection();
     
     unsigned length() const;
     
-    virtual Node *item(unsigned index) const;
-    virtual Node *firstItem() const;
-    virtual Node *nextItem() const;
+    virtual Node* item(unsigned index) const;
+    virtual Node* firstItem() const;
+    virtual Node* nextItem() const;
 
-    virtual Node *namedItem(const String &name, bool caseSensitive = true) const;
-    // In case of multiple items named the same way
-    virtual Node *nextNamedItem(const String &name) const;
+    virtual Node* namedItem(const String& name, bool caseSensitive = true) const;
+    virtual Node* nextNamedItem(const String& name) const; // In case of multiple items named the same way
 
-    // Extension
+    void namedItems(const AtomicString& name, Vector<RefPtr<Node> >&) const;
+
     PassRefPtr<NodeList> tags(const String&);
 
-    void namedItems(const AtomicString &name, Vector<RefPtr<Node> >&) const;
+    Node* base() const { return m_base.get(); }
+    Type type() const { return m_type; }
 
-    Node *base() { return m_base.get(); }
-
+    // FIXME: This class name is a bad in two ways. First, "info" is much too vague,
+    // and doesn't convey the job of this class (caching collection state).
+    // Second, since this is a member of HTMLCollection, it doesn't need "collection"
+    // in its name.
     struct CollectionInfo {
         CollectionInfo();
         CollectionInfo(const CollectionInfo&);
@@ -99,52 +108,49 @@ public:
             swap(tmp);
             return *this;
         }
-        
         ~CollectionInfo();
+
         void reset();
         void swap(CollectionInfo&);
 
-        unsigned int version;
-        Node *current;
-        unsigned int position;
-        unsigned int length;
+        typedef HashMap<AtomicStringImpl*, Vector<Element*>*> NodeCacheMap;
+
+        unsigned version;
+        Element* current;
+        unsigned position;
+        unsigned length;
         int elementsArrayPosition;
-        typedef HashMap<AtomicStringImpl*, Vector<Node*>*> NodeCacheMap;
         NodeCacheMap idCache;
         NodeCacheMap nameCache;
-        bool haslength;
+        bool hasLength;
         bool hasNameCache;
+
     private:
-        static void copyCacheMap(NodeCacheMap& dest, const NodeCacheMap& src)
-        {
-            ASSERT(dest.isEmpty());
-            NodeCacheMap::const_iterator end = src.end();
-            for (NodeCacheMap::const_iterator it = src.begin(); it != end; ++it)
-                dest.add(it->first, new Vector<Node*>(*it->second));
-        }
+        static void copyCacheMap(NodeCacheMap&, const NodeCacheMap&);
     };
 
-    Type collectionType() const { return type; }
-
 protected:
+    HTMLCollection(PassRefPtr<Node> base, Type, CollectionInfo*);
+
+    CollectionInfo* info() const { return m_info; }
+    virtual void resetCollectionInfo() const;
+
+    mutable bool m_idsDone; // for nextNamedItem()
+
+private:
+    virtual Element* itemAfter(Element*) const;
+    virtual unsigned calcLength() const;
     virtual void updateNameCache() const;
 
-    virtual Node *traverseNextItem(Node *start) const;
-    bool checkForNameMatch(Node *node, bool checkName, const String &name, bool caseSensitive) const;
-    virtual unsigned calcLength() const;
-    virtual void resetCollectionInfo() const;
-    // the base node, the collection refers to
+    bool checkForNameMatch(Element*, bool checkName, const String &name, bool caseSensitive) const;
+
     RefPtr<Node> m_base;
-    // The collection list the following elements
-    Type type;
-    mutable CollectionInfo *info;
+    Type m_type;
 
-    // For nextNamedItem()
-    mutable bool idsDone;
-
+    mutable CollectionInfo* m_info;
     mutable bool m_ownsInfo;
 };
 
-} //namespace
+} // namespace
 
 #endif

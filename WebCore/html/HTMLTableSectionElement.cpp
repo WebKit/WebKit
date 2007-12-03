@@ -168,7 +168,7 @@ void HTMLTableSectionElement::setVAlign(const String &value)
 
 PassRefPtr<HTMLCollection> HTMLTableSectionElement::rows()
 {
-    return new HTMLCollection(this, HTMLCollection::TableRows);
+    return new HTMLCollection(this, HTMLCollection::TSectionRows);
 }
 
 }

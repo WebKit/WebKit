@@ -230,12 +230,13 @@ public:
 
     HTMLCollection::CollectionInfo* collectionInfo(HTMLCollection::Type type)
     {
-        if ((int)type < HTMLCollection::UnnamedCollectionTypes) 
-            return m_collectionInfo + type; 
-        return 0;
+        ASSERT(type >= HTMLCollection::FirstUnnamedDocumentCachedType);
+        unsigned index = type - HTMLCollection::FirstUnnamedDocumentCachedType;
+        ASSERT(index < HTMLCollection::NumUnnamedDocumentCachedTypes);
+        return &m_collectionInfo[index]; 
     }
 
-    HTMLCollection::CollectionInfo* nameCollectionInfo(HTMLCollection::Type type, const String& name);
+    HTMLCollection::CollectionInfo* nameCollectionInfo(HTMLCollection::Type, const AtomicString& name);
 
     // DOM methods overridden from  parent classes
 
@@ -893,9 +894,10 @@ private:
     int m_selfOnlyRefCount;
 
     HTMLFormElement::CheckedRadioButtons m_checkedRadioButtons;
-    
-    HTMLCollection::CollectionInfo m_collectionInfo[HTMLCollection::UnnamedCollectionTypes];
-    HashMap<AtomicStringImpl*, HTMLCollection::CollectionInfo*> m_nameCollectionInfo[HTMLCollection::CollectionTypes - HTMLCollection::UnnamedCollectionTypes];
+
+    typedef HashMap<AtomicStringImpl*, HTMLCollection::CollectionInfo*> NamedCollectionMap;
+    HTMLCollection::CollectionInfo m_collectionInfo[HTMLCollection::NumUnnamedDocumentCachedTypes];
+    NamedCollectionMap m_nameCollectionInfo[HTMLCollection::NumNamedDocumentCachedTypes];
 
 #if ENABLE(XPATH)
     RefPtr<XPathEvaluator> m_xpathEvaluator;
