@@ -1,3 +1,13 @@
+2007-12-03  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        - added a test of the behavior of getIntIdentifier with the integers
+          0 and -1
+
+        * plugins/getintidentifier-special-values-expected.txt: Added.
+        * plugins/getintidentifier-special-values.html: Added.
+
 2007-12-03  Rob Buis  <buis@kde.org>
 
         Reviewed by Darin.

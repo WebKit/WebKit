@@ -96,16 +96,29 @@ void _NPN_GetStringIdentifiers(const NPUTF8** names, int32_t nameCount, NPIdenti
 
 NPIdentifier _NPN_GetIntIdentifier(int32_t intid)
 {
-    PrivateIdentifier* identifier = 0;
-    
-    identifier = getIntIdentifierMap()->get(intid);
-    if (identifier == 0) {
-        identifier = (PrivateIdentifier*)malloc(sizeof(PrivateIdentifier));
-        // We never release identifier names, so this dictionary will grow.
-        identifier->isString = false;
-        identifier->value.number = intid;
+    PrivateIdentifier* identifier;
 
-        getIntIdentifierMap()->set(intid, identifier);
+    if (intid == 0 || intid == -1) {
+        static PrivateIdentifier* negativeOneAndZeroIdentifiers[2];
+
+        identifier = negativeOneAndZeroIdentifiers[intid + 1];
+        if (!identifier) {
+            identifier = (PrivateIdentifier*)malloc(sizeof(PrivateIdentifier));
+            identifier->isString = false;
+            identifier->isString = intid;
+
+            negativeOneAndZeroIdentifiers[intid + 1] = identifier;
+        }
+    } else {
+        identifier = getIntIdentifierMap()->get(intid);
+        if (!identifier) {
+            identifier = (PrivateIdentifier*)malloc(sizeof(PrivateIdentifier));
+            // We never release identifier names, so this dictionary will grow.
+            identifier->isString = false;
+            identifier->value.number = intid;
+
+            getIntIdentifierMap()->set(intid, identifier);
+        }
     }
     return (NPIdentifier)identifier;
 }
