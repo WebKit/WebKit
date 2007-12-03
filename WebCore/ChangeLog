@@ -1,3 +1,23 @@
+2007-12-02  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Adam.
+
+        RenderSVGViewportContainer sets wrong width/height.
+        Share code with RenderSVGContainer in a central calcBounds() function.
+
+        Fixes:
+        - svg/custom/use-css-events.svg (http://bugs.webkit.org/show_bug.cgi?id=15403)
+        - svg/custom/deep-dynamic-updates.svg
+        - svg/custom/use-clipped-hit.svg
+        - svg/custom/image-clipped-hit.svg
+
+        * rendering/RenderSVGContainer.cpp:
+        (WebCore::RenderSVGContainer::layout):
+        (WebCore::RenderSVGContainer::calcBounds):
+        * rendering/RenderSVGContainer.h:
+        * rendering/RenderSVGViewportContainer.cpp:
+        (WebCore::RenderSVGViewportContainer::layout):
+
 2007-12-02  Brady Eidson <beidson@apple.com>
 
         Reviewed by Darin

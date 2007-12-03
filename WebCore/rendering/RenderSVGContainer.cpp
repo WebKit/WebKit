@@ -254,10 +254,7 @@ void RenderSVGContainer::layout()
         ASSERT(!child->needsLayout());
     }
 
-    // Calculate width & height
-    m_width = calcReplacedWidth();
-    m_height = calcReplacedHeight();
-    m_absoluteBounds = absoluteClippedOverflowRect();
+    calcBounds();
 
     if (checkForRepaint)
         repaintAfterLayoutIfNeeded(oldBounds, oldOutlineBox);
@@ -305,6 +302,13 @@ void RenderSVGContainer::applyContentTransforms(PaintInfo& paintInfo)
 void RenderSVGContainer::applyAdditionalTransforms(PaintInfo& paintInfo)
 {
     // no-op
+}
+
+void RenderSVGContainer::calcBounds()
+{
+    m_width = calcReplacedWidth();
+    m_height = calcReplacedHeight();
+    m_absoluteBounds = absoluteClippedOverflowRect();
 }
 
 bool RenderSVGContainer::selfWillPaint() const
