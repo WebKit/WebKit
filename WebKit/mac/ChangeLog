@@ -1,3 +1,18 @@
+2007-12-03  Kevin Decker  <kdecker@apple.com>
+
+        Reviewed by Darin.
+
+        Fixed: <rdar://problem/5586978> REGRESSION (Safari 2-3): WebKit sometimes doesn't invoke Flash's NPP_SetWindow function and causes a hang
+
+        The CG-based Flash player would sometimes hang because (for CoreGraphics-based plug-ins) our code would only call into the NPP_SetWindow()
+        function when we tell the plug-in to draw. This created havoc with Flash because Flash expects the browser to call NPP_SetWindow()
+        and provide a valid graphics context regardless of whether or not it actually needs to draw. 
+        
+        * Plugins/WebBaseNetscapePluginView.mm:
+        (-[WebBaseNetscapePluginView saveAndSetNewPortStateForUpdate:]): Removed an incorrect comment and toned down an ASSERT that was too strict. 
+        (-[WebBaseNetscapePluginView updateAndSetWindow]): Removed an early return for CoreGraphics-based plug-ins which would sometimes 
+        altogether prevent updating the PortState and calling into a plug-ins NPP_SetWindow() function.
+
 2007-12-02  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Eric Seidel.
