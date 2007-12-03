@@ -112,10 +112,12 @@ void ImageSource::setData(SharedBuffer* data, bool allDataReceived)
     // This method will examine the data and instantiate an instance of the appropriate decoder plugin.
     // If insufficient bytes are available to determine the image type, no decoder plugin will be
     // made.
-    delete m_decoder;
-    m_decoder = createDecoder(data->buffer());
+    if (!m_decoder)
+        m_decoder = createDecoder(data->buffer());
+
     if (!m_decoder)
         return;
+
     m_decoder->setData(data, allDataReceived);
 }
 

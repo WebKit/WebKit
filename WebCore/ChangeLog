@@ -1,3 +1,21 @@
+2007-12-03  Alp Toker  <alp@atoker.com>
+
+        Reviewed by Mark Rowe.
+
+        Don't delete the decoder if it's already been created. The one we have
+        is fine.
+
+        Cairo image cleanups. Nothing substantial.
+
+        Notify ImageObservers where appropriate.
+
+        * platform/graphics/cairo/ImageCairo.cpp:
+        (WebCore::BitmapImage::draw):
+        (WebCore::Image::drawPattern):
+        * platform/graphics/cairo/ImageSourceCairo.cpp:
+        (WebCore::ImageSource::setData):
+        * platform/graphics/gtk/ImageGtk.cpp:
+
 2007-12-03  Simon Hausmann  <hausmann@webkit.org>
 
         Reviewed by Lars.

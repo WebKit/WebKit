@@ -32,6 +32,7 @@
 #include "AffineTransform.h"
 #include "FloatRect.h"
 #include "GraphicsContext.h"
+#include "ImageObserver.h"
 #include <cairo.h>
 #include <math.h>
 
@@ -47,27 +48,26 @@ void FrameData::clear()
     }
 }
 
-// ================================================
-// Image Class
-// ================================================
-
-// Drawing Routines
-
 void BitmapImage::draw(GraphicsContext* context, const FloatRect& dst, const FloatRect& src, CompositeOperator op)
 {
-    cairo_t* cr = context->platformContext();
-
     if (!m_source.initialized())
         return;
+
+    FloatRect srcRect(src);
+    FloatRect dstRect(dst);
 
     cairo_surface_t* image = frameAtIndex(m_currentFrame);
     if (!image) // If it's too early we won't have an image yet.
         return;
 
-    IntSize selfSize = size();
-    FloatRect srcRect(src);
-    FloatRect dstRect(dst);
+    if (mayFillWithSolidColor()) {
+        fillWithSolidColor(context, dstRect, solidColor(), op);
+        return;
+    }
 
+    IntSize selfSize = size();
+
+    cairo_t* cr = context->platformContext();
     cairo_save(cr);
 
     // Set the compositing operation.
@@ -89,19 +89,22 @@ void BitmapImage::draw(GraphicsContext* context, const FloatRect& dst, const Flo
 
     float scaleX = srcRect.width() / dstRect.width();
     float scaleY = srcRect.height() / dstRect.height();
-    cairo_matrix_t matrix = { scaleX,  0, 0 , scaleY, srcRect.x(), srcRect.y() };
+    cairo_matrix_t matrix = { scaleX, 0, 0, scaleY, srcRect.x(), srcRect.y() };
     cairo_pattern_set_matrix(pattern, &matrix);
 
     // Draw the image.
     cairo_translate(cr, dstRect.x(), dstRect.y());
     cairo_set_source(cr, pattern);
+    cairo_pattern_destroy(pattern);
     cairo_rectangle(cr, 0, 0, dstRect.width(), dstRect.height());
     cairo_fill(cr);
 
-    cairo_pattern_destroy(pattern);
     cairo_restore(cr);
 
     startAnimation();
+
+    if (imageObserver())
+        imageObserver()->didDraw(this);
 }
 
 void Image::drawPattern(GraphicsContext* context, const FloatRect& tileRect, const AffineTransform& patternTransform,
@@ -131,11 +134,14 @@ void Image::drawPattern(GraphicsContext* context, const FloatRect& tileRect, con
 
     context->setCompositeOperation(op);
     cairo_set_source(cr, pattern);
+    cairo_pattern_destroy(pattern);
     cairo_rectangle(cr, destRect.x(), destRect.y(), destRect.width(), destRect.height());
     cairo_fill(cr);
 
-    cairo_pattern_destroy(pattern);
     context->restore();
+
+    if (imageObserver())
+        imageObserver()->didDraw(this);
 }
 
 void BitmapImage::checkForSolidColor()
