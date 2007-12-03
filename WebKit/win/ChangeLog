@@ -1,3 +1,42 @@
+2007-12-03  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Adam.
+
+        - <rdar://5618942> Drosera: Console window does not process everything
+        correctly.
+        - <rdar://5619005> Drosera: could be sped up by moving the
+        WebScriptScope stuff into the WebScriptCallFrame.
+        - Now the console can correctly process objects and does not receive
+        notifications from JavaScriptCore about the JavaScript in Drosera's
+        own process.
+
+        * Interfaces/IWebScriptCallFrame.idl: Moved the variable lookup
+        functions from WebScriptScope to here.
+        * Interfaces/WebKit.idl: Removed WebScriptScope.
+        * WebKit.vcproj/Interfaces.vcproj: Ditto.
+        * WebKit.vcproj/WebKit.vcproj: Ditto.
+        * WebKit.vcproj/WebKitGUID.vcproj: Ditto.
+        * WebScriptCallFrame.cpp: Moved WebScriptScope functionality into here.
+        (WebScriptCallFrame::stringByEvaluatingJavaScriptFromString): Now
+        returns a string value for things that are not strings.
+        (WebScriptCallFrame::variableNames): Moved from WebScriptScope.
+        (WebScriptCallFrame::valueForVariable): Moved from WebScriptScope.
+        (WebScriptCallFrame::jsValueToString): Helper functions that converts
+        any JSValue to a String.
+        * WebScriptCallFrame.h: Moved WebScriptScope functionality into here.
+        * WebScriptDebugger.cpp: Added nested guards so that Drosera does not
+        receive notifications about JavaScript that Drosera is running just the
+        JavaScript WebKit is running.
+        (WebScriptDebugger::WebScriptDebugger):
+        (WebScriptDebugger::sourceParsed):
+        (WebScriptDebugger::callEvent):
+        (WebScriptDebugger::atStatement):
+        (WebScriptDebugger::returnEvent):
+        (WebScriptDebugger::exception):
+        * WebScriptDebugger.h: Ditto.
+        * WebScriptScope.cpp: Removed.
+        * WebScriptScope.h: Removed.
+
 2007-12-03  Mark Rowe  <mrowe@apple.com>
 
         Speculative Windows build fix.

@@ -746,10 +746,6 @@
 			>
 		</File>
 		<File
-			RelativePath="$(WebKitOutputDir)\obj\WebKit\Interfaces\IWebScriptScope_i.c"
-			>
-		</File>
-		<File
 			RelativePath="$(WebKitOutputDir)\obj\WebKit\Interfaces\IWebScrollBarDelegatePrivate_i.c"
 			>
 		</File>

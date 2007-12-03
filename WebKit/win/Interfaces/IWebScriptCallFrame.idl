@@ -73,9 +73,8 @@ cpp_quote("#endif")
 interface IWebScriptCallFrame : IUnknown
 {
     HRESULT caller([out, retval] IWebScriptCallFrame**);
-    HRESULT scopeChain([out, retval] IEnumVARIANT**);
     HRESULT functionName([out, retval] BSTR*);
     HRESULT stringByEvaluatingJavaScriptFromString([in] BSTR script, [out, retval] BSTR*);
-
-    [local] WebScriptCallFrame* impl();
+    HRESULT variableNames([out, retval] IEnumVARIANT**);
+    HRESULT valueForVariable([in] BSTR key, [out, retval] BSTR* value);
 }

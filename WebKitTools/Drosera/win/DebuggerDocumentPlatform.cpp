@@ -113,31 +113,15 @@ void DebuggerDocument::getPlatformCurrentFunctionStack(JSContextRef context, Vec
 
 void DebuggerDocument::getPlatformLocalScopeVariableNamesForCallFrame(JSContextRef context, int callFrame, Vector<JSValueRef>& variableNames)
 {
-    // FIXME: <rdar://5619005> Move the retrieval of local variables into IWebScriptCallFrame to reduce the number of RPCs and simplify the code.
     COMPtr<IWebScriptCallFrame> cframe = m_server->getCallerFrame(callFrame);
     if (!cframe)
         return;
 
-    COMPtr<IEnumVARIANT> scopeChain;
-    if (FAILED(cframe->scopeChain(&scopeChain)))
-        return;
-
     VARIANT var;
     VariantInit(&var);
-    if (FAILED(scopeChain->Next(1, &var, 0))) { // local is always first
-        VariantClear(&var);
-        return;
-    }
-
-    ASSERT(V_VT(&var) == VT_UNKNOWN);
-    COMPtr<IWebScriptScope> scope;
-    scope.query(V_UNKNOWN(&var));
-    VariantClear(&var);
-    if (!scope)
-        return;
 
     COMPtr<IEnumVARIANT> localScopeVariableNames;
-    if (FAILED(scope->variableNames(cframe.get(), &localScopeVariableNames)))
+    if (FAILED(cframe->variableNames(&localScopeVariableNames)))
         return;
 
     while (localScopeVariableNames->Next(1, &var, 0) == S_OK) {
@@ -158,35 +142,16 @@ JSValueRef DebuggerDocument::platformValueForScopeVariableNamed(JSContextRef con
     if (!cframe)
         return JSValueMakeUndefined(context);
 
-    COMPtr<IEnumVARIANT> scopeChain;
-    if (FAILED(cframe->scopeChain(&scopeChain)))
+    BSTR bstrKey = JSStringCopyBSTR(key);
+
+    BSTR variableValue;
+    HRESULT hr = cframe->valueForVariable(bstrKey, &variableValue);
+    SysFreeString(bstrKey);
+    if (FAILED(hr))
         return JSValueMakeUndefined(context);
 
-    VARIANT var;
-    VariantInit(&var);
-
-    BSTR resultString = 0;
-    BSTR bstrKey = JSStringCopyBSTR(key);
-    while (scopeChain->Next(1, &var, 0) == S_OK && resultString == 0) {
-        ASSERT(V_VT(&var) == VT_UNKNOWN);
-
-        COMPtr<IWebScriptScope> scope;
-        scope.query(V_UNKNOWN(&var));
-        if (!scope)
-            return JSValueMakeUndefined(context);
-
-        if (FAILED(scope->valueForVariable(cframe.get(), bstrKey, &resultString))) {
-            VariantClear(&var);
-            SysFreeString(bstrKey);
-            SysFreeString(resultString);
-            return JSValueMakeUndefined(context);
-        }
-        VariantClear(&var);
-    }
-    SysFreeString(bstrKey);
-
-    JSValueRef returnValue = JSValueRefCreateWithBSTR(context, resultString);
-    SysFreeString(resultString);
+    JSValueRef returnValue = JSValueRefCreateWithBSTR(context, variableValue);
+    SysFreeString(variableValue);
 
     return returnValue;
 }

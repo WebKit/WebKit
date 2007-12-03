@@ -62,6 +62,7 @@ public:
 private:
     void enterFrame(KJS::ExecState*);
     void leaveFrame();
+    bool m_callingServer;
 
     WebFrame* m_frame;
     COMPtr<IWebView> m_webView;

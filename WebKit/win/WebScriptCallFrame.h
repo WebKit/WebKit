@@ -39,6 +39,7 @@
 namespace KJS {
     class ExecState;
     class JSValue;
+    class UString;
 }
 
 class WebScriptCallFrame : public IWebScriptCallFrame {
@@ -63,9 +64,6 @@ public:
     virtual HRESULT STDMETHODCALLTYPE caller(
         /* [out, retval] */ IWebScriptCallFrame**);
 
-    virtual HRESULT STDMETHODCALLTYPE scopeChain(
-        /* [out, retval] */ IEnumVARIANT**);
-
     virtual HRESULT STDMETHODCALLTYPE functionName(
         /* [out, retval] */ BSTR*);
 
@@ -73,17 +71,24 @@ public:
         /* [in] */ BSTR script,
         /* [out, retval] */ BSTR*);
 
-    virtual /* [local] */ WebScriptCallFrame *STDMETHODCALLTYPE impl() { return this; }
+    virtual HRESULT STDMETHODCALLTYPE variableNames( 
+        /* [retval][out] */ IEnumVARIANT**);
+
+    virtual HRESULT STDMETHODCALLTYPE valueForVariable(
+        /* [in] */ BSTR key,
+        /* [out, retval] */ BSTR* value);
 
     // Helper and accessors
     virtual KJS::JSValue* valueByEvaluatingJavaScriptFromString(BSTR script);
     virtual KJS::ExecState* state() const { return m_state; }
 
+    static KJS::UString jsValueToString(KJS::ExecState*, KJS::JSValue*);
+
 private:
+    ULONG m_refCount;
+
     KJS::ExecState* m_state;
     COMPtr<IWebScriptCallFrame> m_caller;
-
-    ULONG m_refCount;
 };
 
 #endif

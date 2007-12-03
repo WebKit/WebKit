@@ -50,6 +50,8 @@ WebScriptDebugger::WebScriptDebugger(WebFrame* frame)
 {
     ASSERT(m_frame);
 
+    m_callingServer = true;
+
     KJSProxy* proxy = core(m_frame)->scriptProxy();
     if (!proxy)
         return;
@@ -61,11 +63,17 @@ WebScriptDebugger::WebScriptDebugger(WebFrame* frame)
     ASSERT(m_webView);
 
     callEvent(proxy->globalObject()->globalExec(), -1, -1, 0, List());
+    m_callingServer = false;
 }
 
 bool WebScriptDebugger::sourceParsed(ExecState*, int sourceId, const UString& sourceURL,
                   const UString& source, int startingLineNumber, int errorLine, const UString& /*errorMsg*/)
 {
+    if (m_callingServer)
+        return true;
+
+    m_callingServer = true;
+
     if (WebScriptDebugServer::listenerCount() <= 0)
         return true;
 
@@ -91,32 +99,66 @@ bool WebScriptDebugger::sourceParsed(ExecState*, int sourceId, const UString& so
             m_frame);
     }
 
+    m_callingServer = false;
     return true;
 }
 
 bool WebScriptDebugger::callEvent(ExecState* state, int sourceId, int lineno, JSObject* /*function*/, const List &/*args*/)
 {
+    if (m_callingServer)
+        return true;
+
+    m_callingServer = true;
+
     enterFrame(state);
     WebScriptDebugServer::sharedWebScriptDebugServer()->didEnterCallFrame(m_webView.get(), m_topStackFrame.get(), sourceId, lineno, m_frame);
+
+    m_callingServer = false;
+
     return true;
 }
 
 bool WebScriptDebugger::atStatement(ExecState*, int sourceId, int firstLine, int /*lastLine*/)
 {
+    if (m_callingServer)
+        return true;
+
+    m_callingServer = true;
+
+
     WebScriptDebugServer::sharedWebScriptDebugServer()->willExecuteStatement(m_webView.get(), m_topStackFrame.get(), sourceId, firstLine, m_frame);
+
+    m_callingServer = false;
+
     return true;
 }
 
 bool WebScriptDebugger::returnEvent(ExecState*, int sourceId, int lineno, JSObject* /*function*/)
 {
+    if (m_callingServer)
+        return true;
+
+    m_callingServer = true;
+
     leaveFrame();
     WebScriptDebugServer::sharedWebScriptDebugServer()->willLeaveCallFrame(m_webView.get(), m_topStackFrame.get(), sourceId, lineno, m_frame);
+
+    m_callingServer = false;
+
     return true;
 }
 
 bool WebScriptDebugger::exception(ExecState*, int sourceId, int lineno, JSValue* /*exception */)
 {
+    if (m_callingServer)
+        return true;
+
+    m_callingServer = true;
+
     WebScriptDebugServer::sharedWebScriptDebugServer()->exceptionWasRaised(m_webView.get(), m_topStackFrame.get(), sourceId, lineno, m_frame);
+
+    m_callingServer = false;
+
     return true;
 }
 

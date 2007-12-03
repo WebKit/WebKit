@@ -1,3 +1,19 @@
+2007-12-03  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Adam.
+
+        - <rdar://5618942> Drosera: Console window does not process everything
+        correctly.
+        - <rdar://5619005> Drosera: could be sped up by moving the 
+        WebScriptScope stuff into the WebScriptCallFrame.
+        - Now the console can correctly process objects and does not receive
+        notifications from JavaScriptCore about the JavaScript in Drosera's
+        own process.
+
+        * Drosera/win/DebuggerDocumentPlatform.cpp:
+        (DebuggerDocument::getPlatformLocalScopeVariableNamesForCallFrame):
+        (DebuggerDocument::platformValueForScopeVariableNamed):
+
 2007-12-03  Stephanie  <slewis@apple.com>
 
         Reviewed by Darin.

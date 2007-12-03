@@ -33,11 +33,11 @@
 #include "COMEnumVariant.h"
 #include "IWebScriptScope.h"
 #include "Function.h"
-#include "WebScriptScope.h"
 
 #include <JavaScriptCore/JSGlobalObject.h>
 #include <JavaScriptCore/JSStringRefBSTR.h>
 #include <JavaScriptCore/JSValueRef.h>
+#include <JavaScriptCore/PropertyNameArray.h>
 
 #pragma warning(push, 0)
 #include <WebCore/BString.h>
@@ -47,6 +47,35 @@
 #include <wtf/Assertions.h>
 
 using namespace KJS;
+
+UString WebScriptCallFrame::jsValueToString(KJS::ExecState* state, JSValue* jsvalue)
+{
+    if (!jsvalue)
+        return "undefined";
+
+    switch (jsvalue->type()) {
+        case NullType:
+        case UndefinedType:
+        case UnspecifiedType:
+        case GetterSetterType:
+            break;
+        case StringType:
+            return jsvalue->getString();
+            break;
+        case NumberType:
+            return UString::from(jsvalue->getNumber());
+            break;
+        case BooleanType:
+            return jsvalue->getBoolean() ? "True" : "False";
+            break;
+        case ObjectType:
+            jsvalue = jsvalue->getObject()->defaultValue(state, StringType);
+            return jsvalue->getString();
+            break;
+    }
+
+    return "undefined";
+}
 
 // WebScriptCallFrame -----------------------------------------------------------
 
@@ -109,20 +138,6 @@ HRESULT STDMETHODCALLTYPE WebScriptCallFrame::caller(
     return m_caller.copyRefTo(callFrame);
 }
 
-template<> struct COMVariantSetter<JSObject*> : COMIUnknownVariantSetter<WebScriptScope, JSObject*> {};
-
-HRESULT STDMETHODCALLTYPE WebScriptCallFrame::scopeChain(
-    /* [out, retval] */ IEnumVARIANT** result)
-{
-    if (!result)
-        return E_POINTER;
-
-    // FIXME: If there is no current body do we need to make scope chain from the global object?
-    *result = COMEnumVariant<ScopeChain>::createInstance(m_state->scopeChain());
-
-    return S_OK;
-}
-
 HRESULT STDMETHODCALLTYPE WebScriptCallFrame::functionName(
     /* [out, retval] */ BSTR* funcName)
 {
@@ -160,11 +175,47 @@ HRESULT STDMETHODCALLTYPE WebScriptCallFrame::stringByEvaluatingJavaScriptFromSt
     JSLock lock;
 
     JSValue* scriptExecutionResult = valueByEvaluatingJavaScriptFromString(script);
+    *result = WebCore::BString(jsValueToString(m_state, scriptExecutionResult)).release();
 
-    if (scriptExecutionResult && scriptExecutionResult->isString())
-        *result = WebCore::BString(WebCore::String(scriptExecutionResult->getString())).release();
-    else
+    return S_OK;
+}
+
+HRESULT STDMETHODCALLTYPE WebScriptCallFrame::variableNames(
+    /* [out, retval] */ IEnumVARIANT** variableNames)
+{
+    if (!variableNames)
+        return E_POINTER;
+
+    *variableNames = 0;
+
+    PropertyNameArray propertyNames;
+
+    m_state->scopeChain().top()->getPropertyNames(m_state, propertyNames);
+    *variableNames = COMEnumVariant<PropertyNameArray>::adopt(propertyNames);
+
+    return S_OK;
+}
+
+HRESULT STDMETHODCALLTYPE WebScriptCallFrame::valueForVariable(
+    /* [in] */ BSTR key,
+    /* [out, retval] */ BSTR* value)
+{
+    if (!key)
         return E_FAIL;
+
+    if (!value)
+        return E_POINTER;
+
+    *value = 0;
+
+    Identifier identKey(reinterpret_cast<KJS::UChar*>(key), SysStringLen(key));
+
+    JSValue* jsvalue = 0;
+    ScopeChain scopeChain = m_state->scopeChain();
+    for (ScopeChainIterator it = scopeChain.begin(); it != scopeChain.end() && !jsvalue; ++it)
+        jsvalue = (*it)->get(m_state, identKey);
+
+    *value = WebCore::BString(jsValueToString(m_state, jsvalue)).release();
 
     return S_OK;
 }
@@ -208,3 +259,13 @@ JSValue* WebScriptCallFrame::valueByEvaluatingJavaScriptFromString(BSTR script)
     return scriptExecutionResult;
 }
 
+template<> struct COMVariantSetter<Identifier>
+{
+    static void setVariant(VARIANT* variant, const Identifier& value)
+    {
+        ASSERT(V_VT(variant) == VT_EMPTY);
+
+        V_VT(variant) = VT_BSTR;
+        V_BSTR(variant) = WebCore::BString(reinterpret_cast<const wchar_t*>(value.data()), value.size()).release();
+    }
+};
