@@ -1,5 +1,12 @@
 2007-12-03  Dan Bernstein  <mitz@apple.com>
 
+        - fix a copy-and-paste-o
+
+        * bindings/npruntime.cpp:
+        (_NPN_GetIntIdentifier):
+
+2007-12-03  Dan Bernstein  <mitz@apple.com>
+
         Reviewed by Darin Adler.
 
         - fix an ASSERT when getIntIdentifier is called with 0 or -1

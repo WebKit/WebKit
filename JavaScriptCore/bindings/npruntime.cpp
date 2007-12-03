@@ -105,7 +105,7 @@ NPIdentifier _NPN_GetIntIdentifier(int32_t intid)
         if (!identifier) {
             identifier = (PrivateIdentifier*)malloc(sizeof(PrivateIdentifier));
             identifier->isString = false;
-            identifier->isString = intid;
+            identifier->value.number = intid;
 
             negativeOneAndZeroIdentifiers[intid + 1] = identifier;
         }
