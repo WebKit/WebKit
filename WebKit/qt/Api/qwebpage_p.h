@@ -28,6 +28,8 @@
 #include "qwebpage.h"
 #include "qwebframe.h"
 
+#include <wtf/RefPtr.h>
+
 namespace WebCore
 {
     class ChromeClientQt;
@@ -35,6 +37,7 @@ namespace WebCore
     class ContextMenuItem;
     class ContextMenu;
     class EditorClientQt;
+    class Node;
     class Page;
 }
 
@@ -50,6 +53,7 @@ public:
     QUrl imageUrl;
     QPixmap image;
     QPointer<QWebFrame> targetFrame;
+    RefPtr<WebCore::Node> innerNonSharedNode;
 };
 
 class QWebPageContext

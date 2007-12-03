@@ -2,6 +2,25 @@
 
         Reviewed by Simon.
 
+        * Allow adding the Inspect ContextMenuItem to our Menu
+        * Open the Inspector when Inspect was activated. This requires
+        that we keep the innerNonSharedNode from the HitTest around. This
+        forces us to include <wtf/RefPtr.h> in the private header. It is
+        the first non Qt header but should be okay.
+        
+
+        * Api/qwebpage.cpp:
+        (webActionForContextMenuAction):
+        (QWebPage::triggerAction):
+        (QWebPage::action):
+        (QWebPageContext::QWebPageContext):
+        * Api/qwebpage.h:
+        * Api/qwebpage_p.h:
+
+2007-12-03  Holger Hans Peter Freyther  <holger.freyther@trolltech.com>
+
+        Reviewed by Simon.
+
         * Add the Developer Extras to the WebAttribute and propagate it
         to WebCore::Settings. This will enable the Inspect Element menu item
         * CodingStyle fixes in QWebSettings

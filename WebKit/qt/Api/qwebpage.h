@@ -130,6 +130,8 @@ public:
         ToggleItalic,
         ToggleUnderline,
 
+        InspectElement,
+
         WebActionCount
     };
 
