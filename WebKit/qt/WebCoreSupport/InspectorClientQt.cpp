@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2007 Trolltech ASA
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,10 +30,21 @@
 #include "config.h"
 #include "InspectorClientQt.h"
 
+#include "qwebpage.h"
+#include "qwebpage_p.h"
+#include <QtCore/QCoreApplication>
+
+#include "InspectorController.h"
 #include "NotImplemented.h"
+#include "Page.h"
 #include "PlatformString.h"
 
 namespace WebCore {
+
+InspectorClientQt::InspectorClientQt(QWebPage* page)
+    : m_inspectedWebPage(page)
+    , m_attached(false)
+{}
 
 void InspectorClientQt::inspectorDestroyed()
 {
@@ -41,8 +53,13 @@ void InspectorClientQt::inspectorDestroyed()
 
 Page* InspectorClientQt::createPage()
 {
-    notImplemented();
-    return 0;
+    if (m_webPage)
+        return m_webPage->d->page;
+
+    m_webPage.set(new QWebPage(0));
+    m_webPage->open(QString::fromLatin1("qrc:/webkit/inspector/inspector.html"));
+    m_webPage->setMinimumSize(400,300);
+    return m_webPage->d->page;
 }
 
 String InspectorClientQt::localizedStringsURL()
@@ -53,21 +70,47 @@ String InspectorClientQt::localizedStringsURL()
 
 void InspectorClientQt::showWindow()
 {
-    notImplemented();
+    if (!m_webPage)
+        return;
+
+    updateWindowTitle();
+    m_webPage->show();
+    m_inspectedWebPage->d->page->inspectorController()->setWindowVisible(true);
 }
 
 void InspectorClientQt::closeWindow()
 {
-    notImplemented();
+    if (!m_webPage)
+        return;
+
+    m_webPage->hide();
+    m_inspectedWebPage->d->page->inspectorController()->setWindowVisible(false);
+}
+
+bool InspectorClientQt::windowVisible()
+{
+    if (!m_webPage)
+        return false;
+    return m_webPage->isVisible();
 }
 
 void InspectorClientQt::attachWindow()
 {
+    ASSERT(m_inspectedWebPage);
+    ASSERT(m_webPage);
+    ASSERT(!m_attached);
+
+    m_attached = true;
     notImplemented();
 }
 
 void InspectorClientQt::detachWindow()
 {
+    ASSERT(m_inspectedWebPage);
+    ASSERT(m_webPage);
+    ASSERT(m_attached);
+
+    m_attached = false;
     notImplemented();
 }
 
@@ -81,9 +124,19 @@ void InspectorClientQt::hideHighlight()
     notImplemented();
 }
 
-void InspectorClientQt::inspectedURLChanged(const String&)
+void InspectorClientQt::inspectedURLChanged(const String& newURL)
 {
-    notImplemented();
+    m_inspectedURL = newURL;
+    updateWindowTitle();
+}
+
+void InspectorClientQt::updateWindowTitle()
+{
+    if (!m_webPage)
+        return;
+
+    QString caption = QCoreApplication::translate("QWebPage", "Web Inspector - %2");
+    m_webPage->setWindowTitle(caption.arg(m_inspectedURL));
 }
 
 }

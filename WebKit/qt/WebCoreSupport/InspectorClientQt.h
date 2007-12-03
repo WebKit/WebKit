@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2007 Trolltech ASA
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,6 +31,10 @@
 #define InspectorClientQt_h
 
 #include "InspectorClient.h"
+#include "OwnPtr.h"
+#include <QtCore/QString>
+
+class QWebPage;
 
 namespace WebCore {
     class Node;
@@ -38,6 +43,8 @@ namespace WebCore {
 
     class InspectorClientQt : public InspectorClient {
     public:
+        InspectorClientQt(QWebPage*);
+
         virtual void inspectorDestroyed();
 
         virtual Page* createPage();
@@ -46,6 +53,7 @@ namespace WebCore {
 
         virtual void showWindow();
         virtual void closeWindow();
+        virtual bool windowVisible();
 
         virtual void attachWindow();
         virtual void detachWindow();
@@ -53,6 +61,13 @@ namespace WebCore {
         virtual void highlight(Node*);
         virtual void hideHighlight();
         virtual void inspectedURLChanged(const String& newURL);
+
+    private:
+        void updateWindowTitle();
+        QWebPage* m_inspectedWebPage;
+        OwnPtr<QWebPage> m_webPage;
+        bool m_attached;
+        QString m_inspectedURL;
     };
 }
 

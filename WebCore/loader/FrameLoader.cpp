@@ -1126,6 +1126,9 @@ static HashSet<String, CaseInsensitiveHash<String> >& localSchemes()
 #if PLATFORM(MAC)
         localSchemes.add("applewebdata");
 #endif
+#if PLATFORM(QT)
+        localSchemes.add("qrc");
+#endif
     }
 
     return localSchemes;
