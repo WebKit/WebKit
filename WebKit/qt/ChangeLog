@@ -1,5 +1,12 @@
 2007-12-03  Geoffrey Garen  <ggaren@apple.com>
 
+        Removed unnecessary and possibly incorrect #include from my last 
+        check-in.
+
+        * Api/qwebframe.cpp:
+
+2007-12-03  Geoffrey Garen  <ggaren@apple.com>
+
         Qt build fix: Get globalExec() from the right place.
 
 2007-11-30  Holger Hans Peter Freyther  <holger.freyther@trolltech.com>
