@@ -82,9 +82,9 @@ static inline InterpreterMap &interpreterMap()
 }
 
 Interpreter::Interpreter()
-    : m_currentExec(0)
+    : m_globalExec(this, 0, 0, 0)
+    , m_currentExec(0)
     , m_globalObject(0)
-    , m_globalExec(this, 0, 0, 0)
 {
     init();
 }
@@ -308,11 +308,6 @@ void Interpreter::setGlobalObjectProperties()
 #endif
 }
 
-ExecState* Interpreter::globalExec()
-{
-  return &m_globalExec;
-}
-
 Completion Interpreter::checkSyntax(const UString& sourceURL, int startingLineNumber, const UString& code)
 {
     return checkSyntax(sourceURL, startingLineNumber, code.data(), code.size());
@@ -385,7 +380,7 @@ Completion Interpreter::evaluate(const UString& sourceURL, int startingLineNumbe
     
     if (shouldPrintExceptions() && res.complType() == Throw) {
         JSLock lock;
-        ExecState* exec = globalExec();
+        ExecState* exec = m_globalObject->globalExec();
         CString f = sourceURL.UTF8String();
         CString message = res.value()->toObject(exec)->toString(exec).UTF8String();
         int line = res.value()->toObject(exec)->get(exec, "line")->toUInt32(exec);
@@ -542,79 +537,6 @@ JSObject *Interpreter::builtinTypeErrorPrototype() const
 JSObject *Interpreter::builtinURIErrorPrototype() const
 {
   return m_UriErrorPrototype;
-}
-
-void Interpreter::mark()
-{
-    if (m_currentExec)
-        m_currentExec->mark();
-
-    if (m_globalExec.exception() && !m_globalExec.exception()->marked())
-        m_globalExec.exception()->mark();
-
-    if (m_Object && !m_Object->marked())
-        m_Object->mark();
-    if (m_Function && !m_Function->marked())
-        m_Function->mark();
-    if (m_Array && !m_Array->marked())
-        m_Array->mark();
-    if (m_Boolean && !m_Boolean->marked())
-        m_Boolean->mark();
-    if (m_String && !m_String->marked())
-        m_String->mark();
-    if (m_Number && !m_Number->marked())
-        m_Number->mark();
-    if (m_Date && !m_Date->marked())
-        m_Date->mark();
-    if (m_RegExp && !m_RegExp->marked())
-        m_RegExp->mark();
-    if (m_Error && !m_Error->marked())
-        m_Error->mark();
-    
-    if (m_ObjectPrototype && !m_ObjectPrototype->marked())
-        m_ObjectPrototype->mark();
-    if (m_FunctionPrototype && !m_FunctionPrototype->marked())
-        m_FunctionPrototype->mark();
-    if (m_ArrayPrototype && !m_ArrayPrototype->marked())
-        m_ArrayPrototype->mark();
-    if (m_BooleanPrototype && !m_BooleanPrototype->marked())
-        m_BooleanPrototype->mark();
-    if (m_StringPrototype && !m_StringPrototype->marked())
-        m_StringPrototype->mark();
-    if (m_NumberPrototype && !m_NumberPrototype->marked())
-        m_NumberPrototype->mark();
-    if (m_DatePrototype && !m_DatePrototype->marked())
-        m_DatePrototype->mark();
-    if (m_RegExpPrototype && !m_RegExpPrototype->marked())
-        m_RegExpPrototype->mark();
-    if (m_ErrorPrototype && !m_ErrorPrototype->marked())
-        m_ErrorPrototype->mark();
-    
-    if (m_EvalError && !m_EvalError->marked())
-        m_EvalError->mark();
-    if (m_RangeError && !m_RangeError->marked())
-        m_RangeError->mark();
-    if (m_ReferenceError && !m_ReferenceError->marked())
-        m_ReferenceError->mark();
-    if (m_SyntaxError && !m_SyntaxError->marked())
-        m_SyntaxError->mark();
-    if (m_TypeError && !m_TypeError->marked())
-        m_TypeError->mark();
-    if (m_UriError && !m_UriError->marked())
-        m_UriError->mark();
-    
-    if (m_EvalErrorPrototype && !m_EvalErrorPrototype->marked())
-        m_EvalErrorPrototype->mark();
-    if (m_RangeErrorPrototype && !m_RangeErrorPrototype->marked())
-        m_RangeErrorPrototype->mark();
-    if (m_ReferenceErrorPrototype && !m_ReferenceErrorPrototype->marked())
-        m_ReferenceErrorPrototype->mark();
-    if (m_SyntaxErrorPrototype && !m_SyntaxErrorPrototype->marked())
-        m_SyntaxErrorPrototype->mark();
-    if (m_TypeErrorPrototype && !m_TypeErrorPrototype->marked())
-        m_TypeErrorPrototype->mark();
-    if (m_UriErrorPrototype && !m_UriErrorPrototype->marked())
-        m_UriErrorPrototype->mark();
 }
 
 static bool printExceptions = false;
@@ -778,7 +700,7 @@ bool Interpreter::checkTimeout()
         m_ticksUntilNextTimeoutCheck = initialTickCountThreshold;
 
     if (m_timeoutTime && m_timeExecuting > m_timeoutTime) {
-        if (shouldInterruptScript())
+        if (m_globalObject->shouldInterruptScript())
             return true;
         
         resetTimeoutCheck();

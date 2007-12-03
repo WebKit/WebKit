@@ -87,7 +87,7 @@ static ExecState* getThreadGlobalExecState()
         pthread_setspecific(globalObjectKey, globalObject);
     }
     
-    ExecState* exec = globalObject->interpreter()->globalExec();
+    ExecState* exec = globalObject->globalExec();
 
     // Discard exceptions -- otherwise an exception would forestall JS 
     // evaluation throughout the thread

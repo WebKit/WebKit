@@ -130,7 +130,7 @@ static PassRefPtr<RootObject> createRootObject(void* nativeHandle)
         return 0;
 
     Frame* frame = [bridge _frame];
-    return frame->createRootObject(nativeHandle, frame->scriptProxy()->interpreter()->globalObject());
+    return frame->createRootObject(nativeHandle, frame->scriptProxy()->globalObject());
 }
 
 static pthread_t mainThread = 0;
@@ -714,7 +714,7 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
         return @"";
 
     JSLock lock;
-    return String(result->toString(m_frame->scriptProxy()->interpreter()->globalExec()));
+    return String(result->toString(m_frame->scriptProxy()->globalObject()->globalExec()));
 }
 
 - (NSAppleEventDescriptor *)aeDescByEvaluatingJavaScriptFromString:(NSString *)string
@@ -725,7 +725,7 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
     if (!result) // FIXME: pass errors
         return 0;
     JSLock lock;
-    return aeDescFromJSValue(m_frame->scriptProxy()->interpreter()->globalExec(), result);
+    return aeDescFromJSValue(m_frame->scriptProxy()->globalObject()->globalExec(), result);
 }
 
 - (NSRect)caretRectAtNode:(DOMNode *)node offset:(int)offset affinity:(NSSelectionAffinity)affinity

@@ -34,16 +34,18 @@ namespace KJS {
         JSGlobalObject() { }
         JSGlobalObject(JSValue* proto) : JSObject(proto) { }
 
-        virtual bool isGlobalObject() const { return true; }
-
-        virtual void mark()
-        {
-            JSObject::mark();
-            m_interpreter->mark();
-        }
-
         Interpreter* interpreter() const { return m_interpreter.get(); }
         void setInterpreter(std::auto_ptr<Interpreter> i) { m_interpreter = i; }
+
+        virtual void mark();
+
+        virtual bool isGlobalObject() const { return true; }
+
+        virtual ExecState* globalExec();
+
+        virtual bool shouldInterruptScript() const { return true; }
+
+        virtual bool isSafeScript(const JSGlobalObject*) { return true; }
 
     private:
         std::auto_ptr<Interpreter> m_interpreter;

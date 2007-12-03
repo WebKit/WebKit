@@ -72,7 +72,7 @@ namespace KJS {
   protected:
     Window(WebCore::DOMWindow*);
   public:
-    ~Window();
+    virtual ~Window();
     WebCore::DOMWindow* impl() const { return m_impl.get(); }
     void disconnectFrame();
     /**
@@ -103,7 +103,6 @@ namespace KJS {
 
     void timerFired(DOMWindowTimer*);
     
-    bool isSafeScript(ExecState*) const;
     static bool isSafeScript(const ScriptInterpreter *origin, const ScriptInterpreter *target);
 
     Location* location() const;
@@ -138,6 +137,10 @@ namespace KJS {
     
     virtual const ClassInfo* classInfo() const { return &info; }
     static const ClassInfo info;
+    
+    virtual ExecState* globalExec();
+    virtual bool shouldInterruptScript() const;
+    virtual bool isSafeScript(ExecState*) const;
 
     enum {
         // Attributes

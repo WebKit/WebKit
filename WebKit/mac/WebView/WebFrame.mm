@@ -80,6 +80,7 @@
 #import <WebKit/DOMHTMLElement.h>
 #import <WebKit/DOMNode.h>
 #import <WebKit/DOMRange.h>
+#import <JavaScriptCore/APICast.h>
 
 using namespace WebCore;
 
@@ -876,7 +877,7 @@ static NSURL *createUniqueWebDataURL()
     Frame* coreFrame = core(self);
     if (!coreFrame)
         return 0;
-    return reinterpret_cast<JSGlobalContextRef>(coreFrame->scriptProxy()->interpreter()->globalExec());
+    return toGlobalRef(coreFrame->scriptProxy()->globalObject()->globalExec());
 }
 
 @end

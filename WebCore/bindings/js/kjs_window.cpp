@@ -268,7 +268,7 @@ JSValue *Window::retrieve(Frame *p)
 {
     ASSERT(p);
     if (KJSProxy *proxy = p->scriptProxy())
-        return proxy->interpreter()->globalObject(); // the Global object is the "window"
+        return proxy->globalObject(); // the Global object is the "window"
   
     return jsUndefined(); // This can happen with JS disabled on the domain of that window
 }
@@ -900,6 +900,33 @@ bool Window::isSafeScript(const ScriptInterpreter *origin, const ScriptInterpret
     }
 
     return false;
+}
+
+ExecState* Window::globalExec()
+{
+    // we need to make sure that any script execution happening in this
+    // frame does not destroy it
+    ASSERT(impl()->frame());
+    impl()->frame()->keepAlive();
+    return JSGlobalObject::globalExec();
+}
+
+bool Window::shouldInterruptScript() const
+{
+    ASSERT(impl()->frame());
+    Page* page = impl()->frame()->page();
+
+    // See <rdar://problem/5479443>. We don't think that page can ever be NULL
+    // in this case, but if it is, we've gotten into a state where we may have
+    // hung the UI, with no way to ask the client whether to cancel execution. 
+    // For now, our solution is just to cancel execution no matter what, 
+    // ensuring that we never hang. We might want to consider other solutions 
+    // if we discover problems with this one.
+    ASSERT(page);
+    if (!page)
+        return true;
+
+    return page->chrome()->shouldInterruptJavaScript();
 }
 
 bool Window::isSafeScript(ExecState *exec) const
@@ -1661,7 +1688,7 @@ void ScheduledAction::execute(Window* window)
     if (JSValue* func = m_func.get()) {
         JSLock lock;
         if (func->isObject() && static_cast<JSObject*>(func)->implementsCall()) {
-            ExecState* exec = interpreter->globalExec();
+            ExecState* exec = window->globalExec();
             ASSERT(window == interpreter->globalObject());
             
             List args;

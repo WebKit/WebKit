@@ -84,7 +84,7 @@ class WebCoreScriptDebuggerImp : public KJS::Debugger {
     // constructor
     WebCoreScriptDebuggerImp(WebCoreScriptDebugger *objc, Interpreter *interp) : _objc(objc) {
         _nested = true;
-        _current = [_objc _enterFrame:interp->globalExec()];
+        _current = [_objc _enterFrame:interp->globalObject()->globalExec()];
         attach(interp);
         [[_objc delegate] enteredFrame:_current sourceId:-1 line:-1];
         _nested = false;
@@ -350,7 +350,7 @@ class WebCoreScriptDebuggerImp : public KJS::Debugger {
             eval = static_cast<JSObject *>(v);
         else
             // no "eval" - fallback operates on global exec state
-            state = interp->globalExec();
+            state = interp->globalObject()->globalExec();
     }
 
     JSValue *savedException = state->exception();

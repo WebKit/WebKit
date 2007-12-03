@@ -27,15 +27,14 @@
 #include "config.h"
 #include "JSContextRef.h"
 
-#include <wtf/Platform.h>
 #include "APICast.h"
-
 #include "JSCallbackObject.h"
 #include "JSClassRef.h"
 #include "JSGlobalObject.h"
 #include "completion.h"
 #include "interpreter.h"
 #include "object.h"
+#include <wtf/Platform.h>
 
 using namespace KJS;
 
@@ -44,10 +43,11 @@ JSGlobalContextRef JSGlobalContextCreate(JSClassRef globalObjectClass)
     JSLock lock;
 
     Interpreter* interpreter = new Interpreter();
-    ExecState* globalExec = interpreter->globalExec();
+    ExecState* globalExec = &interpreter->m_globalExec;
     JSGlobalContextRef ctx = toGlobalRef(globalExec);
 
-    if (globalObjectClass) {
+     if (globalObjectClass) {
+        // FIXME: ctx is not fully initialized yet, so this call to prototype() might return an object with a garbage pointer in its prototype chain.
         JSObject* prototype = globalObjectClass->prototype(ctx);
         JSCallbackObject<JSGlobalObject>* globalObject = new JSCallbackObject<JSGlobalObject>(globalObjectClass, prototype ? prototype : jsNull(), 0);
         interpreter->setGlobalObject(globalObject);

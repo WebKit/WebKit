@@ -21,10 +21,12 @@
 #ifndef kjs_proxy_h
 #define kjs_proxy_h
 
+#include "JSDOMWindow.h"
 #include <kjs/protect.h>
 #include <wtf/RefPtr.h>
 
 namespace KJS {
+    class JSGlobalObject;
     class JSValue;
     class ScriptInterpreter;
 }
@@ -34,7 +36,6 @@ namespace WebCore {
 class Event;
 class EventListener;
 class Frame;
-class JSDOMWindow;
 class Node;
 class String;
 
@@ -46,6 +47,14 @@ public:
     KJSProxy(Frame*);
     ~KJSProxy();
 
+    bool haveInterpreter() const { return m_globalObject; }
+    KJS::ScriptInterpreter* interpreter();
+    KJS::JSGlobalObject* globalObject()
+    {
+        initScriptIfNeeded();
+        return m_globalObject;
+    }
+
     KJS::JSValue* evaluate(const String& filename, int baseLine, const String& code);
     void clear();
     EventListener* createHTMLEventHandler(const String& functionName, const String& code, Node*);
@@ -53,16 +62,18 @@ public:
     EventListener* createSVGEventHandler(const String& functionName, const String& code, Node*);
 #endif
     void finishedWithEvent(Event*);
-    KJS::ScriptInterpreter *interpreter();
     void setEventHandlerLineno(int lineno) { m_handlerLineno = lineno; }
 
-    void initScriptIfNeeded();
-
-    bool haveInterpreter() const { return m_globalObject; }
-    
     void clearDocumentWrapper();
 
 private:
+    void initScriptIfNeeded()
+    {
+        if (!m_globalObject)
+            initScript();
+    }
+    void initScript();
+
     KJS::ProtectedPtr<JSDOMWindow> m_globalObject;
     Frame* m_frame;
     int m_handlerLineno;

@@ -286,6 +286,12 @@ Interpreter* RootObject::interpreter() const
     return m_globalObject->interpreter();
 }
 
+JSGlobalObject* RootObject::globalObject() const
+{
+    ASSERT(m_isValid);
+    return m_globalObject;
+}
+
 void RootObject::addRuntimeObject(RuntimeObjectImp* object)
 {
     ASSERT(m_isValid);

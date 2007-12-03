@@ -131,7 +131,7 @@ bool runtimeObjectImplementsCall(HTMLElement* thisImp)
     if (!frame)
         return false;
     KJSProxy* proxy = frame->scriptProxy();
-    ExecState* exec = proxy->interpreter()->globalExec();
+    ExecState* exec = proxy->globalObject()->globalExec();
     if (JSValue* runtimeObject = getRuntimeObject(exec, thisImp))
         return static_cast<JSObject*>(runtimeObject)->implementsCall();
 

@@ -80,7 +80,7 @@ void JSAbstractEventListener::handleEvent(Event* ele, bool isWindowEvent)
     JSLock lock;
 
     ScriptInterpreter* interpreter = proxy->interpreter();
-    ExecState* exec = interpreter->globalExec();
+    ExecState* exec = proxy->globalObject()->globalExec();
 
     JSValue* handleEventFuncValue = listener->get(exec, "handleEvent");
     JSObject* handleEventFunc = 0;
@@ -297,7 +297,7 @@ void JSLazyEventListener::parseCode() const
 
     if (proxy) {
         ScriptInterpreter* interpreter = proxy->interpreter();
-        ExecState* exec = interpreter->globalExec();
+        ExecState* exec = proxy->globalObject()->globalExec();
 
         JSLock lock;
         JSObject* constr = interpreter->builtinFunction();

@@ -228,17 +228,17 @@ static GlobalImp* createGlobalObject()
   interp->setGlobalObject(global); // global now owns interp.
 
   // add debug() function
-  global->put(interp->globalExec(), "debug", new TestFunctionImp(TestFunctionImp::Debug, 1));
+  global->put(global->globalExec(), "debug", new TestFunctionImp(TestFunctionImp::Debug, 1));
   // add "print" for compatibility with the mozilla js shell
-  global->put(interp->globalExec(), "print", new TestFunctionImp(TestFunctionImp::Print, 1));
+  global->put(global->globalExec(), "print", new TestFunctionImp(TestFunctionImp::Print, 1));
   // add "quit" for compatibility with the mozilla js shell
-  global->put(interp->globalExec(), "quit", new TestFunctionImp(TestFunctionImp::Quit, 0));
+  global->put(global->globalExec(), "quit", new TestFunctionImp(TestFunctionImp::Quit, 0));
   // add "gc" for compatibility with the mozilla js shell
-  global->put(interp->globalExec(), "gc", new TestFunctionImp(TestFunctionImp::GC, 0));
+  global->put(global->globalExec(), "gc", new TestFunctionImp(TestFunctionImp::GC, 0));
   // add "version" for compatibility with the mozilla js shell 
-  global->put(interp->globalExec(), "version", new TestFunctionImp(TestFunctionImp::Version, 1));
-  global->put(interp->globalExec(), "run", new TestFunctionImp(TestFunctionImp::Run, 1));
-  global->put(interp->globalExec(), "load", new TestFunctionImp(TestFunctionImp::Load, 1));
+  global->put(global->globalExec(), "version", new TestFunctionImp(TestFunctionImp::Version, 1));
+  global->put(global->globalExec(), "run", new TestFunctionImp(TestFunctionImp::Run, 1));
+  global->put(global->globalExec(), "load", new TestFunctionImp(TestFunctionImp::Load, 1));
 
   Interpreter::setShouldPrintExceptions(true);
   return global;

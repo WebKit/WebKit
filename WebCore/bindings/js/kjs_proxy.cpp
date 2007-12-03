@@ -74,7 +74,7 @@ JSValue* KJSProxy::evaluate(const String& filename, int baseLine, const String& 
     bool inlineCode = filename.isNull();
 
     ScriptInterpreter* interpreter = static_cast<ScriptInterpreter*>(m_globalObject->interpreter());
-    ExecState* exec = interpreter->globalExec();
+    ExecState* exec = m_globalObject->globalExec();
 
     interpreter->setInlineCode(inlineCode);
 
@@ -84,7 +84,7 @@ JSValue* KJSProxy::evaluate(const String& filename, int baseLine, const String& 
     // so we start the keep alive timer here.
     m_frame->keepAlive();
     
-    JSValue* thisNode = KJS::Window::retrieve(m_frame);
+    JSValue* thisNode = Window::retrieve(m_frame);
   
     interpreter->startTimeoutCheck();
     Completion comp = interpreter->evaluate(filename, baseLine, reinterpret_cast<const KJS::UChar*>(str.characters()), str.length(), thisNode);
@@ -106,7 +106,7 @@ JSValue* KJSProxy::evaluate(const String& filename, int baseLine, const String& 
 
 void KJSProxy::clear() {
   // clear resources allocated by the interpreter, and make it ready to be used by another page
-  // We have to keep it, so that the KJS::Window object for the frame remains the same.
+  // We have to keep it, so that the Window object for the frame remains the same.
   // (we used to delete and re-create it, previously)
   if (m_globalObject)
     m_globalObject->clear();
@@ -116,7 +116,7 @@ EventListener* KJSProxy::createHTMLEventHandler(const String& functionName, cons
 {
     initScriptIfNeeded();
     JSLock lock;
-    return new JSLazyEventListener(functionName, code, KJS::Window::retrieveWindow(m_frame), node, m_handlerLineno);
+    return new JSLazyEventListener(functionName, code, Window::retrieveWindow(m_frame), node, m_handlerLineno);
 }
 
 #if ENABLE(SVG)
@@ -124,7 +124,7 @@ EventListener* KJSProxy::createSVGEventHandler(const String& functionName, const
 {
     initScriptIfNeeded();
     JSLock lock;
-    return new JSSVGLazyEventListener(functionName, code, KJS::Window::retrieveWindow(m_frame), node, m_handlerLineno);
+    return new JSSVGLazyEventListener(functionName, code, Window::retrieveWindow(m_frame), node, m_handlerLineno);
 }
 #endif
 
@@ -141,12 +141,11 @@ void KJSProxy::finishedWithEvent(Event* event)
 
 ScriptInterpreter* KJSProxy::interpreter()
 {
-  initScriptIfNeeded();
-  ASSERT(m_globalObject);
-  return static_cast<ScriptInterpreter*>(m_globalObject->interpreter());
+    initScriptIfNeeded();
+    return static_cast<ScriptInterpreter*>(m_globalObject->interpreter());
 }
 
-void KJSProxy::initScriptIfNeeded()
+void KJSProxy::initScript()
 {
   if (m_globalObject)
     return;

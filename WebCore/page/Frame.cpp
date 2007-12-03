@@ -195,7 +195,7 @@ Frame::~Frame()
 #endif
 
     if (d->m_jscript && d->m_jscript->haveInterpreter())
-        static_cast<KJS::Window*>(d->m_jscript->interpreter()->globalObject())->disconnectFrame();
+        static_cast<KJS::Window*>(d->m_jscript->globalObject())->disconnectFrame();
 
     disconnectOwnerElement();
     
@@ -1110,7 +1110,7 @@ KJS::Bindings::RootObject* Frame::bindingRootObject()
 
     if (!d->m_bindingRootObject) {
         JSLock lock;
-        d->m_bindingRootObject = KJS::Bindings::RootObject::create(0, scriptProxy()->interpreter()->globalObject());
+        d->m_bindingRootObject = KJS::Bindings::RootObject::create(0, scriptProxy()->globalObject());
     }
     return d->m_bindingRootObject.get();
 }

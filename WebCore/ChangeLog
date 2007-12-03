@@ -1,3 +1,12 @@
+2007-12-02  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Eric Seidel.
+
+        Updated to match the JavaScriptCore change to move virtual methods from
+        Interpreter to JSGlobalObject.
+        
+        Moved virtual ScriptInterpreter functions to Window.
+
 2007-12-02  Darin Adler  <darin@apple.com>
 
         Reviewed by Mitz.

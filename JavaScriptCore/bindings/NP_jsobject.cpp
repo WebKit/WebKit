@@ -29,11 +29,12 @@
 
 #include "NP_jsobject.h"
 
+#include "JSGlobalObject.h"
+#include "PropertyNameArray.h"
 #include "c_utility.h"
 #include "npruntime_impl.h"
 #include "npruntime_priv.h"
 #include "object.h"
-#include "PropertyNameArray.h"
 #include "runtime_root.h"
 
 using namespace KJS;
@@ -80,7 +81,7 @@ static bool _isSafeScript(JavaScriptObject* obj)
     if (!obj->originRootObject->isValid() || !obj->rootObject->isValid())
         return false;
         
-    return obj->originRootObject->interpreter()->isSafeScript(obj->rootObject->interpreter());
+    return obj->originRootObject->globalObject()->isSafeScript(obj->rootObject->globalObject());
 }
 
 NPObject* _NPN_CreateScriptObject(NPP npp, JSObject* imp, PassRefPtr<RootObject> originRootObject, PassRefPtr<RootObject> rootObject)
@@ -116,7 +117,7 @@ bool _NPN_InvokeDefault(NPP, NPObject* o, const NPVariant* args, uint32_t argCou
         if (!rootObject || !rootObject->isValid())
             return false;
         
-        ExecState* exec = rootObject->interpreter()->globalExec();
+        ExecState* exec = rootObject->globalObject()->globalExec();
         JSLock lock;
         
         // Call the function object.
@@ -166,7 +167,7 @@ bool _NPN_Invoke(NPP npp, NPObject* o, NPIdentifier methodName, const NPVariant*
         if (!rootObject || !rootObject->isValid())
             return false;
 
-        ExecState* exec = rootObject->interpreter()->globalExec();
+        ExecState* exec = rootObject->globalObject()->globalExec();
         JSLock lock;
         JSValue* func = obj->imp->get(exec, identifierFromNPIdentifier(i->value.string));
         if (func->isNull()) {
@@ -210,7 +211,7 @@ bool _NPN_Evaluate(NPP, NPObject* o, NPString* s, NPVariant* variant)
         if (!rootObject || !rootObject->isValid())
             return false;
 
-        ExecState* exec = rootObject->interpreter()->globalExec();
+        ExecState* exec = rootObject->globalObject()->globalExec();
         
         JSLock lock;
         NPUTF16* scriptString;
@@ -251,7 +252,7 @@ bool _NPN_GetProperty(NPP, NPObject* o, NPIdentifier propertyName, NPVariant* va
         if (!rootObject || !rootObject->isValid())
             return false;
 
-        ExecState* exec = rootObject->interpreter()->globalExec();
+        ExecState* exec = rootObject->globalObject()->globalExec();
         PrivateIdentifier* i = (PrivateIdentifier*)propertyName;
         
         JSLock lock;
@@ -294,7 +295,7 @@ bool _NPN_SetProperty(NPP, NPObject* o, NPIdentifier propertyName, const NPVaria
         if (!rootObject || !rootObject->isValid())
             return false;
 
-        ExecState* exec = rootObject->interpreter()->globalExec();
+        ExecState* exec = rootObject->globalObject()->globalExec();
         JSLock lock;
         PrivateIdentifier* i = (PrivateIdentifier*)propertyName;
         if (i->isString)
@@ -321,7 +322,7 @@ bool _NPN_RemoveProperty(NPP, NPObject* o, NPIdentifier propertyName)
         if (!rootObject || !rootObject->isValid())
             return false;
 
-        ExecState* exec = rootObject->interpreter()->globalExec();
+        ExecState* exec = rootObject->globalObject()->globalExec();
         PrivateIdentifier* i = (PrivateIdentifier*)propertyName;
         if (i->isString) {
             if (!obj->imp->hasProperty(exec, identifierFromNPIdentifier(i->value.string)))
@@ -353,7 +354,7 @@ bool _NPN_HasProperty(NPP, NPObject* o, NPIdentifier propertyName)
         if (!rootObject || !rootObject->isValid())
             return false;
 
-        ExecState* exec = rootObject->interpreter()->globalExec();
+        ExecState* exec = rootObject->globalObject()->globalExec();
         PrivateIdentifier* i = (PrivateIdentifier*)propertyName;
         JSLock lock;
         if (i->isString)
@@ -382,7 +383,7 @@ bool _NPN_HasMethod(NPP, NPObject* o, NPIdentifier methodName)
         if (!rootObject || !rootObject->isValid())
             return false;
 
-        ExecState* exec = rootObject->interpreter()->globalExec();
+        ExecState* exec = rootObject->globalObject()->globalExec();
         JSLock lock;
         JSValue* func = obj->imp->get(exec, identifierFromNPIdentifier(i->value.string));
         return !func->isUndefined();
@@ -402,7 +403,7 @@ void _NPN_SetException(NPObject* o, const NPUTF8* message)
         if (!rootObject || !rootObject->isValid())
             return;
 
-        ExecState* exec = rootObject->interpreter()->globalExec();
+        ExecState* exec = rootObject->globalObject()->globalExec();
         JSLock lock;
         throwError(exec, GeneralError, message);
     }
@@ -419,7 +420,7 @@ bool _NPN_Enumerate(NPP, NPObject *o, NPIdentifier **identifier, uint32_t *count
         if (!rootObject || !rootObject->isValid())
             return false;
         
-        ExecState* exec = rootObject->interpreter()->globalExec();
+        ExecState* exec = rootObject->globalObject()->globalExec();
         JSLock lock;
         PropertyNameArray propertyNames;
 

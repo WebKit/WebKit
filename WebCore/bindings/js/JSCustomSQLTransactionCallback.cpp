@@ -54,8 +54,8 @@ void JSCustomSQLTransactionCallback::handleEvent(SQLTransaction* transaction, bo
     if (!proxy)
         return;
         
+    ExecState* exec = proxy->globalObject()->globalExec();
     ScriptInterpreter* interpreter = proxy->interpreter();
-    ExecState* exec = interpreter->globalExec();
         
     KJS::JSLock lock;
         

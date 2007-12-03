@@ -1047,7 +1047,7 @@ void Collector::reportOutOfMemoryToAllInterpreters()
     
     Interpreter* interpreter = Interpreter::s_hook;
     do {
-        ExecState* exec = interpreter->currentExec() ? interpreter->currentExec() : interpreter->globalExec();
+        ExecState* exec = interpreter->currentExec() ? interpreter->currentExec() : interpreter->globalObject()->globalExec();
         
         exec->setException(Error::create(exec, GeneralError, "Out of memory"));
         

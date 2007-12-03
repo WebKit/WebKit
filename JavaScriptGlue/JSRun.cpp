@@ -58,11 +58,6 @@ JSGlobalObject* JSRun::GlobalObject() const
     return fGlobalObject;
 }
 
-JSInterpreter* JSRun::GetInterpreter()
-{
-    return static_cast<JSInterpreter*>(fGlobalObject->interpreter());
-}
-
 Completion JSRun::Evaluate()
 {
     return fGlobalObject->interpreter()->evaluate(UString(), 0, fSource.data(), fSource.size());

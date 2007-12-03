@@ -315,6 +315,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\kjs\JSGlobalObject.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\kjs\JSImmediate.cpp"
 				>
 			</File>

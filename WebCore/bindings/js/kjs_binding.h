@@ -99,17 +99,9 @@ namespace KJS {
          */
         bool wasRunByUserGesture() const;
 
-        virtual ExecState* globalExec();
-
         WebCore::Event* getCurrentEvent() const { return m_currentEvent; }
 
-        virtual bool isGlobalObject(JSValue*);
-        virtual bool isSafeScript(const Interpreter* target);
-
-        virtual bool shouldInterruptScript() const;
-
     private:
-        virtual ~ScriptInterpreter() { } // only deref on the base class should delete us
     
         WebCore::Frame* m_frame;
         WebCore::Event* m_currentEvent;

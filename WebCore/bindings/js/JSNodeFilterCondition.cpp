@@ -46,7 +46,7 @@ short JSNodeFilterCondition::acceptNode(Node* filterNode) const
     KJSProxy* proxy = frame->scriptProxy();
     if (proxy && m_filter->implementsCall()) {
         KJS::JSLock lock;
-        KJS::ExecState* exec = proxy->interpreter()->globalExec();
+        KJS::ExecState* exec = proxy->globalObject()->globalExec();
         KJS::List args;
         args.append(toJS(exec, node));
         KJS::JSObject* obj = m_filter;

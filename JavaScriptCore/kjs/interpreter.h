@@ -78,14 +78,15 @@ namespace KJS {
    */
   class Interpreter {
     friend class Collector;
+    friend class JSGlobalObject;
+
   public:
     /**
      * Creates a new interpreter. The global object must be set via setGlobalObject
      * before code is executed with this interpreter.
      */
     Interpreter();
-    
-    virtual ~Interpreter(); // only deref should delete us
+    ~Interpreter();
 
     /**
      * Set the interpreter's global object. The supplied object will be used as the global
@@ -116,19 +117,6 @@ namespace KJS {
      * execution performed by this interpreter
      */
     JSGlobalObject* globalObject() const;
-
-    /**
-     * Returns the execution state object which can be used to execute
-     * scripts using this interpreter at a the "global" level, i.e. one
-     * with a execution context that has the global object as the "this"
-     * value, and who's scope chain contains only the global object.
-     *
-     * Note: this pointer remains constant for the life of the interpreter
-     * and should not be manually deleted.
-     *
-     * @return The interpreter global execution state object
-     */
-    virtual ExecState *globalExec();
 
     /**
      * Parses the supplied ECMAScript code and checks for syntax errors.
@@ -280,32 +268,12 @@ namespace KJS {
     void setCompatMode(CompatMode mode) { m_compatMode = mode; }
     CompatMode compatMode() const { return m_compatMode; }
     
-    /**
-     * Run the garbage collection. Returns true when at least one object
-     * was collected; false otherwise.
-     */
-    static bool collect();
-
-    /**
-     * Called during the mark phase of the garbage collector. Subclasses 
-     * implementing custom mark methods must make sure to chain to this one.
-     */
-    virtual void mark();
-
     static bool shouldPrintExceptions();
     static void setShouldPrintExceptions(bool);
 
     void saveBuiltins (SavedBuiltins&) const;
     void restoreBuiltins (const SavedBuiltins&);
     
-    /**
-     * Determine if the it is 'safe' to execute code in the target interpreter from an
-     * object that originated in this interpreter.  This check is used to enforce WebCore
-     * cross frame security rules.  In particular, attempts to access 'bound' objects are
-     * not allowed unless isSafeScript returns true.
-     */
-    virtual bool isSafeScript(const Interpreter*) { return true; }
-  
     // Chained list of interpreters (ring)
     static Interpreter* firstInterpreter() { return s_hook; }
     Interpreter* nextInterpreter() const { return next; }
@@ -324,9 +292,9 @@ namespace KJS {
     
     bool timedOut();
     
-protected:
-    virtual bool shouldInterruptScript() const { return true; }
+    ExecState m_globalExec; // This is temporarily public to help with bootstrapping.
 
+protected:
     unsigned m_timeoutTime;
 
 private:
@@ -344,7 +312,6 @@ private:
     
     ExecState* m_currentExec;
     JSGlobalObject* m_globalObject;
-    ExecState m_globalExec;
 
     // Chained list of interpreters (ring) - for collector
     static Interpreter* s_hook;

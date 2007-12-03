@@ -232,14 +232,6 @@ void ScriptInterpreter::markDOMNodesForDocument(Document* doc)
     }
 }
 
-ExecState* ScriptInterpreter::globalExec()
-{
-    // we need to make sure that any script execution happening in this
-    // frame does not destroy it
-    m_frame->keepAlive();
-    return Interpreter::globalExec();
-}
-
 void ScriptInterpreter::updateDOMNodeDocument(Node* node, Document* oldDoc, Document* newDoc)
 {
     ASSERT(oldDoc != newDoc);
@@ -275,33 +267,6 @@ bool ScriptInterpreter::wasRunByUserGesture() const
         // This is the <script>window.open(...)</script> case or a timer callback -> block it
     }
     return false;
-}
-
-bool ScriptInterpreter::isGlobalObject(JSValue* v)
-{
-    return v->isObject(&Window::info);
-}
-
-bool ScriptInterpreter::isSafeScript(const Interpreter* target)
-{
-    return Window::isSafeScript(this, static_cast<const ScriptInterpreter*>(target));
-}
-
-bool ScriptInterpreter::shouldInterruptScript() const
-{
-    Page* page = m_frame->page();
-
-    // See <rdar://problem/5479443>. We don't think that page can ever be NULL
-    // in this case, but if it is, we've gotten into a state where we may have
-    // hung the UI, with no way to ask the client whether to cancel execution. 
-    // For now, our solution is just to cancel execution no matter what, 
-    // ensuring that we never hang. We might want to consider other solutions 
-    // if we discover problems with this one.
-    ASSERT(page);
-    if (!page)
-        return true;
-
-    return page->chrome()->shouldInterruptJavaScript();
 }
 
 JSValue* jsStringOrNull(const String& s)

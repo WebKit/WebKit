@@ -185,7 +185,7 @@ NPObject* HTMLPlugInElement::createNPObject()
     
     // Create a JSObject bound to this element
     JSLock lock;
-    ExecState *exec = frame->scriptProxy()->interpreter()->globalExec();
+    ExecState *exec = frame->scriptProxy()->globalObject()->globalExec();
     JSValue* jsElementValue = toJS(exec, this);
     if (!jsElementValue || !jsElementValue->isObject())
         return _NPN_CreateNoScriptObject();

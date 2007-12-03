@@ -741,7 +741,7 @@ void InspectorController::windowScriptObjectAvailable()
     if (!m_page || !enabled())
         return;
 
-    m_scriptContext = toRef(m_page->mainFrame()->scriptProxy()->interpreter()->globalExec());
+    m_scriptContext = toRef(m_page->mainFrame()->scriptProxy()->globalObject()->globalExec());
 
     JSObjectRef global = JSContextGetGlobalObject(m_scriptContext);
     ASSERT(global);

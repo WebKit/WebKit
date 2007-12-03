@@ -68,6 +68,7 @@ public:
 
     const void* nativeHandle() const;
     Interpreter* interpreter() const;
+    JSGlobalObject* globalObject() const;
 
 #if PLATFORM(MAC)
     // Must be called from the thread that will be used to access JavaScript.
