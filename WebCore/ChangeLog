@@ -2,6 +2,19 @@
 
         Rubber stamped by Sam Weinig.
 
+        Only add applewebdata to the localSchemes when building for the
+        mac. This is in preparation of adding qrc for the Qt port there
+        as well and http://bugs.webkit.org/show_bug.cgi?id=15938.
+
+        According to Anders applewebdata is not used on the win port.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::localSchemes):
+
+2007-12-02  Holger Hans Peter Freyther  <holger.freyther@trolltech.com>
+
+        Rubber stamped by Sam Weinig.
+
         Fix a typo. It is contains and not containts
 
         * loader/FrameLoader.cpp:

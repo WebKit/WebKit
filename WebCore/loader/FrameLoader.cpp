@@ -1123,7 +1123,9 @@ static HashSet<String, CaseInsensitiveHash<String> >& localSchemes()
 
     if (localSchemes.isEmpty()) {
         localSchemes.add("file");
+#if PLATFORM(MAC)
         localSchemes.add("applewebdata");
+#endif
     }
 
     return localSchemes;
