@@ -1,3 +1,16 @@
+2007-12-03  Holger Hans Peter Freyther  <holger.freyther@trolltech.com>
+
+        Reviewed by Simon.
+
+        * Coding Style fixes
+        
+
+        WARNING: NO TEST CASES ADDED OR CHANGED
+
+        * platform/qt/ScrollViewQt.cpp:
+        (WebCore::ScrollView::addChild):
+        (WebCore::ScrollView::removeChild):
+
 2007-12-03  Alp Toker  <alp@atoker.com>
 
         Reviewed by Mark Rowe.

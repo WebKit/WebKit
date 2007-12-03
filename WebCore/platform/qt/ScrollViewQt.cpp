@@ -587,9 +587,8 @@ PlatformScrollbar* ScrollView::scrollbarUnderMouse(const PlatformMouseEvent& mou
 void ScrollView::addChild(Widget* child)
 {
     QWidget* w = child->qwidget();
-    if (w) {
+    if (w)
         m_data->m_children.add(child);
-    }
 
     child->setParent(this);
 }
@@ -599,9 +598,8 @@ void ScrollView::removeChild(Widget* child)
     child->setParent(0);
     child->hide();
     QWidget* w = child->qwidget();
-    if (w) {
+    if (w)
         m_data->m_children.remove(child);
-    }
 }
 
 void ScrollView::paint(GraphicsContext* context, const IntRect& rect)
