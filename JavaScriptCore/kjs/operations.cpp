@@ -58,12 +58,20 @@ bool equal(ExecState *exec, JSValue *v1, JSValue *v2)
             t1 = NumberType;
             // use toNumber
         else {
-            if ((t1 == StringType || t1 == NumberType) && t2 >= ObjectType)
-                return equal(exec, v1, v2->toPrimitive(exec));
+            if ((t1 == StringType || t1 == NumberType) && t2 == ObjectType) {
+                v2 = v2->toPrimitive(exec);
+                if (exec->hadException())
+                    return false;
+                return equal(exec, v1, v2);
+            }
             if (t1 == NullType && t2 == ObjectType)
                 return static_cast<JSObject *>(v2)->masqueradeAsUndefined();
-            if (t1 >= ObjectType && (t2 == StringType || t2 == NumberType))
-                return equal(exec, v1->toPrimitive(exec), v2);
+            if (t1 == ObjectType && (t2 == StringType || t2 == NumberType)) {
+                v1 = v1->toPrimitive(exec);
+                if (exec->hadException())
+                    return false;
+                return equal(exec, v1, v2);
+            }
             if (t1 == ObjectType && t2 == NullType)
                 return static_cast<JSObject *>(v1)->masqueradeAsUndefined();
             if (t1 != t2)

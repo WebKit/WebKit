@@ -1,3 +1,14 @@
+2007-12-03  Darin Adler  <darin@apple.com>
+
+        Reviewed by Geoff.
+
+        - test for http://bugs.webkit.org/show_bug.cgi?id=15618
+          <rdar://problem/5619353> REGRESSION: Stack overflow/crash in KJS::equal (15618)
+
+        * fast/js/recursion-limit-equal-expected.txt: Added.
+        * fast/js/recursion-limit-equal.html: Added.
+        * fast/js/resources/recursion-limit-equal.js: Added.
+
 2007-12-03  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.
