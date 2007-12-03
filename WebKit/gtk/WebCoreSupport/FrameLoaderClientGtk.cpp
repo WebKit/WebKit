@@ -362,7 +362,7 @@ void FrameLoaderClient::windowObjectCleared()
 
     // TODO: Consider using g_signal_has_handler_pending() to avoid the overhead
     // when there are no handlers.
-    JSGlobalContextRef context = toGlobalRef(coreFrame->scriptProxy()->interpreter()->globalExec());
+    JSGlobalContextRef context = toGlobalRef(coreFrame->scriptProxy()->globalObject()->globalExec());
     JSObjectRef windowObject = toRef(KJS::Window::retrieve(coreFrame)->getObject());
     ASSERT(windowObject);
 

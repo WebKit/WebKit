@@ -1,3 +1,10 @@
+2007-12-03  Alp Toker  <alp@atoker.com>
+
+        globalObject() GTK+ build fix.
+
+        * WebCoreSupport/FrameLoaderClientGtk.cpp:
+        (WebKit::FrameLoaderClient::windowObjectCleared):
+
 2007-12-03  Geoffrey Garen  <ggaren@apple.com>
 
         GTK Build fix: get globalExec from the right place.
