@@ -151,10 +151,12 @@ ALWAYS_INLINE bool ArrayInstance::inlineGetOwnPropertySlot(ExecState* exec, unsi
             return true;
         }
     } else if (SparseArrayValueMap* map = storage->m_sparseValueMap) {
-        SparseArrayValueMap::iterator it = map->find(i);
-        if (it != map->end()) {
-            slot.setValueSlot(this, &it->second);
-            return true;
+        if (i >= sparseArrayCutoff) {
+            SparseArrayValueMap::iterator it = map->find(i);
+            if (it != map->end()) {
+                slot.setValueSlot(this, &it->second);
+                return true;
+            }
         }
     }
 
@@ -318,10 +320,12 @@ bool ArrayInstance::deleteProperty(ExecState* exec, unsigned i)
     }
 
     if (SparseArrayValueMap* map = storage->m_sparseValueMap) {
-        SparseArrayValueMap::iterator it = map->find(i);
-        if (it != map->end()) {
-            map->remove(it);
-            return true;
+        if (i >= sparseArrayCutoff) {
+            SparseArrayValueMap::iterator it = map->find(i);
+            if (it != map->end()) {
+                map->remove(it);
+                return true;
+            }
         }
     }
 

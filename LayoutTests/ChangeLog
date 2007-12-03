@@ -2,6 +2,17 @@
 
         Reviewed by Mitz.
 
+        - test for http://bugs.webkit.org/show_bug.cgi?id=15848
+          <rdar://problem/5619330> REGRESSION: Assertion failure viewing comments page on digg.com
+
+        * fast/js/resources/sparse-array.js: Added.
+        * fast/js/sparse-array-expected.txt: Added.
+        * fast/js/sparse-array.html: Added.
+
+2007-12-02  Darin Adler  <darin@apple.com>
+
+        Reviewed by Mitz.
+
         - tests for table-related HTMLCollection classes for misnested
           tables and for <rdar://problem/5601995> Hang/crash on http://ebay-uk.custhelp.com/
 
