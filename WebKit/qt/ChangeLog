@@ -2,6 +2,27 @@
 
         Reviewed by Simon.
 
+        * SubClass QWebPage to handle hide and close events.
+        * Forward these events to the InspectorController
+        * The other options would have been using an eventFilter
+        on the webpage and making InspectorClient a QObject or
+        creating a QObject Observer.
+        * Provide a simple QWebPage* createWindow implementation. This is needed
+        to make FrameLoaderClientQt::dispatchCreatePage stop crashing in the case
+        of the inspector client.
+        
+
+        * WebCoreSupport/InspectorClientQt.cpp:
+        (WebCore::InspectorClientWebPage::InspectorClientWebPage):
+        (WebCore::InspectorClientWebPage::createWindow):
+        (WebCore::InspectorClientWebPage::hideEvent):
+        (WebCore::InspectorClientWebPage::closeEvent):
+        (WebCore::InspectorClientQt::createPage):
+
+2007-12-03  Holger Hans Peter Freyther  <holger.freyther@trolltech.com>
+
+        Reviewed by Simon.
+
         * Allow adding the Inspect ContextMenuItem to our Menu
         * Open the Inspector when Inspect was activated. This requires
         that we keep the innerNonSharedNode from the HitTest around. This

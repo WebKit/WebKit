@@ -41,6 +41,35 @@
 
 namespace WebCore {
 
+class InspectorClientWebPage : public QWebPage {
+public:
+    InspectorClientWebPage(InspectorController* controller)
+        : QWebPage(0)
+        , m_controller(controller)
+    {}
+
+    QWebPage* createWindow()
+    {
+        return new QWebPage(0);
+    }
+
+protected:
+    void hideEvent(QHideEvent* ev)
+    {
+        QWebPage::hideEvent(ev);
+        m_controller->setWindowVisible(false);
+    }
+
+    void closeEvent(QCloseEvent* ev)
+    {
+        QWebPage::closeEvent(ev);
+        m_controller->setWindowVisible(false);
+    }
+
+private:
+    InspectorController* m_controller;
+};
+
 InspectorClientQt::InspectorClientQt(QWebPage* page)
     : m_inspectedWebPage(page)
     , m_attached(false)
@@ -56,7 +85,7 @@ Page* InspectorClientQt::createPage()
     if (m_webPage)
         return m_webPage->d->page;
 
-    m_webPage.set(new QWebPage(0));
+    m_webPage.set(new InspectorClientWebPage(m_inspectedWebPage->d->page->inspectorController()));
     m_webPage->open(QString::fromLatin1("qrc:/webkit/inspector/inspector.html"));
     m_webPage->setMinimumSize(400,300);
     return m_webPage->d->page;
