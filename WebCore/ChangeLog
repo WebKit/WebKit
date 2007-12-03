@@ -2,6 +2,20 @@
 
         Reviewed by Simon.
 
+        * Implement GraphicsContext::fillRoundedRect similiar to the
+        CoreGraphics implementation only addPath is not called this
+        seems to be only needed for CoreGraphics.
+        
+
+        WARNING: NO TEST CASES ADDED OR CHANGED
+
+        * platform/graphics/qt/GraphicsContextQt.cpp:
+        (WebCore::GraphicsContext::fillRoundedRect):
+
+2007-12-03  Holger Hans Peter Freyther  <holger.freyther@trolltech.com>
+
+        Reviewed by Simon.
+
         * Coding Style fixes
         
 
