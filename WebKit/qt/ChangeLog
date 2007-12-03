@@ -2,6 +2,22 @@
 
         Reviewed by Simon.
 
+        * Avoid crashes by making sure everything is layouted before
+        we start painting. This avoids a crash in Widget::invalidateRect
+        because QPainter::begin would fail
+        * The QWebFrame::layout() methods and calls are left untouched because
+        this would be an API decision.
+        
+
+        * Api/qwebframe.cpp:
+        (QWebFrame::layout):
+        * Api/qwebpage.cpp:
+        (QWebPage::paintEvent):
+
+2007-12-03  Holger Hans Peter Freyther  <holger.freyther@trolltech.com>
+
+        Reviewed by Simon.
+
         * SubClass QWebPage to handle hide and close events.
         * Forward these events to the InspectorController
         * The other options would have been using an eventFilter

@@ -132,7 +132,7 @@ public:
 
     // FIXME: This method should be used by all platforms, but currently depends on ScrollView::children,
     // which not all methods have. Once FrameView and ScrollView are merged, this #if should be removed.
-#if PLATFORM(WIN) || PLATFORM(GTK)
+#if PLATFORM(WIN) || PLATFORM(GTK) || PLATFORM(QT)
     void layoutIfNeededRecursive();
 #endif
 

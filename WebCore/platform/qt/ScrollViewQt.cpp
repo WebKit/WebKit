@@ -291,6 +291,11 @@ void ScrollView::setFrameGeometry(const IntRect& newGeometry)
     geometryChanged();
 }
 
+HashSet<Widget*>* ScrollView::children()
+{
+    return &(m_data->m_children);
+}
+
 void ScrollView::geometryChanged() const
 {
     HashSet<Widget*>::const_iterator end = m_data->m_children.end();

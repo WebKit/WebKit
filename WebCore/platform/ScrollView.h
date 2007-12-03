@@ -203,6 +203,8 @@ namespace WebCore {
         PlatformScrollbar *horizontalScrollBar() const;
         PlatformScrollbar *verticalScrollBar() const;
 
+        HashSet<Widget*>* children();
+
     private:
         void updateScrollbars(const IntSize& desiredOffset);
         IntSize maximumScroll() const;

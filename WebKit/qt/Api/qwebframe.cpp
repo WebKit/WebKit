@@ -248,13 +248,10 @@ void QWebFrame::render(QPainter *painter, const QRect &source)
 
 void QWebFrame::layout()
 {
-    if (d->frameView->needsLayout()) {
-        d->frameView->layout();
-    }
+    if (!d->frameView)
+        return;
 
-    foreach (QWebFrame *child, childFrames()) {
-        child->layout();
-    }
+    d->frameView->layoutIfNeededRecursive();
 }
 
 QPoint QWebFrame::pos() const

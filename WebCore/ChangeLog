@@ -2,6 +2,26 @@
 
         Reviewed by Simon.
 
+        * Avoid crashes by making sure everything is layouted before
+        we start painting. This avoids a crash in Widget::invalidateRect
+        because QPainter::begin would fail
+        * The QWebFrame::layout() methods and calls are left untouched because
+        this would be an API decision.
+        
+
+        WARNING: NO TEST CASES ADDED OR CHANGED
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::updateControlTints):
+        * page/FrameView.h:
+        * platform/ScrollView.h:
+        * platform/qt/ScrollViewQt.cpp:
+        (WebCore::ScrollView::children):
+
+2007-12-03  Holger Hans Peter Freyther  <holger.freyther@trolltech.com>
+
+        Reviewed by Simon.
+
         * Implement GraphicsContext::fillRoundedRect similiar to the
         CoreGraphics implementation only addPath is not called this
         seems to be only needed for CoreGraphics.
