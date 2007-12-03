@@ -59,6 +59,8 @@
 
 #include "wtf/HashMap.h"
 
+#include "kjs/JSGlobalObject.h"
+
 #include <qdebug.h>
 #include <qevent.h>
 #include <qpainter.h>
@@ -150,7 +152,7 @@ void QWebFrame::addToJSWindowObject(const QByteArray &name, QObject *object)
         KJS::Bindings::Instance::createRuntimeObject(KJS::Bindings::Instance::QtLanguage,
                                                      object, root);
 
-      window->put(window->interpreter()->globalExec(), KJS::Identifier(name.constData()), runtimeObject);
+      window->put(window->globalExec(), KJS::Identifier(name.constData()), runtimeObject);
 }
 
 
@@ -276,7 +278,7 @@ QString QWebFrame::evaluateJavaScript(const QString& scriptSource)
     if (proxy) {
         KJS::JSValue *v = proxy->evaluate(String(), 0, scriptSource);
         if (v) {
-            rc = String(v->toString(proxy->interpreter()->globalExec()));
+            rc = String(v->toString(proxy->globalObject()->globalExec()));
         }
     }
     return rc;
