@@ -227,7 +227,8 @@ bool RenderThemeQt::paintButton(RenderObject* o, const RenderObject::PaintInfo& 
         return true;
 
     QStyleOptionButton option;
-    option.initFrom(widget);
+    if (widget)
+        option.initFrom(widget);
     option.rect = r;
 
     // Get the correct theme data for a button
@@ -258,8 +259,8 @@ bool RenderThemeQt::paintTextField(RenderObject* o, const RenderObject::PaintInf
         return true;
 
     QStyleOptionFrameV2 panel;
-    
-    panel.initFrom(widget);
+    if (widget)
+        panel.initFrom(widget);
     panel.rect = r;
     panel.state |= QStyle::State_Sunken;
     panel.features = QStyleOptionFrameV2::None;
@@ -310,7 +311,8 @@ bool RenderThemeQt::paintMenuList(RenderObject* o, const RenderObject::PaintInfo
         return true;
 
     QStyleOptionComboBox opt;
-    opt.initFrom(widget);
+    if (widget)
+        opt.initFrom(widget);
     EAppearance appearance = applyTheme(opt, o);
     const QPoint topLeft = r.topLeft();
     painter->translate(topLeft);
@@ -416,10 +418,15 @@ bool RenderThemeQt::getStylePainterAndWidgetFromPaintInfo(const RenderObject::Pa
                                                           QPainter*& painter, QWidget*& widget) const
 {
     painter = (i.context ? static_cast<QPainter*>(i.context->platformContext()) : 0);
-    widget = (painter ? static_cast<QWidget*>(painter->device()) : 0);
-    style = (widget ? widget->style() : 0);
+    widget = 0;
+    QPaintDevice* dev = 0;
+    if (painter)
+        dev = painter->device();
+    if (dev && dev->devType() == QInternal::Widget)
+        widget = static_cast<QWidget*>(dev);
+    style = (widget ? widget->style() : QApplication::style());
 
-    return (painter && widget && style);
+    return (painter && style);
 }
 
 EAppearance RenderThemeQt::applyTheme(QStyleOption& option, RenderObject* o) const

@@ -1,3 +1,19 @@
+2007-12-03  Simon Hausmann  <hausmann@webkit.org>
+
+        Reviewed by Lars.
+
+        Fixed crash when rendering form elements with Qt 4.4
+
+        QPainter::device() is not guaranteed to return a QWidget, so do the safe "cast" with the
+        help of QPaintDevice::devType().
+        Also fall back to the QApplication::style() if we don't have a widget.
+
+        * platform/qt/RenderThemeQt.cpp:
+        (WebCore::RenderThemeQt::paintButton):
+        (WebCore::RenderThemeQt::paintTextField):
+        (WebCore::RenderThemeQt::paintMenuList):
+        (WebCore::RenderThemeQt::getStylePainterAndWidgetFromPaintInfo):
+
 2007-12-02  Holger Hans Peter Freyther  <holger.freyther@trolltech.com>
 
         Reviewed by Sam Weinig.
