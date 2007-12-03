@@ -4613,7 +4613,7 @@ void FrameLoader::registerURLSchemeAsLocal(const String& scheme)
 
 bool FrameLoader::shouldTreatURLAsLocal(const String& url)
 {
-    // This avoids an allocation of another String and the HashSet containts()
+    // This avoids an allocation of another String and the HashSet contains()
     // call for the file: and http: schemes.
     if (url.length() >= 5) {
         const UChar* s = url.characters();

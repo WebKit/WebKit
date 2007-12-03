@@ -1,3 +1,11 @@
+2007-12-02  Holger Hans Peter Freyther  <holger.freyther@trolltech.com>
+
+        Rubber stamped by Sam Weinig.
+
+        Fix a typo. It is contains and not containts
+
+        * loader/FrameLoader.cpp:
+
 2007-12-03  Alp Toker  <alp@atoker.com>
 
         Add another missing DEPENDPATH.
