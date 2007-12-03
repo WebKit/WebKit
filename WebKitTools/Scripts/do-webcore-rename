@@ -71,6 +71,8 @@ my %renames = (
     "KURLMac" => "URLMac",
     "KURLCFNet" => "KURLCF",
     "KURL_H_" => "URL_h",
+    "HTMLGenericFormElement" => "HTMLFormControlElement",
+    "HTMLGenericFormElement_h" => "HTMLFormControlElement_h",
 );
 
 # rename files
