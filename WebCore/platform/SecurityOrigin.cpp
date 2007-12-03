@@ -110,7 +110,7 @@ void SecurityOrigin::setDomainFromDOM(const String& newDomain)
 
 bool SecurityOrigin::canAccess(const SecurityOrigin& other) const
 {
-    if (m_protocol == "file")
+    if (FrameLoader::shouldTreatSchemeAsLocal(m_protocol))
         return true;
 
     if (m_noAccess || other.m_noAccess)
@@ -128,7 +128,7 @@ bool SecurityOrigin::isSecureTransitionTo(const KURL& url) const
     if (isEmpty())
         return true;
 
-    if (m_protocol == "file")
+    if (FrameLoader::shouldTreatSchemeAsLocal(m_protocol))
         return true;
 
     return equalIgnoringCase(m_host, String(url.host())) && equalIgnoringCase(m_protocol, String(url.protocol())) && m_port == url.port();

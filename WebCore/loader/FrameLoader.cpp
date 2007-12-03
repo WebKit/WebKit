@@ -4633,6 +4633,24 @@ bool FrameLoader::shouldTreatURLAsLocal(const String& url)
     return localSchemes().contains(scheme);
 }
 
+bool FrameLoader::shouldTreatSchemeAsLocal(const String& scheme)
+{
+    // This avoids an allocation of another String and the HashSet contains()
+    // call for the file: and http: schemes.
+    if (scheme.length() == 4) {
+        const UChar* s = scheme.characters();
+        if (s[0] == 'h' && s[1] == 't' && s[2] == 't' && s[3] == 'p')
+            return false;
+        if (s[0] == 'f' && s[1] == 'i' && s[2] == 'l' && s[3] == 'e')
+            return true;
+    }
+
+    if (scheme.isEmpty())
+        return false;
+
+    return localSchemes().contains(scheme);
+}
+
 void FrameLoader::dispatchDidCommitLoad()
 {
     m_client->dispatchDidCommitLoad();

@@ -1,5 +1,22 @@
 2007-12-02  Holger Hans Peter Freyther  <holger.freyther@trolltech.com>
 
+        Reviewed by Sam Weinig.
+
+        * Add FrameLoader::shouldTreatSchemeAsLocal which is similar to
+        shouldTreatURLAsLocal.
+        * Make use of FrameLoader::shouldTreatSchemeAsLocal in SecurityOrigin
+        and do not hardcode "file". This is needed for the WebKit/qt port to make
+        the Web Inspector work as it using the qrc protocol instead of file.
+
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::shouldTreatSchemeAsLocal):
+        * loader/FrameLoader.h:
+        * platform/SecurityOrigin.cpp:
+        (WebCore::SecurityOrigin::isSecureTransitionTo):
+
+2007-12-02  Holger Hans Peter Freyther  <holger.freyther@trolltech.com>
+
         Rubber stamped by Sam Weinig.
 
         Only add applewebdata to the localSchemes when building for the

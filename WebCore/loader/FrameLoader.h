@@ -421,7 +421,8 @@ namespace WebCore {
         static void registerURLSchemeAsLocal(const String& scheme);
         static bool restrictAccessToLocal();
         static void setRestrictAccessToLocal(bool);
-        static bool shouldTreatURLAsLocal(const String& url);
+        static bool shouldTreatURLAsLocal(const String&);
+        static bool shouldTreatSchemeAsLocal(const String&);
 
 #if USE(LOW_BANDWIDTH_DISPLAY)    
         bool addLowBandwidthDisplayRequest(CachedResource*);
