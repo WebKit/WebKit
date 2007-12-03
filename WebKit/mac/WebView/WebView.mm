@@ -960,6 +960,11 @@ static inline IMP getMethod(id o, SEL s)
     WebResourceDelegateImplementationCache *cache = &_private->resourceLoadDelegateImplementations;
     id delegate = _private->resourceProgressDelegate;
 
+    if (!delegate) {
+        bzero(cache, sizeof(WebResourceDelegateImplementationCache));
+        return;
+    }
+
     cache->didCancelAuthenticationChallengeFunc = getMethod(delegate, @selector(webView:resource:didReceiveAuthenticationChallenge:fromDataSource:));
     cache->didFailLoadingWithErrorFromDataSourceFunc = getMethod(delegate, @selector(webView:resource:didFailLoadingWithError:fromDataSource:));
     cache->didFinishLoadingFromDataSourceFunc = getMethod(delegate, @selector(webView:resource:didFinishLoadingFromDataSource:));
@@ -975,6 +980,9 @@ static inline IMP getMethod(id o, SEL s)
 
 WebResourceDelegateImplementationCache WebViewGetResourceLoadDelegateImplementations(WebView *webView)
 {
+    static WebResourceDelegateImplementationCache empty = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+    if (!webView)
+        return empty;
     return webView->_private->resourceLoadDelegateImplementations;
 }
 
@@ -982,6 +990,11 @@ WebResourceDelegateImplementationCache WebViewGetResourceLoadDelegateImplementat
 {
     WebFrameLoadDelegateImplementationCache *cache = &_private->frameLoadDelegateImplementations;
     id delegate = _private->frameLoadDelegate;
+
+    if (!delegate) {
+        bzero(cache, sizeof(WebFrameLoadDelegateImplementationCache));
+        return;
+    }
 
     cache->didCancelClientRedirectForFrameFunc = getMethod(delegate, @selector(webView:didCancelClientRedirectForFrame:));
     cache->didChangeLocationWithinPageForFrameFunc = getMethod(delegate, @selector(webView:didChangeLocationWithinPageForFrame:));
@@ -1004,6 +1017,9 @@ WebResourceDelegateImplementationCache WebViewGetResourceLoadDelegateImplementat
 
 WebFrameLoadDelegateImplementationCache WebViewGetFrameLoadDelegateImplementations(WebView *webView)
 {
+    static WebFrameLoadDelegateImplementationCache empty = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+    if (!webView)
+        return empty;
     return webView->_private->frameLoadDelegateImplementations;
 }
 

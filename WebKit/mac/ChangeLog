@@ -1,3 +1,20 @@
+2007-12-03  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Brady Eidson.
+
+        <rdar://problem/5539913> 188 crashes in WebViewGetFrameLoadDelegateImplementations
+        <rdar://problem/5586095> CrashTracer: [USER] 5000+ crashes in Safari and Dashboard in dispatchDidFailLoading
+        <rdar://problem/5607081> CrashTracer: [USER] 2150 crashes in Safari at com.apple.WebKit:
+        WebViewGetResourceLoadDelegateImplementations + 28
+
+        * WebView/WebView.mm:
+        (-[WebView _cacheResourceLoadDelegateImplementations]): If the delegate is nil, bzero the
+        implementation cache. This just prevents us from calling getMethod() multiple times just to zero.
+        (-[WebView _cacheFrameLoadDelegateImplementations]): Ditto.
+        (WebViewGetResourceLoadDelegateImplementations): Return a zeroed implementations struct
+        if the WebView is nil. This fixes the crashes.
+        (WebViewGetFrameLoadDelegateImplementations): Ditto.
+
 2007-12-03  Kevin Decker  <kdecker@apple.com>
 
         Reviewed by Darin.
