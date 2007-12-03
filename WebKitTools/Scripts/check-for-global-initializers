@@ -39,6 +39,7 @@ my $configuration = $ENV{'CONFIGURATION'};
 my $target = $ENV{'TARGET_NAME'};
 my $variant = $ENV{'CURRENT_VARIANT'};
 my $coverageBuild = $ENV{'WEBKIT_COVERAGE_BUILD'};
+my $debugRoot = $ENV{'WEBKIT_DEBUG_ROOT'};
 
 $arch = $ENV{'NATIVE_ARCH'} if !$arch; # for Xcode 2.1, which does not have CURRENT_ARCH
 $variant = "normal" if !$variant; # for Xcode 2.1, which does not have CURRENT_VARIANT
@@ -83,7 +84,7 @@ for my $file (sort @files) {
         $shortName =~ s/.*\///;
 
         # Special cases for files that have initializers in debug builds.
-        if ($configuration eq "Debug") {
+        if ($configuration eq "Debug" or $debugRoot ) {
             if ($target eq "JavaScriptCore") {
                 next if $shortName eq "nodes.o";
                 next if $shortName eq "AllInOneFile.o";

@@ -1,3 +1,11 @@
+2007-12-03  Stephanie  <slewis@apple.com>
+
+        Reviewed by Darin.
+
+        Check to see if we are building a debug root
+
+        * Scripts/check-for-global-initializers: 
+
 2007-12-03  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.
