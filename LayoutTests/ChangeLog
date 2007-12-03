@@ -1,3 +1,21 @@
+2007-12-03  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Rubber stamped by Mark.
+
+        Commit missing layout test results from my last commit (fix for bug 15403)
+
+        * platform/mac/svg/custom/deep-dynamic-updates-expected.checksum:
+        * platform/mac/svg/custom/deep-dynamic-updates-expected.png:
+        * platform/mac/svg/custom/deep-dynamic-updates-expected.txt:
+        * platform/mac/svg/custom/image-clipped-hit-expected.checksum:
+        * platform/mac/svg/custom/image-clipped-hit-expected.png:
+        * platform/mac/svg/custom/image-clipped-hit-expected.txt:
+        * platform/mac/svg/custom/use-clipped-hit-expected.checksum:
+        * platform/mac/svg/custom/use-clipped-hit-expected.png:
+        * platform/mac/svg/custom/use-clipped-hit-expected.txt:
+        * platform/mac/svg/custom/use-css-events-expected.checksum:
+        * platform/mac/svg/custom/use-css-events-expected.png:
+
 2007-12-03  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Adam Roben.
