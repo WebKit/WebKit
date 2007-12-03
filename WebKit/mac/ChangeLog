@@ -1,5 +1,47 @@
 2007-12-03  Timothy Hatcher  <timothy@apple.com>
 
+        Reviewed by Darin.
+
+        Change WebViewGetResourceLoadDelegateImplementations and WebViewGetFrameLoadDelegateImplementations
+        to return a pointer to the implementation struct instead of a copy of the struct. This changes
+        all of the callers to dereference the pointer to access the struct fields.
+
+        * Plugins/WebNullPluginView.mm:
+        (-[WebNullPluginView reportFailure]):
+        * WebCoreSupport/WebFrameBridge.mm:
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::dispatchDidLoadResourceFromMemoryCache):
+        (WebFrameLoaderClient::assignIdentifierToInitialRequest):
+        (WebFrameLoaderClient::dispatchWillSendRequest):
+        (WebFrameLoaderClient::dispatchDidReceiveAuthenticationChallenge):
+        (WebFrameLoaderClient::dispatchDidCancelAuthenticationChallenge):
+        (WebFrameLoaderClient::dispatchDidReceiveResponse):
+        (WebFrameLoaderClient::willCacheResponse):
+        (WebFrameLoaderClient::dispatchDidReceiveContentLength):
+        (WebFrameLoaderClient::dispatchDidFinishLoading):
+        (WebFrameLoaderClient::dispatchDidFailLoading):
+        (WebFrameLoaderClient::dispatchDidHandleOnloadEvents):
+        (WebFrameLoaderClient::dispatchDidReceiveServerRedirectForProvisionalLoad):
+        (WebFrameLoaderClient::dispatchDidCancelClientRedirect):
+        (WebFrameLoaderClient::dispatchWillPerformClientRedirect):
+        (WebFrameLoaderClient::dispatchDidChangeLocationWithinPage):
+        (WebFrameLoaderClient::dispatchWillClose):
+        (WebFrameLoaderClient::dispatchDidStartProvisionalLoad):
+        (WebFrameLoaderClient::dispatchDidReceiveTitle):
+        (WebFrameLoaderClient::dispatchDidCommitLoad):
+        (WebFrameLoaderClient::dispatchDidFailProvisionalLoad):
+        (WebFrameLoaderClient::dispatchDidFailLoad):
+        (WebFrameLoaderClient::dispatchDidFinishDocumentLoad):
+        (WebFrameLoaderClient::dispatchDidFinishLoad):
+        (WebFrameLoaderClient::dispatchDidFirstLayout):
+        * WebView/WebView.mm:
+        (WebViewGetResourceLoadDelegateImplementations):
+        (WebViewGetFrameLoadDelegateImplementations):
+        (-[WebView _dispatchDidReceiveIconFromWebFrame:]):
+        * WebView/WebViewInternal.h:
+
+2007-12-03  Timothy Hatcher  <timothy@apple.com>
+
         Reviewed by Brady Eidson.
 
         <rdar://problem/5539913> 188 crashes in WebViewGetFrameLoadDelegateImplementations

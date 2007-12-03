@@ -75,9 +75,9 @@
     WebFrame *webFrame = kit(core(localElement)->document()->frame());
     if (webFrame) {
         WebView *webView = [webFrame webView];
-        WebResourceDelegateImplementationCache implementations = WebViewGetResourceLoadDelegateImplementations(webView);
-        if (implementations.plugInFailedWithErrorFunc)
-            CallResourceLoadDelegate(implementations.plugInFailedWithErrorFunc, webView,
+        WebResourceDelegateImplementationCache* implementations = WebViewGetResourceLoadDelegateImplementations(webView);
+        if (implementations->plugInFailedWithErrorFunc)
+            CallResourceLoadDelegate(implementations->plugInFailedWithErrorFunc, webView,
                 @selector(webView:plugInFailedWithError:dataSource:), localError, [webFrame _dataSource]);
     }
 

@@ -706,11 +706,11 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
 - (void)windowObjectCleared
 {
     WebView *webView = getWebView(_frame);
-    WebFrameLoadDelegateImplementationCache implementations = WebViewGetFrameLoadDelegateImplementations(webView);
-    if (implementations.didClearWindowObjectForFrameFunc)
-        CallFrameLoadDelegate(implementations.didClearWindowObjectForFrameFunc, webView, @selector(webView:didClearWindowObject:forFrame:), m_frame->windowScriptObject(), _frame);
-    else if (implementations.windowScriptObjectAvailableFunc)
-        CallFrameLoadDelegate(implementations.windowScriptObjectAvailableFunc, webView, @selector(webView:windowScriptObjectAvailable:), m_frame->windowScriptObject());
+    WebFrameLoadDelegateImplementationCache* implementations = WebViewGetFrameLoadDelegateImplementations(webView);
+    if (implementations->didClearWindowObjectForFrameFunc)
+        CallFrameLoadDelegate(implementations->didClearWindowObjectForFrameFunc, webView, @selector(webView:didClearWindowObject:forFrame:), m_frame->windowScriptObject(), _frame);
+    else if (implementations->windowScriptObjectAvailableFunc)
+        CallFrameLoadDelegate(implementations->windowScriptObjectAvailableFunc, webView, @selector(webView:windowScriptObjectAvailable:), m_frame->windowScriptObject());
 
     if ([webView scriptDebugDelegate] || [WebScriptDebugServer listenerCount]) {
         [_frame _detachScriptDebugger];

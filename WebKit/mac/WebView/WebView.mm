@@ -978,12 +978,12 @@ static inline IMP getMethod(id o, SEL s)
     cache->willSendRequestFunc = getMethod(delegate, @selector(webView:resource:willSendRequest:redirectResponse:fromDataSource:));
 }
 
-WebResourceDelegateImplementationCache WebViewGetResourceLoadDelegateImplementations(WebView *webView)
+WebResourceDelegateImplementationCache* WebViewGetResourceLoadDelegateImplementations(WebView *webView)
 {
-    static WebResourceDelegateImplementationCache empty = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+    static WebResourceDelegateImplementationCache empty;
     if (!webView)
-        return empty;
-    return webView->_private->resourceLoadDelegateImplementations;
+        return &empty;
+    return &webView->_private->resourceLoadDelegateImplementations;
 }
 
 - (void)_cacheFrameLoadDelegateImplementations
@@ -1015,12 +1015,12 @@ WebResourceDelegateImplementationCache WebViewGetResourceLoadDelegateImplementat
     cache->windowScriptObjectAvailableFunc = getMethod(delegate, @selector(webView:windowScriptObjectAvailable:));
 }
 
-WebFrameLoadDelegateImplementationCache WebViewGetFrameLoadDelegateImplementations(WebView *webView)
+WebFrameLoadDelegateImplementationCache* WebViewGetFrameLoadDelegateImplementations(WebView *webView)
 {
-    static WebFrameLoadDelegateImplementationCache empty = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+    static WebFrameLoadDelegateImplementationCache empty;
     if (!webView)
-        return empty;
-    return webView->_private->frameLoadDelegateImplementations;
+        return &empty;
+    return &webView->_private->frameLoadDelegateImplementations;
 }
 
 - (id)_policyDelegateForwarder
@@ -4042,11 +4042,11 @@ static WebFrameView *containingFrameView(NSView *view)
     // notification any longer
     [self _registerForIconNotification:NO];
 
-    WebFrameLoadDelegateImplementationCache implementations = WebViewGetFrameLoadDelegateImplementations(self);
-    if (implementations.didReceiveIconForFrameFunc) {
+    WebFrameLoadDelegateImplementationCache* implementations = WebViewGetFrameLoadDelegateImplementations(self);
+    if (implementations->didReceiveIconForFrameFunc) {
         Image* image = iconDatabase()->iconForPageURL(core(webFrame)->loader()->url().url(), IntSize(16, 16));
         if (NSImage *icon = webGetNSImage(image, NSMakeSize(16, 16)))
-            CallFrameLoadDelegate(implementations.didReceiveIconForFrameFunc, self, @selector(webView:didReceiveIcon:forFrame:), icon, webFrame);
+            CallFrameLoadDelegate(implementations->didReceiveIconForFrameFunc, self, @selector(webView:didReceiveIcon:forFrame:), icon, webFrame);
     }
 
     [self _didChangeValueForKey:_WebMainFrameIconKey];
