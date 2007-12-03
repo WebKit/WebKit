@@ -402,15 +402,6 @@ editing/selection/5195166-2.html
 editing/selection/select-line.html
 editing/selection/selection-actions.html
 
-# <rdar://5507233> Cookie isn't getting set
-fast/cookies/local-file-can-set-cookies.html
-
-# <rdar://5507244>
-fast/dom/object-embed-plugin-scripting.html
-
-# <rdar://5507262> statusText is empty
-fast/loader/xmlhttprequest-missing-file-exception.html
-
 # <rdar://5507278> Crash
 http/tests/incremental/frame-focus-before-load.html
 

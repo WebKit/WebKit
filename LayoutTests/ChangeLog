@@ -1,3 +1,9 @@
+2007-12-03  Alice Liu  <alice.liu@apple.com>
+
+        Removing passing tests
+
+        * platform/win/Skipped:
+
 2007-12-03  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by David.
