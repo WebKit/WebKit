@@ -183,7 +183,7 @@ JSValue* WebScriptCallFrame::valueByEvaluatingJavaScriptFromString(BSTR script)
             eval = static_cast<JSObject*>(v);
         else
             // no "eval" - fallback operates on global exec state
-            state = interp->globalExec();
+            state = globObj->globalExec();
     }
 
     JSValue* savedException = state->exception();

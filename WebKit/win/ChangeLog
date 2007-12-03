@@ -1,5 +1,12 @@
 2007-12-03  Adam Roben  <aroben@apple.com>
 
+        Another speculative Windows build fix
+
+        * WebScriptCallFrame.cpp:
+        (WebScriptCallFrame::valueByEvaluatingJavaScriptFromString):
+
+2007-12-03  Adam Roben  <aroben@apple.com>
+
         Speculative Windows build fix
 
         * WebFrame.cpp:
