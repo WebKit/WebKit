@@ -46,7 +46,7 @@
 		1403B99709EB13AF00797C7F /* DOMWindow.h in Headers */ = {isa = PBXBuildFile; fileRef = 1403B99509EB13AF00797C7F /* DOMWindow.h */; };
 		1403B99809EB13AF00797C7F /* DOMWindow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1403B99609EB13AF00797C7F /* DOMWindow.cpp */; };
 		1403BA0C09EB18C700797C7F /* JSDOMWindow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1403BA0B09EB18C700797C7F /* JSDOMWindow.cpp */; };
-		1403BA0F09EB18F900797C7F /* JSDOMWindow.h in Headers */ = {isa = PBXBuildFile; fileRef = 1403BA0E09EB18F800797C7F /* JSDOMWindow.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		1403BA0F09EB18F900797C7F /* JSDOMWindow.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 1403BA0E09EB18F800797C7F /* JSDOMWindow.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		14115B5209F84B7100CA4FC1 /* Node.h in Headers */ = {isa = PBXBuildFile; fileRef = 14115B5109F84B7100CA4FC1 /* Node.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		14115B7209F84CD600CA4FC1 /* JSNodeFilter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14115B7009F84CD600CA4FC1 /* JSNodeFilter.cpp */; };
 		14115B7309F84CD600CA4FC1 /* JSNodeFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = 14115B7109F84CD600CA4FC1 /* JSNodeFilter.h */; };
@@ -4288,6 +4288,7 @@
 				85E9E0AA0AB3A11900069CD0 /* DOMXPathNSResolver.h in Copy Generated Headers */,
 				85E9E0AB0AB3A11900069CD0 /* DOMXPathResult.h in Copy Generated Headers */,
 				A8D06B390A265DCD005E7203 /* HTMLNames.h in Copy Generated Headers */,
+				1403BA0F09EB18F900797C7F /* JSDOMWindow.h in Copy Generated Headers */,
 				14DC0D3809FED073007B0235 /* JSNode.h in Copy Generated Headers */,
 			);
 			name = "Copy Generated Headers";
@@ -13283,7 +13284,6 @@
 				65DF31F809D1CC60000BE325 /* JSDOMImplementation.h in Headers */,
 				1ACE53E00A8D18810022947D /* JSDOMParser.h in Headers */,
 				BC5A86B60C3367E800EEA649 /* JSDOMSelection.h in Headers */,
-				1403BA0F09EB18F900797C7F /* JSDOMWindow.h in Headers */,
 				1AE82F900CAAFA9D002237AE /* JSDatabase.h in Headers */,
 				659DDC8309E198BA001BF3C6 /* JSDocument.h in Headers */,
 				1A494EDF0A123F4C00FDAFC1 /* JSDocumentFragment.h in Headers */,
