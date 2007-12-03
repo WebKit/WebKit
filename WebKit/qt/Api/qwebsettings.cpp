@@ -20,6 +20,7 @@
     pages from the web. It has a memory cache for these objects.
 */
 
+#include "config.h"
 #include "qwebsettings.h"
 
 #include "qwebpage.h"

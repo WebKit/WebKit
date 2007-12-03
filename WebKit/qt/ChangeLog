@@ -1,5 +1,13 @@
 2007-12-03  Holger Hans Peter Freyther  <holger.freyther@trolltech.com>
 
+        Rubber stamped by Mark.
+
+        Always include config.h at the beginning of the file.
+
+        * Api/qwebsettings.cpp:
+
+2007-12-03  Holger Hans Peter Freyther  <holger.freyther@trolltech.com>
+
         Reviewed by Simon.
 
         * Avoid crashes by making sure everything is layouted before
