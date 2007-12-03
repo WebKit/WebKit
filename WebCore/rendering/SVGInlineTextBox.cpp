@@ -483,6 +483,9 @@ static inline Path pathForDecoration(ETextDecoration decoration, RenderObject* o
 
 void SVGInlineTextBox::paintDecoration(ETextDecoration decoration, GraphicsContext* context, int tx, int ty, int width, const SVGChar& svgChar, const SVGTextDecorationInfo& info)
 {
+    if (object()->style()->visibility() != VISIBLE)
+        return;
+
     // This function does NOT accept combinated text decorations. It's meant to be invoked for just one.
     ASSERT(decoration == TDNONE || decoration == UNDERLINE || decoration == OVERLINE || decoration == LINE_THROUGH || decoration == BLINK);
 

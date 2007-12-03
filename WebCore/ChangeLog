@@ -1,3 +1,15 @@
+2007-12-03  Rob Buis  <buis@kde.org>
+
+        Reviewed by Darin.
+
+        http://bugs.webkit.org/show_bug.cgi?id=15767
+        Text decorations do not respect "visibility" property
+
+        Only paint decorations if visibility is "visible".
+
+        * rendering/SVGInlineTextBox.cpp:
+        (WebCore::SVGInlineTextBox::paintDecoration):
+
 2007-12-03  Steve Falkenburg  <sfalken@apple.com>
 
         Fix build.
