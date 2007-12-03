@@ -739,7 +739,7 @@ static bool getString(KJSProxy* proxy, JSValue* result, String& string)
         return false;
     JSLock lock;
 
-    ExecState* exec = proxy->interpreter()->globalExec();
+    ExecState* exec = proxy->globalObject()->globalExec();
     UString ustring = result->toString(exec);
     exec->clearException();
 
