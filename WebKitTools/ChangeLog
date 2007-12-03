@@ -1,3 +1,14 @@
+2007-12-03  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Oliver.
+
+        Added eventSender.dispatchMessage() - will be used to test Windows keyboard input
+        in a more fine-grained manner than eventSender.keyDown().
+
+        * DumpRenderTree/win/EventSender.cpp:
+        (getConstantCallback):
+        (dispatchMessageCallback):
+
 2007-12-02  Darin Adler  <darin@apple.com>
 
         * Scripts/do-webcore-rename: More planned renaming.

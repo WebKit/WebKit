@@ -63,6 +63,28 @@ static bool setDragModeCallback(JSContextRef context, JSObjectRef object, JSStri
     return true;
 }
 
+static JSValueRef getConstantCallback(JSContextRef context, JSObjectRef object, JSStringRef propertyName, JSValueRef* exception)
+{
+    if (JSStringIsEqualToUTF8CString(propertyName, "WM_KEYDOWN"))
+        return JSValueMakeNumber(context, WM_KEYDOWN);
+    if (JSStringIsEqualToUTF8CString(propertyName, "WM_KEYUP"))
+        return JSValueMakeNumber(context, WM_KEYUP);
+    if (JSStringIsEqualToUTF8CString(propertyName, "WM_CHAR"))
+        return JSValueMakeNumber(context, WM_KEYDOWN);
+    if (JSStringIsEqualToUTF8CString(propertyName, "WM_DEADCHAR"))
+        return JSValueMakeNumber(context, WM_CHAR);
+    if (JSStringIsEqualToUTF8CString(propertyName, "WM_SYSKEYDOWN"))
+        return JSValueMakeNumber(context, WM_SYSKEYDOWN);
+    if (JSStringIsEqualToUTF8CString(propertyName, "WM_SYSKEYUP"))
+        return JSValueMakeNumber(context, WM_SYSKEYUP);
+    if (JSStringIsEqualToUTF8CString(propertyName, "WM_SYSCHAR"))
+        return JSValueMakeNumber(context, WM_SYSCHAR);
+    if (JSStringIsEqualToUTF8CString(propertyName, "WM_SYSDEADCHAR"))
+        return JSValueMakeNumber(context, WM_SYSDEADCHAR);
+    ASSERT_NOT_REACHED();
+    return JSValueMakeUndefined(context);
+}
+
 static JSValueRef leapForwardCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
     if (argumentCount > 0) {
@@ -330,6 +352,43 @@ static JSValueRef keyDownCallback(JSContextRef context, JSObjectRef function, JS
     return JSValueMakeUndefined(context);
 }
 
+// eventSender.dispatchMessage(message, wParam, lParam, time = currentEventTime(), x = lastMousePosition.x, y = lastMousePosition.y)
+static JSValueRef dispatchMessageCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+    if (argumentCount < 3)
+        return JSValueMakeUndefined(context);
+
+    COMPtr<IWebFramePrivate> framePrivate;
+    if (SUCCEEDED(frame->QueryInterface(&framePrivate)))
+        framePrivate->layout();
+    
+    MSG msg = {};
+    msg.hwnd = webViewWindow;
+    msg.message = JSValueToNumber(context, arguments[0], exception);
+    ASSERT(!*exception);
+    msg.wParam = JSValueToNumber(context, arguments[1], exception);
+    ASSERT(!*exception);
+    msg.lParam = JSValueToNumber(context, arguments[2], exception);
+    ASSERT(!*exception);
+    if (argumentCount >= 4) {
+        msg.time = JSValueToNumber(context, arguments[3], exception);
+        ASSERT(!*exception);
+    }
+    if (!msg.time)
+        msg.time = currentEventTime();
+    if (argumentCount >= 6) {
+        msg.pt.x = JSValueToNumber(context, arguments[4], exception);
+        ASSERT(!*exception);
+        msg.pt.y = JSValueToNumber(context, arguments[5], exception);
+        ASSERT(!*exception);
+    } else
+        msg.pt = lastMousePosition;
+
+    dispatchMessage(&msg);
+
+    return JSValueMakeUndefined(context);
+}
+
 static JSValueRef textZoomInCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
     COMPtr<IWebView> webView;
@@ -365,6 +424,7 @@ static JSStaticFunction staticFunctions[] = {
     { "mouseMoveTo", mouseMoveToCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
     { "leapForward", leapForwardCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
     { "keyDown", keyDownCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+    { "dispatchMessage", dispatchMessageCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
     { "textZoomIn", textZoomInCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
     { "textZoomOut", textZoomOutCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
     { 0, 0, 0 }
@@ -372,6 +432,14 @@ static JSStaticFunction staticFunctions[] = {
 
 static JSStaticValue staticValues[] = {
     { "dragMode", getDragModeCallback, setDragModeCallback, kJSPropertyAttributeNone },
+    { "WM_KEYDOWN", getConstantCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeNone },
+    { "WM_KEYUP", getConstantCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeNone },
+    { "WM_CHAR", getConstantCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeNone },
+    { "WM_DEADCHAR", getConstantCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeNone },
+    { "WM_SYSKEYDOWN", getConstantCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeNone },
+    { "WM_SYSKEYUP", getConstantCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeNone },
+    { "WM_SYSCHAR", getConstantCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeNone },
+    { "WM_SYSDEADCHAR", getConstantCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeNone },
     { 0, 0, 0, 0 }
 };
 
