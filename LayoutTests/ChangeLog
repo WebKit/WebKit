@@ -1,3 +1,13 @@
+2007-12-03  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Adam Roben.
+
+        - test for <rdar://problem/5538651> REGRESSSION: domfuzz: null deref in WebCore::Document::canReplaceChild
+
+        * fast/dom/Document/replaceChild-null-oldChild-expected.txt: Added.
+        * fast/dom/Document/replaceChild-null-oldChild.html: Added.
+        * fast/dom/Document/resources/replaceChild-null-oldChild.js: Added.
+
 2007-12-02  Darin Adler  <darin@apple.com>
 
         Reviewed by Mitz.
