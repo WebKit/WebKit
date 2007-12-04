@@ -23,6 +23,9 @@
 
         Reviewed by Darin Adler.
 
+        - fix http://bugs.webkit.org/show_bug.cgi?id=16267
+        Symbol lookup menu broken in debugger view
+
         * Drosera/debugger.js: Fixed javascript error where document property
         should have been used instead of contentDocument in switchFunction that
         was breaking the select symbol dropdown menu.  This is because
