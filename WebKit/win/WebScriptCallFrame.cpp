@@ -31,7 +31,6 @@
 #include "WebScriptCallFrame.h"
 
 #include "COMEnumVariant.h"
-#include "IWebScriptScope.h"
 #include "Function.h"
 
 #include <JavaScriptCore/JSGlobalObject.h>

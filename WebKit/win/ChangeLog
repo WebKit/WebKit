@@ -1,3 +1,9 @@
+2007-12-04  Adam Roben  <aroben@apple.com>
+
+        Windows build fix
+
+        * WebScriptCallFrame.cpp:
+
 2007-12-03  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Dave Hyatt.
