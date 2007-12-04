@@ -8,7 +8,7 @@ install:
 	set WebKitLibrariesDir="$(SRCROOT)\AppleInternal"
 	set WebKitOutputDir=$(OBJROOT)
 	set BuildBot=1
-	xcopy "$(SRCROOT)\obj\WebKit\DOMInterfaces\*" "$(OBJROOT)\obj\WebKit\DOMInterfaces" /e/v/i/h/y
+	xcopy "$(SRCROOT)\AppleInternal\obj\WebKit\DOMInterfaces\*" "$(OBJROOT)\obj\WebKit\DOMInterfaces" /e/v/i/h/y
 	devenv "WebKit.submit.sln" /rebuild $(BUILDSTYLE)
 	xcopy "$(OBJROOT)\bin\*" "$(DSTROOT)\AppleInternal\bin\" /e/v/i/h/y
 	xcopy "$(OBJROOT)\include\*" "$(DSTROOT)\AppleInternal\include\" /e/v/i/h/y	
