@@ -58,6 +58,7 @@ extern NSString *WebDatabaseIdentifierKey;
 - (NSDictionary *)detailsForDatabase:(NSString *)databaseIdentifier withOrigin:(WebSecurityOrigin *)origin;
 
 - (void)deleteAllDatabases;
+- (void)deleteOrigin:(WebSecurityOrigin *)origin;
 - (void)deleteDatabasesWithOrigin:(WebSecurityOrigin *)origin;
 - (void)deleteDatabase:(NSString *)databaseIdentifier withOrigin:(WebSecurityOrigin *)origin;
 

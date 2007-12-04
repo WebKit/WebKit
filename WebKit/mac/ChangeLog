@@ -1,3 +1,14 @@
+2007-12-04  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Darin
+        
+        Added deleteOrigin: SPI, which isn't fully implemented
+
+        * Storage/WebDatabaseManagerPrivate.h:
+        * Storage/WebDatabaseManager.mm:
+        (-[WebDatabaseManager deleteOrigin:]):
+        just calls deleteDatabasesWithOrigin: for now, but needs to delete origin itself too
+
 2007-12-04  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Mark Rowe.

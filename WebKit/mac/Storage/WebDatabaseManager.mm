@@ -105,6 +105,12 @@ NSString *WebDatabaseIdentifierKey = @"WebDatabaseIdentifierKey";
     DatabaseTracker::tracker().deleteAllDatabases();
 }
 
+- (void)deleteOrigin:(WebSecurityOrigin *)origin
+{
+    // FIXME: this needs to delete the origin as well as the databases therein
+    [self deleteDatabasesWithOrigin:origin];
+}
+
 - (void)deleteDatabasesWithOrigin:(WebSecurityOrigin *)origin
 {
     DatabaseTracker::tracker().deleteDatabasesWithOrigin(*[origin _core]);
