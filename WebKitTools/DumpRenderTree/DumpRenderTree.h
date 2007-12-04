@@ -39,7 +39,7 @@
 #include "DumpRenderTreeGtk.h"
 #endif
 
-#if PLATFORM(CF)
+#if PLATFORM(CF) || PLATFORM(MAC) || PLATFORM(WIN)
 #include <CoreFoundation/CoreFoundation.h>
 extern CFRunLoopTimerRef waitToDumpWatchdog;
 #endif
