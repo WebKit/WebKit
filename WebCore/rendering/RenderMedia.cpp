@@ -191,7 +191,7 @@ void MediaControlTimelineElement::update(bool updateDuration)
 // ----------------------------
 
 RenderMedia::RenderMedia(HTMLMediaElement* video, const IntSize& intrinsicSize)
-    : RenderReplaced(video)
+    : RenderReplaced(video, intrinsicSize)
     , m_controlsShadowRoot(0)
     , m_panel(0)
     , m_playButton(0)
