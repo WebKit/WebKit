@@ -237,12 +237,12 @@ void ScrollView::update()
 
 int ScrollView::visibleWidth() const
 {
-    return width() - (m_data->m_vBar ? m_data->m_vBar->width() : 0);
+    return max(0, width() - (m_data->m_vBar ? m_data->m_vBar->width() : 0));
 }
 
 int ScrollView::visibleHeight() const
 {
-    return height() - (m_data->m_hBar ? m_data->m_hBar->height() : 0);
+    return max(0, height() - (m_data->m_hBar ? m_data->m_hBar->height() : 0));
 }
 
 FloatRect ScrollView::visibleContentRect() const

@@ -1,5 +1,15 @@
 2007-12-03  Dan Bernstein  <mitz@apple.com>
 
+        Reviewed by Darin Adler.
+
+        - fix <rdar://problem/5134044> fast/frames/frame-src-attribute.html fails on Windows
+
+        * platform/win/ScrollViewWin.cpp:
+        (WebCore::ScrollView::visibleWidth): Do not return negative values.
+        (WebCore::ScrollView::visibleHeight): Ditto.
+
+2007-12-03  Dan Bernstein  <mitz@apple.com>
+
         Reviewed by Dave Hyatt.
 
         - fix <rdar://problem/5346452> Resize event doesn't fire on body element inside a frame

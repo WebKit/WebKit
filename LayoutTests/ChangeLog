@@ -1,5 +1,13 @@
 2007-12-03  Dan Bernstein  <mitz@apple.com>
 
+        Reviewed by Darin Adler.
+
+        - remove passing test
+
+        * platform/win/Skipped:
+
+2007-12-03  Dan Bernstein  <mitz@apple.com>
+
         Reviewed by Dave Hyatt.
 
         - test for <rdar://problem/5346452> Resize event doesn't fire on body element inside a frame
