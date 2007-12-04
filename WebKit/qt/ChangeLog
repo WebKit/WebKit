@@ -1,3 +1,29 @@
+2007-12-04  Holger Hans Peter Freyther <holger.freyther@trolltech.com>
+
+        Reviewed by Simon.
+
+        * Implement the InspectorClient for the Qt port
+        * It does not support highlighting of nodes yet
+        * Use QRC to open the internal page. The important thing is the
+        '/' in the URL to make WebCore::Document::completeURL behave the
+        way we want.
+        * To make the InspectorClient work we will have to mark qrc as secure.
+
+        * Api/qwebpage.cpp:
+        (QWebPagePrivate::QWebPagePrivate):
+        * Api/qwebpage.h:
+        * WebCoreSupport/InspectorClientQt.cpp:
+        (WebCore::InspectorClientWebPage::hideEvent):
+        (WebCore::InspectorClientQt::InspectorClientQt):
+        (WebCore::InspectorClientQt::inspectorDestroyed):
+        (WebCore::InspectorClientQt::createPage):
+        (WebCore::InspectorClientQt::localizedStringsURL):
+        (WebCore::InspectorClientQt::showWindow):
+        (WebCore::InspectorClientQt::closeWindow):
+        (WebCore::InspectorClientQt::attachWindow):
+        (WebCore::InspectorClientQt::detachWindow):
+        * WebCoreSupport/InspectorClientQt.h:
+
 2007-12-03  Holger Hans Peter Freyther  <holger.freyther@trolltech.com>
 
         Rubber stamped by Mark.
