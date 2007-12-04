@@ -1,3 +1,11 @@
+2007-12-04  Alp Toker  <alp@atoker.com>
+
+        Reviewed by Mark Rowe.
+
+        Link to Planet WebKit.
+
+        * nav.inc:
+
 2007-12-02  Adam Roben  <aroben@apple.com>
 
         Add another screenshot
