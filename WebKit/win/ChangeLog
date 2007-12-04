@@ -1,3 +1,12 @@
+2007-12-04  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Reviewed by Ollie.
+
+        Don't crash if our JavaPlugin DLL can't be found 
+
+        * WebFrame.cpp:
+        (WebFrame::createJavaAppletWidget): Added null check
+
 2007-12-04  Darin Adler  <darin@apple.com>
 
         Reviewed by Kevin Decker.

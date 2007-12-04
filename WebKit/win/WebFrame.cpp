@@ -2393,7 +2393,7 @@ Widget* WebFrame::createJavaAppletWidget(const IntSize& pluginSize, Element* ele
         createPluginView(core(this), pluginSize, element, KURL(), paramNames, paramValues, "application/x-java-applet", false);
 
     // Check if the plugin can be loaded successfully
-    if (pluginView->plugin()->load())
+    if (pluginView->plugin() && pluginView->plugin()->load())
         return pluginView;
 
     COMPtr<IWebResourceLoadDelegate> resourceLoadDelegate;
