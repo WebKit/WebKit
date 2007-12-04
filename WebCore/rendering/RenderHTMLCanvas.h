@@ -38,8 +38,7 @@ namespace WebCore {
 
         virtual const char* renderName() const { return "RenderHTMLCanvas"; }
 
-        virtual void paint(PaintInfo&, int tx, int ty);
-        virtual void layout();
+        virtual void paintReplaced(PaintInfo& paintInfo, int tx, int ty);
 
         void canvasSizeChanged();
     };

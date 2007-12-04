@@ -41,58 +41,11 @@ RenderHTMLCanvas::RenderHTMLCanvas(HTMLCanvasElement* element)
 {
 }
 
-void RenderHTMLCanvas::paint(PaintInfo& paintInfo, int tx, int ty)
+void RenderHTMLCanvas::paintReplaced(PaintInfo& paintInfo, int tx, int ty)
 {
-    if (!shouldPaint(paintInfo, tx, ty))
-        return;
-
-    int x = tx + m_x;
-    int y = ty + m_y;
-
-    if (hasBoxDecorations() && (paintInfo.phase == PaintPhaseForeground || paintInfo.phase == PaintPhaseSelection)) 
-        paintBoxDecorations(paintInfo, x, y);
-
-    if ((paintInfo.phase == PaintPhaseOutline || paintInfo.phase == PaintPhaseSelfOutline) && style()->outlineWidth() && style()->visibility() == VISIBLE)
-        paintOutline(paintInfo.context, x, y, width(), height(), style());
-
-    if (paintInfo.phase != PaintPhaseForeground && paintInfo.phase != PaintPhaseSelection)
-        return;
-
-    if (!shouldPaintWithinRoot(paintInfo))
-        return;
-
-    bool drawSelectionTint = selectionState() != SelectionNone && !document()->printing();
-    if (paintInfo.phase == PaintPhaseSelection) {
-        if (selectionState() == SelectionNone)
-            return;
-        drawSelectionTint = false;
-    }
-
-    static_cast<HTMLCanvasElement*>(node())->paint(paintInfo.context,
-        IntRect(x + borderLeft() + paddingLeft(), y + borderTop() + paddingTop(), contentWidth(), contentHeight()));
-
-    if (drawSelectionTint)
-        paintInfo.context->fillRect(selectionRect(), selectionBackgroundColor());
-}
-
-void RenderHTMLCanvas::layout()
-{
-    ASSERT(needsLayout());
-
-    IntRect oldBounds;
-    IntRect oldOutlineBox;
-    bool checkForRepaint = checkForRepaintDuringLayout();
-    if (checkForRepaint) {
-        oldBounds = absoluteClippedOverflowRect();
-        oldOutlineBox = absoluteOutlineBox();
-    }
-    calcWidth();
-    calcHeight();
-    adjustOverflowForBoxShadow();
-    if (checkForRepaint)
-        repaintAfterLayoutIfNeeded(oldBounds, oldOutlineBox);
-
-    setNeedsLayout(false);
+    IntRect rect = contentBox();
+    rect.move(tx, ty);
+    static_cast<HTMLCanvasElement*>(node())->paint(paintInfo.context, rect);
 }
 
 void RenderHTMLCanvas::canvasSizeChanged()

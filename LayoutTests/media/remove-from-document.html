@@ -8,6 +8,7 @@ waitForEvent('load', function () {
     run("document.body.removeChild(video)");
     test("video.networkState == HTMLMediaElement.LOADED");
     test("video.paused");
+    document.body.offsetTop;
     endTest();
 } );
 video.src = "content/test.mp4";

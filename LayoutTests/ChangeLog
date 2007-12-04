@@ -1,3 +1,16 @@
+2007-12-03  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Adele.
+        
+        Test for <rdar://problem/5624802> 
+        Controller displays outside of <video> element when width and height aren't specified 
+
+        * media/remove-from-document.html: Improve coverage by doing relayout before finishing.
+        * media/video-controls-rendering.html: Added.
+        * platform/mac/media/video-controls-rendering-expected.checksum: Added.
+        * platform/mac/media/video-controls-rendering-expected.png: Added.
+        * platform/mac/media/video-controls-rendering-expected.txt: Added.
+
 2007-12-04  Darin Adler  <darin@apple.com>
 
         Reviewed by Geoff.

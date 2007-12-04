@@ -41,7 +41,7 @@ public:
 
     virtual const char* renderName() const { return "RenderVideo"; }
 
-    virtual void paintObject(PaintInfo&, int tx, int ty);
+    virtual void paintReplaced(PaintInfo& paintInfo, int tx, int ty);
 
     virtual void layout();
 

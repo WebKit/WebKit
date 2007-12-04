@@ -1,3 +1,59 @@
+2007-12-03  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Adele.
+        
+        Fix <rdar://problem/5624802> 
+        Controller displays outside of <video> element when width and height aren't specified 
+
+        - Explicitly adjust size of the controls tree root.
+        - Switch RenderMedia base class back to RenderReplaced. It is easier to manage the shadow tree
+          by hand. This also allows better code sharing with other replaced element classes.
+        - Move duplicated layout and painting code from subclasses up to RenderReplaced.
+
+        Test: media/video-controls-rendering.html
+
+        * rendering/RenderHTMLCanvas.cpp:
+        (WebCore::RenderHTMLCanvas::paintReplaced):
+        * rendering/RenderHTMLCanvas.h:
+            Share code.
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::paintReplaced):
+        (WebCore::RenderImage::minimumReplacedHeight):
+        * rendering/RenderImage.h:
+            Share code.
+        * rendering/RenderMedia.cpp:
+        (WebCore::RenderMediaControlShadowRoot::RenderMediaControlShadowRoot):
+        (WebCore::RenderMediaControlShadowRoot::setParent):
+            Add a subclass just to get through encapsulation to use setParent().
+        (WebCore::MediaControlShadowRootElement::MediaControlShadowRootElement):
+            Move initialization to the constructor.
+        (WebCore::RenderMedia::RenderMedia):
+        (WebCore::RenderMedia::~RenderMedia):
+        (WebCore::RenderMedia::layout):
+            Resize and layout the controller root by hand.
+        (WebCore::RenderMedia::firstChild):
+        (WebCore::RenderMedia::lastChild):
+        (WebCore::RenderMedia::removeChild):
+            Support one child renderer for controls.
+        (WebCore::RenderMedia::createControlsShadowRoot):
+        * rendering/RenderMedia.h:
+        (WebCore::RenderMedia::isMedia):
+            Switch base class to RenderReplaced, delete the now unnecessary stuff.
+        * rendering/RenderReplaced.cpp:
+        (WebCore::RenderReplaced::layout):
+        (WebCore::RenderReplaced::paint):
+        * rendering/RenderReplaced.h:
+        (WebCore::RenderReplaced::minimumReplacedHeight):
+        (WebCore::RenderReplaced::paintReplaced):
+            Share code.
+        * rendering/RenderVideo.cpp:
+        (WebCore::RenderVideo::videoSizeChanged):
+            Simplify, just request relayout.
+        (WebCore::RenderVideo::paintReplaced):
+        (WebCore::RenderVideo::layout):
+        * rendering/RenderVideo.h:
+            Share code.
+
 2007-12-04  Michael Natterer  <mitch@imendio.com>
 
         Reviewed by Alp Toker.

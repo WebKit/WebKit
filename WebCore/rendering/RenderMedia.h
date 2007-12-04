@@ -28,7 +28,7 @@
 
 #if ENABLE(VIDEO)
 
-#include "RenderBlock.h"
+#include "RenderReplaced.h"
 #include "Timer.h"
 
 namespace WebCore {
@@ -39,21 +39,19 @@ class MediaControlPlayButtonElement;
 class MediaControlTimelineElement;
 class Movie;
 
-class RenderMedia : public RenderBlock {
+class RenderMedia : public RenderReplaced {
 public:
     RenderMedia(HTMLMediaElement*, const IntSize& intrinsicSize);
     virtual ~RenderMedia();
     
-    virtual void setStyle(RenderStyle* newStyle);
+    virtual RenderObject* firstChild() const;
+    virtual RenderObject* lastChild() const;
+    virtual void removeChild(RenderObject*);
     
-    virtual bool canHaveChildren() const { return false; }
-    
-    virtual bool shouldCalculateSizeAsReplaced() const { return true; }
+    virtual void layout();
 
     virtual const char* renderName() const { return "RenderMedia"; }
     virtual bool isMedia() const { return true; }
-
-    virtual IntSize intrinsicSize() const { return m_intrinsicSize; }
     
     HTMLMediaElement* mediaElement() const;
     Movie* movie() const;
@@ -65,8 +63,6 @@ public:
     void updateControls();
     
     void forwardEvent(Event*);
-    
-    void setIntrinsicSize(IntSize size) { m_intrinsicSize = size; }
     
 private:
     void createControlsShadowRoot();
@@ -94,7 +90,6 @@ private:
     double m_opacityAnimationStartTime;
     float m_opacityAnimationFrom;
     float m_opacityAnimationTo;
-    IntSize m_intrinsicSize;
 };
 
 } // namespace WebCore

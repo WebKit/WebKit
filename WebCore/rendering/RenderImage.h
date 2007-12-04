@@ -41,9 +41,9 @@ public:
 
     virtual bool isImage() const { return true; }
     
-    virtual void paint(PaintInfo&, int tx, int ty);
+    virtual void paintReplaced(PaintInfo& paintInfo, int tx, int ty);
 
-    virtual void layout();
+    virtual int minimumReplacedHeight() const;
 
     virtual void imageChanged(CachedImage*);
     

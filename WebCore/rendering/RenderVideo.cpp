@@ -61,40 +61,24 @@ void RenderVideo::videoSizeChanged()
     IntSize size = movie()->naturalSize();
     if (size != intrinsicSize()) {
         setIntrinsicSize(size);
-        
-        int oldWidth = width();
-        int oldHeight = height();
-        
-        calcWidth();
-        calcHeight();
-        
-        if (oldWidth != m_width || oldHeight != m_height) {
-            setPrefWidthsDirty(true);
-            setNeedsLayout(true);
-        }
+        setPrefWidthsDirty(true);
+        setNeedsLayout(true);
     }
 }
 
-void RenderVideo::paintObject(PaintInfo& paintInfo, int tx, int ty)
+void RenderVideo::paintReplaced(PaintInfo& paintInfo, int tx, int ty)
 {
-    if (style()->visibility() != VISIBLE)
-        return;
-
-    if (paintInfo.phase == PaintPhaseForeground && movie() && !document()->printing()) {
+    if (Movie* video = movie()) {
         updateMovie();
-            
         IntRect rect = contentBox();
         rect.move(tx, ty);
-        movie()->paint(paintInfo.context, rect);
+        video->paint(paintInfo.context, rect);
     }
-    
-    // Paint the children.
-    RenderBlock::paintObject(paintInfo, tx, ty);
 }
 
 void RenderVideo::layout()
 {
-    RenderBlock::layout();
+    RenderMedia::layout();
     updateMovie();
 }
     

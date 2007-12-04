@@ -55,12 +55,16 @@ static const double cTimeUpdateRepeatDelay = 0.2;
 static const double cOpacityAnimationRepeatDelay = 0.05;
 // FIXME get this from style
 static const double cOpacityAnimationDuration = 0.5;
-    
+
+class RenderMediaControlShadowRoot : public RenderBlock {
+public:
+    RenderMediaControlShadowRoot(Element* e) : RenderBlock(e) { }
+    void setParent(RenderObject* p) { RenderObject::setParent(p); }
+};
+
 class MediaControlShadowRootElement : public HTMLDivElement {
 public:
-    MediaControlShadowRootElement(Document* doc, HTMLMediaElement* mediaElement) 
-        : HTMLDivElement(doc)
-        , m_mediaElement(mediaElement) { }
+    MediaControlShadowRootElement(Document* doc, HTMLMediaElement* mediaElement);
     
     virtual bool isShadowNode() const { return true; }
     virtual Node* shadowParentNode() { return m_mediaElement; }
@@ -68,6 +72,21 @@ public:
 private:
     HTMLMediaElement* m_mediaElement;    
 };
+    
+MediaControlShadowRootElement::MediaControlShadowRootElement(Document* doc, HTMLMediaElement* mediaElement) 
+    : HTMLDivElement(doc)
+    , m_mediaElement(mediaElement) 
+{
+    RenderStyle* rootStyle = new (mediaElement->renderer()->renderArena()) RenderStyle();
+    rootStyle->setDisplay(BLOCK);
+    rootStyle->setPosition(AbsolutePosition);
+    RenderMediaControlShadowRoot* renderer = new (mediaElement->renderer()->renderArena()) RenderMediaControlShadowRoot(this);
+    renderer->setParent(mediaElement->renderer());
+    renderer->setStyle(rootStyle);
+    setRenderer(renderer);
+    setAttached();
+    setInDocument(true);
+}
     
 // ----------------------------
 
@@ -172,7 +191,7 @@ void MediaControlTimelineElement::update(bool updateDuration)
 // ----------------------------
 
 RenderMedia::RenderMedia(HTMLMediaElement* video, const IntSize& intrinsicSize)
-    : RenderBlock(video)
+    : RenderReplaced(video)
     , m_controlsShadowRoot(0)
     , m_panel(0)
     , m_playButton(0)
@@ -184,13 +203,15 @@ RenderMedia::RenderMedia(HTMLMediaElement* video, const IntSize& intrinsicSize)
     , m_opacityAnimationStartTime(0)
     , m_opacityAnimationFrom(0)
     , m_opacityAnimationTo(1.0f)
-    , m_intrinsicSize(intrinsicSize)
 {
-    setReplaced();
 }
 
 RenderMedia::~RenderMedia()
 {
+    if (m_controlsShadowRoot && m_controlsShadowRoot->renderer()) {
+        static_cast<RenderMediaControlShadowRoot*>(m_controlsShadowRoot->renderer())->setParent(0);
+        m_controlsShadowRoot->detach();
+    }
 }
  
 HTMLMediaElement* RenderMedia::mediaElement() const
@@ -203,27 +224,46 @@ Movie* RenderMedia::movie() const
     return mediaElement()->movie();
 }
 
-void RenderMedia::setStyle(RenderStyle* newStyle)
+void RenderMedia::layout()
 {
-    RenderBlock::setStyle(newStyle);
-    setReplaced();
+    IntSize oldSize = contentBox().size();
+
+    RenderReplaced::layout();
+
+    RenderObject* controlsRenderer = m_controlsShadowRoot ? m_controlsShadowRoot->renderer() : 0;
+    if (!controlsRenderer)
+        return;
+    IntSize newSize = contentBox().size();
+    if (newSize != oldSize || controlsRenderer->needsLayout()) {
+        controlsRenderer->style()->setHeight(Length(newSize.height(), Fixed));
+        controlsRenderer->style()->setWidth(Length(newSize.width(), Fixed));
+        controlsRenderer->setNeedsLayout(true, false);
+        controlsRenderer->layout();
+        setChildNeedsLayout(false);
+    }
 }
 
+RenderObject* RenderMedia::firstChild() const 
+{ 
+    return m_controlsShadowRoot ? m_controlsShadowRoot->renderer() : 0; 
+}
+
+RenderObject* RenderMedia::lastChild() const 
+{ 
+    return m_controlsShadowRoot ? m_controlsShadowRoot->renderer() : 0;
+}
+    
+void RenderMedia::removeChild(RenderObject* child)
+{
+    ASSERT(m_controlsShadowRoot);
+    ASSERT(child == m_controlsShadowRoot->renderer());
+    child->removeLayers(enclosingLayer());
+}
+    
 void RenderMedia::createControlsShadowRoot()
 {
     ASSERT(!m_controlsShadowRoot);
     m_controlsShadowRoot = new MediaControlShadowRootElement(document(), mediaElement());
-    RenderStyle* rootStyle = new (renderArena()) RenderStyle();
-    rootStyle->setDisplay(BLOCK);
-    rootStyle->setPosition(RelativePosition);
-    rootStyle->setHeight(Length(100.0, Percent));
-    RenderObject* renderer = m_controlsShadowRoot->createRenderer(renderArena(), rootStyle);
-    m_controlsShadowRoot->setRenderer(renderer);
-    renderer->setStyle(rootStyle);
-    renderer->updateFromElement();
-    m_controlsShadowRoot->setAttached();
-    m_controlsShadowRoot->setInDocument(true);
-    addChild(renderer);
 }
 
 void RenderMedia::createPanel()

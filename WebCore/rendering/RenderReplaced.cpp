@@ -23,6 +23,7 @@
 #include "config.h"
 #include "RenderReplaced.h"
 
+#include "GraphicsContext.h"
 #include "RenderBlock.h"
 #include "RenderLayer.h"
 
@@ -55,6 +56,63 @@ RenderReplaced::~RenderReplaced()
 {
     if (m_hasOverflow)
         gOverflowRectMap->remove(this);
+}
+    
+void RenderReplaced::layout()
+{
+    ASSERT(needsLayout());
+    
+    IntRect oldBounds;
+    IntRect oldOutlineBox;
+    bool checkForRepaint = checkForRepaintDuringLayout();
+    if (checkForRepaint) {
+        oldBounds = absoluteClippedOverflowRect();
+        oldOutlineBox = absoluteOutlineBox();
+    }
+    
+    m_height = minimumReplacedHeight();
+    
+    calcWidth();
+    calcHeight();
+    adjustOverflowForBoxShadow();
+    
+    if (checkForRepaint)
+        repaintAfterLayoutIfNeeded(oldBounds, oldOutlineBox);
+    
+    setNeedsLayout(false);
+}
+    
+void RenderReplaced::paint(PaintInfo& paintInfo, int tx, int ty)
+{
+    if (!shouldPaint(paintInfo, tx, ty))
+        return;
+    
+    tx += m_x;
+    ty += m_y;
+    
+    if (hasBoxDecorations() && (paintInfo.phase == PaintPhaseForeground || paintInfo.phase == PaintPhaseSelection)) 
+        paintBoxDecorations(paintInfo, tx, ty);
+    
+    if ((paintInfo.phase == PaintPhaseOutline || paintInfo.phase == PaintPhaseSelfOutline) && style()->outlineWidth() && style()->visibility() == VISIBLE)
+        paintOutline(paintInfo.context, tx, ty, width(), height(), style());
+    
+    if (paintInfo.phase != PaintPhaseForeground && paintInfo.phase != PaintPhaseSelection)
+        return;
+    
+    if (!shouldPaintWithinRoot(paintInfo))
+        return;
+    
+    bool drawSelectionTint = selectionState() != SelectionNone && !document()->printing();
+    if (paintInfo.phase == PaintPhaseSelection) {
+        if (selectionState() == SelectionNone)
+            return;
+        drawSelectionTint = false;
+    }
+
+    paintReplaced(paintInfo, tx, ty);
+    
+    if (drawSelectionTint)
+        paintInfo.context->fillRect(selectionRect(), selectionBackgroundColor());
 }
 
 bool RenderReplaced::shouldPaint(PaintInfo& paintInfo, int& tx, int& ty)
