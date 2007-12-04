@@ -1,3 +1,68 @@
+2007-12-04  Xan Lopez  <xan@gnome.org>
+
+        Reviewed by Alp Toker.
+
+        http://bugs.webkit.org/show_bug.cgi?id=15561
+        GTK port needs DumpRenderTree implementation
+
+        Start work on the GTK+ DRT.
+
+        This does not work yet, and there are a few lingering style issues
+        (nothing major) but this patch has been stuck in the bug tracker for
+        too long already.
+
+        * DumpRenderTree/DumpRenderTree.h:
+        * DumpRenderTree/gtk: Added.
+        * DumpRenderTree/gtk/DumpRenderTree.cpp: Added.
+        (autocorrectURL):
+        (shouldLogFrameLoadDelegates):
+        (dumpFrameScrollPosition):
+        (displayWebView):
+        (appendString):
+        (dumpFramesAsText):
+        (dumpRenderTreeAsText):
+        (dump):
+        (runTest):
+        (main):
+        * DumpRenderTree/gtk/DumpRenderTree.pro: Added.
+        * DumpRenderTree/gtk/DumpRenderTreeGtk.h: Added.
+        * DumpRenderTree/gtk/GCControllerGtk.cpp: Added.
+        (GCController::collect):
+        (GCController::collectOnAlternateThread):
+        (GCController::getJSObjectCount):
+        * DumpRenderTree/gtk/LayoutTestControllerGtk.cpp: Added.
+        (LayoutTestController::~LayoutTestController):
+        (LayoutTestController::addDisallowedURL):
+        (LayoutTestController::clearBackForwardList):
+        (LayoutTestController::copyDecodedHostName):
+        (LayoutTestController::copyEncodedHostName):
+        (LayoutTestController::display):
+        (LayoutTestController::keepWebHistory):
+        (LayoutTestController::notifyDone):
+        (LayoutTestController::queueBackNavigation):
+        (LayoutTestController::queueForwardNavigation):
+        (LayoutTestController::queueLoad):
+        (LayoutTestController::queueReload):
+        (LayoutTestController::queueScript):
+        (LayoutTestController::setAcceptsEditing):
+        (LayoutTestController::setCustomPolicyDelegate):
+        (LayoutTestController::setMainFrameIsFirstResponder):
+        (LayoutTestController::setTabKeyCyclesThroughElements):
+        (LayoutTestController::setUseDashboardCompatibilityMode):
+        (LayoutTestController::setUserStyleSheetEnabled):
+        (LayoutTestController::setUserStyleSheetLocation):
+        (LayoutTestController::setWindowIsKey):
+        (LayoutTestController::setWaitToDump):
+        (LayoutTestController::windowCount):
+        (LayoutTestController::setPrivateBrowsingEnabled):
+        (LayoutTestController::setAuthorAndUserStylesEnabled):
+        * DumpRenderTree/gtk/WorkQueueItemGtk.cpp: Added.
+        (JSStringCopyUTF8CString):
+        (LoadItem::invoke):
+        (ReloadItem::invoke):
+        (ScriptItem::invoke):
+        (BackForwardItem::invoke):
+
 2007-12-03  Sam Weinig  <sam@webkit.org>
 
         Move JavaScriptCore thread testing code to pthread specific directory

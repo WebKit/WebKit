@@ -1,3 +1,18 @@
+2007-12-04  Xan Lopez  <xan@gnome.org>
+
+        Reviewed by Alp Toker.
+
+        http://bugs.webkit.org/show_bug.cgi?id=15561
+        GTK port needs DumpRenderTree implementation
+
+        Start work on the GTK+ DRT.
+
+        Add a couple of proposed new API entry points. They are currently for
+        internal use only by DRT and not in the public headers.
+
+        * WebView/webkitprivate.h:
+        * WebView/webkitwebframe.cpp:
+
 2007-12-03  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Dave Hyatt.

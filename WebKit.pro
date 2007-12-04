@@ -14,4 +14,5 @@ qt-port {
 }
 
 gtk-port:SUBDIRS += \
-        WebKitTools/GtkLauncher
+        WebKitTools/GtkLauncher \
+        WebKitTools/DumpRenderTree/gtk/DumpRenderTree.pro

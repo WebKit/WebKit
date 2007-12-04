@@ -1,3 +1,14 @@
+2007-12-04  Xan Lopez  <xan@gnome.org>
+
+        Reviewed by Alp Toker.
+
+        http://bugs.webkit.org/show_bug.cgi?id=15561
+        GTK port needs DumpRenderTree implementation
+
+        Start work on the GTK+ DRT.
+
+        * WebKit.pro:
+
 2007-11-30  Alp Toker  <alp@atoker.com>
 
         Reviewed by Adam Roben.

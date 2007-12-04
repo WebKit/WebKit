@@ -385,4 +385,48 @@ JSGlobalContextRef webkit_web_frame_get_global_context(WebKitWebFrame* frame)
     return toGlobalRef(coreFrame->scriptProxy()->globalObject()->globalExec());
 }
 
+/**
+ * webkit_web_frame_get_children:
+ * @frame: a #WebKitWebFrame
+ *
+ * Return value: child frames of @frame
+ */
+GSList* webkit_web_frame_get_children(WebKitWebFrame* frame)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEB_FRAME(frame), NULL);
+
+    GSList* children = NULL;
+    Frame* coreFrame = core(frame);
+
+    for (Frame* child = coreFrame->tree()->firstChild(); child; child = child->tree()->nextSibling()) {
+        FrameLoader* loader = child->loader();
+        WebKit::FrameLoaderClient* client = static_cast<WebKit::FrameLoaderClient*>(loader->client());
+        if (client)
+          children = g_slist_append(children, client->webFrame());
+    }
+
+    return children;
+}
+
+/**
+ * webkit_web_frame_get_inner_text:
+ * @frame: a #WebKitWebFrame
+ *
+ * Return value: inner text of @frame
+ */
+gchar* webkit_web_frame_get_inner_text(WebKitWebFrame* frame)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEB_FRAME(frame), NULL);
+
+    Frame* coreFrame = core(frame);
+    FrameView* view = coreFrame->view();
+
+    if (view->layoutPending())
+        view->layout();
+
+    Element* documentElement = coreFrame->document()->documentElement();
+    String string =  documentElement->innerText();
+    return g_strdup(string.utf8().data());
+}
+
 }

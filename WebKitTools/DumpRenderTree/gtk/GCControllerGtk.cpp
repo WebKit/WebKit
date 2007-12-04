@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2007 Eric Seidel <eric@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,32 +26,17 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DumpRenderTree_h
-#define DumpRenderTree_h
+#include "GCController.h"
 
-#include <wtf/Platform.h>
+void GCController::collect() const
+{
+}
 
-#if PLATFORM(MAC)
-#include "DumpRenderTreeMac.h"
-#elif PLATFORM(WIN)
-#include "DumpRenderTreeWin.h"
-#elif PLATFORM(GTK)
-#include "DumpRenderTreeGtk.h"
-#endif
+void GCController::collectOnAlternateThread(bool waitUntilDone) const
+{
+}
 
-#if PLATFORM(CF)
-#include <CoreFoundation/CoreFoundation.h>
-extern CFRunLoopTimerRef waitToDumpWatchdog;
-#endif
-
-class LayoutTestController;
-
-extern volatile bool done;
-
-// FIXME: This is a bad abstraction.  We should insted pass this to other controller objects which need access to it.
-extern LayoutTestController* layoutTestController;
-
-void dump();
-void displayWebView();
-
-#endif // DumpRenderTree_h
+size_t GCController::getJSObjectCount() const
+{
+    return 0;
+}
