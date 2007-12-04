@@ -41,6 +41,7 @@
 #include <JavaScriptCore/JavaScriptCore.h>
 #include <JavaScriptCore/JSRetainPtr.h>
 #include <WebKit/IWebHistory.h>
+#include <WebKit/IWebPreferencesPrivate.h>
 #include <WebKit/IWebViewPrivate.h>
 #include <WebKit/WebKit.h>
 #include <string>
@@ -224,7 +225,19 @@ void LayoutTestController::setAcceptsEditing(bool acceptsEditing)
 
 void LayoutTestController::setAuthorAndUserStylesEnabled(bool flag)
 {
-    // FIXME: Implement!
+    COMPtr<IWebView> webView;
+    if (FAILED(frame->webView(&webView)))
+        return;
+
+    COMPtr<IWebPreferences> preferences;
+    if (FAILED(webView->preferences(&preferences)))
+        return;
+
+    COMPtr<IWebPreferencesPrivate> prefsPrivate(Query, preferences);
+    if (!prefsPrivate)
+        return;
+
+    prefsPrivate->setAuthorAndUserStylesEnabled(flag);
 }
 
 void LayoutTestController::setCustomPolicyDelegate(bool setDelegate)

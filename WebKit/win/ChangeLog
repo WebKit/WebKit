@@ -1,3 +1,24 @@
+2007-11-27  Adam Roben  <aroben@apple.com>
+
+        Hook up the authorAndUserStylesEnabled preference
+
+        This is the Windows counterpart of r28071.
+
+        Reviewed by Maciej.
+
+        * Interfaces/IWebPreferencesPrivate.idl: Added new method
+        declarations.
+        * WebPreferenceKeysPrivate.h: Added a new preference key.
+        * WebPreferences.cpp:
+        (WebPreferences::initializeDefaultSettings): Set the default for the
+        new preference.
+        (WebPreferences::setAuthorAndUserStylesEnabled): Added.
+        (WebPreferences::authorAndUserStylesEnabled): Added.
+        * WebPreferences.h:
+        * WebView.cpp:
+        (WebView::notifyPreferencesChanged): Communicate the new preference
+        down to WebCore::Settings.
+
 2007-12-04  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Reviewed by Ollie.

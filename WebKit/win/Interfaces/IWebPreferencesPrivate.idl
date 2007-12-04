@@ -71,4 +71,7 @@ interface IWebPreferencesPrivate : IUnknown
 
     HRESULT setAutomaticallyDetectsCacheModel([in] BOOL automaticallyDetectsCacheModel);
     HRESULT automaticallyDetectsCacheModel([out, retval] BOOL* automaticallyDetectsCacheModel);
+
+    HRESULT setAuthorAndUserStylesEnabled([in] BOOL enabled);
+    HRESULT authorAndUserStylesEnabled([out, retval] BOOL* enabled);
 }

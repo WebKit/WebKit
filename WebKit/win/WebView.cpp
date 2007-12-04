@@ -3784,6 +3784,14 @@ HRESULT WebView::notifyPreferencesChanged(IWebNotification* notification)
     settings->setForceFTPDirectoryListings(true);
     settings->setDeveloperExtrasEnabled(developerExtrasEnabled());
 
+    COMPtr<IWebPreferencesPrivate> prefsPrivate(Query, preferences);
+    if (prefsPrivate) {
+        hr = prefsPrivate->authorAndUserStylesEnabled(&enabled);
+        if (FAILED(hr))
+            return hr;
+        settings->setAuthorAndUserStylesEnabled(enabled);
+    }
+
     m_mainFrame->invalidate(); // FIXME
 
     hr = updateSharedSettingsFromPreferencesIfNeeded(preferences.get());

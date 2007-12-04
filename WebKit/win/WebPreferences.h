@@ -288,6 +288,9 @@ public:
      virtual HRESULT STDMETHODCALLTYPE automaticallyDetectsCacheModel(
          /* [out, retval] */ BOOL* automaticallyDetectsCacheModel);
 
+    virtual HRESULT STDMETHODCALLTYPE setAuthorAndUserStylesEnabled(BOOL);
+    virtual HRESULT STDMETHODCALLTYPE authorAndUserStylesEnabled(BOOL*);
+
     // WebPreferences
 
     // This method accesses a different preference key than developerExtrasEnabled.

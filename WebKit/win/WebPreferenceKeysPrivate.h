@@ -102,3 +102,5 @@
 
 #define WebKitDeveloperExtrasEnabledPreferenceKey "WebKitDeveloperExtras"
 #define DisableWebKitDeveloperExtrasPreferenceKey "DisableWebKitDeveloperExtras"
+
+#define WebKitAuthorAndUserStylesEnabledPreferenceKey "WebKitAuthorAndUserStylesEnabled"

@@ -1,3 +1,11 @@
+2007-11-27  Adam Roben  <aroben@apple.com>
+
+        Remove a now-passing test from the Windows Skipped file
+
+        Reviewed by Maciej.
+
+        * platform/win/Skipped:
+
 2007-12-03  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Adele.

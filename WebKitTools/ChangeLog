@@ -1,3 +1,12 @@
+2007-11-27  Adam Roben  <aroben@apple.com>
+
+        Fix <rdar://5614497> setAuthorAndUserStylesEnabled is not implemented in DRT
+
+        Reviewed by Maciej.
+
+        * DumpRenderTree/win/LayoutTestControllerWin.cpp:
+        (LayoutTestController::setAuthorAndUserStylesEnabled): Implemented.
+
 2007-12-04  Alp Toker  <alp@atoker.com>
 
         Prospective Win DRT build fix.

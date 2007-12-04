@@ -192,6 +192,8 @@ void WebPreferences::initializeDefaultSettings()
     RetainPtr<CFStringRef> cacheModelRef(AdoptCF, CFStringCreateWithFormat(0, 0, CFSTR("%d"), WebCacheModelDocumentViewer));
     CFDictionaryAddValue(defaults, CFSTR(WebKitCacheModelPreferenceKey), cacheModelRef.get());
 
+    CFDictionaryAddValue(defaults, CFSTR(WebKitAuthorAndUserStylesEnabledPreferenceKey), kCFBooleanTrue);
+
     s_defaultSettings = defaults;
 }
 
@@ -1090,6 +1092,21 @@ HRESULT WebPreferences::automaticallyDetectsCacheModel(BOOL* automaticallyDetect
         return E_POINTER;
 
     *automaticallyDetectsCacheModel = m_automaticallyDetectsCacheModel;
+    return S_OK;
+}
+
+HRESULT STDMETHODCALLTYPE WebPreferences::setAuthorAndUserStylesEnabled(BOOL enabled)
+{
+    setBoolValue(CFSTR(WebKitAuthorAndUserStylesEnabledPreferenceKey), enabled);
+    return S_OK;
+}
+
+HRESULT STDMETHODCALLTYPE WebPreferences::authorAndUserStylesEnabled(BOOL* enabled)
+{
+    if (!enabled)
+        return E_POINTER;
+
+    *enabled = boolValueForKey(CFSTR(WebKitAuthorAndUserStylesEnabledPreferenceKey));
     return S_OK;
 }
 
