@@ -483,7 +483,6 @@ void CanvasRenderingContext2D::fill()
         p->fillPath(*path, p->brush());
     }
 #elif PLATFORM(CAIRO)
-    cairo_t* pathCr = state().m_path.platformPath()->m_cr;
     cairo_t* cr = c->platformContext();
     cairo_save(cr);
     willDraw(state().m_path.boundingRect());
@@ -547,7 +546,6 @@ void CanvasRenderingContext2D::stroke()
         p->strokePath(*path, p->pen());
     }
 #elif PLATFORM(CAIRO)
-    cairo_t* pathCr = state().m_path.platformPath()->m_cr;
     cairo_t* cr = c->platformContext();
     cairo_save(cr);
     // FIXME: consider inset, as in CG

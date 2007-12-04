@@ -1,3 +1,13 @@
+2007-12-04  Alp Toker  <alp@atoker.com>
+
+        Rubber stamped by Mark Rowe.
+
+        Remove two unused variables to silence warnings.
+
+        * html/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::fill):
+        (WebCore::CanvasRenderingContext2D::stroke):
+
 2007-12-03  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.
