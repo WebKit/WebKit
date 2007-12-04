@@ -1,3 +1,18 @@
+2007-12-04  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam.
+
+        Add isSafeScript(const JSGlobalObject*) so we won't get the JSGlobalObject
+        implementation, which always returns true(!).
+        
+        * bindings/js/kjs_window.cpp:
+        (KJS::Window::isSafeScript):
+        Make the static isSafeScript method take two JSGlobalObjects.
+        
+        * bindings/js/kjs_window.h:
+        (KJS::Window::isSafeScript):
+        Implement isSafeScript and have it call the static method.
+
 2007-11-27  Adam Roben  <aroben@apple.com>
 
         Make the implementation of Frame::setNeedsReapplyStyles cross-platform

@@ -846,13 +846,13 @@ static bool shouldLoadAsEmptyDocument(const KURL &url)
   return url.protocol().lower() == "about" || url.isEmpty();
 }
 
-bool Window::isSafeScript(const ScriptInterpreter *origin, const ScriptInterpreter *target)
+bool Window::isSafeScript(const JSGlobalObject *origin, const JSGlobalObject *target)
 {
     if (origin == target)
         return true;
         
-    Frame* originFrame = origin->frame();
-    Frame* targetFrame = target->frame();
+    Frame* originFrame = static_cast<const Window*>(origin)->impl()->frame();
+    Frame* targetFrame = static_cast<const Window*>(target)->impl()->frame();
 
     // JS may be attempting to access the "window" object, which should be valid,
     // even if the document hasn't been constructed yet.  If the document doesn't
