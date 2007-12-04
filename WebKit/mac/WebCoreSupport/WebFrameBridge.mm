@@ -349,16 +349,6 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
     return newFrame.get();
 }
 
-- (void)setNeedsReapplyStyles
-{
-    NSView <WebDocumentView> *view = [[_frame frameView] documentView];
-    if ([view isKindOfClass:[WebHTMLView class]]) {
-        [(WebHTMLView *)view setNeedsToApplyStyles:YES];
-        [view setNeedsLayout:YES];
-        [view setNeedsDisplay:YES];
-    }
-}
-
 - (NSView *)pluginViewWithPackage:(WebPluginPackage *)pluginPackage
                    attributeNames:(NSArray *)attributeNames
                   attributeValues:(NSArray *)attributeValues

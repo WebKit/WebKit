@@ -1,3 +1,14 @@
+2007-11-27  Adam Roben  <aroben@apple.com>
+
+        Remove -[WebFrameBridge setNeedsReapplyStyles]
+
+        This functionality is now WebCore's responsibility.
+
+        Reviewed by Hyatt.
+
+        * WebCoreSupport/WebFrameBridge.mm:
+        * WebKit.order:
+
 2007-12-04  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Darin

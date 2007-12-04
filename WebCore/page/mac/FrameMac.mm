@@ -570,11 +570,6 @@ void Frame::willPopupMenu(NSMenu * menu)
     [d->m_bridge willPopupMenu:menu];
 }
 
-void Frame::setNeedsReapplyStyles()
-{
-    [d->m_bridge setNeedsReapplyStyles];
-}
-
 FloatRect Frame::customHighlightLineRect(const AtomicString& type, const FloatRect& lineRect, Node* node)
 {
     return [d->m_bridge customHighlightRect:type forLine:lineRect representedNode:node];

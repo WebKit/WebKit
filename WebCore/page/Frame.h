@@ -155,7 +155,6 @@ public:
     static Frame* frameForWidget(const Widget*);
 
     Settings* settings() const; // can be NULL
-    void reparseConfiguration();
 
     void setUserStyleSheetLocation(const KURL&);
     void setUserStyleSheet(const String& styleSheetData);
@@ -197,6 +196,9 @@ public:
     UChar backslashAsCurrencySymbol() const;
 
     void setNeedsReapplyStyles();
+    bool needsReapplyStyles() const;
+    void reapplyStyles();
+
     String documentTypeString() const;
 
     void dashboardRegionsChanged();

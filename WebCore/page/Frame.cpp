@@ -758,8 +758,30 @@ String Frame::jsDefaultStatusBarText() const
    return d->m_kjsDefaultStatusBarText;
 }
 
-void Frame::reparseConfiguration()
+void Frame::setNeedsReapplyStyles()
 {
+    if (d->m_needsReapplyStyles)
+        return;
+
+    d->m_needsReapplyStyles = true;
+
+    // Invalidate the FrameView so that FrameView::layout will get called,
+    // which calls reapplyStyles.
+    view()->invalidate();
+}
+
+bool Frame::needsReapplyStyles() const
+{
+    return d->m_needsReapplyStyles;
+}
+
+void Frame::reapplyStyles()
+{
+    d->m_needsReapplyStyles = false;
+
+    // FIXME: This call doesn't really make sense in a method called
+    // "reapplyStyles". We should probably eventually move it into its own
+    // method.
     if (d->m_doc)
         d->m_doc->docLoader()->setAutoLoadImages(d->m_page && d->m_page->settings()->loadsImagesAutomatically());
         
@@ -1993,6 +2015,7 @@ FramePrivate::FramePrivate(Page* page, Frame* parent, Frame* thisFrame, HTMLFram
     , m_inViewSourceMode(false)
     , frameCount(0)
     , m_prohibitsScrolling(false)
+    , m_needsReapplyStyles(false)
     , m_windowScriptNPObject(0)
 #if PLATFORM(MAC)
     , m_windowScriptObject(nil)

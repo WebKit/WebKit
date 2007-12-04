@@ -394,7 +394,7 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
     Document *doc = m_frame->document();
     if (doc)
         doc->setPrinting(deviceType == WebCoreDevicePrinter);
-    m_frame->reparseConfiguration();
+    m_frame->reapplyStyles();
 }
 
 - (void)forceLayoutAdjustingViewSize:(BOOL)flag

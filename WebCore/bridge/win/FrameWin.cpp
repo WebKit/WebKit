@@ -194,10 +194,4 @@ void Frame::dashboardRegionsChanged()
 {
 }
 
-void Frame::setNeedsReapplyStyles()
-{
-    // Will be needed for focus ring color change.
-    notImplemented();
-}
-
 } // namespace WebCore

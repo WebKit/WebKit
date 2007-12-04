@@ -1,3 +1,35 @@
+2007-11-27  Adam Roben  <aroben@apple.com>
+
+        Make the implementation of Frame::setNeedsReapplyStyles cross-platform
+
+        Reviewed by Hyatt.
+
+        No change in functionality.
+
+        * page/Frame.cpp:
+        (WebCore::Frame::setNeedsReapplyStyles): Added. Invalidates the
+        FrameView so that FrameView::layout will be called, which ends up
+        calling reapplyStyles.
+        (WebCore::Frame::needsReapplyStyles): Added.
+        (WebCore::Frame::reapplyStyles): Renamed from reparseConfiguration.
+        (WebCore::FramePrivate::FramePrivate):
+        * page/Frame.h:
+        * page/FramePrivate.h: Added new boolean member.
+        * page/FrameView.cpp:
+        (WebCore::FrameView::layout): Call Frame::reapplyStyles if needed.
+        (WebCore::FrameView::needsLayout): Say that we need layout if the
+        Frame needs styles reapplied.
+        * page/mac/WebCoreFrameBridge.h: Removed setNeedsReapplyStyles.
+        * page/mac/WebCoreFrameBridge.mm:
+        (-[WebCoreFrameBridge reapplyStylesForDeviceType:]): Updated for
+        rename.
+
+        * bridge/win/FrameWin.cpp: Removed Frame::setNeedsReapplyStyles.
+        * page/gtk/FrameGtk.cpp: Ditto.
+        * page/mac/FrameMac.mm: Ditto.
+        * page/qt/FrameQt.cpp: Ditto.
+        * platform/wx/TemporaryLinkStubs.cpp: Ditto.
+
 2007-12-04  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Adele.

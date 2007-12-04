@@ -49,8 +49,4 @@ void Frame::dashboardRegionsChanged()
     notImplemented();
 }
 
-void Frame::setNeedsReapplyStyles()
-{
-   notImplemented(); 
-}
 }

@@ -190,7 +190,6 @@ __ZNK20WebFrameLoaderClient17overrideMediaTypeEv
 -[WebPreferences(WebPrivate) _useSiteSpecificSpoofing]
 -[WebPreferences cursiveFontFamily]
 -[WebPreferences _stringValueForKey:]
--[WebFrameBridge setNeedsReapplyStyles]
 -[WebHTMLView setNeedsToApplyStyles:]
 -[WebHTMLView setNeedsLayout:]
 -[WebPreferences defaultFixedFontSize]
