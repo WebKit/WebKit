@@ -108,31 +108,33 @@ static gboolean webkit_web_view_key_event(GtkWidget* widget, GdkEventKey* event)
     Frame* frame = core(getFrameFromView(WEBKIT_WEB_VIEW(widget)));
     PlatformKeyboardEvent keyboardEvent(event);
 
-    if (!frame->eventHandler()->keyEvent(keyboardEvent) && event->type == GDK_KEY_PRESS)
-      {
-          FrameView* view = frame->view();
+    if (frame->eventHandler()->keyEvent(keyboardEvent))
+        return TRUE;
 
-          /* FIXME: at the very least we should be using the same code than the
-             Windows port here, but our ScrollView file diverges enough to make
-             that impossible. A short term solution would be to unify ScrollViewWin
-             and ScrollViewGtk. Long-term ScrollView and FrameView should be
-             unified and used everywhere for scrollbars */
+    if (event->type == GDK_KEY_PRESS) {
+        FrameView* view = frame->view();
 
-          switch (event->keyval) {
-          case GDK_Down:
-              view->scrollBy(0, LINE_STEP);
-              return TRUE;
-          case GDK_Up:
-              view->scrollBy(0, -LINE_STEP);
-              return TRUE;
-          case GDK_Right:
-              view->scrollBy(LINE_STEP, 0);
-              return TRUE;
-          case GDK_Left:
-              view->scrollBy(-LINE_STEP, 0);
-              return TRUE;
-          }
-      }
+        /* FIXME: at the very least we should be using the same code than the
+           Windows port here, but our ScrollView file diverges enough to make
+           that impossible. A short term solution would be to unify ScrollViewWin
+           and ScrollViewGtk. Long-term ScrollView and FrameView should be
+           unified and used everywhere for scrollbars */
+
+        switch (event->keyval) {
+        case GDK_Down:
+            view->scrollBy(0, LINE_STEP);
+            return TRUE;
+        case GDK_Up:
+            view->scrollBy(0, -LINE_STEP);
+            return TRUE;
+        case GDK_Right:
+            view->scrollBy(LINE_STEP, 0);
+            return TRUE;
+        case GDK_Left:
+            view->scrollBy(-LINE_STEP, 0);
+            return TRUE;
+        }
+    }
 
     return gtk_bindings_activate_event(GTK_OBJECT(widget), event);
 }
