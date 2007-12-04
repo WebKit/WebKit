@@ -15,14 +15,15 @@
 <title><TMPL_VAR name></title>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <meta name="generator" content="<TMPL_VAR generator ESCAPE="HTML">">
-<link rel="stylesheet" href="planet.css" type="text/css">
+<link rel="stylesheet" href="planetwebkit.css" type="text/css">
 <TMPL_IF feedtype>
 <link rel="alternate" href="<TMPL_VAR feed ESCAPE="HTML">" title="<TMPL_VAR channel_title_plain ESCAPE="HTML">" type="application/<TMPL_VAR feedtype>+xml">
 </TMPL_IF>
 </head>
 
 <body>
-<h1><TMPL_VAR name></h1>
+<div id="icon"></div>
+<div id="wrapper">
 
 <TMPL_LOOP Items>
 <TMPL_IF new_date>
@@ -49,7 +50,6 @@
 ### doesn't know about the "face", "facewidth" and "faceheight" configuration
 ### variables, but makes them available to us anyway.
 
-<h3><a href="<TMPL_VAR channel_link ESCAPE="HTML">" title="<TMPL_VAR channel_title_plain ESCAPE="HTML">"><TMPL_VAR channel_name></a></h3>
 <TMPL_IF channel_face>
 <img class="face" src="images/<TMPL_VAR channel_face ESCAPE="HTML">" width="<TMPL_VAR channel_facewidth ESCAPE="HTML">" height="<TMPL_VAR channel_faceheight ESCAPE="HTML">" alt="">
 </TMPL_IF>
@@ -58,7 +58,8 @@
 
 <div class="entrygroup" id="<TMPL_VAR id>"<TMPL_IF channel_language> lang="<TMPL_VAR channel_language>"</TMPL_IF>>
 <TMPL_IF title>
-<h4<TMPL_IF title_language> lang="<TMPL_VAR title_language>"</TMPL_IF>><a href="<TMPL_VAR link ESCAPE="HTML">"><TMPL_VAR title></a></h4>
+<h3<TMPL_IF title_language> lang="<TMPL_VAR title_language>"</TMPL_IF>><a href="<TMPL_VAR link ESCAPE="HTML">"><TMPL_VAR title></a></h3>
+<h4><a href="<TMPL_VAR channel_link ESCAPE="HTML">" title="<TMPL_VAR channel_title_plain ESCAPE="HTML">"><TMPL_VAR channel_name></a></h4>
 </TMPL_IF>
 <div class="entry">
 <div class="content"<TMPL_IF content_language> lang="<TMPL_VAR content_language>"</TMPL_IF>>
@@ -72,7 +73,7 @@
 ### demonstrate below.
 
 <p class="date">
-<a href="<TMPL_VAR link ESCAPE="HTML">"><TMPL_IF author>by <TMPL_VAR author> at </TMPL_IF><TMPL_VAR date><TMPL_IF category> under <TMPL_VAR category></TMPL_IF></a>
+<a href="<TMPL_VAR link ESCAPE="HTML">"><TMPL_IF author>By <TMPL_VAR author> at </TMPL_IF><TMPL_VAR date><TMPL_IF category> under <TMPL_VAR category></TMPL_IF></a>
 </p>
 </div>
 </div>
@@ -84,10 +85,11 @@
 </div>
 </TMPL_IF>
 </TMPL_LOOP>
+</div>
 
 
 <div class="sidebar">
-
+<h1><TMPL_VAR name></h1>
 <h2>Subscriptions</h2>
 <ul>
 <TMPL_LOOP Channels>
@@ -99,8 +101,8 @@
 
 <p>
 <strong>Last updated:</strong><br>
-<TMPL_VAR date><br>
-<em>All times are UTC.</em><br>
+<small><TMPL_VAR date></small><br>
+<small><em>All times are UTC.</em></small><br>
 <br>
 Powered by:<br>
 <a href="http://www.planetplanet.org/"><img src="images/planet.png" width="80" height="15" alt="Planet" border="0"></a>

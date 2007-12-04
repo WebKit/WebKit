@@ -1,3 +1,14 @@
+2007-12-03  Matt Lilek  <webkit@mattlilek.com>
+
+        Reviewed by Adam.
+
+        Make it sexy with awesome icon and tweaks from Tim.
+
+        * templates/index.html.tmpl:
+        * wwwroot/ie.css: Added.
+        * wwwroot/images/ie-nav-blue.png: Added.
+        * wwwroot/planetwebkit.css: Added.
+
 2007-12-01  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Mark Rowe.
