@@ -28,8 +28,10 @@
  */
 
 #include "config.h"
+
 #include "webkitwebframe.h"
 #include "webkitwebview.h"
+#include "webkit-marshal.h"
 #include "webkitprivate.h"
 
 #include "CString.h"
@@ -48,13 +50,6 @@ using namespace WebKit;
 using namespace WebCore;
 
 extern "C" {
-
-extern void webkit_marshal_VOID__STRING_STRING (GClosure*     closure,
-                                                GValue*       return_value,
-                                                guint         n_param_values,
-                                                const GValue* param_values,
-                                                gpointer      invocation_hint,
-                                                gpointer      marshal_data);
 
 enum {
     CLEARED,

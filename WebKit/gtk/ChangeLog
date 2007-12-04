@@ -1,3 +1,11 @@
+2007-12-04  Michael Natterer  <mitch@imendio.com>
+
+        Reviewed by Alp Toker.
+
+        * WebView/webkitwebframe.cpp: don't redeclare the marshaller
+        prototype but simply include "webkit-marshal.h" now that its build
+        is fixed.
+
 2007-12-04  Luca Bruno  <lethalman88@gmail.com>
 
         Reviewed by Alp Toker.

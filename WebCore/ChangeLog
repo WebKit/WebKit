@@ -1,3 +1,14 @@
+2007-12-04  Michael Natterer  <mitch@imendio.com>
+
+        Reviewed by Alp Toker.
+
+        * WebCore.pro: fix build of webkit-marshal by building the
+        functions into a separate .cpp file instead of including them in
+        the header. This way we can use the marshallers from more than one
+        file without using bad hacks.
+
+        Add the generated sources directory to DEPENDPATH.
+
 2007-12-04  Pierre-Luc Beaudoin  <pierre-luc.beaudoin@collabora.co.uk>
 
         Reviewed by Alp Toker.

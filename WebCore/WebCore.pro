@@ -21,6 +21,7 @@ GENERATED_SOURCES_DIR_SLASH = $$GENERATED_SOURCES_DIR/
 win32-*: GENERATED_SOURCES_DIR_SLASH ~= s|/|\|
 
 INCLUDEPATH += $$GENERATED_SOURCES_DIR
+DEPENDPATH += $$GENERATED_SOURCES_DIR
 
 !CONFIG(QTDIR_build) {
      OBJECTS_DIR = tmp
@@ -1744,12 +1745,12 @@ gtk-port {
     #
     # integrate glib-genmarshal as additional compiler
     #
-    QMAKE_GENMARSHAL_CC  = glib-genmarshal
-    glib-genmarshal.commands = $${QMAKE_GENMARSHAL_CC} --prefix=$${GENMARSHALS_PREFIX} ${QMAKE_FILE_IN} --header --body >${QMAKE_FILE_OUT}
-    glib-genmarshal.output = $$OUT_PWD/${QMAKE_FILE_BASE}.h
+    QMAKE_GENMARSHAL_CC = glib-genmarshal
+    glib-genmarshal.output = $$GENERATED_SOURCES_DIR/${QMAKE_FILE_BASE}.cpp
+    glib-genmarshal.commands = echo 'extern \\"C\\" {' > ${QMAKE_FILE_OUT} && $${QMAKE_GENMARSHAL_CC} --prefix=$${GENMARSHALS_PREFIX} ${QMAKE_FILE_IN} --body >> ${QMAKE_FILE_OUT} && echo '}' >> ${QMAKE_FILE_OUT} && $${QMAKE_GENMARSHAL_CC} --prefix=$${GENMARSHALS_PREFIX} ${QMAKE_FILE_IN} --header > $$GENERATED_SOURCES_DIR/${QMAKE_FILE_BASE}.h
     glib-genmarshal.input = GENMARSHALS
-    glib-genmarshal.CONFIG = no_link
-    glib-genmarshal.variable_out = PRE_TARGETDEPS
+    glib-genmarshal.variable_out = GENERATED_SOURCES
+    glib-genmarshal.clean = ${QMAKE_FILE_OUT} ${QMAKE_VAR_GENERATED_SOURCES_DIR_SLASH}${QMAKE_FILE_BASE}.h
     glib-genmarshal.name = GENMARSHALS
     QMAKE_EXTRA_UNIX_COMPILERS += glib-genmarshal
 }
