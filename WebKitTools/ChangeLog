@@ -1,3 +1,9 @@
+2007-12-04  Alp Toker  <alp@atoker.com>
+
+        Fix a clobbered copyright header.
+
+        * DumpRenderTree/gtk/DumpRenderTree.cpp:
+
 2007-12-04  Xan Lopez  <xan@gnome.org>
 
         Reviewed by Alp Toker.
