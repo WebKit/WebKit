@@ -1,5 +1,13 @@
 2007-12-03  Matt Lilek  <webkit@mattlilek.com>
 
+        Rubberstamped by Tim.
+
+        Make the bullets lickable.
+
+        * wwwroot/planetwebkit.css:
+
+2007-12-03  Matt Lilek  <webkit@mattlilek.com>
+
         Reviewed by Adam.
 
         Make it sexy with awesome icon and tweaks from Tim.
