@@ -1,3 +1,16 @@
+2007-12-04  Darin Adler  <darin@apple.com>
+
+        Reviewed by Geoff.
+
+        - fix first part of http://bugs.webkit.org/show_bug.cgi?id=16220
+          <rdar://problem/5625221> Crash opening www.news.com (CNet)
+
+        Test: fast/js/regexp-overflow.html
+
+        * pcre/pcre_compile.cpp:
+        (calculateCompiledPatternLengthAndFlags): Add room for the additional BRA/KET that
+        was generated in the compile code but not taken into account here.
+
 2007-12-03  Darin Adler  <darin@apple.com>
 
         Reviewed by Geoff.

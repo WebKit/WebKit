@@ -1,3 +1,13 @@
+2007-12-04  Darin Adler  <darin@apple.com>
+
+        Reviewed by Geoff.
+
+        - test for first part of http://bugs.webkit.org/show_bug.cgi?id=16220
+          <rdar://problem/5625221> Crash opening www.news.com (CNet)
+
+        * fast/js/regexp-overflow-expected.txt: Updated.
+        * fast/js/resources/regexp-overflow.js: Added test cases.
+
 2007-12-03  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.

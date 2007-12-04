@@ -1509,8 +1509,7 @@ compile_branch(int options, int* brackets, uschar** codeptr,
                          The first one has to be handled carefully because it's the original
                          copy, which has to be moved up. The remainder can be handled by code
                          that is common with the non-zero minimum case below. We have to
-                         adjust the value or repeat_max, since one less copy is required. Once
-                         again, we may have to adjust any OP_RECURSE calls inside the group. */
+                         adjust the value of repeat_max, since one less copy is required. */
                         
                         else {
                             *code = OP_END;
@@ -2657,6 +2656,7 @@ static int calculateCompiledPatternLengthAndFlags(const UChar* pattern, int patt
                 if (minRepeats == 0) {
                     length++;
                     if (maxRepeats > 0) length += (maxRepeats - 1) * (duplength + 3 + 2 * LINK_SIZE);
+                    if (maxRepeats > 1) length += 2 + 2 * LINK_SIZE; // BRA/KET created in else case
                 }
                 
                 /* When the minimum is greater than zero, we have to replicate up to
@@ -2706,42 +2706,6 @@ static int calculateCompiledPatternLengthAndFlags(const UChar* pattern, int patt
     length += 2 + LINK_SIZE;    /* For final KET and END */
     return length;
 }
-
-#ifdef DEBUG
-static void printCompiledRegExp(JSRegExp* re, int length)
-{
-    printf("Length = %d top_bracket = %d top_backref = %d\n",
-           length, re->top_bracket, re->top_backref);
-    
-    if (re->options) {
-        printf("%s%s%s\n",
-               ((re->options & IsAnchoredOption) != 0)? "anchored " : "",
-               ((re->options & IgnoreCaseOption) != 0)? "ignores case " : "",
-               ((re->options & MatchAcrossMultipleLinesOption) != 0)? "multiline " : "");
-    }
-    
-    if (re->options & UseFirstByteOptimizationOption) {
-        char ch = re->first_byte & 255;
-        const char* caseless = (re->first_byte & REQ_IGNORE_CASE) ? " (ignores case)" : "";
-        if (isASCIIAlphanumeric(ch))
-            printf("First char = %c%s\n", ch, caseless);
-        else
-            printf("First char = \\x%02x%s\n", ch, caseless);
-    }
-    
-    if (re->options & UseRequiredByteOptimizationOption) {
-        char ch = re->req_byte & 255;
-        const char* caseless = (re->req_byte & REQ_IGNORE_CASE) ? " (ignores case)" : "";
-        if (isASCIIAlphanumeric(ch))
-            printf("Req char = %c%s\n", ch, caseless);
-        else
-            printf("Req char = \\x%02x%s\n", ch, caseless);
-    }
-    
-    // This debugging function has been removed from JavaScriptCore's PCRE
-    //pcre_printint(re, stdout);
-}
-#endif
 
 /*************************************************
 *        Compile a Regular Expression            *
@@ -2837,11 +2801,10 @@ JSRegExp* jsRegExpCompile(const UChar* pattern, int patternLength,
      if debugging, leave the test till after things are printed out. */
     
     *code++ = OP_END;
-    
-#ifndef DEBUG
+
+    ASSERT(code - codestart <= length);
     if (code - codestart > length)
         errorcode = ERR7;
-#endif
     
     /* Give an error if there's back reference to a non-existent capturing
      subpattern. */
@@ -2894,19 +2857,6 @@ JSRegExp* jsRegExpCompile(const UChar* pattern, int patternLength,
             re->options |= UseRequiredByteOptimizationOption;
         }
     }
-    
-#ifdef DEBUG
-    printCompiledRegExp(re);
-    
-    /* This check is done here in the debugging case so that the code that
-     was compiled can be seen. */
-    if (code - codestart > length) {
-        (pcre_free)(re);
-        *errorptr = error_text(ERR7);
-        return NULL;
-    }
-    
-#endif
     
     if (numSubpatterns)
         *numSubpatterns = re->top_bracket;
