@@ -1,3 +1,15 @@
+2007-12-03  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        - fix <rdar://problem/5346452> Resize event doesn't fire on body element inside a frame
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView layoutToMinimumPageWidth:maximumPageWidth:adjustingViewSize:]): Removed the code
+        that checked if the view had resized and sent the resize event, since
+        FrameView sends resize events now.
+        * WebView/WebHTMLViewInternal.h:
+
 2007-12-03  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Darin.

@@ -118,7 +118,6 @@ enum WebScrollGranularity {
 - (void)reapplyStylesForDeviceType:(WebCoreDeviceType)deviceType;
 - (void)forceLayoutAdjustingViewSize:(BOOL)adjustSizeFlag;
 - (void)forceLayoutWithMinimumPageWidth:(float)minPageWidth maximumPageWidth:(float)maxPageWidth adjustingViewSize:(BOOL)adjustSizeFlag;
-- (void)sendResizeEvent;
 - (void)sendScrollEvent;
 - (BOOL)needsLayout;
 - (void)setNeedsLayout;

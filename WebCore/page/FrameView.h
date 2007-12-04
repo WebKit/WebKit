@@ -123,6 +123,7 @@ public:
     void scheduleEvent(PassRefPtr<Event>, PassRefPtr<EventTargetNode>, bool tempEvent);
     void pauseScheduledEvents();
     void resumeScheduledEvents();
+    void postLayoutTimerFired(Timer<FrameView>*);
 
     bool wasScrolledByUser() const;
     void setWasScrolledByUser(bool);
@@ -150,6 +151,7 @@ private:
     void updateOverflowStatus(bool horizontalOverflow, bool verticalOverflow);
 
     void dispatchScheduledEvents();
+    void performPostLayoutTasks();
 
     unsigned m_refCount;
     IntSize m_size;

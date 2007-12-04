@@ -1,3 +1,12 @@
+2007-12-03  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        - test for <rdar://problem/5346452> Resize event doesn't fire on body element inside a frame
+
+        * fast/events/resize-subframe-expected.txt: Added.
+        * fast/events/resize-subframe.html: Added.
+
 2007-12-03  Darin Adler  <darin@apple.com>
 
         Reviewed by Geoff.

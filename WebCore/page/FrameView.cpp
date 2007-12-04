@@ -58,6 +58,7 @@ public:
         : m_slowRepaintObjectCount(0)
         , layoutTimer(view, &FrameView::layoutTimerFired)
         , layoutRoot(0)
+        , postLayoutTasksTimer(view, &FrameView::postLayoutTimerFired)
         , m_mediaType("screen")
         , m_enqueueEvents(0)
         , m_overflowStatusDirty(true)
@@ -84,9 +85,11 @@ public:
         midLayout = false;
         layoutCount = 0;
         nestedLayoutCount = 0;
+        postLayoutTasksTimer.stop();
         firstLayout = true;
         repaintRects.clear();
         m_wasScrolledByUser = false;
+        lastLayoutSize = IntSize();
     }
 
     bool doFullRepaint;
@@ -106,11 +109,13 @@ public:
     bool midLayout;
     int layoutCount;
     unsigned nestedLayoutCount;
+    Timer<FrameView> postLayoutTasksTimer;
 
     bool firstLayout;
     bool needToInitScrollbars;
     bool isTransparent;
     Color baseBackgroundColor;
+    IntSize lastLayoutSize;
 
     // Used by objects during layout to communicate repaints that need to take place only
     // after all layout has been completed.
@@ -141,6 +146,12 @@ FrameView::FrameView(Frame* frame)
 
 FrameView::~FrameView()
 {
+    if (d->postLayoutTasksTimer.isActive()) {
+        d->postLayoutTasksTimer.stop();
+        d->m_scheduledEvents.clear();
+        d->m_enqueueEvents = 0;
+    }
+
     resetScrollbars();
 
     ASSERT(m_refCount == 0);
@@ -329,6 +340,13 @@ void FrameView::layout(bool allowSubtree)
 
     d->layoutSchedulingEnabled = false;
 
+    if (!d->nestedLayoutCount && d->postLayoutTasksTimer.isActive()) {
+        // This is a new top-level layout. If there are any remaining tasks from the previous
+        // layout, finish them now.
+        d->postLayoutTasksTimer.stop();
+        performPostLayoutTasks();
+    }
+
     // Always ensure our style info is up-to-date.  This can happen in situations where
     // the layout beats any sort of style recalc update that needs to occur.
     if (document->hasChangedChild())
@@ -337,7 +355,7 @@ void FrameView::layout(bool allowSubtree)
     bool subtree = d->layoutRoot;
 
     // If there is only one ref to this view left, then its going to be destroyed as soon as we exit, 
-    // so there's no point to continuiing to layout
+    // so there's no point to continuing to layout
     if (protector->hasOneRef())
         return;
 
@@ -352,7 +370,7 @@ void FrameView::layout(bool allowSubtree)
 
     ScrollbarMode hMode = d->hmode;
     ScrollbarMode vMode = d->vmode;
-    
+
     if (!subtree) {
         RenderObject* rootRenderer = document->documentElement() ? document->documentElement()->renderer() : 0;
         if (document->isHTMLDocument()) {
@@ -395,6 +413,7 @@ void FrameView::layout(bool allowSubtree)
             if (d->firstLayout) {
                 d->firstLayout = false;
                 didFirstLayout = true;
+                d->lastLayoutSize = IntSize(width(), height());
                 
                 // Set the initial vMode to AlwaysOn if we're auto.
                 if (vMode == ScrollbarAuto)
@@ -423,8 +442,9 @@ void FrameView::layout(bool allowSubtree)
     }
     
     RenderLayer* layer = root->enclosingLayer();
-     
-    pauseScheduledEvents();
+
+    if (!d->postLayoutTasksTimer.isActive())
+        pauseScheduledEvents();
 
     if (subtree)
         root->view()->pushLayoutState(root);
@@ -437,7 +457,7 @@ void FrameView::layout(bool allowSubtree)
 
     m_frame->invalidateSelection();
    
-    d->layoutSchedulingEnabled=true;
+    d->layoutSchedulingEnabled = true;
 
     if (!subtree && !static_cast<RenderView*>(root)->printing())
         adjustViewSize();
@@ -445,10 +465,6 @@ void FrameView::layout(bool allowSubtree)
     // Now update the positions of all layers.
     layer->updateLayerPositions(d->doFullRepaint);
 
-    // We update our widget positions right after doing a layout.
-    if (!subtree)
-        static_cast<RenderView*>(root)->updateWidgetPositions();
-    
     // FIXME: Could optimize this and have objects removed from this list
     // if they ever do full repaints.
     Vector<RenderObject::RepaintInfo>::iterator end = d->repaintRects.end();
@@ -475,24 +491,19 @@ void FrameView::layout(bool allowSubtree)
         updateOverflowStatus(visibleWidth() < contentsWidth(),
                              visibleHeight() < contentsHeight());
 
-    if (m_widgetUpdateSet && d->nestedLayoutCount == 1) {
-        Vector<RenderPartObject*> objectVector;
-        copyToVector(*m_widgetUpdateSet, objectVector);
-        size_t size = objectVector.size();
-        for (size_t i = 0; i < size; ++i) {
-            RenderPartObject* object = objectVector[i];
-            object->updateWidget(false);
+    if (!d->postLayoutTasksTimer.isActive()) {
+        // Calls resumeScheduledEvents()
+        performPostLayoutTasks();
 
-            // updateWidget() can destroy the RenderPartObject, so we need to make sure it's
-            // alive by checking if it's still in m_widgetUpdateSet.
-            if (m_widgetUpdateSet->contains(object))
-                object->updateWidgetPosition();
+        if (needsLayout()) {
+            // Post-layout widget updates or an event handler made us need layout again.
+            // Lay out again, but this time defer widget updates and event dispatch until after
+            // we return.
+            d->postLayoutTasksTimer.startOneShot(0);
+            pauseScheduledEvents();
+            layout();
         }
-        m_widgetUpdateSet->clear();
     }
-
-    // Allow events scheduled during layout to fire
-    resumeScheduledEvents();
 
     d->nestedLayoutCount--;
 }
@@ -846,6 +857,43 @@ void FrameView::resumeScheduledEvents()
     ASSERT(d->m_scheduledEvents.isEmpty() || d->m_enqueueEvents);
 }
 
+void FrameView::performPostLayoutTasks()
+{
+    RenderView* root = static_cast<RenderView*>(m_frame->document()->renderer());
+
+    root->updateWidgetPositions();
+    if (m_widgetUpdateSet && d->nestedLayoutCount <= 1) {
+        Vector<RenderPartObject*> objectVector;
+        copyToVector(*m_widgetUpdateSet, objectVector);
+        size_t size = objectVector.size();
+        for (size_t i = 0; i < size; ++i) {
+            RenderPartObject* object = objectVector[i];
+            object->updateWidget(false);
+
+            // updateWidget() can destroy the RenderPartObject, so we need to make sure it's
+            // alive by checking if it's still in m_widgetUpdateSet.
+            if (m_widgetUpdateSet->contains(object))
+                object->updateWidgetPosition();
+        }
+        m_widgetUpdateSet->clear();
+    }
+
+    resumeScheduledEvents();
+
+    if (!root->printing()) {
+        IntSize currentSize = IntSize(width(), height());
+        bool resized = !d->firstLayout && currentSize != d->lastLayoutSize;
+        d->lastLayoutSize = currentSize;
+        if (resized)
+            m_frame->sendResizeEvent();
+    }
+}
+
+void FrameView::postLayoutTimerFired(Timer<FrameView>*)
+{
+    performPostLayoutTasks();
+}
+
 void FrameView::updateOverflowStatus(bool horizontalOverflow, bool verticalOverflow)
 {
     if (!d->m_viewportRenderer)
@@ -876,7 +924,7 @@ void FrameView::dispatchScheduledEvents()
 {
     if (d->m_scheduledEvents.isEmpty())
         return;
-    
+
     Vector<ScheduledEvent*> scheduledEventsCopy = d->m_scheduledEvents;
     d->m_scheduledEvents.clear();
     
@@ -892,7 +940,7 @@ void FrameView::dispatchScheduledEvents()
                 ec, scheduledEvent->m_tempEvent);
         
         delete scheduledEvent;
-    }    
+    }
 }
 
 IntRect FrameView::windowClipRect() const

@@ -1,3 +1,34 @@
+2007-12-03  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        - fix <rdar://problem/5346452> Resize event doesn't fire on body element inside a frame
+
+        Test: fast/events/resize-subframe.html
+
+        * page/FrameView.cpp:
+        (WebCore::FrameViewPrivate::FrameViewPrivate): Added a timer used when
+        deferring tasks that need to be done after layout.
+        (WebCore::FrameViewPrivate::reset):
+        (WebCore::FrameView::~FrameView):
+        (WebCore::FrameView::layout): Moved the updating of widget positions,
+        loading plug-ins and sending events queued up during layout into
+        performPostLayoutTasks(). performPostLayoutTasks() is called after
+        layout unless the layout was triggered by a previous layout's post-
+        layout tasks. In the latter case, performPostLayoutTasks() is scheduled
+        to run later.
+        (WebCore::FrameView::performPostLayoutTasks): Performs work that needs
+        to be done after layout but which can result in arbitrary code
+        execution and therefore may re-invalidate the layout. This includes
+        updating widget positions, loading plug-ins, and dispatching layout-
+        related DOM events (scroll, overflow and resize).
+        (WebCore::FrameView::postLayoutTimerFired):
+        (WebCore::FrameView::dispatchScheduledEvents):
+        * page/FrameView.h:
+        * page/mac/WebCoreFrameBridge.h:
+        * page/mac/WebCoreFrameBridge.mm: Removed -sendResizeEvent since this
+        is handled by FrameView now.
+
 2007-12-03  Rob Buis  <buis@kde.org>
 
         Reviewed by Darin.

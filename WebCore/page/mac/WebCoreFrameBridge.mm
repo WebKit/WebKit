@@ -409,11 +409,6 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
     m_frame->forceLayoutWithPageWidthRange(minPageWidth, maxPageWidth, flag);
 }
 
-- (void)sendResizeEvent
-{
-    m_frame->sendResizeEvent();
-}
-
 - (void)sendScrollEvent
 {
     m_frame->sendScrollEvent();

@@ -2726,20 +2726,8 @@ static void _updateActiveStateTimerCallback(CFRunLoopTimerRef timer, void *info)
     }
     _private->needsLayout = NO;
     
-    if (!_private->printing) {
-        // get size of the containing dynamic scrollview, so
-        // appearance and disappearance of scrollbars will not show up
-        // as a size change
-        NSSize newLayoutFrameSize = [[[self superview] superview] frame].size;
-        if (_private->laidOutAtLeastOnce && !NSEqualSizes(_private->lastLayoutFrameSize, newLayoutFrameSize)) {
-            [[self _bridge] sendResizeEvent];
-            if ([[self _bridge] needsLayout])
-                [[self _bridge] forceLayoutAdjustingViewSize:NO];
-        }
-        _private->laidOutAtLeastOnce = YES;
+    if (!_private->printing)
         _private->lastLayoutSize = [(NSClipView *)[self superview] documentVisibleRect].size;
-        _private->lastLayoutFrameSize = newLayoutFrameSize;
-    }
 
 #ifdef _KWQ_TIMING        
     double thisTime = CFAbsoluteTimeGetCurrent() - start;

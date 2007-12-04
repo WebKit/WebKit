@@ -1,3 +1,12 @@
+2007-12-03  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        - fix <rdar://problem/5346452> Resize event doesn't fire on body element inside a frame
+
+        * WebView/webkitwebview.cpp: Remove the call to sendResizeEvent() since
+        FrameView sends it now.
+
 2007-12-03  Alp Toker  <alp@atoker.com>
 
         globalObject() GTK+ build fix.
