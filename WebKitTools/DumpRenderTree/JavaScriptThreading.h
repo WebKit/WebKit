@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2006, 2007 Apple, Inc.  All rights reserved.
+ * Copyright (C) 2005, 2006, 2007 Apple Inc. All rights reserved.
  *           (C) 2007 Graham Dennis (graham.dennis@gmail.com)
  *           (C) 2007 Eric Seidel <eric@webkit.org>
  *
@@ -28,8 +28,13 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#ifndef JavaScriptThreading_h
+#define JavaScriptThreading_h
+
 /* These functions start/stop threads used to abuse the JavaScript interpreter
  and assure that our JS implementation remains threadsafe */
 
 void startJavaScriptThreads();
 void stopJavaScriptThreads();
+
+#endif // JavaScriptThreading_h

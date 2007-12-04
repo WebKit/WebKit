@@ -1,3 +1,24 @@
+2007-12-03  Sam Weinig  <sam@webkit.org>
+
+        Move JavaScriptCore thread testing code to pthread specific directory
+        and remove the dependance on CoreFoundation by using WTF::HashSet.
+
+        Reviewed by Geoff and Oliver.
+
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj:
+        * DumpRenderTree/ForwardingHeaders/wtf/HashMap.h: Added.
+        * DumpRenderTree/ForwardingHeaders/wtf/HashSet.h: Added.
+        * DumpRenderTree/ForwardingHeaders/wtf/Vector.h: Added.
+        * DumpRenderTree/JavaScriptThreading.h: Copied from DumpRenderTree/mac/JavaScriptThreading.h.
+        * DumpRenderTree/mac/JavaScriptThreading.cpp: Removed.
+        * DumpRenderTree/mac/JavaScriptThreading.h: Removed.
+        * DumpRenderTree/pthreads: Added.
+        * DumpRenderTree/pthreads/JavaScriptThreadingPthreads.cpp: Copied from DumpRenderTree/mac/JavaScriptThreading.cpp.
+        (javaScriptThreads):
+        (runJavaScriptThread):
+        (startJavaScriptThreads):
+        (stopJavaScriptThreads):
+
 2007-12-03  Andrew Bonventre  <andybons@google.com>
 
         Reviewed by Darin Adler.
