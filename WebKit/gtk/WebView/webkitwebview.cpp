@@ -47,6 +47,7 @@
 #include "InspectorClientGtk.h"
 #include "FrameLoader.h"
 #include "FrameView.h"
+#include "Editor.h"
 #include "PlatformKeyboardEvent.h"
 #include "PlatformWheelEvent.h"
 #include "SubstituteData.h"
@@ -74,6 +75,10 @@ enum {
     SCRIPT_ALERT,
     SCRIPT_CONFIRM,
     SCRIPT_PROMPT,
+    SELECT_ALL,
+    COPY_CLIPBOARD,
+    PASTE_CLIPBOARD,
+    CUT_CLIPBOARD,
     LAST_SIGNAL
 };
 
@@ -103,36 +108,33 @@ static gboolean webkit_web_view_key_event(GtkWidget* widget, GdkEventKey* event)
     Frame* frame = core(getFrameFromView(WEBKIT_WEB_VIEW(widget)));
     PlatformKeyboardEvent keyboardEvent(event);
 
-    if (frame->eventHandler()->keyEvent(keyboardEvent))
-        return TRUE;
+    if (!frame->eventHandler()->keyEvent(keyboardEvent) && event->type == GDK_KEY_PRESS)
+      {
+          FrameView* view = frame->view();
 
-    if (event->type != GDK_KEY_PRESS)
-        return FALSE;
+          /* FIXME: at the very least we should be using the same code than the
+             Windows port here, but our ScrollView file diverges enough to make
+             that impossible. A short term solution would be to unify ScrollViewWin
+             and ScrollViewGtk. Long-term ScrollView and FrameView should be
+             unified and used everywhere for scrollbars */
 
-    FrameView* view = frame->view();
+          switch (event->keyval) {
+          case GDK_Down:
+              view->scrollBy(0, LINE_STEP);
+              return TRUE;
+          case GDK_Up:
+              view->scrollBy(0, -LINE_STEP);
+              return TRUE;
+          case GDK_Right:
+              view->scrollBy(LINE_STEP, 0);
+              return TRUE;
+          case GDK_Left:
+              view->scrollBy(-LINE_STEP, 0);
+              return TRUE;
+          }
+      }
 
-    /* FIXME: at the very least we should be using the same code than the
-       Windows port here, but our ScrollView file diverges enough to make
-       that impossible. A short term solution would be to unify ScrollViewWin
-       and ScrollViewGtk. Long-term ScrollView and FrameView should be
-       unified and used everywhere for scrollbars */
-
-    switch (event->keyval) {
-    case (GDK_Down):
-        view->scrollBy(0, LINE_STEP);
-        return TRUE;
-    case (GDK_Up):
-        view->scrollBy(0, -LINE_STEP);
-        return TRUE;
-    case (GDK_Right):
-        view->scrollBy(LINE_STEP, 0);
-        return TRUE;
-    case (GDK_Left):
-        view->scrollBy(-LINE_STEP, 0);
-        return TRUE;
-    }
-
-    return FALSE;
+    return gtk_bindings_activate_event(GTK_OBJECT(widget), event);
 }
 
 static gboolean webkit_web_view_button_event(GtkWidget* widget, GdkEventButton* event)
@@ -360,6 +362,30 @@ static gboolean webkit_web_view_real_console_message(WebKitWebView* webView, con
     return TRUE;
 }
 
+static void webkit_web_view_real_select_all(WebKitWebView* webView)
+{
+    Frame* frame = core(getFrameFromView(webView));
+    frame->editor()->execCommand("SelectAll");
+}
+
+static void webkit_web_view_real_cut_clipboard(WebKitWebView* webView)
+{
+    Frame* frame = core(getFrameFromView(webView));
+    frame->editor()->execCommand("Cut");
+}
+
+static void webkit_web_view_real_copy_clipboard(WebKitWebView* webView)
+{
+    Frame* frame = core(getFrameFromView(webView));
+    frame->editor()->execCommand("Copy");
+}
+
+static void webkit_web_view_real_paste_clipboard(WebKitWebView* webView)
+{
+    Frame* frame = core(getFrameFromView(webView));
+    frame->editor()->execCommand("Paste");
+}
+
 static void webkit_web_view_finalize(GObject* object)
 {
     webkit_web_view_stop_loading(WEBKIT_WEB_VIEW(object));
@@ -375,6 +401,8 @@ static void webkit_web_view_finalize(GObject* object)
 
 static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
 {
+    GtkBindingSet* binding_set;
+
     g_type_class_add_private(webViewClass, sizeof(WebKitWebViewPrivate));
 
     /*
@@ -590,6 +618,73 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
             G_TYPE_BOOLEAN, 4,
             G_TYPE_OBJECT, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_POINTER);
 
+    /**
+     * WebKitWebView::select-all:
+     * @web_view: the object which received the signal
+     *
+     * The ::select-all signal is a keybinding signal which gets emitted to
+     * select the complete contents of the text view.
+     *
+     * The default bindings for this signal is Ctrl-a.
+     */
+    webkit_web_view_signals[SELECT_ALL] = g_signal_new("select_all",
+            G_TYPE_FROM_CLASS(webViewClass),
+            (GSignalFlags)(G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION),
+            G_STRUCT_OFFSET(WebKitWebViewClass, select_all),
+            NULL, NULL,
+            g_cclosure_marshal_VOID__VOID,
+            G_TYPE_NONE, 0);
+
+    /**
+     * WebKitWebView::cut-clipboard:
+     * @web_view: the object which received the signal
+     *
+     * The ::cut-clipboard signal is a keybinding signal which gets emitted to
+     * cut the selection to the clipboard.
+     *
+     * The default bindings for this signal are Ctrl-x and Shift-Delete.
+     */
+    webkit_web_view_signals[CUT_CLIPBOARD] = g_signal_new("cut_clipboard",
+            G_TYPE_FROM_CLASS(webViewClass),
+            (GSignalFlags)(G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION),
+            G_STRUCT_OFFSET(WebKitWebViewClass, cut_clipboard),
+            NULL, NULL,
+            g_cclosure_marshal_VOID__VOID,
+            G_TYPE_NONE, 0);
+
+    /**
+     * WebKitWebView::copy-clipboard:
+     * @web_view: the object which received the signal
+     *
+     * The ::copy-clipboard signal is a keybinding signal which gets emitted to
+     * copy the selection to the clipboard.
+     *
+     * The default bindings for this signal are Ctrl-c and Ctrl-Insert.
+     */
+    webkit_web_view_signals[COPY_CLIPBOARD] = g_signal_new("copy_clipboard",
+            G_TYPE_FROM_CLASS(webViewClass),
+            (GSignalFlags)(G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION),
+            G_STRUCT_OFFSET(WebKitWebViewClass, copy_clipboard),
+            NULL, NULL,
+            g_cclosure_marshal_VOID__VOID,
+            G_TYPE_NONE, 0);
+
+    /**
+     * WebKitWebView::paste-clipboard:
+     * @web_view: the object which received the signal
+     *
+     * The ::paste-clipboard signal is a keybinding signal which gets emitted to
+     * paste the contents of the clipboard into the Web view.
+     *
+     * The default bindings for this signal are Ctrl-v and Shift-Insert.
+     */
+    webkit_web_view_signals[PASTE_CLIPBOARD] = g_signal_new("paste_clipboard",
+            G_TYPE_FROM_CLASS(webViewClass),
+            (GSignalFlags)(G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION),
+            G_STRUCT_OFFSET(WebKitWebViewClass, paste_clipboard),
+            NULL, NULL,
+            g_cclosure_marshal_VOID__VOID,
+            G_TYPE_NONE, 0);
 
     /*
      * implementations of virtual methods
@@ -602,6 +697,10 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
     webViewClass->script_confirm = webkit_web_view_real_script_confirm;
     webViewClass->script_prompt = webkit_web_view_real_script_prompt;
     webViewClass->console_message = webkit_web_view_real_console_message;
+    webViewClass->select_all = webkit_web_view_real_select_all;
+    webViewClass->cut_clipboard = webkit_web_view_real_cut_clipboard;
+    webViewClass->copy_clipboard = webkit_web_view_real_copy_clipboard;
+    webViewClass->paste_clipboard = webkit_web_view_real_paste_clipboard;
 
     G_OBJECT_CLASS(webViewClass)->finalize = webkit_web_view_finalize;
 
@@ -633,6 +732,31 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
             webkit_marshal_VOID__OBJECT_OBJECT,
             G_TYPE_NONE, 2,
             GTK_TYPE_ADJUSTMENT, GTK_TYPE_ADJUSTMENT);
+
+    /*
+     * Key bindings
+     */
+
+    binding_set = gtk_binding_set_by_class(webViewClass);
+
+    gtk_binding_entry_add_signal(binding_set, GDK_a, GDK_CONTROL_MASK,
+                                 "select_all", 0);
+
+    /* Cut/copy/paste */
+
+    gtk_binding_entry_add_signal(binding_set, GDK_x, GDK_CONTROL_MASK,
+                                 "cut_clipboard", 0);
+    gtk_binding_entry_add_signal(binding_set, GDK_c, GDK_CONTROL_MASK,
+                                 "copy_clipboard", 0);
+    gtk_binding_entry_add_signal(binding_set, GDK_v, GDK_CONTROL_MASK,
+                                 "paste_clipboard", 0);
+
+    gtk_binding_entry_add_signal(binding_set, GDK_Delete, GDK_SHIFT_MASK,
+                                 "cut_clipboard", 0);
+    gtk_binding_entry_add_signal(binding_set, GDK_Insert, GDK_CONTROL_MASK,
+                                 "copy_clipboard", 0);
+    gtk_binding_entry_add_signal(binding_set, GDK_Insert, GDK_SHIFT_MASK,
+                                 "paste_clipboard", 0);
 }
 
 static void webkit_web_view_init(WebKitWebView* webView)
@@ -643,6 +767,7 @@ static void webkit_web_view_init(WebKitWebView* webView)
     Settings* settings = webViewData->corePage->settings();
     settings->setLoadsImagesAutomatically(true);
     settings->setMinimumFontSize(5);
+    settings->setDOMPasteAllowed(true);
     settings->setMinimumLogicalFontSize(5);
     settings->setShouldPrintBackgrounds(true);
     settings->setJavaScriptEnabled(true);

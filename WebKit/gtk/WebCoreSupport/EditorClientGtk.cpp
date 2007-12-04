@@ -285,23 +285,11 @@ void EditorClient::handleKeypress(KeyboardEvent* event)
                     frame->editor()->insertText(kevent->text(), event);
                 } else if (kevent->ctrlKey()) {
                     switch (kevent->WindowsKeyCode()) {
-                        case VK_A:
-                            frame->editor()->execCommand("SelectAll");
-                            break;
                         case VK_B:
                             frame->editor()->execCommand("ToggleBold");
                             break;
-                        case VK_C:
-                            frame->editor()->execCommand("Copy");
-                            break;
                         case VK_I:
                             frame->editor()->execCommand("ToggleItalic");
-                            break;
-                        case VK_V:
-                            frame->editor()->execCommand("Paste");
-                            break;
-                        case VK_X:
-                            frame->editor()->execCommand("Cut");
                             break;
                         case VK_Y:
                             frame->editor()->execCommand("Redo");
@@ -337,18 +325,7 @@ void EditorClient::handleKeypress(KeyboardEvent* event)
                     frame->editor()->execCommand("MoveToEndOfDocument");
                 break;
             default:
-                if (kevent->ctrlKey()) {
-                    switch(kevent->WindowsKeyCode()) {
-                        case VK_A:
-                            frame->editor()->execCommand("SelectAll");
-                            break;
-                        case VK_C: case VK_X:
-                            frame->editor()->execCommand("Copy");
-                            break;
-                        default:
-                            return;
-                    }
-                } else return;
+                return;
         }
     }
     event->setDefaultHandled();

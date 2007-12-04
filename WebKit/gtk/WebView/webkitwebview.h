@@ -78,6 +78,10 @@ struct _WebKitWebViewClass {
     gboolean (*script_confirm) (WebKitWebView* web_view, WebKitWebFrame* frame, const gchar* confirm_message, gboolean* did_confirm);
     gboolean (*script_prompt) (WebKitWebView* web_view, WebKitWebFrame* frame, const gchar* message, const gchar* default_value, gchar** value);
     gboolean (*console_message) (WebKitWebView* web_view, const gchar* message, unsigned int line_number, const gchar* source_id);
+    void (*select_all) (WebKitWebView* web_view);
+    void (*cut_clipboard) (WebKitWebView* web_view);
+    void (*copy_clipboard) (WebKitWebView* web_view);
+    void (*paste_clipboard) (WebKitWebView* web_view);
 
     /*
      * internal

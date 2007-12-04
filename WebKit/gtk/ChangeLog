@@ -1,3 +1,18 @@
+2007-12-04  Luca Bruno  <lethalman88@gmail.com>
+
+        Reviewed by Alp Toker.
+
+        http://bugs.webkit.org/show_bug.cgi?id=15911
+        [GTK] Use GtkBindingSet to make key bindings user-configurable
+
+        This patch doesn't cover the full range of bindings, only the ones
+        that seem obviously correct and have clear public API.
+
+        * WebCoreSupport/EditorClientGtk.cpp:
+        (WebKit::EditorClient::handleKeypress): do not handle clipboard operations and select-all
+        * WebView/webkitwebview.cpp: add cut, copy, paste and select-all signals and allow binding sets (issue #15911 and #16144)
+        * WebView/webkitwebview.h:
+
 2007-12-04  Xan Lopez  <xan@gnome.org>
 
         Reviewed by Alp Toker.
