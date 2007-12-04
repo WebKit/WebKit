@@ -3740,12 +3740,7 @@ static WebFrameView *containingFrameView(NSView *view)
 #ifdef BUILDING_ON_TIGER
     // Don't use a big Foundation disk cache on Tiger because, according to the 
     // PLT, the Foundation disk cache on Tiger is slower than the network. 
-    nsurlCacheDiskCapacity = [[NSURLCache sharedURLCache] diskCapacity];
-#else
-    // Don't use a big Foundation disk cache on older versions of Leopard because
-    // doing so causes a SPOD on launch (<rdar://problem/5465260>).
-    if (NSVersionOfRunTimeLibrary("CFNetwork") < WEBKIT_FIRST_CFNETWORK_VERSION_WITH_LARGE_DISK_CACHE_FIX)
-        nsurlCacheDiskCapacity = [[NSURLCache sharedURLCache] diskCapacity];
+    nsurlCacheDiskCapacity = [nsurlCache diskCapacity];
 #endif
 
     // Don't shrink a big disk cache, since that would cause churn.

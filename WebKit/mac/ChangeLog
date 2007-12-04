@@ -1,3 +1,14 @@
+2007-12-04  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        Remove a check for early versions of Leopard CFNetwork now that
+        Leopard has shipped.
+
+        * Misc/WebKitVersionChecks.h: Remove WEBKIT_FIRST_CFNETWORK_VERSION_WITH_LARGE_DISK_CACHE_FIX.
+        * WebView/WebView.mm:
+        (+[WebView _setCacheModel:]): Remove the early Leopard CFNetwork check.
+
 2007-12-04  Kevin Decker  <kdecker@apple.com>
 
         Reviewed by Darin.
