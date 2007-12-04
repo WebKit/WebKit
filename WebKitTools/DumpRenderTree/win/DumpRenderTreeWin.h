@@ -45,6 +45,9 @@
 #undef _WINSOCKAPI_
 #define _WINSOCKAPI_ // Prevent inclusion of winsock.h in windows.h
 
+// FIXME: we should add a config.h file for DumpRenderTree.
+#define WTF_PLATFORM_CF 1
+
 struct IWebFrame;
 struct IWebPolicyDelegate;
 typedef struct HWND__* HWND;

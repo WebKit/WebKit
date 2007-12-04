@@ -1,3 +1,11 @@
+2007-12-04  Sam Weinig  <sam@webkit.org>
+
+        Define CF as platform for windows.
+
+        Reviewed by Adam Roben.
+
+        * DumpRenderTree/win/DumpRenderTreeWin.h:
+
 2007-12-04  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Adam and Darin.
