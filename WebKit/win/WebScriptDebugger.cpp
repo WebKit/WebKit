@@ -125,7 +125,6 @@ bool WebScriptDebugger::atStatement(ExecState*, int sourceId, int firstLine, int
 
     m_callingServer = true;
 
-
     WebScriptDebugServer::sharedWebScriptDebugServer()->willExecuteStatement(m_webView.get(), m_topStackFrame.get(), sourceId, firstLine, m_frame);
 
     m_callingServer = false;
@@ -176,6 +175,5 @@ void WebScriptDebugger::leaveFrame()
     if (FAILED(m_topStackFrame->caller(&caller)))
         return;
 
-    if (caller)
-        m_topStackFrame = caller;
+    m_topStackFrame = caller;
 }

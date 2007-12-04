@@ -1,3 +1,15 @@
+2007-12-04  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Adam and Darin.
+
+        - Fixed a crasher where the top of the stack was not updated correctly.
+        And set the eol style on IWebScriptCallFrame.idl file.
+
+        * Interfaces/IWebScriptCallFrame.idl:
+        * WebScriptDebugger.cpp:
+        (WebScriptDebugger::atStatement):
+        (WebScriptDebugger::leaveFrame):
+
 2007-11-27  Adam Roben  <aroben@apple.com>
 
         Hook up the authorAndUserStylesEnabled preference

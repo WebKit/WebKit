@@ -1,3 +1,12 @@
+2007-12-04  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Adam and Darin.
+
+        - Removed a needless BSTR cleanup.
+
+        * Drosera/win/DebuggerDocumentPlatform.cpp:
+        (DebuggerDocument::getPlatformCurrentFunctionStack):
+
 2007-11-27  Adam Roben  <aroben@apple.com>
 
         Fix <rdar://5614497> setAuthorAndUserStylesEnabled is not implemented in DRT
