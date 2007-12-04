@@ -965,7 +965,7 @@ function switchFunction(index, shouldResetPopup)
     var selectedFunction = functionSelect.childNodes[index];
     var selection = sourcesFrame.getSelection();
     var currentFunction = selectedFunction.value;     
-    var currentFunctionElement = sourcesFrame.contentDocument.getElementById(currentFunction);
+    var currentFunctionElement = sourcesFrame.document.getElementById(currentFunction);
     
     functionSelect.blur();
     sourcesFrame.focus();

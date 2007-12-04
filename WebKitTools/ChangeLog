@@ -1,3 +1,13 @@
+2007-12-03  Andrew Bonventre  <andybons@google.com>
+
+        Reviewed by Darin Adler.
+
+        * Drosera/debugger.js: Fixed javascript error where document property
+        should have been used instead of contentDocument in switchFunction that
+        was breaking the select symbol dropdown menu.  This is because
+        window.frames will return a Window object and not a frame object like
+        the author was originally expecting.
+
 2007-12-03  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Adam.
