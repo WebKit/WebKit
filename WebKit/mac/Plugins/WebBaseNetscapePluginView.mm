@@ -561,7 +561,8 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
 #endif /* NP_NO_QUICKDRAW */
 
         case NPDrawingModelCoreGraphics: {            
-            ASSERT([NSView focusView] == self);
+            // A CoreGraphics plugin's window may only be set while the plugin view is being updated
+            ASSERT(forUpdate && [NSView focusView] == self);
 
             CGContextRef context = static_cast<CGContextRef>([[NSGraphicsContext currentContext] graphicsPort]);
 
@@ -594,7 +595,8 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
         }
 
         case NPDrawingModelOpenGL: {
-            ASSERT([NSView focusView] == self);
+            // An OpenGL plugin's window may only be set while the plugin view is being updated
+            ASSERT(forUpdate && [NSView focusView] == self);
 
             // Clear the "current" window and context -- they will be assigned below (if all goes well)
             nPort.aglPort.window = NULL;
@@ -1192,21 +1194,22 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
 
 - (void)updateAndSetWindow
 {
+    if (drawingModel == NPDrawingModelCoreGraphics || drawingModel == NPDrawingModelOpenGL) {
+        // Can only update CoreGraphics and OpenGL plugins while redrawing the plugin view
+        [self setNeedsDisplay:YES];
+        return;
+    }
+    
     // Can't update the plugin if it has not started (or has been stopped)
     if (!isStarted)
         return;
-
-    BOOL needsFocus = [NSView focusView] != self;
-    if (needsFocus)
-        [self lockFocus];    
+        
     PortState portState = [self saveAndSetNewPortState];
     if (portState) {
         [self setWindowIfNecessary];
         [self restorePortState:portState];
         free(portState);
     }
-    if (needsFocus)
-        [self unlockFocus];
 }
 
 - (void)setWindowIfNecessary
