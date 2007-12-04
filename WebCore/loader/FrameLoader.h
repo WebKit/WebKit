@@ -201,7 +201,6 @@ namespace WebCore {
         void didReceiveData(ResourceLoader*, const char*, int, int lengthReceived);
         void didFinishLoad(ResourceLoader*);
         void didFailToLoad(ResourceLoader*, const ResourceError&);
-        bool privateBrowsingEnabled() const;
         const ResourceRequest& originalRequest() const;
         const ResourceRequest& initialRequest() const;
         void receivedMainResourceError(const ResourceError&, bool isComplete);
@@ -393,12 +392,7 @@ namespace WebCore {
         void cancelAndClear();
 
         void setTitle(const String&);
-        void dispatchDidChangeLocationWithinPage();
         
-        void dispatchDidFinishLoadToClient();
-        void updateGlobalHistoryForStandardLoad(const KURL&);
-        void updateGlobalHistoryForReload(const KURL&);
-        bool shouldGoToHistoryItem(HistoryItem*) const;
         bool shouldTreatURLAsSameAsCurrent(const KURL&) const;
 
         void commitProvisionalLoad(PassRefPtr<CachedPage>);
@@ -647,6 +641,10 @@ namespace WebCore {
         
         bool m_didPerformFirstNavigation;
 
+#ifndef NDEBUG
+        bool m_didDispatchDidCommitLoad;
+#endif
+
 #if USE(LOW_BANDWIDTH_DISPLAY)
         // whether to use low bandwidth dislay, set by client
         bool m_useLowBandwidthDisplay;
@@ -660,7 +658,7 @@ namespace WebCore {
         
         String m_pendingSourceInLowBandwidthDisplay;        
         HashSet<CachedResource*> m_externalRequestsInLowBandwidthDisplay;
-#endif   
+#endif
     };
 
 }

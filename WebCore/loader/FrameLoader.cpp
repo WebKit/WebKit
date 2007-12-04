@@ -253,6 +253,9 @@ FrameLoader::FrameLoader(Frame* frame, FrameLoaderClient* client)
     , m_isDisplayingInitialEmptyDocument(false)
     , m_committedFirstRealDocumentLoad(false)
     , m_didPerformFirstNavigation(false)
+#ifndef NDEBUG
+    , m_didDispatchDidCommitLoad(false)
+#endif
 #if USE(LOW_BANDWIDTH_DISPLAY)
     , m_useLowBandwidthDisplay(true)
     , m_finishedParsingDuringLowBandwidthDisplay(false)
@@ -2650,11 +2653,6 @@ void FrameLoader::transitionToCommitted(PassRefPtr<CachedPage> cachedPage)
     }
 }
 
-bool FrameLoader::privateBrowsingEnabled() const
-{
-    return m_client->privateBrowsingEnabled();
-}
-
 void FrameLoader::clientRedirectCancelledOrFinished(bool cancelWithLoadInProgress)
 {
     // Note that -webView:didCancelClientRedirectForFrame: is called on the frame load delegate even if
@@ -2968,6 +2966,10 @@ void FrameLoader::checkLoadCompleteForThisFrame()
                 return;
 
             const ResourceError& error = dl->mainDocumentError();
+#ifndef NDEBUG
+            ASSERT(m_didDispatchDidCommitLoad);
+            m_didDispatchDidCommitLoad = false;
+#endif
             if (!error.isNull())
                 m_client->dispatchDidFailLoad(error);
             else
@@ -3194,31 +3196,6 @@ void FrameLoader::detachFromParent()
     [m_frame->bridge() close];
 #endif
     m_client->detachedFromParent4();
-}
-
-void FrameLoader::dispatchDidChangeLocationWithinPage()
-{
-    m_client->dispatchDidChangeLocationWithinPage();
-}
-
-void FrameLoader::dispatchDidFinishLoadToClient()
-{
-    m_client->didFinishLoad();
-}
-
-void FrameLoader::updateGlobalHistoryForStandardLoad(const KURL& url)
-{
-    m_client->updateGlobalHistoryForStandardLoad(url);
-}
-
-void FrameLoader::updateGlobalHistoryForReload(const KURL& url)
-{
-    m_client->updateGlobalHistoryForReload(url);
-}
-
-bool FrameLoader::shouldGoToHistoryItem(HistoryItem* item) const
-{
-    return m_client->shouldGoToHistoryItem(item);
 }
 
 void FrameLoader::addExtraFieldsToRequest(ResourceRequest& request, bool mainResource, bool alwaysFromRequest)
@@ -3448,7 +3425,7 @@ void FrameLoader::continueFragmentScrollAfterNavigationPolicy(const ResourceRequ
         // we'll not go through a real load and reach Completed state.
         checkLoadComplete();
  
-    dispatchDidChangeLocationWithinPage();
+    m_client->dispatchDidChangeLocationWithinPage();
     m_client->didFinishLoad();
 }
 
@@ -4017,10 +3994,10 @@ void FrameLoader::loadItem(HistoryItem* item, FrameLoadType loadType)
         // be necessary if we do the better fix described above.
         documentLoader()->replaceRequestURLForAnchorScroll(itemURL);
 
-        dispatchDidChangeLocationWithinPage();
+        m_client->dispatchDidChangeLocationWithinPage();
         
         // FrameLoaderClient::didFinishLoad() tells the internal load delegate the load finished with no error
-        dispatchDidFinishLoadToClient();
+        m_client->didFinishLoad();
     } else {
         // Remember this item so we can traverse any child items as child frames load
         m_provisionalHistoryItem = item;
@@ -4133,7 +4110,7 @@ void FrameLoader::goToItem(HistoryItem* targetItem, FrameLoadType type)
     // Ultimately, history item navigations should go through the policy delegate. That's covered in:
     // <rdar://problem/3979539> back/forward cache navigations should consult policy delegate
     if (Page* page = m_frame->page())
-        if (shouldGoToHistoryItem(targetItem)) {
+        if (m_client->shouldGoToHistoryItem(targetItem)) {
             BackForwardList* bfList = page->backForwardList();
             HistoryItem* currentItem = bfList->currentItem();
             
@@ -4222,9 +4199,9 @@ bool FrameLoader::childFramesMatchItem(HistoryItem* item) const
 
 void FrameLoader::addHistoryForCurrentLocation()
 {
-    if (!privateBrowsingEnabled()) {
+    if (!m_frame->settings()->privateBrowsingEnabled()) {
         // FIXME: <rdar://problem/4880065> - This will be a hook into the WebCore global history, and this loader/client call will be removed
-        updateGlobalHistoryForStandardLoad(documentLoader()->urlForHistory());
+        m_client->updateGlobalHistoryForStandardLoad(documentLoader()->urlForHistory());
     }
     addBackForwardItemClippedAtTarget(true);
 }
@@ -4302,7 +4279,7 @@ void FrameLoader::updateHistoryForReload()
     
     // FIXME: <rdar://problem/4880065> - This will be a hook into the WebCore global history, and this loader/client call will be removed
     // Update the last visited time. Mostly interesting for URL autocompletion statistics.
-    updateGlobalHistoryForReload(documentLoader()->originalURL());
+    m_client->updateGlobalHistoryForReload(documentLoader()->originalURL());
 }
 
 void FrameLoader::updateHistoryForRedirectWithLockedHistory()
@@ -4656,6 +4633,11 @@ bool FrameLoader::shouldTreatSchemeAsLocal(const String& scheme)
 
 void FrameLoader::dispatchDidCommitLoad()
 {
+#ifndef NDEBUG
+    ASSERT(!m_didDispatchDidCommitLoad);
+    m_didDispatchDidCommitLoad = true;
+#endif
+
     m_client->dispatchDidCommitLoad();
 
     if (Page* page = m_frame->page())

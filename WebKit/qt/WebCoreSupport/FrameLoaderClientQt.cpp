@@ -159,13 +159,6 @@ void FrameLoaderClientQt::invalidateCurrentItemPageCache()
 }
 
 
-bool FrameLoaderClientQt::privateBrowsingEnabled() const
-{
-    notImplemented();
-    return false;
-}
-
-
 void FrameLoaderClientQt::makeDocumentView()
 {
 //    qDebug() << "FrameLoaderClientQt::makeDocumentView" << m_frame->document();

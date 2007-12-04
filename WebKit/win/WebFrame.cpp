@@ -1493,15 +1493,6 @@ bool WebFrame::hasFrameView() const
     return !!d->frameView();
 }
 
-bool WebFrame::privateBrowsingEnabled() const
-{
-    BOOL privateBrowsingEnabled = FALSE;
-    COMPtr<IWebPreferences> preferences;
-    if (SUCCEEDED(d->webView->preferences(&preferences)))
-        preferences->privateBrowsingEnabled(&privateBrowsingEnabled);
-    return !!privateBrowsingEnabled;
-}
-
 void WebFrame::makeDocumentView()
 {
     ASSERT(core(this));

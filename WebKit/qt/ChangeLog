@@ -1,3 +1,10 @@
+2007-12-04  Darin Adler  <darin@apple.com>
+
+        Reviewed by Kevin Decker.
+
+        * WebCoreSupport/FrameLoaderClientQt.cpp: Removed obsolete privateBrowsingEnabled.
+        * WebCoreSupport/FrameLoaderClientQt.h: Ditto.
+
 2007-12-04  Holger Hans Peter Freyther <holger.freyther@trolltech.com>
 
         Reviewed by Simon.

@@ -80,8 +80,6 @@ namespace WebCore {
         virtual bool loadProvisionalItemFromPageCache();
         virtual void invalidateCurrentItemPageCache();
 
-        virtual bool privateBrowsingEnabled() const;
-
         virtual void makeDocumentView();
         virtual void makeRepresentation(DocumentLoader*);
         virtual void forceLayout();

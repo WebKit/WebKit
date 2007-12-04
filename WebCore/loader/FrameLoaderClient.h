@@ -78,8 +78,6 @@ namespace WebCore {
 
         virtual bool hasHTMLView() const { return true; }
 
-        virtual bool privateBrowsingEnabled() const = 0;
-
         virtual void makeDocumentView() = 0;
         virtual void makeRepresentation(DocumentLoader*) = 0;
         virtual void setDocumentViewFromCachedPage(CachedPage*) = 0;

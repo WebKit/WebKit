@@ -147,11 +147,6 @@ bool WebFrameLoaderClient::hasFrameView() const
     return m_webFrame->_private->webFrameView != nil;
 }
 
-bool WebFrameLoaderClient::privateBrowsingEnabled() const
-{
-    return [[getWebView(m_webFrame.get()) preferences] privateBrowsingEnabled];
-}
-
 void WebFrameLoaderClient::makeDocumentView()
 {
     WebFrameView *v = m_webFrame->_private->webFrameView;

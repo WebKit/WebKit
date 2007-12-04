@@ -1,3 +1,40 @@
+2007-12-04  Darin Adler  <darin@apple.com>
+
+        Reviewed by Kevin Decker.
+
+        - added an assertion for a situation that leads to a Safari assertion:
+          a commit that is not followed by a load completion
+
+        - removed some unneeded FrameLoader stuff -- maybe some day we'll get this
+          class cut down to size
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::FrameLoader): Added boolean for assertion.
+        (WebCore::FrameLoader::checkLoadCompleteForThisFrame): Added code to assert
+        that we already sent a commit before sending a complete.
+        (WebCore::FrameLoader::continueFragmentScrollAfterNavigationPolicy): Call
+        client directly instead of indirecting through a function.
+        (WebCore::FrameLoader::loadItem): Ditto.
+        (WebCore::FrameLoader::goToItem): Ditto.
+        (WebCore::FrameLoader::addHistoryForCurrentLocation): Get the private browsing
+        state from Settings instead of FrameLoaderClient. Also call client directly
+        instead of indirecting through a function.
+        (WebCore::FrameLoader::updateHistoryForReload): Call client directly instead
+        of indirecting through a function.
+        (WebCore::FrameLoader::dispatchDidCommitLoad): Added code to assert
+        that we did not yet send a commit and set the flag that will be used to check
+        that we don't do this twice in a row without an intervening completion call.
+
+        * loader/FrameLoader.h: Added a boolean for the assertion. Removed six
+        now-unneeded functions.
+
+        * loader/FrameLoaderClient.h: Removed now-unneeded privateBrowsingEnabled function.
+
+        * loader/ResourceLoader.cpp: (WebCore::ResourceLoader::willCacheResponse): Get
+        the private browsing state from Settings instead of FrameLoaderClient.
+
+        * svg/graphics/SVGImageEmptyClients.h: Removed obsolete privateBrowsingEnabled.
+
 2007-12-03  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Adele.

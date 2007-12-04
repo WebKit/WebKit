@@ -1,3 +1,10 @@
+2007-12-04  Darin Adler  <darin@apple.com>
+
+        Reviewed by Kevin Decker.
+
+        * WebFrame.cpp: Removed obsolete privateBrowsingEnabled.
+        * WebFrame.h: Ditto.
+
 2007-12-04  Adam Roben  <aroben@apple.com>
 
         Windows build fix

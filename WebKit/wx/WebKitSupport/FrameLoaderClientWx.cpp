@@ -131,13 +131,6 @@ bool FrameLoaderClientWx::provisionalItemIsTarget() const
 }
 
 
-bool FrameLoaderClientWx::privateBrowsingEnabled() const
-{
-    notImplemented();
-    return false;
-}
-
-
 void FrameLoaderClientWx::makeDocumentView()
 {
     notImplemented();

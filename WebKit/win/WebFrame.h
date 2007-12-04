@@ -229,7 +229,6 @@ public:
     virtual void frameLoaderDestroyed();
     virtual bool hasWebView() const;
     virtual bool hasFrameView() const;
-    virtual bool privateBrowsingEnabled() const;
     virtual void makeDocumentView();
     virtual void makeRepresentation(WebCore::DocumentLoader*);
     virtual void forceLayout();

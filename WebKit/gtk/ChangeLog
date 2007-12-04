@@ -1,3 +1,10 @@
+2007-12-04  Darin Adler  <darin@apple.com>
+
+        Reviewed by Kevin Decker.
+
+        * WebCoreSupport/FrameLoaderClientGtk.cpp: Removed obsolete privateBrowsingEnabled.
+        * WebCoreSupport/FrameLoaderClientGtk.h: Ditto.
+
 2007-12-04  Michael Natterer  <mitch@imendio.com>
 
         Reviewed by Alp Toker.

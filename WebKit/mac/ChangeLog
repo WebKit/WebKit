@@ -1,3 +1,11 @@
+2007-12-04  Darin Adler  <darin@apple.com>
+
+        Reviewed by Kevin Decker.
+
+        * WebCoreSupport/WebFrameLoaderClient.h: Removed obsolete privateBrowsingEnabled.
+        * WebCoreSupport/WebFrameLoaderClient.mm: Ditto.
+        * WebKit.order: Ditto.
+
 2007-12-03  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Dave Hyatt.

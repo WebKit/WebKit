@@ -128,8 +128,6 @@ public:
     virtual bool hasWebView() const { return true; } // mainly for assertions
     virtual bool hasFrameView() const { return true; } // ditto
     
-    virtual bool privateBrowsingEnabled() const { return false; }
-    
     virtual void makeDocumentView() { }
     virtual void makeRepresentation(DocumentLoader*) { }
     virtual void forceLayout() { }
