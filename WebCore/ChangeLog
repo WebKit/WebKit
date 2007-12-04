@@ -1,3 +1,90 @@
+2007-12-04  Pierre-Luc Beaudoin  <pierre-luc.beaudoin@collabora.co.uk>
+
+        Reviewed by Alp Toker.
+
+        http://bugs.webkit.org/show_bug.cgi?id=16145
+        [gtk] Implement media support in GTK backend
+
+        This implements the media tags of HTML5 on the GTK+ port based on the 
+        Mac port. Media tests pass although some tests required a small modifications: 
+        As per the HTML5 spec, the loading of the clip should start only after 
+        all script are done.  But in the case of the tests, the loading starts 
+        before some callbacks get registered.  This has been discussed with 
+        Antti Koivisto, and the tests should be updated.
+
+        There is only one known issue: one time in 10 tries, loading a buffered 
+        clip will never end buffering.  The buffering will stall at 97% for no 
+        apparent reasons.  Reloading the page usually works around the problem.
+        On the GStreamer side, some codecs don't return correct values, therefore
+        they make the tests fail.  For instance H.264 will make the video-end 
+        test fail.  This should be fixed in GStreamer 0.10.15.
+
+        This version displays video in a pop up window.  A place holder is drawn
+        on the page where the video should appear.
+
+        By default, it is turned off in WebCore.pro until GStreamer/X
+        detection issues are sorted out.
+
+        * WebCore.pro:
+        Disable video for now
+        * platform/Logging.cpp:
+        (WebCore::):
+        * platform/Logging.h:
+        Added a logging level for Media stuff
+        * platform/graphics/Movie.cpp:
+        * platform/graphics/gtk/MoviePrivateGStreamer.cpp: Added.
+        (WebCore::moviePrivateErrorCallback):
+        (WebCore::moviePrivateEOSCallback):
+        (WebCore::moviePrivateStateCallback):
+        (WebCore::moviePrivateBufferingCallback):
+        (WebCore::moviePrivateWindowIDCallback):
+        (WebCore::MoviePrivate::MoviePrivate):
+        (WebCore::MoviePrivate::~MoviePrivate):
+        (WebCore::MoviePrivate::load):
+        (WebCore::MoviePrivate::play):
+        (WebCore::MoviePrivate::pause):
+        (WebCore::MoviePrivate::duration):
+        (WebCore::MoviePrivate::currentTime):
+        (WebCore::MoviePrivate::seek):
+        (WebCore::MoviePrivate::setEndTime):
+        (WebCore::MoviePrivate::addCuePoint):
+        (WebCore::MoviePrivate::removeCuePoint):
+        (WebCore::MoviePrivate::clearCuePoints):
+        (WebCore::MoviePrivate::startCuePointTimerIfNeeded):
+        (WebCore::MoviePrivate::cancelSeek):
+        (WebCore::MoviePrivate::cuePointTimerFired):
+        (WebCore::MoviePrivate::paused):
+        (WebCore::MoviePrivate::seeking):
+        (WebCore::MoviePrivate::naturalSize):
+        (WebCore::MoviePrivate::hasVideo):
+        (WebCore::MoviePrivate::setVolume):
+        (WebCore::MoviePrivate::setMuted):
+        (WebCore::MoviePrivate::setRate):
+        (WebCore::MoviePrivate::dataRate):
+        (WebCore::MoviePrivate::networkState):
+        (WebCore::MoviePrivate::readyState):
+        (WebCore::MoviePrivate::maxTimeBuffered):
+        (WebCore::MoviePrivate::maxTimeSeekable):
+        (WebCore::MoviePrivate::maxTimeLoaded):
+        (WebCore::MoviePrivate::bytesLoaded):
+        (WebCore::MoviePrivate::totalBytesKnown):
+        (WebCore::MoviePrivate::totalBytes):
+        (WebCore::MoviePrivate::cancelLoad):
+        (WebCore::MoviePrivate::updateStates):
+        (WebCore::MoviePrivate::loadStateChanged):
+        (WebCore::MoviePrivate::rateChanged):
+        (WebCore::MoviePrivate::sizeChanged):
+        (WebCore::MoviePrivate::timeChanged):
+        (WebCore::MoviePrivate::volumeChanged):
+        (WebCore::MoviePrivate::didEnd):
+        (WebCore::MoviePrivate::loadingFailed):
+        (WebCore::MoviePrivate::setRect):
+        (WebCore::MoviePrivate::setVisible):
+        (WebCore::MoviePrivate::paint):
+        (WebCore::MoviePrivate::getSupportedTypes):
+        (WebCore::MoviePrivate::createGSTPlayBin):
+        * platform/graphics/gtk/MoviePrivateGStreamer.h: Added.
+
 2007-12-04  Holger Hans Peter Freyther <holger.freyther@trolltech.com>
 
         Reviewed by Simon.

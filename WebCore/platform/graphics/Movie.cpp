@@ -33,6 +33,8 @@
 
 #if PLATFORM(MAC)
 #include "MoviePrivateQTKit.h"
+#elif PLATFORM(GTK)
+#include "MoviePrivateGStreamer.h"
 #endif
 
 namespace WebCore {

@@ -74,6 +74,7 @@ gtk-port:!contains(DEFINES, ENABLE_XSLT=.): DEFINES += ENABLE_XSLT=1
 #!contains(DEFINES, ENABLE_XBL=.): DEFINES += ENABLE_XBL=1
 qt-port: !contains(DEFINES, ENABLE_SVG=.): DEFINES += ENABLE_SVG=1
 gtk-port:DEFINES += ENABLE_SVG=1
+DEFINES += ENABLE_VIDEO=0
 
 DEFINES += WTF_CHANGES=1
 
@@ -1078,6 +1079,38 @@ contains(DEFINES, ENABLE_ICONDATABASE=1) {
 } else {
     SOURCES += \
         loader/icon/IconDatabaseNone.cpp
+}
+
+contains(DEFINES, ENABLE_VIDEO=1) {
+    FEATURE_DEFINES_JAVASCRIPT += ENABLE_VIDEO=1
+
+    IDL_BINDINGS += \
+        html/HTMLAudioElement.idl \
+        html/HTMLMediaElement.idl \
+        html/HTMLSourceElement.idl \
+        html/HTMLVideoElement.idl \
+        html/MediaError.idl \
+        html/TimeRanges.idl \
+        html/VoidCallback.idl 
+
+    SOURCES += \
+        html/HTMLAudioElement.cpp \
+        html/HTMLMediaElement.cpp \
+        html/HTMLSourceElement.cpp \
+        html/HTMLVideoElement.cpp \
+        html/TimeRanges.cpp \
+        platform/graphics/Movie.cpp \
+        rendering/RenderVideo.cpp \
+        rendering/RenderMedia.cpp \
+        bindings/js/JSHTMLAudioElementConstructor.cpp 
+
+    gtk-port {
+        SOURCES += \
+            platform/graphics/gtk/MoviePrivateGStreamer.cpp
+
+        PKGCONFIG += gstreamer-0.10 gstreamer-plugins-base-0.10 gnome-vfs-2.0
+        LIBS += -lgstinterfaces-0.10 -lgstbase-0.10 -lgstvideo-0.10
+    }
 }
 
 contains(DEFINES, ENABLE_XPATH=1) {
