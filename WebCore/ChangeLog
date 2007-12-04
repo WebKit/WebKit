@@ -1,3 +1,12 @@
+2007-12-04  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Darin.
+
+        Fix for <rdar://problem/5578209> REGRESSION: Crash in WebCore::DeprecatedValueListImpl::Private::copyList when going back on zoomerang.com/survey
+
+        * loader/FrameLoader.cpp: (WebCore::FrameLoader::scheduleHistoryNavigation):
+          When the new url is exactly the same as the old url, don't treat it like a fragment navigation, since its going to cause a reload.
+
 2007-12-04  Darin Adler  <darin@apple.com>
 
         Reviewed by Kevin Decker.
