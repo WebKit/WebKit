@@ -1,3 +1,11 @@
+2007-12-04  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by NOBODY (Build fix).
+
+        Fix gtk build.
+
+        * wtf/TCSystemAlloc.cpp:
+
 2007-12-03  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Mark Rowe and Geoff Garen.

@@ -41,10 +41,12 @@
 #if PLATFORM(WIN_OS)
 #include "windows.h"
 #else
+#include <errno.h>
 #include <unistd.h>
 #include <sys/mman.h>
 #endif
 #include <fcntl.h>
+#include "Assertions.h"
 #include "TCSystemAlloc.h"
 #include "TCSpinLock.h"
 
@@ -73,8 +75,15 @@ static size_t pagesize = 0;
 #ifndef WTF_CHANGES
 static bool use_devmem = false;
 #endif
+
+#if HAVE(SBRK)
 static bool use_sbrk = false;
+#endif
+
+#if HAVE(MMAP)
 static bool use_mmap = true;
+#endif 
+
 #if HAVE(VIRTUALALLOC)
 static bool use_VirtualAlloc = true;
 #endif
