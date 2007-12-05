@@ -34,9 +34,11 @@
 #import "PluginObject.h"
 
 // Mach-o entry points
-NPError NP_Initialize(NPNetscapeFuncs *browserFuncs);
-NPError NP_GetEntryPoints(NPPluginFuncs *pluginFuncs);
-void NP_Shutdown(void);
+extern "C" {
+    NPError NP_Initialize(NPNetscapeFuncs *browserFuncs);
+    NPError NP_GetEntryPoints(NPPluginFuncs *pluginFuncs);
+    void NP_Shutdown(void);
+}
 
 // Mach-o entry points
 NPError NP_Initialize(NPNetscapeFuncs *browserFuncs)

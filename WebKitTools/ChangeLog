@@ -1,5 +1,10 @@
 2007-12-05  Anders Carlsson  <andersca@apple.com>
 
+        Make the entry points extern "C".
+        * DumpRenderTree/TestNetscapePlugIn.subproj/main.cpp:
+        
+2007-12-05  Anders Carlsson  <andersca@apple.com>
+
         C++ warning fixes.
         
         * DumpRenderTree/TestNetscapePlugIn.subproj/main.cpp:
