@@ -76,9 +76,7 @@ ContextMenuItem::ContextMenuItem(ContextMenuItemType type, ContextMenuAction act
         m_platformDescription->fMask |= MIIM_STRING | MIIM_ID;
 
     m_platformDescription->fType = MFT_STRING;
-    
-    if (type == ActionType)
-        m_platformDescription->wID = action;
+    m_platformDescription->wID = action;
     
     String t = title;
     m_platformDescription->cch = t.length();

@@ -1,3 +1,17 @@
+2007-12-05  Adam Roben  <aroben@apple.com>
+
+        Set the menu item identifier for all menu items
+
+        This allows WebKit clients to distinguish between submenus in the
+        context menu.
+
+        Reviewed by Darin.
+
+        No test possible.
+
+        * platform/win/ContextMenuItemWin.cpp:
+        (WebCore::ContextMenuItem::ContextMenuItem):
+
 2007-12-05  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.
