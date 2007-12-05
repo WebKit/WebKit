@@ -288,6 +288,12 @@ public:
      virtual HRESULT STDMETHODCALLTYPE automaticallyDetectsCacheModel(
          /* [out, retval] */ BOOL* automaticallyDetectsCacheModel);
 
+    virtual HRESULT STDMETHODCALLTYPE defaultDatabaseQuota(
+        /* [retval][out] */ unsigned long long *quota);
+
+    virtual HRESULT STDMETHODCALLTYPE setDefaultDatabaseQuota( 
+        /* [in] */ unsigned long long quota);
+
     virtual HRESULT STDMETHODCALLTYPE setAuthorAndUserStylesEnabled(BOOL);
     virtual HRESULT STDMETHODCALLTYPE authorAndUserStylesEnabled(BOOL*);
 
@@ -321,9 +327,11 @@ protected:
     int integerValueForKey(CFStringRef key);
     BOOL boolValueForKey(CFStringRef key);
     float floatValueForKey(CFStringRef key);
+    LONGLONG longlongValueForKey(CFStringRef key);
     void setStringValue(CFStringRef key, LPCTSTR value);
     void setIntegerValue(CFStringRef key, int value);
     void setBoolValue(CFStringRef key, BOOL value);
+    void setLongLongValue(CFStringRef key, LONGLONG value);
     static WebPreferences* getInstanceForIdentifier(BSTR identifier);
     static void initializeDefaultSettings();
     void save();

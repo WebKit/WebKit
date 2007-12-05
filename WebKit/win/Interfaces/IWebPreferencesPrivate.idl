@@ -74,4 +74,7 @@ interface IWebPreferencesPrivate : IUnknown
 
     HRESULT setAuthorAndUserStylesEnabled([in] BOOL enabled);
     HRESULT authorAndUserStylesEnabled([out, retval] BOOL* enabled);
+
+    HRESULT defaultDatabaseQuota([out, retval] unsigned long long* quota);
+    HRESULT setDefaultDatabaseQuota([in] unsigned long long quota);
 }

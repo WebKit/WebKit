@@ -1,3 +1,21 @@
+2007-12-04  Ada Chan  <adachan@apple.com>
+
+        Provide API for setting the default storage quota per database origin
+
+        Reviewed by Jon.
+
+        * Interfaces/IWebPreferencesPrivate.idl: added SPI to get/set default database quota
+        * WebPreferenceKeysPrivate.h:
+        * WebPreferences.cpp:
+        (WebPreferences::initializeDefaultSettings): default database quota is 5MB
+        (WebPreferences::longlongValueForKey):
+        (WebPreferences::setLongLongValue):
+        (WebPreferences::defaultDatabaseQuota):
+        (WebPreferences::setDefaultDatabaseQuota):
+        * WebPreferences.h:
+        * WebView.cpp:
+        (WebView::notifyPreferencesChanged): propagate default database quota change to WebCore settings.
+
 2007-12-04  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Adam and Darin.
