@@ -103,7 +103,7 @@ static gboolean webkit_web_view_expose_event(GtkWidget* widget, GdkEventExpose* 
     return FALSE;
 }
 
-static gboolean webkit_web_view_key_event(GtkWidget* widget, GdkEventKey* event)
+static gboolean webkit_web_view_key_press_event(GtkWidget* widget, GdkEventKey* event)
 {
     Frame* frame = core(getFrameFromView(WEBKIT_WEB_VIEW(widget)));
     PlatformKeyboardEvent keyboardEvent(event);
@@ -111,55 +111,64 @@ static gboolean webkit_web_view_key_event(GtkWidget* widget, GdkEventKey* event)
     if (frame->eventHandler()->keyEvent(keyboardEvent))
         return TRUE;
 
-    if (event->type == GDK_KEY_PRESS) {
-        FrameView* view = frame->view();
-        SelectionController::EAlteration alteration;
-        if (event->state & GDK_SHIFT_MASK)
-            alteration = SelectionController::EXTEND;
-        else
-            alteration = SelectionController::MOVE;
+    FrameView* view = frame->view();
+    SelectionController::EAlteration alteration;
+    if (event->state & GDK_SHIFT_MASK)
+        alteration = SelectionController::EXTEND;
+    else
+        alteration = SelectionController::MOVE;
 
-        /* FIXME: at the very least we should be using the same code than the
-           Windows port here, but our ScrollView file diverges enough to make
-           that impossible. A short term solution would be to unify ScrollViewWin
-           and ScrollViewGtk. Long-term ScrollView and FrameView should be
-           unified and used everywhere for scrollbars */
-
-        switch (event->keyval) {
-        case GDK_Down:
-            view->scrollBy(0, LINE_STEP);
-            return TRUE;
-        case GDK_Up:
-            view->scrollBy(0, -LINE_STEP);
-            return TRUE;
-        case GDK_Right:
-            view->scrollBy(LINE_STEP, 0);
-            return TRUE;
-        case GDK_Left:
-            view->scrollBy(-LINE_STEP, 0);
-            return TRUE;
-        case GDK_Home:
-            frame->selectionController()->modify(alteration, SelectionController::BACKWARD, DocumentBoundary, true);
-            return TRUE;
-        case GDK_End:
-            frame->selectionController()->modify(alteration, SelectionController::FORWARD, DocumentBoundary, true);
-            return TRUE;
-        }
+    // TODO: We probably want to use GTK+ key bindings here and perhaps take an
+    // approach more like the Win and Mac ports for key handling.
+    switch (event->keyval) {
+    case GDK_Down:
+        view->scrollBy(0, LINE_STEP);
+        return TRUE;
+    case GDK_Up:
+        view->scrollBy(0, -LINE_STEP);
+        return TRUE;
+    case GDK_Right:
+        view->scrollBy(LINE_STEP, 0);
+        return TRUE;
+    case GDK_Left:
+        view->scrollBy(-LINE_STEP, 0);
+        return TRUE;
+    case GDK_Home:
+        frame->selectionController()->modify(alteration, SelectionController::BACKWARD, DocumentBoundary, true);
+        return TRUE;
+    case GDK_End:
+        frame->selectionController()->modify(alteration, SelectionController::FORWARD, DocumentBoundary, true);
+        return TRUE;
     }
 
     return gtk_bindings_activate_event(GTK_OBJECT(widget), event);
 }
 
-static gboolean webkit_web_view_button_event(GtkWidget* widget, GdkEventButton* event)
+static gboolean webkit_web_view_key_release_event(GtkWidget* widget, GdkEventKey* event)
 {
     Frame* frame = core(getFrameFromView(WEBKIT_WEB_VIEW(widget)));
+    PlatformKeyboardEvent keyboardEvent(event);
 
-    if (event->type == GDK_BUTTON_RELEASE)
-        return frame->eventHandler()->handleMouseReleaseEvent(PlatformMouseEvent(event));
+    if (frame->eventHandler()->keyEvent(keyboardEvent))
+        return TRUE;
+
+    return FALSE;
+}
+
+static gboolean webkit_web_view_button_press_event(GtkWidget* widget, GdkEventButton* event)
+{
+    Frame* frame = core(getFrameFromView(WEBKIT_WEB_VIEW(widget)));
 
     // FIXME: need to keep track of subframe focus for key events
     gtk_widget_grab_focus(GTK_WIDGET(widget));
     return frame->eventHandler()->handleMousePressEvent(PlatformMouseEvent(event));
+}
+
+static gboolean webkit_web_view_button_release_event(GtkWidget* widget, GdkEventButton* event)
+{
+    Frame* frame = core(getFrameFromView(WEBKIT_WEB_VIEW(widget)));
+
+    return frame->eventHandler()->handleMouseReleaseEvent(PlatformMouseEvent(event));
 }
 
 static gboolean webkit_web_view_motion_event(GtkWidget* widget, GdkEventMotion* event)
@@ -720,10 +729,10 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
     GtkWidgetClass* widgetClass = GTK_WIDGET_CLASS(webViewClass);
     widgetClass->realize = webkit_web_view_realize;
     widgetClass->expose_event = webkit_web_view_expose_event;
-    widgetClass->key_press_event = webkit_web_view_key_event;
-    widgetClass->key_release_event = webkit_web_view_key_event;
-    widgetClass->button_press_event = webkit_web_view_button_event;
-    widgetClass->button_release_event = webkit_web_view_button_event;
+    widgetClass->key_press_event = webkit_web_view_key_press_event;
+    widgetClass->key_release_event = webkit_web_view_key_release_event;
+    widgetClass->button_press_event = webkit_web_view_button_press_event;
+    widgetClass->button_release_event = webkit_web_view_button_release_event;
     widgetClass->motion_notify_event = webkit_web_view_motion_event;
     widgetClass->scroll_event = webkit_web_view_scroll_event;
     widgetClass->size_allocate = webkit_web_view_size_allocate;
