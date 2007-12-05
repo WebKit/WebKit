@@ -1,5 +1,14 @@
 2007-12-04  Alp Toker  <alp@atoker.com>
 
+        Potential GTK+ build fix for the glib-genmarshal issue.
+
+        Split the glib-genmarshal qmake generator in two; one for the source
+        file, another for the header.
+
+        * WebCore.pro:
+
+2007-12-04  Alp Toker  <alp@atoker.com>
+
         GTK+ build fix.
 
         * platform/PlugInInfoStore.h:

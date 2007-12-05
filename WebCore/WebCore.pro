@@ -1747,10 +1747,16 @@ gtk-port {
     #
     QMAKE_GENMARSHAL_CC = glib-genmarshal
     glib-genmarshal.output = $$GENERATED_SOURCES_DIR/${QMAKE_FILE_BASE}.cpp
-    glib-genmarshal.commands = echo 'extern \\"C\\" {' > ${QMAKE_FILE_OUT} && $${QMAKE_GENMARSHAL_CC} --prefix=$${GENMARSHALS_PREFIX} ${QMAKE_FILE_IN} --body >> ${QMAKE_FILE_OUT} && echo '}' >> ${QMAKE_FILE_OUT} && $${QMAKE_GENMARSHAL_CC} --prefix=$${GENMARSHALS_PREFIX} ${QMAKE_FILE_IN} --header > $$GENERATED_SOURCES_DIR/${QMAKE_FILE_BASE}.h
+    glib-genmarshal.commands = echo 'extern \\"C\\" {' > ${QMAKE_FILE_OUT} && $${QMAKE_GENMARSHAL_CC} --prefix=$${GENMARSHALS_PREFIX} ${QMAKE_FILE_IN} --body >> ${QMAKE_FILE_OUT} && echo '}' >> ${QMAKE_FILE_OUT}
     glib-genmarshal.input = GENMARSHALS
     glib-genmarshal.variable_out = GENERATED_SOURCES
-    glib-genmarshal.clean = ${QMAKE_FILE_OUT} ${QMAKE_VAR_GENERATED_SOURCES_DIR_SLASH}${QMAKE_FILE_BASE}.h
     glib-genmarshal.name = GENMARSHALS
     QMAKE_EXTRA_UNIX_COMPILERS += glib-genmarshal
+
+    glib-genmarshalh.output = $$GENERATED_SOURCES_DIR/${QMAKE_FILE_BASE}.h
+    glib-genmarshalh.commands = $${QMAKE_GENMARSHAL_CC} --prefix=$${GENMARSHALS_PREFIX} ${QMAKE_FILE_IN} --header > $$GENERATED_SOURCES_DIR/${QMAKE_FILE_BASE}.h
+    glib-genmarshalh.input = GENMARSHALS
+    glib-genmarshalh.variable_out = GENERATED_SOURCES
+    glib-genmarshalh.name = GENMARSHALS
+    QMAKE_EXTRA_UNIX_COMPILERS += glib-genmarshalh
 }
