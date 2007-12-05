@@ -1,5 +1,14 @@
 2007-12-04  Sam Weinig  <sam@webkit.org>
 
+        Rubber stamped by Mark Rowe.
+
+        Define CF as platform for mac and revert r28409
+
+        * DumpRenderTree/DumpRenderTree.h:
+        * DumpRenderTree/mac/DumpRenderTreeMac.h:
+
+2007-12-04  Sam Weinig  <sam@webkit.org>
+
         Define CF as platform for windows.
 
         Reviewed by Adam Roben.

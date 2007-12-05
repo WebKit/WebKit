@@ -29,6 +29,9 @@
 #ifndef DumpRenderTreeMac_h
 #define DumpRenderTreeMac_h
 
+// FIXME: we should add a config.h file for DumpRenderTree.
+#define WTF_PLATFORM_CF 1
+
 @class DumpRenderTreeDraggingInfo;
 @class NavigationController;
 @class PolicyDelegate;
