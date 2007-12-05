@@ -1,5 +1,18 @@
 2007-12-05  Adam Roben  <aroben@apple.com>
 
+        Fix case of keypresses from the Windows implementation of eventSender.keyDown
+
+        This fixes several regression tests.
+
+        Reviewed by Alice.
+
+        * DumpRenderTree/win/EventSender.cpp:
+        (keyDownCallback): Virtual keycodes for ASCII characters are always
+        uppercase, so we need to check the case of the original character
+        passed in to eventSender.keyDown.
+
+2007-12-05  Adam Roben  <aroben@apple.com>
+
         Learn from Tim's mistakes
 
         * DumpRenderTree/win/DumpRenderTree.cpp:

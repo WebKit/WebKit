@@ -296,8 +296,8 @@ static JSValueRef keyDownCallback(JSContextRef context, JSObjectRef function, JS
         virtualKeyCode = VK_RIGHT;
     } else {
         charCode = JSStringGetCharactersPtr(character)[0];
-        virtualKeyCode = toupper(LOBYTE(VkKeyScan(charCode)));
-        if (isupper(LOBYTE(VkKeyScan(charCode))))
+        virtualKeyCode = LOBYTE(VkKeyScan(charCode));
+        if (isupper(charCode))
             needsShiftKeyModifier = true;
     }
     JSStringRelease(character);
