@@ -34,7 +34,6 @@
 #include <JavaScriptCore/JSStringRef.h>
 #include <JavaScriptCore/JSStringRefBSTR.h>
 #include <WebKit/IWebScriptCallFrame.h>
-#include <WebKit/IWebScriptScope.h>
 
 JSValueRef JSValueRefCreateWithBSTR(JSContextRef context, BSTR string)
 {

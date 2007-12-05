@@ -1,3 +1,9 @@
+2007-12-04  Anders Carlsson  <andersca@apple.com>
+
+        Remove IWebScriptScope include.
+        
+        * Drosera/win/DebuggerDocumentPlatform.cpp:
+
 2007-12-04  Sam Weinig  <sam@webkit.org>
 
         Rubber stamped by Mark Rowe.
