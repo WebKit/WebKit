@@ -1,3 +1,13 @@
+2007-12-05  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Hyatt.
+
+        Reverting fix for <rdar://problem/5499918> REGRESSION: insertion point in input field with custom border cuts holes in focus ring interior edges
+
+        We need to just fix the underlying focus ring repaint problem.
+
+        * rendering/RenderTextControl.cpp: (WebCore::RenderTextControl::setStyle):
+
 2007-12-04  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Darin.
