@@ -68,6 +68,14 @@ unsigned PlugInInfoStore::pluginCount() const
     return PluginDatabaseWin::installedPlugins()->plugins().size();
 }
 
+
+String PlugInInfoStore::pluginNameForMIMEType(const String& mimeType)
+{
+    // FIXME 5629139: Implement this method on Windows.
+    return String();
+}
+
+    
 bool PlugInInfoStore::supportsMIMEType(const WebCore::String& mimeType) 
 {
     return PluginDatabaseWin::installedPlugins()->isMIMETypeRegistered(mimeType);

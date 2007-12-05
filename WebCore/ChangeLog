@@ -1,3 +1,20 @@
+2007-12-04  Kevin Decker  <kdecker@apple.com>
+
+        Reviewed by Anders.
+
+        <rdar://problem/5629125> PluginInfoStore needs the ability to return the name of a plug-in for a given MIME type
+
+        * page/mac/WebCoreViewFactory.h: Added pluginNameForMIMEType: method.
+        * platform/PlugInInfoStore.h:
+        * platform/gtk/TemporaryLinkStubs.cpp: Added stub version of pluginNameForMIMEType.
+        (PlugInInfoStore::pluginNameForMIMEType):
+        * platform/mac/PlugInInfoStoreMac.mm:
+        (WebCore::PlugInInfoStore::pluginNameForMIMEType): Added.
+        * platform/qt/PlugInInfoStoreQt.cpp: 
+        (WebCore::PlugInInfoStore::pluginNameForMIMEType): Added stub version of pluginNameForMIMEType.
+        * plugins/win/PlugInInfoStoreWin.cpp: 
+        (WebCore::PlugInInfoStore::pluginNameForMIMEType): Added stub version of pluginNameForMIMEType.
+
 2007-12-04  Adele Peterson  <adele@apple.com>
 
         Reviewed by Darin.

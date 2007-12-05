@@ -32,6 +32,11 @@
 
 namespace WebCore {
 
+String PlugInInfoStore::pluginNameForMIMEType(const String& mimeType)
+{
+    return [[WebCoreViewFactory sharedFactory] pluginNameForMIMEType:mimeType];
+}
+
 PluginInfo *PlugInInfoStore::createPluginInfoForPluginAtIndex(unsigned index)
 {
     PluginInfo *pluginInfo = new PluginInfo;

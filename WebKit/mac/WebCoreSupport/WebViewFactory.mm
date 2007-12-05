@@ -71,6 +71,11 @@
     return [[WebPluginDatabase sharedDatabase] plugins];
 }
 
+- (NSString *)pluginNameForMIMEType:(NSString *)MIMEType
+{
+    return [[[WebPluginDatabase sharedDatabase] pluginForMIMEType:MIMEType] name];
+}
+
 - (void)refreshPlugins:(BOOL)reloadPages
 {
     [[WebPluginDatabase sharedDatabase] refresh];

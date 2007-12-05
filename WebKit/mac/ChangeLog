@@ -1,3 +1,12 @@
+2007-12-04  Kevin Decker  <kdecker@apple.com>
+
+        Reviewed by Anders.
+
+        <rdar://problem/5629125> PluginInfoStore needs the ability to return the name of a plug-in for a given MIME type
+
+        * WebCoreSupport/WebViewFactory.mm:
+        (-[WebViewFactory pluginNameForMIMEType:]): Added.
+
 2007-12-04  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Mark Rowe

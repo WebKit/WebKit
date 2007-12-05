@@ -60,6 +60,7 @@ bool WebCore::historyContains(DeprecatedString const&) { return false; }
 
 PluginInfo* PlugInInfoStore::createPluginInfoForPluginAtIndex(unsigned) { notImplemented(); return 0;}
 unsigned PlugInInfoStore::pluginCount() const { notImplemented(); return 0; }
+String PlugInInfoStore::pluginNameForMIMEType(const String& mimeType) { notImplemented(); return String(); } 
 bool WebCore::PlugInInfoStore::supportsMIMEType(const WebCore::String&) { notImplemented(); return false; }
 void WebCore::refreshPlugins(bool) { notImplemented(); }
 

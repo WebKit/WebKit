@@ -54,6 +54,13 @@ unsigned PlugInInfoStore::pluginCount() const
     return QWebFactoryLoader::self()->keys().count();
 }
 
+String PlugInInfoStore::pluginNameForMIMEType(const String& mimeType)
+{
+    // FIXME: This method is stubbed out and should really return the name of a plug-in package for
+    // a given MIME type.
+    return String();
+}
+    
 bool PlugInInfoStore::supportsMIMEType(const WebCore::String& string)
 {
     bool supports = QWebFactoryLoader::self()->supportsMimeType(string);
