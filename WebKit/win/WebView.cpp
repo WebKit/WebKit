@@ -4150,9 +4150,13 @@ HRESULT WebView::revokeDragDrop()
     return ::RevokeDragDrop(m_viewWindow);
 }
 
-void WebView::setProhibitsMainFrameScrolling(bool b)
+HRESULT WebView::setProhibitsMainFrameScrolling(BOOL b)
 {
+    if (!m_page)
+        return E_FAIL;
+
     m_page->mainFrame()->setProhibitsScrolling(b);
+    return S_OK;
 }
 
 class IMMDict {

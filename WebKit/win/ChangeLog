@@ -1,3 +1,17 @@
+2007-12-05  Adam Roben  <aroben@apple.com>
+
+        Expose WebView::setProhibitsMainFrameScrolling through IWebViewPrivate
+
+        Reviewed by Steve.
+
+        * Interfaces/IWebViewPrivate.idl: Added declaration.
+        * WebInspectorClient.cpp:
+        (WebInspectorClient::createPage): Updated for change to
+        setProhibitsMainFrameScrolling signature.
+        * WebView.cpp:
+        (WebView::setProhibitsMainFrameScrolling): Updated and robustified.
+        * WebView.h:
+
 2007-12-05  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.

@@ -111,7 +111,7 @@ Page* WebInspectorClient::createPage()
     if (FAILED(m_webView->initWithFrame(rect, 0, 0)))
         return 0;
 
-    m_webView->setProhibitsMainFrameScrolling();
+    m_webView->setProhibitsMainFrameScrolling(TRUE);
 
     if (FAILED(m_webView->viewWindow(reinterpret_cast<OLE_HANDLE*>(&m_webViewHwnd))))
         return 0;

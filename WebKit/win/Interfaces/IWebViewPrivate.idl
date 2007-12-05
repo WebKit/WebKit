@@ -122,4 +122,6 @@ interface IWebViewPrivate : IUnknown
     HRESULT inspector([out, retval] IWebInspector**);
 
     HRESULT clearUndoRedoOperations();
+
+    HRESULT setProhibitsMainFrameScrolling([in] BOOL prohibits);
 }

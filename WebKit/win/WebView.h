@@ -620,6 +620,8 @@ public:
 
     virtual HRESULT STDMETHODCALLTYPE clearUndoRedoOperations( void);
 
+    virtual HRESULT STDMETHODCALLTYPE setProhibitsMainFrameScrolling(BOOL);
+
     // WebView
     WebCore::Page* page();
     bool handleMouseEvent(UINT, WPARAM, LPARAM);
@@ -649,7 +651,6 @@ public:
     void closeWindowSoon();
     void close();
     bool didClose() const { return m_didClose; }
-    void setProhibitsMainFrameScrolling(bool = true);
 
     bool onIMEStartComposition();
     bool onIMEComposition(LPARAM);
