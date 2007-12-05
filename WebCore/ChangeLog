@@ -2,8 +2,8 @@
 
         Reviewed by Hyatt.
 
-        <rdar://problem/5602071> Safari displays each pixel of 300 dpi US Patent TIFF Images, making them extremely large
-        
+        <rdar://problem/5613106> Acordex: REGRESSION (Tiger-Leopard): plug-ins can no longer take over TIFF images (affects uspto.gov)
+       
         * loader/FrameLoader.cpp:
         (WebCore::FrameLoader::shouldUsePlugin): Allow plug-ins (with the exception of QuickTime) to
         takeover TIFF once again.
