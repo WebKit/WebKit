@@ -31,6 +31,9 @@
 		141BF453096A45EB00E0753C /* PluginObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 141BF447096A45C800E0753C /* PluginObject.h */; };
 		14770FE20A22ADF7009342EE /* GCController.h in Headers */ = {isa = PBXBuildFile; fileRef = 14770FE00A22ADF7009342EE /* GCController.h */; };
 		1A8F02E80BB9B4EC008CFA34 /* TestObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A8F024C0BB9B056008CFA34 /* TestObject.h */; };
+		1AC6C8490D07638600CD3161 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AC6C77F0D07589B00CD3161 /* main.cpp */; };
+		1AC6C84A0D07638600CD3161 /* PluginObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AC6C7800D07589B00CD3161 /* PluginObject.cpp */; };
+		1AC6C84B0D07638600CD3161 /* TestObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AC6C7810D07589B00CD3161 /* TestObject.cpp */; };
 		9340994C08540CAE007F3BC8 /* DumpRenderTreePrefix.h in Headers */ = {isa = PBXBuildFile; fileRef = 32A70AAB03705E1F00C91783 /* DumpRenderTreePrefix.h */; };
 		9340995108540CAE007F3BC8 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9335435F03D75502008635CE /* WebKit.framework */; };
 		A817090008B163EF00CCB9FB /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A84F608908B136DA00E9745F /* Cocoa.framework */; };
@@ -534,6 +537,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1AC6C8490D07638600CD3161 /* main.cpp in Sources */,
+				1AC6C84A0D07638600CD3161 /* PluginObject.cpp in Sources */,
+				1AC6C84B0D07638600CD3161 /* TestObject.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -1,5 +1,11 @@
 2007-12-05  Anders Carlsson  <andersca@apple.com>
 
+        Add the .cpp files to the TestNetscapePlugIn target.
+
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj:
+
+2007-12-05  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Geoff.
         
         Rename the TestNetscapePlugIn .c files to be .cpp.
