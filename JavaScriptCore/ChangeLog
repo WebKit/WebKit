@@ -1,3 +1,15 @@
+2007-12-05  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Geoff.
+
+        - Wait until local variable data is fully constructed before notifying the debugger of entering
+        or leaving a call frame.
+
+        * kjs/function.cpp:
+        (KJS::FunctionImp::callAsFunction):
+        * kjs/nodes.cpp:
+        (KJS::FunctionBodyNode::execute):
+
 2007-12-05  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Oliver.

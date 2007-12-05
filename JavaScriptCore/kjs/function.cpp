@@ -77,43 +77,11 @@ JSValue* FunctionImp::callAsFunction(ExecState* exec, JSObject* thisObj, const L
   if (exec->hadException())
     newExec.setException(exec->exception());
 
-  Debugger* dbg = exec->dynamicInterpreter()->debugger();
-  int sourceId = -1;
-  int lineNo = -1;
-  if (dbg) {
-    sourceId = body->sourceId();
-    lineNo = body->firstLine();
-
-    bool cont = dbg->callEvent(&newExec, sourceId, lineNo, this, args);
-    if (!cont) {
-      dbg->imp()->abort();
-      return jsUndefined();
-    }
-  }
-
   Completion comp = execute(&newExec);
 
   // if an exception occured, propogate it back to the previous execution object
   if (newExec.hadException())
     comp = Completion(Throw, newExec.exception());
-
-  // The debugger may have been deallocated by now if the WebFrame
-  // we were running in has been destroyed, so refetch it.
-  // See http://bugs.webkit.org/show_bug.cgi?id=9477
-  dbg = exec->dynamicInterpreter()->debugger();
-
-  if (dbg) {
-    lineNo = body->lastLine();
-
-    if (comp.complType() == Throw)
-        newExec.setException(comp.value());
-
-    int cont = dbg->returnEvent(&newExec, sourceId, lineNo, this);
-    if (!cont) {
-      dbg->imp()->abort();
-      return jsUndefined();
-    }
-  }
 
   if (comp.complType() == Throw) {
     exec->setException(comp.value());

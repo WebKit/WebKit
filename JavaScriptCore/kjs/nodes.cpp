@@ -4579,7 +4579,28 @@ UString FunctionBodyNode::paramString() const
 Completion FunctionBodyNode::execute(ExecState* exec)
 {
     processDeclarations(exec);
-    return BlockNode::execute(exec);
+
+    if (Debugger* dbg = exec->dynamicInterpreter()->debugger()) {
+        if (!dbg->callEvent(exec, sourceId(), lineNo(), exec->function(), *exec->arguments())) {
+            dbg->imp()->abort();
+            return Completion(Interrupted, jsUndefined());
+        }
+    }    
+    
+    Completion completion = BlockNode::execute(exec);
+    
+    if (Debugger* dbg = exec->dynamicInterpreter()->debugger()) {
+        if (completion.complType() == Throw)
+            exec->setException(completion.value());
+
+        if (!dbg->returnEvent(exec, sourceId(), lineNo(), exec->function())) {
+            dbg->imp()->abort();
+            return Completion(Interrupted, jsUndefined());
+        }
+    }
+
+    
+    return completion;
 }
 
 // ------------------------------ FuncDeclNode ---------------------------------
