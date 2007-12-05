@@ -1,3 +1,12 @@
+2007-12-04  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Mark Rowe
+
+        Tweaked the way we typedef and cast these objc_msgSend calls
+
+        * WebView/WebView.mm:
+        (CallDelegateReturningUnsignedLongLong):
+
 2007-12-04  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Brady Eidson (with help from Mark Rowe)
