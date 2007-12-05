@@ -26,25 +26,22 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "webkitwebframe.h"
-#include "webkitwebview.h"
-
-#include <gtk/gtk.h>
-
-#include <string.h>
-
-#include <JavaScriptCore/JSBase.h>
-#include <JavaScriptCore/JSContextRef.h>
-#include <JavaScriptCore/JSStringRef.h>
-#include <JavaScriptCore/JSObjectRef.h>
-#include <JavaScriptCore/JSValueRef.h>
-
 #include "LayoutTestController.h"
 #include "WorkQueue.h"
 #include "WorkQueueItem.h"
 
+#include <gtk/gtk.h>
+#include <webkit.h>
+
+#include <JavaScriptCore/JSBase.h>
+#include <JavaScriptCore/JSContextRef.h>
+#include <JavaScriptCore/JSObjectRef.h>
+#include <JavaScriptCore/JSStringRef.h>
+#include <JavaScriptCore/JSValueRef.h>
+
 #include <getopt.h>
 #include <stdlib.h>
+#include <string.h>
 
 extern "C" {
 // This API is not yet public.
@@ -238,6 +235,9 @@ int main(int argc, char* argv[])
                 exit(1);
                 break;
         }
+
+    gtk_init(&argc, &argv);
+    webkit_init();
 
     view = WEBKIT_WEB_VIEW(webkit_web_view_new());
     mainFrame = webkit_web_view_get_main_frame(view);

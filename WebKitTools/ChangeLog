@@ -1,3 +1,14 @@
+2007-12-05  Alp Toker  <alp@atoker.com>
+
+        Reviewed by Mark Rowe.
+
+        Initialize GTK+ and WebKit so the tests can run.
+
+        Reorganize the headers a little.
+
+        * DumpRenderTree/gtk/DumpRenderTree.cpp:
+        (main):
+
 2007-12-04  Anders Carlsson  <andersca@apple.com>
 
         Remove IWebScriptScope include.
