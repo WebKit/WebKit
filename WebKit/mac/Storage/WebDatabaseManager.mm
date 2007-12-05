@@ -37,7 +37,7 @@
 
 using namespace WebCore;
 
-const NSString *WebDatabaseDirectoryDefaultsKey = @"WebDatabaseDirectory";
+NSString *WebDatabaseDirectoryDefaultsKey = @"WebDatabaseDirectory";
 
 NSString *WebDatabaseDisplayNameKey = @"WebDatabaseDisplayNameKey";
 NSString *WebDatabaseExpectedSizeKey = @"WebDatabaseExpectedSizeKey";

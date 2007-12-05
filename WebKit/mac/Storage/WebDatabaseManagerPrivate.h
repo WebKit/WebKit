@@ -26,6 +26,8 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+extern NSString *WebDatabaseDirectoryDefaultsKey;
+
 extern NSString *WebDatabaseDisplayNameKey;
 extern NSString *WebDatabaseExpectedSizeKey;
 extern NSString *WebDatabaseUsageKey;

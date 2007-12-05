@@ -1,3 +1,13 @@
+2007-12-05  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Kevin Deckers rubberstamp
+
+        Disclose and export the Databases Directory defaults key
+
+        * Storage/WebDatabaseManager.mm:
+        * Storage/WebDatabaseManagerPrivate.h:
+        * WebKit.exp:
+
 2007-12-04  Kevin Decker  <kdecker@apple.com>
 
         Reviewed by Anders.

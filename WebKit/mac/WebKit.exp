@@ -4,8 +4,8 @@
 .objc_class_name_WebCache
 .objc_class_name_WebCoreScrollView
 .objc_class_name_WebCoreStatistics
-.objc_class_name_WebDatabaseManager
 .objc_class_name_WebDataSource
+.objc_class_name_WebDatabaseManager
 .objc_class_name_WebDefaultPolicyDelegate
 .objc_class_name_WebDownload
 .objc_class_name_WebDynamicScrollBarsView
@@ -42,6 +42,7 @@ _WebArchivePboardType
 _WebConvertNSImageToCGImageRef
 _WebDatabaseDidModifyDatabaseNotification
 _WebDatabaseDidModifyOriginNotification
+_WebDatabaseDirectoryDefaultsKey
 _WebDatabaseDisplayNameKey
 _WebDatabaseIdentifierKey
 _WebDatabaseUsageKey
