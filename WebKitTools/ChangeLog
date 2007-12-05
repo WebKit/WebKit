@@ -1,3 +1,11 @@
+2007-12-05  Adam Roben  <aroben@apple.com>
+
+        Learn from Tim's mistakes
+
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (runTest): Reset the authorAndUserStylesEnabled preference for each
+        test.
+
 2007-12-05  Alp Toker  <alp@atoker.com>
 
         Reviewed by Mark Rowe.

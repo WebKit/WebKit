@@ -48,6 +48,7 @@
 #include <WebKit/IWebFramePrivate.h>
 #include <WebKit/IWebHistoryItem.h>
 #include <WebKit/IWebHistoryItemPrivate.h>
+#include <WebKit/IWebPreferencesPrivate.h>
 #include <WebKit/IWebURLResponse.h>
 #include <WebKit/IWebViewPrivate.h>
 #include <WebKit/WebKit.h>
@@ -641,8 +642,12 @@ static void runTest(const char* pathOrURL)
             webIBActions->makeTextStandardSize(0);
 
         COMPtr<IWebPreferences> preferences;
-        if (SUCCEEDED(webView->preferences(&preferences)))
+        if (SUCCEEDED(webView->preferences(&preferences))) {
             preferences->setPrivateBrowsingEnabled(FALSE);
+            COMPtr<IWebPreferencesPrivate> prefsPrivate(Query, preferences);
+            if (prefsPrivate)
+                prefsPrivate->setAuthorAndUserStylesEnabled(TRUE);
+        }
     }
 
     WorkQueue::shared()->clear();
