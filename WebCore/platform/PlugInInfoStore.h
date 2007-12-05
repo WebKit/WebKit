@@ -51,7 +51,7 @@ class PlugInInfoStore {
 public:
     PluginInfo *createPluginInfoForPluginAtIndex(unsigned);
     unsigned pluginCount() const;
-    static String PlugInInfoStore::pluginNameForMIMEType(const String& mimeType);
+    static String pluginNameForMIMEType(const String& mimeType);
     static bool supportsMIMEType(const String& mimeType);
 };
 
