@@ -39,6 +39,7 @@
 #include "Image.h"
 #include "RenderImage.h"
 #include "KURL.h"
+#include "markup.h"
 
 #include <gtk/gtk.h>
 
@@ -106,9 +107,42 @@ bool Pasteboard::canSmartReplace()
     return false;
 }
 
-PassRefPtr<DocumentFragment> Pasteboard::documentFragment(Frame*, PassRefPtr<Range>, bool, bool&)
+PassRefPtr<DocumentFragment> Pasteboard::documentFragment(Frame* frame, PassRefPtr<Range> context,
+                                                          bool allowPlainText, bool& chosePlainText)
 {
-    notImplemented();
+#if GLIB_CHECK_VERSION(2,10,0)
+    GdkAtom textHtml = gdk_atom_intern_static_string("text/html");
+#else
+    GdkAtom textHtml = gdk_atom_intern("text/html", false);
+#endif
+    GtkClipboard* clipboard = gtk_clipboard_get_for_display(gdk_display_get_default(), GDK_SELECTION_CLIPBOARD);
+    chosePlainText = false;
+
+    if (GtkSelectionData* data = gtk_clipboard_wait_for_contents(clipboard, textHtml)) {
+        ASSERT(data->data);
+        String html = String::fromUTF8(reinterpret_cast<gchar*>(data->data), data->length * data->format / 8);
+        gtk_selection_data_free(data);
+
+        if (!html.isEmpty()) {
+            RefPtr<DocumentFragment> fragment = createFragmentFromMarkup(frame->document(), html, "");
+            if (fragment)
+                return fragment.release();
+        }
+    }
+
+    if (!allowPlainText)
+        return 0;
+
+    if (gchar* utf8 = gtk_clipboard_wait_for_text(clipboard)) {
+        String text = String::fromUTF8(utf8);
+        g_free(utf8);
+
+        chosePlainText = true;
+        RefPtr<DocumentFragment> fragment = createFragmentFromText(context.get(), text);
+        if (fragment)
+            return fragment.release();
+    }
+
     return 0;
 }
 

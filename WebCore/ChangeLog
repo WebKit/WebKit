@@ -1,3 +1,13 @@
+2007-12-05  Luca Bruno  <lethalman88@gmail.com>
+
+        Reviewed by Alp Toker.
+
+        http://bugs.webkit.org/show_bug.cgi?id=16290
+        [GTK] Pasting clipboard in rich text.
+
+        * platform/gtk/PasteboardGtk.cpp:
+        (Pasteboard::documentFragment): Implement rich text paste support.
+
 2007-12-05  Adele Peterson  <adele@apple.com>
 
         Reviewed by Hyatt.
