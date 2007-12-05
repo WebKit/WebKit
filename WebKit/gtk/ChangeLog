@@ -1,3 +1,11 @@
+2007-12-05  Michael Natterer  <mitch@imendio.com>
+
+        Reviewed by Alp Toker.
+
+        * WebView/webkitwebview.cpp
+        * WebCoreSupport/ChromeClientGtk.cpp
+        * WebCoreSupport/FrameLoaderClientGtk.cpp: canonicalize signal names.
+
 2007-12-04  Darin Adler  <darin@apple.com>
 
         Reviewed by Kevin Decker.

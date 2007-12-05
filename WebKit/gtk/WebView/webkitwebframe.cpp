@@ -93,7 +93,7 @@ static void webkit_web_frame_class_init(WebKitWebFrameClass* frameClass)
             g_cclosure_marshal_VOID__VOID,
             G_TYPE_NONE, 0);
 
-    webkit_web_frame_signals[LOAD_DONE] = g_signal_new("load_done",
+    webkit_web_frame_signals[LOAD_DONE] = g_signal_new("load-done",
             G_TYPE_FROM_CLASS(frameClass),
             (GSignalFlags)(G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION),
             0,
@@ -103,7 +103,7 @@ static void webkit_web_frame_class_init(WebKitWebFrameClass* frameClass)
             G_TYPE_NONE, 1,
             G_TYPE_BOOLEAN);
 
-    webkit_web_frame_signals[TITLE_CHANGED] = g_signal_new("title_changed",
+    webkit_web_frame_signals[TITLE_CHANGED] = g_signal_new("title-changed",
             G_TYPE_FROM_CLASS(frameClass),
             (GSignalFlags)(G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION),
             G_STRUCT_OFFSET(WebKitWebFrameClass, title_changed),
@@ -113,7 +113,7 @@ static void webkit_web_frame_class_init(WebKitWebFrameClass* frameClass)
             G_TYPE_NONE, 2,
             G_TYPE_STRING, G_TYPE_STRING);
 
-    webkit_web_frame_signals[HOVERING_OVER_LINK] = g_signal_new("hovering_over_link",
+    webkit_web_frame_signals[HOVERING_OVER_LINK] = g_signal_new("hovering-over-link",
             G_TYPE_FROM_CLASS(frameClass),
             (GSignalFlags)(G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION),
             0,
