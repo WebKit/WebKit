@@ -1,3 +1,18 @@
+2007-12-04  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Hyatt.
+
+        Fix for <rdar://problem/5622464> controls should show up for audio element
+
+        * css/html4.css: Added styles for audio controls.  This will need to be refined, since we may want a different look for audio controls.
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::attributeChanged): When the controls attribute changes detach and reattach if necessary. 
+        (WebCore::HTMLMediaElement::rendererIsNeeded): Added.
+        (WebCore::HTMLMediaElement::createRenderer): Added.  Uses RenderMedia.
+        * html/HTMLMediaElement.h:
+        * rendering/RenderMedia.cpp: (WebCore::RenderMedia::RenderMedia): Added constructor that doesn't take intrinsic size.
+        * rendering/RenderMedia.h:
+
 2007-12-04  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam.

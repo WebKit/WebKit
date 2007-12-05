@@ -592,11 +592,15 @@ iframe {
 /* media controls */
 /* FIXME this is not the final styling */
 
-video::-webkit-media-controls-panel {
-    display: inline-block;
+audio {
+    width: 234px;
+    height: 69px;
+}
+
+audio::-webkit-media-controls-panel, video::-webkit-media-controls-panel {
     position: absolute;
     left: 0; right: 0; top: 0; bottom: 0;
-    margin: auto auto 10% auto;
+    margin: auto;
     width: 230px;
     height: 65px;
     border: 2px solid #eee;
@@ -605,9 +609,12 @@ video::-webkit-media-controls-panel {
     -webkit-user-select: none;
 }
 
-video::-webkit-media-controls-play-button {
+video::-webkit-media-controls-panel {
+    margin-bottom: 10%;
+}
+
+audio::-webkit-media-controls-play-button, video::-webkit-media-controls-play-button {
     -webkit-appearance: none;
-    display: inline-block;
     position: absolute;
     margin: 5px auto auto auto;
     left: 0; right: 0; top: 0; bottom: 0;
@@ -621,7 +628,7 @@ video::-webkit-media-controls-play-button {
     height: 1.2em;
 }
 
-video::-webkit-media-controls-timeline {
+audio::-webkit-media-controls-timeline, video::-webkit-media-controls-timeline {
     -webkit-appearance: slider-horizontal;
     position: absolute;
     margin: auto auto 5px 10px;
@@ -633,8 +640,7 @@ video::-webkit-media-controls-timeline {
     z-index: 1;
 }
 
-video::-webkit-media-controls-time-display {
-    display: inline-block;
+audio::-webkit-media-controls-time-display, video::-webkit-media-controls-time-display {
     position: absolute;
     margin: auto 5px 5px 5px;
     left: 0; right: 0; top: 0; bottom: 0px;

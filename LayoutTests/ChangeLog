@@ -1,3 +1,14 @@
+2007-12-04  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Hyatt.
+
+        Test for <rdar://problem/5622464> controls should show up for audio element
+
+        * media/audio-controls-rendering.html: Added.
+        * platform/mac/media/audio-controls-rendering-expected.checksum: Added.
+        * platform/mac/media/audio-controls-rendering-expected.png: Added.
+        * platform/mac/media/audio-controls-rendering-expected.txt: Added.
+
 2007-11-27  Adam Roben  <aroben@apple.com>
 
         Remove a now-passing test from the Windows Skipped file

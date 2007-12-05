@@ -190,6 +190,22 @@ void MediaControlTimelineElement::update(bool updateDuration)
 
 // ----------------------------
 
+RenderMedia::RenderMedia(HTMLMediaElement* video)
+    : RenderReplaced(video)
+    , m_controlsShadowRoot(0)
+    , m_panel(0)
+    , m_playButton(0)
+    , m_timeline(0)
+    , m_timeDisplay(0)
+    , m_timeUpdateTimer(this, &RenderMedia::timeUpdateTimerFired)
+    , m_opacityAnimationTimer(this, &RenderMedia::opacityAnimationTimerFired)
+    , m_mouseOver(false)
+    , m_opacityAnimationStartTime(0)
+    , m_opacityAnimationFrom(0)
+    , m_opacityAnimationTo(1.0f)
+{
+}
+
 RenderMedia::RenderMedia(HTMLMediaElement* video, const IntSize& intrinsicSize)
     : RenderReplaced(video, intrinsicSize)
     , m_controlsShadowRoot(0)

@@ -41,6 +41,7 @@ class Movie;
 
 class RenderMedia : public RenderReplaced {
 public:
+    RenderMedia(HTMLMediaElement*);
     RenderMedia(HTMLMediaElement*, const IntSize& intrinsicSize);
     virtual ~RenderMedia();
     
