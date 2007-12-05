@@ -66,6 +66,7 @@ fast/css/rtl-ordering.html
 fast/css/text-security.html
 fast/encoding/denormalised-voiced-japanese-chars.html
 fast/encoding/invalid-UTF-8.html
+fast/events/updateLayoutForHitTest.html
 fast/forms/select-visual-hebrew.html
 fast/forms/select-writing-direction-natural.html
 fast/forms/visual-hebrew-text-field.html
