@@ -1,5 +1,18 @@
 2007-12-05  Anders Carlsson  <andersca@apple.com>
 
+        C++ warning fixes.
+        
+        * DumpRenderTree/TestNetscapePlugIn.subproj/main.cpp:
+        (NPP_New):
+        (NPP_Destroy):
+        (NPP_SetWindow):
+        (NPP_NewStream):
+        (NPP_HandleEvent):
+        (NPP_URLNotify):
+        (NPP_GetValue):
+
+2007-12-05  Anders Carlsson  <andersca@apple.com>
+
         Add the .cpp files to the TestNetscapePlugIn target.
 
         * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj:

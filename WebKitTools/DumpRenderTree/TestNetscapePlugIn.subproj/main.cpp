@@ -6,7 +6,7 @@
  redistribute this Apple software.
  
  In consideration of your agreement to abide by the following terms, and subject to these 
- terms, Apple grants you a personal, non-exclusive license, under AppleÕs copyrights in 
+ terms, Apple grants you a personal, non-exclusive license, under Appleâ€™s copyrights in 
  this original Apple software (the "Apple Software"), to use, reproduce, modify and 
  redistribute the Apple Software, with or without modifications, in source and/or binary 
  forms; provided that if you redistribute the Apple Software in its entirety and without 
@@ -77,7 +77,7 @@ NPError NPP_New(NPMIMEType pluginType, NPP instance, uint16 mode, int16 argc, ch
     
         obj->onStreamLoad = NULL;
         
-        for (uint i = 0; i < argc; i++) {
+        for (int i = 0; i < argc; i++) {
             if (strcasecmp(argn[i], "onstreamload") == 0 && !obj->onStreamLoad)
                 obj->onStreamLoad = strdup(argv[i]);
             else if (strcasecmp(argn[i], "src") == 0 &&
@@ -95,7 +95,7 @@ NPError NPP_New(NPMIMEType pluginType, NPP instance, uint16 mode, int16 argc, ch
 
 NPError NPP_Destroy(NPP instance, NPSavedData **save)
 {
-    PluginObject *obj = instance->pdata;
+    PluginObject* obj = static_cast<PluginObject*>(instance->pdata);
     if (obj) {
         if (obj->onStreamLoad)
             free(obj->onStreamLoad);
@@ -110,7 +110,7 @@ NPError NPP_Destroy(NPP instance, NPSavedData **save)
 
 NPError NPP_SetWindow(NPP instance, NPWindow *window)
 {
-    PluginObject *obj = instance->pdata;
+    PluginObject* obj = static_cast<PluginObject*>(instance->pdata);
 
     if (obj) {
         if (obj->logSetWindow) {
@@ -124,7 +124,7 @@ NPError NPP_SetWindow(NPP instance, NPWindow *window)
 
 NPError NPP_NewStream(NPP instance, NPMIMEType type, NPStream *stream, NPBool seekable, uint16 *stype)
 {
-    PluginObject* obj = instance->pdata;
+    PluginObject* obj = static_cast<PluginObject*>(instance->pdata);
     obj->stream = stream;
     *stype = NP_ASFILEONLY;
 
@@ -175,11 +175,11 @@ void NPP_Print(NPP instance, NPPrint *platformPrint)
 
 int16 NPP_HandleEvent(NPP instance, void *event)
 {
-    PluginObject *obj = instance->pdata;
+    PluginObject* obj = static_cast<PluginObject*>(instance->pdata);
     if (!obj->eventLogging)
         return 0;
     
-    EventRecord *evt = event;
+    EventRecord* evt = static_cast<EventRecord*>(event);
     Point pt = { evt->where.v, evt->where.h };
     switch (evt->what) {
         case nullEvent:
@@ -246,7 +246,7 @@ int16 NPP_HandleEvent(NPP instance, void *event)
 
 void NPP_URLNotify(NPP instance, const char *url, NPReason reason, void *notifyData)
 {
-    PluginObject *obj = instance->pdata;
+    PluginObject* obj = static_cast<PluginObject*>(instance->pdata);
         
     handleCallback(obj, url, reason, notifyData);
 }
@@ -255,7 +255,7 @@ NPError NPP_GetValue(NPP instance, NPPVariable variable, void *value)
 {
     if (variable == NPPVpluginScriptableNPObject) {
         void **v = (void **)value;
-        PluginObject *obj = instance->pdata;
+        PluginObject* obj = static_cast<PluginObject*>(instance->pdata);
         // Return value is expected to be retained
         browser->retainobject((NPObject *)obj);
         *v = obj;
