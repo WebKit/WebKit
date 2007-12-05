@@ -93,8 +93,7 @@ static const NPUTF8 *pluginPropertyIdentifierNames[NUM_PROPERTY_IDENTIFIERS] = {
 #define ID_TEST_INVOKE_DEFAULT      5
 #define ID_DESTROY_STREAM           6
 #define ID_TEST_ENUMERATE           7
-#define ID_TEST_GETINTIDENTIFIER    8
-#define NUM_METHOD_IDENTIFIERS      9
+#define NUM_METHOD_IDENTIFIERS      8
 
 static NPIdentifier pluginMethodIdentifiers[NUM_METHOD_IDENTIFIERS];
 static const NPUTF8 *pluginMethodIdentifierNames[NUM_METHOD_IDENTIFIERS] = {
@@ -105,8 +104,7 @@ static const NPUTF8 *pluginMethodIdentifierNames[NUM_METHOD_IDENTIFIERS] = {
     "getURLNotify",
     "testInvokeDefault",
     "destroyStream",
-    "testEnumerate",
-    "testGetIntIdentifier"
+    "testEnumerate"
 };
 
 static NPUTF8* createCStringFromNPVariant(const NPVariant *variant)
@@ -284,7 +282,7 @@ static bool pluginInvoke(NPObject *header, NPIdentifier name, const NPVariant *a
             if (browser->enumerate(obj->npp, NPVARIANT_TO_OBJECT(args[0]), &identifiers, &count)) {
                 NPObject* outArray = NPVARIANT_TO_OBJECT(args[1]);
                 NPIdentifier pushIdentifier = browser->getstringidentifier("push");
-
+                
                 for (uint32_t i = 0; i < count; i++) {
                     NPUTF8* string = browser->utf8fromidentifier(identifiers[i]);
                     
@@ -298,7 +296,7 @@ static bool pluginInvoke(NPObject *header, NPIdentifier name, const NPVariant *a
                     browser->releasevariantvalue(&browserResult);
                     browser->memfree(string);
                 }
-
+                
                 browser->memfree(identifiers);
             }
             
@@ -309,13 +307,7 @@ static bool pluginInvoke(NPObject *header, NPIdentifier name, const NPVariant *a
         NPError npError = browser->destroystream(obj->npp, obj->stream, NPRES_USER_BREAK);
         INT32_TO_NPVARIANT(npError, *result);
         return true;        
-    } else if (name == pluginMethodIdentifiers[ID_TEST_GETINTIDENTIFIER]) {
-        if (argCount == 1 && NPVARIANT_IS_DOUBLE(args[0])) {
-            NPIdentifier identifier = browser->getintidentifier((int)NPVARIANT_TO_DOUBLE(args[0]));
-            INT32_TO_NPVARIANT((int32)identifier, *result);
-            return true;
-        }
-    }
+    } 
     return false;
 }
 

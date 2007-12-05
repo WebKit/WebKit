@@ -183,44 +183,12 @@
 	</References>
 	<Files>
 		<File
-			RelativePath=".\main.c"
+			RelativePath=".\main.cpp"
 			>
-			<FileConfiguration
-				Name="Debug|Win32"
-				>
-				<Tool
-					Name="VCCLCompilerTool"
-					CompileAs="2"
-				/>
-			</FileConfiguration>
-			<FileConfiguration
-				Name="Release|Win32"
-				>
-				<Tool
-					Name="VCCLCompilerTool"
-					CompileAs="2"
-				/>
-			</FileConfiguration>
 		</File>
 		<File
-			RelativePath="..\..\TestNetscapePlugIn.subproj\PluginObject.c"
+			RelativePath="..\..\TestNetscapePlugIn.subproj\PluginObject.cpp"
 			>
-			<FileConfiguration
-				Name="Debug|Win32"
-				>
-				<Tool
-					Name="VCCLCompilerTool"
-					CompileAs="2"
-				/>
-			</FileConfiguration>
-			<FileConfiguration
-				Name="Release|Win32"
-				>
-				<Tool
-					Name="VCCLCompilerTool"
-					CompileAs="2"
-				/>
-			</FileConfiguration>
 		</File>
 		<File
 			RelativePath="..\..\TestNetscapePlugIn.subproj\PluginObject.h"
@@ -239,24 +207,8 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\TestNetscapePlugIn.subproj\TestObject.c"
+			RelativePath="..\..\TestNetscapePlugIn.subproj\TestObject.cpp"
 			>
-			<FileConfiguration
-				Name="Debug|Win32"
-				>
-				<Tool
-					Name="VCCLCompilerTool"
-					CompileAs="2"
-				/>
-			</FileConfiguration>
-			<FileConfiguration
-				Name="Release|Win32"
-				>
-				<Tool
-					Name="VCCLCompilerTool"
-					CompileAs="2"
-				/>
-			</FileConfiguration>
 		</File>
 		<File
 			RelativePath="..\..\TestNetscapePlugIn.subproj\TestObject.h"

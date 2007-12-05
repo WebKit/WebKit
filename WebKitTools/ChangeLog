@@ -1,3 +1,18 @@
+2007-12-05  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Geoff.
+        
+        Rename the TestNetscapePlugIn .c files to be .cpp.
+
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj:
+        * DumpRenderTree/TestNetscapePlugIn.subproj/PluginObject.c: Removed.
+        * DumpRenderTree/TestNetscapePlugIn.subproj/PluginObject.cpp: Copied from DumpRenderTree/TestNetscapePlugIn.subproj/PluginObject.c.
+        * DumpRenderTree/TestNetscapePlugIn.subproj/TestObject.c: Removed.
+        * DumpRenderTree/TestNetscapePlugIn.subproj/TestObject.cpp: Copied from DumpRenderTree/TestNetscapePlugIn.subproj/TestObject.c.
+        * DumpRenderTree/TestNetscapePlugIn.subproj/main.c: Removed.
+        * DumpRenderTree/TestNetscapePlugIn.subproj/main.cpp: Copied from DumpRenderTree/TestNetscapePlugIn.subproj/main.c.
+        * DumpRenderTree/win/TestNetscapePlugin/TestNetscapePlugin.vcproj:
+
 2007-12-05  Adam Roben  <aroben@apple.com>
 
         Fix case of keypresses from the Windows implementation of eventSender.keyDown
