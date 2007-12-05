@@ -399,9 +399,6 @@ editing/selection/5195166-2.html
 editing/selection/select-line.html
 editing/selection/selection-actions.html
 
-# <rdar://5507278> Crash
-http/tests/incremental/frame-focus-before-load.html
-
 # <rdar://5507285> Back/forward list is missing entries
 http/tests/navigation/javascriptlink-frames.html
 

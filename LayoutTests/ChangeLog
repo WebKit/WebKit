@@ -1,3 +1,12 @@
+2007-12-04  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Adam Roben.
+
+        Remove http/tests/incremental/frame-focus-before-load.html from the skipped list
+        as it is no longer crashing. <rdar://problem/5507278>
+
+        * platform/win/Skipped:
+
 2007-12-04  Adele Peterson  <adele@apple.com>
 
         Reviewed by Hyatt.
