@@ -1,3 +1,13 @@
+2007-12-05  Kevin Decker  <kdecker@apple.com>
+
+        Reviewed by Hyatt.
+
+        <rdar://problem/5602071> Safari displays each pixel of 300 dpi US Patent TIFF Images, making them extremely large
+        
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::shouldUsePlugin): Allow plug-ins (with the exception of QuickTime) to
+        takeover TIFF once again.
+        
 2007-12-05  Luca Bruno  <lethalman88@gmail.com>
 
         Reviewed by Alp Toker.
