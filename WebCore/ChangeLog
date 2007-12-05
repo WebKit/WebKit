@@ -1,3 +1,12 @@
+2007-12-04  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Darin.
+
+        Fix for <rdar://problem/5499918> REGRESSION: insertion point in input field with custom border cuts holes in focus ring interior edges
+
+        * rendering/RenderTextControl.cpp: (WebCore::RenderTextControl::setStyle):
+        Adjust outline-offset so it doesn't extend beyond the border to interfere with typing
+
 2007-12-04  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Jon.

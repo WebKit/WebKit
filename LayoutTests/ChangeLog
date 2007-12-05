@@ -1,3 +1,14 @@
+2007-12-04  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Darin.
+
+        Test for <rdar://problem/5499918> REGRESSION: insertion point in input field with custom border cuts holes in focus ring interior edges
+
+        * fast/forms/textfield-outline.html: Added.
+        * platform/mac/fast/forms/textfield-outline-expected.checksum: Added.
+        * platform/mac/fast/forms/textfield-outline-expected.png: Added.
+        * platform/mac/fast/forms/textfield-outline-expected.txt: Added.
+
 2007-12-04  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Adam Roben.

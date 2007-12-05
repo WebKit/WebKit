@@ -129,6 +129,11 @@ void RenderTextControl::setStyle(RenderStyle* style)
     if (m_cancelButton)
         m_cancelButton->renderer()->setStyle(createCancelButtonStyle(style));
 
+    // Adjust outline-offset so it doesn't extend beyond the border to interfere with typing
+    int maxBorderWidth = max(style->borderLeftWidth(), max(style->borderRightWidth(), max(style->borderTopWidth(), style->borderBottomWidth())));
+    if (style->outlineOffset() < -maxBorderWidth)
+        style->setOutlineOffset(-maxBorderWidth);
+
     setHasOverflowClip(false);
     setReplaced(isInline());
 }
