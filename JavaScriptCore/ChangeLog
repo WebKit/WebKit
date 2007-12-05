@@ -1,3 +1,119 @@
+2007-12-03  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Mark Rowe and Geoff Garen.
+
+        Merge TCMalloc r38
+
+        It also result in a performance progression between 0.5% and 
+        0.9% depending on the test, however most if not all of this 
+        gain will be consumed by the overhead involved in the later
+        change to release memory to the system.
+
+        * JavaScriptCore.vcproj/WTF/WTF.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * wtf/FastMalloc.cpp:
+        (WTF::KernelSupportsTLS):
+        (WTF::CheckIfKernelSupportsTLS):
+        (WTF::):
+        (WTF::ClassIndex):
+        (WTF::SLL_Next):
+        (WTF::SLL_SetNext):
+        (WTF::SLL_Push):
+        (WTF::SLL_Pop):
+        (WTF::SLL_PopRange):
+        (WTF::SLL_PushRange):
+        (WTF::SLL_Size):
+        (WTF::SizeClass):
+        (WTF::ByteSizeForClass):
+        (WTF::NumMoveSize):
+        (WTF::InitSizeClasses):
+        (WTF::AllocationSize):
+        (WTF::TCMalloc_PageHeap::GetSizeClassIfCached):
+        (WTF::TCMalloc_PageHeap::CacheSizeClass):
+        (WTF::TCMalloc_PageHeap::init):
+        (WTF::TCMalloc_PageHeap::New):
+        (WTF::TCMalloc_PageHeap::AllocLarge):
+        (WTF::TCMalloc_PageHeap::Carve):
+        (WTF::TCMalloc_PageHeap::Delete):
+        (WTF::TCMalloc_PageHeap::IncrementalScavenge):
+        (WTF::PagesToMB):
+        (WTF::TCMalloc_PageHeap::Dump):
+        (WTF::TCMalloc_PageHeap::GrowHeap):
+        (WTF::TCMalloc_PageHeap::Check):
+        (WTF::ReleaseFreeList):
+        (WTF::TCMalloc_PageHeap::ReleaseFreePages):
+        (WTF::TCMalloc_ThreadCache_FreeList::Push):
+        (WTF::TCMalloc_ThreadCache_FreeList::PushRange):
+        (WTF::TCMalloc_ThreadCache_FreeList::PopRange):
+        (WTF::TCMalloc_ThreadCache_FreeList::Pop):
+        (WTF::TCMalloc_Central_FreeList::length):
+        (WTF::TCMalloc_Central_FreeList::tc_length):
+        (WTF::TCMalloc_Central_FreeList::Init):
+        (WTF::TCMalloc_Central_FreeList::ReleaseListToSpans):
+        (WTF::TCMalloc_Central_FreeList::EvictRandomSizeClass):
+        (WTF::TCMalloc_Central_FreeList::MakeCacheSpace):
+        (WTF::TCMalloc_Central_FreeList::ShrinkCache):
+        (WTF::TCMalloc_Central_FreeList::InsertRange):
+        (WTF::TCMalloc_Central_FreeList::RemoveRange):
+        (WTF::TCMalloc_Central_FreeList::FetchFromSpansSafe):
+        (WTF::TCMalloc_Central_FreeList::Populate):
+        (WTF::TCMalloc_ThreadCache::Init):
+        (WTF::TCMalloc_ThreadCache::Cleanup):
+        (WTF::TCMalloc_ThreadCache::Allocate):
+        (WTF::TCMalloc_ThreadCache::Deallocate):
+        (WTF::TCMalloc_ThreadCache::FetchFromCentralCache):
+        (WTF::TCMalloc_ThreadCache::ReleaseToCentralCache):
+        (WTF::TCMalloc_ThreadCache::Scavenge):
+        (WTF::TCMalloc_ThreadCache::PickNextSample):
+        (WTF::TCMalloc_ThreadCache::NewHeap):
+        (WTF::TCMalloc_ThreadCache::GetThreadHeap):
+        (WTF::TCMalloc_ThreadCache::GetCache):
+        (WTF::TCMalloc_ThreadCache::GetCacheIfPresent):
+        (WTF::TCMalloc_ThreadCache::InitTSD):
+        (WTF::TCMalloc_ThreadCache::CreateCacheIfNecessary):
+        (WTF::TCMallocStats::ExtractStats):
+        (WTF::TCMallocStats::DumpStats):
+        (WTF::TCMallocStats::DumpStackTraces):
+        (WTF::TCMallocStats::TCMallocImplementation::MarkThreadIdle):
+        (WTF::TCMallocStats::TCMallocImplementation::ReleaseFreeMemory):
+        (WTF::TCMallocStats::TCMallocGuard::TCMallocGuard):
+        (WTF::TCMallocStats::TCMallocGuard::~TCMallocGuard):
+        (WTF::TCMallocStats::DoSampledAllocation):
+        (WTF::TCMallocStats::CheckCachedSizeClass):
+        (WTF::TCMallocStats::CheckedMallocResult):
+        (WTF::TCMallocStats::SpanToMallocResult):
+        (WTF::TCMallocStats::do_malloc):
+        (WTF::TCMallocStats::do_free):
+        (WTF::TCMallocStats::do_memalign):
+        (WTF::TCMallocStats::do_malloc_stats):
+        (WTF::TCMallocStats::do_mallopt):
+        (WTF::TCMallocStats::do_mallinfo):
+        (WTF::TCMallocStats::realloc):
+        (WTF::TCMallocStats::cpp_alloc):
+        (WTF::TCMallocStats::operator new):
+        (WTF::TCMallocStats::):
+        (WTF::TCMallocStats::operator new[]):
+        (WTF::TCMallocStats::malloc_stats):
+        (WTF::TCMallocStats::mallopt):
+        (WTF::TCMallocStats::mallinfo):
+        * wtf/TCPackedCache.h: Added.
+        (PackedCache::PackedCache):
+        (PackedCache::Put):
+        (PackedCache::Has):
+        (PackedCache::GetOrDefault):
+        (PackedCache::Clear):
+        (PackedCache::EntryToValue):
+        (PackedCache::EntryToUpper):
+        (PackedCache::KeyToUpper):
+        (PackedCache::UpperToPartialKey):
+        (PackedCache::Hash):
+        (PackedCache::KeyMatch):
+        * wtf/TCPageMap.h:
+        (TCMalloc_PageMap2::PreallocateMoreMemory):
+        * wtf/TCSystemAlloc.cpp:
+        (TCMalloc_SystemRelease):
+        * wtf/TCSystemAlloc.h:
+
 2007-12-04  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam.

@@ -1,4 +1,4 @@
-// Copyright (c) 2005, Google Inc.
+// Copyright (c) 2005, 2007, Google Inc.
 // All rights reserved.
 // 
 // Redistribution and use in source and binary forms, with or without
@@ -370,3 +370,41 @@ void* TCMalloc_SystemAlloc(size_t size, size_t *actual_size, size_t alignment) {
   }
   return NULL;
 }
+
+#ifndef MADV_DONTNEED
+void TCMalloc_SystemRelease(void*, size_t) {}
+#else
+void TCMalloc_SystemRelease(void* start, size_t length) {
+  if (FLAGS_malloc_devmem_start) {
+    // It's not safe to use MADV_DONTNEED if we've been mapping
+    // /dev/mem for heap memory
+    return;
+  }
+  if (pagesize == 0) pagesize = getpagesize();
+  const size_t pagemask = pagesize - 1;
+
+  size_t new_start = reinterpret_cast<size_t>(start);
+  size_t end = new_start + length;
+  size_t new_end = end;
+
+  // Round up the starting address and round down the ending address
+  // to be page aligned:
+  new_start = (new_start + pagesize - 1) & ~pagemask;
+  new_end = new_end & ~pagemask;
+
+  ASSERT((new_start & pagemask) == 0);
+  ASSERT((new_end & pagemask) == 0);
+  ASSERT(new_start >= reinterpret_cast<size_t>(start));
+  ASSERT(new_end <= end);
+
+  if (new_end > new_start) {
+    // Note -- ignoring most return codes, because if this fails it
+    // doesn't matter...
+    while (madvise(reinterpret_cast<char*>(new_start), new_end - new_start,
+                   MADV_DONTNEED) == -1 &&
+           errno == EAGAIN) {
+      // NOP
+    }
+  }
+}
+#endif

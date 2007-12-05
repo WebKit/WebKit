@@ -280,6 +280,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\wtf\TCPackedCache.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\wtf\TCPageMap.h"
 			>
 		</File>
