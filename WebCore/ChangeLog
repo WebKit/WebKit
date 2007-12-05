@@ -1,3 +1,46 @@
+2007-12-05  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        - WebCore part of fixing <rdar://problem/5111082> Flash popup video ad doesn't close when clicked at http://www.firestonecompleteautocare.com/
+
+        * manual-tests/nested-plug-ins.html: Added.
+        * manual-tests/resources/nested-plug-ins-inner-frame.html: Added.
+        * manual-tests/resources/nested-plug-ins-outer-frame.html: Added.
+        * platform/ScrollView.h:
+        * platform/Widget.h:
+        (WebCore::Widget::attachToWindow): Added. Tells the widget that it is connected
+        via visible ScrollViews to the root ScrollView of the WebView.
+        (WebCore::Widget::detachFromWindow): Added. Tells the widget that it is no longer
+        connected via visible ScrollViews to the root ScrollView of the WebView.
+        * platform/win/ScrollViewWin.cpp:
+        (WebCore::ScrollView::ScrollViewPrivate::ScrollViewPrivate): Added
+        m_visible and m_attachedToWindow members.
+        (WebCore::ScrollView::attachToWindow): Added. Attaches all children if this
+        view is visible.
+        (WebCore::ScrollView::detachFromWindow): Added. Detaches all children if this
+        view is visible (otherwise they would be detached already).
+        (WebCore::ScrollView::show): Added. Attaches all children if this view
+        is attached.
+        (WebCore::ScrollView::hide): Added. Detaches all children if this view
+        is attached (otherwise they would be detached already).
+        (WebCore::ScrollView::isAttachedToWindow): Added.
+        * platform/win/WidgetWin.cpp:
+        (WebCore::Widget::setParent): Added calls to attachToWindow() and detachFromWindow()
+        depending on whether the parent is set and attached or not.
+        * plugins/win/PluginViewWin.cpp:
+        (WebCore::PluginViewWin::setFocus):
+        (WebCore::PluginViewWin::show): Changed to show the plug-in only if
+        this view is attached.
+        (WebCore::PluginViewWin::hide): Changed to hide the plug-in only if this
+        view is attached (otherwise it would be hidden already).
+        (WebCore::PluginViewWin::attachToWindow): Added. Shows the plug-in if this view
+        is visible.
+        (WebCore::PluginViewWin::detachFromWindow): Added. Hides the plug-in if this view
+        is visible (otherwise it would be hidden already).
+        (WebCore::PluginViewWin::PluginViewWin):
+        * plugins/win/PluginViewWin.h: Added m_attachedToWindow member.
+
 2007-12-04  Alp Toker  <alp@atoker.com>
 
         Potential GTK+ build fix for the glib-genmarshal issue.

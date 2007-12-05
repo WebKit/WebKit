@@ -100,7 +100,11 @@ void Widget::setFrameGeometry(const IntRect &rect)
 
 void Widget::setParent(ScrollView* v)
 {
+    if (!v || !v->isAttachedToWindow())
+        detachFromWindow();
     data->parent = v;
+    if (v && v->isAttachedToWindow())
+        attachToWindow();
 }
 
 ScrollView* Widget::parent() const

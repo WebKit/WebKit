@@ -135,6 +135,13 @@ namespace WebCore {
         
         virtual void setParent(ScrollView*);
 
+        virtual void attachToWindow();
+        virtual void detachFromWindow();
+        bool isAttachedToWindow() const;
+
+        virtual void show();
+        virtual void hide();
+
         void addToDirtyRegion(const IntRect&);
         void scrollBackingStore(int dx, int dy, const IntRect& scrollViewRect, const IntRect& clipRect);
         void updateBackingStore();
