@@ -1,3 +1,15 @@
+2007-12-04  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Darin.
+
+        - <rdar://5621435>
+        - Security Fix. Instead of having it off by default, WebKit now must
+        explicitly turn off local-resource restriction when needed for backwards
+        coimpatibility reasons.
+
+        * WebView/WebView.mm:
+        (-[WebView _commonInitializationWithFrameName:groupName:]):
+
 2007-12-05  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Kevin Deckers rubberstamp

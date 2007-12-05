@@ -1836,8 +1836,8 @@ WebFrameLoadDelegateImplementationCache* WebViewGetFrameLoadDelegateImplementati
     // Post a notification so the WebCore settings update.
     [[self preferences] _postPreferencesChangesNotification];
 
-    if (WebKitLinkedOnOrAfter(WEBKIT_FIRST_VERSION_WITH_LOCAL_RESOURCE_SECURITY_RESTRICTION))
-        FrameLoader::setRestrictAccessToLocal(true);
+    if (!WebKitLinkedOnOrAfter(WEBKIT_FIRST_VERSION_WITH_LOCAL_RESOURCE_SECURITY_RESTRICTION))
+        FrameLoader::setRestrictAccessToLocal(false);
 }
 
 - (id)initWithFrame:(NSRect)f

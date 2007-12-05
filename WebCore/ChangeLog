@@ -1,3 +1,14 @@
+2007-12-04  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Darin.
+
+        - <rdar://5621435>
+        - Security Fix. Instead of having it off by default, WebKit now must
+        explicitly turn off local-resource restriction when needed for backwards
+        compatibility reasons.
+
+        * loader/FrameLoader.cpp:
+
 2007-12-05  Adam Roben  <aroben@apple.com>
 
         Set the menu item identifier for all menu items

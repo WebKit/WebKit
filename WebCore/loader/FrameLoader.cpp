@@ -177,7 +177,7 @@ struct ScheduledRedirection {
 };
 
 static double storedTimeOfLastCompletedLoad;
-static bool m_restrictAccessToLocal = false;
+static bool m_restrictAccessToLocal = true;
 
 static bool getString(JSValue* result, String& string)
 {
