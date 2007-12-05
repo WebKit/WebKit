@@ -4256,14 +4256,16 @@ static inline float CallDelegateReturningFloat(WebView *self, id delegate, SEL s
     return 0.0f;
 }
 
+typedef unsigned long long (*msg64)(id, SEL, ...);
+
 static inline unsigned long long CallDelegateReturningUnsignedLongLong(WebView *self, id delegate, SEL selector, id object1, id object2, unsigned long long integer)
 {
     if (!delegate || ![delegate respondsToSelector:selector])
         return 0;
     if (!self->_private->catchesDelegateExceptions)
-        return static_cast<unsigned long long>(objc_msgSend_fpret(delegate, selector, self, object1, object2, integer));
+        return reinterpret_cast<msg64>(objc_msgSend)(delegate, selector, self, object1, object2, integer);
     @try {
-        return static_cast<unsigned long long>(objc_msgSend_fpret(delegate, selector, self, object1, object2, integer));
+        return reinterpret_cast<msg64>(objc_msgSend)(delegate, selector, self, object1, object2, integer);
     } @catch(id exception) {
         ReportDiscardedDelegateException(selector, exception);
     }
@@ -4275,9 +4277,9 @@ static inline unsigned long long CallDelegateReturningUnsignedLongLong(WebView *
     if (!delegate || ![delegate respondsToSelector:selector])
         return 0;
     if (!self->_private->catchesDelegateExceptions)
-        return static_cast<unsigned long long>(objc_msgSend_fpret(delegate, selector, self, object1, integer, object2));
+        return reinterpret_cast<msg64>(objc_msgSend)(delegate, selector, self, object1, integer, object2);
     @try {
-        return static_cast<unsigned long long>(objc_msgSend_fpret(delegate, selector, self, object1, integer, object2));
+        return reinterpret_cast<msg64>(objc_msgSend)(delegate, selector, self, object1, integer, object2);
     } @catch(id exception) {
         ReportDiscardedDelegateException(selector, exception);
     }

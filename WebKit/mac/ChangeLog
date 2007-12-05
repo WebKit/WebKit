@@ -1,3 +1,13 @@
+2007-12-04  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Brady Eidson (with help from Mark Rowe)
+        
+        Fixed return values for unsigned-long-long delegate methods
+
+        * WebView/WebView.mm:
+        (CallDelegateReturningUnsignedLongLong):
+        redid the change that Brady did at home over the weekend but forgot to check in
+
 2007-11-27  Adam Roben  <aroben@apple.com>
 
         Remove -[WebFrameBridge setNeedsReapplyStyles]
