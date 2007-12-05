@@ -1,5 +1,15 @@
 2007-12-05  Mark Rowe  <mrowe@apple.com>
 
+        Reviewed by Oliver.
+
+        Build fix for GCC 4.2. Cast via a union to avoid strict-aliasing issues.
+
+        * wtf/FastMalloc.cpp:
+        (WTF::):
+        (WTF::getPageHeap):
+
+2007-12-05  Mark Rowe  <mrowe@apple.com>
+
         Reviewed by Darin.
 
         Fix testkjs in 64-bit.

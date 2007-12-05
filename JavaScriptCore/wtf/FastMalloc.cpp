@@ -1835,7 +1835,18 @@ static bool phinited = false;
 
 // Avoid extra level of indirection by making "pageheap" be just an alias
 // of pageheap_memory.
-#define pageheap ((TCMalloc_PageHeap*) pageheap_memory)
+typedef union {
+    void* m_memory;
+    TCMalloc_PageHeap* m_pageHeap;
+} PageHeapUnion;
+
+static inline TCMalloc_PageHeap* getPageHeap()
+{
+    PageHeapUnion u = { &pageheap_memory[0] };
+    return u.m_pageHeap;
+}
+
+#define pageheap getPageHeap()
 
 // If TLS is available, we also store a copy
 // of the per-thread object in a __thread variable
