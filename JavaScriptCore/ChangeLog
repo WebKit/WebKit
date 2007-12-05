@@ -1,3 +1,16 @@
+2007-12-05  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Darin.
+
+        Fix testkjs in 64-bit.
+
+        When built for 64-bit the TCMalloc spin lock uses pthread mutexes rather than a custom spin lock
+        implemented in assembly.  If we fail to initialize the pthread mutex, attempts to lock or unlock
+        it will fail and trigger a call to abort.
+
+        * wtf/FastMalloc.cpp: Initialize the spin lock so that we can later lock and unlock it.
+        * wtf/TCSpinLock.h: Add an Init method to the optimised spin lock.
+
 2007-12-04  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by NOBODY (Build fix).

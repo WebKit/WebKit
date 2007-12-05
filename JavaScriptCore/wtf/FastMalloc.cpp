@@ -1889,6 +1889,7 @@ static volatile size_t per_thread_cache_size = kMaxThreadCacheSize;
 //-------------------------------------------------------------------
 
 void TCMalloc_Central_FreeList::Init(size_t cl) {
+  lock_.Init();
   size_class_ = cl;
   DLL_Init(&empty_);
   DLL_Init(&nonempty_);

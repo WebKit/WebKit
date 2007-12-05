@@ -121,6 +121,8 @@ struct TCMalloc_SpinLock {
         return lockword_ != 0;
     }
 
+    inline void Init() { lockword_ = 0; }
+
     volatile unsigned int lockword_;
 };
 
