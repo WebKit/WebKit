@@ -236,7 +236,7 @@ String TextCodecMac::decode(const char* bytes, size_t length, bool flush)
                 break;
             }
             default:
-                LOG_ERROR("text decoding failed with error %zu", status);
+                LOG_ERROR("text decoding failed with error %ld", static_cast<long>(status));
                 m_error = true;
                 return String();
         }
