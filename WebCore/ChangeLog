@@ -1,3 +1,19 @@
+2007-12-04  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Jon.
+
+        Always call NPP_NewStream, NPP_DestroyStream and NPP_URLNotify for JavaScript
+        result streams, even if the JavaScript expression threw an exception or returned undefined.
+        This matches what Firefox does.
+        
+        * plugins/win/PluginStreamWin.cpp:
+        (WebCore::PluginStreamWin::sendJavaScriptStream):
+        Handle the result string being null, and set the correct NPReason if it is.
+        
+        * plugins/win/PluginViewWin.cpp:
+        (WebCore::PluginViewWin::performRequest):
+        Always send the JavaScript stream, regardless of the result could be converted to a string or not.
+
 2007-12-04  Adele Peterson  <adele@apple.com>
 
         Reviewed by Hyatt.

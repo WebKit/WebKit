@@ -776,16 +776,16 @@ void PluginViewWin::performRequest(PluginRequestWin* request)
     ASSERT(request->frameLoadRequest().frameName().isEmpty() || m_parentFrame->tree()->find(request->frameLoadRequest().frameName()) == m_parentFrame);
     
     // Executing a script can cause the plugin view to be destroyed, so we keep a reference to the parent frame.
-    RefPtr<Frame> parentFrame =  m_parentFrame;
-    JSValue* result = m_parentFrame->loader()->executeScript(jsString.deprecatedString(), true);
+    RefPtr<Frame> parentFrame = m_parentFrame;
+    JSValue* result = m_parentFrame->loader()->executeScript(jsString, true);
 
     if (request->frameLoadRequest().frameName().isNull()) {
         String resultString;
 
-        if (!getString(parentFrame->scriptProxy(), result, resultString))
-            return;
+        CString cstr;
+        if (getString(parentFrame->scriptProxy(), result, resultString))
+            cstr = resultString.utf8();
 
-        CString cstr = resultString.utf8();
         RefPtr<PluginStreamWin> stream = new PluginStreamWin(this, parentFrame.get(), request->frameLoadRequest().resourceRequest(), request->sendNotification(), request->notifyData());
         m_streams.add(stream);
         stream->sendJavaScriptStream(requestURL, cstr);

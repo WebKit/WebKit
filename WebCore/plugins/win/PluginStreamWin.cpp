@@ -344,11 +344,15 @@ void PluginStreamWin::sendJavaScriptStream(const KURL& requestURL, const CString
     if (m_streamState == StreamStopped)
         return;
 
-    didReceiveData(0, resultString.data(), resultString.length());
-    if (m_streamState == StreamStopped)
-        return;
+    if (!resultString.isNull()) {
+        didReceiveData(0, resultString.data(), resultString.length());
+        if (m_streamState == StreamStopped)
+            return;
+    }
 
-    didFinishLoading(0);
+    m_loader = 0;
+
+    destroyStream(resultString.isNull() ? NPRES_NETWORK_ERR : NPRES_DONE);
 }
 
 void PluginStreamWin::didReceiveResponse(NetscapePlugInStreamLoader* loader, const ResourceResponse& response)
