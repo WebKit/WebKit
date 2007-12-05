@@ -1,3 +1,12 @@
+2007-12-05  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Adam Roben.
+
+        - adding a test for http://bugs.webkit.org/show_bug.cgi?id=16097
+
+        * fast/dom/ImageDocument-image-deletion-expected.txt: Added.
+        * fast/dom/ImageDocument-image-deletion.html: Added.
+
 2007-12-04  Adele Peterson  <adele@apple.com>
 
         Reviewed by Darin.
