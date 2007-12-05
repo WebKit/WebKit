@@ -269,6 +269,22 @@ void EditorClient::handleKeypress(KeyboardEvent* event)
             case VK_NEXT:  // PageDown
                 frame->editor()->execCommand("MoveDownByPageAndModifyCaret");
                 break;
+            case VK_HOME:
+                if (kevent->ctrlKey())
+                    frame->editor()->execCommand("MoveToBeginningOfDocument");
+                else if (kevent->shiftKey())
+                    frame->editor()->execCommand("MoveToBeginningOfLineAndModifySelection");
+                else
+                    frame->editor()->execCommand("MoveToBeginningOfLine");
+                break;
+            case VK_END:
+                if (kevent->ctrlKey())
+                    frame->editor()->execCommand("MoveToEndOfDocument");
+                else if (kevent->shiftKey())
+                    frame->editor()->execCommand("MoveToEndOfLineAndModifySelection");
+                else
+                    frame->editor()->execCommand("MoveToEndOfLine");
+                break;
             case VK_RETURN:
                 frame->editor()->execCommand("InsertLineBreak");
                 break;

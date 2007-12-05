@@ -113,6 +113,11 @@ static gboolean webkit_web_view_key_event(GtkWidget* widget, GdkEventKey* event)
 
     if (event->type == GDK_KEY_PRESS) {
         FrameView* view = frame->view();
+        SelectionController::EAlteration alteration;
+        if (event->state & GDK_SHIFT_MASK)
+            alteration = SelectionController::EXTEND;
+        else
+            alteration = SelectionController::MOVE;
 
         /* FIXME: at the very least we should be using the same code than the
            Windows port here, but our ScrollView file diverges enough to make
@@ -132,6 +137,12 @@ static gboolean webkit_web_view_key_event(GtkWidget* widget, GdkEventKey* event)
             return TRUE;
         case GDK_Left:
             view->scrollBy(-LINE_STEP, 0);
+            return TRUE;
+        case GDK_Home:
+            frame->selectionController()->modify(alteration, SelectionController::BACKWARD, DocumentBoundary, true);
+            return TRUE;
+        case GDK_End:
+            frame->selectionController()->modify(alteration, SelectionController::FORWARD, DocumentBoundary, true);
             return TRUE;
         }
     }
