@@ -1,3 +1,14 @@
+2007-12-05  Alice Liu  <alice.liu@apple.com>
+
+        Reviewed by Antti.
+
+        Addressed <rdar://problem/5137284> fast/events/mouseout-dead-node.html fails on boomer
+
+        * fast/events/mouseout-dead-node.html:
+        Changed the questionable calls to mouseUp() to mouseMoveTo() to better simulate mouseovers 
+        * platform/win/Skipped:
+        removed this test from skipped file
+
 2007-12-05  Adam Roben  <aroben@apple.com>
 
         * platform/win/Skipped: Add a crashing test.

@@ -289,9 +289,6 @@ fast/dom/Window/window-screen-properties.html
 # Layout Tests fail in boomer because of not objCWrapperClass. <rdar://problem/5137769>
 fast/dom/wrapper-classes.html
 
-# fast/events/mouseout-dead-node.html fails on boomer <rdar://problem/5137284>
-fast/events/mouseout-dead-node.html
-
 # This test uses Mac-specific key codes <rdar://problem/5076426>
 fast/events/arrow-navigation.html
 

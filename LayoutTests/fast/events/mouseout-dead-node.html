@@ -28,12 +28,12 @@ function test() {
         var x = el.offsetLeft+3;
         var y = el.offsetTop+3;
         eventSender.mouseMoveTo(x, y); 
-        eventSender.mouseUp();
+        eventSender.mouseMoveTo(x+1, y+1); 
         el = document.getElementById('target2');
         x = el.offsetLeft+3;
         y = el.offsetTop+3;
         eventSender.mouseMoveTo(x, y);
-        eventSender.mouseUp();
+        eventSender.mouseMoveTo(x+1, y+1);
 
     }
 }
