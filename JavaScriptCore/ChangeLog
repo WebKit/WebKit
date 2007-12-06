@@ -1,3 +1,14 @@
+2007-12-01  Mark Rowe  <mrowe@apple.com>
+
+        Build fix.  Include headers before trying to use the things that they declare.
+
+        * kjs/JSImmediate.cpp:
+        * kjs/nodes.cpp:
+        * kjs/object.cpp:
+        * kjs/object_object.cpp:
+        * kjs/regexp_object.cpp:
+        * kjs/string_object.cpp:
+
 2007-12-05  Geoffrey Garen  <ggaren@apple.com>
 
         Build fix: added some #includes.

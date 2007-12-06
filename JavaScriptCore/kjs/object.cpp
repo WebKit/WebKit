@@ -26,6 +26,7 @@
 #include "config.h"
 #include "object.h"
 
+#include "date_object.h"
 #include "error_object.h"
 #include "lookup.h"
 #include "nodes.h"

@@ -24,9 +24,10 @@
 #include "string_object.lut.h"
 
 #include "JSWrapperObject.h"
+#include "PropertyNameArray.h"
+#include "array_object.h"
 #include "error_object.h"
 #include "operations.h"
-#include "PropertyNameArray.h"
 #include "regexp_object.h"
 #include <wtf/MathExtras.h>
 #include <wtf/unicode/Unicode.h>

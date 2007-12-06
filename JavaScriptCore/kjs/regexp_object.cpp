@@ -23,6 +23,7 @@
 #include "regexp_object.lut.h"
 
 #include "array_instance.h"
+#include "array_object.h"
 #include "error_object.h"
 #include "internal.h"
 #include "object.h"

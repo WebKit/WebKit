@@ -29,6 +29,7 @@
 #include "ExecState.h"
 #include "JSGlobalObject.h"
 #include "PropertyNameArray.h"
+#include "array_object.h"
 #include "debugger.h"
 #include "function_object.h"
 #include "lexer.h"

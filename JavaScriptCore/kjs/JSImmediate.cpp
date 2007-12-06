@@ -23,7 +23,7 @@
 #include "JSImmediate.h"
 
 #include "JSGlobalObject.h"
-#include "boolean_object.h"
+#include "bool_object.h"
 #include "number_object.h"
 #include "object.h"
 
