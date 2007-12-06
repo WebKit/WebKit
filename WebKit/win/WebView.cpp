@@ -3340,6 +3340,11 @@ HRESULT STDMETHODCALLTYPE WebView::isGrammarCheckingEnabled(
 HRESULT STDMETHODCALLTYPE WebView::setGrammarCheckingEnabled( 
     BOOL enabled)
 {
+    if (!m_editingDelegate) {
+        LOG_ERROR("No NSSpellChecker");
+        return E_FAIL;
+    }
+
     if (grammarCheckingEnabled == !!enabled)
         return S_OK;
     

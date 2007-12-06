@@ -1,3 +1,12 @@
+2007-12-05  Steve Falkenburg  <sfalken@apple.com>
+
+        <rdar://problem/5625327> Crash toggling check grammar w/ spelling when no spell checker exists.
+        
+        Reviewed by Adam.
+
+        * WebView.cpp:
+        (WebView::setGrammarCheckingEnabled): Add null check
+
 2007-12-05  Adam Roben  <aroben@apple.com>
 
         Expose WebView::setProhibitsMainFrameScrolling through IWebViewPrivate
