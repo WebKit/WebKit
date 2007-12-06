@@ -1,6 +1,6 @@
 KRenderingPaintServer {id="grad" [type=LINEAR-GRADIENT] [stops=[(0.00,#FFD700), (0.50,#FFA500), (1.00,#DC143C)]] [start=(0,0)] [end=(1,0)]}
-KCanvasResource {id="clip" [type=CLIPPER] [clip data=[]]}
-KCanvasResource {id="svgClip" [type=CLIPPER] [clip data=[]]}
+KCanvasResource {id="clip" [type=CLIPPER] [clip data=[[winding=EVEN-ODD] [path=M0.00,0.00L0.00,0.00L0.00,0.00L0.00,0.00]]]}
+KCanvasResource {id="svgClip" [type=CLIPPER] [clip data=[[winding=EVEN-ODD] [path=M0.00,0.00L0.00,0.00L0.00,0.00L0.00,0.00]]]}
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 450x500
