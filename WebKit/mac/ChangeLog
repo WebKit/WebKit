@@ -1,3 +1,12 @@
+2007-12-06  Timothy Hatcher  <timothy@apple.com>
+
+        Change the ASSERT added for the previous fix. The ASSERT was firing for 10.5.0.
+        Only assert if the major version is zero, since zero is handled in the other cases.
+
+        * WebView/WebView.mm:
+        (callGestalt): Remove the ASSERT.
+        (createMacOSXVersionString): ASSERT that major is not zero.
+
 2007-12-06  Darin Adler  <darin@apple.com>
 
         Reviewed by Tim Hatcher.

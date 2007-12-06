@@ -4064,7 +4064,6 @@ static inline int callGestalt(OSType selector)
 {
     SInt32 value = 0;
     Gestalt(selector, &value);
-    ASSERT(value);
     return value;
 }
 
@@ -4073,6 +4072,8 @@ static NSString *createMacOSXVersionString()
 {
     // Can't use -[NSProcessInfo operatingSystemVersionString] because it has too much stuff we don't want.
     int major = callGestalt(gestaltSystemVersionMajor);
+    ASSERT(major);
+
     int minor = callGestalt(gestaltSystemVersionMinor);
     int bugFix = callGestalt(gestaltSystemVersionBugFix);
     if (bugFix)
