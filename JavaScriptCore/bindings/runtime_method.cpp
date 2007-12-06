@@ -27,6 +27,7 @@
 #include "runtime_method.h"
 
 #include "ExecState.h"
+#include "JSGlobalObject.h"
 #include "runtime_object.h"
 #include "function_object.h"
 
@@ -34,7 +35,7 @@ using namespace KJS::Bindings;
 using namespace KJS;
 
 RuntimeMethod::RuntimeMethod(ExecState *exec, const Identifier &ident, Bindings::MethodList &m) 
-    : InternalFunctionImp (static_cast<FunctionPrototype*>(exec->lexicalInterpreter()->builtinFunctionPrototype()), ident)
+    : InternalFunctionImp(exec->lexicalGlobalObject()->functionPrototype(), ident)
     , _methodList(new MethodList(m))
 {
 }

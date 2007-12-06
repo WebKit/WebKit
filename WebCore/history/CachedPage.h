@@ -86,7 +86,7 @@ private:
     KURL m_URL;
     OwnPtr<KJS::SavedProperties> m_windowProperties;
     OwnPtr<KJS::SavedProperties> m_locationProperties;
-    OwnPtr<KJS::SavedBuiltins> m_interpreterBuiltins;
+    OwnPtr<KJS::SavedBuiltins> m_windowBuiltins;
     OwnPtr<KJS::PausedTimeouts> m_pausedTimeouts;
         
 #if PLATFORM(MAC)

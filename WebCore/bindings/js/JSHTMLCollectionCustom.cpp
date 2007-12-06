@@ -32,15 +32,17 @@
 #include "kjs_html.h"
 #include <wtf/Vector.h>
 
+using namespace KJS;
+
 namespace WebCore {
 
-static KJS::JSValue* getNamedItems(KJS::ExecState* exec, HTMLCollection* impl, const KJS::Identifier& propertyName)
+static JSValue* getNamedItems(ExecState* exec, HTMLCollection* impl, const Identifier& propertyName)
 {
     Vector<RefPtr<Node> > namedItems;
     impl->namedItems(propertyName, namedItems);
 
     if (namedItems.isEmpty())
-        return KJS::jsUndefined();
+        return jsUndefined();
 
     if (namedItems.size() == 1)
         return toJS(exec, namedItems[0].get());
@@ -50,10 +52,10 @@ static KJS::JSValue* getNamedItems(KJS::ExecState* exec, HTMLCollection* impl, c
 
 // HTMLCollections are strange objects, they support both get and call,
 // so that document.forms.item(0) and document.forms(0) both work.
-KJS::JSValue* JSHTMLCollection::callAsFunction(KJS::ExecState* exec, KJS::JSObject*, const KJS::List& args)
+JSValue* JSHTMLCollection::callAsFunction(ExecState* exec, JSObject*, const List& args)
 {
     if (args.size() < 1)
-        return KJS::jsUndefined();
+        return jsUndefined();
 
     // Do not use thisObj here. It can be the JSHTMLDocument, in the document.forms(i) case.
     HTMLCollection* collection = impl();
@@ -63,18 +65,18 @@ KJS::JSValue* JSHTMLCollection::callAsFunction(KJS::ExecState* exec, KJS::JSObje
     if (args.size() == 1) {
         // Support for document.all(<index>) etc.
         bool ok;
-        KJS::UString string = args[0]->toString(exec);
+        UString string = args[0]->toString(exec);
         unsigned index = string.toUInt32(&ok, false);
         if (ok)
             return toJS(exec, collection->item(index));
 
         // Support for document.images('<name>') etc.
-        return getNamedItems(exec, collection, KJS::Identifier(string));
+        return getNamedItems(exec, collection, Identifier(string));
     }
 
     // The second arg, if set, is the index of the item we want
     bool ok;
-    KJS::UString string = args[0]->toString(exec);
+    UString string = args[0]->toString(exec);
     unsigned index = args[1]->toString(exec).toUInt32(&ok, false);
     if (ok) {
         String pstr = string;
@@ -87,7 +89,7 @@ KJS::JSValue* JSHTMLCollection::callAsFunction(KJS::ExecState* exec, KJS::JSObje
         }
     }
 
-    return KJS::jsUndefined();
+    return jsUndefined();
 }
 
 bool JSHTMLCollection::implementsCall() const
@@ -95,38 +97,37 @@ bool JSHTMLCollection::implementsCall() const
     return true;
 }
 
-bool JSHTMLCollection::canGetItemsForName(KJS::ExecState* exec, HTMLCollection* thisObj, const KJS::Identifier& propertyName)
+bool JSHTMLCollection::canGetItemsForName(ExecState* exec, HTMLCollection* thisObj, const Identifier& propertyName)
 {
     return !getNamedItems(exec, thisObj, propertyName)->isUndefined();
 }
 
-KJS::JSValue* JSHTMLCollection::nameGetter(KJS::ExecState* exec, KJS::JSObject* originalObject, const KJS::Identifier& propertyName, const KJS::PropertySlot& slot)
+JSValue* JSHTMLCollection::nameGetter(ExecState* exec, JSObject* originalObject, const Identifier& propertyName, const PropertySlot& slot)
 {
     JSHTMLCollection* thisObj = static_cast<JSHTMLCollection*>(slot.slotBase());
     return getNamedItems(exec, thisObj->impl(), propertyName);
 }
 
-KJS::JSValue* JSHTMLCollection::item(KJS::ExecState* exec, const KJS::List& args)
+JSValue* JSHTMLCollection::item(ExecState* exec, const List& args)
 {
     bool ok;
     uint32_t index = args[0]->toString(exec).toUInt32(&ok, false);
     if (ok)
         return toJS(exec, impl()->item(index));
-    return getNamedItems(exec, impl(), KJS::Identifier(args[0]->toString(exec)));
+    return getNamedItems(exec, impl(), Identifier(args[0]->toString(exec)));
 }
 
-KJS::JSValue* JSHTMLCollection::namedItem(KJS::ExecState* exec, const KJS::List& args)
+JSValue* JSHTMLCollection::namedItem(ExecState* exec, const List& args)
 {
-    return getNamedItems(exec, impl(), KJS::Identifier(args[0]->toString(exec)));
+    return getNamedItems(exec, impl(), Identifier(args[0]->toString(exec)));
 }
 
-KJS::JSValue* toJS(KJS::ExecState* exec, HTMLCollection* collection)
+JSValue* toJS(ExecState* exec, HTMLCollection* collection)
 {
     if (!collection)
-        return KJS::jsNull();
+        return jsNull();
 
-    KJS::ScriptInterpreter* interp = static_cast<KJS::ScriptInterpreter*>(exec->dynamicInterpreter());
-    KJS::DOMObject* ret = interp->getDOMObject(collection);
+    DOMObject* ret = ScriptInterpreter::getDOMObject(collection);
 
     if (ret)
         return ret;
@@ -143,7 +144,7 @@ KJS::JSValue* toJS(KJS::ExecState* exec, HTMLCollection* collection)
             break;
     }
 
-    interp->putDOMObject(collection, ret);
+    ScriptInterpreter::putDOMObject(collection, ret);
     return ret;
 }
 

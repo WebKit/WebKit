@@ -137,17 +137,17 @@ ObjcValue convertValueToObjcValue(ExecState *exec, JSValue *value, ObjcValueType
         case ObjcObjectType: {
             JSLock lock;
             
-            Interpreter *originInterpreter = exec->dynamicInterpreter();
-            RootObject* originRootObject = findRootObject(originInterpreter);
+            JSGlobalObject *originGlobalObject = exec->dynamicGlobalObject();
+            RootObject* originRootObject = findRootObject(originGlobalObject);
 
-            Interpreter *interpreter = 0;
+            JSGlobalObject* globalObject = 0;
             if (value->isObject() && static_cast<JSObject*>(value)->isGlobalObject())
-                interpreter = static_cast<JSGlobalObject*>(value)->interpreter();
+                globalObject = static_cast<JSGlobalObject*>(value);
 
-            if (!interpreter)
-                interpreter = originInterpreter;
+            if (!globalObject)
+                globalObject = originGlobalObject;
                 
-            RootObject* rootObject = findRootObject(interpreter);
+            RootObject* rootObject = findRootObject(globalObject);
             result.objectValue =  rootObject
                 ? [webScriptObjectClass() _convertValueToObjcValue:value originRootObject:originRootObject rootObject:rootObject]
                 : nil;

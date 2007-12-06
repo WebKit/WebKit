@@ -34,10 +34,11 @@
 #import "PlatformString.h"
 #import "WebCoreObjCExtras.h"
 #import "WebScriptObjectPrivate.h"
-#import <JavaScriptCore/debugger.h>
 #import <JavaScriptCore/ExecState.h>
-#import <JavaScriptCore/function.h>
 #import <JavaScriptCore/JSGlobalObject.h>
+#import <JavaScriptCore/debugger.h>
+#import <JavaScriptCore/function.h>
+#import <JavaScriptCore/interpreter.h>
 
 using namespace KJS;
 using namespace WebCore;
@@ -82,10 +83,10 @@ class WebCoreScriptDebuggerImp : public KJS::Debugger {
 
   public:
     // constructor
-    WebCoreScriptDebuggerImp(WebCoreScriptDebugger *objc, Interpreter *interp) : _objc(objc) {
+    WebCoreScriptDebuggerImp(WebCoreScriptDebugger *objc, JSGlobalObject* globalObject) : _objc(objc) {
         _nested = true;
-        _current = [_objc _enterFrame:interp->globalObject()->globalExec()];
-        attach(interp);
+        _current = [_objc _enterFrame:globalObject->globalExec()];
+        attach(globalObject);
         [[_objc delegate] enteredFrame:_current sourceId:-1 line:-1];
         _nested = false;
     }
@@ -143,7 +144,7 @@ class WebCoreScriptDebuggerImp : public KJS::Debugger {
 // This is the main (behind-the-scenes) debugger class in WebCore.
 //
 // The WebCoreScriptDebugger has two faces, one for Objective-C (this class), and another (WebCoreScriptDebuggerImp)
-// for C++.  The ObjC side creates the C++ side, which does the real work of attaching to the interpreter and
+// for C++.  The ObjC side creates the C++ side, which does the real work of attaching to the global object and
 // forwarding the KJS debugger callbacks to the delegate.
 
 @implementation WebCoreScriptDebugger
@@ -160,7 +161,7 @@ class WebCoreScriptDebuggerImp : public KJS::Debugger {
     if ((self = [super init])) {
         _delegate   = delegate;
         _globalObj = [_delegate globalObject];
-        _debugger  = new WebCoreScriptDebuggerImp(self, [_globalObj _rootObject]->interpreter());
+        _debugger  = new WebCoreScriptDebuggerImp(self, [_globalObj _rootObject]->globalObject());
     }
     return self;
 }
@@ -332,25 +333,27 @@ class WebCoreScriptDebuggerImp : public KJS::Debugger {
 // Calling this method on the global frame is not quite the same as calling the WebScriptObject
 // method of the same name, due to the treatment of exceptions.
 
+// FIXME: If "script" contains var declarations, the machinery to handle local variables
+// efficiently in JavaScriptCore will not work properly. This could lead to crashes or
+// incorrect variable values. So this is not appropriate for evaluating arbitrary script.
 - (id)evaluateWebScript:(NSString *)script
 {
     JSLock lock;
 
     UString code = String(script);
 
-    ExecState   *state   = _state;
-    Interpreter *interp  = state->dynamicInterpreter();
-    JSObject   *globObj = interp->globalObject();
+    ExecState* state = _state;
+    JSGlobalObject* globalObject = state->dynamicGlobalObject();
 
     // find "eval"
     JSObject *eval = NULL;
     if (state->currentBody()) {  // "eval" won't work without context (i.e. at global scope)
-        JSValue *v = globObj->get(state, "eval");
+        JSValue *v = globalObject->get(state, "eval");
         if (v->isObject() && static_cast<JSObject *>(v)->implementsCall())
             eval = static_cast<JSObject *>(v);
         else
             // no "eval" - fallback operates on global exec state
-            state = interp->globalObject()->globalExec();
+            state = globalObject->globalExec();
     }
 
     JSValue *savedException = state->exception();
@@ -364,7 +367,7 @@ class WebCoreScriptDebuggerImp : public KJS::Debugger {
         result = eval->call(state, NULL, args);
     } else
         // no "eval", or no context (i.e. global scope) - use global fallback
-        result = interp->evaluate(UString(), 0, code.data(), code.size(), globObj).value();
+        result = Interpreter::evaluate(state, UString(), 0, code.data(), code.size(), globalObject).value();
 
     if (state->hadException())
         result = state->exception();    // (may be redundant depending on which eval path was used)

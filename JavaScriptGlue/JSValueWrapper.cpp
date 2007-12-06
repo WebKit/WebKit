@@ -79,10 +79,7 @@ static ExecState* getThreadGlobalExecState()
     pthread_once(&globalObjectKeyOnce, initializeGlobalObjectKey);
     JSGlobalObject* globalObject = static_cast<JSGlobalObject*>(pthread_getspecific(globalObjectKey));
     if (!globalObject) {
-        globalObject = new JSGlobalObject;
-        Interpreter* interpreter = new JSInterpreter;
-        interpreter->setGlobalObject(globalObject); // globalObject now owns interpreter
-        
+        globalObject = new JSGlueGlobalObject;
         gcProtect(globalObject);
         pthread_setspecific(globalObjectKey, globalObject);
     }

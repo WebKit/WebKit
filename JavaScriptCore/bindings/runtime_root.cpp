@@ -50,7 +50,7 @@ static RootObjectSet* rootObjectSet()
 // FIXME:  These two functions are a potential performance problem.  We could 
 // fix them by adding a JSObject to RootObject dictionary.
 
-RootObject* findRootObject(JSObject* jsObject)
+RootObject* findProtectingRootObject(JSObject* jsObject)
 {
     RootObjectSet::const_iterator end = rootObjectSet()->end();
     for (RootObjectSet::const_iterator it = rootObjectSet()->begin(); it != end; ++it) {
@@ -60,11 +60,11 @@ RootObject* findRootObject(JSObject* jsObject)
     return 0;
 }
 
-RootObject* findRootObject(Interpreter* interpreter)
+RootObject* findRootObject(JSGlobalObject* globalObject)
 {
     RootObjectSet::const_iterator end = rootObjectSet()->end();
     for (RootObjectSet::const_iterator it = rootObjectSet()->begin(); it != end; ++it) {
-        if ((*it)->interpreter() == interpreter)
+        if ((*it)->globalObject() == globalObject)
             return *it;
     }
     return 0;
@@ -278,12 +278,6 @@ const void* RootObject::nativeHandle() const
 { 
     ASSERT(m_isValid);
     return m_nativeHandle; 
-}
-
-Interpreter* RootObject::interpreter() const 
-{ 
-    ASSERT(m_isValid);
-    return m_globalObject->interpreter();
 }
 
 JSGlobalObject* RootObject::globalObject() const

@@ -43,7 +43,7 @@ const ClassInfo JSNamedNodesCollection::info = { "Collection", 0, 0 };
 JSNamedNodesCollection::JSNamedNodesCollection(ExecState* exec, const Vector<RefPtr<Node> >& nodes)
     : m_nodes(nodes)
 {
-    setPrototype(exec->lexicalInterpreter()->builtinObjectPrototype());
+    setPrototype(exec->lexicalGlobalObject()->objectPrototype());
 }
 
 JSValue* JSNamedNodesCollection::lengthGetter(ExecState* exec, JSObject* originalObject, const Identifier& propertyName, const PropertySlot& slot)

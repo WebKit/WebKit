@@ -40,7 +40,7 @@ namespace WebCore {
 JSHTMLAudioElementConstructor::JSHTMLAudioElementConstructor(ExecState* exec, Document* d)
     : m_doc(d)
 {
-    setPrototype(exec->lexicalInterpreter()->builtinObjectPrototype());
+    setPrototype(exec->lexicalGlobalObject()->objectPrototype());
     put(exec, exec->propertyNames().length, jsNumber(1), ReadOnly|DontDelete|DontEnum);
 }
 

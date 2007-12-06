@@ -45,8 +45,6 @@ BooleanInstance::BooleanInstance(JSObject *proto)
 BooleanPrototype::BooleanPrototype(ExecState* exec, ObjectPrototype* objectProto, FunctionPrototype* funcProto)
   : BooleanInstance(objectProto)
 {
-  // The constructor will be added later by Interpreter::Interpreter()
-
   putDirectFunction(new BooleanProtoFunc(exec, funcProto, BooleanProtoFunc::ToString, 0, exec->propertyNames().toString), DontEnum);
   putDirectFunction(new BooleanProtoFunc(exec, funcProto, BooleanProtoFunc::ValueOf, 0, exec->propertyNames().valueOf),  DontEnum);
   setInternalValue(jsBoolean(false));
@@ -101,7 +99,7 @@ bool BooleanObjectImp::implementsConstruct() const
 // ECMA 15.6.2
 JSObject *BooleanObjectImp::construct(ExecState *exec, const List &args)
 {
-  BooleanInstance *obj(new BooleanInstance(exec->lexicalInterpreter()->builtinBooleanPrototype()));
+  BooleanInstance *obj(new BooleanInstance(exec->lexicalGlobalObject()->booleanPrototype()));
 
   bool b;
   if (args.size() > 0)

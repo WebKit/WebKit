@@ -38,6 +38,8 @@
 #include "Page.h"
 #include "kjs_proxy.h"
 #include "kjs_window.h"
+#include <kjs/array_object.h>
+#include <kjs/function_object.h>
 
 #include "kjs_events.lut.h"
 
@@ -79,8 +81,8 @@ void JSAbstractEventListener::handleEvent(Event* ele, bool isWindowEvent)
 
     JSLock lock;
 
-    ScriptInterpreter* interpreter = proxy->interpreter();
-    ExecState* exec = proxy->globalObject()->globalExec();
+    JSGlobalObject* globalObject = proxy->globalObject();
+    ExecState* exec = globalObject->globalExec();
 
     JSValue* handleEventFuncValue = listener->get(exec, "handleEvent");
     JSObject* handleEventFunc = 0;
@@ -96,14 +98,11 @@ void JSAbstractEventListener::handleEvent(Event* ele, bool isWindowEvent)
         List args;
         args.append(toJS(exec, event));
 
-        // Set the event we're handling in the KJS::Window object
         window->setCurrentEvent(event);
-        // ... and in the interpreter
-        interpreter->setCurrentEvent(event);
 
         JSValue* retval;
         if (handleEventFunc) {
-            interpreter->startTimeoutCheck();
+            globalObject->startTimeoutCheck();
             retval = handleEventFunc->call(exec, listener, args);
         } else {
             JSObject* thisObj;
@@ -111,13 +110,12 @@ void JSAbstractEventListener::handleEvent(Event* ele, bool isWindowEvent)
                 thisObj = window;
             else
                 thisObj = static_cast<JSObject*>(toJS(exec, event->currentTarget()));
-            interpreter->startTimeoutCheck();
+            globalObject->startTimeoutCheck();
             retval = listener->call(exec, thisObj, args);
         }
-        interpreter->stopTimeoutCheck();
+        globalObject->stopTimeoutCheck();
 
         window->setCurrentEvent(0);
-        interpreter->setCurrentEvent(0);
 
         if (exec->hadException()) {
             JSObject* exception = exec->exception()->toObject(exec);
@@ -296,11 +294,10 @@ void JSLazyEventListener::parseCode() const
         proxy = frame->scriptProxy();
 
     if (proxy) {
-        ScriptInterpreter* interpreter = proxy->interpreter();
         ExecState* exec = proxy->globalObject()->globalExec();
 
         JSLock lock;
-        JSObject* constr = interpreter->builtinFunction();
+        JSObject* constr = proxy->globalObject()->functionConstructor();
         List args;
 
         UString sourceURL(frame->loader()->url().url());
@@ -405,7 +402,7 @@ JSValue* JSClipboard::getValueProperty(ExecState* exec, int token) const
                 HashSet<String>::const_iterator end = types.end();
                 for (HashSet<String>::const_iterator it = types.begin(); it != end; ++it)
                     list.append(jsString(UString(*it)));
-                return exec->lexicalInterpreter()->builtinArray()->construct(exec, list);
+                return exec->lexicalGlobalObject()->arrayConstructor()->construct(exec, list);
             }
         }
         default:

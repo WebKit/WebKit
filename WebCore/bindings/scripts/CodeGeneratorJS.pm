@@ -296,6 +296,8 @@ sub GenerateHeader
             push(@headerContent, "#include \"$parentClassName.h\"\n");
         } else {
             push(@headerContent, "#include \"kjs_binding.h\"\n");
+            push(@headerContent, "#include <kjs/JSGlobalObject.h>\n");
+            push(@headerContent, "#include <kjs/object_object.h>\n");
         }
     }
 
@@ -540,7 +542,7 @@ sub GenerateHeader
         if ($hasParent && $parentClassName ne "KJS::DOMNodeFilter") {
             push(@headerContent, "        : KJS::JSObject(${parentClassName}Prototype::self(exec)) { }\n");
         } else {
-            push(@headerContent, "        : KJS::JSObject(exec->lexicalInterpreter()->builtinObjectPrototype()) { }\n");
+            push(@headerContent, "        : KJS::JSObject(exec->lexicalGlobalObject()->objectPrototype()) { }\n");
         }
     }
 
@@ -1746,7 +1748,7 @@ class ${className}Constructor : public DOMObject {
 public:
     ${className}Constructor(ExecState* exec)
     {
-        setPrototype(exec->lexicalInterpreter()->builtinObjectPrototype());
+        setPrototype(exec->lexicalGlobalObject()->objectPrototype());
         putDirect(exec->propertyNames().prototype, ${protoClassName}::self(exec), None);
     }
     virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
@@ -1799,7 +1801,7 @@ public: \
     }
 
     ${name}(KJS::ExecState* exec, int len, const KJS::Identifier& name)
-        : KJS::InternalFunctionImp(static_cast<KJS::FunctionPrototype*>(exec->lexicalInterpreter()->builtinFunctionPrototype()), name)
+        : KJS::InternalFunctionImp(static_cast<KJS::FunctionPrototype*>(exec->lexicalGlobalObject()->functionPrototype()), name)
     {
         put(exec, exec->propertyNames().length, KJS::jsNumber(len), KJS::DontDelete | KJS::ReadOnly | KJS::DontEnum);
     }

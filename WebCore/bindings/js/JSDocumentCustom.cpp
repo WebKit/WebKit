@@ -20,13 +20,15 @@
 #include "config.h"
 #include "JSDocument.h"
 
+#include "DOMWindow.h"
 #include "Document.h"
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "HTMLDocument.h"
+#include "JSDOMWindow.h"
 #include "JSHTMLDocument.h"
 #include "kjs_binding.h"
-#include "kjs_window.h"
+#include "kjs_proxy.h"
 
 #if ENABLE(SVG)
 #include "JSSVGDocument.h"
@@ -64,11 +66,11 @@ void JSDocument::setLocation(ExecState* exec, JSValue* value)
 
     // IE and Mozilla both resolve the URL relative to the source frame,
     // not the target frame.
-    Frame* activeFrame = static_cast<ScriptInterpreter*>(exec->dynamicInterpreter())->frame();
+    Frame* activeFrame = static_cast<JSDOMWindow*>(exec->dynamicGlobalObject())->impl()->frame();
     if (activeFrame)
         str = activeFrame->document()->completeURL(str);
 
-    bool userGesture = static_cast<ScriptInterpreter*>(exec->dynamicInterpreter())->wasRunByUserGesture();
+    bool userGesture = activeFrame->scriptProxy()->processingUserGesture();
     frame->loader()->scheduleLocationChange(str, activeFrame->loader()->outgoingReferrer(), false, userGesture);
 }
 
@@ -77,8 +79,7 @@ JSValue* toJS(ExecState* exec, Document* doc)
     if (!doc)
         return jsNull();
 
-    ScriptInterpreter* interp = static_cast<ScriptInterpreter*>(exec->dynamicInterpreter());
-    JSDocument* ret =  static_cast<JSDocument*>(interp->getDOMObject(doc));
+    JSDocument* ret = static_cast<JSDocument*>(ScriptInterpreter::getDOMObject(doc));
     if (ret)
         return ret;
 
@@ -103,7 +104,7 @@ JSValue* toJS(ExecState* exec, Document* doc)
         Collector::reportExtraMemoryCost(nodeCount * sizeof(Node));
     }
 
-    interp->putDOMObject(doc, ret);
+    ScriptInterpreter::putDOMObject(doc, ret);
 
     return ret;
 }

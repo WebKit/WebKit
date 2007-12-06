@@ -32,7 +32,7 @@ using namespace KJS;
 JSHTMLOptionElementConstructor::JSHTMLOptionElementConstructor(ExecState* exec, Document* d)
     : m_doc(d)
 {
-    setPrototype(exec->lexicalInterpreter()->builtinObjectPrototype());
+    setPrototype(exec->lexicalGlobalObject()->objectPrototype());
     put(exec, exec->propertyNames().length, jsNumber(4), ReadOnly|DontDelete|DontEnum);
 }
 

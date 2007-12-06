@@ -32,6 +32,7 @@
 #include "JSGlobalObject.h"
 #include "PropertyNameArray.h"
 #include "c_utility.h"
+#include "interpreter.h"
 #include "npruntime_impl.h"
 #include "npruntime_priv.h"
 #include "object.h"
@@ -127,9 +128,9 @@ bool _NPN_InvokeDefault(NPP, NPObject* o, const NPVariant* args, uint32_t argCou
         
         List argList;
         getListFromVariantArgs(exec, args, argCount, rootObject, argList);
-        rootObject->interpreter()->startTimeoutCheck();
+        rootObject->globalObject()->startTimeoutCheck();
         JSValue *resultV = funcImp->call (exec, funcImp, argList);
-        rootObject->interpreter()->stopTimeoutCheck();
+        rootObject->globalObject()->stopTimeoutCheck();
 
         // Convert and return the result of the function call.
         convertValueToNPVariant(exec, resultV, result);
@@ -183,9 +184,9 @@ bool _NPN_Invoke(NPP npp, NPObject* o, NPIdentifier methodName, const NPVariant*
         JSObject *thisObj = const_cast<JSObject*>(obj->imp);
         List argList;
         getListFromVariantArgs(exec, args, argCount, rootObject, argList);
-        rootObject->interpreter()->startTimeoutCheck();
+        rootObject->globalObject()->startTimeoutCheck();
         JSValue *resultV = funcImp->call (exec, thisObj, argList);
-        rootObject->interpreter()->stopTimeoutCheck();
+        rootObject->globalObject()->stopTimeoutCheck();
 
         // Convert and return the result of the function call.
         convertValueToNPVariant(exec, resultV, result);
@@ -217,9 +218,9 @@ bool _NPN_Evaluate(NPP, NPObject* o, NPString* s, NPVariant* variant)
         NPUTF16* scriptString;
         unsigned int UTF16Length;
         convertNPStringToUTF16(s, &scriptString, &UTF16Length); // requires free() of returned memory
-        rootObject->interpreter()->startTimeoutCheck();
-        Completion completion = rootObject->interpreter()->evaluate(UString(), 0, UString((const UChar*)scriptString,UTF16Length));
-        rootObject->interpreter()->stopTimeoutCheck();
+        rootObject->globalObject()->startTimeoutCheck();
+        Completion completion = Interpreter::evaluate(rootObject->globalObject()->globalExec(), UString(), 0, UString(reinterpret_cast<const UChar*>(scriptString), UTF16Length));
+        rootObject->globalObject()->stopTimeoutCheck();
         ComplType type = completion.complType();
         
         JSValue* result;

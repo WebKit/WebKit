@@ -24,7 +24,6 @@
 #include "value.h"
 #include "object.h"
 #include "types.h"
-#include "interpreter.h"
 #include "operations.h"
 #include "error_object.h"
 //#include "debugger.h"
@@ -98,7 +97,7 @@ bool ErrorObjectImp::implementsConstruct() const
 // ECMA 15.9.3
 JSObject* ErrorObjectImp::construct(ExecState* exec, const List &args)
 {
-  JSObject* proto = static_cast<JSObject*>(exec->lexicalInterpreter()->builtinErrorPrototype());
+  JSObject* proto = static_cast<JSObject*>(exec->lexicalGlobalObject()->errorPrototype());
   JSObject* imp = new ErrorInstance(proto);
   JSObject* obj(imp);
 

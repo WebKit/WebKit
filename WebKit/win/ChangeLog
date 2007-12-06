@@ -1,3 +1,17 @@
+2007-12-04  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Third step in refactoring JSGlobalObject: Moved data members and data
+        member access from Interpreter to JSGlobalObject.
+        
+        * WebFrame.cpp:
+        (WebFrame::globalContext):
+        (WebFrame::attachScriptDebugger):
+        (WebFrame::windowObjectCleared):
+        * WebScriptDebugger.cpp:
+        (WebScriptDebugger::WebScriptDebugger):
+
 2007-12-05  Steve Falkenburg  <sfalken@apple.com>
 
         <rdar://problem/5625327> Crash toggling check grammar w/ spelling when no spell checker exists.

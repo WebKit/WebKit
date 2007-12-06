@@ -79,7 +79,7 @@ jvalue JavaJSObject::invoke (JSObjectCallContext *context)
         }
         else {
             JSObject *imp = jlong_to_impptr(nativeHandle);
-            if (!findRootObject(imp)) {
+            if (!findProtectingRootObject(imp)) {
                 fprintf (stderr, "%s:%d:  Attempt to access JavaScript from destroyed applet, type %d.\n", __FILE__, __LINE__, context->type);
                 return result;
             }
@@ -147,7 +147,7 @@ JavaJSObject::JavaJSObject(jlong nativeJSObject)
     _imp = jlong_to_impptr(nativeJSObject);
     
     ASSERT(_imp);
-    _rootObject = findRootObject(_imp);
+    _rootObject = findProtectingRootObject(_imp);
     ASSERT(_rootObject);
 }
 
@@ -178,9 +178,9 @@ jobject JavaJSObject::call(jstring methodName, jobjectArray args) const
     JSObject *thisObj = const_cast<JSObject*>(_imp);
     List argList;
     getListFromJArray(args, argList);
-    rootObject->interpreter()->startTimeoutCheck();
+    rootObject->globalObject()->startTimeoutCheck();
     JSValue *result = funcImp->call(exec, thisObj, argList);
-    rootObject->interpreter()->stopTimeoutCheck();
+    rootObject->globalObject()->stopTimeoutCheck();
 
     return convertValueToJObject(result);
 }
@@ -198,9 +198,9 @@ jobject JavaJSObject::eval(jstring script) const
     if (!rootObject)
         return 0;
 
-    rootObject->interpreter()->startTimeoutCheck();
-    Completion completion = rootObject->interpreter()->evaluate(UString(), 0, JavaString(script).ustring(),thisObj);
-    rootObject->interpreter()->stopTimeoutCheck();
+    rootObject->globalObject()->startTimeoutCheck();
+    Completion completion = Interpreter::evaluate(rootObject->globalObject()->globalExec(), UString(), 0, JavaString(script).ustring(),thisObj);
+    rootObject->globalObject()->stopTimeoutCheck();
     ComplType type = completion.complType();
     
     if (type == Normal) {
@@ -326,7 +326,7 @@ jlong JavaJSObject::createNative(jlong nativeHandle)
     if (nativeHandle == UndefinedHandle)
         return nativeHandle;
 
-    if (findRootObject(jlong_to_impptr(nativeHandle)))
+    if (findProtectingRootObject(jlong_to_impptr(nativeHandle)))
         return nativeHandle;
 
     CreateRootObjectFunction createRootObject = RootObject::createRootObject();
@@ -339,7 +339,7 @@ jlong JavaJSObject::createNative(jlong nativeHandle)
     // otherwise we are being called after creating a JavaJSObject in
     // JavaJSObject::convertValueToJObject().
     if (rootObject) {
-        JSObject* globalObject = rootObject->interpreter()->globalObject();
+        JSObject* globalObject = rootObject->globalObject();
         // We call gcProtect here to get the object into the root object's "protect set" which
         // is used to test if a native handle is valid as well as getting the root object given the handle.
         rootObject->gcProtect(globalObject);

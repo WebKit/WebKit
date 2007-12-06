@@ -463,7 +463,7 @@ bool NumberObjectImp::implementsConstruct() const
 // ECMA 15.7.1
 JSObject *NumberObjectImp::construct(ExecState *exec, const List &args)
 {
-  JSObject *proto = exec->lexicalInterpreter()->builtinNumberPrototype();
+  JSObject *proto = exec->lexicalGlobalObject()->numberPrototype();
   NumberInstance *obj(new NumberInstance(proto));
 
   double n;

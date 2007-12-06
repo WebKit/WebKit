@@ -48,8 +48,7 @@ KJS::JSValue* toJS(KJS::ExecState* exec, CSSRule* rule)
     if (!rule)
         return KJS::jsNull();
 
-    KJS::ScriptInterpreter* interp = static_cast<KJS::ScriptInterpreter*>(exec->dynamicInterpreter());
-    KJS::DOMObject* ret = interp->getDOMObject(rule);
+    KJS::DOMObject* ret = KJS::ScriptInterpreter::getDOMObject(rule);
 
     if (ret)
         return ret;
@@ -78,7 +77,7 @@ KJS::JSValue* toJS(KJS::ExecState* exec, CSSRule* rule)
             break;
     }
 
-    interp->putDOMObject(rule, ret);
+    KJS::ScriptInterpreter::putDOMObject(rule, ret);
     return ret;
 }
 

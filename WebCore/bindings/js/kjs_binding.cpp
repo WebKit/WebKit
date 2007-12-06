@@ -137,17 +137,6 @@ static NodePerDocMap& domNodesPerDocument()
     return staticDOMNodesPerDocument;
 }
 
-ScriptInterpreter::ScriptInterpreter(JSGlobalObject* global, Frame* frame)
-    : m_frame(frame)
-    , m_currentEvent(0)
-    , m_inlineCode(false)
-    , m_timerCallback(false)
-{
-    setGlobalObject(global);
-    // Time in milliseconds before the script timeout handler kicks in.
-    setTimeoutTime(10000);
-}
-
 DOMObject* ScriptInterpreter::getDOMObject(void* objectHandle) 
 {
     return domObjects().get(objectHandle);
@@ -242,31 +231,6 @@ void ScriptInterpreter::updateDOMNodeDocument(Node* node, Document* oldDoc, Docu
         forgetDOMNodeForDocument(oldDoc, node);
         addWrapper(wrapper);
     }
-}
-
-bool ScriptInterpreter::wasRunByUserGesture() const
-{
-    if (m_currentEvent) {
-        const AtomicString& type = m_currentEvent->type();
-        bool eventOk = ( // mouse events
-            type == clickEvent || type == mousedownEvent ||
-            type == mouseupEvent || type == dblclickEvent ||
-            // keyboard events
-            type == keydownEvent || type == keypressEvent ||
-            type == keyupEvent ||
-            // other accepted events
-            type == selectEvent || type == changeEvent ||
-            type == focusEvent || type == blurEvent ||
-            type == submitEvent);
-        if (eventOk)
-            return true;
-    } else { // no event
-        if (m_inlineCode && !m_timerCallback)
-            // This is the <a href="javascript:window.open('...')> case -> we let it through
-            return true;
-        // This is the <script>window.open(...)</script> case or a timer callback -> block it
-    }
-    return false;
 }
 
 JSValue* jsStringOrNull(const String& s)

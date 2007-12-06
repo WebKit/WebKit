@@ -25,7 +25,6 @@
 #include "lexer.h"
 
 #include "function.h"
-#include "interpreter.h"
 #include "nodes.h"
 #include <ctype.h>
 #include <limits.h>

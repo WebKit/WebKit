@@ -26,7 +26,6 @@
 #include "config.h"
 #include "jni_utility.h"
 
-#include "interpreter.h"
 #include "list.h"
 #include "jni_runtime.h"
 #include "runtime_array.h"

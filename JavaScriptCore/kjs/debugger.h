@@ -29,7 +29,6 @@
 namespace KJS {
 
   class DebuggerImp;
-  class Interpreter;
   class ExecState;
   class JSObject;
   class JSValue;
@@ -58,7 +57,7 @@ namespace KJS {
     Debugger();
 
     /**
-     * Destroys the debugger. If the debugger is attached to any interpreters,
+     * Destroys the debugger. If the debugger is attached to any global objects,
      * it is automatically detached.
      */
     virtual ~Debugger();
@@ -66,31 +65,30 @@ namespace KJS {
     DebuggerImp *imp() const { return rep; }
 
     /**
-     * Attaches the debugger to specified interpreter. This will cause this
-     * object to receive notification of events from the interpreter.
+     * Attaches the debugger to specified global object. This will cause this
+     * object to receive notification of events during execution.
      *
-     * If the interpreter is deleted, the debugger will automatically be
-     * detached.
+     * If the global object is deleted, it will detach the debugger.
      *
-     * Note: only one debugger can be attached to an interpreter at a time.
-     * Attaching another debugger to the same interpreter will cause the
-     * original debugger to be detached from that interpreter.
+     * Note: only one debugger can be attached to a global object at a time.
+     * Attaching another debugger to the same global object will cause the
+     * original debugger to be detached.
      *
-     * @param interp The interpreter to attach to
+     * @param The global object to attach to.
      *
      * @see detach()
      */
-    void attach(Interpreter *interp);
+    void attach(JSGlobalObject*);
 
     /**
-     * Detach the debugger from an interpreter
+     * Detach the debugger from a global object.
      *
-     * @param interp The interpreter to detach from. If 0, the debugger will be
-     * detached from all interpreters to which it is attached.
+     * @param The global object to detach from. If 0, the debugger will be
+     * detached from all global objects to which it is attached.
      *
      * @see attach()
      */
-    void detach(Interpreter *interp);
+    void detach(JSGlobalObject*);
 
     /**
      * Called to notify the debugger that some javascript source code has
@@ -215,7 +213,7 @@ namespace KJS {
 
   private:
     DebuggerImp *rep;
-    HashMap<Interpreter*, ProtectedPtr<JSValue> > latestExceptions;
+    HashMap<JSGlobalObject*, ProtectedPtr<JSValue> > latestExceptions;
 
   public:
     static int debuggersPresent;

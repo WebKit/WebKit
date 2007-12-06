@@ -60,48 +60,50 @@
 #include "SVGElement.h"
 #endif
 
+using namespace KJS;
+
 namespace WebCore {
 
 typedef int ExpectionCode;
 
-KJS::JSValue* JSNode::insertBefore(KJS::ExecState* exec, const KJS::List& args)
+JSValue* JSNode::insertBefore(ExecState* exec, const List& args)
 {
     ExceptionCode ec = 0;
     bool ok = impl()->insertBefore(toNode(args[0]), toNode(args[1]), ec);
-    KJS::setDOMException(exec, ec);
+    setDOMException(exec, ec);
     if (ok)
         return args[0];
-    return KJS::jsNull();
+    return jsNull();
 }
 
-KJS::JSValue* JSNode::replaceChild(KJS::ExecState* exec, const KJS::List& args)
+JSValue* JSNode::replaceChild(ExecState* exec, const List& args)
 {
     ExceptionCode ec = 0;
     bool ok = impl()->replaceChild(toNode(args[0]), toNode(args[1]), ec);
-    KJS::setDOMException(exec, ec);
+    setDOMException(exec, ec);
     if (ok)
         return args[1];
-    return KJS::jsNull();
+    return jsNull();
 }
 
-KJS::JSValue* JSNode::removeChild(KJS::ExecState* exec, const KJS::List& args)
+JSValue* JSNode::removeChild(ExecState* exec, const List& args)
 {
     ExceptionCode ec = 0;
     bool ok = impl()->removeChild(toNode(args[0]), ec);
-    KJS::setDOMException(exec, ec);
+    setDOMException(exec, ec);
     if (ok)
         return args[0];
-    return KJS::jsNull();
+    return jsNull();
 }
 
-KJS::JSValue* JSNode::appendChild(KJS::ExecState* exec, const KJS::List& args)
+JSValue* JSNode::appendChild(ExecState* exec, const List& args)
 {
     ExceptionCode ec = 0;
     bool ok = impl()->appendChild(toNode(args[0]), ec);
-    KJS::setDOMException(exec, ec);
+    setDOMException(exec, ec);
     if (ok)
         return args[0];
-    return KJS::jsNull();
+    return jsNull();
 }
 
 void JSNode::mark()
@@ -133,7 +135,7 @@ void JSNode::mark()
     // Mark the whole tree; use the global set of roots to avoid reentering.
     root->m_inSubtreeMark = true;
     for (Node* nodeToMark = root; nodeToMark; nodeToMark = nodeToMark->traverseNextNode()) {
-        JSNode* wrapper = KJS::ScriptInterpreter::getDOMNodeForDocument(m_impl->document(), nodeToMark);
+        JSNode* wrapper = ScriptInterpreter::getDOMNodeForDocument(m_impl->document(), nodeToMark);
         if (wrapper) {
             if (!wrapper->marked())
                 wrapper->mark();
@@ -153,15 +155,14 @@ void JSNode::mark()
     ASSERT(marked());
 }
 
-KJS::JSValue* toJS(KJS::ExecState* exec, PassRefPtr<Node> n)
+JSValue* toJS(ExecState* exec, PassRefPtr<Node> n)
 {
     Node* node = n.get(); 
     if (!node)
-        return KJS::jsNull();
+        return jsNull();
 
-    KJS::ScriptInterpreter* interp = static_cast<KJS::ScriptInterpreter*>(exec->dynamicInterpreter());
     Document* doc = node->document();
-    JSNode* ret = interp->getDOMNodeForDocument(doc, node);
+    JSNode* ret = ScriptInterpreter::getDOMNodeForDocument(doc, node);
     if (ret)
         return ret;
 
@@ -213,7 +214,7 @@ KJS::JSValue* toJS(KJS::ExecState* exec, PassRefPtr<Node> n)
             ret = new JSNode(exec, node);
     }
 
-    interp->putDOMNodeForDocument(doc, node, ret);
+    ScriptInterpreter::putDOMNodeForDocument(doc, node, ret);
 
     return ret;
 }

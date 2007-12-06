@@ -767,7 +767,7 @@ KURL WebFrame::url() const
 
 void WebFrame::attachScriptDebugger()
 {
-    if (!m_scriptDebugger && core(this)->scriptProxy()->haveInterpreter())
+    if (!m_scriptDebugger && core(this)->scriptProxy()->haveGlobalObject())
         m_scriptDebugger.set(new WebScriptDebugger(this));
 }
 

@@ -54,7 +54,7 @@ size_t JavaScriptStatistics::objectCount()
 size_t JavaScriptStatistics::interpreterCount()
 {
     JSLock lock;
-    return Collector::numInterpreters();
+    return Collector::numGlobalObjects();
 }
 
 size_t JavaScriptStatistics::protectedObjectCount()

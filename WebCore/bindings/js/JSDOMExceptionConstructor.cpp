@@ -27,6 +27,7 @@
 #include "JSDOMExceptionConstructor.h"
 
 #include "ExceptionCode.h"
+#include <kjs/object_object.h>
 
 #include "JSDOMExceptionConstructor.lut.h"
 
@@ -58,7 +59,7 @@ const ClassInfo JSDOMExceptionConstructor::info = { "DOMExceptionConstructor", 0
 
 JSDOMExceptionConstructor::JSDOMExceptionConstructor(ExecState* exec) 
 { 
-    setPrototype(exec->lexicalInterpreter()->builtinObjectPrototype());
+    setPrototype(exec->lexicalGlobalObject()->objectPrototype());
 }
 
 bool JSDOMExceptionConstructor::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)

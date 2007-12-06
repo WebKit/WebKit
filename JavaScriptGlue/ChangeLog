@@ -1,3 +1,22 @@
+2007-12-04  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Third step in refactoring JSGlobalObject: Moved data members and data
+        member access from Interpreter to JSGlobalObject. Replaced JSInterpreter
+        subclass with JSGlobalObject subclass.
+        
+        * JSRun.cpp:
+        (JSRun::JSRun):
+        (JSRun::Evaluate):
+        (JSRun::CheckSyntax):
+        * JSRun.h:
+        (JSGlueGlobalObject::JSGlueGlobalObject):
+        * JSUtils.cpp:
+        (KJSValueToCFTypeInternal):
+        * JSValueWrapper.cpp:
+        (getThreadGlobalExecState):
+
 2007-12-02  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Eric Seidel.

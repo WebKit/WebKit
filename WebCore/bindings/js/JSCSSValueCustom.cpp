@@ -47,8 +47,7 @@ KJS::JSValue* toJS(KJS::ExecState* exec, CSSValue* value)
     if (!value)
         return KJS::jsNull();
 
-    KJS::ScriptInterpreter* interp = static_cast<KJS::ScriptInterpreter*>(exec->dynamicInterpreter());
-    KJS::DOMObject* ret = interp->getDOMObject(value);
+    KJS::DOMObject* ret = KJS::ScriptInterpreter::getDOMObject(value);
 
     if (ret)
         return ret;
@@ -66,7 +65,7 @@ KJS::JSValue* toJS(KJS::ExecState* exec, CSSValue* value)
     else
         ret = new JSCSSValue(exec, value);
 
-    interp->putDOMObject(value, ret);
+    KJS::ScriptInterpreter::putDOMObject(value, ret);
     return ret;
 }
 

@@ -25,7 +25,6 @@
 #include "array_instance.h"
 #include "error_object.h"
 #include "internal.h"
-#include "interpreter.h"
 #include "object.h"
 #include "operations.h"
 #include "regexp.h"
@@ -186,7 +185,7 @@ void RegExpImp::putValueProperty(ExecState* exec, int token, JSValue* value, int
 
 bool RegExpImp::match(ExecState* exec, const List& args)
 {
-    RegExpObjectImp* regExpObj = exec->lexicalInterpreter()->builtinRegExp();
+    RegExpObjectImp* regExpObj = exec->lexicalGlobalObject()->regExpConstructor();
 
     UString input;
     if (!args.isEmpty())
@@ -230,7 +229,7 @@ JSValue* RegExpImp::test(ExecState* exec, const List& args)
 JSValue* RegExpImp::exec(ExecState* exec, const List& args)
 {
     return match(exec, args)
-        ? exec->lexicalInterpreter()->builtinRegExp()->arrayOfMatches(exec)
+        ? exec->lexicalGlobalObject()->regExpConstructor()->arrayOfMatches(exec)
         :  jsNull();
 }
 
@@ -321,7 +320,7 @@ void RegExpObjectImp::performMatch(RegExp* r, const UString& s, int startOffset,
 JSObject* RegExpObjectImp::arrayOfMatches(ExecState* exec) const
 {
   unsigned lastNumSubpatterns = d->lastNumSubPatterns;
-  ArrayInstance* arr = new ArrayInstance(exec->lexicalInterpreter()->builtinArrayPrototype(), lastNumSubpatterns + 1);
+  ArrayInstance* arr = new ArrayInstance(exec->lexicalGlobalObject()->arrayPrototype(), lastNumSubpatterns + 1);
   for (unsigned i = 0; i <= lastNumSubpatterns; ++i) {
     int start = d->lastOvector[2 * i];
     if (start >= 0)
@@ -455,7 +454,7 @@ JSObject *RegExpObjectImp::construct(ExecState *exec, const List &args)
 JSObject* RegExpObjectImp::createRegExpImp(ExecState* exec, PassRefPtr<RegExp> regExp)
 {
     return regExp->isValid()
-        ? new RegExpImp(static_cast<RegExpPrototype*>(exec->lexicalInterpreter()->builtinRegExpPrototype()), regExp)
+        ? new RegExpImp(static_cast<RegExpPrototype*>(exec->lexicalGlobalObject()->regExpPrototype()), regExp)
         : throwError(exec, SyntaxError, UString("Invalid regular expression: ").append(regExp->errorMessage()));
 }
 

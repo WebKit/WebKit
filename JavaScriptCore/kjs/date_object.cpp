@@ -502,7 +502,7 @@ JSObject *DateObjectImp::construct(ExecState *exec, const List &args)
     }
   }
   
-  DateInstance *ret = new DateInstance(exec->lexicalInterpreter()->builtinDatePrototype());
+  DateInstance *ret = new DateInstance(exec->lexicalGlobalObject()->datePrototype());
   ret->setInternalValue(jsNumber(timeClip(value)));
   return ret;
 }
@@ -1806,7 +1806,7 @@ JSValue* DateProtoFuncGetYear::callAsFunction(ExecState* exec, JSObject* thisObj
     msToGregorianDateTime(milli, utc, t);
 
     // IE returns the full year even in getYear.
-    if (exec->dynamicInterpreter()->compatMode() == Interpreter::IECompat)
+    if (exec->dynamicGlobalObject()->compatMode() == IECompat)
         return jsNumber(1900 + t.year);
     return jsNumber(t.year);
 }

@@ -273,8 +273,8 @@ CFTypeRef KJSValueToCFTypeInternal(JSValue *inValue, ExecState *exec, ObjectImpL
 #endif
                     {
                         isArray = true;
-                        JSInterpreter* intrepreter = (JSInterpreter*)exec->dynamicInterpreter();
-                        if (intrepreter && (intrepreter->Flags() & kJSFlagConvertAssociativeArray)) {
+                        JSGlueGlobalObject* globalObject = static_cast<JSGlueGlobalObject*>(exec->dynamicGlobalObject());
+                        if (globalObject && (globalObject->Flags() & kJSFlagConvertAssociativeArray)) {
                             PropertyNameArray propNames;
                             object->getPropertyNames(exec, propNames);
                             PropertyNameArray::const_iterator iter = propNames.begin();

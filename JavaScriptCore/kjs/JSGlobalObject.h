@@ -1,7 +1,7 @@
 // -*- c-basic-offset: 4 -*-
 /*
  *  Copyright (C) 2007 Eric Seidel <eric@webkit.org>
- *  Copyright (C) 2007 Apple Ince. All rights reserved.
+ *  Copyright (C) 2007 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -27,15 +27,186 @@
 
 namespace KJS {
 
-    class Interpreter;
+    class ArrayObjectImp;
+    class ArrayPrototype;
+    class BooleanObjectImp;
+    class BooleanPrototype;
+    class DateObjectImp;
+    class DatePrototype;
+    class Debugger;
+    class ErrorObjectImp;
+    class ErrorPrototype;
+    class EvalError;
+    class EvalErrorPrototype;
+    class FunctionObjectImp;
+    class FunctionPrototype;
+    class JSGlobalObject;
+    class NativeErrorImp;
+    class NativeErrorPrototype;
+    class NumberObjectImp;
+    class NumberPrototype;
+    class ObjectObjectImp;
+    class ObjectPrototype;
+    class RangeError;
+    class RangeErrorPrototype;
+    class ReferenceError;
+    class ReferenceError;
+    class ReferenceErrorPrototype;
+    class RegExpObjectImp;
+    class RegExpPrototype;
+    class RuntimeMethod;
+    class SavedBuiltins;
+    class ScopeChain;
+    class StringObjectImp;
+    class StringPrototype;
+    class SyntaxErrorPrototype;
+    class TypeError;
+    class TypeErrorPrototype;
+    class UriError;
+    class UriErrorPrototype;
+
+    enum CompatMode { NativeMode, IECompat, NetscapeCompat };
 
     class JSGlobalObject : public JSObject {
-    public:
-        JSGlobalObject() { }
-        JSGlobalObject(JSValue* proto) : JSObject(proto) { }
+    protected:
+        struct JSGlobalObjectData {
+            JSGlobalObjectData(JSGlobalObject* globalObject)
+                : globalExec(globalObject, globalObject, 0)
+            {
+            }
 
-        Interpreter* interpreter() const { return m_interpreter.get(); }
-        void setInterpreter(std::auto_ptr<Interpreter> i) { m_interpreter = i; }
+            JSGlobalObject* next;
+            JSGlobalObject* prev;
+
+            Debugger* debugger;
+            CompatMode compatMode;
+
+            ExecState globalExec;
+            ExecState* currentExec;
+            int recursion;
+
+            unsigned timeoutTime;
+            unsigned timeAtLastCheckTimeout;
+            unsigned timeExecuting;
+            unsigned timeoutCheckCount;
+            unsigned tickCount;
+            unsigned ticksUntilNextTimeoutCheck;
+
+            ObjectObjectImp* objectConstructor;
+            FunctionObjectImp* functionConstructor;
+            ArrayObjectImp* arrayConstructor;
+            BooleanObjectImp* booleanConstructor;
+            StringObjectImp* stringConstructor;
+            NumberObjectImp* numberConstructor;
+            DateObjectImp* dateConstructor;
+            RegExpObjectImp* regExpConstructor;
+            ErrorObjectImp* errorConstructor;
+            NativeErrorImp* evalErrorConstructor;
+            NativeErrorImp* rangeErrorConstructor;
+            NativeErrorImp* referenceErrorConstructor;
+            NativeErrorImp* syntaxErrorConstructor;
+            NativeErrorImp* typeErrorConstructor;
+            NativeErrorImp* URIErrorConstructor;
+
+            ObjectPrototype* objectPrototype;
+            FunctionPrototype* functionPrototype;
+            ArrayPrototype* arrayPrototype;
+            BooleanPrototype* booleanPrototype;
+            StringPrototype* stringPrototype;
+            NumberPrototype* numberPrototype;
+            DatePrototype* datePrototype;
+            RegExpPrototype* regExpPrototype;
+            ErrorPrototype* errorPrototype;
+            NativeErrorPrototype* evalErrorPrototype;
+            NativeErrorPrototype* rangeErrorPrototype;
+            NativeErrorPrototype* referenceErrorPrototype;
+            NativeErrorPrototype* syntaxErrorPrototype;
+            NativeErrorPrototype* typeErrorPrototype;
+            NativeErrorPrototype* URIErrorPrototype;
+        };
+
+    public:
+        JSGlobalObject()
+        {
+            init();
+        }
+
+    protected:
+        JSGlobalObject(JSValue* proto)
+            : JSObject(proto)
+        {
+            init();
+        }
+
+    public:
+        virtual ~JSGlobalObject();
+
+        // Linked list of all global objects.
+        static JSGlobalObject* head() { return s_head; }
+        JSGlobalObject* next() { return d->next; }
+
+        // Resets the global object to contain only built-in properties, sets
+        // the global object's prototype to "prototype," then adds the 
+        // default object prototype to the tail of the global object's 
+        // prototype chain.
+        void reset(JSValue* prototype);
+
+        // The following accessors return pristine values, even if a script 
+        // replaces the global object's associated property.
+
+        ObjectObjectImp* objectConstructor() const { return d->objectConstructor; }
+        FunctionObjectImp* functionConstructor() const { return d->functionConstructor; }
+        ArrayObjectImp* arrayConstructor() const { return d->arrayConstructor; }
+        BooleanObjectImp* booleanConstructor() const { return d->booleanConstructor; }
+        StringObjectImp* stringConstructor() const{ return d->stringConstructor; }
+        NumberObjectImp* numberConstructor() const{ return d->numberConstructor; }
+        DateObjectImp* dateConstructor() const{ return d->dateConstructor; }
+        RegExpObjectImp* regExpConstructor() const { return d->regExpConstructor; }
+        ErrorObjectImp* errorConstructor() const { return d->errorConstructor; }
+        NativeErrorImp* evalErrorConstructor() const { return d->evalErrorConstructor; }
+        NativeErrorImp* rangeErrorConstructor() const { return d->rangeErrorConstructor; }
+        NativeErrorImp* referenceErrorConstructor() const { return d->referenceErrorConstructor; }
+        NativeErrorImp* syntaxErrorConstructor() const { return d->syntaxErrorConstructor; }
+        NativeErrorImp* typeErrorConstructor() const { return d->typeErrorConstructor; }
+        NativeErrorImp* URIErrorConstructor() const { return d->URIErrorConstructor; }
+
+        ObjectPrototype* objectPrototype() const { return d->objectPrototype; }
+        FunctionPrototype* functionPrototype() const { return d->functionPrototype; }
+        ArrayPrototype* arrayPrototype() const { return d->arrayPrototype; }
+        BooleanPrototype* booleanPrototype() const { return d->booleanPrototype; }
+        StringPrototype* stringPrototype() const { return d->stringPrototype; }
+        NumberPrototype* numberPrototype() const { return d->numberPrototype; }
+        DatePrototype* datePrototype() const { return d->datePrototype; }
+        RegExpPrototype* regExpPrototype() const { return d->regExpPrototype; }
+        ErrorPrototype* errorPrototype() const { return d->errorPrototype; }
+        NativeErrorPrototype* evalErrorPrototype() const { return d->evalErrorPrototype; }
+        NativeErrorPrototype* rangeErrorPrototype() const { return d->rangeErrorPrototype; }
+        NativeErrorPrototype* referenceErrorPrototype() const { return d->referenceErrorPrototype; }
+        NativeErrorPrototype* syntaxErrorPrototype() const { return d->syntaxErrorPrototype; }
+        NativeErrorPrototype* typeErrorPrototype() const { return d->typeErrorPrototype; }
+        NativeErrorPrototype* URIErrorPrototype() const { return d->URIErrorPrototype; }
+
+        void saveBuiltins(SavedBuiltins&) const;
+        void restoreBuiltins(const SavedBuiltins&);
+
+        void setTimeoutTime(unsigned timeoutTime) { d->timeoutTime = timeoutTime; }
+        void startTimeoutCheck();
+        void stopTimeoutCheck();
+        bool timedOut();
+
+        Debugger* debugger() const { return d->debugger; }
+        void setDebugger(Debugger* debugger) { d->debugger = debugger; }
+
+        void setCurrentExec(ExecState* exec) { d->currentExec = exec; }
+        ExecState* currentExec() const { return d->currentExec; }
+
+        // FIXME: Let's just pick one compatible behavior and go with it.
+        void setCompatMode(CompatMode mode) { d->compatMode = mode; }
+        CompatMode compatMode() const { return d->compatMode; }
+        
+        int recursion() { return d->recursion; }
+        void incRecursion() { ++d->recursion; }
+        void decRecursion() { --d->recursion; }
 
         virtual void mark();
 
@@ -47,9 +218,27 @@ namespace KJS {
 
         virtual bool isSafeScript(const JSGlobalObject*) const { return true; }
 
+    protected:
+        std::auto_ptr<JSGlobalObjectData> d;
+
     private:
-        std::auto_ptr<Interpreter> m_interpreter;
+        void init();
+
+        bool checkTimeout();
+        void resetTimeoutCheck();
+
+        static JSGlobalObject* s_head;
     };
+
+    inline bool JSGlobalObject::timedOut()
+    {
+        d->tickCount++;
+
+        if (d->tickCount != d->ticksUntilNextTimeoutCheck)
+            return false;
+
+        return checkTimeout();
+    }
 
 } // namespace KJS
 

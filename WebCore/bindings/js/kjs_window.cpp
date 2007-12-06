@@ -222,6 +222,9 @@ Window::Window(DOMWindow* window)
     // Window destruction is not thread-safe because of
     // the non-thread-safe WebCore structures it references.
     Collector::collectOnMainThreadOnly(this);
+
+    // Time in milliseconds before the script timeout handler kicks in.
+    setTimeoutTime(10000);
 }
 
 Window::~Window()
@@ -259,7 +262,7 @@ Window *Window::retrieveWindow(Frame *f)
 
 Window *Window::retrieveActive(ExecState *exec)
 {
-    JSValue *imp = exec->dynamicInterpreter()->globalObject();
+    JSValue *imp = exec->dynamicGlobalObject();
     ASSERT(imp);
     return static_cast<Window*>(imp);
 }
@@ -293,7 +296,7 @@ static bool allowPopUp(ExecState *exec, Window *window)
     Frame* frame = window->impl()->frame();
     if (!frame)
         return false;
-    if (static_cast<ScriptInterpreter*>(exec->dynamicInterpreter())->wasRunByUserGesture())
+    if (window->impl()->frame()->scriptProxy()->processingUserGesture());
         return true;
     Settings* settings = frame->settings();
     return settings && settings->JavaScriptCanOpenWindowsAutomatically();
@@ -389,7 +392,7 @@ static Frame* createWindow(ExecState* exec, Frame* openerFrame, const String& ur
 
     if (!url.startsWith("javascript:", false) || newWindow->isSafeScript(exec)) {
         String completedURL = url.isEmpty() ? url : activeFrame->document()->completeURL(url);
-        bool userGesture = static_cast<ScriptInterpreter *>(exec->dynamicInterpreter())->wasRunByUserGesture();
+        bool userGesture = activeFrame->scriptProxy()->processingUserGesture();
         
         if (created) {
             newFrame->loader()->changeLocation(KURL(completedURL.deprecatedString()), activeFrame->loader()->outgoingReferrer(), false, userGesture);
@@ -726,7 +729,7 @@ void Window::put(ExecState* exec, const Identifier& propertyName, JSValue* value
           return;
         DeprecatedString dstUrl = p->loader()->completeURL(DeprecatedString(value->toString(exec))).url();
         if (!dstUrl.startsWith("javascript:", false) || isSafeScript(exec)) {
-          bool userGesture = static_cast<ScriptInterpreter *>(exec->dynamicInterpreter())->wasRunByUserGesture();
+          bool userGesture = p->scriptProxy()->processingUserGesture();
           // We want a new history item if this JS was called via a user gesture
           impl()->frame()->loader()->scheduleLocationChange(dstUrl, p->loader()->outgoingReferrer(), false, userGesture);
         }
@@ -934,7 +937,7 @@ bool Window::isSafeScript(ExecState *exec) const
   Frame* frame = impl()->frame();
   if (!frame)
     return false;
-  Frame* activeFrame = static_cast<ScriptInterpreter*>(exec->dynamicInterpreter())->frame();
+  Frame* activeFrame = Window::retrieveActive(exec)->impl()->frame();
   if (!activeFrame)
     return false;
   if (activeFrame == frame)
@@ -1065,12 +1068,11 @@ void Window::clear()
   clearAllTimeouts();
   clearProperties();
   clearHelperObjectProperties();
-  setPrototype(JSDOMWindowPrototype::self()); // clear the prototype
 
   // Now recreate a working global object for the next URL that will use us; but only if we haven't been
   // disconnected yet
   if (Frame* frame = impl()->frame())
-    frame->scriptProxy()->interpreter()->resetGlobalObjectProperties();
+    frame->scriptProxy()->globalObject()->reset(JSDOMWindowPrototype::self());
 
   // there's likely to be lots of garbage now
   gcController().garbageCollectSoon();
@@ -1079,6 +1081,11 @@ void Window::clear()
 void Window::setCurrentEvent(Event *evt)
 {
   d->m_evt = evt;
+}
+
+Event* Window::currentEvent()
+{
+    return d->m_evt;
 }
 
 static void setWindowFeature(const String& keyString, const String& valueString, WindowFeatures& windowFeatures)
@@ -1356,7 +1363,7 @@ JSValue* WindowProtoFuncOpen::callAsFunction(ExecState* exec, JSObject* thisObj,
 
         const Window* window = Window::retrieveWindow(frame);
         if (!completedURL.isEmpty() && (!completedURL.startsWith("javascript:", false) || (window && window->isSafeScript(exec)))) {
-            bool userGesture = static_cast<ScriptInterpreter *>(exec->dynamicInterpreter())->wasRunByUserGesture();
+            bool userGesture = activeFrame->scriptProxy()->processingUserGesture();
             frame->loader()->scheduleLocationChange(completedURL, activeFrame->loader()->outgoingReferrer(), false, userGesture);
         }
         return Window::retrieve(frame);
@@ -1681,15 +1688,15 @@ void ScheduledAction::execute(Window* window)
     if (!scriptProxy)
         return;
 
-    ScriptInterpreter* interpreter = scriptProxy->interpreter();
+    Window* globalObject = scriptProxy->globalObject();
 
-    interpreter->setProcessingTimerCallback(true);
+    scriptProxy->setProcessingTimerCallback(true);
 
     if (JSValue* func = m_func.get()) {
         JSLock lock;
         if (func->isObject() && static_cast<JSObject*>(func)->implementsCall()) {
             ExecState* exec = window->globalExec();
-            ASSERT(window == interpreter->globalObject());
+            ASSERT(window == globalObject);
             
             List args;
             size_t size = m_args.size();
@@ -1697,9 +1704,9 @@ void ScheduledAction::execute(Window* window)
                 args.append(m_args[i]);
             }
 
-            interpreter->startTimeoutCheck();
+            globalObject->startTimeoutCheck();
             static_cast<JSObject*>(func)->call(exec, window, args);
-            interpreter->stopTimeoutCheck();
+            globalObject->stopTimeoutCheck();
             if (exec->hadException()) {
                 JSObject* exception = exec->exception()->toObject(exec);
                 exec->clearException();
@@ -1722,7 +1729,7 @@ void ScheduledAction::execute(Window* window)
     if (Document* doc = frame->document())
         doc->updateRendering();
   
-    interpreter->setProcessingTimerCallback(false);
+    scriptProxy->setProcessingTimerCallback(false);
 }
 
 ////////////////////// timeouts ////////////////////////
@@ -2031,7 +2038,7 @@ void Location::put(ExecState *exec, const Identifier &p, JSValue *v, int attr)
 
   Frame* activeFrame = Window::retrieveActive(exec)->impl()->frame();
   if (!url.url().startsWith("javascript:", false) || sameDomainAccess) {
-    bool userGesture = static_cast<ScriptInterpreter *>(exec->dynamicInterpreter())->wasRunByUserGesture();
+    bool userGesture = activeFrame->scriptProxy()->processingUserGesture();
     m_frame->loader()->scheduleLocationChange(url.url(), activeFrame->loader()->outgoingReferrer(), false, userGesture);
   }
 }
@@ -2052,7 +2059,7 @@ JSValue* LocationProtoFuncReplace::callAsFunction(ExecState* exec, JSObject* thi
       DeprecatedString str = args[0]->toString(exec);
       const Window* window = Window::retrieveWindow(frame);
       if (!str.startsWith("javascript:", false) || (window && window->isSafeScript(exec))) {
-        bool userGesture = static_cast<ScriptInterpreter *>(exec->dynamicInterpreter())->wasRunByUserGesture();
+        bool userGesture = p->scriptProxy()->processingUserGesture();
         frame->loader()->scheduleLocationChange(p->loader()->completeURL(str).url(), p->loader()->outgoingReferrer(), true, userGesture);
       }
     }
@@ -2074,7 +2081,7 @@ JSValue* LocationProtoFuncReload::callAsFunction(ExecState* exec, JSObject* this
         return jsUndefined();
 
     if (!frame->loader()->url().url().startsWith("javascript:", false) || (window && window->isSafeScript(exec))) {
-      bool userGesture = static_cast<ScriptInterpreter *>(exec->dynamicInterpreter())->wasRunByUserGesture();
+      bool userGesture = Window::retrieveActive(exec)->impl()->frame()->scriptProxy()->processingUserGesture();
       frame->loader()->scheduleRefresh(userGesture);
     }
     return jsUndefined();
@@ -2096,7 +2103,7 @@ JSValue* LocationProtoFuncAssign::callAsFunction(ExecState* exec, JSObject* this
         const Window *window = Window::retrieveWindow(frame);
         DeprecatedString dstUrl = p->loader()->completeURL(DeprecatedString(args[0]->toString(exec))).url();
         if (!dstUrl.startsWith("javascript:", false) || (window && window->isSafeScript(exec))) {
-            bool userGesture = static_cast<ScriptInterpreter *>(exec->dynamicInterpreter())->wasRunByUserGesture();
+            bool userGesture = p->scriptProxy()->processingUserGesture();
             // We want a new history item if this JS was called via a user gesture
             frame->loader()->scheduleLocationChange(dstUrl, p->loader()->outgoingReferrer(), false, userGesture);
         }

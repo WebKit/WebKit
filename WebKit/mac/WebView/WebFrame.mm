@@ -366,7 +366,7 @@ WebView *getWebView(WebFrame *webFrame)
 
 - (void)_attachScriptDebugger
 {
-    if (!_private->scriptDebugger && core(self)->scriptProxy()->haveInterpreter())
+    if (!_private->scriptDebugger && core(self)->scriptProxy()->haveGlobalObject())
         _private->scriptDebugger = [[WebScriptDebugger alloc] initWithWebFrame:self];
 }
 

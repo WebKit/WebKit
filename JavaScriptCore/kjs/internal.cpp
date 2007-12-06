@@ -80,7 +80,7 @@ UString StringImp::toString(ExecState *) const
 
 JSObject* StringImp::toObject(ExecState *exec) const
 {
-    return new StringInstance(exec->lexicalInterpreter()->builtinStringPrototype(), const_cast<StringImp*>(this));
+    return new StringInstance(exec->lexicalGlobalObject()->stringPrototype(), const_cast<StringImp*>(this));
 }
 
 // ------------------------------ NumberImp ------------------------------------
@@ -118,7 +118,7 @@ JSObject *NumberImp::toObject(ExecState *exec) const
 {
   List args;
   args.append(const_cast<NumberImp*>(this));
-  return static_cast<JSObject *>(exec->lexicalInterpreter()->builtinNumber()->construct(exec,args));
+  return static_cast<JSObject *>(exec->lexicalGlobalObject()->numberConstructor()->construct(exec,args));
 }
 
 bool NumberImp::getUInt32(uint32_t& uint32) const

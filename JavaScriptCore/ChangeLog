@@ -1,5 +1,23 @@
 2007-12-05  Geoffrey Garen  <ggaren@apple.com>
 
+        Reviewed by Darin Adler.
+
+        Third step in refactoring JSGlobalObject: Moved data members and 
+        functions accessing data members from Interpreter to JSGlobalObject.
+        Changed Interpreter member functions to static functions.
+        
+        This resolves a bug in global object bootstrapping, where the global
+        ExecState could be used when uninitialized.
+        
+        This is a big change, but it's mostly code motion and renaming.
+        
+        Layout and JS tests, and testjsglue and testapi, pass. SunSpider reports
+        a .7% regression, but Shark sees no difference related to this patch,
+        and SunSpider reported a .7% speedup from an earlier step in this 
+        refactoring, so I think it's fair to call that a wash.
+
+2007-12-05  Geoffrey Garen  <ggaren@apple.com>
+
         Reviewed by Darin Adler. (Or vice versa.)
         
         Fixed ASSERT during run-javascriptcore-tests. (Darin just added the

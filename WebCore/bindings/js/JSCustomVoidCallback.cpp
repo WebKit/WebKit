@@ -56,8 +56,8 @@ void JSCustomVoidCallback::handleEvent()
     if (!proxy)
         return;
         
-    ExecState* exec = proxy->globalObject()->globalExec();
-    ScriptInterpreter* interpreter = proxy->interpreter();
+    JSGlobalObject* globalObject = proxy->globalObject();
+    ExecState* exec = globalObject->globalExec();
         
     KJS::JSLock lock;
         
@@ -78,12 +78,12 @@ void JSCustomVoidCallback::handleEvent()
         
     List args;
     
-    interpreter->startTimeoutCheck();
+    globalObject->startTimeoutCheck();
     if (handleEventFunc)
         handleEventFunc->call(exec, m_callback, args);
     else
         m_callback->call(exec, m_callback, args);
-    interpreter->stopTimeoutCheck();
+    globalObject->stopTimeoutCheck();
         
     if (exec->hadException()) {
         JSObject* exception = exec->exception()->toObject(exec);

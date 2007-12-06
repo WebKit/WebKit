@@ -26,56 +26,67 @@
 #define SavedBuiltins_H
 
 #include "protect.h"
+#include "object_object.h"
+#include "string_object.h"
+#include "error_object.h"
+#include "regexp_object.h"
+#include "array_object.h"
+#include "bool_object.h"
+#include "date_object.h"
+#include "number_object.h"
+#include "math_object.h"
 
 namespace KJS {
     
-class SavedBuiltinsInternal;
-
-class SavedBuiltins {
-    friend class Interpreter;
-public:
-    SavedBuiltins();
-    ~SavedBuiltins();
-private:
-    SavedBuiltinsInternal *_internal;
+struct SavedBuiltinsInternal {
+    ProtectedPtr<ObjectObjectImp> objectConstructor;
+    ProtectedPtr<FunctionObjectImp> functionConstructor;
+    ProtectedPtr<ArrayObjectImp> arrayConstructor;
+    ProtectedPtr<BooleanObjectImp> booleanConstructor;
+    ProtectedPtr<StringObjectImp> stringConstructor;
+    ProtectedPtr<NumberObjectImp> numberConstructor;
+    ProtectedPtr<DateObjectImp> dateConstructor;
+    ProtectedPtr<RegExpObjectImp> regExpConstructor;
+    ProtectedPtr<ErrorObjectImp> errorConstructor;
+    ProtectedPtr<NativeErrorImp> evalErrorConstructor;
+    ProtectedPtr<NativeErrorImp> rangeErrorConstructor;
+    ProtectedPtr<NativeErrorImp> referenceErrorConstructor;
+    ProtectedPtr<NativeErrorImp> syntaxErrorConstructor;
+    ProtectedPtr<NativeErrorImp> typeErrorConstructor;
+    ProtectedPtr<NativeErrorImp> URIErrorConstructor;
+    
+    ProtectedPtr<ObjectPrototype> objectPrototype;
+    ProtectedPtr<FunctionPrototype> functionPrototype;
+    ProtectedPtr<ArrayPrototype> arrayPrototype;
+    ProtectedPtr<BooleanPrototype> booleanPrototype;
+    ProtectedPtr<StringPrototype> stringPrototype;
+    ProtectedPtr<NumberPrototype> numberPrototype;
+    ProtectedPtr<DatePrototype> datePrototype;
+    ProtectedPtr<RegExpPrototype> regExpPrototype;
+    ProtectedPtr<ErrorPrototype> errorPrototype;
+    ProtectedPtr<NativeErrorPrototype> evalErrorPrototype;
+    ProtectedPtr<NativeErrorPrototype> rangeErrorPrototype;
+    ProtectedPtr<NativeErrorPrototype> referenceErrorPrototype;
+    ProtectedPtr<NativeErrorPrototype> syntaxErrorPrototype;
+    ProtectedPtr<NativeErrorPrototype> typeErrorPrototype;
+    ProtectedPtr<NativeErrorPrototype> URIErrorPrototype;
 };
 
-class SavedBuiltinsInternal {
-    friend class Interpreter;
+class SavedBuiltins {
+    friend class JSGlobalObject;
+public:
+    SavedBuiltins()
+        : _internal(0)
+    {
+    }
+
+    ~SavedBuiltins()
+    {
+        delete _internal;
+    }
+
 private:
-    ProtectedPtr<ObjectObjectImp> m_Object;
-    ProtectedPtr<FunctionObjectImp> m_Function;
-    ProtectedPtr<ArrayObjectImp> m_Array;
-    ProtectedPtr<BooleanObjectImp> m_Boolean;
-    ProtectedPtr<StringObjectImp> m_String;
-    ProtectedPtr<NumberObjectImp> m_Number;
-    ProtectedPtr<DateObjectImp> m_Date;
-    ProtectedPtr<RegExpObjectImp> m_RegExp;
-    ProtectedPtr<ErrorObjectImp> m_Error;
-    
-    ProtectedPtr<ObjectPrototype> m_ObjectPrototype;
-    ProtectedPtr<FunctionPrototype> m_FunctionPrototype;
-    ProtectedPtr<ArrayPrototype> m_ArrayPrototype;
-    ProtectedPtr<BooleanPrototype> m_BooleanPrototype;
-    ProtectedPtr<StringPrototype> m_StringPrototype;
-    ProtectedPtr<NumberPrototype> m_NumberPrototype;
-    ProtectedPtr<DatePrototype> m_DatePrototype;
-    ProtectedPtr<RegExpPrototype> m_RegExpPrototype;
-    ProtectedPtr<ErrorPrototype> m_ErrorPrototype;
-    
-    ProtectedPtr<NativeErrorImp> m_EvalError;
-    ProtectedPtr<NativeErrorImp> m_RangeError;
-    ProtectedPtr<NativeErrorImp> m_ReferenceError;
-    ProtectedPtr<NativeErrorImp> m_SyntaxError;
-    ProtectedPtr<NativeErrorImp> m_TypeError;
-    ProtectedPtr<NativeErrorImp> m_UriError;
-    
-    ProtectedPtr<NativeErrorPrototype> m_EvalErrorPrototype;
-    ProtectedPtr<NativeErrorPrototype> m_RangeErrorPrototype;
-    ProtectedPtr<NativeErrorPrototype> m_ReferenceErrorPrototype;
-    ProtectedPtr<NativeErrorPrototype> m_SyntaxErrorPrototype;
-    ProtectedPtr<NativeErrorPrototype> m_TypeErrorPrototype;
-    ProtectedPtr<NativeErrorPrototype> m_UriErrorPrototype;
+    SavedBuiltinsInternal* _internal;
 };
 
 } // namespace

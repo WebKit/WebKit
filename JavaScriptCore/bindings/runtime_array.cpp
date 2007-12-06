@@ -26,12 +26,15 @@
 #include "config.h"
 #include "runtime_array.h"
 
+#include "JSGlobalObject.h"
+#include "array_object.h"
+
 using namespace KJS;
 
 const ClassInfo RuntimeArray::info = { "RuntimeArray", &ArrayInstance::info, 0 };
 
 RuntimeArray::RuntimeArray(ExecState *exec, Bindings::Array *a)
-    : JSObject(exec->lexicalInterpreter()->builtinArrayPrototype())
+    : JSObject(exec->lexicalGlobalObject()->arrayPrototype())
     , _array(a)
 {
 }

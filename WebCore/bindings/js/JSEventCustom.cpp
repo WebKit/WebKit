@@ -49,23 +49,24 @@
 #include "WheelEvent.h"
 #include "kjs_events.h"
 
+using namespace KJS;
+
 namespace WebCore {
 
-KJS::JSValue* JSEvent::clipboardData(KJS::ExecState* exec) const
+JSValue* JSEvent::clipboardData(ExecState* exec) const
 {
-    return impl()->isClipboardEvent() ? toJS(exec, impl()->clipboardData()) : KJS::jsUndefined();
+    return impl()->isClipboardEvent() ? toJS(exec, impl()->clipboardData()) : jsUndefined();
 }
 
-KJS::JSValue* toJS(KJS::ExecState* exec, Event* event)
+JSValue* toJS(ExecState* exec, Event* event)
 {
-    KJS::JSLock lock;
+    JSLock lock;
 
     if (!event)
-        return KJS::jsNull();
+        return jsNull();
 
-    KJS::ScriptInterpreter* interp = static_cast<KJS::ScriptInterpreter*>(exec->dynamicInterpreter());
 
-    KJS::DOMObject* ret = interp->getDOMObject(event);
+    DOMObject* ret = ScriptInterpreter::getDOMObject(event);
     if (ret)
         return ret;
 
@@ -88,7 +89,7 @@ KJS::JSValue* toJS(KJS::ExecState* exec, Event* event)
     else
         ret = new JSEvent(exec, event);
 
-    interp->putDOMObject(event, ret);
+    ScriptInterpreter::putDOMObject(event, ret);
     return ret;
 }
 

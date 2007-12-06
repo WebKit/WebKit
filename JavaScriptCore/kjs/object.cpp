@@ -68,7 +68,7 @@ JSValue *JSObject::call(ExecState *exec, JSObject *thisObj, const List &args)
   ASSERT(implementsCall());
 
 #if KJS_MAX_STACK > 0
-  static int depth = 0; // sum of all concurrent interpreters
+  static int depth = 0; // sum of all extant function calls
 
 #if JAVASCRIPT_CALL_TRACING
     static bool tracing = false;
@@ -365,7 +365,7 @@ bool JSObject::getPrimitiveNumber(ExecState* exec, double& number, JSValue*& res
 JSValue* JSObject::defaultValue(ExecState* exec, JSType hint) const
 {
   /* Prefer String for Date objects */
-  if ((hint == StringType) || (hint != StringType) && (hint != NumberType) && (_proto == exec->lexicalInterpreter()->builtinDatePrototype())) {
+  if ((hint == StringType) || (hint != NumberType && _proto == exec->lexicalGlobalObject()->datePrototype())) {
     if (JSValue* v = tryGetAndCallProperty(exec, this, exec->propertyNames().toString))
       return v;
     if (JSValue* v = tryGetAndCallProperty(exec, this, exec->propertyNames().valueOf))
@@ -599,25 +599,25 @@ JSObject *Error::create(ExecState *exec, ErrorType errtype, const UString &messa
   JSObject *cons;
   switch (errtype) {
   case EvalError:
-    cons = exec->lexicalInterpreter()->builtinEvalError();
+    cons = exec->lexicalGlobalObject()->evalErrorConstructor();
     break;
   case RangeError:
-    cons = exec->lexicalInterpreter()->builtinRangeError();
+    cons = exec->lexicalGlobalObject()->rangeErrorConstructor();
     break;
   case ReferenceError:
-    cons = exec->lexicalInterpreter()->builtinReferenceError();
+    cons = exec->lexicalGlobalObject()->referenceErrorConstructor();
     break;
   case SyntaxError:
-    cons = exec->lexicalInterpreter()->builtinSyntaxError();
+    cons = exec->lexicalGlobalObject()->syntaxErrorConstructor();
     break;
   case TypeError:
-    cons = exec->lexicalInterpreter()->builtinTypeError();
+    cons = exec->lexicalGlobalObject()->typeErrorConstructor();
     break;
   case URIError:
-    cons = exec->lexicalInterpreter()->builtinURIError();
+    cons = exec->lexicalGlobalObject()->URIErrorConstructor();
     break;
   default:
-    cons = exec->lexicalInterpreter()->builtinError();
+    cons = exec->lexicalGlobalObject()->errorConstructor();
     break;
   }
 

@@ -31,24 +31,22 @@
 
 namespace KJS {
 
-
 // ECMA 10.2
-ExecState::ExecState(Interpreter* interpreter, JSGlobalObject* globalObject, JSObject* thisV, 
-                     FunctionBodyNode* currentBody, CodeType type, ExecState* callingExec, 
+ExecState::ExecState(JSGlobalObject* globalObject, JSObject* thisV, 
+                     FunctionBodyNode* currentBody, CodeType type, ExecState* callingExec, ExecState* currentExec,
                      FunctionImp* func, const List* args)
-    : m_interpreter(interpreter)
+    : m_globalObject(globalObject)
     , m_exception(0)
     , m_propertyNames(CommonIdentifiers::shared())
-    , m_savedExecState(interpreter->currentExec())
+    , m_callingExec(callingExec)
+    , m_savedExec(currentExec)
     , m_currentBody(currentBody)
     , m_function(func)
     , m_arguments(args)
     , m_iterationDepth(0)
     , m_switchDepth(0) 
+    , m_codeType(type)
 {
-    m_codeType = type;
-    m_callingExecState = callingExec;
-    
     // create and initialize activation object (ECMA 10.1.6)
     if (type == FunctionCode) {
         m_activation = new ActivationImp(this);
@@ -61,15 +59,15 @@ ExecState::ExecState(Interpreter* interpreter, JSGlobalObject* globalObject, JSO
     // ECMA 10.2
     switch(type) {
     case EvalCode:
-        if (m_callingExecState) {
-            m_scopeChain = m_callingExecState->scopeChain();
-            m_variable = m_callingExecState->variableObject();
-            m_thisVal = m_callingExecState->thisValue();
+        if (m_callingExec) {
+            m_scopeChain = m_callingExec->scopeChain();
+            m_variable = m_callingExec->variableObject();
+            m_thisVal = m_callingExec->thisValue();
             break;
         } // else same as GlobalCode
     case GlobalCode:
-        if (globalObject)
-            setGlobalObject(globalObject);
+        m_scopeChain.push(globalObject);
+        m_thisVal = globalObject;
         break;
     case FunctionCode:
         m_scopeChain = func->scope();
@@ -80,37 +78,30 @@ ExecState::ExecState(Interpreter* interpreter, JSGlobalObject* globalObject, JSO
     }
 
     if (currentBody)
-        m_interpreter->setCurrentExec(this);
+        m_globalObject->setCurrentExec(this);
 }
 
 ExecState::~ExecState()
 {
-    m_interpreter->setCurrentExec(m_savedExecState);
+    m_globalObject->setCurrentExec(m_savedExec);
 }
 
 void ExecState::mark()
 {
-    for (ExecState* exec = this; exec; exec = exec->m_callingExecState)
+    for (ExecState* exec = this; exec; exec = exec->m_callingExec)
         exec->m_scopeChain.mark();
 }
 
-void ExecState::setGlobalObject(JSGlobalObject* globalObject)
-{
-    m_scopeChain.clear();
-    m_scopeChain.push(globalObject);
-    m_thisVal = static_cast<JSObject*>(globalObject);
-}
-
-Interpreter* ExecState::lexicalInterpreter() const
+JSGlobalObject* ExecState::lexicalGlobalObject() const
 {
     if (scopeChain().isEmpty())
-        return dynamicInterpreter();
+        return dynamicGlobalObject();
     
     JSObject* object = scopeChain().bottom();
     if (object && object->isGlobalObject())
-        return static_cast<JSGlobalObject*>(object)->interpreter();
+        return static_cast<JSGlobalObject*>(object);
 
-    return dynamicInterpreter();
+    return dynamicGlobalObject();
 }
     
 void ExecState::updateLocalStorage() 

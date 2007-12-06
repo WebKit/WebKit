@@ -62,7 +62,7 @@ bool checkNodeSecurity(ExecState* exec, Node* n)
     return false;
 
   // Check to see if the currently executing interpreter is allowed to access the specified node
-  KJS::Window* win = KJS::Window::retrieveWindow(n->document()->frame());
+  Window* win = Window::retrieveWindow(n->document()->frame());
   return win && win->isSafeScript(exec);
 }
 
@@ -82,12 +82,9 @@ JSValue* toJS(ExecState* exec, EventTarget* target)
     if (node)
         return toJS(exec, node);
 
-    XMLHttpRequest* xhr = target->toXMLHttpRequest();
-    if (xhr) {
+    if (XMLHttpRequest* xhr = target->toXMLHttpRequest())
         // XMLHttpRequest is always created via JS, so we don't need to use cacheDOMObject() here.
-        ScriptInterpreter* interp = static_cast<ScriptInterpreter*>(exec->dynamicInterpreter());
-        return interp->getDOMObject(xhr);
-    }
+        return ScriptInterpreter::getDOMObject(xhr);
 
     // There are two kinds of EventTargets: EventTargetNode and XMLHttpRequest.
     // If SVG support is enabled, there is also SVGElementInstance.

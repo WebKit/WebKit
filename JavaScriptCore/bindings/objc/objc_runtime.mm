@@ -123,7 +123,7 @@ JSValue* ObjcField::valueFromInstance(ExecState* exec, const Instance* instance)
 
 static id convertValueToObjcObject(ExecState* exec, JSValue* value)
 {
-    RefPtr<RootObject> rootObject = findRootObject(exec->dynamicInterpreter());
+    RefPtr<RootObject> rootObject = findRootObject(exec->dynamicGlobalObject());
     if (!rootObject)
         return nil;
     return [webScriptObjectClass() _convertValueToObjcValue:value originRootObject:rootObject.get() rootObject:rootObject.get()];

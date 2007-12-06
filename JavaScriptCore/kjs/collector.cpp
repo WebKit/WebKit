@@ -962,7 +962,7 @@ bool Collector::collect()
   
   bool newMemoryFull = (numLiveObjects >= KJS_MEM_LIMIT);
   if (newMemoryFull && newMemoryFull != memoryFull)
-      reportOutOfMemoryToAllInterpreters();
+      reportOutOfMemoryToAllExecStates();
   memoryFull = newMemoryFull;
 
   return numLiveObjects < originalLiveObjects;
@@ -973,15 +973,15 @@ size_t Collector::size()
   return primaryHeap.numLiveObjects + numberHeap.numLiveObjects; 
 }
 
-size_t Collector::numInterpreters()
+size_t Collector::numGlobalObjects()
 {
   size_t count = 0;
-  if (Interpreter::s_hook) {
-    Interpreter* scr = Interpreter::s_hook;
+  if (JSGlobalObject::head()) {
+    JSGlobalObject* o = JSGlobalObject::head();
     do {
       ++count;
-      scr = scr->next;
-    } while (scr != Interpreter::s_hook);
+      o = o->next();
+    } while (o != JSGlobalObject::head());
   }
   return count;
 }
@@ -1041,19 +1041,17 @@ bool Collector::isBusy()
     return (primaryHeap.operationInProgress != NoOperation) | (numberHeap.operationInProgress != NoOperation);
 }
 
-void Collector::reportOutOfMemoryToAllInterpreters()
+void Collector::reportOutOfMemoryToAllExecStates()
 {
-    if (!Interpreter::s_hook)
+    JSGlobalObject* o = JSGlobalObject::head();
+    if (!o)
         return;
     
-    Interpreter* interpreter = Interpreter::s_hook;
     do {
-        ExecState* exec = interpreter->currentExec() ? interpreter->currentExec() : interpreter->globalObject()->globalExec();
-        
+        ExecState* exec = o->currentExec() ? o->currentExec() : o->globalExec();
         exec->setException(Error::create(exec, GeneralError, "Out of memory"));
-        
-        interpreter = interpreter->next;
-    } while(interpreter != Interpreter::s_hook);
+        o = o->next();
+    } while(o != JSGlobalObject::head());
 }
 
 } // namespace KJS

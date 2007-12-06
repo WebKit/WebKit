@@ -36,6 +36,7 @@
 #import <JavaScriptCore/runtime_object.h>
 #import <JavaScriptCore/APICast.h>
 #import <JavaScriptCore/JSGlobalObject.h>
+#import <JavaScriptCore/interpreter.h>
 
 using namespace KJS;
 using namespace KJS::Bindings;
@@ -249,24 +250,24 @@ static void _didExecute(WebScriptObject *obj)
 {
     JSLock lock;
     
-    Interpreter *first, *interp = Interpreter::firstInterpreter();
+    JSGlobalObject* head = JSGlobalObject::head();
 
     // This code assumes that we only ever have one running interpreter.  A
     // good assumption for now, as we depend on that elsewhere.  However,
     // in the future we may have the ability to run multiple interpreters,
     // in which case this will have to change.
-    first = interp;
+    JSGlobalObject* o = head;
     do {
-        if (!interp)
+        if (!o)
             return NO;
 
         // If the interpreter has a current exec state, we set the exception.
-        if (ExecState* exec = interp->currentExec()) {
+        if (ExecState* exec = o->currentExec()) {
             throwError(exec, GeneralError, exceptionMessage);
             return YES;
         }
-        interp = interp->nextInterpreter();
-    } while (interp != first);
+        o = o->next();
+    } while (o != head);
     
     return NO;
 }
@@ -309,9 +310,9 @@ static void getListFromNSArray(ExecState *exec, NSArray *array, RootObject* root
     if (![self _isSafeScript])
         return nil;
 
-    [self _rootObject]->interpreter()->startTimeoutCheck();
+    [self _rootObject]->globalObject()->startTimeoutCheck();
     JSValue *result = funcImp->call(exec, [self _imp], argList);
-    [self _rootObject]->interpreter()->stopTimeoutCheck();
+    [self _rootObject]->globalObject()->stopTimeoutCheck();
 
     if (exec->hadException()) {
         LOG_EXCEPTION(exec);
@@ -338,9 +339,9 @@ static void getListFromNSArray(ExecState *exec, NSArray *array, RootObject* root
     JSValue *result;
     JSLock lock;
     
-    [self _rootObject]->interpreter()->startTimeoutCheck();
-    Completion completion = [self _rootObject]->interpreter()->evaluate(UString(), 0, String(script));
-    [self _rootObject]->interpreter()->stopTimeoutCheck();
+    [self _rootObject]->globalObject()->startTimeoutCheck();
+    Completion completion = Interpreter::evaluate([self _rootObject]->globalObject()->globalExec(), UString(), 0, String(script));
+    [self _rootObject]->globalObject()->stopTimeoutCheck();
     ComplType type = completion.complType();
     
     if (type == Normal) {
@@ -495,7 +496,7 @@ static void getListFromNSArray(ExecState *exec, NSArray *array, RootObject* root
 
     JSLock lock;
     
-    if (ExecState* exec = [self _rootObject]->interpreter()->currentExec()) {
+    if (ExecState* exec = [self _rootObject]->globalObject()->currentExec()) {
         throwError(exec, GeneralError, description);
     } else
         throwError([self _rootObject]->globalObject()->globalExec(), GeneralError, description);

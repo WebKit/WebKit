@@ -1722,7 +1722,7 @@ bool FrameLoader::userGestureHint()
         rootFrame = rootFrame->tree()->parent();
 
     if (rootFrame->scriptProxy())
-        return rootFrame->scriptProxy()->interpreter()->wasRunByUserGesture();
+        return rootFrame->scriptProxy()->processingUserGesture();
 
     return true; // If JavaScript is disabled, a user gesture must have initiated the navigation
 }
@@ -4535,7 +4535,7 @@ String FrameLoader::referrer() const
 void FrameLoader::dispatchWindowObjectAvailable()
 {
     Settings* settings = m_frame->settings();
-    if (!settings || !settings->isJavaScriptEnabled() || !m_frame->scriptProxy()->haveInterpreter())
+    if (!settings || !settings->isJavaScriptEnabled() || !m_frame->scriptProxy()->haveGlobalObject())
         return;
 
     m_client->windowObjectCleared();

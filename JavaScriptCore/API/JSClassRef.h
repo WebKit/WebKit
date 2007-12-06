@@ -33,6 +33,7 @@
 #include <kjs/protect.h>
 #include <kjs/ustring.h>
 #include <wtf/HashMap.h>
+#include <wtf/RefCounted.h>
 
 struct StaticValueEntry {
     StaticValueEntry(JSObjectGetPropertyCallback _getProperty, JSObjectSetPropertyCallback _setProperty, JSPropertyAttributes _attributes)

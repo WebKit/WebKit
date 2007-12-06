@@ -28,7 +28,6 @@
 #include "value.h"
 #include "object.h"
 #include "types.h"
-#include "interpreter.h"
 #include "nodes.h"
 #include "lexer.h"
 #include "internal.h"

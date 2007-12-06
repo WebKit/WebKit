@@ -36,7 +36,7 @@ using namespace KJS;
 ImageConstructorImp::ImageConstructorImp(ExecState* exec, Document* doc)
     : m_doc(doc)
 {
-    setPrototype(exec->lexicalInterpreter()->builtinObjectPrototype());
+    setPrototype(exec->lexicalGlobalObject()->objectPrototype());
 }
 
 JSObject* ImageConstructorImp::construct(ExecState*  exec, const List& list)

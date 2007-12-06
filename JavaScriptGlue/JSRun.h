@@ -32,11 +32,10 @@
 #include "JSBase.h"
 #include "JSUtils.h"
 
-class JSInterpreter : public Interpreter {
+class JSGlueGlobalObject : public JSGlobalObject {
     public:
-        JSInterpreter(JSGlobalObject *global, JSFlags flags) : fJSFlags(flags) { setGlobalObject(global); }
-        JSInterpreter(JSGlobalObject *global) : fJSFlags(kJSFlagNone) { setGlobalObject(global); }
-        JSInterpreter() : fJSFlags(kJSFlagNone) { }
+        JSGlueGlobalObject(JSFlags flags) : fJSFlags(flags) { }
+        JSGlueGlobalObject() : fJSFlags(kJSFlagNone) { }
         JSFlags Flags() const { return fJSFlags; }
 
     private:

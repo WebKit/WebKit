@@ -194,7 +194,7 @@ Frame::~Frame()
     --FrameCounter::count;
 #endif
 
-    if (d->m_jscript && d->m_jscript->haveInterpreter())
+    if (d->m_jscript && d->m_jscript->haveGlobalObject())
         static_cast<KJS::Window*>(d->m_jscript->globalObject())->disconnectFrame();
 
     disconnectOwnerElement();
@@ -1817,7 +1817,7 @@ void Frame::pageDestroyed()
         d->m_page->focusController()->setFocusedFrame(0);
 
     // This will stop any JS timers
-    if (d->m_jscript && d->m_jscript->haveInterpreter())
+    if (d->m_jscript && d->m_jscript->haveGlobalObject())
         if (KJS::Window* w = KJS::Window::retrieveWindow(this))
             w->disconnectFrame();
 

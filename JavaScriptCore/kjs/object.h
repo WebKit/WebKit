@@ -25,9 +25,10 @@
 #ifndef KJS_OBJECT_H
 #define KJS_OBJECT_H
 
-#include "JSType.h"
 #include "CommonIdentifiers.h"
-#include "interpreter.h"
+#include "ExecState.h"
+#include "JSType.h"
+#include "list.h"
 #include "property_map.h"
 #include "property_slot.h"
 #include "scope_chain.h"

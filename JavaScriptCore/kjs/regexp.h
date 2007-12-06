@@ -23,7 +23,7 @@
 #define KJS_REGEXP_H
 
 #include "ustring.h"
-#include <pcre.h>
+#include <pcre/pcre.h>
 #include <sys/types.h>
 #include <wtf/OwnArrayPtr.h>
 #include <wtf/RefCounted.h>

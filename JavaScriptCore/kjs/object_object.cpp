@@ -180,7 +180,7 @@ JSObject* ObjectObjectImp::construct(ExecState* exec, const List& args)
       return arg->toObject(exec);
   case NullType:
   case UndefinedType:
-      return new JSObject(exec->lexicalInterpreter()->builtinObjectPrototype());
+      return new JSObject(exec->lexicalGlobalObject()->objectPrototype());
   default:
       ASSERT_NOT_REACHED();
       return 0;

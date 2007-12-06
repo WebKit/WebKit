@@ -36,12 +36,12 @@ JSObject *JSImmediate::toObject(const JSValue *v, ExecState *exec)
     else if (isBoolean(v)) {
         List args;
         args.append(const_cast<JSValue *>(v));
-        return exec->lexicalInterpreter()->builtinBoolean()->construct(exec, args);
+        return exec->lexicalGlobalObject()->booleanConstructor()->construct(exec, args);
     } else {
         ASSERT(isNumber(v));
         List args;
         args.append(const_cast<JSValue *>(v));
-        return exec->lexicalInterpreter()->builtinNumber()->construct(exec, args);
+        return exec->lexicalGlobalObject()->numberConstructor()->construct(exec, args);
     }
 }
 

@@ -1,8 +1,7 @@
 /*
- *  This file is part of the KDE libraries
  *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2003 Apple Computer, Inc.
+ *  Copyright (C) 2003, 2007 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -21,103 +20,20 @@
  *
  */
 
-#ifndef _KJS_INTERPRETER_H_
-#define _KJS_INTERPRETER_H_
-
-#include "ExecState.h"
-#include "protect.h"
-#include "types.h"
-#include "value.h"
-#include <wtf/RefCounted.h>
+#ifndef KJS_Interpreter_h
+#define KJS_Interpreter_h
 
 namespace KJS {
 
-  class ArrayObjectImp;
-  class ArrayPrototype;
-  class BooleanObjectImp;
-  class BooleanPrototype;
-  class DateObjectImp;
-  class DatePrototype;
-  class Debugger;
-  class ErrorObjectImp;
-  class ErrorPrototype;
-  class EvalError;
-  class EvalErrorPrototype;
-  class FunctionObjectImp;
-  class FunctionPrototype;
-  class JSGlobalObject;
-  class NativeErrorImp;
-  class NativeErrorPrototype;
-  class NumberObjectImp;
-  class NumberPrototype;
-  class ObjectObjectImp;
-  class ObjectPrototype;
-  class RangeError;
-  class RangeErrorPrototype;
-  class ReferenceError;
-  class ReferenceError;
-  class ReferenceErrorPrototype;
-  class RegExpObjectImp;
-  class RegExpPrototype;
-  class RuntimeMethod;
-  class SavedBuiltins;
-  class ScopeChain;
-  class StringObjectImp;
-  class StringPrototype;
-  class SyntaxErrorPrototype;
-  class TypeError;
-  class TypeErrorPrototype;
-  class UriError;
-  class UriErrorPrototype;
+  class Completion;
+  class ExecState;
+  class JSValue;
+  class UString;
+
+  struct UChar;
   
-  /**
-   * Interpreter objects can be used to evaluate ECMAScript code. Each
-   * interpreter has a global object which is used for the purposes of code
-   * evaluation, and also provides access to built-in properties such as
-   * " Object" and "Number".
-   */
   class Interpreter {
-    friend class Collector;
-    friend class JSGlobalObject;
-
   public:
-    /**
-     * Creates a new interpreter. The global object must be set via setGlobalObject
-     * before code is executed with this interpreter.
-     */
-    Interpreter();
-    ~Interpreter();
-
-    /**
-     * Set the interpreter's global object. The supplied object will be used as the global
-     * object for all scripts executed with this interpreter. During
-     * construction, all the standard properties such as "Object" and "Number"
-     * will be added to the global object.
-     *
-     * Note: You should not use the same global object for multiple
-     * interpreters.
-     *
-     * This is due do the fact that the built-in properties are set in the
-     * constructor, and if these objects have been modified from another
-     * interpreter (e.g. a script modifying String.prototype), the changes will
-     * be overridden.
-     *
-     * @param The object to use as the global object for this interpreter
-     */
-    void setGlobalObject(JSGlobalObject*);
-
-    /**
-     * Resets the global object's default properties and adds the default object 
-     * prototype to its prototype chain.
-     */
-    void resetGlobalObjectProperties();
-
-    /**
-     * Returns the object that is used as the global object during all script
-     * execution performed by this interpreter
-     */
-    JSGlobalObject* globalObject() const;
-
     /**
      * Parses the supplied ECMAScript code and checks for syntax errors.
      *
@@ -125,8 +41,8 @@ namespace KJS {
      * @return A normal completion if there were no syntax errors in the code, 
      * otherwise a throw completion with the syntax error as its value.
      */
-    Completion checkSyntax(const UString& sourceURL, int startingLineNumber, const UString& code);
-    Completion checkSyntax(const UString& sourceURL, int startingLineNumber, const UChar* code, int codeLength);
+    static Completion checkSyntax(ExecState*, const UString& sourceURL, int startingLineNumber, const UString& code);
+    static Completion checkSyntax(ExecState*, const UString& sourceURL, int startingLineNumber, const UChar* code, int codeLength);
 
     /**
      * Evaluates the supplied ECMAScript code.
@@ -143,238 +59,13 @@ namespace KJS {
      * execution. This should either be jsNull() or an Object.
      * @return A completion object representing the result of the execution.
      */
-    Completion evaluate(const UString& sourceURL, int startingLineNumber, const UChar* code, int codeLength, JSValue* thisV = 0);
-    Completion evaluate(const UString& sourceURL, int startingLineNumber, const UString& code, JSValue* thisV = 0);
-
-    /**
-     * Returns the builtin "Object" object. This is the object that was set
-     * as a property of the global object during construction; if the property
-     * is replaced by script code, this method will still return the original
-     * object.
-     *
-     * @return The builtin "Object" object
-     */
-    JSObject *builtinObject() const;
-
-    /**
-     * Returns the builtin "Function" object.
-     */
-    JSObject *builtinFunction() const;
-
-    /**
-     * Returns the builtin "Array" object.
-     */
-    JSObject *builtinArray() const;
-
-    /**
-     * Returns the builtin "Boolean" object.
-     */
-    JSObject *builtinBoolean() const;
-
-    /**
-     * Returns the builtin "String" object.
-     */
-    JSObject *builtinString() const;
-
-    /**
-     * Returns the builtin "Number" object.
-     */
-    JSObject *builtinNumber() const;
-
-    /**
-     * Returns the builtin "Date" object.
-     */
-    JSObject *builtinDate() const;
-
-    /**
-     * Returns the builtin "RegExp" object.
-     */
-    RegExpObjectImp* builtinRegExp() const { return m_RegExp; }
-
-    /**
-     * Returns the builtin "Error" object.
-     */
-    JSObject *builtinError() const;
-
-    /**
-     * Returns the builtin "Object.prototype" object.
-     */
-    JSObject *builtinObjectPrototype() const;
-
-    /**
-     * Returns the builtin "Function.prototype" object.
-     */
-    JSObject *builtinFunctionPrototype() const;
-
-    /**
-     * Returns the builtin "Array.prototype" object.
-     */
-    JSObject *builtinArrayPrototype() const;
-
-    /**
-     * Returns the builtin "Boolean.prototype" object.
-     */
-    JSObject *builtinBooleanPrototype() const;
-
-    /**
-     * Returns the builtin "String.prototype" object.
-     */
-    JSObject *builtinStringPrototype() const;
-
-    /**
-     * Returns the builtin "Number.prototype" object.
-     */
-    JSObject *builtinNumberPrototype() const;
-
-    /**
-     * Returns the builtin "Date.prototype" object.
-     */
-    JSObject *builtinDatePrototype() const;
-
-    /**
-     * Returns the builtin "RegExp.prototype" object.
-     */
-    JSObject *builtinRegExpPrototype() const;
-
-    /**
-     * Returns the builtin "Error.prototype" object.
-     */
-    JSObject *builtinErrorPrototype() const;
-
-    /**
-     * The initial value of "Error" global property
-     */
-    JSObject *builtinEvalError() const;
-    JSObject *builtinRangeError() const;
-    JSObject *builtinReferenceError() const;
-    JSObject *builtinSyntaxError() const;
-    JSObject *builtinTypeError() const;
-    JSObject *builtinURIError() const;
-
-    JSObject *builtinEvalErrorPrototype() const;
-    JSObject *builtinRangeErrorPrototype() const;
-    JSObject *builtinReferenceErrorPrototype() const;
-    JSObject *builtinSyntaxErrorPrototype() const;
-    JSObject *builtinTypeErrorPrototype() const;
-    JSObject *builtinURIErrorPrototype() const;
-
-    enum CompatMode { NativeMode, IECompat, NetscapeCompat };
-    /**
-     * Call this to enable a compatibility mode with another browser.
-     * (by default konqueror is in "native mode").
-     * Currently, in KJS, this only changes the behavior of Date::getYear()
-     * which returns the full year under IE.
-     */
-    void setCompatMode(CompatMode mode) { m_compatMode = mode; }
-    CompatMode compatMode() const { return m_compatMode; }
+    static Completion evaluate(ExecState*, const UString& sourceURL, int startingLineNumber, const UString& code, JSValue* thisV = 0);
+    static Completion evaluate(ExecState*, const UString& sourceURL, int startingLineNumber, const UChar* code, int codeLength, JSValue* thisV = 0);
     
     static bool shouldPrintExceptions();
     static void setShouldPrintExceptions(bool);
-
-    void saveBuiltins (SavedBuiltins&) const;
-    void restoreBuiltins (const SavedBuiltins&);
-    
-    // Chained list of interpreters (ring)
-    static Interpreter* firstInterpreter() { return s_hook; }
-    Interpreter* nextInterpreter() const { return next; }
-    Interpreter* prevInterpreter() const { return prev; }
-
-    Debugger* debugger() const { return m_debugger; }
-    void setDebugger(Debugger* d) { m_debugger = d; }
-    
-    void setCurrentExec(ExecState* exec) { m_currentExec = exec; }
-    ExecState* currentExec() const { return m_currentExec; }
-        
-    void setTimeoutTime(unsigned timeoutTime) { m_timeoutTime = timeoutTime; }
-
-    void startTimeoutCheck();
-    void stopTimeoutCheck();
-    
-    bool timedOut();
-    
-    ExecState m_globalExec; // This is temporarily public to help with bootstrapping.
-
-protected:
-    unsigned m_timeoutTime;
-
-private:
-    void init();
-
-    void createObjectsForGlobalObjectProperties();
-    void setGlobalObjectProperties();
-
-    void resetTimeoutCheck();
-    bool checkTimeout();
-
-    // Uncopyable
-    Interpreter(const Interpreter&);
-    Interpreter operator=(const Interpreter&);
-    
-    ExecState* m_currentExec;
-    JSGlobalObject* m_globalObject;
-
-    // Chained list of interpreters (ring) - for collector
-    static Interpreter* s_hook;
-    Interpreter *next, *prev;
-    
-    int m_recursion;
-    
-    Debugger* m_debugger;
-    CompatMode m_compatMode;
-
-    unsigned m_timeAtLastCheckTimeout;
-    unsigned m_timeExecuting;
-    unsigned m_timeoutCheckCount;
-    
-    unsigned m_tickCount;
-    unsigned m_ticksUntilNextTimeoutCheck;
-
-
-    ObjectObjectImp* m_Object;
-    FunctionObjectImp* m_Function;
-    ArrayObjectImp* m_Array;
-    BooleanObjectImp* m_Boolean;
-    StringObjectImp* m_String;
-    NumberObjectImp* m_Number;
-    DateObjectImp* m_Date;
-    RegExpObjectImp* m_RegExp;
-    ErrorObjectImp* m_Error;
-    
-    ObjectPrototype* m_ObjectPrototype;
-    FunctionPrototype* m_FunctionPrototype;
-    ArrayPrototype* m_ArrayPrototype;
-    BooleanPrototype* m_BooleanPrototype;
-    StringPrototype* m_StringPrototype;
-    NumberPrototype* m_NumberPrototype;
-    DatePrototype* m_DatePrototype;
-    RegExpPrototype* m_RegExpPrototype;
-    ErrorPrototype* m_ErrorPrototype;
-    
-    NativeErrorImp* m_EvalError;
-    NativeErrorImp* m_RangeError;
-    NativeErrorImp* m_ReferenceError;
-    NativeErrorImp* m_SyntaxError;
-    NativeErrorImp* m_TypeError;
-    NativeErrorImp* m_UriError;
-    
-    NativeErrorPrototype* m_EvalErrorPrototype;
-    NativeErrorPrototype* m_RangeErrorPrototype;
-    NativeErrorPrototype* m_ReferenceErrorPrototype;
-    NativeErrorPrototype* m_SyntaxErrorPrototype;
-    NativeErrorPrototype* m_TypeErrorPrototype;
-    NativeErrorPrototype* m_UriErrorPrototype;
   };
 
-  inline bool Interpreter::timedOut()
-  {
-      m_tickCount++;
-      
-      if (m_tickCount != m_ticksUntilNextTimeoutCheck)
-          return false;
-      
-      return checkTimeout();
-  }
-  
-} // namespace
+} // namespace KJS
 
-#endif // _KJS_INTERPRETER_H_
+#endif // KJS_Interpreter_h

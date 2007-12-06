@@ -55,7 +55,7 @@ namespace KJS {
 const ClassInfo FunctionImp::info = { "Function", &InternalFunctionImp::info, 0 };
 
 FunctionImp::FunctionImp(ExecState* exec, const Identifier& name, FunctionBodyNode* b, const ScopeChain& sc)
-  : InternalFunctionImp(static_cast<FunctionPrototype*>(exec->lexicalInterpreter()->builtinFunctionPrototype()), name)
+  : InternalFunctionImp(exec->lexicalGlobalObject()->functionPrototype(), name)
   , body(b)
   , _scope(sc)
 {
@@ -69,11 +69,8 @@ void FunctionImp::mark()
 
 JSValue* FunctionImp::callAsFunction(ExecState* exec, JSObject* thisObj, const List& args)
 {
-  JSGlobalObject* globalObj = exec->dynamicInterpreter()->globalObject();
-
   // enter a new execution context
-  ExecState newExec(exec->dynamicInterpreter(), globalObj, thisObj, body.get(),
-                    FunctionCode, exec, this, &args);
+  ExecState newExec(exec->dynamicGlobalObject(), thisObj, body.get(), FunctionCode, exec, exec->dynamicGlobalObject()->currentExec(), this, &args);
   if (exec->hadException())
     newExec.setException(exec->exception());
 
@@ -204,7 +201,7 @@ JSObject* FunctionImp::construct(ExecState* exec, const List& args)
   if (p->isObject())
     proto = static_cast<JSObject*>(p);
   else
-    proto = exec->lexicalInterpreter()->builtinObjectPrototype();
+    proto = exec->lexicalGlobalObject()->objectPrototype();
 
   JSObject* obj(new JSObject(proto));
 
@@ -299,7 +296,7 @@ const ClassInfo Arguments::info = { "Arguments", 0, 0 };
 
 // ECMA 10.1.8
 Arguments::Arguments(ExecState* exec, FunctionImp* func, const List& args, ActivationImp* act)
-: JSObject(exec->lexicalInterpreter()->builtinObjectPrototype()), 
+: JSObject(exec->lexicalGlobalObject()->objectPrototype()), 
 _activationObject(act),
 indexToNameMap(func, args)
 {
@@ -744,7 +741,7 @@ JSValue* GlobalFuncImp::callAsFunction(ExecState* exec, JSObject* thisObj, const
         UString errMsg;
         RefPtr<ProgramNode> progNode(parser().parseProgram(UString(), 0, s.data(), s.size(), &sourceId, &errLine, &errMsg));
 
-        Debugger* dbg = exec->dynamicInterpreter()->debugger();
+        Debugger* dbg = exec->dynamicGlobalObject()->debugger();
         if (dbg) {
           bool cont = dbg->sourceParsed(exec, sourceId, UString(), s, 0, errLine, errMsg);
           if (!cont)
@@ -755,12 +752,12 @@ JSValue* GlobalFuncImp::callAsFunction(ExecState* exec, JSObject* thisObj, const
         if (!progNode)
           return throwError(exec, SyntaxError, errMsg, errLine, sourceId, NULL);
 
-        bool switchGlobal = thisObj && thisObj != exec->dynamicInterpreter()->globalObject();
-          
+        bool switchGlobal = thisObj && thisObj != exec->dynamicGlobalObject() && thisObj->isGlobalObject();
+
         // enter a new execution context
-        Interpreter* interpreter = switchGlobal ? static_cast<JSGlobalObject*>(thisObj)->interpreter() : exec->dynamicInterpreter();
+        JSGlobalObject* globalObject = switchGlobal ? static_cast<JSGlobalObject*>(thisObj) : exec->dynamicGlobalObject();
         JSObject* thisVal = static_cast<JSObject*>(exec->thisValue());
-        ExecState newExec(interpreter, interpreter->globalObject(), thisVal, progNode.get(), EvalCode, exec);
+        ExecState newExec(globalObject, thisVal, progNode.get(), EvalCode, exec, globalObject->currentExec());
         if (exec->hadException())
             newExec.setException(exec->exception());
           

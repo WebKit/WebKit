@@ -47,7 +47,7 @@ const ClassInfo JSRGBColor::info = { "RGBColor", 0, &JSRGBColorTable };
 JSRGBColor::JSRGBColor(ExecState* exec, unsigned color) 
     : m_color(color) 
 { 
-    setPrototype(exec->lexicalInterpreter()->builtinObjectPrototype());
+    setPrototype(exec->lexicalGlobalObject()->objectPrototype());
 }
 
 JSRGBColor::~JSRGBColor()

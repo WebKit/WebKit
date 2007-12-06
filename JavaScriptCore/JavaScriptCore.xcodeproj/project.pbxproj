@@ -165,7 +165,7 @@
 		932F5B6F0822A1C700736975 /* jni_utility.h in Headers */ = {isa = PBXBuildFile; fileRef = 51856D900562EE95008B9D83 /* jni_utility.h */; };
 		932F5B700822A1C700736975 /* runtime.h in Headers */ = {isa = PBXBuildFile; fileRef = 511B0870056468730080E486 /* runtime.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		932F5B710822A1C700736975 /* jni_runtime.h in Headers */ = {isa = PBXBuildFile; fileRef = 511B0876056468BB0080E486 /* jni_runtime.h */; };
-		932F5B720822A1C700736975 /* bool_object.h in Headers */ = {isa = PBXBuildFile; fileRef = 704FD35305697E6D003DBED9 /* bool_object.h */; };
+		932F5B720822A1C700736975 /* bool_object.h in Headers */ = {isa = PBXBuildFile; fileRef = 704FD35305697E6D003DBED9 /* bool_object.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		932F5B730822A1C700736975 /* runtime_object.h in Headers */ = {isa = PBXBuildFile; fileRef = 70B16A270569A10900DB756D /* runtime_object.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		932F5B740822A1C700736975 /* jni_class.h in Headers */ = {isa = PBXBuildFile; fileRef = 517D52DD056BF2F6003851BD /* jni_class.h */; };
 		932F5B750822A1C700736975 /* jni_instance.h in Headers */ = {isa = PBXBuildFile; fileRef = 517D5348056BFB5D003851BD /* jni_instance.h */; settings = {ATTRIBUTES = (); }; };

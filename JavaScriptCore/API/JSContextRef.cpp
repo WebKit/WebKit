@@ -32,7 +32,6 @@
 #include "JSClassRef.h"
 #include "JSGlobalObject.h"
 #include "completion.h"
-#include "interpreter.h"
 #include "object.h"
 #include <wtf/Platform.h>
 
@@ -42,19 +41,17 @@ JSGlobalContextRef JSGlobalContextCreate(JSClassRef globalObjectClass)
 {
     JSLock lock;
 
-    Interpreter* interpreter = new Interpreter();
-    ExecState* globalExec = &interpreter->m_globalExec;
-    JSGlobalContextRef ctx = toGlobalRef(globalExec);
+    if (!globalObjectClass) {
+        JSGlobalObject* globalObject = new JSGlobalObject;
+        return JSGlobalContextRetain(toGlobalRef(globalObject->globalExec()));
+    }
 
-     if (globalObjectClass) {
-        // FIXME: ctx is not fully initialized yet, so this call to prototype() might return an object with a garbage pointer in its prototype chain.
-        JSObject* prototype = globalObjectClass->prototype(ctx);
-        JSCallbackObject<JSGlobalObject>* globalObject = new JSCallbackObject<JSGlobalObject>(globalObjectClass, prototype ? prototype : jsNull(), 0);
-        interpreter->setGlobalObject(globalObject);
-        globalObject->init(globalExec);
-    } else
-        interpreter->setGlobalObject(new JSGlobalObject());
-
+    JSGlobalObject* globalObject = new JSCallbackObject<JSGlobalObject>(globalObjectClass);
+    JSGlobalContextRef ctx = toGlobalRef(globalObject->globalExec());
+    JSValue* prototype = globalObjectClass->prototype(ctx);
+    if (!prototype)
+        prototype = jsNull();
+    globalObject->reset(prototype);
     return JSGlobalContextRetain(ctx);
 }
 
@@ -62,7 +59,7 @@ JSGlobalContextRef JSGlobalContextRetain(JSGlobalContextRef ctx)
 {
     JSLock lock;
     ExecState* exec = toJS(ctx);
-    gcProtect(exec->dynamicInterpreter()->globalObject());
+    gcProtect(exec->dynamicGlobalObject());
     return ctx;
 }
 
@@ -70,11 +67,11 @@ void JSGlobalContextRelease(JSGlobalContextRef ctx)
 {
     JSLock lock;
     ExecState* exec = toJS(ctx);
-    gcUnprotect(exec->dynamicInterpreter()->globalObject());
+    gcUnprotect(exec->dynamicGlobalObject());
 }
 
 JSObjectRef JSContextGetGlobalObject(JSContextRef ctx)
 {
     ExecState* exec = toJS(ctx);
-    return toRef(exec->dynamicInterpreter()->globalObject());
+    return toRef(exec->dynamicGlobalObject());
 }

@@ -81,7 +81,7 @@ CachedPage::CachedPage(Page* page)
     , m_URL(page->mainFrame()->loader()->url())
     , m_windowProperties(new SavedProperties)
     , m_locationProperties(new SavedProperties)
-    , m_interpreterBuiltins(new SavedBuiltins)
+    , m_windowBuiltins(new SavedBuiltins)
 {
 #ifndef NDEBUG
     ++CachedPageCounter::count;
@@ -98,7 +98,7 @@ CachedPage::CachedPage(Page* page)
     JSLock lock;
 
     if (proxy && window) {
-        proxy->interpreter()->saveBuiltins(*m_interpreterBuiltins.get());
+        proxy->globalObject()->saveBuiltins(*m_windowBuiltins.get());
         window->saveProperties(*m_windowProperties.get());
         window->location()->saveProperties(*m_locationProperties.get());
         m_pausedTimeouts.set(window->pauseTimeouts());
@@ -132,7 +132,7 @@ void CachedPage::restore(Page* page)
     JSLock lock;
 
     if (proxy && window) {
-        proxy->interpreter()->restoreBuiltins(*m_interpreterBuiltins.get());
+        proxy->globalObject()->restoreBuiltins(*m_windowBuiltins.get());
         window->restoreProperties(*m_windowProperties.get());
         window->location()->restoreProperties(*m_locationProperties.get());
         window->resumeTimeouts(m_pausedTimeouts.get());
@@ -186,7 +186,7 @@ void CachedPage::clear()
 
     m_windowProperties.clear();
     m_locationProperties.clear();
-    m_interpreterBuiltins.clear();
+    m_windowBuiltins.clear();
     m_pausedTimeouts.clear();
 
     gcController().garbageCollectSoon();
