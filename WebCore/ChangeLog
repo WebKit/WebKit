@@ -1,3 +1,12 @@
+2007-12-06  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Oliver.
+
+        Fix for <rdar://problem/5631356> Toggling display property on video causes controls to get lost
+
+        * html/HTMLMediaElement.cpp: (WebCore::HTMLMediaElement::attach): Call updateFromElement.
+        * html/HTMLMediaElement.h:
+
 2007-12-05  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Oliver.

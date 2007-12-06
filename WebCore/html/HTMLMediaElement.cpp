@@ -145,6 +145,16 @@ void HTMLMediaElement::removedFromDocument()
     HTMLElement::removedFromDocument();
 }
 
+void HTMLMediaElement::attach()
+{
+    ASSERT(!attached());
+
+    HTMLElement::attach();
+
+    if (renderer())
+        renderer()->updateFromElement();
+}
+
 void HTMLMediaElement::scheduleLoad()
 {
     m_loadTimer.startOneShot(0);
@@ -337,7 +347,6 @@ end:
     ASSERT(m_loadNestingLevel);
     m_loadNestingLevel--;
 }
-
 
 void HTMLMediaElement::mediaPlayerNetworkStateChanged(MediaPlayer*)
 {

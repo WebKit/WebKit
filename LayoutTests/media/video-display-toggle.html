@@ -1,0 +1,34 @@
+<html>
+    <head>
+        <script>            
+            function toggleDisplay()
+            {
+                var video = document.getElementById('vid');
+                if (video.style.display == "none")
+                    video.style.display = "inline-block";
+                else
+                    video.style.display = "none";
+                
+            }
+            function test()
+            {
+                if (window.layoutTestController)
+                    layoutTestController.waitUntilDone();
+                document.getElementById('vid').addEventListener("load", test2);    
+            }
+            function test2()
+            {
+                toggleDisplay();
+                toggleDisplay();
+
+                if (window.layoutTestController)
+                    layoutTestController.notifyDone(); 
+            }
+        </script>
+    </head>
+    <body onload="test()">
+        This tests that toggling the display property won't make the controls disappear.<br>
+        <video id="vid" controls src="content/test.mp4"></video>
+    </body>
+</html>
+

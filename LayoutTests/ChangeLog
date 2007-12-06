@@ -1,3 +1,14 @@
+2007-12-06  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Oliver.
+
+        Fix <rdar://problem/5631356> Toggling display property on video causes controls to get lost
+
+        * media/video-display-toggle.html: Added.
+        * platform/mac/media/video-display-toggle-expected.checksum: Added.
+        * platform/mac/media/video-display-toggle-expected.png: Added.
+        * platform/mac/media/video-display-toggle-expected.txt: Added.
+
 2007-12-05  Rob Buis  <buis@kde.org>
 
         Reviewed by Mitz.

@@ -56,6 +56,7 @@ public:
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
     virtual void insertedIntoDocument();
     virtual void removedFromDocument();
+    virtual void attach();
     
     MediaPlayer* player() const { return m_player; }
     
