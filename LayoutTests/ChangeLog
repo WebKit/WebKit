@@ -1,5 +1,9 @@
 2007-12-05  Adam Roben  <aroben@apple.com>
 
+        * platform/win/Skipped: Add a crashing test.
+
+2007-12-05  Adam Roben  <aroben@apple.com>
+
         * platform/win/Skipped: Add another test failing due to fonts.
 
 2007-12-05  Dan Bernstein  <mitz@apple.com>
