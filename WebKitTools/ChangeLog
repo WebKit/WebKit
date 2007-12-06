@@ -1,3 +1,9 @@
+2007-12-06  Sam Weinig  <sam@webkit.org>
+
+        Rubber stamped by Geoff.
+
+        * Scripts/do-webcore-rename: Don't rename kjs_css twice.
+
 2007-12-06  Darin Adler  <darin@apple.com>
 
         * Scripts/do-webcore-rename: Some more renaming plans.
