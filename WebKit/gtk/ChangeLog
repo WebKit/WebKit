@@ -1,3 +1,26 @@
+2007-12-06  Holger Hans Peter Freyther <holger.freyther@trolltech.com>
+
+        Reviewed by Alp Toker.
+
+        http://bugs.webkit.org/show_bug.cgi?id=16173
+        Licensing change
+
+        Change license from BSD to LGPL.
+
+        * WebCoreSupport/ChromeClientGtk.h:
+        * WebView/webkitdefines.h:
+        * WebView/webkitglobal.cpp:
+        * WebView/webkitglobal.h:
+        * WebView/webkitnetworkrequest.cpp:
+        * WebView/webkitnetworkrequest.h:
+        * WebView/webkitprivate.cpp:
+        * WebView/webkitprivate.h:
+        * WebView/webkitsettings.cpp:
+        * WebView/webkitsettings.h:
+        * WebView/webkitwebframe.cpp:
+        * WebView/webkitwebframe.h:
+        * WebView/webkitwebview.h:
+
 2007-12-05  Michael Natterer  <mitch@imendio.com>
 
         Reviewed by Alp Toker.

@@ -1,3 +1,14 @@
+2007-12-06  Holger Hans Peter Freyther <holger.freyther@trolltech.com>
+
+        Reviewed by Alp Toker.
+
+        http://bugs.webkit.org/show_bug.cgi?id=16173
+        Licensing change
+
+        Change license from BSD to LGPL.
+
+        * platform/gtk/FileSystemGtk.cpp:
+
 2007-12-05  Rob Buis  <buis@kde.org>
 
         Reviewed by Mitz.
