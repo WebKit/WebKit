@@ -1,6 +1,10 @@
+2007-12-06  Darin Adler  <darin@apple.com>
+
+        * Scripts/do-webcore-rename: Some more renaming plans.
+
 2007-12-06  Anders Carlsson  <andersca@apple.com>
 
-        Remove implementation of testGetIntIdentifier that was accidentally
+        Restore implementation of testGetIntIdentifier that was accidentally
         removed somehow (possibly when I made PluginObject be a cpp file).
         
         * DumpRenderTree/TestNetscapePlugIn.subproj/PluginObject.cpp:

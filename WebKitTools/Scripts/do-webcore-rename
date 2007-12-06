@@ -73,6 +73,15 @@ my %renames = (
     "KURL_H_" => "URL_h",
     "HTMLGenericFormElement" => "HTMLFormControlElement",
     "HTMLGenericFormElement_h" => "HTMLFormControlElement_h",
+    "kjs_binding" => "JSDOMBinding",
+    "kjs_binding_h" => "JSDOMBinding_h",
+    "kjs_css" => "JSRGBColor",
+    "kjs_css_h" => "JSRGBColor_h",
+    "kjs_css" => "JSRGBColor",
+    "kjs_css_h" => "JSRGBColor_h",
+    "kjs_proxy" => "JSController",
+    "kjs_proxy_h" => "JSController_h",
+    "scriptProxy" => "javaScript",
 );
 
 # rename files
