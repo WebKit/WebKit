@@ -1,3 +1,17 @@
+2007-12-05  Darin Adler  <darin@apple.com>
+
+        Not reviewed; just undoing a previous commit.
+
+        - remove earlier incorrect fix for http://bugs.webkit.org/show_bug.cgi?id=16220
+          <rdar://problem/5625221> Crash opening www.news.com (CNet)
+
+        The real bug was the backwards ?: in the compile function, which Geoff just
+        fixed. Rolling out the incorrect earlier fix.
+
+        * pcre/pcre_compile.cpp: (calculateCompiledPatternLengthAndFlags): Take out
+        the unneeded preflight change. The regression test proves this is still working
+        fine, so the bug remains fixed.
+
 2007-12-01  Mark Rowe  <mrowe@apple.com>
 
         Build fix.  Include headers before trying to use the things that they declare.
