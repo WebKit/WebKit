@@ -23,57 +23,46 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef Movie_h
-#define Movie_h
+#ifndef MediaPlayerPrivateQTKit_h
+#define MediaPlayerPrivateQTKit_h
 
 #if ENABLE(VIDEO)
 
-#include "IntRect.h"
-#include "StringHash.h"
-#include "wtf/HashSet.h"
+#include "MediaPlayer.h"
+#include "Timer.h"
+#include "wtf/RetainPtr.h"
 #include "wtf/Noncopyable.h"
+
+#ifdef __OBJC__
+#import "QTKit/QTTime.h"
+@class QTMovie;
+@class QTMovieView;
+@class WebCoreMovieObserver;
+#else
+class QTMovie;
+class QTMovieView;
+class QTTime;
+class WebCoreMovieObserver;
+#endif
 
 namespace WebCore {
 
 class GraphicsContext;
 class IntSize;
-class Movie;
-class MoviePrivate;
+class IntRect;
 class String;
-class Widget;
 
-class MovieClient
+class MediaPlayerPrivate : Noncopyable
 {
 public:
-    virtual ~MovieClient() { }
-    virtual void movieNetworkStateChanged(Movie*) { }
-    virtual void movieReadyStateChanged(Movie*) { }
-    virtual void movieVolumeChanged(Movie*) { }
-    virtual void movieTimeChanged(Movie*) { }
-    virtual void movieCuePointReached(Movie*, float cueTime) { }
-};
-
-class Movie : Noncopyable {
-public:
-    Movie(MovieClient*);
-    virtual ~Movie();
-    
-    static void getSupportedTypes(HashSet<String>&);
+    MediaPlayerPrivate(MediaPlayer*);
+    ~MediaPlayerPrivate();
     
     IntSize naturalSize();
     bool hasVideo();
     
-    Widget* parentWidget() const { return m_parentWidget; }
-    void setParentWidget(Widget* parent) { m_parentWidget = parent; }
-    
-    IntRect rect() const { return m_rect; }
-    void setRect(const IntRect& r);
-    
     void load(String url);
     void cancelLoad();
-    
-    bool visible() const;
-    void setVisible(bool);
     
     void play();
     void pause();    
@@ -84,57 +73,68 @@ public:
     float duration() const;
     float currentTime() const;
     void seek(float time);
-    
     void setEndTime(float time);
     
     void addCuePoint(float time);
     void removeCuePoint(float time);
     void clearCuePoints();
     
-    float rate() const;
     void setRate(float);
-    
-    float maxTimeBuffered();
-    float maxTimeSeekable();
-    
-    unsigned bytesLoaded();
-    bool totalBytesKnown();
-    unsigned totalBytes();
-    
-    float volume() const;
     void setVolume(float);
-    bool muted() const;
     void setMuted(bool);
     
     int dataRate() const;
     
-    void paint(GraphicsContext*, const IntRect&);
+    MediaPlayer::NetworkState networkState();
+    MediaPlayer::ReadyState readyState();
     
-    enum NetworkState { Empty, LoadFailed, Loading, LoadedMetaData, LoadedFirstFrame, Loaded };
-    NetworkState networkState();
-
-    enum ReadyState  { DataUnavailable, CanShowCurrentFrame, CanPlay, CanPlayThrough };
-    ReadyState readyState();
+    float maxTimeBuffered();
+    float maxTimeSeekable();
+    unsigned bytesLoaded();
+    bool totalBytesKnown();
+    unsigned totalBytes();
     
-    void networkStateChanged();
-    void readyStateChanged();
-    void volumeChanged();
+    void setVisible(bool);
+    void setRect(const IntRect& r);
+    
+    void loadStateChanged();
+    void rateChanged();
+    void sizeChanged();
     void timeChanged();
-    void cuePointReached(float cueTime);
-
-private:
-        
-    friend class MoviePrivate;
+    void volumeChanged();
+    void didEnd();
     
-    MovieClient* m_movieClient;
-    MoviePrivate* m_private;
-    Widget* m_parentWidget;
-    IntRect m_rect;
-    bool m_visible;
-    float m_rate;
-    float m_volume;
-    bool m_muted;
-    HashSet<float> m_cuePoints;
+    void paint(GraphicsContext* p, const IntRect& r);
+    
+    void createQTMovie(String url);
+    void createQTMovieView();
+    QTTime createQTTime(float time);
+    
+    static void getSupportedTypes(HashSet<String>& types);
+    
+private:
+    void updateStates();
+    void doSeek();
+    void cancelSeek();
+    void seekTimerFired(Timer<MediaPlayerPrivate>*);
+    void cuePointTimerFired(Timer<MediaPlayerPrivate>*);
+    float maxTimeLoaded();
+    void startCuePointTimerIfNeeded();
+    
+private:    
+    MediaPlayer* m_player;
+    RetainPtr<QTMovie> m_qtMovie;
+    RetainPtr<QTMovieView> m_qtMovieView;
+    RetainPtr<WebCoreMovieObserver> m_objcObserver;
+    float m_seekTo;
+    float m_endTime;
+    Timer<MediaPlayerPrivate> m_seekTimer;
+    Timer<MediaPlayerPrivate> m_cuePointTimer;
+    float m_previousTimeCueTimerFired;
+    MediaPlayer::NetworkState m_networkState;
+    MediaPlayer::ReadyState m_readyState;
+    bool m_startedPlaying;
+    bool m_isStreaming;
 };
 
 }

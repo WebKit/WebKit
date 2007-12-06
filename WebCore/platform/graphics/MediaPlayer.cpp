@@ -26,22 +26,22 @@
 #include "config.h"
 
 #if ENABLE(VIDEO)
-#include "Movie.h"
+#include "MediaPlayer.h"
 
 #include "IntRect.h"
 #include "MIMETypeRegistry.h"
 
 #if PLATFORM(MAC)
-#include "MoviePrivateQTKit.h"
+#include "MediaPlayerPrivateQTKit.h"
 #elif PLATFORM(GTK)
-#include "MoviePrivateGStreamer.h"
+#include "MediaPlayerPrivateGStreamer.h"
 #endif
 
 namespace WebCore {
     
-    Movie::Movie(MovieClient* client)
-    : m_movieClient(client)
-    , m_private(new MoviePrivate(this))
+    MediaPlayer::MediaPlayer(MediaPlayerClient* client)
+    : m_mediaPlayerClient(client)
+    , m_private(new MediaPlayerPrivate(this))
     , m_parentWidget(0)
     , m_visible(false)
     , m_rate(1.0f)
@@ -50,82 +50,82 @@ namespace WebCore {
 {
 }
 
-Movie::~Movie()
+MediaPlayer::~MediaPlayer()
 {
     delete m_private;
 }
 
-void Movie::load(String url)
+void MediaPlayer::load(String url)
 {
     m_private->load(url);
 }    
 
-void Movie::cancelLoad()
+void MediaPlayer::cancelLoad()
 {
     m_private->cancelLoad();
 }    
 
-void Movie::play()
+void MediaPlayer::play()
 {
     m_private->play();
 }
 
-void Movie::pause()
+void MediaPlayer::pause()
 {
     m_private->pause();
 }
 
-float Movie::duration() const
+float MediaPlayer::duration() const
 {
     return m_private->duration();
 }
 
-float Movie::currentTime() const
+float MediaPlayer::currentTime() const
 {
     return m_private->currentTime();  
 }
 
-void Movie::seek(float time)
+void MediaPlayer::seek(float time)
 {
     m_private->seek(time);
 }
 
-bool Movie::paused() const
+bool MediaPlayer::paused() const
 {
     return m_private->paused();
 }
 
-bool Movie::seeking() const
+bool MediaPlayer::seeking() const
 {
     return m_private->seeking();
 }
 
-IntSize Movie::naturalSize()
+IntSize MediaPlayer::naturalSize()
 {
     return m_private->naturalSize();
 }
 
-bool Movie::hasVideo()
+bool MediaPlayer::hasVideo()
 {
     return m_private->hasVideo();
 }
 
-Movie::NetworkState Movie::networkState()
+MediaPlayer::NetworkState MediaPlayer::networkState()
 {
     return m_private->networkState();
 }
 
-Movie::ReadyState Movie::readyState()
+MediaPlayer::ReadyState MediaPlayer::readyState()
 {
     return m_private->readyState();
 }
 
-float Movie::volume() const
+float MediaPlayer::volume() const
 {
     return m_volume;
 }
 
-void Movie::setVolume(float volume)
+void MediaPlayer::setVolume(float volume)
 {
     if (volume != m_volume) {
         m_volume = volume;
@@ -133,12 +133,12 @@ void Movie::setVolume(float volume)
     }
 }
 
-float Movie::rate() const
+float MediaPlayer::rate() const
 {
     return m_rate;
 }
 
-void Movie::setRate(float rate)
+void MediaPlayer::setRate(float rate)
 {
     if (rate == m_rate) 
         return;
@@ -146,12 +146,12 @@ void Movie::setRate(float rate)
     m_private->setRate(rate);   
 }
 
-bool Movie::muted() const
+bool MediaPlayer::muted() const
 {
     return m_muted;
 }
 
-void Movie::setMuted(bool muted)
+void MediaPlayer::setMuted(bool muted)
 {
     if (muted == m_muted) 
         return;
@@ -159,17 +159,17 @@ void Movie::setMuted(bool muted)
     m_private->setMuted(muted);
 }
 
-int Movie::dataRate() const
+int MediaPlayer::dataRate() const
 {
     return m_private->dataRate();
 }
 
-void Movie::setEndTime(float time)
+void MediaPlayer::setEndTime(float time)
 {
     m_private->setEndTime(time);
 }
 
-void Movie::addCuePoint(float time)
+void MediaPlayer::addCuePoint(float time)
 {
     if (m_cuePoints.contains(time))
         return;
@@ -177,7 +177,7 @@ void Movie::addCuePoint(float time)
     m_private->addCuePoint(time);
 }
 
-void Movie::removeCuePoint(float time)
+void MediaPlayer::removeCuePoint(float time)
 {
     if (!m_cuePoints.contains(time))
         return;
@@ -185,38 +185,38 @@ void Movie::removeCuePoint(float time)
     m_private->removeCuePoint(time);
 }
 
-void Movie::clearCuePoints()
+void MediaPlayer::clearCuePoints()
 {
     m_cuePoints.clear();
     m_private->clearCuePoints();
 }
 
-float Movie::maxTimeBuffered()
+float MediaPlayer::maxTimeBuffered()
 {
     return m_private->maxTimeBuffered();
 }
 
-float Movie::maxTimeSeekable()
+float MediaPlayer::maxTimeSeekable()
 {
     return m_private->maxTimeSeekable();
 }
 
-unsigned Movie::bytesLoaded()
+unsigned MediaPlayer::bytesLoaded()
 {
     return m_private->bytesLoaded();
 }
 
-bool Movie::totalBytesKnown()
+bool MediaPlayer::totalBytesKnown()
 {
     return m_private->totalBytesKnown();
 }
 
-unsigned Movie::totalBytes()
+unsigned MediaPlayer::totalBytes()
 {
     return m_private->totalBytes();
 }
 
-void Movie::setRect(const IntRect& r) 
+void MediaPlayer::setRect(const IntRect& r) 
 { 
     if (m_rect == r)
         return;
@@ -224,12 +224,12 @@ void Movie::setRect(const IntRect& r)
     m_private->setRect(r);
 }
 
-bool Movie::visible() const
+bool MediaPlayer::visible() const
 {
     return m_visible;
 }
 
-void Movie::setVisible(bool b)
+void MediaPlayer::setVisible(bool b)
 {
     if (m_visible == b)
         return;
@@ -237,44 +237,44 @@ void Movie::setVisible(bool b)
     m_private->setVisible(b);
 }
 
-void Movie::paint(GraphicsContext* p, const IntRect& r)
+void MediaPlayer::paint(GraphicsContext* p, const IntRect& r)
 {
     m_private->paint(p, r);
 }
 
-void Movie::getSupportedTypes(HashSet<String>& types)
+void MediaPlayer::getSupportedTypes(HashSet<String>& types)
 {
-    MoviePrivate::getSupportedTypes(types);
+    MediaPlayerPrivate::getSupportedTypes(types);
 } 
 
-void Movie::networkStateChanged()
+void MediaPlayer::networkStateChanged()
 {
-    if (m_movieClient)
-        m_movieClient->movieNetworkStateChanged(this);
+    if (m_mediaPlayerClient)
+        m_mediaPlayerClient->mediaPlayerNetworkStateChanged(this);
 }
 
-void Movie::readyStateChanged()
+void MediaPlayer::readyStateChanged()
 {
-    if (m_movieClient)
-        m_movieClient->movieReadyStateChanged(this);
+    if (m_mediaPlayerClient)
+        m_mediaPlayerClient->mediaPlayerReadyStateChanged(this);
 }
 
-void Movie::volumeChanged()
+void MediaPlayer::volumeChanged()
 {
-    if (m_movieClient)
-        m_movieClient->movieVolumeChanged(this);
+    if (m_mediaPlayerClient)
+        m_mediaPlayerClient->mediaPlayerVolumeChanged(this);
 }
 
-void Movie::timeChanged()
+void MediaPlayer::timeChanged()
 {
-    if (m_movieClient)
-        m_movieClient->movieTimeChanged(this);
+    if (m_mediaPlayerClient)
+        m_mediaPlayerClient->mediaPlayerTimeChanged(this);
 }
 
-void Movie::cuePointReached(float cueTime)
+void MediaPlayer::cuePointReached(float cueTime)
 {
-    if (m_movieClient)
-        m_movieClient->movieCuePointReached(this, cueTime);
+    if (m_mediaPlayerClient)
+        m_mediaPlayerClient->mediaPlayerCuePointReached(this, cueTime);
 }
 
 }

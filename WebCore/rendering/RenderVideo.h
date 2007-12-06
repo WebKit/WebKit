@@ -61,7 +61,7 @@ private:
     bool isWidthSpecified() const;
     bool isHeightSpecified() const;
 
-    void updateMovie();
+    void updatePlayer();
 };
 
 } // namespace WebCore

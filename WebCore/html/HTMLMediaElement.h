@@ -29,7 +29,7 @@
 #if ENABLE(VIDEO)
 
 #include "HTMLElement.h"
-#include "Movie.h"
+#include "MediaPlayer.h"
 #include "Timer.h"
 #include "StringHash.h"
 #include "VoidCallback.h"
@@ -43,7 +43,7 @@ namespace WebCore {
 class MediaError;
 class TimeRanges;
     
-class HTMLMediaElement : public HTMLElement, public MovieClient {
+class HTMLMediaElement : public HTMLElement, public MediaPlayerClient {
 public:
     HTMLMediaElement(const QualifiedName&, Document*);
     virtual ~HTMLMediaElement();
@@ -57,7 +57,7 @@ public:
     virtual void insertedIntoDocument();
     virtual void removedFromDocument();
     
-    Movie* movie() const { return m_movie; }
+    MediaPlayer* player() const { return m_player; }
     
     virtual bool isVideo() const { return false; }
     
@@ -140,12 +140,12 @@ protected:
     
     void setReadyState(ReadyState);
     
-private: // MovieObserver
-    virtual void movieNetworkStateChanged(Movie*);
-    virtual void movieReadyStateChanged(Movie*);
-    virtual void movieTimeChanged(Movie*);
-    virtual void movieVolumeChanged(Movie*);
-    virtual void movieCuePointReached(Movie*, float cueTime);
+private: // MediaPlayerObserver
+    virtual void mediaPlayerNetworkStateChanged(MediaPlayer*);
+    virtual void mediaPlayerReadyStateChanged(MediaPlayer*);
+    virtual void mediaPlayerTimeChanged(MediaPlayer*);
+    virtual void mediaPlayerVolumeChanged(MediaPlayer*);
+    virtual void mediaPlayerCuePointReached(MediaPlayer*, float cueTime);
         
 private:
     void loadTimerFired(Timer<HTMLMediaElement>*);
@@ -155,7 +155,7 @@ private:
     void checkIfSeekNeeded();
     
     String pickMedia();
-    void updateMovie();
+    void updateMediaPlayer();
     float effectiveStart() const;
     float effectiveEnd() const;
     float effectiveLoopStart() const;
@@ -212,7 +212,7 @@ protected:
     typedef Vector<CallbackEntry> CallbackVector;
     HashMap<float, CallbackVector*> m_cuePoints;
     
-    Movie* m_movie;
+    MediaPlayer* m_player;
 };
 
 } //namespace

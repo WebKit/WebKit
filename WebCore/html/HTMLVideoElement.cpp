@@ -104,16 +104,16 @@ void HTMLVideoElement::parseMappedAttribute(MappedAttribute *attr)
 
 int HTMLVideoElement::videoWidth() const
 {
-    if (!m_movie)
+    if (!m_player)
         return 0;
-    return m_movie->naturalSize().width();
+    return m_player->naturalSize().width();
 }
 
 int HTMLVideoElement::videoHeight() const
 {
-    if (!m_movie)
+    if (!m_player)
         return 0;
-    return m_movie->naturalSize().height();
+    return m_player->naturalSize().height();
 }
 
 int HTMLVideoElement::width() const

@@ -33,7 +33,7 @@
 #include "GraphicsContext.h"
 #include "HTMLNames.h"
 #include "HTMLVideoElement.h"
-#include "Movie.h"
+#include "MediaPlayer.h"
 
 using namespace std;
 
@@ -42,23 +42,23 @@ namespace WebCore {
 using namespace HTMLNames;
 
 RenderVideo::RenderVideo(HTMLMediaElement* video)
-    : RenderMedia(video, video->movie() ? video->movie()->naturalSize() : IntSize(300, 150))
+    : RenderMedia(video, video->player() ? video->player()->naturalSize() : IntSize(300, 150))
 {
 }
 
 RenderVideo::~RenderVideo()
 {
-    if (Movie* m = movie()) {
-        m->setVisible(false);
-        m->setParentWidget(0);
+    if (MediaPlayer* p = player()) {
+        p->setVisible(false);
+        p->setParentWidget(0);
     }
 }
     
 void RenderVideo::videoSizeChanged()
 {
-    if (!movie())
+    if (!player())
         return;
-    IntSize size = movie()->naturalSize();
+    IntSize size = player()->naturalSize();
     if (size != intrinsicSize()) {
         setIntrinsicSize(size);
         setPrefWidthsDirty(true);
@@ -68,8 +68,8 @@ void RenderVideo::videoSizeChanged()
 
 void RenderVideo::paintReplaced(PaintInfo& paintInfo, int tx, int ty)
 {
-    if (Movie* video = movie()) {
-        updateMovie();
+    if (MediaPlayer* video = player()) {
+        updatePlayer();
         IntRect rect = contentBox();
         rect.move(tx, ty);
         video->paint(paintInfo.context, rect);
@@ -79,16 +79,16 @@ void RenderVideo::paintReplaced(PaintInfo& paintInfo, int tx, int ty)
 void RenderVideo::layout()
 {
     RenderMedia::layout();
-    updateMovie();
+    updatePlayer();
 }
     
 void RenderVideo::updateFromElement()
 {
     RenderMedia::updateFromElement();
-    updateMovie();
+    updatePlayer();
 }
 
-void RenderVideo::updateMovie()
+void RenderVideo::updatePlayer()
 {
     int x;
     int y;
@@ -101,10 +101,10 @@ void RenderVideo::updateMovie()
     
     IntRect newBounds(x, y, width, height);
     
-    if (Movie* m = movie()) {
-        m->setParentWidget(document()->view());
-        m->setRect(newBounds);
-        m->setVisible(true);
+    if (MediaPlayer* p = player()) {
+        p->setParentWidget(document()->view());
+        p->setRect(newBounds);
+        p->setVisible(true);
     }    
 }
 

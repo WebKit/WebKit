@@ -26,7 +26,7 @@
 #include "config.h"
 #include "MIMETypeRegistry.h"
 
-#include "Movie.h"
+#include "MediaPlayer.h"
 #include "StringHash.h"
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
@@ -45,7 +45,7 @@ namespace WebCore
 static WTF::HashSet<String>* supportedImageResourceMIMETypes;
 static WTF::HashSet<String>* supportedImageMIMETypes;
 static WTF::HashSet<String>* supportedNonImageMIMETypes;
-static WTF::HashSet<String>* supportedMovieMIMETypes;
+static WTF::HashSet<String>* supportedMediaMIMETypes;
 
 #if PLATFORM(CG)
 extern String getMIMETypeForUTI(const String& uti);
@@ -147,11 +147,11 @@ static void initialiseSupportedNonImageMimeTypes()
       supportedNonImageMIMETypes->add(types[i]);
 }
     
-static void initialiseSupportedMovieMIMETypes()
+static void initialiseSupportedMediaMIMETypes()
 {
-    supportedMovieMIMETypes = new WTF::HashSet<String>();
+    supportedMediaMIMETypes = new WTF::HashSet<String>();
 #if ENABLE(VIDEO)
-    Movie::getSupportedTypes(*supportedMovieMIMETypes);
+    MediaPlayer::getSupportedTypes(*supportedMediaMIMETypes);
 #endif
 }
 
@@ -196,11 +196,11 @@ bool MIMETypeRegistry::isSupportedNonImageMIMEType(const String& mimeType)
     return !mimeType.isEmpty() && supportedNonImageMIMETypes->contains(mimeType);
 }
 
-bool MIMETypeRegistry::isSupportedMovieMIMEType(const String& mimeType)
+bool MIMETypeRegistry::isSupportedMediaMIMEType(const String& mimeType)
 {
-    if (!supportedMovieMIMETypes)
-        initialiseSupportedMovieMIMETypes();
-    return !mimeType.isEmpty() && supportedMovieMIMETypes->contains(mimeType);     
+    if (!supportedMediaMIMETypes)
+        initialiseSupportedMediaMIMETypes();
+    return !mimeType.isEmpty() && supportedMediaMIMETypes->contains(mimeType);     
 }
     
     
@@ -236,11 +236,11 @@ HashSet<String> &MIMETypeRegistry::getSupportedNonImageMIMETypes()
     return *supportedNonImageMIMETypes;
 }
 
-HashSet<String> &MIMETypeRegistry::getSupportedMovieMIMETypes()
+HashSet<String> &MIMETypeRegistry::getSupportedMediaMIMETypes()
 {
-    if (!supportedMovieMIMETypes)
-        initialiseSupportedMovieMIMETypes();
-    return *supportedMovieMIMETypes;
+    if (!supportedMediaMIMETypes)
+        initialiseSupportedMediaMIMETypes();
+    return *supportedMediaMIMETypes;
 }
     
 }

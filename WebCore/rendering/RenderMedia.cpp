@@ -40,7 +40,7 @@
 #include "HTMLMediaElement.h"
 #include "HTMLNames.h"
 #include "MouseEvent.h"
-#include "Movie.h"
+#include "MediaPlayer.h"
 #include "RenderSlider.h"
 #include "SystemTime.h"
 
@@ -235,9 +235,9 @@ HTMLMediaElement* RenderMedia::mediaElement() const
     return static_cast<HTMLMediaElement*>(node()); 
 }
 
-Movie* RenderMedia::movie() const
+MediaPlayer* RenderMedia::player() const
 {
-    return mediaElement()->movie();
+    return mediaElement()->player();
 }
 
 void RenderMedia::layout()

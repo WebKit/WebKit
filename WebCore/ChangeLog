@@ -1,3 +1,228 @@
+2007-12-05  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Oliver.
+
+        Rename
+
+        Movie -> MediaPlayer
+        MoviePrivate -> MediaPlayerPrivate
+        
+        Movie is QuickTime terminology and clashes with its C API.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::HTMLMediaElement):
+        (WebCore::HTMLMediaElement::~HTMLMediaElement):
+        (WebCore::HTMLMediaElement::initAndDispatchProgressEvent):
+        (WebCore::HTMLMediaElement::bufferingRate):
+        (WebCore::HTMLMediaElement::load):
+        (WebCore::HTMLMediaElement::mediaPlayerNetworkStateChanged):
+        (WebCore::HTMLMediaElement::mediaPlayerReadyStateChanged):
+        (WebCore::HTMLMediaElement::setReadyState):
+        (WebCore::HTMLMediaElement::progressEventTimerFired):
+        (WebCore::HTMLMediaElement::seek):
+        (WebCore::HTMLMediaElement::currentTime):
+        (WebCore::HTMLMediaElement::duration):
+        (WebCore::HTMLMediaElement::playbackRate):
+        (WebCore::HTMLMediaElement::setPlaybackRate):
+        (WebCore::HTMLMediaElement::play):
+        (WebCore::HTMLMediaElement::pause):
+        (WebCore::HTMLMediaElement::setVolume):
+        (WebCore::HTMLMediaElement::setMuted):
+        (WebCore::HTMLMediaElement::pickMedia):
+        (WebCore::HTMLMediaElement::checkIfSeekNeeded):
+        (WebCore::HTMLMediaElement::mediaPlayerVolumeChanged):
+        (WebCore::HTMLMediaElement::mediaPlayerTimeChanged):
+        (WebCore::HTMLMediaElement::mediaPlayerCuePointReached):
+        (WebCore::HTMLMediaElement::addCuePoint):
+        (WebCore::HTMLMediaElement::buffered):
+        (WebCore::HTMLMediaElement::seekable):
+        (WebCore::HTMLMediaElement::effectiveStart):
+        (WebCore::HTMLMediaElement::effectiveEnd):
+        (WebCore::HTMLMediaElement::effectiveLoopStart):
+        (WebCore::HTMLMediaElement::effectiveLoopEnd):
+        (WebCore::HTMLMediaElement::updateMediaPlayer):
+        (WebCore::HTMLMediaElement::willSaveToCache):
+        * html/HTMLMediaElement.h:
+        (WebCore::HTMLMediaElement::player):
+        * html/HTMLVideoElement.cpp:
+        (WebCore::HTMLVideoElement::videoWidth):
+        (WebCore::HTMLVideoElement::videoHeight):
+        * platform/MIMETypeRegistry.cpp:
+        (WebCore::initialiseSupportedMediaMIMETypes):
+        (WebCore::MIMETypeRegistry::isSupportedMediaMIMEType):
+        (WebCore::MIMETypeRegistry::getSupportedMediaMIMETypes):
+        * platform/MIMETypeRegistry.h:
+        * platform/graphics/MediaPlayer.cpp: Copied from WebCore/platform/graphics/Movie.cpp.
+        (WebCore::MediaPlayer::MediaPlayer):
+        (WebCore::MediaPlayer::~MediaPlayer):
+        (WebCore::MediaPlayer::load):
+        (WebCore::MediaPlayer::cancelLoad):
+        (WebCore::MediaPlayer::play):
+        (WebCore::MediaPlayer::pause):
+        (WebCore::MediaPlayer::duration):
+        (WebCore::MediaPlayer::currentTime):
+        (WebCore::MediaPlayer::seek):
+        (WebCore::MediaPlayer::paused):
+        (WebCore::MediaPlayer::seeking):
+        (WebCore::MediaPlayer::naturalSize):
+        (WebCore::MediaPlayer::hasVideo):
+        (WebCore::MediaPlayer::networkState):
+        (WebCore::MediaPlayer::readyState):
+        (WebCore::MediaPlayer::volume):
+        (WebCore::MediaPlayer::setVolume):
+        (WebCore::MediaPlayer::rate):
+        (WebCore::MediaPlayer::setRate):
+        (WebCore::MediaPlayer::muted):
+        (WebCore::MediaPlayer::setMuted):
+        (WebCore::MediaPlayer::dataRate):
+        (WebCore::MediaPlayer::setEndTime):
+        (WebCore::MediaPlayer::addCuePoint):
+        (WebCore::MediaPlayer::removeCuePoint):
+        (WebCore::MediaPlayer::clearCuePoints):
+        (WebCore::MediaPlayer::maxTimeBuffered):
+        (WebCore::MediaPlayer::maxTimeSeekable):
+        (WebCore::MediaPlayer::bytesLoaded):
+        (WebCore::MediaPlayer::totalBytesKnown):
+        (WebCore::MediaPlayer::totalBytes):
+        (WebCore::MediaPlayer::setRect):
+        (WebCore::MediaPlayer::visible):
+        (WebCore::MediaPlayer::setVisible):
+        (WebCore::MediaPlayer::paint):
+        (WebCore::MediaPlayer::getSupportedTypes):
+        (WebCore::MediaPlayer::networkStateChanged):
+        (WebCore::MediaPlayer::readyStateChanged):
+        (WebCore::MediaPlayer::volumeChanged):
+        (WebCore::MediaPlayer::timeChanged):
+        (WebCore::MediaPlayer::cuePointReached):
+        * platform/graphics/MediaPlayer.h: Copied from WebCore/platform/graphics/Movie.h.
+        (WebCore::MediaPlayerClient::~MediaPlayerClient):
+        (WebCore::MediaPlayerClient::mediaPlayerNetworkStateChanged):
+        (WebCore::MediaPlayerClient::mediaPlayerReadyStateChanged):
+        (WebCore::MediaPlayerClient::mediaPlayerVolumeChanged):
+        (WebCore::MediaPlayerClient::mediaPlayerTimeChanged):
+        (WebCore::MediaPlayerClient::mediaPlayerCuePointReached):
+        * platform/graphics/Movie.cpp: Removed.
+        * platform/graphics/Movie.h: Removed.
+        * platform/graphics/gtk/MediaPlayerPrivateGStreamer.cpp: Copied from WebCore/platform/graphics/gtk/MoviePrivateGStreamer.cpp.
+        (WebCore::mediaPlayerPrivateErrorCallback):
+        (WebCore::mediaPlayerPrivateEOSCallback):
+        (WebCore::mediaPlayerPrivateStateCallback):
+        (WebCore::mediaPlayerPrivateBufferingCallback):
+        (WebCore::MediaPlayerPrivate::MediaPlayerPrivate):
+        (WebCore::MediaPlayerPrivate::~MediaPlayerPrivate):
+        (WebCore::MediaPlayerPrivate::load):
+        (WebCore::MediaPlayerPrivate::play):
+        (WebCore::MediaPlayerPrivate::pause):
+        (WebCore::MediaPlayerPrivate::duration):
+        (WebCore::MediaPlayerPrivate::currentTime):
+        (WebCore::MediaPlayerPrivate::seek):
+        (WebCore::MediaPlayerPrivate::setEndTime):
+        (WebCore::MediaPlayerPrivate::addCuePoint):
+        (WebCore::MediaPlayerPrivate::removeCuePoint):
+        (WebCore::MediaPlayerPrivate::clearCuePoints):
+        (WebCore::MediaPlayerPrivate::startCuePointTimerIfNeeded):
+        (WebCore::MediaPlayerPrivate::cancelSeek):
+        (WebCore::MediaPlayerPrivate::cuePointTimerFired):
+        (WebCore::MediaPlayerPrivate::paused):
+        (WebCore::MediaPlayerPrivate::seeking):
+        (WebCore::MediaPlayerPrivate::naturalSize):
+        (WebCore::MediaPlayerPrivate::hasVideo):
+        (WebCore::MediaPlayerPrivate::setVolume):
+        (WebCore::MediaPlayerPrivate::setMuted):
+        (WebCore::MediaPlayerPrivate::setRate):
+        (WebCore::MediaPlayerPrivate::dataRate):
+        (WebCore::MediaPlayerPrivate::networkState):
+        (WebCore::MediaPlayerPrivate::readyState):
+        (WebCore::MediaPlayerPrivate::maxTimeBuffered):
+        (WebCore::MediaPlayerPrivate::maxTimeSeekable):
+        (WebCore::MediaPlayerPrivate::maxTimeLoaded):
+        (WebCore::MediaPlayerPrivate::bytesLoaded):
+        (WebCore::MediaPlayerPrivate::totalBytesKnown):
+        (WebCore::MediaPlayerPrivate::totalBytes):
+        (WebCore::MediaPlayerPrivate::cancelLoad):
+        (WebCore::MediaPlayerPrivate::updateStates):
+        (WebCore::MediaPlayerPrivate::loadStateChanged):
+        (WebCore::MediaPlayerPrivate::rateChanged):
+        (WebCore::MediaPlayerPrivate::sizeChanged):
+        (WebCore::MediaPlayerPrivate::timeChanged):
+        (WebCore::MediaPlayerPrivate::volumeChanged):
+        (WebCore::MediaPlayerPrivate::didEnd):
+        (WebCore::MediaPlayerPrivate::loadingFailed):
+        (WebCore::MediaPlayerPrivate::setRect):
+        (WebCore::MediaPlayerPrivate::setVisible):
+        (WebCore::MediaPlayerPrivate::paint):
+        (WebCore::MediaPlayerPrivate::getSupportedTypes):
+        (WebCore::MediaPlayerPrivate::createGSTPlayBin):
+        * platform/graphics/gtk/MediaPlayerPrivateGStreamer.h: Copied from WebCore/platform/graphics/gtk/MoviePrivateGStreamer.h.
+        * platform/graphics/gtk/MoviePrivateGStreamer.cpp: Removed.
+        * platform/graphics/gtk/MoviePrivateGStreamer.h: Removed.
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.h: Copied from WebCore/platform/graphics/mac/MoviePrivateQTKit.h.
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.mm: Copied from WebCore/platform/graphics/mac/MoviePrivateQTKit.mm.
+        (WebCore::MediaPlayerPrivate::MediaPlayerPrivate):
+        (WebCore::MediaPlayerPrivate::~MediaPlayerPrivate):
+        (WebCore::MediaPlayerPrivate::createQTMovie):
+        (WebCore::MediaPlayerPrivate::createQTMovieView):
+        (WebCore::MediaPlayerPrivate::createQTTime):
+        (WebCore::MediaPlayerPrivate::load):
+        (WebCore::MediaPlayerPrivate::play):
+        (WebCore::MediaPlayerPrivate::pause):
+        (WebCore::MediaPlayerPrivate::duration):
+        (WebCore::MediaPlayerPrivate::currentTime):
+        (WebCore::MediaPlayerPrivate::seek):
+        (WebCore::MediaPlayerPrivate::doSeek):
+        (WebCore::MediaPlayerPrivate::cancelSeek):
+        (WebCore::MediaPlayerPrivate::seekTimerFired):
+        (WebCore::MediaPlayerPrivate::setEndTime):
+        (WebCore::MediaPlayerPrivate::addCuePoint):
+        (WebCore::MediaPlayerPrivate::removeCuePoint):
+        (WebCore::MediaPlayerPrivate::clearCuePoints):
+        (WebCore::MediaPlayerPrivate::startCuePointTimerIfNeeded):
+        (WebCore::MediaPlayerPrivate::cuePointTimerFired):
+        (WebCore::MediaPlayerPrivate::paused):
+        (WebCore::MediaPlayerPrivate::seeking):
+        (WebCore::MediaPlayerPrivate::naturalSize):
+        (WebCore::MediaPlayerPrivate::hasVideo):
+        (WebCore::MediaPlayerPrivate::setVolume):
+        (WebCore::MediaPlayerPrivate::setMuted):
+        (WebCore::MediaPlayerPrivate::setRate):
+        (WebCore::MediaPlayerPrivate::dataRate):
+        (WebCore::MediaPlayerPrivate::networkState):
+        (WebCore::MediaPlayerPrivate::readyState):
+        (WebCore::MediaPlayerPrivate::maxTimeBuffered):
+        (WebCore::MediaPlayerPrivate::maxTimeSeekable):
+        (WebCore::MediaPlayerPrivate::maxTimeLoaded):
+        (WebCore::MediaPlayerPrivate::bytesLoaded):
+        (WebCore::MediaPlayerPrivate::totalBytesKnown):
+        (WebCore::MediaPlayerPrivate::totalBytes):
+        (WebCore::MediaPlayerPrivate::cancelLoad):
+        (WebCore::MediaPlayerPrivate::updateStates):
+        (WebCore::MediaPlayerPrivate::loadStateChanged):
+        (WebCore::MediaPlayerPrivate::rateChanged):
+        (WebCore::MediaPlayerPrivate::sizeChanged):
+        (WebCore::MediaPlayerPrivate::timeChanged):
+        (WebCore::MediaPlayerPrivate::volumeChanged):
+        (WebCore::MediaPlayerPrivate::didEnd):
+        (WebCore::MediaPlayerPrivate::setRect):
+        (WebCore::MediaPlayerPrivate::setVisible):
+        (WebCore::MediaPlayerPrivate::paint):
+        (WebCore::MediaPlayerPrivate::getSupportedTypes):
+        (-[WebCoreMovieObserver initWithCallback:WebCore::]):
+        * platform/graphics/mac/MoviePrivateQTKit.h: Removed.
+        * platform/graphics/mac/MoviePrivateQTKit.mm: Removed.
+        * rendering/RenderMedia.cpp:
+        (WebCore::RenderMedia::player):
+        * rendering/RenderMedia.h:
+        * rendering/RenderVideo.cpp:
+        (WebCore::RenderVideo::RenderVideo):
+        (WebCore::RenderVideo::~RenderVideo):
+        (WebCore::RenderVideo::videoSizeChanged):
+        (WebCore::RenderVideo::paintReplaced):
+        (WebCore::RenderVideo::layout):
+        (WebCore::RenderVideo::updateFromElement):
+        (WebCore::RenderVideo::updatePlayer):
+        * rendering/RenderVideo.h:
+
 2007-12-06  Geoffrey Garen  <ggaren@apple.com>
 
         Build fix: access global object directly.

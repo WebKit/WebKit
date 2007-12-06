@@ -1099,14 +1099,14 @@ contains(DEFINES, ENABLE_VIDEO=1) {
         html/HTMLSourceElement.cpp \
         html/HTMLVideoElement.cpp \
         html/TimeRanges.cpp \
-        platform/graphics/Movie.cpp \
+        platform/graphics/MediaPlayer.cpp \
         rendering/RenderVideo.cpp \
         rendering/RenderMedia.cpp \
         bindings/js/JSHTMLAudioElementConstructor.cpp 
 
     gtk-port {
         SOURCES += \
-            platform/graphics/gtk/MoviePrivateGStreamer.cpp
+            platform/graphics/gtk/MediaPlayerPrivateGStreamer.cpp
 
         PKGCONFIG += gstreamer-0.10 gstreamer-plugins-base-0.10 gnome-vfs-2.0
         LIBS += -lgstinterfaces-0.10 -lgstbase-0.10 -lgstvideo-0.10

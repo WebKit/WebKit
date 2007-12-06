@@ -37,7 +37,7 @@ class HTMLInputElement;
 class HTMLMediaElement;
 class MediaControlPlayButtonElement;
 class MediaControlTimelineElement;
-class Movie;
+class MediaPlayer;
 
 class RenderMedia : public RenderReplaced {
 public:
@@ -55,12 +55,12 @@ public:
     virtual bool isMedia() const { return true; }
     
     HTMLMediaElement* mediaElement() const;
-    Movie* movie() const;
+    MediaPlayer* player() const;
 
     static String formatTime(float time);
 
     void updateFromElement();
-    void updateMovie();
+    void updatePlayer();
     void updateControls();
     
     void forwardEvent(Event*);

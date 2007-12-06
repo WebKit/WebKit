@@ -26,7 +26,7 @@
 #import "config.h"
 
 #if ENABLE(VIDEO)
-#import "MoviePrivateQTKit.h"
+#import "MediaPlayerPrivateQTKit.h"
 
 #import "BlockExceptions.h"
 #import "DeprecatedString.h"
@@ -35,7 +35,7 @@
 #import "KURL.h"
 #import <limits>
 #import "MIMETypeRegistry.h"
-#import "Movie.h"
+#import "MediaPlayer.h"
 #import <QTKit/QTKit.h>
 #import "ScrollView.h"
 #import "WebCoreSystemInterface.h"
@@ -44,10 +44,10 @@
 
 @interface WebCoreMovieObserver : NSObject
 {
-    WebCore::MoviePrivate* _callback;
+    WebCore::MediaPlayerPrivate* _callback;
     BOOL _delayCallbacks;
 }
--(id)initWithCallback:(WebCore::MoviePrivate *)c;
+-(id)initWithCallback:(WebCore::MediaPlayerPrivate *)c;
 -(void)disconnect;
 -(void)setDelayCallbacks:(BOOL)b;
 -(void)loadStateChanged:(NSNotification *)notification;
@@ -60,25 +60,25 @@
 
 namespace WebCore {
     
-MoviePrivate::MoviePrivate(Movie* movie)
-    : m_movie(movie)
+MediaPlayerPrivate::MediaPlayerPrivate(MediaPlayer* player)
+    : m_player(player)
     , m_qtMovie(nil)
     , m_qtMovieView(nil)
     , m_objcObserver(AdoptNS, [[WebCoreMovieObserver alloc] initWithCallback:this])
     , m_seekTo(-1)
     , m_endTime(std::numeric_limits<float>::infinity())
-    , m_seekTimer(this, &MoviePrivate::seekTimerFired)
-    , m_cuePointTimer(this, &MoviePrivate::cuePointTimerFired)
+    , m_seekTimer(this, &MediaPlayerPrivate::seekTimerFired)
+    , m_cuePointTimer(this, &MediaPlayerPrivate::cuePointTimerFired)
     , m_previousTimeCueTimerFired(0)
-    , m_networkState(Movie::Empty)
-    , m_readyState(Movie::DataUnavailable)
+    , m_networkState(MediaPlayer::Empty)
+    , m_readyState(MediaPlayer::DataUnavailable)
     , m_startedPlaying(false)
     , m_isStreaming(false)
 {
 }
 
 
-MoviePrivate::~MoviePrivate()
+MediaPlayerPrivate::~MediaPlayerPrivate()
 {
     if (m_qtMovieView)
         [m_qtMovieView.get() removeFromSuperview];
@@ -86,7 +86,7 @@ MoviePrivate::~MoviePrivate()
     [m_objcObserver.get() disconnect];
 }
 
-void MoviePrivate::createQTMovie(String url)
+void MediaPlayerPrivate::createQTMovie(String url)
 {
     [[NSNotificationCenter defaultCenter] removeObserver:m_objcObserver.get()];
     
@@ -101,8 +101,8 @@ void MoviePrivate::createQTMovie(String url)
     if (!m_qtMovie)
         return;
     
-    [m_qtMovie.get() setVolume: m_movie->volume()];
-    [m_qtMovie.get() setMuted: m_movie->muted()];
+    [m_qtMovie.get() setVolume: m_player->volume()];
+    [m_qtMovie.get() setMuted: m_player->muted()];
     
     [[NSNotificationCenter defaultCenter] addObserver:m_objcObserver.get()
                                              selector:@selector(loadStateChanged:) 
@@ -130,16 +130,16 @@ void MoviePrivate::createQTMovie(String url)
                                                object:m_qtMovie.get()];
 }
 
-void MoviePrivate::createQTMovieView()
+void MediaPlayerPrivate::createQTMovieView()
 {
     if (m_qtMovieView) {
         [m_qtMovieView.get() removeFromSuperview];
         m_qtMovieView = nil;
     }
-    if (!m_movie->m_parentWidget || !m_qtMovie)
+    if (!m_player->m_parentWidget || !m_qtMovie)
         return;
-    m_qtMovieView = [[[QTMovieView alloc] initWithFrame:m_movie->rect()] autorelease];
-    NSView* parentView = static_cast<ScrollView*>(m_movie->m_parentWidget)->getDocumentView();
+    m_qtMovieView = [[[QTMovieView alloc] initWithFrame:m_player->rect()] autorelease];
+    NSView* parentView = static_cast<ScrollView*>(m_player->m_parentWidget)->getDocumentView();
     [parentView addSubview:m_qtMovieView.get()];
     [m_qtMovieView.get() setMovie:m_qtMovie.get()];
     [m_qtMovieView.get() setControllerVisible:NO];
@@ -150,7 +150,7 @@ void MoviePrivate::createQTMovieView()
     wkQTMovieViewSetDrawSynchronously(m_qtMovieView.get(), YES);
 }
 
-QTTime MoviePrivate::createQTTime(float time)
+QTTime MediaPlayerPrivate::createQTTime(float time)
 {
     if (!m_qtMovie)
         return QTMakeTime(0, 600);
@@ -158,15 +158,15 @@ QTTime MoviePrivate::createQTTime(float time)
     return QTMakeTime((long long)(time * timeScale), timeScale);
 }
 
-void MoviePrivate::load(String url)
+void MediaPlayerPrivate::load(String url)
 {
-    if (m_networkState != Movie::Loading) {
-        m_networkState = Movie::Loading;
-        m_movie->networkStateChanged();
+    if (m_networkState != MediaPlayer::Loading) {
+        m_networkState = MediaPlayer::Loading;
+        m_player->networkStateChanged();
     }
-    if (m_readyState != Movie::DataUnavailable) {
-        m_readyState = Movie::DataUnavailable;
-        m_movie->readyStateChanged();
+    if (m_readyState != MediaPlayer::DataUnavailable) {
+        m_readyState = MediaPlayer::DataUnavailable;
+        m_player->readyStateChanged();
     }
     cancelSeek();
     m_cuePointTimer.stop();
@@ -174,25 +174,25 @@ void MoviePrivate::load(String url)
     [m_objcObserver.get() setDelayCallbacks:YES];
 
     createQTMovie(url);
-    if (m_movie->visible())
+    if (m_player->visible())
         createQTMovieView();
 
     [m_objcObserver.get() loadStateChanged:nil];
     [m_objcObserver.get() setDelayCallbacks:NO];
 }
 
-void MoviePrivate::play()
+void MediaPlayerPrivate::play()
 {
     if (!m_qtMovie)
         return;
     m_startedPlaying = true;
     [m_objcObserver.get() setDelayCallbacks:YES];
-    [m_qtMovie.get() setRate: m_movie->rate()];
+    [m_qtMovie.get() setRate: m_player->rate()];
     [m_objcObserver.get() setDelayCallbacks:NO];
     startCuePointTimerIfNeeded();
 }
 
-void MoviePrivate::pause()
+void MediaPlayerPrivate::pause()
 {
     if (!m_qtMovie)
         return;
@@ -203,7 +203,7 @@ void MoviePrivate::pause()
     m_cuePointTimer.stop();
 }
 
-float MoviePrivate::duration() const
+float MediaPlayerPrivate::duration() const
 {
     if (!m_qtMovie)
         return 0;
@@ -213,7 +213,7 @@ float MoviePrivate::duration() const
     return (float)time.timeValue / time.timeScale;
 }
 
-float MoviePrivate::currentTime() const
+float MediaPlayerPrivate::currentTime() const
 {
     if (!m_qtMovie)
         return 0;
@@ -223,7 +223,7 @@ float MoviePrivate::currentTime() const
     return current;
 }
 
-void MoviePrivate::seek(float time)
+void MediaPlayerPrivate::seek(float time)
 {
     cancelSeek();
     
@@ -240,7 +240,7 @@ void MoviePrivate::seek(float time)
         m_seekTimer.start(0, 0.5f);
 }
     
-void MoviePrivate::doSeek() 
+void MediaPlayerPrivate::doSeek() 
 {
     QTTime qttime = createQTTime(m_seekTo);
     // setCurrentTime generates several event callbacks, update afterwards
@@ -256,63 +256,63 @@ void MoviePrivate::doSeek()
     [m_objcObserver.get() setDelayCallbacks:NO];
 }
 
-void MoviePrivate::cancelSeek()
+void MediaPlayerPrivate::cancelSeek()
 {
     m_seekTo = -1;
     m_seekTimer.stop();
 }
 
-void MoviePrivate::seekTimerFired(Timer<MoviePrivate>*)
+void MediaPlayerPrivate::seekTimerFired(Timer<MediaPlayerPrivate>*)
 {        
     if (!m_qtMovie || !seeking() || currentTime() == m_seekTo) {
         cancelSeek();
         updateStates();
-        m_movie->timeChanged(); 
+        m_player->timeChanged(); 
         return;
     } 
     
     if (maxTimeLoaded() >= m_seekTo)
         doSeek();
     else {
-        Movie::NetworkState state = networkState();
-        if (state == Movie::Empty || state == Movie::Loaded) {
+        MediaPlayer::NetworkState state = networkState();
+        if (state == MediaPlayer::Empty || state == MediaPlayer::Loaded) {
             cancelSeek();
             updateStates();
-            m_movie->timeChanged();
+            m_player->timeChanged();
         }
     }
 }
 
-void MoviePrivate::setEndTime(float time)
+void MediaPlayerPrivate::setEndTime(float time)
 {
     m_endTime = time;
     startCuePointTimerIfNeeded();
 }
 
-void MoviePrivate::addCuePoint(float time)
+void MediaPlayerPrivate::addCuePoint(float time)
 {
     // FIXME: simulate with timer for now
     startCuePointTimerIfNeeded();
 }
 
-void MoviePrivate::removeCuePoint(float time)
+void MediaPlayerPrivate::removeCuePoint(float time)
 {
 }
 
-void MoviePrivate::clearCuePoints()
+void MediaPlayerPrivate::clearCuePoints()
 {
 }
 
-void MoviePrivate::startCuePointTimerIfNeeded()
+void MediaPlayerPrivate::startCuePointTimerIfNeeded()
 {
-    if ((m_endTime < duration() || !m_movie->m_cuePoints.isEmpty())
+    if ((m_endTime < duration() || !m_player->m_cuePoints.isEmpty())
         && m_startedPlaying && !m_cuePointTimer.isActive()) {
         m_previousTimeCueTimerFired = currentTime();
         m_cuePointTimer.startRepeating(0.020f);
     }
 }
 
-void MoviePrivate::cuePointTimerFired(Timer<MoviePrivate>*)
+void MediaPlayerPrivate::cuePointTimerFired(Timer<MediaPlayerPrivate>*)
 {
     float time = currentTime();
     float previousTime = m_previousTimeCueTimerFired;
@@ -323,29 +323,29 @@ void MoviePrivate::cuePointTimerFired(Timer<MoviePrivate>*)
         pause();
         didEnd();
     }
-    HashSet<float>::const_iterator end = m_movie->m_cuePoints.end();
-    for (HashSet<float>::const_iterator it = m_movie->m_cuePoints.begin(); it != end; ++it) {
+    HashSet<float>::const_iterator end = m_player->m_cuePoints.end();
+    for (HashSet<float>::const_iterator it = m_player->m_cuePoints.begin(); it != end; ++it) {
         float cueTime = *it;
         if (previousTime < cueTime && cueTime <= time)
-            m_movie->cuePointReached(cueTime);
+            m_player->cuePointReached(cueTime);
     }
 }
 
-bool MoviePrivate::paused() const
+bool MediaPlayerPrivate::paused() const
 {
     if (!m_qtMovie)
         return true;
     return [m_qtMovie.get() rate] == 0.0f;
 }
 
-bool MoviePrivate::seeking() const
+bool MediaPlayerPrivate::seeking() const
 {
     if (!m_qtMovie)
         return false;
     return m_seekTo >= 0;
 }
 
-IntSize MoviePrivate::naturalSize()
+IntSize MediaPlayerPrivate::naturalSize()
 {
     if (!m_qtMovie)
         return IntSize();
@@ -353,7 +353,7 @@ IntSize MoviePrivate::naturalSize()
     return IntSize(val);
 }
 
-bool MoviePrivate::hasVideo()
+bool MediaPlayerPrivate::hasVideo()
 {
     if (!m_qtMovie)
         return false;
@@ -361,21 +361,21 @@ bool MoviePrivate::hasVideo()
     return val;
 }
 
-void MoviePrivate::setVolume(float volume)
+void MediaPlayerPrivate::setVolume(float volume)
 {
     if (!m_qtMovie)
         return;
     [m_qtMovie.get() setVolume:volume];  
 }
 
-void MoviePrivate::setMuted(bool b)
+void MediaPlayerPrivate::setMuted(bool b)
 {
     if (!m_qtMovie)
         return;
     [m_qtMovie.get() setMuted:b];
 }
 
-void MoviePrivate::setRate(float rate)
+void MediaPlayerPrivate::setRate(float rate)
 {
     if (!m_qtMovie)
         return;
@@ -383,7 +383,7 @@ void MoviePrivate::setRate(float rate)
         [m_qtMovie.get() setRate:rate];
 }
 
-int MoviePrivate::dataRate() const
+int MediaPlayerPrivate::dataRate() const
 {
     if (!m_qtMovie)
         return 0;
@@ -391,36 +391,36 @@ int MoviePrivate::dataRate() const
 }
 
 
-Movie::NetworkState MoviePrivate::networkState()
+MediaPlayer::NetworkState MediaPlayerPrivate::networkState()
 {
     return m_networkState;
 }
 
-Movie::ReadyState MoviePrivate::readyState()
+MediaPlayer::ReadyState MediaPlayerPrivate::readyState()
 {
     return m_readyState;
 }
 
-float MoviePrivate::maxTimeBuffered()
+float MediaPlayerPrivate::maxTimeBuffered()
 {
     // rtsp streams are not buffered
     return m_isStreaming ? 0 : maxTimeLoaded();
 }
 
-float MoviePrivate::maxTimeSeekable()
+float MediaPlayerPrivate::maxTimeSeekable()
 {
     // infinite duration means live stream
     return isinf(duration()) ? 0 : maxTimeLoaded();
 }
 
-float MoviePrivate::maxTimeLoaded()
+float MediaPlayerPrivate::maxTimeLoaded()
 {
     if (!m_qtMovie)
         return 0;
     return wkQTMovieMaxTimeLoaded(m_qtMovie.get()); 
 }
 
-unsigned MoviePrivate::bytesLoaded()
+unsigned MediaPlayerPrivate::bytesLoaded()
 {
     if (!m_qtMovie)
         return 0;
@@ -431,22 +431,22 @@ unsigned MoviePrivate::bytesLoaded()
     return totalBytes() * maxTime / dur;
 }
 
-bool MoviePrivate::totalBytesKnown()
+bool MediaPlayerPrivate::totalBytesKnown()
 {
     return totalBytes() > 0;
 }
 
-unsigned MoviePrivate::totalBytes()
+unsigned MediaPlayerPrivate::totalBytes()
 {
     if (!m_qtMovie)
         return 0;
     return [[m_qtMovie.get() attributeForKey: QTMovieDataSizeAttribute] intValue];
 }
 
-void MoviePrivate::cancelLoad()
+void MediaPlayerPrivate::cancelLoad()
 {
     // FIXME better way to do this?
-    if (m_networkState < Movie::Loading || m_networkState == Movie::Loaded)
+    if (m_networkState < MediaPlayer::Loading || m_networkState == MediaPlayer::Loaded)
         return;
     
     if (m_qtMovieView) {
@@ -458,92 +458,92 @@ void MoviePrivate::cancelLoad()
     updateStates();
 }
 
-void MoviePrivate::updateStates()
+void MediaPlayerPrivate::updateStates()
 {
-    Movie::NetworkState oldNetworkState = m_networkState;
-    Movie::ReadyState oldReadyState = m_readyState;
+    MediaPlayer::NetworkState oldNetworkState = m_networkState;
+    MediaPlayer::ReadyState oldReadyState = m_readyState;
     
     long loadState = m_qtMovie ? [[m_qtMovie.get() attributeForKey:QTMovieLoadStateAttribute] longValue] : -1;
     // "Loaded" is reserved for fully buffered movies, never the case when rtsp streaming
     if (loadState >= 100000 && !m_isStreaming) {
         // 100000 is kMovieLoadStateComplete
-        if (m_networkState < Movie::Loaded)
-            m_networkState = Movie::Loaded;
-        m_readyState = Movie::CanPlayThrough;
+        if (m_networkState < MediaPlayer::Loaded)
+            m_networkState = MediaPlayer::Loaded;
+        m_readyState = MediaPlayer::CanPlayThrough;
     } else if (loadState >= 20000) {
         // 20000 is kMovieLoadStatePlaythroughOK
-        if (m_networkState < Movie::LoadedFirstFrame && !seeking())
-            m_networkState = Movie::LoadedFirstFrame;
-        m_readyState = ([m_qtMovie.get() rate] == 0.0f && m_startedPlaying) ? Movie::DataUnavailable : Movie::CanPlayThrough;
+        if (m_networkState < MediaPlayer::LoadedFirstFrame && !seeking())
+            m_networkState = MediaPlayer::LoadedFirstFrame;
+        m_readyState = ([m_qtMovie.get() rate] == 0.0f && m_startedPlaying) ? MediaPlayer::DataUnavailable : MediaPlayer::CanPlayThrough;
     } else if (loadState >= 10000) {
         // 10000 is kMovieLoadStatePlayable
-        if (m_networkState < Movie::LoadedFirstFrame && !seeking())
-            m_networkState = Movie::LoadedFirstFrame;
-        m_readyState = ([m_qtMovie.get() rate] == 0.0f && m_startedPlaying) ? Movie::DataUnavailable : Movie::CanPlay;
+        if (m_networkState < MediaPlayer::LoadedFirstFrame && !seeking())
+            m_networkState = MediaPlayer::LoadedFirstFrame;
+        m_readyState = ([m_qtMovie.get() rate] == 0.0f && m_startedPlaying) ? MediaPlayer::DataUnavailable : MediaPlayer::CanPlay;
     } else if (loadState >= 2000) {
         // 10000 is kMovieLoadStateLoaded
-        if (m_networkState < Movie::LoadedMetaData)
-            m_networkState = Movie::LoadedMetaData;
-        m_readyState = Movie::DataUnavailable;
+        if (m_networkState < MediaPlayer::LoadedMetaData)
+            m_networkState = MediaPlayer::LoadedMetaData;
+        m_readyState = MediaPlayer::DataUnavailable;
     } else if (loadState >= 0) {
-        if (m_networkState < Movie::Loading)
-            m_networkState = Movie::Loading;
-        m_readyState = Movie::DataUnavailable;        
+        if (m_networkState < MediaPlayer::Loading)
+            m_networkState = MediaPlayer::Loading;
+        m_readyState = MediaPlayer::DataUnavailable;        
     } else {
-        m_networkState = Movie::LoadFailed;
-        m_readyState = Movie::DataUnavailable; 
+        m_networkState = MediaPlayer::LoadFailed;
+        m_readyState = MediaPlayer::DataUnavailable; 
     }
 
     if (seeking())
-        m_readyState = Movie::DataUnavailable;
+        m_readyState = MediaPlayer::DataUnavailable;
     
     if (m_networkState != oldNetworkState)
-        m_movie->networkStateChanged();
+        m_player->networkStateChanged();
     if (m_readyState != oldReadyState)
-        m_movie->readyStateChanged();
+        m_player->readyStateChanged();
 }
 
-void MoviePrivate::loadStateChanged()
+void MediaPlayerPrivate::loadStateChanged()
 {
     updateStates();
 }
 
-void MoviePrivate::rateChanged()
+void MediaPlayerPrivate::rateChanged()
 {
     updateStates();
 }
 
-void MoviePrivate::sizeChanged()
+void MediaPlayerPrivate::sizeChanged()
 {
 }
 
-void MoviePrivate::timeChanged()
+void MediaPlayerPrivate::timeChanged()
 {
     m_previousTimeCueTimerFired = -1;
     updateStates();
-    m_movie->timeChanged();
+    m_player->timeChanged();
 }
 
-void MoviePrivate::volumeChanged()
+void MediaPlayerPrivate::volumeChanged()
 {
-    m_movie->volumeChanged();
+    m_player->volumeChanged();
 }
 
-void MoviePrivate::didEnd()
+void MediaPlayerPrivate::didEnd()
 {
     m_cuePointTimer.stop();
     m_startedPlaying = false;
     updateStates();
-    m_movie->timeChanged();
+    m_player->timeChanged();
 }
 
-void MoviePrivate::setRect(const IntRect& r) 
+void MediaPlayerPrivate::setRect(const IntRect& r) 
 { 
     if (m_qtMovieView)
         [m_qtMovieView.get() setFrame: r];
 }
 
-void MoviePrivate::setVisible(bool b)
+void MediaPlayerPrivate::setVisible(bool b)
 {
     if (b)
         createQTMovieView();
@@ -553,7 +553,7 @@ void MoviePrivate::setVisible(bool b)
     }
 }
 
-void MoviePrivate::paint(GraphicsContext* p, const IntRect& r)
+void MediaPlayerPrivate::paint(GraphicsContext* p, const IntRect& r)
 {
     if (p->paintingDisabled())
         return;
@@ -567,7 +567,7 @@ void MoviePrivate::paint(GraphicsContext* p, const IntRect& r)
     [m_objcObserver.get() setDelayCallbacks:NO];
 }
 
-void MoviePrivate::getSupportedTypes(HashSet<String>& types)
+void MediaPlayerPrivate::getSupportedTypes(HashSet<String>& types)
 {
     NSArray* fileTypes = [QTMovie movieFileTypes:(QTMovieFileTypeOptions)0];
     int count = [fileTypes count];
@@ -588,7 +588,7 @@ void MoviePrivate::getSupportedTypes(HashSet<String>& types)
 }
 
 @implementation WebCoreMovieObserver
--(id)initWithCallback:(WebCore::MoviePrivate *)c
+-(id)initWithCallback:(WebCore::MediaPlayerPrivate *)c
 {
     _callback = c;
     return [super init];

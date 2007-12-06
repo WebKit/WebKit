@@ -22,7 +22,7 @@
 
 #if ENABLE(VIDEO)
 
-#include "MoviePrivateGStreamer.h"
+#include "MediaPlayerPrivateGStreamer.h"
 
 #include "CString.h"
 #include "CString.h"
@@ -30,7 +30,7 @@
 #include "IntRect.h"
 #include "KURL.h"
 #include "MIMETypeRegistry.h"
-#include "Movie.h"
+#include "MediaPlayer.h"
 #include "NotImplemented.h"
 #include "ScrollView.h"
 #include "Widget.h"
@@ -49,7 +49,7 @@ using namespace std;
 
 namespace WebCore {
 
-gboolean moviePrivateErrorCallback(GstBus* bus, GstMessage* message, gpointer data)
+gboolean mediaPlayerPrivateErrorCallback(GstBus* bus, GstMessage* message, gpointer data)
 {
     if (GST_MESSAGE_TYPE(message) == GST_MESSAGE_ERROR)
     {
@@ -59,7 +59,7 @@ gboolean moviePrivateErrorCallback(GstBus* bus, GstMessage* message, gpointer da
         gst_message_parse_error(message, &err, &debug);
         if (err->code == 3) {
             LOG_VERBOSE(Media, "File not found");
-            MoviePrivate* mp = reinterpret_cast<MoviePrivate*>(data);
+            MediaPlayerPrivate* mp = reinterpret_cast<MediaPlayerPrivate*>(data);
             if (mp)
                 mp->loadingFailed();
         } else {
@@ -71,28 +71,28 @@ gboolean moviePrivateErrorCallback(GstBus* bus, GstMessage* message, gpointer da
     return true;
 }
 
-gboolean moviePrivateEOSCallback(GstBus* bus, GstMessage* message, gpointer data)
+gboolean mediaPlayerPrivateEOSCallback(GstBus* bus, GstMessage* message, gpointer data)
 {
     if (GST_MESSAGE_TYPE(message) == GST_MESSAGE_EOS)
     {
         LOG_VERBOSE(Media, "End of Stream");
-        MoviePrivate* mp = reinterpret_cast<MoviePrivate*>(data);
+        MediaPlayerPrivate* mp = reinterpret_cast<MediaPlayerPrivate*>(data);
         mp->didEnd();
     }
     return true;
 }
 
-gboolean moviePrivateStateCallback(GstBus* bus, GstMessage* message, gpointer data)
+gboolean mediaPlayerPrivateStateCallback(GstBus* bus, GstMessage* message, gpointer data)
 {
     if (GST_MESSAGE_TYPE(message) == GST_MESSAGE_STATE_CHANGED)
     {
-        MoviePrivate* mp = reinterpret_cast<MoviePrivate*>(data);
+        MediaPlayerPrivate* mp = reinterpret_cast<MediaPlayerPrivate*>(data);
         mp->updateStates();
     }
     return true;
 }
 
-gboolean moviePrivateBufferingCallback(GstBus* bus, GstMessage* message, gpointer data)
+gboolean mediaPlayerPrivateBufferingCallback(GstBus* bus, GstMessage* message, gpointer data)
 {
     if (GST_MESSAGE_TYPE(message) == GST_MESSAGE_BUFFERING)
     {
@@ -103,8 +103,8 @@ gboolean moviePrivateBufferingCallback(GstBus* bus, GstMessage* message, gpointe
     return true;
 }
 
-MoviePrivate::MoviePrivate(Movie* movie)
-    : m_movie(movie)
+MediaPlayerPrivate::MediaPlayerPrivate(MediaPlayer* player)
+    : m_player(player)
     , m_playBin(0)
     , m_videoSink(0)
     , m_source(0)
@@ -113,8 +113,8 @@ MoviePrivate::MoviePrivate(Movie* movie)
     , m_isEndReached(false)
     , m_volume(0.5f)
     , m_previousTimeCueTimerFired(0)
-    , m_networkState(Movie::Empty)
-    , m_readyState(Movie::DataUnavailable)
+    , m_networkState(MediaPlayer::Empty)
+    , m_readyState(MediaPlayer::DataUnavailable)
     , m_startedPlaying(false)
     , m_isStreaming(false)
 {
@@ -122,29 +122,29 @@ MoviePrivate::MoviePrivate(Movie* movie)
     gst_init(0, NULL);
 }
 
-MoviePrivate::~MoviePrivate()
+MediaPlayerPrivate::~MediaPlayerPrivate()
 {
     gst_element_set_state(m_playBin, GST_STATE_NULL);
     gst_object_unref(GST_OBJECT(m_playBin));
 }
 
-void MoviePrivate::load(String url)
+void MediaPlayerPrivate::load(String url)
 {
     LOG_VERBOSE(Media, "Load %s", url.utf8().data());
-    if (m_networkState != Movie::Loading) {
-        m_networkState = Movie::Loading;
-        m_movie->networkStateChanged();
+    if (m_networkState != MediaPlayer::Loading) {
+        m_networkState = MediaPlayer::Loading;
+        m_player->networkStateChanged();
     }
-    if (m_readyState != Movie::DataUnavailable) {
-        m_readyState = Movie::DataUnavailable;
-        m_movie->readyStateChanged();
+    if (m_readyState != MediaPlayer::DataUnavailable) {
+        m_readyState = MediaPlayer::DataUnavailable;
+        m_player->readyStateChanged();
     }
 
     createGSTPlayBin(url);
     pause();
 }
 
-void MoviePrivate::play()
+void MediaPlayerPrivate::play()
 {
     LOG_VERBOSE(Media, "Play");
     // When end reached, rewind for Test video-seek-past-end-playing
@@ -156,14 +156,14 @@ void MoviePrivate::play()
     m_startedPlaying = true;
 }
 
-void MoviePrivate::pause()
+void MediaPlayerPrivate::pause()
 {
     LOG_VERBOSE(Media, "Pause");
     gst_element_set_state(m_playBin, GST_STATE_PAUSED);
     m_startedPlaying = false;
 }
 
-float MoviePrivate::duration()
+float MediaPlayerPrivate::duration()
 {
     if (!m_playBin)
         return 0.0;
@@ -184,7 +184,7 @@ float MoviePrivate::duration()
     // FIXME: handle 3.14.9.5 properly
 }
 
-float MoviePrivate::currentTime() const
+float MediaPlayerPrivate::currentTime() const
 {
     if (!m_playBin)
         return 0;
@@ -211,7 +211,7 @@ float MoviePrivate::currentTime() const
     return ret;
 }
 
-void MoviePrivate::seek(float time)
+void MediaPlayerPrivate::seek(float time)
 {
     GstClockTime sec = (GstClockTime)(time * GST_SECOND);
 
@@ -231,7 +231,7 @@ void MoviePrivate::seek(float time)
         LOG_VERBOSE(Media, "Seek to %f failed", time);
 }
 
-void MoviePrivate::setEndTime(float time)
+void MediaPlayerPrivate::setEndTime(float time)
 {
     if (!m_playBin)
         return;
@@ -252,48 +252,48 @@ void MoviePrivate::setEndTime(float time)
     }
 }
 
-void MoviePrivate::addCuePoint(float time)
+void MediaPlayerPrivate::addCuePoint(float time)
 {
     notImplemented();
 }
 
-void MoviePrivate::removeCuePoint(float time)
+void MediaPlayerPrivate::removeCuePoint(float time)
 {
     notImplemented();
 }
 
-void MoviePrivate::clearCuePoints()
+void MediaPlayerPrivate::clearCuePoints()
 {
     notImplemented();
 }
 
-void MoviePrivate::startCuePointTimerIfNeeded()
+void MediaPlayerPrivate::startCuePointTimerIfNeeded()
 {
     notImplemented();
 }
 
-void MoviePrivate::cancelSeek()
+void MediaPlayerPrivate::cancelSeek()
 {
     notImplemented();
 }
 
-void MoviePrivate::cuePointTimerFired(Timer<MoviePrivate>*)
+void MediaPlayerPrivate::cuePointTimerFired(Timer<MediaPlayerPrivate>*)
 {
     notImplemented();
 }
 
-bool MoviePrivate::paused() const
+bool MediaPlayerPrivate::paused() const
 {
     return !m_startedPlaying;
 }
 
-bool MoviePrivate::seeking() const
+bool MediaPlayerPrivate::seeking() const
 {
     return false;;
 }
 
 // Returns the size of the video
-IntSize MoviePrivate::naturalSize()
+IntSize MediaPlayerPrivate::naturalSize()
 {
     int x = 0, y = 0;
     if (hasVideo()) {
@@ -305,7 +305,7 @@ IntSize MoviePrivate::naturalSize()
     return IntSize(x, y);
 }
 
-bool MoviePrivate::hasVideo()
+bool MediaPlayerPrivate::hasVideo()
 {
     gint currentVideo = -1;
     if (m_playBin)
@@ -313,14 +313,14 @@ bool MoviePrivate::hasVideo()
     return currentVideo > -1;
 }
 
-void MoviePrivate::setVolume(float volume)
+void MediaPlayerPrivate::setVolume(float volume)
 {
     m_volume = volume;
     LOG_VERBOSE(Media, "Volume to %f", volume);
     setMuted(false);
 }
 
-void MoviePrivate::setMuted(bool b)
+void MediaPlayerPrivate::setMuted(bool b)
 {
     if (!m_playBin) 
         return;
@@ -333,7 +333,7 @@ void MoviePrivate::setMuted(bool b)
     }
 }
 
-void MoviePrivate::setRate(float rate)
+void MediaPlayerPrivate::setRate(float rate)
 {
     if (rate == 0.0) {
         gst_element_set_state(m_playBin, GST_STATE_PAUSED);
@@ -352,23 +352,23 @@ void MoviePrivate::setRate(float rate)
         LOG_VERBOSE(Media, "Set Rate to %f failed", rate);
 }
 
-int MoviePrivate::dataRate() const
+int MediaPlayerPrivate::dataRate() const
 {
     notImplemented();
     return 1;
 }
 
-Movie::NetworkState MoviePrivate::networkState()
+MediaPlayer::NetworkState MediaPlayerPrivate::networkState()
 {
     return m_networkState;
 }
 
-Movie::ReadyState MoviePrivate::readyState()
+MediaPlayer::ReadyState MediaPlayerPrivate::readyState()
 {
     return m_readyState;
 }
 
-float MoviePrivate::maxTimeBuffered()
+float MediaPlayerPrivate::maxTimeBuffered()
 {
     notImplemented();
     LOG_VERBOSE(Media, "maxTimeBuffered");
@@ -376,7 +376,7 @@ float MoviePrivate::maxTimeBuffered()
     return m_isStreaming ? 0 : maxTimeLoaded();
 }
 
-float MoviePrivate::maxTimeSeekable()
+float MediaPlayerPrivate::maxTimeSeekable()
 {
     // TODO
     LOG_VERBOSE(Media, "maxTimeSeekable");
@@ -386,7 +386,7 @@ float MoviePrivate::maxTimeSeekable()
     return maxTimeLoaded();
 }
 
-float MoviePrivate::maxTimeLoaded()
+float MediaPlayerPrivate::maxTimeLoaded()
 {
     // TODO
     LOG_VERBOSE(Media, "maxTimeLoaded");
@@ -394,7 +394,7 @@ float MoviePrivate::maxTimeLoaded()
     return duration();
 }
 
-unsigned MoviePrivate::bytesLoaded()
+unsigned MediaPlayerPrivate::bytesLoaded()
 {
     notImplemented();
     LOG_VERBOSE(Media, "bytesLoaded");
@@ -407,14 +407,14 @@ unsigned MoviePrivate::bytesLoaded()
     return 1;//totalBytes() * maxTime / dur;
 }
 
-bool MoviePrivate::totalBytesKnown()
+bool MediaPlayerPrivate::totalBytesKnown()
 {
     notImplemented();
     LOG_VERBOSE(Media, "totalBytesKnown");
     return totalBytes() > 0;
 }
 
-unsigned MoviePrivate::totalBytes()
+unsigned MediaPlayerPrivate::totalBytes()
 {
     notImplemented();
     LOG_VERBOSE(Media, "totalBytes");
@@ -429,19 +429,19 @@ unsigned MoviePrivate::totalBytes()
     return 100;
 }
 
-void MoviePrivate::cancelLoad()
+void MediaPlayerPrivate::cancelLoad()
 {
     notImplemented();
 }
 
-void MoviePrivate::updateStates()
+void MediaPlayerPrivate::updateStates()
 {
     // There is no (known) way to get such level of information about
     // the state of GStreamer, therefore, when in PAUSED state,
     // we are sure we can display the first frame and go to play
 
-    Movie::NetworkState oldNetworkState = m_networkState;
-    Movie::ReadyState oldReadyState = m_readyState;
+    MediaPlayer::NetworkState oldNetworkState = m_networkState;
+    MediaPlayer::ReadyState oldReadyState = m_readyState;
     GstState state;
     GstState pending;
 
@@ -458,12 +458,12 @@ void MoviePrivate::updateStates()
             gst_element_state_get_name(pending));
 
         if (state == GST_STATE_READY) {
-            m_readyState = Movie::CanPlayThrough;
+            m_readyState = MediaPlayer::CanPlayThrough;
         } else if (state == GST_STATE_PAUSED) {
-            m_readyState = Movie::CanPlayThrough;
+            m_readyState = MediaPlayer::CanPlayThrough;
         }
-        if (m_networkState < Movie::Loaded)
-            m_networkState = Movie::Loaded;
+        if (m_networkState < MediaPlayer::Loaded)
+            m_networkState = MediaPlayer::Loaded;
 
         g_object_get(m_playBin, "source", &m_source, NULL);
         if (!m_source)
@@ -481,12 +481,12 @@ void MoviePrivate::updateStates()
             gst_element_state_get_name(state),
             gst_element_state_get_name(pending));
         if (state == GST_STATE_READY) {
-            m_readyState = Movie::CanPlay;
+            m_readyState = MediaPlayer::CanPlay;
         } else if (state == GST_STATE_PAUSED) {
-            m_readyState = Movie::CanPlay;
+            m_readyState = MediaPlayer::CanPlay;
         }
-        if (m_networkState < Movie::LoadedMetaData)
-            m_networkState = Movie::LoadedMetaData;
+        if (m_networkState < MediaPlayer::LoadedMetaData)
+            m_networkState = MediaPlayer::LoadedMetaData;
         break;
     default:
         LOG_VERBOSE(Media, "Else : %d", ret);
@@ -494,76 +494,76 @@ void MoviePrivate::updateStates()
     }
 
     if (seeking())
-        m_readyState = Movie::DataUnavailable;
+        m_readyState = MediaPlayer::DataUnavailable;
 
     if (m_networkState != oldNetworkState) {
         LOG_VERBOSE(Media, "Network State Changed from %u to %u",
             oldNetworkState, m_networkState);
-        m_movie->networkStateChanged();
+        m_player->networkStateChanged();
     }
     if (m_readyState != oldReadyState) {
         LOG_VERBOSE(Media, "Ready State Changed from %u to %u",
             oldReadyState, m_readyState);
-        m_movie->readyStateChanged();
+        m_player->readyStateChanged();
     }
 }
 
-void MoviePrivate::loadStateChanged()
+void MediaPlayerPrivate::loadStateChanged()
 {
     updateStates();
 }
 
-void MoviePrivate::rateChanged()
+void MediaPlayerPrivate::rateChanged()
 {
     updateStates();
 }
 
-void MoviePrivate::sizeChanged()
+void MediaPlayerPrivate::sizeChanged()
 {
     notImplemented();
 }
 
-void MoviePrivate::timeChanged()
+void MediaPlayerPrivate::timeChanged()
 {
     updateStates();
-    m_movie->timeChanged();
+    m_player->timeChanged();
 }
 
-void MoviePrivate::volumeChanged()
+void MediaPlayerPrivate::volumeChanged()
 {
-    m_movie->volumeChanged();
+    m_player->volumeChanged();
 }
 
-void MoviePrivate::didEnd()
+void MediaPlayerPrivate::didEnd()
 {
     m_isEndReached = true;
     pause();
     timeChanged();
 }
 
-void MoviePrivate::loadingFailed()
+void MediaPlayerPrivate::loadingFailed()
 {
-    if (m_networkState != Movie::LoadFailed) {
-        m_networkState = Movie::LoadFailed;
-        m_movie->networkStateChanged();
+    if (m_networkState != MediaPlayer::LoadFailed) {
+        m_networkState = MediaPlayer::LoadFailed;
+        m_player->networkStateChanged();
     }
-    if (m_readyState != Movie::DataUnavailable) {
-        m_readyState = Movie::DataUnavailable;
-        m_movie->readyStateChanged();
+    if (m_readyState != MediaPlayer::DataUnavailable) {
+        m_readyState = MediaPlayer::DataUnavailable;
+        m_player->readyStateChanged();
     }
 }
 
-void MoviePrivate::setRect(const IntRect& r)
+void MediaPlayerPrivate::setRect(const IntRect& r)
 {
     notImplemented();
 }
 
-void MoviePrivate::setVisible(bool b)
+void MediaPlayerPrivate::setVisible(bool b)
 {
     notImplemented();
 }
 
-void MoviePrivate::paint(GraphicsContext* p, const IntRect& r)
+void MediaPlayerPrivate::paint(GraphicsContext* p, const IntRect& r)
 {
     // FIXME: do the real thing
     if (p->paintingDisabled())
@@ -572,14 +572,14 @@ void MoviePrivate::paint(GraphicsContext* p, const IntRect& r)
     p->drawRect(r);
 }
 
-void MoviePrivate::getSupportedTypes(HashSet<String>& types)
+void MediaPlayerPrivate::getSupportedTypes(HashSet<String>& types)
 {
     // FIXME: do the real thing
     notImplemented();
     types.add(String("video/x-theora+ogg"));
 }
 
-void MoviePrivate::createGSTPlayBin(String url)
+void MediaPlayerPrivate::createGSTPlayBin(String url)
 {
     GstElement* audioSink;
     GstBus* bus;
@@ -590,10 +590,10 @@ void MoviePrivate::createGSTPlayBin(String url)
 
     gst_bus_add_signal_watch(bus);
 
-    g_signal_connect(bus, "message::error", G_CALLBACK(moviePrivateErrorCallback), this);
-    g_signal_connect(bus, "message::eos", G_CALLBACK(moviePrivateEOSCallback), this);
-    g_signal_connect(bus, "message::state-changed", G_CALLBACK(moviePrivateStateCallback), this);
-    g_signal_connect(bus, "message::buffering", G_CALLBACK(moviePrivateBufferingCallback), this);
+    g_signal_connect(bus, "message::error", G_CALLBACK(mediaPlayerPrivateErrorCallback), this);
+    g_signal_connect(bus, "message::eos", G_CALLBACK(mediaPlayerPrivateEOSCallback), this);
+    g_signal_connect(bus, "message::state-changed", G_CALLBACK(mediaPlayerPrivateStateCallback), this);
+    g_signal_connect(bus, "message::buffering", G_CALLBACK(mediaPlayerPrivateBufferingCallback), this);
 
     gst_object_unref(bus);
 

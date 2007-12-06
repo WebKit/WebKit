@@ -18,12 +18,12 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef MoviePrivateGStreamer_h
-#define MoviePrivateGStreamer_h
+#ifndef MediaPlayerPrivateGStreamer_h
+#define MediaPlayerPrivateGStreamer_h
 
 #if ENABLE(VIDEO)
 
-#include "Movie.h"
+#include "MediaPlayer.h"
 #include "Timer.h"
 #include "wtf/Noncopyable.h"
 
@@ -40,19 +40,19 @@ namespace WebCore {
     class IntRect;
     class String;
 
-    gboolean moviePrivateErrorCallback(GstBus* bus, GstMessage* message, gpointer data);
-    gboolean moviePrivateEOSCallback(GstBus* bus, GstMessage* message, gpointer data);
-    gboolean moviePrivateStateCallback(GstBus* bus, GstMessage* message, gpointer data);
+    gboolean mediaPlayerPrivateErrorCallback(GstBus* bus, GstMessage* message, gpointer data);
+    gboolean mediaPlayerPrivateEOSCallback(GstBus* bus, GstMessage* message, gpointer data);
+    gboolean mediaPlayerPrivateStateCallback(GstBus* bus, GstMessage* message, gpointer data);
 
-    class MoviePrivate : Noncopyable
+    class MediaPlayerPrivate : Noncopyable
     {
-    friend gboolean moviePrivateErrorCallback(GstBus* bus, GstMessage* message, gpointer data);
-    friend gboolean moviePrivateEOSCallback(GstBus* bus, GstMessage* message, gpointer data);
-    friend gboolean moviePrivateStateCallback(GstBus* bus, GstMessage* message, gpointer data);
+    friend gboolean mediaPlayerPrivateErrorCallback(GstBus* bus, GstMessage* message, gpointer data);
+    friend gboolean mediaPlayerPrivateEOSCallback(GstBus* bus, GstMessage* message, gpointer data);
+    friend gboolean mediaPlayerPrivateStateCallback(GstBus* bus, GstMessage* message, gpointer data);
 
     public:
-        MoviePrivate(Movie* m);
-        ~MoviePrivate();
+        MediaPlayerPrivate(MediaPlayer* m);
+        ~MediaPlayerPrivate();
 
         IntSize naturalSize();
         bool hasVideo();
@@ -81,8 +81,8 @@ namespace WebCore {
 
         int dataRate() const;
 
-        Movie::NetworkState networkState();
-        Movie::ReadyState readyState();
+        MediaPlayer::NetworkState networkState();
+        MediaPlayer::ReadyState readyState();
 
         float maxTimeBuffered();
         float maxTimeSeekable();
@@ -108,14 +108,14 @@ namespace WebCore {
 
         void updateStates();
         void cancelSeek();
-        void cuePointTimerFired(Timer<MoviePrivate>*);
+        void cuePointTimerFired(Timer<MediaPlayerPrivate>*);
         float maxTimeLoaded();
         void startCuePointTimerIfNeeded();
 
         void createGSTPlayBin(String url);
 
     private:
-        Movie* m_movie;
+        MediaPlayer* m_player;
         GstElement* m_playBin;
         GstElement* m_videoSink;
         GstElement* m_source;
@@ -124,8 +124,8 @@ namespace WebCore {
         bool m_isEndReached;
         double m_volume;
         float m_previousTimeCueTimerFired;
-        Movie::NetworkState m_networkState;
-        Movie::ReadyState m_readyState;
+        MediaPlayer::NetworkState m_networkState;
+        MediaPlayer::ReadyState m_readyState;
         bool m_startedPlaying;
         bool m_isStreaming;
     };

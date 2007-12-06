@@ -52,8 +52,8 @@ public:
     // document in a frame.
     static bool isSupportedNonImageMIMEType(const String& mimeType);
     
-    // Check to see if a mime type is suitable for being loaded using <movie>
-    static bool isSupportedMovieMIMEType(const String& mimeType); 
+    // Check to see if a mime type is suitable for being loaded using <video> and <audio>
+    static bool isSupportedMediaMIMEType(const String& mimeType); 
 
     // Check to see if a mime type is a valid Java applet mime type
     static bool isJavaAppletMIMEType(const String& mimeType);
@@ -61,7 +61,7 @@ public:
     static HashSet<String>& getSupportedImageMIMETypes();
     static HashSet<String>& getSupportedImageResourceMIMETypes();
     static HashSet<String>& getSupportedNonImageMIMETypes();
-    static HashSet<String>& getSupportedMovieMIMETypes();
+    static HashSet<String>& getSupportedMediaMIMETypes();
 };
 
 } // namespace WebCore

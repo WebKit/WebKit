@@ -3803,10 +3803,10 @@
 		E44613AF0CD6331000FADA75 /* TimeRanges.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E446139D0CD6331000FADA75 /* TimeRanges.cpp */; };
 		E44613B00CD6331000FADA75 /* TimeRanges.h in Headers */ = {isa = PBXBuildFile; fileRef = E446139E0CD6331000FADA75 /* TimeRanges.h */; };
 		E44613B60CD6344E00FADA75 /* VoidCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = E44613B40CD6344E00FADA75 /* VoidCallback.h */; };
-		E44613E30CD6819F00FADA75 /* Movie.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4B41E0C0CBF90BD00AF2ECE /* Movie.cpp */; };
-		E44613E40CD681A200FADA75 /* Movie.h in Headers */ = {isa = PBXBuildFile; fileRef = E4B41E0D0CBF90BD00AF2ECE /* Movie.h */; };
-		E44613E50CD681A600FADA75 /* MoviePrivateQTKit.mm in Sources */ = {isa = PBXBuildFile; fileRef = E4B41E110CBF90EF00AF2ECE /* MoviePrivateQTKit.mm */; };
-		E44613E60CD681A900FADA75 /* MoviePrivateQTKit.h in Headers */ = {isa = PBXBuildFile; fileRef = E4B41E100CBF90EF00AF2ECE /* MoviePrivateQTKit.h */; };
+		E44613E30CD6819F00FADA75 /* MediaPlayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4B41E0C0CBF90BD00AF2ECE /* MediaPlayer.cpp */; };
+		E44613E40CD681A200FADA75 /* MediaPlayer.h in Headers */ = {isa = PBXBuildFile; fileRef = E4B41E0D0CBF90BD00AF2ECE /* MediaPlayer.h */; };
+		E44613E50CD681A600FADA75 /* MediaPlayerPrivateQTKit.mm in Sources */ = {isa = PBXBuildFile; fileRef = E4B41E110CBF90EF00AF2ECE /* MediaPlayerPrivateQTKit.mm */; };
+		E44613E60CD681A900FADA75 /* MediaPlayerPrivateQTKit.h in Headers */ = {isa = PBXBuildFile; fileRef = E4B41E100CBF90EF00AF2ECE /* MediaPlayerPrivateQTKit.h */; };
 		E44613EB0CD681B400FADA75 /* ProgressEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4B41E010CBF8EAA00AF2ECE /* ProgressEvent.cpp */; };
 		E44613EC0CD681B500FADA75 /* ProgressEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = E4B41E020CBF8EAA00AF2ECE /* ProgressEvent.h */; };
 		E44613ED0CD681BA00FADA75 /* JSProgressEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4B423850CBFB73C00AF2ECE /* JSProgressEvent.cpp */; };
@@ -7830,10 +7830,10 @@
 		E4B41E030CBF8EAA00AF2ECE /* ProgressEvent.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ProgressEvent.idl; sourceTree = "<group>"; };
 		E4B41E070CBF8F2100AF2ECE /* JSHTMLAudioElementConstructor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLAudioElementConstructor.cpp; sourceTree = "<group>"; };
 		E4B41E080CBF8F2100AF2ECE /* JSHTMLAudioElementConstructor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSHTMLAudioElementConstructor.h; sourceTree = "<group>"; };
-		E4B41E0C0CBF90BD00AF2ECE /* Movie.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Movie.cpp; sourceTree = "<group>"; };
-		E4B41E0D0CBF90BD00AF2ECE /* Movie.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Movie.h; sourceTree = "<group>"; };
-		E4B41E100CBF90EF00AF2ECE /* MoviePrivateQTKit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MoviePrivateQTKit.h; sourceTree = "<group>"; };
-		E4B41E110CBF90EF00AF2ECE /* MoviePrivateQTKit.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MoviePrivateQTKit.mm; sourceTree = "<group>"; };
+		E4B41E0C0CBF90BD00AF2ECE /* MediaPlayer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaPlayer.cpp; sourceTree = "<group>"; };
+		E4B41E0D0CBF90BD00AF2ECE /* MediaPlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaPlayer.h; sourceTree = "<group>"; };
+		E4B41E100CBF90EF00AF2ECE /* MediaPlayerPrivateQTKit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaPlayerPrivateQTKit.h; sourceTree = "<group>"; };
+		E4B41E110CBF90EF00AF2ECE /* MediaPlayerPrivateQTKit.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MediaPlayerPrivateQTKit.mm; sourceTree = "<group>"; };
 		E4B41E330CBFB60900AF2ECE /* RenderVideo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderVideo.cpp; sourceTree = "<group>"; };
 		E4B41E340CBFB60900AF2ECE /* RenderVideo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderVideo.h; sourceTree = "<group>"; };
 		E4B4232E0CBFB66400AF2ECE /* QTKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QTKit.framework; path = /System/Library/Frameworks/QTKit.framework; sourceTree = "<absolute>"; };
@@ -11163,8 +11163,8 @@
 				B275354F0B053814002CE64F /* IntPointMac.mm */,
 				B27535500B053814002CE64F /* IntRectMac.mm */,
 				B27535510B053814002CE64F /* IntSizeMac.mm */,
-				E4B41E100CBF90EF00AF2ECE /* MoviePrivateQTKit.h */,
-				E4B41E110CBF90EF00AF2ECE /* MoviePrivateQTKit.mm */,
+				E4B41E100CBF90EF00AF2ECE /* MediaPlayerPrivateQTKit.h */,
+				E4B41E110CBF90EF00AF2ECE /* MediaPlayerPrivateQTKit.mm */,
 			);
 			path = mac;
 			sourceTree = "<group>";
@@ -11222,8 +11222,8 @@
 				B27535470B053814002CE64F /* IntSize.h */,
 				B27535480B053814002CE64F /* IntSizeHash.h */,
 				B27535490B053814002CE64F /* mac */,
-				E4B41E0C0CBF90BD00AF2ECE /* Movie.cpp */,
-				E4B41E0D0CBF90BD00AF2ECE /* Movie.h */,
+				E4B41E0C0CBF90BD00AF2ECE /* MediaPlayer.cpp */,
+				E4B41E0D0CBF90BD00AF2ECE /* MediaPlayer.h */,
 				B27535520B053814002CE64F /* Path.cpp */,
 				B27535530B053814002CE64F /* Path.h */,
 				A88DD4880B4629B000C02990 /* PathTraversalState.cpp */,
@@ -13562,8 +13562,8 @@
 				935C476309AC4CE600A6AAB4 /* MouseEventWithHitTestResults.h in Headers */,
 				85031B480A44EFC700F992E0 /* MouseRelatedEvent.h in Headers */,
 				93309DFC099E64920056E581 /* MoveSelectionCommand.h in Headers */,
-				E44613E40CD681A200FADA75 /* Movie.h in Headers */,
-				E44613E60CD681A900FADA75 /* MoviePrivateQTKit.h in Headers */,
+				E44613E40CD681A200FADA75 /* MediaPlayer.h in Headers */,
+				E44613E60CD681A900FADA75 /* MediaPlayerPrivateQTKit.h in Headers */,
 				85031B4A0A44EFC700F992E0 /* MutationEvent.h in Headers */,
 				A818721E0977D3C0005826D9 /* NameNodeList.h in Headers */,
 				A8C4A80309D563270003AC8D /* NamedAttrMap.h in Headers */,
@@ -15291,8 +15291,8 @@
 				93EB355F09E37FD600F43799 /* MouseEventWithHitTestResults.cpp in Sources */,
 				85031B470A44EFC700F992E0 /* MouseRelatedEvent.cpp in Sources */,
 				93309DFB099E64920056E581 /* MoveSelectionCommand.cpp in Sources */,
-				E44613E30CD6819F00FADA75 /* Movie.cpp in Sources */,
-				E44613E50CD681A600FADA75 /* MoviePrivateQTKit.mm in Sources */,
+				E44613E30CD6819F00FADA75 /* MediaPlayer.cpp in Sources */,
+				E44613E50CD681A600FADA75 /* MediaPlayerPrivateQTKit.mm in Sources */,
 				85031B490A44EFC700F992E0 /* MutationEvent.cpp in Sources */,
 				A81872240977D3C0005826D9 /* NameNodeList.cpp in Sources */,
 				A8C4A80409D563270003AC8D /* NamedAttrMap.cpp in Sources */,
