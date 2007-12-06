@@ -1,3 +1,35 @@
+2007-12-05  Pierre-Luc Beaudoin  <pierre-luc.beaudoin@collabora.co.uk>
+
+        http://bugs.webkit.org/show_bug.cgi?id=16145
+        [gtk] Implement media support in GTK backend
+
+        Reviewed by Alp Toker.
+
+        Remove old comments, fix variable names, match WebKit coding style.
+
+        * platform/graphics/gtk/MoviePrivateGStreamer.cpp:
+        (WebCore::moviePrivateEOSCallback):
+        (WebCore::MoviePrivate::MoviePrivate):
+        (WebCore::MoviePrivate::load):
+        (WebCore::MoviePrivate::play):
+        (WebCore::MoviePrivate::pause):
+        (WebCore::MoviePrivate::currentTime):
+        (WebCore::MoviePrivate::seek):
+        (WebCore::MoviePrivate::cancelSeek):
+        (WebCore::MoviePrivate::seeking):
+        (WebCore::MoviePrivate::naturalSize):
+        (WebCore::MoviePrivate::setVolume):
+        (WebCore::MoviePrivate::setMuted):
+        (WebCore::MoviePrivate::maxTimeBuffered):
+        (WebCore::MoviePrivate::bytesLoaded):
+        (WebCore::MoviePrivate::totalBytesKnown):
+        (WebCore::MoviePrivate::totalBytes):
+        (WebCore::MoviePrivate::updateStates):
+        (WebCore::MoviePrivate::didEnd):
+        (WebCore::MoviePrivate::paint):
+        (WebCore::MoviePrivate::createGSTPlayBin):
+        * platform/graphics/gtk/MoviePrivateGStreamer.h:
+
 2007-12-05  Mark Rowe  <mrowe@apple.com>
 
         Speculative wx build fix.  Add PlugInInfoStore::pluginNameForMIMEType to the temporary link stubs.

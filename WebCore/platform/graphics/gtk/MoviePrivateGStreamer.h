@@ -117,13 +117,12 @@ namespace WebCore {
     private:
         Movie* m_movie;
         GstElement* m_playBin;
-        GstElement* m_video_sink;
+        GstElement* m_videoSink;
         GstElement* m_source;
-        float m_seekTo;
         float m_rate;
         float m_endTime;
-        bool m_endReached;
-        double m_oldVolume;
+        bool m_isEndReached;
+        double m_volume;
         float m_previousTimeCueTimerFired;
         Movie::NetworkState m_networkState;
         Movie::ReadyState m_readyState;

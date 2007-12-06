@@ -45,10 +45,9 @@
 #include <limits>
 #include <math.h>
 
-namespace WebCore {
+using namespace std;
 
-// Local var, for strange reasons, a member var will make the app crash
-GdkWindow* m_window;
+namespace WebCore {
 
 gboolean moviePrivateErrorCallback(GstBus* bus, GstMessage* message, gpointer data)
 {
@@ -76,7 +75,7 @@ gboolean moviePrivateEOSCallback(GstBus* bus, GstMessage* message, gpointer data
 {
     if (GST_MESSAGE_TYPE(message) == GST_MESSAGE_EOS)
     {
-        LOG_VERBOSE(Media, "END OF STREAM");
+        LOG_VERBOSE(Media, "End of Stream");
         MoviePrivate* mp = reinterpret_cast<MoviePrivate*>(data);
         mp->didEnd();
     }
@@ -104,41 +103,22 @@ gboolean moviePrivateBufferingCallback(GstBus* bus, GstMessage* message, gpointe
     return true;
 }
 
-// Setup the overlay when the message is received
-GstBusSyncReply moviePrivateWindowIDCallback(GstBus* bus, GstMessage* message, gpointer data)
-{
-    if (GST_MESSAGE_TYPE(message) != GST_MESSAGE_ELEMENT)
-        return GST_BUS_PASS;
-
-    if (!gst_structure_has_name(message->structure, "prepare-xwindow-id"))
-        return GST_BUS_PASS;
-
-    // Disabled for now as it is annoying: the overlay if done for the whole web page
-    // not only the specified Rect...
-
-    //gst_x_overlay_set_xwindow_id(
-    //    GST_X_OVERLAY(GST_MESSAGE_SRC(message)),
-    //    GDK_WINDOW_XID(m_window));
-    return GST_BUS_DROP;
-}
-
 MoviePrivate::MoviePrivate(Movie* movie)
     : m_movie(movie)
     , m_playBin(0)
-    , m_video_sink(0)
+    , m_videoSink(0)
     , m_source(0)
-    , m_seekTo(-1)
     , m_rate(1.0f)
-    , m_endTime(std::numeric_limits<float>::infinity())
-    , m_endReached(false)
-    , m_oldVolume(0.5f)
+    , m_endTime(numeric_limits<float>::infinity())
+    , m_isEndReached(false)
+    , m_volume(0.5f)
     , m_previousTimeCueTimerFired(0)
     , m_networkState(Movie::Empty)
     , m_readyState(Movie::DataUnavailable)
     , m_startedPlaying(false)
     , m_isStreaming(false)
 {
-    //FIXME We should pass the arguments from the command line
+    // FIXME: We should pass the arguments from the command line
     gst_init(0, NULL);
 }
 
@@ -150,7 +130,7 @@ MoviePrivate::~MoviePrivate()
 
 void MoviePrivate::load(String url)
 {
-    LOG_VERBOSE(Media, "LOAD %s", url.utf8().data());
+    LOG_VERBOSE(Media, "Load %s", url.utf8().data());
     if (m_networkState != Movie::Loading) {
         m_networkState = Movie::Loading;
         m_movie->networkStateChanged();
@@ -160,19 +140,17 @@ void MoviePrivate::load(String url)
         m_movie->readyStateChanged();
     }
 
-    cancelSeek();
     createGSTPlayBin(url);
     pause();
 }
 
 void MoviePrivate::play()
 {
-    cancelSeek();
-    LOG_VERBOSE(Media, "PLAY");
+    LOG_VERBOSE(Media, "Play");
     // When end reached, rewind for Test video-seek-past-end-playing
-    if (m_endReached)
+    if (m_isEndReached)
         seek(0);
-    m_endReached = false;
+    m_isEndReached = false;
 
     gst_element_set_state(m_playBin, GST_STATE_PLAYING);
     m_startedPlaying = true;
@@ -180,8 +158,7 @@ void MoviePrivate::play()
 
 void MoviePrivate::pause()
 {
-    cancelSeek();
-    LOG_VERBOSE(Media, "PAUSE");
+    LOG_VERBOSE(Media, "Pause");
     gst_element_set_state(m_playBin, GST_STATE_PAUSED);
     m_startedPlaying = false;
 }
@@ -195,26 +172,24 @@ float MoviePrivate::duration()
     gint64 len = 0;
 
     if (gst_element_query_duration(m_playBin, &fmt, &len))
-        LOG_VERBOSE(Media, "duration: %" GST_TIME_FORMAT, GST_TIME_ARGS(len));
+        LOG_VERBOSE(Media, "Duration: %" GST_TIME_FORMAT, GST_TIME_ARGS(len));
     else
-        LOG_VERBOSE(Media, "duration query failed ");
+        LOG_VERBOSE(Media, "Duration query failed ");
 
     if ((GstClockTime)len == GST_CLOCK_TIME_NONE) {
         m_isStreaming = true;
-        return std::numeric_limits<float>::infinity();
+        return numeric_limits<float>::infinity();
     }
     return (float) (len / 1000000000.0);
-    //FIXME: handle 3.14.9.5 properly
+    // FIXME: handle 3.14.9.5 properly
 }
 
 float MoviePrivate::currentTime() const
 {
     if (!m_playBin)
         return 0;
-    if (seeking())
-        return m_seekTo;
     // Necessary as sometimes, gstreamer return 0:00 at the EOS
-    if (m_endReached)
+    if (m_isEndReached)
         return m_endTime;
 
     float ret;
@@ -227,9 +202,9 @@ float MoviePrivate::currentTime() const
         gint64 position;
         gst_query_parse_position(query, NULL, &position);
         ret = (float) (position / 1000000000.0);
-        LOG_VERBOSE(Media, "currentTime %" GST_TIME_FORMAT, GST_TIME_ARGS(position));
+        LOG_VERBOSE(Media, "Position %" GST_TIME_FORMAT, GST_TIME_ARGS(position));
     } else {
-        LOG_VERBOSE(Media, "position query failed...");
+        LOG_VERBOSE(Media, "Position query failed...");
         ret = 0.0;
     }
     gst_query_unref(query);
@@ -238,7 +213,6 @@ float MoviePrivate::currentTime() const
 
 void MoviePrivate::seek(float time)
 {
-    cancelSeek();
     GstClockTime sec = (GstClockTime)(time * GST_SECOND);
 
     if (!m_playBin)
@@ -247,14 +221,14 @@ void MoviePrivate::seek(float time)
     if (m_isStreaming)
         return;
 
-    LOG_VERBOSE(Media, "seek: %" GST_TIME_FORMAT, GST_TIME_ARGS(sec));
+    LOG_VERBOSE(Media, "Seek: %" GST_TIME_FORMAT, GST_TIME_ARGS(sec));
     // FIXME: What happens when the seeked position is not available?
     if (!gst_element_seek( m_playBin, m_rate,
             GST_FORMAT_TIME,
             (GstSeekFlags)(GST_SEEK_FLAG_FLUSH),
             GST_SEEK_TYPE_SET, sec,
             GST_SEEK_TYPE_NONE, GST_CLOCK_TIME_NONE))
-        LOG_VERBOSE(Media, "seek to %f failed", time);
+        LOG_VERBOSE(Media, "Seek to %f failed", time);
 }
 
 void MoviePrivate::setEndTime(float time)
@@ -274,7 +248,7 @@ void MoviePrivate::setEndTime(float time)
                 (GstSeekFlags)(GST_SEEK_FLAG_FLUSH | GST_SEEK_FLAG_ACCURATE),
                 GST_SEEK_TYPE_SET, start,
                 GST_SEEK_TYPE_SET, end ))
-            LOG_VERBOSE(Media, "seek to %f failed", time);
+            LOG_VERBOSE(Media, "Seek to %f failed", time);
     }
 }
 
@@ -300,8 +274,7 @@ void MoviePrivate::startCuePointTimerIfNeeded()
 
 void MoviePrivate::cancelSeek()
 {
-    if (m_seekTo > -1)
-        m_seekTo = -1;
+    notImplemented();
 }
 
 void MoviePrivate::cuePointTimerFired(Timer<MoviePrivate>*)
@@ -316,9 +289,7 @@ bool MoviePrivate::paused() const
 
 bool MoviePrivate::seeking() const
 {
-     if (!m_playBin)
-        return false;
-    return m_seekTo >= 0;
+    return false;;
 }
 
 // Returns the size of the video
@@ -327,7 +298,7 @@ IntSize MoviePrivate::naturalSize()
     int x = 0, y = 0;
     if (hasVideo()) {
         GstPad* pad = NULL;
-        pad = gst_element_get_pad(m_video_sink, "sink");
+        pad = gst_element_get_pad(m_videoSink, "sink");
         if (pad)
             gst_video_get_size(GST_PAD(pad), &x, &y);
     }
@@ -344,7 +315,7 @@ bool MoviePrivate::hasVideo()
 
 void MoviePrivate::setVolume(float volume)
 {
-    m_oldVolume = volume;
+    m_volume = volume;
     LOG_VERBOSE(Media, "Volume to %f", volume);
     setMuted(false);
 }
@@ -355,10 +326,10 @@ void MoviePrivate::setMuted(bool b)
         return;
 
     if (b) {
-        g_object_get(G_OBJECT(m_playBin), "volume", &m_oldVolume, NULL);
+        g_object_get(G_OBJECT(m_playBin), "volume", &m_volume, NULL);
         g_object_set(G_OBJECT(m_playBin), "volume", (double)0.0, NULL);
     } else {
-        g_object_set(G_OBJECT(m_playBin), "volume", m_oldVolume, NULL);
+        g_object_set(G_OBJECT(m_playBin), "volume", m_volume, NULL);
     }
 }
 
@@ -399,7 +370,7 @@ Movie::ReadyState MoviePrivate::readyState()
 
 float MoviePrivate::maxTimeBuffered()
 {
-    //TODO
+    notImplemented();
     LOG_VERBOSE(Media, "maxTimeBuffered");
     // rtsp streams are not buffered
     return m_isStreaming ? 0 : maxTimeLoaded();
@@ -407,17 +378,17 @@ float MoviePrivate::maxTimeBuffered()
 
 float MoviePrivate::maxTimeSeekable()
 {
-    //TODO
+    // TODO
     LOG_VERBOSE(Media, "maxTimeSeekable");
     if (m_isStreaming)
-        return std::numeric_limits<float>::infinity();
+        return numeric_limits<float>::infinity();
     // infinite duration means live stream
     return maxTimeLoaded();
 }
 
 float MoviePrivate::maxTimeLoaded()
 {
-    //TODO
+    // TODO
     LOG_VERBOSE(Media, "maxTimeLoaded");
     notImplemented();
     return duration();
@@ -425,6 +396,7 @@ float MoviePrivate::maxTimeLoaded()
 
 unsigned MoviePrivate::bytesLoaded()
 {
+    notImplemented();
     LOG_VERBOSE(Media, "bytesLoaded");
     /*if (!m_playBin)
         return 0;
@@ -437,42 +409,23 @@ unsigned MoviePrivate::bytesLoaded()
 
 bool MoviePrivate::totalBytesKnown()
 {
+    notImplemented();
     LOG_VERBOSE(Media, "totalBytesKnown");
     return totalBytes() > 0;
 }
 
 unsigned MoviePrivate::totalBytes()
 {
-
+    notImplemented();
     LOG_VERBOSE(Media, "totalBytes");
     if (!m_playBin)
         return 0;
 
     if (!m_source)
         return 0;
-    /*GstFormat fmt = GST_FORMAT_BYTES;
 
+    // Do something with m_source to get the total bytes of the media
 
-    if (gst_element_query_duration(m_playBin, &fmt, &len)) 
-        LOG_VERBOSE(Media, "totalBytes: %d", (len));
-    else {
-        LOG_VERBOSE(Media, "totalBytes failed ");
-        return 0;
-    }*/
-    guint64 len;
-    if (G_OBJECT_TYPE_NAME(m_source) == "GstFileSrc") {
-        // FIXME: Get file size some other way, maybe with the fd property
-        len = 0;
-    } else if (G_OBJECT_TYPE_NAME(m_source) == "GstGnomeVFSSrc") {
-        /*
-        GnomeVFSHandle* handle;
-        g_object_get(m_source, "handle", handle, NULL);
-        GnomeVFSFileInfo info;
-        gnome_vfs_get_file_info_from_handle(handle, &info,
-            GNOME_VFS_FILE_INFO_DEFAULT);
-        len = info.size;
-        */
-    }
     return 100;
 }
 
@@ -494,9 +447,6 @@ void MoviePrivate::updateStates()
 
     if (!m_playBin)
         return;
-
-    if (m_seekTo >= currentTime())
-        m_seekTo = -1;
 
     GstStateChangeReturn ret = gst_element_get_state (m_playBin,
         &state, &pending, 250 * GST_NSECOND);
@@ -586,7 +536,7 @@ void MoviePrivate::volumeChanged()
 
 void MoviePrivate::didEnd()
 {
-    m_endReached = true;
+    m_isEndReached = true;
     pause();
     timeChanged();
 }
@@ -615,50 +565,46 @@ void MoviePrivate::setVisible(bool b)
 
 void MoviePrivate::paint(GraphicsContext* p, const IntRect& r)
 {
-    // FIXME do the real thing
+    // FIXME: do the real thing
     if (p->paintingDisabled())
         return;
     // For now draw a placeholder rectangle
     p->drawRect(r);
-    // This will be used to draw with XOverlay
-    m_window = p->gdkDrawable();
 }
 
 void MoviePrivate::getSupportedTypes(HashSet<String>& types)
 {
-    // FIXME do the real thing
+    // FIXME: do the real thing
     notImplemented();
     types.add(String("video/x-theora+ogg"));
 }
 
 void MoviePrivate::createGSTPlayBin(String url)
 {
-    GstElement* audio_sink;
+    GstElement* audioSink;
     GstBus* bus;
 
     m_playBin = gst_element_factory_make("playbin", "play");
 
     bus = gst_pipeline_get_bus(GST_PIPELINE(m_playBin));
 
-    gst_bus_set_sync_handler(bus, (GstBusSyncHandler) moviePrivateWindowIDCallback, m_playBin);
     gst_bus_add_signal_watch(bus);
 
     g_signal_connect(bus, "message::error", G_CALLBACK(moviePrivateErrorCallback), this);
     g_signal_connect(bus, "message::eos", G_CALLBACK(moviePrivateEOSCallback), this);
-    g_signal_connect(bus, "message::prepare-xwindow-id", G_CALLBACK(moviePrivateWindowIDCallback), NULL);
     g_signal_connect(bus, "message::state-changed", G_CALLBACK(moviePrivateStateCallback), this);
     g_signal_connect(bus, "message::buffering", G_CALLBACK(moviePrivateBufferingCallback), this);
 
     gst_object_unref(bus);
 
     g_object_set(G_OBJECT(m_playBin), "uri", url.utf8().data(), NULL);
-    audio_sink = gst_element_factory_make("gconfaudiosink", NULL);
-    m_video_sink = gst_element_factory_make("gconfvideosink", NULL);
+    audioSink = gst_element_factory_make("gconfaudiosink", NULL);
+    m_videoSink = gst_element_factory_make("gconfvideosink", NULL);
 
-    g_object_set(m_playBin, "audio-sink", audio_sink, NULL);
-    g_object_set(m_playBin, "video-sink", m_video_sink, NULL);
+    g_object_set(m_playBin, "audio-sink", audioSink, NULL);
+    g_object_set(m_playBin, "video-sink", m_videoSink, NULL);
 
-    setVolume(m_oldVolume);
+    setVolume(m_volume);
 }
 
 }
