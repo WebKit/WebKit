@@ -22,9 +22,10 @@
 
 #include "config.h"
 #include "debugger.h"
-#include "ustring.h"
 
+#include "JSGlobalobject.h"
 #include "internal.h"
+#include "ustring.h"
 
 using namespace KJS;
 
