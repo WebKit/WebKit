@@ -22,6 +22,7 @@
 #include "config.h"
 #include "JSImmediate.h"
 
+#include "JSGlobalObject.h"
 #include "object.h"
 
 namespace KJS {

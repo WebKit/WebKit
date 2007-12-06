@@ -41,6 +41,7 @@
 #include "object_object.h"
 #include "regexp_object.h"
 #include "string_object.h"
+#include <sys/time.h>
 
 namespace KJS {
 
