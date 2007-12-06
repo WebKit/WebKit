@@ -1,3 +1,13 @@
+2007-12-05  Alp Toker  <alp@atoker.com>
+
+        Rubber stamped by Mark Rowe.
+
+        Remove DEPENDPATH on the generated sources directory. This causes
+        trouble and is no longer necessary following the glib-genmarshal
+        generator split.
+
+        * WebCore.pro:
+
 2007-12-04  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Darin Adler.
