@@ -33,6 +33,7 @@
 #include "COMEnumVariant.h"
 #include "Function.h"
 
+#include <JavaScriptCore/Interpreter.h>
 #include <JavaScriptCore/JSGlobalObject.h>
 #include <JavaScriptCore/JSStringRefBSTR.h>
 #include <JavaScriptCore/JSValueRef.h>
@@ -222,8 +223,7 @@ HRESULT STDMETHODCALLTYPE WebScriptCallFrame::valueForVariable(
 JSValue* WebScriptCallFrame::valueByEvaluatingJavaScriptFromString(BSTR script)
 {
     ExecState* state = m_state;
-    Interpreter* interp  = state->dynamicInterpreter();
-    JSGlobalObject* globObj = interp->globalObject();
+    JSGlobalObject* globObj = state->dynamicGlobalObject();
 
     // find "eval"
     JSObject* eval = 0;
@@ -249,7 +249,7 @@ JSValue* WebScriptCallFrame::valueByEvaluatingJavaScriptFromString(BSTR script)
         scriptExecutionResult = eval->call(state, 0, args);
     } else
         // no "eval", or no context (i.e. global scope) - use global fallback
-        scriptExecutionResult = interp->evaluate(UString(), 0, code.data(), code.size(), globObj).value();
+        scriptExecutionResult = Interpreter::evaluate(state, UString(), 0, code.data(), code.size(), globObj).value();
 
     if (state->hadException())
         scriptExecutionResult = state->exception();    // (may be redundant depending on which eval path was used)
