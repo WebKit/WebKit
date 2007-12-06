@@ -1,3 +1,24 @@
+2007-12-05  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=16266
+          <rdar://problem/5625279> REGRESSION: crash loading CNN.com at
+          Interpreter::createObjectsForGlobalObjectProperties()
+
+        I don't know how to reproduce this in a test.
+
+        * bindings/js/JSDocumentCustom.cpp: (WebCore::JSDocument::mark):
+        Call JSEventTargetNode::mark instead of DOMObject::mark. There's no difference
+        right now, but it's best to call your base class, not your base's base.
+
+        * bindings/js/kjs_events.h: Removed unneeded virtual from the
+        JSUnprotectedEventListener::mark() function; it neither derives from or is
+        derived from anyone else with a mark() function so there's no need for virtual.
+
+        * bindings/js/kjs_window.cpp: (KJS::Window::mark): Call JSGlobalObject::mark,
+        not JSObject::mark. This is the actual bug fix.
+
 2007-12-05  Pierre-Luc Beaudoin  <pierre-luc.beaudoin@collabora.co.uk>
 
         http://bugs.webkit.org/show_bug.cgi?id=16145
