@@ -1,5 +1,11 @@
 2007-12-05  Geoffrey Garen  <ggaren@apple.com>
 
+        Build fix: added an #include.
+
+        * kjs/bool_object.cpp:
+
+2007-12-05  Geoffrey Garen  <ggaren@apple.com>
+
         Reviewed by Darin Adler.
 
         Third step in refactoring JSGlobalObject: Moved data members and 
