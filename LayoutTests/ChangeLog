@@ -1,3 +1,22 @@
+2007-12-05  Rob Buis  <buis@kde.org>
+
+        Reviewed by Mitz.
+
+        Testcase for:
+        http://bugs.webkit.org/show_bug.cgi?id=15289
+        WebKit does not respect clip paths of a 0x0 rect
+
+        * platform/mac/svg/W3C-SVG-1.1/masking-path-04-b-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/masking-path-04-b-expected.txt:
+        * platform/mac/svg/batik/text/textEffect2-expected.checksum:
+        * platform/mac/svg/batik/text/textEffect2-expected.png:
+        * platform/mac/svg/batik/text/textProperties-expected.checksum:
+        * platform/mac/svg/batik/text/textProperties-expected.png:
+        * svg/custom/empty-clip-path-expected.checksum: Added.
+        * svg/custom/empty-clip-path-expected.png: Added.
+        * svg/custom/empty-clip-path-expected.txt: Added.
+        * svg/custom/empty-clip-path.svg: Added.
+
 2007-12-05  Alice Liu  <alice.liu@apple.com>
 
         Reviewed by Antti.

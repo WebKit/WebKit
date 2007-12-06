@@ -1,3 +1,17 @@
+2007-12-05  Rob Buis  <buis@kde.org>
+
+        Reviewed by Mitz.
+
+        http://bugs.webkit.org/show_bug.cgi?id=15289
+        WebKit does not respect clip paths of a 0x0 rect
+
+        Make empty clip paths clip the whole referencing graphic.
+
+        * svg/SVGClipPathElement.cpp:
+        (WebCore::SVGClipPathElement::canvasResource):
+        * svg/graphics/SVGResourceClipper.h:
+        (WebCore::ClipDataList::isEmpty):
+
 2007-12-05  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.

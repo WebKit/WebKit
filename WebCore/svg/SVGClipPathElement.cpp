@@ -88,6 +88,11 @@ SVGResource* SVGClipPathElement::canvasResource()
             pathStyle->deref(document()->renderArena());
         }
     }
+    if (m_clipper->clipData().isEmpty() ) {
+        Path pathData;
+        pathData.addRect(FloatRect());
+        m_clipper->addClipData(pathData, RULE_EVENODD, bbox);
+    }
     clipPathStyle->deref(document()->renderArena());
     return m_clipper.get();
 }

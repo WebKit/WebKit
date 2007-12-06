@@ -54,6 +54,7 @@ namespace WebCore {
         
         void clear() { m_clipData.clear(); }
         const Vector<ClipData>& clipData() const { return m_clipData; }
+        bool isEmpty() const { return m_clipData.isEmpty(); }
     private:
         Vector<ClipData> m_clipData;
     };  
