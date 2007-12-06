@@ -30,7 +30,7 @@ namespace WebKit {
     class ChromeClient : public WebCore::ChromeClient {
     public:
         ChromeClient(WebKitWebView*);
-        WebKitWebView* webPage() const { return m_webPage; }
+        WebKitWebView* webView() const { return m_webView; }
 
         virtual void chromeDestroyed();
 
@@ -97,7 +97,7 @@ namespace WebKit {
         virtual unsigned long long requestQuotaIncreaseForDatabaseOperation(WebCore::Frame*, const WebCore::SecurityOriginData&, const WebCore::String&, unsigned long long);
 
     private:
-        WebKitWebView* m_webPage;
+        WebKitWebView* m_webView;
         WebCore::KURL m_hoveredLinkURL;
     };
 }

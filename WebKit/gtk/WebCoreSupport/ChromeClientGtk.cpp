@@ -43,8 +43,8 @@
 using namespace WebCore;
 
 namespace WebKit {
-ChromeClient::ChromeClient(WebKitWebView* page)
-    : m_webPage(page)
+ChromeClient::ChromeClient(WebKitWebView* webView)
+    : m_webView(webView)
 {
 }
 
@@ -93,11 +93,11 @@ Page* ChromeClient::createWindow(Frame*, const FrameLoadRequest&, const WindowFe
         return 0;
     } else {
         /* TODO: FrameLoadRequest is not used */
-        WebKitWebView* page = WEBKIT_WEB_VIEW_GET_CLASS(m_webPage)->create_web_view(m_webPage);
-        if (!page)
+        WebKitWebView* webView = WEBKIT_WEB_VIEW_GET_CLASS(m_webView)->create_web_view(m_webView);
+        if (!webView)
             return 0;
 
-        WebKitWebViewPrivate *privateData = WEBKIT_WEB_VIEW_GET_PRIVATE(WEBKIT_WEB_VIEW(page));
+        WebKitWebViewPrivate* privateData = WEBKIT_WEB_VIEW_GET_PRIVATE(webView);
         return privateData->corePage;
     }
 }
@@ -197,20 +197,20 @@ bool ChromeClient::runBeforeUnloadConfirmPanel(const WebCore::String&, WebCore::
 void ChromeClient::addMessageToConsole(const WebCore::String& message, unsigned int lineNumber, const WebCore::String& sourceId)
 {
     gboolean retval;
-    g_signal_emit_by_name(m_webPage, "console-message", message.utf8().data(), lineNumber, sourceId.utf8().data(), &retval);
+    g_signal_emit_by_name(m_webView, "console-message", message.utf8().data(), lineNumber, sourceId.utf8().data(), &retval);
 }
 
 void ChromeClient::runJavaScriptAlert(Frame* frame, const String& message)
 {
     gboolean retval;
-    g_signal_emit_by_name(m_webPage, "script-alert", kit(frame), message.utf8().data(), &retval);
+    g_signal_emit_by_name(m_webView, "script-alert", kit(frame), message.utf8().data(), &retval);
 }
 
 bool ChromeClient::runJavaScriptConfirm(Frame* frame, const String& message)
 {
     gboolean retval;
     gboolean didConfirm;
-    g_signal_emit_by_name(m_webPage, "script-confirm", kit(frame), message.utf8().data(), &didConfirm, &retval);
+    g_signal_emit_by_name(m_webView, "script-confirm", kit(frame), message.utf8().data(), &didConfirm, &retval);
     return didConfirm == TRUE;
 }
 
@@ -218,7 +218,7 @@ bool ChromeClient::runJavaScriptPrompt(Frame* frame, const String& message, cons
 {
     gboolean retval;
     gchar* value = 0;
-    g_signal_emit_by_name(m_webPage, "script-prompt", kit(frame), message.utf8().data(), defaultValue.utf8().data(), &value, &retval);
+    g_signal_emit_by_name(m_webView, "script-prompt", kit(frame), message.utf8().data(), defaultValue.utf8().data(), &value, &retval);
     if (value) {
         result = String::fromUTF8(value);
         g_free(value);
@@ -230,7 +230,7 @@ bool ChromeClient::runJavaScriptPrompt(Frame* frame, const String& message, cons
 void ChromeClient::setStatusbarText(const String& string)
 {
     CString stringMessage = string.utf8();
-    g_signal_emit_by_name(m_webPage, "status-bar-text-changed", stringMessage.data());
+    g_signal_emit_by_name(m_webView, "status-bar-text-changed", stringMessage.data());
 }
 
 bool ChromeClient::shouldInterruptJavaScript()
@@ -274,11 +274,11 @@ void ChromeClient::mouseDidMoveOverElement(const HitTestResult& hit, unsigned mo
         if (!url.isEmpty() && url != m_hoveredLinkURL) {
             CString titleString = hit.title().utf8();
             DeprecatedCString urlString = url.prettyURL().utf8();
-            g_signal_emit_by_name(m_webPage, "hovering-over-link", titleString.data(), urlString.data());
+            g_signal_emit_by_name(m_webView, "hovering-over-link", titleString.data(), urlString.data());
             m_hoveredLinkURL = url;
         }
     } else if (!isLink && !m_hoveredLinkURL.isEmpty()) {
-        g_signal_emit_by_name(m_webPage, "hovering-over-link", 0, 0);
+        g_signal_emit_by_name(m_webView, "hovering-over-link", 0, 0);
         m_hoveredLinkURL = KURL();
     }
 }
@@ -287,9 +287,9 @@ void ChromeClient::setToolTip(const String& toolTip)
 {
 #if GTK_CHECK_VERSION(2,12,0)
     if (toolTip.isEmpty())
-        g_object_set(G_OBJECT(m_webPage), "has-tooltip", FALSE, NULL);
+        g_object_set(G_OBJECT(m_webView), "has-tooltip", FALSE, NULL);
     else
-        gtk_widget_set_tooltip_text(GTK_WIDGET(m_webPage), toolTip.utf8().data());
+        gtk_widget_set_tooltip_text(GTK_WIDGET(m_webView), toolTip.utf8().data());
 #else
     // TODO: Support older GTK+ versions
     // See http://bugs.webkit.org/show_bug.cgi?id=15793

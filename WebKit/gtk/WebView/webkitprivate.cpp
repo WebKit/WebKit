@@ -84,6 +84,6 @@ WebKitWebView* kit(WebCore::Page* corePage)
 
     ASSERT(corePage->chrome());
     WebKit::ChromeClient* client = static_cast<WebKit::ChromeClient*>(corePage->chrome()->client());
-    return client ? client->webPage() : 0;
+    return client ? client->webView() : 0;
 }
 }

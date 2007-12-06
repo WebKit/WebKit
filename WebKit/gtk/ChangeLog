@@ -1,3 +1,27 @@
+2007-12-06  Xan Lopez  <xan@gnome.org>
+
+        Reviewed by Alp Toker.
+
+        http://bugs.webkit.org/show_bug.cgi?id=16329
+        [GTK] Two small cleanups
+
+        * WebCoreSupport/ChromeClientGtk.cpp:
+        (WebKit::ChromeClient::createWindow):
+        (WebKit::ChromeClient::addMessageToConsole):
+        (WebKit::ChromeClient::runJavaScriptAlert):
+        (WebKit::ChromeClient::runJavaScriptConfirm):
+        (WebKit::ChromeClient::runJavaScriptPrompt):
+        (WebKit::ChromeClient::setStatusbarText):
+        (WebKit::ChromeClient::mouseDidMoveOverElement):
+        (WebKit::ChromeClient::setToolTip):
+        * WebCoreSupport/ChromeClientGtk.h:
+        * WebView/webkitprivate.cpp:
+        (WebKit::kit):
+        s/m_webPage/m_webView/
+        * WebView/webkitwebview.cpp:
+        Chain up to the parent class to activate bindings instead
+        of doing it explicitely.
+
 2007-12-06  Holger Hans Peter Freyther <holger.freyther@trolltech.com>
 
         Reviewed by Alp Toker.
