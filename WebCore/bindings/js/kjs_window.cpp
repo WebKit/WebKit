@@ -296,7 +296,7 @@ static bool allowPopUp(ExecState *exec, Window *window)
     Frame* frame = window->impl()->frame();
     if (!frame)
         return false;
-    if (window->impl()->frame()->scriptProxy()->processingUserGesture());
+    if (window->impl()->frame()->scriptProxy()->processingUserGesture())
         return true;
     Settings* settings = frame->settings();
     return settings && settings->JavaScriptCanOpenWindowsAutomatically();

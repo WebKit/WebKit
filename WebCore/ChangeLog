@@ -1,3 +1,12 @@
+2007-12-06  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Eric.
+
+        Fix bug spotted by GCC 4.2.
+
+        * bindings/js/kjs_window.cpp:
+        (KJS::allowPopUp): Remove extraneous semicolon that completely changed the meaning of allowPopUp.
+
 2007-12-06  Holger Hans Peter Freyther <holger.freyther@trolltech.com>
 
         Reviewed by Alp Toker.
