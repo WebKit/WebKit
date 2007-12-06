@@ -2981,7 +2981,6 @@ void FrameLoader::checkLoadCompleteForThisFrame()
 
             const ResourceError& error = dl->mainDocumentError();
 #ifndef NDEBUG
-            ASSERT(m_didDispatchDidCommitLoad);
             m_didDispatchDidCommitLoad = false;
 #endif
             if (!error.isNull())
@@ -4651,7 +4650,6 @@ void FrameLoader::dispatchDidCommitLoad()
         return;
 
 #ifndef NDEBUG
-    ASSERT(!m_didDispatchDidCommitLoad);
     m_didDispatchDidCommitLoad = true;
 #endif
 
