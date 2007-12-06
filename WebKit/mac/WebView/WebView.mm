@@ -4060,26 +4060,50 @@ static WebFrameView *containingFrameView(NSView *view)
     return fullVersion;
 }
 
+static inline int callGestalt(OSType selector)
+{
+    SInt32 value = 0;
+    Gestalt(selector, &value);
+    ASSERT(value);
+    return value;
+}
+
+// Uses underscores instead of dots because if "4." ever appears in a user agent string, old DHTML libraries treat it as Netscape 4.
+static NSString *createMacOSXVersionString()
+{
+    // Can't use -[NSProcessInfo operatingSystemVersionString] because it has too much stuff we don't want.
+    int major = callGestalt(gestaltSystemVersionMajor);
+    int minor = callGestalt(gestaltSystemVersionMinor);
+    int bugFix = callGestalt(gestaltSystemVersionBugFix);
+    if (bugFix)
+        return [[NSString alloc] initWithFormat:@"%d_%d_%d", major, minor, bugFix];
+    if (minor)
+        return [[NSString alloc] initWithFormat:@"%d_%d", major, minor];
+    return [[NSString alloc] initWithFormat:@"%d", major];
+}
+
 - (NSString *)_userAgentWithApplicationName:(NSString *)applicationName andWebKitVersion:(NSString *)version
 {
+    static NSString *osVersion = createMacOSXVersionString();
     NSString *language = [NSUserDefaults _webkit_preferredLanguageCode];
     if ([applicationName length])
-        return [NSString stringWithFormat:@"Mozilla/5.0 (Macintosh; U; " PROCESSOR " Mac OS X; %@) AppleWebKit/%@ (KHTML, like Gecko) %@", language, version, applicationName];
-    return [NSString stringWithFormat:@"Mozilla/5.0 (Macintosh; U; " PROCESSOR " Mac OS X; %@) AppleWebKit/%@ (KHTML, like Gecko)", language, version];
+        return [NSString stringWithFormat:@"Mozilla/5.0 (Macintosh; U; " PROCESSOR " Mac OS X %@; %@) AppleWebKit/%@ (KHTML, like Gecko) %@",
+            osVersion, language, version, applicationName];
+    return [NSString stringWithFormat:@"Mozilla/5.0 (Macintosh; U; " PROCESSOR " Mac OS X %@; %@) AppleWebKit/%@ (KHTML, like Gecko)",
+        osVersion, language, version];
 }
 
 // Get the appropriate user-agent string for a particular URL.
 - (WebCore::String)_userAgentForURL:(const WebCore::KURL&)url
 {
     if (_private->useSiteSpecificSpoofing) {
-        // FIXME: Make this a hash table lookup if more domains need spoofing.
-        // FIXME: Remove yahoo.com once <rdar://problem/5057117> is fixed.
+        // FIXME: Remove yahoo.com once <rdar://problem/4549681> is fixed.
         if (url.host().endsWith("yahoo.com")) {
             static String yahooUserAgent([self _userAgentWithApplicationName:_private->applicationNameForUserAgent andWebKitVersion:@"422"]);
             return yahooUserAgent;
         }
         
-        // FIXME: Remove flickr.com workaround once <rdar://problem/5084872> is fixed
+        // FIXME: Remove flickr.com workaround once <rdar://problem/5081617> is fixed
         if (url.host().endsWith("flickr.com")) {
             // Safari 2.0.4's user agent string works here
             static String safari204UserAgent([self _userAgentWithApplicationName:@"Safari/419.3" andWebKitVersion:@"419"]);

@@ -1,3 +1,17 @@
+2007-12-06  Darin Adler  <darin@apple.com>
+
+        Reviewed by Tim Hatcher.
+
+        - fix <rdar://problem/5513394> No way to detect Tiger vs Leopard from Safari's user agent string
+
+        * WebView/WebView.mm:
+        (callGestalt): Added.
+        (createMacOSXVersionString): Added.
+        (-[WebView _userAgentWithApplicationName:andWebKitVersion:]): Added Mac OS X version string,
+        right after the string "Mac OS X", but with underscores instead of dots to avoid the dreaded
+        "4." problem (old libraries that think a "4." anywhere in the user agent means Netscape 4).
+        (-[WebView _userAgentForURL:]): Fixed incorrect bug numbers.
+
 2007-12-04  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Darin Adler.
