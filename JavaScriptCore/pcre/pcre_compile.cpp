@@ -2515,13 +2515,16 @@ static int calculateCompiledPatternLengthAndFlags(const UChar* pattern, int patt
                     return -1;
                 }
                 
-                /* We can optimize when there was only one optimizable character. Repeats
-                 for positive and negated single one-byte chars are handled by the general
-                 code. Here, we handle repeats for the class opcodes. */
-                
+                /* We can optimize when there was only one optimizable character.
+                 Note that this does not detect the case of a negated single character.
+                 In that case we do an incorrect length computation, but it's not a serious
+                 problem because the computed length is too large rather than too small. */
+
                 if (class_optcount == 1)
-                    length += 3;
-                else {
+                    goto NORMAL_CHAR;
+
+                /* Here, we handle repeats for the class opcodes. */
+                {
                     length += 33;
                     
                     /* A repeat needs either 1 or 5 bytes. If it is a possessive quantifier,

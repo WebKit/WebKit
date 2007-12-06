@@ -14,6 +14,9 @@ shouldBe('/\\[["\'\\s]{0,1}([\\w-]*)["\'\\s]{0,1}([\\W]{0,1}=){0,2}["\'\\s]{0,1}
 
 shouldBe('/(x){0,2}/.exec("").toString()', '","');
 
+shouldBe('/[\u00A1]{4,6}/.exec("\u00A1\u00A1\u00A1\u00A1").toString()', '"\u00A1\u00A1\u00A1\u00A1"');
+shouldBe('/[\u00A1]{1,100}[\u00A1]{1,100}[\u00A1]{1,100}[\u00A1]{1,100}[\u00A1]{1,100}[\u00A1]{1,100}[\u00A1]{1,100}[\u00A1]{1,100}/.exec("\u00A1\u00A1\u00A1\u00A1\u00A1\u00A1\u00A1\u00A1").toString()', '"\u00A1\u00A1\u00A1\u00A1\u00A1\u00A1\u00A1\u00A1"');
+
 debug('');
 
 var successfullyParsed = true;

@@ -1,3 +1,14 @@
+2007-12-06  Darin Adler  <darin@apple.com>
+
+        Reviewed by Eric Seidel.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=16321
+          new RegExp("[\u0097]{4,6}", "gmy") crashes in DEBUG builds
+          <rdar://problem/5632992>
+
+        * fast/js/regexp-overflow-expected.txt: Updated.
+        * fast/js/resources/regexp-overflow.js: Added test.
+
 2007-12-06  Adele Peterson  <adele@apple.com>
 
         Reviewed by Oliver.

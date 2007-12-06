@@ -1,3 +1,18 @@
+2007-12-06  Darin Adler  <darin@apple.com>
+
+        Reviewed by Eric Seidel.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=16321
+          new RegExp("[\u0097]{4,6}", "gmy") crashes in DEBUG builds
+          <rdar://problem/5632992>
+
+        Test: fast/js/regexp-oveflow.html
+
+        * pcre/pcre_compile.cpp:
+        (calculateCompiledPatternLengthAndFlags): In the case where a single character
+        character class is optimized to not use a character class at all, the preflight
+        code was not setting the lastitemlength variable.
+
 2007-12-05  Mark Rowe  <mrowe@apple.com>
 
         Qt Windows build fix.  Include the time-related headers in the correct place.
