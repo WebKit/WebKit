@@ -1,3 +1,15 @@
+2007-12-05  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Darin Adler. (Or vice versa.)
+        
+        Fixed ASSERT during run-javascriptcore-tests. (Darin just added the
+        ASSERT, but the bug wasn't new.)
+
+        * pcre/pcre_compile.cpp:
+        (compile_branch): The ?: operator here was backwards, causing us to
+        execute the loop too many times, adding stray KET opcodes to the
+        compiled regular expression.
+
 2007-12-05  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Geoff.
