@@ -1,8 +1,7 @@
 // -*- c-basic-offset: 2 -*-
 /*
- *  This file is part of the KDE libraries
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- *  Copyright (C) 2003 Apple Computer, Inc.
+ *  Copyright (C) 2003, 2007 Apple Inc.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -20,13 +19,13 @@
  *
  */
 
+#include "JSGlobalObject.h"
 #include "config.h"
-#include "value.h"
-#include "object.h"
-#include "types.h"
-#include "operations.h"
 #include "error_object.h"
-//#include "debugger.h"
+#include "object.h"
+#include "operations.h"
+#include "types.h"
+#include "value.h"
 
 using namespace KJS;
 

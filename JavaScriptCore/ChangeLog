@@ -2,6 +2,12 @@
 
         Build fix: added an #include.
 
+        * kjs/error_object.cpp:
+
+2007-12-05  Geoffrey Garen  <ggaren@apple.com>
+
+        Build fix: added an #include.
+
         * kjs/bool_object.cpp:
 
 2007-12-05  Geoffrey Garen  <ggaren@apple.com>
