@@ -1,3 +1,14 @@
+2007-12-06  Adam Roben  <aroben@apple.com>
+
+        Explicitly turn on the Mac font ascent hack on Windows
+
+        This keeps our font metrics matching those from Mac.
+
+        Reviewed by Hyatt.
+
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (main):
+
 2007-12-06  Anders Carlsson  <andersca@apple.com>
 
         Rename main.c to main.cpp here too.

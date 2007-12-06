@@ -47,7 +47,14 @@ using std::max;
 
 const float cSmallCapsFontSizeMultiplier = 0.7f;
 
+static bool shouldApplyMacAscentHack;
+
 static inline float scaleEmToUnits(float x, unsigned unitsPerEm) { return unitsPerEm ? x / (float)unitsPerEm : x; }
+
+void FontData::setShouldApplyMacAscentHack(bool b)
+{
+    shouldApplyMacAscentHack = b;
+}
 
 void FontData::platformInit()
 {    
@@ -74,13 +81,17 @@ void FontData::platformInit()
         SelectObject(dc, oldFont);
         ReleaseDC(0, dc);
 
-        // We need to adjust Times, Helvetica, and Courier to closely match the
-        // vertical metrics of their Microsoft counterparts that are the de facto
-        // web standard. The AppKit adjustment of 20% is too big and is
-        // incorrectly added to line spacing, so we use a 15% adjustment instead
-        // and add it to the ascent.
-        if (!_tcscmp(faceName.data(), _T("Times")) || !_tcscmp(faceName.data(), _T("Helvetica")) || !_tcscmp(faceName.data(), _T("Courier")))
-            fAscent += floorf(((fAscent + fDescent) * 0.15f) + 0.5f);
+        if (shouldApplyMacAscentHack) {
+            // This code comes from FontDataMac.mm. We only ever do this when running regression tests so that our metrics will match Mac.
+
+            // We need to adjust Times, Helvetica, and Courier to closely match the
+            // vertical metrics of their Microsoft counterparts that are the de facto
+            // web standard. The AppKit adjustment of 20% is too big and is
+            // incorrectly added to line spacing, so we use a 15% adjustment instead
+            // and add it to the ascent.
+            if (!_tcscmp(faceName.data(), _T("Times")) || !_tcscmp(faceName.data(), _T("Helvetica")) || !_tcscmp(faceName.data(), _T("Courier")))
+                fAscent += floorf(((fAscent + fDescent) * 0.15f) + 0.5f);
+        }
     }
 
     m_ascent = lroundf(fAscent);

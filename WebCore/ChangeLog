@@ -1,3 +1,27 @@
+2007-12-06  Adam Roben  <aroben@apple.com>
+
+        Fix <rdar://5108390> Feed title is too low in blue banner
+
+        Way back in r23069 we started applying the same font ascent hack that
+        Mac WebKit applies to Helvetica, Times, and Courier. We did this so
+        that those fonts would match the Mac metrics when we run the
+        regression tests. However, this hack was applying to Arial on Windows
+        when a site would specify the Helvetica font face because Windows will
+        alias the font names. Instead of removing the hack entirely, we
+        turn it off by default but provide some SPI so that DumpRenderTree can
+        turn it on.
+
+        Reviewed by Hyatt.
+
+        All tests pass.
+
+        * platform/graphics/FontData.h: Add a new static method to turn on the
+        hack on Windows only.
+        * platform/graphics/win/FontDataWin.cpp:
+        (WebCore::FontData::setShouldApplyMacAscentHack): Added.
+        (WebCore::FontData::platformInit): Only perform the hack if
+        shouldApplyMacAscentHack is true.
+
 2007-12-06  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Sam Weinig.

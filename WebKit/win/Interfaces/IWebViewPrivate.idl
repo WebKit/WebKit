@@ -124,4 +124,7 @@ interface IWebViewPrivate : IUnknown
     HRESULT clearUndoRedoOperations();
 
     HRESULT setProhibitsMainFrameScrolling([in] BOOL prohibits);
+
+    // SPI for DumpRenderTree. This is global to all WebViews.
+    HRESULT setShouldApplyMacFontAscentHack([in] BOOL shouldApply);
 }

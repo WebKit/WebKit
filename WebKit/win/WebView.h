@@ -621,6 +621,7 @@ public:
     virtual HRESULT STDMETHODCALLTYPE clearUndoRedoOperations( void);
 
     virtual HRESULT STDMETHODCALLTYPE setProhibitsMainFrameScrolling(BOOL);
+    virtual HRESULT STDMETHODCALLTYPE setShouldApplyMacFontAscentHack(BOOL);
 
     // WebView
     WebCore::Page* page();

@@ -1,3 +1,15 @@
+2007-12-06  Adam Roben  <aroben@apple.com>
+
+        Add SPI so that DumpRenderTree can turn on the Mac font ascent hack
+
+        Reviewed by Hyatt.
+
+        * Interfaces/IWebViewPrivate.idl: Added new method declaration.
+        * WebView.cpp:
+        (WebView::setShouldApplyMacFontAscentHack): Added. Just calls down to
+        FontData.
+        * WebView.h:
+
 2007-12-06  Ada Chan  <adachan@apple.com>
 
         Build fix.

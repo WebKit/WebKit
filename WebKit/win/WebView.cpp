@@ -64,6 +64,7 @@
 #include <WebCore/EventHandler.h>
 #include <WebCore/FileSystem.h>
 #include <WebCore/FocusController.h>
+#include <WebCore/FontData.h>
 #include <WebCore/FrameLoader.h>
 #include <WebCore/FrameTree.h>
 #include <WebCore/FrameView.h>
@@ -4161,6 +4162,12 @@ HRESULT WebView::setProhibitsMainFrameScrolling(BOOL b)
         return E_FAIL;
 
     m_page->mainFrame()->setProhibitsScrolling(b);
+    return S_OK;
+}
+
+HRESULT WebView::setShouldApplyMacFontAscentHack(BOOL b)
+{
+    FontData::setShouldApplyMacAscentHack(b);
     return S_OK;
 }
 

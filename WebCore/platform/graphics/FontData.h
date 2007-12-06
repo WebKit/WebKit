@@ -92,6 +92,8 @@ public:
     bool isSystemFont() const { return m_isSystemFont; }
     SCRIPT_FONTPROPERTIES* scriptFontProperties() const;
     SCRIPT_CACHE* scriptCache() const { return &m_scriptCache; }
+
+    static void setShouldApplyMacAscentHack(bool);
 #endif
 
 #if PLATFORM(GTK)
