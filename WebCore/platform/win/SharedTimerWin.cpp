@@ -41,10 +41,11 @@ static HWND timerWindowHandle = 0;
 static UINT timerFiredMessage = 0;
 const LPCWSTR kTimerWindowClassName = L"TimerWindowClass";
 static bool processingCustomTimerMessage = false;
+const int sharedTimerID = 1000;
 
 LRESULT CALLBACK TimerWindowWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-    if (message == timerFiredMessage) {
+    if (message == timerFiredMessage || (message == WM_TIMER && wParam == sharedTimerID)) {
         processingCustomTimerMessage = true;
         sharedTimerFiredFunction();
         processingCustomTimerMessage = false;
@@ -76,11 +77,6 @@ void setSharedTimerFiredFunction(void (*f)())
     sharedTimerFiredFunction = f;
 }
 
-static void CALLBACK timerFired(HWND, UINT, UINT_PTR, DWORD)
-{
-    sharedTimerFiredFunction();
-}
-
 void setSharedTimerFireTime(double fireTime)
 {
     ASSERT(sharedTimerFiredFunction);
@@ -107,13 +103,13 @@ void setSharedTimerFireTime(double fireTime)
     // user input > WM_PAINT/WM_TIMER.)
     // In addition, if the queue contains input events that have been there since the last call to
     // GetQueueStatus, PeekMessage or GetMessage we favor timers.
+    initializeOffScreenTimerWindow();
     if (intervalInMS < USER_TIMER_MINIMUM && !processingCustomTimerMessage && 
         !LOWORD(::GetQueueStatus(QS_ALLINPUT))) {
         // Windows SetTimer does not allow timeouts smaller than 10ms (USER_TIMER_MINIMUM)
-        initializeOffScreenTimerWindow();
         PostMessage(timerWindowHandle, timerFiredMessage, 0, 0);
     } else
-        timerID = SetTimer(0, 0, intervalInMS, timerFired);
+        timerID = SetTimer(timerWindowHandle, sharedTimerID, intervalInMS, 0);
 }
 
 void stopSharedTimer()

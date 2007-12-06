@@ -1,3 +1,30 @@
+2007-12-06  Steve Falkenburg  <sfalken@apple.com>
+
+        <rdar://problem/5614257> Crash in timer / hashtable code due to uncaught exception
+        
+        Don't use callback-based timers, since these cause Windows to eat Windows crashes
+        in code the timers call.
+        
+        Windows appears to be defending against "shatter" attacks partially by setting
+        up a structured exception block while dispatching callback-based WM_TIMERs.
+        
+        I verified this by adding a divide by zero into some timer callback code.
+        In the case where the timer was dispatched via a callback, the divide by zero
+        exception was silently handled and ignored, with execution continuing after
+        our call to DispatchMessage.  When processed via the WNDPROC, no SEH
+        block was established by Windows, and our divide by zero generated a real
+        crash (which is what we wanted).
+        
+        Windows handling our crashes for us led us to leave the timer data structures
+        in an invalid state so the next time a timer was set, we'd crash accessing an
+        invalid HashMap of timer data.
+        
+        Reviewed by Hyatt.
+
+        * platform/win/SharedTimerWin.cpp:
+        (WebCore::TimerWindowWndProc):
+        (WebCore::setSharedTimerFireTime):
+
 2007-12-06  Adam Roben  <aroben@apple.com>
 
         Fix <rdar://5108390> Feed title is too low in blue banner
