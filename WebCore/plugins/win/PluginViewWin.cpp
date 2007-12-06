@@ -61,7 +61,6 @@
 #include <wtf/ASCIICType.h>
 
 using KJS::ExecState;
-using KJS::Interpreter;
 using KJS::JSLock;
 using KJS::JSObject;
 using KJS::JSValue;
@@ -1330,7 +1329,7 @@ KJS::Bindings::Instance* PluginViewWin::bindingInstance()
     if (npErr != NPERR_NO_ERROR || !object)
         return 0;
 
-    RefPtr<KJS::Bindings::RootObject> root = m_parentFrame->createRootObject(this, m_parentFrame->scriptProxy()->interpreter()->globalObject());
+    RefPtr<KJS::Bindings::RootObject> root = m_parentFrame->createRootObject(this, m_parentFrame->scriptProxy()->globalObject());
     KJS::Bindings::Instance *instance = KJS::Bindings::Instance::createBindingForLanguageInstance(KJS::Bindings::Instance::CLanguage, object, root.release());
 
     _NPN_ReleaseObject(object);
