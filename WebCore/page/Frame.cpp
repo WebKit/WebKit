@@ -252,13 +252,11 @@ void Frame::setView(FrameView* view)
 
 KJSProxy *Frame::scriptProxy()
 {
-    Settings* settings = this->settings();
-    if (!settings || !settings->isJavaScriptEnabled())
-        return 0;
-
-    if (!d->m_jscript)
-        d->m_jscript = new KJSProxy(this);
-
+    if (!d->m_jscript) {
+        Settings* settings = this->settings();
+        if (settings && settings->isJavaScriptEnabled())
+            d->m_jscript = new KJSProxy(this);
+    }
     return d->m_jscript;
 }
 
