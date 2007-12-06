@@ -1,3 +1,9 @@
+2007-12-06  Anders Carlsson  <andersca@apple.com>
+
+        Rename main.c to main.cpp here too.
+        
+        * DumpRenderTree/win/TestNetscapePlugin/main.cpp: Copied from DumpRenderTree/win/TestNetscapePlugin/main.c.
+
 2007-12-06  Sam Weinig  <sam@webkit.org>
 
         Rubber stamped by Geoff.
