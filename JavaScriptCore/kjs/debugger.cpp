@@ -23,7 +23,7 @@
 #include "config.h"
 #include "debugger.h"
 
-#include "JSGlobalobject.h"
+#include "JSGlobalObject.h"
 #include "internal.h"
 #include "ustring.h"
 

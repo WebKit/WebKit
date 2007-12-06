@@ -1,5 +1,11 @@
 2007-12-05  Geoffrey Garen  <ggaren@apple.com>
 
+        Build fix: Fixed #include spelling.
+
+        * kjs/debugger.cpp:
+
+2007-12-05  Geoffrey Garen  <ggaren@apple.com>
+
         Build fix: added #include.
 
         * kjs/debugger.cpp:
