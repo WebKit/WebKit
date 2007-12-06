@@ -30,6 +30,7 @@ namespace KJS {
 
   class DebuggerImp;
   class ExecState;
+  class JSGlobalObject;
   class JSObject;
   class JSValue;
   class UString;

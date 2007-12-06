@@ -1,5 +1,11 @@
 2007-12-05  Geoffrey Garen  <ggaren@apple.com>
 
+        Build fix: added a forward declaration.
+
+        * kjs/debugger.h:
+
+2007-12-05  Geoffrey Garen  <ggaren@apple.com>
+
         Build fix: added an #include.
 
         * kjs/error_object.cpp:
