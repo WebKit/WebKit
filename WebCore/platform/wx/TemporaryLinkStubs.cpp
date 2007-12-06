@@ -120,6 +120,7 @@ void WebCore::findWordBoundary(UChar const* str,int len,int position,int* start,
 PluginInfo*PlugInInfoStore::createPluginInfoForPluginAtIndex(unsigned) { notImplemented(); return 0;}
 unsigned PlugInInfoStore::pluginCount() const { notImplemented(); return 0; }
 bool WebCore::PlugInInfoStore::supportsMIMEType(const WebCore::String&) { notImplemented(); return false; }
+String PlugInInfoStore::pluginNameForMIMEType(const String& mimeType) { notImplemented(); return String(); }
 void WebCore::refreshPlugins(bool) { notImplemented(); }
 
 void Widget::setIsSelected(bool) { notImplemented(); }
