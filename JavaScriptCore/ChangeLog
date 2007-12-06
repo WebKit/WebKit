@@ -2,6 +2,12 @@
 
         Build fix: added some #includes.
 
+        * kjs/JSImmediate.cpp:
+
+2007-12-05  Geoffrey Garen  <ggaren@apple.com>
+
+        Build fix: added some #includes.
+
         * kjs/JSGlobalObject.cpp:
         * kjs/JSImmediate.cpp:
 
