@@ -38,7 +38,7 @@ using namespace HTMLNames;
 namespace KJS {
 
 typedef HashMap<void*, DOMObject*> DOMObjectMap;
-typedef HashMap<Node*, JSNode*> NodeMap;
+typedef HashMap<WebCore::Node*, JSNode*> NodeMap;
 typedef HashMap<Document*, NodeMap*> NodePerDocMap;
 
 // For debugging, keep a set of wrappers currently registered, and check that
@@ -133,7 +133,7 @@ void ScriptInterpreter::forgetDOMObject(void* objectHandle)
     removeWrapper(domObjects().take(objectHandle));
 }
 
-JSNode* ScriptInterpreter::getDOMNodeForDocument(Document* document, Node* node)
+JSNode* ScriptInterpreter::getDOMNodeForDocument(Document* document, WebCore::Node* node)
 {
     if (!document)
         return static_cast<JSNode*>(domObjects().get(node));
@@ -143,7 +143,7 @@ JSNode* ScriptInterpreter::getDOMNodeForDocument(Document* document, Node* node)
     return NULL;
 }
 
-void ScriptInterpreter::forgetDOMNodeForDocument(Document* document, Node* node)
+void ScriptInterpreter::forgetDOMNodeForDocument(Document* document, WebCore::Node* node)
 {
     if (!document) {
         removeWrapper(domObjects().take(node));
@@ -154,7 +154,7 @@ void ScriptInterpreter::forgetDOMNodeForDocument(Document* document, Node* node)
         removeWrapper(documentDict->take(node));
 }
 
-void ScriptInterpreter::putDOMNodeForDocument(Document* document, Node* node, JSNode* wrapper)
+void ScriptInterpreter::putDOMNodeForDocument(Document* document, WebCore::Node* node, JSNode* wrapper)
 {
     addWrapper(wrapper);
     if (!document) {
@@ -187,7 +187,7 @@ void ScriptInterpreter::markDOMNodesForDocument(Document* doc)
         NodeMap::iterator nodeEnd = nodeDict->end();
         for (NodeMap::iterator nodeIt = nodeDict->begin(); nodeIt != nodeEnd; ++nodeIt) {
             JSNode* jsNode = nodeIt->second;
-            Node* node = jsNode->impl();
+            WebCore::Node* node = jsNode->impl();
             
             // don't mark wrappers for nodes that are no longer in the
             // document - they should not be saved if the node is not
@@ -201,7 +201,7 @@ void ScriptInterpreter::markDOMNodesForDocument(Document* doc)
     }
 }
 
-void ScriptInterpreter::updateDOMNodeDocument(Node* node, Document* oldDoc, Document* newDoc)
+void ScriptInterpreter::updateDOMNodeDocument(WebCore::Node* node, Document* oldDoc, Document* newDoc)
 {
     ASSERT(oldDoc != newDoc);
     JSNode* wrapper = getDOMNodeForDocument(oldDoc, node);

@@ -96,7 +96,7 @@ JSValue* FunctionImp::argumentsGetter(ExecState* exec, JSObject*, const Identifi
   ExecState* e = exec;
   while (e) {
     if (e->function() == thisObj)
-      return static_cast<ActivationImp*>(e->activationObject())->get(exec, propertyName);
+      return e->activationObject()->get(exec, propertyName);
     e = e->callingExecState();
   }
   return jsNull();
@@ -358,21 +358,14 @@ bool Arguments::deleteProperty(ExecState* exec, const Identifier& propertyName)
 
 const ClassInfo ActivationImp::info = { "Activation", 0, 0 };
 
-ActivationImp::ActivationImp(ExecState* exec)
-    : d(new ActivationImpPrivate(exec))
-    , m_symbolTable(&exec->function()->body->symbolTable())
-{
-}
-
 JSValue* ActivationImp::argumentsGetter(ExecState* exec, JSObject*, const Identifier&, const PropertySlot& slot)
 {
   ActivationImp* thisObj = static_cast<ActivationImp*>(slot.slotBase());
-  ActivationImpPrivate* d = thisObj->d.get();
   
-  if (!d->argumentsObject)
+  if (!thisObj->d()->argumentsObject)
     thisObj->createArgumentsObject(exec);
   
-  return d->argumentsObject;
+  return thisObj->d()->argumentsObject;
 }
 
 PropertySlot::GetValueFunc ActivationImp::getArgumentsGetter()
@@ -382,19 +375,8 @@ PropertySlot::GetValueFunc ActivationImp::getArgumentsGetter()
 
 bool ActivationImp::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
 {
-    // We don't call through to JSObject because there's no way to give an 
-    // activation object getter/setter properties, and __proto__ is a 
-    // non-standard extension that other implementations do not expose in the 
-    // activation object.
-    ASSERT(!_prop.hasGetterSetterProperties());
-
-    // it's more efficient to just get and check for a special empty
-    // value than to do a separate contains check
-    size_t index = m_symbolTable->get(propertyName.ustring().rep());
-    if (index != missingSymbolMarker()) {
-        slot.setValueSlot(this, &d->localStorage[index].value);
+    if (symbolTableGet(propertyName, slot))
         return true;
-    }
 
     if (JSValue** location = getDirectLocation(propertyName)) {
         slot.setValueSlot(this, location);
@@ -407,6 +389,10 @@ bool ActivationImp::getOwnPropertySlot(ExecState* exec, const Identifier& proper
         return true;
     }
 
+    // We don't call through to JSObject because there's no way to give an 
+    // activation object getter properties or a prototype.
+    ASSERT(!_prop.hasGetterSetterProperties());
+    ASSERT(prototype() == jsNull());
     return false;
 }
 
@@ -415,57 +401,27 @@ bool ActivationImp::deleteProperty(ExecState* exec, const Identifier& propertyNa
     if (propertyName == exec->propertyNames().arguments)
         return false;
 
-    if (m_symbolTable->contains(propertyName.ustring().rep()))
-        return false;
-
-    return JSObject::deleteProperty(exec, propertyName);
-}
-
-void ActivationImp::getPropertyNames(ExecState* exec, PropertyNameArray& propertyNames)
-{
-    SymbolTable::const_iterator::Keys end = m_symbolTable->end().keys();
-    for (SymbolTable::const_iterator::Keys it = m_symbolTable->begin().keys(); it != end; ++it)
-        propertyNames.add(Identifier(*it));
-
-    JSObject::getPropertyNames(exec, propertyNames);
+    return JSVariableObject::deleteProperty(exec, propertyName);
 }
 
 void ActivationImp::put(ExecState*, const Identifier& propertyName, JSValue* value, int attr)
 {
-  // There's no way that an activation object can have a prototype or getter/setter properties.
-  ASSERT(!_prop.hasGetterSetterProperties());
-  ASSERT(prototype() == jsNull());
+    if (symbolTablePut(propertyName, value, attr))
+        return;
 
-  // it's more efficient to just get and check for a special empty
-  // value than to do a separate contains check
-  size_t index = m_symbolTable->get(propertyName.ustring().rep());
-  if (index != missingSymbolMarker()) {
-    LocalStorageEntry& entry = d->localStorage[index];
-    entry.value = value;
-    entry.attributes = attr;
-    return;
-  }
-
-  _prop.put(propertyName, value, attr, (attr == None || attr == DontDelete));
+    // We don't call through to JSObject because __proto__ and getter/setter 
+    // properties are non-standard extensions that other implementations do not
+    // expose in the activation object.
+    ASSERT(!_prop.hasGetterSetterProperties());
+    _prop.put(propertyName, value, attr, (attr == None || attr == DontDelete));
 }
 
 void ActivationImp::mark()
 {
-    JSObject::mark();
+    JSVariableObject::mark();
 
-    size_t size = d->localStorage.size();
-    for (size_t i = 0; i < size; ++i) {
-        JSValue* value = d->localStorage[i].value;
-        if (!value->marked())
-            value->mark();
-    }
-    
-    ASSERT(d->function);
-    if (!d->function->marked())
-        d->function->mark();
-
-    if (d->argumentsObject && !d->argumentsObject->marked())
-        d->argumentsObject->mark();
+    if (d()->argumentsObject && !d()->argumentsObject->marked())
+        d()->argumentsObject->mark();
 }
 
 void ActivationImp::createArgumentsObject(ExecState* exec)
@@ -473,7 +429,7 @@ void ActivationImp::createArgumentsObject(ExecState* exec)
     // Since "arguments" is only accessible while a function is being called,
     // we can retrieve our argument list from the ExecState for our function 
     // call instead of storing the list ourselves.
-    d->argumentsObject = new Arguments(exec, d->function, *d->exec->arguments(), this);
+    d()->argumentsObject = new Arguments(exec, d()->exec->function(), *d()->exec->arguments(), this);
 }
 
 // ------------------------------ GlobalFunc -----------------------------------
@@ -763,7 +719,7 @@ JSValue* GlobalFuncImp::callAsFunction(ExecState* exec, JSObject* thisObj, const
           
         if (switchGlobal) {
             newExec.pushScope(thisObj);
-            newExec.setVariableObject(thisObj);
+            newExec.setVariableObject(static_cast<JSGlobalObject*>(thisObj));
         }
         
         Completion c = progNode->execute(&newExec);

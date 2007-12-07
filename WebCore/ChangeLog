@@ -1,3 +1,20 @@
+2007-12-07  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Added some namespace qualifications and a forwarding header, now that
+        KJS::Node is sometimes #included in WebCore by JavaScriptCore headers.
+
+        * ForwardingHeaders/wtf/ListRefPtr.h: Added.
+        * bindings/js/JSXSLTProcessor.cpp:
+        (KJS::JSXSLTProcessorPrototypeFunctionTransformToFragment::callAsFunction):
+        * bindings/js/kjs_binding.cpp:
+        (KJS::ScriptInterpreter::getDOMNodeForDocument):
+        (KJS::ScriptInterpreter::forgetDOMNodeForDocument):
+        (KJS::ScriptInterpreter::putDOMNodeForDocument):
+        (KJS::ScriptInterpreter::markDOMNodesForDocument):
+        (KJS::ScriptInterpreter::updateDOMNodeDocument):
+
 2007-12-07  Adam Roben  <aroben@apple.com>
 
         Add SoftLinking.h for Windows and use it in a few places

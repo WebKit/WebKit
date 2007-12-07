@@ -50,10 +50,10 @@ ExecState::ExecState(JSGlobalObject* globalObject, JSObject* thisV,
     // create and initialize activation object (ECMA 10.1.6)
     if (type == FunctionCode) {
         m_activation = new ActivationImp(this);
-        m_variable = m_activation;
+        m_variableObject = m_activation;
     } else {
         m_activation = 0;
-        m_variable = globalObject;
+        m_variableObject = globalObject;
     }
     
     // ECMA 10.2
@@ -61,7 +61,7 @@ ExecState::ExecState(JSGlobalObject* globalObject, JSObject* thisV,
     case EvalCode:
         if (m_callingExec) {
             m_scopeChain = m_callingExec->scopeChain();
-            m_variable = m_callingExec->variableObject();
+            m_variableObject = m_callingExec->variableObject();
             m_thisVal = m_callingExec->thisValue();
             break;
         } // else same as GlobalCode
@@ -72,7 +72,7 @@ ExecState::ExecState(JSGlobalObject* globalObject, JSObject* thisV,
     case FunctionCode:
         m_scopeChain = func->scope();
         m_scopeChain.push(m_activation);
-        m_variable = m_activation; // TODO: DontDelete ? (ECMA 10.2.3)
+        m_variableObject = m_activation;
         m_thisVal = thisV;
         break;
     }
@@ -106,7 +106,7 @@ JSGlobalObject* ExecState::lexicalGlobalObject() const
     
 void ExecState::updateLocalStorage() 
 {
-    m_localStorageBuffer = static_cast<ActivationImp*>(m_activation)->localStorage().data(); 
+    m_localStorageBuffer = m_activation->localStorage().data(); 
 }
 
 } // namespace KJS

@@ -38,12 +38,14 @@ namespace KJS  {
         FunctionCode,
     };
     
-    class JSGlobalObject;
-    class ScopeChain;
-    class Interpreter;
+    class ActivationImp;
+    class FunctionBodyNode;
     class FunctionImp;
     class GlobalFuncImp;
-    class FunctionBodyNode;
+    class Interpreter;
+    class JSGlobalObject;
+    class JSVariableObject;
+    class ScopeChain;
     struct LocalStorageEntry;
     
     /**
@@ -73,14 +75,14 @@ namespace KJS  {
         
         const ScopeChain& scopeChain() const { return m_scopeChain; }
         
-        JSObject* variableObject() const { return m_variable; }
-        void setVariableObject(JSObject* v) { m_variable = v; }
+        JSVariableObject* variableObject() const { return m_variableObject; }
+        void setVariableObject(JSVariableObject* v) { m_variableObject = v; }
         
         JSObject* thisValue() const { return m_thisVal; }
         
         ExecState* callingExecState() { return m_callingExec; }
         
-        JSObject* activationObject() { return m_activation; }
+        ActivationImp* activationObject() { return m_activation; }
         CodeType codeType() { return m_codeType; }
         FunctionBodyNode* currentBody() { return m_currentBody; }
         FunctionImp* function() const { return m_function; }
@@ -128,11 +130,11 @@ namespace KJS  {
         
         FunctionImp* m_function;
         const List* m_arguments;
-        JSObject* m_activation;
+        ActivationImp* m_activation;
         LocalStorageEntry* m_localStorageBuffer;
 
         ScopeChain m_scopeChain;
-        JSObject* m_variable;
+        JSVariableObject* m_variableObject;
         JSObject* m_thisVal;
         
         LabelStack ls;

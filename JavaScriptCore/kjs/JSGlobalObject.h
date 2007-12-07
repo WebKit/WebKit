@@ -23,7 +23,7 @@
 #ifndef KJS_GlobalObject_h
 #define KJS_GlobalObject_h
 
-#include "object.h"
+#include "JSVariableObject.h"
 
 namespace KJS {
 
@@ -67,11 +67,14 @@ namespace KJS {
 
     enum CompatMode { NativeMode, IECompat, NetscapeCompat };
 
-    class JSGlobalObject : public JSObject {
+    class JSGlobalObject : public JSVariableObject {
     protected:
-        struct JSGlobalObjectData {
+        using JSVariableObject::JSVariableObjectData;
+
+        struct JSGlobalObjectData : public JSVariableObjectData {
             JSGlobalObjectData(JSGlobalObject* globalObject)
-                : globalExec(globalObject, globalObject, 0)
+                : JSVariableObjectData(&inlineSymbolTable)
+                , globalExec(globalObject, globalObject, 0)
             {
             }
 
@@ -80,7 +83,7 @@ namespace KJS {
 
             Debugger* debugger;
             CompatMode compatMode;
-
+            
             ExecState globalExec;
             ExecState* currentExec;
             int recursion;
@@ -123,17 +126,20 @@ namespace KJS {
             NativeErrorPrototype* syntaxErrorPrototype;
             NativeErrorPrototype* typeErrorPrototype;
             NativeErrorPrototype* URIErrorPrototype;
+
+            SymbolTable inlineSymbolTable;
         };
 
     public:
         JSGlobalObject()
+            : JSVariableObject(new JSGlobalObjectData(this))
         {
             init();
         }
 
     protected:
         JSGlobalObject(JSValue* proto)
-            : JSObject(proto)
+            : JSVariableObject(proto, new JSGlobalObjectData(this))
         {
             init();
         }
@@ -143,7 +149,7 @@ namespace KJS {
 
         // Linked list of all global objects.
         static JSGlobalObject* head() { return s_head; }
-        JSGlobalObject* next() { return d->next; }
+        JSGlobalObject* next() { return d()->next; }
 
         // Resets the global object to contain only built-in properties, sets
         // the global object's prototype to "prototype," then adds the 
@@ -154,59 +160,59 @@ namespace KJS {
         // The following accessors return pristine values, even if a script 
         // replaces the global object's associated property.
 
-        ObjectObjectImp* objectConstructor() const { return d->objectConstructor; }
-        FunctionObjectImp* functionConstructor() const { return d->functionConstructor; }
-        ArrayObjectImp* arrayConstructor() const { return d->arrayConstructor; }
-        BooleanObjectImp* booleanConstructor() const { return d->booleanConstructor; }
-        StringObjectImp* stringConstructor() const{ return d->stringConstructor; }
-        NumberObjectImp* numberConstructor() const{ return d->numberConstructor; }
-        DateObjectImp* dateConstructor() const{ return d->dateConstructor; }
-        RegExpObjectImp* regExpConstructor() const { return d->regExpConstructor; }
-        ErrorObjectImp* errorConstructor() const { return d->errorConstructor; }
-        NativeErrorImp* evalErrorConstructor() const { return d->evalErrorConstructor; }
-        NativeErrorImp* rangeErrorConstructor() const { return d->rangeErrorConstructor; }
-        NativeErrorImp* referenceErrorConstructor() const { return d->referenceErrorConstructor; }
-        NativeErrorImp* syntaxErrorConstructor() const { return d->syntaxErrorConstructor; }
-        NativeErrorImp* typeErrorConstructor() const { return d->typeErrorConstructor; }
-        NativeErrorImp* URIErrorConstructor() const { return d->URIErrorConstructor; }
+        ObjectObjectImp* objectConstructor() const { return d()->objectConstructor; }
+        FunctionObjectImp* functionConstructor() const { return d()->functionConstructor; }
+        ArrayObjectImp* arrayConstructor() const { return d()->arrayConstructor; }
+        BooleanObjectImp* booleanConstructor() const { return d()->booleanConstructor; }
+        StringObjectImp* stringConstructor() const{ return d()->stringConstructor; }
+        NumberObjectImp* numberConstructor() const{ return d()->numberConstructor; }
+        DateObjectImp* dateConstructor() const{ return d()->dateConstructor; }
+        RegExpObjectImp* regExpConstructor() const { return d()->regExpConstructor; }
+        ErrorObjectImp* errorConstructor() const { return d()->errorConstructor; }
+        NativeErrorImp* evalErrorConstructor() const { return d()->evalErrorConstructor; }
+        NativeErrorImp* rangeErrorConstructor() const { return d()->rangeErrorConstructor; }
+        NativeErrorImp* referenceErrorConstructor() const { return d()->referenceErrorConstructor; }
+        NativeErrorImp* syntaxErrorConstructor() const { return d()->syntaxErrorConstructor; }
+        NativeErrorImp* typeErrorConstructor() const { return d()->typeErrorConstructor; }
+        NativeErrorImp* URIErrorConstructor() const { return d()->URIErrorConstructor; }
 
-        ObjectPrototype* objectPrototype() const { return d->objectPrototype; }
-        FunctionPrototype* functionPrototype() const { return d->functionPrototype; }
-        ArrayPrototype* arrayPrototype() const { return d->arrayPrototype; }
-        BooleanPrototype* booleanPrototype() const { return d->booleanPrototype; }
-        StringPrototype* stringPrototype() const { return d->stringPrototype; }
-        NumberPrototype* numberPrototype() const { return d->numberPrototype; }
-        DatePrototype* datePrototype() const { return d->datePrototype; }
-        RegExpPrototype* regExpPrototype() const { return d->regExpPrototype; }
-        ErrorPrototype* errorPrototype() const { return d->errorPrototype; }
-        NativeErrorPrototype* evalErrorPrototype() const { return d->evalErrorPrototype; }
-        NativeErrorPrototype* rangeErrorPrototype() const { return d->rangeErrorPrototype; }
-        NativeErrorPrototype* referenceErrorPrototype() const { return d->referenceErrorPrototype; }
-        NativeErrorPrototype* syntaxErrorPrototype() const { return d->syntaxErrorPrototype; }
-        NativeErrorPrototype* typeErrorPrototype() const { return d->typeErrorPrototype; }
-        NativeErrorPrototype* URIErrorPrototype() const { return d->URIErrorPrototype; }
+        ObjectPrototype* objectPrototype() const { return d()->objectPrototype; }
+        FunctionPrototype* functionPrototype() const { return d()->functionPrototype; }
+        ArrayPrototype* arrayPrototype() const { return d()->arrayPrototype; }
+        BooleanPrototype* booleanPrototype() const { return d()->booleanPrototype; }
+        StringPrototype* stringPrototype() const { return d()->stringPrototype; }
+        NumberPrototype* numberPrototype() const { return d()->numberPrototype; }
+        DatePrototype* datePrototype() const { return d()->datePrototype; }
+        RegExpPrototype* regExpPrototype() const { return d()->regExpPrototype; }
+        ErrorPrototype* errorPrototype() const { return d()->errorPrototype; }
+        NativeErrorPrototype* evalErrorPrototype() const { return d()->evalErrorPrototype; }
+        NativeErrorPrototype* rangeErrorPrototype() const { return d()->rangeErrorPrototype; }
+        NativeErrorPrototype* referenceErrorPrototype() const { return d()->referenceErrorPrototype; }
+        NativeErrorPrototype* syntaxErrorPrototype() const { return d()->syntaxErrorPrototype; }
+        NativeErrorPrototype* typeErrorPrototype() const { return d()->typeErrorPrototype; }
+        NativeErrorPrototype* URIErrorPrototype() const { return d()->URIErrorPrototype; }
 
         void saveBuiltins(SavedBuiltins&) const;
         void restoreBuiltins(const SavedBuiltins&);
 
-        void setTimeoutTime(unsigned timeoutTime) { d->timeoutTime = timeoutTime; }
+        void setTimeoutTime(unsigned timeoutTime) { d()->timeoutTime = timeoutTime; }
         void startTimeoutCheck();
         void stopTimeoutCheck();
         bool timedOut();
 
-        Debugger* debugger() const { return d->debugger; }
-        void setDebugger(Debugger* debugger) { d->debugger = debugger; }
+        Debugger* debugger() const { return d()->debugger; }
+        void setDebugger(Debugger* debugger) { d()->debugger = debugger; }
 
-        void setCurrentExec(ExecState* exec) { d->currentExec = exec; }
-        ExecState* currentExec() const { return d->currentExec; }
+        void setCurrentExec(ExecState* exec) { d()->currentExec = exec; }
+        ExecState* currentExec() const { return d()->currentExec; }
 
         // FIXME: Let's just pick one compatible behavior and go with it.
-        void setCompatMode(CompatMode mode) { d->compatMode = mode; }
-        CompatMode compatMode() const { return d->compatMode; }
+        void setCompatMode(CompatMode mode) { d()->compatMode = mode; }
+        CompatMode compatMode() const { return d()->compatMode; }
         
-        int recursion() { return d->recursion; }
-        void incRecursion() { ++d->recursion; }
-        void decRecursion() { --d->recursion; }
+        int recursion() { return d()->recursion; }
+        void incRecursion() { ++d()->recursion; }
+        void decRecursion() { --d()->recursion; }
 
         virtual void mark();
 
@@ -218,11 +224,10 @@ namespace KJS {
 
         virtual bool isSafeScript(const JSGlobalObject*) const { return true; }
 
-    protected:
-        std::auto_ptr<JSGlobalObjectData> d;
-
     private:
         void init();
+        
+        JSGlobalObjectData* d() const { return static_cast<JSGlobalObjectData*>(JSVariableObject::d); }
 
         bool checkTimeout();
         void resetTimeoutCheck();
@@ -232,9 +237,9 @@ namespace KJS {
 
     inline bool JSGlobalObject::timedOut()
     {
-        d->tickCount++;
+        d()->tickCount++;
 
-        if (d->tickCount != d->ticksUntilNextTimeoutCheck)
+        if (d()->tickCount != d()->ticksUntilNextTimeoutCheck)
             return false;
 
         return checkTimeout();

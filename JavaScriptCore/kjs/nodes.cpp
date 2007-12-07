@@ -93,10 +93,8 @@ static inline bool canSkipLookup(ExecState* exec, const Identifier& ident)
     if (exec->variableObject() != exec->scopeChain().top())
         return false;
 
-    ASSERT(exec->variableObject()->isActivation()); // Because this is function code.
-
     // Static lookup is impossible if the symbol isn't statically declared.
-    if (!static_cast<ActivationImp*>(exec->variableObject())->symbolTable().contains(ident.ustring().rep()))
+    if (!exec->variableObject()->symbolTable().contains(ident.ustring().rep()))
         return false;
         
     return true;
@@ -572,8 +570,7 @@ void ResolveNode::optimizeVariableAccess(FunctionBodyNode* functionBody, Declara
 
 JSValue* LocalVarAccessNode::inlineEvaluate(ExecState* exec)
 {
-    ASSERT(static_cast<ActivationImp*>(exec->variableObject())->isActivation());
-    ASSERT(static_cast<ActivationImp*>(exec->variableObject()) == exec->scopeChain().top());
+    ASSERT(exec->variableObject() == exec->scopeChain().top());
     return exec->localStorage()[index].value;
 }
 
@@ -1000,7 +997,7 @@ JSValue* FunctionCallResolveNode::inlineEvaluate(ExecState* exec)
       // that the section does not apply to interal functions, but for simplicity
       // of implementation we use the global object anyway here. This guarantees
       // that in host objects you always get a valid object for this.
-      if (thisObj->isActivation())
+      if (thisObj->isActivationObject())
         thisObj = exec->dynamicGlobalObject();
 
       return func->call(exec, thisObj, argList);
@@ -1046,8 +1043,7 @@ uint32_t FunctionCallResolveNode::evaluateToUInt32(ExecState* exec)
 
 JSValue* LocalVarFunctionCallNode::inlineEvaluate(ExecState* exec)
 {
-    ASSERT(static_cast<ActivationImp*>(exec->variableObject())->isActivation());
-    ASSERT(static_cast<ActivationImp*>(exec->variableObject()) == exec->scopeChain().top());
+    ASSERT(exec->variableObject() == exec->scopeChain().top());
 
     JSValue* v = exec->localStorage()[index].value;
 
@@ -1150,7 +1146,7 @@ JSValue *FunctionCallBracketNode::evaluate(ExecState *exec)
   JSObject *thisObj = baseObj;
   ASSERT(thisObj);
   ASSERT(thisObj->isObject());
-  ASSERT(!thisObj->isActivation());
+  ASSERT(!thisObj->isActivationObject());
 
   return func->call(exec, thisObj, argList);
 }
@@ -1199,7 +1195,7 @@ JSValue* FunctionCallDotNode::inlineEvaluate(ExecState* exec)
   JSObject *thisObj = baseObj;
   ASSERT(thisObj);
   ASSERT(thisObj->isObject());
-  ASSERT(!thisObj->isActivation());
+  ASSERT(!thisObj->isActivationObject());
 
   return func->call(exec, thisObj, argList);
 }
@@ -1284,8 +1280,7 @@ void PostIncResolveNode::optimizeForUnnecessaryResult()
     
 JSValue* PostIncLocalVarNode::evaluate(ExecState* exec)
 {
-    ASSERT(static_cast<ActivationImp*>(exec->variableObject())->isActivation());
-    ASSERT(static_cast<ActivationImp*>(exec->variableObject()) == exec->scopeChain().top());
+    ASSERT(exec->variableObject() == exec->scopeChain().top());
 
     JSValue** slot = &exec->localStorage()[m_index].value;
     JSValue* v = (*slot)->toJSNumber(exec);
@@ -1342,8 +1337,7 @@ void PostDecResolveNode::optimizeForUnnecessaryResult()
     
 JSValue* PostDecLocalVarNode::evaluate(ExecState* exec)
 {
-    ASSERT(static_cast<ActivationImp*>(exec->variableObject())->isActivation());
-    ASSERT(static_cast<ActivationImp*>(exec->variableObject()) == exec->scopeChain().top());
+    ASSERT(exec->variableObject() == exec->scopeChain().top());
 
     JSValue** slot = &exec->localStorage()[m_index].value;
     JSValue* v = (*slot)->toJSNumber(exec);
@@ -1353,8 +1347,7 @@ JSValue* PostDecLocalVarNode::evaluate(ExecState* exec)
 
 double PostDecLocalVarNode::inlineEvaluateToNumber(ExecState* exec)
 {
-    ASSERT(static_cast<ActivationImp*>(exec->variableObject())->isActivation());
-    ASSERT(static_cast<ActivationImp*>(exec->variableObject()) == exec->scopeChain().top());
+    ASSERT(exec->variableObject() == exec->scopeChain().top());
     
     JSValue** slot = &exec->localStorage()[m_index].value;
     double n = (*slot)->toNumber(exec);
@@ -1664,8 +1657,7 @@ void TypeOfResolveNode::optimizeVariableAccess(FunctionBodyNode* functionBody, D
 
 JSValue* LocalVarTypeOfNode::evaluate(ExecState* exec)
 {
-    ASSERT(static_cast<ActivationImp*>(exec->variableObject())->isActivation());
-    ASSERT(static_cast<ActivationImp*>(exec->variableObject()) == exec->scopeChain().top());
+    ASSERT(exec->variableObject() == exec->scopeChain().top());
 
     return typeStringForValue(exec->localStorage()[m_index].value);
 }
@@ -1717,8 +1709,7 @@ void PreIncResolveNode::optimizeVariableAccess(FunctionBodyNode* functionBody, D
 
 JSValue* PreIncLocalVarNode::evaluate(ExecState* exec)
 {
-    ASSERT(static_cast<ActivationImp*>(exec->variableObject())->isActivation());
-    ASSERT(static_cast<ActivationImp*>(exec->variableObject()) == exec->scopeChain().top());
+    ASSERT(exec->variableObject() == exec->scopeChain().top());
     JSValue** slot = &exec->localStorage()[m_index].value;
 
     double n = (*slot)->toNumber(exec);
@@ -1765,8 +1756,7 @@ void PreDecResolveNode::optimizeVariableAccess(FunctionBodyNode* functionBody, D
 
 JSValue* PreDecLocalVarNode::evaluate(ExecState* exec)
 {
-    ASSERT(static_cast<ActivationImp*>(exec->variableObject())->isActivation());
-    ASSERT(static_cast<ActivationImp*>(exec->variableObject()) == exec->scopeChain().top());
+    ASSERT(exec->variableObject() == exec->scopeChain().top());
     JSValue** slot = &exec->localStorage()[m_index].value;
 
     double n = (*slot)->toNumber(exec);
@@ -3178,8 +3168,7 @@ void AssignResolveNode::optimizeVariableAccess(FunctionBodyNode* functionBody, D
 
 JSValue* ReadModifyLocalVarNode::evaluate(ExecState* exec)
 {
-    ASSERT(static_cast<ActivationImp*>(exec->variableObject())->isActivation());
-    ASSERT(static_cast<ActivationImp*>(exec->variableObject()) == exec->scopeChain().top());
+    ASSERT(exec->variableObject() == exec->scopeChain().top());
     JSValue** slot = &exec->localStorage()[m_index].value;
 
     ASSERT(m_oper != OpEqual);
@@ -3193,8 +3182,7 @@ JSValue* ReadModifyLocalVarNode::evaluate(ExecState* exec)
 
 JSValue* AssignLocalVarNode::evaluate(ExecState* exec)
 {
-    ASSERT(static_cast<ActivationImp*>(exec->variableObject())->isActivation());
-    ASSERT(static_cast<ActivationImp*>(exec->variableObject()) == exec->scopeChain().top());
+    ASSERT(exec->variableObject() == exec->scopeChain().top());
     JSValue* v = m_right->evaluate(exec);
 
     KJS_CHECKEXCEPTIONVALUE
@@ -4503,8 +4491,7 @@ void FunctionBodyNode::processDeclarationsForFunctionCode(ExecState* exec)
     if (!m_optimizedResolveNodes)
         optimizeVariableAccess();
 
-    ASSERT(exec->variableObject()->isActivation());
-    LocalStorage& localStorage = static_cast<ActivationImp*>(exec->variableObject())->localStorage();
+    LocalStorage& localStorage = exec->variableObject()->localStorage();
     localStorage.reserveCapacity(m_varStack.size() + m_parameters.size() + m_functionStack.size());
     
     int minAttributes = Internal | DontDelete;

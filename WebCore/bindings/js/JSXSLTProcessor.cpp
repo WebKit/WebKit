@@ -93,7 +93,7 @@ JSValue* JSXSLTProcessorPrototypeFunctionTransformToFragment::callAsFunction(Exe
     JSValue *nodeVal = args[0];
     JSValue *docVal = args[1];
     if (nodeVal->isObject(&JSNode::info) && docVal->isObject(&JSDocument::info)) {
-        Node* node = static_cast<JSNode*>(nodeVal)->impl();
+        WebCore::Node* node = static_cast<JSNode*>(nodeVal)->impl();
         Document* doc = static_cast<Document*>(static_cast<JSDocument *>(docVal)->impl());
         return toJS(exec, processor.transformToFragment(node, doc).get());
     }

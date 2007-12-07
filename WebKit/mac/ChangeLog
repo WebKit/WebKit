@@ -1,3 +1,12 @@
+2007-12-07  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
+        
+        Added a forwarding header, since we now #include nodes.h through some
+        JavaScriptCore headers.
+
+        * ForwardingHeaders/wtf/ListRefPtr.h: Added.
+
 2007-12-06  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Oliver's rubber stamp
