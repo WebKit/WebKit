@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2006 Apple Computer, Inc.
+ *  Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -50,6 +50,13 @@ namespace WebCore {
         VALIDATION_ERR = 16,
         TYPE_MISMATCH_ERR = 17
     };
+
+    struct ExceptionCodeDescription {
+        const char* typeName; // has spaces and is suitable for use in exception description strings; maximum length is 10 characters
+        const char* name; // exception name, also intended for use in exception description strings; 0 if name not known; maximum length is 27 characters
+        int code; // numeric value of the exception within a particular type
+    };
+    void getExceptionCodeDescription(ExceptionCode, ExceptionCodeDescription&);
 
 }
 

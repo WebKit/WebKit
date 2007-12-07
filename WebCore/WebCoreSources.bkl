@@ -303,6 +303,7 @@ This file contains the list of files needed to build WebCore.
         dom/EventNames.cpp
         dom/EventTarget.cpp
         dom/EventTargetNode.cpp
+        dom/ExceptionCode.cpp
         dom/KeyboardEvent.cpp
         dom/MappedAttribute.cpp
         dom/MouseEvent.cpp

@@ -5877,6 +5877,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\dom\ExceptionCode.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\dom\ExceptionCode.h"
 				>
 			</File>

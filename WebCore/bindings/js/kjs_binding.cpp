@@ -26,33 +26,13 @@
 #include "config.h"
 #include "kjs_binding.h"
 
-#include "Chrome.h"
-#include "Event.h"
-#include "EventNames.h"
-#include "Frame.h"
+#include "ExceptionCode.h"
 #include "HTMLImageElement.h"
 #include "HTMLNames.h"
 #include "JSNode.h"
-#include "Page.h"
-#include "PlatformString.h"
-#include "Range.h"
-#include "RangeException.h"
 #include "XMLHttpRequest.h"
-#include "kjs_dom.h"
-#include "kjs_window.h"
-#include <kjs/collector.h>
-#include <wtf/HashMap.h>
-
-#if ENABLE(SVG)
-#include "SVGException.h"
-#endif
-
-#if ENABLE(XPATH)
-#include "XPathEvaluator.h"
-#endif
 
 using namespace WebCore;
-using namespace EventNames;
 using namespace HTMLNames;
 
 namespace KJS {
@@ -275,130 +255,35 @@ String valueToStringWithUndefinedOrNullCheck(ExecState* exec, JSValue* val)
     return val->toString(exec);
 }
 
-static const char* const exceptionNames[] = {
-    0,
-    "INDEX_SIZE_ERR",
-    "DOMSTRING_SIZE_ERR",
-    "HIERARCHY_REQUEST_ERR",
-    "WRONG_DOCUMENT_ERR",
-    "INVALID_CHARACTER_ERR",
-    "NO_DATA_ALLOWED_ERR",
-    "NO_MODIFICATION_ALLOWED_ERR",
-    "NOT_FOUND_ERR",
-    "NOT_SUPPORTED_ERR",
-    "INUSE_ATTRIBUTE_ERR",
-    "INVALID_STATE_ERR",
-    "SYNTAX_ERR",
-    "INVALID_MODIFICATION_ERR",
-    "NAMESPACE_ERR",
-    "INVALID_ACCESS_ERR",
-    "VALIDATION_ERR",
-    "TYPE_MISMATCH_ERR",
-};
-
-static const char* const rangeExceptionNames[] = {
-    0, "BAD_BOUNDARYPOINTS_ERR", "INVALID_NODE_TYPE_ERR"
-};
-
-static const char* const eventExceptionNames[] = {
-    "UNSPECIFIED_EVENT_TYPE_ERR"
-};
-
-static const char* const xmlHttpRequestExceptionNames[] = {
-    "NETWORK_ERR"
-};
-
-#if ENABLE(XPATH)
-static const char* const xpathExceptionNames[] = {
-    "INVALID_EXPRESSION_ERR",
-    "TYPE_ERR"
-};
-#endif
-
-#if ENABLE(SVG)
-static const char* const svgExceptionNames[] = {
-    "SVG_WRONG_TYPE_ERR",
-    "SVG_INVALID_VALUE_ERR",
-    "SVG_MATRIX_NOT_INVERTABLE"
-};
-#endif
-
 void setDOMException(ExecState* exec, ExceptionCode ec)
 {
     if (!ec || exec->hadException())
         return;
 
-    const char* type = "DOM";
-    int code = ec;
-
-    const char* const* nameTable;
-  
-    int nameTableSize;
-    int nameIndex;
-    if (code >= RangeExceptionOffset && code <= RangeExceptionMax) {
-        type = "DOM Range";
-        code -= RangeExceptionOffset;
-        nameIndex = code;
-        nameTable = rangeExceptionNames;
-        nameTableSize = sizeof(rangeExceptionNames) / sizeof(rangeExceptionNames[0]);
-    } else if (code >= EventExceptionOffset && code <= EventExceptionMax) {
-        type = "DOM Events";
-        code -= EventExceptionOffset;
-        nameIndex = code;
-        nameTable = eventExceptionNames;
-        nameTableSize = sizeof(eventExceptionNames) / sizeof(eventExceptionNames[0]);
-    } else if (code == XMLHttpRequestExceptionOffset) {
-        // FIXME: this exception should be replaced with DOM SECURITY_ERR when it finds its way to the spec.
+    // To be removed: See XMLHttpRequest.h.
+    if (ec == XMLHttpRequestExceptionOffset + PERMISSION_DENIED) {
         throwError(exec, GeneralError, "Permission denied");
         return;
-    } else if (code > XMLHttpRequestExceptionOffset && code <= XMLHttpRequestExceptionMax) {
-        type = "XMLHttpRequest";
-        // XMLHttpRequest exception codes start with 101 and we don't want 100 empty elements in the name array
-        nameIndex = code - NETWORK_ERR;
-        code -= XMLHttpRequestExceptionOffset;
-        nameTable = xmlHttpRequestExceptionNames;
-        nameTableSize = sizeof(xmlHttpRequestExceptionNames) / sizeof(xmlHttpRequestExceptionNames[0]);
-#if ENABLE(XPATH)
-    } else if (code >= XPathExceptionOffset && code <= XPathExceptionMax) {
-        type = "DOM XPath";
-        // XPath exception codes start with 51 and we don't want 51 empty elements in the name array
-        nameIndex = code - INVALID_EXPRESSION_ERR;
-        code -= XPathExceptionOffset;
-        nameTable = xpathExceptionNames;
-        nameTableSize = sizeof(xpathExceptionNames) / sizeof(xpathExceptionNames[0]);
-#endif
-#if ENABLE(SVG)
-    } else if (code >= SVGExceptionOffset && code <= SVGExceptionMax) {
-        type = "DOM SVG";
-        code -= SVGExceptionOffset;
-        nameIndex = code;
-        nameTable = svgExceptionNames;
-        nameTableSize = sizeof(svgExceptionNames) / sizeof(svgExceptionNames[0]);
-#endif
-    } else {
-        nameIndex = code;
-        nameTable = exceptionNames;
-        nameTableSize = sizeof(exceptionNames) / sizeof(exceptionNames[0]);
     }
 
-    const char* name = (nameIndex < nameTableSize && nameIndex >= 0) ? nameTable[nameIndex] : 0;
+    ExceptionCodeDescription description;
+    getExceptionCodeDescription(ec, description);
 
     // 100 characters is a big enough buffer, because there are:
     //   13 characters in the message
-    //   10 characters in the longest type, "DOM Events"
-    //   27 characters in the longest name, "NO_MODIFICATION_ALLOWED_ERR"
+    //   10 characters in the longest type name
+    //   27 characters in the longest exception name
     //   20 or so digits in the longest integer's ASCII form (even if int is 64-bit)
     //   1 byte for a null character
     // That adds up to about 70 bytes.
     char buffer[100];
-
-    if (name)
-        sprintf(buffer, "%s: %s Exception %d", name, type, code);
+    if (description.name)
+        sprintf(buffer, "%s: %s Exception %d", description.name, description.typeName, description.code);
     else
-        sprintf(buffer, "%s Exception %d", type, code);
+        sprintf(buffer, "%s Exception %d", description.typeName, description.code);
 
     JSObject* errorObject = throwError(exec, GeneralError, buffer);
-    errorObject->put(exec, "code", jsNumber(code));
+    errorObject->put(exec, "code", jsNumber(description.code));
 }
 
 }

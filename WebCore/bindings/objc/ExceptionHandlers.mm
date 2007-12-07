@@ -26,10 +26,7 @@
 #include "config.h"
 #include "ExceptionHandlers.h"
 
-#include "Event.h"
-#include "RangeException.h"
-#include "SVGException.h"
-#include "XPathEvaluator.h"
+#include "ExceptionCode.h"
 
 NSString * DOMException = @"DOMException";
 NSString * DOMRangeException = @"DOMRangeException";
@@ -43,30 +40,34 @@ void raiseDOMException(ExceptionCode ec)
 {
     ASSERT(ec);
 
-    NSString *name = DOMException;
+    ExceptionCodeDescription description;
+    getExceptionCodeDescription(ec, description);
 
-    int code = ec;
-    if (ec >= RangeExceptionOffset && ec <= RangeExceptionMax) {
-        name = DOMRangeException;
-        code -= RangeExceptionOffset;
-    } else if (ec >= EventExceptionOffset && ec <= EventExceptionMax) {
-        name = DOMEventException;
-        code -= EventExceptionOffset;
-#if ENABLE(SVG)
-    } else if (ec >= SVGExceptionOffset && ec <= SVGExceptionMax) {
-        name = DOMSVGException;
-        code -= SVGExceptionOffset;
-#endif
-#if ENABLE(XPATH)
-    } else if (ec >= XPathExceptionOffset && ec <= XPathExceptionMax) {
-        name = DOMXPathException;
-        code -= XPathExceptionOffset;
-#endif
-    }
+    NSString *exceptionName;
+    if (strcmp(description.typeName, "DOM Range") == 0)
+        exceptionName = DOMRangeException;
+    else if (strcmp(description.typeName, "DOM Events") == 0)
+        exceptionName = DOMEventException;
+    else if (strcmp(description.typeName, "DOM SVG") == 0)
+        exceptionName = DOMSVGException;
+    else if (strcmp(description.typeName, "DOM XPath") == 0)
+        exceptionName = DOMXPathException;
+    else
+        exceptionName = DOMException;
 
-    NSString *reason = [NSString stringWithFormat:@"*** Exception received from DOM API: %d", code];
-    NSException *exception = [NSException exceptionWithName:name reason:reason
-        userInfo:[NSDictionary dictionaryWithObject:[NSNumber numberWithInt:code] forKey:name]];
+    NSString *reason;
+    if (description.name)
+        reason = [[NSString alloc] initWithFormat:@"*** %s: %@ %d", description.name, exceptionName, description.code];
+    else
+        reason = [[NSString alloc] initWithFormat:@"*** %@ %d", exceptionName, description.code];
+
+    NSDictionary *userInfo = [[NSDictionary alloc] initWithObjectsAndKeys:[NSNumber numberWithInt:description.code], exceptionName, nil];
+
+    NSException *exception = [NSException exceptionWithName:exceptionName reason:reason userInfo:userInfo];
+
+    [reason release];
+    [userInfo release];
+
     [exception raise];
 }
 

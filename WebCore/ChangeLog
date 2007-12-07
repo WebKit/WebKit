@@ -1,3 +1,36 @@
+2007-12-06  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=16332
+          ObjC DOM exception object descriptions should include the exception name
+
+        * WebCore.pro: Added ExceptionCode.cpp.
+        * WebCore.vcproj/WebCore.vcproj: Added ExceptionCode.cpp.
+        * WebCore.xcodeproj/project.pbxproj: Added ExceptionCode.cpp.
+        * WebCoreSources.bkl: Added ExceptionCode.cpp.
+
+        * bindings/js/kjs_binding.cpp: (KJS::setDOMException): Moved the code to decompose an
+        ExceptionCode into ExceptionCode.h/cpp -- getExceptionCodeDescription. Also removed
+        the many unneeded includes that were here. Had to keep one special case here, for
+        SECURITY_ERR.
+
+        * bindings/objc/ExceptionHandlers.mm: (WebCore::raiseDOMException): Changed to use the
+        new getExceptionCodeDescription function so that this shares the exception name
+        information that was previously only available to JavaScript.
+
+        * dom/ExceptionCode.cpp: Copied from bindings/js/kjs_binding.cpp.
+        (WebCore::getExceptionCodeDescription): Added some assertions, and made the function
+        handle exception names in a slightly more robust way that is not subject to integer
+        overflow. (Not a real world issue since we should never receive a bad exception code.)
+
+        * dom/ExceptionCode.h: Added the ExceptionCodeDescription struct and the
+        getExceptionCodeDescription function.
+
+        * svg/SVGException.h: Added a missing #include and got rid of some comments. Some of
+        the comments were mildly helpful, but others were incorrect. This now matches the other
+        exception-related headers such as RangeException.h.
+
 2007-12-06  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Darin

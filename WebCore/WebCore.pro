@@ -483,6 +483,7 @@ SOURCES += \
     dom/EventNames.cpp \
     dom/EventTarget.cpp \
     dom/EventTargetNode.cpp \
+    dom/ExceptionCode.cpp \
     dom/KeyboardEvent.cpp \
     dom/MappedAttribute.cpp \
     dom/MouseEvent.cpp \
