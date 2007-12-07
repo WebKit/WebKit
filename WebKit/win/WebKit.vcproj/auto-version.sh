@@ -37,7 +37,11 @@ if [ "$TINYVERSION" == "" ]; then
     TINYVERSION=0
 fi
 
-echo -n `cat "$SRCPATH/VERSION"` > "$VERSIONFILE"
+if [ "$RC_PROJECTSOURCEVERSION" == "" ]; then
+    echo -n `cat "$SRCPATH/VERSION"` > "$VERSIONFILE"
+else
+    echo -n $RC_PROJECTSOURCEVERSION > "$VERSIONFILE"
+fi
 
 if [ `grep -c -E "4\.|4$" "$VERSIONFILE"` -ne 0 ]; then
     echo "Can't set WebKit's version to something that ends in a 4!"
@@ -58,7 +62,7 @@ BLDNMBR=`cat "$VERSIONFILE"`
 BLDNMBRSHORT=`cat "$VERSIONFILE"`
 BUILDER=""
 
-if [ "$BUILDBOT" == "" -o "$ARCHIVE_BUILD" == "1" ]; then
+if [ "$RC_PROJECTSOURCEVERSION" == "" ]; then
     echo -n "+" >> "$VERSIONFILE"
     BLDNMBRSHORT=`cat "$VERSIONFILE"`
     echo -n " " >> "$VERSIONFILE"

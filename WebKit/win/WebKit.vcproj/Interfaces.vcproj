@@ -38,7 +38,7 @@
 			/>
 			<Tool
 				Name="VCMIDLTool"
-				PreprocessorDefinitions="__BUILDBOT__=0$(BuildBot)"
+				PreprocessorDefinitions="__PRODUCTION__=0$(PRODUCTION)"
 				AdditionalIncludeDirectories="&quot;$(WebKitOutputDir)\obj\WebKit\DerivedSources&quot;;..\Interfaces"
 				WarningLevel="1"
 				WarnAsError="true"
@@ -112,7 +112,7 @@
 			/>
 			<Tool
 				Name="VCMIDLTool"
-				PreprocessorDefinitions="__BUILDBOT__=0$(BuildBot)"
+				PreprocessorDefinitions="__PRODUCTION__=0$(PRODUCTION)"
 				AdditionalIncludeDirectories="&quot;$(WebKitOutputDir)\obj\WebKit\DerivedSources&quot;;..\Interfaces"
 				WarningLevel="1"
 				WarnAsError="true"

@@ -111,7 +111,7 @@ STDAPI DllCanUnloadNow(void)
     return S_FALSE;
 }
 
-#if __BUILDBOT__
+#if __PRODUCTION__
 #define VERSION_INDEPENDENT_PROGID(className) VERSION_INDEPENDENT_PRODUCTION_PROGID(className)
 #else
 #define VERSION_INDEPENDENT_PROGID(className) VERSION_INDEPENDENT_OPENSOURCE_PROGID(className)
@@ -171,7 +171,7 @@ STDAPI DllUnregisterServer(void)
     HRESULT hr = S_OK;
     HKEY userClasses;
 
-#if __BUILDBOT__
+#if __PRODUCTION__
     UnRegisterTypeLib(LIBID_WebKit, 3, 0, 0, SYS_WIN32);
 #else
     UnRegisterTypeLib(LIBID_OpenSourceWebKit, 3, 0, 0, SYS_WIN32);

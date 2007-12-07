@@ -1,3 +1,11 @@
+2007-12-07  Steve Falkenburg  <sfalken@apple.com>
+
+        Re-named our B&I flag from BUILDBOT to PRODUCTION.
+
+        Reviewed by Sam Weinig.
+
+        * WebCore.vcproj/WebCore.make:
+
 2007-12-07  Geoffrey Garen  <ggaren@apple.com>
 
         Build fix: corrected #include path.

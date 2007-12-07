@@ -5,7 +5,7 @@ BUILDSTYLE=Debug_Internal
 !ENDIF
 
 install:
-    set BuildBot=1
+    set PRODUCTION=1
 	set WebKitLibrariesDir=$(SRCROOT)\AppleInternal
 	set WebKitOutputDir=$(OBJROOT)
 	devenv "WebCore.vcproj" /rebuild $(BUILDSTYLE)

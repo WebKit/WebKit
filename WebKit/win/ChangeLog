@@ -1,3 +1,24 @@
+2007-12-07  Steve Falkenburg  <sfalken@apple.com>
+
+        Re-named our B&I flag from BUILDBOT to PRODUCTION.
+        Fix our tiny versioning.
+        Bump our product version.
+        Use just the major version in the fallback VERSION files.
+        Pick up the version numbers from the production builder.
+
+        Reviewed by Sam Weinig.
+
+        * Interfaces/WebKit.idl:
+        * WebKit.vcproj/Interfaces.vcproj:
+        * WebKit.vcproj/PRODUCTVERSION:
+        * WebKit.vcproj/VERSION:
+        * WebKit.vcproj/WebKit.make:
+        * WebKit.vcproj/WebKit.rc:
+        * WebKit.vcproj/WebKit.vcproj:
+        * WebKit.vcproj/auto-version.sh:
+        * WebKitDLL.cpp:
+        (DllUnregisterServer):
+
 2007-12-07  Adam Roben  <aroben@apple.com>
 
         Use SoftLinking.h in WebKitClassFactory.
