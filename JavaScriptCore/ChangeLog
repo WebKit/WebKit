@@ -1,3 +1,30 @@
+2007-12-07  Darin Adler  <darin@apple.com>
+
+        Reviewed by Geoff.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=16185
+          jsRegExpCompile should not add implicit non-capturing bracket
+
+        While this does not make SunSpider faster, it will make many regular
+        expressions a bit faster.
+
+        * pcre/pcre_compile.cpp: Moved CompileData struct in here from the
+        header since it's private to this file.
+        (compile_branch): Updated for function name change.
+        (compile_bracket): Renamed from compile_regex, since, for one thing,
+        this does not compile an entire regular expression.
+        (calculateCompiledPatternLengthAndFlags): Removed unused item_count
+        local variable. Renamed CompileData to cd instead of compile_block
+        to be consistent with other functions. Added code to set the
+        needOuterBracket flag if there's at least one "|" at the outer level.
+        (jsRegExpCompile): Renamed CompileData to cd instead of compile_block
+        to be consistent with other functions. Removed unneeded "size" field
+        from the compiled regular expression. If no outer bracket is needed,
+        then use compile_branch to compile the regular expression.
+
+        * pcre/pcre_internal.h: Removed the CompileData struct, which is now
+        private to pcre_compile.cpp. Removed the size member from JSRegExp.
+
 2007-12-06  Kevin Ollivier  <kevino@theolliviers.com>
 
         MSVC7 build fix due to a compiler bug with placement new and/or

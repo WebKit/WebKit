@@ -442,7 +442,6 @@ pointer that is always NULL.
 */
 
 struct JSRegExp {
-    pcre_uint32 size;               /* Total that was malloced */
     pcre_uint32 options;
 
     pcre_uint16 top_bracket;
@@ -503,24 +502,6 @@ static inline bool isSpaceChar(UChar c)
 {
     return (c < 128 && (charTypeForChar(c) & ctype_space));
 }
-
-/* Structure for passing "static" information around between the functions
-doing the compiling, so that they are thread-safe. */
-
-struct CompileData {
-    CompileData() {
-        start_code = 0;
-        start_pattern = 0;
-        top_backref = 0;
-        backref_map = 0;
-        req_varyopt = 0;
-    }
-  const uschar* start_code;     /* The start of the compiled code */
-  const UChar* start_pattern;   /* The start of the pattern */
-  int  top_backref;             /* Maximum back reference */
-  unsigned backref_map;     /* Bitmap of low back refs */
-  int  req_varyopt;             /* "After variable item" flag for reqbyte */
-};
 
 /* Internal shared functions. These are functions that are used by more than
 one of the exported public functions. They have to be "external" in the C
