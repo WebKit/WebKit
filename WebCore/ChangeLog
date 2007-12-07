@@ -1,3 +1,11 @@
+2007-12-06  Adam Roben  <aroben@apple.com>
+
+        Rename FontsTable.plist to FontsList.plist
+
+        Rubberstamped by Hyatt.
+
+        * platform/graphics/win/FontDatabase.cpp:
+
 2007-12-06  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Darin
