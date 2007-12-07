@@ -26,17 +26,14 @@
 #import "config.h"
 #import "GlobalHistory.h"
 
-#import "DeprecatedString.h"
 #import "WebCoreHistory.h"
 
 namespace WebCore {
 
-bool historyContains(const DeprecatedString& s)
+bool historyContains(const UChar* characters, unsigned length)
 {
     // the other side of the bridge is careful not to throw exceptions here
-    if (s.hasFastLatin1())
-        return [[WebCoreHistory historyProvider] containsItemForURLLatin1:s.latin1() length:s.length()];
-    return [[WebCoreHistory historyProvider] containsItemForURLUnicode:(UniChar *)s.unicode() length:s.length()];
+    return [[WebCoreHistory historyProvider] containsURL:characters length:length];
 }
 
 } // namespace WebCore

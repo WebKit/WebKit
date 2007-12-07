@@ -1,3 +1,13 @@
+2007-12-07  Darin Adler  <darin@apple.com>
+
+        Reviewed by Mitz.
+
+        - http://bugs.webkit.org/show_bug.cgi?id=15981
+          speed up visited-link code a bit
+
+        * WebHistory.cpp: Removed unused Latin-1 code path.
+        (_WebCoreHistoryProvider::containsItem): Updated for function name change.
+
 2007-12-07  Steve Falkenburg  <sfalken@apple.com>
 
         Re-named our B&I flag from BUILDBOT to PRODUCTION.

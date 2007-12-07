@@ -1,5 +1,40 @@
 2007-12-07  Darin Adler  <darin@apple.com>
 
+        Reviewed by Mitz.
+
+        - http://bugs.webkit.org/show_bug.cgi?id=15981
+          speed up visited-link code a bit
+
+        * bridge/GlobalHistory.h: Change historyContains to take a character pointer plus length
+        instead of requiring a DeprecatedString.
+
+        * bridge/mac/GlobalHistoryMac.mm: (WebCore::historyContains): Updated for above change.
+        Also removes pointless "fast Latin-1" case that was never used.
+        * bridge/win/GlobalHistoryWin.cpp: (WebCore::historyContains): Ditto.
+        * platform/gtk/TemporaryLinkStubs.cpp: (WebCore::historyContains): Ditto.
+        * platform/wx/TemporaryLinkStubs.cpp: (WebCore::historyContains): Ditto.
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::findHash): Added. Helper for cleanpath.
+        (WebCore::findSlashDotDotSlash): Ditto.
+        (WebCore::findSlashSlash): Ditto.
+        (WebCore::findSlashDotSlash): Ditto.
+        (WebCore::cleanpath): Changed to use fast helper functions instead of slower general-purpose
+        DeprecatedString find function.
+        (WebCore::containsColonSlashSlash): Added. Helper for checkPseudoState.
+        (WebCore::checkPseudoState): Got rid of reference count churn by using an AtomicString*
+        instead of an AtomicString for the attribute value. Changed to use fast helper function
+        instead of slower DeprecatedString::contains function, and also made the fast case not
+        bother allocating a DeprecatedConstString.
+
+        - unrelated tiny cleanup
+
+        * platform/graphics/svg/cg/SVGPaintServerGradientCg.cpp:
+        (WebCore::releaseCachedStops): Use static_cast instead of reinterpret_cast.
+        (WebCore::cgGradientCallback): Ditto.
+
+2007-12-07  Darin Adler  <darin@apple.com>
+
         Fix build on Tiger (Mark Rowe told me how).
 
         * platform/graphics/mac/MediaPlayerPrivateQTKit.mm:

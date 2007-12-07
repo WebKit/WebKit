@@ -56,7 +56,7 @@ Vector<char> loadResourceIntoArray(const char* resourceName)
 /* Completely empty stubs (mostly to allow DRT to run): */
 /********************************************************/
 
-bool WebCore::historyContains(DeprecatedString const&) { return false; }
+bool WebCore::historyContains(const UChar*, unsigned) { return false; }
 
 PluginInfo* PlugInInfoStore::createPluginInfoForPluginAtIndex(unsigned) { notImplemented(); return 0;}
 unsigned PlugInInfoStore::pluginCount() const { notImplemented(); return 0; }

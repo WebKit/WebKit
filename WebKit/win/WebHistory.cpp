@@ -52,8 +52,7 @@ public:
     _WebCoreHistoryProvider(IWebHistory* history);
     ~_WebCoreHistoryProvider();
 
-    virtual bool containsItemForURLLatin1(const char* latin1, unsigned int length);
-    virtual bool containsItemForURLUnicode(const UChar* unicode, unsigned int length);
+    virtual bool containsItem(const UChar* unicode, unsigned int length);
 
 private:
     IWebHistory* m_history;
@@ -892,69 +891,7 @@ static inline bool matchUnicodeLetter(UniChar c, UniChar lowercaseLetter)
     return (c | 0x20) == lowercaseLetter;
 }
 
-bool _WebCoreHistoryProvider::containsItemForURLLatin1(const char* latin1, unsigned int length)
-{
-    const int bufferSize = 2048;
-    const char *latin1Str = latin1;
-    char staticStrBuffer[bufferSize];
-    char *strBuffer = 0;
-    bool needToAddSlash = false;
-
-    if (length >= 6 &&
-        matchLetter(latin1[0], 'h') &&
-        matchLetter(latin1[1], 't') &&
-        matchLetter(latin1[2], 't') &&
-        matchLetter(latin1[3], 'p') &&
-        (latin1[4] == ':' 
-        || (matchLetter(latin1[4], 's') && latin1[5] == ':'))) {
-            int pos = latin1[4] == ':' ? 5 : 6;
-            // skip possible initial two slashes
-            if (latin1[pos] == '/' && latin1[pos + 1] == '/') {
-                pos += 2;
-            }
-
-            const char* nextSlash = strchr(latin1 + pos, '/');
-            if (!nextSlash)
-                needToAddSlash = true;
-    }
-
-    if (needToAddSlash) {
-        if (length + 1 <= bufferSize)
-            strBuffer = staticStrBuffer;
-        else
-            strBuffer = (char*)malloc(length + 2);
-        memcpy(strBuffer, latin1, length + 1);
-        strBuffer[length] = '/';
-        strBuffer[length+1] = '\0';
-        length++;
-
-        latin1Str = strBuffer;
-    }
-
-    if (!m_historyPrivate) {
-        if (SUCCEEDED(m_history->QueryInterface(IID_IWebHistoryPrivate, (void**)&m_historyPrivate))) {
-            // don't hold a ref - we're owned by IWebHistory/IWebHistoryPrivate
-            m_historyPrivate->Release();
-        } else {
-            if (strBuffer != staticStrBuffer)
-                free(strBuffer);
-            m_historyPrivate = 0;
-            return false;
-        }
-    }
-    
-    CFStringRef str = CFStringCreateWithCStringNoCopy(NULL, latin1Str, kCFStringEncodingWindowsLatin1, kCFAllocatorNull);
-    BOOL result = FALSE;
-    m_historyPrivate->containsItemForURLString((void*)str, &result);
-    CFRelease(str);
-
-    if (strBuffer != staticStrBuffer)
-        free(strBuffer);
-
-    return !!result;
-}
-
-bool _WebCoreHistoryProvider::containsItemForURLUnicode(const UChar* unicode, unsigned int length)
+bool _WebCoreHistoryProvider::containsItem(const UChar* unicode, unsigned int length)
 {
     const int bufferSize = 1024;
     const UChar *unicodeStr = unicode;

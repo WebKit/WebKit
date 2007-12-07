@@ -1,6 +1,4 @@
-/**
- * This file is part of the CSS implementation for KDE.
- *
+/*
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 2004-2005 Allan Sandfeld Jensen (kde@carewolf.com)
  *           (C) 2006 Nicholas Shanks (webkit@nickshanks.com)
@@ -569,41 +567,99 @@ void CSSStyleSelector::initForStyleResolve(Element* e, RenderStyle* defaultParen
     fontDirty = false;
 }
 
-// modified version of the one in kurl.cpp
-static void cleanpath(DeprecatedString &path)
+static int findHash(const DeprecatedString& string)
+{
+    const ::UChar* ptr = reinterpret_cast<const ::UChar*>(string.unicode());
+    unsigned length = string.length();
+    for (unsigned i = 0; i < length; ++i) {
+        if (ptr[i] == '#')
+            return i;
+    }
+    return -1;
+}
+
+static inline int findSlashDotDotSlash(const DeprecatedString& string)
+{
+    const ::UChar* ptr = reinterpret_cast<const ::UChar*>(string.unicode());
+    unsigned length = string.length();
+    unsigned loopLimit = length < 4 ? 0 : length - 3;
+    for (unsigned i = 0; i < loopLimit; ++i) {
+        if (ptr[i] == '/' && ptr[i + 1] == '.' && ptr[i + 2] == '.' && ptr[i + 3] == '/')
+            return i;
+    }
+    return -1;
+}
+
+static inline int findSlashSlash(const DeprecatedString& string, int position)
+{
+    const ::UChar* ptr = reinterpret_cast<const ::UChar*>(string.unicode());
+    unsigned length = string.length();
+    unsigned loopLimit = length < 2 ? 0 : length - 1;
+    for (unsigned i = position; i < loopLimit; ++i) {
+        if (ptr[i] == '/' && ptr[i + 1] == '/')
+            return i;
+    }
+    return -1;
+}
+
+static inline int findSlashDotSlash(const DeprecatedString& string)
+{
+    const ::UChar* ptr = reinterpret_cast<const ::UChar*>(string.unicode());
+    unsigned length = string.length();
+    unsigned loopLimit = length < 3 ? 0 : length - 2;
+    for (unsigned i = 0; i < loopLimit; ++i) {
+        if (ptr[i] == '/' && ptr[i + 1] == '.' && ptr[i + 2] == '/')
+            return i;
+    }
+    return -1;
+}
+
+static void cleanpath(DeprecatedString& path)
 {
     int pos;
-    while ((pos = path.find("/../")) != -1) {
+
+    while ((pos = findSlashDotDotSlash(path)) != -1) {
         int prev = 0;
         if (pos > 0)
-            prev = path.findRev("/", pos -1);
+            prev = path.findRev("/", pos - 1);
         // don't remove the host, i.e. http://foo.org/../foo.html
-        if (prev < 0 || (prev > 3 && path.findRev("://", prev-1) == prev-2))
+        if (prev < 0 || (prev > 3 && path.findRev("://", prev - 1) == prev - 2))
             path.remove(pos, 3);
         else
             // matching directory found ?
-            path.remove(prev, pos- prev + 3);
+            path.remove(prev, pos - prev + 3);
     }
-    pos = 0;
-    
+
     // Don't remove "//" from an anchor identifier. -rjw
     // Set refPos to -2 to mean "I haven't looked for the anchor yet".
     // We don't want to waste a function call on the search for the the anchor
     // in the vast majority of cases where there is no "//" in the path.
+    pos = 0;
     int refPos = -2;
-    while ((pos = path.find("//", pos)) != -1) {
+    while ((pos = findSlashSlash(path, pos)) != -1) {
         if (refPos == -2)
-            refPos = path.find("#");
+            refPos = findHash(path);
         if (refPos > 0 && pos >= refPos)
             break;
         
-        if (pos == 0 || path[pos-1] != ':')
+        if (pos == 0 || path[pos - 1] != ':')
             path.remove(pos, 1);
         else
             pos += 2;
     }
-    while ((pos = path.find("/./")) != -1)
+
+    // FIXME: We don't want to remove "/./" from an anchor identifier either.
+    while ((pos = findSlashDotSlash(path)) != -1)
         path.remove(pos, 2);
+}
+
+static inline bool containsColonSlashSlash(const UChar* characters, unsigned length)
+{
+    unsigned loopLimit = length < 3 ? 0 : length - 2;
+    for (unsigned i = 0; i < loopLimit; ++i)
+        if (characters[i] == ':' && characters[i + 1] == '/' && characters[i + 2] == '/')
+            return true;
+    return false;
 }
 
 static void checkPseudoState(Element *e, bool checkVisited = true)
@@ -612,36 +668,49 @@ static void checkPseudoState(Element *e, bool checkVisited = true)
         pseudoState = PseudoNone;
         return;
     }
-    
-    AtomicString attr;
+
+    const AtomicString* attr;
     if (e->isHTMLElement())
-        attr = e->getAttribute(hrefAttr);
+        attr = &e->getAttribute(hrefAttr);
 #if ENABLE(SVG)
     else if (e->isSVGElement())
-        attr = e->getAttribute(XLinkNames::hrefAttr);
+        attr = &e->getAttribute(XLinkNames::hrefAttr);
 #endif
-    if (attr.isNull()) {
+    else {
         pseudoState = PseudoNone;
         return;
     }
-    
+
+    if (attr->isNull()) {
+        pseudoState = PseudoNone;
+        return;
+    }
+
     if (!checkVisited) {
         pseudoState = PseudoAnyLink;
         return;
     }
-    
-    DeprecatedConstString cu(reinterpret_cast<const DeprecatedChar*>(attr.characters()), attr.length());
-    DeprecatedString u = cu.string();
-    if (!u.contains("://")) {
-        if (u[0] == '/')
-            u.prepend(currentEncodedURL->host);
-        else if (u[0] == '#')
-            u.prepend(currentEncodedURL->file);
-        else
-            u.prepend(currentEncodedURL->path);
-        cleanpath(u);
+
+    const UChar* characters = attr->characters();
+    unsigned length = attr->length();
+
+    if (containsColonSlashSlash(characters, length)) {
+        // FIXME: Strange to not clean the path just beacause it has "://" in it.
+        pseudoState = historyContains(characters, length) ? PseudoVisited : PseudoLink;
+        return;
     }
-    pseudoState = historyContains(u) ? PseudoVisited : PseudoLink;
+
+    DeprecatedConstString cu(reinterpret_cast<const DeprecatedChar*>(characters), length);
+    DeprecatedString u = cu.string();
+    if (length && characters[0] == '/')
+        u.prepend(currentEncodedURL->host);
+    else if (length && characters[0] == '#')
+        u.prepend(currentEncodedURL->file);
+    else
+        u.prepend(currentEncodedURL->path);
+    cleanpath(u);
+    pseudoState = historyContains(reinterpret_cast<const UChar*>(u.unicode()), u.length())
+        ? PseudoVisited : PseudoLink;
 }
 
 #ifdef STYLE_SHARING_STATS

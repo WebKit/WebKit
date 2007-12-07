@@ -49,19 +49,6 @@ void Font::drawGlyphs(GraphicsContext* graphicsContext, const FontData* font, co
     uint32_t oldFontSmoothingStyle = wkSetFontSmoothingStyle(cgContext);
 
     const FontPlatformData& platformData = font->platformData();
-    //NSFont* drawFont;
-    //if ([gContext isDrawingToScreen]) {
-    //    drawFont = [platformData.font screenFont];
-    //    if (drawFont != platformData.font)
-    //        // We are getting this in too many places (3406411); use ERROR so it only prints on debug versions for now. (We should debug this also, eventually).
-    //        LOG_ERROR("Attempting to set non-screen font (%@) when drawing to screen.  Using screen font anyway, may result in incorrect metrics.",
-    //            [[[platformData.font fontDescriptor] fontAttributes] objectForKey:NSFontNameAttribute]);
-    //} else {
-    //    drawFont = [platformData.font printerFont];
-    //    if (drawFont != platformData.font)
-    //        NSLog(@"Attempting to set non-printer font (%@) when printing.  Using printer font anyway, may result in incorrect metrics.",
-    //            [[[platformData.font fontDescriptor] fontAttributes] objectForKey:NSFontNameAttribute]);
-    //}
 
     CGContextSetFont(cgContext, platformData.cgFont());
 
@@ -82,7 +69,6 @@ void Font::drawGlyphs(GraphicsContext* graphicsContext, const FontData* font, co
     
     CGContextSetTextMatrix(cgContext, matrix);
 
-    //wkSetCGFontRenderingMode(cgContext, drawFont);
     CGContextSetFontSize(cgContext, platformData.size());
     CGContextSetTextPosition(cgContext, point.x(), point.y());
     CGContextShowGlyphsWithAdvances(cgContext, glyphBuffer.glyphs(from), glyphBuffer.advances(from), numGlyphs);

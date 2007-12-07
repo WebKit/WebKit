@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2003, 2007 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,13 +24,10 @@
  */
 
 @protocol WebCoreHistoryProvider <NSObject>
-- (BOOL)containsItemForURLLatin1:(const char *)latin1 length:(unsigned)length;
-- (BOOL)containsItemForURLUnicode:(const UniChar *)unicode length:(unsigned)length;
+- (BOOL)containsURL:(const UniChar*)unicode length:(unsigned)length;
 @end
 
 @interface WebCoreHistory : NSObject
-{
-}
 
 + (void)setHistoryProvider:(id<WebCoreHistoryProvider>)h;
 + (id<WebCoreHistoryProvider>)historyProvider;

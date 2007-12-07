@@ -39,7 +39,6 @@
 #import <WebCore/WebCoreHistory.h>
 #import <wtf/Vector.h>
 
-
 NSString *WebHistoryItemsAddedNotification = @"WebHistoryItemsAddedNotification";
 NSString *WebHistoryItemsRemovedNotification = @"WebHistoryItemsRemovedNotification";
 NSString *WebHistoryAllItemsRemovedNotification = @"WebHistoryAllItemsRemovedNotification";
@@ -49,8 +48,6 @@ NSString *WebHistorySavedNotification = @"WebHistorySavedNotification";
 NSString *WebHistoryItemsKey = @"WebHistoryItems";
 
 static WebHistory *_sharedHistory = nil;
-
-
 
 NSString *FileVersionKey = @"WebHistoryFileVersion";
 NSString *DatesArrayKey = @"WebHistoryDates";
@@ -616,62 +613,9 @@ static inline bool matchUnicodeLetter(UniChar c, UniChar lowercaseLetter)
     return (c | 0x20) == lowercaseLetter;
 }
 
-#define BUFFER_SIZE 2048
-
-- (BOOL)containsItemForURLLatin1:(const char *)latin1 length:(unsigned)length
-{
-    const char *latin1Str = latin1;
-    char staticStrBuffer[BUFFER_SIZE];
-    char *strBuffer = NULL;
-    BOOL needToAddSlash = FALSE;
-
-    if (length >= 6 &&
-        matchLetter(latin1[0], 'h') &&
-        matchLetter(latin1[1], 't') &&
-        matchLetter(latin1[2], 't') &&
-        matchLetter(latin1[3], 'p') &&
-        (latin1[4] == ':' 
-         || (matchLetter(latin1[4], 's') && latin1[5] == ':'))) {
-        int pos = latin1[4] == ':' ? 5 : 6;
-        // skip possible initial two slashes
-        if (latin1[pos] == '/' && latin1[pos + 1] == '/') {
-            pos += 2;
-        }
-
-        char *nextSlash = strchr(latin1 + pos, '/');
-        if (nextSlash == NULL) {
-            needToAddSlash = TRUE;
-        }
-    }
-
-    if (needToAddSlash) {
-        if (length + 1 <= BUFFER_SIZE) {
-            strBuffer = staticStrBuffer;
-        } else {
-            strBuffer = (char*)malloc(length + 2);
-        }
-        memcpy(strBuffer, latin1, length + 1);
-        strBuffer[length] = '/';
-        strBuffer[length+1] = '\0';
-        length++;
-
-        latin1Str = strBuffer;
-    }
-
-    CFStringRef str = CFStringCreateWithCStringNoCopy(NULL, latin1Str, kCFStringEncodingWindowsLatin1, kCFAllocatorNull);
-    BOOL result = [history containsItemForURLString:(id)str];
-    CFRelease(str);
-
-    if (strBuffer != staticStrBuffer) {
-        free(strBuffer);
-    }
-
-    return result;
-}
-
 #define UNICODE_BUFFER_SIZE 1024
 
-- (BOOL)containsItemForURLUnicode:(const UniChar *)unicode length:(unsigned)length
+- (BOOL)containsURL:(const UniChar *)unicode length:(unsigned)length
 {
     const UniChar *unicodeStr = unicode;
     UniChar staticStrBuffer[UNICODE_BUFFER_SIZE];

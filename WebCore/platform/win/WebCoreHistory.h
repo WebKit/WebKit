@@ -1,5 +1,5 @@
 /*
-* Copyright (C) 2006, 2007 Apple Inc.  All rights reserved.
+* Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions
@@ -32,13 +32,12 @@ namespace WebCore {
 
 class WebCoreHistoryProvider {
 public:
-    virtual bool containsItemForURLLatin1(const char* latin1, unsigned int length) = 0;
-    virtual bool containsItemForURLUnicode(const UChar* unicode, unsigned int length) = 0;
+    virtual bool containsURL(const UChar* unicode, unsigned length) = 0;
 };
 
 class WebCoreHistory {
 public:
-    static void setHistoryProvider(WebCoreHistoryProvider* h);
+    static void setHistoryProvider(WebCoreHistoryProvider*);
     static WebCoreHistoryProvider* historyProvider();
 };
 

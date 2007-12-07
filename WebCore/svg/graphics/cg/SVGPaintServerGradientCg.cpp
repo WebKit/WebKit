@@ -42,12 +42,12 @@ namespace WebCore {
 
 static void releaseCachedStops(void* info)
 {
-    reinterpret_cast<SVGPaintServerGradient::SharedStopCache*>(info)->deref();
+    static_cast<SVGPaintServerGradient::SharedStopCache*>(info)->deref();
 }
 
 static void cgGradientCallback(void* info, const CGFloat* inValues, CGFloat* outColor)
 {
-    SVGPaintServerGradient::SharedStopCache* stopsCache = reinterpret_cast<SVGPaintServerGradient::SharedStopCache*>(info);
+    SVGPaintServerGradient::SharedStopCache* stopsCache = static_cast<SVGPaintServerGradient::SharedStopCache*>(info);
     
     SVGPaintServerGradient::QuartzGradientStop* stops = stopsCache->m_stops.data();
         
