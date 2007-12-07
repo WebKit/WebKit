@@ -1,3 +1,12 @@
+2007-12-06  Kevin Ollivier  <kevino@theolliviers.com>
+
+        Linux build fix - ensure that webcore is linked before jscore
+        so that the linker will know which symbols it needs to link in.
+        Also fix MSVC project file name typo for sample app.
+
+        * Bakefiles.bkgen:
+        * wxwebkit.bkl:
+
 2007-12-04  Darin Adler  <darin@apple.com>
 
         Reviewed by Kevin Decker.

@@ -49,16 +49,7 @@ This file builds the wxWebKit library.
         <runtime-libs>dynamic</runtime-libs>
         <dllname>wxwebkit</dllname>
         <libname>wxwebkit</libname>
-        
-        <if cond="FORMAT=='gnu'">
-            <ldflags>$(WKOUTPUTDIR)/libjscore.a</ldflags>
-        </if>
-        <if cond="FORMAT in ['msvc','msvs2005prj']">
-            <sys-lib>jscore</sys-lib>
-            <sys-lib>winmm</sys-lib> <!-- for timeGetTime -->
-            <lib-path>$(WKOUTPUTDIR)</lib-path>
-        </if>
-        
+
         <set var="BUILDDIR">obj-$(FORMAT)</set>
         
         <include>$(WK_ROOT)/WebCore/platform/graphics/wx</include>
@@ -68,15 +59,18 @@ This file builds the wxWebKit library.
         <include>$(WK_ROOT)/WebKit/wx</include>
         <include>$(WK_ROOT)/WebKit/wx/WebKitSupport</include>
         
+        <lib-path>$(WKOUTPUTDIR)</lib-path>
+        <sys-lib>webcore-wx</sys-lib>
+        <sys-lib>jscore</sys-lib>
+        
         <if cond="FORMAT=='gnu'">
             <sys-lib>png</sys-lib>
-            <ldflags>$(WKOUTPUTDIR)/libwebcore-wx.a</ldflags>
+            <sys-lib>jpeg</sys-lib>
         </if>
         <if cond="FORMAT in ['msvc','msvs2005prj']">
-            <sys-lib>webcore-wx</sys-lib>
+            <sys-lib>winmm</sys-lib> <!-- for timeGetTime -->
             <sys-lib>libpng</sys-lib>
-            <!-- we use wx's libjpeg so no need to link to an external one. -->
-            <lib-path>$(WKOUTPUTDIR)</lib-path>
+            <sys-lib>libjpeg</sys-lib>
         </if>
         
         <sources>

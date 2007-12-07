@@ -95,7 +95,7 @@ Build configuration script for Bakefile.
         -o../../WebKitTools/wx/browser/GNUmakefile
     </add-flags>
     <add-flags files="../../WebKitTools/wx/browser/browser.bkl" formats="msvs2005prj">
-        -o../../WebKitTools/wx/browser/webcore-wx.sln
+        -o../../WebKitTools/wx/browser/browser.sln
     </add-flags>
     <add-flags files="../../WebKitTools/wx/browser/browser.bkl" formats="msvc">
         -o../../WebKitTools/wx/browser/makefile.vc
