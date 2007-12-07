@@ -423,7 +423,7 @@ unsigned long long WebChromeClient::requestQuotaIncreaseForNewDatabase(WebCore::
 unsigned long long WebChromeClient::requestQuotaIncreaseForDatabaseOperation(WebCore::Frame*, const WebCore::SecurityOriginData& origin, const WebCore::String& databaseIdentifier, unsigned long long proposedNewQuota)
 {
     WebSecurityOrigin *webOrigin = [[WebSecurityOrigin alloc] _initWithWebCoreSecurityOriginData:reinterpret_cast<const WebCoreSecurityOriginData*>(&origin)];
-    unsigned long long result = CallUIDelegateReturningUnsignedLongLong(m_webView, @selector(webView:quotaForSecurityOrigin:toCreateDatabase:withEstimatedSize:), webOrigin, proposedNewQuota, (NSString *)databaseIdentifier);
+    unsigned long long result = CallUIDelegateReturningUnsignedLongLong(m_webView, @selector(webView:quotaForSecurityOrigin:fromProposedQuota:database:), webOrigin, proposedNewQuota, (NSString *)databaseIdentifier);
     [webOrigin release];
     return result;
 }
