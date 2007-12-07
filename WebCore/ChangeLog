@@ -1,3 +1,12 @@
+2007-12-07  Darin Adler  <darin@apple.com>
+
+        - fix 64-bit build, hopefully without breaking Tiger build
+
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.mm:
+        (WebCore::MediaPlayerPrivate::updateStates):
+        Don't use Movies.h constants that are nonexistent in 64-bit.
+        Define the new QTMovie.h constants, though, when using an older QTKit.
+
 2007-12-07  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Anders

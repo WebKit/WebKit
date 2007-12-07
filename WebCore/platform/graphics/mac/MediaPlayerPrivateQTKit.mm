@@ -73,6 +73,16 @@ SOFT_LINK_POINTER(QTKit, QTMovieVolumeDidChangeNotification, NSString *)
 #define QTMovieTimeScaleAttribute getQTMovieTimeScaleAttribute()
 #define QTMovieVolumeDidChangeNotification getQTMovieVolumeDidChangeNotification()
 
+// Older versions of the QTKit header don't have these constants.
+#if QTKIT_VERSION_MAX_ALLOWED <= QTKIT_VERSION_7_0
+enum {
+    QTMovieLoadStateLoaded  = 2000L,
+    QTMovieLoadStatePlayable = 10000L,
+    QTMovieLoadStatePlaythroughOK = 20000L,
+    QTMovieLoadStateComplete = 100000L
+};
+#endif
+
 using namespace WebCore;
 using namespace std;
 
@@ -482,19 +492,19 @@ void MediaPlayerPrivate::updateStates()
     
     long loadState = m_qtMovie ? [[m_qtMovie.get() attributeForKey:QTMovieLoadStateAttribute] longValue] : -1;
     // "Loaded" is reserved for fully buffered movies, never the case when streaming
-    if (loadState >= kMovieLoadStateComplete && !m_isStreaming) {
+    if (loadState >= QTMovieLoadStateComplete && !m_isStreaming) {
         if (m_networkState < MediaPlayer::Loaded)
             m_networkState = MediaPlayer::Loaded;
         m_readyState = MediaPlayer::CanPlayThrough;
-    } else if (loadState >= kMovieLoadStatePlaythroughOK) {
+    } else if (loadState >= QTMovieLoadStatePlaythroughOK) {
         if (m_networkState < MediaPlayer::LoadedFirstFrame && !seeking())
             m_networkState = MediaPlayer::LoadedFirstFrame;
         m_readyState = ([m_qtMovie.get() rate] == 0 && m_startedPlaying) ? MediaPlayer::DataUnavailable : MediaPlayer::CanPlayThrough;
-    } else if (loadState >= kMovieLoadStatePlayable) {
+    } else if (loadState >= QTMovieLoadStatePlayable) {
         if (m_networkState < MediaPlayer::LoadedFirstFrame && !seeking())
             m_networkState = MediaPlayer::LoadedFirstFrame;
         m_readyState = ([m_qtMovie.get() rate] == 0 && m_startedPlaying) ? MediaPlayer::DataUnavailable : MediaPlayer::CanPlay;
-    } else if (loadState >= kMovieLoadStateLoaded) {
+    } else if (loadState >= QTMovieLoadStateLoaded) {
         if (m_networkState < MediaPlayer::LoadedMetaData)
             m_networkState = MediaPlayer::LoadedMetaData;
         m_readyState = MediaPlayer::DataUnavailable;
