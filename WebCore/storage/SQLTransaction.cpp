@@ -31,8 +31,10 @@
 #include "Database.h"
 #include "DatabaseAuthorizer.h"
 #include "DatabaseTracker.h"
+#include "Document.h"
 #include "ExceptionCode.h"
 #include "Logging.h"
+#include "Page.h"
 #include "PlatformString.h"
 #include "SecurityOriginData.h"
 #include "SQLError.h"
@@ -43,6 +45,11 @@
 #include "SQLStatementErrorCallback.h"
 #include "SQLValue.h"
 
+// There's no way of knowing exactly how much more space will be required when a statement hits the quota limit.  
+// For now, we'll arbitrarily choose currentQuota + 1mb.
+// In the future we decide to track if a size increase wasn't enough, and ask for larger-and-larger increases until its enough.
+static const int DefaultQuotaSizeIncrease = 1048576;
+
 namespace WebCore {
 
 SQLTransaction::SQLTransaction(Database* db, PassRefPtr<SQLTransactionCallback> callback, PassRefPtr<SQLTransactionErrorCallback> errorCallback, PassRefPtr<SQLTransactionWrapper> wrapper)
@@ -52,6 +59,7 @@ SQLTransaction::SQLTransaction(Database* db, PassRefPtr<SQLTransactionCallback> 
     , m_wrapper(wrapper)
     , m_callback(callback)
     , m_errorCallback(errorCallback)
+    , m_shouldRetryCurrentStatement(false)
     , m_shouldCommitAfterErrorCallback(true)
     , m_modifiedDatabase(false)
 {
@@ -96,7 +104,8 @@ void SQLTransaction::performPendingCallback()
 {
     ASSERT(m_nextStep == &SQLTransaction::deliverTransactionCallback ||
            m_nextStep == &SQLTransaction::deliverTransactionErrorCallback ||
-           m_nextStep == &SQLTransaction::deliverStatementCallback);
+           m_nextStep == &SQLTransaction::deliverStatementCallback ||
+           m_nextStep == &SQLTransaction::deliverQuotaIncreaseCallback);
            
     (this->*m_nextStep)();
 }
@@ -104,6 +113,12 @@ void SQLTransaction::performPendingCallback()
 void SQLTransaction::openTransactionAndPreflight()
 {
     LOG(StorageAPI, "Opening and preflighting transaction %p", this);
+    
+    // FIXME: This is a glaring bug that gives each database in an origin the full quota of that origin
+    // An efficient way to track the size of individual databases in an origin will need to be developed
+    // before we can know
+    // <rdar://problem/5628468> tracks this task
+    m_database->m_sqliteDatabase.setMaximumSize(DatabaseTracker::tracker().quotaForOrigin(m_database->securityOriginData()));
     
     ASSERT(!m_sqliteTransaction);
     m_sqliteTransaction.set(new SQLiteTransaction(m_database->m_sqliteDatabase));
@@ -164,12 +179,22 @@ void SQLTransaction::scheduleToRunStatements()
 
 void SQLTransaction::runStatements()
 {
-    ASSERT(!m_currentStatement);
-
     // If there is a series of statements queued up that are all successful and have no associated
     // SQLStatementCallback objects, then we can burn through the queue
     do {
-        getNextStatement();
+        if (m_shouldRetryCurrentStatement) 
+            m_shouldRetryCurrentStatement = false;
+        else {
+            // If the current statement has already been run, failed due to quota constraints, and we're not retrying it,
+            // that means it ended in an error.  Handle it now
+            if (m_currentStatement && m_currentStatement->lastExecutionFailedDueToQuota()) {
+                handleCurrentStatementError();
+                break;
+            }
+            
+            // Otherwise, advance to the next statement
+            getNextStatement();
+        }
     } while (runCurrentStatement());
     
     // If runCurrentStatement() returned false, that means either there was no current statement to run,
@@ -210,6 +235,19 @@ bool SQLTransaction::runCurrentStatement()
         return true;
     }
     
+    if (m_currentStatement->lastExecutionFailedDueToQuota()) {
+        m_nextStep = &SQLTransaction::deliverQuotaIncreaseCallback;
+        m_database->scheduleTransactionCallback(this);
+        return false;
+    }
+    
+    handleCurrentStatementError();
+    
+    return false;
+}
+
+void SQLTransaction::handleCurrentStatementError()
+{
     // Transaction Steps 6.error - Call the statement's error callback, but if there was no error callback,
     // jump to the transaction error callback
     if (m_currentStatement->hasStatementErrorCallback()) {
@@ -221,8 +259,6 @@ bool SQLTransaction::runCurrentStatement()
             m_transactionError = new SQLError(1, "the statement failed to execute");
         handleTransactionError(false);
     }
-    
-    return false;
 }
 
 void SQLTransaction::deliverStatementCallback()
@@ -240,6 +276,29 @@ void SQLTransaction::deliverStatementCallback()
         handleTransactionError(true);
     } else
         scheduleToRunStatements();
+}
+
+void SQLTransaction::deliverQuotaIncreaseCallback()
+{
+    ASSERT(m_currentStatement);
+    ASSERT(!m_shouldRetryCurrentStatement);
+    
+    Page* page = m_database->document()->page();
+    ASSERT(page);
+    
+    SecurityOriginData originData = m_database->securityOriginData();
+    
+    unsigned long long currentQuota = DatabaseTracker::tracker().quotaForOrigin(originData);
+    unsigned long long newQuota = page->chrome()->requestQuotaIncreaseForDatabaseOperation(m_database->document()->frame(), originData, m_database->stringIdentifier(), currentQuota + DefaultQuotaSizeIncrease);
+    
+    DatabaseTracker::tracker().setQuota(originData, newQuota);
+    
+    // If the new quota ended up being larger than the old quota, we will retry the statement.
+    if (newQuota > currentQuota)
+        m_shouldRetryCurrentStatement = true;
+        
+    m_nextStep = &SQLTransaction::runStatements;
+    m_database->scheduleTransactionStep();
 }
 
 void SQLTransaction::postflightAndCommit()

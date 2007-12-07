@@ -40,6 +40,7 @@ const int SQLResultError = SQLITE_ERROR;
 const int SQLResultOk = SQLITE_OK;
 const int SQLResultRow = SQLITE_ROW;
 const int SQLResultSchema = SQLITE_SCHEMA;
+const int SQLResultFull = SQLITE_FULL;
 
 
 SQLiteDatabase::SQLiteDatabase()

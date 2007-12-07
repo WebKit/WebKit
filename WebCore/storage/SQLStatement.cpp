@@ -58,6 +58,9 @@ bool SQLStatement::execute(Database* db)
     if (m_error)
         return false;
         
+    // In case we're re-running this statement after a quota violation, clear that error now
+    clearFailureDueToQuota();
+    
     SQLiteDatabase* database = &db->m_sqliteDatabase;
     
     SQLiteStatement statement(*database, m_statement);
@@ -78,7 +81,13 @@ bool SQLStatement::execute(Database* db)
     }
 
     for (unsigned i = 0; i < m_arguments.size(); ++i) {
-        if (statement.bindValue(i + 1, m_arguments[i]) != SQLResultOk) {
+        result = statement.bindValue(i + 1, m_arguments[i]);
+        if (result == SQLResultFull) {
+            setFailureDueToQuota();
+            return false;
+        }
+        
+        if (result != SQLResultOk) {
             LOG(StorageAPI, "Failed to bind value index %i to statement for query '%s'", i + 1, m_statement.ascii().data());
             m_error = new SQLError(1, database->lastErrorMsg());
             return false;
@@ -113,6 +122,10 @@ bool SQLStatement::execute(Database* db)
         // Didn't find anything, or was an insert
         if (db->m_databaseAuthorizer->lastActionWasInsert())
             resultSet->setInsertId(database->lastInsertRowID());
+    } else if (result == SQLResultFull) {
+        // Return the Quota error - the delegate will be asked for more space and this statement might be re-run
+        setFailureDueToQuota();
+        return false;
     } else {
         m_error = new SQLError(1, database->lastErrorMsg());
         return false;
@@ -149,5 +162,24 @@ bool SQLStatement::performCallback(SQLTransaction* transaction)
 
     return callbackError;
 }
+
+void SQLStatement::setFailureDueToQuota()
+{
+    ASSERT(!m_error && !m_resultSet);
+    m_error = new SQLError(4, "there was not enough remaining storage space, or the storage quota was reached and the user declined to allow more space");
+}
+
+void SQLStatement::clearFailureDueToQuota()
+{
+    ASSERT(m_error && m_error->code() == 4);
+    m_error = 0;
+}
+
+bool SQLStatement::lastExecutionFailedDueToQuota() const 
+{ 
+    return m_error ? m_error->code() == 4 : false; 
+}
+
+
 
 } // namespace WebCore

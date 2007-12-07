@@ -49,6 +49,7 @@ extern const int SQLResultError;
 extern const int SQLResultOk;
 extern const int SQLResultRow;
 extern const int SQLResultSchema;
+extern const int SQLResultFull;
 
 
 class SQLiteDatabase : public Noncopyable

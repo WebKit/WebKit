@@ -547,5 +547,17 @@ void Database::setExpectedVersion(const String& version)
     m_expectedVersion = version.copy();
 }
 
+SecurityOriginData Database::securityOriginData() const
+{
+    // Return a deep copy for ref counting thread safety
+    return m_securityOrigin.securityOriginData().copy();
+}
+
+String Database::stringIdentifier() const
+{
+    // Return a deep copy for ref counting thread safety
+    return m_name.copy();
+}
+
 
 }

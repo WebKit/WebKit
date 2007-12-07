@@ -85,7 +85,9 @@ private:
     void runStatements();
     void getNextStatement();
     bool runCurrentStatement();
+    void handleCurrentStatementError();
     void deliverStatementCallback();
+    void deliverQuotaIncreaseCallback();
     void postflightAndCommit();
     void handleTransactionError(bool inCallback);
     void deliverTransactionErrorCallback();
@@ -100,6 +102,7 @@ private:
     RefPtr<SQLTransactionCallback> m_callback;
     RefPtr<SQLTransactionErrorCallback> m_errorCallback;
     RefPtr<SQLError> m_transactionError;
+    bool m_shouldRetryCurrentStatement;
     bool m_shouldCommitAfterErrorCallback;
     bool m_modifiedDatabase;
     

@@ -1,3 +1,42 @@
+2007-12-06  Brady Eidson <beidson@apple.com>
+
+        Reviewed by Darin
+
+        Finished hooking up UI Delegate for databases - Database operations will now enforce a size quota and
+        will ask the UI Delegate for more space when that quota is met
+
+        * platform/sql/SQLiteDatabase.cpp: Add the new SQLResultFull constant
+        * platform/sql/SQLiteDatabase.h: Ditto
+
+        * storage/Database.cpp:
+        (WebCore::Database::securityOriginData): Added this accessor, copying for thread safety
+        (WebCore::Database::stringIdentifier): Ditto
+        * storage/Database.h:
+
+        * storage/SQLStatement.cpp:
+        (WebCore::SQLStatement::SQLStatement):
+        (WebCore::SQLStatement::execute): Change to return an enum that represents 3 states - success, error, and quota.
+          If the result is quota, this statement expects that it might be run again, presumably after the user increases 
+          the quota
+        (WebCore::SQLStatement::setFailureDueToQuota): Setup a quota failure, including a flag and the error
+        (WebCore::SQLStatement::clearFailureDueToQuota): Clear a quota failure, for when the statement is rerun
+        (WebCore::SQLStatement::lastExecutionFailedDueToQuota):
+        * storage/SQLStatement.h:
+
+        * storage/SQLTransaction.cpp:
+        (WebCore::SQLTransaction::SQLTransaction):
+        (WebCore::SQLTransaction::performPendingCallback): Added an acceptable callback pointer
+        (WebCore::SQLTransaction::openTransactionAndPreflight): Setup the quota in the database that will remain for this 
+          transaction.  Note that in this patch, the quota being set is wrong - it makes sense to fix that in a follow up patch
+        (WebCore::SQLTransaction::runStatements): Modified to add the ability to re-run a statement based on the UI delegate
+          decision and whether the current statement was already run
+        (WebCore::SQLTransaction::runCurrentStatement): Added another result condition - the Quota result - and handle it
+        (WebCore::SQLTransaction::handleCurrentStatementError): Statements can now error-out from two places, so the code
+          that handles a statement error was moved here
+        (WebCore::SQLTransaction::deliverQuotaIncreaseCallback): Added - Consult the UI delegate for more quota, then 
+          reschedule the current statement on the database thread
+        * storage/SQLTransaction.h:
+
 2007-12-06  Steve Falkenburg  <sfalken@apple.com>
 
         <rdar://problem/5614257> Crash in timer / hashtable code due to uncaught exception
