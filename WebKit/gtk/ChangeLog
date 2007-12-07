@@ -1,3 +1,19 @@
+2007-12-07  Luca Bruno  <lethalman88@gmail.com>
+
+        Reviewed by Alp Toker.
+
+        http://bugs.webkit.org/show_bug.cgi?id=16333
+        [GTK] Key bindings must work with focused frames.
+
+        There are still more cases where getFrameFromView() is mis-used that
+        need to be fixed, but this is a good start.
+
+        * WebView/webkitwebview.cpp:
+        (webkit_web_view_real_select_all):
+        (webkit_web_view_real_cut_clipboard):
+        (webkit_web_view_real_copy_clipboard):
+        (webkit_web_view_real_paste_clipboard):
+
 2007-12-06  Xan Lopez  <xan@gnome.org>
 
         Reviewed by Alp Toker.

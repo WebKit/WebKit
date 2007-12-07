@@ -41,6 +41,7 @@
 #include "DragClientGtk.h"
 #include "EditorClientGtk.h"
 #include "EventHandler.h"
+#include "FocusController.h"
 #include "HitTestRequest.h"
 #include "HitTestResult.h"
 #include "GraphicsContext.h"
@@ -388,25 +389,25 @@ static gboolean webkit_web_view_real_console_message(WebKitWebView* webView, con
 
 static void webkit_web_view_real_select_all(WebKitWebView* webView)
 {
-    Frame* frame = core(getFrameFromView(webView));
+    Frame* frame = core(webView)->focusController()->focusedOrMainFrame();
     frame->editor()->execCommand("SelectAll");
 }
 
 static void webkit_web_view_real_cut_clipboard(WebKitWebView* webView)
 {
-    Frame* frame = core(getFrameFromView(webView));
+    Frame* frame = core(webView)->focusController()->focusedOrMainFrame();
     frame->editor()->execCommand("Cut");
 }
 
 static void webkit_web_view_real_copy_clipboard(WebKitWebView* webView)
 {
-    Frame* frame = core(getFrameFromView(webView));
+    Frame* frame = core(webView)->focusController()->focusedOrMainFrame();
     frame->editor()->execCommand("Copy");
 }
 
 static void webkit_web_view_real_paste_clipboard(WebKitWebView* webView)
 {
-    Frame* frame = core(getFrameFromView(webView));
+    Frame* frame = core(webView)->focusController()->focusedOrMainFrame();
     frame->editor()->execCommand("Paste");
 }
 
