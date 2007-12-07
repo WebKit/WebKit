@@ -1,3 +1,14 @@
+2007-12-07  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Anders
+
+        Fix <rdar://problem/5636115> - Prompted for quota increase to create database when it already existed
+
+        * storage/DatabaseTracker.cpp:
+        (WebCore::DatabaseTracker::canEstablishDatabase): Check hasEntryForDatabase before doing any prompting
+        (WebCore::DatabaseTracker::hasEntryForDatabase): Check and see if this database already exists
+        * storage/DatabaseTracker.h:
+
 2007-12-07  Darin Adler  <darin@apple.com>
 
         Reviewed by Mitz.
