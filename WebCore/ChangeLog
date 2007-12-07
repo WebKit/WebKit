@@ -1,3 +1,18 @@
+2007-12-07  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=16334
+          <rdar://problem/5634923> REGRESSION (r28299): Homepage of any DotMac Web Gallery won't load completely
+
+        Test: fast/dynamic/subtree-no-common-root-static-y.html
+
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::markContainingBlocksForLayout): Changed the call
+        to setChildNeedsLayout() to not mark containing blocks and added a
+        separate call to markContainingBlocksForLayout() that will not schedule
+        a layout if we are already in the middle of scheduleRelayoutOfSubtree().
+
 2007-12-07  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin.
