@@ -45,7 +45,7 @@ WebInspector.ConsolePanel = function()
     this.consolePrompt.className = "console-prompt";
     this.element.appendChild(this.consolePrompt);
 
-    this.consolePrompt.addEventListener("keydown", this.promptKeypress.bind(this), false);
+    this.consolePrompt.addEventListener("keydown", this.promptKeyDown.bind(this), false);
 }
 
 WebInspector.ConsolePanel.prototype = {
@@ -121,7 +121,7 @@ WebInspector.ConsolePanel.prototype = {
         event.preventDefault();
     },
 
-    promptKeypress: function(event)
+    promptKeyDown: function(event)
     {
         switch (event.keyIdentifier) {
             case "Enter":

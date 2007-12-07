@@ -267,7 +267,7 @@ WebInspector.loaded = function()
 
     document.addEventListener("mousedown", this.changeFocus.bind(this), true);
     document.addEventListener("focus", this.changeFocus.bind(this), true);
-    document.addEventListener("keypress", this.documentKeypress.bind(this), true);
+    document.addEventListener("keydown", this.documentKeyDown.bind(this), true);
     document.addEventListener("beforecopy", this.documentCanCopy.bind(this), true);
     document.addEventListener("copy", this.documentCopy.bind(this), true);
 
@@ -307,8 +307,8 @@ var windowLoaded = function()
     } else
         WebInspector.loaded();
 
-    delete windowLoaded;
     window.removeEventListener("load", windowLoaded, false);
+    delete windowLoaded;
 };
 
 window.addEventListener("load", windowLoaded, false);
@@ -365,14 +365,14 @@ WebInspector.documentClick = function(event)
     }
 }
 
-WebInspector.documentKeypress = function(event)
+WebInspector.documentKeyDown = function(event)
 {
     if (!this.currentFocusElement)
         return;
     if (this.currentFocusElement.handleKeyEvent)
         this.currentFocusElement.handleKeyEvent(event);
-    else if (this.currentFocusElement.id && this.currentFocusElement.id.length && WebInspector[this.currentFocusElement.id + "Keypress"])
-        WebInspector[this.currentFocusElement.id + "Keypress"](event);
+    else if (this.currentFocusElement.id && this.currentFocusElement.id.length && WebInspector[this.currentFocusElement.id + "KeyDown"])
+        WebInspector[this.currentFocusElement.id + "KeyDown"](event);
 }
 
 WebInspector.documentCanCopy = function(event)
@@ -396,7 +396,7 @@ WebInspector.documentCopy = function(event)
         WebInspector[this.currentFocusElement.id + "Copy"](event);
 }
 
-WebInspector.sidebarKeypress = function(event)
+WebInspector.sidebarKeyDown = function(event)
 {
     var nextSelectedElement;
 
@@ -442,7 +442,7 @@ WebInspector.sidebarCopy = function(event)
     event.clipboardData.setData("URL", this.fileOutline.selectedTreeElement.representedObject.url);
 }
 
-WebInspector.mainKeypress = function(event)
+WebInspector.mainKeyDown = function(event)
 {
     if (this.currentPanel && this.currentPanel.handleKeyEvent)
         this.currentPanel.handleKeyEvent(event);
@@ -454,7 +454,7 @@ WebInspector.mainCopy = function(event)
         this.currentPanel.handleCopyEvent(event);
 }
 
-WebInspector.searchResultsKeypress = function(event)
+WebInspector.searchResultsKeyDown = function(event)
 {
     if (this.searchResultsTree)
         this.searchResultsTree.handleKeyEvent(event);

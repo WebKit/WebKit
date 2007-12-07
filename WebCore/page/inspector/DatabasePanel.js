@@ -40,7 +40,7 @@ WebInspector.DatabasePanel = function(database, views)
     this.queryPromptElement.className = "database-prompt";
     this.element.appendChild(this.queryPromptElement);
 
-    this.queryPromptElement.addEventListener("keydown", this.queryInputKeypress.bind(this), false);
+    this.queryPromptElement.addEventListener("keydown", this.queryInputKeyDown.bind(this), false);
 
     this.queryPromptHistory = [];
     this.queryPromptHistoryOffset = 0;
@@ -238,7 +238,7 @@ return {
         this.views.browse.contentElement.appendChild(errorMsgElement);
     },
 
-    queryInputKeypress: function(event)
+    queryInputKeyDown: function(event)
     {
         switch (event.keyIdentifier) {
             case "Enter":

@@ -1,3 +1,14 @@
+2007-12-06  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Use keydown instead of keypress so keyIdentifier can be used.
+
+        * page/inspector/ConsolePanel.js: Use keydown instead of keypress.
+        * page/inspector/DatabasePanel.js: Ditto.
+        * page/inspector/inspector.js: Ditto. Plus call removeEventListener
+        before deleting windowLoaded.
+
 2007-12-06  Adam Roben  <aroben@apple.com>
 
         Rename FontsTable.plist to FontsList.plist
