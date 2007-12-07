@@ -3828,7 +3828,6 @@
 		E446143E0CD68A2300FADA75 /* JSHTMLAudioElementConstructor.h in Headers */ = {isa = PBXBuildFile; fileRef = E4B41E080CBF8F2100AF2ECE /* JSHTMLAudioElementConstructor.h */; };
 		E44614510CD68A3500FADA75 /* RenderVideo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4B41E330CBFB60900AF2ECE /* RenderVideo.cpp */; };
 		E44614520CD68A3500FADA75 /* RenderVideo.h in Headers */ = {isa = PBXBuildFile; fileRef = E4B41E340CBFB60900AF2ECE /* RenderVideo.h */; };
-		E4B4232F0CBFB66400AF2ECE /* QTKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E4B4232E0CBFB66400AF2ECE /* QTKit.framework */; };
 		E4C279580CF9741900E97B98 /* RenderMedia.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4C279560CF9741900E97B98 /* RenderMedia.cpp */; };
 		E4C279590CF9741900E97B98 /* RenderMedia.h in Headers */ = {isa = PBXBuildFile; fileRef = E4C279570CF9741900E97B98 /* RenderMedia.h */; };
 		ED048ABC0833F132006E1E67 /* textAreaResizeCorner.tiff in Resources */ = {isa = PBXBuildFile; fileRef = ED048ABB0833F132006E1E67 /* textAreaResizeCorner.tiff */; };
@@ -7838,7 +7837,6 @@
 		E4B41E110CBF90EF00AF2ECE /* MediaPlayerPrivateQTKit.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MediaPlayerPrivateQTKit.mm; sourceTree = "<group>"; };
 		E4B41E330CBFB60900AF2ECE /* RenderVideo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderVideo.cpp; sourceTree = "<group>"; };
 		E4B41E340CBFB60900AF2ECE /* RenderVideo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderVideo.h; sourceTree = "<group>"; };
-		E4B4232E0CBFB66400AF2ECE /* QTKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QTKit.framework; path = /System/Library/Frameworks/QTKit.framework; sourceTree = "<absolute>"; };
 		E4B423710CBFB6E000AF2ECE /* JSHTMLSourceElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLSourceElement.cpp; sourceTree = "<group>"; };
 		E4B423720CBFB6E000AF2ECE /* JSHTMLSourceElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSHTMLSourceElement.h; sourceTree = "<group>"; };
 		E4B4237D0CBFB73C00AF2ECE /* JSHTMLAudioElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLAudioElement.cpp; sourceTree = "<group>"; };
@@ -7903,7 +7901,6 @@
 				93F19B1408245E59001E9ABC /* Carbon.framework in Frameworks */,
 				93F19B1508245E59001E9ABC /* Cocoa.framework in Frameworks */,
 				93F19B1608245E59001E9ABC /* JavaScriptCore.framework in Frameworks */,
-				E4B4232F0CBFB66400AF2ECE /* QTKit.framework in Frameworks */,
 				A88AD52F09524B92001DD196 /* QuartzCore.framework in Frameworks */,
 				93F19B1708245E59001E9ABC /* libicucore.dylib in Frameworks */,
 				1CFAE3230A6D6A3F0032593D /* libobjc.dylib in Frameworks */,
@@ -7967,7 +7964,6 @@
 				1CFAE3220A6D6A3F0032593D /* libobjc.dylib */,
 				9372560F0A61564200B053B9 /* libsqlite3.dylib */,
 				DD763BB10992C2C900740B8E /* libxml2.dylib */,
-				E4B4232E0CBFB66400AF2ECE /* QTKit.framework */,
 				A85D7A2F0879EBA9006A9172 /* QuartzCore.framework */,
 			);
 			name = Frameworks;

@@ -1,3 +1,49 @@
+2007-12-07  Darin Adler  <darin@apple.com>
+
+        Reviewed by Antti Koivisto and Kevin Decker.
+
+        - fix <rdar://problem/5601586> QtKit should be dynamically loaded upon need, not linked at startup
+
+        Also did a lot of small tweaks to MediaPlayerPrivateQTKit.
+
+        * WebCore.xcodeproj/project.pbxproj: Don't link to QTKit.
+
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.h: Omit unneeded includes and declarations.
+        Made a lot more functions const. Made a few more members private and a couple inline.
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.mm: Added soft linking machinery for all the
+        things we currently use in QTKit. It's a little more awkward for classes and other data objects
+        than it is for functions, but still relatively straightforward, with no changes needed to the
+        client code. Added using namespace directives. Made a cuePointTimerInterval constant and put
+        it at the top of the file. Use 0 consistently instead of sometimes 0 and sometimes 0.0f.
+        (WebCore::MediaPlayerPrivate::MediaPlayerPrivate): Removed unneeded initialization of RetainPtr
+        members to nil.
+        (WebCore::MediaPlayerPrivate::createQTMovie): Use adoptNS instead of autorelease.
+        (WebCore::MediaPlayerPrivate::createQTMovieView): Ditto. Also use -[NSColor clearColor].
+        (WebCore::MediaPlayerPrivate::createQTTime): Remove an unneeded type cast that had no effect.
+        Changed to use long instead of int because that's the type for a QTTime time scale anyway.
+        (WebCore::MediaPlayerPrivate::duration): Use a static_cast instead of a C-style cast.
+        (WebCore::MediaPlayerPrivate::currentTime): Ditto. Also merged into a single expression.
+        (WebCore::MediaPlayerPrivate::cuePointTimerFired): Added code to make a copy of the cue
+        points set to avoid a potential problem with a set being modified as we iterate it.
+        (WebCore::MediaPlayerPrivate::bytesLoaded): Removed unneeded null check of m_qtMovie.
+        (WebCore::MediaPlayerPrivate::updateStates): Instead of comments explaining the numeric
+        values, used the constants from the headers directly.
+        (WebCore::MediaPlayerPrivate::getSupportedTypes): Instead of (QTMovieFileTypeOptions)0,
+        pass the named constant with value 0, QTIncludeCommonTypes. Skipped the intermediate type
+        of NSString to remove one cast. Replaced C-style cast with reinterpret_cast (arguably
+        no better). Used RetainPtr instead of explicit CFRelease calls.
+
+        * platform/mac/SoftLinking.h: Added macros to do soft linking for classes and for pointers.
+        It's not quite as automatic as the soft linking we can do for functions, since these define
+        functions to get the values, so you need to define macros to make what look like variable
+        accesses turn into function calls. See MediaPlayerPrivateQTKit for the details.
+
+        * html/HTMLMediaElement.h:
+        * html/TimeRanges.h:
+        * html/VoidCallback.h:
+        * platform/graphics/MediaPlayer.h:
+        Use angle brackets for wtf includes. Omit unneeded includes.
+
 2007-12-07  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.

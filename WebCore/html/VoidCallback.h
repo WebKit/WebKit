@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2007 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,14 +26,10 @@
 #ifndef VoidCallback_h
 #define VoidCallback_h
 
-#include <kjs/protect.h>
 #include <wtf/RefCounted.h>
-#include "wtf/PassRefPtr.h"
 
 namespace WebCore {
 
-class Frame;
-    
 class VoidCallback : public RefCounted<VoidCallback> {
 public:
     VoidCallback() { }

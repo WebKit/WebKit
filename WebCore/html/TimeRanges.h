@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2007 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,7 +28,7 @@
 
 #include "ExceptionCode.h"
 #include <wtf/RefCounted.h>
-#include "wtf/Vector.h"
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
@@ -38,8 +38,8 @@ public:
     TimeRanges(float start, float end);
     
     unsigned length() const { return m_ranges.size(); }
-    float start(unsigned index, ExceptionCode& ec) const;
-    float end(unsigned index, ExceptionCode& ec) const;
+    float start(unsigned index, ExceptionCode&) const;
+    float end(unsigned index, ExceptionCode&) const;
     
     void add(float start, float end);
     

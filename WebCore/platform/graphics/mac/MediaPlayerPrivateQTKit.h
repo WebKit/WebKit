@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2007 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,11 +30,10 @@
 
 #include "MediaPlayer.h"
 #include "Timer.h"
-#include "wtf/RetainPtr.h"
-#include "wtf/Noncopyable.h"
+#include <wtf/RetainPtr.h>
 
 #ifdef __OBJC__
-#import "QTKit/QTTime.h"
+#import <QTKit/QTTime.h>
 @class QTMovie;
 @class QTMovieView;
 @class WebCoreMovieObserver;
@@ -47,21 +46,15 @@ class WebCoreMovieObserver;
 
 namespace WebCore {
 
-class GraphicsContext;
-class IntSize;
-class IntRect;
-class String;
-
-class MediaPlayerPrivate : Noncopyable
-{
+class MediaPlayerPrivate : Noncopyable {
 public:
     MediaPlayerPrivate(MediaPlayer*);
     ~MediaPlayerPrivate();
     
-    IntSize naturalSize();
-    bool hasVideo();
+    IntSize naturalSize() const;
+    bool hasVideo() const;
     
-    void load(String url);
+    void load(const String& url);
     void cancelLoad();
     
     void play();
@@ -85,14 +78,14 @@ public:
     
     int dataRate() const;
     
-    MediaPlayer::NetworkState networkState();
-    MediaPlayer::ReadyState readyState();
+    MediaPlayer::NetworkState networkState() const { return m_networkState; }
+    MediaPlayer::ReadyState readyState() const { return m_readyState; }
     
-    float maxTimeBuffered();
-    float maxTimeSeekable();
-    unsigned bytesLoaded();
-    bool totalBytesKnown();
-    unsigned totalBytes();
+    float maxTimeBuffered() const;
+    float maxTimeSeekable() const;
+    unsigned bytesLoaded() const;
+    bool totalBytesKnown() const;
+    unsigned totalBytes() const;
     
     void setVisible(bool);
     void setRect(const IntRect& r);
@@ -104,24 +97,23 @@ public:
     void volumeChanged();
     void didEnd();
     
-    void paint(GraphicsContext* p, const IntRect& r);
-    
-    void createQTMovie(String url);
-    void createQTMovieView();
-    QTTime createQTTime(float time);
+    void paint(GraphicsContext*, const IntRect&);
     
     static void getSupportedTypes(HashSet<String>& types);
     
 private:
+    void createQTMovie(const String& url);
+    void createQTMovieView();
+    QTTime createQTTime(float time) const;
+    
     void updateStates();
     void doSeek();
     void cancelSeek();
     void seekTimerFired(Timer<MediaPlayerPrivate>*);
     void cuePointTimerFired(Timer<MediaPlayerPrivate>*);
-    float maxTimeLoaded();
+    float maxTimeLoaded() const;
     void startCuePointTimerIfNeeded();
-    
-private:    
+
     MediaPlayer* m_player;
     RetainPtr<QTMovie> m_qtMovie;
     RetainPtr<QTMovieView> m_qtMovieView;

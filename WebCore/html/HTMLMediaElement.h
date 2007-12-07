@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2007 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,12 +31,7 @@
 #include "HTMLElement.h"
 #include "MediaPlayer.h"
 #include "Timer.h"
-#include "StringHash.h"
 #include "VoidCallback.h"
-#include "wtf/HashMap.h"
-#include "wtf/HashSet.h"
-#include "wtf/RefPtr.h"
-#include "wtf/Vector.h"
 
 namespace WebCore {
 

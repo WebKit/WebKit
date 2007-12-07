@@ -60,3 +60,41 @@
     {\
         return softLink##functionName parameterNames; \
     }
+
+#define SOFT_LINK_CLASS(framework, className) \
+    static Class init##className(); \
+    static Class (*get##className##Class)() = init##className; \
+    static Class class##className; \
+    \
+    static Class className##Function() \
+    { \
+        return class##className; \
+    }\
+    \
+    static Class init##className() \
+    { \
+        framework##Library(); \
+        class##className = objc_getClass(#className); \
+        ASSERT(class##className); \
+        get##className##Class = className##Function; \
+        return class##className; \
+    }
+
+#define SOFT_LINK_POINTER(framework, name, type) \
+    static type init##name(); \
+    static type (*get##name)() = init##name; \
+    static type pointer##name; \
+    \
+    static type name##Function() \
+    { \
+        return pointer##name; \
+    }\
+    \
+    static type init##name() \
+    { \
+        void** pointer = static_cast<void**>(dlsym(framework##Library(), #name)); \
+        ASSERT(pointer); \
+        pointer##name = static_cast<type>(*pointer); \
+        get##name = name##Function; \
+        return pointer##name; \
+    }
