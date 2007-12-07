@@ -668,7 +668,18 @@ namespace WTF {
         const U* ptr = &val;
         if (size() == capacity())
             ptr = expandCapacity(size() + 1, ptr);
+            
+        // FIXME: MSVC7 generates compilation errors when trying to assign
+        // a pointer to a Vector of its base class (i.e. can't downcast). So far
+        // I've been unable to determine any logical reason for this, so I can
+        // only assume it is a bug with the compiler. Casting is very bad
+        // however because it subverts implicit conversions, so a better 
+        // solution is direly needed. 
+#if COMPILER(MSVC7)
+        new (end()) T(static_cast<T>(*ptr));
+#else
         new (end()) T(*ptr);
+#endif
         ++m_size;
     }
 

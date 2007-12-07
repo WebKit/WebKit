@@ -1,3 +1,13 @@
+2007-12-06  Kevin Ollivier  <kevino@theolliviers.com>
+
+        MSVC7 build fix due to a compiler bug with placement new and/or
+        templates and casting.
+
+        Reviewed by Darin Adler.
+
+        * wtf/Vector.h:
+        (WTF::::append):
+
 2007-12-06  Darin Adler  <darin@apple.com>
 
         Reviewed by Eric Seidel.
