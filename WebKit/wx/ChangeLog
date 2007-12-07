@@ -1,5 +1,24 @@
 2007-12-06  Kevin Ollivier  <kevino@theolliviers.com>
 
+        Fix page leak caused because the Frame's page pointer is 0 by the 
+        time we call delete on it. Store a reference to the page instead
+        and delete it that way.
+
+        Also, small fix to call PrepareDC(gcdc) when using wxGCDC because
+        on Linux the wxGCDC gcdc(dc) constructor will not retain the
+        changes made to dc by PrepareDC(dc).
+
+        Reviewed by Darin Adler.
+
+        * WebView.cpp:
+        (wxWebView::wxWebView):
+        (wxWebView::~wxWebView):
+        (wxWebView::OnPaint):
+        * WebViewPrivate.h:
+        (WebViewPrivate::WebViewPrivate):
+
+2007-12-06  Kevin Ollivier  <kevino@theolliviers.com>
+
         Linux build fix - ensure that webcore is linked before jscore
         so that the linker will know which symbols it needs to link in.
         Also fix MSVC project file name typo for sample app.

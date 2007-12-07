@@ -170,7 +170,6 @@ wxWebView::wxWebView(wxWindow* parent, int id, const wxPoint& position,
 
     WebCore::InitializeLoggingChannelsIfNecessary();    
     WebCore::HTMLFrameOwnerElement* parentFrame = 0;
-    WebCore::Page* page = 0;
 
     // FIXME: This cast is obviously not as safe as a dynamic
     // cast, but this allows us to get around requiring RTTI
@@ -180,17 +179,17 @@ wxWebView::wxWebView(wxWindow* parent, int id, const wxPoint& position,
     
     if (data) {
         parentFrame = data->ownerElement;
-        page = parentWebView->m_impl->frame->page();
+        m_impl->page = parentWebView->m_impl->frame->page();
     }
     else {
         WebCore::EditorClientWx* editorClient = new WebCore::EditorClientWx();
-        page = new WebCore::Page(new WebCore::ChromeClientWx(), new WebCore::ContextMenuClientWx(), editorClient, new WebCore::DragClientWx(), new WebCore::InspectorClientWx());
-        editorClient->setPage(page);
+        m_impl->page = new WebCore::Page(new WebCore::ChromeClientWx(), new WebCore::ContextMenuClientWx(), editorClient, new WebCore::DragClientWx(), new WebCore::InspectorClientWx());
+        editorClient->setPage(m_impl->page);
     }
     
     WebCore::FrameLoaderClientWx* loaderClient = new WebCore::FrameLoaderClientWx();
     
-    m_impl->frame = new WebCore::Frame(page, parentFrame, loaderClient);
+    m_impl->frame = new WebCore::Frame(m_impl->page, parentFrame, loaderClient);
     m_impl->frame->deref();
     m_impl->frameView = new WebCore::FrameView(m_impl->frame.get());
     m_impl->frameView->deref();
@@ -203,7 +202,7 @@ wxWebView::wxWebView(wxWindow* parent, int id, const wxPoint& position,
         
     // Default settings - we should have wxWebViewSettings class for this
     // eventually
-    WebCore::Settings* settings = page->settings();
+    WebCore::Settings* settings = m_impl->page->settings();
     settings->setLoadsImagesAutomatically(true);
     settings->setDefaultFixedFontSize(13);
     settings->setDefaultFontSize(16);
@@ -222,16 +221,11 @@ wxWebView::~wxWebView()
     
     m_impl->frame->loader()->detachFromParent();
     
-    // This test determines whether or not the frame is a subframe
-    // or the main (top level) frame. If it's the main frame, then
-    // delete its page to keep leaks from occurring
-    if (!m_impl->frame->ownerElement()) {
-        delete m_impl->frame->page();
-    }
-    m_impl->frameView = 0;
-    m_impl->frame = 0;
-
-    delete m_impl;
+    delete m_impl->page;
+    m_impl->page = 0;
+    // Since frameView has the last reference to Frame, once it is
+    // destroyed the destructor for Frame will happen as well.
+    m_impl->frameView = 0;    
 }
 
 void wxWebView::Stop()
@@ -365,11 +359,13 @@ void wxWebView::OnPaint(wxPaintEvent& event)
         return;
     
     wxAutoBufferedPaintDC dc(this);
-    DoPrepareDC(dc);
 
     if (IsShown() && m_impl->frame && m_impl->frame->document()) {
 #if USE(WXGC)
         wxGCDC gcdc(dc);
+        DoPrepareDC(gcdc);
+#else
+        DoPrepareDC(dc);
 #endif
 
         if (dc.IsOk()) {
