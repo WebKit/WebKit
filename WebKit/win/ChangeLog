@@ -1,3 +1,9 @@
+2007-12-07  Geoffrey Garen  <ggaren@apple.com>
+
+        Tried to fix build by suppressing warning.
+
+        * WebScriptCallFrame.cpp:
+
 2007-12-07  Darin Adler  <darin@apple.com>
 
         Reviewed by Mitz.
