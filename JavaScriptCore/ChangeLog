@@ -1,5 +1,14 @@
 2007-12-07  Geoffrey Garen  <ggaren@apple.com>
 
+        Build fix: moved functions with qualified names outside of class
+        declaration.
+
+        * kjs/JSVariableObject.h:
+        (KJS::JSVariableObject::symbolTableGet):
+        (KJS::JSVariableObject::symbolTablePut):
+
+2007-12-07  Geoffrey Garen  <ggaren@apple.com>
+
         Reviewed by Sam Weinig.
 
         Next step in refactoring JSGlobalObject: Added JSVariableObject class,

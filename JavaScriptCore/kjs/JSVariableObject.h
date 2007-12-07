@@ -70,32 +70,35 @@ namespace KJS {
         {
         }
 
-        bool JSVariableObject::symbolTableGet(const Identifier& propertyName, PropertySlot& slot)
-        {
-            size_t index = symbolTable().get(propertyName.ustring().rep());
-            if (index != missingSymbolMarker()) {
-                slot.setValueSlot(this, &d->localStorage[index].value);
-                return true;
-            }
-
-            return false;
-        }
-
-        bool JSVariableObject::symbolTablePut(const Identifier& propertyName, JSValue* value, int attr)
-        {
-            size_t index = symbolTable().get(propertyName.ustring().rep());
-            if (index != missingSymbolMarker()) {
-                LocalStorageEntry& entry = d->localStorage[index];
-                entry.value = value;
-                entry.attributes = attr;
-                return true;
-            }
-
-            return false;
-        }
+        bool symbolTableGet(const Identifier&, PropertySlot&);
+        bool symbolTablePut(const Identifier&, JSValue*, int attr);
 
         JSVariableObjectData* d;
     };
+
+    inline bool JSVariableObject::symbolTableGet(const Identifier& propertyName, PropertySlot& slot)
+    {
+        size_t index = symbolTable().get(propertyName.ustring().rep());
+        if (index != missingSymbolMarker()) {
+            slot.setValueSlot(this, &d->localStorage[index].value);
+            return true;
+        }
+
+        return false;
+    }
+
+    inline bool JSVariableObject::symbolTablePut(const Identifier& propertyName, JSValue* value, int attr)
+    {
+        size_t index = symbolTable().get(propertyName.ustring().rep());
+        if (index != missingSymbolMarker()) {
+            LocalStorageEntry& entry = d->localStorage[index];
+            entry.value = value;
+            entry.attributes = attr;
+            return true;
+        }
+
+        return false;
+    }
 
 } // namespace KJS
 
