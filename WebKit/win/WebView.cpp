@@ -4144,6 +4144,20 @@ HRESULT STDMETHODCALLTYPE WebView::clearUndoRedoOperations()
     return S_OK;
 }
 
+HRESULT STDMETHODCALLTYPE WebView::shouldClose( 
+    /* [retval][out] */ BOOL* result)
+{
+    if (!result) {
+        ASSERT_NOT_REACHED();
+        return E_POINTER;
+    }
+
+    *result = TRUE;
+    if (Frame* frame = m_page->focusController()->focusedOrMainFrame())
+        *result = frame->shouldClose() ? TRUE : FALSE;
+    return S_OK;
+}
+
 HRESULT WebView::registerDragDrop()
 {
     ASSERT(::IsWindow(m_viewWindow));

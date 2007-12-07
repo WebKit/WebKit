@@ -127,4 +127,12 @@ interface IWebViewPrivate : IUnknown
 
     // SPI for DumpRenderTree. This is global to all WebViews.
     HRESULT setShouldApplyMacFontAscentHack([in] BOOL shouldApply);
+
+    /*!
+        @method shouldClose:
+        @abstract This function will fire the before unload handler for a page.  
+        If the user cancels the closing of a webview from the alert popped up by the 
+        before unload handler, then this function will return false.
+    */
+    HRESULT shouldClose([out, retval] BOOL* result);
 }

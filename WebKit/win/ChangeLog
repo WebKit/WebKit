@@ -1,3 +1,14 @@
+2007-12-06  Alice Liu  <alice.liu@apple.com>
+
+        Fixed <rdar://5540000> onbeforeunload doesn't fire when closing window/tab
+
+        Reviewed by Darin.
+
+        * Interfaces/IWebViewPrivate.idl:
+        * WebView.cpp:
+        (WebView::shouldClose):
+        * WebView.h:
+
 2007-12-06  Adam Roben  <aroben@apple.com>
 
         Fix <rdar://5615283> Crash in WebFrame::receivedPolicyDecision
