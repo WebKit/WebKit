@@ -76,6 +76,7 @@ SOURCES += \
     kjs/internal.cpp \
     kjs/interpreter.cpp \
     kjs/JSGlobalObject.cpp \
+    kjs/JSVariableObject.cpp \
     kjs/JSImmediate.cpp \
     kjs/JSLock.cpp \
     kjs/lexer.cpp \

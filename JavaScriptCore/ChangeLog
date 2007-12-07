@@ -1,5 +1,11 @@
 2007-12-07  Geoffrey Garen  <ggaren@apple.com>
 
+        Build fix: added JSVariableObject.cpp to the .pri file.
+
+        * JavaScriptCore.pri:
+
+2007-12-07  Geoffrey Garen  <ggaren@apple.com>
+
         Build fix: added #include.
 
         * kjs/function.cpp:
