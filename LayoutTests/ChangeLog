@@ -1,3 +1,13 @@
+2007-12-07  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        http://bugs.webkit.org/show_bug.cgi?id=16325
+        <rdar://problem/5632997> REGRESSION: www.xerox.ru doesn't work
+
+        * http/tests/misc/empty-cookie-expected.txt: Added.
+        * http/tests/misc/empty-cookie.html: Added.
+
 2007-12-06  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin.

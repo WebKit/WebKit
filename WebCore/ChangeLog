@@ -1,3 +1,17 @@
+2007-12-07  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        http://bugs.webkit.org/show_bug.cgi?id=16325
+        <rdar://problem/5632997> REGRESSION: www.xerox.ru doesn't work
+        
+        Test: http/tests/misc/empty-cookie.html
+
+        * platform/mac/CookieJar.mm:
+        (WebCore::setCookies): Don't store empty cookies.
+        (WebCore::cookies): Filter out empty cookies if we have them, as they could have been set
+        with an earlier version of Leopard!
+
 2007-12-06  Ada Chan  <adachan@apple.com>
 
         Fixed the if statement (ERROR_SUCCESS is 0 and we were actually
