@@ -156,9 +156,6 @@ private:
     void setSearchFieldSize(RenderStyle*) const;
 
     ThemeControlState determineState(RenderObject*) const;
-    
-private:
-    HMODULE m_themeDLL;
 };
 
 } // namespace WebCore

@@ -50,14 +50,20 @@
 #include "WebURLResponse.h"
 #include "WebScriptDebugServer.h"
 #include "WebView.h"
-#include <SafariTheme/SafariTheme.h>
 #pragma warning(push, 0)
 #include <WebCore/FontDatabase.h>
+#include <WebCore/SoftLinking.h>
 #pragma warning(pop)
 
 // WebKitClassFactory ---------------------------------------------------------
 
-typedef void (APIENTRY*STInitializePtr)();
+#if !defined(NDEBUG) && defined(USE_DEBUG_SAFARI_THEME)
+SOFT_LINK_DEBUG_LIBRARY(SafariTheme)
+#else
+SOFT_LINK_LIBRARY(SafariTheme)
+#endif
+
+SOFT_LINK(SafariTheme, STInitialize, void, APIENTRY, (), ())
 
 WebKitClassFactory::WebKitClassFactory(CLSID targetClass)
 : m_targetClass(targetClass)
@@ -65,9 +71,8 @@ WebKitClassFactory::WebKitClassFactory(CLSID targetClass)
 {
     static bool didInitializeSafariTheme;
     if (!didInitializeSafariTheme) {
-        if (HMODULE module = LoadLibrary(SAFARITHEMEDLL))
-            if (STInitializePtr stInit = (STInitializePtr)GetProcAddress(module, "STInitialize"))
-                stInit();
+        if (SafariThemeLibrary())
+            STInitialize();
         didInitializeSafariTheme = true;
     }
 

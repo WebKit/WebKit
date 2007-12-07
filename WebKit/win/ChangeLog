@@ -1,3 +1,14 @@
+2007-12-07  Adam Roben  <aroben@apple.com>
+
+        Use SoftLinking.h in WebKitClassFactory.
+
+        Reviewed by Oliver.
+
+        * WebKitClassFactory.cpp:
+        (WebKitClassFactory::WebKitClassFactory): We don't have to worry about
+        not finding STInitialize anymore now that a version of SafariTheme
+        containing this function has shipped.
+
 2007-12-06  Ada Chan  <adachan@apple.com>
 
         <rdar://problem/5556378> Implemented database related UI delegate methods (prompts for new/enlarged databases)

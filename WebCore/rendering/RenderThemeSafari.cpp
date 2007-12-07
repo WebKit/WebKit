@@ -32,6 +32,7 @@
 #include "RenderSlider.h"
 #include "RenderView.h"
 #include "RetainPtr.h"
+#include "SoftLinking.h"
 #include "cssstyleselector.h"
 #include <CoreGraphics/CoreGraphics.h>
  
@@ -63,7 +64,13 @@ RenderTheme* theme()
     return &safariTheme;
 }
 
-static paintThemePartPtr paintThemePart;
+#if !defined(NDEBUG) && defined(USE_DEBUG_SAFARI_THEME)
+SOFT_LINK_DEBUG_LIBRARY(SafariTheme)
+#else
+SOFT_LINK_LIBRARY(SafariTheme)
+#endif
+
+SOFT_LINK(SafariTheme, paintThemePart, void, __stdcall, (ThemePart part, CGContextRef context, const CGRect& rect, NSControlSize size, ThemeControlState state), (part, context, rect, size, state))
 
 ThemeControlState RenderThemeSafari::determineState(RenderObject* o) const
 {
@@ -92,23 +99,11 @@ static NSControlSize controlSizeFromRect(const IntRect& rect, const IntSize size
 }
 
 RenderThemeSafari::RenderThemeSafari()
-    : m_themeDLL(0)
 {
-    m_themeDLL = ::LoadLibrary(SAFARITHEMEDLL);
-    if (m_themeDLL) {
-        paintThemePart = (paintThemePartPtr)GetProcAddress(m_themeDLL, "paintThemePart");
-    }
 }
 
 RenderThemeSafari::~RenderThemeSafari()
 {
-    if (!m_themeDLL)
-        return;
-
-    // we don't need to close the themes here because uxtheme should do that for us
-    // anyway (and we could crash if uxtheme has done cleanup already)
-
-    ::FreeLibrary(m_themeDLL);
 }
 
 Color RenderThemeSafari::platformActiveSelectionBackgroundColor() const
@@ -198,7 +193,7 @@ bool RenderThemeSafari::isControlStyled(const RenderStyle* style, const BorderDa
                                      const BackgroundLayer& background, const Color& backgroundColor) const
 {
     // If we didn't find SafariTheme.dll we won't be able to paint any themed controls.
-    if (!paintThemePart)
+    if (!SafariThemeLibrary())
         return true;
 
     if (style->appearance() == TextFieldAppearance || style->appearance() == TextAreaAppearance || style->appearance() == ListboxAppearance)
@@ -353,7 +348,7 @@ NSControlSize RenderThemeSafari::controlSizeForSystemFont(RenderStyle* style) co
 
 bool RenderThemeSafari::paintCheckbox(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
 {
-    ASSERT(paintThemePart);
+    ASSERT(SafariThemeLibrary());
 
     NSControlSize controlSize = controlSizeForFont(o->style());
 
@@ -392,7 +387,7 @@ void RenderThemeSafari::setCheckboxSize(RenderStyle* style) const
 
 bool RenderThemeSafari::paintRadio(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
 {
-    ASSERT(paintThemePart);
+    ASSERT(SafariThemeLibrary());
 
     NSControlSize controlSize = controlSizeForFont(o->style());
  
@@ -516,7 +511,7 @@ void RenderThemeSafari::setButtonSize(RenderStyle* style) const
 
 bool RenderThemeSafari::paintButton(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
 {
-    ASSERT(paintThemePart);
+    ASSERT(SafariThemeLibrary());
 
     // We inflate the rect as needed to account for padding included in the cell to accommodate the button
     // shadow.  We don't consider this part of the bounds of the control in WebKit.
@@ -549,7 +544,7 @@ bool RenderThemeSafari::paintButton(RenderObject* o, const RenderObject::PaintIn
 
 bool RenderThemeSafari::paintTextField(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
 {
-    ASSERT(paintThemePart);
+    ASSERT(SafariThemeLibrary());
 
     paintThemePart(TextFieldPart, paintInfo.context->platformContext(), r, (NSControlSize)0, determineState(o) & ~FocusedState);
     return false;
@@ -562,7 +557,7 @@ void RenderThemeSafari::adjustTextFieldStyle(CSSStyleSelector*, RenderStyle*, El
 bool RenderThemeSafari::paintCapsLockIndicator(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
 {    
 #if defined(SAFARI_THEME_VERSION) && SAFARI_THEME_VERSION >= 1
-    ASSERT(paintThemePart);
+    ASSERT(SafariThemeLibrary());
 
     if (paintInfo.context->paintingDisabled())
         return true;
@@ -577,7 +572,7 @@ bool RenderThemeSafari::paintCapsLockIndicator(RenderObject* o, const RenderObje
 
 bool RenderThemeSafari::paintTextArea(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
 {
-    ASSERT(paintThemePart);
+    ASSERT(SafariThemeLibrary());
 
     paintThemePart(TextAreaPart, paintInfo.context->platformContext(), r, (NSControlSize)0, determineState(o) & ~FocusedState);
     return false;
@@ -617,7 +612,7 @@ const int* RenderThemeSafari::popupButtonPadding(NSControlSize size) const
 
 bool RenderThemeSafari::paintMenuList(RenderObject* o, const RenderObject::PaintInfo& info, const IntRect& r)
 {
-    ASSERT(paintThemePart);
+    ASSERT(SafariThemeLibrary());
 
     NSControlSize controlSize = controlSizeFromRect(r, popupButtonSizes());
     IntRect inflatedRect = r;
@@ -938,7 +933,7 @@ const float verticalSliderHeightPadding = 0.1f;
 
 bool RenderThemeSafari::paintSliderThumb(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
 {
-    ASSERT(paintThemePart);
+    ASSERT(SafariThemeLibrary());
 
     ASSERT(o->parent()->isSlider());
 
@@ -965,7 +960,7 @@ void RenderThemeSafari::adjustSliderThumbSize(RenderObject* o) const
 
 bool RenderThemeSafari::paintSearchField(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
 {
-    ASSERT(paintThemePart);
+    ASSERT(SafariThemeLibrary());
 
     paintThemePart(SearchFieldPart, paintInfo.context->platformContext(), r, controlSizeFromRect(r, searchFieldSizes()), determineState(o));
     return false;
@@ -1018,7 +1013,7 @@ void RenderThemeSafari::adjustSearchFieldStyle(CSSStyleSelector* selector, Rende
 
 bool RenderThemeSafari::paintSearchFieldCancelButton(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect&)
 {
-    ASSERT(paintThemePart);
+    ASSERT(SafariThemeLibrary());
 
     Node* input = o->node()->shadowAncestorNode();
     ASSERT(input);
@@ -1072,7 +1067,7 @@ void RenderThemeSafari::adjustSearchFieldResultsDecorationStyle(CSSStyleSelector
 
 bool RenderThemeSafari::paintSearchFieldResultsDecoration(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect&)
 {
-    ASSERT(paintThemePart);
+    ASSERT(SafariThemeLibrary());
 
     Node* input = o->node()->shadowAncestorNode();
     ASSERT(input);
@@ -1095,7 +1090,7 @@ void RenderThemeSafari::adjustSearchFieldResultsButtonStyle(CSSStyleSelector* se
 
 bool RenderThemeSafari::paintSearchFieldResultsButton(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect&)
 {
-    ASSERT(paintThemePart);
+    ASSERT(SafariThemeLibrary());
 
     Node* input = o->node()->shadowAncestorNode();
     ASSERT(input);

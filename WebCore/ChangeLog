@@ -1,3 +1,26 @@
+2007-12-07  Adam Roben  <aroben@apple.com>
+
+        Add SoftLinking.h for Windows and use it in a few places
+
+        Reviewed by Oliver.
+
+        * WebCore.vcproj/WebCore.vcproj: Added new file to project.
+        * platform/win/PlatformScrollBarSafari.cpp: Use SoftLinking.h.
+        (WebCore::PlatformScrollbar::PlatformScrollbar): Removed manual
+        soft-linking calls.
+        (WebCore::PlatformScrollbar::paintButton): Check for the presence of
+        the SafariTheme library now that we can't check for the presence of
+        paintThemePart directly.
+        (WebCore::PlatformScrollbar::paintTrack): Ditto.
+        (WebCore::PlatformScrollbar::paintThumb): Ditto.
+        * platform/win/SoftLinking.h: Copied from WebCore/platform/mac/SoftLinking.h.
+        * rendering/RenderThemeSafari.cpp: Same basic changes as to
+        PlatformScrollBarSafari.cpp.
+        (WebCore::RenderThemeSafari::RenderThemeSafari):
+        (WebCore::RenderThemeSafari::isControlStyled):
+        (WebCore::RenderThemeSafari::paintCapsLockIndicator):
+        * rendering/RenderThemeSafari.h: Removed m_themeDLL member.
+
 2007-12-07  Darin Adler  <darin@apple.com>
 
         Reviewed by Adele.

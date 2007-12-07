@@ -35,6 +35,7 @@
 #include "GraphicsContext.h"
 #include "IntRect.h"
 #include "PlatformMouseEvent.h"
+#include "SoftLinking.h"
 
 #include <CoreGraphics/CoreGraphics.h>
 #include <SafariTheme/SafariTheme.h>
@@ -61,9 +62,13 @@ static int cThumbWidth[] = { 15, 11 };
 static int cThumbHeight[] = { 15, 11 };
 static int cThumbMinLength[] = { 26, 20 };
 
-static paintThemePartPtr paintThemePart;
+#if !defined(NDEBUG) && defined(USE_DEBUG_SAFARI_THEME)
+SOFT_LINK_DEBUG_LIBRARY(SafariTheme)
+#else
+SOFT_LINK_LIBRARY(SafariTheme)
+#endif
 
-static HMODULE themeDLL;
+SOFT_LINK(SafariTheme, paintThemePart, void, __stdcall, (ThemePart part, CGContextRef context, const CGRect& rect, NSControlSize size, ThemeControlState state), (part, context, rect, size, state))
 
 const double cInitialTimerDelay = 0.25;
 const double cNormalTimerDelay = 0.05;
@@ -77,12 +82,6 @@ PlatformScrollbar::PlatformScrollbar(ScrollbarClient* client, ScrollbarOrientati
     if (!cHorizontalWidth) {
         // FIXME: Get metics from SafariTheme
     }
-
-    if (!themeDLL)
-        themeDLL = ::LoadLibrary(SAFARITHEMEDLL);
-
-    if (themeDLL)
-        paintThemePart = (paintThemePartPtr)GetProcAddress(themeDLL, "paintThemePart");
 
     if (orientation == VerticalScrollbar)
         setFrameGeometry(IntRect(0, 0, cVerticalWidth[controlSize()], cVerticalHeight[controlSize()]));
@@ -351,7 +350,7 @@ int PlatformScrollbar::trackLength() const
 
 void PlatformScrollbar::paintButton(GraphicsContext* context, const IntRect& rect, bool start, const IntRect& damageRect) const
 {
-    if (!paintThemePart)
+    if (!SafariThemeLibrary())
         return;
 
     IntRect paintRect = buttonRepaintRect(rect, m_orientation, controlSize(), start);
@@ -377,7 +376,7 @@ void PlatformScrollbar::paintButton(GraphicsContext* context, const IntRect& rec
 
 void PlatformScrollbar::paintTrack(GraphicsContext* context, const IntRect& rect, bool start, const IntRect& damageRect) const
 {
-    if (!paintThemePart)
+    if (!SafariThemeLibrary())
         return;
 
     IntRect paintRect = hasButtons() ? trackRepaintRect(rect, m_orientation, controlSize()) : rect;
@@ -395,7 +394,7 @@ void PlatformScrollbar::paintTrack(GraphicsContext* context, const IntRect& rect
 
 void PlatformScrollbar::paintThumb(GraphicsContext* context, const IntRect& rect, const IntRect& damageRect) const
 {
-    if (!paintThemePart)
+    if (!SafariThemeLibrary())
         return;
 
     if (!damageRect.intersects(rect))

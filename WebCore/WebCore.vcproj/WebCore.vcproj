@@ -3582,6 +3582,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\platform\win\SoftLinking.h"
+					>
+				</File>
+				<File
 					RelativePath="..\platform\win\SoundWin.cpp"
 					>
 				</File>
