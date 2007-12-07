@@ -1,3 +1,12 @@
+2007-12-07  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Adam Roben
+
+        * misc/DatabaseExample.html: Changed to differentiate failure between running with an
+          unsupported browser or some other error that prevented the database from opening.
+          In the future we can use ExceptionCodes returned from openDatabase(), but a good list
+          of those don't exist yet
+
 2007-12-05  Timothy Hatcher  <timothy@apple.com>
 
         Add another Inspector screenshot for an upcoming blog post.

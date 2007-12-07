@@ -53,13 +53,15 @@ body {
 </style>
 <script>
 var db;
-try {
-    db = openDatabase("NoteTest", "1.0", "HTML5 Database API example", 200000);
-} catch(err) { }
 
-if (!db) {
-    alert("Failed to open the database on disk.  Are you using a WebKit nightly with this feature enabled?");
-}
+try {
+    if (window.openDatabase) {
+        db = openDatabase("NoteTest", "1.0", "HTML5 Database API example", 200000);
+        if (!db)
+            alert("Failed to open the database on disk.  This is probably because the version was bad or there is not enough space left in this domain's quota");
+    } else
+        alert("Couldn't open the database.  Please try with a WebKit nightly with this feature enabled");
+} catch(err) { }
 
 var captured = null;
 var highestZ = 0;
