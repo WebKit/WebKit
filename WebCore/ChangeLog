@@ -1,5 +1,11 @@
 2007-12-07  Geoffrey Garen  <ggaren@apple.com>
 
+        Build fix: corrected #include path.
+
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.mm:
+
+2007-12-07  Geoffrey Garen  <ggaren@apple.com>
+
         Reviewed by Sam Weinig.
 
         Added some namespace qualifications and a forwarding header, now that

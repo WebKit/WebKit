@@ -37,7 +37,7 @@
 #import "SoftLinking.h"
 #import "WebCoreSystemInterface.h"
 #import <QTKit/QTKit.h>
-#import <objc/runtime.h>
+#import <bindings/runtime.h>
 
 SOFT_LINK_FRAMEWORK(QTKit)
 
