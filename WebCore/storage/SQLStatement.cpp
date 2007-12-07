@@ -58,7 +58,7 @@ bool SQLStatement::execute(Database* db)
     if (m_error)
         return false;
         
-    // In case we're re-running this statement after a quota violation, clear that error now
+    // If we're re-running this statement after a quota violation, we need to clear that error now
     clearFailureDueToQuota();
     
     SQLiteDatabase* database = &db->m_sqliteDatabase;
@@ -171,15 +171,13 @@ void SQLStatement::setFailureDueToQuota()
 
 void SQLStatement::clearFailureDueToQuota()
 {
-    ASSERT(m_error && m_error->code() == 4);
+    ASSERT(!m_error || m_error->code() == 4);
     m_error = 0;
 }
 
 bool SQLStatement::lastExecutionFailedDueToQuota() const 
 { 
-    return m_error ? m_error->code() == 4 : false; 
+    return m_error && m_error->code() == 4; 
 }
-
-
 
 } // namespace WebCore

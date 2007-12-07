@@ -1,3 +1,14 @@
+2007-12-06  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Darin
+
+        Tweaked a comment and a few assertions from my last checkin
+
+        * storage/SQLStatement.cpp:
+        (WebCore::SQLStatement::execute):
+        (WebCore::SQLStatement::clearFailureDueToQuota):
+        (WebCore::SQLStatement::lastExecutionFailedDueToQuota):
+
 2007-12-06  Brady Eidson <beidson@apple.com>
 
         Reviewed by Darin
