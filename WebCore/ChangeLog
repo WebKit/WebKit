@@ -1,3 +1,13 @@
+2007-12-06  Ada Chan  <adachan@apple.com>
+
+        Fixed the if statement (ERROR_SUCCESS is 0 and we were actually
+        returning true when there's an error).
+
+        Reviewed by Steve.
+
+        * platform/win/FileSystemWin.cpp:
+        (WebCore::makeAllDirectories):
+
 2007-12-06  Darin Adler  <darin@apple.com>
 
         - fix broken regression test
