@@ -1,3 +1,14 @@
+2007-12-06  Ada Chan  <adachan@apple.com>
+
+        <rdar://problem/5556378> Implemented database related UI delegate methods (prompts for new/enlarged databases)
+
+        Reviewed by Darin.
+
+        * Interfaces/IWebUIDelegatePrivate.idl:
+        * WebChromeClient.cpp:
+        (WebChromeClient::requestQuotaIncreaseForNewDatabase):
+        (WebChromeClient::requestQuotaIncreaseForDatabaseOperation):
+
 2007-12-06  Alice Liu  <alice.liu@apple.com>
 
         Fixed <rdar://5540000> onbeforeunload doesn't fire when closing window/tab

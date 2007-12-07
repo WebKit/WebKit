@@ -29,6 +29,7 @@
 #include "WebElementPropertyBag.h"
 #include "WebFrame.h"
 #include "WebMutableURLRequest.h"
+#include "WebSecurityOrigin.h"
 #include "WebView.h"
 #pragma warning(push, 0)
 #include <WebCore/BString.h>
@@ -456,14 +457,36 @@ void WebChromeClient::print(Frame* frame)
             uiDelegate2->printFrame(m_webView, kit(frame));
 }
 
-unsigned long long WebChromeClient::requestQuotaIncreaseForNewDatabase(Frame*, const SecurityOriginData&, const String&, unsigned long long)
+unsigned long long WebChromeClient::requestQuotaIncreaseForNewDatabase(Frame*, const SecurityOriginData& originData, const String& databaseDisplayName, unsigned long long estimatedSize)
 {
-    return 0;
+    COMPtr<WebSecurityOrigin> webOrigin(AdoptCOM, WebSecurityOrigin::createInstance(originData));
+    unsigned long long result = 0;
+    COMPtr<IWebUIDelegate> uiDelegate;
+    if (SUCCEEDED(m_webView->uiDelegate(&uiDelegate))) {
+        COMPtr<IWebUIDelegatePrivate3> uiDelegatePrivate3(Query, uiDelegate);
+        if (uiDelegatePrivate3 &&
+            SUCCEEDED(uiDelegatePrivate3->quotaForSecurityOriginForNewDatabase(m_webView, webOrigin.get(), BString(databaseDisplayName), estimatedSize, &result)))
+            return result;
+    }
+    // an error happened - just return the current quota
+    webOrigin->quota(&result);
+    return result;
 }
 
-unsigned long long WebChromeClient::requestQuotaIncreaseForDatabaseOperation(Frame*, const SecurityOriginData&, const String&, unsigned long long)
+unsigned long long WebChromeClient::requestQuotaIncreaseForDatabaseOperation(Frame*, const SecurityOriginData& originData, const String& databaseIdentifier, unsigned long long proposedNewQuota)
 {
-    return 0;
+    COMPtr<WebSecurityOrigin> webOrigin(AdoptCOM, WebSecurityOrigin::createInstance(originData));
+    unsigned long long result = 0;
+    COMPtr<IWebUIDelegate> uiDelegate;
+    if (SUCCEEDED(m_webView->uiDelegate(&uiDelegate))) {
+        COMPtr<IWebUIDelegatePrivate3> uiDelegatePrivate3(Query, uiDelegate);
+        if (uiDelegatePrivate3 &&
+            SUCCEEDED(uiDelegatePrivate3->quotaForSecurityOriginForDatabaseOperation(m_webView, webOrigin.get(), proposedNewQuota, BString(databaseIdentifier), &result)))
+            return result;
+    }
+    // an error happened - just return the current quota
+    webOrigin->quota(&result);
+    return result;
 }
 
 COMPtr<IWebUIDelegate> WebChromeClient::uiDelegate()

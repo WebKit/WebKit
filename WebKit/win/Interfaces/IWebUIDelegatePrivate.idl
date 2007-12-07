@@ -50,8 +50,10 @@ cpp_quote(" */")
 
 import "oaidl.idl";
 import "ocidl.idl";
+import "IWebSecurityOrigin.idl";
 import "IWebView.idl";
 
+interface IWebSecurityOrigin;
 interface IWebView;
 
 [
@@ -82,4 +84,43 @@ interface IWebUIDelegatePrivate : IUnknown
 interface IWebUIDelegatePrivate2 : IWebUIDelegatePrivate
 {
     HRESULT webViewPainted([in] IWebView* sender);
+}
+
+
+[
+    object,
+    oleautomation,
+    uuid(4E7AECB6-C017-4e98-8FD5-4131C4BAB923),
+    pointer_default(unique)
+]
+interface IWebUIDelegatePrivate3 : IWebUIDelegatePrivate2
+{
+/*!
+    @method webView:quotaForSecurityOrigin:toCreateDatabase:withEstimatedSize:
+    @param sender The WebView sending the delegate method
+    @param origin The security origin of the database that needs a larger quota to create a database
+    @param newDatabaseName The display name of the new database
+    @param estimatedSize The estimated maximum usage of the new database
+    @result The new quota, in bytes
+    @discussion If the new quota is less than or equal to the current usage for the given security origin, the new database will not be created.
+    Otherwise the database will created, even if the new quota doesn't allow for the entire estimated size.
+
+    - (unsigned long long)webView:(WebView *)sender quotaForSecurityOrigin:(WebSecurityOrigin *)origin toCreateDatabase:(NSString *)newDatabaseName withEstimatedSize:(unsigned long long)estimatedSize;
+*/
+    HRESULT quotaForSecurityOriginForNewDatabase([in] IWebView* sender, [in] IWebSecurityOrigin* origin, [in] BSTR newDatabaseName, [in] unsigned long long estimatedSize, [out, retval] unsigned long long* newQuota);
+
+/*!
+    @method webView:quotaForSecurityOrigin:fromProposedQuota:database:
+    @param sender The WebView sending the delegate method
+    @param origin The security origin of the database that has reached its size limit
+    @param proposedNewQuota WebKit's best guess as to the required new quota
+    @param databaseIdentifier The string identifier of the database
+    @result The new quota, in bytes
+    @discussion If the new quota is less than the proposedNewQuota, the current database operation will fail.
+    If the new quota is equal to or greater than the proposedNewQuota, the current database operation will continue, 
+    possibly calling this delegate method again to request even more space
+
+    - (unsigned long long)webView:(WebView *)sender quotaForSecurityOrigin:(WebSecurityOrigin *)origin fromProposedQuota:(unsigned long long)proposedNewQuota database:(NSString *)databaseIdentifier;
+*/
+    HRESULT quotaForSecurityOriginForDatabaseOperation([in] IWebView* sender, [in] IWebSecurityOrigin* origin, [in] unsigned long long proposedNewQuota, [in] BSTR databaseIdentifier, [out, retval] unsigned long long* newQuota);
 }
