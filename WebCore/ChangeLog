@@ -1,3 +1,38 @@
+2007-12-07  Darin Adler  <darin@apple.com>
+
+        Reviewed by Adele.
+
+        - fix <rdar://problem/5608795> CrashTracer: 481 crashes in Safari
+          at WebCore::HTMLSelectElement::saveState const + 152
+
+        Test: fast/forms/select-set-inner.html
+
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::removeChildren): Added a return value, as with other
+        calls that change children, so we can optimize for the case where it does nothing.
+        (WebCore::ContainerNode::cloneChildNodes): Changed parameter type to ContainerNode.
+        * dom/ContainerNode.h: See above.
+
+        * html/HTMLOptGroupElement.cpp:
+        (WebCore::HTMLOptGroupElement::removeChildren): Override removeChildren and call
+        recalcSelectOptions in that case.
+        (WebCore::HTMLOptGroupElement::childrenChanged): Override childrenChanged instead of
+        addChild, for consistency with HTMLSelectElement; no need to override both.
+        (WebCore::HTMLOptGroupElement::groupLabelText): Made const.
+        * html/HTMLOptGroupElement.h: See above.
+
+        * html/HTMLSelectElement.cpp: Don't override addChild any more, because we already
+        override childrenChanged, and addChild calls that.
+        (WebCore::HTMLSelectElement::removeChildren): Override removeChildren and call
+        recalcSelectOptions in that case.
+        (WebCore::HTMLSelectElement::recalcListItems): Tightened up the code a little bit
+        by using a for loop and traverseNextSibling. Also added some new comments and
+        removed some obsolete ones.
+        (WebCore::HTMLSelectElement::checkListItems): Added. Debug-only check to make
+        sure we don't have a stale list items vector.
+        * html/HTMLSelectElement.h: Changed listItems() to invoke checkListItems().
+        This will help us catch cases where we have too few calls to setRecalcListItems.
+
 2007-12-07  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.

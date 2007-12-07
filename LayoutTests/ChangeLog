@@ -1,3 +1,13 @@
+2007-12-07  Darin Adler  <darin@apple.com>
+
+        Reviewed by Adele.
+
+        - test for <rdar://problem/5608795> CrashTracer: 481 crashes in Safari
+          at WebCore::HTMLSelectElement::saveState const + 152
+
+        * fast/forms/select-set-inner-expected.txt: Added.
+        * fast/forms/select-set-inner.html: Added.
+
 2007-12-07  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.

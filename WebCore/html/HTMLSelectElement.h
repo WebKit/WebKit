@@ -86,8 +86,7 @@ public:
     virtual bool replaceChild(PassRefPtr<Node> newChild, Node* oldChild, ExceptionCode&);
     virtual bool removeChild(Node* child, ExceptionCode&);
     virtual bool appendChild(PassRefPtr<Node> newChild, ExceptionCode&);
-    virtual ContainerNode* addChild(PassRefPtr<Node>);
-
+    virtual bool removeChildren();
     virtual void childrenChanged();
 
     virtual void parseMappedAttribute(MappedAttribute*);
@@ -106,6 +105,8 @@ public:
     {
         if (m_recalcListItems)
             recalcListItems();
+        else
+            checkListItems();
         return m_listItems;
     }
     virtual void reset();
@@ -138,6 +139,8 @@ public:
 
 private:
     void recalcListItems() const;
+    void checkListItems() const;
+
     void deselectItems(HTMLOptionElement* excludeElement = 0);
     bool usesMenuList() const { return !m_multiple && m_size <= 1; }
     int nextSelectableListIndex(int startIndex);
@@ -167,6 +170,14 @@ private:
 
     HTMLCollection::CollectionInfo m_collectionInfo;
 };
+
+#ifdef NDEBUG
+
+inline void HTMLSelectElement::checkListItems() const
+{
+}
+
+#endif
 
 } // namespace
 

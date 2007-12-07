@@ -1,10 +1,8 @@
 /*
- * This file is part of the DOM implementation for KDE.
- *
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2000 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.
+ * Copyright (C) 2004, 2005, 2006, 2007 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -37,26 +35,28 @@ public:
     virtual bool checkDTD(const Node*);
     virtual const AtomicString& type() const;
     virtual bool isFocusable() const;
-    virtual bool insertBefore(PassRefPtr<Node> newChild, Node* refChild, ExceptionCode&);
-    virtual bool replaceChild(PassRefPtr<Node> newChild, Node* oldChild, ExceptionCode&);
-    virtual bool removeChild(Node* child, ExceptionCode&);
-    virtual bool appendChild(PassRefPtr<Node> newChild, ExceptionCode&);
-    virtual ContainerNode* addChild(PassRefPtr<Node>);
     virtual void parseMappedAttribute(MappedAttribute*);
     virtual bool rendererIsNeeded(RenderStyle*) { return false; }
     virtual void attach();
     virtual void detach();
     virtual RenderStyle* renderStyle() const { return m_style; }
-    virtual void setRenderStyle(RenderStyle* s);
+    virtual void setRenderStyle(RenderStyle*);
 
-    void recalcSelectOptions();
+    virtual bool insertBefore(PassRefPtr<Node> newChild, Node* refChild, ExceptionCode&);
+    virtual bool replaceChild(PassRefPtr<Node> newChild, Node* oldChild, ExceptionCode&);
+    virtual bool removeChild(Node* child, ExceptionCode&);
+    virtual bool appendChild(PassRefPtr<Node> newChild, ExceptionCode&);
+    virtual bool removeChildren();
+    virtual void childrenChanged();
 
     String label() const;
     void setLabel(const String&);
     
-    String groupLabelText();
+    String groupLabelText() const;
     
 private:
+    void recalcSelectOptions();
+
     RenderStyle* m_style;
 };
 

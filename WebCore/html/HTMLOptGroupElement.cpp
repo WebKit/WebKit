@@ -1,10 +1,8 @@
 /*
- * This file is part of the DOM implementation for KDE.
- *
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.
+ * Copyright (C) 2004, 2005, 2006, 2007 Apple Inc. All rights reserved.
  *           (C) 2006 Alexey Proskuryakov (ap@nypop.com)
  *
  * This library is free software; you can redistribute it and/or
@@ -86,15 +84,21 @@ bool HTMLOptGroupElement::appendChild(PassRefPtr<Node> newChild, ExceptionCode& 
     return result;
 }
 
-ContainerNode* HTMLOptGroupElement::addChild(PassRefPtr<Node> newChild)
+bool HTMLOptGroupElement::removeChildren()
 {
-    ContainerNode* result = HTMLGenericFormElement::addChild(newChild);
+    bool result = HTMLGenericFormElement::removeChildren();
     if (result)
         recalcSelectOptions();
     return result;
 }
 
-void HTMLOptGroupElement::parseMappedAttribute(MappedAttribute *attr)
+void HTMLOptGroupElement::childrenChanged()
+{
+    recalcSelectOptions();
+    HTMLGenericFormElement::childrenChanged();
+}
+
+void HTMLOptGroupElement::parseMappedAttribute(MappedAttribute* attr)
 {
     HTMLGenericFormElement::parseMappedAttribute(attr);
     recalcSelectOptions();
@@ -102,7 +106,7 @@ void HTMLOptGroupElement::parseMappedAttribute(MappedAttribute *attr)
 
 void HTMLOptGroupElement::recalcSelectOptions()
 {
-    Node *select = parentNode();
+    Node* select = parentNode();
     while (select && !select->hasTagName(selectTag))
         select = select->parentNode();
     if (select)
@@ -154,7 +158,7 @@ void HTMLOptGroupElement::setRenderStyle(RenderStyle* newStyle)
         oldStyle->deref(document()->renderArena());
 }
 
-String HTMLOptGroupElement::groupLabelText()
+String HTMLOptGroupElement::groupLabelText() const
 {
     DeprecatedString itemText = getAttribute(labelAttr).deprecatedString();
     

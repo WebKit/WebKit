@@ -333,9 +333,9 @@ bool HTMLSelectElement::appendChild(PassRefPtr<Node> newChild, ExceptionCode& ec
     return result;
 }
 
-ContainerNode* HTMLSelectElement::addChild(PassRefPtr<Node> newChild)
+bool HTMLSelectElement::removeChildren()
 {
-    ContainerNode* result = HTMLFormControlElementWithState::addChild(newChild);
+    bool result = HTMLFormControlElementWithState::removeChildren();
     if (result)
         setRecalcListItems();
     return result;
@@ -496,15 +496,21 @@ PassRefPtr<HTMLOptionsCollection> HTMLSelectElement::options()
 
 void HTMLSelectElement::recalcListItems() const
 {
-    Node* current = firstChild();
     m_listItems.clear();
     HTMLOptionElement* foundSelected = 0;
-    while (current) {
+    for (Node* current = firstChild(); current; current = current->traverseNextSibling(this)) {
         if (current->hasTagName(optgroupTag) && current->firstChild()) {
-            // ### what if optgroup contains just comments? don't want one of no options in it...
+            // FIXME: It doesn't make sense to add an optgroup to the list items,
+            // when it has children, but not to add it if it happens to have,
+            // children (say some comment nodes or text nodes), yet that's what
+            // this code does!
             m_listItems.append(static_cast<HTMLElement*>(current));
             current = current->firstChild();
+            // FIXME: It doesn't make sense to handle an <optgroup> inside another <optgroup>
+            // if it's not the first child, but not handle it if it happens to be the first
+            // child, yet that's what this code does!
         }
+
         if (current->hasTagName(optionTag)) {
             m_listItems.append(static_cast<HTMLElement*>(current));
             if (!foundSelected && (usesMenuList() || (!m_multiple && static_cast<HTMLOptionElement*>(current)->selected()))) {
@@ -517,13 +523,6 @@ void HTMLSelectElement::recalcListItems() const
         }
         if (current->hasTagName(hrTag))
             m_listItems.append(static_cast<HTMLElement*>(current));
-
-        Node* parent = current->parentNode();
-        current = current->nextSibling();
-        if (!current) {
-            if (parent != this)
-                current = parent->nextSibling();
-        }
     }
     m_recalcListItems = false;
 }
@@ -531,7 +530,6 @@ void HTMLSelectElement::recalcListItems() const
 void HTMLSelectElement::childrenChanged()
 {
     setRecalcListItems();
-
     HTMLFormControlElementWithState::childrenChanged();
 }
 
@@ -1061,5 +1059,16 @@ void HTMLSelectElement::scrollToSelection()
     if (renderer() && !usesMenuList())
         static_cast<RenderListBox*>(renderer())->selectionChanged();
 }
+
+#ifndef NDEBUG
+
+void HTMLSelectElement::checkListItems() const
+{
+    Vector<HTMLElement*> items = m_listItems;
+    recalcListItems();
+    ASSERT(items == m_listItems);
+}
+
+#endif
 
 } // namespace
