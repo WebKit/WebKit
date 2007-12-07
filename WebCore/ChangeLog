@@ -1,8 +1,14 @@
+2007-12-07  Darin Adler  <darin@apple.com>
+
+        Fix build on Tiger (Mark Rowe told me how).
+
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.mm:
+        Include <objc/objc-runtime.h>, which existed back on Tiger,
+        rather than <objc/runtime.h>, which did not.
+
 2007-12-07  Geoffrey Garen  <ggaren@apple.com>
 
         Build fix: rolling out last build fix to change #include path.
-
-        WARNING: NO TEST CASES ADDED OR CHANGED
 
         * platform/graphics/mac/MediaPlayerPrivateQTKit.mm:
 
