@@ -261,7 +261,7 @@ void setDOMException(ExecState* exec, ExceptionCode ec)
         return;
 
     // To be removed: See XMLHttpRequest.h.
-    if (ec == XMLHttpRequestExceptionOffset + PERMISSION_DENIED) {
+    if (ec == PERMISSION_DENIED) {
         throwError(exec, GeneralError, "Permission denied");
         return;
     }

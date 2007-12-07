@@ -1,5 +1,12 @@
 2007-12-06  Darin Adler  <darin@apple.com>
 
+        - fix broken regression test
+
+        * bindings/js/kjs_binding.cpp:
+        (KJS::setDOMException): Oops, this was just supposed to be PERMISSION_DENIED.
+
+2007-12-06  Darin Adler  <darin@apple.com>
+
         Reviewed by Sam Weinig.
 
         - fix http://bugs.webkit.org/show_bug.cgi?id=16332
