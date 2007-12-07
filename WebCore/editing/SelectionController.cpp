@@ -704,17 +704,9 @@ IntRect SelectionController::caretRect() const
     return caret;
 }
 
-static IntRect repaintRectForCaret(IntRect caret)
-{
-    if (caret.isEmpty())
-        return IntRect();
-    caret.inflate(1);
-    return caret;
-}
-
 IntRect SelectionController::caretRepaintRect() const
 {
-    return repaintRectForCaret(caretRect());
+    return caretRect();
 }
 
 bool SelectionController::recomputeCaretRect()
@@ -735,8 +727,8 @@ bool SelectionController::recomputeCaretRect()
     if (oldRect == newRect)
         return false;
 
-    v->updateContents(repaintRectForCaret(oldRect), false);
-    v->updateContents(repaintRectForCaret(newRect), false);
+    v->updateContents(oldRect, false);
+    v->updateContents(newRect, false);
     return true;
 }
 

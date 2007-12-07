@@ -79,7 +79,6 @@ public:
 #endif
 
     CGContextRef m_cgContext;
-    IntRect m_focusRingClip; // Work around CG bug in focus ring clipping.
     bool m_userToDeviceTransformKnownToBeIdentity;
 };
 

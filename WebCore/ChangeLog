@@ -1,3 +1,37 @@
+2007-12-07  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        - WebCore part of fixing <rdar://problem/5499918> REGRESSION: insertion point in input field with custom border cuts holes in focus ring interior edges
+
+        Test: fast/repaint/focus-ring.html
+
+        * editing/SelectionController.cpp:
+        (WebCore::SelectionController::caretRepaintRect): Changed to return just
+        the caret rect without any padding.
+        (WebCore::SelectionController::recomputeCaretRect): Changed to repaint
+        just the caret rect without any padding.
+        * platform/graphics/GraphicsContext.h: Removed setFocusRingClip() and
+        clearFocusRingClip().
+        * platform/graphics/cairo/GraphicsContextCairo.cpp: Ditto.
+        * platform/graphics/cg/GraphicsContextCG.cpp: Ditto.
+        * platform/graphics/cg/GraphicsContextPlatformPrivate.h: Removed
+        m_focusRingClip member.
+        * platform/graphics/mac/GraphicsContextMac.mm:
+        (WebCore::GraphicsContext::drawFocusRing): Changed to call
+        wkDrawFocusRing() once without setting up additional clip. On Leopard,
+        wkDrawFocusRing() respects the context clip now. On Tiger, a
+        transparency layer is used to apply clipping to the focus ring.
+        * platform/graphics/qt/GraphicsContextQt.cpp: Removed focus ring clip
+        methods and member.
+        * platform/graphics/wx/GraphicsContextWx.cpp: Ditto.
+        * platform/mac/WebCoreSystemInterface.h: Removed the clipRect argument
+        to wkDrawFocusRing().
+        * platform/mac/WebCoreSystemInterface.mm: Ditto.
+        * rendering/RenderLayer.cpp:
+        (WebCore::setClip): Removed call to set the focus ring clip.
+        (WebCore::restoreClip): Removed call to reset the focus ring clip.
+
 2007-12-07  Darin Adler  <darin@apple.com>
 
         Reviewed by Antti Koivisto and Kevin Decker.

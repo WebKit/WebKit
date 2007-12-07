@@ -164,10 +164,6 @@ namespace WebCore {
         void clipOutEllipseInRect(const IntRect&);
         void clipOutRoundedRect(const IntRect&, const IntSize& topLeft, const IntSize& topRight, const IntSize& bottomLeft, const IntSize& bottomRight);
 
-        // Functions to work around bugs in focus ring clipping on Mac.
-        void setFocusRingClip(const IntRect&);
-        void clearFocusRingClip();
-
         int textDrawingMode();
         void setTextDrawingMode(int);
 

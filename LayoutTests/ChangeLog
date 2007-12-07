@@ -2,6 +2,17 @@
 
         Reviewed by Darin Adler.
 
+        - repaint test for <rdar://problem/5499918> REGRESSION: insertion point in input field with custom border cuts holes in focus ring interior edges
+
+        * fast/repaint/focus-ring.html: Added.
+        * platform/mac/fast/repaint/focus-ring-expected.checksum: Added.
+        * platform/mac/fast/repaint/focus-ring-expected.png: Added.
+        * platform/mac/fast/repaint/focus-ring-expected.txt: Added.
+
+2007-12-07  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
         - test for http://bugs.webkit.org/show_bug.cgi?id=16334
           <rdar://problem/5634923> REGRESSION (r28299): Homepage of any DotMac Web Gallery won't load completely
 

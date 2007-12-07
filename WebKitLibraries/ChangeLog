@@ -1,3 +1,13 @@
+2007-12-07  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        - updated system interface for fixing <rdar://problem/5499918> REGRESSION: insertion point in input field with custom border cuts holes in focus ring interior edges
+
+        * WebKitSystemInterface.h:
+        * libWebKitSystemInterfaceLeopard.a:
+        * libWebKitSystemInterfaceTiger.a:
+
 2007-11-27  John Sullivan  <sullivan@apple.com>
 
         Fixed 5614525, caused by a recent bug in WKGetExtensionsForMIMEType

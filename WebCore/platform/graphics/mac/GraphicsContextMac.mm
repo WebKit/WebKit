@@ -55,35 +55,15 @@ void GraphicsContext::drawFocusRing(const Color& color)
         CGPathAddRect(focusRingPath, 0, CGRectInset(rects[i], -offset, -offset));
 
     CGContextRef context = platformContext();
-
-    // FIXME: This works only inside a NSView's drawRect method. The view must be
-    // focused and this context must be the current NSGraphicsContext.
-    ASSERT(context == [[NSGraphicsContext currentContext] graphicsPort]);
-    NSView* view = [NSView focusView];
-    ASSERT(view);
-
-    const NSRect* drawRects;
-#ifdef __LP64__
-    long count;
-#else
-    int count;
+#ifdef BUILDING_ON_TIGER
+    CGContextBeginTransparencyLayer(context, NULL);
 #endif
-    [view getRectsBeingDrawn:&drawRects count:&count];
-
-    // We have to pass in our own clip rectangles here because a bug in CG
-    // seems to inflate the clip (thus allowing the focus ring to paint
-    // slightly outside the clip).
-    NSRect transformedClipRect = [view convertRect:m_data->m_focusRingClip toView:nil];
-    for (int i = 0; i < count; ++i) {
-        NSRect transformedRect = [view convertRect:drawRects[i] toView:nil];
-        NSRect rectToUse = NSIntersectionRect(transformedRect, transformedClipRect);
-        if (!NSIsEmptyRect(rectToUse)) {
-            CGContextBeginPath(context);
-            CGContextAddPath(context, focusRingPath);
-            wkDrawFocusRing(context, *(CGRect *)&rectToUse, colorRef, radius);
-        }
-    }
-
+    CGContextBeginPath(context);
+    CGContextAddPath(context, focusRingPath);
+    wkDrawFocusRing(context, colorRef, radius);
+#ifdef BUILDING_ON_TIGER
+    CGContextEndTransparencyLayer(context);
+#endif
     CGColorRelease(colorRef);
 
     CGPathRelease(focusRingPath);

@@ -35,7 +35,7 @@ void (*wkDrawBezeledTextFieldCell)(NSRect, BOOL enabled);
 void (*wkDrawTextFieldCellFocusRing)(NSTextFieldCell*, NSRect);
 void (*wkDrawCapsLockIndicator)(CGContextRef, CGRect);
 void (*wkDrawBezeledTextArea)(NSRect, BOOL enabled);
-void (*wkDrawFocusRing)(CGContextRef, CGRect clipRect, CGColorRef, int radius);
+void (*wkDrawFocusRing)(CGContextRef, CGColorRef, int radius);
 BOOL (*wkFontSmoothingModeIsLCD)(int mode);
 OSStatus (*wkGetATSStyleGroup)(ATSUStyle, void** styleGroup);
 CGFontRef (*wkGetCGFontFromNSFont)(NSFont*);

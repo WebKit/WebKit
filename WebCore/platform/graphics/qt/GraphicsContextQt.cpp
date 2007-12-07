@@ -216,7 +216,6 @@ public:
     QStack<TransparencyLayer> layers;
     QPainter* redirect;
 
-    IntRect focusRingClip;
     TextShadow shadow;
 
     // Only used by SVG for now.
@@ -564,22 +563,6 @@ void GraphicsContext::drawFocusRing(const Color& color)
 #endif
         m_data->p().restore();
     }
-}
-
-void GraphicsContext::setFocusRingClip(const IntRect& rect)
-{
-    if (paintingDisabled())
-        return;
-
-    m_data->focusRingClip = rect;
-}
-
-void GraphicsContext::clearFocusRingClip()
-{
-    if (paintingDisabled())
-        return;
-
-    m_data->focusRingClip = IntRect();
 }
 
 void GraphicsContext::drawLineForText(const IntPoint& origin, int width, bool printing)

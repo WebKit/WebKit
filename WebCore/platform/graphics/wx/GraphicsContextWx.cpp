@@ -93,7 +93,6 @@ public:
 #else
     wxWindowDC* context;
 #endif
-    IntRect focusRect;
     int mswDCStateID;
     wxRegion gtkCurrentClipRgn;
     wxRegion gtkPaintClipRgn;
@@ -101,7 +100,6 @@ public:
 
 GraphicsContextPlatformPrivate::GraphicsContextPlatformPrivate() :
     context(0),
-    focusRect(IntRect()),
     mswDCStateID(0),
     gtkCurrentClipRgn(wxRegion()),
     gtkPaintClipRgn(wxRegion())
@@ -327,16 +325,6 @@ void GraphicsContext::clipOut(const IntRect&)
 void GraphicsContext::clipOutEllipseInRect(const IntRect&)
 {
     notImplemented();
-}
-
-void GraphicsContext::setFocusRingClip(const IntRect& r)
-{
-    m_data->focusRect = r;
-}
-
-void GraphicsContext::clearFocusRingClip()
-{
-    m_data->focusRect = IntRect(); 
 }
 
 void GraphicsContext::drawLineForText(const IntPoint& origin, int width, bool printing)

@@ -72,18 +72,6 @@ GraphicsContext::~GraphicsContext()
     delete m_data;
 }
 
-void GraphicsContext::setFocusRingClip(const IntRect& r)
-{
-    // This method only exists to work around bugs in Mac focus ring clipping.
-    m_data->m_focusRingClip = r;
-}
-
-void GraphicsContext::clearFocusRingClip()
-{
-    // This method only exists to work around bugs in Mac focus ring clipping.
-    m_data->m_focusRingClip = IntRect();
-}
-
 CGContextRef GraphicsContext::platformContext() const
 {
     ASSERT(!paintingDisabled());
