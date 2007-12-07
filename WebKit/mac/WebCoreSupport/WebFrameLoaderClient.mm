@@ -1060,8 +1060,7 @@ void WebFrameLoaderClient::saveDocumentViewToCachedPage(CachedPage* cachedPage)
 
 RetainPtr<WebFramePolicyListener> WebFrameLoaderClient::setUpPolicyListener(FramePolicyFunction function)
 {
-    ASSERT(!m_policyListener);
-    ASSERT(!m_policyFunction);
+    // FIXME: <rdar://5634381> We need to support multiple active policy listeners.
 
     [m_policyListener.get() invalidate];
 

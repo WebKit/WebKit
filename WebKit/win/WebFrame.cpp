@@ -1985,8 +1985,10 @@ void WebFrame::receivedData(const char* data, int length, const String& textEnco
 
 COMPtr<WebFramePolicyListener> WebFrame::setUpPolicyListener(WebCore::FramePolicyFunction function)
 {
-    ASSERT(!d->m_policyListener);
-    ASSERT(!d->m_policyFunction);
+    // FIXME: <rdar://5634381> We need to support multiple active policy listeners.
+
+    if (d->m_policyListener)
+        d->m_policyListener->invalidate();
 
     Frame* coreFrame = core(this);
     ASSERT(coreFrame);

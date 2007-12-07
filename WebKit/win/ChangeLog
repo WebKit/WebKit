@@ -1,5 +1,24 @@
 2007-12-06  Adam Roben  <aroben@apple.com>
 
+        Fix <rdar://5615283> Crash in WebFrame::receivedPolicyDecision
+
+        It's possible for a second policy listener to be created while we're
+        waiting for a decision on the first policy listener. In this case we
+        would crash when the first policy listener had a decision made. Mac
+        WebKit already handles this by invalidating any existing policy
+        listener when creating a new one.
+
+        A test case is coming in a future commit.
+
+        Reviewed by Anders.
+
+        * WebFrame.cpp:
+        (WebFrame::setUpPolicyListener): Copy the Mac behavior of invalidating
+        any existing policy listener, and remove some assertions that we know
+        can fire.
+
+2007-12-06  Adam Roben  <aroben@apple.com>
+
         Add SPI so that DumpRenderTree can turn on the Mac font ascent hack
 
         Reviewed by Hyatt.
