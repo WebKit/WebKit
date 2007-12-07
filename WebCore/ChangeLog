@@ -1,3 +1,11 @@
+2007-12-07  Geoffrey Garen  <ggaren@apple.com>
+
+        Build fix: rolling out last build fix to change #include path.
+
+        WARNING: NO TEST CASES ADDED OR CHANGED
+
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.mm:
+
 2007-12-07  Steve Falkenburg  <sfalken@apple.com>
 
         Re-named our B&I flag from BUILDBOT to PRODUCTION.
