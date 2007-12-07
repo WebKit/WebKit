@@ -53,14 +53,15 @@ SQLStatement::SQLStatement(const String& statement, const Vector<SQLValue>& argu
 bool SQLStatement::execute(Database* db)
 {
     ASSERT(!m_resultSet);
-
-    // This transaction might have been marked bad while it was being set up on the main thread
-    if (m_error)
-        return false;
         
     // If we're re-running this statement after a quota violation, we need to clear that error now
     clearFailureDueToQuota();
-    
+
+    // This transaction might have been marked bad while it was being set up on the main thread, 
+    // so if there is still an error, return false.
+    if (m_error)
+        return false;
+        
     SQLiteDatabase* database = &db->m_sqliteDatabase;
     
     SQLiteStatement statement(*database, m_statement);
@@ -171,8 +172,8 @@ void SQLStatement::setFailureDueToQuota()
 
 void SQLStatement::clearFailureDueToQuota()
 {
-    ASSERT(!m_error || m_error->code() == 4);
-    m_error = 0;
+    if (lastExecutionFailedDueToQuota())
+        m_error = 0;
 }
 
 bool SQLStatement::lastExecutionFailedDueToQuota() const 

@@ -1,3 +1,14 @@
+2007-12-06  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Darin
+
+        Fixed a glaring bug that would prevent a statement from getting run a second time
+
+        * storage/SQLStatement.cpp:
+        (WebCore::SQLStatement::execute): Clear failure due to quota *before* we check the error
+          and return early
+        (WebCore::SQLStatement::clearFailureDueToQuota): Only clear the error if it was a quota error
+
 2007-12-06  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Oliver Hunt.
