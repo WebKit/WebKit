@@ -1,3 +1,30 @@
+2007-12-06  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        http://bugs.webkit.org/show_bug.cgi?id=16091
+        JSCRE needs to import the PCRE test suite
+
+        We can use two files from PCRE test suite, as others either test for features not supported
+        in JS, or use internal debugging facilities of PCRE.
+
+        The files are checked in almost unmodified, I have only converted them to UTF-8 and removed two
+        huge test cases that were completely incompatible with JSC, and were polluting the output.
+
+        Many of the failures in results are just legitimate differences in behavior or possibly
+        problems with the test runner, but some may be genuine bugs and even regressions in JSC.
+
+        * fast/regex: Added.
+        * fast/regex/pcre-test-runner.js: Added.
+        * fast/regex/test1-expected.txt: Added.
+        * fast/regex/test1.html: Added.
+        * fast/regex/test4-expected.txt: Added.
+        * fast/regex/test4.html: Added.
+        * fast/regex/testinput1: Added.
+        * fast/regex/testinput4: Added.
+        * fast/regex/testoutput1: Added.
+        * fast/regex/testoutput4: Added.
+
 2007-12-06  Dan Bernstein  <mitz@apple.com>
 
         - updated render tree results for r28483
