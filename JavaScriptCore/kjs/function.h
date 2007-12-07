@@ -155,7 +155,7 @@ namespace KJS {
     };
 
   public:
-    ActivationImp::ActivationImp(ExecState* exec)
+    ActivationImp(ExecState* exec)
         : JSVariableObject(new ActivationImpData(exec))
     {
     }

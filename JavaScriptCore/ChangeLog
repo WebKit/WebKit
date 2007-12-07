@@ -1,5 +1,12 @@
 2007-12-07  Geoffrey Garen  <ggaren@apple.com>
 
+        Build fix: removed stray name qualification.
+
+        * kjs/function.h:
+        (KJS::ActivationImp::ActivationImp):
+
+2007-12-07  Geoffrey Garen  <ggaren@apple.com>
+
         Build fix: moved functions with qualified names outside of class
         declaration.
 
