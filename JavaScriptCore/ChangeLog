@@ -2,7 +2,7 @@
 
         Reviewed by Darin.
 
-        - Rename isSafeScript to allowsAccess.
+        - Rename isSafeScript to allowsAccessFrom.
 
         * bindings/NP_jsobject.cpp:
         (_isSafeScript):
