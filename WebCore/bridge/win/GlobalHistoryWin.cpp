@@ -33,7 +33,7 @@ namespace WebCore {
 bool historyContains(const UChar* characters, unsigned length)
 {
     WebCoreHistoryProvider* provider = WebCoreHistory::historyProvider();
-    return provider && provider->containsItemForURLUnicode(characters, length);
+    return provider && provider->containsURL(characters, length);
 }
 
 } // namespace WebCore

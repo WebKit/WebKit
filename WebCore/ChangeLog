@@ -1,3 +1,10 @@
+2007-12-07  Darin Adler  <darin@apple.com>
+
+        - fix Windows build
+
+        * bridge/win/GlobalHistoryWin.cpp:
+        (WebCore::historyContains): Missed a rename.
+
 2007-12-07  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Anders and Darin
