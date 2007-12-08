@@ -1,5 +1,19 @@
 2007-12-08  Rob Buis  <buis@kde.org>
 
+        Reviewed by Darin.
+
+        http://bugs.webkit.org/show_bug.cgi?id=15464
+        SVGLengthList allows bad values
+
+        Be more strict with svg lengths without a unit identifier.
+
+        Test: svg/custom/invalid-lengthlist.svg
+
+        * svg/SVGLength.cpp:
+        (WebCore::SVGLength::setValueAsString):
+
+2007-12-08  Rob Buis  <buis@kde.org>
+
         Mac Tiger build fix.
 
         Use the wtf prefix when including MathExtras.h.

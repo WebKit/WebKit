@@ -1,3 +1,17 @@
+2007-12-08  Rob Buis  <buis@kde.org>
+
+        Reviewed by Darin.
+
+        Testcase for:
+        http://bugs.webkit.org/show_bug.cgi?id=15464
+        SVGLengthList allows bad values
+
+        * svg/custom/invalid-lengthlist-expected.checksum: Added.
+        * svg/custom/invalid-lengthlist-expected.png: Added.
+        * svg/custom/invalid-lengthlist-expected.txt: Added.
+        * svg/custom/invalid-lengthlist.svg: Added.
+        * svg/dom/length-list-parser-expected.txt:
+
 2007-12-07  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Adele.
