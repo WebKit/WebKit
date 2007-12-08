@@ -1,3 +1,42 @@
+2007-12-08  Rob Buis  <buis@kde.org>
+
+        Reviewed by Darin.
+
+        http://bugs.webkit.org/show_bug.cgi?id=15528
+        svg_dynamic_cast should be removed
+
+        Replace svg_dynamic_cast with a combination of
+        isSVGElement and static_cast.
+
+        * rendering/SVGRootInlineBox.cpp:
+        (WebCore::SVGRootInlineBox::buildLayoutInformation):
+        (WebCore::SVGRootInlineBox::buildTextChunks):
+        * svg/SVGAnimationElement.cpp:
+        (WebCore::SVGAnimationElement::targetElement):
+        * svg/SVGElement.h:
+        * svg/SVGElementInstance.cpp:
+        (WebCore::SVGElementInstance::updateInstance):
+        * svg/SVGFilterElement.cpp:
+        (WebCore::SVGFilterElement::canvasResource):
+        * svg/SVGGradientElement.cpp:
+        (WebCore::SVGGradientElement::buildStops):
+        * svg/SVGLocatable.cpp:
+        (WebCore::SVGLocatable::getTransformToElement):
+        * svg/SVGMaskElement.cpp:
+        (WebCore::SVGMaskElement::drawMaskerContent):
+        * svg/SVGSwitchElement.cpp:
+        (WebCore::SVGSwitchElement::childShouldCreateRenderer):
+        * svg/SVGUseElement.cpp:
+        (WebCore::SVGUseElement::insertedIntoDocument):
+        (WebCore::SVGUseElement::buildPendingResource):
+        (WebCore::SVGUseElement::buildInstanceTree):
+        (WebCore::SVGUseElement::handleDeepUseReferencing):
+        (WebCore::SVGUseElement::buildShadowTree):
+        (WebCore::SVGUseElement::expandUseElementsInShadowTree):
+        (WebCore::SVGUseElement::associateInstancesWithShadowTreeElements):
+        * svg/graphics/SVGResource.cpp:
+        (WebCore::getResourceById):
+
 2007-12-07  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Adele.

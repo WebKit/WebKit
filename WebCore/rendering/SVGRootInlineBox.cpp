@@ -913,10 +913,10 @@ void SVGRootInlineBox::buildLayoutInformation(InlineFlowBox* start, SVGCharacter
                 info.setInPathLayout(true);
 
                 // Handle text-anchor/textLength on path, which is special.
-                SVGElement* textElement = svg_dynamic_cast(flowBox->object()->element());
-                ASSERT(textElement);
-
-                SVGTextContentElement* textContent = static_cast<SVGTextContentElement*>(textElement);
+                SVGTextContentElement* textContent = 0;
+                Node* node = flowBox->object()->element();
+                if (node && node->isSVGElement())
+                    textContent = static_cast<SVGTextContentElement*>(node);
                 ASSERT(textContent);
 
                 ELengthAdjust lengthAdjust = (ELengthAdjust) textContent->lengthAdjust();
@@ -1328,13 +1328,14 @@ void SVGRootInlineBox::buildTextChunks(Vector<SVGChar>& svgChars, InlineFlowBox*
 
             RenderText* text = textBox->textObject();
             ASSERT(text);
-
-            SVGElement* textElement = svg_dynamic_cast(text->element()->parent());
             ASSERT(text->element());
 
-            SVGTextContentElement* textContent = static_cast<SVGTextContentElement*>(textElement);
+            SVGTextContentElement* textContent = 0;
+            Node* node = text->element()->parent();
+            if (node && node->isSVGElement())
+                textContent = static_cast<SVGTextContentElement*>(node);
             ASSERT(textContent);
-            
+
             // Start new character range for the first chunk
             bool isFirstCharacter = info.svgTextChunks.isEmpty() && info.chunk.start == info.it && info.chunk.start == info.chunk.end;
             if (isFirstCharacter) {

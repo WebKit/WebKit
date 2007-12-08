@@ -116,7 +116,7 @@ void SVGUseElement::insertedIntoDocument()
     SVGElement::insertedIntoDocument();
 
     String id = SVGURIReference::getTarget(href());
-    Element* targetElement = ownerDocument()->getElementById(id);
+    Element* targetElement = document()->getElementById(id);
     if (!targetElement) {
         document()->accessSVGExtensions()->addPendingResource(id, this);
         return;
@@ -258,8 +258,10 @@ void SVGUseElement::buildPendingResource()
     }
 
     String id = SVGURIReference::getTarget(href());
-    Element* targetElement = ownerDocument()->getElementById(id); 
-    SVGElement* target = svg_dynamic_cast(targetElement);
+    Element* targetElement = document()->getElementById(id); 
+    SVGElement* target = 0;
+    if (targetElement && targetElement->isSVGElement())
+        target = static_cast<SVGElement*>(targetElement);
 
     // Do not allow self-referencing.
     // 'target' may be null, if it's a non SVG namespaced element.
@@ -388,7 +390,9 @@ void SVGUseElement::buildInstanceTree(SVGElement* target, SVGElementInstance* ta
     // its correspondingElement that is an SVGRectElement object.
 
     for (Node* node = target->firstChild(); node; node = node->nextSibling()) {
-        SVGElement* element = svg_dynamic_cast(node);
+        SVGElement* element = 0;
+        if (node->isSVGElement())
+            element = static_cast<SVGElement*>(node);
 
         // Skip any non-svg nodes or any disallowed element.
         if (!element || isDisallowedElement(element))
@@ -419,8 +423,10 @@ void SVGUseElement::buildInstanceTree(SVGElement* target, SVGElementInstance* ta
 void SVGUseElement::handleDeepUseReferencing(SVGElement* use, SVGElementInstance* targetInstance, bool& foundProblem)
 {
     String id = SVGURIReference::getTarget(use->href());
-    Element* targetElement = ownerDocument()->getElementById(id); 
-    SVGElement* target = svg_dynamic_cast(targetElement);
+    Element* targetElement = document()->getElementById(id); 
+    SVGElement* target = 0;
+    if (targetElement && targetElement->isSVGElement())
+        target = static_cast<SVGElement*>(targetElement);
 
     if (!target)
         return;
@@ -498,7 +504,9 @@ void SVGUseElement::buildShadowTree(SVGElement* target, SVGElementInstance* targ
     if (subtreeContainsDisallowedElement(newChild.get()))
         removeDisallowedElementsFromSubtree(newChild.get());
 
-    SVGElement* newChildPtr = svg_dynamic_cast(newChild.get());
+    SVGElement* newChildPtr = 0;
+    if (newChild->isSVGElement())
+        newChildPtr = static_cast<SVGElement*>(newChild.get());
     ASSERT(newChildPtr);
 
     ExceptionCode ec = 0;
@@ -524,8 +532,10 @@ void SVGUseElement::expandUseElementsInShadowTree(Node* element)
         SVGUseElement* use = static_cast<SVGUseElement*>(element);
 
         String id = SVGURIReference::getTarget(use->href());
-        Element* targetElement = ownerDocument()->getElementById(id); 
-        SVGElement* target = svg_dynamic_cast(targetElement);
+        Element* targetElement = document()->getElementById(id); 
+        SVGElement* target = 0;
+        if (targetElement && targetElement->isSVGElement())
+            target = static_cast<SVGElement*>(targetElement);
 
         // Don't ASSERT(target) here, it may be "pending", too.
         if (target) {
@@ -573,7 +583,9 @@ void SVGUseElement::expandUseElementsInShadowTree(Node* element)
             if (subtreeContainsDisallowedElement(newChild.get()))
                 removeDisallowedElementsFromSubtree(newChild.get());
 
-            SVGElement* newChildPtr = svg_dynamic_cast(newChild.get());
+            SVGElement* newChildPtr = 0;
+            if (newChild->isSVGElement())
+                newChildPtr = static_cast<SVGElement*>(newChild.get());
             ASSERT(newChildPtr);
 
             cloneParent->appendChild(newChild.release(), ec);
@@ -698,7 +710,9 @@ void SVGUseElement::associateInstancesWithShadowTreeElements(Node* target, SVGEl
     } else
         ASSERT(target->nodeName() == originalElement->nodeName());
 
-    SVGElement* element = svg_dynamic_cast(target);
+    SVGElement* element = 0;
+    if (target->isSVGElement())
+        element = static_cast<SVGElement*>(target);
 
     ASSERT(!targetInstance->shadowTreeElement());
     targetInstance->setShadowTreeElement(element);

@@ -44,9 +44,11 @@ SVGSwitchElement::~SVGSwitchElement()
 bool SVGSwitchElement::childShouldCreateRenderer(Node* child) const
 {
     for (Node* n = firstChild(); n != 0; n = n->nextSibling()) {
-        SVGElement* element = svg_dynamic_cast(n);
-        if (element && element->isValid())
-            return (n == child); // Only allow this child if it's the first valid child
+        if (n->isSVGElement()) {
+            SVGElement* element = static_cast<SVGElement*>(n);
+            if (element && element->isValid())
+                return (n == child); // Only allow this child if it's the first valid child
+        }
     }
 
     return false;

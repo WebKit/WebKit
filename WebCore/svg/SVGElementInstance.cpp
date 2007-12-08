@@ -162,7 +162,9 @@ void SVGElementInstance::updateInstance(SVGElement* element)
 
     // For all other nodes this logic is sufficient.
     RefPtr<Node> clone = m_element->cloneNode(true);
-    SVGElement* svgClone = svg_dynamic_cast(clone.get());
+    SVGElement* svgClone = 0;
+    if (clone && clone->isSVGElement())
+        svgClone = static_cast<SVGElement*>(clone.get());
     ASSERT(svgClone);
 
     // Replace node in the <use> shadow tree

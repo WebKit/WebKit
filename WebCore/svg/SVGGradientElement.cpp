@@ -119,7 +119,9 @@ Vector<SVGGradientStop> SVGGradientElement::buildStops() const
     // FIXME: Manual style resolution is a hack
     RenderStyle* gradientStyle = 0;
     for (Node* n = firstChild(); n; n = n->nextSibling()) {
-        SVGElement* element = svg_dynamic_cast(n);
+        SVGElement* element = 0;
+        if (n->isSVGElement())
+            element = static_cast<SVGElement*>(n);
         if (element && element->isGradientStop()) {
             SVGStopElement* stop = static_cast<SVGStopElement*>(element);
             float stopOffset = stop->offset();

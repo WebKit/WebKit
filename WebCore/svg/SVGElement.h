@@ -244,14 +244,6 @@ namespace WebCore {
         Node* m_shadowParent;
     };
 
-    static inline SVGElement* svg_dynamic_cast(Node* node)
-    {
-        SVGElement* svgElement = 0;
-        if (node && node->isSVGElement())
-            svgElement = static_cast<SVGElement*>(node);
-        return svgElement;
-    }
-
 } // namespace WebCore 
 
 #endif // ENABLE(SVG)

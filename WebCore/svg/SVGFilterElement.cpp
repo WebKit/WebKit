@@ -141,7 +141,9 @@ SVGResource* SVGFilterElement::canvasResource()
     // TODO : use switch/case instead?
     m_filter->clearEffects();
     for (Node* n = firstChild(); n != 0; n = n->nextSibling()) {
-        SVGElement* element = svg_dynamic_cast(n);
+        SVGElement* element = 0;
+        if (n->isSVGElement())
+            element = static_cast<SVGElement*>(n);
         if (element && element->isFilterEffect()) {
             SVGFilterPrimitiveStandardAttributes* filterAttributes = static_cast<SVGFilterPrimitiveStandardAttributes*>(element);
             SVGFilterEffect* filterEffect = filterAttributes->filterEffect(m_filter.get());

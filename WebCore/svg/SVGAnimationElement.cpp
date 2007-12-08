@@ -78,21 +78,23 @@ bool SVGAnimationElement::hasValidTarget() const
 SVGElement* SVGAnimationElement::targetElement() const
 {
     if (!m_targetElement) {
+        Node *target = 0;
         if (!m_href.isEmpty()) {
-            Element* element = ownerDocument()->getElementById(SVGURIReference::getTarget(m_href));
-            m_targetElement = svg_dynamic_cast(element);
+            target = document()->getElementById(SVGURIReference::getTarget(m_href));
         } else if (parentNode()) {
-            Node* target = parentNode();
+            // TODO : do we really need to skip non element nodes? Can that happen at all?
+            target = parentNode();
             while (target) {
                 if (target->nodeType() != ELEMENT_NODE)
                     target = target->parentNode();
                 else
                     break;
             }
-            m_targetElement = svg_dynamic_cast(target);
         }
+        if (target && target->isSVGElement())
+            m_targetElement = static_cast<SVGElement*>(target);
     }
-                        
+ 
     return m_targetElement;
 }
 

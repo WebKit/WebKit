@@ -158,7 +158,9 @@ SVGResource* getResourceById(Document* document, const AtomicString& id)
         return 0;
 
     Element* element = document->getElementById(id);
-    SVGElement* svgElement = svg_dynamic_cast(element);
+    SVGElement* svgElement = 0;
+    if (element && element->isSVGElement())
+        svgElement = static_cast<SVGElement*>(element);
 
     if (svgElement && svgElement->isStyled())
         return static_cast<SVGStyledElement*>(svgElement)->canvasResource();

@@ -159,7 +159,9 @@ auto_ptr<ImageBuffer> SVGMaskElement::drawMaskerContent(const FloatRect& targetR
 
     // Render subtree into ImageBuffer
     for (Node* n = firstChild(); n; n = n->nextSibling()) {
-        SVGElement* elem = svg_dynamic_cast(n);
+        SVGElement* elem = 0;
+        if (n->isSVGElement())
+            elem = static_cast<SVGElement*>(n);
         if (!elem || !elem->isStyled())
             continue;
 
