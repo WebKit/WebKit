@@ -1,3 +1,11 @@
+2007-12-07  Darin Adler  <darin@apple.com>
+
+        - try to fix build
+
+        * Api/qwebhistoryinterface.cpp:
+        (WebCore::historyContains): There's a WebCore function here in WebKit! Needs to
+        be updated, since WebCore changed, but this should not be here.
+
 2007-12-04  Darin Adler  <darin@apple.com>
 
         Reviewed by Kevin Decker.
