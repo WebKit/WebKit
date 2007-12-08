@@ -1,5 +1,12 @@
 2007-12-07  Darin Adler  <darin@apple.com>
 
+        - fix Tiger build
+
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.mm: Tiger didn't even have
+        QTKIT_VERSION_MAX_ALLOWED, so add logic to work without that.
+
+2007-12-07  Darin Adler  <darin@apple.com>
+
         - fix 64-bit build, hopefully without breaking Tiger build
 
         * platform/graphics/mac/MediaPlayerPrivateQTKit.mm:

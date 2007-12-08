@@ -74,7 +74,7 @@ SOFT_LINK_POINTER(QTKit, QTMovieVolumeDidChangeNotification, NSString *)
 #define QTMovieVolumeDidChangeNotification getQTMovieVolumeDidChangeNotification()
 
 // Older versions of the QTKit header don't have these constants.
-#if QTKIT_VERSION_MAX_ALLOWED <= QTKIT_VERSION_7_0
+#if !defined QTKIT_VERSION_MAX_ALLOWED || QTKIT_VERSION_MAX_ALLOWED <= QTKIT_VERSION_7_0
 enum {
     QTMovieLoadStateLoaded  = 2000L,
     QTMovieLoadStatePlayable = 10000L,
