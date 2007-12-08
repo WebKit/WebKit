@@ -27,6 +27,7 @@
 
 #include "ExecState.h"
 #include "JSGlobalObject.h"
+#include "Parser.h"
 #include "SavedBuiltins.h"
 #include "array_object.h"
 #include "bool_object.h"
