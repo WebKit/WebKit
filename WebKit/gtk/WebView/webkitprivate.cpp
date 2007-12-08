@@ -39,11 +39,6 @@ WebKitSettings* create(WebCore::Settings*)
     return 0;
 }
 
-WebKitWebFrame* getFrameFromView(WebKitWebView* webView)
-{
-    return webkit_web_view_get_main_frame(webView);
-}
-
 WebKitWebView* getViewFromFrame(WebKitWebFrame* frame)
 {
     return webkit_web_frame_get_web_view(frame);

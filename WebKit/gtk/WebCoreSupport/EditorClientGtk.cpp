@@ -270,7 +270,9 @@ void EditorClient::handleKeypress(KeyboardEvent* event)
                 frame->editor()->execCommand("MoveDownByPageAndModifyCaret");
                 break;
             case VK_HOME:
-                if (kevent->ctrlKey())
+                if (kevent->ctrlKey() && kevent->shiftKey())
+                    frame->editor()->execCommand("MoveToBeginningOfDocumentAndModifySelection");
+                else if (kevent->ctrlKey())
                     frame->editor()->execCommand("MoveToBeginningOfDocument");
                 else if (kevent->shiftKey())
                     frame->editor()->execCommand("MoveToBeginningOfLineAndModifySelection");
@@ -278,7 +280,9 @@ void EditorClient::handleKeypress(KeyboardEvent* event)
                     frame->editor()->execCommand("MoveToBeginningOfLine");
                 break;
             case VK_END:
-                if (kevent->ctrlKey())
+                if (kevent->ctrlKey() && kevent->shiftKey())
+                    frame->editor()->execCommand("MoveToEndOfDocumentAndModifySelection");
+                else if (kevent->ctrlKey())
                     frame->editor()->execCommand("MoveToEndOfDocument");
                 else if (kevent->shiftKey())
                     frame->editor()->execCommand("MoveToEndOfLineAndModifySelection");

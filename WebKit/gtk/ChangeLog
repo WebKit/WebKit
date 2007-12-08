@@ -1,3 +1,41 @@
+2007-12-08  Luca Bruno  <lethalman88@gmail.com>
+
+        Reviewed by Alp Toker.
+
+        http://bugs.webkit.org/show_bug.cgi?id=16346
+        [GTK] Some webview parts must use the focused frame.
+
+        Also update some old code.
+
+        * WebView/webkitprivate.cpp:
+        (getFrameFromView): removed
+
+        * WebView/webkitprivate.h:
+        (getFrameFromView): removed
+        
+        * WebView/webkitwebview.cpp:
+        (webkit_web_view_expose_event):
+        (webkit_web_view_key_press_event): use focused frame
+        (webkit_web_view_key_release_event): use focused frame
+        (webkit_web_view_button_press_event):
+        (webkit_web_view_button_release_event):
+        (webkit_web_view_motion_event):
+        (webkit_web_view_scroll_event):
+        (webkit_web_view_size_allocate):
+        (webkit_web_view_set_scroll_adjustments):
+        (webkit_web_view_execute_script):
+        (webkit_web_view_stop_loading):
+        (webkit_web_view_load_string):
+        (webkit_web_view_reload):
+        (webkit_web_view_open):
+        (webkit_web_view_can_go_forward):
+        (webkit_web_view_can_go_backward):
+        (webkit_web_view_go_forward):
+        (webkit_web_view_go_backward):
+
+        * WebCoreSupport/EditorClientGtk.cpp:
+        (WebKit::EditorClient::handleKeypress): fix for page up and page down keys for editable contents
+
 2007-12-07  Luca Bruno  <lethalman88@gmail.com>
 
         Reviewed by Alp Toker.

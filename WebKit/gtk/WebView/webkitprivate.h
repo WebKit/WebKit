@@ -40,7 +40,6 @@
 namespace WebKit {
     void apply(WebKitSettings*,WebCore::Settings*);
     WebKitSettings* create(WebCore::Settings*);
-    WebKitWebFrame*  getFrameFromView(WebKitWebView*);
     WebKitWebView* getViewFromFrame(WebKitWebFrame*);
 
     WebCore::Frame* core(WebKitWebFrame*);
