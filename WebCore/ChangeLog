@@ -1,3 +1,11 @@
+2007-12-08  Rob Buis  <buis@kde.org>
+
+        Mac Tiger build fix.
+
+        Use the wtf prefix when including MathExtras.h.
+
+        * rendering/RenderMedia.cpp:
+
 2007-12-08  Alp Toker  <alp@atoker.com>
 
         GTK+ build fix (for ENABLE_VIDEO builds):
