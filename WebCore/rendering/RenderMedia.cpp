@@ -39,6 +39,7 @@
 #include "HTMLInputElement.h"
 #include "HTMLMediaElement.h"
 #include "HTMLNames.h"
+#include "MathExtras.h"
 #include "MouseEvent.h"
 #include "MediaPlayer.h"
 #include "RenderSlider.h"

@@ -1,3 +1,13 @@
+2007-12-08  Alp Toker  <alp@atoker.com>
+
+        Reviewed by Alp Toker.
+
+        GTK+ build fix (for ENABLE_VIDEO builds):
+
+        Include MathExtras.h to get isfinite().
+
+        * rendering/RenderMedia.cpp:
+
 2007-12-08  Rob Buis  <buis@kde.org>
 
         Reviewed by Darin.
