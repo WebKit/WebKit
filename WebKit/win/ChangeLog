@@ -1,3 +1,10 @@
+2007-12-07  Steve Falkenburg  <sfalken@apple.com>
+
+        Fix build.
+
+        * WebHistory.cpp:
+        (_WebCoreHistoryProvider::containsURL):
+
 2007-12-07  Geoffrey Garen  <ggaren@apple.com>
 
         Tried to fix build by suppressing warning.
