@@ -1,3 +1,45 @@
+2007-12-07  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Darin.
+
+        - Removes the faulty isSafeScript implementation that was only
+          used for plugins.
+        - Renames isSafeScript to allowsAccessFrom.
+
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::customGetOwnPropertySlot):
+        (WebCore::JSDOMWindow::customPut):
+        * bindings/js/kjs_dom.cpp:
+        (WebCore::checkNodeSecurity):
+        * bindings/js/kjs_window.cpp:
+        (KJS::createWindow):
+        (KJS::Window::getValueProperty):
+        (KJS::Window::namedItemGetter):
+        (KJS::Window::getOwnPropertySlot):
+        (KJS::Window::put):
+        (KJS::Window::allowsAccessFrom):
+        (KJS::Window::setListener):
+        (KJS::Window::getListener):
+        (KJS::WindowProtoFuncOpen::callAsFunction):
+        (KJS::WindowProtoFuncSetTimeout::callAsFunction):
+        (KJS::WindowProtoFuncClearTimeout::callAsFunction):
+        (KJS::WindowProtoFuncSetInterval::callAsFunction):
+        (KJS::WindowProtoFuncAddEventListener::callAsFunction):
+        (KJS::WindowProtoFuncRemoveEventListener::callAsFunction):
+        (KJS::WindowProtoFuncNotImplemented::callAsFunction):
+        (KJS::Location::getOwnPropertySlot):
+        (KJS::Location::put):
+        (KJS::LocationProtoFuncReplace::callAsFunction):
+        (KJS::LocationProtoFuncReload::callAsFunction):
+        (KJS::LocationProtoFuncAssign::callAsFunction):
+        (KJS::LocationProtoFuncToString::callAsFunction):
+        * bindings/js/kjs_window.h:
+        (KJS::Window::allowsAccessFrom):
+        * bindings/objc/WebScriptObject.mm:
+        (-[WebScriptObject _isSafeScript]): Reverse caller/argument of allowsAccessFrom to match
+        the new call.
+        * bindings/scripts/CodeGeneratorJS.pm:
+
 2007-12-08  Rob Buis  <buis@kde.org>
 
         Reviewed by Darin.

@@ -207,7 +207,7 @@ static void _didExecute(WebScriptObject *obj)
     if (!_private->originRootObject->isValid())
         return false;
 
-    return _private->originRootObject->globalObject()->isSafeScript(root->globalObject());
+    return root->globalObject()->allowsAccessFrom(_private->originRootObject->globalObject());
 }
 
 - (void)dealloc

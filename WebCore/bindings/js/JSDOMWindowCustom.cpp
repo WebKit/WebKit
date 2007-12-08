@@ -56,7 +56,7 @@ bool JSDOMWindow::customGetOwnPropertySlot(KJS::ExecState* exec, const KJS::Iden
     // Look for overrides first
     KJS::JSValue** val = getDirectLocation(propertyName);
     if (val) {
-        if (!isSafeScript(exec)) {
+        if (!allowsAccessFrom(exec)) {
             slot.setUndefined(this);
             return true;
         }
@@ -69,7 +69,7 @@ bool JSDOMWindow::customGetOwnPropertySlot(KJS::ExecState* exec, const KJS::Iden
         return true;
     }
 
-    // FIXME: We need this to work around the blanket isSafeScript check in KJS::Window.  Once we remove that, we
+    // FIXME: We need this to work around the blanket same origin (allowsAccessFrom) check in KJS::Window.  Once we remove that, we
     // can move this to JSDOMWindowPrototype.
     KJS::JSValue* proto = prototype();
     if (proto->isObject()) {
@@ -81,7 +81,7 @@ bool JSDOMWindow::customGetOwnPropertySlot(KJS::ExecState* exec, const KJS::Iden
                     || entry->value.functionValue == &JSDOMWindowPrototypeFunctionClose::create)
                         slot.setStaticEntry(this, entry, KJS::staticFunctionGetter);
                 else {
-                    if (!isSafeScript(exec))
+                    if (!allowsAccessFrom(exec))
                         slot.setUndefined(this);
                     else
                         slot.setStaticEntry(this, entry, KJS::staticFunctionGetter);
@@ -107,7 +107,7 @@ bool JSDOMWindow::customPut(KJS::ExecState* exec, const KJS::Identifier& propert
 
     // We have a local override (e.g. "var location"), save time and jump directly to JSObject.
     if (KJS::JSObject::getDirect(propertyName)) {
-        if (isSafeScript(exec))
+        if (allowsAccessFrom(exec))
             KJS::JSObject::put(exec, propertyName, value, attr);
         return true;
     }

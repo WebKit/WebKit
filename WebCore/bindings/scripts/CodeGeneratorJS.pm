@@ -921,7 +921,7 @@ sub GenerateImplementation
             }
 
             if ($dataNode->extendedAttributes->{"CheckDomainSecurity"} && !$attribute->signature->extendedAttributes->{"DoNotCheckDomainSecurity"}) {
-                push(@implContent, "        if (!isSafeScript(exec))\n");
+                push(@implContent, "        if (!allowsAccessFrom(exec))\n");
                 push(@implContent, "            return jsUndefined();\n");
             }
 
@@ -1025,7 +1025,7 @@ sub GenerateImplementation
                     }
 
                     if ($dataNode->extendedAttributes->{"CheckDomainSecurity"} && !$attribute->signature->extendedAttributes->{"DoNotCheckDomainSecurity"}) {
-                        push(@implContent, "        if (!isSafeScript(exec))\n");
+                        push(@implContent, "        if (!allowsAccessFrom(exec))\n");
                         push(@implContent, "            return;\n");
                     }
 

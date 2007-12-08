@@ -58,12 +58,12 @@ Attr* toAttr(JSValue* val, bool& ok)
 
 bool checkNodeSecurity(ExecState* exec, Node* n)
 {
-  if (!n) 
+  if (!n)
     return false;
 
   // Check to see if the currently executing interpreter is allowed to access the specified node
   Window* win = Window::retrieveWindow(n->document()->frame());
-  return win && win->isSafeScript(exec);
+  return win && win->allowsAccessFrom(exec);
 }
 
 JSValue* toJS(ExecState* exec, EventTarget* target)
