@@ -1,3 +1,15 @@
+2007-12-07  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Adele.
+        
+        Test video painting when transform is applied.
+
+        * media/video-paint-test.js: Added.
+        * media/video-transformed.html: Added.
+        * platform/mac/media/video-transformed-expected.checksum: Added.
+        * platform/mac/media/video-transformed-expected.png: Added.
+        * platform/mac/media/video-transformed-expected.txt: Added.
+
 2007-12-07  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Sam Weinig.

@@ -585,7 +585,13 @@ void MediaPlayerPrivate::paint(GraphicsContext* context, const IntRect& r)
         return;
     [m_objcObserver.get() setDelayCallbacks:YES];
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    [view displayRectIgnoringOpacity:[view convertRect:r fromView:[view superview]]];
+    context->save();
+    context->translate(r.x(), r.y() + r.height());
+    context->scale(FloatSize(1.0f, -1.0f));
+    IntRect paintRect(IntPoint(0, 0), IntSize(r.width(), r.height()));
+    NSGraphicsContext* newContext = [NSGraphicsContext graphicsContextWithGraphicsPort:context->platformContext() flipped:NO];
+    [view displayRectIgnoringOpacity:paintRect inContext:newContext];
+    context->restore();
     END_BLOCK_OBJC_EXCEPTIONS;
     [m_objcObserver.get() setDelayCallbacks:NO];
 }

@@ -1,3 +1,17 @@
+2007-12-07  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Adele.
+        
+        Partial fix for <rdar://problem/5633400>
+        Transformed <video>, <img>, <embed> are not clipped correctly until a repaint is forced
+        
+        Fix video painting when transform is applied.
+
+        Test: media/video-transformed.html
+
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.mm:
+        (WebCore::MediaPlayerPrivate::paint):
+
 2007-12-07  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Sam Weinig.
