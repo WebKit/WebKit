@@ -28,7 +28,7 @@
 
 #include "ExecState.h"
 #include "JSGlobalObject.h"
-#include "JSVariableObject.h"
+#include "Parser.h"
 #include "PropertyNameArray.h"
 #include "debugger.h"
 #include "dtoa.h"

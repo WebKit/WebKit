@@ -3663,10 +3663,10 @@ static inline Completion statementListExecute(SourceElements& statements, ExecSt
 // ------------------------------ BlockNode ------------------------------------
 
 BlockNode::BlockNode(SourceElements* children)
+    : m_children(children)
 {
-    ASSERT(children);
+    ASSERT(m_children);
     m_mayHaveDeclarations = true; 
-    m_children.set(children);
 }
 
 void BlockNode::optimizeVariableAccess(FunctionBodyNode*, DeclarationStacks::NodeStack& nodeStack)

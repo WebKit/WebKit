@@ -26,7 +26,6 @@
 #ifndef NODES_H_
 #define NODES_H_
 
-#include "Parser.h"
 #include "internal.h"
 #include "regexp.h"
 #include "SymbolTable.h"

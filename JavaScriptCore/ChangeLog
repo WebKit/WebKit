@@ -1,5 +1,22 @@
 2007-12-07  Geoffrey Garen  <ggaren@apple.com>
 
+        Reviewed by Sam Weinig.
+        
+        Refactored parsing of global code: Removed the assumption that 
+        ProgramNode inherits from FunctionBodyNode from the parser.
+
+        * kjs/Parser.cpp:
+        (KJS::Parser::parseProgram):
+        (KJS::Parser::parseFunctionBody):
+        (KJS::Parser::parse):
+        * kjs/Parser.h:
+        (KJS::Parser::didFinishParsing):
+        * kjs/function.cpp:
+        * kjs/grammar.y:
+        * kjs/nodes.h:
+
+2007-12-07  Geoffrey Garen  <ggaren@apple.com>
+
         Build fix: added JSVariableObject.cpp to the .pri file.
 
         * JavaScriptCore.pri:

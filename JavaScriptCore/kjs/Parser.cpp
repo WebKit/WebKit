@@ -44,7 +44,9 @@ PassRefPtr<ProgramNode> Parser::parseProgram(const UString& sourceURL, int start
     int* sourceId, int* errLine, UString* errMsg)
 {
     parse(sourceURL, startingLineNumber, code, length, sourceId, errLine, errMsg);
-    return m_progNode.release();
+    if (!m_sourceElements)
+        return 0;
+    return new ProgramNode(m_sourceElements.release());
 }
 
 PassRefPtr<FunctionBodyNode> Parser::parseFunctionBody(const UString& sourceURL, int startingLineNumber,
@@ -52,14 +54,16 @@ PassRefPtr<FunctionBodyNode> Parser::parseFunctionBody(const UString& sourceURL,
     int* sourceId, int* errLine, UString* errMsg)
 {
     parse(sourceURL, startingLineNumber, code, length, sourceId, errLine, errMsg);
-    return m_progNode.release();
+    if (!m_sourceElements)
+        return 0;
+    return new FunctionBodyNode(m_sourceElements.release());
 }
 
 void Parser::parse(const UString& sourceURL, int startingLineNumber,
     const UChar* code, unsigned length,
     int* sourceId, int* errLine, UString* errMsg)
 {
-    ASSERT(!m_progNode);
+    ASSERT(!m_sourceElements);
 
     if (errLine)
         *errLine = -1;
@@ -84,13 +88,8 @@ void Parser::parse(const UString& sourceURL, int startingLineNumber,
             *errLine = lexer.lineNo();
         if (errMsg)
             *errMsg = "Parse error";
-        m_progNode = 0;
+        m_sourceElements.clear();
     }
-}
-
-void Parser::didFinishParsing(PassRefPtr<ProgramNode> progNode)
-{
-    m_progNode = progNode;
 }
 
 Parser& parser()

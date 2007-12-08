@@ -878,8 +878,8 @@ FunctionBody:
 ;
 
 Program:
-    /* not in spec */                   { parser().didFinishParsing(new ProgramNode(new SourceElements)); }
-    | SourceElements                    { parser().didFinishParsing(new ProgramNode($1->release())); }
+    /* not in spec */                   { parser().didFinishParsing(new SourceElements); }
+    | SourceElements                    { parser().didFinishParsing($1->release()); }
 ;
 
 SourceElements:
