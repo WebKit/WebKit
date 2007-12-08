@@ -1,5 +1,12 @@
 2007-12-07  Geoffrey Garen  <ggaren@apple.com>
 
+        Reviewed by Sam Weinig.
+        
+        Refactored variable access optimization: Removed the assumption that
+        the FunctionBodyNode holds the symbol table.
+        
+2007-12-07  Geoffrey Garen  <ggaren@apple.com>
+
         Build fix: added #include.
 
         * kjs/nodes.cpp:
