@@ -182,9 +182,14 @@ void SQLTransaction::runStatements()
     // If there is a series of statements queued up that are all successful and have no associated
     // SQLStatementCallback objects, then we can burn through the queue
     do {
-        if (m_shouldRetryCurrentStatement) 
+        if (m_shouldRetryCurrentStatement) {
             m_shouldRetryCurrentStatement = false;
-        else {
+            // FIXME - Another place that needs fixing up after <rdar://problem/5628468> is addressed.
+            // See ::openTransactionAndPreflight() for discussion
+            
+            // Reset the maximum size here, as it was increased to allow us to retry this statement
+            m_database->m_sqliteDatabase.setMaximumSize(DatabaseTracker::tracker().quotaForOrigin(m_database->securityOriginData()));
+        } else {
             // If the current statement has already been run, failed due to quota constraints, and we're not retrying it,
             // that means it ended in an error.  Handle it now
             if (m_currentStatement && m_currentStatement->lastExecutionFailedDueToQuota()) {

@@ -1,3 +1,15 @@
+2007-12-07  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Anders and Darin
+
+        When a statement bumps up against the quota and the UI Delegate grants more space, we need to
+        actually set the new maximum size on the SQLiteDatabase (in addition to storing the new max quota
+        in the DatabaseTracker, which was already done)
+
+        * storage/SQLTransaction.cpp:
+        (WebCore::SQLTransaction::runStatements): If a statement is being retried, set the maximum size on
+          the SQLiteDatabase to the new maximum size
+
 2007-12-07  Darin Adler  <darin@apple.com>
 
         - fix Tiger build
