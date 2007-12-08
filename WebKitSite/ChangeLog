@@ -1,5 +1,17 @@
 2007-12-07  Brady Eidson  <beidson@apple.com>
 
+        Reviewed by Darin's rubberstamp
+
+        When developing the Database feature and dealing with UI Delegate issues, it is important to have
+        live examples on the web to help reproduce certain situations.
+
+        This file is a dumping ground for such examples, and starts out with one function - the ability to add
+        arbitrary amounts of data to a database to test the quota-related mechanisms of the UI
+
+        * misc/DatabaseTester.html: Added.
+
+2007-12-07  Brady Eidson  <beidson@apple.com>
+
         Reviewed by Adam Roben
 
         * misc/DatabaseExample.html: Changed to differentiate failure between running with an
