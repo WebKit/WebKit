@@ -1,5 +1,13 @@
 2007-12-07  Steve Falkenburg  <sfalken@apple.com>
 
+        Fix version parsing.
+
+        Rubber-stamped by Oliver.
+
+        * WebKit.vcproj/auto-version.sh:
+
+2007-12-07  Steve Falkenburg  <sfalken@apple.com>
+
         Fix build.
 
         * WebKit.vcproj/WebKit.vcproj:

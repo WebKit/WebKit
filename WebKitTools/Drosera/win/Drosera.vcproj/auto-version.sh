@@ -50,9 +50,12 @@ if [ `grep -c -E "4\.|4$" "$VERSIONFILE"` -ne 0 ]; then
     exit 1
 fi
 
-BLDMAJORVERSION=`sed 's/\([^\.]*\)\.\([^.]*\)\(\.\([^.]*\)\)\?/\1/' "$VERSIONFILE"`
-BLDMINORVERSION=`sed 's/\([^\.]*\)\.\([^.]*\)\(\.\([^.]*\)\)\?/\2/' "$VERSIONFILE"`
-BLDVARIANTVERSION=`sed 's/\([^\.]*\)\.\([^.]*\)\(\.\([^.]*\)\)\?/\4/' "$VERSIONFILE"`
+BLDMAJORVERSION=`sed 's/\([^\.]*\)\(\.\([^.]*\)\(\.\([^.]*\)\)\?\)\?/\1/' "$VERSIONFILE"`
+BLDMINORVERSION=`sed 's/\([^\.]*\)\(\.\([^.]*\)\(\.\([^.]*\)\)\?\)\?/\3/' "$VERSIONFILE"`
+BLDVARIANTVERSION=`sed 's/\([^\.]*\)\(\.\([^.]*\)\(\.\([^.]*\)\)\?\)\?/\5/' "$VERSIONFILE"`
+if [ "$BLDMINORVERSION" == "" ]; then
+    BLDMINORVERSION=0
+fi
 if [ "$BLDVARIANTVERSION" == "" ]; then
     BLDVARIANTVERSION=0
 fi

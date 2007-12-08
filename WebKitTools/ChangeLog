@@ -1,5 +1,13 @@
 2007-12-07  Steve Falkenburg  <sfalken@apple.com>
 
+        Fix version parsing.
+
+        Rubber-stamped by Oliver.
+
+        * Drosera/win/Drosera.vcproj/auto-version.sh:
+
+2007-12-07  Steve Falkenburg  <sfalken@apple.com>
+
         Build modifications for Drosera.
 
         Reviewed by Adam.
