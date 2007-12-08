@@ -33,13 +33,13 @@
 #include "COMEnumVariant.h"
 #include "Function.h"
 
-#pragma warning(push, 0)
 #include <JavaScriptCore/Interpreter.h>
 #include <JavaScriptCore/JSGlobalObject.h>
 #include <JavaScriptCore/JSStringRefBSTR.h>
 #include <JavaScriptCore/JSValueRef.h>
 #include <JavaScriptCore/PropertyNameArray.h>
 
+#pragma warning(push, 0)
 #include <WebCore/BString.h>
 #include <WebCore/PlatformString.h>
 #pragma warning(pop)
