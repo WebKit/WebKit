@@ -146,11 +146,13 @@ namespace KJS {
         ActivationImpData(ExecState* e)
             : JSVariableObjectData(&e->function()->body->symbolTable())
             , exec(e)
+            , function(e->function()) // Store this pointer for marking, to keep our symbol table / scope alive after exec has gone out of scope.
             , argumentsObject(0)
         {
         }
 
         ExecState* exec;
+        FunctionImp* function;
         Arguments* argumentsObject;
     };
 

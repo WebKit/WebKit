@@ -2,6 +2,20 @@
 
         Reviewed by Sam Weinig.
         
+        Fixed crash seen running layout tests.
+        
+        Reverted a change I made earlier today. Added a comment to try to
+        discourage myself from making this mistake a third time.
+
+        * kjs/function.cpp:
+        (KJS::ActivationImp::mark):
+        * kjs/function.h:
+        (KJS::ActivationImp::ActivationImpData::ActivationImpData):
+
+2007-12-07  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
+        
         Refactored parsing of global code: Removed the assumption that 
         ProgramNode inherits from FunctionBodyNode from the parser.
 

@@ -420,6 +420,9 @@ void ActivationImp::put(ExecState*, const Identifier& propertyName, JSValue* val
 void ActivationImp::mark()
 {
     JSVariableObject::mark();
+    
+    if (!d()->function->marked())
+        d()->function->mark();
 
     if (d()->argumentsObject && !d()->argumentsObject->marked())
         d()->argumentsObject->mark();
