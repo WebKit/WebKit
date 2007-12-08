@@ -32,6 +32,7 @@
 #include "lexer.h"
 #include "internal.h"
 #include "CommonIdentifiers.h"
+#include "Parser.h"
 #include <wtf/MathExtras.h>
 
 // Not sure why, but yacc doesn't add this define along with the others.
