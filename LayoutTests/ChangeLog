@@ -1,3 +1,17 @@
+2007-12-08  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Adele Peterson.
+
+        - test that re-inserting a parser-generated <style> element applies its
+          sylesheet.
+
+        * fast/dom/HTMLStyleElement: Added.
+        * fast/dom/HTMLStyleElement/insert-parser-generated.html: Added.
+        * platform/mac/fast/dom/HTMLStyleElement: Added.
+        * platform/mac/fast/dom/HTMLStyleElement/insert-parser-generated-expected.checksum: Added.
+        * platform/mac/fast/dom/HTMLStyleElement/insert-parser-generated-expected.png: Added.
+        * platform/mac/fast/dom/HTMLStyleElement/insert-parser-generated-expected.txt: Added.
+
 2007-12-08  Rob Buis  <buis@kde.org>
 
         Reviewed by Darin.

@@ -1,3 +1,21 @@
+2007-12-08  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Adele Peterson.
+
+        - fix two bugs in parsing of stylesheets in <style> elements created by
+          the parser:
+          1. each such stylesheet is parsed twice, once when the text node is
+             added and again when the </style> tag is reached
+          2. re-inserting such a <style> element into the document fails to
+             re-parse and apply its stylesheet.
+
+        Test for bug #2: fast/dom/HTMLStyleElement/insert-parser-generated.html
+
+        * html/HTMLStyleElement.cpp:
+        (WebCore::HTMLStyleElement::finishedParsing):
+        * svg/SVGStyleElement.cpp:
+        (WebCore::SVGStyleElement::finishedParsing):
+
 2007-12-07  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Darin.
