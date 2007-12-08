@@ -1,5 +1,19 @@
 2007-12-07  Darin Adler  <darin@apple.com>
 
+        Reviewed by Kevin Decker and Tim Hatcher.
+
+        - speculative fix for <rdar://problem/5400159> CrashTracer: [USER] 726 crashes
+          in Safari at com.apple.WebKit: -[WebHTMLView(WebPrivate) _updateMouseoverWithFakeEvent] + 389
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView _frameOrBoundsChanged]): Only schedule the mouseover timer if we are in a window
+        and not closed. That's because viewDidMoveToWindow and close are the entry points for cancelling.
+        (-[WebHTMLView close]): Add code to cancel both timers. Needed for the case where the entire
+        window goes away, and the view is never removed from the window.
+        (-[WebHTMLView viewDidMoveToWindow]): Don't do work if the view is closed.
+
+2007-12-07  Darin Adler  <darin@apple.com>
+
         Reviewed by Mitz.
 
         - http://bugs.webkit.org/show_bug.cgi?id=15981

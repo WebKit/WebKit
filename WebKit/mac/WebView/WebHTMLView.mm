@@ -1003,7 +1003,7 @@ static void _updateMouseoverTimerCallback(CFRunLoopTimerRef timer, void *info)
     }
     _private->lastScrollPosition = origin;
 
-    if (!_private->updateMouseoverTimer) {
+    if ([self window] && !_private->closed && !_private->updateMouseoverTimer) {
         CFRunLoopTimerContext context = { 0, self, NULL, NULL, NULL };
         
         // Use a 100ms delay so that the synthetic mouse over update doesn't cause cursor thrashing when pages are loading
@@ -1783,9 +1783,11 @@ static void _updateMouseoverTimerCallback(CFRunLoopTimerRef timer, void *info)
 - (void)close
 {
     // Check for a nil _private here incase we were created with initWithCoder. In that case, the WebView is just throwing
-    // out the archived WebHTMLView and recreating a new one if needed. So close dosen't need to do anything in that case.
+    // out the archived WebHTMLView and recreating a new one if needed. So close doesn't need to do anything in that case.
     if (!_private || _private->closed)
         return;
+    [self _cancelUpdateMouseoverTimer];
+    [self _cancelUpdateActiveStateTimer];
     [self _clearLastHitViewIfSelf];
     // FIXME: This is slow; should remove individual observers instead.
     [[NSNotificationCenter defaultCenter] removeObserver:self];
@@ -2627,7 +2629,7 @@ static void _updateActiveStateTimerCallback(CFRunLoopTimerRef timer, void *info)
     // when decoding a WebView.  When WebViews are decoded their subviews
     // are created by initWithCoder: and so won't be normally
     // initialized.  The stub views are discarded by WebView.
-    if (!_private)
+    if (!_private || _private->closed)
         return;
         
     [self _stopAutoscrollTimer];
