@@ -1,5 +1,11 @@
 2007-12-07  Geoffrey Garen  <ggaren@apple.com>
 
+        Build fix: added #include.
+
+        * kjs/function_object.cpp:
+
+2007-12-07  Geoffrey Garen  <ggaren@apple.com>
+
         Reviewed by Sam Weinig.
         
         Fixed crash seen running layout tests.
