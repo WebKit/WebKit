@@ -1,3 +1,16 @@
+2007-12-07  Steve Falkenburg  <sfalken@apple.com>
+
+        Build modifications for Drosera.
+
+        Reviewed by Adam.
+
+        * Drosera/DroseraWin.make: Added.
+        * Drosera/win/Drosera.vcproj/Drosera.rc:
+        * Drosera/win/Drosera.vcproj/Drosera.vcproj:
+        * Drosera/win/Drosera.vcproj/PRODUCTVERSION: Added.
+        * Drosera/win/Drosera.vcproj/VERSION: Added.
+        * Drosera/win/Drosera.vcproj/auto-version.sh: Added.
+
 2007-12-06  Adam Roben  <aroben@apple.com>
 
         Explicitly turn on the Mac font ascent hack on Windows

@@ -25,7 +25,7 @@
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
-				CommandLine=""
+				CommandLine="set PATH=%SystemDrive%\cygwin\bin;%PATH%&#x0D;&#x0A;bash auto-version.sh &quot;$(InputDir).&quot; &quot;$(IntDir)&quot;&#x0D;&#x0A;"
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
@@ -65,7 +65,7 @@
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="_DEBUG;__APPLICATION_NAME__=\&quot;$(ProjectName)\&quot;"
 				Culture="1033"
-				AdditionalIncludeDirectories="&quot;$(InputDir)\WTL75\include&quot;;&quot;$(IntDir)\include&quot;"
+				AdditionalIncludeDirectories="&quot;$(IntDir)\include&quot;"
 			/>
 			<Tool
 				Name="VCPreLinkEventTool"
@@ -123,7 +123,7 @@
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
-				CommandLine=""
+				CommandLine="set PATH=%SystemDrive%\cygwin\bin;%PATH%&#x0D;&#x0A;bash auto-version.sh &quot;$(InputDir).&quot; &quot;$(IntDir)&quot;&#x0D;&#x0A;"
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
@@ -162,6 +162,7 @@
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="NDEBUG;__APPLICATION_NAME__=\&quot;$(ProjectName)\&quot;"
 				Culture="1033"
+				AdditionalIncludeDirectories="&quot;$(IntDir)\include&quot;"
 			/>
 			<Tool
 				Name="VCPreLinkEventTool"
@@ -217,7 +218,7 @@
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
-				CommandLine=""
+				CommandLine="set PATH=%SystemDrive%\cygwin\bin;%PATH%&#x0D;&#x0A;bash auto-version.sh &quot;$(InputDir).&quot; &quot;$(IntDir)&quot;&#x0D;&#x0A;"
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
@@ -257,7 +258,7 @@
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="_DEBUG;__APPLICATION_NAME__=\&quot;$(ProjectName)\&quot;"
 				Culture="1033"
-				AdditionalIncludeDirectories="&quot;$(InputDir)\WTL75\include&quot;;&quot;$(IntDir)\include&quot;"
+				AdditionalIncludeDirectories="&quot;$(IntDir)\include&quot;"
 			/>
 			<Tool
 				Name="VCPreLinkEventTool"
