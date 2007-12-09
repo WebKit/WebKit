@@ -1,5 +1,50 @@
 2007-12-08  Sam Weinig  <sam@webkit.org>
 
+        Reviewed by Oliver.
+
+        Cleanup kjs_window.h/cpp.
+
+        * bindings/js/kjs_window.cpp:
+        (KJS::WindowPrivate::WindowPrivate):
+        (KJS::DOMWindowTimer::DOMWindowTimer):
+        (KJS::Window::Window):
+        (KJS::Window::retrieveWindow):
+        (KJS::Window::retrieveActive):
+        (KJS::Window::retrieve):
+        (KJS::Window::location):
+        (KJS::Window::mark):
+        (KJS::allowPopUp):
+        (KJS::parseModalDialogFeatures):
+        (KJS::floatFeature):
+        (KJS::canShowModalDialog):
+        (KJS::canShowModalDialogNow):
+        (KJS::showModalDialog):
+        (KJS::Window::getValueProperty):
+        (KJS::Window::getOwnPropertySlot):
+        (KJS::Window::globalExec):
+        (KJS::Window::setListener):
+        (KJS::Window::getListener):
+        (KJS::Window::findOrCreateJSEventListener):
+        (KJS::Window::findOrCreateJSUnprotectedEventListener):
+        (KJS::Window::clearHelperObjectProperties):
+        (KJS::Window::setCurrentEvent):
+        (KJS::WindowProtoFuncAToB::callAsFunction):
+        (KJS::WindowProtoFuncBToA::callAsFunction):
+        (KJS::WindowProtoFuncOpen::callAsFunction):
+        (KJS::WindowProtoFuncSetTimeout::callAsFunction):
+        (KJS::WindowProtoFuncClearTimeout::callAsFunction):
+        (KJS::WindowProtoFuncSetInterval::callAsFunction):
+        (KJS::WindowProtoFuncAddEventListener::callAsFunction):
+        (KJS::WindowProtoFuncRemoveEventListener::callAsFunction):
+        (KJS::WindowProtoFuncShowModalDialog::callAsFunction):
+        (KJS::WindowProtoFuncNotImplemented::callAsFunction):
+        * bindings/js/kjs_window.h:
+        (KJS::PausedTimeouts::PausedTimeouts):
+        (KJS::PausedTimeouts::takeTimeouts):
+        (KJS::ScheduledAction::ScheduledAction):
+
+2007-12-08  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Mitz.
 
         Move window scrolling, moving and resizing methods from KJS::Window

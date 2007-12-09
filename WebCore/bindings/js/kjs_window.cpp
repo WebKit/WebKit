@@ -37,21 +37,14 @@
 #include "FrameLoadRequest.h"
 #include "FrameLoader.h"
 #include "FrameTree.h"
-#include "FrameView.h"
 #include "GCController.h"
 #include "HTMLDocument.h"
-#include "JSCSSRule.h"
-#include "JSCSSValue.h"
 #include "JSDOMExceptionConstructor.h"
 #include "JSDOMWindow.h"
 #include "JSEvent.h"
 #include "JSHTMLAudioElementConstructor.h"
 #include "JSHTMLCollection.h"
 #include "JSHTMLOptionElementConstructor.h"
-#include "JSMutationEvent.h"
-#include "JSNode.h"
-#include "JSNodeFilter.h"
-#include "JSRange.h"
 #include "JSXMLHttpRequest.h"
 #include "Logging.h"
 #include "Page.h"
@@ -84,7 +77,7 @@ const int cMaxTimerNestingLevel = 5;
 const double cMinimumTimerInterval = 0.010;
 
 struct WindowPrivate {
-    WindowPrivate() 
+    WindowPrivate()
         : loc(0)
         , m_evt(0)
         , m_returnValueSlot(0)
@@ -96,16 +89,23 @@ struct WindowPrivate {
     Window::UnprotectedListenersMap jsUnprotectedEventListeners;
     Window::UnprotectedListenersMap jsUnprotectedHTMLEventListeners;
     mutable Location* loc;
-    WebCore::Event *m_evt;
+    WebCore::Event* m_evt;
     JSValue** m_returnValueSlot;
+
     typedef HashMap<int, DOMWindowTimer*> TimeoutsMap;
     TimeoutsMap m_timeouts;
 };
 
 class DOMWindowTimer : public TimerBase {
 public:
-    DOMWindowTimer(int timeoutId, int nestingLevel, Window* o, ScheduledAction* a)
-        : m_timeoutId(timeoutId), m_nestingLevel(nestingLevel), m_object(o), m_action(a) { }
+    DOMWindowTimer(int timeoutId, int nestingLevel, Window* object, ScheduledAction* action)
+        : m_timeoutId(timeoutId)
+        , m_nestingLevel(nestingLevel)
+        , m_object(object)
+        , m_action(action)
+    {
+    }
+
     virtual ~DOMWindowTimer() 
     { 
         JSLock lock;
@@ -209,8 +209,8 @@ const ClassInfo Window::info = { "Window", 0, &WindowTable };
 */
 
 Window::Window(DOMWindow* window)
-  : m_impl(window)
-  , d(new WindowPrivate)
+    : m_impl(window)
+    , d(new WindowPrivate)
 {
     // Window destruction is not thread-safe because of
     // the non-thread-safe WebCore structures it references.
@@ -245,61 +245,60 @@ Window::~Window()
         i1->second->clearWindowObj();
 }
 
-Window *Window::retrieveWindow(Frame *f)
+Window* Window::retrieveWindow(Frame* frame)
 {
-    JSObject *o = retrieve(f)->getObject();
+    JSObject* o = retrieve(frame)->getObject();
 
-    ASSERT(o || !f->settings() || !f->settings()->isJavaScriptEnabled());
-    return static_cast<Window *>(o);
+    ASSERT(o || !frame->settings() || !frame->settings()->isJavaScriptEnabled());
+    return static_cast<Window*>(o);
 }
 
-Window *Window::retrieveActive(ExecState *exec)
+Window* Window::retrieveActive(ExecState* exec)
 {
-    JSValue *imp = exec->dynamicGlobalObject();
-    ASSERT(imp);
-    return static_cast<Window*>(imp);
+    JSGlobalObject* globalObject = exec->dynamicGlobalObject();
+    ASSERT(globalObject);
+    return static_cast<Window*>(globalObject);
 }
 
-JSValue *Window::retrieve(Frame *p)
+JSValue* Window::retrieve(Frame* frame)
 {
-    ASSERT(p);
-    if (KJSProxy *proxy = p->scriptProxy())
+    ASSERT(frame);
+    if (KJSProxy* proxy = frame->scriptProxy())
         return proxy->globalObject(); // the Global object is the "window"
-  
+
     return jsUndefined(); // This can happen with JS disabled on the domain of that window
 }
 
-Location *Window::location() const
+Location* Window::location() const
 {
-  if (!d->loc)
-    d->loc = new Location(impl()->frame());
-  return d->loc;
+    if (!d->loc)
+        d->loc = new Location(impl()->frame());
+    return d->loc;
 }
 
 // reference our special objects during garbage collection
 void Window::mark()
 {
-  JSGlobalObject::mark();
-  if (d->loc && !d->loc->marked())
-    d->loc->mark();
+    JSGlobalObject::mark();
+    if (d->loc && !d->loc->marked())
+        d->loc->mark();
 }
 
-static bool allowPopUp(ExecState *exec, Window *window)
+static bool allowPopUp(Frame* frame)
 {
-    Frame* frame = window->impl()->frame();
     if (!frame)
         return false;
-    if (window->impl()->frame()->scriptProxy()->processingUserGesture())
+    if (frame->scriptProxy()->processingUserGesture())
         return true;
     Settings* settings = frame->settings();
     return settings && settings->JavaScriptCanOpenWindowsAutomatically();
 }
 
-static HashMap<String, String> parseModalDialogFeatures(ExecState *exec, JSValue *featuresArg)
+static HashMap<String, String> parseModalDialogFeatures(const String& featuresArg)
 {
     HashMap<String, String> map;
 
-    Vector<String> features = valueToStringWithUndefinedOrNullCheck(exec, featuresArg).split(';');
+    Vector<String> features = featuresArg.split(';');
     Vector<String>::const_iterator end = features.end();
     for (Vector<String>::const_iterator it = features.begin(); it != end; ++it) {
         String s = *it;
@@ -334,7 +333,7 @@ static bool boolFeature(const HashMap<String, String>& features, const char* key
     return value.isNull() || value == "1" || value == "yes" || value == "on";
 }
 
-static float floatFeature(const HashMap<String, String> &features, const char *key, float min, float max, float defaultValue)
+static float floatFeature(const HashMap<String, String>& features, const char* key, float min, float max, float defaultValue)
 {
     HashMap<String, String>::const_iterator it = features.find(key);
     if (it == features.end())
@@ -400,34 +399,28 @@ static Frame* createWindow(ExecState* exec, Frame* openerFrame, const String& ur
     return newFrame;
 }
 
-static bool canShowModalDialog(const Window *window)
+static bool canShowModalDialog(const Frame* frame)
 {
-    Frame* frame = window->impl()->frame();
     if (!frame)
         return false;
-
     return frame->page()->chrome()->canRunModal();
 }
 
-static bool canShowModalDialogNow(const Window *window)
+static bool canShowModalDialogNow(const Frame* frame)
 {
-    Frame* frame = window->impl()->frame();
     if (!frame)
         return false;
-
     return frame->page()->chrome()->canRunModalNow();
 }
 
-static JSValue* showModalDialog(ExecState* exec, Window* openerWindow, const List& args)
+static JSValue* showModalDialog(ExecState* exec, Frame* frame, const String& url, JSValue* dialogArgs, const String& featureArgs)
 {
-    if (!canShowModalDialogNow(openerWindow) || !allowPopUp(exec, openerWindow))
+    if (!canShowModalDialogNow(frame) || !allowPopUp(frame))
         return jsUndefined();
 
-    const HashMap<String, String> features = parseModalDialogFeatures(exec, args[2]);
+    const HashMap<String, String> features = parseModalDialogFeatures(featureArgs);
 
-    bool trusted = false;
-
-    WindowFeatures wargs;
+    const bool trusted = false;
 
     // The following features from Microsoft's documentation are not implemented:
     // - default font settings
@@ -436,12 +429,12 @@ static JSValue* showModalDialog(ExecState* exec, Window* openerWindow, const Lis
     // - dialogHide: trusted && boolFeature(features, "dialoghide"), makes dialog hide when you print
     // - help: boolFeature(features, "help", true), makes help icon appear in dialog (what does it do on Windows?)
     // - unadorned: trusted && boolFeature(features, "unadorned");
-    Frame* frame = openerWindow->impl()->frame();
     if (!frame)
         return jsUndefined();
 
     FloatRect screenRect = screenAvailableRect(frame->view());
 
+    WindowFeatures wargs;
     wargs.width = floatFeature(features, "dialogwidth", 100, screenRect.width(), 620); // default here came from frame size of dialog in MacIE
     wargs.widthSet = true;
     wargs.height = floatFeature(features, "dialogheight", 100, screenRect.height(), 450); // default here came from frame size of dialog in MacIE
@@ -472,7 +465,7 @@ static JSValue* showModalDialog(ExecState* exec, Window* openerWindow, const Lis
     wargs.locationBarVisible = false;
     wargs.fullscreen = false;
     
-    Frame* dialogFrame = createWindow(exec, frame, valueToStringWithUndefinedOrNullCheck(exec, args[0]), "", wargs, args[1]);
+    Frame* dialogFrame = createWindow(exec, frame, url, "", wargs, dialogArgs);
     if (!dialogFrame)
         return jsUndefined();
 
@@ -607,8 +600,8 @@ JSValue *Window::getValueProperty(ExecState *exec, int token) const
    case Onsubmit:
      return getListener(exec,submitEvent);
    case Onbeforeunload:
-      return getListener(exec, beforeunloadEvent);
-    case Onunload:
+     return getListener(exec, beforeunloadEvent);
+   case Onunload:
      return getListener(exec, unloadEvent);
    }
    ASSERT_NOT_REACHED();
@@ -654,7 +647,7 @@ bool Window::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName,
   if (entry) {
     if (entry->attr & Function) {
       if (entry->value.functionValue == &WindowProtoFuncShowModalDialog::create) {
-        if (!canShowModalDialog(this))
+        if (!canShowModalDialog(impl()->frame()))
           return false;
       }
       if (allowsAccessFrom(exec))
@@ -882,7 +875,7 @@ bool Window::allowsAccessFrom(const JSGlobalObject* other) const
 
 ExecState* Window::globalExec()
 {
-    // we need to make sure that any script execution happening in this
+    // We need to make sure that any script execution happening in this
     // frame does not destroy it
     ASSERT(impl()->frame());
     impl()->frame()->keepAlive();
@@ -907,35 +900,26 @@ bool Window::shouldInterruptScript() const
     return page->chrome()->shouldInterruptJavaScript();
 }
 
-void Window::setListener(ExecState *exec, const AtomicString &eventType, JSValue *func)
+void Window::setListener(ExecState* exec, const AtomicString& eventType, JSValue* func)
 {
-  if (!allowsAccessFrom(exec))
-    return;
-  Frame* frame = impl()->frame();
-  if (!frame)
-    return;
-  Document* doc = frame->document();
-  if (!doc)
-    return;
+    ASSERT(impl()->frame());
+    Document* doc = impl()->frame()->document();
+    if (!doc)
+        return;
 
-  doc->setHTMLWindowEventListener(eventType, findOrCreateJSEventListener(func,true));
+    doc->setHTMLWindowEventListener(eventType, findOrCreateJSEventListener(func, true));
 }
 
-JSValue *Window::getListener(ExecState *exec, const AtomicString &eventType) const
+JSValue* Window::getListener(ExecState* exec, const AtomicString& eventType) const
 {
-  if (!allowsAccessFrom(exec))
-    return jsUndefined();
-  Frame* frame = impl()->frame();
-  if (!frame)
-    return jsUndefined();
-  Document* doc = frame->document();
-  if (!doc)
-    return jsUndefined();
+    ASSERT(impl()->frame());
+    Document* doc = impl()->frame()->document();
+    if (!doc)
+        return jsUndefined();
 
-  WebCore::EventListener *listener = doc->getHTMLWindowEventListener(eventType);
-  if (listener && static_cast<JSEventListener*>(listener)->listenerObj())
-    return static_cast<JSEventListener*>(listener)->listenerObj();
-  else
+    WebCore::EventListener* listener = doc->getHTMLWindowEventListener(eventType);
+    if (listener && static_cast<JSEventListener*>(listener)->listenerObj())
+        return static_cast<JSEventListener*>(listener)->listenerObj();
     return jsNull();
 }
 
@@ -948,18 +932,18 @@ JSEventListener* Window::findJSEventListener(JSValue* val, bool html)
     return listeners.get(object);
 }
 
-JSEventListener *Window::findOrCreateJSEventListener(JSValue *val, bool html)
+JSEventListener* Window::findOrCreateJSEventListener(JSValue* val, bool html)
 {
-  JSEventListener *listener = findJSEventListener(val, html);
-  if (listener)
-    return listener;
+    JSEventListener* listener = findJSEventListener(val, html);
+    if (listener)
+        return listener;
 
-  if (!val->isObject())
-    return 0;
-  JSObject *object = static_cast<JSObject *>(val);
+    if (!val->isObject())
+        return 0;
+    JSObject* object = static_cast<JSObject*>(val);
 
-  // Note that the JSEventListener constructor adds it to our jsEventListeners list
-  return new JSEventListener(object, this, html);
+    // Note that the JSEventListener constructor adds it to our jsEventListeners list
+    return new JSEventListener(object, this, html);
 }
 
 JSUnprotectedEventListener* Window::findJSUnprotectedEventListener(JSValue* val, bool html)
@@ -971,24 +955,23 @@ JSUnprotectedEventListener* Window::findJSUnprotectedEventListener(JSValue* val,
     return listeners.get(object);
 }
 
-JSUnprotectedEventListener *Window::findOrCreateJSUnprotectedEventListener(JSValue *val, bool html)
+JSUnprotectedEventListener* Window::findOrCreateJSUnprotectedEventListener(JSValue* val, bool html)
 {
-  JSUnprotectedEventListener *listener = findJSUnprotectedEventListener(val, html);
-  if (listener)
-    return listener;
+    JSUnprotectedEventListener* listener = findJSUnprotectedEventListener(val, html);
+    if (listener)
+        return listener;
+    if (!val->isObject())
+        return 0;
+    JSObject* object = static_cast<JSObject*>(val);
 
-  if (!val->isObject())
-    return 0;
-  JSObject *object = static_cast<JSObject *>(val);
-
-  // The JSUnprotectedEventListener constructor adds it to our jsUnprotectedEventListeners map.
-  return new JSUnprotectedEventListener(object, this, html);
+    // The JSUnprotectedEventListener constructor adds it to our jsUnprotectedEventListeners map.
+    return new JSUnprotectedEventListener(object, this, html);
 }
 
 void Window::clearHelperObjectProperties()
 {
-  d->loc = 0;
-  d->m_evt = 0;
+    d->loc = 0;
+    d->m_evt = 0;
 }
 
 void Window::clear()
@@ -1011,9 +994,9 @@ void Window::clear()
   gcController().garbageCollectSoon();
 }
 
-void Window::setCurrentEvent(Event *evt)
+void Window::setCurrentEvent(Event* evt)
 {
-  d->m_evt = evt;
+    d->m_evt = evt;
 }
 
 Event* Window::currentEvent()
@@ -1154,23 +1137,20 @@ JSValue* WindowProtoFuncAToB::callAsFunction(ExecState* exec, JSObject* thisObj,
 {
     if (!thisObj->inherits(&Window::info))
         return throwError(exec, TypeError);
-    Window* window = static_cast<Window*>(thisObj);
-    Frame* frame = window->impl()->frame();
-    if (!frame)
-        return jsUndefined();
-
-    JSValue* v = args[0];
-    UString s = v->toString(exec);
 
     if (args.size() < 1)
         return throwError(exec, SyntaxError, "Not enough arguments");
+
+    JSValue* v = args[0];
     if (v->isNull())
         return jsString();
+    
+    UString s = v->toString(exec);
     if (!s.is8Bit()) {
         setDOMException(exec, INVALID_CHARACTER_ERR);
         return jsUndefined();
     }
-    
+
     Vector<char> in(s.size());
     for (int i = 0; i < s.size(); ++i)
         in[i] = static_cast<char>(s.data()[i].unicode());
@@ -1178,7 +1158,7 @@ JSValue* WindowProtoFuncAToB::callAsFunction(ExecState* exec, JSObject* thisObj,
 
     if (!base64Decode(in, out))
         return throwError(exec, GeneralError, "Cannot decode base64");
-    
+
     return jsString(String(out.data(), out.size()));
 }
 
@@ -1186,30 +1166,27 @@ JSValue* WindowProtoFuncBToA::callAsFunction(ExecState* exec, JSObject* thisObj,
 {
     if (!thisObj->inherits(&Window::info))
         return throwError(exec, TypeError);
-    Window* window = static_cast<Window*>(thisObj);
-    Frame* frame = window->impl()->frame();
-    if (!frame)
-        return jsUndefined();
-
-    JSValue* v = args[0];
-    UString s = v->toString(exec);
 
     if (args.size() < 1)
         return throwError(exec, SyntaxError, "Not enough arguments");
+
+    JSValue* v = args[0];
     if (v->isNull())
         return jsString();
+
+    UString s = v->toString(exec);
     if (!s.is8Bit()) {
         setDOMException(exec, INVALID_CHARACTER_ERR);
         return jsUndefined();
     }
-    
+
     Vector<char> in(s.size());
     for (int i = 0; i < s.size(); ++i)
         in[i] = static_cast<char>(s.data()[i].unicode());
     Vector<char> out;
 
     base64Encode(in, out);
-    
+
     return jsString(String(out.data(), out.size()));
 }
 
@@ -1232,7 +1209,7 @@ JSValue* WindowProtoFuncOpen::callAsFunction(ExecState* exec, JSObject* thisObj,
 
     // Because FrameTree::find() returns true for empty strings, we must check for empty framenames.
     // Otherwise, illegitimate window.open() calls with no name will pass right through the popup blocker.
-    if (!allowPopUp(exec, window) && (frameName.isEmpty() || !frame->tree()->find(frameName)))
+    if (!allowPopUp(frame) && (frameName.isEmpty() || !frame->tree()->find(frameName)))
         return jsUndefined();
 
     // Get the target frame for the special cases of _top and _parent.  In those 
@@ -1253,8 +1230,8 @@ JSValue* WindowProtoFuncOpen::callAsFunction(ExecState* exec, JSObject* thisObj,
         if (!urlString.isEmpty())
             completedURL = activeFrame->document()->completeURL(urlString);
 
-        const Window* window = Window::retrieveWindow(frame);
-        if (!completedURL.isEmpty() && (!completedURL.startsWith("javascript:", false) || (window && window->allowsAccessFrom(exec)))) {
+        const Window* targetedWindow = Window::retrieveWindow(frame);
+        if (!completedURL.isEmpty() && (!completedURL.startsWith("javascript:", false) || (targetedWindow && targetedWindow->allowsAccessFrom(exec)))) {
             bool userGesture = activeFrame->scriptProxy()->processingUserGesture();
             frame->loader()->scheduleLocationChange(completedURL, activeFrame->loader()->outgoingReferrer(), false, userGesture);
         }
@@ -1286,32 +1263,17 @@ JSValue* WindowProtoFuncSetTimeout::callAsFunction(ExecState* exec, JSObject* th
     if (!thisObj->inherits(&Window::info))
         return throwError(exec, TypeError);
     Window* window = static_cast<Window*>(thisObj);
-    Frame* frame = window->impl()->frame();
-    if (!frame)
-        return jsUndefined();
 
-    JSValue *v = args[0];
-    UString s = v->toString(exec);
-
-    if (!window->allowsAccessFrom(exec))
-        return jsUndefined();
-    if (v->isString()) {
-      int i = args[1]->toInt32(exec);
-      int r = (const_cast<Window*>(window))->installTimeout(s, i, true /*single shot*/);
-      return jsNumber(r);
+    JSValue* v = args[0];
+    if (v->isString())
+        return jsNumber(window->installTimeout(v->toString(exec), args[1]->toInt32(exec), true /*single shot*/));
+    if (v->isObject() && static_cast<JSObject*>(v)->implementsCall()) {
+        List argsTail;
+        args.getSlice(2, argsTail);
+        return jsNumber(window->installTimeout(v, argsTail, args[1]->toInt32(exec), true /*single shot*/));
     }
-    else if (v->isObject() && static_cast<JSObject *>(v)->implementsCall()) {
-      JSValue *func = args[0];
-      int i = args[1]->toInt32(exec);
-      
-      List argsTail;
-      args.getSlice(2, argsTail);
 
-      int r = (const_cast<Window*>(window))->installTimeout(func, argsTail, i, true /*single shot*/);
-      return jsNumber(r);
-    }
-    else
-      return jsUndefined();
+    return jsUndefined();
 }
 
 JSValue* WindowProtoFuncClearTimeout::callAsFunction(ExecState* exec, JSObject* thisObj, const List& args)
@@ -1321,15 +1283,8 @@ JSValue* WindowProtoFuncClearTimeout::callAsFunction(ExecState* exec, JSObject* 
     if (!thisObj->inherits(&Window::info))
         return throwError(exec, TypeError);
     Window* window = static_cast<Window*>(thisObj);
-    Frame* frame = window->impl()->frame();
-    if (!frame)
-        return jsUndefined();
 
-    JSValue *v = args[0];
-
-    if (!window->allowsAccessFrom(exec))
-        return jsUndefined();
-    (const_cast<Window*>(window))->clearTimeout(v->toInt32(exec));
+    window->clearTimeout(args[0]->toInt32(exec));
     return jsUndefined();
 }
 
@@ -1338,32 +1293,20 @@ JSValue* WindowProtoFuncSetInterval::callAsFunction(ExecState* exec, JSObject* t
     if (!thisObj->inherits(&Window::info))
         return throwError(exec, TypeError);
     Window* window = static_cast<Window*>(thisObj);
-    Frame* frame = window->impl()->frame();
-    if (!frame)
-        return jsUndefined();
 
-    JSValue *v = args[0];
-    UString s = v->toString(exec);
-
-    if (!window->allowsAccessFrom(exec))
-        return jsUndefined();
-    if (args.size() >= 2 && v->isString()) {
-      int i = args[1]->toInt32(exec);
-      int r = (const_cast<Window*>(window))->installTimeout(s, i, false);
-      return jsNumber(r);
+    if (args.size() >= 2) {
+        JSValue* v = args[0];
+        int delay = args[1]->toInt32(exec);
+        if (v->isString())
+            return jsNumber(window->installTimeout(v->toString(exec), delay, false));
+        if (v->isObject() && static_cast<JSObject*>(v)->implementsCall()) {
+            List argsTail;
+            args.getSlice(2, argsTail);
+            return jsNumber(window->installTimeout(v, argsTail, delay, false));
+        }
     }
-    else if (args.size() >= 2 && v->isObject() && static_cast<JSObject *>(v)->implementsCall()) {
-      JSValue *func = args[0];
-      int i = args[1]->toInt32(exec);
 
-      List argsTail;
-      args.getSlice(2, argsTail);
-
-      int r = (const_cast<Window*>(window))->installTimeout(func, argsTail, i, false);
-      return jsNumber(r);
-    }
-    else
-      return jsUndefined();
+    return jsUndefined();
 
 }
 
@@ -1376,11 +1319,11 @@ JSValue* WindowProtoFuncAddEventListener::callAsFunction(ExecState* exec, JSObje
     if (!frame)
         return jsUndefined();
 
-    if (!window->allowsAccessFrom(exec))
-        return jsUndefined();
-    if (JSEventListener* listener = window->findOrCreateJSEventListener(args[1]))
-        if (Document *doc = frame->document())
+    if (JSEventListener* listener = window->findOrCreateJSEventListener(args[1])) {
+        if (Document* doc = frame->document())
             doc->addWindowEventListener(AtomicString(args[0]->toString(exec)), listener, args[2]->toBoolean(exec));
+    }
+
     return jsUndefined();
 }
 
@@ -1393,11 +1336,11 @@ JSValue* WindowProtoFuncRemoveEventListener::callAsFunction(ExecState* exec, JSO
     if (!frame)
         return jsUndefined();
 
-    if (!window->allowsAccessFrom(exec))
-        return jsUndefined();
-    if (JSEventListener* listener = window->findJSEventListener(args[1]))
-        if (Document *doc = frame->document())
+    if (JSEventListener* listener = window->findJSEventListener(args[1])) {
+        if (Document* doc = frame->document())
             doc->removeWindowEventListener(AtomicString(args[0]->toString(exec)), listener, args[2]->toBoolean(exec));
+    }
+
     return jsUndefined();
 }
 
@@ -1410,7 +1353,7 @@ JSValue* WindowProtoFuncShowModalDialog::callAsFunction(ExecState* exec, JSObjec
     if (!frame)
         return jsUndefined();
 
-    return showModalDialog(exec, window, args);
+    return showModalDialog(exec, frame, valueToStringWithUndefinedOrNullCheck(exec, args[0]), args[1], valueToStringWithUndefinedOrNullCheck(exec, args[2]));
 }
 
 JSValue* WindowProtoFuncNotImplemented::callAsFunction(ExecState* exec, JSObject* thisObj, const List& args)
@@ -1418,7 +1361,6 @@ JSValue* WindowProtoFuncNotImplemented::callAsFunction(ExecState* exec, JSObject
     if (!thisObj->inherits(&Window::info))
         return throwError(exec, TypeError);
 
-    // Not implemented.
     return jsUndefined();
 }
 
