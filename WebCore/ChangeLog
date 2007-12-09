@@ -1,3 +1,19 @@
+2007-12-08  Kevin Ollivier  <kevino@theolliviers.com>
+
+        Reviewed by Alp Toker.
+
+        http://bugs.webkit.org/show_bug.cgi?id=14651
+        [CURL] didReceiveResponse() only called for HTTP loads
+
+        http://bugs.webkit.org/show_bug.cgi?id=14583
+        [GDK] file:// relative CSS include URLs handled incorrectly
+
+        Make sure CURL sets the ResourceResponse URL and calls
+        didReceiveResponse for local files too. 
+
+        * platform/network/curl/ResourceHandleManager.cpp:
+        (WebCore::writeCallback):
+
 2007-12-08  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Sam W.

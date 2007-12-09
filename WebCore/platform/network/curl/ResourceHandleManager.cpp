@@ -94,6 +94,20 @@ static size_t writeCallback(void* ptr, size_t size, size_t nmemb, void* data)
     if (CURLE_OK == err && httpCode >= 300 && httpCode < 400)
         return totalSize;
 
+    // since the code in headerCallback will not have run for local files
+    // the code to set the URL and fire didReceiveResponse is never run,
+    // which means the ResourceLoader's response does not contain the URL.
+    // Run the code here for local files to resolve the issue.
+    // TODO: See if there is a better approach for handling this.
+    if (!d->m_response.responseFired()) {
+        const char* hdr;
+        err = curl_easy_getinfo(h, CURLINFO_EFFECTIVE_URL, &hdr);
+        d->m_response.setUrl(KURL(hdr));
+        if (d->client())
+            d->client()->didReceiveResponse(job, d->m_response);
+        d->m_response.setResponseFired(true);
+    }
+
     if (d->client())
         d->client()->didReceiveData(job, static_cast<char*>(ptr), totalSize, 0);
     return totalSize;
@@ -161,6 +175,8 @@ static size_t headerCallback(char* ptr, size_t size, size_t nmemb, void* data)
 
         if (client)
             client->didReceiveResponse(job, d->m_response);
+        d->m_response.setResponseFired(true);
+
     } else {
         int splitPos = header.find(":");
         if (splitPos != -1)
