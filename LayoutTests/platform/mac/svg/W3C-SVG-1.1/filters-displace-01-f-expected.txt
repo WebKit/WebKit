@@ -1,8 +1,3 @@
-KCanvasResource {id="DispMapChecker" [type=FILTER]  [effects=[[type=IMAGE]  [subregion="at (0,0) size 1x1"]]]}
-KCanvasResource {id="RotateMap" [type=FILTER]  [effects=[[type=IMAGE]  [subregion="at (0,0) size 1x1"]]]}
-KCanvasResource {id="SphereMap" [type=FILTER]  [effects=[[type=IMAGE]  [subregion="at (0,0) size 1x1"]]]}
-KCanvasResource {id="RotateMapTest" [type=FILTER]  [effects=[[type=IMAGE]  [result="Map"] [subregion="at (0,0) size 1x1"], [type=IMAGE]  [result="Texture"] [subregion="at (0,0) size 1x1"], [type=DISPLACEMENT-MAP] [in="Texture"] [subregion="at (0,0) size 1x1"] [in2=Map] [scale=64.00] [x channel selector=RED] [y channel selector=GREEN]]]}
-KCanvasResource {id="SphereMapTest" [type=FILTER]  [effects=[[type=IMAGE]  [result="Map"] [subregion="at (0,0) size 1x1"], [type=IMAGE]  [result="Texture"] [subregion="at (0,0) size 1x1"], [type=DISPLACEMENT-MAP] [in="Texture"] [subregion="at (0,0) size 1x1"] [in2=Map] [scale=64.00] [x channel selector=RED] [y channel selector=GREEN]]]}
 layer at (0,0) size 480x360
   RenderView at (0,0) size 480x360
 layer at (0,0) size 480x360

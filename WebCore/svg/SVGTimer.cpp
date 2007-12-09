@@ -56,7 +56,7 @@ SVGTimer::TargetAnimationMap SVGTimer::animationsByElement(double elapsedSeconds
     // Build a list of all animations which apply to each element
     // FIXME: This list should be sorted by animation priority
     TargetAnimationMap targetMap;
-#if ENABLE(SVG_EXPERIMENTAL_FEATURES)
+#if ENABLE(SVG_ANIMATION)
     ExceptionCode ec = 0;
     SVGNotifySet::const_iterator end = m_notifySet.end();
     for (SVGNotifySet::const_iterator it = m_notifySet.begin(); it != end; ++it) {
@@ -88,7 +88,7 @@ SVGTimer::TargetAnimationMap SVGTimer::animationsByElement(double elapsedSeconds
 // FIXME: This funtion will eventually become part of the AnimationCompositor
 void SVGTimer::applyAnimations(double elapsedSeconds, const SVGTimer::TargetAnimationMap& targetMap)
 {    
-#if ENABLE(SVG_EXPERIMENTAL_FEATURES)
+#if ENABLE(SVG_ANIMATION)
     TargetAnimationMap::const_iterator targetIterator = targetMap.begin();
     TargetAnimationMap::const_iterator tend = targetMap.end();
     for (; targetIterator != tend; ++targetIterator) {
@@ -130,7 +130,7 @@ void SVGTimer::applyAnimations(double elapsedSeconds, const SVGTimer::TargetAnim
 
 void SVGTimer::notifyAll()
 {
-#if ENABLE(SVG_EXPERIMENTAL_FEATURES)
+#if ENABLE(SVG_ANIMATION)
     if (m_enabledNotifySet.isEmpty())
         return;
 
@@ -145,7 +145,7 @@ void SVGTimer::notifyAll()
 
 void SVGTimer::addNotify(SVGAnimationElement* element, bool enabled)
 {
-#if ENABLE(SVG_EXPERIMENTAL_FEATURES)
+#if ENABLE(SVG_ANIMATION)
     m_notifySet.add(element);
     if (enabled)
         m_enabledNotifySet.add(element);
@@ -156,7 +156,7 @@ void SVGTimer::addNotify(SVGAnimationElement* element, bool enabled)
 
 void SVGTimer::removeNotify(SVGAnimationElement *element)
 {
-#if ENABLE(SVG_EXPERIMENTAL_FEATURES)
+#if ENABLE(SVG_ANIMATION)
     // FIXME: Why do we keep a pointer to the element forever (marked disabled)?
     // That can't be right!
 

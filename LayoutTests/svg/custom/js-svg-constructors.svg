@@ -35,12 +35,14 @@
       expect("SVGColor.SVG_COLORTYPE_RGBCOLOR_ICCCOLOR", 2);
       expect("SVGColor.SVG_COLORTYPE_CURRENTCOLOR", 3);
 
-      expect("SVGComponentTransferFunctionElement.SVG_FECOMPONENTTRANSFER_TYPE_UNKNOWN", 0);
-      expect("SVGComponentTransferFunctionElement.SVG_FECOMPONENTTRANSFER_TYPE_IDENTITY", 1);
-      expect("SVGComponentTransferFunctionElement.SVG_FECOMPONENTTRANSFER_TYPE_TABLE", 2);
-      expect("SVGComponentTransferFunctionElement.SVG_FECOMPONENTTRANSFER_TYPE_DISCRETE", 3);
-      expect("SVGComponentTransferFunctionElement.SVG_FECOMPONENTTRANSFER_TYPE_LINEAR", 4);
-      expect("SVGComponentTransferFunctionElement.SVG_FECOMPONENTTRANSFER_TYPE_GAMMA", 5);
+      if (window.SVGComponentTransferFunctionElement) {
+          expect("SVGComponentTransferFunctionElement.SVG_FECOMPONENTTRANSFER_TYPE_UNKNOWN", 0);
+          expect("SVGComponentTransferFunctionElement.SVG_FECOMPONENTTRANSFER_TYPE_IDENTITY", 1);
+          expect("SVGComponentTransferFunctionElement.SVG_FECOMPONENTTRANSFER_TYPE_TABLE", 2);
+          expect("SVGComponentTransferFunctionElement.SVG_FECOMPONENTTRANSFER_TYPE_DISCRETE", 3);
+          expect("SVGComponentTransferFunctionElement.SVG_FECOMPONENTTRANSFER_TYPE_LINEAR", 4);
+          expect("SVGComponentTransferFunctionElement.SVG_FECOMPONENTTRANSFER_TYPE_GAMMA", 5);
+      }
 
       expect_failure("SVGCSSRule.COLOR_PROFILE_RULE", 7);
 
@@ -48,49 +50,63 @@
       expect("SVGException.SVG_INVALID_VALUE_ERR", 1);
       expect("SVGException.SVG_MATRIX_NOT_INVERTABLE", 2);
 
-      expect("SVGFEBlendElement.SVG_FEBLEND_MODE_UNKNOWN", 0);
-      expect("SVGFEBlendElement.SVG_FEBLEND_MODE_NORMAL", 1); // Highlights a HASH bug!
-      expect("SVGFEBlendElement.SVG_FEBLEND_MODE_MULTIPLY", 2);
-      expect("SVGFEBlendElement.SVG_FEBLEND_MODE_SCREEN", 3);
-      expect("SVGFEBlendElement.SVG_FEBLEND_MODE_DARKEN", 4);
-      expect("SVGFEBlendElement.SVG_FEBLEND_MODE_LIGHTEN", 5);
+      if (window.SVGComponentTransferFunctionElement) {
+          expect("SVGFEBlendElement.SVG_FEBLEND_MODE_UNKNOWN", 0);
+          expect("SVGFEBlendElement.SVG_FEBLEND_MODE_NORMAL", 1); // Highlights a HASH bug!
+          expect("SVGFEBlendElement.SVG_FEBLEND_MODE_MULTIPLY", 2);
+          expect("SVGFEBlendElement.SVG_FEBLEND_MODE_SCREEN", 3);
+          expect("SVGFEBlendElement.SVG_FEBLEND_MODE_DARKEN", 4);
+          expect("SVGFEBlendElement.SVG_FEBLEND_MODE_LIGHTEN", 5);
+      }
 
-      expect("SVGFEColorMatrixElement.SVG_FECOLORMATRIX_TYPE_UNKNOWN", 0);
-      expect("SVGFEColorMatrixElement.SVG_FECOLORMATRIX_TYPE_MATRIX", 1);
-      expect("SVGFEColorMatrixElement.SVG_FECOLORMATRIX_TYPE_SATURATE", 2);
-      expect("SVGFEColorMatrixElement.SVG_FECOLORMATRIX_TYPE_HUEROTATE", 3);
-      expect("SVGFEColorMatrixElement.SVG_FECOLORMATRIX_TYPE_LUMINANCETOALPHA", 4);
+      if (window.SVGFEColorMatrixElement) {
+          expect("SVGFEColorMatrixElement.SVG_FECOLORMATRIX_TYPE_UNKNOWN", 0);
+          expect("SVGFEColorMatrixElement.SVG_FECOLORMATRIX_TYPE_MATRIX", 1);
+          expect("SVGFEColorMatrixElement.SVG_FECOLORMATRIX_TYPE_SATURATE", 2);
+          expect("SVGFEColorMatrixElement.SVG_FECOLORMATRIX_TYPE_HUEROTATE", 3);
+          expect("SVGFEColorMatrixElement.SVG_FECOLORMATRIX_TYPE_LUMINANCETOALPHA", 4);
+      }
 
-      expect("SVGFECompositeElement.SVG_FECOMPOSITE_OPERATOR_UNKNOWN", 0);
-      expect("SVGFECompositeElement.SVG_FECOMPOSITE_OPERATOR_OVER", 1);
-      expect("SVGFECompositeElement.SVG_FECOMPOSITE_OPERATOR_IN", 2);
-      expect("SVGFECompositeElement.SVG_FECOMPOSITE_OPERATOR_OUT", 3);
-      expect("SVGFECompositeElement.SVG_FECOMPOSITE_OPERATOR_ATOP", 4);
-      expect("SVGFECompositeElement.SVG_FECOMPOSITE_OPERATOR_XOR", 5);
-      expect("SVGFECompositeElement.SVG_FECOMPOSITE_OPERATOR_ARITHMETIC", 6);
+      if (window.SVGFECompositeElement) {
+          expect("SVGFECompositeElement.SVG_FECOMPOSITE_OPERATOR_UNKNOWN", 0);
+          expect("SVGFECompositeElement.SVG_FECOMPOSITE_OPERATOR_OVER", 1);
+          expect("SVGFECompositeElement.SVG_FECOMPOSITE_OPERATOR_IN", 2);
+          expect("SVGFECompositeElement.SVG_FECOMPOSITE_OPERATOR_OUT", 3);
+          expect("SVGFECompositeElement.SVG_FECOMPOSITE_OPERATOR_ATOP", 4);
+          expect("SVGFECompositeElement.SVG_FECOMPOSITE_OPERATOR_XOR", 5);
+          expect("SVGFECompositeElement.SVG_FECOMPOSITE_OPERATOR_ARITHMETIC", 6);
+      }
 
-      expect_failure("SVGFEConvolveMatrixElement.SVG_EDGEMODE_UNKNOWN", 0);
-      expect_failure("SVGFEConvolveMatrixElement.SVG_EDGEMODE_DUPLICATE", 1);
-      expect_failure("SVGFEConvolveMatrixElement.SVG_EDGEMODE_WRAP", 2);
-      expect_failure("SVGFEConvolveMatrixElement.SVG_EDGEMODE_NONE", 3);
+      if (window.SVGFEConvolveMatrixElement) {
+          expect_failure("SVGFEConvolveMatrixElement.SVG_EDGEMODE_UNKNOWN", 0);
+          expect_failure("SVGFEConvolveMatrixElement.SVG_EDGEMODE_DUPLICATE", 1);
+          expect_failure("SVGFEConvolveMatrixElement.SVG_EDGEMODE_WRAP", 2);
+          expect_failure("SVGFEConvolveMatrixElement.SVG_EDGEMODE_NONE", 3);
+      }
 
-      expect("SVGFEDisplacementMapElement.SVG_CHANNEL_UNKNOWN", 0);
-      expect("SVGFEDisplacementMapElement.SVG_CHANNEL_R", 1);
-      expect("SVGFEDisplacementMapElement.SVG_CHANNEL_G", 2);
-      expect("SVGFEDisplacementMapElement.SVG_CHANNEL_B", 3);
-      expect("SVGFEDisplacementMapElement.SVG_CHANNEL_A", 4);
+      if (window.SVGFEDisplacementMapElement) {
+          expect("SVGFEDisplacementMapElement.SVG_CHANNEL_UNKNOWN", 0);
+          expect("SVGFEDisplacementMapElement.SVG_CHANNEL_R", 1);
+          expect("SVGFEDisplacementMapElement.SVG_CHANNEL_G", 2);
+          expect("SVGFEDisplacementMapElement.SVG_CHANNEL_B", 3);
+          expect("SVGFEDisplacementMapElement.SVG_CHANNEL_A", 4);
+      }
 
-      expect_failure("SVGFEMorphologyElement.SVG_MORPHOLOGY_OPERATOR_UNKNOWN", 0);
-      expect_failure("SVGFEMorphologyElement.SVG_MORPHOLOGY_OPERATOR_ERODE", 1);
-      expect_failure("SVGFEMorphologyElement.SVG_MORPHOLOGY_OPERATOR_DILATE", 2);
+      if (window.SVGFEMorphologyElement) {
+          expect_failure("SVGFEMorphologyElement.SVG_MORPHOLOGY_OPERATOR_UNKNOWN", 0);
+          expect_failure("SVGFEMorphologyElement.SVG_MORPHOLOGY_OPERATOR_ERODE", 1);
+          expect_failure("SVGFEMorphologyElement.SVG_MORPHOLOGY_OPERATOR_DILATE", 2);
+      }
 
-      expect("SVGFETurbulenceElement.SVG_TURBULENCE_TYPE_UNKNOWN", 0);
-      expect("SVGFETurbulenceElement.SVG_TURBULENCE_TYPE_FRACTALNOISE", 1);
-      expect("SVGFETurbulenceElement.SVG_TURBULENCE_TYPE_TURBULENCE", 2);
-      expect("SVGFETurbulenceElement.SVG_STITCHTYPE_UNKNOWN", 0);
-      expect("SVGFETurbulenceElement.SVG_STITCHTYPE_STITCH", 1);
-      expect("SVGFETurbulenceElement.SVG_STITCHTYPE_NOSTITCH", 2);
-
+      if (window.SVGFETurbulenceElement) {
+          expect("SVGFETurbulenceElement.SVG_TURBULENCE_TYPE_UNKNOWN", 0);
+          expect("SVGFETurbulenceElement.SVG_TURBULENCE_TYPE_FRACTALNOISE", 1);
+          expect("SVGFETurbulenceElement.SVG_TURBULENCE_TYPE_TURBULENCE", 2);
+          expect("SVGFETurbulenceElement.SVG_STITCHTYPE_UNKNOWN", 0);
+          expect("SVGFETurbulenceElement.SVG_STITCHTYPE_STITCH", 1);
+          expect("SVGFETurbulenceElement.SVG_STITCHTYPE_NOSTITCH", 2);
+      }
+      
       expect("SVGGradientElement.SVG_SPREADMETHOD_UNKNOWN", 0);
       expect("SVGGradientElement.SVG_SPREADMETHOD_PAD", 1);
       expect("SVGGradientElement.SVG_SPREADMETHOD_REFLECT", 2);

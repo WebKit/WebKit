@@ -1,8 +1,4 @@
 KRenderingPaintServer {id="MyGradient" [type=LINEAR-GRADIENT] [stops=[(0.00,#00FF00), (1.00,#000000)]] [bounding box mode=0] [start=(10,0)] [end=(590,0)]}
-KCanvasResource {id="Identity" [type=FILTER]  [effects=[[type=COMPONENT-TRANSFER]  [subregion="at (0,0) size 1x1"] [red func=[type=IDENTITY]] [green func=[type=UNKNOWN]] [blue func=[type=UNKNOWN]] [alpha func=[type=UNKNOWN]]]]}
-KCanvasResource {id="DiscreteBlank" [type=FILTER]  [effects=[[type=COMPONENT-TRANSFER]  [subregion="at (0,0) size 1x1"] [red func=[type=UNKNOWN]] [green func=[type=DISCRETE] [table values=0.00]] [blue func=[type=UNKNOWN]] [alpha func=[type=UNKNOWN]]]]}
-KCanvasResource {id="DiscreteFull" [type=FILTER]  [effects=[[type=COMPONENT-TRANSFER]  [subregion="at (0,0) size 1x1"] [red func=[type=UNKNOWN]] [green func=[type=DISCRETE] [table values=1.00]] [blue func=[type=UNKNOWN]] [alpha func=[type=UNKNOWN]]]]}
-KCanvasResource {id="DiscreteOrd" [type=FILTER]  [effects=[[type=COMPONENT-TRANSFER]  [subregion="at (0,0) size 1x1"] [red func=[type=UNKNOWN]] [green func=[type=DISCRETE] [table values=0.00 0.25 0.50 0.75 1.00 1.00]] [blue func=[type=UNKNOWN]] [alpha func=[type=UNKNOWN]]]]}
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600

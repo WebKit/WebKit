@@ -1,3 +1,28 @@
+2007-12-08  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Sam W.
+
+        Split the ENABLE_SVG_EXPERIMENTAL_FEATURES flag into separate flags.
+        
+        Fixes <rdar://problem/5620249> Must disable SVG animation
+        <rdar://problem/5612772> Disable SVG filters on Mac to match Windows behavior
+        
+        In order to allow finer grained control over the set of SVG features
+        this patch splits ENABLE_SVG_EXPERIMENTAL_FEATURES into the following
+        distinct flags:
+        ENABLE_SVG_ANIMATION
+        ENABLE_SVG_FILTERS
+        ENABLE_SVG_FONTS
+        ENABLE_SVG_AS_IMAGE
+        ENABLE_SVG_USE
+        
+        by default only ENABLE_SVG_AS_IMAGE and ENABLE_SVG_USE are set.
+        
+        Script handles all the new build flags, and allows --svg-experimental
+        to automatically enable all features.
+
+        * Scripts/build-webkit:
+
 2007-12-07  Steve Falkenburg  <sfalken@apple.com>
 
         Fix version parsing.

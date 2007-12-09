@@ -150,7 +150,7 @@ void RenderSVGRoot::paint(PaintInfo& paintInfo, int parentX, int parentY)
         paintBoxDecorations(paintInfo, m_x + parentX, m_y + parentY);
 
     if (!firstChild()) {
-#if ENABLE(SVG_EXPERIMENTAL_FEATURES)
+#if ENABLE(SVG_FILTERS)
         // Spec: groups w/o children still may render filter content.
         const SVGRenderStyle* svgStyle = style()->svgStyle();
         AtomicString filterId(SVGURIReference::getTarget(svgStyle->filter()));
@@ -210,7 +210,7 @@ IntRect RenderSVGRoot::absoluteClippedOverflowRect()
     for (RenderObject* current = firstChild(); current != 0; current = current->nextSibling())
         repaintRect.unite(current->absoluteClippedOverflowRect());
 
-#if ENABLE(SVG_EXPERIMENTAL_FEATURES)
+#if ENABLE(SVG_FILTERS)
     // Filters can expand the bounding box
     SVGResourceFilter* filter = getFilterById(document(), SVGURIReference::getTarget(style()->svgStyle()->filter()));
     if (filter)

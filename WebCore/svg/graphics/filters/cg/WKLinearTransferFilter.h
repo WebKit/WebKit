@@ -25,7 +25,7 @@
 
 #import <QuartzCore/CoreImage.h>
 
-#if ENABLE(SVG) && ENABLE(SVG_EXPERIMENTAL_FEATURES)
+#if ENABLE(SVG) && ENABLE(SVG_FILTERS)
 
 @interface WKLinearTransferFilter : CIFilter {
     CIImage  *inputImage;
@@ -35,4 +35,4 @@
 
 @end
 
-#endif // ENABLE(SVG) && ENABLE(SVG_EXPERIMENTAL_FEATURES)
+#endif // ENABLE(SVG) && ENABLE(SVG_FILTERS)

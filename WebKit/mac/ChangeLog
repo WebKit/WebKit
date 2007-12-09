@@ -1,3 +1,17 @@
+2007-12-08  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Sam W.
+
+        Split the ENABLE_SVG_EXPERIMENTAL_FEATURES flag into separate flags.
+        
+        Fixes <rdar://problem/5620249> Must disable SVG animation
+        <rdar://problem/5612772> Disable SVG filters on Mac to match Windows behavior
+        
+        Minor updates to the feature flags used.
+
+        * Configurations/WebKit.xcconfig:
+        * DOM/WebDOMOperations.mm:
+
 2007-12-07  Darin Adler  <darin@apple.com>
 
         Reviewed by Kevin Decker and Tim Hatcher.

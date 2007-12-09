@@ -26,7 +26,7 @@
 #import "config.h"
 #import "WKLinearTransferFilter.h"
 
-#if ENABLE(SVG) && ENABLE(SVG_EXPERIMENTAL_FEATURES)
+#if ENABLE(SVG) && ENABLE(SVG_FILTERS)
 
 static CIKernel *linearTransferFilter = nil;
 
@@ -77,4 +77,4 @@ static CIKernel *linearTransferFilter = nil;
 
 @end
 
-#endif ENABLE(SVG) && ENABLE(SVG_EXPERIMENTAL_FEATURES)
+#endif ENABLE(SVG) && ENABLE(SVG_FILTERS)

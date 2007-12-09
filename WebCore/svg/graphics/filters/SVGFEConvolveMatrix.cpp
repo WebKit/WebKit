@@ -21,7 +21,7 @@
 
 #include "config.h"
 
-#if ENABLE(SVG) && ENABLE(SVG_EXPERIMENTAL_FEATURES)
+#if ENABLE(SVG) && ENABLE(SVG_FILTERS)
 #include "SVGRenderTreeAsText.h"
 #include "SVGFEConvolveMatrix.h"
 
@@ -152,4 +152,4 @@ TextStream& SVGFEConvolveMatrix::externalRepresentation(TextStream& ts) const
 
 }; // namespace WebCore
 
-#endif // ENABLE(SVG) && ENABLE(SVG_EXPERIMENTAL_FEATURES)
+#endif // ENABLE(SVG) && ENABLE(SVG_FILTERS)

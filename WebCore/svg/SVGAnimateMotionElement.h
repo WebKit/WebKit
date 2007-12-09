@@ -21,7 +21,7 @@
 
 #ifndef SVGAnimateMotionElement_h
 #define SVGAnimateMotionElement_h
-#if ENABLE(SVG) && ENABLE(SVG_EXPERIMENTAL_FEATURES)
+#if ENABLE(SVG) && ENABLE(SVG_ANIMATION)
 
 #include "SVGAnimationElement.h"
 #include "AffineTransform.h"

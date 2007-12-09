@@ -221,6 +221,7 @@
 
 @end
 
+#if ENABLE(SVG_FILTERS)
 @implementation DOMSVGFEImageElement (WebDOMSVGFEImageElementOperationsPrivate)
 
 - (NSArray *)_subresourceURLs
@@ -229,6 +230,7 @@
 }
 
 @end
+#endif
 
 #endif
 

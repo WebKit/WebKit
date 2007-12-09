@@ -276,7 +276,7 @@ module window {
 //      attribute SVGZoomAndPanConstructor SVGZoomAndPan;
 #endif
 
-#if defined(ENABLE_SVG_EXPERIMENTAL_FEATURES)
+#if defined(ENABLED_SVG_FILTERS)
         attribute SVGComponentTransferFunctionElementConstructor SVGComponentTransferFunctionElement;
         attribute SVGFEBlendElementConstructor SVGFEBlendElement;
         attribute SVGFEColorMatrixElementConstructor SVGFEColorMatrixElement;

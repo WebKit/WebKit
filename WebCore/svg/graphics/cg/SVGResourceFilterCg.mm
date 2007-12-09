@@ -26,7 +26,7 @@
 
 #include "config.h"
 
-#if ENABLE(SVG) && ENABLE(SVG_EXPERIMENTAL_FEATURES)
+#if ENABLE(SVG) && ENABLE(SVG_FILTERS)
 #include "SVGResourceFilter.h"
 
 #include "AffineTransform.h"
@@ -142,4 +142,4 @@ void SVGResourceFilter::applyFilter(GraphicsContext*& context, const FloatRect& 
 
 }
 
-#endif // ENABLE(SVG) ENABLE(SVG_EXPERIMENTAL_FEATURES)
+#endif // ENABLE(SVG) ENABLE(SVG_FILTERS)

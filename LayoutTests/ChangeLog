@@ -1,3 +1,54 @@
+2007-12-08  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Sam W.
+
+        Split the ENABLE_SVG_EXPERIMENTAL_FEATURES flag into separate flags.
+        
+        Fixes <rdar://problem/5620249> Must disable SVG animation
+        <rdar://problem/5612772> Disable SVG filters on Mac to match Windows behavior
+
+        These layout test changes are caused by some of the experimental
+        features no longer being enabled by default.
+
+        * fast/dom/Window/window-properties-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/filters-blend-01-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/filters-color-01-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/filters-composite-02-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/filters-comptran-01-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/filters-conv-01-f-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/filters-diffuse-01-f-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/filters-displace-01-f-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/filters-example-01-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/filters-felem-01-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/filters-gauss-01-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/filters-image-01-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/filters-light-01-f-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/filters-morph-01-f-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/filters-offset-01-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/filters-specular-01-f-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/filters-tile-01-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/filters-turb-01-f-expected.txt:
+        * platform/mac/svg/custom/empty-merge-expected.txt:
+        * platform/mac/svg/custom/feComponentTransfer-Discrete-expected.txt:
+        * platform/mac/svg/custom/feComponentTransfer-Gamma-expected.txt:
+        * platform/mac/svg/custom/feComponentTransfer-Linear-expected.txt:
+        * platform/mac/svg/custom/feComponentTransfer-Table-expected.txt:
+        * platform/mac/svg/custom/feDisplacementMap-01-expected.txt:
+        * platform/mac/svg/custom/filter-source-alpha-expected.txt:
+        * platform/mac/svg/custom/image-with-transform-clip-filter-expected.txt:
+        * platform/mac/svg/custom/invalid-css-expected.txt:
+        * platform/mac/svg/custom/non-opaque-filters-expected.txt:
+        * platform/mac/svg/custom/text-filter-expected.txt:
+        * platform/mac/svg/custom/visibility-override-filter-expected.txt:
+        * svg/batik/filters/filterRegions-expected.txt:
+        * svg/batik/text/textEffect-expected.txt:
+        * svg/batik/text/textEffect3-expected.txt:
+        * svg/batik/text/textFeatures-expected.txt:
+        * svg/batik/text/textProperties-expected.txt:
+        * svg/custom/js-svg-constructors-expected.txt:
+        * svg/dom/font-face-elements-expected.txt:
+        * svg/webarchive/svg-feimage-subresources-expected.txt:
+
 2007-12-08  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Adele Peterson.

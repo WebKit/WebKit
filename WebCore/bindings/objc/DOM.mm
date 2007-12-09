@@ -188,7 +188,7 @@ static void createElementClassMap()
 
 #if ENABLE(SVG)
     addElementClass(SVGNames::aTag, [DOMSVGAElement class]);
-#if ENABLE(SVG_EXPERIMENTAL_FEATURES)
+#if ENABLE(SVG_ANIMATION)
     addElementClass(SVGNames::animateTag, [DOMSVGAnimateElement class]);
     addElementClass(SVGNames::animateColorTag, [DOMSVGAnimateColorElement class]);
     addElementClass(SVGNames::animateTransformTag, [DOMSVGAnimateTransformElement class]);
@@ -197,10 +197,12 @@ static void createElementClassMap()
     addElementClass(SVGNames::clipPathTag, [DOMSVGClipPathElement class]);
     addElementClass(SVGNames::cursorTag, [DOMSVGCursorElement class]);
     addElementClass(SVGNames::definition_srcTag, [DOMSVGDefinitionSrcElement class]);
+#if ENABLE(SVG_FONTS)
     addElementClass(SVGNames::defsTag, [DOMSVGDefsElement class]);
+#endif
     addElementClass(SVGNames::descTag, [DOMSVGDescElement class]);
     addElementClass(SVGNames::ellipseTag, [DOMSVGEllipseElement class]);
-#if ENABLE(SVG_EXPERIMENTAL_FEATURES)
+#if ENABLE(SVG_FILTERS)
     addElementClass(SVGNames::feBlendTag, [DOMSVGFEBlendElement class]);
     addElementClass(SVGNames::feColorMatrixTag, [DOMSVGFEColorMatrixElement class]);
     addElementClass(SVGNames::feComponentTransferTag, [DOMSVGFEComponentTransferElement class]);
@@ -225,11 +227,13 @@ static void createElementClassMap()
     addElementClass(SVGNames::feTurbulenceTag, [DOMSVGFETurbulenceElement class]);
     addElementClass(SVGNames::filterTag, [DOMSVGFilterElement class]);
 #endif
+#if ENABLE(SVG_FONTS)
     addElementClass(SVGNames::font_faceTag, [DOMSVGFontFaceElement class]);
     addElementClass(SVGNames::font_face_formatTag, [DOMSVGFontFaceFormatElement class]);
     addElementClass(SVGNames::font_face_nameTag, [DOMSVGFontFaceNameElement class]);
     addElementClass(SVGNames::font_face_srcTag, [DOMSVGFontFaceSrcElement class]);
     addElementClass(SVGNames::font_face_uriTag, [DOMSVGFontFaceUriElement class]);
+#endif
     addElementClass(SVGNames::gTag, [DOMSVGGElement class]);
     addElementClass(SVGNames::imageTag, [DOMSVGImageElement class]);
     addElementClass(SVGNames::lineTag, [DOMSVGLineElement class]);

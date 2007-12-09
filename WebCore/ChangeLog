@@ -1,3 +1,245 @@
+2007-12-08  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Sam W.
+
+        Split the ENABLE_SVG_EXPERIMENTAL_FEATURES flag into separate flags.
+        
+        Fixes <rdar://problem/5620249> Must disable SVG animation
+        <rdar://problem/5612772> Disable SVG filters on Mac to match Windows behavior
+        
+        In order to allow finer grained control over the set of SVG features
+        this patch splits ENABLE_SVG_EXPERIMENTAL_FEATURES into the following
+        distinct flags:
+        ENABLE_SVG_ANIMATION
+        ENABLE_SVG_FILTERS
+        ENABLE_SVG_FONTS
+        ENABLE_SVG_AS_IMAGE
+        ENABLE_SVG_USE
+        
+        by default only ENABLE_SVG_AS_IMAGE and ENABLE_SVG_USE are set.
+
+        * Configurations/WebCore.xcconfig:
+        * DerivedSources.make:
+          Handle the increased number of build flags that may be necessary
+          
+        * WebCore.SVG.Animation.exp: Added.
+        * WebCore.SVG.Filters.exp: Added.
+        * WebCore.SVG.exp:
+          We now may not need the animation or filter exports so 
+          these need to be separate.
+          
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.vcproj/build-generated-files.sh:
+          Update for new flags
+          
+        Remainder of changes are to swap ENABLE(SVG_EXPERIMENTAL_FEATURES) 
+        with the appropriate specific feature flag.  
+        * bindings/js/JSSVGElementWrapperFactory.cpp:
+        (WebCore::createJSSVGWrapper):
+        * bindings/objc/DOM.mm:
+        (WebCore::createElementClassMap):
+        * dom/make_names.pl:
+        * loader/CachedImage.cpp:
+        (WebCore::CachedImage::createImage):
+        * page/DOMWindow.idl:
+        * rendering/RenderPath.cpp:
+        (WebCore::RenderPath::absoluteClippedOverflowRect):
+        * rendering/RenderSVGContainer.cpp:
+        (WebCore::RenderSVGContainer::absoluteClippedOverflowRect):
+        * rendering/RenderSVGImage.cpp:
+        (WebCore::RenderSVGImage::absoluteClippedOverflowRect):
+        * rendering/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::paint):
+        (WebCore::RenderSVGRoot::absoluteClippedOverflowRect):
+        * rendering/RenderSVGText.cpp:
+        (WebCore::RenderSVGText::absoluteClippedOverflowRect):
+        * rendering/SVGRenderSupport.cpp:
+        (WebCore::prepareToRenderSVGContent):
+        (WebCore::finishRenderSVGContent):
+        * svg/SVGAnimateElement.cpp:
+        * svg/SVGAnimateElement.h:
+        * svg/SVGAnimateElement.idl:
+        * svg/SVGAnimateMotionElement.cpp:
+        * svg/SVGAnimateMotionElement.h:
+        * svg/SVGAnimateTransformElement.cpp:
+        * svg/SVGAnimateTransformElement.h:
+        * svg/SVGAnimateTransformElement.idl:
+        * svg/SVGComponentTransferFunctionElement.cpp:
+        * svg/SVGComponentTransferFunctionElement.h:
+        * svg/SVGComponentTransferFunctionElement.idl:
+        * svg/SVGDocumentExtensions.cpp:
+        (WebCore::SVGDocumentExtensions::startAnimations):
+        * svg/SVGFEBlendElement.cpp:
+        * svg/SVGFEBlendElement.h:
+        * svg/SVGFEBlendElement.idl:
+        * svg/SVGFEColorMatrixElement.cpp:
+        * svg/SVGFEColorMatrixElement.h:
+        * svg/SVGFEColorMatrixElement.idl:
+        * svg/SVGFEComponentTransferElement.cpp:
+        * svg/SVGFEComponentTransferElement.h:
+        * svg/SVGFEComponentTransferElement.idl:
+        * svg/SVGFECompositeElement.cpp:
+        * svg/SVGFECompositeElement.h:
+        * svg/SVGFECompositeElement.idl:
+        * svg/SVGFEDiffuseLightingElement.cpp:
+        * svg/SVGFEDiffuseLightingElement.h:
+        * svg/SVGFEDiffuseLightingElement.idl:
+        * svg/SVGFEDisplacementMapElement.cpp:
+        * svg/SVGFEDisplacementMapElement.h:
+        * svg/SVGFEDisplacementMapElement.idl:
+        * svg/SVGFEDistantLightElement.cpp:
+        * svg/SVGFEDistantLightElement.h:
+        * svg/SVGFEDistantLightElement.idl:
+        * svg/SVGFEFloodElement.cpp:
+        * svg/SVGFEFloodElement.h:
+        * svg/SVGFEFloodElement.idl:
+        * svg/SVGFEFuncAElement.cpp:
+        * svg/SVGFEFuncAElement.h:
+        * svg/SVGFEFuncAElement.idl:
+        * svg/SVGFEFuncBElement.cpp:
+        * svg/SVGFEFuncBElement.h:
+        * svg/SVGFEFuncBElement.idl:
+        * svg/SVGFEFuncGElement.cpp:
+        * svg/SVGFEFuncGElement.h:
+        * svg/SVGFEFuncGElement.idl:
+        * svg/SVGFEFuncRElement.cpp:
+        * svg/SVGFEFuncRElement.h:
+        * svg/SVGFEFuncRElement.idl:
+        * svg/SVGFEGaussianBlurElement.cpp:
+        * svg/SVGFEGaussianBlurElement.h:
+        * svg/SVGFEGaussianBlurElement.idl:
+        * svg/SVGFEImageElement.cpp:
+        * svg/SVGFEImageElement.h:
+        * svg/SVGFEImageElement.idl:
+        * svg/SVGFELightElement.cpp:
+        * svg/SVGFELightElement.h:
+        * svg/SVGFEMergeElement.cpp:
+        * svg/SVGFEMergeElement.h:
+        * svg/SVGFEMergeElement.idl:
+        * svg/SVGFEMergeNodeElement.cpp:
+        * svg/SVGFEMergeNodeElement.h:
+        * svg/SVGFEMergeNodeElement.idl:
+        * svg/SVGFEOffsetElement.cpp:
+        * svg/SVGFEOffsetElement.h:
+        * svg/SVGFEOffsetElement.idl:
+        * svg/SVGFEPointLightElement.cpp:
+        * svg/SVGFEPointLightElement.h:
+        * svg/SVGFEPointLightElement.idl:
+        * svg/SVGFESpecularLightingElement.cpp:
+        * svg/SVGFESpecularLightingElement.h:
+        * svg/SVGFESpecularLightingElement.idl:
+        * svg/SVGFESpotLightElement.cpp:
+        * svg/SVGFESpotLightElement.h:
+        * svg/SVGFESpotLightElement.idl:
+        * svg/SVGFETileElement.cpp:
+        * svg/SVGFETileElement.h:
+        * svg/SVGFETileElement.idl:
+        * svg/SVGFETurbulenceElement.cpp:
+        * svg/SVGFETurbulenceElement.h:
+        * svg/SVGFETurbulenceElement.idl:
+        * svg/SVGFilterElement.cpp:
+        * svg/SVGFilterElement.h:
+        * svg/SVGFilterElement.idl:
+        * svg/SVGFilterPrimitiveStandardAttributes.cpp:
+        * svg/SVGTimer.cpp:
+        (WebCore::SVGTimer::animationsByElement):
+        * svg/SVGUseElement.cpp:
+        (WebCore::SVGUseElement::buildPendingResource):
+        (WebCore::SVGUseElement::associateInstancesWithShadowTreeElements):
+        * svg/SVGUseElement.h:
+        * svg/TimeScheduler.cpp:
+        (WebCore::TimeScheduler::connectIntervalTimer):
+        (WebCore::TimeScheduler::disconnectIntervalTimer):
+        * svg/graphics/SVGResourceFilter.cpp:
+        * svg/graphics/SVGResourceFilter.h:
+        * svg/graphics/cg/SVGResourceFilterCg.cpp:
+        * svg/graphics/cg/SVGResourceFilterCg.mm:
+        * svg/graphics/filters/SVGDistantLightSource.h:
+        * svg/graphics/filters/SVGFEBlend.cpp:
+        * svg/graphics/filters/SVGFEBlend.h:
+        * svg/graphics/filters/SVGFEColorMatrix.cpp:
+        * svg/graphics/filters/SVGFEColorMatrix.h:
+        * svg/graphics/filters/SVGFEComponentTransfer.cpp:
+        * svg/graphics/filters/SVGFEComponentTransfer.h:
+        * svg/graphics/filters/SVGFEComposite.cpp:
+        * svg/graphics/filters/SVGFEComposite.h:
+        * svg/graphics/filters/SVGFEConvolveMatrix.cpp:
+        * svg/graphics/filters/SVGFEConvolveMatrix.h:
+        * svg/graphics/filters/SVGFEDiffuseLighting.cpp:
+        * svg/graphics/filters/SVGFEDiffuseLighting.h:
+        * svg/graphics/filters/SVGFEDisplacementMap.cpp:
+        * svg/graphics/filters/SVGFEDisplacementMap.h:
+        * svg/graphics/filters/SVGFEFlood.cpp:
+        * svg/graphics/filters/SVGFEFlood.h:
+        * svg/graphics/filters/SVGFEGaussianBlur.cpp:
+        * svg/graphics/filters/SVGFEGaussianBlur.h:
+        * svg/graphics/filters/SVGFEImage.cpp:
+        * svg/graphics/filters/SVGFEImage.h:
+        * svg/graphics/filters/SVGFEMerge.cpp:
+        * svg/graphics/filters/SVGFEMerge.h:
+        * svg/graphics/filters/SVGFEMorphology.cpp:
+        * svg/graphics/filters/SVGFEMorphology.h:
+        * svg/graphics/filters/SVGFEOffset.cpp:
+        * svg/graphics/filters/SVGFEOffset.h:
+        * svg/graphics/filters/SVGFESpecularLighting.cpp:
+        * svg/graphics/filters/SVGFESpecularLighting.h:
+        * svg/graphics/filters/SVGFETile.h:
+        * svg/graphics/filters/SVGFETurbulence.cpp:
+        * svg/graphics/filters/SVGFETurbulence.h:
+        * svg/graphics/filters/SVGFilterEffect.cpp:
+        * svg/graphics/filters/SVGFilterEffect.h:
+        * svg/graphics/filters/SVGLightSource.cpp:
+        * svg/graphics/filters/SVGLightSource.h:
+        * svg/graphics/filters/SVGPointLightSource.h:
+        * svg/graphics/filters/SVGSpotLightSource.h:
+        * svg/graphics/filters/cg/SVGFEBlendCg.mm:
+        * svg/graphics/filters/cg/SVGFEColorMatrixCg.mm:
+        * svg/graphics/filters/cg/SVGFEComponentTransferCg.mm:
+        * svg/graphics/filters/cg/SVGFECompositeCg.mm:
+        * svg/graphics/filters/cg/SVGFEDiffuseLightingCg.mm:
+        * svg/graphics/filters/cg/SVGFEDisplacementMapCg.mm:
+        * svg/graphics/filters/cg/SVGFEFloodCg.mm:
+        * svg/graphics/filters/cg/SVGFEGaussianBlurCg.mm:
+        * svg/graphics/filters/cg/SVGFEHelpersCg.h:
+        * svg/graphics/filters/cg/SVGFEHelpersCg.mm:
+        * svg/graphics/filters/cg/SVGFEImageCg.mm:
+        * svg/graphics/filters/cg/SVGFEMergeCg.mm:
+        * svg/graphics/filters/cg/SVGFEOffsetCg.mm:
+        * svg/graphics/filters/cg/SVGFESpecularLightingCg.mm:
+        * svg/graphics/filters/cg/SVGFETileCg.mm:
+        * svg/graphics/filters/cg/SVGFilterEffectCg.mm:
+        * svg/graphics/filters/cg/WKArithmeticFilter.h:
+        * svg/graphics/filters/cg/WKArithmeticFilter.m:
+        * svg/graphics/filters/cg/WKComponentMergeFilter.h:
+        * svg/graphics/filters/cg/WKComponentMergeFilter.m:
+        * svg/graphics/filters/cg/WKDiffuseLightingFilter.h:
+        * svg/graphics/filters/cg/WKDiffuseLightingFilter.m:
+        * svg/graphics/filters/cg/WKDiscreteTransferFilter.h:
+        * svg/graphics/filters/cg/WKDiscreteTransferFilter.m:
+        * svg/graphics/filters/cg/WKDisplacementMapFilter.h:
+        * svg/graphics/filters/cg/WKDisplacementMapFilter.m:
+        * svg/graphics/filters/cg/WKDistantLightFilter.h:
+        * svg/graphics/filters/cg/WKDistantLightFilter.m:
+        * svg/graphics/filters/cg/WKGammaTransferFilter.h:
+        * svg/graphics/filters/cg/WKGammaTransferFilter.m:
+        * svg/graphics/filters/cg/WKIdentityTransferFilter.h:
+        * svg/graphics/filters/cg/WKIdentityTransferFilter.m:
+        * svg/graphics/filters/cg/WKLinearTransferFilter.h:
+        * svg/graphics/filters/cg/WKLinearTransferFilter.m:
+        * svg/graphics/filters/cg/WKNormalMapFilter.h:
+        * svg/graphics/filters/cg/WKNormalMapFilter.m:
+        * svg/graphics/filters/cg/WKPointLightFilter.h:
+        * svg/graphics/filters/cg/WKPointLightFilter.m:
+        * svg/graphics/filters/cg/WKSpecularLightingFilter.h:
+        * svg/graphics/filters/cg/WKSpecularLightingFilter.m:
+        * svg/graphics/filters/cg/WKSpotLightFilter.h:
+        * svg/graphics/filters/cg/WKSpotLightFilter.m:
+        * svg/graphics/filters/cg/WKTableTransferFilter.h:
+        * svg/graphics/filters/cg/WKTableTransferFilter.m:
+        * svg/graphics/mac/SVGResourceFilterPlatformDataMac.h:
+        * svg/graphics/mac/SVGResourceFilterPlatformDataMac.mm:
+        * svg/svgtags.in:
+
 2007-12-08  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Adele Peterson.

@@ -73,7 +73,7 @@ void SVGDocumentExtensions::startAnimations()
 {
     // FIXME: Eventually every "Time Container" will need a way to latch on to some global timer
     // starting animations for a document will do this "latching"
-#if ENABLE(SVG_EXPERIMENTAL_FEATURES)    
+#if ENABLE(SVG_ANIMATION)    
     HashSet<SVGSVGElement*>::iterator end = m_timeContainers.end();
     for (HashSet<SVGSVGElement*>::iterator itr = m_timeContainers.begin(); itr != end; ++itr)
         (*itr)->timeScheduler()->startAnimations();

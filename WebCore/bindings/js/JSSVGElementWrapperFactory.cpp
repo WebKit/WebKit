@@ -170,19 +170,34 @@ using namespace SVGNames;
 
 typedef JSNode* (*CreateSVGElementWrapperFunction)(ExecState*, PassRefPtr<SVGElement>);
 
-#if ENABLE(SVG_EXPERIMENTAL_FEATURES)
-#define FOR_EACH_TAG(macro) \
-    macro(a, A) \
+#if ENABLE(SVG_ANIMATION)
+#define FOR_EACH_ANIMATION_TAG(macro) \
     macro(animateColor, AnimateColor) \
     macro(animate, Animate) \
     macro(animateTransform, AnimateTransform) \
-    macro(circle, Circle) \
-    macro(clipPath, ClipPath) \
-    macro(cursor, Cursor) \
+    // end of macro
+
+#else
+#define FOR_EACH_ANIMATION_TAG(macro)
+#endif
+
+
+#if ENABLE(SVG_FONTS)
+#define FOR_EACH_FONT_TAG(macro) \
     macro(definition_src, DefinitionSrc) \
-    macro(defs, Defs) \
-    macro(desc, Desc) \
-    macro(ellipse, Ellipse) \
+    macro(font_face, FontFace) \
+    macro(font_face_format, FontFaceFormat) \
+    macro(font_face_name, FontFaceName) \
+    macro(font_face_src, FontFaceSrc) \
+    macro(font_face_uri, FontFaceUri) \
+    // end of macro
+    
+#else
+#define FOR_EACH_FONT_TAG(macro)
+#endif
+
+#if ENABLE(SVG_FILTERS)
+#define FOR_EACH_FILTER_TAG(macro) \
     macro(feBlend, FEBlend) \
     macro(feColorMatrix, FEColorMatrix) \
     macro(feComponentTransfer, FEComponentTransfer) \
@@ -205,43 +220,11 @@ typedef JSNode* (*CreateSVGElementWrapperFunction)(ExecState*, PassRefPtr<SVGEle
     macro(feSpotLight, FESpotLight) \
     macro(feTile, FETile) \
     macro(feTurbulence, FETurbulence) \
-    macro(font_face, FontFace) \
-    macro(font_face_format, FontFaceFormat) \
-    macro(font_face_name, FontFaceName) \
-    macro(font_face_src, FontFaceSrc) \
-    macro(font_face_uri, FontFaceUri) \
     macro(filter, Filter) \
-    macro(foreignObject, ForeignObject) \
-    macro(g, G) \
-    macro(image, Image) \
-    macro(linearGradient, LinearGradient) \
-    macro(line, Line) \
-    macro(marker, Marker) \
-    macro(mask, Mask) \
-    macro(metadata, Metadata) \
-    macro(path, Path) \
-    macro(pattern, Pattern) \
-    macro(polyline, Polyline) \
-    macro(polygon, Polygon) \
-    macro(radialGradient, RadialGradient) \
-    macro(rect, Rect) \
-    macro(script, Script) \
-    macro(set, Set) \
-    macro(stop, Stop) \
-    macro(style, Style) \
-    macro(svg, SVG) \
-    macro(switch, Switch) \
-    macro(symbol, Symbol) \
-    macro(text, Text) \
-    macro(textPath, TextPath) \
-    macro(title, Title) \
-    macro(tref, TRef) \
-    macro(tspan, TSpan) \
-    macro(use, Use) \
-    macro(view, View) \
     // end of macro
-
 #else
+#define FOR_EACH_FILTER_TAG(macro)
+#endif
 
 #define FOR_EACH_TAG(macro) \
     macro(a, A) \
@@ -281,14 +264,16 @@ typedef JSNode* (*CreateSVGElementWrapperFunction)(ExecState*, PassRefPtr<SVGEle
     macro(view, View) \
     // end of macro
 
-#endif
-
 #define CREATE_WRAPPER_FUNCTION(tag, name) \
 static JSNode* create##name##Wrapper(ExecState* exec, PassRefPtr<SVGElement> element) \
 { \
     return new JSSVG##name##Element(exec, static_cast<SVG##name##Element*>(element.get())); \
 }
 FOR_EACH_TAG(CREATE_WRAPPER_FUNCTION)
+FOR_EACH_ANIMATION_TAG(CREATE_WRAPPER_FUNCTION)
+FOR_EACH_FONT_TAG(CREATE_WRAPPER_FUNCTION)
+FOR_EACH_FILTER_TAG(CREATE_WRAPPER_FUNCTION)
+
 #undef CREATE_WRAPPER_FUNCTION
 
 JSNode* createJSSVGWrapper(ExecState* exec, PassRefPtr<SVGElement> element)
@@ -297,6 +282,9 @@ JSNode* createJSSVGWrapper(ExecState* exec, PassRefPtr<SVGElement> element)
     if (map.isEmpty()) {
 #define ADD_TO_HASH_MAP(tag, name) map.set(tag##Tag.localName().impl(), create##name##Wrapper);
 FOR_EACH_TAG(ADD_TO_HASH_MAP)
+FOR_EACH_ANIMATION_TAG(ADD_TO_HASH_MAP)
+FOR_EACH_FONT_TAG(ADD_TO_HASH_MAP)
+FOR_EACH_FILTER_TAG(ADD_TO_HASH_MAP)
 #undef ADD_TO_HASH_MAP
     }
     CreateSVGElementWrapperFunction createWrapperFunction = map.get(element->localName().impl());

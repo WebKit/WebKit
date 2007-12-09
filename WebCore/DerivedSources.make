@@ -696,16 +696,40 @@ XMLNames.cpp : dom/make_names.pl xml/xmlattrs.in
 
 ifeq ($(findstring ENABLE_SVG,$(FEATURE_DEFINES)), ENABLE_SVG)
 
-ifeq ($(findstring ENABLE_SVG_EXPERIMENTAL_FEATURES,$(FEATURE_DEFINES)), ENABLE_SVG_EXPERIMENTAL_FEATURES)
+WEBCORE_EXPORT_DEPENDENCIES := WebCore.SVG.exp
+
+ifeq ($(findstring ENABLE_SVG_USE,$(FEATURE_DEFINES)), ENABLE_SVG_USE)
+    SVG_FLAGS := $(SVG_FLAGS) ENABLE_SVG_USE=1
+endif
+
+ifeq ($(findstring ENABLE_SVG_FONTS,$(FEATURE_DEFINES)), ENABLE_SVG_FONTS)
+    SVG_FLAGS := $(SVG_FLAGS) ENABLE_SVG_FONTS=1
+endif
+
+ifeq ($(findstring ENABLE_SVG_FILTERS,$(FEATURE_DEFINES)), ENABLE_SVG_FILTERS)
+    SVG_FLAGS := $(SVG_FLAGS) ENABLE_SVG_FILTERS=1
+    WEBCORE_EXPORT_DEPENDENCIES := $(WEBCORE_EXPORT_DEPENDENCIES) WebCore.SVG.Filters.exp
+endif
+
+ifeq ($(findstring ENABLE_SVG_AS_IMAGE,$(FEATURE_DEFINES)), ENABLE_SVG_AS_IMAGE)
+    SVG_FLAGS := $(SVG_FLAGS) ENABLE_SVG_AS_IMAGE=1
+endif
+
+ifeq ($(findstring ENABLE_SVG_ANIMATION,$(FEATURE_DEFINES)), ENABLE_SVG_ANIMATION)
+    SVG_FLAGS := $(SVG_FLAGS) ENABLE_SVG_ANIMATION=1
+    WEBCORE_EXPORT_DEPENDENCIES := $(WEBCORE_EXPORT_DEPENDENCIES) WebCore.SVG.Animation.exp
+endif
+
 # SVG tag and attribute names (need to pass an extra flag if svg experimental features are enabled)
+ifdef SVG_FLAGS
 SVGElementFactory.cpp SVGNames.cpp : dom/make_names.pl svg/svgtags.in svg/svgattrs.in
-	perl $< --tags $(WebCore)/svg/svgtags.in --attrs $(WebCore)/svg/svgattrs.in --extraDefines "ENABLE_SVG_EXPERIMENTAL_FEATURES=1" \
+	perl $< --tags $(WebCore)/svg/svgtags.in --attrs $(WebCore)/svg/svgattrs.in --extraDefines "$(SVG_FLAGS)" \
             --namespace SVG --cppNamespace WebCore --namespaceURI "http://www.w3.org/2000/svg" --factory --attrsNullNamespace --output .
 else
-# SVG tag and attribute names
 SVGElementFactory.cpp SVGNames.cpp : dom/make_names.pl svg/svgtags.in svg/svgattrs.in
 	perl $< --tags $(WebCore)/svg/svgtags.in --attrs $(WebCore)/svg/svgattrs.in \
             --namespace SVG --cppNamespace WebCore --namespaceURI "http://www.w3.org/2000/svg" --factory --attrsNullNamespace --output .
+
 endif
 
 XLinkNames.cpp : dom/make_names.pl svg/xlinkattrs.in
@@ -713,8 +737,7 @@ XLinkNames.cpp : dom/make_names.pl svg/xlinkattrs.in
             --namespace XLink --cppNamespace WebCore --namespaceURI "http://www.w3.org/1999/xlink" --output .
 
 # Add SVG Symbols to the WebCore exported symbols file
-
-WebCore.exp : WebCore.base.exp WebCore.SVG.exp
+WebCore.exp : WebCore.base.exp $(WEBCORE_EXPORT_DEPENDENCIES)
 	cat $^ > $@
 
 else

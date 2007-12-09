@@ -90,7 +90,7 @@ sub readNames
     if ($extraDefines eq 0) {
         die "Failed to open file: $namesFile" unless open NAMES, $preprocessor . " " . $namesFile . "|" or die;
     } else {
-        die "Failed to open file: $namesFile" unless open NAMES, $preprocessor . " -D" . $extraDefines . " " . $namesFile . "|" or die;
+        die "Failed to open file: $namesFile" unless open NAMES, $preprocessor . " -D" . join(" -D", split(" ", $extraDefines)) . " " . $namesFile . "|" or die;
     }
 
     my @names = ();

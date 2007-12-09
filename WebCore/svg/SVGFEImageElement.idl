@@ -25,7 +25,7 @@
 
 module svg {
 
-    interface [Conditional=SVG&SVG_EXPERIMENTAL_FEATURES] SVGFEImageElement : SVGElement,
+    interface [Conditional=SVG&SVG_FILTERS] SVGFEImageElement : SVGElement,
                                                     SVGURIReference,
                                                     SVGLangSpace,
                                                     SVGExternalResourcesRequired,

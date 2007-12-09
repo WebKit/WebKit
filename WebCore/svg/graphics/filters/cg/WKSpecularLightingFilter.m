@@ -26,7 +26,7 @@
 #import "config.h"
 #import "WKSpecularLightingFilter.h"
 
-#if ENABLE(SVG) && ENABLE(SVG_EXPERIMENTAL_FEATURES)
+#if ENABLE(SVG) && ENABLE(SVG_FILTERS)
 
 static CIKernel *specularLightingFilter = nil;
 
@@ -93,4 +93,4 @@ static CIKernel *specularLightingFilter = nil;
 
 @end
 
-#endif // ENABLE(SVG) && ENABLE(SVG_EXPERIMENTAL_FEATURES)
+#endif // ENABLE(SVG) && ENABLE(SVG_FILTERS)

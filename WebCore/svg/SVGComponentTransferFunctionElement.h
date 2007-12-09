@@ -22,7 +22,7 @@
 
 #ifndef SVGComponentTransferFunctionElement_h
 #define SVGComponentTransferFunctionElement_h
-#if ENABLE(SVG) && ENABLE(SVG_EXPERIMENTAL_FEATURES)
+#if ENABLE(SVG) && ENABLE(SVG_FILTERS)
 
 #include "SVGElement.h"
 #include "SVGFEComponentTransfer.h"
@@ -55,7 +55,7 @@ namespace WebCore
 
 } // namespace WebCore
 
-#endif // ENABLE(SVG) && ENABLE(SVG_EXPERIMENTAL_FEATURES)
+#endif // ENABLE(SVG) && ENABLE(SVG_FILTERS)
 #endif
 
 // vim:ts=4:noet

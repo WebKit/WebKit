@@ -152,7 +152,7 @@ IntRect RenderPath::absoluteClippedOverflowRect()
     // Markers can expand the bounding box
     repaintRect.unite(m_markerBounds);
 
-#if ENABLE(SVG_EXPERIMENTAL_FEATURES)
+#if ENABLE(SVG_FILTERS)
     // Filters can expand the bounding box
     SVGResourceFilter* filter = getFilterById(document(), SVGURIReference::getTarget(style()->svgStyle()->filter()));
     if (filter)

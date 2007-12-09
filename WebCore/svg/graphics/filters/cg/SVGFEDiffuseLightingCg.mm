@@ -21,7 +21,7 @@
 
 #include "config.h"
 
-#if ENABLE(SVG) && ENABLE(SVG_EXPERIMENTAL_FEATURES)
+#if ENABLE(SVG) && ENABLE(SVG_FILTERS)
 #include "SVGFEDiffuseLighting.h"
 #include "SVGFEHelpersCg.h"
 
@@ -71,4 +71,4 @@ CIFilter* SVGFEDiffuseLighting::getCIFilter(const FloatRect& bbox) const
 
 }
 
-#endif // ENABLE(SVG) && ENABLE(SVG_EXPERIMENTAL_FEATURES)
+#endif // ENABLE(SVG) && ENABLE(SVG_FILTERS)

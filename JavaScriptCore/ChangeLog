@@ -1,3 +1,17 @@
+2007-12-08  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Sam W.
+
+        Split the ENABLE_SVG_EXPERIMENTAL_FEATURES flag into separate flags.
+        
+        Fixes <rdar://problem/5620249> Must disable SVG animation
+        <rdar://problem/5612772> Disable SVG filters on Mac to match Windows behavior
+        
+        Minor config changes.
+
+        * Configurations/JavaScriptCore.xcconfig:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+
 2007-12-07  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Darin.

@@ -25,7 +25,7 @@
 
 module svg {
 
-    interface [Conditional=SVG&SVG_EXPERIMENTAL_FEATURES] SVGAnimateElement : SVGAnimationElement {
+    interface [Conditional=SVG&SVG_ANIMATION] SVGAnimateElement : SVGAnimationElement {
     }
 
 };

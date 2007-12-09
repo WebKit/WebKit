@@ -4,7 +4,7 @@ altGlyph
 altGlyphDef
 altGlyphItem
 #endif
-#ifdef ENABLE_SVG_EXPERIMENTAL_FEATURES
+#ifdef ENABLE_SVG_ANIMATION
 animate
 animateColor
 animateMotion
@@ -20,7 +20,7 @@ definition_src
 defs
 desc
 ellipse
-#ifdef ENABLE_SVG_EXPERIMENTAL_FEATURES
+#ifdef ENABLE_SVG_FILTERS
 feBlend
 feColorMatrix
 feComponentTransfer
