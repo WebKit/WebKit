@@ -44,11 +44,12 @@ namespace WebCore {
 
 const int selectTimeoutMS = 5;
 const double pollTimeSeconds = 0.05;
+const int maxRunningJobs = 5;
 
 ResourceHandleManager::ResourceHandleManager()
     : m_downloadTimer(this, &ResourceHandleManager::downloadTimerCallback)
     , m_cookieJarFileName(0)
-    , m_resourceHandleListHead(0)
+    , m_runningJobs(0)
 {
     curl_global_init(CURL_GLOBAL_ALL);
     m_curlMultiHandle = curl_multi_init();
@@ -268,6 +269,7 @@ void ResourceHandleManager::removeFromCurl(ResourceHandle* job)
     ASSERT(d->m_handle);
     if (!d->m_handle)
         return;
+    m_runningJobs--;
     curl_multi_remove_handle(m_curlMultiHandle, d->m_handle);
     curl_easy_cleanup(d->m_handle);
     d->m_handle = 0;
@@ -323,39 +325,34 @@ void ResourceHandleManager::add(ResourceHandle* job)
 {
     // we can be called from within curl, so to avoid re-entrancy issues
     // schedule this job to be added the next time we enter curl download loop
-    m_resourceHandleListHead = new ResourceHandleList(job, m_resourceHandleListHead);
+    m_resourceHandleList.append(job);
     if (!m_downloadTimer.isActive())
         m_downloadTimer.startOneShot(pollTimeSeconds);
 }
 
 bool ResourceHandleManager::removeScheduledJob(ResourceHandle* job)
 {
-    ResourceHandleList* node = m_resourceHandleListHead;
-    while (node) {
-        ResourceHandleList* next = node->next();
-        if (job == node->job()) {
-            node->setRemoved(true);
+    int size = m_resourceHandleList.size();
+    for (int i=0; i < size; i++) {
+        if (job == m_resourceHandleList[i]) {
+            m_resourceHandleList.remove(i);
             return true;
         }
-        node = next;
     }
     return false;
 }
 
 bool ResourceHandleManager::startScheduledJobs()
 {
+    // TODO: Create a separate stack of jobs for each domain.
+
     bool started = false;
-    ResourceHandleList* node = m_resourceHandleListHead;
-    while (node) {
-        ResourceHandleList* next = node->next();
-        if (!node->removed()) {
-            startJob(node->job());
-            started = true;
-        }
-        delete node;
-        node = next;
+    while (!m_resourceHandleList.isEmpty() && m_runningJobs < maxRunningJobs) {
+        ResourceHandle* job = m_resourceHandleList[0];
+        startJob(job);
+        m_resourceHandleList.remove(0);
+        started = true;
     }
-    m_resourceHandleListHead = 0;
     return started;
 }
 
@@ -488,6 +485,7 @@ void ResourceHandleManager::startJob(ResourceHandle* job)
     else if ("HEAD" == job->request().httpMethod())
         curl_easy_setopt(d->m_handle, CURLOPT_NOBODY, TRUE);
 
+    m_runningJobs++;
     CURLMcode ret = curl_multi_add_handle(m_curlMultiHandle, d->m_handle);
     // don't call perform, because events must be async
     // timeout will occur and do curl_multi_perform
@@ -505,7 +503,6 @@ void ResourceHandleManager::cancel(ResourceHandle* job)
     if (removeScheduledJob(job))
         return;
     removeFromCurl(job);
-    // FIXME: report an error?
 }
 
 } // namespace WebCore

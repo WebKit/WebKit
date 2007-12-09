@@ -31,27 +31,11 @@
 #include "Frame.h"
 #include "Timer.h"
 #include "ResourceHandleClient.h"
+
 #include <curl/curl.h>
+#include <wtf/Vector.h>
 
 namespace WebCore {
-
-class ResourceHandleList {
-public:
-    ResourceHandleList(ResourceHandle* job, ResourceHandleList* next)
-        : m_job(job)
-        , m_next(next)
-        , m_removed(false)
-    {}
-    ResourceHandleList* next() const { return m_next; }
-    ResourceHandle* job() const { return m_job; }
-    void setRemoved(bool removed) { m_removed = removed; }
-    bool removed() const { return m_removed; }
-
-private:
-    ResourceHandle* m_job;
-    ResourceHandleList* m_next;
-    bool m_removed;
-};
 
 class ResourceHandleManager {
 public:
@@ -77,7 +61,8 @@ private:
     CURLSH* m_curlShareHandle;
     char* m_cookieJarFileName;
     char m_curlErrorBuffer[CURL_ERROR_SIZE];
-    ResourceHandleList* m_resourceHandleListHead;
+    Vector<ResourceHandle*> m_resourceHandleList;
+    int m_runningJobs;
 };
 
 }

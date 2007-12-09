@@ -1,3 +1,25 @@
+2007-12-09  Luca Bruno  <lethalman88@gmail.com>
+
+        Reviewed by Alp Toker.
+
+        http://bugs.webkit.org/show_bug.cgi?id=15825
+        [GTK] curl - slow dns causing hangs.
+
+        Create a vector of jobs, to satisfy requests in the right order.
+        Set a limit to the number of simultaneous connections.
+
+        * platform/network/curl/ResourceHandleManager.cpp:
+        (WebCore::maxRunningJobs): added
+        (WebCore::ResourceHandleManager::ResourceHandleManager):
+        (WebCore::ResourceHandleManager::removeFromCurl):
+        (WebCore::ResourceHandleManager::startScheduledJobs):
+
+        * platform/network/curl/ResourceHandleManager.h:
+        (WebCore::ResourceHandleList): removed
+        (WebCore::ResourceHandleManager::m_runningJobs): added
+        (WebCore::ResourceHandleManager::m_resourceHandleListHead): removed
+        (WebCore::ResourceHandleManager::m_resourceHandleList): added
+
 2007-12-08  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Oliver.
