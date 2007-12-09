@@ -75,6 +75,14 @@ module window {
         readonly attribute long pageXOffset;
         readonly attribute long pageYOffset;
 
+        [RequiresAllArguments] void scrollBy(in long x, in long y);
+        [RequiresAllArguments] void scrollTo(in long x, in long y);
+        [RequiresAllArguments] void scroll(in long x, in long y);
+        [RequiresAllArguments] void moveBy(in float x, in float y); // FIXME: this should take longs not floats.
+        [RequiresAllArguments] void moveTo(in float x, in float y); // FIXME: this should take longs not floats.
+        [RequiresAllArguments] void resizeBy(in float x, in float y); // FIXME: this should take longs not floats.
+        [RequiresAllArguments] void resizeTo(in float width, in float height); // FIXME: this should take longs not floats.
+
         readonly attribute [DoNotCheckDomainSecurity] boolean closed;
 
         readonly attribute [DoNotCheckDomainSecurity] unsigned long length;

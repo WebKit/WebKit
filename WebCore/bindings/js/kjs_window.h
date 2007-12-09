@@ -163,8 +163,6 @@ namespace KJS {
         XSLTProcessor_
     };
 
-    void updateLayout() const;
-
   private:
     JSValue* getListener(ExecState*, const WebCore::AtomicString& eventType) const;
     void setListener(ExecState*, const WebCore::AtomicString& eventType, JSValue* func);
@@ -186,12 +184,6 @@ namespace KJS {
     macro(WindowProtoFuncAToB) \
     macro(WindowProtoFuncBToA) \
     macro(WindowProtoFuncOpen) \
-    macro(WindowProtoFuncScrollBy) \
-    macro(WindowProtoFuncScrollTo) \
-    macro(WindowProtoFuncMoveBy) \
-    macro(WindowProtoFuncMoveTo) \
-    macro(WindowProtoFuncResizeBy) \
-    macro(WindowProtoFuncResizeTo) \
     macro(WindowProtoFuncSetTimeout) \
     macro(WindowProtoFuncClearTimeout) \
     macro(WindowProtoFuncSetInterval) \

@@ -49,12 +49,26 @@
         * svg/dom/font-face-elements-expected.txt:
         * svg/webarchive/svg-feimage-subresources-expected.txt:
 
+2007-12-08  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Mitz.
+
+        Test that calling window scrolling, moving and resizing methods with
+        less than 2 arguments is not allowed and that calling them with more
+        than 2 is allowed.
+
+        * fast/dom/Window/window-resize-and-move-arguments-expected.txt: Added.
+        * fast/dom/Window/window-resize-and-move-arguments.html: Added.
+        * fast/dom/Window/window-scroll-arguments-expected.txt: Added.
+        * fast/dom/Window/window-scroll-arguments.html: Added.
+        * http/tests/security/cross-frame-access-get-expected.txt:
+
 2007-12-08  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Adele Peterson.
 
         - test that re-inserting a parser-generated <style> element applies its
-          sylesheet.
+          stylesheet.
 
         * fast/dom/HTMLStyleElement: Added.
         * fast/dom/HTMLStyleElement/insert-parser-generated.html: Added.

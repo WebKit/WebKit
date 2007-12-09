@@ -154,13 +154,6 @@ const ClassInfo Window::info = { "Window", 0, &WindowTable };
 # -- Functions --
   atob                  &WindowProtoFuncAToB::create                DontDelete|Function 1
   btoa                  &WindowProtoFuncBToA::create                DontDelete|Function 1
-  scroll                &WindowProtoFuncScrollTo::create            DontDelete|Function 2
-  scrollBy              &WindowProtoFuncScrollBy::create            DontDelete|Function 2
-  scrollTo              &WindowProtoFuncScrollTo::create            DontDelete|Function 2
-  moveBy                &WindowProtoFuncMoveBy::create              DontDelete|Function 2
-  moveTo                &WindowProtoFuncMoveTo::create              DontDelete|Function 2
-  resizeBy              &WindowProtoFuncResizeBy::create            DontDelete|Function 2
-  resizeTo              &WindowProtoFuncResizeTo::create            DontDelete|Function 2
   open                  &WindowProtoFuncOpen::create                DontDelete|Function 3
   setTimeout            &WindowProtoFuncSetTimeout::create          DontDelete|Function 2
   clearTimeout          &WindowProtoFuncClearTimeout::create        DontDelete|Function 1
@@ -507,8 +500,6 @@ JSValue *Window::getValueProperty(ExecState *exec, int token) const
 
    switch (token) {
    case Crypto:
-      if (!allowsAccessFrom(exec))
-        return jsUndefined();
       return jsUndefined(); // FIXME: implement this
    case DOMException:
       if (!allowsAccessFrom(exec))
@@ -620,7 +611,7 @@ JSValue *Window::getValueProperty(ExecState *exec, int token) const
     case Onunload:
      return getListener(exec, unloadEvent);
    }
-   ASSERT(0);
+   ASSERT_NOT_REACHED();
    return jsUndefined();
 }
 
@@ -1159,47 +1150,6 @@ static void parseWindowFeatures(const String& features, WindowFeatures& windowFe
     }
 }
 
-// Explain the 4 things this function does.
-// 1) Validates the pending changes are not changing to NaN
-// 2) Constrains the window rect to no smaller than 100 in each dimension and no
-//    bigger than the the float rect's dimensions.
-// 3) Constrain window rect to within the top and left boundaries of the screen rect
-// 4) Constraint the window rect to within the bottom and right boundaries of the
-//    screen rect.
-// 5) Translate the window rect coordinates to be within the coordinate space of
-//    the screen rect.
-static void adjustWindowRect(const FloatRect& screen, FloatRect& window, const FloatRect& pendingChanges)
-{
-    // Make sure we're in a valid state before adjusting dimensions
-    ASSERT(!isnan(screen.x()) && !isnan(screen.y()) && !isnan(screen.width()) && !isnan(screen.height()) &&
-           !isnan(window.x()) && !isnan(window.y()) && !isnan(window.width()) && !isnan(window.height()));
-    
-    // Update window values if they are not NaN
-    if (!isnan(pendingChanges.x()))
-        window.setX(pendingChanges.x());
-    if (!isnan(pendingChanges.y()))
-        window.setY(pendingChanges.y());
-    if (!isnan(pendingChanges.width()))
-        window.setWidth(pendingChanges.width());
-    if (!isnan(pendingChanges.height()))
-        window.setHeight(pendingChanges.height());
-    
-    // Resize the window to between 100 and the screen width and height if it's
-    // outside of those ranges.
-    window.setWidth(min(max(100.0f, window.width()), screen.width()));
-    window.setHeight(min(max(100.0f, window.height()), screen.height()));
-    
-    // Constrain the window to the top and left of the screen if it's left or
-    // above it.
-    window.setX(max(window.x(), screen.x()));
-    window.setY(max(window.y(), screen.y()));
-
-    // Constrain the window to the bottom and right of the screen if it's past
-    // the right or below it.
-    window.setX(window.x() - max(0.0f, window.right() - screen.width() - screen.x()));
-    window.setY(window.y() - max(0.0f, window.bottom() - screen.height() - screen.y()));
-}
-
 JSValue* WindowProtoFuncAToB::callAsFunction(ExecState* exec, JSObject* thisObj, const List& args)
 {
     if (!thisObj->inherits(&Window::info))
@@ -1316,7 +1266,7 @@ JSValue* WindowProtoFuncOpen::callAsFunction(ExecState* exec, JSObject* thisObj,
     String features = valueToStringWithUndefinedOrNullCheck(exec, args[2]);
     parseWindowFeatures(features, windowFeatures);
     FloatRect windowRect(windowFeatures.x, windowFeatures.y, windowFeatures.width, windowFeatures.height);
-    adjustWindowRect(screenAvailableRect(page->mainFrame()->view()), windowRect, windowRect);
+    WebCore::DOMWindow::adjustWindowRect(screenAvailableRect(page->mainFrame()->view()), windowRect, windowRect);
 
     windowFeatures.x = windowRect.x();
     windowFeatures.y = windowRect.y();
@@ -1329,130 +1279,6 @@ JSValue* WindowProtoFuncOpen::callAsFunction(ExecState* exec, JSObject* thisObj,
         return jsUndefined();
 
     return Window::retrieve(frame); // global object
-}
-
-JSValue* WindowProtoFuncScrollBy::callAsFunction(ExecState* exec, JSObject* thisObj, const List& args)
-{
-    if (!thisObj->inherits(&Window::info))
-        return throwError(exec, TypeError);
-    Window* window = static_cast<Window*>(thisObj);
-    Frame* frame = window->impl()->frame();
-    if (!frame)
-        return jsUndefined();
-
-    FrameView *widget = frame->view();
-
-    window->updateLayout();
-    if(args.size() >= 2 && widget)
-      widget->scrollBy(args[0]->toInt32(exec), args[1]->toInt32(exec));
-    return jsUndefined();
-}
-
-JSValue* WindowProtoFuncScrollTo::callAsFunction(ExecState* exec, JSObject* thisObj, const List& args)
-{
-    // Also the implementation for window.scroll()
-
-    if (!thisObj->inherits(&Window::info))
-        return throwError(exec, TypeError);
-    Window* window = static_cast<Window*>(thisObj);
-    Frame* frame = window->impl()->frame();
-    if (!frame)
-        return jsUndefined();
-
-    FrameView *widget = frame->view();
-
-    window->updateLayout();
-    if (args.size() >= 2 && widget)
-      widget->setContentsPos(args[0]->toInt32(exec), args[1]->toInt32(exec));
-    return jsUndefined();
-}
-
-JSValue* WindowProtoFuncMoveBy::callAsFunction(ExecState* exec, JSObject* thisObj, const List& args)
-{
-    if (!thisObj->inherits(&Window::info))
-        return throwError(exec, TypeError);
-    Window* window = static_cast<Window*>(thisObj);
-    Frame* frame = window->impl()->frame();
-    if (!frame)
-        return jsUndefined();
-
-    Page* page = frame->page();
-
-    if (args.size() >= 2 && page) {
-      FloatRect fr = page->chrome()->windowRect();
-      FloatRect update = fr;
-      update.move(args[0]->toFloat(exec), args[1]->toFloat(exec));
-      // Security check (the spec talks about UniversalBrowserWrite to disable this check...)
-      adjustWindowRect(screenAvailableRect(page->mainFrame()->view()), fr, update);
-      page->chrome()->setWindowRect(fr);
-    }
-    return jsUndefined();
-}
-
-JSValue* WindowProtoFuncMoveTo::callAsFunction(ExecState* exec, JSObject* thisObj, const List& args)
-{
-    if (!thisObj->inherits(&Window::info))
-        return throwError(exec, TypeError);
-    Window* window = static_cast<Window*>(thisObj);
-    Frame* frame = window->impl()->frame();
-    if (!frame)
-        return jsUndefined();
-
-    Page* page = frame->page();
-
-    if (args.size() >= 2 && page) {
-      FloatRect fr = page->chrome()->windowRect();
-      FloatRect sr = screenAvailableRect(page->mainFrame()->view());
-      fr.setLocation(sr.location());
-      FloatRect update = fr;
-      update.move(args[0]->toFloat(exec), args[1]->toFloat(exec));     
-      // Security check (the spec talks about UniversalBrowserWrite to disable this check...)
-      adjustWindowRect(sr, fr, update);
-      page->chrome()->setWindowRect(fr);
-    }
-    return jsUndefined();
-}
-
-JSValue* WindowProtoFuncResizeBy::callAsFunction(ExecState* exec, JSObject* thisObj, const List& args)
-{
-    if (!thisObj->inherits(&Window::info))
-        return throwError(exec, TypeError);
-    Window* window = static_cast<Window*>(thisObj);
-    Frame* frame = window->impl()->frame();
-    if (!frame)
-        return jsUndefined();
-
-    Page* page = frame->page();
-
-    if (args.size() >= 2 && page) {
-      FloatRect fr = page->chrome()->windowRect();
-      FloatSize dest = fr.size() + FloatSize(args[0]->toFloat(exec), args[1]->toFloat(exec));
-      FloatRect update(fr.location(), dest);
-      adjustWindowRect(screenAvailableRect(page->mainFrame()->view()), fr, update);
-      page->chrome()->setWindowRect(fr);
-    }
-    return jsUndefined();
-}
-
-JSValue* WindowProtoFuncResizeTo::callAsFunction(ExecState* exec, JSObject* thisObj, const List& args)
-{
-    if (!thisObj->inherits(&Window::info))
-        return throwError(exec, TypeError);
-    Window* window = static_cast<Window*>(thisObj);
-    Frame* frame = window->impl()->frame();
-    if (!frame)
-        return jsUndefined();
-
-    Page* page = frame->page();
-
-    if (args.size() >= 2 && page) {
-      FloatRect fr = page->chrome()->windowRect();
-      FloatSize dest = FloatSize(args[0]->toFloat(exec), args[1]->toFloat(exec));
-      FloatRect update(fr.location(), dest);
-      adjustWindowRect(screenAvailableRect(page->mainFrame()->view()), fr, update);
-      page->chrome()->setWindowRect(fr);
-    }
-    return jsUndefined();
 }
 
 JSValue* WindowProtoFuncSetTimeout::callAsFunction(ExecState* exec, JSObject* thisObj, const List& args)
@@ -1591,26 +1417,9 @@ JSValue* WindowProtoFuncNotImplemented::callAsFunction(ExecState* exec, JSObject
 {
     if (!thisObj->inherits(&Window::info))
         return throwError(exec, TypeError);
-    Window* window = static_cast<Window*>(thisObj);
-    Frame* frame = window->impl()->frame();
-    if (!frame)
-        return jsUndefined();
 
-    // If anyone implements these, they need the safe script security check.
-    if (!window->allowsAccessFrom(exec))
-        return jsUndefined();
     // Not implemented.
     return jsUndefined();
-}
-
-void Window::updateLayout() const
-{
-  Frame* frame = impl()->frame();
-  if (!frame)
-    return;
-  WebCore::Document* docimpl = frame->document();
-  if (docimpl)
-    docimpl->updateLayoutIgnorePendingStylesheets();
 }
 
 void Window::setReturnValueSlot(JSValue** slot)

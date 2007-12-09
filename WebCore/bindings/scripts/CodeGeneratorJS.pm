@@ -1098,9 +1098,15 @@ sub GenerateImplementation
                     push(@implContent, "    JSSVGPODTypeWrapper<$podType>* wrapper = castedThisObj->impl();\n");
                     push(@implContent, "    $podType imp(*wrapper);\n\n");
                 } else {
-                    push(@implContent, "    $implClassName* imp = static_cast<$implClassName*>(castedThisObj->impl());\n\n");
+                    push(@implContent, "    $implClassName* imp = static_cast<$implClassName*>(castedThisObj->impl());\n");
                 }
 
+                my $numParameters = @{$function->parameters};
+
+                if ($function->signature->extendedAttributes->{"RequiresAllArguments"}) {
+                        push(@implContent, "    if (args.size() < $numParameters)\n");
+                        push(@implContent, "        return jsUndefined();\n");
+                }
 
                 if (@{$function->raisesExceptions}) {
                     push(@implContent, "    ExceptionCode ec = 0;\n");
@@ -1115,7 +1121,6 @@ sub GenerateImplementation
                 my $paramIndex = 0;
                 my $functionString = "imp" . ($podType ? "." : "->") . $function->signature->name . "(";
 
-                my $numParameters = @{$function->parameters};
                 my $hasOptionalArguments = 0;
 
                 foreach my $parameter (@{$function->parameters}) {

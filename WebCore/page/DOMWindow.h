@@ -37,10 +37,11 @@ namespace WebCore {
     class CSSRuleList;
     class CSSStyleDeclaration;
     class Console;
-    class Database;
     class DOMSelection;
+    class Database;
     class Document;
     class Element;
+    class FloatRect;
     class Frame;
     class History;
     class Screen;
@@ -56,6 +57,8 @@ namespace WebCore {
         void disconnectFrame();
 
         void clear();
+
+        static void adjustWindowRect(const FloatRect& screen, FloatRect& window, const FloatRect& pendingChanges);
 
         // DOM Level 0
         Screen* screen() const;
@@ -138,6 +141,16 @@ namespace WebCore {
 #endif
 
         Console* console() const;
+
+        void scrollBy(int x, int y) const;
+        void scrollTo(int x, int y) const;
+        void scroll(int x, int y) const { scrollTo(x, y); }
+
+        void moveBy(float x, float y) const;
+        void moveTo(float x, float y) const;
+
+        void resizeBy(float x, float y) const;
+        void resizeTo(float width, float height) const;
 
     private:
         Frame* m_frame;

@@ -11332,8 +11332,6 @@
 		BC1A3793097C6FB10019F3D8 /* js */ = {
 			isa = PBXGroup;
 			children = (
-				B22277AF0D00BEDC0071B782 /* JSSVGLazyEventListener.cpp */,
-				B22277B00D00BEDC0071B782 /* JSSVGLazyEventListener.h */,
 				14DFB33F0A7DF7630018F769 /* Derived Sources */,
 				BC4EDEF70C08F414007EDD49 /* Custom */,
 				93F8B3060A300FEA00F61AB8 /* CodeGeneratorJS.pm */,
@@ -11358,6 +11356,8 @@
 				BCB7735F0C17853D00132BA4 /* JSNodeFilterCondition.h */,
 				8574D1F10ADE6122004CBA11 /* JSSVGElementWrapperFactory.cpp */,
 				8574D1F20ADE6122004CBA11 /* JSSVGElementWrapperFactory.h */,
+				B22277AF0D00BEDC0071B782 /* JSSVGLazyEventListener.cpp */,
+				B22277B00D00BEDC0071B782 /* JSSVGLazyEventListener.h */,
 				B21127A50B3186770009BE53 /* JSSVGPODTypeWrapper.h */,
 				B2D3FC890C2212CB00CF3618 /* JSSVGTransformListCustom.cpp */,
 				93B70D4109EB0C7C009D8468 /* JSXMLHttpRequest.cpp */,
