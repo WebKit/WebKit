@@ -1,3 +1,10 @@
+2007-12-08  Sam Weinig  <sam@webkit.org>
+
+        Rubber-stamped by Adam Roben.
+
+        * fast/dom/Window/window-resize-and-move-arguments.html: Make the window small enough
+        that this test won't fail on systems with lower resolutions.
+
 2007-12-08  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Sam W.
