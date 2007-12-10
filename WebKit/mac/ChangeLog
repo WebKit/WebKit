@@ -1,3 +1,12 @@
+2007-12-10  Kevin Decker  <kdecker@apple.com>
+
+        Reviewed by Darin.
+
+        Fixed: <rdar://problem/4290098> Right-mouse click on element doesn't call onmousedown handler
+        
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView menuForEvent:]): Match behavior of other browsers by sending an onmousedown event for right clicks.
+
 2007-12-08  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Sam W.

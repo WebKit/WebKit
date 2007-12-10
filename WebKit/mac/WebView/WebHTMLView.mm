@@ -2760,6 +2760,8 @@ static void _updateActiveStateTimerCallback(CFRunLoopTimerRef timer, void *info)
         return nil;
 
     page->contextMenuController()->clearContextMenu();
+    // Match behavior of other browsers by sending an onmousedown event for right clicks.
+    coreFrame->eventHandler()->mouseDown(event);
     handledEvent = coreFrame->eventHandler()->sendContextMenuEvent(PlatformMouseEvent(event));
     _private->handlingMouseDownEvent = NO;
 
