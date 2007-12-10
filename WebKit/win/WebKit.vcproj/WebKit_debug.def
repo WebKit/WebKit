@@ -90,7 +90,6 @@ EXPORTS
 ;       KJS_JSObject_JSObjectToString
         WebLocalizedStringUTF8
         WebLocalizedLPCTSTRUTF8
-        SetWebLocalizedStringMainBundle
         DrawTextAtPoint
         WebDrawText
         FontMetrics
@@ -107,3 +106,4 @@ EXPORTS
         ; These functions are deprecated
         WebLocalizedString
         WebLocalizedLPCTSTR
+        SetWebLocalizedStringMainBundle

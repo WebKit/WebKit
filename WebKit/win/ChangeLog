@@ -59,6 +59,26 @@
 
 2007-12-07  Adam Roben  <aroben@apple.com>
 
+        Make WebLocalizableStrings work a little more like the Mac version
+
+        Reviewed by Steve.
+
+        * WebKit.vcproj/WebKit.def: Deprecated SetWebLocalizedStringMainBundle.
+        * WebKit.vcproj/WebKit_debug.def: Ditto.
+        * WebLocalizableStrings.cpp:
+        (createWebKitBundle): Changed to only create the bundle once.
+        (cfBundleForStringsBundle): Added. Code was factored out of
+        copyLocalizedStringFromBundle. We now use the CFBundleGetMainBundle to
+        get the main bundle and WebLocalizableStringsBundle's identifier to
+        fetch the framework's bundle.
+        (copyLocalizedStringFromBundle): Changed to call
+        cfBundleForStringsBundle.
+        (cacheString): Cleaned up logic a bit with an early return.
+        (SetWebLocalizedStringMainBundle): Moved down with the other
+        deprecated functions and made into a no-op.
+
+2007-12-07  Adam Roben  <aroben@apple.com>
+
         Use SoftLinking.h in WebKitClassFactory.
 
         Reviewed by Oliver.
