@@ -513,14 +513,11 @@ bool SVGPathParser::parseSVG(const String& s, bool process)
 
         // Check for remaining coordinates in the current command.
         if ((*ptr == '+' || *ptr == '-' || (*ptr >= '0' && *ptr <= '9')) &&
-            (command != 'z' && command !='a' && command != 'A')) {
+            (command != 'z' && command != 'Z')) {
             if (command == 'M')
                 command = 'L';
             else if (command == 'm')
                 command = 'l';
-            else
-                // Garbage data at the end of the path
-                return false;
         } else
             command = *(ptr++);
 

@@ -2,6 +2,16 @@
 
         Reviewed by Niko.
 
+        Correction, 'z' and 'Z' are the only commands that cannot have an extended
+        list of arguments.
+
+        * svg/SVGParserUtilities.cpp:
+        (WebCore::SVGPathParser::parseSVG):
+
+2007-12-09  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Niko.
+
         Prevent unlimited iteration in the case of invalid path data.
         
         The only path commands that can leave numbers trailing the command processing

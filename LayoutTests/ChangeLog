@@ -2,6 +2,15 @@
 
         Reviewed by Niko.
 
+        Somehow I managed to not check in new expected results
+        in the last patch.
+
+        * svg/dom/path-parser-expected.txt:
+
+2007-12-09  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Niko.
+
         Prevent unlimited iteration in the case of invalid path data.
         
         The only path commands that can leave numbers trailing the command processing
