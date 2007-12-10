@@ -1,3 +1,16 @@
+2007-12-09  Rob Buis  <buis@kde.org>
+
+        Reviewed by Niko.
+
+        Testcase for:
+        http://bugs.webkit.org/show_bug.cgi?id=16163
+        SVG crash in Node::setChanged() on Debug builds only (trashed parent)
+
+        * svg/custom/resource-client-removal-expected.checksum: Added.
+        * svg/custom/resource-client-removal-expected.png: Added.
+        * svg/custom/resource-client-removal-expected.txt: Added.
+        * svg/custom/resource-client-removal.svg: Added.
+
 2007-12-10  David D. Kilzer  <ddkilzer@webkit.org>
 
         Bug 9683: Implement select.options.remove() method

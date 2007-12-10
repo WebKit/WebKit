@@ -1,3 +1,16 @@
+2007-12-09  Rob Buis  <buis@kde.org>
+
+        Reviewed by Niko.
+
+        http://bugs.webkit.org/show_bug.cgi?id=16163
+        SVG crash in Node::setChanged() on Debug builds only (trashed parent)
+
+        Fix the crash by properly unregistering as client from SVGResource
+        when deleting a styled svg node.
+
+        * svg/SVGStyledElement.cpp:
+        (WebCore::SVGStyledElement::~SVGStyledElement):
+
 2007-12-10  Brady Eidson  <beidson@apple.com>
 
         Rubberstamped by John

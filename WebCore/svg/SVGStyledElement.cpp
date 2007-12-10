@@ -50,6 +50,7 @@ SVGStyledElement::SVGStyledElement(const QualifiedName& tagName, Document* doc)
 
 SVGStyledElement::~SVGStyledElement()
 {
+    SVGResource::removeClient(this);
 }
 
 ANIMATED_PROPERTY_DEFINITIONS(SVGStyledElement, String, String, string, ClassName, className, HTMLNames::classAttr.localName(), m_className)
