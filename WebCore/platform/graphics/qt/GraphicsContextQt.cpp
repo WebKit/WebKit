@@ -853,6 +853,13 @@ void GraphicsContext::setPlatformFillColor(const Color& color)
     m_data->p().setBrush(QBrush(color));
 }
 
+void GraphicsContext::setUseAntialiasing(bool enable)
+{
+    if (paintingDisabled())
+        return;
+    m_data->p().setRenderHint(QPainter::Antialiasing, enable);
+}
+
 }
 
 // vim: ts=4 sw=4 et

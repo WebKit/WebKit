@@ -451,4 +451,11 @@ void GraphicsContext::concatCTM(const AffineTransform& transform)
     return;
 }
 
+void GraphicsContext::setUseAntialiasing(bool enable)
+{
+    if (paintingDisabled())
+        return;
+    notImplemented();
+}
+
 }

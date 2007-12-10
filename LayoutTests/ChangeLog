@@ -1,3 +1,16 @@
+2007-12-10  Rob Buis  <buis@kde.org>
+
+        Reviewed by Darin.
+
+        Testcase for:
+        http://bugs.webkit.org/show_bug.cgi?id=16182
+        SVG should disable antialiasing for shape-rendering="crispEdges"
+
+        * svg/custom/shape-rendering-expected.checksum: Added.
+        * svg/custom/shape-rendering-expected.png: Added.
+        * svg/custom/shape-rendering-expected.txt: Added.
+        * svg/custom/shape-rendering.svg: Added.
+
 2007-12-09  Rob Buis  <buis@kde.org>
 
         Reviewed by Niko.

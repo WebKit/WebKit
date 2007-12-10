@@ -217,6 +217,8 @@ namespace WebCore {
 
         void concatCTM(const AffineTransform&);
 
+        void setUseAntialiasing(bool = true);
+
 #if PLATFORM(WIN)
         GraphicsContext(HDC); // FIXME: To be removed.
         HDC getWindowsContext(bool supportAlphaBlend = false, const IntRect* = 0); // The passed in rect is used to create a bitmap for compositing inside transparency layers.

@@ -1,3 +1,24 @@
+2007-12-10  Rob Buis  <buis@kde.org>
+
+        Reviewed by Darin.
+
+        http://bugs.webkit.org/show_bug.cgi?id=16182
+        SVG should disable antialiasing for shape-rendering="crispEdges"
+
+        Turn off anti-aliasing of shapes when shape-rendering="crispEdges".
+
+        * platform/graphics/GraphicsContext.h:
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        (WebCore::GraphicsContext::setUseAntialiasing):
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::GraphicsContext::setUseAntialiasing):
+        * platform/graphics/qt/GraphicsContextQt.cpp:
+        (WebCore::GraphicsContext::setUseAntialiasing):
+        * platform/graphics/wx/GraphicsContextWx.cpp:
+        (WebCore::GraphicsContext::setUseAntialiasing):
+        * rendering/RenderPath.cpp:
+        (WebCore::RenderPath::paint):
+
 2007-12-09  Rob Buis  <buis@kde.org>
 
         Reviewed by Niko.
