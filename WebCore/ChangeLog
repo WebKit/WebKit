@@ -1,3 +1,9 @@
+2007-12-09  Sam Weinig  <sam@webkit.org>
+
+        Rubber stamped by Mark Rowe.
+
+        * WebCore.xcodeproj/project.pbxproj: Add missing DerivedSources files.
+
 2007-12-09  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Niko.

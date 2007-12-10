@@ -3616,6 +3616,10 @@
 		BC80C9880CD294EE00A0B7B3 /* CSSTimingFunctionValue.h in Headers */ = {isa = PBXBuildFile; fileRef = BC80C9860CD294EE00A0B7B3 /* CSSTimingFunctionValue.h */; };
 		BC80C98B0CD2950500A0B7B3 /* AnimationController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC80C9890CD2950500A0B7B3 /* AnimationController.cpp */; };
 		BC80C98C0CD2950500A0B7B3 /* AnimationController.h in Headers */ = {isa = PBXBuildFile; fileRef = BC80C98A0CD2950500A0B7B3 /* AnimationController.h */; };
+		BC8243290D0CE8A200460C8F /* JSSQLError.h in Headers */ = {isa = PBXBuildFile; fileRef = BC8243250D0CE8A200460C8F /* JSSQLError.h */; };
+		BC82432A0D0CE8A200460C8F /* JSSQLTransaction.h in Headers */ = {isa = PBXBuildFile; fileRef = BC8243260D0CE8A200460C8F /* JSSQLTransaction.h */; };
+		BC82432B0D0CE8A200460C8F /* JSVoidCallback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC8243270D0CE8A200460C8F /* JSVoidCallback.cpp */; };
+		BC82432C0D0CE8A200460C8F /* JSVoidCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = BC8243280D0CE8A200460C8F /* JSVoidCallback.h */; };
 		BC926F800C0552470082776B /* JSHTMLFrameSetElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC926F7E0C0552470082776B /* JSHTMLFrameSetElement.cpp */; };
 		BC926F810C0552470082776B /* JSHTMLFrameSetElement.h in Headers */ = {isa = PBXBuildFile; fileRef = BC926F7F0C0552470082776B /* JSHTMLFrameSetElement.h */; };
 		BC94D1080C274F88006BC617 /* PlatformScreenMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC94D1070C274F88006BC617 /* PlatformScreenMac.mm */; };
@@ -7615,6 +7619,10 @@
 		BC80C9860CD294EE00A0B7B3 /* CSSTimingFunctionValue.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CSSTimingFunctionValue.h; sourceTree = "<group>"; };
 		BC80C9890CD2950500A0B7B3 /* AnimationController.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = AnimationController.cpp; sourceTree = "<group>"; };
 		BC80C98A0CD2950500A0B7B3 /* AnimationController.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = AnimationController.h; sourceTree = "<group>"; };
+		BC8243250D0CE8A200460C8F /* JSSQLError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSSQLError.h; sourceTree = "<group>"; };
+		BC8243260D0CE8A200460C8F /* JSSQLTransaction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSSQLTransaction.h; sourceTree = "<group>"; };
+		BC8243270D0CE8A200460C8F /* JSVoidCallback.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSVoidCallback.cpp; sourceTree = "<group>"; };
+		BC8243280D0CE8A200460C8F /* JSVoidCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSVoidCallback.h; sourceTree = "<group>"; };
 		BC926F7E0C0552470082776B /* JSHTMLFrameSetElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLFrameSetElement.cpp; sourceTree = "<group>"; };
 		BC926F7F0C0552470082776B /* JSHTMLFrameSetElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSHTMLFrameSetElement.h; sourceTree = "<group>"; };
 		BC94D1070C274F88006BC617 /* PlatformScreenMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = PlatformScreenMac.mm; sourceTree = "<group>"; };
@@ -10107,6 +10115,8 @@
 				E44614110CD6826900FADA75 /* JSMediaError.h */,
 				E44614120CD6826900FADA75 /* JSTimeRanges.cpp */,
 				E44614130CD6826900FADA75 /* JSTimeRanges.h */,
+				BC8243270D0CE8A200460C8F /* JSVoidCallback.cpp */,
+				BC8243280D0CE8A200460C8F /* JSVoidCallback.h */,
 			);
 			name = HTML;
 			sourceTree = "<group>";
@@ -10508,11 +10518,13 @@
 				1AE82F8D0CAAFA9D002237AE /* JSDatabase.cpp */,
 				1AE82F8E0CAAFA9D002237AE /* JSDatabase.h */,
 				514C76350CE9225E007EF3CD /* JSSQLError.cpp */,
+				BC8243250D0CE8A200460C8F /* JSSQLError.h */,
 				1AE82FEA0CAB07EE002237AE /* JSSQLResultSet.cpp */,
 				1AE82FEB0CAB07EE002237AE /* JSSQLResultSet.h */,
 				1AFE11970CBFFCC4003017FA /* JSSQLResultSetRowList.cpp */,
 				1AFE11980CBFFCC4003017FA /* JSSQLResultSetRowList.h */,
 				514C76360CE9225E007EF3CD /* JSSQLTransaction.cpp */,
+				BC8243260D0CE8A200460C8F /* JSSQLTransaction.h */,
 			);
 			name = Storage;
 			sourceTree = "<group>";
@@ -14068,6 +14080,9 @@
 				B25599B80D00D8BA00BB825C /* SVGResourceListener.h in Headers */,
 				B25599BA0D00D8BA00BB825C /* SVGResourceMarker.h in Headers */,
 				B25599BC0D00D8BA00BB825C /* SVGResourceMasker.h in Headers */,
+				BC8243290D0CE8A200460C8F /* JSSQLError.h in Headers */,
+				BC82432A0D0CE8A200460C8F /* JSSQLTransaction.h in Headers */,
+				BC82432C0D0CE8A200460C8F /* JSVoidCallback.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -15776,6 +15791,7 @@
 				B25599B90D00D8BA00BB825C /* SVGResourceMarker.cpp in Sources */,
 				B25599BB0D00D8BA00BB825C /* SVGResourceMasker.cpp in Sources */,
 				93831B570D087D6000E5C984 /* ExceptionCode.cpp in Sources */,
+				BC82432B0D0CE8A200460C8F /* JSVoidCallback.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
