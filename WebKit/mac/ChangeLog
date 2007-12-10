@@ -1,3 +1,12 @@
+2007-12-10  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        <rdar://problem/5639463> Bundle versions on Tiger should be 4523.x not 523.x
+
+        * Configurations/Version.xcconfig: Some Tiger versions of Xcode don't set MAC_OS_X_VERSION_MAJOR,
+          so assume Tiger and use a 4 for the SYSTEM_VERSION_PREFIX.
+
 2007-12-10  Kevin Decker  <kdecker@apple.com>
 
         Reviewed by Darin.

@@ -12,7 +12,7 @@ BUNDLE_VERSION_Debug = $(BUNDLE_VERSION_Release);
 
 // The system version prefix is based on the current system version.
 SYSTEM_VERSION_PREFIX = $(SYSTEM_VERSION_PREFIX_$(MAC_OS_X_VERSION_MAJOR));
-SYSTEM_VERSION_PREFIX_ = ;
+SYSTEM_VERSION_PREFIX_ = 4; // Some Tiger versions of Xcode don't set MAC_OS_X_VERSION_MAJOR.
 SYSTEM_VERSION_PREFIX_1040 = 4;
 SYSTEM_VERSION_PREFIX_1050 = 5;
 
