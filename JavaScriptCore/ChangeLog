@@ -1,5 +1,34 @@
 2007-12-09  Darin Adler  <darin@apple.com>
 
+        Reviewed by Sam Weinig.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=16369
+          REGRESSION (r28525): regular expression tests failing due to bad firstByte optimization
+
+        * pcre/pcre_compile.cpp: Changed some names to use interCaps intead of under_scores.
+        (branchIsAnchored): Broke is_anchored into two separate functions; this one works on a
+        branch and the other on an anchor. The old function would only work on a bracket.
+        Also removed unneeded parameters; the anchored check does not require the bracket
+        map or the options any more because we have a reduced set of features.
+        (bracketIsAnchored): Ditto.
+        (branchNeedsLineStart): Broke canApplyFirstCharOptimization into two functions and gave
+        both a better name. This is the function that was returning the wrong value. The failure
+        was beacuse the old function would only work on a bracket.
+        (bracketNeedsLineStart): Ditto.
+        (jsRegExpCompile): Changed to call the appropriate branch or bracket flavor of the
+        functions based on whether we compiled an outer bracket. Also removed inaccurate comments
+        and unneeded parameters.
+
+        - other small changes
+
+        * pcre/pcre.h: Renumbered error codes, in a logical order. First, normal failure, then
+        the recursion limit, then running out of memory, and finally an unexpected internal error.
+
+        * pcre/pcre_exec.cpp: Fixed indentation.
+        (jsRegExpExecute): Corrected an inaccurate comment.
+
+2007-12-09  Darin Adler  <darin@apple.com>
+
         Reviewed by Maciej.
 
         - fix http://bugs.webkit.org/show_bug.cgi?id=16370
