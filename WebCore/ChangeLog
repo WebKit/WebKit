@@ -1,3 +1,12 @@
+2007-12-10  Alp Toker  <alp@atoker.com>
+
+        Reviewed by Niko.
+
+        Cairo implementation of GraphicsContext::setUseAntialiasing().
+
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        (WebCore::GraphicsContext::setUseAntialiasing):
+
 2007-12-10  Rob Buis  <buis@kde.org>
 
         Reviewed by Darin.

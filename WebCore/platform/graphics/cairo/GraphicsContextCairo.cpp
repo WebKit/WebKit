@@ -877,7 +877,11 @@ void GraphicsContext::setUseAntialiasing(bool enable)
 {
     if (paintingDisabled())
         return;
-    notImplemented();
+
+    // When true, use the default Cairo backend antialias mode (usually this
+    // enables standard 'grayscale' antialiasing); false to explicitly disable
+    // antialiasing. This is the same strategy as used in drawConvexPolygon().
+    cairo_set_antialias(m_data->cr, enable ? CAIRO_ANTIALIAS_DEFAULT : CAIRO_ANTIALIAS_NONE);
 }
 
 } // namespace WebCore
