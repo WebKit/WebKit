@@ -692,6 +692,7 @@ SOURCES += \
     page/Page.cpp \
     page/Screen.cpp \
     page/Settings.cpp \
+    page/WindowFeatures.cpp \
     platform/Arena.cpp \
     platform/ArrayImpl.cpp \
     platform/text/AtomicString.cpp \

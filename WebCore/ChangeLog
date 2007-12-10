@@ -1,3 +1,46 @@
+2007-12-09  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Darin.
+
+        More cleanup of kjs_window.
+        - Move WindowFeatures from bridge/ to page/
+        - Move functions related to WindowFeatures (boolFeature,
+          floatFeature, setWindowFeature, parseWindowFeatures) into the class.
+        - Fix up whitespace.
+
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/kjs_window.cpp:
+        (KJS::DOMWindowTimer::~DOMWindowTimer):
+        (KJS::createWindow):
+        (KJS::showModalDialog):
+        (KJS::Window::getOwnPropertySlot):
+        (KJS::Window::allowsAccessFrom):
+        (KJS::Window::shouldInterruptScript):
+        (KJS::WindowProtoFuncAToB::callAsFunction):
+        (KJS::WindowProtoFuncOpen::callAsFunction):
+        (KJS::Window::setReturnValueSlot):
+        (KJS::ScheduledAction::execute):
+        (KJS::Window::timerFired):
+        (KJS::Location::Location):
+        (KJS::Location::getValueProperty):
+        (KJS::Location::getOwnPropertySlot):
+        (KJS::Location::put):
+        (KJS::LocationProtoFuncReplace::callAsFunction): Use better variable names.
+        (KJS::LocationProtoFuncAssign::callAsFunction): Ditto.
+        (KJS::LocationProtoFuncToString::callAsFunction): Remove extraneous calls to
+        allowsAccessFrom, cleanup the function a little.
+        (KJS::PausedTimeouts::~PausedTimeouts):
+        * bridge/WindowFeatures.h: Removed.
+        * page/WindowFeatures.cpp: Added.
+        (WebCore::isSeparator):
+        (WebCore::WindowFeatures::WindowFeatures):
+        (WebCore::WindowFeatures::setWindowFeature):
+        (WebCore::WindowFeatures::boolFeature):
+        (WebCore::WindowFeatures::floatFeature):
+        * page/WindowFeatures.h: Copied from WebCore/bridge/WindowFeatures.h.
+        (WebCore::WindowFeatures::WindowFeatures):
+
 2007-12-10  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Mark Rowe.
