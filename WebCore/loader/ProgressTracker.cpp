@@ -191,7 +191,10 @@ void ProgressTracker::incrementProgress(unsigned long identifier, const char*, i
     int numPendingOrLoadingRequests = m_originatingProgressFrame->loader()->numPendingOrLoadingRequests(true);
     estimatedBytesForPendingRequests = progressItemDefaultEstimatedLength * numPendingOrLoadingRequests;
     remainingBytes = ((m_totalPageAndResourceBytesToLoad + estimatedBytesForPendingRequests) - m_totalBytesReceived);
-    percentOfRemainingBytes = (double)bytesReceived / (double)remainingBytes;
+    if (remainingBytes > 0)  // Prevent divide by 0.
+        percentOfRemainingBytes = (double)bytesReceived / (double)remainingBytes;
+    else
+        percentOfRemainingBytes = 1.0;
     
     // Treat the first layout as the half-way point.
     double maxProgressValue = m_originatingProgressFrame->loader()->firstLayoutDone() ? finalProgressValue : .5;
