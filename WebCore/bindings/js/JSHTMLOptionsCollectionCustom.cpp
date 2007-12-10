@@ -26,6 +26,7 @@
 #include "HTMLOptionsCollection.h"
 #include "HTMLSelectElement.h"
 #include "JSHTMLOptionElement.h"
+#include "JSHTMLSelectElement.h"
 #include "JSHTMLSelectElementCustom.h"
 
 #include <wtf/MathExtras.h>
@@ -64,6 +65,13 @@ void JSHTMLOptionsCollection::indexSetter(KJS::ExecState* exec, unsigned index, 
     HTMLOptionsCollection* imp = static_cast<HTMLOptionsCollection*>(impl());
     HTMLSelectElement* base = static_cast<HTMLSelectElement*>(imp->base());
     selectIndexSetter(base, exec, index, value);
+}
+
+KJS::JSValue* JSHTMLOptionsCollection::remove(KJS::ExecState* exec, const KJS::List& args)
+{
+    HTMLOptionsCollection* imp = static_cast<HTMLOptionsCollection*>(impl());
+    JSHTMLSelectElement* base = static_cast<JSHTMLSelectElement*>(toJS(exec, imp->base()));
+    return base->remove(exec, args);
 }
 
 }

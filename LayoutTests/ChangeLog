@@ -1,3 +1,16 @@
+2007-12-10  David D. Kilzer  <ddkilzer@webkit.org>
+
+        Bug 9683: Implement select.options.remove() method
+        <http://bugs.webkit.org/show_bug.cgi?id=9683>
+
+        Reviewed by Maciej.
+
+        * fast/js/resources/select-options-remove.js: Added.
+        * fast/js/select-options-remove-expected.txt: Added.
+        * fast/js/select-options-remove-gc-expected.txt: Added.
+        * fast/js/select-options-remove-gc.html: Added.
+        * fast/js/select-options-remove.html: Added.
+
 2007-12-10  Alexey Proskuryakov  <ap@webkit.org>
 
         Removed fast/events/objc-keyboard-event-creation.html from skipped list, as this test has

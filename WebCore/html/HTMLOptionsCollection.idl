@@ -34,6 +34,7 @@ module html {
 
         void add(in HTMLOptionElement option, in [Optional] unsigned long index)
              raises (DOMException);
+        [Custom] void remove(in unsigned long index);
 
 #if !defined(LANGUAGE_JAVASCRIPT)
         Node item(in unsigned long index);

@@ -1,3 +1,27 @@
+2007-12-10  David D. Kilzer  <ddkilzer@webkit.org>
+
+        Bug 9683: Implement select.options.remove() method
+        <http://bugs.webkit.org/show_bug.cgi?id=9683>
+
+        Reviewed by Maciej.
+
+        Implement select.options.remove() by calling select.remove()
+        with the same arguments.  This is what MSIE 7 does, although its
+        select.remove() method differs from WebKit's by throwing an
+        exception when called with no arguments or with a negative
+        integer argument.  Note that the DOM Level 1 documentation
+        specifies that select.remove() does not throw an exception.
+
+        Tests: fast/js/select-options-remove-gc.html
+               fast/js/select-options-remove.html
+
+        * bindings/js/JSHTMLOptionsCollectionCustom.cpp:
+        (WebCore::JSHTMLOptionsCollection::remove): Added.
+        * html/HTMLOptionsCollection.cpp:
+        (WebCore::HTMLOptionsCollection::remove): Added.
+        * html/HTMLOptionsCollection.h:
+        * html/HTMLOptionsCollection.idl:
+
 2007-12-09  Sam Weinig  <sam@webkit.org>
 
         Rubber stamped by Mark Rowe.
