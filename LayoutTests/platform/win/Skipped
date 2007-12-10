@@ -304,9 +304,6 @@ svg/custom/text-hit-test.svg
 # Emacs bindings are used in LayoutTests which fail on boomer. <rdar://problem/5137352>
 fast/events/keydown-1.html
 
-# fireKeyboardEventsToElement is not implemented in DRT <rdar://problem/5137198>
-fast/events/objc-keyboard-event-creation.html
-
 # The eqqivalent of option-tab doesn not exist in Boomer <rdar://problem/5137230>
 fast/events/frame-tab-focus.html
 fast/events/option-tab.html

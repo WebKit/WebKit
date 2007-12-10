@@ -1,3 +1,10 @@
+2007-12-10  Alexey Proskuryakov  <ap@webkit.org>
+
+        Removed fast/events/objc-keyboard-event-creation.html from skipped list, as this test has
+        been moved to platform/mac long ago.
+
+        * platform/win/Skipped:
+
 2007-12-09  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Niko.
