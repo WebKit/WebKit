@@ -148,7 +148,7 @@ bool DatabaseTracker::canEstablishDatabase(Document* document, const String& nam
     unsigned long long newQuota = page->chrome()->requestQuotaIncreaseForNewDatabase(document->frame(), originData, displayName, estimatedSize);
     setQuota(originData, newQuota);
     
-    return usage + estimatedSize < newQuota;
+    return usage + estimatedSize <= newQuota;
 }
 
 bool DatabaseTracker::hasEntryForOrigin(const SecurityOriginData& origin)

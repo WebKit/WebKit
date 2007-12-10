@@ -1,3 +1,11 @@
+2007-12-10  Brady Eidson  <beidson@apple.com>
+
+        Rubberstamped by John
+
+        * storage/DatabaseTracker.cpp:
+        (WebCore::DatabaseTracker::canEstablishDatabase): If the UI Delegate returns *exactly* the estimated size
+          for the new quota, we should allow the database to be created
+
 2007-12-10  David D. Kilzer  <ddkilzer@webkit.org>
 
         Bug 9683: Implement select.options.remove() method
