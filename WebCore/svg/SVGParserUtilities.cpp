@@ -518,6 +518,9 @@ bool SVGPathParser::parseSVG(const String& s, bool process)
                 command = 'L';
             else if (command == 'm')
                 command = 'l';
+            else
+                // Garbage data at the end of the path
+                return false;
         } else
             command = *(ptr++);
 

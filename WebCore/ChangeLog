@@ -1,3 +1,17 @@
+2007-12-09  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Niko.
+
+        Prevent unlimited iteration in the case of invalid path data.
+        
+        The only path commands that can leave numbers trailing the command processing
+        are 'm' and 'M', in which trailing numbers are parsed as arguments to an
+        implicit lineto command.  In any case we should just terminate as an invalid
+        path.
+
+        * svg/SVGParserUtilities.cpp:
+        (WebCore::SVGPathParser::parseSVG):
+
 2007-12-09  Luca Bruno  <lethalman88@gmail.com>
 
         Reviewed by Alp Toker.

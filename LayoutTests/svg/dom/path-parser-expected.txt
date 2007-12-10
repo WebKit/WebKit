@@ -458,6 +458,7 @@ Parsed as 7 command(s) [MCCCCZC]: M1,1a9,2 6 1 2 2 2,za9 0 2 8,2,3,3 s5,8,8 1,HC
 Could not parse: 
 Could not parse: M
 Could not parse: M
+Parsed as 2 command(s) [MZ]: M1,1Z0
 PASS successfullyParsed is true
 
 TEST COMPLETE
