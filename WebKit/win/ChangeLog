@@ -59,6 +59,29 @@
 
 2007-12-07  Adam Roben  <aroben@apple.com>
 
+        Fix <rdar://5624866> CFStringRef UI_STRING should use a cache and follow the CF "Get" model (current uses leak)
+
+        Added a new class, LocalizedString, that wraps a CFStringRef and a
+        WebCore::String. We store one LocalizedString for each key string.
+
+        Reviewed by Steve.
+
+        * WebLocalizableStrings.cpp: Changed our two HashMaps to map from
+        WebCore::String to LocalizedString*.
+        (LocalizedString::LocalizedString):
+        (LocalizedString::operator CFStringRef):
+        (LocalizedString::operator LPCTSTR): Code moved here from
+        localizedLPCTSTR.
+        (findCachedString): Changed to return a LocalizedString*.
+        (cacheString): Changed to take a LocalizedString*.
+        (localizedString): Changed to return a const LocalizedString&. We
+        first try to find a cached LocalizedString. If there isn't one, we
+        create a new one and cache it.
+        (WebLocalizedLPCTSTRUTF8): Changed to call localizedString.
+        (WebLocalizedLPCTSTR): Ditto.
+
+2007-12-07  Adam Roben  <aroben@apple.com>
+
         Make WebLocalizableStrings work a little more like the Mac version
 
         Reviewed by Steve.
