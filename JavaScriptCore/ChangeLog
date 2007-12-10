@@ -1,3 +1,40 @@
+2007-12-09  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=16370
+          REGRESSION (r28540): source URL and line number no longer set for outer function/programs
+
+        Test: fast/js/exception-linenums-in-html-1.html
+        Test: fast/js/exception-linenums-in-html-2.html
+        Test: fast/js/exception-linenums.html
+
+        By the time the ProgramNode was constructed, the source URL was empty.
+
+        * kjs/Parser.cpp:
+        (KJS::Parser::parseProgram): Added code to set and clear m_sourceURL, which is now
+        handled here instead of in the lexer; it needs to still be set when we create the
+        program node. Call setLoc to set the first and last line number.
+        (KJS::Parser::parseFunctionBody): Ditto, but for the body.
+        (KJS::Parser::parse): Removed the sourceURL argument.
+
+        * kjs/Parser.h: Added sourceURL(), m_sourceURL, and m_lastLine. Added a lastLine
+        parameter to didFinishParsing, since the bison grammar knows the last line number
+        and we otherwise do not know it. Removed the sourceURL parameter from parse, since
+        that's now handled at a higher level.
+
+        * kjs/grammar.y: Pass the last line number to didFinishParsing.
+
+        * kjs/lexer.cpp:
+        (KJS::Lexer::setCode): Removed the sourceURL argument and the code to set m_sourceURL.
+        (KJS::Lexer::clear): Ditto.
+        * kjs/lexer.h: More of the same.
+
+        * kjs/nodes.cpp:
+        (KJS::FunctionBodyNode::FunctionBodyNode): Get the source URL from the parser rather
+        than from the lexer. Removed unneeded call to setLoc, since the line numbers already
+        both default to -1.
+
 2007-12-08  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Sam W.

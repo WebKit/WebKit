@@ -94,10 +94,9 @@ Lexer::Lexer()
     m_identifiers.reserveCapacity(initialStringTableCapacity);
 }
 
-void Lexer::setCode(const UString &sourceURL, int startingLineNumber, const KJS::UChar *c, unsigned int len)
+void Lexer::setCode(int startingLineNumber, const KJS::UChar *c, unsigned int len)
 {
   yylineno = 1 + startingLineNumber;
-  m_sourceURL = sourceURL;
   restrKeyword = false;
   delimited = false;
   eatNextIdentifier = false;
@@ -863,7 +862,6 @@ void Lexer::clear()
 
     m_pattern = 0;
     m_flags = 0;
-    m_sourceURL = 0;
 }
 
 Identifier* Lexer::makeIdentifier(const Vector<KJS::UChar>& buffer)

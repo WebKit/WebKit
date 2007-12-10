@@ -879,8 +879,8 @@ FunctionBody:
 ;
 
 Program:
-    /* not in spec */                   { parser().didFinishParsing(new SourceElements); }
-    | SourceElements                    { parser().didFinishParsing($1->release()); }
+    /* not in spec */                   { parser().didFinishParsing(new SourceElements, @$.last_line); }
+    | SourceElements                    { parser().didFinishParsing($1->release(), @$.last_line); }
 ;
 
 SourceElements:

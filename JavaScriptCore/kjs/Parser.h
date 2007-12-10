@@ -48,23 +48,26 @@ namespace KJS {
             const UChar* code, unsigned length,
             int* sourceId = 0, int* errLine = 0, UString* errMsg = 0);
 
-        int sourceId() { return m_sourceId; }
+        UString sourceURL() const { return m_sourceURL; }
+        int sourceId() const { return m_sourceId; }
 
-        void didFinishParsing(SourceElements* sourceElements)
+        void didFinishParsing(SourceElements* sourceElements, int lastLine)
         {
             m_sourceElements.set(sourceElements);
+            m_lastLine = lastLine;
         }
 
     private:
         friend Parser& parser();
 
         Parser(); // Use parser() instead.
-        void parse(const UString& sourceURL, int startingLineNumber,
-            const UChar* code, unsigned length,
-            int* sourceId = 0, int* errLine = 0, UString* errMsg = 0);
+        void parse(int startingLineNumber, const UChar* code, unsigned length,
+            int* sourceId, int* errLine, UString* errMsg);
 
+        UString m_sourceURL;
         int m_sourceId;
         OwnPtr<SourceElements> m_sourceElements;
+        int m_lastLine;
     };
     
     Parser& parser(); // Returns the singleton JavaScript parser.

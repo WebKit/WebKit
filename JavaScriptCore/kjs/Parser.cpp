@@ -43,23 +43,35 @@ PassRefPtr<ProgramNode> Parser::parseProgram(const UString& sourceURL, int start
     const UChar* code, unsigned length,
     int* sourceId, int* errLine, UString* errMsg)
 {
-    parse(sourceURL, startingLineNumber, code, length, sourceId, errLine, errMsg);
-    if (!m_sourceElements)
+    m_sourceURL = sourceURL;
+    parse(startingLineNumber, code, length, sourceId, errLine, errMsg);
+    if (!m_sourceElements) {
+        m_sourceURL = UString();
         return 0;
-    return new ProgramNode(m_sourceElements.release());
+    }
+    RefPtr<ProgramNode> program = new ProgramNode(m_sourceElements.release());
+    m_sourceURL = UString();
+    program->setLoc(startingLineNumber, m_lastLine);
+    return program.release();
 }
 
 PassRefPtr<FunctionBodyNode> Parser::parseFunctionBody(const UString& sourceURL, int startingLineNumber,
     const UChar* code, unsigned length,
     int* sourceId, int* errLine, UString* errMsg)
 {
-    parse(sourceURL, startingLineNumber, code, length, sourceId, errLine, errMsg);
-    if (!m_sourceElements)
+    m_sourceURL = sourceURL;
+    parse(startingLineNumber, code, length, sourceId, errLine, errMsg);
+    if (!m_sourceElements) {
+        m_sourceURL = UString();
         return 0;
-    return new FunctionBodyNode(m_sourceElements.release());
+    }
+    RefPtr<FunctionBodyNode> body = new FunctionBodyNode(m_sourceElements.release());
+    m_sourceURL = UString();
+    body->setLoc(startingLineNumber, m_lastLine);
+    return body;
 }
 
-void Parser::parse(const UString& sourceURL, int startingLineNumber,
+void Parser::parse(int startingLineNumber,
     const UChar* code, unsigned length,
     int* sourceId, int* errLine, UString* errMsg)
 {
@@ -72,7 +84,7 @@ void Parser::parse(const UString& sourceURL, int startingLineNumber,
         
     Lexer& lexer = KJS::lexer();
 
-    lexer.setCode(sourceURL, startingLineNumber, code, length);
+    lexer.setCode(startingLineNumber, code, length);
     m_sourceId++;
     if (sourceId)
         *sourceId = m_sourceId;
