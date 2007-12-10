@@ -1,3 +1,11 @@
+2007-12-10  Stephanie  <slewis@apple.com>
+
+        Rubber-stamped by Sam.
+   
+        Check in correct results
+
+        * svg/custom/resource-client-removal-expected.txt:
+
 2007-12-10  Rob Buis  <buis@kde.org>
 
         Reviewed by Darin.
