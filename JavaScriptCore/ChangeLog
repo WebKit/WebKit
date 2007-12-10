@@ -1,3 +1,16 @@
+2007-12-10  Darin Adler  <darin@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=16375
+          REGRESSION: Safari crashes on quit
+
+        Probably a debug-only issue.
+
+        * kjs/Parser.cpp:
+        (KJS::parser): Create the parser and never destroy it by using a pointer instead
+        of a global object.
+
 2007-12-09  Darin Adler  <darin@apple.com>
 
         Reviewed by Sam Weinig.
