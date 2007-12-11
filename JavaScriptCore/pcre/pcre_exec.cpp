@@ -1992,7 +1992,6 @@ int jsRegExpExecute(const JSRegExp* re,
         if (!match_block.offset_vector)
             return JSRegExpErrorNoMemory;
         using_temporary_offsets = true;
-        ASSERT_NOT_REACHED(); // Fail debug builds -- No one should be hitting this vestigal (slow!) code, see comment above.
     } else
         match_block.offset_vector = offsets;
     
