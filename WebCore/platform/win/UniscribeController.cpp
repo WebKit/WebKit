@@ -101,52 +101,66 @@ void UniscribeController::advance(unsigned offset, GlyphBuffer* glyphBuffer)
     if (length <= 0)
         return;
 
-    // We break up itemization of the string if small caps is involved.
-    // Adjust the characters to account for small caps if it is set.
-    if (m_font.isSmallCaps()) {
-        // FIXME: It's inconsistent that we use logical order when itemizing, since this
-        // does not match normal RTL.
-        Vector<UChar> smallCapsBuffer(length);
-        memcpy(smallCapsBuffer.data(), cp, length * sizeof(UChar));
-        bool isSmallCaps = false;
-        unsigned indexOfCaseShift = m_run.rtl() ? length - 1 : 0;
-        const UChar* curr = m_run.rtl() ? cp + length  - 1: cp;
-        const UChar* end = m_run.rtl() ? cp - 1: cp + length;
-        while (curr != end) {
-            int index = curr - cp;
-            UChar c = smallCapsBuffer[index];
-            UChar newC;
-            curr = m_run.rtl() ? curr - 1 : curr + 1;
-            if (U_GET_GC_MASK(c) & U_GC_M_MASK)
-                continue;
-            if (!u_isUUppercase(c) && (newC = u_toupper(c)) != c) {
-                smallCapsBuffer[index] = newC;
-                if (!isSmallCaps) {
-                    isSmallCaps = true;
-                    int itemStart = m_run.rtl() ? index : indexOfCaseShift;
-                    int itemLength = m_run.rtl() ? indexOfCaseShift - index : index - indexOfCaseShift;
-                    itemizeShapeAndPlace(smallCapsBuffer.data() + itemStart, itemLength, false, glyphBuffer);
-                    indexOfCaseShift = index;
-                }
-            } else if (isSmallCaps) {
-                isSmallCaps = false;
-                int itemStart = m_run.rtl() ? index : indexOfCaseShift;
-                int itemLength = m_run.rtl() ? indexOfCaseShift - index : index - indexOfCaseShift;
-                itemizeShapeAndPlace(smallCapsBuffer.data() + itemStart, itemLength, true, glyphBuffer);
-                indexOfCaseShift = index;
-            }
+    // We break up itemization of the string by fontData and (if needed) the use of small caps.
+
+    // FIXME: It's inconsistent that we use logical order when itemizing, since this
+    // does not match normal RTL.
+
+    // FIXME: This function should decode surrogate pairs. Currently it makes little difference that
+    // it does not because the font cache on Windows does not support non-BMP characters.
+    Vector<UChar, 256> smallCapsBuffer;
+    if (m_font.isSmallCaps())
+        smallCapsBuffer.resize(length);
+
+    unsigned indexOfFontTransition = m_run.rtl() ? length - 1 : 0;
+    const UChar* curr = m_run.rtl() ? cp + length  - 1 : cp;
+    const UChar* end = m_run.rtl() ? cp - 1 : cp + length;
+
+    const FontData* fontData;
+    const FontData* nextFontData = m_font.glyphDataForCharacter(*curr, false).fontData;
+
+    UChar newC;
+
+    bool isSmallCaps;
+    bool nextIsSmallCaps = m_font.isSmallCaps() && !(U_GET_GC_MASK(*curr) & U_GC_M_MASK) && (newC = u_toupper(*curr)) != *curr;
+
+    if (nextIsSmallCaps)
+        smallCapsBuffer[curr - cp] = newC;
+
+    while (true) {
+        curr = m_run.rtl() ? curr - 1 : curr + 1;
+        if (curr == end)
+            break;
+
+        fontData = nextFontData;
+        isSmallCaps = nextIsSmallCaps;
+        int index = curr - cp;
+        UChar c = *curr;
+
+        bool forceSmallCaps = isSmallCaps && (U_GET_GC_MASK(c) & U_GC_M_MASK);
+        nextFontData = m_font.glyphDataForCharacter(*curr, false, forceSmallCaps).fontData;
+        if (m_font.isSmallCaps()) {
+            nextIsSmallCaps = forceSmallCaps || (newC = u_toupper(c)) != c;
+            if (nextIsSmallCaps)
+                smallCapsBuffer[index] = forceSmallCaps ? c : newC;
         }
-        
-        int itemLength = m_run.rtl() ? indexOfCaseShift + 1 : length - indexOfCaseShift;
-        if (itemLength) {
-            int itemStart = m_run.rtl() ? 0 : indexOfCaseShift;
-            itemizeShapeAndPlace(smallCapsBuffer.data() + itemStart, itemLength, isSmallCaps, glyphBuffer);
+
+        if (nextFontData != fontData || nextIsSmallCaps != isSmallCaps) {
+            int itemStart = m_run.rtl() ? index : indexOfFontTransition;
+            int itemLength = m_run.rtl() ? indexOfFontTransition - index : index - indexOfFontTransition;
+            itemizeShapeAndPlace((isSmallCaps ? smallCapsBuffer.data() : cp) + itemStart, itemLength, fontData, glyphBuffer);
+            indexOfFontTransition = index;
         }
-    } else
-        itemizeShapeAndPlace(cp, length, false, glyphBuffer);
+    }
+    
+    int itemLength = m_run.rtl() ? indexOfFontTransition + 1 : length - indexOfFontTransition;
+    if (itemLength) {
+        int itemStart = m_run.rtl() ? 0 : indexOfFontTransition;
+        itemizeShapeAndPlace((nextIsSmallCaps ? smallCapsBuffer.data() : cp) + itemStart, itemLength, nextFontData, glyphBuffer);
+    }
 }
 
-void UniscribeController::itemizeShapeAndPlace(const UChar* cp, unsigned length, bool smallCaps, GlyphBuffer* glyphBuffer)
+void UniscribeController::itemizeShapeAndPlace(const UChar* cp, unsigned length, const FontData* fontData, GlyphBuffer* glyphBuffer)
 {
     // ScriptItemize (in Windows XP versions prior to SP2) can overflow by 1.  This is why there is an extra empty item
     // hanging out at the end of the array
@@ -160,12 +174,12 @@ void UniscribeController::itemizeShapeAndPlace(const UChar* cp, unsigned length,
 
     if (m_run.rtl()) {
         for (int i = m_items.size() - 2; i >= 0; i--) {
-            if (!shapeAndPlaceItem(cp, i, smallCaps, glyphBuffer))
+            if (!shapeAndPlaceItem(cp, i, fontData, glyphBuffer))
                 return;
         }
     } else {
         for (unsigned i = 0; i < m_items.size() - 1; i++) {
-            if (!shapeAndPlaceItem(cp, i, smallCaps, glyphBuffer))
+            if (!shapeAndPlaceItem(cp, i, fontData, glyphBuffer))
                 return;
         }
     }
@@ -185,18 +199,12 @@ void UniscribeController::resetControlAndState()
     m_state.fOverrideDirection = m_run.directionalOverride();
 }
 
-bool UniscribeController::shapeAndPlaceItem(const UChar* cp, unsigned i, bool smallCaps, GlyphBuffer* glyphBuffer)
+bool UniscribeController::shapeAndPlaceItem(const UChar* cp, unsigned i, const FontData* fontData, GlyphBuffer* glyphBuffer)
 {
     // Determine the string for this item.
     const UChar* str = cp + m_items[i].iCharPos;
     int len = m_items[i+1].iCharPos - m_items[i].iCharPos;
     SCRIPT_ITEM item = m_items[i];
-
-    // Get our current FontData that we are using.
-    unsigned dataIndex = 0;
-    const FontData* fontData = m_font.fontDataAt(dataIndex);
-    if (smallCaps)
-        fontData = fontData->smallCapsFontData(m_font.fontDescription());
 
     // Set up buffers to hold the results of shaping the item.
     Vector<WORD> glyphs;
@@ -204,40 +212,13 @@ bool UniscribeController::shapeAndPlaceItem(const UChar* cp, unsigned i, bool sm
     Vector<SCRIPT_VISATTR> visualAttributes;
     clusters.resize(len);
      
-    // Shape the item.  This will provide us with glyphs for the item.  We will
-    // attempt to shape using the first available FontData.  If the shaping produces a result with missing
-    // glyphs, then we will fall back to the next FontData.
-    // FIXME: This isn't as good as per-glyph fallback, but in practice it should be pretty good, since
-    // items are broken up by "shaping engine", meaning unique scripts will be broken up into
-    // separate items.
-    bool lastResortFontTried = false;
-    while (fontData) {
-        // The recommended size for the glyph buffer is 1.5 * the character length + 16 in the uniscribe docs.
-        // Apparently this is a good size to avoid having to make repeated calls to ScriptShape.
-        glyphs.resize(1.5 * len + 16);
-        visualAttributes.resize(glyphs.size());
-   
-        if (shape(str, len, item, fontData, glyphs, clusters, visualAttributes))
-            break;
-        
-        // Try again with the next font in the list.
-        if (lastResortFontTried) {
-            fontData = 0;
-            break;
-        }
-        
-        fontData = m_font.fontDataAt(++dataIndex);
-        if (!fontData) {
-            // Out of fonts.  Get a font data based on the actual characters.
-            fontData = m_font.fontDataForCharacters(str, len);
-            lastResortFontTried = true;
-        }
-        if (smallCaps)
-            fontData = fontData->smallCapsFontData(m_font.fontDescription());
-    }
+    // Shape the item.
+    // The recommended size for the glyph buffer is 1.5 * the character length + 16 in the uniscribe docs.
+    // Apparently this is a good size to avoid having to make repeated calls to ScriptShape.
+    glyphs.resize(1.5 * len + 16);
+    visualAttributes.resize(glyphs.size());
 
-    // Just give up.  We were unable to shape.
-    if (!fontData)
+    if (!shape(str, len, item, fontData, glyphs, clusters, visualAttributes))
         return true;
 
     // We now have a collection of glyphs.
@@ -282,13 +263,13 @@ bool UniscribeController::shapeAndPlaceItem(const UChar* cp, unsigned i, bool sm
             // array.
             glyphs[clusters[k]] = fontData->m_spaceGlyph;
             advances[clusters[k]] = logicalSpaceWidth;
-            spaceCharacters[clusters[k]] = m_currentCharacter + k + m_items[i].iCharPos;
+            spaceCharacters[clusters[k]] = m_currentCharacter + k + item.iCharPos;
         }
 
         if (Font::isRoundingHackCharacter(ch))
-            roundingHackCharacters[clusters[k]] = m_currentCharacter + k + m_items[i].iCharPos;
+            roundingHackCharacters[clusters[k]] = m_currentCharacter + k + item.iCharPos;
 
-        int boundary = k + m_currentCharacter + m_items[i].iCharPos;
+        int boundary = k + m_currentCharacter + item.iCharPos;
         if (boundary < m_run.length() &&
             Font::isRoundingHackCharacter(*(str + k + 1)))
             roundingHackWordBoundaries[clusters[k]] = boundary;
@@ -344,7 +325,7 @@ bool UniscribeController::shapeAndPlaceItem(const UChar* cp, unsigned i, bool sm
 
                 // Account for word-spacing.
                 int characterIndex = spaceCharacters[k];
-                if (characterIndex > 0 && !Font::treatAsSpace(*m_run.data(characterIndex-1)) && m_font.wordSpacing())
+                if (characterIndex > 0 && !Font::treatAsSpace(*m_run.data(characterIndex - 1)) && m_font.wordSpacing())
                     advance += m_font.wordSpacing();
             }
         }

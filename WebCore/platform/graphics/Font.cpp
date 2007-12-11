@@ -344,14 +344,10 @@ bool Font::operator==(const Font& other) const
            && m_letterSpacing == other.m_letterSpacing
            && m_wordSpacing == other.m_wordSpacing;
 }
-    
-// FIXME: It is unfortunate that this function needs to be passed the original cluster.
-// It is only required for the platform's FontCache::getFontDataForCharacters(), and it means
-// that this function is not correct if it transforms the character to uppercase and calls
-// FontCache::getFontDataForCharacters() afterwards.
-const GlyphData& Font::glyphDataForCharacter(UChar32 c, bool mirror) const
+
+const GlyphData& Font::glyphDataForCharacter(UChar32 c, bool mirror, bool forceSmallCaps) const
 {
-    bool useSmallCapsFont = false;
+    bool useSmallCapsFont = forceSmallCaps;
     if (m_fontDescription.smallCaps()) {
         UChar32 upperC = Unicode::toUpper(c);
         if (upperC != c) {

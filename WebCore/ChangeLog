@@ -1,3 +1,30 @@
+2007-12-11  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        - fix <rdar://problem/5631507> Text doesn't wrap properly at Tamil version of Wikipedia
+
+        Test: fast/text/international/complex-character-based-fallback.html
+
+        * platform/graphics/Font.cpp:
+        (WebCore::Font::glyphDataForCharacter): Added a forceSmallCaps argument
+        that forces this function to use the small caps font. It is used for
+        combining marks that need to combine with a small cap.
+        * platform/graphics/Font.h:
+        * platform/win/UniscribeController.cpp:
+        (WebCore::UniscribeController::advance): Changed to split the string
+        into runs of characters that will be rendered using the same FontData.
+        This is done by calling glyphDataForCharacter() for each cahracter to
+        find the FontData it should be rendered with.
+        (WebCore::UniscribeController::itemizeShapeAndPlace): Added a fontData
+        argument that is passed on to shapeAndPlaceItem() instead of the
+        smallCaps argument.
+        (WebCore::UniscribeController::shapeAndPlaceItem): Added a fontData
+        argument and removed the font fallback logic from this function, as
+        it is now expected to be called with an item all of whose characters
+        can be rendered with the given fontData.
+        * platform/win/UniscribeController.h:
+
 2007-12-07  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin.

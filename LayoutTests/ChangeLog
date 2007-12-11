@@ -1,3 +1,19 @@
+2007-12-11  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        - test for <rdar://problem/5631507> Text doesn't wrap properly at Tamil version of Wikipedia
+
+        * fast/text/international/complex-character-based-fallback.html: Added.
+        * platform/mac-leopard/fast/text/international/complex-character-based-fallback-expected.checksum: Added.
+        * platform/mac-leopard/fast/text/international/complex-character-based-fallback-expected.png: Added.
+        * platform/mac/fast/text/international/complex-character-based-fallback-expected.txt: Added.
+        * platform/win/fast/text: Added.
+        * platform/win/fast/text/international: Added.
+        * platform/win/fast/text/international/complex-character-based-fallback-expected.checksum: Added.
+        * platform/win/fast/text/international/complex-character-based-fallback-expected.png: Added.
+        * platform/win/fast/text/international/complex-character-based-fallback-expected.txt: Added.
+
 2007-12-07  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin.
