@@ -66,7 +66,7 @@ Completion Interpreter::checkSyntax(ExecState* exec, const UString& sourceURL, i
 
     int errLine;
     UString errMsg;
-    RefPtr<ProgramNode> progNode = parser().parseProgram(sourceURL, startingLineNumber, code, codeLength, 0, &errLine, &errMsg);
+    RefPtr<ProgramNode> progNode = parser().parse<ProgramNode>(sourceURL, startingLineNumber, code, codeLength, 0, &errLine, &errMsg);
     if (!progNode)
         return Completion(Throw, Error::create(exec, SyntaxError, errMsg, errLine, 0, sourceURL));
     return Completion(Normal);
@@ -90,7 +90,7 @@ Completion Interpreter::evaluate(ExecState* exec, const UString& sourceURL, int 
     int sourceId;
     int errLine;
     UString errMsg;
-    RefPtr<ProgramNode> progNode = parser().parseProgram(sourceURL, startingLineNumber, code, codeLength, &sourceId, &errLine, &errMsg);
+    RefPtr<ProgramNode> progNode = parser().parse<ProgramNode>(sourceURL, startingLineNumber, code, codeLength, &sourceId, &errLine, &errMsg);
     
     // notify debugger that source has been parsed
     if (globalObject->debugger()) {

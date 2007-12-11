@@ -26,7 +26,6 @@
 #include "Parser.h"
 
 #include "lexer.h"
-#include "nodes.h"
 #include <wtf/HashSet.h>
 #include <wtf/Vector.h>
 
@@ -39,7 +38,8 @@ Parser::Parser()
 {
 }
 
-PassRefPtr<ProgramNode> Parser::parseProgram(const UString& sourceURL, int startingLineNumber,
+template <class ParsedNode>
+PassRefPtr<ParsedNode> Parser::parse(const UString& sourceURL, int startingLineNumber,
     const UChar* code, unsigned length,
     int* sourceId, int* errLine, UString* errMsg)
 {
@@ -49,26 +49,10 @@ PassRefPtr<ProgramNode> Parser::parseProgram(const UString& sourceURL, int start
         m_sourceURL = UString();
         return 0;
     }
-    RefPtr<ProgramNode> program = new ProgramNode(m_sourceElements.release());
+    RefPtr<ParsedNode> node = new ParsedNode(m_sourceElements.release());
     m_sourceURL = UString();
-    program->setLoc(startingLineNumber, m_lastLine);
-    return program.release();
-}
-
-PassRefPtr<FunctionBodyNode> Parser::parseFunctionBody(const UString& sourceURL, int startingLineNumber,
-    const UChar* code, unsigned length,
-    int* sourceId, int* errLine, UString* errMsg)
-{
-    m_sourceURL = sourceURL;
-    parse(startingLineNumber, code, length, sourceId, errLine, errMsg);
-    if (!m_sourceElements) {
-        m_sourceURL = UString();
-        return 0;
-    }
-    RefPtr<FunctionBodyNode> body = new FunctionBodyNode(m_sourceElements.release());
-    m_sourceURL = UString();
-    body->setLoc(startingLineNumber, m_lastLine);
-    return body;
+    node->setLoc(startingLineNumber, m_lastLine);
+    return node.release();
 }
 
 void Parser::parse(int startingLineNumber,

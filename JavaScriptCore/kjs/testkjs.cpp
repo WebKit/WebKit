@@ -248,7 +248,7 @@ static bool prettyPrintScript(const UString& fileName, const Vector<char>& scrip
   int errLine = 0;
   UString errMsg;
   UString scriptUString(script.data());
-  RefPtr<ProgramNode> programNode = parser().parseProgram(fileName, 0, scriptUString.data(), scriptUString.size(), 0, &errLine, &errMsg);
+  RefPtr<ProgramNode> programNode = parser().parse<ProgramNode>(fileName, 0, scriptUString.data(), scriptUString.size(), 0, &errLine, &errMsg);
   if (!programNode) {
     fprintf(stderr, "%s:%d: %s.\n", fileName.UTF8String().c_str(), errLine, errMsg.UTF8String().c_str());
     return false;
