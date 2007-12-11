@@ -49,6 +49,10 @@ namespace WebCore
 void setCookies(const KURL& url, const KURL& policyURL, const String& value)
 {
 #if USE(CFNETWORK)
+    // <rdar://problem/5632883> CFHTTPCookieStorage happily stores an empty cookie, which would be sent as "Cookie: =".
+    if (value.isEmpty())
+        return;
+
     CFHTTPCookieStorageRef defaultCookieStorage = wkGetDefaultHTTPCookieStorage();
     if (!defaultCookieStorage)
         return;
@@ -91,7 +95,17 @@ String cookies(const KURL& url)
     bool secure = equalIgnoringCase(url.protocol(), "https");
 
     RetainPtr<CFArrayRef> cookiesCF(AdoptCF, CFHTTPCookieStorageCopyCookiesForURL(defaultCookieStorage, urlCF.get(), secure));
-    RetainPtr<CFDictionaryRef> headerCF(AdoptCF, CFHTTPCookieCopyRequestHeaderFields(kCFAllocatorDefault, cookiesCF.get()));
+
+    // <rdar://problem/5632883> CFHTTPCookieStorage happily stores an empty cookie, which would be sent as "Cookie: =".
+    // We have a workaround in setCookies() to prevent that, but we also need to avoid sending cookies that were previously stored.
+    CFIndex count = CFArrayGetCount(cookiesCF.get());
+    RetainPtr<CFMutableArrayRef> cookiesForURLFilteredCopy(AdoptCF, CFArrayCreateMutable(0, count, &kCFTypeArrayCallBacks));
+    for (CFIndex i = 0; i < count; ++i) {
+        CFHTTPCookieRef cookie = (CFHTTPCookieRef)CFArrayGetValueAtIndex(cookiesCF.get(), i);
+        if (CFStringGetLength(CFHTTPCookieGetName(cookie)) != 0)
+            CFArrayAppendValue(cookiesForURLFilteredCopy.get(), cookie);
+    }
+    RetainPtr<CFDictionaryRef> headerCF(AdoptCF, CFHTTPCookieCopyRequestHeaderFields(kCFAllocatorDefault, cookiesForURLFilteredCopy.get()));
 
     return (CFStringRef)CFDictionaryGetValue(headerCF.get(), s_cookieCF);
 #else

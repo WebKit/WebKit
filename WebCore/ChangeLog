@@ -1,3 +1,21 @@
+2007-12-11  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        http://bugs.webkit.org/show_bug.cgi?id=16325
+        <rdar://problem/5632997> REGRESSION: www.xerox.ru doesn't work
+
+        Fix this on Windows, too!
+
+        Test: http/tests/misc/empty-cookie.html
+
+        * platform/network/win/CookieJarWin.cpp:
+        (WebCore::setCookies):
+        (WebCore::cookies):
+        Same fix as on Mac, translated into CF.
+
+        * platform/win/CookieJarWin.cpp: Removed - the real one is in platform/network/win.
+
 2007-12-11  Christian Dywan  <christian@twotoasts.de>
 
         Reviewed by Alp Toker.
