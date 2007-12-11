@@ -27,6 +27,7 @@
 #include "StringHash.h"
 #include <wtf/Assertions.h>
 #include <wtf/HashMap.h>
+#include <wtf/MathExtras.h>
 
 namespace WebCore {
 

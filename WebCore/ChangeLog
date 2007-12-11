@@ -1,3 +1,9 @@
+2007-12-10  Sam Weinig  <sam@webkit.org>
+
+        Fix non-mac builds.
+
+        * page/WindowFeatures.cpp: #include <wtf/MathExtras.h> for isnan.
+
 2007-12-10  Marvin Decker  <marv.decker@gmail.com>
 
         Reviewed by Darin.
