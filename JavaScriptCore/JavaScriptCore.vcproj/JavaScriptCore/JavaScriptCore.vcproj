@@ -319,14 +319,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\JSVariableObject.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\kjs\JSVariableObject.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\kjs\JSImmediate.cpp"
 				>
 			</File>
@@ -340,6 +332,14 @@
 			</File>
 			<File
 				RelativePath="..\..\kjs\JSLock.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\kjs\JSVariableObject.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\kjs\JSVariableObject.h"
 				>
 			</File>
 			<File

@@ -38,23 +38,6 @@ Parser::Parser()
 {
 }
 
-template <class ParsedNode>
-PassRefPtr<ParsedNode> Parser::parse(const UString& sourceURL, int startingLineNumber,
-    const UChar* code, unsigned length,
-    int* sourceId, int* errLine, UString* errMsg)
-{
-    m_sourceURL = sourceURL;
-    parse(startingLineNumber, code, length, sourceId, errLine, errMsg);
-    if (!m_sourceElements) {
-        m_sourceURL = UString();
-        return 0;
-    }
-    RefPtr<ParsedNode> node = new ParsedNode(m_sourceElements.release());
-    m_sourceURL = UString();
-    node->setLoc(startingLineNumber, m_lastLine);
-    return node.release();
-}
-
 void Parser::parse(int startingLineNumber,
     const UChar* code, unsigned length,
     int* sourceId, int* errLine, UString* errMsg)
