@@ -1,3 +1,17 @@
+2007-12-10  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        - test for http://bugs.webkit.org/show_bug.cgi?id=16379
+          REGRESSION(r28525): Failures in http/tests/xmlhttprequest/response-encoding.html and
+          fast/dom/xmlhttprequest-html-response-encoding.html
+          and <rdar://problem/5640230> REGRESSION (306A4-ToT): Access violation in PCRE function
+          find_firstassertedchar
+
+        * fast/js/regexp-find-first-asserted-expected.txt: Added.
+        * fast/js/regexp-find-first-asserted.html: Added.
+        * fast/js/resources/regexp-find-first-asserted.js: Added.
+
 2007-12-10  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Adele.

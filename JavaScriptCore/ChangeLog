@@ -1,3 +1,25 @@
+2007-12-10  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=16379
+          REGRESSION(r28525): Failures in http/tests/xmlhttprequest/response-encoding.html and
+          fast/dom/xmlhttprequest-html-response-encoding.html
+          and <rdar://problem/5640230> REGRESSION (306A4-ToT): Access violation in PCRE function
+          find_firstassertedchar
+
+        Test: fast/js/regexp-find-first-asserted.html
+
+        * pcre/pcre_compile.cpp:
+        (compileBracket): Take out unnecessary initialization of out parameters.
+        (branchFindFirstAssertedCharacter): Added. Broke out the half of the function that handles
+        a branch.
+        (bracketFindFirstAssertedCharacter): Renamed from find_firstassertedchar. Also removed the
+        options parameter -- the caller can handle the options.
+        (jsRegExpCompile): Changed call site to call the appropriate bracket or branch version of
+        the find_firstassertedchar function. Also put the REQ_IGNORE_CASE code here instead of
+        passing in the options.
+
 2007-12-10  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Sam Weinig.
