@@ -1,3 +1,15 @@
+2007-12-10  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Darin.
+    
+        <rdar://problem/5636865>
+        WebKit needs API to allow registering a protocol as local (RSS feeds appear unstyled)
+        
+        * Interfaces/IWebView.idl:
+        * WebView.cpp:
+        (WebView::registerURLSchemeAsLocal):
+        * WebView.h:
+
 2007-12-11  Ada Chan  <adachan@apple.com>
 
         Updated the database SPI to take in IWebFrame.

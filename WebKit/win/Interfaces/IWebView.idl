@@ -738,6 +738,14 @@ interface IWebView : IUnknown
         - (NSImage *)mainFrameIcon;
     */
     HRESULT mainFrameIcon([out, retval] OLE_HANDLE* hBitmap);
+
+    /*!
+        @method registerURLSchemeAsLocal
+        @discussion Adds the scheme to the list of schemes to be treated as local.
+        @param scheme The scheme to register.
+        + (void)registerURLSchemeAsLocal:(NSString *)scheme;
+    */
+    HRESULT registerURLSchemeAsLocal([in] BSTR scheme);
 }
 
 /*

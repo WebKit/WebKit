@@ -292,6 +292,9 @@ public:
     virtual HRESULT STDMETHODCALLTYPE mainFrameIcon( 
         /* [retval][out] */ OLE_HANDLE *hBitmap);
 
+    virtual HRESULT STDMETHODCALLTYPE registerURLSchemeAsLocal( 
+        /* [in] */ BSTR scheme);
+
     // IWebIBActions
 
     virtual HRESULT STDMETHODCALLTYPE takeStringURLFrom( 

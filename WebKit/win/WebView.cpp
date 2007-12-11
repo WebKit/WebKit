@@ -2955,6 +2955,17 @@ HRESULT STDMETHODCALLTYPE WebView::mainFrameIcon(
     return E_NOTIMPL;
 }
 
+HRESULT STDMETHODCALLTYPE WebView::registerURLSchemeAsLocal( 
+        /* [in] */ BSTR scheme)
+{
+    if (!scheme)
+        return E_POINTER;
+
+    FrameLoader::registerURLSchemeAsLocal(String(scheme, ::SysStringLen(scheme)));
+
+    return S_OK;
+}
+
 // IWebIBActions ---------------------------------------------------------------
 
 HRESULT STDMETHODCALLTYPE WebView::takeStringURLFrom( 
