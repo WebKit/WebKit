@@ -51,6 +51,7 @@ public:
     virtual void mediaPlayerVolumeChanged(MediaPlayer*) { }
     virtual void mediaPlayerTimeChanged(MediaPlayer*) { }
     virtual void mediaPlayerCuePointReached(MediaPlayer*, float cueTime) { }
+    virtual void mediaPlayerRepaint(MediaPlayer*) { }
 };
 
 class MediaPlayer : Noncopyable {
@@ -122,6 +123,8 @@ public:
     void timeChanged();
     void cuePointReached(float cueTime);
 
+    void repaint();
+    
 private:
         
     friend class MediaPlayerPrivate;

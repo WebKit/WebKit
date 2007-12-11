@@ -97,6 +97,7 @@ public:
     void volumeChanged();
     void didEnd();
     
+    void repaint();
     void paint(GraphicsContext*, const IntRect&);
     
     static void getSupportedTypes(HashSet<String>& types);
@@ -104,6 +105,7 @@ public:
 private:
     void createQTMovie(const String& url);
     void createQTMovieView();
+    void detachQTMovieView();
     QTTime createQTTime(float time) const;
     
     void updateStates();

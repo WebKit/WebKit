@@ -918,6 +918,12 @@ void HTMLMediaElement::mediaPlayerCuePointReached(MediaPlayer*, float cueTime)
     }      
 }
 
+void HTMLMediaElement::mediaPlayerRepaint(MediaPlayer*)
+{
+    if (renderer())
+        renderer()->repaint();
+}
+
 void HTMLMediaElement::addCuePoint(float time, VoidCallback* voidCallback, bool pause)
 {
     if (time < 0 || !isfinite(time))

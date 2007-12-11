@@ -277,5 +277,11 @@ void MediaPlayer::cuePointReached(float cueTime)
         m_mediaPlayerClient->mediaPlayerCuePointReached(this, cueTime);
 }
 
+void MediaPlayer::repaint()
+{
+    if (m_mediaPlayerClient)
+        m_mediaPlayerClient->mediaPlayerRepaint(this);
+}
+
 }
 #endif

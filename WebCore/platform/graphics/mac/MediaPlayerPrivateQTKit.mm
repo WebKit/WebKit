@@ -39,6 +39,15 @@
 #import <QTKit/QTKit.h>
 #import <objc/objc-runtime.h>
 
+#ifdef BUILDING_ON_TIGER
+static IMP method_setImplementation(Method m, IMP imp)
+{
+    IMP result = m->method_imp;
+    m->method_imp = imp;
+    return result;
+}
+#endif
+
 SOFT_LINK_FRAMEWORK(QTKit)
 
 SOFT_LINK(QTKit, QTMakeTime, QTTime, (long long timeValue, long timeScale), (timeValue, timeScale))
@@ -93,6 +102,7 @@ using namespace std;
 }
 -(id)initWithCallback:(MediaPlayerPrivate*)callback;
 -(void)disconnect;
+-(void)repaint;
 -(void)setDelayCallbacks:(BOOL)shouldDelay;
 -(void)loadStateChanged:(NSNotification *)notification;
 -(void)rateChanged:(NSNotification *)notification;
@@ -123,8 +133,8 @@ MediaPlayerPrivate::MediaPlayerPrivate(MediaPlayer* player)
 
 MediaPlayerPrivate::~MediaPlayerPrivate()
 {
-    if (m_qtMovieView)
-        [m_qtMovieView.get() removeFromSuperview];
+    detachQTMovieView();
+
     [[NSNotificationCenter defaultCenter] removeObserver:m_objcObserver.get()];
     [m_objcObserver.get() disconnect];
 }
@@ -171,23 +181,59 @@ void MediaPlayerPrivate::createQTMovie(const String& url)
                                                object:m_qtMovie.get()];
 }
 
+static void mainThreadSetNeedsDisplay(id self, SEL _cmd)
+{
+    id movieView = [self superview];
+    ASSERT(!movieView || [movieView isKindOfClass:[QTMovieView class]]);
+    if (!movieView || ![movieView isKindOfClass:[QTMovieView class]])
+        return;
+
+    WebCoreMovieObserver* delegate = [movieView delegate];
+    ASSERT(!delegate || [delegate isKindOfClass:[WebCoreMovieObserver class]]);
+    if (!delegate || ![delegate isKindOfClass:[WebCoreMovieObserver class]])
+        return;
+
+    [delegate repaint];
+}
+
 void MediaPlayerPrivate::createQTMovieView()
 {
-    if (m_qtMovieView) {
-        [m_qtMovieView.get() removeFromSuperview];
-        m_qtMovieView = nil;
-    }
+    detachQTMovieView();
+
     if (!m_player->m_parentWidget || !m_qtMovie)
         return;
+
+    static bool addedCustomMethods = false;
+    if (!addedCustomMethods) {
+        Class QTMovieContentViewClass = NSClassFromString(@"QTMovieContentView");
+        ASSERT(QTMovieContentViewClass);
+
+        Method mainThreadSetNeedsDisplayMethod = class_getInstanceMethod(QTMovieContentViewClass, @selector(_mainThreadSetNeedsDisplay));
+        ASSERT(mainThreadSetNeedsDisplayMethod);
+
+        method_setImplementation(mainThreadSetNeedsDisplayMethod, reinterpret_cast<IMP>(mainThreadSetNeedsDisplay));
+        addedCustomMethods = true;
+    }
+
     m_qtMovieView.adoptNS([[QTMovieView alloc] initWithFrame:m_player->rect()]);
     NSView* parentView = static_cast<ScrollView*>(m_player->m_parentWidget)->getDocumentView();
     [parentView addSubview:m_qtMovieView.get()];
+    [m_qtMovieView.get() setDelegate:m_objcObserver.get()];
     [m_qtMovieView.get() setMovie:m_qtMovie.get()];
     [m_qtMovieView.get() setControllerVisible:NO];
     [m_qtMovieView.get() setPreservesAspectRatio:YES];
     // the area not covered by video should be transparent
     [m_qtMovieView.get() setFillColor:[NSColor clearColor]];
     wkQTMovieViewSetDrawSynchronously(m_qtMovieView.get(), YES);
+}
+
+void MediaPlayerPrivate::detachQTMovieView()
+{
+    if (m_qtMovieView) {
+        [m_qtMovieView.get() setDelegate:nil];
+        [m_qtMovieView.get() removeFromSuperview];
+        m_qtMovieView = nil;
+    }
 }
 
 QTTime MediaPlayerPrivate::createQTTime(float time) const
@@ -476,10 +522,7 @@ void MediaPlayerPrivate::cancelLoad()
     if (m_networkState < MediaPlayer::Loading || m_networkState == MediaPlayer::Loaded)
         return;
     
-    if (m_qtMovieView) {
-        [m_qtMovieView.get() removeFromSuperview];
-        m_qtMovieView = nil;
-    }
+    detachQTMovieView();
     m_qtMovie = nil;
     
     updateStates();
@@ -570,10 +613,13 @@ void MediaPlayerPrivate::setVisible(bool b)
 {
     if (b)
         createQTMovieView();
-    else if (m_qtMovieView) {
-        [m_qtMovieView.get() removeFromSuperview];
-        m_qtMovieView = nil;
-    }
+    else
+        detachQTMovieView();
+}
+
+void MediaPlayerPrivate::repaint()
+{
+    m_player->repaint();
 }
 
 void MediaPlayerPrivate::paint(GraphicsContext* context, const IntRect& r)
@@ -626,6 +672,14 @@ void MediaPlayerPrivate::getSupportedTypes(HashSet<String>& types)
 {
     [NSObject cancelPreviousPerformRequestsWithTarget:self];
     m_callback = 0;
+}
+
+-(void)repaint
+{
+    if (m_delayCallbacks)
+        [self performSelector:_cmd withObject:nil afterDelay:0.];
+    else if (m_callback)
+        m_callback->repaint();
 }
 
 - (void)loadStateChanged:(NSNotification *)notification

@@ -142,7 +142,8 @@ private: // MediaPlayerObserver
     virtual void mediaPlayerTimeChanged(MediaPlayer*);
     virtual void mediaPlayerVolumeChanged(MediaPlayer*);
     virtual void mediaPlayerCuePointReached(MediaPlayer*, float cueTime);
-        
+    virtual void mediaPlayerRepaint(MediaPlayer*);
+
 private:
     void loadTimerFired(Timer<HTMLMediaElement>*);
     void asyncEventTimerFired(Timer<HTMLMediaElement>*);

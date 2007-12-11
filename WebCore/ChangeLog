@@ -1,3 +1,34 @@
+2007-12-10  Adele Peterson  <adele@apple.com>
+
+        Reviewed and partially fixed by Tim Hatcher.
+
+        Remaining part of fix for <rdar://problem/5633400>
+        Transformed <video> is not clipped correctly until a repaint is forced
+
+        Replace the implementation of a QTKit method to avoid repaints from the NSView system associated with the QTMovie
+        from clobbering the WebCore repaints.
+
+        * html/HTMLMediaElement.cpp: (WebCore::HTMLMediaElement::mediaPlayerRepaint): Added.
+        * html/HTMLMediaElement.h:
+        * platform/graphics/MediaPlayer.cpp: (WebCore::MediaPlayer::repaint): Added.
+        * platform/graphics/MediaPlayer.h: (WebCore::MediaPlayerClient::mediaPlayerRepaint): Added.
+
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.h:
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.mm:
+        (method_setImplementation): Added for Tiger.
+
+        (WebCore::MediaPlayerPrivate::~MediaPlayerPrivate): Call detachQTMovieView, which now does more cleanup.
+        (WebCore::MediaPlayerPrivate::cancelLoad): ditto.
+        (WebCore::MediaPlayerPrivate::setVisible): ditto.
+        (WebCore::MediaPlayerPrivate::detachQTMovieView): Clear the delegate as well as m_qtMovieView pointer.
+
+        (WebCore::MediaPlayerPrivate::repaint): Added.  Triggers a repaint on the video renderer.
+        (-[WebCoreMovieObserver repaint]): ditto.
+
+        (WebCore::mainThreadSetNeedsDisplay): Added.
+         Does a WebCore repaint instead of going through the view repaint system for QTMovieView.
+        (WebCore::MediaPlayerPrivate::createQTMovieView): Replace the implementation of _mainThreadSetNeedsDisplay.
+
 2007-12-10  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Sam Weinig.
