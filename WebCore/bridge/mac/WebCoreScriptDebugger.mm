@@ -284,7 +284,7 @@ class WebCoreScriptDebuggerImp : public KJS::Debugger {
 
 - (NSArray *)scopeChain
 {
-    if (!_state->currentBody()) {  // global frame
+    if (!_state->scopeNode()) {  // global frame
         return [NSArray arrayWithObject:_globalObj];
     }
 
@@ -307,7 +307,7 @@ class WebCoreScriptDebuggerImp : public KJS::Debugger {
 
 - (NSString *)functionName
 {
-    if (_state->currentBody()) {
+    if (_state->scopeNode()) {
         FunctionImp *func = _state->function();
         if (func) {
             Identifier fn = func->functionName();
@@ -347,7 +347,7 @@ class WebCoreScriptDebuggerImp : public KJS::Debugger {
 
     // find "eval"
     JSObject *eval = NULL;
-    if (state->currentBody()) {  // "eval" won't work without context (i.e. at global scope)
+    if (state->scopeNode()) {  // "eval" won't work without context (i.e. at global scope)
         JSValue *v = globalObject->get(state, "eval");
         if (v->isObject() && static_cast<JSObject *>(v)->implementsCall())
             eval = static_cast<JSObject *>(v);

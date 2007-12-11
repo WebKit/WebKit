@@ -146,7 +146,7 @@ HRESULT STDMETHODCALLTYPE WebScriptCallFrame::functionName(
 
     *funcName = 0;
 
-    if (!m_state->currentBody())
+    if (!m_state->scopeNode())
         return S_OK;
 
     FunctionImp* func = m_state->function();
@@ -227,7 +227,7 @@ JSValue* WebScriptCallFrame::valueByEvaluatingJavaScriptFromString(BSTR script)
 
     // find "eval"
     JSObject* eval = 0;
-    if (state->currentBody()) {  // "eval" won't work without context (i.e. at global scope)
+    if (state->scopeNode()) {  // "eval" won't work without context (i.e. at global scope)
         JSValue* v = globObj->get(state, "eval");
         if (v->isObject() && static_cast<JSObject*>(v)->implementsCall())
             eval = static_cast<JSObject*>(v);

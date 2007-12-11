@@ -33,14 +33,14 @@ namespace KJS {
 
 // ECMA 10.2
 ExecState::ExecState(JSGlobalObject* globalObject, JSObject* thisV, 
-                     FunctionBodyNode* currentBody, CodeType type, ExecState* callingExec, ExecState* currentExec,
+                     ScopeNode* scopeNode, CodeType type, ExecState* callingExec, ExecState* currentExec,
                      FunctionImp* func, const List* args)
     : m_globalObject(globalObject)
     , m_exception(0)
     , m_propertyNames(CommonIdentifiers::shared())
     , m_callingExec(callingExec)
     , m_savedExec(currentExec)
-    , m_currentBody(currentBody)
+    , m_scopeNode(scopeNode)
     , m_function(func)
     , m_arguments(args)
     , m_iterationDepth(0)
@@ -77,7 +77,7 @@ ExecState::ExecState(JSGlobalObject* globalObject, JSObject* thisV,
         break;
     }
 
-    if (currentBody)
+    if (scopeNode)
         m_globalObject->setCurrentExec(this);
 }
 

@@ -1,3 +1,14 @@
+2007-12-10  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Updated for rename in JavaScriptCore.
+
+        * bridge/mac/WebCoreScriptDebugger.mm:
+        (-[WebCoreScriptCallFrame scopeChain]):
+        (-[WebCoreScriptCallFrame functionName]):
+        (-[WebCoreScriptCallFrame evaluateWebScript:]):
+
 2007-12-10  Rodney Dawes  <dobey@wayofthemonkey.com>
 
         Bug 16383: Ambiguous Window Usage in kjs_dom.cpp

@@ -55,8 +55,9 @@ namespace KJS {
             {
             }
 
-            LocalStorage localStorage;
-            SymbolTable* symbolTable;
+            LocalStorage localStorage; // Storage for variables in the symbol table.
+            SymbolTable* symbolTable; // Maps name -> index in localStorage.
+
         };
 
         JSVariableObject(JSVariableObjectData* data)

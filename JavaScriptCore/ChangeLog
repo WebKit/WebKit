@@ -1,5 +1,36 @@
 2007-12-10  Geoffrey Garen  <ggaren@apple.com>
 
+        Reviewed by Sam Weinig.
+
+        Split this:
+        
+                            FunctionBodyNode
+                                    ^
+                                    |
+                                ProgramNode
+            
+        into this:
+            
+                                ScopeNode
+                ^                   ^                   ^
+                |                   |                   |
+        FunctionBodyNode        ProgramNode         EvalNode
+
+        in preparation for specializing each class more while optimizing global
+        variable access.
+        
+        Also removed some cruft from the FunctionBodyNode interface to simplify
+        things.
+        
+        SunSpider says this patch is a .8% speedup, which seems reasonable,
+        since it eliminates a few branches and adds KJS_FAST_CALL in a few
+        places.
+        
+        Layout tests and JS tests pass. Also, this baby builds on Windows! (Qt
+        mileage may vary...)
+
+2007-12-10  Geoffrey Garen  <ggaren@apple.com>
+
         RS by Mark Rowe.
         
         Mac build fix: added some exported symbols, now that Parser::parse is

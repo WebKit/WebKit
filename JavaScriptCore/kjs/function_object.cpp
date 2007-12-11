@@ -231,11 +231,11 @@ JSObject* FunctionObjectImp::construct(ExecState* exec, const List& args, const 
           while (i < len && *c == ' ')
               c++, i++;
           if (i == len) {
-              functionBody->addParam(Identifier(param));
+              functionBody->parameters().append(Identifier(param));
               params++;
               break;
           } else if (*c == ',') {
-              functionBody->addParam(Identifier(param));
+              functionBody->parameters().append(Identifier(param));
               params++;
               c++, i++;
               continue;
