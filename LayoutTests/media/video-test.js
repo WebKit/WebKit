@@ -2,13 +2,15 @@ if (window.layoutTestController) {
     layoutTestController.dumpAsText();
     layoutTestController.waitUntilDone();
 }
-
-var video = document.getElementsByTagName('video')[0];
+var video;
 var media;
-if (video)
-    media = video;
 var console = document.createElement('div');
 document.body.appendChild(console);
+try {
+    video = document.getElementsByTagName('video')[0];
+    if (video)
+        media = video;
+} catch (ex) { }
 
 function hanged()
 {

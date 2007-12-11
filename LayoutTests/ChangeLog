@@ -1,3 +1,19 @@
+2007-12-10  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Adele.
+        
+        The load events could fire before the event listener was registered making these tests fail occasionally.
+        
+        No changes to test results.
+
+        * media/video-source-media.html:
+        * media/video-source-type.html:
+        * media/video-source.html:
+        * media/video-src-remove.html:
+        * media/video-src-source.html:
+        * media/video-src.html:
+        * media/video-test.js:
+
 2007-12-10  Stephanie  <slewis@apple.com>
 
         Rubber-stamped by Sam.

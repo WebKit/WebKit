@@ -1,11 +1,13 @@
-<video src=bogus controls>
-    <source src=content/test.mp4></source>
-</video>
+<body>
 <div>
 Test that removing src attribute triggers load
 </div>
 <script src=video-test.js></script>
+<video src=bogus controls>
+    <source src=content/test.mp4></source>
+</video>
 <script>
+video = media = document.getElementsByTagName('video')[0];
 waitForEvent('emptied', function () {
     video.removeAttribute('src')
     waitForEventTestAndEnd('begin', "relativeURL(video.currentSrc) == 'content/test.mp4'");
