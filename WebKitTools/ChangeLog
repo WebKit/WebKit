@@ -1,3 +1,13 @@
+2007-12-11  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Anders
+
+        Make DumpRenderTree on mac use its own path for Databases testing
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (setDefaultsToConsistentValuesForTesting): Keep a string to ~/Library/Application Support/DumpRenderTree 
+          for future DRT-only use, then use it to construct the Databases path and set that default
+
 2007-12-07  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin.

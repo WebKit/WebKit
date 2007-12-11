@@ -52,6 +52,7 @@
 #import <WebKit/DOMRange.h>
 #import <WebKit/WebBackForwardList.h>
 #import <WebKit/WebCoreStatistics.h>
+#import <WebKit/WebDatabaseManagerPrivate.h>
 #import <WebKit/WebDataSourcePrivate.h>
 #import <WebKit/WebDocumentPrivate.h>
 #import <WebKit/WebEditingDelegate.h>
@@ -244,6 +245,9 @@ static void setDefaultsToConsistentValuesForTesting()
     [defaults setObject:@"0.500000 0.500000 0.500000" forKey:@"AppleOtherHighlightColor"];
     [defaults setObject:[NSArray arrayWithObject:@"en"] forKey:@"AppleLanguages"];
 
+    NSString *libraryPath = [@"~/Library/Application Support/DumpRenderTree" stringByExpandingTildeInPath];
+    [defaults setObject:[libraryPath stringByAppendingPathComponent:@"Databases"] forKey:WebDatabaseDirectoryDefaultsKey];
+    
     WebPreferences *preferences = [WebPreferences standardPreferences];
 
     [preferences setStandardFontFamily:@"Times"];
