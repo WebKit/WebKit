@@ -1,3 +1,14 @@
+2007-12-07  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Oliver.
+
+        - <rdar://5599845> Drosera: Does not show loal files in the file list
+        on the left side.
+
+        * Drosera/debugger.js: - Updated url dividing regex to handle %s and :s.
+        * Drosera/win/Drosera.vcproj/Drosera.vcproj: - Updated Debug settings
+        so the open source community can build.
+
 2007-12-10  Brady Eidson  <beidson@apple.com>
 
         Rubberstamped by Sam Weinig

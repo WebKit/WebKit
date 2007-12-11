@@ -1019,7 +1019,7 @@ function loadFile(fileIndex, manageNavLists)
     file.element.style.removeProperty("display");
 
     document.getElementById("filesPopupButtonContent").innerText = (file.url ? file.url : "(unknown script)");
-    
+
     var filesSelect = document.getElementById("files");
     for (var i = 0; i < filesSelect.childNodes.length; i++) {
         if (filesSelect.childNodes[i].value == fileIndex) {
@@ -1101,7 +1101,7 @@ function ParsedURL(url)
 {
     // Since we're getting the URL from the browser, we're safe to assume the URL is already well formatted
     // and so there is no need for more sophisticated regular expression here
-    var url_parts = ((url.substring(0,4)).toLowerCase() == "file") ? url.match(/(file:[\/]{2,3}(\w|\.|-|_|\/)+)\/(.*)/) : url.match(/(http[s]?:\/\/(www)?\.?(\w|\.|-)+\w(:\d{1,5})?)\/?(.*)/);    
+    var url_parts = ((url.substring(0,4)).toLowerCase() == "file") ? url.match(/(file:[\/]{2,3}(\w|\.|-|_|\/|\%|\:)+)\/(.*)/) : url.match(/(http[s]?:\/\/(www)?\.?(\w|\.|-)+\w(:\d{1,5})?)\/?(.*)/);
     // the domain here is considered the whole http://www.example.org:8000 or file:///Users/user/folder/file.htm string for display purposes
     this.domain = url_parts[1];
     // the relative path is everything following the domain
@@ -1115,12 +1115,12 @@ function ParsedURL(url)
 function SiteBrowser()
 {
     var fileBrowser = document.getElementById("filesBrowserSites");
-    
+
     this.addURL = function add(url, fileIndex)
     {
         var parsedURL = new ParsedURL(url);
         var divs = fileBrowser.getElementsByTagName("div");
-        
+
         if (divs.length == 0) { 
             addNewDomain(parsedURL, fileIndex);
         } else {
@@ -1144,13 +1144,13 @@ function SiteBrowser()
             }
         }
     }
-    
+
     this.selectInitialFile = function sf()
     {
         if (currentFile == -1)
             document.getElementById("1").className = "active";
     }
-    
+
     function addNewDomain(parsedURL, fileIndex)
     {
         var div = document.createElement("div");
@@ -1169,7 +1169,7 @@ function SiteBrowser()
         div.appendChild(ul);
         fileBrowser.appendChild(div);        
     }
-    
+
     function removeFile(fileIndex)
     {
         var theFile = document.getElementById(fileIndex);
@@ -1251,8 +1251,8 @@ function didParseScript(source, fileSource, url, sourceId, baseLineNumber)
 
         var siteBrowser = new SiteBrowser();
         siteBrowser.addURL(file.url, fileIndex);
-        siteBrowser.selectInitialFile();        
-        
+        siteBrowser.selectInitialFile();
+
         firstLoad = true;
     }
 
