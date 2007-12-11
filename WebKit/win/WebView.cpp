@@ -62,6 +62,7 @@
 #include <WebCore/DragData.h>
 #include <WebCore/Editor.h>
 #include <WebCore/EventHandler.h>
+#include <WebCore/EventNames.h>
 #include <WebCore/FileSystem.h>
 #include <WebCore/FocusController.h>
 #include <WebCore/FontData.h>
@@ -105,6 +106,7 @@
 #include <ShlObj.h>
 
 using namespace WebCore;
+using namespace WebCore::EventNames;
 using KJS::JSLock;
 using std::min;
 using std::max;
@@ -1342,7 +1344,7 @@ const char* WebView::interpretKeyEvent(const KeyboardEvent* evt)
             keyDownCommandsMap->set(keyDownEntries[i].modifiers << 16 | keyDownEntries[i].virtualKey, keyDownEntries[i].name);
 
         for (unsigned i = 0; i < _countof(keyPressEntries); i++)
-            keyPressCommandsMap->set(keyPressEntries[i].modifiers << 16 | keyPressEntries[i].virtualKey, keyPressEntries[i].name);
+            keyPressCommandsMap->set(keyPressEntries[i].modifiers << 16 | keyPressEntries[i].charCode, keyPressEntries[i].name);
     }
 
     unsigned modifiers = 0;
