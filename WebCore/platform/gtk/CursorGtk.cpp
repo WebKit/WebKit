@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
  * Copyright (C) 2006 Michael Emmel mike.emmel@gmail.com 
+ * Copyright (C) 2007 Christian Dywan <christian@twotoasts.de>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -26,16 +27,34 @@
  */
 
 #include "config.h"
-#include "Cursor.h"
+#include "CursorGtk.h"
 
 #include "DeprecatedString.h"
 #include "NotImplemented.h"
 #include <wtf/Assertions.h>
 
 #include <gdk/gdk.h>
-#include <stdio.h>
- 
+#include <gtk/gtk.h>
+
 namespace WebCore {
+
+static GdkCursor* customCursorNew(CustomCursorType cursorType)
+{
+    CustomCursor cursor = CustomCursors[cursorType];
+    GdkCursor* c = gdk_cursor_new_from_name(gdk_display_get_default(), cursor.name);
+    if (!c) {
+        const GdkColor fg = { 0, 0, 0, 0 };
+        const GdkColor bg = { 65535, 65535, 65535, 65535 };
+
+        GdkPixmap* source = gdk_bitmap_create_from_data(NULL, cursor.bits, 32, 32);
+        GdkPixmap* mask = gdk_bitmap_create_from_data(NULL, cursor.mask_bits, 32, 32);
+        c = gdk_cursor_new_from_pixmap(source, mask, &fg, &bg, cursor.hot_x, cursor.hot_y);
+        g_object_unref(source);
+        g_object_unref(mask);
+    }
+    return c;
+}
+
 
 Cursor::Cursor(const Cursor& other)
     : m_impl(other.m_impl)
@@ -89,10 +108,10 @@ const Cursor& handCursor()
     return c;
 }
 
-const Cursor& moveCursor() 
+const Cursor& moveCursor()
 {
     static Cursor c = gdk_cursor_new(GDK_FLEUR);
-    return c; 
+    return c;
 }
 
 const Cursor& iBeamCursor()
@@ -197,60 +216,70 @@ const Cursor& rowResizeCursor()
     return c;
 }
 
-// FIXME: should find better GDK cursors for those than a generic GDK_LEFT_PTR
 const Cursor& verticalTextCursor()
 {
-    return pointerCursor();
+    static Cursor c = customCursorNew(CustomCursorVerticalText);
+    return c;
 }
 
 const Cursor& cellCursor()
 {
+    // TODO: Find a suitable cursor
     return pointerCursor();
 }
 
 const Cursor& contextMenuCursor()
 {
-    return pointerCursor();
+    static Cursor c = customCursorNew(CustomCursorContextMenu);
+    return c;
 }
 
 const Cursor& noDropCursor()
 {
+    // TODO: Find a suitable cursor
     return pointerCursor();
 }
 
 const Cursor& copyCursor()
 {
-    return pointerCursor();
+    static Cursor c = customCursorNew(CustomCursorCopy);
+    return c;
 }
 
 const Cursor& progressCursor()
 {
+    // TODO: Find a suitable cursor
     return pointerCursor();
 }
 
 const Cursor& aliasCursor()
 {
-    return pointerCursor();
+    static Cursor c = customCursorNew(CustomCursorAlias);
+    return c;
 }
 
 const Cursor& noneCursor()
 {
+    // TODO: Find a suitable cursor
     return pointerCursor();
 }
 
 const Cursor& notAllowedCursor()
 {
+    // TODO: Find a suitable cursor
     return pointerCursor();
 }
 
 const Cursor& zoomInCursor()
 {
-    return pointerCursor();
+    static Cursor c = customCursorNew(CustomCursorZoomIn);
+    return c;
 }
 
 const Cursor& zoomOutCursor()
 {
-    return pointerCursor();
+    static Cursor c = customCursorNew(CustomCursorZoomOut);
+    return c;
 }
 
 }

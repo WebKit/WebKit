@@ -1,3 +1,28 @@
+2007-12-11  Christian Dywan  <christian@twotoasts.de>
+
+        Reviewed by Alp Toker.
+
+        http://bugs.webkit.org/show_bug.cgi?id=16371
+        Implement additional mouse cursors for Gtk
+
+        Added cursor bitmaps from Mozilla:
+        http://lxr.mozilla.org/mozilla1.8/source/widget/src/gtk2/nsGtkCursors.h
+
+        * platform/gtk/CursorGtk.cpp:
+        (WebCore::customCursorNew):
+        (WebCore::verticalTextCursor):
+        (WebCore::cellCursor):
+        (WebCore::contextMenuCursor):
+        (WebCore::noDropCursor):
+        (WebCore::copyCursor):
+        (WebCore::progressCursor):
+        (WebCore::aliasCursor):
+        (WebCore::noneCursor):
+        (WebCore::notAllowedCursor):
+        (WebCore::zoomInCursor):
+        (WebCore::zoomOutCursor):
+        * platform/gtk/CursorGtk.h: Added.
+
 2007-12-10  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Weinig, Dan, and Alexey.
