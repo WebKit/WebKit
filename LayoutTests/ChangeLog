@@ -2,6 +2,16 @@
 
         Rubberstamped by Mark.
 
+        Add missing tests - their results have already been checked in over a month ago - I forgot to commit the tests itself.
+
+        * svg/custom/alignment-baseline-modes.svg: Added.
+        * svg/custom/dominant-baseline-hanging.svg: Added.
+        * svg/custom/dominant-baseline-modes.svg: Added.
+
+2007-12-11  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Rubberstamped by Mark.
+
         Update pixel test results now that filters are disabled.
 
         * platform/mac/svg/W3C-SVG-1.1/filters-blend-01-b-expected.checksum:
