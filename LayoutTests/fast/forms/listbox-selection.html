@@ -44,12 +44,12 @@
                 testResults(expectedSelectionResults, 2);
                                 
                 // 3) Select one item with the keyboard (no previous selection)
-                keyPressOnSelect("sl3", "Up", false, false);               
+                keyDownOnSelect("sl3", "upArrow", false, false);               
                 expectedSelectionResults = new Array(false, false, false, false, true);
                 testResults(expectedSelectionResults, 3);
 
                 // 4) Select one item with the keyboard (with previous selection)
-                keyPressOnSelect("sl4", "Down", false, false);
+                keyDownOnSelect("sl4", "downArrow", false, false);
                 expectedSelectionResults = new Array(false, false, true, false, false);
                 testResults(expectedSelectionResults, 4);
 
@@ -64,7 +64,7 @@
                 testResults(expectedSelectionResults, 6);
                 
                 // 7) Attempt to select a range with the keyboard
-                keyPressOnSelect("sl7", "Down", true, false);
+                keyDownOnSelect("sl7", "downArrow", true, false);
                 expectedSelectionResults = new Array(false, false, true, false, false);
                 testResults(expectedSelectionResults, 7);
                 
@@ -82,12 +82,12 @@
                 testResults(expectedSelectionResults, 9);
                 
                 // 10) Select one item with the keyboard (no previous selection)
-                keyPressOnSelect("sl10", "Up", false, false);
+                keyDownOnSelect("sl10", "upArrow", false, false);
                 expectedSelectionResults = new Array(false, false, false, false, true);
                 testResults(expectedSelectionResults, 10);
                                 
                 // 11) Select one item with the keyboard (with previous selection)
-                keyPressOnSelect("sl11", "Down", false, false);
+                keyDownOnSelect("sl11", "downArrow", false, false);
                 expectedSelectionResults = new Array(false, false, true, false, false);
                 testResults(expectedSelectionResults, 11);
                 
@@ -102,7 +102,7 @@
                 testResults(expectedSelectionResults, 13);
                                 
                 // 14) Select a range with the keyboard
-                keyPressOnSelect("sl14", "Down", true, false);
+                keyDownOnSelect("sl14", "downArrow", true, false);
                 expectedSelectionResults = new Array(false, true, true, false, false);
                 testResults(expectedSelectionResults, 14);
                 
@@ -130,21 +130,20 @@
                 sl.dispatchEvent(event);
             }
             
-            function keyPressOnSelect(selId, identifier, shift, metaOrCtrl)
+            function keyDownOnSelect(selId, identifier, shift, metaOrCtrl)
             {
-                var meta = false;
-                var ctrl = false;
+                modifiers = [];
+                if (shift)
+                    modifiers[0] = "shiftKey";
                 if (metaOrCtrl) {
                     if (navigator.userAgent.search(/\bMac OS X\b/) != -1)
-                        meta = true;
+                        modifiers[modifiers.length] = "metaKey";
                     else
-                        ctrl = true;
+                        modifiers[modifiers.length] = "controlKey";
                 }
-                var sl = document.getElementById(selId);
-                sl.focus();
-                var event = document.createEvent("KeyboardEvents");
-                event.initKeyboardEvent("keypress", true, true, document.defaultView, identifier, 0, ctrl, false, shift, meta, false);
-                sl.dispatchEvent(event);
+
+                document.getElementById(selId).focus();
+                eventSender.keyDown(identifier, modifiers);
             }
             
             function createSelect(idName, sz, mlt, selIndex, testMsg)

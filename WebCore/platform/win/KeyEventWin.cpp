@@ -33,10 +33,6 @@ using namespace WTF;
 
 namespace WebCore {
 
-static const unsigned REPEAT_COUNT_MASK = 0x0000FFFF;
-static const unsigned NEW_RELEASE_STATE_MASK = 0x80000000;
-static const unsigned PREVIOUS_DOWN_STATE_MASK = 0x40000000;
-
 static const unsigned short HIGH_BIT_MASK_SHORT = 0x8000;
 
 // FIXME: This is incomplete. We could change this to mirror
@@ -148,21 +144,26 @@ static String keyIdentifierForWindowsKeyCode(unsigned short keyCode)
 
 static inline String singleCharacterString(UChar c) { return String(&c, 1); }
 
-PlatformKeyboardEvent::PlatformKeyboardEvent(HWND, WPARAM virtualKeyCode, LPARAM keyData, UChar characterCode, bool systemKey)
-    : m_text(singleCharacterString(characterCode))
-    , m_unmodifiedText(singleCharacterString(characterCode))
-    , m_keyIdentifier(keyIdentifierForWindowsKeyCode(virtualKeyCode))
-    , m_isKeyUp((keyData & NEW_RELEASE_STATE_MASK))
-    , m_autoRepeat((keyData & REPEAT_COUNT_MASK) > 1)
-    , m_WindowsKeyCode(virtualKeyCode)
+PlatformKeyboardEvent::PlatformKeyboardEvent(HWND, WPARAM code, LPARAM keyData, Type type, bool systemKey)
+    : m_type(type)
+    , m_text((type == Char) ? singleCharacterString(code) : String())
+    , m_unmodifiedText((type == Char) ? singleCharacterString(code) : String())
+    , m_keyIdentifier((type == Char) ? String() : keyIdentifierForWindowsKeyCode(code))
+    , m_autoRepeat(keyData & KF_REPEAT)
+    , m_windowsVirtualKeyCode((type == RawKeyDown || type == KeyUp) ? code : 0)
     , m_isKeypad(false) // FIXME: Need to implement this.
     , m_shiftKey(GetKeyState(VK_SHIFT) & HIGH_BIT_MASK_SHORT)
     , m_ctrlKey(GetKeyState(VK_CONTROL) & HIGH_BIT_MASK_SHORT)
     , m_altKey(GetKeyState(VK_MENU) & HIGH_BIT_MASK_SHORT)
     , m_metaKey(m_altKey)
-    , m_isModifierKeyPress(virtualKeyCode == VK_SHIFT || virtualKeyCode == VK_CONTROL || virtualKeyCode == VK_MENU || virtualKeyCode == VK_CAPITAL)
     , m_isSystemKey(systemKey)
 {
+}
+
+void PlatformKeyboardEvent::disambiguateKeyDownEvent(Type, bool)
+{
+    // No KeyDown events here to change.
+    ASSERT_NOT_REACHED();
 }
 
 bool PlatformKeyboardEvent::currentCapsLockState()

@@ -94,8 +94,8 @@ public:
     virtual void textWillBeDeletedInTextField(WebCore::Element* input);
     virtual void textDidChangeInTextArea(WebCore::Element*);
 
-    void handleKeypress(WebCore::KeyboardEvent*);
-    void handleInputMethodKeypress(WebCore::KeyboardEvent*);
+    void handleKeyboardEvent(WebCore::KeyboardEvent*);
+    void handleInputMethodKeydown(WebCore::KeyboardEvent*);
 
     virtual void ignoreWordInSpellDocument(const WebCore::String&);
     virtual void learnWord(const WebCore::String&);

@@ -14,7 +14,7 @@ function init() {
     input.addEventListener("keypress", keyevent, true);
     input.addEventListener("keyup", keyevent, true);
    
-    if (layoutTestController)
+    if (window.layoutTestController)
         layoutTestController.dumpAsText();
     
     input.focus();
@@ -28,6 +28,7 @@ function init() {
 <body onload="init()">
     <form>
         <input type="text" size="50" id="testinput" />
+        <input type="text" size="50" />
     </form>
    
     <p>This tests that DOMKeyboardEvents are created correctly in the JavaScript API.</p>

@@ -474,19 +474,33 @@ static inline String singleCharacterString(guint val)
 }
 
 PlatformKeyboardEvent::PlatformKeyboardEvent(GdkEventKey* event)
-    : m_text(singleCharacterString(event->keyval))
+    : m_type((event->type == GDK_KEY_RELEASE) ? KeyUp : KeyDown)
+    , m_text(singleCharacterString(event->keyval))
     , m_unmodifiedText(singleCharacterString(event->keyval))
     , m_keyIdentifier(keyIdentifierForGdkKeyCode(event->keyval))
-    , m_isKeyUp(event->type == GDK_KEY_RELEASE)
     , m_autoRepeat(false)
-    , m_WindowsKeyCode(windowsKeyCodeForKeyEvent(event->keyval))
+    , m_windowsVirtualKeyCode(windowsKeyCodeForKeyEvent(event->keyval))
     , m_isKeypad(false)
     , m_shiftKey((event->state & GDK_SHIFT_MASK) || (event->keyval == GDK_3270_BackTab))
     , m_ctrlKey(event->state & GDK_CONTROL_MASK)
     , m_altKey(event->state & GDK_MOD1_MASK)
     , m_metaKey(event->state & GDK_MOD2_MASK)
-    , m_isModifierKeyPress(false)
 {
+}
+
+void PlatformKeyboardEvent::disambiguateKeyDownEvent(Type type, bool)
+{
+    // Can only change type from KeyDown to RawKeyDown or Char, as we lack information for other conversions.
+    ASSERT(m_type == KeyDown);
+    m_type = type;
+
+    if (type == RawKeyDown) {
+        m_text = String();
+        m_unmodifiedText = String();
+    } else {
+        m_keyIdentifier = String();
+        m_windowsVirtualKeyCode = 0;
+    }
 }
 
 bool PlatformKeyboardEvent::currentCapsLockState()

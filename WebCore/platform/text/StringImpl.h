@@ -93,6 +93,7 @@ public:
     StringImpl* substring(unsigned pos, unsigned len = UINT_MAX);
 
     UChar operator[](int pos) const { return m_data[pos]; }
+    UChar32 characterStartingAt(unsigned) const;
 
     Length toLength() const;
 

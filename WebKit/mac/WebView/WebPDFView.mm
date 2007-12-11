@@ -947,8 +947,9 @@ static BOOL _PDFSelectionsAreEqual(PDFSelection *selectionA, PDFSelection *selec
             break;
         case NSKeyDown: {
             PlatformKeyboardEvent pe(nsEvent);
+            pe.disambiguateKeyDownEvent(PlatformKeyboardEvent::RawKeyDown);
             event = new KeyboardEvent(keydownEvent, true, true, 0,
-                pe.keyIdentifier(), pe.WindowsKeyCode(),
+                pe.keyIdentifier(), pe.windowsVirtualKeyCode(),
                 pe.ctrlKey(), pe.altKey(), pe.shiftKey(), pe.metaKey(), false);
         }
         default:

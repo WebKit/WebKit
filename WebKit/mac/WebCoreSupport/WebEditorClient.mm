@@ -430,7 +430,7 @@ void WebEditorClient::redo()
         [[m_webView undoManager] redo];    
 }
 
-void WebEditorClient::handleKeypress(KeyboardEvent* event)
+void WebEditorClient::handleKeyboardEvent(KeyboardEvent* event)
 {
     Frame* frame = event->target()->toNode()->document()->frame();
     WebHTMLView *webHTMLView = [[kit(frame) frameView] documentView];
@@ -438,7 +438,7 @@ void WebEditorClient::handleKeypress(KeyboardEvent* event)
         event->setDefaultHandled();
 }
 
-void WebEditorClient::handleInputMethodKeypress(KeyboardEvent* event)
+void WebEditorClient::handleInputMethodKeydown(KeyboardEvent* event)
 {
     Frame* frame = event->target()->toNode()->document()->frame();
     WebHTMLView *webHTMLView = [[kit(frame) frameView] documentView];

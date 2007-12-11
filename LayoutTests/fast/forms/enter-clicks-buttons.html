@@ -25,18 +25,18 @@ function loaded()
     if (window.layoutTestController)
         layoutTestController.dumpAsText();
 
-    var keys = ['Enter', 'U+0020'];
+    var keys = ['\r', ' '];
+    var keyNames = ['Enter', 'U+0020'];
     var tagNames = ['button', 'input'];
 
     for (var i in keys) {
-        log('\n\nSending ' + keys[i] + ' keypresses...\n');
+        log('\n\nSending ' + keyNames[i] + ' keypresses...\n');
         for (var j in tagNames) {
             var elements = document.getElementsByTagName(tagNames[j]);
             log('\nLooping over ' + elements.length + ' ' + tagNames[j] + ' elements...\n');
             for (var k = 0; k < elements.length; ++k) {
-                var event = elements[k].ownerDocument.createEvent("KeyboardEvent");
-                event.initKeyboardEvent("keypress", true, true, elements[k].ownerDocument.defaultView, keys[i], 0, false, false, false, false, false);
-                elements[k].dispatchEvent(event);
+                elements[k].focus();
+                eventSender.keyDown(keys[i], []);
             }
         }
     }

@@ -35,9 +35,9 @@ function description(element)
     return element.toString();
 }
 
-function keypressListener(event)
+function keydownListener(event)
 {
-    log("keypress event: [to] " + description(event.target)  + "\n");
+    log("keydown event: [to] " + description(event.target)  + "\n");
 }
 
 function blurListener(event)
@@ -54,7 +54,7 @@ function focusListener(event)
 
 function addEventListeners(element)
 {
-    element.addEventListener('keypress', keypressListener, false);
+    element.addEventListener('keydown', keydownListener, false);
     element.addEventListener('focus', focusListener, false);
     element.addEventListener('blur', blurListener, false);
 }
@@ -109,7 +109,7 @@ function dispatchOptionTab(element, shiftKey)
 {
     var event = document.createEvent("KeyboardEvents");
     var tabKeyIdentifier = "U+0009";
-    event.initKeyboardEvent("keypress", true, true, document.defaultView, tabKeyIdentifier, 0, false, true, shiftKey, false, false);
+    event.initKeyboardEvent("keydown", true, true, document.defaultView, tabKeyIdentifier, 0, false, true, shiftKey, false, false);
     element.dispatchEvent(event);
 }
 

@@ -1,3 +1,21 @@
+2007-12-07  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        <rdar://problem/5535636>
+        Have to press 4 times instead of 2 times to get the expected result of ^^ with german keyboard.
+
+        http://bugs.webkit.org/show_bug.cgi?id=13916
+        JavaScript detects Tab as a character input on a textfield validation
+
+        * WebKitSupport/EditorClientWx.cpp:
+        (WebCore::EditorClientWx::handleInputMethodKeydown):
+        (WebCore::EditorClientWx::handleKeyboardEvent):
+        * WebKitSupport/EditorClientWx.h:
+        Updated for cross-platform changes as much as it was possible without a wx build environment.
+        The keyboard event model of wx is similar to Windows one, so further fixes can be modeled
+        after the Windows port.
+
 2007-12-06  Kevin Ollivier  <kevino@theolliviers.com>
 
         Fix page leak caused because the Frame's page pointer is 0 by the 

@@ -350,9 +350,21 @@ BOOL replayingSavedEvents;
 - (void)keyDown:(NSString *)character withModifiers:(WebScriptObject *)modifiers
 {
     NSString *eventCharacter = character;
-    if ([character isEqualToString:@"rightArrow"]) {
-        const unichar rightArrowCharacter = NSRightArrowFunctionKey;
-        eventCharacter = [NSString stringWithCharacters:&rightArrowCharacter length:1];
+    if ([character isEqualToString:@"leftArrow"]) {
+        const unichar ch = NSLeftArrowFunctionKey;
+        eventCharacter = [NSString stringWithCharacters:&ch length:1];
+    } else if ([character isEqualToString:@"rightArrow"]) {
+        const unichar ch = NSRightArrowFunctionKey;
+        eventCharacter = [NSString stringWithCharacters:&ch length:1];
+    } else if ([character isEqualToString:@"upArrow"]) {
+        const unichar ch = NSUpArrowFunctionKey;
+        eventCharacter = [NSString stringWithCharacters:&ch length:1];
+    } else if ([character isEqualToString:@"downArrow"]) {
+        const unichar ch = NSDownArrowFunctionKey;
+        eventCharacter = [NSString stringWithCharacters:&ch length:1];
+    } else if ([character isEqualToString:@"delete"]) {
+        const unichar ch = 0x7f;
+        eventCharacter = [NSString stringWithCharacters:&ch length:1];
     }
 
     NSString *charactersIgnoringModifiers = eventCharacter;
@@ -391,6 +403,19 @@ BOOL replayingSavedEvents;
                         keyCode:0];
 
     [[[[mainFrame webView] window] firstResponder] keyDown:event];
+
+    event = [NSEvent keyEventWithType:NSKeyUp
+                        location:NSMakePoint(5, 5)
+                        modifierFlags:modifierFlags
+                        timestamp:[self currentEventTime]
+                        windowNumber:[[[mainFrame webView] window] windowNumber]
+                        context:[NSGraphicsContext currentContext]
+                        characters:eventCharacter
+                        charactersIgnoringModifiers:charactersIgnoringModifiers
+                        isARepeat:NO
+                        keyCode:0];
+
+    [[[[mainFrame webView] window] firstResponder] keyUp:event];
 }
 
 - (void)enableDOMUIEventLogging:(WebScriptObject *)node

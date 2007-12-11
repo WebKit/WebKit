@@ -325,19 +325,43 @@ static int windowsKeyCodeForKeyEvent(unsigned int keycode)
 
 PlatformKeyboardEvent::PlatformKeyboardEvent(wxKeyEvent& event)
 {
-    m_text = wxString(event.GetUnicodeKey());
-    m_unmodifiedText = m_text;
-    m_keyIdentifier = keyIdentifierForWxKeyCode(event.GetKeyCode());
-    m_isKeyUp = event.GetEventType() == wxEVT_KEY_UP;
+    switch (event.GetEventType()) {
+        case wxEVT_KEY_UP:
+            m_type = KeyUp;
+            break;
+        case wxEVT_KEY_DOWN:
+            m_type = KeyDown;
+            break;
+        case wxEVT_CHAR:
+            m_type = Char;
+            break;
+        default:
+            ASSERT_NOT_REACHED();
+    }
+    m_text = (type == Char) ? wxString(event.GetUnicodeKey()) : String();
+    m_unmodifiedText = (type == Char) ? m_text : String();
+    m_keyIdentifier = (type == Char) ? String() : keyIdentifierForWxKeyCode(event.GetKeyCode());
     m_autoRepeat = false; // FIXME: not correct.
-    m_WindowsKeyCode = windowsKeyCodeForKeyEvent(event.GetKeyCode());
+    m_windowsVirtualKeyCode = windowsKeyCodeForKeyEvent(event.GetKeyCode());
     m_isKeypad = (event.GetKeyCode() >= WXK_NUMPAD_SPACE) && (event.GetKeyCode() <= WXK_NUMPAD_DIVIDE);
     m_shiftKey = event.ShiftDown();
     m_ctrlKey = event.CmdDown();
     m_altKey = event.AltDown();
     m_metaKey = event.MetaDown();
-    m_isModifierKeyPress = false;
-    m_isWxCharEvent = event.GetEventType() == wxEVT_CHAR;
+}
+
+void PlatformKeyboardEvent::disambiguateKeyDownEvent(Type type, bool)
+{
+    // Can only change type from KeyDown to RawKeyDown or Char, as we lack information for other conversions.
+    ASSERT(m_type == KeyDown);
+    m_type = type;
+    if (type == RawKeyDown) {
+        m_text = String();
+        m_unmodifiedText = String();
+    } else {
+        m_keyIdentifier = String();
+        m_windowsVirtualKeyCode = 0;
+    }
 }
 
 bool PlatformKeyboardEvent::currentCapsLockState()

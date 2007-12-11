@@ -232,27 +232,27 @@ void EditorClientWx::redo()
     notImplemented();
 }
 
-void EditorClientWx::handleInputMethodKeypress(KeyboardEvent* event)
+void EditorClientWx::handleInputMethodKeydown(KeyboardEvent* event)
 {
 // NOTE: we don't currently need to handle this. When key events occur,
-// both this method and handleKeypress get a chance at handling them.
+// both this method and handleKeyboardEvent get a chance at handling them.
 // We might use this method later on for IME-specific handling.
 }
 
-void EditorClientWx::handleKeypress(KeyboardEvent* event)
+void EditorClientWx::handleKeyboardEvent(KeyboardEvent* event)
 {
     Frame* frame = m_page->focusController()->focusedOrMainFrame();
     if (!frame)
         return;
 
     const PlatformKeyboardEvent* kevent = event->keyEvent();
-    if (!kevent->isKeyUp()) {
+    if (!kevent->type() == PlatformKeyboardEvent::KeyUp) {
         Node* start = frame->selectionController()->start().node();
         if (!start || !start->isContentEditable())
             return; 
         
-        if (kevent->isWxCharEvent() && !kevent->ctrlKey() && !kevent->altKey()) {
-            switch(kevent->WindowsKeyCode()) {
+        if (kevent->type() == PlatformKeyboardEvent::Char && !kevent->ctrlKey() && !kevent->altKey()) {
+            switch (kevent->windowsVirtualKeyCode()) {
                 // we handled these on key down, ignore them for char events
                 case VK_BACK:
                 case VK_DELETE:
@@ -269,7 +269,7 @@ void EditorClientWx::handleKeypress(KeyboardEvent* event)
             return; 
         }
         
-        switch(kevent->WindowsKeyCode()) {
+        switch (kevent->windowsVirtualKeyCode()) {
             case VK_BACK:
                 frame->editor()->deleteWithDirection(SelectionController::BACKWARD,
                                                      CharacterGranularity, false, true);

@@ -91,11 +91,29 @@ void HTMLButtonElement::defaultEventHandler(Event* evt)
             form()->reset();
     }
 
-    if (evt->type() == keypressEvent && evt->isKeyboardEvent()) {
-        String key = static_cast<KeyboardEvent*>(evt)->keyIdentifier();
-
-        if (key == "Enter" || key == "U+0020") {
-            dispatchSimulatedClick(evt);
+    if (evt->isKeyboardEvent()) {
+        if (evt->type() == keydownEvent && static_cast<KeyboardEvent*>(evt)->keyIdentifier() == "U+0020") {
+            setActive(true, true);
+            // No setDefaultHandled() - IE dispatches a keypress in this case.
+            return;
+        }
+        if (evt->type() == keypressEvent) {
+            switch (static_cast<KeyboardEvent*>(evt)->charCode()) {
+                case '\r':
+                    dispatchSimulatedClick(evt);
+                    evt->setDefaultHandled();
+                    return;
+                case ' ':
+                    // Prevent scrolling down the page.
+                    evt->setDefaultHandled();
+                    return;
+                default:
+                    break;
+            }
+        }
+        if (evt->type() == keyupEvent && static_cast<KeyboardEvent*>(evt)->keyIdentifier() == "U+0020") {
+            if (active())
+                dispatchSimulatedClick(evt);
             evt->setDefaultHandled();
             return;
         }

@@ -111,18 +111,18 @@ EditorClient* Editor::client() const
     return 0;
 }
 
-void Editor::handleKeypress(KeyboardEvent* event)
+void Editor::handleKeyboardEvent(KeyboardEvent* event)
 {
     if (EditorClient* c = client())
         if (selectionForEvent(m_frame, event).isContentEditable())
-            c->handleKeypress(event);
+            c->handleKeyboardEvent(event);
 }
 
-void Editor::handleInputMethodKeypress(KeyboardEvent* event)
+void Editor::handleInputMethodKeydown(KeyboardEvent* event)
 {
     if (EditorClient* c = client())
         if (selectionForEvent(m_frame, event).isContentEditable())
-            c->handleInputMethodKeypress(event);
+            c->handleInputMethodKeydown(event);
 }
 
 bool Editor::canEdit() const
@@ -1324,6 +1324,14 @@ void Editor::clear()
 {
     m_compositionNode = 0;
     m_customCompositionUnderlines.clear();
+}
+
+bool Editor::isTextInsertionCommand(const AtomicString& command)
+{
+    return command == "InsertBacktab"
+        || command == "InsertTab"
+        || command == "InsertLineBreak"
+        || command == "InsertNewline";
 }
 
 bool Editor::execCommand(const AtomicString& command, Event* triggeringEvent)

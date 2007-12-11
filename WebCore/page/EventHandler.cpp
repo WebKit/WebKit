@@ -1464,75 +1464,123 @@ static EventTargetNode* eventTargetNodeForDocument(Document* doc)
     return EventTargetNodeCast(node);
 }
 
+static bool handleAccessKey(Document* document, const PlatformKeyboardEvent& evt)
+{
+#if PLATFORM(MAC)
+    if (evt.ctrlKey())
+#else
+    if (evt.altKey())
+#endif
+    {
+        String key = evt.unmodifiedText();
+        Element* elem = document->getElementByAccessKey(key.lower());
+        if (elem) {
+            elem->accessKeyAction(false);
+            return true;
+        }
+    }
+
+    return false;
+}
 
 bool EventHandler::keyEvent(const PlatformKeyboardEvent& initialKeyEvent)
 {
     // Check for cases where we are too early for events -- possible unmatched key up
     // from pressing return in the location bar.
-    EventTargetNode* node = eventTargetNodeForDocument(m_frame->document());
+    RefPtr<EventTargetNode> node = eventTargetNodeForDocument(m_frame->document());
     if (!node)
         return false;
-        
-    if (initialKeyEvent.isKeyUp())
-        return !node->dispatchKeyEvent(initialKeyEvent);
-        
+
+    // FIXME: what is this doing here, in keyboard event handler?
     m_frame->loader()->resetMultipleFormSubmissionProtection();
+
+    // In IE, access keys are special, they are handled after default keydown processing, but cannot be canceled - this is hard to match.
+    // On Windows, we process them before dispatching keypress event (and rely on WebKit to not drop WM_SYSCHAR events when a keydown representing WM_SYSKEYDOWN is canceled).
+    // On Mac OS X, we process them before dispatching keydown, as the default keydown handler implements Emacs key bindings, which may conflict with access keys.
+    // Other platforms currently match either Mac or Windows behavior, depending on whether they send combined KeyDown events.
+    bool matchedAnAccessKey = false;
+    if (initialKeyEvent.type() == PlatformKeyboardEvent::Char) {
+        if (handleAccessKey(m_frame->document(), initialKeyEvent))
+            return true;
+    } else if (initialKeyEvent.type() == PlatformKeyboardEvent::KeyDown)
+        matchedAnAccessKey = handleAccessKey(m_frame->document(), initialKeyEvent);
+
+    // FIXME: it would be fair to let an input method handle KeyUp events before DOM dispatch.
+    if (initialKeyEvent.type() == PlatformKeyboardEvent::KeyUp || initialKeyEvent.type() == PlatformKeyboardEvent::Char)
+        return !node->dispatchKeyEvent(initialKeyEvent);
+
+    bool dashboardCompatibilityMode = false;
+    if (Settings* settings = node->document()->settings())
+        dashboardCompatibilityMode = settings->usesDashboardBackwardCompatibilityMode();
+
+    ExceptionCode ec;
+    PlatformKeyboardEvent keyDownEvent = initialKeyEvent;    
+    if (keyDownEvent.type() != PlatformKeyboardEvent::RawKeyDown)
+        keyDownEvent.disambiguateKeyDownEvent(PlatformKeyboardEvent::RawKeyDown, dashboardCompatibilityMode);
+    RefPtr<KeyboardEvent> keydown = new KeyboardEvent(keyDownEvent, m_frame->document()->defaultView());
+    if (matchedAnAccessKey)
+        keydown->setDefaultPrevented(true);
+    keydown->setTarget(node);
+
+    if (initialKeyEvent.type() == PlatformKeyboardEvent::RawKeyDown) {
+        node->dispatchEvent(keydown, ec, true);
+        return keydown->defaultHandled() || keydown->defaultPrevented();
+    }
+
+    // Run input method in advance of DOM event handling.  This may result in the IM
+    // modifying the page prior the keydown event, but this behaviour is necessary
+    // in order to match IE:
+    // 1. preventing default handling of keydown and keypress events has no effect on IM input;
+    // 2. if an input method handles the event, its keyCode is set to 229 in keydown event.
+    m_frame->editor()->handleInputMethodKeydown(keydown.get());
     
-    // Prepare the keyPress in advance of the keyDown so we can fire the input method
-    // in advance of keyDown
-    PlatformKeyboardEvent keyPressEvent = initialKeyEvent;    
-    keyPressEvent.setIsAutoRepeat(true);
+    bool handledByInputMethod = keydown->defaultHandled();
+    
+    if (handledByInputMethod) {
+        keyDownEvent.setWindowsVirtualKeyCode(CompositionEventKeyCode);
+        keydown = new KeyboardEvent(keyDownEvent, m_frame->document()->defaultView());
+        keydown->setTarget(node);
+        keydown->setDefaultHandled();
+    }
+
+    node->dispatchEvent(keydown, ec, true);
+    bool keydownResult = keydown->defaultHandled() || keydown->defaultPrevented();
+    if (handledByInputMethod || (keydownResult && !dashboardCompatibilityMode) || initialKeyEvent.text().isEmpty())
+        return keydownResult;
+    
+    // Focus may have changed during keydown handling, so refetch node.
+    // But if we are dispatching a fake Dashboard compatibility keypress, then we pretend that the keypress happened on the original node.
+    if (!keydownResult) {
+        node = eventTargetNodeForDocument(m_frame->document());
+        if (!node)
+            return false;
+    }
+
+    PlatformKeyboardEvent keyPressEvent = initialKeyEvent;
+    keyPressEvent.disambiguateKeyDownEvent(PlatformKeyboardEvent::Char, dashboardCompatibilityMode);
     RefPtr<KeyboardEvent> keypress = new KeyboardEvent(keyPressEvent, m_frame->document()->defaultView());
     keypress->setTarget(node);
-    
-    // Run input method in advance of DOM event handling.  This may result in the IM
-    // modifying the page prior the keydown event, however this behaviour is necessary
-    // in order to match IE
-    m_frame->editor()->handleInputMethodKeypress(keypress.get());
-    
-    bool handledByInputMethod = keypress->defaultHandled();
-    
-    PlatformKeyboardEvent keyDownEvent = initialKeyEvent; 
-    
-    if (handledByInputMethod) 
-        keyDownEvent.setWindowsKeyCode(CompositionEventKeyCode);
-        
-    // We always send keyDown and keyPress for all events, including autorepeat keys
-    keyDownEvent.setIsAutoRepeat(false);
-    
-    bool result = !node->dispatchKeyEvent(keyDownEvent);
-    
-    // Focus may have change during the keyDown handling, so refetch node
-    node = eventTargetNodeForDocument(m_frame->document());
-    if (!node)
-        return result;
-    
-    if (keypress->defaultHandled())
-        return true;
-    
-    if (handledByInputMethod || initialKeyEvent.isModifierKeyPress())
-        return result;
-    
-    // If the default handling has been prevented on the keydown, we prevent it on
-    // the keypress as well
-    if (result)
-        keypress->setDefaultHandled();
-    
-    ExceptionCode ec;
+    if (keydownResult)
+        keypress->setDefaultPrevented(true);
     node->dispatchEvent(keypress, ec, true);
-    
-    return result || keypress->defaultHandled() || keypress->defaultPrevented();
+
+    return keydownResult || keypress->defaultPrevented() || keypress->defaultHandled();
 }
 
 void EventHandler::defaultKeyboardEventHandler(KeyboardEvent* event)
 {
-   if (event->type() == keypressEvent) {
-        m_frame->editor()->handleKeypress(event);
+   if (event->type() == keydownEvent) {
+        m_frame->editor()->handleKeyboardEvent(event);
         if (event->defaultHandled())
             return;
         if (event->keyIdentifier() == "U+0009")
             defaultTabEventHandler(event, false);
-    }
+   }
+   if (event->type() == keypressEvent) {
+        m_frame->editor()->handleKeyboardEvent(event);
+        if (event->defaultHandled())
+            return;
+   }
 }
 
 bool EventHandler::dragHysteresisExceeded(const FloatPoint& floatDragViewportLocation) const
@@ -1724,6 +1772,12 @@ bool EventHandler::handleTextInputEvent(const String& text, Event* underlyingEve
 {
     if (!m_frame)
         return false;
+#ifndef NDEBUG
+    // Platforms should differentiate real commands like selectAll from text input in disguise (like insertNewline),
+    // and avoid dispatching text input events from keydown default handlers.
+    if (underlyingEvent && underlyingEvent->isKeyboardEvent())
+        ASSERT(static_cast<KeyboardEvent*>(underlyingEvent)->type() == keypressEvent);
+#endif
     EventTarget* target;
     if (underlyingEvent)
         target = underlyingEvent->target();
@@ -1762,11 +1816,6 @@ bool EventHandler::tabsToLinks(KeyboardEvent* event) const
 void EventHandler::defaultTextInputEventHandler(TextEvent* event)
 {
     String data = event->data();
-    if (data == "\t") {
-        defaultTabEventHandler(event, event->isBackTab());
-        if (event->defaultHandled())
-            return;
-    }
     if (data == "\n") {
         if (event->isLineBreak()) {
             if (m_frame->editor()->insertLineBreak())

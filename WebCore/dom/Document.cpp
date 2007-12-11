@@ -2442,32 +2442,6 @@ void Document::handleWindowEvent(Event *evt, bool useCapture)
             (*it)->listener()->handleEvent(evt, true);
 }
 
-
-void Document::defaultEventHandler(Event *evt)
-{
-    // handle accesskey
-    if (evt->type() == keydownEvent) {
-        KeyboardEvent* kevt = static_cast<KeyboardEvent *>(evt);
-#if PLATFORM(MAC)
-        if (kevt->ctrlKey())
-#else
-        if (kevt->altKey())
-#endif
-        {
-            const PlatformKeyboardEvent* ev = kevt->keyEvent();
-            String key = (ev ? ev->unmodifiedText() : kevt->keyIdentifier()).lower();
-            Element* elem = getElementByAccessKey(key);
-            if (elem) {
-                elem->accessKeyAction(false);
-                evt->setDefaultHandled();
-                return;
-            }
-        }
-    }
-
-    ContainerNode::defaultEventHandler(evt);
-}
-
 void Document::setHTMLWindowEventListener(const AtomicString &eventType, PassRefPtr<EventListener> listener)
 {
     // If we already have it we don't want removeWindowEventListener to delete it

@@ -435,17 +435,32 @@ static int windowsKeyCodeForKeyEvent(unsigned int keycode)
 PlatformKeyboardEvent::PlatformKeyboardEvent(QKeyEvent* event)
 {
     const int state = event->modifiers();
+    m_type = (event->type() == QEvent::KeyRelease) ? KeyUp : KeyDown;
     m_text = event->text();
     m_unmodifiedText = event->text(); // FIXME: not correct
     m_keyIdentifier = keyIdentifierForQtKeyCode(event->key());
-    m_isKeyUp = (event->type() == QEvent::KeyRelease);
     m_autoRepeat = event->isAutoRepeat();
     m_ctrlKey = (state & Qt::ControlModifier) != 0;
     m_altKey = (state & Qt::AltModifier) != 0;
     m_metaKey = (state & Qt::MetaModifier) != 0;    
-    m_WindowsKeyCode = windowsKeyCodeForKeyEvent(event->key());
+    m_windowsVirtualKeyCode = windowsKeyCodeForKeyEvent(event->key());
     m_isKeypad = (state & Qt::KeypadModifier) != 0;
     m_shiftKey = (state & Qt::ShiftModifier) != 0 || event->key() == Qt::Key_Backtab; // Simulate Shift+Tab with Key_Backtab
+}
+
+void PlatformKeyboardEvent::disambiguateKeyDownEvent(Type type, bool)
+{
+    // Can only change type from KeyDown to RawKeyDown or Char, as we lack information for other conversions.
+    ASSERT(m_type == KeyDown);
+    m_type = type;
+
+    if (type == RawKeyDown) {
+        m_text = String();
+        m_unmodifiedText = String();
+    } else {
+        m_keyIdentifier = String();
+        m_windowsVirtualKeyCode = 0;
+    }
 }
 
 bool PlatformKeyboardEvent::currentCapsLockState()

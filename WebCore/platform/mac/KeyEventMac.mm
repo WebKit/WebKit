@@ -393,7 +393,7 @@ static bool isKeypadEvent(NSEvent* event)
      return false;
 }
 
-static int WindowsKeyCodeForKeyEvent(NSEvent* event)
+static int windowsKeyCodeForKeyEvent(NSEvent* event)
 {
     switch ([event keyCode]) {
         // VK_TAB (09) TAB key
@@ -764,7 +764,9 @@ static int WindowsKeyCodeForKeyEvent(NSEvent* event)
 static inline bool isKeyUpEvent(NSEvent *event)
 {
     if ([event type] != NSFlagsChanged)
-        return false;
+        return [event type] == NSKeyUp;
+    // FIXME: This logic fails if the user presses both Shift keys at once, for example:
+    // we treat releasing one of them as keyDown.
     switch ([event keyCode]) {
         case 54: // Right Command
         case 55: // Left Command
@@ -805,31 +807,56 @@ static inline String unmodifiedTextFromEvent(NSEvent* event)
         return "";
     return [event charactersIgnoringModifiers];
 }
-    
-PlatformKeyboardEvent::PlatformKeyboardEvent(NSEvent *event, bool forceAutoRepeat)
-    : m_text(textFromEvent(event))
+
+PlatformKeyboardEvent::PlatformKeyboardEvent(NSEvent *event)
+    : m_type(isKeyUpEvent(event) ? PlatformKeyboardEvent::KeyUp : PlatformKeyboardEvent::KeyDown)
+    , m_text(textFromEvent(event))
     , m_unmodifiedText(unmodifiedTextFromEvent(event))
     , m_keyIdentifier(keyIdentifierForKeyEvent(event))
-    , m_isKeyUp([event type] == NSKeyUp || isKeyUpEvent(event))
-    , m_autoRepeat(([event type] != NSFlagsChanged) && (forceAutoRepeat || [event isARepeat]))
-    , m_WindowsKeyCode(WindowsKeyCodeForKeyEvent(event))
+    , m_autoRepeat(([event type] != NSFlagsChanged) && [event isARepeat])
+    , m_windowsVirtualKeyCode(windowsKeyCodeForKeyEvent(event))
     , m_isKeypad(isKeypadEvent(event))
     , m_shiftKey([event modifierFlags] & NSShiftKeyMask)
     , m_ctrlKey([event modifierFlags] & NSControlKeyMask)
     , m_altKey([event modifierFlags] & NSAlternateKeyMask)
     , m_metaKey([event modifierFlags] & NSCommandKeyMask)
-    , m_isModifierKeyPress([event type] == NSFlagsChanged)
     , m_macEvent(event)
 {
+    // Always use 13 for Enter/Return -- we don't want to use AppKit's different character for Enter.
+    if (m_windowsVirtualKeyCode == '\r') {
+        m_text = "\r";
+        m_unmodifiedText = "\r";
+    }
+
+    // The adjustments below are only needed in Dashboard compatibility mode, but we cannot tell what mode we are in from here.
+
     // Turn 0x7F into 8, because backspace needs to always be 8.
     if (m_text == "\x7F")
         m_text = "\x8";
     if (m_unmodifiedText == "\x7F")
         m_unmodifiedText = "\x8";
     // Always use 9 for tab -- we don't want to use AppKit's different character for shift-tab.
-    if (m_WindowsKeyCode == 9) {
+    if (m_windowsVirtualKeyCode == 9) {
         m_text = "\x9";
         m_unmodifiedText = "\x9";
+    }
+}
+
+void PlatformKeyboardEvent::disambiguateKeyDownEvent(Type type, bool dashboardCompatibilityMode)
+{
+    // Can only change type from KeyDown to RawKeyDown or Char, as we lack information for other conversions.
+    ASSERT(m_type == KeyDown);
+    ASSERT(type == RawKeyDown || type == Char);
+    m_type = type;
+    if (dashboardCompatibilityMode)
+        return;
+
+    if (type == RawKeyDown) {
+        m_text = String();
+        m_unmodifiedText = String();
+    } else {
+        m_keyIdentifier = String();
+        m_windowsVirtualKeyCode = 0;
     }
 }
 

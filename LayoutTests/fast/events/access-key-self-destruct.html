@@ -5,15 +5,14 @@ function replace()
 }
 function test()
 {
-    if (window.layoutTestController)
+    if (window.layoutTestController) {
         layoutTestController.dumpAsText();
-    
-    var event = document.createEvent("KeyboardEvent");
-    if (navigator.userAgent.search(/\bMac OS X\b/) != -1)
-        event.initKeyboardEvent("keydown", true, true, document.defaultView, "a", 0, true, false, false, false, false);
-    else
-        event.initKeyboardEvent("keydown", true, true, document.defaultView, "a", 0, false, true, false, false, false);
-    document.dispatchEvent(event);
+        if (navigator.userAgent.search(/\bMac OS X\b/) != -1)
+            modifier = "ctrlKey";
+        else
+            modifier = "altKey";
+        eventSender.keyDown("a", [modifier]);
+    }
 }
 </script>
 <body onload="test()">

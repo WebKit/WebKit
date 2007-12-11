@@ -2047,17 +2047,17 @@ static void _updateMouseoverTimerCallback(CFRunLoopTimerRef timer, void *info)
     return [[webView _editingDelegateForwarder] webView:webView doCommandBySelector:selector];
 }
 
-- (void)callWebCoreCommand:(SEL)selector
+static AtomicString selectorToCommandName(SEL selector)
 {
-    if ([self callDelegateDoCommandBySelectorIfNeeded:selector])
-        return;
-
-    Frame* coreFrame = core([self _frame]);
-    if (!coreFrame)
-        return;
-
     // Capitalize the first letter of the selector, since we use capitalized command
     // names in the Editor object (why?). And remove the trailing colon.
+    // And change a few command names into ones supported by WebCore::Editor.
+
+    if (selector == @selector(insertParagraphSeparator:) || selector == @selector(insertNewlineIgnoringFieldEditor:))
+        return "InsertNewline";
+    if (selector == @selector(insertTabIgnoringFieldEditor:))
+        return "InsertTab";
+
     const char* selectorName = sel_getName(selector);
     size_t selectorNameLength = strlen(selectorName);
     ASSERT(selectorNameLength >= 2);
@@ -2067,7 +2067,19 @@ static void _updateMouseoverTimerCallback(CFRunLoopTimerRef timer, void *info)
     memcpy(&commandName[1], &selectorName[1], selectorNameLength - 2);
     commandName[selectorNameLength - 1] = 0;
 
-    coreFrame->editor()->execCommand(commandName.data());
+    return AtomicString(commandName.data());
+}
+
+- (void)callWebCoreCommand:(SEL)selector
+{
+    if ([self callDelegateDoCommandBySelectorIfNeeded:selector])
+        return;
+
+    Frame* coreFrame = core([self _frame]);
+    if (!coreFrame)
+        return;
+
+    coreFrame->editor()->execCommand(selectorToCommandName(selector));
 }
 
 // These commands are forwarded to the Editor object in WebCore.
@@ -5185,7 +5197,7 @@ static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
     // and only change this assumption if one of the NSTextInput/Responder callbacks is used.
     // We assume the IM will *not* consume hotkey sequences
     parameters.consumedByIM = !event->metaKey() && shouldSave;
-        
+
     if (const PlatformKeyboardEvent* platformEvent = event->keyEvent()) {
         NSEvent *macEvent = platformEvent->macEvent();
         if ([macEvent type] == NSKeyDown && [_private->compController filterKeyDown:macEvent])
@@ -5200,16 +5212,26 @@ static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
         KeypressCommand command = event->keypressCommand();
         bool hasKeypressCommand = !command.commandNames.isEmpty() || !command.text.isEmpty();
 
+        // FIXME: interpretKeyEvents doesn't match application key equivalents (such as Cmd+A),
+        // and sends noop: for those. As a result, we don't handle those from within WebCore,
+        // but send a full sequence of DOM events, including an unneeded keypress.
         if (parameters.shouldSaveCommand || !hasKeypressCommand)
             [self interpretKeyEvents:[NSArray arrayWithObject:macEvent]];
         else {
-            if (!command.text.isEmpty())
-                [self insertText:command.text];
-            else {
-                size_t size = command.commandNames.size();
+            ASSERT(platformEvent->type() == PlatformKeyboardEvent::RawKeyDown);
+            size_t size = command.commandNames.size();
+            // Are there commands that would just cause text insertion if executed via Editor?
+            // WebKit doesn't have enough information about mode to decide how they should be treated, so we leave it upon WebCore
+            // to either handle them immediately (e.g. Tab that changes focus) or let a keypress event be generated
+            // (e.g. Tab that inserts a Tab character, or Enter).
+            bool haveTextInsertionCommands = false;
+            for (size_t i = 0; i < size; ++i) {
+                if (Editor::isTextInsertionCommand(selectorToCommandName(NSSelectorFromString(command.commandNames[i]))))
+                    haveTextInsertionCommands = true;
+            }
+            if (!haveTextInsertionCommands)
                 for (size_t i = 0; i < size; ++i)
                     [self doCommandBySelector:NSSelectorFromString(command.commandNames[i])];
-            }
         }
         _private->interpretKeyEventsParameters = 0;
     }
@@ -5547,14 +5569,9 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
         WebView *webView = [self _webView];
         Frame* coreFrame = core([self _frame]);
         if (![[webView _editingDelegateForwarder] webView:webView doCommandBySelector:selector] && coreFrame) {
-            if (selector == @selector(insertNewline:) || selector == @selector(insertParagraphSeparator:) || selector == @selector(insertNewlineIgnoringFieldEditor:))
-                eventWasHandled = coreFrame->editor()->execCommand("InsertNewline", event);
-            else if (selector == @selector(insertLineBreak:))
-                eventWasHandled = coreFrame->editor()->execCommand("InsertLineBreak", event);
-            else if (selector == @selector(insertTab:) || selector == @selector(insertTabIgnoringFieldEditor:))
-                eventWasHandled = coreFrame->editor()->execCommand("InsertTab", event);
-            else if (selector == @selector(insertBacktab:))
-                eventWasHandled = coreFrame->editor()->execCommand("InsertBacktab", event);
+            AtomicString commandName = selectorToCommandName(selector);
+            if (Editor::isTextInsertionCommand(commandName))
+                eventWasHandled = coreFrame->editor()->execCommand(commandName, event);
             else {
                 _private->selectorForDoCommandBySelector = selector;
                 [super doCommandBySelector:selector];

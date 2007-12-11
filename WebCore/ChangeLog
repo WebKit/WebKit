@@ -1,3 +1,130 @@
+2007-12-07  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        <rdar://problem/5535636>
+        Have to press 4 times instead of 2 times to get the expected result of ^^ with german keyboard.
+
+        http://bugs.webkit.org/show_bug.cgi?id=13916
+        JavaScript detects Tab as a character input on a textfield validation
+
+        Test: platform/win/fast/events/double-dead-char.html
+
+        * platform/PlatformKeyboardEvent.h:
+        (WebCore::PlatformKeyboardEvent::):
+        (WebCore::PlatformKeyboardEvent::type):
+        (WebCore::PlatformKeyboardEvent::windowsVirtualKeyCode):
+        (WebCore::PlatformKeyboardEvent::setWindowsVirtualKeyCode):
+        (WebCore::PlatformKeyboardEvent::keyIdentifier):
+        (WebCore::PlatformKeyboardEvent::setIsAutoRepeat):
+        Added an explicit type member to differentiate different kinds of events:
+          RawKeyDown == keydown == WM_KEYDOWN
+          KeyUp == keyup == WM_KEYUP
+          Char == keypress == WM_CHAR
+          KeyDown == e.g. NSKeyDown or NSFlagsChanged, used on platforms that have a different model for
+          event processing, and needs to be converted to RawKeyDown (+ Char) for processing in DOM.
+
+        * platform/mac/KeyEventMac.mm:
+        (WebCore::PlatformKeyboardEvent::PlatformKeyboardEvent): Updated for changed data members.
+        Fix Enter (numeric keypad) charCode to match Return, as we check for it from keypress default handlers.
+        (WebCore::windowsKeyCodeForKeyEvent): 
+        (WebCore::isKeyUpEvent): Made it do something closer to what it claims; added a FIXME explaining
+        that it still fails.
+        (WebCore::disambiguateKeyDownEvent): Downgrade from KeyDown to RawKeyDown or Char, removing information that
+        should not be available in those (because it cannot be provided on Windows).
+
+        * platform/win/KeyEventWin.cpp:
+        (WebCore::PlatformKeyboardEvent::PlatformKeyboardEvent): Updated for changed data members.
+        Used standard Windows constants for bit masks instead of our own ones.
+        (WebCore::PlatformKeyboardEvent::disambiguateKeyDownEvent): Should never be called on Windows.
+
+        * platform/gtk/KeyEventGtk.cpp:
+        (WebCore::PlatformKeyboardEvent::PlatformKeyboardEvent):
+        (WebCore::PlatformKeyboardEvent::disambiguateKeyDownEvent):
+        * platform/qt/PlatformKeyboardEventQt.cpp:
+        (WebCore::PlatformKeyboardEvent::PlatformKeyboardEvent):
+        (WebCore::PlatformKeyboardEvent::disambiguateKeyDownEvent):
+        * platform/wx/KeyboardEventWx.cpp:
+        (WebCore::PlatformKeyboardEvent::PlatformKeyboardEvent):
+        (WebCore::PlatformKeyboardEvent::disambiguateKeyDownEvent):
+        Updated for cross-platform changes as much as it was possible without appropriate build
+        environments.
+
+        * WebCore.base.exp: Export PlatformKeyboardEvent::disambiguateKeyDownEvent(), used by platforms that need to
+        convert their fancy key events to RawKeyDown/Char pairs. Export Editor::isTextInsertionCommand().
+
+        * bridge/EditorClient.h:
+        Renamed handleKeypress() to handleKeyboardEvent(), as it gets both keydowns and keypresses.
+        Renamed handleInputMethodKeypress() to handleInputMethodKeydown(), as IMs work with raw keydowns.
+
+        * dom/Document.h:
+        * dom/Document.cpp:
+        (WebCore::Document::defaultEventHandler): Moved accesskey processing to EventHandler.
+
+        * dom/KeyboardEvent.h: Added comments describing keyCode/charCode behavior.
+
+        * dom/KeyboardEvent.cpp:
+        (WebCore::eventTypeForKeyboardEventType):
+        (WebCore::KeyboardEvent::KeyboardEvent): Conversion between platform and DOM event types is
+        now straightforward, so scary hacks such as using autorepeat to distinguish types are
+        not needed.
+        (WebCore::KeyboardEvent::keyCode): Added a comment describing other browsers' behavior.
+        (WebCore::KeyboardEvent::charCode): Added a comment describing other browsers' behavior.
+        Changed to a more compatible behavior: raw keydown/keyup events do not and can not have
+        character codes.
+
+        * editing/Editor.h:
+        * editing/Editor.cpp:
+        (WebCore::Editor::isTextInsertionCommand): Is this command actually text input in disguise?
+        (WebCore::Editor::handleKeyboardEvent): Updated for new function names.
+        (WebCore::Editor::handleInputMethodKeydown): Ditto.
+
+        * html/HTMLButtonElement.cpp:
+        (WebCore::HTMLButtonElement::defaultEventHandler): Perform the default action when handling an
+        appropriate event. Enter is processed on keypress (and thus should be checked for via charCode,
+        not keyIdentifier), Space is processed on keydown+keyup! We now match IE in that a button is
+        highlighted when Space is pressed.
+
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::defaultEventHandler):
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::menuListDefaultEventHandler):
+        (WebCore::HTMLSelectElement::listBoxDefaultEventHandler):
+        Made a number of fixes to when default actions take place, similar to HTMLButtonElement ones
+        described above.
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::keyEvent): Unless we have a combined KeyDown, just forward the event
+        to the target. Call accesskey handling directly, as it doesn't seem to be part of normal event
+        handling in IE. Also streamlined the code in KeyDown case, thanks to handleInputMethodKeypress()
+        now being handleInputMethodKeydown().
+        (WebCore::EventHandler::handleTextInputEvent): Check that we were not called from keydown.
+        (WebCore::EventHandler::defaultTextInputEventHandler): Removed a call to defaultTabEventHandler,
+        as default tab handling happens when processing keydown.
+        (WebCore::handleAccessKey): Moved from Document, as access keys are processed outside normal
+        event handling. Fixed accesskey processing to use information that's available in a raw keydown
+        event.
+
+        (WebCore::EventHandler::defaultKeyboardEventHandler): Do not ignore keydown; in particular,
+        handle tabs during keydown processing.
+
+        * page/mac/EventHandlerMac.mm:
+        (WebCore::EventHandler::currentKeyboardEvent): Disambiguate KeyDown as RawKeyDown, as this is
+        what callers want.
+
+        * platform/text/PlatformString.h:
+        * platform/text/String.cpp:
+        (WebCore::String::characterStartingAt):
+        * platform/text/StringImpl.cpp:
+        (WebCore::StringImpl::characterStartingAt):
+        * platform/text/StringImpl.h:
+        Added a UChar32 accessor.
+
+        * svg/graphics/SVGImageEmptyClients.h:
+        (WebCore::SVGEmptyEditorClient::handleKeyboardEvent):
+        (WebCore::SVGEmptyEditorClient::handleInputMethodKeydown):
+        Updated for new function names.
+
 2007-12-11  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Adele

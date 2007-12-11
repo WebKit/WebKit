@@ -19,9 +19,9 @@
     }
 </script> 
 <body onload="test()">
-    This tests that preventing the default behavior for a keydown event will not prevent the keypress event from firing, but will prevent text from being inserted.<br>
-    This matches IE7 and Firefox.<br>
-    <input id="tf" onkeydown="log('key down'); event.preventDefault();" onkeypress="log('key press')">
+    This tests that preventing the default behavior for a keydown event will prevent the keypress event from firing, and will prevent text from being inserted.<br>
+    This matches IE7, but not Firefox, which still dispatches a keypress.<br>
+    <input id="tf" onkeydown="log('key down'); return false" onkeypress="log('key press')">
     <br>
     <div id="res"></div>
 </body>

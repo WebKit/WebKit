@@ -12,7 +12,7 @@ function sendKeyEvent()
 function sendDeleteKeyEvent()
 {
     if (window.eventSender)
-        eventSender.keyDown("\x7F");
+        eventSender.keyDown("delete");
 }
 
 function keyEvent(event)
@@ -33,7 +33,7 @@ function searchEvent(event)
         }
     } else {
         if (window.layoutTestController)
-            layoutTestController.notifyDone();
+            setTimeout("layoutTestController.notifyDone()", 0); // Do it on a timer to avoid Windows DRT hanging.
     }
 }
 
@@ -55,7 +55,7 @@ function startTest()
 
 <p>As of this writing we can't use DOM events to type into a search field, so the test uses the event sender and only runs under DumpRenderTree.</p>
 
-<p><input id="search" type="search" incremental onkeypress="keyEvent(event)" onsearch="searchEvent(event)"></p>
+<p><input id="search" type="search" incremental onkeydown="keyEvent(event)" onsearch="searchEvent(event)"></p>
 
 <div>The two rows below should match.</div>
 <div>0.5 0.4 0.3 0.2 0.2 0</p>

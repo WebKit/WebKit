@@ -1,3 +1,19 @@
+2007-12-07  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        <rdar://problem/5535636>
+        Have to press 4 times instead of 2 times to get the expected result of ^^ with german keyboard.
+
+        http://bugs.webkit.org/show_bug.cgi?id=13916
+        JavaScript detects Tab as a character input on a textfield validation
+
+        * WebCoreSupport/EditorClientGtk.cpp:
+        (WebKit::EditorClient::handleKeyboardEvent):
+        (WebKit::EditorClient::handleInputMethodKeydown):
+        * WebCoreSupport/EditorClientGtk.h:
+        Updated for cross-platform changes as much as it was possible without a gtk build environment.
+
 2007-12-08  Luca Bruno  <lethalman88@gmail.com>
 
         Reviewed by Alp Toker.

@@ -1,3 +1,29 @@
+2007-12-07  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        <rdar://problem/5535636>
+        Have to press 4 times instead of 2 times to get the expected result of ^^ with german keyboard.
+
+        http://bugs.webkit.org/show_bug.cgi?id=13916
+        JavaScript detects Tab as a character input on a textfield validation
+
+        * WebCoreSupport/WebEditorClient.h:
+        Renamed handleKeypress() to handleKeyboardEvent(), as it gets both keydowns and keypresses.
+        Renamed handleInputMethodKeypress() to handleInputMethodKeydown().
+        * WebCoreSupport/WebEditorClient.mm:
+        (WebEditorClient::handleKeyboardEvent): This change makes sense only remotely, but it helped
+        to get tests working. I guess Mac keyboard event handling needs further refactoring.
+
+        * WebView/WebHTMLView.mm:
+        (selectorToCommandName): Convert AppKit editing selector name to Editor command name - extracted
+        from callWebCoreCommand:.
+        (_interceptEditingKeyEvent:shouldSaveCommand:): Insert text from keypress.
+
+        * WebView/WebPDFView.mm:
+        (-[WebPDFView PDFViewWillClickOnLink:withURL:]):
+        Convert incoming platform KeyDown into RawKeyDown, as this is what the view is interested in.
+
 2007-12-10  Brady Eidson  <beidson@apple.com>
 
         Reviewed by John Sullivan

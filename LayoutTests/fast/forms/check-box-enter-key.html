@@ -18,13 +18,12 @@ function submitHandler(e)
 }
 function test()
 {
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
-
     document.getElementById("form").onsubmit = submitHandler;
-    var event = document.createEvent("KeyboardEvents");
-    event.initKeyboardEvent("keypress", true, true, document.defaultView, "Enter", 0, false, false, false, false, false);
-    document.getElementById("check").dispatchEvent(event);
+    document.getElementById("check").focus();
+    if (window.layoutTestController) {
+        layoutTestController.dumpAsText();
+        eventSender.keyDown("\r", []);
+    }
 }
 </script>
 </head>

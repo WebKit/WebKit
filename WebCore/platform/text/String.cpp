@@ -175,6 +175,12 @@ UChar String::operator[](unsigned i) const
     return m_impl->characters()[i];
 }
 
+UChar32 String::characterStartingAt(unsigned i) const
+{
+    if (!m_impl || i >= m_impl->length())
+        return 0;
+    return m_impl->characterStartingAt(i);
+}
 unsigned String::length() const
 {
     if (!m_impl)

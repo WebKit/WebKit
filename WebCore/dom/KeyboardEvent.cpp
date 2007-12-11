@@ -23,12 +23,32 @@
 #include "config.h"
 #include "KeyboardEvent.h"
 
+#include "Document.h"
+#include "DOMWindow.h"
 #include "EventNames.h"
 #include "PlatformKeyboardEvent.h"
+#include "Settings.h"
 
 namespace WebCore {
 
 using namespace EventNames;
+
+static inline const AtomicString& eventTypeForKeyboardEventType(PlatformKeyboardEvent::Type type)
+{
+    switch (type) {
+        case PlatformKeyboardEvent::KeyUp:
+            return keyupEvent;
+        case PlatformKeyboardEvent::RawKeyDown:
+            return keydownEvent;
+        case PlatformKeyboardEvent::Char:
+            return keypressEvent;
+        case PlatformKeyboardEvent::KeyDown:
+            // The caller should disambiguate the combined event into RawKeyDown or Char events.
+            break;
+    }
+    ASSERT_NOT_REACHED();
+    return keydownEvent;
+}
 
 KeyboardEvent::KeyboardEvent()
     : m_keyEvent(0)
@@ -38,11 +58,11 @@ KeyboardEvent::KeyboardEvent()
 }
 
 KeyboardEvent::KeyboardEvent(const PlatformKeyboardEvent& key, AbstractView* view)
-    : UIEventWithKeyState(key.isKeyUp() ? keyupEvent : key.isAutoRepeat() ? keypressEvent : keydownEvent,
+    : UIEventWithKeyState(eventTypeForKeyboardEventType(key.type()),
                           true, true, view, 0, key.ctrlKey(), key.altKey(), key.shiftKey(), key.metaKey())
     , m_keyEvent(new PlatformKeyboardEvent(key))
     , m_keyIdentifier(key.keyIdentifier())
-    , m_keyLocation(key.isKeypad() ? DOM_KEY_LOCATION_NUMPAD : DOM_KEY_LOCATION_STANDARD)
+    , m_keyLocation(key.isKeypad() ? DOM_KEY_LOCATION_NUMPAD : DOM_KEY_LOCATION_STANDARD) // FIXME: differentiate right/left, too
     , m_altGraphKey(false)
 {
 }
@@ -96,21 +116,30 @@ bool KeyboardEvent::getModifierState(const String& keyIdentifier) const
 
 int KeyboardEvent::keyCode() const
 {
+    // IE: virtual key code for keyup/keydown, character code for keypress
+    // Firefox: virtual key code for keyup/keydown, zero for keypress
+    // We match IE.
     if (!m_keyEvent)
         return 0;
     if (type() == keydownEvent || type() == keyupEvent)
-        return m_keyEvent->WindowsKeyCode();
+        return m_keyEvent->windowsVirtualKeyCode();
     return charCode();
 }
 
 int KeyboardEvent::charCode() const
 {
-    if (!m_keyEvent)
+    // IE: not supported
+    // Firefox: 0 for keydown/keyup events, character code for keypress
+    // We match Firefox, unless in Dashboard compatibility mode, where we always return the character code.
+    bool dashboardCompatibilityMode = false;
+    if (view())
+        if (Settings* settings = view()->document()->settings())
+            dashboardCompatibilityMode = settings->usesDashboardBackwardCompatibilityMode();
+
+    if (!m_keyEvent || (type() != keypressEvent && !dashboardCompatibilityMode))
         return 0;
     String text = m_keyEvent->text();
-    if (text.length() != 1)
-        return 0;
-    return text[0];
+    return static_cast<int>(text.characterStartingAt(0));
 }
 
 bool KeyboardEvent::isKeyboardEvent() const

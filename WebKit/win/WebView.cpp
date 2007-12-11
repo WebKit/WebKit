@@ -1239,11 +1239,7 @@ bool WebView::execCommand(WPARAM wParam, LPARAM /*lParam*/)
 
 bool WebView::keyUp(WPARAM virtualKeyCode, LPARAM keyData, bool systemKeyDown)
 {
-    PlatformKeyboardEvent keyEvent(m_viewWindow, virtualKeyCode, keyData, m_currentCharacterCode, systemKeyDown);
-
-    // Don't send key events for alt+space and alt+f4.
-    if (keyEvent.altKey() && (virtualKeyCode == VK_SPACE || virtualKeyCode == VK_F4))
-        return false;
+    PlatformKeyboardEvent keyEvent(m_viewWindow, virtualKeyCode, keyData, PlatformKeyboardEvent::KeyUp, systemKeyDown);
 
     Frame* frame = m_page->focusController()->focusedOrMainFrame();
     m_currentCharacterCode = 0;
@@ -1256,13 +1252,19 @@ static const unsigned AltKey = 1 << 1;
 static const unsigned ShiftKey = 1 << 2;
 
 
-struct KeyEntry {
+struct KeyDownEntry {
     unsigned virtualKey;
     unsigned modifiers;
     const char* name;
 };
 
-static const KeyEntry keyEntries[] = {
+struct KeyPressEntry {
+    unsigned charCode;
+    unsigned modifiers;
+    const char* name;
+};
+
+static const KeyDownEntry keyDownEntries[] = {
     { VK_LEFT,   0,                  "MoveLeft"                                    },
     { VK_LEFT,   ShiftKey,           "MoveLeftAndModifySelection"                  },
     { VK_LEFT,   CtrlKey,            "MoveWordLeft"                                },
@@ -1316,54 +1318,77 @@ static const KeyEntry keyEntries[] = {
     { 'Z',       CtrlKey | ShiftKey, "Redo"                                        },
 };
 
+static const KeyPressEntry keyPressEntries[] = {
+    { '\t',   0,                  "InsertTab"                                   },
+    { '\t',   ShiftKey,           "InsertBacktab"                               },
+    { '\r',   0,                  "InsertNewline"                               },
+    { '\r',   CtrlKey,            "InsertNewline"                               },
+    { '\r',   AltKey,             "InsertNewline"                               },
+    { '\r',   AltKey | ShiftKey,  "InsertNewline"                               },
+};
+
 const char* WebView::interpretKeyEvent(const KeyboardEvent* evt)
 {
-    const PlatformKeyboardEvent* keyEvent = evt->keyEvent();
-    if (!keyEvent)
-        return "";
+    ASSERT(evt->type() == keydownEvent || evt->type() == keypressEvent);
 
-    static HashMap<int, const char*>* commandsMap = 0;
+    static HashMap<int, const char*>* keyDownCommandsMap = 0;
+    static HashMap<int, const char*>* keyPressCommandsMap = 0;
 
-    if (!commandsMap) {
-        commandsMap = new HashMap<int, const char*>;
+    if (!keyDownCommandsMap) {
+        keyDownCommandsMap = new HashMap<int, const char*>;
+        keyPressCommandsMap = new HashMap<int, const char*>;
 
-        for (unsigned i = 0; i < _countof(keyEntries); i++)
-            commandsMap->set(keyEntries[i].modifiers << 16 | keyEntries[i].virtualKey, keyEntries[i].name);
+        for (unsigned i = 0; i < _countof(keyDownEntries); i++)
+            keyDownCommandsMap->set(keyDownEntries[i].modifiers << 16 | keyDownEntries[i].virtualKey, keyDownEntries[i].name);
+
+        for (unsigned i = 0; i < _countof(keyPressEntries); i++)
+            keyPressCommandsMap->set(keyPressEntries[i].modifiers << 16 | keyPressEntries[i].virtualKey, keyPressEntries[i].name);
     }
 
     unsigned modifiers = 0;
-    if (keyEvent->shiftKey())
+    if (evt->shiftKey())
         modifiers |= ShiftKey;
-    if (keyEvent->altKey())
+    if (evt->altKey())
         modifiers |= AltKey;
-    if (keyEvent->ctrlKey())
+    if (evt->ctrlKey())
         modifiers |= CtrlKey;
 
-    return commandsMap->get(modifiers << 16 | keyEvent->WindowsKeyCode());
+    return evt->type() == keydownEvent ? 
+        keyDownCommandsMap->get(modifiers << 16 | evt->keyCode()) :
+        keyPressCommandsMap->get(modifiers << 16 | evt->charCode());
 }
 
 bool WebView::handleEditingKeyboardEvent(KeyboardEvent* evt)
 {
-    String command(interpretKeyEvent(evt));
-
     Node* node = evt->target()->toNode();
     ASSERT(node);
     Frame* frame = node->document()->frame();
     ASSERT(frame);
 
-    if (!command.isEmpty())
+    const PlatformKeyboardEvent* keyEvent = evt->keyEvent();
+    if (!keyEvent || keyEvent->isSystemKey())  // do not treat this as text input if it's a system key event
+        return false;
+
+    if (keyEvent->type() == PlatformKeyboardEvent::RawKeyDown) {
+        String command = interpretKeyEvent(evt);
+
+        // WebKit doesn't have enough information about mode to decide how commands that just insert text if executed via Editor should be treated,
+        // so we leave it upon WebCore to either handle them immediately (e.g. Tab that changes focus) or let a keypress event be generated
+        // (e.g. Tab that inserts a Tab character, or Enter).
+        if (!command.isEmpty() && !Editor::isTextInsertionCommand(command))
+            if (frame->editor()->execCommand(command, evt))
+                return true;
+        return false;
+    }
+
+    String command = interpretKeyEvent(evt);
+     if (!command.isEmpty())
         if (frame->editor()->execCommand(command, evt))
             return true;
 
-    if (!evt->keyEvent() || evt->keyEvent()->isSystemKey())  // do not treat this as text input if it's a system key event
+    // Don't insert null or control characters as they can result in unexpected behaviour
+    if (evt->charCode() < ' ')
         return false;
-
-    if (evt->keyEvent()->text().length() == 1) {
-        UChar ch = evt->keyEvent()->text()[0];
-        // Don't insert null or control characters as they can reslt in unexpected behaviour
-        if (ch < ' ')
-            return false;
-    }
 
     return frame->editor()->insertText(evt->keyEvent()->text(), evt);
 }
@@ -1374,43 +1399,33 @@ bool WebView::keyDown(WPARAM virtualKeyCode, LPARAM keyData, bool systemKeyDown)
     if (virtualKeyCode == VK_CAPITAL)
         frame->eventHandler()->capsLockStateMayHaveChanged();
 
-    // Don't send key events for alt+space and alt+f4, since the OS needs to handle that.
-    if (systemKeyDown && (virtualKeyCode == VK_SPACE || virtualKeyCode == VK_F4))
-        return false;
-
-    MSG msg;
-    // If the next message is a WM_CHAR message, then take it out of the queue, and use
-    // the message parameters to get the character code to construct the PlatformKeyboardEvent.
-    if (systemKeyDown) {
-        if (::PeekMessage(&msg, m_viewWindow, WM_SYSCHAR, WM_SYSCHAR, PM_NOREMOVE))     // don't remove sys key message from the windows message queue until we know we can handle it
-            m_currentCharacterCode = (UChar)msg.wParam;
-    } else if (::PeekMessage(&msg, m_viewWindow, WM_CHAR, WM_CHAR, PM_REMOVE)) 
-        m_currentCharacterCode = (UChar)msg.wParam;
-
-    // FIXME: We need to check WM_UNICHAR to support supplementary characters.
-    // FIXME: We may need to handle other messages for international text.
-
-    m_inIMEKeyDown = virtualKeyCode == VK_PROCESSKEY;
-    if (virtualKeyCode == VK_PROCESSKEY && !m_inIMEComposition)
-        virtualKeyCode = MapVirtualKey(LOBYTE(HIWORD(keyData)), 1);
-
-    PlatformKeyboardEvent keyEvent(m_viewWindow, virtualKeyCode, keyData, m_currentCharacterCode, systemKeyDown);
+    PlatformKeyboardEvent keyEvent(m_viewWindow, virtualKeyCode, keyData, PlatformKeyboardEvent::RawKeyDown, systemKeyDown);
     bool handled = frame->eventHandler()->keyEvent(keyEvent);
-    m_inIMEKeyDown = false;
-    if (handled)
-        goto exit;
+
+    // These events cannot be canceled.
+    // FIXME: match IE list more closely, see <http://msdn2.microsoft.com/en-us/library/ms536938.aspx>.
+    if (systemKeyDown)
+        handled = false;
+
+    if (handled) {
+        // FIXME: remove WM_UNICHAR, too
+        MSG msg;
+        // WM_SYSCHAR events should not be removed, because access keys are implemented in WebCore in WM_SYSCHAR handler.
+        if (!systemKeyDown)
+            ::PeekMessage(&msg, m_viewWindow, WM_CHAR, WM_CHAR, PM_REMOVE);
+        return true;
+    }
 
     // We need to handle back/forward using either Backspace(+Shift) or Ctrl+Left/Right Arrow keys.
-    int windowsKeyCode = keyEvent.WindowsKeyCode();
-    if ((windowsKeyCode == VK_BACK && keyEvent.shiftKey()) || (windowsKeyCode == VK_RIGHT && keyEvent.ctrlKey()))
+    if ((virtualKeyCode == VK_BACK && keyEvent.shiftKey()) || (virtualKeyCode == VK_RIGHT && keyEvent.ctrlKey()))
         m_page->goForward();
-    else if (windowsKeyCode == VK_BACK || (windowsKeyCode == VK_LEFT && keyEvent.ctrlKey()))
+    else if (virtualKeyCode == VK_BACK || (virtualKeyCode == VK_LEFT && keyEvent.ctrlKey()))
         m_page->goBack();
     
     // Need to scroll the page if the arrow keys, space(shift), pgup/dn, or home/end are hit.
     ScrollDirection direction;
     ScrollGranularity granularity;
-    switch (windowsKeyCode) {
+    switch (virtualKeyCode) {
         case VK_LEFT:
             granularity = ScrollByLine;
             direction = ScrollLeft;
@@ -1450,17 +1465,20 @@ bool WebView::keyDown(WPARAM virtualKeyCode, LPARAM keyData, bool systemKeyDown)
         default:
             // We want to let Windows handle the WM_SYSCHAR event if we can't handle it
             // We do want to return true for regular key down case so the WM_CHAR handler won't pick up unhandled messages
-            return !systemKeyDown;
+            return false;
     }
 
     if (!frame->eventHandler()->scrollOverflow(direction, granularity))
         frame->view()->scroll(direction, granularity);
-
-exit:
-    if (systemKeyDown)  // remove sys key message if we have handled it
-        ::PeekMessage(&msg, m_viewWindow, WM_SYSCHAR, WM_SYSCHAR, PM_REMOVE);
-
     return true;
+}
+
+bool WebView::keyPress(WPARAM charCode, LPARAM keyData, bool systemKeyDown)
+{
+    Frame* frame = m_page->focusController()->focusedOrMainFrame();
+
+    PlatformKeyboardEvent keyEvent(m_viewWindow, charCode, keyData, PlatformKeyboardEvent::Char, systemKeyDown);
+    return frame->eventHandler()->keyEvent(keyEvent);
 }
 
 bool WebView::inResizer(LPARAM lParam)
@@ -1576,6 +1594,13 @@ static LRESULT CALLBACK WebViewWndProc(HWND hWnd, UINT message, WPARAM wParam, L
         case WM_KEYUP:
             handled = webView->keyUp(wParam, lParam);
             break;
+        case WM_SYSCHAR:
+            handled = webView->keyPress(wParam, lParam, true);
+            break;
+        case WM_CHAR:
+            handled = webView->keyPress(wParam, lParam);
+            break;
+        // FIXME: We need to check WM_UNICHAR to support supplementary characters (that don't fit in 16 bits).
         case WM_SIZE:
             if (webView->isBeingDestroyed())
                 // If someone has sent us this message while we're being destroyed, we should bail out so we don't crash.

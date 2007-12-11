@@ -77,8 +77,8 @@ public:
     DeleteButtonController* deleteButtonController() const { return m_deleteButtonController.get(); }
     EditCommand* lastEditCommand() { return m_lastEditCommand.get(); }
 
-    void handleKeypress(KeyboardEvent*);
-    void handleInputMethodKeypress(KeyboardEvent*);
+    void handleKeyboardEvent(KeyboardEvent*);
+    void handleInputMethodKeydown(KeyboardEvent*);
 
     bool canEdit() const;
     bool canEditRichly() const;
@@ -156,7 +156,9 @@ public:
     bool selectionStartHasStyle(CSSStyleDeclaration*) const;
 
     bool clientIsEditable() const;
-    
+
+    static bool isTextInsertionCommand(const AtomicString&);
+
     bool execCommand(const AtomicString&, Event* triggeringEvent = 0);
     
     bool insertText(const String&, Event* triggeringEvent);

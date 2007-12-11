@@ -1,3 +1,22 @@
+2007-12-07  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        <rdar://problem/5535636>
+        Have to press 4 times instead of 2 times to get the expected result of ^^ with german keyboard.
+
+        http://bugs.webkit.org/show_bug.cgi?id=13916
+        JavaScript detects Tab as a character input on a textfield validation
+
+        * DumpRenderTree/mac/EventSendingController.mm:
+        (-[EventSendingController keyDown:withModifiers:]): Added a few more named keys.
+        Dispatch a keyup to better match what happens when a key is physically pressed.
+
+        * DumpRenderTree/win/EventSender.cpp:
+        (keyDownCallback): Ditto. Also make sure that WM_CHAR is consistently dispatched before
+        returning from keyDown().
+        (getConstantCallback): Fixed a couple copy/paste mistakes.
+
 2007-12-07  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Oliver.

@@ -1,3 +1,39 @@
+2007-12-07  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        <rdar://problem/5535636>
+        Have to press 4 times instead of 2 times to get the expected result of ^^ with german keyboard.
+
+        http://bugs.webkit.org/show_bug.cgi?id=13916
+        JavaScript detects Tab as a character input on a textfield validation
+
+        Listen to WM_CHAR messages, and actually pass the type of message received down to WebCore.
+        Since WM_KEYDOWN == keydown and WM_CHAR == keypress, this allows for much better IE compatibility
+        than layering Windows keyboard event handling on top of Mac one.
+
+        * WebView.cpp:
+        (WebView::keyUp): Do not special case Alt+F4 and Alt+Space - we don't get keyups for those anyway!
+        (WebView::interpretKeyEvent): Renamed WindowsKeyCode() to windowsVirtualKeyCode().
+        (WebView::handleEditingKeyboardEvent): Use the additional information about event type that
+        we now pass with PlatformKeyboardEvent.
+        (WebView::keyDown): (WebView::keyPress): Split WM_KEYDOWN and WM_CHAR handling in separate
+        functions, pass them down as is, without trying to guess what WM_CHAR Windows would have sent
+        for a given WM_KEYDOWN.
+
+        (WebViewWndProc): Handle WM_CHAR and WM_SYSCHAR.
+
+        * WebView.h: Removed inIMEKeyDown() - it doesn't look like we need it at all. At least, I didn't
+        notice any regressions after removing the only call to it in WebEditorClient.
+
+        * WebEditorClient.cpp:
+        (WebEditorClient::handleKeyboardEvent):
+        (WebEditorClient::handleInputMethodKeydown):
+        * WebEditorClient.h:
+        Renamed handleKeypress() to handleKeyboardEvent(), as it gets both keydowns and keypresses.
+        Renamed handleInputMethodKeypress() to handleInputMethodKeydown() and removed
+        inIMEKeyDown()-related code.
+
 2007-12-10  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Sam Weinig.

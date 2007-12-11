@@ -79,8 +79,20 @@ event type:      keydown
   keyLocation:   0
   modifier keys: c:0 s:0 a:0 m:0
   keyCode:       65
-  charCode:      97
+  charCode:      0
 event type:      keypress
+  target:        <body>
+  eventPhase:    3
+  bubbles:       1
+  cancelable:    1
+  detail:        0
+  view:          OK (document: OK)
+  keyIdentifier: 
+  keyLocation:   0
+  modifier keys: c:0 s:0 a:0 m:0
+  keyCode:       97
+  charCode:      97
+event type:      keyup
   target:        <body>
   eventPhase:    3
   bubbles:       1
@@ -90,8 +102,8 @@ event type:      keypress
   keyIdentifier: U+0041
   keyLocation:   0
   modifier keys: c:0 s:0 a:0 m:0
-  keyCode:       97
-  charCode:      97
+  keyCode:       65
+  charCode:      0
 event type:      keydown
   target:        <body>
   eventPhase:    3
@@ -103,8 +115,20 @@ event type:      keydown
   keyLocation:   0
   modifier keys: c:1 s:0 a:0 m:0
   keyCode:       66
-  charCode:      98
+  charCode:      0
 event type:      keypress
+  target:        <body>
+  eventPhase:    3
+  bubbles:       1
+  cancelable:    1
+  detail:        0
+  view:          OK (document: OK)
+  keyIdentifier: 
+  keyLocation:   0
+  modifier keys: c:1 s:0 a:0 m:0
+  keyCode:       98
+  charCode:      98
+event type:      keyup
   target:        <body>
   eventPhase:    3
   bubbles:       1
@@ -114,8 +138,8 @@ event type:      keypress
   keyIdentifier: U+0042
   keyLocation:   0
   modifier keys: c:1 s:0 a:0 m:0
-  keyCode:       98
-  charCode:      98
+  keyCode:       66
+  charCode:      0
 event type:      keydown
   target:        <body>
   eventPhase:    3
@@ -127,8 +151,20 @@ event type:      keydown
   keyLocation:   0
   modifier keys: c:0 s:1 a:0 m:0
   keyCode:       68
-  charCode:      100
+  charCode:      0
 event type:      keypress
+  target:        <body>
+  eventPhase:    3
+  bubbles:       1
+  cancelable:    1
+  detail:        0
+  view:          OK (document: OK)
+  keyIdentifier: 
+  keyLocation:   0
+  modifier keys: c:0 s:1 a:0 m:0
+  keyCode:       100
+  charCode:      100
+event type:      keyup
   target:        <body>
   eventPhase:    3
   bubbles:       1
@@ -138,8 +174,8 @@ event type:      keypress
   keyIdentifier: U+0044
   keyLocation:   0
   modifier keys: c:0 s:1 a:0 m:0
-  keyCode:       100
-  charCode:      100
+  keyCode:       68
+  charCode:      0
 event type:      keydown
   target:        <body>
   eventPhase:    3
@@ -151,8 +187,20 @@ event type:      keydown
   keyLocation:   0
   modifier keys: c:0 s:0 a:1 m:1
   keyCode:       69
-  charCode:      101
+  charCode:      0
 event type:      keypress
+  target:        <body>
+  eventPhase:    3
+  bubbles:       1
+  cancelable:    1
+  detail:        0
+  view:          OK (document: OK)
+  keyIdentifier: 
+  keyLocation:   0
+  modifier keys: c:0 s:0 a:1 m:1
+  keyCode:       101
+  charCode:      101
+event type:      keyup
   target:        <body>
   eventPhase:    3
   bubbles:       1
@@ -162,8 +210,8 @@ event type:      keypress
   keyIdentifier: U+0045
   keyLocation:   0
   modifier keys: c:0 s:0 a:1 m:1
-  keyCode:       101
-  charCode:      101
+  keyCode:       69
+  charCode:      0
 event type:      mousemove
   target:        <div>
   eventPhase:    3

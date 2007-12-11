@@ -10,7 +10,7 @@
     function test2() {
         document.getElementById('tf').focus();
         eventSender.keyDown('a');
-        eventSender.keyDown("\n", null);
+        eventSender.keyDown("\r", null);
         if (window.layoutTestController)
             layoutTestController.notifyDone();
     }

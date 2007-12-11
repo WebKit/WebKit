@@ -87,7 +87,11 @@ PassRefPtr<KeyboardEvent> EventHandler::currentKeyboardEvent() const
     if (!event)
         return 0;
     switch ([event type]) {
-        case NSKeyDown:
+        case NSKeyDown: {
+            PlatformKeyboardEvent platformEvent(event);
+            platformEvent.disambiguateKeyDownEvent(PlatformKeyboardEvent::RawKeyDown);
+            return new KeyboardEvent(platformEvent, m_frame->document() ? m_frame->document()->defaultView() : 0);
+        }
         case NSKeyUp:
             return new KeyboardEvent(event, m_frame->document() ? m_frame->document()->defaultView() : 0);
         default:

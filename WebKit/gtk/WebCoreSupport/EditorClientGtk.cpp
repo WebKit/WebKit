@@ -212,14 +212,14 @@ void EditorClient::toggleGrammarChecking()
 {
 }
 
-void EditorClient::handleKeypress(KeyboardEvent* event)
+void EditorClient::handleKeyboardEvent(KeyboardEvent* event)
 {
     Frame* frame = core(m_page)->focusController()->focusedOrMainFrame();
     if (!frame || !frame->document()->focusedNode())
         return;
 
     const PlatformKeyboardEvent* kevent = event->keyEvent();
-    if (!kevent || kevent->isKeyUp())
+    if (!kevent || kevent->type() == PlatformKeyboardEvent::KeyUp)
         return;
 
     Node* start = frame->selectionController()->start().node();
@@ -230,7 +230,7 @@ void EditorClient::handleKeypress(KeyboardEvent* event)
     // http://bugs.webkit.org/show_bug.cgi?id=15911
 
     if (start->isContentEditable()) {
-        switch(kevent->WindowsKeyCode()) {
+        switch (kevent->windowsVirtualKeyCode()) {
             case VK_BACK:
                 frame->editor()->deleteWithDirection(SelectionController::BACKWARD,
                         kevent->ctrlKey() ? WordGranularity : CharacterGranularity, false, true);
@@ -304,7 +304,7 @@ void EditorClient::handleKeypress(KeyboardEvent* event)
                     }
                     frame->editor()->insertText(kevent->text(), event);
                 } else if (kevent->ctrlKey()) {
-                    switch (kevent->WindowsKeyCode()) {
+                    switch (kevent->windowsVirtualKeyCode()) {
                         case VK_B:
                             frame->editor()->execCommand("ToggleBold");
                             break;
@@ -323,7 +323,7 @@ void EditorClient::handleKeypress(KeyboardEvent* event)
                 } else return;
         }
     } else {
-        switch (kevent->WindowsKeyCode()) {
+        switch (kevent->windowsVirtualKeyCode()) {
             case VK_UP:
                 frame->editor()->execCommand("MoveUp");
                 break;
@@ -352,7 +352,7 @@ void EditorClient::handleKeypress(KeyboardEvent* event)
 }
 
 
-void EditorClient::handleInputMethodKeypress(KeyboardEvent*)
+void EditorClient::handleInputMethodKeydown(KeyboardEvent*)
 {
     notImplemented();
 }

@@ -271,6 +271,15 @@ StringImpl* StringImpl::substring(unsigned pos, unsigned len)
     return new StringImpl(m_data + pos, len);
 }
 
+UChar32 StringImpl::characterStartingAt(unsigned i) const
+{
+    if (U16_IS_SINGLE(m_data[i]))
+        return m_data[i];
+    if (i + 1 < m_length && U16_IS_LEAD(m_data[i]) && U16_IS_TRAIL(m_data[i + 1]))
+        return U16_GET_SUPPLEMENTARY(m_data[i], m_data[i + 1]);
+    return 0;
+}
+
 static Length parseLength(const UChar* m_data, unsigned int m_length)
 {
     if (m_length == 0)

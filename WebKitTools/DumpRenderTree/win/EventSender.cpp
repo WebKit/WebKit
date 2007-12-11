@@ -70,9 +70,9 @@ static JSValueRef getConstantCallback(JSContextRef context, JSObjectRef object, 
     if (JSStringIsEqualToUTF8CString(propertyName, "WM_KEYUP"))
         return JSValueMakeNumber(context, WM_KEYUP);
     if (JSStringIsEqualToUTF8CString(propertyName, "WM_CHAR"))
-        return JSValueMakeNumber(context, WM_KEYDOWN);
-    if (JSStringIsEqualToUTF8CString(propertyName, "WM_DEADCHAR"))
         return JSValueMakeNumber(context, WM_CHAR);
+    if (JSStringIsEqualToUTF8CString(propertyName, "WM_DEADCHAR"))
+        return JSValueMakeNumber(context, WM_DEADCHAR);
     if (JSStringIsEqualToUTF8CString(propertyName, "WM_SYSKEYDOWN"))
         return JSValueMakeNumber(context, WM_SYSKEYDOWN);
     if (JSStringIsEqualToUTF8CString(propertyName, "WM_SYSKEYUP"))
@@ -292,9 +292,17 @@ static JSValueRef keyDownCallback(JSContextRef context, JSObjectRef function, JS
     int virtualKeyCode;
     int charCode = 0;
     bool needsShiftKeyModifier = false;
-    if (JSStringIsEqualToUTF8CString(character, "rightArrow")) {
+    if (JSStringIsEqualToUTF8CString(character, "leftArrow"))
+        virtualKeyCode = VK_LEFT;
+    else if (JSStringIsEqualToUTF8CString(character, "rightArrow"))
         virtualKeyCode = VK_RIGHT;
-    } else {
+    else if (JSStringIsEqualToUTF8CString(character, "upArrow"))
+        virtualKeyCode = VK_UP;
+    else if (JSStringIsEqualToUTF8CString(character, "downArrow"))
+        virtualKeyCode = VK_DOWN;
+    else if (JSStringIsEqualToUTF8CString(character, "delete"))
+        virtualKeyCode = VK_BACK;
+    else {
         charCode = JSStringGetCharactersPtr(character)[0];
         virtualKeyCode = LOBYTE(VkKeyScan(charCode));
         if (isupper(charCode))
@@ -343,8 +351,14 @@ static JSValueRef keyDownCallback(JSContextRef context, JSObjectRef function, JS
         // For characters that do not exist in the active keyboard layout,
         // ::Translate will not work, so we post an WM_CHAR event ourselves.
         ::PostMessage(webViewWindow, WM_CHAR, charCode, 0);
-        ::DispatchMessage(&msg);
     }
+
+    // Tests expect that all messages are processed by the time keyDown() returns.
+    if (::PeekMessage(&msg, webViewWindow, WM_CHAR, WM_CHAR, PM_REMOVE))
+        ::DispatchMessage(&msg);
+
+    MSG msgUp = makeMsg(webViewWindow, WM_KEYUP, virtualKeyCode, 0);
+    ::DispatchMessage(&msgUp);
 
     if (argumentCount > 1 || needsShiftKeyModifier)
         ::SetKeyboardState(keyState);
@@ -384,7 +398,7 @@ static JSValueRef dispatchMessageCallback(JSContextRef context, JSObjectRef func
     } else
         msg.pt = lastMousePosition;
 
-    dispatchMessage(&msg);
+    ::DispatchMessage(&msg);
 
     return JSValueMakeUndefined(context);
 }

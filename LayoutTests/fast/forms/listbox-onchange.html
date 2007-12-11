@@ -51,7 +51,7 @@
                 checkSelection("0");
 
                 log("6) Make sure onChange fires when changing the selection with the keyboard");
-                keyPressOnSelect("sl1", "Down", true, false);
+                keyDownOnSelect("sl1", "downArrow", true, false);
                 checkSelection("0,1");
 
                 log("7) Make sure onChange doesn't fire when setting the select element's value from JS");
@@ -147,20 +147,20 @@
                 sl.dispatchEvent(event);
             }
 
-            function keyPressOnSelect(selId, identifier, shift, metaOrCtrl)
+            function keyDownOnSelect(selId, identifier, shift, metaOrCtrl)
             {
-                var meta = false;
-                var ctrl = false;
+                modifiers = [];
+                if (shift)
+                    modifiers[0] = "shiftKey";
                 if (metaOrCtrl) {
                     if (navigator.userAgent.search(/\bMac OS X\b/) != -1)
-                        meta = true;
+                        modifiers[modifiers.length] = "metaKey";
                     else
-                        ctrl = true;
+                        modifiers[modifiers.length] = "controlKey";
                 }
-                var sl = document.getElementById(selId);
-                var event = document.createEvent("KeyboardEvents");
-                event.initKeyboardEvent("keypress", true, true, document.defaultView, identifier, 0, ctrl, false, shift, meta, false);
-                sl.dispatchEvent(event);
+
+                document.getElementById(selId).focus();
+                eventSender.keyDown(identifier, modifiers);
             }
             
             function getSelectedOptions(selId)

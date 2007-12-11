@@ -1,3 +1,73 @@
+2007-12-07  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        <rdar://problem/5535636>
+        Have to press 4 times instead of 2 times to get the expected result of ^^ with german keyboard.
+
+        http://bugs.webkit.org/show_bug.cgi?id=13916
+        JavaScript detects Tab as a character input on a textfield validation
+
+        * platform/win/fast/events: Added.
+        * platform/win/fast/events/double-dead-char-expected.txt: Added.
+        * platform/win/fast/events/double-dead-char.html: Added.
+        * fast/events/key-events-in-input-button.html: Added
+        * fast/events/key-events-in-input-button-expected.txt: Added
+        * fast/events/key-events-in-input-text.html: Added
+        * fast/events/key-events-in-input-text-expected.txt: Added
+
+        * fast/events/access-key-self-destruct.html:
+        * fast/forms/listbox-onchange.html:
+        * fast/forms/listbox-selection.html:
+        * fast/forms/access-key.html:
+        * fast/forms/legend-access-key.html:
+        * fast/forms/enter-clicks-buttons.html:
+        * fast/forms/check-box-enter-key.html:
+        * fast/forms/button-enter-click.html:
+        * fast/events/onsearch-enter.html:
+        * fast/events/onchange-passwordfield.html:
+        * fast/events/onchange-searchfield.html:
+        * fast/events/onchange-textfield.html:
+        Use eventSender instead of DOM events, because it emulates the real user action much better,
+        and we weren't getting cross-browser compatibility for the tests anyway.
+
+        * fast/events/frame-tab-focus.html:
+        * fast/html/tab-order.html:
+        * fast/forms/select-enter-key.html:
+        * fast/forms/focus2-expected.txt:
+        * fast/forms/focus2.html:
+        * fast/events/option-tab.html:
+        Dispatch a keydown instead of keypress, as this is when default processing is now done.
+        Possibly, it would be better stiull to use eventSender here, as well.
+
+        * fast/forms/onchange-enter-submit.html:
+        * fast/forms/select-double-onchange.html:
+        * fast/forms/textfield-onchange-deletion.html:
+        The correct code is '\r', not '\n' - previously, the difference was lost while converting
+        events back and forth.
+
+        * fast/forms/search-event-delay.html: Use a new named key to dispatch backspace - the
+        character code for it is cross-platform, but key code is not.
+        Also changed the test to call notifyDone() from a timer - otherwise, DRT would hang as 
+        WM_KEYUP was dispatched after WM_QUIT. I tried and couldn't make DRT work, but I'm
+        fairly confident that this issue doesn't affect Safari.
+
+        * fast/events/keydown-keypress-preventDefault-expected.txt:
+        * fast/events/keydown-keypress-preventDefault.html:
+        This test claimed that its expacted behavior matched both IE and Firefox, but it did not.
+        We now match IE.
+
+        * fast/events/js-keyboard-event-creation-expected.txt:
+        * fast/events/js-keyboard-event-creation.html:
+        This test was problematic, because it was tabbing out to chrome, and that doesn't work
+        well in DRT. I have added another input for it to have a nicer target.
+
+        * platform/mac/fast/events/objc-event-api-expected.txt:
+        Updated for new behavior:
+          - eventSender.keyDown() now dispatches a keyUp, too;
+          - raw events do not have charCode;
+          - keypresses do not have keyIdentifiers.
+
 2007-12-10  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Weinig, Dan and Alexey.

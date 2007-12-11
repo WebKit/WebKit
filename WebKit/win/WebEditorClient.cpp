@@ -594,16 +594,14 @@ void WebEditorClient::redo()
     }
 }
 
-void WebEditorClient::handleKeypress(KeyboardEvent* evt)
+void WebEditorClient::handleKeyboardEvent(KeyboardEvent* evt)
 {
     if (m_webView->handleEditingKeyboardEvent(evt))
         evt->setDefaultHandled();
 }
 
-void WebEditorClient::handleInputMethodKeypress(KeyboardEvent* evt)
+void WebEditorClient::handleInputMethodKeydown(KeyboardEvent* )
 {
-    if (m_webView->inIMEKeyDown())
-        evt->setDefaultHandled();
 }
 
 bool WebEditorClient::isEditable()

@@ -4,11 +4,10 @@
     function test() {
         var bt = document.getElementById('bt');
         bt.focus();
-        if (window.layoutTestController)
+        if (window.layoutTestController) {
             layoutTestController.dumpAsText();
-        var keyEvent = document.createEvent("KeyboardEvents");
-        keyEvent.initKeyboardEvent("keypress", true, true, window, "Enter", 0, false, false, false, false, false);
-        bt.dispatchEvent(keyEvent);
+            eventSender.keyDown("\r", []);
+        }
     }
     function log(msg) {
         var console = document.getElementById('console');

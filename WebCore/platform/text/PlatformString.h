@@ -74,7 +74,8 @@ public:
     const UChar* characters() const;
     const UChar* charactersWithNullTermination();
     
-    UChar operator[](unsigned i) const; // if i >= length(), returns 0
+    UChar operator[](unsigned i) const; // if i >= length(), returns 0    
+    UChar32 characterStartingAt(unsigned) const; // Ditto.
     
     bool contains(UChar c) const { return find(c) != -1; }
     bool contains(const char* str, bool caseSensitive = true) const { return find(str, 0, caseSensitive) != -1; }

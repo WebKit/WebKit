@@ -9,23 +9,23 @@ function log(message)
 }
 function pressKey(key)
 {
-    var event = document.createEvent("KeyboardEvent");
     if (navigator.userAgent.search(/\bMac OS X\b/) != -1)
-        event.initKeyboardEvent("keydown", true, true, document.defaultView, key, 0, true, false, false, false, false);
+        modifier = "ctrlKey";
     else
-        event.initKeyboardEvent("keydown", true, true, document.defaultView, key, 0, false, true, false, false, false);
-    document.dispatchEvent(event);
+        modifier = "altKey";
+    eventSender.keyDown(key, [modifier]);
 }
 function test()
 {
-    if (window.layoutTestController)
+    if (window.layoutTestController) {
         layoutTestController.dumpAsText();
 
-    for (i = 1; i <= 9; i++)
-        pressKey(i);
-    pressKey("a");
-    pressKey("b");
-    pressKey("c");
+        for (i = 1; i <= 9; i++)
+            pressKey(i.toString());
+        pressKey("a");
+        pressKey("b");
+        pressKey("c");
+    }
 }
 </script>
 </head>

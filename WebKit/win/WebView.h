@@ -639,6 +639,7 @@ public:
     bool execCommand(WPARAM wParam, LPARAM lParam);
     bool keyDown(WPARAM, LPARAM, bool systemKeyDown = false);
     bool keyUp(WPARAM, LPARAM, bool systemKeyDown = false);
+    bool keyPress(WPARAM, LPARAM, bool systemKeyDown = false);
     bool inResizer(LPARAM lParam);
     void paint(HDC, LPARAM);
     void paintIntoBackingStore(WebCore::FrameView*, HDC bitmapDC, const WebCore::IntRect& dirtyRect);
@@ -665,7 +666,6 @@ public:
     bool onIMESetContext(WPARAM, LPARAM);
     void selectionChanged();
     void resetIME(WebCore::Frame*);
-    bool inIMEKeyDown() const { return m_inIMEKeyDown; }
     void setInputMethodState(bool);
 
     HRESULT registerDragDrop();
@@ -759,7 +759,6 @@ protected:
     bool m_didClose;
     bool m_hasCustomDropTarget;
     unsigned m_inIMEComposition;
-    bool m_inIMEKeyDown;
     HWND m_toolTipHwnd;
     WebCore::String m_toolTip;
 
