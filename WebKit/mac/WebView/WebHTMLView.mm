@@ -361,8 +361,21 @@ struct WebHTMLViewInterpretKeyEventsParameters {
     BOOL consumedByIM;
 };
 
-@implementation WebHTMLViewPrivate
+static NSCellStateValue kit(TriState state)
+{
+    switch (state) {
+        case FalseTriState:
+            return NSOffState;
+        case TrueTriState:
+            return NSOnState;
+        case MixedTriState:
+            return NSMixedState;
+    }
+    ASSERT_NOT_REACHED();
+    return NSOffState;
+}
 
+@implementation WebHTMLViewPrivate
 
 + (void)initialize
 {
@@ -2047,39 +2060,48 @@ static void _updateMouseoverTimerCallback(CFRunLoopTimerRef timer, void *info)
     return [[webView _editingDelegateForwarder] webView:webView doCommandBySelector:selector];
 }
 
-static AtomicString selectorToCommandName(SEL selector)
+static String comandNameForSelector(SEL selector)
 {
-    // Capitalize the first letter of the selector, since we use capitalized command
-    // names in the Editor object (why?). And remove the trailing colon.
-    // And change a few command names into ones supported by WebCore::Editor.
-
+    // Change a few command names into ones supported by WebCore::Editor.
     if (selector == @selector(insertParagraphSeparator:) || selector == @selector(insertNewlineIgnoringFieldEditor:))
         return "InsertNewline";
     if (selector == @selector(insertTabIgnoringFieldEditor:))
         return "InsertTab";
 
+    // Remove the trailing colon.
     const char* selectorName = sel_getName(selector);
     size_t selectorNameLength = strlen(selectorName);
     ASSERT(selectorNameLength >= 2);
     ASSERT(selectorName[selectorNameLength - 1] == ':');
-    Vector<char, 256> commandName(selectorNameLength - 1 + 1);
-    commandName[0] = toASCIIUpper(selectorName[0]);
-    memcpy(&commandName[1], &selectorName[1], selectorNameLength - 2);
-    commandName[selectorNameLength - 1] = 0;
-
-    return AtomicString(commandName.data());
+    return String(selectorName, selectorNameLength - 1);
 }
 
-- (void)callWebCoreCommand:(SEL)selector
+- (Editor::Command)coreCommandBySelector:(SEL)selector
+{
+    Frame* coreFrame = core([self _frame]);
+    if (!coreFrame)
+        return Editor::Command();
+    return coreFrame->editor()->command(comandNameForSelector(selector));
+}
+
+- (Editor::Command)coreCommandByName:(const char*)name
+{
+    Frame* coreFrame = core([self _frame]);
+    if (!coreFrame)
+        return Editor::Command();
+    return coreFrame->editor()->command(name);
+}
+
+- (void)executeCoreCommandBySelector:(SEL)selector
 {
     if ([self callDelegateDoCommandBySelectorIfNeeded:selector])
         return;
+    [self coreCommandBySelector:selector].execute();
+}
 
-    Frame* coreFrame = core([self _frame]);
-    if (!coreFrame)
-        return;
-
-    coreFrame->editor()->execCommand(selectorToCommandName(selector));
+- (void)executeCoreCommandByName:(const char*)name
+{
+    [self coreCommandByName:name].execute();
 }
 
 // These commands are forwarded to the Editor object in WebCore.
@@ -2087,14 +2109,28 @@ static AtomicString selectorToCommandName(SEL selector)
 // should be moved from here to there, and more commands should be
 // added to this list.
 
-#define WEBCORE_COMMAND(command) - (void)command:(id)sender { [self callWebCoreCommand:_cmd]; }
+// FIXME: Maybe we should set things up so that all these share a single method implementation function.
+// The functions are identical.
 
+#define WEBCORE_COMMAND(command) - (void)command:(id)sender { [self executeCoreCommandBySelector:_cmd]; }
+
+WEBCORE_COMMAND(alignCenter)
+WEBCORE_COMMAND(alignJustified)
+WEBCORE_COMMAND(alignLeft)
+WEBCORE_COMMAND(alignRight)
+WEBCORE_COMMAND(cut)
+WEBCORE_COMMAND(copy)
+WEBCORE_COMMAND(deleteToMark)
 WEBCORE_COMMAND(deleteWordBackward)
 WEBCORE_COMMAND(deleteWordForward)
+WEBCORE_COMMAND(indent)
 WEBCORE_COMMAND(insertBacktab)
 WEBCORE_COMMAND(insertLineBreak)
 WEBCORE_COMMAND(insertNewline)
+WEBCORE_COMMAND(insertNewlineIgnoringFieldEditor)
+WEBCORE_COMMAND(insertParagraphSeparator)
 WEBCORE_COMMAND(insertTab)
+WEBCORE_COMMAND(insertTabIgnoringFieldEditor)
 WEBCORE_COMMAND(moveBackward)
 WEBCORE_COMMAND(moveBackwardAndModifySelection)
 WEBCORE_COMMAND(moveDown)
@@ -2133,7 +2169,18 @@ WEBCORE_COMMAND(moveWordLeft)
 WEBCORE_COMMAND(moveWordLeftAndModifySelection)
 WEBCORE_COMMAND(moveWordRight)
 WEBCORE_COMMAND(moveWordRightAndModifySelection)
+WEBCORE_COMMAND(outdent)
+WEBCORE_COMMAND(selectAll)
+WEBCORE_COMMAND(selectToMark)
+WEBCORE_COMMAND(setMark)
+WEBCORE_COMMAND(subscript)
+WEBCORE_COMMAND(superscript)
+WEBCORE_COMMAND(swapWithMark)
 WEBCORE_COMMAND(transpose)
+WEBCORE_COMMAND(underline)
+WEBCORE_COMMAND(unscript)
+WEBCORE_COMMAND(yank)
+WEBCORE_COMMAND(yankAndSelect)
 
 #undef WEBCORE_COMMAND
 
@@ -2180,13 +2227,6 @@ WEBCORE_COMMAND(transpose)
     return [[self nextResponder] validRequestorForSendType:sendType returnType:returnType];
 }
 
-- (void)selectAll:(id)sender
-{
-    COMMAND_PROLOGUE
-
-    [self selectAll];
-}
-
 // jumpToSelection is the old name for what AppKit now calls centerSelectionInVisibleArea. Safari
 // was using the old jumpToSelection selector in its menu. Newer versions of Safari will us the
 // selector centerSelectionInVisibleArea. We'll leave this old selector in place for two reasons:
@@ -2198,6 +2238,14 @@ WEBCORE_COMMAND(transpose)
 
     if (Frame* coreFrame = core([self _frame]))
         coreFrame->revealSelection(RenderLayer::gAlignCenterAlways);
+}
+
+- (NSCellStateValue)selectionHasStyle:(CSSStyleDeclaration*)style
+{
+    Frame* coreFrame = core([self _frame]);
+    if (!coreFrame)
+        return NSOffState;
+    return kit(coreFrame->editor()->selectionHasStyle(style));
 }
 
 - (BOOL)validateUserInterfaceItemWithoutDelegate:(id <NSValidatedUserInterfaceItem>)item
@@ -2219,21 +2267,17 @@ WEBCORE_COMMAND(transpose)
             return NO;
         }
     }
-    
-    if (action == @selector(changeSpelling:)
-            || action == @selector(_changeSpellingFromMenu:)
-            || action == @selector(checkSpelling:)
-            || action == @selector(complete:)
-            || action == @selector(deleteBackward:)
-            || action == @selector(deleteBackwardByDecomposingPreviousCharacter:)
-            || action == @selector(deleteForward:)
-            || action == @selector(deleteToBeginningOfLine:)
-            || action == @selector(deleteToBeginningOfParagraph:)
-            || action == @selector(deleteToEndOfLine:)
-            || action == @selector(deleteToEndOfParagraph:)
+
+    if (action == @selector(alignCenter:)
+            || action == @selector(alignJustified:)
+            || action == @selector(alignLeft:)
+            || action == @selector(alignRight:)
+            || action == @selector(cut:)
+            || action == @selector(copy:)
             || action == @selector(deleteToMark:)
             || action == @selector(deleteWordBackward:)
             || action == @selector(deleteWordForward:)
+            || action == @selector(indent:)
             || action == @selector(insertBacktab:)
             || action == @selector(insertLineBreak:)
             || action == @selector(insertNewline:)
@@ -2255,20 +2299,20 @@ WEBCORE_COMMAND(transpose)
             || action == @selector(moveRightAndModifySelection:)
             || action == @selector(moveToBeginningOfDocument:)
             || action == @selector(moveToBeginningOfDocumentAndModifySelection:)
-            || action == @selector(moveToBeginningOfSentence:)
-            || action == @selector(moveToBeginningOfSentenceAndModifySelection:)
             || action == @selector(moveToBeginningOfLine:)
             || action == @selector(moveToBeginningOfLineAndModifySelection:)
             || action == @selector(moveToBeginningOfParagraph:)
             || action == @selector(moveToBeginningOfParagraphAndModifySelection:)
+            || action == @selector(moveToBeginningOfSentence:)
+            || action == @selector(moveToBeginningOfSentenceAndModifySelection:)
             || action == @selector(moveToEndOfDocument:)
             || action == @selector(moveToEndOfDocumentAndModifySelection:)
-            || action == @selector(moveToEndOfSentence:)
-            || action == @selector(moveToEndOfSentenceAndModifySelection:)
             || action == @selector(moveToEndOfLine:)
             || action == @selector(moveToEndOfLineAndModifySelection:)
             || action == @selector(moveToEndOfParagraph:)
             || action == @selector(moveToEndOfParagraphAndModifySelection:)
+            || action == @selector(moveToEndOfSentence:)
+            || action == @selector(moveToEndOfSentenceAndModifySelection:)
             || action == @selector(moveUp:)
             || action == @selector(moveUpAndModifySelection:)
             || action == @selector(moveWordBackward:)
@@ -2279,14 +2323,41 @@ WEBCORE_COMMAND(transpose)
             || action == @selector(moveWordLeftAndModifySelection:)
             || action == @selector(moveWordRight:)
             || action == @selector(moveWordRightAndModifySelection:)
+            || action == @selector(outdent:)
+            || action == @selector(selectAll:)
+            || action == @selector(selectToMark:)
+            || action == @selector(setMark:)
+            || action == @selector(subscript:)
+            || action == @selector(superscript:)
+            || action == @selector(swapWithMark:)
+            || action == @selector(transpose:)
+            || action == @selector(underline:)
+            || action == @selector(unscript:)
+            || action == @selector(yank:)
+            || action == @selector(yankAndSelect:)) {
+        Editor::Command command = [self coreCommandBySelector:action];
+        NSMenuItem *menuItem = (NSMenuItem *)item;
+        if ([menuItem isKindOfClass:[NSMenuItem class]])
+            [menuItem setState:kit(command.state())];
+        return command.isEnabled();
+    }
+
+    if (action == @selector(changeSpelling:)
+            || action == @selector(_changeSpellingFromMenu:)
+            || action == @selector(checkSpelling:)
+            || action == @selector(complete:)
+            || action == @selector(deleteBackward:)
+            || action == @selector(deleteBackwardByDecomposingPreviousCharacter:)
+            || action == @selector(deleteForward:)
+            || action == @selector(deleteToBeginningOfLine:)
+            || action == @selector(deleteToBeginningOfParagraph:)
+            || action == @selector(deleteToEndOfLine:)
+            || action == @selector(deleteToEndOfParagraph:)
             || action == @selector(pageDown:)
             || action == @selector(pageDownAndModifySelection:)
             || action == @selector(pageUp:)
             || action == @selector(pageUpAndModifySelection:)
-            || action == @selector(pasteFont:)
-            || action == @selector(transpose:)
-            || action == @selector(yank:)
-            || action == @selector(yankAndSelect:))
+            || action == @selector(pasteFont:))
         return [self _canEdit];
     
     if (action == @selector(showGuessPanel:)) {
@@ -2306,12 +2377,13 @@ WEBCORE_COMMAND(transpose)
         if ([menuItem isKindOfClass:[NSMenuItem class]]) {
             NSWritingDirection writingDirection = static_cast<NSWritingDirection>([item tag]);
             if (writingDirection == NSWritingDirectionNatural) {
-                [menuItem setState:NO];
+                [menuItem setState:NSOffState];
                 return NO;
             }
-            DOMCSSStyleDeclaration* style = [self _emptyStyle];
-            [style setDirection:writingDirection == NSWritingDirectionLeftToRight ? @"LTR" : @"RTL"];
-            [menuItem setState:[[self _bridge] selectionHasStyle:style]];
+            RefPtr<CSSStyleDeclaration> style = new CSSMutableStyleDeclaration;
+            ExceptionCode ec;
+            style->setProperty("direction", writingDirection == NSWritingDirectionLeftToRight ? "LTR" : "RTL", ec);
+            [menuItem setState:frame->editor()->selectionHasStyle(style.get())];
         }
         return [self _canEdit];
     }
@@ -2319,24 +2391,21 @@ WEBCORE_COMMAND(transpose)
     if (action == @selector(toggleBaseWritingDirection:)) {
         NSMenuItem *menuItem = (NSMenuItem *)item;
         if ([menuItem isKindOfClass:[NSMenuItem class]]) {
-            DOMCSSStyleDeclaration* rtl = [self _emptyStyle];
-            [rtl setDirection:@"RTL"];
+            RefPtr<CSSStyleDeclaration> style = new CSSMutableStyleDeclaration;
+            ExceptionCode ec;
+            style->setProperty("direction", "RTL", ec);
             // Take control of the title of the menu item, instead of just checking/unchecking it because otherwise
             // we don't know what the check would mean.
-            [menuItem setTitle:[[self _bridge] selectionHasStyle:rtl] ? UI_STRING("Left to Right", "Left to Right context menu item") : UI_STRING("Right to Left", "Right to Left context menu item")];
+            [menuItem setTitle:frame->editor()->selectionHasStyle(style.get())
+                ? UI_STRING("Left to Right", "Left to Right context menu item")
+                : UI_STRING("Right to Left", "Right to Left context menu item")];
         }
         return [self _canEdit];
     } 
     
-    if (action == @selector(alignCenter:)
-            || action == @selector(alignLeft:)
-            || action == @selector(alignJustified:)
-            || action == @selector(alignRight:)
-            || action == @selector(changeAttributes:)
+    if (action == @selector(changeAttributes:)
             || action == @selector(changeColor:)        
-            || action == @selector(changeFont:)
-            || action == @selector(indent:)
-            || action == @selector(outdent:))
+            || action == @selector(changeFont:))
         return [self _canEditRichly];
     
     if (action == @selector(capitalizeWord:)
@@ -2346,18 +2415,11 @@ WEBCORE_COMMAND(transpose)
     
     if (action == @selector(centerSelectionInVisibleArea:)
                || action == @selector(jumpToSelection:)
-               || action == @selector(copyFont:)
-               || action == @selector(setMark:))
+               || action == @selector(copyFont:))
         return [self _hasSelection] || ([self _isEditable] && [self _hasInsertionPoint]);
     
     if (action == @selector(changeDocumentBackgroundColor:))
         return [[self _webView] isEditable] && [self _canEditRichly];
-    
-    if (action == @selector(copy:))
-        return frame && (frame->editor()->canDHTMLCopy() || frame->editor()->canCopy());
-    
-    if (action == @selector(cut:))
-        return frame && (frame->editor()->canDHTMLCut() || frame->editor()->canCut());
     
     if (action == @selector(delete:))
         return frame && frame->editor()->canDelete();
@@ -2377,50 +2439,6 @@ WEBCORE_COMMAND(transpose)
     if (action == @selector(performFindPanelAction:))
         // FIXME: Not yet implemented.
         return NO;
-    
-    if (action == @selector(selectToMark:)
-            || action == @selector(swapWithMark:))
-        return [self _hasSelectionOrInsertionPoint] && [[self _bridge] markDOMRange] != nil;
-    
-    if (action == @selector(subscript:)) {
-        NSMenuItem *menuItem = (NSMenuItem *)item;
-        if ([menuItem isKindOfClass:[NSMenuItem class]]) {
-            DOMCSSStyleDeclaration *style = [self _emptyStyle];
-            [style setVerticalAlign:@"sub"];
-            [menuItem setState:[[self _bridge] selectionHasStyle:style]];
-        }
-        return [self _canEditRichly];
-    } 
-    
-    if (action == @selector(superscript:)) {
-        NSMenuItem *menuItem = (NSMenuItem *)item;
-        if ([menuItem isKindOfClass:[NSMenuItem class]]) {
-            DOMCSSStyleDeclaration *style = [self _emptyStyle];
-            [style setVerticalAlign:@"super"];
-            [menuItem setState:[[self _bridge] selectionHasStyle:style]];
-        }
-        return [self _canEditRichly];
-    } 
-    
-    if (action == @selector(underline:)) {
-        NSMenuItem *menuItem = (NSMenuItem *)item;
-        if ([menuItem isKindOfClass:[NSMenuItem class]]) {
-            DOMCSSStyleDeclaration *style = [self _emptyStyle];
-            [style setProperty:@"-khtml-text-decorations-in-effect" value:@"underline" priority:@""];
-            [menuItem setState:[[self _bridge] selectionHasStyle:style]];
-        }
-        return [self _canEditRichly];
-    } 
-    
-    if (action == @selector(unscript:)) {
-        NSMenuItem *menuItem = (NSMenuItem *)item;
-        if ([menuItem isKindOfClass:[NSMenuItem class]]) {
-            DOMCSSStyleDeclaration *style = [self _emptyStyle];
-            [style setVerticalAlign:@"baseline"];
-            [menuItem setState:[[self _bridge] selectionHasStyle:style]];
-        }
-        return [self _canEditRichly];
-    } 
     
     if (action == @selector(_lookUpInDictionaryFromMenu:)) {
         return [self _hasSelection];
@@ -3898,18 +3916,6 @@ noPromisedData:
         coreFrame->editor()->applyParagraphStyleToSelection(core(style), undoAction);
 }
 
-- (void)_toggleBold
-{
-    if (Frame* coreFrame = core([self _frame]))
-        coreFrame->editor()->execCommand("ToggleBold");
-}
-
-- (void)_toggleItalic
-{
-    if (Frame* coreFrame = core([self _frame]))
-        coreFrame->editor()->execCommand("ToggleItalic");
-}
-
 - (BOOL)_handleStyleKeyEquivalent:(NSEvent *)event
 {
     ASSERT([self _webView]);
@@ -3924,11 +3930,11 @@ noPromisedData:
     
     NSString *string = [event characters];
     if ([string caseInsensitiveCompare:@"b"] == NSOrderedSame) {
-        [self _toggleBold];
+        [self executeCoreCommandByName:"ToggleBold"];
         return YES;
     }
     if ([string caseInsensitiveCompare:@"i"] == NSOrderedSame) {
-        [self _toggleItalic];
+        [self executeCoreCommandByName:"ToggleItalic"];
         return YES;
     }
     
@@ -4260,52 +4266,6 @@ NSStrokeColorAttributeName        /* NSColor, default nil: same as foreground co
                   withUndoAction:EditActionSetColor];
 }
 
-- (void)_alignSelectionUsingCSSValue:(NSString *)CSSAlignmentValue withUndoAction:(EditAction)undoAction
-{
-    if (![self _canEditRichly])
-        return;
-        
-    DOMCSSStyleDeclaration *style = [self _emptyStyle];
-    [style setTextAlign:CSSAlignmentValue];
-    [self _applyStyleToSelection:style withUndoAction:undoAction];
-}
-
-- (void)alignCenter:(id)sender
-{
-    COMMAND_PROLOGUE
-
-    [self _alignSelectionUsingCSSValue:@"center" withUndoAction:EditActionCenter];
-}
-
-- (void)alignJustified:(id)sender
-{
-    COMMAND_PROLOGUE
-
-    [self _alignSelectionUsingCSSValue:@"justify" withUndoAction:EditActionJustify];
-}
-
-- (void)alignLeft:(id)sender
-{
-    COMMAND_PROLOGUE
-
-    [self _alignSelectionUsingCSSValue:@"left" withUndoAction:EditActionAlignLeft];
-}
-
-- (void)alignRight:(id)sender
-{
-    COMMAND_PROLOGUE
-
-    [self _alignSelectionUsingCSSValue:@"right" withUndoAction:EditActionAlignRight];
-}
-
-- (void)insertParagraphSeparator:(id)sender
-{
-    COMMAND_PROLOGUE
-
-    if (Frame* coreFrame = core([self _frame]))
-        coreFrame->editor()->execCommand("InsertNewline");
-}
-
 - (void)_changeWordCaseWithSelector:(SEL)selector
 {
     if (![self _canEdit])
@@ -4534,113 +4494,6 @@ NSStrokeColorAttributeName        /* NSColor, default nil: same as foreground co
     [NSApp stopSpeaking:sender];
 }
 
-- (void)insertNewlineIgnoringFieldEditor:(id)sender
-{
-    COMMAND_PROLOGUE
-
-    if (Frame* coreFrame = core([self _frame]))
-        coreFrame->editor()->execCommand("InsertNewline");
-}
-
-- (void)insertTabIgnoringFieldEditor:(id)sender
-{
-    COMMAND_PROLOGUE
-
-    if (Frame* coreFrame = core([self _frame]))
-        coreFrame->editor()->execCommand("InsertTab");
-}
-
-- (void)subscript:(id)sender
-{
-    COMMAND_PROLOGUE
-
-    DOMCSSStyleDeclaration *style = [self _emptyStyle];
-    [style setVerticalAlign:@"sub"];
-    [self _applyStyleToSelection:style withUndoAction:EditActionSubscript];
-}
-
-- (void)superscript:(id)sender
-{
-    COMMAND_PROLOGUE
-
-    DOMCSSStyleDeclaration *style = [self _emptyStyle];
-    [style setVerticalAlign:@"super"];
-    [self _applyStyleToSelection:style withUndoAction:EditActionSuperscript];
-}
-
-- (void)unscript:(id)sender
-{
-    COMMAND_PROLOGUE
-
-    DOMCSSStyleDeclaration *style = [self _emptyStyle];
-    [style setVerticalAlign:@"baseline"];
-    [self _applyStyleToSelection:style withUndoAction:EditActionUnscript];
-}
-
-- (void)underline:(id)sender
-{
-    COMMAND_PROLOGUE
-
-    Frame* coreFrame = core([self _frame]);
-    if (!coreFrame)
-        return;
-    // Despite the name, this method is actually supposed to toggle underline.
-    // FIXME: This currently clears overline, line-through, and blink as an unwanted side effect.
-    DOMCSSStyleDeclaration *style = [self _emptyStyle];
-    [style setProperty:@"-khtml-text-decorations-in-effect" value:@"underline" priority:@""];
-    if (coreFrame->editor()->selectionStartHasStyle(core(style)))
-        [style setProperty:@"-khtml-text-decorations-in-effect" value:@"none" priority:@""];
-    [self _applyStyleToSelection:style withUndoAction:EditActionUnderline];
-}
-
-- (void)yank:(id)sender
-{
-    COMMAND_PROLOGUE
-
-    if (Frame* coreFrame = core([self _frame]))
-        coreFrame->editor()->yank();
-}
-
-- (void)yankAndSelect:(id)sender
-{
-    COMMAND_PROLOGUE
-
-    if (Frame* coreFrame = core([self _frame]))
-        coreFrame->editor()->yankAndSelect();
-}
-
-- (void)setMark:(id)sender
-{
-    COMMAND_PROLOGUE
-
-    if (Frame* coreFrame = core([self _frame]))
-        coreFrame->editor()->setMark();
-}
-
-- (void)deleteToMark:(id)sender
-{
-    COMMAND_PROLOGUE
-
-    if (Frame* coreFrame = core([self _frame]))
-        coreFrame->editor()->deleteToMark();
-}
-
-- (void)selectToMark:(id)sender
-{
-    COMMAND_PROLOGUE
-
-    if (Frame* coreFrame = core([self _frame]))
-        coreFrame->editor()->selectToMark();
-}
-
-- (void)swapWithMark:(id)sender
-{
-    COMMAND_PROLOGUE
-
-    if (Frame* coreFrame = core([self _frame]))
-        coreFrame->editor()->swapWithMark();
-}
-
 - (void)toggleBaseWritingDirection:(id)sender
 {
     COMMAND_PROLOGUE
@@ -4683,22 +4536,6 @@ NSStrokeColorAttributeName        /* NSColor, default nil: same as foreground co
     DOMCSSStyleDeclaration *style = [self _emptyStyle];
     [style setDirection:writingDirection == NSWritingDirectionLeftToRight ? @"LTR" : @"RTL"];
     [self _applyParagraphStyleToSelection:style withUndoAction:EditActionSetWritingDirection];
-}
-
-- (void)indent:(id)sender
-{
-    COMMAND_PROLOGUE
-
-    if (Frame* coreFrame = core([self _frame]))
-        coreFrame->editor()->indent();
-}
-
-- (void)outdent:(id)sender
-{
-    COMMAND_PROLOGUE
-    
-    if (Frame* coreFrame = core([self _frame]))
-        coreFrame->editor()->outdent();
 }
 
 #if 0
@@ -5014,22 +4851,6 @@ NSStrokeColorAttributeName        /* NSColor, default nil: same as foreground co
     return [_private->dataSource webFrame];
 }
 
-- (void)copy:(id)sender
-{
-    COMMAND_PROLOGUE
-
-    if (Frame* coreFrame = core([self _frame]))
-        coreFrame->editor()->copy();
-}
-
-- (void)cut:(id)sender
-{
-    COMMAND_PROLOGUE
-
-    if (Frame* coreFrame = core([self _frame]))
-        coreFrame->editor()->cut();
-}
-
 - (void)paste:(id)sender
 {
     COMMAND_PROLOGUE
@@ -5226,7 +5047,7 @@ static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
             // (e.g. Tab that inserts a Tab character, or Enter).
             bool haveTextInsertionCommands = false;
             for (size_t i = 0; i < size; ++i) {
-                if (Editor::isTextInsertionCommand(selectorToCommandName(NSSelectorFromString(command.commandNames[i]))))
+                if ([self coreCommandBySelector:NSSelectorFromString(command.commandNames[i])].isTextInsertion())
                     haveTextInsertionCommands = true;
             }
             if (!haveTextInsertionCommands)
@@ -5569,9 +5390,9 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
         WebView *webView = [self _webView];
         Frame* coreFrame = core([self _frame]);
         if (![[webView _editingDelegateForwarder] webView:webView doCommandBySelector:selector] && coreFrame) {
-            AtomicString commandName = selectorToCommandName(selector);
-            if (Editor::isTextInsertionCommand(commandName))
-                eventWasHandled = coreFrame->editor()->execCommand(commandName, event);
+            Editor::Command command = [self coreCommandBySelector:selector];
+            if (command.isTextInsertion())
+                eventWasHandled = command.execute(event);
             else {
                 _private->selectorForDoCommandBySelector = selector;
                 [super doCommandBySelector:selector];

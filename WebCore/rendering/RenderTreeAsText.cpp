@@ -33,7 +33,6 @@
 #include "HTMLElement.h"
 #include "HTMLNames.h"
 #include "InlineTextBox.h"
-#include "JSEditor.h"
 #include "RenderBR.h"
 #include "RenderListMarker.h"
 #include "RenderTableCell.h"

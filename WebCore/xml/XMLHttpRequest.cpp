@@ -91,7 +91,7 @@ static void removeFromRequestsByDocument(Document* doc, XMLHttpRequest* req)
 
 static bool canSetRequestHeader(const String& name)
 {
-    static HashSet<String, CaseInsensitiveHash<String> > forbiddenHeaders;
+    static HashSet<String, CaseFoldingHash> forbiddenHeaders;
     static String proxyString("proxy-");
     
     if (forbiddenHeaders.isEmpty()) {

@@ -70,7 +70,6 @@ namespace WebCore {
     class HTMLInputElement;
     class HTMLMapElement;
     class IntPoint;
-    class JSEditor;
     class MouseEventWithHitTestResults;
     class NameNodeList;
     class NodeFilter;
@@ -868,9 +867,6 @@ private:
     void imageLoadEventTimerFired(Timer<Document>*);
     void updateFocusAppearanceTimerFired(Timer<Document>*);
 
-    JSEditor* jsEditor();
-    JSEditor* m_jsEditor;
-
     mutable String m_domain;
 
     SecurityOrigin m_securityOrigin;
@@ -886,7 +882,7 @@ private:
     mutable HashMap<AtomicStringImpl*, Element*> m_elementsById;
     mutable HashCountedSet<AtomicStringImpl*> m_duplicateIds;
     
-    mutable HashMap<StringImpl*, Element*, CaseInsensitiveHash<StringImpl*> > m_elementsByAccessKey;
+    mutable HashMap<StringImpl*, Element*, CaseFoldingHash> m_elementsByAccessKey;
     
     InheritedBool m_designMode;
     

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Computer, Inc.
+ * Copyright (C) 2006, 2007 Apple Inc. All rights reserved
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -26,13 +26,11 @@
 #include <wtf/HashTraits.h>
 #include <wtf/unicode/Unicode.h>
 
-namespace WTF {
+namespace WebCore {
 
-    template<typename T> struct StrHash;
-
-    template<> struct StrHash<WebCore::StringImpl*> {
-        static unsigned hash(const WebCore::StringImpl* key) { return key->hash(); }
-        static bool equal(const WebCore::StringImpl* a, const WebCore::StringImpl* b)
+    struct StringHash {
+        static unsigned hash(const StringImpl* key) { return key->hash(); }
+        static bool equal(const StringImpl* a, const StringImpl* b)
         {
             if (a == b)
                 return true;
@@ -57,39 +55,30 @@ namespace WTF {
 
             return true;
         }
-        static const bool safeToCompareToEmptyOrDeleted = false;
-    };
-    
-    template<> struct StrHash<WebCore::AtomicStringImpl*> : public StrHash<WebCore::StringImpl*> { };
 
-    template<> struct StrHash<RefPtr<WebCore::StringImpl> > {
-        static unsigned hash(const RefPtr<WebCore::StringImpl>& key) { return key->hash(); }
-        static bool equal(const RefPtr<WebCore::StringImpl>& a, const RefPtr<WebCore::StringImpl>& b)
+        static unsigned hash(const RefPtr<StringImpl>& key) { return key->hash(); }
+        static bool equal(const RefPtr<StringImpl>& a, const RefPtr<StringImpl>& b)
         {
-            return StrHash<WebCore::StringImpl*>::equal(a.get(), b.get());
+            return equal(a.get(), b.get());
         }
-        static const bool safeToCompareToEmptyOrDeleted = false;
-    };
 
-    template<> struct StrHash<WebCore::String> {
-        static unsigned hash(const WebCore::String& key) { return key.impl()->hash(); }
-        static bool equal(const WebCore::String& a, const WebCore::String& b)
+        static unsigned hash(const String& key) { return key.impl()->hash(); }
+        static bool equal(const String& a, const String& b)
         {
-            return StrHash<WebCore::StringImpl*>::equal(a.impl(), b.impl());
+            return equal(a.impl(), b.impl());
         }
+
         static const bool safeToCompareToEmptyOrDeleted = false;
     };
 
-    template<typename T> struct CaseInsensitiveHash;
-
-    template<> class CaseInsensitiveHash<WebCore::StringImpl*> {
+    class CaseFoldingHash {
     private:
         // Golden ratio - arbitrary start value to avoid mapping all 0's to all 0's
         static const unsigned PHI = 0x9e3779b9U;
     public:
         // Paul Hsieh's SuperFastHash
         // http://www.azillionmonkeys.com/qed/hash.html
-        static unsigned hash(const WebCore::StringImpl* str)
+        static unsigned hash(const StringImpl* str)
         {
             unsigned l = str->length();
             const UChar* s = str->characters();
@@ -177,7 +166,7 @@ namespace WTF {
             return hash;
         }
         
-        static bool equal(const WebCore::StringImpl* a, const WebCore::StringImpl* b)
+        static bool equal(const StringImpl* a, const StringImpl* b)
         {
             if (a == b)
                 return true;
@@ -189,37 +178,31 @@ namespace WTF {
             return WTF::Unicode::umemcasecmp(a->characters(), b->characters(), length) == 0;
         }
 
-        static const bool safeToCompareToEmptyOrDeleted = false;
-    };
-
-    template<> struct CaseInsensitiveHash<WebCore::AtomicStringImpl*> : public CaseInsensitiveHash<WebCore::StringImpl*> { };
-
-    template<> struct CaseInsensitiveHash<RefPtr<WebCore::StringImpl> > {
-        static unsigned hash(const RefPtr<WebCore::StringImpl>& key) 
+        static unsigned hash(const RefPtr<StringImpl>& key) 
         {
-            return CaseInsensitiveHash<WebCore::StringImpl*>::hash(key.get());
+            return hash(key.get());
         }
 
-        static bool equal(const RefPtr<WebCore::StringImpl>& a, const RefPtr<WebCore::StringImpl>& b)
+        static bool equal(const RefPtr<StringImpl>& a, const RefPtr<StringImpl>& b)
         {
-            return CaseInsensitiveHash<WebCore::StringImpl*>::equal(a.get(), b.get());
+            return equal(a.get(), b.get());
         }
 
-        static const bool safeToCompareToEmptyOrDeleted = false;
-    };
-
-    template<> struct CaseInsensitiveHash<WebCore::String> {
-        static unsigned hash(const WebCore::String& key)
+        static unsigned hash(const String& key)
         {
-            return CaseInsensitiveHash<WebCore::StringImpl*>::hash(key.impl());
+            return hash(key.impl());
         }
-        static bool equal(const WebCore::String& a, const WebCore::String& b)
+        static bool equal(const String& a, const String& b)
         {
-            return CaseInsensitiveHash<WebCore::StringImpl*>::equal(a.impl(), b.impl());
+            return equal(a.impl(), b.impl());
         }
 
         static const bool safeToCompareToEmptyOrDeleted = false;
     };
+
+}
+
+namespace WTF {
 
     // store WebCore::String as StringImpl*
 
@@ -243,26 +226,24 @@ namespace WTF {
 
     // share code between StringImpl*, RefPtr<StringImpl>, and String
 
-    template<> struct HashKeyStorageTraits<StrHash<RefPtr<WebCore::StringImpl> >, HashTraits<RefPtr<WebCore::StringImpl> > > {
-        typedef StrHash<WebCore::StringImpl*> Hash;
+    template<> struct HashKeyStorageTraits<WebCore::StringHash, HashTraits<RefPtr<WebCore::StringImpl> > > {
+        typedef WebCore::StringHash Hash;
         typedef HashTraits<WebCore::StringImpl*> Traits;
     };
-    template<> struct HashKeyStorageTraits<StrHash<WebCore::String>, HashTraits<WebCore::String> > {
-        typedef StrHash<WebCore::StringImpl*> Hash;
+    template<> struct HashKeyStorageTraits<WebCore::StringHash, HashTraits<WebCore::String> > {
+        typedef WebCore::StringHash Hash;
         typedef HashTraits<WebCore::StringImpl*> Traits;
     };
 
-    template<> struct HashKeyStorageTraits<CaseInsensitiveHash<RefPtr<WebCore::StringImpl> >, HashTraits<RefPtr<WebCore::StringImpl> > > {
-        typedef CaseInsensitiveHash<WebCore::StringImpl*> Hash;
+    template<> struct HashKeyStorageTraits<WebCore::CaseFoldingHash, HashTraits<RefPtr<WebCore::StringImpl> > > {
+        typedef WebCore::CaseFoldingHash Hash;
         typedef HashTraits<WebCore::StringImpl*> Traits;
     };
-    template<> struct HashKeyStorageTraits<CaseInsensitiveHash<WebCore::String>, HashTraits<WebCore::String> > {
-        typedef CaseInsensitiveHash<WebCore::StringImpl*> Hash;
+    template<> struct HashKeyStorageTraits<WebCore::CaseFoldingHash, HashTraits<WebCore::String> > {
+        typedef WebCore::CaseFoldingHash Hash;
         typedef HashTraits<WebCore::StringImpl*> Traits;
     };
 
 }
-
-using WTF::CaseInsensitiveHash;
 
 #endif

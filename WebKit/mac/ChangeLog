@@ -1,3 +1,35 @@
+2007-12-11  Darin Adler  <darin@apple.com>
+
+        Reviewed by Geoff.
+
+        - change more editing commands to use WebCore::Editor
+        - change to use the new WebCore::Editor::command() function
+
+        * WebView/WebHTMLView.mm: Changed alignCenter, alignJustified, alignLeft,
+        alignRight, cut, copy, deleteToMark, indent, insertNewlineIgnoringFieldEditor,
+        insertTabIgnoringFieldEditor, outdent, selectAll, selectToMark, setMark,
+        subscript, superscript, swapWithMark, underline, unscript, yank, and yankAndSelect
+        to use the "forward to WebCore" macro instead of having hand-written implementations.
+        (kit): Added function to change a TriState to an AppKit-style tri-state value.
+        (-[WebHTMLView coreCommandBySelector:]): Added. No longer converts case of the
+        first character or copies the selector name, since the Editor commands are not case
+        sensitive any more. Returns a command object.
+        (-[WebHTMLView coreCommandByName:]): Added.
+        (-[WebHTMLView executeCoreCommandBySelector:]): Renamed from callWebCoreCommand:,
+        and changed to use the new coreCommandBySelector: method.
+        (-[WebHTMLView executeCoreCommandByName:]): Added.
+        (-[WebHTMLView validateUserInterfaceItemWithoutDelegate:]): Changed all the
+        methods that call through to WebCore to also use the state() and isEnabled()
+        functions on the commands for the menu item state and user interface item enabling.
+        (-[WebHTMLView _handleStyleKeyEquivalent:]): Use ToggleBold and ToggleItalic by
+        name rather than having local methods for them; no need for methods with a single
+        call site.
+        (-[WebHTMLView insertParagraphSeparator:]): Use executeCoreCommandByName: rather
+        than the deprecated execCommand().
+        (-[WebHTMLView doCommandBySelector:]): Changed to use command().execute() rather
+        than the deprecated execCommand().
+        * WebView/WebHTMLViewInternal.h: Removed some unneeded method declarations.
+
 2007-12-07  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin.

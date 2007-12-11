@@ -1,8 +1,6 @@
 /*
- * This file is part of the DOM implementation for KDE.
- *
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
- * Copyright (C) 2005, 2006 Apple Computer, Inc.
+ * Copyright (C) 2005, 2006, 2007 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -43,9 +41,10 @@ namespace WebCore {
 
 class AtomicString;
 class DeprecatedString;
-struct UCharBufferTranslator;
 struct CStringTranslator;
 struct Length;
+struct StringHash;
+struct UCharBufferTranslator;
 
 class StringImpl : public RefCounted<StringImpl> {
 private:
@@ -180,14 +179,13 @@ inline bool equalIgnoringCase(const char* a, const StringImpl* b) { return equal
 
 namespace WTF {
 
-    // StrHash is the default hash for StringImpl* and RefPtr<StringImpl>
+    // WebCore::StringHash is the default hash for StringImpl* and RefPtr<StringImpl>
     template<typename T> struct DefaultHash;
-    template<typename T> struct StrHash;
     template<> struct DefaultHash<WebCore::StringImpl*> {
-        typedef StrHash<WebCore::StringImpl*> Hash;
+        typedef WebCore::StringHash Hash;
     };
     template<> struct DefaultHash<RefPtr<WebCore::StringImpl> > {
-        typedef StrHash<RefPtr<WebCore::StringImpl> > Hash;
+        typedef WebCore::StringHash Hash;
     };
 
 }

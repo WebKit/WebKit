@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-    typedef HashMap<String, String, CaseInsensitiveHash<String> > HTTPHeaderMap;
+    typedef HashMap<String, String, CaseFoldingHash> HTTPHeaderMap;
 
 } // namespace WebCore
 

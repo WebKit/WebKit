@@ -350,6 +350,7 @@ This file contains the list of files needed to build WebCore.
         editing/DeleteSelectionCommand.cpp
         editing/EditCommand.cpp
         editing/Editor.cpp
+        editing/EditorCommand.cpp
         editing/FormatBlockCommand.cpp
         editing/HTMLInterchange.cpp
         editing/IndentOutdentCommand.cpp
@@ -359,7 +360,6 @@ This file contains the list of files needed to build WebCore.
         editing/InsertNodeBeforeCommand.cpp
         editing/InsertParagraphSeparatorCommand.cpp
         editing/InsertTextCommand.cpp
-        editing/JSEditor.cpp
         editing/JoinTextNodesCommand.cpp
         editing/MergeIdenticalElementsCommand.cpp
         editing/ModifySelectionListLevel.cpp

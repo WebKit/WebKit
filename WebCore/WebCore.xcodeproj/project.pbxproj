@@ -1468,8 +1468,6 @@
 		93309DF2099E64920056E581 /* InsertTextCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = 93309DA3099E64910056E581 /* InsertTextCommand.h */; };
 		93309DF3099E64920056E581 /* JoinTextNodesCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93309DA4099E64910056E581 /* JoinTextNodesCommand.cpp */; };
 		93309DF4099E64920056E581 /* JoinTextNodesCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = 93309DA5099E64910056E581 /* JoinTextNodesCommand.h */; };
-		93309DF5099E64920056E581 /* JSEditor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93309DA6099E64910056E581 /* JSEditor.cpp */; };
-		93309DF6099E64920056E581 /* JSEditor.h in Headers */ = {isa = PBXBuildFile; fileRef = 93309DA7099E64910056E581 /* JSEditor.h */; };
 		93309DF7099E64920056E581 /* markup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93309DA8099E64910056E581 /* markup.cpp */; };
 		93309DF8099E64920056E581 /* markup.h in Headers */ = {isa = PBXBuildFile; fileRef = 93309DA9099E64910056E581 /* markup.h */; };
 		93309DF9099E64920056E581 /* MergeIdenticalElementsCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93309DAA099E64910056E581 /* MergeIdenticalElementsCommand.cpp */; };
@@ -1561,6 +1559,7 @@
 		939885C408B7E3D100E707C4 /* EventNames.h in Headers */ = {isa = PBXBuildFile; fileRef = 939885C208B7E3D100E707C4 /* EventNames.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		93A1EAA00A5634C9006960A0 /* ImageDocumentMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 93A1EA9F0A5634C9006960A0 /* ImageDocumentMac.mm */; };
 		93A1EAA80A563508006960A0 /* ImageDocumentMac.h in Headers */ = {isa = PBXBuildFile; fileRef = 93A1EAA70A563508006960A0 /* ImageDocumentMac.h */; };
+		93A38B4B0D0E5808006872C2 /* EditorCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93A38B4A0D0E5808006872C2 /* EditorCommand.cpp */; };
 		93B6A0E60B0BCA5C00F5027A /* ContextMenu.h in Headers */ = {isa = PBXBuildFile; fileRef = 93B6A0E50B0BCA5C00F5027A /* ContextMenu.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		93B6A0E80B0BCA6700F5027A /* ContextMenu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93B6A0E70B0BCA6700F5027A /* ContextMenu.cpp */; };
 		93B6A0EA0B0BCA8400F5027A /* ContextMenuMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 93B6A0E90B0BCA8400F5027A /* ContextMenuMac.mm */; };
@@ -5761,8 +5760,6 @@
 		93309DA3099E64910056E581 /* InsertTextCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InsertTextCommand.h; sourceTree = "<group>"; };
 		93309DA4099E64910056E581 /* JoinTextNodesCommand.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JoinTextNodesCommand.cpp; sourceTree = "<group>"; };
 		93309DA5099E64910056E581 /* JoinTextNodesCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JoinTextNodesCommand.h; sourceTree = "<group>"; };
-		93309DA6099E64910056E581 /* JSEditor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSEditor.cpp; sourceTree = "<group>"; };
-		93309DA7099E64910056E581 /* JSEditor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSEditor.h; sourceTree = "<group>"; };
 		93309DA8099E64910056E581 /* markup.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = markup.cpp; sourceTree = "<group>"; };
 		93309DA9099E64910056E581 /* markup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = markup.h; sourceTree = "<group>"; };
 		93309DAA099E64910056E581 /* MergeIdenticalElementsCommand.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MergeIdenticalElementsCommand.cpp; sourceTree = "<group>"; };
@@ -5859,6 +5856,7 @@
 		939885C208B7E3D100E707C4 /* EventNames.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = EventNames.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		93A1EA9F0A5634C9006960A0 /* ImageDocumentMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ImageDocumentMac.mm; sourceTree = "<group>"; };
 		93A1EAA70A563508006960A0 /* ImageDocumentMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImageDocumentMac.h; sourceTree = "<group>"; };
+		93A38B4A0D0E5808006872C2 /* EditorCommand.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EditorCommand.cpp; sourceTree = "<group>"; };
 		93B6A0E50B0BCA5C00F5027A /* ContextMenu.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = ContextMenu.h; sourceTree = "<group>"; };
 		93B6A0E70B0BCA6700F5027A /* ContextMenu.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = ContextMenu.cpp; sourceTree = "<group>"; };
 		93B6A0E90B0BCA8400F5027A /* ContextMenuMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = ContextMenuMac.mm; sourceTree = "<group>"; };
@@ -9611,6 +9609,7 @@
 				93309D95099E64910056E581 /* EditCommand.h */,
 				4B3043CA0AE0373B00A82647 /* Editor.cpp */,
 				4B3043CB0AE0373B00A82647 /* Editor.h */,
+				93A38B4A0D0E5808006872C2 /* EditorCommand.cpp */,
 				4BAE95B00B2FA9CE00AED8A0 /* EditorDeleteAction.h */,
 				93FDAFC90B11307400E2746F /* EditorInsertAction.h */,
 				D05CED270A40BB2C00C5AF38 /* FormatBlockCommand.cpp */,
@@ -9635,8 +9634,6 @@
 				93309DA3099E64910056E581 /* InsertTextCommand.h */,
 				93309DA4099E64910056E581 /* JoinTextNodesCommand.cpp */,
 				93309DA5099E64910056E581 /* JoinTextNodesCommand.h */,
-				93309DA6099E64910056E581 /* JSEditor.cpp */,
-				93309DA7099E64910056E581 /* JSEditor.h */,
 				93309DA8099E64910056E581 /* markup.cpp */,
 				93309DA9099E64910056E581 /* markup.h */,
 				93309DAA099E64910056E581 /* MergeIdenticalElementsCommand.cpp */,
@@ -13325,7 +13322,6 @@
 				659DDC8309E198BA001BF3C6 /* JSDocument.h in Headers */,
 				1A494EDF0A123F4C00FDAFC1 /* JSDocumentFragment.h in Headers */,
 				65DF31F609D1CC60000BE325 /* JSDocumentType.h in Headers */,
-				93309DF6099E64920056E581 /* JSEditor.h in Headers */,
 				65DF31FA09D1CC60000BE325 /* JSElement.h in Headers */,
 				65DF323009D1DDBC000BE325 /* JSEntity.h in Headers */,
 				93F9B7750BA5FDDD00854064 /* JSEntityReference.h in Headers */,
@@ -15026,7 +15022,6 @@
 				929264770B61FC7200B41D34 /* JSDocumentCustom.cpp in Sources */,
 				1A494EDE0A123F4C00FDAFC1 /* JSDocumentFragment.cpp in Sources */,
 				65DF31F509D1CC60000BE325 /* JSDocumentType.cpp in Sources */,
-				93309DF5099E64920056E581 /* JSEditor.cpp in Sources */,
 				65DF31F909D1CC60000BE325 /* JSElement.cpp in Sources */,
 				BC2ED5550C6B9BD300920BFF /* JSElementCustom.cpp in Sources */,
 				65DF322F09D1DDBC000BE325 /* JSEntity.cpp in Sources */,
@@ -15796,6 +15791,7 @@
 				BCB16C2C0979C3BD00467741 /* loader.cpp in Sources */,
 				93309DF7099E64920056E581 /* markup.cpp in Sources */,
 				93309E1D099E64920056E581 /* visible_units.cpp in Sources */,
+				93A38B4B0D0E5808006872C2 /* EditorCommand.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

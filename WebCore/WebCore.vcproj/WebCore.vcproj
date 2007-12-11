@@ -6309,6 +6309,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\editing\EditorCommand.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\editing\EditorDeleteAction.h"
 				>
 			</File>
@@ -6402,14 +6406,6 @@
 			</File>
 			<File
 				RelativePath="..\editing\JoinTextNodesCommand.h"
-				>
-			</File>
-			<File
-				RelativePath="..\editing\JSEditor.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\editing\JSEditor.h"
 				>
 			</File>
 			<File

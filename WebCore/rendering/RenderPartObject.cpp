@@ -150,7 +150,7 @@ void RenderPartObject::updateWidget(bool onlyCreateNonNetscapePlugins)
       if (serviceType.isEmpty())
           serviceType = o->m_serviceType;
       
-      HashSet<StringImpl*, CaseInsensitiveHash<StringImpl*> > uniqueParamNames;
+      HashSet<StringImpl*, CaseFoldingHash> uniqueParamNames;
       
       // Scan the PARAM children.
       // Get the URL and type from the params if we don't already have them.

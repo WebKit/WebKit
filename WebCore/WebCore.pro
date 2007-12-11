@@ -527,6 +527,7 @@ SOURCES += \
     editing/DeleteSelectionCommand.cpp \
     editing/EditCommand.cpp \
     editing/Editor.cpp \
+    editing/EditorCommand.cpp \
     editing/FormatBlockCommand.cpp \
     editing/htmlediting.cpp \
     editing/HTMLInterchange.cpp \
@@ -538,7 +539,6 @@ SOURCES += \
     editing/InsertParagraphSeparatorCommand.cpp \
     editing/InsertTextCommand.cpp \
     editing/JoinTextNodesCommand.cpp \
-    editing/JSEditor.cpp \
     editing/markup.cpp \
     editing/MergeIdenticalElementsCommand.cpp \
     editing/ModifySelectionListLevel.cpp \

@@ -879,58 +879,6 @@ void Frame::computeAndSetTypingStyle(CSSStyleDeclaration *style, EditAction edit
     d->m_typingStyle = mutableStyle.release();
 }
 
-static void updateState(CSSMutableStyleDeclaration *desiredStyle, CSSComputedStyleDeclaration *computedStyle, bool& atStart, Frame::TriState& state)
-{
-    DeprecatedValueListConstIterator<CSSProperty> end;
-    for (DeprecatedValueListConstIterator<CSSProperty> it = desiredStyle->valuesIterator(); it != end; ++it) {
-        int propertyID = (*it).id();
-        String desiredProperty = desiredStyle->getPropertyValue(propertyID);
-        String computedProperty = computedStyle->getPropertyValue(propertyID);
-        Frame::TriState propertyState = equalIgnoringCase(desiredProperty, computedProperty)
-            ? Frame::trueTriState : Frame::falseTriState;
-        if (atStart) {
-            state = propertyState;
-            atStart = false;
-        } else if (state != propertyState) {
-            state = Frame::mixedTriState;
-            break;
-        }
-    }
-}
-
-Frame::TriState Frame::selectionHasStyle(CSSStyleDeclaration *style) const
-{
-    bool atStart = true;
-    TriState state = falseTriState;
-
-    RefPtr<CSSMutableStyleDeclaration> mutableStyle = style->makeMutable();
-
-    if (!selectionController()->isRange()) {
-        Node* nodeToRemove;
-        RefPtr<CSSComputedStyleDeclaration> selectionStyle = selectionComputedStyle(nodeToRemove);
-        if (!selectionStyle)
-            return falseTriState;
-        updateState(mutableStyle.get(), selectionStyle.get(), atStart, state);
-        if (nodeToRemove) {
-            ExceptionCode ec = 0;
-            nodeToRemove->remove(ec);
-            ASSERT(ec == 0);
-        }
-    } else {
-        for (Node* node = selectionController()->start().node(); node; node = node->traverseNextNode()) {
-            RefPtr<CSSComputedStyleDeclaration> computedStyle = new CSSComputedStyleDeclaration(node);
-            if (computedStyle)
-                updateState(mutableStyle.get(), computedStyle.get(), atStart, state);
-            if (state == mixedTriState)
-                break;
-            if (node == selectionController()->end().node())
-                break;
-        }
-    }
-
-    return state;
-}
-
 String Frame::selectionStartStylePropertyValue(int stylePropertyID) const
 {
     Node *nodeToRemove;

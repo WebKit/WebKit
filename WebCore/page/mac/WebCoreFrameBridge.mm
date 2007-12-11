@@ -1161,21 +1161,6 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
     m_frame->computeAndSetTypingStyle([style _CSSStyleDeclaration], undoAction);
 }
 
-- (NSCellStateValue)selectionHasStyle:(DOMCSSStyleDeclaration *)style
-{
-    if (!m_frame)
-        return NSOffState;
-    switch (m_frame->selectionHasStyle([style _CSSStyleDeclaration])) {
-        case Frame::falseTriState:
-            return NSOffState;
-        case Frame::trueTriState:
-            return NSOnState;
-        case Frame::mixedTriState:
-            return NSMixedState;
-    }
-    return NSOffState;
-}
-
 - (NSFont *)fontForSelection:(BOOL *)hasMultipleFonts
 {
     bool multipleFonts = false;

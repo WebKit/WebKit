@@ -1,3 +1,8 @@
+2007-12-11  Darin Adler  <darin@apple.com>
+
+        * WebView.cpp:
+        (WebView::handleEditingKeyboardEvent): Update for change to Editor API.
+
 2007-12-07  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin.

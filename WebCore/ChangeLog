@@ -1,5 +1,290 @@
 2007-12-11  Darin Adler  <darin@apple.com>
 
+        Reviewed by Geoff.
+
+        - exposed many new commands to the DOM Document executeCommand function by
+          merging the JSEditor and Editor executeCommand implementations
+        - replaced the execCommand function with a EditorCommand class
+        - replaced the WTF::StrHash<> class template with the WebCore::StringHash class
+        - replaced the WTF::CaseInsensitiveHash<> class template with the
+          WebCore::CaseFoldingHash class
+
+        * WebCore.base.exp: Updated.
+        * WebCore.pro: Added EditorCommand.cpp, removed JSEditor.cpp.
+        * WebCore.vcproj/WebCore.vcproj: Ditto.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+        * WebCoreSources.bkl: Ditto.
+
+        * dom/Document.cpp:
+        (WebCore::Document::Document): Removed code to set up m_jsEditor.
+        (WebCore::Document::~Document): Removed code to delete m_jsEditor.
+        (WebCore::command): Added. Helper function that gets an Editor::Command.
+        (WebCore::Document::executeCommand): Changed to use Editor::Command instead of
+        JSEditor.
+        (WebCore::Document::queryCommandEnabled): Ditto.
+        (WebCore::Document::queryCommandIndeterm):
+        (WebCore::Document::queryCommandState): Ditto.
+        (WebCore::Document::queryCommandSupported): Ditto.
+        (WebCore::Document::queryCommandValue): Ditto.
+
+        * dom/Document.h: Removed JSEditor, jsEditor, m_jsEditor. Changed to
+        use CaseFoldingHash.
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::selectionForCommand): Renamed from selectionForEvent and
+        made into a member function so it is accessible from the new EditorCommand.cpp file.
+        Also changed to get the selection from the passed-in frame instead of from the
+        page, because this should work on the targeted frame unless the event overrides it.
+        (WebCore::Editor::handleKeypress): Updated for selectionForCommand change.
+        (WebCore::Editor::handleInputMethodKeypress): Ditto.
+        (WebCore::imageElementFromImageDocument): Renamed and changed to return
+        a HTMLImageElement instead of a Node*.
+        (WebCore::Editor::canCopy): Updated for name change.
+        (WebCore::Editor::selectionUnorderedListState): Updated for TriState change.
+        (WebCore::Editor::selectionOrderedListState): Ditto.
+        (WebCore::Editor::selectionStartHasStyle): Make type of local more specific.
+        (WebCore::updateState): Moved here from Frame.
+        (WebCore::Editor::selectionHasStyle): Ditto.
+        (WebCore::Editor::Editor): Initialize m_shouldStartNewKillRingSequence.
+        (WebCore::Editor::insertTextWithoutSendingTextEvent): Updated for
+        selectionForCommand change.
+        (WebCore::Editor::copy): Updated for imageElementFromImageDocument change.
+        (WebCore::Editor::toggleBold): Call the ToggleBold command via the command
+        machinery since it's no longer in this file as a local function.
+        (WebCore::Editor::toggleUnderline): Call the ToggleUnderline command.
+        (WebCore::Editor::setBaseWritingDirection): Change type of argument and of
+        local variable.
+        (WebCore::Editor::addToKillRing): Moved here from EditorMac. Not useful
+        without a kill ring, but it's relatively straightforward to implement one.
+        (WebCore::Editor::appendToKillRing): Put default implementation here for
+        platforms other than Mac. We should probably put a simple kill ring
+        implementation here -- doesn't need to be shared with the OS oh platforms
+        other than Mac.
+        (WebCore::Editor::prependToKillRing): Ditto.
+        (WebCore::Editor::yankFromKillRing): Ditto.
+        (WebCore::Editor::startNewKillRingSequence): Ditto.
+        (WebCore::Editor::setKillRingToYankedState): Ditto.
+
+        * editing/Editor.h: Moved the TriState enum here instead of inside the
+        Frame class. Added EditorCommandSource enum. Moved selectionHasStyle
+        here from the Frame class. Added Editor::Command class with five functions
+        for the various things you can do with a command (execute it, check if it
+        can be used, and its state and value). Changed hte parameter of
+        setBaseWritingDirection to be a const String& rather than a String.
+        Got rid of the kill-ring-related operations, but added the kill ring
+        functions themselves. Made selectedRange() public. Made the
+        m_startNewKillRingSequence not Mac-specific and added "should" to its
+        name.
+
+        * editing/EditorCommand.cpp: Copied from WebCore/editing/Editor.cpp.
+        Retained only the editing commands.
+        (WebCore::targetFrame): Moved to the top of the file.
+        (WebCore::executeApplyStyle): Added. Helper function for commands
+        that need to apply styles.
+        (WebCore::executeToggleStyle): Added. Helper function for commands
+        that need to toggle styles based on the style of the start of selection.
+        (WebCore::executeApplyParagraphStyle): Added. Like executeApplyStyle, but
+        for paragraph styles.
+        (WebCore::executeInsertFragment): Added. Helper function for commands
+        that need to insert a DOM fragment.
+        (WebCore::executeInsertNode): Added. Helper function for commands that
+        need to insert a tree rooted in a single DOM node.
+        (WebCore::stateStyle): Added. Helper function for the state of commands
+        that represent style.
+        (WebCore::valueStyle): Added. Helper function for the value of commands
+        that represent style.
+        (WebCore::canScroll): Added. Helper functions for some move and scroll
+        commands that need to determine if the renderer they are in can scroll.
+        (WebCore::unionDOMRanges): Moved here from EditorMac.
+        (WebCore::executeBackColor):
+        (WebCore::executeBackwardDelete):
+        (WebCore::executeCopy):
+        (WebCore::executeCreateLink):
+        (WebCore::executeCut):
+        (WebCore::executeDelete):
+        (WebCore::executeDeleteToMark):
+        (WebCore::executeDeleteWordBackward):
+        (WebCore::executeDeleteWordForward):
+        (WebCore::executeFindString):
+        (WebCore::executeFontName):
+        (WebCore::executeFontSize):
+        (WebCore::executeFontSizeDelta):
+        (WebCore::executeForeColor):
+        (WebCore::executeFormatBlock):
+        (WebCore::executeForwardDelete):
+        (WebCore::executeIndent):
+        (WebCore::executeInsertBacktab):
+        (WebCore::executeInsertHorizontalRule):
+        (WebCore::executeInsertHTML):
+        (WebCore::executeInsertImage):
+        (WebCore::executeInsertLineBreak):
+        (WebCore::executeInsertNewline):
+        (WebCore::executeInsertNewlineInQuotedContent):
+        (WebCore::executeInsertOrderedList):
+        (WebCore::executeInsertParagraph):
+        (WebCore::executeInsertTab):
+        (WebCore::executeInsertText):
+        (WebCore::executeInsertUnorderedList):
+        (WebCore::executeJustifyCenter):
+        (WebCore::executeJustifyFull):
+        (WebCore::executeJustifyLeft):
+        (WebCore::executeJustifyRight):
+        (WebCore::executeMoveBackward):
+        (WebCore::executeMoveBackwardAndModifySelection):
+        (WebCore::executeMoveDown):
+        (WebCore::executeMoveDownAndModifySelection):
+        (WebCore::executeMoveDownByPageAndModifyCaret):
+        (WebCore::executeMoveForward):
+        (WebCore::executeMoveForwardAndModifySelection):
+        (WebCore::executeMoveLeft):
+        (WebCore::executeMoveLeftAndModifySelection):
+        (WebCore::executeMoveRight):
+        (WebCore::executeMoveRightAndModifySelection):
+        (WebCore::executeMoveToBeginningOfDocument):
+        (WebCore::executeMoveToBeginningOfDocumentAndModifySelection):
+        (WebCore::executeMoveToBeginningOfLine):
+        (WebCore::executeMoveToBeginningOfLineAndModifySelection):
+        (WebCore::executeMoveToBeginningOfParagraph):
+        (WebCore::executeMoveToBeginningOfParagraphAndModifySelection):
+        (WebCore::executeMoveToBeginningOfSentence):
+        (WebCore::executeMoveToBeginningOfSentenceAndModifySelection):
+        (WebCore::executeMoveToEndOfDocument):
+        (WebCore::executeMoveToEndOfDocumentAndModifySelection):
+        (WebCore::executeMoveToEndOfSentence):
+        (WebCore::executeMoveToEndOfSentenceAndModifySelection):
+        (WebCore::executeMoveToEndOfLine):
+        (WebCore::executeMoveToEndOfLineAndModifySelection):
+        (WebCore::executeMoveToEndOfParagraph):
+        (WebCore::executeMoveToEndOfParagraphAndModifySelection):
+        (WebCore::executeMoveParagraphBackwardAndModifySelection):
+        (WebCore::executeMoveParagraphForwardAndModifySelection):
+        (WebCore::executeMoveUp):
+        (WebCore::executeMoveUpAndModifySelection):
+        (WebCore::executeMoveUpByPageAndModifyCaret):
+        (WebCore::executeMoveWordBackward):
+        (WebCore::executeMoveWordBackwardAndModifySelection):
+        (WebCore::executeMoveWordForward):
+        (WebCore::executeMoveWordForwardAndModifySelection):
+        (WebCore::executeMoveWordLeft):
+        (WebCore::executeMoveWordLeftAndModifySelection):
+        (WebCore::executeMoveWordRight):
+        (WebCore::executeMoveWordRightAndModifySelection):
+        (WebCore::executeOutdent):
+        (WebCore::executePaste):
+        (WebCore::executePasteAndMatchStyle):
+        (WebCore::executePrint):
+        (WebCore::executeRedo):
+        (WebCore::executeRemoveFormat):
+        (WebCore::executeSelectAll):
+        (WebCore::executeSelectToMark):
+        (WebCore::executeSetMark):
+        (WebCore::executeStrikethrough):
+        (WebCore::executeSubscript):
+        (WebCore::executeSuperscript):
+        (WebCore::executeSwapWithMark):
+        (WebCore::executeToggleBold):
+        (WebCore::executeToggleItalic):
+        (WebCore::executeTranspose):
+        (WebCore::executeUnderline):
+        (WebCore::executeUndo):
+        (WebCore::executeUnlink):
+        (WebCore::executeUnscript):
+        (WebCore::executeUnselect):
+        (WebCore::executeYank):
+        (WebCore::executeYankAndSelect):
+        (WebCore::supported):
+        (WebCore::supportedPaste):
+        (WebCore::enabled):
+        (WebCore::enabledAnySelection):
+        (WebCore::enabledAnySelectionAndMark):
+        (WebCore::enableCaretInEditableText):
+        (WebCore::enabledCopy):
+        (WebCore::enabledCut):
+        (WebCore::enabledInEditableText):
+        (WebCore::enabledInRichlyEditableText):
+        (WebCore::enabledPaste):
+        (WebCore::enabledRangeInEditableText):
+        (WebCore::enabledRangeInRichlyEditableText):
+        (WebCore::enabledRedo):
+        (WebCore::enabledUndo):
+        (WebCore::stateNone):
+        (WebCore::stateBold):
+        (WebCore::stateItalic):
+        (WebCore::stateOrderedList):
+        (WebCore::stateStrikethrough):
+        (WebCore::stateSubscript):
+        (WebCore::stateSuperscript):
+        (WebCore::stateUnderline):
+        (WebCore::stateUnorderedList):
+        (WebCore::valueNull):
+        (WebCore::valueBackColor):
+        (WebCore::valueFontName):
+        (WebCore::valueFontSize):
+        (WebCore::valueFontSizeDelta):
+        (WebCore::valueForeColor):
+        (WebCore::createCommandMap): Added lots of commands, including all the commands
+        from JSEditor. A few commands needed different behavior based on whether they are
+        invoked from the DOM or a keyboard binding.
+        (WebCore::Editor::command): Added. Gets a command object given a name.
+        (WebCore::Editor::Command::Command): Added.
+        (WebCore::Editor::Command::execute): Added.
+        (WebCore::Editor::Command::isSupported): Added.
+        (WebCore::Editor::Command::isEnabled): Added.
+        (WebCore::Editor::Command::state): Added.
+        (WebCore::Editor::Command::value): Added.
+        (WebCore::Editor::execCommand): Changed to call command().execute().
+
+        * editing/JSEditor.cpp: Removed.
+        * editing/JSEditor.h: Removed.
+
+        * editing/mac/EditorMac.mm: Changed to provide kill ring primitives intead of
+        kill ring commands, so the kill ring commands can be cross-platform.
+        (WebCore::Editor::appendToKillRing): Added.
+        (WebCore::Editor::prependToKillRing): Added.
+        (WebCore::Editor::yankFromKillRing): Added.
+        (WebCore::Editor::startNewKillRingSequence): Added.
+        (WebCore::Editor::setKillRingToYankedState): Added.
+
+        * page/Frame.cpp: Removed selectionHasStyle, TriState, and updateState.
+        * page/Frame.h: Ditto.
+
+        * page/mac/WebCoreFrameBridge.mm: Removed selectionHasStyle.
+        * page/mac/WebCoreFrameBridge.h: Ditto.
+
+        * platform/ContextMenu.cpp:
+        (WebCore::ContextMenu::checkOrEnableIfNeeded): Updated for TriState change.
+
+        * platform/text/StringHash.h:
+        (WebCore::StringHash::hash): Merged the StrHash<> template classes into this.
+        (WebCore::StringHash::equal): Ditto.
+        (WebCore::CaseFoldingHash::hash): Merged the CaseInsensitiveHash<> template
+        classes into this.
+        (WebCore::CaseFoldingHash::equal): Ditto.
+
+        * platform/text/StringImpl.cpp:
+        (WebCore::equal): Changed to invoke StringHash.
+        (WebCore::equalIgnoringCase): Changed to invoke CaseFoldingHash.
+
+        * dom/DOMImplementation.cpp:
+        (WebCore::addString): Updated to use StringHash and CaseFoldingHash.
+        (WebCore::isSVG10Feature): Ditto.
+        (WebCore::isSVG11Feature): Ditto.
+        * loader/FrameLoader.cpp:
+        (WebCore::localSchemes): Ditto.
+        * platform/graphics/FontCache.cpp:
+        (WebCore::computeHash): Ditto.
+        * platform/network/HTTPHeaderMap.h: Ditto.
+        * platform/text/PlatformString.h: Ditto.
+        * platform/text/StringImpl.h: Ditto.
+        * rendering/RenderPartObject.cpp:
+        (WebCore::RenderPartObject::updateWidget): Ditto.
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::canSetRequestHeader): Ditto.
+
+        * rendering/RenderTreeAsText.cpp: Removed stray include of JSEditor.h.
+
+2007-12-11  Darin Adler  <darin@apple.com>
+
         * platform/wx/KeyboardEventWx.cpp:
         (WebCore::PlatformKeyboardEvent::PlatformKeyboardEvent): Another try at fixing the
         WX build. Changes the code around a little bit.

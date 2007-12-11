@@ -1046,7 +1046,7 @@ StringImpl* StringImpl::replace(const StringImpl* pattern, const StringImpl* rep
 
 bool equal(const StringImpl* a, const StringImpl* b)
 {
-    return StrHash<StringImpl*>::equal(a, b);
+    return StringHash::equal(a, b);
 }
 
 bool equal(const StringImpl* a, const char* b)
@@ -1071,7 +1071,7 @@ bool equal(const StringImpl* a, const char* b)
 
 bool equalIgnoringCase(const StringImpl* a, const StringImpl* b)
 {
-    return CaseInsensitiveHash<StringImpl*>::equal(a, b);
+    return CaseFoldingHash::equal(a, b);
 }
 
 bool equalIgnoringCase(const StringImpl* a, const char* b)

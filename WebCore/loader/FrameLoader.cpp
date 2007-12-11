@@ -1121,9 +1121,9 @@ void FrameLoader::setRestrictAccessToLocal(bool access)
     m_restrictAccessToLocal = access;
 }
 
-static HashSet<String, CaseInsensitiveHash<String> >& localSchemes()
+static HashSet<String, CaseFoldingHash>& localSchemes()
 {
-    static HashSet<String, CaseInsensitiveHash<String> > localSchemes;
+    static HashSet<String, CaseFoldingHash> localSchemes;
 
     if (localSchemes.isEmpty()) {
         localSchemes.add("file");

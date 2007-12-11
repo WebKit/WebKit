@@ -1,8 +1,6 @@
 /*
- * This file is part of the DOM implementation for KDE.
- *
  * (C) 1999 Lars Knoll (knoll@kde.org)
- * Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.
+ * Copyright (C) 2004, 2005, 2006, 2007 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -45,7 +43,8 @@ class wxString;
 namespace WebCore {
 
 class CString;
-    
+struct StringHash;
+
 /**
  * Currently, strings are explicitly shared (they behave like pointers), meaning
  * that modifications to one instance will also modify all others. If you
@@ -242,11 +241,10 @@ inline NSString* nsStringNilIfEmpty(const String& str) {  return str.isEmpty() ?
 
 namespace WTF {
 
-    // StrHash is the default hash for String
+    // StringHash is the default hash for String
     template<typename T> struct DefaultHash;
-    template<typename T> struct StrHash;
     template<> struct DefaultHash<WebCore::String> {
-        typedef StrHash<WebCore::String> Hash;
+        typedef WebCore::StringHash Hash;
     };
 
 }
