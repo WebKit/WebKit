@@ -29,6 +29,7 @@
 #include "Document.h"
 #include "EventNames.h"
 #include "Frame.h"
+#include "FrameLoader.h"
 #include "HTMLNames.h"
 #include "kjs_proxy.h"
 #include "Text.h"
@@ -118,7 +119,12 @@ void HTMLScriptElement::insertedIntoDocument()
     
     const AtomicString& url = getAttribute(srcAttr);
     if (!url.isEmpty()) {
-        m_cachedScript = document()->docLoader()->requestScript(url, getAttribute(charsetAttr));
+        String scriptSrcCharset = getAttribute(charsetAttr).domString().stripWhiteSpace();
+        if (scriptSrcCharset.isEmpty()) {
+            if (Frame* frame = document()->frame())
+                scriptSrcCharset = frame->loader()->encoding();
+        }
+        m_cachedScript = document()->docLoader()->requestScript(url, scriptSrcCharset);
         if (m_cachedScript)
             m_cachedScript->ref(this);
         else

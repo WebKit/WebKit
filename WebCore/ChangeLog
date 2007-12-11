@@ -1,3 +1,20 @@
+2007-12-10  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Weinig, Dan, and Alexey.
+
+        Fix character set used for dynamically loaded scripts.
+
+        Fix for:
+            <rdar://problem/5333163> Safari can not display the mouse over pop menu on ChinaTimes News site correctly.
+            <rdar://problem/5530048> [Safari]? :Leopard9A576: The typed CH characters displays as garbage in Sina website after reloading the webpage.
+            <rdar://problem/5416588> All menus for chinese IBM site have wrong encoding
+            
+        Use the same logic to determine the charset for a script loaded dynamically
+        as we do for a statically loaded script.
+
+        * html/HTMLScriptElement.cpp:
+        (WebCore::HTMLScriptElement::insertedIntoDocument):
+
 2007-12-10  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Oliver Hunt.

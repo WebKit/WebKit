@@ -1,3 +1,13 @@
+2007-12-10  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Weinig, Dan and Alexey.
+        
+        Layout test to confirm correct character encoding is used to
+        load dynamically loaded scripts.
+
+        * fast/encoding/no-charset-on-dynamic-script-load.html: Added.
+        * fast/encoding/resources/dynamic-load-target.js: Added.
+
 2007-12-10  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Oliver Hunt.
