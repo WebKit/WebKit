@@ -62,7 +62,7 @@ bool checkNodeSecurity(ExecState* exec, Node* n)
     return false;
 
   // Check to see if the currently executing interpreter is allowed to access the specified node
-  Window* win = Window::retrieveWindow(n->document()->frame());
+  KJS::Window* win = KJS::Window::retrieveWindow(n->document()->frame());
   return win && win->allowsAccessFrom(exec);
 }
 

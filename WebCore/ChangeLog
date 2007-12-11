@@ -1,3 +1,11 @@
+2007-12-10  Rodney Dawes  <dobey@wayofthemonkey.com>
+
+        Use KJS::Window not the ambiguous Window
+
+        Reviewed by ddkilzer.
+
+        * bindings/js/kjs_dom.cpp (checkNodeSecurity):
+
 2007-12-10  Sam Weinig  <sam@webkit.org>
 
         Fix non-mac builds.
