@@ -325,22 +325,17 @@ static int windowsKeyCodeForKeyEvent(unsigned int keycode)
 
 PlatformKeyboardEvent::PlatformKeyboardEvent(wxKeyEvent& event)
 {
-    switch (event.GetEventType()) {
-        case wxEVT_KEY_UP:
-            m_type = KeyUp;
-            break;
-        case wxEVT_KEY_DOWN:
-            m_type = KeyDown;
-            break;
-        case wxEVT_CHAR:
-            m_type = Char;
-            break;
-        default:
-            ASSERT_NOT_REACHED();
-    }
-    m_text = (type == Char) ? wxString(event.GetUnicodeKey()) : String();
-    m_unmodifiedText = (type == Char) ? m_text : String();
-    m_keyIdentifier = (type == Char) ? String() : keyIdentifierForWxKeyCode(event.GetKeyCode());
+    if (event.GetEventType() == wxEVT_KEY_UP)
+        m_type = KeyUp;
+    else if (event.GetEventType() == wxEVT_KEY_DOWN)
+        m_type = KeyDown;
+    else if (event.GetEventType() == wxEVT_CHAR)
+        m_type = Char;
+    else
+        ASSERT_NOT_REACHED();
+    m_text = (m_type == Char) ? wxString(event.GetUnicodeKey()) : String();
+    m_unmodifiedText = (m_type == Char) ? m_text : String();
+    m_keyIdentifier = (m_type == Char) ? String() : keyIdentifierForWxKeyCode(event.GetKeyCode());
     m_autoRepeat = false; // FIXME: not correct.
     m_windowsVirtualKeyCode = windowsKeyCodeForKeyEvent(event.GetKeyCode());
     m_isKeypad = (event.GetKeyCode() >= WXK_NUMPAD_SPACE) && (event.GetKeyCode() <= WXK_NUMPAD_DIVIDE);
