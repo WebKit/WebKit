@@ -89,6 +89,7 @@ enum {
 /*!
     @method webView:quotaForSecurityOrigin:toCreateDatabase:withEstimatedSize:
     @param sender The WebView sending the delegate method
+    @param frame The WebFrame whose JavaScript initiated this call.
     @param origin The security origin of the database that needs a larger quota to create a database
     @param newDatabaseName The display name of the new database
     @param estimatedSize The estimated maximum usage of the new database
@@ -96,11 +97,12 @@ enum {
     @discussion If the new quota is less than or equal to the current usage for the given security origin, the new database will not be created.
     Otherwise the database will created, even if the new quota doesn't allow for the entire estimated size.
 */
-- (unsigned long long)webView:(WebView *)sender quotaForSecurityOrigin:(WebSecurityOrigin *)origin toCreateDatabase:(NSString *)newDatabaseName withEstimatedSize:(unsigned long long)estimatedSize;
+- (unsigned long long)webView:(WebView *)sender frame:(WebFrame *)frame quotaForSecurityOrigin:(WebSecurityOrigin *)origin toCreateDatabase:(NSString *)newDatabaseName withEstimatedSize:(unsigned long long)estimatedSize;
 
 /*!
     @method webView:quotaForSecurityOrigin:fromProposedQuota:database:
     @param sender The WebView sending the delegate method
+    @param frame The WebFrame whose JavaScript initiated this call.
     @param origin The security origin of the database that has reached its size limit
     @param proposedNewQuota WebKit's best guess as to the required new quota
     @param databaseIdentifier The string identifier of the database
@@ -109,7 +111,7 @@ enum {
     If the new quota is equal to or greater than the proposedNewQuota, the current database operation will continue, 
     possibly calling this delegate method again to request even more space
 */
-- (unsigned long long)webView:(WebView *)sender quotaForSecurityOrigin:(WebSecurityOrigin *)origin fromProposedQuota:(unsigned long long)proposedNewQuota database:(NSString *)databaseIdentifier;
+- (unsigned long long)webView:(WebView *)sender frame:(WebFrame *)frame quotaForSecurityOrigin:(WebSecurityOrigin *)origin fromProposedQuota:(unsigned long long)proposedNewQuota database:(NSString *)databaseIdentifier;
 
 - (WebView *)webView:(WebView *)sender createWebViewWithRequest:(NSURLRequest *)request windowFeatures:(NSDictionary *)features;
 

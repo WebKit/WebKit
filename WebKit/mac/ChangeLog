@@ -1,3 +1,22 @@
+2007-12-10  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by John Sullivan
+
+        Fix for <rdar://problem/5640080> - Database UI delegate calls need to specify WebFrame
+
+        This is because a common UI case is to want to know the originating URL of a Database
+
+        * WebCoreSupport/WebChromeClient.mm:
+        (WebChromeClient::requestQuotaIncreaseForNewDatabase):
+        (WebChromeClient::requestQuotaIncreaseForDatabaseOperation):
+
+        * WebView/WebUIDelegatePrivate.h:
+
+        * WebView/WebView.mm:
+        (CallDelegateReturningUnsignedLongLong):
+        (CallUIDelegateReturningUnsignedLongLong):
+        * WebView/WebViewInternal.h:
+
 2007-12-10  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Mark Rowe.
