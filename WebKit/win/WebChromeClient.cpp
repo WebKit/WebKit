@@ -457,7 +457,7 @@ void WebChromeClient::print(Frame* frame)
             uiDelegate2->printFrame(m_webView, kit(frame));
 }
 
-unsigned long long WebChromeClient::requestQuotaIncreaseForNewDatabase(Frame*, const SecurityOriginData& originData, const String& databaseDisplayName, unsigned long long estimatedSize)
+unsigned long long WebChromeClient::requestQuotaIncreaseForNewDatabase(Frame* frame, const SecurityOriginData& originData, const String& databaseDisplayName, unsigned long long estimatedSize)
 {
     COMPtr<WebSecurityOrigin> webOrigin(AdoptCOM, WebSecurityOrigin::createInstance(originData));
     unsigned long long result = 0;
@@ -465,7 +465,7 @@ unsigned long long WebChromeClient::requestQuotaIncreaseForNewDatabase(Frame*, c
     if (SUCCEEDED(m_webView->uiDelegate(&uiDelegate))) {
         COMPtr<IWebUIDelegatePrivate3> uiDelegatePrivate3(Query, uiDelegate);
         if (uiDelegatePrivate3 &&
-            SUCCEEDED(uiDelegatePrivate3->quotaForSecurityOriginForNewDatabase(m_webView, webOrigin.get(), BString(databaseDisplayName), estimatedSize, &result)))
+            SUCCEEDED(uiDelegatePrivate3->quotaForSecurityOriginForNewDatabase(m_webView, kit(frame), webOrigin.get(), BString(databaseDisplayName), estimatedSize, &result)))
             return result;
     }
     // an error happened - just return the current quota
@@ -473,7 +473,7 @@ unsigned long long WebChromeClient::requestQuotaIncreaseForNewDatabase(Frame*, c
     return result;
 }
 
-unsigned long long WebChromeClient::requestQuotaIncreaseForDatabaseOperation(Frame*, const SecurityOriginData& originData, const String& databaseIdentifier, unsigned long long proposedNewQuota)
+unsigned long long WebChromeClient::requestQuotaIncreaseForDatabaseOperation(Frame* frame, const SecurityOriginData& originData, const String& databaseIdentifier, unsigned long long proposedNewQuota)
 {
     COMPtr<WebSecurityOrigin> webOrigin(AdoptCOM, WebSecurityOrigin::createInstance(originData));
     unsigned long long result = 0;
@@ -481,7 +481,7 @@ unsigned long long WebChromeClient::requestQuotaIncreaseForDatabaseOperation(Fra
     if (SUCCEEDED(m_webView->uiDelegate(&uiDelegate))) {
         COMPtr<IWebUIDelegatePrivate3> uiDelegatePrivate3(Query, uiDelegate);
         if (uiDelegatePrivate3 &&
-            SUCCEEDED(uiDelegatePrivate3->quotaForSecurityOriginForDatabaseOperation(m_webView, webOrigin.get(), proposedNewQuota, BString(databaseIdentifier), &result)))
+            SUCCEEDED(uiDelegatePrivate3->quotaForSecurityOriginForDatabaseOperation(m_webView, kit(frame), webOrigin.get(), proposedNewQuota, BString(databaseIdentifier), &result)))
             return result;
     }
     // an error happened - just return the current quota

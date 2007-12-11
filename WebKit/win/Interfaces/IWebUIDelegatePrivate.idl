@@ -107,7 +107,7 @@ interface IWebUIDelegatePrivate3 : IWebUIDelegatePrivate2
 
     - (unsigned long long)webView:(WebView *)sender quotaForSecurityOrigin:(WebSecurityOrigin *)origin toCreateDatabase:(NSString *)newDatabaseName withEstimatedSize:(unsigned long long)estimatedSize;
 */
-    HRESULT quotaForSecurityOriginForNewDatabase([in] IWebView* sender, [in] IWebSecurityOrigin* origin, [in] BSTR newDatabaseName, [in] unsigned long long estimatedSize, [out, retval] unsigned long long* newQuota);
+    HRESULT quotaForSecurityOriginForNewDatabase([in] IWebView* sender, [in] IWebFrame* frame, [in] IWebSecurityOrigin* origin, [in] BSTR newDatabaseName, [in] unsigned long long estimatedSize, [out, retval] unsigned long long* newQuota);
 
 /*!
     @method webView:quotaForSecurityOrigin:fromProposedQuota:database:
@@ -122,5 +122,5 @@ interface IWebUIDelegatePrivate3 : IWebUIDelegatePrivate2
 
     - (unsigned long long)webView:(WebView *)sender quotaForSecurityOrigin:(WebSecurityOrigin *)origin fromProposedQuota:(unsigned long long)proposedNewQuota database:(NSString *)databaseIdentifier;
 */
-    HRESULT quotaForSecurityOriginForDatabaseOperation([in] IWebView* sender, [in] IWebSecurityOrigin* origin, [in] unsigned long long proposedNewQuota, [in] BSTR databaseIdentifier, [out, retval] unsigned long long* newQuota);
+    HRESULT quotaForSecurityOriginForDatabaseOperation([in] IWebView* sender, [in] IWebFrame* frame, [in] IWebSecurityOrigin* origin, [in] unsigned long long proposedNewQuota, [in] BSTR databaseIdentifier, [out, retval] unsigned long long* newQuota);
 }

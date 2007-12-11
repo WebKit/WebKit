@@ -1,3 +1,14 @@
+2007-12-11  Ada Chan  <adachan@apple.com>
+
+        Updated the database SPI to take in IWebFrame.
+
+        Reviewed by Adam.
+
+        * Interfaces/IWebUIDelegatePrivate.idl:
+        * WebChromeClient.cpp:
+        (WebChromeClient::requestQuotaIncreaseForNewDatabase):
+        (WebChromeClient::requestQuotaIncreaseForDatabaseOperation):
+
 2007-12-11  Alexey Proskuryakov  <ap@webkit.org>
 
         Windows build fix.
