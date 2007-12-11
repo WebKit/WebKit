@@ -1,3 +1,7 @@
+2007-12-11  Darin Adler  <darin@apple.com>
+
+        * wtf/unicode/qt4/UnicodeQt4.h: Try to fix Qt build by adding U16_IS_SINGLE.
+
 2007-12-10  Darin Adler  <darin@apple.com>
 
         Reviewed by Sam Weinig.

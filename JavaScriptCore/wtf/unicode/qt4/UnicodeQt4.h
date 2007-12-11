@@ -63,7 +63,7 @@ typedef uint16_t UChar;
 #endif
 typedef uint32_t UChar32;
 
-// some defines from ICU needed one or two places
+// some defines from ICU
 
 #define U16_IS_LEAD(c) (((c)&0xfffffc00)==0xd800)
 #define U16_IS_TRAIL(c) (((c)&0xfffffc00)==0xdc00)
@@ -75,6 +75,7 @@ typedef uint32_t UChar32;
 #define U16_TRAIL(supplementary) (UChar)(((supplementary)&0x3ff)|0xdc00)
 
 #define U_IS_SURROGATE(c) (((c)&0xfffff800)==0xd800)
+#define U16_IS_SINGLE(c) !U_IS_SURROGATE(c)
 #define U16_IS_SURROGATE(c) U_IS_SURROGATE(c)
 #define U16_IS_SURROGATE_LEAD(c) (((c)&0x400)==0)
 
