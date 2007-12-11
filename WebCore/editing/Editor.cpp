@@ -1920,6 +1920,7 @@ void Editor::prependToKillRing(const String&)
 
 String Editor::yankFromKillRing()
 {
+    return String();
 }
 
 void Editor::startNewKillRingSequence()
