@@ -218,7 +218,12 @@ void MediaPlayerPrivate::createQTMovieView()
     m_qtMovieView.adoptNS([[QTMovieView alloc] initWithFrame:m_player->rect()]);
     NSView* parentView = static_cast<ScrollView*>(m_player->m_parentWidget)->getDocumentView();
     [parentView addSubview:m_qtMovieView.get()];
+#ifdef BUILDING_ON_TIGER
+    // setDelegate: isn't a public call in Tiger, so use performSelector to keep the compiler happy
+    [m_qtMovieView.get() performSelector:@selector(setDelegate:) withObject:m_objcObserver.get()];    
+#else
     [m_qtMovieView.get() setDelegate:m_objcObserver.get()];
+#endif
     [m_qtMovieView.get() setMovie:m_qtMovie.get()];
     [m_qtMovieView.get() setControllerVisible:NO];
     [m_qtMovieView.get() setPreservesAspectRatio:YES];
@@ -230,7 +235,12 @@ void MediaPlayerPrivate::createQTMovieView()
 void MediaPlayerPrivate::detachQTMovieView()
 {
     if (m_qtMovieView) {
+#ifdef BUILDING_ON_TIGER
+        // setDelegate: isn't a public call in Tiger, so use performSelector to keep the compiler happy
+        [m_qtMovieView.get() performSelector:@selector(setDelegate:) withObject:nil];    
+#else
         [m_qtMovieView.get() setDelegate:nil];
+#endif
         [m_qtMovieView.get() removeFromSuperview];
         m_qtMovieView = nil;
     }

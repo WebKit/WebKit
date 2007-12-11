@@ -1,3 +1,13 @@
+2007-12-11  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Adele
+
+        Tiger build fix -- don't call QTMovieView setDelegate: directly because it's not public
+
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.mm:
+        (WebCore::MediaPlayerPrivate::createQTMovieView):
+        (WebCore::MediaPlayerPrivate::detachQTMovieView):
+
 2007-12-11  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin.
