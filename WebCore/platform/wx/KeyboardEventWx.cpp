@@ -333,9 +333,12 @@ PlatformKeyboardEvent::PlatformKeyboardEvent(wxKeyEvent& event)
         m_type = Char;
     else
         ASSERT_NOT_REACHED();
-    m_text = (m_type == Char) ? wxString(event.GetUnicodeKey()) : String();
-    m_unmodifiedText = (m_type == Char) ? m_text : String();
-    m_keyIdentifier = (m_type == Char) ? String() : keyIdentifierForWxKeyCode(event.GetKeyCode());
+    if (m_type != Char)
+        m_keyIdentifier = keyIdentifierForWxKeyCode(event.GetKeyCode());
+    else {
+        m_text = wxString(event.GetUnicodeKey());
+        m_unmodifiedText = m_text;
+    }
     m_autoRepeat = false; // FIXME: not correct.
     m_windowsVirtualKeyCode = windowsKeyCodeForKeyEvent(event.GetKeyCode());
     m_isKeypad = (event.GetKeyCode() >= WXK_NUMPAD_SPACE) && (event.GetKeyCode() <= WXK_NUMPAD_DIVIDE);

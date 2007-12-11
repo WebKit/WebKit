@@ -1,6 +1,12 @@
 2007-12-11  Darin Adler  <darin@apple.com>
 
         * platform/wx/KeyboardEventWx.cpp:
+        (WebCore::PlatformKeyboardEvent::PlatformKeyboardEvent): Another try at fixing the
+        WX build. Changes the code around a little bit.
+
+2007-12-11  Darin Adler  <darin@apple.com>
+
+        * platform/wx/KeyboardEventWx.cpp:
         (WebCore::PlatformKeyboardEvent::PlatformKeyboardEvent): Quick try at fixing build.
 
 2007-12-11  Dan Bernstein  <mitz@apple.com>
