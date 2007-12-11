@@ -1,5 +1,8 @@
 2007-12-10  Rodney Dawes  <dobey@wayofthemonkey.com>
 
+        Bug 16383: Ambiguous Window Usage in kjs_dom.cpp
+        <http://bugs.webkit.org/show_bug.cgi?id=16383>
+
         Use KJS::Window not the ambiguous Window
 
         Reviewed by ddkilzer.
