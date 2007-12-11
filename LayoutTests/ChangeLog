@@ -1,3 +1,62 @@
+2007-12-11  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Rubberstamped by Mark.
+
+        Update pixel test results now that filters are disabled.
+
+        * platform/mac/svg/W3C-SVG-1.1/filters-blend-01-b-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1/filters-blend-01-b-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/filters-color-01-b-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1/filters-color-01-b-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/filters-composite-02-b-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1/filters-composite-02-b-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/filters-comptran-01-b-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1/filters-comptran-01-b-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/filters-diffuse-01-f-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1/filters-diffuse-01-f-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/filters-displace-01-f-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1/filters-displace-01-f-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/filters-example-01-b-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1/filters-example-01-b-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/filters-gauss-01-b-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1/filters-gauss-01-b-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/filters-image-01-b-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1/filters-image-01-b-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/filters-light-01-f-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1/filters-light-01-f-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/filters-offset-01-b-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1/filters-offset-01-b-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/filters-specular-01-f-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1/filters-specular-01-f-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/filters-turb-01-f-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1/filters-turb-01-f-expected.png:
+        * platform/mac/svg/custom/empty-merge-expected.checksum:
+        * platform/mac/svg/custom/empty-merge-expected.png:
+        * platform/mac/svg/custom/feComponentTransfer-Discrete-expected.checksum:
+        * platform/mac/svg/custom/feComponentTransfer-Discrete-expected.png:
+        * platform/mac/svg/custom/feComponentTransfer-Gamma-expected.checksum:
+        * platform/mac/svg/custom/feComponentTransfer-Gamma-expected.png:
+        * platform/mac/svg/custom/feComponentTransfer-Linear-expected.checksum:
+        * platform/mac/svg/custom/feComponentTransfer-Linear-expected.png:
+        * platform/mac/svg/custom/feComponentTransfer-Table-expected.checksum:
+        * platform/mac/svg/custom/feComponentTransfer-Table-expected.png:
+        * platform/mac/svg/custom/feDisplacementMap-01-expected.checksum:
+        * platform/mac/svg/custom/feDisplacementMap-01-expected.png:
+        * platform/mac/svg/custom/image-with-transform-clip-filter-expected.checksum:
+        * platform/mac/svg/custom/image-with-transform-clip-filter-expected.png:
+        * platform/mac/svg/custom/non-opaque-filters-expected.checksum:
+        * platform/mac/svg/custom/non-opaque-filters-expected.png:
+        * platform/mac/svg/custom/text-filter-expected.checksum:
+        * platform/mac/svg/custom/text-filter-expected.png:
+        * platform/mac/svg/custom/visibility-override-filter-expected.checksum:
+        * platform/mac/svg/custom/visibility-override-filter-expected.png:
+        * svg/batik/filters/filterRegions-expected.checksum:
+        * svg/batik/filters/filterRegions-expected.png:
+        * svg/batik/text/textFeatures-expected.checksum:
+        * svg/batik/text/textFeatures-expected.png:
+        * svg/custom/js-svg-constructors-expected.checksum:
+        * svg/custom/js-svg-constructors-expected.png:
+
 2007-12-11  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.
