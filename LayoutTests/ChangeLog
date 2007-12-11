@@ -1,3 +1,14 @@
+2007-12-10  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Oliver Hunt.
+        
+        <rdar://problem/5482023> GoogleDocs: After performing FormatBlock in an empty document, certain functions are disabled
+
+        * editing/execCommand/5482023.html: Added.
+        * platform/mac/editing/execCommand/5482023-expected.checksum: Added.
+        * platform/mac/editing/execCommand/5482023-expected.png: Added.
+        * platform/mac/editing/execCommand/5482023-expected.txt: Added.
+
 2007-12-10  Darin Adler  <darin@apple.com>
 
         Reviewed by Sam Weinig.

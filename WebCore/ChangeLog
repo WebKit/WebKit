@@ -1,3 +1,23 @@
+2007-12-10  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        <rdar://problem/5482023> GoogleDocs: After FormatBlock in an empty document, certain functions are disabled
+        
+        We were trying to insert a block of the requested type before the body element.
+        
+        * editing/FormatBlockCommand.cpp:
+        (WebCore::FormatBlockCommand::doApply): 
+        Removed unnecessary ()s in the if condition.
+        Removed "|| !upstreamStart.node()->isDescendantOf(root)" from the if condition, since
+        a) upstreamStart will never be outside the root editable element, since in that case
+        there would be no block inside the editable root to Format, and b) if upstreamStart.node() 
+        *is* the root, then refNode is the root, and we shouldn't insert before the root, we should insert
+        at [root, 0].
+        Added comments to explain the use of upstream() in the second if-clause.
+        Added an early return for case where there is nothing selected, in that case, there is nothing
+        to move.
+
 2007-12-10  Adele Peterson  <adele@apple.com>
 
         Reviewed and partially fixed by Tim Hatcher.

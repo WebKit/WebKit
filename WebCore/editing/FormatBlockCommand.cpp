@@ -110,19 +110,24 @@ void FormatBlockCommand::doApply()
     RefPtr<Node> placeholder = createBreakElement(document());
     
     Node* root = endingSelection().start().node()->rootEditableElement();
-    if (refNode == root || root->isDescendantOf(refNode))
-        refNode = paragraphStart.deepEquivalent().node();
-    
-    Position upstreamStart = paragraphStart.deepEquivalent().upstream();
-    if ((validBlockTag(refNode->nodeName().lower()) && paragraphStart == blockStart && paragraphEnd == blockEnd) ||
-        !upstreamStart.node()->isDescendantOf(root))
+    if (validBlockTag(refNode->nodeName().lower()) && 
+        paragraphStart == blockStart && paragraphEnd == blockEnd && 
+        refNode != root && !root->isDescendantOf(refNode))
         // Already in a valid block tag that only contains the current paragraph, so we can swap with the new tag
         insertNodeBefore(blockNode.get(), refNode);
     else {
-        insertNodeAt(blockNode.get(), upstreamStart);
+        // Avoid inserting inside inline elements that surround paragraphStart with upstream().
+        // This is only to avoid creating bloated markup.
+        insertNodeAt(blockNode.get(), paragraphStart.deepEquivalent().upstream());
     }
     appendNode(placeholder.get(), blockNode.get());
-    moveParagraph(paragraphStart, paragraphEnd, VisiblePosition(Position(placeholder.get(), 0)), true, false);
+    
+    VisiblePosition destination(Position(placeholder.get(), 0));
+    if (paragraphStart == paragraphEnd) {
+        setEndingSelection(destination);
+        return;
+    }
+    moveParagraph(paragraphStart, paragraphEnd, destination, true, false);
 }
 
 }
