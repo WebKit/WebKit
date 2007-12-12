@@ -196,13 +196,13 @@ void RenderSVGRoot::calcViewport()
 
         float w, h;
         SVGLength width = svg->width();
-        if (width.unitType() == LengthTypePercentage && svg->relativeWidthValue() > 0)
+        if (width.unitType() == LengthTypePercentage && svg->hasSetContainerSize())
             w = svg->relativeWidthValue();
         else
             w = width.value();
         
         SVGLength height = svg->height();
-        if (height.unitType() == LengthTypePercentage && svg->relativeHeightValue() > 0)
+        if (height.unitType() == LengthTypePercentage && svg->hasSetContainerSize())
             h = svg->relativeHeightValue();
         else
             h = height.value();

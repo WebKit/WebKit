@@ -1,3 +1,26 @@
+2007-12-12  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Oliver.
+
+        Fix for <rdar://problem/5643770> REGRESSION: Free-standing SVGs 
+        with width and height 100% clip to 300 x 150
+
+        Though it was correct in an earlier iteration of my patch, it is 
+        not sufficient in the final, committed version to ask if the 
+        relativeWidthValue() or relativeHeightValue() is greater than 0 
+        just to determine if one has been set, for, they are now 
+        initialized to 300 and 150 respectively! This patch instead adds a 
+        bool to keep track of whether a container size has been set, and 
+        only used the relative value if it has.
+
+        * rendering/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::calcViewport):
+        * svg/SVGSVGElement.cpp:
+        (WebCore::SVGSVGElement::SVGSVGElement):
+        * svg/SVGSVGElement.h:
+        (WebCore::SVGSVGElement::setContainerSize):
+        (WebCore::SVGSVGElement::hasSetContainerSize):
+
 2007-12-12  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Steve Falkenburg 

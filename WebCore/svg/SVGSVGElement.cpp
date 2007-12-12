@@ -72,6 +72,7 @@ SVGSVGElement::SVGSVGElement(const QualifiedName& tagName, Document* doc)
     , m_timeScheduler(new TimeScheduler(doc))
     , m_viewSpec(0)
     , m_containerSize(300, 150)
+    , m_hasSetContainerSize(false)
 {
     setWidthBaseValue(SVGLength(this, LengthModeWidth, "100%"));
     setHeightBaseValue(SVGLength(this, LengthModeHeight, "100%"));
