@@ -1,3 +1,28 @@
+2007-12-12  Alp Toker  <alp@atoker.com>
+
+        Reviewed by Holger Freyther.
+
+        http://bugs.webkit.org/show_bug.cgi?id=15576
+        [GTK] Printing support
+
+        Add printing support.
+
+        The API will be kept internal for the time being, but printing can now
+        be triggered by Web pages or the JSC API using JavaScript.
+
+        The print spooler and pagination code is fairly abstract and could be
+        shared by other ports including Win and Qt once complete. It doesn't
+        have header/footer support yet.
+
+        * WebCoreSupport/ChromeClientGtk.cpp:
+        (WebKit::ChromeClient::print):
+        * WebView/webkitprivate.h:
+        * WebView/webkitwebframe.cpp:
+        (PrintContext::begin_print):
+        (PrintContext::draw_page):
+        (PrintContext::end_print):
+        (PrintContext::webkit_web_frame_print):
+
 2007-12-12  Sam Weinig  <sam@webkit.org>
 
         Build fix.

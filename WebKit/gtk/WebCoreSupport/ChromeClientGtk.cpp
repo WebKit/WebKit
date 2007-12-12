@@ -297,9 +297,9 @@ void ChromeClient::setToolTip(const String& toolTip)
 #endif
 }
 
-void ChromeClient::print(Frame*)
+void ChromeClient::print(Frame* frame)
 {
-    notImplemented();
+    webkit_web_frame_print(kit(frame));
 }
 
 unsigned long long ChromeClient::requestQuotaIncreaseForNewDatabase(Frame*, const SecurityOriginData&, const String&, unsigned long long)

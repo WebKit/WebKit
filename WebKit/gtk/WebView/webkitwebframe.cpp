@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2007 Holger Hans Peter Freyther
  * Copyright (C) 2007 Alp Toker <alp@atoker.com>
+ * Copyright (C) 2007 Apple Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -30,7 +31,9 @@
 #include "FrameLoaderClientGtk.h"
 #include "FrameTree.h"
 #include "FrameView.h"
+#include "GraphicsContext.h"
 #include "HTMLFrameOwnerElement.h"
+#include "RenderView.h"
 #include "kjs_binding.h"
 #include "kjs_proxy.h"
 #include "kjs_window.h"
@@ -414,5 +417,196 @@ gchar* webkit_web_frame_get_inner_text(WebKitWebFrame* frame)
     String string =  documentElement->innerText();
     return g_strdup(string.utf8().data());
 }
+
+
+#if GTK_CHECK_VERSION(2,10,0)
+
+// This could be shared between ports once it's complete
+class PrintContext
+{
+public:
+    PrintContext(Frame* frame)
+        : m_frame(frame)
+    {
+    }
+
+    ~PrintContext()
+    {
+        m_pageRects.clear();
+    }
+
+    int pageCount()
+    {
+        return m_pageRects.size();
+    }
+
+    void computePageRects(const FloatRect& printRect, float headerHeight, float footerHeight, float userScaleFactor, float& outPageHeight)
+    {
+        m_pageRects.clear();
+        outPageHeight = 0;
+
+        if (!m_frame->document() || !m_frame->view() || !m_frame->document()->renderer())
+            return;
+
+        RenderView* root = static_cast<RenderView*>(m_frame->document()->renderer());
+
+        if (!root) {
+            LOG_ERROR("document to be printed has no renderer");
+            return;
+        }
+
+        if (userScaleFactor <= 0) {
+            LOG_ERROR("userScaleFactor has bad value %.2f", userScaleFactor);
+            return;
+        }
+
+        float ratio = printRect.height() / printRect.width();
+
+        float pageWidth  = (float)root->docWidth();
+        float pageHeight = pageWidth * ratio;
+        outPageHeight = pageHeight;   // this is the height of the page adjusted by margins
+        pageHeight -= headerHeight + footerHeight;
+
+        if (pageHeight <= 0) {
+            LOG_ERROR("pageHeight has bad value %.2f", pageHeight);
+            return;
+        }
+
+        float currPageHeight = pageHeight / userScaleFactor;
+        float docHeight = root->layer()->height();
+        float currPageWidth = pageWidth / userScaleFactor;
+
+        // always return at least one page, since empty files should print a blank page
+        float printedPagesHeight = 0.0;
+        do {
+            float proposedBottom = min(docHeight, printedPagesHeight + pageHeight);
+            m_frame->adjustPageHeight(&proposedBottom, printedPagesHeight, proposedBottom, printedPagesHeight);
+            currPageHeight = max(1.0f, proposedBottom - printedPagesHeight);
+
+            m_pageRects.append(IntRect(0, (int)printedPagesHeight, (int)currPageWidth, (int)currPageHeight));
+            printedPagesHeight += currPageHeight;
+        } while (printedPagesHeight < docHeight);
+    }
+
+    // TODO: eliminate width param
+    void begin(float width)
+    {
+        // By imaging to a width a little wider than the available pixels,
+        // thin pages will be scaled down a little, matching the way they
+        // print in IE and Camino. This lets them use fewer sheets than they
+        // would otherwise, which is presumably why other browsers do this.
+        // Wide pages will be scaled down more than this.
+        const float PrintingMinimumShrinkFactor = 1.25f;
+
+        // This number determines how small we are willing to reduce the page content
+        // in order to accommodate the widest line. If the page would have to be
+        // reduced smaller to make the widest line fit, we just clip instead (this
+        // behavior matches MacIE and Mozilla, at least)
+        const float PrintingMaximumShrinkFactor = 2.0f;
+
+        float minLayoutWidth = width * PrintingMinimumShrinkFactor;
+        float maxLayoutWidth = width * PrintingMaximumShrinkFactor;
+
+        // FIXME: This will modify the rendering of the on-screen frame.
+        // Could lead to flicker during printing.
+        m_frame->setPrinting(true, minLayoutWidth, maxLayoutWidth, true);
+    }
+
+    // TODO: eliminate width param
+    void spoolPage(GraphicsContext& ctx, int pageNumber, float width)
+    {
+        IntRect pageRect = m_pageRects[pageNumber];
+        float scale = width / pageRect.width();
+
+        ctx.save();
+        ctx.scale(FloatSize(scale, scale));
+        ctx.translate(-pageRect.x(), -pageRect.y());
+        ctx.clip(pageRect);
+        m_frame->paint(&ctx, pageRect);
+        ctx.restore();
+    }
+
+    void end()
+    {
+        m_frame->setPrinting(false, 0, 0, true);
+    }
+
+protected:
+    Frame* m_frame;
+    Vector<IntRect> m_pageRects;
+};
+
+static void begin_print(GtkPrintOperation* op, GtkPrintContext* context, gpointer user_data)
+{
+    PrintContext* printContext = reinterpret_cast<PrintContext*>(user_data);
+
+    float width = gtk_print_context_get_width(context);
+    float height = gtk_print_context_get_height(context);
+    FloatRect printRect = FloatRect(0, 0, width, height);
+
+    printContext->begin(width);
+
+    // TODO: Margin adjustments and header/footer support
+    float headerHeight = 0;
+    float footerHeight = 0;
+    float pageHeight; // height of the page adjusted by margins
+    printContext->computePageRects(printRect, headerHeight, footerHeight, 1.0, pageHeight);
+    gtk_print_operation_set_n_pages(op, printContext->pageCount());
+}
+
+static void draw_page(GtkPrintOperation* op, GtkPrintContext* context, gint page_nr, gpointer user_data)
+{
+    PrintContext* printContext = reinterpret_cast<PrintContext*>(user_data);
+
+    cairo_t* cr = gtk_print_context_get_cairo_context(context);
+    GraphicsContext ctx(cr);
+    float width = gtk_print_context_get_width(context);
+    printContext->spoolPage(ctx, page_nr, width);
+}
+
+static void end_print(GtkPrintOperation* op, GtkPrintContext* context, gpointer user_data)
+{
+    PrintContext* printContext = reinterpret_cast<PrintContext*>(user_data);
+    printContext->end();
+}
+
+void webkit_web_frame_print(WebKitWebFrame* frame)
+{
+    GtkWidget* topLevel = gtk_widget_get_toplevel(GTK_WIDGET(webkit_web_frame_get_web_view(frame)));
+    if (!GTK_WIDGET_TOPLEVEL(topLevel))
+        topLevel = NULL;
+
+    Frame* coreFrame = core(frame);
+    PrintContext printContext(coreFrame);
+
+    GtkPrintOperation* op = gtk_print_operation_new();
+    g_signal_connect(G_OBJECT(op), "begin-print", G_CALLBACK(begin_print), &printContext);
+    g_signal_connect(G_OBJECT(op), "draw-page", G_CALLBACK(draw_page), &printContext);
+    g_signal_connect(G_OBJECT(op), "end-print", G_CALLBACK(end_print), &printContext);
+    GError *error = NULL;
+    gtk_print_operation_run(op, GTK_PRINT_OPERATION_ACTION_PRINT_DIALOG, GTK_WINDOW(topLevel), &error);
+    g_object_unref(op);
+
+    if (error) {
+        GtkWidget* dialog = gtk_message_dialog_new(GTK_WINDOW(topLevel),
+                                                   GTK_DIALOG_DESTROY_WITH_PARENT,
+                                                   GTK_MESSAGE_ERROR,
+                                                   GTK_BUTTONS_CLOSE,
+                                                   "%s", error->message);
+        g_error_free(error);
+
+        g_signal_connect(dialog, "response", G_CALLBACK(gtk_widget_destroy), NULL);
+        gtk_widget_show(dialog);
+    }
+}
+
+#else
+
+void webkit_web_frame_print(WebKitWebFrame*)
+{
+    g_warning("Printing support is not available in older versions of GTK+");
+}
+
+#endif
 
 }
