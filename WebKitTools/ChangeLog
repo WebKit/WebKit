@@ -1,3 +1,13 @@
+2007-12-11  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Mark Rowe and Sam Weinig too!
+
+        - added Helvetica Oblique and Helvetica Bold Oblique to the list of
+          fonts DumpRenderTree registers.
+
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (initialize):
+
 2007-12-11  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Anders

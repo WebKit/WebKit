@@ -45,7 +45,6 @@ media
 http/tests/media
 
 # Layout tests that depend on certain fonts don't match Mac results <rdar://problem/5075790>
-css1/basic/contextual_selectors.html
 css1/font_properties/font.html
 css1/pseudo/multiple_pseudo_elements.html
 css2.1/t1202-counter-09-b.html
@@ -54,19 +53,15 @@ css2.1/t1508-c527-font-00-b.html
 css2.1/t1508-c527-font-04-b.html
 css2.1/t1508-c527-font-05-b.html
 css2.1/t1508-c527-font-07-b.html
-css2.1/t1508-c527-font-08-b.html
 css2.1/t1508-c527-font-10-c.html
 css2.1/t051201-c23-first-line-00-b.html
 editing/deleting/5144139-2.html
-editing/execCommand/5119244.html
-fast/block/positioning/047.html
 fast/css/beforeSelectorOnCodeElement.html
 fast/css/font_property_normal.html
 fast/css/rtl-ordering.html
 fast/css/text-security.html
 fast/encoding/denormalised-voiced-japanese-chars.html
 fast/encoding/invalid-UTF-8.html
-fast/events/updateLayoutForHitTest.html
 fast/forms/select-visual-hebrew.html
 fast/forms/select-writing-direction-natural.html
 fast/forms/visual-hebrew-text-field.html
@@ -120,9 +115,7 @@ svg/batik/text/textEffect.svg
 svg/batik/text/textFeatures.svg
 svg/batik/text/textPosition2.svg
 svg/batik/text/textProperties2.svg
-svg/batik/text/textProperties.svg
 svg/batik/text/textStyles.svg
-svg/batik/text/verticalText.svg
 svg/batik/paints/patternRegions.svg
 svg/carto.net/button.svg
 svg/carto.net/colourpicker.svg
@@ -137,7 +130,6 @@ svg/custom/circular-marker-reference-4.svg
 svg/custom/control-points-for-S-and-T.svg
 svg/custom/coords-relative-units-transforms.svg
 svg/custom/marker-changes.svg
-svg/custom/marker-viewBox-changes.svg
 svg/custom/scrolling-embedded-svg-file-image-repaint-problem.html
 svg/custom/use-referencing-nonexisting-symbol.svg
 svg/custom/width-full-percentage.svg
@@ -147,7 +139,6 @@ svg/hixie/viewbox/preserveAspectRatio/002.xml
 svg/text/text-altglyph-01-b.svg
 svg/text/text-fonts-01-t.svg
 svg/text/text-intro-05-t.svg
-svg/text/text-path-01-b.svg
 svg/text/text-text-04-t.svg
 svg/text/text-text-05-t.svg
 svg/text/text-text-06-t.svg
@@ -174,12 +165,10 @@ css2.1/t0905-c414-flt-04-c.html
 css2.1/t0905-c414-flt-fit-01-d-g.html
 css2.1/t0905-c5525-fltblck-01-d.html
 css2.1/t0905-c5525-fltcont-00-d-g.html
-css2.1/t0905-c5525-flthw-00-c-g.html
 css2.1/t0905-c5525-fltwidth-00-c-g.html
 css2.1/t0905-c5525-fltwidth-02-c-g.html
 css2.1/t0905-c5525-fltwidth-03-c-g.html
 css2.1/t0905-c5525-fltwrap-00-b.html
-css2.1/t0905-c5526-flthw-00-c-g.html
 css2.1/t1202-counter-03-b.html
 css2.1/t1202-counter-04-b.html
 css2.1/t1202-counters-03-b.html
@@ -198,7 +187,6 @@ fast/text/cg-fallback-bolding.html
 fast/text/cg-vs-atsui.html
 fast/text/in-rendered-text-rtl.html
 fast/text/monospace-width-cache.html
-fast/text/international/001.html
 fast/text/international/002.html
 fast/text/international/003.html
 fast/text/international/bidi-AN-after-L.html
