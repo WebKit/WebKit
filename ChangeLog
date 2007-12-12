@@ -1,3 +1,17 @@
+2007-12-12  Alp Toker  <alp@atoker.com>
+
+        Reviewed by Mark Rowe.
+
+        http://bugs.webkit.org/show_bug.cgi?id=16302
+        [GTK] Compiler flags for optimization
+
+        Use the compiler flags -fno-exceptions -fno-rtti.
+
+        This patch does not add all the flags discussed in the bug report,
+        only these two.
+
+        * WebKit.pri:
+
 2007-12-04  Xan Lopez  <xan@gnome.org>
 
         Reviewed by Alp Toker.

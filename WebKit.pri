@@ -45,6 +45,10 @@ gtk-port {
     # This set of warnings is borrowed from the Mac build
     QMAKE_CXXFLAGS += -Wall -W -Wcast-align -Wchar-subscripts -Wformat-security -Wmissing-format-attribute -Wpointer-arith -Wwrite-strings -Wno-format-y2k -Wno-unused-parameter -Wundef
 
+    # These flags are based on optimization experience from the Mac port:
+    # Helps code size significantly and speed a little
+    QMAKE_CXXFLAGS += -fno-exceptions -fno-rtti
+
     DEPENDPATH += $$PWD/JavaScriptCore/API
     INCLUDEPATH += $$PWD
 }
