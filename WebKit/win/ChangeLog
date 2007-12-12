@@ -1,3 +1,13 @@
+2007-12-12  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        - fix a crash when pressing a key that is not associated with a command
+
+        * WebView.cpp:
+        (WebView::handleEditingKeyboardEvent): Check if the result of
+        interpretKeyEvent() is empty.
+
 2007-12-11  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Darin Adler.
