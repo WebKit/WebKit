@@ -255,7 +255,7 @@ void FrameLoaderClient::dispatchDecidePolicyForNavigationAction(FramePolicyFunct
         return;
 
     WebKitWebView* page = getViewFromFrame(m_frame);
-    WebKitNetworkRequest* request = webkit_network_request_new(resourceRequest.url().url().utf8().data());
+    WebKitNetworkRequest* request = webkit_network_request_new(resourceRequest.url().string().utf8().data());
     WebKitNavigationResponse response;
 
     g_signal_emit_by_name(page, "navigation-requested", m_frame, request, &response);

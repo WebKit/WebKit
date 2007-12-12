@@ -110,7 +110,7 @@ Page* ChromeClientWx::createWindow(Frame*, const FrameLoadRequest& request, cons
     wxWebFrame* newFrame = new wxWebFrame(wxTheApp->GetAppName());
     
     if (newFrame->webview) {
-        newFrame->webview->LoadURL(request.resourceRequest().url().url());
+        newFrame->webview->LoadURL(request.resourceRequest().url().string());
         newFrame->Show(true);
 
         WebViewPrivate* impl = newFrame->webview->m_impl;

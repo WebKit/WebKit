@@ -358,7 +358,7 @@ bool ResourceHandleManager::startScheduledJobs()
 
 static void parseDataUrl(ResourceHandle* handle)
 {
-    DeprecatedString data = handle->request().url().url();
+    DeprecatedString data = handle->request().url().deprecatedString();
 
     ASSERT(data.startsWith("data:", false));
 
@@ -418,7 +418,7 @@ void ResourceHandleManager::startJob(ResourceHandle* job)
     }
 
     ResourceHandleInternal* d = job->getInternal();
-    DeprecatedString url = kurl.url();
+    DeprecatedString url = kurl.deprecatedString();
 
     if (kurl.isLocalFile()) {
         DeprecatedString query = kurl.query();
@@ -491,7 +491,7 @@ void ResourceHandleManager::startJob(ResourceHandle* job)
     // timeout will occur and do curl_multi_perform
     if (ret && ret != CURLM_CALL_MULTI_PERFORM) {
 #ifndef NDEBUG
-        printf("Error %d starting job %s\n", ret, job->request().url().url().ascii());
+        printf("Error %d starting job %s\n", ret, job->request().url().deprecatedString().ascii());
 #endif
         job->cancel();
         return;

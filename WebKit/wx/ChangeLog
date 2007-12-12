@@ -1,3 +1,17 @@
+2007-12-12  Sam Weinig  <sam@webkit.org>
+
+        Build fix.
+
+        * WebKitSupport/ChromeClientWx.cpp:
+        (WebCore::ChromeClientWx::createWindow):
+        * WebKitSupport/FrameLoaderClientWx.cpp:
+        (WebCore::FrameLoaderClientWx::dispatchDidStartProvisionalLoad):
+        (WebCore::FrameLoaderClientWx::dispatchDidCommitLoad):
+        (WebCore::FrameLoaderClientWx::dispatchDidFinishDocumentLoad):
+        (WebCore::FrameLoaderClientWx::postProgressFinishedNotification):
+        (WebCore::FrameLoaderClientWx::didChangeTitle):
+        (WebCore::FrameLoaderClientWx::dispatchDecidePolicyForNavigationAction):
+
 2007-12-07  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin.

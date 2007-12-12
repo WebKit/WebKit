@@ -381,7 +381,7 @@ bool ResourceHandle::start(Frame* frame)
                                          INTERNET_SERVICE_HTTP,
                                          flags, (DWORD_PTR)d->m_jobId);
         } else {
-            DeprecatedString urlStr = url().url();
+            DeprecatedString urlStr = url().deprecatedString();
             int fragmentIndex = urlStr.find('#');
             if (fragmentIndex != -1)
                 urlStr = urlStr.left(fragmentIndex);

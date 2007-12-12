@@ -107,7 +107,7 @@ void Pasteboard::writeURL(const KURL& _url, const String&, Frame*)
     ASSERT(!_url.isEmpty());
 
     QMimeData* md = new QMimeData;
-    QString url = _url.url();
+    QString url = _url.string();
     md->setText(url);
     md->setUrls(QList<QUrl>() << QUrl(url));
     QApplication::clipboard()->setMimeData(md, QClipboard::Clipboard);

@@ -669,22 +669,22 @@ WebCore::ResourceError FrameLoaderClientQt::blockedError(const WebCore::Resource
 
 WebCore::ResourceError FrameLoaderClientQt::cannotShowURLError(const WebCore::ResourceRequest& request)
 {
-    return ResourceError("Error", WebKitErrorCannotShowURL, request.url().url(), QObject::tr("QWebFrame", "Cannot show URL"));
+    return ResourceError("Error", WebKitErrorCannotShowURL, request.url().string(), QObject::tr("QWebFrame", "Cannot show URL"));
 }
 
 WebCore::ResourceError FrameLoaderClientQt::interruptForPolicyChangeError(const WebCore::ResourceRequest& request)
 {
-    return ResourceError("Error", WebKitErrorFrameLoadInterruptedByPolicyChange, request.url().url(), QObject::tr("QWebFrame", "Frame load interruped by policy change"));
+    return ResourceError("Error", WebKitErrorFrameLoadInterruptedByPolicyChange, request.url().string(), QObject::tr("QWebFrame", "Frame load interruped by policy change"));
 }
 
 WebCore::ResourceError FrameLoaderClientQt::cannotShowMIMETypeError(const WebCore::ResourceResponse& response)
 {
-    return ResourceError("Error", WebKitErrorCannotShowMIMEType, response.url().url(), QObject::tr("QWebFrame", "Cannot show mimetype"));
+    return ResourceError("Error", WebKitErrorCannotShowMIMEType, response.url().string(), QObject::tr("QWebFrame", "Cannot show mimetype"));
 }
 
 WebCore::ResourceError FrameLoaderClientQt::fileDoesNotExistError(const WebCore::ResourceResponse& response)
 {
-    return ResourceError("Error", -998 /* ### */, response.url().url(), QObject::tr("QWebFrame", "File does not exist"));
+    return ResourceError("Error", -998 /* ### */, response.url().string(), QObject::tr("QWebFrame", "File does not exist"));
 }
 
 bool FrameLoaderClientQt::shouldFallBack(const WebCore::ResourceError&)
@@ -712,7 +712,7 @@ void FrameLoaderClientQt::assignIdentifierToInitialRequest(unsigned long identif
 void FrameLoaderClientQt::dispatchWillSendRequest(WebCore::DocumentLoader*, unsigned long, WebCore::ResourceRequest& request, const WebCore::ResourceResponse& response)
 {
     // seems like the Mac code doesn't do anything here by default neither
-    //qDebug() << "FrameLoaderClientQt::dispatchWillSendRequest" << request.isNull() << request.url().url();
+    //qDebug() << "FrameLoaderClientQt::dispatchWillSendRequest" << request.isNull() << request.url().string`();
 }
 
 void FrameLoaderClientQt::dispatchDidReceiveAuthenticationChallenge(DocumentLoader*, unsigned long, const AuthenticationChallenge&)
@@ -730,7 +730,7 @@ void FrameLoaderClientQt::dispatchDidReceiveResponse(WebCore::DocumentLoader*, u
 
     m_response = response;
     m_firstData = true;
-    //qDebug() << "    got response from" << response.url().url();
+    //qDebug() << "    got response from" << response.url().string();
 }
 
 void FrameLoaderClientQt::dispatchDidReceiveContentLength(WebCore::DocumentLoader*, unsigned long, int)
@@ -915,7 +915,7 @@ Widget* FrameLoaderClientQt::createPlugin(const IntSize&, Element* element, cons
     for (int i = 0; i < paramValues.size(); ++i)
         values.append(paramValues[i]);
 
-    QString urlStr(url.url());
+    QString urlStr(url.string());
     QUrl qurl = urlStr;
 
     QObject *object = 0;

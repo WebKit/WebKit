@@ -1089,7 +1089,7 @@ bool CSSParser::parseValue(int propId, bool important)
                 if (val->unit == CSSPrimitiveValue::CSS_URI) {
                     String value = parseURL(domString(val->string));
                     parsedValue = new CSSPrimitiveValue(
-                                    String(KURL(styleElement->baseURL().deprecatedString(), value.deprecatedString()).url()), 
+                                    KURL(styleElement->baseURL().deprecatedString(), value.deprecatedString()).string(), 
                                     CSSPrimitiveValue::CSS_URI);
                 } 
                 

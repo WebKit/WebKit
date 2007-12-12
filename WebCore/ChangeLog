@@ -1,3 +1,22 @@
+2007-12-12  Sam Weinig  <sam@webkit.org>
+
+        Build fix for Qt, Gtk, and Wx.
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue):
+        * loader/win/FrameLoaderWin.cpp:
+        (WebCore::FrameLoader::urlSelected):
+        * platform/network/curl/ResourceHandleManager.cpp:
+        (WebCore::parseDataUrl):
+        (WebCore::ResourceHandleManager::startJob):
+        * platform/network/win/CookieJarWin.cpp:
+        (WebCore::setCookies):
+        (WebCore::cookies):
+        * platform/network/win/ResourceHandleWin.cpp:
+        (WebCore::ResourceHandle::start):
+        * platform/qt/PasteboardQt.cpp:
+        (WebCore::Pasteboard::writeURL):
+
 2007-12-11  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Maciej Stachowiak.

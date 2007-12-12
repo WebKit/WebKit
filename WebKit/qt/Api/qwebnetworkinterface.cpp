@@ -106,7 +106,7 @@ static QByteArray decodePercentEncoding(const QByteArray& input)
 void QWebNetworkRequestPrivate::init(const WebCore::ResourceRequest &resourceRequest)
 {
     KURL url = resourceRequest.url();
-    QUrl qurl = QString(url.url());
+    QUrl qurl = QString(url.string());
     init(resourceRequest.httpMethod(), qurl, &resourceRequest);
 }
 

@@ -45,13 +45,13 @@ QWebHistoryItem::~QWebHistoryItem()
 
 QUrl QWebHistoryItem::originalUrl() const
 {
-    return QUrl(d->item->originalURL().url());
+    return QUrl(d->item->originalURL().string());
 }
 
 
 QUrl QWebHistoryItem::currentUrl() const
 {
-    return QUrl(d->item->url().url());
+    return QUrl(d->item->url().string());
 }
 
 

@@ -345,7 +345,7 @@ void QWebPage::open(const QWebNetworkRequest &req)
 
 QUrl QWebPage::url() const
 {
-    return QUrl((QString)mainFrame()->d->frame->loader()->url().url());
+    return QUrl((QString)mainFrame()->d->frame->loader()->url().string());
 }
 
 QString QWebPage::title() const
@@ -1278,8 +1278,8 @@ QWebPageContext::QWebPageContext(const WebCore::HitTestResult &hitTest)
 {
     d->pos = hitTest.point();
     d->text = hitTest.textContent();
-    d->linkUrl = hitTest.absoluteLinkURL().url();
-    d->imageUrl = hitTest.absoluteImageURL().url();
+    d->linkUrl = hitTest.absoluteLinkURL().string();
+    d->imageUrl = hitTest.absoluteImageURL().string();
     d->innerNonSharedNode = hitTest.innerNonSharedNode();
     WebCore::Image *img = hitTest.image();
     if (img) {
