@@ -1,3 +1,59 @@
+2007-12-11  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Darin.
+
+        Fix for <rdar://problem/5641255> SVGs with width and height 100% 
+        fail to render when used as background images
+
+        CachedImage now has a setImageContainerSize function. It is only 
+        needed for SVG right now.
+        * loader/CachedImage.cpp:
+        (WebCore::CachedImage::setImageContainerSize):
+        * loader/CachedImage.h:
+
+        Relatively sized SVGs have no intrinsic size. Because this call is 
+        low-level enough that we cannot pass in the container size and get 
+        the real size of the SVG, we need to know if it has relative 
+        dimensions, and if so, we need to get the size from scaledTileSize.
+        * platform/graphics/Image.cpp:
+        (WebCore::Image::drawTiled):
+        * platform/graphics/Image.h:
+        (WebCore::Image::setContainerSize):
+        (WebCore::Image::hasRelativeWidth):
+        (WebCore::Image::hasRelativeHeight):
+
+        Re-factored calculateBackgroundSize a bit so that it returns an 
+        IntSize. Made it a member function so that it can send m_width and 
+        m_height along to setImageContainerSize.
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::calculateBackgroundSize):
+        (WebCore::RenderBox::calculateBackgroundImageGeometry):
+        * rendering/RenderBox.h:
+
+        Need to account for relatively sized SVGs in calcViewport()
+        * rendering/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::calcViewport):
+        
+        Added new member variables to store the size of the SVG container. 
+        relativeWidthValue() and relativeHeightValue() use the stored SVG 
+        container size to correctly calculate the width and height of a 
+        relatively sized SVG.
+        * svg/SVGSVGElement.cpp:
+        (WebCore::SVGSVGElement::SVGSVGElement):
+        (WebCore::SVGSVGElement::setContainerSize):
+        (WebCore::SVGSVGElement::relativeWidthValue):
+        (WebCore::SVGSVGElement::relativeHeightValue):
+        * svg/SVGSVGElement.h:
+        (WebCore::SVGSVGElement::containerSize):
+        
+        Re-factored size calculations to use the size of the container.
+        * svg/graphics/SVGImage.cpp:
+        (WebCore::SVGImage::setContainerSize):
+        (WebCore::SVGImage::size):
+        (WebCore::SVGImage::hasRelativeWidth):
+        (WebCore::SVGImage::hasRelativeHeight):
+        * svg/graphics/SVGImage.h:
+
 2007-12-11  Darin Adler  <darin@apple.com>
 
         * editing/Editor.cpp:

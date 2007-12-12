@@ -143,6 +143,7 @@ public:
 
     virtual void paintBackgroundExtended(GraphicsContext*, const Color&, const BackgroundLayer*, int clipY, int clipHeight,
                                          int tx, int ty, int width, int height, bool includeLeftEdge = true, bool includeRightEdge = true);
+    IntSize calculateBackgroundSize(const BackgroundLayer*, int scaledWidth, int scaledHeight) const;
 
     virtual int staticX() const;
     virtual int staticY() const;

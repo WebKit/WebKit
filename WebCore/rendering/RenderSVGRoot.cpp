@@ -135,10 +135,7 @@ void RenderSVGRoot::paint(PaintInfo& paintInfo, int parentX, int parentY)
     if (paintInfo.context->paintingDisabled())
         return;
 
-    // Be sure that our viewport size, didn't depend on ourselves!
-    // If that is true, we have a null viewport() here, and need to recalculate.
-    if (viewport().isEmpty())
-        calcViewport();
+    calcViewport();
 
     SVGSVGElement* svg = static_cast<SVGSVGElement*>(element());
     // A value of zero disables rendering of the element. 
@@ -197,8 +194,19 @@ void RenderSVGRoot::calcViewport()
         if (!selfNeedsLayout() && !svg->hasRelativeValues())
             return;
 
-        float w = svg->width().value();
-        float h = svg->height().value();
+        float w, h;
+        SVGLength width = svg->width();
+        if (width.unitType() == LengthTypePercentage && svg->relativeWidthValue() > 0)
+            w = svg->relativeWidthValue();
+        else
+            w = width.value();
+        
+        SVGLength height = svg->height();
+        if (height.unitType() == LengthTypePercentage && svg->relativeHeightValue() > 0)
+            h = svg->relativeHeightValue();
+        else
+            h = height.value();
+
         m_viewport = FloatRect(0, 0, w, h);
     }
 }

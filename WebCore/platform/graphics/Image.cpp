@@ -127,6 +127,11 @@ void Image::drawTiled(GraphicsContext* ctxt, const FloatRect& destRect, const Fl
     }
 
     FloatSize intrinsicTileSize = size();
+    if (hasRelativeWidth())
+        intrinsicTileSize.setWidth(scaledTileSize.width());
+    if (hasRelativeHeight())
+        intrinsicTileSize.setHeight(scaledTileSize.height());
+
     FloatSize scale(scaledTileSize.width() / intrinsicTileSize.width(),
                     scaledTileSize.height() / intrinsicTileSize.height());
     AffineTransform patternTransform = AffineTransform().scale(scale.width(), scale.height());

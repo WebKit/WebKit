@@ -417,51 +417,52 @@ void RenderBox::paintBackground(GraphicsContext* context, const Color& c, const 
     paintBackgroundExtended(context, c, bgLayer, clipY, clipH, tx, ty, width, height);
 }
 
-static void cacluateBackgroundSize(const BackgroundLayer* bgLayer, int& scaledWidth, int& scaledHeight)
+IntSize RenderBox::calculateBackgroundSize(const BackgroundLayer* bgLayer, int scaledWidth, int scaledHeight) const
 {
     CachedImage* bg = bgLayer->backgroundImage();
 
     if (bgLayer->isBackgroundSizeSet()) {
+        int w = scaledWidth;
+        int h = scaledHeight;
         Length bgWidth = bgLayer->backgroundSize().width;
         Length bgHeight = bgLayer->backgroundSize().height;
 
         if (bgWidth.isPercent())
-            scaledWidth = bgWidth.calcValue(scaledWidth);
+            w = bgWidth.calcValue(scaledWidth);
         else if (bgWidth.isFixed())
-            scaledWidth = bgWidth.value();
+            w = bgWidth.value();
         else if (bgWidth.isAuto()) {
             // If the width is auto and the height is not, we have to use the appropriate
             // scale to maintain our aspect ratio.
             if (bgHeight.isPercent()) {
                 int scaledH = bgHeight.calcValue(scaledHeight);
-                scaledWidth = bg->imageSize().width() * scaledH / bg->imageSize().height();
+                w = bg->imageSize().width() * scaledH / bg->imageSize().height();
             } else if (bgHeight.isFixed())
-                scaledWidth = bg->imageSize().width() * bgHeight.value() / bg->imageSize().height();
+                w = bg->imageSize().width() * bgHeight.value() / bg->imageSize().height();
         }
 
         if (bgHeight.isPercent())
-            scaledHeight = bgHeight.calcValue(scaledHeight);
+            h = bgHeight.calcValue(scaledHeight);
         else if (bgHeight.isFixed())
-            scaledHeight = bgHeight.value();
+            h = bgHeight.value();
         else if (bgHeight.isAuto()) {
             // If the height is auto and the width is not, we have to use the appropriate
             // scale to maintain our aspect ratio.
             if (bgWidth.isPercent())
-                scaledHeight = bg->imageSize().height() * scaledWidth / bg->imageSize().width();
+                h = bg->imageSize().height() * scaledWidth / bg->imageSize().width();
             else if (bgWidth.isFixed())
-                scaledHeight = bg->imageSize().height() * bgWidth.value() / bg->imageSize().width();
+                h = bg->imageSize().height() * bgWidth.value() / bg->imageSize().width();
             else if (bgWidth.isAuto()) {
                 // If both width and height are auto, we just want to use the image's
                 // intrinsic size.
-                scaledWidth = bg->imageSize().width();
-                scaledHeight = bg->imageSize().height();
+                w = bg->imageSize().width();
+                h = bg->imageSize().height();
             }
         }
-        scaledWidth = max(1, scaledWidth);
-        scaledHeight = max(1, scaledHeight);
+        return IntSize(max(1, w), max(1, h));
     } else {
-        scaledWidth = bg->imageSize().width();
-        scaledHeight = bg->imageSize().height();
+        bg->setImageContainerSize(IntSize(m_width, m_height));
+        return bg->imageSize();
     }
 }
 
@@ -561,10 +562,10 @@ void RenderBox::calculateBackgroundImageGeometry(const BackgroundLayer* bgLayer,
     int sy = 0;
     int cw;
     int ch;
-    int scaledImageWidth = pw;
-    int scaledImageHeight = ph;
 
-    cacluateBackgroundSize(bgLayer, scaledImageWidth, scaledImageHeight);
+    IntSize scaledImageSize = calculateBackgroundSize(bgLayer, pw, ph);
+    int scaledImageWidth = scaledImageSize.width();
+    int scaledImageHeight = scaledImageSize.height();
 
     EBackgroundRepeat backgroundRepeat = bgLayer->backgroundRepeat();
     

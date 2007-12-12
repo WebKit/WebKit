@@ -1,3 +1,41 @@
+2007-12-11  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Darin.
+
+        Tests for <rdar://problem/5641255> SVGs with width and height 100% 
+        fail to render when used as background images
+
+        * fast/backgrounds/resources/balloon.svg: Added.
+        * fast/backgrounds/resources/eyes.svg: Added.
+        * fast/backgrounds/resources/hearts.svg: Added.
+        * fast/backgrounds/resources/linguistics.svg: Added.
+        * fast/backgrounds/resources/map.svg: Added.
+        * fast/backgrounds/resources/mouse-repel.svg: Added.
+        * fast/backgrounds/svg-as-background-1.html: Added.
+        * fast/backgrounds/svg-as-background-2.html: Added.
+        * fast/backgrounds/svg-as-background-3.html: Added.
+        * fast/backgrounds/svg-as-background-4.html: Added.
+        * fast/backgrounds/svg-as-background-5.html: Added.
+        * fast/backgrounds/svg-as-background-6.html: Added.
+        * platform/mac/fast/backgrounds/svg-as-background-1-expected.checksum: Added.
+        * platform/mac/fast/backgrounds/svg-as-background-1-expected.png: Added.
+        * platform/mac/fast/backgrounds/svg-as-background-1-expected.txt: Added.
+        * platform/mac/fast/backgrounds/svg-as-background-2-expected.checksum: Added.
+        * platform/mac/fast/backgrounds/svg-as-background-2-expected.png: Added.
+        * platform/mac/fast/backgrounds/svg-as-background-2-expected.txt: Added.
+        * platform/mac/fast/backgrounds/svg-as-background-3-expected.checksum: Added.
+        * platform/mac/fast/backgrounds/svg-as-background-3-expected.png: Added.
+        * platform/mac/fast/backgrounds/svg-as-background-3-expected.txt: Added.
+        * platform/mac/fast/backgrounds/svg-as-background-4-expected.checksum: Added.
+        * platform/mac/fast/backgrounds/svg-as-background-4-expected.png: Added.
+        * platform/mac/fast/backgrounds/svg-as-background-4-expected.txt: Added.
+        * platform/mac/fast/backgrounds/svg-as-background-5-expected.checksum: Added.
+        * platform/mac/fast/backgrounds/svg-as-background-5-expected.png: Added.
+        * platform/mac/fast/backgrounds/svg-as-background-5-expected.txt: Added.
+        * platform/mac/fast/backgrounds/svg-as-background-6-expected.checksum: Added.
+        * platform/mac/fast/backgrounds/svg-as-background-6-expected.png: Added.
+        * platform/mac/fast/backgrounds/svg-as-background-6-expected.txt: Added.
+
 2007-12-11  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Rubberstamped by Mark.

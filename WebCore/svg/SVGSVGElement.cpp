@@ -71,6 +71,7 @@ SVGSVGElement::SVGSVGElement(const QualifiedName& tagName, Document* doc)
     , m_useCurrentView(false)
     , m_timeScheduler(new TimeScheduler(doc))
     , m_viewSpec(0)
+    , m_containerSize(300, 150)
 {
     setWidthBaseValue(SVGLength(this, LengthModeWidth, "100%"));
     setHeightBaseValue(SVGLength(this, LengthModeHeight, "100%"));
@@ -131,6 +132,24 @@ FloatRect SVGSVGElement::viewport() const
     viewBox.map(_x, _y, &_x, &_y);
     viewBox.map(w, h, &wDouble, &hDouble);
     return FloatRect::narrowPrecision(_x, _y, wDouble, hDouble);
+}
+
+int SVGSVGElement::relativeWidthValue() const
+{
+    SVGLength w = width();
+    if (w.unitType() != LengthTypePercentage)
+        return 0;
+
+    return static_cast<int>(w.valueAsPercentage() * m_containerSize.width());
+}
+
+int SVGSVGElement::relativeHeightValue() const
+{
+    SVGLength h = height();
+    if (h.unitType() != LengthTypePercentage)
+        return 0;
+
+    return static_cast<int>(h.valueAsPercentage() * m_containerSize.height());
 }
 
 float SVGSVGElement::pixelUnitToMillimeterX() const
