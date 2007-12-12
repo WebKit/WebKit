@@ -1,3 +1,12 @@
+2007-12-12  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Nico.
+
+        Updated pixel results from my recent SVG change.
+
+        * svg/custom/inline-svg-in-xhtml-expected.checksum: Added.
+        * svg/custom/inline-svg-in-xhtml-expected.png: Added.
+
 2007-12-11  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam.
