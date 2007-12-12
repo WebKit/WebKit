@@ -142,6 +142,48 @@ static String keyIdentifierForWindowsKeyCode(unsigned short keyCode)
     }
 }
 
+static bool isKeypadEvent(WPARAM code, LPARAM keyData, PlatformKeyboardEvent::Type type)
+{
+    if (type != PlatformKeyboardEvent::RawKeyDown && type != PlatformKeyboardEvent::KeyUp)
+        return false;
+
+    switch (code) {
+        case VK_NUMLOCK:
+        case VK_NUMPAD0:
+        case VK_NUMPAD1:
+        case VK_NUMPAD2:
+        case VK_NUMPAD3:
+        case VK_NUMPAD4:
+        case VK_NUMPAD5:
+        case VK_NUMPAD6:
+        case VK_NUMPAD7:
+        case VK_NUMPAD8:
+        case VK_NUMPAD9:
+        case VK_MULTIPLY:
+        case VK_ADD:
+        case VK_SEPARATOR:
+        case VK_SUBTRACT:
+        case VK_DECIMAL:
+        case VK_DIVIDE:
+            return true;
+        case VK_RETURN:
+            return (keyData >> 16) & KF_EXTENDED;
+        case VK_INSERT:
+        case VK_DELETE:
+        case VK_PRIOR:
+        case VK_NEXT:
+        case VK_END:
+        case VK_HOME:
+        case VK_LEFT:
+        case VK_UP:
+        case VK_RIGHT:
+        case VK_DOWN:
+            return !((keyData >> 16) & KF_EXTENDED);
+        default:
+            return false;
+    }
+}
+
 static inline String singleCharacterString(UChar c) { return String(&c, 1); }
 
 PlatformKeyboardEvent::PlatformKeyboardEvent(HWND, WPARAM code, LPARAM keyData, Type type, bool systemKey)
@@ -149,9 +191,9 @@ PlatformKeyboardEvent::PlatformKeyboardEvent(HWND, WPARAM code, LPARAM keyData, 
     , m_text((type == Char) ? singleCharacterString(code) : String())
     , m_unmodifiedText((type == Char) ? singleCharacterString(code) : String())
     , m_keyIdentifier((type == Char) ? String() : keyIdentifierForWindowsKeyCode(code))
-    , m_autoRepeat(keyData & KF_REPEAT)
+    , m_autoRepeat((keyData >> 16) & KF_REPEAT)
     , m_windowsVirtualKeyCode((type == RawKeyDown || type == KeyUp) ? code : 0)
-    , m_isKeypad(false) // FIXME: Need to implement this.
+    , m_isKeypad(isKeypadEvent(code, keyData, type))
     , m_shiftKey(GetKeyState(VK_SHIFT) & HIGH_BIT_MASK_SHORT)
     , m_ctrlKey(GetKeyState(VK_CONTROL) & HIGH_BIT_MASK_SHORT)
     , m_altKey(GetKeyState(VK_MENU) & HIGH_BIT_MASK_SHORT)
@@ -162,7 +204,7 @@ PlatformKeyboardEvent::PlatformKeyboardEvent(HWND, WPARAM code, LPARAM keyData, 
 
 void PlatformKeyboardEvent::disambiguateKeyDownEvent(Type, bool)
 {
-    // No KeyDown events here to change.
+    // No KeyDown events on Windows to disambiguate.
     ASSERT_NOT_REACHED();
 }
 
