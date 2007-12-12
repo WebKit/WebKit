@@ -1,3 +1,19 @@
+2007-12-12  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam.
+
+        <rdar://problem/5132003>
+        dumpResourceLoadCallbacks is not implemented in DRT on Windows.
+        
+        * platform/network/cf/ResourceErrorCF.cpp:
+        (WebCore::ResourceError::unpackPlatformError):
+        Handle kCFErrorDomainWinSock.
+        
+        * platform/network/cf/ResourceHandleCFNet.cpp:
+        (WebCore::willSendRequest):
+        Ignore willSendRequest calls where the redirect response is null, like we do in 
+        the Mac version.
+
 2007-12-12  Steve Falkenburg  <sfalken@apple.com>
 
         <rdar://problem/5643785> Fix iBench regression caused by mis-placed nested timer check.

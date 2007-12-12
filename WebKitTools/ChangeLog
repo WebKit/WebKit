@@ -1,3 +1,19 @@
+2007-12-11  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam.
+
+        <rdar://problem/5132003>
+        dumpResourceLoadCallbacks is not implemented in DRT on Windows.
+
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (main):
+        Set the resource load delegate.
+        
+        * DumpRenderTree/win/DumpRenderTree.vcproj:
+        
+        * DumpRenderTree/win/ResourceLoadDelegate.cpp: Added.
+        * DumpRenderTree/win/ResourceLoadDelegate.h: Added.
+
 2007-12-12  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Adam Roben.

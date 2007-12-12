@@ -329,6 +329,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\ResourceLoadDelegate.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\ResourceLoadDelegate.h"
+				>
+			</File>
+			<File
 				RelativePath=".\UIDelegate.cpp"
 				>
 			</File>

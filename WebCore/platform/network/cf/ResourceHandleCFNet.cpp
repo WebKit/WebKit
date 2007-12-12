@@ -62,6 +62,11 @@ CFURLRequestRef willSendRequest(CFURLConnectionRef conn, CFURLRequestRef cfReque
 {
     ResourceHandle* handle = (ResourceHandle*)clientInfo;
 
+    if (!cfRedirectResponse) {
+        CFRetain(cfRequest);
+        return cfRequest;
+    }
+
     LOG(Network, "CFNet - willSendRequest(conn=%p, handle=%p) (%s)", conn, handle, handle->request().url().string().utf8().data());
 
     ResourceRequest request(cfRequest);

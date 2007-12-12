@@ -258,11 +258,6 @@ http/tests/security/javascriptURL/xss-DENIED-to-javascript-url-in-foreign-domain
 fast/dom/Window/setting-properties-on-closed-window.html
 svg/custom/use-events-crash.svg
 
-# dumpResourceLoadCallbacks is not implemented <rdar://5132003>
-http/tests/misc/window-dot-stop.html
-http/tests/xmlhttprequest/abort-should-cancel-load.html
-security/block-test.html
-
 # Pixel depth and color depth different on boomer <rdar://problem/5137719>
 fast/dom/Window/window-screen-properties.html
 

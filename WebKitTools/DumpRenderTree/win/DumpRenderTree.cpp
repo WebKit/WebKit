@@ -33,6 +33,7 @@
 #include "LayoutTestController.h"
 #include "PixelDumpSupport.h"
 #include "PolicyDelegate.h"
+#include "ResourceLoadDelegate.h"
 #include "UIDelegate.h"
 #include "WorkQueueItem.h"
 #include "WorkQueue.h"
@@ -924,6 +925,10 @@ int main(int argc, char* argv[])
     COMPtr<EditingDelegate> editingDelegate;
     editingDelegate.adoptRef(new EditingDelegate);
     if (FAILED(viewEditing->setEditingDelegate(editingDelegate.get())))
+        return -1;
+
+    COMPtr<ResourceLoadDelegate> resourceLoadDelegate(AdoptCOM, new ResourceLoadDelegate);
+    if (FAILED(webView->setResourceLoadDelegate(resourceLoadDelegate.get())))
         return -1;
 
     COMPtr<IWebPreferences> preferences;
