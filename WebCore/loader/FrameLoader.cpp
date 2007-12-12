@@ -4058,7 +4058,7 @@ void FrameLoader::loadItem(HistoryItem* item, FrameLoadType loadType)
                     case FrameLoadTypeBack:
                     case FrameLoadTypeForward:
                     case FrameLoadTypeIndexedBackForward:
-                        if (itemURL.protocol() == "https")
+                        if (itemURL.protocol() != "https")
                             request.setCachePolicy(ReturnCacheDataElseLoad);
                         break;
                     case FrameLoadTypeStandard:

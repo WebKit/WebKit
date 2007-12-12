@@ -1,3 +1,15 @@
+2007-12-12  MorganL  <morganl.webkit@yahoo.com>
+
+        Reviewed by Maciej.
+
+        Fixes:
+        http://bugs.webkit.org/show_bug.cgi?id=16408
+
+        When navigating back/forward to a http:// link, we should prefer to
+        load from cache if possible.
+
+        * loader/FrameLoader.cpp:
+
 2007-12-12  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam.
