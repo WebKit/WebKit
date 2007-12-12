@@ -1,5 +1,11 @@
 2007-12-12  Sam Weinig  <sam@webkit.org>
 
+        Fix Mac release build.
+
+        * WebCore.base.exp:
+
+2007-12-12  Sam Weinig  <sam@webkit.org>
+
         Build fix for Qt, Gtk, and Wx.
 
         * css/CSSParser.cpp:
