@@ -1,3 +1,9 @@
+2007-12-12  Steve Falkenburg  <sfalken@apple.com>
+
+        Build fix.
+
+        * WebKit.vcproj/WebKit.make: Copy only what we need out of obj/bin.
+
 2007-12-12  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.
