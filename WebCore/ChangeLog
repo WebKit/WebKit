@@ -1,3 +1,21 @@
+2007-12-12  Rodney Dawes  <dobey@wayofthemonkey.com>
+
+        Reviewed by Maciej.
+
+        http://bugs.webkit.org/show_bug.cgi?id=16342
+        Build Warning and Error fixes in WebCore GTK+
+
+        Use C-style casts for casting function pointers to gpointer
+        Use static_cast<int> to cast a float to int to fix a warning
+
+        * platform/gtk/PlatformScrollBarGtk.cpp:
+        (PlatformScrollbar::PlatformScrollbar):
+        (PlatformScrollbar::~PlatformScrollbar):
+        (PlatformScrollbar::gtkValueChanged):
+        * platform/gtk/ThreadingGtk.cpp:
+        (callFunctionOnMainThread):
+        (callOnMainThread):
+
 2007-12-12  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.

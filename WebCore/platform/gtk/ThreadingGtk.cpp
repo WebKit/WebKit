@@ -39,7 +39,7 @@ namespace WebCore {
 
 static gboolean callFunctionOnMainThread(gpointer data)
 {
-    void (*function)() = reinterpret_cast<void(*)()>(data);
+    void (*function)() = (void(*)())data;
     function();
     return FALSE;
 }
@@ -47,7 +47,7 @@ static gboolean callFunctionOnMainThread(gpointer data)
 void callOnMainThread(void (*function)())
 {
     ASSERT(function);
-    g_timeout_add(0, callFunctionOnMainThread, reinterpret_cast<gpointer>(function));
+    g_timeout_add(0, callFunctionOnMainThread, (gpointer)function);
 }
 
 void initializeThreading()
