@@ -1,3 +1,16 @@
+2007-12-12  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Maciej.
+
+        <rdar://problem/5071781> window.mouseout events are not sent 
+        to window when mouse moves out of window 
+
+        Make PlatformMouseEvent recognise WM_MOUSELEAVE.
+
+        * platform/win/PlatformMouseEventWin.cpp:
+        (WebCore::messageToEventType):
+        (WebCore::PlatformMouseEvent::PlatformMouseEvent):
+
 2007-12-12  Sam Weinig  <sam@webkit.org>
 
         Fix Mac release build.

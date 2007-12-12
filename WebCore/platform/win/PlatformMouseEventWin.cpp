@@ -63,6 +63,7 @@ static MouseEventType messageToEventType(UINT message)
         case WM_MBUTTONUP:
             return MouseEventReleased;
 
+        case WM_MOUSELEAVE:
         case WM_MOUSEMOVE:
             return MouseEventMoved;
 
@@ -103,6 +104,7 @@ PlatformMouseEvent::PlatformMouseEvent(HWND hWnd, UINT message, WPARAM wParam, L
             m_button = MiddleButton;
             break;
         case WM_MOUSEMOVE:
+        case WM_MOUSELEAVE:
             if (wParam & MK_LBUTTON)
                 m_button = LeftButton;
             else if (wParam & MK_MBUTTON)

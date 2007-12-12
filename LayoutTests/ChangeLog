@@ -1,3 +1,16 @@
+2007-12-12  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Maciej.
+        
+        <rdar://problem/5071781> window.mouseout events are not 
+        sent to window when mouse moves out of window 
+
+        Layout tests to make sure we correctly handle mouse out 
+        on the window object.
+
+        * fast/events/mouseout-on-window-expected.txt: Added.
+        * fast/events/mouseout-on-window.html: Added.
+
 2007-12-11  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Maciej Stachowiak.

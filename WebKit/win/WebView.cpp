@@ -567,6 +567,12 @@ void WebView::close()
     if (frame)
         frame->loader()->detachFromParent();
 
+    if (m_mouseOutTracker) {
+        m_mouseOutTracker->dwFlags = TME_CANCEL;
+        ::TrackMouseEvent(m_mouseOutTracker.get());
+        m_mouseOutTracker.set(0);
+    }
+
     m_page->setGroupName(String());
     setHostWindow(0);
 
@@ -1147,7 +1153,10 @@ bool WebView::handleMouseEvent(UINT message, WPARAM wParam, LPARAM lParam)
     static LONG globalPrevMouseDownTime;
 
     // Create our event.
-    PlatformMouseEvent mouseEvent(m_viewWindow, message, wParam, lParam, m_mouseActivated);
+    // On WM_MOUSELEAVE we need to create a mouseout event, so we force the position
+    // of the event to be at (MINSHORT, MINSHORT).
+    LPARAM position = (message == WM_MOUSELEAVE) ? ((MINSHORT << 16) | MINSHORT) : lParam;
+    PlatformMouseEvent mouseEvent(m_viewWindow, message, wParam, position, m_mouseActivated);
    
     bool insideThreshold = abs(globalPrevPoint.x() - mouseEvent.pos().x()) < ::GetSystemMetrics(SM_CXDOUBLECLK) &&
                            abs(globalPrevPoint.y() - mouseEvent.pos().y()) < ::GetSystemMetrics(SM_CYDOUBLECLK);
@@ -1187,11 +1196,24 @@ bool WebView::handleMouseEvent(UINT message, WPARAM wParam, LPARAM lParam)
         mouseEvent.setClickCount(globalClickCount);
         m_page->mainFrame()->eventHandler()->handleMouseReleaseEvent(mouseEvent);
         ::ReleaseCapture();
+    } else if (message == WM_MOUSELEAVE && m_mouseOutTracker) {
+        // Once WM_MOUSELEAVE is fired windows clears this tracker
+        // so there is no need to disable it ourselves.
+        m_mouseOutTracker.set(0);
+        m_page->mainFrame()->eventHandler()->mouseMoved(mouseEvent);
+        handled = true;
     } else if (message == WM_MOUSEMOVE) {
         if (!insideThreshold)
             globalClickCount = 0;
         mouseEvent.setClickCount(globalClickCount);
         handled = m_page->mainFrame()->eventHandler()->mouseMoved(mouseEvent);
+        if (!m_mouseOutTracker) {
+            m_mouseOutTracker.set(new TRACKMOUSEEVENT);
+            m_mouseOutTracker->cbSize = sizeof(TRACKMOUSEEVENT);
+            m_mouseOutTracker->dwFlags = TME_LEAVE;
+            m_mouseOutTracker->hwndTrack = m_viewWindow;
+            ::TrackMouseEvent(m_mouseOutTracker.get());
+        }
     }
     setMouseActivated(false);
     return handled;
@@ -1573,6 +1595,7 @@ static LRESULT CALLBACK WebViewWndProc(HWND hWnd, UINT message, WPARAM wParam, L
         case WM_LBUTTONUP:
         case WM_MBUTTONUP:
         case WM_RBUTTONUP:
+        case WM_MOUSELEAVE:
             if (Frame* coreFrame = core(mainFrameImpl))
                 if (coreFrame->view()->didFirstLayout())
                     handled = webView->handleMouseEvent(message, wParam, lParam);
