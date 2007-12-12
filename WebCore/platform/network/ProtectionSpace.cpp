@@ -41,7 +41,7 @@ ProtectionSpace::ProtectionSpace(const String& host, int port, ProtectionSpaceSe
     : m_host(host.length() ? host : "")
     , m_port(port)
     , m_serverType(serverType)
-    , m_realm(realm.length() ? host : "")
+    , m_realm(realm.length() ? realm : "")
     , m_authenticationScheme(authenticationScheme)
 {    
 }
