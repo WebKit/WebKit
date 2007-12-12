@@ -79,7 +79,7 @@ void HTMLBaseElement::process()
         return;
 
     if (!m_href.isEmpty() && document()->frame())
-        document()->setBaseURL(KURL(document()->frame()->loader()->url(), m_href.deprecatedString()).url());
+        document()->setBaseURL(KURL(document()->frame()->loader()->url(), m_href.deprecatedString()).deprecatedString());
 
     if (!m_target.isEmpty())
         document()->setBaseTarget(m_target);

@@ -156,7 +156,7 @@ void ContextMenuController::contextMenuItemSelected(ContextMenuItem* item)
         case ContextMenuItemTagOpenFrameInNewWindow: {
             KURL url = frame->loader()->documentLoader()->unreachableURL();
             if (frame && url.isEmpty())
-                url = frame->loader()->documentLoader()->URL();
+                url = frame->loader()->documentLoader()->url();
             openNewWindow(url, frame);
             break;
         }

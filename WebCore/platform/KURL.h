@@ -27,6 +27,7 @@
 #define KURL_h
 
 #include "DeprecatedString.h"
+#include "PlatformString.h"
 #include <wtf/Platform.h>
 
 #if PLATFORM(CF)
@@ -44,7 +45,6 @@ class NSURL;
 namespace WebCore {
 
     class KURL;
-    class String;
     class TextEncoding;
 
     bool operator==(const KURL&, const KURL&);
@@ -65,10 +65,14 @@ public:
 #if PLATFORM(CF)
     KURL(CFURLRef);
 #endif
-    bool isEmpty() const { return urlString.isEmpty(); } 
+
+    bool isNull() const { return urlString.isNull(); }
+    bool isEmpty() const { return urlString.isEmpty(); }
+
     bool hasPath() const;
 
-    DeprecatedString url() const { return urlString; }
+    String string() const { return urlString; }
+    const DeprecatedString& deprecatedString() const { return urlString; }
 
     DeprecatedString protocol() const;
     DeprecatedString host() const;

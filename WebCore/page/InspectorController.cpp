@@ -145,7 +145,7 @@ struct InspectorResource : public RefCounted<InspectorResource> {
         if (!doc)
             return Other;
 
-        CachedResource* cachedResource = doc->docLoader()->cachedResource(requestURL.url());
+        CachedResource* cachedResource = doc->docLoader()->cachedResource(requestURL.string());
         if (!cachedResource)
             return Other;
 
@@ -271,7 +271,7 @@ static JSValueRef addSourceToFrame(JSContextRef ctx, JSObjectRef /*function*/, J
         if (!doc)
             return undefined;
 
-        CachedResource* cachedResource = doc->docLoader()->cachedResource(resource->requestURL.url());
+        CachedResource* cachedResource = doc->docLoader()->cachedResource(resource->requestURL.string());
         if (!cachedResource)
             return undefined;
 
@@ -925,7 +925,7 @@ JSObjectRef InspectorController::addScriptResource(InspectorResource* resource)
     JSObjectRef resourceConstructor = JSValueToObject(m_scriptContext, JSObjectGetProperty(m_scriptContext, m_scriptObject, resourceString, 0), 0);
     JSStringRelease(resourceString);
 
-    String urlString = resource->requestURL.url();
+    String urlString = resource->requestURL.string();
     JSStringRef url = JSStringCreateWithCharacters(urlString.characters(), urlString.length());
     JSValueRef urlValue = JSValueMakeString(m_scriptContext, url);
     JSStringRelease(url);
@@ -1022,7 +1022,7 @@ void InspectorController::updateScriptResourceRequest(InspectorResource* resourc
     if (!resource->scriptObject || !m_scriptContext)
         return;
 
-    String urlString = resource->requestURL.url();
+    String urlString = resource->requestURL.string();
     JSStringRef url = JSStringCreateWithCharacters(urlString.characters(), urlString.length());
     JSValueRef urlValue = JSValueMakeString(m_scriptContext, url);
     JSStringRelease(url);
@@ -1370,7 +1370,7 @@ void InspectorController::didCommitLoad(DocumentLoader* loader)
         ASSERT(m_mainResource);
         // FIXME: Should look into asserting that m_mainResource->loader == loader here.
 
-        m_client->inspectedURLChanged(loader->URL().url());
+        m_client->inspectedURLChanged(loader->url().string());
 
         deleteAllValues(m_consoleMessages);
         m_consoleMessages.clear();

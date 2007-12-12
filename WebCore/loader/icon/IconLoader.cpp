@@ -75,7 +75,7 @@ void IconLoader::startLoading()
 
     RefPtr<SubresourceLoader> loader = SubresourceLoader::create(m_frame, this, m_frame->loader()->iconURL());
     if (!loader)
-        LOG_ERROR("Failed to start load for icon at url %s", m_frame->loader()->iconURL().url().ascii());
+        LOG_ERROR("Failed to start load for icon at url %s", m_frame->loader()->iconURL().string().ascii().data());
 
     // Store the handle so we can cancel the load if stopLoading is called later.
     // But only do it if the load hasn't already completed.
@@ -138,7 +138,6 @@ void IconLoader::didFinishLoading(SubresourceLoader* resourceLoader)
 
 void IconLoader::finishLoading(const KURL& iconURL, PassRefPtr<SharedBuffer> data)
 {
-
     // When an icon load results in a 404 we commit it to the database here and clear the loading state.  
     // But the SubresourceLoader continues pulling in data in the background for the 404 page if the server sends one.  
     // Once that data finishes loading or if the load is cancelled while that data is being read, finishLoading ends up being called a second time.
@@ -147,8 +146,8 @@ void IconLoader::finishLoading(const KURL& iconURL, PassRefPtr<SharedBuffer> dat
     // <rdar://problem/5463392> tracks that enhancement
     
     if (!iconURL.isEmpty() && m_loadIsInProgress) {
-        iconDatabase()->setIconDataForIconURL(data, iconURL.url());
-        LOG(IconDatabase, "IconLoader::finishLoading() - Committing iconURL %s to database", iconURL.url().ascii());
+        iconDatabase()->setIconDataForIconURL(data, iconURL.string());
+        LOG(IconDatabase, "IconLoader::finishLoading() - Committing iconURL %s to database", iconURL.string().ascii().data());
         m_frame->loader()->commitIconURLToIconDatabase(iconURL);
         m_frame->loader()->client()->dispatchDidReceiveIcon();
     }

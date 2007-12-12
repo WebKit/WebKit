@@ -296,7 +296,7 @@ void Frame::setUserStyleSheetLocation(const KURL& url)
     delete d->m_userStyleSheetLoader;
     d->m_userStyleSheetLoader = 0;
     if (d->m_doc && d->m_doc->docLoader())
-        d->m_userStyleSheetLoader = new UserStyleSheetLoader(d->m_doc, url.url());
+        d->m_userStyleSheetLoader = new UserStyleSheetLoader(d->m_doc, url.string());
 }
 
 void Frame::setUserStyleSheet(const String& styleSheet)

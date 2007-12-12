@@ -1,10 +1,9 @@
 # 
-# KDOM IDL parser
+# WebKit IDL parser
 #
 # Copyright (C) 2005 Nikolas Zimmermann <wildfox@kde.org>
 # Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
-# 
-# This file is part of the KDE project
+# Copyright (C) 2007 Apple Inc. All rights reserved.
 # 
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Library General Public
@@ -357,6 +356,26 @@ sub ScanDirectory
             }
         }
     }
+}
+
+# Uppercase the first letter while respecting WebKit style guidelines. 
+# E.g., xmlEncoding becomes XMLEncoding, but xmlllang becomes Xmllang.
+sub WK_ucfirst
+{
+    my ($object, $param) = @_;
+    my $ret = ucfirst($param);
+    $ret =~ s/Xml/XML/ if $ret =~ /^Xml[^a-z]/;
+    return $ret;
+}
+
+# Lowercase the first letter while respecting WebKit style guidelines. 
+# URL becomes url, but SetURL becomes setURL.
+sub WK_lcfirst
+{
+    my ($object, $param) = @_;
+    my $ret = lcfirst($param);
+    $ret =~ s/uRL/url/;
+    return $ret;
 }
 
 1;

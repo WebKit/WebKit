@@ -169,7 +169,7 @@ void ImageDocument::createDocumentStructure()
     
     imageElement->setAttribute(styleAttr, "-webkit-user-select: none");        
     imageElement->setLoadManually(true);
-    imageElement->setSrc(URL());
+    imageElement->setSrc(url());
     
     body->appendChild(imageElement, ec);
     

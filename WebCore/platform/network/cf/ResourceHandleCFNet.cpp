@@ -31,6 +31,7 @@
 
 #include "AuthenticationCF.h"
 #include "AuthenticationChallenge.h"
+#include "CString.h"
 #include "DocLoader.h"
 #include "Frame.h"
 #include "FrameLoader.h"
@@ -61,7 +62,7 @@ CFURLRequestRef willSendRequest(CFURLConnectionRef conn, CFURLRequestRef cfReque
 {
     ResourceHandle* handle = (ResourceHandle*)clientInfo;
 
-    LOG(Network, "CFNet - willSendRequest(conn=%p, handle=%p) (%s)", conn, handle, handle->request().url().url().ascii());
+    LOG(Network, "CFNet - willSendRequest(conn=%p, handle=%p) (%s)", conn, handle, handle->request().url().string().utf8().data());
 
     ResourceRequest request(cfRequest);
     if (handle->client())
@@ -77,7 +78,7 @@ void didReceiveResponse(CFURLConnectionRef conn, CFURLResponseRef cfResponse, co
 {
     ResourceHandle* handle = (ResourceHandle*)clientInfo;
 
-    LOG(Network, "CFNet - didReceiveResponse(conn=%p, handle=%p) (%s)", conn, handle, handle->request().url().url().ascii());
+    LOG(Network, "CFNet - didReceiveResponse(conn=%p, handle=%p) (%s)", conn, handle, handle->request().url().string().utf8().data());
 
     if (handle->client())
         handle->client()->didReceiveResponse(handle, cfResponse);
@@ -89,7 +90,7 @@ void didReceiveData(CFURLConnectionRef conn, CFDataRef data, CFIndex originalLen
     const UInt8* bytes = CFDataGetBytePtr(data);
     CFIndex length = CFDataGetLength(data);
 
-    LOG(Network, "CFNet - didReceiveData(conn=%p, handle=%p, bytes=%d) (%s)", conn, handle, length, handle->request().url().url().ascii());
+    LOG(Network, "CFNet - didReceiveData(conn=%p, handle=%p, bytes=%d) (%s)", conn, handle, length, handle->request().url().string().utf8().data());
 
     if (handle->client())
         handle->client()->didReceiveData(handle, (const char*)bytes, length, originalLength);
@@ -99,7 +100,7 @@ void didFinishLoading(CFURLConnectionRef conn, const void* clientInfo)
 {
     ResourceHandle* handle = (ResourceHandle*)clientInfo;
 
-    LOG(Network, "CFNet - didFinishLoading(conn=%p, handle=%p) (%s)", conn, handle, handle->request().url().url().ascii());
+    LOG(Network, "CFNet - didFinishLoading(conn=%p, handle=%p) (%s)", conn, handle, handle->request().url().string().utf8().data());
 
     if (handle->client())
         handle->client()->didFinishLoading(handle);
@@ -109,7 +110,7 @@ void didFail(CFURLConnectionRef conn, CFErrorRef error, const void* clientInfo)
 {
     ResourceHandle* handle = (ResourceHandle*)clientInfo;
 
-    LOG(Network, "CFNet - didFail(conn=%p, handle=%p, error = %p) (%s)", conn, handle, error, handle->request().url().url().ascii());
+    LOG(Network, "CFNet - didFail(conn=%p, handle=%p, error = %p) (%s)", conn, handle, error, handle->request().url().string().utf8().data());
 
     if (handle->client())
         handle->client()->didFail(handle, ResourceError(error));
@@ -139,7 +140,7 @@ void didReceiveChallenge(CFURLConnectionRef conn, CFURLAuthChallengeRef challeng
 {
     ResourceHandle* handle = (ResourceHandle*)clientInfo;
     ASSERT(handle);
-    LOG(Network, "CFNet - didReceiveChallenge(conn=%p, handle=%p (%s)", conn, handle, handle->request().url().url().ascii());
+    LOG(Network, "CFNet - didReceiveChallenge(conn=%p, handle=%p (%s)", conn, handle, handle->request().url().string().utf8().data());
 
     handle->didReceiveAuthenticationChallenge(AuthenticationChallenge(challenge, handle));
 }
@@ -162,14 +163,14 @@ void addHeadersFromHashMap(CFMutableURLRequestRef request, const HTTPHeaderMap& 
 ResourceHandleInternal::~ResourceHandleInternal()
 {
     if (m_connection) {
-        LOG(Network, "CFNet - Cancelling connection %p (%s)", m_connection, m_request.url().url().ascii());
+        LOG(Network, "CFNet - Cancelling connection %p (%s)", m_connection, m_request.url().string().utf8().data());
         CFURLConnectionCancel(m_connection.get());
     }
 }
 
 ResourceHandle::~ResourceHandle()
 {
-    LOG(Network, "CFNet - Destroying job %p (%s)", this, d->m_request.url().url().ascii());
+    LOG(Network, "CFNet - Destroying job %p (%s)", this, d->m_request.url().string().utf8().data());
 }
 
 CFArrayRef arrayFromFormData(const FormData& d)
@@ -260,7 +261,7 @@ bool ResourceHandle::start(Frame* frame)
     CFURLConnectionScheduleDownloadWithRunLoop(d->m_connection.get(), loaderRunLoop(), kCFRunLoopDefaultMode);
     CFURLConnectionStart(d->m_connection.get());
 
-    LOG(Network, "CFNet - Starting URL %s (handle=%p, conn=%p)", d->m_request.url().url().ascii(), this, d->m_connection);
+    LOG(Network, "CFNet - Starting URL %s (handle=%p, conn=%p)", d->m_request.url().string().utf8().data(), this, d->m_connection);
 
     return true;
 }

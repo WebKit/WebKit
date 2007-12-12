@@ -107,7 +107,7 @@ static FORMATETC* texthtmlFormat()
 
 HGLOBAL createGlobalData(const KURL& url, const String& title)
 {
-    String mutableURL(url.url());
+    String mutableURL(url.string());
     String mutableTitle(title);
     SIZE_T size = mutableURL.length() + mutableTitle.length() + 2;  // +1 for "\n" and +1 for null terminator
     HGLOBAL cbData = ::GlobalAlloc(GPTR, size * sizeof(UChar));
@@ -196,7 +196,7 @@ DeprecatedCString markupToCF_HTML(const String& markup, const String& srcURL)
 String urlToMarkup(const KURL& url, const String& title)
 {
     String markup("<a href=\"");
-    markup.append(url.url());
+    markup.append(url.string());
     markup.append("\">");
     markup.append(title);
     markup.append("</a>");

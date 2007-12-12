@@ -171,7 +171,7 @@ Document* XMLHttpRequest::getResponseXML(ExceptionCode& ec) const
         } else {
             m_responseXML = m_doc->implementation()->createDocument(0);
             m_responseXML->open();
-            m_responseXML->setURL(m_url.url());
+            m_responseXML->setURL(m_url.deprecatedString());
             // FIXME: set Last-Modified and cookies (currently, those are only available for HTMLDocuments).
             m_responseXML->write(String(m_responseText));
             m_responseXML->finishParsing();
@@ -319,7 +319,7 @@ bool XMLHttpRequest::urlMatchesDocumentDomain(const KURL& url) const
         return true;
 
     // but a remote document can only load from the same port on the server
-    KURL documentURL = m_doc->URL();
+    KURL documentURL = m_doc->url();
     if (documentURL.protocol().lower() == url.protocol().lower()
             && documentURL.host().lower() == url.host().lower()
             && documentURL.port() == url.port())

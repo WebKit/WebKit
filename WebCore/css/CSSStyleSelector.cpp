@@ -323,7 +323,7 @@ void CSSStyleSelector::setEncodedURL(const KURL& url)
 
     u.setQuery(DeprecatedString::null);
     u.setRef(DeprecatedString::null);
-    encodedurl.file = u.url();
+    encodedurl.file = u.deprecatedString();
     int pos = encodedurl.file.findRev('/');
     encodedurl.path = encodedurl.file;
     if (pos > 0) {
@@ -331,7 +331,7 @@ void CSSStyleSelector::setEncodedURL(const KURL& url)
         encodedurl.path += '/';
     }
     u.setPath(DeprecatedString::null);
-    encodedurl.host = u.url();
+    encodedurl.host = u.deprecatedString();
 }
 
 CSSStyleSelector::~CSSStyleSelector()

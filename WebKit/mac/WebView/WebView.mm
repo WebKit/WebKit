@@ -4039,7 +4039,7 @@ static WebFrameView *containingFrameView(NSView *view)
 
     WebFrameLoadDelegateImplementationCache* implementations = WebViewGetFrameLoadDelegateImplementations(self);
     if (implementations->didReceiveIconForFrameFunc) {
-        Image* image = iconDatabase()->iconForPageURL(core(webFrame)->loader()->url().url(), IntSize(16, 16));
+        Image* image = iconDatabase()->iconForPageURL(core(webFrame)->loader()->url().string(), IntSize(16, 16));
         if (NSImage *icon = webGetNSImage(image, NSMakeSize(16, 16)))
             CallFrameLoadDelegate(implementations->didReceiveIconForFrameFunc, self, @selector(webView:didReceiveIcon:forFrame:), icon, webFrame);
     }

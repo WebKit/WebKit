@@ -46,7 +46,7 @@ namespace WebCore {
 
         bool isEmpty() const { return m_URL.isEmpty(); }
 
-        KURL URL() const { return m_URL; }
+        KURL url() const { return m_URL; }
         NavigationType type() const { return m_type; }
         const Event* event() const { return m_event.get(); }
 

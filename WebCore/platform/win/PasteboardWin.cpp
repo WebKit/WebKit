@@ -116,7 +116,7 @@ void Pasteboard::writeSelection(Range* selectedRange, bool canSmartCopyOrDelete,
     // Put CF_HTML format on the pasteboard 
     if (::OpenClipboard(m_owner)) {
         ExceptionCode ec = 0;
-        HGLOBAL cbData = createGlobalData(markupToCF_HTML(createMarkup(selectedRange, 0, AnnotateForInterchange), selectedRange->startContainer(ec)->document()->URL()));
+        HGLOBAL cbData = createGlobalData(markupToCF_HTML(createMarkup(selectedRange, 0, AnnotateForInterchange), selectedRange->startContainer(ec)->document()->url()));
         if (!::SetClipboardData(HTMLClipboardFormat, cbData))
             ::GlobalFree(cbData);
         ::CloseClipboard();
@@ -174,7 +174,7 @@ void Pasteboard::writeURL(const KURL& url, const String& titleStr, Frame* frame)
 
     // bare-bones CF_UNICODETEXT support
     if (::OpenClipboard(m_owner)) {
-        HGLOBAL cbData = createGlobalData(url.url());
+        HGLOBAL cbData = createGlobalData(url.string());
         if (!::SetClipboardData(CF_UNICODETEXT, cbData))
             ::GlobalFree(cbData);
         ::CloseClipboard();

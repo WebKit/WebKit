@@ -1819,7 +1819,7 @@ void Document::processHttpEquiv(const String &equiv, const String &content)
         String url;
         if (frame && parseHTTPRefresh(content, true, delay, url)) {
             if (url.isEmpty())
-                url = frame->loader()->url().url();
+                url = frame->loader()->url().string();
             else
                 url = completeURL(url);
             frame->loader()->scheduleHTTPRedirection(delay, url);
@@ -2560,12 +2560,12 @@ Element* Document::ownerElement() const
 
 String Document::cookie() const
 {
-    return cookies(URL());
+    return cookies(url());
 }
 
 void Document::setCookie(const String& value)
 {
-    setCookies(URL(), policyBaseURL().deprecatedString(), value);
+    setCookies(url(), policyBaseURL().deprecatedString(), value);
 }
 
 String Document::referrer() const
@@ -2578,7 +2578,7 @@ String Document::referrer() const
 String Document::domain() const
 {
     if (m_domain.isEmpty()) // not set yet (we set it on demand to save time and space)
-        m_domain = KURL(URL()).host(); // Initially set to the host
+        m_domain = KURL(url()).host(); // Initially set to the host
     return m_domain;
 }
 
@@ -2587,7 +2587,7 @@ void Document::setDomain(const String& newDomain)
     // Not set yet (we set it on demand to save time and space)
     // Initially set to the host
     if (m_domain.isEmpty())
-        m_domain = KURL(URL()).host();
+        m_domain = KURL(url()).host();
 
     // Both NS and IE specify that changing the domain is only allowed when
     // the new domain is a suffix of the old domain.
@@ -2734,12 +2734,12 @@ void Document::removeImageMap(HTMLMapElement* imageMap)
         m_imageMapsByName.remove(it);
 }
 
-HTMLMapElement *Document::getImageMap(const String& URL) const
+HTMLMapElement *Document::getImageMap(const String& url) const
 {
-    if (URL.isNull())
+    if (url.isNull())
         return 0;
-    int hashPos = URL.find('#');
-    String name = (hashPos < 0 ? URL : URL.substring(hashPos + 1)).impl();
+    int hashPos = url.find('#');
+    String name = (hashPos < 0 ? url : url.substring(hashPos + 1)).impl();
     AtomicString mapName = hMode == XHtml ? name : name.lower();
     return m_imageMapsByName.get(mapName.impl());
 }
@@ -2756,26 +2756,26 @@ UChar Document::backslashAsCurrencySymbol() const
     return m_decoder->encoding().backslashAsCurrencySymbol();
 }
 
-DeprecatedString Document::completeURL(const DeprecatedString& URL)
+DeprecatedString Document::completeURL(const DeprecatedString& url)
 {
     // FIXME: This treats null URLs the same as empty URLs, unlike the String function below.
 
     // If both the URL and base URL are empty, like they are for documents
     // created using DOMImplementation::createDocument, just return the passed in URL.
-    // (We do this because URL() returns "about:blank" for empty URLs.
+    // (We do this because url() returns "about:blank" for empty URLs.
     if (m_url.isEmpty() && m_baseURL.isEmpty())
-        return URL;
+        return url;
     if (!m_decoder)
-        return KURL(baseURL(), URL).url();
-    return KURL(baseURL(), URL, m_decoder->encoding()).url();
+        return KURL(baseURL(), url).deprecatedString();
+    return KURL(baseURL(), url, m_decoder->encoding()).deprecatedString();
 }
 
-String Document::completeURL(const String &URL)
+String Document::completeURL(const String& url)
 {
     // FIXME: This always returns null when passed a null URL, unlike the String function above.
-    if (URL.isNull())
-        return URL;
-    return completeURL(URL.deprecatedString());
+    if (url.isNull())
+        return url;
+    return completeURL(url.deprecatedString());
 }
 
 bool Document::inPageCache()

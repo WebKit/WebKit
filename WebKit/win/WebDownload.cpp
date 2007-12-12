@@ -102,9 +102,9 @@ void WebDownload::init(ResourceHandle* handle, const ResourceRequest& request, c
     // However, we should never hit that case
     if (!m_download) {
         ASSERT_NOT_REACHED();
-        LOG_ERROR("WebDownload - Failed to create WebDownload from existing connection (%s)", request.url().url().ascii());
+        LOG_ERROR("WebDownload - Failed to create WebDownload from existing connection (%s)", request.url().deprecatedString().ascii());
     } else
-        LOG(Download, "WebDownload - Created WebDownload %p from existing connection (%s)", this, request.url().url().ascii());
+        LOG(Download, "WebDownload - Created WebDownload %p from existing connection (%s)", this, request.url().deprecatedString().ascii());
 
     // The CFURLDownload either starts successfully and retains the CFURLConnection, 
     // or it fails to creating and we have a now-useless connection with a dangling ref. 
@@ -130,7 +130,7 @@ void WebDownload::init(const KURL& url, IWebDownloadDelegate* delegate)
     CFURLDownloadScheduleWithCurrentMessageQueue(m_download.get());
     CFURLDownloadScheduleDownloadWithRunLoop(m_download.get(), ResourceHandle::loaderRunLoop(), kCFRunLoopDefaultMode);
 
-    LOG(Download, "WebDownload - Initialized download of url %s in WebDownload %p", url.url().ascii(), this);
+    LOG(Download, "WebDownload - Initialized download of url %s in WebDownload %p", url.deprecatedString().ascii(), this);
 }
 
 WebDownload::~WebDownload()
@@ -232,7 +232,7 @@ HRESULT STDMETHODCALLTYPE WebDownload::initWithRequest(
     CFURLDownloadScheduleWithCurrentMessageQueue(m_download.get());
     CFURLDownloadScheduleDownloadWithRunLoop(m_download.get(), ResourceHandle::loaderRunLoop(), kCFRunLoopDefaultMode);
 
-    LOG(Download, "WebDownload - initWithRequest complete, started download of url %s", webRequest->resourceRequest().url().url().ascii());
+    LOG(Download, "WebDownload - initWithRequest complete, started download of url %s", webRequest->resourceRequest().url().deprecatedString().ascii());
     return S_OK;
 }
 

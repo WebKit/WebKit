@@ -2122,7 +2122,7 @@ HRESULT WebView::notifyDidAddIcon(IWebNotification* notification)
 
     String mainFrameURL;
     if (m_mainFrame)
-        mainFrameURL = m_mainFrame->url().url();
+        mainFrameURL = m_mainFrame->url().string();
 
     if (!mainFrameURL.isEmpty() && mainFrameURL == String((CFStringRef)value))
         dispatchDidReceiveIconFromWebFrame(m_mainFrame);

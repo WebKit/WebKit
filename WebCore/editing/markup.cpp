@@ -551,7 +551,7 @@ static void completeURLs(Node* node, const String& baseURL)
             for (unsigned i = 0; i < length; i++) {
                 Attribute* attr = attrs->attributeItem(i);
                 if (e->isURLAttribute(attr)) {
-                    String completedURL = KURL(baseURLAsKURL, attr->value().deprecatedString()).url();
+                    String completedURL = KURL(baseURLAsKURL, attr->value().deprecatedString()).string();
                     changes.append(AttributeChange(e, attr->name(), completedURL));
                 }
             }

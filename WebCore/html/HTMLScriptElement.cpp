@@ -64,7 +64,7 @@ void HTMLScriptElement::childrenChanged()
     // and the script element has been inserted in the document
     // we evaluate the script.
     if (!m_createdByParser && inDocument() && firstChild())
-        evaluateScript(document()->URL(), text());
+        evaluateScript(document()->url(), text());
 }
 
 void HTMLScriptElement::parseMappedAttribute(MappedAttribute *attr)
@@ -137,7 +137,7 @@ void HTMLScriptElement::insertedIntoDocument()
     // it should be evaluated, and evaluateScript only evaluates a script once.
     String scriptString = text();    
     if (!scriptString.isEmpty())
-        evaluateScript(document()->URL(), scriptString);
+        evaluateScript(document()->url(), scriptString);
 }
 
 void HTMLScriptElement::removedFromDocument()
@@ -245,7 +245,7 @@ bool HTMLScriptElement::shouldExecuteAsJavaScript()
     return true;
 }
 
-void HTMLScriptElement::evaluateScript(const String& URL, const String& script)
+void HTMLScriptElement::evaluateScript(const String& url, const String& script)
 {
     if (m_evaluated)
         return;
@@ -258,7 +258,7 @@ void HTMLScriptElement::evaluateScript(const String& URL, const String& script)
         KJSProxy* proxy = frame->scriptProxy();
         if (proxy) {
             m_evaluated = true;
-            proxy->evaluate(URL, 0, script);
+            proxy->evaluate(url, 0, script);
             Document::updateDocumentsRendering();
         }
     }

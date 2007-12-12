@@ -821,7 +821,7 @@ bool CSSParser::parseValue(int propId, bool important)
 #endif
                 if (!uri.isEmpty()) {
                     list->append(new CSSCursorImageValue(
-                                 String(KURL(styleElement->baseURL().deprecatedString(), uri.deprecatedString()).url()),
+                                 KURL(styleElement->baseURL().deprecatedString(), uri.deprecatedString()).string(),
                                  hotspot, styleElement));
                 }
             }
@@ -884,7 +884,7 @@ bool CSSParser::parseValue(int propId, bool important)
             String uri = parseURL(domString(value->string));
             if (!uri.isEmpty()) {
                 parsedValue = new CSSImageValue(
-                    String(KURL(styleElement->baseURL().deprecatedString(), uri.deprecatedString()).url()),
+                    KURL(styleElement->baseURL().deprecatedString(), uri.deprecatedString()).string(),
                     styleElement);
                 valueList->next();
             }
@@ -1849,7 +1849,7 @@ bool CSSParser::parseContent(int propId, bool important)
             // url
             String value = parseURL(domString(val->string));
             parsedValue = new CSSImageValue(
-                String(KURL(styleElement->baseURL().deprecatedString(), value.deprecatedString()).url()), styleElement);
+                KURL(styleElement->baseURL().deprecatedString(), value.deprecatedString()).string(), styleElement);
         } else if (val->unit == Value::Function) {
             // attr(X) | counter(X [,Y]) | counters(X, Y, [,Z])
             ValueList *args = val->function->args;
@@ -1915,7 +1915,7 @@ bool CSSParser::parseBackgroundImage(CSSValue*& value)
     if (valueList->current()->unit == CSSPrimitiveValue::CSS_URI) {
         String uri = parseURL(domString(valueList->current()->string));
         if (!uri.isEmpty())
-            value = new CSSImageValue(String(KURL(styleElement->baseURL().deprecatedString(), uri.deprecatedString()).url()), 
+            value = new CSSImageValue(KURL(styleElement->baseURL().deprecatedString(), uri.deprecatedString()).string(),
                                          styleElement);
         return true;
     }
@@ -2761,7 +2761,7 @@ bool CSSParser::parseFontFaceSrc()
         parsedValue = 0;
         if (val->unit == CSSPrimitiveValue::CSS_URI && !expectComma) {
             String value = parseURL(domString(val->string));
-            parsedValue = new CSSFontFaceSrcValue(String(KURL(styleElement->baseURL().deprecatedString(), value.deprecatedString()).url()), false);
+            parsedValue = new CSSFontFaceSrcValue(KURL(styleElement->baseURL().deprecatedString(), value.deprecatedString()).string(), false);
             uriValue = parsedValue;
             allowFormat = true;
             expectComma = true;
@@ -3216,7 +3216,7 @@ bool CSSParser::parseBorderImage(int propId, bool important)
     if (uri.isEmpty())
         return false;
     
-    context.commitImage(new CSSImageValue(String(KURL(styleElement->baseURL().deprecatedString(), uri.deprecatedString()).url()),
+    context.commitImage(new CSSImageValue(KURL(styleElement->baseURL().deprecatedString(), uri.deprecatedString()).string(),
                                                              styleElement));
     while ((val = valueList->next())) {
         if (context.allowNumber() && validUnit(val, FInteger|FNonNeg|FPercent, true)) {
@@ -3778,7 +3778,7 @@ CSSRule* CSSParser::createCharsetRule(const ParseString& charset)
     return rule;
 }
 
-CSSRule* CSSParser::createImportRule(const ParseString& URL, MediaList* media)
+CSSRule* CSSParser::createImportRule(const ParseString& url, MediaList* media)
 {
     if (!media)
         return 0;
@@ -3786,7 +3786,7 @@ CSSRule* CSSParser::createImportRule(const ParseString& URL, MediaList* media)
         return 0;
     if (!styleElement->isCSSStyleSheet())
         return 0;
-    CSSImportRule* rule = new CSSImportRule(styleElement, domString(URL), media);
+    CSSImportRule* rule = new CSSImportRule(styleElement, domString(url), media);
     m_parsedStyleObjects.append(rule);
     return rule;
 }

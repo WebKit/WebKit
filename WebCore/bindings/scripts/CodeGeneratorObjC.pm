@@ -203,16 +203,6 @@ sub finish
     my $object = shift;
 }
 
-# Uppercase the first letter, while respecting WebKit style guidelines. 
-# E.g., xmlEncoding becomes XMLEncoding, but xmllang becomes Xmllang.
-sub WK_ucfirst
-{
-    my $param = shift;
-    my $ret = ucfirst($param);
-    $ret =~ s/Xml/XML/ if $ret =~ /^Xml[^a-z]/;
-    return $ret;
-}
-
 sub ReadPublicInterfaces
 {
     my $class = shift;
@@ -1065,7 +1055,7 @@ sub GenerateImplementation
             # - GETTER
             my $getterSig = "- ($attributeType)$attributeInterfaceName\n";
             my $hasGetterException = @{$attribute->getterExceptions};
-            my $getterContentHead = "IMPL->$attributeName(";
+            my $getterContentHead = "IMPL->" . $codeGenerator->WK_lcfirst($attributeName) . "(";
             my $getterContentTail = ")";
 
             # Special case for DOMSVGNumber
@@ -1163,7 +1153,7 @@ sub GenerateImplementation
                 # Exception handling
                 my $hasSetterException = @{$attribute->setterExceptions};
 
-                $attributeName = "set" . WK_ucfirst($attributeName);
+                $attributeName = "set" . $codeGenerator->WK_ucfirst($attributeName);
                 my $setterName = "set" . ucfirst($attributeInterfaceName);
                 my $argName = "new" . ucfirst($attributeInterfaceName);
                 my $arg = GetObjCTypeGetter($argName, $idlType);
@@ -1295,7 +1285,7 @@ sub GenerateImplementation
             my $svgMatrixInverse = ($podType and $podType eq "AffineTransform" and $functionName eq "inverse");
 
             push(@parameterNames, "ec") if $raisesExceptions and !($svgMatrixRotateFromVector || $svgMatrixInverse);
-            my $content = $caller . "->" . $functionName . "(" . join(", ", @parameterNames) . ")"; 
+            my $content = $caller . "->" . $codeGenerator->WK_lcfirst($functionName) . "(" . join(", ", @parameterNames) . ")"; 
 
             if ($svgMatrixRotateFromVector) {
                 # Special case with rotateFromVector & SVGMatrix        

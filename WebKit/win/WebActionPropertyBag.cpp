@@ -133,7 +133,7 @@ HRESULT STDMETHODCALLTYPE WebActionPropertyBag::Read(LPCOLESTR pszPropName, VARI
         }
     } else if (isEqual(pszPropName, WebActionOriginalURLKey)) {
         V_VT(pVar) = VT_BSTR;
-        V_BSTR(pVar) = BString(m_action.URL().url()).release();
+        V_BSTR(pVar) = BString(m_action.url().string()).release();
         return S_OK;
     } else if (isEqual(pszPropName, WebActionModifierFlagsKey)) {
         if (const UIEventWithKeyState* keyEvent = findEventWithKeyState(const_cast<Event*>(m_action.event()))) {

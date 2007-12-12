@@ -342,7 +342,7 @@ HRESULT STDMETHODCALLTYPE WebURLResponse::URL(
     if (!result)
         return E_INVALIDARG;
 
-    BString url(m_response.url().url());
+    BString url(m_response.url().string());
     *result = url.release();
     if (!m_response.url().isEmpty() && !*result)
         return E_OUTOFMEMORY;

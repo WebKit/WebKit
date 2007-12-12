@@ -62,10 +62,10 @@ public:
         Unknown,      // let cache decide what to do with it
         New,          // inserting new item
         Pending,      // only partially loaded
-        Cached       // regular case
+        Cached        // regular case
     };
 
-    CachedResource(const String& URL, Type, bool forCache = true, bool sendResourceLoadCallbacks = false);
+    CachedResource(const String& url, Type, bool forCache = true, bool sendResourceLoadCallbacks = false);
     virtual ~CachedResource();
 
     virtual void setEncoding(const String&) { }

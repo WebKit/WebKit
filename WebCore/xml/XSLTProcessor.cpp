@@ -255,7 +255,7 @@ RefPtr<Document> XSLTProcessor::createDocumentFromSource(const String& sourceStr
     
     result->open();
     if (sourceIsDocument) {
-        result->setURL(ownerDocument->URL());
+        result->setURL(ownerDocument->url());
         result->setBaseURL(ownerDocument->baseURL());
     }
     result->determineParseMode(documentSource); // Make sure we parse in the correct mode.
@@ -293,7 +293,7 @@ static inline RefPtr<DocumentFragment> createFragmentFromSource(String sourceStr
 static xsltStylesheetPtr xsltStylesheetPointer(RefPtr<XSLStyleSheet>& cachedStylesheet, Node* stylesheetRootNode)
 {
     if (!cachedStylesheet && stylesheetRootNode) {
-        cachedStylesheet = new XSLStyleSheet(stylesheetRootNode->parent() ? stylesheetRootNode->parent() : stylesheetRootNode, stylesheetRootNode->document()->URL());
+        cachedStylesheet = new XSLStyleSheet(stylesheetRootNode->parent() ? stylesheetRootNode->parent() : stylesheetRootNode, stylesheetRootNode->document()->url());
         cachedStylesheet->parseString(createMarkup(stylesheetRootNode));
     }
     
@@ -312,7 +312,7 @@ static inline xmlDocPtr xmlDocPtrFromNode(Node* sourceNode, bool& shouldDelete)
     if (sourceIsDocument)
         sourceDoc = (xmlDocPtr)ownerDocument->transformSource();
     if (!sourceDoc) {
-        sourceDoc = (xmlDocPtr)xmlDocPtrForString(ownerDocument->docLoader(), createMarkup(sourceNode), sourceIsDocument ? ownerDocument->URL() : DeprecatedString());
+        sourceDoc = (xmlDocPtr)xmlDocPtrForString(ownerDocument->docLoader(), createMarkup(sourceNode), sourceIsDocument ? ownerDocument->url() : DeprecatedString());
         shouldDelete = (sourceDoc != 0);
     }
     return sourceDoc;

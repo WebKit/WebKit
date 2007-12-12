@@ -293,10 +293,10 @@ void StyledElement::addCSSStringProperty(MappedAttribute* attr, int id, const St
     attr->decl()->setStringProperty(id, value, type, false);
 }
 
-void StyledElement::addCSSImageProperty(MappedAttribute* attr, int id, const String &URL)
+void StyledElement::addCSSImageProperty(MappedAttribute* attr, int id, const String& url)
 {
     if (!attr->decl()) createMappedDecl(attr);
-    attr->decl()->setImageProperty(id, URL, false);
+    attr->decl()->setImageProperty(id, url, false);
 }
 
 void StyledElement::addCSSLength(MappedAttribute* attr, int id, const String &value)

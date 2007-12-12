@@ -319,7 +319,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
 // May return nil if not initialized with a URL.
 - (NSURL *)_URL
 {
-    KURL URL = _private->loader->URL();
+    KURL URL = _private->loader->url();
     return URL.isEmpty() ? nil : URL.getNSURL();
 }
 

@@ -616,7 +616,7 @@ sub GenerateCPPAttribute
     push(@getterImplementation, "    if (!result)\n");
     push(@getterImplementation, "        return E_POINTER;\n\n");
 
-    my $implementationGetter = "impl${implementationClassWithoutNamespace}()->${attributeName}(" . ($hasGetterException ? "ec" : ""). ")";
+    my $implementationGetter = "impl${implementationClassWithoutNamespace}()->" . $codeGenerator->WK_lcfirst($attributeName) . "(" . ($hasGetterException ? "ec" : ""). ")";
 
     push(@getterImplementation, "    WebCore::ExceptionCode ec = 0;\n") if $hasGetterException;
 
@@ -763,7 +763,7 @@ sub GenerateCPPFunction
     }
 
     my $callSigBegin = "    ";
-    my $callSigMiddle = "${implementationGetter}->${functionName}(" . join(", ", @parameterList) . ")";
+    my $callSigMiddle = "${implementationGetter}->" . $codeGenerator->WK_lcfirst($functionName) . "(" . join(", ", @parameterList) . ")";
     my $callSigEnd = ";\n";
 
     if (defined $needsCustom{"NodeToReturn"}) {

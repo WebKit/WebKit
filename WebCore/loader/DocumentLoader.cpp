@@ -189,15 +189,15 @@ ResourceRequest& DocumentLoader::actualRequest()
     return m_request;
 }
 
-const KURL& DocumentLoader::URL() const
+const KURL& DocumentLoader::url() const
 {
     return request().url();
 }
 
-void DocumentLoader::replaceRequestURLForAnchorScroll(const KURL& URL)
+void DocumentLoader::replaceRequestURLForAnchorScroll(const KURL& url)
 {
-    m_originalRequestCopy.setURL(URL);
-    m_request.setURL(URL);
+    m_originalRequestCopy.setURL(url);
+    m_request.setURL(url);
 }
 
 void DocumentLoader::setRequest(const ResourceRequest& req)
@@ -221,7 +221,7 @@ void DocumentLoader::setRequest(const ResourceRequest& req)
 
     // Only send webView:didReceiveServerRedirectForProvisionalLoadForFrame: if URL changed.
     // Also, don't send it when replacing unreachable URLs with alternate content.
-    if (!handlingUnreachableURL && oldURL.url() != req.url().url())
+    if (!handlingUnreachableURL && oldURL != req.url())
         frameLoader()->didReceiveServerRedirectForProvisionalLoadForFrame();
 }
 
@@ -688,7 +688,7 @@ bool DocumentLoader::startLoadingMainResource(unsigned long identifier)
     if (!m_mainResourceLoader->load(m_request, m_substituteData)) {
         // FIXME: If this should really be caught, we should just ASSERT this doesn't happen;
         // should it be caught by other parts of WebKit or other parts of the app?
-        LOG_ERROR("could not create WebResourceHandle for URL %s -- should be caught by policy handler level", m_request.url().url().ascii());
+        LOG_ERROR("could not create WebResourceHandle for URL %s -- should be caught by policy handler level", m_request.url().string().ascii().data());
         m_mainResourceLoader = 0;
         return false;
     }

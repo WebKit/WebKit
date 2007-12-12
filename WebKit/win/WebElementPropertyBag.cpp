@@ -144,7 +144,7 @@ HRESULT STDMETHODCALLTYPE WebElementPropertyBag::Read(LPCOLESTR pszPropName, VAR
         V_ARRAY(pVar) = MarshallingHelpers::intRectToSafeArray(m_result->boundingBox());
         return S_OK;
     } else if (isEqual(WebElementImageURLKey, key))
-        return convertStringToVariant(pVar, m_result->absoluteImageURL().url());
+        return convertStringToVariant(pVar, m_result->absoluteImageURL().string());
     else if (isEqual(WebElementIsSelectedKey, key)) {
         V_VT(pVar) = VT_BOOL;
         if (m_result->isSelected())
@@ -157,7 +157,7 @@ HRESULT STDMETHODCALLTYPE WebElementPropertyBag::Read(LPCOLESTR pszPropName, VAR
     else if (isEqual(WebElementTitleKey, key))
         return convertStringToVariant(pVar, m_result->title());
     else if (isEqual(WebElementLinkURLKey, key))
-        return convertStringToVariant(pVar, m_result->absoluteLinkURL().url());
+        return convertStringToVariant(pVar, m_result->absoluteLinkURL().string());
     else if (isEqual(WebElementLinkTargetFrameKey, key)) {
         if (!m_result->targetFrame())
             return E_FAIL;

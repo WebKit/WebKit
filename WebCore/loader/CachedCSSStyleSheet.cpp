@@ -92,7 +92,7 @@ void CachedCSSStyleSheet::checkNotify()
 
     CachedResourceClientWalker w(m_clients);
     while (CachedResourceClient *c = w.next())
-        c->setCSSStyleSheet(m_response.url().url(), m_decoder->encoding().name(), m_sheet);
+        c->setCSSStyleSheet(m_response.url().string(), m_decoder->encoding().name(), m_sheet);
 
 #if USE(LOW_BANDWIDTH_DISPLAY)        
     // if checkNotify() is called from error(), client's setCSSStyleSheet(...)

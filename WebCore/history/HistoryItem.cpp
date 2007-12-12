@@ -74,8 +74,8 @@ HistoryItem::HistoryItem(const String& urlString, const String& title, const Str
 }
 
 HistoryItem::HistoryItem(const KURL& url, const String& title)
-    : m_urlString(url.url())
-    , m_originalURLString(url.url())
+    : m_urlString(url.string())
+    , m_originalURLString(url.string())
     , m_title(title)
     , m_lastVisitedTime(0)
     , m_isInPageCache(false)
@@ -86,8 +86,8 @@ HistoryItem::HistoryItem(const KURL& url, const String& title)
 }
 
 HistoryItem::HistoryItem(const KURL& url, const String& target, const String& parent, const String& title)
-    : m_urlString(url.url())
-    , m_originalURLString(url.url())
+    : m_urlString(url.string())
+    , m_originalURLString(url.string())
     , m_target(target)
     , m_parent(parent)
     , m_title(title)
@@ -209,7 +209,7 @@ void HistoryItem::setURLString(const String& urlString)
 void HistoryItem::setURL(const KURL& url)
 {
     pageCache()->remove(this);
-    setURLString(url.url());
+    setURLString(url.string());
     clearDocumentState();
 }
 
@@ -388,7 +388,7 @@ FormData* HistoryItem::formData()
 bool HistoryItem::isCurrentDocument(Document* doc) const
 {
     // FIXME: We should find a better way to check if this is the current document.
-    return urlString() == doc->URL();
+    return urlString() == doc->url();
 }
 
 void HistoryItem::mergeAutoCompleteHints(HistoryItem* otherItem)

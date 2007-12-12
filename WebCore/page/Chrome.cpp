@@ -327,7 +327,7 @@ void Chrome::setToolTip(const HitTestResult& result)
         // Get tooltip representing link's URL
         if (toolTip.isEmpty())
             // FIXME: Need to pass this URL through userVisibleString once that's in WebCore
-            toolTip = result.absoluteLinkURL().url();
+            toolTip = result.absoluteLinkURL().string();
     }
 
     // Lastly we'll consider a tooltip for element with "title" attribute

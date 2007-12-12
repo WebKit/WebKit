@@ -66,20 +66,20 @@ static CachedResource* createResource(CachedResource::Type type, DocLoader* docL
     switch (type) {
     case CachedResource::ImageResource:
         // User agent images need to null check the docloader.  No other resources need to.
-        return new CachedImage(docLoader, url.url(), true /* for cache */);
+        return new CachedImage(docLoader, url.string(), true /* for cache */);
     case CachedResource::CSSStyleSheet:
-        return new CachedCSSStyleSheet(docLoader, url.url(), *charset, skipCanLoadCheck, sendResourceLoadCallbacks);
+        return new CachedCSSStyleSheet(docLoader, url.string(), *charset, skipCanLoadCheck, sendResourceLoadCallbacks);
     case CachedResource::Script:
-        return new CachedScript(docLoader, url.url(), *charset);
+        return new CachedScript(docLoader, url.string(), *charset);
     case CachedResource::FontResource:
-        return new CachedFont(docLoader, url.url());
+        return new CachedFont(docLoader, url.string());
 #if ENABLE(XSLT)
     case CachedResource::XSLStyleSheet:
-        return new CachedXSLStyleSheet(docLoader, url.url());
+        return new CachedXSLStyleSheet(docLoader, url.string());
 #endif
 #if ENABLE(XBL)
     case CachedResource::XBLStyleSheet:
-        return new CachedXBLDocument(docLoader, url.url());
+        return new CachedXBLDocument(docLoader, url.string());
 #endif
     default:
         break;
@@ -96,7 +96,7 @@ CachedResource* Cache::requestResource(DocLoader* docLoader, CachedResource::Typ
         return 0;
     
     // Look up the resource in our map.
-    CachedResource* resource = m_resources.get(url.url());
+    CachedResource* resource = m_resources.get(url.string());
 
     if (resource) {
         if (!skipCanLoadCheck && FrameLoader::restrictAccessToLocal() && !FrameLoader::canLoad(*resource, docLoader->doc())) {
@@ -110,7 +110,7 @@ CachedResource* Cache::requestResource(DocLoader* docLoader, CachedResource::Typ
         if (!skipCanLoadCheck && FrameLoader::restrictAccessToLocal() && !FrameLoader::canLoad(url, docLoader->doc())) {
             Document* doc = docLoader->doc();
             if(doc)
-                FrameLoader::reportLocalLoadFailed(doc->page(), url.url());
+                FrameLoader::reportLocalLoadFailed(doc->page(), url.string());
 
             return 0;
         }
@@ -120,7 +120,7 @@ CachedResource* Cache::requestResource(DocLoader* docLoader, CachedResource::Typ
         ASSERT(resource);
         ASSERT(resource->inCache());
         if (!disabled()) {
-            m_resources.set(url.url(), resource);  // The size will be added in later once the resource is loaded and calls back to us with the new size.
+            m_resources.set(url.string(), resource);  // The size will be added in later once the resource is loaded and calls back to us with the new size.
             
             // This will move the resource to the front of its LRU list and increase its access count.
             resourceAccessed(resource);

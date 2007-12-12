@@ -47,7 +47,7 @@ KURL MarshallingHelpers::BSTRToKURL(BSTR urlStr)
 
 BSTR MarshallingHelpers::KURLToBSTR(const KURL& url)
 {
-    String urlString(url.url());
+    String urlString(url.string());
     return SysAllocStringLen(urlString.characters(), urlString.length());
 }
 

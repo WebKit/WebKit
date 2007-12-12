@@ -300,7 +300,7 @@ void JSLazyEventListener::parseCode() const
         JSObject* constr = proxy->globalObject()->functionConstructor();
         List args;
 
-        UString sourceURL(frame->loader()->url().url());
+        UString sourceURL(frame->loader()->url().string());
         args.append(eventParameterName());
         args.append(jsString(m_code));
         m_listener = constr->construct(exec, args, m_functionName, sourceURL, m_lineNumber); // FIXME: is globalExec ok ?

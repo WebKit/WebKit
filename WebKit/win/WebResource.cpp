@@ -126,7 +126,7 @@ HRESULT STDMETHODCALLTYPE WebResource::URL(
         return E_POINTER;
     }
 
-    *url = BString(String(m_url.url())).release();
+    *url = BString(String(m_url.string())).release();
     return S_OK;
 }
     

@@ -73,10 +73,10 @@ void Loader::servePendingRequests()
         if (!req->cachedResource()->accept().isEmpty())
             request.setHTTPAccept(req->cachedResource()->accept());
 
-        KURL r = dl->doc()->URL();
+        KURL r = dl->doc()->url();
         if (r.protocol().startsWith("http") && r.path().isEmpty())
             r.setPath("/");
-        request.setHTTPReferrer(r.url());
+        request.setHTTPReferrer(r.string());
         DeprecatedString domain = r.host();
         if (dl->doc()->isHTMLDocument())
             domain = static_cast<HTMLDocument*>(dl->doc())->domain().deprecatedString();

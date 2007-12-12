@@ -166,20 +166,20 @@ String ClipboardMac::getData(const String& type, bool& success) const
                 if (count > 0) {
                     if (type != "text/uri-list")
                         count = 1;
-                    NSMutableString *URLs = [NSMutableString string];
+                    NSMutableString *urls = [NSMutableString string];
                     unsigned i;
                     for (i = 0; i < count; i++) {
                         if (i > 0) {
-                            [URLs appendString:@"\n"];
+                            [urls appendString:@"\n"];
                         }
                         NSString *string = [fileList objectAtIndex:i];
                         if (![string isKindOfClass:[NSString class]])
                             break;
-                        NSURL *URL = [NSURL fileURLWithPath:string];
-                        [URLs appendString:[URL absoluteString]];
+                        NSURL *url = [NSURL fileURLWithPath:string];
+                        [urls appendString:[url absoluteString]];
                     }
                     if (i == count)
-                        cocoaValue = URLs;
+                        cocoaValue = urls;
                 }
             }
         }

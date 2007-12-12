@@ -86,7 +86,7 @@ void PluginTokenizer::createDocumentStructure()
     m_embedElement->setAttribute(heightAttr, "100%");
     
     m_embedElement->setAttribute(nameAttr, "plugin");
-    m_embedElement->setSrc(m_doc->URL());
+    m_embedElement->setSrc(m_doc->url());
     m_embedElement->setType(m_doc->frame()->loader()->responseMIMEType());
     
     body->appendChild(embedElement, ec);    

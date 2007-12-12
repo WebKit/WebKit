@@ -210,12 +210,12 @@ void Pasteboard::writeURL(NSPasteboard* pasteboard, NSArray* types, const KURL& 
     
     ASSERT(!url.isEmpty());
     
-    NSURL *URL = url.getNSURL();
-    NSString *userVisibleString = frame->editor()->client()->userVisibleString(URL);
+    NSURL *cocoaURL = url.getNSURL();
+    NSString *userVisibleString = frame->editor()->client()->userVisibleString(cocoaURL);
     
     NSString *title = (NSString*)titleStr;
     if ([title length] == 0) {
-        title = [[URL path] lastPathComponent];
+        title = [[cocoaURL path] lastPathComponent];
         if ([title length] == 0)
             title = userVisibleString;
     }
@@ -226,7 +226,7 @@ void Pasteboard::writeURL(NSPasteboard* pasteboard, NSArray* types, const KURL& 
                                      nil]
                             forType:WebURLsWithTitlesPboardType];
     if ([types containsObject:NSURLPboardType])
-        [URL writeToPasteboard:pasteboard];
+        [cocoaURL writeToPasteboard:pasteboard];
     if ([types containsObject:WebURLPboardType])
         [pasteboard setString:userVisibleString forType:WebURLPboardType];
     if ([types containsObject:WebURLNamePboardType])
@@ -240,7 +240,7 @@ void Pasteboard::writeURL(const KURL& url, const String& titleStr, Frame* frame)
     Pasteboard::writeURL(m_pasteboard.get(), nil, url, titleStr, frame);
 }
 
-static NSFileWrapper* fileWrapperForImage(CachedResource* resource, NSURL *URL)
+static NSFileWrapper* fileWrapperForImage(CachedResource* resource, NSURL *url)
 {
     SharedBuffer* coreData = resource->data();
     NSData *data = [[[NSData alloc] initWithBytes:coreData->platformData() 
@@ -250,7 +250,7 @@ static NSFileWrapper* fileWrapperForImage(CachedResource* resource, NSURL *URL)
     NSString *MIMEType = nil;
     if (!coreMIMEType.isNull())
         MIMEType = coreMIMEType;
-    [wrapper setPreferredFilename:suggestedFilenameWithMIMEType(URL, MIMEType)];
+    [wrapper setPreferredFilename:suggestedFilenameWithMIMEType(url, MIMEType)];
     return wrapper;
 }
 
@@ -270,12 +270,12 @@ void Pasteboard::writeImage(Node* node, const KURL& url, const String& title)
     ASSERT(node);
     Frame* frame = node->document()->frame();
 
-    NSURL *URL = url.getNSURL();
-    ASSERT(URL);
+    NSURL *cocoaURL = url.getNSURL();
+    ASSERT(cocoaURL);
 
     NSArray* types = writableTypesForImage();
     [m_pasteboard.get() declareTypes:types owner:nil];
-    writeURL(m_pasteboard.get(), types, URL, nsStringNilIfEmpty(title), frame);
+    writeURL(m_pasteboard.get(), types, cocoaURL, nsStringNilIfEmpty(title), frame);
 
     ASSERT(node->renderer() && node->renderer()->isImage());
     RenderImage* renderer = static_cast<RenderImage*>(node->renderer());
@@ -289,7 +289,7 @@ void Pasteboard::writeImage(Node* node, const KURL& url, const String& title)
     String MIMEType = cachedImage->response().mimeType();
     ASSERT(MIMETypeRegistry::isSupportedImageResourceMIMEType(MIMEType));
 
-    writeFileWrapperAsRTFDAttachment(fileWrapperForImage(cachedImage, URL));
+    writeFileWrapperAsRTFDAttachment(fileWrapperForImage(cachedImage, cocoaURL));
 }
 
 bool Pasteboard::canSmartReplace()
@@ -324,13 +324,11 @@ String Pasteboard::plainText(Frame* frame)
     }
     
     
-    NSURL *URL;
-    
-    if ((URL = [NSURL URLFromPasteboard:m_pasteboard.get()])) {
+    if (NSURL *url = [NSURL URLFromPasteboard:m_pasteboard.get()]) {
         // FIXME: using the editorClient to call into webkit, for now, since 
-        // calling [URL _web_userVisibleString] from WebCore involves migrating a sizable web of 
+        // calling _web_userVisibleString from WebCore involves migrating a sizable web of 
         // helper code that should either be done in a separate patch or figured out in another way.
-        string = frame->editor()->client()->userVisibleString(URL);
+        string = frame->editor()->client()->userVisibleString(url);
         if ([string length] > 0)
             return string;
     }

@@ -1201,13 +1201,13 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
     }
 }
 
-- (BOOL)getData:(NSData **)data andResponse:(NSURLResponse **)response forURL:(NSString *)URL
+- (BOOL)getData:(NSData **)data andResponse:(NSURLResponse **)response forURL:(NSString *)url
 {
     Document* doc = m_frame->document();
     if (!doc)
         return NO;
 
-    CachedResource* resource = doc->docLoader()->cachedResource(URL);
+    CachedResource* resource = doc->docLoader()->cachedResource(url);
     if (!resource)
         return NO;
 

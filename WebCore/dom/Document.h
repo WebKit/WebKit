@@ -361,10 +361,10 @@ public:
 
     bool wellFormed() const { return m_wellFormed; }
 
-    DeprecatedString URL() const { return m_url.isEmpty() ? "about:blank" : m_url; }
+    DeprecatedString url() const { return m_url.isEmpty() ? "about:blank" : m_url; }
     void setURL(const DeprecatedString& url);
 
-    DeprecatedString baseURL() const { return m_baseURL.isEmpty() ? URL() : m_baseURL; }
+    DeprecatedString baseURL() const { return m_baseURL.isEmpty() ? url() : m_baseURL; }
     void setBaseURL(const DeprecatedString& baseURL);
 
     String baseTarget() const { return m_baseTarget; }
@@ -576,7 +576,7 @@ public:
 
     void addImageMap(HTMLMapElement*);
     void removeImageMap(HTMLMapElement*);
-    HTMLMapElement* getImageMap(const String& URL) const;
+    HTMLMapElement* getImageMap(const String& url) const;
 
     HTMLElement* body();
     void setBody(PassRefPtr<HTMLElement>, ExceptionCode&);

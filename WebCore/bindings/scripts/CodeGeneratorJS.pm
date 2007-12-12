@@ -81,16 +81,6 @@ sub leftShift($$) {
     return (($value << $distance) & 0xFFFFFFFF);
 }
 
-# Uppercase the first letter, while respecting WebKit style guidelines. 
-# E.g., xmlEncoding becomes XMLEncoding, but xmlllang becomes Xmllang.
-sub WK_ucfirst
-{
-    my $param = shift;
-    my $ret = ucfirst($param);
-    $ret =~ s/Xml/XML/ if $ret =~ /^Xml[^a-z]/;
-    return $ret;
-}
-
 # Params: 'domClass' struct
 sub GenerateInterface
 {
@@ -410,9 +400,9 @@ sub GenerateHeader
                 push(@headerContent, "\n        ");
             }
 
-            my $value = $attribute->signature->type =~ /Constructor$/
-                      ? $attribute->signature->name . "ConstructorAttrNum"
-                      : WK_ucfirst($attribute->signature->name) . "AttrNum";
+            my $value = $codeGenerator->WK_ucfirst($attribute->signature->name)
+                . ($attribute->signature->type =~ /Constructor$/ ? "Constructor" : "")
+                . "AttrNum";
             $value .= ", " if (($i < $numAttributes - 1) or (($i eq $numAttributes - 1) and (($numFunctions ne 0) or $dataNode->extendedAttributes->{"GenerateConstructor"})));
             push(@headerContent, $value);
         }
@@ -431,15 +421,15 @@ sub GenerateHeader
 
         foreach my $attribute (@{$dataNode->attributes}) {
             if ($attribute->signature->extendedAttributes->{"Custom"}) {
-                push(@headerContent, "    KJS::JSValue* " . $attribute->signature->name . "(KJS::ExecState*) const;\n");
+                push(@headerContent, "    KJS::JSValue* " . $codeGenerator->WK_lcfirst($attribute->signature->name) . "(KJS::ExecState*) const;\n");
                 if ($attribute->type !~ /^readonly/) {
-                    push(@headerContent, "    void set" . WK_ucfirst($attribute->signature->name) . "(KJS::ExecState*, KJS::JSValue*);\n");
+                    push(@headerContent, "    void set" . $codeGenerator->WK_ucfirst($attribute->signature->name) . "(KJS::ExecState*, KJS::JSValue*);\n");
                 }
             } elsif ($attribute->signature->extendedAttributes->{"CustomGetter"}) {
-                push(@headerContent, "    KJS::JSValue* " . $attribute->signature->name . "(KJS::ExecState*) const;\n");
+                push(@headerContent, "    KJS::JSValue* " . $codeGenerator->WK_lcfirst($attribute->signature->name) . "(KJS::ExecState*) const;\n");
             } elsif ($attribute->signature->extendedAttributes->{"CustomSetter"}) {
                 if ($attribute->type !~ /^readonly/) {
-                    push(@headerContent, "    void set" . WK_ucfirst($attribute->signature->name) . "(KJS::ExecState*, KJS::JSValue*);\n");
+                    push(@headerContent, "    void set" . $codeGenerator->WK_ucfirst($attribute->signature->name) . "(KJS::ExecState*, KJS::JSValue*);\n");
                 }
             }
         }
@@ -453,7 +443,7 @@ sub GenerateHeader
         push(@headerContent, "\n    // Custom functions\n");
         foreach my $function (@{$dataNode->functions}) {
             if ($function->signature->extendedAttributes->{"Custom"}) {
-                push(@headerContent, "    KJS::JSValue* " . $function->signature->name . "(KJS::ExecState*, const KJS::List&);\n");
+                push(@headerContent, "    KJS::JSValue* " . $codeGenerator->WK_lcfirst($function->signature->name) . "(KJS::ExecState*, const KJS::List&);\n");
             }
         }
     }
@@ -551,7 +541,7 @@ sub GenerateHeader
     if ($numFunctions > 0) {
         push(@headerContent,"// Functions\n\n");
         foreach my $function (@{$dataNode->functions}) {
-            push(@headerContent, prototypeFunctionFor($className, WK_ucfirst($function->signature->name)));
+            push(@headerContent, prototypeFunctionFor($className, $codeGenerator->WK_ucfirst($function->signature->name)));
         }        
     }
 
@@ -622,9 +612,9 @@ sub GenerateImplementation
             my $name = $attribute->signature->name;
             push(@hashKeys, $name);
 
-            my $value = $className . "::" . ($attribute->signature->type =~ /Constructor$/
-                                       ? $attribute->signature->name . "ConstructorAttrNum"
-                                       : WK_ucfirst($attribute->signature->name) . "AttrNum");
+            my $value = $className . "::" . $codeGenerator->WK_ucfirst($attribute->signature->name)
+                . ($attribute->signature->type =~ /Constructor$/ ? "Constructor" : "")
+                . "AttrNum";
             push(@hashValues, $value);
 
             my @specials = ();
@@ -714,7 +704,7 @@ sub GenerateImplementation
         my $name = $function->signature->name;
         push(@hashKeys, $name);
 
-        my $value = "&" . $className . "PrototypeFunction" . WK_ucfirst($name) . "::create";
+        my $value = "&" . $className . "PrototypeFunction" . $codeGenerator->WK_ucfirst($name) . "::create";
         push(@hashValues, $value);
 
         my @specials = ();
@@ -907,18 +897,16 @@ sub GenerateImplementation
         push(@implContent, "    switch (token) {\n");
 
         foreach my $attribute (@{$dataNode->attributes}) {
-            my $name = $attribute->signature->name;
+            my $getterFunctionName = $codeGenerator->WK_lcfirst($attribute->signature->name);
 
             my $implClassNameForValueConversion = "";
             if (!$podType and ($codeGenerator->IsSVGAnimatedType($implClassName) or $attribute->type !~ /^readonly/)) {
                 $implClassNameForValueConversion = $implClassName;
             }
 
-            if ($attribute->signature->type =~ /Constructor$/) {
-                push(@implContent, "    case " . $name . "ConstructorAttrNum: {\n");
-            } else {
-                push(@implContent, "    case " . WK_ucfirst($name) . "AttrNum: {\n");
-            }
+            push(@implContent, "    case " . $codeGenerator->WK_ucfirst($attribute->signature->name)
+                . ($attribute->signature->type =~ /Constructor$/ ? "Constructor" : "")
+                . "AttrNum: {\n");
 
             if ($dataNode->extendedAttributes->{"CheckDomainSecurity"} && !$attribute->signature->extendedAttributes->{"DoNotCheckDomainSecurity"}) {
                 push(@implContent, "        if (!allowsAccessFrom(exec))\n");
@@ -926,33 +914,32 @@ sub GenerateImplementation
             }
 
             if ($attribute->signature->extendedAttributes->{"Custom"} || $attribute->signature->extendedAttributes->{"CustomGetter"}) {
-                push(@implContent, "        return $name(exec);\n");
+                push(@implContent, "        return $getterFunctionName(exec);\n");
             } elsif ($attribute->signature->extendedAttributes->{"CheckNodeSecurity"}) {
                 $implIncludes{"kjs_dom.h"} = 1;
-                push(@implContent, "        $implClassName* imp = static_cast<$implClassName*>(impl());\n\n");
-                push(@implContent, "        return checkNodeSecurity(exec, imp->$name()) ? " . NativeToJSValue($attribute->signature, 0, $implClassName, $implClassNameForValueConversion, "imp->$name()") . " : jsUndefined();\n");
+                push(@implContent, "        $implClassName* imp = static_cast<$implClassName*>(impl());\n");
+                push(@implContent, "        return checkNodeSecurity(exec, imp->$getterFunctionName()) ? " . NativeToJSValue($attribute->signature, 0, $implClassName, $implClassNameForValueConversion, "imp->$getterFunctionName()") . " : jsUndefined();\n");
             } elsif ($attribute->signature->extendedAttributes->{"CheckFrameSecurity"}) {
                 $implIncludes{"Document.h"} = 1;
                 $implIncludes{"kjs_dom.h"} = 1;
-                push(@implContent, "        $implClassName* imp = static_cast<$implClassName*>(impl());\n\n");
-                push(@implContent, "        return checkNodeSecurity(exec, imp->contentDocument()) ? " . NativeToJSValue($attribute->signature,  0, $implClassName, $implClassNameForValueConversion, "imp->$name()") . " : jsUndefined();\n");
+                push(@implContent, "        $implClassName* imp = static_cast<$implClassName*>(impl());\n");
+                push(@implContent, "        return checkNodeSecurity(exec, imp->contentDocument()) ? " . NativeToJSValue($attribute->signature,  0, $implClassName, $implClassNameForValueConversion, "imp->$getterFunctionName()") . " : jsUndefined();\n");
             } elsif ($attribute->signature->type =~ /Constructor$/) {
                 my $constructorType = $codeGenerator->StripModule($attribute->signature->type);
                 $constructorType =~ s/Constructor$//;
                 push(@implContent, "        return JS" . $constructorType . "::getConstructor(exec);\n");
             } elsif (!@{$attribute->getterExceptions}) {
                 if ($podType) {
-                    push(@implContent, "        $podType imp(*impl());\n\n");
+                    push(@implContent, "        $podType imp(*impl());\n");
                     if ($podType eq "float") { # Special case for JSSVGNumber
                         push(@implContent, "        return " . NativeToJSValue($attribute->signature, 0, $implClassName, "", "imp") . ";\n");
                     } else {
-                        push(@implContent, "        return " . NativeToJSValue($attribute->signature, 0, $implClassName, "", "imp.$name()") . ";\n");
+                        push(@implContent, "        return " . NativeToJSValue($attribute->signature, 0, $implClassName, "", "imp.$getterFunctionName()") . ";\n");
                     }
                 } else {
-                    push(@implContent, "        $implClassName* imp = static_cast<$implClassName*>(impl());\n\n");
+                    push(@implContent, "        $implClassName* imp = static_cast<$implClassName*>(impl());\n");
                     my $type = $codeGenerator->StripModule($attribute->signature->type);
-                    my $jsType = NativeToJSValue($attribute->signature, 0, $implClassName, $implClassNameForValueConversion, "imp->$name()");
-
+                    my $jsType = NativeToJSValue($attribute->signature, 0, $implClassName, $implClassNameForValueConversion, "imp->$getterFunctionName()");
                     if ($codeGenerator->IsSVGAnimatedType($type)) {
                         push(@implContent, "        RefPtr<$type> obj = $jsType;\n");
                         push(@implContent, "        return toJS(exec, obj.get(), imp);\n");
@@ -964,11 +951,11 @@ sub GenerateImplementation
                 push(@implContent, "        ExceptionCode ec = 0;\n");
 
                 if ($podType) {
-                    push(@implContent, "        $podType imp(*impl());\n\n");
-                    push(@implContent, "        KJS::JSValue* result = " . NativeToJSValue($attribute->signature, 0, $implClassName, "", "imp.$name(ec)") . ";\n");
+                    push(@implContent, "        $podType imp(*impl());\n");
+                    push(@implContent, "        KJS::JSValue* result = " . NativeToJSValue($attribute->signature, 0, $implClassName, "", "imp.$getterFunctionName(ec)") . ";\n");
                 } else {
-                    push(@implContent, "        $implClassName* imp = static_cast<$implClassName*>(impl());\n\n");
-                    push(@implContent, "        KJS::JSValue* result = " . NativeToJSValue($attribute->signature, 0, $implClassName, $implClassNameForValueConversion, "imp->$name(ec)") . ";\n");
+                    push(@implContent, "        $implClassName* imp = static_cast<$implClassName*>(impl());\n");
+                    push(@implContent, "        KJS::JSValue* result = " . NativeToJSValue($attribute->signature, 0, $implClassName, $implClassNameForValueConversion, "imp->$getterFunctionName(ec)") . ";\n");
                 }
 
                 push(@implContent, "        setDOMException(exec, ec);\n");
@@ -1017,12 +1004,11 @@ sub GenerateImplementation
             foreach my $attribute (@{$dataNode->attributes}) {
                 if ($attribute->type !~ /^readonly/) {
                     my $name = $attribute->signature->name;
+                    my $setterFunctionName = $codeGenerator->WK_ucfirst($name);
 
-                    if ($attribute->signature->type =~ /Constructor$/) {
-                        push(@implContent, "    case " . $name ."ConstructorAttrNum: {\n");
-                    } else {
-                        push(@implContent, "    case " . WK_ucfirst($name) . "AttrNum: {\n");
-                    }
+                    push(@implContent, "    case " . $codeGenerator->WK_ucfirst($attribute->signature->name)
+                        . ($attribute->signature->type =~ /Constructor$/ ? "Constructor" : "")
+                        . "AttrNum: {\n");
 
                     if ($dataNode->extendedAttributes->{"CheckDomainSecurity"} && !$attribute->signature->extendedAttributes->{"DoNotCheckDomainSecurity"}) {
                         push(@implContent, "        if (!allowsAccessFrom(exec))\n");
@@ -1030,7 +1016,7 @@ sub GenerateImplementation
                     }
 
                     if ($attribute->signature->extendedAttributes->{"Custom"} || $attribute->signature->extendedAttributes->{"CustomSetter"}) {
-                        push(@implContent, "        set" . WK_ucfirst($name) . "(exec, value);\n");
+                        push(@implContent, "        set$setterFunctionName(exec, value);\n");
                     } elsif ($attribute->signature->type =~ /Constructor$/) {
                         my $constructorType = $attribute->signature->type;
                         $constructorType =~ s/Constructor$//;
@@ -1041,17 +1027,17 @@ sub GenerateImplementation
                         push(@implContent, "        JSObject::put(exec, \"$name\", value);\n");
                     } else {
                         if ($podType) {
-                            push(@implContent, "        $podType imp(*impl());\n\n");
+                            push(@implContent, "        $podType imp(*impl());\n");
                             if ($podType eq "float") { # Special case for JSSVGNumber
                                 push(@implContent, "        imp = " . JSValueToNative($attribute->signature, "value") . ";\n");
                             } else {
-                                push(@implContent, "        imp.set" . WK_ucfirst($name) . "(" . JSValueToNative($attribute->signature, "value") . ");\n");
+                                push(@implContent, "        imp.set$setterFunctionName(" . JSValueToNative($attribute->signature, "value") . ");\n");
                             }
                             push(@implContent, "        m_impl->commitChange(exec, imp);\n");
                         } else {
-                            push(@implContent, "        $implClassName* imp = static_cast<$implClassName*>(impl());\n\n");
+                            push(@implContent, "        $implClassName* imp = static_cast<$implClassName*>(impl());\n");
                             push(@implContent, "        ExceptionCode ec = 0;\n") if @{$attribute->setterExceptions};
-                            push(@implContent, "        imp->set" . WK_ucfirst($name) . "(" . JSValueToNative($attribute->signature, "value"));
+                            push(@implContent, "        imp->set$setterFunctionName(" . JSValueToNative($attribute->signature, "value"));
                             push(@implContent, ", ec") if @{$attribute->setterExceptions};
                             push(@implContent, ");\n");
                             push(@implContent, "        setDOMException(exec, ec);\n") if @{$attribute->setterExceptions};
@@ -1081,22 +1067,22 @@ sub GenerateImplementation
     # Functions
     if ($numFunctions > 0) {
         foreach my $function (@{$dataNode->functions}) {
-            my $functionClassName = $className . "PrototypeFunction" . WK_ucfirst($function->signature->name);
+            my $functionClassName = $className . "PrototypeFunction" . $codeGenerator->WK_ucfirst($function->signature->name);
             push(@implContent, "JSValue* ${functionClassName}::callAsFunction(ExecState* exec, JSObject* thisObj, const List& args)\n");
             push(@implContent, "{\n");
             push(@implContent, "    if (!thisObj->inherits(&${className}::info))\n");
-            push(@implContent, "      return throwError(exec, TypeError);\n\n");
+            push(@implContent, "        return throwError(exec, TypeError);\n");
 
             AddIncludesForType($function->signature->type);
 
             push(@implContent, "    $className* castedThisObj = static_cast<$className*>(thisObj);\n");
 
             if ($function->signature->extendedAttributes->{"Custom"}) {
-                push(@implContent, "        return castedThisObj->" . $function->signature->name . "(exec, args);\n");
+                push(@implContent, "        return castedThisObj->" . $codeGenerator->WK_lcfirst($function->signature->name) . "(exec, args);\n");
             } else {
                 if ($podType) {
                     push(@implContent, "    JSSVGPODTypeWrapper<$podType>* wrapper = castedThisObj->impl();\n");
-                    push(@implContent, "    $podType imp(*wrapper);\n\n");
+                    push(@implContent, "    $podType imp(*wrapper);\n");
                 } else {
                     push(@implContent, "    $implClassName* imp = static_cast<$implClassName*>(castedThisObj->impl());\n");
                 }
@@ -1119,7 +1105,7 @@ sub GenerateImplementation
                 }
 
                 my $paramIndex = 0;
-                my $functionString = "imp" . ($podType ? "." : "->") . $function->signature->name . "(";
+                my $functionString = "imp" . ($podType ? "." : "->") . $codeGenerator->WK_lcfirst($function->signature->name) . "(";
 
                 my $hasOptionalArguments = 0;
 
@@ -1266,7 +1252,7 @@ sub GenerateImplementationFunctionCall()
         push(@implContent, $indent . "setDOMException(exec, ec);\n") if @{$function->raisesExceptions};
 
         if ($podType) {
-            push(@implContent, $indent . "wrapper->commitChange(exec, imp);\n\n");
+            push(@implContent, $indent . "wrapper->commitChange(exec, imp);\n");
             push(@implContent, $indent . "if (castedThisObj->context())\n");
             push(@implContent, $indent . "    castedThisObj->context()->notifyAttributeChange();\n");
         }
@@ -1277,7 +1263,7 @@ sub GenerateImplementationFunctionCall()
         push(@implContent, $indent . "setDOMException(exec, ec);\n") if @{$function->raisesExceptions};
 
         if ($podType) {
-            push(@implContent, $indent . "wrapper->commitChange(exec, imp);\n\n");
+            push(@implContent, $indent . "wrapper->commitChange(exec, imp);\n");
             push(@implContent, $indent . "if (castedThisObj->context())\n");
             push(@implContent, $indent . "    castedThisObj->context()->notifyAttributeChange();\n");
         }
@@ -1461,7 +1447,7 @@ sub NativeToJSValue
         $getter =~ s/imp->//;
         $getter =~ s/\(\)//;
 
-        my $setter = "set" . WK_ucfirst($getter);
+        my $setter = "set" . $codeGenerator->WK_ucfirst($getter);
 
         if ($implClassNameForValueConversion eq "") {
             if (IsSVGTypeNeedingContextParameter($implClassName)) {

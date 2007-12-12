@@ -77,7 +77,7 @@ SubresourceLoader::~SubresourceLoader()
 
 bool SubresourceLoader::load(const ResourceRequest& r)
 {
-    m_frame->loader()->didTellBridgeAboutLoad(r.url().url());
+    m_frame->loader()->didTellBridgeAboutLoad(r.url().string());
     
     return ResourceLoader::load(r);
 }
@@ -96,7 +96,7 @@ PassRefPtr<SubresourceLoader> SubresourceLoader::create(Frame* frame, Subresourc
     if (!skipCanLoadCheck
             && FrameLoader::restrictAccessToLocal()
             && !FrameLoader::canLoad(request.url(), frame->document())) {
-        FrameLoader::reportLocalLoadFailed(frame->page(), request.url().url());
+        FrameLoader::reportLocalLoadFailed(frame->page(), request.url().string());
         return 0;
     }
     

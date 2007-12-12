@@ -88,7 +88,7 @@ void XSLImportRule::loadSheet()
     XSLStyleSheet* parentSheet = parentStyleSheet();
     if (!parentSheet->href().isNull())
         // use parent styleheet's URL as the base URL
-        absHref = KURL(parentSheet->href().deprecatedString(),m_strHref.deprecatedString()).url();
+        absHref = KURL(parentSheet->href().deprecatedString(), m_strHref.deprecatedString()).string();
     
     // Check for a cycle in our import chain.  If we encounter a stylesheet
     // in our parent chain with the same URL, then just bail.

@@ -204,11 +204,11 @@ private:
 
 static String scriptStringIfJavaScriptURL(const KURL& url)
 {
-    if (!url.url().startsWith("javascript:", false))
+    if (!url.string().startsWith("javascript:", false))
         return String();
 
     // This returns an unescaped string
-    return KURL::decode_string(url.url().mid(11));
+    return KURL::decode_string(url.deprecatedString().mid(11));
 }
 
 PluginViewWin* PluginViewWin::s_currentPluginView = 0;
@@ -784,7 +784,7 @@ void PluginViewWin::performRequest(PluginRequestWin* request)
             // FIXME: <rdar://problem/4807469> This should be sent when the document has finished loading
             if (request->sendNotification()) {
                 KJS::JSLock::DropAllLocks dropAllLocks;
-                m_plugin->pluginFuncs()->urlnotify(m_instance, requestURL.url().utf8(), NPRES_DONE, request->notifyData());
+                m_plugin->pluginFuncs()->urlnotify(m_instance, requestURL.deprecatedString().utf8(), NPRES_DONE, request->notifyData());
             }
         }
         return;

@@ -845,7 +845,7 @@ void XMLTokenizer::endElementNs()
                 if (child->isTextNode() || child->nodeType() == Node::CDATA_SECTION_NODE)
                     scriptCode += static_cast<CharacterData*>(child)->data();
             }
-            m_view->frame()->loader()->executeScript(m_doc->URL(), m_scriptStartLine - 1, scriptCode);
+            m_view->frame()->loader()->executeScript(m_doc->url(), m_scriptStartLine - 1, scriptCode);
         }
         
         m_requestingScript = false;
@@ -1274,7 +1274,7 @@ void XMLTokenizer::end()
 {
 #if ENABLE(XSLT)
     if (m_sawXSLTransform) {
-        m_doc->setTransformSource(xmlDocPtrForString(m_doc->docLoader(), m_originalSourceForTransform, m_doc->URL()));
+        m_doc->setTransformSource(xmlDocPtrForString(m_doc->docLoader(), m_originalSourceForTransform, m_doc->url()));
         
         m_doc->setParsing(false); // Make the doc think it's done, so it will apply xsl sheets.
         m_doc->updateStyleSelector();
@@ -1917,7 +1917,7 @@ void XMLTokenizer::parseEndElement()
                 if (child->isTextNode() || child->nodeType() == Node::CDATA_SECTION_NODE)
                     scriptCode += static_cast<CharacterData*>(child)->data();
             }
-            m_view->frame()->loader()->executeScript(m_doc->URL(), m_scriptStartLine - 1, scriptCode);
+            m_view->frame()->loader()->executeScript(m_doc->url(), m_scriptStartLine - 1, scriptCode);
         }
         m_requestingScript = false;
     }

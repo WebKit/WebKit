@@ -563,13 +563,13 @@ String Element::baseURI() const
     KURL xmlbase(getAttribute(baseAttr).deprecatedString());
 
     if (!xmlbase.protocol().isEmpty())
-        return xmlbase.url();
+        return xmlbase.string();
 
     Node* parent = parentNode();
     if (parent)
-        return KURL(parent->baseURI().deprecatedString(), xmlbase.url()).url();
+        return KURL(parent->baseURI().deprecatedString(), xmlbase.deprecatedString()).string();
 
-    return xmlbase.url();
+    return xmlbase.string();
 }
 
 Node* Element::insertAdjacentElement(const String& where, Node* newChild, int& exception)

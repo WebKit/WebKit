@@ -272,15 +272,15 @@ namespace WebCore {
 
         void setDefersLoading(bool);
 
-        void changeLocation(const String& URL, const String& referrer, bool lockHistory = true, bool userGesture = false);
-        void changeLocation(const KURL& URL, const String& referrer, bool lockHistory = true, bool userGesture = false);
+        void changeLocation(const String& url, const String& referrer, bool lockHistory = true, bool userGesture = false);
+        void changeLocation(const KURL&, const String& referrer, bool lockHistory = true, bool userGesture = false);
         void urlSelected(const ResourceRequest&, const String& target, Event*, bool lockHistory, bool userGesture);
         void urlSelected(const FrameLoadRequest&, Event*, bool lockHistory, bool userGesture);
       
-        bool requestFrame(HTMLFrameOwnerElement*, const String& URL, const AtomicString& frameName);
-        Frame* loadSubframe(HTMLFrameOwnerElement*, const KURL& URL, const String& name, const String& referrer);
+        bool requestFrame(HTMLFrameOwnerElement*, const String& url, const AtomicString& frameName);
+        Frame* loadSubframe(HTMLFrameOwnerElement*, const KURL&, const String& name, const String& referrer);
 
-        void submitForm(const char* action, const String& URL, PassRefPtr<FormData>, const String& target, const String& contentType, const String& boundary, Event*);
+        void submitForm(const char* action, const String& url, PassRefPtr<FormData>, const String& target, const String& contentType, const String& boundary, Event*);
         void submitFormAgain();
         void submitForm(const FrameLoadRequest&, Event*);
 
@@ -298,8 +298,8 @@ namespace WebCore {
         KURL dataURLBaseFromRequest(const ResourceRequest& request) const;
 
         bool isScheduledLocationChangePending() const { return m_scheduledRedirection && isLocationChange(*m_scheduledRedirection); }
-        void scheduleHTTPRedirection(double delay, const String& URL);
-        void scheduleLocationChange(const String& URL, const String& referrer, bool lockHistory = true, bool userGesture = false);
+        void scheduleHTTPRedirection(double delay, const String& url);
+        void scheduleLocationChange(const String& url, const String& referrer, bool lockHistory = true, bool userGesture = false);
         void scheduleRefresh(bool userGesture = false);
         void scheduleHistoryNavigation(int steps);
 
@@ -319,7 +319,7 @@ namespace WebCore {
         void setEncoding(const String& encoding, bool userChosen);
         String encoding() const;
 
-        KJS::JSValue* executeScript(const String& URL, int baseLine, const String& script);
+        KJS::JSValue* executeScript(const String& url, int baseLine, const String& script);
         KJS::JSValue* executeScript(const String& script, bool forceUserGesture = false);
 
         void gotoAnchor();
@@ -357,9 +357,7 @@ namespace WebCore {
 
         void frameDetached();
 
-        // FIXME: Which one of these URL methods is right?
-        KURL url() const;
-        KURL URL() const;
+        const KURL& url() const { return m_URL; }
 
         void updateBaseURLForEmptyDocument();
 
@@ -379,13 +377,13 @@ namespace WebCore {
 
         bool isComplete() const;
 
-        bool requestObject(RenderPart* frame, const String& URL, const AtomicString& frameName,
+        bool requestObject(RenderPart* frame, const String& url, const AtomicString& frameName,
             const String& serviceType, const Vector<String>& paramNames, const Vector<String>& paramValues);
 
-        KURL completeURL(const String& URL);
+        KURL completeURL(const String& url);
 
-        void didTellBridgeAboutLoad(const String& URL);
-        bool haveToldBridgeAboutLoad(const String& URL);
+        void didTellBridgeAboutLoad(const String& url);
+        bool haveToldBridgeAboutLoad(const String& url);
 
         KURL originalRequestURL() const;
 

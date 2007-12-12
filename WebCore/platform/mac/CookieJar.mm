@@ -42,8 +42,8 @@ String cookies(const KURL& url)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
-    NSURL *URL = url.getNSURL();
-    NSArray *cookiesForURL = [[NSHTTPCookieStorage sharedHTTPCookieStorage] cookiesForURL:URL];
+    NSURL *cookieURL = url.getNSURL();
+    NSArray *cookiesForURL = [[NSHTTPCookieStorage sharedHTTPCookieStorage] cookiesForURL:cookieURL];
 
     // <rdar://problem/5632883> On 10.5, NSHTTPCookieStorage would happily store an empty cookie, which would be sent as "Cookie: =".
     // We have a workaround in setCookies() to prevent that, but we also need to avoid sending cookies that were previously stored.
@@ -70,14 +70,14 @@ void setCookies(const KURL& url, const KURL& policyBaseURL, const String& cookie
     if (cookieStr.isEmpty())
         return;
 
-    NSURL *URL = url.getNSURL();
+    NSURL *cookieURL = url.getNSURL();
     
     // <http://bugs.webkit.org/show_bug.cgi?id=6531>, <rdar://4409034>
     // cookiesWithResponseHeaderFields doesn't parse cookies without a value
     String cookieString = cookieStr.contains('=') ? cookieStr : cookieStr + "=";
     
-    NSArray *cookies = [NSHTTPCookie cookiesWithResponseHeaderFields:[NSDictionary dictionaryWithObject:cookieString forKey:@"Set-Cookie"] forURL:URL];
-    [[NSHTTPCookieStorage sharedHTTPCookieStorage] setCookies:cookies forURL:URL mainDocumentURL:policyBaseURL.getNSURL()];    
+    NSArray *cookies = [NSHTTPCookie cookiesWithResponseHeaderFields:[NSDictionary dictionaryWithObject:cookieString forKey:@"Set-Cookie"] forURL:cookieURL];
+    [[NSHTTPCookieStorage sharedHTTPCookieStorage] setCookies:cookies forURL:cookieURL mainDocumentURL:policyBaseURL.getNSURL()];    
 
     END_BLOCK_OBJC_EXCEPTIONS;
 }

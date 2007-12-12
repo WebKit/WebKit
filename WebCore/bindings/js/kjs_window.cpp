@@ -684,7 +684,7 @@ void Window::put(ExecState* exec, const Identifier& propertyName, JSValue* value
       if (p) {
         if (!p->loader()->shouldAllowNavigation(impl()->frame()))
           return;
-        DeprecatedString dstUrl = p->loader()->completeURL(DeprecatedString(value->toString(exec))).url();
+        String dstUrl = p->loader()->completeURL(value->toString(exec)).string();
         if (!dstUrl.startsWith("javascript:", false) || allowsAccessFrom(exec)) {
           bool userGesture = p->scriptProxy()->processingUserGesture();
           // We want a new history item if this JS was called via a user gesture
@@ -833,7 +833,7 @@ bool Window::allowsAccessFrom(const JSGlobalObject* other) const
     if (!targetFrame->settings()->privateBrowsingEnabled()) {
         // FIXME: this error message should contain more specifics of why the same origin check has failed.
         String message = String::format("Unsafe JavaScript attempt to access frame with URL %s from frame with URL %s. Domains, protocols and ports must match.\n",
-                                        targetDocument->URL().utf8().data(), originDocument->URL().utf8().data());
+                                        targetDocument->url().utf8().data(), originDocument->url().utf8().data());
 
         if (Interpreter::shouldPrintExceptions())
             printf("%s", message.utf8().data());
@@ -1528,7 +1528,7 @@ void Location::put(ExecState* exec, const Identifier& propertyName, JSValue* val
               return;
           if (!frame->loader()->shouldAllowNavigation(m_frame))
               return;
-          url = frame->loader()->completeURL(str).url();
+          url = frame->loader()->completeURL(str);
           break;
       }
       case Hash: {
@@ -1570,9 +1570,9 @@ void Location::put(ExecState* exec, const Identifier& propertyName, JSValue* val
   }
 
   Frame* activeFrame = Window::retrieveActive(exec)->impl()->frame();
-  if (!url.url().startsWith("javascript:", false) || sameDomainAccess) {
+  if (!url.deprecatedString().startsWith("javascript:", false) || sameDomainAccess) {
     bool userGesture = activeFrame->scriptProxy()->processingUserGesture();
-    m_frame->loader()->scheduleLocationChange(url.url(), activeFrame->loader()->outgoingReferrer(), false, userGesture);
+    m_frame->loader()->scheduleLocationChange(url.string(), activeFrame->loader()->outgoingReferrer(), false, userGesture);
   }
 }
 
@@ -1593,7 +1593,7 @@ JSValue* LocationProtoFuncReplace::callAsFunction(ExecState* exec, JSObject* thi
         const Window* window = Window::retrieveWindow(frame);
         if (!str.startsWith("javascript:", false) || (window && window->allowsAccessFrom(exec))) {
             bool userGesture = activeFrame->scriptProxy()->processingUserGesture();
-            frame->loader()->scheduleLocationChange(activeFrame->loader()->completeURL(str).url(), activeFrame->loader()->outgoingReferrer(), true, userGesture);
+            frame->loader()->scheduleLocationChange(activeFrame->loader()->completeURL(str).string(), activeFrame->loader()->outgoingReferrer(), true, userGesture);
         }
     }
 
@@ -1613,9 +1613,9 @@ JSValue* LocationProtoFuncReload::callAsFunction(ExecState* exec, JSObject* this
     if (!window->allowsAccessFrom(exec))
         return jsUndefined();
 
-    if (!frame->loader()->url().url().startsWith("javascript:", false) || (window && window->allowsAccessFrom(exec))) {
-      bool userGesture = Window::retrieveActive(exec)->impl()->frame()->scriptProxy()->processingUserGesture();
-      frame->loader()->scheduleRefresh(userGesture);
+    if (!frame->loader()->url().deprecatedString().startsWith("javascript:", false) || (window && window->allowsAccessFrom(exec))) {
+        bool userGesture = Window::retrieveActive(exec)->impl()->frame()->scriptProxy()->processingUserGesture();
+        frame->loader()->scheduleRefresh(userGesture);
     }
     return jsUndefined();
 }
@@ -1634,7 +1634,7 @@ JSValue* LocationProtoFuncAssign::callAsFunction(ExecState* exec, JSObject* this
         if (!activeFrame->loader()->shouldAllowNavigation(frame))
             return jsUndefined();
         const Window* window = Window::retrieveWindow(frame);
-        DeprecatedString dstUrl = activeFrame->loader()->completeURL(DeprecatedString(args[0]->toString(exec))).url();
+        String dstUrl = activeFrame->loader()->completeURL(args[0]->toString(exec)).string();
         if (!dstUrl.startsWith("javascript:", false) || (window && window->allowsAccessFrom(exec))) {
             bool userGesture = activeFrame->scriptProxy()->processingUserGesture();
             // We want a new history item if this JS was called via a user gesture

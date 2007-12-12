@@ -1,3 +1,248 @@
+2007-12-11  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Scrub URL out of the tree in preparation for renaming KURL to URL.
+            - Renames Document::URL() -> Document::url()
+            - Renames DocumentLoader::URL() -> DocumentLoader::url()
+            - Renames KURL::url() to KURL::string() and KURL::deprecatedString()
+            - Remove FrameLoader::URL()
+            - Various variable renames.
+
+        The change from Document::URL() to Document::url() required changes
+        to the bindings scripts as well, because URL() is the name of a DOM
+        method.  The code generation scripts now have code to special case URL()
+        to url().
+
+        * WebCore.base.exp:
+        * bindings/js/kjs_events.cpp:
+        (WebCore::JSLazyEventListener::parseCode):
+        * bindings/js/kjs_navigator.cpp:
+        (KJS::Navigator::getValueProperty):
+        * bindings/js/kjs_proxy.cpp:
+        (WebCore::KJSProxy::initScript):
+        * bindings/js/kjs_window.cpp:
+        (KJS::Window::put):
+        (KJS::Window::allowsAccessFrom):
+        (KJS::Location::put):
+        (KJS::LocationProtoFuncReplace::callAsFunction):
+        (KJS::LocationProtoFuncReload::callAsFunction):
+        (KJS::LocationProtoFuncAssign::callAsFunction):
+        * bindings/scripts/CodeGenerator.pm:
+        * bindings/scripts/CodeGeneratorCOM.pm:
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * bindings/scripts/CodeGeneratorObjC.pm:
+        * css/CSSImportRule.cpp:
+        (WebCore::CSSImportRule::insertedIntoParent):
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue):
+        (WebCore::CSSParser::parseContent):
+        (WebCore::CSSParser::parseBackgroundImage):
+        (WebCore::CSSParser::parseFontFaceSrc):
+        (WebCore::CSSParser::parseBorderImage):
+        (WebCore::CSSParser::createImportRule):
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::setEncodedURL):
+        * dom/Document.cpp:
+        (WebCore::Document::processHttpEquiv):
+        (WebCore::Document::cookie):
+        (WebCore::Document::setCookie):
+        (WebCore::Document::domain):
+        (WebCore::Document::setDomain):
+        (WebCore::Document::getImageMap):
+        (WebCore::Document::completeURL):
+        * dom/Document.h:
+        (WebCore::Document::url):
+        (WebCore::Document::baseURL):
+        * dom/Element.cpp:
+        (WebCore::Element::baseURI):
+        * dom/ProcessingInstruction.h:
+        * dom/StyledElement.cpp:
+        (WebCore::StyledElement::addCSSImageProperty):
+        * dom/StyledElement.h:
+        * dom/XMLTokenizer.cpp:
+        (WebCore::XMLTokenizer::endElementNs):
+        (WebCore::XMLTokenizer::end):
+        (WebCore::):
+        * dom/XMLTokenizer.h:
+        * editing/Editor.cpp:
+        (WebCore::Editor::copy):
+        * editing/markup.cpp:
+        (WebCore::completeURLs):
+        * history/CachedPage.h:
+        (WebCore::CachedPage::url):
+        * history/HistoryItem.cpp:
+        (WebCore::HistoryItem::HistoryItem):
+        (WebCore::HistoryItem::setURL):
+        (WebCore::HistoryItem::isCurrentDocument):
+        * html/HTMLBaseElement.cpp:
+        (WebCore::HTMLBaseElement::process):
+        * html/HTMLParser.cpp:
+        (WebCore::HTMLParser::reportErrorToConsole):
+        * html/HTMLScriptElement.cpp:
+        (WebCore::HTMLScriptElement::childrenChanged):
+        (WebCore::HTMLScriptElement::insertedIntoDocument):
+        (WebCore::HTMLScriptElement::evaluateScript):
+        * html/HTMLScriptElement.h:
+        * html/HTMLTokenizer.cpp:
+        (WebCore::HTMLTokenizer::scriptExecution):
+        * loader/Cache.cpp:
+        (WebCore::createResource):
+        (WebCore::Cache::requestResource):
+        * loader/CachedCSSStyleSheet.cpp:
+        (WebCore::CachedCSSStyleSheet::checkNotify):
+        * loader/CachedResource.cpp:
+        (WebCore::CachedResource::CachedResource):
+        * loader/CachedResource.h:
+        (WebCore::CachedResource::):
+        * loader/CachedScript.h:
+        * loader/DocLoader.cpp:
+        (WebCore::DocLoader::checkForReload):
+        (WebCore::DocLoader::requestResource):
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::url):
+        (WebCore::DocumentLoader::replaceRequestURLForAnchorScroll):
+        (WebCore::DocumentLoader::setRequest):
+        (WebCore::DocumentLoader::startLoadingMainResource):
+        * loader/DocumentLoader.h:
+        * loader/FrameLoader.cpp:
+        (WebCore::FormSubmission::FormSubmission):
+        (WebCore::ScheduledRedirection::ScheduledRedirection):
+        (WebCore::FrameLoader::changeLocation):
+        (WebCore::FrameLoader::urlSelected):
+        (WebCore::FrameLoader::requestFrame):
+        (WebCore::FrameLoader::loadSubframe):
+        (WebCore::FrameLoader::submitFormAgain):
+        (WebCore::FrameLoader::submitForm):
+        (WebCore::FrameLoader::didExplicitOpen):
+        (WebCore::FrameLoader::replaceContentsWithScriptResult):
+        (WebCore::FrameLoader::executeScript):
+        (WebCore::FrameLoader::receivedFirstData):
+        (WebCore::FrameLoader::begin):
+        (WebCore::FrameLoader::startIconLoader):
+        (WebCore::FrameLoader::commitIconURLToIconDatabase):
+        (WebCore::FrameLoader::scheduleRefresh):
+        (WebCore::FrameLoader::redirectionTimerFired):
+        (WebCore::FrameLoader::loadPlugin):
+        (WebCore::FrameLoader::didNotOpenURL):
+        (WebCore::FrameLoader::updatePolicyBaseURL):
+        (WebCore::FrameLoader::scrollToAnchor):
+        (WebCore::FrameLoader::startRedirectionTimer):
+        (WebCore::FrameLoader::load):
+        (WebCore::FrameLoader::canLoad):
+        (WebCore::FrameLoader::shouldHideReferrer):
+        (WebCore::FrameLoader::shouldAllowNavigation):
+        (WebCore::FrameLoader::commitProvisionalLoad):
+        (WebCore::FrameLoader::clientRedirected):
+        (WebCore::FrameLoader::open):
+        (WebCore::FrameLoader::didTellBridgeAboutLoad):
+        (WebCore::FrameLoader::haveToldBridgeAboutLoad):
+        (WebCore::FrameLoader::post):
+        (WebCore::FrameLoader::loadResourceSynchronously):
+        (WebCore::FrameLoader::continueFragmentScrollAfterNavigationPolicy):
+        (WebCore::FrameLoader::shouldTreatURLAsSameAsCurrent):
+        (WebCore::FrameLoader::createHistoryItem):
+        (WebCore::FrameLoader::addBackForwardItemClippedAtTarget):
+        (WebCore::FrameLoader::loadItem):
+        (WebCore::FrameLoader::urlsMatchItem):
+        (WebCore::FrameLoader::recursiveGoToItem):
+        (WebCore::FrameLoader::updateHistoryForStandardLoad):
+        (WebCore::FrameLoader::updateHistoryForRedirectWithLockedHistory):
+        * loader/FrameLoader.h:
+        (WebCore::FrameLoader::url):
+        * loader/ImageDocument.cpp:
+        (WebCore::ImageDocument::createDocumentStructure):
+        * loader/MainResourceLoader.cpp:
+        (WebCore::shouldLoadAsEmptyDocument):
+        (WebCore::MainResourceLoader::didFinishLoading):
+        * loader/NavigationAction.cpp:
+        (WebCore::NavigationAction::NavigationAction):
+        * loader/NavigationAction.h:
+        (WebCore::NavigationAction::url):
+        * loader/PluginDocument.cpp:
+        (WebCore::PluginTokenizer::createDocumentStructure):
+        * loader/SubresourceLoader.cpp:
+        (WebCore::SubresourceLoader::load):
+        (WebCore::SubresourceLoader::create):
+        * loader/icon/IconLoader.cpp:
+        (WebCore::IconLoader::startLoading):
+        (WebCore::IconLoader::finishLoading):
+        * loader/loader.cpp:
+        (WebCore::Loader::servePendingRequests):
+        * loader/mac/LoaderNSURLExtras.m:
+        (urlOriginalData):
+        * page/Chrome.cpp:
+        (WebCore::Chrome::setToolTip):
+        * page/ContextMenuController.cpp:
+        (WebCore::ContextMenuController::contextMenuItemSelected):
+        * page/Frame.cpp:
+        (WebCore::Frame::setUserStyleSheetLocation):
+        * page/InspectorController.cpp:
+        (WebCore::InspectorResource::type):
+        (WebCore::addSourceToFrame):
+        (WebCore::InspectorController::addScriptResource):
+        (WebCore::InspectorController::updateScriptResourceRequest):
+        (WebCore::InspectorController::didCommitLoad):
+        * page/mac/WebCoreFrameBridge.mm:
+        (-[WebCoreFrameBridge getData:andResponse:forURL:]):
+        * platform/KURL.h:
+        (WebCore::KURL::string):
+        (WebCore::KURL::deprecatedString):
+        * platform/mac/ClipboardMac.mm:
+        (WebCore::ClipboardMac::getData):
+        * platform/mac/CookieJar.mm:
+        (WebCore::cookies):
+        (WebCore::setCookies):
+        * platform/mac/PasteboardMac.mm:
+        (WebCore::Pasteboard::writeURL):
+        (WebCore::fileWrapperForImage):
+        (WebCore::Pasteboard::writeImage):
+        (WebCore::Pasteboard::plainText):
+        * platform/network/ResourceHandle.cpp:
+        (WebCore::ResourceHandle::portAllowed):
+        * platform/network/ResourceRequestBase.cpp:
+        (WebCore::ResourceRequestBase::isNull):
+        * platform/network/cf/ResourceHandleCFNet.cpp:
+        (WebCore::willSendRequest):
+        (WebCore::didReceiveResponse):
+        (WebCore::didReceiveData):
+        (WebCore::didFinishLoading):
+        (WebCore::didFail):
+        (WebCore::didReceiveChallenge):
+        (WebCore::ResourceHandleInternal::~ResourceHandleInternal):
+        (WebCore::ResourceHandle::~ResourceHandle):
+        (WebCore::ResourceHandle::start):
+        * platform/win/ClipboardUtilitiesWin.cpp:
+        (WebCore::createGlobalData):
+        (WebCore::urlToMarkup):
+        * platform/win/ClipboardWin.cpp:
+        (WebCore::writeURL):
+        (WebCore::writeImageToDataObject):
+        (WebCore::ClipboardWin::writeURL):
+        (WebCore::ClipboardWin::writeRange):
+        * platform/win/PasteboardWin.cpp:
+        (WebCore::Pasteboard::writeSelection):
+        (WebCore::Pasteboard::writeURL):
+        * plugins/win/PluginDatabaseWin.cpp:
+        (WebCore::PluginDatabaseWin::findPlugin):
+        * plugins/win/PluginStreamWin.cpp:
+        (WebCore::PluginStreamWin::startStream):
+        (WebCore::PluginStreamWin::destroyStream):
+        * plugins/win/PluginViewWin.cpp:
+        (WebCore::scriptStringIfJavaScriptURL):
+        (WebCore::PluginViewWin::performRequest):
+        * svg/SVGImageLoader.cpp:
+        (WebCore::SVGImageLoader::updateFromElement):
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::getResponseXML):
+        (WebCore::XMLHttpRequest::urlMatchesDocumentDomain):
+        * xml/XSLImportRule.cpp:
+        (WebCore::XSLImportRule::loadSheet):
+        * xml/XSLTProcessor.cpp:
+        (WebCore::XSLTProcessor::createDocumentFromSource):
+        (WebCore::xsltStylesheetPointer):
+        (WebCore::xmlDocPtrFromNode):
+
 2007-12-11  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Darin.

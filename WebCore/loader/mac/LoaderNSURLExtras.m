@@ -98,11 +98,9 @@ NSData *urlOriginalData(NSURL *url)
     NSData *data = [NSData dataWithBytesNoCopy:buffer length:bytesFilled freeWhenDone:YES];
     
     NSURL *baseURL = (NSURL *)CFURLGetBaseURL((CFURLRef)url);
-    if (baseURL) {
-        NSURL *URL = urlWithDataRelativeToURL(data, baseURL);
-        return urlOriginalData(URL);
-    } else
-        return data;
+    if (baseURL)
+        return urlOriginalData(urlWithDataRelativeToURL(data, baseURL));
+    return data;
 }
 
 NSURL *urlWithData(NSData *data)

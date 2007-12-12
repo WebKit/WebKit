@@ -514,7 +514,7 @@ String PluginDatabaseWin::MIMETypeForExtension(const String& extension) const
 PluginPackageWin* PluginDatabaseWin::findPlugin(const KURL& url, String& mimeType)
 {   
     PluginPackageWin* plugin = pluginForMIMEType(mimeType);
-    String filename = url.url();
+    String filename = url.string();
     
     if (!plugin) {
         String filename = url.lastPathComponent();

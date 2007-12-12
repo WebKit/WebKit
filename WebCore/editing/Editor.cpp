@@ -937,7 +937,7 @@ void Editor::copy()
     
     Document* document = m_frame->document();
     if (HTMLImageElement* imageElement = imageElementFromImageDocument(document))
-        Pasteboard::generalPasteboard()->writeImage(imageElement, document->URL(), document->title());
+        Pasteboard::generalPasteboard()->writeImage(imageElement, document->url(), document->title());
     else
         Pasteboard::generalPasteboard()->writeSelection(selectedRange().get(), canSmartCopyOrDelete(), m_frame);
     

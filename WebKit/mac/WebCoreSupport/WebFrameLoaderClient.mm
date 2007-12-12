@@ -1121,7 +1121,7 @@ NSDictionary *WebFrameLoaderClient::actionDictionary(const NavigationAction& act
             element, WebActionElementKey,
             [NSNumber numberWithInt:mouseEvent->button()], WebActionButtonKey,
             [NSNumber numberWithInt:modifierFlags], WebActionModifierFlagsKey,
-            action.URL().getNSURL(), WebActionOriginalURLKey,
+            action.url().getNSURL(), WebActionOriginalURLKey,
             nil];
         [element release];
         return result;
@@ -1129,7 +1129,7 @@ NSDictionary *WebFrameLoaderClient::actionDictionary(const NavigationAction& act
     return [NSDictionary dictionaryWithObjectsAndKeys:
         [NSNumber numberWithInt:action.type()], WebActionNavigationTypeKey,
         [NSNumber numberWithInt:modifierFlags], WebActionModifierFlagsKey,
-        action.URL().getNSURL(), WebActionOriginalURLKey,
+        action.url().getNSURL(), WebActionOriginalURLKey,
         nil];
 }
 
