@@ -1,5 +1,20 @@
 2007-12-11  Sam Weinig  <sam@webkit.org>
 
+        Build fix for Qt, Gtk, and Wx.
+
+        * platform/gtk/CookieJarGtk.cpp:
+        (WebCore::setCookies):
+        (WebCore::cookies):
+        * platform/qt/ClipboardQt.cpp:
+        (WebCore::ClipboardQt::writeURL):
+        * platform/qt/CookieJarQt.cpp:
+        (WebCore::setCookies):
+        (WebCore::cookies):
+        * platform/wx/PasteboardWx.cpp:
+        (WebCore::Pasteboard::writeURL):
+
+2007-12-11  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Darin Adler.
 
         Scrub URL out of the tree in preparation for renaming KURL to URL.

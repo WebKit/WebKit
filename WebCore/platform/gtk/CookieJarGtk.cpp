@@ -40,12 +40,12 @@ static HashMap<String, String> cookieJar;
 
 void setCookies(const KURL& url, const KURL& /*policyURL*/, const String& value)
 {
-    cookieJar.set(url.url(), value);
+    cookieJar.set(url.string(), value);
 }
 
 String cookies(const KURL& url)
 {
-    return cookieJar.get(url.url());
+    return cookieJar.get(url.string());
 }
 
 bool cookiesEnabled()

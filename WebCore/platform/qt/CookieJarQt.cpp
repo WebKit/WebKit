@@ -38,14 +38,14 @@ namespace WebCore {
 
 void setCookies(const KURL& url, const KURL& policyURL, const String& value)
 {
-    QUrl u((QString)url.url());
-    QUrl p((QString)policyURL.url());
+    QUrl u((QString)url.string());
+    QUrl p((QString)policyURL.string());
     QCookieJar::cookieJar()->setCookies(u, p, (QString)value);
 }
 
 String cookies(const KURL& url)
 {
-    QUrl u((QString)url.url());
+    QUrl u((QString)url.string());
     QString cookies = QCookieJar::cookieJar()->cookies(u);
     int idx = cookies.indexOf(QLatin1Char(';'));
     if (idx > 0)
