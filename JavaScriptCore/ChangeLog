@@ -1,5 +1,16 @@
 2007-12-11  Geoffrey Garen  <ggaren@apple.com>
 
+        Reviewed by Sam Weinig.
+        
+        Build fix: Note some variables that are used only for ASSERTs.
+
+        * API/testapi.c:
+        (Base_finalize):
+        (globalObject_initialize):
+        (testInitializeFinalize):
+
+2007-12-11  Geoffrey Garen  <ggaren@apple.com>
+
         Reviewed by Darin Adler.
         
         Fixed: All JS tests crash on Windows.

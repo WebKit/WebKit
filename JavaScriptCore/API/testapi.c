@@ -333,6 +333,7 @@ static void Base_initialize(JSContextRef context, JSObjectRef object)
 static unsigned Base_didFinalize;
 static void Base_finalize(JSObjectRef object)
 {
+    UNUSED_PARAM(object);
     if (TestInitializeFinalize) {
         ASSERT((void*)4 == JSObjectGetPrivate(object));
         Base_didFinalize = true;
@@ -482,6 +483,8 @@ static void globalObject_initialize(JSContextRef context, JSObjectRef object)
     JSStringRef array = JSStringCreateWithUTF8CString("Array");
     JSObjectRef arrayConstructor = JSValueToObject(context, JSObjectGetProperty(context, globalObject, array, NULL), NULL);
     JSStringRelease(array);
+
+    UNUSED_PARAM(arrayConstructor);
     ASSERT(arrayConstructor);
 }
 
@@ -515,6 +518,7 @@ static char* createStringWithContentsOfFile(const char* fileName);
 static void testInitializeFinalize()
 {
     JSObjectRef o = JSObjectMake(context, Derived_class(context), (void*)1);
+    UNUSED_PARAM(o);
     ASSERT(JSObjectGetPrivate(o) == (void*)3);
 }
 
