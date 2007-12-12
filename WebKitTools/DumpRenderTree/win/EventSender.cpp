@@ -382,7 +382,7 @@ static JSValueRef dispatchMessageCallback(JSContextRef context, JSObjectRef func
     ASSERT(!*exception);
     msg.wParam = JSValueToNumber(context, arguments[1], exception);
     ASSERT(!*exception);
-    msg.lParam = JSValueToNumber(context, arguments[2], exception);
+    msg.lParam = static_cast<ULONG_PTR>(JSValueToNumber(context, arguments[2], exception));
     ASSERT(!*exception);
     if (argumentCount >= 4) {
         msg.time = JSValueToNumber(context, arguments[3], exception);
