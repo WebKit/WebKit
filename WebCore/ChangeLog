@@ -1,3 +1,17 @@
+2007-12-11  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        - allow non-integer font sizes on Windows for small caps
+
+        * platform/graphics/win/FontDataWin.cpp:
+        (WebCore::FontData::smallCapsFontData):
+        * platform/graphics/win/FontPlatformData.h:
+        (WebCore::FontPlatformData::size):
+        (WebCore::FontPlatformData::setSize):
+        * platform/graphics/win/FontPlatformDataWin.cpp:
+        (WebCore::FontPlatformData::FontPlatformData):
+
 2007-12-11  Sam Weinig  <sam@webkit.org>
 
         Build fix for Qt, Gtk, and Wx.

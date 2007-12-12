@@ -128,7 +128,7 @@ static int CALLBACK enumStylesCallback(const LOGFONT* logFont, const TEXTMETRIC*
     return 1;
 }
 
-FontPlatformData::FontPlatformData(HFONT font, int size, bool bold, bool oblique)
+FontPlatformData::FontPlatformData(HFONT font, float size, bool bold, bool oblique)
     : m_font(font)
     , m_size(size)
     , m_cgFont(0)
@@ -196,7 +196,7 @@ FontPlatformData::FontPlatformData(HFONT font, int size, bool bold, bool oblique
     ReleaseDC(0, hdc);
 }
 
-FontPlatformData::FontPlatformData(CGFontRef font, int size, bool bold, bool oblique)
+FontPlatformData::FontPlatformData(CGFontRef font, float size, bool bold, bool oblique)
     : m_font(0)
     , m_size(size)
     , m_cgFont(font)

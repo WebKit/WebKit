@@ -45,16 +45,8 @@ media
 http/tests/media
 
 # Layout tests that depend on certain fonts don't match Mac results <rdar://problem/5075790>
-css1/font_properties/font.html
-css1/pseudo/multiple_pseudo_elements.html
 css2.1/t1202-counter-09-b.html
 css2.1/t1202-counters-09-b.html
-css2.1/t1508-c527-font-00-b.html
-css2.1/t1508-c527-font-04-b.html
-css2.1/t1508-c527-font-05-b.html
-css2.1/t1508-c527-font-07-b.html
-css2.1/t1508-c527-font-10-c.html
-css2.1/t051201-c23-first-line-00-b.html
 editing/deleting/5144139-2.html
 fast/css/beforeSelectorOnCodeElement.html
 fast/css/font_property_normal.html

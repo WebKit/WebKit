@@ -137,7 +137,7 @@ void FontData::platformDestroy()
 FontData* FontData::smallCapsFontData(const FontDescription& fontDescription) const
 {
     if (!m_smallCapsFontData) {
-        int smallCapsHeight = lroundf(cSmallCapsFontSizeMultiplier * m_font.size());
+        float smallCapsHeight = cSmallCapsFontSizeMultiplier * m_font.size();
         if (isCustomFont()) {
             FontPlatformData smallCapsFontData(m_font);
             smallCapsFontData.setSize(smallCapsHeight);
@@ -145,7 +145,7 @@ FontData* FontData::smallCapsFontData(const FontDescription& fontDescription) co
         } else {
             LOGFONT winfont;
             GetObject(m_font.hfont(), sizeof(LOGFONT), &winfont);
-            winfont.lfHeight = -smallCapsHeight * 32;
+            winfont.lfHeight = -lroundf(smallCapsHeight * 32);
             HFONT hfont = CreateFontIndirect(&winfont);
             m_smallCapsFontData = new FontData(FontPlatformData(hfont, smallCapsHeight, fontDescription.bold(), fontDescription.italic()));
         }

@@ -55,15 +55,15 @@ public:
     , m_syntheticOblique(false)
     {}
 
-    FontPlatformData(HFONT, int size, bool bold, bool oblique);
-    FontPlatformData(CGFontRef, int size, bool bold, bool oblique);
+    FontPlatformData(HFONT, float size, bool bold, bool oblique);
+    FontPlatformData(CGFontRef, float size, bool bold, bool oblique);
     ~FontPlatformData();
 
     HFONT hfont() const { return m_font; }
     CGFontRef cgFont() const { return m_cgFont; }
 
-    int size() const { return m_size; }
-    void setSize(int size) { m_size = size; }
+    float size() const { return m_size; }
+    void setSize(float size) { m_size = size; }
     bool syntheticBold() const { return m_syntheticBold; }
     bool syntheticOblique() const { return m_syntheticOblique; }
 
@@ -82,7 +82,7 @@ private:
     HFONT m_font;
     CGFontRef m_cgFont;
 
-    int m_size;
+    float m_size;
     bool m_syntheticBold;
     bool m_syntheticOblique;
 };
