@@ -39,6 +39,7 @@
 #include "ChromeClientGtk.h"
 #include "ContextMenuClientGtk.h"
 #include "DragClientGtk.h"
+#include "Editor.h"
 #include "EditorClientGtk.h"
 #include "EventHandler.h"
 #include "FocusController.h"
@@ -170,6 +171,19 @@ static gboolean webkit_web_view_button_press_event(GtkWidget* widget, GdkEventBu
 static gboolean webkit_web_view_button_release_event(GtkWidget* widget, GdkEventButton* event)
 {
     Frame* frame = core(webkit_web_view_get_main_frame(WEBKIT_WEB_VIEW(widget)));
+
+    WebKitWebView* web_view = WEBKIT_WEB_VIEW(widget);
+    WebKitWebViewPrivate* webViewData = WEBKIT_WEB_VIEW_GET_PRIVATE(web_view);
+    Frame* focusedFrame = webViewData->corePage->focusController()->focusedFrame();
+
+    if (focusedFrame->editor()->canEdit()) {
+        GdkWindow* window = gtk_widget_get_parent_window(widget);
+        gtk_im_context_set_client_window(webViewData->imContext, window);
+#ifdef MAEMO_CHANGES
+        hildon_gtk_im_context_filter_event(webViewData->imContext, (GdkEvent*)event);
+        hildon_gtk_im_context_show(webViewData->imContext);
+#endif
+    }
 
     return frame->eventHandler()->handleMouseReleaseEvent(PlatformMouseEvent(event));
 }
@@ -419,6 +433,7 @@ static void webkit_web_view_finalize(GObject* object)
     delete webViewData->corePage;
     delete webViewData->settings;
     g_object_unref(webViewData->mainFrame);
+    g_object_unref(webViewData->imContext);
     delete webViewData->userAgent;
 
     G_OBJECT_CLASS(webkit_web_view_parent_class)->finalize(object);
@@ -787,6 +802,7 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
 static void webkit_web_view_init(WebKitWebView* webView)
 {
     WebKitWebViewPrivate* webViewData = WEBKIT_WEB_VIEW_GET_PRIVATE(WEBKIT_WEB_VIEW(webView));
+    webViewData->imContext = gtk_im_multicontext_new();
     webViewData->corePage = new Page(new WebKit::ChromeClient(webView), new WebKit::ContextMenuClient, new WebKit::EditorClient(webView), new WebKit::DragClient, new WebKit::InspectorClient);
 
     Settings* settings = webViewData->corePage->settings();

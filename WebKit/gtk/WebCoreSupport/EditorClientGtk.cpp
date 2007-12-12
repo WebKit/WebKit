@@ -48,6 +48,13 @@ using namespace WebCore;
 
 namespace WebKit {
 
+static void imContextCommitted(GtkIMContext* context, const char* str, EditorClient* client)
+{
+    WebKitWebViewPrivate* pageData = WEBKIT_WEB_VIEW_GET_PRIVATE(client->m_page);
+    Frame* frame = pageData->corePage->focusController()->focusedOrMainFrame();
+    frame->editor()->insertTextWithoutSendingTextEvent(str, false);
+}
+
 bool EditorClient::shouldDeleteRange(Range*)
 {
     notImplemented();
@@ -360,16 +367,29 @@ void EditorClient::handleInputMethodKeydown(KeyboardEvent*)
 EditorClient::EditorClient(WebKitWebView* page)
     : m_page(page)
 {
+    WebKitWebViewPrivate* pageData = WEBKIT_WEB_VIEW_GET_PRIVATE(m_page);
+    g_signal_connect(pageData->imContext, "commit", G_CALLBACK(imContextCommitted), this);
+}
+
+EditorClient::~EditorClient()
+{
+    WebKitWebViewPrivate* pageData = WEBKIT_WEB_VIEW_GET_PRIVATE(m_page);
+    g_signal_handlers_disconnect_by_func(pageData->imContext, (gpointer)imContextCommitted, this);
 }
 
 void EditorClient::textFieldDidBeginEditing(Element*)
 {
-    notImplemented();
+    gtk_im_context_focus_in(WEBKIT_WEB_VIEW_GET_PRIVATE(m_page)->imContext);
 }
 
 void EditorClient::textFieldDidEndEditing(Element*)
 {
-    notImplemented();
+    WebKitWebViewPrivate* pageData = WEBKIT_WEB_VIEW_GET_PRIVATE(m_page);
+
+    gtk_im_context_focus_out(pageData->imContext);
+#ifdef MAEMO_CHANGES
+    hildon_gtk_im_context_hide(pageData->imContext);
+#endif
 }
 
 void EditorClient::textDidChangeInTextField(Element*)

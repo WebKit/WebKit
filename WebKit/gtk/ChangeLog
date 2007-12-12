@@ -1,3 +1,25 @@
+2007-12-11  George Wright  <george.wright@collabora.co.uk>
+
+        Reviewed by Alp Toker.
+
+        http://bugs.webkit.org/show_bug.cgi?id=14120
+        [GDK] Support input methods
+
+        This patch adds infrastructure for input method support.
+
+        It also adds Hildon features for the Maemo mobile platform sufficient
+        to support the virtual keyboard.
+
+        * WebCoreSupport/EditorClientGtk.cpp:
+        (WebKit::imContextCommitted):
+        (WebKit::EditorClient::EditorClient):
+        (WebKit::EditorClient::~EditorClient):
+        (WebKit::EditorClient::textFieldDidBeginEditing):
+        (WebKit::EditorClient::textFieldDidEndEditing):
+        * WebCoreSupport/EditorClientGtk.h:
+        * WebView/webkitprivate.h:
+        * WebView/webkitwebview.cpp:
+
 2007-12-07  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin.
