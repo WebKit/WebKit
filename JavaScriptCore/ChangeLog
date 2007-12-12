@@ -2,6 +2,27 @@
 
         Reviewed by Darin Adler.
         
+        Fixed: All JS tests crash on Windows.
+
+        NDEBUG wasn't defined when compiling testkjs in release builds, so the
+        HashTable definition in HashTable.h included an extra data member.
+
+        The solution was to add NDEBUG to the release testkjs configuration on
+        Windows and Mac.
+        
+        For giggles, I also added other missing #defines to testkjs on Windows.
+
+        * Configurations/Base.xcconfig:
+        * Configurations/JavaScriptCore.xcconfig:
+        * JavaScriptCore.vcproj/testkjs/testkjs.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * kjs/testkjs.cpp:
+        (main):
+
+2007-12-11  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Darin Adler.
+        
         Removed bogus ASSERT.
         
         ASSERT should only be used when we know that a code path will not be
