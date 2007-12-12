@@ -3,6 +3,13 @@
         Build fix.
 
         * WebCoreSupport/FrameLoaderClientGtk.cpp:
+        (WebKit::FrameLoaderClient::didChangeTitle):
+
+2007-12-12  Sam Weinig  <sam@webkit.org>
+
+        Build fix.
+
+        * WebCoreSupport/FrameLoaderClientGtk.cpp:
         (WebKit::FrameLoaderClient::dispatchDecidePolicyForNavigationAction):
 
 2007-12-11  George Wright  <george.wright@collabora.co.uk>

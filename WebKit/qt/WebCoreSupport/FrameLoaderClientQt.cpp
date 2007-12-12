@@ -544,7 +544,7 @@ void FrameLoaderClientQt::setTitle(const String&, const KURL&)
 String FrameLoaderClientQt::userAgent(const KURL& url)
 {
     if (m_webFrame) {
-        return m_webFrame->page()->userAgentFor(QUrl((QString)url.url()));
+        return m_webFrame->page()->userAgentFor(QUrl((QString)url.string()));
     }
     return String();
 }

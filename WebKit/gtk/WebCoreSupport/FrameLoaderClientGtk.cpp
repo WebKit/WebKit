@@ -469,7 +469,7 @@ void FrameLoaderClient::dispatchDidLoadMainResource(DocumentLoader*) { notImplem
 void FrameLoaderClient::revertToProvisionalState(DocumentLoader*) { notImplemented(); }
 void FrameLoaderClient::clearUnarchivingState(DocumentLoader*) { notImplemented(); }
 void FrameLoaderClient::willChangeTitle(DocumentLoader*) { notImplemented(); }
-void FrameLoaderClient::didChangeTitle(DocumentLoader *l) { setTitle(l->title(), l->URL()); }
+void FrameLoaderClient::didChangeTitle(DocumentLoader *l) { setTitle(l->title(), l->url()); }
 void FrameLoaderClient::finalSetupForReplace(DocumentLoader*) { notImplemented(); }
 void FrameLoaderClient::setDefersLoading(bool) { notImplemented(); }
 bool FrameLoaderClient::isArchiveLoadPending(ResourceLoader*) const { notImplemented(); return false; }
