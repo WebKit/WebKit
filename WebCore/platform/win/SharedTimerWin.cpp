@@ -45,11 +45,13 @@ const int sharedTimerID = 1000;
 
 LRESULT CALLBACK TimerWindowWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-    if (message == timerFiredMessage || (message == WM_TIMER && wParam == sharedTimerID)) {
+    if (message == timerFiredMessage) {
         processingCustomTimerMessage = true;
         sharedTimerFiredFunction();
         processingCustomTimerMessage = false;
-    } else
+    } else if (message == WM_TIMER && wParam == sharedTimerID)
+        sharedTimerFiredFunction();
+    else
         return DefWindowProc(hWnd, message, wParam, lParam);
     return 0;
 }

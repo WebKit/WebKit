@@ -1,3 +1,12 @@
+2007-12-12  Steve Falkenburg  <sfalken@apple.com>
+
+        <rdar://problem/5643785> Fix iBench regression caused by mis-placed nested timer check.
+        
+        Reviewed by Anders.
+
+        * platform/win/SharedTimerWin.cpp:
+        (WebCore::TimerWindowWndProc): Don't set high-resolution timer flag inside non-high-resolution timer proc.
+
 2007-12-12  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Oliver.
