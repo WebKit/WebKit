@@ -1,3 +1,14 @@
+2007-12-12  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        - better fix for a crash when pressing a key that is not associated
+          with a command
+
+        * editing/EditorCommand.cpp:
+        (WebCore::Editor::command): Return the empty command if the command name
+        is empty.
+
 2007-12-12  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin.

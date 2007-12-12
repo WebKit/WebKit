@@ -1,3 +1,13 @@
+2007-12-12  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        - revert my earlier crash fix after making WebCore return the empty
+          editor command for the empty command name.
+
+        * WebView.cpp:
+        (WebView::handleEditingKeyboardEvent):
+
 2007-12-12  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Maciej.

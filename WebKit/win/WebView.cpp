@@ -1393,21 +1393,17 @@ bool WebView::handleEditingKeyboardEvent(KeyboardEvent* evt)
     if (!keyEvent || keyEvent->isSystemKey())  // do not treat this as text input if it's a system key event
         return false;
 
-    String commandName = interpretKeyEvent(evt);
-    if (!commandName.isEmpty()) {
-        Editor::Command command = frame->editor()->command(commandName);
+    Editor::Command command = frame->editor()->command(interpretKeyEvent(evt));
 
-        if (keyEvent->type() == PlatformKeyboardEvent::RawKeyDown) {
-            // WebKit doesn't have enough information about mode to decide how commands that just insert text if executed via Editor should be treated,
-            // so we leave it upon WebCore to either handle them immediately (e.g. Tab that changes focus) or let a keypress event be generated
-            // (e.g. Tab that inserts a Tab character, or Enter).
-            return !command.isTextInsertion() && command.execute(evt);
-        }
+    if (keyEvent->type() == PlatformKeyboardEvent::RawKeyDown) {
+        // WebKit doesn't have enough information about mode to decide how commands that just insert text if executed via Editor should be treated,
+        // so we leave it upon WebCore to either handle them immediately (e.g. Tab that changes focus) or let a keypress event be generated
+        // (e.g. Tab that inserts a Tab character, or Enter).
+        return !command.isTextInsertion() && command.execute(evt);
+    }
 
-         if (command.execute(evt))
-            return true;
-    } else if (keyEvent->type() == PlatformKeyboardEvent::RawKeyDown)
-        return false;
+     if (command.execute(evt))
+        return true;
 
     // Don't insert null or control characters as they can result in unexpected behaviour
     if (evt->charCode() < ' ')
