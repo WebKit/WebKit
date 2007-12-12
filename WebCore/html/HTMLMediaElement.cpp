@@ -89,8 +89,6 @@ HTMLMediaElement::~HTMLMediaElement()
 {
     document()->unregisterForCacheCallbacks(this);
     delete m_player;
-    for (HashMap<float, CallbackVector*>::iterator it = m_cuePoints.begin(); it != m_cuePoints.end(); ++it)
-        delete it->second;
 }
 
 bool HTMLMediaElement::checkDTD(const Node* newChild)
@@ -327,8 +325,6 @@ void HTMLMediaElement::load(ExceptionCode& ec)
     m_player = new MediaPlayer(this);
     m_player->setVolume(m_volume);
     m_player->setMuted(m_muted);
-    for (HashMap<float, CallbackVector*>::iterator it = m_cuePoints.begin(); it != m_cuePoints.end(); ++it)
-        m_player->addCuePoint(it->first);
     m_player->load(m_currentSrc);
     if (m_loadNestingLevel < m_terminateLoadBelowNestingLevel)
         goto end;
@@ -895,55 +891,10 @@ void HTMLMediaElement::mediaPlayerTimeChanged(MediaPlayer*)
     updateMediaPlayer();
 }
 
-void HTMLMediaElement::mediaPlayerCuePointReached(MediaPlayer*, float cueTime)
-{
-    CallbackVector* callbackVector = m_cuePoints.get(cueTime);
-    if (!callbackVector)
-        return;
-    for (unsigned n = 0; n < callbackVector->size(); n++) {
-        CallbackEntry ce = (*callbackVector)[n];
-        if (ce.m_pause) {
-            ExceptionCode ec;
-            pause(ec);
-            break;
-        }
-    }    
-    
-    dispatchHTMLEvent(timeupdateEvent, false, true);
-    
-    for (unsigned n = 0; n < callbackVector->size(); n++) {
-        CallbackEntry ce = (*callbackVector)[n];
-        if (ce.m_voidCallback) 
-            ce.m_voidCallback->handleEvent();
-    }      
-}
-
 void HTMLMediaElement::mediaPlayerRepaint(MediaPlayer*)
 {
     if (renderer())
         renderer()->repaint();
-}
-
-void HTMLMediaElement::addCuePoint(float time, VoidCallback* voidCallback, bool pause)
-{
-    if (time < 0 || !isfinite(time))
-        return;
-    CallbackVector* callbackVector = m_cuePoints.get(time);
-    if (!callbackVector) {
-        callbackVector = new CallbackVector;
-        m_cuePoints.add(time, callbackVector);
-    }
-    callbackVector->append(CallbackEntry(voidCallback, pause));
-    
-    if (m_player)
-        m_player->addCuePoint(time);
-}
-
-void HTMLMediaElement::removeCuePoint(float time, VoidCallback* callback)
-{
-    // FIXME: This method be removed entirely. The body has been removed
-    // because it used to contain code that compared VoidCallbacks for equality
-    // and the new VoidCallback interface doesn't allow that.
 }
 
 PassRefPtr<TimeRanges> HTMLMediaElement::buffered() const

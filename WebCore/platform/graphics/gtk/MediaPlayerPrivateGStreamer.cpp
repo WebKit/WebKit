@@ -112,7 +112,6 @@ MediaPlayerPrivate::MediaPlayerPrivate(MediaPlayer* player)
     , m_endTime(numeric_limits<float>::infinity())
     , m_isEndReached(false)
     , m_volume(0.5f)
-    , m_previousTimeCueTimerFired(0)
     , m_networkState(MediaPlayer::Empty)
     , m_readyState(MediaPlayer::DataUnavailable)
     , m_startedPlaying(false)
@@ -252,22 +251,7 @@ void MediaPlayerPrivate::setEndTime(float time)
     }
 }
 
-void MediaPlayerPrivate::addCuePoint(float time)
-{
-    notImplemented();
-}
-
-void MediaPlayerPrivate::removeCuePoint(float time)
-{
-    notImplemented();
-}
-
-void MediaPlayerPrivate::clearCuePoints()
-{
-    notImplemented();
-}
-
-void MediaPlayerPrivate::startCuePointTimerIfNeeded()
+void MediaPlayerPrivate::startEndPointTimerIfNeeded()
 {
     notImplemented();
 }
@@ -277,7 +261,7 @@ void MediaPlayerPrivate::cancelSeek()
     notImplemented();
 }
 
-void MediaPlayerPrivate::cuePointTimerFired(Timer<MediaPlayerPrivate>*)
+void MediaPlayerPrivate::endPointTimerFired(Timer<MediaPlayerPrivate>*)
 {
     notImplemented();
 }

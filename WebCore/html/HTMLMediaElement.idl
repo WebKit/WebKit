@@ -79,10 +79,6 @@ interface [GenerateConstructor, Conditional=VIDEO] HTMLMediaElement : HTMLElemen
         setter raises (DOMException);
     attribute unsigned long currentLoop;
 
-    // cue points
-    void addCuePoint(in float time, in VoidCallback callback, in boolean pause);
-    void removeCuePoint(in float time, in VoidCallback callback);
-
     // controls
     attribute boolean controls;
     attribute float volume 

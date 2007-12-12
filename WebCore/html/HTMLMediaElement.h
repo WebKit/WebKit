@@ -111,11 +111,7 @@ public:
     void setPlayCount(unsigned, ExceptionCode&);
     unsigned currentLoop() const;
     void setCurrentLoop(unsigned);
- 
-// cue points
-    void addCuePoint(float time, VoidCallback* callback, bool pause);
-    void removeCuePoint(float time, VoidCallback* callback);
-    
+
 // controls
     bool controls() const;
     void setControls(bool);
@@ -141,7 +137,6 @@ private: // MediaPlayerObserver
     virtual void mediaPlayerReadyStateChanged(MediaPlayer*);
     virtual void mediaPlayerTimeChanged(MediaPlayer*);
     virtual void mediaPlayerVolumeChanged(MediaPlayer*);
-    virtual void mediaPlayerCuePointReached(MediaPlayer*, float cueTime);
     virtual void mediaPlayerRepaint(MediaPlayer*);
 
 private:
@@ -207,7 +202,6 @@ protected:
         bool m_pause;
     };
     typedef Vector<CallbackEntry> CallbackVector;
-    HashMap<float, CallbackVector*> m_cuePoints;
     
     MediaPlayer* m_player;
 };

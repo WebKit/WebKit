@@ -1,3 +1,36 @@
+2007-12-12  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Geoff.
+
+        Fix for <rdar://problem/5643054> Remove cue point implementation for media elements
+
+        When the specification for cue ranges is more final, we will implement those.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::~HTMLMediaElement):
+        (WebCore::HTMLMediaElement::load):
+        * html/HTMLMediaElement.h:
+        * html/HTMLMediaElement.idl:
+        * platform/graphics/MediaPlayer.cpp:
+        * platform/graphics/MediaPlayer.h:
+        (WebCore::MediaPlayerClient::mediaPlayerTimeChanged):
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.h:
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.mm:
+        (WebCore::MediaPlayerPrivate::MediaPlayerPrivate):
+        (WebCore::MediaPlayerPrivate::load):
+        (WebCore::MediaPlayerPrivate::play):
+        (WebCore::MediaPlayerPrivate::pause):
+        (WebCore::MediaPlayerPrivate::setEndTime):
+        (WebCore::MediaPlayerPrivate::startEndPointTimerIfNeeded):
+        (WebCore::MediaPlayerPrivate::endPointTimerFired):
+        (WebCore::MediaPlayerPrivate::timeChanged):
+        (WebCore::MediaPlayerPrivate::didEnd):
+        * platform/graphics/gtk/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivate::MediaPlayerPrivate):
+        (WebCore::MediaPlayerPrivate::startEndPointTimerIfNeeded):
+        (WebCore::MediaPlayerPrivate::endPointTimerFired):
+        * platform/graphics/gtk/MediaPlayerPrivateGStreamer.h:
+
 2007-12-12  MorganL  <morganl.webkit@yahoo.com>
 
         Reviewed by Maciej.

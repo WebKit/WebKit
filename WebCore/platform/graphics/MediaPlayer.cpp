@@ -169,28 +169,6 @@ void MediaPlayer::setEndTime(float time)
     m_private->setEndTime(time);
 }
 
-void MediaPlayer::addCuePoint(float time)
-{
-    if (m_cuePoints.contains(time))
-        return;
-    m_cuePoints.add(time);
-    m_private->addCuePoint(time);
-}
-
-void MediaPlayer::removeCuePoint(float time)
-{
-    if (!m_cuePoints.contains(time))
-        return;
-    m_cuePoints.remove(time);
-    m_private->removeCuePoint(time);
-}
-
-void MediaPlayer::clearCuePoints()
-{
-    m_cuePoints.clear();
-    m_private->clearCuePoints();
-}
-
 float MediaPlayer::maxTimeBuffered()
 {
     return m_private->maxTimeBuffered();
@@ -269,12 +247,6 @@ void MediaPlayer::timeChanged()
 {
     if (m_mediaPlayerClient)
         m_mediaPlayerClient->mediaPlayerTimeChanged(this);
-}
-
-void MediaPlayer::cuePointReached(float cueTime)
-{
-    if (m_mediaPlayerClient)
-        m_mediaPlayerClient->mediaPlayerCuePointReached(this, cueTime);
 }
 
 void MediaPlayer::repaint()

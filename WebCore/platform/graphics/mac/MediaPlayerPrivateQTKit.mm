@@ -114,7 +114,7 @@ using namespace std;
 
 namespace WebCore {
 
-static const float cuePointTimerInterval = 0.020f;
+static const float endPointTimerInterval = 0.020f;
     
 MediaPlayerPrivate::MediaPlayerPrivate(MediaPlayer* player)
     : m_player(player)
@@ -122,8 +122,7 @@ MediaPlayerPrivate::MediaPlayerPrivate(MediaPlayer* player)
     , m_seekTo(-1)
     , m_endTime(numeric_limits<float>::infinity())
     , m_seekTimer(this, &MediaPlayerPrivate::seekTimerFired)
-    , m_cuePointTimer(this, &MediaPlayerPrivate::cuePointTimerFired)
-    , m_previousTimeCueTimerFired(0)
+    , m_endPointTimer(this, &MediaPlayerPrivate::endPointTimerFired)
     , m_networkState(MediaPlayer::Empty)
     , m_readyState(MediaPlayer::DataUnavailable)
     , m_startedPlaying(false)
@@ -265,7 +264,7 @@ void MediaPlayerPrivate::load(const String& url)
         m_player->readyStateChanged();
     }
     cancelSeek();
-    m_cuePointTimer.stop();
+    m_endPointTimer.stop();
     
     [m_objcObserver.get() setDelayCallbacks:YES];
 
@@ -285,7 +284,7 @@ void MediaPlayerPrivate::play()
     [m_objcObserver.get() setDelayCallbacks:YES];
     [m_qtMovie.get() setRate:m_player->rate()];
     [m_objcObserver.get() setDelayCallbacks:NO];
-    startCuePointTimerIfNeeded();
+    startEndPointTimerIfNeeded();
 }
 
 void MediaPlayerPrivate::pause()
@@ -296,7 +295,7 @@ void MediaPlayerPrivate::pause()
     [m_objcObserver.get() setDelayCallbacks:YES];
     [m_qtMovie.get() stop];
     [m_objcObserver.get() setDelayCallbacks:NO];
-    m_cuePointTimer.stop();
+    m_endPointTimer.stop();
 }
 
 float MediaPlayerPrivate::duration() const
@@ -380,52 +379,23 @@ void MediaPlayerPrivate::seekTimerFired(Timer<MediaPlayerPrivate>*)
 void MediaPlayerPrivate::setEndTime(float time)
 {
     m_endTime = time;
-    startCuePointTimerIfNeeded();
+    startEndPointTimerIfNeeded();
 }
 
-void MediaPlayerPrivate::addCuePoint(float /*time*/)
+void MediaPlayerPrivate::startEndPointTimerIfNeeded()
 {
-    // FIXME: Eventually we'd like an approach that doesn't involve a timer.
-    startCuePointTimerIfNeeded();
+    if (m_endTime < duration() && m_startedPlaying && !m_endPointTimer.isActive())
+        m_endPointTimer.startRepeating(endPointTimerInterval);
 }
 
-void MediaPlayerPrivate::removeCuePoint(float /*time*/)
-{
-}
-
-void MediaPlayerPrivate::clearCuePoints()
-{
-}
-
-void MediaPlayerPrivate::startCuePointTimerIfNeeded()
-{
-    if ((m_endTime < duration() || !m_player->m_cuePoints.isEmpty())
-        && m_startedPlaying && !m_cuePointTimer.isActive()) {
-        m_previousTimeCueTimerFired = currentTime();
-        m_cuePointTimer.startRepeating(cuePointTimerInterval);
-    }
-}
-
-void MediaPlayerPrivate::cuePointTimerFired(Timer<MediaPlayerPrivate>*)
+void MediaPlayerPrivate::endPointTimerFired(Timer<MediaPlayerPrivate>*)
 {
     float time = currentTime();
-    float previousTime = m_previousTimeCueTimerFired;
-    m_previousTimeCueTimerFired = time;
     
     // just do end for now
     if (time >= m_endTime) {
         pause();
         didEnd();
-    }
-
-    // Make a copy since m_cuePoints could change as we deliver JavaScript calls.
-    Vector<float> cuePoints;
-    copyToVector(m_player->m_cuePoints, cuePoints);
-    size_t numCuePoints = cuePoints.size();
-    for (size_t i = 0; i < numCuePoints; ++i) {
-        float cueTime = cuePoints[i];
-        if (previousTime < cueTime && cueTime <= time)
-            m_player->cuePointReached(cueTime);
     }
 }
 
@@ -595,7 +565,6 @@ void MediaPlayerPrivate::sizeChanged()
 
 void MediaPlayerPrivate::timeChanged()
 {
-    m_previousTimeCueTimerFired = -1;
     updateStates();
     m_player->timeChanged();
 }
@@ -607,7 +576,7 @@ void MediaPlayerPrivate::volumeChanged()
 
 void MediaPlayerPrivate::didEnd()
 {
-    m_cuePointTimer.stop();
+    m_endPointTimer.stop();
     m_startedPlaying = false;
     updateStates();
     m_player->timeChanged();

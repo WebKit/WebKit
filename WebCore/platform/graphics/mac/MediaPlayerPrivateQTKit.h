@@ -68,10 +68,6 @@ public:
     void seek(float time);
     void setEndTime(float time);
     
-    void addCuePoint(float time);
-    void removeCuePoint(float time);
-    void clearCuePoints();
-    
     void setRate(float);
     void setVolume(float);
     void setMuted(bool);
@@ -112,9 +108,9 @@ private:
     void doSeek();
     void cancelSeek();
     void seekTimerFired(Timer<MediaPlayerPrivate>*);
-    void cuePointTimerFired(Timer<MediaPlayerPrivate>*);
+    void endPointTimerFired(Timer<MediaPlayerPrivate>*);
     float maxTimeLoaded() const;
-    void startCuePointTimerIfNeeded();
+    void startEndPointTimerIfNeeded();
 
     MediaPlayer* m_player;
     RetainPtr<QTMovie> m_qtMovie;
@@ -123,8 +119,7 @@ private:
     float m_seekTo;
     float m_endTime;
     Timer<MediaPlayerPrivate> m_seekTimer;
-    Timer<MediaPlayerPrivate> m_cuePointTimer;
-    float m_previousTimeCueTimerFired;
+    Timer<MediaPlayerPrivate> m_endPointTimer;
     MediaPlayer::NetworkState m_networkState;
     MediaPlayer::ReadyState m_readyState;
     bool m_startedPlaying;
