@@ -214,7 +214,8 @@ void MediaPlayerPrivate::createQTMovieView()
         addedCustomMethods = true;
     }
 
-    m_qtMovieView.adoptNS([[QTMovieView alloc] initWithFrame:m_player->rect()]);
+    m_qtMovieView.adoptNS([[QTMovieView alloc] init]);
+    setRect(m_player->rect());
     NSView* parentView = static_cast<ScrollView*>(m_player->m_parentWidget)->getDocumentView();
     [parentView addSubview:m_qtMovieView.get()];
 #ifdef BUILDING_ON_TIGER
@@ -584,8 +585,13 @@ void MediaPlayerPrivate::didEnd()
 
 void MediaPlayerPrivate::setRect(const IntRect& r) 
 { 
-    if (m_qtMovieView)
-        [m_qtMovieView.get() setFrame:r];
+    if (!m_qtMovieView) 
+        return;
+    // We don't really need the QTMovieView in any specific location so let's just get it out of the way
+    // where it won't intercept events or try to bring up the context menu.
+    IntRect farAwayButCorrectSize(r);
+    farAwayButCorrectSize.move(-1000000, -1000000);
+    [m_qtMovieView.get() setFrame:farAwayButCorrectSize];
 }
 
 void MediaPlayerPrivate::setVisible(bool b)

@@ -1,3 +1,17 @@
+2007-12-13  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Tim Hatcher.
+
+        Fix <rdar://problem/5605674> 
+        Make <video> display WebKit context menu instead of the QTKit one.
+    
+        It doesn't really matter where the QTMovieView is.
+
+        * ChangeLog:
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.mm:
+        (WebCore::MediaPlayerPrivate::createQTMovieView):
+        (WebCore::MediaPlayerPrivate::setRect):
+
 2007-12-13  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Adam Roben.
