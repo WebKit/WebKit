@@ -128,7 +128,6 @@ public:
     virtual bool hasWebView() const { return true; } // mainly for assertions
     virtual bool hasFrameView() const { return true; } // ditto
     
-    virtual void makeDocumentView() { }
     virtual void makeRepresentation(DocumentLoader*) { }
     virtual void forceLayout() { }
     virtual void forceLayoutForNonHTML() { }
@@ -244,13 +243,15 @@ public:
     virtual void setTitle(const String& title, const KURL&) { }
     
     virtual String userAgent(const KURL&) { return ""; }
-    
-    virtual void setDocumentViewFromCachedPage(CachedPage*) { }
+
+    virtual void savePlatformDataToCachedPage(CachedPage*) { }
+    virtual void transitionToCommittedFromCachedPage(CachedPage*) { }
+    virtual void transitionToCommittedForNewPage() { }    
+
     virtual void updateGlobalHistoryForStandardLoad(const KURL&) { }
     virtual void updateGlobalHistoryForReload(const KURL&) { }
     virtual bool shouldGoToHistoryItem(HistoryItem*) const { return false; }
     virtual void saveViewStateToItem(HistoryItem*) { }
-    virtual void saveDocumentViewToCachedPage(CachedPage*) { }
     virtual bool canCachePage() const { return false; }
 
     virtual PassRefPtr<Frame> createFrame(const KURL& url, const String& name, HTMLFrameOwnerElement* ownerElement,

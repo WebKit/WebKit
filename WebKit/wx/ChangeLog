@@ -1,3 +1,15 @@
+2007-12-12  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Sam Weinig
+
+        As part of doing some CachedPage and client cleanup, keep Wx building
+
+        * WebKitSupport/FrameLoaderClientWx.cpp:
+        (WebCore::FrameLoaderClientWx::savePlatformDataToCachedPage):
+        (WebCore::FrameLoaderClientWx::transitionToCommittedFromCachedPage):
+        (WebCore::FrameLoaderClientWx::transitionToCommittedForNewPage):
+        * WebKitSupport/FrameLoaderClientWx.h:
+
 2007-12-12  Sam Weinig  <sam@webkit.org>
 
         Build fix.

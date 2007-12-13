@@ -1,3 +1,51 @@
+2007-12-12  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Sam Weinig
+
+        Fix for <rdar://problem/4886844> and lay groundwork for <rdar://problem/4516170> (Back/Forward Cache on Windows)
+
+        All back/forward list and page cache related items used to be in WebKit.
+        When they were pushed into WebCore, some sloppy compromises were made to keep the Back/Forward cache working on Mac.
+        Namely, a WebCore::HistoryItem had to know how to keep a WebDocumentView alive.  We accomplished this via some #ifdefs
+        in CachedPage and having the Mac-only CachedPageMac.mm
+
+        To get rid of that nastiness and pave the way for adding Back/Forward cache on other platforms, this patch adds the 
+        concept of "CachedPagePlatformData" which can contain anything the platform API wants.  
+
+        I also took the opportunity to do other cleanup and renaming client methods to better fit their new purposes.
+
+        * WebCore.base.exp:
+        * WebCore.xcodeproj/project.pbxproj:
+
+        * history/CachedPage.cpp:
+        (WebCore::CachedPage::~CachedPage): Combined "close()" and "clear()" to just "clear()" - call it from here.
+        (WebCore::CachedPage::clear): Call clear() on the CachedPagePlatformData if it exists.  Also delete the CachedPagePlatformData.
+        (WebCore::CachedPage::setCachedPagePlatformData):
+        (WebCore::CachedPage::cachedPagePlatformData):
+        * history/CachedPage.h:
+
+        * history/CachedPagePlatformData.h: Added.
+        (WebCore::CachedPagePlatformData::~CachedPagePlatformData): Virtual d'tor.
+        (WebCore::CachedPagePlatformData::clear): Virtual method for platforms that need to do cleanup at the same time as CachedPage::clear().
+
+        * history/PageCache.cpp:
+        (WebCore::PageCache::releaseAutoreleasedPagesNow): Call "clear()" instead of "close()"
+
+        * history/mac/CachedPageMac.mm: Removed. Functionality replaced with CachedPagePlatformData.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::transitionToCommitted): Call the new client methods.  Make some work previously done by WebKitMac cross platform 
+          (setting the cached DocumentLoader to the Frame).
+        (WebCore::FrameLoader::cachePageForHistoryItem):  Renamed the client methods
+
+        * loader/FrameLoaderClient.h:  The very Mac-centric "makeDocumentView", "setDocumentViewFromCachedPage", and "saveDocumentViewToCachedPage"
+          become "transitionToCommittedForNewPage", "transitionToCommittedFromCachedPage", and "savePlatformDataToCachedPage" accordingly
+
+        * svg/graphics/SVGImageEmptyClients.h:
+        (WebCore::SVGEmptyFrameLoaderClient::savePlatformDataToCachedPage):
+        (WebCore::SVGEmptyFrameLoaderClient::transitionToCommittedFromCachedPage):
+        (WebCore::SVGEmptyFrameLoaderClient::transitionToCommittedForNewPage):
+
 2007-12-12  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Oliver Hunt.

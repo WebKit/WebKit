@@ -1,3 +1,21 @@
+2007-12-12  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Sam Weinig
+
+        Fix for <rdar://problem/4886844> and lay groundwork for <rdar://problem/4516170> (Back/Forward Cache on Windows)
+
+        * WebCoreSupport/WebCachedPagePlatformData.h: Added.
+        (WebCachedPagePlatformData::WebCachedPagePlatformData): Constructor takes a WebDocumentView for later restoration
+        (WebCachedPagePlatformData::clear):
+        (WebCachedPagePlatformData::webDocumentView):
+
+        * WebCoreSupport/WebFrameLoaderClient.h:
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::savePlatformDataToCachedPage):
+        (WebFrameLoaderClient::transitionToCommittedFromCachedPage): Don't set the DocumentLoader to the Frame here, 
+          because that is now done in WebCore.
+        (WebFrameLoaderClient::transitionToCommittedForNewPage):
+
 2007-12-12  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Dave Kilzer.

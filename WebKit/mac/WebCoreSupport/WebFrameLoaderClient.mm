@@ -35,6 +35,7 @@
 
 #import "DOMElementInternal.h"
 #import "WebBackForwardList.h"
+#import "WebCachedPagePlatformData.h"
 #import "WebChromeClient.h"
 #import "WebDataSourceInternal.h"
 #import "WebPolicyDelegatePrivate.h"
@@ -147,52 +148,10 @@ bool WebFrameLoaderClient::hasFrameView() const
     return m_webFrame->_private->webFrameView != nil;
 }
 
-void WebFrameLoaderClient::makeDocumentView()
-{
-    WebFrameView *v = m_webFrame->_private->webFrameView;
-    WebDataSource *ds = [m_webFrame.get() _dataSource];
-
-    bool willProduceHTMLView = [[WebFrameView class] _viewClassForMIMEType:[ds _responseMIMEType]] == [WebHTMLView class];
-    bool canSkipCreation = [m_webFrame.get() _frameLoader]->committingFirstRealLoad() && willProduceHTMLView;
-    if (canSkipCreation) {
-        [[v documentView] setDataSource:ds];
-        return;
-    }
-
-    // Don't suppress scrollbars before the view creation if we're making the view for a non-HTML view.
-    if (!willProduceHTMLView)
-        [[v _scrollView] setScrollBarsSuppressed:NO repaintOnUnsuppress:NO];
-    
-    NSView <WebDocumentView> *documentView = [v _makeDocumentViewForDataSource:ds];
-    if (!documentView)
-        return;
-
-    WebFrameBridge *bridge = m_webFrame->_private->bridge;
-
-    // FIXME: We could save work and not do this for a top-level view that is not a WebHTMLView.
-    [bridge createFrameViewWithNSView:documentView marginWidth:[v _marginWidth] marginHeight:[v _marginHeight]];
-    [m_webFrame.get() _updateBackground];
-    [bridge installInFrame:[v _scrollView]];
-
-    // Call setDataSource on the document view after it has been placed in the view hierarchy.
-    // This what we for the top-level view, so should do this for views in subframes as well.
-    [documentView setDataSource:ds];
-}
 
 void WebFrameLoaderClient::makeRepresentation(DocumentLoader* loader)
 {
     [dataSource(loader) _makeRepresentation];
-}
-
-void WebFrameLoaderClient::setDocumentViewFromCachedPage(CachedPage* cachedPage)
-{
-    DocumentLoader* cachedDocumentLoader = cachedPage->documentLoader();
-    ASSERT(cachedDocumentLoader);
-    cachedDocumentLoader->setFrame(core(m_webFrame.get()));
-    NSView <WebDocumentView> *cachedView = cachedPage->documentView();
-    ASSERT(cachedView != nil);
-    [cachedView setDataSource:dataSource(cachedDocumentLoader)];
-    [m_webFrame->_private->webFrameView _setDocumentView:cachedView];
 }
 
 bool WebFrameLoaderClient::hasHTMLView() const
@@ -1053,9 +1012,52 @@ void WebFrameLoaderClient::deliverArchivedResources(Timer<WebFrameLoaderClient>*
     }
 }
 
-void WebFrameLoaderClient::saveDocumentViewToCachedPage(CachedPage* cachedPage)
+void WebFrameLoaderClient::savePlatformDataToCachedPage(CachedPage* cachedPage)
 {
-    cachedPage->setDocumentView([m_webFrame->_private->webFrameView documentView]);
+    WebCachedPagePlatformData* webPlatformData = new WebCachedPagePlatformData([m_webFrame->_private->webFrameView documentView]);
+    cachedPage->setCachedPagePlatformData(webPlatformData);
+}
+
+void WebFrameLoaderClient::transitionToCommittedFromCachedPage(CachedPage* cachedPage)
+{
+    WebCachedPagePlatformData* platformData = reinterpret_cast<WebCachedPagePlatformData*>(cachedPage->cachedPagePlatformData());
+    NSView <WebDocumentView> *cachedView = platformData->webDocumentView();
+    ASSERT(cachedView != nil);
+    ASSERT(cachedPage->documentLoader());
+    [cachedView setDataSource:dataSource(cachedPage->documentLoader())];
+    [m_webFrame->_private->webFrameView _setDocumentView:cachedView];
+}
+
+void WebFrameLoaderClient::transitionToCommittedForNewPage()
+{
+    WebFrameView *v = m_webFrame->_private->webFrameView;
+    WebDataSource *ds = [m_webFrame.get() _dataSource];
+
+    bool willProduceHTMLView = [[WebFrameView class] _viewClassForMIMEType:[ds _responseMIMEType]] == [WebHTMLView class];
+    bool canSkipCreation = [m_webFrame.get() _frameLoader]->committingFirstRealLoad() && willProduceHTMLView;
+    if (canSkipCreation) {
+        [[v documentView] setDataSource:ds];
+        return;
+    }
+
+    // Don't suppress scrollbars before the view creation if we're making the view for a non-HTML view.
+    if (!willProduceHTMLView)
+        [[v _scrollView] setScrollBarsSuppressed:NO repaintOnUnsuppress:NO];
+    
+    NSView <WebDocumentView> *documentView = [v _makeDocumentViewForDataSource:ds];
+    if (!documentView)
+        return;
+
+    WebFrameBridge *bridge = m_webFrame->_private->bridge;
+
+    // FIXME: We could save work and not do this for a top-level view that is not a WebHTMLView.
+    [bridge createFrameViewWithNSView:documentView marginWidth:[v _marginWidth] marginHeight:[v _marginHeight]];
+    [m_webFrame.get() _updateBackground];
+    [bridge installInFrame:[v _scrollView]];
+
+    // Call setDataSource on the document view after it has been placed in the view hierarchy.
+    // This what we for the top-level view, so should do this for views in subframes as well.
+    [documentView setDataSource:ds];
 }
 
 RetainPtr<WebFramePolicyListener> WebFrameLoaderClient::setUpPolicyListener(FramePolicyFunction function)

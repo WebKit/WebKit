@@ -427,7 +427,6 @@ bool FrameLoaderClient::shouldGoToHistoryItem(HistoryItem* item) const
     return item != 0;
 }
 
-void FrameLoaderClient::makeDocumentView() { notImplemented(); }
 void FrameLoaderClient::makeRepresentation(DocumentLoader*) { notImplemented(); }
 void FrameLoaderClient::forceLayout() { notImplemented(); }
 void FrameLoaderClient::forceLayoutForNonHTML() { notImplemented(); }
@@ -516,7 +515,6 @@ void FrameLoaderClient::setTitle(const String& title, const KURL& url)
         g_signal_emit_by_name(page, "title-changed", titleString.data(), urlString.data());
 }
 
-void FrameLoaderClient::setDocumentViewFromCachedPage(WebCore::CachedPage*) { notImplemented(); }
 void FrameLoaderClient::dispatchDidReceiveContentLength(DocumentLoader*, unsigned long  identifier, int lengthReceived) { notImplemented(); }
 void FrameLoaderClient::dispatchDidFinishLoading(DocumentLoader*, unsigned long  identifier) { notImplemented(); }
 void FrameLoaderClient::dispatchDidFailLoading(DocumentLoader*, unsigned long  identifier, const ResourceError&) { notImplemented(); }
@@ -541,7 +539,6 @@ ResourceError FrameLoaderClient::cannotShowMIMETypeError(const ResourceResponse&
 ResourceError FrameLoaderClient::fileDoesNotExistError(const ResourceResponse&) { notImplemented(); return ResourceError(); }
 bool FrameLoaderClient::shouldFallBack(const ResourceError&) { notImplemented(); return false; }
 bool FrameLoaderClient::willUseArchive(ResourceLoader*, const ResourceRequest&, const KURL& originalURL) const { notImplemented(); return false; }
-void FrameLoaderClient::saveDocumentViewToCachedPage(CachedPage*) { notImplemented(); }
 bool FrameLoaderClient::canCachePage() const { notImplemented(); return false; }
 Frame* FrameLoaderClient::dispatchCreatePage() { notImplemented(); return 0; }
 void FrameLoaderClient::dispatchUnableToImplementPolicy(const ResourceError&) { notImplemented(); }
@@ -550,4 +547,7 @@ void FrameLoaderClient::startDownload(const ResourceRequest&) { notImplemented()
 void FrameLoaderClient::updateGlobalHistoryForStandardLoad(const KURL&) { notImplemented(); }
 void FrameLoaderClient::updateGlobalHistoryForReload(const KURL&) { notImplemented(); }
 
+void FrameLoaderClient::savePlatformDataToCachedPage(CachedPage*) { notImplemented(); }
+void FrameLoaderClient::transitionToCommittedFromCachedPage(CachedPage*) { notImplemented(); }
+void FrameLoaderClient::transitionToCommittedForNewPage() { notImplemented(); }
 }

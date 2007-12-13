@@ -65,7 +65,6 @@ namespace WebCore {
 
         virtual bool provisionalItemIsTarget() const;
 
-        virtual void makeDocumentView();
         virtual void makeRepresentation(DocumentLoader*);
         virtual void forceLayout();
         virtual void forceLayoutForNonHTML();
@@ -153,13 +152,14 @@ namespace WebCore {
 
         virtual String userAgent(const KURL&);
 
-
-        virtual void setDocumentViewFromCachedPage(CachedPage*);
+        virtual void savePlatformDataToCachedPage(WebCore::CachedPage*);
+        virtual void transitionToCommittedFromCachedPage(WebCore::CachedPage*);
+        virtual void transitionToCommittedForNewPage();
+        
         virtual void updateGlobalHistoryForStandardLoad(const KURL&);
         virtual void updateGlobalHistoryForReload(const KURL&);
         virtual bool shouldGoToHistoryItem(HistoryItem*) const;
         virtual void saveScrollPositionAndViewStateToItem(HistoryItem*);
-        virtual void saveDocumentViewToCachedPage(CachedPage*);
         virtual bool canCachePage() const;
         
         virtual void setMainDocumentError(DocumentLoader*, const ResourceError&);

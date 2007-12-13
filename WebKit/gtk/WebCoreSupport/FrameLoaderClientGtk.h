@@ -47,9 +47,7 @@ namespace WebKit {
         virtual bool hasWebView() const;
         virtual bool hasFrameView() const;
 
-        virtual void makeDocumentView();
         virtual void makeRepresentation(WebCore::DocumentLoader*);
-        virtual void setDocumentViewFromCachedPage(WebCore::CachedPage*);
         virtual void forceLayout();
         virtual void forceLayoutForNonHTML();
 
@@ -172,7 +170,10 @@ namespace WebKit {
 
         virtual WebCore::String userAgent(const WebCore::KURL&);
 
-        virtual void saveDocumentViewToCachedPage(WebCore::CachedPage*);
+        virtual void savePlatformDataToCachedPage(WebCore::CachedPage*);
+        virtual void transitionToCommittedFromCachedPage(WebCore::CachedPage*);
+        virtual void transitionToCommittedForNewPage();
+        
         virtual bool canCachePage() const;
         virtual void download(WebCore::ResourceHandle*, const WebCore::ResourceRequest&, const WebCore::ResourceRequest&, const WebCore::ResourceResponse&);
     private:

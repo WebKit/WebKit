@@ -1,3 +1,11 @@
+2007-12-12  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Sam Weinig
+
+                Fix for <rdar://problem/4886844> and lay groundwork for <rdar://problem/4516170> (Back/Forward Cache on Windows)
+
+        * WebKit.xcodeproj/project.pbxproj: Added a new file
+
 2007-12-12  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Dave Kilzer.

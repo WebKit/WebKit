@@ -158,9 +158,18 @@ void FrameLoaderClientQt::invalidateCurrentItemPageCache()
     notImplemented();
 }
 
+void FrameLoaderClientQt::savePlatformDataToCachedPage(CachedPage*) 
+{ 
+    notImplemented();
+}
 
-void FrameLoaderClientQt::makeDocumentView()
-{
+void FrameLoaderClientQt::transitionToCommittedFromCachedPage(CachedPage*)
+{ 
+    notImplemented();
+}
+
+void FrameLoaderClientQt::transitionToCommittedForNewPage() 
+{ 
 //    qDebug() << "FrameLoaderClientQt::makeDocumentView" << m_frame->document();
 
 //     if (!m_frame->document())
@@ -586,11 +595,6 @@ void FrameLoaderClientQt::registerForIconNotification(bool)
     notImplemented();
 }
 
-void FrameLoaderClientQt::setDocumentViewFromCachedPage(CachedPage*)
-{
-    notImplemented();
-}
-
 void FrameLoaderClientQt::updateGlobalHistoryForStandardLoad(const WebCore::KURL& url)
 {
     emit m_webFrame->page()->addToHistory(QUrl(url.prettyURL()));
@@ -610,11 +614,6 @@ bool FrameLoaderClientQt::shouldGoToHistoryItem(WebCore::HistoryItem *item) cons
 }
 
 void FrameLoaderClientQt::saveViewStateToItem(WebCore::HistoryItem*)
-{
-    notImplemented();
-}
-
-void FrameLoaderClientQt::saveDocumentViewToCachedPage(CachedPage*)
 {
     notImplemented();
 }
@@ -984,6 +983,7 @@ QString FrameLoaderClientQt::chooseFile(const QString& oldFile)
 {
     return webFrame()->page()->chooseFile(webFrame(), oldFile);
 }
+
 
 }
 

@@ -414,6 +414,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\WebCachedPagePlatformData.h"
+				>
+			</File>
+			<File
 				RelativePath="..\WebChromeClient.h"
 				>
 			</File>

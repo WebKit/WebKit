@@ -62,10 +62,8 @@ private:
     virtual bool hasWebView() const; // mainly for assertions
     virtual bool hasFrameView() const; // ditto
 
-    virtual void makeDocumentView();
     virtual void makeRepresentation(WebCore::DocumentLoader*);
     virtual bool hasHTMLView() const;
-    virtual void setDocumentViewFromCachedPage(WebCore::CachedPage*);
     virtual void forceLayout();
     virtual void forceLayoutForNonHTML();
 
@@ -159,6 +157,10 @@ private:
     virtual void setDefersLoading(bool);
 
     virtual WebCore::String userAgent(const WebCore::KURL&);
+    
+    virtual void savePlatformDataToCachedPage(WebCore::CachedPage*);
+    virtual void transitionToCommittedFromCachedPage(WebCore::CachedPage*);
+    virtual void transitionToCommittedForNewPage();
 
     virtual bool willUseArchive(WebCore::ResourceLoader*, const WebCore::ResourceRequest&, const WebCore::KURL& originalURL) const;
     virtual bool isArchiveLoadPending(WebCore::ResourceLoader*) const;
@@ -207,8 +209,6 @@ private:
     RetainPtr<WebFramePolicyListener> setUpPolicyListener(WebCore::FramePolicyFunction);
 
     NSDictionary *actionDictionary(const WebCore::NavigationAction&) const;
-
-    void saveDocumentViewToCachedPage(WebCore::CachedPage* cachedPage);
     
     virtual bool canCachePage() const;
 

@@ -1,3 +1,25 @@
+2007-12-12  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Sam Weinig
+
+        Fix for <rdar://problem/4886844> and lay groundwork for <rdar://problem/4516170> (Back/Forward Cache on Windows)
+
+        Even though this new code isn't exercised yet because the page cache is still turned off for Windows, local testing
+        has indicated it works well.
+
+        * WebCachedPagePlatformData.h: Added.
+        (WebCachedPagePlatformData::WebCachedPagePlatformData): Constructor takes an IWebDataSource and the object retains it
+        (WebCachedPagePlatformData::clear):
+        (WebCachedPagePlatformData::webDataSource):
+
+        * WebFrame.cpp:
+        (WebFrame::savePlatformDataToCachedPage):
+        (WebFrame::transitionToCommittedFromCachedPage):
+        (WebFrame::transitionToCommittedForNewPage):
+        * WebFrame.h:
+
+        * WebKit.vcproj/WebKit.vcproj:
+
 2007-12-12  Steve Falkenburg  <sfalken@apple.com>
 
         Build fix.

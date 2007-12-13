@@ -80,7 +80,6 @@ namespace WebCore {
         virtual bool loadProvisionalItemFromPageCache();
         virtual void invalidateCurrentItemPageCache();
 
-        virtual void makeDocumentView();
         virtual void makeRepresentation(DocumentLoader*);
         virtual void forceLayout();
         virtual void forceLayoutForNonHTML();
@@ -153,12 +152,14 @@ namespace WebCore {
 
         virtual String userAgent(const WebCore::KURL&);
 
-        virtual void setDocumentViewFromCachedPage(CachedPage*);
+        virtual void savePlatformDataToCachedPage(WebCore::CachedPage*);
+        virtual void transitionToCommittedFromCachedPage(WebCore::CachedPage*);
+        virtual void transitionToCommittedForNewPage();
+        
         virtual void updateGlobalHistoryForStandardLoad(const WebCore::KURL&);
         virtual void updateGlobalHistoryForReload(const WebCore::KURL&);
         virtual bool shouldGoToHistoryItem(WebCore::HistoryItem*) const;
         virtual void saveViewStateToItem(WebCore::HistoryItem*);
-        virtual void saveDocumentViewToCachedPage(CachedPage*);
         virtual bool canCachePage() const;
         
         virtual void setMainDocumentError(WebCore::DocumentLoader*, const WebCore::ResourceError&);

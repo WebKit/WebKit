@@ -1,3 +1,15 @@
+2007-12-12  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Sam Weinig
+
+        As part of doing some CachedPage and client cleanup, keep Qt building
+
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::savePlatformDataToCachedPage):
+        (WebCore::FrameLoaderClientQt::transitionToCommittedFromCachedPage):
+        (WebCore::FrameLoaderClientQt::transitionToCommittedForNewPage):
+        * WebCoreSupport/FrameLoaderClientQt.h:
+
 2007-12-12  Sam Weinig  <sam@webkit.org>
 
         Build fix.
