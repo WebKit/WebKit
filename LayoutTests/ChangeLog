@@ -1,3 +1,13 @@
+2007-12-12  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by John Sullivan.
+
+        - test for a bug in debug builds only where selecting an earlier item in
+          a popup selects the first item
+
+        * fast/forms/menulist-selection-reset-expected.txt: Added.
+        * fast/forms/menulist-selection-reset.html: Added.
+
 2007-12-12  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Niko.

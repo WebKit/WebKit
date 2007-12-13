@@ -138,7 +138,7 @@ public:
     void scrollToSelection();
 
 private:
-    void recalcListItems() const;
+    void recalcListItems(bool updateSelectedStates = true) const;
     void checkListItems() const;
 
     void deselectItems(HTMLOptionElement* excludeElement = 0);

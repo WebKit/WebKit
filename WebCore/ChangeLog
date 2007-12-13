@@ -1,3 +1,20 @@
+2007-12-12  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by John Sullivan.
+
+        - fix a bug in debug builds only where selecting an earlier item in
+          a popup selects the first item
+
+        Test: fast/forms/menulist-selection-reset.html
+
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::recalcListItems): Added an argument that
+        tells that function whether it should update the selected state of
+        option elements.
+        (WebCore::HTMLSelectElement::checkListItems): Changed to pass false
+        as the above argument.
+        * html/HTMLSelectElement.h:
+
 2007-12-12  Adele Peterson  <adele@apple.com>
 
         Reviewed by Geoff.
