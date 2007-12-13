@@ -1,3 +1,59 @@
+2007-12-12  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Adam and Jon.
+
+        <rdar://problem/5349282>
+        popup blocking is not applied to plugins on Windows.
+        
+        Implement popup blocking. If the plug-in supports the new 
+        NPN_PushPopupsEnabledState/NPN_PopPopupsEnabledState API we just use that
+        to determine if a plug-in request can open new windows.
+        
+        If a plug-in does not support the new API, we assume that a plug-in can open new windows
+        in response to either mouse click or key press events.
+        
+        * plugins/win/PluginViewWin.cpp:
+        (WebCore::PluginRequestWin::PluginRequestWin):
+        (WebCore::PluginRequestWin::shouldAllowPopups):
+        Add new shouldAllowPopups member.
+        
+        (WebCore::PluginViewWin::popPopupsStateTimerFired):
+        Reset the popup state.
+        
+        (WebCore::isWindowsMessageUserGesture):
+        New function that given a windows message id returns whether it's a user gesture or not.
+        
+        (WebCore::PluginViewWin::wndProc):
+        Allow popups if the window message is a user gesture.
+        
+        (WebCore::PluginViewWin::dispatchNPEvent):
+        New method that dispatches an NPEvent, turning on popups if necessary.
+        
+        (WebCore::PluginViewWin::paint):
+        (WebCore::PluginViewWin::handleKeyboardEvent):
+        (WebCore::PluginViewWin::handleMouseEvent):
+        Call dispatchNPEvent().
+        
+        (WebCore::PluginViewWin::performRequest):
+        (WebCore::PluginViewWin::load):
+        Add calls to shouldAllowPopups().
+        
+        (WebCore::PluginViewWin::pushPopupsEnabledState):
+        (WebCore::PluginViewWin::popPopupsEnabledState):
+        New methods that maintain the popup state stack.
+        
+        (WebCore::PluginViewWin::arePopupsAllowed):
+        New method that returns whether popups are allowed.
+        
+        (WebCore::PluginViewWin::PluginViewWin):
+        * plugins/win/PluginViewWin.h:
+        Add new instance variables.
+        
+        * plugins/win/npapi.cpp:
+        (NPN_PushPopupsEnabledState):
+        (NPN_PopPopupsEnabledState):
+        Implement these.
+
 2007-12-12  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by John Sullivan.

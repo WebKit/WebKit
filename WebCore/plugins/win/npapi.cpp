@@ -160,9 +160,11 @@ void* NPN_GetJavaPeer(NPP instance)
 void
 NPN_PushPopupsEnabledState(NPP instance, NPBool enabled)
 {
+    pluginViewForInstance(instance)->pushPopupsEnabledState(enabled);
 }
 
 void
 NPN_PopPopupsEnabledState(NPP instance)
 {
+    pluginViewForInstance(instance)->popPopupsEnabledState();
 }
