@@ -1,3 +1,9 @@
+2007-12-13  Dan Bernstein  <mitz@apple.com>
+
+        - build fix
+
+        * platform/network/cf/ResourceErrorCF.cpp:
+
 2007-12-13  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Tim Hatcher.

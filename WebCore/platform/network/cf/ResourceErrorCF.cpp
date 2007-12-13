@@ -29,7 +29,12 @@
 
 #if USE(CFNETWORK)
 
+// FIXME: Once <rdar://problem/5050881> is fixed in open source we
+// can remove this extern "C"
+extern "C" { 
 #include <CFNetwork/CFNetworkErrors.h>
+}
+
 #include <CoreFoundation/CFError.h>
 #include <WTF/RetainPtr.h>
 
