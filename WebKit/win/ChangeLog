@@ -1,3 +1,9 @@
+2007-12-13  Steve Falkenburg  <sfalken@apple.com>
+
+        Fix project dependencies based on JavaScriptCore change.
+
+        * WebKit.vcproj/WebKit.sln:
+
 2007-12-13  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Adele.

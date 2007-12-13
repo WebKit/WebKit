@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="Windows-1252"?>
+<VisualStudioProject
+	ProjectType="Visual C++"
+	Version="8.00"
+	Name="JavaScriptCoreGenerated"
+	ProjectGUID="{4FF5BA11-59EC-4C24-8F52-F235C2E7D43A}"
+	RootNamespace="JavaScriptCoreGenerated"
+	Keyword="MakeFileProj"
+	>
+	<Platforms>
+		<Platform
+			Name="Win32"
+		/>
+	</Platforms>
+	<ToolFiles>
+	</ToolFiles>
+	<Configurations>
+		<Configuration
+			Name="Release|Win32"
+			OutputDirectory="$(WebKitOutputDir)\lib"
+			IntermediateDirectory="$(WebKitOutputDir)\obj\$(ProjectName)\$(ConfigurationName)"
+			ConfigurationType="0"
+			>
+			<Tool
+				Name="VCNMakeTool"
+				BuildCommandLine="nmake /nologo -f JavaScriptCoreGenerated.make"
+				ReBuildCommandLine="nmake /nologo -f JavaScriptCoreGenerated.make clean&#x0D;&#x0A;nmake -f JavaScriptCoreGenerated.make"
+				CleanCommandLine="nmake /nologo -f JavaScriptCoreGenerated.make clean"
+				Output=""
+				PreprocessorDefinitions="WIN32;NDEBUG"
+				IncludeSearchPath=""
+				ForcedIncludes=""
+				AssemblySearchPath=""
+				ForcedUsingAssemblies=""
+				CompileAsManaged=""
+			/>
+		</Configuration>
+	</Configurations>
+	<References>
+	</References>
+	<Files>
+		<File
+			RelativePath=".\build-generated-files.sh"
+			>
+		</File>
+		<File
+			RelativePath=".\JavaScriptCoreGenerated.make"
+			>
+		</File>
+	</Files>
+	<Globals>
+	</Globals>
+</VisualStudioProject>

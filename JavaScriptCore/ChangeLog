@@ -1,3 +1,15 @@
+2007-12-13  Steve Falkenburg  <sfalken@apple.com>
+
+        Move source file generation into its own vcproj to fix build dependencies.
+
+        Reviewed by Adam.
+
+        * JavaScriptCore.vcproj/JavaScriptCore.sln:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCoreGenerated.make: Added.
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCoreGenerated.vcproj: Added.
+        * JavaScriptCore.vcproj/JavaScriptCoreSubmit.sln:
+
 2007-12-13  Alp Toker  <alp@atoker.com>
 
         http://bugs.webkit.org/show_bug.cgi?id=16406
