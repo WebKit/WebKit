@@ -46,6 +46,12 @@ WebInspector.ConsolePanel = function()
     this.element.appendChild(this.consolePrompt);
 
     this.consolePrompt.addEventListener("keydown", this.promptKeyDown.bind(this), false);
+
+    var clearButtonText = WebInspector.UIString("Clear");
+    this.clearMessagesElement = document.createElement("button");
+    this.clearMessagesElement.appendChild(document.createTextNode(clearButtonText));
+    this.clearMessagesElement.title = clearButtonText;
+    this.clearMessagesElement.addEventListener("click", this.clearButtonClicked.bind(this), false);
 }
 
 WebInspector.ConsolePanel.prototype = {
@@ -53,12 +59,17 @@ WebInspector.ConsolePanel.prototype = {
     {
         WebInspector.Panel.prototype.show.call(this);
         WebInspector.consoleListItem.select();
+
+        this.clearMessagesElement.removeStyleClass("hidden");
+        if (!this.clearMessagesElement.parentNode)
+            document.getElementById("toolbarButtons").appendChild(this.clearMessagesElement);
     },
 
     hide: function()
     {
         WebInspector.Panel.prototype.hide.call(this);
         WebInspector.consoleListItem.deselect();
+        this.clearMessagesElement.addStyleClass("hidden");
     },
 
     addMessage: function(msg)
@@ -97,6 +108,11 @@ WebInspector.ConsolePanel.prototype = {
 
         this.messages = [];
         this.messageList.removeChildren();
+    },
+
+    clearButtonClicked: function()
+    {
+        this.clearMessages();
     },
 
     messageListClicked: function(event)

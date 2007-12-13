@@ -97,6 +97,7 @@ body.attached.inactive #toolbar {
     height: 19px;
     -webkit-box-sizing: border-box;
     vertical-align: middle;
+    line-height: 7px;
 }
 
 #toolbar button:focus {

@@ -1,3 +1,13 @@
+2007-12-12  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Add button to clear the Web Inspector's console.
+
+        * English.lproj/InspectorLocalizedStrings.js:
+        * page/inspector/ConsolePanel.js:
+        * page/inspector/inspector.css:
+
 2007-12-12  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Adam and Jon.
