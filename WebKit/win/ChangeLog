@@ -1,3 +1,18 @@
+2007-12-13  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Adele.
+
+        http://bugs.webkit.org/show_bug.cgi?id=16421
+        REGRESSION(r28669): Page scrolls down when you hit space key in text area
+
+        Test: fast/events/space-scroll-event.html
+
+        * WebView.cpp:
+        (WebView::keyDown):
+        (WebView::keyPress):
+        Moved space handliing to keyPress() to fix this bug and to match IE. Scrolling via arrow keys is correctly handled
+        in keyDown().
+
 2007-12-12  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Sam Weinig
