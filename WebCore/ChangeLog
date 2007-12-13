@@ -1,3 +1,18 @@
+2007-12-13  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Adam Roben.
+
+        - ensure that Unicode bidi control characters are rendered as zero width
+          spaces
+
+        Test: fast/text/international/bidi-control-chars-treated-as-ZWS.html
+
+        * platform/graphics/Font.h:
+        (WebCore::Font::treatAsZeroWidthSpace):
+        * platform/graphics/GlyphPageTreeNode.cpp:
+        (WebCore::GlyphPageTreeNode::initializePage):
+        * platform/text/CharacterNames.h:
+
 2007-12-13  Brady Eidson  <beidson@apple.com>
 
         Build fix

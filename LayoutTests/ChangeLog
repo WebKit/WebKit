@@ -1,3 +1,15 @@
+2007-12-13  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Adam Roben.
+
+        - test that Unicode bidi control characters are rendered as zero width
+          spaces
+
+        * fast/text/international/bidi-control-chars-treated-as-ZWS.html: Added.
+        * platform/mac-leopard/fast/text/international/bidi-control-chars-treated-as-ZWS-expected.checksum: Added.
+        * platform/mac-leopard/fast/text/international/bidi-control-chars-treated-as-ZWS-expected.png: Added.
+        * platform/mac-leopard/fast/text/international/bidi-control-chars-treated-as-ZWS-expected.txt: Added.
+
 2007-12-12  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Oliver Hunt.
