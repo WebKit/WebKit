@@ -568,11 +568,9 @@ void DeleteSelectionCommand::mergeParagraphs()
 
 void DeleteSelectionCommand::removePreviouslySelectedEmptyTableRows()
 {
-    if (m_endTableRow && m_endTableRow->inDocument()) {
-        Node* row = m_endTableRow.get();
-        // Do not remove the row that contained the start of the selection,
-        // since it now contains the selection.
-        while (row && row != m_startTableRow.get()) {
+    if (m_endTableRow && m_endTableRow->inDocument() && m_endTableRow != m_startTableRow) {
+        Node* row = m_endTableRow->previousSibling();
+        while (row && row != m_startTableRow) {
             RefPtr<Node> previousRow = row->previousSibling();
             if (isTableRowEmpty(row))
                 // Use a raw removeNode, instead of DeleteSelectionCommand's, because
@@ -584,16 +582,25 @@ void DeleteSelectionCommand::removePreviouslySelectedEmptyTableRows()
     
     // Remove empty rows after the start row.
     if (m_startTableRow && m_startTableRow->inDocument() && m_startTableRow != m_endTableRow) {
-        // Do not remove the row that contained the start of the selection,
-        // since it now contains the selection.
         Node* row = m_startTableRow->nextSibling();
-        while (row) {
+        while (row && row != m_endTableRow) {
             RefPtr<Node> nextRow = row->nextSibling();
             if (isTableRowEmpty(row))
                 CompositeEditCommand::removeNode(row);
             row = nextRow.get();
         }
     }
+    
+    if (m_endTableRow && m_endTableRow->inDocument() && m_endTableRow != m_startTableRow)
+        if (isTableRowEmpty(m_endTableRow.get())) {
+            // Don't remove m_endTableRow if it's where we're putting the ending selection.
+            if (!m_endingPosition.node()->isDescendantOf(m_endTableRow.get())) {
+                // FIXME: We probably shouldn't remove m_endTableRow unless it's fully selected, even if it is empty.
+                // We'll need to start adjusting the selection endpoints during deletion to know whether or not m_endTableRow
+                // was fully selected here.
+                CompositeEditCommand::removeNode(m_endTableRow.get());
+            }
+        }
 }
 
 void DeleteSelectionCommand::calculateTypingStyleAfterDelete(Node *insertedPlaceholder)

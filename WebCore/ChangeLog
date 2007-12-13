@@ -1,3 +1,16 @@
+2007-12-12  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/5433862> Mail crashes at WebCore::highestAncestor() when deleting a particular selection
+
+        * editing/DeleteSelectionCommand.cpp:
+        (WebCore::DeleteSelectionCommand::removePreviouslySelectedEmptyTableRows):
+        Don't remove the table row that contained the end of the selection if it is where we are
+        about to place the ending selection.
+        Don't remove all empty rows after the row that contained the start of the selection,
+        they might come after the row that contained the end of the selection.
+
 2007-12-12  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.
