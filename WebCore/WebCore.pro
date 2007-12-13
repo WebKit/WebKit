@@ -882,7 +882,6 @@ qt-port {
     platform/graphics/qt/PathQt.cpp \
     platform/network/qt/ResourceHandleQt.cpp \
     editing/qt/EditorQt.cpp \
-    history/qt/CachedPageQt.cpp \
     platform/qt/ClipboardQt.cpp \
     platform/qt/ContextMenuItemQt.cpp \
     platform/qt/ContextMenuQt.cpp \

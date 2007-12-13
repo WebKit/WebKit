@@ -2,6 +2,13 @@
 
         Build fix
 
+        * WebCore.pro:
+        * history/qt/CachedPageQt.cpp: Removed. Whole purpose for this method being platform-specific has been removed
+
+2007-12-12  Brady Eidson  <beidson@apple.com>
+
+        Build fix
+
         * platform/win/TemporaryLinkStubs.cpp:
 
 2007-12-12  Brady Eidson  <beidson@apple.com>
