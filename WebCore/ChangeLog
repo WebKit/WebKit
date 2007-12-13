@@ -1,3 +1,9 @@
+2007-12-13  Brady Eidson  <beidson@apple.com>
+
+        Build fix
+
+        * platform/wx/TemporaryLinkStubs.cpp:
+
 2007-12-12  Brady Eidson  <beidson@apple.com>
 
         Build fix
