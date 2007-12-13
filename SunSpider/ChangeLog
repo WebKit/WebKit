@@ -1,3 +1,19 @@
+2007-12-12  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Sam.
+        
+        - Change sunspider-compare-results output from showing "% faster" values to "x as fast" values.
+        
+        A sample of what new-style results would look like:
+        
+        TEST                   COMPARISON            FROM                 TO             DETAILS
+        ...
+        ** TOTAL **:           1.41x as fast     6613.6ms +/- 0.1%   4703.0ms +/- 0.1%     significant
+        ...
+            3bit-bits-in-byte: *1.36x as slow*     88.8ms +/- 0.6%    121.1ms +/- 0.6%     significant
+        
+        * resources/sunspider-compare-results.js:
+
 2007-11-14  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Sam.

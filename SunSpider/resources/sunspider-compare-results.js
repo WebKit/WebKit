@@ -305,7 +305,10 @@ function sunspiderCompareResults(output1, output2)
         var percentage = 100 * diff / mean1;
         var isFaster = diff < 0;
         var probablySame = (percentage < 0.1) && !statisticallySignificant;
-        
+        var ratio = isFaster ? (mean1 / mean2) : (mean2 / mean1);
+        var fixedRatio = (ratio < 10) ? ratio.toFixed(2).toString() : ratio.toFixed(1).toString();
+        var formattedRatio = isFaster ? fixedRatio + "x as fast" : "*" + fixedRatio + "x as slow*";
+
         var diffSummary;
         var diffDetail;
         
@@ -314,14 +317,13 @@ function sunspiderCompareResults(output1, output2)
             diffDetail = "";
         } else if (!statisticallySignificant) {
             diffSummary = "??";
-            diffDetail =  "    not conclusive: might be " + Math.abs(percentage).toFixed(1).toString() + "% ";
-            diffDetail += (isFaster ? "faster" : "*slower*");
+            diffDetail =  "    not conclusive: might be " + formattedRatio;
         } else {
-            diffSummary = Math.abs(percentage).toFixed(1).toString() + "% " + (isFaster ? "faster" : "*slower*");
+            diffSummary = formattedRatio;
             diffDetail = "    significant"; 
         }
         
-        return result + pad(diffSummary, 16) + formatMean(meanWidth1, mean1, stdErr1, count1) + "  " + formatMean(meanWidth2, mean2, stdErr2, count2) + diffDetail;
+        return result + pad(diffSummary, 18) + formatMean(meanWidth1, mean1, stdErr1, count1) + "  " + formatMean(meanWidth2, mean2, stdErr2, count2) + diffDetail;
     }
     
     function printOutput()
