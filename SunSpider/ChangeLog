@@ -1,3 +1,15 @@
+2007-12-13  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Oliver.
+        
+        - Make the web-hosted version of SunSpider look a little bit less drab.
+
+        * hosted/sunspider-driver.html:
+        * hosted/sunspider-results.html:
+        * hosted/sunspider.css: Added.
+        * hosted/sunspider.html:
+        * resources/TEMPLATE.html:
+
 2007-12-12  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Sam.
