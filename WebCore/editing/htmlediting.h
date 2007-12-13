@@ -110,8 +110,8 @@ Position positionOutsideContainingSpecialElement(const Position&, Node** contain
 Node* isLastPositionBeforeTable(const VisiblePosition&);
 Node* isFirstPositionAfterTable(const VisiblePosition&);
 
-Node* enclosingNodeWithTag(Node*, const QualifiedName&);
-Node* enclosingNodeOfType(Node*, bool (*nodeIsOfType)(const Node*));
+Node* enclosingNodeWithTag(const Position&, const QualifiedName&);
+Node* enclosingNodeOfType(const Position&, bool (*nodeIsOfType)(const Node*));
 Node* enclosingTableCell(const Position&);
 Node* enclosingEmptyListItem(const VisiblePosition&);
 Node* enclosingAnchorElement(const Position&);
@@ -121,6 +121,7 @@ Node* outermostEnclosingList(Node*);
 Node* enclosingListChild(Node*);
 Node* highestAncestor(Node*);
 bool isTableElement(Node*);
+bool isTableCell(const Node*);
 
 bool lineBreakExistsAtPosition(const VisiblePosition&);
 

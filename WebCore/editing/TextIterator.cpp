@@ -374,15 +374,6 @@ bool TextIterator::handleReplacedElement()
     return true;
 }
 
-static bool isTableCell(Node* node)
-{
-    RenderObject* r = node->renderer();
-    if (!r)
-        return node->hasTagName(tdTag) || node->hasTagName(thTag);
-    
-    return r->isTableCell();
-}
-
 static bool shouldEmitTabBeforeNode(Node* node)
 {
     RenderObject* r = node->renderer();

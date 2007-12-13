@@ -1,3 +1,69 @@
+2007-12-13  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/5601583> GMail Editor: Copied link doesn't paste as a link, just colored text
+        
+        The code that checks the selected Range to see if it's inside an anchor
+        checks ancestors of the Range's commonAncestor() but not the
+        commonAncestor() itself, and so we'd fail to add markup for the enclosing
+        anchor to the pasteboard.
+        
+        Some enclosing element getters check the node passed to the getter and some
+        don't.  There were a few places where we incorrectly assumed that enclosing 
+        element getters check the node passed to the getter, but this is the only 
+        case that I'm able to write a test case for at the moment.
+        
+        In this patch I've:
+        Changed enclosingNodeWithType and enclosingNodeWithTag to take in positions,
+        like the newer enclosing element getters.  This is important because we must
+        soon add code to the getters so that they understand that some editing positions
+        inside nodes don't actually refer to positions inside those nodes but positions
+        before and after them.  Like [table, 0].
+        Changed enclosingNodeWithType and enclosingNodeWithTag to check nodes starting with
+        n where [n, o] is the position passed to the getter, instead of starting the the parent
+        of n.  This makes all but a few of the enclosing element getters behave consistently.
+        Changed enclosingNodeWithType and enclosingNodeWithTag to not return non-editable 
+        nodes if the input position was editable.  This fixes a bug that that the above change
+        exposed.
+        Changed enclosingTableCell to simply call enclosingNodeWithType.  We should do
+        this for the rest of the getters, or simply remove them in favor of enclosingNodeWithType
+        unless doing so would affect readability, like it would in the case of enclosingTableCell.
+        Ditto for enclosingBlock.
+
+        * editing/AppendNodeCommand.cpp:
+        (WebCore::AppendNodeCommand::doApply):
+        * editing/DeleteButtonController.cpp:
+        (WebCore::enclosingDeletableElement):
+        * editing/DeleteSelectionCommand.cpp:
+        (WebCore::DeleteSelectionCommand::initializePositionData):
+        (WebCore::DeleteSelectionCommand::saveFullySelectedAnchor):
+        * editing/Editor.cpp:
+        (WebCore::Editor::selectionUnorderedListState):
+        (WebCore::Editor::selectionOrderedListState):
+        * editing/IndentOutdentCommand.cpp:
+        (WebCore::IndentOutdentCommand::prepareBlockquoteLevelForInsertion):
+        (WebCore::IndentOutdentCommand::outdentParagraph):
+        * editing/InsertNodeBeforeCommand.cpp:
+        (WebCore::InsertNodeBeforeCommand::doApply):
+        * editing/InsertParagraphSeparatorCommand.cpp:
+        (WebCore::InsertParagraphSeparatorCommand::doApply):
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplaceSelectionCommand::shouldMerge):
+        (WebCore::ReplaceSelectionCommand::removeUnrenderedTextNodesAtEnds):
+        (WebCore::ReplaceSelectionCommand::positionAtEndOfInsertedContent):
+        * editing/TextIterator.cpp:
+        * editing/htmlediting.cpp:
+        (WebCore::enclosingBlock):
+        (WebCore::enclosingNodeWithTag):
+        (WebCore::enclosingNodeOfType):
+        (WebCore::enclosingTableCell):
+        (WebCore::isTableCell):
+        * editing/htmlediting.h:
+        * editing/markup.cpp:
+        (WebCore::appendStartMarkup):
+        (WebCore::createMarkup):
+
 2007-12-13  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin.

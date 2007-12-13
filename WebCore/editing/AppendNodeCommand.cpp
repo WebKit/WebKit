@@ -43,7 +43,7 @@ void AppendNodeCommand::doApply()
     // If the child to append is already in a tree, appending it will remove it from it's old location
     // in an non-undoable way.  We might eventually find it useful to do an undoable remove in this case.
     ASSERT(!m_childToAppend->parent());
-    ASSERT(isContentEditable(m_parentNode.get()) || enclosingNodeOfType(m_parentNode.get(), &isContentEditable) || !m_parentNode->attached());
+    ASSERT(enclosingNodeOfType(Position(m_parentNode.get(), 0), &isContentEditable) || !m_parentNode->attached());
 
     ExceptionCode ec = 0;
     m_parentNode->appendChild(m_childToAppend.get(), ec);

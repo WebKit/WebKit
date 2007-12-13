@@ -80,10 +80,10 @@ Node* IndentOutdentCommand::prepareBlockquoteLevelForInsertion(VisiblePosition& 
     int currentBlockquoteLevel = 0;
     int lastBlockquoteLevel = 0;
     Node* node = currentParagraph.deepEquivalent().node();
-    while ((node = enclosingNodeOfType(node, &isIndentBlockquote)))
+    while ((node = enclosingNodeOfType(Position(node->parentNode(), 0), &isIndentBlockquote)))
         currentBlockquoteLevel++;
     node = *lastBlockquote;
-    while ((node = enclosingNodeOfType(node, &isIndentBlockquote)))
+    while ((node = enclosingNodeOfType(Position(node->parentNode(), 0), &isIndentBlockquote)))
         lastBlockquoteLevel++;
     while (currentBlockquoteLevel > lastBlockquoteLevel) {
         RefPtr<Node> newBlockquote = createIndentBlockquoteElement(document());
@@ -92,7 +92,7 @@ Node* IndentOutdentCommand::prepareBlockquoteLevelForInsertion(VisiblePosition& 
         lastBlockquoteLevel++;
     }
     while (currentBlockquoteLevel < lastBlockquoteLevel) {
-        *lastBlockquote = enclosingNodeOfType(*lastBlockquote, &isIndentBlockquote);
+        *lastBlockquote = enclosingNodeOfType(Position((*lastBlockquote)->parentNode(), 0), &isIndentBlockquote);
         lastBlockquoteLevel--;
     }
     RefPtr<Node> placeholder = createBreakElement(document());
@@ -207,7 +207,7 @@ void IndentOutdentCommand::outdentParagraph()
     VisiblePosition visibleStartOfParagraph = startOfParagraph(endingSelection().visibleStart());
     VisiblePosition visibleEndOfParagraph = endOfParagraph(visibleStartOfParagraph);
 
-    Node* enclosingNode = enclosingNodeOfType(visibleStartOfParagraph.deepEquivalent().node(), &isListOrIndentBlockquote);
+    Node* enclosingNode = enclosingNodeOfType(visibleStartOfParagraph.deepEquivalent(), &isListOrIndentBlockquote);
     if (!enclosingNode)
         return;
 

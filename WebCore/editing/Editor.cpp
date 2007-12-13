@@ -461,12 +461,11 @@ const FontData* Editor::fontForSelection(bool& hasMultipleFonts) const
 TriState Editor::selectionUnorderedListState() const
 {
     if (m_frame->selectionController()->isCaret()) {
-        Node* selectionNode = m_frame->selectionController()->selection().start().node();
-        if (enclosingNodeWithTag(selectionNode, ulTag))
+        if (enclosingNodeWithTag(m_frame->selectionController()->selection().start(), ulTag))
             return TrueTriState;
     } else if (m_frame->selectionController()->isRange()) {
-        Node* startNode = enclosingNodeWithTag(m_frame->selectionController()->selection().start().node(), ulTag);
-        Node* endNode = enclosingNodeWithTag(m_frame->selectionController()->selection().end().node(), ulTag);
+        Node* startNode = enclosingNodeWithTag(m_frame->selectionController()->selection().start(), ulTag);
+        Node* endNode = enclosingNodeWithTag(m_frame->selectionController()->selection().end(), ulTag);
         if (startNode && endNode && startNode == endNode)
             return TrueTriState;
     }
@@ -477,12 +476,11 @@ TriState Editor::selectionUnorderedListState() const
 TriState Editor::selectionOrderedListState() const
 {
     if (m_frame->selectionController()->isCaret()) {
-        Node* selectionNode = m_frame->selectionController()->selection().start().node();
-        if (enclosingNodeWithTag(selectionNode, olTag))
+        if (enclosingNodeWithTag(m_frame->selectionController()->selection().start(), olTag))
             return TrueTriState;
     } else if (m_frame->selectionController()->isRange()) {
-        Node* startNode = enclosingNodeWithTag(m_frame->selectionController()->selection().start().node(), olTag);
-        Node* endNode = enclosingNodeWithTag(m_frame->selectionController()->selection().end().node(), olTag);
+        Node* startNode = enclosingNodeWithTag(m_frame->selectionController()->selection().start(), olTag);
+        Node* endNode = enclosingNodeWithTag(m_frame->selectionController()->selection().end(), olTag);
         if (startNode && endNode && startNode == endNode)
             return TrueTriState;
     }

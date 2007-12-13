@@ -1,3 +1,14 @@
+2007-12-13  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/5601583> GMail Editor: Copied link doesn't paste as a link, just colored text
+
+        * editing/pasteboard/5601583-1.html: Added.
+        * platform/mac/editing/pasteboard/5601583-1-expected.checksum: Added.
+        * platform/mac/editing/pasteboard/5601583-1-expected.png: Added.
+        * platform/mac/editing/pasteboard/5601583-1-expected.txt: Added.
+
 2007-12-13  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Alice and Sam.
