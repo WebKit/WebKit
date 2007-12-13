@@ -28,7 +28,6 @@
 #include "config.h"
 
 #include "AXObjectCache.h"
-#include "CachedPage.h"
 #include "Editor.h"
 #include "FrameView.h"
 #include "FTPDirectoryDocument.h"
@@ -67,8 +66,6 @@ void WebCore::refreshPlugins(bool) { notImplemented(); }
 
 Color WebCore::focusRingColor() { return 0xFF0000FF; }
 void WebCore::setFocusRingColorChangeFunction(void (*)()) { }
-
-void CachedPage::close() { notImplemented(); }
 
 namespace WebCore {
 Vector<String> supportedKeySizes() { notImplemented(); return Vector<String>(); }
