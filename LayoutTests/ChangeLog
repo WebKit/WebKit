@@ -1,3 +1,17 @@
+2007-12-12  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        - updated results and skipped tests file for
+          <rdar://problem/5074620> text with font:initial; fails to appear (causes fast/text/font-initial.html to fail)
+
+        * platform/mac-leopard/fast/text/font-initial-expected.checksum: Copied from LayoutTests/platform/mac/fast/text/font-initial-expected.checksum.
+        * platform/mac-leopard/fast/text/font-initial-expected.png: Copied from LayoutTests/platform/mac/fast/text/font-initial-expected.png.
+        * platform/mac/fast/text/font-initial-expected.checksum: Removed.
+        * platform/mac/fast/text/font-initial-expected.png: Removed.
+        * platform/mac/fast/text/font-initial-expected.txt:
+        * platform/win/Skipped:
+
 2007-12-12  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Darin Adler.

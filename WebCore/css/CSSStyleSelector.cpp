@@ -3341,6 +3341,13 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         } else if (isInitial) {
             FontDescription fontDescription;
             fontDescription.setGenericFamily(FontDescription::StandardFamily);
+            const AtomicString& standardFontFamily = m_document->settings()->standardFontFamily();
+            if (!standardFontFamily.isEmpty()) {
+                fontDescription.firstFamily().setFamily(standardFontFamily);
+                fontDescription.firstFamily().appendFamily(0);
+            }
+            fontDescription.setKeywordSize(CSS_VAL_MEDIUM - CSS_VAL_XX_SMALL + 1);
+            setFontSize(fontDescription, fontSizeForKeyword(CSS_VAL_MEDIUM, style->htmlHacks(), false));
             style->setLineHeight(RenderStyle::initialLineHeight());
             m_lineHeightValue = 0;
             if (style->setFontDescription(fontDescription))

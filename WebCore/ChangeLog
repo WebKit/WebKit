@@ -1,3 +1,14 @@
+2007-12-12  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        - fix <rdar://problem/5074620> text with font:initial; fails to appear (causes fast/text/font-initial.html to fail)
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty): When the font property is
+        set to 'initial', set the font size to its initial value, 'medium',
+        and the font family to the standard family.
+
 2007-12-12  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Darin Adler.
