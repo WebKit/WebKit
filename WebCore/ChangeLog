@@ -1,3 +1,14 @@
+2007-12-13  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        - fix regression in fast/text/international/bidi-override on Tiger
+
+        * platform/graphics/GlyphPageTreeNode.cpp:
+        (WebCore::GlyphPageTreeNode::initializePage): Add bidi overrides here
+        too. I forgot to add them when I added them to treatAsZeroWidthSpace in
+        an earlier patch.
+
 2007-12-13  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Darin Adler.

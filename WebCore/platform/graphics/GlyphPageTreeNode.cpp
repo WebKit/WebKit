@@ -126,6 +126,8 @@ void GlyphPageTreeNode::initializePage(const FontData* fontData, unsigned pageNu
                     buffer[rightToLeftMark - start] = zeroWidthSpace;
                     buffer[leftToRightEmbed - start] = zeroWidthSpace;
                     buffer[rightToLeftEmbed - start] = zeroWidthSpace;
+                    buffer[leftToRightOverride - start] = zeroWidthSpace;
+                    buffer[rightToLeftOverride - start] = zeroWidthSpace;
                     buffer[popDirectionalFormatting - start] = zeroWidthSpace;
                 } else if (start == (objectReplacementCharacter & ~(GlyphPage::size - 1))) {
                     // Object replacement character must not render at all.
