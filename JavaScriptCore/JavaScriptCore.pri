@@ -9,6 +9,10 @@ qt-port:INCLUDEPATH += $$PWD/bindings/qt
 qt-port:DEFINES += BUILDING_QT__
 gtk-port:DEFINES += BUILDING_GTK__
 
+# http://bugs.webkit.org/show_bug.cgi?id=16406
+# [Gtk] JavaScriptCore needs -lpthread
+gtk-port:!win32-*:LIBS += -lpthread
+
 win32-msvc*: INCLUDEPATH += $$PWD/os-win32
 
 isEmpty(GENERATED_SOURCES_DIR):GENERATED_SOURCES_DIR = tmp

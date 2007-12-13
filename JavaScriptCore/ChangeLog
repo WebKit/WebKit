@@ -1,3 +1,14 @@
+2007-12-13  Alp Toker  <alp@atoker.com>
+
+        http://bugs.webkit.org/show_bug.cgi?id=16406
+        [Gtk] JavaScriptCore needs -lpthread
+
+        Build fix for Debian and any other platforms that don't implicitly
+        link to pthread.
+
+        Link to pthread on non-Windows platforms until this dependency is
+        removed from JSC.
+
 2007-12-11  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Sam Weinig.
