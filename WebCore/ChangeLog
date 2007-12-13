@@ -1,3 +1,28 @@
+2007-12-13  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        Turn on keyboard event processing quirks for feed views and old applications on Mac OS X.
+
+        * WebCore.base.exp:
+        * dom/KeyboardEvent.cpp:
+        (WebCore::KeyboardEvent::charCode):
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::needsKeyboardEventDisambiguationQuirks):
+        (WebCore::EventHandler::keyEvent):
+        * page/EventHandler.h:
+        * page/Settings.cpp:
+        (WebCore::Settings::Settings):
+        (WebCore::Settings::setNeedsKeyboardEventDisambiguationQuirks):
+        * page/Settings.h:
+        (WebCore::Settings::needsKeyboardEventDisambiguationQuirks):
+        * page/mac/EventHandlerMac.mm:
+        (WebCore::EventHandler::needsKeyboardEventDisambiguationQuirks):
+        * platform/PlatformKeyboardEvent.h:
+        * platform/mac/KeyEventMac.mm:
+        (WebCore::PlatformKeyboardEvent::PlatformKeyboardEvent):
+        (WebCore::PlatformKeyboardEvent::disambiguateKeyDownEvent):
+
 2007-12-13  Dan Bernstein  <mitz@apple.com>
 
         - build fix

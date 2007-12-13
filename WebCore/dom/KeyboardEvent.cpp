@@ -26,6 +26,8 @@
 #include "Document.h"
 #include "DOMWindow.h"
 #include "EventNames.h"
+#include "EventHandler.h"
+#include "Frame.h"
 #include "PlatformKeyboardEvent.h"
 #include "Settings.h"
 
@@ -130,13 +132,12 @@ int KeyboardEvent::charCode() const
 {
     // IE: not supported
     // Firefox: 0 for keydown/keyup events, character code for keypress
-    // We match Firefox, unless in Dashboard compatibility mode, where we always return the character code.
-    bool dashboardCompatibilityMode = false;
+    // We match Firefox, unless in backward compatibility mode, where we always return the character code.
+    bool backwardCompatibilityMode = false;
     if (view())
-        if (Settings* settings = view()->document()->settings())
-            dashboardCompatibilityMode = settings->usesDashboardBackwardCompatibilityMode();
+        backwardCompatibilityMode = view()->frame()->eventHandler()->needsKeyboardEventDisambiguationQuirks();
 
-    if (!m_keyEvent || (type() != keypressEvent && !dashboardCompatibilityMode))
+    if (!m_keyEvent || (type() != keypressEvent && !backwardCompatibilityMode))
         return 0;
     String text = m_keyEvent->text();
     return static_cast<int>(text.characterStartingAt(0));

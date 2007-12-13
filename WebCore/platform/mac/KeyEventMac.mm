@@ -828,7 +828,7 @@ PlatformKeyboardEvent::PlatformKeyboardEvent(NSEvent *event)
         m_unmodifiedText = "\r";
     }
 
-    // The adjustments below are only needed in Dashboard compatibility mode, but we cannot tell what mode we are in from here.
+    // The adjustments below are only needed in backward compatibility mode, but we cannot tell what mode we are in from here.
 
     // Turn 0x7F into 8, because backspace needs to always be 8.
     if (m_text == "\x7F")
@@ -842,13 +842,13 @@ PlatformKeyboardEvent::PlatformKeyboardEvent(NSEvent *event)
     }
 }
 
-void PlatformKeyboardEvent::disambiguateKeyDownEvent(Type type, bool dashboardCompatibilityMode)
+void PlatformKeyboardEvent::disambiguateKeyDownEvent(Type type, bool backwardCompatibilityMode)
 {
     // Can only change type from KeyDown to RawKeyDown or Char, as we lack information for other conversions.
     ASSERT(m_type == KeyDown);
     ASSERT(type == RawKeyDown || type == Char);
     m_type = type;
-    if (dashboardCompatibilityMode)
+    if (backwardCompatibilityMode)
         return;
 
     if (type == RawKeyDown) {

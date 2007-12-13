@@ -1483,6 +1483,13 @@ static bool handleAccessKey(Document* document, const PlatformKeyboardEvent& evt
     return false;
 }
 
+#if !PLATFORM(MAC)
+bool EventHandler::needsKeyboardEventDisambiguationQuirks() const
+{
+    return false;
+}
+#endif
+
 bool EventHandler::keyEvent(const PlatformKeyboardEvent& initialKeyEvent)
 {
     // Check for cases where we are too early for events -- possible unmatched key up
@@ -1509,14 +1516,12 @@ bool EventHandler::keyEvent(const PlatformKeyboardEvent& initialKeyEvent)
     if (initialKeyEvent.type() == PlatformKeyboardEvent::KeyUp || initialKeyEvent.type() == PlatformKeyboardEvent::Char)
         return !node->dispatchKeyEvent(initialKeyEvent);
 
-    bool dashboardCompatibilityMode = false;
-    if (Settings* settings = node->document()->settings())
-        dashboardCompatibilityMode = settings->usesDashboardBackwardCompatibilityMode();
+    bool backwardCompatibilityMode = needsKeyboardEventDisambiguationQuirks();
 
     ExceptionCode ec;
     PlatformKeyboardEvent keyDownEvent = initialKeyEvent;    
     if (keyDownEvent.type() != PlatformKeyboardEvent::RawKeyDown)
-        keyDownEvent.disambiguateKeyDownEvent(PlatformKeyboardEvent::RawKeyDown, dashboardCompatibilityMode);
+        keyDownEvent.disambiguateKeyDownEvent(PlatformKeyboardEvent::RawKeyDown, backwardCompatibilityMode);
     RefPtr<KeyboardEvent> keydown = new KeyboardEvent(keyDownEvent, m_frame->document()->defaultView());
     if (matchedAnAccessKey)
         keydown->setDefaultPrevented(true);
@@ -1545,11 +1550,11 @@ bool EventHandler::keyEvent(const PlatformKeyboardEvent& initialKeyEvent)
 
     node->dispatchEvent(keydown, ec, true);
     bool keydownResult = keydown->defaultHandled() || keydown->defaultPrevented();
-    if (handledByInputMethod || (keydownResult && !dashboardCompatibilityMode) || initialKeyEvent.text().isEmpty())
+    if (handledByInputMethod || (keydownResult && !backwardCompatibilityMode) || initialKeyEvent.text().isEmpty())
         return keydownResult;
     
     // Focus may have changed during keydown handling, so refetch node.
-    // But if we are dispatching a fake Dashboard compatibility keypress, then we pretend that the keypress happened on the original node.
+    // But if we are dispatching a fake backward compatibility keypress, then we pretend that the keypress happened on the original node.
     if (!keydownResult) {
         node = eventTargetNodeForDocument(m_frame->document());
         if (!node)
@@ -1557,7 +1562,7 @@ bool EventHandler::keyEvent(const PlatformKeyboardEvent& initialKeyEvent)
     }
 
     PlatformKeyboardEvent keyPressEvent = initialKeyEvent;
-    keyPressEvent.disambiguateKeyDownEvent(PlatformKeyboardEvent::Char, dashboardCompatibilityMode);
+    keyPressEvent.disambiguateKeyDownEvent(PlatformKeyboardEvent::Char, backwardCompatibilityMode);
     RefPtr<KeyboardEvent> keypress = new KeyboardEvent(keyPressEvent, m_frame->document()->defaultView());
     keypress->setTarget(node);
     if (keydownResult)

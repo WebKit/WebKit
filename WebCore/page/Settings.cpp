@@ -58,6 +58,7 @@ Settings::Settings(Page* page)
     , m_textAreasAreResizable(false)
     , m_usesDashboardBackwardCompatibilityMode(false)
     , m_needsAdobeFrameReloadingQuirk(false)
+    , m_needsKeyboardEventDisambiguationQuirks(false)
     , m_isDOMPasteAllowed(false)
     , m_shrinksStandaloneImagesToFit(true)
     , m_usesPageCache(false)
@@ -234,6 +235,14 @@ void Settings::setUsesDashboardBackwardCompatibilityMode(bool usesDashboardBackw
 void Settings::setNeedsAdobeFrameReloadingQuirk(bool shouldNotReloadIFramesForUnchangedSRC)
 {
     m_needsAdobeFrameReloadingQuirk = shouldNotReloadIFramesForUnchangedSRC;
+}
+
+// This is a quirk we are pro-actively applying to old applications. It changes keyboard event dispatching,
+// making keyIdentifier available on keypress events, making charCode available on keydown/keyup events,
+// and getting keypress dispatched in more cases.
+void Settings::setNeedsKeyboardEventDisambiguationQuirks(bool needsQuirks)
+{
+    m_needsKeyboardEventDisambiguationQuirks = needsQuirks;
 }
 
 void Settings::setDOMPasteAllowed(bool DOMPasteAllowed)

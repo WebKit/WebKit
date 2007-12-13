@@ -892,8 +892,24 @@ static bool debugWidget = true;
         || WKAppVersionCheckLessThan(@"com.adobe.InCopy", -1, 5.1)
         || WKAppVersionCheckLessThan(@"com.adobe.InDesign", -1, 5.1)
         || WKAppVersionCheckLessThan(@"com.adobe.Soundbooth", -1, 2);
+    checked = YES;
 
     return needsQuirk;
+}
+
+- (BOOL)_needsKeyboardEventDisambiguationQuirks
+{
+    static BOOL checked = NO;
+    static BOOL needsQuirks = NO;
+
+    if (checked)
+        return needsQuirks;
+
+    needsQuirks = !WebKitLinkedOnOrAfter(WEBKIT_FIRST_VERSION_WITH_IE_COMPATIBLE_KEYBOARD_EVENT_DISPATCH)
+               && ![[[NSBundle mainBundle] bundleIdentifier] isEqualToString:@"com.apple.Safari"];
+    checked = YES;
+
+    return needsQuirks;
 }
 
 - (void)_preferencesChangedNotification:(NSNotification *)notification
@@ -947,6 +963,7 @@ static bool debugWidget = true;
     } else
         settings->setUserStyleSheetLocation([NSURL URLWithString:@""]);
     settings->setNeedsAdobeFrameReloadingQuirk([self _needsAdobeFrameReloadingQuirk]);
+    settings->setNeedsKeyboardEventDisambiguationQuirks([self _needsKeyboardEventDisambiguationQuirks]);
     settings->setDefaultDatabaseOriginQuota([preferences defaultDatabaseQuota]); 
 }
 

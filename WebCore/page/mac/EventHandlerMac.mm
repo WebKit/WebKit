@@ -50,6 +50,7 @@
 #include "PlatformScrollBar.h"
 #include "PlatformWheelEvent.h"
 #include "RenderWidget.h"
+#include "Settings.h"
 #include "WebCoreFrameBridge.h"
 
 namespace WebCore {
@@ -130,6 +131,29 @@ bool EventHandler::tabsToAllControls(KeyboardEvent* event) const
         return !handlingOptionTab;
     
     return handlingOptionTab;
+}
+
+bool EventHandler::needsKeyboardEventDisambiguationQuirks() const
+{
+    static BOOL checkedSafari = NO;
+    static BOOL isSafari = NO;
+
+    if (!checkedSafari) {
+        isSafari = [[[NSBundle mainBundle] bundleIdentifier] isEqualToString:@"com.apple.Safari"];
+        checkedSafari = YES;
+    }
+    
+    Document* document = m_frame->document();
+    if (!document)
+        return false;
+
+    // RSS view needs arrow key keypress events.
+    if (isSafari && document->url().startsWith("feed:", false) || document->url().startsWith("feeds:", false))
+        return true;
+    Settings* settings = m_frame->settings();
+    if (!settings)
+        return false;
+    return settings->usesDashboardBackwardCompatibilityMode() || settings->needsKeyboardEventDisambiguationQuirks();
 }
 
 bool EventHandler::keyEvent(NSEvent *event)

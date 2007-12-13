@@ -115,7 +115,10 @@ namespace WebCore {
         
         void setNeedsAdobeFrameReloadingQuirk(bool);
         bool needsAcrobatFrameReloadingQuirk() const { return m_needsAdobeFrameReloadingQuirk; }
-        
+
+        void setNeedsKeyboardEventDisambiguationQuirks(bool);
+        bool needsKeyboardEventDisambiguationQuirks() const { return m_needsKeyboardEventDisambiguationQuirks; }
+
         void setDOMPasteAllowed(bool);
         bool isDOMPasteAllowed() const { return m_isDOMPasteAllowed; }
         
@@ -170,6 +173,7 @@ namespace WebCore {
         bool m_textAreasAreResizable : 1;
         bool m_usesDashboardBackwardCompatibilityMode : 1;
         bool m_needsAdobeFrameReloadingQuirk : 1;
+        bool m_needsKeyboardEventDisambiguationQuirks : 1;
         bool m_isDOMPasteAllowed : 1;
         bool m_shrinksStandaloneImagesToFit : 1;
         bool m_usesPageCache: 1;
