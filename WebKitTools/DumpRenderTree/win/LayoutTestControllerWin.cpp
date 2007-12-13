@@ -53,6 +53,8 @@
 using std::string;
 using std::wstring;
 
+static bool resolveCygwinPath(const wstring& cygwinPath, wstring& windowsPath);
+
 LayoutTestController::~LayoutTestController()
 {
     COMPtr<IWebView> webView;
@@ -143,6 +145,15 @@ void LayoutTestController::notifyDone()
     if (m_waitToDump && !topLoadingFrame && !WorkQueue::shared()->count())
         dump();
     m_waitToDump = false;
+}
+
+JSStringRef LayoutTestController::pathToLocalResource(JSContextRef context, JSStringRef url)
+{
+    wstring localPath;
+    if (!resolveCygwinPath(wstring(JSStringGetCharactersPtr(url), JSStringGetLength(url)), localPath))
+        return 0;
+
+    return JSStringCreateWithCharacters(localPath.c_str(), localPath.length());
 }
 
 void LayoutTestController::queueBackNavigation(int howFarBack)
@@ -353,7 +364,9 @@ static bool followShortcuts(wstring& path)
 
 static bool resolveCygwinPath(const wstring& cygwinPath, wstring& windowsPath)
 {
-    if (cygwinPath[0] != '/')
+    wstring fileProtocol = L"file://";
+    bool isFileProtocol = cygwinPath.find(fileProtocol) != string::npos;
+    if (cygwinPath[isFileProtocol ? 7 : 0] != '/')  // ensure path is absolute
         return false;
 
     // Get the Root path.
@@ -367,7 +380,7 @@ static bool resolveCygwinPath(const wstring& cygwinPath, wstring& windowsPath)
 
     windowsPath = wstring(rootPath, rootPathSize);
 
-    int oldPos = 1;
+    int oldPos = isFileProtocol ? 8 : 1;
     while (1) {
         int newPos = cygwinPath.find('/', oldPos);
 
@@ -392,6 +405,10 @@ static bool resolveCygwinPath(const wstring& cygwinPath, wstring& windowsPath)
 
         oldPos = newPos + 1;
     }
+
+    if (isFileProtocol)
+        windowsPath = fileProtocol + windowsPath;
+
     return true;
 }
 

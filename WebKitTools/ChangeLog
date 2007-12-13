@@ -1,3 +1,21 @@
+2007-12-12  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Alice and Sam.
+
+        - <rdar://5621435> Need a way to specify local resources (being loaded
+        from HTTP tests) on Windows.
+        - Implemented pathToLocalResource which exposes the functionality of
+        converting a given unix path to the correct location on Windows.
+
+        * DumpRenderTree/LayoutTestController.cpp:
+        (pathToLocalResourceCallback):
+        (LayoutTestController::staticFunctions):
+        * DumpRenderTree/LayoutTestController.h:
+        * DumpRenderTree/mac/LayoutTestControllerMac.mm:
+        (LayoutTestController::pathToLocalResource):
+        * DumpRenderTree/win/LayoutTestControllerWin.cpp:
+        (LayoutTestController::pathToLocalResource):
+
 2007-12-11  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam.

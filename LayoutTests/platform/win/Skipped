@@ -26,6 +26,19 @@
 # THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
 
+# Access violation when trying to run local script. <rdar://5631705>
+fast/dom/frame-loading-via-document-write.html
+fast/loader/local-iFrame-source-from-local.html
+fast/loader/local-image-from-local.html
+fast/loader/local-CSS-from-local.html
+fast/loader/local-JavaScript-from-local.html
+http/tests/security/local-JavaScript-from-remote.html
+http/tests/security/local-iFrame-from-remote.html
+http/tests/security/local-CSS-from-remote.html
+http/tests/security/local-user-CSS-from-remote.html
+http/tests/security/frame-loading-via-document-write.html
+http/tests/security/local-image-from-remote.html
+
 # Should be moved to platform/mac <rdar://5621425>
 http/tests/misc/willCacheResponse-delegate-callback.html
 
@@ -292,19 +305,6 @@ fast/js/kde/Number.html
 
 #<rdar://problem/5224271> Some LayoutTests fail when not run by themselves.
 http/tests/navigation/anchor-frames.html
-
-# Symlinks arn't working correctly. <rdar://problem/5128536>
-fast/dom/frame-loading-via-document-write.html
-fast/loader/local-CSS-from-local.html
-fast/loader/local-JavaScript-from-local.html
-fast/loader/local-iFrame-source-from-local.html
-fast/loader/local-image-from-local.html
-
-# Need a way to specify local resources from http tests that works on Windows <rdar://5621435>
-http/tests/security/frame-loading-via-document-write.html
-http/tests/security/local-CSS-from-remote.html
-http/tests/security/local-JavaScript-from-remote.html
-http/tests/security/local-image-from-remote.html
 
 # No built-in plugin in DRT <rdar://problem/5074411>
 plugins/call-as-function-test.html

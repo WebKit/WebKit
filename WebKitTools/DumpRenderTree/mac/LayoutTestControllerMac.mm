@@ -115,6 +115,11 @@ void LayoutTestController::notifyDone()
     m_waitToDump = false;
 }
 
+JSStringRef LayoutTestController::pathToLocalResource(JSContextRef context, JSStringRef url)
+{
+    return url; // Do nothing on mac.
+}
+
 void LayoutTestController::queueBackNavigation(int howFarBack)
 {
     WorkQueue::shared()->queue(new BackItem(howFarBack));

@@ -1,5 +1,6 @@
-CONSOLE MESSAGE: line 0: Not allowed to load local resource: file:///tmp/LayoutTests/http/tests/security/resources/localPage.html
-This test is to see if a remote file can include a local page in an iFrame.
+CONSOLE MESSAGE: line 0: Not allowed to load local resource: file://C:/cygwin/home/PyongHopscotch/WebKit/OpenSource/LayoutTests/http/tests/security/resources/localPage.html
+This test is to see if a remote file can include a local page in an iFrame. 
+Currently this test cannot be run manually on Windows because we do not have a function like pathToLocalResource() outside of DRT. 
 
-Test Passed.
+Test Passed. Local page not remotely loaded into iFrame.
 

@@ -1,3 +1,40 @@
+2007-12-13  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Alice and Sam.
+
+        - <rdar://5621435> Need a way to specify local resources (being loaded
+        from HTTP tests) on Windows.
+        - Updated the following tests to use the new layoutTestController
+        function, pathToLocalResource to get a Windows viable path (when on
+        Windows) to the local resources they are attempting to access.
+        - Also clarified and updated some results.
+
+        * fast/dom/frame-loading-via-document-write.html:
+        * fast/loader/local-CSS-from-local-expected.txt:
+        * fast/loader/local-CSS-from-local.html:
+        * fast/loader/local-JavaScript-from-local-expected.txt:
+        * fast/loader/local-JavaScript-from-local.html:
+        * fast/loader/local-iFrame-source-from-local-expected.txt:
+        * fast/loader/local-iFrame-source-from-local.html:
+        * fast/loader/local-image-from-local-expected.txt:
+        * fast/loader/local-image-from-local.html:
+        * http/tests/security/frame-loading-via-document-write.html:
+        * http/tests/security/local-CSS-from-remote-expected.txt:
+        * http/tests/security/local-CSS-from-remote.html:
+        * http/tests/security/local-JavaScript-from-remote-expected.txt:
+        * http/tests/security/local-JavaScript-from-remote.html:
+        * http/tests/security/local-iFrame-from-remote-expected.txt:
+        * http/tests/security/local-iFrame-from-remote.html:
+        * http/tests/security/local-image-from-remote-expected.txt:
+        * http/tests/security/local-image-from-remote.html:
+        * http/tests/security/local-user-CSS-from-remote.html:
+        * platform/mac/fast/dom/frame-loading-via-document-write-expected.txt:
+        * platform/win/Skipped:
+        * platform/win/http: Added.
+        * platform/win/http/tests: Added.
+        * platform/win/http/tests/security: Added.
+        * platform/win/http/tests/security/frame-loading-via-document-write-expected.txt: Added.
+
 2007-12-13  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Adam Roben.

@@ -6,8 +6,11 @@
 
 function buildFrameset()
 {
-    if (window.layoutTestController)
+    if (window.layoutTestController) {
         layoutTestController.waitUntilDone();
+        layoutTestController.dumpAsText();
+        layoutTestController.dumpChildFramesAsText();
+    }
 
     var outHTML="<frameset rows=\"33%, 33%, 33%\">"+
                 "<frame src=\"\" name=\"topRow\">"+
@@ -29,10 +32,14 @@ function buildFrameset()
     frames['topRow'].document. write(outHTML);
     frames['topRow'].document.close();
 
+    var localImageLocation = "file:////tmp/LayoutTests/fast/dom/resources/abe.png";
+    if (window.layoutTestController)
+        localImageLocation = layoutTestController.pathToLocalResource(localImageLocation);
+
     outHTML = "<html><head><scr" + "ipt language=\"JavaScript\" src=\"resources/frame-loading-via-document-write.js\">"+
               "</scr" + "ipt></head><body onLoad=\"didImageLoad()\"><table><tr><td>"+
               "<div id=\"result\"></div>"+
-              "<img src=\"file:////tmp/LayoutTests/fast/dom/resources/abe.png\" id=\"myImg\">"+
+              "<img src=\"" + localImageLocation + "\" id=\"myImg\">"+
               "</td></tr></table></body></html>";
 
     frames['middleRow'].document.open("text/html","replace");
