@@ -31,9 +31,6 @@
 
 namespace WebCore {
 
-// back/forward cache
-void CachedPage::close() { notImplemented(); }
-
 // <keygen>
 String signedPublicKeyAndChallengeString(unsigned, const String&, const KURL&) { notImplemented(); return String(); }
 Vector<String> supportedKeySizes() { notImplemented(); return Vector<String>(); }
