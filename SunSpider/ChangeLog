@@ -2,6 +2,17 @@
 
         Reviewed by Oliver.
         
+        - Add some explanatory test and a dumb logo to SunSpider web hosted version
+
+        * hosted/sunspider-driver.html:
+        * hosted/sunspider-results.html:
+        * hosted/sunspider.css:
+        * hosted/sunspider.html:
+
+2007-12-13  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Oliver.
+        
         - Make the web-hosted version of SunSpider look a little bit less drab.
 
         * hosted/sunspider-driver.html:
