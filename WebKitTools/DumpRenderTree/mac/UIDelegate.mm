@@ -60,7 +60,7 @@ DumpRenderTreeDraggingInfo *draggingInfo = nil;
     NSRange range = [message rangeOfString:@"file://"];
     if (range.location != NSNotFound) {
         range.length = [message length] - range.location;
-        message = [message stringByReplacingCharactersInRange:range withString:[message lastPathComponent]];
+        message = [[message substringToIndex:range.location] stringByAppendingString:[message lastPathComponent]];
     }
 
     printf ("CONSOLE MESSAGE: line %d: %s\n", [lineNumber intValue], [message UTF8String]);
