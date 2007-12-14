@@ -1,3 +1,14 @@
+2007-12-14  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Darin.
+
+        - Layout test fix for mac. When dumped to the console local file paths
+        now only show the name of the resource not the whole path.  This is to
+        make the results machine and OS independent.
+
+        * DumpRenderTree/mac/UIDelegate.mm:
+        (-[UIDelegate webView:addMessageToConsole:]):
+
 2007-12-13  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Adam.
