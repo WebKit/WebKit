@@ -1,3 +1,15 @@
+2007-12-14  Darin Adler  <darin@apple.com>
+
+        Reviewed by Alexey.
+
+        * Api/qwebpage.cpp:
+        (QWebPage::triggerAction): Removed some use of Editor member functions we plan
+        to eventually eliminate. Switch from Editor::execCommand to Editor::command.
+        * WebCoreSupport/EditorClientQt.cpp:
+        (WebCore::EditorClientQt::handleKeyboardEvent): Ditto. Also updated name from
+        MoveUpByPageAndModifyCaret to MovePageUp and from MoveDownByPageAndModifyCaret
+        to MovePageDown.
+
 2007-12-12  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Sam Weinig

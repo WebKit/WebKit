@@ -1,3 +1,65 @@
+2007-12-14  Darin Adler  <darin@apple.com>
+
+        Reviewed by Alexey.
+
+        - http://bugs.webkit.org/show_bug.cgi?id=16420
+          change regression tests to use document.execCommand instead of textInputController.doCommand
+
+        Add a few more operations to document.execCommand.
+
+        Finished up the transition to the new Editor::Command, including removing
+        the Editor::execCommand function.
+
+        * WebCore.base.exp: Added Editor::Command::isSupported.
+        * editing/Editor.h: Removed execCommand.
+        * editing/EditorCommand.cpp:
+        (WebCore::expandSelectionToGranularity): Added.
+        (WebCore::verticalScrollDistance): Added; replaces canScroll.
+        (WebCore::executeDeleteBackward): Added. Moved code here from WebHTMLView.
+        (WebCore::executeDeleteBackwardByDecomposingPreviousCharacter): Ditto.
+        (WebCore::executeDeleteForward): Ditto.
+        (WebCore::executeDeleteToBeginningOfLine): Ditto.
+        (WebCore::executeDeleteToBeginningOfParagraph): Ditto.
+        (WebCore::executeDeleteToEndOfLine): Ditto.
+        (WebCore::executeDeleteToEndOfParagraph): Ditto.
+        (WebCore::executeMovePageDown): Renamed this command to be consistent with all the other
+        Move commands. They all modify the caret. Reimplemented to match the Mac OS X version by
+        removing the explicit scrolling, and letting it be done automatically by code that makes
+        the caret visible. In some cases the old code would scroll twice which was harmless but
+        unnecessary.
+        (WebCore::executeMovePageDownAndModifySelection): Added. Moved code here from WebHTMLView.
+        (WebCore::executeMovePageUp): See MovePageDown above.
+        (WebCore::executeMovePageUpAndModifySelection): Added. Moved code here from WebHTMLView.
+        (WebCore::executeSelectLine): Ditto.
+        (WebCore::executeSelectParagraph): Ditto.
+        (WebCore::executeSelectSentence): Ditto.
+        (WebCore::executeSelectWord): Ditto.
+        (WebCore::executeSwapWithMark): Some small tweaks.
+
+        * page/ContextMenuController.cpp:
+        (WebCore::ContextMenuController::contextMenuItemSelected): Changed to use Editor::command()
+        instead of Editor::execCommand(). This code could be changed to use Editor::Command quite a
+        bit more, but I didn't do that this time.
+
+        - Removed some obsolete unused code.
+
+        * page/mac/EventHandlerMac.mm:
+        (WebCore::EventHandler::passMouseDownEventToWidget): Removed the special case code for
+        NSTextView. This was left over from when we used NSTextField and NSTextView for form
+        elements and is no longer used at all.
+
+        * page/mac/WebCoreFrameBridge.h: Removed 20 unused methods that were still on one side
+        of the bridge or another. We really need to find a time to tear down the rest of the
+        bridge, but that's not this patch.
+
+        * page/mac/WebCoreFrameBridge.mm:
+        (-[WebCoreFrameBridge addData:]): Changed to get at the _shouldCreateRenderers field directly
+        instead of using a method.
+        (-[WebCoreFrameBridge rangeByAlteringCurrentSelection:SelectionController::direction:SelectionController::granularity:]):
+        Took out obsolete comment about matching enums (we use a single enum now and have for some
+        time).
+        (-[WebCoreFrameBridge selectionGranularity]): Ditto.
+
 2007-12-14  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Darin Adler.

@@ -418,7 +418,6 @@ static NSCellStateValue kit(TriState state)
     [pluginController release];
     [toolTip release];
     [compController release];
-    [firstResponderTextViewAtMouseDownTime release];
     [dataSource release];
     [highlighters release];
     if (promisedDragTIFFDataSource)
@@ -444,7 +443,6 @@ static NSCellStateValue kit(TriState state)
     [pluginController release];
     [toolTip release];
     [compController release];
-    [firstResponderTextViewAtMouseDownTime release];
     [dataSource release];
     [highlighters release];
     if (promisedDragTIFFDataSource)
@@ -455,7 +453,6 @@ static NSCellStateValue kit(TriState state)
     pluginController = nil;
     toolTip = nil;
     compController = nil;
-    firstResponderTextViewAtMouseDownTime = nil;
     dataSource = nil;
     highlighters = nil;
     promisedDragTIFFDataSource = 0;
@@ -802,21 +799,6 @@ static NSURL* uniqueURLWithRelativePart(NSString *relativePart)
     [event retain];
     [_private->mouseDownEvent release];
     _private->mouseDownEvent = event;
-
-    [_private->firstResponderTextViewAtMouseDownTime release];
-    
-    // The only code that checks this ivar only cares about NSTextViews. The code used to be more general,
-    // but it caused reference cycles leading to world leaks (see 4557386). We should be able to eliminate
-    // firstResponderTextViewAtMouseDownTime entirely when all the form controls are native widgets, because 
-    // the only caller (in WebCore) will be unnecessary.
-    if (event) {
-        NSResponder *firstResponder = [[self window] firstResponder];
-        if ([firstResponder isKindOfClass:[NSTextView class]])
-            _private->firstResponderTextViewAtMouseDownTime = [firstResponder retain];
-        else
-            _private->firstResponderTextViewAtMouseDownTime = nil;
-    } else
-        _private->firstResponderTextViewAtMouseDownTime = nil;
 }
 
 - (void)_cancelUpdateActiveStateTimer
@@ -1177,29 +1159,6 @@ static void _updateMouseoverTimerCallback(CFRunLoopTimerRef timer, void *info)
 - (BOOL)_insideAnotherHTMLView
 {
     return self != [self _topHTMLView];
-}
-
-- (void)scrollPoint:(NSPoint)point
-{
-    // Since we can't subclass NSTextView to do what we want, we have to second guess it here.
-    // If we get called during the handling of a key down event, we assume the call came from
-    // NSTextView, and ignore it and use our own code to decide how to page up and page down
-    // We are smarter about how far to scroll, and we have "superview scrolling" logic.
-    NSEvent *event = [[self window] currentEvent];
-    if ([event type] == NSKeyDown) {
-        const unichar pageUp = NSPageUpFunctionKey;
-        if ([[event characters] rangeOfString:[NSString stringWithCharacters:&pageUp length:1]].length == 1) {
-            [self tryToPerform:@selector(scrollPageUp:) with:nil];
-            return;
-        }
-        const unichar pageDown = NSPageDownFunctionKey;
-        if ([[event characters] rangeOfString:[NSString stringWithCharacters:&pageDown length:1]].length == 1) {
-            [self tryToPerform:@selector(scrollPageDown:) with:nil];
-            return;
-        }
-    }
-    
-    [super scrollPoint:point];
 }
 
 - (NSView *)hitTest:(NSPoint)point
@@ -2060,13 +2019,22 @@ static void _updateMouseoverTimerCallback(CFRunLoopTimerRef timer, void *info)
     return [[webView _editingDelegateForwarder] webView:webView doCommandBySelector:selector];
 }
 
-static String comandNameForSelector(SEL selector)
+static String commandNameForSelector(SEL selector)
 {
     // Change a few command names into ones supported by WebCore::Editor.
+    // If this list gets too long we might decide we need to use a hash table.
     if (selector == @selector(insertParagraphSeparator:) || selector == @selector(insertNewlineIgnoringFieldEditor:))
         return "InsertNewline";
     if (selector == @selector(insertTabIgnoringFieldEditor:))
         return "InsertTab";
+    if (selector == @selector(pageDown:))
+        return "MovePageDown";
+    if (selector == @selector(pageDownAndModifySelection:))
+        return "MovePageDownAndModifySelection";
+    if (selector == @selector(pageUp:))
+        return "MovePageUp";
+    if (selector == @selector(pageUpAndModifySelection:))
+        return "MovePageUpAndModifySelection";
 
     // Remove the trailing colon.
     const char* selectorName = sel_getName(selector);
@@ -2081,7 +2049,7 @@ static String comandNameForSelector(SEL selector)
     Frame* coreFrame = core([self _frame]);
     if (!coreFrame)
         return Editor::Command();
-    return coreFrame->editor()->command(comandNameForSelector(selector));
+    return coreFrame->editor()->command(commandNameForSelector(selector));
 }
 
 - (Editor::Command)coreCommandByName:(const char*)name
@@ -2118,8 +2086,16 @@ WEBCORE_COMMAND(alignCenter)
 WEBCORE_COMMAND(alignJustified)
 WEBCORE_COMMAND(alignLeft)
 WEBCORE_COMMAND(alignRight)
-WEBCORE_COMMAND(cut)
 WEBCORE_COMMAND(copy)
+WEBCORE_COMMAND(cut)
+WEBCORE_COMMAND(delete)
+WEBCORE_COMMAND(deleteBackward)
+WEBCORE_COMMAND(deleteBackwardByDecomposingPreviousCharacter)
+WEBCORE_COMMAND(deleteForward)
+WEBCORE_COMMAND(deleteToBeginningOfLine)
+WEBCORE_COMMAND(deleteToBeginningOfParagraph)
+WEBCORE_COMMAND(deleteToEndOfLine)
+WEBCORE_COMMAND(deleteToEndOfParagraph)
 WEBCORE_COMMAND(deleteToMark)
 WEBCORE_COMMAND(deleteWordBackward)
 WEBCORE_COMMAND(deleteWordForward)
@@ -2170,8 +2146,16 @@ WEBCORE_COMMAND(moveWordLeftAndModifySelection)
 WEBCORE_COMMAND(moveWordRight)
 WEBCORE_COMMAND(moveWordRightAndModifySelection)
 WEBCORE_COMMAND(outdent)
+WEBCORE_COMMAND(pageDown)
+WEBCORE_COMMAND(pageDownAndModifySelection)
+WEBCORE_COMMAND(pageUp)
+WEBCORE_COMMAND(pageUpAndModifySelection)
 WEBCORE_COMMAND(selectAll)
+WEBCORE_COMMAND(selectLine)
+WEBCORE_COMMAND(selectParagraph)
+WEBCORE_COMMAND(selectSentence)
 WEBCORE_COMMAND(selectToMark)
+WEBCORE_COMMAND(selectWord)
 WEBCORE_COMMAND(setMark)
 WEBCORE_COMMAND(subscript)
 WEBCORE_COMMAND(superscript)
@@ -2228,10 +2212,10 @@ WEBCORE_COMMAND(yankAndSelect)
 }
 
 // jumpToSelection is the old name for what AppKit now calls centerSelectionInVisibleArea. Safari
-// was using the old jumpToSelection selector in its menu. Newer versions of Safari will us the
-// selector centerSelectionInVisibleArea. We'll leave this old selector in place for two reasons:
-// (1) compatibility between older Safari and newer WebKit; (2) other WebKit-based applications
-// might be using the jumpToSelection: selector, and we don't want to break them.
+// was using the old jumpToSelection selector in its menu. Newer versions of Safari will use the
+// selector centerSelectionInVisibleArea. We'll leave the old selector in place for two reasons:
+// (1) Compatibility between older Safari and newer WebKit; (2) other WebKit-based applications
+// might be using the selector, and we don't want to break them.
 - (void)jumpToSelection:(id)sender
 {
     COMMAND_PROLOGUE
@@ -2259,104 +2243,17 @@ WEBCORE_COMMAND(yankAndSelect)
     if (Document* doc = frame->document()) {
         if (doc->isPluginDocument())
             return NO;
-        
         if (doc->isImageDocument()) {            
             if (action == @selector(copy:))
                 return frame->loader()->isComplete();
-        
             return NO;
         }
-    }
-
-    if (action == @selector(alignCenter:)
-            || action == @selector(alignJustified:)
-            || action == @selector(alignLeft:)
-            || action == @selector(alignRight:)
-            || action == @selector(cut:)
-            || action == @selector(copy:)
-            || action == @selector(deleteToMark:)
-            || action == @selector(deleteWordBackward:)
-            || action == @selector(deleteWordForward:)
-            || action == @selector(indent:)
-            || action == @selector(insertBacktab:)
-            || action == @selector(insertLineBreak:)
-            || action == @selector(insertNewline:)
-            || action == @selector(insertNewlineIgnoringFieldEditor:)
-            || action == @selector(insertParagraphSeparator:)
-            || action == @selector(insertTab:)
-            || action == @selector(insertTabIgnoringFieldEditor:)
-            || action == @selector(moveBackward:)
-            || action == @selector(moveBackwardAndModifySelection:)
-            || action == @selector(moveDown:)
-            || action == @selector(moveDownAndModifySelection:)
-            || action == @selector(moveForward:)
-            || action == @selector(moveForwardAndModifySelection:)
-            || action == @selector(moveLeft:)
-            || action == @selector(moveLeftAndModifySelection:)
-            || action == @selector(moveParagraphBackwardAndModifySelection:)
-            || action == @selector(moveParagraphForwardAndModifySelection:)
-            || action == @selector(moveRight:)
-            || action == @selector(moveRightAndModifySelection:)
-            || action == @selector(moveToBeginningOfDocument:)
-            || action == @selector(moveToBeginningOfDocumentAndModifySelection:)
-            || action == @selector(moveToBeginningOfLine:)
-            || action == @selector(moveToBeginningOfLineAndModifySelection:)
-            || action == @selector(moveToBeginningOfParagraph:)
-            || action == @selector(moveToBeginningOfParagraphAndModifySelection:)
-            || action == @selector(moveToBeginningOfSentence:)
-            || action == @selector(moveToBeginningOfSentenceAndModifySelection:)
-            || action == @selector(moveToEndOfDocument:)
-            || action == @selector(moveToEndOfDocumentAndModifySelection:)
-            || action == @selector(moveToEndOfLine:)
-            || action == @selector(moveToEndOfLineAndModifySelection:)
-            || action == @selector(moveToEndOfParagraph:)
-            || action == @selector(moveToEndOfParagraphAndModifySelection:)
-            || action == @selector(moveToEndOfSentence:)
-            || action == @selector(moveToEndOfSentenceAndModifySelection:)
-            || action == @selector(moveUp:)
-            || action == @selector(moveUpAndModifySelection:)
-            || action == @selector(moveWordBackward:)
-            || action == @selector(moveWordBackwardAndModifySelection:)
-            || action == @selector(moveWordForward:)
-            || action == @selector(moveWordForwardAndModifySelection:)
-            || action == @selector(moveWordLeft:)
-            || action == @selector(moveWordLeftAndModifySelection:)
-            || action == @selector(moveWordRight:)
-            || action == @selector(moveWordRightAndModifySelection:)
-            || action == @selector(outdent:)
-            || action == @selector(selectAll:)
-            || action == @selector(selectToMark:)
-            || action == @selector(setMark:)
-            || action == @selector(subscript:)
-            || action == @selector(superscript:)
-            || action == @selector(swapWithMark:)
-            || action == @selector(transpose:)
-            || action == @selector(underline:)
-            || action == @selector(unscript:)
-            || action == @selector(yank:)
-            || action == @selector(yankAndSelect:)) {
-        Editor::Command command = [self coreCommandBySelector:action];
-        NSMenuItem *menuItem = (NSMenuItem *)item;
-        if ([menuItem isKindOfClass:[NSMenuItem class]])
-            [menuItem setState:kit(command.state())];
-        return command.isEnabled();
     }
 
     if (action == @selector(changeSpelling:)
             || action == @selector(_changeSpellingFromMenu:)
             || action == @selector(checkSpelling:)
             || action == @selector(complete:)
-            || action == @selector(deleteBackward:)
-            || action == @selector(deleteBackwardByDecomposingPreviousCharacter:)
-            || action == @selector(deleteForward:)
-            || action == @selector(deleteToBeginningOfLine:)
-            || action == @selector(deleteToBeginningOfParagraph:)
-            || action == @selector(deleteToEndOfLine:)
-            || action == @selector(deleteToEndOfParagraph:)
-            || action == @selector(pageDown:)
-            || action == @selector(pageDownAndModifySelection:)
-            || action == @selector(pageUp:)
-            || action == @selector(pageUpAndModifySelection:)
             || action == @selector(pasteFont:))
         return [self _canEdit];
     
@@ -2373,13 +2270,11 @@ WEBCORE_COMMAND(yankAndSelect)
     }
     
     if (action == @selector(changeBaseWritingDirection:)) {
+        NSWritingDirection writingDirection = static_cast<NSWritingDirection>([item tag]);
+        if (writingDirection == NSWritingDirectionNatural)
+            return NO;
         NSMenuItem *menuItem = (NSMenuItem *)item;
         if ([menuItem isKindOfClass:[NSMenuItem class]]) {
-            NSWritingDirection writingDirection = static_cast<NSWritingDirection>([item tag]);
-            if (writingDirection == NSWritingDirectionNatural) {
-                [menuItem setState:NSOffState];
-                return NO;
-            }
             RefPtr<CSSStyleDeclaration> style = new CSSMutableStyleDeclaration;
             ExceptionCode ec;
             style->setProperty("direction", writingDirection == NSWritingDirectionLeftToRight ? "LTR" : "RTL", ec);
@@ -2421,9 +2316,6 @@ WEBCORE_COMMAND(yankAndSelect)
     if (action == @selector(changeDocumentBackgroundColor:))
         return [[self _webView] isEditable] && [self _canEditRichly];
     
-    if (action == @selector(delete:))
-        return frame && frame->editor()->canDelete();
-    
     if (action == @selector(_ignoreSpellingFromMenu:)
             || action == @selector(_learnSpellingFromMenu:)
             || action == @selector(takeFindStringFromSelection:))
@@ -2437,27 +2329,31 @@ WEBCORE_COMMAND(yankAndSelect)
             || (frame->editor()->canPaste() && frame->selectionController()->isContentRichlyEditable()));
     
     if (action == @selector(performFindPanelAction:))
-        // FIXME: Not yet implemented.
         return NO;
     
-    if (action == @selector(_lookUpInDictionaryFromMenu:)) {
+    if (action == @selector(_lookUpInDictionaryFromMenu:))
         return [self _hasSelection];
-    } 
     
 #ifndef BUILDING_ON_TIGER
     if (action == @selector(toggleGrammarChecking:)) {
         // FIXME 4799134: WebView is the bottleneck for this grammar-checking logic, but we must validate 
         // the selector here because we implement it here, and we must implement it here because the AppKit 
         // code checks the first responder.
-        BOOL checkMark = [self isGrammarCheckingEnabled];
-        if ([(NSObject *)item isKindOfClass:[NSMenuItem class]]) {
-            NSMenuItem *menuItem = (NSMenuItem *)item;
-            [menuItem setState:checkMark ? NSOnState : NSOffState];
-        }
+        NSMenuItem *menuItem = (NSMenuItem *)item;
+        if ([menuItem isKindOfClass:[NSMenuItem class]])
+            [menuItem setState:[self isGrammarCheckingEnabled] ? NSOnState : NSOffState];
         return YES;
     }
 #endif
     
+    Editor::Command command = [self coreCommandBySelector:action];
+    if (command.isSupported()) {
+        NSMenuItem *menuItem = (NSMenuItem *)item;
+        if ([menuItem isKindOfClass:[NSMenuItem class]])
+            [menuItem setState:kit(command.state())];
+        return command.isEnabled();
+    }
+
     return YES;
 }
 
@@ -3084,9 +2980,6 @@ static void _updateActiveStateTimerCallback(CFRunLoopTimerRef timer, void *info)
     }
 
 done:
-    [_private->firstResponderTextViewAtMouseDownTime release];
-    _private->firstResponderTextViewAtMouseDownTime = nil;
-
     _private->handlingMouseDownEvent = NO;
 }
 
@@ -3259,9 +3152,8 @@ noPromisedData:
 - (BOOL)becomeFirstResponder
 {
     NSSelectionDirection direction = NSDirectSelection;
-    if (![[self _webView] _isPerformingProgrammaticFocus] && !_private->willBecomeFirstResponderForNodeFocus)
+    if (![[self _webView] _isPerformingProgrammaticFocus])
         direction = [[self window] keyViewSelectionDirection];
-    _private->willBecomeFirstResponderForNodeFocus = NO;
 
     [self _updateActiveState];
     [self _updateFontPanel];
@@ -3300,7 +3192,6 @@ noPromisedData:
         }
         [self _updateActiveState];
         _private->resigningFirstResponder = NO;
-        _private->willBecomeFirstResponderForNodeFocus = NO;
     }
     return resign;
 }
@@ -3666,115 +3557,6 @@ noPromisedData:
 
     if (Frame* coreFrame = core([self _frame]))
         coreFrame->revealSelection(RenderLayer::gAlignCenterAlways);
-}
-
-- (void)pageUp:(id)sender
-{
-    COMMAND_PROLOGUE
-
-    WebFrameView *frameView = [self _frameView];
-    if (!frameView)
-        return;
-    if ([self _canAlterCurrentSelection])
-        [[self _bridge] alterCurrentSelection:SelectionController::MOVE verticalDistance:-[frameView _verticalPageScrollDistance]];
-}
-
-- (void)pageDown:(id)sender
-{
-    COMMAND_PROLOGUE
-
-    WebFrameView *frameView = [self _frameView];
-    if (!frameView)
-        return;
-    if ([self _canAlterCurrentSelection])
-        [[self _bridge] alterCurrentSelection:SelectionController::MOVE verticalDistance:[frameView _verticalPageScrollDistance]];
-}
-
-- (void)pageUpAndModifySelection:(id)sender
-{
-    COMMAND_PROLOGUE
-
-    WebFrameView *frameView = [self _frameView];
-    if (!frameView)
-        return;
-    if ([self _canAlterCurrentSelection])
-        [[self _bridge] alterCurrentSelection:SelectionController::EXTEND verticalDistance:-[frameView _verticalPageScrollDistance]];
-}
-
-- (void)pageDownAndModifySelection:(id)sender
-{
-    COMMAND_PROLOGUE
-
-    WebFrameView *frameView = [self _frameView];
-    if (frameView == nil)
-        return;
-    if ([self _canAlterCurrentSelection])
-        [[self _bridge] alterCurrentSelection:SelectionController::EXTEND verticalDistance:[frameView _verticalPageScrollDistance]];
-}
-
-- (void)_expandSelectionToGranularity:(TextGranularity)granularity
-{
-    if (![self _canAlterCurrentSelection])
-        return;
-    
-    Frame* coreFrame = core([self _frame]);
-    if (!coreFrame || !coreFrame->selectionController()->isCaretOrRange())
-        return;
-
-    // NOTE: The enums *must* match the very similar ones declared in SelectionController.h
-    Selection selection(coreFrame->selectionController()->selection());
-    selection.expandUsingGranularity(static_cast<TextGranularity>(granularity));
-    
-    RefPtr<Range> range = selection.toRange();
-    if (!range)
-        return;
-    
-    DOMRange *domRange = kit(range.get());
-    
-    if ([domRange collapsed])
-        return;
-
-    EAffinity affinity = coreFrame->selectionController()->affinity();
-    WebView *webView = [self _webView];
-    if ([[webView _editingDelegateForwarder] webView:webView shouldChangeSelectedDOMRange:[self _selectedRange] toDOMRange:domRange affinity:kit(affinity) stillSelecting:NO]) {
-        coreFrame->selectionController()->setSelectedRange(range.get(), affinity, true);
-    }
-}
-
-- (void)selectParagraph:(id)sender
-{
-    COMMAND_PROLOGUE
-
-    [self _expandSelectionToGranularity:ParagraphGranularity];
-}
-
-- (void)selectLine:(id)sender
-{
-    COMMAND_PROLOGUE
-
-    [self _expandSelectionToGranularity:LineGranularity];
-}
-
-- (void)selectSentence:(id)sender
-{
-    COMMAND_PROLOGUE
-
-    [self _expandSelectionToGranularity:SentenceGranularity];
-}
-
-- (void)selectWord:(id)sender
-{
-    COMMAND_PROLOGUE
-
-    [self _expandSelectionToGranularity:WordGranularity];
-}
-
-- (void)delete:(id)sender
-{
-    COMMAND_PROLOGUE
-
-    if (Frame* coreFrame = core([self _frame]))
-        coreFrame->editor()->performDelete();
 }
 
 - (NSData *)_selectionStartFontAttributesAsRTF
@@ -4300,80 +4082,6 @@ NSStrokeColorAttributeName        /* NSColor, default nil: same as foreground co
     [self _changeWordCaseWithSelector:@selector(capitalizedString)];
 }
 
-- (void)deleteForward:(id)sender
-{
-    COMMAND_PROLOGUE
-
-    if (![self _isEditable])
-        return;
-    Frame* coreFrame = core([self _frame]);
-    if (coreFrame)
-        coreFrame->editor()->deleteWithDirection(SelectionController::FORWARD, CharacterGranularity, false, true);
-}
-
-- (void)deleteBackward:(id)sender
-{
-    COMMAND_PROLOGUE
-
-    if (![self _isEditable])
-        return;
-    Frame* coreFrame = core([self _frame]);
-    if (coreFrame)
-        coreFrame->editor()->deleteWithDirection(SelectionController::BACKWARD, CharacterGranularity, false, true);
-}
-
-- (void)deleteBackwardByDecomposingPreviousCharacter:(id)sender
-{
-    COMMAND_PROLOGUE
-
-    LOG_ERROR("unimplemented, doing deleteBackward instead");
-
-    if (![self _isEditable])
-        return;
-    Frame* coreFrame = core([self _frame]);
-    if (coreFrame)
-        coreFrame->editor()->deleteWithDirection(SelectionController::BACKWARD, CharacterGranularity, false, true);
-}
-
-- (void)deleteToBeginningOfLine:(id)sender
-{
-    COMMAND_PROLOGUE
-
-    Frame* coreFrame = core([self _frame]);
-    if (coreFrame)
-        coreFrame->editor()->deleteWithDirection(SelectionController::BACKWARD, LineBoundary, true, false);
-}
-
-- (void)deleteToEndOfLine:(id)sender
-{
-    COMMAND_PROLOGUE
-
-    // To match NSTextView, this command should delete the newline at the end of
-    // a paragraph if you are at the end of a paragraph (like deleteToEndOfParagraph does below).
-    Frame* coreFrame = core([self _frame]);
-    if (coreFrame)
-        coreFrame->editor()->deleteWithDirection(SelectionController::FORWARD, LineBoundary, true, false);
-}
-
-- (void)deleteToBeginningOfParagraph:(id)sender
-{
-    COMMAND_PROLOGUE
-
-    Frame* coreFrame = core([self _frame]);
-    if (coreFrame)
-        coreFrame->editor()->deleteWithDirection(SelectionController::BACKWARD, ParagraphBoundary, true, false);
-}
-
-- (void)deleteToEndOfParagraph:(id)sender
-{
-    COMMAND_PROLOGUE
-
-    // Despite the name of the method, this should delete the newline if the caret is at the end of a paragraph.
-    Frame* coreFrame = core([self _frame]);
-    if (coreFrame)
-        coreFrame->editor()->deleteWithDirection(SelectionController::FORWARD, ParagraphBoundary, true, false);
-}
-
 - (void)complete:(id)sender
 {
     COMMAND_PROLOGUE
@@ -4389,12 +4097,6 @@ NSStrokeColorAttributeName        /* NSColor, default nil: same as foreground co
 {
     COMMAND_PROLOGUE
 
-    NSSpellChecker *checker = [NSSpellChecker sharedSpellChecker];
-    if (!checker) {
-        LOG_ERROR("No NSSpellChecker");
-        return;
-    }
-    
     if (Frame* coreFrame = core([self _frame]))
         coreFrame->editor()->advanceToNextMisspelling();
 }
@@ -4774,33 +4476,6 @@ NSStrokeColorAttributeName        /* NSColor, default nil: same as foreground co
     return [[self _webView] smartInsertDeleteEnabled] && [[self _bridge] selectionGranularity] == WordGranularity;
 }
 
-- (DOMRange *)_smartDeleteRangeForProposedRange:(DOMRange *)proposedRange
-{
-    if (proposedRange == nil || [self _canSmartCopyOrDelete] == NO)
-        return nil;
-    
-    return [[self _bridge] smartDeleteRangeForProposedRange:proposedRange];
-}
-
-- (void)_smartInsertForString:(NSString *)pasteString replacingRange:(DOMRange *)rangeToReplace beforeString:(NSString **)beforeString afterString:(NSString **)afterString
-{
-    if (!pasteString || !rangeToReplace || ![[self _webView] smartInsertDeleteEnabled]) {
-        if (beforeString)
-            *beforeString = nil;
-        if (afterString)
-            *afterString = nil;
-        return;
-    }
-    
-    [[self _bridge] smartInsertForString:pasteString replacingRange:rangeToReplace beforeString:beforeString afterString:afterString];
-}
-
-- (BOOL)_textViewWasFirstResponderAtMouseDownTime:(NSTextView *)textView
-{
-    return textView == _private->firstResponderTextViewAtMouseDownTime;
-}
-
-
 - (NSEvent *)_mouseDownEvent
 {
     return _private->mouseDownEvent;
@@ -4835,11 +4510,6 @@ NSStrokeColorAttributeName        /* NSColor, default nil: same as foreground co
     }
 }
 #endif
-
-- (void)_willMakeFirstResponderForNodeFocus
-{
-    _private->willBecomeFirstResponderForNodeFocus = YES;
-}
 
 - (id<WebHTMLHighlighter>)_highlighterForType:(NSString*)type
 {

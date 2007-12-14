@@ -271,33 +271,33 @@ void EditorClient::handleKeyboardEvent(KeyboardEvent* event)
                         true);
                 break;
             case VK_PRIOR:  // PageUp
-                frame->editor()->execCommand("MoveUpByPageAndModifyCaret");
+                frame->editor()->command("MovePageUp").execute();
                 break;
             case VK_NEXT:  // PageDown
-                frame->editor()->execCommand("MoveDownByPageAndModifyCaret");
+                frame->editor()->command("MovePageDown").execute();
                 break;
             case VK_HOME:
                 if (kevent->ctrlKey() && kevent->shiftKey())
-                    frame->editor()->execCommand("MoveToBeginningOfDocumentAndModifySelection");
+                    frame->editor()->command("MoveToBeginningOfDocumentAndModifySelection").execute();
                 else if (kevent->ctrlKey())
-                    frame->editor()->execCommand("MoveToBeginningOfDocument");
+                    frame->editor()->command("MoveToBeginningOfDocument").execute();
                 else if (kevent->shiftKey())
-                    frame->editor()->execCommand("MoveToBeginningOfLineAndModifySelection");
+                    frame->editor()->command("MoveToBeginningOfLineAndModifySelection").execute();
                 else
-                    frame->editor()->execCommand("MoveToBeginningOfLine");
+                    frame->editor()->command("MoveToBeginningOfLine").execute();
                 break;
             case VK_END:
                 if (kevent->ctrlKey() && kevent->shiftKey())
-                    frame->editor()->execCommand("MoveToEndOfDocumentAndModifySelection");
+                    frame->editor()->command("MoveToEndOfDocumentAndModifySelection").execute();
                 else if (kevent->ctrlKey())
-                    frame->editor()->execCommand("MoveToEndOfDocument");
+                    frame->editor()->command("MoveToEndOfDocument").execute();
                 else if (kevent->shiftKey())
-                    frame->editor()->execCommand("MoveToEndOfLineAndModifySelection");
+                    frame->editor()->command("MoveToEndOfLineAndModifySelection").execute();
                 else
-                    frame->editor()->execCommand("MoveToEndOfLine");
+                    frame->editor()->command("MoveToEndOfLine").execute();
                 break;
             case VK_RETURN:
-                frame->editor()->execCommand("InsertLineBreak");
+                frame->editor()->command("InsertLineBreak").execute();
                 break;
             case VK_TAB:
                 return;
@@ -313,16 +313,16 @@ void EditorClient::handleKeyboardEvent(KeyboardEvent* event)
                 } else if (kevent->ctrlKey()) {
                     switch (kevent->windowsVirtualKeyCode()) {
                         case VK_B:
-                            frame->editor()->execCommand("ToggleBold");
+                            frame->editor()->command("ToggleBold").execute();
                             break;
                         case VK_I:
-                            frame->editor()->execCommand("ToggleItalic");
+                            frame->editor()->command("ToggleItalic").execute();
                             break;
                         case VK_Y:
-                            frame->editor()->execCommand("Redo");
+                            frame->editor()->command("Redo").execute();
                             break;
                         case VK_Z:
-                            frame->editor()->execCommand("Undo");
+                            frame->editor()->command("Undo").execute();
                             break;
                         default:
                             return;
@@ -332,24 +332,24 @@ void EditorClient::handleKeyboardEvent(KeyboardEvent* event)
     } else {
         switch (kevent->windowsVirtualKeyCode()) {
             case VK_UP:
-                frame->editor()->execCommand("MoveUp");
+                frame->editor()->command("MoveUp").execute();
                 break;
             case VK_DOWN:
-                frame->editor()->execCommand("MoveDown");
+                frame->editor()->command("MoveDown").execute();
                 break;
             case VK_PRIOR:  // PageUp
-                frame->editor()->execCommand("MoveUpByPageAndModifyCaret");
+                frame->editor()->command("MovePageUp").execute();
                 break;
             case VK_NEXT:  // PageDown
-                frame->editor()->execCommand("MoveDownByPageAndModifyCaret");
+                frame->editor()->command("MovePageDown").execute();
                 break;
             case VK_HOME:
                 if (kevent->ctrlKey())
-                    frame->editor()->execCommand("MoveToBeginningOfDocument");
+                    frame->editor()->command("MoveToBeginningOfDocument").execute();
                 break;
             case VK_END:
                 if (kevent->ctrlKey())
-                    frame->editor()->execCommand("MoveToEndOfDocument");
+                    frame->editor()->command("MoveToEndOfDocument").execute();
                 break;
             default:
                 return;

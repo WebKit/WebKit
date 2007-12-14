@@ -1,3 +1,26 @@
+2007-12-14  Darin Adler  <darin@apple.com>
+
+        Reviewed by Alexey.
+
+        - http://bugs.webkit.org/show_bug.cgi?id=16420
+          change regression tests to use document.execCommand instead of textInputController.doCommand
+
+        To avoid changing results at this time, I didn't correct the many tests that now have
+        misleading "this test cannot be run manually" text or references to "NSResponder" or
+        uneeded instructions for running the test manually. We can do that on a later pass.
+
+        * editing/deleting/5300379.html: Use execCommand instead of doCommand.
+        * editing/deleting/delete-to-end-of-paragraph.html: Ditto.
+        * editing/deleting/smart-delete-003.html: Ditto.
+        * editing/deleting/smart-delete-004.html: Ditto.
+        * editing/execCommand/nsresponder-indent.html: Ditto.
+        * editing/execCommand/nsresponder-outdent.html: Ditto.
+        * editing/selection/4947387.html: Ditto.
+        * editing/selection/5195166-1.html: Ditto.
+        * editing/selection/5195166-2.html: Ditto.
+        * editing/selection/select-line.html: Ditto.
+        * editing/selection/selection-actions.html: Ditto.
+
 2007-12-14  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Darin Adler.

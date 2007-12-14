@@ -1245,21 +1245,15 @@ bool WebView::mouseWheel(WPARAM wParam, LPARAM lParam, bool isHorizontal)
 bool WebView::execCommand(WPARAM wParam, LPARAM /*lParam*/)
 {
     Frame* frame = m_page->focusController()->focusedOrMainFrame();
-    bool handled = false;
     switch (LOWORD(wParam)) {
-    case SelectAll:
-        handled = frame->editor()->execCommand("SelectAll");
-        break;
-    case Undo:
-        handled = frame->editor()->execCommand("Undo");
-        break;
-    case Redo:
-        handled = frame->editor()->execCommand("Redo");
-        break;
-    default:
-        break;
+        case SelectAll:
+            return frame->editor()->command("SelectAll").execute();
+        case Undo:
+            return frame->editor()->command("Undo").execute();
+        case Redo:
+            return frame->editor()->command("Redo").execute();
     }
-    return handled;
+    return false;
 }
 
 bool WebView::keyUp(WPARAM virtualKeyCode, LPARAM keyData, bool systemKeyDown)
@@ -1304,8 +1298,8 @@ static const KeyDownEntry keyDownEntries[] = {
     { VK_DOWN,   0,                  "MoveDown"                                    },
     { VK_DOWN,   ShiftKey,           "MoveDownAndModifySelection"                  },
     { VK_NEXT,   ShiftKey,           "MoveDownAndModifySelection"                  },
-    { VK_PRIOR,  0,                  "MoveUpByPageAndModifyCaret"                  },
-    { VK_NEXT,   0,                  "MoveDownByPageAndModifyCaret"                },
+    { VK_PRIOR,  0,                  "MovePageUp"                                  },
+    { VK_NEXT,   0,                  "MovePageDown"                                },
     { VK_HOME,   0,                  "MoveToBeginningOfLine"                       },
     { VK_HOME,   ShiftKey,           "MoveToBeginningOfLineAndModifySelection"     },
     { VK_HOME,   CtrlKey,            "MoveToBeginningOfDocument"                   },
@@ -3496,21 +3490,21 @@ HRESULT STDMETHODCALLTYPE WebView::applyStyle(
 HRESULT STDMETHODCALLTYPE WebView::copy( 
         /* [in] */ IUnknown* /*sender*/)
 {
-    m_page->focusController()->focusedOrMainFrame()->editor()->execCommand("Copy");
+    m_page->focusController()->focusedOrMainFrame()->editor()->command("Copy").execute();
     return S_OK;
 }
 
 HRESULT STDMETHODCALLTYPE WebView::cut( 
         /* [in] */ IUnknown* /*sender*/)
 {
-    m_page->focusController()->focusedOrMainFrame()->editor()->execCommand("Cut");
+    m_page->focusController()->focusedOrMainFrame()->editor()->command("Cut").execute();
     return S_OK;
 }
 
 HRESULT STDMETHODCALLTYPE WebView::paste( 
         /* [in] */ IUnknown* /*sender*/)
 {
-    m_page->focusController()->focusedOrMainFrame()->editor()->execCommand("Paste");
+    m_page->focusController()->focusedOrMainFrame()->editor()->command("Paste").execute();
     return S_OK;
 }
 
@@ -3540,7 +3534,7 @@ HRESULT STDMETHODCALLTYPE WebView::pasteFont(
 HRESULT STDMETHODCALLTYPE WebView::delete_( 
         /* [in] */ IUnknown* /*sender*/)
 {
-    m_page->focusController()->focusedOrMainFrame()->editor()->execCommand("Delete");
+    m_page->focusController()->focusedOrMainFrame()->editor()->command("Delete").execute();
     return S_OK;
 }
     

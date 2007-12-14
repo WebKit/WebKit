@@ -1,8 +1,12 @@
+2007-12-14  Darin Adler  <darin@apple.com>
+
+        * StringsNotToBeLocalized.txt: Updated.
+
 2007-12-12  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Sam Weinig
 
-                Fix for <rdar://problem/4886844> and lay groundwork for <rdar://problem/4516170> (Back/Forward Cache on Windows)
+        Fix for <rdar://problem/4886844> and lay groundwork for <rdar://problem/4516170> (Back/Forward Cache on Windows)
 
         * WebKit.xcodeproj/project.pbxproj: Added a new file
 

@@ -244,12 +244,6 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
     return [[[self webView] mainFrame] _bridge];
 }
 
-- (NSView *)documentView
-{
-    ASSERT(_frame != nil);
-    return [[_frame frameView] documentView];
-}
-
 - (NSResponder *)firstResponder
 {
     ASSERT(_frame != nil);
@@ -267,22 +261,6 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
     [webView _pushPerformingProgrammaticFocus];
     [[webView _UIDelegateForwarder] webView:webView makeFirstResponder:view];
     [webView _popPerformingProgrammaticFocus];
-}
-
-- (void)willMakeFirstResponderForNodeFocus
-{
-    ASSERT([[[_frame frameView] documentView] isKindOfClass:[WebHTMLView class]]);
-    [(WebHTMLView *)[[_frame frameView] documentView] _willMakeFirstResponderForNodeFocus];
-}
-
-- (BOOL)textViewWasFirstResponderAtMouseDownTime:(NSTextView *)textView;
-{
-    ASSERT(_frame != nil);
-    NSView *documentView = [[_frame frameView] documentView];
-    if (![documentView isKindOfClass:[WebHTMLView class]])
-        return NO;
-    WebHTMLView *webHTMLView = (WebHTMLView *)documentView;
-    return [webHTMLView _textViewWasFirstResponderAtMouseDownTime:textView];
 }
 
 - (NSWindow *)window

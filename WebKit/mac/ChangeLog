@@ -1,3 +1,45 @@
+2007-12-14  Darin Adler  <darin@apple.com>
+
+        Reviewed by Alexey.
+
+        - Changed a few more editing operations to use WebCore instead of WebKit.
+        - Removed some obsolete unused code.
+
+        * WebCoreSupport/WebFrameBridge.h: Moved declarations of methods that are both
+        defined and used on the WebKit side to here. These no longer belong on the bridge
+        and should be moved to the WebFrame class (or elsewhere).
+        * WebCoreSupport/WebFrameBridge.mm: Removed some unused methods.
+
+        * WebView/WebFrameView.mm:
+        (+[WebFrameView _viewTypesAllowImageTypeOmission:]): Fix typo in comment.
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLViewPrivate dealloc]): Removed unused firstResponderTextViewAtMouseDownTime.
+        (-[WebHTMLViewPrivate clear]): Ditto.
+        (-[WebHTMLView _setMouseDownEvent:]): Ditto.
+        (commandNameForSelector): Added special cases for pageDown:, pageDownAndModifySelection:,
+        pageUp:, and pageUpAndModifySelection:, since those names probably aren't specific enough
+        to be used in WebCore (what AppKit calls scrollPageDown: vs. pageDown: needs to be
+        disambiguated with the word "Move"). Added deleteBackward:,
+        deleteBackwardByDecomposingPreviousCharacter:, deleteForward:, deleteToBeginningOfLine:,
+        deleteToBeginningOfParagraph:, deleteToEndOfLine:, deleteToEndOfParagraph:, pageDown:,
+        pageDownAndModifySelection:, pageUp:, pageUpAndModifySelection:, selectLine:,
+        selectParagraph:, selectSentence:, and selectWord: to the list of commands that are
+        forwarded to WebCore.
+        (-[WebHTMLView validateUserInterfaceItemWithoutDelegate:]): Eliminated the long list of
+        operations that we forward to WebCore. Instead, look up any command that WebCore can
+        handle, after any that we handle specially in WebHTMLView. Also fixed a bug where
+        an item that's not a menu item with changeBaseWritingDirection:NSWritingDirectionNatural
+        would end up enabled instead of disabled and streamlined the logic for toggleGrammarChecking:.
+        (-[WebHTMLView mouseDown:]): Removed unused firstResponderTextViewAtMouseDownTime.
+        (-[WebHTMLView becomeFirstResponder]): Removed unused willBecomeFirstResponderForNodeFocus.
+        (-[WebHTMLView resignFirstResponder]): Ditto.
+        (-[WebHTMLView checkSpelling:]): Took unneeded extra initialization of NSSpellChecker.
+
+        * WebView/WebHTMLViewInternal.h: Removed unused willBecomeFirstResponderForNodeFocus,
+        firstResponderTextViewAtMouseDownTime, _textViewWasFirstResponderAtMouseDownTime: and
+        _willMakeFirstResponderForNodeFocus.
+
 2007-12-13  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin.

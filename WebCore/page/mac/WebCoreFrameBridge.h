@@ -103,8 +103,6 @@ enum WebScrollGranularity {
 - (id)init;
 - (void)close;
 
-- (void)addData:(NSData *)data;
-
 - (void)clearFrame;
 
 - (NSURL *)baseURL;
@@ -120,7 +118,6 @@ enum WebScrollGranularity {
 - (void)forceLayoutWithMinimumPageWidth:(float)minPageWidth maximumPageWidth:(float)maxPageWidth adjustingViewSize:(BOOL)adjustSizeFlag;
 - (void)sendScrollEvent;
 - (BOOL)needsLayout;
-- (void)setNeedsLayout;
 - (void)drawRect:(NSRect)rect;
 - (void)adjustPageHeightNew:(float *)newBottom top:(float)oldTop bottom:(float)oldBottom limit:(float)bottomLimit;
 - (NSArray*)computePageRectsWithPrintWidthScaleFactor:(float)printWidthScaleFactor printHeight:(float)printHeight;
@@ -163,17 +160,13 @@ enum WebScrollGranularity {
 - (NSRect)firstRectForDOMRange:(DOMRange *)range;
 - (void)scrollDOMRangeToVisible:(DOMRange *)range;
 
-// Emacs-style-editing "mark"
-- (DOMRange *)markDOMRange;
-
 - (NSFont *)fontForSelection:(BOOL *)hasMultipleFonts;
 - (NSWritingDirection)baseWritingDirectionForSelectionStart;
 
 - (NSString *)stringWithData:(NSData *)data; // using the encoding of the frame's main resource
 + (NSString *)stringWithData:(NSData *)data textEncodingName:(NSString *)textEncodingName; // nil for textEncodingName means Latin-1
 
-- (void)setShouldCreateRenderers:(BOOL)f;
-- (BOOL)shouldCreateRenderers;
+- (void)setShouldCreateRenderers:(BOOL)shouldCreateRenderers;
 
 - (void)setBaseBackgroundColor:(NSColor *)backgroundColor;
 - (void)setDrawsBackground:(BOOL)drawsBackround;
@@ -183,10 +176,7 @@ enum WebScrollGranularity {
 - (id)accessibilityTree;
 
 - (DOMRange *)rangeByAlteringCurrentSelection:(WebCore::SelectionController::EAlteration)alteration direction:(WebCore::SelectionController::EDirection)direction granularity:(WebCore::TextGranularity)granularity;
-- (void)alterCurrentSelection:(WebCore::SelectionController::EAlteration)alteration verticalDistance:(float)distance;
 - (WebCore::TextGranularity)selectionGranularity;
-- (DOMRange *)smartDeleteRangeForProposedRange:(DOMRange *)proposedCharRange;
-- (void)smartInsertForString:(NSString *)pasteString replacingRange:(DOMRange *)charRangeToReplace beforeString:(NSString **)beforeString afterString:(NSString **)afterString;
 - (void)selectNSRange:(NSRange)range;
 - (NSRange)selectedNSRange;
 - (NSRange)markedTextNSRange;
@@ -204,10 +194,6 @@ enum WebScrollGranularity {
 
 - (void)insertParagraphSeparatorInQuotedContent;
 
-- (void)setSelectionToDragCaret;
-- (void)moveSelectionToDragCaret:(DOMDocumentFragment *)selectionFragment smartMove:(BOOL)smartMove;
-- (DOMRange *)dragCaretDOMRange;
-- (BOOL)isDragCaretRichlyEditable;
 - (DOMRange *)characterRangeAtPoint:(NSPoint)point;
 
 - (DOMCSSStyleDeclaration *)typingStyle;
@@ -230,36 +216,12 @@ enum WebScrollGranularity {
 
 @protocol WebCoreFrameBridge
 
-- (NSView *)documentView;
-
-- (WebCore::Frame*)createChildFrameNamed:(NSString *)frameName withURL:(NSURL *)URL referrer:(const WebCore::String&)referrer
-    ownerElement:(WebCore::HTMLFrameOwnerElement *)ownerElement allowsScrolling:(BOOL)allowsScrolling marginWidth:(int)width marginHeight:(int)height;
-
 - (NSWindow *)window;
 
 - (NSResponder *)firstResponder;
 - (void)makeFirstResponder:(NSResponder *)responder;
-- (void)willMakeFirstResponderForNodeFocus;
-
-- (BOOL)textViewWasFirstResponderAtMouseDownTime:(NSTextView *)textView;
 
 - (void)runOpenPanelForFileButtonWithResultListener:(id <WebCoreOpenPanelResultListener>)resultListener;
-
-- (NSView *)viewForPluginWithFrame:(NSRect)frame
-                               URL:(NSURL *)URL
-                    attributeNames:(NSArray *)attributeNames
-                   attributeValues:(NSArray *)attributeValues
-                          MIMEType:(NSString *)MIMEType
-                        DOMElement:(DOMElement *)element
-                      loadManually:(BOOL)loadManually;
-- (NSView *)viewForJavaAppletWithFrame:(NSRect)frame
-                        attributeNames:(NSArray *)attributeNames
-                       attributeValues:(NSArray *)attributeValues
-                               baseURL:(NSURL *)baseURL
-                            DOMElement:(DOMElement *)element;
-- (void)redirectDataToPlugin:(NSView *)pluginView;
-
-- (WebCore::ObjectContentType)determineObjectFromMIMEType:(NSString*)MIMEType URL:(NSURL*)URL;
 
 - (jobject)getAppletInView:(NSView *)view;
 
@@ -267,9 +229,8 @@ enum WebScrollGranularity {
 - (jobject)pollForAppletInView:(NSView *)view;
 
 - (void)issuePasteCommand;
-- (void)setIsSelected:(BOOL)isSelected forView:(NSView *)view;
 
-- (void)windowObjectCleared;
+- (void)setIsSelected:(BOOL)isSelected forView:(NSView *)view;
 
 - (void)dashboardRegionsChanged:(NSMutableDictionary *)regions;
 - (void)willPopupMenu:(NSMenu *)menu;

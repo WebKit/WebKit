@@ -6,14 +6,12 @@ if (window.layoutTestController)
 <div id="div" contenteditable="true">foo bar baz</div>
 
 <script>
-if (window.layoutTestController) {
-    var div = document.getElementById("div");
-    var sel = window.getSelection();
-    
-    sel.setPosition(div, 0);
-    sel.modify("move", "forward", "word");
-    sel.modify("move", "forward", "word");
-    sel.modify("extend", "backward", "word");
-    textInputController.doCommand("deleteBackward:");
-}
+var div = document.getElementById("div");
+var sel = window.getSelection();
+
+sel.setPosition(div, 0);
+sel.modify("move", "forward", "word");
+sel.modify("move", "forward", "word");
+sel.modify("extend", "backward", "word");
+document.execCommand("DeleteBackward");
 </script>

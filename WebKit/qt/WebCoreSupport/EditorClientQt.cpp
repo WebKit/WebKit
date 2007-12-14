@@ -343,7 +343,7 @@ void EditorClientQt::handleKeyboardEvent(KeyboardEvent* event)
     if (start->isContentEditable()) {
         switch (kevent->windowsVirtualKeyCode()) {
             case VK_RETURN:
-                frame->editor()->execCommand("InsertLineBreak");
+                frame->editor()->command("InsertLineBreak").execute();
                 break;
             case VK_BACK:
                 frame->editor()->deleteWithDirection(SelectionController::BACKWARD,
@@ -355,29 +355,29 @@ void EditorClientQt::handleKeyboardEvent(KeyboardEvent* event)
                 break;
             case VK_LEFT:
                 if (kevent->shiftKey())
-                    frame->editor()->execCommand("MoveLeftAndModifySelection");
-                else frame->editor()->execCommand("MoveLeft");
+                    frame->editor()->command("MoveLeftAndModifySelection").execute();
+                else frame->editor()->command("MoveLeft").execute();
                 break;
             case VK_RIGHT:
                 if (kevent->shiftKey())
-                    frame->editor()->execCommand("MoveRightAndModifySelection");
-                else frame->editor()->execCommand("MoveRight");
+                    frame->editor()->command("MoveRightAndModifySelection").execute();
+                else frame->editor()->command("MoveRight").execute();
                 break;
             case VK_UP:
                 if (kevent->shiftKey())
-                    frame->editor()->execCommand("MoveUpAndModifySelection");
-                else frame->editor()->execCommand("MoveUp");
+                    frame->editor()->command("MoveUpAndModifySelection").execute();
+                else frame->editor()->command("MoveUp").execute();
                 break;
             case VK_DOWN:
                 if (kevent->shiftKey())
-                    frame->editor()->execCommand("MoveDownAndModifySelection");
-                else frame->editor()->execCommand("MoveDown");
+                    frame->editor()->command("MoveDownAndModifySelection").execute();
+                else frame->editor()->command("MoveDown").execute();
                 break;
             case VK_PRIOR:  // PageUp
-                frame->editor()->execCommand("MoveUpByPageAndModifyCaret");
+                frame->editor()->command("MovePageUp").execute();
                 break;
             case VK_NEXT:  // PageDown
-                frame->editor()->execCommand("MoveDownByPageAndModifyCaret");
+                frame->editor()->command("MovePageDown").execute();
                 break;
             case VK_TAB:
                 return;
@@ -387,28 +387,28 @@ void EditorClientQt::handleKeyboardEvent(KeyboardEvent* event)
                 } else if (kevent->ctrlKey()) {
                     switch (kevent->windowsVirtualKeyCode()) {
                         case VK_A:
-                            frame->editor()->execCommand("SelectAll");
+                            frame->editor()->command("SelectAll").execute();
                             break;
                         case VK_B:
-                            frame->editor()->execCommand("ToggleBold");
+                            frame->editor()->command("ToggleBold").execute();
                             break;
                         case VK_C:
-                            frame->editor()->execCommand("Copy");
+                            frame->editor()->command("Copy").execute();
                             break;
                         case VK_I:
-                            frame->editor()->execCommand("ToggleItalic");
+                            frame->editor()->command("ToggleItalic").execute();
                             break;
                         case VK_V:
-                            frame->editor()->execCommand("Paste");
+                            frame->editor()->command("Paste").execute();
                             break;
                         case VK_X:
-                            frame->editor()->execCommand("Cut");
+                            frame->editor()->command("Cut").execute();
                             break;
                         case VK_Y:
-                            frame->editor()->execCommand("Redo");
+                            frame->editor()->command("Redo").execute();
                             break;
                         case VK_Z:
-                            frame->editor()->execCommand("Undo");
+                            frame->editor()->command("Undo").execute();
                             break;
                         default:
                             return;
@@ -418,33 +418,33 @@ void EditorClientQt::handleKeyboardEvent(KeyboardEvent* event)
     } else {
         switch (kevent->windowsVirtualKeyCode()) {
             case VK_UP:
-                frame->editor()->execCommand("MoveUp");
+                frame->editor()->command("MoveUp").execute();
                 break;
             case VK_DOWN:
-                frame->editor()->execCommand("MoveDown");
+                frame->editor()->command("MoveDown").execute();
                 break;
             case VK_PRIOR:  // PageUp
-                frame->editor()->execCommand("MoveUpByPageAndModifyCaret");
+                frame->editor()->command("MovePageUp").execute();
                 break;
             case VK_NEXT:  // PageDown
-                frame->editor()->execCommand("MoveDownByPageAndModifyCaret");
+                frame->editor()->command("MovePageDown").execute();
                 break;
             case VK_HOME:
                 if (kevent->ctrlKey())
-                    frame->editor()->execCommand("MoveToBeginningOfDocument");
+                    frame->editor()->command("MoveToBeginningOfDocument").execute();
                 break;
             case VK_END:
                 if (kevent->ctrlKey())
-                    frame->editor()->execCommand("MoveToEndOfDocument");
+                    frame->editor()->command("MoveToEndOfDocument").execute();
                 break;
             default:
                 if (kevent->ctrlKey()) {
-                    switch(kevent->windowsVirtualKeyCode()) {
+                    switch (kevent->windowsVirtualKeyCode()) {
                         case VK_A:
-                            frame->editor()->execCommand("SelectAll");
+                            frame->editor()->command("SelectAll").execute();
                             break;
                         case VK_C: case VK_X:
-                            frame->editor()->execCommand("Copy");
+                            frame->editor()->command("Copy").execute();
                             break;
                         default:
                             return;

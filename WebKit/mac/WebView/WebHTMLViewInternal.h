@@ -78,7 +78,6 @@ struct WebHTMLViewInterpretKeyEventsParameters;
 
     BOOL resigningFirstResponder;
     BOOL nextResponderDisabledOnce;
-    BOOL willBecomeFirstResponderForNodeFocus;
     
     WebTextCompleteController *compController;
     
@@ -86,8 +85,6 @@ struct WebHTMLViewInterpretKeyEventsParameters;
 
     WebHTMLViewInterpretKeyEventsParameters *interpretKeyEventsParameters;
     BOOL receivedNOOP;
-    
-    NSTextView *firstResponderTextViewAtMouseDownTime;
     
     WebDataSource *dataSource;
     WebCore::CachedImage *promisedDragTIFFDataSource;
@@ -108,12 +105,10 @@ struct WebHTMLViewInterpretKeyEventsParameters;
 - (void)_selectionChanged;
 - (void)_updateFontPanel;
 - (BOOL)_canSmartCopyOrDelete;
-- (BOOL)_textViewWasFirstResponderAtMouseDownTime:(NSTextView *)textView;
 #ifndef __LP64__
 - (void)_pauseNullEventsForAllNetscapePlugins;
 - (void)_resumeNullEventsForAllNetscapePlugins;
 #endif
-- (void)_willMakeFirstResponderForNodeFocus;
 - (id<WebHTMLHighlighter>)_highlighterForType:(NSString*)type;
 - (WebFrame *)_frame;
 - (void)paste:(id)sender;

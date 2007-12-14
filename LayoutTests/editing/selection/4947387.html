@@ -3,24 +3,23 @@
 
 <script>
 
-if (window.layoutTestController) {
-
+if (window.layoutTestController)
     window.layoutTestController.dumpEditingCallbacks();
     
-    var div = document.getElementById("div");
-    var text = div.firstChild;
-    var sel = window.getSelection();
-    
-    sel.setPosition(text, text.length);
-    textInputController.doCommand("moveToBeginningOfLineAndModifySelection:");
-    
-    sel.setPosition(text, 0);
-    textInputController.doCommand("moveToEndOfLineAndModifySelection:");
+var div = document.getElementById("div");
+var text = div.firstChild;
+var sel = window.getSelection();
 
-    sel.setPosition(text, text.length);
-    textInputController.doCommand("moveToBeginningOfParagraphAndModifySelection:");
-    
-    sel.setPosition(text, 0);
-    textInputController.doCommand("moveToEndOfParagraphAndModifySelection:");
-}
+sel.setPosition(text, text.length);
+document.execCommand("MoveToBeginningOfLineAndModifySelection");
+
+sel.setPosition(text, 0);
+document.execCommand("MoveToEndOfLineAndModifySelection");
+
+sel.setPosition(text, text.length);
+document.execCommand("MoveToBeginningOfParagraphAndModifySelection");
+
+sel.setPosition(text, 0);
+document.execCommand("MoveToEndOfParagraphAndModifySelection");
+
 </script>

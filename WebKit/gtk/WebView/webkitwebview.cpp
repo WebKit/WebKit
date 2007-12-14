@@ -404,25 +404,25 @@ static gboolean webkit_web_view_real_console_message(WebKitWebView* webView, con
 static void webkit_web_view_real_select_all(WebKitWebView* webView)
 {
     Frame* frame = core(webView)->focusController()->focusedOrMainFrame();
-    frame->editor()->execCommand("SelectAll");
+    frame->editor()->command("SelectAll").execute();
 }
 
 static void webkit_web_view_real_cut_clipboard(WebKitWebView* webView)
 {
     Frame* frame = core(webView)->focusController()->focusedOrMainFrame();
-    frame->editor()->execCommand("Cut");
+    frame->editor()->command("Cut").execute();
 }
 
 static void webkit_web_view_real_copy_clipboard(WebKitWebView* webView)
 {
     Frame* frame = core(webView)->focusController()->focusedOrMainFrame();
-    frame->editor()->execCommand("Copy");
+    frame->editor()->command("Copy").execute();
 }
 
 static void webkit_web_view_real_paste_clipboard(WebKitWebView* webView)
 {
     Frame* frame = core(webView)->focusController()->focusedOrMainFrame();
-    frame->editor()->execCommand("Paste");
+    frame->editor()->command("Paste").execute();
 }
 
 static void webkit_web_view_finalize(GObject* object)

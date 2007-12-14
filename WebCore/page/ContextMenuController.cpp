@@ -214,10 +214,10 @@ void ContextMenuController::contextMenuItemSelected(ContextMenuItem* item)
                 openNewWindow(result.absoluteLinkURL(), frame);
             break;
         case ContextMenuItemTagBold:
-            frame->editor()->execCommand("ToggleBold");
+            frame->editor()->command("ToggleBold").execute();
             break;
         case ContextMenuItemTagItalic:
-            frame->editor()->execCommand("ToggleItalic");
+            frame->editor()->command("ToggleItalic").execute();
             break;
         case ContextMenuItemTagUnderline:
             frame->editor()->toggleUnderline();

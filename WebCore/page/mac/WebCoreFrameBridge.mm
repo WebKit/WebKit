@@ -291,7 +291,7 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
     // changing another's location before the frame's document
     // has been created. 
     if (doc) {
-        doc->setShouldCreateRenderers([self shouldCreateRenderers]);
+        doc->setShouldCreateRenderers(_shouldCreateRenderers);
         m_frame->loader()->addData((const char *)[data bytes], [data length]);
     }
 }
@@ -774,12 +774,6 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
     return m_frame->view() ? m_frame->view()->needsLayout() : false;
 }
 
-- (void)setNeedsLayout
-{
-    if (m_frame->view())
-        m_frame->view()->setNeedsLayout();
-}
-
 - (NSString *)renderTreeAsExternalRepresentation
 {
     return externalRepresentation(m_frame->renderer()).getNSString();
@@ -788,11 +782,6 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
 - (void)setShouldCreateRenderers:(BOOL)f
 {
     _shouldCreateRenderers = f;
-}
-
-- (BOOL)shouldCreateRenderers
-{
-    return _shouldCreateRenderers;
 }
 
 - (NSColor *)selectionColor
@@ -830,24 +819,14 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
     if (m_frame->selectionController()->isNone())
         return nil;
 
-    // NOTE: The enums *must* match the very similar ones declared in SelectionController.h
     SelectionController selectionController;
     selectionController.setSelection(m_frame->selectionController()->selection());
     selectionController.modify(alteration, direction, granularity);
     return [DOMRange _wrapRange:selectionController.toRange().get()];
 }
 
-- (void)alterCurrentSelection:(SelectionController::EAlteration)alteration verticalDistance:(float)verticalDistance
-{
-    if (m_frame->selectionController()->isNone())
-        return;
-    SelectionController* selectionController = m_frame->selectionController();
-    selectionController->modify(alteration, static_cast<int>(verticalDistance), true);
-}
-
 - (TextGranularity)selectionGranularity
 {
-    // NOTE: The enums *must* match the very similar ones declared in SelectionController.h
     return m_frame->selectionGranularity();
 }
 
@@ -1086,16 +1065,6 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
     m_frame->revealSelection(RenderLayer::gAlignToEdgeIfNeeded);
 }
 
-- (void)setSelectionToDragCaret
-{
-    m_frame->selectionController()->setSelection(m_frame->dragCaretController()->selection());
-}
-
-- (void)moveSelectionToDragCaret:(DOMDocumentFragment *)selectionFragment smartMove:(BOOL)smartMove
-{
-    applyCommand(new MoveSelectionCommand([selectionFragment _documentFragment], m_frame->dragCaretController()->base(), smartMove));
-}
-
 - (VisiblePosition)_visiblePositionForPoint:(NSPoint)point
 {
     IntPoint outerPoint(point);
@@ -1110,16 +1079,6 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
     if (visiblePos.isNull())
         visiblePos = VisiblePosition(Position(node, 0));
     return visiblePos;
-}
-
-- (DOMRange *)dragCaretDOMRange
-{
-    return [DOMRange _wrapRange:m_frame->dragCaretController()->toRange().get()];
-}
-
-- (BOOL)isDragCaretRichlyEditable
-{
-    return m_frame->dragCaretController()->isContentRichlyEditable();
 }
 
 - (DOMRange *)characterRangeAtPoint:(NSPoint)point

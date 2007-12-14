@@ -279,19 +279,19 @@ void EditorClientWx::handleKeyboardEvent(KeyboardEvent* event)
                                                      CharacterGranularity, false, true);
                 break;
             case VK_LEFT:
-                frame->editor()->execCommand("MoveLeft");
+                frame->editor()->command("MoveLeft").execute();
                 break;
             case VK_RIGHT:
-                frame->editor()->execCommand("MoveRight");
+                frame->editor()->command("MoveRight").execute();
                 break;
             case VK_UP:
-                frame->editor()->execCommand("MoveUp");
+                frame->editor()->command("MoveUp").execute();
                 break;
             case VK_DOWN:
-                frame->editor()->execCommand("MoveDown");
+                frame->editor()->command("MoveDown").execute();
                 break;
             case VK_RETURN:
-                frame->editor()->execCommand("InsertLineBreak");
+                frame->editor()->command("InsertLineBreak").execute();
             default:
                 break;
         }
