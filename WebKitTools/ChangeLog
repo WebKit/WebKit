@@ -1,5 +1,17 @@
 2007-12-14  Darin Adler  <darin@apple.com>
 
+        - fix mistake causing nearly all tests to fail on Windows
+
+        * DumpRenderTree/win/UIDelegate.cpp:
+        (UIDelegate::webViewAddMessageToConsole): Need to compare the result of find with
+        npos, not 0. Also pass URL in to URL function rather than passing the entire message.
+
+        * DumpRenderTree/mac/UIDelegate.mm:
+        (-[UIDelegate webView:addMessageToConsole:]): Pass path only to path function rather
+        than passing the entire message.
+
+2007-12-14  Darin Adler  <darin@apple.com>
+
         - fix Tiger build
 
         * DumpRenderTree/mac/UIDelegate.mm:
