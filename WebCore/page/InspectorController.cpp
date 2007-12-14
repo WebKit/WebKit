@@ -36,22 +36,19 @@
 #include "Document.h"
 #include "DocumentLoader.h"
 #include "Element.h"
+#include "FloatConversion.h"
 #include "FloatRect.h"
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "FrameTree.h"
 #include "HTMLFrameOwnerElement.h"
 #include "InspectorClient.h"
-#if ENABLE(DATABASE)
-#include "JSDatabase.h"
-#endif
 #include "JSRange.h"
 #include "Page.h"
 #include "Range.h"
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
 #include "Settings.h"
-#include <wtf/RefCounted.h>
 #include "SharedBuffer.h"
 #include "SystemTime.h"
 #include "TextEncoding.h"
@@ -63,6 +60,11 @@
 #include <JavaScriptCore/JSLock.h>
 #include <JavaScriptCore/JSRetainPtr.h>
 #include <JavaScriptCore/JSStringRef.h>
+#include <wtf/RefCounted.h>
+
+#if ENABLE(DATABASE)
+#include "JSDatabase.h"
+#endif
 
 namespace WebCore {
 
@@ -570,6 +572,20 @@ static JSValueRef platform(JSContextRef ctx, JSObjectRef /*function*/, JSObjectR
     return platformValue;
 }
 
+static JSValueRef moveByUnrestricted(JSContextRef ctx, JSObjectRef /*function*/, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* /*exception*/)
+{
+    InspectorController* controller = reinterpret_cast<InspectorController*>(JSObjectGetPrivate(thisObject));
+    if (!controller)
+        return JSValueMakeUndefined(ctx);
+
+    if (argumentCount < 2 )
+        return JSValueMakeUndefined(ctx);
+
+    controller->moveByUnrestricted(narrowPrecisionToFloat(JSValueToNumber(ctx, arguments[0], 0)), narrowPrecisionToFloat(JSValueToNumber(ctx, arguments[1], 0)));
+
+    return JSValueMakeUndefined(ctx);
+}
+
 InspectorController::InspectorController(Page* page, InspectorClient* client)
     : m_inspectedPage(page)
     , m_client(client)
@@ -747,21 +763,22 @@ void InspectorController::windowScriptObjectAvailable()
     ASSERT(global);
 
     static JSStaticFunction staticFunctions[] = {
-        { "addSourceToFrame", addSourceToFrame, kJSPropertyAttributeNone },
-        { "getResourceDocumentNode", getResourceDocumentNode, kJSPropertyAttributeNone },
-        { "highlightDOMNode", highlightDOMNode, kJSPropertyAttributeNone },
-        { "hideDOMNodeHighlight", hideDOMNodeHighlight, kJSPropertyAttributeNone },
-        { "loaded", loaded, kJSPropertyAttributeNone },
-        { "windowUnloading", unloading, kJSPropertyAttributeNone },
-        { "attach", attach, kJSPropertyAttributeNone },
-        { "detach", detach, kJSPropertyAttributeNone },
-        { "search", search, kJSPropertyAttributeNone },
+        { "addSourceToFrame", WebCore::addSourceToFrame, kJSPropertyAttributeNone },
+        { "getResourceDocumentNode", WebCore::getResourceDocumentNode, kJSPropertyAttributeNone },
+        { "highlightDOMNode", WebCore::highlightDOMNode, kJSPropertyAttributeNone },
+        { "hideDOMNodeHighlight", WebCore::hideDOMNodeHighlight, kJSPropertyAttributeNone },
+        { "loaded", WebCore::loaded, kJSPropertyAttributeNone },
+        { "windowUnloading", WebCore::unloading, kJSPropertyAttributeNone },
+        { "attach", WebCore::attach, kJSPropertyAttributeNone },
+        { "detach", WebCore::detach, kJSPropertyAttributeNone },
+        { "search", WebCore::search, kJSPropertyAttributeNone },
 #if ENABLE(DATABASE)
-        { "databaseTableNames", databaseTableNames, kJSPropertyAttributeNone },
+        { "databaseTableNames", WebCore::databaseTableNames, kJSPropertyAttributeNone },
 #endif
-        { "inspectedWindow", inspectedWindow, kJSPropertyAttributeNone },
-        { "localizedStringsURL", localizedStrings, kJSPropertyAttributeNone },
-        { "platform", platform, kJSPropertyAttributeNone },
+        { "inspectedWindow", WebCore::inspectedWindow, kJSPropertyAttributeNone },
+        { "localizedStringsURL", WebCore::localizedStrings, kJSPropertyAttributeNone },
+        { "platform", WebCore::platform, kJSPropertyAttributeNone },
+        { "moveByUnrestricted", WebCore::moveByUnrestricted, kJSPropertyAttributeNone },
         { 0, 0, 0 }
     };
 
@@ -1603,5 +1620,15 @@ void InspectorController::didOpenDatabase(Database* database, const String& doma
         addDatabaseScriptResource(resource);
 }
 #endif
+
+void InspectorController::moveByUnrestricted(float x, float y) const
+{
+    if (!m_page || !enabled())
+        return;
+
+    FloatRect frameRect = m_page->chrome()->windowRect();
+    frameRect.move(x, y);
+    m_page->chrome()->setWindowRect(frameRect);
+}
 
 } // namespace WebCore

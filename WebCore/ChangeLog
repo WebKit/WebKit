@@ -1,3 +1,17 @@
+2007-12-13  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders.
+
+        Fix for http://bugs.webkit.org/show_bug.cgi?id=16352
+        Toolbar dragged inspector cannot be moved beyond screen edges
+
+        * page/InspectorController.cpp:
+        (WebCore::moveByUnrestricted):
+        (WebCore::InspectorController::windowScriptObjectAvailable):
+        (WebCore::InspectorController::moveByUnrestricted):
+        * page/InspectorController.h:
+        * page/inspector/inspector.js:
+
 2007-12-13  Adam Roben  <aroben@apple.com>
 
         Fix <rdar://5517707> Crash on wptv.wp.pl when "make bigger" button is clicked

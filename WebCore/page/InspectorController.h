@@ -117,6 +117,8 @@ public:
 
     const ResourcesMap& resources() const { return m_resources; }
 
+    void moveByUnrestricted(float x, float y) const;
+
 private:
     void focusNode();
 
