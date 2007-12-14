@@ -42,6 +42,8 @@ public:
     }
 
     virtual String cssText() const;
+
+    virtual bool isTransitionTimingFunctionValue() { return true; }
     
     double x1() const { return m_x1; }
     double y1() const { return m_y1; }

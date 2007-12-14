@@ -131,15 +131,9 @@ if (isInitial) { \
 
 #define HANDLE_MULTILAYER_VALUE(layerType, LayerType, prop, Prop, value) { \
 HANDLE_MULTILAYER_INHERIT_AND_INITIAL(layerType, LayerType, prop, Prop) \
-if (!value->isPrimitiveValue() && !value->isValueList()) \
-    return; \
 LayerType* currChild = style->access##LayerType##s(); \
 LayerType* prevChild = 0; \
-if (value->isPrimitiveValue()) { \
-    map##Prop(currChild, value); \
-    currChild = currChild->next(); \
-} \
-else { \
+if (value->isValueList()) { \
     /* Walk each value and put it into a layer, creating new layers as needed. */ \
     CSSValueList* valueList = static_cast<CSSValueList*>(value); \
     for (unsigned int i = 0; i < valueList->length(); i++) { \
@@ -152,6 +146,9 @@ else { \
         prevChild = currChild; \
         currChild = currChild->next(); \
     } \
+} else { \
+    map##Prop(currChild, value); \
+    currChild = currChild->next(); \
 } \
 while (currChild) { \
     /* Reset all remaining layers to not have the property set. */ \
@@ -4219,6 +4216,7 @@ void CSSStyleSelector::mapBackgroundAttachment(BackgroundLayer* layer, CSSValue*
 
     if (!value->isPrimitiveValue())
         return;
+
     CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(value);
     switch (primitiveValue->getIdent()) {
         case CSS_VAL_FIXED:
@@ -4241,6 +4239,7 @@ void CSSStyleSelector::mapBackgroundClip(BackgroundLayer* layer, CSSValue* value
 
     if (!value->isPrimitiveValue())
         return;
+
     CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(value);
     layer->setBackgroundClip(*primitiveValue);
 }
@@ -4254,6 +4253,7 @@ void CSSStyleSelector::mapBackgroundComposite(BackgroundLayer* layer, CSSValue* 
     
     if (!value->isPrimitiveValue())
         return;
+
     CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(value);
     layer->setBackgroundComposite(*primitiveValue);
 }
@@ -4267,6 +4267,7 @@ void CSSStyleSelector::mapBackgroundOrigin(BackgroundLayer* layer, CSSValue* val
 
     if (!value->isPrimitiveValue())
         return;
+
     CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(value);
     layer->setBackgroundOrigin(*primitiveValue);
 }
@@ -4278,7 +4279,9 @@ void CSSStyleSelector::mapBackgroundImage(BackgroundLayer* layer, CSSValue* valu
         return;
     }
     
-    if (!value->isPrimitiveValue()) return;
+    if (!value->isPrimitiveValue())
+        return;
+
     CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(value);
     layer->setBackgroundImage(static_cast<CSSImageValue*>(primitiveValue)->image(element->document()->docLoader()));
 }
@@ -4292,6 +4295,7 @@ void CSSStyleSelector::mapBackgroundRepeat(BackgroundLayer* layer, CSSValue* val
     
     if (!value->isPrimitiveValue())
         return;
+
     CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(value);
     layer->setBackgroundRepeat(*primitiveValue);
 }
@@ -4355,6 +4359,7 @@ void CSSStyleSelector::mapBackgroundXPosition(BackgroundLayer* layer, CSSValue* 
     
     if (!value->isPrimitiveValue())
         return;
+
     CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(value);
     Length l;
     int type = primitiveValue->primitiveType();
@@ -4376,6 +4381,7 @@ void CSSStyleSelector::mapBackgroundYPosition(BackgroundLayer* layer, CSSValue* 
     
     if (!value->isPrimitiveValue())
         return;
+
     CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(value);
     Length l;
     int type = primitiveValue->primitiveType();
@@ -4395,6 +4401,9 @@ void CSSStyleSelector::mapTransitionDuration(Transition* transition, CSSValue* v
         return;
     }
 
+    if (!value->isPrimitiveValue())
+        return;
+
     CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(value);
     if (primitiveValue->primitiveType() == CSSPrimitiveValue::CSS_S)
         transition->setTransitionDuration(int(1000*primitiveValue->getFloatValue()));
@@ -4408,6 +4417,9 @@ void CSSStyleSelector::mapTransitionRepeatCount(Transition* transition, CSSValue
         transition->setTransitionRepeatCount(RenderStyle::initialTransitionRepeatCount());
         return;
     }
+
+    if (!value->isPrimitiveValue())
+        return;
 
     CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(value);
     if (primitiveValue->getIdent() == CSS_VAL_INFINITE)
@@ -4444,9 +4456,11 @@ void CSSStyleSelector::mapTransitionTimingFunction(Transition* transition, CSSVa
         }
         return;
     }
-    
-    CSSTimingFunctionValue* timingFunction = static_cast<CSSTimingFunctionValue*>(value);
-    transition->setTransitionTimingFunction(TimingFunction(CubicBezierTimingFunction, timingFunction->x1(), timingFunction->y1(), timingFunction->x2(), timingFunction->y2()));
+
+    if (value->isTransitionTimingFunctionValue()) {
+        CSSTimingFunctionValue* timingFunction = static_cast<CSSTimingFunctionValue*>(value);
+        transition->setTransitionTimingFunction(TimingFunction(CubicBezierTimingFunction, timingFunction->x1(), timingFunction->y1(), timingFunction->x2(), timingFunction->y2()));
+    }
 }
 
 void CSSStyleSelector::mapTransitionProperty(Transition* transition, CSSValue* value)
@@ -4455,6 +4469,9 @@ void CSSStyleSelector::mapTransitionProperty(Transition* transition, CSSValue* v
         transition->setTransitionProperty(RenderStyle::initialTransitionProperty());
         return;
     }
+
+    if (!value->isPrimitiveValue())
+        return;
 
     CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(value);
     transition->setTransitionProperty(primitiveValue->getIdent());

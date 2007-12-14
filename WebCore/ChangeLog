@@ -1,3 +1,37 @@
+2007-12-13  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        - fix <rdar://problem/5642426> explicit cubic-bezier curves all treated as "default" for transition-timing-function
+
+        Test: fast/css/transition-timing-function.html
+
+        * css/CSSStyleSelector.cpp: Changed the HANDLE_MULTILAYER_VALUE macro to
+        not reject non-primitive non-list values, and instead made sure that the
+        mapping functions rejected them if necessary. This allows non-primitive
+        timing functions to be mapped.
+        (WebCore::CSSStyleSelector::mapBackgroundAttachment):
+        (WebCore::CSSStyleSelector::mapBackgroundClip):
+        (WebCore::CSSStyleSelector::mapBackgroundComposite):
+        (WebCore::CSSStyleSelector::mapBackgroundOrigin):
+        (WebCore::CSSStyleSelector::mapBackgroundImage):
+        (WebCore::CSSStyleSelector::mapBackgroundRepeat):
+        (WebCore::CSSStyleSelector::mapBackgroundXPosition):
+        (WebCore::CSSStyleSelector::mapBackgroundYPosition):
+        (WebCore::CSSStyleSelector::mapTransitionDuration):
+        (WebCore::CSSStyleSelector::mapTransitionRepeatCount):
+        (WebCore::CSSStyleSelector::mapTransitionTimingFunction):
+        (WebCore::CSSStyleSelector::mapTransitionProperty):
+        * css/CSSTimingFunctionValue.cpp:
+        (WebCore::CSSTimingFunctionValue::cssText): Implemented for use in the
+        regression test.
+        * css/CSSTimingFunctionValue.h:
+        (WebCore::CSSTimingFunctionValue::isTransitionTimingFunctionValue):
+        Added. Returns true.
+        * css/CSSValue.h:
+        (WebCore::CSSValue::isTransitionTimingFunctionValue): Added. Returns
+        false.
+
 2007-12-13  Steve Falkenburg  <sfalken@apple.com>
 
         Move source file generation into its own vcproj to fix build dependencies.

@@ -38,7 +38,7 @@
         * WebView.cpp:
         (WebView::keyDown):
         (WebView::keyPress):
-        Moved space handliing to keyPress() to fix this bug and to match IE. Scrolling via arrow keys is correctly handled
+        Moved space handling to keyPress() to fix this bug and to match IE. Scrolling via arrow keys is correctly handled
         in keyDown().
 
 2007-12-12  Brady Eidson  <beidson@apple.com>

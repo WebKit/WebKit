@@ -47,6 +47,7 @@ public:
     virtual bool isValue() { return true; }
     virtual bool isFontValue() { return false; }
     virtual bool isImplicitInitialValue() const { return false; }
+    virtual bool isTransitionTimingFunctionValue() { return false; }
 };
 
 } // namespace WebCore

@@ -1,3 +1,12 @@
+2007-12-13  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        - test for <rdar://problem/5642426> explicit cubic-bezier curves all treated as "default" for transition-timing-function
+
+        * fast/css/transition-timing-function-expected.txt: Added.
+        * fast/css/transition-timing-function.html: Added.
+
 2007-12-13  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Adam.
