@@ -1,3 +1,10 @@
+2007-12-13  Alp Toker  <alp@atoker.com>
+
+        curl backend build fix for breakage introduced in r28709.
+
+        * platform/network/ResourceHandleInternal.h:
+        (WebCore::ResourceHandleInternal::ResourceHandleInternal):
+
 2007-12-13  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Oliver Hunt.
