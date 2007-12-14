@@ -1,3 +1,10 @@
+2007-12-14  Dan Bernstein  <mitz@apple.com>
+
+        - share the results of this test between Tiger and Leopard
+
+        * platform/mac-leopard/fast/text/international/bidi-control-chars-treated-as-ZWS-expected.txt: Removed.
+        * platform/mac/fast/text/international/bidi-control-chars-treated-as-ZWS-expected.txt: Copied from LayoutTests/platform/mac-leopard/fast/text/international/bidi-control-chars-treated-as-ZWS-expected.txt.
+
 2007-12-14  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Brady.
