@@ -1,3 +1,15 @@
+2007-12-14  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Darin and Geoff.
+
+        <rdar://problem/5619295> 
+        REGRESSION: 303-304: Embedded YouTube video fails to render- JS errors (16150) (Flash 9)
+        
+        Add property getting methods to the plug-in.
+        
+        * DumpRenderTree/TestNetscapePlugIn.subproj/PluginObject.cpp:
+        (pluginInvoke):
+
 2007-12-14  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Darin.
@@ -50,7 +62,7 @@
         * DumpRenderTree/win/LayoutTestControllerWin.cpp:
         (LayoutTestController::pathToLocalResource):
 
-2007-12-11  Anders Carlsson  <andersca@apple.com>
+2007-12-12  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam.
 

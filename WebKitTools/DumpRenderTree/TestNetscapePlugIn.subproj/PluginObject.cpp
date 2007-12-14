@@ -94,7 +94,9 @@ static const NPUTF8 *pluginPropertyIdentifierNames[NUM_PROPERTY_IDENTIFIERS] = {
 #define ID_DESTROY_STREAM           6
 #define ID_TEST_ENUMERATE           7
 #define ID_TEST_GETINTIDENTIFIER    8
-#define NUM_METHOD_IDENTIFIERS      9
+#define ID_TEST_GET_PROPERTY        9
+#define ID_TEST_EVALUATE            10
+#define NUM_METHOD_IDENTIFIERS      11
 
 static NPIdentifier pluginMethodIdentifiers[NUM_METHOD_IDENTIFIERS];
 static const NPUTF8 *pluginMethodIdentifierNames[NUM_METHOD_IDENTIFIERS] = {
@@ -106,7 +108,9 @@ static const NPUTF8 *pluginMethodIdentifierNames[NUM_METHOD_IDENTIFIERS] = {
     "testInvokeDefault",
     "destroyStream",
     "testEnumerate",
-    "testGetIntIdentifier"
+    "testGetIntIdentifier",
+    "testGetProperty",
+    "testEvaluate",
 };
 
 static NPUTF8* createCStringFromNPVariant(const NPVariant *variant)
@@ -315,6 +319,44 @@ static bool pluginInvoke(NPObject *header, NPIdentifier name, const NPVariant *a
             INT32_TO_NPVARIANT((int32)identifier, *result);
             return true;
         }
+    } else if (name == pluginMethodIdentifiers[ID_TEST_EVALUATE] && 
+               argCount == 1 && NPVARIANT_IS_STRING(args[0])) {
+        NPObject *windowScriptObject;
+        browser->getvalue(obj->npp, NPNVWindowNPObject, &windowScriptObject);
+
+        NPString s = NPVARIANT_TO_STRING(args[0]);
+        
+        bool retval = browser->evaluate(obj->npp, windowScriptObject, &s, result);
+        browser->releaseobject(windowScriptObject);
+        return retval;
+    } else if (name == pluginMethodIdentifiers[ID_TEST_GET_PROPERTY] &&
+               argCount > 0) {
+        NPObject *object;
+        browser->getvalue(obj->npp, NPNVWindowNPObject, &object);
+
+        for (uint32_t i = 0; i < argCount; i++) {
+            assert(NPVARIANT_IS_STRING(args[i]));
+            char *propertyString = createCStringFromNPVariant(&args[i]);
+            NPIdentifier propertyIdentifier = browser->getstringidentifier(propertyString);
+            
+            NPVariant variant;
+            bool retval = browser->getproperty(obj->npp, object, propertyIdentifier, &variant);
+            browser->releaseobject(object);
+            
+            if (!retval)
+                break;
+            
+            if (i + 1 < argCount) {
+                assert(NPVARIANT_IS_OBJECT(variant));
+                object = NPVARIANT_TO_OBJECT(variant);
+            } else {                
+                *result = variant;
+                return true;
+            }
+        }
+        
+        VOID_TO_NPVARIANT(*result);
+        return false;
     }
         
     return false;

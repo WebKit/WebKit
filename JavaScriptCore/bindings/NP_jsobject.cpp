@@ -62,9 +62,6 @@ static void jsDeallocate(NPObject* npObj)
     if (obj->rootObject)
         obj->rootObject->deref();
 
-    if (obj->originRootObject)
-        obj->originRootObject->deref();
-
     free(obj);
 }
 
@@ -74,22 +71,10 @@ static NPClass noScriptClass = { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 NPClass* NPScriptObjectClass = &javascriptClass;
 static NPClass* NPNoScriptObjectClass = &noScriptClass;
 
-static bool _isSafeScript(JavaScriptObject* obj)
-{
-    if (!obj->originRootObject || !obj->rootObject)
-        return true;
-
-    if (!obj->originRootObject->isValid() || !obj->rootObject->isValid())
-        return false;
-
-    return obj->rootObject->globalObject()->allowsAccessFrom(obj->originRootObject->globalObject());
-}
-
-NPObject* _NPN_CreateScriptObject(NPP npp, JSObject* imp, PassRefPtr<RootObject> originRootObject, PassRefPtr<RootObject> rootObject)
+NPObject* _NPN_CreateScriptObject(NPP npp, JSObject* imp, PassRefPtr<RootObject> rootObject)
 {
     JavaScriptObject* obj = (JavaScriptObject*)_NPN_CreateObject(npp, NPScriptObjectClass);
 
-    obj->originRootObject = originRootObject.releaseRef();
     obj->rootObject = rootObject.releaseRef();
 
     if (obj->rootObject)
@@ -108,8 +93,6 @@ bool _NPN_InvokeDefault(NPP, NPObject* o, const NPVariant* args, uint32_t argCou
 {
     if (o->_class == NPScriptObjectClass) {
         JavaScriptObject* obj = (JavaScriptObject*)o; 
-        if (!_isSafeScript(obj))
-            return false;        
         
         VOID_TO_NPVARIANT(*result);
         
@@ -147,8 +130,6 @@ bool _NPN_Invoke(NPP npp, NPObject* o, NPIdentifier methodName, const NPVariant*
 {
     if (o->_class == NPScriptObjectClass) {
         JavaScriptObject* obj = (JavaScriptObject*)o; 
-        if (!_isSafeScript(obj))
-            return false;
 
         PrivateIdentifier* i = (PrivateIdentifier*)methodName;
         if (!i->isString)
@@ -205,9 +186,6 @@ bool _NPN_Evaluate(NPP, NPObject* o, NPString* s, NPVariant* variant)
     if (o->_class == NPScriptObjectClass) {
         JavaScriptObject* obj = (JavaScriptObject*)o; 
 
-        if (!_isSafeScript(obj))
-            return false;
-
         RootObject* rootObject = obj->rootObject;
         if (!rootObject || !rootObject->isValid())
             return false;
@@ -246,8 +224,6 @@ bool _NPN_GetProperty(NPP, NPObject* o, NPIdentifier propertyName, NPVariant* va
 {
     if (o->_class == NPScriptObjectClass) {
         JavaScriptObject* obj = (JavaScriptObject*)o; 
-        if (!_isSafeScript(obj))
-            return false;
 
         RootObject* rootObject = obj->rootObject;
         if (!rootObject || !rootObject->isValid())
@@ -289,8 +265,6 @@ bool _NPN_SetProperty(NPP, NPObject* o, NPIdentifier propertyName, const NPVaria
 {
     if (o->_class == NPScriptObjectClass) {
         JavaScriptObject* obj = (JavaScriptObject*)o; 
-        if (!_isSafeScript(obj))
-            return false;
 
         RootObject* rootObject = obj->rootObject;
         if (!rootObject || !rootObject->isValid())
@@ -316,8 +290,6 @@ bool _NPN_RemoveProperty(NPP, NPObject* o, NPIdentifier propertyName)
 {
     if (o->_class == NPScriptObjectClass) {
         JavaScriptObject* obj = (JavaScriptObject*)o; 
-        if (!_isSafeScript(obj))
-            return false;
 
         RootObject* rootObject = obj->rootObject;
         if (!rootObject || !rootObject->isValid())
@@ -348,8 +320,6 @@ bool _NPN_HasProperty(NPP, NPObject* o, NPIdentifier propertyName)
 {
     if (o->_class == NPScriptObjectClass) {
         JavaScriptObject* obj = (JavaScriptObject*)o; 
-        if (!_isSafeScript(obj))
-            return false;
 
         RootObject* rootObject = obj->rootObject;
         if (!rootObject || !rootObject->isValid())
@@ -373,8 +343,6 @@ bool _NPN_HasMethod(NPP, NPObject* o, NPIdentifier methodName)
 {
     if (o->_class == NPScriptObjectClass) {
         JavaScriptObject* obj = (JavaScriptObject*)o; 
-        if (!_isSafeScript(obj))
-            return false;
 
         PrivateIdentifier* i = (PrivateIdentifier*)methodName;
         if (!i->isString)
@@ -414,8 +382,6 @@ bool _NPN_Enumerate(NPP, NPObject *o, NPIdentifier **identifier, uint32_t *count
 {
     if (o->_class == NPScriptObjectClass) {
         JavaScriptObject* obj = (JavaScriptObject*)o; 
-        if (!_isSafeScript(obj))
-            return false;
         
         RootObject* rootObject = obj->rootObject;
         if (!rootObject || !rootObject->isValid())

@@ -44,11 +44,10 @@ struct JavaScriptObject
 {
     NPObject object;
     KJS::JSObject* imp;
-    KJS::Bindings::RootObject* originRootObject;
     KJS::Bindings::RootObject* rootObject;
 };
 
-NPObject* _NPN_CreateScriptObject(NPP npp, KJS::JSObject*, PassRefPtr<KJS::Bindings::RootObject> originRootObject, PassRefPtr<KJS::Bindings::RootObject> rootObject);
+NPObject* _NPN_CreateScriptObject(NPP npp, KJS::JSObject*, PassRefPtr<KJS::Bindings::RootObject> rootObject);
 NPObject* _NPN_CreateNoScriptObject(void);
 
 #endif

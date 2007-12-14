@@ -115,19 +115,11 @@ void convertValueToNPVariant(ExecState *exec, JSValue *value, NPVariant *result)
                 OBJECT_TO_NPVARIANT(obj, *result);
             }
         } else {
-            JSGlobalObject* originGlobalObject = exec->dynamicGlobalObject();
-            RootObject* originRootObject = findRootObject(originGlobalObject);
-
-            JSGlobalObject* globalObject = 0;
-            if (object->isGlobalObject())
-                globalObject = static_cast<JSGlobalObject*>(object);
-
-            if (!globalObject)
-                globalObject = originGlobalObject;
+            JSGlobalObject* globalObject = exec->dynamicGlobalObject();
 
             RootObject* rootObject = findRootObject(globalObject);
             if (rootObject) {
-                NPObject* npObject = _NPN_CreateScriptObject(0, object, originRootObject, rootObject);
+                NPObject* npObject = _NPN_CreateScriptObject(0, object, rootObject);
                 OBJECT_TO_NPVARIANT(npObject, *result);
             }
         }

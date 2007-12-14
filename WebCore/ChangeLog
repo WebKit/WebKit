@@ -1,3 +1,17 @@
+2007-12-14  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Darin and Geoff.
+
+        <rdar://problem/5619295> 
+        REGRESSION: 303-304: Embedded YouTube video fails to render- JS errors (16150) (Flash 9)
+
+        _NPN_CreateScriptObject doesn't take an origin root object anymore.
+        
+        * html/HTMLPlugInElement.cpp:
+        (WebCore::HTMLPlugInElement::createNPObject):
+        * page/Frame.cpp:
+        (WebCore::Frame::windowScriptNPObject):
+
 2007-12-14  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.

@@ -1,3 +1,51 @@
+2007-12-14  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Darin and Geoff.
+
+        <rdar://problem/5619295> 
+        REGRESSION: 303-304: Embedded YouTube video fails to render- JS errors (16150) (Flash 9)
+        
+        Get rid of unnecessary and incorrect security checks for plug-ins accessing JavaScript objects. 
+        
+        The way this used to work was that each NPObject that wrapped a JSObject would have a root object
+        corresponding to the frame object (used for managing the lifecycle) and an origin root object (used for
+        doing security checks). 
+        
+        This would prevent a plug-in from accessing a frame's window object if it's security origin was different
+        (some parts of the window, such as the location object, can be accessed from frames with different security 
+        origins, and those checks are being done in WebCore).
+        
+        Also, if a plug-in were to access a window object of a frame that later went away, it could lead to that
+        Window JSObject being garbage collected and the NPObject pointing to freed memory.
+        
+        How this works now is that there is no origin root object anymore, and all NPObject wrappers that are created
+        for a plug-in will have the root object of the containing frame of that plug-in.
+        
+        * bindings/NP_jsobject.cpp:
+        (jsDeallocate):
+        Don't free the origin root object.
+        
+        (_NPN_CreateScriptObject):
+        Remove the origin root object parameter.
+        
+        (_NPN_InvokeDefault):
+        (_NPN_Invoke):
+        (_NPN_Evaluate):
+        (_NPN_GetProperty):
+        (_NPN_SetProperty):
+        (_NPN_RemoveProperty):
+        (_NPN_HasProperty):
+        (_NPN_HasMethod):
+        (_NPN_Enumerate):
+        Get rid of all security checks.
+        
+        * bindings/NP_jsobject.h:
+        Remove originRootObject from the JavaScriptObject struct.
+        
+        * bindings/c/c_utility.cpp:
+        (KJS::Bindings::convertValueToNPVariant):
+        Always use the root object from the ExecState.
+        
 2007-12-13  Steve Falkenburg  <sfalken@apple.com>
 
         Move source file generation into its own vcproj to fix build dependencies.
