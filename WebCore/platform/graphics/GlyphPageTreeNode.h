@@ -31,7 +31,6 @@
 
 #include <wtf/RefCounted.h>
 #include <wtf/unicode/Unicode.h>
-#include <wtf/Noncopyable.h>
 #include <wtf/HashMap.h>
 
 namespace WebCore {

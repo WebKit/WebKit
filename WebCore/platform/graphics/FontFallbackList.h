@@ -22,12 +22,11 @@
  */
 
 // This file has no guards on purpose in order to detect redundant includes. This is a private header
-// and so this should catch anyone trying to include this file in public cpp files.
+// and so this may catch someone trying to include this file in public cpp files.
 
 #include "FontData.h"
-#include <wtf/RefCounted.h>
 #include "FontSelector.h"
-#include <wtf/Vector.h>
+#include <wtf/Forward.h>
 
 namespace WebCore {
 

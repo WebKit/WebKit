@@ -1,3 +1,16 @@
+2007-12-14  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam.
+
+        - removed unnecessary includes of "Vector.h"
+
+        * wtf/HashMap.h:
+        (WTF::copyKeysToVector): Make the type of the vector be a template parameter.
+        This allows copying keys into a vector of a base class or one with an inline capacity.
+        (WTF::copyValuesToVector): Ditto.
+        * wtf/HashSet.h:
+        (WTF::copyToVector): Ditto.
+
 2007-12-14  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Darin and Geoff.

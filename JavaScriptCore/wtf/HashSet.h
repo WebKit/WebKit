@@ -1,8 +1,6 @@
 // -*- mode: c++; c-basic-offset: 4 -*-
 /*
- * This file is part of the KDE libraries
- *
- * Copyright (C) 2005, 2006 Apple Computer, Inc.
+ * Copyright (C) 2005, 2006, 2007 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -25,7 +23,6 @@
 #define WTF_HashSet_h
 
 #include "HashTable.h"
-#include "Vector.h"
 
 namespace WTF {
 
@@ -317,8 +314,8 @@ namespace WTF {
         deleteAllValues<typename HashSet<T, U, V>::ValueType>(collection.m_impl);
     }
     
-    template<typename T, typename U, typename V>
-    inline void copyToVector(const HashSet<T, U, V>& collection, Vector<T>& vector)
+    template<typename T, typename U, typename V, typename W>
+    inline void copyToVector(const HashSet<T, U, V>& collection, W& vector)
     {
         typedef typename HashSet<T, U, V>::const_iterator iterator;
         
@@ -329,6 +326,7 @@ namespace WTF {
         for (unsigned i = 0; it != end; ++it, ++i)
             vector[i] = *it;
     }  
+
 } // namespace WTF
 
 using WTF::HashSet;
