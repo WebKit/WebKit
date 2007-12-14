@@ -1,3 +1,19 @@
+2007-12-13  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        <rdar://problem/5607069> In Mail, a crash occurs at WebCore::AppendNodeCommand() after dragging image into a <FORM> element
+
+        * editing/InsertLineBreakCommand.cpp:
+        (WebCore::InsertLineBreakCommand::shouldUseBreakElement): Equip this function to
+        handle editing positions, like [input, 0];
+        * editing/InsertParagraphSeparatorCommand.cpp:
+        (WebCore::InsertParagraphSeparatorCommand::doApply): Pass enclosingBlock a node peeled
+        off of a non-editing position, to fix a bug where the enclosing block of [input, 0] was
+        the input element itself.
+        Insert a <br> when a <form> element is the enclosing block instead of splitting/cloning or
+        nesting a <div>.
+
 2007-12-13  Alp Toker  <alp@atoker.com>
 
         Reviewed by Oliver Hunt.

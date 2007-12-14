@@ -80,7 +80,11 @@ void InsertLineBreakCommand::insertNodeBeforePosition(Node *node, const Position
 // Whether we should insert a break element or a '\n'.
 bool InsertLineBreakCommand::shouldUseBreakElement(const Position& insertionPos)
 {
-    return insertionPos.node()->renderer() && !insertionPos.node()->renderer()->style()->preserveNewline();
+    // An editing position like [input, 0] actually refers to the position before
+    // the input element, and in that case we need to check the input element's
+    // parent's renderer.
+    Position p(rangeCompliantEquivalent(insertionPos));
+    return p.node()->renderer() && !p.node()->renderer()->style()->preserveNewline();
 }
 
 void InsertLineBreakCommand::doApply()

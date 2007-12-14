@@ -1,3 +1,22 @@
+2007-12-13  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        <rdar://problem/5607069> In Mail, a crash occurs at WebCore::AppendNodeCommand() after dragging image into a <FORM> element
+
+        * editing/inserting/5607069-1-expected.checksum: Added.
+        * editing/inserting/5607069-1-expected.png: Added.
+        * editing/inserting/5607069-1-expected.txt: Added.
+        * editing/inserting/5607069-1.html: Added.
+        * editing/inserting/5607069-2.html: Added.
+        * editing/inserting/5607069-3.html: Added.
+        * platform/mac/editing/inserting/5607069-2-expected.checksum: Added.
+        * platform/mac/editing/inserting/5607069-2-expected.png: Added.
+        * platform/mac/editing/inserting/5607069-2-expected.txt: Added.
+        * platform/mac/editing/inserting/5607069-3-expected.checksum: Added.
+        * platform/mac/editing/inserting/5607069-3-expected.png: Added.
+        * platform/mac/editing/inserting/5607069-3-expected.txt: Added.
+
 2007-12-13  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Dave Hyatt.

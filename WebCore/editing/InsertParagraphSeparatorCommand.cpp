@@ -96,12 +96,12 @@ void InsertParagraphSeparatorCommand::doApply()
         affinity = endingSelection().affinity();
     }
     
-    // FIXME: Turn into an InsertLineBreak in other cases where we don't want to do the splitting/cloning that
-    // InsertParagraphSeparator does.
-    Node* block = enclosingBlock(pos.node());
+    // FIXME: The rangeCompliantEquivalent conversion needs to be moved into enclosingBlock.
+    Node* startBlock = enclosingBlock(rangeCompliantEquivalent(pos).node());
     Position canonicalPos = VisiblePosition(pos).deepEquivalent();
-    if (!block || !block->parentNode() || 
-        isTableCell(block) ||
+    if (!startBlock || !startBlock->parentNode() || 
+        isTableCell(startBlock) ||
+        startBlock->hasTagName(formTag) || 
         canonicalPos.node()->renderer() && canonicalPos.node()->renderer()->isTable() ||
         canonicalPos.node()->hasTagName(hrTag)) {
         applyCommandToComposite(new InsertLineBreakCommand(document()));
@@ -125,8 +125,10 @@ void InsertParagraphSeparatorCommand::doApply()
 
     //---------------------------------------------------------------------
     // Prepare for more general cases.
+    // FIXME: We shouldn't peel off the node here because then we lose track of
+    // the fact that it's the node that belongs to an editing position and
+    // not a rangeCompliantEquivalent.
     Node *startNode = pos.node();
-    Node *startBlock = startNode->enclosingBlockFlowElement();
 
     bool isFirstInBlock = isStartOfBlock(visiblePos);
     bool isLastInBlock = isEndOfBlock(visiblePos);
