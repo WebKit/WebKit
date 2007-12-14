@@ -1,3 +1,14 @@
+2007-12-14  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Adam.
+
+        Fix test output, and move test to mac skipped lists until
+        <rdar://problem/5647952> fast/events/mouseout-on-window.html
+        is fixed.
+
+        * fast/events/mouseout-on-window-expected.txt:
+        * platform/mac/Skipped:
+
 2007-12-13  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Oliver Hunt.

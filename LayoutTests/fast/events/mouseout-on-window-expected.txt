@@ -1,4 +1,2 @@
-creating digester
-creating digester
 This test ensures that mouse out events are sent to the window.
 PASS: Received mouseout event.
