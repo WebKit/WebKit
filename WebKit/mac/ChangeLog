@@ -1,5 +1,16 @@
 2007-12-14  Darin Adler  <darin@apple.com>
 
+        Reviewed by Brady.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=16296
+          <rdar://problem/5635641> -[WebFrameLoadDelegate didReceiveIcon:forFrame:] never called
+
+        * WebView/WebView.mm:
+        (-[WebView setFrameLoadDelegate:]): Call [WebIconDatabase sharedIconDatabase] if the
+        a didReceiveIcon method is present.
+
+2007-12-14  Darin Adler  <darin@apple.com>
+
         Reviewed by Alexey.
 
         - Changed a few more editing operations to use WebCore instead of WebKit.

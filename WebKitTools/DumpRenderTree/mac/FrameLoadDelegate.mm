@@ -295,14 +295,6 @@
     }
 }
 
-- (void)webView:(WebView *)sender didReceiveIcon:(NSImage *)image forFrame:(WebFrame *)frame
-{
-    if (!done && layoutTestController->dumpFrameLoadCallbacks()) {
-        NSString *string = [NSString stringWithFormat:@"%@ - didReceiveIconForFrame", [frame _drt_descriptionSuitableForTestResult]];
-        printf ("%s\n", [string UTF8String]);
-    }
-}
-
 - (void)webView:(WebView *)sender didChangeLocationWithinPageForFrame:(WebFrame *)frame
 {
     if (!done && layoutTestController->dumpFrameLoadCallbacks()) {

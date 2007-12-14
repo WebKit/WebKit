@@ -1,3 +1,9 @@
+2007-12-14  Darin Adler  <darin@apple.com>
+
+        * DumpRenderTree/mac/FrameLoadDelegate.mm: Don't implement didReceiveIcon delegate method
+        since it now triggers unwanted icon loading. We only had it because we implemented "all"
+        delegate methods here.
+
 2007-12-14  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Darin and Geoff.

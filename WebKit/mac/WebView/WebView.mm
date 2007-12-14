@@ -2138,6 +2138,10 @@ WebFrameLoadDelegateImplementationCache* WebViewGetFrameLoadDelegateImplementati
 {
     _private->frameLoadDelegate = delegate;
     [self _cacheFrameLoadDelegateImplementations];
+
+    // If this delegate wants callbacks for icons, fire up the icon database.
+    if (_private->frameLoadDelegateImplementations.didReceiveIconForFrameFunc)
+        [WebIconDatabase sharedIconDatabase];
 }
 
 - frameLoadDelegate
@@ -4054,11 +4058,11 @@ static WebFrameView *containingFrameView(NSView *view)
     // notification any longer
     [self _registerForIconNotification:NO];
 
-    WebFrameLoadDelegateImplementationCache* implementations = WebViewGetFrameLoadDelegateImplementations(self);
-    if (implementations->didReceiveIconForFrameFunc) {
+    WebFrameLoadDelegateImplementationCache* cache = &_private->frameLoadDelegateImplementations;
+    if (cache->didReceiveIconForFrameFunc) {
         Image* image = iconDatabase()->iconForPageURL(core(webFrame)->loader()->url().string(), IntSize(16, 16));
         if (NSImage *icon = webGetNSImage(image, NSMakeSize(16, 16)))
-            CallFrameLoadDelegate(implementations->didReceiveIconForFrameFunc, self, @selector(webView:didReceiveIcon:forFrame:), icon, webFrame);
+            CallFrameLoadDelegate(cache->didReceiveIconForFrameFunc, self, @selector(webView:didReceiveIcon:forFrame:), icon, webFrame);
     }
 
     [self _didChangeValueForKey:_WebMainFrameIconKey];
