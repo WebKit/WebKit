@@ -70,7 +70,8 @@ namespace WebCore {
         PluginQuirkRemoveWindowlessVideoParam = 1 << 3,
         PluginQuirkThrottleWMUserPlusOneMessages = 1 << 4,
         PluginQuirkDontUnloadPlugin = 1 << 5,
-        PluginQuirkDontCallWndProcForSameMessageRecursively = 1 << 6
+        PluginQuirkDontCallWndProcForSameMessageRecursively = 1 << 6,
+        PluginQuirkHasModalMessageLoop = 1 << 7
     };
 
     enum PluginStatus {
@@ -140,6 +141,9 @@ namespace WebCore {
         void didReceiveData(const char*, int);
         void didFinishLoading();
         void didFail(const ResourceError&);
+
+        static bool isCallingPlugin();
+
     private:
         void setParameters(const Vector<String>& paramNames, const Vector<String>& paramValues);
         void init();
@@ -148,6 +152,7 @@ namespace WebCore {
         static void setCurrentPluginView(PluginViewWin*);
         NPError load(const FrameLoadRequest&, bool sendNotification, void* notifyData);
         NPError handlePost(const char* url, const char* target, uint32 len, const char* buf, bool file, void* notifyData, bool sendNotification, bool allowHeaders);
+        void setCallingPlugin(bool) const;
         RefPtr<PluginPackageWin> m_plugin;
         Element* m_element;
         Frame* m_parentFrame;

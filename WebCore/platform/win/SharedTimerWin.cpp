@@ -27,6 +27,7 @@
 #include "SharedTimer.h"
 
 #include "Page.h"
+#include "PluginViewWin.h"
 #include "SystemTime.h"
 #include "Widget.h"
 #include <wtf/Assertions.h>
@@ -45,6 +46,15 @@ const int sharedTimerID = 1000;
 
 LRESULT CALLBACK TimerWindowWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
+    // Windows Media Player has a modal message loop that will deliver messages
+    // to us at inappropriate times and we will crash if we handle them when
+    // they are delivered. We repost all messages so that we will get to handle
+    // them once the modal loop exits.
+    if (PluginViewWin::isCallingPlugin()) {
+        PostMessage(hWnd, message, wParam, lParam);
+        return 0;
+    }
+
     if (message == timerFiredMessage) {
         processingCustomTimerMessage = true;
         sharedTimerFiredFunction();

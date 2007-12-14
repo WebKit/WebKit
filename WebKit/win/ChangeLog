@@ -1,3 +1,13 @@
+2007-12-13  Adam Roben  <aroben@apple.com>
+
+        Fix <rdar://5517707> Crash on wptv.wp.pl when "make bigger" button is clicked
+
+        Reviewed by Anders.
+
+        * WebView.cpp:
+        (WebViewWndProc): Repost paint messages and ignore all other messages
+        when we're calling a plugin.
+
 2007-12-13  Steve Falkenburg  <sfalken@apple.com>
 
         Fix project dependencies based on JavaScriptCore change.

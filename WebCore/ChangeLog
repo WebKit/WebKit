@@ -1,3 +1,33 @@
+2007-12-13  Adam Roben  <aroben@apple.com>
+
+        Fix <rdar://5517707> Crash on wptv.wp.pl when "make bigger" button is clicked
+
+        Windows Media Player has a modal message loop that will deliver
+        messages to us at inappropriate times and we will crash if we handle
+        them when they are delivered. In PluginViewWin, we add a quirk for
+        Media Player to set a flag whenever we give the plugin a chance to
+        execute code, and in SharedTimerWin we check if the plugin is
+        executing code and repost messages if so.
+
+        Reviewed by Anders.
+
+        * platform/win/SharedTimerWin.cpp:
+        (WebCore::TimerWindowWndProc): Repost messages if we're calling a
+        plugin.
+        * plugins/win/PluginViewWin.cpp: Surround all calls to the plugin with
+        setCallingPlugin(true/false).
+        (WebCore::PluginViewWin::updateWindow):
+        (WebCore::PluginViewWin::dispatchNPEvent):
+        (WebCore::PluginViewWin::setNPWindowRect):
+        (WebCore::PluginViewWin::start):
+        (WebCore::PluginViewWin::stop):
+        (WebCore::PluginViewWin::performRequest):
+        (WebCore::PluginViewWin::bindingInstance):
+        (WebCore::PluginViewWin::determineQuirks):
+        (WebCore::PluginViewWin::setCallingPlugin): Added.
+        (WebCore::PluginViewWin::isCallingPlugin): Added.
+        * plugins/win/PluginViewWin.h: Added a new quirk.
+
 2007-12-13  Alp Toker  <alp@atoker.com>
 
         Add a missing DEPENDPATH. Fixes non-clean builds following networking

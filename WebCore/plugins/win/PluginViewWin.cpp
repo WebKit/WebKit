@@ -96,6 +96,7 @@ private:
 };
 
 static const double MessageThrottleTimeInterval = 0.001;
+static int s_callingPlugin;
 
 class PluginMessageThrottlerWin {
 public:
@@ -345,6 +346,7 @@ void PluginViewWin::updateWindow() const
         //rgn = ::CreateRectRgn(0, 0, 0, 0);
         //::SetWindowRgn(m_window, rgn, false);
 
+        setCallingPlugin(true);
         if (m_windowRect != oldWindowRect)
             ::MoveWindow(m_window, m_windowRect.x(), m_windowRect.y(), m_windowRect.width(), m_windowRect.height(), true);
 
@@ -352,6 +354,7 @@ void PluginViewWin::updateWindow() const
         rgn = ::CreateRectRgn(m_clipRect.x(), m_clipRect.y(), m_clipRect.right(), m_clipRect.bottom());
         ::SetWindowRgn(m_window, rgn, true);
         ::UpdateWindow(m_window);
+        setCallingPlugin(false);
     }
 }
 
@@ -448,7 +451,9 @@ bool PluginViewWin::dispatchNPEvent(NPEvent* npEvent)
     }
 
     KJS::JSLock::DropAllLocks dropAllLocks;
+    setCallingPlugin(true);
     bool result = m_plugin->pluginFuncs()->event(m_instance, &npEvent);
+    setCallingPlugin(false);
 
     if (shouldPop) 
         popPopupsEnabledState();
@@ -679,7 +684,9 @@ void PluginViewWin::setNPWindowRect(const IntRect& rect)
 
     if (m_plugin->pluginFuncs()->setwindow) {
         KJS::JSLock::DropAllLocks dropAllLocks;
+        setCallingPlugin(true);
         m_plugin->pluginFuncs()->setwindow(m_instance, &m_npWindow);
+        setCallingPlugin(false);
 
         if (!m_isWindowed)
             return;
@@ -704,7 +711,9 @@ bool PluginViewWin::start()
     PluginViewWin::setCurrentPluginView(this);
     {
         KJS::JSLock::DropAllLocks dropAllLocks;
+        setCallingPlugin(true);
         npErr = m_plugin->pluginFuncs()->newp((NPMIMEType)m_mimeType.data(), m_instance, m_mode, m_paramCount, m_paramNames, m_paramValues, NULL);
+        setCallingPlugin(false);
         LOG_NPERROR(npErr);
     }
     PluginViewWin::setCurrentPluginView(0);
@@ -752,12 +761,17 @@ void PluginViewWin::stop()
 
     // Clear the window
     m_npWindow.window = 0;
-    if (m_plugin->pluginFuncs()->setwindow)
+    if (m_plugin->pluginFuncs()->setwindow) {
+        setCallingPlugin(true);
         m_plugin->pluginFuncs()->setwindow(m_instance, &m_npWindow);
+        setCallingPlugin(false);
+    }
 
     // Destroy the plugin
     NPSavedData* savedData = 0;
+    setCallingPlugin(true);
     NPError npErr = m_plugin->pluginFuncs()->destroy(m_instance, &savedData);
+    setCallingPlugin(false);
     LOG_NPERROR(npErr);
 
     if (savedData) {
@@ -832,7 +846,9 @@ void PluginViewWin::performRequest(PluginRequestWin* request)
             // FIXME: <rdar://problem/4807469> This should be sent when the document has finished loading
             if (request->sendNotification()) {
                 KJS::JSLock::DropAllLocks dropAllLocks;
+                setCallingPlugin(true);
                 m_plugin->pluginFuncs()->urlnotify(m_instance, requestURL.deprecatedString().utf8(), NPRES_DONE, request->notifyData());
+                setCallingPlugin(false);
             }
         }
         return;
@@ -1389,7 +1405,9 @@ KJS::Bindings::Instance* PluginViewWin::bindingInstance()
     NPError npErr;
     {
         KJS::JSLock::DropAllLocks dropAllLocks;
+        setCallingPlugin(true);
         npErr = m_plugin->pluginFuncs()->getvalue(m_instance, NPPVpluginScriptableNPObject, &object);
+        setCallingPlugin(false);
     }
 
     if (npErr != NPERR_NO_ERROR || !object)
@@ -1445,6 +1463,13 @@ void PluginViewWin::determineQuirks(const String& mimeType)
         // Windowless mode does not work at all with the WMP plugin so just remove that parameter 
         // and don't pass it to the plug-in.
         m_quirks |= PluginQuirkRemoveWindowlessVideoParam;
+
+        // WMP has a modal message loop that it enters whenever we call it or
+        // ask it to paint. This modal loop can deliver messages to other
+        // windows in WebKit at times when they are not expecting them (for
+        // example, delivering a WM_PAINT message during a layout), and these
+        // can cause crashes.
+        m_quirks |= PluginQuirkHasModalMessageLoop;
     }
 
     // The DivX plugin sets its size on the first NPP_SetWindow call and never updates its size, so
@@ -1620,6 +1645,24 @@ void PluginViewWin::didFail(const ResourceError& error)
     ASSERT(m_manualStream);
 
     m_manualStream->didFail(0, error);
+}
+
+void PluginViewWin::setCallingPlugin(bool b) const
+{
+    if (!(m_quirks & PluginQuirkHasModalMessageLoop))
+        return;
+
+    if (b)
+        ++s_callingPlugin;
+    else
+        --s_callingPlugin;
+
+    ASSERT(s_callingPlugin >= 0);
+}
+
+bool PluginViewWin::isCallingPlugin()
+{
+    return s_callingPlugin > 0;
 }
 
 } // namespace WebCore

@@ -86,6 +86,7 @@
 #include <WebCore/PlatformWheelEvent.h>
 #include <WebCore/PluginDatabaseWin.h>
 #include <WebCore/PlugInInfoStore.h>
+#include <WebCore/PluginViewWin.h>
 #include <WebCore/ProgressTracker.h>
 #include <WebCore/ResourceHandle.h>
 #include <WebCore/ResourceHandleClient.h>
@@ -1560,6 +1561,17 @@ static LRESULT CALLBACK WebViewWndProc(HWND hWnd, UINT message, WPARAM wParam, L
         return DefWindowProc(hWnd, message, wParam, lParam);
 
     ASSERT(webView);
+
+    // Windows Media Player has a modal message loop that will deliver messages
+    // to us at inappropriate times and we will crash if we handle them when
+    // they are delivered. We repost paint messages so that we eventually get
+    // a chance to paint once the modal loop has exited, but other messages
+    // aren't safe to repost, so we just drop them.
+    if (PluginViewWin::isCallingPlugin()) {
+        if (message == WM_PAINT)
+            PostMessage(hWnd, message, wParam, lParam);
+        return 0;
+    }
 
     bool handled = true;
 
