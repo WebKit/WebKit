@@ -1,3 +1,19 @@
+2007-12-14  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        - fix <rdar://problem/5643663> text-shadow and box-shadow offsets 1px smaller than specified
+          which is the root cause of:
+          http://bugs.webkit.org/show_bug.cgi?id=12943
+          box-shadow: small values don't affect shadow position
+          http://bugs.webkit.org/show_bug.cgi?id=14736
+          Safari implementation of text-shadow off by 1px
+
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::GraphicsContext::setShadow): Slightly increase the magnitude
+        of the offsets passed to CGContextSetShadow* to ensure that the end
+        result after truncation is the desired integer offsets.
+
 2007-12-13  Alp Toker  <alp@atoker.com>
 
         curl backend build fix for breakage introduced in r28709.
