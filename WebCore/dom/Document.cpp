@@ -30,10 +30,11 @@
 #include "CSSStyleSelector.h"
 #include "CSSStyleSheet.h"
 #include "CSSValueKeywords.h"
+#include "ClassNodeList.h"
 #include "Comment.h"
 #include "CookieJar.h"
-#include "DatabaseThread.h"
 #include "DOMImplementation.h"
+#include "DatabaseThread.h"
 #include "DocLoader.h"
 #include "DocumentFragment.h"
 #include "DocumentLoader.h"
@@ -3494,9 +3495,14 @@ HTMLCollection::CollectionInfo* Document::nameCollectionInfo(HTMLCollection::Typ
     return iter->second;
 }
 
-PassRefPtr<NameNodeList> Document::getElementsByName(const String &elementName)
+PassRefPtr<NameNodeList> Document::getElementsByName(const String& elementName)
 {
     return new NameNodeList(this, elementName);
+}
+
+PassRefPtr<NodeList> Document::getElementsByClassName(const String& className)
+{
+    return new ClassNodeList(this, className);
 }
 
 void Document::finishedParsing()

@@ -220,6 +220,8 @@ module core {
                                                   in [Optional] boolean authorOnly);
 #endif
 
+        // HTML 5
+        NodeList            getElementsByClassName(in DOMString tagname);
     };
 
 }

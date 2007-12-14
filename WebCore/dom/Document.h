@@ -213,6 +213,7 @@ public:
     PassRefPtr<Node> adoptNode(PassRefPtr<Node> source, ExceptionCode&);
     
     PassRefPtr<NameNodeList> getElementsByName(const String& elementName);
+    PassRefPtr<NodeList> getElementsByClassName(const String& className);
 
     PassRefPtr<HTMLCollection> images();
     PassRefPtr<HTMLCollection> embeds();

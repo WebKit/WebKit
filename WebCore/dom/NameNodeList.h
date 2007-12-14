@@ -1,10 +1,8 @@
 /*
- * This file is part of the DOM implementation for KDE.
- *
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004 Apple Computer, Inc.
+ * Copyright (C) 2004, 2007 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -35,7 +33,7 @@ namespace WebCore {
  */
 class NameNodeList : public NodeList {
 public:
-    NameNodeList(Node* doc, const String& name);
+    NameNodeList(Node* root, const String& name);
 
     // DOM methods overridden from  parent classes
 
@@ -48,7 +46,8 @@ public:
 protected:
     virtual bool nodeMatches(Node* testNode) const;
 
-    String nodeName;
+private:
+    String m_nodeName;
 };
 
 } // namespace WebCore

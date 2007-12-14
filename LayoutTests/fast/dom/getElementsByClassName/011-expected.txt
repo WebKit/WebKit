@@ -1,0 +1,8 @@
+This page contains the following errors:
+
+error on line 12 at column 200: Namespaced Attribute class in 'http://www.w3.org/1999/xhtml' redefined
+Below is a rendering of the page up to the first error.
+
+PASS
+
+

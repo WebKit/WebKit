@@ -390,8 +390,9 @@ void CSSStyleSelector::matchRules(CSSRuleSet* rules, int& firstRuleIndex, int& l
     if (element->hasID())
         matchRulesForList(rules->getIDRules(element->getIDAttribute().impl()), firstRuleIndex, lastRuleIndex);
     if (element->hasClass()) {
-        for (const AtomicStringList* singleClass = element->getClassList(); singleClass; singleClass = singleClass->next())
-            matchRulesForList(rules->getClassRules(singleClass->string().impl()), firstRuleIndex, lastRuleIndex);
+        const ClassNames& classNames = *element->getClassNames();
+        for (size_t i = 0; i < classNames.size(); ++i)
+            matchRulesForList(rules->getClassRules(classNames[i].impl()), firstRuleIndex, lastRuleIndex);
     }
     matchRulesForList(rules->getTagRules(element->localName().impl()), firstRuleIndex, lastRuleIndex);
     matchRulesForList(rules->getUniversalRules(), firstRuleIndex, lastRuleIndex);
@@ -1431,12 +1432,13 @@ bool CSSStyleSelector::checkOneSelector(CSSSelector* sel, Element* e, bool isAnc
         if (sel->m_match == CSSSelector::Class) {
             if (!e->hasClass())
                 return false;
-            for (const AtomicStringList* c = e->getClassList(); c; c = c->next())
-                if (c->string() == sel->m_value)
+            const ClassNames& classNames = *e->getClassNames();
+            for (size_t i = 0; i < classNames.size(); ++i) {
+                if (classNames[i] == sel->m_value)
                     return true;
+            }
             return false;
-        }
-        else if (sel->m_match == CSSSelector::Id)
+        } else if (sel->m_match == CSSSelector::Id)
             return e->hasID() && e->getIDAttribute() == sel->m_value;
         else if (style && (e != element || !styledElement || (!styledElement->isMappedAttribute(sel->m_attr) && sel->m_attr != typeAttr && sel->m_attr != readonlyAttr))) {
             style->setAffectedByAttributeSelectors(); // Special-case the "type" and "readonly" attributes so input form controls can share style.

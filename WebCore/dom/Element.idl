@@ -102,6 +102,9 @@ module core {
         void scrollByLines(in long lines);
         void scrollByPages(in long pages);
 
+        // HTML 5
+        NodeList getElementsByClassName(in DOMString name);
+
 #if defined(LANGUAGE_OBJECTIVE_C)
         // Objective-C extensions
         readonly attribute DOMString innerText;

@@ -3,6 +3,7 @@
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Peter Kelly (pmk@post.com)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
+ *           (C) 2007 David Smith (catfish.man@gmail.com)
  * Copyright (C) 2004, 2005, 2006, 2007 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -37,7 +38,7 @@ NamedMappedAttrMap::NamedMappedAttrMap(Element *e)
 
 void NamedMappedAttrMap::clearAttributes()
 {
-    m_classList.clear();
+    m_classNames.clear();
     m_mappedAttributeCount = 0;
     NamedAttrMap::clearAttributes();
 }
@@ -76,48 +77,15 @@ bool NamedMappedAttrMap::mapsEquivalent(const NamedMappedAttrMap* otherMap) cons
     return true;
 }
 
-inline static bool isClassWhitespace(UChar c)
-{
-    return c == ' ' || c == '\r' || c == '\n' || c == '\t';
-}
-
-void NamedMappedAttrMap::parseClassAttribute(const String& classStr)
-{
-    m_classList.clear();
-    if (!element->hasClass())
+void NamedMappedAttrMap::parseClassAttribute(const String& classStr) 
+{ 
+    if (!element->hasClass()) { 
+        m_classNames.clear(); 
         return;
-    
-    String classAttr = element->document()->inCompatMode() ? 
-        (classStr.impl()->isLower() ? classStr : String(classStr.impl()->lower())) :
-        classStr;
-    
-    AtomicStringList* curr = 0;
-    
-    const UChar* str = classAttr.characters();
-    int length = classAttr.length();
-    int sPos = 0;
-
-    while (true) {
-        while (sPos < length && isClassWhitespace(str[sPos]))
-            ++sPos;
-        if (sPos >= length)
-            break;
-        int ePos = sPos + 1;
-        while (ePos < length && !isClassWhitespace(str[ePos]))
-            ++ePos;
-        if (curr) {
-            curr->setNext(new AtomicStringList(AtomicString(str + sPos, ePos - sPos)));
-            curr = curr->next();
-        } else {
-            if (sPos == 0 && ePos == length) {
-                m_classList.setString(AtomicString(classAttr));
-                break;
-            }
-            m_classList.setString(AtomicString(str + sPos, ePos - sPos));
-            curr = &m_classList;
-        }
-        sPos = ePos + 1;
     }
+
+    m_classNames.parseClassAttribute(classStr, element->document()->inCompatMode()); 
 }
+
 
 }

@@ -1,3 +1,56 @@
+2007-12-14  David Smith  <catfish.man@gmail.com>
+
+        Reviewed by Mitz.
+
+        - test for http://bugs.webkit.org/show_bug.cgi?id=14955
+          Implement getElementsByClassName
+
+        Tests added from http://tc.labs.opera.com/apis/getElementsByClassName/
+
+        * fast/dom/Window/window-properties-expected.txt:
+        * fast/dom/getElementsByClassName: Added.
+        * fast/dom/getElementsByClassName/001-expected.txt: Added.
+        * fast/dom/getElementsByClassName/001.html: Added.
+        * fast/dom/getElementsByClassName/002-expected.txt: Added.
+        * fast/dom/getElementsByClassName/002.html: Added.
+        * fast/dom/getElementsByClassName/003-expected.txt: Added.
+        * fast/dom/getElementsByClassName/003.html: Added.
+        * fast/dom/getElementsByClassName/004-expected.txt: Added.
+        * fast/dom/getElementsByClassName/004.html: Added.
+        * fast/dom/getElementsByClassName/005-expected.txt: Added.
+        * fast/dom/getElementsByClassName/005.html: Added.
+        * fast/dom/getElementsByClassName/006-expected.txt: Added.
+        * fast/dom/getElementsByClassName/006.html: Added.
+        * fast/dom/getElementsByClassName/007-expected.txt: Added.
+        * fast/dom/getElementsByClassName/007.html: Added.
+        * fast/dom/getElementsByClassName/008-expected.txt: Added.
+        * fast/dom/getElementsByClassName/008.html: Added.
+        * fast/dom/getElementsByClassName/009-expected.txt: Added.
+        * fast/dom/getElementsByClassName/009.html: Added.
+        * fast/dom/getElementsByClassName/010-expected.txt: Added.
+        * fast/dom/getElementsByClassName/010.xml: Added.
+        * fast/dom/getElementsByClassName/011-expected.txt: Added.
+        * fast/dom/getElementsByClassName/011.xml: Added.
+        * fast/dom/getElementsByClassName/012-expected.txt: Added.
+        * fast/dom/getElementsByClassName/012.html: Added.
+        * fast/dom/getElementsByClassName/013-expected.txt: Added.
+        * fast/dom/getElementsByClassName/013.html: Added.
+        * fast/dom/getElementsByClassName/014-expected.txt: Added.
+        * fast/dom/getElementsByClassName/014.html: Added.
+        * fast/dom/getElementsByClassName/array: Added.
+        * fast/dom/getElementsByClassName/array/001-expected.txt: Added.
+        * fast/dom/getElementsByClassName/array/001.html: Added.
+        * fast/dom/getElementsByClassName/array/002-expected.txt: Added.
+        * fast/dom/getElementsByClassName/array/002.html: Added.
+        * fast/dom/getElementsByClassName/array/003-expected.txt: Added.
+        * fast/dom/getElementsByClassName/array/003.html: Added.
+        * fast/dom/getElementsByClassName/array/004-expected.txt: Added.
+        * fast/dom/getElementsByClassName/array/004.html: Added.
+        * fast/dom/getElementsByClassName/dumpNodeList-expected.txt: Added.
+        * fast/dom/getElementsByClassName/dumpNodeList.html: Added.
+        * fast/dom/getElementsByClassName/resources: Added.
+        * fast/dom/getElementsByClassName/resources/common.js: Added.
+
 2007-12-14  Darin Adler  <darin@apple.com>
 
         Reviewed by Alexey.

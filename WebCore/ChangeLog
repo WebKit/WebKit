@@ -1,3 +1,79 @@
+2007-12-14  David Smith  <catfish.man@gmail.com>
+
+        Reviewed by Mitz.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=14955
+          Implement getElementsByClassName.
+
+        This patch also renames AtomicStringList to ClassNames to better reflect its actual use,
+        and takes advantage of admitting that it's class-specific to encapsulate class attribute 
+        parsing so it can be shared.  It also changes the class to use a Vector, rather than a linked
+        list to store the class names.
+
+        Tests: fast/dom/getElementsByClassName/001.html
+               fast/dom/getElementsByClassName/002.html
+               fast/dom/getElementsByClassName/003.html
+               fast/dom/getElementsByClassName/004.html
+               fast/dom/getElementsByClassName/005.html
+               fast/dom/getElementsByClassName/006.html
+               fast/dom/getElementsByClassName/007.html
+               fast/dom/getElementsByClassName/008.html
+               fast/dom/getElementsByClassName/009.html
+               fast/dom/getElementsByClassName/010.xml
+               fast/dom/getElementsByClassName/011.xml
+               fast/dom/getElementsByClassName/012.html
+               fast/dom/getElementsByClassName/013.html
+               fast/dom/getElementsByClassName/014.html
+               fast/dom/getElementsByClassName/array/001.html
+               fast/dom/getElementsByClassName/array/002.html
+               fast/dom/getElementsByClassName/array/003.html
+               fast/dom/getElementsByClassName/array/004.html
+               fast/dom/getElementsByClassName/dumpNodeList.html
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::matchRules):
+        (WebCore::CSSStyleSelector::checkOneSelector):
+        * dom/AtomicStringList.h: Removed.
+        * dom/ClassNames.cpp: Added.
+        (WebCore::ClassNames::contains):
+        (WebCore::ClassNames::parseClassAttribute):
+        * dom/ClassNames.h: Copied from WebCore/dom/AtomicStringList.h.
+        (WebCore::ClassNames::ClassNames):
+        (WebCore::ClassNames::size):
+        (WebCore::ClassNames::clear):
+        (WebCore::ClassNames::operator[]):
+        (WebCore::isClassWhitespace):
+        * dom/ClassNodeList.cpp: Added.
+        (WebCore::ClassNodeList::ClassNodeList):
+        (WebCore::ClassNodeList::length):
+        (WebCore::ClassNodeList::item):
+        (WebCore::ClassNodeList::nodeMatches):
+        * dom/ClassNodeList.h: Added.
+        * dom/Document.cpp:
+        (WebCore::Document::getElementsByName):
+        (WebCore::Document::getElementsByClassName):
+        * dom/Document.h:
+        * dom/Document.idl:
+        * dom/Element.cpp:
+        (WebCore::Element::getClassNames):
+        (WebCore::Element::getElementsByClassName):
+        * dom/Element.h:
+        * dom/Element.idl:
+        * dom/NameNodeList.cpp:
+        (WebCore::NameNodeList::NameNodeList):
+        (WebCore::NameNodeList::item):
+        (WebCore::NameNodeList::nodeMatches):
+        * dom/NameNodeList.h:
+        * dom/NamedMappedAttrMap.cpp:
+        (WebCore::NamedMappedAttrMap::clearAttributes):
+        (WebCore::NamedMappedAttrMap::parseClassAttribute):
+        * dom/NamedMappedAttrMap.h:
+        (WebCore::NamedMappedAttrMap::getClassNames):
+        * dom/StyledElement.cpp:
+        (WebCore::StyledElement::getClassNames):
+        * dom/StyledElement.h:
+
 2007-12-14  Darin Adler  <darin@apple.com>
 
         Reviewed by Sam.

@@ -1,10 +1,8 @@
 /**
- * This file is part of the DOM implementation for KDE.
- *
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004 Apple Computer, Inc.
+ * Copyright (C) 2004, 2007 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -28,14 +26,13 @@
 #include "Element.h"
 #include "HTMLNames.h"
 
-using namespace WebCore;
-
 namespace WebCore {
 
 using namespace HTMLNames;
 
-NameNodeList::NameNodeList(Node *n, const String &t)
-  : NodeList(n), nodeName(t)
+NameNodeList::NameNodeList(Node* root, const String& name)
+    : NodeList(root)
+    , m_nodeName(name)
 {
 }
 
@@ -44,14 +41,14 @@ unsigned NameNodeList::length() const
     return recursiveLength();
 }
 
-Node *NameNodeList::item (unsigned index) const
+Node* NameNodeList::item (unsigned index) const
 {
     return recursiveItem(index);
 }
 
-bool NameNodeList::nodeMatches(Node *testNode) const
+bool NameNodeList::nodeMatches(Node* testNode) const
 {
-    return static_cast<Element*>(testNode)->getAttribute(nameAttr) == nodeName;
+    return static_cast<Element*>(testNode)->getAttribute(nameAttr) == m_nodeName;
 }
 
-}
+} // namespace WebCore

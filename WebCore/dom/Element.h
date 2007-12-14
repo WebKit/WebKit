@@ -31,10 +31,10 @@
 
 namespace WebCore {
 
-class AtomicStringList;
 class Attr;
 class Attribute;
 class CSSStyleDeclaration;
+class ClassNames;
 class ElementRareData;
 class IntSize;
 
@@ -44,7 +44,7 @@ public:
     ~Element();
 
     // Used to quickly determine whether or not an element has a given CSS class.
-    virtual const AtomicStringList* getClassList() const;
+    virtual const ClassNames* getClassNames() const;
     const AtomicString& getIDAttribute() const;
     bool hasAttribute(const QualifiedName&) const;
     const AtomicString& getAttribute(const QualifiedName&) const;
@@ -162,6 +162,8 @@ public:
     virtual void focus(bool restorePreviousSelection = true);
     virtual void updateFocusAppearance(bool restorePreviousSelection);
     void blur();
+    
+    PassRefPtr<NodeList> getElementsByClassName(const String&);
 
 #ifndef NDEBUG
     virtual void dump(TextStream* , DeprecatedString ind = "") const;
