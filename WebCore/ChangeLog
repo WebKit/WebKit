@@ -1,3 +1,10 @@
+2007-12-13  Alp Toker  <alp@atoker.com>
+
+        Add a missing DEPENDPATH. Fixes non-clean builds following networking
+        header changes.
+
+        * WebCore.pro:
+
 2007-12-13  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Anders Carlsson.
