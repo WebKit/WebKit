@@ -1,3 +1,23 @@
+2007-12-13  Alp Toker  <alp@atoker.com>
+
+        Reviewed by Oliver Hunt.
+
+        http://bugs.webkit.org/show_bug.cgi?id=16365
+        [cURL] Acid2 test segmentation fault
+
+        This patch makes the Acid2 test pass.
+
+        Defer the cleanup of cancelled jobs and halt further transfer as early
+        as possible.
+
+        Bug found by and initial patch provided by Luca Bruno.
+
+        * platform/network/curl/ResourceHandleManager.cpp:
+        (WebCore::writeCallback):
+        (WebCore::headerCallback):
+        (WebCore::ResourceHandleManager::downloadTimerCallback):
+        (WebCore::ResourceHandleManager::cancel):
+
 2007-12-13  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Mark Rowe.
