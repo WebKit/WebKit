@@ -1,3 +1,13 @@
+2007-12-14  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Brady.
+
+        Assert that a web frame that's loading a resource always has either a data source or 
+        a provisional data source.
+        
+        * DumpRenderTree/mac/ResourceLoadDelegate.mm:
+        (-[ResourceLoadDelegate webView:identifierForInitialRequest:fromDataSource:]):
+
 2007-12-14  Darin Adler  <darin@apple.com>
 
         - fix mistake causing nearly all tests to fail on Windows

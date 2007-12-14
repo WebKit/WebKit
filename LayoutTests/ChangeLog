@@ -1,3 +1,15 @@
+2007-12-14  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Brady.
+
+        Add test that calls window.open and then immediately writes into the document
+        of the newly opened window.
+        
+        * http/tests/misc/resources/compass.jpg: Added.
+        * http/tests/misc/window-open-then-write-expected.txt: Added.
+        * http/tests/misc/window-open-then-write.html: Added.
+        * platform/win/Skipped:
+
 2007-12-14  David Smith  <catfish.man@gmail.com>
 
         Reviewed by Mitz.

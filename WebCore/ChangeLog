@@ -1,3 +1,13 @@
+2007-12-14  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Brady.
+
+        Make document.open count as committing a document load, so that -[WebFrame dataSource:] won't
+        return nil in that case.
+        
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::didExplicitOpen):
+
 2007-12-14  David Smith  <catfish.man@gmail.com>
 
         Reviewed by Mitz.

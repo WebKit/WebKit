@@ -31,6 +31,7 @@
 #import "DumpRenderTree.h"
 #import "LayoutTestController.h"
 #import <WebKit/WebKit.h>
+#import <wtf/Assertions.h>
 
 @interface NSURL (DRTExtras)
 - (NSString *)_drt_descriptionSuitableForTestResult;
@@ -104,6 +105,8 @@
 
 - webView: (WebView *)wv identifierForInitialRequest: (NSURLRequest *)request fromDataSource: (WebDataSource *)dataSource
 {
+    ASSERT([[dataSource webFrame] dataSource] || [[dataSource webFrame] provisionalDataSource]);
+    
     if (!done && layoutTestController->dumpResourceLoadCallbacks())
         return [[request URL] _drt_descriptionSuitableForTestResult];
     
