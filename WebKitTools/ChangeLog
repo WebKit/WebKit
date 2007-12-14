@@ -1,3 +1,10 @@
+2007-12-13  Alp Toker  <alp@atoker.com>
+
+        Build fix for DRT breakage introduced in r28690.
+
+        * DumpRenderTree/gtk/LayoutTestControllerGtk.cpp:
+        (LayoutTestController::pathToLocalResource):
+
 2007-12-12  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Alice and Sam.

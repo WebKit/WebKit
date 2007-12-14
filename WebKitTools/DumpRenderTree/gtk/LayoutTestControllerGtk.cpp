@@ -80,6 +80,12 @@ void LayoutTestController::notifyDone()
     m_waitToDump = false;
 }
 
+JSStringRef LayoutTestController::pathToLocalResource(JSContextRef context, JSStringRef url)
+{
+    // Function introduced in r28690. This may need special-casing on Windows.
+    return url; // Do nothing on Unix.
+}
+
 void LayoutTestController::queueBackNavigation(int howFarBack)
 {
     WorkQueue::shared()->queue(new BackItem(howFarBack));
