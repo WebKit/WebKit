@@ -1,3 +1,15 @@
+2007-12-13  Steve Falkenburg  <sfalken@apple.com>
+
+        Move source file generation into its own vcproj to fix build dependencies.
+
+        Reviewed by Adam.
+
+        * WebCore.vcproj/WebCore.make:
+        * WebCore.vcproj/WebCore.sln:
+        * WebCore.vcproj/WebCore.submit.sln:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.vcproj/WebCoreGenerated.vcproj: Added.
+
 2007-12-13  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Oliver Hunt.

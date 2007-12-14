@@ -1,3 +1,15 @@
+2007-12-13  Steve Falkenburg  <sfalken@apple.com>
+
+        Move source file generation into its own vcproj to fix build dependencies.
+
+        Reviewed by Adam.
+
+        * WebKit.vcproj/Interfaces.vcproj:
+        * WebKit.vcproj/InterfacesGenerated.vcproj: Added.
+        * WebKit.vcproj/WebKit.sln:
+        * WebKit.vcproj/WebKit.submit.sln:
+        * WebKit.vcproj/build-generated-files.sh:
+
 2007-12-13  Adam Roben  <aroben@apple.com>
 
         Fix <rdar://5517707> Crash on wptv.wp.pl when "make bigger" button is clicked

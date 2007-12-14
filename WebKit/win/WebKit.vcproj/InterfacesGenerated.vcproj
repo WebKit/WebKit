@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="Windows-1252"?>
+<VisualStudioProject
+	ProjectType="Visual C++"
+	Version="8.00"
+	Name="InterfacesGenerated"
+	ProjectGUID="{62C897BE-E207-4BC4-B37D-6F9F9116F166}"
+	Keyword="MakeFileProj"
+	>
+	<Platforms>
+		<Platform
+			Name="Win32"
+		/>
+	</Platforms>
+	<ToolFiles>
+	</ToolFiles>
+	<Configurations>
+		<Configuration
+			Name="Release|Win32"
+			OutputDirectory="$(WebKitOutputDir)\lib"
+			IntermediateDirectory="$(WebKitOutputDir)\obj\$(ProjectName)\$(ConfigurationName)"
+			ConfigurationType="0"
+			>
+			<Tool
+				Name="VCNMakeTool"
+				BuildCommandLine="set PATH=%SystemDrive%\cygwin\bin;%PATH%&#x0D;&#x0A;bash build-generated-files.sh &quot;$(WebKitOutputDir)&quot;&#x0D;&#x0A;"
+				ReBuildCommandLine="del /s /q &quot;$(WebKitOutputDir)\obj\WebKit\DOMInterfaces&quot;&#x0D;&#x0A;set PATH=%SystemDrive%\cygwin\bin;%PATH%&#x0D;&#x0A;bash build-generated-files.sh &quot;$(WebKitOutputDir)&quot;&#x0D;&#x0A;"
+				CleanCommandLine="del /s /q &quot;$(WebKitOutputDir)\obj\WebKit\DOMInterfaces&quot;&#x0D;&#x0A;"
+				Output=""
+				PreprocessorDefinitions=""
+				IncludeSearchPath=""
+				ForcedIncludes=""
+				AssemblySearchPath=""
+				ForcedUsingAssemblies=""
+				CompileAsManaged=""
+			/>
+		</Configuration>
+	</Configurations>
+	<References>
+	</References>
+	<Files>
+		<File
+			RelativePath=".\build-generated-files.sh"
+			>
+		</File>
+	</Files>
+	<Globals>
+	</Globals>
+</VisualStudioProject>

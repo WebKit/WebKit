@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="Windows-1252"?>
+<VisualStudioProject
+	ProjectType="Visual C++"
+	Version="8.00"
+	Name="WebCoreGenerated"
+	ProjectGUID="{0A324352-B3B6-496C-9E5B-4C7E923E628B}"
+	Keyword="MakeFileProj"
+	>
+	<Platforms>
+		<Platform
+			Name="Win32"
+		/>
+	</Platforms>
+	<ToolFiles>
+	</ToolFiles>
+	<Configurations>
+		<Configuration
+			Name="Release|Win32"
+			OutputDirectory="$(WebKitOutputDir)\lib"
+			IntermediateDirectory="$(WebKitOutputDir)\obj\$(ProjectName)\$(ConfigurationName)"
+			ConfigurationType="0"
+			>
+			<Tool
+				Name="VCNMakeTool"
+				BuildCommandLine="set PATH=%SystemDrive%\cygwin\bin;%PATH%&#x0D;&#x0A;bash build-generated-files.sh &quot;$(WebKitOutputDir)&quot; &quot;$(WebKitLibrariesDir)&quot;&#x0D;&#x0A;bash migrate-idls.sh &quot;$(WebKitOutputDir)/obj/WebKit/DOMInterfaces&quot;&#x0D;&#x0A;"
+				ReBuildCommandLine="del /s /q &quot;$(WebKitOutputDir)\obj\WebCore\DerivedSources&quot;&#x0D;&#x0A;del /s /q &quot;$(WebKitOutputDir)\obj\WebKit\DOMInterfaces&quot;&#x0D;&#x0A;set PATH=%SystemDrive%\cygwin\bin;%PATH%&#x0D;&#x0A;bash build-generated-files.sh &quot;$(WebKitOutputDir)&quot; &quot;$(WebKitLibrariesDir)&quot;&#x0D;&#x0A;bash migrate-idls.sh &quot;$(WebKitOutputDir)/obj/WebKit/DOMInterfaces&quot;&#x0D;&#x0A;"
+				CleanCommandLine="del /s /q &quot;$(WebKitOutputDir)\obj\WebCore\DerivedSources&quot;&#x0D;&#x0A;del /s /q &quot;$(WebKitOutputDir)\obj\WebKit\DOMInterfaces&quot;&#x0D;&#x0A;"
+				Output=""
+				PreprocessorDefinitions=""
+				IncludeSearchPath=""
+				ForcedIncludes=""
+				AssemblySearchPath=""
+				ForcedUsingAssemblies=""
+				CompileAsManaged=""
+			/>
+		</Configuration>
+	</Configurations>
+	<References>
+	</References>
+	<Files>
+		<File
+			RelativePath=".\build-generated-files.sh"
+			>
+		</File>
+	</Files>
+	<Globals>
+	</Globals>
+</VisualStudioProject>
