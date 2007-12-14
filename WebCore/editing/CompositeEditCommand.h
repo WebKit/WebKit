@@ -101,6 +101,8 @@ protected:
     bool breakOutOfEmptyListItem();
     
     Position positionAvoidingSpecialElementBoundary(const Position&, bool alwaysAvoidAnchors = true);
+    
+    Node* splitTreeToNode(Node*, Node*, bool splitAncestor = false);
 
     Vector<RefPtr<EditCommand> > m_commands;
 

@@ -911,6 +911,22 @@ Position CompositeEditCommand::positionAvoidingSpecialElementBoundary(const Posi
     return result;
 }
 
+// Splits the tree parent by parent until we reach the specified ancestor. We use VisiblePositions
+// to determine if the split is necessary. Returns the last split node.
+Node* CompositeEditCommand::splitTreeToNode(Node* start, Node* end, bool splitAncestor)
+{
+    Node* node;
+    for (node = start; node && node->parent() != end; node = node->parent()) {
+        VisiblePosition positionInParent(Position(node->parent(), 0), DOWNSTREAM);
+        VisiblePosition positionInNode(Position(node, 0), DOWNSTREAM);
+        if (positionInParent != positionInNode)
+            applyCommandToComposite(new SplitElementCommand(static_cast<Element*>(node->parent()), node));
+    }
+    if (splitAncestor)
+        return splitTreeToNode(end, end->parent());
+    return node;
+}
+
 PassRefPtr<Element> createBlockPlaceholderElement(Document* document)
 {
     ExceptionCode ec = 0;

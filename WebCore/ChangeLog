@@ -1,3 +1,23 @@
+2007-12-14  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/5575101> GoogleDocs: Hang in SplitElementCommand::doApply when outdenting a list item in a particular list
+
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::splitTreeToNode): Moved here.
+        * editing/CompositeEditCommand.h:
+        * editing/IndentOutdentCommand.cpp: Moved splitTreeToNode.
+        * editing/IndentOutdentCommand.h: Ditto, and removed unimplemented splitTreeTo.
+        * editing/InsertListCommand.cpp:
+        (WebCore::InsertListCommand::doApply): Split ancestors of listChildNode between
+        it and listNode, if they exists, so that moving listChildNode doesn't put it out
+        of order.  Added a test case to cover each change.
+        * editing/SplitElementCommand.cpp:
+        (WebCore::SplitElementCommand::doApply): Added an ASSERT to catch code that
+        tries to split a container at a bogus child, and an early return to avoid a
+        hang in that case.
+
 2007-12-14  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Darin and Geoff.

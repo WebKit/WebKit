@@ -169,13 +169,28 @@ void InsertListCommand::doApply()
             nodeToInsert = createListItemElement(document());
             appendNode(placeholder.get(), nodeToInsert.get());
         }
+        
         if (nextListChild && previousListChild) {
-            splitElement(static_cast<Element *>(listNode), nextListChild);
+            // We want to pull listChildNode out of listNode, and place it before nextListChild 
+            // and after previousListChild, so we split listNode and insert it between the two lists.  
+            // But to split listNode, we must first split ancestors of listChildNode between it and listNode,
+            // if any exist.
+            // FIXME: We appear to split at nextListChild as opposed to listChildNode so that when we remove
+            // listChildNode below in moveParagraphs, previousListChild will be removed along with it if it is 
+            // unrendered. But we ought to remove nextListChild too, if it is unrendered.
+            splitElement(static_cast<Element *>(listNode), splitTreeToNode(nextListChild, listNode));
             insertNodeBefore(nodeToInsert.get(), listNode);
-        } else if (nextListChild)
+        } else if (nextListChild || listChildNode->parentNode() != listNode) {
+            // Just because listChildNode has no previousListChild doesn't mean there isn't any content
+            // in listNode that comes before listChildNode, as listChildNode could have ancestors
+            // between it and listNode. So, we split up to listNode before inserting the placeholder
+            // where we're about to move listChildNode to.
+            if (listChildNode->parentNode() != listNode)
+                splitElement(static_cast<Element *>(listNode), splitTreeToNode(listChildNode, listNode));
             insertNodeBefore(nodeToInsert.get(), listNode);
-        else
+        } else
             insertNodeAfter(nodeToInsert.get(), listNode);
+        
         VisiblePosition insertionPoint = VisiblePosition(Position(placeholder.get(), 0));
         moveParagraphs(start, end, insertionPoint, true);
     }
