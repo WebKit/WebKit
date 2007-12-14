@@ -118,11 +118,8 @@ HRESULT STDMETHODCALLTYPE WebActionPropertyBag::Read(LPCOLESTR pszPropName, VARI
     } else if (isEqual(pszPropName, WebActionElementKey)) {
         if (const MouseEvent* mouseEvent = findMouseEvent(m_action.event())) {
             IntPoint point(mouseEvent->clientX(), mouseEvent->clientY());
-            COMPtr<WebElementPropertyBag> elementPropertyBag;
-            elementPropertyBag.adoptRef(WebElementPropertyBag::createInstance(m_frame->eventHandler()->hitTestResultAtPoint(point, false)));
-
             V_VT(pVar) = VT_UNKNOWN;
-            elementPropertyBag->QueryInterface(IID_IUnknown, (void**)V_UNKNOWNREF(pVar));
+            V_UNKNOWN(pVar) = WebElementPropertyBag::createInstance(m_frame->eventHandler()->hitTestResultAtPoint(point, false));
             return S_OK;
         }
     } else if (isEqual(pszPropName, WebActionButtonKey)) {

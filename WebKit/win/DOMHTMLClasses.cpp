@@ -208,10 +208,13 @@ HRESULT STDMETHODCALLTYPE DOMHTMLDocument::domain(
 }
     
 HRESULT STDMETHODCALLTYPE DOMHTMLDocument::URL( 
-        /* [retval][out] */ BSTR* /*result*/)
+        /* [retval][out] */ BSTR* result)
 {
-    ASSERT_NOT_REACHED();
-    return E_NOTIMPL;
+    if (!result)
+        return E_POINTER;
+
+    *result = BString(static_cast<HTMLDocument*>(m_document)->URL()).release();
+    return S_OK;
 }
     
 HRESULT STDMETHODCALLTYPE DOMHTMLDocument::body( 

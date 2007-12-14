@@ -1,5 +1,18 @@
 2007-12-14  Darin Adler  <darin@apple.com>
 
+        Reviewed by Adele.
+
+        - http://bugs.webkit.org/show_bug.cgi?id=16443
+          implement some missing Windows WebKit functions
+
+        * DOMHTMLClasses.cpp:
+        (DOMHTMLDocument::URL): Implemented.
+
+        * WebActionPropertyBag.cpp:
+        (WebActionPropertyBag::Read): Fixed the WebActionElementKey case. 
+
+2007-12-14  Darin Adler  <darin@apple.com>
+
         Reviewed by Alexey.
 
         * WebView.cpp:
