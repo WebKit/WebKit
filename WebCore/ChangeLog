@@ -1,3 +1,16 @@
+2007-12-13  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Mark Rowe.
+
+        Fix typos and rename InspectorController::moveByUnrestricted to InspectorController::moveWindowBy.
+
+        * page/InspectorController.cpp:
+        (WebCore::moveByUnrestricted):
+        (WebCore::InspectorController::windowScriptObjectAvailable):
+        (WebCore::InspectorController::moveWindowBy):
+        * page/InspectorController.h:
+        * page/inspector/inspector.js:
+
 2007-12-13  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Dave Hyatt.

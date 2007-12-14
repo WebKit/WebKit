@@ -583,7 +583,7 @@ WebInspector.toolbarDrag = function(event)
     toolbar.lastScreenX = event.screenX;
     toolbar.lastScreenY = event.screenY;
 
-    // We cannot call window.moveBy here becuase it restricts the movement of the window
+    // We cannot call window.moveBy here because it restricts the movement of the window
     // at the edges.
     InspectorController.moveByUnrestricted(x, y);
 

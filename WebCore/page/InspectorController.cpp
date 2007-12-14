@@ -578,10 +578,10 @@ static JSValueRef moveByUnrestricted(JSContextRef ctx, JSObjectRef /*function*/,
     if (!controller)
         return JSValueMakeUndefined(ctx);
 
-    if (argumentCount < 2 )
+    if (argumentCount < 2)
         return JSValueMakeUndefined(ctx);
 
-    controller->moveByUnrestricted(narrowPrecisionToFloat(JSValueToNumber(ctx, arguments[0], 0)), narrowPrecisionToFloat(JSValueToNumber(ctx, arguments[1], 0)));
+    controller->moveWindowBy(narrowPrecisionToFloat(JSValueToNumber(ctx, arguments[0], 0)), narrowPrecisionToFloat(JSValueToNumber(ctx, arguments[1], 0)));
 
     return JSValueMakeUndefined(ctx);
 }
@@ -763,22 +763,22 @@ void InspectorController::windowScriptObjectAvailable()
     ASSERT(global);
 
     static JSStaticFunction staticFunctions[] = {
-        { "addSourceToFrame", WebCore::addSourceToFrame, kJSPropertyAttributeNone },
-        { "getResourceDocumentNode", WebCore::getResourceDocumentNode, kJSPropertyAttributeNone },
-        { "highlightDOMNode", WebCore::highlightDOMNode, kJSPropertyAttributeNone },
-        { "hideDOMNodeHighlight", WebCore::hideDOMNodeHighlight, kJSPropertyAttributeNone },
-        { "loaded", WebCore::loaded, kJSPropertyAttributeNone },
-        { "windowUnloading", WebCore::unloading, kJSPropertyAttributeNone },
-        { "attach", WebCore::attach, kJSPropertyAttributeNone },
-        { "detach", WebCore::detach, kJSPropertyAttributeNone },
-        { "search", WebCore::search, kJSPropertyAttributeNone },
+        { "addSourceToFrame", addSourceToFrame, kJSPropertyAttributeNone },
+        { "getResourceDocumentNode", getResourceDocumentNode, kJSPropertyAttributeNone },
+        { "highlightDOMNode", highlightDOMNode, kJSPropertyAttributeNone },
+        { "hideDOMNodeHighlight", hideDOMNodeHighlight, kJSPropertyAttributeNone },
+        { "loaded", loaded, kJSPropertyAttributeNone },
+        { "windowUnloading", unloading, kJSPropertyAttributeNone },
+        { "attach", attach, kJSPropertyAttributeNone },
+        { "detach", detach, kJSPropertyAttributeNone },
+        { "search", search, kJSPropertyAttributeNone },
 #if ENABLE(DATABASE)
-        { "databaseTableNames", WebCore::databaseTableNames, kJSPropertyAttributeNone },
+        { "databaseTableNames", databaseTableNames, kJSPropertyAttributeNone },
 #endif
-        { "inspectedWindow", WebCore::inspectedWindow, kJSPropertyAttributeNone },
-        { "localizedStringsURL", WebCore::localizedStrings, kJSPropertyAttributeNone },
-        { "platform", WebCore::platform, kJSPropertyAttributeNone },
-        { "moveByUnrestricted", WebCore::moveByUnrestricted, kJSPropertyAttributeNone },
+        { "inspectedWindow", inspectedWindow, kJSPropertyAttributeNone },
+        { "localizedStringsURL", localizedStrings, kJSPropertyAttributeNone },
+        { "platform", platform, kJSPropertyAttributeNone },
+        { "moveByUnrestricted", moveByUnrestricted, kJSPropertyAttributeNone },
         { 0, 0, 0 }
     };
 
@@ -1621,7 +1621,7 @@ void InspectorController::didOpenDatabase(Database* database, const String& doma
 }
 #endif
 
-void InspectorController::moveByUnrestricted(float x, float y) const
+void InspectorController::moveWindowBy(float x, float y) const
 {
     if (!m_page || !enabled())
         return;
