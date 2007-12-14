@@ -1,3 +1,20 @@
+2007-12-13  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Oliver Hunt.
+        
+        <rdar://problem/4145786> Undoing a color change of text in a compose window always changes it back to black
+        
+        Some of the operations performed in removeHTMLFontStyle were non-undoable.
+        
+        I'm having trouble writing a layout test for this because I can't get DRT to
+        perform editing operations in separate Undo steps without adding unacceptably long
+        wait times between operations.  I filed:
+        
+        <rdar://problem/5646779> Can't get DRT to perform editing operations in separate Undo steps
+
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::ApplyStyleCommand::removeHTMLFontStyle):
+
 2007-12-13  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders.

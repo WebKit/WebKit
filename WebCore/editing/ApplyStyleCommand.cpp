@@ -749,15 +749,15 @@ void ApplyStyleCommand::removeHTMLFontStyle(CSSMutableStyleDeclaration *style, H
     for (DeprecatedValueListConstIterator<CSSProperty> it = style->valuesIterator(); it != end; ++it) {
         switch ((*it).id()) {
             case CSS_PROP_COLOR:
-                elem->removeAttribute(colorAttr, ec);
+                removeNodeAttribute(elem, colorAttr);
                 ASSERT(ec == 0);
                 break;
             case CSS_PROP_FONT_FAMILY:
-                elem->removeAttribute(faceAttr, ec);
+                removeNodeAttribute(elem, faceAttr);
                 ASSERT(ec == 0);
                 break;
             case CSS_PROP_FONT_SIZE:
-                elem->removeAttribute(sizeAttr, ec);
+                removeNodeAttribute(elem, sizeAttr);
                 ASSERT(ec == 0);
                 break;
         }
