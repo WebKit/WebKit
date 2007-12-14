@@ -1,3 +1,29 @@
+2007-12-13  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Adam.
+
+        - Layout tests fix.  Removed machine dependant results and generated new
+        results without machine specific information.
+
+        * fast/dom/frame-loading-via-document-write-expected.txt: Added.
+        * http/tests/security/frame-loading-via-document-write-expected.txt: Added.
+        * http/tests/security/local-CSS-from-remote-expected.txt:
+        * http/tests/security/local-JavaScript-from-remote-expected.txt:
+        * http/tests/security/local-iFrame-from-remote-expected.txt:
+        * http/tests/security/local-image-from-remote-expected.txt:
+        * platform/mac/fast/dom/frame-loading-via-document-write-expected.checksum: Removed.
+        * platform/mac/fast/dom/frame-loading-via-document-write-expected.png: Removed.
+        * platform/mac/fast/dom/frame-loading-via-document-write-expected.txt: Removed.
+        * platform/mac/http/tests/security: Removed.
+        * platform/mac/http/tests/security/frame-loading-via-document-write-expected.checksum: Removed.
+        * platform/mac/http/tests/security/frame-loading-via-document-write-expected.png: Removed.
+        * platform/mac/http/tests/security/frame-loading-via-document-write-expected.txt: Removed.
+        * platform/win/Skipped:
+        * platform/win/http: Removed.
+        * platform/win/http/tests: Removed.
+        * platform/win/http/tests/security: Removed.
+        * platform/win/http/tests/security/frame-loading-via-document-write-expected.txt: Removed.
+
 2007-12-13  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Adele.

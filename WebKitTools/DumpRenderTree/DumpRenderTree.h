@@ -44,6 +44,10 @@
 extern CFRunLoopTimerRef waitToDumpWatchdog;
 #endif
 
+#include <string>
+
+std::wstring urlSuitableForTestResult(const std::wstring& url);
+
 class LayoutTestController;
 
 extern volatile bool done;

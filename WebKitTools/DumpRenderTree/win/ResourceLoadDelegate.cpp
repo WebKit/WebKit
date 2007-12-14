@@ -32,7 +32,6 @@
 #include "LayoutTestController.h"
 #include <wtf/HashMap.h>
 #include <wtf/Vector.h>
-#include <string>
 #include <sstream>
 
 using std::wstring;
@@ -41,14 +40,6 @@ using std::wiostream;
 static inline wstring wstringFromBSTR(BSTR str)
 {
     return wstring(str, ::SysStringLen(str));
-}
-
-static wstring urlSuitableForTestResult(const wstring& url)
-{
-    // FIXME: This should convert file:/// URLs like the Mac version does.
-    // It's currently not done because the only tests that use file:/// URLs 
-    // are the webarchive tests and we don't support those on Windows.
-    return url;
 }
 
 wstring wstringFromInt(int i)

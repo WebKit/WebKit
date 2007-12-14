@@ -1,3 +1,19 @@
+2007-12-13  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Adam.
+
+        - Layout tests fix.  We need a way to remove machine-dependent
+        information from paths in layout test results. The UIDelegate now does
+        this.
+
+        * DumpRenderTree/DumpRenderTree.h:
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (urlSuitableForTestResult):
+        * DumpRenderTree/win/DumpRenderTreeWin.h:
+        * DumpRenderTree/win/ResourceLoadDelegate.cpp:
+        * DumpRenderTree/win/UIDelegate.cpp:
+        (UIDelegate::webViewAddMessageToConsole):
+
 2007-12-13  Alp Toker  <alp@atoker.com>
 
         Build fix for DRT breakage introduced in r28690.

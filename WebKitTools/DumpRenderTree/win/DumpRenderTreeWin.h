@@ -58,4 +58,8 @@ extern IWebPolicyDelegate* policyDelegate;
 
 extern HWND webViewWindow;
 
+#include <string>
+
+std::wstring urlSuitableForTestResult(const std::wstring& url);
+
 #endif // DumpRenderTreeWin_h

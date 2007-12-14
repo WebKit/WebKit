@@ -57,6 +57,7 @@
 #include <io.h>
 #include <windows.h>
 #include <stdio.h>
+#include <shlwapi.h>
 
 using std::wstring;
 
@@ -102,6 +103,14 @@ static const unsigned timeoutId = 10;
 
 const unsigned maxViewWidth = 800;
 const unsigned maxViewHeight = 600;
+
+wstring urlSuitableForTestResult(const wstring& url)
+{
+    if (!url.c_str() || !url.find(L"file://"))
+        return url;
+
+    return PathFindFileNameW(url.c_str());
+}
 
 static LRESULT CALLBACK DumpRenderTreeWndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
