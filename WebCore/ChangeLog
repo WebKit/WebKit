@@ -1,3 +1,17 @@
+2007-12-14  Darin Adler  <darin@apple.com>
+
+        Reviewed by Adele.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=16442
+          navigation policy delegate gets called twice for each load
+
+        * loader/MainResourceLoader.cpp:
+        (WebCore::MainResourceLoader::willSendRequest): Removed call to checkNavigationPolicy.
+        That's handled by FrameLoader.
+
+        * loader/MainResourceLoader.h: Removed callContinueAfterNavigationPolicy
+        and continueAfterNavigationPolicy.
+
 2007-12-14  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Brady.

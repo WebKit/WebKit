@@ -106,18 +106,6 @@ void MainResourceLoader::stopLoadingForPolicyChange()
     cancel(interruptionForPolicyChangeError());
 }
 
-void MainResourceLoader::callContinueAfterNavigationPolicy(void* argument, const ResourceRequest& request, PassRefPtr<FormState>, bool shouldContinue)
-{
-    static_cast<MainResourceLoader*>(argument)->continueAfterNavigationPolicy(request, shouldContinue);
-}
-
-void MainResourceLoader::continueAfterNavigationPolicy(const ResourceRequest& request, bool shouldContinue)
-{
-    if (!shouldContinue)
-        stopLoadingForPolicyChange();
-    deref(); // balances ref in willSendRequest
-}
-
 bool MainResourceLoader::isPostOrRedirectAfterPost(const ResourceRequest& newRequest, const ResourceResponse& redirectResponse)
 {
     if (newRequest.httpMethod() == "POST")
@@ -168,9 +156,6 @@ void MainResourceLoader::willSendRequest(ResourceRequest& newRequest, const Reso
     
     // Don't set this on the first request. It is set when the main load was started.
     m_documentLoader->setRequest(newRequest);
-    
-    ref(); // balanced by deref in continueAfterNavigationPolicy
-    frameLoader()->checkNavigationPolicy(newRequest, callContinueAfterNavigationPolicy, this);
 }
 
 static bool shouldLoadAsEmptyDocument(const KURL& url)
