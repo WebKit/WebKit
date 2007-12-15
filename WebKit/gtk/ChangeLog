@@ -1,3 +1,78 @@
+2007-12-14  Alp Toker  <alp@atoker.com>
+
+        Reviewed by Maciej.
+
+        http://bugs.webkit.org/show_bug.cgi?id=16432
+        [GTK] Update license headers
+
+        Consent has been given by the authors of these files to change license
+        to the LGPL as outlined in the bug report.
+
+        * WebCoreSupport/ChromeClientGtk.cpp:
+        * WebCoreSupport/ContextMenuClientGtk.cpp:
+        * WebCoreSupport/DragClientGtk.cpp:
+        * WebCoreSupport/EditorClientGtk.cpp:
+        * WebCoreSupport/FrameLoaderClientGtk.cpp:
+        (WebKit::FrameLoaderClient::makeRepresentation):
+        (WebKit::FrameLoaderClient::forceLayout):
+        (WebKit::FrameLoaderClient::forceLayoutForNonHTML):
+        (WebKit::FrameLoaderClient::setCopiesOnScroll):
+        (WebKit::FrameLoaderClient::detachedFromParent1):
+        (WebKit::FrameLoaderClient::detachedFromParent2):
+        (WebKit::FrameLoaderClient::detachedFromParent3):
+        (WebKit::FrameLoaderClient::detachedFromParent4):
+        (WebKit::FrameLoaderClient::loadedFromCachedPage):
+        (WebKit::FrameLoaderClient::dispatchDidHandleOnloadEvents):
+        (WebKit::FrameLoaderClient::dispatchDidReceiveServerRedirectForProvisionalLoad):
+        (WebKit::FrameLoaderClient::dispatchDidCancelClientRedirect):
+        (WebKit::FrameLoaderClient::dispatchWillPerformClientRedirect):
+        (WebKit::FrameLoaderClient::dispatchDidChangeLocationWithinPage):
+        (WebKit::FrameLoaderClient::dispatchWillClose):
+        (WebKit::FrameLoaderClient::dispatchDidCommitLoad):
+        (WebKit::FrameLoaderClient::dispatchDidFinishDocumentLoad):
+        (WebKit::FrameLoaderClient::dispatchDidFirstLayout):
+        (WebKit::FrameLoaderClient::dispatchShow):
+        (WebKit::FrameLoaderClient::cancelPolicyCheck):
+        (WebKit::FrameLoaderClient::dispatchDidLoadMainResource):
+        (WebKit::FrameLoaderClient::revertToProvisionalState):
+        (WebKit::FrameLoaderClient::clearUnarchivingState):
+        (WebKit::FrameLoaderClient::willChangeTitle):
+        (WebKit::FrameLoaderClient::didChangeTitle):
+        (WebKit::FrameLoaderClient::finalSetupForReplace):
+        (WebKit::FrameLoaderClient::setDefersLoading):
+        (WebKit::FrameLoaderClient::isArchiveLoadPending):
+        (WebKit::FrameLoaderClient::cancelPendingArchiveLoad):
+        (WebKit::FrameLoaderClient::clearArchivedResources):
+        (WebKit::FrameLoaderClient::canHandleRequest):
+        (WebKit::FrameLoaderClient::canShowMIMEType):
+        (WebKit::FrameLoaderClient::representationExistsForURLScheme):
+        (WebKit::FrameLoaderClient::generatedMIMETypeForURLScheme):
+        (WebKit::FrameLoaderClient::dispatchDidReceiveContentLength):
+        (WebKit::FrameLoaderClient::dispatchDidFinishLoading):
+        (WebKit::FrameLoaderClient::dispatchDidFailLoading):
+        (WebKit::FrameLoaderClient::dispatchDidLoadResourceFromMemoryCache):
+        (WebKit::FrameLoaderClient::download):
+        (WebKit::FrameLoaderClient::cancelledError):
+        (WebKit::FrameLoaderClient::blockedError):
+        (WebKit::FrameLoaderClient::cannotShowURLError):
+        (WebKit::FrameLoaderClient::interruptForPolicyChangeError):
+        (WebKit::FrameLoaderClient::cannotShowMIMETypeError):
+        (WebKit::FrameLoaderClient::fileDoesNotExistError):
+        (WebKit::FrameLoaderClient::shouldFallBack):
+        (WebKit::FrameLoaderClient::willUseArchive):
+        (WebKit::FrameLoaderClient::canCachePage):
+        (WebKit::FrameLoaderClient::dispatchCreatePage):
+        (WebKit::FrameLoaderClient::dispatchUnableToImplementPolicy):
+        (WebKit::FrameLoaderClient::setMainDocumentError):
+        (WebKit::FrameLoaderClient::startDownload):
+        (WebKit::FrameLoaderClient::updateGlobalHistoryForStandardLoad):
+        (WebKit::FrameLoaderClient::updateGlobalHistoryForReload):
+        (WebKit::FrameLoaderClient::savePlatformDataToCachedPage):
+        (WebKit::FrameLoaderClient::transitionToCommittedFromCachedPage):
+        (WebKit::FrameLoaderClient::transitionToCommittedForNewPage):
+        * WebCoreSupport/InspectorClientGtk.cpp:
+        * WebView/webkitwebview.cpp:
+
 2007-12-14  Darin Adler  <darin@apple.com>
 
         Reviewed by Alexey.

@@ -1,38 +1,26 @@
 /*
- * Copyright (C) 2006 Don Gibson <dgibson77@gmail.com>
- * Copyright (C) 2006 Zack Rusin <zack@kde.org>
- * Copyright (C) 2006, 2007 Apple Computer, Inc.  All rights reserved.
- * Copyright (C) 2007 Trolltech ASA
- * Copyright (C) 2007 Alp Toker <alp.toker@collabora.co.uk>
+ * Copyright (C) 2007 Alp Toker <alp@atoker.com>
  * Copyright (C) 2007 Holger Hans Peter Freyther
  * Copyright (C) 2007 Christian Dywan <christian@twotoasts.de>
  *
- * All rights reserved.
+ *  This library is free software; you can redistribute it and/or
+ *  modify it under the terms of the GNU Lesser General Public
+ *  License as published by the Free Software Foundation; either
+ *  version 2 of the License, or (at your option) any later version.
  *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met:
- * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer.
- * 2. Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in the
- *    documentation and/or other materials provided with the distribution.
+ *  This library is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *  Lesser General Public License for more details.
  *
- * THIS SOFTWARE IS PROVIDED BY APPLE COMPUTER, INC. ``AS IS'' AND ANY
- * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE COMPUTER, INC. OR
- * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
- * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
- * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
- * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
- * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *  You should have received a copy of the GNU Lesser General Public
+ *  License along with this library; if not, write to the Free Software
+ *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
 #include "config.h"
 #include "FrameLoaderClientGtk.h"
+
 #include "DocumentLoader.h"
 #include "FrameLoader.h"
 #include "FrameView.h"
@@ -427,21 +415,80 @@ bool FrameLoaderClient::shouldGoToHistoryItem(HistoryItem* item) const
     return item != 0;
 }
 
-void FrameLoaderClient::makeRepresentation(DocumentLoader*) { notImplemented(); }
-void FrameLoaderClient::forceLayout() { notImplemented(); }
-void FrameLoaderClient::forceLayoutForNonHTML() { notImplemented(); }
-void FrameLoaderClient::setCopiesOnScroll() { notImplemented(); }
-void FrameLoaderClient::detachedFromParent1() { notImplemented(); }
-void FrameLoaderClient::detachedFromParent2() { notImplemented(); }
-void FrameLoaderClient::detachedFromParent3() { notImplemented(); }
-void FrameLoaderClient::detachedFromParent4() { notImplemented(); }
-void FrameLoaderClient::loadedFromCachedPage() { notImplemented(); }
-void FrameLoaderClient::dispatchDidHandleOnloadEvents() {notImplemented(); }
-void FrameLoaderClient::dispatchDidReceiveServerRedirectForProvisionalLoad() { notImplemented(); }
-void FrameLoaderClient::dispatchDidCancelClientRedirect() { notImplemented(); }
-void FrameLoaderClient::dispatchWillPerformClientRedirect(const KURL&, double, double) { notImplemented(); }
-void FrameLoaderClient::dispatchDidChangeLocationWithinPage() { notImplemented(); }
-void FrameLoaderClient::dispatchWillClose() { notImplemented(); }
+void FrameLoaderClient::makeRepresentation(DocumentLoader*)
+{
+    notImplemented();
+}
+
+void FrameLoaderClient::forceLayout()
+{
+    notImplemented();
+}
+
+void FrameLoaderClient::forceLayoutForNonHTML()
+{
+    notImplemented();
+}
+
+void FrameLoaderClient::setCopiesOnScroll()
+{
+    notImplemented();
+}
+
+void FrameLoaderClient::detachedFromParent1()
+{
+    notImplemented();
+}
+
+void FrameLoaderClient::detachedFromParent2()
+{
+    notImplemented();
+}
+
+void FrameLoaderClient::detachedFromParent3()
+{
+    notImplemented();
+}
+
+void FrameLoaderClient::detachedFromParent4()
+{
+    notImplemented();
+}
+
+void FrameLoaderClient::loadedFromCachedPage()
+{
+    notImplemented();
+}
+
+void FrameLoaderClient::dispatchDidHandleOnloadEvents()
+{
+    notImplemented();
+}
+
+void FrameLoaderClient::dispatchDidReceiveServerRedirectForProvisionalLoad()
+{
+    notImplemented();
+}
+
+void FrameLoaderClient::dispatchDidCancelClientRedirect()
+{
+    notImplemented();
+}
+
+void FrameLoaderClient::dispatchWillPerformClientRedirect(const KURL&, double, double)
+{
+    notImplemented();
+}
+
+void FrameLoaderClient::dispatchDidChangeLocationWithinPage()
+{
+    notImplemented();
+}
+
+void FrameLoaderClient::dispatchWillClose()
+{
+    notImplemented();
+}
 
 void FrameLoaderClient::dispatchDidReceiveIcon()
 {
@@ -459,25 +506,106 @@ void FrameLoaderClient::dispatchDidReceiveTitle(const String& title)
     notImplemented();
 }
 
-void FrameLoaderClient::dispatchDidCommitLoad() { notImplemented(); }
-void FrameLoaderClient::dispatchDidFinishDocumentLoad() { notImplemented(); }
-void FrameLoaderClient::dispatchDidFirstLayout() { notImplemented(); }
-void FrameLoaderClient::dispatchShow() { notImplemented(); }
-void FrameLoaderClient::cancelPolicyCheck() { notImplemented(); }
-void FrameLoaderClient::dispatchDidLoadMainResource(DocumentLoader*) { notImplemented(); }
-void FrameLoaderClient::revertToProvisionalState(DocumentLoader*) { notImplemented(); }
-void FrameLoaderClient::clearUnarchivingState(DocumentLoader*) { notImplemented(); }
-void FrameLoaderClient::willChangeTitle(DocumentLoader*) { notImplemented(); }
-void FrameLoaderClient::didChangeTitle(DocumentLoader *l) { setTitle(l->title(), l->url()); }
-void FrameLoaderClient::finalSetupForReplace(DocumentLoader*) { notImplemented(); }
-void FrameLoaderClient::setDefersLoading(bool) { notImplemented(); }
-bool FrameLoaderClient::isArchiveLoadPending(ResourceLoader*) const { notImplemented(); return false; }
-void FrameLoaderClient::cancelPendingArchiveLoad(ResourceLoader*) { notImplemented(); }
-void FrameLoaderClient::clearArchivedResources() { notImplemented(); }
-bool FrameLoaderClient::canHandleRequest(const ResourceRequest&) const { notImplemented(); return true; }
-bool FrameLoaderClient::canShowMIMEType(const String&) const { notImplemented(); return true; }
-bool FrameLoaderClient::representationExistsForURLScheme(const String&) const { notImplemented(); return false; }
-String FrameLoaderClient::generatedMIMETypeForURLScheme(const String&) const { notImplemented(); return String(); }
+
+void FrameLoaderClient::dispatchDidCommitLoad()
+{
+    notImplemented();
+}
+
+void FrameLoaderClient::dispatchDidFinishDocumentLoad()
+{
+    notImplemented();
+}
+
+void FrameLoaderClient::dispatchDidFirstLayout()
+{
+    notImplemented();
+}
+
+void FrameLoaderClient::dispatchShow()
+{
+    notImplemented();
+}
+
+void FrameLoaderClient::cancelPolicyCheck()
+{
+    notImplemented();
+}
+
+void FrameLoaderClient::dispatchDidLoadMainResource(DocumentLoader*)
+{
+    notImplemented();
+}
+
+void FrameLoaderClient::revertToProvisionalState(DocumentLoader*)
+{
+    notImplemented();
+}
+
+void FrameLoaderClient::clearUnarchivingState(DocumentLoader*)
+{
+    notImplemented();
+}
+
+void FrameLoaderClient::willChangeTitle(DocumentLoader*)
+{
+    notImplemented();
+}
+
+void FrameLoaderClient::didChangeTitle(DocumentLoader *l)
+{
+    setTitle(l->title(), l->url());
+}
+
+void FrameLoaderClient::finalSetupForReplace(DocumentLoader*)
+{
+    notImplemented();
+}
+
+void FrameLoaderClient::setDefersLoading(bool)
+{
+    notImplemented();
+}
+
+bool FrameLoaderClient::isArchiveLoadPending(ResourceLoader*) const
+{
+    notImplemented();
+    return false;
+}
+
+void FrameLoaderClient::cancelPendingArchiveLoad(ResourceLoader*)
+{
+    notImplemented();
+}
+
+void FrameLoaderClient::clearArchivedResources()
+{
+    notImplemented();
+}
+
+bool FrameLoaderClient::canHandleRequest(const ResourceRequest&) const
+{
+    notImplemented();
+    return true;
+}
+
+bool FrameLoaderClient::canShowMIMEType(const String&) const
+{
+    notImplemented();
+    return true;
+}
+
+bool FrameLoaderClient::representationExistsForURLScheme(const String&) const
+{
+    notImplemented();
+    return false;
+}
+
+String FrameLoaderClient::generatedMIMETypeForURLScheme(const String&) const
+{
+    notImplemented();
+    return String();
+}
 
 void FrameLoaderClient::finishedLoading(DocumentLoader* documentLoader)
 {
@@ -515,10 +643,26 @@ void FrameLoaderClient::setTitle(const String& title, const KURL& url)
         g_signal_emit_by_name(page, "title-changed", titleString.data(), urlString.data());
 }
 
-void FrameLoaderClient::dispatchDidReceiveContentLength(DocumentLoader*, unsigned long  identifier, int lengthReceived) { notImplemented(); }
-void FrameLoaderClient::dispatchDidFinishLoading(DocumentLoader*, unsigned long  identifier) { notImplemented(); }
-void FrameLoaderClient::dispatchDidFailLoading(DocumentLoader*, unsigned long  identifier, const ResourceError&) { notImplemented(); }
-bool FrameLoaderClient::dispatchDidLoadResourceFromMemoryCache(DocumentLoader*, const ResourceRequest&, const ResourceResponse&, int length) { notImplemented(); return false; }
+void FrameLoaderClient::dispatchDidReceiveContentLength(DocumentLoader*, unsigned long identifier, int lengthReceived)
+{
+    notImplemented();
+}
+
+void FrameLoaderClient::dispatchDidFinishLoading(DocumentLoader*, unsigned long identifier)
+{
+    notImplemented();
+}
+
+void FrameLoaderClient::dispatchDidFailLoading(DocumentLoader*, unsigned long identifier, const ResourceError&)
+{
+    notImplemented();
+}
+
+bool FrameLoaderClient::dispatchDidLoadResourceFromMemoryCache(DocumentLoader*, const ResourceRequest&, const ResourceResponse&, int length)
+{
+    notImplemented();
+    return false;
+}
 
 void FrameLoaderClient::dispatchDidFailProvisionalLoad(const ResourceError&)
 {
@@ -530,24 +674,109 @@ void FrameLoaderClient::dispatchDidFailLoad(const ResourceError&)
     g_signal_emit_by_name(m_frame, "load-done", false);
 }
 
-void FrameLoaderClient::download(ResourceHandle*, const ResourceRequest&, const ResourceRequest&, const ResourceResponse&) { notImplemented(); }
-ResourceError FrameLoaderClient::cancelledError(const ResourceRequest&) { notImplemented(); return ResourceError(); }
-ResourceError FrameLoaderClient::blockedError(const ResourceRequest&) { notImplemented(); return ResourceError(); }
-ResourceError FrameLoaderClient::cannotShowURLError(const ResourceRequest&) { notImplemented(); return ResourceError(); }
-ResourceError FrameLoaderClient::interruptForPolicyChangeError(const ResourceRequest&) { notImplemented(); return ResourceError(); }
-ResourceError FrameLoaderClient::cannotShowMIMETypeError(const ResourceResponse&) { notImplemented(); return ResourceError(); }
-ResourceError FrameLoaderClient::fileDoesNotExistError(const ResourceResponse&) { notImplemented(); return ResourceError(); }
-bool FrameLoaderClient::shouldFallBack(const ResourceError&) { notImplemented(); return false; }
-bool FrameLoaderClient::willUseArchive(ResourceLoader*, const ResourceRequest&, const KURL& originalURL) const { notImplemented(); return false; }
-bool FrameLoaderClient::canCachePage() const { notImplemented(); return false; }
-Frame* FrameLoaderClient::dispatchCreatePage() { notImplemented(); return 0; }
-void FrameLoaderClient::dispatchUnableToImplementPolicy(const ResourceError&) { notImplemented(); }
-void FrameLoaderClient::setMainDocumentError(DocumentLoader*, const ResourceError&) { notImplemented(); }
-void FrameLoaderClient::startDownload(const ResourceRequest&) { notImplemented(); }
-void FrameLoaderClient::updateGlobalHistoryForStandardLoad(const KURL&) { notImplemented(); }
-void FrameLoaderClient::updateGlobalHistoryForReload(const KURL&) { notImplemented(); }
+void FrameLoaderClient::download(ResourceHandle*, const ResourceRequest&, const ResourceRequest&, const ResourceResponse&)
+{
+    notImplemented();
+}
 
-void FrameLoaderClient::savePlatformDataToCachedPage(CachedPage*) { notImplemented(); }
-void FrameLoaderClient::transitionToCommittedFromCachedPage(CachedPage*) { notImplemented(); }
-void FrameLoaderClient::transitionToCommittedForNewPage() { notImplemented(); }
+ResourceError FrameLoaderClient::cancelledError(const ResourceRequest&)
+{
+    notImplemented();
+    return ResourceError();
+}
+
+ResourceError FrameLoaderClient::blockedError(const ResourceRequest&)
+{
+    notImplemented();
+    return ResourceError();
+}
+
+ResourceError FrameLoaderClient::cannotShowURLError(const ResourceRequest&)
+{
+    notImplemented();
+    return ResourceError();
+}
+
+ResourceError FrameLoaderClient::interruptForPolicyChangeError(const ResourceRequest&)
+{
+    notImplemented();
+    return ResourceError();
+}
+
+ResourceError FrameLoaderClient::cannotShowMIMETypeError(const ResourceResponse&)
+{
+    notImplemented();
+    return ResourceError();
+}
+
+ResourceError FrameLoaderClient::fileDoesNotExistError(const ResourceResponse&)
+{
+    notImplemented();
+    return ResourceError();
+}
+
+bool FrameLoaderClient::shouldFallBack(const ResourceError&)
+{
+    notImplemented();
+    return false;
+}
+
+bool FrameLoaderClient::willUseArchive(ResourceLoader*, const ResourceRequest&, const KURL& originalURL) const
+{
+    notImplemented();
+    return false;
+}
+
+bool FrameLoaderClient::canCachePage() const
+{
+    notImplemented();
+    return false;
+}
+
+Frame* FrameLoaderClient::dispatchCreatePage()
+{
+    notImplemented();
+    return 0;
+}
+
+void FrameLoaderClient::dispatchUnableToImplementPolicy(const ResourceError&)
+{
+    notImplemented();
+}
+
+void FrameLoaderClient::setMainDocumentError(DocumentLoader*, const ResourceError&)
+{
+    notImplemented();
+}
+
+void FrameLoaderClient::startDownload(const ResourceRequest&)
+{
+    notImplemented();
+}
+
+void FrameLoaderClient::updateGlobalHistoryForStandardLoad(const KURL&)
+{
+    notImplemented();
+}
+
+void FrameLoaderClient::updateGlobalHistoryForReload(const KURL&)
+{
+    notImplemented();
+}
+
+void FrameLoaderClient::savePlatformDataToCachedPage(CachedPage*)
+{
+    notImplemented();
+}
+
+void FrameLoaderClient::transitionToCommittedFromCachedPage(CachedPage*)
+{
+    notImplemented();
+}
+
+void FrameLoaderClient::transitionToCommittedForNewPage()
+{
+    notImplemented();
+}
+
 }

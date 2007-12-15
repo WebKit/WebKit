@@ -1,5 +1,4 @@
 /*
- * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
  * Copyright (C) 2006 Michael Emmel mike.emmel@gmail.com 
  * Copyright (C) 2007 Christian Dywan <christian@twotoasts.de>
  * All rights reserved.

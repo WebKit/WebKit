@@ -32,8 +32,6 @@
 #include "Widget.h"
 
 #include <gtk/gtk.h>
-#include <stdio.h>
-#include <wtf/Assertions.h>
 
 namespace WebCore {
 
