@@ -7,7 +7,7 @@
 
         * dom/WheelEvent.cpp: (WebCore::WheelEvent::WheelEvent):
         Ensure that delta is never rounded down to zero - we are getting values less than 1 from 
-        many mice on OS X, and Google Maps code assumes scrolling down if event.wheelDelta is zero.
+        many mice on OS X, and Google Maps code assumes scrolling up if event.wheelDelta is zero.
 
 2007-12-14  Dan Bernstein  <mitz@apple.com>
 
