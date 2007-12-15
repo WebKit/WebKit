@@ -629,7 +629,7 @@
 				>
 			</File>
 			<File
-				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSEventTargetNode.lut.h"
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSEventTargetBase.lut.h"
 				>
 			</File>
 			<File
@@ -7373,6 +7373,14 @@
 				</File>
 				<File
 					RelativePath="..\bindings\js\JSEventCustom.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\bindings\js\JSEventTargetBase.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\bindings\js\JSEventTargetBase.h"
 					>
 				</File>
 				<File
