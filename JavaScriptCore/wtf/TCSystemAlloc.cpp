@@ -380,7 +380,9 @@ void* TCMalloc_SystemAlloc(size_t size, size_t *actual_size, size_t alignment) {
   return NULL;
 }
 
-#ifdef MADV_DONTNEED
+#ifndef MADV_DONTNEED
+void TCMalloc_SystemRelease(void*, size_t) {
+#else
 void TCMalloc_SystemRelease(void* start, size_t length) {
   if (FLAGS_malloc_devmem_start) {
     // It's not safe to use MADV_DONTNEED if we've been mapping
@@ -413,8 +415,6 @@ void TCMalloc_SystemRelease(void* start, size_t length) {
       // NOP
     }
   }
-#else
-void TCMalloc_SystemRelease(void*, size_t) { }
 #endif
 
 #if HAVE(MMAP)
