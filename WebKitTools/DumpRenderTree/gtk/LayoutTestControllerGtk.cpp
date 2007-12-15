@@ -151,10 +151,20 @@ void LayoutTestController::setWindowIsKey(bool windowIsKey)
     // FIXME: implement
 }
 
+static gboolean waitToDumpWatchdogFired(void*)
+{
+    const char* message = "FAIL: Timed out waiting for notifyDone to be called\n";
+    fprintf(stderr, "%s", message);
+    fprintf(stdout, "%s", message);
+    dump();
+    return FALSE;
+}
+
 void LayoutTestController::setWaitToDump(bool waitUntilDone)
 {
     m_waitToDump = waitUntilDone;
-    // FIXME: Should have some sort of watchdog timer here
+    if (m_waitToDump && !waitToDumpWatchdog)
+        waitToDumpWatchdog = g_timeout_add_seconds(10, waitToDumpWatchdogFired, 0);
 }
 
 int LayoutTestController::windowCount()

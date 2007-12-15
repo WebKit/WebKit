@@ -33,5 +33,6 @@
 
 extern WebKitWebFrame* mainFrame;
 extern WebKitWebFrame* topLoadingFrame;
+extern guint waitToDumpWatchdog;
 
 #endif // DumpRenderTreeGtk_h 

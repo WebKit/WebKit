@@ -2,6 +2,24 @@
 
         Reviewed by Alp Toker.
 
+        Add a watchdog timer to Gtk DumpRenderTree, and implement alert/prompt/confirm.  This prevents
+        many layout tests from hanging while waiting on user responses to dialogs.
+
+        * DumpRenderTree/gtk/DumpRenderTree.cpp:
+        (invalidateAnyPreviousWaitToDumpWatchdog):
+        (webViewScriptAlert):
+        (webViewScriptPrompt):
+        (webViewScriptConfirm):
+        (main):
+        * DumpRenderTree/gtk/DumpRenderTreeGtk.h:
+        * DumpRenderTree/gtk/LayoutTestControllerGtk.cpp:
+        (waitToDumpWatchdogFired):
+        (LayoutTestController::setWaitToDump):
+
+2007-12-05  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Alp Toker.
+
         Flesh out DumpRenderTree for Gtk.  After these changes, the majority of the tests in fast/js pass.
 
         * DumpRenderTree/gtk/DumpRenderTree.cpp:
