@@ -1,5 +1,12 @@
 2007-12-14  Dan Bernstein  <mitz@apple.com>
 
+        - yet another build fix
+
+        * DOMHTMLClasses.cpp:
+        (DOMHTMLDocument::URL):
+
+2007-12-14  Dan Bernstein  <mitz@apple.com>
+
         - build fix
 
         * WebIconDatabase.h:

@@ -213,7 +213,7 @@ HRESULT STDMETHODCALLTYPE DOMHTMLDocument::URL(
     if (!result)
         return E_POINTER;
 
-    *result = BString(static_cast<HTMLDocument*>(m_document)->URL()).release();
+    *result = BString(static_cast<HTMLDocument*>(m_document)->url()).release();
     return S_OK;
 }
     
