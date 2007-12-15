@@ -33,12 +33,9 @@ KEYWORDLUT_FILES += \
 KJSBISON += \
     kjs/grammar.y
 
-gtk-port: SOURCES += wtf/TCSystemAlloc.cpp
-
 SOURCES += \
     wtf/Assertions.cpp \
     wtf/HashTable.cpp \
-    wtf/FastMalloc.cpp \
     wtf/unicode/UTF8.cpp \
     bindings/NP_jsobject.cpp \
     bindings/npruntime.cpp \
@@ -60,29 +57,36 @@ SOURCES += \
     API/JSObjectRef.cpp \
     API/JSStringRef.cpp \
     API/JSValueRef.cpp \
-    kjs/DateMath.cpp \
-    kjs/JSWrapperObject.cpp \
-    kjs/PropertyNameArray.cpp \
+    kjs/JSGlobalObject.cpp \
+    kjs/JSVariableObject.cpp \
+    kjs/fpconst.cpp
+
+# AllInOneFile.cpp helps gcc analize and optimize code
+# Other compilers may be able to do this at link time
+gtk-port:CONFIG(release) {
+SOURCES += \
+    kjs/AllInOneFile.cpp
+} else {
+SOURCES += \
+    kjs/function.cpp \
+    kjs/debugger.cpp \
     kjs/array_instance.cpp \
     kjs/array_object.cpp \
     kjs/bool_object.cpp \
     kjs/collector.cpp \
     kjs/CommonIdentifiers.cpp \
     kjs/date_object.cpp \
-    kjs/debugger.cpp \
+    kjs/DateMath.cpp \
     kjs/dtoa.cpp \
     kjs/error_object.cpp \
     kjs/ExecState.cpp \
-    kjs/fpconst.cpp \
-    kjs/function.cpp \
     kjs/function_object.cpp \
     kjs/identifier.cpp \
     kjs/internal.cpp \
     kjs/interpreter.cpp \
-    kjs/JSGlobalObject.cpp \
-    kjs/JSVariableObject.cpp \
     kjs/JSImmediate.cpp \
     kjs/JSLock.cpp \
+    kjs/JSWrapperObject.cpp \
     kjs/lexer.cpp \
     kjs/list.cpp \
     kjs/lookup.cpp \
@@ -96,12 +100,18 @@ SOURCES += \
     kjs/Parser.cpp \
     kjs/property_map.cpp \
     kjs/property_slot.cpp \
+    kjs/PropertyNameArray.cpp \
     kjs/regexp.cpp \
     kjs/regexp_object.cpp \
     kjs/scope_chain.cpp \
     kjs/string_object.cpp \
     kjs/ustring.cpp \
-    kjs/value.cpp
+    kjs/value.cpp \
+    wtf/FastMalloc.cpp
+
+!qt-port:SOURCES += \
+    wtf/TCSystemAlloc.cpp
+}
 
 qt-port:SOURCES += \
     bindings/qt/qt_class.cpp \

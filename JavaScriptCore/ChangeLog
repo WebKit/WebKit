@@ -1,3 +1,11 @@
+2007-12-14  Alp Toker  <alp@atoker.com>
+
+        Reviewed by Mark Rowe.
+
+        Enable the AllInOneFile.cpp optimization for the GTK+ port.
+
+        * JavaScriptCore.pri:
+
 2007-12-14  Mark Rowe  <mrowe@apple.com>
 
         Unreviewed.  Remove commented out fprintf's that were for debugging purposes only.
