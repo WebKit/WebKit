@@ -48,6 +48,11 @@ WheelEvent::WheelEvent(float wheelDeltaX, float wheelDeltaY, AbstractView* view,
     , m_wheelDeltaX(lroundf(wheelDeltaX) * 120)
     , m_wheelDeltaY(lroundf(wheelDeltaY) * 120) // Normalize to the Windows 120 multiple
 {
+    // Rounding delta to zero makes no sense and breaks Google Maps, <http://bugs.webkit.org/show_bug.cgi?id=16078>.
+    if (wheelDeltaX && !m_wheelDeltaX)
+        m_wheelDeltaX = (wheelDeltaX > 0) ? 120 : -120;
+    if (wheelDeltaY && !m_wheelDeltaY)
+        m_wheelDeltaY = (wheelDeltaY > 0) ? 120 : -120;
 }
 
 void WheelEvent::initWheelEvent(int wheelDeltaX, int wheelDeltaY, AbstractView* view,

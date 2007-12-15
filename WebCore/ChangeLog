@@ -1,3 +1,14 @@
+2007-12-15  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        http://bugs.webkit.org/show_bug.cgi?id=16078
+        Google Maps zooming via the scroll wheel (almost) always zooms IN only.
+
+        * dom/WheelEvent.cpp: (WebCore::WheelEvent::WheelEvent):
+        Ensure that delta is never rounded down to zero - we are getting values less than 1 from 
+        many mice on OS X, and Google Maps code assumes scrolling down if event.wheelDelta is zero.
+
 2007-12-14  Dan Bernstein  <mitz@apple.com>
 
         - Windows build fix
