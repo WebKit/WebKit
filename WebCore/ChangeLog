@@ -1,3 +1,14 @@
+2007-12-14  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Geoff.
+
+        Speed up getElementByClassName.
+        - This makes getElementByClassName take 33% faster on the stress test
+          linked to at http://bugs.webkit.org/show_bug.cgi?id=15760.
+
+        * platform/text/StringImpl.cpp:
+        (WebCore::StringImpl::foldCase): Optimize the case when all the characters are ASCII.
+
 2007-12-14  Alp Toker  <alp@atoker.com>
 
         Reviewed by Maciej.

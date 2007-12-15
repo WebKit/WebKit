@@ -497,11 +497,39 @@ StringImpl* StringImpl::foldCase() const
     StringImpl* c = new StringImpl;
     if (!m_length)
         return c;
-    bool error;
-    int32_t length = Unicode::foldCase(0, 0, m_data, m_length, &error);
-    c->m_data = newUCharVector(length);
+
+    UChar* data = newUCharVector(m_length);
+    int32_t length = m_length;
+
+    c->m_data = data;
     c->m_length = length;
-    Unicode::foldCase(c->m_data, length, m_data, m_length, &error);
+
+    // Do a faster loop for the case where all the characters are ASCII.
+    UChar ored = 0;
+    for (int i = 0; i < length; i++) {
+        UChar c = m_data[i];
+        ored |= c;
+        data[i] = toASCIILower(c);
+    }
+    if (!(ored & ~0x7F))
+        return c;
+
+    // Do a slower implementation for cases that include non-ASCII characters.
+    bool error;
+    int32_t realLength = Unicode::foldCase(data, length, m_data, m_length, &error);
+    if (!error && realLength == length)
+        return c;
+
+    if (realLength > length) {
+        deleteUCharVector(data);
+        data = newUCharVector(realLength);
+    }
+    length = realLength;
+
+    c->m_data = data;
+    c->m_length = length;
+
+    Unicode::foldCase(data, length, m_data, m_length, &error);
     if (error) {
         c->ref();
         c->deref();
