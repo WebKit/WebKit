@@ -218,6 +218,7 @@ extern "C" const int jscore_fastmalloc_introspection = 0;
 #include "TCPageMap.h"
 #include "TCSpinLock.h"
 #include "TCSystemAlloc.h"
+#include <algorithm>
 #include <errno.h>
 #include <new>
 #include <pthread.h>
@@ -1349,7 +1350,7 @@ void TCMalloc_PageHeap::IncrementalScavenge(Length n) {
                              static_cast<size_t>(s->length << kPageShift));
       DLL_Prepend(&slist->returned, s);
 
-      scavenge_counter_ = max(64UL, min(kDefaultReleaseDelay, kDefaultReleaseDelay - (free_pages_ / kDefaultReleaseDelay)));
+      scavenge_counter_ = std::max<size_t>(64UL, std::min<size_t>(kDefaultReleaseDelay, kDefaultReleaseDelay - (free_pages_ / kDefaultReleaseDelay)));
 //      fprintf(stderr, "Released %zu pages at 0x%08zx to the system from index %zu.  Delaying for %lld pages before scavenging next.\n", s->length, s->start << kPageShift, index, scavenge_counter_);
 
       if (index == kMaxPages && !DLL_IsEmpty(&slist->normal))
