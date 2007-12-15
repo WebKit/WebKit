@@ -597,6 +597,10 @@ void CSSStyleSelector::applySVGProperty(int id, CSSValue* value)
 
             break;
         }
+        case CSS_PROP_ENABLE_BACKGROUND:
+            // Silently ignoring this property for now
+            // http://bugs.webkit.org/show_bug.cgi?id=6022
+            break;
         default:
             // If you crash here, it's because you added a css property and are not handling it
             // in either this switch statement or the one in CSSStyleSelector::applyProperty

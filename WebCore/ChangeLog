@@ -1,3 +1,19 @@
+2007-12-15  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Oliver.
+        
+        Width of SVG elements not applied to container elements
+        http://bugs.webkit.org/show_bug.cgi?id=16305
+        Added calcPrefWidths for RenderSVGRoot (copied from RenderReplaced)
+        This is caused by poor factoring in the render tree.  RenderContainer probably should be a template.
+
+        svg/css/css-box-min-width.html
+
+        * rendering/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::calcPrefWidths): Added.
+        * rendering/RenderSVGRoot.h:
+        * css/SVGCSSStyleSelector::applySVGProperty: fixed ASSERT in debug builds
+
 2007-12-15  David Kilzer  <ddkilzer@apple.com>
 
         Fix comment after isSafeScript() was renamed to allowsAccessFrom().

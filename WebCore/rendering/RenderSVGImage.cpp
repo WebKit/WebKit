@@ -151,10 +151,10 @@ void RenderSVGImage::layout()
     
     calcWidth();
     calcHeight();
-        
+
     if (checkForRepaint)
         repaintAfterLayoutIfNeeded(oldBounds, oldOutlineBox);
-    
+
     setNeedsLayout(false);
 }
 

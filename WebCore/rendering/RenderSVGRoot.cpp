@@ -61,6 +61,20 @@ short RenderSVGRoot::baselinePosition(bool b, bool isRootLineBox) const
     return height() + marginTop() + marginBottom();
 }
 
+void RenderSVGRoot::calcPrefWidths()
+{
+    ASSERT(prefWidthsDirty());
+
+    int width = calcReplacedWidth() + paddingLeft() + paddingRight() + borderLeft() + borderRight();
+    if (style()->width().isPercent() || (style()->width().isAuto() && style()->height().isPercent())) {
+        m_minPrefWidth = 0;
+        m_maxPrefWidth = width;
+    } else
+        m_minPrefWidth = m_maxPrefWidth = width;
+
+    setPrefWidthsDirty(false);
+}
+
 void RenderSVGRoot::layout()
 {
     ASSERT(needsLayout());
