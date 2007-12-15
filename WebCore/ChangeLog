@@ -1,3 +1,9 @@
+2007-12-14  Alp Toker  <alp@atoker.com>
+
+        GTK+/Qt build fix. Track added files in r28722.
+
+        * WebCore.pro:
+
 2007-12-14  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Geoff.

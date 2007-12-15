@@ -466,6 +466,8 @@ SOURCES += \
     dom/CDATASection.cpp \
     dom/CharacterData.cpp \
     dom/ChildNodeList.cpp \
+    dom/ClassNames.cpp \
+    dom/ClassNodeList.cpp \
     dom/Clipboard.cpp \
     dom/ClipboardEvent.cpp \
     dom/Comment.cpp \
