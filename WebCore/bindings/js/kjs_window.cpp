@@ -338,7 +338,7 @@ static Frame* createWindow(ExecState* exec, Frame* openerFrame, const String& ur
     // know what URL we are going to open. Unfortunately, this code passes the empty string
     // for the URL, but there's a reason for that. Before loading we have to set up the opener,
     // openedByDOM, and dialogArguments values. Also, to decide whether to use the URL we currently
-    // do an isSafeScript call using the window we create, which can't be done before creating it.
+    // do an allowsAccessFrom call using the window we create, which can't be done before creating it.
     // We'd have to resolve all those issues to pass the URL instead of "".
 
     bool created;
