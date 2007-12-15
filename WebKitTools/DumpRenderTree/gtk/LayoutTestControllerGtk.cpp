@@ -162,9 +162,15 @@ static gboolean waitToDumpWatchdogFired(void*)
 
 void LayoutTestController::setWaitToDump(bool waitUntilDone)
 {
+    static const int timeoutSeconds = 10;
+
     m_waitToDump = waitUntilDone;
     if (m_waitToDump && !waitToDumpWatchdog)
-        waitToDumpWatchdog = g_timeout_add_seconds(10, waitToDumpWatchdogFired, 0);
+#if GLIB_CHECK_VERSION(2,14,0)
+        waitToDumpWatchdog = g_timeout_add_seconds(timeoutSeconds, waitToDumpWatchdogFired, 0);
+#else
+        waitToDumpWatchdog = g_timeout_add(timeoutSeconds * 1000, waitToDumpWatchdogFired, 0);
+#endif
 }
 
 int LayoutTestController::windowCount()
