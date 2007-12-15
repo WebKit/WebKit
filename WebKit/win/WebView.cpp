@@ -1416,10 +1416,10 @@ bool WebView::keyDown(WPARAM virtualKeyCode, LPARAM keyData, bool systemKeyDown)
     PlatformKeyboardEvent keyEvent(m_viewWindow, virtualKeyCode, keyData, PlatformKeyboardEvent::RawKeyDown, systemKeyDown);
     bool handled = frame->eventHandler()->keyEvent(keyEvent);
 
-    // These events cannot be canceled.
+    // These events cannot be canceled, and we have no default handling for them.
     // FIXME: match IE list more closely, see <http://msdn2.microsoft.com/en-us/library/ms536938.aspx>.
     if (systemKeyDown)
-        handled = false;
+        return false;
 
     if (handled) {
         // FIXME: remove WM_UNICHAR, too
@@ -1483,6 +1483,10 @@ bool WebView::keyDown(WPARAM virtualKeyCode, LPARAM keyData, bool systemKeyDown)
 
 bool WebView::keyPress(WPARAM charCode, LPARAM keyData, bool systemKeyDown)
 {
+    // IE does not dispatch keypress event for WM_SYSCHAR.
+    if (systemKeyDown)
+        return false;
+
     Frame* frame = m_page->focusController()->focusedOrMainFrame();
 
     PlatformKeyboardEvent keyEvent(m_viewWindow, charCode, keyData, PlatformKeyboardEvent::Char, systemKeyDown);

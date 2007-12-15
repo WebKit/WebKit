@@ -1,3 +1,13 @@
+2007-12-15  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Maciej.
+
+        http://bugs.webkit.org/show_bug.cgi?id=16436
+        Alt+Space works incorrectly
+
+        * platform/win/fast/events/alt-space-scroll-expected.txt: Added.
+        * platform/win/fast/events/alt-space-scroll.html: Added.
+
 2007-12-14  Dan Bernstein  <mitz@apple.com>
 
         - share the results of this test between Tiger and Leopard
