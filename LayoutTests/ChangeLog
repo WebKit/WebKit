@@ -1,3 +1,11 @@
+2007-12-05  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Alp Toker.
+
+        Add a skeleton Gtk skipped list containing only tests that hang run-webkit-tests.
+
+        * platform/gtk/Skipped: Added.
+
 2007-12-15  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Maciej.
