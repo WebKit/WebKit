@@ -35,7 +35,7 @@
 #include <WebCore/Threading.h>
 #pragma warning(pop)
 
-#include <WTF/HashMap.h>
+#include <WTF/Vector.h>
 
 #include <windows.h>
 

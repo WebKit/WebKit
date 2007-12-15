@@ -1,3 +1,9 @@
+2007-12-14  Dan Bernstein  <mitz@apple.com>
+
+        - build fix
+
+        * WebIconDatabase.h:
+
 2007-12-14  Darin Adler  <darin@apple.com>
 
         Reviewed by Adele.
