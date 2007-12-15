@@ -341,7 +341,7 @@ all : \
     JSEntity.h \
     JSEntityReference.h \
     JSEvent.h \
-    JSEventTargetNode.lut.h \
+    JSEventTargetBase.lut.h \
     JSHTMLAppletElement.h \
     JSHTMLAnchorElement.h \
     JSHTMLAreaElement.h \

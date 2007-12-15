@@ -30,6 +30,7 @@
 #include "Event.h"
 #include "EventListener.h"
 #include "EventNames.h"
+#include "FrameView.h"
 #include "HTMLNames.h"
 #include "PlatformString.h"
 #include "RenderObject.h"
@@ -168,7 +169,7 @@ void SVGElement::sendSVGLoadEventIfPossible(bool sendParentLoadEvents)
         RefPtr<Event> event = new Event(loadEvent, false, false);
         event->setTarget(currentTarget);
         ExceptionCode ignored = 0;
-        dispatchGenericEvent(event.release(), ignored, false);
+        dispatchGenericEvent(this, event.release(), ignored, false);
         currentTarget = (parent && parent->isSVGElement()) ? static_pointer_cast<SVGElement>(parent) : 0;
     }
 }
@@ -220,6 +221,8 @@ static Node* shadowTreeParentElementForShadowTreeElement(Node* node)
 
 bool SVGElement::dispatchEvent(PassRefPtr<Event> e, ExceptionCode& ec, bool tempEvent)
 {
+    // TODO: This function will be removed in a follow-up patch!
+
     EventTarget* target = this;
     Node* useNode = shadowTreeParentElementForShadowTreeElement(this);
 
@@ -235,7 +238,10 @@ bool SVGElement::dispatchEvent(PassRefPtr<Event> e, ExceptionCode& ec, bool temp
             target = instance;
     }
 
-    return EventTargetNode::dispatchEvent(e, ec, tempEvent, target);
+    e->setTarget(target);
+
+    RefPtr<FrameView> view = document()->view();
+    return EventTargetNode::dispatchGenericEvent(this, e, ec, tempEvent);
 }
 
 }

@@ -1,3 +1,78 @@
+2007-12-15  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Eric.
+
+        Fixes: http://bugs.webkit.org/show_bug.cgi?id=16445 (Refactor EventTargetNode & JSEventTargetNode for an upcoming SVG patch)
+
+        Split up JSEventTargetNode in JSEventTargetNode & JSEventTargetBase - where most functionality has been moved down
+        in the base class. Applied the same refactorization to EventTargetNode.
+
+        This makes it possible for the upcoming patch implementing the EventTarget interface for SVGElementInstance
+        to share as much code as possible with the EventTargetNode classes.
+
+        * DerivedSources.make:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSEventTargetBase.cpp: Added.
+        (WebCore::retrieveEventTargetAndCorrespondingNode):
+        (WebCore::eventNameForPropertyToken):
+        * bindings/js/JSEventTargetBase.h: Added.
+        (WebCore::JSEventTargetProperties::):
+        (WebCore::JSEventTargetPrototypeFunctionBase::JSEventTargetPrototypeFunctionBase):
+        (WebCore::JSEventTargetPrototypeFunction::JSEventTargetPrototypeFunction):
+        (WebCore::):
+        (WebCore::::create):
+        (WebCore::JSEventTargetBase::JSEventTargetBase):
+        (WebCore::JSEventTargetBase::getValueProperty):
+        (WebCore::JSEventTargetBase::putValueProperty):
+        (WebCore::JSEventTargetBase::getOwnPropertySlot):
+        (WebCore::JSEventTargetBase::put):
+        (WebCore::JSEventTargetPrototype::JSEventTargetPrototype):
+        (WebCore::JSEventTargetPrototype::self):
+        (WebCore::JSEventTargetPrototype::getOwnPropertySlot):
+        (WebCore::JSEventTargetPrototype::classInfo):
+        * bindings/js/JSEventTargetNode.cpp:
+        (WebCore::JSEventTargetNode::getOwnPropertySlot):
+        (WebCore::JSEventTargetNode::getValueProperty):
+        (WebCore::JSEventTargetNode::put):
+        (WebCore::JSEventTargetNode::putValueProperty):
+        (WebCore::JSEventTargetNode::setListener):
+        (WebCore::toEventTargetNode):
+        * bindings/js/JSEventTargetNode.h:
+        (WebCore::JSEventTargetPrototypeInformation::prototypeClassName):
+        (WebCore::JSEventTargetPrototypeInformation::prototypeIdentifier):
+        * dom/EventTarget.cpp:
+        (WebCore::EventTarget::addEventListener):
+        (WebCore::EventTarget::removeEventListener):
+        (WebCore::EventTarget::dispatchGenericEvent):
+        (WebCore::EventTarget::removeAllEventListeners):
+        (WebCore::EventTarget::insertedIntoDocument):
+        (WebCore::EventTarget::removedFromDocument):
+        (WebCore::EventTarget::handleLocalEvents):
+        (WebCore::EventTarget::applySVGEventTargetRules):
+        (WebCore::forbidEventDispatch):
+        (WebCore::allowEventDispatch):
+        (WebCore::eventDispatchForbidden):
+        * dom/EventTarget.h:
+        (WebCore::EventTarget::preDispatchEventHandler):
+        (WebCore::EventTarget::postDispatchEventHandler):
+        (WebCore::forbidEventDispatch):
+        (WebCore::allowEventDispatch):
+        * dom/EventTargetNode.cpp:
+        (WebCore::EventTargetNode::~EventTargetNode):
+        (WebCore::EventTargetNode::insertedIntoDocument):
+        (WebCore::EventTargetNode::removedFromDocument):
+        (WebCore::EventTargetNode::addEventListener):
+        (WebCore::EventTargetNode::removeEventListener):
+        (WebCore::EventTargetNode::removeAllEventListeners):
+        (WebCore::EventTargetNode::handleLocalEvents):
+        (WebCore::EventTargetNode::dispatchEvent):
+        (WebCore::EventTargetNode::dispatchWindowEvent):
+        * dom/EventTargetNode.h:
+        (WebCore::EventTargetNode::localEventListeners):
+        * svg/SVGElement.cpp:
+        (WebCore::SVGElement::sendSVGLoadEventIfPossible):
+        (WebCore::SVGElement::dispatchEvent):
+
 2007-12-15  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Oliver.

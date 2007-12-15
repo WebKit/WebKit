@@ -3,6 +3,7 @@
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
  * Copyright (C) 2004, 2005, 2006, 2007 Apple Inc. All rights reserved.
+ *           (C) 2007 Nikolas Zimmermann <zimmermann@kde.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -24,18 +25,13 @@
 #include "config.h"
 #include "EventTargetNode.h"
 
-#include "ContextMenuController.h"
 #include "Document.h"
-#include "Element.h"
 #include "Event.h"
 #include "EventHandler.h"
 #include "EventListener.h"
 #include "EventNames.h"
-#include "FocusController.h"
 #include "Frame.h"
 #include "FrameView.h"
-#include "HTMLNames.h"
-#include "TextStream.h"
 #include "KeyboardEvent.h"
 #include "MouseEvent.h"
 #include "MutationEvent.h"
@@ -45,18 +41,12 @@
 #include "ProgressEvent.h"
 #include "RegisteredEventListener.h"
 #include "TextEvent.h"
-#include "UIEvent.h"
+#include "TextStream.h"
 #include "WheelEvent.h"
-#include "kjs_proxy.h"
 
 namespace WebCore {
 
 using namespace EventNames;
-using namespace HTMLNames;
-
-#ifndef NDEBUG
-static int gEventDispatchForbidden = 0;
-#endif
 
 EventTargetNode::EventTargetNode(Document *doc)
     : Node(doc)
@@ -68,232 +58,47 @@ EventTargetNode::~EventTargetNode()
 {
     if (m_regdListeners && !m_regdListeners->isEmpty() && !inDocument())
         document()->unregisterDisconnectedNodeWithEventListeners(this);
+
     delete m_regdListeners;
+    m_regdListeners = 0;
 }
 
 void EventTargetNode::insertedIntoDocument()
 {
-    if (m_regdListeners && !m_regdListeners->isEmpty())
-        document()->unregisterDisconnectedNodeWithEventListeners(this);
-    
+    EventTarget::insertedIntoDocument(this);
     Node::insertedIntoDocument();
 }
 
 void EventTargetNode::removedFromDocument()
 {
-    if (m_regdListeners && !m_regdListeners->isEmpty())
-        document()->registerDisconnectedNodeWithEventListeners(this);
-
+    EventTarget::removedFromDocument(this);
     Node::removedFromDocument();
 }
 
-void EventTargetNode::addEventListener(const AtomicString &eventType, PassRefPtr<EventListener> listener, const bool useCapture)
+void EventTargetNode::addEventListener(const AtomicString& eventType, PassRefPtr<EventListener> listener, bool useCapture)
 {
-    if (!document()->attached())
-        return;
-    
-    Document::ListenerType type = static_cast<Document::ListenerType>(0);
-    if (eventType == DOMSubtreeModifiedEvent)
-        type = Document::DOMSUBTREEMODIFIED_LISTENER;
-    else if (eventType == DOMNodeInsertedEvent)
-        type = Document::DOMNODEINSERTED_LISTENER;
-    else if (eventType == DOMNodeRemovedEvent)
-        type = Document::DOMNODEREMOVED_LISTENER;
-    else if (eventType == DOMNodeRemovedFromDocumentEvent)
-        type = Document::DOMNODEREMOVEDFROMDOCUMENT_LISTENER;
-    else if (eventType == DOMNodeInsertedIntoDocumentEvent)
-        type = Document::DOMNODEINSERTEDINTODOCUMENT_LISTENER;
-    else if (eventType == DOMAttrModifiedEvent)
-        type = Document::DOMATTRMODIFIED_LISTENER;
-    else if (eventType == DOMCharacterDataModifiedEvent)
-        type = Document::DOMCHARACTERDATAMODIFIED_LISTENER;
-    else if (eventType == overflowchangedEvent)
-        type = Document::OVERFLOWCHANGED_LISTENER;
-        
-    if (type)
-        document()->addListenerType(type);
-    
-    if (!m_regdListeners)
-        m_regdListeners = new RegisteredEventListenerList;
-    
-    // Remove existing identical listener set with identical arguments.
-    // The DOM2 spec says that "duplicate instances are discarded" in this case.
-    removeEventListener(eventType, listener.get(), useCapture);
-    
-    // adding the first one
-    if (m_regdListeners->isEmpty() && !inDocument())
-        document()->registerDisconnectedNodeWithEventListeners(this);
-    
-    m_regdListeners->append(new RegisteredEventListener(eventType, listener.get(), useCapture));
+    EventTarget::addEventListener(this, eventType, listener, useCapture);
 }
 
-void EventTargetNode::removeEventListener(const AtomicString &eventType, EventListener *listener, bool useCapture)
+void EventTargetNode::removeEventListener(const AtomicString& eventType, EventListener* listener, bool useCapture)
 {
-    if (!m_regdListeners) // nothing to remove
-        return;
-    
-    RegisteredEventListener rl(eventType, listener, useCapture);
-    
-    RegisteredEventListenerList::Iterator end = m_regdListeners->end();
-    for (RegisteredEventListenerList::Iterator it = m_regdListeners->begin(); it != end; ++it)
-        if (*(*it).get() == rl) {
-            (*it)->setRemoved(true);
-            
-            it = m_regdListeners->remove(it);
-            // removed last
-            if (m_regdListeners->isEmpty() && !inDocument())
-                document()->unregisterDisconnectedNodeWithEventListeners(this);
-            return;
-        }
+    EventTarget::removeEventListener(this, eventType, listener, useCapture);
 }
 
 void EventTargetNode::removeAllEventListeners()
 {
-    delete m_regdListeners;
-    m_regdListeners = 0;
+    EventTarget::removeAllEventListeners(this);
 }
 
 void EventTargetNode::handleLocalEvents(Event *evt, bool useCapture)
 {
-    if (!m_regdListeners)
-        return;
-    
     if (disabled() && evt->isMouseEvent())
         return;
-    
-    RegisteredEventListenerList listenersCopy = *m_regdListeners;
-    RegisteredEventListenerList::Iterator end = listenersCopy.end();
 
-    for (RegisteredEventListenerList::Iterator it = listenersCopy.begin(); it != end; ++it)
-        if ((*it)->eventType() == evt->type() && (*it)->useCapture() == useCapture && !(*it)->removed())
-            (*it)->listener()->handleEvent(evt, false);
-}
-
-bool EventTargetNode::dispatchGenericEvent(PassRefPtr<Event> e, ExceptionCode&, bool tempEvent)
-{
-    RefPtr<Event> evt(e);
-    ASSERT(!eventDispatchForbidden());
-    ASSERT(evt->target());
-    ASSERT(!evt->type().isNull()); // JavaScript code could create an event with an empty name
-    
-    // work out what nodes to send event to
-    DeprecatedPtrList<Node> nodeChain;
-    
-    if (inDocument()) {
-        for (Node* n = this; n; n = n->eventParentNode()) {
-            n->ref();
-            nodeChain.prepend(n);
-        } 
-    } else {
-        // if node is not in the document just send event to itself 
-        ref();
-        nodeChain.prepend(this);
-    }
-    
-    DeprecatedPtrListIterator<Node> it(nodeChain);
-    
-    // Before we begin dispatching events, give the target node a chance to do some work prior
-    // to the DOM event handlers getting a crack.
-    void* data = preDispatchEventHandler(evt.get());
-    
-    // trigger any capturing event handlers on our way down
-    evt->setEventPhase(Event::CAPTURING_PHASE);
-    
-    it.toFirst();
-    // Handle window events for capture phase, except load events, this quirk is needed
-    // because Mozilla used to never propagate load events to the window object
-    if (evt->type() != loadEvent && it.current()->isDocumentNode() && !evt->propagationStopped())
-        static_cast<Document*>(it.current())->handleWindowEvent(evt.get(), true);
-    
-    for (; it.current() && it.current() != this && !evt->propagationStopped(); ++it) {
-        evt->setCurrentTarget(EventTargetNodeCast(it.current()));
-        EventTargetNodeCast(it.current())->handleLocalEvents(evt.get(), true);
-    }
-    
-    // dispatch to the actual target node
-    it.toLast();
-    if (!evt->propagationStopped()) {
-        evt->setEventPhase(Event::AT_TARGET);
-        evt->setCurrentTarget(EventTargetNodeCast(it.current()));
-        
-        // We do want capturing event listeners to be invoked here, even though
-        // that violates the specification since Mozilla does it.
-        EventTargetNodeCast(it.current())->handleLocalEvents(evt.get(), true);
-        
-        EventTargetNodeCast(it.current())->handleLocalEvents(evt.get(), false);
-    }
-    --it;
-    
-    // ok, now bubble up again (only non-capturing event handlers will be called)
-    // ### recalculate the node chain here? (e.g. if target node moved in document by previous event handlers)
-    // no. the DOM specs says:
-    // The chain of EventTargets from the event target to the top of the tree
-    // is determined before the initial dispatch of the event.
-    // If modifications occur to the tree during event processing,
-    // event flow will proceed based on the initial state of the tree.
-    //
-    // since the initial dispatch is before the capturing phase,
-    // there's no need to recalculate the node chain.
-    // (tobias)
-    
-    if (evt->bubbles()) {
-        evt->setEventPhase(Event::BUBBLING_PHASE);
-        for (; it.current() && !evt->propagationStopped() && !evt->cancelBubble(); --it) {
-            evt->setCurrentTarget(EventTargetNodeCast(it.current()));
-            EventTargetNodeCast(it.current())->handleLocalEvents(evt.get(), false);
-        }
-        // Handle window events for bubbling phase, except load events, this quirk is needed
-        // because Mozilla used to never propagate load events at all
-
-        it.toFirst();
-        if (evt->type() != loadEvent && it.current()->isDocumentNode() && !evt->propagationStopped() && !evt->cancelBubble()) {
-            evt->setCurrentTarget(EventTargetNodeCast(it.current()));
-            static_cast<Document*>(it.current())->handleWindowEvent(evt.get(), false);
-        } 
-    } 
-    
-    evt->setCurrentTarget(0);
-    evt->setEventPhase(0); // I guess this is correct, the spec does not seem to say
-                           // anything about the default event handler phase.
-    
-    
-    // Now call the post dispatch.
-    postDispatchEventHandler(evt.get(), data);
-    
-    // now we call all default event handlers (this is not part of DOM - it is internal to khtml)
-    
-    it.toLast();
-    if (evt->bubbles())
-        for (; it.current() && !evt->defaultPrevented() && !evt->defaultHandled(); --it)
-            EventTargetNodeCast(it.current())->defaultEventHandler(evt.get());
-    else if (!evt->defaultPrevented() && !evt->defaultHandled())
-        EventTargetNodeCast(it.current())->defaultEventHandler(evt.get());
-    
-    // deref all nodes in chain
-    it.toFirst();
-    for (; it.current(); ++it)
-        it.current()->deref(); // this may delete us
-    
-    Document::updateDocumentsRendering();
-    
-    // If tempEvent is true, this means that the DOM implementation
-    // will not be storing a reference to the event, i.e.  there is no
-    // way to retrieve it from javascript if a script does not already
-    // have a reference to it in a variable.  So there is no need for
-    // the interpreter to keep the event in it's cache
-    Frame *frame = document()->frame();
-    if (tempEvent && frame && frame->scriptProxy())
-        frame->scriptProxy()->finishedWithEvent(evt.get());
-    
-    return !evt->defaultPrevented(); // ### what if defaultPrevented was called before dispatchEvent?
+    EventTarget::handleLocalEvents(this, evt, useCapture);    
 }
 
 bool EventTargetNode::dispatchEvent(PassRefPtr<Event> e, ExceptionCode& ec, bool tempEvent)
-{
-    return dispatchEvent(e, ec, tempEvent, this);
-}
-
-bool EventTargetNode::dispatchEvent(PassRefPtr<Event> e, ExceptionCode& ec, bool tempEvent, EventTarget* target)
 {
     RefPtr<Event> evt(e);
     ASSERT(!eventDispatchForbidden());
@@ -302,11 +107,11 @@ bool EventTargetNode::dispatchEvent(PassRefPtr<Event> e, ExceptionCode& ec, bool
         return false;
     }
 
-    evt->setTarget(target);
-    
+    EventTargetNode* eventTarget = this;
+    evt->setTarget(eventTargetRespectingSVGTargetRules(eventTarget));
+
     RefPtr<FrameView> view = document()->view();
-    
-    return dispatchGenericEvent(evt.release(), ec, tempEvent);
+    return dispatchGenericEvent(eventTarget, evt.release(), ec, tempEvent);
 }
 
 bool EventTargetNode::dispatchSubtreeModifiedEvent(bool sendChildrenChanged)
@@ -345,7 +150,7 @@ void EventTargetNode::dispatchWindowEvent(const AtomicString &eventType, bool ca
         if (ownerElement) {
             RefPtr<Event> ownerEvent = new Event(eventType, false, cancelableArg);
             ownerEvent->setTarget(ownerElement);
-            ownerElement->dispatchGenericEvent(ownerEvent.release(), ec, true);
+            ownerElement->dispatchGenericEvent(ownerElement, ownerEvent.release(), ec, true);
         }
     }
 }
@@ -621,22 +426,6 @@ void EventTargetNode::dump(TextStream* stream, DeprecatedString ind) const
         *stream << " #regdListeners=" << m_regdListeners->count(); // ### more detail
     
     Node::dump(stream,ind);
-}
-
-void forbidEventDispatch()
-{
-    ++gEventDispatchForbidden;
-}
-
-void allowEventDispatch()
-{
-    if (gEventDispatchForbidden > 0)
-        --gEventDispatchForbidden;
-}
-
-bool eventDispatchForbidden()
-{
-    return gEventDispatchForbidden > 0;
 }
 
 #endif

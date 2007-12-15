@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2007 Apple Inc. All rights reserved.
+ *           (C) 2007 Nikolas Zimmermann <zimmermann@kde.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,6 +28,7 @@
 #define JSEventTargetNode_h
 
 #include "JSNode.h"
+#include "JSEventTargetBase.h"
 
 namespace WebCore {
 
@@ -35,7 +37,7 @@ namespace WebCore {
 
     class JSEventTargetNode : public JSNode {
     public:
-        JSEventTargetNode(KJS::ExecState*, Node* n);
+        JSEventTargetNode(KJS::ExecState*, Node*);
 
         void setListener(KJS::ExecState*, const AtomicString& eventType, KJS::JSValue* func) const;
         KJS::JSValue* getListener(const AtomicString& eventType) const;
@@ -46,28 +48,24 @@ namespace WebCore {
         virtual void put(KJS::ExecState*, const KJS::Identifier&, KJS::JSValue* value, int attr);
         void putValueProperty(KJS::ExecState*, int token, KJS::JSValue* value, int attr);
 
-        enum {  
-            AddEventListener, RemoveEventListener, DispatchEvent,
-            OnAbort, OnBlur, OnChange, OnClick, OnContextMenu, OnDblClick, OnError,
-            OnDragEnter, OnDragOver, OnDragLeave, OnDrop, OnDragStart, OnDrag, OnDragEnd,
-            OnBeforeCut, OnCut, OnBeforeCopy, OnCopy, OnBeforePaste, OnPaste, OnSelectStart,
-            OnFocus, OnInput, OnKeyDown, OnKeyPress, OnKeyUp, OnLoad, OnMouseDown,
-            OnMouseMove, OnMouseOut, OnMouseOver, OnMouseUp, OnMouseWheel, OnReset,
-            OnResize, OnScroll, OnSearch, OnSelect, OnSubmit, OnUnload
-        };
+    private:
+        JSEventTargetBase<JSEventTargetNode> m_base;
     };
 
+    struct JSEventTargetPrototypeInformation {
+        static const char* prototypeClassName()
+        {
+            return "EventTargetNodePrototype";
+        }
+
+        static const char* prototypeIdentifier()
+        {
+            return "[[EventTargetNode.prototype]]";
+        }
+    };
+
+    typedef JSEventTargetPrototype<JSNodePrototype, JSEventTargetPrototypeInformation> JSEventTargetNodePrototype;
     EventTargetNode* toEventTargetNode(KJS::JSValue*);
-
-    KJS_DEFINE_PROTOTYPE_WITH_PROTOTYPE(JSEventTargetNodePrototype, JSNodePrototype)
-
-#define FOR_EACH_CLASS(macro) \
-    macro(JSEventTargetNodePrototypeFunctionAddEventListener) \
-    macro(JSEventTargetNodePrototypeFunctionRemoveEventListener) \
-    macro(JSEventTargetNodePrototypeFunctionDispatchEvent) \
-
-FOR_EACH_CLASS(KJS_IMPLEMENT_PROTOTYPE_FUNCTION_WITH_CREATE)
-#undef FOR_EACH_CLASS
 
 } // namespace WebCore
 
