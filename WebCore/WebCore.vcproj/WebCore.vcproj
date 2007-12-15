@@ -5737,6 +5737,22 @@
 				>
 			</File>
 			<File
+				RelativePath="..\dom\ClassNames.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\dom\ClassNames.h"
+				>
+			</File>
+			<File
+				RelativePath="..\dom\ClassNodeList.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\dom\ClassNodeList.h"
+				>
+			</File>
+			<File
 				RelativePath="..\dom\Clipboard.cpp"
 				>
 			</File>
