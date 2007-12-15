@@ -380,10 +380,8 @@ void* TCMalloc_SystemAlloc(size_t size, size_t *actual_size, size_t alignment) {
   return NULL;
 }
 
-#ifndef MADV_DONTNEED
-void TCMalloc_SystemRelease(void*, size_t) {}
-#else
 void TCMalloc_SystemRelease(void* start, size_t length) {
+#ifdef MADV_DONTNEED
   if (FLAGS_malloc_devmem_start) {
     // It's not safe to use MADV_DONTNEED if we've been mapping
     // /dev/mem for heap memory
@@ -415,5 +413,12 @@ void TCMalloc_SystemRelease(void* start, size_t length) {
       // NOP
     }
   }
-}
 #endif
+
+#if HAVE(MMAP)
+  void *newAddress = mmap(start, length, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS|MAP_FIXED, -1, 0);
+  UNUSED_PARAM(newAddress);
+  // If the mmap failed then that's ok, we just won't return the memory to the system.
+  ASSERT(newAddress == start || newAddress == reinterpret_cast<void*>(MAP_FAILED));
+#endif
+}

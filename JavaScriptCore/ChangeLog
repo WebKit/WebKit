@@ -1,3 +1,18 @@
+2007-12-14  Mark Rowe <mrowe@apple.com>
+
+        Reviewed by Maciej and Oliver.
+
+        Add final changes to make TCMalloc release memory to the system.
+        This results in a 0.4% regression against ToT, but this is offset
+        against the gains made by the original TCMalloc r38 merge - in fact
+        we retain around 0.3-0.4% progression overall.
+
+        * wtf/FastMalloc.cpp:
+        (WTF::InitSizeClasses):
+        (WTF::TCMalloc_PageHeap::IncrementalScavenge):
+        * wtf/TCSystemAlloc.cpp:
+        (TCMalloc_SystemRelease):
+
 2007-12-14  Darin Adler  <darin@apple.com>
 
         Reviewed by Sam.

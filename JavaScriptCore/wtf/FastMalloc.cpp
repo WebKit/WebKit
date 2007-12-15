@@ -235,6 +235,10 @@ extern "C" const int jscore_fastmalloc_introspection = 0;
 #include "MallocZoneSupport.h"
 #endif
 
+#ifndef PRIuS
+#define PRIuS "zu"
+#endif
+
 // Calling pthread_getspecific through a global function pointer is faster than a normal
 // call to the function on Mac OS X, and it's used in performance-critical code. So we
 // use a function pointer. But that's not necessarily faster on other platforms, and we had
@@ -671,7 +675,7 @@ static void InitSizeClasses() {
     sc++;
   }
   if (sc != kNumClasses) {
-    MESSAGE("wrong number of size classes: found %d instead of %d\n",
+    MESSAGE("wrong number of size classes: found %" PRIuS " instead of %d\n",
             sc, int(kNumClasses));
     abort();
   }
@@ -690,25 +694,25 @@ static void InitSizeClasses() {
   for (size_t size = 0; size <= kMaxSize; size++) {
     const size_t sc = SizeClass(size);
     if (sc == 0) {
-      MESSAGE("Bad size class %d for %" PRIuS "\n", sc, size);
+      MESSAGE("Bad size class %" PRIuS " for %" PRIuS "\n", sc, size);
       abort();
     }
     if (sc > 1 && size <= class_to_size[sc-1]) {
-      MESSAGE("Allocating unnecessarily large class %d for %" PRIuS
+      MESSAGE("Allocating unnecessarily large class %" PRIuS " for %" PRIuS
               "\n", sc, size);
       abort();
     }
     if (sc >= kNumClasses) {
-      MESSAGE("Bad size class %d for %" PRIuS "\n", sc, size);
+      MESSAGE("Bad size class %" PRIuS " for %" PRIuS "\n", sc, size);
       abort();
     }
     const size_t s = class_to_size[sc];
     if (size > s) {
-      MESSAGE("Bad size %" PRIuS " for %" PRIuS " (sc = %d)\n", s, size, sc);
+     MESSAGE("Bad size %" PRIuS " for %" PRIuS " (sc = %" PRIuS ")\n", s, size, sc);
       abort();
     }
     if (s == 0) {
-      MESSAGE("Bad size %" PRIuS " for %" PRIuS " (sc = %d)\n", s, size, sc);
+      MESSAGE("Bad size %" PRIuS " for %" PRIuS " (sc = %" PRIuS ")\n", s, size, sc);
       abort();
     }
   }
@@ -1328,21 +1332,9 @@ void TCMalloc_PageHeap::IncrementalScavenge(Length n) {
   scavenge_counter_ -= n;
   if (scavenge_counter_ >= 0) return;  // Not yet time to scavenge
 
-  // Never delay scavenging for more than the following number of
-  // deallocated pages.  With 4K pages, this comes to 4GB of
-  // deallocation.
-  static const int kMaxReleaseDelay = 1 << 20;
-
   // If there is nothing to release, wait for so many pages before
-  // scavenging again.  With 4K pages, this comes to 1GB of memory.
-  static const int kDefaultReleaseDelay = 1 << 18;
-
-  const double rate = FLAGS_tcmalloc_release_rate;
-  if (rate <= 1e-6) {
-    // Tiny release rate means that releasing is disabled.
-    scavenge_counter_ = kDefaultReleaseDelay;
-    return;
-  }
+  // scavenging again.  With 4K pages, this comes to 16MB of memory.
+  static const size_t kDefaultReleaseDelay = 1 << 8;
 
   // Find index of free list to scavenge
   size_t index = scavenge_index_ + 1;
@@ -1357,18 +1349,13 @@ void TCMalloc_PageHeap::IncrementalScavenge(Length n) {
                              static_cast<size_t>(s->length << kPageShift));
       DLL_Prepend(&slist->returned, s);
 
-      // Compute how long to wait until we return memory.
-      // FLAGS_tcmalloc_release_rate==1 means wait for 1000 pages
-      // after releasing one page.
-      const double mult = 1000.0 / rate;
-      double wait = mult * static_cast<double>(s->length);
-      if (wait > kMaxReleaseDelay) {
-        // Avoid overflow and bound to reasonable range
-        wait = kMaxReleaseDelay;
-      }
-      scavenge_counter_ = static_cast<int64_t>(wait);
+      scavenge_counter_ = max(64UL, min(kDefaultReleaseDelay, kDefaultReleaseDelay - (free_pages_ / kDefaultReleaseDelay)));
+//      fprintf(stderr, "Released %zu pages at 0x%08zx to the system from index %zu.  Delaying for %lld pages before scavenging next.\n", s->length, s->start << kPageShift, index, scavenge_counter_);
 
-      scavenge_index_ = index;  // Scavenge at index+1 next time
+      if (index == kMaxPages && !DLL_IsEmpty(&slist->normal))
+        scavenge_index_ = index - 1;
+      else
+        scavenge_index_ = index;
       return;
     }
     index++;
@@ -1376,6 +1363,7 @@ void TCMalloc_PageHeap::IncrementalScavenge(Length n) {
 
   // Nothing to scavenge, delay for a while
   scavenge_counter_ = kDefaultReleaseDelay;
+//  fprintf(stderr, "Nothing to scavenge.  Delaying for %lld pages before scavenging next.\n", scavenge_counter_);
 }
 
 void TCMalloc_PageHeap::RegisterSizeClass(Span* span, size_t sc) {
