@@ -4119,12 +4119,7 @@ static NSString *createMacOSXVersionString()
 - (WebCore::String)_userAgentForURL:(const WebCore::KURL&)url
 {
     if (_private->useSiteSpecificSpoofing) {
-        // FIXME: Remove flickr.com workaround once <rdar://problem/5081617> is fixed
-        if (url.host().endsWith("flickr.com")) {
-            // Safari 2.0.4's user agent string works here
-            static String safari204UserAgent([self _userAgentWithApplicationName:@"Safari/419.3" andWebKitVersion:@"419"]);
-            return safari204UserAgent;
-        }
+        // No current site-specific spoofs.
     }
     
     if (_private->userAgent->isNull()) {

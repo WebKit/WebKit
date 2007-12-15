@@ -1,5 +1,14 @@
 2007-12-14  David D. Kilzer  <ddkilzer@apple.com>
 
+        <rdar://problem/5647272> Remove user agent string hack for flickr.com
+
+        Reviewed by Darin.
+
+        * WebView/WebView.mm:
+        (-[WebView _userAgentForURL:]): Removed hack.
+
+2007-12-14  David D. Kilzer  <ddkilzer@apple.com>
+
         <rdar://problem/5647261> Remove user agent string hack for yahoo.com
 
         Reviewed by Darin.
