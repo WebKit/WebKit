@@ -3,7 +3,7 @@
     Copyright (C) 2004, 2005, 2006 Nikolas Zimmermann <wildfox@kde.org>
                   2004, 2005, 2006 Rob Buis <buis@kde.org>
                   2005, 2007 Apple Inc. All Rights reserved.
-                  2007 Alp Toker <alp.toker@collabora.co.uk>
+                  2007 Alp Toker <alp@atoker.com>
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -29,9 +29,9 @@
 #include "FloatRect.h"
 #include "NotImplemented.h"
 #include "PlatformString.h"
+
 #include <cairo.h>
 #include <math.h>
-#include <stdio.h>
 
 namespace WebCore {
 
@@ -138,6 +138,11 @@ void Path::addBezierCurveTo(const FloatPoint& controlPoint1, const FloatPoint& c
 
 void Path::addArc(const FloatPoint& p, float r, float sa, float ea, bool clockwise)
 {
+    // http://bugs.webkit.org/show_bug.cgi?id=16449
+    // cairo_arc() functions hang or crash when passed inf as radius or start/end angle
+    if (!isfinite(r) || !isfinite(sa) || !isfinite(ea))
+        return;
+
     cairo_t* cr = platformPath()->m_cr;
     if (clockwise)
         cairo_arc(cr, p.x(), p.y(), r, sa, ea);
