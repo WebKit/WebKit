@@ -3,7 +3,7 @@
         Reviewed by Geoff.
 
         Speed up getElementByClassName.
-        - This makes getElementByClassName take 33% faster on the stress test
+        - This makes getElementByClassName 33% faster on the stress test
           linked to at http://bugs.webkit.org/show_bug.cgi?id=15760.
 
         * platform/text/StringImpl.cpp:
