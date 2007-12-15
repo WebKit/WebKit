@@ -1,3 +1,11 @@
+2007-12-14  Alp Toker  <alp@atoker.com>
+
+        Build fix for GTK+/Qt and ports that don't use AllInOneFile.cpp.
+
+        Include UnusedParam.h.
+
+        * wtf/TCSystemAlloc.cpp:
+
 2007-12-14  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Stephanie.

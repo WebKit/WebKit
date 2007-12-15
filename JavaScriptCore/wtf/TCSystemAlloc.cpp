@@ -49,6 +49,7 @@
 #include "Assertions.h"
 #include "TCSystemAlloc.h"
 #include "TCSpinLock.h"
+#include "UnusedParam.h"
 
 #ifndef MAP_ANONYMOUS
 #define MAP_ANONYMOUS MAP_ANON
