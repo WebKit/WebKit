@@ -1,3 +1,10 @@
+2007-12-14  Dan Bernstein  <mitz@apple.com>
+
+        - try to fix the Windows build
+
+        * wtf/TCSystemAlloc.cpp:
+        (TCMalloc_SystemRelease):
+
 2007-12-14  Mark Rowe <mrowe@apple.com>
 
         Reviewed by Maciej and Oliver.
