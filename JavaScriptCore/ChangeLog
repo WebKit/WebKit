@@ -1,3 +1,14 @@
+2007-12-14  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Don't use the MADV_DONTNEED code path for now as it has no effect on Mac OS X and is
+        currently untested on other platforms.
+
+        * wtf/TCSystemAlloc.cpp:
+        (TCMalloc_SystemRelease): Return after releasing memory rather than potentially falling
+        through into another mechanism if multiple are supported.
+
 2007-12-14  Alp Toker  <alp@atoker.com>
 
         Build fix for GTK+/Qt and ports that don't use AllInOneFile.cpp.
