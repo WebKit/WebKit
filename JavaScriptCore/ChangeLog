@@ -1,5 +1,12 @@
 2007-12-14  Mark Rowe  <mrowe@apple.com>
 
+        Unreviewed.  Remove commented out fprintf's that were for debugging purposes only.
+
+        * wtf/FastMalloc.cpp:
+        (WTF::TCMalloc_PageHeap::IncrementalScavenge):
+
+2007-12-14  Mark Rowe  <mrowe@apple.com>
+
         Reviewed by Maciej Stachowiak.
 
         Don't use the MADV_DONTNEED code path for now as it has no effect on Mac OS X and is

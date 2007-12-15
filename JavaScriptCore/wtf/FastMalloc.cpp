@@ -1351,7 +1351,6 @@ void TCMalloc_PageHeap::IncrementalScavenge(Length n) {
       DLL_Prepend(&slist->returned, s);
 
       scavenge_counter_ = std::max<size_t>(64UL, std::min<size_t>(kDefaultReleaseDelay, kDefaultReleaseDelay - (free_pages_ / kDefaultReleaseDelay)));
-//      fprintf(stderr, "Released %zu pages at 0x%08zx to the system from index %zu.  Delaying for %lld pages before scavenging next.\n", s->length, s->start << kPageShift, index, scavenge_counter_);
 
       if (index == kMaxPages && !DLL_IsEmpty(&slist->normal))
         scavenge_index_ = index - 1;
@@ -1364,7 +1363,6 @@ void TCMalloc_PageHeap::IncrementalScavenge(Length n) {
 
   // Nothing to scavenge, delay for a while
   scavenge_counter_ = kDefaultReleaseDelay;
-//  fprintf(stderr, "Nothing to scavenge.  Delaying for %lld pages before scavenging next.\n", scavenge_counter_);
 }
 
 void TCMalloc_PageHeap::RegisterSizeClass(Span* span, size_t sc) {
