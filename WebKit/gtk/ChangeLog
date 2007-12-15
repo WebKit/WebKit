@@ -1,5 +1,11 @@
 2007-12-14  Alp Toker  <alp@atoker.com>
 
+        Fix inconsistent indentation in the license header. Maciej was right!
+
+        * WebCoreSupport/FrameLoaderClientGtk.cpp:
+
+2007-12-14  Alp Toker  <alp@atoker.com>
+
         Reviewed by Maciej.
 
         http://bugs.webkit.org/show_bug.cgi?id=16432
