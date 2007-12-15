@@ -381,6 +381,7 @@ SOURCES += \
     bindings/js/JSDOMWindowCustom.cpp \
     bindings/js/JSElementCustom.cpp \
     bindings/js/JSEventCustom.cpp \
+    bindings/js/JSEventTargetBase.cpp \
     bindings/js/JSEventTargetNode.cpp \
     bindings/js/JSHTMLAppletElementCustom.cpp \
     bindings/js/JSHTMLCollectionCustom.cpp \
