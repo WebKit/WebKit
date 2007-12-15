@@ -1,8 +1,2 @@
 # print dialog hangs DRT
 editing/execCommand/print.html
-
-# inf as parameter to arc hangs DRT
-fast/canvas/arc-crash.html
-
-# hang in DRT
-fast/canvas/canvas-with-incorrect-args.html

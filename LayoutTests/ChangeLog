@@ -1,3 +1,14 @@
+2007-12-15  Alp Toker  <alp@atoker.com>
+
+        http://bugs.webkit.org/show_bug.cgi?id=16449
+        cairo_arc() functions hang or crash when passed inf as radius or start/end angle
+
+        Fixed in r28751. Remove these tests from the skip list:
+          fast/canvas/arc-crash.html
+          fast/canvas/canvas-with-incorrect-args.html
+
+        * platform/gtk/Skipped:
+
 2007-12-05  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Alp Toker.
