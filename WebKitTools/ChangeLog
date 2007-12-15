@@ -1,3 +1,25 @@
+2007-12-05  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Alp Toker.
+
+        Flesh out DumpRenderTree for Gtk.  After these changes, the majority of the tests in fast/js pass.
+
+        * DumpRenderTree/gtk/DumpRenderTree.cpp:
+        (dumpFramesAsText): Don't print the frame name when dumping the main frame as text.
+        (dump):
+        (runTest):
+        (webViewLoadStarted): Store the top frame when it starts loading so we can use it to determine when to dump.
+        (webViewLoadFinished): Dump when the top frame load completes if we're not waiting for a JS callback and the
+        work queue is empty.
+        (webViewWindowObjectCleared): Set up window.layoutTestController.
+        (webViewConsoleMessage): Match the console message format expected by the layout test results.
+        (main): Hook up the new signals.
+        * DumpRenderTree/gtk/DumpRenderTreeGtk.h:
+        * DumpRenderTree/gtk/LayoutTestControllerGtk.cpp: Only notify done if the top frame has completed loading to avoid
+        dumping multiple times.
+        * Scripts/build-dumprendertree: Ensure build-dumprendertree is a no-op for Gtk too.
+        * Scripts/run-webkit-tests: Teach run-webkit-tests that Gtk is like Qt in many ways.  Use run-launcher to open test results.
+
 2007-12-14  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Brady.

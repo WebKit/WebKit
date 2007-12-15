@@ -242,7 +242,7 @@ if ($shouldCheckLeaks && $testsPerDumpTool > 1000) {
 }
 
 # Force --no-http for Qt/Linux, for now.
-$testHTTP = 0 if isQt();
+$testHTTP = 0 if (isQt() || isGtk());
 
 # Stack logging does not play well with QuickTime on Tiger (rdar://problem/5537157)
 $testMedia = 0 if $shouldCheckLeaks && isTiger();
@@ -250,6 +250,7 @@ $testMedia = 0 if $shouldCheckLeaks && isTiger();
 setConfigurationProductDir(Cwd::abs_path($root)) if (defined($root));
 my $productDir = productDir();
 $productDir .= "/bin" if (isQt());
+$productDir .= "/WebKitTools/DumpRenderTree/gtk" if isGtk();
 
 chdirWebKit();
 
@@ -958,6 +959,8 @@ close HTML;
 
 if (isQt()) {
   system "konqueror", $testResults if $launchSafari;
+} elsif (isGtk()) {
+  system "WebKitTools/Scripts/run-launcher", "--gtk", $configurationOption, $testResults if $launchSafari;
 } elsif (isCygwin()) {
   system "cygstart", $testResults if $launchSafari;
 } else {
@@ -1137,13 +1140,13 @@ sub openDumpTool()
     my $homePath = $ENV{'HOMEPATH'};
         
     local %ENV;
-    if (isQt()) {
+    if (isQt() || isGtk()) {
         if (defined $display) {
             $ENV{DISPLAY} = $display;
         } else {
             $ENV{DISPLAY} = ":1";
         }
-        $ENV{'WEBKIT_TESTFONTS'} = $testfonts;
+        $ENV{'WEBKIT_TESTFONTS'} = $testfonts if defined($testfonts);
         $ENV{HOME} = $homeDir;
         if (defined $libraryPath) {
             $ENV{LD_LIBRARY_PATH} = $libraryPath;

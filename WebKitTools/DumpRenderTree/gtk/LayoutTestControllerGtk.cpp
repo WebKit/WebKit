@@ -74,8 +74,7 @@ void LayoutTestController::keepWebHistory()
 
 void LayoutTestController::notifyDone()
 {
-    // FIXME: The frame might not be finished loading yet
-    if (m_waitToDump && !WorkQueue::shared()->count())
+    if (m_waitToDump && !topLoadingFrame && !WorkQueue::shared()->count())
         dump();
     m_waitToDump = false;
 }

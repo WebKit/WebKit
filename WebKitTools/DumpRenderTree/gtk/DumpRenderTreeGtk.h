@@ -32,5 +32,6 @@
 #include "webkitdefines.h"
 
 extern WebKitWebFrame* mainFrame;
+extern WebKitWebFrame* topLoadingFrame;
 
 #endif // DumpRenderTreeGtk_h 
