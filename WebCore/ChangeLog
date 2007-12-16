@@ -1,3 +1,9 @@
+2007-12-16  Darin Adler  <darin@apple.com>
+
+        - fix Tiger build (my fault it was broken)
+
+        * rendering/RenderThemeMac.mm: Define NSUInteger if on Tiger.
+
 2007-12-16  Andrew Wellington  <proton@wiretapped.net>
 
         Reviewed by Darin.

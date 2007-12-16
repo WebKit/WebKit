@@ -1,7 +1,5 @@
 /*
- * This file is part of the theme implementation for form controls in WebCore.
- *
- * Copyright (C) 2005, 2006 Apple Computer, Inc.
+ * Copyright (C) 2005, 2006, 2007 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -38,6 +36,10 @@
 #import <Cocoa/Cocoa.h>
 #import <wtf/RetainPtr.h>
 #import <math.h>
+
+#ifdef BUILDING_ON_TIGER
+typedef unsigned NSUInteger;
+#endif
 
 using std::min;
 
