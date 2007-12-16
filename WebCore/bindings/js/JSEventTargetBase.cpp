@@ -25,8 +25,11 @@
  */
 
 #include "config.h"
+#include "JSEventTargetBase.h"
 
 #include "JSEventTargetNode.h"
+
+#include "JSEventTargetBase.lut.h"
 
 namespace WebCore {
 

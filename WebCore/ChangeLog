@@ -1,3 +1,15 @@
+2007-12-15  Darin Adler  <darin@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        - better build fix for the problem affecting GTK and some other platforms
+          "this time for sure"
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSEventTargetBase.cpp: Move the include of the .lut.h file here.
+        * bindings/js/JSEventTargetBase.h: Instead of including the .lut.h file in the header,
+        which won't work, declare the tables that are in the .lut.h file in the header.
+
 2007-12-12  Kevin Watters  <kevin@dotsyntax.com>
 
         Reviewed by Darin Adler.
