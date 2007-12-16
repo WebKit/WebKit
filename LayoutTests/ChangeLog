@@ -1,3 +1,14 @@
+2007-12-15  Darin Adler  <darin@apple.com>
+
+        Disabled the smallFonts.svg test, which has been failing for weeks. I heard that Niko
+        is going to fix this soon. He should rename it back at that time.
+
+        Removed the svn:executable flag from many .svg, .png, and .css files that had it set
+        for no good reason.
+
+        * svg/batik/text/smallFonts.svg: Removed.
+        * svg/batik/text/smallFonts.svg-disabled: Copied from svg/batik/text/smallFonts.svg.
+
 2007-12-15  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Oliver.
