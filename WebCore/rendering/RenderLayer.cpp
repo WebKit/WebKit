@@ -1283,9 +1283,6 @@ RenderLayer::updateScrollInfoAfterLayout()
         if (pageStep < 0) pageStep = clientHeight;
         m_vBar->setSteps(LINE_STEP, pageStep);
         m_vBar->setProportion(clientHeight, m_scrollHeight);
-        m_object->repaintRectangle(IntRect(m_object->borderLeft() + m_object->clientWidth(),
-                                   m_object->borderTop(), verticalScrollbarWidth(), 
-                                   m_object->height() - m_object->borderTop() - m_object->borderBottom()));
     }
  
     if (m_object->element() && m_object->document()->hasListenerType(Document::OVERFLOWCHANGED_LISTENER))

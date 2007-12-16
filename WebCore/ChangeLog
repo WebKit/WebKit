@@ -1,3 +1,19 @@
+2007-12-16  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=16426
+          Divs with overflow:auto: scrollbars not correctly updated when contents change
+
+        Test: fast/overflow/scrollbar-position-update.html
+
+        * platform/mac/PlatformScrollBarMac.mm:
+        (WebCore::PlatformScrollbar::updateThumbProportion): Update the
+        NSScroller's value for the new proportions.
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::updateScrollInfoAfterLayout): Removed unnecessary
+        repaint(). Scrollbars repaint themselves as needed.
+
 2007-12-16  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin.

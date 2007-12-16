@@ -136,12 +136,12 @@ void PlatformScrollbar::updateThumbPosition()
 
 void PlatformScrollbar::updateThumbProportion()
 {
-    float val = (float)m_visibleSize/m_totalSize;
+    float val = static_cast<float>(m_visibleSize) / m_totalSize;
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
     WebCoreScrollBar *bar = (WebCoreScrollBar *)getView();
-    if (!(val == [bar knobProportion] || val < 0.0))
-        [bar setFloatValue: [bar floatValue] knobProportion: val];
+    if (val != [bar knobProportion] && val >= 0)
+        [bar setFloatValue:static_cast<float>(m_currentPos) / (m_totalSize - m_visibleSize) knobProportion:val];
     END_BLOCK_OBJC_EXCEPTIONS;
 }
 

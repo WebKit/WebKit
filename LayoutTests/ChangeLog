@@ -1,3 +1,16 @@
+2007-12-16  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        - test for http://bugs.webkit.org/show_bug.cgi?id=16426
+          Divs with overflow:auto: scrollbars not correctly updated when contents change
+
+        * fast/overflow/scrollbar-position-update.html: Added.
+        * platform/mac-leopard/fast/overflow: Added.
+        * platform/mac-leopard/fast/overflow/scrollbar-position-update-expected.checksum: Added.
+        * platform/mac-leopard/fast/overflow/scrollbar-position-update-expected.png: Added.
+        * platform/mac/fast/overflow/scrollbar-position-update-expected.txt: Added.
+
 2007-12-15  Darin Adler  <darin@apple.com>
 
         Disabled the smallFonts.svg test, which has been failing for weeks. I heard that Niko
