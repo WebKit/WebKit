@@ -1,3 +1,12 @@
+2007-12-12  Kevin Watters  <kevin@dotsyntax.com>
+
+        Reviewed by Darin Adler.
+
+        Fixed the Wx port's FontPlatformData for use in HashTable.
+        - FontPlatformData(Deleted) made unequal to FontPlatformData()
+
+        * platform/graphics/wx/FontPlatformData
+
 2007-12-15  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.

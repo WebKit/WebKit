@@ -98,6 +98,8 @@ FontPlatformData::FontPlatformData(const FontDescription& desc, const AtomicStri
     
 FontPlatformData::~FontPlatformData()
 {
+    if (m_font && m_font != reinterpret_cast<wxFont*>(-1))
+        delete m_font;
 }
 
 }
