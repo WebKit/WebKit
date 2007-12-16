@@ -1,3 +1,13 @@
+2007-12-15  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Mark Rowe.
+
+        Fix urlSuitableForTestResult to correctly identify wstring::npos as
+        the case when wstring.find doesn't find anything.
+
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (urlSuitableForTestResult):
+
 2007-12-15  Alp Toker  <alp@atoker.com>
 
         GTK+ DRT build fix for GLib < 2.14.
