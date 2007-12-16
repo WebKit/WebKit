@@ -467,10 +467,21 @@ static int windowsKeyCodeForKeyEvent(unsigned int keycode)
 
 }
 
-static inline String singleCharacterString(guint val)
+static String singleCharacterString(guint val)
 {
-    val = gdk_keyval_to_unicode(val);
-    return String((UChar*)&val, 1);
+    glong nwc;
+    String retVal;
+    gunichar c = gdk_keyval_to_unicode(val);
+    gunichar2* uchar16 = g_ucs4_to_utf16(&c, 1, 0, &nwc, 0);
+
+    if (uchar16)
+        retVal = String((UChar*)uchar16, nwc);
+    else
+        retVal = String();
+
+    g_free(uchar16);
+
+    return retVal;
 }
 
 PlatformKeyboardEvent::PlatformKeyboardEvent(GdkEventKey* event)

@@ -1,3 +1,16 @@
+2007-12-16  Xan Lopez  <xan@gnome.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        http://bugs.webkit.org/show_bug.cgi?id=16454
+        [GTK] Text input doesn't work consistently on PPC
+
+        * platform/gtk/KeyEventGtk.cpp:
+        (WebCore::singleCharacterString):
+
+        UChar is 2 bytes (UTF-16), so transform accordingly from
+        gunichar (UCS-4). Fixes keyboard input on big endian systems.
+
 2007-12-15  Darin Adler  <darin@apple.com>
 
         Reviewed by Mark Rowe.
