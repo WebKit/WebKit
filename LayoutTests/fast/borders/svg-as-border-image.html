@@ -1,0 +1,38 @@
+<html>
+<head>
+<style>
+    div {
+        border-width: 30px 30px 30px 30px;
+        height: 100px;
+        width: 100px;
+        margin: 10px;
+        display: inline-block;
+    }
+    
+    div.rr {
+        -webkit-border-image: url("resources/green-fixed-size-rect.svg") 30 30 30 30 repeat repeat;
+    }
+    
+    div.rs {
+        -webkit-border-image: url("resources/green-fixed-size-rect.svg") 30 30 30 30 repeat stretch;
+    }
+    
+    div.sr {
+        -webkit-border-image: url("resources/green-fixed-size-rect.svg") 30 30 30 30 stretch repeat;
+    }
+    
+    div.ss {
+        -webkit-border-image: url("resources/green-fixed-size-rect.svg") 30 30 30 30 stretch stretch;
+    }
+</style>
+</head>
+<body>
+
+    <div class="rr"></div>
+    <div class="rs"></div>
+    <br>
+    <div class="sr"></div>
+    <div class="ss"></div>
+
+</body>
+</html>

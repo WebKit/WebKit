@@ -1,3 +1,20 @@
+2007-12-16  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Geoff.
+
+        Tests for SVG as border-image.
+
+        * fast/borders/resources/green-fixed-size-rect.svg: Added.
+        * fast/borders/resources/green-relative-size-rect.svg: Added.
+        * fast/borders/svg-as-border-image-2.html: Added.
+        * fast/borders/svg-as-border-image.html: Added.
+        * platform/mac/fast/borders/svg-as-border-image-2-expected.checksum: Added.
+        * platform/mac/fast/borders/svg-as-border-image-2-expected.png: Added.
+        * platform/mac/fast/borders/svg-as-border-image-2-expected.txt: Added.
+        * platform/mac/fast/borders/svg-as-border-image-expected.checksum: Added.
+        * platform/mac/fast/borders/svg-as-border-image-expected.png: Added.
+        * platform/mac/fast/borders/svg-as-border-image-expected.txt: Added.
+
 2007-12-16  Andrew Wellington  <proton@wiretapped.net>
 
         Reviewed by Darin.

@@ -1,3 +1,14 @@
+2007-12-16  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Geoff.
+
+        Make relative-size SVGs work in border-image.
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::calculateBackgroundSize):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::paintBorderImage):
+
 2007-12-16  Darin Adler  <darin@apple.com>
 
         - fix Tiger build (my fault it was broken)

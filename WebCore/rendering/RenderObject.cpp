@@ -1149,6 +1149,7 @@ bool RenderObject::paintBorderImage(GraphicsContext* graphicsContext, int tx, in
         clipped = true;
     }
 
+    borderImage->setImageContainerSize(IntSize(w, h));
     int imageWidth = borderImage->image()->width();
     int imageHeight = borderImage->image()->height();
 
