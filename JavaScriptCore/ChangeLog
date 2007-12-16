@@ -1,3 +1,13 @@
+2007-12-16  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        http://bugs.webkit.org/show_bug.cgi?id=16162
+        Problems with float parsing on Linux (locale-dependent parsing was used).
+
+        * kjs/dtoa.cpp: Removed USE_LOCALE to reduce future confusion.
+        * kjs/lexer.cpp: (KJS::Lexer::lex): Parse with kjs_strtod, not the system one.
+
 2007-12-14  Alp Toker  <alp@atoker.com>
 
         Reviewed by Mark Rowe.
