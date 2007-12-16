@@ -63,6 +63,15 @@ IMLangFontLink2* FontCache::getFontLinkInterface()
     return langFontLink;
 }
 
+static int CALLBACK metaFileEnumProc(HDC hdc, HANDLETABLE* table, CONST ENHMETARECORD* record, int tableEntries, LPARAM hfontPtr)
+{
+    if (record->iType == EMR_EXTCREATEFONTINDIRECTW) {
+        const EMREXTCREATEFONTINDIRECTW* createFontRecord = reinterpret_cast<const EMREXTCREATEFONTINDIRECTW*>(record);
+        *reinterpret_cast<HFONT*>(hfontPtr) = CreateFontIndirect(&createFontRecord->elfw.elfLogFont);
+    }
+    return true;
+}
+
 const FontData* FontCache::getFontDataForCharacters(const Font& font, const UChar* characters, int length)
 {
     // IMLangFontLink::MapFont Method does what we want.
@@ -89,25 +98,49 @@ const FontData* FontCache::getFontDataForCharacters(const Font& font, const UCha
             LOGFONT lf;
             GetObject(result, sizeof(LOGFONT), &lf);
             langFontLink->ReleaseFont(result);
-
             hfont = CreateFontIndirect(&lf);
-            SelectObject(hdc, hfont);
-
-            WCHAR name[LF_FACESIZE];
-            GetTextFace(hdc, LF_FACESIZE, name);
-            
-            String familyName(name);
-            if (!familyName.isEmpty()) {
-                FontPlatformData* result = getCachedFontPlatformData(font.fontDescription(), familyName);
-                if (result)
-                    fontData = getCachedFontData(result);
-            }
         }
     }
 
-    SelectObject(hdc, oldFont);
-    if (hfont)
+    if (!hfont) {
+        // Font linking failed but Uniscribe might still be able to find a fallback font.
+        // To find out what Uniscribe would do, we make it draw into a metafile and intercept
+        // calls to CreateFontIndirect().
+        HDC metaFileDc = CreateEnhMetaFile(hdc, NULL, NULL, NULL);
+        SelectObject(metaFileDc, hfont ? hfont : primaryFont);
+
+        bool scriptStringOutSucceeded = false;
+        SCRIPT_STRING_ANALYSIS ssa;
+
+        // FIXME: If length is greater than 1, we actually return the font for the last character.
+        // This function should be renamed getFontDataForCharacter and take a single 32-bit character.
+        if (SUCCEEDED(ScriptStringAnalyse(metaFileDc, characters, length, 0, -1, SSA_METAFILE | SSA_FALLBACK | SSA_GLYPHS | SSA_LINK,
+            0, NULL, NULL, NULL, NULL, NULL, &ssa))) {
+            scriptStringOutSucceeded = SUCCEEDED(ScriptStringOut(ssa, 0, 0, 0, NULL, 0, 0, FALSE));
+            ScriptStringFree(&ssa);
+        }
+        HENHMETAFILE metaFile = CloseEnhMetaFile(metaFileDc);
+        if (scriptStringOutSucceeded)
+            EnumEnhMetaFile(0, metaFile, metaFileEnumProc, &hfont, NULL);
+        DeleteEnhMetaFile(metaFile);
+    }
+
+    if (hfont) {
+        SelectObject(hdc, hfont);
+        WCHAR name[LF_FACESIZE];
+        GetTextFace(hdc, LF_FACESIZE, name);
+
+        String familyName(name);
+        if (!familyName.isEmpty()) {
+            FontPlatformData* result = getCachedFontPlatformData(font.fontDescription(), familyName);
+            if (result)
+                fontData = getCachedFontData(result);
+        }
+
+        SelectObject(hdc, oldFont);
         DeleteObject(hfont);
+    }
+
     ReleaseDC(0, hdc);
     return fontData;
 }

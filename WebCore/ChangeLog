@@ -1,3 +1,15 @@
+2007-12-15  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        - fix <rdar://problem/5636090> Text in Georgia, Armenian, Inuktitut, Cree, or Cherokee (KA, HY, IU, CR, CHR) draws as all missing glyphs
+
+        * platform/graphics/win/FontCacheWin.cpp:
+        (WebCore::metaFileEnumProc): Added. Called during metafile record
+        enumeration and extracts the font from the create font record.
+        (WebCore::FontCache::getFontDataForCharacters): If font linking fails,
+        let Uniscribe draw the characters and see what font it chooses.
+
 2007-12-15  Darin Adler  <darin@apple.com>
 
         * WebCore.pro: Roll my last change out. Was wrong and didn't fix the build.
