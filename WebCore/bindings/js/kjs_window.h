@@ -33,36 +33,17 @@ namespace WebCore {
     class Frame;
     class JSEventListener;
     class JSUnprotectedEventListener;
+    class PausedTimeouts;
 }
 
 namespace KJS {
 
     class DOMWindowTimer;
     class Location;
-    class PausedTimeout;
     class ScheduledAction;
     class Window;
     class WindowFunc;
     class WindowPrivate;
-
-    class PausedTimeouts : Noncopyable {
-    public:
-        PausedTimeouts(PausedTimeout* array, size_t length)
-            : m_array(array)
-            , m_length(length)
-        {
-        }
-
-        ~PausedTimeouts();
-
-        size_t numTimeouts() const { return m_length; }
-        PausedTimeout* takeTimeouts() { PausedTimeout* a = m_array; m_array = 0; return a; }
-
-    private:
-        PausedTimeout* m_array;
-        size_t m_length;
-    };
-
 
   // This is the only WebCore JS binding which does not inherit from DOMObject
   class Window : public JSGlobalObject {
@@ -99,8 +80,8 @@ namespace KJS {
     int installTimeout(const UString& handler, int t, bool singleShot);
     int installTimeout(JSValue* function, const List& args, int t, bool singleShot);
     void clearTimeout(int timerId, bool delAction = true);
-    PausedTimeouts* pauseTimeouts();
-    void resumeTimeouts(PausedTimeouts*);
+    WebCore::PausedTimeouts* pauseTimeouts();
+    void resumeTimeouts(WebCore::PausedTimeouts*);
 
     void timerFired(DOMWindowTimer*);
 

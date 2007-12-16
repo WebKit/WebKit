@@ -418,6 +418,7 @@ SOURCES += \
     bindings/js/kjs_navigator.cpp \
     bindings/js/kjs_proxy.cpp \
     bindings/js/kjs_window.cpp \
+    bindings/js/PausedTimeouts.cpp \
     css/CSSBorderImageValue.cpp \
     css/CSSCharsetRule.cpp \
     css/CSSComputedStyleDeclaration.cpp \

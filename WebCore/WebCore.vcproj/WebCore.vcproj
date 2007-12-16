@@ -7647,6 +7647,14 @@
 					RelativePath="..\bindings\js\kjs_window.h"
 					>
 				</File>
+				<File
+					RelativePath="..\bindings\js\PausedTimeouts.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\bindings\js\PausedTimeouts.h"
+					>
+				</File>
 			</Filter>
 		</Filter>
 		<Filter

@@ -3642,6 +3642,8 @@
 		BC9ADD800CC4092200098C4C /* CSSTransformValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC9ADD7F0CC4092200098C4C /* CSSTransformValue.cpp */; };
 		BCA169A20BFD55B40019CA76 /* JSHTMLTableCaptionElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCA169A00BFD55B40019CA76 /* JSHTMLTableCaptionElement.cpp */; };
 		BCA169A30BFD55B40019CA76 /* JSHTMLTableCaptionElement.h in Headers */ = {isa = PBXBuildFile; fileRef = BCA169A10BFD55B40019CA76 /* JSHTMLTableCaptionElement.h */; };
+		BCA378160D15C64600B793D6 /* PausedTimeouts.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCA378140D15C64600B793D6 /* PausedTimeouts.cpp */; };
+		BCA378170D15C64600B793D6 /* PausedTimeouts.h in Headers */ = {isa = PBXBuildFile; fileRef = BCA378150D15C64600B793D6 /* PausedTimeouts.h */; };
 		BCA85A100C3AEAF4006F8308 /* DOMSVGNumberInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = BCA85A0F0C3AEAF4006F8308 /* DOMSVGNumberInternal.h */; };
 		BCAA90C30A7EBA60008B1229 /* ScrollBar.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCAA90C20A7EBA60008B1229 /* ScrollBar.cpp */; };
 		BCB16B8B0979B01400467741 /* DeprecatedArray.h in Headers */ = {isa = PBXBuildFile; fileRef = BCB16B880979B01400467741 /* DeprecatedArray.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -7651,6 +7653,8 @@
 		BC9ADD7F0CC4092200098C4C /* CSSTransformValue.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = CSSTransformValue.cpp; sourceTree = "<group>"; };
 		BCA169A00BFD55B40019CA76 /* JSHTMLTableCaptionElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLTableCaptionElement.cpp; sourceTree = "<group>"; };
 		BCA169A10BFD55B40019CA76 /* JSHTMLTableCaptionElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSHTMLTableCaptionElement.h; sourceTree = "<group>"; };
+		BCA378140D15C64600B793D6 /* PausedTimeouts.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PausedTimeouts.cpp; sourceTree = "<group>"; };
+		BCA378150D15C64600B793D6 /* PausedTimeouts.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PausedTimeouts.h; sourceTree = "<group>"; };
 		BCA85A0F0C3AEAF4006F8308 /* DOMSVGNumberInternal.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DOMSVGNumberInternal.h; sourceTree = "<group>"; };
 		BCAA90C20A7EBA60008B1229 /* ScrollBar.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = ScrollBar.cpp; path = platform/ScrollBar.cpp; sourceTree = SOURCE_ROOT; };
 		BCB16B880979B01400467741 /* DeprecatedArray.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DeprecatedArray.h; sourceTree = "<group>"; };
@@ -11404,6 +11408,8 @@
 				93B70D5409EB0C7C009D8468 /* kjs_proxy.h */,
 				93B70D5909EB0C7C009D8468 /* kjs_window.cpp */,
 				93B70D5A09EB0C7C009D8468 /* kjs_window.h */,
+				BCA378140D15C64600B793D6 /* PausedTimeouts.cpp */,
+				BCA378150D15C64600B793D6 /* PausedTimeouts.h */,
 			);
 			path = js;
 			sourceTree = "<group>";
@@ -14100,6 +14106,7 @@
 				BC904B770D10998F00680D32 /* ClassNodeList.h in Headers */,
 				BC4BF9E50D11E133007D247F /* ClassNames.h in Headers */,
 				B28BC31A0D135E5400CDBA27 /* JSEventTargetBase.lut.h in Headers */,
+				BCA378170D15C64600B793D6 /* PausedTimeouts.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -15812,6 +15819,7 @@
 				93A38B4B0D0E5808006872C2 /* EditorCommand.cpp in Sources */,
 				BC904B760D10998F00680D32 /* ClassNodeList.cpp in Sources */,
 				BC4BF9E40D11E133007D247F /* ClassNames.cpp in Sources */,
+				BCA378160D15C64600B793D6 /* PausedTimeouts.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

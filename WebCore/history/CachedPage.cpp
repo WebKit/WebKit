@@ -38,13 +38,13 @@
 #include "GCController.h"
 #include "Logging.h"
 #include "Page.h"
+#include "PausedTimeouts.h"
 #include "SystemTime.h"
 #if ENABLE(SVG)
 #include "SVGDocumentExtensions.h"
 #endif
 
 #include "kjs_proxy.h"
-#include "kjs_window.h"
 #include "kjs_window.h"
 #include <kjs/JSLock.h>
 #include <kjs/SavedBuiltins.h>

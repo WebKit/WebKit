@@ -36,6 +36,7 @@
 #include "Settings.h"
 #include "WindowFeatures.h"
 #include "kjs_window.h"
+#include "PausedTimeouts.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
@@ -43,7 +44,6 @@
 namespace WebCore {
 
 using namespace HTMLNames;
-using namespace KJS;
 using namespace std;
 
 class PageGroupLoadDeferrer : Noncopyable {

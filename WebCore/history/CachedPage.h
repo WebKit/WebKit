@@ -39,7 +39,6 @@ typedef struct objc_object* id;
 
 namespace KJS {
     
-    class PausedTimeouts;
     class SavedBuiltins;
     class SavedProperties;
 }
@@ -51,6 +50,7 @@ namespace WebCore {
     class FrameView;
     class Node;
     class Page;
+    class PausedTimeouts;
 
 class CachedPage : public RefCounted<CachedPage> {
 public:
@@ -84,7 +84,7 @@ private:
     OwnPtr<KJS::SavedProperties> m_windowProperties;
     OwnPtr<KJS::SavedProperties> m_locationProperties;
     OwnPtr<KJS::SavedBuiltins> m_windowBuiltins;
-    OwnPtr<KJS::PausedTimeouts> m_pausedTimeouts;
+    OwnPtr<PausedTimeouts> m_pausedTimeouts;
     OwnPtr<CachedPagePlatformData> m_cachedPagePlatformData;
 };
 
