@@ -1,3 +1,9 @@
+2007-12-15  Darin Adler  <darin@apple.com>
+
+        Another try at a GTK build fix.
+
+        * WebCore.pro: Add JSEventTargetBase.cpp to LUT_TABLE_FILES instead of LUT_FILES.
+
 2007-12-15  Sam Weinig  <sam@webkit.org>
 
         Force windows to regenerate COM DOM bindings.
