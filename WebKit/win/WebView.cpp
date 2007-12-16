@@ -1483,13 +1483,12 @@ bool WebView::keyDown(WPARAM virtualKeyCode, LPARAM keyData, bool systemKeyDown)
 
 bool WebView::keyPress(WPARAM charCode, LPARAM keyData, bool systemKeyDown)
 {
-    // IE does not dispatch keypress event for WM_SYSCHAR.
-    if (systemKeyDown)
-        return false;
-
     Frame* frame = m_page->focusController()->focusedOrMainFrame();
 
     PlatformKeyboardEvent keyEvent(m_viewWindow, charCode, keyData, PlatformKeyboardEvent::Char, systemKeyDown);
+    // IE does not dispatch keypress event for WM_SYSCHAR.
+    if (systemKeyDown)
+        return frame->eventHandler()->handleAccessKey(keyEvent);
     if (frame->eventHandler()->keyEvent(keyEvent))
         return true;
 

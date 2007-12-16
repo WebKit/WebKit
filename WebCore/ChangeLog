@@ -1,3 +1,16 @@
+2007-12-16  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        http://bugs.webkit.org/show_bug.cgi?id=16462
+        REGRESSION: access keys broken on Windows
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleAccessKey):
+        (WebCore::EventHandler::keyEvent):
+        * page/EventHandler.h:
+        Make handleAccessKey a class method; rely on WebKit to call it on Windows and wxWidgets.
+
 2007-12-16  Xan Lopez  <xan@gnome.org>
 
         Reviewed by Alexey Proskuryakov.

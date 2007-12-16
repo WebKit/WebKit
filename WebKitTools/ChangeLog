@@ -1,3 +1,13 @@
+2007-12-16  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        http://bugs.webkit.org/show_bug.cgi?id=16462
+        REGRESSION: access keys broken on Windows
+
+        * DumpRenderTree/win/EventSender.cpp: (keyDownCallback): Send system key events
+        if Alt is pressed.
+
 2007-12-15  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Mark Rowe.
