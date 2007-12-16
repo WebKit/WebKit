@@ -116,16 +116,6 @@ sub finish
     my $object = shift;
 }
 
-# Uppercase the first letter, while respecting WebKit style guidelines.
-# E.g., xmlEncoding becomes XMLEncoding, but xmlllang becomes Xmllang.
-sub WK_ucfirst
-{
-    my $param = shift;
-    my $ret = ucfirst($param);
-    $ret =~ s/Xml/XML/ if $ret =~ /^Xml[^a-z]/;
-    return $ret;
-}
-
 # Params: 'domClass' struct
 sub GenerateInterface
 {
@@ -402,7 +392,7 @@ sub GenerateIDL
 
             unless ($attributeIsReadonly) {
                 # Setter
-                my $setterName = "set" . WK_ucfirst($attributeName);
+                my $setterName = "set" . $codeGenerator->WK_ucfirst($attributeName);
                 my $setter = "    HRESULT " . $setterName . "([in] " . $attributeTypeIn . ");\n";
                 push(@IDLContent, $setter);
             }
@@ -507,7 +497,7 @@ sub GenerateCPPAttributeSignature
 
     unless ($isReadonly) {
         my $attributeTypeIn = GetCOMTypeIn($attribute->signature->type);
-        my $setterName = "set" . WK_ucfirst($attributeName);
+        my $setterName = "set" . $codeGenerator->WK_ucfirst($attributeName);
         my $setter = $indent . $virtual . "HRESULT STDMETHODCALLTYPE ". $class . $setterName . "(";
         $setter .= $joiner . "/* [in] */ ${attributeTypeIn} ${attributeName})" . $semicolon . $newline;
         if ($forwarder) {
@@ -560,7 +550,7 @@ sub GenerateCPPAttribute
         push(@setterImplementation, $signatures{"Setter"});
         push(@setterImplementation, "{\n");
 
-        my $setterName = "set" . WK_ucfirst($attributeName);
+        my $setterName = "set" . $codeGenerator->WK_ucfirst($attributeName);
 
         my @setterParams = ();
         if ($attributeTypeIsString) {
@@ -746,7 +736,7 @@ sub GenerateCPPFunction
 
             my $paramTypeCOMClassName = GetClassName($paramIDLType);
             my $paramTypeImplementationWithoutNamespace = StripNamespace(IDLTypeToImplementationType($paramIDLType));
-            my $ptrName = "ptrFor" . WK_ucfirst($paramName);
+            my $ptrName = "ptrFor" . $codeGenerator->WK_ucfirst($paramName);
             my $paramInit = "    COMPtr<${paramTypeCOMClassName}> ${ptrName}(Query, ${paramName});\n";
             $paramInit .= "    if (!${ptrName})\n";
             $paramInit .= "        return E_NOINTERFACE;";

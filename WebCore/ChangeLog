@@ -1,5 +1,12 @@
 2007-12-15  Sam Weinig  <sam@webkit.org>
 
+        Force windows to regenerate COM DOM bindings.
+
+        * WebCore.vcproj/build-generated-files.sh: Add license. 
+        * bindings/scripts/CodeGeneratorCOM.pm: Use shared WK_ucfirst.
+
+2007-12-15  Sam Weinig  <sam@webkit.org>
+
         Fix Windows and wx builds.
 
         * WebCore.vcproj/WebCore.vcproj:
