@@ -1565,6 +1565,9 @@ bool EventHandler::keyEvent(const PlatformKeyboardEvent& initialKeyEvent)
     keypress->setTarget(node);
     if (keydownResult)
         keypress->setDefaultPrevented(true);
+#if PLATFORM(MAC)
+    keypress->keypressCommands() = keydown->keypressCommands();
+#endif
     node->dispatchEvent(keypress, ec, true);
 
     return keydownResult || keypress->defaultPrevented() || keypress->defaultHandled();

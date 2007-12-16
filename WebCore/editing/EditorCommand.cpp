@@ -1169,7 +1169,7 @@ static const CommandMap& createCommandMap()
         { "InsertOrderedList", { executeInsertOrderedList, supported, enabledInRichlyEditableText, stateOrderedList, valueNull, notTextInsertion } },
         { "InsertParagraph", { executeInsertParagraph, supported, enabledInEditableText, stateNone, valueNull, notTextInsertion } },
         { "InsertTab", { executeInsertTab, supported, enabledInEditableText, stateNone, valueNull, isTextInsertion } },
-        { "InsertText", { executeInsertText, supported, enabledInEditableText, stateNone, valueNull, notTextInsertion } },
+        { "InsertText", { executeInsertText, supported, enabledInEditableText, stateNone, valueNull, isTextInsertion } },
         { "InsertUnorderedList", { executeInsertUnorderedList, supported, enabledInRichlyEditableText, stateUnorderedList, valueNull, notTextInsertion } },
         { "Italic", { executeToggleItalic, supported, enabledInRichlyEditableText, stateItalic, valueNull, notTextInsertion } },
         { "JustifyCenter", { executeJustifyCenter, supported, enabledInRichlyEditableText, stateNone, valueNull, notTextInsertion } },

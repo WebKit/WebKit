@@ -1,3 +1,17 @@
+2007-12-16  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        http://bugs.webkit.org/show_bug.cgi?id=14140
+        <rdar://problem/5270958> REGRESSION: Complex system KeyBindings don't work properly
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView _interceptEditingKeyEvent:shouldSaveCommand:]): Made command replaying work
+        when handling keypress, too.
+        (-[WebHTMLView doCommandBySelector:]): Adapted for the new way to store commands in events.
+        (-[WebHTMLView insertText:]): Append a command, not replace the whole existing vector. Also,
+        restore the state for additional commands to be saved correctly.
+
 2007-12-14  David D. Kilzer  <ddkilzer@apple.com>
 
         <rdar://problem/5647272> Remove user agent string hack for flickr.com

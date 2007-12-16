@@ -2,6 +2,25 @@
 
         Reviewed by Darin.
 
+        http://bugs.webkit.org/show_bug.cgi?id=14140
+        <rdar://problem/5270958> REGRESSION: Complex system KeyBindings don't work properly
+
+        * dom/KeyboardEvent.h:
+        (WebCore::KeypressCommand::KeypressCommand):
+        (WebCore::KeyboardEvent::keypressCommands):
+        Change stored command class to preserve complete information about commands.
+
+        * editing/EditorCommand.cpp: (WebCore::CommandEntry::): Mark InsertText as a text insertion
+        command, which it is. Previously, we couldn't do it because WebKit didn't really treat insertText:
+        as a command.
+
+        * page/EventHandler.cpp: (WebCore::EventHandler::keyEvent): Copy commands saved while interpreting
+        a keydown event into keypress, to avoid losing state when running interpretKeyEvents: again.
+
+2007-12-16  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
         http://bugs.webkit.org/show_bug.cgi?id=16462
         REGRESSION: access keys broken on Windows
 

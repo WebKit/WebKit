@@ -33,10 +33,11 @@ namespace WebCore {
 
 #if PLATFORM(MAC)
     struct KeypressCommand {
-        Vector<String> commandNames;
+        KeypressCommand(const String& commandName) : commandName(commandName) {}
+        KeypressCommand(const String& commandName, const String& text) : commandName(commandName), text(text) { ASSERT(commandName == "insertText:"); }
+
+        String commandName;
         String text;
-        
-        bool isEmpty() const { return text.isEmpty() && commandNames.isEmpty(); }
     };
 #endif
     
@@ -78,8 +79,7 @@ namespace WebCore {
 
 #if PLATFORM(MAC)
         // We only have this need to store keypress command info on the Mac.
-        KeypressCommand keypressCommand() { return m_keypressCommand; }
-        void setKeypressCommand(const KeypressCommand& command) { m_keypressCommand = command; }        
+        Vector<KeypressCommand>& keypressCommands() { return m_keypressCommands; }
 #endif
 
     private:
@@ -89,7 +89,7 @@ namespace WebCore {
         bool m_altGraphKey : 1;
 
 #if PLATFORM(MAC)        
-        KeypressCommand m_keypressCommand;
+        Vector<KeypressCommand> m_keypressCommands;
 #endif
     };
 
