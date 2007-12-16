@@ -29,17 +29,25 @@
 #ifndef SymbolTable_h
 #define SymbolTable_h
 
-#include "property_map.h"
-#include "AlwaysInline.h"
+#include "ustring.h"
+#include <wtf/AlwaysInline.h>
 
 namespace KJS {
 
-    class JSValue;
-
     struct IdentifierRepHash {
-        static unsigned hash(const KJS::UString::Rep *key) { return key->computedHash(); }
-        static bool equal(const KJS::UString::Rep *a, const KJS::UString::Rep *b) { return a == b; }
+        static unsigned hash(const RefPtr<UString::Rep>& key) { return key->computedHash(); }
+        static bool equal(const RefPtr<UString::Rep>& a, const RefPtr<UString::Rep>& b) { return a == b; }
         static const bool safeToCompareToEmptyOrDeleted = true;
+    };
+
+    struct IdentifierRepHashTraits : HashTraits<RefPtr<UString::Rep> > {
+        static const RefPtr<UString::Rep>& deletedValue()
+        {
+            return *reinterpret_cast<RefPtr<UString::Rep>*>(&nullRepPtr);
+        }
+
+    private:
+        static UString::Rep* nullRepPtr;
     };
 
     static ALWAYS_INLINE size_t missingSymbolMarker() { return std::numeric_limits<size_t>::max(); }
@@ -53,7 +61,7 @@ namespace KJS {
         static const bool needsRef = false;
     };
 
-    typedef HashMap<UString::Rep*, size_t, IdentifierRepHash, HashTraits<UString::Rep*>, SymbolTableIndexHashTraits> SymbolTable;
+    typedef HashMap<RefPtr<UString::Rep>, size_t, IdentifierRepHash, IdentifierRepHashTraits, SymbolTableIndexHashTraits> SymbolTable;
 
 } // namespace KJS
 

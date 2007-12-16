@@ -272,6 +272,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\wtf\RefPtrHashMap.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\wtf\RetainPtr.h"
 			>
 		</File>

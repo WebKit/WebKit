@@ -1,3 +1,34 @@
+2007-12-16  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Darin Adler and Maciej Stachowiak.
+        
+        More refactoring to support global variable optimization.
+        
+        Changed SymbolTable to use RefPtr<UString::Rep> as its key instead of
+        UString::Rep*. With globals, the symbol table can outlast the
+        declaration node for any given symbol, so the symbol table needs to ref
+        its symbol names.
+        
+        In support, specialized HashMaps with RefPtr keys to allow lookup
+        via raw pointer, avoiding refcount churn.
+        
+        SunSpider reports a .6% speedup (prolly just noise).
+
+        * JavaScriptCore.vcproj/WTF/WTF.vcproj: Added new file: wtf/RefPtrHashMap.h
+        * JavaScriptCore.xcodeproj/project.pbxproj: ditto
+
+        * kjs/JSVariableObject.cpp:
+        (KJS::JSVariableObject::getPropertyNames): Symbol table keys are RefPtrs now.
+
+        * kjs/SymbolTable.h: Modified key traits to match RefPtr. Added a
+        static Rep* for null, which helps compute the deletedValue() trait.
+
+        * wtf/HashMap.h: #include the RefPtr specialization so everyone can use it.
+
+        * wtf/RefPtrHashMap.h: Copied from wtf/HashMap.h. Added overloaded versions
+        of find(), contains(), get(), set(), add(), remove(), and take() that take
+        raw pointers as keys.
+
 2007-12-16  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin.
