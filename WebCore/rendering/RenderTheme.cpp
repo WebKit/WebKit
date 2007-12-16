@@ -22,6 +22,7 @@
 #include "config.h"
 #include "RenderTheme.h"
 
+#include "CSSValueKeywords.h"
 #include "Document.h"
 #include "Frame.h"
 #include "GraphicsContext.h"
@@ -476,6 +477,71 @@ void RenderTheme::platformColorsDidChange()
 {
     m_activeSelectionColor = Color();
     m_inactiveSelectionColor = Color();
+}
+
+Color RenderTheme::systemColor(int cssValueId) const
+{
+    switch (cssValueId) {
+        case CSS_VAL_ACTIVEBORDER:
+            return 0xFFFFFFFF;
+        case CSS_VAL_ACTIVECAPTION:
+            return 0xFFCCCCCC;
+        case CSS_VAL_APPWORKSPACE:
+            return 0xFFFFFFFF;
+        case CSS_VAL_BACKGROUND:
+            return 0xFF6363CE;
+        case CSS_VAL_BUTTONFACE:
+            return 0xFFECECEC;
+        case CSS_VAL_BUTTONHIGHLIGHT:
+            return 0xFFDDDDDD;
+        case CSS_VAL_BUTTONSHADOW:
+            return 0xFF888888;
+        case CSS_VAL_BUTTONTEXT:
+            return 0xFF000000;
+        case CSS_VAL_CAPTIONTEXT:
+            return 0xFF000000;
+        case CSS_VAL_GRAYTEXT:
+            return 0xFF808080;
+        case CSS_VAL_HIGHLIGHT:
+            return 0xFFB5D5FF;
+        case CSS_VAL_HIGHLIGHTTEXT:
+            return 0xFF000000;
+        case CSS_VAL_INACTIVEBORDER:
+            return 0xFFFFFFFF;
+        case CSS_VAL_INACTIVECAPTION:
+            return 0xFFFFFFFF;
+        case CSS_VAL_INACTIVECAPTIONTEXT:
+            return 0xFF7F7F7F;
+        case CSS_VAL_INFOBACKGROUND:
+            return 0xFFFBFCC5;
+        case CSS_VAL_INFOTEXT:
+            return 0xFF000000;
+        case CSS_VAL_MENU:
+            return 0xFFC0C0C0;
+        case CSS_VAL_MENUTEXT:
+            return 0xFF000000;
+        case CSS_VAL_SCROLLBAR:
+            return 0xFFFFFFFF;
+        case CSS_VAL_TEXT:
+            return 0xFF000000;
+        case CSS_VAL_THREEDDARKSHADOW:
+            return 0xFF666666;
+        case CSS_VAL_THREEDFACE:
+            return 0xFFECECEC;
+        case CSS_VAL_THREEDHIGHLIGHT:
+            return 0xFFDDDDDD;
+        case CSS_VAL_THREEDLIGHTSHADOW:
+            return 0xFFC0C0C0;
+        case CSS_VAL_THREEDSHADOW:
+            return 0xFF888888;
+        case CSS_VAL_WINDOW:
+            return 0xFFFFFFFF;
+        case CSS_VAL_WINDOWFRAME:
+            return 0xFFCCCCCC;
+        case CSS_VAL_WINDOWTEXT:
+            return 0xFF000000;
+    }
+    return Color();
 }
 
 Color RenderTheme::platformTextSearchHighlightColor() const

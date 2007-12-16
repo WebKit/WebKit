@@ -131,7 +131,7 @@ Color RenderThemeMac::activeListBoxSelectionBackgroundColor() const
     return Color(static_cast<int>(255.0 * [color redComponent]), static_cast<int>(255.0 * [color greenComponent]), static_cast<int>(255.0 * [color blueComponent]));
 }
 
-void RenderThemeMac::systemFont(int propId, FontDescription& fontDescription) const
+void RenderThemeMac::systemFont(int cssValueId, FontDescription& fontDescription) const
 {
     static FontDescription systemFont;
     static FontDescription smallSystemFont;
@@ -143,7 +143,7 @@ void RenderThemeMac::systemFont(int propId, FontDescription& fontDescription) co
 
     FontDescription* cachedDesc;
     NSFont* font = nil;
-    switch (propId) {
+    switch (cssValueId) {
         case CSS_VAL_SMALL_CAPTION:
             cachedDesc = &smallSystemFont;
             if (!smallSystemFont.isAbsoluteSize())
@@ -190,6 +190,162 @@ void RenderThemeMac::systemFont(int propId, FontDescription& fontDescription) co
         cachedDesc->setItalic(traits & NSItalicFontMask);
     }
     fontDescription = *cachedDesc;
+}
+
+static RGBA32 convertNSColorToColor(NSColor *color)
+{
+    NSColor *colorInColorSpace = [color colorUsingColorSpaceName:NSCalibratedRGBColorSpace];
+    if (colorInColorSpace) {
+        static const double scaleFactor = nextafter(256.0, 0.0);
+        return makeRGB(static_cast<int>(scaleFactor * [colorInColorSpace redComponent]),
+            static_cast<int>(scaleFactor * [colorInColorSpace greenComponent]),
+            static_cast<int>(scaleFactor * [colorInColorSpace blueComponent]));
+    }
+
+    // This conversion above can fail if the NSColor in question is an NSPatternColor 
+    // (as many system colors are). These colors are actually a repeating pattern
+    // not just a solid color. To work around this we simply draw a 1x1 image of
+    // the color and use that pixel's color. It might be better to use an average of
+    // the colors in the pattern instead.
+    NSBitmapImageRep *offscreenRep = [[NSBitmapImageRep alloc] initWithBitmapDataPlanes:nil
+                                                                             pixelsWide:1
+                                                                             pixelsHigh:1
+                                                                          bitsPerSample:8
+                                                                        samplesPerPixel:4
+                                                                               hasAlpha:YES
+                                                                               isPlanar:NO
+                                                                         colorSpaceName:NSCalibratedRGBColorSpace
+                                                                            bytesPerRow:4
+                                                                           bitsPerPixel:32];
+
+    [NSGraphicsContext saveGraphicsState];
+    [NSGraphicsContext setCurrentContext:[NSGraphicsContext graphicsContextWithBitmapImageRep:offscreenRep]];
+    NSEraseRect(NSMakeRect(0, 0, 1, 1));
+    [color drawSwatchInRect:NSMakeRect(0, 0, 1, 1)];
+    [NSGraphicsContext restoreGraphicsState];
+
+    NSUInteger pixel[3];
+    [offscreenRep getPixel:pixel atX:0 y:0];
+
+    [offscreenRep release];
+
+    return makeRGB(pixel[0], pixel[1], pixel[3]);
+}
+
+void RenderThemeMac::platformColorsDidChange()
+{
+    m_systemColorCache.clear();
+    RenderTheme::platformColorsDidChange();
+}
+
+Color RenderThemeMac::systemColor(int cssValueId) const
+{
+    if (m_systemColorCache.contains(cssValueId))
+        return m_systemColorCache.get(cssValueId);
+    
+    Color color;
+    switch (cssValueId) {
+        case CSS_VAL_ACTIVEBORDER:
+            color = convertNSColorToColor([NSColor keyboardFocusIndicatorColor]);
+            break;
+        case CSS_VAL_ACTIVECAPTION:
+            color = convertNSColorToColor([NSColor windowFrameTextColor]);
+            break;
+        case CSS_VAL_APPWORKSPACE:
+            color = convertNSColorToColor([NSColor headerColor]);
+            break;
+        case CSS_VAL_BACKGROUND:
+            // Use theme independent default
+            break;
+        case CSS_VAL_BUTTONFACE:
+            // We use this value instead of NSColor's controlColor to avoid website incompatibilities.
+            // We may want to change this to use the NSColor in future.
+            color = 0xFFC0C0C0;
+            break;
+        case CSS_VAL_BUTTONHIGHLIGHT:
+            color = convertNSColorToColor([NSColor controlHighlightColor]);
+            break;
+        case CSS_VAL_BUTTONSHADOW:
+            color = convertNSColorToColor([NSColor controlShadowColor]);
+            break;
+        case CSS_VAL_BUTTONTEXT:
+            color = convertNSColorToColor([NSColor controlTextColor]);
+            break;
+        case CSS_VAL_CAPTIONTEXT:
+            color = convertNSColorToColor([NSColor textColor]);
+            break;
+        case CSS_VAL_GRAYTEXT:
+            color = convertNSColorToColor([NSColor disabledControlTextColor]);
+            break;
+        case CSS_VAL_HIGHLIGHT:
+            color = convertNSColorToColor([NSColor selectedTextBackgroundColor]);
+            break;
+        case CSS_VAL_HIGHLIGHTTEXT:
+            color = convertNSColorToColor([NSColor selectedTextColor]);
+            break;
+        case CSS_VAL_INACTIVEBORDER:
+            color = convertNSColorToColor([NSColor controlBackgroundColor]);
+            break;
+        case CSS_VAL_INACTIVECAPTION:
+            color = convertNSColorToColor([NSColor controlBackgroundColor]);
+            break;
+        case CSS_VAL_INACTIVECAPTIONTEXT:
+            color = convertNSColorToColor([NSColor textColor]);
+            break;
+        case CSS_VAL_INFOBACKGROUND:
+            // There is no corresponding NSColor for this so we use a hard coded value.
+            color = 0xFFFBFCC5;
+            break;
+        case CSS_VAL_INFOTEXT:
+            color = convertNSColorToColor([NSColor textColor]);
+            break;
+        case CSS_VAL_MENU:
+            color = convertNSColorToColor([NSColor selectedMenuItemColor]);
+            break;
+        case CSS_VAL_MENUTEXT:
+            color = convertNSColorToColor([NSColor selectedMenuItemTextColor]);
+            break;
+        case CSS_VAL_SCROLLBAR:
+            color = convertNSColorToColor([NSColor scrollBarColor]);
+            break;
+        case CSS_VAL_TEXT:
+            color = convertNSColorToColor([NSColor textColor]);
+            break;
+        case CSS_VAL_THREEDDARKSHADOW:
+            color = convertNSColorToColor([NSColor controlDarkShadowColor]);
+            break;
+        case CSS_VAL_THREEDSHADOW:
+            color = convertNSColorToColor([NSColor shadowColor]);
+            break;
+        case CSS_VAL_THREEDFACE:
+            // We use this value instead of NSColor's controlColor to avoid website incompatibilities.
+            // We may want to change this to use the NSColor in future.
+            color = 0xFFC0C0C0;
+            break;
+        case CSS_VAL_THREEDHIGHLIGHT:
+            color = convertNSColorToColor([NSColor highlightColor]);
+            break;
+        case CSS_VAL_THREEDLIGHTSHADOW:
+            color = convertNSColorToColor([NSColor controlLightHighlightColor]);
+            break;
+        case CSS_VAL_WINDOW:
+            color = convertNSColorToColor([NSColor windowBackgroundColor]);
+            break;
+        case CSS_VAL_WINDOWFRAME:
+            color = convertNSColorToColor([NSColor windowFrameColor]);
+            break;
+        case CSS_VAL_WINDOWTEXT:
+            color = convertNSColorToColor([NSColor windowFrameTextColor]);
+            break;
+    }
+
+    if (!color.isValid())
+        color = RenderTheme::systemColor(cssValueId);
+
+    if (color.isValid())
+        m_systemColorCache.set(cssValueId, color.rgb());
+
+    return color;
 }
 
 bool RenderThemeMac::isControlStyled(const RenderStyle* style, const BorderData& border,

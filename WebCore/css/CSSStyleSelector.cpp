@@ -4648,9 +4648,8 @@ float CSSStyleSelector::smallerFontSize(float size, bool quirksMode) const
     return size / 1.2f;
 }
 
-// color mapping code
 struct ColorValue {
-    int css_value;
+    int cssValueId;
     RGBA32 color;
 };
 
@@ -4674,44 +4673,15 @@ static const ColorValue colorValues[] = {
     { CSS_VAL_YELLOW, 0xFFFFFF00 },
     { CSS_VAL_TRANSPARENT, 0x00000000 },
     { CSS_VAL_GREY, 0xFF808080 },
-    { CSS_VAL_ACTIVEBORDER, 0xFFFFFFFF },
-    { CSS_VAL_ACTIVECAPTION, 0xFFCCCCCC },
-    { CSS_VAL_APPWORKSPACE, 0xFFFFFFFF },
-    { CSS_VAL_BUTTONFACE, 0xFFC0C0C0 },
-    { CSS_VAL_BUTTONHIGHLIGHT, 0xFFDDDDDD },
-    { CSS_VAL_BUTTONSHADOW, 0xFF888888 },
-    { CSS_VAL_BUTTONTEXT, 0xFF000000 },
-    { CSS_VAL_CAPTIONTEXT, 0xFF000000 },
-    { CSS_VAL_GRAYTEXT, 0xFF808080 },
-    { CSS_VAL_HIGHLIGHT, 0xFFB5D5FF },
-    { CSS_VAL_HIGHLIGHTTEXT, 0xFF000000 },
-    { CSS_VAL_INACTIVEBORDER, 0xFFFFFFFF },
-    { CSS_VAL_INACTIVECAPTION, 0xFFFFFFFF },
-    { CSS_VAL_INACTIVECAPTIONTEXT, 0xFF7F7F7F },
-    { CSS_VAL_INFOBACKGROUND, 0xFFFBFCC5 },
-    { CSS_VAL_INFOTEXT, 0xFF000000 },
-    { CSS_VAL_MENU, 0xFFC0C0C0 },
-    { CSS_VAL_MENUTEXT, 0xFF000000 },
-    { CSS_VAL_SCROLLBAR, 0xFFFFFFFF },
-    { CSS_VAL_TEXT, 0xFF000000 },
-    { CSS_VAL_THREEDDARKSHADOW, 0xFF666666 },
-    { CSS_VAL_THREEDFACE, 0xFFC0C0C0 },
-    { CSS_VAL_THREEDHIGHLIGHT, 0xFFDDDDDD },
-    { CSS_VAL_THREEDLIGHTSHADOW, 0xFFC0C0C0 },
-    { CSS_VAL_THREEDSHADOW, 0xFF888888 },
-    { CSS_VAL_WINDOW, 0xFFFFFFFF },
-    { CSS_VAL_WINDOWFRAME, 0xFFCCCCCC },
-    { CSS_VAL_WINDOWTEXT, 0xFF000000 },
     { 0, 0 }
 };
 
-
-static Color colorForCSSValue(int css_value)
+static Color colorForCSSValue(int cssValueId)
 {
-    for (const ColorValue* col = colorValues; col->css_value; ++col)
-        if (col->css_value == css_value)
+    for (const ColorValue* col = colorValues; col->cssValueId; ++col)
+        if (col->cssValueId == cssValueId)
             return col->color;
-    return Color();
+    return theme()->systemColor(cssValueId);
 }
 
 Color CSSStyleSelector::getColorFromPrimitiveValue(CSSPrimitiveValue* primitiveValue)

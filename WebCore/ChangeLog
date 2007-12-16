@@ -1,3 +1,30 @@
+2007-12-16  Andrew Wellington  <proton@wiretapped.net>
+
+        Reviewed by Darin.
+        
+        http://bugs.webkit.org/show_bug.cgi?id=6129
+        Incomplete implementation of CSS 2.1 system colors
+
+        Test: fast/css/css2-system-color.html
+        
+        Based on original patch by Rob Buis.
+        
+        System colors are retrieved from NSColor as appropriate. If the color is a pattern color
+        (and therefore NSColor won't let us retrieve a color from it) we draw a 1x1 image of the
+        color and sample that to get a solid color.
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::):
+        (WebCore::colorForCSSValue):
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::systemColor):
+        * rendering/RenderTheme.h:
+        * rendering/RenderThemeMac.h:
+        * rendering/RenderThemeMac.mm:
+        (WebCore::getSystemColor):
+        (WebCore::RenderThemeMac::platformColorsDidChange):
+        (WebCore::RenderThemeMac::systemColor):
+
 2007-12-16  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.

@@ -1,3 +1,19 @@
+2007-12-16  Andrew Wellington  <proton@wiretapped.net>
+
+        Reviewed by Darin.
+        
+        http://bugs.webkit.org/show_bug.cgi?id=6129
+        Incomplete implementation of CSS 2.1 system colors
+        
+        Add layout test for this bug and update tests for new system-derived colors
+
+        * fast/css/css2-system-color.html: Added.
+        * platform/mac/fast/css/css2-system-color-expected.checksum: Added.
+        * platform/mac/fast/css/css2-system-color-expected.png: Added.
+        * platform/mac/fast/css/css2-system-color-expected.txt: Added.
+        * platform/mac/fast/css/css2-system-fonts-expected.checksum:
+        * platform/mac/tables/mozilla/bugs/bug103533-expected.txt:
+
 2007-12-16  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.
