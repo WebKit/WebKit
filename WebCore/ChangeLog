@@ -1,5 +1,9 @@
 2007-12-15  Darin Adler  <darin@apple.com>
 
+        * WebCore.pro: Roll my last change out. Was wrong and didn't fix the build.
+
+2007-12-15  Darin Adler  <darin@apple.com>
+
         Another try at a GTK build fix.
 
         * WebCore.pro: Add JSEventTargetBase.cpp to LUT_TABLE_FILES instead of LUT_FILES.

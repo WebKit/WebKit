@@ -231,6 +231,7 @@ STYLESHEETS_EMBED = $$PWD/css/html4.css
 
 LUT_FILES += \
     bindings/js/JSDOMExceptionConstructor.cpp \
+    bindings/js/JSEventTargetBase.cpp \
     bindings/js/JSXMLHttpRequest.cpp \
     bindings/js/JSXSLTProcessor.cpp \
     bindings/js/kjs_css.cpp \
@@ -239,7 +240,6 @@ LUT_FILES += \
     bindings/js/kjs_window.cpp
 
 LUT_TABLE_FILES += \
-    bindings/js/JSEventTargetBase.cpp \
     bindings/js/JSHTMLInputElementBase.cpp
 
 IDL_BINDINGS += \
