@@ -1111,7 +1111,8 @@ contains(DEFINES, ENABLE_VIDEO=1) {
 
     gtk-port {
         SOURCES += \
-            platform/graphics/gtk/MediaPlayerPrivateGStreamer.cpp
+            platform/graphics/gtk/MediaPlayerPrivateGStreamer.cpp \
+            platform/graphics/gtk/VideoSinkGStreamer.cpp
 
         PKGCONFIG += gstreamer-0.10 gstreamer-plugins-base-0.10 gnome-vfs-2.0
         LIBS += -lgstinterfaces-0.10 -lgstbase-0.10 -lgstvideo-0.10

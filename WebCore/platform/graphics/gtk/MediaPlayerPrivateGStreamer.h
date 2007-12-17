@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2007 Apple Inc.  All rights reserved.
  * Copyright (C) 2007 Collabora Ltd. All rights reserved.
+ * Copyright (C) 2007 Alp Toker <alp@atoker.com>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -25,7 +26,6 @@
 
 #include "MediaPlayer.h"
 #include "Timer.h"
-#include "wtf/Noncopyable.h"
 
 #include <gtk/gtk.h>
 
@@ -51,7 +51,7 @@ namespace WebCore {
     friend gboolean mediaPlayerPrivateStateCallback(GstBus* bus, GstMessage* message, gpointer data);
 
     public:
-        MediaPlayerPrivate(MediaPlayer* m);
+        MediaPlayerPrivate(MediaPlayer*);
         ~MediaPlayerPrivate();
 
         IntSize naturalSize();
@@ -68,8 +68,8 @@ namespace WebCore {
 
         float duration();
         float currentTime() const;
-        void seek(float time);
-        void setEndTime(float time);
+        void seek(float);
+        void setEndTime(float);
 
         void setRate(float);
         void setVolume(float);
@@ -87,7 +87,7 @@ namespace WebCore {
         unsigned totalBytes();
 
         void setVisible(bool);
-        void setRect(const IntRect& r);
+        void setRect(const IntRect&);
 
         void loadStateChanged();
         void rateChanged();
@@ -97,8 +97,9 @@ namespace WebCore {
         void didEnd();
         void loadingFailed();
 
-        void paint(GraphicsContext* p, const IntRect& r);
-        static void getSupportedTypes(HashSet<String>& types);
+        void repaint();
+        void paint(GraphicsContext*, const IntRect&);
+        static void getSupportedTypes(HashSet<String>&);
 
     private:
 
@@ -123,6 +124,9 @@ namespace WebCore {
         MediaPlayer::ReadyState m_readyState;
         bool m_startedPlaying;
         bool m_isStreaming;
+        IntRect m_rect;
+        bool m_visible;
+        cairo_surface_t* m_surface;
     };
 }
 

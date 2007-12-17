@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2007 Apple Inc.  All rights reserved.
  * Copyright (C) 2007 Collabora Ltd.  All rights reserved.
+ * Copyright (C) 2007 Alp Toker <alp@atoker.com>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -23,8 +24,8 @@
 #if ENABLE(VIDEO)
 
 #include "MediaPlayerPrivateGStreamer.h"
+#include "VideoSinkGStreamer.h"
 
-#include "CString.h"
 #include "CString.h"
 #include "GraphicsContext.h"
 #include "IntRect.h"
@@ -116,15 +117,30 @@ MediaPlayerPrivate::MediaPlayerPrivate(MediaPlayer* player)
     , m_readyState(MediaPlayer::DataUnavailable)
     , m_startedPlaying(false)
     , m_isStreaming(false)
+    , m_rect(IntRect())
+    , m_visible(true)
 {
+
+    static bool gstInitialized = false;
     // FIXME: We should pass the arguments from the command line
-    gst_init(0, NULL);
+    if (!gstInitialized) {
+        gst_init(0, NULL);
+        gstInitialized = true;
+    }
+
+    // FIXME: The size shouldn't be fixed here, this is just a quick hack.
+    m_surface = cairo_image_surface_create(CAIRO_FORMAT_ARGB32, 640, 480);
 }
 
 MediaPlayerPrivate::~MediaPlayerPrivate()
 {
-    gst_element_set_state(m_playBin, GST_STATE_NULL);
-    gst_object_unref(GST_OBJECT(m_playBin));
+    if (m_surface)
+        cairo_surface_destroy(m_surface);
+
+    if (m_playBin) {
+        gst_element_set_state(m_playBin, GST_STATE_NULL);
+        gst_object_unref(GST_OBJECT(m_playBin));
+    }
 }
 
 void MediaPlayerPrivate::load(String url)
@@ -192,12 +208,9 @@ float MediaPlayerPrivate::currentTime() const
         return m_endTime;
 
     float ret;
-    GstQuery* query;
-    gboolean res;
 
-    query = gst_query_new_position(GST_FORMAT_TIME);
-    res = gst_element_query(m_playBin, query);
-    if (res) {
+    GstQuery* query = gst_query_new_position(GST_FORMAT_TIME);
+    if (gst_element_query(m_playBin, query)) {
         gint64 position;
         gst_query_parse_position(query, NULL, &position);
         ret = (float) (position / 1000000000.0);
@@ -207,6 +220,7 @@ float MediaPlayerPrivate::currentTime() const
         ret = 0.0;
     }
     gst_query_unref(query);
+
     return ret;
 }
 
@@ -242,7 +256,7 @@ void MediaPlayerPrivate::setEndTime(float time)
         GstClockTime end   = (GstClockTime)(time * GST_SECOND);
         LOG_VERBOSE(Media, "setEndTime: %" GST_TIME_FORMAT, GST_TIME_ARGS(end));
         // FIXME: What happens when the seeked position is not available?
-        if (!gst_element_seek( m_playBin, m_rate,
+        if (!gst_element_seek(m_playBin, m_rate,
                 GST_FORMAT_TIME,
                 (GstSeekFlags)(GST_SEEK_FLAG_FLUSH | GST_SEEK_FLAG_ACCURATE),
                 GST_SEEK_TYPE_SET, start,
@@ -273,19 +287,21 @@ bool MediaPlayerPrivate::paused() const
 
 bool MediaPlayerPrivate::seeking() const
 {
-    return false;;
+    return false;
 }
 
 // Returns the size of the video
 IntSize MediaPlayerPrivate::naturalSize()
 {
+    if (!hasVideo())
+        return IntSize();
+
     int x = 0, y = 0;
-    if (hasVideo()) {
-        GstPad* pad = NULL;
-        pad = gst_element_get_pad(m_videoSink, "sink");
-        if (pad)
-            gst_video_get_size(GST_PAD(pad), &x, &y);
+    if (GstPad* pad = gst_element_get_static_pad(m_videoSink, "sink")) {
+        gst_video_get_size(GST_PAD(pad), &x, &y);
+        gst_object_unref(GST_OBJECT(pad));
     }
+
     return IntSize(x, y);
 }
 
@@ -306,7 +322,7 @@ void MediaPlayerPrivate::setVolume(float volume)
 
 void MediaPlayerPrivate::setMuted(bool b)
 {
-    if (!m_playBin) 
+    if (!m_playBin)
         return;
 
     if (b) {
@@ -537,23 +553,39 @@ void MediaPlayerPrivate::loadingFailed()
     }
 }
 
-void MediaPlayerPrivate::setRect(const IntRect& r)
+void MediaPlayerPrivate::setRect(const IntRect& rect)
 {
-    notImplemented();
+    m_rect = rect;
 }
 
-void MediaPlayerPrivate::setVisible(bool b)
+void MediaPlayerPrivate::setVisible(bool visible)
 {
-    notImplemented();
+    m_visible = visible;
 }
 
-void MediaPlayerPrivate::paint(GraphicsContext* p, const IntRect& r)
+void MediaPlayerPrivate::repaint()
 {
-    // FIXME: do the real thing
-    if (p->paintingDisabled())
+    m_player->repaint();
+}
+
+void MediaPlayerPrivate::paint(GraphicsContext* context, const IntRect& rect)
+{
+    if (context->paintingDisabled())
         return;
-    // For now draw a placeholder rectangle
-    p->drawRect(r);
+
+    if (!m_visible)
+        return;
+
+    //TODO: m_rect vs rect?
+    cairo_t* cr = context->platformContext();
+
+    cairo_save(cr);
+    cairo_set_operator(cr, CAIRO_OPERATOR_SOURCE);
+    cairo_translate(cr, rect.x(), rect.y());
+    cairo_rectangle(cr, 0, 0, rect.width(), rect.height());
+    cairo_set_source_surface(cr, m_surface, 0, 0);
+    cairo_fill(cr);
+    cairo_restore(cr);
 }
 
 void MediaPlayerPrivate::getSupportedTypes(HashSet<String>& types)
@@ -565,25 +597,21 @@ void MediaPlayerPrivate::getSupportedTypes(HashSet<String>& types)
 
 void MediaPlayerPrivate::createGSTPlayBin(String url)
 {
-    GstElement* audioSink;
-    GstBus* bus;
-
+    ASSERT(!m_playBin);
     m_playBin = gst_element_factory_make("playbin", "play");
 
-    bus = gst_pipeline_get_bus(GST_PIPELINE(m_playBin));
-
+    GstBus* bus = gst_pipeline_get_bus(GST_PIPELINE(m_playBin));
     gst_bus_add_signal_watch(bus);
-
     g_signal_connect(bus, "message::error", G_CALLBACK(mediaPlayerPrivateErrorCallback), this);
     g_signal_connect(bus, "message::eos", G_CALLBACK(mediaPlayerPrivateEOSCallback), this);
     g_signal_connect(bus, "message::state-changed", G_CALLBACK(mediaPlayerPrivateStateCallback), this);
     g_signal_connect(bus, "message::buffering", G_CALLBACK(mediaPlayerPrivateBufferingCallback), this);
-
     gst_object_unref(bus);
 
     g_object_set(G_OBJECT(m_playBin), "uri", url.utf8().data(), NULL);
-    audioSink = gst_element_factory_make("gconfaudiosink", NULL);
-    m_videoSink = gst_element_factory_make("gconfvideosink", NULL);
+
+    GstElement* audioSink = gst_element_factory_make("gconfaudiosink", NULL);
+    m_videoSink = webkit_video_sink_new(m_surface);
 
     g_object_set(m_playBin, "audio-sink", audioSink, NULL);
     g_object_set(m_playBin, "video-sink", m_videoSink, NULL);

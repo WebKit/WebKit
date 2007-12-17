@@ -1,3 +1,47 @@
+2007-12-16  Alp Toker  <alp@atoker.com>
+
+        Reviewed by Maciej.
+
+        http://bugs.webkit.org/show_bug.cgi?id=16356
+        [GTK] Integrate GStreamer video with the graphics backend
+
+        Integrate the GStreamer media backend with the Cairo graphics backend.
+        There are still some issues: Data is copied more often than necessary,
+        and repaint() is not called, causing transformed video not to update
+        sometimes.
+
+        * WebCore.pro:
+        * platform/graphics/gtk/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivate::MediaPlayerPrivate):
+        (WebCore::MediaPlayerPrivate::~MediaPlayerPrivate):
+        (WebCore::MediaPlayerPrivate::currentTime):
+        (WebCore::MediaPlayerPrivate::setEndTime):
+        (WebCore::MediaPlayerPrivate::seeking):
+        (WebCore::MediaPlayerPrivate::naturalSize):
+        (WebCore::MediaPlayerPrivate::setMuted):
+        (WebCore::MediaPlayerPrivate::setRect):
+        (WebCore::MediaPlayerPrivate::setVisible):
+        (WebCore::MediaPlayerPrivate::repaint):
+        (WebCore::MediaPlayerPrivate::paint):
+        (WebCore::MediaPlayerPrivate::createGSTPlayBin):
+        * platform/graphics/gtk/MediaPlayerPrivateGStreamer.h:
+        * platform/graphics/gtk/VideoSinkGStreamer.cpp: Added.
+        (webkit_video_sink_base_init):
+        (webkit_video_sink_init):
+        (webkit_video_sink_idle_func):
+        (webkit_video_sink_render):
+        (webkit_video_sink_set_caps):
+        (webkit_video_sink_dispose):
+        (webkit_video_sink_finalize):
+        (webkit_video_sink_set_property):
+        (webkit_video_sink_get_property):
+        (webkit_video_sink_stop):
+        (webkit_video_sink_class_init):
+        (webkit_video_sink_new):
+        (webkit_video_sink_set_surface):
+        (plugin_init):
+        * platform/graphics/gtk/VideoSinkGStreamer.h: Added.
+
 2007-12-16  Mark Rowe  <mrowe@apple.com>
 
         Mac build fix.
