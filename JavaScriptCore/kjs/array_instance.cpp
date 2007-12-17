@@ -49,7 +49,7 @@ static const unsigned maxArrayIndex = 0xFFFFFFFEU;
 static const unsigned sparseArrayCutoff = 10000;
 static const unsigned minDensityMultiplier = 8;
 
-static const unsigned mergeSortCutoff = 10000;
+static const unsigned copyingSortCutoff = 50000;
 
 const ClassInfo ArrayInstance::info = {"Array", 0, 0};
 
@@ -429,8 +429,14 @@ void ArrayInstance::mark()
     }
 }
 
-static ExecState* execForCompareByStringForQSort = 0;
+static int compareByStringPairForQSort(const void* a, const void* b)
+{
+    const std::pair<JSValue*, UString>* va = static_cast<const std::pair<JSValue*, UString>*>(a);
+    const std::pair<JSValue*, UString>* vb = static_cast<const std::pair<JSValue*, UString>*>(b);
+    return compare(va->second, vb->second);
+}
 
+static ExecState* execForCompareByStringForQSort = 0;
 static int compareByStringForQSort(const void* a, const void* b)
 {
     ExecState* exec = execForCompareByStringForQSort;
@@ -447,34 +453,34 @@ void ArrayInstance::sort(ExecState* exec)
 {
     unsigned lengthNotIncludingUndefined = compactForSorting();
 
-    ExecState* oldExec = execForCompareByStringForQSort;
-    execForCompareByStringForQSort = exec;
+    if (lengthNotIncludingUndefined < copyingSortCutoff) {
+        // Converting JavaScript values to strings can be expensive, so we do it once up front and sort based on that.
+        // This is a considerable improvement over doing it twice per comparison, though it requires a large temporary
+        // buffer.  For large arrays, we fall back to a qsort on the JavaScriptValues to avoid creating copies.
+
+        Vector<std::pair<JSValue*, UString> > values(lengthNotIncludingUndefined);
+        for (size_t i = 0; i < lengthNotIncludingUndefined; i++) {
+            JSValue* value = m_storage->m_vector[i];
+            ASSERT(!value->isUndefined());
+            values[i].first = value;
+            values[i].second = value->toString(exec);
+        }
+
+        // FIXME: Since we sort by string value, a fast algorithm might be to use a radix sort. That would be O(N) rather
+        // than O(N log N).
 
 #if HAVE(MERGESORT)
-    // Because mergesort usually does fewer compares, it is faster than qsort here.
-    // However, because it requires extra copies of the storage buffer, don't use it for very
-    // large arrays.
-
-    // FIXME: Since we sort by string value, a fast algorithm might be to convert all the
-    // values to string once up front, and then use a radix sort. That would be O(N) rather
-    // than O(N log N).
-
-    if (lengthNotIncludingUndefined < mergeSortCutoff) {
-        // During the sort, we could do a garbage collect, and it's important to still
-        // have references to every object in the array for ArrayInstance::mark.
-        // The mergesort algorithm does not guarantee this, so we sort a copy rather
-        // than the original.
-        size_t size = storageSize(m_vectorLength);
-        ArrayStorage* copy = static_cast<ArrayStorage*>(fastMalloc(size));
-        memcpy(copy, m_storage, size);
-        mergesort(copy->m_vector, lengthNotIncludingUndefined, sizeof(JSValue*), compareByStringForQSort);
-        fastFree(m_storage);
-        m_storage = copy;
-        execForCompareByStringForQSort = oldExec;
+        mergesort(values.begin(), values.size(), sizeof(std::pair<JSValue*, UString>), compareByStringPairForQSort);
+#else
+        qsort(values.begin(), values.size(), sizeof(std::pair<JSValue*, UString>), compareByStringPairForQSort);
+#endif
+        for (size_t i = 0; i < lengthNotIncludingUndefined; i++)
+            m_storage->m_vector[i] = values[i].first;
         return;
     }
-#endif
 
+    ExecState* oldExec = execForCompareByStringForQSort;
+    execForCompareByStringForQSort = exec;
     qsort(m_storage->m_vector, lengthNotIncludingUndefined, sizeof(JSValue*), compareByStringForQSort);
     execForCompareByStringForQSort = oldExec;
 }
@@ -528,7 +534,7 @@ void ArrayInstance::sort(ExecState* exec, JSObject* compareFunction)
     // FIXME: A tree sort using a perfectly balanced tree (e.g. an AVL tree) could do an even
     // better job of minimizing compares.
 
-    if (lengthNotIncludingUndefined < mergeSortCutoff) {
+    if (lengthNotIncludingUndefined < copyingSortCutoff) {
         // During the sort, we could do a garbage collect, and it's important to still
         // have references to every object in the array for ArrayInstance::mark.
         // The mergesort algorithm does not guarantee this, so we sort a copy rather
