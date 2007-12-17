@@ -45,6 +45,7 @@ supporting internal functions that are not used by other modules. */
 
 #include "pcre_internal.h"
 
+#include <string.h>
 #include <wtf/ASCIICType.h>
 #include <wtf/FastMalloc.h>
 
