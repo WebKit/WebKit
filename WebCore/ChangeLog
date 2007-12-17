@@ -1,3 +1,23 @@
+2007-12-17  Christian Dywan  <christian@twotoasts.de>
+
+        Reviewed by Alp Toker.
+
+        http://bugs.webkit.org/show_bug.cgi?id=16378
+        Implement Icon for Gtk
+
+        Icon provides a GdkPixbuf containing a themed icon.
+        The icon theme is probed for an icon name according to the
+        Icon Naming Specification or conventional Gnome icon names respectively.
+
+        See http://standards.freedesktop.org/icon-naming-spec/icon-naming-spec-latest.html
+
+        * platform/graphics/Icon.h:
+        * platform/graphics/gtk/IconGtk.cpp:
+        (WebCore::Icon::~Icon):
+        (WebCore::lookupIconName):
+        (WebCore::Icon::newIconForFile):
+        (WebCore::Icon::paint):
+
 2007-12-16  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Mitz.

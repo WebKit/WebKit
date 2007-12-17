@@ -35,6 +35,8 @@ class NSImage;
 typedef struct HICON__* HICON;
 #elif PLATFORM(QT)
 #include <QIcon>
+#elif PLATFORM(GTK)
+#include <gdk/gdk.h>
 #endif
 
 namespace WebCore {
@@ -66,6 +68,8 @@ private:
     HICON m_hIcon;
 #elif PLATFORM(QT)
     QIcon m_icon;
+#elif PLATFORM(GTK)
+    GdkPixbuf* m_icon;
 #endif
 };
 
