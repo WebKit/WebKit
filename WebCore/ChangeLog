@@ -1,3 +1,16 @@
+2007-12-16  Grace Kloba  <klobag@gmail.com>
+
+        Reviewed by Darin Adler.
+
+        Fix http://bugs.webkit.org/show_bug.cgi?id=16433.
+        Bug 16433: LOW_BANDWIDTH_DISPLAY build is broken
+
+        * dom/Document.cpp:
+        (WebCore::Document::Document):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::addLowBandwidthDisplayRequest):
+        (WebCore::FrameLoader::switchOutLowBandwidthDisplayIfReady):
+
 2007-12-16  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Darin.

@@ -4723,6 +4723,7 @@ bool FrameLoader::addLowBandwidthDisplayRequest(CachedResource* cache)
             cache->ref(this);
             return true;
         case CachedResource::ImageResource:
+        case CachedResource::FontResource:
 #if ENABLE(XSLT)
         case CachedResource::XSLStyleSheet:
 #endif
@@ -4780,14 +4781,14 @@ void FrameLoader::switchOutLowBandwidthDisplayIfReady()
             
             // similar to begin(), should be refactored to share more code
             RefPtr<Document> newDoc = DOMImplementation::instance()->
-                createDocument(m_responseMIMEType, m_frame->view(), m_frame->inViewSourceMode());
+                createDocument(m_responseMIMEType, m_frame, m_frame->inViewSourceMode());
             m_frame->setDocument(newDoc);
             newDoc->setURL(m_URL.url());
             newDoc->setBaseURL(m_URL.url());
             if (m_decoder)
                 newDoc->setDecoder(m_decoder.get());
             restoreDocumentState();
-            partClearedInBegin();         
+            dispatchWindowObjectAvailable();         
             newDoc->implicitOpen();
 
             // swap DocLoader ownership

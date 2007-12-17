@@ -280,11 +280,11 @@ Document::Document(DOMImplementation* impl, Frame* frame, bool isXHTML)
     , m_inPageCache(false)
     , m_isAllowedToLoadLocalResources(false)
     , m_useSecureKeyboardEntryWhenActive(false)
+    , m_isXHTML(isXHTML)
+    , m_numNodeLists(0)
 #if USE(LOW_BANDWIDTH_DISPLAY)
     , m_inLowBandwidthDisplay(false)
 #endif
-    , m_isXHTML(isXHTML)
-    , m_numNodeLists(0)
 {
     m_document.resetSkippingRef(this);
 
