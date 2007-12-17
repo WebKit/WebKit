@@ -226,12 +226,12 @@ static RGBA32 convertNSColorToColor(NSColor *color)
     [color drawSwatchInRect:NSMakeRect(0, 0, 1, 1)];
     [NSGraphicsContext restoreGraphicsState];
 
-    NSUInteger pixel[3];
+    NSUInteger pixel[4];
     [offscreenRep getPixel:pixel atX:0 y:0];
 
     [offscreenRep release];
 
-    return makeRGB(pixel[0], pixel[1], pixel[3]);
+    return makeRGB(pixel[0], pixel[1], pixel[2]);
 }
 
 void RenderThemeMac::platformColorsDidChange()
