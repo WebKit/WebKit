@@ -1,5 +1,14 @@
 2007-12-16  Darin Adler  <darin@apple.com>
 
+        Reviewed by Maciej.
+
+        - tests for the argument handling of the executeSql function
+
+        * storage/execute-sql-args-expected.txt: Added.
+        * storage/execute-sql-args.html: Added.
+
+2007-12-16  Darin Adler  <darin@apple.com>
+
         - try to get the system color test passing on the buildbot
 
         I fear this test may be vulnerable to slight platform differences.

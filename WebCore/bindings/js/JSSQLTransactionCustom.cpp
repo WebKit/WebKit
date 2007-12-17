@@ -25,6 +25,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 #include "config.h"
 #include "JSSQLTransaction.h"
 
@@ -32,11 +33,8 @@
 #include "ExceptionCode.h"
 #include "JSCustomSQLStatementCallback.h"
 #include "JSCustomSQLStatementErrorCallback.h"
-#include "kjs_window.h"
-#include "PlatformString.h"
 #include "SQLTransaction.h"
-#include "SQLValue.h"
-#include <kjs/array_instance.h>
+#include "kjs_window.h"
 
 using namespace KJS;
 
@@ -45,33 +43,45 @@ namespace WebCore {
 JSValue* JSSQLTransaction::executeSql(ExecState* exec, const List& args)
 {
     String sqlStatement = args[0]->toString(exec);
-    
+    if (exec->hadException())
+        return jsUndefined();
+
     // Now assemble the list of SQL arguments
     Vector<SQLValue> sqlValues;
-    
-    if (!args[1]->isObject() ||
-        !static_cast<JSObject*>(args[1])->inherits(&ArrayInstance::info)) {
-        setDOMException(exec, TYPE_MISMATCH_ERR);
-        return jsUndefined();
-    }
-    
-    ArrayInstance* array = static_cast<ArrayInstance*>(args[1]);
-    
-    for (unsigned i = 0 ; i < array->getLength(); i++) {
-        JSValue* value = array->getItem(i);
+    if (!args[1]->isUndefinedOrNull()) {
+        JSObject* object = args[1]->getObject();
+        if (!object) {
+            setDOMException(exec, TYPE_MISMATCH_ERR);
+            return jsUndefined();
+        }
+
+        JSValue* lengthValue = object->get(exec, exec->propertyNames().length);
+        if (exec->hadException())
+            return jsUndefined();
+        unsigned length = lengthValue->toUInt32(exec);
+        if (exec->hadException())
+            return jsUndefined();
         
-        if (value->isNull()) {
-            sqlValues.append(SQLValue());
-        } else if (value->isNumber()) {
-            sqlValues.append(value->getNumber());
-        } else {
-            // Convert the argument to a string and append it
-            sqlValues.append(value->toString(exec));
+        for (unsigned i = 0 ; i < length; ++i) {
+            JSValue* value = object->get(exec, i);
+            if (exec->hadException())
+                return jsUndefined();
+            
+            if (value->isNull())
+                sqlValues.append(SQLValue());
+            else if (value->isNumber())
+                sqlValues.append(value->getNumber());
+            else {
+                // Convert the argument to a string and append it
+                sqlValues.append(value->toString(exec));
+                if (exec->hadException())
+                    return jsUndefined();
+            }
         }
     }
 
     RefPtr<SQLStatementCallback> callback;
-    if (args.size() > 2 && !args[2]->isNull()) {
+    if (!args[2]->isUndefinedOrNull()) {
         JSObject* object = args[2]->getObject();
         if (!object) {
             setDOMException(exec, TYPE_MISMATCH_ERR);
@@ -83,7 +93,7 @@ JSValue* JSSQLTransaction::executeSql(ExecState* exec, const List& args)
     }
     
     RefPtr<SQLStatementErrorCallback> errorCallback;
-    if (args.size() > 3 && !args[3]->isNull()) {
+    if (!args[3]->isUndefinedOrNull()) {
         JSObject* object = args[3]->getObject();
         if (!object) {
             setDOMException(exec, TYPE_MISMATCH_ERR);
