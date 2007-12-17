@@ -2,6 +2,17 @@
 
         Reviewed by Maciej.
 
+        - test for http://bugs.webkit.org/show_bug.cgi?id=16459
+          REGRESSION: assertion failure with regexp with \B in a case-ignoring character range
+          <rdar://problem/5646361>
+
+        * fast/js/regexp-overflow-expected.txt: Updated.
+        * fast/js/resources/regexp-overflow.js: Added test cases.
+
+2007-12-16  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
         - tests for the argument handling of the executeSql function
 
         * storage/execute-sql-args-expected.txt: Added.

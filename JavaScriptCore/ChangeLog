@@ -1,3 +1,22 @@
+2007-12-16  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=16459
+          REGRESSION: assertion failure with regexp with \B in a case-ignoring character range
+          <rdar://problem/5646361>
+
+        The problem was that \B was not handled properly in character classes.
+
+        Test: fast/js/regexp-overflow.html
+
+        * pcre/pcre_compile.cpp:
+        (check_escape): Added handling of ESC_b and ESC_B in character classes here.
+        Allows us to get rid of the handling of \b in character classes from all the
+        call sites that handle it separately and to handle \B properly as well.
+        (compileBranch): Remove the ESC_b handling, since it's not needed any more.
+        (calculateCompiledPatternLengthAndFlags): Ditto.
+
 2007-12-16  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Maciej Stachowiak.

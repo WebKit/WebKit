@@ -196,12 +196,17 @@ static int check_escape(const UChar** ptrptr, const UChar* patternEnd, ErrorCode
      Otherwise further processing may be required. */
     
     if (c < '0' || c > 'z') { /* Not alphameric */
-    } else if (int escapeValue = escapes[c - '0'])
+    } else if (int escapeValue = escapes[c - '0']) {
         c = escapeValue;
-    
+        if (isclass) {
+            if (-c == ESC_b)
+                c = '\b'; /* \b is backslash in a class */
+            else if (-c == ESC_B)
+                c = 'B'; /* and \B is a capital B in a class (in browsers event though ECMAScript 15.10.2.19 says it raises an error) */
+        }
     /* Escapes that need further processing, or are illegal. */
     
-    else {
+    } else {
         switch (c) {
         case '1':
         case '2':
@@ -934,10 +939,6 @@ compileBranch(int options, int* brackets, uschar** codeptr,
                     
                     if (c == '\\') {
                         c = check_escape(&ptr, patternEnd, errorcodeptr, *brackets, true);
-                        
-                        if (-c == ESC_b)
-                            c = '\b';       /* \b is backslash in a class */
-                        
                         if (c < 0) {
                             class_charcount += 2;     /* Greater than 1 is what matters */
                             switch (-c) {
@@ -1006,16 +1007,10 @@ compileBranch(int options, int* brackets, uschar** codeptr,
                             const UChar* oldptr = ptr;
                             d = check_escape(&ptr, patternEnd, errorcodeptr, *brackets, true);
                             
-                            /* \b is backslash; \X is literal X; any other special means the '-'
-                             was literal */
-                            
+                            /* \X is literal X; any other special means the '-' was literal */
                             if (d < 0) {
-                                if (d == -ESC_b)
-                                    d = '\b';
-                                else {
-                                    ptr = oldptr - 2;
-                                    goto LONE_SINGLE_CHARACTER;  /* A few lines below */
-                                }
+                                ptr = oldptr - 2;
+                                goto LONE_SINGLE_CHARACTER;  /* A few lines below */
                             }
                         }
                         
@@ -2374,11 +2369,6 @@ static int calculateCompiledPatternLengthAndFlags(const UChar* pattern, int patt
                         if (errorcode != 0)
                             return -1;
                         
-                        /* \b is backspace inside a class; \X is literal */
-                        
-                        if (-c == ESC_b)
-                            c = '\b';
-                        
                         /* Handle escapes that turn into characters */
                         
                         if (c >= 0)
@@ -2413,8 +2403,6 @@ static int calculateCompiledPatternLengthAndFlags(const UChar* pattern, int patt
                                 d = check_escape(&ptr, patternEnd, &errorcode, bracount, true);
                                 if (errorcode != 0)
                                     return -1;
-                                if (-d == ESC_b)
-                                    d = '\b';        /* backspace */
                             }
                             else if ((ptr + 1 < patternEnd) && ptr[1] != ']')
                                 d = *++ptr;
