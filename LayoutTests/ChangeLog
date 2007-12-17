@@ -1,3 +1,10 @@
+2007-12-17  Darin Adler  <darin@apple.com>
+
+        - disabling this test until we can find a way to make it pass on diverse machines
+
+        * fast/css/css2-system-color.html: Removed.
+        * fast/css/css2-system-color.html-disabled: Copied from fast/css/css2-system-color.html.
+
 2007-12-17  Anders Carlsson  <andersca@apple.com>
 
         Fix argument to window.open.
