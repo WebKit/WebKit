@@ -1,3 +1,13 @@
+2007-12-16  Brent Fulgham  <bfulgham@gmail.com>
+
+        Reviewed by Adam Roben.
+
+        http://bugs.webkit.org/show_bug.cgi?id=16315
+        FindSafari needs a path-only option.
+
+        * FindSafari/FindSafari.cpp:
+        (_tmain):
+
 2007-12-16  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin.

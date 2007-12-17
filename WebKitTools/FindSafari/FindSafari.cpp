@@ -129,11 +129,16 @@ int _tmain(int argc, TCHAR* argv[])
     }
 
     bool printLauncher = false;
+    bool printEnvironment = false;
     bool debugger = false;
 
     for (int i = 1; i < argc; ++i) {
         if (!_tcscmp(argv[i], TEXT("/printSafariLauncher"))) {
             printLauncher = true;
+            continue;
+        }
+        if (!_tcscmp(argv[i], TEXT("/printSafariEnvironment"))) {
+            printEnvironment = true;
             continue;
         }
         if (!_tcscmp(argv[i], TEXT("/debugger"))) {
@@ -142,7 +147,12 @@ int _tmain(int argc, TCHAR* argv[])
         }
     }
 
-    if (!printLauncher) {
+    // printLauncher is inclusive of printEnvironment, so do not
+    // leave both enabled:
+    if (printLauncher && printEnvironment)
+        printEnvironment = false;
+
+    if (!printLauncher && !printEnvironment) {
         _tprintf(TEXT("%s\n"), path);
         free(path);
         return 0;
@@ -176,9 +186,13 @@ int _tmain(int argc, TCHAR* argv[])
     }
 
     LPCTSTR* endLines = debugger ? debuggerLines : launchLines;
-    for (unsigned i = 0; i < (debugger ? ARRAYSIZE(debuggerLines) : ARRAYSIZE(launchLines)); ++i) {
-        _tprintf(endLines[i], command);
-        _tprintf(TEXT("\n"));
+
+    // Don't print launch command if we just want the environment set up...
+    if (!printEnvironment) {
+       for (unsigned i = 0; i < (debugger ? ARRAYSIZE(debuggerLines) : ARRAYSIZE(launchLines)); ++i) {
+           _tprintf(endLines[i], command);
+           _tprintf(TEXT("\n"));
+       }
     }
 
     free(path);
