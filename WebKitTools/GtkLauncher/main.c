@@ -183,7 +183,6 @@ int
 main (int argc, char* argv[])
 {
     gtk_init (&argc, &argv);
-    webkit_init ();
 
     GtkWidget* vbox = gtk_vbox_new (FALSE, 0);
     gtk_box_pack_start (GTK_BOX (vbox), create_toolbar (), FALSE, FALSE, 0);

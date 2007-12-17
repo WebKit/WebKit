@@ -1,3 +1,14 @@
+2007-12-14  Juan A. Suarez Romero  <jasuarez@igalia.com>
+
+        Reviewed by Alp Toker.
+
+        http://bugs.webkit.org/show_bug.cgi?id=16042
+        [GTK] Eliminate webkit_init()
+
+        Move webkit initialization to WebView class init.
+
+        * WebCore.pro:
+
 2007-12-17  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Reviewed by Darin.

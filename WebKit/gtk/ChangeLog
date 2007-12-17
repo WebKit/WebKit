@@ -1,3 +1,22 @@
+2007-12-14  Juan A. Suarez Romero  <jasuarez@igalia.com>
+
+        Reviewed by Alp Toker.
+
+        http://bugs.webkit.org/show_bug.cgi?id=16042
+        [GTK] Eliminate webkit_init()
+
+        Move webkit initialization to WebView class init.
+
+        * WebView/headers.pri:
+        * WebView/webkit.h:
+        * WebView/webkitglobal.cpp: Removed.
+        * WebView/webkitglobal.h: Removed.
+        * WebView/webkitprivate.cpp:
+        (WebKit::webkit_init):
+        * WebView/webkitprivate.h:
+        * WebView/webkitwebframe.cpp:
+        * WebView/webkitwebview.cpp:
+
 2007-12-17  Luca Bruno  <lethalman88@gmail.com>
 
         Reviewed by Alp Toker.

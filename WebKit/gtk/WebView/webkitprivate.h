@@ -49,6 +49,8 @@ namespace WebKit {
 }
 
 extern "C" {
+    void webkit_init();
+
     #define WEBKIT_WEB_VIEW_GET_PRIVATE(obj)    (G_TYPE_INSTANCE_GET_PRIVATE((obj), WEBKIT_TYPE_WEB_VIEW, WebKitWebViewPrivate))
     typedef struct _WebKitWebViewPrivate WebKitWebViewPrivate;
     struct _WebKitWebViewPrivate {
@@ -83,7 +85,6 @@ extern "C" {
     };
 
     WebKitWebFrame* webkit_web_frame_init_with_web_view(WebKitWebView*, WebCore::HTMLFrameOwnerElement*);
-
 
     // TODO: Move these to webkitwebframe.h once these functions are fully
     // implemented and their API has been discussed.

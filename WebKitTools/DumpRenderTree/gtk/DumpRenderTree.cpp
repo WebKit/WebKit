@@ -313,7 +313,6 @@ int main(int argc, char* argv[])
         }
 
     gtk_init(&argc, &argv);
-    webkit_init();
 
     GtkWidget* window = gtk_window_new(GTK_WINDOW_POPUP);
     GtkContainer* container = GTK_CONTAINER(gtk_fixed_new());

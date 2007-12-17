@@ -953,7 +953,6 @@ gtk-port {
         ../WebCore/platform/gtk/ClipboardGtk.h \
         ../WebKit/gtk/WebView/webkit.h \
         ../WebKit/gtk/WebView/webkitdefines.h \
-        ../WebKit/gtk/WebView/webkitglobal.h \
         ../WebKit/gtk/WebView/webkitnetworkrequest.h \
         ../WebKit/gtk/WebView/webkitprivate.h \
         ../WebKit/gtk/WebView/webkitsettings.h \
@@ -1029,7 +1028,6 @@ gtk-port {
         platform/image-decoders/bmp/BMPImageDecoder.cpp \
         platform/image-decoders/ico/ICOImageDecoder.cpp \
         platform/image-decoders/xbm/XBMImageDecoder.cpp \
-        ../WebKit/gtk/WebView/webkitglobal.cpp \
         ../WebKit/gtk/WebView/webkitnetworkrequest.cpp \
         ../WebKit/gtk/WebView/webkitprivate.cpp \
         ../WebKit/gtk/WebView/webkitsettings.cpp \

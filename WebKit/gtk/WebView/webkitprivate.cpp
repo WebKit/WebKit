@@ -21,8 +21,10 @@
 
 #include "webkitprivate.h"
 #include "ChromeClientGtk.h"
+#include "DatabaseTracker.h"
 #include "FrameLoader.h"
 #include "FrameLoaderClientGtk.h"
+#include "Logging.h"
 #include "NotImplemented.h"
 
 using namespace WebCore;
@@ -81,4 +83,23 @@ WebKitWebView* kit(WebCore::Page* corePage)
     WebKit::ChromeClient* client = static_cast<WebKit::ChromeClient*>(corePage->chrome()->client());
     return client ? client->webView() : 0;
 }
+
+}
+
+void webkit_init()
+{
+    static bool isInitialized = false;
+    if (isInitialized)
+        return;
+    isInitialized = true;
+
+    WebCore::initializeThreading();
+    WebCore::InitializeLoggingChannelsIfNecessary();
+
+#if ENABLE(DATABASE)
+    // FIXME: It should be possible for client applications to override this default location
+    gchar* databaseDirectory = g_build_filename(g_get_user_data_dir(), "webkit", "databases", NULL);
+    WebCore::DatabaseTracker::tracker().setDatabasePath(databaseDirectory);
+    g_free(databaseDirectory);
+#endif
 }

@@ -72,6 +72,8 @@ static void webkit_web_frame_finalize(GObject* object)
 
 static void webkit_web_frame_class_init(WebKitWebFrameClass* frameClass)
 {
+    webkit_init();
+
     g_type_class_add_private(frameClass, sizeof(WebKitWebFramePrivate));
 
     /*

@@ -21,7 +21,6 @@
 #define __WEBKIT_H__
 
 #include <webkitdefines.h>
-#include <webkitglobal.h>
 #include <webkitnetworkrequest.h>
 #include <webkitwebframe.h>
 #include <webkitwebview.h>
