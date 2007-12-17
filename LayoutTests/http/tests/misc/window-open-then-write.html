@@ -7,7 +7,7 @@ if (window.layoutTestController) {
 }
 
 function runTest() {
-    var w = window.open('test.html');
+    var w = window.open('window-open-then-write.html');
     w.document.write('<img src="resources/compass.jpg" onload="if (window.layoutTestController) setTimeout(\'layoutTestController.notifyDone()\', 100);">');
     w.document.close();
 }
