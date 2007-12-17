@@ -1,3 +1,46 @@
+2007-12-17  Maciej Stachowiak  <mjs@apple.com>
+
+        Rubber stamped by Mark.
+        
+        - Add a copy of SunSpider 0.9 to the site
+
+        * perf: Added.
+        * perf/sunspider-0.9: Added.
+        * perf/sunspider-0.9/3d-cube.html: Added.
+        * perf/sunspider-0.9/3d-morph.html: Added.
+        * perf/sunspider-0.9/3d-raytrace.html: Added.
+        * perf/sunspider-0.9/access-binary-trees.html: Added.
+        * perf/sunspider-0.9/access-fannkuch.html: Added.
+        * perf/sunspider-0.9/access-nbody.html: Added.
+        * perf/sunspider-0.9/access-nsieve.html: Added.
+        * perf/sunspider-0.9/bitops-3bit-bits-in-byte.html: Added.
+        * perf/sunspider-0.9/bitops-bits-in-byte.html: Added.
+        * perf/sunspider-0.9/bitops-bitwise-and.html: Added.
+        * perf/sunspider-0.9/bitops-nsieve-bits.html: Added.
+        * perf/sunspider-0.9/controlflow-recursive.html: Added.
+        * perf/sunspider-0.9/crypto-aes.html: Added.
+        * perf/sunspider-0.9/crypto-md5.html: Added.
+        * perf/sunspider-0.9/crypto-sha1.html: Added.
+        * perf/sunspider-0.9/date-format-tofte.html: Added.
+        * perf/sunspider-0.9/date-format-xparb.html: Added.
+        * perf/sunspider-0.9/math-cordic.html: Added.
+        * perf/sunspider-0.9/math-partial-sums.html: Added.
+        * perf/sunspider-0.9/math-spectral-norm.html: Added.
+        * perf/sunspider-0.9/regexp-dna.html: Added.
+        * perf/sunspider-0.9/string-base64.html: Added.
+        * perf/sunspider-0.9/string-fasta.html: Added.
+        * perf/sunspider-0.9/string-tagcloud.html: Added.
+        * perf/sunspider-0.9/string-unpack-code.html: Added.
+        * perf/sunspider-0.9/string-validate-input.html: Added.
+        * perf/sunspider-0.9/sunspider-analyze-results.js: Added.
+        * perf/sunspider-0.9/sunspider-compare-results.js: Added.
+        * perf/sunspider-0.9/sunspider-driver.html: Added.
+        * perf/sunspider-0.9/sunspider-record-result.js: Added.
+        * perf/sunspider-0.9/sunspider-results.html: Added.
+        * perf/sunspider-0.9/sunspider-test-prefix.js: Added.
+        * perf/sunspider-0.9/sunspider.css: Added.
+        * perf/sunspider-0.9/sunspider.html: Added.
+
 2007-12-16  Brent Fulgham  <bfulgham@gmail.com>
 
         Reviewed by Maciej Stachowiak.
