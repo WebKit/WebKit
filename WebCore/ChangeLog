@@ -1,3 +1,20 @@
+2007-12-17  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Reviewed by Darin.
+
+        <rdar://problem/5651291> REGRESSION: Flash content doesn't display
+        (www.adobe.com)
+
+        We were passing NPEvent** instead of NPEvent* to NPP_HandleEvent.
+
+        * plugins/win/PluginViewWin.cpp:
+        (WebCore::PluginViewWin::dispatchNPEvent): Changed to take NPEvent&, not
+        NPEvent*
+        (WebCore::PluginViewWin::paint): Pass NPEvent, not NPEvent*
+        (WebCore::PluginViewWin::handleKeyboardEvent): same
+        (WebCore::PluginViewWin::handleMouseEvent): same
+        * plugins/win/PluginViewWin.h:
+
 2007-12-17  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin.

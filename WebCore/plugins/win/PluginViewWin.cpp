@@ -438,14 +438,14 @@ void PluginViewWin::paintMissingPluginIcon(GraphicsContext* context, const IntRe
     context->restore();
 }
 
-bool PluginViewWin::dispatchNPEvent(NPEvent* npEvent)
+bool PluginViewWin::dispatchNPEvent(NPEvent& npEvent)
 {
     if (!m_plugin->pluginFuncs()->event)
         return true;
 
     bool shouldPop = false;
 
-    if (m_plugin->pluginFuncs()->version < NPVERS_HAS_POPUPS_ENABLED_STATE && isWindowsMessageUserGesture(npEvent->event)) {
+    if (m_plugin->pluginFuncs()->version < NPVERS_HAS_POPUPS_ENABLED_STATE && isWindowsMessageUserGesture(npEvent.event)) {
         pushPopupsEnabledState(true);
         shouldPop = true;
     }
@@ -502,7 +502,7 @@ void PluginViewWin::paint(GraphicsContext* context, const IntRect& rect)
     npEvent.lParam = reinterpret_cast<uint32>(&windowpos);
     npEvent.wParam = 0;
 
-    dispatchNPEvent(&npEvent);
+    dispatchNPEvent(npEvent);
 
     setNPWindowRect(frameGeometry());
 
@@ -513,7 +513,7 @@ void PluginViewWin::paint(GraphicsContext* context, const IntRect& rect)
     // ignores it so we just pass null.
     npEvent.lParam = 0;
 
-    dispatchNPEvent(&npEvent);
+    dispatchNPEvent(npEvent);
 
     context->releaseWindowsContext(hdc);
 }
@@ -533,7 +533,7 @@ void PluginViewWin::handleKeyboardEvent(KeyboardEvent* event)
     }
 
     KJS::JSLock::DropAllLocks;
-    if (!dispatchNPEvent(&npEvent))
+    if (!dispatchNPEvent(npEvent))
         event->setDefaultHandled();
 }
 
@@ -605,7 +605,7 @@ void PluginViewWin::handleMouseEvent(MouseEvent* event)
     HCURSOR currentCursor = ::GetCursor();
 
     KJS::JSLock::DropAllLocks;
-    if (!dispatchNPEvent(&npEvent))
+    if (!dispatchNPEvent(npEvent))
         event->setDefaultHandled();
 
     // Currently, Widget::setCursor is always called after this function in EventHandler.cpp
