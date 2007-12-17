@@ -2,6 +2,102 @@
 
         Reviewed by Maciej.
 
+        - http://bugs.webkit.org/show_bug.cgi?id=16438
+        - removed some more unused code
+        - changed quite a few more names to WebKit-style
+        - moved more things out of pcre_internal.h
+        - changed some indentation to WebKit-style
+        - improved design of the functions for reading and writing
+          2-byte values from the opcode stream (in pcre_internal.h)
+
+        * pcre/dftables.cpp:
+        (main): Added the kjs prefix a normal way in lieu of using macros.
+
+        * pcre/pcre_compile.cpp: Moved some definitions here from pcre_internal.h.
+        (errorText): Name changes, fewer typedefs.
+        (checkEscape): Ditto. Changed uppercase conversion to use toASCIIUpper.
+        (isCountedRepeat): Name change.
+        (readRepeatCounts): Name change.
+        (firstSignificantOpcode): Got rid of the use of OP_lengths, which is
+        very lightly used here. Hard-coded the length of OP_BRANUMBER.
+        (firstSignificantOpcodeSkippingAssertions): Ditto. Also changed to
+        use the advanceToEndOfBracket function.
+        (getOthercaseRange): Name changes.
+        (encodeUTF8): Ditto.
+        (compileBranch): Name changes. Removed unused after_manual_callout and
+        the code to handle it. Removed code to handle OP_ONCE since we never
+        emit this opcode. Changed to use advanceToEndOfBracket in more places.
+        (compileBracket): Name changes.
+        (branchIsAnchored): Removed code to handle OP_ONCE since we never emit
+        this opcode.
+        (bracketIsAnchored): Name changes.
+        (branchNeedsLineStart): More fo the same.
+        (bracketNeedsLineStart): Ditto.
+        (branchFindFirstAssertedCharacter): Removed OP_ONCE code.
+        (bracketFindFirstAssertedCharacter): More of the same.
+        (calculateCompiledPatternLengthAndFlags): Ditto.
+        (returnError): Name changes.
+        (jsRegExpCompile): Ditto.
+
+        * pcre/pcre_exec.cpp: Moved some definitions here from pcre_internal.h.
+        (matchRef): Updated names.
+        Improved macros to use the do { } while(0) idiom so they expand to single
+        statements rather than to blocks or multiple statements. And refeactored
+        the recursive match macros.
+        (MatchStack::pushNewFrame): Name changes.
+        (getUTF8CharAndIncrementLength): Name changes.
+        (match): Name changes. Removed the ONCE opcode.
+        (jsRegExpExecute): Name changes.
+
+        * pcre/pcre_internal.h: Removed quite a few unneeded includes. Rewrote
+        quite a few comments. Removed the macros that add kjs prefixes to the
+        functions with external linkage; instead renamed the functions. Removed
+        the unneeded typedefs pcre_uint16, pcre_uint32, and uschar. Removed the
+        dead and not-all-working code for LINK_SIZE values other than 2, although
+        we aim to keep the abstraction working. Removed the OP_LENGTHS macro.
+        (put2ByteValue): Replaces put2ByteOpcodeValueAtOffset.
+        (get2ByteValue): Replaces get2ByteOpcodeValueAtOffset.
+        (put2ByteValueAndAdvance): Replaces put2ByteOpcodeValueAtOffsetAndAdvance.
+        (putLinkValueAllowZero): Replaces putOpcodeValueAtOffset; doesn't do the
+        addition, since a comma is really no better than a plus sign. Added an
+        assertion to catch out of range values and changed the parameter type to
+        int rather than unsigned.
+        (getLinkValueAllowZero): Replaces getOpcodeValueAtOffset.
+        (putLinkValue): New function that most former callers of the
+        putOpcodeValueAtOffset function can use; asserts the value that is
+        being stored is non-zero and then calls putLinkValueAllowZero.
+        (getLinkValue): Ditto.
+        (putLinkValueAndAdvance): Replaces putOpcodeValueAtOffsetAndAdvance. No
+        caller was using an offset, which makes sense given the advancing behavior.
+        (putLinkValueAllowZeroAndAdvance): Ditto.
+        (isBracketOpcode): Added. For use in an assertion.
+        (advanceToEndOfBracket): Renamed from moveOpcodePtrPastAnyAlternateBranches,
+        and removed comments about how it's not well designed. This function takes
+        a pointer to the beginning of a bracket and advances to the end of the
+        bracket.
+
+        * pcre/pcre_tables.cpp: Updated names.
+        * pcre/pcre_ucp_searchfuncs.cpp:
+        (kjs_pcre_ucp_othercase): Ditto.
+        * pcre/pcre_xclass.cpp:
+        (getUTF8CharAndAdvancePointer): Ditto.
+        (kjs_pcre_xclass): Ditto.
+        * pcre/ucpinternal.h: Ditto.
+
+        * wtf/ASCIICType.h:
+        (WTF::isASCIIAlpha): Added an int overload, like the one we already have for
+        isASCIIDigit.
+        (WTF::isASCIIAlphanumeric): Ditto.
+        (WTF::isASCIIHexDigit): Ditto.
+        (WTF::isASCIILower): Ditto.
+        (WTF::isASCIISpace): Ditto.
+        (WTF::toASCIILower): Ditto.
+        (WTF::toASCIIUpper): Ditto.
+
+2007-12-16  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
         - fix http://bugs.webkit.org/show_bug.cgi?id=16459
           REGRESSION: assertion failure with regexp with \B in a case-ignoring character range
           <rdar://problem/5646361>
@@ -1170,7 +1266,9 @@
 
         Reviewed by Maciej.
 
-        Centralize code for subjectPtr adjustments using inlines, only ever check for a single trailing surrogate (as UTF16 only allows one), possibly fix PCRE bugs involving char classes and garbled UTF16 strings.
+        Centralize code for subjectPtr adjustments using inlines, only ever check for a single
+        trailing surrogate (as UTF16 only allows one), possibly fix PCRE bugs involving char
+        classes and garbled UTF16 strings.
 
         * pcre/pcre_exec.cpp:
         (match):

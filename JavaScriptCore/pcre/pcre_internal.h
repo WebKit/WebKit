@@ -76,33 +76,13 @@ total length. */
 #pragma warning(disable: 4244)
 #endif
 
+#include "pcre.h"
+
 /* The value of LINK_SIZE determines the number of bytes used to store links as
 offsets within the compiled regex. The default is 2, which allows for compiled
-patterns up to 64K long. This covers the vast majority of cases. However, PCRE
-can also be compiled to use 3 or 4 bytes instead. This allows for longer
-patterns in extreme cases. On systems that support it, "configure" can be used
-to override this default. */
+patterns up to 64K long. */
 
 #define LINK_SIZE   2
-
-/* The below limit restricts the number of recursive match calls in order to
-limit the maximum amount of stack (or heap, if NO_RECURSE is defined) that is used. The
-value of MATCH_LIMIT_RECURSION applies only to recursive calls of match().
- 
- This limit is tied to the size of MatchFrame.  Right now we allow PCRE to allocate up
- to MATCH_LIMIT_RECURSION - 16 * sizeof(MatchFrame) bytes of "stack" space before we give up.
- Currently that's 100000 - 16 * (23 * 4)  ~ 90MB
- */
-
-#define MATCH_LIMIT_RECURSION 100000
-
-#define _pcre_default_tables kjs_pcre_default_tables
-#define _pcre_ord2utf8 kjs_pcre_ord2utf8
-#define _pcre_utf8_table1 kjs_pcre_utf8_table1
-#define _pcre_utf8_table2 kjs_pcre_utf8_table2
-#define _pcre_utf8_table3 kjs_pcre_utf8_table3
-#define _pcre_utf8_table4 kjs_pcre_utf8_table4
-#define _pcre_xclass kjs_pcre_xclass
 
 /* Define DEBUG to get debugging output on stdout. */
 
@@ -121,118 +101,72 @@ all, it had only been about 10 years then... */
 #define DPRINTF(p) /*nothing*/
 #endif
 
-/* Standard C headers plus the external interface definition. The only time
-setjmp and stdarg are used is when NO_RECURSE is set. */
-
-#include <ctype.h>
-#include <limits.h>
-#include <setjmp.h>
-#include <stdarg.h>
-#include <stddef.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
-/* Include the public PCRE header and the definitions of UCP character property
-values. */
-
-#include "pcre.h"
-
-typedef unsigned short pcre_uint16;
-typedef unsigned pcre_uint32;
-typedef unsigned char uschar;
-
 /* PCRE keeps offsets in its compiled code as 2-byte quantities (always stored
 in big-endian order) by default. These are used, for example, to link from the
 start of a subpattern to its alternatives and its end. The use of 2 bytes per
 offset limits the size of the compiled regex to around 64K, which is big enough
 for almost everybody. However, I received a request for an even bigger limit.
 For this reason, and also to make the code easier to maintain, the storing and
-loading of offsets from the byte string is now handled by the macros that are
-defined here.
-
-The macros are controlled by the value of LINK_SIZE. This defaults to 2 in
-the config.h file, but can be overridden by using -D on the command line. This
-is automated on Unix systems via the "configure" command. */
-
-#if LINK_SIZE == 2
-
-static inline void putOpcodeValueAtOffset(uschar* opcodePtr, size_t offset, unsigned short value)
-{
-    opcodePtr[offset] = value >> 8;
-    opcodePtr[offset + 1] = value & 255;
-}
-
-static inline short getOpcodeValueAtOffset(const uschar* opcodePtr, size_t offset)
-{
-    return ((opcodePtr[offset] << 8) | opcodePtr[offset + 1]);
-}
-
-#define MAX_PATTERN_SIZE (1 << 16)
-
-#elif LINK_SIZE == 3
-
-static inline void putOpcodeValueAtOffset(uschar* opcodePtr, size_t offset, unsigned value)
-{
-    ASSERT(!(value & 0xFF000000)); // This function only allows values < 2^24
-    opcodePtr[offset] = value >> 16;
-    opcodePtr[offset + 1] = value >> 8;
-    opcodePtr[offset + 2] = value & 255;
-}
-
-static inline int getOpcodeValueAtOffset(const uschar* opcodePtr, size_t offset)
-{
-    return ((opcodePtr[offset] << 16) | (opcodePtr[offset + 1] << 8) | opcodePtr[offset + 2]);
-}
-
-#define MAX_PATTERN_SIZE (1 << 24)
-
-#elif LINK_SIZE == 4
-
-static inline void putOpcodeValueAtOffset(uschar* opcodePtr, size_t offset, unsigned value)
-{
-    opcodePtr[offset] = value >> 24;
-    opcodePtr[offset + 1] = value >> 16;
-    opcodePtr[offset + 2] = value >> 8;
-    opcodePtr[offset + 3] = value & 255;
-}
-
-static inline int getOpcodeValueAtOffset(const uschar* opcodePtr, size_t offset)
-{
-    return ((opcodePtr[offset] << 24) | (opcodePtr[offset + 1] << 16) | (opcodePtr[offset + 2] << 8) | opcodePtr[offset + 3]);
-}
-
-#define MAX_PATTERN_SIZE (1 << 30)   /* Keep it positive */
-
-#else
-#error LINK_SIZE must be either 2, 3, or 4
-#endif
-
-static inline void putOpcodeValueAtOffsetAndAdvance(uschar*& opcodePtr, size_t offset, unsigned short value)
-{
-    putOpcodeValueAtOffset(opcodePtr, offset, value);
-    opcodePtr += LINK_SIZE;
-}
+loading of offsets from the byte string is now handled by the functions that are
+defined here. */
 
 /* PCRE uses some other 2-byte quantities that do not change when the size of
 offsets changes. There are used for repeat counts and for other things such as
 capturing parenthesis numbers in back references. */
 
-static inline void put2ByteOpcodeValueAtOffset(uschar* opcodePtr, size_t offset, unsigned short value)
+static inline void put2ByteValue(unsigned char* opcodePtr, int value)
 {
-    opcodePtr[offset] = value >> 8;
-    opcodePtr[offset + 1] = value & 255;
+    ASSERT(value >= 0 && value <= 0xFFFF);
+    opcodePtr[0] = value >> 8;
+    opcodePtr[1] = value;
 }
 
-static inline short get2ByteOpcodeValueAtOffset(const uschar* opcodePtr, size_t offset)
+static inline int get2ByteValue(const unsigned char* opcodePtr)
 {
-    return ((opcodePtr[offset] << 8) | opcodePtr[offset + 1]);
+    return (opcodePtr[0] << 8) | opcodePtr[1];
 }
 
-static inline void put2ByteOpcodeValueAtOffsetAndAdvance(uschar*& opcodePtr, size_t offset, unsigned short value)
+static inline void put2ByteValueAndAdvance(unsigned char*& opcodePtr, int value)
 {
-    put2ByteOpcodeValueAtOffset(opcodePtr, offset, value);
+    put2ByteValue(opcodePtr, value);
     opcodePtr += 2;
+}
+
+static inline void putLinkValueAllowZero(unsigned char* opcodePtr, int value)
+{
+    put2ByteValue(opcodePtr, value);
+}
+
+static inline int getLinkValueAllowZero(const unsigned char* opcodePtr)
+{
+    return get2ByteValue(opcodePtr);
+}
+
+#define MAX_PATTERN_SIZE (1 << 16)
+
+static inline void putLinkValue(unsigned char* opcodePtr, int value)
+{
+    ASSERT(value);
+    putLinkValueAllowZero(opcodePtr, value);
+}
+
+static inline int getLinkValue(const unsigned char* opcodePtr)
+{
+    int value = getLinkValueAllowZero(opcodePtr);
+    ASSERT(value);
+    return value;
+}
+
+static inline void putLinkValueAndAdvance(unsigned char*& opcodePtr, int value)
+{
+    putLinkValue(opcodePtr, value);
+    opcodePtr += LINK_SIZE;
+}
+
+static inline void putLinkValueAllowZeroAndAdvance(unsigned char*& opcodePtr, int value)
+{
+    putLinkValueAllowZero(opcodePtr, value);
+    opcodePtr += LINK_SIZE;
 }
 
 // FIXME: These are really more of a "compiled regexp state" than "regexp options"
@@ -244,16 +178,6 @@ enum RegExpOptions {
     IgnoreCaseOption = 0x00000001,
     MatchAcrossMultipleLinesOption = 0x00000002
 };
-
-/* Negative values for the firstchar and reqchar variables */
-
-#define REQ_UNSET (-2)
-#define REQ_NONE  (-1)
-
-/* The maximum remaining length of subject we are prepared to search for a
-req_byte match. */
-
-#define REQ_BYTE_MAX 1000
 
 /* Flags added to firstbyte or reqbyte; a "non-literal" item is either a
 variable-length repeat, or a anything other than literal characters. */
@@ -366,8 +290,6 @@ must also be updated to match. */
     macro(ASSERT) \
     macro(ASSERT_NOT) \
     \
-    macro(ONCE) \
-    \
     macro(BRAZERO) \
     macro(BRAMINZERO) \
     macro(BRANUMBER) \
@@ -381,57 +303,15 @@ study.c that all opcodes are less than 128 in value. This makes handling UTF-8
 character sequences easier. */
 
 /* The highest extraction number before we have to start using additional
-bytes. (Originally PCRE didn't have support for extraction counts highter than
+bytes. (Originally PCRE didn't have support for extraction counts higher than
 this number.) The value is limited by the number of opcodes left after OP_BRA,
 i.e. 255 - OP_BRA. We actually set it a bit lower to leave room for additional
 opcodes. */
 
+/* FIXME: Note that OP_BRA + 100 is > 128, so the two comments above
+are in conflict! */
+
 #define EXTRACT_BASIC_MAX  100
-
-/* This macro defines the length of fixed length operations in the compiled
-regex. The lengths are used when searching for specific things, and also in the
-debugging printing of a compiled regex. We use a macro so that it can be
-defined close to the definitions of the opcodes themselves.
-
-As things have been extended, some of these are no longer fixed lenths, but are
-minima instead. For example, the length of a single-character repeat may vary
-in UTF-8 mode. The code that uses this table must know about such things. */
-
-#define OP_LENGTHS \
-  1,                             /* End                                    */ \
-  1, 1, 1, 1, 1, 1, 1, 1,        /* \B, \b, \D, \d, \S, \s, \W, \w         */ \
-  1,                             /* Any                                    */ \
-  1, 1,                          /* ^, $                                   */ \
-  2, 2,                          /* Char, Charnc - minimum lengths         */ \
-  2, 2,                          /* ASCII char or non-cased                */ \
-  2,                             /* not                                    */ \
-  /* Positive single-char repeats                            ** These are  */ \
-  2, 2, 2, 2, 2, 2,              /* *, *?, +, +?, ?, ??      ** minima in  */ \
-  4, 4, 4,                       /* upto, minupto, exact     ** UTF-8 mode */ \
-  /* Negative single-char repeats - only for chars < 256                   */ \
-  2, 2, 2, 2, 2, 2,              /* NOT *, *?, +, +?, ?, ??                */ \
-  4, 4, 4,                       /* NOT upto, minupto, exact               */ \
-  /* Positive type repeats                                                 */ \
-  2, 2, 2, 2, 2, 2,              /* Type *, *?, +, +?, ?, ??               */ \
-  4, 4, 4,                       /* Type upto, minupto, exact              */ \
-  /* Character class & ref repeats                                         */ \
-  1, 1, 1, 1, 1, 1,              /* *, *?, +, +?, ?, ??                    */ \
-  5, 5,                          /* CRRANGE, CRMINRANGE                    */ \
- 33,                             /* CLASS                                  */ \
- 33,                             /* NCLASS                                 */ \
-  0,                             /* XCLASS - variable length               */ \
-  3,                             /* REF                                    */ \
-  1 + LINK_SIZE,                   /* Alt                                    */ \
-  1 + LINK_SIZE,                   /* Ket                                    */ \
-  1 + LINK_SIZE,                   /* KetRmax                                */ \
-  1 + LINK_SIZE,                   /* KetRmin                                */ \
-  1 + LINK_SIZE,                   /* Assert                                 */ \
-  1 + LINK_SIZE,                   /* Assert not                             */ \
-  1 + LINK_SIZE,                   /* Once                                   */ \
-  1, 1,                          /* BRAZERO, BRAMINZERO                    */ \
-  3,                             /* BRANUMBER                              */ \
-  1 + LINK_SIZE                    /* BRA                                    */ \
-
 
 /* The index of names and the
 code vector run on as long as necessary after the end. We store an explicit
@@ -442,16 +322,13 @@ pointer that is always NULL.
 */
 
 struct JSRegExp {
-    pcre_uint32 options;
+    unsigned options;
 
-    pcre_uint16 top_bracket;
-    pcre_uint16 top_backref;
+    unsigned short top_bracket;
+    unsigned short top_backref;
     
-    // jsRegExpExecute && jsRegExpCompile currently only how to handle ASCII
-    // chars for thse optimizations, however it would be trivial to add support
-    // for optimized UChar first_byte/req_byte scans
-    pcre_uint16 first_byte;
-    pcre_uint16 req_byte;
+    unsigned short first_byte;
+    unsigned short req_byte;
 };
 
 /* Internal shared data tables. These are tables that are used by more than one
@@ -459,72 +336,81 @@ struct JSRegExp {
  but are not part of the PCRE public API. The data for these tables is in the
  pcre_tables.c module. */
 
-#define _pcre_utf8_table1_size 6
+#define kjs_pcre_utf8_table1_size 6
 
-extern const int    _pcre_utf8_table1[6];
-extern const int    _pcre_utf8_table2[6];
-extern const int    _pcre_utf8_table3[6];
-extern const uschar _pcre_utf8_table4[0x40];
+extern const int    kjs_pcre_utf8_table1[6];
+extern const int    kjs_pcre_utf8_table2[6];
+extern const int    kjs_pcre_utf8_table3[6];
+extern const unsigned char kjs_pcre_utf8_table4[0x40];
 
-extern const uschar _pcre_default_tables[tables_length];
+extern const unsigned char kjs_pcre_default_tables[tables_length];
 
-static inline uschar toLowerCase(uschar c)
+static inline unsigned char toLowerCase(unsigned char c)
 {
-    static const uschar* lowerCaseChars = _pcre_default_tables + lcc_offset;
+    static const unsigned char* lowerCaseChars = kjs_pcre_default_tables + lcc_offset;
     return lowerCaseChars[c];
 }
 
-static inline uschar flipCase(uschar c)
+static inline unsigned char flipCase(unsigned char c)
 {
-    static const uschar* flippedCaseChars = _pcre_default_tables + fcc_offset;
+    static const unsigned char* flippedCaseChars = kjs_pcre_default_tables + fcc_offset;
     return flippedCaseChars[c];
 }
 
-static inline uschar classBitmapForChar(uschar c)
+static inline unsigned char classBitmapForChar(unsigned char c)
 {
-    static const uschar* charClassBitmaps = _pcre_default_tables + cbits_offset;
+    static const unsigned char* charClassBitmaps = kjs_pcre_default_tables + cbits_offset;
     return charClassBitmaps[c];
 }
 
-static inline uschar charTypeForChar(uschar c)
+static inline unsigned char charTypeForChar(unsigned char c)
 {
-    const uschar* charTypeMap = _pcre_default_tables + ctypes_offset;
+    const unsigned char* charTypeMap = kjs_pcre_default_tables + ctypes_offset;
     return charTypeMap[c];
 }
 
 static inline bool isWordChar(UChar c)
 {
-    /* UTF8 Characters > 128 are assumed to be "non-word" characters. */
-    return (c < 128 && (charTypeForChar(c) & ctype_word));
+    return c < 128 && (charTypeForChar(c) & ctype_word);
 }
 
 static inline bool isSpaceChar(UChar c)
 {
-    return (c < 128 && (charTypeForChar(c) & ctype_space));
+    return c < 128 && (charTypeForChar(c) & ctype_space);
 }
-
-/* Internal shared functions. These are functions that are used by more than
-one of the exported public functions. They have to be "external" in the C
-sense, but are not part of the PCRE public API. */
-
-extern int         _pcre_ucp_othercase(const unsigned int);
-extern bool        _pcre_xclass(int, const uschar*);
 
 static inline bool isNewline(UChar nl)
 {
     return (nl == 0xA || nl == 0xD || nl == 0x2028 || nl == 0x2029);
 }
 
-// FIXME: It's unclear to me if this moves the opcode ptr to the start of all branches
-// or to the end of all branches -- ecs
-// FIXME: This abstraction is poor since it assumes that you want to jump based on whatever
-// the next value in the stream is, and *then* follow any OP_ALT branches.
-static inline void moveOpcodePtrPastAnyAlternateBranches(const uschar*& opcodePtr)
+static inline bool isBracketStartOpcode(unsigned char opcode)
 {
-    do {
-        opcodePtr += getOpcodeValueAtOffset(opcodePtr, 1);
-    } while (*opcodePtr == OP_ALT);
+    if (opcode >= OP_BRA)
+        return true;
+    switch (opcode) {
+        case OP_ASSERT:
+        case OP_ASSERT_NOT:
+            return true;
+        default:
+            return false;
+    }
 }
+
+static inline void advanceToEndOfBracket(const unsigned char*& opcodePtr)
+{
+    ASSERT(isBracketStartOpcode(*opcodePtr) || *opcodePtr == OP_ALT);
+    do
+        opcodePtr += getLinkValue(opcodePtr + 1);
+    while (*opcodePtr == OP_ALT);
+}
+
+/* Internal shared functions. These are functions that are used in more
+that one of the source files. They have to have external linkage, but
+but are not part of the public API and so not exported from the library. */
+
+extern int kjs_pcre_ucp_othercase(unsigned);
+extern bool kjs_pcre_xclass(int, const unsigned char*);
 
 #endif
 

@@ -59,13 +59,13 @@ Returns:      true if character matches, else false
 /* Get the next UTF-8 character, advancing the pointer. This is called when we
  know we are in UTF-8 mode. */
 
-static inline void getUTF8CharAndAdvancePointer(int& c, const uschar*& subjectPtr)
+static inline void getUTF8CharAndAdvancePointer(int& c, const unsigned char*& subjectPtr)
 {
     c = *subjectPtr++;
     if ((c & 0xc0) == 0xc0) {
-        int gcaa = _pcre_utf8_table4[c & 0x3f];  /* Number of additional bytes */
+        int gcaa = kjs_pcre_utf8_table4[c & 0x3f];  /* Number of additional bytes */
         int gcss = 6 * gcaa;
-        c = (c & _pcre_utf8_table3[gcaa]) << gcss;
+        c = (c & kjs_pcre_utf8_table3[gcaa]) << gcss;
         while (gcaa-- > 0) {
             gcss -= 6;
             c |= (*subjectPtr++ & 0x3f) << gcss;
@@ -73,7 +73,7 @@ static inline void getUTF8CharAndAdvancePointer(int& c, const uschar*& subjectPt
     }
 }
 
-bool _pcre_xclass(int c, const uschar* data)
+bool kjs_pcre_xclass(int c, const unsigned char* data)
 {
     bool negated = (*data & XCL_NOT);
     

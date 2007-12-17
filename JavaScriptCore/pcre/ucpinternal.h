@@ -45,8 +45,8 @@ POSSIBILITY OF SUCH DAMAGE.
 words that form a data item in the table. */
 
 typedef struct cnode {
-  pcre_uint32 f0;
-  pcre_uint32 f1;
+  unsigned f0;
+  unsigned f1;
 } cnode;
 
 /* Things for the f0 field */
