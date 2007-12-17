@@ -52,6 +52,7 @@
 #include "PlatformScreen.h"
 #include "PlugInInfoStore.h"
 #include "RenderView.h"
+#include "ScheduledAction.h"
 #include "SecurityOrigin.h"
 #include "Settings.h"
 #include "WindowFeatures.h"
@@ -99,7 +100,7 @@ struct WindowPrivate {
 
 class DOMWindowTimer : public TimerBase {
 public:
-    DOMWindowTimer(int timeoutId, int nestingLevel, Window* object, ScheduledAction* action)
+    DOMWindowTimer(int timeoutId, int nestingLevel, Window* object, WebCore::ScheduledAction* action)
         : m_timeoutId(timeoutId)
         , m_nestingLevel(nestingLevel)
         , m_object(object)
@@ -118,8 +119,8 @@ public:
     int nestingLevel() const { return m_nestingLevel; }
     void setNestingLevel(int n) { m_nestingLevel = n; }
 
-    ScheduledAction* action() const { return m_action; }
-    ScheduledAction* takeAction() { ScheduledAction* a = m_action; m_action = 0; return a; }
+    WebCore::ScheduledAction* action() const { return m_action; }
+    WebCore::ScheduledAction* takeAction() { WebCore::ScheduledAction* a = m_action; m_action = 0; return a; }
 
 private:
     virtual void fired();
@@ -127,7 +128,7 @@ private:
     int m_timeoutId;
     int m_nestingLevel;
     Window* m_object;
-    ScheduledAction* m_action;
+    WebCore::ScheduledAction* m_action;
 };
 
 } // namespace KJS
@@ -1202,62 +1203,6 @@ void Window::setReturnValueSlot(JSValue** slot)
     d->m_returnValueSlot = slot;
 }
 
-////////////////////// ScheduledAction ////////////////////////
-
-void ScheduledAction::execute(Window* window)
-{
-    RefPtr<Frame> frame = window->impl()->frame();
-    if (!frame)
-        return;
-
-    KJSProxy* scriptProxy = frame->scriptProxy();
-    if (!scriptProxy)
-        return;
-
-    Window* globalObject = scriptProxy->globalObject();
-
-    scriptProxy->setProcessingTimerCallback(true);
-
-    if (JSValue* func = m_func.get()) {
-        JSLock lock;
-        if (func->isObject() && static_cast<JSObject*>(func)->implementsCall()) {
-            ExecState* exec = window->globalExec();
-            ASSERT(window == globalObject);
-
-            List args;
-            size_t size = m_args.size();
-            for (size_t i = 0; i < size; ++i) {
-                args.append(m_args[i]);
-            }
-
-            globalObject->startTimeoutCheck();
-            static_cast<JSObject*>(func)->call(exec, window, args);
-            globalObject->stopTimeoutCheck();
-            if (exec->hadException()) {
-                JSObject* exception = exec->exception()->toObject(exec);
-                exec->clearException();
-                String message = exception->get(exec, exec->propertyNames().message)->toString(exec);
-                int lineNumber = exception->get(exec, "line")->toInt32(exec);
-                if (Interpreter::shouldPrintExceptions())
-                    printf("(timer):%s\n", message.utf8().data());
-                if (Page* page = frame->page())
-                    page->chrome()->addMessageToConsole(JSMessageSource, ErrorMessageLevel, message, lineNumber, String());
-            }
-        }
-    } else
-        frame->loader()->executeScript(m_code);
-
-    // Update our document's rendering following the execution of the timeout callback.
-    // FIXME: Why not use updateDocumentsRendering to update rendering of all documents?
-    // FIXME: Is this really the right point to do the update? We need a place that works
-    // for all possible entry points that might possibly execute script, but this seems
-    // to be a bit too low-level.
-    if (Document* doc = frame->document())
-        doc->updateRendering();
-
-    scriptProxy->setProcessingTimerCallback(false);
-}
-
 ////////////////////// timeouts ////////////////////////
 
 void Window::clearAllTimeouts()
@@ -1266,7 +1211,7 @@ void Window::clearAllTimeouts()
     d->m_timeouts.clear();
 }
 
-int Window::installTimeout(ScheduledAction* a, int t, bool singleShot)
+int Window::installTimeout(WebCore::ScheduledAction* a, int t, bool singleShot)
 {
     int timeoutId = ++lastUsedTimeoutId;
 
@@ -1291,22 +1236,14 @@ int Window::installTimeout(ScheduledAction* a, int t, bool singleShot)
     return timeoutId;
 }
 
-ScheduledAction::ScheduledAction(JSValue* func, const List& args)
-    : m_func(func)
-{
-    List::const_iterator end = args.end();
-    for (List::const_iterator it = args.begin(); it != end; ++it)
-        m_args.append(*it);
-}
-
 int Window::installTimeout(const UString& handler, int t, bool singleShot)
 {
-    return installTimeout(new ScheduledAction(handler), t, singleShot);
+    return installTimeout(new WebCore::ScheduledAction(handler), t, singleShot);
 }
 
 int Window::installTimeout(JSValue* func, const List& args, int t, bool singleShot)
 {
-    return installTimeout(new ScheduledAction(func, args), t, singleShot);
+    return installTimeout(new WebCore::ScheduledAction(func, args), t, singleShot);
 }
 
 WebCore::PausedTimeouts* Window::pauseTimeouts()
@@ -1378,7 +1315,7 @@ void Window::timerFired(DOMWindowTimer* timer)
     }
 
     // Delete timer before executing the action for one-shot timers.
-    ScheduledAction* action = timer->takeAction();
+    WebCore::ScheduledAction* action = timer->takeAction();
     d->m_timeouts.remove(timer->timeoutId());
     delete timer;
     action->execute(this);

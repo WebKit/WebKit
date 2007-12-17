@@ -23,7 +23,7 @@
 #include "config.h"
 #include "PausedTimeouts.h"
 
-#include "kjs_window.h"
+#include "ScheduledAction.h"
 
 namespace WebCore {
 

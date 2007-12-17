@@ -17,41 +17,42 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef PausedTimeouts_h
-#define PausedTimeouts_h
+#ifndef ScheduledAction_h
+#define ScheduledAction_h
 
-#include <wtf/Noncopyable.h>
+#include "PlatformString.h"
+#include <kjs/protect.h>
+#include <wtf/Vector.h>
+
+namespace KJS {
+    class Window;
+    class JSValue;
+    class List;
+}
 
 namespace WebCore {
 
-    class ScheduledAction;
-
-    struct PausedTimeout {
-        int timeoutId;
-        int nestingLevel;
-        double nextFireInterval;
-        double repeatInterval;
-        ScheduledAction* action;
-    };
-
-    class PausedTimeouts : Noncopyable {
+  /**
+   * An action (either function or string) to be executed after a specified
+   * time interval, either once or repeatedly. Used for window.setTimeout()
+   * and window.setInterval()
+   */
+    class ScheduledAction {
     public:
-        PausedTimeouts(PausedTimeout* array, size_t length)
-            : m_array(array)
-            , m_length(length)
+        ScheduledAction(KJS::JSValue* func, const KJS::List& args);
+        ScheduledAction(const String& code)
+            : m_code(code)
         {
         }
 
-        ~PausedTimeouts();
-
-        size_t numTimeouts() const { return m_length; }
-        PausedTimeout* takeTimeouts() { PausedTimeout* a = m_array; m_array = 0; return a; }
+        void execute(KJS::Window*);
 
     private:
-        PausedTimeout* m_array;
-        size_t m_length;
+        KJS::ProtectedPtr<KJS::JSValue> m_func;
+        Vector<KJS::ProtectedPtr<KJS::JSValue> > m_args;
+        String m_code;
     };
 
 } // namespace WebCore
 
-#endif // PausedTimeouts_h
+#endif // ScheduledAction_h

@@ -1,3 +1,31 @@
+2007-12-16  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Maciej.
+
+        Yet more of http://bugs.webkit.org/show_bug.cgi?id=16385
+        Cleanup kjs_window
+
+        - Move ScheduledAction into its own file and put it in the WebCore namespace.
+
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * WebCoreSources.bkl:
+        * bindings/js/PausedTimeouts.cpp:
+        * bindings/js/PausedTimeouts.h:
+        * bindings/js/ScheduledAction.cpp: Copied from bindings/js/kjs_window.cpp.
+        (WebCore::ScheduledAction::ScheduledAction):
+        (WebCore::ScheduledAction::execute):
+        * bindings/js/ScheduledAction.h: Copied from bindings/js/kjs_window.h.
+        (WebCore::ScheduledAction::ScheduledAction):
+        * bindings/js/kjs_window.cpp:
+        (KJS::DOMWindowTimer::DOMWindowTimer):
+        (KJS::DOMWindowTimer::action):
+        (KJS::DOMWindowTimer::takeAction):
+        (KJS::Window::installTimeout):
+        (KJS::Window::timerFired):
+        * bindings/js/kjs_window.h:
+
 2007-12-16  Alp Toker  <alp@atoker.com>
 
         Reviewed by Maciej.

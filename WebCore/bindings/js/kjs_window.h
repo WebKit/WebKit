@@ -34,13 +34,13 @@ namespace WebCore {
     class JSEventListener;
     class JSUnprotectedEventListener;
     class PausedTimeouts;
+    class ScheduledAction;
 }
 
 namespace KJS {
 
     class DOMWindowTimer;
     class Location;
-    class ScheduledAction;
     class Window;
     class WindowFunc;
     class WindowPrivate;
@@ -48,7 +48,7 @@ namespace KJS {
   // This is the only WebCore JS binding which does not inherit from DOMObject
   class Window : public JSGlobalObject {
     friend class Location;
-    friend class ScheduledAction;
+    friend class WebCore::ScheduledAction;
   protected:
     Window(WebCore::DOMWindow*);
 
@@ -155,7 +155,7 @@ namespace KJS {
 
     void clearHelperObjectProperties();
     void clearAllTimeouts();
-    int installTimeout(ScheduledAction*, int interval, bool singleShot);
+    int installTimeout(WebCore::ScheduledAction*, int interval, bool singleShot);
 
     RefPtr<WebCore::DOMWindow> m_impl;
     OwnPtr<WindowPrivate> d;
@@ -176,27 +176,6 @@ namespace KJS {
 FOR_EACH_CLASS(KJS_IMPLEMENT_PROTOTYPE_FUNCTION_WITH_CREATE)
 #undef FOR_EACH_CLASS
 
-
-  /**
-   * An action (either function or string) to be executed after a specified
-   * time interval, either once or repeatedly. Used for window.setTimeout()
-   * and window.setInterval()
-   */
-    class ScheduledAction {
-    public:
-        ScheduledAction(JSValue* func, const List& args);
-        ScheduledAction(const WebCore::String& code)
-            : m_code(code)
-        {
-        }
-
-        void execute(Window *);
-
-    private:
-        ProtectedPtr<JSValue> m_func;
-        Vector<ProtectedPtr<JSValue> > m_args;
-        WebCore::String m_code;
-    };
 
   class Location : public DOMObject {
     friend class Window;
