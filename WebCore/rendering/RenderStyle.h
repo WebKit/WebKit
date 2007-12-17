@@ -1386,7 +1386,7 @@ protected:
         unsigned _text_align : 4; // ETextAlign
         unsigned _text_transform : 2; // ETextTransform
         unsigned _text_decorations : 4;
-        unsigned _cursor_style : 5; // ECursor
+        unsigned _cursor_style : 6; // ECursor
         unsigned _direction : 1; // TextDirection
         bool _border_collapse : 1 ;
         unsigned _white_space : 3; // EWhiteSpace

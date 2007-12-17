@@ -1,3 +1,14 @@
+2007-12-16  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        - make 'cursor: copy' and 'cursor: none' work.
+
+        Already covered by manual-tests/cursor.html
+
+        * rendering/RenderStyle.h: Increase the _cursor_style field to 6 bits,
+        needed for the 33rd and 34th cursor values.
+
 2007-12-16  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Maciej Stachowiak.
