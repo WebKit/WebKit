@@ -2994,14 +2994,6 @@
 					>
 				</File>
 			</Filter>
-			<Filter
-				Name="win"
-				>
-				<File
-					RelativePath="..\loader\win\NetscapePlugInStreamLoaderWin.cpp"
-					>
-				</File>
-			</Filter>
 		</Filter>
 		<Filter
 			Name="platform"

@@ -1,3 +1,14 @@
+2007-12-16  Rodney Dawes  <dobey@wayofthemonkey.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        http://bugs.webkit.org/show_bug.cgi?id=16389
+        Bug 16389: Common Implementation of NetscapePlugInStreamLoader
+
+        * WebCore.vcproj/WebCore.vcproj: Remove NetscapePlugInStreamLoaderWin.cpp.
+        * loader/NetscapePlugInStreamLoader.cpp: Copy method implementations from NetscapePlugInStreamLoaderWin.cpp.
+        * loader/win/NetscapePlugInStreamLoaderWin.cpp: Removed.
+
 2007-12-16  Grace Kloba  <klobag@gmail.com>
 
         Reviewed by Darin Adler.
