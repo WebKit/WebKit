@@ -161,7 +161,7 @@ layer at (0,0) size 800x600
           RenderBlock (floating) {DIV} at (0,0) size 26x12
             RenderText {#text} at (0,0) size 26x12
               text run at (0,0) width 26: "Menu"
-          RenderBlock (floating) {DIV} at (130,0) size 620x12 [bgcolor=#2B6BFF]
+          RenderBlock (floating) {DIV} at (130,0) size 620x12 [bgcolor=#2B6BCE]
             RenderText {#text} at (0,0) size 4x12
               text run at (0,0) width 4: " "
           RenderBlock (generated) at (0,12) size 750x0
@@ -233,7 +233,7 @@ layer at (0,0) size 800x600
           RenderBlock (floating) {DIV} at (0,0) size 39x12
             RenderText {#text} at (0,0) size 39x12
               text run at (0,0) width 39: "Window"
-          RenderBlock (floating) {DIV} at (130,0) size 620x12 [bgcolor=#ECECFF]
+          RenderBlock (floating) {DIV} at (130,0) size 620x12 [bgcolor=#ECECEC]
             RenderText {#text} at (0,0) size 4x12
               text run at (0,0) width 4: " "
           RenderBlock (generated) at (0,12) size 750x0
