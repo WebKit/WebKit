@@ -1749,11 +1749,6 @@ RRETURN_SWITCH:
         case 2: goto RRETURN_2;
         case 6: goto RRETURN_6;
         case 7: goto RRETURN_7;
-        case 9: goto RRETURN_9;
-        case 10: goto RRETURN_10;
-        case 11: goto RRETURN_11;
-        case 12: goto RRETURN_12;
-        case 13: goto RRETURN_13;
         case 14: goto RRETURN_14;
         case 15: goto RRETURN_15;
         case 16: goto RRETURN_16;
