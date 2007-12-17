@@ -1,3 +1,12 @@
+2007-12-17  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        Live to the promise of never making AppKit special character codes visible via DOM.
+
+        * fast/events/arrow-keys-on-body-expected.txt: Added.
+        * fast/events/arrow-keys-on-body.html: Added.
+
 2007-12-16  Darin Adler  <darin@apple.com>
 
         * fast/js/regexp-overflow-expected.txt: Updated. I accidentally checked in an

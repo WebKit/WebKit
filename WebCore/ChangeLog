@@ -1,3 +1,18 @@
+2007-12-17  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        Live to the promise of never making AppKit special character codes visible via DOM.
+
+        Test: fast/events/arrow-keys-on-body.html
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::keyEvent): Check for empty keypress characters after disambiguation,
+        to let quirks-aware code strip special charactrers.
+        * platform/mac/KeyEventMac.mm:
+        (WebCore::PlatformKeyboardEvent::disambiguateKeyDownEvent): If not in keyboard event quirks
+        mode, remove the text if it's a special character.
+
 2007-12-17  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Darin Adler.
