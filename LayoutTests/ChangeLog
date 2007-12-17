@@ -1,3 +1,19 @@
+2007-12-16  Darin Adler  <darin@apple.com>
+
+        - try to get the system color test passing on the buildbot
+
+        I fear this test may be vulnerable to slight platform differences.
+
+        * platform/mac-tiger/fast: Added.
+        * platform/mac-tiger/fast/css: Added.
+        * platform/mac-tiger/fast/css/css2-system-color-expected.checksum: Copied from platform/mac/fast/css/css2-system-color-expected.checksum.
+        * platform/mac-tiger/fast/css/css2-system-color-expected.png: Copied from platform/mac/fast/css/css2-system-color-expected.png.
+        * platform/mac-tiger/fast/css/css2-system-color-expected.txt: Copied from platform/mac/fast/css/css2-system-color-expected.txt.
+        Then updated to match what the buildbot says.
+
+        * platform/mac/fast/css/css2-system-color-expected.txt: Updated to match
+        results I'm getting locally on my Leopard machine.
+
 2007-12-16  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Geoff.
