@@ -1,3 +1,14 @@
+2007-12-17  Darin Adler  <darin@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=16468
+          REGRESSION(r28781): Crash running storage/transaction_callback_exception_crash.html
+
+        * storage/DatabaseThread.cpp:
+        (WebCore::DatabaseThread::dispatchNextTaskIdentifier): Use a RefPtr for the database
+        because there's no guarantee it won't lose its last reference otherwise.
+
 2007-12-17  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Maciej Stachowiak.
