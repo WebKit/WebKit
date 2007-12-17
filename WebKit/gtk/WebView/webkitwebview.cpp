@@ -56,6 +56,7 @@ enum {
     NAVIGATION_REQUESTED,
     WINDOW_OBJECT_CLEARED,
     LOAD_STARTED,
+    LOAD_COMMITTED,
     LOAD_PROGRESS_CHANGED,
     LOAD_FINISHED,
     TITLE_CHANGED,
@@ -330,7 +331,7 @@ static gboolean webkit_web_view_script_dialog(WebKitWebView* webView, WebKitWebF
 
     window = gtk_widget_get_toplevel(GTK_WIDGET(webView));
     dialog = gtk_message_dialog_new(GTK_WIDGET_TOPLEVEL(window) ? GTK_WINDOW(window) : 0, GTK_DIALOG_DESTROY_WITH_PARENT, messageType, buttons, "%s", message);
-    gchar* title = g_strconcat("JavaScript - ", webkit_web_frame_get_location(frame), NULL);
+    gchar* title = g_strconcat("JavaScript - ", webkit_web_frame_get_uri(frame), NULL);
     gtk_window_set_title(GTK_WINDOW(dialog), title);
     g_free(title);
 
@@ -495,6 +496,24 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
             WEBKIT_TYPE_WEB_FRAME);
 
     /**
+     * WebKitWebView::load-committed:
+     * @web_view: the object on which the signal is emitted
+     * @frame: the main frame that received the first data
+     *
+     * When a #WebKitWebFrame loaded the first data this signal is emitted.
+     */
+    webkit_web_view_signals[LOAD_COMMITTED] = g_signal_new("load-committed",
+            G_TYPE_FROM_CLASS(webViewClass),
+            (GSignalFlags)(G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION),
+            0,
+            NULL,
+            NULL,
+            g_cclosure_marshal_VOID__OBJECT,
+            G_TYPE_NONE, 1,
+            WEBKIT_TYPE_WEB_FRAME);
+
+
+    /**
      * WebKitWebView::load-progress-changed:
      * @web_view: the #WebKitWebView
      * @progress: the global progress
@@ -519,15 +538,24 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
             G_TYPE_NONE, 1,
             WEBKIT_TYPE_WEB_FRAME);
 
+    /**
+     * WebKitWebView::title-changed:
+     * @web_view: the object on which the signal is emitted
+     * @frame: the main frame
+     * @title: the new title
+     *
+     * When a #WebKitWebFrame changes the document title this signal is emitted.
+     */
     webkit_web_view_signals[TITLE_CHANGED] = g_signal_new("title-changed",
             G_TYPE_FROM_CLASS(webViewClass),
             (GSignalFlags)(G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION),
             0,
             NULL,
             NULL,
-            webkit_marshal_VOID__STRING_STRING,
+            webkit_marshal_VOID__OBJECT_STRING,
             G_TYPE_NONE, 2,
-            G_TYPE_STRING, G_TYPE_STRING);
+            WEBKIT_TYPE_WEB_FRAME,
+            G_TYPE_STRING);
 
     webkit_web_view_signals[HOVERING_OVER_LINK] = g_signal_new("hovering-over-link",
             G_TYPE_FROM_CLASS(webViewClass),

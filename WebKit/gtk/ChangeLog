@@ -1,3 +1,31 @@
+2007-12-17  Luca Bruno  <lethalman88@gmail.com>
+
+        Reviewed by Alp Toker.
+
+        http://bugs.webkit.org/show_bug.cgi?id=13542
+        gdklauncher doesnt change URL in adress GTKEntry.
+
+        Let DOMDocument observers do their work before emitting title-changed.
+        The load-committed signal has been added for both the view and the frame.
+
+        * WebCoreSupport/FrameLoaderClientGtk.cpp:
+        (WebKit::FrameLoaderClient::dispatchDidReceiveTitle): emit title-changed
+        (WebKit::FrameLoaderClient::setTitle): set private title
+        (WebKit::FrameLoaderClient::dispatchDidCommitLoad): update the frame uri and emit load-committed
+        * WebView/webkit-marshal.list:
+        * WebView/webkitprivate.h:
+        (_WebKitWebFramePrivate): rename location to uri
+        * WebView/webkitwebframe.cpp:
+        (webkit_web_frame_get_location): renamed to *_get_uri
+        (webkit_web_frame_get_uri):
+        (webkit_web_frame_real_title_changed): removed (see FrameLoaderClient::setTitle)
+        (webkit_web_frame_class_init): pass the frame and the title in title-changed, not the uri
+        (webkit_web_frame_finalize):
+        * WebView/webkitwebframe.h:
+        (_WebKitWebFrameClass): removed title_changed
+        * WebView/webkitwebview.cpp:
+        (webkit_web_view_class_init): pass only the title in title-changed
+
 2007-12-14  Alp Toker  <alp@atoker.com>
 
         Fix inconsistent indentation in the license header. Maciej was right!

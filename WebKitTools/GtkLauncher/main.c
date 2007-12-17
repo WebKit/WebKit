@@ -65,10 +65,8 @@ link_hover_cb (WebKitWebView* page, const gchar* title, const gchar* link, gpoin
 }
 
 static void
-title_change_cb (WebKitWebView* page, const gchar* title, const gchar* uri, gpointer data)
+title_change_cb (WebKitWebView* web_view, WebKitWebFrame* web_frame, const gchar* title, gpointer data)
 {
-    gtk_entry_set_text (GTK_ENTRY (uri_entry), uri);
-
     if (main_title)
         g_free (main_title);
     main_title = g_strdup (title);
@@ -80,6 +78,14 @@ progress_change_cb (WebKitWebView* page, gint progress, gpointer data)
 {
     load_progress = progress;
     update_title (GTK_WINDOW (main_window));
+}
+
+static void
+load_commit_cb (WebKitWebView* page, WebKitWebFrame* frame, gpointer data)
+{
+    const gchar* uri = webkit_web_frame_get_uri(frame);
+    if (uri)
+        gtk_entry_set_text (GTK_ENTRY (uri_entry), uri);
 }
 
 static void
@@ -111,6 +117,7 @@ create_browser ()
 
     g_signal_connect (G_OBJECT (web_view), "title-changed", G_CALLBACK (title_change_cb), web_view);
     g_signal_connect (G_OBJECT (web_view), "load-progress-changed", G_CALLBACK (progress_change_cb), web_view);
+    g_signal_connect (G_OBJECT (web_view), "load-committed", G_CALLBACK (load_commit_cb), web_view);
     g_signal_connect (G_OBJECT (web_view), "hovering-over-link", G_CALLBACK (link_hover_cb), web_view);
 
     return scrolled_window;

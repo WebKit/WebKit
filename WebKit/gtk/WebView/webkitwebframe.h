@@ -43,13 +43,12 @@ struct _WebKitWebFrame {
 struct _WebKitWebFrameClass {
     GObjectClass parent;
 
-    void (*title_changed) (WebKitWebFrame* frame, gchar* title, gchar* location);
-
     void (*_webkit_reserved1) (void);
     void (*_webkit_reserved2) (void);
     void (*_webkit_reserved3) (void);
     void (*_webkit_reserved4) (void);
     void (*_webkit_reserved5) (void);
+    void (*_webkit_reserved6) (void);
 };
 
 WEBKIT_API GType
@@ -68,7 +67,7 @@ WEBKIT_API const gchar*
 webkit_web_frame_get_title (WebKitWebFrame* frame);
 
 WEBKIT_API const gchar*
-webkit_web_frame_get_location (WebKitWebFrame* frame);
+webkit_web_frame_get_uri (WebKitWebFrame* frame);
 
 WEBKIT_API WebKitWebFrame*
 webkit_web_frame_get_parent (WebKitWebFrame* frame);

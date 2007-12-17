@@ -503,13 +503,27 @@ void FrameLoaderClient::dispatchDidStartProvisionalLoad()
 
 void FrameLoaderClient::dispatchDidReceiveTitle(const String& title)
 {
-    notImplemented();
-}
+    g_signal_emit_by_name(m_frame, "title-changed", title.utf8().data());
 
+    WebKitWebView* page = getViewFromFrame(m_frame);
+    if (m_frame == webkit_web_view_get_main_frame(page))
+        g_signal_emit_by_name(page, "title-changed", m_frame, title.utf8().data());
+}
 
 void FrameLoaderClient::dispatchDidCommitLoad()
 {
-    notImplemented();
+    /* Update the URI once first data has been received.
+     * This means the URI is valid and successfully identify the page that's going to be loaded.
+     */
+    WebKitWebFramePrivate* frameData = WEBKIT_WEB_FRAME_GET_PRIVATE(m_frame);
+    g_free(frameData->uri);
+    frameData->uri = g_strdup(core(m_frame)->loader()->url().prettyURL().utf8().data());
+
+    g_signal_emit_by_name(m_frame, "load-committed");
+
+    WebKitWebView* page = getViewFromFrame(m_frame);
+    if (m_frame == webkit_web_view_get_main_frame(page))
+        g_signal_emit_by_name(page, "load-committed", m_frame);
 }
 
 void FrameLoaderClient::dispatchDidFinishDocumentLoad()
@@ -633,14 +647,9 @@ void FrameLoaderClient::prepareForDataSourceReplacement() { notImplemented(); }
 
 void FrameLoaderClient::setTitle(const String& title, const KURL& url)
 {
-    WebKitWebView* page = getViewFromFrame(m_frame);
-
-    CString titleString = title.utf8();
-    DeprecatedCString urlString = url.prettyURL().utf8();
-    g_signal_emit_by_name(m_frame, "title-changed", titleString.data(), urlString.data());
-
-    if (m_frame == webkit_web_view_get_main_frame(page))
-        g_signal_emit_by_name(page, "title-changed", titleString.data(), urlString.data());
+    WebKitWebFramePrivate* frameData = WEBKIT_WEB_FRAME_GET_PRIVATE(m_frame);
+    g_free(frameData->title);
+    frameData->title = g_strdup(title.utf8().data());
 }
 
 void FrameLoaderClient::dispatchDidReceiveContentLength(DocumentLoader*, unsigned long identifier, int lengthReceived)

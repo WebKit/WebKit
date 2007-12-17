@@ -73,7 +73,7 @@ extern "C" {
 
         gchar* name;
         gchar* title;
-        gchar* location;
+        gchar* uri;
     };
 
     #define WEBKIT_NETWORK_REQUEST_GET_PRIVATE(obj)    (G_TYPE_INSTANCE_GET_PRIVATE((obj), WEBKIT_TYPE_NETWORK_REQUEST, WebKitNetworkRequestPrivate))
