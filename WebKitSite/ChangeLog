@@ -1,3 +1,11 @@
+2007-12-16  Brent Fulgham  <bfulgham@gmail.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        http://bugs.webkit.org/show_bug.cgi?id=16446.
+
+        * building/debug.html:  Update to expand the win32 debugging instructions.
+
 2007-12-07  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Darin's rubberstamp

@@ -37,6 +37,15 @@
 <h2>Debugging on Windows</h2>
 <p>To launch Safari in the Visual Studio or Visual C++ Express debugger, simply run:</p>
 <p class="code">debug-safari</p>
+<p>This command will launch the Visual Studio debugging environment, and attach to Safari connected to the debug build of WebKit.dll.  There are a few things to keep in mind:
+<ul>
+<li>The instance of Safari is not running yet.  You must press the F5 key (or the 'Run' button) to see anything happen.</li>
+<li>If you want to set any breakpoints, you must navigate to the particular source file you wish to investigate using the "File|Open" menu.</li>
+<li><p>If you want to see the helpful output debug messages, you should edit the debug settings for the Safari solution (i.e., the pseudo-project created when the debugger attached to Safari):</p>
+<img src="debug_vs2005.jpg">
+<p>You should consider including the command-line switch '<span class="code">/console</span>'.  This causes Safari to run with an open DOS shell in which output messages, created with the <span class="code">LOG</span> macro, appear.</p>
+<img src="console_vs2005.jpg"></li>
+</ul></p>
 </div>
 
 <?php
