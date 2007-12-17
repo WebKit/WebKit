@@ -1,3 +1,12 @@
+2007-12-16  Dimitri Glazkov  <dimitri@glazkov.com>
+
+        Reviewed by Adam Roben.
+
+        Remove the double-quotes around the PATH variable value, in order to make it work in Windows shell.
+
+        * FindSafari/FindSafari.cpp:
+        (_tmain):
+
 2007-12-16  Brent Fulgham  <bfulgham@gmail.com>
 
         Reviewed by Adam Roben.
