@@ -27,6 +27,7 @@
 #include "HTMLDocument.h"
 #include "JSDOMWindow.h"
 #include "JSHTMLDocument.h"
+#include "JSLocation.h"
 #include "kjs_binding.h"
 #include "kjs_proxy.h"
 

@@ -1125,6 +1125,10 @@
 				>
 			</File>
 			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSLocation.lut.h"
+				>
+			</File>
+			<File
 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSMediaList.cpp"
 				>
 			</File>
@@ -7461,6 +7465,14 @@
 				</File>
 				<File
 					RelativePath="..\bindings\js\JSHTMLSelectElementCustom.h"
+					>
+				</File>
+				<File
+					RelativePath="..\bindings\js\JSLocation.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\bindings\js\JSLocation.h"
 					>
 				</File>
 				<File

@@ -32,7 +32,9 @@ namespace WebCore {
     class DOMWindow;
     class Frame;
     class JSEventListener;
+    class JSLocation;
     class JSUnprotectedEventListener;
+    class Location;
     class PausedTimeouts;
     class ScheduledAction;
 }
@@ -40,14 +42,13 @@ namespace WebCore {
 namespace KJS {
 
     class DOMWindowTimer;
-    class Location;
     class Window;
     class WindowFunc;
     class WindowPrivate;
 
   // This is the only WebCore JS binding which does not inherit from DOMObject
   class Window : public JSGlobalObject {
-    friend class Location;
+    friend class WebCore::JSLocation;
     friend class WebCore::ScheduledAction;
   protected:
     Window(WebCore::DOMWindow*);
@@ -85,7 +86,7 @@ namespace KJS {
 
     void timerFired(DOMWindowTimer*);
 
-    Location* location() const;
+    WebCore::JSLocation* location() const;
 
     // Finds a wrapper of a JS EventListener, returns 0 if no existing one.
     WebCore::JSEventListener* findJSEventListener(JSValue*, bool html = false);
@@ -172,37 +173,6 @@ namespace KJS {
     macro(WindowProtoFuncRemoveEventListener) \
     macro(WindowProtoFuncShowModalDialog) \
     macro(WindowProtoFuncNotImplemented) \
-
-FOR_EACH_CLASS(KJS_IMPLEMENT_PROTOTYPE_FUNCTION_WITH_CREATE)
-#undef FOR_EACH_CLASS
-
-
-  class Location : public DOMObject {
-    friend class Window;
-  public:
-    virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
-    JSValue* getValueProperty(ExecState*, int token) const;
-    virtual void put(ExecState*, const Identifier& propertyName, JSValue*, int attr = None);
-
-    enum { Hash, Href, Hostname, Host, Pathname, Port, Protocol, Search, 
-           Replace, Reload, ToString, Assign };
-
-    WebCore::Frame* frame() const { return m_frame; }
-
-    virtual const ClassInfo* classInfo() const { return &info; }
-    static const ClassInfo info;
-
-  private:
-    Location(WebCore::Frame*);
-
-    WebCore::Frame* m_frame;
-  };
-
-#define FOR_EACH_CLASS(macro) \
-    macro(LocationProtoFuncAssign) \
-    macro(LocationProtoFuncToString) \
-    macro(LocationProtoFuncReplace) \
-    macro(LocationProtoFuncReload) \
 
 FOR_EACH_CLASS(KJS_IMPLEMENT_PROTOTYPE_FUNCTION_WITH_CREATE)
 #undef FOR_EACH_CLASS

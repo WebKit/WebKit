@@ -409,6 +409,7 @@ all : \
     JSHTMLVideoElement.h \
     JSHistory.h \
     JSKeyboardEvent.h \
+    JSLocation.lut.h \
     JSMediaError.h \
     JSMediaList.h \
     JSMouseEvent.h \

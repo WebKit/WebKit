@@ -1,3 +1,37 @@
+2007-12-16  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Mitz.
+
+        Fix for http://bugs.webkit.org/show_bug.cgi?id=16466
+        Move the JS Location object to its own file
+
+        - Move Location into its own file and rename it JSLocation.
+
+        * DerivedSources.make:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * WebCoreSources.bkl:
+        * bindings/js/JSDocumentCustom.cpp:
+        * bindings/js/JSLocation.cpp: Copied from WebCore/bindings/js/kjs_window.cpp.
+        (WebCore::):
+        (WebCore::JSLocation::JSLocation):
+        (WebCore::JSLocation::getValueProperty):
+        (WebCore::JSLocation::getOwnPropertySlot):
+        (WebCore::JSLocation::put):
+        (WebCore::JSLocationProtoFuncReplace::callAsFunction):
+        (WebCore::JSLocationProtoFuncReload::callAsFunction):
+        (WebCore::JSLocationProtoFuncAssign::callAsFunction):
+        (WebCore::JSLocationProtoFuncToString::callAsFunction):
+        * bindings/js/JSLocation.h: Copied from WebCore/bindings/js/kjs_window.h.
+        (WebCore::JSLocation::):
+        (WebCore::JSLocation::frame):
+        (WebCore::JSLocation::classInfo):
+        * bindings/js/kjs_window.cpp:
+        (KJS::Window::location):
+        * bindings/js/kjs_window.h:
+        * history/CachedPage.cpp:
+
 2007-12-16  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Sam Weinig.

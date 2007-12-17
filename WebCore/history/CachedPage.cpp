@@ -36,6 +36,7 @@
 #include "FrameLoader.h"
 #include "FrameView.h"
 #include "GCController.h"
+#include "JSLocation.h"
 #include "Logging.h"
 #include "Page.h"
 #include "PausedTimeouts.h"
