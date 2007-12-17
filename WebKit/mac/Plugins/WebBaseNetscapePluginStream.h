@@ -29,7 +29,7 @@
 #import <Foundation/Foundation.h>
 
 #import <WebKit/npfunctions.h>
-#import <WebCore/WebPlugInStreamLoaderDelegate.h>
+#import <WebKit/WebPlugInStreamLoaderDelegate.h>
 
 @class WebBaseNetscapePluginView;
 @class NSURLResponse;

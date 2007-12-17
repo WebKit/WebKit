@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2007 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,21 +26,25 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-@class NSURLResponse;
-@class NSError;
-@class NSData;
+#import <WebKit/WebPlugInStreamLoaderDelegate.h>
+#import <WebCore/NetscapePlugInStreamLoader.h>
+#import <wtf/RetainPtr.h>
 
-@protocol WebPlugInStreamLoaderDelegate
+namespace WebCore {
+    class NetscapePlugInStreamLoader;
+    class ResourceResponse;
+};
 
-- (void)startStreamWithResponse:(NSURLResponse *)r;
+typedef id <WebPlugInStreamLoaderDelegate> PlugInStreamLoaderDelegate;
 
-    // destroyStreamWithError tells the plug-in that the load is completed (error == nil) or ended in error.
-- (void)destroyStreamWithError:(NSError *)error;
+class WebNetscapePlugInStreamLoaderClient : public WebCore::NetscapePlugInStreamLoaderClient {
+public:
+    WebNetscapePlugInStreamLoaderClient(PlugInStreamLoaderDelegate delegate) : m_stream(delegate) { }
+    virtual void didReceiveResponse(WebCore::NetscapePlugInStreamLoader*, const WebCore::ResourceResponse&);
+    virtual void didReceiveData(WebCore::NetscapePlugInStreamLoader*, const char*, int);
+    virtual void didFail(WebCore::NetscapePlugInStreamLoader*, const WebCore::ResourceError&);
+    virtual void didFinishLoading(WebCore::NetscapePlugInStreamLoader*);
 
-// cancelLoadAndDestoryStreamWithError calls cancelLoadWithError: then destroyStreamWithError:.
-- (void)cancelLoadAndDestroyStreamWithError:(NSError *)error;
-
-- (void)receivedData:(NSData *)data;
-- (void)finishedLoading;
-
-@end
+private:
+    RetainPtr<PlugInStreamLoaderDelegate> m_stream;
+};

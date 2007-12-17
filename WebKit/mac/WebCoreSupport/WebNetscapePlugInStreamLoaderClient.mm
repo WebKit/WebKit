@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2007 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,41 +26,32 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "ResourceLoader.h"
-#include <wtf/Forward.h>
+#import <WebKit/WebNetscapePlugInStreamLoaderClient.h>
+#import <WebCore/NetscapePlugInStreamLoader.h>
+#import <WebCore/ResourceResponse.h>
 
-namespace WebCore {
-    class NetscapePlugInStreamLoader;
+using namespace WebCore;
 
-    class NetscapePlugInStreamLoaderClient {
-    public:
-        virtual ~NetscapePlugInStreamLoaderClient() { }
-        virtual void didReceiveResponse(NetscapePlugInStreamLoader*, const ResourceResponse&) = 0;
-        virtual void didReceiveData(NetscapePlugInStreamLoader*, const char*, int) = 0;
-        virtual void didFail(NetscapePlugInStreamLoader*, const ResourceError&) = 0;
-        virtual void didFinishLoading(NetscapePlugInStreamLoader*) { }
-    };
+void WebNetscapePlugInStreamLoaderClient::didReceiveResponse(NetscapePlugInStreamLoader*, const ResourceResponse& theResponse)
+{
+    [m_stream.get() startStreamWithResponse:theResponse.nsURLResponse()];
+}
 
-    class NetscapePlugInStreamLoader : public ResourceLoader {
-    public:
-        static PassRefPtr<NetscapePlugInStreamLoader> create(Frame*, NetscapePlugInStreamLoaderClient*);
-        virtual ~NetscapePlugInStreamLoader();
+void WebNetscapePlugInStreamLoaderClient::didReceiveData(NetscapePlugInStreamLoader*, const char* data, int length)
+{
+    NSData *nsData = [[NSData alloc] initWithBytesNoCopy:(void*)data length:length freeWhenDone:NO];
+    [m_stream.get() receivedData:nsData];
+    [nsData release];
+}
 
-        bool isDone() const;
+void WebNetscapePlugInStreamLoaderClient::didFail(NetscapePlugInStreamLoader*, const ResourceError& error)
+{
+    [m_stream.get() destroyStreamWithError:error];
+    m_stream = 0;
+}
 
-        virtual void didReceiveResponse(const ResourceResponse&);
-        virtual void didReceiveData(const char*, int, long long lengthReceived, bool allAtOnce);
-        virtual void didFinishLoading();
-        virtual void didFail(const ResourceError&);
-
-        virtual void releaseResources();
-
-    private:
-        NetscapePlugInStreamLoader(Frame*, NetscapePlugInStreamLoaderClient*);
-
-        virtual void didCancel(const ResourceError& error);
-
-        NetscapePlugInStreamLoaderClient* m_client;
-    };
-
+void WebNetscapePlugInStreamLoaderClient::didFinishLoading(NetscapePlugInStreamLoader*)
+{
+    [m_stream.get() finishedLoading];
+    m_stream = 0;
 }

@@ -1,3 +1,15 @@
+2007-12-16  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Refactor Mac plugin stream code to use the shared NetscapePlugInStreamLoader implementation.
+
+        * WebCore.base.exp:
+        * WebCore.xcodeproj/project.pbxproj:
+        * loader/NetscapePlugInStreamLoader.h:
+        * loader/mac/NetscapePlugInStreamLoaderMac.mm: Removed.
+        * loader/mac/WebPlugInStreamLoaderDelegate.h: Moved to WebKit.
+
 2007-12-16  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Maciej.

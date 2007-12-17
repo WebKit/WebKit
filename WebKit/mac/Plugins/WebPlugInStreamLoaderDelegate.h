@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,41 +26,21 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "ResourceLoader.h"
-#include <wtf/Forward.h>
+@class NSURLResponse;
+@class NSError;
+@class NSData;
 
-namespace WebCore {
-    class NetscapePlugInStreamLoader;
+@protocol WebPlugInStreamLoaderDelegate
 
-    class NetscapePlugInStreamLoaderClient {
-    public:
-        virtual ~NetscapePlugInStreamLoaderClient() { }
-        virtual void didReceiveResponse(NetscapePlugInStreamLoader*, const ResourceResponse&) = 0;
-        virtual void didReceiveData(NetscapePlugInStreamLoader*, const char*, int) = 0;
-        virtual void didFail(NetscapePlugInStreamLoader*, const ResourceError&) = 0;
-        virtual void didFinishLoading(NetscapePlugInStreamLoader*) { }
-    };
+- (void)startStreamWithResponse:(NSURLResponse *)r;
 
-    class NetscapePlugInStreamLoader : public ResourceLoader {
-    public:
-        static PassRefPtr<NetscapePlugInStreamLoader> create(Frame*, NetscapePlugInStreamLoaderClient*);
-        virtual ~NetscapePlugInStreamLoader();
+// destroyStreamWithError tells the plug-in that the load is completed (error == nil) or ended in error.
+- (void)destroyStreamWithError:(NSError *)error;
 
-        bool isDone() const;
+// cancelLoadAndDestoryStreamWithError calls cancelLoadWithError: then destroyStreamWithError:.
+- (void)cancelLoadAndDestroyStreamWithError:(NSError *)error;
 
-        virtual void didReceiveResponse(const ResourceResponse&);
-        virtual void didReceiveData(const char*, int, long long lengthReceived, bool allAtOnce);
-        virtual void didFinishLoading();
-        virtual void didFail(const ResourceError&);
+- (void)receivedData:(NSData *)data;
+- (void)finishedLoading;
 
-        virtual void releaseResources();
-
-    private:
-        NetscapePlugInStreamLoader(Frame*, NetscapePlugInStreamLoaderClient*);
-
-        virtual void didCancel(const ResourceError& error);
-
-        NetscapePlugInStreamLoaderClient* m_client;
-    };
-
-}
+@end

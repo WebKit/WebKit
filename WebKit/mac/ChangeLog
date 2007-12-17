@@ -1,3 +1,24 @@
+2007-12-16  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Refactor Mac plugin stream code to use the shared NetscapePlugInStreamLoader implementation.
+
+        * Plugins/WebBaseNetscapePluginStream.h:
+        * Plugins/WebNetscapePluginStream.h:
+        * Plugins/WebNetscapePluginStream.mm:
+        (-[WebNetscapePluginStream initWithRequest:plugin:notifyData:sendNotification:]):
+        (-[WebNetscapePluginStream dealloc]):
+        (-[WebNetscapePluginStream finalize]):
+        * Plugins/WebPlugInStreamLoaderDelegate.h: Moved from WebCore.
+        * WebCoreSupport/WebNetscapePlugInStreamLoaderClient.h: Added.
+        (WebNetscapePlugInStreamLoaderClient::WebNetscapePlugInStreamLoaderClient):
+        * WebCoreSupport/WebNetscapePlugInStreamLoaderClient.mm: Added.
+        (WebNetscapePlugInStreamLoaderClient::didReceiveResponse): Call through to the equivalent WebPlugInStreamLoaderDelegate method.
+        (WebNetscapePlugInStreamLoaderClient::didReceiveData): Ditto.
+        (WebNetscapePlugInStreamLoaderClient::didFail): Ditto.
+        (WebNetscapePlugInStreamLoaderClient::didFinishLoading): Ditto.
+
 2007-12-16  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin.

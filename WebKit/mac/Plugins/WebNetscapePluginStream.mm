@@ -41,6 +41,7 @@
 #import <WebKit/WebNSURLRequestExtras.h>
 #import <WebKit/WebNetscapePluginEmbeddedView.h>
 #import <WebKit/WebNetscapePluginPackage.h>
+#import <WebKit/WebNetscapePlugInStreamLoaderClient.h>
 #import <WebKit/WebViewInternal.h>
 #import <WebCore/ResourceError.h>
 #import <WebCore/WebCoreObjCExtras.h>
@@ -88,7 +89,9 @@ using namespace WebCore;
     if (core([view webFrame])->loader()->shouldHideReferrer([theRequest URL], core([view webFrame])->loader()->outgoingReferrer()))
         [(NSMutableURLRequest *)request _web_setHTTPReferrer:nil];
 
-    _loader = NetscapePlugInStreamLoader::create(core([view webFrame]), self).releaseRef();
+    _client = new WebNetscapePlugInStreamLoaderClient(self);
+    _loader = NetscapePlugInStreamLoader::create(core([view webFrame]), _client).releaseRef();
+    _loader->setShouldBufferData(false);
     
     isTerminated = NO;
 
@@ -99,6 +102,7 @@ using namespace WebCore;
 {
     if (_loader)
         _loader->deref();
+    delete _client;
     [request release];
     [super dealloc];
 }
@@ -108,6 +112,7 @@ using namespace WebCore;
     ASSERT_MAIN_THREAD();
     if (_loader)
         _loader->deref();
+    delete _client;
     [super finalize];
 }
 
