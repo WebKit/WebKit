@@ -11,6 +11,25 @@
         (WebCore::FrameLoader::addLowBandwidthDisplayRequest):
         (WebCore::FrameLoader::switchOutLowBandwidthDisplayIfReady):
 
+2007-12-16  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - fix <rdar://problem/5636065> First form of SQLTransaction.executeSql() fails with TYPE_ERROR dom exception
+
+        Test: storage/execute-sql-args.html
+
+        * bindings/js/JSSQLTransactionCustom.cpp:
+        (WebCore::JSSQLTransaction::executeSql): Added exception handling code so that once an
+        exception happens, we won't try to do any more argument processing. Changed processing
+        of the second argument so that we allow an undefined value or null, and simply omit the
+        array. Changed processing of the second argument so that we don't require an actual
+        JavaScript array. Instead, as with the JavaScript array operations themselves, we use
+        the length property and corresponding numeric properties of the object, allowing other
+        objects to act as arrays. Changed processing of the third and fourth arguments to
+        allow the undefined value as well as null; we check the value of the argument rather
+        than looking at the size of the passed-in arguments list.
+
 2007-12-16  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Darin.
@@ -43,25 +62,6 @@
         (WebCore::RenderBox::calculateBackgroundSize):
         * rendering/RenderObject.cpp:
         (WebCore::RenderObject::paintBorderImage):
-
-2007-12-16  Darin Adler  <darin@apple.com>
-
-        Reviewed by Maciej.
-
-        - fix <rdar://problem/5636065> First form of SQLTransaction.executeSql() fails with TYPE_ERROR dom exception
-
-        Test: storage/execute-sql-args.html
-
-        * bindings/js/JSSQLTransactionCustom.cpp:
-        (WebCore::JSSQLTransaction::executeSql): Added exception handling code so that once an
-        exception happens, we won't try to do any more argument processing. Changed processing
-        of the second argument so that we allow an undefined value or null, and simply omit the
-        array. Changed processing of the second argument so that we don't require an actual
-        JavaScript array. Instead, as with the JavaScript array operations themselves, we use
-        the length property and corresponding numeric properties of the object, allowing other
-        objects to act as arrays. Changed processing of the third and fourth arguments to
-        allow the undefined value as well as null; we check the value of the argument rather
-        than looking at the size of the passed-in arguments list.
 
 2007-12-16  Darin Adler  <darin@apple.com>
 
