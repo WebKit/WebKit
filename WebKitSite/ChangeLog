@@ -1,5 +1,13 @@
 2007-12-17  Maciej Stachowiak  <mjs@apple.com>
 
+        Reviewed by Mark.
+        
+        - fix compare feature
+
+        * perf/sunspider-0.9/sunspider-results.html:
+
+2007-12-17  Maciej Stachowiak  <mjs@apple.com>
+
         Rubber stamped by Mark.
         
         - Add a copy of SunSpider 0.9 to the site

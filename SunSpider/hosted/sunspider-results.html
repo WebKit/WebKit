@@ -76,7 +76,7 @@ var output2 = output;
 function compare(other)
 {
     document.getElementById("console").innerHTML = "";
-    var output1 = eval(decodeURI(other.split("?")[1]));
+    var output1 = pivot(eval("(" + decodeURI(other.split("?")[1]) + ")"));
     sunspiderCompareResults(output1, output2);
 }
 </script>

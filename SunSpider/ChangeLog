@@ -2,6 +2,14 @@
 
         Reviewed by Mark.
         
+        - fix compare feature
+
+        * hosted/sunspider-results.html:
+
+2007-12-17  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Mark.
+        
         - Change the format of the output URL to be shorter, to meet IE constraints
 
         * hosted/sunspider-driver.html:
