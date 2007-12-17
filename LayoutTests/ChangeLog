@@ -1,5 +1,10 @@
 2007-12-16  Darin Adler  <darin@apple.com>
 
+        * fast/js/regexp-overflow-expected.txt: Updated. I accidentally checked in an
+        out-of-date file last time.
+
+2007-12-16  Darin Adler  <darin@apple.com>
+
         Reviewed by Maciej.
 
         - test for http://bugs.webkit.org/show_bug.cgi?id=16459
