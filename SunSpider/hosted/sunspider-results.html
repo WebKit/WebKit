@@ -45,7 +45,20 @@
 
 
 <script>
-var output = eval(decodeURI(location.search.substring(1)));
+var output = pivot(eval("(" + decodeURI(location.search.substring(1)) + ")"));
+
+function pivot(input) {
+    var output = [];
+    for (var test in input) {
+        for (var i = 0; i < input[test].length; i++) {
+             if (!output[i])
+                 output[i] = {};
+             output[i][test] =  input[test][i];
+        }
+    }
+    return output;
+}
+
 function print(str) {
     var console = document.getElementById("console");
     console.appendChild(document.createTextNode(str));
