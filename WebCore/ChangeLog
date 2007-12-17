@@ -1,3 +1,17 @@
+2007-12-17  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        - fix <rdar://problem/5333260> Some Chinese characters in Text Encoding menu are bold, others are not
+          and <rdar://problem/5280188> Chinese text looks worse on Safari for Windows cf. Safari for Mac
+
+        * platform/graphics/win/FontCacheWin.cpp:
+        (WebCore::FontCache::getFontDataForCharacters): To ensure that font
+        linking gives consistent results for characters that are exclusive to
+        the simplified Chinese code page and characters that belong to that
+        code page and other code pages, always ask to map to simplified Chinese
+        alone first.
+
 2007-12-17  Christian Dywan  <christian@twotoasts.de>
 
         Reviewed by Alp Toker.

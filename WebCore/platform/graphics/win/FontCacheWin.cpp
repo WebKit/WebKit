@@ -92,7 +92,21 @@ const FontData* FontCache::getFontDataForCharacters(const Font& font, const UCha
     long cchActual;
     langFontLink->GetStrCodePages(characters, length, acpCodePages, &actualCodePages, &cchActual);
     if (cchActual) {
+        // If simplified Chinese is one of the actual code pages, make one call to MapFont() asking for
+        // simplified Chinese only (and ignore the result). This ensures that we get consistent answers
+        // for characters that are in the simplified Chinese code page as well as other code pages and
+        // characters that are exclusively in the simplified Chinese code page.
+        // FIXME: This needs to be done only once per primary font. We could set a bit in the FontPlatformData
+        // indicating that we have done this.
+        const UINT simplifiedChineseCP = 936;
+        UINT codePage;
         HFONT result;
+        if (SUCCEEDED(langFontLink->CodePagesToCodePage(actualCodePages, simplifiedChineseCP, &codePage)) && codePage == simplifiedChineseCP) {
+            DWORD simplifiedChineseCodePages;
+            langFontLink->CodePageToCodePages(simplifiedChineseCP, &simplifiedChineseCodePages);
+            langFontLink->MapFont(hdc, simplifiedChineseCodePages, characters[0], &result);
+            langFontLink->ReleaseFont(result);
+        }
         if (langFontLink->MapFont(hdc, actualCodePages, characters[0], &result) == S_OK) {
             // Fill in a log font with the returned font from MLang, and then use that to create a new font.
             LOGFONT lf;
