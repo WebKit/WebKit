@@ -1,5 +1,16 @@
 2007-12-18  Steve Falkenburg  <sfalken@apple.com>
 
+        <rdar://problem/5649911> REGRESSION (304-306A9): Typing 'p' in popup menu for type-to-select brings up Safari Help
+        
+        Need to translate the char back into a key code for posting our WM_KEYDOWN.
+        
+        Reviewed by Ada.
+
+        * platform/win/PopupMenuWin.cpp:
+        (WebCore::PopupWndProc):
+
+2007-12-18  Steve Falkenburg  <sfalken@apple.com>
+
         <rdar://problem/5651534> REGRESSION(r28764-r28765): GDI leak drawing text when no appropriate font is available
         
         Our captured metafile from Uniscribe may contain multiple calls to CreateFontIndirect.
