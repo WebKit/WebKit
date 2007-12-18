@@ -1,3 +1,11 @@
+2007-12-18  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Eric.
+        
+        - give an extra digit of precision for small differences.
+
+        * resources/sunspider-compare-results.js:
+
 2007-12-17  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Eric.

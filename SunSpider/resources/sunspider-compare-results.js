@@ -306,7 +306,7 @@ function sunspiderCompareResults(output1, output2)
         var isFaster = diff < 0;
         var probablySame = (percentage < 0.1) && !statisticallySignificant;
         var ratio = isFaster ? (mean1 / mean2) : (mean2 / mean1);
-        var fixedRatio = (ratio < 10) ? ratio.toFixed(2).toString() : ratio.toFixed(1).toString();
+        var fixedRatio = (ratio < 1.2) ? ratio.toFixed(3).toString() : ((ratio < 10) ? ratio.toFixed(2).toString() : ratio.toFixed(1).toString());
         var formattedRatio = isFaster ? fixedRatio + "x as fast" : "*" + fixedRatio + "x as slow*";
 
         var diffSummary;
