@@ -1,3 +1,16 @@
+2007-12-17  Alice Liu  <alice.liu@apple.com>
+
+        Reviewed by Adam.
+
+        Test for <rdar://problem/5566435> window with no scrollbars can still be scrolled with wheelevent 
+
+        * fast/events/attempt-scroll-with-no-scrollbars-expected.txt: Added.
+        * fast/events/attempt-scroll-with-no-scrollbars.html: Added.
+        * platform/mac/Skipped: 
+        Adding to mac Skipped list because of <rdar://problem/5643675> window.scrollTo scrolls a window with no scrollbars
+        * platform/win/Skipped:
+        Adding to win Skipped list because of <rdar://problem/5132009> Windows DRT does not support multiple windows
+
 2007-12-17  Darin Adler  <darin@apple.com>
 
         - disabling this test until we can find a way to make it pass on diverse machines
