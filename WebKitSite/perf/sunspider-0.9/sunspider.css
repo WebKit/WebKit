@@ -8,7 +8,8 @@ h2 { background-color: #4E8AB9;
      margin: -20px -20px 0px -20px; 
      padding: 30px 20px 30px 20px; 
      color: yellow;
-     border-bottom: 2px solid #360D6B }
+     border-bottom: 2px solid #360D6B;
+     zoom: 1.0 /* I CAN HAS LAYOUT? (ie hack) */ }
 
 dt { font-weight: bold }
 
