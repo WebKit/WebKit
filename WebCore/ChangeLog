@@ -1,3 +1,13 @@
+2007-12-18  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        - avoid the simplified Chinese font linking code for characters that are
+          not in any Windows code page
+
+        * platform/graphics/win/FontCacheWin.cpp:
+        (WebCore::FontCache::getFontDataForCharacters):
+
 2007-12-18  Brady Eidson <beidson@apple.com>
 
         Reviewed by Adele

@@ -101,7 +101,7 @@ const FontData* FontCache::getFontDataForCharacters(const Font& font, const UCha
         const UINT simplifiedChineseCP = 936;
         UINT codePage;
         HFONT result;
-        if (SUCCEEDED(langFontLink->CodePagesToCodePage(actualCodePages, simplifiedChineseCP, &codePage)) && codePage == simplifiedChineseCP) {
+        if (actualCodePages && SUCCEEDED(langFontLink->CodePagesToCodePage(actualCodePages, simplifiedChineseCP, &codePage)) && codePage == simplifiedChineseCP) {
             DWORD simplifiedChineseCodePages;
             langFontLink->CodePageToCodePages(simplifiedChineseCP, &simplifiedChineseCodePages);
             langFontLink->MapFont(hdc, simplifiedChineseCodePages, characters[0], &result);
