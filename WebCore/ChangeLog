@@ -1,3 +1,13 @@
+2007-12-17  Rodney Dawes  <dobey@wayofthemonkey.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Define WTF_USE_NPOBJECT and WTF_USE_JAVASCRIPTCORE_BINDINGS for GTK+
+        Add required Frame::createScriptInstanceForWidget to FrameGtk
+
+        * config.h:
+        * page/gtk/FrameGtk.cpp (Frame::createScriptInstanceForWidget):
+
 2007-12-17  Alice Liu  <alice.liu@apple.com>
 
         Reviewed by Adam.

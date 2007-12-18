@@ -33,6 +33,11 @@
 
 namespace WebCore {
 
+KJS::Bindings::Instance* Frame::createScriptInstanceForWidget(Widget*)
+{
+    notImplemented();
+}
+
 void Frame::clearPlatformScriptObjects()
 {
     notImplemented();
