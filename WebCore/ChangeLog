@@ -1,3 +1,16 @@
+2007-12-18  Steve Falkenburg  <sfalken@apple.com>
+
+        <rdar://problem/5651534> REGRESSION(r28764-r28765): GDI leak drawing text when no appropriate font is available
+        
+        Our captured metafile from Uniscribe may contain multiple calls to CreateFontIndirect.
+        Only create a font with the last one.
+        
+        Reviewed by Mitz, Darin.
+
+        * platform/graphics/win/FontCacheWin.cpp:
+        (WebCore::metaFileEnumProc):
+        (WebCore::FontCache::getFontDataForCharacters):
+
 2007-12-17  Brent Fulgham  <bfulgham@gmail.com>
 
         Reviewed by Darin.
