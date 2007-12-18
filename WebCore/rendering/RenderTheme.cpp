@@ -491,7 +491,7 @@ Color RenderTheme::systemColor(int cssValueId) const
         case CSS_VAL_BACKGROUND:
             return 0xFF6363CE;
         case CSS_VAL_BUTTONFACE:
-            return 0xFFECECEC;
+            return 0xFFC0C0C0;
         case CSS_VAL_BUTTONHIGHLIGHT:
             return 0xFFDDDDDD;
         case CSS_VAL_BUTTONSHADOW:
@@ -527,7 +527,7 @@ Color RenderTheme::systemColor(int cssValueId) const
         case CSS_VAL_THREEDDARKSHADOW:
             return 0xFF666666;
         case CSS_VAL_THREEDFACE:
-            return 0xFFECECEC;
+            return 0xFFC0C0C0;
         case CSS_VAL_THREEDHIGHLIGHT:
             return 0xFFDDDDDD;
         case CSS_VAL_THREEDLIGHTSHADOW:

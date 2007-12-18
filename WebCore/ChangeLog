@@ -1,3 +1,14 @@
+2007-12-17  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        - restore ButtonFace and ThreeDFace to their previous values for non-Mac
+          platforms. The Mac port also uses the same values for now instead
+          of NSColor-based ones.
+
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::systemColor):
+
 2007-12-17  Rodney Dawes  <dobey@wayofthemonkey.com>
 
         Reviewed by Maciej Stachowiak.
