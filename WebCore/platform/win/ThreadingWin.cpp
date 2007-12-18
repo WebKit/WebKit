@@ -27,11 +27,12 @@
  */
 
 #include "config.h"
-#include "Threading.h"
-
 #include "Logging.h"
 #include "Page.h"
+#include "Threading.h"
+#include <errno.h>
 #include <windows.h>
+#include <wtf/HashMap.h>
 
 namespace WebCore {
 
@@ -41,6 +42,101 @@ static HWND threadingWindowHandle = 0;
 static UINT threadingFiredMessage = 0;
 const LPCWSTR kThreadingWindowClassName = L"ThreadingWindowClass";
 static bool processingCustomThreadingMessage = false;
+
+static Mutex& threadMapMutex()
+{
+    static Mutex mutex;
+    return mutex;
+}
+
+static HashMap<DWORD, HANDLE>& threadMap()
+{
+    static HashMap<DWORD, HANDLE> map;
+    return map;
+}
+
+static void storeThreadHandleByIdentifier(DWORD threadID, HANDLE threadHandle)
+{
+    MutexLocker locker(threadMapMutex());
+    threadMap().add(threadID, threadHandle);
+}
+
+static ThreadIdentifier identifierByThreadHandle(HANDLE threadHandle)
+{
+    MutexLocker locker(threadMapMutex());
+
+    HashMap<DWORD, HANDLE>::iterator i = threadMap().begin();
+    for (; i != threadMap().end(); ++i) {
+        if (i->second == threadHandle)
+            return i->first;
+    }
+
+    return 0;
+}
+
+static HANDLE threadHandleForIdentifier(ThreadIdentifier id)
+{
+    MutexLocker locker(threadMapMutex());
+    return threadMap().get(id);
+}
+
+static void clearThreadHandleForIdentifier(ThreadIdentifier id)
+{
+    MutexLocker locker(threadMapMutex());
+    ASSERT(threadMap().contains(id));
+    threadMap().remove(id);
+}
+
+ThreadIdentifier createThread(ThreadFunction entryPoint, void* data)
+{
+    DWORD threadIdentifier = 0;
+    ThreadIdentifier threadID = 0;
+    HANDLE hEvent = ::CreateEvent(0, FALSE, FALSE, 0);
+    HANDLE threadHandle = ::CreateThread(0, 0, (LPTHREAD_START_ROUTINE)entryPoint, data, 0, &threadIdentifier);
+    if (!threadHandle) {
+        LOG_ERROR("Failed to create thread at entry point %p with data %p", entryPoint, data);
+        return 0;
+    }
+
+    threadID = static_cast<ThreadIdentifier>(threadIdentifier);
+    storeThreadHandleByIdentifier(threadIdentifier, threadHandle);
+
+    LOG(Threading, "Created thread with thread id %u", threadID);
+    return threadID;
+}
+
+int waitForThreadCompletion(ThreadIdentifier threadID, void** result)
+{
+    ASSERT(threadID);
+    
+    HANDLE threadHandle = threadHandleForIdentifier(threadID);
+    if (!threadHandle)
+        LOG_ERROR("ThreadIdentifier %u did not correspond to an active thread when trying to quit", threadID);
+ 
+    DWORD joinResult = ::WaitForSingleObject(threadHandle, INFINITE);
+    if (joinResult == WAIT_FAILED)
+        LOG_ERROR("ThreadIdentifier %u was found to be deadlocked trying to quit", threadID);
+
+    ::CloseHandle(threadHandle);
+    clearThreadHandleForIdentifier(threadID);
+
+    return joinResult;
+}
+
+void detachThread(ThreadIdentifier threadID)
+{
+    ASSERT(threadID);
+    
+    HANDLE threadHandle = threadHandleForIdentifier(threadID);
+    if (threadHandle)
+        ::CloseHandle(threadHandle);
+    clearThreadHandleForIdentifier(threadID);
+}
+
+ThreadIdentifier currentThread()
+{
+    return static_cast<ThreadIdentifier>(::GetCurrentThreadId());
+}
 
 static Mutex& functionQueueMutex()
 {

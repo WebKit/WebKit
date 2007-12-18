@@ -1,3 +1,40 @@
+2007-12-17  Brent Fulgham  <bfulgham@gmail.com>
+
+        Reviewed by Darin.
+
+        http://bugs.webkit.org/show_bug.cgi?id=16464
+        Modify WebCore to use win32 thread primitives
+
+        Updates to support native windows threading primitives
+        rather than pthreads emulation library.
+
+        * WebCore.vcproj/WebCore.vcproj:
+        * config.h:
+        * platform/Threading.h:
+        * platform/win/MutexWin.cpp: Added.
+        (WebCore::Mutex::Mutex):
+        (WebCore::Mutex::~Mutex):
+        (WebCore::Mutex::lock):
+        (WebCore::Mutex::tryLock):
+        (WebCore::Mutex::unlock):
+        * platform/win/ThreadConditionWin.cpp: Added.
+        (WebCore::ThreadCondition::ThreadCondition):
+        (WebCore::ThreadCondition::~ThreadCondition):
+        (WebCore::ThreadCondition::wait):
+        (WebCore::ThreadCondition::signal):
+        (WebCore::ThreadCondition::broadcast):
+        * platform/win/ThreadingWin.cpp:
+        (WebCore::threadMapMutex):
+        (WebCore::threadMap):
+        (WebCore::storeThreadHandleByIdentifier):
+        (WebCore::identifierByThreadHandle):
+        (WebCore::threadHandleForIdentifier):
+        (WebCore::clearThreadHandleForIdentifier):
+        (WebCore::createThread):
+        (WebCore::waitForThreadCompletion):
+        (WebCore::detachThread):
+        (WebCore::currentThread):
+
 2007-12-18  Rodney Dawes  <dobey@wayofthemonkey.com>
 
         Reviewed by Darin Adler.

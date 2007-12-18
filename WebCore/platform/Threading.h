@@ -69,6 +69,19 @@ typedef GCond* PlatformCondition;
 #elif PLATFORM(QT)
 typedef QMutex* PlatformMutex;
 typedef QWaitCondition* PlatformCondition;
+#elif PLATFORM(WIN_OS)
+struct PlatformMutex {
+    CRITICAL_SECTION m_internalMutex;
+    size_t m_recursionCount;
+};
+struct PlatformCondition {
+    size_t m_timedOut;
+    size_t m_blocked;
+    size_t m_waitingForRemoval;
+    HANDLE m_gate;
+    HANDLE m_queue;
+    HANDLE m_mutex;
+};
 #else
 typedef void* PlatformMutex;
 typedef void* PlatformCondition;

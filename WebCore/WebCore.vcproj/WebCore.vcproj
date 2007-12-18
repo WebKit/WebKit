@@ -3545,6 +3545,10 @@
 					RelativePath="..\platform\win\MIMETypeRegistryWin.cpp"
 					>
 				</File>
+ 				<File
+					RelativePath="..\platform\win\MutexWin.cpp"
+					>
+				</File>
 				<File
 					RelativePath="..\platform\win\PasteboardWin.cpp"
 					>
@@ -3603,6 +3607,10 @@
 				</File>
 				<File
 					RelativePath="..\platform\text\win\TextBreakIteratorInternalICUWin.cpp"
+					>
+				</File>
+ 				<File
+					RelativePath="..\platform\win\ThreadConditionWin.cpp"
 					>
 				</File>
 				<File
@@ -4080,14 +4088,6 @@
 						>
 					</File>
 				</Filter>
-			</Filter>
-			<Filter
-				Name="pthreads"
-				>
-				<File
-					RelativePath="..\platform\pthreads\ThreadingPthreads.cpp"
-					>
-				</File>
 			</Filter>
 			<Filter
 				Name="sql"
