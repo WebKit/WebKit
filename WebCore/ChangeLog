@@ -1,3 +1,13 @@
+2007-12-18  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Brady
+        
+        - fixed <rdar://problem/5652380> Initial prompt shows "" for databases with no user-visible name
+
+        * storage/DatabaseTracker.cpp:
+        (WebCore::DatabaseTracker::canEstablishDatabase):
+        pass "name" instead of "displayName" if there's no displayName
+
 2007-12-17  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Maciej Stachowiak.
