@@ -67,19 +67,24 @@ sub wanted
 }
 
 my %renames = (
-    "KURL" => "URL",
-    "KURLMac" => "URLMac",
-    "KURLCFNet" => "KURLCF",
-    "KURL_H_" => "URL_h",
     "HTMLGenericFormElement" => "HTMLFormControlElement",
     "HTMLGenericFormElement_h" => "HTMLFormControlElement_h",
+    "KURL" => "URL",
+    "KURLCFNet" => "KURLCF",
+    "KURLMac" => "URLMac",
+    "KURL_H_" => "URL_h",
+    "StringImpl" => "SharedString",
+    "animationController" => "animation",
+    "caseSensitive" => "foldCase",
+    "equalIgnoringCase" => "equalFoldingCase",
     "kjs_binding" => "JSDOMBinding",
     "kjs_binding_h" => "JSDOMBinding_h",
     "kjs_css" => "JSRGBColor",
     "kjs_css_h" => "JSRGBColor_h",
-    "kjs_proxy" => "JSController",
-    "kjs_proxy_h" => "JSController_h",
-    "scriptProxy" => "javaScript",
+    "kjs_proxy" => "ScriptController",
+    "kjs_proxy_h" => "ScriptController_h",
+    "scriptProxy" => "script",
+    "selectionController" => "selection",
 );
 
 # rename files
