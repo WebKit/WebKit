@@ -38,6 +38,7 @@
 #include "HTTPParsers.h"
 #include "Base64.h"
 
+#include <errno.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -195,13 +196,9 @@ void ResourceHandleManager::downloadTimerCallback(Timer<ResourceHandleManager>* 
     startScheduledJobs();
 
     fd_set fdread;
-    FD_ZERO(&fdread);
     fd_set fdwrite;
-    FD_ZERO(&fdwrite);
     fd_set fdexcep;
-    FD_ZERO(&fdexcep);
     int maxfd = 0;
-    curl_multi_fdset(m_curlMultiHandle, &fdread, &fdwrite, &fdexcep, &maxfd);
 
     struct timeval timeout;
     timeout.tv_sec = 0;
@@ -209,12 +206,19 @@ void ResourceHandleManager::downloadTimerCallback(Timer<ResourceHandleManager>* 
 
     // Temporarily disable timers since signals may interrupt select(), raising EINTR errors on some platforms
     setDeferringTimers(true);
-    int rc = ::select(maxfd + 1, &fdread, &fdwrite, &fdexcep, &timeout);
+    int rc;
+    do {
+        FD_ZERO(&fdread);
+        FD_ZERO(&fdwrite);
+        FD_ZERO(&fdexcep);
+        curl_multi_fdset(m_curlMultiHandle, &fdread, &fdwrite, &fdexcep, &maxfd);
+        rc = ::select(maxfd + 1, &fdread, &fdwrite, &fdexcep, &timeout);
+    } while (rc == -1 && errno == EINTR);
     setDeferringTimers(false);
 
     if (-1 == rc) {
 #ifndef NDEBUG
-        printf("bad: select() returned -1\n");
+        perror("bad: select() returned -1: ");
 #endif
         return;
     }

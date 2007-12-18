@@ -1,3 +1,13 @@
+2007-12-18  Rodney Dawes  <dobey@wayofthemonkey.com>
+
+        Reviewed by Darin Adler.
+
+        Handle EINTR when set by select() and try the select() again
+        http://bugs.webkit.org/show_bug.cgi?id=16071
+
+        * platform/network/curl/ResourceHandleManager.cpp:
+        (ResourceHandleManager::downloadTimerCallback):
+
 2007-12-18  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Dave Hyatt.
