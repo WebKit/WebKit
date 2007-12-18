@@ -1,3 +1,11 @@
+2007-12-18  Darin Adler  <darin@apple.com>
+
+        - fix failing regression test
+
+        * fast/regex/resources/TEMPLATE.html: Updated this template -- I accidentally landed
+        the one that was copied without updating the paths.
+        * fast/regex/slow.html: Regenerated.
+
 2007-12-18  Alice Liu  <alice.liu@apple.com>
 
         Reviewed by Darin.
