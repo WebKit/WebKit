@@ -1,3 +1,11 @@
+2007-12-18  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by John Sullivan.
+
+        - remove passing test
+
+        * platform/win/Skipped: Removed fast/text/international/wrap-CJK-001.html
+
 2007-12-17  Alice Liu  <alice.liu@apple.com>
 
         Reviewed by Adam.

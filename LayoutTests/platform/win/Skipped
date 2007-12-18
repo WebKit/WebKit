@@ -197,7 +197,6 @@ fast/text/international/bidi-neutral-directionality-paragraph-start.html
 fast/text/international/bidi-override.html
 fast/text/international/rtl-caret.html
 fast/text/international/thai-line-breaks.html
-fast/text/international/wrap-CJK-001.html
 
 # DRT doesn't support undo/redo <rdar://problem/5131975>
 editing/deleting/delete-and-undo.html
