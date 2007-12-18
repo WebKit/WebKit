@@ -1,3 +1,23 @@
+2007-12-18  Darin Adler  <darin@apple.com>
+
+        Reviewed by Geoff.
+
+        - test for http://bugs.webkit.org/show_bug.cgi?id=16458
+          REGRESSION (r28164): regular expressions can now hang due to lack of a match limit
+          <rdar://problem/5636067>
+
+        Test: fast/regex/slow.html
+
+        Slows down SunSpider a bit (about 1.01x); filed a bug to follow up on that:
+        http://bugs.webkit.org/show_bug.cgi?id=16503
+
+        * pcre/pcre.h: Changed name of error code to not specifically mention "recursion".
+        * pcre/pcre_exec.cpp:
+        (match): Replaced the depth limit, MATCH_RECURSION_LIMIT, with a total match looping
+        limit, matchLimit. Also eliminated the constants for MATCH_MATCH and MATCH_NOMATCH,
+        since they are just true and false (1 and 0).
+        (jsRegExpExecute): More of the MATCH_MATCH change.
+
 2007-12-17  Darin Adler  <darin@apple.com>
 
         - speculative build fix for non-gcc platforms
