@@ -60,6 +60,7 @@ namespace WebCore {
         virtual void didReceiveData(const char*, int, long long lengthReceived, bool allAtOnce);
         virtual void didFinishLoading();
         virtual void didFail(const ResourceError&);
+        virtual void didReceiveAuthenticationChallenge(const AuthenticationChallenge&);
         virtual void receivedCancellation(const AuthenticationChallenge&);
 
     private:

@@ -236,6 +236,21 @@ void SubresourceLoader::didCancel(const ResourceError& error)
     ResourceLoader::didCancel(error);
 }
 
+void SubresourceLoader::didReceiveAuthenticationChallenge(const AuthenticationChallenge& challenge)
+{
+    RefPtr<SubresourceLoader> protect(this);
+
+    if (m_client)
+        m_client->didReceiveAuthenticationChallenge(this, challenge);
+    
+    // The SubResourceLoaderClient may have cancelled this ResourceLoader in response to the challenge.  
+    // If that's the case, don't call didReceiveAuthenticationChallenge
+    if (reachedTerminalState())
+        return;
+        
+    ResourceLoader::didReceiveAuthenticationChallenge(challenge);
+}
+
 void SubresourceLoader::receivedCancellation(const AuthenticationChallenge& challenge)
 {
     ASSERT(!reachedTerminalState());

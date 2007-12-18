@@ -82,7 +82,7 @@ namespace WebCore {
         virtual void didFail(const ResourceError&);
         virtual void wasBlocked();
 
-        void didReceiveAuthenticationChallenge(const AuthenticationChallenge&);
+        virtual void didReceiveAuthenticationChallenge(const AuthenticationChallenge&);
         void didCancelAuthenticationChallenge(const AuthenticationChallenge&);
         virtual void receivedCancellation(const AuthenticationChallenge&);
 

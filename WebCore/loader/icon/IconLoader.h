@@ -53,6 +53,8 @@ private:
     virtual void didFinishLoading(SubresourceLoader*);
     virtual void didFail(SubresourceLoader*, const ResourceError&);
 
+    virtual void didReceiveAuthenticationChallenge(SubresourceLoader*, const AuthenticationChallenge&);
+    
     void finishLoading(const KURL&, PassRefPtr<SharedBuffer> data);
     void clearLoadingState();
 

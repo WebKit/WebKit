@@ -1,3 +1,31 @@
+2007-12-18  Brady Eidson <beidson@apple.com>
+
+        Reviewed by Adele
+
+        <rdar://problem/5525770> REGRESSION: HTTP Auth protected favicon request results in a password sheet
+
+        Some http-auth protected sites have the main resource(s) unprotected, but many subresources are
+        protected by authentication.  Occasionally one can view the main page of a site but the favicon
+        is behind the iron curtain - in these cases, we should *not* prompt for a username and password
+        solely for the favicon.
+
+        * loader/ResourceLoader.h: Make didReceiveAuthenticationChallenge virtual
+
+        * loader/SubresourceLoader.cpp:
+        (WebCore::SubresourceLoader::didReceiveAuthenticationChallenge): Now that this method
+          is virtual from ResourceLoader, SubresourceLoader can override.  First call to the 
+          SubresourceLoaderClient.  If they cancel the resource load, return early. Otherwise, let
+          ResourceLoader work its magic (resulting in the auth sheet coming down)
+        * loader/SubresourceLoader.h:
+
+        * loader/SubresourceLoaderClient.h:
+        (WebCore::SubresourceLoaderClient::didReceiveAuthenticationChallenge):
+
+        * loader/icon/IconLoader.cpp:
+        (WebCore::IconLoader::didReceiveAuthenticationChallenge): Cancel the resource load, since we should
+          never prompt the user for credentials just for a favicon.
+        * loader/icon/IconLoader.h:
+
 2007-12-18  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Brady
