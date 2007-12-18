@@ -1,3 +1,17 @@
+2007-12-18  Alice Liu  <alice.liu@apple.com>
+
+        Reviewed by Darin.
+
+        Fixed <rdar://problem/5646454> REGRESSION: dom/xhtml/level2/html/HTMLDocument12 fails on Leopard
+
+        * fast/cookies/local-file-can-set-cookies.html:
+        cookies are matched by domain and path, and since layout tests are file URLs, 
+        they all match on domain.  setting a cookie without specifying the path will 
+        make CFNetwork pick up the path from the URL automatically.  Since 
+        fast/cookies/local-file-can-set-cookies.html set a specific path of /, that 
+        cookie will be set for EVERY local file loaded in Safari.   removing that 
+        component from the cookie string will fix the problem.
+
 2007-12-18  Darin Adler  <darin@apple.com>
 
         Reviewed by Geoff.
