@@ -1,3 +1,14 @@
+2007-12-17  Alice Liu  <alice.liu@apple.com>
+
+        Reviewed by Adam.
+
+        Fixed <rdar://5566435> window with no scrollbars can be scrolled
+
+        * platform/win/ScrollViewWin.cpp:
+        (WebCore::ScrollView::maximumScroll):
+        corrected maximumScroll() to account for scrolling not allowed.
+        (WebCore::ScrollView::wheelEvent):
+
 2007-12-14  Juan A. Suarez Romero  <jasuarez@igalia.com>
 
         Reviewed by Alp Toker.
