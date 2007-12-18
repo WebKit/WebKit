@@ -1,3 +1,32 @@
+2007-12-17  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam.
+
+        - <rdar://4516170> Back/Forward Cache on Windows
+
+        * WebFrame.cpp:
+        (WebFrame::forceLayout): Implemented this. Just calling through to
+        Frame::forceLayout matches the Mac pretty well and should be enough
+        for now. Without this we won't repaint the new page when we go back
+        and forward.
+        (WebFrame::dispatchWillSubmitForm): Use COMPtr's AdoptCOM constructor
+        instead of the adoptRef function.
+        (WebFrame::restoreViewState): Removed unneeded notImplemented() call.
+        This is implemented as much as it needs to be.
+        (WebFrame::shouldGoToHistoryItem): Ditto.
+        (WebFrame::saveViewStateToItem): Ditto.
+        (WebFrame::canCachePage): Ditto, also changed it to return true. This
+        is what was preventing the back/forward cache from running, and there's
+        no need for any additional checks in the Windows version.
+
+        * WebView.cpp:
+        (PreferencesChangedOrRemovedObserver::onNotify): Fix backwards null check
+        that was preventing this notification from ever being sent, which in turn
+        meant that page cache had a capacity of 0.
+        (WebView::initWithFrame): Removed unneeded setUsesPageCache(false) code.
+        This actually was ineffective and ended up doing no harm, but we don't
+        need it.
+
 2007-12-16  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin.

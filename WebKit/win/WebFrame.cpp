@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -1501,7 +1501,7 @@ void WebFrame::makeRepresentation(DocumentLoader*)
 
 void WebFrame::forceLayout()
 {
-    notImplemented();
+    core(this)->forceLayout(true);
 }
 
 void WebFrame::forceLayoutForNonHTML()
@@ -1646,8 +1646,7 @@ void WebFrame::dispatchWillSubmitForm(FramePolicyFunction function, PassRefPtr<F
         return;
     }
 
-    COMPtr<IDOMElement> formElement;
-    formElement.adoptRef(DOMElement::createInstance(formState->form()));
+    COMPtr<IDOMElement> formElement(AdoptCOM, DOMElement::createInstance(formState->form()));
 
     // FIXME: The FormValuesPropertyBag constructor should take a const pointer
     FormValuesPropertyBag formValuesPropBag(const_cast<HashMap<String, String>*>(&formState->values()));
@@ -1771,8 +1770,6 @@ void WebFrame::frameLoadCompleted()
 
 void WebFrame::restoreViewState()
 {
-    // FIXME: Need to restore view state for page caching
-    notImplemented();
 }
 
 void WebFrame::provisionalLoadStarted()
@@ -1891,20 +1888,16 @@ void WebFrame::updateGlobalHistoryForReload(const KURL& url)
 
 bool WebFrame::shouldGoToHistoryItem(HistoryItem*) const
 {
-    notImplemented();
     return true;
 }
 
 void WebFrame::saveViewStateToItem(HistoryItem*)
 {
-    // FIXME: Need to save view state for page caching
-    notImplemented();
 }
 
 bool WebFrame::canCachePage() const
 {
-    notImplemented();
-    return false;
+    return true;
 }
 
 PassRefPtr<DocumentLoader> WebFrame::createDocumentLoader(const ResourceRequest& request, const SubstituteData& substituteData)

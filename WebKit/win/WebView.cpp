@@ -150,7 +150,7 @@ HRESULT PreferencesChangedOrRemovedObserver::onNotify(IWebNotification* notifica
         return hr;
 
     COMPtr<IWebPreferences> preferences(Query, unkPrefs);
-    if (preferences)
+    if (!preferences)
         return E_NOINTERFACE;
 
     WebCacheModel cacheModel;
@@ -2033,9 +2033,6 @@ HRESULT STDMETHODCALLTYPE WebView::initWithFrame(
     WebKitSetWebDatabasesPathIfNecessary();
 
     m_page = new Page(new WebChromeClient(this), new WebContextMenuClient(this), new WebEditorClient(this), new WebDragClient(this), new WebInspectorClient(this));
-    // FIXME: 4931464 - When we do cache pages on Windows this needs to be removed so the "should I cache this page?" check
-    // in FrameLoader::provisionalLoadStarted() doesn't always fail
-    m_page->settings()->setUsesPageCache(false);
 
     if (m_uiDelegate) {
         COMPtr<IWebUIDelegate2> uiDelegate2;
