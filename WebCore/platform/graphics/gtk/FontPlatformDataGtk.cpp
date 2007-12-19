@@ -26,6 +26,9 @@
  *
  */
 
+// Use the Pango backend API for compatibility with older Pango versions.
+#define PANGO_ENABLE_BACKEND
+
 #include "config.h"
 #include "FontPlatformData.h"
 
@@ -34,6 +37,15 @@
 #include "FontDescription.h"
 #include <cairo.h>
 #include <assert.h>
+
+#include <pango/pango.h>
+#include <pango/pangocairo.h>
+
+// Use cairo-ft if a recent enough Pango version isn't available.
+#if !PANGO_VERSION_CHECK(1,18,0)
+#include <cairo-ft.h>
+#include <pango/pangofc-fontmap.h>
+#endif
 
 namespace WebCore {
 
@@ -87,8 +99,31 @@ FontPlatformData::FontPlatformData(const FontDescription& fontDescription, const
     }
 
     // FIXME: should we set some default font?
+#if PANGO_VERSION_CHECK(1,18,0)
     if (m_font)
-        m_scaledFont = pango_cairo_font_get_scaled_font(PANGO_CAIRO_FONT(m_font));
+        m_scaledFont = cairo_scaled_font_reference(pango_cairo_font_get_scaled_font(PANGO_CAIRO_FONT(m_font)));
+#else
+    // This compatibility code for older versions of Pango is not well-tested.
+    if (m_font) {
+        PangoFcFont* fcfont = PANGO_FC_FONT(m_font);
+        cairo_font_face_t* face = cairo_ft_font_face_create_for_pattern(fcfont->font_pattern);
+        double size;
+        if (FcPatternGetDouble(fcfont->font_pattern, FC_PIXEL_SIZE, 0, &size) != FcResultMatch)
+            size = 12.0;
+        cairo_matrix_t fontMatrix;
+        cairo_matrix_init_scale(&fontMatrix, size, size);
+        cairo_font_options_t* fontOptions;
+        if (pango_cairo_context_get_font_options(m_context))
+            fontOptions = cairo_font_options_copy(pango_cairo_context_get_font_options(m_context));
+        else
+            fontOptions = cairo_font_options_create();
+        cairo_matrix_t ctm;
+        cairo_matrix_init_identity(&ctm);
+        m_scaledFont = cairo_scaled_font_create(face, &fontMatrix, &ctm, fontOptions);
+        cairo_font_options_destroy(fontOptions);
+        cairo_font_face_destroy(face);
+    }
+#endif
 
     pango_font_description_free(description);
 }
@@ -123,6 +158,8 @@ bool FontPlatformData::init()
 
 FontPlatformData::~FontPlatformData()
 {
+    if (m_scaledFont)
+        cairo_scaled_font_destroy(m_scaledFont);
 }
 
 bool FontPlatformData::isFixedPitch()
