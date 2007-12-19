@@ -3496,16 +3496,6 @@ HTMLCollection::CollectionInfo* Document::nameCollectionInfo(HTMLCollection::Typ
     return iter->second;
 }
 
-PassRefPtr<NameNodeList> Document::getElementsByName(const String& elementName)
-{
-    return new NameNodeList(this, elementName);
-}
-
-PassRefPtr<NodeList> Document::getElementsByClassName(const String& className)
-{
-    return new ClassNodeList(this, className);
-}
-
 void Document::finishedParsing()
 {
     setParsing(false);

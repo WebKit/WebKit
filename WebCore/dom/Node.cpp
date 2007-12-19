@@ -26,14 +26,17 @@
 
 #include "CString.h"
 #include "ChildNodeList.h"
+#include "ClassNodeList.h"
 #include "DOMImplementation.h"
 #include "Document.h"
 #include "Element.h"
 #include "ExceptionCode.h"
 #include "Frame.h"
 #include "HTMLNames.h"
+#include "HTMLNames.h"
 #include "KURL.h"
 #include "Logging.h"
+#include "NameNodeList.h"
 #include "NamedAttrMap.h"
 #include "RenderObject.h"
 #include "Text.h"
@@ -50,6 +53,8 @@ typedef HashSet<NodeList*> NodeListSet;
 struct NodeListsNodeData {
     NodeListSet m_listsToNotify;
     NodeList::Caches m_childNodeListCaches;
+    HashMap<String, NodeList::Caches> m_classNodeListCaches;
+    HashMap<String, NodeList::Caches> m_nameNodeListCaches;
 };
 
 // NodeList that limits to a particular tag.
@@ -68,7 +73,9 @@ private:
 };
 
 inline TagNodeList::TagNodeList(PassRefPtr<Node> rootNode, const AtomicString& namespaceURI, const AtomicString& localName)
-    : NodeList(rootNode), m_namespaceURI(namespaceURI), m_localName(localName)
+    : NodeList(rootNode, true)
+    , m_namespaceURI(namespaceURI)
+    , m_localName(localName)
 {
     ASSERT(m_namespaceURI.isNull() || !m_namespaceURI.isEmpty());
 }
@@ -138,7 +145,6 @@ Node::Node(Document *doc)
       m_previous(0),
       m_next(0),
       m_renderer(0),
-      m_nodeLists(0),
       m_tabIndex(0),
       m_hasId(false),
       m_hasClass(false),
@@ -191,7 +197,7 @@ Node::~Node()
 #endif
     if (renderer())
         detach();
-    delete m_nodeLists;
+
     if (m_previous)
         m_previous->setNextSibling(0);
     if (m_next)
@@ -217,7 +223,7 @@ void Node::setNodeValue(const String& /*nodeValue*/, ExceptionCode& ec)
 PassRefPtr<NodeList> Node::childNodes()
 {
     if (!m_nodeLists)
-        m_nodeLists = new NodeListsNodeData;
+        m_nodeLists.set(new NodeListsNodeData);
 
     return new ChildNodeList(this, &m_nodeLists->m_childNodeListCaches);
 }
@@ -438,7 +444,7 @@ unsigned Node::nodeIndex() const
 void Node::registerNodeList(NodeList* list)
 {
     if (!m_nodeLists)
-        m_nodeLists = new NodeListsNodeData;
+        m_nodeLists.set(new NodeListsNodeData);
     else if (!m_document->hasNodeLists())
         // We haven't been receiving notifications while there were no registered lists, so the cache is invalid now.
         m_nodeLists->m_childNodeListCaches.reset();
@@ -1205,6 +1211,22 @@ PassRefPtr<NodeList> Node::getElementsByTagNameNS(const String& namespaceURI, co
     if (document()->isHTMLDocument())
         name = localName.lower();
     return new TagNodeList(this, namespaceURI.isEmpty() ? nullAtom : AtomicString(namespaceURI), name);
+}
+
+PassRefPtr<NodeList> Node::getElementsByName(const String& elementName)
+{
+    if (!m_nodeLists)
+        m_nodeLists.set(new NodeListsNodeData);
+
+    return new NameNodeList(this, elementName, &m_nodeLists->m_nameNodeListCaches.add(elementName, NodeList::Caches()).first->second);
+}
+
+PassRefPtr<NodeList> Node::getElementsByClassName(const String& classNames)
+{
+    if (!m_nodeLists)
+        m_nodeLists.set(new NodeListsNodeData);
+
+    return new ClassNodeList(this, classNames, &m_nodeLists->m_classNodeListCaches.add(classNames, NodeList::Caches()).first->second);
 }
 
 Document *Node::ownerDocument() const

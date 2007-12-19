@@ -1,3 +1,49 @@
+2007-12-19  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Maciej.
+
+        http://bugs.webkit.org/show_bug.cgi?id=16511
+        Speed up ClassNodeList and NamedNodeList by using the caching mechanism employed by ChildNodeList.
+        - This give a ~2.15x speedup on the native test @ http://ejohn.org/apps/classname/
+
+        * dom/ChildNodeList.cpp: Use the caching NodeList constructor to turn on caching.
+        (WebCore::ChildNodeList::ChildNodeList):
+        * dom/ClassNodeList.cpp:
+        (WebCore::ClassNodeList::ClassNodeList):
+        * dom/ClassNodeList.h:
+
+        Move getElementsByName and getElementsByClassName to Node so they
+        can use easily employ the caching already used by ChildNodeLists.  In the case of 
+        getElementsByClassName, this reduces code duplication in Element as well
+        * dom/Document.cpp:
+        * dom/Document.h:
+
+        Move getElementsByClassName to Node.
+        * dom/Element.cpp:
+        * dom/Element.h:
+
+        * dom/NameNodeList.cpp: Use the caching NodeList constructor to turn on caching.
+        (WebCore::NameNodeList::NameNodeList):
+        (WebCore::NameNodeList::item):
+        * dom/NameNodeList.h:
+
+        Add maps of caches for ClassNodeLists and NameNodeList to NodeListsNodeData.
+        * dom/Node.cpp:
+        (WebCore::TagNodeList::TagNodeList):
+        (WebCore::Node::Node):
+        (WebCore::Node::~Node):
+        (WebCore::Node::childNodes):
+        (WebCore::Node::registerNodeList):
+        (WebCore::Node::getElementsByName):
+        (WebCore::Node::getElementsByClassName):
+        * dom/Node.h: Make m_nodeLists an OwnPtr.  Moved getElementsByName and getElementsByClassName here
+
+        Allow subclasses to choose whether they want to receive the notifications using a new bit.
+        * dom/NodeList.cpp:
+        (WebCore::NodeList::NodeList):
+        * dom/NodeList.h:
+        (WebCore::NodeList::needsNotifications):
+
 2007-12-19  Dave Hyatt  <hyatt@apple.com>
 
         Add support for GDI text rendering to WebKit.

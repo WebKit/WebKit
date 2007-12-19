@@ -30,8 +30,8 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-NameNodeList::NameNodeList(Node* root, const String& name)
-    : NodeList(root)
+NameNodeList::NameNodeList(Node* root, const String& name, NodeList::Caches* caches)
+    : NodeList(root, caches, true)
     , m_nodeName(name)
 {
 }
@@ -41,7 +41,7 @@ unsigned NameNodeList::length() const
     return recursiveLength();
 }
 
-Node* NameNodeList::item (unsigned index) const
+Node* NameNodeList::item(unsigned index) const
 {
     return recursiveItem(index);
 }

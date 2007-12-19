@@ -30,15 +30,16 @@
 #ifndef ClassNodeList_h
 #define ClassNodeList_h
 
-#include "AtomicString.h"
 #include "ClassNames.h"
 #include "NodeList.h"
 
 namespace WebCore {
 
+    class String;
+
     class ClassNodeList : public NodeList {
     public:
-        ClassNodeList(PassRefPtr<Node> rootNode, const AtomicString& className);
+        ClassNodeList(PassRefPtr<Node> rootNode, const String& classNames, NodeList::Caches*);
 
         virtual unsigned length() const;
         virtual Node* item(unsigned index) const;

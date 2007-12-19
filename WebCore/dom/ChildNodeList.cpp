@@ -31,7 +31,7 @@ using namespace WebCore;
 namespace WebCore {
 
 ChildNodeList::ChildNodeList(Node* n, NodeList::Caches* info)
-    : NodeList(n, info)
+    : NodeList(n, info, false)
 {
 }
 

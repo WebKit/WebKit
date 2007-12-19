@@ -162,8 +162,6 @@ public:
     virtual void focus(bool restorePreviousSelection = true);
     virtual void updateFocusAppearance(bool restorePreviousSelection);
     void blur();
-    
-    PassRefPtr<NodeList> getElementsByClassName(const String&);
 
 #ifndef NDEBUG
     virtual void dump(TextStream* , DeprecatedString ind = "") const;

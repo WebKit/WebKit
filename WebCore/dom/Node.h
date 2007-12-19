@@ -24,12 +24,13 @@
 #ifndef Node_h
 #define Node_h
 
-#include "DocPtr.h"
 #include "DeprecatedString.h"
+#include "DocPtr.h"
 #include "PlatformString.h"
 #include "TreeShared.h"
 #include <wtf/Assertions.h>
 #include <wtf/HashSet.h>
+#include <wtf/OwnPtr.h>
 #include <wtf/PassRefPtr.h>
 
 namespace WebCore {
@@ -44,7 +45,6 @@ class IntRect;
 class KeyboardEvent;
 class NamedAttrMap;
 class NodeList;
-struct NodeListsNodeData;
 class PlatformKeyboardEvent;
 class PlatformMouseEvent;
 class PlatformWheelEvent;
@@ -54,6 +54,7 @@ class RenderArena;
 class RenderObject;
 class RenderStyle;
 class TextStream;
+struct NodeListsNodeData;
 
 typedef int ExceptionCode;
 
@@ -451,6 +452,9 @@ public:
     PassRefPtr<NodeList> getElementsByTagName(const String&);
     PassRefPtr<NodeList> getElementsByTagNameNS(const String& namespaceURI, const String& localName);
 
+    PassRefPtr<NodeList> getElementsByName(const String& elementName);
+    PassRefPtr<NodeList> getElementsByClassName(const String& classNames);
+
 private: // members
     DocPtr<Document> m_document;
     Node* m_previous;
@@ -461,7 +465,7 @@ protected:
     virtual void willMoveToNewOwnerDocument() { }
     virtual void didMoveToNewOwnerDocument() { }
     
-    NodeListsNodeData* m_nodeLists;
+    OwnPtr<NodeListsNodeData> m_nodeLists;
 
     short m_tabIndex;
 
