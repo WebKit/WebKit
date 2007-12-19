@@ -1,3 +1,13 @@
+2007-12-18  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Geoffrey.
+
+        - Temporarily remove calls that are causing subsequent tests in DRT to fail.
+          Filled http://bugs.webkit.org/show_bug.cgi?id=16510 to track the issue.
+
+        * http/tests/security/cross-frame-access-history-expected.txt:
+        * http/tests/security/cross-frame-access-history.html:
+
 2007-12-18  Darin Adler  <darin@apple.com>
 
         - fix failing regression test
