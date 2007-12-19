@@ -1,5 +1,9 @@
 2007-12-18  Darin Adler  <darin@apple.com>
 
+        * Scripts/do-webcore-rename: Remove a stray K.
+
+2007-12-18  Darin Adler  <darin@apple.com>
+
         * Scripts/do-webcore-rename: Plan more renaming.
 
 2007-12-14  Juan A. Suarez Romero  <jasuarez@igalia.com>
