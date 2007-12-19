@@ -1,3 +1,12 @@
+2007-12-19  Alp Toker  <alp@atoker.com>
+
+        Reviewed by Holger Freyther.
+
+        Check the bounding box before doing a full hit test
+
+        * platform/graphics/cairo/PathCairo.cpp:
+        (WebCore::Path::contains):
+
 2007-12-18  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Geoff.
