@@ -774,7 +774,7 @@ sub GenerateImplementation
     # Constructor
     if ($dataNode->extendedAttributes->{"DoNotCache"}) {
         push(@implContent, "${className}::$className($passType impl)\n");
-        push(@implContent, "    : $parentClassName(impl)\n");
+        push(@implContent, "    : $parentClassName(impl, ${className}Prototype::self())\n");
     } else {
         my $needsSVGContext = IsSVGTypeNeedingContextParameter($implClassName);
         if ($needsSVGContext) {
@@ -799,11 +799,13 @@ sub GenerateImplementation
         }
     }
 
-    if ($dataNode->extendedAttributes->{"DoNotCache"}) {
-        push(@implContent, "{\n    setPrototype(${className}Prototype::self());\n}\n\n");
-    } else {
-        push(@implContent, "{\n    setPrototype(${className}Prototype::self(exec));\n}\n\n");
+    push(@implContent, "{\n");
+
+    if (!$dataNode->extendedAttributes->{"DoNotCache"}) {
+        push(@implContent, "    setPrototype(${className}Prototype::self(exec));\n");
     }
+
+    push(@implContent, "}\n\n");
 
     # Destructor
     if (!$hasParent) {

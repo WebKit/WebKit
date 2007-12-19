@@ -51,7 +51,7 @@ namespace KJS {
     friend class WebCore::JSLocation;
     friend class WebCore::ScheduledAction;
   protected:
-    Window(WebCore::DOMWindow*);
+    Window(WebCore::DOMWindow*, JSValue* prototype);
 
   public:
     virtual ~Window();

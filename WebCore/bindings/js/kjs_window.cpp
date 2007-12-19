@@ -202,8 +202,9 @@ const ClassInfo Window::info = { "Window", 0, &WindowTable };
 @end
 */
 
-Window::Window(DOMWindow* window)
-    : m_impl(window)
+Window::Window(DOMWindow* window, JSValue* prototype)
+    : JSGlobalObject(prototype)
+    , m_impl(window)
     , d(new WindowPrivate)
 {
     // Window destruction is not thread-safe because of

@@ -1,3 +1,20 @@
+2007-12-18  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Geoff.
+
+        Fix for <rdar://problem/5646478>
+        REGRESSION: fast/events/event-view-toString fails on Leopard
+
+        This fixes an issue where we were incorrectly setting the lastInPrototypeChain
+        for the JSDOMWindow (the global object) before a call to setPrototype overwrote
+        it. This fixes it by passing the prototype up the constructor chain so that it
+        is set before any calls can be made.
+
+        * bindings/js/kjs_window.cpp:
+        (KJS::Window::Window):
+        * bindings/js/kjs_window.h:
+        * bindings/scripts/CodeGeneratorJS.pm:
+
 2007-12-18  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Oliver.
