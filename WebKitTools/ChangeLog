@@ -1,3 +1,17 @@
+2007-12-18  Kevin Ollivier  <kevino@theolliviers.com>
+
+        Reviewed by Alp Toker.
+
+        Build related fixes.
+
+        * wx/build-wxwebkit:
+        - Check to make sure the user is running a supported wx port
+        - More robust checks for Cygwin
+        - Only run install-unix-extras on Mac, it's not the right solution
+          for Linux distros.
+        - Remove outdated Linux instructions after successful build
+        - Clean Bakefile-generated files during a clean operation
+
 2007-12-18  Darin Adler  <darin@apple.com>
 
         * Scripts/make-js-test-wrappers: Don't generate a wrapper for select-options-remove.js.

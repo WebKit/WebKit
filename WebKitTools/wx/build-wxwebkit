@@ -76,6 +76,13 @@ else
         echo "Make sure wx-config is on your PATH and points to a valid wxWidgets installation."
         exit 1
     fi
+    
+    CONFIG=`wx-config --selected-config`
+    if [ "${CONFIG:0:4}" != "gtk2" -a "${CONFIG:0:3}" != "mac" ]; then
+        echo "ERROR: This configuration '$CONFIG' is not currently supported by wxWebKit. Please use the win, mac, or gtk2 port depending on your platform."
+        exit 1
+    fi
+    
     if [ ! -d "$WX_PREFIX/share/bakefile" ]; then
         echo "ERROR: wxWidgets installation does not have wxpresets."
         echo "wx-config is pointing to an installation that does not have Bakefile presets installed. Run `wx-config --version` to ensure your wxWidgets is of version 2.8+."
@@ -188,7 +195,7 @@ else
         
         # since the buildbot will wipe the build tree clean sometimes, we need to reinstall
         # the dependencies if they aren't installed.
-        if [ ! "${OSTYPE:0:6}" == "cygwin" ]; then
+        if [ "${OSTYPE:0:6}" == "darwin" ]; then
             $WK_ROOT/WebKitTools/wx/install-unix-extras
         fi
         
@@ -220,10 +227,10 @@ if [ $do_build == 1 -o $do_clean == 1 ]; then
         WXGC_DEFINE="-DWTF_USE_WXGC=1"
     fi
     WX_EXT=
-    if [ "$OSTYPE" == "cygwin" -a $wxdebug == 1 ]; then
+    if [ "${OSTYPE:0:6}" == "cygwin" -a $wxdebug == 1 ]; then
         WX_EXT=d
     fi
-    if [ "$OSTYPE" == "cygwin" -a $wxpython == 1 ]; then
+    if [ "${OSTYPE:0:6}" == "cygwin" -a $wxpython == 1 ]; then
         other_args=WX_PYTHON=1
         WX_EXT=h
         wxdebug=1
@@ -313,16 +320,17 @@ if [ $do_build == 1 -o $do_clean == 1 ]; then
         echo ""
         echo "Next steps:"
         echo ""
-        if [ "${OSTYPE:0:5}" = "linux" ]; then
-            echo "-- Add /usr/local/lib and $WEBKITOUTPUTDIR to your LD_LIBRARY_PATH environment variable."
-            echo ""
-        fi
         echo "-- Run '$WK_ROOT/WebKitTools/Scripts/run-javascriptcore-tests --wx' to ensure JSCore tests pass."
         echo ""
         echo "-- Run $WEBKITOUTPUTDIR/$BROWSERAPP to test your wxWebKit build."
         echo ""
         echo ""
     fi
+fi
+
+if [ $do_clean == 1 ]; then
+    cd $WK_ROOT/WebKit/wx
+    bakefile_gen --clean
 fi
 
 cd $olddir
