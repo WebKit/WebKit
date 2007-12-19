@@ -116,7 +116,7 @@ template <typename T> T mergeDeclarationLists(T decls1, T decls2)
     return decls1;
 }
 
-void appendToVarDeclarationList(ParserRefCountedData<DeclarationStacks::VarStack>*& varDecls, VarDeclNode* decl)
+static void appendToVarDeclarationList(ParserRefCountedData<DeclarationStacks::VarStack>*& varDecls, VarDeclNode* decl)
 {
     if (!varDecls)
         varDecls = new ParserRefCountedData<DeclarationStacks::VarStack>;
