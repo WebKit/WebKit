@@ -2002,12 +2002,12 @@ int jsRegExpExecute(const JSRegExp* re,
         
         /* When the result is no match, advance the pointer to the next character
          and continue. */
-        if (returnCode == false) {
+        if (returnCode == 0) {
             startMatch++;
             continue;
         }
 
-        if (returnCode != true) {
+        if (returnCode != 1) {
             ASSERT(returnCode == JSRegExpErrorHitLimit || returnCode == JSRegExpErrorNoMemory);
             DPRINTF((">>>> error: returning %d\n", rc));
             return returnCode;

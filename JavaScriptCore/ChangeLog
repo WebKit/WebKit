@@ -1,8 +1,16 @@
 2007-12-18  Darin Adler  <darin@apple.com>
 
+        - fix Windows build
+
+        * pcre/pcre_exec.cpp:
+        (jsRegExpExecute): Change back from false/true to 0/1 -- I probably should not have
+        deleted MATCH_MATCH and MATCH_NOMATCH, but I'm going to leave them out.
+
+2007-12-18  Darin Adler  <darin@apple.com>
+
         Reviewed by Geoff.
 
-        - test for http://bugs.webkit.org/show_bug.cgi?id=16458
+        - fix http://bugs.webkit.org/show_bug.cgi?id=16458
           REGRESSION (r28164): regular expressions can now hang due to lack of a match limit
           <rdar://problem/5636067>
 
