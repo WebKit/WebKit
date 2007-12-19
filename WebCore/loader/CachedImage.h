@@ -46,7 +46,7 @@ public:
 
     bool canRender() const { return !errorOccurred() && imageSize().width() > 0 && imageSize().height() > 0; }
 
-    // These are ony used for SVGImage right now
+    // These are only used for SVGImage right now
     void setImageContainerSize(const IntSize&);
     bool usesImageContainerSize() const;
     bool imageHasRelativeWidth() const;

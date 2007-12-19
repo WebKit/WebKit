@@ -80,7 +80,7 @@ public:
 
     bool isNull() const;
 
-    // These are ony used for SVGImage right now
+    // These are only used for SVGImage right now
     virtual void setContainerSize(const IntSize&) { }
     virtual bool usesContainerSize() const { return false; }
     virtual bool hasRelativeWidth() const { return false; }
