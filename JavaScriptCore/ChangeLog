@@ -1,5 +1,33 @@
 2007-12-18  Oliver Hunt  <oliver@apple.com>
 
+        Remove dead code due to removal of post-parse declaration discovery.
+
+        RS=Geoff.
+
+        Due to the removal of the declaration discovery pass after parsing we
+        no longer need any of the logic used for that discovery.
+
+        * kjs/nodes.cpp:
+        (KJS::Node::Node):
+        (KJS::VarDeclNode::VarDeclNode):
+        (KJS::BlockNode::BlockNode):
+        (KJS::ForInNode::ForInNode):
+        (KJS::CaseBlockNode::CaseBlockNode):
+        * kjs/nodes.h:
+        (KJS::VarStatementNode::):
+        (KJS::IfNode::):
+        (KJS::DoWhileNode::):
+        (KJS::WhileNode::):
+        (KJS::WithNode::):
+        (KJS::LabelNode::):
+        (KJS::TryNode::):
+        (KJS::FuncDeclNode::):
+        (KJS::CaseClauseNode::):
+        (KJS::ClauseListNode::):
+        (KJS::SwitchNode::):
+
+2007-12-18  Oliver Hunt  <oliver@apple.com>
+
         Replace post-parse pass to find declarations with logic in the parser itself
 
         Reviewed by Geoff.
