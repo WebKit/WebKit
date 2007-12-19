@@ -1,3 +1,28 @@
+2007-12-19  Andre Boule  <aboule@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Test: fast/canvas/canvas-composite.html
+
+        Fix for:
+        <rdar://problem/5640059> GraphicsContext::setCompositeOperation should use CGContextSetBlendMode
+
+        This fix makes setCompositeOperation consistent across all platforms that use CG.
+
+        The following compositing modes don't pass however that is covered by another bug:
+        source-in
+        source-out
+        destination-in
+        destination-atop
+        copy
+        <rdar://problem/5651783> Some canvas tag compositing modes don't render correctly
+
+        * platform/graphics/GraphicsTypes.h:
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::GraphicsContext::setCompositeOperation):
+        * platform/graphics/mac/GraphicsContextMac.mm:
+        * platform/win/GraphicsContextWin.cpp:
+
 2007-12-19  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Dave Hyatt.

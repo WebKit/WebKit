@@ -1,3 +1,23 @@
+2007-12-19  Andre Boule  <aboule@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Adding tests for canvas compositing modes to make sure the results don't change after:
+        <rdar://problem/5640059> GraphicsContext::setCompositeOperation should use CGContextSetBlendMode
+
+        The following compositing modes don't pass however that is covered by another bug:
+        source-in
+        source-out
+        destination-in
+        destination-atop
+        copy
+        <rdar://problem/5651783> Some canvas tag compositing modes don't render correctly
+
+        * fast/canvas/canvas-composite.html: Added.
+        * platform/mac/fast/canvas/canvas-composite-expected.checksum: Added.
+        * platform/mac/fast/canvas/canvas-composite-expected.png: Added.
+        * platform/mac/fast/canvas/canvas-composite-expected.txt: Added.
+
 2007-12-19  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Dave Hyatt.

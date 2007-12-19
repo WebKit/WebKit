@@ -69,16 +69,6 @@ void GraphicsContext::drawFocusRing(const Color& color)
     CGPathRelease(focusRingPath);
 }
 
-void GraphicsContext::setCompositeOperation(CompositeOperator op)
-{
-    if (paintingDisabled())
-        return;
-    NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
-    [[NSGraphicsContext graphicsContextWithGraphicsPort:platformContext() flipped:YES]
-        setCompositingOperation:(NSCompositingOperation)op];
-    [pool drain];
-}
-
 void GraphicsContext::drawLineForMisspellingOrBadGrammar(const IntPoint& point, int width, bool grammar)
 {
     if (paintingDisabled())

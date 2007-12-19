@@ -868,6 +868,59 @@ void GraphicsContext::setUseAntialiasing(bool enable)
     CGContextSetShouldAntialias(platformContext(), enable);
 }
 
+void GraphicsContext::setCompositeOperation(CompositeOperator mode)
+{   
+    if (paintingDisabled())
+        return;
+
+    CGBlendMode target = kCGBlendModeNormal;   
+    switch (mode) {
+        case CompositeClear:
+            target = kCGBlendModeClear;
+            break;
+        case CompositeCopy:
+            target = kCGBlendModeCopy;
+            break;
+        case CompositeSourceOver:
+            //kCGBlendModeNormal
+            break;
+        case CompositeSourceIn:
+            target = kCGBlendModeSourceIn;
+            break;
+        case CompositeSourceOut:
+            target = kCGBlendModeSourceOut;
+            break;
+        case CompositeSourceAtop:
+            target = kCGBlendModeSourceAtop; 
+            break;
+        case CompositeDestinationOver:
+            target = kCGBlendModeDestinationOver;
+            break;
+        case CompositeDestinationIn:
+            target = kCGBlendModeDestinationIn;
+            break;
+        case CompositeDestinationOut:
+            target = kCGBlendModeDestinationOut;
+            break;
+        case CompositeDestinationAtop:
+            target = kCGBlendModeDestinationAtop;
+            break;
+        case CompositeXOR:
+            target = kCGBlendModeXOR;
+            break;
+        case CompositePlusDarker:
+            target = kCGBlendModePlusDarker;
+            break;
+        case CompositeHighlight:
+            // currently unsupported
+            break;
+        case CompositePlusLighter:
+            target = kCGBlendModePlusLighter;
+            break;
+    }
+    CGContextSetBlendMode(platformContext(), target);
+}
+    
 }
 
 #endif // PLATFORM(CG)

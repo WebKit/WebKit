@@ -30,9 +30,6 @@ namespace WebCore {
 
     class String;
 
-    // Note: These constants exactly match the NSCompositeOperator constants of
-    // AppKit on Mac OS X. If that's ever changed, we'll need to change the Mac
-    // platform code to map one to the other.
     enum CompositeOperator {
         CompositeClear,
         CompositeCopy,
