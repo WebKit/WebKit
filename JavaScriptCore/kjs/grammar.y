@@ -84,6 +84,51 @@ static NumberNode* makeNumberNode(double);
 
 #endif
 
+template <typename T> struct NodeInfo {
+    T m_node;
+    ParserRefCountedData<DeclarationStacks::VarStack>* m_varDeclarations;
+    ParserRefCountedData<DeclarationStacks::FunctionStack>* m_funcDeclarations;
+};
+
+template <typename T> NodeInfo<T> createNodeInfo(T node, ParserRefCountedData<DeclarationStacks::VarStack>* varDecls, 
+                                                 ParserRefCountedData<DeclarationStacks::FunctionStack>* funcDecls) 
+{
+    NodeInfo<T> result = {node, varDecls, funcDecls};
+    return result;
+}
+
+template <typename T> T mergeDeclarationLists(T decls1, T decls2) 
+{
+    // decls1 or both are null
+    if (!decls1)
+        return decls2;
+    // only decls1 is non-null
+    if (!decls2)
+        return decls1;
+
+    // Both are non-null
+    decls1->data.append(decls2->data);
+    
+    // We manually release the declaration lists to avoid accumulating many many
+    // unused heap allocated vectors
+    decls2->ref();
+    decls2->deref();
+    return decls1;
+}
+
+void appendToVarDeclarationList(ParserRefCountedData<DeclarationStacks::VarStack>*& varDecls, VarDeclNode* decl)
+{
+    if (!varDecls)
+        varDecls = new ParserRefCountedData<DeclarationStacks::VarStack>;
+    varDecls->data.append(decl);
+}
+
+typedef NodeInfo<StatementNode*> StatementNodeInfo;
+typedef NodeInfo<CaseBlockNode*> CaseBlockNodeInfo;
+typedef NodeInfo<CaseClauseNode*> CaseClauseNodeInfo;
+typedef NodeInfo<SourceElementsStub*> SourceElementsInfo;
+typedef NodeInfo<ClauseList> ClauseListInfo;
+typedef NodeInfo<VarDeclList> VarDeclListInfo;
 %}
 
 %union {
@@ -98,21 +143,21 @@ static NumberNode* makeNumberNode(double);
     PropertyNode*       propertyNode;
     ArgumentsNode*      argumentsNode;
     VarDeclNode*        varDeclNode;
-    CaseBlockNode*      caseBlockNode;
-    CaseClauseNode*     caseClauseNode;
+    CaseBlockNodeInfo   caseBlockNode;
+    CaseClauseNodeInfo  caseClauseNode;
     FuncExprNode*       funcExprNode;
     AssignExprNode*     assignExprNode;
 
     // statement nodes
-    StatementNode*      statementNode;
+    StatementNodeInfo   statementNode;
     FunctionBodyNode*   functionBodyNode;
     ProgramNode*        programNode;
 
-    SourceElementsStub* sourceElements;
+    SourceElementsInfo  sourceElements;
     PropertyList        propertyList;
     ArgumentList        argumentList;
-    VarDeclList         varDeclList;
-    ClauseList          clauseList;
+    VarDeclListInfo     varDeclList;
+    ClauseListInfo      clauseList;
     ElementList         elementList;
     ParameterList       parameterList;
 
@@ -662,31 +707,50 @@ Statement:
 ;
 
 Block:
-    '{' '}'                             { $$ = new BlockNode(new SourceElements); DBG($$, @1, @2); }
-  | '{' SourceElements '}'              { $$ = new BlockNode($2->release()); DBG($$, @1, @3); }
+    '{' '}'                             { $$ = createNodeInfo<StatementNode*>(new BlockNode(new SourceElements), 0, 0);
+                                          DBG($$.m_node, @1, @2); }
+  | '{' SourceElements '}'              { $$ = createNodeInfo<StatementNode*>(new BlockNode($2.m_node->release()), $2.m_varDeclarations, $2.m_funcDeclarations);
+                                          DBG($$.m_node, @1, @3); }
 ;
 
 VariableStatement:
-    VAR VariableDeclarationList ';'     { $$ = new VarStatementNode($2.head); DBG($$, @1, @3); }
-  | VAR VariableDeclarationList error   { $$ = new VarStatementNode($2.head); DBG($$, @1, @2); AUTO_SEMICOLON; }
+    VAR VariableDeclarationList ';'     { $$ = createNodeInfo<StatementNode*>(new VarStatementNode($2.m_node.head), $2.m_varDeclarations, $2.m_funcDeclarations);
+                                          DBG($$.m_node, @1, @3); }
+  | VAR VariableDeclarationList error   { $$ = createNodeInfo<StatementNode*>(new VarStatementNode($2.m_node.head), $2.m_varDeclarations, $2.m_funcDeclarations);
+                                          DBG($$.m_node, @1, @2);
+                                          AUTO_SEMICOLON; }
 ;
 
 VariableDeclarationList:
-    VariableDeclaration                 { $$.head = $1; 
-                                          $$.tail = $$.head; }
+    VariableDeclaration                 { $$.m_node.head = $1;
+                                          $$.m_node.tail = $$.m_node.head;
+                                          $$.m_varDeclarations = new ParserRefCountedData<DeclarationStacks::VarStack>;
+                                          $$.m_varDeclarations->data.append($1);
+                                          $$.m_funcDeclarations = 0;
+                                        }
   | VariableDeclarationList ',' VariableDeclaration
-                                        { $$.head = $1.head;
-                                          $1.tail->next = $3;
-                                          $$.tail = $3; }
+                                        { $$.m_node.head = $1.m_node.head;
+                                          $1.m_node.tail->next = $3;
+                                          $$.m_node.tail = $3;
+                                          $$.m_varDeclarations = $1.m_varDeclarations;
+                                          $$.m_varDeclarations->data.append($3);
+                                          $$.m_funcDeclarations = 0;
+                                        }
 ;
 
 VariableDeclarationListNoIn:
-    VariableDeclarationNoIn             { $$.head = $1; 
-                                          $$.tail = $$.head; }
+    VariableDeclarationNoIn             { $$.m_node.head = $1; 
+                                          $$.m_node.tail = $$.m_node.head;
+                                          $$.m_varDeclarations = new ParserRefCountedData<DeclarationStacks::VarStack>;
+                                          $$.m_varDeclarations->data.append($1);
+                                          $$.m_funcDeclarations = 0; }
   | VariableDeclarationListNoIn ',' VariableDeclarationNoIn
-                                        { $$.head = $1.head;
-                                          $1.tail->next = $3;
-                                          $$.tail = $3; }
+                                        { $$.m_node.head = $1.m_node.head;
+                                          $1.m_node.tail->next = $3;
+                                          $$.m_node.tail = $3; 
+                                          $$.m_varDeclarations = $1.m_varDeclarations;
+                                          $$.m_varDeclarations->data.append($3);
+                                          $$.m_funcDeclarations = 0; }
 ;
 
 VariableDeclaration:
@@ -700,18 +764,26 @@ VariableDeclarationNoIn:
 ;
 
 ConstStatement:
-    CONSTTOKEN ConstDeclarationList ';' { $$ = new VarStatementNode($2.head); DBG($$, @1, @3); }
+    CONSTTOKEN ConstDeclarationList ';' { $$ = createNodeInfo<StatementNode*>(new VarStatementNode($2.m_node.head), $2.m_varDeclarations, $2.m_funcDeclarations);
+                                          DBG($$.m_node, @1, @3); }
   | CONSTTOKEN ConstDeclarationList error
-                                        { $$ = new VarStatementNode($2.head); DBG($$, @1, @2); AUTO_SEMICOLON; }
+                                        { $$ = createNodeInfo<StatementNode*>(new VarStatementNode($2.m_node.head), $2.m_varDeclarations, $2.m_funcDeclarations);
+                                          DBG($$.m_node, @1, @2); AUTO_SEMICOLON; }
 ;
 
 ConstDeclarationList:
-    ConstDeclaration                    { $$.head = $1; 
-                                          $$.tail = $$.head; }
+    ConstDeclaration                    { $$.m_node.head = $1;
+                                          $$.m_node.tail = $$.m_node.head;
+                                          $$.m_varDeclarations = new ParserRefCountedData<DeclarationStacks::VarStack>;
+                                          $$.m_varDeclarations->data.append($1);
+                                          $$.m_funcDeclarations = 0; }
   | ConstDeclarationList ',' ConstDeclaration
-                                        { $$.head = $1.head;
-                                          $1.tail->next = $3;
-                                          $$.tail = $3; }
+                                        {  $$.m_node.head = $1.m_node.head;
+                                          $1.m_node.tail->next = $3;
+                                          $$.m_node.tail = $3;
+                                          $$.m_varDeclarations = $1.m_varDeclarations;
+                                          $$.m_varDeclarations->data.append($3);
+                                          $$.m_funcDeclarations = 0; }
 ;
 
 ConstDeclaration:
@@ -728,41 +800,59 @@ InitializerNoIn:
 ;
 
 EmptyStatement:
-    ';'                                 { $$ = new EmptyStatementNode(); }
+    ';'                                 { $$ = createNodeInfo<StatementNode*>(new EmptyStatementNode(), 0, 0); }
 ;
 
 ExprStatement:
-    ExprNoBF ';'                        { $$ = new ExprStatementNode($1); DBG($$, @1, @2); }
-  | ExprNoBF error                      { $$ = new ExprStatementNode($1); DBG($$, @1, @1); AUTO_SEMICOLON; }
+    ExprNoBF ';'                        { $$ = createNodeInfo<StatementNode*>(new ExprStatementNode($1), 0, 0);
+                                          DBG($$.m_node, @1, @2); }
+  | ExprNoBF error                      { $$ = createNodeInfo<StatementNode*>(new ExprStatementNode($1), 0, 0);
+                                          DBG($$.m_node, @1, @1); AUTO_SEMICOLON; }
 ;
 
 IfStatement:
     IF '(' Expr ')' Statement %prec IF_WITHOUT_ELSE
-                                        { $$ = new IfNode($3, $5, 0); DBG($$, @1, @4); }
+                                        { $$ = createNodeInfo<StatementNode*>(new IfNode($3, $5.m_node, 0), $5.m_varDeclarations, $5.m_funcDeclarations);
+                                          DBG($$.m_node, @1, @4); }
   | IF '(' Expr ')' Statement ELSE Statement
-                                        { $$ = new IfNode($3, $5, $7); DBG($$, @1, @4); }
+                                        { $$ = createNodeInfo<StatementNode*>(new IfNode($3, $5.m_node, $7.m_node), mergeDeclarationLists($5.m_varDeclarations, $7.m_varDeclarations), mergeDeclarationLists($5.m_funcDeclarations, $7.m_funcDeclarations)); 
+                                          DBG($$.m_node, @1, @4); }
 ;
 
 IterationStatement:
-    DO Statement WHILE '(' Expr ')' ';'    { $$ = new DoWhileNode($2, $5); DBG($$, @1, @3); }
-  | DO Statement WHILE '(' Expr ')' error  { $$ = new DoWhileNode($2, $5); DBG($$, @1, @3); } // Always performs automatic semicolon insertion.
-  | WHILE '(' Expr ')' Statement        { $$ = new WhileNode($3, $5); DBG($$, @1, @4); }
+    DO Statement WHILE '(' Expr ')' ';'    { $$ = createNodeInfo<StatementNode*>(new DoWhileNode($2.m_node, $5), $2.m_varDeclarations, $2.m_funcDeclarations);
+                                             DBG($$.m_node, @1, @3); }
+  | DO Statement WHILE '(' Expr ')' error  { $$ = createNodeInfo<StatementNode*>(new DoWhileNode($2.m_node, $5), $2.m_varDeclarations, $2.m_funcDeclarations);
+                                             DBG($$.m_node, @1, @3); } // Always performs automatic semicolon insertion.
+  | WHILE '(' Expr ')' Statement        { $$ = createNodeInfo<StatementNode*>(new WhileNode($3, $5.m_node), $5.m_varDeclarations, $5.m_funcDeclarations);
+                                          DBG($$.m_node, @1, @4); }
   | FOR '(' ExprNoInOpt ';' ExprOpt ';' ExprOpt ')' Statement
-                                        { $$ = new ForNode($3, $5, $7, $9); DBG($$, @1, @8); }
+                                        { $$ = createNodeInfo<StatementNode*>(new ForNode($3, $5, $7, $9.m_node), $9.m_varDeclarations, $9.m_funcDeclarations);
+                                          DBG($$.m_node, @1, @8); 
+                                        }
   | FOR '(' VAR VariableDeclarationListNoIn ';' ExprOpt ';' ExprOpt ')' Statement
-                                        { $$ = new ForNode($4.head, $6, $8, $10); DBG($$, @1, @9); }
+                                        { $$ = createNodeInfo<StatementNode*>(new ForNode($4.m_node.head, $6, $8, $10.m_node),
+                                                                              mergeDeclarationLists($4.m_varDeclarations, $10.m_varDeclarations),
+                                                                              mergeDeclarationLists($4.m_funcDeclarations, $10.m_funcDeclarations));
+                                          DBG($$.m_node, @1, @9); }
   | FOR '(' LeftHandSideExpr INTOKEN Expr ')' Statement
                                         {
                                             ExpressionNode* n = $3;
                                             if (!n->isLocation())
                                                 YYABORT;
-                                            $$ = new ForInNode(n, $5, $7);
-                                            DBG($$, @1, @6);
+                                            $$ = createNodeInfo<StatementNode*>(new ForInNode(n, $5, $7.m_node), $7.m_varDeclarations, $7.m_funcDeclarations);
+                                            DBG($$.m_node, @1, @6);
                                         }
   | FOR '(' VAR IDENT INTOKEN Expr ')' Statement
-                                        { $$ = new ForInNode(*$4, 0, $6, $8); DBG($$, @1, @7); }
+                                        { ForInNode *forIn = new ForInNode(*$4, 0, $6, $8.m_node);
+                                          appendToVarDeclarationList($8.m_varDeclarations, forIn->getVarDecl());
+                                          $$ = createNodeInfo<StatementNode*>(forIn, $8.m_varDeclarations, $8.m_funcDeclarations);
+                                          DBG($$.m_node, @1, @7); }
   | FOR '(' VAR IDENT InitializerNoIn INTOKEN Expr ')' Statement
-                                        { $$ = new ForInNode(*$4, $5, $7, $9); DBG($$, @1, @8); }
+                                        { ForInNode *forIn = new ForInNode(*$4, $5, $7, $9.m_node);
+                                          appendToVarDeclarationList($9.m_varDeclarations, forIn->getVarDecl());
+                                          $$ = createNodeInfo<StatementNode*>(forIn, $9.m_varDeclarations, $9.m_funcDeclarations);
+                                          DBG($$.m_node, @1, @8); }
 ;
 
 ExprOpt:
@@ -776,81 +866,106 @@ ExprNoInOpt:
 ;
 
 ContinueStatement:
-    CONTINUE ';'                        { $$ = new ContinueNode(); DBG($$, @1, @2); }
-  | CONTINUE error                      { $$ = new ContinueNode(); DBG($$, @1, @1); AUTO_SEMICOLON; }
-  | CONTINUE IDENT ';'                  { $$ = new ContinueNode(*$2); DBG($$, @1, @3); }
-  | CONTINUE IDENT error                { $$ = new ContinueNode(*$2); DBG($$, @1, @2); AUTO_SEMICOLON; }
+    CONTINUE ';'                        { $$ = createNodeInfo<StatementNode*>(new ContinueNode(), 0, 0);
+                                          DBG($$.m_node, @1, @2); }
+  | CONTINUE error                      { $$ = createNodeInfo<StatementNode*>(new ContinueNode(), 0, 0);
+                                          DBG($$.m_node, @1, @1); AUTO_SEMICOLON; }
+  | CONTINUE IDENT ';'                  { $$ = createNodeInfo<StatementNode*>(new ContinueNode(*$2), 0, 0);
+                                          DBG($$.m_node, @1, @3); }
+  | CONTINUE IDENT error                { $$ = createNodeInfo<StatementNode*>(new ContinueNode(*$2), 0, 0);
+                                          DBG($$.m_node, @1, @2); AUTO_SEMICOLON; }
 ;
 
 BreakStatement:
-    BREAK ';'                           { $$ = new BreakNode(); DBG($$, @1, @2); }
-  | BREAK error                         { $$ = new BreakNode(); DBG($$, @1, @1); AUTO_SEMICOLON; }
-  | BREAK IDENT ';'                     { $$ = new BreakNode(*$2); DBG($$, @1, @3); }
-  | BREAK IDENT error                   { $$ = new BreakNode(*$2); DBG($$, @1, @2); AUTO_SEMICOLON; }
+    BREAK ';'                           { $$ = createNodeInfo<StatementNode*>(new BreakNode(), 0, 0); DBG($$.m_node, @1, @2); }
+  | BREAK error                         { $$ = createNodeInfo<StatementNode*>(new BreakNode(), 0, 0); DBG($$.m_node, @1, @1); AUTO_SEMICOLON; }
+  | BREAK IDENT ';'                     { $$ = createNodeInfo<StatementNode*>(new BreakNode(*$2), 0, 0); DBG($$.m_node, @1, @3); }
+  | BREAK IDENT error                   { $$ = createNodeInfo<StatementNode*>(new BreakNode(*$2), 0, 0); DBG($$.m_node, @1, @2); AUTO_SEMICOLON; }
 ;
 
 ReturnStatement:
-    RETURN ';'                          { $$ = new ReturnNode(0); DBG($$, @1, @2); }
-  | RETURN error                        { $$ = new ReturnNode(0); DBG($$, @1, @1); AUTO_SEMICOLON; }
-  | RETURN Expr ';'                     { $$ = new ReturnNode($2); DBG($$, @1, @3); }
-  | RETURN Expr error                   { $$ = new ReturnNode($2); DBG($$, @1, @2); AUTO_SEMICOLON; }
+    RETURN ';'                          { $$ = createNodeInfo<StatementNode*>(new ReturnNode(0), 0, 0); DBG($$.m_node, @1, @2); }
+  | RETURN error                        { $$ = createNodeInfo<StatementNode*>(new ReturnNode(0), 0, 0); DBG($$.m_node, @1, @1); AUTO_SEMICOLON; }
+  | RETURN Expr ';'                     { $$ = createNodeInfo<StatementNode*>(new ReturnNode($2), 0, 0); DBG($$.m_node, @1, @3); }
+  | RETURN Expr error                   { $$ = createNodeInfo<StatementNode*>(new ReturnNode($2), 0, 0); DBG($$.m_node, @1, @2); AUTO_SEMICOLON; }
 ;
 
 WithStatement:
-    WITH '(' Expr ')' Statement         { $$ = new WithNode($3, $5); DBG($$, @1, @4); }
+    WITH '(' Expr ')' Statement         { $$ = createNodeInfo<StatementNode*>(new WithNode($3, $5.m_node), $5.m_varDeclarations, $5.m_funcDeclarations);
+                                          DBG($$.m_node, @1, @4); }
 ;
 
 SwitchStatement:
-    SWITCH '(' Expr ')' CaseBlock       { $$ = new SwitchNode($3, $5); DBG($$, @1, @4); }
+    SWITCH '(' Expr ')' CaseBlock       { $$ = createNodeInfo<StatementNode*>(new SwitchNode($3, $5.m_node), $5.m_varDeclarations, $5.m_funcDeclarations);
+                                          DBG($$.m_node, @1, @4); }
 ;
 
 CaseBlock:
-    '{' CaseClausesOpt '}'              { $$ = new CaseBlockNode($2.head, 0, 0); }
+    '{' CaseClausesOpt '}'              { $$ = createNodeInfo<CaseBlockNode*>(new CaseBlockNode($2.m_node.head, 0, 0), $2.m_varDeclarations, $2.m_funcDeclarations); }
   | '{' CaseClausesOpt DefaultClause CaseClausesOpt '}'
-                                        { $$ = new CaseBlockNode($2.head, $3, $4.head); }
+                                        { $$ = createNodeInfo<CaseBlockNode*>(new CaseBlockNode($2.m_node.head, $3.m_node, $4.m_node.head),
+                                                                              mergeDeclarationLists(mergeDeclarationLists($2.m_varDeclarations, $3.m_varDeclarations), $4.m_varDeclarations),
+                                                                              mergeDeclarationLists(mergeDeclarationLists($2.m_funcDeclarations, $3.m_funcDeclarations), $4.m_funcDeclarations)); }
 ;
 
 CaseClausesOpt:
-    /* nothing */                       { $$.head = 0; $$.tail = 0; }
+    /* nothing */                       { $$.m_node.head = 0; $$.m_node.tail = 0; $$.m_varDeclarations = 0; $$.m_funcDeclarations = 0; }
   | CaseClauses
 ;
 
 CaseClauses:
-    CaseClause                          { $$.head = new ClauseListNode($1);
-                                          $$.tail = $$.head; }
-  | CaseClauses CaseClause              { $$.head = $1.head; 
-                                          $$.tail = new ClauseListNode($1.tail, $2); }
+    CaseClause                          { $$.m_node.head = new ClauseListNode($1.m_node);
+                                          $$.m_node.tail = $$.m_node.head;
+                                          $$.m_varDeclarations = $1.m_varDeclarations;
+                                          $$.m_funcDeclarations = $1.m_funcDeclarations; }
+  | CaseClauses CaseClause              { $$.m_node.head = $1.m_node.head;
+                                          $$.m_node.tail = new ClauseListNode($1.m_node.tail, $2.m_node);
+                                          $$.m_varDeclarations = mergeDeclarationLists($1.m_varDeclarations, $2.m_varDeclarations);
+                                          $$.m_funcDeclarations = mergeDeclarationLists($1.m_funcDeclarations, $2.m_funcDeclarations);
+                                        }
 ;
 
 CaseClause:
-    CASE Expr ':'                       { $$ = new CaseClauseNode($2); }
-  | CASE Expr ':' SourceElements        { $$ = new CaseClauseNode($2, $4->release()); }
+    CASE Expr ':'                       { $$ = createNodeInfo<CaseClauseNode*>(new CaseClauseNode($2), 0, 0); }
+  | CASE Expr ':' SourceElements        { $$ = createNodeInfo<CaseClauseNode*>(new CaseClauseNode($2, $4.m_node->release()), $4.m_varDeclarations, $4.m_funcDeclarations); }
 ;
 
 DefaultClause:
-    DEFAULT ':'                         { $$ = new CaseClauseNode(0); }
-  | DEFAULT ':' SourceElements          { $$ = new CaseClauseNode(0, $3->release()); }
+    DEFAULT ':'                         { $$ = createNodeInfo<CaseClauseNode*>(new CaseClauseNode(0), 0, 0); }
+  | DEFAULT ':' SourceElements          { $$ = createNodeInfo<CaseClauseNode*>(new CaseClauseNode(0, $3.m_node->release()), $3.m_varDeclarations, $3.m_funcDeclarations); }
 ;
 
 LabelledStatement:
-    IDENT ':' Statement                 { $3->pushLabel(*$1); $$ = new LabelNode(*$1, $3); }
+    IDENT ':' Statement                 { $3.m_node->pushLabel(*$1);
+                                          $$ = createNodeInfo<StatementNode*>(new LabelNode(*$1, $3.m_node), $3.m_varDeclarations, $3.m_funcDeclarations); }
 ;
 
 ThrowStatement:
-    THROW Expr ';'                      { $$ = new ThrowNode($2); DBG($$, @1, @3); }
-  | THROW Expr error                    { $$ = new ThrowNode($2); DBG($$, @1, @2); AUTO_SEMICOLON; }
+    THROW Expr ';'                      { $$ = createNodeInfo<StatementNode*>(new ThrowNode($2), 0, 0); DBG($$.m_node, @1, @3); }
+  | THROW Expr error                    { $$ = createNodeInfo<StatementNode*>(new ThrowNode($2), 0, 0); DBG($$.m_node, @1, @2); AUTO_SEMICOLON; }
 ;
 
 TryStatement:
-    TRY Block FINALLY Block             { $$ = new TryNode($2, CommonIdentifiers::shared()->nullIdentifier, 0, $4); DBG($$, @1, @2); }
-  | TRY Block CATCH '(' IDENT ')' Block { $$ = new TryNode($2, *$5, $7, 0); DBG($$, @1, @2); }
+    TRY Block FINALLY Block             { $$ = createNodeInfo<StatementNode*>(new TryNode($2.m_node, CommonIdentifiers::shared()->nullIdentifier, 0, $4.m_node),
+                                                                              mergeDeclarationLists($2.m_varDeclarations, $4.m_varDeclarations),
+                                                                              mergeDeclarationLists($2.m_funcDeclarations, $4.m_funcDeclarations));
+                                          DBG($$.m_node, @1, @2); }
+  | TRY Block CATCH '(' IDENT ')' Block { $$ = createNodeInfo<StatementNode*>(new TryNode($2.m_node, *$5, $7.m_node, 0),
+                                                                              mergeDeclarationLists($2.m_varDeclarations, $7.m_varDeclarations),
+                                                                              mergeDeclarationLists($2.m_funcDeclarations, $7.m_funcDeclarations));
+                                          DBG($$.m_node, @1, @2); }
   | TRY Block CATCH '(' IDENT ')' Block FINALLY Block
-                                        { $$ = new TryNode($2, *$5, $7, $9); DBG($$, @1, @2); }
+                                        { $$ = createNodeInfo<StatementNode*>(new TryNode($2.m_node, *$5, $7.m_node, $9.m_node),
+                                                                              mergeDeclarationLists(mergeDeclarationLists($2.m_varDeclarations, $7.m_varDeclarations), $9.m_varDeclarations),
+                                                                              mergeDeclarationLists(mergeDeclarationLists($2.m_funcDeclarations, $7.m_funcDeclarations), $9.m_funcDeclarations));
+                                          DBG($$.m_node, @1, @2); }
 ;
 
 DebuggerStatement:
-    DEBUGGER ';'                        { $$ = new EmptyStatementNode(); DBG($$, @1, @2); }
-  | DEBUGGER error                      { $$ = new EmptyStatementNode(); DBG($$, @1, @1); AUTO_SEMICOLON; }
+    DEBUGGER ';'                        { $$ = createNodeInfo<StatementNode*>(new EmptyStatementNode(), 0, 0);
+                                          DBG($$.m_node, @1, @2); }
+  | DEBUGGER error                      { $$ = createNodeInfo<StatementNode*>(new EmptyStatementNode(), 0, 0);
+                                          DBG($$.m_node, @1, @1); AUTO_SEMICOLON; }
 ;
 
 FunctionDeclaration:
@@ -874,22 +989,41 @@ FormalParameterList:
 ;
 
 FunctionBody:
-    /* not in spec */           { $$ = new FunctionBodyNode(new SourceElements); }
-  | SourceElements              { $$ = new FunctionBodyNode($1->release()); }
+    /* not in spec */           { $$ = new FunctionBodyNode(new SourceElements, 0, 0); }
+  | SourceElements              { $$ = new FunctionBodyNode($1.m_node->release(), $1.m_varDeclarations ? &$1.m_varDeclarations->data : 0, 
+                                                                                  $1.m_funcDeclarations ? &$1.m_funcDeclarations->data : 0);
+                                  // As in mergeDeclarationLists() we have to ref/deref to safely get rid of
+                                  // the declaration lists.
+                                  if ($1.m_varDeclarations) {
+                                      $1.m_varDeclarations->ref();
+                                      $1.m_varDeclarations->deref();
+                                  }
+                                  if ($1.m_funcDeclarations) {
+                                      $1.m_funcDeclarations->ref();
+                                      $1.m_funcDeclarations->deref();
+                                  }
+                                }
 ;
 
 Program:
-    /* not in spec */                   { parser().didFinishParsing(new SourceElements, @0.last_line); }
-    | SourceElements                    { parser().didFinishParsing($1->release(), @1.last_line); }
+    /* not in spec */                   { parser().didFinishParsing(new SourceElements, 0, 0, @0.last_line); }
+    | SourceElements                    { parser().didFinishParsing($1.m_node->release(), $1.m_varDeclarations, $1.m_funcDeclarations, @1.last_line); }
 ;
 
 SourceElements:
-    SourceElement                       { $$ = new SourceElementsStub; $$->append($1); }
-  | SourceElements SourceElement        { $$->append($2); }
+    SourceElement                       { $$.m_node = new SourceElementsStub;
+                                          $$.m_node->append($1.m_node);
+                                          $$.m_varDeclarations = $1.m_varDeclarations;
+                                          $$.m_funcDeclarations = $1.m_funcDeclarations;
+                                        }
+  | SourceElements SourceElement        { $$.m_node->append($2.m_node);
+                                          $$.m_varDeclarations = mergeDeclarationLists($1.m_varDeclarations, $2.m_varDeclarations);
+                                          $$.m_funcDeclarations = mergeDeclarationLists($1.m_funcDeclarations, $2.m_funcDeclarations);
+                                        }
 ;
 
 SourceElement:
-    FunctionDeclaration                 { $$ = $1; }
+    FunctionDeclaration                 { $$ = createNodeInfo<StatementNode*>($1, 0, new ParserRefCountedData<DeclarationStacks::FunctionStack>); $$.m_funcDeclarations->data.append($1); }
   | Statement                           { $$ = $1; }
 ;
  

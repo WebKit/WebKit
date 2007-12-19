@@ -1,3 +1,41 @@
+2007-12-18  Oliver Hunt  <oliver@apple.com>
+
+        Replace post-parse pass to find declarations with logic in the parser itself
+
+        Reviewed by Geoff.
+
+        Instead of finding declarations in a pass following the initial parsing of
+        a program, we incorporate the logic directly into the parser.  This lays
+        the groundwork for further optimisations (such as improving performance in
+        declaration expressions -- var x = y; -- to match that of standard assignment)
+        in addition to providing a 0.4% performance improvement in SunSpider.
+
+        * JavaScriptCore.exp:
+        * kjs/Parser.cpp:
+        (KJS::Parser::parse):
+        * kjs/Parser.h:
+        (KJS::Parser::didFinishParsing):
+        (KJS::Parser::parse):
+        * kjs/grammar.y:
+        * kjs/nodes.cpp:
+        (KJS::ParserTracked::ParserTracked):
+        (KJS::ParserTracked::~ParserTracked):
+        (KJS::ParserTracked::ref):
+        (KJS::ParserTracked::deref):
+        (KJS::ParserTracked::refcount):
+        (KJS::ParserTracked::clearNewTrackedObjects):
+        (KJS::Node::Node):
+        (KJS::ScopeNode::ScopeNode):
+        (KJS::ProgramNode::ProgramNode):
+        (KJS::EvalNode::EvalNode):
+        (KJS::FunctionBodyNode::FunctionBodyNode):
+        (KJS::FunctionBodyNode::initializeSymbolTable):
+        (KJS::FunctionBodyNode::processDeclarations):
+        * kjs/nodes.h:
+        (KJS::ParserTracked::):
+        (KJS::Node::):
+        (KJS::ScopeNode::):
+
 2007-12-18  Xan Lopez  <xan@gnome.org>
 
         Reviewed by Geoff.

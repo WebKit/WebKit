@@ -60,7 +60,7 @@ void Parser::parse(int startingLineNumber,
     bool lexError = lexer.sawError();
     lexer.clear();
 
-    Node::clearNewNodes();
+    ParserRefCounted::deleteNewObjects();
 
     if (parseError || lexError) {
         if (errLine)

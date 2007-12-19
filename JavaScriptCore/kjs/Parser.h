@@ -28,6 +28,7 @@
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/OwnPtr.h>
+#include <wtf/RefPtr.h>
 #include "nodes.h"
 
 namespace KJS {
@@ -37,6 +38,10 @@ namespace KJS {
     class UString;
 
     struct UChar;
+
+    template <typename T> struct ParserRefCountedData : ParserRefCounted {
+        T data;
+    };
 
     class Parser : Noncopyable {
     public:
@@ -48,9 +53,12 @@ namespace KJS {
         UString sourceURL() const { return m_sourceURL; }
         int sourceId() const { return m_sourceId; }
 
-        void didFinishParsing(SourceElements* sourceElements, int lastLine)
+        void didFinishParsing(SourceElements* sourceElements, ParserRefCountedData<DeclarationStacks::VarStack>* varStack, 
+                              ParserRefCountedData<DeclarationStacks::FunctionStack>* funcStack, int lastLine)
         {
             m_sourceElements.set(sourceElements);
+            m_varDeclarations = varStack;
+            m_funcDeclarations = funcStack;
             m_lastLine = lastLine;
         }
 
@@ -64,6 +72,8 @@ namespace KJS {
         UString m_sourceURL;
         int m_sourceId;
         OwnPtr<SourceElements> m_sourceElements;
+        RefPtr<ParserRefCountedData<DeclarationStacks::VarStack> > m_varDeclarations;
+        RefPtr<ParserRefCountedData<DeclarationStacks::FunctionStack> > m_funcDeclarations;
         int m_lastLine;
     };
     
@@ -80,7 +90,11 @@ namespace KJS {
             m_sourceURL = UString();
             return 0;
         }
-        RefPtr<ParsedNode> node = new ParsedNode(m_sourceElements.release());
+        RefPtr<ParsedNode> node = new ParsedNode(m_sourceElements.release(), 
+                                                 m_varDeclarations ? &m_varDeclarations->data : 0, 
+                                                 m_funcDeclarations ? &m_funcDeclarations->data : 0);
+        m_varDeclarations = 0;
+        m_funcDeclarations = 0;
         m_sourceURL = UString();
         node->setLoc(startingLineNumber, m_lastLine);
         return node.release();

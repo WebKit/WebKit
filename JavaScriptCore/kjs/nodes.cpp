@@ -110,117 +110,116 @@ static inline bool canSkipLookup(ExecState* exec, const Identifier& ident)
 #endif
 static WTFLogChannel LogKJSNodeLeaks = { 0x00000000, "", WTFLogChannelOn };
 
-struct NodeCounter { 
+struct ParserRefCountedCounter { 
     static unsigned count; 
-    ~NodeCounter() 
+    ParserRefCountedCounter() 
     { 
         if (count) 
             LOG(KJSNodeLeaks, "LEAK: %u KJS::Node\n", count); 
     }
 };
-unsigned NodeCounter::count = 0;
-static NodeCounter nodeCounter;
+unsigned ParserRefCountedCounter::count = 0;
+static ParserRefCountedCounter parserRefCountedCounter;
 #endif
 
-static HashSet<Node*>* newNodes;
-static HashCountedSet<Node*>* nodeExtraRefCounts;
+static HashSet<ParserRefCounted*>* newTrackedObjects;
+static HashCountedSet<ParserRefCounted*>* trackedObjectExtraRefCounts;
+
+ParserRefCounted::ParserRefCounted()
+{
+#ifndef NDEBUG
+    ++ParserRefCountedCounter::count;
+#endif
+  if (!newTrackedObjects)
+      newTrackedObjects = new HashSet<ParserRefCounted*>;
+  newTrackedObjects->add(this);
+  ASSERT(newTrackedObjects->contains(this));
+}
+
+ParserRefCounted::~ParserRefCounted()
+{
+#ifndef NDEBUG
+    --ParserRefCountedCounter::count;
+#endif
+}
+
+void ParserRefCounted::ref()
+{
+    // bumping from 0 to 1 is just removing from the new nodes set
+    if (newTrackedObjects) {
+        HashSet<ParserRefCounted*>::iterator it = newTrackedObjects->find(this);
+        if (it != newTrackedObjects->end()) {
+            newTrackedObjects->remove(it);
+            ASSERT(!trackedObjectExtraRefCounts || !trackedObjectExtraRefCounts->contains(this));
+            return;
+        }
+    }   
+
+    ASSERT(!newTrackedObjects || !newTrackedObjects->contains(this));
+    
+    if (!trackedObjectExtraRefCounts)
+        trackedObjectExtraRefCounts = new HashCountedSet<ParserRefCounted*>;
+    trackedObjectExtraRefCounts->add(this);
+}
+
+void ParserRefCounted::deref()
+{
+    ASSERT(!newTrackedObjects || !newTrackedObjects->contains(this));
+    
+    if (!trackedObjectExtraRefCounts) {
+        delete this;
+        return;
+    }
+
+    HashCountedSet<ParserRefCounted*>::iterator it = trackedObjectExtraRefCounts->find(this);
+    if (it == trackedObjectExtraRefCounts->end())
+        delete this;
+    else
+        trackedObjectExtraRefCounts->remove(it);
+}
+
+unsigned ParserRefCounted::refcount()
+{
+    if (newTrackedObjects && newTrackedObjects->contains(this)) {
+        ASSERT(!trackedObjectExtraRefCounts || !trackedObjectExtraRefCounts->contains(this));
+        return 0;
+    }
+ 
+    ASSERT(!newTrackedObjects || !newTrackedObjects->contains(this));
+
+    if (!trackedObjectExtraRefCounts)
+        return 1;
+
+    return 1 + trackedObjectExtraRefCounts->count(this);
+}
+
+void ParserRefCounted::deleteNewObjects()
+{
+    if (!newTrackedObjects)
+        return;
+
+#ifndef NDEBUG
+    HashSet<ParserRefCounted*>::iterator end = newTrackedObjects->end();
+    for (HashSet<ParserRefCounted*>::iterator it = newTrackedObjects->begin(); it != end; ++it)
+        ASSERT(!trackedObjectExtraRefCounts || !trackedObjectExtraRefCounts->contains(*it));
+#endif
+    deleteAllValues(*newTrackedObjects);
+    delete newTrackedObjects;
+    newTrackedObjects = 0;
+}
 
 Node::Node()
     : m_mayHaveDeclarations(false)
     , m_expectedReturnType(ObjectType)
 {
-#ifndef NDEBUG
-    ++NodeCounter::count;
-#endif
   m_line = lexer().lineNo();
-  if (!newNodes)
-      newNodes = new HashSet<Node*>;
-  newNodes->add(this);
 }
 
 Node::Node(JSType expectedReturn)
     : m_mayHaveDeclarations(false)
     , m_expectedReturnType(expectedReturn)
 {
-#ifndef NDEBUG
-    ++NodeCounter::count;
-#endif
     m_line = lexer().lineNo();
-    if (!newNodes)
-        newNodes = new HashSet<Node*>;
-    newNodes->add(this);
-}
-
-Node::~Node()
-{
-#ifndef NDEBUG
-    --NodeCounter::count;
-#endif
-}
-
-void Node::ref()
-{
-    // bumping from 0 to 1 is just removing from the new nodes set
-    if (newNodes) {
-        HashSet<Node*>::iterator it = newNodes->find(this);
-        if (it != newNodes->end()) {
-            newNodes->remove(it);
-            ASSERT(!nodeExtraRefCounts || !nodeExtraRefCounts->contains(this));
-            return;
-        }
-    }   
-
-    ASSERT(!newNodes || !newNodes->contains(this));
-    
-    if (!nodeExtraRefCounts)
-        nodeExtraRefCounts = new HashCountedSet<Node*>;
-    nodeExtraRefCounts->add(this);
-}
-
-void Node::deref()
-{
-    ASSERT(!newNodes || !newNodes->contains(this));
-    
-    if (!nodeExtraRefCounts) {
-        delete this;
-        return;
-    }
-
-    HashCountedSet<Node*>::iterator it = nodeExtraRefCounts->find(this);
-    if (it == nodeExtraRefCounts->end())
-        delete this;
-    else
-        nodeExtraRefCounts->remove(it);
-}
-
-unsigned Node::refcount()
-{
-    if (newNodes && newNodes->contains(this)) {
-        ASSERT(!nodeExtraRefCounts || !nodeExtraRefCounts->contains(this));
-        return 0;
-    }
- 
-    ASSERT(!newNodes || !newNodes->contains(this));
-
-    if (!nodeExtraRefCounts)
-        return 1;
-
-    return 1 + nodeExtraRefCounts->count(this);
-}
-
-void Node::clearNewNodes()
-{
-    if (!newNodes)
-        return;
-
-#ifndef NDEBUG
-    HashSet<Node*>::iterator end = newNodes->end();
-    for (HashSet<Node*>::iterator it = newNodes->begin(); it != end; ++it)
-        ASSERT(!nodeExtraRefCounts || !nodeExtraRefCounts->contains(*it));
-#endif
-    deleteAllValues(*newNodes);
-    delete newNodes;
-    newNodes = 0;
 }
 
 double ExpressionNode::evaluateToNumber(ExecState* exec)
@@ -4400,58 +4399,45 @@ Completion TryNode::execute(ExecState *exec)
 
 // ------------------------------ FunctionBodyNode -----------------------------
 
-ScopeNode::ScopeNode(SourceElements* children)
+ScopeNode::ScopeNode(SourceElements* children, DeclarationStacks::VarStack* varStack, DeclarationStacks::FunctionStack* funcStack)
     : BlockNode(children)
     , m_sourceURL(parser().sourceURL())
     , m_sourceId(parser().sourceId())
 {
+    if (varStack)
+        m_varStack = *varStack;
+
+    if (funcStack)
+        m_functionStack = *funcStack;
 }
 
-ProgramNode::ProgramNode(SourceElements* children)
-    : ScopeNode(children)
+ProgramNode::ProgramNode(SourceElements* children, DeclarationStacks::VarStack* varStack, DeclarationStacks::FunctionStack* funcStack)
+    : ScopeNode(children, varStack, funcStack)
 {
 }
 
-EvalNode::EvalNode(SourceElements* children)
-    : ScopeNode(children)
+EvalNode::EvalNode(SourceElements* children, DeclarationStacks::VarStack* varStack, DeclarationStacks::FunctionStack* funcStack)
+    : ScopeNode(children, varStack, funcStack)
 {
 }
 
-FunctionBodyNode::FunctionBodyNode(SourceElements* children)
-    : ScopeNode(children)
+FunctionBodyNode::FunctionBodyNode(SourceElements* children, DeclarationStacks::VarStack* varStack, DeclarationStacks::FunctionStack* funcStack)
+    : ScopeNode(children, varStack, funcStack)
     , m_initialized(false)
 {
 }
 
-void ScopeNode::initializeDeclarationStacks(ExecState* exec)
-{
-    DeclarationStacks::NodeStack nodeStack;
-    DeclarationStacks stacks(exec, nodeStack, m_varStack, m_functionStack);
-    Node* node = statementListInitializeDeclarationStack(*m_children, nodeStack);
-    if (!node)
-        return;
-    
-    while (true) {
-        ASSERT(node->mayHaveDeclarations()); // Otherwise, we wasted time putting an irrelevant node on the stack.
-        node->getDeclarations(stacks);
-        
-        size_t size = nodeStack.size();
-        if (!size)
-            break;
-        --size;
-        node = nodeStack[size];
-        nodeStack.shrink(size);
-    }
-}
-
-void FunctionBodyNode::initializeSymbolTable()
+void FunctionBodyNode::initializeSymbolTable(ExecState* exec)
 {
     size_t i, size;
     size_t count = 0;
 
     // The order of additions here implicitly enforces the mutual exclusion described in ECMA 10.1.3.
-    for (i = 0, size = m_varStack.size(); i < size; ++i)
-        m_symbolTable.set(m_varStack[i]->ident.ustring().rep(), count++);
+    for (i = 0, size = m_varStack.size(); i < size; ++i) {
+        if (m_varStack[i]->ident != exec->propertyNames().arguments)
+            m_symbolTable.set(m_varStack[i]->ident.ustring().rep(), count);
+        count++;
+    }
 
     for (i = 0, size = m_parameters.size(); i < size; ++i)
         m_symbolTable.set(m_parameters[i].ustring().rep(), count++);
@@ -4482,8 +4468,7 @@ void FunctionBodyNode::optimizeVariableAccess()
 void FunctionBodyNode::processDeclarations(ExecState* exec)
 {
     if (!m_initialized) {
-        initializeDeclarationStacks(exec);
-        initializeSymbolTable();
+        initializeSymbolTable(exec);
         optimizeVariableAccess();
         
         m_initialized = true;
@@ -4520,8 +4505,6 @@ void FunctionBodyNode::processDeclarations(ExecState* exec)
 
 void ProgramNode::processDeclarations(ExecState* exec)
 {
-    initializeDeclarationStacks(exec);
-
     size_t i, size;
 
     JSVariableObject* variableObject = exec->variableObject();
@@ -4546,8 +4529,6 @@ void ProgramNode::processDeclarations(ExecState* exec)
 
 void EvalNode::processDeclarations(ExecState* exec)
 {
-    initializeDeclarationStacks(exec);
-
     size_t i, size;
 
     JSVariableObject* variableObject = exec->variableObject();
