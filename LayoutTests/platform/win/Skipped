@@ -57,7 +57,6 @@ fast/encoding/invalid-UTF-8.html
 fast/forms/select-visual-hebrew.html
 fast/forms/select-writing-direction-natural.html
 fast/forms/visual-hebrew-text-field.html
-fast/lists/drag-into-marker.html
 fast/lists/w3-list-styles.html
 fast/text/international/bidi-neutral-run.html
 fast/xsl/xslt-text.xml
@@ -178,7 +177,6 @@ fast/text/cg-fallback-bolding.html
 fast/text/cg-vs-atsui.html
 fast/text/in-rendered-text-rtl.html
 fast/text/monospace-width-cache.html
-fast/text/international/002.html
 fast/text/international/003.html
 fast/text/international/bidi-AN-after-L.html
 fast/text/international/bidi-CS-after-AN.html
@@ -236,6 +234,7 @@ fast/events/standalone-image-drag-to-editable.html
 fast/forms/drag-into-textarea.html
 fast/forms/drag-out-of-textarea.html
 fast/forms/textfield-drag-into-disabled.html
+fast/lists/drag-into-marker.html
 
 # DumpRenderTree doesn't support multiple windows <rdar://problem/5132009>
 fast/dom/open-and-close-by-DOM.html
