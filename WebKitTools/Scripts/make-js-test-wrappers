@@ -71,6 +71,7 @@ for my $tfile (@templates) {
         chomp $file;
         next if $file =~ /js-test-.*\.js$/;
         next if $file =~ m:resources/intersectsNode\.js$:;
+        next if $file =~ m:resources/select-options-remove\.js$:;
 
         my $html = $file;
         $html =~ s:resources/(.*)\.js:$1.html:;
