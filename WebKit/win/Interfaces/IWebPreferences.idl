@@ -58,7 +58,8 @@ typedef enum FontSmoothingType {
     FontSmoothingTypeStandard=0,
     FontSmoothingTypeLight,
     FontSmoothingTypeMedium,
-    FontSmoothingTypeStrong
+    FontSmoothingTypeStrong,
+    FontSmoothingTypeWindows
 } FontSmoothingType;
 
 typedef enum WebKitEditableLinkBehavior {

@@ -1,3 +1,18 @@
+2007-12-19  Dave Hyatt <hyatt@apple.com>
+
+        Add a fourth preference value for GDI text in the font smoothing prefs.
+        
+        Reviewed by mitz
+
+        * Interfaces/IWebPreferences.idl:
+        * WebPreferenceKeysPrivate.h:
+        * WebPreferences.cpp:
+        (WebPreferences::initializeDefaultSettings):
+        (WebPreferences::fontSmoothing):
+        (WebPreferences::setFontSmoothing):
+        * WebView.cpp:
+        (WebView::notifyPreferencesChanged):
+
 2007-12-17  Darin Adler  <darin@apple.com>
 
         Reviewed by Sam.
