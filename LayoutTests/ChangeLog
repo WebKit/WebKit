@@ -1,3 +1,14 @@
+2007-12-19  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        - test for <rdar://problem/5650045> REGRESSION: major layout problems in svn r28754 WebKit on Vox.com page
+
+        * fast/dynamic/subtree-boundary-percent-height.html: Added.
+        * platform/mac/fast/dynamic/subtree-boundary-percent-height-expected.checksum: Added.
+        * platform/mac/fast/dynamic/subtree-boundary-percent-height-expected.png: Added.
+        * platform/mac/fast/dynamic/subtree-boundary-percent-height-expected.txt: Added.
+
 2007-12-18  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Oliver.

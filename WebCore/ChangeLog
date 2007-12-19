@@ -1,3 +1,15 @@
+2007-12-19  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        - fix <rdar://problem/5650045> REGRESSION: major layout problems in svn r28754 WebKit on Vox.com page
+
+        Test: fast/dynamic/subtree-boundary-percent-height.html
+
+        * rendering/RenderObject.cpp:
+        (WebCore::objectIsRelayoutBoundary): Do not allow overflows with
+        percent heights because sometimes they compute to 'auto'.
+
 2007-12-19  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Maciej.
