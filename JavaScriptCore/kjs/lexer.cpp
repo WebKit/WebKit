@@ -27,6 +27,7 @@
 #include "dtoa.h"
 #include "function.h"
 #include "nodes.h"
+#include "NodeInfo.h"
 #include <ctype.h>
 #include <limits.h>
 #include <string.h>

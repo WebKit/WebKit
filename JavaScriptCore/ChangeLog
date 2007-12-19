@@ -1,3 +1,17 @@
+2007-12-09  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Build fix for non-Mac platforms.  Move NodeInfo into its own header so that the YYTYPE
+        declaration in grammar.h is able to declare members of that type.
+
+        * kjs/NodeInfo.h: Added.
+        (KJS::createNodeInfo):
+        (KJS::mergeDeclarationLists):
+        (KJS::appendToVarDeclarationList):
+        * kjs/grammar.y:
+        * kjs/lexer.cpp:
+
 2007-12-19  Oliver Hunt  <oliver@apple.com>
 
         Make appendToVarDeclarationList static

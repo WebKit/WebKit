@@ -32,6 +32,7 @@
 #include "lexer.h"
 #include "internal.h"
 #include "CommonIdentifiers.h"
+#include "NodeInfo.h"
 #include "Parser.h"
 #include <wtf/MathExtras.h>
 
@@ -84,12 +85,6 @@ static NumberNode* makeNumberNode(double);
 
 #endif
 
-template <typename T> struct NodeInfo {
-    T m_node;
-    ParserRefCountedData<DeclarationStacks::VarStack>* m_varDeclarations;
-    ParserRefCountedData<DeclarationStacks::FunctionStack>* m_funcDeclarations;
-};
-
 template <typename T> NodeInfo<T> createNodeInfo(T node, ParserRefCountedData<DeclarationStacks::VarStack>* varDecls, 
                                                  ParserRefCountedData<DeclarationStacks::FunctionStack>* funcDecls) 
 {
@@ -123,12 +118,6 @@ static void appendToVarDeclarationList(ParserRefCountedData<DeclarationStacks::V
     varDecls->data.append(decl);
 }
 
-typedef NodeInfo<StatementNode*> StatementNodeInfo;
-typedef NodeInfo<CaseBlockNode*> CaseBlockNodeInfo;
-typedef NodeInfo<CaseClauseNode*> CaseClauseNodeInfo;
-typedef NodeInfo<SourceElementsStub*> SourceElementsInfo;
-typedef NodeInfo<ClauseList> ClauseListInfo;
-typedef NodeInfo<VarDeclList> VarDeclListInfo;
 %}
 
 %union {
