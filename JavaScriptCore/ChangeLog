@@ -1,3 +1,18 @@
+2007-12-18  Xan Lopez  <xan@gnome.org>
+
+        Reviewed by Geoff.
+
+        Fix http://bugs.webkit.org/show_bug.cgi?id=14521
+        Bug 14521: JavaScriptCore fails to build on Linux/PPC gcc 4.1.2
+        
+        * wtf/TCSpinLock.h:
+        (TCMalloc_SpinLock::Unlock):
+
+        Use less strict memory operand constraint on inline asm generation.
+        PLATFORM(DARWIN) left unpatched due to Apple's GCC bug.
+
+        Patch by David Kilzer <ddkilzer@webkit.org>
+
 2007-12-18  Mark Rowe  <mrowe@apple.com>
 
         Rubber-stamped by Maciej Stachowiak.

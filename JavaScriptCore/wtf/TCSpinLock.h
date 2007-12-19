@@ -102,7 +102,11 @@ struct TCMalloc_SpinLock {
       ("isync\n\t"
        "eieio\n\t"
        "stw %1, %0"
-       : "=o" (lockword_) 
+#if PLATFORM(DARWIN)
+       : "=o" (lockword_)
+#else
+       : "=m" (lockword_) 
+#endif
        : "r" (0)
        : "memory");
 #endif
