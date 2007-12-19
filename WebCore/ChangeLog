@@ -1,3 +1,41 @@
+2007-12-18  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Oliver.
+
+        Fix for <rdar://problem/5616982> SVGs with width and height 100% 
+        fail to render when used as <img> or CSS image (16167)
+
+        This final part of the work fixes the <img> tag.
+
+        This is the real fix. 
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::calcReplacedWidth): Set the container size 
+        on the image. Setting the container size only actually sticks if 
+        the values are non-zero, so if the container size really was set, 
+        use the imageSize that is calculated using the container size. If 
+        it did not stick but the image does have relative width (meaning 
+        that the container size is 0), set the width to 0 by hand. We want 
+        to avoid setting the width before we have a container size or we 
+        will end up incorrectly using the default size of 300x150.
+        (WebCore::RenderImage::calcReplacedHeight): Same as above, but for 
+        height.
+
+        A few more pieces of information have to be exposed through cached 
+        image to make this happen.
+        * loader/CachedImage.cpp:
+        (WebCore::CachedImage::usesImageContainerSize): As mentioned above, 
+        when setContainerSize() is called, the container size is only 
+        actually set if the values are non-zero. This call tells you if it 
+        was set.
+        (WebCore::CachedImage::imageHasRelativeWidth):
+        (WebCore::CachedImage::imageHasRelativeHeight):
+        * loader/CachedImage.h:
+        * platform/graphics/Image.h:
+        (WebCore::Image::usesContainerSize):
+        * svg/graphics/SVGImage.cpp:
+        (WebCore::SVGImage::usesContainerSize):
+        * svg/graphics/SVGImage.h:
+
 2007-12-18  Mark Rowe  <mrowe@apple.com>
 
         Rubber-stamped by Maciej Stachowiak.

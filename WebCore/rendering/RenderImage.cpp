@@ -324,9 +324,17 @@ bool RenderImage::isHeightSpecified() const
 
 int RenderImage::calcReplacedWidth() const
 {
+    if (m_cachedImage && m_cachedImage->imageHasRelativeWidth() && !m_cachedImage->usesImageContainerSize())
+        if (RenderObject* cb = isPositioned() ? container() : containingBlock())
+            m_cachedImage->setImageContainerSize(IntSize(cb->availableWidth(), cb->availableHeight()));
+    
     int width;
     if (isWidthSpecified())
         width = calcReplacedWidthUsing(style()->width());
+    else if (m_cachedImage && m_cachedImage->usesImageContainerSize())
+        width = m_cachedImage->imageSize().width();
+    else if (m_cachedImage && m_cachedImage->imageHasRelativeWidth())
+        width = 0; // If the image is relatively-sized, set the width to 0 until there is a set container size.
     else
         width = calcAspectRatioWidth();
 
@@ -341,6 +349,10 @@ int RenderImage::calcReplacedHeight() const
     int height;
     if (isHeightSpecified())
         height = calcReplacedHeightUsing(style()->height());
+    else if (m_cachedImage && m_cachedImage->usesImageContainerSize())
+        height = m_cachedImage->imageSize().height();
+    else if (m_cachedImage && m_cachedImage->imageHasRelativeHeight())
+        height = 0; // If the image is relatively-sized, set the height to 0 until there is a set container size.
     else
         height = calcAspectRatioHeight();
 

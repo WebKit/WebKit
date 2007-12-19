@@ -119,6 +119,30 @@ void CachedImage::setImageContainerSize(const IntSize& containerSize)
         m_image->setContainerSize(containerSize);
 }
 
+bool CachedImage::usesImageContainerSize() const
+{
+    if (m_image)
+        return m_image->usesContainerSize();
+
+    return false;
+}
+
+bool CachedImage::imageHasRelativeWidth() const
+{
+    if (m_image)
+        return m_image->hasRelativeWidth();
+
+    return false;
+}
+
+bool CachedImage::imageHasRelativeHeight() const
+{
+    if (m_image)
+        return m_image->hasRelativeHeight();
+
+    return false;
+}
+
 IntSize CachedImage::imageSize() const
 {
     return (m_image ? m_image->size() : IntSize());

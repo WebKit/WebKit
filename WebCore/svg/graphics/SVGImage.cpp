@@ -76,6 +76,15 @@ void SVGImage::setContainerSize(const IntSize& containerSize)
     rootElement->setContainerSize(containerSize);
 }
 
+bool SVGImage::usesContainerSize() const
+{
+    SVGSVGElement* rootElement = static_cast<SVGDocument*>(m_frame->document())->rootElement();
+    if (!rootElement)
+        return false;
+
+    return rootElement->hasSetContainerSize();
+}
+
 IntSize SVGImage::size() const
 {
     if (!m_frame || !m_frame->document())
