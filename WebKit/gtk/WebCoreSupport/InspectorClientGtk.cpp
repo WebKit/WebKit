@@ -26,7 +26,7 @@ namespace WebKit {
 
 void InspectorClient::inspectorDestroyed()
 {
-    notImplemented();
+    delete this;
 }
 
 Page* InspectorClient::createPage()

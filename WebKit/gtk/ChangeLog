@@ -1,3 +1,15 @@
+2007-12-19  Alp Toker  <alp@atoker.com>
+
+        Reviewed by Holger Freyther.
+
+        Delete when Destroy functions are called to avoid leaks
+        
+        This matches the Mac port.
+
+        * WebCoreSupport/ChromeClientGtk.cpp:
+        * WebCoreSupport/ContextMenuClientGtk.cpp:
+        * WebCoreSupport/InspectorClientGtk.cpp:
+
 2007-12-14  Juan A. Suarez Romero  <jasuarez@igalia.com>
 
         Reviewed by Alp Toker.

@@ -27,7 +27,7 @@ namespace WebKit {
 
 void ContextMenuClient::contextMenuDestroyed()
 {
-    notImplemented();
+    delete this;
 }
 
 PlatformMenuDescription ContextMenuClient::getCustomMenuFromDefaultItems(ContextMenu*)
