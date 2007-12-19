@@ -1,2 +1,0 @@
-#include "WebCore.xcconfig"
-GCC_OPTIMIZATION_LEVEL = 0

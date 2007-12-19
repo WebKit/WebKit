@@ -1,3 +1,0 @@
-#include "WebCore.xcconfig"
-ARCHS = i386 ppc;
-GCC_OPTIMIZATION_LEVEL = s
