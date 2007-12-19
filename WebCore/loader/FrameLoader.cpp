@@ -801,6 +801,8 @@ void FrameLoader::clear(bool clearWindowProperties, bool clearScriptObjects)
         if (m_frame->document()->attached()) {
             m_frame->document()->willRemove();
             m_frame->document()->detach();
+            
+            m_frame->document()->removeFocusedNodeOfSubtree(m_frame->document());
         }
     }
 

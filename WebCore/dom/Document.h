@@ -446,7 +446,8 @@ public:
     void setActiveNode(PassRefPtr<Node>);
     Node* activeNode() const { return m_activeNode.get(); }
 
-    void focusedNodeRemoved(Node*);
+    void focusedNodeRemoved();
+    void removeFocusedNodeOfSubtree(Node*, bool amongChildrenOnly = false);
     void hoveredNodeDetached(Node*);
     void activeChainNodeDetached(Node*);
 

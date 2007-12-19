@@ -1,3 +1,13 @@
+2007-12-19  Alice Liu  <alice.liu@apple.com>
+
+        Reviewed by Darin.
+
+        Fixed <rdar://problem/5592485> Safari crashed trying to get a motorcycle insurance quote
+        on Geico.com WebCore::Document::inPageCache()
+
+        * fast/events/nested-event-remove-node-crash-expected.txt: Added.
+        * fast/events/nested-event-remove-node-crash.html: Added.
+
 2007-12-19  Andre Boule  <aboule@apple.com>
 
         Reviewed by Dan Bernstein.

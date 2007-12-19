@@ -1,3 +1,24 @@
+2007-12-19  Alice Liu  <alice.liu@apple.com>
+
+        Reviewed by Darin.
+
+        Fixed <rdar://problem/5592485> Safari crashed trying to get a motorcycle insurance quote
+        on Geico.com WebCore::Document::inPageCache()
+
+        Calling Node::willRemove on the focusedNode would immediately tell the document to remove
+        the focused node, and trigger JS events.  This means that the document is mutated while
+        the engine is trying to tell all child nodes that it's about to removed.  To avoid
+        crashing, we need to hold off on mutating the document until node traversal is finished.
+
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::removeChild):
+        (WebCore::ContainerNode::removeChildren):
+        * dom/Node.cpp:
+        * dom/Node.h:
+        (WebCore::Node::willRemove):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::clear):
+
 2007-12-19  Andre Boule  <aboule@apple.com>
 
         Reviewed by Dan Bernstein.
