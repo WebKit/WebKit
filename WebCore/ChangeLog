@@ -2,6 +2,17 @@
 
         Reviewed by Holger Freyther.
 
+        Improve graphics operator approximations
+        
+        These changes match Cairo's own CG approximations.
+
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        (WebCore::toCairoOperator):
+
+2007-12-19  Alp Toker  <alp@atoker.com>
+
+        Reviewed by Holger Freyther.
+
         Check the bounding box before doing a full hit test
 
         * platform/graphics/cairo/PathCairo.cpp:

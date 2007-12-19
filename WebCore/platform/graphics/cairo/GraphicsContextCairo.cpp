@@ -756,14 +756,15 @@ static inline cairo_operator_t toCairoOperator(CompositeOperator op)
         case CompositeXOR:
             return CAIRO_OPERATOR_XOR;
         case CompositePlusDarker:
-            return CAIRO_OPERATOR_OVER;
+            return CAIRO_OPERATOR_SATURATE;
         case CompositeHighlight:
+            // There is no Cairo equivalent for CompositeHighlight.
             return CAIRO_OPERATOR_OVER;
         case CompositePlusLighter:
-            return CAIRO_OPERATOR_OVER;
+            return CAIRO_OPERATOR_ADD;
+        default:
+            return CAIRO_OPERATOR_SOURCE;
     }
-
-    return CAIRO_OPERATOR_OVER;
 }
 
 void GraphicsContext::setCompositeOperation(CompositeOperator op)
