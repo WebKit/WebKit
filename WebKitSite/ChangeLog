@@ -1,3 +1,12 @@
+2007-12-18  Steve Falkenburg  <sfalken@apple.com>
+
+        Correct link to Visual Studio Express 2005.
+        Old link points to 2008.
+        
+        Reviewed by Mark.
+
+        * building/tools.html:
+
 2007-12-17  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Eric.
