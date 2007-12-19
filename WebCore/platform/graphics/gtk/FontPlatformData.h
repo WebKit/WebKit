@@ -5,6 +5,7 @@
  * Copyright (C) 2006 Apple Computer, Inc.
  * Copyright (C) 2006 Michael Emmel mike.emmel@gmail.com 
  * Copyright (C) 2007 Holger Hans Peter Freyther
+ * Copyright (C) 2007 Pioneer Research Center USA, Inc.
  * All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -30,8 +31,7 @@
 #include "GlyphBuffer.h"
 #include "FontDescription.h"
 #include <cairo.h>
-#include <cairo-ft.h>
-#include <fontconfig/fcfreetype.h>
+#include <pango/pangocairo.h>
 
 namespace WebCore {
 
@@ -39,12 +39,14 @@ class FontPlatformData {
 public:
     class Deleted {};
     FontPlatformData(Deleted)
-        : m_pattern(reinterpret_cast<FcPattern*>(-1))
+        : m_context(0)
+        , m_font(reinterpret_cast<PangoFont*>(-1))
         , m_scaledFont(0)
         { }
 
     FontPlatformData()
-        : m_pattern(0)
+        : m_context(0)
+        , m_font(0)
         , m_scaledFont(0)
         { }
 
@@ -59,13 +61,17 @@ public:
 
     unsigned hash() const
     {
-        uintptr_t hashCodes[1] = { reinterpret_cast<uintptr_t>(m_scaledFont) };
-        return StringImpl::computeHash( reinterpret_cast<UChar*>(hashCodes), sizeof(hashCodes) / sizeof(UChar));
+        uintptr_t hashCodes[1] = {reinterpret_cast<uintptr_t>(m_scaledFont)};
+        return StringImpl::computeHash(reinterpret_cast<UChar*>(hashCodes), sizeof(hashCodes) / sizeof(UChar));
     }
 
     bool operator==(const FontPlatformData&) const;
 
-    FcPattern* m_pattern;
+    static PangoFontMap* m_fontMap;
+    static GHashTable  * m_hashTable;
+
+    PangoContext* m_context;
+    PangoFont* m_font;
     FontDescription m_fontDescription;
     cairo_scaled_font_t* m_scaledFont;
 };

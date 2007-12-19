@@ -1,3 +1,32 @@
+2007-12-19  Sven Herzberg  <sven@imendio.com>
+
+        Reviewed by Alp Toker.
+
+        Replace the fontconfig/freetype based font management with a pango
+        based one. Fixes:
+        http://bugs.webkit.org/show_bug.cgi?id=15229
+
+        * platform/gtk/FontDataGtk.cpp (FontData::platformDestroy()): updated
+        the platform specific destroy code
+        (FontData::containsCharacters()): implemented font coverage with pango
+        * platform/gtk/FontPlatformData.h: replaced fontconfig specific
+        members with pango-specific ones
+        * platform/gtk/FontPlatformDataGtk.cpp: added static members for the
+        FontPlatformData class
+        (FontPlatformData::FontPlatformData()): implemented the font-matching
+        with a PangoFontDescription instead of an FcPattern; initialize the
+        scaled font by using the API for PangoCairoFont
+        (FontPlatformData::init()): initialize the PangoFontMap and set up a
+        hash table to translate the font family name into a font family
+        (FontPlatformData::isFixedPitch()): implemented by querying the
+        PangoFontFamily
+        (FontPlatformData::operator==): compare the FontPlatformData by
+        comparing the font pointers or the described fonts
+        * platform/gtk/GlyphPageTreeNodeGtk.cpp (pango_font_get_glyph()):
+        added a function to query a glyph from a PangoFont
+        (GlyphPage::fill()): implemented the fill function with Pango instead
+        of fontconfig/freetype
+
 2007-12-19  Alp Toker  <alp@atoker.com>
 
         Reviewed by Holger Freyther.

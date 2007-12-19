@@ -2,6 +2,7 @@
  * Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Michael Emmel mike.emmel@gmail.com 
  * Copyright (C) 2007 Alp Toker <alp.toker@collabora.co.uk>
+ * Copyright (C) 2007 Pioneer Research Center USA, Inc.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,8 +33,38 @@
 #include "GlyphPageTreeNode.h"
 
 #include "FontData.h"
+#include <pango/pango-font.h>
 
 namespace WebCore {
+
+static PangoGlyph pango_font_get_glyph(PangoFont* font, PangoContext* context, gunichar wc)
+{
+    PangoGlyph result = 0;
+    gchar buffer[7];
+
+    gint  length = g_unichar_to_utf8(wc, buffer);
+    g_return_val_if_fail(length, 0);
+
+    GList* items = pango_itemize(context, buffer, 0, length, NULL, NULL);
+
+    if (g_list_length(items) == 1) {
+        PangoGlyphString* glyphs = pango_glyph_string_new();
+
+        pango_shape(buffer, length, &((PangoItem*)items->data)->analysis, glyphs);
+
+        if (glyphs->num_glyphs == 1)
+            result = glyphs->glyphs[0].glyph;
+        else
+            g_warning("didn't get 1 glyph but %d", glyphs->num_glyphs);
+
+        pango_glyph_string_free(glyphs);
+    }
+
+    g_list_foreach(items, (GFunc)pango_item_free, NULL);
+    g_list_free(items);
+
+    return result;
+}
 
 bool GlyphPage::fill(UChar* buffer, unsigned bufferLength, const FontData* fontData)
 {
@@ -42,13 +73,12 @@ bool GlyphPage::fill(UChar* buffer, unsigned bufferLength, const FontData* fontD
     if (bufferLength > GlyphPage::size)
         return false;
 
-    FT_Face face = cairo_ft_scaled_font_lock_face(fontData->m_font.m_scaledFont);
-    if (!face)
+    if (!fontData->m_font.m_font || fontData->m_font.m_font == reinterpret_cast<PangoFont*>(-1))
         return false;
 
     bool haveGlyphs = false;
     for (unsigned i = 0; i < GlyphPage::size; i++) {
-        Glyph glyph = FcFreeTypeCharIndex(face, buffer[i]);
+        Glyph glyph = pango_font_get_glyph(fontData->m_font.m_font, fontData->m_font.m_context, buffer[i]);
         if (!glyph)
             setGlyphDataForIndex(i, 0, 0);
         else {
@@ -56,8 +86,6 @@ bool GlyphPage::fill(UChar* buffer, unsigned bufferLength, const FontData* fontD
             haveGlyphs = true;
         }
     }
-
-    cairo_ft_scaled_font_unlock_face(fontData->m_font.m_scaledFont);
 
     return haveGlyphs;
 }
