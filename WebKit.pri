@@ -25,9 +25,6 @@ gtk-port {
 
     DEFINES += BUILDING_CAIRO__=1 BUILDING_GTK__=1
 
-    # We use FreeType directly with Cairo
-    PKGCONFIG += cairo-ft
-
     directfb: PKGCONFIG += cairo-directfb gtk+-directfb-2.0
     else: PKGCONFIG += cairo gtk+-2.0
 
