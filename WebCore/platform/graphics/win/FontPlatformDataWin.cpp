@@ -128,12 +128,13 @@ static int CALLBACK enumStylesCallback(const LOGFONT* logFont, const TEXTMETRIC*
     return 1;
 }
 
-FontPlatformData::FontPlatformData(HFONT font, float size, bool bold, bool oblique)
+FontPlatformData::FontPlatformData(HFONT font, float size, bool bold, bool oblique, bool useGDI)
     : m_font(font)
     , m_size(size)
     , m_cgFont(0)
     , m_syntheticBold(false)
     , m_syntheticOblique(false)
+    , m_useGDI(useGDI)
 {
     HDC hdc = GetDC(0);
     SaveDC(hdc);
@@ -178,6 +179,9 @@ FontPlatformData::FontPlatformData(HFONT font, float size, bool bold, bool obliq
                     m_syntheticOblique = true;
         }
 
+        // For GDI text, synthetic bold and oblique never need to be set.
+        m_syntheticBold = m_syntheticOblique = false;
+
         // Try the face name first.  Windows may end up localizing this name, and CG doesn't know about
         // the localization.  If the create fails, we'll try the PostScript name.
         RetainPtr<CFStringRef> fullName(AdoptCF, CFStringCreateWithCharacters(NULL, (const UniChar*)faceName, wcslen(faceName)));
@@ -202,6 +206,7 @@ FontPlatformData::FontPlatformData(CGFontRef font, float size, bool bold, bool o
     , m_cgFont(font)
     , m_syntheticBold(bold)
     , m_syntheticOblique(oblique)
+    , m_useGDI(false)
 {
 }
 

@@ -314,4 +314,17 @@ unsigned long long Settings::defaultDatabaseOriginQuota() const
 #endif
 }
 
+void Settings::setFontRenderingMode(FontRenderingMode mode)
+{
+    if (m_fontRenderingMode == mode)
+        return;
+    m_fontRenderingMode = mode;
+    setNeedsReapplyStylesInAllFrames(m_page);
+}
+
+FontRenderingMode Settings::fontRenderingMode() const
+{
+    return m_fontRenderingMode;
+}
+
 } // namespace WebCore

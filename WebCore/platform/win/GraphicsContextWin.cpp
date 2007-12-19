@@ -77,19 +77,17 @@ GraphicsContext::GraphicsContext(HDC hdc)
     }
 }
 
-HDC GraphicsContext::getWindowsContext(bool supportAlphaBlend, const IntRect* dstRect)
+HDC GraphicsContext::getWindowsContext(const IntRect& dstRect, bool supportAlphaBlend)
 {
     if (m_data->m_transparencyCount) {
-        // We're in a transparency layer.
-        ASSERT(dstRect);
-        if (!dstRect)
+        if (dstRect.isEmpty())
             return 0;
-    
+
         // Create a bitmap DC in which to draw.
         BITMAPINFO bitmapInfo;
         bitmapInfo.bmiHeader.biSize          = sizeof(BITMAPINFOHEADER);
-        bitmapInfo.bmiHeader.biWidth         = dstRect->width(); 
-        bitmapInfo.bmiHeader.biHeight        = dstRect->height();
+        bitmapInfo.bmiHeader.biWidth         = dstRect.width(); 
+        bitmapInfo.bmiHeader.biHeight        = dstRect.height();
         bitmapInfo.bmiHeader.biPlanes        = 1;
         bitmapInfo.bmiHeader.biBitCount      = 32;
         bitmapInfo.bmiHeader.biCompression   = BI_RGB;
@@ -124,8 +122,8 @@ HDC GraphicsContext::getWindowsContext(bool supportAlphaBlend, const IntRect* ds
         xform.eM12 = 0;
         xform.eM21 = 0;
         xform.eM22 = 1.0;
-        xform.eDx = -dstRect->x();
-        xform.eDy = -dstRect->y();
+        xform.eDx = -dstRect.x();
+        xform.eDy = -dstRect.y();
         ::SetWorldTransform(bitmapDC, &xform);
 
         return bitmapDC;
@@ -136,9 +134,12 @@ HDC GraphicsContext::getWindowsContext(bool supportAlphaBlend, const IntRect* ds
     return m_data->m_hdc;
 }
 
-void GraphicsContext::releaseWindowsContext(HDC hdc, bool supportAlphaBlend, const IntRect* dstRect)
+void GraphicsContext::releaseWindowsContext(HDC hdc, const IntRect& dstRect, bool supportAlphaBlend)
 {
     if (hdc && m_data->m_transparencyCount) {
+        if (dstRect.isEmpty())
+            return;
+
         HBITMAP bitmap = (HBITMAP)GetCurrentObject(hdc, OBJ_BITMAP);
 
         // Need to make a CGImage out of the bitmap's pixel buffer and then draw
@@ -154,7 +155,7 @@ void GraphicsContext::releaseWindowsContext(HDC hdc, bool supportAlphaBlend, con
         CGColorSpaceRelease(deviceRGB);
 
         CGImageRef image = CGBitmapContextCreateImage(bitmapContext);
-        CGContextDrawImage(m_data->m_cgContext, *dstRect, image);
+        CGContextDrawImage(m_data->m_cgContext, dstRect, image);
         
         // Delete all our junk.
         CGImageRelease(image);

@@ -221,8 +221,8 @@ namespace WebCore {
 
 #if PLATFORM(WIN)
         GraphicsContext(HDC); // FIXME: To be removed.
-        HDC getWindowsContext(bool supportAlphaBlend = false, const IntRect* = 0); // The passed in rect is used to create a bitmap for compositing inside transparency layers.
-        void releaseWindowsContext(HDC, bool supportAlphaBlend = false, const IntRect* = 0);    // The passed in HDC should be the one handed back by getWindowsContext.
+        HDC getWindowsContext(const IntRect&, bool supportAlphaBlend = true); // The passed in rect is used to create a bitmap for compositing inside transparency layers.
+        void releaseWindowsContext(HDC, const IntRect&, bool supportAlphaBlend = true);    // The passed in HDC should be the one handed back by getWindowsContext.
 #endif
 
 #if PLATFORM(QT)

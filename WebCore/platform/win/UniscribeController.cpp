@@ -253,7 +253,9 @@ bool UniscribeController::shapeAndPlaceItem(const UChar* cp, unsigned i, const F
     roundingHackCharacters.fill(-1);
     Vector<int> roundingHackWordBoundaries(glyphs.size());
     roundingHackWordBoundaries.fill(-1);
-    unsigned logicalSpaceWidth = fontData->m_spaceWidth * 32.0f;
+
+    const float cLogicalScale = fontData->m_font.useGDI() ? 1.0f : 32.0f;
+    unsigned logicalSpaceWidth = fontData->m_spaceWidth * cLogicalScale;
     float roundedSpaceWidth = roundf(fontData->m_spaceWidth);
 
     for (int k = 0; k < len; k++) {
@@ -282,9 +284,9 @@ bool UniscribeController::shapeAndPlaceItem(const UChar* cp, unsigned i, const F
 
     for (unsigned k = 0; k < glyphs.size(); k++) {
         Glyph glyph = glyphs[k];
-        float advance = advances[k] / 32.0f;
-        float offsetX = offsets[k].du / 32.0f;
-        float offsetY = offsets[k].dv / 32.0f;
+        float advance = advances[k] / cLogicalScale;
+        float offsetX = offsets[k].du / cLogicalScale;
+        float offsetY = offsets[k].dv / cLogicalScale;
 
         // Match AppKit's rules for the integer vs. non-integer rendering modes.
         float roundedAdvance = roundf(advance);

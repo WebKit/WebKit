@@ -472,8 +472,10 @@ void PluginViewWin::paint(GraphicsContext* context, const IntRect& rect)
     if (m_isWindowed || context->paintingDisabled())
         return;
 
-    HDC hdc = context->getWindowsContext();
+    HDC hdc = context->getWindowsContext(frameGeometry());
 
+    // FIXME: This is completely wrong and will break in the presence of opacity, SVG transforms
+    // and CSS transforms.
     // The plugin expects that the passed in DC has window coordinates.
     // (This probably breaks funky SVG transform stuff)
     XFORM transform;
@@ -515,7 +517,7 @@ void PluginViewWin::paint(GraphicsContext* context, const IntRect& rect)
 
     dispatchNPEvent(npEvent);
 
-    context->releaseWindowsContext(hdc);
+    context->releaseWindowsContext(hdc, frameGeometry());
 }
 
 void PluginViewWin::handleKeyboardEvent(KeyboardEvent* event)

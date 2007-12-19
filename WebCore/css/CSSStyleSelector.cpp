@@ -3338,8 +3338,11 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
             if (style->setFontDescription(fontDescription))
                 fontDirty = true;
         } else if (isInitial) {
+            Settings* settings = m_document->settings();
             FontDescription fontDescription;
             fontDescription.setGenericFamily(FontDescription::StandardFamily);
+            fontDescription.setRenderingMode(settings->fontRenderingMode());
+            fontDescription.setUsePrinterFont(m_document->printing());
             const AtomicString& standardFontFamily = m_document->settings()->standardFontFamily();
             if (!standardFontFamily.isEmpty()) {
                 fontDescription.firstFamily().setFamily(standardFontFamily);

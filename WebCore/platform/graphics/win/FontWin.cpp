@@ -44,6 +44,88 @@ const int syntheticObliqueAngle = 14;
 void Font::drawGlyphs(GraphicsContext* graphicsContext, const FontData* font, const GlyphBuffer& glyphBuffer, 
                       int from, int numGlyphs, const FloatPoint& point) const
 {
+    if (font->m_font.useGDI()) {
+        // FIXME: Support alpha blending.
+        // FIXME: Support text stroke/fill.
+        // FIXME: Support text shadow.
+        Color fillColor = graphicsContext->fillColor();
+        if (fillColor.alpha() == 0)
+            return;
+
+        // We have to convert CG's two-dimensional floating point advances to just horizontal integer advances.
+        Vector<int, 2048> gdiAdvances;
+        int totalWidth = 0;
+        for (int i = 0; i < numGlyphs; i++) {
+            gdiAdvances.append(lroundf(glyphBuffer.advanceAt(from + i)));
+            totalWidth += gdiAdvances[i];
+        }
+
+        // We put slop into this rect, since glyphs can overflow the ascent/descent bounds and the left/right edges.
+        IntRect textRect(point.x() - font->lineGap(), point.y() - font->ascent() - font->lineGap(), totalWidth + 2 * font->lineGap(), font->lineSpacing());
+        HDC hdc = graphicsContext->getWindowsContext(textRect);
+        SelectObject(hdc, font->m_font.hfont());
+
+        // Set the correct color.
+        HDC textDrawingDC = hdc;
+        /*if (fillColor.hasAlpha() || graphicsContext->inTransparencyLayer()) {
+            // GDI can't handle drawing transparent text.  We have to draw into a mask.  We draw black text on a white-filled background.
+            // We also do this when inside transparency layers, since GDI also can't draw onto a surface with alpha.
+            graphicsContext->save();
+            graphicsContext->setFillColor(Color::white);
+            textDrawingDC = graphicsContext->getWindowsBitmapContext(textRect);
+            SetTextColor(hdc, RGB(0, 0, 0));
+        } else*/
+            SetTextColor(hdc, RGB(fillColor.red(), fillColor.green(), fillColor.blue()));
+
+        SetBkMode(hdc, TRANSPARENT);
+        SetTextAlign(hdc, TA_LEFT | TA_BASELINE);
+
+        // Uniscribe gives us offsets to help refine the positioning of combining glyphs.
+        FloatSize translation = glyphBuffer.offsetAt(from);
+        if (translation.width() || translation.height()) {
+            XFORM xform;
+            xform.eM11 = 1.0;
+            xform.eM12 = 0;
+            xform.eM21 = 0;
+            xform.eM22 = 1.0;
+            xform.eDx = translation.width();
+            xform.eDy = translation.height();
+            ModifyWorldTransform(hdc, &xform, MWT_LEFTMULTIPLY);
+        }
+        ExtTextOut(hdc, point.x(), point.y(), ETO_GLYPH_INDEX, 0, (WCHAR*)glyphBuffer.glyphs(from), numGlyphs, gdiAdvances.data());
+
+        /*if (fillColor.hasAlpha() || graphicsContext->inTransparencyLayer()) {
+            // TODOD: We have to walk the bits of the bitmap and invert them.  We also copy over the green component value into the alpha value
+            // to keep ClearType looking reasonable.
+
+            // Now that we have drawn the text into a bitmap and inverted it, obtain a CGImageRef mask.
+            CGImageRef mask = graphicsContext->releaseWindowsBitmapContextIntoMask(textDrawingDC, textRect);
+            
+            // Apply the mask to the fill color.
+            CGContextRef bitmapContext = graphicsContext->getWindowsCompatibleCGBitmapContext(textRect.size());
+            CGFloat red, green, blue, alpha;
+            color.getRGBA(red, green, blue, alpha);
+            CGContextSetRGBFillColor(context, red, green, blue, alpha);
+            CGContextFillRect(bitmapContext, IntRect(0, 0, textRect.width(), textRect.height()));
+            CGImageRef fillColorImage = CGBitmapContextCreateImage(bitmapContext);
+        
+            // Apply the mask.
+            CGImageRef finalImage = CGImageCreateWithMask(fillColorImage, mask);
+
+            // The bitmap image needs to be drawn into the HDC.
+            graphicsContext->drawImageIntoWindowsContext(hdc, finalImage);
+
+            // Release our images and contexts.
+            CGImageRelease(mask);
+            CGImageRelease(fillColorImage);
+            CGImageRelease(finalImage);
+            CGContextRelease(bitmapContext);
+        }*/
+
+        graphicsContext->releaseWindowsContext(hdc, textRect);
+        return;
+    }
+
     CGContextRef cgContext = graphicsContext->platformContext();
 
     uint32_t oldFontSmoothingStyle = wkSetFontSmoothingStyle(cgContext);

@@ -215,7 +215,7 @@ bool FontCache::fontExists(const FontDescription& fontDescription, const AtomicS
     HFONT hfont = CreateFontIndirect(&winfont);
     // Windows will always give us a valid pointer here, even if the face name is non-existent.  We have to double-check
     // and see if the family name was really used.
-    HDC dc = GetDC((HWND)0);
+    HDC dc = GetDC(0);
     SaveDC(dc);
     SelectObject(dc, hfont);
     WCHAR name[LF_FACESIZE];
@@ -230,22 +230,28 @@ bool FontCache::fontExists(const FontDescription& fontDescription, const AtomicS
 
 FontPlatformData* FontCache::createFontPlatformData(const FontDescription& fontDescription, const AtomicString& family)
 {
+    bool isLucidaGrande = false;
+    static AtomicString lucidaStr("Lucida Grande");
+    if (equalIgnoringCase(family, lucidaStr))
+        isLucidaGrande = true;
+
+    bool useGDI = fontDescription.renderingMode() == AlternateRenderingMode && !isLucidaGrande;
+
     LOGFONT winfont;
 
-    // The size here looks unusual.  The negative number is intentional.  The logical size constant is 32.
-    winfont.lfHeight = -fontDescription.computedPixelSize() * 32;
+    // The size here looks unusual.  The negative number is intentional.  The logical size constant is 32. We do this
+    // for subpixel precision when rendering using Uniscribe.  This masks rounding errors related to the HFONT metrics being
+    // different from the CGFont metrics.
+    // FIXME: We will eventually want subpixel precision for GDI mode, but the scaled rendering doesn't look as nice.  That may be solvable though.
+    winfont.lfHeight = -fontDescription.computedPixelSize() * (useGDI ? 1 : 32);
     winfont.lfWidth = 0;
     winfont.lfEscapement = 0;
     winfont.lfOrientation = 0;
     winfont.lfUnderline = false;
     winfont.lfStrikeOut = false;
     winfont.lfCharSet = DEFAULT_CHARSET;
-#if PLATFORM(CG)
     winfont.lfOutPrecision = OUT_TT_ONLY_PRECIS;
-#else
-    winfont.lfOutPrecision = OUT_TT_PRECIS;
-#endif
-    winfont.lfQuality = 5; // Force cleartype.
+    winfont.lfQuality = DEFAULT_QUALITY;
     winfont.lfPitchAndFamily = DEFAULT_PITCH | FF_DONTCARE;
     winfont.lfItalic = fontDescription.italic();
 
@@ -254,10 +260,10 @@ FontPlatformData* FontCache::createFontPlatformData(const FontDescription& fontD
     // gaps in the weight list.
     // FIXME: Hardcoding Lucida Grande for now.  It uses different weights than typical Win32 fonts
     // (500/600 instead of 400/700).
-    static AtomicString lucidaStr("Lucida Grande");
-    if (equalIgnoringCase(family, lucidaStr))
+    if (isLucidaGrande) {
         winfont.lfWeight = fontDescription.bold() ? 600 : 500;
-    else
+        useGDI = false; // Never use GDI for Lucida Grande.
+    } else
         winfont.lfWeight = fontDescription.bold() ? 700 : 400;
     int len = min(family.length(), (unsigned int)LF_FACESIZE - 1);
     memcpy(winfont.lfFaceName, family.characters(), len * sizeof(WORD));
@@ -266,7 +272,7 @@ FontPlatformData* FontCache::createFontPlatformData(const FontDescription& fontD
     HFONT hfont = CreateFontIndirect(&winfont);
     // Windows will always give us a valid pointer here, even if the face name is non-existent.  We have to double-check
     // and see if the family name was really used.
-    HDC dc = GetDC((HWND)0);
+    HDC dc = GetDC(0);
     SaveDC(dc);
     SelectObject(dc, hfont);
     WCHAR name[LF_FACESIZE];
@@ -280,7 +286,7 @@ FontPlatformData* FontCache::createFontPlatformData(const FontDescription& fontD
     }
     
     FontPlatformData* result = new FontPlatformData(hfont, fontDescription.computedPixelSize(),
-                                                    fontDescription.bold(), fontDescription.italic());
+                                                    fontDescription.bold(), fontDescription.italic(), useGDI);
     if (!result->cgFont()) {
         // The creation of the CGFontRef failed for some reason.  We already asserted in debug builds, but to make
         // absolutely sure that we don't use this font, go ahead and return 0 so that we can fall back to the next

@@ -59,6 +59,35 @@ void FontData::setShouldApplyMacAscentHack(bool b)
 void FontData::platformInit()
 {    
     m_syntheticBoldOffset = m_font.syntheticBold() ? 1.0f : 0.f;
+    m_scriptCache = 0;
+    m_scriptFontProperties = 0;
+    m_isSystemFont = false;
+    
+    if (m_font.useGDI()) {
+        HDC hdc = GetDC(0);
+        HGDIOBJ oldFont = SelectObject(hdc, m_font.hfont());
+        OUTLINETEXTMETRIC metrics;
+        GetOutlineTextMetrics(hdc, sizeof(metrics), &metrics);
+        TEXTMETRIC& textMetrics = metrics.otmTextMetrics;
+        m_ascent = textMetrics.tmAscent;
+        m_descent = textMetrics.tmDescent;
+        m_lineGap = textMetrics.tmExternalLeading;
+        m_lineSpacing = m_ascent + m_descent + m_lineGap;
+        m_xHeight = m_ascent * 0.56f; // Best guess for xHeight if no x glyph is present.
+
+        GLYPHMETRICS gm;
+        MAT2 mat = { 1, 0, 0, 1 };
+        DWORD len = GetGlyphOutline(hdc, 'x', GGO_METRICS, &gm, 0, 0, &mat);
+        if (len != GDI_ERROR && gm.gmptGlyphOrigin.y > 0)
+            m_xHeight = gm.gmptGlyphOrigin.y;
+
+        m_unitsPerEm = metrics.otmEMSquare;
+
+        SelectObject(hdc, oldFont);
+        ReleaseDC(0, hdc);
+
+        return;
+    }
 
     CGFontRef font = m_font.cgFont();
     int iAscent = CGFontGetAscent(font);
@@ -70,7 +99,6 @@ void FontData::platformInit()
     float fDescent = -scaleEmToUnits(iDescent, m_unitsPerEm) * pointSize;
     float fLineGap = scaleEmToUnits(iLineGap, m_unitsPerEm) * pointSize;
 
-    m_isSystemFont = false;
     if (!isCustomFont()) {
         HDC dc = GetDC(0);
         HGDIOBJ oldFont = SelectObject(dc, m_font.hfont());
@@ -115,9 +143,6 @@ void FontData::platformInit()
         int iXHeight = CGFontGetXHeight(font);
         m_xHeight = scaleEmToUnits(iXHeight, m_unitsPerEm) * pointSize;
     }
-
-    m_scriptCache = 0;
-    m_scriptFontProperties = 0;
 }
 
 void FontData::platformDestroy()
@@ -145,9 +170,9 @@ FontData* FontData::smallCapsFontData(const FontDescription& fontDescription) co
         } else {
             LOGFONT winfont;
             GetObject(m_font.hfont(), sizeof(LOGFONT), &winfont);
-            winfont.lfHeight = -lroundf(smallCapsHeight * 32);
+            winfont.lfHeight = -lroundf(smallCapsHeight * m_font.useGDI() ? 1 : 32);
             HFONT hfont = CreateFontIndirect(&winfont);
-            m_smallCapsFontData = new FontData(FontPlatformData(hfont, smallCapsHeight, fontDescription.bold(), fontDescription.italic()));
+            m_smallCapsFontData = new FontData(FontPlatformData(hfont, smallCapsHeight, fontDescription.bold(), fontDescription.italic(), m_font.useGDI()));
         }
     }
     return m_smallCapsFontData;
@@ -166,7 +191,7 @@ bool FontData::containsCharacters(const UChar* characters, int length) const
     if (!langFontLink)
         return false;
 
-    HDC dc = GetDC((HWND)0);
+    HDC dc = GetDC(0);
     
     DWORD acpCodePages;
     langFontLink->CodePageToCodePages(CP_ACP, &acpCodePages);
@@ -197,7 +222,7 @@ void FontData::determinePitch()
     }
 
     // TEXTMETRICS have this.  Set m_treatAsFixedPitch based off that.
-    HDC dc = GetDC((HWND)0);
+    HDC dc = GetDC(0);
     SaveDC(dc);
     SelectObject(dc, m_font.hfont());
 
@@ -213,6 +238,16 @@ void FontData::determinePitch()
 
 float FontData::platformWidthForGlyph(Glyph glyph) const
 {
+    if (m_font.useGDI()) {
+        HDC hdc = GetDC(0);
+        HGDIOBJ oldFont = SelectObject(hdc, m_font.hfont());
+        int width;
+        GetCharWidthI(hdc, glyph, 1, 0, &width);
+        SelectObject(hdc, oldFont);
+        ReleaseDC(0, hdc);
+        return width;
+    }
+
     CGFontRef font = m_font.cgFont();
     float pointSize = m_font.size();
     CGSize advance;

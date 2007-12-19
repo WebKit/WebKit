@@ -1,3 +1,59 @@
+2007-12-19  Dave Hyatt  <hyatt@apple.com>
+
+        Add support for GDI text rendering to WebKit.
+      
+        Reviewed by mitz
+        
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty):
+        * dom/Document.cpp:
+        (WebCore::Document::recalcStyle):
+        * page/Settings.cpp:
+        (WebCore::Settings::setFontRenderingMode):
+        (WebCore::Settings::fontRenderingMode):
+        * page/Settings.h:
+        * platform/graphics/Font.h:
+        (WebCore::Font::renderingMode):
+        * platform/graphics/FontCache.cpp:
+        (WebCore::FontPlatformDataCacheKey::FontPlatformDataCacheKey):
+        (WebCore::FontPlatformDataCacheKey::operator==):
+        (WebCore::computeHash):
+        (WebCore::FontCache::getCachedFontPlatformData):
+        * platform/graphics/FontDescription.h:
+        (WebCore::):
+        (WebCore::FontDescription::FontDescription):
+        (WebCore::FontDescription::renderingMode):
+        (WebCore::FontDescription::setRenderingMode):
+        (WebCore::FontDescription::operator==):
+        * platform/graphics/GraphicsContext.h:
+        * platform/graphics/win/FontCacheWin.cpp:
+        (WebCore::FontCache::fontExists):
+        (WebCore::FontCache::createFontPlatformData):
+        * platform/graphics/win/FontDataWin.cpp:
+        (WebCore::FontData::platformInit):
+        (WebCore::FontData::smallCapsFontData):
+        (WebCore::FontData::containsCharacters):
+        (WebCore::FontData::determinePitch):
+        (WebCore::FontData::platformWidthForGlyph):
+        * platform/graphics/win/FontPlatformData.h:
+        (WebCore::FontPlatformData::FontPlatformData):
+        (WebCore::FontPlatformData::useGDI):
+        (WebCore::FontPlatformData::operator==):
+        * platform/graphics/win/FontPlatformDataWin.cpp:
+        (WebCore::FontPlatformData::FontPlatformData):
+        * platform/graphics/win/FontWin.cpp:
+        (WebCore::Font::drawGlyphs):
+        * platform/graphics/win/IconWin.cpp:
+        (WebCore::Icon::paint):
+        * platform/win/GraphicsContextWin.cpp:
+        (WebCore::GraphicsContext::getWindowsContext):
+        (WebCore::GraphicsContext::releaseWindowsContext):
+        * platform/win/UniscribeController.cpp:
+        (WebCore::UniscribeController::shapeAndPlaceItem):
+        * platform/win/UniscribeController.h:
+        * plugins/win/PluginViewWin.cpp:
+        (WebCore::PluginViewWin::paint):
+
 2007-12-19  Sven Herzberg  <sven@imendio.com>
 
         Reviewed by Alp Toker.

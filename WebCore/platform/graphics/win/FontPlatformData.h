@@ -45,6 +45,7 @@ public:
     , m_size(0)
     , m_syntheticBold(false)
     , m_syntheticOblique(false)
+    , m_useGDI(false)
     {}
 
     FontPlatformData()
@@ -53,9 +54,10 @@ public:
     , m_size(0)
     , m_syntheticBold(false)
     , m_syntheticOblique(false)
+    , m_useGDI(false)
     {}
 
-    FontPlatformData(HFONT, float size, bool bold, bool oblique);
+    FontPlatformData(HFONT, float size, bool bold, bool oblique, bool useGDI);
     FontPlatformData(CGFontRef, float size, bool bold, bool oblique);
     ~FontPlatformData();
 
@@ -66,6 +68,7 @@ public:
     void setSize(float size) { m_size = size; }
     bool syntheticBold() const { return m_syntheticBold; }
     bool syntheticOblique() const { return m_syntheticOblique; }
+    bool useGDI() const { return m_useGDI; }
 
     unsigned hash() const
     {
@@ -75,7 +78,8 @@ public:
     bool operator==(const FontPlatformData& other) const
     { 
         return m_font == other.m_font && m_cgFont ==other.m_cgFont && m_size == other.m_size &&
-               m_syntheticBold == other.m_syntheticBold && m_syntheticOblique == other.m_syntheticOblique;
+               m_syntheticBold == other.m_syntheticBold && m_syntheticOblique == other.m_syntheticOblique &&
+               m_useGDI == other.m_useGDI;
     }
 
 private:
@@ -85,6 +89,7 @@ private:
     float m_size;
     bool m_syntheticBold;
     bool m_syntheticOblique;
+    bool m_useGDI;
 };
 
 }

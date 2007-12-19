@@ -29,6 +29,7 @@
 
 #include "AtomicString.h"
 #include "KURL.h"
+#include "FontDescription.h"
 
 namespace WebCore {
 
@@ -146,6 +147,9 @@ namespace WebCore {
         void setDefaultDatabaseOriginQuota(unsigned long long);
         unsigned long long defaultDatabaseOriginQuota() const;
         
+        void setFontRenderingMode(FontRenderingMode mode);
+        FontRenderingMode fontRenderingMode() const;
+
     private:
         Page* m_page;
         
@@ -181,6 +185,7 @@ namespace WebCore {
         bool m_forceFTPDirectoryListings : 1;
         bool m_developerExtrasEnabled : 1;
         bool m_authorAndUserStylesEnabled : 1;
+        FontRenderingMode m_fontRenderingMode : 1;
     };
 
 } // namespace WebCore

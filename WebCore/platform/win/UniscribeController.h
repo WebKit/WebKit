@@ -29,10 +29,10 @@
 #ifndef UniscribeController_h
 #define UniscribeController_h
 
+#include <usp10.h>
 #include "Font.h"
 #include "GlyphBuffer.h"
 #include "Vector.h"
-#include <usp10.h>
 
 namespace WebCore {
 
