@@ -347,8 +347,6 @@ IntSize ScrollView::scrollOffset() const
 
 IntSize ScrollView::maximumScroll() const
 {
-    if (!m_data->allowsScrolling())
-        return IntSize();
     IntSize delta = (m_data->m_contentsSize - IntSize(visibleWidth(), visibleHeight())) - scrollOffset();
     delta.clampNegativeToZero();
     return delta;
@@ -665,6 +663,9 @@ void ScrollView::themeChanged()
 
 void ScrollView::wheelEvent(PlatformWheelEvent& e)
 {
+    if (!m_data->allowsScrolling())
+        return;
+
     // Determine how much we want to scroll.  If we can move at all, we will accept the event.
     IntSize maxScrollDelta = maximumScroll();
     if ((e.deltaX() < 0 && maxScrollDelta.width() > 0) ||
