@@ -4,7 +4,7 @@
 
         Slight logic reordering in JSImmediate::from(double)
 
-        This gives a 0.1% improvement in SunSpider.
+        This gives a 0.6% improvement in SunSpider.
 
         * kjs/JSImmediate.h:
         (KJS::JSImmediate::from):
@@ -17,7 +17,7 @@
 
         SunSpider claims this is at least 1.37x as fast as pre-regression. :)
 
-        * kjs/array_instance.cpp: make Array's fast again!
+        * kjs/array_instance.cpp: make Arrays fast again!
 
 2007-12-20  Eric Seidel  <eric@webkit.org>
 
