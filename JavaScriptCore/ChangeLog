@@ -1,3 +1,90 @@
+2007-12-20  Darin Adler  <darin@apple.com>
+
+        Reviewed by Eric.
+
+        - http://bugs.webkit.org/show_bug.cgi?id=16471
+          Completions need to be smaller (or not exist at all)
+
+        SuSpider shows 2.4% speedup.
+
+        Stop using completions in the execution engine.
+        Instead, the completion type and label target are both
+        stored in the ExecState.
+
+        * API/JSContextRef.cpp: Removed unneeded include of "completion.h".
+        * bindings/runtime_method.cpp: Removed unused execute function.
+        * bindings/runtime_method.h: Ditto.
+
+        * kjs/ExecState.h: Added completionType, breakOrContinueTarget,
+        setCompletionType, setNormalCompletion, setBreakCompletion,
+        setContinueCompletion, setReturnValueCompletion, setThrowCompletion,
+        setInterruptedCompletion, m_completionType, and m_breakOrContinueTarget.
+
+        * kjs/completion.h: Removed constructor and getter for target
+        for break and continue from Completion. This class is now only
+        used for the public API to Interpreter and such.
+
+        * kjs/date_object.h: Removed unused execute function.
+
+        * kjs/function.cpp:
+        (KJS::FunctionImp::callAsFunction): Removed some unneeded
+        exception processing. Updated to call the new execute function
+        and to get the completion type from the ExecState. Merged in
+        the execute function, which repeated some of the same logic and
+        was called only from here.
+        (KJS::GlobalFuncImp::callAsFunction): More of the same for eval.
+        * kjs/function.h: Removed execute.
+
+        * kjs/interpreter.cpp:
+        (KJS::Interpreter::evaluate): Added code to convert the result of
+        execut into a Completion.
+
+        * kjs/nodes.cpp:
+        (KJS::Node::setErrorCompletion): Renamed from createErrorCompletion.
+        Now sets the completion type in the ExecState.
+        (KJS::Node::rethrowException): Now sets the completion type in the
+        ExecState.
+        (KJS::StatementNode::hitStatement): Now sets the completion type in
+        the ExecState.
+        (KJS::VarStatementNode::execute): Updated to put completion type in
+        the ExecState instead of a Completion object.
+        (KJS::statementListExecute): Ditto. Also changed the for loop to use
+        indices instead of iterators.
+        (KJS::BlockNode::execute): Updated return type.
+        (KJS::EmptyStatementNode::execute): Updated to put completion type in
+        the ExecState instead of a Completion object.
+        (KJS::ExprStatementNode::execute): Ditto.
+        (KJS::IfNode::execute): Ditto.
+        (KJS::DoWhileNode::execute): Ditto. Also streamlined the logic a little
+        to make the normal case a little faster and moved the end outside the
+        loop so that "break" can do a break.
+        (KJS::WhileNode::execute): Ditto.
+        (KJS::ForNode::execute): Ditto.
+        (KJS::ForInNode::execute): Ditto.
+        (KJS::ContinueNode::execute): Updated to put completion type in
+        the ExecState instead of a Completion object.
+        (KJS::BreakNode::execute): Ditto.
+        (KJS::ReturnNode::execute): Ditto.
+        (KJS::WithNode::execute): Ditto.
+        (KJS::CaseClauseNode::executeStatements): Ditto. Also renamed to have
+        execute in its name to reflect the fact that it's a member of the same
+        family of functions.
+        (KJS::CaseBlockNode::executeBlock): Ditto.
+        (KJS::SwitchNode::execute): Ditto.
+        (KJS::LabelNode::execute): Ditto.
+        (KJS::ThrowNode::execute): Ditto.
+        (KJS::TryNode::execute): Ditto.
+        (KJS::ProgramNode::execute): Ditto.
+        (KJS::EvalNode::execute): Ditto.
+        (KJS::FunctionBodyNode::execute): Ditto.
+        (KJS::FuncDeclNode::execute): Ditto.
+
+        * kjs/nodes.h: Renamed setErrorCompletion to createErrorCompletion, made
+        hitStatement protected, changed return value of execute to a JSValue,
+        renamed evalStatements to executeStatements, and evalBlock to executeBlock.
+
+        * kjs/number_object.h: Removed unused execute function.
+
 2007-12-20  Geoffrey Garen  <ggaren@apple.com>
 
         Added Radar number.

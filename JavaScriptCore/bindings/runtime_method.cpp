@@ -92,8 +92,3 @@ JSValue *RuntimeMethod::callAsFunction(ExecState *exec, JSObject *thisObj, const
     instance->end();
     return aValue;
 }
-
-Completion RuntimeMethod::execute(ExecState*)
-{
-    return Completion(Normal, jsUndefined());
-}
