@@ -1,5 +1,12 @@
 2007-12-20  Geoffrey Garen  <ggaren@apple.com>
 
+        Added Radar number.
+
+        * kjs/nodes.cpp:
+        (KJS::ProgramNode::processDeclarations):
+
+2007-12-20  Geoffrey Garen  <ggaren@apple.com>
+
         Linux build fix: config.h has to come first.
 
         * kjs/error_object.cpp:
