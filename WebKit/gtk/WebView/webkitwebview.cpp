@@ -946,6 +946,82 @@ void webkit_web_view_stop_loading(WebKitWebView* webView)
         loader->stopAllLoaders();
 }
 
+/**
+ * webkit_web_view_search_text:
+ * @web_view: a #WebKitWebView
+ * @text: a string to look for
+ * @forward: wether to find forward or not
+ * @case_sensitive: wether to respect the case of text
+ * @wrap: wether to continue looking at the beginning after reaching the end
+ *
+ * Looks for a specified string inside #web_view.
+ *
+ * Return value: %TRUE on success or %FALSE on failure
+ */
+gboolean webkit_web_view_search_text(WebKitWebView* webView, const gchar* string, gboolean caseSensitive, gboolean forward, gboolean shouldWrap)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), FALSE);
+    g_return_val_if_fail(string, FALSE);
+
+    TextCaseSensitivity caseSensitivity = caseSensitive ? TextCaseSensitive : TextCaseInsensitive;
+    FindDirection direction = forward ? FindDirectionForward : FindDirectionBackward;
+
+    WebKitWebViewPrivate* webViewData = WEBKIT_WEB_VIEW_GET_PRIVATE(webView);
+    return webViewData->corePage->findString(String::fromUTF8(string), caseSensitivity, direction, shouldWrap);
+}
+
+/**
+ * webkit_web_view_mark_text_matches:
+ * @web_view: a #WebKitWebView
+ * @string: a string to look for
+ * @case_sensitive: wether to respect the case of text
+ * @limit: the maximum number of strings to look for or %0 for all
+ *
+ * Attempts to highlight all occurances of #string inside #web_view.
+ *
+ * Return value: the number of strings highlighted
+ */
+guint webkit_web_view_mark_text_matches(WebKitWebView* webView, const gchar* string, gboolean caseSensitive, guint limit)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), 0);
+    g_return_val_if_fail(string, 0);
+
+    TextCaseSensitivity caseSensitivity = caseSensitive ? TextCaseSensitive : TextCaseInsensitive;
+
+    WebKitWebViewPrivate* webViewData = WEBKIT_WEB_VIEW_GET_PRIVATE(webView);
+    return webViewData->corePage->markAllMatchesForText(String::fromUTF8(string), caseSensitivity, false, limit);
+}
+
+/**
+ * webkit_web_view_set_highlight_text_matches:
+ * @web_view: a #WebKitWebView
+ * @highlight: Wether to highlight text matches
+ *
+ * Highlights text matches previously marked by webkit_web_view_mark_text_matches.
+ */
+void webkit_web_view_set_highlight_text_matches(WebKitWebView* webView, gboolean shouldHighlight)
+{
+    g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
+
+    WebKitWebViewPrivate* webViewData = WEBKIT_WEB_VIEW_GET_PRIVATE(webView);
+    WebKitWebFramePrivate* frameData = WEBKIT_WEB_FRAME_GET_PRIVATE(webViewData->mainFrame);
+    frameData->frame->setMarkedTextMatchesAreHighlighted(shouldHighlight);
+}
+
+/**
+ * webkit_web_view_unmark_text_matches:
+ * @web_view: a #WebKitWebView
+ *
+ * Removes highlighting previously set by webkit_web_view_mark_text_matches.
+ */
+void webkit_web_view_unmark_text_matches(WebKitWebView* webView)
+{
+    g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
+
+    WebKitWebViewPrivate* webViewData = WEBKIT_WEB_VIEW_GET_PRIVATE(webView);
+    return webViewData->corePage->unmarkAllTextMatches();
+}
+
 WebKitWebFrame* webkit_web_view_get_main_frame(WebKitWebView* webView)
 {
     g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), NULL);

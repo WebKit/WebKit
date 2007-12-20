@@ -1,3 +1,19 @@
+2007-12-19  Christian Dywan  <christian@twotoasts.de> 
+
+        Reviewed by Alp Toker.
+
+        http://bugs.webkit.org/show_bug.cgi?id=16222
+        [GTK] Implement inline search and highlighting of matching strings.
+
+        Implement search and highlighting logic directly in WebCore.
+
+        * page/Page.cpp:
+        (WebCore::incrementFrame):
+        (WebCore::Page::findString):
+        (WebCore::Page::markAllMatchesForText):
+        (WebCore::Page::unmarkAllTextMatches):
+        * page/Page.h:
+
 2007-12-19  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Sam Weinig, Dan Bernstein.

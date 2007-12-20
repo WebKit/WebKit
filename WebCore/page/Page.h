@@ -33,6 +33,16 @@
 typedef struct HINSTANCE__* HINSTANCE;
 #endif
 
+typedef enum TextCaseSensitivity {
+    TextCaseSensitive,
+    TextCaseInsensitive
+};
+
+typedef enum FindDirection {
+    FindDirectionForward,
+    FindDirectionBackward
+};
+
 namespace WebCore {
 
     class Chrome;
@@ -98,7 +108,11 @@ namespace WebCore {
         
         void setTabKeyCyclesThroughElements(bool b) { m_tabKeyCyclesThroughElements = b; }
         bool tabKeyCyclesThroughElements() const { return m_tabKeyCyclesThroughElements; }
-        
+
+        bool findString(const String&, TextCaseSensitivity, FindDirection, bool shouldWrap);
+        uint markAllMatchesForText(const String&, TextCaseSensitivity, bool shouldHighlight, unsigned);
+        void unmarkAllTextMatches();
+
         const Selection& selection() const;
 
         void setDefersLoading(bool);

@@ -113,6 +113,18 @@ webkit_web_view_load_string (WebKitWebView* web_view, const gchar* content, cons
 WEBKIT_API void
 webkit_web_view_load_html_string (WebKitWebView* web_view, const gchar* content, const gchar* base_uri);
 
+WEBKIT_API gboolean
+webkit_web_view_search_text (WebKitWebView* web_view, const gchar* string, gboolean case_sensitive, gboolean forward, gboolean wrap);
+
+WEBKIT_API guint
+webkit_web_view_mark_text_matches (WebKitWebView* web_view, const gchar* string, gboolean case_sensitive, guint limit);
+
+WEBKIT_API void
+webkit_web_view_set_highlight_text_matches (WebKitWebView* web_view, gboolean highlight);
+
+WEBKIT_API void
+webkit_web_view_unmark_text_matches (WebKitWebView* web_view);
+
 WEBKIT_API WebKitWebFrame*
 webkit_web_view_get_main_frame (WebKitWebView* web_view);
 

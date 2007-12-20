@@ -204,6 +204,71 @@ void Page::setNeedsReapplyStyles()
             frame->setNeedsReapplyStyles();
 }
 
+static Frame* incrementFrame(Frame* curr, bool forward, bool wrapFlag)
+{
+    return forward
+        ? curr->tree()->traverseNextWithWrap(wrapFlag)
+        : curr->tree()->traversePreviousWithWrap(wrapFlag);
+}
+
+bool Page::findString(const String& target, TextCaseSensitivity caseSensitivity, FindDirection direction, bool shouldWrap)
+{
+    if (target.isEmpty() || !mainFrame())
+        return false;
+
+    Frame* frame = focusController()->focusedOrMainFrame();
+    Frame* startFrame = frame;
+    do {
+        if (frame->findString(target, direction == FindDirectionForward, caseSensitivity == TextCaseSensitive, false, true)) {
+            if (frame != startFrame)
+                startFrame->selectionController()->clear();
+            focusController()->setFocusedFrame(frame);
+            return true;
+        }
+        frame = incrementFrame(frame, direction == FindDirectionForward, shouldWrap);
+    } while (frame && frame != startFrame);
+
+    // Search contents of startFrame, on the other side of the selection that we did earlier.
+    // We cheat a bit and just research with wrap on
+    if (shouldWrap && !startFrame->selectionController()->isNone()) {
+        bool found = startFrame->findString(target, direction == FindDirectionForward, caseSensitivity == TextCaseSensitive, true, true);
+        focusController()->setFocusedFrame(frame);
+        return found;
+    }
+
+    return false;
+}
+
+uint Page::markAllMatchesForText(const String& target, TextCaseSensitivity caseSensitivity, bool shouldHighlight, unsigned limit)
+{
+    if (target.isEmpty() || !mainFrame())
+        return 0;
+
+    unsigned matches = 0;
+
+    Frame* frame = mainFrame();
+    do {
+        frame->setMarkedTextMatchesAreHighlighted(shouldHighlight);
+        matches += frame->markAllMatchesForText(target, caseSensitivity == TextCaseSensitive, (limit == 0) ? 0 : (limit - matches));
+        frame = incrementFrame(frame, true, false);
+    } while (frame);
+
+    return matches;
+}
+
+void Page::unmarkAllTextMatches()
+{
+    if (!mainFrame())
+        return;
+
+    Frame* frame = mainFrame();
+    do {
+        if (Document* document = frame->document())
+            document->removeMarkers(DocumentMarker::TextMatch);
+        frame = incrementFrame(frame, true, false);
+    } while (frame);
+}
+
 const Selection& Page::selection() const
 {
     return focusController()->focusedOrMainFrame()->selectionController()->selection();
