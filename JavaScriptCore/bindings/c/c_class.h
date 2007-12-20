@@ -28,7 +28,7 @@
 #ifndef BINDINGS_C_CLASS_H_
 #define BINDINGS_C_CLASS_H_
 
-#include "npruntime.h"
+#include "npruntime_internal.h"
 #include "runtime.h"
 #include <wtf/HashMap.h>
 

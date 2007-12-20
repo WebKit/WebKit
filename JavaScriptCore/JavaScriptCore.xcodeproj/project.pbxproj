@@ -88,6 +88,7 @@
 		5186111E0CC824900081412B /* Deque.h in Headers */ = {isa = PBXBuildFile; fileRef = 5186111D0CC824830081412B /* Deque.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		51F648D70BB4E2CA0033D760 /* RetainPtr.h in Headers */ = {isa = PBXBuildFile; fileRef = 51F648D60BB4E2CA0033D760 /* RetainPtr.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5DA479660CFBCF56009328A0 /* TCPackedCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 5DA479650CFBCF56009328A0 /* TCPackedCache.h */; };
+		5DAF21B00D1B1ED60000B392 /* npruntime_internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 5DAF21AF0D1B1ED60000B392 /* npruntime_internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5DBD18AC0C54018700C15EAE /* CollectorHeapIntrospector.h in Headers */ = {isa = PBXBuildFile; fileRef = 5DBD18AA0C54018700C15EAE /* CollectorHeapIntrospector.h */; };
 		5DBD18B00C5401A700C15EAE /* MallocZoneSupport.h in Headers */ = {isa = PBXBuildFile; fileRef = 5DBD18AF0C5401A700C15EAE /* MallocZoneSupport.h */; };
 		652246A50C8D7A0E007BDAF7 /* HashIterators.h in Headers */ = {isa = PBXBuildFile; fileRef = 652246A40C8D7A0E007BDAF7 /* HashIterators.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -495,6 +496,7 @@
 		51F0EC9705C88DC700E6DF1B /* objc_utility.mm */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = objc_utility.mm; path = bindings/objc/objc_utility.mm; sourceTree = "<group>"; tabWidth = 8; };
 		51F648D60BB4E2CA0033D760 /* RetainPtr.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = RetainPtr.h; sourceTree = "<group>"; };
 		5DA479650CFBCF56009328A0 /* TCPackedCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TCPackedCache.h; sourceTree = "<group>"; };
+		5DAF21AF0D1B1ED60000B392 /* npruntime_internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = npruntime_internal.h; path = bindings/npruntime_internal.h; sourceTree = "<group>"; };
 		5DBD18A90C54018700C15EAE /* CollectorHeapIntrospector.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CollectorHeapIntrospector.cpp; sourceTree = "<group>"; };
 		5DBD18AA0C54018700C15EAE /* CollectorHeapIntrospector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CollectorHeapIntrospector.h; sourceTree = "<group>"; };
 		5DBD18AF0C5401A700C15EAE /* MallocZoneSupport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MallocZoneSupport.h; sourceTree = "<group>"; };
@@ -834,6 +836,7 @@
 		51856D950562EE9C008B9D83 /* bindings */ = {
 			isa = PBXGroup;
 			children = (
+				5DAF21AF0D1B1ED60000B392 /* npruntime_internal.h */,
 				5182A53A06012C3000CBD2F2 /* c_class.cpp */,
 				5182A53B06012C3000CBD2F2 /* c_class.h */,
 				5182A45605FFCF4B00CBD2F2 /* c_instance.cpp */,
@@ -1174,6 +1177,7 @@
 				146AAB2B0B66A84900E55F16 /* JSStringRefCF.h in Headers */,
 				14ABB455099C2A0F00E2A24F /* JSType.h in Headers */,
 				1482B6EB0A4300B300517CFC /* JSValueRef.h in Headers */,
+				14F252570D08DD8D004ECFFF /* JSVariableObject.h in Headers */,
 				65C7A1740A8EAACB00FA37EA /* JSWrapperObject.h in Headers */,
 				14BD5A360A3E91F600BAF59C /* JavaScriptCore.h in Headers */,
 				932F5B610822A1C700736975 /* JavaScriptCorePrefix.h in Headers */,
@@ -1191,14 +1195,18 @@
 				6580F796094070560082C219 /* PassRefPtr.h in Headers */,
 				65D6D87F09B5A32E0002E4D7 /* Platform.h in Headers */,
 				65400C120A69BAF200509887 /* PropertyNameArray.h in Headers */,
+				1419D32D0CEA7CDE00FF507A /* RefCounted.h in Headers */,
 				65C647B4093EF8D60022C380 /* RefPtr.h in Headers */,
+				148A1ECE0D10C23B0069A47C /* RefPtrHashMap.h in Headers */,
 				51F648D70BB4E2CA0033D760 /* RetainPtr.h in Headers */,
 				14BD534C0A3E0AEA00BAF59C /* SavedBuiltins.h in Headers */,
 				E11D51760B2E798D0056C188 /* StringExtras.h in Headers */,
 				14A396A70CD2933100B5B4FF /* SymbolTable.h in Headers */,
+				5DA479660CFBCF56009328A0 /* TCPackedCache.h in Headers */,
 				6541BD7208E80A17002CBEE7 /* TCPageMap.h in Headers */,
 				6541BD7308E80A17002CBEE7 /* TCSpinLock.h in Headers */,
 				6541BD7508E80A17002CBEE7 /* TCSystemAlloc.h in Headers */,
+				E1EF79AB0CE97BA60088D500 /* UTF8.h in Headers */,
 				E195679809E7CF1200B89D13 /* Unicode.h in Headers */,
 				E195679609E7CF1200B89D13 /* UnicodeIcu.h in Headers */,
 				935AF46E09E9D9DB00ACD1D8 /* UnusedParam.h in Headers */,
@@ -1243,6 +1251,7 @@
 				932F5B8C0822A1C700736975 /* npapi.h in Headers */,
 				932F5B850822A1C700736975 /* npruntime.h in Headers */,
 				932F5B8E0822A1C700736975 /* npruntime_impl.h in Headers */,
+				5DAF21B00D1B1ED60000B392 /* npruntime_internal.h in Headers */,
 				932F5B8D0822A1C700736975 /* npruntime_priv.h in Headers */,
 				932F5B510822A1C700736975 /* number_object.h in Headers */,
 				65B174F609D100FA00820339 /* number_object.lut.h in Headers */,
@@ -1274,11 +1283,6 @@
 				93E26BFE08B151D400F85226 /* ucpinternal.h in Headers */,
 				932F5B5C0822A1C700736975 /* ustring.h in Headers */,
 				14ABB36F099C076400E2A24F /* value.h in Headers */,
-				E1EF79AB0CE97BA60088D500 /* UTF8.h in Headers */,
-				1419D32D0CEA7CDE00FF507A /* RefCounted.h in Headers */,
-				5DA479660CFBCF56009328A0 /* TCPackedCache.h in Headers */,
-				14F252570D08DD8D004ECFFF /* JSVariableObject.h in Headers */,
-				148A1ECE0D10C23B0069A47C /* RefPtrHashMap.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1535,11 +1539,14 @@
 				14ABDF600A437FEF00ECCA01 /* JSCallbackObject.cpp in Sources */,
 				1440FCE40A51E46B0005F061 /* JSClassRef.cpp in Sources */,
 				14BD5A300A3E91F600BAF59C /* JSContextRef.cpp in Sources */,
+				14DE0D690D02431400AACCA2 /* JSGlobalObject.cpp in Sources */,
 				1482B7E40A43076000517CFC /* JSObjectRef.cpp in Sources */,
 				1482B74E0A43032800517CFC /* JSStringRef.cpp in Sources */,
 				146AAB380B66A94400E55F16 /* JSStringRefCF.cpp in Sources */,
 				14BD5A320A3E91F600BAF59C /* JSValueRef.cpp in Sources */,
+				14F252610D08DF2F004ECFFF /* JSVariableObject.cpp in Sources */,
 				932F5BC60822A1C700736975 /* NP_jsobject.cpp in Sources */,
+				E1EF79AA0CE97BA60088D500 /* UTF8.cpp in Sources */,
 				932F5BCA0822A1C700736975 /* c_class.cpp in Sources */,
 				932F5BC70822A1C700736975 /* c_instance.cpp in Sources */,
 				932F5BC80822A1C700736975 /* c_runtime.cpp in Sources */,
@@ -1566,9 +1573,6 @@
 				932F5BBD0822A1C700736975 /* runtime_method.cpp in Sources */,
 				932F5BBA0822A1C700736975 /* runtime_object.cpp in Sources */,
 				932F5BC50822A1C700736975 /* runtime_root.cpp in Sources */,
-				E1EF79AA0CE97BA60088D500 /* UTF8.cpp in Sources */,
-				14DE0D690D02431400AACCA2 /* JSGlobalObject.cpp in Sources */,
-				14F252610D08DF2F004ECFFF /* JSVariableObject.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -134,6 +134,10 @@ DEPENDPATH += editing/qt history/qt loader/qt page/qt \
 }
 
 gtk-port {
+    x11:plugins {
+        DEFINES += XP_UNIX
+    }
+
     INCLUDEPATH += \
     $$PWD/platform/gtk \
     $$PWD/platform/graphics/gtk \

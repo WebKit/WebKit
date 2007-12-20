@@ -28,7 +28,7 @@
 
 #if !PLATFORM(DARWIN) || !defined(__LP64__)
 
-#include "npruntime.h"
+#include "npruntime_internal.h"
 #include "runtime.h"
 
 namespace KJS {

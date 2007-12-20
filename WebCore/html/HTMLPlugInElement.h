@@ -32,7 +32,7 @@
 #endif
 
 #if USE(NPOBJECT)
-#include <bindings/npruntime.h>
+#include <bindings/npruntime_internal.h>
 #endif
 
 namespace WebCore {

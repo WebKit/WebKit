@@ -1,3 +1,15 @@
+2007-12-20  Rodney Dawes  <dobey@wayofthemonkey.com>
+
+        Reviewed by Darin Adler.
+
+        Define XP_UNIX when building with plugins on X11.
+        Use new npruntime_internal.h instead of npruntime.h.
+        http://bugs.webkit.org/show_bug.cgi?id=15669
+
+        * ForwardingHeaders/bindings/npruntime_internal.h
+        * WebCore.pro:
+        * html/HTMLPlugInElement.h:
+
 2007-12-19  johnnyding.webkit  <johnnyding.webkit@gmail.com>
 
         Reviewed by Alexey. Landed by Stephanie.

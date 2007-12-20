@@ -29,7 +29,7 @@
 #include "types.h"
 #include "interpreter.h"
 
-#include "npruntime.h"
+#include "npruntime_internal.h"
 
 #include "runtime.h"
 #include "runtime_object.h"

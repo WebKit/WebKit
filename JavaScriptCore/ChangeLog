@@ -1,3 +1,25 @@
+2007-12-20  Rodney Dawes  <dobey@wayofthemonkey.com>
+
+        Reviewed by Darin Adler.
+
+        Proxy includes of npruntime.h or npapi.h through npruntime_internal.h
+        Include stdio.h in npapi.h for the use of FILE with XP_UNIX defined
+        This is for building with X11, as some type and enum names conflict
+        with #define names in X11 headers.
+        http://bugs.webkit.org/show_bug.cgi?id=15669
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bindings/NP_jsobject.h:
+        * bindings/npapi.h:
+        * bindings/npruntime.cpp:
+        * bindings/npruntime_impl.h:
+        * bindings/npruntime_priv.h:
+        * bindings/npruntime_internal.h:
+        * bindings/testbindings.cpp:
+        * bindings/c/c_class.h:
+        * bindings/c/c_runtime.h:
+        * bindings/c/c_utility.h:
+
 2007-12-20  Darin Adler  <darin@apple.com>
 
         - re-fix http://bugs.webkit.org/show_bug.cgi?id=16471

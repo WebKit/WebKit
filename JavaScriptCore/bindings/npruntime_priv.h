@@ -28,7 +28,7 @@
 
 #if !PLATFORM(DARWIN) || !defined(__LP64__)
 
-#include "npruntime.h"
+#include "npruntime_internal.h"
 
 /*
     NPN_InitializeVariantWithStringCopy() will copy string data.  The string data
