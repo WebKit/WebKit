@@ -69,6 +69,18 @@ void GraphicsContext::drawFocusRing(const Color& color)
     CGPathRelease(focusRingPath);
 }
 
+#ifdef BUILDING_ON_TIGER // Post-Tiger's setCompositeOperation() is defined in GraphicsContextCG.cpp.
+void GraphicsContext::setCompositeOperation(CompositeOperator op)
+{
+    if (paintingDisabled())
+        return;
+    NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
+    [[NSGraphicsContext graphicsContextWithGraphicsPort:platformContext() flipped:YES]
+        setCompositingOperation:(NSCompositingOperation)op];
+    [pool drain];
+}
+#endif
+ 
 void GraphicsContext::drawLineForMisspellingOrBadGrammar(const IntPoint& point, int width, bool grammar)
 {
     if (paintingDisabled())

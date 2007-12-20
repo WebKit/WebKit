@@ -1,3 +1,14 @@
+2007-12-19  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig, Dan Bernstein.
+
+        Tiger build fix: restored some graphics code still needed on Tiger.
+
+        * platform/graphics/GraphicsTypes.h:
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        * platform/graphics/mac/GraphicsContextMac.mm:
+        (WebCore::GraphicsContext::setCompositeOperation):
+
 2007-12-19  Alp Toker  <alp@atoker.com>
 
         Build fix for Pango < 1.18.0 breakage introduced in r28864. Use Fc and
