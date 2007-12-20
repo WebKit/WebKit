@@ -1,5 +1,11 @@
 2007-12-19  Dan Bernstein  <mitz@apple.com>
 
+        - remove two more tests that pass now due to changed font fallback
+
+        * platform/win/Skipped:
+
+2007-12-19  Dan Bernstein  <mitz@apple.com>
+
         - remove passing tests following the change to font fallback
 
         * platform/win/Skipped: Removed tests that failed only because they
