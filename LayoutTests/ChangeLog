@@ -1,3 +1,13 @@
+2007-12-20  johnnyding.webkit  <johnnyding.webkit@gmail.com>
+       
+        Reviewed by Alexey. Landed by Stephanie.
+
+        - bug http://bugs.webkit.org/show_bug.cgi?id=16179 | <rdar://problem/5619399>
+        Test for unicode characters which is great than 255 are in HTML attribute name
+
+        * fast/parser/test-unicode-characters-in-attribute-name-expected.txt: Added.
+        * fast/parser/test-unicode-characters-in-attribute-name.html: Added.
+
 2007-12-20  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Nikolas Zimmermann.

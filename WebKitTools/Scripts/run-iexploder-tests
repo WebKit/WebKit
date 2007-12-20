@@ -130,13 +130,25 @@ sub openHTTPDIfNeeded()
     my $testDirectory = getcwd() . "/LayoutTests";
     my $iExploderDirectory = getcwd() . "/WebKitTools/iExploder";
     my $httpdPath = "/usr/sbin/httpd";
-    my $httpdConfig = "$testDirectory/http/conf/httpd.conf";
-    $httpdConfig = "$testDirectory/http/conf/apache2-httpd.conf" if `$httpdPath -v` =~ m|Apache/2|;
+    my $httpdConfig;
+    if (isCygwin()) {
+        my $windowsConfDirectory = "$testDirectory/http/conf/";
+        unless (-x "/usr/lib/apache/libphp4.dll") {
+            copy("$windowsConfDirectory/libphp4.dll", "/usr/lib/apache/libphp4.dll");
+            chmod(0755, "/usr/lib/apache/libphp4.dll");
+        }
+        $httpdConfig = "$windowsConfDirectory/cygwin-httpd.conf";
+    } else {
+        $httpdConfig = "$testDirectory/http/conf/httpd.conf";
+        $httpdConfig = "$testDirectory/http/conf/apache2-httpd.conf" if `$httpdPath -v` =~ m|Apache/2|;
+    }
     my $documentRoot = "$iExploderDirectory/htdocs";
     my $typesConfig = "$testDirectory/http/conf/mime.types";
     my $listen = "127.0.0.1:$httpdPort";
+    #my $absTestResultsDirectory = File::Spec->rel2abs(glob $testResultsDirectory);
+    my $sslCertificate = "$testDirectory/http/conf/webkit-httpd.pem";
 
-    open2(\*HTTPDIN, \*HTTPDOUT, $httpdPath, 
+    my @args = (
         "-f", "$httpdConfig",
         "-C", "DocumentRoot \"$documentRoot\"",
         "-C", "Listen $listen",
@@ -144,7 +156,14 @@ sub openHTTPDIfNeeded()
         "-c", "CustomLog \"/tmp/WebKit/access_log.txt\" common",
         "-c", "ErrorLog \"/tmp/WebKit/error_log.txt\"",
         # Apache wouldn't run CGIs with permissions==700 otherwise
-        "-c", "User \"#$<\"");
+        "-c", "User \"#$<\""
+    );
+
+    # FIXME: Enable this on Windows once <rdar://problem/5345985> is fixed
+    push(@args, "-c", "SSLCertificateFile \"$sslCertificate\"") unless isCygwin();
+
+    open2(\*HTTPDIN, \*HTTPDOUT, $httpdPath, @args);
+    
 
     my $retryCount = 20;
     while (system("/usr/bin/curl -q --silent --stderr - --output /dev/null $listen") && $retryCount) {

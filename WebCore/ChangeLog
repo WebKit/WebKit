@@ -1,3 +1,18 @@
+2007-12-19  johnnyding.webkit  <johnnyding.webkit@gmail.com>
+
+        Reviewed by Alexey. Landed by Stephanie.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=16179 | <rdar://problem/5619399>
+          Any attribute name start with a unicode which like #xx00(x could be any hex number[0-9a-f]) will cause HTMLTokenizer parse error
+          Actually any unicode characters which great than 255 in attribute name will cause Webkit parse the attribute name wrong. So after comparing 
+          the same scenario in IE 6/7, FireFox 2/3, Opera, we should treat those characters as part of attribute name.
+
+
+        * html/HTMLTokenizer.cpp:
+        (WebCore::HTMLTokenizer::parseEntity): Handle Unicode Entity Name by using ASCII version of findEntity.
+        (WebCore::HTMLTokenizer::parseTag): Let type of ptr match type of cBuffer.
+        * html/HTMLTokenizer.h: Change type of cBuffer from char to UChar.
+
 2007-12-20  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Nikolas Zimmermann.

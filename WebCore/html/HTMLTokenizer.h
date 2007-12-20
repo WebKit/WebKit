@@ -343,7 +343,7 @@ private:
 // So any fixed number might be too small, but rather than rewriting all usage of this buffer
 // we'll just make it large enough to handle all imaginable cases.
 #define CBUFLEN 1024
-    char cBuffer[CBUFLEN + 2];
+    UChar cBuffer[CBUFLEN + 2];
     unsigned int m_cBufferPos;
 
     SegmentedString src;
