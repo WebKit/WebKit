@@ -1,3 +1,15 @@
+2007-12-19  Sven Herzberg  <sven@imendio.com>
+
+        Reviewed by Alp Toker.
+
+        Scaled font destruction takes place in FontData::platformDestroy(). No
+        need to do it in FontPlatformData::~FontPlatformData().
+
+        Destroying platform data in platformDestroy() is a convention we
+        borrow from the Mac and Win ports.
+
+        * platform/graphics/gtk/FontPlatformDataGtk.cpp:
+
 2007-12-19  Alice Liu  <alice.liu@apple.com>
 
         build fix (Windows)

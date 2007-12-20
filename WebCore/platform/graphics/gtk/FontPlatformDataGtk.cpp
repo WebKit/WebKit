@@ -158,8 +158,7 @@ bool FontPlatformData::init()
 
 FontPlatformData::~FontPlatformData()
 {
-    if (m_scaledFont)
-        cairo_scaled_font_destroy(m_scaledFont);
+    // Destroy takes place in FontData::platformDestroy().
 }
 
 bool FontPlatformData::isFixedPitch()
