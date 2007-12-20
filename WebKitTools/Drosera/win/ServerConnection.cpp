@@ -36,6 +36,7 @@
 #include <JavaScriptCore/JSRetainPtr.h>
 #include <JavaScriptCore/JSStringRefBSTR.h>
 #include <JavaScriptCore/RetainPtr.h>
+#include <WebKit/ForEachCoClass.h>
 #include <WebKit/IWebScriptCallFrame.h>
 #include <WebKit/IWebScriptDebugServer.h>
 #include <WebKit/WebKit.h>
@@ -62,20 +63,26 @@ ServerConnection::~ServerConnection()
 void ServerConnection::attemptToCreateServerConnection(JSGlobalContextRef globalContextRef)
 {
     COMPtr<IWebScriptDebugServer> tempServer;
-    if (SUCCEEDED(CoCreateInstance(CLSID_WebScriptDebugServer, 0, CLSCTX_LOCAL_SERVER, IID_IWebScriptDebugServer, (void**)&tempServer))) {
-        if (FAILED(tempServer->sharedWebScriptDebugServer(&m_server)))
-            return;
 
-        if (FAILED(m_server->addListener(this))) {
-            m_server = 0;
-            return;
-        }
+    CLSID clsid = CLSID_NULL;
+    if (FAILED(CLSIDFromProgID(PROGID(WebScriptDebugServer), &clsid)))
+        return;
 
-        m_serverConnected = true;
+    if (FAILED(CoCreateInstance(clsid, 0, CLSCTX_LOCAL_SERVER, IID_IWebScriptDebugServer, (void**)&tempServer)))
+        return;
 
-        if (globalContextRef)
-            m_globalContext = JSGlobalContextRetain(globalContextRef);
+    if (FAILED(tempServer->sharedWebScriptDebugServer(&m_server)))
+        return;
+
+    if (FAILED(m_server->addListener(this))) {
+        m_server = 0;
+        return;
     }
+
+    m_serverConnected = true;
+
+    if (globalContextRef)
+        m_globalContext = JSGlobalContextRetain(globalContextRef);
 }
 
 void ServerConnection::setGlobalContext(JSGlobalContextRef globalContextRef)

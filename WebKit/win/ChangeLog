@@ -1,3 +1,23 @@
+2007-12-20  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Steve.
+
+        - <rdar://5656485> Drosera: Win: Nightly does not reliably connect to 
+        WebKit.
+
+        - Drosera and Safari need to use the same ProgIDs in order for
+        CoCreateInstance to work properly.  The most robust way to do this is
+        for WebKit to dynamically publish those ProgIDs.
+
+        * ForEachCoClass.cpp: Added.
+        (setUseOpenSourceWebKit):
+        (progIDForClass):
+        * ForEachCoClass.h: Added functionality to publish ProgIDs.
+        * WebKit.vcproj/WebKit.def: Exposed added functions for applications.
+        * WebKit.vcproj/WebKit.vcproj: Added ForEachCoClass.cpp
+        * WebKit.vcproj/WebKit_debug.def: Exposed added functions fori
+        applications.
+
 2007-12-19  Dave Hyatt <hyatt@apple.com>
 
         Add a fourth preference value for GDI text in the font smoothing prefs.

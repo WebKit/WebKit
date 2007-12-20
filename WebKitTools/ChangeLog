@@ -1,5 +1,28 @@
 2007-12-20  Kevin McCullough  <kmccullough@apple.com>
 
+        Reviewed by Steve.
+
+        - <rdar://5656485> Drosera: Win: Nightly does not reliably connect to
+        WebKit.
+
+        - Drosera and Safari need to use the same ProgIDs in order for
+        CoCreateInstance to work properly.  The most robust way to do this is
+        for WebKit to dynamically publish those ProgIDs.
+
+        * Drosera/win/DebuggerClient.cpp: Use the published ProgIDs
+        (DebuggerClient::createWebViewWithRequest):
+        * Drosera/win/Drosera.cpp: Use the published ProgIDs and rename some
+        statics.
+        (Drosera::initUI):
+        (Drosera::attach):
+        (Drosera::attemptToCreateServerConnection):
+        * Drosera/win/Drosera.vcproj/Drosera.vcproj: Fix a runtime failure.
+        * Drosera/win/ServerConnection.cpp: Reformat the connection function and
+        make use of the published ProgIDs.
+        (ServerConnection::attemptToCreateServerConnection):
+
+2007-12-20  Kevin McCullough  <kmccullough@apple.com>
+
         - <rdar://problem/5658317> REGRESSION: 20+ leaks seen on buildbots.
         - Build bot and leak fix.
 

@@ -29,6 +29,8 @@
 #ifndef ForEachCoClass_h
 #define ForEachCoClass_h
 
+#include <WebKit/ProgIDMacros.h>
+
 #define FOR_EACH_COCLASS(macro) \
     macro(CFDictionaryPropertyBag) \
     macro(WebCache) \
@@ -52,5 +54,37 @@
     macro(WebURLResponse) \
     macro(WebView) \
     // end of macro
+
+#define WEBKITCLASS_MEMBER(cls) cls##Class,
+enum WebKitClass {
+    FOR_EACH_COCLASS(WEBKITCLASS_MEMBER)
+    WebKitClassSentinel
+};
+#undef WEBKITCLASS_MEMBER
+
+#define PRODUCTION_PROGID(cls) VERSION_INDEPENDENT_PRODUCTION_PROGID(cls),
+static LPCOLESTR productionProgIDs[WebKitClassSentinel] = {
+    FOR_EACH_COCLASS(PRODUCTION_PROGID)
+};
+#undef PRODUCTION_PROGID
+
+#define OPENSOURCE_PROGID(cls) VERSION_INDEPENDENT_OPENSOURCE_PROGID(cls),
+static LPCOLESTR openSourceProgIDs[WebKitClassSentinel] = {
+    FOR_EACH_COCLASS(OPENSOURCE_PROGID)
+};
+#undef OPENSOURCE_PROGID
+
+#if __PRODUCTION__
+    static LPCOLESTR* s_progIDs = productionProgIDs;
+#else
+    static LPCOLESTR* s_progIDs = openSourceProgIDs;
+#endif
+
+#define PROGID(className) progIDForClass(className##Class)
+
+void setUseOpenSourceWebKit(bool);
+LPCOLESTR progIDForClass(WebKitClass);
+
+
 
 #endif // !defined(ForEachCoClass_h)

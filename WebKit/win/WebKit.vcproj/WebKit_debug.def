@@ -88,6 +88,8 @@ EXPORTS
 ;       KJS_JSObject_JSObjectSetMember
 ;       KJS_JSObject_JSObjectSetSlot
 ;       KJS_JSObject_JSObjectToString
+        setUseOpenSourceWebKit
+        progIDForClass
         WebLocalizedStringUTF8
         WebLocalizedLPCTSTRUTF8
         DrawTextAtPoint

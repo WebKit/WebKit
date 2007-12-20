@@ -32,6 +32,7 @@
 #include "Drosera.h"
 #include "ServerConnection.h"
 
+#include <WebKit/ForEachCoClass.h>
 #include <WebKit/IWebView.h>
 #include <WebKit/IWebViewPrivate.h>
 #include <WebKit/WebKit.h>
@@ -222,8 +223,13 @@ HRESULT STDMETHODCALLTYPE DebuggerClient::createWebViewWithRequest(
     if (FAILED(ret))
         return ret;
 
+    CLSID clsid = CLSID_NULL;
+    ret = CLSIDFromProgID(PROGID(WebView), &clsid);
+    if (FAILED(ret))
+        return ret;
+
     COMPtr<IWebView> view;
-    ret = CoCreateInstance(CLSID_WebView, 0, CLSCTX_ALL, IID_IWebView, (void**)&view);
+    ret = CoCreateInstance(clsid, 0, CLSCTX_ALL, IID_IWebView, (void**)&view);
     if (FAILED(ret))
         return ret;
 

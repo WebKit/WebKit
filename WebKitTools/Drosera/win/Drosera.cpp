@@ -35,6 +35,7 @@
 #include "ServerConnection.h"
 
 #include <JavaScriptCore/JSStringRef.h>
+#include <WebKit/ForEachCoClass.h>
 #include <WebKit/IWebMutableURLRequest.h>
 #include <WebKit/IWebView.h>
 #include <WebKit/WebKit.h>
@@ -45,8 +46,7 @@ const unsigned MAX_LOADSTRING = 100;
 TCHAR szTitle[MAX_LOADSTRING];                  // The title bar text
 TCHAR szWindowClass[MAX_LOADSTRING];            // the main window class name
 
-static const LRESULT kNotHandledResult = -1;
-static LPCTSTR kDroseraPointerProp = TEXT("DroseraPointer");
+static LPCTSTR s_DroseraPointerProp = TEXT("DroseraPointer");
 static HINSTANCE hInst;
 
 BSTR cfStringToBSTR(CFStringRef cfstr);
@@ -259,7 +259,12 @@ HRESULT Drosera::initUI(HINSTANCE hInstance, int nCmdShow)
     if (FAILED(ret))
         return ret;
 
-    ret = CoCreateInstance(CLSID_WebView, 0, CLSCTX_ALL, IID_IWebView, (void**)&m_webView);
+    CLSID clsid = CLSID_NULL;
+    ret = CLSIDFromProgID(PROGID(WebView), &clsid);
+    if (FAILED(ret))
+        return ret;
+
+    ret = CoCreateInstance(clsid, 0, CLSCTX_ALL, IID_IWebView, (void**)&m_webView);
     if (FAILED(ret))
         return ret;
 
@@ -282,7 +287,7 @@ HRESULT Drosera::initUI(HINSTANCE hInstance, int nCmdShow)
     if (FAILED(ret))
         return ret;
 
-    ::SetProp(viewWindow, kDroseraPointerProp, (HANDLE)this);
+    SetProp(viewWindow, s_DroseraPointerProp, (HANDLE)this);
 
     // FIXME: Implement window size/position save/restore
     ShowWindow(m_hWnd, nCmdShow);
@@ -325,8 +330,13 @@ HRESULT Drosera::attach()
     if (FAILED(ret))
         return ret;
 
+    CLSID clsid = CLSID_NULL;
+    ret = CLSIDFromProgID(PROGID(WebMutableURLRequest), &clsid);
+    if (FAILED(ret))
+        return ret;
+
     COMPtr<IWebMutableURLRequest> request;
-    ret = CoCreateInstance(CLSID_WebMutableURLRequest, 0, CLSCTX_ALL, IID_IWebMutableURLRequest, (void**)&request);
+    ret = CoCreateInstance(clsid, 0, CLSCTX_ALL, IID_IWebMutableURLRequest, (void**)&request);
     if (FAILED(ret))
         return ret;
 

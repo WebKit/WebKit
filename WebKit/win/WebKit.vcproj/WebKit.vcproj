@@ -642,6 +642,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\ForEachCoClass.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\HTTPHeaderPropertyBag.cpp"
 				>
 			</File>
