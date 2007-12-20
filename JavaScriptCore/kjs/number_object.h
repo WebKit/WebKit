@@ -88,7 +88,6 @@ namespace KJS {
     static const ClassInfo info;
     enum { NaNValue, NegInfinity, PosInfinity, MaxValue, MinValue };
 
-    Completion execute(const List &);
     JSObject *construct(const List &);
   };
 

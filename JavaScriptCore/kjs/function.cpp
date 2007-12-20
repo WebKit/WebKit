@@ -70,24 +70,14 @@ void FunctionImp::mark()
 
 JSValue* FunctionImp::callAsFunction(ExecState* exec, JSObject* thisObj, const List& args)
 {
-  // enter a new execution context
-  ExecState newExec(exec->dynamicGlobalObject(), thisObj, body.get(), FunctionCode, exec, exec->dynamicGlobalObject()->currentExec(), this, &args);
-  if (exec->hadException())
-    newExec.setException(exec->exception());
-
-  Completion comp = execute(&newExec);
-
-  // if an exception occured, propogate it back to the previous execution object
-  if (newExec.hadException())
-    comp = Completion(Throw, newExec.exception());
-
-  if (comp.complType() == Throw) {
-    exec->setException(comp.value());
-    return comp.value();
-  }
-  else if (comp.complType() == ReturnValue)
-    return comp.value();
-  else
+    ExecState newExec(exec->dynamicGlobalObject(), thisObj, body.get(), FunctionCode, exec, exec->dynamicGlobalObject()->currentExec(), this, &args);
+    JSValue* result = body->execute(&newExec);
+    if (newExec.completionType() == Throw) {
+        exec->setException(result);
+        return result;
+    }
+    if (newExec.completionType() == ReturnValue)
+        return result;
     return jsUndefined();
 }
 
@@ -212,15 +202,6 @@ JSObject* FunctionImp::construct(ExecState* exec, const List& args)
     return static_cast<JSObject*>(res);
   else
     return obj;
-}
-
-Completion FunctionImp::execute(ExecState* exec)
-{
-  Completion result = body->execute(exec);
-
-  if (result.complType() == Throw || result.complType() == ReturnValue)
-      return result;
-  return Completion(Normal, jsUndefined()); // TODO: or ReturnValue ?
 }
 
 // ------------------------------ IndexToNameMap ---------------------------------
@@ -718,30 +699,21 @@ JSValue* GlobalFuncImp::callAsFunction(ExecState* exec, JSObject* thisObj, const
         JSGlobalObject* globalObject = switchGlobal ? static_cast<JSGlobalObject*>(thisObj) : exec->dynamicGlobalObject();
         JSObject* thisVal = static_cast<JSObject*>(exec->thisValue());
         ExecState newExec(globalObject, thisVal, evalNode.get(), EvalCode, exec, globalObject->currentExec());
-        if (exec->hadException())
-            newExec.setException(exec->exception());
           
         if (switchGlobal) {
             newExec.pushScope(thisObj);
             newExec.setVariableObject(static_cast<JSGlobalObject*>(thisObj));
         }
-        
-        Completion c = evalNode->execute(&newExec);
-          
+        JSValue* value = evalNode->execute(&newExec);
         if (switchGlobal)
             newExec.popScope();
 
-        // if an exception occured, propogate it back to the previous execution object
-        if (newExec.hadException())
-          exec->setException(newExec.exception());
-
-        res = jsUndefined();
-        if (c.complType() == Throw)
-          exec->setException(c.value());
-        else if (c.isValueCompletion())
-            res = c.value();
+        if (newExec.completionType() == Throw) {
+            exec->setException(value);
+            return value;
+        }
+        return value ? value : jsUndefined();
       }
-      break;
     }
   case ParseInt:
     res = jsNumber(parseInt(args[0]->toString(exec), args[1]->toInt32(exec)));

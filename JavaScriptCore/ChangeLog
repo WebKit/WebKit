@@ -1,5 +1,16 @@
 2007-12-20  Darin Adler  <darin@apple.com>
 
+        - re-fix http://bugs.webkit.org/show_bug.cgi?id=16471
+          Completions need to be smaller (or not exist at all)
+
+        Same patch as last time with the test failures problem fixed.
+
+        * kjs/function.cpp:
+        (KJS::GlobalFuncImp::callAsFunction): Make sure to check the completion
+        type from newExec to see if the execute raised an exception.
+
+2007-12-20  Darin Adler  <darin@apple.com>
+
         - roll out that last change -- it was causing test failures;
           I'll check it back in after fixing them
 

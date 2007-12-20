@@ -31,7 +31,6 @@
 #include "JSCallbackObject.h"
 #include "JSClassRef.h"
 #include "JSGlobalObject.h"
-#include "completion.h"
 #include "object.h"
 #include <wtf/Platform.h>
 
