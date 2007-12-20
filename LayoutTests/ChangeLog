@@ -1,3 +1,18 @@
+2007-12-20  Adam Barth  <hk9565@gmail.com>
+
+        Reviewed and landed by Sam Weinig.
+
+        Update LayoutTests for http://bugs.webkit.org/show_bug.cgi?id=15313
+
+        * http/tests/security/cross-frame-access-child-explicit-domain-expected.txt: Added.
+        * http/tests/security/cross-frame-access-child-explicit-domain.html: Added.
+        * http/tests/security/cross-frame-access-custom-expected.txt:
+        * http/tests/security/cross-frame-access-parent-explicit-domain-expected.txt: Added.
+        * http/tests/security/cross-frame-access-parent-explicit-domain.html: Added.
+        * http/tests/security/cross-frame-access-port-explicit-domain-expected.txt:
+        * http/tests/security/cross-frame-access-protocol-explicit-domain-expected.txt:
+        * http/tests/security/cross-frame-access-protocol-explicit-domain.html:
+
 2007-12-20  johnnyding.webkit  <johnnyding.webkit@gmail.com>
        
         Reviewed by Alexey. Landed by Stephanie.

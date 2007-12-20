@@ -125,7 +125,7 @@ void DatabaseTracker::openTrackerDatabase()
 
 bool DatabaseTracker::canEstablishDatabase(Document* document, const String& name, const String& displayName, unsigned long estimatedSize)
 {
-    SecurityOriginData originData = document->securityOrigin().securityOriginData();
+    SecurityOriginData originData = document->securityOrigin()->securityOriginData();
     
     // If this origin has no databases yet, establish an entry in the tracker database with the default quota
     if (!hasEntryForOrigin(originData))

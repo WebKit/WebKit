@@ -97,7 +97,7 @@ PassRefPtr<Database> Database::openDatabase(Document* document, const String& na
 {
     if (!DatabaseTracker::tracker().canEstablishDatabase(document, name, displayName, estimatedSize)) {
         // There should be an exception raised here in addition to returning a null Database object.  The question has been raised with the WHATWG
-        LOG(StorageAPI, "Database %s for origin %s not allowed to be established", name.ascii().data(), document->securityOrigin().toString().ascii().data());
+        LOG(StorageAPI, "Database %s for origin %s not allowed to be established", name.ascii().data(), document->securityOrigin()->toString().ascii().data());
         return 0;
     }
     
@@ -108,7 +108,7 @@ PassRefPtr<Database> Database::openDatabase(Document* document, const String& na
        return 0;
     }
     
-    DatabaseTracker::tracker().setDatabaseDetails(document->securityOrigin().securityOriginData(), name, displayName, estimatedSize);
+    DatabaseTracker::tracker().setDatabaseDetails(document->securityOrigin()->securityOriginData(), name, displayName, estimatedSize);
 
     if (Page* page = document->frame()->page())
         page->inspectorController()->didOpenDatabase(database.get(), document->domain(), name, expectedVersion);
@@ -131,7 +131,7 @@ Database::Database(Document* document, const String& name, const String& expecte
 
     initializeThreading();
 
-    m_guid = guidForOriginAndName(m_securityOrigin.toString(), name);
+    m_guid = guidForOriginAndName(m_securityOrigin->toString(), name);
 
     {
         MutexLocker locker(guidMutex());
@@ -148,7 +148,7 @@ Database::Database(Document* document, const String& name, const String& expecte
     m_databaseThread = document->databaseThread();
     ASSERT(m_databaseThread);
 
-    m_filename = DatabaseTracker::tracker().fullPathForDatabase(m_securityOrigin.securityOriginData(), m_name);
+    m_filename = DatabaseTracker::tracker().fullPathForDatabase(m_securityOrigin->securityOriginData(), m_name);
 }
 
 Database::~Database()
@@ -550,7 +550,7 @@ void Database::setExpectedVersion(const String& version)
 SecurityOriginData Database::securityOriginData() const
 {
     // Return a deep copy for ref counting thread safety
-    return m_securityOrigin.securityOriginData().copy();
+    return m_securityOrigin->securityOriginData().copy();
 }
 
 String Database::stringIdentifier() const

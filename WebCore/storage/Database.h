@@ -44,6 +44,7 @@
 #include <wtf/HashSet.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/PassRefPtr.h>
+#include <wtf/RefPtr.h>
 #include <wtf/Deque.h>
 
 namespace WebCore {
@@ -125,7 +126,7 @@ private:
     void deliverPendingCallback();
 
     Document* m_document;
-    SecurityOrigin m_securityOrigin;
+    RefPtr<SecurityOrigin> m_securityOrigin;
     String m_name;
     int m_guid;
     String m_expectedVersion;
@@ -140,7 +141,7 @@ private:
     RefPtr<SQLTransaction> m_transactionPendingCallback;
 
 #ifndef NDEBUG
-    String databaseDebugName() const { return m_securityOrigin.toString() + "::" + m_name; }
+    String databaseDebugName() const { return m_securityOrigin->toString() + "::" + m_name; }
 #endif
 
     static Mutex& globalCallbackMutex();

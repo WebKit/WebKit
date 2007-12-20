@@ -62,44 +62,58 @@ bool SecurityOrigin::isEmpty() const
     return m_protocol.isEmpty();
 }
 
-void SecurityOrigin::setForFrame(Frame* frame)
+void SecurityOrigin::setForURL(const KURL& url)
 {
     clear();
+
+    if (url.isEmpty())
+      return;
+
+    m_protocol = url.protocol().lower();
+    m_host = url.host().lower();
+    m_port = url.port();
+
+    if (m_port)
+        m_portSet = true;
+
+    // data: URLs are not allowed access to anything other than themselves.
+    if (m_protocol == "data")
+        m_noAccess = true;
+}
+
+PassRefPtr<SecurityOrigin> SecurityOrigin::createForFrame(Frame* frame)
+{
+    RefPtr<SecurityOrigin> origin = new SecurityOrigin();
+
+    if (!frame)
+        return origin;
 
     FrameLoader* loader = frame->loader();
     const KURL& securityPolicyURL = loader->url();
 
-    if (!securityPolicyURL.isEmpty()) {
-        m_protocol = securityPolicyURL.protocol().lower();
-        m_host = securityPolicyURL.host().lower();
-        m_port = securityPolicyURL.port();
-        if (m_port)
-            m_portSet = true;
+    origin->setForURL(securityPolicyURL);
 
-        // data: URLs are not allowed access to anything other than themselves.
-        if (m_protocol == "data") {
-            m_noAccess = true;
-            return;
-        }
+    if (!origin->isEmpty() && origin->m_protocol != "about")
+        return origin;
 
-        // Only in the case of about:blank or javascript: URLs (which create documents using the "about" 
-        // protocol) do we want to use the parent or openers URL as the origin.
-        if (m_protocol != "about")
-            return;
-    }
+    // In the case of about:blank or javascript: URLs (which create 
+    // documents using the "about" protocol) do we want to use the
+    // parent or openers origin.
 
     Frame* openerFrame = frame->tree()->parent();
     if (!openerFrame) {
         openerFrame = loader->opener();
         if (!openerFrame)
-            return;
+            return origin;
     }
 
     Document* openerDocument = openerFrame->document();
     if (!openerDocument)
-        return;
+        return origin;
 
-    *this = openerDocument->securityOrigin();
+    // We alias the SecurityOrigins to match Firefox, see Bug 15313
+    // http://bugs.webkit.org/show_bug.cgi?id=15313
+    return openerDocument->securityOrigin();
 }
 
 void SecurityOrigin::setDomainFromDOM(const String& newDomain)
@@ -108,18 +122,46 @@ void SecurityOrigin::setDomainFromDOM(const String& newDomain)
     m_host = newDomain.lower();
 }
 
-bool SecurityOrigin::canAccess(const SecurityOrigin& other) const
+bool SecurityOrigin::canAccess(const SecurityOrigin* other) const
 {
     if (FrameLoader::shouldTreatSchemeAsLocal(m_protocol))
         return true;
 
-    if (m_noAccess || other.m_noAccess)
+    if (m_noAccess || other->m_noAccess)
         return false;
 
-    if (m_domainWasSetInDOM && other.m_domainWasSetInDOM && m_host == other.m_host)
-        return true;
- 
-    return m_host == other.m_host && m_protocol == other.m_protocol && m_port == other.m_port;
+    // Here are two cases where we should permit access:
+    //
+    // 1) Neither document has set document.domain.  In this case, we insist
+    //    that the scheme, host, and port of the URLs match.
+    //
+    // 2) Both documents have set document.domain.  In this case, we insist
+    //    that the documents have set document.domain to the same value and
+    //    that the scheme of the URLs match.
+    //
+    // This matches the behavior of Firefox 2 and Internet Explorer 6.
+    //
+    // Internet Explorer 7 and Opera 9 are more strict in that they require
+    // the port numbers to match when both pages have document.domain set.
+    //
+    // FIXME: Evaluate whether we can tighten this policy to require matched
+    //        port numbers.
+    //
+    // Opera 9 allows access when only one page has set document.domain, but
+    // this is a security vulnerability.
+
+    if (m_protocol == other->m_protocol) {
+        if (!m_domainWasSetInDOM && !other->m_domainWasSetInDOM) {
+            if (m_host == other->m_host && m_port == other->m_port)
+                return true;
+        }
+        if (m_domainWasSetInDOM && other->m_domainWasSetInDOM) {
+            if (m_host == other->m_host)
+                return true;
+        }
+    }
+
+    return false;
 }
 
 bool SecurityOrigin::isSecureTransitionTo(const KURL& url) const

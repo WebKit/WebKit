@@ -2594,18 +2594,11 @@ String Document::referrer() const
 
 String Document::domain() const
 {
-    if (m_domain.isEmpty()) // not set yet (we set it on demand to save time and space)
-        m_domain = KURL(url()).host(); // Initially set to the host
-    return m_domain;
+    return m_securityOrigin->domain();
 }
 
 void Document::setDomain(const String& newDomain)
 {
-    // Not set yet (we set it on demand to save time and space)
-    // Initially set to the host
-    if (m_domain.isEmpty())
-        m_domain = KURL(url()).host();
-
     // Both NS and IE specify that changing the domain is only allowed when
     // the new domain is a suffix of the old domain.
 
@@ -2617,35 +2610,29 @@ void Document::setDomain(const String& newDomain)
     // assigns its current domain using document.domain, the page will
     // allow other pages loaded on different ports in the same domain that
     // have also assigned to access this page.
-    if (equalIgnoringCase(m_domain, newDomain)) {
-        m_securityOrigin.setDomainFromDOM(newDomain);
+    if (equalIgnoringCase(domain(), newDomain)) {
+        m_securityOrigin->setDomainFromDOM(newDomain);
         return;
     }
 
-    int oldLength = m_domain.length();
+    int oldLength = domain().length();
     int newLength = newDomain.length();
-    // e.g. newDomain = webkit.org (10) and m_domain = www.webkit.org (14)
+    // e.g. newDomain = webkit.org (10) and domain() = www.webkit.org (14)
     if (newLength >= oldLength)
         return;
 
-    String test = m_domain.copy();
+    String test = domain().copy();
     // Check that it's a subdomain, not e.g. "ebkit.org"
     if (test[oldLength - newLength - 1] != '.')
         return;
 
-    // Now test is "webkit.org" from m_domain
+    // Now test is "webkit.org" from domain()
     // and we check that it's the same thing as newDomain
     test.remove(0, oldLength - newLength);
     if (test != newDomain)
         return;
 
-    m_domain = newDomain;
-    m_securityOrigin.setDomainFromDOM(newDomain);
-}
-
-void Document::setDomainInternal(const String& newDomain)
-{
-    m_domain = newDomain;
+    m_securityOrigin->setDomainFromDOM(newDomain);
 }
 
 String Document::lastModified() const
@@ -3726,9 +3713,7 @@ bool Document::useSecureKeyboardEntryWhenActive() const
 
 void Document::initSecurityOrigin()
 {
-    if (!m_frame)
-        return;
-    m_securityOrigin.setForFrame(m_frame);
+    m_securityOrigin = SecurityOrigin::createForFrame(m_frame);
 }
 
 void Document::updateFocusAppearanceSoon()

@@ -12,9 +12,9 @@
 
     var url = "https://127.0.0.1:8443/security/resources/cross-frame-iframe-with-explicit-domain-set.html";
     var iframeId ="aFrame";
-    var passMessage = "PASS: Cross frame access to https from http, after explicitly setting document.domain, was allowed!";
-    var failMessage = "Fail: Cross frame access to https from http, after explicitly setting document.domain, was denied.";
-    canAccessFrame(url, iframeId, passMessage, failMessage);
+    var passMessage = "PASS: Cross frame access to https from http, after explicitly setting document.domain, was denied.";
+    var failMessage = "Fail: Cross frame access to https from http, after explicitly setting document.domain, was allowed.";
+    cannotAccessFrame(url, iframeId, passMessage, failMessage);
 </script>
 </body>
 </html>

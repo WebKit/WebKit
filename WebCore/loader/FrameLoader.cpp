@@ -887,7 +887,7 @@ void FrameLoader::begin()
 
 void FrameLoader::begin(const KURL& url, bool dispatch)
 {
-    bool resetScripting = !(m_isDisplayingInitialEmptyDocument && m_frame->document() && m_frame->document()->securityOrigin().isSecureTransitionTo(url));
+    bool resetScripting = !(m_isDisplayingInitialEmptyDocument && m_frame->document() && m_frame->document()->securityOrigin()->isSecureTransitionTo(url));
     clear(resetScripting, resetScripting);
     if (dispatch)
         dispatchWindowObjectAvailable();
@@ -1301,16 +1301,6 @@ void FrameLoader::checkCallImplicitClose()
     for (Frame* child = m_frame->tree()->firstChild(); child; child = child->tree()->nextSibling())
         if (!child->loader()->m_isComplete) // still got a frame running -> too early
             return;
-
-    // All frames completed -> set their domain to the frameset's domain
-    // This must only be done when loading the frameset initially (#22039),
-    // not when following a link in a frame (#44162).
-    if (m_frame->document()) {
-        String domain = m_frame->document()->domain();
-        for (Frame* child = m_frame->tree()->firstChild(); child; child = child->tree()->nextSibling())
-            if (child->document())
-                child->document()->setDomainInternal(domain);
-    }
 
     m_didCallImplicitClose = true;
     m_wasUnloadEventEmitted = false;
@@ -2351,14 +2341,14 @@ bool FrameLoader::shouldAllowNavigation(Frame* targetFrame) const
 
     Document* activeDocument = m_frame->document();
     ASSERT(activeDocument);
-    const SecurityOrigin& activeSecurityOrigin = activeDocument->securityOrigin();
+    const SecurityOrigin* activeSecurityOrigin = activeDocument->securityOrigin();
     for (Frame* ancestorFrame = targetFrame; ancestorFrame; ancestorFrame = ancestorFrame->tree()->parent()) {
         Document* ancestorDocument = ancestorFrame->document();
         if (!ancestorDocument)
             return true;
 
-        const SecurityOrigin& ancestorSecurityOrigin = ancestorDocument->securityOrigin();
-        if (activeSecurityOrigin.canAccess(ancestorSecurityOrigin))
+        const SecurityOrigin* ancestorSecurityOrigin = ancestorDocument->securityOrigin();
+        if (activeSecurityOrigin->canAccess(ancestorSecurityOrigin))
             return true;
     }
 

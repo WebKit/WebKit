@@ -1,3 +1,86 @@
+2007-12-20  Adam Barth  <hk9565@gmail.com>
+
+        Reviewed and landed by Sam Weinig.
+
+        http://bugs.webkit.org/show_bug.cgi?id=15313
+        <rdar://problem/5514516>
+
+        The same-origin check was incorrect in two cases (both fixed in this
+        patch):
+
+        A) If both the source and the target have set their document.domain
+           to the same value, the protocol must also match in order for
+           access to be allowed.  Without this requirement, the browser is
+           vulnerable to the following attack:
+
+           1) Suppose there is an HTTPS site (www.example.com) that sets
+              document.domain = "example.com".
+           2) A network attacker redirects the browser to http://www.example.com/
+              a) injects script to set document.domain = "example.com", and
+              b) opens a window to https://www.example.com/
+           3) Now the network attacker can inject script into the HTTPS page,
+              stealing cookies and issuing banking transactions.
+
+        B) If only one of the source and target has set document.domain, then
+           access should be denied.  With this behavior, the browser is
+           vulnerable to the following attack:
+
+           1) Suppose http://foo.example.com/ opens an iframe to
+              http://foo.example.com/frame.html that
+              a) sets document.domain = "example.com", and
+              b) opens an iframe to http://bar.example.com/
+              This is a common usage of document.domain for cross-domain
+              communication, see for example:
+                http://www.collinjackson.com/research/papers/fp801-jackson.pdf
+           2) The inner-most iframe, which is from bar.example.com, sets
+              document.domain = "example.com".
+           3) Now the inner-most iframe can inject script into the middle
+              iframe (say via document.write).  This bar.example.com script
+              now has access to the outer-most frame (from foo.example.com).
+
+        Both these changes cause WebKit to match the behavior of Firefox 2 and
+        IE6 in these cases.  This patch includes regression tests for both
+        issues.
+
+        Internet Explorer 7 and Opera 9 are more strict in that they require
+        the port numbers to match when both pages have document.domain set.
+        Opera 9 allows access when only one page has set document.domain, but
+        this is a security vulnerability.
+
+        Tests: http/tests/security/cross-frame-access-child-explicit-domain.html
+               http/tests/security/cross-frame-access-parent-explicit-domain.html
+
+        * bindings/js/kjs_window.cpp:
+        (KJS::createWindow):
+        (KJS::Window::allowsAccessFrom):
+        * dom/Document.cpp:
+        (WebCore::Document::domain):
+        (WebCore::Document::setDomain):
+        (WebCore::Document::initSecurityOrigin):
+        * dom/Document.h:
+        (WebCore::Document::securityOrigin):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::begin):
+        (WebCore::FrameLoader::checkCallImplicitClose):
+        (WebCore::FrameLoader::shouldAllowNavigation):
+        * platform/SecurityOrigin.cpp:
+        (WebCore::SecurityOrigin::setForURL):
+        (WebCore::SecurityOrigin::createForFrame):
+        (WebCore::SecurityOrigin::canAccess):
+        * platform/SecurityOrigin.h:
+        (WebCore::SecurityOrigin::domain):
+        * storage/Database.cpp:
+        (WebCore::Database::openDatabase):
+        (WebCore::Database::Database):
+        (WebCore::Database::securityOriginData):
+        * storage/Database.h:
+        (WebCore::Database::databaseDebugName):
+        * storage/DatabaseTracker.cpp:
+        (WebCore::DatabaseTracker::canEstablishDatabase):
+        * storage/SQLTransaction.cpp:
+        (WebCore::SQLTransaction::postflightAndCommit):
+        (WebCore::SQLTransaction::cleanupAfterTransactionErrorCallback):
+
 2007-12-20  Rodney Dawes  <dobey@wayofthemonkey.com>
 
         Reviewed by Darin Adler.

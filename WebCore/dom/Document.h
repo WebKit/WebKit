@@ -553,7 +553,6 @@ public:
 
     String domain() const;
     void setDomain(const String& newDomain);
-    void setDomainInternal(const String& newDomain);
 
     String lastModified() const;
 
@@ -848,7 +847,7 @@ public:
 #endif
 
     void initSecurityOrigin();
-    const SecurityOrigin& securityOrigin() const { return m_securityOrigin; }
+    SecurityOrigin* securityOrigin() const { return m_securityOrigin.get(); }
 
     bool processingLoadEvent() const { return m_processingLoadEvent; }
 
@@ -866,9 +865,7 @@ private:
     void imageLoadEventTimerFired(Timer<Document>*);
     void updateFocusAppearanceTimerFired(Timer<Document>*);
 
-    mutable String m_domain;
-
-    SecurityOrigin m_securityOrigin;
+    RefPtr<SecurityOrigin> m_securityOrigin;
 
     RenderObject* m_savedRenderer;
     int m_secureForms;

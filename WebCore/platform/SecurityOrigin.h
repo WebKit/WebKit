@@ -29,6 +29,9 @@
 #ifndef SecurityOrigin_h
 #define SecurityOrigin_h
 
+#include <wtf/RefCounted.h>
+#include <wtf/PassRefPtr.h>
+
 #include "PlatformString.h"
 
 namespace WebCore {
@@ -37,14 +40,14 @@ namespace WebCore {
     class KURL;
     class SecurityOriginData;
     
-    class SecurityOrigin {
+    class SecurityOrigin : public RefCounted<SecurityOrigin> {
     public:
-        SecurityOrigin();
+        static PassRefPtr<SecurityOrigin> createForFrame(Frame*);
 
-        void setForFrame(Frame*);
         void setDomainFromDOM(const String& newDomain);
+        String domain() const { return m_host; }
 
-        bool canAccess(const SecurityOrigin&) const;
+        bool canAccess(const SecurityOrigin*) const;
         bool isSecureTransitionTo(const KURL&) const;
 
         String toString() const;
@@ -52,8 +55,11 @@ namespace WebCore {
         SecurityOriginData securityOriginData() const;
         
     private:
-        void clear();
+        SecurityOrigin();
         bool isEmpty() const;
+
+        void clear();
+        void setForURL(const KURL& url);
 
         String m_protocol;
         String m_host;
