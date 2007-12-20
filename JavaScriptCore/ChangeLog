@@ -11,6 +11,16 @@
 
 2007-12-20  Eric Seidel  <eric@webkit.org>
 
+        Reviewed by mjs.
+
+        Fix major Array regression introduced by 28899.
+
+        SunSpider claims this is at least 1.37x as fast as pre-regression. :)
+
+        * kjs/array_instance.cpp: make Array's fast again!
+
+2007-12-20  Eric Seidel  <eric@webkit.org>
+
         Reviewed by Geoff, then re-rubber-stamped by Geoff after final search/replace and testing.
 
         Small reworking of Date code for 4% speedup on Date tests (0.2% overall)
