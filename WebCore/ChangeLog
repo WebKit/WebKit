@@ -1,3 +1,14 @@
+2007-12-20  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        WebKit claims to support SVG feature strings it shouldn't
+        http://bugs.webkit.org/show_bug.cgi?id=15480
+
+        * dom/DOMImplementation.cpp:
+        (WebCore::isSVG10Feature):
+        (WebCore::isSVG11Feature):
+
 2007-12-20  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Oliver and Geoff

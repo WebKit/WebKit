@@ -78,17 +78,18 @@ static bool isSVG10Feature(const String &feature)
     static bool initialized = false;
     static HashSet<StringImpl*, CaseFoldingHash> svgFeatures;
     if (!initialized) {
-        // TODO: features need to be uncommented when we implement them
-        // 1.0 features
-        addString(svgFeatures, "svg");
-        addString(svgFeatures, "svg.static");
+        // Sadly, we cannot claim to implement any SVG 1.0 feature set, due to
+        // lack of Font support.
+        // http://bugs.webkit.org/show_bug.cgi?id=15480
+//      addString(svgFeatures, "svg");
+//      addString(svgFeatures, "svg.static");
 //      addString(svgFeatures, "svg.animation");
 //      addString(svgFeatures, "svg.dynamic");
 //      addString(svgFeatures, "svg.dom.animation");
 //      addString(svgFeatures, "svg.dom.dynamic");
-        addString(svgFeatures, "dom");
-        addString(svgFeatures, "dom.svg");
-        addString(svgFeatures, "dom.svg.static");
+//      addString(svgFeatures, "dom");
+//      addString(svgFeatures, "dom.svg");
+//      addString(svgFeatures, "dom.svg.static");
 //      addString(svgFeatures, "svg.all");
 //      addString(svgFeatures, "dom.svg.all");
         initialized = true;
@@ -101,27 +102,30 @@ static bool isSVG11Feature(const String &feature)
     static bool initialized = false;
     static HashSet<StringImpl*, CaseFoldingHash> svgFeatures;
     if (!initialized) {
-        // TODO: features need to be uncommented when we implement them
-        // 1.1 features
-        addString(svgFeatures, "SVG");
-        addString(svgFeatures, "SVGDOM");
-        addString(svgFeatures, "SVG-static");
-        addString(svgFeatures, "SVGDOM-static");
+        // Sadly, we cannot claim to implement any of the SVG 1.1 generic feature sets
+        // lack of Font and Filter support.
+        // http://bugs.webkit.org/show_bug.cgi?id=15480
+//      addString(svgFeatures, "SVG");
+//      addString(svgFeatures, "SVGDOM");
+//      addString(svgFeatures, "SVG-static");
+//      addString(svgFeatures, "SVGDOM-static");
 //      addString(svgFeatures, "SVG-animation);
 //      addString(svgFeatures, "SVGDOM-animation);
 //      addString(svgFeatures, "SVG-dynamic);
 //      addString(svgFeatures, "SVGDOM-dynamic);
         addString(svgFeatures, "CoreAttribute");
+#if ENABLE(SVG_USE)
         addString(svgFeatures, "Structure");
         addString(svgFeatures, "BasicStructure");
+#endif
         addString(svgFeatures, "ContainerAttribute");
         addString(svgFeatures, "ConditionalProcessing");
         addString(svgFeatures, "Image");
         addString(svgFeatures, "Style");
         addString(svgFeatures, "ViewportAttribute");
         addString(svgFeatures, "Shape");
-//      addString(svgFeatures, "Text");
-//      addString(svgFeatures, "BasicText");
+//      addString(svgFeatures, "Text"); // requires altGlyph, bug 6426
+        addString(svgFeatures, "BasicText");
         addString(svgFeatures, "PaintAttribute");
         addString(svgFeatures, "BasicPaintAttribute");
         addString(svgFeatures, "OpacityAttribute");
@@ -134,15 +138,17 @@ static bool isSVG11Feature(const String &feature)
         addString(svgFeatures, "Clip");
         addString(svgFeatures, "BasicClip");
         addString(svgFeatures, "Mask");
+#if ENABLE(SVG_FILTER)
 //      addString(svgFeatures, "Filter");
-//      addString(svgFeatures, "BasicFilter");
+        addString(svgFeatures, "BasicFilter");
+#endif
         addString(svgFeatures, "DocumentEventsAttribute");
         addString(svgFeatures, "GraphicalEventsAttribute");
-        addString(svgFeatures, "AnimationEventsAttribute");
-//      addString(svgFeatures, "Cursor");
+//      addString(svgFeatures, "AnimationEventsAttribute");
+        addString(svgFeatures, "Cursor");
         addString(svgFeatures, "Hyperlinking");
         addString(svgFeatures, "XlinkAttribute");
-//      addString(svgFeatures, "ExternalResourcesRequired");
+        addString(svgFeatures, "ExternalResourcesRequired");
 //      addString(svgFeatures, "View");
         addString(svgFeatures, "Script");
 //      addString(svgFeatures, "Animation");
