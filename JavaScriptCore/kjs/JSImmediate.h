@@ -234,7 +234,7 @@ ALWAYS_INLINE JSValue* JSImmediate::from(double d)
         return 0;
 
     // Check for data loss from conversion to int.
-    if ((intVal != d) || (signbit(d) && !intVal))
+    if ((intVal != d) || (!intVal && signbit(d)))
         return 0;
 
     return tag(intVal << 2, NumberType);

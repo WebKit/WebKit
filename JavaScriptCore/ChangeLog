@@ -1,3 +1,14 @@
+2007-12-20  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Geoff.
+
+        Slight logic reordering in JSImmediate::from(double)
+
+        This gives a 0.1% improvement in SunSpider.
+
+        * kjs/JSImmediate.h:
+        (KJS::JSImmediate::from):
+
 2007-12-20  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Geoff, then re-rubber-stamped by Geoff after final search/replace and testing.
