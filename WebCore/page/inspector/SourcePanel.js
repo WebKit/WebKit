@@ -71,6 +71,8 @@ WebInspector.SourcePanel.prototype = {
 
     sourceRow: function(lineNumber)
     {
+        this.setupSourceFrameIfNeeded();
+
         var doc = this.views.source.frameElement.contentDocument;
         var rows = doc.getElementsByTagName("table")[0].rows;
 

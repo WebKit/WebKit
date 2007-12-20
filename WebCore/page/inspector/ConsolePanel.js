@@ -118,7 +118,7 @@ WebInspector.ConsolePanel.prototype = {
     messageListClicked: function(event)
     {
         var link = event.target.firstParentOrSelfWithNodeName("a");
-        if (link) {
+        if (link && link.representedNode) {
             WebInspector.updateFocusedNode(link.representedNode);
             return;
         }
@@ -131,7 +131,10 @@ WebInspector.ConsolePanel.prototype = {
         if (!resource)
             return;
 
-        resource.panel.showSourceLine(item.message.line);
+        if (link && link.hasStyleClass("console-message-url")) {
+            WebInspector.navigateToResource(resource);
+            resource.panel.showSourceLine(item.message.line);
+        }
 
         event.stopPropagation();
         event.preventDefault();
@@ -287,22 +290,21 @@ WebInspector.ConsoleMessage.prototype = {
                 item.className += " console-error-level";
         }
 
-
         var messageDiv = document.createElement("div");
         messageDiv.className = "console-message-message";
         messageDiv.textContent = this.message;
         item.appendChild(messageDiv);
 
-        var urlDiv = document.createElement("div");
-        urlDiv.className = "console-message-url";
-        urlDiv.textContent = this.url;
-        item.appendChild(urlDiv);
+        if (this.url && this.url !== "undefined") {
+            var urlElement = document.createElement("a");
+            urlElement.className = "console-message-url";
 
-        if (this.line) {
-            var lineDiv = document.createElement("div");
-            lineDiv.className = "console-message-line";
-            lineDiv.textContent = this.line;
-            item.appendChild(lineDiv);
+            if (this.line > 0)
+                urlElement.textContent = WebInspector.UIString("%s (line %d)", this.url, this.line);
+            else
+                urlElement.textContent = this.url;
+
+            item.appendChild(urlElement);
         }
 
         return item;

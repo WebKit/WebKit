@@ -527,6 +527,17 @@ body.attached #attachToggle:active {
     position: relative;
     height: 37px;
     -webkit-box-sizing: border-box;
+    -webkit-user-drag: element;
+}
+
+#list > ol > li:-webkit-drag {
+    background: transparent !important;
+    color: black !important;
+    font-weight: normal !important;
+}
+
+#sidebar li:-webkit-drag .count {
+    display: none;
 }
 
 #list .icon {
@@ -1414,7 +1425,7 @@ body:not(.inactive) .focused .outline-disclosure li.selected * {
 .console-message, .console-command {
     font-size: 10px;
     margin: 0;
-    padding: 3px;
+    padding: 3px 3px 3px 24px;
     border-bottom: 1px solid rgb(75%, 75%, 75%);
     word-break: break-word;
     position: relative;
@@ -1429,38 +1440,46 @@ body:not(.inactive) .focused .outline-disclosure li.selected * {
 .console-message-message {
     font-size: 11px;
     white-space: pre-wrap;
-    margin-left: 22px;
 }
 
 .console-message-url {
-    margin-left: 22px;
+    color: rgb(33%, 33%, 33%);
+    cursor: pointer;
 }
 
-.console-message-line {
-    margin-left: 22px;
+.console-message-url::after {
+    content: url(Images/goArrow.png);
+    margin-left: 3px;
+    width: 12px;
+    height: 12px;
+    vertical-align: middle;
+    opacity: 0.75;
 }
 
-.console-message-line::before {
-    content: "line ";
+.console-message-url:hover {
+    color: rgb(15%, 15%, 15%);
+}
+
+.console-message-url:hover::after {
+    opacity: 1;
 }
 
 .console-error-level::before {
     content: url(Images/errorMediumIcon.png);
     position: absolute;
-    left: 4px;
-    top: 3px;
+    left: 5px;
+    top: 2px;
 }
 
 .console-warning-level::before {
     content: url(Images/warningMediumIcon.png);
     position: absolute;
     left: 4px;
-    top: 3px;
+    top: 2px;
 }
 
 .console-command-input, .console-command-output {
     font-size: 11px;
-    margin-left: 22px;
     white-space: pre-wrap;
 }
 
@@ -1470,7 +1489,7 @@ body:not(.inactive) .focused .outline-disclosure li.selected * {
     font-size: 15px;
     color: blue;
     position: absolute;
-    left: 7px;
+    left: 8px;
     top: 1px;
 }
 

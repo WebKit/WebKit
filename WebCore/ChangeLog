@@ -1,3 +1,23 @@
+2007-12-20  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        <rdar://problem/5604897> Double-clicking on JavaScript console error
+        won't show the line where it occurred
+
+        Make the URLs clickable in the console, since double clicking is used for
+        word text selection. Makes the word "line" localizable. Messages that don't
+        have a URL will no longer print "undefined". Messages that have a line number
+        less than or equal to 0 will no longer be printed.
+
+        * English.lproj/InspectorLocalizedStrings.js: Add "%s (line %d)".
+        * page/inspector/ConsolePanel.js: Tweak how the DOM nodes are created
+          and change the click handler to look for a link with the
+          "console-message-url" class name.
+        * page/inspector/SourcePanel.js: Call setupSourceFrameIfNeeded() if a
+          line row is needed. 
+        * page/inspector/inspector.css: Update the look of the URL in the console.
+
 2007-12-20  Adam Barth  <hk9565@gmail.com>
 
         Reviewed and landed by Sam Weinig.
