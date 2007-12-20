@@ -1,3 +1,14 @@
+2007-12-19  Dan Bernstein  <mitz@apple.com>
+
+        - remove passing tests following the change to font fallback
+
+        * platform/win/Skipped: Removed tests that failed only because they
+        specified as primary font family a font family that was not available
+        on Windows and therefore were rendered using the platform last resort
+        font, Times New Roman. Now they are rendered using the 'standard'
+        font family, which is set to Times on both Mac and Windows when running
+        the tests.
+
 2007-12-19  Alice Liu  <alice.liu@apple.com>
 
         Reviewed by Darin.

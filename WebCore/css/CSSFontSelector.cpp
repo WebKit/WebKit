@@ -199,7 +199,7 @@ void CSSFontSelector::fontLoaded(CSSFontFace*)
 
 FontData* CSSFontSelector::getFontData(const FontDescription& fontDescription, const AtomicString& familyName)
 {
-    if (m_fonts.isEmpty())
+    if (m_fonts.isEmpty() && !familyName.startsWith("-webkit-"))
         return 0;
     
     bool bold = fontDescription.bold();
@@ -246,9 +246,11 @@ FontData* CSSFontSelector::getFontData(const FontDescription& fontDescription, c
         else if (familyName == "-webkit-cursive")
             genericFamily = settings->cursiveFontFamily();
         else if (familyName == "-webkit-fantasy")
-            genericFamily = settings->cursiveFontFamily();
+            genericFamily = settings->fantasyFontFamily();
         else if (familyName == "-webkit-monospace")
             genericFamily = settings->fixedFontFamily();
+        else if (familyName == "-webkit-standard")
+            genericFamily = settings->standardFontFamily();
         
         if (!genericFamily.isEmpty())
             return FontCache::getCachedFontData(FontCache::getCachedFontPlatformData(fontDescription, genericFamily));

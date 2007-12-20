@@ -247,6 +247,7 @@ CSSStyleSelector::CSSStyleSelector(Document* doc, const String& userStyleSheet, 
     init();
     
     m_document = doc;
+    m_fontSelector = new CSSFontSelector(doc);
 
     m_matchAuthorAndUserStyles = matchAuthorAndUserStyles;
 
@@ -298,10 +299,6 @@ CSSStyleSelector::CSSStyleSelector(Document* doc, const String& userStyleSheet, 
     for (; it.current(); ++it)
         if (it.current()->isCSSStyleSheet() && !it.current()->disabled())
             m_authorStyle->addRulesFromSheet(static_cast<CSSStyleSheet*>(it.current()), *m_medium, this);
-
-    // Just delete our font selector if we end up with nothing but invalid @font-face rules.
-    if (m_fontSelector && m_fontSelector->isEmpty())
-        m_fontSelector = 0;
 }
 
 void CSSStyleSelector::init()
@@ -1819,14 +1816,14 @@ void CSSRuleSet::addRulesFromSheet(CSSStyleSheet* sheet, const MediaQueryEvaluat
                     } else if (item->isFontFaceRule() && styleSelector) {
                         // Add this font face to our set.
                         const CSSFontFaceRule* fontFaceRule = static_cast<CSSFontFaceRule*>(item);
-                        styleSelector->ensureFontSelector()->addFontFaceRule(fontFaceRule);
+                        styleSelector->fontSelector()->addFontFaceRule(fontFaceRule);
                     }
                 }   // for rules
             }   // if rules
         } else if (item->isFontFaceRule() && styleSelector) {
             // Add this font face to our set.
             const CSSFontFaceRule* fontFaceRule = static_cast<CSSFontFaceRule*>(item);
-            styleSelector->ensureFontSelector()->addFontFaceRule(fontFaceRule);
+            styleSelector->fontSelector()->addFontFaceRule(fontFaceRule);
         }
     }
 }
@@ -3132,23 +3129,23 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
                         face = settings->standardFontFamily();
                         break;
                     case CSS_VAL_SERIF:
-                        face = m_fontSelector ? "-webkit-serif" : settings->serifFontFamily();
+                        face = "-webkit-serif";
                         fontDescription.setGenericFamily(FontDescription::SerifFamily);
                         break;
                     case CSS_VAL_SANS_SERIF:
-                        face = m_fontSelector ? "-webkit-sans-serif" : settings->sansSerifFontFamily();
+                        face = "-webkit-sans-serif";
                         fontDescription.setGenericFamily(FontDescription::SansSerifFamily);
                         break;
                     case CSS_VAL_CURSIVE:
-                        face = m_fontSelector ? "-webkit-cursive" : settings->cursiveFontFamily();
+                        face = "-webkit-cursive";
                         fontDescription.setGenericFamily(FontDescription::CursiveFamily);
                         break;
                     case CSS_VAL_FANTASY:
-                        face = m_fontSelector ? "-webkit-fantasy" : settings->fantasyFontFamily();
+                        face = "-webkit-fantasy";
                         fontDescription.setGenericFamily(FontDescription::FantasyFamily);
                         break;
                     case CSS_VAL_MONOSPACE:
-                        face = m_fontSelector ? "-webkit-monospace" : settings->fixedFontFamily();
+                        face = "-webkit-monospace";
                         fontDescription.setGenericFamily(FontDescription::MonospaceFamily);
                         break;
                 }
@@ -4718,13 +4715,6 @@ Color CSSStyleSelector::getColorFromPrimitiveValue(CSSPrimitiveValue* primitiveV
 bool CSSStyleSelector::hasSelectorForAttribute(const AtomicString &attrname)
 {
     return m_selectorAttrs.contains(attrname.impl());
-}
-
-CSSFontSelector* CSSStyleSelector::ensureFontSelector()
-{
-    if (!m_fontSelector.get())
-        m_fontSelector = new CSSFontSelector(m_document);
-    return m_fontSelector.get();
 }
 
 } // namespace WebCore

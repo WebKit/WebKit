@@ -252,10 +252,19 @@ const FontData* FontCache::getFontData(const Font& font, int& familyIndex, FontS
         // Geeza Pro font.
         result = getSimilarFontPlatformData(font);
 
-    if (!result && startIndex == 0)
-        // We still don't have a result.  Hand back our last resort fallback font.  We only do the last resort fallback
-        // when trying to find the primary font.  Otherwise our fallback will rely on the actual characters used.
+    if (!result && startIndex == 0) {
+        // If it's the primary font that we couldn't find, we try the following. In all other cases, we will
+        // just use per-character system fallback.
+
+        if (fontSelector) {
+            // Try the user's preferred standard font.
+            if (FontData* data = fontSelector->getFontData(font.fontDescription(), "-webkit-standard"))
+                return data;
+        }
+
+        // Still no result.  Hand back our last resort fallback font.
         result = getLastResortFallbackFont(font.fontDescription());
+    }
 
     // Now that we have a result, we need to go from FontPlatformData -> FontData.
     return getCachedFontData(result);

@@ -128,7 +128,6 @@ class StyledElement;
         bool hasSelectorForAttribute(const AtomicString &attrname);
  
         CSSFontSelector* fontSelector() { return m_fontSelector.get(); }
-        CSSFontSelector* ensureFontSelector();
 
     protected:
 

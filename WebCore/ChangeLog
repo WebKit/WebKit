@@ -1,3 +1,30 @@
+2007-12-19  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler and Dave Hyatt.
+
+        - Substitute the user's preferred standard font for an unknown primary
+          font before falling back on the platform's last resort font
+
+        Cannot be tested in DumpRenderTree because it sets the standard font to
+        Times, which is also the hard-coded last resort font on Mac.
+
+        * css/CSSFontSelector.cpp:
+        (WebCore::CSSFontSelector::getFontData): Changed the early bail out
+        condition to allow getting generic font families from settings even if
+        there are not @font-face rules. Fixed a typo that mapped fantasy to
+        cursive. Added a mapping from -webkit-standard to the standard family.
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::CSSStyleSelector): Changed to always create
+        a font selector.
+        (WebCore::CSSRuleSet::addRulesFromSheet):
+        (WebCore::CSSStyleSelector::applyProperty): Changed to always use the
+        font selector.
+        * css/CSSStyleSelector.h:
+        (WebCore::CSSStyleSelector::fontSelector):
+        * platform/graphics/FontCache.cpp:
+        (WebCore::FontCache::getFontData): Try the user's preferred standard
+        font before the platform's last resort font.
+
 2007-12-19  Sven Herzberg  <sven@imendio.com>
 
         Reviewed by Alp Toker.
