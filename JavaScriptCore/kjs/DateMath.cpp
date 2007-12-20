@@ -97,15 +97,21 @@ static inline int daysInYear(int year)
 
 static inline double daysFrom1970ToYear(int year)
 {
-    return 365.0 * (year - 1970)
-        + floor((year - 1969) / 4.0)
-        - floor((year - 1901) / 100.0)
-        + floor((year - 1601) / 400.0);
-}
+    // The Gregorian Calendar rules for leap years:
+    // Every fourth year is a leap year.  2004, 2008, and 2012 are leap years.
+    // However, every hundredth year is not a leap year.  1900 and 2100 are not leap years.
+    // Every four hundred years, there's a leap year after all.  2000 and 2400 are leap years.
 
-static inline double msFrom1970ToYear(int year)
-{
-    return msPerDay * daysFrom1970ToYear(year);
+    static const int leapDaysBefore1971By4Rule = 1970 / 4;
+    static const int excludedLeapDaysBefore1971By100Rule = 1970 / 100;
+    static const int leapDaysBefore1971By400Rule = 1970 / 400;
+
+    const double yearMinusOne = year - 1;
+    const double yearsToAddBy4Rule = floor(yearMinusOne / 4.0) - leapDaysBefore1971By4Rule;
+    const double yearsToExcludeBy100Rule = floor(yearMinusOne / 100.0) - excludedLeapDaysBefore1971By100Rule;
+    const double yearsToAddBy400Rule = floor(yearMinusOne / 400.0) - leapDaysBefore1971By400Rule;
+
+    return 365.0 * (year - 1970) + yearsToAddBy4Rule - yearsToExcludeBy100Rule + yearsToAddBy400Rule;
 }
 
 static inline double msToDays(double ms)
@@ -115,20 +121,13 @@ static inline double msToDays(double ms)
 
 static inline int msToYear(double ms)
 {
-    int y = static_cast<int>(floor(ms / (msPerDay * 365.2425)) + 1970);
-    double t2 = msFrom1970ToYear(y);
-    if (t2 > ms) {
-        y--;
-    } else {
-        if (t2 + msPerDay * daysInYear(y) <= ms)
-            y++;
-    }
-    return y;
-}
-
-static inline bool isInLeapYear(double ms)
-{
-    return isLeapYear(msToYear(ms));
+    int approxYear = static_cast<int>(floor(ms / (msPerDay * 365.2425)) + 1970);
+    double msFromApproxYearTo1970 = msPerDay * daysFrom1970ToYear(approxYear);
+    if (msFromApproxYearTo1970 > ms)
+        return approxYear - 1;
+    if (msFromApproxYearTo1970 + msPerDay * daysInYear(approxYear) <= ms)
+        return approxYear + 1;
+    return approxYear;
 }
 
 static inline int dayInYear(double ms, int year)
@@ -177,15 +176,14 @@ static inline int msToHours(double ms)
     return static_cast<int>(result);
 }
 
-static inline int msToMonth(double ms)
+static inline int monthFromDayInYear(int dayInYear, bool leapYear)
 {
+    const int d = dayInYear;
     int step;
-    int year = msToYear(ms);
-    int d = dayInYear(ms, year);
 
     if (d < (step = 31))
         return 0;
-    step += (isInLeapYear(ms) ? 29 : 28);
+    step += (leapYear ? 29 : 28);
     if (d < step)
         return 1;
     if (d < (step += 31))
@@ -209,44 +207,41 @@ static inline int msToMonth(double ms)
     return 11;
 }
 
-static inline int msToDayInMonth(double ms)
+static inline bool checkMonth(int dayInYear, int& startDayOfThisMonth, int& startDayOfNextMonth, int daysInThisMonth)
 {
-    int step, next;
-    int year = msToYear(ms);
-    int d = dayInYear(ms, year);
+    startDayOfThisMonth = startDayOfNextMonth;
+    startDayOfNextMonth += daysInThisMonth;
+    return (dayInYear <= startDayOfNextMonth);
+}
 
-    if (d <= (next = 30))
-        return d + 1;
-    step = next;
-    next += (isInLeapYear(ms) ? 29 : 28);
+static inline int dayInMonthFromDayInYear(int dayInYear, bool leapYear)
+{
+    const int d = dayInYear;
+    int step;
+    int next = 30;
+
     if (d <= next)
+        return d + 1;
+    const int daysInFeb = (leapYear ? 29 : 28);
+    if (checkMonth(d, step, next, daysInFeb))
         return d - step;
-    step = next;
-    if (d <= (next += 31))
+    if (checkMonth(d, step, next, 31))
         return d - step;
-    step = next;
-    if (d <= (next += 30))
+    if (checkMonth(d, step, next, 30))
         return d - step;
-    step = next;
-    if (d <= (next += 31))
+    if (checkMonth(d, step, next, 31))
         return d - step;
-    step = next;
-    if (d <= (next += 30))
+    if (checkMonth(d, step, next, 30))
         return d - step;
-    step = next;
-    if (d <= (next += 31))
+    if (checkMonth(d, step, next, 31))
         return d - step;
-    step = next;
-    if (d <= (next += 31))
+    if (checkMonth(d, step, next, 31))
         return d - step;
-    step = next;
-    if (d <= (next += 30))
+    if (checkMonth(d, step, next, 30))
         return d - step;
-    step = next;
-    if (d <= (next += 31))
+    if (checkMonth(d, step, next, 31))
         return d - step;
-    step = next;
-    if (d <= (next += 30))
+    if (checkMonth(d, step, next, 30))
         return d - step;
     step = next;
     return d - step;
@@ -272,7 +267,7 @@ static int dateToDayInYear(int year, int month, int day)
         --year;
     }
 
-    int yearday = static_cast<int>(floor(msFrom1970ToYear(year) / msPerDay));
+    int yearday = static_cast<int>(floor(daysFrom1970ToYear(year)));
     int monthday = monthToDayInYear(month, isLeapYear(year));
 
     return yearday + monthday + day - 1;
@@ -313,7 +308,7 @@ static int mimimumYearForDST()
     // greater than the max year minus 27 (2010), we want to use the max year
     // minus 27 instead, to ensure there is a range of 28 years that all years
     // can map to.
-    static int minYear = std::min(msToYear(getCurrentUTCTime()), maximumYearForDST()-27) ;
+    static int minYear = std::min(msToYear(getCurrentUTCTime()), maximumYearForDST() - 27) ;
     return minYear;
 }
 
@@ -402,15 +397,15 @@ double getUTCOffset()
  * seconds (not milliseconds) and cannot handle dates before 1970
  * on some OS'
  */
-static double getDSTOffsetSimple(double localTimeSeconds)
+static double getDSTOffsetSimple(double localTimeSeconds, double utcOffset)
 {
     if (localTimeSeconds > maxUnixTime)
         localTimeSeconds = maxUnixTime;
-    else if(localTimeSeconds < 0) // Go ahead a day to make localtime work (does not work with 0)
+    else if (localTimeSeconds < 0) // Go ahead a day to make localtime work (does not work with 0)
         localTimeSeconds += secondsPerDay;
 
     //input is UTC so we have to shift back to local time to determine DST thus the + getUTCOffset()
-    double offsetTime = (localTimeSeconds * msPerSecond) + getUTCOffset();
+    double offsetTime = (localTimeSeconds * msPerSecond) + utcOffset;
 
     // Offset from UTC but doesn't include DST obviously
     int offsetHour =  msToHours(offsetTime);
@@ -439,14 +434,14 @@ static double getDSTOffsetSimple(double localTimeSeconds)
 
     double diff = ((localTM.tm_hour - offsetHour) * secondsPerHour) + ((localTM.tm_min - offsetMinute) * 60);
 
-    if(diff < 0)
+    if (diff < 0)
         diff += secondsPerDay;
 
     return (diff * msPerSecond);
 }
 
 // Get the DST offset, given a time in UTC
-static double getDSTOffset(double ms)
+static double getDSTOffset(double ms, double utcOffset)
 {
     // On Mac OS X, the call to localtime (see getDSTOffsetSimple) will return historically accurate
     // DST information (e.g. New Zealand did not have DST from 1946 to 1974) however the JavaScript
@@ -454,13 +449,17 @@ static double getDSTOffset(double ms)
     // determining DST. For this reason we shift away from years that localtime can handle but would
     // return historically accurate information.
     int year = msToYear(ms);
-    int equvalentYear = equivalentYearForDST(year);
-    if (year != equvalentYear) {
-        int day = dateToDayInYear(equvalentYear, msToMonth(ms), msToDayInMonth(ms));
+    int equivalentYear = equivalentYearForDST(year);
+    if (year != equivalentYear) {
+        bool leapYear = isLeapYear(year);
+        int dayInYearLocal = dayInYear(ms, year);
+        int dayInMonth = dayInMonthFromDayInYear(dayInYearLocal, leapYear);
+        int month = monthFromDayInYear(dayInYearLocal, leapYear);
+        int day = dateToDayInYear(equivalentYear, month, dayInMonth);
         ms = (day * msPerDay) + msToMilliseconds(ms);
     }
 
-    return getDSTOffsetSimple(ms / msPerSecond);
+    return getDSTOffsetSimple(ms / msPerSecond, utcOffset);
 }
 
 double gregorianDateTimeToMS(const GregorianDateTime& t, double milliSeconds, bool inputIsUTC)
@@ -470,8 +469,9 @@ double gregorianDateTimeToMS(const GregorianDateTime& t, double milliSeconds, bo
     double result = (day * msPerDay) + ms;
 
     if (!inputIsUTC) { // convert to UTC
-        result -= getUTCOffset();       
-        result -= getDSTOffset(result);
+        double utcOffset = getUTCOffset();
+        result -= utcOffset;
+        result -= getDSTOffset(result, utcOffset);
     }
 
     return result;
@@ -481,23 +481,25 @@ void msToGregorianDateTime(double ms, bool outputIsUTC, GregorianDateTime& tm)
 {
     // input is UTC
     double dstOff = 0.0;
+    const double utcOff = getUTCOffset();
     
     if (!outputIsUTC) {  // convert to local time
-        dstOff = getDSTOffset(ms);
-        ms += dstOff + getUTCOffset();
+        dstOff = getDSTOffset(ms, utcOff);
+        ms += dstOff + utcOff;
     }
 
+    const int year = msToYear(ms);
     tm.second   =  msToSeconds(ms);
     tm.minute   =  msToMinutes(ms);
     tm.hour     =  msToHours(ms);
     tm.weekDay  =  msToWeekDay(ms);
-    tm.monthDay =  msToDayInMonth(ms);
-    tm.yearDay  =  dayInYear(ms, msToYear(ms));
-    tm.month    =  msToMonth(ms);
-    tm.year     =  msToYear(ms) - 1900;
+    tm.yearDay  =  dayInYear(ms, year);
+    tm.monthDay =  dayInMonthFromDayInYear(tm.yearDay, isLeapYear(year));
+    tm.month    =  monthFromDayInYear(tm.yearDay, isLeapYear(year));
+    tm.year     =  year - 1900;
     tm.isDST    =  dstOff != 0.0;
 
-    tm.utcOffset = static_cast<long>((dstOff + getUTCOffset()) / msPerSecond);
+    tm.utcOffset = static_cast<long>((dstOff + utcOff) / msPerSecond);
     tm.timeZone = NULL;
 }
 

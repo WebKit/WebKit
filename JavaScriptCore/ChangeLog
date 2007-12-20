@@ -1,3 +1,28 @@
+2007-12-20  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Geoff, then re-rubber-stamped by Geoff after final search/replace and testing.
+
+        Small reworking of Date code for 4% speedup on Date tests (0.2% overall)
+        http://bugs.webkit.org/show_bug.cgi?id=16537
+
+        Make msToYear human-readable
+        Make msToDayInMonth slightly more readable and avoid recalculating msToYear
+        Remove use of isInLeapYear to avoid calling msToYear
+        Remove dayInYear call by changing msToDayInMonth to dayInMonthFromDayInYear
+        Remove more duplicate calls to dayInYear and getUTCOffset for further speedup
+
+        * kjs/DateMath.cpp:
+        (KJS::daysFrom1970ToYear):
+        (KJS::msToYear):
+        (KJS::monthFromDayInYear):
+        (KJS::checkMonth):
+        (KJS::dayInMonthFromDayInYear):
+        (KJS::dateToDayInYear):
+        (KJS::getDSTOffsetSimple):
+        (KJS::getDSTOffset):
+        (KJS::gregorianDateTimeToMS):
+        (KJS::msToGregorianDateTime):
+
 2007-12-20  Rodney Dawes  <dobey@wayofthemonkey.com>
 
         Reviewed by Darin Adler.
