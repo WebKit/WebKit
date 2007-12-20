@@ -132,6 +132,7 @@ FOR_EACH_CLASS(KJS_IMPLEMENT_PROTOTYPE_FUNCTION_WITH_CREATE)
         virtual JSObject *construct(ExecState *, const List &args);
         virtual JSValue *callAsFunction(ExecState *, JSObject *thisObj, const List &args);
 
+        Completion execute(const List &);
         JSObject *construct(const List &);
     };
 

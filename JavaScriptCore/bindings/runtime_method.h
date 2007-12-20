@@ -32,13 +32,17 @@
 
 namespace KJS {
 
-class RuntimeMethod : public InternalFunctionImp {
+
+class RuntimeMethod : public InternalFunctionImp 
+{
 public:
     RuntimeMethod(ExecState *exec, const Identifier &n, Bindings::MethodList &methodList);
     
     virtual bool getOwnPropertySlot(ExecState *, const Identifier&, PropertySlot&);
 
     virtual JSValue *callAsFunction(ExecState *exec, JSObject *thisObj, const List &args);
+
+    virtual Completion execute(ExecState *exec);
 
 private:
     static JSValue *lengthGetter(ExecState *, JSObject *, const Identifier&, const PropertySlot&);

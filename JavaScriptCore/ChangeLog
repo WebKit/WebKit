@@ -1,5 +1,10 @@
 2007-12-20  Darin Adler  <darin@apple.com>
 
+        - roll out that last change -- it was causing test failures;
+          I'll check it back in after fixing them
+
+2007-12-20  Darin Adler  <darin@apple.com>
+
         Reviewed by Eric.
 
         - http://bugs.webkit.org/show_bug.cgi?id=16471

@@ -82,6 +82,7 @@ namespace KJS {
     virtual JSObject* construct(ExecState*, const List& args);
     
     virtual JSValue* callAsFunction(ExecState*, JSObject* thisObj, const List& args);
+    Completion execute(ExecState*);
 
     // Note: unlike body->paramName, this returns Identifier::null for parameters 
     // that will never get set, due to later param having the same name

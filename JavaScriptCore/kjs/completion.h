@@ -26,6 +26,7 @@
 
 namespace KJS {
 
+  class Identifier;
   class JSValue;
 
   enum ComplType { Normal, Break, Continue, ReturnValue, Throw, Interrupted };
@@ -43,16 +44,20 @@ namespace KJS {
   class Completion {
   public:
     Completion(ComplType type = Normal, JSValue* value = 0)
-        : m_type(type), m_value(value) { }
+        : m_type(type), m_value(value), m_target(0) { }
+    Completion(ComplType type, const Identifier* target)
+        : m_type(type), m_value(0), m_target(target) { }
 
     ComplType complType() const { return m_type; }
     JSValue* value() const { return m_value; }
     void setValue(JSValue* v) { m_value = v; }
+    const Identifier& target() const { return *m_target; }
     bool isValueCompletion() const { return !!m_value; }
 
   private:
     ComplType m_type;
     JSValue* m_value;
+    const Identifier* m_target;
   };
 
 }

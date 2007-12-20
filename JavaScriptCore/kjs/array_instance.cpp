@@ -180,7 +180,7 @@ bool ArrayInstance::getOwnPropertySlot(ExecState* exec, const Identifier& proper
 
 bool ArrayInstance::getOwnPropertySlot(ExecState* exec, unsigned i, PropertySlot& slot)
 {
-    return inlineGetOwnPropertySlot(exec, i, slot);
+    return JSObject::getOwnPropertySlot(exec, i, slot);
 }
 
 // ECMA 15.4.5.1
