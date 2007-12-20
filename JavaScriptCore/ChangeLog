@@ -1,3 +1,9 @@
+2007-12-20  Geoffrey Garen  <ggaren@apple.com>
+
+        Linux build fix: config.h has to come first.
+
+        * kjs/error_object.cpp:
+
 2007-12-19  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Oliver Hunt.
