@@ -1,3 +1,18 @@
+2007-12-17  Tony Chang  <idealisms@gmail.com>
+
+        Reviewed by Darin.
+
+        - Fix for http://bugs.webkit.org/show_bug.cgi?id=16479
+          text selection does not always begin at mouse down point
+          Reset the m_dragSrc object on mouse down on all platforms.
+
+        Test: fast/text/reset-drag-on-mouse-down.html
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleMousePressEvent):
+        * page/mac/EventHandlerMac.mm:
+        (WebCore::EventHandler::mouseDown):
+
 2007-12-19  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Oliver Hunt.

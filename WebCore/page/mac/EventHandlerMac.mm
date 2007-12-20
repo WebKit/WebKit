@@ -470,7 +470,6 @@ void EventHandler::mouseDown(NSEvent *event)
     m_frame->loader()->resetMultipleFormSubmissionProtection();
 
     m_mouseDownView = nil;
-    dragState().m_dragSrc = 0;
     
     RetainPtr<NSEvent> oldCurrentEvent = currentEvent();
     currentEvent() = event;
