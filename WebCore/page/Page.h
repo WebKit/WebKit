@@ -110,7 +110,7 @@ namespace WebCore {
         bool tabKeyCyclesThroughElements() const { return m_tabKeyCyclesThroughElements; }
 
         bool findString(const String&, TextCaseSensitivity, FindDirection, bool shouldWrap);
-        uint markAllMatchesForText(const String&, TextCaseSensitivity, bool shouldHighlight, unsigned);
+        unsigned int markAllMatchesForText(const String&, TextCaseSensitivity, bool shouldHighlight, unsigned);
         void unmarkAllTextMatches();
 
         const Selection& selection() const;

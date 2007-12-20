@@ -239,7 +239,7 @@ bool Page::findString(const String& target, TextCaseSensitivity caseSensitivity,
     return false;
 }
 
-uint Page::markAllMatchesForText(const String& target, TextCaseSensitivity caseSensitivity, bool shouldHighlight, unsigned limit)
+unsigned int Page::markAllMatchesForText(const String& target, TextCaseSensitivity caseSensitivity, bool shouldHighlight, unsigned limit)
 {
     if (target.isEmpty() || !mainFrame())
         return 0;
