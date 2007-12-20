@@ -1,3 +1,11 @@
+2007-12-20  Kevin McCullough  <kmccullough@apple.com>
+
+        - <rdar://problem/5658317> REGRESSION: 20+ leaks seen on buildbots.
+        - Build bot and leak fix.
+
+        * DumpRenderTree/LayoutTestController.cpp:
+        (pathToLocalResourceCallback):
+
 2007-12-19  David Kilzer  <ddkilzer@apple.com>
 
         Make svn-apply/svn-unapply work with patches from git-format-patch.

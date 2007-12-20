@@ -142,7 +142,7 @@ static JSValueRef pathToLocalResourceCallback(JSContextRef context, JSObjectRef 
         return JSValueMakeUndefined(context);
 
     LayoutTestController* controller = reinterpret_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
-    JSRetainPtr<JSStringRef> localPath = JSValueToStringCopy(context, arguments[0], exception);
+    JSRetainPtr<JSStringRef> localPath(Adopt, JSValueToStringCopy(context, arguments[0], exception));
     ASSERT(!*exception);
 
     return JSValueMakeString(context, controller->pathToLocalResource(context, localPath.get()));
