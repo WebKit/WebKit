@@ -451,6 +451,7 @@ namespace WTF {
         const T& last() const { return at(size() - 1); }
 
         void shrink(size_t size);
+        void grow(size_t size);
         void resize(size_t size);
         void reserveCapacity(size_t newCapacity);
 
@@ -631,6 +632,16 @@ namespace WTF {
     {
         ASSERT(size <= m_size);
         TypeOperations::destruct(begin() + size, end());
+        m_size = size;
+    }
+
+    template<typename T, size_t inlineCapacity>
+    void Vector<T, inlineCapacity>::grow(size_t size)
+    {
+        ASSERT(size >= m_size);
+        if (size > capacity())
+            expandCapacity(size);
+        TypeOperations::initialize(end(), begin() + size);
         m_size = size;
     }
 

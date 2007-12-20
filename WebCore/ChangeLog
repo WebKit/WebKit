@@ -1,3 +1,32 @@
+2007-12-19  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Build support:
+        * ForwardingHeaders/kjs/SymbolTable.h: Added.
+        * ForwardingHeaders/wtf/VectorTraits.h: Added.
+
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::customGetOwnPropertySlot): Replaced use of
+        getDirectLocation with getOwnPropertySlot. getDirectLocation is no
+        longer valid, since global declarations are not stored in the property
+        map.
+
+        (WebCore::JSDOMWindow::customPut): Replaced use of JSObject::put with
+        JSGlobalObject::put. JSObject::put is no longer valid, since global
+        declarations are not stored in the property map.
+
+        * bindings/js/kjs_window.cpp: Replaced JSObject:: calls with Base::
+        calls, since JSObject is not our base class. This was always a bug, but
+        the bug is even more apparent after some of my changes.
+
+        (KJS::Window::clear): Removed call to clearProperties because
+        JSGlobalObject::reset takes care of that now.
+
+        * history/CachedPage.cpp:
+        * history/CachedPage.h: Added support for saving a symbol table and
+        localStorage to the page cache, and restoring it.
+
 2007-12-19  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler and Dave Hyatt.

@@ -699,7 +699,7 @@ JSValue* GlobalFuncImp::callAsFunction(ExecState* exec, JSObject* thisObj, const
         int sourceId;
         int errLine;
         UString errMsg;
-        RefPtr<EvalNode> progNode(parser().parse<EvalNode>(UString(), 0, s.data(), s.size(), &sourceId, &errLine, &errMsg));
+        RefPtr<EvalNode> evalNode = parser().parse<EvalNode>(UString(), 0, s.data(), s.size(), &sourceId, &errLine, &errMsg);
 
         Debugger* dbg = exec->dynamicGlobalObject()->debugger();
         if (dbg) {
@@ -709,7 +709,7 @@ JSValue* GlobalFuncImp::callAsFunction(ExecState* exec, JSObject* thisObj, const
         }
 
         // no program node means a syntax occurred
-        if (!progNode)
+        if (!evalNode)
           return throwError(exec, SyntaxError, errMsg, errLine, sourceId, NULL);
 
         bool switchGlobal = thisObj && thisObj != exec->dynamicGlobalObject() && thisObj->isGlobalObject();
@@ -717,7 +717,7 @@ JSValue* GlobalFuncImp::callAsFunction(ExecState* exec, JSObject* thisObj, const
         // enter a new execution context
         JSGlobalObject* globalObject = switchGlobal ? static_cast<JSGlobalObject*>(thisObj) : exec->dynamicGlobalObject();
         JSObject* thisVal = static_cast<JSObject*>(exec->thisValue());
-        ExecState newExec(globalObject, thisVal, progNode.get(), EvalCode, exec, globalObject->currentExec());
+        ExecState newExec(globalObject, thisVal, evalNode.get(), EvalCode, exec, globalObject->currentExec());
         if (exec->hadException())
             newExec.setException(exec->exception());
           
@@ -726,7 +726,7 @@ JSValue* GlobalFuncImp::callAsFunction(ExecState* exec, JSObject* thisObj, const
             newExec.setVariableObject(static_cast<JSGlobalObject*>(thisObj));
         }
         
-        Completion c = progNode->execute(&newExec);
+        Completion c = evalNode->execute(&newExec);
           
         if (switchGlobal)
             newExec.popScope();

@@ -3488,6 +3488,7 @@ void VarDeclNode::handleSlowCase(ExecState* exec, const ScopeChain& chain, JSVal
 // ECMA 12.2
 inline void VarDeclNode::evaluateSingle(ExecState* exec)
 {
+    ASSERT(exec->variableObject()->hasOwnProperty(exec, ident) || exec->codeType() == EvalCode); // Guaranteed by processDeclarations.
     const ScopeChain& chain = exec->scopeChain();
     JSObject* variableObject = exec->variableObject();
 
@@ -3495,31 +3496,32 @@ inline void VarDeclNode::evaluateSingle(ExecState* exec)
 
     bool inGlobalScope = ++chain.begin() == chain.end();
 
-    if (inGlobalScope && (init || !variableObject->getDirect(ident))) {
-        JSValue* val = init ? init->evaluate(exec) : jsUndefined();
-        int flags = Internal;
-        if (exec->codeType() != EvalCode)
-            flags |= DontDelete;
-        if (varType == VarDeclNode::Constant)
-            flags |= ReadOnly;
-        variableObject->putDirect(ident, val, flags);
-    } else if (init) {
-        JSValue* val = init->evaluate(exec);
-        KJS_CHECKEXCEPTIONVOID
-            
-        // if the variable object is the top of the scope chain, then that must
-        // be where this variable is declared, processVarDecls would have put 
-        // it there. Don't search the scope chain, to optimize this very common case.
-        if (chain.top() != variableObject)
-            return handleSlowCase(exec, chain, val);
+    if (init) {
+        if (inGlobalScope) {
+            JSValue* val = init->evaluate(exec);
+            int flags = Internal;
+            if (exec->codeType() != EvalCode)
+                flags |= DontDelete;
+            if (varType == VarDeclNode::Constant)
+                flags |= ReadOnly;
+            variableObject->put(exec, ident, val, flags);
+        } else {
+            JSValue* val = init->evaluate(exec);
+            KJS_CHECKEXCEPTIONVOID
 
-        unsigned flags = 0;
-        variableObject->getPropertyAttributes(ident, flags);
-        if (varType == VarDeclNode::Constant)
-            flags |= ReadOnly;
-        
-        ASSERT(variableObject->hasProperty(exec, ident));
-        variableObject->put(exec, ident, val, flags);
+            // if the variable object is the top of the scope chain, then that must
+            // be where this variable is declared, processVarDecls would have put 
+            // it there. Don't search the scope chain, to optimize this very common case.
+            if (chain.top() != variableObject)
+                return handleSlowCase(exec, chain, val);
+
+            unsigned flags = 0;
+            variableObject->getPropertyAttributes(ident, flags);
+            if (varType == VarDeclNode::Constant)
+                flags |= ReadOnly;
+            
+            variableObject->put(exec, ident, val, flags);
+        }
     }
 }
 
@@ -4274,32 +4276,83 @@ FunctionBodyNode::FunctionBodyNode(SourceElements* children, DeclarationStacks::
 
 void FunctionBodyNode::initializeSymbolTable(ExecState* exec)
 {
-    size_t i, size;
-    size_t count = 0;
+    SymbolTable& symbolTable = exec->variableObject()->symbolTable();
+    ASSERT(!symbolTable.size());
 
-    // The order of additions here implicitly enforces the mutual exclusion described in ECMA 10.1.3.
-    for (i = 0, size = m_varStack.size(); i < size; ++i) {
-        if (m_varStack[i]->ident != exec->propertyNames().arguments)
-            m_symbolTable.set(m_varStack[i]->ident.ustring().rep(), count);
-        count++;
+    size_t localStorageIndex = 0;
+
+    for (size_t i = 0, size = m_parameters.size(); i < size; ++i, ++localStorageIndex) {
+        UString::Rep* rep = m_parameters[i].ustring().rep();
+        symbolTable.set(rep, localStorageIndex);
     }
 
-    for (i = 0, size = m_parameters.size(); i < size; ++i)
-        m_symbolTable.set(m_parameters[i].ustring().rep(), count++);
+    for (size_t i = 0, size = m_functionStack.size(); i < size; ++i, ++localStorageIndex) {
+        UString::Rep* rep = m_functionStack[i]->ident.ustring().rep();
+        symbolTable.set(rep, localStorageIndex);
+    }
 
-    for (i = 0, size = m_functionStack.size(); i < size; ++i)
-        m_symbolTable.set(m_functionStack[i]->ident.ustring().rep(), count++);
+    for (size_t i = 0, size = m_varStack.size(); i < size; ++i, ++localStorageIndex) {
+        Identifier& ident = m_varStack[i]->ident;
+        if (ident == exec->propertyNames().arguments)
+            continue;
+        symbolTable.add(ident.ustring().rep(), localStorageIndex);
+    }
 }
 
-void FunctionBodyNode::optimizeVariableAccess()
+void ProgramNode::initializeSymbolTable(ExecState* exec)
+{
+    // If a previous script defined a symbol with the same name as one of our
+    // symbols, to avoid breaking previously optimized nodes, we need to reuse
+    // the symbol's existing storage index. So, we can't be as efficient as
+    // FunctionBodyNode::initializeSymbolTable, which knows that no bindings
+    // have yet been made.
+    
+    JSVariableObject* variableObject = exec->variableObject();
+    SymbolTable& symbolTable = variableObject->symbolTable();
+
+    size_t localStorageIndex = symbolTable.size();
+    size_t size;
+    
+    size = m_functionStack.size();
+    m_functionIndexes.resize(size);
+    for (size_t i = 0; i < size; ++i) {
+        UString::Rep* rep = m_functionStack[i]->ident.ustring().rep();
+        pair<SymbolTable::iterator, bool> result = symbolTable.add(rep, localStorageIndex);
+        m_functionIndexes[i] = result.first->second;
+        if (result.second)
+            ++localStorageIndex;
+    }
+
+    size = m_varStack.size();
+    m_varIndexes.resize(size);
+    for (size_t i = 0; i < size; ++i) {
+        const Identifier& ident = m_varStack[i]->ident;
+        if (variableObject->getDirect(ident)) {
+            m_varIndexes[i] = missingSymbolMarker(); // Signal not to initialize this declaration.
+            continue;
+        }
+
+        UString::Rep* rep = ident.ustring().rep();
+        pair<SymbolTable::iterator, bool> result = symbolTable.add(rep, localStorageIndex);
+        if (!result.second) {
+            m_varIndexes[i] = missingSymbolMarker(); // Signal not to initialize this declaration.
+            continue;
+        }
+        m_varIndexes[i] = result.first->second;
+        ++localStorageIndex;
+    }
+}
+
+void ScopeNode::optimizeVariableAccess(ExecState* exec)
 {
     DeclarationStacks::NodeStack nodeStack;
     Node* node = statementListInitializeVariableAccessStack(*m_children, nodeStack);
     if (!node)
         return;
     
+    SymbolTable& symbolTable = exec->variableObject()->symbolTable();
     while (true) {
-        node->optimizeVariableAccess(m_symbolTable, nodeStack);
+        node->optimizeVariableAccess(symbolTable, nodeStack);
         
         size_t size = nodeStack.size();
         if (!size)
@@ -4314,66 +4367,100 @@ void FunctionBodyNode::processDeclarations(ExecState* exec)
 {
     if (!m_initialized) {
         initializeSymbolTable(exec);
-        optimizeVariableAccess();
+        optimizeVariableAccess(exec);
         
         m_initialized = true;
     }
 
     LocalStorage& localStorage = exec->variableObject()->localStorage();
+    
+    // We can't just resize localStorage here because that would temporarily
+    // leave uninitialized entries, which would crash GC during the mark phase.
     localStorage.reserveCapacity(m_varStack.size() + m_parameters.size() + m_functionStack.size());
     
     int minAttributes = Internal | DontDelete;
     
-    size_t i, size;
+    // In order for our localStorage indexes to be correct, we must match the 
+    // order of addition in initializeSymbolTable().
 
-    // NOTE: Must match the order of addition in initializeSymbolTable().
+    const List& args = *exec->arguments();
+    for (size_t i = 0, size = m_parameters.size(); i < size; ++i)
+        localStorage.uncheckedAppend(LocalStorageEntry(args[i], DontDelete));
 
-    for (i = 0, size = m_varStack.size(); i < size; ++i) {
+    for (size_t i = 0, size = m_functionStack.size(); i < size; ++i) {
+        FuncDeclNode* node = m_functionStack[i];
+        localStorage.uncheckedAppend(LocalStorageEntry(node->makeFunction(exec), minAttributes));
+    }
+
+    for (size_t i = 0, size = m_varStack.size(); i < size; ++i) {
         VarDeclNode* node = m_varStack[i];
         int attributes = minAttributes;
         if (node->varType == VarDeclNode::Constant)
             attributes |= ReadOnly;
-        localStorage.append(LocalStorageEntry(jsUndefined(), attributes));
+        localStorage.uncheckedAppend(LocalStorageEntry(jsUndefined(), attributes));
     }
+}
 
-    const List& args = *exec->arguments();
-    for (i = 0, size = m_parameters.size(); i < size; ++i)
-        localStorage.append(LocalStorageEntry(args[i], DontDelete));
-
-    for (i = 0, size = m_functionStack.size(); i < size; ++i) {
-        FuncDeclNode* node = m_functionStack[i];
-        localStorage.append(LocalStorageEntry(node->makeFunction(exec), minAttributes));
-    }
-
-    exec->updateLocalStorage();
+static void gccIsCrazy() KJS_FAST_CALL;
+static void gccIsCrazy()
+{
 }
 
 void ProgramNode::processDeclarations(ExecState* exec)
 {
-    size_t i, size;
-
-    JSVariableObject* variableObject = exec->variableObject();
+    // If you remove this call, some SunSpider tests, including
+    // bitops-nsieve-bits.js, will regress substantially on Mac, due to a ~40%
+    // increase in L2 cache misses. FIXME: WTF?
+    gccIsCrazy();
     
+    initializeSymbolTable(exec);
+    optimizeVariableAccess(exec);
+
+    LocalStorage& localStorage = exec->variableObject()->localStorage();
+
+    // We can't just resize localStorage here because that would temporarily
+    // leave uninitialized entries, which would crash GC during the mark phase.
+    localStorage.reserveCapacity(localStorage.size() + m_varStack.size() + m_functionStack.size());
+
     int minAttributes = Internal | DontDelete;
 
-    for (i = 0, size = m_varStack.size(); i < size; ++i) {
-        VarDeclNode* node = m_varStack[i];
-        if (variableObject->hasProperty(exec, node->ident))
+    // In order for our localStorage indexes to be correct, we must match the
+    // order of addition in initializeSymbolTable().
+
+    for (size_t i = 0, size = m_functionStack.size(); i < size; ++i) {
+        FuncDeclNode* node = m_functionStack[i];
+        LocalStorageEntry entry = LocalStorageEntry(node->makeFunction(exec), minAttributes);
+        size_t index = m_functionIndexes[i];
+
+        if (index == localStorage.size())
+            localStorage.uncheckedAppend(entry);
+        else {
+            ASSERT(index < localStorage.size());
+            localStorage[index] = entry;
+        }
+    }
+
+    for (size_t i = 0, size = m_varStack.size(); i < size; ++i) {
+        size_t index = m_varIndexes[i];
+        if (index == missingSymbolMarker())
             continue;
+
+        VarDeclNode* node = m_varStack[i];
         int attributes = minAttributes;
         if (node->varType == VarDeclNode::Constant)
             attributes |= ReadOnly;
-        variableObject->put(exec, node->ident, jsUndefined(), attributes);
-    }
-
-    for (i = 0, size = m_functionStack.size(); i < size; ++i) {
-        FuncDeclNode* node = m_functionStack[i];
-        variableObject->put(exec, node->ident, node->makeFunction(exec), minAttributes);
+        LocalStorageEntry entry = LocalStorageEntry(jsUndefined(), attributes);
+            
+        ASSERT(index == localStorage.size());
+        localStorage.uncheckedAppend(entry);
     }
 }
 
 void EvalNode::processDeclarations(ExecState* exec)
 {
+    // We could optimize access to pre-existing symbols here, but SunSpider
+    // reports that to be a net loss.
+
     size_t i, size;
 
     JSVariableObject* variableObject = exec->variableObject();
@@ -4382,7 +4469,7 @@ void EvalNode::processDeclarations(ExecState* exec)
 
     for (i = 0, size = m_varStack.size(); i < size; ++i) {
         VarDeclNode* node = m_varStack[i];
-        if (variableObject->hasProperty(exec, node->ident))
+        if (variableObject->hasOwnProperty(exec, node->ident))
             continue;
         int attributes = minAttributes;
         if (node->varType == VarDeclNode::Constant)

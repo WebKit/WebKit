@@ -30,10 +30,50 @@
 #include "JSVariableObject.h"
 
 #include "PropertyNameArray.h"
+#include "property_map.h"
 
 namespace KJS {
 
 UString::Rep* IdentifierRepHashTraits::nullRepPtr = &UString::Rep::null; // Didn't want to make a whole source file for just this.
+
+void JSVariableObject::saveSymbolTable(SymbolTable& s) const
+{
+    s = *d->symbolTable;
+}
+
+void JSVariableObject::restoreSymbolTable(SymbolTable& s) const
+{
+    *d->symbolTable = s;
+}
+
+void JSVariableObject::saveLocalStorage(SavedProperties& p) const
+{
+    unsigned count = d->localStorage.size();
+
+    p.m_properties.clear();
+    p.m_count = count;
+
+    if (!count)
+        return;
+
+    p.m_properties.set(new SavedProperty[count]);
+    
+    SavedProperty* prop = p.m_properties.get();
+    for (size_t i = 0; i < count; ++i, ++prop) {
+        LocalStorageEntry& entry = d->localStorage[i];
+        prop->value = entry.value;
+        prop->attributes = entry.attributes;
+    }
+}
+
+void JSVariableObject::restoreLocalStorage(SavedProperties& p) const
+{
+    unsigned count = p.m_count;
+    d->localStorage.resize(count);
+    SavedProperty* prop = p.m_properties.get();
+    for (size_t i = 0; i < count; ++i, ++prop)
+        d->localStorage[i] = LocalStorageEntry(prop->value, prop->attributes);
+}
 
 bool JSVariableObject::deleteProperty(ExecState* exec, const Identifier& propertyName)
 {

@@ -507,10 +507,25 @@ static bool globalObject_set(JSContextRef ctx, JSObjectRef object, JSStringRef p
     return true;
 }
 
+static JSValueRef globalObject_call(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+    UNUSED_PARAM(function);
+    UNUSED_PARAM(thisObject);
+    UNUSED_PARAM(argumentCount);
+    UNUSED_PARAM(arguments);
+    UNUSED_PARAM(exception);
+
+    return JSValueMakeNumber(ctx, 3);
+}
 
 static JSStaticValue globalObject_staticValues[] = {
     { "globalStaticValue", globalObject_get, globalObject_set, kJSPropertyAttributeNone },
     { 0, 0, 0, 0 }
+};
+
+static JSStaticFunction globalObject_staticFunctions[] = {
+    { "globalStaticFunction", globalObject_call, kJSPropertyAttributeNone },
+    { 0, 0, 0 }
 };
 
 static char* createStringWithContentsOfFile(const char* fileName);
@@ -540,6 +555,8 @@ int main(int argc, char* argv[])
     JSClassDefinition globalObjectClassDefinition = kJSClassDefinitionEmpty;
     globalObjectClassDefinition.initialize = globalObject_initialize;
     globalObjectClassDefinition.staticValues = globalObject_staticValues;
+    globalObjectClassDefinition.staticFunctions = globalObject_staticFunctions;
+    globalObjectClassDefinition.attributes = kJSClassAttributeNoAutomaticPrototype;
     JSClassRef globalObjectClass = JSClassCreate(&globalObjectClassDefinition);
     context = JSGlobalContextCreate(globalObjectClass);
     

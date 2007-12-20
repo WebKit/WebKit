@@ -1,3 +1,66 @@
+2007-12-19  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Oliver Hunt.
+        
+        Optimized global access to global variables, using a symbol table.
+        
+        SunSpider reports a 1.5% overall speedup, a 6.2% speedup on 3d-morph,
+        and a whopping 33.1% speedup on bitops-bitwise-and.
+
+        * API/JSCallbackObjectFunctions.h: Replaced calls to JSObject:: with
+        calls to Base::, since JSObject is not always our base class. This
+        was always a bug, but the bug is even more apparent after some of my
+        changes.
+
+        (KJS::::staticFunctionGetter): Replaced use of getDirect with call to
+        getOwnPropertySlot. Global declarations are no longer stored in the
+        property map, so a call to getDirect is insufficient for finding
+        override properties.
+
+        * API/testapi.c: 
+        * API/testapi.js: Added test for the getDirect change mentioned above.
+
+        * kjs/ExecState.cpp: 
+        * kjs/ExecState.h: Dialed back the optimization to store a direct
+        pointer to the localStorage buffer. One ExecState can grow the global
+        object's localStorage without another ExecState's knowledge, so
+        ExecState can't store a direct pointer to the localStorage buffer
+        unless/until we invent a way to update all the relevant ExecStates.
+
+        * kjs/JSGlobalObject.cpp: Inserted the symbol table into get and put
+        operations.
+        (KJS::JSGlobalObject::reset): Reset the symbol table and local storage,
+        too. Also, clear the property map here, removing the need for a
+        separate call.
+
+        * kjs/JSVariableObject.cpp:
+        * kjs/JSVariableObject.h: Added support for saving localStorage and the
+        symbol table to the back/forward cache, and restoring them.
+
+        * kjs/function.cpp:
+        (KJS::GlobalFuncImp::callAsFunction): Renamed progNode to evalNode
+        because it's an EvalNode, not a ProgramNode.
+
+        * kjs/lookup.h:
+        (KJS::cacheGlobalObject): Replaced put with faster putDirect, since
+        that's how the rest of lookup.h works. putDirect is safe here because
+        cacheGlobalObject is only used for objects whose names are not valid
+        identifiers.
+
+        * kjs/nodes.cpp: The good stuff!
+
+        (KJS::EvalNode::processDeclarations): Replaced hasProperty with
+        the new hasOwnProperty, which is slightly faster.
+
+        * kjs/object.h: Nixed clearProperties because clear() does this job now.
+
+        * kjs/property_map.cpp:
+        * kjs/property_map.h: More back/forward cache support.
+        
+        * wtf/Vector.h:
+        (WTF::::grow): Added fast non-branching grow function. I used it in
+        an earlier version of this patch, even though it's not used anymore.
+
 2007-12-09  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Oliver Hunt.

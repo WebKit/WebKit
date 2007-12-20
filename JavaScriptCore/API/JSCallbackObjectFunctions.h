@@ -96,7 +96,7 @@ UString JSCallbackObject<Base>::className() const
     if (!m_class->className.isNull())
         return m_class->className;
     
-    return JSObject::className();
+    return Base::className();
 }
 
 template <class Base>
@@ -140,7 +140,7 @@ bool JSCallbackObject<Base>::getOwnPropertySlot(ExecState* exec, const Identifie
         }
     }
     
-    return JSObject::getOwnPropertySlot(exec, propertyName, slot);
+    return Base::getOwnPropertySlot(exec, propertyName, slot);
 }
 
 template <class Base>
@@ -187,7 +187,7 @@ void JSCallbackObject<Base>::put(ExecState* exec, const Identifier& propertyName
         }
     }
     
-    return JSObject::put(exec, propertyName, value, attr);
+    return Base::put(exec, propertyName, value, attr);
 }
 
 template <class Base>
@@ -227,7 +227,7 @@ bool JSCallbackObject<Base>::deleteProperty(ExecState* exec, const Identifier& p
         }
     }
     
-    return JSObject::deleteProperty(exec, propertyName);
+    return Base::deleteProperty(exec, propertyName);
 }
 
 template <class Base>
@@ -361,7 +361,7 @@ void JSCallbackObject<Base>::getPropertyNames(ExecState* exec, PropertyNameArray
         }
     }
     
-    JSObject::getPropertyNames(exec, propertyNames);
+    Base::getPropertyNames(exec, propertyNames);
 }
 
 template <class Base>
@@ -377,7 +377,7 @@ double JSCallbackObject<Base>::toNumber(ExecState* exec) const
                 return toJS(value)->getNumber();
         }
             
-    return JSObject::toNumber(exec);
+    return Base::toNumber(exec);
 }
 
 template <class Base>
@@ -393,7 +393,7 @@ UString JSCallbackObject<Base>::toString(ExecState* exec) const
                 return toJS(value)->getString();
         }
             
-    return JSObject::toString(exec);
+    return Base::toString(exec);
 }
 
 template <class Base>
@@ -453,8 +453,10 @@ JSValue* JSCallbackObject<Base>::staticFunctionGetter(ExecState* exec, JSObject*
     ASSERT(slot.slotBase()->inherits(&JSCallbackObject::info));
     JSCallbackObject* thisObj = static_cast<JSCallbackObject*>(slot.slotBase());
     
-    if (JSValue* cachedOrOverrideValue = thisObj->getDirect(propertyName))
-        return cachedOrOverrideValue;
+    // Check for cached or override property.
+    PropertySlot slot2;
+    if (thisObj->Base::getOwnPropertySlot(exec, propertyName, slot2))
+        return slot2.getValue(exec, thisObj, propertyName);
     
     for (JSClassRef jsClass = thisObj->m_class; jsClass; jsClass = jsClass->parentClass) {
         if (OpaqueJSClass::StaticFunctionsTable* staticFunctions = jsClass->staticFunctions) {

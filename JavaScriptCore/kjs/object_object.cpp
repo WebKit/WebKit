@@ -74,10 +74,8 @@ JSValue *ObjectProtoFunc::callAsFunction(ExecState *exec, JSObject *thisObj, con
     switch (id) {
         case ValueOf:
             return thisObj;
-        case HasOwnProperty: {
-            PropertySlot slot;
-            return jsBoolean(thisObj->getOwnPropertySlot(exec, Identifier(args[0]->toString(exec)), slot));
-        }
+        case HasOwnProperty:
+            return jsBoolean(thisObj->hasOwnProperty(exec, Identifier(args[0]->toString(exec))));
         case IsPrototypeOf: {
             if (!args[0]->isObject())
                 return jsBoolean(false);

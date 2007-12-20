@@ -282,7 +282,7 @@ namespace KJS {
       return static_cast<JSObject* >(obj);
     }
     JSObject* newObject = new ClassCtor(exec);
-    globalObject->put(exec, propertyName, newObject, Internal | DontEnum);
+    globalObject->putDirect(propertyName, newObject, Internal | DontEnum);
     return newObject;
   }
 

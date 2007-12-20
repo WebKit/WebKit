@@ -54,18 +54,10 @@ bool JSDOMWindow::customGetOwnPropertySlot(KJS::ExecState* exec, const KJS::Iden
     }
 
     // Look for overrides first
-    KJS::JSValue** val = getDirectLocation(propertyName);
-    if (val) {
-        if (!allowsAccessFrom(exec)) {
+    if (JSGlobalObject::getOwnPropertySlot(exec, propertyName, slot)) {
+        if (!allowsAccessFrom(exec))
             slot.setUndefined(this);
-            return true;
-        }
 
-        // FIXME: Come up with a way of having JavaScriptCore handle getters/setters in this case
-        if (_prop.hasGetterSetterProperties() && val[0]->type() == KJS::GetterSetterType)
-            fillGetterPropertySlot(slot, val);
-        else
-            slot.setValueSlot(this, val);
         return true;
     }
 
@@ -99,16 +91,17 @@ bool JSDOMWindow::customPut(KJS::ExecState* exec, const KJS::Identifier& propert
     if (!impl()->frame())
         return true;
 
-    // Called by an internal KJS, save time and jump directly to JSObject.
+    // Called by an internal KJS, save time and jump directly to JSGlobalObject.
     if (attr != KJS::None && attr != KJS::DontDelete) {
-        KJS::JSObject::put(exec, propertyName, value, attr);
+        KJS::JSGlobalObject::put(exec, propertyName, value, attr);
         return true;
     }
 
-    // We have a local override (e.g. "var location"), save time and jump directly to JSObject.
-    if (KJS::JSObject::getDirect(propertyName)) {
+    // We have a local override (e.g. "var location"), save time and jump directly to JSGlobalObject.
+    KJS::PropertySlot slot;
+    if (KJS::JSGlobalObject::getOwnPropertySlot(exec, propertyName, slot)) {
         if (allowsAccessFrom(exec))
-            KJS::JSObject::put(exec, propertyName, value, attr);
+            KJS::JSGlobalObject::put(exec, propertyName, value, attr);
         return true;
     }
 

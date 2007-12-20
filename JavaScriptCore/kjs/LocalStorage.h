@@ -25,7 +25,8 @@
 #ifndef KJS_LOCAL_STORAGE_H
 #define KJS_LOCAL_STORAGE_H
 
-#include <wtf/Vector.h>
+#include <wtf/Forward.h>
+#include <wtf/VectorTraits.h>
 
 namespace KJS {
     class JSValue;

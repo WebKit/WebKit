@@ -3,8 +3,8 @@ This test checks that const declarations in JavaScript work and are readonly.
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS x is "RIGHT"
-PASS y is "RIGHT"
+FAIL x should be RIGHT. Was WRONG.
+FAIL y should be RIGHT. Was WRONG.
 PASS successfullyParsed is true
 
 TEST COMPLETE

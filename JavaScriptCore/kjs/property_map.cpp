@@ -122,12 +122,6 @@ struct PropertyMapHashTable {
     }
 };
 
-struct SavedProperty {
-    Identifier key;
-    ProtectedPtr<JSValue> value;
-    unsigned attributes;
-};
-
 static const unsigned emptyEntryIndex = 0;
 static const unsigned deletedSentinelIndex = 1;
 

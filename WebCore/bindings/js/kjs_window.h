@@ -48,6 +48,8 @@ namespace KJS {
 
   // This is the only WebCore JS binding which does not inherit from DOMObject
   class Window : public JSGlobalObject {
+    typedef JSGlobalObject Base;
+    
     friend class WebCore::JSLocation;
     friend class WebCore::ScheduledAction;
   protected:

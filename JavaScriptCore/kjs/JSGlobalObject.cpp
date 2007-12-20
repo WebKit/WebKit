@@ -129,6 +129,20 @@ void JSGlobalObject::init()
     reset(prototype());
 }
 
+bool JSGlobalObject::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
+{
+    if (symbolTableGet(propertyName, slot))
+        return true;
+    return JSVariableObject::getOwnPropertySlot(exec, propertyName, slot);
+}
+
+void JSGlobalObject::put(ExecState* exec, const Identifier& propertyName, JSValue* value, int attr)
+{
+    if (symbolTablePut(propertyName, value, attr))
+        return;
+    return JSVariableObject::put(exec, propertyName, value, attr);
+}
+
 static inline JSObject* lastInPrototypeChain(JSObject* object)
 {
     JSObject* o = object;
@@ -139,11 +153,13 @@ static inline JSObject* lastInPrototypeChain(JSObject* object)
 
 void JSGlobalObject::reset(JSValue* prototype)
 {
-    // Clear before inititalizing, to avoid marking uninitialized (dangerous) or 
-    // stale (wasteful) pointers during possible garbage collection while creating
-    // new objects below.
+    // Clear before inititalizing, to avoid calling mark() on stale pointers --
+    // which would be wasteful -- or uninitialized pointers -- which would be
+    // dangerous. (The allocations below may cause a GC.)
 
-    ExecState* exec = &d()->globalExec;
+    _prop.clear();
+    localStorage().clear();
+    symbolTable().clear();
 
     // Prototypes
     d()->functionPrototype = 0;
@@ -181,6 +197,8 @@ void JSGlobalObject::reset(JSValue* prototype)
     d()->syntaxErrorConstructor = 0;
     d()->typeErrorConstructor = 0;
     d()->URIErrorConstructor = 0;
+
+    ExecState* exec = &d()->globalExec;
 
     // Prototypes
     d()->functionPrototype = new FunctionPrototype(exec);

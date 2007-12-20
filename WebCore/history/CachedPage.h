@@ -27,6 +27,7 @@
 #define CachedPage_h
 
 #include "DocumentLoader.h"
+#include <kjs/SymbolTable.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Forward.h>
 #include <wtf/RefPtr.h>
@@ -40,7 +41,7 @@ typedef struct objc_object* id;
 namespace KJS {
     
     class SavedBuiltins;
-    class SavedProperties;
+    struct SavedProperties;
 }
 
 namespace WebCore {
@@ -83,6 +84,8 @@ private:
     KURL m_URL;
     OwnPtr<KJS::SavedProperties> m_windowProperties;
     OwnPtr<KJS::SavedProperties> m_locationProperties;
+    OwnPtr<KJS::SavedProperties> m_windowLocalStorage;
+    KJS::SymbolTable m_windowSymbolTable;
     OwnPtr<KJS::SavedBuiltins> m_windowBuiltins;
     OwnPtr<PausedTimeouts> m_pausedTimeouts;
     OwnPtr<CachedPagePlatformData> m_cachedPagePlatformData;

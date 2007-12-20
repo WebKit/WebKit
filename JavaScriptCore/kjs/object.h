@@ -111,7 +111,7 @@ namespace KJS {
      * (that is, the ECMAScript "null" value, not a null object pointer).
      */
     JSObject();
-
+    
     virtual void mark();
     virtual JSType type() const;
 
@@ -283,8 +283,9 @@ namespace KJS {
      * @param propertyName The name of the property to check for
      * @return true if the object has the property, otherwise false
      */
-    bool hasProperty(ExecState *exec, const Identifier &propertyName) const;
-    bool hasProperty(ExecState *exec, unsigned propertyName) const;
+    bool hasProperty(ExecState*, const Identifier&) const;
+    bool hasProperty(ExecState*, unsigned) const;
+    bool hasOwnProperty(ExecState*, const Identifier&) const;
 
     /**
      * Removes the specified property from the object.
@@ -443,20 +444,15 @@ namespace KJS {
     void defineGetter(ExecState *exec, const Identifier& propertyName, JSObject *getterFunc);
     void defineSetter(ExecState *exec, const Identifier& propertyName, JSObject *setterFunc);
 
-    /**
-     * Remove all properties from this object.
-     * This doesn't take DontDelete into account, and isn't in the ECMA spec.
-     * It's simply a quick way to remove everything stored in the property map.
-     */
-    void clearProperties() { _prop.clear(); }
-
     void saveProperties(SavedProperties &p) const { _prop.save(p); }
     void restoreProperties(const SavedProperties &p) { _prop.restore(p); }
 
     virtual bool isActivationObject() { return false; }
     virtual bool isGlobalObject() const { return false; }
+
   protected:
     PropertyMap _prop;
+
   private:
     const HashEntry* findPropertyHashEntry( const Identifier& propertyName ) const;
     JSValue *_proto;

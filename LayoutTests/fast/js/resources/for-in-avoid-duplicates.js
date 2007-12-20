@@ -8,7 +8,7 @@ function constr() {
     this.yyy = "bar";
 }
 
-constructor.prototype = { xxx: "baz", yyy: "quux" };
+constr.prototype = { xxx: "baz", yyy: "quux" };
 
 var obj = new constr();
 

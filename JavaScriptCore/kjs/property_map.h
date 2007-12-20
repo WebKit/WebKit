@@ -23,6 +23,7 @@
 #define KJS_PROPERTY_MAP_H_
 
 #include "identifier.h"
+#include "protect.h"
 #include <wtf/OwnArrayPtr.h>
 
 namespace KJS {
@@ -33,15 +34,17 @@ namespace KJS {
     
     struct PropertyMapEntry;
     struct PropertyMapHashTable;
-    struct SavedProperty;
     
-    class SavedProperties {
-        friend class PropertyMap;
-    public:
+    struct SavedProperty {
+        Identifier key;
+        ProtectedPtr<JSValue> value;
+        unsigned attributes;
+    };
+
+    struct SavedProperties {
         SavedProperties();
         ~SavedProperties();
         
-    private:
         unsigned m_count;
         OwnArrayPtr<SavedProperty> m_properties;
     };
@@ -50,7 +53,7 @@ namespace KJS {
     public:
         PropertyMap();
         ~PropertyMap();
-
+        
         void clear();
         
         void put(const Identifier&, JSValue*, unsigned attributes, bool checkReadOnly = false);

@@ -334,6 +334,12 @@ bool JSObject::deleteProperty(ExecState* /*exec*/, const Identifier &propertyNam
   return true;
 }
 
+bool JSObject::hasOwnProperty(ExecState* exec, const Identifier& propertyName) const
+{
+    PropertySlot slot;
+    return const_cast<JSObject*>(this)->getOwnPropertySlot(exec, propertyName, slot);
+}
+
 bool JSObject::deleteProperty(ExecState *exec, unsigned propertyName)
 {
   return deleteProperty(exec, Identifier::from(propertyName));

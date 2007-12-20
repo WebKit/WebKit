@@ -83,6 +83,7 @@ CachedPage::CachedPage(Page* page)
     , m_URL(page->mainFrame()->loader()->url())
     , m_windowProperties(new SavedProperties)
     , m_locationProperties(new SavedProperties)
+    , m_windowLocalStorage(new SavedProperties)
     , m_windowBuiltins(new SavedBuiltins)
 {
 #ifndef NDEBUG
@@ -92,16 +93,17 @@ CachedPage::CachedPage(Page* page)
     m_document->willSaveToCache(); 
     
     Frame* mainFrame = page->mainFrame();
-    KJSProxy* proxy = mainFrame->scriptProxy();
-    KJS::Window* window = KJS::Window::retrieveWindow(mainFrame);
+    Window* window = Window::retrieveWindow(mainFrame);
 
     mainFrame->clearTimers();
 
     JSLock lock;
 
-    if (proxy && window) {
-        proxy->globalObject()->saveBuiltins(*m_windowBuiltins.get());
+    if (window) {
+        window->saveBuiltins(*m_windowBuiltins.get());
         window->saveProperties(*m_windowProperties.get());
+        window->saveSymbolTable(m_windowSymbolTable);
+        window->saveLocalStorage(*m_windowLocalStorage.get());
         window->location()->saveProperties(*m_locationProperties.get());
         m_pausedTimeouts.set(window->pauseTimeouts());
     }
@@ -128,14 +130,15 @@ void CachedPage::restore(Page* page)
     ASSERT(m_document->view() == m_view);
 
     Frame* mainFrame = page->mainFrame();
-    KJSProxy* proxy = mainFrame->scriptProxy();
-    KJS::Window* window = KJS::Window::retrieveWindow(mainFrame);
+    Window* window = Window::retrieveWindow(mainFrame);
 
     JSLock lock;
 
-    if (proxy && window) {
-        proxy->globalObject()->restoreBuiltins(*m_windowBuiltins.get());
+    if (window) {
+        window->restoreBuiltins(*m_windowBuiltins.get());
         window->restoreProperties(*m_windowProperties.get());
+        window->restoreSymbolTable(m_windowSymbolTable);
+        window->restoreLocalStorage(*m_windowLocalStorage.get());
         window->location()->restoreProperties(*m_locationProperties.get());
         window->resumeTimeouts(m_pausedTimeouts.get());
     }
@@ -194,6 +197,8 @@ void CachedPage::clear()
     m_windowBuiltins.clear();
     m_pausedTimeouts.clear();
     m_cachedPagePlatformData.clear();
+    m_windowLocalStorage.clear();
+    m_windowSymbolTable.clear();
 
     gcController().garbageCollectSoon();
 }
