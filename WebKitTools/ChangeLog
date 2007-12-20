@@ -1,3 +1,15 @@
+2007-12-19  David Kilzer  <ddkilzer@apple.com>
+
+        Make svn-apply/svn-unapply work with patches from git-format-patch.
+
+        Reviewed by Darin.
+
+        * Scripts/svn-apply:
+        (patch): If 'Index:' can't be found in the text passed in, print it
+        out with a warning and return early.
+        * Scripts/svn-unapply:
+        (patch): Ditto.
+
 2007-12-18  Kevin Ollivier  <kevino@theolliviers.com>
 
         Reviewed by Alp Toker.

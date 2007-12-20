@@ -327,7 +327,11 @@ sub patch($)
     my ($patch) = @_;
     return if !$patch;
 
-    $patch =~ m|^Index: ([^\n]+)| or die "Failed to find 'Index:' in \"$patch\"\n";
+    unless ($patch =~ m|^Index: ([^\n]+)|) {
+        my $separator = '-' x 67;
+        warn "Failed to find 'Index:' in:\n$separator\n$patch\n$separator\n";
+        return;
+    }
     my $fullPath = $1;
 
     my $deletion = 0;
