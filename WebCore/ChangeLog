@@ -1,3 +1,14 @@
+2007-12-20  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Oliver and Geoff
+        
+        - fix <rdar://problem/5536858> Yellow highlight for find results is sometimes shorter 
+          than white "hole" behind it
+
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::addLineBoxRects):
+        respect useSelectionHeight in all cases; we were only respecting it in one of the two cases
+
 2007-12-20  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.

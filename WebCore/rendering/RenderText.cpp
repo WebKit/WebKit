@@ -197,13 +197,29 @@ void RenderText::absoluteRects(Vector<IntRect>& rects, int tx, int ty, bool)
 
 void RenderText::addLineBoxRects(Vector<IntRect>& rects, unsigned start, unsigned end, bool useSelectionHeight)
 {
+    // Work around signed/unsigned issues. This function takes unsigneds, and is often passed UINT_MAX
+    // to mean "all the way to the end". InlineTextBox coordinates are unsigneds, so changing this 
+    // function to take ints causes various internal mismatches. But selectionRect takes ints, and 
+    // passing UINT_MAX to it causes trouble. Ideally we'd change selectionRect to take unsigneds, but 
+    // that would cause many ripple effects, so for now we'll just clamp our unsigned parameters to INT_MAX.
+    ASSERT(end == UINT_MAX || end <= INT_MAX);
+    ASSERT(start <= INT_MAX);
+    start = min(start, static_cast<unsigned>(INT_MAX));
+    end = min(end, static_cast<unsigned>(INT_MAX));
+    
     int x, y;
     absolutePositionForContent(x, y);
 
     for (InlineTextBox* box = firstTextBox(); box; box = box->nextTextBox()) {
-        if (start <= box->start() && box->end() <= end)
-            rects.append(IntRect(x + box->xPos(), y + box->yPos(), box->width(), box->height()));
-        else {
+        if (start <= box->start() && box->end() <= end) {
+            IntRect r = IntRect(x + box->xPos(), y + box->yPos(), box->width(), box->height());
+            if (useSelectionHeight) {
+                IntRect selectionRect = box->selectionRect(x, y, start, end);
+                r.setHeight(selectionRect.height());
+                r.setY(selectionRect.y());
+            }
+            rects.append(r);
+        } else {
             unsigned realEnd = min(box->end() + 1, end); // box->end() points at the last char, not after it
             IntRect r = box->selectionRect(x, y, start, realEnd);
             if (!r.isEmpty()) {
