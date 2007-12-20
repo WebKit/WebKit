@@ -1,3 +1,15 @@
+2007-12-20  Kevin Decker  <kdecker@apple.com>
+
+        Reviewed by Anders.
+        
+        Fixed: <rdar://problem/5638288> REGRESSION: Flash movies show up in other tabs above the page (16373)
+
+        * Plugins/WebBaseNetscapePluginView.mm:
+        (-[WebBaseNetscapePluginView updateAndSetWindow]): QuickDraw plug-ins must manually be told when to stop
+         writing to the window backing store. The problem was that change-set 28400 introduced an early return 
+         which prevented this necessary operation. The fix is to limit the scope of the early return to CG and GL
+         plug-ins and to tweak the needsFocus check to prevent an exception from occurring in QuickDraw-based plug-ins.
+
 2007-12-19  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Oliver Hunt.

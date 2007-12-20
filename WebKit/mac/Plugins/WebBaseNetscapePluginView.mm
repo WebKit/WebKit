@@ -1194,19 +1194,25 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
 {
     // A plug-in can only update if it's (1) already been started (2) isn't stopped
     // and (3) is able to draw on-screen. To meet condition (3) the plug-in must not
-    // be hidden and be attached to a window.
-    if (!isStarted || ![self canDraw])
+    // be hidden and be attached to a window. QuickDraw plug-ins are an important
+    // excpetion to rule (3) because they manually must be told when to stop writing
+    // bits to the window backing store, thus to do so requires a new call to
+    // NPP_SetWindow() with an empty NPWindow struct.
+    if (!isStarted)
         return;
-
-    BOOL needsFocus = [NSView focusView] != self;
+    if ((drawingModel == NPDrawingModelCoreGraphics || drawingModel == NPDrawingModelOpenGL)  && ![self canDraw])
+        return;
+    
+    BOOL needsFocus = [self window] && ([NSView focusView] != self);
     if (needsFocus)
-        [self lockFocus];    
+        [self lockFocus];
+
     PortState portState = [self saveAndSetNewPortState];
     if (portState) {
         [self setWindowIfNecessary];
         [self restorePortState:portState];
         free(portState);
-    }
+    }   
     if (needsFocus)
         [self unlockFocus];
 }
