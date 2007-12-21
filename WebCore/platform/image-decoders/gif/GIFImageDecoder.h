@@ -64,7 +64,7 @@ public:
     void sizeNowAvailable(unsigned width, unsigned height);
     void decodingHalted(unsigned bytesLeft);
     void haveDecodedRow(unsigned frameIndex, unsigned char* rowBuffer, unsigned char* rowEnd, unsigned rowNumber, 
-                        unsigned repeatCount);
+                        unsigned repeatCount, bool writeTransparentPixels);
     void frameComplete(unsigned frameIndex, unsigned frameDuration, RGBA32Buffer::FrameDisposalMethod disposalMethod);
     void gifComplete();
 

@@ -278,7 +278,8 @@ void GIFImageDecoder::haveDecodedRow(unsigned frameIndex,
                                      unsigned char* rowBuffer,   // Pointer to single scanline temporary buffer
                                      unsigned char* rowEnd,
                                      unsigned rowNumber,  // The row index
-                                     unsigned repeatCount) // How many times to repeat the row
+                                     unsigned repeatCount,  // How many times to repeat the row
+                                     bool writeTransparentPixels)
 {
     // Initialize the frame if necessary.
     RGBA32Buffer& buffer = m_frameBufferCache[frameIndex];
@@ -317,6 +318,15 @@ void GIFImageDecoder::haveDecodedRow(unsigned frameIndex,
             RGBA32Buffer::setRGBA(*currDst, red, green, blue, 255);
         } else {
             m_currentBufferSawAlpha = true;
+            // We may or may not need to write transparent pixels to the buffer.
+            // If we're compositing against a previous image, it's wrong, and if
+            // we're writing atop a cleared, fully transparent buffer, it's
+            // unnecessary; but if we're decoding an interlaced gif and
+            // displaying it "Haeberli"-style, we must write these for passes
+            // beyond the first, or the initial passes will "show through" the
+            // later ones.
+            if (writeTransparentPixels)
+                RGBA32Buffer::setRGBA(*currDst, 0, 0, 0, 0);
         }
         currDst++;
         currentRowByte++;

@@ -161,7 +161,8 @@ void GIFImageReader::output_row()
   // CALLBACK: Let the client know we have decoded a row.
   if (clientptr && frame_reader)
     clientptr->haveDecodedRow(images_count - 1, frame_reader->rowbuf, frame_reader->rowend,
-                              drow_start, drow_end - drow_start + 1);
+                              drow_start, drow_end - drow_start + 1,
+                              gs->progressive_display && gs->interlaced && gs->ipass > 1);
 
   gs->rowp = gs->rowbuf;
 

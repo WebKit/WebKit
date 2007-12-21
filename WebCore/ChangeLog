@@ -1,3 +1,17 @@
+2007-12-20  Peter Kasting  <zerodpx@gmail.com>
+
+        Reviewed by Alp Toker.
+
+        http://bugs.webkit.org/show_bug.cgi?id=16508
+        Fix regression in GIFImageDecoder.cpp: "Haeberli hack" led to wrongly
+        decoded transparent areas.
+
+        * platform/image-decoders/gif/GIFImageDecoder.cpp:
+        (WebCore::GIFImageDecoder::haveDecodedRow):
+        * platform/image-decoders/gif/GIFImageDecoder.h:
+        * platform/image-decoders/gif/GIFImageReader.cpp:
+        (GIFImageReader::output_row):
+
 2007-12-20  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Oliver Hunt.
