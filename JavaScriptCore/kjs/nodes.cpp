@@ -3652,12 +3652,8 @@ JSValue* ExprStatementNode::execute(ExecState* exec)
 
 void IfNode::optimizeVariableAccess(SymbolTable&, DeclarationStacks::NodeStack& nodeStack)
 {
-    if (statement2)
-        nodeStack.append(statement2.get());
-    ASSERT(statement1);
-    nodeStack.append(statement1.get());
-    ASSERT(expr);
-    nodeStack.append(expr.get());
+    nodeStack.append(m_ifBlock.get());
+    nodeStack.append(m_condition.get());
 }
 
 // ECMA 12.5
@@ -3665,19 +3661,32 @@ JSValue* IfNode::execute(ExecState* exec)
 {
     KJS_BREAKPOINT
 
-    bool b = expr->evaluateToBoolean(exec);
+    bool b = m_condition->evaluateToBoolean(exec);
     KJS_CHECKEXCEPTION
 
-    // if ... then
     if (b)
-        return statement1->execute(exec);
+        return m_ifBlock->execute(exec);
+    return exec->setNormalCompletion();
+}
 
-    // no else
-    if (!statement2)
-        return exec->setNormalCompletion();
+void IfElseNode::optimizeVariableAccess(SymbolTable& table, DeclarationStacks::NodeStack& nodeStack)
+{
+    nodeStack.append(m_elseBlock.get());
+    IfNode::optimizeVariableAccess(table, nodeStack);
+}
 
-    // else
-    return statement2->execute(exec);
+// ECMA 12.5
+JSValue* IfElseNode::execute(ExecState* exec)
+{
+    KJS_BREAKPOINT;
+
+    bool b = m_condition->evaluateToBoolean(exec);
+    KJS_CHECKEXCEPTION
+
+    if (b)
+        return m_ifBlock->execute(exec);
+
+    return m_elseBlock->execute(exec);
 }
 
 // ------------------------------ DoWhileNode ----------------------------------

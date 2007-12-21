@@ -1,3 +1,28 @@
+2007-12-17  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by mjs.
+        
+        Split IfNode into IfNode and IfElseNode for speedup.
+        http://bugs.webkit.org/show_bug.cgi?id=16470
+        
+        SunSpider claims this is 1.003x as fast as before.
+        (This required running with --runs 15 to get consistent enough results to tell!)
+
+        * kjs/grammar.y:
+        * kjs/nodes.cpp:
+        (KJS::IfNode::optimizeVariableAccess):
+        (KJS::IfNode::execute):
+        (KJS::IfNode::getDeclarations):
+        (KJS::IfElseNode::optimizeVariableAccess):
+        (KJS::IfElseNode::execute):
+        (KJS::IfElseNode::getDeclarations):
+        * kjs/nodes.h:
+        (KJS::IfNode::):
+        (KJS::IfElseNode::):
+        * kjs/nodes2string.cpp:
+        (KJS::IfNode::streamTo):
+        (KJS::IfElseNode::streamTo):
+
 2007-12-20  Darin Adler  <darin@apple.com>
 
         Reviewed by Sam.

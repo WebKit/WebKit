@@ -752,9 +752,13 @@ void ExprStatementNode::streamTo(SourceStream& s) const
 
 void IfNode::streamTo(SourceStream& s) const
 {
-    s << Endl << "if (" << expr << ')' << Indent << statement1 << Unindent;
-    if (statement2)
-        s << Endl << "else" << Indent << statement2 << Unindent;
+    s << Endl << "if (" << m_condition << ')' << Indent << m_ifBlock << Unindent;
+}
+
+void IfElseNode::streamTo(SourceStream& s) const
+{
+    IfNode::streamTo(s);
+    s << Endl << "else" << Indent << m_elseBlock << Unindent;
 }
 
 void DoWhileNode::streamTo(SourceStream& s) const

@@ -801,10 +801,10 @@ ExprStatement:
 
 IfStatement:
     IF '(' Expr ')' Statement %prec IF_WITHOUT_ELSE
-                                        { $$ = createNodeInfo<StatementNode*>(new IfNode($3, $5.m_node, 0), $5.m_varDeclarations, $5.m_funcDeclarations);
+                                        { $$ = createNodeInfo<StatementNode*>(new IfNode($3, $5.m_node), $5.m_varDeclarations, $5.m_funcDeclarations);
                                           DBG($$.m_node, @1, @4); }
   | IF '(' Expr ')' Statement ELSE Statement
-                                        { $$ = createNodeInfo<StatementNode*>(new IfNode($3, $5.m_node, $7.m_node), mergeDeclarationLists($5.m_varDeclarations, $7.m_varDeclarations), mergeDeclarationLists($5.m_funcDeclarations, $7.m_funcDeclarations)); 
+                                        { $$ = createNodeInfo<StatementNode*>(new IfElseNode($3, $5.m_node, $7.m_node), mergeDeclarationLists($5.m_varDeclarations, $7.m_varDeclarations), mergeDeclarationLists($5.m_funcDeclarations, $7.m_funcDeclarations)); 
                                           DBG($$.m_node, @1, @4); }
 ;
 
