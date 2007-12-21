@@ -1,3 +1,19 @@
+2007-12-20  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Reviewed by Kevin Decker.
+
+        <rdar://problem/5655797> REGRESSION(304-306A10) Safari does not find
+        shockwave plugin on freshly installed OS
+
+        Look for Director plugin in its native directory.
+
+        * plugins/win/PluginDatabaseWin.cpp:
+        (WebCore::PluginDatabaseWin::getPluginsInPaths): The Director plugin
+        doesn't start with "np," so special case its filename.
+        (WebCore::addMacromediaPluginPaths): Add Flash and "Shockwave 10"
+        directories to the plugin paths.
+        (WebCore::PluginDatabaseWin::defaultPluginPaths):
+
 2007-12-20  Peter Kasting  <zerodpx@gmail.com>
 
         Reviewed by Alp Toker.

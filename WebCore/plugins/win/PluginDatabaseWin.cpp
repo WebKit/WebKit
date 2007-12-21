@@ -188,7 +188,8 @@ PluginSet PluginDatabaseWin::getPluginsInPaths() const
                 continue;
 
             String filename = String(findFileData.cFileName, wcslen(findFileData.cFileName));
-            if (!filename.startsWith("np", false) || !filename.endsWith(".dll", false))
+            if ((!filename.startsWith("np", false) || !filename.endsWith("dll", false)) &&
+                (!equalIgnoringCase(filename, "Plugin.dll") || !it->endsWith("Shockwave 10", false)))
                 continue;
 
             String fullPath = *it + "\\" + filename;
@@ -405,18 +406,20 @@ exit:
     return pluginsPath;
 }
 
-static inline void addFlashPluginPath(Vector<String>& paths)
+static inline void addMacromediaPluginPaths(Vector<String>& paths)
 {
     WCHAR systemDirectoryStr[MAX_PATH];
 
     if (GetSystemDirectory(systemDirectoryStr, _countof(systemDirectoryStr)) == 0)
         return;
 
-    WCHAR flashDirectoryStr[MAX_PATH];
+    WCHAR macromediaDirectoryStr[MAX_PATH];
 
-    PathCombine(flashDirectoryStr, systemDirectoryStr, TEXT("macromed\\Flash"));
+    PathCombine(macromediaDirectoryStr, systemDirectoryStr, TEXT("macromed\\Flash"));
+    paths.append(macromediaDirectoryStr);
 
-    paths.append(flashDirectoryStr);
+    PathCombine(macromediaDirectoryStr, systemDirectoryStr, TEXT("macromed\\Shockwave 10"));
+    paths.append(macromediaDirectoryStr);
 }
 
 Vector<String> PluginDatabaseWin::defaultPluginPaths()
@@ -430,7 +433,7 @@ Vector<String> PluginDatabaseWin::defaultPluginPaths()
     addAdobeAcrobatPluginPath(paths);
     addMozillaPluginPaths(paths);
     addWindowsMediaPlayerPluginPath(paths);
-    addFlashPluginPath(paths);
+    addMacromediaPluginPaths(paths);
 
     return paths;
 }
