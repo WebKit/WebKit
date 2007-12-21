@@ -1,3 +1,15 @@
+2007-12-21  Darin Adler  <darin@apple.com>
+
+        - fix broken regression tests
+
+        The broken tests were fast/js/do-while-expression-value.html and
+        fast/js/while-expression-value.html.
+
+        * kjs/nodes.cpp: Check in the correct version of this file. I had accidentally landed
+        an old version of my patch for bug 16471.
+        (KJS::statementListExecute): The logic here was backwards. Have to set the value
+        even for non-normal execution results.
+
 2007-12-20  Alexey Proskuryakov  <ap@webkit.org>
 
         Windows build fix
