@@ -6,7 +6,6 @@
  * Copyright (C) 2006 Michael Emmel mike.emmel@gmail.com 
  * Copyright (C) 2007 Alp Toker <alp@atoker.com>
  * Copyright (C) 2007 Holger Hans Peter Freyther
- * Copyright (C) 2007 Pioneer Research Center USA, Inc.
  * All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -26,106 +25,90 @@
  *
  */
 
-// Use the Pango backend API for compatibility with older Pango versions.
-#define PANGO_ENABLE_BACKEND
-
 #include "config.h"
 #include "FontPlatformData.h"
 
 #include "CString.h"
 #include "PlatformString.h"
 #include "FontDescription.h"
-#include <cairo.h>
-#include <assert.h>
 
-#include <pango/pango.h>
-#include <pango/pangocairo.h>
-
-// Use cairo-ft if a recent enough Pango version isn't available.
-#if !PANGO_VERSION_CHECK(1,18,0)
 #include <cairo-ft.h>
-#include <pango/pangofc-fontmap.h>
-#endif
+#include <cairo.h>
+#include <fontconfig/fcfreetype.h>
 
 namespace WebCore {
 
-PangoFontMap* FontPlatformData::m_fontMap = 0;
-GHashTable* FontPlatformData::m_hashTable = 0;
-
 FontPlatformData::FontPlatformData(const FontDescription& fontDescription, const AtomicString& familyName)
-    : m_context(0)
-    , m_font(0)
+    : m_pattern(0)
     , m_fontDescription(fontDescription)
     , m_scaledFont(0)
 {
     FontPlatformData::init();
 
-    CString  stored_family = familyName.domString().utf8();
-    gchar const* families[] = {
-        stored_family.data(),
-        NULL
-    };
-
-    switch (fontDescription.genericFamily()) {
-    case FontDescription::SerifFamily:
-        families[1] = "serif";
-        break;
-    case FontDescription::SansSerifFamily:
-        families[1] = "sans";
-        break;
-    case FontDescription::MonospaceFamily:
-        families[1] = "monospace";
-        break;
-    case FontDescription::NoFamily:
-    case FontDescription::StandardFamily:
-    default:
-        families[1] = "sans";
-        break;
-    }
-
-    PangoFontDescription* description = pango_font_description_new();
-    pango_font_description_set_absolute_size(description, fontDescription.computedSize() * PANGO_SCALE);
-
-    if (fontDescription.bold())
-        pango_font_description_set_weight(description, PANGO_WEIGHT_BOLD);
+    CString familyNameString = familyName.domString().utf8();
+    const char* fcfamily = familyNameString.data();
+    int fcslant = FC_SLANT_ROMAN;
+    int fcweight = FC_WEIGHT_NORMAL;
+    float fcsize = fontDescription.computedSize();
     if (fontDescription.italic())
-        pango_font_description_set_style(description, PANGO_STYLE_ITALIC);
+        fcslant = FC_SLANT_ITALIC;
+    if (fontDescription.bold())
+        fcweight = FC_WEIGHT_BOLD;
 
-    m_context = pango_cairo_font_map_create_context(PANGO_CAIRO_FONT_MAP(m_fontMap));
+    int type = fontDescription.genericFamily();
 
-    for (unsigned int i = 0; !m_font && i < G_N_ELEMENTS(families); i++) {
-        pango_font_description_set_family(description, families[i]);
-        m_font = pango_font_map_load_font(m_fontMap, m_context, description);
+    FcPattern* pattern = FcPatternCreate();
+    cairo_font_face_t* fontFace;
+    cairo_font_options_t* options;
+    cairo_matrix_t fontMatrix;
+
+    if (!FcPatternAddString(pattern, FC_FAMILY, reinterpret_cast<const FcChar8*>(fcfamily)))
+        goto freePattern;
+
+    switch (type) {
+        case FontDescription::SerifFamily:
+            fcfamily = "serif";
+            break;
+        case FontDescription::SansSerifFamily:
+            fcfamily = "sans-serif";
+            break;
+        case FontDescription::MonospaceFamily:
+            fcfamily = "monospace";
+            break;
+        case FontDescription::NoFamily:
+        case FontDescription::StandardFamily:
+        default:
+            fcfamily = "sans-serif";
     }
 
+    if (!FcPatternAddString(pattern, FC_FAMILY, reinterpret_cast<const FcChar8*>(fcfamily)))
+        goto freePattern;
+    if (!FcPatternAddInteger(pattern, FC_SLANT, fcslant))
+        goto freePattern;
+    if (!FcPatternAddInteger(pattern, FC_WEIGHT, fcweight))
+        goto freePattern;
+    if (!FcPatternAddDouble(pattern, FC_PIXEL_SIZE, fcsize))
+        goto freePattern;
+
+    FcConfigSubstitute(NULL, pattern, FcMatchPattern);
+    FcDefaultSubstitute(pattern);
+
+    FcResult fcresult;
+    m_pattern = FcFontMatch(NULL, pattern, &fcresult);
     // FIXME: should we set some default font?
-#if PANGO_VERSION_CHECK(1,18,0)
-    if (m_font)
-        m_scaledFont = cairo_scaled_font_reference(pango_cairo_font_get_scaled_font(PANGO_CAIRO_FONT(m_font)));
-#else
-    // This compatibility code for older versions of Pango is not well-tested.
-    if (m_font) {
-        PangoFcFont* fcfont = PANGO_FC_FONT(m_font);
-        cairo_font_face_t* face = cairo_ft_font_face_create_for_pattern(fcfont->font_pattern);
-        double size;
-        if (FcPatternGetDouble(fcfont->font_pattern, FC_PIXEL_SIZE, 0, &size) != FcResultMatch)
-            size = 12.0;
-        cairo_matrix_t fontMatrix;
-        cairo_matrix_init_scale(&fontMatrix, size, size);
-        cairo_font_options_t* fontOptions;
-        if (pango_cairo_context_get_font_options(m_context))
-            fontOptions = cairo_font_options_copy(pango_cairo_context_get_font_options(m_context));
-        else
-            fontOptions = cairo_font_options_create();
-        cairo_matrix_t ctm;
-        cairo_matrix_init_identity(&ctm);
-        m_scaledFont = cairo_scaled_font_create(face, &fontMatrix, &ctm, fontOptions);
-        cairo_font_options_destroy(fontOptions);
-        cairo_font_face_destroy(face);
-    }
-#endif
+    if (!m_pattern)
+        goto freePattern;
+    fontFace = cairo_ft_font_face_create_for_pattern(m_pattern);
+    cairo_matrix_t ctm;
+    cairo_matrix_init_scale(&fontMatrix, m_fontDescription.computedSize(), m_fontDescription.computedSize());
+    cairo_matrix_init_identity(&ctm);
+    options = cairo_font_options_create();
+    m_scaledFont = cairo_scaled_font_create(fontFace, &fontMatrix, &ctm, options);
+    cairo_font_face_destroy(fontFace);
+    cairo_font_options_destroy(options);
 
-    pango_font_description_free(description);
+freePattern:
+    FcPatternDestroy(pattern);
 }
 
 bool FontPlatformData::init()
@@ -134,40 +117,23 @@ bool FontPlatformData::init()
     if (initialized)
         return true;
     initialized = true;
-
-    if (!m_fontMap)
-        m_fontMap = pango_cairo_font_map_new();
-    if (!m_hashTable) {
-        PangoFontFamily**families = 0;
-        int n_families = 0;
-
-        m_hashTable = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_object_unref);
-
-        pango_font_map_list_families(m_fontMap, &families, &n_families);
-
-        for (int family = 0; family < n_families; family++)
-                g_hash_table_insert(m_hashTable,
-                                    g_strdup(pango_font_family_get_name(families[family])),
-                                    g_object_ref(families[family]));
-
-        g_free(families);
+    if (!FcInit()) {
+        fprintf(stderr, "Can't init font config library\n");
+        return false;
     }
-
     return true;
 }
 
 FontPlatformData::~FontPlatformData()
 {
-    // Destroy takes place in FontData::platformDestroy().
 }
 
 bool FontPlatformData::isFixedPitch()
 {
-    PangoFontDescription* description = pango_font_describe_with_absolute_size(m_font);
-    PangoFontFamily* family = reinterpret_cast<PangoFontFamily*>(g_hash_table_lookup(m_hashTable, pango_font_description_get_family(description)));
-    pango_font_description_free(description);
-
-    return pango_font_family_is_monospace(family);
+    int spacing;
+    if (FcPatternGetInteger(m_pattern, FC_SPACING, 0, &spacing) == FcResultMatch)
+        return spacing == FC_MONO;
+    return false;
 }
 
 void FontPlatformData::setFont(cairo_t* cr) const
@@ -179,18 +145,12 @@ void FontPlatformData::setFont(cairo_t* cr) const
 
 bool FontPlatformData::operator==(const FontPlatformData& other) const
 {
-    if (m_font == other.m_font)
+    if (m_pattern == other.m_pattern)
         return true;
-    if (m_font == 0 || m_font == reinterpret_cast<PangoFont*>(-1)
-            || other.m_font == 0 || other.m_font == reinterpret_cast<PangoFont*>(-1))
+    if (m_pattern == 0 || m_pattern == reinterpret_cast<FcPattern*>(-1)
+            || other.m_pattern == 0 || other.m_pattern == reinterpret_cast<FcPattern*>(-1))
         return false;
-
-    PangoFontDescription* thisDesc = pango_font_describe(m_font);
-    PangoFontDescription* otherDesc = pango_font_describe(other.m_font);
-    bool result = pango_font_description_equal(thisDesc, otherDesc);
-    pango_font_description_free(otherDesc);
-    pango_font_description_free(thisDesc);
-    return result;
+    return FcPatternEqual(m_pattern, other.m_pattern);
 }
 
 }

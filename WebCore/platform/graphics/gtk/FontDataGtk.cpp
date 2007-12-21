@@ -3,7 +3,6 @@
  * Copyright (C) 2006 Michael Emmel mike.emmel@gmail.com 
  * Copyright (C) 2007 Alp Toker <alp.toker@collabora.co.uk>
  * Copyright (C) 2007 Holger Hans Peter Freyther
- * Copyright (C) 2007 Pioneer Research Center USA, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -63,10 +62,8 @@ void FontData::platformInit()
 
 void FontData::platformDestroy()
 {
-    if (m_font.m_font && m_font.m_font != reinterpret_cast<PangoFont*>(-1))
-        g_object_unref(m_font.m_font);
-    if (m_font.m_context)
-        g_object_unref(m_font.m_context);
+    if (m_font.m_pattern && ((FcPattern*)-1 != m_font.m_pattern))
+        FcPatternDestroy(m_font.m_pattern);
 
     if (m_font.m_scaledFont)
         cairo_scaled_font_destroy(m_font.m_scaledFont);
@@ -86,23 +83,21 @@ FontData* FontData::smallCapsFontData(const FontDescription& fontDescription) co
 
 bool FontData::containsCharacters(const UChar* characters, int length) const
 {
-    bool result = true;
+    FT_Face face = cairo_ft_scaled_font_lock_face(m_font.m_scaledFont);
 
-    PangoCoverage* requested = pango_coverage_from_bytes((guchar*)characters, length);
-    PangoCoverage* available = pango_font_get_coverage(m_font.m_font, pango_language_get_default());
-    pango_coverage_max(requested, available);
+    if (!face)
+        return false;
 
     for (unsigned i = 0; i < length; i++) {
-        if (PANGO_COVERAGE_NONE == pango_coverage_get(requested, i)) {
-            result = false;
-            break;
+        if (FcFreeTypeCharIndex(face, characters[i]) == 0) {
+            cairo_ft_scaled_font_unlock_face(m_font.m_scaledFont);
+            return false;
         }
     }
 
-    pango_coverage_unref(available);
-    pango_coverage_unref(requested);
+    cairo_ft_scaled_font_unlock_face(m_font.m_scaledFont);
 
-    return result;
+    return true;
 }
 
 void FontData::determinePitch()

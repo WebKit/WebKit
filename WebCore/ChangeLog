@@ -1,3 +1,31 @@
+2007-12-20  Alp Toker  <alp@atoker.com>
+
+        Rubber-stamped by Maciej.
+
+        http://bugs.webkit.org/show_bug.cgi?id=16542
+        [GTK] Text is missing with old Pango version
+
+        Back out commits r28880, r28876, r28865, r28864 which added Pango font
+        selection support. These changes caused a regression where no text was
+        displayed with older Pango versions.
+
+        * platform/graphics/gtk/FontCacheGtk.cpp:
+        (WebCore::FontCache::fontExists):
+        * platform/graphics/gtk/FontDataGtk.cpp:
+        (WebCore::FontData::platformDestroy):
+        (WebCore::FontData::containsCharacters):
+        * platform/graphics/gtk/FontPlatformData.h:
+        (WebCore::FontPlatformData::FontPlatformData):
+        (WebCore::FontPlatformData::hash):
+        * platform/graphics/gtk/FontPlatformDataGtk.cpp:
+        (WebCore::FontPlatformData::FontPlatformData):
+        (WebCore::FontPlatformData::init):
+        (WebCore::FontPlatformData::~FontPlatformData):
+        (WebCore::FontPlatformData::isFixedPitch):
+        (WebCore::FontPlatformData::operator==):
+        * platform/graphics/gtk/GlyphPageTreeNodeGtk.cpp:
+        (WebCore::GlyphPage::fill):
+
 2007-12-20  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Sam Weinig.

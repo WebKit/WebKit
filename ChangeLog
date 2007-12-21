@@ -1,3 +1,16 @@
+2007-12-20  Alp Toker  <alp@atoker.com>
+
+        Rubber-stamped by Maciej.
+
+        http://bugs.webkit.org/show_bug.cgi?id=16542
+        [GTK] Text is missing with old Pango version
+
+        Back out commits r28880, r28876, r28865, r28864 which added Pango font
+        selection support. These changes caused a regression where no text was
+        displayed with older Pango versions.
+
+        * WebKit.pri:
+
 2007-12-19  Alp Toker  <alp@atoker.com>
 
         Remove the cairo-ft pkg-config check. The GTK+ port doesn't use
