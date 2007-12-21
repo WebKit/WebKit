@@ -1,3 +1,13 @@
+2007-12-21  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Oliver.
+
+        <rdar://problem/5629995> Incorrect display of Danish characters on web site.
+
+        * http/tests/xmlhttprequest/resources/utf-8-no-charset.html: Added.
+        * http/tests/xmlhttprequest/response-encoding-expected.txt:
+        * http/tests/xmlhttprequest/response-encoding.html:
+
 2007-12-20  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Oliver Hunt.

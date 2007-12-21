@@ -112,7 +112,11 @@
              log("Async: XML transferred as text/plain, UTF-8 as default (ignore XML text declaration): " + req.responseText);
              get('resources/1251.html', true);
            } else if (asyncStep == 10) {
+             asyncStep = 11;
              log("Async: HTML, charset determined by a META: " + req.responseText.replace(/\s/g, "").replace(/.*<body>(.*)<\/body>.*/, "$1"));
+             get('resources/utf-8-no-charset.html', true);
+           } else if (asyncStep == 11) {
+             log("Async: HTML, UTF-8 as default: " + req.responseText.replace(/\s/g, "").replace(/.*<body>(.*)<\/body>.*/, "$1"));
            }
         } else {
            log("Error loading URL: status " + req.status);
@@ -198,6 +202,14 @@
     try {
         req =  get('resources/1251.html', false);
         log("HTML, charset determined by a META: " + req.responseText.replace(/\s/g, "").replace(/.*<body>(.*)<\/body>.*/, "$1"));
+    } catch (ex) {
+        log("Exception: " + ex.description);
+    }
+
+    // 11
+    try {
+        req =  get('resources/utf-8-no-charset.html', false);
+        log("HTML, UTF-8 as default: " + req.responseText.replace(/\s/g, "").replace(/.*<body>(.*)<\/body>.*/, "$1"));
     } catch (ex) {
         log("Exception: " + ex.description);
     }

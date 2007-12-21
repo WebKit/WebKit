@@ -1,3 +1,15 @@
+2007-12-21  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Oliver.
+
+        <rdar://problem/5629995> Incorrect display of Danish characters on web site.
+
+        Test: http/tests/xmlhttprequest/response-encoding.html
+
+        * xml/XMLHttpRequest.cpp: (WebCore::XMLHttpRequest::didReceiveData):
+        Default to UTF-8 for HTML, too. It's unfortunate that we have to use different
+        rules for main content and XHR responses, but this matches both IE and Firefox.
+
 2007-12-20  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Reviewed by Kevin Decker.
