@@ -92,6 +92,26 @@ namespace WTF {
     
     template <typename T> inline void swap(OwnPtr<T>& a, OwnPtr<T>& b) { a.swap(b); }
 
+    template <typename T, typename U> inline bool operator==(const OwnPtr<T>& a, U* b)
+    { 
+        return a.get() == b; 
+    }
+    
+    template <typename T, typename U> inline bool operator==(T* a, const OwnPtr<U>& b) 
+    {
+        return a == b.get(); 
+    }
+
+    template <typename T, typename U> inline bool operator!=(const OwnPtr<T>& a, U* b)
+    {
+        return a.get() != b; 
+    }
+
+    template <typename T, typename U> inline bool operator!=(T* a, const OwnPtr<U>& b)
+    { 
+        return a != b.get(); 
+    }
+    
     template <typename T> inline typename OwnPtr<T>::PtrType getPtr(const OwnPtr<T>& p)
     {
         return p.get();
