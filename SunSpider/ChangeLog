@@ -1,3 +1,9 @@
+2007-12-20  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by mjs.
+
+        * sunspider: increase default number of runs for more accurate numbers
+
 2007-12-18  Mark Rowe  <mrowe@apple.com>
 
         Fix typo.

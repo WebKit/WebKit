@@ -1,3 +1,9 @@
+2007-12-20  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by mjs.
+
+        * Scripts/run-sunspider: change --runs default to 10 for better accuracy
+
 2007-12-20  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Steve.

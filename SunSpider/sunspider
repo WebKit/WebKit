@@ -38,7 +38,7 @@ my $runSharkCache = 0;
 my $jsShellPath;
 my $setBaseline = 0;
 my $testsPattern;
-my $testRuns = 5; # This number may be different from what ./sunspider defaults to (that's OK)
+my $testRuns = 10;
 
 my $programName = basename($0);
 my $usage = <<EOF;

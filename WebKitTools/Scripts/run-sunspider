@@ -37,7 +37,7 @@ setConfiguration();
 my $configuration = configuration();
 
 my $root;
-my $testRuns = 5; # This number may be different from what sunspider defaults to (that's OK)
+my $testRuns = 10; # This number may be different from what sunspider defaults to (that's OK)
 my $runShark = 0;
 my $runShark20 = 0;
 my $runSharkCache = 0;
