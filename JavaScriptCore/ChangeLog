@@ -1,4 +1,11 @@
-2007-12-17  Eric Seidel  <eric@webkit.org>
+2007-12-20  Alexey Proskuryakov  <ap@webkit.org>
+
+        Windows build fix
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj: Copy npruntime_internal.h
+        to WebKitBuild.
+
+2007-12-20  Eric Seidel  <eric@webkit.org>
 
         Reviewed by mjs.
         
