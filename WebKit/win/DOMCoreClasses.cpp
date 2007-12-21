@@ -681,11 +681,17 @@ HRESULT STDMETHODCALLTYPE DOMDocument::getElementsByTagNameNS(
 }
 
 HRESULT STDMETHODCALLTYPE DOMDocument::getElementById( 
-    /* [in] */ BSTR /*elementId*/,
-    /* [retval][out] */ IDOMElement** /*result*/)
+    /* [in] */ BSTR elementId,
+    /* [retval][out] */ IDOMElement** result)
 {
-    ASSERT_NOT_REACHED();
-    return E_NOTIMPL;
+    if (!m_document)
+        return E_FAIL;
+
+    String idString(elementId);
+    *result = DOMElement::createInstance(m_document->getElementById(idString));
+    if (!(*result))
+        return E_FAIL;
+    return S_OK;
 }
 
 // DOMDocument - IDOMViewCSS --------------------------------------------------
