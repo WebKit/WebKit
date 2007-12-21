@@ -1818,13 +1818,19 @@ namespace KJS {
 
   class ForNode : public StatementNode {
   public:
-    ForNode(ExpressionNode* e1, ExpressionNode* e2, ExpressionNode* e3, StatementNode* s) KJS_FAST_CALL :
-      expr1(e1), expr2(e2), expr3(e3), statement(s)
+    ForNode(ExpressionNode* e1, ExpressionNode* e2, ExpressionNode* e3, StatementNode* s) KJS_FAST_CALL
+        : expr1(e1 ? e1 : new TrueNode)
+        , expr2(e2 ? e2 : new TrueNode)
+        , expr3(e3 ? e3 : new TrueNode)
+        , statement(s)
     {
-        if (expr1)
-            expr1->optimizeForUnnecessaryResult();
-        if (expr3)
-            expr3->optimizeForUnnecessaryResult();
+        ASSERT(expr1);
+        ASSERT(expr2);
+        ASSERT(expr3);
+        ASSERT(statement);
+
+        expr1->optimizeForUnnecessaryResult();
+        expr3->optimizeForUnnecessaryResult();
     }
 
     virtual void optimizeVariableAccess(SymbolTable&, DeclarationStacks::NodeStack&) KJS_FAST_CALL;

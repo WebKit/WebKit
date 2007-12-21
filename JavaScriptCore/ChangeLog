@@ -1,3 +1,47 @@
+2007-12-20  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Oliver Hunt.
+        
+        AST optimization: Avoid NULL-checking ForNode's child nodes.
+        
+        0.6% speedup on SunSpider.
+        
+        This is a proof of concept patch that demonstrates how to optimize
+        grammar productions with optional components, like
+        
+            for (optional; optional; optional) {
+                ...
+            }
+            
+        The parser emits NULL for an optional component that is not present.
+
+        Instead of checking for a NULL child at execution time, a node that
+        expects an optional component to be present more often than not checks
+        for a NULL child at construction time, and substitutes a viable
+        alternative node in its place.
+
+        (We'd like the parser to start emitting NULL a lot more once we teach
+        it to emit NULL for certain no-op productions like EmptyStatement and
+        VariableStatement, so, as a foundation, it's important for nodes with
+        NULL optional components to be fast.)
+
+        * kjs/Parser.cpp:
+        (KJS::Parser::didFinishParsing): Check for NULL SourceElements. Also,
+        moved didFinishParsing into the .cpp file because adding a branch while
+        it was in the header file caused a substantial and inexplicable
+        performance regression. (Did I mention that GCC is crazy?)
+
+        * kjs/grammar.y:
+
+        * kjs/nodes.cpp:
+        (KJS::BlockNode::BlockNode): Check for NULL SourceElements.
+        (KJS::ForNode::optimizeVariableAccess): No need to check for NULL here.
+        (KJS::ForNode::execute): No need to check for NULL here.
+        * kjs/nodes.h:
+        (KJS::ForNode::): Check for NULL SourceElements. Substitute a TrueNode
+        because it's semantically harmless, and it evaluates to boolean in an
+        efficient manner.
+
 2007-12-20  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Geoff.

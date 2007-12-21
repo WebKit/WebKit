@@ -71,6 +71,15 @@ void Parser::parse(int startingLineNumber,
     }
 }
 
+void Parser::didFinishParsing(SourceElements* sourceElements, ParserRefCountedData<DeclarationStacks::VarStack>* varStack, 
+                              ParserRefCountedData<DeclarationStacks::FunctionStack>* funcStack, int lastLine)
+{
+    m_sourceElements.set(sourceElements ? sourceElements : new SourceElements);
+    m_varDeclarations = varStack;
+    m_funcDeclarations = funcStack;
+    m_lastLine = lastLine;
+}
+
 Parser& parser()
 {
     ASSERT(JSLock::currentThreadIsHoldingLock());

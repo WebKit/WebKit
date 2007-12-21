@@ -3605,7 +3605,7 @@ static inline JSValue* statementListExecute(SourceElements& statements, ExecStat
 // ------------------------------ BlockNode ------------------------------------
 
 BlockNode::BlockNode(SourceElements* children)
-    : m_children(children)
+    : m_children(children ? children : new SourceElements)
 {
     ASSERT(m_children);
 }
@@ -3772,12 +3772,9 @@ JSValue* WhileNode::execute(ExecState* exec)
 void ForNode::optimizeVariableAccess(SymbolTable&, DeclarationStacks::NodeStack& nodeStack)
 {
     nodeStack.append(statement.get());
-    if (expr3)
-        nodeStack.append(expr3.get());
-    if (expr2)
-        nodeStack.append(expr2.get());
-    if (expr1)
-        nodeStack.append(expr1.get());
+    nodeStack.append(expr3.get());
+    nodeStack.append(expr2.get());
+    nodeStack.append(expr1.get());
 }
 
 // ECMA 12.6.3
@@ -3785,18 +3782,14 @@ JSValue* ForNode::execute(ExecState *exec)
 {
     JSValue* value = 0;
 
-    if (expr1) {
-        expr1->evaluate(exec);
-        KJS_CHECKEXCEPTION
-    }
+    expr1->evaluate(exec);
+    KJS_CHECKEXCEPTION
 
     while (1) {
-        if (expr2) {
-            bool b = expr2->evaluateToBoolean(exec);
-            KJS_CHECKEXCEPTION
-            if (!b)
-                break;
-        }
+        bool b = expr2->evaluateToBoolean(exec);
+        KJS_CHECKEXCEPTION
+        if (!b)
+            break;
 
         exec->pushIteration();
         JSValue* statementValue = statement->execute(exec);
@@ -3816,10 +3809,8 @@ JSValue* ForNode::execute(ExecState *exec)
         }
 
 continueForLoop:
-        if (expr3) {
-            expr3->evaluate(exec);
-            KJS_CHECKEXCEPTION
-        }
+        expr3->evaluate(exec);
+        KJS_CHECKEXCEPTION
     }
   
     return exec->setNormalCompletion(value);

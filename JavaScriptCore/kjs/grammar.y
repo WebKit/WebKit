@@ -696,7 +696,7 @@ Statement:
 ;
 
 Block:
-    '{' '}'                             { $$ = createNodeInfo<StatementNode*>(new BlockNode(new SourceElements), 0, 0);
+    '{' '}'                             { $$ = createNodeInfo<StatementNode*>(new BlockNode(0), 0, 0);
                                           DBG($$.m_node, @1, @2); }
   | '{' SourceElements '}'              { $$ = createNodeInfo<StatementNode*>(new BlockNode($2.m_node->release()), $2.m_varDeclarations, $2.m_funcDeclarations);
                                           DBG($$.m_node, @1, @3); }
@@ -978,7 +978,7 @@ FormalParameterList:
 ;
 
 FunctionBody:
-    /* not in spec */           { $$ = new FunctionBodyNode(new SourceElements, 0, 0); }
+    /* not in spec */           { $$ = new FunctionBodyNode(0, 0, 0); }
   | SourceElements              { $$ = new FunctionBodyNode($1.m_node->release(), $1.m_varDeclarations ? &$1.m_varDeclarations->data : 0, 
                                                                                   $1.m_funcDeclarations ? &$1.m_funcDeclarations->data : 0);
                                   // As in mergeDeclarationLists() we have to ref/deref to safely get rid of
@@ -995,7 +995,7 @@ FunctionBody:
 ;
 
 Program:
-    /* not in spec */                   { parser().didFinishParsing(new SourceElements, 0, 0, @0.last_line); }
+    /* not in spec */                   { parser().didFinishParsing(0, 0, 0, @0.last_line); }
     | SourceElements                    { parser().didFinishParsing($1.m_node->release(), $1.m_varDeclarations, $1.m_funcDeclarations, @1.last_line); }
 ;
 
