@@ -1,3 +1,10 @@
+2007-12-21  Alexey Proskuryakov  <ap@webkit.org>
+
+        Build fix: cannot use framework-style include for ProgIDMacros.h,
+        because the file is only created on a leter step. 
+
+        * ForEachCoClass.h:
+
 2007-12-20  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Steve.

@@ -29,7 +29,7 @@
 #ifndef ForEachCoClass_h
 #define ForEachCoClass_h
 
-#include <WebKit/ProgIDMacros.h>
+#include "ProgIDMacros.h"
 
 #define FOR_EACH_COCLASS(macro) \
     macro(CFDictionaryPropertyBag) \
