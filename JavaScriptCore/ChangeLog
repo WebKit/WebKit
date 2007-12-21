@@ -1,5 +1,13 @@
 2007-12-21  Darin Adler  <darin@apple.com>
 
+        Requested by Maciej.
+
+        * kjs/nodes.h: Use the new NEVER_INLINE here and eliminate the old
+        KJS_NO_INLINE. We don't want to have two, and we figured it was better
+        to keep the one that's in WTF.
+
+2007-12-21  Darin Adler  <darin@apple.com>
+
         Reviewed by Eric.
 
         - http://bugs.webkit.org/show_bug.cgi?id=16561

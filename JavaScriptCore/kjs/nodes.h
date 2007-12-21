@@ -39,12 +39,6 @@
 #define KJS_FAST_CALL
 #endif
 
-#if COMPILER(GCC)
-#define KJS_NO_INLINE __attribute__((noinline))
-#else
-#define KJS_NO_INLINE
-#endif
-
 namespace KJS {
 
     class FuncDeclNode;
@@ -1719,7 +1713,7 @@ namespace KJS {
     Identifier ident;
     ListRefPtr<VarDeclNode> next;
   private:
-    void handleSlowCase(ExecState*, const ScopeChain&, JSValue*) KJS_FAST_CALL KJS_NO_INLINE;
+    void handleSlowCase(ExecState*, const ScopeChain&, JSValue*) KJS_FAST_CALL NEVER_INLINE;
     RefPtr<AssignExprNode> init;
   };
 
