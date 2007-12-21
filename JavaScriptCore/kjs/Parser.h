@@ -65,7 +65,7 @@ namespace KJS {
 
         UString m_sourceURL;
         int m_sourceId;
-        OwnPtr<SourceElements> m_sourceElements;
+        RefPtr<SourceElements> m_sourceElements;
         RefPtr<ParserRefCountedData<DeclarationStacks::VarStack> > m_varDeclarations;
         RefPtr<ParserRefCountedData<DeclarationStacks::FunctionStack> > m_funcDeclarations;
         int m_lastLine;
@@ -84,7 +84,7 @@ namespace KJS {
             m_sourceURL = UString();
             return 0;
         }
-        RefPtr<ParsedNode> node = new ParsedNode(m_sourceElements.release(), 
+        RefPtr<ParsedNode> node = new ParsedNode(m_sourceElements.release().get(),
                                                  m_varDeclarations ? &m_varDeclarations->data : 0, 
                                                  m_funcDeclarations ? &m_funcDeclarations->data : 0);
         m_varDeclarations = 0;

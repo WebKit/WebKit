@@ -34,20 +34,21 @@ namespace WTF {
     template <typename T> class RefPtr {
     public:
         RefPtr() : m_ptr(0) {}
-        RefPtr(T *ptr) : m_ptr(ptr) { if (ptr) ptr->ref(); }
-        RefPtr(const RefPtr& o) : m_ptr(o.m_ptr) { if (T *ptr = m_ptr) ptr->ref(); }
+        RefPtr(T* ptr) : m_ptr(ptr) { if (ptr) ptr->ref(); }
+        RefPtr(const RefPtr& o) : m_ptr(o.m_ptr) { if (T* ptr = m_ptr) ptr->ref(); }
         // see comment in PassRefPtr.h for why this takes const reference
         template <typename U> RefPtr(const PassRefPtr<U>&);
 
         // Special constructor for cases where we overwrite an object in place.
         RefPtr(PlacementNewAdoptType) { }
 
-        ~RefPtr() { if (T *ptr = m_ptr) ptr->deref(); }
+        ~RefPtr() { if (T* ptr = m_ptr) ptr->deref(); }
         
-        template <typename U> RefPtr(const RefPtr<U>& o) : m_ptr(o.get()) { if (T *ptr = m_ptr) ptr->ref(); }
+        template <typename U> RefPtr(const RefPtr<U>& o) : m_ptr(o.get()) { if (T* ptr = m_ptr) ptr->ref(); }
         
-        T *get() const { return m_ptr; }
+        T* get() const { return m_ptr; }
         
+        void clear() { if (T* ptr = m_ptr) ptr->deref(); m_ptr = 0; }
         PassRefPtr<T> release() { PassRefPtr<T> tmp = adoptRef(m_ptr); m_ptr = 0; return tmp; }
 
         T& operator*() const { return *m_ptr; }
@@ -56,11 +57,11 @@ namespace WTF {
         bool operator!() const { return !m_ptr; }
     
         // This conversion operator allows implicit conversion to bool but not to other integer types.
-        typedef T * (RefPtr::*UnspecifiedBoolType)() const;
+        typedef T* (RefPtr::*UnspecifiedBoolType)() const;
         operator UnspecifiedBoolType() const { return m_ptr ? &RefPtr::get : 0; }
         
         RefPtr& operator=(const RefPtr&);
-        RefPtr& operator=(T *);
+        RefPtr& operator=(T*);
         RefPtr& operator=(const PassRefPtr<T>&);
         template <typename U> RefPtr& operator=(const RefPtr<U>&);
         template <typename U> RefPtr& operator=(const PassRefPtr<U>&);
@@ -171,12 +172,12 @@ namespace WTF {
     
     template <typename T, typename U> inline RefPtr<T> static_pointer_cast(const RefPtr<U>& p)
     { 
-        return RefPtr<T>(static_cast<T *>(p.get())); 
+        return RefPtr<T>(static_cast<T*>(p.get())); 
     }
 
     template <typename T, typename U> inline RefPtr<T> const_pointer_cast(const RefPtr<U>& p)
     { 
-        return RefPtr<T>(const_cast<T *>(p.get())); 
+        return RefPtr<T>(const_cast<T*>(p.get())); 
     }
 
     template <typename T> inline T* getPtr(const RefPtr<T>& p)

@@ -1,7 +1,6 @@
 // -*- mode: c++; c-basic-offset: 4 -*-
 /*
- *  This file is part of the KDE libraries
- *  Copyright (C) 2005, 2006 Apple Computer, Inc.
+ *  Copyright (C) 2005, 2006, 2007 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -31,9 +30,7 @@ namespace WTF {
     template<typename T> class PassRefPtr;
     template <typename T> PassRefPtr<T> adoptRef(T*);
 
-    template<typename T> 
-    class PassRefPtr
-    {
+    template<typename T> class PassRefPtr {
     public:
         PassRefPtr() : m_ptr(0) {}
         PassRefPtr(T* ptr) : m_ptr(ptr) { if (ptr) ptr->ref(); }
@@ -51,6 +48,7 @@ namespace WTF {
         
         T* get() const { return m_ptr; }
 
+        void clear() { if (T* ptr = m_ptr) ptr->deref(); m_ptr = 0; }
         T* releaseRef() const { T* tmp = m_ptr; m_ptr = 0; return tmp; }
 
         T& operator*() const { return *m_ptr; }

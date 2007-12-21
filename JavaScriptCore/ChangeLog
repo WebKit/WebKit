@@ -1,5 +1,90 @@
 2007-12-21  Darin Adler  <darin@apple.com>
 
+        Reviewed by Eric.
+
+        - http://bugs.webkit.org/show_bug.cgi?id=16561
+          remove debugger overhead from non-debugged JavaScript execution
+
+        1.022x as fast on SunSpider.
+
+        * JavaScriptCore.exp: Updated.
+
+        * kjs/NodeInfo.h: Renamed SourceElementsStub to SourceElements,
+        since that more accurately describes the role of this object, which
+        is a reference-counted wrapper for a Vector.
+
+        * kjs/Parser.cpp:
+        (KJS::Parser::didFinishParsing): Changed parameter type to SourceElements,
+        and use plain assignment instead of set.
+        * kjs/Parser.h: Changed parameter type of didFinishParsing to a
+        SourceElements. Also changed m_sourceElements; we now use a RefPtr instead
+        of an OwnPtr as well.
+
+        * kjs/grammar.y: Got rid of all the calls to release() on SourceElements.
+        That's now handed inside the constructors for various node types, since we now
+        use vector swapping instead.
+
+        * kjs/nodes.cpp:
+        (KJS::Node::rethrowException): Added NEVER_INLINE, because this was getting inlined
+        and we want exception handling out of the normal code flow.
+        (KJS::SourceElements::append): Moved here from the header. This now handles
+        creating a BreakpointCheckStatement for each statement in the debugger case.
+        That way we can get breakpoint handling without having it in every execute function.
+        (KJS::BreakpointCheckStatement::BreakpointCheckStatement): Added.
+        (KJS::BreakpointCheckStatement::execute): Added. Contains the code that was formerly
+        in the StatementNode::hitStatement function and the KJS_BREAKPOINT macro.
+        (KJS::BreakpointCheckStatement::streamTo): Added.
+        (KJS::ArgumentListNode::evaluateList): Use KJS_CHECKEXCEPTIONVOID since the return
+        type is void.
+        (KJS::VarStatementNode::execute): Removed KJS_BREAKPOINT.
+        (KJS::BlockNode::BlockNode): Changed parameter type to SourceElements.
+        Changed code to use release since the class now contains a vector rather than
+        a vector point.
+        (KJS::BlockNode::optimizeVariableAccess): Updated since member is now a vector
+        rather than a vector pointer.
+        (KJS::BlockNode::execute): Ditto.
+        (KJS::ExprStatementNode::execute): Removed KJS_BREAKPOINT.
+        (KJS::IfNode::execute): Ditto.
+        (KJS::IfElseNode::execute): Ditto.
+        (KJS::DoWhileNode::execute): Ditto.
+        (KJS::WhileNode::execute): Ditto.
+        (KJS::ContinueNode::execute): Ditto.
+        (KJS::BreakNode::execute): Ditto.
+        (KJS::ReturnNode::execute): Ditto.
+        (KJS::WithNode::execute): Ditto.
+        (KJS::CaseClauseNode::optimizeVariableAccess): Updated since member is now a vector
+        rather than a vector pointer.
+        (KJS::CaseClauseNode::executeStatements): Ditto.
+        (KJS::SwitchNode::execute): Removed KJS_BREAKPOINT.
+        (KJS::ThrowNode::execute): Ditto.
+        (KJS::TryNode::execute): Ditto.
+        (KJS::ScopeNode::ScopeNode): Changed parameter type to SourceElements.
+        (KJS::ProgramNode::ProgramNode): Ditto.
+        (KJS::EvalNode::EvalNode): Ditto.
+        (KJS::FunctionBodyNode::FunctionBodyNode): Ditto.
+        (KJS::ScopeNode::optimizeVariableAccess): Updated since member is now a vector
+        rather than a vector pointer.
+
+        * kjs/nodes.h: Removed hitStatement. Renamed SourceElements to StatementVector.
+        Renamed SourceElementsStub to SourceElements and made it derive from
+        ParserRefCounted rather than from Node, hold a vector rather than a pointer to
+        a vector, and changed the release function to swap with another vector rather
+        than the pointer idiom. Updated BlockNode and CaseClauseNode to hold actual
+        vectors instead of pointers to vectors. Added BreakpointCheckStatement.
+
+        * kjs/nodes2string.cpp:
+        (KJS::statementListStreamTo): Changed to work on a vector instead of a pointer
+        to a vector.
+        (KJS::BlockNode::streamTo): Ditto.
+        (KJS::CaseClauseNode::streamTo):  Ditto.
+
+        * wtf/AlwaysInline.h: Added NEVER_INLINE.
+        * wtf/PassRefPtr.h: Tweaked formatting. Added clear() function that matches the
+        ones in OwnPtr and auto_ptr.
+        * wtf/RefPtr.h: Ditto.
+
+2007-12-21  Darin Adler  <darin@apple.com>
+
         - fix broken regression tests
 
         The broken tests were fast/js/do-while-expression-value.html and

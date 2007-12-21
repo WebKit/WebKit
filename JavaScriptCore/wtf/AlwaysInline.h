@@ -1,6 +1,5 @@
 /*
- *  This file is part of the KDE libraries
- *  Copyright (C) 2005 Apple Computer, Inc
+ *  Copyright (C) 2005, 2007 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -26,5 +25,13 @@
 #define ALWAYS_INLINE __forceinline
 #else
 #define ALWAYS_INLINE inline
+#endif
+#endif
+
+#ifndef NEVER_INLINE
+#if COMPILER(GCC)
+#define NEVER_INLINE __attribute__ ((__noinline__))
+#else
+#define NEVER_INLINE
 #endif
 #endif

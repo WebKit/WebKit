@@ -698,7 +698,7 @@ Statement:
 Block:
     '{' '}'                             { $$ = createNodeInfo<StatementNode*>(new BlockNode(0), 0, 0);
                                           DBG($$.m_node, @1, @2); }
-  | '{' SourceElements '}'              { $$ = createNodeInfo<StatementNode*>(new BlockNode($2.m_node->release()), $2.m_varDeclarations, $2.m_funcDeclarations);
+  | '{' SourceElements '}'              { $$ = createNodeInfo<StatementNode*>(new BlockNode($2.m_node), $2.m_varDeclarations, $2.m_funcDeclarations);
                                           DBG($$.m_node, @1, @3); }
 ;
 
@@ -916,12 +916,12 @@ CaseClauses:
 
 CaseClause:
     CASE Expr ':'                       { $$ = createNodeInfo<CaseClauseNode*>(new CaseClauseNode($2), 0, 0); }
-  | CASE Expr ':' SourceElements        { $$ = createNodeInfo<CaseClauseNode*>(new CaseClauseNode($2, $4.m_node->release()), $4.m_varDeclarations, $4.m_funcDeclarations); }
+  | CASE Expr ':' SourceElements        { $$ = createNodeInfo<CaseClauseNode*>(new CaseClauseNode($2, $4.m_node), $4.m_varDeclarations, $4.m_funcDeclarations); }
 ;
 
 DefaultClause:
     DEFAULT ':'                         { $$ = createNodeInfo<CaseClauseNode*>(new CaseClauseNode(0), 0, 0); }
-  | DEFAULT ':' SourceElements          { $$ = createNodeInfo<CaseClauseNode*>(new CaseClauseNode(0, $3.m_node->release()), $3.m_varDeclarations, $3.m_funcDeclarations); }
+  | DEFAULT ':' SourceElements          { $$ = createNodeInfo<CaseClauseNode*>(new CaseClauseNode(0, $3.m_node), $3.m_varDeclarations, $3.m_funcDeclarations); }
 ;
 
 LabelledStatement:
@@ -979,7 +979,7 @@ FormalParameterList:
 
 FunctionBody:
     /* not in spec */           { $$ = new FunctionBodyNode(0, 0, 0); }
-  | SourceElements              { $$ = new FunctionBodyNode($1.m_node->release(), $1.m_varDeclarations ? &$1.m_varDeclarations->data : 0, 
+  | SourceElements              { $$ = new FunctionBodyNode($1.m_node, $1.m_varDeclarations ? &$1.m_varDeclarations->data : 0, 
                                                                                   $1.m_funcDeclarations ? &$1.m_funcDeclarations->data : 0);
                                   // As in mergeDeclarationLists() we have to ref/deref to safely get rid of
                                   // the declaration lists.
@@ -996,11 +996,11 @@ FunctionBody:
 
 Program:
     /* not in spec */                   { parser().didFinishParsing(0, 0, 0, @0.last_line); }
-    | SourceElements                    { parser().didFinishParsing($1.m_node->release(), $1.m_varDeclarations, $1.m_funcDeclarations, @1.last_line); }
+    | SourceElements                    { parser().didFinishParsing($1.m_node, $1.m_varDeclarations, $1.m_funcDeclarations, @1.last_line); }
 ;
 
 SourceElements:
-    SourceElement                       { $$.m_node = new SourceElementsStub;
+    SourceElement                       { $$.m_node = new SourceElements;
                                           $$.m_node->append($1.m_node);
                                           $$.m_varDeclarations = $1.m_varDeclarations;
                                           $$.m_funcDeclarations = $1.m_funcDeclarations;
