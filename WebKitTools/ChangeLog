@@ -1,3 +1,9 @@
+2007-12-21  Kevin Ollivier  <kevino@theolliviers.com>
+
+        Build script fix for buildbot.
+
+        * wx/build-wxwebkit:
+
 2007-12-20  Eric Seidel  <eric@webkit.org>
 
         Reviewed by mjs.
