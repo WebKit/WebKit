@@ -1,5 +1,20 @@
 2007-12-21  Alexey Proskuryakov  <ap@webkit.org>
 
+        Reviewed by Steve and Darin.
+
+        <rdar://problem/5497037> Win32: Accelerator keys (ctrl-x,c,v,w,q,etc) only fire keyUp,
+        keyDown/Press consumed by accelerator table (14104)
+
+        <rdar://problem/5346299> preventing default behavior for key down does not block accelerators like Ctrl+N
+
+        This is WebKit part of a fix, most of which will be in Safari.
+
+        * WebView.cpp:
+        (WebViewWndProc): Return our result for WM_(SYS)KEYDOWN to let the client know whether
+        further procesing is desired.
+
+2007-12-21  Alexey Proskuryakov  <ap@webkit.org>
+
         Build fix: cannot use framework-style include for ProgIDMacros.h,
         because the file is only created on a later step. 
 

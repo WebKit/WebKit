@@ -1804,7 +1804,8 @@ static LRESULT CALLBACK WebViewWndProc(HWND hWnd, UINT message, WPARAM wParam, L
     if (!handled)
         lResult = DefWindowProc(hWnd, message, wParam, lParam);
     
-    return lResult;
+    // Let the client know whether we consider this message handled.
+    return (message == WM_KEYDOWN || message == WM_SYSKEYDOWN) ? !handled : lResult;
 }
 
 bool WebView::developerExtrasEnabled() const
