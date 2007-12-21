@@ -38,6 +38,7 @@
 #include "Range.h"
 #include "Selection.h"
 #include "Text.h"
+#include "TextIterator.h"
 #include "VisiblePosition.h"
 #include "visible_units.h"
 
@@ -639,7 +640,7 @@ Node* enclosingListChild(Node *node)
     for (Node* n = node; n && n->parentNode(); n = n->parentNode()) {
         if (n->hasTagName(liTag) || isListElement(n->parentNode()))
             return n;
-        if (n == root)
+        if (n == root || isTableCell(n))
             return 0;
     }
     
@@ -895,6 +896,44 @@ bool lineBreakExistsAtPosition(const VisiblePosition& visiblePosition)
     Position downstream(visiblePosition.deepEquivalent().downstream());
     return downstream.node()->hasTagName(brTag) ||
            downstream.node()->isTextNode() && downstream.node()->renderer()->style()->preserveNewline() && visiblePosition.characterAfter() == '\n';
+}
+
+// Modifies selections that have an end point at the edge of a table
+// that contains the other endpoint so that they don't confuse
+// code that iterates over selected paragraphs.
+Selection selectionForParagraphIteration(const Selection& original)
+{
+    Selection newSelection(original);
+    VisiblePosition startOfSelection(newSelection.visibleStart());
+    VisiblePosition endOfSelection(newSelection.visibleEnd());
+    
+    // If the end of the selection to modify is just after a table, and
+    // if the start of the selection is inside that table, then the last paragraph
+    // that we'll want modify is the last one inside the table, not the table itself
+    // (a table is itself a paragraph).
+    if (Node* table = isFirstPositionAfterTable(endOfSelection))
+        if (startOfSelection.deepEquivalent().node()->isDescendantOf(table))
+            newSelection = Selection(startOfSelection, endOfSelection.previous(true));
+    
+    // If the start of the selection to modify is just before a table,
+    // and if the end of the selection is inside that table, then the first paragraph
+    // we'll want to modify is the first one inside the table, not the paragraph
+    // containing the table itself.
+    if (Node* table = isLastPositionBeforeTable(startOfSelection))
+        if (endOfSelection.deepEquivalent().node()->isDescendantOf(table))
+            newSelection = Selection(startOfSelection.next(true), endOfSelection);
+    
+    return newSelection;
+}
+
+
+int indexForVisiblePosition(VisiblePosition& visiblePosition)
+{
+    if (visiblePosition.isNull())
+        return 0;
+    Position p(visiblePosition.deepEquivalent());
+    RefPtr<Range> range = new Range(p.node()->document(), Position(p.node()->document(), 0), rangeCompliantEquivalent(p));
+    return TextIterator::rangeLength(range.get(), true);
 }
 
 PassRefPtr<Range> avoidIntersectionWithNode(const Range* range, Node* node)

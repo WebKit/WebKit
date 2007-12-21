@@ -1,3 +1,16 @@
+2007-12-20  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Oliver Hunt.
+        
+        <rdar://problem/5543472> GoogleDocs: Safari hangs when creating a list from a particular selection
+
+        * editing/execCommand/5543472-1-expected.txt: Added.
+        * editing/execCommand/5543472-1.html: Added.
+        * editing/execCommand/5543472-2-expected.txt: Added.
+        * editing/execCommand/5543472-2.html: Added.
+        * editing/execCommand/5543472-3-expected.txt: Added.
+        * editing/execCommand/5543472-3.html: Added.
+
 2007-12-20  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by John Sullivan.

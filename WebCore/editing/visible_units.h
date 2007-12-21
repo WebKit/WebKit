@@ -57,8 +57,9 @@ bool isStartOfLine(const VisiblePosition &);
 bool isEndOfLine(const VisiblePosition &);
 
 // paragraphs (perhaps a misnomer, can be divided by line break elements)
-VisiblePosition startOfParagraph(const VisiblePosition &);
-VisiblePosition endOfParagraph(const VisiblePosition &);
+VisiblePosition startOfParagraph(const VisiblePosition&);
+VisiblePosition endOfParagraph(const VisiblePosition&);
+VisiblePosition startOfNextParagraph(const VisiblePosition&);
 VisiblePosition previousParagraphPosition(const VisiblePosition &, int x);
 VisiblePosition nextParagraphPosition(const VisiblePosition &, int x);
 bool inSameParagraph(const VisiblePosition &, const VisiblePosition &);

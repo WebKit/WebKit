@@ -38,7 +38,6 @@ public:
     virtual void doApply();
     virtual EditAction editingAction() const { return m_typeOfAction == Indent ? EditActionIndent : EditActionOutdent; }
 private:
-    bool modifyRange();
     EIndentType m_typeOfAction;
     int m_marginInPixels;
     void indentRegion();

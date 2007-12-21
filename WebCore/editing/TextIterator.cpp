@@ -595,6 +595,8 @@ void TextIterator::exitNode()
         // use extra newline to represent margin bottom, as needed
         bool addNewline = shouldEmitExtraNewlineForNode(m_node);
         
+        // FIXME: We need to emit a '\n' as we leave an empty block(s) that
+        // contain a VisiblePosition when doing selection preservation.
         if (m_lastCharacter != '\n') {
             // insert a newline with a position following this block's contents.
             emitCharacter('\n', baseNode->parentNode(), baseNode, 1, 1);

@@ -125,6 +125,10 @@ bool isTableCell(const Node*);
 
 bool lineBreakExistsAtPosition(const VisiblePosition&);
 
+Selection selectionForParagraphIteration(const Selection&);
+
+int indexForVisiblePosition(VisiblePosition&);
+
 }
 
 #endif

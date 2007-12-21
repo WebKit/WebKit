@@ -747,6 +747,17 @@ VisiblePosition endOfParagraph(const VisiblePosition &c)
     return VisiblePosition(node, offset, DOWNSTREAM);
 }
 
+VisiblePosition startOfNextParagraph(const VisiblePosition& visiblePosition)
+{
+    VisiblePosition paragraphEnd(endOfParagraph(visiblePosition));
+    VisiblePosition afterParagraphEnd(paragraphEnd.next(true));
+    // The position after the last position in the last cell of a table
+    // is not the start of the next paragraph.
+    if (isFirstPositionAfterTable(afterParagraphEnd))
+        return afterParagraphEnd.next(true);
+    return afterParagraphEnd;
+}
+
 bool inSameParagraph(const VisiblePosition &a, const VisiblePosition &b)
 {
     return a.isNotNull() && startOfParagraph(a) == startOfParagraph(b);

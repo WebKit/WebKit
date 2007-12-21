@@ -30,6 +30,7 @@
 #include "htmlediting.h"
 #include "HTMLElement.h"
 #include "HTMLNames.h"
+#include "TextIterator.h"
 #include "visible_units.h"
 
 namespace WebCore {
@@ -60,44 +61,39 @@ InsertListCommand::InsertListCommand(Document* document, Type type, const String
 
 bool InsertListCommand::modifyRange()
 {
-    ASSERT(endingSelection().isRange());
-    VisiblePosition visibleStart = endingSelection().visibleStart();
-    VisiblePosition visibleEnd = endingSelection().visibleEnd();
-    VisiblePosition startOfLastParagraph = startOfParagraph(visibleEnd);
+    Selection selection = selectionForParagraphIteration(endingSelection());
+    ASSERT(selection.isRange());
+    VisiblePosition startOfSelection = selection.visibleStart();
+    VisiblePosition endOfSelection = selection.visibleEnd();
+    VisiblePosition startOfLastParagraph = startOfParagraph(endOfSelection);
     
-    // If the end of the selection to modify is just after a table, and
-    // if the start of the selection is inside that table, the last paragraph
-    // that we'll want modify is the last one inside the table, not the table itself.
-    // Adjust startOfLastParagraph and visibleEnd here to avoid infinite recursion.
-    if (Node* table = isFirstPositionAfterTable(visibleEnd))
-        if (visibleStart.deepEquivalent().node()->isDescendantOf(table)) {
-            visibleEnd = visibleEnd.previous(true);
-            startOfLastParagraph = startOfParagraph(visibleEnd);
-        }
-        
-    if (startOfParagraph(visibleStart) == startOfLastParagraph)
+    if (startOfParagraph(startOfSelection) == startOfLastParagraph)
         return false;
-    
-    Node* startList = enclosingList(visibleStart.deepEquivalent().node());
-    Node* endList = enclosingList(visibleEnd.deepEquivalent().node());
+
+    Node* startList = enclosingList(startOfSelection.deepEquivalent().node());
+    Node* endList = enclosingList(endOfSelection.deepEquivalent().node());
     if (!startList || startList != endList)
         m_forceCreateList = true;
 
-    setEndingSelection(visibleStart);
+    setEndingSelection(startOfSelection);
     doApply();
-    visibleStart = endingSelection().visibleStart();
-    VisiblePosition nextParagraph = endOfParagraph(visibleStart).next();
-    while (nextParagraph.isNotNull() && nextParagraph != startOfLastParagraph) {
-        setEndingSelection(nextParagraph);
+    // Fetch the start of the selection after moving the first paragraph,
+    // because moving the paragraph will invalidate the original start.  
+    // We'll use the new start to restore the original selection after 
+    // we modified all selected paragraphs.
+    startOfSelection = endingSelection().visibleStart();
+    VisiblePosition startOfCurrentParagraph = startOfNextParagraph(startOfSelection);
+    while (startOfCurrentParagraph != startOfLastParagraph) {
+        setEndingSelection(startOfCurrentParagraph);
         doApply();
-        nextParagraph = endOfParagraph(endingSelection().visibleStart()).next();
+        startOfCurrentParagraph = startOfNextParagraph(endingSelection().visibleStart());
     }
-    setEndingSelection(visibleEnd);
+    setEndingSelection(endOfSelection);
     doApply();
-    visibleEnd = endingSelection().visibleEnd();
-    setEndingSelection(Selection(visibleStart.deepEquivalent(), visibleEnd.deepEquivalent(), DOWNSTREAM));
+    // Fetch the end of the selection, for the reason mentioned above.
+    endOfSelection = endingSelection().visibleEnd();
+    setEndingSelection(Selection(startOfSelection, endOfSelection));
     m_forceCreateList = false;
-    
     return true;
 }
 
@@ -125,6 +121,9 @@ void InsertListCommand::doApply()
     if (endingSelection().isRange() && modifyRange())
         return;
     
+    // FIXME: This will produce unexpected results for a selection that starts just before a
+    // table and ends inside the first cell, selectionForParagraphIteration should probably
+    // be renamed and deployed inside setEndingSelection().
     Node* selectionNode = endingSelection().start().node();
     const QualifiedName listTag = (m_type == OrderedList) ? olTag : ulTag;
     Node* listChildNode = enclosingListChild(selectionNode);

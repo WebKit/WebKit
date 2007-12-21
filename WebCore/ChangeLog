@@ -1,3 +1,37 @@
+2007-12-20  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        <rdar://problem/5543472> GoogleDocs: Safari hangs when creating a list from a particular selection
+        
+        Still need to fix similar issues with the other operations that iterate 
+        over selected paragraphs, like FormatBlock, Indent and Outdent (<rdar://problem/5658933>).
+
+        * editing/IndentOutdentCommand.cpp:
+        (WebCore::IndentOutdentCommand::indentRegion): Added a FIXME.
+        * editing/IndentOutdentCommand.h: Removed an unused function.
+        * editing/InsertListCommand.cpp:
+        (WebCore::InsertListCommand::modifyRange): 
+        Renamed visibleStart to startOfSelection and visibleEnd to endOfSelection.
+        Call the new selectionForParagraphIteration, which a) prevents operations like this
+        one from being performed on a table that isn't fully selected (where the selection
+        starts just before the table and ends inside it), and b) helps prevent paragraph
+        iteration from going past the end of the selection.
+        Call the new startOfNextParagraph, instead of using endOfParagraph(v).next(),
+        since when v is in the last paragraph of the last cell of a table, that expression 
+        will return the position after the table, not the start of the next paragraph.
+        * editing/htmlediting.cpp:
+        (WebCore::enclosingListChild): Don't go above a table cell, so that list operations
+        take effect inside the table cell where they are performed.
+        (WebCore::selectionForParagraphIteration): Added, see above.
+        (WebCore::indexForVisiblePosition): Moved from IndentOutdentCommand.cpp.
+        * editing/htmlediting.h:
+        * editing/visible_units.cpp:
+        (WebCore::startOfNextParagraph): Added, see above.
+        * editing/visible_units.h:
+        * editing/TextIterator.h:
+        (WebCore::TextIterator::exitNode): Added a FIXME.
+
 2007-12-20  Alp Toker  <alp@atoker.com>
 
         Rubber-stamped by Maciej.
