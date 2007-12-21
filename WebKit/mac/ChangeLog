@@ -1,3 +1,16 @@
+2007-12-20  Darin Adler  <darin@apple.com>
+
+        Reviewed by Oliver.
+
+        - fix <rdar://problem/5658787> Selector -[WebView insertLineBreak:] is not implemented
+
+        * WebView/WebView.mm: Added all selectors implemented by WebHTMLView to the list of
+        selectors to forward here. The new ones are: changeBaseWritingDirection:, changeSpelling:,
+        deleteToMark:, insertLineBreak:, moveParagraphBackwardAndModifySelection:,
+        moveParagraphForwardAndModifySelection:, pageDownAndModifySelection:, pageUpAndModifySelection:,
+        selectToMark:, setMark:, swapWithMark:, takeFindStringFromSelection:, toggleBaseWritingDirection:,
+        and transpose:.
+
 2007-12-20  Kevin Decker  <kdecker@apple.com>
 
         Reviewed by Anders.
