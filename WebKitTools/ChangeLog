@@ -1,3 +1,15 @@
+2007-12-21  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Mark Rowe.
+
+        - Disable the back/forward cache using the new WebPreferences API
+          instead of through the BackForwardList.  This makes us match what
+          we do on Windows.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (createWebViewAndOffscreenWindow):
+        (setDefaultsToConsistentValuesForTesting):
+
 2007-12-21  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Mark Rowe.

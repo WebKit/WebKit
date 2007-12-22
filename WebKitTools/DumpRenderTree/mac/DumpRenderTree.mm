@@ -168,10 +168,6 @@ WebView *createWebViewAndOffscreenWindow()
     [WebView registerURLSchemeAsLocal:@"feed"];
     [WebView registerURLSchemeAsLocal:@"feeds"];
     [WebView registerURLSchemeAsLocal:@"feedsearch"];
-
-    // The back/forward cache is causing problems due to layouts during transition from one page to another.
-    // So, turn it off for now, but we might want to turn it back on some day.
-    [[webView backForwardList] setPageCacheSize:0];
     
     [webView setContinuousSpellCheckingEnabled:YES];
     
@@ -264,6 +260,10 @@ static void setDefaultsToConsistentValuesForTesting()
     [preferences setEditableLinkBehavior:WebKitEditableLinkOnlyLiveWithShiftKey];
     [preferences setTabsToLinks:NO];
     [preferences setDOMPasteAllowed:YES];
+
+    // The back/forward cache is causing problems due to layouts during transition from one page to another.
+    // So, turn it off for now, but we might want to turn it back on some day.
+    [preferences setUsesPageCache:NO];
 }
 
 static void crashHandler(int sig)
