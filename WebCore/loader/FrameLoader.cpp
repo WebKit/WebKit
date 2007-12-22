@@ -4775,8 +4775,8 @@ void FrameLoader::switchOutLowBandwidthDisplayIfReady()
             RefPtr<Document> newDoc = DOMImplementation::instance()->
                 createDocument(m_responseMIMEType, m_frame, m_frame->inViewSourceMode());
             m_frame->setDocument(newDoc);
-            newDoc->setURL(m_URL.url());
-            newDoc->setBaseURL(m_URL.url());
+            newDoc->setURL(m_URL.deprecatedString());
+            newDoc->setBaseURL(m_URL.deprecatedString());
             if (m_decoder)
                 newDoc->setDecoder(m_decoder.get());
             restoreDocumentState();
