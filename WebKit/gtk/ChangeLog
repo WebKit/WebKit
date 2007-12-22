@@ -1,3 +1,9 @@
+2007-12-21  Alp Toker  <alp@atoker.com>
+
+        Documentation typo fix: s/wether/whether
+
+        * WebView/webkitwebview.cpp:
+
 2007-12-21  Christian Dywan  <christian@twotoasts.de>
 
         Reviewed by Alp Toker.

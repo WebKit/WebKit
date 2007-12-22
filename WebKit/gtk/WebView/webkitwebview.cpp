@@ -951,9 +951,9 @@ void webkit_web_view_stop_loading(WebKitWebView* webView)
  * webkit_web_view_search_text:
  * @web_view: a #WebKitWebView
  * @text: a string to look for
- * @forward: wether to find forward or not
- * @case_sensitive: wether to respect the case of text
- * @wrap: wether to continue looking at the beginning after reaching the end
+ * @forward: whether to find forward or not
+ * @case_sensitive: whether to respect the case of text
+ * @wrap: whether to continue looking at the beginning after reaching the end
  *
  * Looks for a specified string inside #web_view.
  *
@@ -975,7 +975,7 @@ gboolean webkit_web_view_search_text(WebKitWebView* webView, const gchar* string
  * webkit_web_view_mark_text_matches:
  * @web_view: a #WebKitWebView
  * @string: a string to look for
- * @case_sensitive: wether to respect the case of text
+ * @case_sensitive: whether to respect the case of text
  * @limit: the maximum number of strings to look for or %0 for all
  *
  * Attempts to highlight all occurances of #string inside #web_view.
@@ -996,7 +996,7 @@ guint webkit_web_view_mark_text_matches(WebKitWebView* webView, const gchar* str
 /**
  * webkit_web_view_set_highlight_text_matches:
  * @web_view: a #WebKitWebView
- * @highlight: Wether to highlight text matches
+ * @highlight: whether to highlight text matches
  *
  * Highlights text matches previously marked by webkit_web_view_mark_text_matches.
  */
@@ -1045,7 +1045,7 @@ void webkit_web_view_execute_script(WebKitWebView* webView, const gchar* script)
  * webkit_web_view_cut_clipboard:
  * @web_view: a #WebKitWebView
  *
- * Determines wether or not it is currently possible to cut to the clipboard.
+ * Determines whether or not it is currently possible to cut to the clipboard.
  *
  * Return value: %TRUE if a selection can be cut, %FALSE if not
  */
@@ -1061,7 +1061,7 @@ gboolean webkit_web_view_can_cut_clipboard(WebKitWebView* webView)
  * webkit_web_view_copy_clipboard:
  * @web_view: a #WebKitWebView
  *
- * Determines wether or not it is currently possible to copy to the clipboard.
+ * Determines whether or not it is currently possible to copy to the clipboard.
  *
  * Return value: %TRUE if a selection can be copied, %FALSE if not
  */
@@ -1077,7 +1077,7 @@ gboolean webkit_web_view_can_copy_clipboard(WebKitWebView* webView)
  * webkit_web_view_paste_clipboard:
  * @web_view: a #WebKitWebView
  *
- * Determines wether or not it is currently possible to paste from the clipboard.
+ * Determines whether or not it is currently possible to paste from the clipboard.
  *
  * Return value: %TRUE if a selection can be pasted, %FALSE if not
  */
@@ -1149,7 +1149,7 @@ void webkit_web_view_delete_selection(WebKitWebView* webView)
  * webkit_web_view_has_selection:
  * @web_view: a #WebKitWebView
  *
- * Determines wether text was selected.
+ * Determines whether text was selected.
  *
  * Return value: %TRUE if there is selected text, %FALSE if not
  */
