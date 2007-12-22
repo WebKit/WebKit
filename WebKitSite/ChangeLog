@@ -1,3 +1,9 @@
+2007-12-21  David Smith  <catfish.man@gmail.com>
+
+        Add a graph of benchmark results for an upcoming blog post.
+
+        * blog-files/gebcnwebkitonly.png: Added.
+
 2007-12-18  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Darin and Steve.
