@@ -665,11 +665,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\..\WebKitBuild\obj\WebCore\DerivedSources\JSHTMLAudioElement.cpp"
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSHTMLAudioElement.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\..\WebKitBuild\obj\WebCore\DerivedSources\JSHTMLAudioElement.h"
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSHTMLAudioElement.h"
 				>
 			</File>
 			<File
@@ -933,11 +933,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\..\WebKitBuild\obj\WebCore\DerivedSources\JSHTMLMediaElement.cpp"
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSHTMLMediaElement.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\..\WebKitBuild\obj\WebCore\DerivedSources\JSHTMLMediaElement.h"
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSHTMLMediaElement.h"
 				>
 			</File>
 			<File
@@ -1053,11 +1053,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\..\WebKitBuild\obj\WebCore\DerivedSources\JSHTMLSourceElement.cpp"
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSHTMLSourceElement.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\..\WebKitBuild\obj\WebCore\DerivedSources\JSHTMLSourceElement.h"
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSHTMLSourceElement.h"
 				>
 			</File>
 			<File
@@ -1141,11 +1141,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\..\WebKitBuild\obj\WebCore\DerivedSources\JSHTMLVideoElement.cpp"
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSHTMLVideoElement.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\..\WebKitBuild\obj\WebCore\DerivedSources\JSHTMLVideoElement.h"
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSHTMLVideoElement.h"
 				>
 			</File>
 			<File
@@ -1161,11 +1161,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\..\WebKitBuild\obj\WebCore\DerivedSources\JSMediaError.cpp"
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSMediaError.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\..\WebKitBuild\obj\WebCore\DerivedSources\JSMediaError.h"
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSMediaError.h"
 				>
 			</File>
 			<File
@@ -2385,11 +2385,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\..\WebKitBuild\obj\WebCore\DerivedSources\JSTimeRanges.cpp"
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSTimeRanges.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\..\WebKitBuild\obj\WebCore\DerivedSources\JSTimeRanges.h"
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSTimeRanges.h"
 				>
 			</File>
 			<File
@@ -2409,11 +2409,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\..\WebKitBuild\obj\WebCore\DerivedSources\JSVoidCallback.cpp"
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSVoidCallback.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\..\WebKitBuild\obj\WebCore\DerivedSources\JSVoidCallback.h"
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSVoidCallback.h"
 				>
 			</File>
 			<File

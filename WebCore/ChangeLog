@@ -1,3 +1,9 @@
+2007-12-22  Dan Bernstein  <mitz@apple.com>
+
+        - Windows build fix
+
+        * WebCore.vcproj/WebCore.vcproj:
+
 2007-12-22  Xan Lopez  <xan@gnome.org>
 
         Reviewed by Alp Toker.
