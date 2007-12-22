@@ -1,5 +1,11 @@
 2007-12-21  David Smith  <catfish.man@gmail.com>
 
+        At bdash's suggestion, display a message if someone attempts to run the 'native' version of the getElementsByClassName benchmark in a browser that doesn't support that.
+
+        * blog-files/gebcnspeedtest.html:
+
+2007-12-21  David Smith  <catfish.man@gmail.com>
+
         Add the benchmark from the previous commit as well.
 
         * blog-files/gebcnspeedtest.html: Added.
