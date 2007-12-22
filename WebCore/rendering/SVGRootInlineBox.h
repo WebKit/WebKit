@@ -42,6 +42,8 @@ public:
     {
     }
 
+    virtual bool isSVGRootInlineBox() { return true; }
+
     virtual void paint(RenderObject::PaintInfo&, int tx, int ty);
 
     virtual int placeBoxesHorizontally(int x, int& leftPosition, int& rightPosition, bool& needsWordSpacing);

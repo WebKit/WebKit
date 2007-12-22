@@ -1,3 +1,25 @@
+2007-12-22  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Oliver.
+
+        Fixes: http://bugs.webkit.org/show_bug.cgi?id=15966 (Crash in SVGRootInlineBox::walkTextChunks() on mouse hover)
+
+        Add new isSVGRootInlineBox() function to InlineBox to be able to differentiate between RootInlineBox/SVGRootInlineBox.
+        SVG assumed it's root inline box (for <text> elements) is always of type SVGRootInlineBox, which is not the case
+        for HTML text in <foreignObject>. Text selection doesn't work so far as line box offsets are wrong - which is visible
+        in Web Inspector.
+
+        * rendering/InlineBox.h:
+        (WebCore::InlineBox::isSVGRootInlineBox):
+        * rendering/SVGInlineTextBox.cpp:
+        (WebCore::SVGInlineTextBox::svgRootInlineBox):
+        (WebCore::SVGInlineTextBox::closestCharacterToPosition):
+        (WebCore::SVGInlineTextBox::selectionRect):
+        * rendering/SVGRenderTreeAsText.cpp:
+        (WebCore::writeSVGInlineTextBox):
+        * rendering/SVGRootInlineBox.h:
+        (WebCore::SVGRootInlineBox::isSVGRootInlineBox):
+
 2007-12-22  Alp Toker  <alp@atoker.com>
 
         LOW_BANDWIDTH_DISPLAY build fix

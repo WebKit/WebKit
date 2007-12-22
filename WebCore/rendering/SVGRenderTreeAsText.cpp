@@ -358,8 +358,6 @@ static inline bool containsInlineTextBox(SVGTextChunk& chunk, SVGInlineTextBox* 
 static inline void writeSVGInlineTextBox(TextStream& ts, SVGInlineTextBox* textBox, int indent)
 {
     SVGRootInlineBox* rootBox = textBox->svgRootInlineBox();
-    ASSERT(rootBox);
-
     if (!rootBox)
         return;
 
