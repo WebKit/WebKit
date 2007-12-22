@@ -1,3 +1,13 @@
+2007-12-21  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        - disable the back/forward cache in Windows DumpRenderTree. It is
+          already disabled in Mac DumpRenderTree.
+
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (initializePreferences):
+
 2007-12-13  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Darin and Steve.

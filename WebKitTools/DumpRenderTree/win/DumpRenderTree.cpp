@@ -731,6 +731,7 @@ static void initializePreferences(IWebPreferences* preferences)
     preferences->setDOMPasteAllowed(TRUE);
     preferences->setEditableLinkBehavior(WebKitEditableLinkOnlyLiveWithShiftKey);
     preferences->setFontSmoothing(FontSmoothingTypeStandard);
+    preferences->setUsesPageCache(FALSE);
 
     SysFreeString(standardFamily);
     SysFreeString(fixedFamily);
