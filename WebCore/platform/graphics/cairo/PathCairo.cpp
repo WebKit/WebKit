@@ -32,6 +32,7 @@
 
 #include <cairo.h>
 #include <math.h>
+#include <wtf/MathExtras.h>
 
 namespace WebCore {
 
@@ -136,7 +137,7 @@ void Path::addBezierCurveTo(const FloatPoint& controlPoint1, const FloatPoint& c
                    controlPoint3.x(), controlPoint3.y());
 }
 
-void Path::addArc(const FloatPoint& p, float r, float sa, float ea, bool clockwise)
+void Path::addArc(const FloatPoint& p, float r, float sa, float ea, bool anticlockwise)
 {
     // http://bugs.webkit.org/show_bug.cgi?id=16449
     // cairo_arc() functions hang or crash when passed inf as radius or start/end angle
@@ -144,10 +145,10 @@ void Path::addArc(const FloatPoint& p, float r, float sa, float ea, bool clockwi
         return;
 
     cairo_t* cr = platformPath()->m_cr;
-    if (clockwise)
-        cairo_arc(cr, p.x(), p.y(), r, sa, ea);
-    else
+    if (anticlockwise)
         cairo_arc_negative(cr, p.x(), p.y(), r, sa, ea);
+    else
+        cairo_arc(cr, p.x(), p.y(), r, sa, ea);
 }
 
 void Path::addArcTo(const FloatPoint& p1, const FloatPoint& p2, float radius)
@@ -165,7 +166,7 @@ void Path::addEllipse(const FloatRect& rect)
     float xRadius = .5 * rect.width();
     cairo_translate(cr, rect.x() + xRadius, rect.y() + yRadius);
     cairo_scale(cr, xRadius, yRadius);
-    cairo_arc(cr, 0., 0., 1., 0., 2 * M_PI);
+    cairo_arc(cr, 0., 0., 1., 0., 2 * piDouble);
     cairo_restore(cr);
 }
 

@@ -1,3 +1,24 @@
+2007-12-21  Brent Fulgham  <bfulgham@gmail.com>
+
+        Reviewed by Alp Toker.
+
+        http://bugs.webkit.org/show_bug.cgi?id=16558
+        Cairo WebCore Rendering Fails on arc drawing
+
+        Fix for bug reported (and patched) by Apollo team in which
+        arcs were draw in reverse (resulting in inverted images).
+        Review of the source found that the 'clockwise' term was
+        actually meant to mean 'anticlockwise' so the IDL and
+        supporting classes have been changed to match this. 
+
+        * html/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::arc):
+        * html/CanvasRenderingContext2D.idl:
+        * platform/graphics/cairo/PathCairo.cpp:
+        (WebCore::Path::addArc):
+        (WebCore::Path::addEllipse):
+        * platform/graphics/Path.h:
+
 2007-12-21  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Oliver.

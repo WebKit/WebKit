@@ -72,7 +72,7 @@ module html {
             raises (DOMException);
         void rect(in float x, in float y, in float width, in float height)
             raises (DOMException);
-        void arc(in float x, in float y, in float radius, in float startAngle, in float endAngle, in boolean clockwise)
+        void arc(in float x, in float y, in float radius, in float startAngle, in float endAngle, in boolean anticlockwise)
             raises (DOMException);
         void fill();
         void stroke();

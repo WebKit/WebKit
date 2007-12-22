@@ -97,7 +97,7 @@ namespace WebCore {
         void addArcTo(const FloatPoint&, const FloatPoint&, float radius);
         void closeSubpath();
 
-        void addArc(const FloatPoint&, float radius, float startAngle, float endAngle, bool clockwise);
+        void addArc(const FloatPoint&, float radius, float startAngle, float endAngle, bool anticlockwise);
         void addRect(const FloatRect&);
         void addEllipse(const FloatRect&);
 

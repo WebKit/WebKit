@@ -419,14 +419,14 @@ void CanvasRenderingContext2D::arcTo(float x0, float y0, float x1, float y1, flo
     state().m_path.addArcTo(FloatPoint(x0, y0), FloatPoint(x1, y1), r);
 }
 
-void CanvasRenderingContext2D::arc(float x, float y, float r, float sa, float ea, bool clockwise, ExceptionCode& ec)
+void CanvasRenderingContext2D::arc(float x, float y, float r, float sa, float ea, bool anticlockwise, ExceptionCode& ec)
 {
     ec = 0;
     if (!(r > 0)) {
         ec = INDEX_SIZE_ERR;
         return;
     }
-    state().m_path.addArc(FloatPoint(x, y), r, sa, ea, clockwise);
+    state().m_path.addArc(FloatPoint(x, y), r, sa, ea, anticlockwise);
 }
 
 void CanvasRenderingContext2D::rect(float x, float y, float width, float height, ExceptionCode& ec)
