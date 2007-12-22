@@ -1,5 +1,12 @@
 2007-12-21  David Smith  <catfish.man@gmail.com>
 
+        Add the benchmark from the previous commit as well.
+
+        * blog-files/gebcnspeedtest.html: Added.
+        * blog-files/prototype-for-gebcn-test.js: Added.
+
+2007-12-21  David Smith  <catfish.man@gmail.com>
+
         Add a graph of benchmark results for an upcoming blog post.
 
         * blog-files/gebcnwebkitonly.png: Added.
