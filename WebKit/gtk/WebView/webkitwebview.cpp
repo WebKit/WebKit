@@ -41,6 +41,7 @@
 #include "FrameLoader.h"
 #include "FrameView.h"
 #include "Editor.h"
+#include "PasteboardHelper.h"
 #include "PlatformKeyboardEvent.h"
 #include "PlatformWheelEvent.h"
 #include "SubstituteData.h"
@@ -76,9 +77,31 @@ enum {
     LAST_SIGNAL
 };
 
+enum {
+    PROP_0,
+
+    PROP_COPY_TARGET_LIST,
+    PROP_PASTE_TARGET_LIST
+};
+
 static guint webkit_web_view_signals[LAST_SIGNAL] = { 0, };
 
 G_DEFINE_TYPE(WebKitWebView, webkit_web_view, GTK_TYPE_CONTAINER)
+
+static void webkit_web_view_get_property(GObject *object, guint prop_id, GValue *value, GParamSpec *pspec) {
+    WebKitWebView* webView = WEBKIT_WEB_VIEW(object);
+
+    switch(prop_id) {
+    case PROP_COPY_TARGET_LIST:
+        g_value_set_boxed(value, webkit_web_view_get_copy_target_list(webView));
+        break;
+    case PROP_PASTE_TARGET_LIST:
+        g_value_set_boxed(value, webkit_web_view_get_paste_target_list(webView));
+        break;
+    default:
+        break;
+    }
+}
 
 static gboolean webkit_web_view_expose_event(GtkWidget* widget, GdkEventExpose* event)
 {
@@ -426,6 +449,8 @@ static void webkit_web_view_finalize(GObject* object)
     delete webViewData->settings;
     g_object_unref(webViewData->mainFrame);
     g_object_unref(webViewData->imContext);
+    gtk_target_list_unref(webViewData->copy_target_list);
+    gtk_target_list_unref(webViewData->paste_target_list);
     delete webViewData->userAgent;
 
     G_OBJECT_CLASS(webkit_web_view_parent_class)->finalize(object);
@@ -765,6 +790,9 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
 
     G_OBJECT_CLASS(webViewClass)->finalize = webkit_web_view_finalize;
 
+    GObjectClass* objectClass = G_OBJECT_CLASS(webViewClass);
+    objectClass->get_property = webkit_web_view_get_property;
+
     GtkWidgetClass* widgetClass = GTK_WIDGET_CLASS(webViewClass);
     widgetClass->realize = webkit_web_view_realize;
     widgetClass->expose_event = webkit_web_view_expose_event;
@@ -818,6 +846,22 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
                                  "copy_clipboard", 0);
     gtk_binding_entry_add_signal(binding_set, GDK_Insert, GDK_SHIFT_MASK,
                                  "paste_clipboard", 0);
+
+    /* Properties */
+    GParamFlags flags = (GParamFlags)(G_PARAM_READABLE|G_PARAM_STATIC_NAME|G_PARAM_STATIC_NICK|G_PARAM_STATIC_BLURB);
+    g_object_class_install_property(objectClass, PROP_COPY_TARGET_LIST,
+                                    g_param_spec_boxed("copy-target-list",
+                                                       "Target list",
+                                                       "The list of targets this Web view supports for copying to the clipboard",
+                                                       GTK_TYPE_TARGET_LIST,
+                                                       flags));
+
+    g_object_class_install_property(objectClass, PROP_PASTE_TARGET_LIST,
+                                    g_param_spec_boxed("paste-target-list",
+                                                       "Target list",
+                                                       "The list of targets this Web view supports for pasting to the clipboard",
+                                                       GTK_TYPE_TARGET_LIST,
+                                                       flags));
 }
 
 static void webkit_web_view_init(WebKitWebView* webView)
@@ -843,6 +887,22 @@ static void webkit_web_view_init(WebKitWebView* webView)
     GTK_WIDGET_SET_FLAGS(webView, GTK_CAN_FOCUS);
     webViewData->mainFrame = WEBKIT_WEB_FRAME(webkit_web_frame_new(webView));
     webViewData->editable = false;
+
+#if GLIB_CHECK_VERSION(2,10,0)
+    GdkAtom textHtml = gdk_atom_intern_static_string("text/html");
+#else
+    GdkAtom textHtml = gdk_atom_intern("text/html", false);
+#endif
+    /* Targets for copy */
+    webViewData->copy_target_list = gtk_target_list_new(NULL, 0);
+    gtk_target_list_add(webViewData->copy_target_list, textHtml, GTK_TARGET_OTHER_APP, WEBKIT_WEB_VIEW_TARGET_INFO_HTML);
+    gtk_target_list_add_text_targets(webViewData->copy_target_list, WEBKIT_WEB_VIEW_TARGET_INFO_TEXT);
+
+    /* Targets for pasting */
+    webViewData->paste_target_list = gtk_target_list_new(NULL, 0);
+    gtk_target_list_add(webViewData->paste_target_list, textHtml, GTK_TARGET_OTHER_APP, WEBKIT_WEB_VIEW_TARGET_INFO_HTML);
+    gtk_target_list_add_text_targets(webViewData->paste_target_list, WEBKIT_WEB_VIEW_TARGET_INFO_TEXT);
+
 }
 
 GtkWidget* webkit_web_view_new(void)
@@ -1254,6 +1314,46 @@ void webkit_web_view_set_editable(WebKitWebView* webView, gboolean flag)
         //    mainFrame->setSelectionFromNone();
     } else
         mainFrame->removeEditingStyleFromBodyElement();
+}
+
+/**
+ * webkit_web_view_get_copy_target_list:
+ * @web_view: a #WebKitWebView
+ *
+ * This function returns the list of targets this #WebKitWebView can
+ * provide for clipboard copying and as DND source. The targets in the list are
+ * added with %info values from the #WebKitWebViewTargetInfo enum,
+ * using gtk_target_list_add() and
+ * gtk_target_list_add_text_targets().
+ *
+ * Return value: the #GtkTargetList
+ **/
+GtkTargetList* webkit_web_view_get_copy_target_list(WebKitWebView* webView)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), NULL);
+
+    WebKitWebViewPrivate* webViewData = WEBKIT_WEB_VIEW_GET_PRIVATE(webView);
+    return webViewData->copy_target_list;
+}
+
+/**
+ * webkit_web_view_get_paste_target_list:
+ * @web_view: a #WebKitWebView
+ *
+ * This function returns the list of targets this #WebKitWebView can
+ * provide for clipboard pasting and as DND destination. The targets in the list are
+ * added with %info values from the #WebKitWebViewTargetInfo enum,
+ * using gtk_target_list_add() and
+ * gtk_target_list_add_text_targets().
+ *
+ * Return value: the #GtkTargetList
+ **/
+GtkTargetList* webkit_web_view_get_paste_target_list(WebKitWebView* webView)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), NULL);
+
+    WebKitWebViewPrivate* webViewData = WEBKIT_WEB_VIEW_GET_PRIVATE(webView);
+    return webViewData->paste_target_list;
 }
 
 }

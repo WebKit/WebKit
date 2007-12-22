@@ -34,6 +34,10 @@
 #include <wtf/RetainPtr.h>
 #endif
 
+#if PLATFORM(GTK)
+#include <PasteboardHelper.h>
+#endif
+
 // FIXME: This class is too high-level to be in the platform directory, since it
 // uses the DOM and makes calls to Editor. It should either be divested of its
 // knowledge of the frame and editor or moved into the editing directory.
@@ -88,6 +92,10 @@ public:
     PassRefPtr<DocumentFragment> documentFragment(Frame*, PassRefPtr<Range>, bool allowPlainText, bool& chosePlainText);
     String plainText(Frame* = 0);
 
+#if PLATFORM(GTK)
+    void setHelper(PasteboardHelper*);
+#endif
+
 private:
     Pasteboard();
     ~Pasteboard();
@@ -100,6 +108,11 @@ private:
 #if PLATFORM(WIN)
     HWND m_owner;
 #endif
+
+#if PLATFORM(GTK)
+    PasteboardHelper* m_helper;
+#endif
+
 };
 
 } // namespace WebCore

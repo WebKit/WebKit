@@ -41,7 +41,11 @@ typedef enum {
     WEBKIT_NAVIGATION_RESPONSE_DOWNLOAD
 } WebKitNavigationResponse;
 
-
+typedef enum
+{
+    WEBKIT_WEB_VIEW_TARGET_INFO_HTML = - 1,
+    WEBKIT_WEB_VIEW_TARGET_INFO_TEXT = - 2
+} WebKitWebViewTargetInfo;
 
 struct _WebKitWebView {
     GtkContainer parent;
@@ -163,6 +167,12 @@ webkit_web_view_get_editable (WebKitWebView* web_view);
 
 WEBKIT_API void
 webkit_web_view_set_editable (WebKitWebView* web_view, gboolean flag);
+
+WEBKIT_API GtkTargetList*
+webkit_web_view_get_copy_target_list (WebKitWebView* webView);
+
+WEBKIT_API GtkTargetList*
+webkit_web_view_get_paste_target_list (WebKitWebView* webView);
 
 G_END_DECLS
 

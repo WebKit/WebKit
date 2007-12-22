@@ -955,6 +955,7 @@ qt-port {
 gtk-port {
     HEADERS += \
         ../WebCore/platform/gtk/ClipboardGtk.h \
+        ../WebCore/platform/gtk/PasteboardHelper.h \
         ../WebKit/gtk/WebView/webkit.h \
         ../WebKit/gtk/WebView/webkitdefines.h \
         ../WebKit/gtk/WebView/webkitnetworkrequest.h \
@@ -967,7 +968,8 @@ gtk-port {
         ../WebKit/gtk/WebCoreSupport/DragClientGtk.h \
         ../WebKit/gtk/WebCoreSupport/EditorClientGtk.h \
         ../WebKit/gtk/WebCoreSupport/FrameLoaderClientGtk.h \
-        ../WebKit/gtk/WebCoreSupport/InspectorClientGtk.h
+        ../WebKit/gtk/WebCoreSupport/InspectorClientGtk.h \
+        ../WebKit/gtk/WebCoreSupport/PasteboardHelperGtk.h
     SOURCES += \
         platform/graphics/StringTruncator.cpp \
         platform/text/TextCodecICU.cpp \
@@ -1042,7 +1044,8 @@ gtk-port {
         ../WebKit/gtk/WebCoreSupport/DragClientGtk.cpp \
         ../WebKit/gtk/WebCoreSupport/EditorClientGtk.cpp \
         ../WebKit/gtk/WebCoreSupport/FrameLoaderClientGtk.cpp \
-        ../WebKit/gtk/WebCoreSupport/InspectorClientGtk.cpp
+        ../WebKit/gtk/WebCoreSupport/InspectorClientGtk.cpp \
+        ../WebKit/gtk/WebCoreSupport/PasteboardHelperGtk.cpp
 }
 
 contains(DEFINES, ENABLE_DATABASE=1) {

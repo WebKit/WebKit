@@ -1,3 +1,33 @@
+2007-12-22  Luca Bruno  <lethalman88@gmail.com>
+
+        Reviewed by Alp Toker.
+
+        http://bugs.webkit.org/show_bug.cgi?id=16311
+        [Gtk] Copy rich text to clipboard as text/plain and text/html.
+
+        Add copy and paste targets for WebView and implement
+        WebCore::PasteboardHelper.
+
+        * WebCoreSupport/PasteboardHelperGtk.cpp: Added.
+        (WebKit::PasteboardHelperGtk::getClipboard):
+        (WebKit::PasteboardHelperGtk::getCopyTargetList):
+        (WebKit::PasteboardHelperGtk::getPasteTargetList):
+        * WebCoreSupport/PasteboardHelperGtk.h: Added.
+        * WebView/webkitprivate.cpp:
+        (webkit_init): set the PasteboardHelperGtk as WebCore::Pasteboard helper
+        * WebView/webkitprivate.h:
+        (_WebKitWebViewPrivate::copy_target_list): added
+        (_WebKitWebViewPrivate::paste_target_list): added
+        * WebView/webkitwebview.cpp:
+        (webkit_web_view_get_property): added
+        (webkit_web_view_finalize):
+        (webkit_web_view_class_init): create properties for COPY_TARGET and PASTE_TARGET and create the copy and paste target lists
+        (webkit_web_view_get_copy_target_list): added
+        (webkit_web_view_get_paste_target_list): added
+        * WebView/webkitwebview.h:
+        (webkit_web_view_get_copy_target_list): added
+        (webkit_web_view_get_paste_target_list): added
+
 2007-12-22  Xan Lopez  <xan@gnome.org>
 
         Reviewed by Alp Toker.
