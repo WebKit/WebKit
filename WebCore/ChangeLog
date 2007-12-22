@@ -1,3 +1,12 @@
+2007-12-22  Xan Lopez  <xan@gnome.org>
+
+        Reviewed by Alp Toker.
+
+        Add missing return 0 to fix a compile warning.
+
+        * page/gtk/FrameGtk.cpp:
+        (WebCore::Frame::createScriptInstanceForWidget):
+
 2007-12-21  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Darin, Adam and Steve.
