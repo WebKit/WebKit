@@ -644,6 +644,16 @@ sub setupCygwinEnv()
         }
     }
 
+    my $qtSDKPath = "$programFilesPath/QuickTime SDK";
+    if (! -e $qtSDKPath) {
+        print "*************************************************************\n";
+        print "Cannot find '$qtSDKPath'\n";
+        print "Pleased download QuickTime SDK for Windows from\n";
+        print "http://developer.apple.com/quicktime/download/\n";
+        print "*************************************************************\n";
+        die;
+    }
+    
     chomp($ENV{'WEBKITLIBRARIESDIR'} = `cygpath -wa "$sourceDir/WebKitLibraries/win"`) unless $ENV{'WEBKITLIBRARIESDIR'};
 
     $windowsTmpPath = `cygpath -w /tmp`;

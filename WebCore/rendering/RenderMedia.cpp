@@ -150,10 +150,9 @@ void MediaControlPlayButtonElement::defaultEventHandler(Event* event)
 
 void MediaControlPlayButtonElement::update()
 {
-    // FIXME: these are here just for temporary look
-    static const UChar blackRightPointingTriangle = 0x25b6;
-    const UChar twoBlackVerticalRectangles[] = { 0x25AE, 0x25AE };
-    setValue(inPausedState() ? String(&blackRightPointingTriangle, 1) : String(&twoBlackVerticalRectangles[0], 2));
+    // FIXME: These are here just for temporary look,
+    // switch to using bitmaps
+    setValue(inPausedState() ? ">" : "||");
     renderer()->updateFromElement();
 }
 

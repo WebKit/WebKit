@@ -229,7 +229,7 @@ String HTMLMediaElement::src() const
     return document()->completeURL(getAttribute(srcAttr));
 }
 
-void HTMLMediaElement::HTMLMediaElement::setSrc(const String& url)
+void HTMLMediaElement::setSrc(const String& url)
 {
     setAttribute(srcAttr, url);
 }

@@ -1,3 +1,123 @@
+2007-12-21  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Darin, Adam and Steve.
+
+        Add media playback support for Windows.
+        
+        The implementation uses low level QuickTime API. DLL is
+        needed to work around CF use in both WebKit and QuickTime.
+        
+        This makes Windows build depend on the QuickTime SDK 
+        
+        http://developer.apple.com/quicktime/download/
+        
+        but not QuickTime itself.
+        
+        QTMovieWinTimer contains some copy code from SharedTimerWin. It
+        is used in the QuickTime access DLL which can't use WebCore
+        SharedTimer due to dependency problems.
+
+        * WebCore.vcproj/QTMovieWin.vcproj: Added.
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.vcproj/build-generated-files.sh:
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::setSrc):
+        * platform/graphics/MediaPlayer.cpp:
+        * platform/graphics/win/MediaPlayerPrivateQuickTimeWin.cpp: Added.
+        (WebCore::MediaPlayerPrivate::MediaPlayerPrivate):
+        (WebCore::MediaPlayerPrivate::~MediaPlayerPrivate):
+        (WebCore::MediaPlayerPrivate::load):
+        (WebCore::MediaPlayerPrivate::play):
+        (WebCore::MediaPlayerPrivate::pause):
+        (WebCore::MediaPlayerPrivate::duration):
+        (WebCore::MediaPlayerPrivate::currentTime):
+        (WebCore::MediaPlayerPrivate::seek):
+        (WebCore::MediaPlayerPrivate::doSeek):
+        (WebCore::MediaPlayerPrivate::cancelSeek):
+        (WebCore::MediaPlayerPrivate::seekTimerFired):
+        (WebCore::MediaPlayerPrivate::setEndTime):
+        (WebCore::MediaPlayerPrivate::startEndPointTimerIfNeeded):
+        (WebCore::MediaPlayerPrivate::endPointTimerFired):
+        (WebCore::MediaPlayerPrivate::paused):
+        (WebCore::MediaPlayerPrivate::seeking):
+        (WebCore::MediaPlayerPrivate::naturalSize):
+        (WebCore::MediaPlayerPrivate::hasVideo):
+        (WebCore::MediaPlayerPrivate::setVolume):
+        (WebCore::MediaPlayerPrivate::setMuted):
+        (WebCore::MediaPlayerPrivate::setRate):
+        (WebCore::MediaPlayerPrivate::dataRate):
+        (WebCore::MediaPlayerPrivate::maxTimeBuffered):
+        (WebCore::MediaPlayerPrivate::maxTimeSeekable):
+        (WebCore::MediaPlayerPrivate::maxTimeLoaded):
+        (WebCore::MediaPlayerPrivate::bytesLoaded):
+        (WebCore::MediaPlayerPrivate::totalBytesKnown):
+        (WebCore::MediaPlayerPrivate::totalBytes):
+        (WebCore::MediaPlayerPrivate::cancelLoad):
+        (WebCore::MediaPlayerPrivate::updateStates):
+        (WebCore::MediaPlayerPrivate::didEnd):
+        (WebCore::MediaPlayerPrivate::setRect):
+        (WebCore::MediaPlayerPrivate::setVisible):
+        (WebCore::MediaPlayerPrivate::paint):
+        (WebCore::MediaPlayerPrivate::getSupportedTypes):
+        (WebCore::MediaPlayerPrivate::movieEnded):
+        (WebCore::MediaPlayerPrivate::movieLoadStateChanged):
+        (WebCore::MediaPlayerPrivate::movieTimeChanged):
+        (WebCore::MediaPlayerPrivate::movieNewImageAvailable):
+        * platform/graphics/win/MediaPlayerPrivateQuickTimeWin.h: Added.
+        (WebCore::MediaPlayerPrivate::networkState):
+        (WebCore::MediaPlayerPrivate::readyState):
+        * platform/graphics/win/QTMovieWin.cpp: Added.
+        (updateTaskTimer):
+        (QTMovieWinPrivate::QTMovieWinPrivate):
+        (QTMovieWinPrivate::~QTMovieWinPrivate):
+        (taskTimerFired):
+        (QTMovieWinPrivate::startTask):
+        (QTMovieWinPrivate::endTask):
+        (QTMovieWinPrivate::task):
+        (QTMovieWinPrivate::registerDrawingCallback):
+        (QTMovieWinPrivate::drawingComplete):
+        (QTMovieWinPrivate::createGWorld):
+        (QTMovieWinPrivate::setSize):
+        (QTMovieWinPrivate::deleteGWorld):
+        (QTMovieWin::QTMovieWin):
+        (QTMovieWin::~QTMovieWin):
+        (QTMovieWin::play):
+        (QTMovieWin::pause):
+        (QTMovieWin::rate):
+        (QTMovieWin::setRate):
+        (QTMovieWin::duration):
+        (QTMovieWin::currentTime):
+        (QTMovieWin::setCurrentTime):
+        (QTMovieWin::setVolume):
+        (QTMovieWin::setMuted):
+        (QTMovieWin::dataSize):
+        (QTMovieWin::maxTimeLoaded):
+        (QTMovieWin::loadState):
+        (QTMovieWin::getNaturalSize):
+        (QTMovieWin::setSize):
+        (QTMovieWin::setVisible):
+        (QTMovieWin::paint):
+        (QTMovieWin::load):
+        (movieDrawingCompleteProc):
+        (initializeSupportedTypes):
+        (QTMovieWin::countSupportedTypes):
+        (QTMovieWin::getSupportedType):
+        (QTMovieWin::initializeQuickTime):
+        (DllMain):
+        * platform/graphics/win/QTMovieWin.h: Added.
+        * platform/graphics/win/QTMovieWinTimer.cpp: Added.
+        (TimerWindowWndProc):
+        (initializeOffScreenTimerWindow):
+        (setSharedTimerFiredFunction):
+        (timerFired):
+        (setSharedTimerFireDelay):
+        (stopSharedTimer):
+        (setSharedTimerInstanceHandle):
+        (systemTime):
+        * platform/graphics/win/QTMovieWinTimer.h: Added.
+        * rendering/RenderMedia.cpp:
+        (WebCore::MediaControlPlayButtonElement::update):
+
 2007-12-21  Brent Fulgham  <bfulgham@gmail.com>
 
         Reviewed by Alp Toker.

@@ -33,6 +33,8 @@
 
 #if PLATFORM(MAC)
 #include "MediaPlayerPrivateQTKit.h"
+#elif PLATFORM(WIN)
+#include "MediaPlayerPrivateQuickTimeWin.h"
 #elif PLATFORM(GTK)
 #include "MediaPlayerPrivateGStreamer.h"
 #endif

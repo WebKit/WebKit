@@ -43,8 +43,8 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;$(ProjectDir)..\&quot;;&quot;$(ProjectDir)..&quot;;&quot;$(ProjectDir)..\css&quot;;&quot;$(ProjectDir)..\editing&quot;;&quot;$(ProjectDir)..\rendering&quot;;&quot;$(ProjectDir)..\bindings\js&quot;;&quot;$(ProjectDir)..\dom&quot;;&quot;$(ProjectDir)..\history&quot;;&quot;$(ProjectDir)..\html&quot;;&quot;$(ProjectDir)..\bridge&quot;;&quot;$(ProjectDir)..\bridge\win&quot;;&quot;$(ProjectDir)..\loader&quot;;&quot;$(ProjectDir)..\loader\icon&quot;;&quot;$(ProjectDir)..\page&quot;;&quot;$(ProjectDir)..\platform&quot;;&quot;$(ProjectDir)..\platform\sql&quot;;&quot;$(ProjectDir)..\platform\win&quot;;&quot;$(ProjectDir)..\platform\network&quot;;&quot;$(ProjectDir)..\platform\network\win&quot;;&quot;$(ProjectDir)..\platform\cf&quot;;&quot;$(ProjectDir)..\platform\network\cf&quot;;&quot;$(ProjectDir)..\platform\graphics&quot;;&quot;$(ProjectDir)..\platform\text&quot;;&quot;$(ProjectDir)..\platform\graphics\cairo&quot;;&quot;$(ProjectDir)..\platform\graphics\cg&quot;;&quot;$(ProjectDir)..\platform\graphics\win&quot;;&quot;$(ProjectDir)..\platform\image-decoders&quot;;&quot;$(ProjectDir)..\platform\image-decoders\bmp&quot;;&quot;$(ProjectDir)..\platform\image-decoders\gif&quot;;&quot;$(ProjectDir)..\platform\image-decoders\ico&quot;;&quot;$(ProjectDir)..\platform\image-decoders\jpeg&quot;;&quot;$(ProjectDir)..\platform\image-decoders\png&quot;;&quot;$(ProjectDir)..\platform\image-decoders\xbm&quot;;&quot;$(ProjectDir)..\platform\image-decoders\zlib&quot;;&quot;$(ProjectDir)..\xml&quot;;&quot;$(WebKitOutputDir)\obj\WebCore\DerivedSources&quot;;&quot;$(ProjectDir)..\plugins\win&quot;;&quot;$(ProjectDir)..\platform\cairo\pixman\src&quot;;&quot;$(ProjectDir)..\platform\cairo\cairo\src&quot;;&quot;$(ProjectDir)..\svg\graphics&quot;;&quot;$(ProjectDir)..\svg\graphics\cg&quot;;&quot;$(ProjectDir)..\svg\graphics\filters&quot;;&quot;$(ProjectDir)..\kcanvas&quot;;&quot;$(ProjectDir)..\kcanvas\device&quot;;&quot;$(ProjectDir)..\kcanvas\device\quartz&quot;;&quot;$(ProjectDir)..\svg&quot;;&quot;$(ProjectDir)..\storage&quot;;&quot;$(WebKitOutputDir)\include&quot;;&quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;;&quot;$(ProjectDir)..\ForwardingHeaders&quot;;&quot;$(WebKitLibrariesDir)\include&quot;;&quot;$(WebKitLibrariesDir)\include\icu&quot;;&quot;$(WebKitLibrariesDir)\include\iconv&quot;;&quot;$(WebKitLibrariesDir)\include\pthreads&quot;;&quot;$(WebKitLibrariesDir)\include\sqlite&quot;;&quot;$(WebKitLibrariesDir)\include\JavaScriptCore&quot;;&quot;$(WebKitLibrariesDir)\Include\CoreFoundation\OSXCompatibilityHeaders&quot;;&quot;$(WebKitLibrariesDir)\Include\CoreFoundation\OSXCompatibilityHeaders\GNUCompatibility&quot;"
-				PreprocessorDefinitions="WIN32;__WIN32__;_SCL_SECURE_NO_DEPRECATE;_CRT_SECURE_NO_DEPRECATE;ENABLE_XSLT;ENABLE_XPATH;ENABLE_SVG;ENABLE_SVG_AS_IMAGE;ENABLE_SVG_USE;WEBCORE_CONTEXT_MENUS;USE_SAFARI_THEME"
+				AdditionalIncludeDirectories="&quot;$(ProjectDir)..\&quot;;&quot;$(ProjectDir)..&quot;;&quot;$(ProjectDir)..\css&quot;;&quot;$(ProjectDir)..\editing&quot;;&quot;$(ProjectDir)..\rendering&quot;;&quot;$(ProjectDir)..\bindings\js&quot;;&quot;$(ProjectDir)..\dom&quot;;&quot;$(ProjectDir)..\history&quot;;&quot;$(ProjectDir)..\html&quot;;&quot;$(ProjectDir)..\bridge&quot;;&quot;$(ProjectDir)..\bridge\win&quot;;&quot;$(ProjectDir)..\loader&quot;;&quot;$(ProjectDir)..\loader\icon&quot;;&quot;$(ProjectDir)..\page&quot;;&quot;$(ProjectDir)..\platform&quot;;&quot;$(ProjectDir)..\platform\sql&quot;;&quot;$(ProjectDir)..\platform\win&quot;;&quot;$(ProjectDir)..\platform\network&quot;;&quot;$(ProjectDir)..\platform\network\win&quot;;&quot;$(ProjectDir)..\platform\cf&quot;;&quot;$(ProjectDir)..\platform\network\cf&quot;;&quot;$(ProjectDir)..\platform\graphics&quot;;&quot;$(ProjectDir)..\platform\text&quot;;&quot;$(ProjectDir)..\platform\graphics\cairo&quot;;&quot;$(ProjectDir)..\platform\graphics\cg&quot;;&quot;$(ProjectDir)..\platform\graphics\win&quot;;&quot;$(ProjectDir)..\platform\image-decoders&quot;;&quot;$(ProjectDir)..\platform\image-decoders\bmp&quot;;&quot;$(ProjectDir)..\platform\image-decoders\gif&quot;;&quot;$(ProjectDir)..\platform\image-decoders\ico&quot;;&quot;$(ProjectDir)..\platform\image-decoders\jpeg&quot;;&quot;$(ProjectDir)..\platform\image-decoders\png&quot;;&quot;$(ProjectDir)..\platform\image-decoders\xbm&quot;;&quot;$(ProjectDir)..\platform\image-decoders\zlib&quot;;&quot;$(ProjectDir)..\xml&quot;;&quot;$(WebKitOutputDir)\obj\WebCore\DerivedSources&quot;;&quot;$(ProjectDir)..\plugins\win&quot;;&quot;$(ProjectDir)..\platform\cairo\pixman\src&quot;;&quot;$(ProjectDir)..\platform\cairo\cairo\src&quot;;&quot;$(ProjectDir)..\svg\graphics&quot;;&quot;$(ProjectDir)..\svg\graphics\cg&quot;;&quot;$(ProjectDir)..\svg\graphics\filters&quot;;&quot;$(ProjectDir)..\kcanvas&quot;;&quot;$(ProjectDir)..\kcanvas\device&quot;;&quot;$(ProjectDir)..\kcanvas\device\quartz&quot;;&quot;$(ProjectDir)..\svg&quot;;&quot;$(ProjectDir)..\storage&quot;;&quot;$(WebKitOutputDir)\include&quot;;&quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;;&quot;$(ProjectDir)..\ForwardingHeaders&quot;;&quot;$(WebKitLibrariesDir)\include&quot;;&quot;$(WebKitLibrariesDir)\include\icu&quot;;&quot;$(WebKitLibrariesDir)\include\iconv&quot;;&quot;$(WebKitLibrariesDir)\include\pthreads&quot;;&quot;$(WebKitLibrariesDir)\include\sqlite&quot;;&quot;$(WebKitLibrariesDir)\include\JavaScriptCore&quot;;&quot;$(WebKitLibrariesDir)\Include\CoreFoundation\OSXCompatibilityHeaders&quot;;&quot;$(WebKitLibrariesDir)\Include\CoreFoundation\OSXCompatibilityHeaders\GNUCompatibility&quot;;$(WebKitOutputDir)\include\QtMovieWin"
+				PreprocessorDefinitions="WIN32;__WIN32__;_SCL_SECURE_NO_DEPRECATE;_CRT_SECURE_NO_DEPRECATE;ENABLE_XSLT;ENABLE_XPATH;ENABLE_SVG;ENABLE_SVG_AS_IMAGE;ENABLE_SVG_USE;ENABLE_VIDEO;WEBCORE_CONTEXT_MENUS;USE_SAFARI_THEME"
 				MinimalRebuild="true"
 				ExceptionHandling="0"
 				BasicRuntimeChecks="3"
@@ -117,8 +117,8 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="&quot;$(ProjectDir)..\&quot;;&quot;$(ProjectDir)..&quot;;&quot;$(ProjectDir)..\css&quot;;&quot;$(ProjectDir)..\editing&quot;;&quot;$(ProjectDir)..\rendering&quot;;&quot;$(ProjectDir)..\bindings\js&quot;;&quot;$(ProjectDir)..\dom&quot;;&quot;$(ProjectDir)..\history&quot;;&quot;$(ProjectDir)..\html&quot;;&quot;$(ProjectDir)..\bridge&quot;;&quot;$(ProjectDir)..\bridge\win&quot;;&quot;$(ProjectDir)..\loader&quot;;&quot;$(ProjectDir)..\loader\icon&quot;;&quot;$(ProjectDir)..\page&quot;;&quot;$(ProjectDir)..\platform&quot;;&quot;$(ProjectDir)..\platform\sql&quot;;&quot;$(ProjectDir)..\platform\win&quot;;&quot;$(ProjectDir)..\platform\network&quot;;&quot;$(ProjectDir)..\platform\network\win&quot;;&quot;$(ProjectDir)..\platform\cf&quot;;&quot;$(ProjectDir)..\platform\network\cf&quot;;&quot;$(ProjectDir)..\platform\graphics&quot;;&quot;$(ProjectDir)..\platform\text&quot;;&quot;$(ProjectDir)..\platform\graphics\cairo&quot;;&quot;$(ProjectDir)..\platform\graphics\cg&quot;;&quot;$(ProjectDir)..\platform\graphics\win&quot;;&quot;$(ProjectDir)..\platform\image-decoders&quot;;&quot;$(ProjectDir)..\platform\image-decoders\bmp&quot;;&quot;$(ProjectDir)..\platform\image-decoders\gif&quot;;&quot;$(ProjectDir)..\platform\image-decoders\ico&quot;;&quot;$(ProjectDir)..\platform\image-decoders\jpeg&quot;;&quot;$(ProjectDir)..\platform\image-decoders\png&quot;;&quot;$(ProjectDir)..\platform\image-decoders\xbm&quot;;&quot;$(ProjectDir)..\platform\image-decoders\zlib&quot;;&quot;$(ProjectDir)..\xml&quot;;&quot;$(WebKitOutputDir)\obj\WebCore\DerivedSources&quot;;&quot;$(ProjectDir)..\plugins\win&quot;;&quot;$(ProjectDir)..\platform\cairo\pixman\src&quot;;&quot;$(ProjectDir)..\platform\cairo\cairo\src&quot;;&quot;$(ProjectDir)..\svg\graphics&quot;;&quot;$(ProjectDir)..\svg\graphics\cg&quot;;&quot;$(ProjectDir)..\svg\graphics\filters&quot;;&quot;$(ProjectDir)..\kcanvas&quot;;&quot;$(ProjectDir)..\kcanvas\device&quot;;&quot;$(ProjectDir)..\kcanvas\device\quartz&quot;;&quot;$(ProjectDir)..\svg&quot;;&quot;$(ProjectDir)..\storage&quot;;&quot;$(WebKitOutputDir)\include&quot;;&quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;;&quot;$(ProjectDir)..\ForwardingHeaders&quot;;&quot;$(WebKitLibrariesDir)\include&quot;;&quot;$(WebKitLibrariesDir)\include\icu&quot;;&quot;$(WebKitLibrariesDir)\include\iconv&quot;;&quot;$(WebKitLibrariesDir)\include\pthreads&quot;;&quot;$(WebKitLibrariesDir)\include\sqlite&quot;;&quot;$(WebKitLibrariesDir)\include\JavaScriptCore&quot;;&quot;$(WebKitLibrariesDir)\Include\CoreFoundation\OSXCompatibilityHeaders&quot;;&quot;$(WebKitLibrariesDir)\Include\CoreFoundation\OSXCompatibilityHeaders\GNUCompatibility&quot;"
-				PreprocessorDefinitions="WIN32;__WIN32__;ENABLE_XSLT;ENABLE_XPATH;ENABLE_SVG;ENABLE_SVG_AS_IMAGE;ENABLE_SVG_USE;NDEBUG;WEBCORE_CONTEXT_MENUS;USE_SAFARI_THEME"
+				AdditionalIncludeDirectories="&quot;$(ProjectDir)..\&quot;;&quot;$(ProjectDir)..&quot;;&quot;$(ProjectDir)..\css&quot;;&quot;$(ProjectDir)..\editing&quot;;&quot;$(ProjectDir)..\rendering&quot;;&quot;$(ProjectDir)..\bindings\js&quot;;&quot;$(ProjectDir)..\dom&quot;;&quot;$(ProjectDir)..\history&quot;;&quot;$(ProjectDir)..\html&quot;;&quot;$(ProjectDir)..\bridge&quot;;&quot;$(ProjectDir)..\bridge\win&quot;;&quot;$(ProjectDir)..\loader&quot;;&quot;$(ProjectDir)..\loader\icon&quot;;&quot;$(ProjectDir)..\page&quot;;&quot;$(ProjectDir)..\platform&quot;;&quot;$(ProjectDir)..\platform\sql&quot;;&quot;$(ProjectDir)..\platform\win&quot;;&quot;$(ProjectDir)..\platform\network&quot;;&quot;$(ProjectDir)..\platform\network\win&quot;;&quot;$(ProjectDir)..\platform\cf&quot;;&quot;$(ProjectDir)..\platform\network\cf&quot;;&quot;$(ProjectDir)..\platform\graphics&quot;;&quot;$(ProjectDir)..\platform\text&quot;;&quot;$(ProjectDir)..\platform\graphics\cairo&quot;;&quot;$(ProjectDir)..\platform\graphics\cg&quot;;&quot;$(ProjectDir)..\platform\graphics\win&quot;;&quot;$(ProjectDir)..\platform\image-decoders&quot;;&quot;$(ProjectDir)..\platform\image-decoders\bmp&quot;;&quot;$(ProjectDir)..\platform\image-decoders\gif&quot;;&quot;$(ProjectDir)..\platform\image-decoders\ico&quot;;&quot;$(ProjectDir)..\platform\image-decoders\jpeg&quot;;&quot;$(ProjectDir)..\platform\image-decoders\png&quot;;&quot;$(ProjectDir)..\platform\image-decoders\xbm&quot;;&quot;$(ProjectDir)..\platform\image-decoders\zlib&quot;;&quot;$(ProjectDir)..\xml&quot;;&quot;$(WebKitOutputDir)\obj\WebCore\DerivedSources&quot;;&quot;$(ProjectDir)..\plugins\win&quot;;&quot;$(ProjectDir)..\platform\cairo\pixman\src&quot;;&quot;$(ProjectDir)..\platform\cairo\cairo\src&quot;;&quot;$(ProjectDir)..\svg\graphics&quot;;&quot;$(ProjectDir)..\svg\graphics\cg&quot;;&quot;$(ProjectDir)..\svg\graphics\filters&quot;;&quot;$(ProjectDir)..\kcanvas&quot;;&quot;$(ProjectDir)..\kcanvas\device&quot;;&quot;$(ProjectDir)..\kcanvas\device\quartz&quot;;&quot;$(ProjectDir)..\svg&quot;;&quot;$(ProjectDir)..\storage&quot;;&quot;$(WebKitOutputDir)\include&quot;;&quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;;&quot;$(ProjectDir)..\ForwardingHeaders&quot;;&quot;$(WebKitLibrariesDir)\include&quot;;&quot;$(WebKitLibrariesDir)\include\icu&quot;;&quot;$(WebKitLibrariesDir)\include\iconv&quot;;&quot;$(WebKitLibrariesDir)\include\pthreads&quot;;&quot;$(WebKitLibrariesDir)\include\sqlite&quot;;&quot;$(WebKitLibrariesDir)\include\JavaScriptCore&quot;;&quot;$(WebKitLibrariesDir)\Include\CoreFoundation\OSXCompatibilityHeaders&quot;;&quot;$(WebKitLibrariesDir)\Include\CoreFoundation\OSXCompatibilityHeaders\GNUCompatibility&quot;;$(WebKitOutputDir)\include\QtMovieWin"
+				PreprocessorDefinitions="WIN32;__WIN32__;ENABLE_XSLT;ENABLE_XPATH;ENABLE_SVG;ENABLE_SVG_AS_IMAGE;ENABLE_SVG_USE;ENABLE_VIDEO;NDEBUG;WEBCORE_CONTEXT_MENUS;USE_SAFARI_THEME"
 				ExceptionHandling="0"
 				RuntimeLibrary="2"
 				RuntimeTypeInfo="false"
@@ -189,8 +189,8 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;$(ProjectDir)..\&quot;;&quot;$(ProjectDir)..&quot;;&quot;$(ProjectDir)..\css&quot;;&quot;$(ProjectDir)..\editing&quot;;&quot;$(ProjectDir)..\rendering&quot;;&quot;$(ProjectDir)..\bindings\js&quot;;&quot;$(ProjectDir)..\dom&quot;;&quot;$(ProjectDir)..\history&quot;;&quot;$(ProjectDir)..\html&quot;;&quot;$(ProjectDir)..\bridge&quot;;&quot;$(ProjectDir)..\bridge\win&quot;;&quot;$(ProjectDir)..\loader&quot;;&quot;$(ProjectDir)..\loader\icon&quot;;&quot;$(ProjectDir)..\page&quot;;&quot;$(ProjectDir)..\platform&quot;;&quot;$(ProjectDir)..\platform\sql&quot;;&quot;$(ProjectDir)..\platform\win&quot;;&quot;$(ProjectDir)..\platform\network&quot;;&quot;$(ProjectDir)..\platform\network\win&quot;;&quot;$(ProjectDir)..\platform\cf&quot;;&quot;$(ProjectDir)..\platform\network\cf&quot;;&quot;$(ProjectDir)..\platform\graphics&quot;;&quot;$(ProjectDir)..\platform\text&quot;;&quot;$(ProjectDir)..\platform\graphics\cairo&quot;;&quot;$(ProjectDir)..\platform\graphics\cg&quot;;&quot;$(ProjectDir)..\platform\graphics\win&quot;;&quot;$(ProjectDir)..\platform\image-decoders&quot;;&quot;$(ProjectDir)..\platform\image-decoders\bmp&quot;;&quot;$(ProjectDir)..\platform\image-decoders\gif&quot;;&quot;$(ProjectDir)..\platform\image-decoders\ico&quot;;&quot;$(ProjectDir)..\platform\image-decoders\jpeg&quot;;&quot;$(ProjectDir)..\platform\image-decoders\png&quot;;&quot;$(ProjectDir)..\platform\image-decoders\xbm&quot;;&quot;$(ProjectDir)..\platform\image-decoders\zlib&quot;;&quot;$(ProjectDir)..\xml&quot;;&quot;$(WebKitOutputDir)\obj\WebCore\DerivedSources&quot;;&quot;$(ProjectDir)..\plugins\win&quot;;&quot;$(ProjectDir)..\platform\cairo\pixman\src&quot;;&quot;$(ProjectDir)..\platform\cairo\cairo\src&quot;;&quot;$(ProjectDir)..\svg\graphics&quot;;&quot;$(ProjectDir)..\svg\graphics\cg&quot;;&quot;$(ProjectDir)..\svg\graphics\filters&quot;;&quot;$(ProjectDir)..\kcanvas&quot;;&quot;$(ProjectDir)..\kcanvas\device&quot;;&quot;$(ProjectDir)..\kcanvas\device\quartz&quot;;&quot;$(ProjectDir)..\svg&quot;;&quot;$(ProjectDir)..\storage&quot;;&quot;$(WebKitOutputDir)\include&quot;;&quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;;&quot;$(ProjectDir)..\ForwardingHeaders&quot;;&quot;$(WebKitLibrariesDir)\include&quot;;&quot;$(WebKitLibrariesDir)\include\icu&quot;;&quot;$(WebKitLibrariesDir)\include\iconv&quot;;&quot;$(WebKitLibrariesDir)\include\pthreads&quot;;&quot;$(WebKitLibrariesDir)\include\sqlite&quot;;&quot;$(WebKitLibrariesDir)\include\JavaScriptCore&quot;;&quot;$(WebKitLibrariesDir)\Include\CoreFoundation\OSXCompatibilityHeaders&quot;;&quot;$(WebKitLibrariesDir)\Include\CoreFoundation\OSXCompatibilityHeaders\GNUCompatibility&quot;"
-				PreprocessorDefinitions="WIN32;__WIN32__;_SCL_SECURE_NO_DEPRECATE;_CRT_SECURE_NO_DEPRECATE;ENABLE_XSLT;ENABLE_XPATH;ENABLE_SVG;ENABLE_SVG_AS_IMAGE;ENABLE_SVG_USE;WEBCORE_CONTEXT_MENUS;USE_SAFARI_THEME"
+				AdditionalIncludeDirectories="&quot;$(ProjectDir)..\&quot;;&quot;$(ProjectDir)..&quot;;&quot;$(ProjectDir)..\css&quot;;&quot;$(ProjectDir)..\editing&quot;;&quot;$(ProjectDir)..\rendering&quot;;&quot;$(ProjectDir)..\bindings\js&quot;;&quot;$(ProjectDir)..\dom&quot;;&quot;$(ProjectDir)..\history&quot;;&quot;$(ProjectDir)..\html&quot;;&quot;$(ProjectDir)..\bridge&quot;;&quot;$(ProjectDir)..\bridge\win&quot;;&quot;$(ProjectDir)..\loader&quot;;&quot;$(ProjectDir)..\loader\icon&quot;;&quot;$(ProjectDir)..\page&quot;;&quot;$(ProjectDir)..\platform&quot;;&quot;$(ProjectDir)..\platform\sql&quot;;&quot;$(ProjectDir)..\platform\win&quot;;&quot;$(ProjectDir)..\platform\network&quot;;&quot;$(ProjectDir)..\platform\network\win&quot;;&quot;$(ProjectDir)..\platform\cf&quot;;&quot;$(ProjectDir)..\platform\network\cf&quot;;&quot;$(ProjectDir)..\platform\graphics&quot;;&quot;$(ProjectDir)..\platform\text&quot;;&quot;$(ProjectDir)..\platform\graphics\cairo&quot;;&quot;$(ProjectDir)..\platform\graphics\cg&quot;;&quot;$(ProjectDir)..\platform\graphics\win&quot;;&quot;$(ProjectDir)..\platform\image-decoders&quot;;&quot;$(ProjectDir)..\platform\image-decoders\bmp&quot;;&quot;$(ProjectDir)..\platform\image-decoders\gif&quot;;&quot;$(ProjectDir)..\platform\image-decoders\ico&quot;;&quot;$(ProjectDir)..\platform\image-decoders\jpeg&quot;;&quot;$(ProjectDir)..\platform\image-decoders\png&quot;;&quot;$(ProjectDir)..\platform\image-decoders\xbm&quot;;&quot;$(ProjectDir)..\platform\image-decoders\zlib&quot;;&quot;$(ProjectDir)..\xml&quot;;&quot;$(WebKitOutputDir)\obj\WebCore\DerivedSources&quot;;&quot;$(ProjectDir)..\plugins\win&quot;;&quot;$(ProjectDir)..\platform\cairo\pixman\src&quot;;&quot;$(ProjectDir)..\platform\cairo\cairo\src&quot;;&quot;$(ProjectDir)..\svg\graphics&quot;;&quot;$(ProjectDir)..\svg\graphics\cg&quot;;&quot;$(ProjectDir)..\svg\graphics\filters&quot;;&quot;$(ProjectDir)..\kcanvas&quot;;&quot;$(ProjectDir)..\kcanvas\device&quot;;&quot;$(ProjectDir)..\kcanvas\device\quartz&quot;;&quot;$(ProjectDir)..\svg&quot;;&quot;$(ProjectDir)..\storage&quot;;&quot;$(WebKitOutputDir)\include&quot;;&quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;;&quot;$(ProjectDir)..\ForwardingHeaders&quot;;&quot;$(WebKitLibrariesDir)\include&quot;;&quot;$(WebKitLibrariesDir)\include\icu&quot;;&quot;$(WebKitLibrariesDir)\include\iconv&quot;;&quot;$(WebKitLibrariesDir)\include\pthreads&quot;;&quot;$(WebKitLibrariesDir)\include\sqlite&quot;;&quot;$(WebKitLibrariesDir)\include\JavaScriptCore&quot;;&quot;$(WebKitLibrariesDir)\Include\CoreFoundation\OSXCompatibilityHeaders&quot;;&quot;$(WebKitLibrariesDir)\Include\CoreFoundation\OSXCompatibilityHeaders\GNUCompatibility&quot;;$(WebKitOutputDir)\include\QtMovieWin"
+				PreprocessorDefinitions="WIN32;__WIN32__;_SCL_SECURE_NO_DEPRECATE;_CRT_SECURE_NO_DEPRECATE;ENABLE_XSLT;ENABLE_XPATH;ENABLE_SVG;ENABLE_SVG_AS_IMAGE;ENABLE_SVG_USE;ENABLE_VIDEO;WEBCORE_CONTEXT_MENUS;USE_SAFARI_THEME"
 				MinimalRebuild="true"
 				ExceptionHandling="0"
 				BasicRuntimeChecks="3"
@@ -665,6 +665,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\..\WebKitBuild\obj\WebCore\DerivedSources\JSHTMLAudioElement.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\..\WebKitBuild\obj\WebCore\DerivedSources\JSHTMLAudioElement.h"
+				>
+			</File>
+			<File
 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSHTMLBaseElement.cpp"
 				>
 			</File>
@@ -925,6 +933,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\..\WebKitBuild\obj\WebCore\DerivedSources\JSHTMLMediaElement.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\..\WebKitBuild\obj\WebCore\DerivedSources\JSHTMLMediaElement.h"
+				>
+			</File>
+			<File
 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSHTMLMenuElement.cpp"
 				>
 			</File>
@@ -1037,6 +1053,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\..\WebKitBuild\obj\WebCore\DerivedSources\JSHTMLSourceElement.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\..\WebKitBuild\obj\WebCore\DerivedSources\JSHTMLSourceElement.h"
+				>
+			</File>
+			<File
 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSHTMLStyleElement.cpp"
 				>
 			</File>
@@ -1117,6 +1141,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\..\WebKitBuild\obj\WebCore\DerivedSources\JSHTMLVideoElement.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\..\WebKitBuild\obj\WebCore\DerivedSources\JSHTMLVideoElement.h"
+				>
+			</File>
+			<File
 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSKeyboardEvent.cpp"
 				>
 			</File>
@@ -1126,6 +1158,14 @@
 			</File>
 			<File
 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSLocation.lut.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\..\WebKitBuild\obj\WebCore\DerivedSources\JSMediaError.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\..\WebKitBuild\obj\WebCore\DerivedSources\JSMediaError.h"
 				>
 			</File>
 			<File
@@ -2345,6 +2385,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\..\WebKitBuild\obj\WebCore\DerivedSources\JSTimeRanges.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\..\WebKitBuild\obj\WebCore\DerivedSources\JSTimeRanges.h"
+				>
+			</File>
+			<File
 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSTreeWalker.cpp"
 				>
 			</File>
@@ -2358,6 +2406,14 @@
 			</File>
 			<File
 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSUIEvent.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\..\WebKitBuild\obj\WebCore\DerivedSources\JSVoidCallback.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\..\WebKitBuild\obj\WebCore\DerivedSources\JSVoidCallback.h"
 				>
 			</File>
 			<File
@@ -3545,7 +3601,7 @@
 					RelativePath="..\platform\win\MIMETypeRegistryWin.cpp"
 					>
 				</File>
- 				<File
+				<File
 					RelativePath="..\platform\win\MutexWin.cpp"
 					>
 				</File>
@@ -3609,7 +3665,7 @@
 					RelativePath="..\platform\text\win\TextBreakIteratorInternalICUWin.cpp"
 					>
 				</File>
- 				<File
+				<File
 					RelativePath="..\platform\win\ThreadConditionWin.cpp"
 					>
 				</File>
@@ -3829,6 +3885,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\platform\graphics\MediaPlayer.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\platform\graphics\MediaPlayer.h"
+					>
+				</File>
+				<File
 					RelativePath="..\platform\graphics\Path.cpp"
 					>
 				</File>
@@ -3877,6 +3941,14 @@
 					</File>
 					<File
 						RelativePath="..\platform\graphics\win\IntSizeWin.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\platform\graphics\win\MediaPlayerPrivateQuickTimeWin.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\platform\graphics\win\MediaPlayerPrivateQuickTimeWin.h"
 						>
 					</File>
 				</Filter>
@@ -5090,6 +5162,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\rendering\RenderMedia.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\rendering\RenderMedia.h"
+				>
+			</File>
+			<File
 				RelativePath="..\rendering\RenderMenuList.cpp"
 				>
 			</File>
@@ -5339,6 +5419,14 @@
 			</File>
 			<File
 				RelativePath="..\rendering\RenderTreeAsText.h"
+				>
+			</File>
+			<File
+				RelativePath="..\rendering\RenderVideo.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\rendering\RenderVideo.h"
 				>
 			</File>
 			<File
@@ -6681,6 +6769,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\html\HTMLAudioElement.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\html\HTMLAudioElement.h"
+				>
+			</File>
+			<File
 				RelativePath="..\html\HTMLBaseElement.cpp"
 				>
 			</File>
@@ -7001,6 +7097,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\html\HTMLMediaElement.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\html\HTMLMediaElement.h"
+				>
+			</File>
+			<File
 				RelativePath="..\html\HTMLMenuElement.cpp"
 				>
 			</File>
@@ -7145,6 +7249,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\html\HTMLSourceElement.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\html\HTMLSourceElement.h"
+				>
+			</File>
+			<File
 				RelativePath="..\html\HTMLStyleElement.cpp"
 				>
 			</File>
@@ -7249,11 +7361,31 @@
 				>
 			</File>
 			<File
+				RelativePath="..\html\HTMLVideoElement.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\html\HTMLVideoElement.h"
+				>
+			</File>
+			<File
 				RelativePath="..\html\HTMLViewSourceDocument.cpp"
 				>
 			</File>
 			<File
 				RelativePath="..\html\HTMLViewSourceDocument.h"
+				>
+			</File>
+			<File
+				RelativePath="..\html\MediaError.h"
+				>
+			</File>
+			<File
+				RelativePath="..\html\TimeRanges.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\html\TimeRanges.h"
 				>
 			</File>
 			<File
@@ -7393,6 +7525,14 @@
 				</File>
 				<File
 					RelativePath="..\bindings\js\JSHTMLAppletElementCustom.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\bindings\js\JSHTMLAudioElementConstructor.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\bindings\js\JSHTMLAudioElementConstructor.h"
 					>
 				</File>
 				<File
