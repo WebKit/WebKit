@@ -648,7 +648,7 @@ sub setupCygwinEnv()
     if (! -e $qtSDKPath) {
         print "*************************************************************\n";
         print "Cannot find '$qtSDKPath'\n";
-        print "Pleased download QuickTime SDK for Windows from\n";
+        print "Please download the QuickTime SDK for Windows from\n";
         print "http://developer.apple.com/quicktime/download/\n";
         print "*************************************************************\n";
         die;
