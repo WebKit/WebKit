@@ -1,5 +1,16 @@
 2007-12-21  Sam Weinig  <sam@webkit.org>
 
+        Reviewed by Adele.
+
+        Fix another mistaken duplication, this time in cross-frame-access-parent-explicit-domain.html,
+        that was causing intermittent failures.
+
+        * http/tests/security/cross-frame-access-parent-explicit-domain-expected.txt:
+        * http/tests/security/cross-frame-access-parent-explicit-domain.html:
+        * http/tests/security/cross-frame-access-port-explicit-domain-expected.txt:
+
+2007-12-21  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Dan Bernstein.
 
         Fix mistaken duplication in cross-frame-access-child-explicit-domain.html that was causing

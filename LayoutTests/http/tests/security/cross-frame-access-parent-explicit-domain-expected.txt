@@ -4,7 +4,6 @@ CONSOLE MESSAGE: line 1: Unsafe JavaScript attempt to access frame with URL http
 PASS: Cross frame access from frame explicitly setting document.domain was denied.
 
 
-
 --------
 Frame: 'aFrame'
 --------
@@ -14,10 +13,5 @@ Inner iframe.
 
 --------
 Frame: 'flag'
---------
-
-
---------
-Frame: '<!--framePath //<!--frame1-->-->'
 --------
 
