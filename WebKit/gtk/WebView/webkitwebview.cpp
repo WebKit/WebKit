@@ -26,6 +26,7 @@
 #include "webkitprivate.h"
 
 #include "NotImplemented.h"
+#include "CString.h"
 #include "ChromeClientGtk.h"
 #include "ContextMenuClientGtk.h"
 #include "DragClientGtk.h"
@@ -1038,6 +1039,155 @@ void webkit_web_view_execute_script(WebKitWebView* webView, const gchar* script)
     Frame* frame = core(webkit_web_view_get_main_frame(webView));
     if (FrameLoader* loader = frame->loader())
         loader->executeScript(String::fromUTF8(script), true);
+}
+
+/**
+ * webkit_web_view_cut_clipboard:
+ * @web_view: a #WebKitWebView
+ *
+ * Determines wether or not it is currently possible to cut to the clipboard.
+ *
+ * Return value: %TRUE if a selection can be cut, %FALSE if not
+ */
+gboolean webkit_web_view_can_cut_clipboard(WebKitWebView* webView)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), FALSE);
+
+    Frame* frame = core(webView)->focusController()->focusedOrMainFrame();
+    return frame->editor()->canCut() || frame->editor()->canDHTMLCut();
+}
+
+/**
+ * webkit_web_view_copy_clipboard:
+ * @web_view: a #WebKitWebView
+ *
+ * Determines wether or not it is currently possible to copy to the clipboard.
+ *
+ * Return value: %TRUE if a selection can be copied, %FALSE if not
+ */
+gboolean webkit_web_view_can_copy_clipboard(WebKitWebView* webView)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), FALSE);
+
+    Frame* frame = core(webView)->focusController()->focusedOrMainFrame();
+    return frame->editor()->canCopy() || frame->editor()->canDHTMLCopy();
+}
+
+/**
+ * webkit_web_view_paste_clipboard:
+ * @web_view: a #WebKitWebView
+ *
+ * Determines wether or not it is currently possible to paste from the clipboard.
+ *
+ * Return value: %TRUE if a selection can be pasted, %FALSE if not
+ */
+gboolean webkit_web_view_can_paste_clipboard(WebKitWebView* webView)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), FALSE);
+
+    Frame* frame = core(webView)->focusController()->focusedOrMainFrame();
+    return frame->editor()->canPaste() || frame->editor()->canDHTMLPaste();
+}
+
+/**
+ * webkit_web_view_cut_clipboard:
+ * @web_view: a #WebKitWebView
+ *
+ * Cuts the current selection inside the @web_view to the clipboard.
+ */
+void webkit_web_view_cut_clipboard(WebKitWebView* webView)
+{
+    g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
+
+    if (webkit_web_view_can_cut_clipboard(webView))
+        g_signal_emit(webView, CUT_CLIPBOARD, 0);
+}
+
+/**
+ * webkit_web_view_copy_clipboard:
+ * @web_view: a #WebKitWebView
+ *
+ * Copies the current selection inside the @web_view to the clipboard.
+ */
+void webkit_web_view_copy_clipboard(WebKitWebView* webView)
+{
+    g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
+
+    if (webkit_web_view_can_copy_clipboard(webView))
+        g_signal_emit(webView, COPY_CLIPBOARD, 0);
+}
+
+/**
+ * webkit_web_view_paste_clipboard:
+ * @web_view: a #WebKitWebView
+ *
+ * Pastes the current contents of the clipboard to the @web_view.
+ */
+void webkit_web_view_paste_clipboard(WebKitWebView* webView)
+{
+    g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
+
+    if (webkit_web_view_can_paste_clipboard(webView))
+        g_signal_emit(webView, PASTE_CLIPBOARD, 0);
+}
+
+/**
+ * webkit_web_view_delete_selection:
+ * @web_view: a #WebKitWebView
+ *
+ * Deletes the current selection inside the @web_view.
+ */
+void webkit_web_view_delete_selection(WebKitWebView* webView)
+{
+    g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
+
+    Frame* frame = core(webView)->focusController()->focusedOrMainFrame();
+    frame->editor()->performDelete();
+}
+
+/**
+ * webkit_web_view_has_selection:
+ * @web_view: a #WebKitWebView
+ *
+ * Determines wether text was selected.
+ *
+ * Return value: %TRUE if there is selected text, %FALSE if not
+ */
+gboolean webkit_web_view_has_selection(WebKitWebView* webView)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), FALSE);
+
+    WebKitWebViewPrivate* webViewData = WEBKIT_WEB_VIEW_GET_PRIVATE(webView);
+    return webViewData->corePage->selection().isNone() ? TRUE : FALSE;
+}
+
+/**
+ * webkit_web_view_get_selected_text:
+ * @web_view: a #WebKitWebView
+ *
+ * Retrieves the selected text if any.
+ *
+ * Return value: a newly allocated string with the selection or %NULL
+ */
+gchar* webkit_web_view_get_selected_text(WebKitWebView* webView)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), 0);
+
+    Frame* frame = core(webView)->focusController()->focusedOrMainFrame();
+    return g_strdup(frame->selectedText().utf8().data());
+}
+
+/**
+ * webkit_web_view_select_all:
+ * @web_view: a #WebKitWebView
+ *
+ * Attempts to select everything inside the @web_view.
+ */
+void webkit_web_view_select_all(WebKitWebView* webView)
+{
+    g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
+
+    g_signal_emit(webView, SELECT_ALL, 0);
 }
 
 /**

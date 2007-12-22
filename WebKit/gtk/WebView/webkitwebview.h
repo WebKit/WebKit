@@ -132,6 +132,33 @@ WEBKIT_API void
 webkit_web_view_execute_script (WebKitWebView* web_view, const gchar* script);
 
 WEBKIT_API gboolean
+webkit_web_view_can_cut_clipboard (WebKitWebView* web_view);
+
+WEBKIT_API gboolean
+webkit_web_view_can_copy_clipboard (WebKitWebView* web_view);
+
+WEBKIT_API gboolean
+webkit_web_view_can_paste_clipboard (WebKitWebView* web_view);
+
+WEBKIT_API void
+webkit_web_view_cut_clipboard (WebKitWebView* web_view);
+
+WEBKIT_API void
+webkit_web_view_copy_clipboard (WebKitWebView* web_view);
+
+WEBKIT_API void
+webkit_web_view_paste_clipboard (WebKitWebView* web_view);
+
+WEBKIT_API void
+webkit_web_view_delete_selection (WebKitWebView* web_view);
+
+WEBKIT_API gboolean
+webkit_web_view_has_selection (WebKitWebView* web_view);
+
+WEBKIT_API void
+webkit_web_view_select_all (WebKitWebView* web_view);
+
+WEBKIT_API gboolean
 webkit_web_view_get_editable (WebKitWebView* web_view);
 
 WEBKIT_API void
