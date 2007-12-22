@@ -1100,7 +1100,7 @@ void webkit_web_view_cut_clipboard(WebKitWebView* webView)
     g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
 
     if (webkit_web_view_can_cut_clipboard(webView))
-        g_signal_emit(webView, CUT_CLIPBOARD, 0);
+        g_signal_emit(webView, webkit_web_view_signals[CUT_CLIPBOARD], 0);
 }
 
 /**
@@ -1114,7 +1114,7 @@ void webkit_web_view_copy_clipboard(WebKitWebView* webView)
     g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
 
     if (webkit_web_view_can_copy_clipboard(webView))
-        g_signal_emit(webView, COPY_CLIPBOARD, 0);
+        g_signal_emit(webView, webkit_web_view_signals[COPY_CLIPBOARD], 0);
 }
 
 /**
@@ -1128,7 +1128,7 @@ void webkit_web_view_paste_clipboard(WebKitWebView* webView)
     g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
 
     if (webkit_web_view_can_paste_clipboard(webView))
-        g_signal_emit(webView, PASTE_CLIPBOARD, 0);
+        g_signal_emit(webView, webkit_web_view_signals[PASTE_CLIPBOARD], 0);
 }
 
 /**
@@ -1187,7 +1187,7 @@ void webkit_web_view_select_all(WebKitWebView* webView)
 {
     g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
 
-    g_signal_emit(webView, SELECT_ALL, 0);
+    g_signal_emit(webView, webkit_web_view_signals[SELECT_ALL], 0);
 }
 
 /**

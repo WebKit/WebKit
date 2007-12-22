@@ -1,3 +1,13 @@
+2007-12-22  Xan Lopez  <xan@gnome.org>
+
+        Reviewed by Alp Toker.
+
+        Follow up to http://bugs.webkit.org/show_bug.cgi?id=16144
+
+        * WebView/webkitwebview.cpp:
+        Fix signal id arguments for g_signal_emit in
+        clipboard functions.
+
 2007-12-21  Alp Toker  <alp@atoker.com>
 
         Documentation typo fix: s/wether/whether
