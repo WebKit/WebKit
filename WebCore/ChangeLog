@@ -1,3 +1,15 @@
+2007-12-22  Alp Toker  <alp@atoker.com>
+
+        GTK+ build fix
+
+        GTK_TARGET_OTHER_APP is not available in older GTK+ versions. Pass
+        empty target flags for now.
+
+        Check GTK+, not GLib versions, since they are different.
+
+        * platform/gtk/PasteboardGtk.cpp:
+        (WebCore::Pasteboard::documentFragment):
+
 2007-12-22  Luca Bruno  <lethalman88@gmail.com>
 
         Reviewed by Alp Toker.

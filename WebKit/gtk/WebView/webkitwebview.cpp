@@ -888,19 +888,19 @@ static void webkit_web_view_init(WebKitWebView* webView)
     webViewData->mainFrame = WEBKIT_WEB_FRAME(webkit_web_frame_new(webView));
     webViewData->editable = false;
 
-#if GLIB_CHECK_VERSION(2,10,0)
+#if GTK_CHECK_VERSION(2,10,0)
     GdkAtom textHtml = gdk_atom_intern_static_string("text/html");
 #else
     GdkAtom textHtml = gdk_atom_intern("text/html", false);
 #endif
     /* Targets for copy */
     webViewData->copy_target_list = gtk_target_list_new(NULL, 0);
-    gtk_target_list_add(webViewData->copy_target_list, textHtml, GTK_TARGET_OTHER_APP, WEBKIT_WEB_VIEW_TARGET_INFO_HTML);
+    gtk_target_list_add(webViewData->copy_target_list, textHtml, 0, WEBKIT_WEB_VIEW_TARGET_INFO_HTML);
     gtk_target_list_add_text_targets(webViewData->copy_target_list, WEBKIT_WEB_VIEW_TARGET_INFO_TEXT);
 
     /* Targets for pasting */
     webViewData->paste_target_list = gtk_target_list_new(NULL, 0);
-    gtk_target_list_add(webViewData->paste_target_list, textHtml, GTK_TARGET_OTHER_APP, WEBKIT_WEB_VIEW_TARGET_INFO_HTML);
+    gtk_target_list_add(webViewData->paste_target_list, textHtml, 0, WEBKIT_WEB_VIEW_TARGET_INFO_HTML);
     gtk_target_list_add_text_targets(webViewData->paste_target_list, WEBKIT_WEB_VIEW_TARGET_INFO_TEXT);
 
 }
