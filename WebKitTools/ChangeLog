@@ -1,3 +1,9 @@
+2007-12-23  Kevin Ollivier  <kevino@theolliviers.com>
+
+        wx buildbot fix. Update libpng dl script to the latest version.
+
+        * wx/install-unix-extras:
+
 2007-12-22  Antti Koivisto  <antti@apple.com>
 
         Fix a typo.
