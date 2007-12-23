@@ -1,3 +1,27 @@
+2007-12-22  Xan Lopez  <xan@gnome.org>
+
+        Reviewed by Alp Toker.
+
+        Use webView, web_view, etc for variable names instead of page, which
+        was left over from the old API.
+
+        * WebCoreSupport/EditorClientGtk.cpp:
+        (WebKit::imContextCommitted):
+        (WebKit::EditorClient::EditorClient):
+        (WebKit::EditorClient::~EditorClient):
+        (WebKit::EditorClient::textFieldDidBeginEditing):
+        (WebKit::EditorClient::textFieldDidEndEditing):
+        * WebCoreSupport/EditorClientGtk.h:
+        * WebCoreSupport/FrameLoaderClientGtk.cpp:
+        (WebKit::FrameLoaderClient::postProgressStartedNotification):
+        (WebKit::FrameLoaderClient::postProgressEstimateChangedNotification):
+        (WebKit::FrameLoaderClient::postProgressFinishedNotification):
+        (WebKit::FrameLoaderClient::dispatchDecidePolicyForNavigationAction):
+        (WebKit::FrameLoaderClient::windowObjectCleared):
+        (WebKit::FrameLoaderClient::dispatchDidReceiveIcon):
+        (WebKit::FrameLoaderClient::dispatchDidReceiveTitle):
+        (WebKit::FrameLoaderClient::dispatchDidCommitLoad):
+
 2007-12-22  Alp Toker  <alp@atoker.com>
 
         GTK+ build fix

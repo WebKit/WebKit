@@ -36,8 +36,8 @@ namespace WebKit {
 
 static void imContextCommitted(GtkIMContext* context, const char* str, EditorClient* client)
 {
-    WebKitWebViewPrivate* pageData = WEBKIT_WEB_VIEW_GET_PRIVATE(client->m_page);
-    Frame* frame = pageData->corePage->focusController()->focusedOrMainFrame();
+    WebKitWebViewPrivate* webViewData = WEBKIT_WEB_VIEW_GET_PRIVATE(client->m_webView);
+    Frame* frame = webViewData->corePage->focusController()->focusedOrMainFrame();
     frame->editor()->insertTextWithoutSendingTextEvent(str, false);
 }
 
@@ -139,7 +139,7 @@ void EditorClient::didSetSelectionTypesForPasteboard()
 
 bool EditorClient::isEditable()
 {
-    return webkit_web_view_get_editable(m_page);
+    return webkit_web_view_get_editable(m_webView);
 }
 
 void EditorClient::registerCommandForUndo(WTF::PassRefPtr<WebCore::EditCommand>)
@@ -207,7 +207,7 @@ void EditorClient::toggleGrammarChecking()
 
 void EditorClient::handleKeyboardEvent(KeyboardEvent* event)
 {
-    Frame* frame = core(m_page)->focusController()->focusedOrMainFrame();
+    Frame* frame = core(m_webView)->focusController()->focusedOrMainFrame();
     if (!frame || !frame->document()->focusedNode())
         return;
 
@@ -350,31 +350,31 @@ void EditorClient::handleInputMethodKeydown(KeyboardEvent*)
     notImplemented();
 }
 
-EditorClient::EditorClient(WebKitWebView* page)
-    : m_page(page)
+EditorClient::EditorClient(WebKitWebView* webView)
+    : m_webView(webView)
 {
-    WebKitWebViewPrivate* pageData = WEBKIT_WEB_VIEW_GET_PRIVATE(m_page);
-    g_signal_connect(pageData->imContext, "commit", G_CALLBACK(imContextCommitted), this);
+    WebKitWebViewPrivate* webViewData = WEBKIT_WEB_VIEW_GET_PRIVATE(m_webView);
+    g_signal_connect(webViewData->imContext, "commit", G_CALLBACK(imContextCommitted), this);
 }
 
 EditorClient::~EditorClient()
 {
-    WebKitWebViewPrivate* pageData = WEBKIT_WEB_VIEW_GET_PRIVATE(m_page);
-    g_signal_handlers_disconnect_by_func(pageData->imContext, (gpointer)imContextCommitted, this);
+    WebKitWebViewPrivate* webViewData = WEBKIT_WEB_VIEW_GET_PRIVATE(m_webView);
+    g_signal_handlers_disconnect_by_func(webViewData->imContext, (gpointer)imContextCommitted, this);
 }
 
 void EditorClient::textFieldDidBeginEditing(Element*)
 {
-    gtk_im_context_focus_in(WEBKIT_WEB_VIEW_GET_PRIVATE(m_page)->imContext);
+    gtk_im_context_focus_in(WEBKIT_WEB_VIEW_GET_PRIVATE(m_webView)->imContext);
 }
 
 void EditorClient::textFieldDidEndEditing(Element*)
 {
-    WebKitWebViewPrivate* pageData = WEBKIT_WEB_VIEW_GET_PRIVATE(m_page);
+    WebKitWebViewPrivate* webViewData = WEBKIT_WEB_VIEW_GET_PRIVATE(m_webView);
 
-    gtk_im_context_focus_out(pageData->imContext);
+    gtk_im_context_focus_out(webViewData->imContext);
 #ifdef MAEMO_CHANGES
-    hildon_gtk_im_context_hide(pageData->imContext);
+    hildon_gtk_im_context_hide(webViewData->imContext);
 #endif
 }
 

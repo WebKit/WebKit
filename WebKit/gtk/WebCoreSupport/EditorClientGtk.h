@@ -109,7 +109,7 @@ namespace WebKit {
         virtual void getGuessesForWord(const WebCore::String&, WTF::Vector<WebCore::String>& guesses);
         virtual void setInputMethodState(bool enabled);
 
-        WebKitWebView* m_page;
+        WebKitWebView* m_webView;
     };
 }
 
