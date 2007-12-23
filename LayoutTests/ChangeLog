@@ -1,3 +1,11 @@
+2007-12-23  Darin Adler  <darin@apple.com>
+
+        - updated results (character used for controls changed in r28945)
+
+        * platform/mac/media/audio-controls-rendering-expected.txt: Regenerated.
+        * platform/mac/media/video-controls-rendering-expected.txt: Regenerated.
+        * platform/mac/media/video-display-toggle-expected.txt: Regenerated.
+
 2007-12-22  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Oliver.
