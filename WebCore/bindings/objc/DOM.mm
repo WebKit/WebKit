@@ -196,10 +196,10 @@ static void createElementClassMap()
     addElementClass(SVGNames::circleTag, [DOMSVGCircleElement class]);
     addElementClass(SVGNames::clipPathTag, [DOMSVGClipPathElement class]);
     addElementClass(SVGNames::cursorTag, [DOMSVGCursorElement class]);
-    addElementClass(SVGNames::definition_srcTag, [DOMSVGDefinitionSrcElement class]);
 #if ENABLE(SVG_FONTS)
-    addElementClass(SVGNames::defsTag, [DOMSVGDefsElement class]);
+    addElementClass(SVGNames::definition_srcTag, [DOMSVGDefinitionSrcElement class]);
 #endif
+    addElementClass(SVGNames::defsTag, [DOMSVGDefsElement class]);
     addElementClass(SVGNames::descTag, [DOMSVGDescElement class]);
     addElementClass(SVGNames::ellipseTag, [DOMSVGEllipseElement class]);
 #if ENABLE(SVG_FILTERS)

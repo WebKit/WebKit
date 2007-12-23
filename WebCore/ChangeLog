@@ -1,3 +1,12 @@
+2007-12-23  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Mark.
+
+        Fix wrong placed ifdef - wrapping SVGDefsElement, instead of SVGDefinitionSrcElement in SVG_FONTS block.
+
+        * bindings/objc/DOM.mm:
+        (WebCore::createElementClassMap):
+
 2007-12-22  Alp Toker  <alp@atoker.com>
 
         GTK+ build fix
