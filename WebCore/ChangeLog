@@ -1,3 +1,39 @@
+2007-12-23  Alp Toker  <alp@atoker.com>
+
+        Reviewed by Holger Freyther.
+
+        http://bugs.webkit.org/show_bug.cgi?id=15382
+        [CAIRO] Canvas pattern support
+
+        http://bugs.webkit.org/show_bug.cgi?id=16577
+        Merge Cairo enhancements from Apollo project
+
+        Add support for canvas patterns.
+
+        Make Image::nativeImageForCurrentFrame() public.
+
+        Fix some typos along the way.
+
+        The globalAlpha canvas fixes are not included in this patch as
+        they're slightly more intrusive and may conflict conceptually with
+        GraphicsContext::setAlpha().
+
+        * html/CanvasPattern.cpp:
+        (WebCore::CanvasPattern::CanvasPattern):
+        (WebCore::CanvasPattern::~CanvasPattern):
+        (WebCore::CanvasPattern::createPattern):
+        * html/CanvasPattern.h:
+        (WebCore::CanvasPattern::platformImage):
+        * html/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::setShadow):
+        (WebCore::CanvasRenderingContext2D::applyShadow):
+        (WebCore::CanvasRenderingContext2D::drawImage):
+        (WebCore::CanvasRenderingContext2D::createPattern):
+        (WebCore::CanvasRenderingContext2D::applyStrokePattern):
+        (WebCore::CanvasRenderingContext2D::applyFillPattern):
+        * platform/graphics/Image.h:
+        (WebCore::Image::nativeImageForCurrentFrame):
+
 2007-12-23  Kevin Ollivier  <kevino@theolliviers.com>
 
         Reviewed by Eric Seidel.

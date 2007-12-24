@@ -725,7 +725,7 @@ void CanvasRenderingContext2D::setShadow(float width, float height, float blur, 
         return;
     // FIXME: Do this through platform-independent GraphicsContext API.
 #if PLATFORM(CG)
-    RGBA32 rgba = 0; // default is transparant black
+    RGBA32 rgba = 0; // default is transparent black
     CSSParser::parseColor(rgba, color);
     const CGFloat components[4] = {
         ((rgba >> 16) & 0xFF) / 255.0f,
@@ -816,7 +816,7 @@ void CanvasRenderingContext2D::applyShadow()
         return;
     // FIXME: Do this through platform-independent GraphicsContext API.
 #if PLATFORM(CG)
-    RGBA32 rgba = 0; // default is transparant black
+    RGBA32 rgba = 0; // default is transparent black
     if (!state().m_shadowColor.isEmpty())
         CSSParser::parseColor(rgba, state().m_shadowColor);
     const CGFloat components[4] = {
@@ -977,21 +977,13 @@ void CanvasRenderingContext2D::drawImage(HTMLCanvasElement* canvas, const FloatR
     if (!image)
         return;
     willDraw(dstRect);
-
-    float iw = cairo_image_surface_get_width(image);
-    float ih = cairo_image_surface_get_height(image);
-
-    if (sourceRect.x() == 0 && sourceRect.y() == 0 && iw == sourceRect.width() && ih == sourceRect.height()) {
-        cairo_t* cr = c->platformContext();
-        cairo_save(cr);
-        cairo_set_source_surface(cr, image, srcRect.x(), srcRect.y());
-        cairo_surface_destroy(image);
-        cairo_rectangle(cr, dstRect.x(), dstRect.y(), dstRect.width(), dstRect.height());
-        cairo_fill(cr);
-        cairo_restore(cr);
-    } else
-        notImplemented();
-
+    cairo_t* cr = c->platformContext();
+    cairo_save(cr);
+    cairo_set_source_surface(cr, image, srcRect.x(), srcRect.y());
+    cairo_surface_destroy(image);
+    cairo_rectangle(cr, dstRect.x(), dstRect.y(), dstRect.width(), dstRect.height());
+    cairo_fill(cr);
+    cairo_restore(cr);
 #endif
 }
 
@@ -1068,6 +1060,13 @@ PassRefPtr<CanvasPattern> CanvasRenderingContext2D::createPattern(HTMLCanvasElem
     PassRefPtr<CanvasPattern> pattern = new CanvasPattern(image, repeatX, repeatY);
     CGImageRelease(image);
     return pattern;
+#elif PLATFORM(CAIRO)
+    cairo_surface_t* surface = canvas->createPlatformImage();
+    if (!surface)
+        return 0;
+    PassRefPtr<CanvasPattern> pattern = new CanvasPattern(surface, repeatX, repeatY);
+    cairo_surface_destroy(surface);
+    return pattern;
 #else
     notImplemented();
     return 0;
@@ -1121,7 +1120,20 @@ void CanvasRenderingContext2D::applyStrokePattern()
 #elif PLATFORM(QT)
     fprintf(stderr, "FIXME: CanvasRenderingContext2D::applyStrokePattern\n");
 #elif PLATFORM(CAIRO)
-    notImplemented();
+    CanvasPattern* pattern = state().m_strokeStyle->pattern();
+    if (!pattern)
+        return;
+
+    cairo_t* cr = c->platformContext();
+    cairo_matrix_t m;
+    cairo_get_matrix(cr, &m);
+
+    cairo_pattern_t* platformPattern = pattern->createPattern(m);
+    if (!platformPattern)
+        return;
+
+    cairo_set_source(cr, platformPattern);
+    cairo_pattern_destroy(platformPattern);
 #endif
     state().m_appliedStrokePattern = true;
 }
@@ -1158,6 +1170,21 @@ void CanvasRenderingContext2D::applyFillPattern()
     state().m_fillStylePatternTransform = m;
 #elif PLATFORM(QT)
     fprintf(stderr, "FIXME: CanvasRenderingContext2D::applyFillPattern\n");
+#elif PLATFORM(CAIRO)
+    CanvasPattern* pattern = state().m_fillStyle->pattern();
+    if (!pattern)
+        return;
+
+    cairo_t* cr = c->platformContext();
+    cairo_matrix_t m;
+    cairo_get_matrix(cr, &m);
+
+    cairo_pattern_t* platformPattern = pattern->createPattern(m);
+    if (!platformPattern)
+        return;
+
+    cairo_set_source(cr, platformPattern);
+    cairo_pattern_destroy(platformPattern);
 #endif
     state().m_appliedFillPattern = true;
 }

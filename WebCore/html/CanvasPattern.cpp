@@ -73,11 +73,21 @@ CanvasPattern::CanvasPattern(CGImageRef image, bool repeatX, bool repeatY)
 {
 }
 
+#elif PLATFORM(CAIRO)
+
+CanvasPattern::CanvasPattern(cairo_surface_t* surface, bool repeatX, bool repeatY)
+    : m_platformImage(surface)
+    , m_cachedImage(0)
+    , m_repeatX(repeatX)
+    , m_repeatY(repeatY)
+{
+}
+
 #endif
 
 CanvasPattern::CanvasPattern(CachedImage* cachedImage, bool repeatX, bool repeatY)
     :
-#if PLATFORM(CG)
+#if PLATFORM(CG) || PLATFORM(CAIRO)
       m_platformImage(0)
     ,
 #endif
@@ -91,6 +101,10 @@ CanvasPattern::CanvasPattern(CachedImage* cachedImage, bool repeatX, bool repeat
 
 CanvasPattern::~CanvasPattern()
 {
+#if PLATFORM(CAIRO)
+    if (m_platformImage)
+        cairo_surface_destroy(m_platformImage);
+#endif
     if (m_cachedImage)
         m_cachedImage->deref(this);
 }
@@ -166,6 +180,32 @@ CGPatternRef CanvasPattern::createPattern(const CGAffineTransform& transform)
     ref();
     return CGPatternCreate(this, rect, patternTransform, xStep, yStep,
         kCGPatternTilingConstantSpacing, TRUE, &patternCallbacks);
+}
+
+#elif PLATFORM(CAIRO)
+
+cairo_pattern_t* CanvasPattern::createPattern(const cairo_matrix_t& m)
+{
+    cairo_surface_t* surface = 0;
+    if (m_platformImage) {
+        surface = m_platformImage;
+    } else {
+        if (!m_cachedImage)
+            return 0;
+        Image* image = m_cachedImage->image();
+        if (!image)
+            return 0;
+        surface = image->nativeImageForCurrentFrame();
+    }
+
+    if (!surface)
+        return 0;
+
+    cairo_pattern_t* pattern = cairo_pattern_create_for_surface(surface);
+    cairo_pattern_set_matrix(pattern, &m);
+    if (m_repeatX || m_repeatY)
+        cairo_pattern_set_extend(pattern, CAIRO_EXTEND_REPEAT);
+    return pattern;
 }
 
 #endif
