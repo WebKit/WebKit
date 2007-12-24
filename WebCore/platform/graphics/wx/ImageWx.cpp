@@ -182,9 +182,4 @@ void BitmapImage::invalidatePlatformData()
 
 }
 
-wxBitmap* BitmapImage::getWxBitmap() const
-{
-    return const_cast<BitmapImage*>(this)->frameAtIndex(0);
-}
-
 }
