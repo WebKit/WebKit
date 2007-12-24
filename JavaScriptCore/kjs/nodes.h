@@ -45,7 +45,7 @@ namespace KJS {
     class Node;
     class PropertyListNode;
     class SourceStream;
-    class VarDeclNode;
+    class ConstDeclNode;
 
     enum Operator {
         OpEqual,
@@ -88,7 +88,8 @@ namespace KJS {
   
   struct DeclarationStacks {
       typedef Vector<Node*, 16> NodeStack;
-      typedef Vector<VarDeclNode*, 16> VarStack;
+      enum { IsConstant, HasInitializer } VarAttrs;
+      typedef Vector<std::pair<Identifier, unsigned>, 16> VarStack;
       typedef Vector<FuncDeclNode*, 16> FunctionStack;
       
       DeclarationStacks(ExecState* e, NodeStack& n, VarStack& v, FunctionStack& f)
@@ -201,6 +202,7 @@ namespace KJS {
     virtual JSValue* execute(ExecState *exec) KJS_FAST_CALL = 0;
     void pushLabel(const Identifier &id) KJS_FAST_CALL { ls.push(id); }
     virtual Precedence precedence() const { ASSERT_NOT_REACHED(); return PrecExpression; }
+    virtual bool isEmptyStatement() const KJS_FAST_CALL { return false; }
   protected:
     LabelStack ls;
   private:
@@ -1683,48 +1685,31 @@ namespace KJS {
     RefPtr<ExpressionNode> expr2;
   };
 
-    class AssignExprNode : public ExpressionNode {
+  class ConstDeclNode : public ExpressionNode {
   public:
-    AssignExprNode(ExpressionNode* e) KJS_FAST_CALL : expr(e) {}
-    virtual void optimizeVariableAccess(SymbolTable&, DeclarationStacks::NodeStack&) KJS_FAST_CALL;
-    virtual JSValue* evaluate(ExecState*) KJS_FAST_CALL;
-    virtual bool evaluateToBoolean(ExecState*) KJS_FAST_CALL;
-    virtual double evaluateToNumber(ExecState*) KJS_FAST_CALL;
-    virtual int32_t evaluateToInt32(ExecState*) KJS_FAST_CALL;
-    virtual uint32_t evaluateToUInt32(ExecState*) KJS_FAST_CALL;
-    virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
-    virtual Precedence precedence() const { ASSERT_NOT_REACHED(); return PrecExpression; }
-  private:
-    RefPtr<ExpressionNode> expr;
-  };
-
-    class VarDeclNode : public ExpressionNode {
-  public:
-    enum Type { Variable, Constant };
-    VarDeclNode(const Identifier &id, AssignExprNode *in, Type t) KJS_FAST_CALL;
+    ConstDeclNode(const Identifier& id, ExpressionNode* in) KJS_FAST_CALL;
     virtual void optimizeVariableAccess(SymbolTable&, DeclarationStacks::NodeStack&) KJS_FAST_CALL;
     virtual KJS::JSValue* evaluate(ExecState*) KJS_FAST_CALL;
     void evaluateSingle(ExecState*) KJS_FAST_CALL;
     virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
     virtual Precedence precedence() const { ASSERT_NOT_REACHED(); return PrecExpression; }
-    PassRefPtr<VarDeclNode> releaseNext() KJS_FAST_CALL { return next.release(); }
+    PassRefPtr<ConstDeclNode> releaseNext() KJS_FAST_CALL { return next.release(); }
 
-    Type varType;
     Identifier ident;
-    ListRefPtr<VarDeclNode> next;
+    ListRefPtr<ConstDeclNode> next;
+    RefPtr<ExpressionNode> init;
   private:
     void handleSlowCase(ExecState*, const ScopeChain&, JSValue*) KJS_FAST_CALL NEVER_INLINE;
-    RefPtr<AssignExprNode> init;
   };
 
-  class VarStatementNode : public StatementNode {
+  class ConstStatementNode : public StatementNode {
   public:
-    VarStatementNode(VarDeclNode* l) KJS_FAST_CALL : next(l) { }
+    ConstStatementNode(ConstDeclNode* l) KJS_FAST_CALL : next(l) { }
     virtual void optimizeVariableAccess(SymbolTable&, DeclarationStacks::NodeStack&) KJS_FAST_CALL;
     virtual JSValue* execute(ExecState*) KJS_FAST_CALL;
     virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
   private:
-    RefPtr<VarDeclNode> next;
+    RefPtr<ConstDeclNode> next;
   };
 
   typedef Vector<RefPtr<StatementNode> > StatementVector;
@@ -1756,11 +1741,22 @@ namespace KJS {
     EmptyStatementNode() KJS_FAST_CALL { } // debug
     virtual JSValue* execute(ExecState*) KJS_FAST_CALL;
     virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
+    virtual bool isEmptyStatement() const KJS_FAST_CALL { return true; }
   };
 
   class ExprStatementNode : public StatementNode {
   public:
     ExprStatementNode(ExpressionNode* e) KJS_FAST_CALL : expr(e) { }
+    virtual void optimizeVariableAccess(SymbolTable&, DeclarationStacks::NodeStack&) KJS_FAST_CALL;
+    virtual JSValue* execute(ExecState*) KJS_FAST_CALL;
+    virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
+  private:
+    RefPtr<ExpressionNode> expr;
+  };
+
+  class VarStatementNode : public StatementNode {
+  public:
+    VarStatementNode(ExpressionNode* e) KJS_FAST_CALL : expr(e) { }
     virtual void optimizeVariableAccess(SymbolTable&, DeclarationStacks::NodeStack&) KJS_FAST_CALL;
     virtual JSValue* execute(ExecState*) KJS_FAST_CALL;
     virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
@@ -1815,11 +1811,12 @@ namespace KJS {
 
   class ForNode : public StatementNode {
   public:
-    ForNode(ExpressionNode* e1, ExpressionNode* e2, ExpressionNode* e3, StatementNode* s) KJS_FAST_CALL
+      ForNode(ExpressionNode* e1, ExpressionNode* e2, ExpressionNode* e3, StatementNode* s, bool e1WasVarDecl) KJS_FAST_CALL
         : expr1(e1 ? e1 : new TrueNode)
         , expr2(e2 ? e2 : new TrueNode)
         , expr3(e3 ? e3 : new TrueNode)
         , statement(s)
+        , expr1WasVarDecl(e1WasVarDecl)
     {
         ASSERT(expr1);
         ASSERT(expr2);
@@ -1838,23 +1835,23 @@ namespace KJS {
     RefPtr<ExpressionNode> expr2;
     RefPtr<ExpressionNode> expr3;
     RefPtr<StatementNode> statement;
+    bool expr1WasVarDecl;
   };
 
   class ForInNode : public StatementNode {
   public:
     ForInNode(ExpressionNode*  l, ExpressionNode* e, StatementNode *s) KJS_FAST_CALL;
-    ForInNode(const Identifier &i, AssignExprNode *in, ExpressionNode* e, StatementNode *s) KJS_FAST_CALL;
+    ForInNode(const Identifier &i, ExpressionNode *in, ExpressionNode* e, StatementNode *s) KJS_FAST_CALL;
     virtual void optimizeVariableAccess(SymbolTable&, DeclarationStacks::NodeStack&) KJS_FAST_CALL;
     virtual JSValue* execute(ExecState*) KJS_FAST_CALL;
     virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
-    VarDeclNode* getVarDecl() { return varDecl.get(); }
   private:
     Identifier ident;
-    RefPtr<AssignExprNode> init;
+    RefPtr<ExpressionNode> init;
     RefPtr<ExpressionNode> lexpr;
     RefPtr<ExpressionNode> expr;
-    RefPtr<VarDeclNode> varDecl;
     RefPtr<StatementNode> statement;
+    bool identIsVarDecl;
   };
 
   class ContinueNode : public StatementNode {
@@ -1956,6 +1953,7 @@ namespace KJS {
 
     int sourceId() const KJS_FAST_CALL { return m_sourceId; }
     const UString& sourceURL() const KJS_FAST_CALL { return m_sourceURL; }
+    virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
 
   protected:
     void optimizeVariableAccess(ExecState*) KJS_FAST_CALL;
@@ -2124,9 +2122,9 @@ namespace KJS {
       ArgumentListNode* tail;
   };
 
-  struct VarDeclList {
-      VarDeclNode* head;
-      VarDeclNode* tail;
+  struct ConstDeclList {
+      ConstDeclNode* head;
+      ConstDeclNode* tail;
   };
 
   struct ParameterList {

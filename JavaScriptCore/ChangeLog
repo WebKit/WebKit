@@ -1,3 +1,62 @@
+2007-12-24  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Eric.
+
+        - Optimize variable declarations
+        http://bugs.webkit.org/show_bug.cgi?id=16585
+        
+        3.5% speedup on SunSpider.
+
+        var statements now result in either assignments or empty statements.
+        
+        This allows a couple of optimization opportunities:
+        - No need to branch at runtime to check if there is an initializer
+        - EmptyStatementNodes can be removed entirely (also done in this patch)
+        - Assignment expressions get properly optimized for local variables
+        
+        This patch also includes some code cleanup:
+        - Most of the old VarStatement/VarDecl logic is now only used for const declarations, 
+          thus it is renamed appropriately
+        - AssignExprNode is gone
+        
+        * JavaScriptCore.exp:
+        * kjs/NodeInfo.h:
+        * kjs/grammar.y:
+        * kjs/nodes.cpp:
+        (KJS::SourceElements::append):
+        (KJS::ConstDeclNode::ConstDeclNode):
+        (KJS::ConstDeclNode::optimizeVariableAccess):
+        (KJS::ConstDeclNode::handleSlowCase):
+        (KJS::ConstDeclNode::evaluateSingle):
+        (KJS::ConstDeclNode::evaluate):
+        (KJS::ConstStatementNode::optimizeVariableAccess):
+        (KJS::ConstStatementNode::execute):
+        (KJS::VarStatementNode::optimizeVariableAccess):
+        (KJS::VarStatementNode::execute):
+        (KJS::ForInNode::ForInNode):
+        (KJS::ForInNode::optimizeVariableAccess):
+        (KJS::ForInNode::execute):
+        (KJS::FunctionBodyNode::initializeSymbolTable):
+        (KJS::ProgramNode::initializeSymbolTable):
+        (KJS::FunctionBodyNode::processDeclarations):
+        (KJS::ProgramNode::processDeclarations):
+        (KJS::EvalNode::processDeclarations):
+        * kjs/nodes.h:
+        (KJS::DeclarationStacks::):
+        (KJS::StatementNode::):
+        (KJS::ConstDeclNode::):
+        (KJS::ConstStatementNode::):
+        (KJS::EmptyStatementNode::):
+        (KJS::VarStatementNode::):
+        (KJS::ForNode::):
+        * kjs/nodes2string.cpp:
+        (KJS::ConstDeclNode::streamTo):
+        (KJS::ConstStatementNode::streamTo):
+        (KJS::ScopeNode::streamTo):
+        (KJS::VarStatementNode::streamTo):
+        (KJS::ForNode::streamTo):
+        (KJS::ForInNode::streamTo):
+
 2007-12-21  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Oliver Hunt.

@@ -36,7 +36,8 @@ typedef NodeInfo<CaseBlockNode*> CaseBlockNodeInfo;
 typedef NodeInfo<CaseClauseNode*> CaseClauseNodeInfo;
 typedef NodeInfo<SourceElements*> SourceElementsInfo;
 typedef NodeInfo<ClauseList> ClauseListInfo;
-typedef NodeInfo<VarDeclList> VarDeclListInfo;
+typedef NodeInfo<ExpressionNode*> VarDeclListInfo;
+typedef NodeInfo<ConstDeclList> ConstDeclListInfo;
 
 } // namespace KJS
 

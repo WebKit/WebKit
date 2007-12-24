@@ -380,6 +380,9 @@ void StatementNode::setLoc(int firstLine, int lastLine)
 
 void SourceElements::append(PassRefPtr<StatementNode> statement)
 {
+    if (statement->isEmptyStatement())
+        return;
+
     if (Debugger::debuggersPresent)
         m_statements.append(new BreakpointCheckStatement(statement));
     else
@@ -3419,49 +3422,15 @@ JSValue* CommaNode::evaluate(ExecState *exec)
     return expr2->evaluate(exec);
 }
 
-// ------------------------------ AssignExprNode -------------------------------
+// ------------------------------ ConstDeclNode ----------------------------------
 
-void AssignExprNode::optimizeVariableAccess(SymbolTable&, DeclarationStacks::NodeStack& nodeStack)
-{
-    nodeStack.append(expr.get());
-}
-
-// ECMA 12.2
-JSValue* AssignExprNode::evaluate(ExecState* exec)
-{
-    return expr->evaluate(exec);
-}
-
-bool AssignExprNode::evaluateToBoolean(ExecState* exec)
-{
-    return expr->evaluateToBoolean(exec);
-}
-
-double AssignExprNode::evaluateToNumber(ExecState* exec)
-{
-    return expr->evaluateToNumber(exec);
-}
-
-int32_t AssignExprNode::evaluateToInt32(ExecState* exec)
-{
-    return expr->evaluateToInt32(exec);
-}
-
-uint32_t AssignExprNode::evaluateToUInt32(ExecState* exec)
-{
-    return expr->evaluateToInt32(exec);
-}
-
-// ------------------------------ VarDeclNode ----------------------------------
-
-VarDeclNode::VarDeclNode(const Identifier &id, AssignExprNode *in, Type t)
-    : varType(t)
-    , ident(id)
+ConstDeclNode::ConstDeclNode(const Identifier& id, ExpressionNode* in)
+    : ident(id)
     , init(in)
 {
 }
 
-void VarDeclNode::optimizeVariableAccess(SymbolTable&, DeclarationStacks::NodeStack& nodeStack)
+void ConstDeclNode::optimizeVariableAccess(SymbolTable&, DeclarationStacks::NodeStack& nodeStack)
 {
     if (next)
         nodeStack.append(next.get());
@@ -3469,7 +3438,7 @@ void VarDeclNode::optimizeVariableAccess(SymbolTable&, DeclarationStacks::NodeSt
         nodeStack.append(init.get());
 }
 
-void VarDeclNode::handleSlowCase(ExecState* exec, const ScopeChain& chain, JSValue* val)
+void ConstDeclNode::handleSlowCase(ExecState* exec, const ScopeChain& chain, JSValue* val)
 {
     ScopeChainIterator iter = chain.begin();
     ScopeChainIterator end = chain.end();
@@ -3490,14 +3459,13 @@ void VarDeclNode::handleSlowCase(ExecState* exec, const ScopeChain& chain, JSVal
     
     unsigned flags = 0;
     base->getPropertyAttributes(ident, flags);
-    if (varType == VarDeclNode::Constant)
-        flags |= ReadOnly;
+    flags |= ReadOnly;
     
     base->put(exec, ident, val, flags);
 }
 
 // ECMA 12.2
-inline void VarDeclNode::evaluateSingle(ExecState* exec)
+inline void ConstDeclNode::evaluateSingle(ExecState* exec)
 {
     ASSERT(exec->variableObject()->hasOwnProperty(exec, ident) || exec->codeType() == EvalCode); // Guaranteed by processDeclarations.
     const ScopeChain& chain = exec->scopeChain();
@@ -3513,8 +3481,7 @@ inline void VarDeclNode::evaluateSingle(ExecState* exec)
             int flags = Internal;
             if (exec->codeType() != EvalCode)
                 flags |= DontDelete;
-            if (varType == VarDeclNode::Constant)
-                flags |= ReadOnly;
+            flags |= ReadOnly;
             variableObject->put(exec, ident, val, flags);
         } else {
             JSValue* val = init->evaluate(exec);
@@ -3528,19 +3495,18 @@ inline void VarDeclNode::evaluateSingle(ExecState* exec)
 
             unsigned flags = 0;
             variableObject->getPropertyAttributes(ident, flags);
-            if (varType == VarDeclNode::Constant)
-                flags |= ReadOnly;
+            flags |= ReadOnly;
             
             variableObject->put(exec, ident, val, flags);
         }
     }
 }
 
-JSValue* VarDeclNode::evaluate(ExecState* exec)
+JSValue* ConstDeclNode::evaluate(ExecState* exec)
 {
     evaluateSingle(exec);
 
-    if (VarDeclNode* n = next.get()) {
+    if (ConstDeclNode* n = next.get()) {
         do {
             n->evaluateSingle(exec);
             KJS_CHECKEXCEPTIONVALUE
@@ -3550,16 +3516,16 @@ JSValue* VarDeclNode::evaluate(ExecState* exec)
     return jsUndefined();
 }
 
-// ------------------------------ VarStatementNode -----------------------------
+// ------------------------------ ConstStatementNode -----------------------------
 
-void VarStatementNode::optimizeVariableAccess(SymbolTable&, DeclarationStacks::NodeStack& nodeStack)
+void ConstStatementNode::optimizeVariableAccess(SymbolTable&, DeclarationStacks::NodeStack& nodeStack)
 {
     ASSERT(next);
     nodeStack.append(next.get());
 }
 
 // ECMA 12.2
-JSValue* VarStatementNode::execute(ExecState* exec)
+JSValue* ConstStatementNode::execute(ExecState* exec)
 {
     next->evaluate(exec);
     KJS_CHECKEXCEPTION
@@ -3652,6 +3618,22 @@ JSValue* ExprStatementNode::execute(ExecState* exec)
     KJS_CHECKEXCEPTION
 
     return exec->setNormalCompletion(value);
+}
+
+// ------------------------------ VarStatementNode ----------------------------
+
+void VarStatementNode::optimizeVariableAccess(SymbolTable&, DeclarationStacks::NodeStack& nodeStack)
+{
+    ASSERT(expr);
+    nodeStack.append(expr.get());
+}
+
+JSValue* VarStatementNode::execute(ExecState* exec)
+{
+    expr->evaluate(exec);
+    KJS_CHECKEXCEPTION
+
+    return exec->setNormalCompletion();
 }
 
 // ------------------------------ IfNode ---------------------------------------
@@ -3826,16 +3808,16 @@ continueForLoop:
 // ------------------------------ ForInNode ------------------------------------
 
 ForInNode::ForInNode(ExpressionNode* l, ExpressionNode* e, StatementNode* s)
-  : init(0L), lexpr(l), expr(e), varDecl(0L), statement(s)
+    : init(0L), lexpr(l), expr(e), statement(s), identIsVarDecl(false)
 {
 }
 
-ForInNode::ForInNode(const Identifier& i, AssignExprNode* in, ExpressionNode* e, StatementNode* s)
-  : ident(i), init(in), expr(e), statement(s)
+ForInNode::ForInNode(const Identifier& i, ExpressionNode* in, ExpressionNode* e, StatementNode* s)
+    : ident(i), lexpr(new ResolveNode(i)), expr(e), statement(s), identIsVarDecl(true)
 {
+  if (in)
+      init = new AssignResolveNode(i, in);
   // for( var foo = bar in baz )
-  varDecl = new VarDeclNode(ident, init.get(), VarDeclNode::Variable);
-  lexpr = new ResolveNode(ident);
 }
 
 void ForInNode::optimizeVariableAccess(SymbolTable&, DeclarationStacks::NodeStack& nodeStack)
@@ -3843,8 +3825,8 @@ void ForInNode::optimizeVariableAccess(SymbolTable&, DeclarationStacks::NodeStac
     nodeStack.append(statement.get());
     nodeStack.append(expr.get());
     nodeStack.append(lexpr.get());
-    if (varDecl)
-        nodeStack.append(varDecl.get());
+    if (init)
+        nodeStack.append(init.get());
 }
 
 // ECMA 12.6.4
@@ -3852,8 +3834,8 @@ JSValue* ForInNode::execute(ExecState* exec)
 {
   JSValue* value = 0;
 
-  if (varDecl) {
-    varDecl->evaluate(exec);
+  if (init) {
+    init->evaluate(exec);
     KJS_CHECKEXCEPTION
   }
 
@@ -4267,7 +4249,7 @@ void FunctionBodyNode::initializeSymbolTable(ExecState* exec)
     }
 
     for (size_t i = 0, size = m_varStack.size(); i < size; ++i, ++localStorageIndex) {
-        Identifier& ident = m_varStack[i]->ident;
+        Identifier& ident = m_varStack[i].first;
         if (ident == exec->propertyNames().arguments)
             continue;
         symbolTable.add(ident.ustring().rep(), localStorageIndex);
@@ -4301,7 +4283,7 @@ void ProgramNode::initializeSymbolTable(ExecState* exec)
     size = m_varStack.size();
     m_varIndexes.resize(size);
     for (size_t i = 0; i < size; ++i) {
-        const Identifier& ident = m_varStack[i]->ident;
+        const Identifier& ident = m_varStack[i].first;
         if (variableObject->getDirect(ident)) {
             m_varIndexes[i] = missingSymbolMarker(); // Signal not to initialize this declaration.
             continue;
@@ -4368,9 +4350,9 @@ void FunctionBodyNode::processDeclarations(ExecState* exec)
     }
 
     for (size_t i = 0, size = m_varStack.size(); i < size; ++i) {
-        VarDeclNode* node = m_varStack[i];
+        bool isConstant = m_varStack[i].second & DeclarationStacks::IsConstant;
         int attributes = minAttributes;
-        if (node->varType == VarDeclNode::Constant)
+        if (isConstant)
             attributes |= ReadOnly;
         localStorage.uncheckedAppend(LocalStorageEntry(jsUndefined(), attributes));
     }
@@ -4420,9 +4402,9 @@ void ProgramNode::processDeclarations(ExecState* exec)
         if (index == missingSymbolMarker())
             continue;
 
-        VarDeclNode* node = m_varStack[i];
+        bool isConstant = m_varStack[i].second & DeclarationStacks::IsConstant;
         int attributes = minAttributes;
-        if (node->varType == VarDeclNode::Constant)
+        if (isConstant)
             attributes |= ReadOnly;
         LocalStorageEntry entry = LocalStorageEntry(jsUndefined(), attributes);
             
@@ -4443,13 +4425,14 @@ void EvalNode::processDeclarations(ExecState* exec)
     int minAttributes = Internal;
 
     for (i = 0, size = m_varStack.size(); i < size; ++i) {
-        VarDeclNode* node = m_varStack[i];
-        if (variableObject->hasOwnProperty(exec, node->ident))
+        Identifier& ident = m_varStack[i].first;
+        bool isConstant = m_varStack[i].second & DeclarationStacks::IsConstant;
+        if (variableObject->hasOwnProperty(exec, ident))
             continue;
         int attributes = minAttributes;
-        if (node->varType == VarDeclNode::Constant)
+        if (isConstant)
             attributes |= ReadOnly;
-        variableObject->put(exec, node->ident, jsUndefined(), attributes);
+        variableObject->put(exec, ident, jsUndefined(), attributes);
     }
 
     for (i = 0, size = m_functionStack.size(); i < size; ++i) {

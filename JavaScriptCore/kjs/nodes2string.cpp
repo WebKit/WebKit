@@ -707,21 +707,21 @@ void CommaNode::streamTo(SourceStream& s) const
     s << PrecAssignment << expr1 << ", " << PrecAssignment << expr2;
 }
 
-void AssignExprNode::streamTo(SourceStream& s) const
+void ConstDeclNode::streamTo(SourceStream& s) const
 {
-    s << " = " << PrecAssignment << expr;
+    s << ident;
+    if (init)
+        s << " = " << init;
+    for (ConstDeclNode* n = next.get(); n; n = n->next.get()) {
+        s << ", " << ident;
+        if (init)
+            s << " = " << init;
+    }
 }
 
-void VarDeclNode::streamTo(SourceStream& s) const
+void ConstStatementNode::streamTo(SourceStream& s) const
 {
-    s << "var " << ident << init;
-    for (VarDeclNode* n = next.get(); n; n = n->next.get())
-        s << ", " << ident << init;
-}
-
-void VarStatementNode::streamTo(SourceStream& s) const
-{
-    s << Endl << next << ';';
+    s << Endl << "const " << next << ';';
 }
 
 static inline void statementListStreamTo(const Vector<RefPtr<StatementNode> >& nodes, SourceStream& s)
@@ -737,6 +737,28 @@ void BlockNode::streamTo(SourceStream& s) const
     s << Unindent << Endl << "}";
 }
 
+void ScopeNode::streamTo(SourceStream& s) const
+{
+    s << Endl << "{" << Indent;
+
+    bool printedVar = false;
+    for (size_t i = 0; i < m_varStack.size(); ++i) {
+        if (m_varStack[i].second == 0) {
+            if (!printedVar) {
+                s << Endl << "var ";
+                printedVar = true;
+            } else
+                s << ", ";
+            s << m_varStack[i].first;
+        }
+    }
+    if (printedVar)
+        s << ';';
+
+    statementListStreamTo(m_children, s); 
+    s << Unindent << Endl << "}";
+}
+
 void EmptyStatementNode::streamTo(SourceStream& s) const
 {
     s << Endl << ';';
@@ -745,6 +767,11 @@ void EmptyStatementNode::streamTo(SourceStream& s) const
 void ExprStatementNode::streamTo(SourceStream& s) const
 {
     s << Endl << expr << ';';
+}
+
+void VarStatementNode::streamTo(SourceStream& s) const
+{
+    s << Endl << "var " << expr << ';';
 }
 
 void IfNode::streamTo(SourceStream& s) const
@@ -772,6 +799,7 @@ void WhileNode::streamTo(SourceStream& s) const
 void ForNode::streamTo(SourceStream& s) const
 {
     s << Endl << "for ("
+        << (expr1WasVarDecl ? "var " : "")
         << expr1
         << "; " << expr2
         << "; " << expr3
@@ -781,9 +809,13 @@ void ForNode::streamTo(SourceStream& s) const
 void ForInNode::streamTo(SourceStream& s) const
 {
     s << Endl << "for (";
-    if (varDecl)
-        s << varDecl;
-    else
+    if (identIsVarDecl) {
+        s << "var ";
+        if (init)
+            s << init;
+        else
+            s << PrecLeftHandSide << lexpr;
+    } else
         s << PrecLeftHandSide << lexpr;
 
     s << " in " << expr << ')' << Indent << statement << Unindent;

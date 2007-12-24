@@ -70,6 +70,9 @@ static ExpressionNode* makeTypeOfNode(ExpressionNode*);
 static ExpressionNode* makeDeleteNode(ExpressionNode*);
 static ExpressionNode* makeNegateNode(ExpressionNode*);
 static NumberNode* makeNumberNode(double);
+static StatementNode* makeVarStatementNode(ExpressionNode*);
+static ExpressionNode* combineVarInitializers(ExpressionNode* list, AssignResolveNode* init);
+
 
 #if COMPILER(MSVC)
 
@@ -111,11 +114,21 @@ template <typename T> T mergeDeclarationLists(T decls1, T decls2)
     return decls1;
 }
 
-static void appendToVarDeclarationList(ParserRefCountedData<DeclarationStacks::VarStack>*& varDecls, VarDeclNode* decl)
+static void appendToVarDeclarationList(ParserRefCountedData<DeclarationStacks::VarStack>*& varDecls, const Identifier& ident, unsigned attrs)
 {
     if (!varDecls)
         varDecls = new ParserRefCountedData<DeclarationStacks::VarStack>;
-    varDecls->data.append(decl);
+
+    varDecls->data.append(make_pair(ident, attrs));
+
+}
+
+static inline void appendToVarDeclarationList(ParserRefCountedData<DeclarationStacks::VarStack>*& varDecls, ConstDeclNode* decl)
+{
+    unsigned attrs = DeclarationStacks::IsConstant;
+    if (decl->init)
+        attrs |= DeclarationStacks::HasInitializer;        
+    appendToVarDeclarationList(varDecls, decl->ident, attrs);
 }
 
 %}
@@ -131,11 +144,10 @@ static void appendToVarDeclarationList(ParserRefCountedData<DeclarationStacks::V
     FuncDeclNode*       funcDeclNode;
     PropertyNode*       propertyNode;
     ArgumentsNode*      argumentsNode;
-    VarDeclNode*        varDeclNode;
+    ConstDeclNode*      constDeclNode;
     CaseBlockNodeInfo   caseBlockNode;
     CaseClauseNodeInfo  caseClauseNode;
     FuncExprNode*       funcExprNode;
-    AssignExprNode*     assignExprNode;
 
     // statement nodes
     StatementNodeInfo   statementNode;
@@ -146,6 +158,7 @@ static void appendToVarDeclarationList(ParserRefCountedData<DeclarationStacks::V
     PropertyList        propertyList;
     ArgumentList        argumentList;
     VarDeclListInfo     varDeclList;
+    ConstDeclListInfo   constDeclList;
     ClauseListInfo      clauseList;
     ElementList         elementList;
     ParameterList       parameterList;
@@ -228,7 +241,7 @@ static void appendToVarDeclarationList(ParserRefCountedData<DeclarationStacks::V
 %type <statementNode>   DebuggerStatement
 %type <statementNode>   SourceElement
 
-%type <assignExprNode>  Initializer InitializerNoIn
+%type <expressionNode>  Initializer InitializerNoIn
 %type <funcDeclNode>    FunctionDeclaration
 %type <funcExprNode>    FunctionExpr
 %type <functionBodyNode>  FunctionBody
@@ -237,8 +250,9 @@ static void appendToVarDeclarationList(ParserRefCountedData<DeclarationStacks::V
 %type <op>              AssignmentOperator
 %type <argumentsNode>   Arguments
 %type <argumentList>    ArgumentList
-%type <varDeclList>     VariableDeclarationList VariableDeclarationListNoIn ConstDeclarationList
-%type <varDeclNode>     VariableDeclaration VariableDeclarationNoIn ConstDeclaration
+%type <varDeclList>     VariableDeclarationList VariableDeclarationListNoIn
+%type <constDeclList>   ConstDeclarationList
+%type <constDeclNode>   ConstDeclaration
 %type <caseBlockNode>   CaseBlock
 %type <caseClauseNode>  CaseClause DefaultClause
 %type <clauseList>      CaseClauses CaseClausesOpt
@@ -703,60 +717,68 @@ Block:
 ;
 
 VariableStatement:
-    VAR VariableDeclarationList ';'     { $$ = createNodeInfo<StatementNode*>(new VarStatementNode($2.m_node.head), $2.m_varDeclarations, $2.m_funcDeclarations);
+    VAR VariableDeclarationList ';'     { $$ = createNodeInfo<StatementNode*>(makeVarStatementNode($2.m_node), $2.m_varDeclarations, $2.m_funcDeclarations);
                                           DBG($$.m_node, @1, @3); }
-  | VAR VariableDeclarationList error   { $$ = createNodeInfo<StatementNode*>(new VarStatementNode($2.m_node.head), $2.m_varDeclarations, $2.m_funcDeclarations);
+  | VAR VariableDeclarationList error   { $$ = createNodeInfo<StatementNode*>(makeVarStatementNode($2.m_node), $2.m_varDeclarations, $2.m_funcDeclarations);
                                           DBG($$.m_node, @1, @2);
                                           AUTO_SEMICOLON; }
 ;
 
 VariableDeclarationList:
-    VariableDeclaration                 { $$.m_node.head = $1;
-                                          $$.m_node.tail = $$.m_node.head;
+    IDENT                               { $$.m_node = 0;
                                           $$.m_varDeclarations = new ParserRefCountedData<DeclarationStacks::VarStack>;
-                                          $$.m_varDeclarations->data.append($1);
+                                          appendToVarDeclarationList($$.m_varDeclarations, *$1, 0);
                                           $$.m_funcDeclarations = 0;
                                         }
-  | VariableDeclarationList ',' VariableDeclaration
-                                        { $$.m_node.head = $1.m_node.head;
-                                          $1.m_node.tail->next = $3;
-                                          $$.m_node.tail = $3;
+  | IDENT Initializer                   { $$.m_node = new AssignResolveNode(*$1, $2);
+                                          $$.m_varDeclarations = new ParserRefCountedData<DeclarationStacks::VarStack>;
+                                          appendToVarDeclarationList($$.m_varDeclarations, *$1, DeclarationStacks::HasInitializer);
+                                          $$.m_funcDeclarations = 0;
+                                        }
+  | VariableDeclarationList ',' IDENT
+                                        { $$.m_node = $1.m_node;
                                           $$.m_varDeclarations = $1.m_varDeclarations;
-                                          $$.m_varDeclarations->data.append($3);
+                                          appendToVarDeclarationList($$.m_varDeclarations, *$3, 0);
+                                          $$.m_funcDeclarations = 0;
+                                        }
+  | VariableDeclarationList ',' IDENT Initializer
+                                        { $$.m_node = combineVarInitializers($1.m_node, new AssignResolveNode(*$3, $4));
+                                          $$.m_varDeclarations = $1.m_varDeclarations;
+                                          appendToVarDeclarationList($$.m_varDeclarations, *$3, DeclarationStacks::HasInitializer);
                                           $$.m_funcDeclarations = 0;
                                         }
 ;
 
 VariableDeclarationListNoIn:
-    VariableDeclarationNoIn             { $$.m_node.head = $1; 
-                                          $$.m_node.tail = $$.m_node.head;
+    IDENT                               { $$.m_node = 0;
                                           $$.m_varDeclarations = new ParserRefCountedData<DeclarationStacks::VarStack>;
-                                          $$.m_varDeclarations->data.append($1);
-                                          $$.m_funcDeclarations = 0; }
-  | VariableDeclarationListNoIn ',' VariableDeclarationNoIn
-                                        { $$.m_node.head = $1.m_node.head;
-                                          $1.m_node.tail->next = $3;
-                                          $$.m_node.tail = $3; 
+                                          appendToVarDeclarationList($$.m_varDeclarations, *$1, 0);
+                                          $$.m_funcDeclarations = 0;
+                                        }
+  | IDENT InitializerNoIn               { $$.m_node = new AssignResolveNode(*$1, $2);
+                                          $$.m_varDeclarations = new ParserRefCountedData<DeclarationStacks::VarStack>;
+                                          appendToVarDeclarationList($$.m_varDeclarations, *$1, DeclarationStacks::HasInitializer);
+                                          $$.m_funcDeclarations = 0;
+                                        }
+  | VariableDeclarationListNoIn ',' IDENT
+                                        { $$.m_node = $1.m_node;
                                           $$.m_varDeclarations = $1.m_varDeclarations;
-                                          $$.m_varDeclarations->data.append($3);
-                                          $$.m_funcDeclarations = 0; }
-;
-
-VariableDeclaration:
-    IDENT                               { $$ = new VarDeclNode(*$1, 0, VarDeclNode::Variable); }
-  | IDENT Initializer                   { $$ = new VarDeclNode(*$1, $2, VarDeclNode::Variable); }
-;
-
-VariableDeclarationNoIn:
-    IDENT                               { $$ = new VarDeclNode(*$1, 0, VarDeclNode::Variable); }
-  | IDENT InitializerNoIn               { $$ = new VarDeclNode(*$1, $2, VarDeclNode::Variable); }
+                                          appendToVarDeclarationList($$.m_varDeclarations, *$3, 0);
+                                          $$.m_funcDeclarations = 0;
+                                        }
+  | VariableDeclarationListNoIn ',' IDENT InitializerNoIn
+                                        { $$.m_node = combineVarInitializers($1.m_node, new AssignResolveNode(*$3, $4));
+                                          $$.m_varDeclarations = $1.m_varDeclarations;
+                                          appendToVarDeclarationList($$.m_varDeclarations, *$3, DeclarationStacks::HasInitializer);
+                                          $$.m_funcDeclarations = 0;
+                                        }
 ;
 
 ConstStatement:
-    CONSTTOKEN ConstDeclarationList ';' { $$ = createNodeInfo<StatementNode*>(new VarStatementNode($2.m_node.head), $2.m_varDeclarations, $2.m_funcDeclarations);
+    CONSTTOKEN ConstDeclarationList ';' { $$ = createNodeInfo<StatementNode*>(new ConstStatementNode($2.m_node.head), $2.m_varDeclarations, $2.m_funcDeclarations);
                                           DBG($$.m_node, @1, @3); }
   | CONSTTOKEN ConstDeclarationList error
-                                        { $$ = createNodeInfo<StatementNode*>(new VarStatementNode($2.m_node.head), $2.m_varDeclarations, $2.m_funcDeclarations);
+                                        { $$ = createNodeInfo<StatementNode*>(new ConstStatementNode($2.m_node.head), $2.m_varDeclarations, $2.m_funcDeclarations);
                                           DBG($$.m_node, @1, @2); AUTO_SEMICOLON; }
 ;
 
@@ -764,28 +786,28 @@ ConstDeclarationList:
     ConstDeclaration                    { $$.m_node.head = $1;
                                           $$.m_node.tail = $$.m_node.head;
                                           $$.m_varDeclarations = new ParserRefCountedData<DeclarationStacks::VarStack>;
-                                          $$.m_varDeclarations->data.append($1);
+                                          appendToVarDeclarationList($$.m_varDeclarations, $1);
                                           $$.m_funcDeclarations = 0; }
   | ConstDeclarationList ',' ConstDeclaration
                                         {  $$.m_node.head = $1.m_node.head;
                                           $1.m_node.tail->next = $3;
                                           $$.m_node.tail = $3;
                                           $$.m_varDeclarations = $1.m_varDeclarations;
-                                          $$.m_varDeclarations->data.append($3);
+                                          appendToVarDeclarationList($$.m_varDeclarations, $3);
                                           $$.m_funcDeclarations = 0; }
 ;
 
 ConstDeclaration:
-    IDENT                               { $$ = new VarDeclNode(*$1, 0, VarDeclNode::Constant); }
-  | IDENT Initializer                   { $$ = new VarDeclNode(*$1, $2, VarDeclNode::Constant); }
+    IDENT                               { $$ = new ConstDeclNode(*$1, 0); }
+  | IDENT Initializer                   { $$ = new ConstDeclNode(*$1, $2); }
 ;
 
 Initializer:
-    '=' AssignmentExpr                  { $$ = new AssignExprNode($2); }
+    '=' AssignmentExpr                  { $$ = $2; }
 ;
 
 InitializerNoIn:
-    '=' AssignmentExprNoIn              { $$ = new AssignExprNode($2); }
+    '=' AssignmentExprNoIn              { $$ = $2; }
 ;
 
 EmptyStatement:
@@ -816,11 +838,11 @@ IterationStatement:
   | WHILE '(' Expr ')' Statement        { $$ = createNodeInfo<StatementNode*>(new WhileNode($3, $5.m_node), $5.m_varDeclarations, $5.m_funcDeclarations);
                                           DBG($$.m_node, @1, @4); }
   | FOR '(' ExprNoInOpt ';' ExprOpt ';' ExprOpt ')' Statement
-                                        { $$ = createNodeInfo<StatementNode*>(new ForNode($3, $5, $7, $9.m_node), $9.m_varDeclarations, $9.m_funcDeclarations);
+                                        { $$ = createNodeInfo<StatementNode*>(new ForNode($3, $5, $7, $9.m_node, false), $9.m_varDeclarations, $9.m_funcDeclarations);
                                           DBG($$.m_node, @1, @8); 
                                         }
   | FOR '(' VAR VariableDeclarationListNoIn ';' ExprOpt ';' ExprOpt ')' Statement
-                                        { $$ = createNodeInfo<StatementNode*>(new ForNode($4.m_node.head, $6, $8, $10.m_node),
+                                                                            { $$ = createNodeInfo<StatementNode*>(new ForNode($4.m_node, $6, $8, $10.m_node, true),
                                                                               mergeDeclarationLists($4.m_varDeclarations, $10.m_varDeclarations),
                                                                               mergeDeclarationLists($4.m_funcDeclarations, $10.m_funcDeclarations));
                                           DBG($$.m_node, @1, @9); }
@@ -834,12 +856,12 @@ IterationStatement:
                                         }
   | FOR '(' VAR IDENT INTOKEN Expr ')' Statement
                                         { ForInNode *forIn = new ForInNode(*$4, 0, $6, $8.m_node);
-                                          appendToVarDeclarationList($8.m_varDeclarations, forIn->getVarDecl());
+                                          appendToVarDeclarationList($8.m_varDeclarations, *$4, DeclarationStacks::HasInitializer);
                                           $$ = createNodeInfo<StatementNode*>(forIn, $8.m_varDeclarations, $8.m_funcDeclarations);
                                           DBG($$.m_node, @1, @7); }
   | FOR '(' VAR IDENT InitializerNoIn INTOKEN Expr ')' Statement
                                         { ForInNode *forIn = new ForInNode(*$4, $5, $7, $9.m_node);
-                                          appendToVarDeclarationList($9.m_varDeclarations, forIn->getVarDecl());
+                                          appendToVarDeclarationList($9.m_varDeclarations, *$4, DeclarationStacks::HasInitializer);
                                           $$ = createNodeInfo<StatementNode*>(forIn, $9.m_varDeclarations, $9.m_funcDeclarations);
                                           DBG($$.m_node, @1, @8); }
 ;
@@ -980,7 +1002,7 @@ FormalParameterList:
 FunctionBody:
     /* not in spec */           { $$ = new FunctionBodyNode(0, 0, 0); }
   | SourceElements              { $$ = new FunctionBodyNode($1.m_node, $1.m_varDeclarations ? &$1.m_varDeclarations->data : 0, 
-                                                                                  $1.m_funcDeclarations ? &$1.m_funcDeclarations->data : 0);
+                                                            $1.m_funcDeclarations ? &$1.m_funcDeclarations->data : 0);
                                   // As in mergeDeclarationLists() we have to ref/deref to safely get rid of
                                   // the declaration lists.
                                   if ($1.m_varDeclarations) {
@@ -1218,3 +1240,21 @@ static bool allowAutomaticSemicolon()
 {
     return yychar == '}' || yychar == 0 || lexer().prevTerminator();
 }
+
+static ExpressionNode* combineVarInitializers(ExpressionNode* list, AssignResolveNode* init)
+{
+    if (!list)
+        return init;
+    return new CommaNode(list, init);
+}
+
+// We turn variable declarations into either assignments or empty
+// statements (which later get stripped out), because the actual
+// declaration work is hoisted up to the start of the function body
+static StatementNode* makeVarStatementNode(ExpressionNode* expr)
+{
+    if (!expr)
+        return new EmptyStatementNode();
+    return new VarStatementNode(expr);
+}
+
