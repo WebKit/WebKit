@@ -1,3 +1,10 @@
+2007-12-24  Alp Toker  <alp@atoker.com>
+
+        Fix builds that don't use AllInOneFile.cpp following breakage
+        introduced in r28973.
+
+        * kjs/grammar.y:
+
 2007-12-24  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Eric.

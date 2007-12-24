@@ -58,6 +58,7 @@ static bool allowAutomaticSemicolon();
 #define DBG(l, s, e) (l)->setLoc((s).first_line, (e).last_line)
 
 using namespace KJS;
+using namespace std;
 
 static AddNode* makeAddNode(ExpressionNode*, ExpressionNode*);
 static LessNode* makeLessNode(ExpressionNode*, ExpressionNode*);
