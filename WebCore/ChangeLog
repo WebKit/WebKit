@@ -1,3 +1,30 @@
+2007-12-23  Alp Toker  <alp@atoker.com>
+
+        Reviewed by Holger Freyther.
+
+        http://bugs.webkit.org/show_bug.cgi?id=16577
+        Merge Cairo enhancements from Apollo project
+
+        This patch is based on initial merging work by Brent Fulgham. Adobe's
+        code has been modified in a few places to better suit the existing
+        coding style.
+
+        Implement more clipping and drawing functions.
+
+        Save and restore the fill rule manually when clipping.
+
+        Avoid image surface creation when the image buffer has height zero.
+
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        (WebCore::GraphicsContext::clip):
+        (WebCore::GraphicsContext::addInnerRoundedRectClip):
+        (WebCore::GraphicsContext::addPath):
+        (WebCore::GraphicsContext::clipOut):
+        (WebCore::GraphicsContext::clipOutEllipseInRect):
+        (WebCore::GraphicsContext::fillRoundedRect):
+        * platform/graphics/cairo/ImageSourceCairo.cpp:
+        (WebCore::ImageSource::createFrameAtIndex):
+
 2007-12-23  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Mark.
