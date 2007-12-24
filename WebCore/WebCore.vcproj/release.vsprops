@@ -9,4 +9,9 @@
 		Value=""
 		PerformEnvironmentSet="true"
 	/>
+	<UserMacro
+		Name="LibraryConfigSuffix"
+		Value=""
+		PerformEnvironmentSet="true"
+	/>
 </VisualStudioPropertySheet>
