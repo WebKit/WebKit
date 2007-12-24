@@ -291,16 +291,21 @@ static JSValueRef keyDownCallback(JSContextRef context, JSObjectRef function, JS
     ASSERT(!*exception);
     int virtualKeyCode;
     int charCode = 0;
+    int keyData = 1;
     bool needsShiftKeyModifier = false;
-    if (JSStringIsEqualToUTF8CString(character, "leftArrow"))
+    if (JSStringIsEqualToUTF8CString(character, "leftArrow")) {
         virtualKeyCode = VK_LEFT;
-    else if (JSStringIsEqualToUTF8CString(character, "rightArrow"))
+        keyData += KF_EXTENDED << 16; // In this case, extended means "not keypad".
+    } else if (JSStringIsEqualToUTF8CString(character, "rightArrow")) {
         virtualKeyCode = VK_RIGHT;
-    else if (JSStringIsEqualToUTF8CString(character, "upArrow"))
+        keyData += KF_EXTENDED << 16;
+    } else if (JSStringIsEqualToUTF8CString(character, "upArrow")) {
         virtualKeyCode = VK_UP;
-    else if (JSStringIsEqualToUTF8CString(character, "downArrow"))
+        keyData += KF_EXTENDED << 16;
+    } else if (JSStringIsEqualToUTF8CString(character, "downArrow")) {
         virtualKeyCode = VK_DOWN;
-    else if (JSStringIsEqualToUTF8CString(character, "delete"))
+        keyData += KF_EXTENDED << 16;
+    } else if (JSStringIsEqualToUTF8CString(character, "delete"))
         virtualKeyCode = VK_BACK;
     else {
         charCode = JSStringGetCharactersPtr(character)[0];
@@ -344,7 +349,7 @@ static JSValueRef keyDownCallback(JSContextRef context, JSObjectRef function, JS
         ::SetKeyboardState(newKeyState);
     }
 
-    MSG msg = makeMsg(webViewWindow, (::GetKeyState(VK_MENU) & 0x8000) ? WM_SYSKEYDOWN : WM_KEYDOWN, virtualKeyCode, 0);
+    MSG msg = makeMsg(webViewWindow, (::GetKeyState(VK_MENU) & 0x8000) ? WM_SYSKEYDOWN : WM_KEYDOWN, virtualKeyCode, keyData);
     if (virtualKeyCode != 255)
         dispatchMessage(&msg);
     else {

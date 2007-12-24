@@ -1,3 +1,14 @@
+2007-12-24  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Oliver.
+
+        Fix fast/events/arrow-keys-on-body.html, failing on Windows.
+
+        * platform/win/KeyEventWin.cpp:
+        (WebCore::isKeypadEvent):
+        (WebCore::PlatformKeyboardEvent::PlatformKeyboardEvent):
+        Use HIWORD() macro instead of shifting the value explicitly (no change in behavior).
+
 2007-12-23  Alexey Proskuryakov  <ap@webkit.org>
 
         Fix Debug and Release QTMovieWin bulds.

@@ -167,7 +167,7 @@ static bool isKeypadEvent(WPARAM code, LPARAM keyData, PlatformKeyboardEvent::Ty
         case VK_DIVIDE:
             return true;
         case VK_RETURN:
-            return (keyData >> 16) & KF_EXTENDED;
+            return HIWORD(keyData) & KF_EXTENDED;
         case VK_INSERT:
         case VK_DELETE:
         case VK_PRIOR:
@@ -178,7 +178,7 @@ static bool isKeypadEvent(WPARAM code, LPARAM keyData, PlatformKeyboardEvent::Ty
         case VK_UP:
         case VK_RIGHT:
         case VK_DOWN:
-            return !((keyData >> 16) & KF_EXTENDED);
+            return !(HIWORD(keyData) & KF_EXTENDED);
         default:
             return false;
     }
@@ -191,7 +191,7 @@ PlatformKeyboardEvent::PlatformKeyboardEvent(HWND, WPARAM code, LPARAM keyData, 
     , m_text((type == Char) ? singleCharacterString(code) : String())
     , m_unmodifiedText((type == Char) ? singleCharacterString(code) : String())
     , m_keyIdentifier((type == Char) ? String() : keyIdentifierForWindowsKeyCode(code))
-    , m_autoRepeat((keyData >> 16) & KF_REPEAT)
+    , m_autoRepeat(HIWORD(keyData) & KF_REPEAT)
     , m_windowsVirtualKeyCode((type == RawKeyDown || type == KeyUp) ? code : 0)
     , m_isKeypad(isKeypadEvent(code, keyData, type))
     , m_shiftKey(GetKeyState(VK_SHIFT) & HIGH_BIT_MASK_SHORT)

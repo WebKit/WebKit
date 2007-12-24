@@ -1,3 +1,13 @@
+2007-12-24  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Oliver.
+
+        Fix fast/events/arrow-keys-on-body.html, failing on Windows.
+
+        * DumpRenderTree/win/EventSender.cpp:
+        (keyDownCallback): Add KF_EXTENDED flag to arrow keys. Also add a count
+        of 1, even though WebKit currently ignores it.
+
 2007-12-23  Kevin Ollivier  <kevino@theolliviers.com>
 
         wx buildbot fix. Update libpng dl script to the latest version.
