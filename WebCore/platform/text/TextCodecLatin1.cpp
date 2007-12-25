@@ -118,8 +118,7 @@ void TextCodecLatin1::registerCodecs(TextCodecRegistrar registrar)
 
 String TextCodecLatin1::decode(const char* bytes, size_t length, bool)
 {
-    UChar* characters;
-    String string = String::newUninitialized(length, characters);
+    Vector <UChar> characters(length);
 
     // Convert the string a fast way and simultaneously do an efficient check to see if it's all ASCII.
     unsigned char ored = 0;
@@ -130,7 +129,7 @@ String TextCodecLatin1::decode(const char* bytes, size_t length, bool)
     }
 
     if (!(ored & 0x80))
-        return string;
+        return String::adopt(characters);
 
     // Convert the slightly slower way when there are non-ASCII characters.
     for (size_t i = 0; i < length; ++i) {
@@ -138,7 +137,7 @@ String TextCodecLatin1::decode(const char* bytes, size_t length, bool)
         characters[i] = table[c];
     }
 
-    return string;
+    return String::adopt(characters);
 }
 
 static CString encodeComplexWindowsLatin1(const UChar* characters, size_t length, bool allowEntities)

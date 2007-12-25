@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2005, 2006, 2007 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -476,7 +476,7 @@ void CompositeEditCommand::deleteInsignificantText(Text* textNode, int start, in
 
     int removed = 0;
     InlineTextBox* prevBox = 0;
-    RefPtr<StringImpl> str;
+    String str;
 
     // This loop structure works to process all gaps preceding a box,
     // and also will look at the gap after the last box.
@@ -492,10 +492,10 @@ void CompositeEditCommand::deleteInsignificantText(Text* textNode, int start, in
         if (indicesIntersect && gapLen > 0) {
             gapStart = max(gapStart, start);
             gapEnd = min(gapEnd, end);
-            if (!str)
+            if (str.isNull())
                 str = textNode->string()->substring(start, end - start);
             // remove text in the gap
-            str->remove(gapStart - start - removed, gapLen);
+            str.remove(gapStart - start - removed, gapLen);
             removed += gapLen;
         }
         
@@ -504,11 +504,11 @@ void CompositeEditCommand::deleteInsignificantText(Text* textNode, int start, in
             box = box->nextTextBox();
     }
 
-    if (str) {
+    if (!str.isNull()) {
         // Replace the text between start and end with our pruned version.
-        if (str->length() > 0) {
-            replaceTextInNode(textNode, start, end - start, str.get());
-        } else {
+        if (!str.isEmpty())
+            replaceTextInNode(textNode, start, end - start, str);
+        else {
             // Assert that we are not going to delete all of the text in the node.
             // If we were, that should have been done above with the call to 
             // removeNode and return.

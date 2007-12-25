@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller ( mueller@kde.org )
@@ -49,8 +49,8 @@ namespace WebCore {
 
 static inline bool isSpace(UChar c)
 {
-    // Use isspace() for basic Latin-1.
-    // This will include newlines, which aren't included in unicode DirWS.
+    // Use isASCIISpace() for basic Latin-1.
+    // This will include newlines, which aren't included in Unicode DirWS.
     return c <= 0x7F ? isASCIISpace(c) : direction(c) == WhiteSpaceNeutral;
 }    
     
@@ -79,6 +79,17 @@ StringImpl::StringImpl(const DeprecatedString& str)
 StringImpl::StringImpl(const UChar* str, unsigned len)
 {
     init(str, len);
+}
+
+StringImpl::StringImpl(const StringImpl& str, WithTerminatingNullCharacter)
+    : m_length(str.m_length)
+    , m_data(newUCharVector(m_length + 1))
+    , m_hash(str.m_hash)
+    , m_inTable(false)
+    , m_hasTerminatingNullCharacter(true)
+{
+    memcpy(m_data, str.m_data, m_length * sizeof(UChar));
+    m_data[m_length] = 0;
 }
 
 StringImpl::StringImpl(const char* str)
@@ -133,117 +144,6 @@ StringImpl::~StringImpl()
     deleteUCharVector(m_data);
 }
 
-const UChar* StringImpl::charactersWithNullTermination()
-{
-    if (m_hasTerminatingNullCharacter)
-        return m_data;
-    
-    m_data = static_cast<UChar*>(fastRealloc(m_data, (m_length + 1) * sizeof(UChar)));
-    m_data[m_length] = 0;
-    m_hasTerminatingNullCharacter = true;
-    
-    return m_data;
-}
-
-void StringImpl::append(const UChar* str, unsigned length)
-{
-    ASSERT(!m_inTable);
-    if (str && length != 0) {
-        int newlen = m_length + length;
-        UChar* c = newUCharVector(newlen);
-        memcpy(c, m_data, m_length * sizeof(UChar));
-        memcpy(c + m_length, str, length * sizeof(UChar));
-        deleteUCharVector(m_data);
-        m_data = c;
-        m_length = newlen;
-        m_hasTerminatingNullCharacter = false;
-    }
-}
-
-void StringImpl::append(const StringImpl* str)
-{
-    if (str)
-        append(str->m_data, str->m_length);
-}
-
-void StringImpl::append(char c)
-{
-    append(UChar(c));
-}
-
-void StringImpl::append(UChar c)
-{
-    ASSERT(!m_inTable);
-    UChar* nc = newUCharVector(m_length + 1);
-    memcpy(nc, m_data, m_length * sizeof(UChar));
-    nc[m_length] = c;
-    deleteUCharVector(m_data);
-    m_data = nc;
-    m_length++;
-    m_hasTerminatingNullCharacter = false;
-}
-
-void StringImpl::insert(const UChar* str, unsigned length, unsigned pos)
-{
-    ASSERT(!m_inTable);
-    if (pos >= m_length) {
-        append(str, length);
-        return;
-    }
-
-    if (str && length != 0) {
-        size_t newlen = m_length + length;
-        UChar* c = newUCharVector(newlen);
-        memcpy(c, m_data, pos * sizeof(UChar));
-        memcpy(c + pos, str, length * sizeof(UChar));
-        memcpy(c + pos + length, m_data + pos, (m_length - pos) * sizeof(UChar));
-        deleteUCharVector(m_data);
-        m_data = c;
-        m_length = newlen;
-        m_hasTerminatingNullCharacter = false;
-    }
-}
-
-void StringImpl::insert(const StringImpl* str, unsigned pos)
-{
-    if (str)
-        insert(str->m_data, str->m_length, pos);
-}
-
-void StringImpl::truncate(int len)
-{
-    ASSERT(!m_inTable);
-    if (len >= (int)m_length)
-        return;
-    int nl = len < 1 ? 1 : len;
-    UChar* c = newUCharVector(nl);
-    memcpy(c, m_data, nl * sizeof(UChar));
-    deleteUCharVector(m_data);
-    m_data = c;
-    m_length = len;
-    m_hasTerminatingNullCharacter = false;
-}
-
-void StringImpl::remove(unsigned pos, int len)
-{
-    ASSERT(!m_inTable);
-    if (len <= 0)
-        return;
-    if (pos >= m_length)
-        return;
-    if ((unsigned)len > m_length - pos)
-        len = m_length - pos;
-
-    unsigned newLen = m_length-len;
-    UChar* c = newUCharVector(newLen);
-    memcpy(c, m_data, pos * sizeof(UChar));
-    memcpy(c + pos, m_data + pos + len, (m_length - len - pos) * sizeof(UChar));
-    deleteUCharVector(m_data);
-    m_data = c;
-    m_length = newLen;
-    m_hasTerminatingNullCharacter = false;
-}
-
 bool StringImpl::containsOnlyWhitespace() const
 {
     return containsOnlyWhitespace(0, m_length);
@@ -262,7 +162,7 @@ bool StringImpl::containsOnlyWhitespace(unsigned from, unsigned len) const
     return true;
 }
     
-StringImpl* StringImpl::substring(unsigned pos, unsigned len)
+StringImpl* StringImpl::substring(unsigned pos, unsigned len) const
 {
     if (pos >= m_length) return
         new StringImpl;
@@ -944,16 +844,16 @@ bool StringImpl::endsWith(const StringImpl* m_data, bool caseSensitive) const
     return false;
 }
 
-StringImpl* StringImpl::replace(UChar oldC, UChar newC)
+StringImpl* StringImpl::replace(UChar oldC, UChar newC) const
 {
     if (oldC == newC)
-        return this;
+        return const_cast<StringImpl*>(this);
     unsigned i;
     for (i = 0; i != m_length; ++i)
         if (m_data[i] == oldC)
             break;
     if (i == m_length)
-        return this;
+        return const_cast<StringImpl*>(this);
 
     StringImpl* c = new StringImpl;
 
@@ -970,18 +870,26 @@ StringImpl* StringImpl::replace(UChar oldC, UChar newC)
     return c;
 }
 
-StringImpl* StringImpl::replace(unsigned index, unsigned len, const StringImpl* str)
+StringImpl* StringImpl::replace(unsigned position, unsigned lengthToReplace, const StringImpl* str) const
 {
-    StringImpl* m_data = copy();
-    m_data->remove(index, len);
-    m_data->insert(str, index);
-    return m_data;
+    position = min(position, length());
+    lengthToReplace = min(lengthToReplace, length() - position);
+    unsigned lengthToInsert = str ? str->length() : 0;
+    if (!lengthToReplace && !lengthToInsert)
+        return const_cast<StringImpl*>(this);
+    Vector<UChar> buffer(length() - lengthToReplace + lengthToInsert);
+    memcpy(buffer.data(), characters(), position * sizeof(UChar));
+    if (str)
+        memcpy(buffer.data() + position, str->characters(), lengthToInsert * sizeof(UChar));
+    memcpy(buffer.data() + position + lengthToInsert, characters() + position + lengthToReplace,
+        (length() - position - lengthToReplace) * sizeof(UChar));
+    return adopt(buffer);
 }
 
-StringImpl* StringImpl::replace(UChar pattern, const StringImpl* replacement)
+StringImpl* StringImpl::replace(UChar pattern, const StringImpl* replacement) const
 {
     if (!replacement)
-        return this;
+        return const_cast<StringImpl*>(this);
         
     int repStrLength = replacement->length();
     int srcSegmentStart = 0;
@@ -995,7 +903,7 @@ StringImpl* StringImpl::replace(UChar pattern, const StringImpl* replacement)
     
     // If we have 0 matches, we don't have to do any more work
     if (!matchCount)
-        return this;
+        return const_cast<StringImpl*>(this);
     
     // Create the new StringImpl;
     StringImpl* dst = new StringImpl();
@@ -1023,14 +931,14 @@ StringImpl* StringImpl::replace(UChar pattern, const StringImpl* replacement)
     return dst;
 }
 
-StringImpl* StringImpl::replace(const StringImpl* pattern, const StringImpl* replacement)
+StringImpl* StringImpl::replace(const StringImpl* pattern, const StringImpl* replacement) const
 {
     if (!pattern || !replacement)
-        return this;
+        return const_cast<StringImpl*>(this);
 
     int patternLength = pattern->length();
     if (!patternLength)
-        return this;
+        return const_cast<StringImpl*>(this);
         
     int repStrLength = replacement->length();
     int srcSegmentStart = 0;
@@ -1044,7 +952,7 @@ StringImpl* StringImpl::replace(const StringImpl* pattern, const StringImpl* rep
     
     // If we have 0 matches, we don't have to do any more work
     if (!matchCount)
-        return this;
+        return const_cast<StringImpl*>(this);
     
     // Create the new StringImpl;
     StringImpl* dst = new StringImpl();
@@ -1291,16 +1199,6 @@ PassRefPtr<StringImpl> StringImpl::createStrippingNull(const UChar* str, unsigne
 
     result->m_data = strippedCopy;
     result->m_length = strippedLength;
-    return result;
-}
-
-StringImpl* StringImpl::newUninitialized(size_t length, UChar*& characterBuffer)
-{
-    StringImpl* result = new StringImpl;
-    result->m_length = length;
-    if (length)
-        result->m_data = newUCharVector(length);
-    characterBuffer = result->m_data;
     return result;
 }
 

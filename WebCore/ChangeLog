@@ -1,3 +1,71 @@
+2007-12-24  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - http://bugs.webkit.org/show_bug.cgi?id=16550
+          make StringImpl immutable
+
+        I tried to keep the changes to a minimum. In some cases there is
+        room for optimization -- I didn't try to add in the "single ref count"
+        optimizations and there might be a tiny bit more string copying than
+        we had before.
+
+        * WebCore.base.exp: Updated.
+
+        * dom/CharacterData.cpp:
+        (WebCore::CharacterData::appendData): Changed to use String since
+        StringImpl doesn't have mutating functions any more.
+        (WebCore::CharacterData::insertData): Ditto.
+        (WebCore::CharacterData::deleteData): Ditto.
+        (WebCore::CharacterData::replaceData): Ditto.
+        * dom/Text.cpp:
+        (WebCore::Text::splitText): Changed to use substring instead of
+        remove since StringImpl does't have mutating functions any more.
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::deleteInsignificantText): Changed
+        to use String instead of StringImpl so we can use remove.
+
+        * platform/text/PlatformString.h: Removed newUninitialized.
+        Added append that takes a character pointer and length.
+
+        * platform/text/String.cpp:
+        (WebCore::String::insert): Added an implementation that does not
+        rely on an underlying StringImpl function.
+        (WebCore::String::append): Ditto.
+        (WebCore::String::truncate): Ditto.
+        (WebCore::String::remove): Ditto.
+        (WebCore::String::charactersWithNullTermination): Added an
+        implementation that uses the new StringImpl null termination feature,
+        which does not require modifying a string.
+
+        * platform/text/StringImpl.cpp:
+        (WebCore::isSpace): Fix comment.
+        (WebCore::StringImpl::StringImpl): Added a new constructor that makes
+        a string with a trailing null character.
+        (WebCore::StringImpl::substring): Marked const.
+        (WebCore::StringImpl::replace): Marked const; had to add quite a few
+        const_cast. Also rewrote one of these to work without modifying the
+        existing string.
+
+        * platform/text/StringImpl.h: Fixed a mistake where the empty string had
+        m_hasTerminatingNullCharacter uninitialized. Added a type and constructor
+        for creating strings that have a trailing null character. Added a
+        hasTerminatingNullCharacter function. Removed newUninitialized,
+        charactersWithNullTermination, append, insert, truncate, and remove.
+        Marked lots of other functions const.
+
+        * platform/text/TextCodecLatin1.cpp:
+        (WebCore::TextCodecLatin1::decode): Rewrote to use a Vector instead of
+        newUninitialized.
+        * platform/text/TextCodecUTF16.cpp:
+        (WebCore::TextCodecUTF16::decode): Ditto.
+        * platform/text/TextCodecUserDefined.cpp:
+        (WebCore::TextCodecUserDefined::decode): Ditto.
+
+        * rendering/RenderStyle.cpp:
+        (WebCore::RenderStyle::setContent): Changed to use String since
+        StringImpl doesn't have mutating functions any more.
+
 2007-12-24  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Oliver.

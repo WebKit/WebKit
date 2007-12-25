@@ -75,9 +75,8 @@ String TextCodecUTF16::decode(const char* bytes, size_t length, bool)
     size_t numBytes = length + m_haveBufferedByte;
     size_t numChars = numBytes / 2;
 
-    UChar* buffer;
-    String result = String::newUninitialized(numChars, buffer);
-    UChar* q = buffer;
+    Vector<UChar> buffer(numChars);
+    UChar* q = buffer.data();
 
     if (m_haveBufferedByte) {
         UChar c;
@@ -113,8 +112,9 @@ String TextCodecUTF16::decode(const char* bytes, size_t length, bool)
         m_bufferedByte = p[0];
     }
 
-    result.truncate(q - buffer);
-    return result;
+    buffer.resize(q - buffer.data());
+
+    return String::adopt(buffer);
 }
 
 CString TextCodecUTF16::encode(const UChar* characters, size_t length, bool)

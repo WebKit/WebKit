@@ -1,8 +1,6 @@
-/**
- * This file is part of the DOM implementation for KDE.
- *
+/*
  * (C) 1999 Lars Knoll (knoll@kde.org)
- * Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.
+ * Copyright (C) 2004, 2005, 2006, 2007 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -154,18 +152,57 @@ String operator+(const char* cs, const String& s)
 
 void String::insert(const String& str, unsigned pos)
 {
-    if (!m_impl)
-        m_impl = str.m_impl->copy();
-    else
-        m_impl->insert(str.m_impl.get(), pos);
+    if (str.isEmpty()) {
+        if (str.isNull())
+            return;
+        if (isNull())
+            m_impl = str.impl();
+        return;
+    }
+    insert(str.characters(), str.length(), pos);
 }
 
-void String::insert(const UChar* str, unsigned length, unsigned pos)
+void String::append(const UChar* charactersToAppend, unsigned lengthToAppend)
 {
-    if (!m_impl)
-        m_impl = new StringImpl(str, length);
-    else
-        m_impl->insert(str, length, pos);
+    if (!m_impl) {
+        if (!charactersToAppend)
+            return;
+        if (!lengthToAppend) {
+            m_impl = StringImpl::empty();
+            return;
+        }
+        m_impl = new StringImpl(charactersToAppend, lengthToAppend);
+        return;
+    }
+
+    if (!lengthToAppend)
+        return;
+
+    ASSERT(charactersToAppend);
+    Vector<UChar> buffer(length() + lengthToAppend);
+    memcpy(buffer.data(), characters(), length() * sizeof(UChar));
+    memcpy(buffer.data() + length(), charactersToAppend, lengthToAppend * sizeof(UChar));
+    m_impl = StringImpl::adopt(buffer);
+}
+
+void String::insert(const UChar* charactersToInsert, unsigned lengthToInsert, unsigned position)
+{
+    if (position >= length()) {
+        append(charactersToInsert, lengthToInsert);
+        return;
+    }
+
+    ASSERT(m_impl);
+
+    if (!lengthToInsert)
+        return;
+
+    ASSERT(charactersToInsert);
+    Vector<UChar> buffer(length() + lengthToInsert);
+    memcpy(buffer.data(), characters(), position * sizeof(UChar));
+    memcpy(buffer.data() + position, charactersToInsert, lengthToInsert * sizeof(UChar));
+    memcpy(buffer.data() + position + lengthToInsert, characters() + position, (length() - position) * sizeof(UChar));
+    m_impl = StringImpl::adopt(buffer);
 }
 
 UChar String::operator[](unsigned i) const
@@ -181,6 +218,7 @@ UChar32 String::characterStartingAt(unsigned i) const
         return 0;
     return m_impl->characterStartingAt(i);
 }
+
 unsigned String::length() const
 {
     if (!m_impl)
@@ -188,16 +226,28 @@ unsigned String::length() const
     return m_impl->length();
 }
 
-void String::truncate(unsigned len)
+void String::truncate(unsigned position)
 {
-    if (m_impl)
-        m_impl->truncate(len);
+    if (position >= length())
+        return;
+    Vector<UChar> buffer(position);
+    memcpy(buffer.data(), characters(), position * sizeof(UChar));
+    m_impl = StringImpl::adopt(buffer);
 }
 
-void String::remove(unsigned pos, int len)
+void String::remove(unsigned position, int lengthToRemove)
 {
-    if (m_impl)
-        m_impl->remove(pos, len);
+    if (lengthToRemove <= 0)
+        return;
+    if (position >= length())
+        return;
+    if (static_cast<unsigned>(lengthToRemove) > length() - position)
+        lengthToRemove = length() - position;
+    Vector<UChar> buffer(length() - lengthToRemove);
+    memcpy(buffer.data(), characters(), position * sizeof(UChar));
+    memcpy(buffer.data() + position, characters() + position + lengthToRemove,
+        (length() - lengthToRemove - position) * sizeof(UChar));
+    m_impl = StringImpl::adopt(buffer);
 }
 
 String String::substring(unsigned pos, unsigned len) const
@@ -265,7 +315,10 @@ const UChar* String::charactersWithNullTermination()
 {
     if (!m_impl)
         return 0;
-    return m_impl->charactersWithNullTermination();
+    if (m_impl->hasTerminatingNullCharacter())
+        return m_impl->characters();
+    m_impl = new StringImpl(*m_impl, StringImpl::WithTerminatingNullCharacter());
+    return m_impl->characters();
 }
 
 DeprecatedString String::deprecatedString() const
@@ -535,11 +588,6 @@ String::operator UString() const
     if (!m_impl)
         return UString();
     return UString(reinterpret_cast<const KJS::UChar*>(m_impl->characters()), m_impl->length());
-}
-
-String String::newUninitialized(size_t length, UChar*& characterBuffer)
-{
-    return StringImpl::newUninitialized(length, characterBuffer);
 }
 
 String String::adopt(Vector<UChar>& buffer)

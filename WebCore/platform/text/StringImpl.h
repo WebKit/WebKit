@@ -49,47 +49,38 @@ struct UCharBufferTranslator;
 class StringImpl : public RefCounted<StringImpl> {
 private:
     struct WithOneRef { };
-    StringImpl(WithOneRef) : m_length(0), m_data(0), m_hash(0), m_inTable(false) { ref(); }
-    void init(const char*, unsigned len);
-    void init(const UChar*, unsigned len);
+    StringImpl(WithOneRef) : m_length(0), m_data(0), m_hash(0), m_inTable(false), m_hasTerminatingNullCharacter(false) { ref(); }
+    void init(const char*, unsigned length);
+    void init(const UChar*, unsigned length);
 
 protected:
     StringImpl() : m_length(0), m_data(0), m_hash(0), m_inTable(false), m_hasTerminatingNullCharacter(false) { }
 public:
-    StringImpl(const UChar*, unsigned len);
-    StringImpl(const char*, unsigned len);
+    StringImpl(const UChar*, unsigned length);
+    StringImpl(const char*, unsigned length);
     StringImpl(const char*);
     StringImpl(const KJS::Identifier&);
     StringImpl(const KJS::UString&);
     ~StringImpl();
 
+    struct WithTerminatingNullCharacter { };
+    StringImpl(const StringImpl&, WithTerminatingNullCharacter);
+
     static PassRefPtr<StringImpl> createStrippingNull(const UChar*, unsigned len);
-    static StringImpl* newUninitialized(size_t length, UChar*& characterBuffer);
     static StringImpl* adopt(Vector<UChar>&);
 
     const UChar* characters() const { return m_data; }
     unsigned length() const { return m_length; }
-    
-    const UChar* charactersWithNullTermination();
-    
+
+    bool hasTerminatingNullCharacter() const { return m_hasTerminatingNullCharacter; }
+
     unsigned hash() const { if (m_hash == 0) m_hash = computeHash(m_data, m_length); return m_hash; }
     static unsigned computeHash(const UChar*, unsigned len);
     static unsigned computeHash(const char*);
     
-    void append(const UChar*, unsigned length);
-    void append(const StringImpl*);
-    void append(UChar);
-    void append(char);
-
-    void insert(const UChar*, unsigned length, unsigned pos);
-    void insert(const StringImpl*, unsigned pos);
-
-    void truncate(int len);
-    void remove(unsigned pos, int len = 1);
-
     StringImpl* copy() const { return new StringImpl(m_data, m_length); }
 
-    StringImpl* substring(unsigned pos, unsigned len = UINT_MAX);
+    StringImpl* substring(unsigned pos, unsigned len = UINT_MAX) const;
 
     UChar operator[](int pos) const { return m_data[pos]; }
     UChar32 characterStartingAt(unsigned) const;
@@ -128,10 +119,10 @@ public:
     bool endsWith(const StringImpl*, bool caseSensitive = true) const;
 
     // Does not modify the string.
-    StringImpl* replace(UChar, UChar);
-    StringImpl* replace(UChar, const StringImpl*);
-    StringImpl* replace(const StringImpl*, const StringImpl*);
-    StringImpl* replace(unsigned index, unsigned len, const StringImpl*);
+    StringImpl* replace(UChar, UChar) const;
+    StringImpl* replace(UChar, const StringImpl*) const;
+    StringImpl* replace(const StringImpl*, const StringImpl*) const;
+    StringImpl* replace(unsigned index, unsigned len, const StringImpl*) const;
 
     static StringImpl* empty();
 

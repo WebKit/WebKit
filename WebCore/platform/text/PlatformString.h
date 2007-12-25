@@ -63,7 +63,6 @@ public:
     String(const char*, unsigned length);
     String(StringImpl* i) : m_impl(i) { }
 
-    static String newUninitialized(size_t length, UChar*& characterBuffer);
     static String adopt(Vector<UChar>&);
 
     operator KJS::Identifier() const;
@@ -100,6 +99,7 @@ public:
     void append(const String&);
     void append(char);
     void append(UChar);
+    void append(const UChar*, unsigned length);
     void insert(const String&, unsigned pos);
     void insert(const UChar*, unsigned length, unsigned pos);
 
@@ -149,8 +149,8 @@ public:
 
     String copy() const;
 
-    bool isNull()  const { return !m_impl; }
-    bool isEmpty()  const;
+    bool isNull() const { return !m_impl; }
+    bool isEmpty() const;
 
     StringImpl* impl() const { return m_impl.get(); }
 

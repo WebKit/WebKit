@@ -1,9 +1,7 @@
-/**
- * This file is part of the DOM implementation for KDE.
- *
+/*
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
- * Copyright (C) 2003 Apple Computer, Inc.
+ * Copyright (C) 2003, 2004, 2005, 2006, 2007 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -73,10 +71,9 @@ Text *Text::splitText(unsigned offset, ExceptionCode& ec)
     }
 
     StringImpl *oldStr = str;
-    Text *newText = createNew(str->substring(offset, str->length()-offset));
-    str = str->copy();
+    Text *newText = createNew(str->substring(offset));
+    str = str->substring(0, offset);
     str->ref();
-    str->remove(offset, str->length()-offset);
 
     dispatchModifiedEvent(oldStr);
     oldStr->deref();

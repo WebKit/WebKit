@@ -50,15 +50,14 @@ void TextCodecUserDefined::registerCodecs(TextCodecRegistrar registrar)
 
 String TextCodecUserDefined::decode(const char* bytes, size_t length, bool)
 {
-    UChar* characters;
-    String string = String::newUninitialized(length, characters);
+    Vector<UChar> characters(length);
 
     for (size_t i = 0; i < length; ++i) {
         signed char c = bytes[i];
         characters[i] = c & 0xf7ff;
     }
 
-    return string;
+    return String::adopt(characters);
 }
 
 static CString encodeComplexUserDefined(const UChar* characters, size_t length, bool allowEntities)

@@ -1420,11 +1420,11 @@ void RenderStyle::setContent(StringImpl* s, bool add)
         if (lastContent->m_type == CONTENT_TEXT) {
             // We can augment the existing string and share this ContentData node.
             StringImpl* oldStr = lastContent->m_content.m_text;
-            StringImpl* newStr = oldStr->copy();
-            newStr->ref();
+            String newStr = oldStr;
+            newStr.append(s);
+            newStr.impl()->ref();
             oldStr->deref();
-            newStr->append(s);
-            lastContent->m_content.m_text = newStr;
+            lastContent->m_content.m_text = newStr.impl();
             return;
         }
     }
