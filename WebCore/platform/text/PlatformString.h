@@ -45,13 +45,6 @@ namespace WebCore {
 class CString;
 struct StringHash;
 
-/**
- * Currently, strings are explicitly shared (they behave like pointers), meaning
- * that modifications to one instance will also modify all others. If you
- * wish to get a String that is independent, use @ref copy(). In the future,
- * we plan to change this to have immutable copy on write semantics.
- */
-
 class String {
 public:
     String() { } // gives null string, distinguishable from an empty string
@@ -147,6 +140,9 @@ public:
     Length* toCoordsArray(int& len) const;
     bool percentage(int &_percentage) const;
 
+    // Makes a deep copy. Helpful only if you need to use a String on another thread.
+    // Since the underlying StringImpl objects are immutable, there's no other reason
+    // to ever prefer copy() over plain old assignment.
     String copy() const;
 
     bool isNull() const { return !m_impl; }

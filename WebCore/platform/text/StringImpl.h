@@ -78,6 +78,8 @@ public:
     static unsigned computeHash(const UChar*, unsigned len);
     static unsigned computeHash(const char*);
     
+    // Makes a deep copy. Helpful only if you need to use a String on another thread.
+    // Since StringImpl objects are immutable, there's no other reason to make a copy.
     StringImpl* copy() const { return new StringImpl(m_data, m_length); }
 
     StringImpl* substring(unsigned pos, unsigned len = UINT_MAX) const;
