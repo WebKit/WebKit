@@ -963,6 +963,7 @@ gboolean webkit_web_view_can_go_forward(WebKitWebView* webView)
 void webkit_web_view_open(WebKitWebView* webView, const gchar* uri)
 {
     g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
+    g_return_if_fail(uri);
 
     Frame* frame = core(webkit_web_view_get_main_frame(webView));
     DeprecatedString string = DeprecatedString::fromUtf8(uri);
@@ -980,21 +981,23 @@ void webkit_web_view_reload(WebKitWebView* webView)
 void webkit_web_view_load_string(WebKitWebView* webView, const gchar* content, const gchar* contentMimeType, const gchar* contentEncoding, const gchar* baseUri)
 {
     g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
+    g_return_if_fail(content);
 
     Frame* frame = core(webkit_web_view_get_main_frame(webView));
 
-    KURL url(DeprecatedString::fromUtf8(baseUri));
+    KURL url(baseUri ? DeprecatedString::fromUtf8(baseUri) : "");
     RefPtr<SharedBuffer> sharedBuffer = new SharedBuffer(strdup(content), strlen(content));
-    SubstituteData substituteData(sharedBuffer.release(), String(contentMimeType), String(contentEncoding), KURL("about:blank"), url);
+    SubstituteData substituteData(sharedBuffer.release(), contentMimeType ? String(contentMimeType) : "text/html", contentEncoding ? String(contentEncoding) : "UTF-8", KURL("about:blank"), url);
 
     frame->loader()->load(ResourceRequest(url), substituteData);
 }
 
-void webkit_web_view_load_html_string(WebKitWebView* webView, const gchar* content, const gchar* baseUrl)
+void webkit_web_view_load_html_string(WebKitWebView* webView, const gchar* content, const gchar* baseUri)
 {
     g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
+    g_return_if_fail(content);
 
-    webkit_web_view_load_string(webView, content, "text/html", "UTF-8", baseUrl);
+    webkit_web_view_load_string(webView, content, NULL, NULL, baseUri);
 }
 
 void webkit_web_view_stop_loading(WebKitWebView* webView)

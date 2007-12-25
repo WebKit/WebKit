@@ -51,6 +51,8 @@ static void webkit_network_request_init(WebKitNetworkRequest* request)
 
 WebKitNetworkRequest* webkit_network_request_new(const gchar* uri)
 {
+    g_return_val_if_fail(uri, NULL);
+
     WebKitNetworkRequest* request = WEBKIT_NETWORK_REQUEST(g_object_new(WEBKIT_TYPE_NETWORK_REQUEST, NULL));
     WebKitNetworkRequestPrivate* requestPrivate = WEBKIT_NETWORK_REQUEST_GET_PRIVATE(request);
 
@@ -61,11 +63,10 @@ WebKitNetworkRequest* webkit_network_request_new(const gchar* uri)
 
 void webkit_network_request_set_uri(WebKitNetworkRequest* request, const gchar* uri)
 {
-    WebKitNetworkRequestPrivate* requestPrivate;
-
     g_return_if_fail(WEBKIT_IS_NETWORK_REQUEST(request));
+    g_return_if_fail(uri);
 
-    requestPrivate = WEBKIT_NETWORK_REQUEST_GET_PRIVATE(request);
+    WebKitNetworkRequestPrivate* requestPrivate = WEBKIT_NETWORK_REQUEST_GET_PRIVATE(request);
 
     g_free(requestPrivate->uri);
     requestPrivate->uri = g_strdup(uri);
@@ -73,11 +74,9 @@ void webkit_network_request_set_uri(WebKitNetworkRequest* request, const gchar* 
 
 const gchar* webkit_network_request_get_uri(WebKitNetworkRequest* request)
 {
-    WebKitNetworkRequestPrivate* requestPrivate;
-
     g_return_val_if_fail(WEBKIT_IS_NETWORK_REQUEST(request), NULL);
 
-    requestPrivate = WEBKIT_NETWORK_REQUEST_GET_PRIVATE(request);
+    WebKitNetworkRequestPrivate* requestPrivate = WEBKIT_NETWORK_REQUEST_GET_PRIVATE(request);
 
     return requestPrivate->uri;
 }

@@ -1,3 +1,20 @@
+2007-12-24  Christian Dywan  <christian@twotoasts.de>
+
+        Reviewed by Alp Toker.
+
+        http://bugs.webkit.org/attachment.cgi?id=18099
+        There are no NULL checks for strings in public api
+
+        Add missing NULL checks for string parameters.
+
+        Provide sensible defaults when NULL is passed for the optional
+        parameters in webkit_web_view_load_string(). UTF-8 is the default
+        encoding used by GLib and text/html is a reasonable default content
+        type.
+
+        * WebView/webkitnetworkrequest.cpp:
+        * WebView/webkitwebview.cpp:
+
 2007-12-22  Xan Lopez  <xan@gnome.org>
 
         Reviewed by Alp Toker.
