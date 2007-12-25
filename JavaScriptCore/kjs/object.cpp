@@ -226,10 +226,7 @@ void JSObject::put(ExecState* exec, const Identifier &propertyName, JSValue *val
   // putValue() is used for JS assignemnts. It passes no attribute.
   // Assume that a C++ implementation knows what it is doing
   // and let it override the canPut() check.
-  if ((attr == None || attr == DontDelete) && !canPut(exec,propertyName)) {
-    return;
-  }
-
+  bool checkReadOnly = !(attr & (ReadOnly | DontEnum | Internal | Function | GetterSetter));
   // Check if there are any setters or getters in the prototype chain
   JSObject *obj = this;
   bool hasGettersOrSetters = false;
@@ -246,6 +243,10 @@ void JSObject::put(ExecState* exec, const Identifier &propertyName, JSValue *val
   }
   
   if (hasGettersOrSetters) {
+    if (checkReadOnly && !canPut(exec,propertyName)) {
+      return;
+    }
+
     obj = this;
     while (true) {
       unsigned attributes;
@@ -277,7 +278,7 @@ void JSObject::put(ExecState* exec, const Identifier &propertyName, JSValue *val
     }
   }
   
-  _prop.put(propertyName,value,attr);
+  _prop.put(propertyName, value, attr, checkReadOnly);
 }
 
 void JSObject::put(ExecState *exec, unsigned propertyName,
@@ -293,11 +294,13 @@ bool JSObject::canPut(ExecState *, const Identifier &propertyName) const
     
   // Don't look in the prototype here. We can always put an override
   // in the object, even if the prototype has a ReadOnly property.
+  // Also, there is no need to check the static property table, as this
+  // would have been done by the subclass already.
 
-  if (!getPropertyAttributes(propertyName, attributes))
+  if (!_prop.get(propertyName, attributes))
     return true;
-  else
-    return !(attributes & ReadOnly);
+
+  return !(attributes & ReadOnly);
 }
 
 // ECMA 8.6.2.4

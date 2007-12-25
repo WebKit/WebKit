@@ -1,3 +1,18 @@
+2007-12-25  Maciej Stachowiak  <mjs@apple.com>
+        
+        Reviewed by Oliver.
+                
+        - Remove unnecessary redundant check from property setting
+        http://bugs.webkit.org/show_bug.cgi?id=16602
+                
+        1.3% speedup on SunSpider.
+        
+        * kjs/object.cpp:
+        (KJS::JSObject::put): Don't do canPut check when not needed; let
+        the PropertyMap handle it.        
+        (KJS::JSObject::canPut): Don't check the static property
+        table. lookupPut does that already.
+        
 2007-12-24  Alp Toker  <alp@atoker.com>
 
         Fix builds that don't use AllInOneFile.cpp following breakage
