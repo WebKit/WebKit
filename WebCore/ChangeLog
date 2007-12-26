@@ -1,5 +1,11 @@
 2007-12-25  Alp Toker  <alp@atoker.com>
 
+        Wx build fix for breakage introduced in r28981.
+
+        * WebCoreSources.bkl:
+
+2007-12-25  Alp Toker  <alp@atoker.com>
+
         GTK+/Qt build fix for breakage introduced in r28981.
 
         * WebCore.pro:

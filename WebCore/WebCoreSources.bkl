@@ -301,6 +301,7 @@ This file contains the list of files needed to build WebCore.
         dom/Document.cpp
         dom/DocumentFragment.cpp
         dom/DocumentType.cpp
+        dom/DynamicNodeList.cpp
         dom/EditingText.cpp
         dom/Element.cpp
         dom/Entity.cpp
@@ -322,7 +323,6 @@ This file contains the list of files needed to build WebCore.
         dom/NodeFilter.cpp
         dom/NodeFilterCondition.cpp
         dom/NodeIterator.cpp
-        dom/NodeList.cpp
         dom/Notation.cpp
         dom/OverflowEvent.cpp
         dom/Position.cpp
