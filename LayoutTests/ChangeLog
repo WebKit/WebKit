@@ -1,3 +1,14 @@
+2007-12-26  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Sam Weinig.
+
+        http://bugs.webkit.org/show_bug.cgi?id=16609
+        Make manual-tests/xmlhttprequest-contenttype-empty.html test automatic
+
+        * http/tests/xmlhttprequest/xmlhttprequest-contenttype-empty-expected.txt: Added.
+        * http/tests/xmlhttprequest/resources/empty-content-type.php: Added.
+        * http/tests/xmlhttprequest/xmlhttprequest-contenttype-empty.html: Copied from WebCore/manual-tests/xmlhttprequest-contenttype-empty.html.
+
 2007-12-25  Rob Buis  <buis@kde.org>
 
         Reviewed by Eric.
