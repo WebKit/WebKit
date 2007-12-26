@@ -521,6 +521,7 @@ SOURCES += \
     dom/StaticNodeList.cpp \
     dom/StyledElement.cpp \
     dom/StyleElement.cpp \
+    dom/TagNodeList.cpp \
     dom/Text.cpp \
     dom/TextEvent.cpp \
     dom/Traversal.cpp \

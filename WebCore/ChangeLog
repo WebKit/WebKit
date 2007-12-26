@@ -1,5 +1,13 @@
 2007-12-25  Sam Weinig  <sam@webkit.org>
 
+        Fix non-mac builds.
+
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCoreSources.bkl:
+
+2007-12-25  Sam Weinig  <sam@webkit.org>
+
         Rubber stamped by Eric Seidel.
 
         Move TagNodeList into its own file.

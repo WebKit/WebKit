@@ -6217,6 +6217,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\dom\TagNodeList.h"
+				>
+			</File>
+			<File
+				RelativePath="..\dom\TagNodeList.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\dom\Text.cpp"
 				>
 			</File>
