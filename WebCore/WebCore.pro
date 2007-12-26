@@ -486,6 +486,7 @@ SOURCES += \
     dom/DocumentFragment.cpp \
     dom/DocumentType.cpp \
     dom/DOMImplementation.cpp \
+    dom/DynamicNodeList.cpp \
     dom/EditingText.cpp \
     dom/Element.cpp \
     dom/Entity.cpp \
@@ -507,7 +508,6 @@ SOURCES += \
     dom/NodeFilterCondition.cpp \
     dom/NodeFilter.cpp \
     dom/NodeIterator.cpp \
-    dom/NodeList.cpp \
     dom/Notation.cpp \
     dom/OverflowEvent.cpp \
     dom/Position.cpp \

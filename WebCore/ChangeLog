@@ -1,3 +1,9 @@
+2007-12-25  Alp Toker  <alp@atoker.com>
+
+        GTK+/Qt build fix for breakage introduced in r28981.
+
+        * WebCore.pro:
+
 2007-12-25  David Smith  <catfish.man@gmail.com> and Sam Weinig  <sam@webkit.org>
 
         Reviewed by Oliver.
