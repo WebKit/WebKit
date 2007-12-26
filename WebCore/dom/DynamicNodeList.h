@@ -54,19 +54,16 @@ public:
     bool needsNotifications() const { return m_needsNotifications; }
 
     // DOM methods & attributes for NodeList
-    virtual unsigned length() const = 0;
-    virtual Node* item(unsigned index) const = 0;
-    Node* itemWithName(const AtomicString&) const;
+    virtual unsigned length() const;
+    virtual Node* item(unsigned index) const;
+    virtual Node* itemWithName(const AtomicString&) const;
 
     // Other methods (not part of DOM)
     virtual void rootNodeChildrenChanged();
-    virtual void rootNodeAttributeChanged() { }
+    virtual void rootNodeAttributeChanged();
 
 protected:
-    // helper functions for searching all ElementImpls in a tree
-    unsigned recursiveLength(Node* start = 0) const;
-    Node* recursiveItem (unsigned offset, Node* start = 0) const;
-    virtual bool nodeMatches(Node* testNode) const = 0;
+    virtual bool nodeMatches(Node*) const = 0;
 
     RefPtr<Node> m_rootNode;
     mutable Caches* m_caches;

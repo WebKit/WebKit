@@ -53,27 +53,22 @@ DynamicNodeList::~DynamicNodeList()
         delete m_caches;
 }
 
-unsigned DynamicNodeList::recursiveLength(Node* start) const
+unsigned DynamicNodeList::length() const
 {
-    if (!start)
-        start = m_rootNode.get();
-
-    if (m_caches->isLengthCacheValid && start == m_rootNode)
+    if (m_caches->isLengthCacheValid)
         return m_caches->cachedLength;
 
     unsigned len = 0;
 
-    for (Node* n = start->firstChild(); n; n = n->nextSibling())
+    for (Node* n = m_rootNode->firstChild(); n; n = n->traverseNextNode(m_rootNode.get())) {
         if (n->isElementNode()) {
             if (nodeMatches(n))
                 len++;
-            len += recursiveLength(n);
         }
-
-    if (start == m_rootNode) {
-        m_caches->cachedLength = len;
-        m_caches->isLengthCacheValid = true;
     }
+
+    m_caches->cachedLength = len;
+    m_caches->isLengthCacheValid = true;
 
     return len;
 }
@@ -119,25 +114,22 @@ Node* DynamicNodeList::itemBackwardsFromCurrent(Node* start, unsigned offset, in
     return 0; // no matching node in this subtree
 }
 
-Node* DynamicNodeList::recursiveItem(unsigned offset, Node* start) const
+Node* DynamicNodeList::item(unsigned offset) const
 {
     int remainingOffset = offset;
-    if (!start) {
-        start = m_rootNode->firstChild();
-        if (m_caches->isItemCacheValid) {
-            if (offset == m_caches->lastItemOffset) {
-                return m_caches->lastItem;
-            } else if (offset > m_caches->lastItemOffset || m_caches->lastItemOffset - offset < offset) {
-                start = m_caches->lastItem;
-                remainingOffset -= m_caches->lastItemOffset;
-            }
+    Node* start = m_rootNode->firstChild();
+    if (m_caches->isItemCacheValid) {
+        if (offset == m_caches->lastItemOffset)
+            return m_caches->lastItem;
+        else if (offset > m_caches->lastItemOffset || m_caches->lastItemOffset - offset < offset) {
+            start = m_caches->lastItem;
+            remainingOffset -= m_caches->lastItemOffset;
         }
     }
 
     if (remainingOffset < 0)
         return itemBackwardsFromCurrent(start, offset, remainingOffset);
-    else
-        return itemForwardsFromCurrent(start, offset, remainingOffset);
+    return itemForwardsFromCurrent(start, offset, remainingOffset);
 }
 
 Node* DynamicNodeList::itemWithName(const AtomicString& elementId) const
@@ -170,6 +162,9 @@ void DynamicNodeList::rootNodeChildrenChanged()
     m_caches->reset();
 }
 
+void DynamicNodeList::rootNodeAttributeChanged()
+{
+}
 
 DynamicNodeList::Caches::Caches()
     : lastItem(0)

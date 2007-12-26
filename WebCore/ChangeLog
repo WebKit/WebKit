@@ -1,3 +1,25 @@
+2007-12-25  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Simplify the NodeList architecture.
+        - Rename recursiveItem() to item(), since it is not recursive.
+        - Make recursiveLength() iterative and rename to length().
+        - Remove now unneeded overrides of item() and length() that used 
+          to call the recursive variants.
+
+        * dom/ClassNodeList.cpp:
+        * dom/ClassNodeList.h:
+        * dom/DynamicNodeList.cpp:
+        (WebCore::DynamicNodeList::length):
+        (WebCore::DynamicNodeList::item):
+        (WebCore::DynamicNodeList::rootNodeAttributeChanged): Move implementation 
+        into the .cpp file since virtual methods can't be inlined.
+        * dom/DynamicNodeList.h:
+        * dom/NameNodeList.cpp:
+        * dom/NameNodeList.h:
+        * dom/Node.cpp:
+
 2007-12-25  Alp Toker  <alp@atoker.com>
 
         More complete GTK+/Qt/Wx/Win build fixes for breakage introduced in

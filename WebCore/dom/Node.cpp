@@ -71,9 +71,6 @@ class TagNodeList : public DynamicNodeList {
 public:
     TagNodeList(PassRefPtr<Node> rootNode, const AtomicString& namespaceURI, const AtomicString& localName);
 
-    virtual unsigned length() const;
-    virtual Node* item(unsigned index) const;
-
 private:
     virtual bool nodeMatches(Node*) const;
 
@@ -87,16 +84,6 @@ inline TagNodeList::TagNodeList(PassRefPtr<Node> rootNode, const AtomicString& n
     , m_localName(localName)
 {
     ASSERT(m_namespaceURI.isNull() || !m_namespaceURI.isEmpty());
-}
-
-unsigned TagNodeList::length() const
-{
-    return recursiveLength();
-}
-
-Node* TagNodeList::item(unsigned index) const
-{
-    return recursiveItem(index);
 }
 
 bool TagNodeList::nodeMatches(Node* testNode) const

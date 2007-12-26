@@ -36,19 +36,13 @@ class NameNodeList : public DynamicNodeList {
 public:
     NameNodeList(Node* root, const String& name, DynamicNodeList::Caches*);
 
-    // DOM methods overridden from  parent classes
-
-    virtual unsigned length() const;
-    virtual Node* item(unsigned index) const;
-
     // Other methods (not part of DOM)
     
     virtual void rootNodeAttributeChanged() { DynamicNodeList::rootNodeChildrenChanged(); }
 
-protected:
-    virtual bool nodeMatches(Node* testNode) const;
-
 private:
+    virtual bool nodeMatches(Node*) const;
+
     String m_nodeName;
 };
 

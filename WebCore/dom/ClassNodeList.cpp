@@ -42,16 +42,6 @@ ClassNodeList::ClassNodeList(PassRefPtr<Node> rootNode, const String& classNames
     m_classNames.parseClassAttribute(classNames, m_rootNode->document()->inCompatMode());
 }
 
-unsigned ClassNodeList::length() const
-{
-    return recursiveLength();
-}
-
-Node* ClassNodeList::item(unsigned index) const
-{
-    return recursiveItem(index);
-}
-
 bool ClassNodeList::nodeMatches(Node* testNode) const
 {
     if (!testNode->isElementNode())
