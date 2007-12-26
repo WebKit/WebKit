@@ -1,0 +1,77 @@
+<html>
+<body>
+<div class="one">Line 1<div class="two">Line 2</div><p>Line <i>3</i></p></div>
+<div id="test" class="one two"><div id="test2" class="one two">line 4</div><p class="two">line 5</p></div>
+<p><ol id="console"></ol></p>
+<script type="text/javascript">
+    if (window.layoutTestController)
+        layoutTestController.dumpAsText();
+
+    function log(message)
+    {
+        var item = document.createElement("li");
+        item.appendChild(document.createTextNode(message));
+        document.getElementById("console").appendChild(item);
+    }
+    
+    Element.prototype.dump = function()
+    {
+        return this;
+    }
+    
+    NodeList.prototype.dump = function()
+    {
+        var result = "";
+        var i = 0;
+        for (; i < this.length; i++)
+            result += this[i] + ", ";
+        result += "length: " + i;
+        return result;
+    }
+
+    try {
+        var elm = document.getElementById("test");
+        
+        try { log(document.querySelectorAll("#test").dump());      } catch (e) { log(e) }
+        try { log(document.querySelectorAll(".two").dump());       } catch (e) { log(e) }
+        try { log(document.querySelectorAll(".one, .two").dump()); } catch (e) { log(e) }
+        try { log(document.querySelectorAll("@font-face").dump()); } catch (e) { log(e) }
+        try { log(document.querySelectorAll("").dump());           } catch (e) { log(e) }
+        try { log(document.querySelectorAll().dump());             } catch (e) { log(e) }
+        try { log(document.querySelectorAll(null).dump());         } catch (e) { log(e) }
+        try { log(document.querySelectorAll(undefined).dump());    } catch (e) { log(e) }
+
+        try { log(elm.querySelectorAll("#test").dump());           } catch (e) { log(e) }
+        try { log(elm.querySelectorAll("#test2").dump());          } catch (e) { log(e) }
+        try { log(elm.querySelectorAll(".two").dump());            } catch (e) { log(e) }
+        try { log(elm.querySelectorAll(".one, .two").dump());      } catch (e) { log(e) }
+        try { log(elm.querySelectorAll("@font-face").dump());      } catch (e) { log(e) }
+        try { log(elm.querySelectorAll("").dump());                } catch (e) { log(e) }
+        try { log(elm.querySelectorAll().dump());                  } catch (e) { log(e) }
+        try { log(elm.querySelectorAll(null).dump());              } catch (e) { log(e) }
+        try { log(elm.querySelectorAll(undefined).dump());         } catch (e) { log(e) }
+
+        try { log(document.querySelector("#test").dump());         } catch (e) { log(e) }
+        try { log(document.querySelector(".two").dump());          } catch (e) { log(e) }
+        try { log(document.querySelector(".one, .two").dump());    } catch (e) { log(e) }
+        try { log(document.querySelector("@font-face").dump());    } catch (e) { log(e) }
+        try { log(document.querySelector("").dump());              } catch (e) { log(e) }
+        try { log(document.querySelector().dump());                } catch (e) { log(e) }
+        try { log(document.querySelector(null).dump());            } catch (e) { log(e) }
+        try { log(document.querySelector(undefined).dump());       } catch (e) { log(e) }
+
+        try { log(elm.querySelector("#test").dump());              } catch (e) { log(e) }
+        try { log(elm.querySelector("#test2").dump());             } catch (e) { log(e) }
+        try { log(elm.querySelector(".two").dump());               } catch (e) { log(e) }
+        try { log(elm.querySelector(".one, .two").dump());         } catch (e) { log(e) }
+        try { log(elm.querySelector("@font-face").dump());         } catch (e) { log(e) }
+        try { log(elm.querySelector("").dump());                   } catch (e) { log(e) }
+        try { log(elm.querySelector().dump());                     } catch (e) { log(e) }
+        try { log(elm.querySelector(null).dump());                 } catch (e) { log(e) }
+        try { log(elm.querySelector(undefined).dump());            } catch (e) { log(e) }
+    } catch (ex) {
+        log("Exception: " + ex.description);
+    }
+</script>
+</body>
+</html>

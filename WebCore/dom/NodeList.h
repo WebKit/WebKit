@@ -28,58 +28,23 @@
 
 #include <wtf/RefCounted.h>
 #include <wtf/Forward.h>
-#include <wtf/RefPtr.h>
 
 namespace WebCore {
 
-class AtomicString;
-class Node;
+    class AtomicString;
+    class Node;
 
-class NodeList : public RefCounted<NodeList> {
-public:
+    class NodeList : public RefCounted<NodeList> {
+    public:
+        NodeList() { }
+        virtual ~NodeList() { }
 
-    struct Caches {
-        Caches();
-        void reset();
-        
-        unsigned cachedLength;
-        Node* lastItem;
-        unsigned lastItemOffset;
-        bool isLengthCacheValid : 1;
-        bool isItemCacheValid : 1;
+        // DOM methods & attributes for NodeList
+        virtual unsigned length() const = 0;
+        virtual Node* item(unsigned index) const = 0;
+        virtual Node* itemWithName(const AtomicString&) const = 0;
     };
 
-    NodeList(PassRefPtr<Node> rootNode, bool needsNotifications);
-    NodeList(PassRefPtr<Node> rootNode, Caches*, bool needsNotifications);
-    virtual ~NodeList();
+} // namespace WebCore
 
-    bool needsNotifications() const { return m_needsNotifications; }
-
-    // DOM methods & attributes for NodeList
-    virtual unsigned length() const = 0;
-    virtual Node* item(unsigned index) const = 0;
-    Node* itemWithName(const AtomicString&) const;
-
-    // Other methods (not part of DOM)
-    virtual void rootNodeChildrenChanged();
-    virtual void rootNodeAttributeChanged() {}
-
-protected:
-    // helper functions for searching all ElementImpls in a tree
-    unsigned recursiveLength(Node* start = 0) const;
-    Node* recursiveItem (unsigned offset, Node* start = 0) const;
-    virtual bool nodeMatches(Node* testNode) const = 0;
-
-    RefPtr<Node> m_rootNode;
-    mutable Caches* m_caches;
-    bool m_ownsCaches;
-    bool m_needsNotifications;
-
- private:
-    Node* itemForwardsFromCurrent(Node* start, unsigned offset, int remainingOffset) const;
-    Node* itemBackwardsFromCurrent(Node* start, unsigned offset, int remainingOffset) const;
-};
-
-} //namespace
-
-#endif
+#endif NodeList_h

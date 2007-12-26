@@ -30,8 +30,8 @@ using namespace WebCore;
 
 namespace WebCore {
 
-ChildNodeList::ChildNodeList(Node* n, NodeList::Caches* info)
-    : NodeList(n, info, false)
+ChildNodeList::ChildNodeList(Node* n, DynamicNodeList::Caches* info)
+    : DynamicNodeList(n, info, false)
 {
 }
 

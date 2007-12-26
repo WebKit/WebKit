@@ -1978,7 +1978,6 @@
 		A818721E0977D3C0005826D9 /* NameNodeList.h in Headers */ = {isa = PBXBuildFile; fileRef = A81872130977D3C0005826D9 /* NameNodeList.h */; };
 		A818721F0977D3C0005826D9 /* ContainerNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A81872140977D3C0005826D9 /* ContainerNode.cpp */; };
 		A81872200977D3C0005826D9 /* ChildNodeList.h in Headers */ = {isa = PBXBuildFile; fileRef = A81872150977D3C0005826D9 /* ChildNodeList.h */; };
-		A81872210977D3C0005826D9 /* NodeList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A81872160977D3C0005826D9 /* NodeList.cpp */; };
 		A81872230977D3C0005826D9 /* NamedNodeMap.h in Headers */ = {isa = PBXBuildFile; fileRef = A81872180977D3C0005826D9 /* NamedNodeMap.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A81872240977D3C0005826D9 /* NameNodeList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A81872190977D3C0005826D9 /* NameNodeList.cpp */; };
 		A81872250977D3C0005826D9 /* ChildNodeList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A818721A0977D3C0005826D9 /* ChildNodeList.cpp */; };
@@ -3614,6 +3613,12 @@
 		BC772C4F0C4EB3040083285F /* MIMETypeRegistry.h in Headers */ = {isa = PBXBuildFile; fileRef = BC772C4D0C4EB3040083285F /* MIMETypeRegistry.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC772C5E0C4EB3440083285F /* MIMETypeRegistryMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC772C5D0C4EB3440083285F /* MIMETypeRegistryMac.mm */; };
 		BC7F44A80B9E324E00A9D081 /* ImageObserver.h in Headers */ = {isa = PBXBuildFile; fileRef = BC7F44A70B9E324E00A9D081 /* ImageObserver.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		BC7FA6200D1F0CBD00DB22A9 /* DynamicNodeList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC7FA61E0D1F0CBD00DB22A9 /* DynamicNodeList.cpp */; };
+		BC7FA6210D1F0CBD00DB22A9 /* DynamicNodeList.h in Headers */ = {isa = PBXBuildFile; fileRef = BC7FA61F0D1F0CBD00DB22A9 /* DynamicNodeList.h */; };
+		BC7FA62D0D1F0EFF00DB22A9 /* StaticNodeList.h in Headers */ = {isa = PBXBuildFile; fileRef = BC7FA62B0D1F0EFF00DB22A9 /* StaticNodeList.h */; };
+		BC7FA62E0D1F0EFF00DB22A9 /* StaticNodeList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC7FA62C0D1F0EFF00DB22A9 /* StaticNodeList.cpp */; };
+		BC7FA6810D1F167900DB22A9 /* SelectorNodeList.h in Headers */ = {isa = PBXBuildFile; fileRef = BC7FA67F0D1F167900DB22A9 /* SelectorNodeList.h */; };
+		BC7FA6820D1F167900DB22A9 /* SelectorNodeList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC7FA6800D1F167900DB22A9 /* SelectorNodeList.cpp */; };
 		BC80C9870CD294EE00A0B7B3 /* CSSTimingFunctionValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC80C9850CD294EE00A0B7B3 /* CSSTimingFunctionValue.cpp */; };
 		BC80C9880CD294EE00A0B7B3 /* CSSTimingFunctionValue.h in Headers */ = {isa = PBXBuildFile; fileRef = BC80C9860CD294EE00A0B7B3 /* CSSTimingFunctionValue.h */; };
 		BC80C98B0CD2950500A0B7B3 /* AnimationController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC80C9890CD2950500A0B7B3 /* AnimationController.cpp */; };
@@ -6108,7 +6113,6 @@
 		A81872130977D3C0005826D9 /* NameNodeList.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = NameNodeList.h; sourceTree = "<group>"; };
 		A81872140977D3C0005826D9 /* ContainerNode.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ContainerNode.cpp; sourceTree = "<group>"; };
 		A81872150977D3C0005826D9 /* ChildNodeList.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = ChildNodeList.h; sourceTree = "<group>"; };
-		A81872160977D3C0005826D9 /* NodeList.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = NodeList.cpp; sourceTree = "<group>"; };
 		A81872180977D3C0005826D9 /* NamedNodeMap.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = NamedNodeMap.h; sourceTree = "<group>"; };
 		A81872190977D3C0005826D9 /* NameNodeList.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = NameNodeList.cpp; sourceTree = "<group>"; };
 		A818721A0977D3C0005826D9 /* ChildNodeList.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = ChildNodeList.cpp; sourceTree = "<group>"; };
@@ -7625,6 +7629,12 @@
 		BC7B2AF80450824100A8000F /* ScrollBar.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = ScrollBar.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		BC7B2AF90450824100A8000F /* PlatformScrollBarMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PlatformScrollBarMac.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		BC7F44A70B9E324E00A9D081 /* ImageObserver.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = ImageObserver.h; sourceTree = "<group>"; };
+		BC7FA61E0D1F0CBD00DB22A9 /* DynamicNodeList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DynamicNodeList.cpp; sourceTree = "<group>"; };
+		BC7FA61F0D1F0CBD00DB22A9 /* DynamicNodeList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DynamicNodeList.h; sourceTree = "<group>"; };
+		BC7FA62B0D1F0EFF00DB22A9 /* StaticNodeList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StaticNodeList.h; sourceTree = "<group>"; };
+		BC7FA62C0D1F0EFF00DB22A9 /* StaticNodeList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StaticNodeList.cpp; sourceTree = "<group>"; };
+		BC7FA67F0D1F167900DB22A9 /* SelectorNodeList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SelectorNodeList.h; sourceTree = "<group>"; };
+		BC7FA6800D1F167900DB22A9 /* SelectorNodeList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SelectorNodeList.cpp; sourceTree = "<group>"; };
 		BC80C9850CD294EE00A0B7B3 /* CSSTimingFunctionValue.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = CSSTimingFunctionValue.cpp; sourceTree = "<group>"; };
 		BC80C9860CD294EE00A0B7B3 /* CSSTimingFunctionValue.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CSSTimingFunctionValue.h; sourceTree = "<group>"; };
 		BC80C9890CD2950500A0B7B3 /* AnimationController.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = AnimationController.cpp; sourceTree = "<group>"; };
@@ -12166,6 +12176,8 @@
 				A8185F3609765765005826D9 /* DOMImplementation.cpp */,
 				A8185F3309765765005826D9 /* DOMImplementation.h */,
 				93EEC1E909C2877700C515D1 /* DOMImplementation.idl */,
+				BC7FA61E0D1F0CBD00DB22A9 /* DynamicNodeList.cpp */,
+				BC7FA61F0D1F0CBD00DB22A9 /* DynamicNodeList.h */,
 				6550B699099DF0270090D781 /* EditingText.cpp */,
 				6550B69A099DF0270090D781 /* EditingText.h */,
 				A8C4A7F609D563270003AC8D /* Element.cpp */,
@@ -12224,7 +12236,6 @@
 				854FE72A0A2297BE0058D7AD /* NodeIterator.cpp */,
 				854FE72B0A2297BE0058D7AD /* NodeIterator.h */,
 				1A750D870A90E394000FF215 /* NodeIterator.idl */,
-				A81872160977D3C0005826D9 /* NodeList.cpp */,
 				A81872100977D3C0005826D9 /* NodeList.h */,
 				85ACA9FA0A9B631000671E90 /* NodeList.idl */,
 				A8EA7EB70A1945D000A8EF5F /* Notation.cpp */,
@@ -12252,6 +12263,10 @@
 				D23CA5480AB0E983005108A5 /* RangeException.idl */,
 				85031B350A44EFC700F992E0 /* RegisteredEventListener.cpp */,
 				85031B360A44EFC700F992E0 /* RegisteredEventListener.h */,
+				BC7FA6800D1F167900DB22A9 /* SelectorNodeList.cpp */,
+				BC7FA67F0D1F167900DB22A9 /* SelectorNodeList.h */,
+				BC7FA62C0D1F0EFF00DB22A9 /* StaticNodeList.cpp */,
+				BC7FA62B0D1F0EFF00DB22A9 /* StaticNodeList.h */,
 				A8C4A7EC09D563270003AC8D /* StyledElement.cpp */,
 				A8C4A7EB09D563270003AC8D /* StyledElement.h */,
 				AA4C3A740B2B1679002334A2 /* StyleElement.cpp */,
@@ -14118,6 +14133,9 @@
 				93309E1E099E64920056E581 /* visible_units.h in Headers */,
 				BCA379150D163E5500B793D6 /* JSLocation.h in Headers */,
 				BCA3793F0D1647E000B793D6 /* JSLocation.lut.h in Headers */,
+				BC7FA6210D1F0CBD00DB22A9 /* DynamicNodeList.h in Headers */,
+				BC7FA62D0D1F0EFF00DB22A9 /* StaticNodeList.h in Headers */,
+				BC7FA6810D1F167900DB22A9 /* SelectorNodeList.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -15377,7 +15395,6 @@
 				854FE7300A2297BE0058D7AD /* NodeFilter.cpp in Sources */,
 				854FE7320A2297BE0058D7AD /* NodeFilterCondition.cpp in Sources */,
 				854FE7340A2297BE0058D7AD /* NodeIterator.cpp in Sources */,
-				A81872210977D3C0005826D9 /* NodeList.cpp in Sources */,
 				A8EA7EBF0A1945D000A8EF5F /* Notation.cpp in Sources */,
 				1A0D57360A5C77FE007EDD4C /* OverflowEvent.cpp in Sources */,
 				B27535640B053814002CE64F /* PDFDocumentImage.cpp in Sources */,
@@ -15832,6 +15849,9 @@
 				93309DF7099E64920056E581 /* markup.cpp in Sources */,
 				93309E1D099E64920056E581 /* visible_units.cpp in Sources */,
 				BCA379140D163E5500B793D6 /* JSLocation.cpp in Sources */,
+				BC7FA6200D1F0CBD00DB22A9 /* DynamicNodeList.cpp in Sources */,
+				BC7FA62E0D1F0EFF00DB22A9 /* StaticNodeList.cpp in Sources */,
+				BC7FA6820D1F167900DB22A9 /* SelectorNodeList.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

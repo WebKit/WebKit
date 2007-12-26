@@ -222,6 +222,12 @@ module core {
 
         // HTML 5
         NodeList            getElementsByClassName(in DOMString tagname);
+
+        // DocumentSelector - Selector API
+        Element             querySelector(in [ConvertUndefinedOrNullToNullString] DOMString selectors)
+            raises(DOMException);
+        NodeList            querySelectorAll(in [ConvertUndefinedOrNullToNullString] DOMString selectors)
+            raises(DOMException);
     };
 
 }

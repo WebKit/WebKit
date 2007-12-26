@@ -1,6 +1,5 @@
 /*
  * Copyright (C) 2007 Apple Inc. All rights reserved.
- * Copyright (C) 2007 David Smith (catfish.man@gmail.com)
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,48 +27,31 @@
  */
 
 #include "config.h"
-#include "ClassNodeList.h"
+#include "SelectorNodeList.h"
 
+#include "CSSSelector.h"
+#include "CSSStyleSelector.h"
 #include "Document.h"
 #include "Element.h"
 #include "Node.h"
 
 namespace WebCore {
 
-ClassNodeList::ClassNodeList(PassRefPtr<Node> rootNode, const String& classNames, DynamicNodeList::Caches* caches)
-    : DynamicNodeList(rootNode, caches, true)
+SelectorNodeList::SelectorNodeList(PassRefPtr<Node> rootNode, CSSSelector* querySelector)
 {
-    m_classNames.parseClassAttribute(classNames, m_rootNode->document()->inCompatMode());
-}
-
-unsigned ClassNodeList::length() const
-{
-    return recursiveLength();
-}
-
-Node* ClassNodeList::item(unsigned index) const
-{
-    return recursiveItem(index);
-}
-
-bool ClassNodeList::nodeMatches(Node* testNode) const
-{
-    if (!testNode->isElementNode())
-        return false;
-
-    if (!testNode->hasClass())
-        return false;
-
-    if (!m_classNames.size())
-        return false;
-
-    const ClassNames& classes = *static_cast<Element*>(testNode)->getClassNames();
-    for (size_t i = 0; i < m_classNames.size(); ++i) {
-        if (!classes.contains(m_classNames[i]))
-            return false;
+    Document* document = rootNode->document();
+    CSSStyleSelector* styleSelector = document->styleSelector();
+    for (Node* n = rootNode->traverseNextNode(); n; n = n->traverseNextNode()) {
+        if (n->isElementNode()) {
+            styleSelector->initElementAndPseudoState(static_cast<Element*>(n));
+            for (CSSSelector* selector = querySelector; selector; selector = selector->next()) {
+                if (styleSelector->checkSelector(selector)) {
+                    m_nodes.append(n);
+                    break;
+                }
+            }
+        }
     }
-
-    return true;
 }
 
 } // namespace WebCore

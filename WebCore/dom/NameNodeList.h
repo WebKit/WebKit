@@ -20,10 +20,11 @@
  * Boston, MA 02110-1301, USA.
  *
  */
+
 #ifndef NameNodeList_h
 #define NameNodeList_h
 
-#include "NodeList.h"
+#include "DynamicNodeList.h"
 #include "PlatformString.h"
 
 namespace WebCore {
@@ -31,9 +32,9 @@ namespace WebCore {
 /**
  * NodeList which lists all Nodes in a Element with a given "name=" tag
  */
-class NameNodeList : public NodeList {
+class NameNodeList : public DynamicNodeList {
 public:
-    NameNodeList(Node* root, const String& name, NodeList::Caches*);
+    NameNodeList(Node* root, const String& name, DynamicNodeList::Caches*);
 
     // DOM methods overridden from  parent classes
 
@@ -42,7 +43,7 @@ public:
 
     // Other methods (not part of DOM)
     
-    virtual void rootNodeAttributeChanged() { NodeList::rootNodeChildrenChanged(); }
+    virtual void rootNodeAttributeChanged() { DynamicNodeList::rootNodeChildrenChanged(); }
 
 protected:
     virtual bool nodeMatches(Node* testNode) const;

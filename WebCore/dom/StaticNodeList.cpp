@@ -1,6 +1,5 @@
 /*
  * Copyright (C) 2007 Apple Inc. All rights reserved.
- * Copyright (C) 2007 David Smith (catfish.man@gmail.com)
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,48 +27,36 @@
  */
 
 #include "config.h"
-#include "ClassNodeList.h"
+#include "StaticNodeList.h"
 
-#include "Document.h"
-#include "Element.h"
+#include "AtomicString.h"
 #include "Node.h"
+#include "Element.h"
 
 namespace WebCore {
 
-ClassNodeList::ClassNodeList(PassRefPtr<Node> rootNode, const String& classNames, DynamicNodeList::Caches* caches)
-    : DynamicNodeList(rootNode, caches, true)
+unsigned StaticNodeList::length() const
 {
-    m_classNames.parseClassAttribute(classNames, m_rootNode->document()->inCompatMode());
+    return m_nodes.size();
 }
 
-unsigned ClassNodeList::length() const
+Node* StaticNodeList::item(unsigned index) const
 {
-    return recursiveLength();
+    if (index < m_nodes.size())
+        return m_nodes[index].get();
+    return 0;
 }
 
-Node* ClassNodeList::item(unsigned index) const
+Node* StaticNodeList::itemWithName(const AtomicString& elementId) const
 {
-    return recursiveItem(index);
-}
-
-bool ClassNodeList::nodeMatches(Node* testNode) const
-{
-    if (!testNode->isElementNode())
-        return false;
-
-    if (!testNode->hasClass())
-        return false;
-
-    if (!m_classNames.size())
-        return false;
-
-    const ClassNames& classes = *static_cast<Element*>(testNode)->getClassNames();
-    for (size_t i = 0; i < m_classNames.size(); ++i) {
-        if (!classes.contains(m_classNames[i]))
-            return false;
+    size_t length = m_nodes.size();
+    for (size_t i = 0; i < length; ++i) {
+        Node* node = m_nodes[i].get();
+        if (node->isElementNode() && static_cast<Element*>(node)->getIDAttribute() == elementId)
+            return node;
     }
 
-    return true;
+    return 0;
 }
 
 } // namespace WebCore

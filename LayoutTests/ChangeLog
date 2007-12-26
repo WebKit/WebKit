@@ -1,3 +1,15 @@
+2007-12-25  David Smith  <catfish.man@gmail.com> and Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Oliver.
+        
+        - http://bugs.webkit.org/show_bug.cgi?id=16587
+        Implement the most useful part of the W3C Selectors API.
+
+        * fast/dom/SelectorAPI: Copied from LayoutTests/fast/dom/getElementsByClassName.
+        * fast/dom/SelectorAPI/dumpNodeList-expected.txt:
+        * fast/dom/SelectorAPI/dumpNodeList.html: Modified to test querySelector and querySelectorAll instead of getElementsByClassName
+        * fast/dom/Window/window-properties-expected.txt: Added querySelector and querySelectorAll
+
 2007-12-23  Darin Adler  <darin@apple.com>
 
         - updated results (character used for controls changed in r28945)

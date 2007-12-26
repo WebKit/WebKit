@@ -1,3 +1,61 @@
+2007-12-25  David Smith  <catfish.man@gmail.com> and Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Oliver.
+        
+        - http://bugs.webkit.org/show_bug.cgi?id=16587
+        Implement the most useful part of the W3C Selectors API.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSStyleSelector.h: Make Node a friend of CSSStyleSelector so it can use checkSelector()
+        * dom/ChildNodeList.cpp:
+        (WebCore::ChildNodeList::ChildNodeList): Change to being a DynamicNodeList
+        * dom/ChildNodeList.h:
+        * dom/ClassNodeList.cpp:
+        (WebCore::ClassNodeList::ClassNodeList): Change to being a DynamicNodeList
+        * dom/ClassNodeList.h:
+        * dom/Document.idl: Add the new functions
+        * dom/DynamicNodeList.cpp: Copied from WebCore/dom/NodeList.cpp.
+        (WebCore::DynamicNodeList::DynamicNodeList): Rename NodeList to DynamicNodeList, to differentiate it from the new StaticNodeList
+        (WebCore::DynamicNodeList::~DynamicNodeList):
+        (WebCore::DynamicNodeList::recursiveLength):
+        (WebCore::DynamicNodeList::itemForwardsFromCurrent):
+        (WebCore::DynamicNodeList::itemBackwardsFromCurrent):
+        (WebCore::DynamicNodeList::recursiveItem):
+        (WebCore::DynamicNodeList::itemWithName):
+        (WebCore::DynamicNodeList::rootNodeChildrenChanged):
+        (WebCore::DynamicNodeList::Caches::Caches):
+        (WebCore::DynamicNodeList::Caches::reset):
+        * dom/DynamicNodeList.h: Copied from WebCore/dom/NodeList.h.
+        (WebCore::DynamicNodeList::rootNodeAttributeChanged):
+        * dom/Element.idl: Add the new functions
+        * dom/NameNodeList.cpp: Change to being a DynamicNodeList
+        (WebCore::NameNodeList::NameNodeList):
+        * dom/NameNodeList.h:
+        (WebCore::NameNodeList::rootNodeAttributeChanged):
+        * dom/Node.cpp:
+        (WebCore::TagNodeList::TagNodeList): Change to being a DynamicNodeList
+        (WebCore::Node::registerDynamicNodeList):
+        (WebCore::Node::unregisterDynamicNodeList):
+        (WebCore::Node::getElementsByName):
+        (WebCore::Node::getElementsByClassName):
+        (WebCore::Node::querySelector): new
+        (WebCore::Node::querySelectorAll): new
+        * dom/Node.h:
+        * dom/NodeList.cpp: Removed.
+        * dom/NodeList.h: This is now an abstract superclass of DynamicNodeList and StaticNodeList
+        (WebCore::NodeList::NodeList):
+        (WebCore::NodeList::~NodeList):
+        * dom/SelectorNodeList.cpp: Added.
+        (WebCore::SelectorNodeList::SelectorNodeList): New StaticNodeList subclass that filters elements by CSS selector
+        * dom/SelectorNodeList.h: Added.
+        * dom/StaticNodeList.cpp: Added.
+        (WebCore::StaticNodeList::length):
+        (WebCore::StaticNodeList::item):
+        (WebCore::StaticNodeList::itemWithName):
+        * dom/StaticNodeList.h: Added.
+        (WebCore::StaticNodeList::StaticNodeList):
+        (WebCore::StaticNodeList::~StaticNodeList):
+
 2007-12-25  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Sam Weinig.

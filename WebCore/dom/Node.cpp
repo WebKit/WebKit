@@ -24,11 +24,19 @@
 #include "config.h"
 #include "Node.h"
 
+#include "CSSRule.h"
+#include "CSSRuleList.h"
+#include "CSSStyleRule.h"
+#include "CSSStyleSelector.h"
+#include "CSSStyleSheet.h"
+#include "CSSParser.h"
+#include "CSSSelector.h"
 #include "CString.h"
 #include "ChildNodeList.h"
 #include "ClassNodeList.h"
 #include "DOMImplementation.h"
 #include "Document.h"
+#include "DynamicNodeList.h"
 #include "Element.h"
 #include "ExceptionCode.h"
 #include "Frame.h"
@@ -39,6 +47,7 @@
 #include "NameNodeList.h"
 #include "NamedAttrMap.h"
 #include "RenderObject.h"
+#include "SelectorNodeList.h"
 #include "Text.h"
 #include "TextStream.h"
 #include "XMLNames.h"
@@ -49,16 +58,16 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-typedef HashSet<NodeList*> NodeListSet;
+typedef HashSet<DynamicNodeList*> NodeListSet;
 struct NodeListsNodeData {
     NodeListSet m_listsToNotify;
-    NodeList::Caches m_childNodeListCaches;
-    HashMap<String, NodeList::Caches> m_classNodeListCaches;
-    HashMap<String, NodeList::Caches> m_nameNodeListCaches;
+    DynamicNodeList::Caches m_childNodeListCaches;
+    HashMap<String, DynamicNodeList::Caches> m_classNodeListCaches;
+    HashMap<String, DynamicNodeList::Caches> m_nameNodeListCaches;
 };
 
 // NodeList that limits to a particular tag.
-class TagNodeList : public NodeList {
+class TagNodeList : public DynamicNodeList {
 public:
     TagNodeList(PassRefPtr<Node> rootNode, const AtomicString& namespaceURI, const AtomicString& localName);
 
@@ -73,7 +82,7 @@ private:
 };
 
 inline TagNodeList::TagNodeList(PassRefPtr<Node> rootNode, const AtomicString& namespaceURI, const AtomicString& localName)
-    : NodeList(rootNode, true)
+    : DynamicNodeList(rootNode, true)
     , m_namespaceURI(namespaceURI)
     , m_localName(localName)
 {
@@ -441,7 +450,7 @@ unsigned Node::nodeIndex() const
     return count;
 }
 
-void Node::registerNodeList(NodeList* list)
+void Node::registerDynamicNodeList(DynamicNodeList* list)
 {
     if (!m_nodeLists)
         m_nodeLists.set(new NodeListsNodeData);
@@ -454,7 +463,7 @@ void Node::registerNodeList(NodeList* list)
     m_document->addNodeList();
 }
 
-void Node::unregisterNodeList(NodeList* list)
+void Node::unregisterDynamicNodeList(DynamicNodeList* list)
 {
     ASSERT(m_nodeLists);
     m_document->removeNodeList();
@@ -1215,7 +1224,7 @@ PassRefPtr<NodeList> Node::getElementsByName(const String& elementName)
     if (!m_nodeLists)
         m_nodeLists.set(new NodeListsNodeData);
 
-    return new NameNodeList(this, elementName, &m_nodeLists->m_nameNodeListCaches.add(elementName, NodeList::Caches()).first->second);
+    return new NameNodeList(this, elementName, &m_nodeLists->m_nameNodeListCaches.add(elementName, DynamicNodeList::Caches()).first->second);
 }
 
 PassRefPtr<NodeList> Node::getElementsByClassName(const String& classNames)
@@ -1223,7 +1232,58 @@ PassRefPtr<NodeList> Node::getElementsByClassName(const String& classNames)
     if (!m_nodeLists)
         m_nodeLists.set(new NodeListsNodeData);
 
-    return new ClassNodeList(this, classNames, &m_nodeLists->m_classNodeListCaches.add(classNames, NodeList::Caches()).first->second);
+    return new ClassNodeList(this, classNames, &m_nodeLists->m_classNodeListCaches.add(classNames, DynamicNodeList::Caches()).first->second);
+}
+
+PassRefPtr<Element> Node::querySelector(const String& selectors, ExceptionCode& ec)
+{
+    if (selectors.isNull() || selectors.isEmpty()) {
+        ec = SYNTAX_ERR;
+        return 0;
+    }
+    CSSStyleSheet tempStyleSheet(document());
+    CSSParser p(true);
+    RefPtr<CSSRule> rule = p.parseRule(&tempStyleSheet, selectors + "{}");
+    if (!rule || !rule->isStyleRule()) {
+        ec = SYNTAX_ERR;
+        return 0;
+    }
+
+    CSSStyleSelector* styleSelector = document()->styleSelector();
+    CSSSelector* querySelector = static_cast<CSSStyleRule*>(rule.get())->selector();
+    
+    // FIXME: We can speed this up by implementing caching similar to the one use by getElementById
+    for (Node *n = traverseNextNode(); n; n = n->traverseNextNode()) {
+        if (n->isElementNode()) {
+            Element* element = static_cast<Element*>(n);
+            styleSelector->initElementAndPseudoState(element);
+            for (CSSSelector* selector = querySelector; selector; selector = selector->next()) {
+                if (styleSelector->checkSelector(selector))
+                    return element;
+            }
+        }
+    }
+    
+    return 0;
+}
+
+PassRefPtr<NodeList> Node::querySelectorAll(const String& selectors, ExceptionCode& ec)
+{
+    if (selectors.isNull() || selectors.isEmpty()) {
+        ec = SYNTAX_ERR;
+        return 0;
+    }
+    CSSStyleSheet tempStyleSheet(document());
+    CSSParser p(true);
+    RefPtr<CSSRule> rule = p.parseRule(&tempStyleSheet, selectors + "{}");
+    if (!rule || !rule->isStyleRule()) {
+        ec = SYNTAX_ERR;
+        return 0;
+    }
+    
+    SelectorNodeList* resultList = new SelectorNodeList(this, static_cast<CSSStyleRule*>(rule.get())->selector());
+
+    return resultList;
 }
 
 Document *Node::ownerDocument() const

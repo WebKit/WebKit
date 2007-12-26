@@ -1,10 +1,8 @@
 /**
- * This file is part of the DOM implementation for KDE.
- *
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004, 2006 Apple Computer, Inc.
+ * Copyright (C) 2004, 2006, 2007 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -23,39 +21,39 @@
  */
 
 #include "config.h"
-#include "NodeList.h"
+#include "DynamicNodeList.h"
 
 #include "Document.h"
 #include "Element.h"
 
 namespace WebCore {
 
-NodeList::NodeList(PassRefPtr<Node> rootNode, bool needsNotifications)
+DynamicNodeList::DynamicNodeList(PassRefPtr<Node> rootNode, bool needsNotifications)
     : m_rootNode(rootNode)
     , m_caches(new Caches)
     , m_ownsCaches(true)
     , m_needsNotifications(needsNotifications)
 {
-    m_rootNode->registerNodeList(this);
+    m_rootNode->registerDynamicNodeList(this);
 }    
 
-NodeList::NodeList(PassRefPtr<Node> rootNode, NodeList::Caches* info, bool needsNotifications)
+DynamicNodeList::DynamicNodeList(PassRefPtr<Node> rootNode, DynamicNodeList::Caches* info, bool needsNotifications)
     : m_rootNode(rootNode)
     , m_caches(info)
     , m_ownsCaches(false)
     , m_needsNotifications(needsNotifications)
 {
-    m_rootNode->registerNodeList(this);
+    m_rootNode->registerDynamicNodeList(this);
 }    
 
-NodeList::~NodeList()
+DynamicNodeList::~DynamicNodeList()
 {
-    m_rootNode->unregisterNodeList(this);
+    m_rootNode->unregisterDynamicNodeList(this);
     if (m_ownsCaches)
         delete m_caches;
 }
 
-unsigned NodeList::recursiveLength(Node* start) const
+unsigned DynamicNodeList::recursiveLength(Node* start) const
 {
     if (!start)
         start = m_rootNode.get();
@@ -80,7 +78,7 @@ unsigned NodeList::recursiveLength(Node* start) const
     return len;
 }
 
-Node* NodeList::itemForwardsFromCurrent(Node* start, unsigned offset, int remainingOffset) const
+Node* DynamicNodeList::itemForwardsFromCurrent(Node* start, unsigned offset, int remainingOffset) const
 {
     ASSERT(remainingOffset >= 0);
 
@@ -101,7 +99,7 @@ Node* NodeList::itemForwardsFromCurrent(Node* start, unsigned offset, int remain
     return 0; // no matching node in this subtree
 }
 
-Node* NodeList::itemBackwardsFromCurrent(Node* start, unsigned offset, int remainingOffset) const
+Node* DynamicNodeList::itemBackwardsFromCurrent(Node* start, unsigned offset, int remainingOffset) const
 {
     ASSERT(remainingOffset < 0);
     for (Node *n = start; n; n = n->traversePreviousNode(m_rootNode.get())) {
@@ -121,7 +119,7 @@ Node* NodeList::itemBackwardsFromCurrent(Node* start, unsigned offset, int remai
     return 0; // no matching node in this subtree
 }
 
-Node* NodeList::recursiveItem(unsigned offset, Node* start) const
+Node* DynamicNodeList::recursiveItem(unsigned offset, Node* start) const
 {
     int remainingOffset = offset;
     if (!start) {
@@ -142,7 +140,7 @@ Node* NodeList::recursiveItem(unsigned offset, Node* start) const
         return itemForwardsFromCurrent(start, offset, remainingOffset);
 }
 
-Node* NodeList::itemWithName(const AtomicString& elementId) const
+Node* DynamicNodeList::itemWithName(const AtomicString& elementId) const
 {
     if (m_rootNode->isDocumentNode() || m_rootNode->inDocument()) {
         Node* node = m_rootNode->document()->getElementById(elementId);
@@ -167,20 +165,20 @@ Node* NodeList::itemWithName(const AtomicString& elementId) const
     return 0;
 }
 
-void NodeList::rootNodeChildrenChanged()
+void DynamicNodeList::rootNodeChildrenChanged()
 {
     m_caches->reset();
 }
 
 
-NodeList::Caches::Caches()
+DynamicNodeList::Caches::Caches()
     : lastItem(0)
     , isLengthCacheValid(false)
     , isItemCacheValid(false)
 {
 }
 
-void NodeList::Caches::reset()
+void DynamicNodeList::Caches::reset()
 {
     lastItem = 0;
     isLengthCacheValid = false;

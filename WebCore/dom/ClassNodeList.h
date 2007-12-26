@@ -31,15 +31,15 @@
 #define ClassNodeList_h
 
 #include "ClassNames.h"
-#include "NodeList.h"
+#include "DynamicNodeList.h"
 
 namespace WebCore {
 
     class String;
 
-    class ClassNodeList : public NodeList {
+    class ClassNodeList : public DynamicNodeList {
     public:
-        ClassNodeList(PassRefPtr<Node> rootNode, const String& classNames, NodeList::Caches*);
+        ClassNodeList(PassRefPtr<Node> rootNode, const String& classNames, DynamicNodeList::Caches*);
 
         virtual unsigned length() const;
         virtual Node* item(unsigned index) const;

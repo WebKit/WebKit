@@ -1,6 +1,5 @@
 /*
  * Copyright (C) 2007 Apple Inc. All rights reserved.
- * Copyright (C) 2007 David Smith (catfish.man@gmail.com)
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,49 +26,31 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "ClassNodeList.h"
+#ifndef StaticNodeList_h
+#define StaticNodeList_h
 
-#include "Document.h"
-#include "Element.h"
-#include "Node.h"
+#include "NodeList.h"
+#include <wtf/RefPtr.h>
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
-ClassNodeList::ClassNodeList(PassRefPtr<Node> rootNode, const String& classNames, DynamicNodeList::Caches* caches)
-    : DynamicNodeList(rootNode, caches, true)
-{
-    m_classNames.parseClassAttribute(classNames, m_rootNode->document()->inCompatMode());
-}
+    class Node;
 
-unsigned ClassNodeList::length() const
-{
-    return recursiveLength();
-}
+    class StaticNodeList : public NodeList {
+    public:
+        // Derived classes should build up the Vector in their constructor.
+        StaticNodeList() { }
+        virtual ~StaticNodeList() { }
 
-Node* ClassNodeList::item(unsigned index) const
-{
-    return recursiveItem(index);
-}
+        virtual unsigned length() const;
+        virtual Node* item(unsigned index) const;
+        virtual Node* itemWithName(const AtomicString&) const;
 
-bool ClassNodeList::nodeMatches(Node* testNode) const
-{
-    if (!testNode->isElementNode())
-        return false;
-
-    if (!testNode->hasClass())
-        return false;
-
-    if (!m_classNames.size())
-        return false;
-
-    const ClassNames& classes = *static_cast<Element*>(testNode)->getClassNames();
-    for (size_t i = 0; i < m_classNames.size(); ++i) {
-        if (!classes.contains(m_classNames[i]))
-            return false;
-    }
-
-    return true;
-}
+    protected:
+        Vector<RefPtr<Node> > m_nodes;
+    };
 
 } // namespace WebCore
+
+#endif // StaticNodeList_h

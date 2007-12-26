@@ -30,8 +30,8 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-NameNodeList::NameNodeList(Node* root, const String& name, NodeList::Caches* caches)
-    : NodeList(root, caches, true)
+NameNodeList::NameNodeList(Node* root, const String& name, DynamicNodeList::Caches* caches)
+    : DynamicNodeList(root, caches, true)
     , m_nodeName(name)
 {
 }
