@@ -160,8 +160,8 @@ private:
 #if PLATFORM(WIN_OS)
 #define WTF_USE_LOCKFREE_THREADSAFESHARED 1
 
-inline void atomicIncrement(int volatile* addened) { InterlockedIncrement(addened); }
-inline int atomicDecrement(int volatile* addened) { return InterlockedDecrement(addened); }
+inline void atomicIncrement(int volatile* addened) { InterlockedIncrement(reinterpret_cast<long volatile*>(addened)); }
+inline int atomicDecrement(int volatile* addened) { return InterlockedDecrement(reinterpret_cast<long volatile*>(addened)); }
 
 #elif COMPILER(GCC) && (PLATFORM(X86) || PLATFORM(X86_64) || PLATFORM(PPC) || PLATFORM(PPC64))
 #define WTF_USE_LOCKFREE_THREADSAFESHARED 1
