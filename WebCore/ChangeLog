@@ -1,5 +1,17 @@
 2007-12-25  Sam Weinig  <sam@webkit.org>
 
+        Rubber stamped by Eric Seidel.
+
+        Move TagNodeList into its own file.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/Node.cpp:
+        * dom/TagNodeList.cpp: Copied from dom/Node.cpp.
+        (WebCore::TagNodeList::TagNodeList):
+        * dom/TagNodeList.h: Copied from dom/Node.cpp.
+
+2007-12-25  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Eric Seidel.
 
         Simplify the NodeList architecture.

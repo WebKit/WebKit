@@ -24,13 +24,13 @@
 #include "config.h"
 #include "Node.h"
 
+#include "CSSParser.h"
 #include "CSSRule.h"
 #include "CSSRuleList.h"
+#include "CSSSelector.h"
 #include "CSSStyleRule.h"
 #include "CSSStyleSelector.h"
 #include "CSSStyleSheet.h"
-#include "CSSParser.h"
-#include "CSSSelector.h"
 #include "CString.h"
 #include "ChildNodeList.h"
 #include "ClassNodeList.h"
@@ -48,6 +48,7 @@
 #include "NamedAttrMap.h"
 #include "RenderObject.h"
 #include "SelectorNodeList.h"
+#include "TagNodeList.h"
 #include "Text.h"
 #include "TextStream.h"
 #include "XMLNames.h"
@@ -65,38 +66,6 @@ struct NodeListsNodeData {
     HashMap<String, DynamicNodeList::Caches> m_classNodeListCaches;
     HashMap<String, DynamicNodeList::Caches> m_nameNodeListCaches;
 };
-
-// NodeList that limits to a particular tag.
-class TagNodeList : public DynamicNodeList {
-public:
-    TagNodeList(PassRefPtr<Node> rootNode, const AtomicString& namespaceURI, const AtomicString& localName);
-
-private:
-    virtual bool nodeMatches(Node*) const;
-
-    AtomicString m_namespaceURI;
-    AtomicString m_localName;
-};
-
-inline TagNodeList::TagNodeList(PassRefPtr<Node> rootNode, const AtomicString& namespaceURI, const AtomicString& localName)
-    : DynamicNodeList(rootNode, true)
-    , m_namespaceURI(namespaceURI)
-    , m_localName(localName)
-{
-    ASSERT(m_namespaceURI.isNull() || !m_namespaceURI.isEmpty());
-}
-
-bool TagNodeList::nodeMatches(Node* testNode) const
-{
-    if (!testNode->isElementNode())
-        return false;
-
-    if (m_namespaceURI != starAtom && m_namespaceURI != testNode->namespaceURI())
-        return false;
-
-    return m_localName == starAtom || m_localName == testNode->localName();
-}
-
 
 bool Node::isSupported(const String& feature, const String& version)
 {
