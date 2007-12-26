@@ -28,18 +28,18 @@
 
 namespace WebCore {
 
-class ChildNodeList : public DynamicNodeList {
-public:
-    ChildNodeList(Node*, DynamicNodeList::Caches*);
+    class ChildNodeList : public DynamicNodeList {
+    public:
+        ChildNodeList(PassRefPtr<Node> rootNode, DynamicNodeList::Caches*);
 
-    virtual unsigned length() const;
-    virtual Node* item(unsigned index) const;
+        virtual unsigned length() const;
+        virtual Node* item(unsigned index) const;
 
-    virtual void rootNodeChildrenChanged();
+        virtual void rootNodeChildrenChanged();
 
-protected:
-    virtual bool nodeMatches(Node* testNode) const;
-};
+    protected:
+        virtual bool nodeMatches(Node*) const;
+    };
 
 } // namespace WebCore
 

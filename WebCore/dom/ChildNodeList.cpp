@@ -1,10 +1,8 @@
 /**
- * This file is part of the DOM implementation for KDE.
- *
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004 Apple Computer, Inc.
+ * Copyright (C) 2004, 2007 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -24,14 +22,13 @@
 
 #include "config.h"
 #include "ChildNodeList.h"
-#include "Node.h"
 
-using namespace WebCore;
+#include "Node.h"
 
 namespace WebCore {
 
-ChildNodeList::ChildNodeList(Node* n, DynamicNodeList::Caches* info)
-    : DynamicNodeList(n, info, false)
+ChildNodeList::ChildNodeList(PassRefPtr<Node> rootNode, DynamicNodeList::Caches* info)
+    : DynamicNodeList(rootNode, info, false)
 {
 }
 
@@ -41,8 +38,7 @@ unsigned ChildNodeList::length() const
         return m_caches->cachedLength;
 
     unsigned len = 0;
-    Node *n;
-    for (n = m_rootNode->firstChild(); n != 0; n = n->nextSibling())
+    for (Node* n = m_rootNode->firstChild(); n; n = n->nextSibling())
         len++;
 
     m_caches->cachedLength = len;
@@ -80,16 +76,17 @@ Node* ChildNodeList::item(unsigned index) const
         }
     }
 
-    if (pos <= index)
+    if (pos <= index) {
         while (n && pos < index) {
             n = n->nextSibling();
             ++pos;
         }
-    else
+    } else {
         while (n && pos > index) {
             n = n->previousSibling();
             --pos;
         }
+    }
 
     if (n) {
         m_caches->lastItem = n;
@@ -101,7 +98,7 @@ Node* ChildNodeList::item(unsigned index) const
     return 0;
 }
 
-bool ChildNodeList::nodeMatches(Node *testNode) const
+bool ChildNodeList::nodeMatches(Node* testNode) const
 {
     return testNode->parentNode() == m_rootNode;
 }
@@ -112,4 +109,4 @@ void ChildNodeList::rootNodeChildrenChanged()
     ASSERT(!m_ownsCaches);
 }
 
-}
+} // namespace WebCore

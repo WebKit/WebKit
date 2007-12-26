@@ -1,5 +1,31 @@
 2007-12-25  Sam Weinig  <sam@webkit.org>
 
+        Reviewed by Eric Seidel.
+
+        Clean up the files relating to NodeLists.
+
+        * dom/ChildNodeList.cpp:
+        (WebCore::ChildNodeList::ChildNodeList):
+        (WebCore::ChildNodeList::length):
+        (WebCore::ChildNodeList::item):
+        (WebCore::ChildNodeList::nodeMatches):
+        * dom/ChildNodeList.h:
+        * dom/DynamicNodeList.cpp:
+        (WebCore::DynamicNodeList::itemForwardsFromCurrent):
+        (WebCore::DynamicNodeList::itemBackwardsFromCurrent):
+        (WebCore::DynamicNodeList::itemWithName):
+        * dom/DynamicNodeList.h:
+        (WebCore::DynamicNodeList::needsNotifications):
+        * dom/NameNodeList.cpp:
+        (WebCore::NameNodeList::NameNodeList):
+        (WebCore::NameNodeList::rootNodeAttributeChanged):
+        (WebCore::NameNodeList::nodeMatches):
+        * dom/NameNodeList.h:
+        * dom/NodeList.h:
+        * dom/SelectorNodeList.h:
+
+2007-12-25  Sam Weinig  <sam@webkit.org>
+
         Fix non-mac builds.
 
         * WebCore.pro:
