@@ -3503,9 +3503,10 @@ noPromisedData:
         coreFrame->eventHandler()->capsLockStateMayHaveChanged();
     
     RetainPtr<WebHTMLView> selfProtector = self;
-    
-    //Don't make an event from the function key
-    if (coreFrame && [event keyCode] != 0 && [event keyCode] != 63)
+
+    unsigned short keyCode = [event keyCode];
+    //Don't make an event from the num lock and function keys
+    if (coreFrame && keyCode != 0 && keyCode != 10 && keyCode != 63)
         coreFrame->eventHandler()->keyEvent(PlatformKeyboardEvent(event));
         
     [super flagsChanged:event];

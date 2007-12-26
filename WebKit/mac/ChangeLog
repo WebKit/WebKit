@@ -1,3 +1,13 @@
+2007-12-25  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        - fix an assertion failure when pressing the num lock key
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView flagsChanged:]): Avoid passing key code 10 down to
+        WebCore.
+
 2007-12-20  Darin Adler  <darin@apple.com>
 
         Reviewed by Oliver.
@@ -1393,7 +1403,7 @@
 
         * WebView/WebHTMLView.mm:
         (-[WebHTMLView flagsChanged:]): Avoid passing key code 0 down to
-        webCore.
+        WebCore.
 
 2007-11-01  Justin Garcia  <justin.garcia@apple.com>
 
