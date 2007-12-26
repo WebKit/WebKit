@@ -5921,6 +5921,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\dom\DynamicNodeList.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\dom\DynamicNodeList.h"
+				>
+			</File>
+			<File
 				RelativePath="..\dom\EditingText.cpp"
 				>
 			</File>
@@ -6098,14 +6106,6 @@
 			</File>
 			<File
 				RelativePath="..\dom\NodeIterator.h"
-				>
-			</File>
-			<File
-				RelativePath="..\dom\NodeList.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\dom\NodeList.h"
 				>
 			</File>
 			<File
