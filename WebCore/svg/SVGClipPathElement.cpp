@@ -80,7 +80,7 @@ SVGResource* SVGClipPathElement::canvasResource()
         if (n->isSVGElement() && static_cast<SVGElement*>(n)->isStyledTransformable()) {
             SVGStyledTransformableElement* styled = static_cast<SVGStyledTransformableElement*>(n);
             RenderStyle* pathStyle = document()->styleSelector()->styleForElement(styled, clipPathStyle);
-            Path pathData = styled->toPathData();
+            Path pathData = styled->toClipPath();
             // FIXME: How do we know the element has done a layout?
             pathData.transform(styled->animatedLocalTransform());
             if (!pathData.isEmpty())

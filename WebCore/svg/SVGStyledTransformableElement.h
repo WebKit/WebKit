@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-                  2004, 2005, 2006 Rob Buis <buis@kde.org>
+                  2004, 2005, 2006, 2007 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -53,11 +53,12 @@ namespace WebCore {
         virtual FloatRect getBBox() const;
 
         virtual void parseMappedAttribute(MappedAttribute*);
-        
+
         // "base class" methods for all the elements which render as paths
         virtual Path toPathData() const { return Path(); }
+        virtual Path toClipPath() const { return toPathData(); }
         virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
-        
+
         virtual void notifyAttributeChange() const;
 
     protected:

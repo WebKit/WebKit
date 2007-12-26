@@ -1,3 +1,22 @@
+2007-12-25  Rob Buis  <buis@kde.org>
+
+        Reviewed by Eric.
+
+        Testcases for:
+        http://bugs.webkit.org/show_bug.cgi?id=15514
+        <clipPath> with <use> not respected
+        http://bugs.webkit.org/show_bug.cgi?id=16557
+        SVG circle elements have been clipped away completely, instead of partially.
+
+        * svg/custom/clip-path-referencing-use-expected.checksum: Added.
+        * svg/custom/clip-path-referencing-use-expected.png: Added.
+        * svg/custom/clip-path-referencing-use-expected.txt: Added.
+        * svg/custom/clip-path-referencing-use.svg: Added.
+        * svg/custom/clip-path-referencing-use2-expected.checksum: Added.
+        * svg/custom/clip-path-referencing-use2-expected.png: Added.
+        * svg/custom/clip-path-referencing-use2-expected.txt: Added.
+        * svg/custom/clip-path-referencing-use2.svg: Added.
+
 2007-12-25  David Smith  <catfish.man@gmail.com> and Sam Weinig  <sam@webkit.org>
 
         Reviewed by Oliver.

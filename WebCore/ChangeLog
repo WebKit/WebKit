@@ -1,3 +1,23 @@
+2007-12-25  Rob Buis  <buis@kde.org>
+
+        Reviewed by Eric.
+
+        http://bugs.webkit.org/show_bug.cgi?id=15514
+        <clipPath> with <use> not respected
+        http://bugs.webkit.org/show_bug.cgi?id=16557
+        SVG circle elements have been clipped away completely, instead of partially.
+
+        Add toClipPath to get clip path data for the clipping paths. Implement it for <use>, thereby allowing clip paths using use.
+
+        * svg/SVGClipPathElement.cpp:
+        (WebCore::SVGClipPathElement::canvasResource):
+        * svg/SVGStyledTransformableElement.h:
+        (WebCore::SVGStyledTransformableElement::toClipPath):
+        * svg/SVGUseElement.cpp:
+        (WebCore::isDirectReference):
+        (WebCore::SVGUseElement::toClipPath):
+        * svg/SVGUseElement.h:
+
 2007-12-25  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Eric Seidel.

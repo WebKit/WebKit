@@ -377,6 +377,34 @@ void SVGUseElement::detach()
         m_shadowTreeRootElement->detach();
 }
 
+static bool isDirectReference(Node* n)
+{
+    return n->hasTagName(SVGNames::pathTag) ||
+           n->hasTagName(SVGNames::rectTag) ||
+           n->hasTagName(SVGNames::circleTag) ||
+           n->hasTagName(SVGNames::ellipseTag) ||
+           n->hasTagName(SVGNames::polygonTag) ||
+           n->hasTagName(SVGNames::polylineTag) ||
+           n->hasTagName(SVGNames::textTag);
+}
+
+Path SVGUseElement::toClipPath() const
+{
+    if (!m_shadowTreeRootElement)
+        const_cast<SVGUseElement*>(this)->buildPendingResource();
+
+    Node* n = m_shadowTreeRootElement->firstChild();
+    if (n->isSVGElement() && static_cast<SVGElement*>(n)->isStyledTransformable()) {
+        if (!isDirectReference(n))
+            // Spec: Indirect references are an error (14.3.5)
+            document()->accessSVGExtensions()->reportError("Not allowed to use indirect reference in <clip-path>");
+        else
+            return static_cast<SVGStyledTransformableElement*>(n)->toClipPath();
+    }
+
+    return Path();
+}
+
 void SVGUseElement::buildInstanceTree(SVGElement* target, SVGElementInstance* targetInstance, bool& foundProblem)
 {
     ASSERT(target);

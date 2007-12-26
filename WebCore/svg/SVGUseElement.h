@@ -67,6 +67,8 @@ namespace WebCore
         virtual void attach();
         virtual void detach();
 
+        virtual Path toClipPath() const;
+
     protected:
         virtual const SVGElement* contextElement() const { return this; }
 
