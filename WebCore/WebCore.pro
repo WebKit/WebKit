@@ -73,7 +73,7 @@ gtk-port: PKGCONFIG += gthread-2.0
 gtk-port:!contains(DEFINES, ENABLE_XSLT=.): DEFINES += ENABLE_XSLT=1
 #!contains(DEFINES, ENABLE_XBL=.): DEFINES += ENABLE_XBL=1
 qt-port: !contains(DEFINES, ENABLE_SVG=.): DEFINES += ENABLE_SVG=1
-gtk-port:DEFINES += ENABLE_SVG=1
+gtk-port:DEFINES += ENABLE_SVG=0
 DEFINES += ENABLE_VIDEO=0
 
 DEFINES += WTF_CHANGES=1
@@ -517,6 +517,8 @@ SOURCES += \
     dom/QualifiedName.cpp \
     dom/Range.cpp \
     dom/RegisteredEventListener.cpp \
+    dom/SelectorNodeList.cpp \
+    dom/StaticNodeList.cpp \
     dom/StyledElement.cpp \
     dom/StyleElement.cpp \
     dom/Text.cpp \

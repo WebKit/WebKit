@@ -6185,6 +6185,22 @@
 				>
 			</File>
 			<File
+				RelativePath="..\dom\SelectorNodeList.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\dom\SelectorNodeList.h"
+				>
+			</File>
+			<File
+				RelativePath="..\dom\StaticNodeList.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\dom\StaticNodeList.h"
+				>
+			</File>
+			<File
 				RelativePath="..\dom\StyledElement.cpp"
 				>
 			</File>
