@@ -35,6 +35,8 @@
 #include <JavaScriptCore/JSRetainPtr.h>
 #include <JavaScriptCore/JSStringRef.h>
 
+#include <glib.h>
+
 LayoutTestController::~LayoutTestController()
 {
     // FIXME: implement

@@ -1,3 +1,12 @@
+2007-12-26  Jan Michael Alonzo  <jmalonzo@unpluggable.com>
+
+        Reviewed by Alp Toker.
+
+        http://bugs.webkit.org/show_bug.cgi?id=16390
+        Use autotools or GNU make as the build system for the GTK port
+
+        * GNUmakefile.am: Added.
+
 2007-12-25  Maciej Stachowiak  <mjs@apple.com>
         
         Reviewed by Oliver.

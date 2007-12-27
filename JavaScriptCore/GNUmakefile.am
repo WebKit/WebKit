@@ -1,0 +1,161 @@
+# tell automake to create gensources/ for us
+nodist_EXTRA_libJavaScriptCore_la_SOURCES = \
+	DerivedSources/dummy.cxx
+
+javascriptcore_cppflags += \
+	-I $(srcdir)/JavaScriptCore/bindings \
+	-I $(srcdir)/JavaScriptCore/bindings/c \
+	-I $(top_builddir)/JavaScriptCore/pcre \
+	-I $(top_builddir)/JavaScriptCore/kjs
+
+javascriptcore_h_api += \
+	JavaScriptCore/API/JavaScriptCore.h \
+	JavaScriptCore/API/JSBase.h \
+	JavaScriptCore/API/JSContextRef.h \
+	JavaScriptCore/API/JSObjectRef.h \
+	JavaScriptCore/API/JSStringRefBSTR.h \
+	JavaScriptCore/API/JSStringRefCF.h \
+	JavaScriptCore/API/JSStringRef.h \
+	JavaScriptCore/API/JSValueRef.h
+
+javascriptcore_built_nosources += \
+	JavaScriptCore/kjs/array_object.lut.h \
+	JavaScriptCore/kjs/date_object.lut.h \
+	JavaScriptCore/kjs/math_object.lut.h \
+	JavaScriptCore/kjs/number_object.lut.h \
+	JavaScriptCore/kjs/regexp_object.lut.h \
+	JavaScriptCore/kjs/string_object.lut.h \
+	JavaScriptCore/pcre/chartables.c \
+	DerivedSources/lexer.lut.h
+
+javascriptcore_sources += \
+	JavaScriptCore/API/JSBase.cpp \
+	JavaScriptCore/API/JSCallbackConstructor.cpp \
+	JavaScriptCore/API/JSCallbackFunction.cpp \
+	JavaScriptCore/API/JSCallbackObject.cpp \
+	JavaScriptCore/API/JSClassRef.cpp \
+	JavaScriptCore/API/JSContextRef.cpp \
+	JavaScriptCore/API/JSObjectRef.cpp \
+	JavaScriptCore/API/JSStringRef.cpp \
+	JavaScriptCore/API/JSValueRef.cpp \
+	JavaScriptCore/bindings/NP_jsobject.cpp \
+	JavaScriptCore/bindings/c/c_class.cpp \
+	JavaScriptCore/bindings/c/c_instance.cpp \
+	JavaScriptCore/bindings/c/c_runtime.cpp \
+	JavaScriptCore/bindings/c/c_utility.cpp \
+	JavaScriptCore/bindings/npruntime.cpp \
+	JavaScriptCore/bindings/runtime.cpp \
+	JavaScriptCore/bindings/runtime_array.cpp \
+	JavaScriptCore/bindings/runtime_method.cpp \
+	JavaScriptCore/bindings/runtime_object.cpp \
+	JavaScriptCore/bindings/runtime_root.cpp \
+	JavaScriptCore/kjs/JSGlobalObject.cpp \
+	JavaScriptCore/kjs/JSVariableObject.cpp \
+	JavaScriptCore/kjs/fpconst.cpp \
+	JavaScriptCore/pcre/pcre_compile.cpp \
+	JavaScriptCore/pcre/pcre_exec.cpp \
+	JavaScriptCore/pcre/pcre_tables.cpp \
+	JavaScriptCore/pcre/pcre_ucp_searchfuncs.cpp \
+	JavaScriptCore/pcre/pcre_xclass.cpp \
+	JavaScriptCore/wtf/Assertions.cpp \
+	JavaScriptCore/wtf/HashTable.cpp \
+	JavaScriptCore/wtf/unicode/UTF8.cpp
+
+# Debug build
+if ENABLE_DEBUG
+javascriptcore_built_sources += \
+	DerivedSources/grammar.h \
+	DerivedSources/grammar.cpp
+
+javascriptcore_sources += \
+	JavaScriptCore/kjs/CommonIdentifiers.cpp \
+	JavaScriptCore/kjs/DateMath.cpp \
+	JavaScriptCore/kjs/ExecState.cpp \
+	JavaScriptCore/kjs/JSImmediate.cpp \
+	JavaScriptCore/kjs/JSLock.cpp \
+	JavaScriptCore/kjs/JSWrapperObject.cpp \
+	JavaScriptCore/kjs/Parser.cpp \
+	JavaScriptCore/kjs/PropertyNameArray.cpp \
+	JavaScriptCore/kjs/array_instance.cpp \
+	JavaScriptCore/kjs/array_object.cpp \
+	JavaScriptCore/kjs/bool_object.cpp \
+	JavaScriptCore/kjs/collector.cpp \
+	JavaScriptCore/kjs/date_object.cpp \
+	JavaScriptCore/kjs/debugger.cpp \
+	JavaScriptCore/kjs/dtoa.cpp \
+	JavaScriptCore/kjs/error_object.cpp \
+	JavaScriptCore/kjs/function.cpp \
+	JavaScriptCore/kjs/function_object.cpp \
+	JavaScriptCore/kjs/identifier.cpp \
+	JavaScriptCore/kjs/internal.cpp \
+	JavaScriptCore/kjs/interpreter.cpp \
+	JavaScriptCore/kjs/lexer.cpp \
+	JavaScriptCore/kjs/list.cpp \
+	JavaScriptCore/kjs/lookup.cpp \
+	JavaScriptCore/kjs/math_object.cpp \
+	JavaScriptCore/kjs/nodes.cpp \
+	JavaScriptCore/kjs/nodes2string.cpp \
+	JavaScriptCore/kjs/number_object.cpp \
+	JavaScriptCore/kjs/object.cpp \
+	JavaScriptCore/kjs/object_object.cpp \
+	JavaScriptCore/kjs/operations.cpp \
+	JavaScriptCore/kjs/property_map.cpp \
+	JavaScriptCore/kjs/property_slot.cpp \
+	JavaScriptCore/kjs/regexp.cpp \
+	JavaScriptCore/kjs/regexp_object.cpp \
+	JavaScriptCore/kjs/scope_chain.cpp \
+	JavaScriptCore/kjs/string_object.cpp \
+	JavaScriptCore/kjs/ustring.cpp \
+	JavaScriptCore/kjs/value.cpp \
+	JavaScriptCore/wtf/FastMalloc.cpp \
+	JavaScriptCore/wtf/TCSystemAlloc.cpp
+
+else 
+javascriptcore_built_nosources += \
+	DerivedSources/grammar.h \
+	DerivedSources/grammar.cpp
+
+javascriptcore_sources += \
+	JavaScriptCore/kjs/AllInOneFile.cpp 
+endif # END ENABLE_DEBUG
+
+DerivedSources/grammar.h: DerivedSources/grammar.cpp
+
+DerivedSources/grammar.cpp:
+	$(BISON) -d -p kjsyy $(srcdir)/JavaScriptCore/kjs/grammar.y -o $@ > bison_out.txt 2>&1
+	$(PERL) -p -e 'END { if ($$conflict) { unlink "grammar.cpp"; die; } } $$conflict ||= /conflict/' < bison_out.txt
+	cat $(GENSOURCES)/grammar.hpp > $(GENSOURCES)/grammar.h
+	rm -f $(GENSOURCES)grammar.hpp bison_out.txt
+
+DerivedSources/lexer.lut.h: $(CREATE_HASH_TABLE) $(srcdir)/JavaScriptCore/kjs/keywords.table
+	$(PERL) $^ > $@
+
+%_object.lut.h: $(CREATE_HASH_TABLE) %_object.cpp
+	$^ -i > $@
+
+JavaScriptCore/pcre/chartables.c: $(top_builddir)/Programs/dftables
+	./Programs/dftables $@
+
+noinst_PROGRAMS += \
+	Programs/testkjs \
+	Programs/dftables
+
+# dftables
+Programs_dftables_SOURCES = JavaScriptCore/pcre/dftables.cpp
+
+# testkjs
+Programs_testkjs_SOURCES = JavaScriptCore/kjs/testkjs.cpp
+Programs_testkjs_CPPFLAGS = $(global_cppflags)
+Programs_testkjs_CXXFLAGS = $(ICU_CFLAGS)
+Programs_testkjs_LDADD = $(ICU_LIBS) libJavaScriptCore.la
+Programs_testkjs_LDFLAGS = -rpath $(CURDIR)/.libs
+
+# Clean rules for JavaScriptCore
+CLEANFILES += \
+	JavaScriptCore/kjs/array_object.lut.h \
+	JavaScriptCore/kjs/date_object.lut.h \
+	JavaScriptCore/kjs/math_object.lut.h \
+	JavaScriptCore/kjs/number_object.lut.h \
+	JavaScriptCore/kjs/regexp_object.lut.h \
+	JavaScriptCore/kjs/string_object.lut.h \
+	JavaScriptCore/pcre/chartables.c
