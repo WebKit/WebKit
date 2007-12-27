@@ -4,11 +4,18 @@
     <iframe id="aFrame"></iframe>
     <script>
         var url = "data:text/html,<html>"
-            + "<body>"
+            + "<head>"
+            +     "<scr" + "ipt>"
+            +         "function loaded() {"
+            +             "if (window.layoutTestController)"
+            +                 "layoutTestController.globalFlag = true;"
+            +         "}"
+            +     "</scri" + "pt>"
+            + "</head>"
+            + "<body onload='loaded();'>"
             +     "<p id='accessMe'>PASS: Access from the main frame was denied!</p>"
             +     "<p>Inner-inner iframe. This iframe (which is data: URL and whose parent is on a foreign domain) is the frame that the"
             +     " main frame is trying to access.  It should not have access to it.</p>"
-            +     "<iframe id='flag'></iframe>"
             + "</body>"
             + "</html>";
 

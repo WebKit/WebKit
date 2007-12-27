@@ -203,9 +203,9 @@ fast/history/history_reload.html
 http/tests/navigation/new-window-redirect-history.html
 http/tests/navigation/target-frame-from-window.html
 http/tests/misc/window-open-then-write.html
-#http/tests/security/dataURL/xss-DENIED-from-data-url-in-foreign-domain-window-open.html [This test is currently disabled]
+http/tests/security/dataURL/xss-DENIED-from-data-url-in-foreign-domain-window-open.html
 http/tests/security/dataURL/xss-DENIED-from-javascript-url-window-open.html
-#http/tests/security/dataURL/xss-DENIED-to-data-url-in-foreign-domain-window-open.html [This test is currently disabled]
+http/tests/security/dataURL/xss-DENIED-to-data-url-in-foreign-domain-window-open.html
 http/tests/security/dataURL/xss-DENIED-to-data-url-window-open.html
 http/tests/security/javascriptURL/xss-ALLOWED-from-javascript-url-window-open.html
 http/tests/security/javascriptURL/xss-ALLOWED-to-javascript-url-window-open.html
@@ -371,6 +371,9 @@ svg/W3C-SVG-1.1/paths-data-01-t.svg
 svg/W3C-SVG-1.1/text-path-01-b.svg
 svg/custom/control-points-for-S-and-T.svg
 
+# <rdar://problem/5539818> REGRESSION (Leopard): http/tests/security/dataURL/xss-DENIED-to-data-url-sub-frame-uppercase.html failing
+http/tests/security/dataURL/xss-DENIED-to-data-url-sub-frame-uppercase.html
+
 ################################################################################
 ####################### No bugs filed about the below yet#######################
 ################################################################################
@@ -432,10 +435,6 @@ editing/selection/contains-boundaries.html
 editing/undo/5378473.html
 http/tests/multipart/win-boundary-crash.html
 http/tests/plugins/npapi-response-headers.html
-#http/tests/security/dataURL/xss-DENIED-from-data-url-in-foreign-domain-subframe.html [This test is currently disabled]
-#http/tests/security/dataURL/xss-DENIED-to-data-url-in-foreign-domain-subframe-location-change.html [This test is currently disabled]
-#http/tests/security/dataURL/xss-DENIED-to-data-url-in-foreign-domain-subframe.html [This test is currently disabled]
-http/tests/security/dataURL/xss-DENIED-to-data-url-sub-frame-uppercase.html
 http/tests/xmlhttprequest/connection-error-sync.html
 http/tests/xmlhttprequest/failed-auth.html
 plugins/netscape-plugin-setwindow-size.html

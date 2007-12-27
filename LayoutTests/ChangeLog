@@ -1,3 +1,31 @@
+2007-12-26  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Alice Liu.
+
+        Re-enable disabled tests with new polling logic using layoutTestController.globalFlag.
+
+        * http/tests/security/dataURL/resources/foreign-domain-data-url-accessee-iframe.html:
+        * http/tests/security/dataURL/resources/foreign-domain-data-url-accessee-opened-frame.html:
+        * http/tests/security/dataURL/resources/foreign-domain-data-url-accessor-iframe.html:
+        * http/tests/security/dataURL/resources/foreign-domain-data-url-accessor-opened-frame.html:
+        * http/tests/security/dataURL/resources/foreign-domain-data-url-window-location.html:
+        * http/tests/security/dataURL/xss-DENIED-from-data-url-in-foreign-domain-subframe-expected.txt:
+        * http/tests/security/dataURL/xss-DENIED-from-data-url-in-foreign-domain-subframe.html: Copied from http/tests/security/dataURL/xss-DENIED-from-data-url-in-foreign-domain-subframe.html-disabled.
+        * http/tests/security/dataURL/xss-DENIED-from-data-url-in-foreign-domain-subframe.html-disabled: Removed.
+        * http/tests/security/dataURL/xss-DENIED-from-data-url-in-foreign-domain-window-open-expected.txt:
+        * http/tests/security/dataURL/xss-DENIED-from-data-url-in-foreign-domain-window-open.html: Copied from http/tests/security/dataURL/xss-DENIED-from-data-url-in-foreign-domain-window-open.html-disabled.
+        * http/tests/security/dataURL/xss-DENIED-from-data-url-in-foreign-domain-window-open.html-disabled: Removed.
+        * http/tests/security/dataURL/xss-DENIED-to-data-url-in-foreign-domain-subframe-expected.txt:
+        * http/tests/security/dataURL/xss-DENIED-to-data-url-in-foreign-domain-subframe-location-change-expected.txt:
+        * http/tests/security/dataURL/xss-DENIED-to-data-url-in-foreign-domain-subframe-location-change.html: Copied from http/tests/security/dataURL/xss-DENIED-to-data-url-in-foreign-domain-subframe-location-change.html-disabled.
+        * http/tests/security/dataURL/xss-DENIED-to-data-url-in-foreign-domain-subframe-location-change.html-disabled: Removed.
+        * http/tests/security/dataURL/xss-DENIED-to-data-url-in-foreign-domain-subframe.html: Copied from http/tests/security/dataURL/xss-DENIED-to-data-url-in-foreign-domain-subframe.html-disabled.
+        * http/tests/security/dataURL/xss-DENIED-to-data-url-in-foreign-domain-subframe.html-disabled: Removed.
+        * http/tests/security/dataURL/xss-DENIED-to-data-url-in-foreign-domain-window-open-expected.txt:
+        * http/tests/security/dataURL/xss-DENIED-to-data-url-in-foreign-domain-window-open.html: Copied from http/tests/security/dataURL/xss-DENIED-to-data-url-in-foreign-domain-window-open.html-disabled.
+        * http/tests/security/dataURL/xss-DENIED-to-data-url-in-foreign-domain-window-open.html-disabled: Removed.
+        * platform/win/Skipped:
+
 2007-12-26  Alice Liu  <alice.liu@apple.com>
 
         removing tests tracked by <rdar://5463489> A number of layout tests should be using 
