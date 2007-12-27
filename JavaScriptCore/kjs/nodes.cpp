@@ -3840,13 +3840,13 @@ JSValue* ForInNode::execute(ExecState* exec)
   }
 
   JSValue* e = expr->evaluate(exec);
+  KJS_CHECKEXCEPTION
 
   // For Null and Undefined, we want to make sure not to go through
   // the loop at all, because toObject will throw an exception.
   if (e->isUndefinedOrNull())
     return exec->setNormalCompletion();
 
-  KJS_CHECKEXCEPTION
   JSObject* v = e->toObject(exec);
   PropertyNameArray propertyNames;
   v->getPropertyNames(exec, propertyNames);

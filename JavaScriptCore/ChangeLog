@@ -1,3 +1,13 @@
+2007-12-27  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Sam.
+
+        ASSERT in JavaScriptCore while viewing WICD test case
+        http://bugs.webkit.org/show_bug.cgi?id=16626
+        
+        * kjs/nodes.cpp:
+        (KJS::ForInNode::execute): move KJS_CHECK_EXCEPTION to proper place
+
 2007-12-26  Jan Michael Alonzo  <jmalonzo@unpluggable.com>
 
         Reviewed by Alp Toker.

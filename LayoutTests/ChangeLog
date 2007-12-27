@@ -1,3 +1,14 @@
+2007-12-27  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Sam.
+        
+        ASSERT in JavaScriptCore while viewing WICD test case
+        http://bugs.webkit.org/show_bug.cgi?id=16626
+
+        * fast/js/for-in-exeception-expected.txt: Added.
+        * fast/js/for-in-exeception.html: Added.
+        * fast/js/resources/for-in-exception.js: Added.
+
 2007-12-27  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Alice Liu.
