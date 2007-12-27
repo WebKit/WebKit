@@ -155,7 +155,8 @@ FrameView::~FrameView()
     resetScrollbars();
 
     ASSERT(m_refCount == 0);
-    ASSERT(d->m_scheduledEvents.isEmpty() && !d->m_enqueueEvents);
+    ASSERT(d->m_scheduledEvents.isEmpty());
+    ASSERT(!d->m_enqueueEvents);
 
     if (m_frame) {
         ASSERT(m_frame->view() != this || !m_frame->document() || !m_frame->document()->renderer());
@@ -444,8 +445,7 @@ void FrameView::layout(bool allowSubtree)
     
     RenderLayer* layer = root->enclosingLayer();
 
-    if (!d->postLayoutTasksTimer.isActive())
-        pauseScheduledEvents();
+    pauseScheduledEvents();
 
     if (subtree)
         root->view()->pushLayoutState(root);
@@ -504,6 +504,9 @@ void FrameView::layout(bool allowSubtree)
             pauseScheduledEvents();
             layout();
         }
+    } else {
+        resumeScheduledEvents();
+        ASSERT(d->m_enqueueEvents);
     }
 
     d->nestedLayoutCount--;

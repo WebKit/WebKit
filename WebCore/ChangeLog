@@ -1,3 +1,19 @@
+2007-12-27  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Eric Seidel.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=16490
+          ASSERT in ~FrameView while viewing/reloading WICD test case
+
+        Test: fast/dynamic/paused-event-dispatch.html
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::~FrameView):
+        (WebCore::FrameView::layout): Changed to always pause event dispatch and
+        always resume event dispatch, regardless of whether the post-layout
+        task time is active. However, if it is active, assert that event
+        dispatch is still paused.
+
 2007-12-27  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Maciej.
