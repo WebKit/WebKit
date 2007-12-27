@@ -1,3 +1,11 @@
+2007-12-26  Dan Bernstein  <mitz@apple.com>
+
+        Rubber-stamped by Anders Carlsson.
+
+        - re-categorize some SVG tests the are failing on Windows
+
+        * platform/win/Skipped:
+
 2007-12-26  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Alice Liu.
