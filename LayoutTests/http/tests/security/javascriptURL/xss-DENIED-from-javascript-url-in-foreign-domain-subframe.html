@@ -8,10 +8,9 @@
     <script>
         if (window.layoutTestController) {
             layoutTestController.dumpAsText();
+            layoutTestController.waitUntilDone();
             layoutTestController.dumpChildFramesAsText();
         }
-        
-        // FIXME: Add polling to make sure this works
     </script>
 </body>
 </html>

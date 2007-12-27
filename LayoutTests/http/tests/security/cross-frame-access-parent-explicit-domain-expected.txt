@@ -8,10 +8,3 @@ PASS: Cross frame access from frame explicitly setting document.domain was denie
 Frame: 'aFrame'
 --------
 Inner iframe.
-
-
-
---------
-Frame: 'flag'
---------
-

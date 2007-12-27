@@ -9,13 +9,6 @@ PASS: Host name compare is case insensitive.
 
 Inner iframe.
 
-
-
---------
-Frame: 'flag'
---------
-
-
 --------
 Frame: 'frameB'
 --------

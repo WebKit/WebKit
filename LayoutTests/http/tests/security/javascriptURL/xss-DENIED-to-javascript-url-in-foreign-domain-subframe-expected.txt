@@ -19,10 +19,3 @@ Frame: 'aFrame'
 PASS: Cross frame access from a frame on a foreign domain denied!
 
 Inner-inner iframe. This iframe (which is javascript: URL and whose parent is on a foreign domain) is the frame that the main frame is trying to access. It should not have access to it.
-
-
-
---------
-Frame: 'flag'
---------
-

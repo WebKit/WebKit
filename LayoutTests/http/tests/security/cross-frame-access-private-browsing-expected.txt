@@ -8,10 +8,3 @@ Attempting to violate the same-origin policy with private browsing enabled.  If 
 Frame: '<!--framePath //<!--frame0-->-->'
 --------
 Inner iframe.
-
-
-
---------
-Frame: 'flag'
---------
-

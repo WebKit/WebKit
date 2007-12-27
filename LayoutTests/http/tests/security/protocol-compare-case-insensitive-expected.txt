@@ -8,10 +8,3 @@ Frame: 'aFrame'
 PASS: Protocol name compare is case insensitive!
 
 Inner iframe.
-
-
-
---------
-Frame: 'flag'
---------
-

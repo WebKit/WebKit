@@ -1,3 +1,58 @@
+2007-12-27  Sam Weinig  <sam@webkit.org>
+
+        Rubber-stamped by Maciej.
+
+        - Change more tests to use the new layoutTestController.globalFlag style polling instead
+          of the "flag frame hack".
+
+        * http/tests/security/cross-frame-access-parent-explicit-domain-expected.txt:
+        * http/tests/security/cross-frame-access-port-expected.txt:
+        * http/tests/security/cross-frame-access-private-browsing-expected.txt:
+        * http/tests/security/cross-frame-access-protocol-expected.txt:
+        * http/tests/security/dataURL/xss-DENIED-to-data-url-from-data-url.html:
+        * http/tests/security/host-compare-case-insensitive-expected.txt:
+        * http/tests/security/javascriptURL/javascriptURL-execution-context-frame-location-htmldom-expected.txt:
+        * http/tests/security/javascriptURL/javascriptURL-execution-context-frame-location-htmldom.html:
+        * http/tests/security/javascriptURL/javascriptURL-execution-context-frame-src-getAttribute-value-expected.txt:
+        * http/tests/security/javascriptURL/javascriptURL-execution-context-frame-src-getAttribute-value.html:
+        * http/tests/security/javascriptURL/javascriptURL-execution-context-frame-src-htmldom-expected.txt:
+        * http/tests/security/javascriptURL/javascriptURL-execution-context-frame-src-htmldom.html:
+        * http/tests/security/javascriptURL/javascriptURL-execution-context-frame-src-setAttribute-expected.txt:
+        * http/tests/security/javascriptURL/javascriptURL-execution-context-frame-src-setAttribute.html:
+        * http/tests/security/javascriptURL/javascriptURL-execution-context-frame-src-setAttributeNS-expected.txt:
+        * http/tests/security/javascriptURL/javascriptURL-execution-context-frame-src-setAttributeNS.html:
+        * http/tests/security/javascriptURL/javascriptURL-execution-context-frame-src-setAttributeNode-expected.txt:
+        * http/tests/security/javascriptURL/javascriptURL-execution-context-frame-src-setAttributeNode.html:
+        * http/tests/security/javascriptURL/javascriptURL-execution-context-frame-src-setAttributeNodeNS-expected.txt:
+        * http/tests/security/javascriptURL/javascriptURL-execution-context-frame-src-setAttributeNodeNS.html:
+        * http/tests/security/javascriptURL/javascriptURL-execution-context-iframe-src-getAttribute-value-expected.txt:
+        * http/tests/security/javascriptURL/javascriptURL-execution-context-iframe-src-getAttribute-value.html:
+        * http/tests/security/javascriptURL/javascriptURL-execution-context-iframe-src-htmldom-expected.txt:
+        * http/tests/security/javascriptURL/javascriptURL-execution-context-iframe-src-htmldom.html:
+        * http/tests/security/javascriptURL/javascriptURL-execution-context-iframe-src-setAttribute-expected.txt:
+        * http/tests/security/javascriptURL/javascriptURL-execution-context-iframe-src-setAttribute.html:
+        * http/tests/security/javascriptURL/javascriptURL-execution-context-iframe-src-setAttributeNS-expected.txt:
+        * http/tests/security/javascriptURL/javascriptURL-execution-context-iframe-src-setAttributeNS.html:
+        * http/tests/security/javascriptURL/javascriptURL-execution-context-iframe-src-setAttributeNode-expected.txt:
+        * http/tests/security/javascriptURL/javascriptURL-execution-context-iframe-src-setAttributeNode.html:
+        * http/tests/security/javascriptURL/javascriptURL-execution-context-iframe-src-setAttributeNodeNS-expected.txt:
+        * http/tests/security/javascriptURL/javascriptURL-execution-context-iframe-src-setAttributeNodeNS.html:
+        * http/tests/security/javascriptURL/resources/foreign-domain-javascript-url-accessee-iframe.html:
+        * http/tests/security/javascriptURL/resources/foreign-domain-javascript-url-accessee-opened-frame.html:
+        * http/tests/security/javascriptURL/resources/foreign-domain-javascript-url-accessor-iframe.html:
+        * http/tests/security/javascriptURL/resources/foreign-domain-javascript-url-accessor-opened-frame.html:
+        * http/tests/security/javascriptURL/xss-ALLOWED-to-javascript-url-sub-frame-2-level.html:
+        * http/tests/security/javascriptURL/xss-ALLOWED-to-javascript-url-window-open.html:
+        * http/tests/security/javascriptURL/xss-DENIED-from-javascript-url-in-foreign-domain-subframe-expected.txt:
+        * http/tests/security/javascriptURL/xss-DENIED-from-javascript-url-in-foreign-domain-subframe.html:
+        * http/tests/security/javascriptURL/xss-DENIED-from-javascript-url-in-foreign-domain-window-open-expected.txt:
+        * http/tests/security/javascriptURL/xss-DENIED-from-javascript-url-in-foreign-domain-window-open.html:
+        * http/tests/security/javascriptURL/xss-DENIED-to-javascript-url-in-foreign-domain-subframe-expected.txt:
+        * http/tests/security/javascriptURL/xss-DENIED-to-javascript-url-in-foreign-domain-subframe.html:
+        * http/tests/security/javascriptURL/xss-DENIED-to-javascript-url-in-foreign-domain-window-open.html:
+        * http/tests/security/protocol-compare-case-insensitive-expected.txt:
+        * http/tests/security/resources/cross-frame-iframe.html:
+
 2007-12-27  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Maciej.
