@@ -1,3 +1,10 @@
+2007-12-27  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Alice Liu.
+
+        * platform/mac-leopard/Skipped: Remove dom/html/level2/html/HTMLDocument12.html 
+        from the Skipped list because it is now passing.
+
 2007-12-27  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Eric Seidel.

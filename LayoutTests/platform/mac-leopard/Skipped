@@ -10,9 +10,6 @@ svg/custom/control-points-for-S-and-T.svg
 svg/hixie/perf/001.xml
 svg/hixie/perf/002.xml
 
-# <rdar://problem/5313535> dom/html/level2/html/HTMLDocument12.html sometimes fails on Leopard
-dom/html/level2/html/HTMLDocument12.html
-
 # <rdar://problem/5313536> frame-loading-via-document-write.html sometimes fails on Leopard
 fast/dom/frame-loading-via-document-write.html
 http/tests/security/frame-loading-via-document-write.html
