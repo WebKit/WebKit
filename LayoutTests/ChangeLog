@@ -1,3 +1,28 @@
+2007-12-27  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Maciej.
+
+        http://bugs.webkit.org/show_bug.cgi?id=14500
+        need to be more generous about charset declaration with meta tag
+        
+        http://bugs.webkit.org/show_bug.cgi?id=12526
+        <rdar://problem/4867183> Safari ignores encoding description "charset=Shift_JIS" in invalid html
+
+        <rdar://problem/4892428> Unlike other browsers, WebKit ignores <meta> charset definitions outside the head
+
+        <rdar://problem/5643774> REGRESSION: Text is garbled when clicking a link inside an Arabic website
+
+        * fast/encoding/ahram-org-eg-expected.txt: Added.
+        * fast/encoding/ahram-org-eg.html: Added.
+        * fast/encoding/bandai-co-jp-releases-expected.txt: Added.
+        * fast/encoding/bandai-co-jp-releases.html: Added.
+        * fast/encoding/floraexpres-ru-expected.txt: Added.
+        * fast/encoding/floraexpres-ru.html: Added.
+        * fast/encoding/hanarei-blog32-fc2-com-expected.txt: Added.
+        * fast/encoding/hanarei-blog32-fc2-com.html: Added.
+        * fast/encoding/yahoo-mail-expected.txt: Added.
+        * fast/encoding/yahoo-mail.html: Added.
+
 2007-12-26  Dan Bernstein  <mitz@apple.com>
 
         Rubber-stamped by Anders Carlsson.

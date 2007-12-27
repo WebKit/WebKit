@@ -529,7 +529,10 @@ bool TextResourceDecoder::checkForHeadCharset(const char* data, size_t len, bool
     // Additionally, we ignore things that looks like tags in <title>, <script> and <noscript>; see
     // <http://bugs.webkit.org/show_bug.cgi?id=4560>, <http://bugs.webkit.org/show_bug.cgi?id=12165>
     // and <http://bugs.webkit.org/show_bug.cgi?id=12389>.
-    
+
+    // Since many sites have charset declarations after <body> or other tags that are disallowed in <head>,
+    // we don't bail out until we've checked at least 512 bytes of input.
+
     AtomicStringImpl* enclosingTagName = 0;
 
     while (ptr + 3 < pEnd) { // +3 guarantees that "<!--" fits in the buffer - and certainly we aren't going to lose any "charset" that way.
@@ -646,7 +649,7 @@ bool TextResourceDecoder::checkForHeadCharset(const char* data, size_t len, bool
 
                     pos = endpos + 1;
                 }
-            } else if (tag != scriptTag && tag != noscriptTag && tag != styleTag &&
+            } else if (ptr - m_buffer.data() >= 512 && tag != scriptTag && tag != noscriptTag && tag != styleTag &&
                        tag != linkTag && tag != metaTag && tag != objectTag &&
                        tag != titleTag && tag != baseTag && 
                        (end || tag != htmlTag) && !enclosingTagName &&

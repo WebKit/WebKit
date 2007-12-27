@@ -1,3 +1,27 @@
+2007-12-27  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Maciej.
+
+        http://bugs.webkit.org/show_bug.cgi?id=14500
+        need to be more generous about charset declaration with meta tag
+        
+        http://bugs.webkit.org/show_bug.cgi?id=12526
+        <rdar://problem/4867183> Safari ignores encoding description "charset=Shift_JIS" in invalid html
+
+        <rdar://problem/4892428> Unlike other browsers, WebKit ignores <meta> charset definitions outside the head
+
+        <rdar://problem/5643774> REGRESSION: Text is garbled when clicking a link inside an Arabic website
+
+        Tests: fast/encoding/ahram-org-eg.html
+               fast/encoding/bandai-co-jp-releases.html
+               fast/encoding/floraexpress-ru.html
+               fast/encoding/hanarei-blog32-fc2-com.html
+               fast/encoding/yahoo-mail.html
+
+        * loader/TextResourceDecoder.cpp:
+        (WebCore::TextResourceDecoder::checkForHeadCharset): Don't stop looking for <meta> until we've
+        seen at least 512 bytes of input.
+
 2007-12-26  Jan Michael Alonzo  <jmalonzo@unpluggable.com>
 
         Reviewed by Alp Toker.
