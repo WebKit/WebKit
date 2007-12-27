@@ -11,7 +11,7 @@
         (WebCore::FrameView::~FrameView):
         (WebCore::FrameView::layout): Changed to always pause event dispatch and
         always resume event dispatch, regardless of whether the post-layout
-        task time is active. However, if it is active, assert that event
+        task timer is active. However, if it is active, assert that event
         dispatch is still paused.
 
 2007-12-27  Alexey Proskuryakov  <ap@webkit.org>
