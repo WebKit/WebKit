@@ -1,5 +1,12 @@
 2007-12-27  Sam Weinig  <sam@webkit.org>
 
+        Reviewed by Maciej.
+
+        * platform/win/Skipped: Move cross-frame-access-protocol* tests to show that they
+        are failing because of a lack of ssl on windows.
+
+2007-12-27  Sam Weinig  <sam@webkit.org>
+
         Rubber-stamped by Maciej.
 
         - Change more tests to use the new layoutTestController.globalFlag style polling instead
