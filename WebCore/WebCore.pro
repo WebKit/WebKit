@@ -1125,6 +1125,8 @@ contains(DEFINES, ENABLE_VIDEO=1) {
             platform/graphics/gtk/MediaPlayerPrivateGStreamer.cpp \
             platform/graphics/gtk/VideoSinkGStreamer.cpp
 
+        CONFIG(debug):DEFINES += GST_DISABLE_DEPRECATED
+
         PKGCONFIG += gstreamer-0.10 gstreamer-plugins-base-0.10 gnome-vfs-2.0
         LIBS += -lgstinterfaces-0.10 -lgstbase-0.10 -lgstvideo-0.10
     }

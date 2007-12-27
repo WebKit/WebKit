@@ -1,3 +1,16 @@
+2007-12-27  Jan Michael Alonzo  <jmalonzo@unpluggable.com>
+
+        Reviewed by Alp Toker.
+
+        http://bugs.webkit.org/show_bug.cgi?id=16353
+        [GTK] Check for deprecated API use (G_DISABLE_DEPRECATED etc.)
+
+        Added the flags mentioned in the bug only when doing 'debug'
+        builds. -DGST_DISABLE_DEPRECATED only added when video is enabled.
+
+        * GNUmakefile.am:
+        * WebCore.pro:
+
 2007-12-27  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Eric Seidel.

@@ -1044,6 +1044,10 @@ FEATURE_DEFINES_JAVASCRIPT += ENABLE_VIDEO=1
 
 webkitgtk_cppflags += -DENABLE_VIDEO=1
 
+if ENABLE_DEBUG
+webkitgtk_cppflags += -DGST_DISABLE_DEPRECATED
+endif # END ENABLE_DEBUG
+
 webkitgtk_built_sources += \
 	DerivedSources/JSHTMLSourceElement.h \
 	DerivedSources/JSHTMLAudioElement.h \
