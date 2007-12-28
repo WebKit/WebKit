@@ -1,3 +1,13 @@
+2007-12-27  Collin Jackson  <webkit@collinjackson.com>
+
+        Reviewed by Sam Weinig.
+
+        Tests for http://bugs.webkit.org/show_bug.cgi?id=16539
+        <rdar://problem/5659269>
+
+        * http/tests/security/cross-frame-access-call-expected.txt: Added.
+        * http/tests/security/cross-frame-access-call.html: Added.
+
 2007-12-27  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Dave Hyatt and Sam Weinig.

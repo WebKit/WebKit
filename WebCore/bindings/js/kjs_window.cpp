@@ -1096,6 +1096,8 @@ JSValue* WindowProtoFuncSetTimeout::callAsFunction(ExecState* exec, JSObject* th
     if (!thisObj->inherits(&Window::info))
         return throwError(exec, TypeError);
     Window* window = static_cast<Window*>(thisObj);
+    if (!window->allowsAccessFrom(exec)) 
+        return jsUndefined();
 
     JSValue* v = args[0];
     if (v->isString())
@@ -1126,6 +1128,8 @@ JSValue* WindowProtoFuncSetInterval::callAsFunction(ExecState* exec, JSObject* t
     if (!thisObj->inherits(&Window::info))
         return throwError(exec, TypeError);
     Window* window = static_cast<Window*>(thisObj);
+    if (!window->allowsAccessFrom(exec)) 
+        return jsUndefined();
 
     if (args.size() >= 2) {
         JSValue* v = args[0];
@@ -1148,6 +1152,8 @@ JSValue* WindowProtoFuncAddEventListener::callAsFunction(ExecState* exec, JSObje
     if (!thisObj->inherits(&Window::info))
         return throwError(exec, TypeError);
     Window* window = static_cast<Window*>(thisObj);
+    if (!window->allowsAccessFrom(exec)) 
+        return jsUndefined();
     Frame* frame = window->impl()->frame();
     if (!frame)
         return jsUndefined();
@@ -1165,6 +1171,8 @@ JSValue* WindowProtoFuncRemoveEventListener::callAsFunction(ExecState* exec, JSO
     if (!thisObj->inherits(&Window::info))
         return throwError(exec, TypeError);
     Window* window = static_cast<Window*>(thisObj);
+    if (!window->allowsAccessFrom(exec)) 
+        return jsUndefined();
     Frame* frame = window->impl()->frame();
     if (!frame)
         return jsUndefined();

@@ -1,3 +1,33 @@
+2007-12-27  Collin Jackson  <webkit@collinjackson.com>
+
+        Reviewed by Sam Weinig.
+
+        http://bugs.webkit.org/show_bug.cgi?id=16539
+        <rdar://problem/5659269>
+
+        The same-origin check was missing in the implementation of 
+        setTimeout, setInterval, addEventListener, and removeEventListener.
+
+        Suppose <http://www.badguy.com/> contains an iframe to 
+        <http://www.goodguy.com/>. Now www.badguy.com can steal
+        www.goodguy.com cookies by running this code:
+
+        setTimeout.call(frames[0], "alert(document.cookie)", 1000);
+
+        This patch changes the behavior so that setTimeout to does 
+        nothing and returns an undefined value if the caller is not
+        permitted to script the window whose setTimeout method is being
+        called. The same applies to setInterval, addEventListener, and 
+        removeEventListener.
+
+        Tests: http/tests/security/cross-frame-access-call.html
+
+        * bindings/js/kjs_window.cpp:
+        (KJS::WindowProtoFuncSetTimeout::callAsFunction)
+        (KJS::WindowProtoFuncSetInterval::callAsFunction)
+        (KJS::WindowProtoFuncAddEventListener::callAsFunction)
+        (KJS::WindowProtoFuncRemoveEventListener::callAsFunction)
+
 2007-12-27  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Dave Hyatt and Sam Weinig.
