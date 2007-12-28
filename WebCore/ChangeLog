@@ -1,3 +1,24 @@
+2007-12-27  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=16603
+          <rdar://problem/5664199> Crash when resizing text field
+
+        Test: fast/layers/resize-layer-deletion-crash.html
+
+        The event handler has only a weak reference to the layer that is
+        currently in resize mode, so it is the layer's responsibility to let
+        the event handler know if it has been destroyed while in that mode.
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::resizeLayerDestroyed): Added. Resets
+        m_resizeLayer to 0.
+        * page/EventHandler.h:
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::~RenderLayer): Added a call to
+        EventHandler::resizeLayerDestroyed() if the layer is in resize mode.
+
 2007-12-27  Collin Jackson  <webkit@collinjackson.com>
 
         Reviewed by Sam Weinig.

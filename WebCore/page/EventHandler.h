@@ -108,6 +108,8 @@ public:
 
     void setResizingFrameSet(HTMLFrameSetElement*);
 
+    void resizeLayerDestroyed();
+
     IntPoint currentMousePosition() const;
 
     void setIgnoreWheelEvents(bool);

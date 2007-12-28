@@ -1437,6 +1437,12 @@ void EventHandler::setResizingFrameSet(HTMLFrameSetElement* frameSet)
     m_frameSetBeingResized = frameSet;
 }
 
+void EventHandler::resizeLayerDestroyed()
+{
+    ASSERT(m_resizeLayer);
+    m_resizeLayer = 0;
+}
+
 void EventHandler::hoverTimerFired(Timer<EventHandler>*)
 {
     m_hoverTimer.stop();

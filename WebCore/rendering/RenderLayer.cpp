@@ -160,6 +160,11 @@ RenderLayer::RenderLayer(RenderObject* object)
 
 RenderLayer::~RenderLayer()
 {
+    if (inResizeMode()) {
+        if (Frame* frame = renderer()->document()->frame())
+            frame->eventHandler()->resizeLayerDestroyed();
+    }
+
     destroyScrollbar(HorizontalScrollbar);
     destroyScrollbar(VerticalScrollbar);
 
