@@ -1,3 +1,18 @@
+2007-12-27  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Dave Hyatt and Sam Weinig.
+
+        - fix <rdar://problem/5605937> Inspector: Disclosure triangle not drawn in node's properties panel until click
+
+        Test: fast/layers/add-layer-with-nested-stacking.html
+        Test: fast/layers/remove-layer-with-nested-stacking.html
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::addChild): If the new child is overflow-only
+        but has children of its own, dirty the stacking context's z-order lists
+        since the grandchildren might need to be in them.
+        (WebCore::RenderLayer::removeChild): Similarly for the old child.
+
 2007-12-27  Jan Michael Alonzo  <jmalonzo@unpluggable.com>
 
         Reviewed by Alp Toker.

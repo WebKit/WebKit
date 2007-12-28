@@ -1,3 +1,18 @@
+2007-12-27  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Dave Hyatt and Sam Weinig.
+
+        - pixel tests for <rdar://problem/5605937> Inspector: Disclosure triangle not drawn in node's properties panel until click
+
+        * fast/layers/add-layer-with-nested-stacking.html: Added.
+        * fast/layers/remove-layer-with-nested-stacking.html: Added.
+        * platform/mac/fast/layers/add-layer-with-nested-stacking-expected.checksum: Added.
+        * platform/mac/fast/layers/add-layer-with-nested-stacking-expected.png: Added.
+        * platform/mac/fast/layers/add-layer-with-nested-stacking-expected.txt: Added.
+        * platform/mac/fast/layers/remove-layer-with-nested-stacking-expected.checksum: Added.
+        * platform/mac/fast/layers/remove-layer-with-nested-stacking-expected.png: Added.
+        * platform/mac/fast/layers/remove-layer-with-nested-stacking-expected.txt: Added.
+
 2007-12-27  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Sam.

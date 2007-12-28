@@ -521,28 +521,27 @@ void RenderLayer::destroy(RenderArena* renderArena)
     renderArena->free(*(size_t *)this, this);
 }
 
-void RenderLayer::addChild(RenderLayer *child, RenderLayer* beforeChild)
+void RenderLayer::addChild(RenderLayer* child, RenderLayer* beforeChild)
 {
     RenderLayer* prevSibling = beforeChild ? beforeChild->previousSibling() : lastChild();
     if (prevSibling) {
         child->setPreviousSibling(prevSibling);
         prevSibling->setNextSibling(child);
-    }
-    else
+    } else
         setFirstChild(child);
 
     if (beforeChild) {
         beforeChild->setPreviousSibling(child);
         child->setNextSibling(beforeChild);
-    }
-    else
+    } else
         setLastChild(child);
-   
+
     child->setParent(this);
 
     if (child->isOverflowOnly())
         dirtyOverflowList();
-    else {
+
+    if (!child->isOverflowOnly() || child->firstChild()) {
         // Dirty the z-order list in which we are contained.  The stackingContext() can be null in the
         // case where we're building up generated content layers.  This is ok, since the lists will start
         // off dirty in that case anyway.
@@ -550,7 +549,7 @@ void RenderLayer::addChild(RenderLayer *child, RenderLayer* beforeChild)
         if (stackingContext)
             stackingContext->dirtyZOrderLists();
     }
-    
+
     child->updateVisibilityStatus();
     if (child->m_hasVisibleContent || child->m_hasVisibleDescendant)
         childVisibilityChanged(true);
@@ -571,7 +570,7 @@ RenderLayer* RenderLayer::removeChild(RenderLayer* oldChild)
 
     if (oldChild->isOverflowOnly())
         dirtyOverflowList();
-    else { 
+    if (!oldChild->isOverflowOnly() || oldChild->firstChild()) { 
         // Dirty the z-order list in which we are contained.  When called via the
         // reattachment process in removeOnlyThisLayer, the layer may already be disconnected
         // from the main layer tree, so we need to null-check the |stackingContext| value.
