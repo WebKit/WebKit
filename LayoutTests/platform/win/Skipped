@@ -349,9 +349,6 @@ svg/custom/visibility-override-filter.svg
 # Results are wildly wrong <rdar://5563746>
 svg/css/glyph-orientation-rounding-test.xhtml
 
-# URL of frame is about:blank in security warning message, warnings sometimes bleed into subsequent tests <rdar://5563750>
-http/tests/security/dataURL/xss-DENIED-from-data-url-sub-frame-to-data-url-sub-frame.html
-
 # The fix for this test is disabled on Windows <rdar://5611712>
 fast/xsl/sort-unicode.xml
 
