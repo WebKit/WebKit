@@ -1,5 +1,16 @@
 2007-12-27  Dan Bernstein  <mitz@apple.com>
 
+        Reviewed by Alexey Proskuryakov.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=16628
+          ASSERTION FAILED: m_resizeLayer (running layout tests)
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::~RenderLayer): Avoid calling
+        EventHandler::resizeLayerDestroyed() if the document is being destroyed.
+
+2007-12-27  Dan Bernstein  <mitz@apple.com>
+
         Reviewed by Oliver Hunt.
 
         - fix http://bugs.webkit.org/show_bug.cgi?id=16603
