@@ -1,3 +1,26 @@
+2007-12-28  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Sam.
+
+        Apply wkstyle/astyle and fix placement of *
+
+        * kjs/number_object.cpp:
+        (KJS::):
+        (KJS::NumberInstance::NumberInstance):
+        (KJS::NumberPrototype::NumberPrototype):
+        (KJS::NumberProtoFunc::NumberProtoFunc):
+        (KJS::integer_part_noexp):
+        (KJS::intPow10):
+        (KJS::NumberProtoFunc::callAsFunction):
+        (KJS::NumberObjectImp::NumberObjectImp):
+        (KJS::NumberObjectImp::getOwnPropertySlot):
+        (KJS::NumberObjectImp::getValueProperty):
+        (KJS::NumberObjectImp::implementsConstruct):
+        (KJS::NumberObjectImp::construct):
+        (KJS::NumberObjectImp::callAsFunction):
+        * kjs/object.cpp:
+        (KJS::JSObject::put):
+
 2007-12-27  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Sam.
