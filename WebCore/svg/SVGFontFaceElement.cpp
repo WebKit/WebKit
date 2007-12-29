@@ -1,35 +1,43 @@
 /*
-Copyright (C) 2007 Eric Seidel <eric@webkit.org>
+   Copyright (C) 2007 Eric Seidel <eric@webkit.org>
+   Copyright (C) 2007 Nikolas Zimmermann <zimmermann@kde.org>
+    
+   This library is free software; you can redistribute it and/or
+   modify it under the terms of the GNU Library General Public
+   License as published by the Free Software Foundation; either
+   version 2 of the License, or (at your option) any later version.
 
-This library is free software; you can redistribute it and/or
-modify it under the terms of the GNU Library General Public
-License as published by the Free Software Foundation; either
-version 2 of the License, or (at your option) any later version.
+   This library is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+   Library General Public License for more details.
 
-This library is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-Library General Public License for more details.
-
-You should have received a copy of the GNU Library General Public License
-along with this library; see the file COPYING.LIB.  If not, write to
-the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
-Boston, MA 02110-1301, USA.
+   You should have received a copy of the GNU Library General Public License
+   along with this library; see the file COPYING.LIB.  If not, write to
+   the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+   Boston, MA 02110-1301, USA.
 */
 
 #include "config.h"
-#if ENABLE(SVG)
+
+#if ENABLE(SVG_FONTS)
 #include "SVGFontFaceElement.h"
 
 #include "CSSFontFaceRule.h"
+#include "CSSFontFaceSrcValue.h"
 #include "CSSProperty.h"
 #include "CSSPropertyNames.h"
 #include "CSSStyleSelector.h"
 #include "CSSStyleSheet.h"
 #include "CSSValueList.h"
-#include "SVGNames.h"
-#include "SVGFontFaceSrcElement.h"
+#include "FontCache.h"
+#include "FontData.h"
+#include "FontPlatformData.h"
 #include "SVGDefinitionSrcElement.h"
+#include "SVGNames.h"
+#include "SVGFontElement.h"
+#include "SVGFontFaceSrcElement.h"
+#include "SVGGlyphElement.h"
 
 namespace WebCore {
 
@@ -125,12 +133,84 @@ void SVGFontFaceElement::parseMappedAttribute(MappedAttribute* attr)
     SVGElement::parseMappedAttribute(attr);
 }
 
+unsigned SVGFontFaceElement::unitsPerEm() const
+{
+    if (hasAttribute(units_per_emAttr))
+        return getAttribute(units_per_emAttr).toInt();
+    
+    return 1000;
+}
+
+String SVGFontFaceElement::fontFamily() const
+{
+    return m_styleDeclaration->getPropertyValue(CSS_PROP_FONT_FAMILY);
+}
+
+FontData* SVGFontFaceElement::createFontData(const FontDescription& fontDescription) const
+{
+    // We only expect to have this method called by a parent font element
+    ASSERT(parentNode());
+    ASSERT(parentNode()->hasTagName(fontTag));
+    SVGFontElement* fontElement = static_cast<SVGFontElement*>(parentNode());
+
+    // Use default fallback platform data - it's not needed anyway...
+    FontPlatformData* cachedPlatformData = FontCache::getLastResortFallbackFont(fontDescription);
+    if (!cachedPlatformData)
+        return 0;
+
+    OwnPtr<FontData> fontData(new FontData(*cachedPlatformData));
+    fontData->m_isSVGFont = true;
+    fontData->m_svgFontFace = const_cast<SVGFontFaceElement*>(this);
+
+    fontData->m_xHeight = fontElement->getAttribute(x_heightAttr).toFloat();
+    fontData->m_unitsPerEm = unitsPerEm();
+
+    if (hasAttribute(ascentAttr))
+        fontData->m_ascent = getAttribute(ascentAttr).toInt();
+    else if (fontElement->hasAttribute(vert_origin_yAttr))
+        fontData->m_ascent = fontData->m_unitsPerEm - fontElement->getAttribute(vert_origin_yAttr).toInt();
+    else
+        // invalid font, should log
+        fontData->m_ascent = 0;
+
+    if (hasAttribute(descentAttr))
+        fontData->m_descent = getAttribute(descentAttr).toInt();
+    else if (fontElement->hasAttribute(vert_origin_yAttr))
+        fontData->m_descent = fontElement->getAttribute(vert_origin_yAttr).toInt();
+    else
+        fontData->m_descent = fontData->m_ascent;
+
+    return fontData.release();
+}
+
 void SVGFontFaceElement::rebuildFontFace()
 {
+    // Ignore changes until we live in the tree
+    if (!parentNode())
+        return;
+
+    // Special handling for local SVG fonts (those which have a <font> parent, and are only used within the document)
+    if (parentNode() && parentNode()->hasTagName(fontTag)) {
+        RefPtr<CSSValueList> list = new CSSValueList;
+
+        RefPtr<CSSFontFaceSrcValue> src = new CSSFontFaceSrcValue(StringImpl::empty(), false);
+        src->setSVGFontFaceElement(this);
+        list->append(src);
+
+        CSSProperty srcProperty(CSS_PROP_SRC, list);
+        const CSSProperty* srcPropertyRef = &srcProperty;
+        m_styleDeclaration->addParsedProperties(&srcPropertyRef, 1);
+
+        document()->updateStyleSelector();
+        return;
+    }
+
+    // TODO: External SVG fonts support - re use existing "custom font" handling logic.
+
     // we currently ignore all but the first src element, alternatively we could concat them
     SVGFontFaceSrcElement* srcElement = 0;
     SVGDefinitionSrcElement* definitionSrc = 0;
-    
+
     for (Node* child = firstChild(); child; child = child->nextSibling()) {
         if (child->hasTagName(font_face_srcTag) && !srcElement)
             srcElement = static_cast<SVGFontFaceSrcElement*>(child);
@@ -143,18 +223,21 @@ void SVGFontFaceElement::rebuildFontFace()
     if (definitionSrc)
         m_styleDeclaration->setProperty(CSS_PROP_DEFINITION_SRC, definitionSrc->getAttribute(XLinkNames::hrefAttr), false);
 #endif
-    
-    if (parentNode() && parentNode()->localName() == "font") // SVGNames::fontTag isn't generated yet
-        return; // this font-face applies to its parent font, which we ignore.
-    else if (srcElement) {
+
+    if (srcElement) {
         // This is the only class (other than CSSParser) to create CSSValue objects and set them on the CSSStyleDeclaration manually
         // we use the addParsedProperties method, and fake having an array of CSSProperty pointers.
         CSSProperty srcProperty(CSS_PROP_SRC, srcElement->srcValue());
         const CSSProperty* srcPropertyRef = &srcProperty;
         m_styleDeclaration->addParsedProperties(&srcPropertyRef, 1);
     }
-    
+
     document()->updateStyleSelector();
+}
+
+void SVGFontFaceElement::insertedIntoDocument()
+{
+    rebuildFontFace();
 }
 
 void SVGFontFaceElement::childrenChanged()
@@ -162,7 +245,16 @@ void SVGFontFaceElement::childrenChanged()
     rebuildFontFace();
 }
 
+SVGGlyphIdentifier SVGFontFaceElement::glyphIdentifierForGlyphCode(const Glyph& code) const
+{
+    // We only expect to have this method called by a parent font element
+    ASSERT(parentNode());
+    ASSERT(parentNode()->hasTagName(fontTag));
+
+    SVGFontElement* fontElement = static_cast<SVGFontElement*>(parentNode());
+    return fontElement->glyphIdentifierForGlyphCode(code);
 }
 
-#endif // ENABLE(SVG)
+}
 
+#endif // ENABLE(SVG_FONTS)

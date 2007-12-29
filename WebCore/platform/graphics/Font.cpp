@@ -507,12 +507,12 @@ int Font::width(const TextRun& run) const
 
 int Font::ascent() const
 {
-    return primaryFont()->ascent();
+    return primaryFont()->ascent(size());
 }
 
 int Font::descent() const
 {
-    return primaryFont()->descent();
+    return primaryFont()->descent(size());
 }
 
 int Font::lineSpacing() const
@@ -548,6 +548,13 @@ void Font::setCodePath(CodePath p)
 
 bool Font::canUseGlyphCache(const TextRun& run) const
 {
+#if ENABLE(SVG_FONTS)
+    // SVG fonts don't support any caching for now, we pretend it here to assure SVG
+    // font drawing always ends up in the 'simple code path', when SVG fonts are used.
+    if (primaryFont() && primaryFont()->isSVGFont())
+        return true;
+#endif
+
     switch (codePath) {
         case Auto:
             break;
@@ -654,7 +661,13 @@ void Font::drawGlyphBuffer(GraphicsContext* context, const GlyphBuffer& glyphBuf
         const FontData* nextFontData = glyphBuffer.fontDataAt(nextGlyph);
         FloatSize nextOffset = glyphBuffer.offsetAt(nextGlyph);
         if (nextFontData != fontData || nextOffset != offset) {
+#if ENABLE(SVG_FONTS)
+            if (fontData->isSVGFont())
+                drawGlyphsWithSVGFont(context, run.referencingRenderObject(), fontData, glyphBuffer, lastFrom, nextGlyph - lastFrom, startPoint);
+            else
+#endif
             drawGlyphs(context, fontData, glyphBuffer, lastFrom, nextGlyph - lastFrom, startPoint);
+
             lastFrom = nextGlyph;
             fontData = nextFontData;
             offset = nextOffset;
@@ -663,6 +676,12 @@ void Font::drawGlyphBuffer(GraphicsContext* context, const GlyphBuffer& glyphBuf
         nextX += glyphBuffer.advanceAt(nextGlyph);
         nextGlyph++;
     }
+
+#if ENABLE(SVG_FONTS)
+    if (fontData->isSVGFont())
+        drawGlyphsWithSVGFont(context, run.referencingRenderObject(), fontData, glyphBuffer, lastFrom, nextGlyph - lastFrom, startPoint);
+    else
+#endif
     drawGlyphs(context, fontData, glyphBuffer, lastFrom, nextGlyph - lastFrom, startPoint);
 }
 

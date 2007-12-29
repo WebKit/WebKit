@@ -46,6 +46,7 @@ class GlyphBuffer;
 class GlyphPageTreeNode;
 class GraphicsContext;
 class IntPoint;
+class RenderObject;
 
 struct GlyphData;
 
@@ -63,6 +64,9 @@ public:
         , m_applyRunRounding(applyRunRounding)
         , m_applyWordRounding(applyWordRounding)
         , m_disableSpacing(false)
+#if ENABLE(SVG_FONTS)
+        , m_referencingRenderObject(0)
+#endif
     {
     }
 
@@ -78,6 +82,9 @@ public:
         , m_applyRunRounding(applyRunRounding)
         , m_applyWordRounding(applyWordRounding)
         , m_disableSpacing(false)
+#if ENABLE(SVG_FONTS)
+        , m_referencingRenderObject(0)
+#endif
     {
     }
 
@@ -103,7 +110,12 @@ public:
     void disableRoundingHacks() { m_applyRunRounding = m_applyWordRounding = false; }
     void setRTL(bool b) { m_rtl = b; }
     void setDirectionalOverride(bool override) { m_directionalOverride = override; }
-    
+
+#if ENABLE(SVG_FONTS)
+    RenderObject* referencingRenderObject() const { return m_referencingRenderObject; }
+    void setReferencingRenderObject(RenderObject* object) { m_referencingRenderObject = object; }
+#endif
+
 private:
     const UChar* m_characters;
     int m_len;
@@ -116,6 +128,10 @@ private:
     bool m_applyRunRounding;
     bool m_applyWordRounding;
     bool m_disableSpacing;
+
+#if ENABLE(SVG_FONTS)
+    RenderObject* m_referencingRenderObject;
+#endif
 };
 
 class Font {
@@ -199,6 +215,9 @@ private:
     bool canUseGlyphCache(const TextRun&) const;
     void drawSimpleText(GraphicsContext*, const TextRun&, const FloatPoint&, int from, int to) const;
     void drawGlyphs(GraphicsContext*, const FontData*, const GlyphBuffer&, int from, int to, const FloatPoint&) const;
+#if ENABLE(SVG_FONTS)
+    void drawGlyphsWithSVGFont(GraphicsContext*, RenderObject*, const FontData*, const GlyphBuffer&, int from, int to, const FloatPoint&) const;
+#endif
     void drawGlyphBuffer(GraphicsContext*, const GlyphBuffer&, const TextRun&, const FloatPoint&) const;
     void drawComplexText(GraphicsContext*, const TextRun&, const FloatPoint&, int from, int to) const;
     float floatWidthForSimpleText(const TextRun&, GlyphBuffer*) const;

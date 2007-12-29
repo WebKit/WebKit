@@ -326,6 +326,7 @@ all : \
     $(INTERNAL_HEADERS_DIR)/DOMSVGFilterElementInternal.h \
     $(PRIVATE_HEADERS_DIR)/DOMSVGFilterPrimitiveStandardAttributes.h \
     $(PRIVATE_HEADERS_DIR)/DOMSVGFitToViewBox.h \
+    $(PRIVATE_HEADERS_DIR)/DOMSVGFontElement.h \
     $(PRIVATE_HEADERS_DIR)/DOMSVGFontFaceElement.h \
     $(PRIVATE_HEADERS_DIR)/DOMSVGFontFaceFormatElement.h \
     $(PRIVATE_HEADERS_DIR)/DOMSVGFontFaceNameElement.h \
@@ -335,6 +336,7 @@ all : \
     $(INTERNAL_HEADERS_DIR)/DOMSVGForeignObjectElementInternal.h \
     $(PRIVATE_HEADERS_DIR)/DOMSVGGElement.h \
     $(INTERNAL_HEADERS_DIR)/DOMSVGGElementInternal.h \
+    $(PRIVATE_HEADERS_DIR)/DOMSVGGlyphElement.h \
     $(PRIVATE_HEADERS_DIR)/DOMSVGGradientElement.h \
     $(INTERNAL_HEADERS_DIR)/DOMSVGGradientElementInternal.h \
     $(PRIVATE_HEADERS_DIR)/DOMSVGImageElement.h \
@@ -357,6 +359,7 @@ all : \
     $(INTERNAL_HEADERS_DIR)/DOMSVGMatrixInternal.h \
     $(PRIVATE_HEADERS_DIR)/DOMSVGMetadataElement.h \
     $(INTERNAL_HEADERS_DIR)/DOMSVGMetadataElementInternal.h \
+    $(PRIVATE_HEADERS_DIR)/DOMSVGMissingGlyphElement.h \
     $(PRIVATE_HEADERS_DIR)/DOMSVGNumber.h \
     $(PRIVATE_HEADERS_DIR)/DOMSVGNumberList.h \
     $(INTERNAL_HEADERS_DIR)/DOMSVGNumberListInternal.h \

@@ -76,6 +76,7 @@ SVGRootInlineBox* SVGInlineTextBox::svgRootInlineBox() const
 
 float SVGInlineTextBox::calculateGlyphWidth(RenderStyle* style, int offset) const
 {
+    ASSERT(style);
     return style->font().floatWidth(svgTextRunForInlineTextBox(textObject()->text()->characters() + offset, 1, style, this, 0));
 }
 

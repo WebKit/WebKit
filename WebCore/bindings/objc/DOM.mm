@@ -228,11 +228,13 @@ static void createElementClassMap()
     addElementClass(SVGNames::filterTag, [DOMSVGFilterElement class]);
 #endif
 #if ENABLE(SVG_FONTS)
+    addElementClass(SVGNames::fontTag, [DOMSVGFontElement class]);
     addElementClass(SVGNames::font_faceTag, [DOMSVGFontFaceElement class]);
     addElementClass(SVGNames::font_face_formatTag, [DOMSVGFontFaceFormatElement class]);
     addElementClass(SVGNames::font_face_nameTag, [DOMSVGFontFaceNameElement class]);
     addElementClass(SVGNames::font_face_srcTag, [DOMSVGFontFaceSrcElement class]);
     addElementClass(SVGNames::font_face_uriTag, [DOMSVGFontFaceUriElement class]);
+    addElementClass(SVGNames::glyphTag, [DOMSVGGlyphElement class]);
 #endif
     addElementClass(SVGNames::gTag, [DOMSVGGElement class]);
     addElementClass(SVGNames::imageTag, [DOMSVGImageElement class]);
@@ -241,6 +243,9 @@ static void createElementClassMap()
     addElementClass(SVGNames::markerTag, [DOMSVGMarkerElement class]);
     addElementClass(SVGNames::maskTag, [DOMSVGMaskElement class]);
     addElementClass(SVGNames::metadataTag, [DOMSVGMetadataElement class]);
+#if ENABLE(SVG_FONTS)
+    addElementClass(SVGNames::missing_glyphTag, [DOMSVGMissingGlyphElement class]);
+#endif
     addElementClass(SVGNames::pathTag, [DOMSVGPathElement class]);
     addElementClass(SVGNames::patternTag, [DOMSVGPatternElement class]);
     addElementClass(SVGNames::polygonTag, [DOMSVGPolygonElement class]);

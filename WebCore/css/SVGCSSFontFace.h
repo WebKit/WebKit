@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Eric Seidel <eric@webkit.org>
+ * Copyright (C) 2007 Nikolas Zimmermann <zimmermann@kde.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,9 +23,32 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-module svg {
+#ifndef SVGCSSFontFace_h
+#define SVGCSSFontFace_h
 
-    interface [Conditional=SVG&SVG_FONTS] SVGFontFaceElement : SVGElement {
-    };
+#if ENABLE(SVG_FONTS)
+#include "CSSFontFace.h"
+
+namespace WebCore {
+
+class SVGFontFaceElement;
+
+class SVGCSSFontFace : public CSSFontFace {
+public:
+    SVGCSSFontFace(CSSFontSelector*, SVGFontFaceElement*);
+    virtual ~SVGCSSFontFace();
+
+    virtual bool isValid() const;
+    virtual void addSource(CSSFontFaceSource*);
+
+    virtual FontData* getFontData(const FontDescription&, bool syntheticBold, bool syntheticItalic);
+
+private:
+    RefPtr<SVGFontFaceElement> m_fontFaceElement;
+    OwnPtr<FontData> m_fontData;
+};
 
 }
+
+#endif // ENABLE(SVG_FONTS)
+#endif

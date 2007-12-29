@@ -39,16 +39,16 @@ class FontDescription;
 class CSSFontFace : public RefCounted<CSSFontFace> {
 public:
     CSSFontFace(CSSFontSelector*);
-    ~CSSFontFace();
+    virtual ~CSSFontFace();
 
     bool isLoaded() const;
-    bool isValid() const;
+    virtual bool isValid() const;
 
-    void addSource(CSSFontFaceSource*);
+    virtual void addSource(CSSFontFaceSource*);
 
     void fontLoaded(CSSFontFaceSource*);
 
-    FontData* getFontData(const FontDescription&, bool syntheticBold, bool syntheticItalic);
+    virtual FontData* getFontData(const FontDescription&, bool syntheticBold, bool syntheticItalic);
 
 private:
     Vector<CSSFontFaceSource*> m_sources;

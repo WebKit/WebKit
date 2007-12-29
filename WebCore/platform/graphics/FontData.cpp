@@ -32,11 +32,19 @@
 
 #include <wtf/MathExtras.h>
 
+#if ENABLE(SVG_FONTS)
+#include "SVGFontFaceElement.h"
+#endif
+
 namespace WebCore {
 
 FontData::FontData(const FontPlatformData& f, bool customFont, bool loading)
     : m_font(f)
     , m_treatAsFixedPitch(false)
+#if ENABLE(SVG_FONTS)
+    , m_isSVGFont(false)
+    , m_svgFontFace(0)
+#endif
     , m_isCustomFont(customFont)
     , m_isLoading(loading)
     , m_smallCapsFontData(0)
@@ -87,6 +95,30 @@ FontData::~FontData()
 
     // We only get deleted when the cache gets cleared.  Since the smallCapsRenderer is also in that cache,
     // it will be deleted then, so we don't need to do anything here.
+}
+
+int FontData::ascent(float fontSize) const
+{
+#if ENABLE(SVG_FONTS)
+    if (m_isSVGFont) {
+        ASSERT(m_unitsPerEm > 0);
+        return m_ascent * fontSize / m_unitsPerEm;
+    }
+#endif
+
+    return m_ascent;
+}
+
+int FontData::descent(float fontSize) const
+{
+#if ENABLE(SVG_FONTS)
+    if (m_isSVGFont) {
+        ASSERT(m_unitsPerEm > 0);
+        return m_descent * fontSize / m_unitsPerEm;
+    }
+#endif
+
+    return m_descent;
 }
 
 float FontData::widthForGlyph(Glyph glyph) const

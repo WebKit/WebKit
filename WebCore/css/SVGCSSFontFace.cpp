@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Eric Seidel <eric@webkit.org>
+ * Copyright (C) 2007 Nikolas Zimmermann <zimmermann@kde.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,9 +23,51 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-module svg {
+#include "config.h"
 
-    interface [Conditional=SVG&SVG_FONTS] SVGFontFaceElement : SVGElement {
-    };
+#if ENABLE(SVG_FONTS)
+#include "SVGCSSFontFace.h"
+
+#include "FontData.h"
+#include "FontDescription.h"
+#include "SVGFontFaceElement.h"
+
+namespace WebCore {
+
+SVGCSSFontFace::SVGCSSFontFace(CSSFontSelector* selector, SVGFontFaceElement* fontFace)
+    : CSSFontFace(selector)
+    , m_fontFaceElement(fontFace)
+{
+    ASSERT(fontFace);
+}
+
+SVGCSSFontFace::~SVGCSSFontFace()
+{
+}
+
+bool SVGCSSFontFace::isValid() const
+{
+    return true;
+}
+    
+void SVGCSSFontFace::addSource(CSSFontFaceSource*)
+{
+    // no-op
+}
+
+FontData* SVGCSSFontFace::getFontData(const FontDescription& fontDescription, bool syntheticBold, bool syntheticItalic)
+{
+    if (!isValid())
+        return 0;
+
+    // TODO: Eventually we'll switch to CSSFontFaceSource here, which handles the caching for us.
+    // (When implementing support for external SVG Fonts this we'll decide about that.)
+    if (!m_fontData)
+        m_fontData.set(m_fontFaceElement->createFontData(fontDescription));
+
+    return m_fontData.get();
+}
 
 }
+
+#endif

@@ -150,7 +150,8 @@ void Path::addArcTo(const FloatPoint& p1, const FloatPoint& p2, float radius)
 
 void Path::closeSubpath()
 {
-    CGPathCloseSubpath(m_path);
+    if (!CGPathIsEmpty(m_path)) // to silence a warning when trying to close an empty path
+        CGPathCloseSubpath(m_path);
 }
 
 void Path::addArc(const FloatPoint& p, float r, float sa, float ea, bool clockwise)

@@ -17,28 +17,23 @@
    Boston, MA 02110-1301, USA.
  */
 
-#include "config.h"
+#ifndef SVGMissingGlyphElement_h
+#define SVGMissingGlyphElement_h
 
 #if ENABLE(SVG_FONTS)
-#include "SVGDefinitionSrcElement.h"
-
-#include "SVGFontFaceElement.h"
-#include "SVGNames.h"
+#include "SVGStyledElement.h"
 
 namespace WebCore {
-    
-SVGDefinitionSrcElement::SVGDefinitionSrcElement(const QualifiedName& tagName, Document* doc)
-    : SVGElement(tagName, doc)
-{
-}
+    class SVGMissingGlyphElement : public SVGStyledElement {
+    public:
+        SVGMissingGlyphElement(const QualifiedName&, Document*);
 
-void SVGDefinitionSrcElement::childrenChanged()
-{
-    if (parentNode() && parentNode()->hasTagName(SVGNames::font_faceTag))
-        static_cast<SVGFontFaceElement*>(parentNode())->rebuildFontFace();
-}
+        virtual bool rendererIsNeeded(RenderStyle*) { return false; }
+    };
 
-}
+} // namespace WebCore
 
 #endif // ENABLE(SVG_FONTS)
+#endif
 
+// vim:ts=4:noet

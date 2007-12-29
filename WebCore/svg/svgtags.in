@@ -16,7 +16,9 @@ clipPath
 color_profile
 #endif
 cursor
+#if ENABLE_SVG_FONTS
 definition_src
+#endif
 defs
 desc
 ellipse
@@ -51,18 +53,20 @@ feTile
 feTurbulence
 filter
 #endif
-#if 0
+#ifdef ENABLE_SVG_FONTS
 font
-#endif
 font_face
 font_face_format
 font_face_name
 font_face_src
 font_face_uri
+#endif
 foreignObject
 g
-#if 0
+#ifdef ENABLE_SVG_FONTS
 glyph
+#endif
+#if 0
 glyphRef
 hkern
 #endif
@@ -72,7 +76,7 @@ linearGradient
 marker
 mask
 metadata
-#if 0
+#ifdef ENABLE_SVG_FONTS
 missing_glyph
 #endif
 mpath

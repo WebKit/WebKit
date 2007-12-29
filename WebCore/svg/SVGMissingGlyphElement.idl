@@ -25,7 +25,7 @@
 
 module svg {
 
-    interface [Conditional=SVG&SVG_FONTS] SVGFontFaceElement : SVGElement {
+    interface [Conditional=SVG&SVG_FONTS] SVGMissingGlyphElement : SVGElement {
     };
 
 }

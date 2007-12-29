@@ -1785,6 +1785,30 @@
 				>
 			</File>
 			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSSVGFontElement.cpp"
+				>
+			</File>
+			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSSVGFontElement.h"
+				>
+			</File>
+			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSSVGGlyphElement.cpp"
+				>
+			</File>
+			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSSVGGlyphElement.h"
+				>
+			</File>
+			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSSVGMissingGlyphElement.cpp"
+				>
+			</File>
+			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSSVGMissingGlyphElement.h"
+				>
+			</File>
+			<File
 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSSVGFontFaceElement.cpp"
 				>
 			</File>
@@ -4835,6 +4859,10 @@
 			</File>
 			<File
 				RelativePath="..\css\SVGCSSComputedStyleDeclaration.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\css\SVGCSSFontFace.cpp"
 				>
 			</File>
 			<File
@@ -8309,6 +8337,22 @@
 				>
 			</File>
 			<File
+				RelativePath="..\svg\SVGFont.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\svg\SVGFont.h"
+				>
+			</File>
+			<File
+				RelativePath="..\svg\SVGFontElement.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\svg\SVGFontElement.h"
+				>
+			</File>
+			<File
 				RelativePath="..\svg\SVGFontFaceElement.cpp"
 				>
 			</File>
@@ -8362,6 +8406,14 @@
 			</File>
 			<File
 				RelativePath="..\svg\SVGGElement.h"
+				>
+			</File>
+			<File
+				RelativePath="..\svg\SVGGlyphElement.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\svg\SVGGlyphElement.h"
 				>
 			</File>
 			<File
@@ -8466,6 +8518,14 @@
 			</File>
 			<File
 				RelativePath="..\svg\SVGMetadataElement.h"
+				>
+			</File>
+			<File
+				RelativePath="..\svg\SVGMissingGlyphElement.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\svg\SVGMissingGlyphElement.h"
 				>
 			</File>
 			<File

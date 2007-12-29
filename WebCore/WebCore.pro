@@ -1236,6 +1236,7 @@ contains(DEFINES, ENABLE_SVG=1) {
         svg/SVGFETileElement.idl \
         svg/SVGFETurbulenceElement.idl \
         svg/SVGFilterElement.idl \
+        svg/SVGFontElement.idl \
         svg/SVGFontFaceElement.idl \
         svg/SVGFontFaceFormatElement.idl \
         svg/SVGFontFaceNameElement.idl \
@@ -1243,6 +1244,7 @@ contains(DEFINES, ENABLE_SVG=1) {
         svg/SVGFontFaceUriElement.idl \
         svg/SVGForeignObjectElement.idl \
         svg/SVGGElement.idl \
+        svg/SVGGlyphElement.idl \
         svg/SVGGradientElement.idl \
         svg/SVGImageElement.idl \
         svg/SVGLength.idl \
@@ -1253,6 +1255,7 @@ contains(DEFINES, ENABLE_SVG=1) {
         svg/SVGMaskElement.idl \
         svg/SVGMatrix.idl \
         svg/SVGMetadataElement.idl \
+        svg/SVGMissingGlyphElement.idl \
         svg/SVGNumber.idl \
         svg/SVGNumberList.idl \
         svg/SVGPaint.idl \
@@ -1320,6 +1323,7 @@ contains(DEFINES, ENABLE_SVG=1) {
         css/SVGCSSComputedStyleDeclaration.cpp \
         css/SVGCSSParser.cpp \
         css/SVGCSSStyleSelector.cpp \
+        css/SVGCSSFontFace.cpp \
         rendering/SVGRenderStyle.cpp \
         rendering/SVGRenderStyleDefs.cpp \
         bindings/js/JSSVGLazyEventListener.cpp \
@@ -1379,6 +1383,8 @@ contains(DEFINES, ENABLE_SVG=1) {
         svg/SVGFilterElement.cpp \
         svg/SVGFilterPrimitiveStandardAttributes.cpp \
         svg/SVGFitToViewBox.cpp \
+        svg/SVGFont.cpp \
+        svg/SVGFontElement.cpp \
         svg/SVGFontFaceElement.cpp \
         svg/SVGFontFaceFormatElement.cpp \
         svg/SVGFontFaceNameElement.cpp \
@@ -1386,6 +1392,7 @@ contains(DEFINES, ENABLE_SVG=1) {
         svg/SVGFontFaceUriElement.cpp \
         svg/SVGForeignObjectElement.cpp \
         svg/SVGGElement.cpp \
+        svg/SVGGlyphElement.cpp \
         svg/SVGGradientElement.cpp \
         svg/SVGImageElement.cpp \
         svg/SVGLangSpace.cpp \
@@ -1397,6 +1404,7 @@ contains(DEFINES, ENABLE_SVG=1) {
         svg/SVGMarkerElement.cpp \
         svg/SVGMaskElement.cpp \
         svg/SVGMetadataElement.cpp \
+        svg/SVGMissingGlyphElement.cpp \
         svg/SVGMPathElement.cpp \
         svg/SVGNumberList.cpp \
         svg/SVGPaint.cpp \

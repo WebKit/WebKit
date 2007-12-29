@@ -45,6 +45,10 @@ class FontPlatformData;
 class SharedBuffer;
 class WidthMap;
 
+#if ENABLE(SVG_FONTS)
+class SVGFontFaceElement;
+#endif
+
 enum Pitch { UnknownPitch, FixedPitch, VariablePitch };
 
 class FontData : Noncopyable {
@@ -57,8 +61,8 @@ public:
     FontData* smallCapsFontData(const FontDescription& fontDescription) const;
 
     // vertical metrics
-    int ascent() const { return m_ascent; }
-    int descent() const { return m_descent; }
+    int ascent(float fontSize) const;
+    int descent(float fontSize) const;
     int lineSpacing() const { return m_lineSpacing; }
     int lineGap() const { return m_lineGap; }
     float xHeight() const { return m_xHeight; }
@@ -71,6 +75,11 @@ public:
 
     void determinePitch();
     Pitch pitch() const { return m_treatAsFixedPitch ? FixedPitch : VariablePitch; }
+
+#if ENABLE(SVG_FONTS)
+    bool isSVGFont() const { return m_isSVGFont; }
+    SVGFontFaceElement* svgFontFace() const { return m_svgFontFace.get(); }
+#endif
 
     bool isCustomFont() const { return m_isCustomFont; }
     bool isLoading() const { return m_isLoading; }
@@ -123,6 +132,11 @@ public:
     mutable GlyphWidthMap m_glyphToWidthMap;
 
     bool m_treatAsFixedPitch;
+
+#if ENABLE(SVG_FONTS)
+    bool m_isSVGFont;
+    RefPtr<SVGFontFaceElement> m_svgFontFace; 
+#endif
 
     bool m_isCustomFont;  // Whether or not we are custom font loaded via @font-face
     bool m_isLoading; // Whether or not this custom font is still in the act of loading.

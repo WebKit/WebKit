@@ -57,18 +57,21 @@
 #include "JSSVGFETurbulenceElement.h"
 #include "JSSVGFilterElement.h"
 #include "JSSVGForeignObjectElement.h"
+#include "JSSVGFontElement.h"
 #include "JSSVGFontFaceElement.h"
 #include "JSSVGFontFaceFormatElement.h"
 #include "JSSVGFontFaceNameElement.h"
 #include "JSSVGFontFaceSrcElement.h"
 #include "JSSVGFontFaceUriElement.h"
 #include "JSSVGGElement.h"
+#include "JSSVGGlyphElement.h"
 #include "JSSVGImageElement.h"
 #include "JSSVGLinearGradientElement.h"
 #include "JSSVGLineElement.h"
 #include "JSSVGMarkerElement.h"
 #include "JSSVGMaskElement.h"
 #include "JSSVGMetadataElement.h"
+#include "JSSVGMissingGlyphElement.h"
 #include "JSSVGPathElement.h"
 #include "JSSVGPatternElement.h"
 #include "JSSVGPolygonElement.h"
@@ -127,18 +130,21 @@
 #include "SVGFETurbulenceElement.h"
 #include "SVGFilterElement.h"
 #include "SVGForeignObjectElement.h"
+#include "SVGFontElement.h"
 #include "SVGFontFaceElement.h"
 #include "SVGFontFaceFormatElement.h"
 #include "SVGFontFaceNameElement.h"
 #include "SVGFontFaceSrcElement.h"
 #include "SVGFontFaceUriElement.h"
 #include "SVGGElement.h"
+#include "SVGGlyphElement.h"
 #include "SVGImageElement.h"
 #include "SVGLinearGradientElement.h"
 #include "SVGLineElement.h"
 #include "SVGMarkerElement.h"
 #include "SVGMaskElement.h"
 #include "SVGMetadataElement.h"
+#include "SVGMissingGlyphElement.h"
 #include "SVGPathElement.h"
 #include "SVGPatternElement.h"
 #include "SVGPolygonElement.h"
@@ -185,11 +191,14 @@ typedef JSNode* (*CreateSVGElementWrapperFunction)(ExecState*, PassRefPtr<SVGEle
 #if ENABLE(SVG_FONTS)
 #define FOR_EACH_FONT_TAG(macro) \
     macro(definition_src, DefinitionSrc) \
+    macro(font, Font) \
     macro(font_face, FontFace) \
     macro(font_face_format, FontFaceFormat) \
     macro(font_face_name, FontFaceName) \
     macro(font_face_src, FontFaceSrc) \
     macro(font_face_uri, FontFaceUri) \
+    macro(glyph, Glyph) \
+    macro(missing_glyph, MissingGlyph)
     // end of macro
     
 #else

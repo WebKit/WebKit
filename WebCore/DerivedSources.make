@@ -203,6 +203,7 @@ all : \
     DOMSVGFESpotLightElement.h \
     DOMSVGFETileElement.h \
     DOMSVGFETurbulenceElement.h \
+    DOMSVGFontElement.h \
     DOMSVGFontFaceElement.h \
     DOMSVGFontFaceFormatElement.h \
     DOMSVGFontFaceNameElement.h \
@@ -213,6 +214,7 @@ all : \
     DOMSVGFitToViewBox.h \
     DOMSVGForeignObjectElement.h \
     DOMSVGGElement.h \
+    DOMSVGGlyphElement.h \
     DOMSVGGradientElement.h \
     DOMSVGImageElement.h \
     DOMSVGLangSpace.h \
@@ -225,6 +227,7 @@ all : \
     DOMSVGMaskElement.h \
     DOMSVGMatrix.h \
     DOMSVGMetadataElement.h \
+    DOMSVGMissingGlyphElement.h \
     DOMSVGNumber.h \
     DOMSVGNumberList.h \
     DOMSVGPaint.h \
@@ -543,6 +546,7 @@ all : \
     JSSVGFETileElement.h \
     JSSVGFETurbulenceElement.h \
     JSSVGFilterElement.h \
+    JSSVGFontElement.h \
     JSSVGFontFaceElement.h \
     JSSVGFontFaceFormatElement.h \
     JSSVGFontFaceNameElement.h \
@@ -550,6 +554,7 @@ all : \
     JSSVGFontFaceUriElement.h \
     JSSVGForeignObjectElement.h \
     JSSVGGElement.h \
+    JSSVGGlyphElement.h \
     JSSVGGradientElement.h \
     JSSVGImageElement.h \
     JSSVGLength.h \
@@ -558,6 +563,7 @@ all : \
     JSSVGLinearGradientElement.h \
     JSSVGMaskElement.h \
     JSSVGMarkerElement.h \
+    JSSVGMissingGlyphElement.h \
     JSSVGTransform.h \
     JSSVGZoomEvent.h \
     JSScreen.h \

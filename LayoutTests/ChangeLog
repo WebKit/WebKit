@@ -1,3 +1,25 @@
+2007-12-29  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Oliver.
+
+        Update layout test results after the SVG Fonts addition.
+        <font-face> is now also disabled by default wrapped in ENABLE(SVG_FONTS) block.
+
+        Fix two misplaced layout test results (results addeed in the wrong place.)
+
+        * platform/mac/svg/css/css-box-min-width-expected.checksum:
+        * platform/mac/svg/css/css-box-min-width-expected.png:
+        * platform/mac/svg/custom/font-face-simple-expected.checksum:
+        * platform/mac/svg/custom/font-face-simple-expected.png:
+        * platform/mac/svg/custom/font-face-simple-expected.txt:
+        * platform/mac/svg/custom/inline-svg-in-xhtml-expected.checksum:
+        * platform/mac/svg/custom/inline-svg-in-xhtml-expected.png:
+        * platform/mac/svg/custom/use-infinite-recursion-expected.png: Added.
+        * svg/custom/inline-svg-in-xhtml-expected.checksum: Removed.
+        * svg/custom/inline-svg-in-xhtml-expected.png: Removed.
+        * svg/custom/use-infinite-recursion-expected.checksum: Removed.
+        * svg/custom/use-infinite-recursion-expected.png: Removed.
+
 2007-12-27  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Oliver Hunt.

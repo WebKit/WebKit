@@ -1,3 +1,123 @@
+2007-12-29  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Eric.
+
+        Fixes: http://bugs.webkit.org/show_bug.cgi?id=10649 (WebKit SVG needs SVG Fonts support)
+
+        Begin implementation of SVG Fonts module. Basic documents using SVG Fonts already work.
+        Only local, in-document fonts who declare their glyphs using the <glyph d="..."> path syntax
+        are supported. (<glyph> containing arbitary SVG content as child elements, not supported yet).
+
+        Limited to single char <-> glyph mapping, no ligatures supported yet.
+        (ie. <glyph unicode='A'/> <glyph unicode='AB'/> - it ignores the 'AB' glyph definition for now)
+
+        Mark all SVG Font related classes & usages in ENABLE(SVG_FONTS) blocks.
+
+        No layout test changes for a --no-svg-fonts build, heavy changes if enabled. Because a lot of SVG Font
+        attributes are not processed yet, the rendering looks wrong - hence disabled by default.)
+
+        * DerivedSources.make: Add SVGFontElement/SVGGlyphElement/SVGMissingGlyphElement
+        * WebCore.pro: Updated build system.
+        * WebCore.vcproj/WebCore.vcproj: Ditto.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+        * bindings/js/JSSVGElementWrapperFactory.cpp: Add JSSVGFontElement/JSSVGGlyphElement/JSSVGMissingGlyphElement
+        * bindings/objc/DOM.mm: Ditto (for DOMSVG*).
+        (WebCore::createElementClassMap):
+        * bindings/objc/DOMInternal.h: Ditto.
+        * bindings/objc/DOMSVG.h: Ditto.
+        * css/CSSFontFace.h: Mark three functions 'virtual', to be overriden by SVGCSSFontFace
+        * css/CSSFontFaceSrcValue.h: Add functionality to identify as SVG CSS font face source.
+        (WebCore::CSSFontFaceSrcValue::m_fontFaceElement): Hold a pointer to the font face which created it.
+        (WebCore::CSSFontFaceSrcValue::svgFontFaceElement):
+        (WebCore::CSSFontFaceSrcValue::setSVGFontFaceElement):
+        * css/CSSFontSelector.cpp: Build 'SVGCSSFontFace' objects for local, in-document SVG fonts.
+        (WebCore::CSSFontSelector::addFontFaceRule):
+        * css/SVGCSSFontFace.cpp: Added. (Simplified implementation for SVG Fonts)
+        (WebCore::SVGCSSFontFace::SVGCSSFontFace):
+        (WebCore::SVGCSSFontFace::~SVGCSSFontFace):
+        (WebCore::SVGCSSFontFace::isValid):
+        (WebCore::SVGCSSFontFace::addSource):
+        (WebCore::SVGCSSFontFace::getFontData):
+        * css/SVGCSSFontFace.h: Added.
+        * platform/graphics/cg/PathCG.cpp:
+        (WebCore::Path::closeSubpath): Silence a CG warning when calling closeSubpath() on empty path.
+        * platform/graphics/Font.cpp: Add some logic to call into SVG Font code when operating on SVG Fonts.
+        (WebCore::Font::ascent): Pass font size to FontData::ascent() call
+        (WebCore::Font::descent): Pass font size to FontData::descent() call
+        (WebCore::Font::canUseGlyphCache): Always return true for SVG fonts here.
+        (WebCore::Font::drawGlyphBuffer): Call drawGlyphsWithSVGFont (instead of drawGlyphs) if the primary font is a SVG font.
+        * platform/graphics/Font.h: Add (SVG-only!) ability to store a RenderObject pointer, to the element which invoked the drawText() call.
+        (WebCore::TextRun::TextRun):
+        (WebCore::TextRun::referencingRenderObject):
+        (WebCore::TextRun::setReferencingRenderObject):
+        * platform/graphics/FontData.cpp:
+        (WebCore::FontData::FontData):
+        (WebCore::FontData::ascent):
+        (WebCore::FontData::descent):
+        * platform/graphics/FontData.h: Store a pointer to the SVGFontFaceElement, which created this FontData object - needed for drawGlyphsWithSVGFont().
+        (WebCore::FontData::isSVGFont): Offer a way to determine wheter this is a FontData object, created by a SVGFontFaceElement.
+        (WebCore::FontData::svgFontFace):
+        * rendering/SVGInlineTextBox.cpp:
+        (WebCore::SVGInlineTextBox::calculateGlyphWidth): Add assertion.
+        * rendering/SVGRootInlineBox.cpp:
+        (WebCore::svgTextRunForInlineTextBox): Always call 'setReferencingRenderObject(myRenderSVGText)' on the new TextRun
+        * svg/SVGFont.cpp: Added.
+        (WebCore::Font::drawGlyphsWithSVGFont): Outsourced implementation of SVG Fonts into it's own file.
+        * svg/SVGFontElement.cpp: Added. (Note: this holds the GlyphHashMap which associates certain <glyph> objects with unicode values)
+        (WebCore::SVGFontElement::SVGFontElement):
+        (WebCore::SVGFontElement::~SVGFontElement):
+        (WebCore::SVGFontElement::parseMappedAttribute):
+        (WebCore::SVGFontElement::collectGlyphs):
+        (WebCore::SVGFontElement::glyphIdentifierForGlyphCode):
+        * svg/SVGFontElement.h: Added.
+        (WebCore::GlyphHash::hash):
+        (WebCore::GlyphHash::equal):
+        (WebCore::GlyphHashTraits::deletedValue):
+        (WebCore::SVGFontElement::rendererIsNeeded):
+        (WebCore::SVGFontElement::contextElement):
+        * svg/SVGFontElement.idl: Added.
+        * svg/SVGFontFaceElement.cpp: Build SVG specific 'FontData' object
+        (WebCore::SVGFontFaceElement::unitsPerEm):
+        (WebCore::SVGFontFaceElement::fontFamily):
+        (WebCore::SVGFontFaceElement::createFontData): Builds SVG specified 'FontData' object with the markup specified ascent/descent values etc..
+        (WebCore::SVGFontFaceElement::rebuildFontFace): Construct CSSFontFaceSrc object (marked as 'isSVGFontFaceSrc') to satisfy CSSFontSelector::addFontFaceRule.
+        (WebCore::SVGFontFaceElement::insertedIntoDocument): Rebuild font face.
+        (WebCore::SVGFontFaceElement::glyphIdentifierForGlyphCode): Allows drawGlyphsWithSVGFont to access the glyph hash map living in the SVGFontElement.
+        * svg/SVGFontFaceElement.h: Fixed code formatting issues & wrap in ENABLE(SVG_FONTS) blocks.
+        * svg/SVGFontFaceElement.idl: Ditto.
+        * svg/SVGFontFaceFormatElement.cpp: Ditto.
+        * svg/SVGFontFaceFormatElement.h: Ditto.
+        * svg/SVGFontFaceFormatElement.idl: Ditto.
+        * svg/SVGFontFaceNameElement.cpp: Ditto.
+        * svg/SVGFontFaceNameElement.h: Ditto.
+        * svg/SVGFontFaceNameElement.idl: Ditto.
+        * svg/SVGFontFaceSrcElement.cpp: Ditto.
+        * svg/SVGFontFaceSrcElement.h: Ditto.
+        * svg/SVGFontFaceSrcElement.idl: Ditto.
+        * svg/SVGFontFaceUriElement.cpp: Ditto.
+        * svg/SVGFontFaceUriElement.h: Ditto.
+        * svg/SVGFontFaceUriElement.idl: Ditto.
+        * svg/SVGDefinitionSrcElement.cpp: Ditto.
+        * svg/SVGDefinitionSrcElement.h: Ditto.
+        * svg/SVGDefinitionSrcElement.idl: Ditto.
+        * svg/SVGGlyphElement.cpp: Added.
+        (WebCore::SVGGlyphElement::SVGGlyphElement):
+        (WebCore::SVGGlyphElement::parseMappedAttribute):
+        (WebCore::SVGGlyphElement::childrenChanged):
+        * svg/SVGGlyphElement.h: Added.
+        (WebCore::SVGGlyphElement::rendererIsNeeded):
+        (WebCore::SVGGlyphIdentifier::): Structure holding all data to represent a SVG glyph (origin, advance, orientation etc..)
+        (WebCore::SVGGlyphIdentifier::SVGGlyphIdentifier):
+        * svg/SVGGlyphElement.idl: Added.
+        * svg/SVGMissingGlyphElement.cpp: Added. (stub implementation)
+        (WebCore::SVGMissingGlyphElement::SVGMissingGlyphElement):
+        (WebCore::SVGMissingGlyphElement::parseMappedAttribute):
+        (WebCore::SVGMissingGlyphElement::childrenChanged):
+        * svg/SVGMissingGlyphElement.h: Added.
+        (WebCore::SVGMissingGlyphElement::rendererIsNeeded):
+        * svg/SVGMissingGlyphElement.idl: Added.
+        * svg/svgtags.in: Wrap all SVGFont* elements in ENABLE(SVG_FONTS) block - to assure --no-svg-fonts compilation works (which is the default for now!).
+
 2007-12-27  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Alexey Proskuryakov.
