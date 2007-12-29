@@ -410,6 +410,11 @@ void BreakpointCheckStatement::streamTo(SourceStream& stream) const
     m_statement->streamTo(stream);
 }
 
+void BreakpointCheckStatement::optimizeVariableAccess(SymbolTable&, DeclarationStacks::NodeStack& nodeStack)
+{
+    nodeStack.append(m_statement.get());
+}
+
 // ------------------------------ NullNode -------------------------------------
 
 JSValue *NullNode::evaluate(ExecState *)

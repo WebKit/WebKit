@@ -2,9 +2,23 @@
 
         Reviewed by Oliver.
 
+        ASSERT when debugging via Drosera due to missed var lookup optimization.
+        http://bugs.webkit.org/show_bug.cgi?id=16634
+        
+        No test case possible.
+
+        * kjs/nodes.cpp:
+        (KJS::BreakpointCheckStatement::optimizeVariableAccess):
+        * kjs/nodes.h:
+
+2007-12-28  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Oliver.
+
         Fix (-0).toFixed() and re-factor a little
         Fix (-0).toExponential() and printing of trailing 0s in toExponential
         Fix toPrecision(nan) handling
+        http://bugs.webkit.org/show_bug.cgi?id=16640
 
         * kjs/number_object.cpp:
         (KJS::numberToFixed):

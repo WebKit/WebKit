@@ -2103,6 +2103,7 @@ namespace KJS {
         BreakpointCheckStatement(PassRefPtr<StatementNode>) KJS_FAST_CALL;
         virtual JSValue* execute(ExecState*) KJS_FAST_CALL;
         virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
+        virtual void optimizeVariableAccess(SymbolTable&, DeclarationStacks::NodeStack&) KJS_FAST_CALL;
     private:
         RefPtr<StatementNode> m_statement;
     };
