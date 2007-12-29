@@ -1,3 +1,32 @@
+2007-12-29  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Maciej.
+
+        Add new helper structure SVGFontData - FontData holds this object as OwnPtr.
+        Store several attribute values there (horiz-adv-x, horiz-origin-x etc..)
+
+        To optimize for the common case ('FontData' used for HTML rendering) it feels
+        better to hold one OwnPtr in FontData, than several floats.
+
+        Parse all <font> attributes in SVGFontFaceElement::createFontData.
+
+        * platform/graphics/FontData.cpp:
+        (WebCore::SVGFontData::SVGFontData):
+        (WebCore::FontData::FontData):
+        (WebCore::FontData::ascent):
+        (WebCore::FontData::descent):
+        * platform/graphics/FontData.h:
+        (WebCore::FontData::isSVGFont):
+        (WebCore::FontData::svgFontData):
+        * svg/SVGFont.cpp:
+        (WebCore::Font::drawGlyphsWithSVGFont):
+        * svg/SVGFontElement.cpp:
+        * svg/SVGFontElement.h:
+        (WebCore::SVGFontElement::rendererIsNeeded):
+        * svg/SVGFontFaceElement.cpp:
+        (WebCore::SVGFontFaceElement::unitsPerEm):
+        (WebCore::SVGFontFaceElement::createFontData):
+
 2007-12-28  Darin Adler  <darin@apple.com>
 
         - try to fix Windows and WX builds (broken by SVG Fonts check-in)

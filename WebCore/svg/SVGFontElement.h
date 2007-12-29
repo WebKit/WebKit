@@ -53,9 +53,7 @@ namespace WebCore {
         SVGFontElement(const QualifiedName&, Document*);
         virtual ~SVGFontElement();
 
-        virtual void parseMappedAttribute(MappedAttribute*);
         virtual bool rendererIsNeeded(RenderStyle*) { return false; }    
-
         virtual const SVGElement* contextElement() const { return this; }
 
         void collectGlyphs(const Font&);

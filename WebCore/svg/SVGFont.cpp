@@ -42,7 +42,10 @@ void Font::drawGlyphsWithSVGFont(GraphicsContext* context, RenderObject* renderO
     ASSERT(!fontData->isCustomFont());
     ASSERT(fontData->isSVGFont());
 
-    SVGFontFaceElement* fontFace = fontData->svgFontFace();
+    SVGFontData* svgFontData = fontData->svgFontData();
+    ASSERT(svgFontData);
+
+    SVGFontFaceElement* fontFace = svgFontData->fontFaceElement.get();
     ASSERT(fontFace);
 
     RenderStyle* style = renderObject->style();

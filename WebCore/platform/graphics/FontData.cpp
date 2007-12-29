@@ -38,12 +38,25 @@
 
 namespace WebCore {
 
+#if ENABLE(SVG_FONTS)
+// Don't implement constructor in the header to save a SVGFontFaceElement.h include.
+SVGFontData::SVGFontData(SVGFontFaceElement* element)
+    : fontFaceElement(element)
+    , horizontalOriginX(0.0f)
+    , horizontalOriginY(0.0f)
+    , horizontalAdvanceX(0.0f)
+    , verticalOriginX(0.0f)
+    , verticalOriginY(0.0f)
+    , verticalAdvanceY(0.0f)
+{
+}
+#endif
+
 FontData::FontData(const FontPlatformData& f, bool customFont, bool loading)
     : m_font(f)
     , m_treatAsFixedPitch(false)
 #if ENABLE(SVG_FONTS)
-    , m_isSVGFont(false)
-    , m_svgFontFace(0)
+    , m_svgFontData(0)
 #endif
     , m_isCustomFont(customFont)
     , m_isLoading(loading)
@@ -100,7 +113,7 @@ FontData::~FontData()
 int FontData::ascent(float fontSize) const
 {
 #if ENABLE(SVG_FONTS)
-    if (m_isSVGFont) {
+    if (m_svgFontData) {
         ASSERT(m_unitsPerEm > 0);
         return m_ascent * fontSize / m_unitsPerEm;
     }
@@ -112,7 +125,7 @@ int FontData::ascent(float fontSize) const
 int FontData::descent(float fontSize) const
 {
 #if ENABLE(SVG_FONTS)
-    if (m_isSVGFont) {
+    if (m_svgFontData) {
         ASSERT(m_unitsPerEm > 0);
         return m_descent * fontSize / m_unitsPerEm;
     }

@@ -136,8 +136,8 @@ void SVGFontFaceElement::parseMappedAttribute(MappedAttribute* attr)
 unsigned SVGFontFaceElement::unitsPerEm() const
 {
     if (hasAttribute(units_per_emAttr))
-        return getAttribute(units_per_emAttr).toInt();
-    
+        return static_cast<int>(ceilf(getAttribute(units_per_emAttr).toFloat()));
+
     return 1000;
 }
 
@@ -159,26 +159,85 @@ FontData* SVGFontFaceElement::createFontData(const FontDescription& fontDescript
         return 0;
 
     OwnPtr<FontData> fontData(new FontData(*cachedPlatformData));
-    fontData->m_isSVGFont = true;
-    fontData->m_svgFontFace = const_cast<SVGFontFaceElement*>(this);
+
+    SVGFontData* svgFontData = new SVGFontData(const_cast<SVGFontFaceElement*>(this));
+    fontData->m_svgFontData.set(svgFontData);
 
     fontData->m_xHeight = fontElement->getAttribute(x_heightAttr).toFloat();
     fontData->m_unitsPerEm = unitsPerEm();
 
-    if (hasAttribute(ascentAttr))
-        fontData->m_ascent = getAttribute(ascentAttr).toInt();
-    else if (fontElement->hasAttribute(vert_origin_yAttr))
-        fontData->m_ascent = fontData->m_unitsPerEm - fontElement->getAttribute(vert_origin_yAttr).toInt();
-    else
-        // invalid font, should log
-        fontData->m_ascent = 0;
+    // Spec: The X-coordinate in the font coordinate system of the origin of a glyph to be used when
+    // drawing horizontally oriented text. (Note that the origin applies to all glyphs in the font.)
+    // If the attribute is not specified, the effect is as if a value of "0" were specified.
+    if (fontElement->hasAttribute(horiz_origin_xAttr))
+        svgFontData->horizontalOriginX = fontElement->getAttribute(horiz_origin_xAttr).toFloat();
 
-    if (hasAttribute(descentAttr))
-        fontData->m_descent = getAttribute(descentAttr).toInt();
-    else if (fontElement->hasAttribute(vert_origin_yAttr))
-        fontData->m_descent = fontElement->getAttribute(vert_origin_yAttr).toInt();
+    // Spec: The Y-coordinate in the font coordinate system of the origin of a glyph to be used when
+    // drawing horizontally oriented text. (Note that the origin applies to all glyphs in the font.)
+    // If the attribute is not specified, the effect is as if a value of "0" were specified.
+    if (fontElement->hasAttribute(horiz_origin_yAttr))
+        svgFontData->horizontalOriginY = fontElement->getAttribute(horiz_origin_yAttr).toFloat();
+
+    // Spec: The default horizontal advance after rendering a glyph in horizontal orientation. Glyph
+    // widths are required to be non-negative, even if the glyph is typically rendered right-to-left,
+    // as in Hebrew and Arabic scripts.
+    if (fontElement->hasAttribute(horiz_adv_xAttr)) {
+        float advance = fontElement->getAttribute(horiz_adv_xAttr).toFloat();
+
+        // TODO: Report errors, instead of silent ignore?
+        if (advance >= 0.0)
+            svgFontData->horizontalAdvanceX = advance;
+    }
+
+    // Spec: The default X-coordinate in the font coordinate system of the origin of a glyph to be used when
+    // drawing vertically oriented text. If the attribute is not specified, the effect is as if the attribute
+    // were set to half of the effective value of attribute horiz-adv-x.
+    if (fontElement->hasAttribute(vert_origin_xAttr))
+        svgFontData->verticalOriginX = fontElement->getAttribute(vert_origin_xAttr).toFloat();
     else
-        fontData->m_descent = fontData->m_ascent;
+        svgFontData->verticalOriginX = svgFontData->horizontalAdvanceX / 2.0f;
+
+    // Spec: The default Y-coordinate in the font coordinate system of the origin of a glyph to be used when
+    // drawing vertically oriented text. If the attribute is not specified, the effect is as if the attribute
+    // were set to the position specified by the font's ascent attribute.             
+    if (fontElement->hasAttribute(vert_origin_yAttr))
+        svgFontData->verticalOriginY = fontElement->getAttribute(vert_origin_yAttr).toFloat();
+    else
+        svgFontData->verticalOriginY = fontElement->getAttribute(ascentAttr).toFloat();
+
+    // Spec: The default vertical advance after rendering a glyph in vertical orientation. If the attribute is
+    // not specified, the effect is as if a value equivalent of one em were specified (see units-per-em).                    
+    if (fontElement->hasAttribute(vert_adv_yAttr))
+        svgFontData->verticalAdvanceY = fontElement->getAttribute(vert_adv_yAttr).toFloat();
+    else
+        svgFontData->verticalAdvanceY = 1.0f;
+
+    // Spec: Same syntax and semantics as the 'ascent' descriptor within an @font-face rule. The maximum
+    // unaccented height of the font within the font coordinate system. If the attribute is not specified,
+    // the effect is as if the attribute were set to the difference between the units-per-em value and the
+    // vert-origin-y value for the corresponding font.
+    if (hasAttribute(ascentAttr))
+        fontData->m_ascent = static_cast<int>(ceilf(getAttribute(ascentAttr).toFloat()));
+    else if (fontElement->hasAttribute(vert_origin_yAttr))
+        fontData->m_ascent = fontData->m_unitsPerEm - static_cast<int>(ceilf(fontElement->getAttribute(vert_origin_yAttr).toFloat()));
+    else {
+        // TODO: Batik actually computes the ascent, based on the glyph dimensions of the glyphs contained in the font.
+        // We may choose the same solution (even if the spec doesn't give a hint), as some W3C SVG 1.1 testcases depend on that.
+        fontData->m_ascent = 0;
+    }
+
+    // Spec: Same syntax and semantics as the 'descent' descriptor within an @font-face rule. The maximum
+    // unaccented depth of the font within the font coordinate system. If the attribute is not specified,
+    // the effect is as if the attribute were set to the vert-origin-y value for the corresponding font.
+    if (hasAttribute(descentAttr))
+        fontData->m_descent = static_cast<int>(ceilf(getAttribute(descentAttr).toFloat()));
+    else if (fontElement->hasAttribute(vert_origin_yAttr))
+        fontData->m_descent = static_cast<int>(ceilf(fontElement->getAttribute(vert_origin_yAttr).toFloat()));
+    else {
+        // TODO: Batik actually computes the descent, based on the glyph dimensions of the glyphs contained in the font.
+        // We may choose the same solution (even if the spec doesn't give a hint), as some W3C SVG 1.1 testcases depend on that.
+        fontData->m_descent = 0;
+    }
 
     return fontData.release();
 }
