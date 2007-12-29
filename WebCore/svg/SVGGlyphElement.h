@@ -27,13 +27,8 @@
 #include "Path.h"
 
 namespace WebCore {
-    
-    class SVGGlyphElement : public SVGStyledElement {
-    public:
-        SVGGlyphElement(const QualifiedName&, Document*);
 
-        virtual bool rendererIsNeeded(RenderStyle*) { return false; }
-    };
+    struct SVGFontData;
 
     // Describe a SVG <glyph> element
     struct SVGGlyphIdentifier {
@@ -50,7 +45,10 @@ namespace WebCore {
         {
         }
 
-        // 'orientation' property;
+        // 'glyph-name' property
+        String glyphName;
+
+        // 'orientation' property
         Orientation orientation;
 
         // 'arabic-form' property
@@ -75,9 +73,17 @@ namespace WebCore {
         Vector<String> languages;
     };
 
+    class SVGGlyphElement : public SVGStyledElement {
+    public:
+        SVGGlyphElement(const QualifiedName&, Document*);
+
+        virtual bool rendererIsNeeded(RenderStyle*) { return false; }
+
+        SVGGlyphIdentifier buildGlyphIdentifier(SVGFontData*) const;
+    };
+
+
 } // namespace WebCore
 
 #endif // ENABLE(SVG_FONTS)
 #endif
-
-// vim:ts=4:noet

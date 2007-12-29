@@ -24,6 +24,7 @@
 #include "SVGFontElement.h"
 
 #include "Font.h"
+#include "FontData.h"
 #include "GlyphPageTreeNode.h"
 #include "SVGGlyphElement.h"
 #include "SVGMissingGlyphElement.h"
@@ -45,6 +46,8 @@ SVGFontElement::~SVGFontElement()
 
 void SVGFontElement::collectGlyphs(const Font& font)
 {
+    m_glyphMap.clear();
+
     Vector<SVGGlyphElement*> glyphElements;
     SVGMissingGlyphElement* missingGlyphElement = 0;
 
@@ -58,26 +61,32 @@ void SVGFontElement::collectGlyphs(const Font& font)
     Vector<SVGGlyphElement*>::iterator it = glyphElements.begin();
     Vector<SVGGlyphElement*>::iterator end = glyphElements.end();
 
-    m_glyphMap.clear();
+    SVGFontData* svgFontData = 0;
 
+#if !PLATFORM(QT)
+    // Why doesn't Qt have primaryFont()? The Qt guys will see an assertion, if buildGlyphIdentifier() is called :(
+    const FontData* fontData = font.primaryFont();
+    ASSERT(fontData);
+
+    svgFontData = fontData->svgFontData();
+#endif
+
+    String glyphString;
     SVGGlyphIdentifier identifier;
 
-    // Only supports single glyph <-> single character situations & glyphs rendered by paths.
     for (; it != end; ++it) {
-        String pathDataString = (*it)->getAttribute(dAttr);
-        String glyphString = (*it)->getAttribute(unicodeAttr);
+        identifier = (*it)->buildGlyphIdentifier(svgFontData);
+        glyphString = (*it)->getAttribute(unicodeAttr);
 
-        // To support glyph strings consisting of more than one character (ie. 'ffl' ligatures) we need another hashing scheme.
-        // Glyph <-> SVGGlyphIdentifier is not enough.
-        if (glyphString.length() != 1 || pathDataString.isEmpty())
+        // TODO: To support glyph strings consisting of more than one character (ie. 'ffl' ligatures)
+        // we need another hashing scheme. Glyph <-> SVGGlyphIdentifier is not enough.
+
+        // TODO: We skip glyphs with empty paths, this is not correct if the <glyph> has no d="" but children!
+        
+        if (glyphString.length() != 1 || identifier.pathData.isEmpty())
             continue;
 
         const GlyphData& glyphData = font.glyphDataForCharacter(glyphString[0], false /* TODO: no rtl, is this correct in all cases? */);
-
-        identifier.pathData = Path();
-        pathFromSVGData(identifier.pathData, pathDataString);
-
-        //fprintf(stderr, "FOUND NEW GLYPH! pathDataString: '%s' glyphString: '%s'  code: '%u'\n", pathDataString.latin1().data(), glyphString.latin1().data(), glyphData.glyph);
         m_glyphMap.add(glyphData.glyph, identifier);
     }
 }

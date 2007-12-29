@@ -51,6 +51,9 @@ class SVGFontFaceElement;
 struct SVGFontData {
     SVGFontData(SVGFontFaceElement*);
 
+    // Helper function
+    static float convertEmUnitToPixel(float fontSize, float unitsPerEm, float value);
+
     // Hold pointer to our creator
     RefPtr<SVGFontFaceElement> fontFaceElement;
 

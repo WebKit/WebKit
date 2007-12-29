@@ -50,6 +50,12 @@ SVGFontData::SVGFontData(SVGFontFaceElement* element)
     , verticalAdvanceY(0.0f)
 {
 }
+
+float SVGFontData::convertEmUnitToPixel(float fontSize, float unitsPerEm, float value)
+{
+    ASSERT(unitsPerEm > 0.0f);
+    return value * fontSize / unitsPerEm;
+}
 #endif
 
 FontData::FontData(const FontPlatformData& f, bool customFont, bool loading)
@@ -113,10 +119,8 @@ FontData::~FontData()
 int FontData::ascent(float fontSize) const
 {
 #if ENABLE(SVG_FONTS)
-    if (m_svgFontData) {
-        ASSERT(m_unitsPerEm > 0);
-        return m_ascent * fontSize / m_unitsPerEm;
-    }
+    if (m_svgFontData)
+        return SVGFontData::convertEmUnitToPixel(fontSize, m_unitsPerEm, m_ascent);
 #endif
 
     return m_ascent;
@@ -125,10 +129,8 @@ int FontData::ascent(float fontSize) const
 int FontData::descent(float fontSize) const
 {
 #if ENABLE(SVG_FONTS)
-    if (m_svgFontData) {
-        ASSERT(m_unitsPerEm > 0);
-        return m_descent * fontSize / m_unitsPerEm;
-    }
+    if (m_svgFontData)
+        return SVGFontData::convertEmUnitToPixel(fontSize, m_unitsPerEm, m_descent);
 #endif
 
     return m_descent;

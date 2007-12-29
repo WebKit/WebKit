@@ -2,6 +2,31 @@
 
         Reviewed by Oliver.
 
+        Further SVG Font work. Parse all <glyph> attributes, using SVGGlyphElement::buildGlyphIdentifier.
+        SVGFontElement::collectGlyphs() now uses this method. Per character advance values work well now.
+
+        * platform/graphics/FontData.cpp:
+        (WebCore::SVGFontData::convertEmUnitToPixel): Add helper function.
+        (WebCore::FontData::ascent):
+        (WebCore::FontData::descent):
+        * platform/graphics/FontData.h:
+        * svg/SVGFont.cpp:
+        (WebCore::isVerticalWritingMode): Add helper function.
+        (WebCore::Font::drawGlyphsWithSVGFont):
+        * svg/SVGFontElement.cpp:
+        (WebCore::SVGFontElement::collectGlyphs): Simplified implementation - SVGGlyphIdentifier now build by SVGGlyphElement.
+        * svg/SVGGlyphElement.cpp:
+        (WebCore::parseArabicForm): Helper function.
+        (WebCore::parseOrientation): Ditto.
+        (WebCore::parsePathData): Ditto.
+        (WebCore::SVGGlyphElement::buildGlyphIdentifier):
+        * svg/SVGGlyphElement.h:
+        (WebCore::SVGGlyphElement::rendererIsNeeded):
+
+2007-12-29  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Oliver.
+
         Refactor SVGAnimationElement::parseValues into a generic function parseDelimitedString.
         SVGAnimationElement needs to parse semicolon-seperated strings, SVGGlyphElement comma-seperated.
 
