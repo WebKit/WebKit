@@ -35,7 +35,8 @@
 
         // Remove this node from the document so it doesn't make the DumpRenderTree output
         // different when SVG is enabled and disabled.
-        document.getElementById("r_00").parentNode.removeChild(document.getElementById("r_00"));
+        var g = document.getElementsByTagNameNS("http://www.w3.org/2000/svg", "g")[0];
+        g.parentNode.removeChild(g);
     </script>
 
 </body>

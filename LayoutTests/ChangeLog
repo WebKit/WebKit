@@ -1,3 +1,12 @@
+2007-12-28  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Mitz.
+
+        http://bugs.webkit.org/show_bug.cgi?id=15734
+        fast/xpath/namespace-vs-predicate.xhtml fails unexpectedly in no-SVG build
+
+        * fast/xpath/namespace-vs-predicate.xhtml: Use (hopefully) correct code to remove an SVG element.
+
 2007-12-28  Darin Adler  <darin@apple.com>
 
         - checked in these files that were supposed to be part of
