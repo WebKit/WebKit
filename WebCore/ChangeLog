@@ -1,5 +1,15 @@
 2007-12-29  Nikolas Zimmermann  <zimmermann@kde.org>
 
+        Reviewed by Alexey.
+
+        Respect horiz-origin-x / horiz-origin-y / vert-origin-x / vert-origin-y properties when drawing SVG Fonts.
+        (Fixes fonts-elem-05-t.svg in a --svg-fonts build)
+
+        * svg/SVGFont.cpp:
+        (WebCore::Font::drawGlyphsWithSVGFont):
+
+2007-12-29  Nikolas Zimmermann  <zimmermann@kde.org>
+
         Reviewed by Oliver.
 
         Further SVG Font work. Parse all <glyph> attributes, using SVGGlyphElement::buildGlyphIdentifier.

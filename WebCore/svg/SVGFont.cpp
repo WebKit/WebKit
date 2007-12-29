@@ -66,24 +66,32 @@ void Font::drawGlyphsWithSVGFont(GraphicsContext* context, RenderObject* renderO
     float fontSize = size();
     unsigned unitsPerEm = fontFace->unitsPerEm();
     bool isVerticalText = isVerticalWritingMode(style->svgStyle());
+    float scale = SVGFontData::convertEmUnitToPixel(fontSize, unitsPerEm, 1.0f);
 
     SVGPaintServer* fillPaintServer = SVGPaintServer::fillPaintServer(style, renderObject);
     SVGPaintServer* strokePaintServer = SVGPaintServer::strokePaintServer(style, renderObject);
 
     FloatPoint startPoint = point;
+
+    FloatPoint glyphOrigin;
+    if (!isVerticalText) {
+        glyphOrigin.setX(SVGFontData::convertEmUnitToPixel(fontSize, unitsPerEm, svgFontData->horizontalOriginX));
+        glyphOrigin.setY(SVGFontData::convertEmUnitToPixel(fontSize, unitsPerEm, svgFontData->horizontalOriginY));
+    }
+
     for (int i = from; i < to; ++i) {
         SVGGlyphIdentifier identifier = fontFace->glyphIdentifierForGlyphCode(glyphBuffer.glyphAt(i));
 
         // TODO: Support arbitary SVG content as glyph (currently limited to <glyph d="..."> situations)
         if (!identifier.pathData.isEmpty()) {
-            float scale = SVGFontData::convertEmUnitToPixel(size(), fontFace->unitsPerEm(), 1.0f); 
-
-            AffineTransform ctm;
-            ctm.translate(startPoint.x(), startPoint.y());
-            ctm.scale(scale, -scale);
+            if (isVerticalText) {
+                glyphOrigin.setX(SVGFontData::convertEmUnitToPixel(fontSize, unitsPerEm, identifier.verticalOriginX));
+                glyphOrigin.setY(SVGFontData::convertEmUnitToPixel(fontSize, unitsPerEm, identifier.verticalOriginY));
+            }
 
             context->save();
-            context->concatCTM(ctm);
+            context->translate(startPoint.x() + glyphOrigin.x(), startPoint.y() + glyphOrigin.y());
+            context->scale(FloatSize(scale, -scale));
 
             context->beginPath();
 
