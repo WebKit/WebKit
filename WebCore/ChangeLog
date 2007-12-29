@@ -1,5 +1,13 @@
 2007-12-29  Nikolas Zimmermann  <zimmermann@kde.org>
 
+        Build fix, not reviewed.
+
+        Add wtf/OwnPtr.h include, to fix --svg-fonts build.
+
+        * css/SVGCSSFontFace.h:
+
+2007-12-29  Nikolas Zimmermann  <zimmermann@kde.org>
+
         Reviewed by Eric.
 
         Fixes: http://bugs.webkit.org/show_bug.cgi?id=10649 (WebKit SVG needs SVG Fonts support)

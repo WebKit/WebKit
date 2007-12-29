@@ -28,6 +28,7 @@
 
 #if ENABLE(SVG_FONTS)
 #include "CSSFontFace.h"
+#include <wtf/OwnPtr.h>
 
 namespace WebCore {
 
