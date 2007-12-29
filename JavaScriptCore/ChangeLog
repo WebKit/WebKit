@@ -2,6 +2,17 @@
 
         Reviewed by Sam.
 
+        More small attempts to make number code readable
+
+        * kjs/number_object.cpp:
+        (KJS::exponentialPartToString):
+        (KJS::numberToExponential):
+        (KJS::numberToPrecision):
+
+2007-12-28  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Sam.
+
         Break out callAsFunction implementations into static functions
 
         * kjs/number_object.cpp:
