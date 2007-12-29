@@ -839,7 +839,35 @@ bool pathSegListFromSVGData(SVGPathSegList* path , const String& d, bool process
     return builder.build(path, d, process);
 }
 
+Vector<String> parseDelimitedString(const String& input, const char seperator)
+{
+    Vector<String> values;
+
+    const UChar* ptr = input.characters();
+    const UChar* end = ptr + input.length();
+    skipOptionalSpaces(ptr, end);
+
+    while (ptr < end) {
+        // Leading and trailing white space, and white space before and after semicolon separators, will be ignored.
+        const UChar* inputStart = ptr;
+        while (ptr < end && *ptr != seperator) // careful not to ignore whitespace inside inputs
+            ptr++;
+
+        if (ptr == inputStart)
+            break;
+
+        // walk backwards from the ; to ignore any whitespace
+        const UChar* inputEnd = ptr - 1;
+        while (inputStart < inputEnd && isWhitespace(*inputEnd))
+            inputEnd--;
+
+        values.append(String(inputStart, inputEnd - inputStart + 1));
+        skipOptionalSpacesOrDelimiter(ptr, end, seperator);
+    }
+
+    return values;
 }
 
-// vim:ts=4:noet
+}
+
 #endif // ENABLE(SVG)

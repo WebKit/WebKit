@@ -137,30 +137,6 @@ void SVGAnimationElement::parseKeyNumbers(Vector<float>& keyNumbers, const Strin
     }
 }
 
-static void parseValues(Vector<String>& values, const String& value)
-{
-    const UChar* ptr = value.characters();
-    const UChar* end = ptr + value.length();
-    skipOptionalSpaces(ptr, end);
-    while (ptr < end) {
-        // SMIL 3.2.2 : Leading and trailing white space, and white space before and after semicolon separators, will be ignored.
-        const UChar* valueStart = ptr;
-        while (ptr < end && *ptr != ';') // careful not to ignore whitespace inside values
-            ptr++;
-        if (ptr == valueStart)
-            break;
-        
-        // walk backwards from the ; to ignore any whitespace
-        const UChar* valueEnd = ptr - 1;
-        while (valueStart < valueEnd && isWhitespace(*valueEnd))
-            valueEnd--;
-        
-        values.append(String(valueStart, valueEnd - valueStart + 1));
-        
-        skipOptionalSpacesOrDelimiter(ptr, end, ';');
-    }
-}
-
 static void parseKeySplines(Vector<SVGAnimationElement::KeySpline>& keySplines, const String& value)
 {
     float number = 0.0f;
@@ -301,7 +277,7 @@ void SVGAnimationElement::parseMappedAttribute(MappedAttribute* attr)
             m_calcMode = CALCMODE_PACED;
     } else if (attr->name() == SVGNames::valuesAttr) {
         m_values.clear();
-        parseValues(m_values, attr->value());
+        m_values = parseDelimitedString(attr->value(), ';');
     } else if (attr->name() == SVGNames::keyTimesAttr) {
         m_keyTimes.clear();
         parseKeyNumbers(m_keyTimes, attr->value());

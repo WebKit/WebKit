@@ -1,5 +1,18 @@
 2007-12-29  Nikolas Zimmermann  <zimmermann@kde.org>
 
+        Reviewed by Oliver.
+
+        Refactor SVGAnimationElement::parseValues into a generic function parseDelimitedString.
+        SVGAnimationElement needs to parse semicolon-seperated strings, SVGGlyphElement comma-seperated.
+
+        * svg/SVGAnimationElement.cpp:
+        (WebCore::SVGAnimationElement::parseMappedAttribute):
+        * svg/SVGParserUtilities.cpp:
+        (WebCore::parseDelimitedString):
+        * svg/SVGParserUtilities.h:
+
+2007-12-29  Nikolas Zimmermann  <zimmermann@kde.org>
+
         Reviewed by Maciej.
 
         Add new helper structure SVGFontData - FontData holds this object as OwnPtr.
