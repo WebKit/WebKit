@@ -1,5 +1,11 @@
 2007-12-29  Alp Toker  <alp@atoker.com>
 
+        Fix typo.
+
+        * hosted/sunspider.html:
+
+2007-12-29  Alp Toker  <alp@atoker.com>
+
         Reviewed by Maciej.
 
         Provide the current URL in the SunSpider results page. Useful for
