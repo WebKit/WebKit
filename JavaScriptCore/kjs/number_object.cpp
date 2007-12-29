@@ -139,6 +139,250 @@ static double intPow10(int e)
     return static_cast<double>(result);
 }
 
+static JSValue* numberToString(ExecState* exec, JSValue* v, const List& args)
+{
+    double dradix = 10;
+    if (!args.isEmpty())
+        dradix = args[0]->toIntegerPreserveNaN(exec);
+    if (dradix >= 2 && dradix <= 36 && dradix != 10) { // false for NaN
+        int radix = static_cast<int>(dradix);
+        const char digits[] = "0123456789abcdefghijklmnopqrstuvwxyz";
+        // INT_MAX results in 1024 characters left of the dot with radix 2
+        // give the same space on the right side. safety checks are in place
+        // unless someone finds a precise rule.
+        char s[2048 + 3];
+        double x = v->toNumber(exec);
+        if (isnan(x) || isinf(x))
+            return jsString(UString::from(x));
+        
+        // apply algorithm on absolute value. add sign later.
+        bool neg = false;
+        if (x < 0.0) {
+            neg = true;
+            x = -x;
+        }
+        // convert integer portion
+        double f = floor(x);
+        double d = f;
+        char* dot = s + sizeof(s) / 2;
+        char* p = dot;
+        *p = '\0';
+        do {
+            *--p = digits[static_cast<int>(fmod(d, radix))];
+            d /= radix;
+        } while ((d <= -1.0 || d >= 1.0) && p > s);
+        // any decimal fraction ?
+        d = x - f;
+        const double eps = 0.001; // TODO: guessed. base on radix ?
+        if (d < -eps || d > eps) {
+            *dot++ = '.';
+            do {
+                d *= radix;
+                *dot++ = digits[static_cast<int>(d)];
+                d -= static_cast<int>(d);
+            } while ((d < -eps || d > eps) && dot - s < static_cast<int>(sizeof(s)) - 1);
+            *dot = '\0';
+        }
+        // add sign if negative
+        if (neg)
+            *--p = '-';
+        return jsString(p);
+    }
+    return jsString(v->toString(exec));
+}
+
+static JSValue* numberToFixed(ExecState* exec, JSValue* v, const List& args)
+{
+    JSValue* fractionDigits = args[0];
+    double df = fractionDigits->toInteger(exec);
+    if (!(df >= 0 && df <= 20))
+        return throwError(exec, RangeError, "toFixed() digits argument must be between 0 and 20");
+    int f = (int)df;
+    
+    double x = v->toNumber(exec);
+    if (isnan(x))
+        return jsString("NaN");
+    
+    UString s = "";
+    if (x < 0) {
+        s += "-";
+        x = -x;
+    }
+    
+    if (x >= pow(10.0, 21.0))
+        return jsString(s+UString::from(x));
+    
+    double n = floor(x*pow(10.0, f));
+    if (fabs(n / pow(10.0, f) - x) >= fabs((n + 1) / pow(10.0, f) - x))
+        n++;
+    
+    UString m = integer_part_noexp(n);
+    
+    int k = m.size();
+    if (k <= f) {
+        UString z = "";
+        for (int i = 0; i < f + 1 - k; i++)
+            z += "0";
+        m = z + m;
+        k = f + 1;
+        ASSERT(k == m.size());
+    }
+    int kMinusf = k - f;
+    if (kMinusf < m.size())
+        return jsString(s + m.substr(0, kMinusf) + "." + m.substr(kMinusf));
+    return jsString(s + m.substr(0, kMinusf));
+}
+
+static JSValue* numberToExponential(ExecState* exec, JSValue* v, const List& args)
+{
+    double x = v->toNumber(exec);
+
+    if (isnan(x) || isinf(x))
+        return jsString(UString::from(x));
+
+    JSValue* fractionDigits = args[0];
+    double df = fractionDigits->toInteger(exec);
+    if (!(df >= 0 && df <= 20))
+        return throwError(exec, RangeError, "toExponential() argument must between 0 and 20");
+    int f = (int)df;
+
+    int decimalAdjust = 0;
+    if (!fractionDigits->isUndefined()) {
+        double logx = floor(log10(fabs(x)));
+        x /= pow(10.0, logx);
+        double fx = floor(x * pow(10.0, f)) / pow(10.0, f);
+        double cx = ceil(x * pow(10.0, f)) / pow(10.0, f);
+
+        if (fabs(fx - x) < fabs(cx - x))
+            x = fx;
+        else
+            x = cx;
+
+        decimalAdjust = static_cast<int>(logx);
+    }
+    
+    char buf[80];
+    int decimalPoint;
+    int sign;
+    
+    if (isnan(x))
+        return jsString("NaN");
+    
+    char* result = kjs_dtoa(x, 0, 0, &decimalPoint, &sign, NULL);
+    size_t length = strlen(result);
+    decimalPoint += decimalAdjust;
+    
+    int i = 0;
+    if (sign)
+        buf[i++] = '-';
+    
+    if (decimalPoint == 999)
+        strcpy(buf + i, result);
+    else {
+        buf[i++] = result[0];
+        
+        if (fractionDigits->isUndefined())
+            f = static_cast<int>(length) - 1;
+        
+        if (length > 1 && f > 0) {
+            buf[i++] = '.';
+            int haveFDigits = static_cast<int>(length) - 1;
+            if (f < haveFDigits) {
+                strncpy(buf+i,result+1, f);
+                i += f;
+            } else {
+                strcpy(buf+i,result+1);
+                i += static_cast<int>(length) - 1;
+                for (int j = 0; j < f-haveFDigits; j++)
+                    buf[i++] = '0';
+            }
+        }
+        
+        buf[i++] = 'e';
+        buf[i++] = (decimalPoint >= 0) ? '+' : '-';
+        // decimalPoint can't be more than 3 digits decimal given the
+        // nature of float representation
+        int exponential = decimalPoint - 1;
+        if (exponential < 0)
+            exponential *= -1;
+        if (exponential >= 100)
+            buf[i++] = static_cast<char>('0' + exponential / 100);
+        if (exponential >= 10)
+            buf[i++] = static_cast<char>('0' + (exponential % 100) / 10);
+        buf[i++] = static_cast<char>('0' + exponential % 10);
+        buf[i++] = '\0';
+    }
+
+    ASSERT(i <= 80);
+
+    kjs_freedtoa(result);
+
+    return jsString(buf);
+}
+    
+static JSValue* numberToPrecision(ExecState* exec, JSValue* v, const List& args)
+{
+    int e = 0;
+    UString m;
+
+    double dp = args[0]->toIntegerPreserveNaN(exec);
+    double x = v->toNumber(exec);
+    if (isnan(dp) || isnan(x) || isinf(x))
+        return jsString(v->toString(exec));
+
+    UString s = "";
+    if (x < 0) {
+        s = "-";
+        x = -x;
+    }
+    
+    if (!(dp >= 1 && dp <= 21)) // true for NaN
+        return throwError(exec, RangeError, "toPrecision() argument must be between 1 and 21");
+    int p = (int)dp;
+    
+    if (x != 0) {
+        e = static_cast<int>(log10(x));
+        double tens = intPow10(e - p + 1);
+        double n = floor(x / tens);
+        if (n < intPow10(p - 1)) {
+            e = e - 1;
+            tens = intPow10(e - p + 1);
+            n = floor(x / tens);
+        }
+        
+        if (fabs((n + 1.0) * tens - x) <= fabs(n * tens - x))
+            ++n;
+        // maintain n < 10^(p)
+        if (n >= intPow10(p)) {
+            n = n / 10.0;
+            e = e + 1;
+        }
+        ASSERT(intPow10(p - 1) <= n);
+        ASSERT(n < intPow10(p));
+
+        m = integer_part_noexp(n);
+        if (e < -6 || e >= p) {
+            if (m.size() > 1)
+                m = m.substr(0, 1) + "." + m.substr(1);
+            if (e >= 0)
+                return jsString(s + m + "e+" + UString::from(e));
+            return jsString(s + m + "e-" + UString::from(-e));
+        }
+    } else {
+        m = char_sequence('0',p);
+        e = 0;
+    }
+
+    if (e == p - 1)
+        return jsString(s+m);
+    else if (e >= 0) {
+        if (e + 1 < m.size())
+            return jsString(s + m.substr(0, e + 1) + "." + m.substr(e + 1));
+        return jsString(s + m.substr(0, e + 1));
+    }
+    return jsString(s + "0." + char_sequence('0', -(e + 1)) + m);
+}
+
 // ECMA 15.7.4.2 - 15.7.4.7
 JSValue* NumberProtoFunc::callAsFunction(ExecState* exec, JSObject* thisObj, const List& args)
 {
@@ -148,250 +392,18 @@ JSValue* NumberProtoFunc::callAsFunction(ExecState* exec, JSObject* thisObj, con
 
     JSValue* v = static_cast<NumberInstance*>(thisObj)->internalValue();
     switch (id) {
-    case ToString: {
-        double dradix = 10;
-        if (!args.isEmpty())
-            dradix = args[0]->toIntegerPreserveNaN(exec);
-        if (dradix >= 2 && dradix <= 36 && dradix != 10) { // false for NaN
-            int radix = static_cast<int>(dradix);
-            const char digits[] = "0123456789abcdefghijklmnopqrstuvwxyz";
-            // INT_MAX results in 1024 characters left of the dot with radix 2
-            // give the same space on the right side. safety checks are in place
-            // unless someone finds a precise rule.
-            char s[2048 + 3];
-            double x = v->toNumber(exec);
-            if (isnan(x) || isinf(x))
-                return jsString(UString::from(x));
-
-            // apply algorithm on absolute value. add sign later.
-            bool neg = false;
-            if (x < 0.0) {
-                neg = true;
-                x = -x;
-            }
-            // convert integer portion
-            double f = floor(x);
-            double d = f;
-            char* dot = s + sizeof(s) / 2;
-            char* p = dot;
-            *p = '\0';
-            do {
-                *--p = digits[static_cast<int>(fmod(d, radix))];
-                d /= radix;
-            } while ((d <= -1.0 || d >= 1.0) && p > s);
-            // any decimal fraction ?
-            d = x - f;
-            const double eps = 0.001; // TODO: guessed. base on radix ?
-            if (d < -eps || d > eps) {
-                *dot++ = '.';
-                do {
-                    d *= radix;
-                    *dot++ = digits[static_cast<int>(d)];
-                    d -= static_cast<int>(d);
-                } while ((d < -eps || d > eps) && dot - s < static_cast<int>(sizeof(s)) - 1);
-                *dot = '\0';
-            }
-            // add sign if negative
-            if (neg)
-                *--p = '-';
-            return jsString(p);
-        } else
-            return jsString(v->toString(exec));
-    }
+    case ToString:
+        return numberToString(exec, v, args);
     case ToLocaleString: /* TODO */
         return jsString(v->toString(exec));
     case ValueOf:
-        return jsNumber(v->toNumber(exec));
-    case ToFixed: {
-        JSValue* fractionDigits = args[0];
-        double df = fractionDigits->toInteger(exec);
-        if (!(df >= 0 && df <= 20))
-            return throwError(exec, RangeError, "toFixed() digits argument must be between 0 and 20");
-        int f = (int)df;
-
-        double x = v->toNumber(exec);
-        if (isnan(x))
-            return jsString("NaN");
-
-        UString s = "";
-        if (x < 0) {
-            s += "-";
-            x = -x;
-        }
-
-        if (x >= pow(10.0, 21.0))
-            return jsString(s+UString::from(x));
-
-        double n = floor(x*pow(10.0, f));
-        if (fabs(n / pow(10.0, f) - x) >= fabs((n + 1) / pow(10.0, f) - x))
-            n++;
-
-        UString m = integer_part_noexp(n);
-
-        int k = m.size();
-        if (k <= f) {
-            UString z = "";
-            for (int i = 0; i < f+1-k; i++)
-                z += "0";
-            m = z + m;
-            k = f + 1;
-            ASSERT(k == m.size());
-        }
-        if (k-f < m.size())
-            return jsString(s+m.substr(0,k-f)+"."+m.substr(k-f));
-        else
-            return jsString(s+m.substr(0,k-f));
-    }
-    case ToExponential: {
-        double x = v->toNumber(exec);
-
-        if (isnan(x) || isinf(x))
-            return jsString(UString::from(x));
-
-        JSValue* fractionDigits = args[0];
-        double df = fractionDigits->toInteger(exec);
-        if (!(df >= 0 && df <= 20))
-            return throwError(exec, RangeError, "toExponential() argument must between 0 and 20");
-        int f = (int)df;
-
-        int decimalAdjust = 0;
-        if (!fractionDigits->isUndefined()) {
-            double logx = floor(log10(fabs(x)));
-            x /= pow(10.0, logx);
-            double fx = floor(x * pow(10.0, f)) / pow(10.0, f);
-            double cx = ceil(x * pow(10.0, f)) / pow(10.0, f);
-
-            if (fabs(fx-x) < fabs(cx-x))
-                x = fx;
-            else
-                x = cx;
-
-            decimalAdjust = static_cast<int>(logx);
-        }
-
-        char buf[80];
-        int decimalPoint;
-        int sign;
-
-        if (isnan(x))
-            return jsString("NaN");
-
-        char* result = kjs_dtoa(x, 0, 0, &decimalPoint, &sign, NULL);
-        size_t length = strlen(result);
-        decimalPoint += decimalAdjust;
-
-        int i = 0;
-        if (sign)
-            buf[i++] = '-';
-
-        if (decimalPoint == 999)
-            strcpy(buf + i, result);
-        else {
-            buf[i++] = result[0];
-
-            if (fractionDigits->isUndefined())
-                f = static_cast<int>(length) - 1;
-
-            if (length > 1 && f > 0) {
-                buf[i++] = '.';
-                int haveFDigits = static_cast<int>(length) - 1;
-                if (f < haveFDigits) {
-                    strncpy(buf+i,result+1, f);
-                    i += f;
-                } else {
-                    strcpy(buf+i,result+1);
-                    i += static_cast<int>(length) - 1;
-                    for (int j = 0; j < f-haveFDigits; j++)
-                        buf[i++] = '0';
-                }
-            }
-
-            buf[i++] = 'e';
-            buf[i++] = (decimalPoint >= 0) ? '+' : '-';
-            // decimalPoint can't be more than 3 digits decimal given the
-            // nature of float representation
-            int exponential = decimalPoint - 1;
-            if (exponential < 0) {
-                exponential = exponential * -1;
-            }
-            if (exponential >= 100)
-                buf[i++] = static_cast<char>('0' + exponential / 100);
-            if (exponential >= 10)
-                buf[i++] = static_cast<char>('0' + (exponential % 100) / 10);
-            buf[i++] = static_cast<char>('0' + exponential % 10);
-            buf[i++] = '\0';
-        }
-
-        ASSERT(i <= 80);
-
-        kjs_freedtoa(result);
-
-        return jsString(buf);
-    }
-    case ToPrecision: {
-        int e = 0;
-        UString m;
-
-        double dp = args[0]->toIntegerPreserveNaN(exec);
-        double x = v->toNumber(exec);
-        if (isnan(dp) || isnan(x) || isinf(x))
-            return jsString(v->toString(exec));
-
-        UString s = "";
-        if (x < 0) {
-            s = "-";
-            x = -x;
-        }
-
-        if (!(dp >= 1 && dp <= 21)) // true for NaN
-            return throwError(exec, RangeError, "toPrecision() argument must be between 1 and 21");
-        int p = (int)dp;
-
-        if (x != 0) {
-            e = static_cast<int>(log10(x));
-            double tens = intPow10(e - p + 1);
-            double n = floor(x / tens);
-            if (n < intPow10(p - 1)) {
-                e = e - 1;
-                tens = intPow10(e - p + 1);
-                n = floor(x / tens);
-            }
-
-            if (fabs((n + 1.0) * tens - x) <= fabs(n * tens - x))
-                ++n;
-            // maintain n < 10^(p)
-            if (n >= intPow10(p)) {
-                n = n / 10.0;
-                e = e + 1;
-            }
-            ASSERT(intPow10(p - 1) <= n);
-            ASSERT(n < intPow10(p));
-
-            m = integer_part_noexp(n);
-            if (e < -6 || e >= p) {
-                if (m.size() > 1)
-                    m = m.substr(0,1) + "." + m.substr(1);
-                if (e >= 0)
-                    return jsString(s + m + "e+" + UString::from(e));
-                else
-                    return jsString(s + m + "e-" + UString::from(-e));
-            }
-        } else {
-            m = char_sequence('0',p);
-            e = 0;
-        }
-
-        if (e == p - 1)
-            return jsString(s+m);
-        else if (e >= 0) {
-            if (e + 1 < m.size())
-                return jsString(s + m.substr(0, e + 1) + "." + m.substr(e + 1));
-            else
-                return jsString(s + m.substr(0, e + 1));
-        }
-        return jsString(s + "0." + char_sequence('0', -(e + 1)) + m);
-    }
-
+        return v->toJSNumber(exec);
+    case ToFixed:
+        return numberToFixed(exec, v, args);
+    case ToExponential:
+        return numberToExponential(exec, v, args);
+    case ToPrecision:
+        return numberToPrecision(exec, v, args);
     }
     return 0;
 }

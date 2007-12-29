@@ -2,6 +2,19 @@
 
         Reviewed by Sam.
 
+        Break out callAsFunction implementations into static functions
+
+        * kjs/number_object.cpp:
+        (KJS::numberToString):
+        (KJS::numberToFixed):
+        (KJS::numberToExponential):
+        (KJS::numberToPrecision):
+        (KJS::NumberProtoFunc::callAsFunction):
+
+2007-12-28  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Sam.
+
         Apply wkstyle/astyle and fix placement of *
 
         * kjs/number_object.cpp:
