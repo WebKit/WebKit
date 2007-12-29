@@ -1,3 +1,13 @@
+2007-12-29  Alp Toker  <alp@atoker.com>
+
+        Reviewed by Maciej.
+
+        Provide the current URL in the SunSpider results page. Useful for
+        copying benchmark results out of browsers without a location bar or
+        where the location bar can't handle long URLs.
+
+        * hosted/sunspider-results.html:
+
 2007-12-20  Eric Seidel  <eric@webkit.org>
 
         Reviewed by mjs.

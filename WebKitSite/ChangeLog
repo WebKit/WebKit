@@ -1,3 +1,13 @@
+2007-12-29  Alp Toker  <alp@atoker.com>
+
+        Reviewed by Maciej.
+
+        Provide the current URL in the SunSpider results page. Useful for
+        copying benchmark results out of browsers without a location bar or
+        where the location bar can't handle long URLs.
+
+        * perf/sunspider-0.9/sunspider-results.html:
+
 2007-12-21  David Smith  <catfish.man@gmail.com>
 
         At bdash's suggestion, display a message if someone attempts to run the 'native' version of the getElementsByClassName benchmark in a browser that doesn't support that.
