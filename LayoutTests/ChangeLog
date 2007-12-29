@@ -1,3 +1,11 @@
+2007-12-28  Darin Adler  <darin@apple.com>
+
+        - checked in these files that were supposed to be part of
+          the previous check-in, but somehow weren't
+
+        * fast/js/number-tofixed-expected.txt: Updated.
+        * fast/js/number-toprecision-expected.txt: Ditto.
+
 2007-12-28  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Oliver.
@@ -27,7 +35,7 @@
         Update layout test results after the SVG Fonts addition.
         <font-face> is now also disabled by default wrapped in ENABLE(SVG_FONTS) block.
 
-        Fix two misplaced layout test results (results addeed in the wrong place.)
+        Fix two misplaced layout test results (results added in the wrong place.)
 
         * platform/mac/svg/css/css-box-min-width-expected.checksum:
         * platform/mac/svg/css/css-box-min-width-expected.png:

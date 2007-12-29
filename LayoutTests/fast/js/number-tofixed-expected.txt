@@ -31,7 +31,13 @@ PASS (0.0).toFixed() is "0"
 PASS (-0.0).toFixed() is "0"
 PASS (1234.567).toFixed() is "1235"
 PASS (1234.567).toFixed(0) is "1235"
+PASS (1234.567).toFixed(null) is "1235"
+PASS (1234.567).toFixed(false) is "1235"
+PASS (1234.567).toFixed('foo') is "1235"
+PASS (1234.567).toFixed(nan) is "1235"
 PASS (1234.567).toFixed(1) is "1234.6"
+PASS (1234.567).toFixed(true) is "1234.6"
+PASS (1234.567).toFixed('1') is "1234.6"
 PASS (1234.567).toFixed(2) is "1234.57"
 PASS (1234.567).toFixed(5) is "1234.56700"
 FAIL (1234.567).toFixed(20) should be 1234.56700000000000727596. Was 1234.56700000000000000000.
@@ -45,7 +51,6 @@ FAIL (1234.567).toFixed(-20) should be 0. Threw exception RangeError: toFixed() 
 PASS (1234.567).toFixed(-21) threw exception RangeError: toFixed() digits argument must be between 0 and 20.
 PASS (1234.567).toFixed(posInf) threw exception RangeError: toFixed() digits argument must be between 0 and 20.
 PASS (1234.567).toFixed(negInf) threw exception RangeError: toFixed() digits argument must be between 0 and 20.
-PASS (1234.567).toFixed(nan) is "1235"
 PASS posInf.toFixed() is "Infinity"
 PASS negInf.toFixed() is "-Infinity"
 PASS nan.toFixed() is "NaN"
