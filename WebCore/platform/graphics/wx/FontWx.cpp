@@ -68,7 +68,7 @@ void Font::drawGlyphs(GraphicsContext* graphicsContext, const FontData* font, co
     }
     
     // the y point is actually the bottom point of the text, turn it into the top
-    float height = font->ascent() - font->descent();
+    float height = font->ascent(size()) - font->descent(size());
     wxCoord ypoint = (wxCoord) (point.y() - height);
      
     dc->DrawText(text, (wxCoord)point.x(), ypoint);

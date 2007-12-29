@@ -1,3 +1,15 @@
+2007-12-28  Darin Adler  <darin@apple.com>
+
+        - try to fix Windows and WX builds (broken by SVG Fonts check-in)
+
+        * platform/graphics/win/FontWin.cpp:
+        (WebCore::Font::drawGlyphs): Pass font size to FontData::ascent, now that it requires it.
+        I can't see how it can be right to require the font size for ascent and descent,
+        but not for other metrics functions in FontData.
+
+        * platform/graphics/wx/FontWx.cpp:
+        (WebCore::Font::drawGlyphs): Pass font size to FontData::ascent and FontData::descent.
+
 2007-12-28  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Mark Rowe.
