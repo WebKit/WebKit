@@ -1,3 +1,17 @@
+2007-12-28  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=16650
+          <rdar://problem/5664872> REGRESSION (r28278-r28314): ATSUI uses LTR writing direction for all text runs
+
+        Covered by existing pixel tests.
+
+        * platform/graphics/mac/FontMac.mm:
+        (WebCore::Font::drawComplexText): Corrected to maintain the style
+        information in the adjusted text run when passing it to
+        ATSUILayoutParameters. Prior to r28298 the style was passed separately.
+
 2007-12-29  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Build fix, not reviewed.
