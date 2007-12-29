@@ -1,5 +1,19 @@
 2007-12-28  Eric Seidel  <eric@webkit.org>
 
+        Reviewed by Oliver.
+
+        Fix (-0).toFixed() and re-factor a little
+        Fix (-0).toExponential() and printing of trailing 0s in toExponential
+        Fix toPrecision(nan) handling
+
+        * kjs/number_object.cpp:
+        (KJS::numberToFixed):
+        (KJS::fractionalPartToString):
+        (KJS::numberToExponential):
+        (KJS::numberToPrecision):
+
+2007-12-28  Eric Seidel  <eric@webkit.org>
+
         Reviewed by Sam.
 
         More changes to make number code readable

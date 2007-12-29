@@ -208,7 +208,8 @@ static JSValue* numberToFixed(ExecState* exec, JSValue* v, const List& args)
     if (x < 0) {
         s.append('-');
         x = -x;
-    }
+    } else if (x == -0.0)
+        x = 0;
 
     if (x >= pow(10.0, 21.0))
         return jsString(s + UString::from(x));
@@ -235,6 +236,27 @@ static JSValue* numberToFixed(ExecState* exec, JSValue* v, const List& args)
     return jsString(s + m.substr(0, kMinusf));
 }
 
+void fractionalPartToString(char* buf, int& i, const char* result, int resultLength, int fractionalDigits)
+{
+    if (fractionalDigits <= 0)
+        return;
+
+    int fDigitsInResult = static_cast<int>(resultLength) - 1;
+    buf[i++] = '.';
+    if (fDigitsInResult > 0) {
+        if (fractionalDigits < fDigitsInResult) {
+            strncpy(buf + i, result + 1, fractionalDigits);
+            i += fractionalDigits;
+        } else {
+            strcpy(buf + i, result + 1);
+            i += static_cast<int>(resultLength) - 1;
+        }
+    }
+
+    for (int j = 0; j < fractionalDigits - fDigitsInResult; j++)
+        buf[i++] = '0';
+}
+
 void exponentialPartToString(char* buf, int& i, int decimalPoint)
 {
     buf[i++] = 'e';
@@ -258,18 +280,18 @@ static JSValue* numberToExponential(ExecState* exec, JSValue* v, const List& arg
     if (isnan(x) || isinf(x))
         return jsString(UString::from(x));
 
-    JSValue* fractionDigits = args[0];
-    double df = fractionDigits->toInteger(exec);
+    JSValue* fractionalDigitsValue = args[0];
+    double df = fractionalDigitsValue->toInteger(exec);
     if (!(df >= 0 && df <= 20))
         return throwError(exec, RangeError, "toExponential() argument must between 0 and 20");
-    int f = (int)df;
-    bool includeAllDigits = fractionDigits->isUndefined();
+    int fractionalDigits = (int)df;
+    bool includeAllDigits = fractionalDigitsValue->isUndefined();
 
     int decimalAdjust = 0;
-    if (!includeAllDigits) {
+    if (x && !includeAllDigits) {
         double logx = floor(log10(fabs(x)));
         x /= pow(10.0, logx);
-        const double tenToTheF = pow(10.0, f);
+        const double tenToTheF = pow(10.0, fractionalDigits);
         double fx = floor(x * tenToTheF) / tenToTheF;
         double cx = ceil(x * tenToTheF) / tenToTheF;
 
@@ -284,14 +306,17 @@ static JSValue* numberToExponential(ExecState* exec, JSValue* v, const List& arg
     if (isnan(x))
         return jsString("NaN");
 
+    if (x == -0.0) // (-0.0).toExponential() should print as 0 instead of -0
+        x = 0;
+
     int decimalPoint;
     int sign;
     char* result = kjs_dtoa(x, 0, 0, &decimalPoint, &sign, NULL);
-    size_t length = strlen(result);
+    size_t resultLength = strlen(result);
     decimalPoint += decimalAdjust;
 
     int i = 0;
-    char buf[80];
+    char buf[80]; // digit + '.' + fractionDigits (max 20) + 'e' + sign + exponent (max?)
     if (sign)
         buf[i++] = '-';
 
@@ -301,25 +326,12 @@ static JSValue* numberToExponential(ExecState* exec, JSValue* v, const List& arg
         buf[i++] = result[0];
 
         if (includeAllDigits)
-            f = static_cast<int>(length) - 1;
+            fractionalDigits = static_cast<int>(resultLength) - 1;
 
-        if (length > 1 && f > 0) {
-            buf[i++] = '.';
-            int haveFDigits = static_cast<int>(length) - 1;
-            if (f < haveFDigits) {
-                strncpy(buf + i, result + 1, f);
-                i += f;
-            } else {
-                strcpy(buf + i, result + 1);
-                i += static_cast<int>(length) - 1;
-                for (int j = 0; j < f - haveFDigits; j++)
-                    buf[i++] = '0';
-            }
-        }
+        fractionalPartToString(buf, i, result, resultLength, fractionalDigits);
         exponentialPartToString(buf, i, decimalPoint);
         buf[i++] = '\0';
     }
-
     ASSERT(i <= 80);
 
     kjs_freedtoa(result);
@@ -331,7 +343,7 @@ static JSValue* numberToPrecision(ExecState* exec, JSValue* v, const List& args)
 {
     double doublePrecision = args[0]->toIntegerPreserveNaN(exec);
     double x = v->toNumber(exec);
-    if (isnan(doublePrecision) || isnan(x) || isinf(x))
+    if (args[0]->isUndefined() || isnan(x) || isinf(x))
         return jsString(v->toString(exec));
 
     UString s;
@@ -346,7 +358,7 @@ static JSValue* numberToPrecision(ExecState* exec, JSValue* v, const List& args)
 
     int e = 0;
     UString m;
-    if (x != 0) {
+    if (x) {
         e = static_cast<int>(log10(x));
         double tens = intPow10(e - precision + 1);
         double n = floor(x / tens);

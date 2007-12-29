@@ -1,3 +1,25 @@
+2007-12-28  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Oliver.
+
+        Add more tests for toFixed, toPrecision and toExponential
+        Add tests for toString to match Firefox's behavior
+        
+        All tests pass in Firefox, but some fail in WebKit
+        I've chosen to land failing tests as I expect we'll move closer
+        towards Firefox's behavior in the future, and it's better to have
+        the tests now thus to notice any behavior changes in the future.
+
+        * fast/js/number-toExponential-expected.txt: Added.
+        * fast/js/number-toString-expected.txt: Added.
+        * fast/js/number-toString.html: Added.
+        * fast/js/number-tofixed-expected.txt:
+        * fast/js/number-toprecision-expected.txt:
+        * fast/js/resources/number-toExponential.js: Added.
+        * fast/js/resources/number-toString.js: Added.
+        * fast/js/resources/number-tofixed.js:
+        * fast/js/resources/number-toprecision.js:
+
 2007-12-29  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Oliver.
