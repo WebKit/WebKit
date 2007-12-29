@@ -1221,7 +1221,7 @@ gboolean webkit_web_view_has_selection(WebKitWebView* webView)
     g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), FALSE);
 
     WebKitWebViewPrivate* webViewData = WEBKIT_WEB_VIEW_GET_PRIVATE(webView);
-    return webViewData->corePage->selection().isNone() ? TRUE : FALSE;
+    return !webViewData->corePage->selection().isNone();
 }
 
 /**
