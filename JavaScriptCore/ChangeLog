@@ -2,6 +2,17 @@
 
         Reviewed by Sam.
 
+        More changes to make number code readable
+
+        * kjs/number_object.cpp:
+        (KJS::integer_part_noexp):
+        (KJS::numberToFixed):
+        (KJS::numberToExponential):
+
+2007-12-28  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Sam.
+
         More small cleanups to toPrecision
 
         * kjs/number_object.cpp:

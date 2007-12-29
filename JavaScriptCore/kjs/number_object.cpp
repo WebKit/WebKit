@@ -75,10 +75,11 @@ static UString integer_part_noexp(double d)
     int decimalPoint;
     int sign;
     char* result = kjs_dtoa(d, 0, 0, &decimalPoint, &sign, NULL);
+    bool resultIsInfOrNan = (decimalPoint == 9999);
     size_t length = strlen(result);
 
     UString str = sign ? "-" : "";
-    if (decimalPoint == 9999)
+    if (resultIsInfOrNan)
         str += result;
     else if (decimalPoint <= 0)
         str += "0";
@@ -198,31 +199,32 @@ static JSValue* numberToFixed(ExecState* exec, JSValue* v, const List& args)
     if (!(df >= 0 && df <= 20))
         return throwError(exec, RangeError, "toFixed() digits argument must be between 0 and 20");
     int f = (int)df;
-    
+
     double x = v->toNumber(exec);
     if (isnan(x))
         return jsString("NaN");
-    
-    UString s = "";
+
+    UString s;
     if (x < 0) {
-        s += "-";
+        s.append('-');
         x = -x;
     }
-    
+
     if (x >= pow(10.0, 21.0))
-        return jsString(s+UString::from(x));
-    
-    double n = floor(x*pow(10.0, f));
-    if (fabs(n / pow(10.0, f) - x) >= fabs((n + 1) / pow(10.0, f) - x))
+        return jsString(s + UString::from(x));
+
+    const double tenToTheF = pow(10.0, f);
+    double n = floor(x * tenToTheF);
+    if (fabs(n / tenToTheF - x) >= fabs((n + 1) / tenToTheF - x))
         n++;
-    
+
     UString m = integer_part_noexp(n);
-    
+
     int k = m.size();
     if (k <= f) {
-        UString z = "";
+        UString z;
         for (int i = 0; i < f + 1 - k; i++)
-            z += "0";
+            z.append('0');
         m = z + m;
         k = f + 1;
         ASSERT(k == m.size());
@@ -267,8 +269,9 @@ static JSValue* numberToExponential(ExecState* exec, JSValue* v, const List& arg
     if (!includeAllDigits) {
         double logx = floor(log10(fabs(x)));
         x /= pow(10.0, logx);
-        double fx = floor(x * pow(10.0, f)) / pow(10.0, f);
-        double cx = ceil(x * pow(10.0, f)) / pow(10.0, f);
+        const double tenToTheF = pow(10.0, f);
+        double fx = floor(x * tenToTheF) / tenToTheF;
+        double cx = ceil(x * tenToTheF) / tenToTheF;
 
         if (fabs(fx - x) < fabs(cx - x))
             x = fx;
@@ -278,22 +281,21 @@ static JSValue* numberToExponential(ExecState* exec, JSValue* v, const List& arg
         decimalAdjust = static_cast<int>(logx);
     }
 
-    char buf[80];
-    int decimalPoint;
-    int sign;
-
     if (isnan(x))
         return jsString("NaN");
 
+    int decimalPoint;
+    int sign;
     char* result = kjs_dtoa(x, 0, 0, &decimalPoint, &sign, NULL);
     size_t length = strlen(result);
     decimalPoint += decimalAdjust;
 
     int i = 0;
+    char buf[80];
     if (sign)
         buf[i++] = '-';
 
-    if (decimalPoint == 999)
+    if (decimalPoint == 999) // ? 9999 is the magical "result is Inf or NaN" value.  what's 999??
         strcpy(buf + i, result);
     else {
         buf[i++] = result[0];
