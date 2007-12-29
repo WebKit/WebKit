@@ -2,6 +2,15 @@
 
         Reviewed by Sam.
 
+        More small cleanups to toPrecision
+
+        * kjs/number_object.cpp:
+        (KJS::numberToPrecision):
+
+2007-12-28  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Sam.
+
         More small attempts to make number code readable
 
         * kjs/number_object.cpp:
