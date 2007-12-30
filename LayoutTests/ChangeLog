@@ -1,3 +1,13 @@
+2007-12-29  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        http://bugs.webkit.org/show_bug.cgi?id=14428
+        FCKEditor: Images disappear on drag/drop and copy/paste
+
+        * editing/pasteboard/drag-image-in-about-blank-frame-expected.txt: Added.
+        * editing/pasteboard/drag-image-in-about-blank-frame.html: Added.
+
 2007-12-28  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Mitz.
