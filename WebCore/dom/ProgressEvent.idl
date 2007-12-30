@@ -22,25 +22,28 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
+
 module events {
 
-interface ProgressEvent : Event {
-     readonly attribute boolean         lengthComputable;
-     readonly attribute unsigned long   loaded;
-     readonly attribute unsigned long   total;
-     void               initProgressEvent(in DOMString typeArg,
-                                          in boolean       canBubbleArg,
-                                          in boolean       cancelableArg,
-                                          in boolean       lengthComputableArg,
-                                          in unsigned long loadedArg,
-                                          in unsigned long totalArg);
-     void               initProgressEventNS(in DOMString namespaceURI,
-                                            in DOMString typeArg,
-                                            in boolean       canBubbleArg,
-                                            in boolean       cancelableArg,
-                                            in boolean       lengthComputableArg,
-                                            in unsigned long loadedArg,
-                                            in unsigned long totalArg);
-};
+    interface [
+        GenerateConstructor
+    ] ProgressEvent : Event {
+         readonly attribute boolean         lengthComputable;
+         readonly attribute unsigned long   loaded;
+         readonly attribute unsigned long   total;
+         void               initProgressEvent(in DOMString typeArg,
+                                              in boolean       canBubbleArg,
+                                              in boolean       cancelableArg,
+                                              in boolean       lengthComputableArg,
+                                              in unsigned long loadedArg,
+                                              in unsigned long totalArg);
+         void               initProgressEventNS(in DOMString namespaceURI,
+                                                in DOMString typeArg,
+                                                in boolean       canBubbleArg,
+                                                in boolean       cancelableArg,
+                                                in boolean       lengthComputableArg,
+                                                in unsigned long loadedArg,
+                                                in unsigned long totalArg);
+    };
 
 }

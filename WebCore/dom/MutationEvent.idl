@@ -20,7 +20,9 @@
 module events {
 
     // Introduced in DOM Level 2:
-    interface [GenerateConstructor] MutationEvent : Event {
+    interface [
+        GenerateConstructor
+    ] MutationEvent : Event {
 
         // attrChangeType
         const unsigned short MODIFICATION = 1;

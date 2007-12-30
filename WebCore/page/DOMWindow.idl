@@ -240,7 +240,14 @@ module window {
         attribute HTMLUListElementConstructor HTMLUListElement;
 
         attribute EventConstructor Event;
+        attribute KeyboardEventConstructor KeyboardEvent;
+        attribute MouseEventConstructor MouseEvent;
         attribute MutationEventConstructor MutationEvent;
+        attribute OverflowEventConstructor OverflowEvent;
+        attribute ProgressEventConstructor ProgressEvent;
+        attribute TextEventConstructor TextEvent;
+        attribute UIEventConstructor UIEvent;
+        attribute WheelEventConstructor WheelEvent;
 
         attribute NodeFilterConstructor NodeFilter;
         attribute RangeConstructor Range;

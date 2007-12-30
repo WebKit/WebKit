@@ -1,3 +1,14 @@
+2007-12-30  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Oliver Hunt.
+
+        Test for http://bugs.webkit.org/show_bug.cgi?id=10686
+        event instanceof MouseEvent throws exception
+
+        * fast/dom/Window/window-properties-expected.txt:
+        * fast/events/event-instanceof.html: Added.
+        * fast/events/resources/event-instanceof.js: Added.
+
 2007-12-30  David Kilzer  <ddkilzer@webkit.org>
 
         Reviewed by Darin.

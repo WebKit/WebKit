@@ -20,7 +20,9 @@
 module events {
 
     // Introduced in DOM Level 2:
-    interface UIEvent : Event {
+    interface [
+        GenerateConstructor
+    ] UIEvent : Event {
         readonly attribute DOMWindow            view;
         readonly attribute long                 detail;
         

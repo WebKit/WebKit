@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Computer, Inc.
+ * Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
  *
  * This library is free software; you can redistribute it and/or
@@ -21,7 +21,9 @@
 module events {
 
     // Based off of proposed IDL interface for WheelEvent:
-    interface WheelEvent : UIEvent {
+    interface [
+        GenerateConstructor
+    ] WheelEvent : UIEvent {
         readonly attribute long    screenX;
         readonly attribute long    screenY;
         readonly attribute long    clientX;

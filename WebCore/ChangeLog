@@ -1,3 +1,25 @@
+2007-12-30  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Oliver Hunt.
+
+        Patch for http://bugs.webkit.org/show_bug.cgi?id=10686
+        event instanceof MouseEvent throws exception
+
+        Add JS constructors for all the Event types.
+
+        Test: fast/events/event-instanceof.html
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/KeyboardEvent.idl:
+        * dom/MouseEvent.idl:
+        * dom/MutationEvent.idl:
+        * dom/OverflowEvent.idl:
+        * dom/ProgressEvent.idl:
+        * dom/TextEvent.idl:
+        * dom/UIEvent.idl:
+        * dom/WheelEvent.idl:
+        * page/DOMWindow.idl:
+
 2007-12-30  David Kilzer  <ddkilzer@webkit.org>
 
         Reviewed by Darin.

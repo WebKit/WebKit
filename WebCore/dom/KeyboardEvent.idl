@@ -21,7 +21,9 @@
 module events {
 
     // Introduced in DOM Level 3:
-    interface KeyboardEvent : UIEvent {
+    interface [
+        GenerateConstructor
+    ] KeyboardEvent : UIEvent {
 
 #if !defined(LANGUAGE_JAVASCRIPT)
         // KeyLocationCode

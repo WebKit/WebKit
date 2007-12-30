@@ -20,7 +20,9 @@
 module events {
 
     // Introduced in DOM Level 2:
-    interface MouseEvent : UIEvent {
+    interface [
+        GenerateConstructor
+    ] MouseEvent : UIEvent {
         readonly attribute long             screenX;
         readonly attribute long             screenY;
         readonly attribute long             clientX;
