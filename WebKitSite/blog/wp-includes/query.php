@@ -32,9 +32,9 @@ function wp_reset_query() {
  */
 
 function is_admin () {
-	global $wp_query;
-
-	return ($wp_query->is_admin || (stripos($_SERVER['REQUEST_URI'], 'wp-admin/') !== false));
+	if ( defined('WP_ADMIN') ) 
+		return WP_ADMIN;
+	return false;
 }
 
 function is_archive () {
@@ -642,7 +642,7 @@ class WP_Query {
 		if ('' != $qv['preview'])
 			$this->is_preview = true;
 
-		if ( strpos($_SERVER['PHP_SELF'], 'wp-admin/') !== false )
+		if ( is_admin() )
 			$this->is_admin = true;
 
 		if ( false !== strpos($qv['feed'], 'comments-') ) {

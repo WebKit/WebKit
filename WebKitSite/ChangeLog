@@ -1,3 +1,24 @@
+2007-12-30  Mark Rowe  <mrowe@apple.com>
+
+        Unreviewed.  Update WordPress to 2.3.2, which includes security fixes.
+
+        * blog/wp-admin/admin.php:
+        * blog/wp-admin/includes/file.php:
+        * blog/wp-admin/install.php:
+        * blog/wp-admin/setup-config.php:
+        * blog/wp-app.php:
+        * blog/wp-includes/formatting.php:
+        * blog/wp-includes/functions.php:
+        * blog/wp-includes/pluggable.php:
+        * blog/wp-includes/post.php:
+        * blog/wp-includes/query.php:
+        * blog/wp-includes/taxonomy.php:
+        * blog/wp-includes/version.php:
+        * blog/wp-includes/wp-db.php:
+        * blog/wp-mail.php:
+        * blog/wp-settings.php:
+        * blog/xmlrpc.php:
+
 2007-12-29  Alp Toker  <alp@atoker.com>
 
         Fix typo.
