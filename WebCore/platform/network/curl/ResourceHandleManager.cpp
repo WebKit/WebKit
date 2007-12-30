@@ -330,8 +330,7 @@ void ResourceHandleManager::setupPOST(ResourceHandle* job)
         break;
     }
 
-    if (post)
-        curl_easy_setopt(d->m_handle, CURLOPT_HTTPPOST, post);
+    curl_easy_setopt(d->m_handle, CURLOPT_HTTPPOST, post);
 }
 
 void ResourceHandleManager::add(ResourceHandle* job)
