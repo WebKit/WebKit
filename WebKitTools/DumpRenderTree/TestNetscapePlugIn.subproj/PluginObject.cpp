@@ -336,8 +336,9 @@ static bool pluginInvoke(NPObject *header, NPIdentifier name, const NPVariant *a
 
         for (uint32_t i = 0; i < argCount; i++) {
             assert(NPVARIANT_IS_STRING(args[i]));
-            char *propertyString = createCStringFromNPVariant(&args[i]);
+            NPUTF8* propertyString = createCStringFromNPVariant(&args[i]);
             NPIdentifier propertyIdentifier = browser->getstringidentifier(propertyString);
+            free(propertyString);
             
             NPVariant variant;
             bool retval = browser->getproperty(obj->npp, object, propertyIdentifier, &variant);

@@ -1,3 +1,13 @@
+2007-12-29  Darin Adler  <darin@apple.com>
+
+        Reviewed by Oliver.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=16663
+          leak bot shows createCStringFromNPVariant result leaking
+
+        * DumpRenderTree/TestNetscapePlugIn.subproj/PluginObject.cpp:
+        (pluginInvoke): Added a missing free.
+
 2007-12-26  Jan Michael Alonzo  <jmalonzo@unpluggable.com>
 
         Reviewed by Alp Toker.
