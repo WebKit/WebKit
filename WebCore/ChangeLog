@@ -1,3 +1,25 @@
+2007-12-30  David Kilzer  <ddkilzer@webkit.org>
+
+        Reviewed by Darin.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=15359
+          JPEG image not shown when height is specified as percentage inside a table
+
+        The problem occurs when a replaced element (image, canvas, etc.) with
+        a percent-height attribute is contained by a table cell with an auto-
+        or percent-height attribute.  If there are no other conditions to cause
+        the table cell's height to expand, an available height of zero will
+        always be returned.  In these cases, the intrinsic height of the
+        replaced element should be used if it is greater than the available
+        height of the table cell.
+
+        Tests: fast/replaced/table-percent-height.html
+               tables/mozilla/bugs/bug137388-1.html
+               tables/mozilla/bugs/bug137388-2.html
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::calcReplacedHeightUsing):
+
 2007-12-30  Luca Bruno  <lethalman88@gmail.com>
 
         Reviewed by Alp Toker.

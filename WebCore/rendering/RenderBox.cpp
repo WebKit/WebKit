@@ -1471,9 +1471,13 @@ int RenderBox::calcReplacedHeightUsing(Length height) const
             // It is necessary to use the border-box to match WinIE's broken
             // box model.  This is essential for sizing inside
             // table cells using percentage heights.
-            if (cb->isTableCell() && (cb->style()->height().isAuto() || cb->style()->height().isPercent()))
+            if (cb->isTableCell() && (cb->style()->height().isAuto() || cb->style()->height().isPercent())) {
+                // Don't let table cells squeeze percent-height replaced elements
+                // <http://bugs.webkit.org/show_bug.cgi?id=15359>
+                availableHeight = max(availableHeight, intrinsicSize().height());
                 return height.calcValue(availableHeight - (borderTop() + borderBottom()
                     + paddingTop() + paddingBottom()));
+            }
 
             return calcContentBoxHeight(height.calcValue(availableHeight));
         }

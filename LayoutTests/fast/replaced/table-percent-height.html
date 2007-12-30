@@ -1,0 +1,182 @@
+<html>
+<head>
+<title>Test for Buzilla Bug 15359: JPEG image not shown when height is specified as percentage inside a table</title>
+<link rel="stylesheet" href="../js/resources/js-test-style.css">
+<script src="../js/resources/js-test-pre.js"></script>
+<script src="../js/resources/js-test-post-function.js"></script>
+<script>
+if (window.layoutTestController) {
+    layoutTestController.waitUntilDone();
+    layoutTestController.dumpAsText();
+}
+
+function getComputedStyleForElement (element, cssPropertyName)
+{
+    if (!element) {
+        return null;
+    }
+    if (window.getComputedStyle) {
+        return window.getComputedStyle(element, '').getPropertyValue(cssPropertyName.replace(/([A-Z])/g, "-$1").toLowerCase());
+    }
+    if (element.currentStyle) {
+        return element.currentStyle[cssPropertyName];
+    }
+    return null;
+}
+
+function test()
+{
+    description("This test checks that replaced elements with percentage heights within table cells have the correct height.");
+
+    shouldBe("getComputedStyleForElement(document.getElementById('canvas-75'), 'width')", "'300px'");
+    shouldBe("getComputedStyleForElement(document.getElementById('canvas-75'), 'height')", "'112px'");
+    shouldBe("getComputedStyleForElement(document.getElementById('canvas-100'), 'width')", "'300px'");
+    shouldBe("getComputedStyleForElement(document.getElementById('canvas-100'), 'height')", "'150px'");
+
+    shouldBe("getComputedStyleForElement(document.getElementById('embed-75'), 'width')", "'300px'");
+    shouldBe("getComputedStyleForElement(document.getElementById('embed-75'), 'height')", "'112px'");
+    shouldBe("getComputedStyleForElement(document.getElementById('embed-100'), 'width')", "'300px'");
+    shouldBe("getComputedStyleForElement(document.getElementById('embed-100'), 'height')", "'150px'");
+
+    shouldBe("getComputedStyleForElement(document.getElementById('img-75'), 'width')", "'75px'");
+    shouldBe("getComputedStyleForElement(document.getElementById('img-75'), 'height')", "'75px'");
+    shouldBe("getComputedStyleForElement(document.getElementById('img-100'), 'width')", "'100px'");
+    shouldBe("getComputedStyleForElement(document.getElementById('img-100'), 'height')", "'100px'");
+
+    shouldBe("getComputedStyleForElement(document.getElementById('object-75'), 'width')", "'300px'");
+    shouldBe("getComputedStyleForElement(document.getElementById('object-75'), 'height')", "'112px'");
+    shouldBe("getComputedStyleForElement(document.getElementById('object-100'), 'width')", "'300px'");
+    shouldBe("getComputedStyleForElement(document.getElementById('object-100'), 'height')", "'150px'");
+
+    shouldBe("getComputedStyleForElement(document.getElementById('button-75'), 'width')", "'51px'");
+    shouldBe("getComputedStyleForElement(document.getElementById('button-75'), 'height')", "'15px'");
+    shouldBe("getComputedStyleForElement(document.getElementById('button-100'), 'width')", "'51px'");
+    shouldBe("getComputedStyleForElement(document.getElementById('button-100'), 'height')", "'15px'");
+
+    shouldBe("getComputedStyleForElement(document.getElementById('input-button-75'), 'width')", "'16px'");
+    shouldBe("getComputedStyleForElement(document.getElementById('input-button-75'), 'height')", "'18px'");
+    shouldBe("getComputedStyleForElement(document.getElementById('input-button-100'), 'width')", "'16px'");
+    shouldBe("getComputedStyleForElement(document.getElementById('input-button-100'), 'height')", "'18px'");
+
+    shouldBe("getComputedStyleForElement(document.getElementById('input-checkbox-75'), 'width')", "'12px'");
+    shouldBe("getComputedStyleForElement(document.getElementById('input-checkbox-75'), 'height')", "'4px'");
+    shouldBe("getComputedStyleForElement(document.getElementById('input-checkbox-100'), 'width')", "'12px'");
+    shouldBe("getComputedStyleForElement(document.getElementById('input-checkbox-100'), 'height')", "'6px'");
+
+    shouldBe("getComputedStyleForElement(document.getElementById('input-file-75'), 'width')", "'237px'");
+    shouldBe("getComputedStyleForElement(document.getElementById('input-file-75'), 'height')", "'13px'");
+    shouldBe("getComputedStyleForElement(document.getElementById('input-file-100'), 'width')", "'237px'");
+    shouldBe("getComputedStyleForElement(document.getElementById('input-file-100'), 'height')", "'18px'");
+
+    shouldBe("getComputedStyleForElement(document.getElementById('input-image-75'), 'width')", "'75px'");
+    shouldBe("getComputedStyleForElement(document.getElementById('input-image-75'), 'height')", "'75px'");
+    shouldBe("getComputedStyleForElement(document.getElementById('input-image-100'), 'width')", "'100px'");
+    shouldBe("getComputedStyleForElement(document.getElementById('input-image-100'), 'height')", "'100px'");
+
+    shouldBe("getComputedStyleForElement(document.getElementById('input-password-75'), 'width')", "'148px'");
+    shouldBe("getComputedStyleForElement(document.getElementById('input-password-75'), 'height')", "'8px'");
+    shouldBe("getComputedStyleForElement(document.getElementById('input-password-100'), 'width')", "'148px'");
+    shouldBe("getComputedStyleForElement(document.getElementById('input-password-100'), 'height')", "'13px'");
+
+    shouldBe("getComputedStyleForElement(document.getElementById('input-radio-75'), 'width')", "'12px'");
+    shouldBe("getComputedStyleForElement(document.getElementById('input-radio-75'), 'height')", "'4px'");
+    shouldBe("getComputedStyleForElement(document.getElementById('input-radio-100'), 'width')", "'12px'");
+    shouldBe("getComputedStyleForElement(document.getElementById('input-radio-100'), 'height')", "'6px'");
+
+    shouldBe("getComputedStyleForElement(document.getElementById('input-reset-75'), 'width')", "'45px'");
+    shouldBe("getComputedStyleForElement(document.getElementById('input-reset-75'), 'height')", "'18px'");
+    shouldBe("getComputedStyleForElement(document.getElementById('input-reset-100'), 'width')", "'45px'");
+    shouldBe("getComputedStyleForElement(document.getElementById('input-reset-100'), 'height')", "'18px'");
+
+    shouldBe("getComputedStyleForElement(document.getElementById('input-submit-75'), 'width')", "'54px'");
+    shouldBe("getComputedStyleForElement(document.getElementById('input-submit-75'), 'height')", "'18px'");
+    shouldBe("getComputedStyleForElement(document.getElementById('input-submit-100'), 'width')", "'54px'");
+    shouldBe("getComputedStyleForElement(document.getElementById('input-submit-100'), 'height')", "'18px'");
+
+    shouldBe("getComputedStyleForElement(document.getElementById('input-text-75'), 'width')", "'148px'");
+    shouldBe("getComputedStyleForElement(document.getElementById('input-text-75'), 'height')", "'8px'");
+    shouldBe("getComputedStyleForElement(document.getElementById('input-text-100'), 'width')", "'148px'");
+    shouldBe("getComputedStyleForElement(document.getElementById('input-text-100'), 'height')", "'13px'");
+
+    shouldBe("getComputedStyleForElement(document.getElementById('isindex-75'), 'width')", "'142px'");
+    shouldBe("getComputedStyleForElement(document.getElementById('isindex-75'), 'height')", "'13px'");
+    shouldBe("getComputedStyleForElement(document.getElementById('isindex-100'), 'width')", "'142px'");
+    shouldBe("getComputedStyleForElement(document.getElementById('isindex-100'), 'height')", "'13px'");
+
+    shouldBe("getComputedStyleForElement(document.getElementById('select-75'), 'width')", "'68px'");
+    shouldBe("getComputedStyleForElement(document.getElementById('select-75'), 'height')", "'18px'");
+    shouldBe("getComputedStyleForElement(document.getElementById('select-100'), 'width')", "'68px'");
+    shouldBe("getComputedStyleForElement(document.getElementById('select-100'), 'height')", "'18px'");
+
+    shouldBe("getComputedStyleForElement(document.getElementById('textarea-75'), 'width')", "'163px'");
+    shouldBe("getComputedStyleForElement(document.getElementById('textarea-75'), 'height')", "'19px'");
+    shouldBe("getComputedStyleForElement(document.getElementById('textarea-100'), 'width')", "'163px'");
+    shouldBe("getComputedStyleForElement(document.getElementById('textarea-100'), 'height')", "'26px'");
+
+    isSuccessfullyParsed();
+
+    if (window.layoutTestController) { 
+        layoutTestController.notifyDone();
+    }
+}
+
+var successfullyParsed = true;
+</script>
+</head>
+<body onload="test()">
+
+<table><tr><td><canvas id="canvas-75" style="background-color: #00ff00; height: 75%;"></canvas></td></tr></table>
+<table><tr><td><canvas id="canvas-100" style="background-color: #00ff00; height: 100%;"></canvas></td></tr></table>
+
+<table><tr><td><embed id="embed-75" style="background-color: #00ff00; height: 75%;"></embed></td></tr></table>
+<table><tr><td><embed id="embed-100" style="background-color: #00ff00; height: 100%;"></embed></td></tr></table>
+
+<table><tr><td><img id="img-75" src="resources/square-blue-100x100.png" style="height: 75%;"></td></tr></table>
+<table><tr><td><img id="img-100" src="resources/square-blue-100x100.png" style="height: 100%;"></td></tr></table>
+
+<table><tr><td><object id="object-75" style="background-color: #00ff00; height: 75%;"></object></td></tr></table>
+<table><tr><td><object id="object-100" style="background-color: #00ff00; height: 100%;"></object></td></tr></table>
+
+<table><tr><td><button id="button-75" style="height: 75%;">Button</button></td></tr></table>
+<table><tr><td><button id="button-100" style="height: 100%;">Button</button></td></tr></table>
+
+<table><tr><td><input type="button" id="input-button-75" style="height: 75%;"></td></tr></table>
+<table><tr><td><input type="button" id="input-button-100" style="height: 100%;"></td></tr></table>
+
+<table><tr><td><input type="checkbox" id="input-checkbox-75" style="height: 75%;"></td></tr></table>
+<table><tr><td><input type="checkbox" id="input-checkbox-100" style="height: 100%;"></td></tr></table>
+
+<table><tr><td><input type="file" id="input-file-75" style="height: 75%;"></td></tr></table>
+<table><tr><td><input type="file" id="input-file-100" style="height: 100%;"></td></tr></table>
+
+<table><tr><td><input type="image" src="resources/square-blue-100x100.png" id="input-image-75" style="height: 75%;"></td></tr></table>
+<table><tr><td><input type="image" src="resources/square-blue-100x100.png" id="input-image-100" style="height: 100%;"></td></tr></table>
+
+<table><tr><td><input type="password" id="input-password-75" style="height: 75%;"></td></tr></table>
+<table><tr><td><input type="password" id="input-password-100" style="height: 100%;"></td></tr></table>
+
+<table><tr><td><input type="radio" id="input-radio-75" style="height: 75%;"></td></tr></table>
+<table><tr><td><input type="radio" id="input-radio-100" style="height: 100%;"></td></tr></table>
+
+<table><tr><td><input type="reset" id="input-reset-75" style="height: 75%;"></td></tr></table>
+<table><tr><td><input type="reset" id="input-reset-100" style="height: 100%;"></td></tr></table>
+
+<table><tr><td><input type="submit" id="input-submit-75" style="height: 75%;"></td></tr></table>
+<table><tr><td><input type="submit" id="input-submit-100" style="height: 100%;"></td></tr></table>
+
+<table><tr><td><input type="text" id="input-text-75" style="height: 75%;"></td></tr></table>
+<table><tr><td><input type="text" id="input-text-100" style="height: 100%;"></td></tr></table>
+
+<table><tr><td><isindex id="isindex-75" style="height: 75%;"></td></tr></table>
+<table><tr><td><isindex id="isindex-100" style="height: 100%;"></td></tr></table>
+
+<table><tr><td><select id="select-75" style="height: 75%;"><option>Option</option></select></td></tr></table>
+<table><tr><td><select id="select-100" style="height: 100%;"><option>Option</option></select></td></tr></table>
+
+<table><tr><td><textarea id="textarea-75" style="height: 75%;"></textarea></td></tr></table>
+<table><tr><td><textarea id="textarea-100" style="height: 100%;"></textarea></td></tr></table>
+
+<p id="description"></p>
+<div id="console"></div>
+</body>
+</html>

@@ -1,3 +1,43 @@
+2007-12-30  David Kilzer  <ddkilzer@webkit.org>
+
+        Reviewed by Darin.
+
+        - test for http://bugs.webkit.org/show_bug.cgi?id=15359
+          JPEG image not shown when height is specified as percentage inside a table
+
+        This test was added specifically for this bug.  It tests the height of
+        replaced elements (canvas, embed, img, object, button, input, isindex,
+        select, textarea ) within table cells.
+
+        * fast/replaced/table-percent-height-expected.txt: Added.
+        * fast/replaced/table-percent-height.html: Added.
+
+        These test results were updated because they are more correct.
+
+        * platform/mac/fast/replaced/width100percent-image-expected.checksum: Updated.
+        * platform/mac/fast/replaced/width100percent-image-expected.png: Updated.
+        * platform/mac/fast/replaced/width100percent-image-expected.txt: Updated.
+
+        Moved tests and results for these two tests from tables/mozilla_expected_failures/bugs
+        to tables/mozilla/bugs since these results have been fixed.
+
+        * platform/mac/tables/mozilla/bugs/bug137388-1-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla_expected_failures/bugs/bug137388-1-expected.checksum.
+        * platform/mac/tables/mozilla/bugs/bug137388-1-expected.png: Copied from LayoutTests/platform/mac/tables/mozilla_expected_failures/bugs/bug137388-1-expected.png.
+        * platform/mac/tables/mozilla/bugs/bug137388-1-expected.txt: Copied from LayoutTests/platform/mac/tables/mozilla_expected_failures/bugs/bug137388-1-expected.txt.
+        * platform/mac/tables/mozilla/bugs/bug137388-2-expected.checksum: Copied from LayoutTests/platform/mac/tables/mozilla_expected_failures/bugs/bug137388-2-expected.checksum.
+        * platform/mac/tables/mozilla/bugs/bug137388-2-expected.png: Copied from LayoutTests/platform/mac/tables/mozilla_expected_failures/bugs/bug137388-2-expected.png.
+        * platform/mac/tables/mozilla/bugs/bug137388-2-expected.txt: Copied from LayoutTests/platform/mac/tables/mozilla_expected_failures/bugs/bug137388-2-expected.txt.
+        * platform/mac/tables/mozilla_expected_failures/bugs/bug137388-1-expected.checksum: Removed.
+        * platform/mac/tables/mozilla_expected_failures/bugs/bug137388-1-expected.png: Removed.
+        * platform/mac/tables/mozilla_expected_failures/bugs/bug137388-1-expected.txt: Removed.
+        * platform/mac/tables/mozilla_expected_failures/bugs/bug137388-2-expected.checksum: Removed.
+        * platform/mac/tables/mozilla_expected_failures/bugs/bug137388-2-expected.png: Removed.
+        * platform/mac/tables/mozilla_expected_failures/bugs/bug137388-2-expected.txt: Removed.
+        * tables/mozilla/bugs/bug137388-1.html: Copied from LayoutTests/tables/mozilla_expected_failures/bugs/bug137388-1.html.
+        * tables/mozilla/bugs/bug137388-2.html: Copied from LayoutTests/tables/mozilla_expected_failures/bugs/bug137388-2.html.
+        * tables/mozilla_expected_failures/bugs/bug137388-1.html: Removed.
+        * tables/mozilla_expected_failures/bugs/bug137388-2.html: Removed.
+
 2007-12-30  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Sam.
