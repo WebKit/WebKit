@@ -1,3 +1,13 @@
+2007-12-29  Jan Michael Alonzo  <jmalonzo@unpluggable.com>
+
+        Reviewed by Alp Toker.
+
+        Move all SVG related stuff inside SVG block. Don't include
+        SVGNames, SVGElementFactory, and XLinkNames when SVG is not
+        enabled
+
+        * GNUmakefile.am:
+
 2007-12-29  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin.

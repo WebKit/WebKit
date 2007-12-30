@@ -9,7 +9,7 @@ AC_CONFIG_SRCDIR([WebCore/config.h])
 LIBWEBKITGTK_VERSION=1:0:0
 AC_SUBST([LIBWEBKITGTK_VERSION])
 
-AM_INIT_AUTOMAKE([1.9 subdir-objects foreign tar-ustar])
+AM_INIT_AUTOMAKE([1.9 foreign tar-ustar subdir-objects])
 
 AM_MAINTAINER_MODE
 
@@ -48,6 +48,7 @@ if test -z "$CFLAGS"; then
 fi
 
 # programs
+AC_DISABLE_STATIC
 AM_PROG_LIBTOOL
 AC_PROG_INSTALL
 AM_PROG_CC_STDC
@@ -184,7 +185,7 @@ AC_MSG_CHECKING([whether to enable HTML5 client-side storage support])
 AC_ARG_ENABLE(database,
               AC_HELP_STRING([--enable-database],
                              [enable HTML5 client-side storage support [default=no]]),
-              [],[enable_database="no"])
+              [],[enable_database="yes"])
 AC_MSG_RESULT([$enable_database])
 
 # check whether to build with icon database support
@@ -208,7 +209,7 @@ AC_MSG_CHECKING([whether to enable XPath support])
 AC_ARG_ENABLE(xpath,
               AC_HELP_STRING([--enable-xpath],
                              [enable support for XPath [default=no]]),
-              [],[enable_xpath="no"])
+              [],[enable_xpath="yes"])
 AC_MSG_RESULT([$enable_xpath])
 
 # check whether to enable XSLT support
@@ -216,7 +217,7 @@ AC_MSG_CHECKING([whether to enable XSLT support])
 AC_ARG_ENABLE(xslt,
               AC_HELP_STRING([--enable-xslt],
                              [enable support for XSLT [default=no]]),
-              [],[enable_xslt="no"])
+              [],[enable_xslt="yes"])
 AC_MSG_RESULT([$enable_xslt])
 
 # check whether to enable SVG support
@@ -368,9 +369,10 @@ WebKit was configured with the following options:
 
  Target                            : $with_webkit_target
  Enable debug                      : $enable_debug
- Icon database support             : $enable_icon_database
+ Code coverage support             : $enable_coverage
  HTML5 client-side storage support : $enable_database
  HTML5 video element support       : $enable_video
+ Icon database support             : $enable_icon_database
  SVG support                       : $enable_svg
  SVG animation support             : $enable_svg_animation
  SVG filters support               : $enable_svg_filters
@@ -379,5 +381,4 @@ WebKit was configured with the following options:
  SVG use element support           : $enable_svg_use_element
  XPATH support                     : $enable_xpath
  XSLT support                      : $enable_xslt
- Code coverage support             : $enable_coverage
 "

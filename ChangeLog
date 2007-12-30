@@ -2,6 +2,14 @@
 
         Reviewed by Alp Toker.
 
+        Enable Database, XPath and XSLT features by default
+
+        * configure.ac:
+
+2007-12-29  Jan Michael Alonzo  <jmalonzo@unpluggable.com>
+
+        Reviewed by Alp Toker.
+
         http://bugs.webkit.org/show_bug.cgi?id=16669
         autotools update and fixes
 

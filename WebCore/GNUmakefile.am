@@ -36,7 +36,6 @@ webkitgtk_cppflags += \
 	-I $(srcdir)/WebCore/platform/gtk \
 	-I $(srcdir)/WebCore/platform/graphics/gtk \
 	-I $(srcdir)/WebCore/platform/graphics/cairo \
-	-I $(srcdir)/WebCore/svg/graphics/cairo \
 	-I $(srcdir)/WebCore/platform/network/curl \
 	-I $(srcdir)/WebCore/loader/gtk \
 	-I $(srcdir)/WebCore/page/gtk \
@@ -61,9 +60,6 @@ webcore_built_nosources += \
 webcore_built_sources += \
 	DerivedSources/CSSPropertyNames.h \
 	DerivedSources/CSSValueKeywords.h \
-	DerivedSources/XLinkNames.cpp \
-	DerivedSources/SVGElementFactory.cpp \
-	DerivedSources/SVGNames.cpp \
 	DerivedSources/HTMLNames.h \
 	DerivedSources/HTMLNames.cpp \
 	DerivedSources/XMLNames.h \
@@ -889,7 +885,6 @@ webcore_sources += \
 	WebCore/rendering/RenderWidget.cpp \
 	WebCore/rendering/RenderWordBreak.cpp \
 	WebCore/rendering/RootInlineBox.cpp \
-	WebCore/rendering/SVGRenderTreeAsText.cpp \
 	WebCore/xml/DOMParser.cpp \
 	WebCore/xml/XMLHttpRequest.cpp \
 	WebCore/xml/XMLSerializer.cpp
@@ -1177,7 +1172,13 @@ endif # END ENABLE_XSLT
 if ENABLE_SVG
 FEATURE_DEFINES_JAVASCRIPT += ENABLE_SVG=1
 
+webkitgtk_cppflags += \
+	-I $(srcdir)/WebCore/svg/graphics/cairo
+
 webcore_built_sources += \
+	DerivedSources/XLinkNames.cpp \
+	DerivedSources/SVGElementFactory.cpp \
+	DerivedSources/SVGNames.cpp \
 	DerivedSources/JSSVGAElement.h \
 	DerivedSources/JSSVGAngle.h \
 	DerivedSources/JSSVGAnimatedAngle.h \
@@ -1592,6 +1593,7 @@ webcore_sources += \
 	WebCore/css/SVGCSSFontFace.cpp \
 	WebCore/rendering/SVGRenderStyle.cpp \
 	WebCore/rendering/SVGRenderStyleDefs.cpp \
+	WebCore/rendering/SVGRenderTreeAsText.cpp \
 	WebCore/rendering/PointerEventsHitRules.cpp \
 	WebCore/svg/SVGZoomEvent.cpp \
 	WebCore/svg/SVGDocumentExtensions.cpp \
@@ -1845,9 +1847,6 @@ DerivedSources/CSSValueKeywords.h: $(WebCore)/css/CSSValueKeywords.in $(WebCore)
 	cp $< CSSValueKeywords.in
 	$(PERL) "$(WebCore)/css/makevalues.pl"
 	mv CSSValueKeywords.* $(GENSOURCES)
-
-DerivedSources/SVGElementFactory.cpp DerivedSources/SVGNames.cpp DerivedSources/XLinkNames.cpp:
-	echo > $@
 
 endif !ENABLE_SVG # END ENABLE_SVG
 
