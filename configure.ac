@@ -37,11 +37,22 @@ case "$host" in
        ;;
 esac
 
+# If CXXFLAGS and CFLAGS are unset, default to -O2
+# This is to tell automake not to include '-g' if CXXFLAGS is not set
+# For more info - http://www.gnu.org/software/automake/manual/autoconf.html#C_002b_002b-Compiler
+if test -z "$CXXFLAGS"; then
+   CXXFLAGS="-O2"
+fi
+if test -z "$CFLAGS"; then
+   CFLAGS="-O2"
+fi
+
 # programs
 AM_PROG_LIBTOOL
 AC_PROG_INSTALL
 AM_PROG_CC_STDC
 AC_PROG_CXX
+AC_PROG_CXX_C_O
 AM_PROG_CC_C_O
 
 AC_PATH_PROG(PERL, perl)
@@ -115,17 +126,17 @@ AC_SUBST([ICU_LIBS])
 
 # determine the GDK/GTK+ target
 AC_MSG_CHECKING([the target for WebKit GTK+])
-AC_ARG_WITH(webkittarget,
+AC_ARG_WITH(webkit_target,
             AC_HELP_STRING([--with-webkit-target=@<:@x11/win32/quartz/directfb@:>@],
                            [Select webkit target [default=x11]]),
-            [],[with_webkittarget="x11"])
+            [],[with_webkit_target="x11"])
 
-case "$with_webkittarget" in
+case "$with_webkit_target" in
      x11|win32|quartz|directfb) ;;
      *) AC_MSG_ERROR([Invalid target: must be x11, quartz, win32, or directfb.]) ;;
 esac
 
-AC_MSG_RESULT([$with_webkittarget])
+AC_MSG_RESULT([$with_webkit_target])
 
 # minimum base dependencies
 GLIB_REQUIRED_VERSION=2.0
@@ -173,15 +184,15 @@ AC_MSG_CHECKING([whether to enable HTML5 client-side storage support])
 AC_ARG_ENABLE(database,
               AC_HELP_STRING([--enable-database],
                              [enable HTML5 client-side storage support [default=no]]),
-              [],[enable_database="yes"])
+              [],[enable_database="no"])
 AC_MSG_RESULT([$enable_database])
 
 # check whether to build with icon database support
 AC_MSG_CHECKING([whether to enable icon database support])
-AC_ARG_ENABLE(icondatabase,
+AC_ARG_ENABLE(icon_database,
               AC_HELP_STRING([--enable-icon-database],
                              [enable icon database [default=no]]),
-              [],[enable_icon_database="yes"])
+              [],[enable_icon_database="no"])
 AC_MSG_RESULT([$enable_icon_database])
 
 # check whether to enable HTML5 audio/video support
@@ -199,14 +210,6 @@ AC_ARG_ENABLE(xpath,
                              [enable support for XPath [default=no]]),
               [],[enable_xpath="no"])
 AC_MSG_RESULT([$enable_xpath])
-
-# check whether to enable XBL support
-AC_MSG_CHECKING([whether to enable XBL support])
-AC_ARG_ENABLE(xbl,
-              AC_HELP_STRING([--enable-xbl],
-                             [enable support for XBL [default=no]]),
-              [],[enable_xbl="no"])
-AC_MSG_RESULT([$enable_xbl])
 
 # check whether to enable XSLT support
 AC_MSG_CHECKING([whether to enable XSLT support])
@@ -272,6 +275,12 @@ AC_ARG_ENABLE(coverage,
               [],[enable_coverage="no"])
 AC_MSG_RESULT([$enable_coverage])
 
+# Add '-g' flag to gcc if it's debug build
+if test "$enable_debug" = "yes"; then
+   CXXFLAGS="$CXXFLAGS -g"
+   CFLAGS="$CFLAGS -g"
+fi
+
 # check if sqlite 3 is available
 if test "$enable_icon_database" = "yes" || test "$enable_database" = "yes"; then
    PKG_CHECK_MODULES([SQLITE3], [sqlite3 >= $SQLITE_REQUIRED_VERSION])
@@ -325,17 +334,16 @@ AM_CONDITIONAL([OS_LINUX],[test "$os_linux" = "yes"])
 AM_CONDITIONAL([OS_FREEBSD],[test "$os_freebsd" = "yes"])
 
 # target conditionals
-AM_CONDITIONAL([TARGET_X11], [test "$with_webkittarget" = "x11"])
-AM_CONDITIONAL([TARGET_WIN32], [test "$with_webkittarget" = "win32"])
-AM_CONDITIONAL([TARGET_QUARTZ], [test "$with_webkittarget" = "quartz"])
-AM_CONDITIONAL([TARGET_DIRECTFB], [test "$with_webkittarget" = "directfb"])
+AM_CONDITIONAL([TARGET_X11], [test "$with_webkit_target" = "x11"])
+AM_CONDITIONAL([TARGET_WIN32], [test "$with_webkit_target" = "win32"])
+AM_CONDITIONAL([TARGET_QUARTZ], [test "$with_webkit_target" = "quartz"])
+AM_CONDITIONAL([TARGET_DIRECTFB], [test "$with_webkit_target" = "directfb"])
 
 # WebKit feature conditionals
 AM_CONDITIONAL([ENABLE_DEBUG],[test "$enable_debug" = "yes"])
 AM_CONDITIONAL([ENABLE_DATABASE],[test "$enable_database" = "yes"])
 AM_CONDITIONAL([ENABLE_ICONDATABASE],[test "$enable_icon_database" = "yes"])
 AM_CONDITIONAL([ENABLE_XPATH],[test "$enable_xpath" = "yes"])
-AM_CONDITIONAL([ENABLE_XBL],[test "$enable_xbl" = "yes"])
 AM_CONDITIONAL([ENABLE_XSLT],[test "$enable_xslt" = "yes"])
 AM_CONDITIONAL([ENABLE_VIDEO],[test "$enable_video" = "yes"])
 AM_CONDITIONAL([ENABLE_SVG],[test "$enable_svg" = "yes"])
@@ -346,7 +354,6 @@ AM_CONDITIONAL([ENABLE_SVG_AS_IMAGE],[test "$enable_svg_as_image" = "yes"])
 AM_CONDITIONAL([ENABLE_SVG_USE],[test "$enable_svg_use_element" = "yes"])
 AM_CONDITIONAL([ENABLE_COVERAGE],[test "$enable_coverage" = "yes"])
 AM_CONDITIONAL([SVG_FLAGS],[test "$svg_flags" = "yes"])
-
 
 AC_CONFIG_FILES([
 GNUmakefile
@@ -359,7 +366,7 @@ AC_OUTPUT
 echo "
 WebKit was configured with the following options:
 
- Target                            : $with_webkittarget
+ Target                            : $with_webkit_target
  Enable debug                      : $enable_debug
  Icon database support             : $enable_icon_database
  HTML5 client-side storage support : $enable_database
@@ -372,6 +379,5 @@ WebKit was configured with the following options:
  SVG use element support           : $enable_svg_use_element
  XPATH support                     : $enable_xpath
  XSLT support                      : $enable_xslt
- XBL support                       : $enable_xbl
  Code coverage support             : $enable_coverage
 "

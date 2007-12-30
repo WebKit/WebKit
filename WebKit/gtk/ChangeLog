@@ -1,3 +1,15 @@
+2007-12-29  Jan Michael Alonzo  <jmalonzo@unpluggable.com>
+
+        Reviewed by Alp Toker.
+
+        http://bugs.webkit.org/show_bug.cgi?id=16669
+        autotools update and fixes
+
+        pkgconfig file and icon database inclusion fix
+
+        * WebKitGtk.pc.in: Remove ICU_FLAGS from Cflags
+        * WebView/webkitprivate.cpp: Guard ICONDATABASE inclusions
+
 2007-12-28  Christian Dywan  <christian@twotoasts.de>
 
         Reviewed by Alp Toker.

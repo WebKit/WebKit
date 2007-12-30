@@ -1,3 +1,24 @@
+2007-12-29  Jan Michael Alonzo  <jmalonzo@unpluggable.com>
+
+        Reviewed by Alp Toker.
+
+        http://bugs.webkit.org/show_bug.cgi?id=16669
+        autotools update and fixes
+
+        Various fixes to the autotools build
+
+        * GNUmakefile.am:
+          - Remove ICU_FLAGS because it adds -g in the CFLAGS/CXXFLAGS
+          - Fix clean rules (Rodney Dawes)
+          - Added webcore specific variables, remove STDINT_H and
+            PTHREAD_NP_H checks (already included in config.h)
+        * autogen.sh:
+          - Loosen automake and aclocal requirement
+        * configure.ac:
+          - Workaround AC_PROG_CXX putting -g in CXXFLAGS. Only use -g
+            when doing a debug build (Rodney Dawes)
+          - Fix webkit target and remove traces of XBL
+
 2007-12-27  Jan Michael Alonzo  <jmalonzo@unpluggable.com>
 
         Reviewed by Alp Toker.

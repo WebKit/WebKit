@@ -34,7 +34,6 @@
 #include "Comment.h"
 #include "CookieJar.h"
 #include "DOMImplementation.h"
-#include "DatabaseThread.h"
 #include "DocLoader.h"
 #include "DocumentFragment.h"
 #include "DocumentLoader.h"
@@ -104,6 +103,10 @@
 #include "XMLTokenizer.h"
 #include "kjs_binding.h"
 #include "kjs_proxy.h"
+
+#if ENABLE(DATABASE)
+#include "DatabaseThread.h"
+#endif
 
 #if ENABLE(XPATH)
 #include "XPathEvaluator.h"

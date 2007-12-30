@@ -21,13 +21,17 @@
 
 #include "webkitprivate.h"
 #include "ChromeClientGtk.h"
-#include "DatabaseTracker.h"
 #include "FrameLoader.h"
 #include "FrameLoaderClientGtk.h"
 #include "Logging.h"
 #include "NotImplemented.h"
 #include "Pasteboard.h"
 #include "PasteboardHelperGtk.h"
+#include "Threading.h"
+
+#if ENABLE(DATABASE)
+#include "DatabaseTracker.h"
+#endif
 
 using namespace WebCore;
 

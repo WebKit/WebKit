@@ -4,7 +4,7 @@ WebCore := $(srcdir)/WebCore
 FEATURE_DEFINES_JAVASCRIPT := LANGUAGE_JAVASCRIPT=1
 SVG_FEATURES :=
 
-webkitgtk_cppflags += \
+webcore_cppflags += \
 	-I $(srcdir)/WebCore \
 	-I $(srcdir)/WebCore/ForwardingHeaders \
 	-I $(srcdir)/WebCore/platform \
@@ -12,6 +12,7 @@ webkitgtk_cppflags += \
 	-I $(srcdir)/WebCore/platform/graphics \
 	-I $(srcdir)/WebCore/platform/text \
 	-I $(srcdir)/WebCore/loader \
+	-I $(srcdir)/WebCore/loader/icon \
 	-I $(srcdir)/WebCore/css \
 	-I $(srcdir)/WebCore/dom \
 	-I $(srcdir)/WebCore/page \
@@ -22,12 +23,6 @@ webkitgtk_cppflags += \
 	-I $(srcdir)/WebCore/html \
 	-I $(srcdir)/WebCore/bindings/js \
 	-I $(srcdir)/WebCore/platform/image-decoders \
-	-I $(srcdir)/WebCore/platform/gtk \
-	-I $(srcdir)/WebCore/platform/graphics/gtk \
-	-I $(srcdir)/WebCore/platform/graphics/cairo \
-	-I $(srcdir)/WebCore/svg/graphics/cairo \
-	-I $(srcdir)/WebCore/platform/network/curl \
-	-I $(srcdir)/WebCore/platform/image-decoders \
 	-I $(srcdir)/WebCore/platform/image-decoders/bmp \
 	-I $(srcdir)/WebCore/platform/image-decoders/gif \
 	-I $(srcdir)/WebCore/platform/image-decoders/ico \
@@ -35,13 +30,20 @@ webkitgtk_cppflags += \
 	-I $(srcdir)/WebCore/platform/image-decoders/png \
 	-I $(srcdir)/WebCore/platform/image-decoders/xbm \
 	-I $(srcdir)/WebCore/rendering \
+	-I $(top_builddir)/WebCore/bindings/js
+
+webkitgtk_cppflags += \
+	-I $(srcdir)/WebCore/platform/gtk \
+	-I $(srcdir)/WebCore/platform/graphics/gtk \
+	-I $(srcdir)/WebCore/platform/graphics/cairo \
+	-I $(srcdir)/WebCore/svg/graphics/cairo \
+	-I $(srcdir)/WebCore/platform/network/curl \
 	-I $(srcdir)/WebCore/loader/gtk \
 	-I $(srcdir)/WebCore/page/gtk \
 	-I $(srcdir)/WebKit/gtk/WebCoreSupport \
-	-I $(srcdir)/WebKit/gtk/WebView \
-	-I $(top_builddir)/WebCore/bindings/js
+	-I $(srcdir)/WebKit/gtk/WebView
 
-webkitgtk_built_nosources += \
+webcore_built_nosources += \
 	DerivedSources/DocTypeStrings.cpp \
 	DerivedSources/tokenizer.cpp \
 	DerivedSources/ColorData.c \
@@ -56,7 +58,12 @@ webkitgtk_built_nosources += \
 	WebCore/bindings/js/kjs_window.lut.h \
 	WebCore/bindings/js/JSHTMLInputElementBaseTable.cpp
 
-webkitgtk_built_sources += \
+webcore_built_sources += \
+	DerivedSources/CSSPropertyNames.h \
+	DerivedSources/CSSValueKeywords.h \
+	DerivedSources/XLinkNames.cpp \
+	DerivedSources/SVGElementFactory.cpp \
+	DerivedSources/SVGNames.cpp \
 	DerivedSources/HTMLNames.h \
 	DerivedSources/HTMLNames.cpp \
 	DerivedSources/XMLNames.h \
@@ -64,8 +71,6 @@ webkitgtk_built_sources += \
 	DerivedSources/HTMLEntityNames.c \
 	DerivedSources/CSSGrammar.h \
 	DerivedSources/CSSGrammar.cpp \
-	DerivedSources/CSSPropertyNames.h \
-	DerivedSources/CSSValueKeywords.h \
 	DerivedSources/UserAgentStyleSheets.h \
 	DerivedSources/UserAgentStyleSheetsData.cpp \
 	DerivedSources/JSAttr.h \
@@ -430,6 +435,9 @@ IDL_BINDINGS +=  \
 	WebCore/page/Screen.idl \
 	WebCore/xml/DOMParser.idl \
 	WebCore/xml/XMLSerializer.idl
+
+webcore_headers += \
+	WebCore/loader/icon/IconDatabase.h
 
 webcore_sources += \
 	WebCore/bindings/js/GCController.cpp \
@@ -967,7 +975,7 @@ webkitgtk_sources += \
 if ENABLE_DATABASE
 FEATURE_DEFINES_JAVASCRIPT += ENABLE_DATABASE=1
 
-webkitgtk_built_sources += \
+webcore_built_sources += \
 	DerivedSources/JSDatabase.h \
 	DerivedSources/JSSQLError.h \
 	DerivedSources/JSSQLResultSet.h \
@@ -986,12 +994,12 @@ IDL_BINDINGS += \
 	WebCore/storage/SQLResultSetRowList.idl \
 	WebCore/storage/SQLTransaction.idl
 
-webkitgtk_cppflags += \
+webcore_cppflags += \
 	-DENABLE_DATABASE=1 \
 	-I $(top_srcdir)/WebCore/platform/sql \
-	-I $(top_srcdir)/WebCore/storage 
+	-I $(top_srcdir)/WebCore/storage
 
-webkitgtk_sources += \
+webcore_sources += \
 	WebCore/platform/sql/SQLiteAuthorizer.cpp \
 	WebCore/platform/sql/SQLiteDatabase.cpp \
 	WebCore/platform/sql/SQLiteStatement.cpp \
@@ -1021,17 +1029,15 @@ endif # END ENABLE_DATABASE
 # Icon Database Support
 # ----
 if ENABLE_ICONDATABASE
-webkitgtk_cppflags += \
-	-DENABLE_ICONDATABASE=1 \
-	-I $(top_srcdir)/WebCore/loader/icon
+webcore_cppflags += -DENABLE_ICONDATABASE=1
 
-webkitgtk_sources += \
+webcore_sources += \
 	WebCore/loader/icon/IconDatabase.cpp \
 	WebCore/loader/icon/IconRecord.cpp \
 	WebCore/loader/icon/PageURLRecord.cpp
 
 else
-webkitgtk_sources += \
+webcore_sources += \
 	WebCore/loader/icon/IconDatabaseNone.cpp
 
 endif # END ENABLE_ICONDATABASE
@@ -1042,13 +1048,13 @@ endif # END ENABLE_ICONDATABASE
 if ENABLE_VIDEO
 FEATURE_DEFINES_JAVASCRIPT += ENABLE_VIDEO=1
 
-webkitgtk_cppflags += -DENABLE_VIDEO=1
+webcore_cppflags += -DENABLE_VIDEO=1
 
 if ENABLE_DEBUG
-webkitgtk_cppflags += -DGST_DISABLE_DEPRECATED
+webcore_cppflags += -DGST_DISABLE_DEPRECATED
 endif # END ENABLE_DEBUG
 
-webkitgtk_built_sources += \
+webcore_built_sources += \
 	DerivedSources/JSHTMLSourceElement.h \
 	DerivedSources/JSHTMLAudioElement.h \
 	DerivedSources/JSHTMLMediaElement.h \
@@ -1073,18 +1079,20 @@ IDL_BINDINGS += \
 	WebCore/html/TimeRanges.idl \
 	WebCore/html/VoidCallback.idl 
 
-webkitgtk_sources += \
+webcore_sources += \
 	WebCore/html/HTMLAudioElement.cpp \
 	WebCore/html/HTMLMediaElement.cpp \
 	WebCore/html/HTMLSourceElement.cpp \
 	WebCore/html/HTMLVideoElement.cpp \
 	WebCore/html/TimeRanges.cpp \
 	WebCore/platform/graphics/MediaPlayer.cpp \
-	WebCore/platform/graphics/gtk/MediaPlayerPrivateGStreamer.cpp \
-	WebCore/platform/graphics/gtk/VideoSinkGStreamer.cpp \
 	WebCore/rendering/RenderVideo.cpp \
 	WebCore/rendering/RenderMedia.cpp \
-	WebCore/bindings/js/JSHTMLAudioElementConstructor.cpp 
+	WebCore/bindings/js/JSHTMLAudioElementConstructor.cpp
+
+webkitgtk_sources += \
+	WebCore/platform/graphics/gtk/MediaPlayerPrivateGStreamer.cpp \
+	WebCore/platform/graphics/gtk/VideoSinkGStreamer.cpp
 
 endif # END ENABLE_VIDEO
 
@@ -1094,9 +1102,9 @@ endif # END ENABLE_VIDEO
 if ENABLE_XPATH
 FEATURE_DEFINES_JAVASCRIPT += ENABLE_XPATH=1
 
-webkitgtk_cppflags += -DENABLE_XPATH=1
+webcore_cppflags += -DENABLE_XPATH=1
 
-webkitgtk_built_sources += \
+webcore_built_sources += \
 	DerivedSources/XPathGrammar.h \
 	DerivedSources/XPathGrammar.cpp \
 	DerivedSources/JSXPathEvaluator.h \
@@ -1114,7 +1122,7 @@ IDL_BINDINGS += \
 	WebCore/xml/XPathResult.idl \
 	WebCore/xml/XPathEvaluator.idl
 
-webkitgtk_sources += \
+webcore_sources += \
 	WebCore/xml/NativeXPathNSResolver.cpp \
 	WebCore/xml/XPathEvaluator.cpp \
 	WebCore/xml/XPathExpression.cpp \
@@ -1151,9 +1159,9 @@ endif # END ENABLE_XPATH
 if ENABLE_XSLT
 FEATURE_DEFINES_JAVASCRIPT += ENABLE_XSLT=1
 
-webkitgtk_cppflags += -DENABLE_XSLT=1
+webcore_cppflags += -DENABLE_XSLT=1
 
-webkitgtk_sources += \
+webcore_sources += \
 	WebCore/xml/XSLImportRule.cpp \
 	WebCore/xml/XSLStyleSheet.cpp \
 	WebCore/xml/XSLTExtensions.cpp \
@@ -1162,25 +1170,14 @@ webkitgtk_sources += \
 endif # END ENABLE_XSLT
 
 # ----
-# XBL Support
-# ----
-if ENABLE_XBL
-FEATURE_DEFINES_JAVASCRIPT += ENABLE_XBL=1
-
-webkitgtk_cppflags += -DENABLE_XBL=1
-
-endif # END ENABLE_XBL
-
-# ----
 # SVG Support
+#
+# FIXME: allow a more fine-grained inclusion/generation of sources per SVG feature
 # ----
 if ENABLE_SVG
 FEATURE_DEFINES_JAVASCRIPT += ENABLE_SVG=1
 
-webkitgtk_built_sources += \
-	DerivedSources/XLinkNames.cpp \
-	DerivedSources/SVGElementFactory.cpp \
-	DerivedSources/SVGNames.cpp \
+webcore_built_sources += \
 	DerivedSources/JSSVGAElement.h \
 	DerivedSources/JSSVGAngle.h \
 	DerivedSources/JSSVGAnimatedAngle.h \
@@ -1294,6 +1291,7 @@ webkitgtk_built_sources += \
 	DerivedSources/JSSVGFETileElement.h \
 	DerivedSources/JSSVGFETurbulenceElement.h \
 	DerivedSources/JSSVGFilterElement.h \
+	DerivedSources/JSSVGFontElement.h \
 	DerivedSources/JSSVGFontFaceElement.h \
 	DerivedSources/JSSVGFontFaceFormatElement.h \
 	DerivedSources/JSSVGFontFaceNameElement.h \
@@ -1301,6 +1299,7 @@ webkitgtk_built_sources += \
 	DerivedSources/JSSVGFontFaceUriElement.h \
 	DerivedSources/JSSVGForeignObjectElement.h \
 	DerivedSources/JSSVGGElement.h \
+	DerivedSources/JSSVGGlyphElement.h \
 	DerivedSources/JSSVGGradientElement.h \
 	DerivedSources/JSSVGImageElement.h \
 	DerivedSources/JSSVGLengthList.h \
@@ -1308,6 +1307,7 @@ webkitgtk_built_sources += \
 	DerivedSources/JSSVGLinearGradientElement.h \
 	DerivedSources/JSSVGMaskElement.h \
 	DerivedSources/JSSVGMarkerElement.h \
+	DerivedSources/JSSVGMissingGlyphElement.h \
 	DerivedSources/JSSVGZoomEvent.h \
 	DerivedSources/JSSVGAElement.cpp \
 	DerivedSources/JSSVGAngle.cpp \
@@ -1495,12 +1495,15 @@ IDL_BINDINGS += \
 	WebCore/svg/SVGFETileElement.idl \
 	WebCore/svg/SVGFETurbulenceElement.idl \
 	WebCore/svg/SVGFilterElement.idl \
+	WebCore/svg/SVGFontElement.idl \
 	WebCore/svg/SVGFontFaceElement.idl \
 	WebCore/svg/SVGFontFaceFormatElement.idl \
 	WebCore/svg/SVGFontFaceNameElement.idl \
 	WebCore/svg/SVGFontFaceSrcElement.idl \
 	WebCore/svg/SVGFontFaceUriElement.idl \
 	WebCore/svg/SVGForeignObjectElement.idl \
+	WebCore/svg/SVGGElement.idl \
+	WebCore/svg/SVGGlyphElement.idl \
 	WebCore/svg/SVGGElement.idl \
 	WebCore/svg/SVGGradientElement.idl \
 	WebCore/svg/SVGImageElement.idl \
@@ -1512,6 +1515,7 @@ IDL_BINDINGS += \
 	WebCore/svg/SVGMaskElement.idl \
 	WebCore/svg/SVGMatrix.idl \
 	WebCore/svg/SVGMetadataElement.idl \
+	WebCore/svg/SVGMissingGlyphElement.idl \
 	WebCore/svg/SVGNumber.idl \
 	WebCore/svg/SVGNumberList.idl \
 	WebCore/svg/SVGPaint.idl \
@@ -1568,13 +1572,13 @@ IDL_BINDINGS += \
 	WebCore/svg/SVGUseElement.idl \
 	WebCore/svg/SVGViewElement.idl 
 
-webkitgtk_cppflags += \
+webcore_cppflags += \
 	-DENABLE_SVG=1 \
 	-I \$(top_srcdir)/WebCore/svg \
 	-I \$(top_srcdir)/WebCore/svg/graphics \
 	-I \$(top_srcdir)/WebCore/svg/graphics/filters
 
-webkitgtk_sources += \
+webcore_sources += \
 	WebCore/bindings/js/JSSVGElementWrapperFactory.cpp \
 	WebCore/bindings/js/JSSVGMatrixCustom.cpp \
 	WebCore/bindings/js/JSSVGPathSegCustom.cpp \
@@ -1585,6 +1589,7 @@ webkitgtk_sources += \
 	WebCore/css/SVGCSSComputedStyleDeclaration.cpp \
 	WebCore/css/SVGCSSParser.cpp \
 	WebCore/css/SVGCSSStyleSelector.cpp \
+	WebCore/css/SVGCSSFontFace.cpp \
 	WebCore/rendering/SVGRenderStyle.cpp \
 	WebCore/rendering/SVGRenderStyleDefs.cpp \
 	WebCore/rendering/PointerEventsHitRules.cpp \
@@ -1643,6 +1648,8 @@ webkitgtk_sources += \
 	WebCore/svg/SVGFilterElement.cpp \
 	WebCore/svg/SVGFilterPrimitiveStandardAttributes.cpp \
 	WebCore/svg/SVGFitToViewBox.cpp \
+	WebCore/svg/SVGFont.cpp \
+	WebCore/svg/SVGFontElement.cpp \
 	WebCore/svg/SVGFontFaceElement.cpp \
 	WebCore/svg/SVGFontFaceFormatElement.cpp \
 	WebCore/svg/SVGFontFaceNameElement.cpp \
@@ -1650,6 +1657,7 @@ webkitgtk_sources += \
 	WebCore/svg/SVGFontFaceUriElement.cpp \
 	WebCore/svg/SVGForeignObjectElement.cpp \
 	WebCore/svg/SVGGElement.cpp \
+	WebCore/svg/SVGGlyphElement.cpp \
 	WebCore/svg/SVGGradientElement.cpp \
 	WebCore/svg/SVGImageElement.cpp \
 	WebCore/svg/SVGLangSpace.cpp \
@@ -1661,6 +1669,7 @@ webkitgtk_sources += \
 	WebCore/svg/SVGMarkerElement.cpp \
 	WebCore/svg/SVGMaskElement.cpp \
 	WebCore/svg/SVGMetadataElement.cpp \
+	WebCore/svg/SVGMissingGlyphElement.cpp \
 	WebCore/svg/SVGMPathElement.cpp \
 	WebCore/svg/SVGNumberList.cpp \
 	WebCore/svg/SVGPaint.cpp \
@@ -1762,7 +1771,9 @@ webkitgtk_sources += \
 	WebCore/rendering/SVGInlineFlowBox.cpp \
 	WebCore/rendering/SVGInlineTextBox.cpp \
 	WebCore/rendering/SVGRenderSupport.cpp \
-	WebCore/rendering/SVGRootInlineBox.cpp \
+	WebCore/rendering/SVGRootInlineBox.cpp
+
+webkitgtk_sources += \
 	WebCore/svg/graphics/cairo/RenderPathCairo.cpp \
 	WebCore/svg/graphics/cairo/SVGPaintServerCairo.cpp \
 	WebCore/svg/graphics/cairo/SVGPaintServerGradientCairo.cpp \
@@ -1863,16 +1874,18 @@ DerivedSources/tokenizer.cpp :
 # CSS grammar
 # NOTE: older versions of bison do not inject an inclusion guard, so we do it
 DerivedSources/CSSGrammar.h DerivedSources/CSSGrammar.cpp : $(WebCore)/css/CSSGrammar.y
-	$(BISON) -d -p cssyy $< -o $@
+	$(BISON) -d -p cssyy $< -o $(GENSOURCES)/CSSGrammar.cpp
 	touch $(GENSOURCES)/CSSGrammar.cpp.h $(GENSOURCES)/CSSGrammar.hpp
 	echo '#ifndef CSSGrammar_h' > $(GENSOURCES)/CSSGrammar.h
 	echo '#define CSSGrammar_h' >> $(GENSOURCES)/CSSGrammar.h
 	cat $(GENSOURCES)/CSSGrammar.cpp.h $(GENSOURCES)/CSSGrammar.hpp >> $(GENSOURCES)/CSSGrammar.h
 	echo '#endif' >> $(GENSOURCES)/CSSGrammar.h
-	rm -f $(GENSOURCES)/CSSGrammar.cpp.h $(GENSOURCES)/CSSGrammar.hpp
 
 # user agent style sheets
 USER_AGENT_STYLE_SHEETS = $(WebCore)/css/html4.css $(WebCore)/css/quirks.css $(WebCore)/css/view-source.css $(WebCore)/css/svg.css 
+
+DerivedSources/UserAgentStyleSheetsData.cpp : DerivedSources/UserAgentStyleSheets.h
+
 DerivedSources/UserAgentStyleSheets.h : $(WebCore)/css/make-css-file-arrays.pl $(USER_AGENT_STYLE_SHEETS)
 	$(PERL) $< $@ UserAgentStyleSheetsData.cpp $(USER_AGENT_STYLE_SHEETS)
 	mv UserAgentStyleSheetsData.cpp $(GENSOURCES)

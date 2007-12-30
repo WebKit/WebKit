@@ -1,3 +1,23 @@
+2007-12-29  Jan Michael Alonzo  <jmalonzo@unpluggable.com>
+
+        Reviewed by Alp Toker.
+
+        http://bugs.webkit.org/show_bug.cgi?id=16669
+        autotools update and fixes
+
+        Autotools update and database/icon database inclusion guard fixes
+
+        * GNUmakefile.am:
+          - Update autotools config as per -r29012 changes
+          - Fix CSSGrammar.h/cpp generation (Seo Sanghyeon, sanxiyn)
+        * dom/Document.cpp:
+        * loader/icon/IconDatabase.h:
+        * page/DOMWindow.cpp:
+        * page/InspectorController.cpp:
+        * page/Settings.cpp:
+        * storage/Database.h:
+          - Remove ENABLE(DATABASE) inclusion guard. Let the includer add the guard instead.
+
 2007-12-29  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Alexey.

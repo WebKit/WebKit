@@ -135,8 +135,8 @@ public:
     String databasePath() const;
     static String defaultDatabaseFilename();
 
-private:
 #if ENABLE(ICONDATABASE)
+private:
     IconRecord* getOrCreateIconRecord(const String& iconURL);
     PageURLRecord* getOrCreatePageURLRecord(const String& pageURL);
     

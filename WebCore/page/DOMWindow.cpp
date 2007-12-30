@@ -33,7 +33,6 @@
 #include "Chrome.h"
 #include "Console.h"
 #include "DOMSelection.h"
-#include "Database.h"
 #include "Document.h"
 #include "Element.h"
 #include "FloatRect.h"
@@ -48,6 +47,10 @@
 #include "Screen.h"
 #include <algorithm>
 #include <wtf/MathExtras.h>
+
+#if ENABLE(DATABASE)
+#include "Database.h"
+#endif
 
 using std::min;
 using std::max;

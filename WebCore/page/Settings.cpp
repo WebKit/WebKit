@@ -26,12 +26,15 @@
 #include "config.h"
 #include "Settings.h"
 
-#include "DatabaseTracker.h"
 #include "Frame.h"
 #include "FrameTree.h"
 #include "Page.h"
 #include "PageCache.h"
 #include "HistoryItem.h"
+
+#if ENABLE(DATABASE)
+#include "DatabaseTracker.h"
+#endif
 
 namespace WebCore {
 

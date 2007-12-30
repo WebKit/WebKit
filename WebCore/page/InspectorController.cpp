@@ -31,7 +31,6 @@
 
 #include "CString.h"
 #include "CachedResource.h"
-#include "Database.h"
 #include "DocLoader.h"
 #include "Document.h"
 #include "DocumentLoader.h"
@@ -63,6 +62,7 @@
 #include <wtf/RefCounted.h>
 
 #if ENABLE(DATABASE)
+#include "Database.h"
 #include "JSDatabase.h"
 #endif
 
