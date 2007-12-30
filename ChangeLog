@@ -1,3 +1,9 @@
+2007-12-30  Alp Toker  <alp@atoker.com>
+
+        Build fix for older autoconf versions.
+
+        * configure.ac:
+
 2007-12-29  Jan Michael Alonzo  <jmalonzo@unpluggable.com>
 
         Reviewed by Alp Toker.
