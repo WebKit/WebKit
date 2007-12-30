@@ -25,6 +25,7 @@ shouldBeEqualToString("(1234.567).toPrecision(1)", "1e+3");
 shouldBeEqualToString("(1234.567).toPrecision(true)", "1e+3"); // just like 1
 shouldBeEqualToString("(1234.567).toPrecision('1')", "1e+3"); // just like 1
 shouldBeEqualToString("(1234.567).toPrecision(2)", "1.2e+3");
+shouldBeEqualToString("(1234.567).toPrecision(2.9)", "1.2e+3");
 shouldBeEqualToString("(1234.567).toPrecision(5)", "1234.6");
 shouldBeEqualToString("(1234.567).toPrecision(21)", "1234.56700000000000728");
 // SpiderMonkey allows precision values 1 to 100, we only allow 1 to 21 currently

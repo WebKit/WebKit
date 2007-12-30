@@ -57,6 +57,7 @@ shouldBeEqualToString("(1234.567).toFixed(true)", "1234.6"); // just like 1
 shouldBeEqualToString("(1234.567).toFixed('1')", "1234.6"); // just like 1
 
 shouldBeEqualToString("(1234.567).toFixed(2)", "1234.57");
+shouldBeEqualToString("(1234.567).toFixed(2.9)", "1234.57");
 shouldBeEqualToString("(1234.567).toFixed(5)", "1234.56700");
 shouldBeEqualToString("(1234.567).toFixed(20)", "1234.56700000000000727596");
 

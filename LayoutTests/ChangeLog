@@ -1,3 +1,16 @@
+2007-12-30  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Sam.
+        
+        Add missing fast/js/number-toExponential.html file and correct results.
+        Add missing number.toString(2) test which also was missing.
+        Update toString results now that we're properly throwing exceptions.
+
+        * fast/js/number-toExponential-expected.txt:
+        * fast/js/number-toExponential.html: Added.
+        * fast/js/number-toString-expected.txt:
+        * fast/js/resources/number-toString.js:
+
 2007-12-29  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin.

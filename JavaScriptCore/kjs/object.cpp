@@ -646,18 +646,6 @@ JSObject *Error::create(ExecState *exec, ErrorType errtype, const UString &messa
     err->put(exec, "sourceURL", jsString(sourceURL));
  
   return err;
-
-/*
-#ifndef NDEBUG
-  const char *msg = err->get(messagePropertyName)->toString().value().ascii();
-  if (l >= 0)
-      fprintf(stderr, "KJS: %s at line %d. %s\n", estr, l, msg);
-  else
-      fprintf(stderr, "KJS: %s. %s\n", estr, msg);
-#endif
-
-  return err;
-*/
 }
 
 JSObject *Error::create(ExecState *exec, ErrorType type, const char *message)

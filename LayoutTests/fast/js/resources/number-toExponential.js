@@ -22,6 +22,7 @@ shouldBeEqualToString("(123.456).toExponential(true)", "1.2e+2"); // just like 1
 shouldBeEqualToString("(123.456).toExponential('1')", "1.2e+2");
 
 shouldBeEqualToString("(123.456).toExponential(2)", "1.23e+2");
+shouldBeEqualToString("(123.456).toExponential(2.9)", "1.23e+2");
 shouldBeEqualToString("(123.456).toExponential(3)", "1.235e+2");
 shouldBeEqualToString("(123.456).toExponential(5)", "1.23456e+2");
 shouldBeEqualToString("(123.456).toExponential(6)", "1.234560e+2");

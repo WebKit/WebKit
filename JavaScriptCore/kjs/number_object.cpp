@@ -142,54 +142,62 @@ static double intPow10(int e)
 
 static JSValue* numberToString(ExecState* exec, JSValue* v, const List& args)
 {
-    double dradix = 10;
-    if (!args.isEmpty())
-        dradix = args[0]->toIntegerPreserveNaN(exec);
-    if (dradix >= 2 && dradix <= 36 && dradix != 10) { // false for NaN
-        int radix = static_cast<int>(dradix);
-        const char digits[] = "0123456789abcdefghijklmnopqrstuvwxyz";
-        // INT_MAX results in 1024 characters left of the dot with radix 2
-        // give the same space on the right side. safety checks are in place
-        // unless someone finds a precise rule.
-        char s[2048 + 3];
-        double x = v->toNumber(exec);
-        if (isnan(x) || isinf(x))
-            return jsString(UString::from(x));
-        
-        // apply algorithm on absolute value. add sign later.
-        bool neg = false;
-        if (x < 0.0) {
-            neg = true;
-            x = -x;
-        }
-        // convert integer portion
-        double f = floor(x);
-        double d = f;
-        char* dot = s + sizeof(s) / 2;
-        char* p = dot;
-        *p = '\0';
+    double radixAsDouble = args[0]->toInteger(exec); // nan -> 0
+    if (radixAsDouble == 10 || args[0]->isUndefined())
+        return jsString(v->toString(exec));
+
+    if (radixAsDouble < 2 || radixAsDouble > 36)
+        return throwError(exec, RangeError, "toString() radix argument must be between 2 and 36");
+
+    int radix = static_cast<int>(radixAsDouble);
+    const char digits[] = "0123456789abcdefghijklmnopqrstuvwxyz";
+    // INT_MAX results in 1024 characters left of the dot with radix 2
+    // give the same space on the right side. safety checks are in place
+    // unless someone finds a precise rule.
+    char s[2048 + 3];
+    const char* lastCharInString = s + sizeof(s) - 1;
+    double x = v->toNumber(exec);
+    if (isnan(x) || isinf(x))
+        return jsString(UString::from(x));
+
+    bool isNegative = x < 0.0;
+    if (isNegative)
+        x = -x;
+
+    double integerPart = floor(x);
+    char* decimalPoint = s + sizeof(s) / 2;
+
+    // convert integer portion
+    char* p = decimalPoint;
+    double d = integerPart;
+    do {
+        int remainderDigit = static_cast<int>(fmod(d, radix));
+        *--p = digits[remainderDigit];
+        d /= radix;
+    } while ((d <= -1.0 || d >= 1.0) && s < p);
+
+    if (isNegative)
+        *--p = '-';
+    char* startOfResultString = p;
+    ASSERT(s <= startOfResultString);
+
+    d = x - integerPart;
+    p = decimalPoint;
+    const double epsilon = 0.001; // TODO: guessed. base on radix ?
+    bool hasFractionalPart = (d < -epsilon || d > epsilon);
+    if (hasFractionalPart) {
+        *p++ = '.';
         do {
-            *--p = digits[static_cast<int>(fmod(d, radix))];
-            d /= radix;
-        } while ((d <= -1.0 || d >= 1.0) && p > s);
-        // any decimal fraction ?
-        d = x - f;
-        const double eps = 0.001; // TODO: guessed. base on radix ?
-        if (d < -eps || d > eps) {
-            *dot++ = '.';
-            do {
-                d *= radix;
-                *dot++ = digits[static_cast<int>(d)];
-                d -= static_cast<int>(d);
-            } while ((d < -eps || d > eps) && dot - s < static_cast<int>(sizeof(s)) - 1);
-            *dot = '\0';
-        }
-        // add sign if negative
-        if (neg)
-            *--p = '-';
-        return jsString(p);
+            d *= radix;
+            const int digit = static_cast<int>(d);
+            *p++ = digits[digit];
+            d -= digit;
+        } while ((d < -epsilon || d > epsilon) && p < lastCharInString);
     }
-    return jsString(v->toString(exec));
+    *p = '\0';
+    ASSERT(p < s + sizeof(s));
+
+    return jsString(startOfResultString);
 }
 
 static JSValue* numberToFixed(ExecState* exec, JSValue* v, const List& args)

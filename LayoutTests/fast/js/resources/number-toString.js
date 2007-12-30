@@ -21,8 +21,10 @@ shouldThrow("(1234.567).toString(true)");
 shouldThrow("(1234.567).toString('1')");
 
 // These test for Firefox compatibility, the spec is "implementation defined"
+shouldBeEqualToString("(1234.567).toString(2)", "10011010010.1001000100100110111010010111100011010101");
 shouldBeEqualToString("(1234.567).toString(3)", "1200201.120022100021001021021002202");
 shouldBeEqualToString("(1234.567).toString(4)", "103102.21010212322113203111");
+shouldBeEqualToString("(1234.567).toString(4.9)", "103102.21010212322113203111");
 shouldBeEqualToString("(1234.567).toString(5)", "14414.240414141414141414");
 shouldBeEqualToString("(1234.567).toString(6)", "5414.32224554134430233");
 shouldBeEqualToString("(1234.567).toString(7)", "3412.365323661111653");
