@@ -1,3 +1,9 @@
+2007-12-30  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Sam.
+
+        * Scripts/do-webcore-rename: Add a few more planned renames s/(\w+)Imp/\1/
+
 2007-12-29  Darin Adler  <darin@apple.com>
 
         Reviewed by Oliver.

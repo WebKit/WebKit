@@ -85,6 +85,10 @@ my %renames = (
     "kjs_proxy_h" => "ScriptController_h",
     "scriptProxy" => "script",
     "selectionController" => "selection",
+    "RuntimeObjectImp" => "RuntimeObject",
+    "InternalFunctionImp" => "InternalFunction",
+    "RegExpObjectImp" => "RegExpObject",
+    "RegExpObjectImpPrivate" => "RegExpObjectPrivate",
 );
 
 # rename files
