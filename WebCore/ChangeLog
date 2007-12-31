@@ -1,3 +1,11 @@
+2007-12-30  Alp Toker  <alp@atoker.com>
+
+        Reviewed by Dan Bernstein.
+
+        Silence warning.
+
+        * dom/NodeList.h:
+
 2007-12-30  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Oliver Hunt.

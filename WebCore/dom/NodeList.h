@@ -44,4 +44,4 @@ namespace WebCore {
 
 } // namespace WebCore
 
-#endif NodeList_h
+#endif // NodeList_h
