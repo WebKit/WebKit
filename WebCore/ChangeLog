@@ -1,3 +1,12 @@
+2007-12-31  Darin Adler  <darin@apple.com>
+
+        Suggested by Antti.
+
+        - turn ENABLE_VIDEO back off for Windows until we can install QuickTime on the build bots
+
+        * WebCore.vcproj/WebCore.vcproj: Removed ENABLE_VIDEO.
+        * WebCore.vcproj/build-generated-files.sh: Ditto.
+
 2007-12-30  Alp Toker  <alp@atoker.com>
 
         Reviewed by Dan Bernstein.
