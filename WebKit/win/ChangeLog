@@ -1,3 +1,15 @@
+2007-12-30  Matt Lilek  <webkit@mattlilek.com>
+
+        Reviewed by Darin.
+
+        Bug 16578: Windows Web Inspector window needs minimum size
+        http://bugs.webkit.org/show_bug.cgi?id=16578
+
+        * WebInspectorClient.cpp:
+        (WebInspectorClient::onGetMinMaxInfo):
+        (WebInspectorWndProc):
+        * WebInspectorClient.h:
+
 2007-12-21  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Steve.

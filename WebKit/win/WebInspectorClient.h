@@ -66,6 +66,7 @@ private:
 
     void updateWindowTitle();
 
+    LRESULT onGetMinMaxInfo(WPARAM, LPARAM);
     LRESULT onSize(WPARAM, LPARAM);
     LRESULT onClose(WPARAM, LPARAM);
 
