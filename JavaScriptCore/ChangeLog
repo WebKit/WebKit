@@ -2,6 +2,27 @@
 
         Reviewed by Sam.
 
+        More small cleanup to array_object.cpp
+
+        * kjs/array_object.cpp:
+        (KJS::ArrayProtoFuncToString::callAsFunction):
+        (KJS::ArrayProtoFuncToLocaleString::callAsFunction):
+        (KJS::ArrayProtoFuncJoin::callAsFunction):
+        (KJS::ArrayProtoFuncConcat::callAsFunction):
+        (KJS::ArrayProtoFuncReverse::callAsFunction):
+        (KJS::ArrayProtoFuncShift::callAsFunction):
+        (KJS::ArrayProtoFuncSlice::callAsFunction):
+        (KJS::ArrayProtoFuncSort::callAsFunction):
+        (KJS::ArrayProtoFuncSplice::callAsFunction):
+        (KJS::ArrayProtoFuncUnShift::callAsFunction):
+        (KJS::ArrayProtoFuncFilter::callAsFunction):
+        (KJS::ArrayProtoFuncMap::callAsFunction):
+        (KJS::ArrayProtoFuncEvery::callAsFunction):
+
+2007-12-30  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Sam.
+
         Apply wkstyle to array_object.cpp
 
         * kjs/array_object.cpp:
