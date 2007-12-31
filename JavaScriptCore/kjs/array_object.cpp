@@ -66,13 +66,13 @@ const ClassInfo ArrayPrototype::info = {"Array", &ArrayInstance::info, &arrayTab
 
 // ECMA 15.4.4
 ArrayPrototype::ArrayPrototype(ExecState*, ObjectPrototype* objProto)
-  : ArrayInstance(objProto, 0)
+        : ArrayInstance(objProto, 0)
 {
 }
 
 bool ArrayPrototype::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
 {
-  return getStaticFunctionSlot<ArrayInstance>(exec, &arrayTable, this, propertyName, slot);
+    return getStaticFunctionSlot<ArrayInstance>(exec, &arrayTable, this, propertyName, slot);
 }
 
 
@@ -235,8 +235,7 @@ JSValue* ArrayProtoFuncConcat::callAsFunction(ExecState* exec, JSObject* thisObj
     List::const_iterator end = args.end();
     unsigned length = thisObj->get(exec, exec->propertyNames().length)->toUInt32(exec);
     for (;;) {
-        if (curArg->isObject() &&
-            curObj->inherits(&ArrayInstance::info)) {
+        if (curArg->isObject() && curObj->inherits(&ArrayInstance::info)) {
             unsigned int k = 0;
             // Older versions tried to optimize out getting the length of thisObj
             // by checking for n != 0, but that doesn't work if thisObj is an empty array.
@@ -266,11 +265,11 @@ JSValue* ArrayProtoFuncPop::callAsFunction(ExecState* exec, JSObject* thisObj, c
     JSValue* result = 0;
     unsigned length = thisObj->get(exec, exec->propertyNames().length)->toUInt32(exec);
     if (length == 0) {
-      thisObj->put(exec, exec->propertyNames().length, jsNumber(length), DontEnum | DontDelete);
-      result = jsUndefined();
+        thisObj->put(exec, exec->propertyNames().length, jsNumber(length), DontEnum | DontDelete);
+        result = jsUndefined();
     } else {
-      result = thisObj->get(exec, length - 1);
-      thisObj->put(exec, exec->propertyNames().length, jsNumber(length - 1), DontEnum | DontDelete);
+        result = thisObj->get(exec, length - 1);
+        thisObj->put(exec, exec->propertyNames().length, jsNumber(length - 1), DontEnum | DontDelete);
     }
     return result;
 }
@@ -295,7 +294,7 @@ JSValue* ArrayProtoFuncReverse::callAsFunction(ExecState* exec, JSObject* thisOb
         JSValue *obj2 = getProperty(exec, thisObj, lk1);
         JSValue *obj = getProperty(exec, thisObj, k);
 
-        if (obj2) 
+        if (obj2)
             thisObj->put(exec, k, obj2);
         else
             thisObj->deleteProperty(exec, k);
@@ -314,18 +313,18 @@ JSValue* ArrayProtoFuncShift::callAsFunction(ExecState* exec, JSObject* thisObj,
 
     unsigned length = thisObj->get(exec, exec->propertyNames().length)->toUInt32(exec);
     if (length == 0) {
-      thisObj->put(exec, exec->propertyNames().length, jsNumber(length), DontEnum | DontDelete);
-      result = jsUndefined();
+        thisObj->put(exec, exec->propertyNames().length, jsNumber(length), DontEnum | DontDelete);
+        result = jsUndefined();
     } else {
-      result = thisObj->get(exec, 0);
-      for(unsigned int k = 1; k < length; k++) {
-        if (JSValue *obj = getProperty(exec, thisObj, k))
-          thisObj->put(exec, k-1, obj);
-        else
-          thisObj->deleteProperty(exec, k-1);
-      }
-      thisObj->deleteProperty(exec, length - 1);
-      thisObj->put(exec, exec->propertyNames().length, jsNumber(length - 1), DontEnum | DontDelete);
+        result = thisObj->get(exec, 0);
+        for (unsigned int k = 1; k < length; k++) {
+            if (JSValue *obj = getProperty(exec, thisObj, k))
+                thisObj->put(exec, k-1, obj);
+            else
+                thisObj->deleteProperty(exec, k-1);
+        }
+        thisObj->deleteProperty(exec, length - 1);
+        thisObj->put(exec, exec->propertyNames().length, jsNumber(length - 1), DontEnum | DontDelete);
     }
     return result;
 }
@@ -365,7 +364,7 @@ JSValue* ArrayProtoFuncSlice::callAsFunction(ExecState* exec, JSObject* thisObj,
     int n = 0;
     int b = static_cast<int>(begin);
     int e = static_cast<int>(end);
-    for(int k = b; k < e; k++, n++) {
+    for (int k = b; k < e; k++, n++) {
         if (JSValue *v = getProperty(exec, thisObj, k))
             resObj->put(exec, n, v);
     }
@@ -377,73 +376,68 @@ JSValue* ArrayProtoFuncSort::callAsFunction(ExecState* exec, JSObject* thisObj, 
 {
 #if 0
     printf("KJS Array::Sort length=%d\n", length);
-    for ( unsigned int i = 0 ; i<length ; ++i )
-      printf("KJS Array::Sort: %d: %s\n", i, thisObj->get(exec, i)->toString(exec).ascii() );
+    for (unsigned int i = 0 ; i<length ; ++i)
+        printf("KJS Array::Sort: %d: %s\n", i, thisObj->get(exec, i)->toString(exec).ascii());
 #endif
     JSObject *sortFunction = NULL;
-    if (!args[0]->isUndefined())
-      {
+    if (!args[0]->isUndefined()) {
         sortFunction = args[0]->toObject(exec);
         if (!sortFunction->implementsCall())
-          sortFunction = NULL;
-      }
-    
+            sortFunction = NULL;
+    }
+
     if (thisObj->classInfo() == &ArrayInstance::info) {
-      if (sortFunction)
-        ((ArrayInstance *)thisObj)->sort(exec, sortFunction);
-      else
-        ((ArrayInstance *)thisObj)->sort(exec);
-      return thisObj;
+        if (sortFunction)
+            ((ArrayInstance *)thisObj)->sort(exec, sortFunction);
+        else
+            ((ArrayInstance *)thisObj)->sort(exec);
+        return thisObj;
     }
 
     unsigned length = thisObj->get(exec, exec->propertyNames().length)->toUInt32(exec);
 
     if (length == 0) {
-      thisObj->put(exec, exec->propertyNames().length, jsNumber(0), DontEnum | DontDelete);
-      return thisObj;
+        thisObj->put(exec, exec->propertyNames().length, jsNumber(0), DontEnum | DontDelete);
+        return thisObj;
     }
 
     // "Min" sort. Not the fastest, but definitely less code than heapsort
     // or quicksort, and much less swapping than bubblesort/insertionsort.
-    for ( unsigned int i = 0 ; i<length-1 ; ++i )
-      {
+    for (unsigned int i = 0 ; i<length-1 ; ++i) {
         JSValue *iObj = thisObj->get(exec,i);
         unsigned int themin = i;
         JSValue *minObj = iObj;
-        for ( unsigned int j = i+1 ; j<length ; ++j )
-          {
+        for (unsigned int j = i+1 ; j<length ; ++j) {
             JSValue *jObj = thisObj->get(exec,j);
             double cmp;
             if (jObj->isUndefined()) {
-              cmp = 1; // don't check minObj because there's no need to differentiate == (0) from > (1)
+                cmp = 1; // don't check minObj because there's no need to differentiate == (0) from > (1)
             } else if (minObj->isUndefined()) {
-              cmp = -1;
+                cmp = -1;
             } else if (sortFunction) {
                 List l;
                 l.append(jObj);
                 l.append(minObj);
                 cmp = sortFunction->call(exec, exec->dynamicGlobalObject(), l)->toNumber(exec);
             } else {
-              cmp = (jObj->toString(exec) < minObj->toString(exec)) ? -1 : 1;
+                cmp = (jObj->toString(exec) < minObj->toString(exec)) ? -1 : 1;
             }
-            if ( cmp < 0 )
-              {
+            if (cmp < 0) {
                 themin = j;
                 minObj = jObj;
-              }
-          }
+            }
+        }
         // Swap themin and i
-        if ( themin > i )
-          {
-            //printf("KJS Array::Sort: swapping %d and %d\n", i, themin );
-            thisObj->put( exec, i, minObj );
-            thisObj->put( exec, themin, iObj );
-          }
+        if (themin > i) {
+            //printf("KJS Array::Sort: swapping %d and %d\n", i, themin);
+            thisObj->put(exec, i, minObj);
+            thisObj->put(exec, themin, iObj);
+        }
     }
 #if 0
     printf("KJS Array::Sort -- Resulting array:\n");
-    for ( unsigned int i = 0 ; i<length ; ++i )
-      printf("KJS Array::Sort: %d: %s\n", i, thisObj->get(exec, i)->toString(exec).ascii() );
+    for (unsigned int i = 0 ; i<length ; ++i)
+        printf("KJS Array::Sort: %d: %s\n", i, thisObj->get(exec, i)->toString(exec).ascii());
 #endif
     return thisObj;
 }
@@ -461,41 +455,34 @@ JSValue* ArrayProtoFuncSplice::callAsFunction(ExecState* exec, JSObject* thisObj
         begin = std::min<int>(begin, length);
     unsigned int deleteCount = std::min<int>(std::max<int>(args[1]->toUInt32(exec), 0), length - begin);
 
-    for(unsigned int k = 0; k < deleteCount; k++) {
-      if (JSValue *v = getProperty(exec, thisObj, k+begin))
-        resObj->put(exec, k, v);
+    for (unsigned int k = 0; k < deleteCount; k++) {
+        if (JSValue *v = getProperty(exec, thisObj, k+begin))
+            resObj->put(exec, k, v);
     }
     resObj->put(exec, exec->propertyNames().length, jsNumber(deleteCount), DontEnum | DontDelete);
 
     unsigned int additionalArgs = std::max<int>(args.size() - 2, 0);
-    if ( additionalArgs != deleteCount )
-    {
-      if ( additionalArgs < deleteCount )
-      {
-        for ( unsigned int k = begin; k < length - deleteCount; ++k )
-        {
-          if (JSValue *v = getProperty(exec, thisObj, k+deleteCount))
-            thisObj->put(exec, k+additionalArgs, v);
-          else
-            thisObj->deleteProperty(exec, k+additionalArgs);
+    if (additionalArgs != deleteCount) {
+        if (additionalArgs < deleteCount) {
+            for (unsigned int k = begin; k < length - deleteCount; ++k) {
+                if (JSValue *v = getProperty(exec, thisObj, k+deleteCount))
+                    thisObj->put(exec, k+additionalArgs, v);
+                else
+                    thisObj->deleteProperty(exec, k+additionalArgs);
+            }
+            for (unsigned int k = length ; k > length - deleteCount + additionalArgs; --k)
+                thisObj->deleteProperty(exec, k-1);
+        } else {
+            for (unsigned int k = length - deleteCount; (int)k > begin; --k) {
+                if (JSValue *obj = getProperty(exec, thisObj, k + deleteCount - 1))
+                    thisObj->put(exec, k + additionalArgs - 1, obj);
+                else
+                    thisObj->deleteProperty(exec, k+additionalArgs-1);
+            }
         }
-        for ( unsigned int k = length ; k > length - deleteCount + additionalArgs; --k )
-          thisObj->deleteProperty(exec, k-1);
-      }
-      else
-      {
-        for ( unsigned int k = length - deleteCount; (int)k > begin; --k )
-        {
-          if (JSValue *obj = getProperty(exec, thisObj, k + deleteCount - 1))
-            thisObj->put(exec, k + additionalArgs - 1, obj);
-          else
-            thisObj->deleteProperty(exec, k+additionalArgs-1);
-        }
-      }
     }
-    for ( unsigned int k = 0; k < additionalArgs; ++k )
-    {
-      thisObj->put(exec, k+begin, args[k+2]);
+    for (unsigned int k = 0; k < additionalArgs; ++k) {
+        thisObj->put(exec, k+begin, args[k+2]);
     }
     thisObj->put(exec, exec->propertyNames().length, jsNumber(length - deleteCount + additionalArgs), DontEnum | DontDelete);
     return result;
@@ -506,15 +493,14 @@ JSValue* ArrayProtoFuncUnShift::callAsFunction(ExecState* exec, JSObject* thisOb
     // 15.4.4.13
     unsigned length = thisObj->get(exec, exec->propertyNames().length)->toUInt32(exec);
     unsigned int nrArgs = args.size();
-    for ( unsigned int k = length; k > 0; --k )
-    {
-      if (JSValue *v = getProperty(exec, thisObj, k - 1))
-        thisObj->put(exec, k+nrArgs-1, v);
-      else
-        thisObj->deleteProperty(exec, k+nrArgs-1);
+    for (unsigned int k = length; k > 0; --k) {
+        if (JSValue *v = getProperty(exec, thisObj, k - 1))
+            thisObj->put(exec, k+nrArgs-1, v);
+        else
+            thisObj->deleteProperty(exec, k+nrArgs-1);
     }
-    for ( unsigned int k = 0; k < nrArgs; ++k )
-      thisObj->put(exec, k, args[k]);
+    for (unsigned int k = 0; k < nrArgs; ++k)
+        thisObj->put(exec, k, args[k]);
     JSValue* result = jsNumber(length + nrArgs);
     thisObj->put(exec, exec->propertyNames().length, result, DontEnum | DontDelete);
     return result;
@@ -523,10 +509,10 @@ JSValue* ArrayProtoFuncUnShift::callAsFunction(ExecState* exec, JSObject* thisOb
 JSValue* ArrayProtoFuncFilter::callAsFunction(ExecState* exec, JSObject* thisObj, const List& args)
 {
     JSObject* eachFunction = args[0]->toObject(exec);
-    
+
     if (!eachFunction->implementsCall())
         return throwError(exec, TypeError);
-    
+
     JSObject *applyThis = args[1]->isUndefinedOrNull() ? exec->dynamicGlobalObject() :  args[1]->toObject(exec);
     JSObject *resultArray = static_cast<JSObject*>(exec->lexicalGlobalObject()->arrayConstructor()->construct(exec, List::empty()));
 
@@ -537,18 +523,18 @@ JSValue* ArrayProtoFuncFilter::callAsFunction(ExecState* exec, JSObject* thisObj
 
         if (!thisObj->getPropertySlot(exec, k, slot))
             continue;
-        
+
         JSValue *v = slot.getValue(exec, thisObj, k);
-        
+
         List eachArguments;
-        
+
         eachArguments.append(v);
         eachArguments.append(jsNumber(k));
         eachArguments.append(thisObj);
-      
+
         JSValue *result = eachFunction->call(exec, applyThis, eachArguments);
-      
-        if (result->toBoolean(exec)) 
+
+        if (result->toBoolean(exec))
             resultArray->put(exec, filterIndex++, v);
     }
     return resultArray;
@@ -559,7 +545,7 @@ JSValue* ArrayProtoFuncMap::callAsFunction(ExecState* exec, JSObject* thisObj, c
     JSObject* eachFunction = args[0]->toObject(exec);
     if (!eachFunction->implementsCall())
         return throwError(exec, TypeError);
-    
+
     JSObject *applyThis = args[1]->isUndefinedOrNull() ? exec->dynamicGlobalObject() :  args[1]->toObject(exec);
 
     unsigned length = thisObj->get(exec, exec->propertyNames().length)->toUInt32(exec);
@@ -596,29 +582,29 @@ JSValue* ArrayProtoFuncMap::callAsFunction(ExecState* exec, JSObject* thisObj, c
 JSValue* ArrayProtoFuncEvery::callAsFunction(ExecState* exec, JSObject* thisObj, const List& args)
 {
     JSObject *eachFunction = args[0]->toObject(exec);
-    
+
     if (!eachFunction->implementsCall())
         return throwError(exec, TypeError);
-    
+
     JSObject *applyThis = args[1]->isUndefinedOrNull() ? exec->dynamicGlobalObject() :  args[1]->toObject(exec);
-    
+
     JSValue* result = jsBoolean(true);
-    
+
     unsigned length = thisObj->get(exec, exec->propertyNames().length)->toUInt32(exec);
     for (unsigned k = 0; k < length && !exec->hadException(); ++k) {
         PropertySlot slot;
-          
+
         if (!thisObj->getPropertySlot(exec, k, slot))
             continue;
-      
+
         List eachArguments;
-        
+
         eachArguments.append(slot.getValue(exec, thisObj, k));
         eachArguments.append(jsNumber(k));
         eachArguments.append(thisObj);
-      
+
         bool predicateResult = eachFunction->call(exec, applyThis, eachArguments)->toBoolean(exec);
-      
+
         if (!predicateResult) {
             result = jsBoolean(false);
             break;
@@ -717,7 +703,7 @@ JSValue* ArrayProtoFuncIndexOf::callAsFunction(ExecState* exec, JSObject* thisOb
 JSValue* ArrayProtoFuncLastIndexOf::callAsFunction(ExecState* exec, JSObject* thisObj, const List& args)
 {
     // JavaScript 1.6 Extension by Mozilla
-    // Documentation: http://developer.mozilla.org/en/docs/Core_JavaScript_1.5_Reference:Global_Objects:Array:lastIndexOf 
+    // Documentation: http://developer.mozilla.org/en/docs/Core_JavaScript_1.5_Reference:Global_Objects:Array:lastIndexOf
 
     unsigned length = thisObj->get(exec, exec->propertyNames().length)->toUInt32(exec);
     int index = length - 1;
@@ -725,12 +711,12 @@ JSValue* ArrayProtoFuncLastIndexOf::callAsFunction(ExecState* exec, JSObject* th
 
     if (d < 0) {
         d += length;
-        if (d < 0) 
+        if (d < 0)
             return jsNumber(-1);
     }
     if (d < length)
         index = static_cast<int>(d);
-          
+
     JSValue* searchElement = args[0];
     for (; index >= 0; --index) {
         JSValue* e = getProperty(exec, thisObj, index);
@@ -739,7 +725,7 @@ JSValue* ArrayProtoFuncLastIndexOf::callAsFunction(ExecState* exec, JSObject* th
         if (strictEqual(exec, searchElement, e))
             return jsNumber(index);
     }
-          
+
     return jsNumber(-1);
 }
 
@@ -748,40 +734,40 @@ JSValue* ArrayProtoFuncLastIndexOf::callAsFunction(ExecState* exec, JSObject* th
 ArrayObjectImp::ArrayObjectImp(ExecState *exec,
                                FunctionPrototype *funcProto,
                                ArrayPrototype *arrayProto)
-  : InternalFunctionImp(funcProto)
+        : InternalFunctionImp(funcProto)
 {
-  // ECMA 15.4.3.1 Array.prototype
-  put(exec, exec->propertyNames().prototype, arrayProto, DontEnum|DontDelete|ReadOnly);
+    // ECMA 15.4.3.1 Array.prototype
+    put(exec, exec->propertyNames().prototype, arrayProto, DontEnum|DontDelete|ReadOnly);
 
-  // no. of arguments for constructor
-  put(exec, exec->propertyNames().length, jsNumber(1), ReadOnly|DontDelete|DontEnum);
+    // no. of arguments for constructor
+    put(exec, exec->propertyNames().length, jsNumber(1), ReadOnly|DontDelete|DontEnum);
 }
 
 bool ArrayObjectImp::implementsConstruct() const
 {
-  return true;
+    return true;
 }
 
 // ECMA 15.4.2
 JSObject *ArrayObjectImp::construct(ExecState *exec, const List &args)
 {
-  // a single numeric argument denotes the array size (!)
-  if (args.size() == 1 && args[0]->isNumber()) {
-    uint32_t n = args[0]->toUInt32(exec);
-    if (n != args[0]->toNumber(exec))
-      return throwError(exec, RangeError, "Array size is not a small enough positive integer.");
-    return new ArrayInstance(exec->lexicalGlobalObject()->arrayPrototype(), n);
-  }
+    // a single numeric argument denotes the array size (!)
+    if (args.size() == 1 && args[0]->isNumber()) {
+        uint32_t n = args[0]->toUInt32(exec);
+        if (n != args[0]->toNumber(exec))
+            return throwError(exec, RangeError, "Array size is not a small enough positive integer.");
+        return new ArrayInstance(exec->lexicalGlobalObject()->arrayPrototype(), n);
+    }
 
-  // otherwise the array is constructed with the arguments in it
-  return new ArrayInstance(exec->lexicalGlobalObject()->arrayPrototype(), args);
+    // otherwise the array is constructed with the arguments in it
+    return new ArrayInstance(exec->lexicalGlobalObject()->arrayPrototype(), args);
 }
 
 // ECMA 15.6.1
 JSValue *ArrayObjectImp::callAsFunction(ExecState *exec, JSObject *, const List &args)
 {
-  // equivalent to 'new Array(....)'
-  return construct(exec,args);
+    // equivalent to 'new Array(....)'
+    return construct(exec,args);
 }
 
 }

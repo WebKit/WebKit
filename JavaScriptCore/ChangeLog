@@ -2,6 +2,32 @@
 
         Reviewed by Sam.
 
+        Apply wkstyle to array_object.cpp
+
+        * kjs/array_object.cpp:
+        (KJS::ArrayPrototype::ArrayPrototype):
+        (KJS::ArrayPrototype::getOwnPropertySlot):
+        (KJS::ArrayProtoFuncConcat::callAsFunction):
+        (KJS::ArrayProtoFuncPop::callAsFunction):
+        (KJS::ArrayProtoFuncReverse::callAsFunction):
+        (KJS::ArrayProtoFuncShift::callAsFunction):
+        (KJS::ArrayProtoFuncSlice::callAsFunction):
+        (KJS::ArrayProtoFuncSort::callAsFunction):
+        (KJS::ArrayProtoFuncSplice::callAsFunction):
+        (KJS::ArrayProtoFuncUnShift::callAsFunction):
+        (KJS::ArrayProtoFuncFilter::callAsFunction):
+        (KJS::ArrayProtoFuncMap::callAsFunction):
+        (KJS::ArrayProtoFuncEvery::callAsFunction):
+        (KJS::ArrayProtoFuncLastIndexOf::callAsFunction):
+        (KJS::ArrayObjectImp::ArrayObjectImp):
+        (KJS::ArrayObjectImp::implementsConstruct):
+        (KJS::ArrayObjectImp::construct):
+        (KJS::ArrayObjectImp::callAsFunction):
+
+2007-12-30  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Sam.
+
         Remove maxInt/minInt, replacing with std:max/min<int>()
 
         * kjs/array_object.cpp:
