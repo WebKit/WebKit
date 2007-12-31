@@ -128,6 +128,8 @@ namespace KJS {
     virtual bool allowsAccessFrom(const JSGlobalObject*) const;
     bool allowsAccessFrom(ExecState* exec) const { return allowsAccessFrom(exec->dynamicGlobalObject()); }
 
+    virtual void getPropertyNames(ExecState*, PropertyNameArray&);
+
     enum {
         // Attributes
         Crypto, Event_, Location_, Navigator_,

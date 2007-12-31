@@ -1,3 +1,13 @@
+2007-12-30  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Oliver Hunt.
+
+        Test for http://bugs.webkit.org/show_bug.cgi?id=16387
+
+        * http/tests/security/cross-frame-access-enumeration-expected.txt: Added.
+        * http/tests/security/cross-frame-access-enumeration.html: Added.
+        * http/tests/security/resources/cross-frame-iframe-for-enumeration-test.html: Added.
+
 2007-12-30  Darin Adler  <darin@apple.com>
 
         - added missing results file

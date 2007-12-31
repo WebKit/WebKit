@@ -2,6 +2,20 @@
 
         Reviewed by Oliver Hunt.
 
+        Fix for http://bugs.webkit.org/show_bug.cgi?id=16387
+        Variable names can be enumerated across domains
+        <rdar://problem/5640454>
+
+        Test: http/tests/security/cross-frame-access-enumeration.html
+
+        * bindings/js/kjs_window.cpp:
+        (KJS::Window::getPropertyNames): Override method to test same-origin policy.
+        * bindings/js/kjs_window.h:
+
+2007-12-30  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Oliver Hunt.
+
         Patch for http://bugs.webkit.org/show_bug.cgi?id=10686
         event instanceof MouseEvent throws exception
 

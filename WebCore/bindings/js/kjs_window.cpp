@@ -865,6 +865,13 @@ bool Window::shouldInterruptScript() const
     return page->chrome()->shouldInterruptJavaScript();
 }
 
+void Window::getPropertyNames(ExecState* exec, PropertyNameArray& propertyNames)
+{
+    if (!allowsAccessFrom(exec))
+        return;
+    Base::getPropertyNames(exec, propertyNames);
+}
+
 void Window::setListener(ExecState* exec, const AtomicString& eventType, JSValue* func)
 {
     ASSERT(impl()->frame());
