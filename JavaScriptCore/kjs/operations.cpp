@@ -125,14 +125,4 @@ bool strictEqual(ExecState *exec, JSValue *v1, JSValue *v2)
     return false;
 }
 
-int maxInt(int d1, int d2)
-{
-    return (d1 > d2) ? d1 : d2;
-}
-
-int minInt(int d1, int d2)
-{
-    return (d1 < d2) ? d1 : d2;
-}
-
 }

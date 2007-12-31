@@ -1,6 +1,17 @@
 2007-12-30  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Sam.
+
+        Remove maxInt/minInt, replacing with std:max/min<int>()
+
+        * kjs/array_object.cpp:
+        (KJS::ArrayProtoFuncSplice::callAsFunction):
+        * kjs/operations.cpp:
+        * kjs/operations.h:
+
+2007-12-30  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Sam.
         
         Update Number.toString to properly throw exceptions.
         Cleanup code in Number.toString implementation.

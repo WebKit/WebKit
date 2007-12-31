@@ -30,9 +30,6 @@ namespace KJS {
 
   bool equal(ExecState *exec, JSValue *v1, JSValue *v2);
   bool strictEqual(ExecState *exec, JSValue *v1, JSValue *v2);
-  int maxInt(int d1, int d2);
-  int minInt(int d1, int d2);
-
 }
 
 #endif
