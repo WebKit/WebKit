@@ -1,3 +1,11 @@
+2008-01-01  Matt Lilek  <webkit@mattlilek.com>
+
+        Attempt to fix the Windows bots until the bots
+        can get the Quicktime SDK installed.
+
+        * WebKit.vcproj/WebKit.sln:
+        * WebKit.vcproj/WebKit.vcproj:
+
 2007-12-30  Matt Lilek  <webkit@mattlilek.com>
 
         Reviewed by Darin.
