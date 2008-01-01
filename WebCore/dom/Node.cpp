@@ -797,7 +797,6 @@ void Node::attach()
 {
     ASSERT(!attached());
     ASSERT(!renderer() || (renderer()->style() && renderer()->parent()));
-    document()->incDOMTreeVersion();
     m_attached = true;
 }
 
@@ -818,7 +817,6 @@ void Node::detach()
         doc->hoveredNodeDetached(this);
     if (m_inActiveChain)
         doc->activeChainNodeDetached(this);
-    doc->incDOMTreeVersion();
 
     m_active = false;
     m_hovered = false;

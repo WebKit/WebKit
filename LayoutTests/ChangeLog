@@ -1,3 +1,17 @@
+2007-12-31  Darin Adler  <darin@apple.com>
+
+        Reviewed by Mitz.
+
+        - test for http://bugs.webkit.org/show_bug.cgi?id=16641
+          Acid3 reveals HTMLFormElement.elements fails to update when element name changes
+
+        * fast/dom/HTMLFormElement: Added.
+        * fast/dom/HTMLFormElement/elements-not-in-document-expected.txt: Added.
+        * fast/dom/HTMLFormElement/elements-not-in-document.html: Added.
+        * fast/dom/HTMLFormElement/resources: Added.
+        * fast/dom/HTMLFormElement/resources/TEMPLATE.html: Added.
+        * fast/dom/HTMLFormElement/resources/elements-not-in-document.js: Added.
+
 2007-12-31  Henry Mason  <hmason@mac.com>
 
         Reviewed by Darin.

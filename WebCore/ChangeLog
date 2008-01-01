@@ -1,3 +1,41 @@
+2007-12-31  Darin Adler  <darin@apple.com>
+
+        Reviewed by Mitz.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=16641
+          Acid3 reveals HTMLFormElement.elements fails to update when element name changes
+
+        Test: fast/dom/HTMLFormElement/elements-not-in-document.html
+
+        This was a bug specific to forms that are not in the document tree.
+        The fix was to change the code to increment the document version number to match
+        up with other document change tracking. Maybe at some point we can clean these up
+        so we don't have so many competing change notification systems.
+
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::replaceChild): Removed bogus comment.
+        (WebCore::ContainerNode::addChild): Added an explicit incDOMTreeVersion
+        call here, since this code path bypasses the subtree-modified event code.
+
+        * dom/Element.cpp:
+        (WebCore::Element::setAttribute): Remove the inDocument() check -- not all HTML
+        collections are for things in the document.
+        (WebCore::Element::setAttributeMap): Ditto.
+
+        * dom/EventTargetNode.cpp:
+        (WebCore::EventTargetNode::dispatchSubtreeModifiedEvent): Added a call to
+        incDOMTreeVersion here; covers most cases of tree structure changes.
+
+        * dom/Node.cpp:
+        (WebCore::Node::attach): Remove call to incDOMTreeVersion -- creating a renderer
+        has nothing to do with changes to the DOM tree!
+        (WebCore::Node::detach): Ditto.
+
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::registerFormElement): Remove call to incDOMTreeVersion.
+        This is handled at a lower level and doesn't need to be here.
+        (WebCore::HTMLFormElement::removeFormElement): Ditto.
+
 2007-12-31  Henry Mason  <hmason@mac.com>
 
         Reviewed by Darin.

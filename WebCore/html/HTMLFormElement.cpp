@@ -582,18 +582,15 @@ unsigned HTMLFormElement::formElementIndex(HTMLGenericFormElement *e)
 
 void HTMLFormElement::registerFormElement(HTMLGenericFormElement* e)
 {
-    Document* doc = document();
-    doc->checkedRadioButtons().removeButton(e);
+    document()->checkedRadioButtons().removeButton(e);
     m_checkedRadioButtons.addButton(e);
     formElements.insert(formElementIndex(e), e);
-    doc->incDOMTreeVersion();
 }
 
 void HTMLFormElement::removeFormElement(HTMLGenericFormElement* e)
 {
     m_checkedRadioButtons.removeButton(e);
     removeFromVector(formElements, e);
-    document()->incDOMTreeVersion();
 }
 
 bool HTMLFormElement::isURLAttribute(Attribute *attr) const
