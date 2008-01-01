@@ -1,3 +1,13 @@
+2008-01-01  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Alexey.
+        
+        Don't replace \ with / in data: urls
+        http://bugs.webkit.org/show_bug.cgi?id=16692
+
+        * fast/loader/url-data-replace-backslash-expected.txt: Added.
+        * fast/loader/url-data-replace-backslash.html: Added.
+
 2007-12-31  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Darin.

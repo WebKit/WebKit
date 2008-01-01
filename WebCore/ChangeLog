@@ -1,3 +1,15 @@
+2008-01-01  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Alexey.
+
+        Don't replace \ with / in data: urls
+        http://bugs.webkit.org/show_bug.cgi?id=16692
+
+        Test: fast/loader/url-data-replace-backslash.html
+
+        * platform/KURL.cpp:
+        (WebCore::KURL::init):
+
 2008-01-01  Alp Toker  <alp@atoker.com>
 
         GTK+ autotools build fix. Track changes in r29051, r29058 and pass the

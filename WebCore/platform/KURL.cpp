@@ -285,10 +285,9 @@ void KURL::init(const KURL &base, const DeprecatedString &relative, const TextEn
 
     // for compatibility with Win IE, we must treat backslashes as if they were slashes, as long as we're not dealing with the javascript: schema
     DeprecatedString substitutedRelative;
-    bool shouldSubstituteBackslashes = relative.contains('\\') && !relative.startsWith("javascript:", false);
-    if (shouldSubstituteBackslashes) {
+    bool shouldSubstituteBackslashes = relative.contains('\\') && !(relative.startsWith("javascript:", false) || relative.startsWith("data:", false));
+    if (shouldSubstituteBackslashes)
         substitutedRelative = substituteBackslashes(relative);
-    }
 
     const DeprecatedString &rel = shouldSubstituteBackslashes ? substitutedRelative : relative;
     
