@@ -333,7 +333,6 @@ all : \
     JSCounter.h \
     JSCSSStyleDeclaration.h \
     JSDOMCoreException.h \
-    JSDOMExceptionConstructor.lut.h \
     JSDOMImplementation.h \
     JSDOMParser.h \
     JSDOMSelection.h \

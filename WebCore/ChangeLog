@@ -1,5 +1,11 @@
 2008-01-01  Sam Weinig  <sam@webkit.org>
 
+        Try again to fix the builds
+
+        * DerivedSources.make:
+
+2008-01-01  Sam Weinig  <sam@webkit.org>
+
         Fix non-mac builds.
 
         * WebCore.pro:
