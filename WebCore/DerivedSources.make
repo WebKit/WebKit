@@ -133,6 +133,7 @@ all : \
     DOMHTMLTitleElement.h \
     DOMHTMLUListElement.h \
     DOMKeyboardEvent.h \
+    DOMMessageEvent.h \
     DOMMediaList.h \
     DOMMouseEvent.h \
     DOMMutationEvent.h \
@@ -415,6 +416,7 @@ all : \
     JSLocation.lut.h \
     JSMediaError.h \
     JSMediaList.h \
+    JSMessageEvent.h \
     JSMouseEvent.h \
     JSMutationEvent.h \
     JSNamedNodeMap.h \

@@ -1,3 +1,35 @@
+2007-12-31  Henry Mason  <hmason@mac.com>
+
+        Reviewed by Darin.
+
+        Patch for http://bugs.webkit.org/show_bug.cgi?id=14994
+        Support for MessageEvent and cross-domain messaging
+
+        Test: http/tests/messaging/cross-domain-message-send.html
+
+        * DerivedSources.make:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * WebCoreSources.bkl:
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::customGetOwnPropertySlot): Allow cross-domain access to the
+        postMessage function.
+        (WebCore::JSDOMWindow::postMessage):
+        * bindings/js/JSEventCustom.cpp:
+        (WebCore::toJS):
+        * dom/Event.cpp:
+        (WebCore::Event::isMessageEvent):
+        * dom/Event.h:
+        * dom/EventNames.h: New event name
+        * dom/MessageEvent.cpp: Added.
+        * dom/MessageEvent.h: Added.
+        * dom/MessageEvent.idl: Added.
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::postMessage): Added.
+        * page/DOMWindow.h:
+        * page/DOMWindow.idl:
+
 2007-12-31  Darin Adler  <darin@apple.com>
 
         Suggested by Antti.

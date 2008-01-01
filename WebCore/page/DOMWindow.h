@@ -141,6 +141,8 @@ namespace WebCore {
 #endif
 
         Console* console() const;
+        
+        void postMessage(const String& message, const String& domain, const String& uri, DOMWindow* source) const;
 
         void scrollBy(int x, int y) const;
         void scrollTo(int x, int y) const;

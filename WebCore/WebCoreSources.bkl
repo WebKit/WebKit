@@ -245,6 +245,7 @@ This file contains the list of files needed to build WebCore.
         DerivedSources/WebCore/JSHistory.cpp
         DerivedSources/WebCore/JSKeyboardEvent.cpp
         DerivedSources/WebCore/JSMediaList.cpp
+        DerivedSources/WebCore/JSMessageEvent.cpp
         DerivedSources/WebCore/JSMouseEvent.cpp
         DerivedSources/WebCore/JSMutationEvent.cpp
         DerivedSources/WebCore/JSNamedNodeMap.cpp
@@ -313,6 +314,7 @@ This file contains the list of files needed to build WebCore.
         dom/ExceptionCode.cpp
         dom/KeyboardEvent.cpp
         dom/MappedAttribute.cpp
+        dom/MessageEvent.cpp
         dom/MouseEvent.cpp
         dom/MouseRelatedEvent.cpp
         dom/MutationEvent.cpp

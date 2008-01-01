@@ -32,6 +32,7 @@
 #include "Clipboard.h"
 #include "Event.h"
 #include "JSKeyboardEvent.h"
+#include "JSMessageEvent.h"
 #include "JSMouseEvent.h"
 #include "JSMutationEvent.h"
 #include "JSOverflowEvent.h"
@@ -40,6 +41,7 @@
 #include "JSUIEvent.h"
 #include "JSWheelEvent.h"
 #include "KeyboardEvent.h"
+#include "MessageEvent.h"
 #include "MouseEvent.h"
 #include "MutationEvent.h"
 #include "OverflowEvent.h"
@@ -84,6 +86,8 @@ JSValue* toJS(ExecState* exec, Event* event)
         ret = new JSMutationEvent(exec, static_cast<MutationEvent*>(event));
     else if (event->isOverflowEvent())
         ret = new JSOverflowEvent(exec, static_cast<OverflowEvent*>(event));
+    else if (event->isMessageEvent())
+        ret = new JSMessageEvent(exec, static_cast<MessageEvent*>(event));
     else if (event->isProgressEvent())
         ret = new JSProgressEvent(exec, static_cast<ProgressEvent*>(event));
     else

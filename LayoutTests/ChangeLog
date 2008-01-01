@@ -1,3 +1,17 @@
+2007-12-31  Henry Mason  <hmason@mac.com>
+
+        Reviewed by Darin.
+
+        Test for http://bugs.webkit.org/show_bug.cgi?id=14994
+        Support for MessageEvent and cross-domain messaging
+
+        * fast/dom/Window/window-properties-expected.txt:
+        * http/tests/messaging: Added.
+        * http/tests/messaging/cross-domain-message-send-expected.txt: Added.
+        * http/tests/messaging/cross-domain-message-send.html: Added.
+        * http/tests/messaging/resources: Added.
+        * http/tests/messaging/resources/cross-domain-message-receive.html: Added.
+
 2007-12-30  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Oliver Hunt.

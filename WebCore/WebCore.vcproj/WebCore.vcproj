@@ -1176,6 +1176,14 @@
 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSMediaList.h"
 				>
 			</File>
+ 			<File
+ 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSMessageEvent.cpp"
+ 				>
+ 			</File>
+ 			<File
+ 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSMessageEvent.h"
+ 				>
+ 			</File>
 			<File
 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSMouseEvent.cpp"
 				>
@@ -6052,6 +6060,14 @@
 				RelativePath="..\dom\MappedAttributeEntry.h"
 				>
 			</File>
+  			<File
+ 				RelativePath="..\dom\MessageEvent.cpp"
+ 				>
+ 			</File>
+ 			<File
+ 				RelativePath="..\dom\MessageEvent.h"
+ 				>
+ 			</File>
 			<File
 				RelativePath="..\dom\MouseEvent.cpp"
 				>

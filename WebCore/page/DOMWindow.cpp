@@ -41,6 +41,7 @@
 #include "FrameTree.h"
 #include "FrameView.h"
 #include "History.h"
+#include "MessageEvent.h"
 #include "Page.h"
 #include "PlatformScreen.h"
 #include "PlatformString.h"
@@ -217,6 +218,12 @@ Console* DOMWindow::console() const
     if (!m_console)
         m_console = new Console(m_frame);
     return m_console.get();
+}
+
+void DOMWindow::postMessage(const String& message, const String& domain, const String& uri, DOMWindow* source) const
+{
+   ExceptionCode ec;
+   document()->dispatchEvent(new MessageEvent(message, domain, uri, source), ec, true);
 }
 
 DOMSelection* DOMWindow::getSelection()

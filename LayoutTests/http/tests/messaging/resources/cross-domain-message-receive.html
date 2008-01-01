@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <title>Cross-Doc Test</title>
+</head>
+<script type="text/javascript" charset="utf-8">
+
+function receiver(e) {
+    var result = "";
+    result += "data: " + e.data + "\n";
+    result += "uri: " + e.uri + "\n";
+    result += "domain: " + e.domain + "\n";
+    e.source.postMessage(result);   
+}
+
+document.addEventListener('message', receiver, false);
+
+</script>
+<body>
+    
+</body>
+</html>

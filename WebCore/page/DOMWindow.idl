@@ -125,6 +125,9 @@ module window {
 
                  attribute [Replaceable] Console console;
 
+        // cross-document messaging
+        [DoNotCheckDomainSecurity, Custom] void postMessage(in DOMString message);
+
 #if defined(LANGUAGE_JAVASCRIPT)
         // Global constructors
         attribute StyleSheetConstructor StyleSheet;
@@ -240,6 +243,7 @@ module window {
         attribute HTMLUListElementConstructor HTMLUListElement;
 
         attribute EventConstructor Event;
+        attribute MessageEventConstructor MessageEvent;
         attribute KeyboardEventConstructor KeyboardEvent;
         attribute MouseEventConstructor MouseEvent;
         attribute MutationEventConstructor MutationEvent;

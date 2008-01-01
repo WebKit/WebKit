@@ -540,6 +540,14 @@
 		65DF323E09D1DE65000BE325 /* JSCanvasRenderingContext2D.h in Headers */ = {isa = PBXBuildFile; fileRef = 65DF323809D1DE65000BE325 /* JSCanvasRenderingContext2D.h */; };
 		65DF326109D1E199000BE325 /* UserAgentStyleSheetsData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 656581AF09D14EE6000E61D7 /* UserAgentStyleSheetsData.cpp */; };
 		65FEA86909833ADE00BED4AB /* Page.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65FEA86809833ADE00BED4AB /* Page.cpp */; };
+		75793E830D0CE0B3007FC0AC /* MessageEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 75793E800D0CE0B3007FC0AC /* MessageEvent.cpp */; };
+		75793E840D0CE0B3007FC0AC /* MessageEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 75793E810D0CE0B3007FC0AC /* MessageEvent.h */; };
+		75793E850D0CE0B3007FC0AC /* MessageEvent.idl in Resources */ = {isa = PBXBuildFile; fileRef = 75793E820D0CE0B3007FC0AC /* MessageEvent.idl */; };
+		75793EC80D0CE72D007FC0AC /* JSMessageEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 75793EC60D0CE72D007FC0AC /* JSMessageEvent.cpp */; };
+		75793EC90D0CE72D007FC0AC /* JSMessageEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 75793EC70D0CE72D007FC0AC /* JSMessageEvent.h */; };
+		75793ED30D0CE85B007FC0AC /* DOMMessageEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 75793ED00D0CE85B007FC0AC /* DOMMessageEvent.h */; };
+		75793ED40D0CE85B007FC0AC /* DOMMessageEvent.mm in Sources */ = {isa = PBXBuildFile; fileRef = 75793ED10D0CE85B007FC0AC /* DOMMessageEvent.mm */; };
+		75793ED50D0CE85B007FC0AC /* DOMMessageEventInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 75793ED20D0CE85B007FC0AC /* DOMMessageEventInternal.h */; };
 		7E6FEED80898582300C44C3F /* WebCoreScriptDebugger.h in Headers */ = {isa = PBXBuildFile; fileRef = 7E6FEED60898582300C44C3F /* WebCoreScriptDebugger.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7E6FEED90898582300C44C3F /* WebCoreScriptDebugger.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7E6FEED70898582300C44C3F /* WebCoreScriptDebugger.mm */; };
 		85004D940ACEEAEF00C438F6 /* DOMSVGDefsElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 85004D880ACEEAEF00C438F6 /* DOMSVGDefsElement.h */; };
@@ -4937,6 +4945,14 @@
 		65DF323809D1DE65000BE325 /* JSCanvasRenderingContext2D.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSCanvasRenderingContext2D.h; sourceTree = "<group>"; };
 		65F80697054D9F86008BF776 /* BlockExceptions.mm */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = BlockExceptions.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		65FEA86809833ADE00BED4AB /* Page.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = Page.cpp; sourceTree = "<group>"; };
+		75793E800D0CE0B3007FC0AC /* MessageEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = MessageEvent.cpp; path = dom/MessageEvent.cpp; sourceTree = SOURCE_ROOT; };
+		75793E810D0CE0B3007FC0AC /* MessageEvent.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = MessageEvent.h; path = dom/MessageEvent.h; sourceTree = SOURCE_ROOT; };
+		75793E820D0CE0B3007FC0AC /* MessageEvent.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; name = MessageEvent.idl; path = dom/MessageEvent.idl; sourceTree = SOURCE_ROOT; };
+		75793EC60D0CE72D007FC0AC /* JSMessageEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSMessageEvent.cpp; sourceTree = "<group>"; };
+		75793EC70D0CE72D007FC0AC /* JSMessageEvent.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSMessageEvent.h; sourceTree = "<group>"; };
+		75793ED00D0CE85B007FC0AC /* DOMMessageEvent.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DOMMessageEvent.h; sourceTree = "<group>"; };
+		75793ED10D0CE85B007FC0AC /* DOMMessageEvent.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMMessageEvent.mm; sourceTree = "<group>"; };
+		75793ED20D0CE85B007FC0AC /* DOMMessageEventInternal.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DOMMessageEventInternal.h; sourceTree = "<group>"; };
 		7E6FEED60898582300C44C3F /* WebCoreScriptDebugger.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebCoreScriptDebugger.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		7E6FEED70898582300C44C3F /* WebCoreScriptDebugger.mm */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebCoreScriptDebugger.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		84B2B1F7056BEF3A00D2B771 /* WebCoreKeyGenerator.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebCoreKeyGenerator.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -9259,6 +9275,9 @@
 				85DF343F0AAFC0ED00E59AE3 /* DOMKeyboardEventPrivate.h */,
 				85FF31580AAFBFCB00374F38 /* DOMKeyboardEvent.h */,
 				85FF31590AAFBFCB00374F38 /* DOMKeyboardEvent.mm */,
+				75793ED00D0CE85B007FC0AC /* DOMMessageEvent.h */,
+				75793ED10D0CE85B007FC0AC /* DOMMessageEvent.mm */,
+				75793ED20D0CE85B007FC0AC /* DOMMessageEventInternal.h */,
 				857E0B2B0AB043FC0036E447 /* DOMMouseEventPrivate.h */,
 				857E0B230AB043460036E447 /* DOMMouseEvent.h */,
 				857E0B240AB043460036E447 /* DOMMouseEvent.mm */,
@@ -10609,6 +10628,8 @@
 				14E8378D09F85D4F00B85AE4 /* JSEvent.h */,
 				A86629CE09DA2B47009633A5 /* JSKeyboardEvent.cpp */,
 				A86629CD09DA2B47009633A5 /* JSKeyboardEvent.h */,
+				75793EC60D0CE72D007FC0AC /* JSMessageEvent.cpp */,
+				75793EC70D0CE72D007FC0AC /* JSMessageEvent.h */,
 				A86629CC09DA2B47009633A5 /* JSMouseEvent.cpp */,
 				A86629CB09DA2B47009633A5 /* JSMouseEvent.h */,
 				65DF31E709D1CC60000BE325 /* JSMutationEvent.cpp */,
@@ -12306,6 +12327,9 @@
 				A8C4A7F409D563270003AC8D /* MappedAttribute.cpp */,
 				A8C4A7F309D563270003AC8D /* MappedAttribute.h */,
 				A8C4A84B09D5649D0003AC8D /* MappedAttributeEntry.h */,
+				75793E800D0CE0B3007FC0AC /* MessageEvent.cpp */,
+				75793E810D0CE0B3007FC0AC /* MessageEvent.h */,
+				75793E820D0CE0B3007FC0AC /* MessageEvent.idl */,
 				85031B2F0A44EFC700F992E0 /* MouseEvent.cpp */,
 				85031B300A44EFC700F992E0 /* MouseEvent.h */,
 				141B94E509EC4223000E9413 /* MouseEvent.idl */,
@@ -14245,6 +14269,10 @@
 				B2D19A490CEF9DC1000E033B /* SVGCSSFontFace.h in Headers */,
 				BCA379150D163E5500B793D6 /* JSLocation.h in Headers */,
 				BCA3793F0D1647E000B793D6 /* JSLocation.lut.h in Headers */,
+				75793E840D0CE0B3007FC0AC /* MessageEvent.h in Headers */,
+				75793EC90D0CE72D007FC0AC /* JSMessageEvent.h in Headers */,
+				75793ED30D0CE85B007FC0AC /* DOMMessageEvent.h in Headers */,
+				75793ED50D0CE85B007FC0AC /* DOMMessageEventInternal.h in Headers */,
 				BC7FA6210D1F0CBD00DB22A9 /* DynamicNodeList.h in Headers */,
 				BC7FA62D0D1F0EFF00DB22A9 /* StaticNodeList.h in Headers */,
 				BC7FA6810D1F167900DB22A9 /* SelectorNodeList.h in Headers */,
@@ -14471,6 +14499,7 @@
 				B25599680D00D8BA00BB825C /* WKSpecularLightingFilter.cikernel in Resources */,
 				B255996B0D00D8BA00BB825C /* WKSpotLightFilter.cikernel in Resources */,
 				B255996E0D00D8BA00BB825C /* WKTableTransferFilter.cikernel in Resources */,
+				75793E850D0CE0B3007FC0AC /* MessageEvent.idl in Resources */,
 				46F9D5DD0B0D60170028EE36 /* aliasCursor.png in Resources */,
 				46D4F2490AF97E810035385A /* cellCursor.png in Resources */,
 				B2AFFC900D00A5DF0030074D /* character-sets.txt in Resources */,
@@ -15967,6 +15996,9 @@
 				93309DF7099E64920056E581 /* markup.cpp in Sources */,
 				93309E1D099E64920056E581 /* visible_units.cpp in Sources */,
 				BCA379140D163E5500B793D6 /* JSLocation.cpp in Sources */,
+				75793E830D0CE0B3007FC0AC /* MessageEvent.cpp in Sources */,
+				75793EC80D0CE72D007FC0AC /* JSMessageEvent.cpp in Sources */,
+				75793ED40D0CE85B007FC0AC /* DOMMessageEvent.mm in Sources */,
 				B2A1F2AA0CEF0ABF00442F6A /* SVGFontElement.cpp in Sources */,
 				B2A1F2AD0CEF0ABF00442F6A /* SVGGlyphElement.cpp in Sources */,
 				B2A1F2B00CEF0ABF00442F6A /* SVGMissingGlyphElement.cpp in Sources */,

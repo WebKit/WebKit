@@ -281,6 +281,7 @@ IDL_BINDINGS += \
 #    dom/EventListener.idl \
 #    dom/EventTarget.idl \
     dom/KeyboardEvent.idl \
+    dom/MessageEvent.idl \
     dom/MouseEvent.idl \
     dom/MutationEvent.idl \
     dom/NamedNodeMap.idl \
@@ -498,6 +499,7 @@ SOURCES += \
     dom/ExceptionCode.cpp \
     dom/KeyboardEvent.cpp \
     dom/MappedAttribute.cpp \
+    dom/MessageEvent.cpp \
     dom/MouseEvent.cpp \
     dom/MouseRelatedEvent.cpp \
     dom/MutationEvent.cpp \
