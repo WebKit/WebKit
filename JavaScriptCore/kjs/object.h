@@ -592,6 +592,19 @@ inline void ScopeChain::mark()
     }
 }
 
+inline void ScopeChain::release()
+{
+    // This function is only called by deref(),
+    // Deref ensures these conditions are true.
+    ASSERT(_node && _node->refCount == 0);
+    ScopeChainNode *n = _node;
+    do {
+        ScopeChainNode *next = n->next;
+        delete n;
+        n = next;
+    } while (n && --n->refCount == 0);
+}
+
 inline JSValue* JSObject::toPrimitive(ExecState* exec, JSType preferredType) const
 {
     return defaultValue(exec, preferredType);

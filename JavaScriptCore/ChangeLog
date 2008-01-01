@@ -1,5 +1,9 @@
 2008-01-01  Darin Adler  <darin@apple.com>
 
+        - rolled scope chain optimization out; it was breaking the world
+
+2008-01-01  Darin Adler  <darin@apple.com>
+
         Reviewed by Geoff.
 
         - http://bugs.webkit.org/show_bug.cgi?id=16685

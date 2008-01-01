@@ -27,14 +27,15 @@
 namespace KJS {
 
     class JSObject;
-    struct ScopeChainHeapNode;
+    class ExecState;
     
-    struct ScopeChainNode {
-        JSObject* object;
-        ScopeChainHeapNode* next;
-    };
+    class ScopeChainNode {
+    public:
+        ScopeChainNode(ScopeChainNode *n, JSObject *o)
+            : next(n), object(o), refCount(1) { }
 
-    struct ScopeChainHeapNode : ScopeChainNode {
+        ScopeChainNode *next;
+        JSObject *object;
         int refCount;
     };
 
@@ -64,7 +65,8 @@ namespace KJS {
         ScopeChain() : _node(0) { }
         ~ScopeChain() { deref(); }
 
-        ScopeChain(const ScopeChain&);
+        ScopeChain(const ScopeChain &c) : _node(c._node)
+            { if (_node) ++_node->refCount; }
         ScopeChain &operator=(const ScopeChain &);
 
         bool isEmpty() const { return !_node; }
@@ -77,6 +79,7 @@ namespace KJS {
 
         void clear() { deref(); _node = 0; }
         void push(JSObject *);
+        void push(const ScopeChain &);
         void pop();
         
         void mark();
@@ -86,65 +89,27 @@ namespace KJS {
 #endif
         
     private:
-        mutable ScopeChainNode* _node;
-        ScopeChainNode m_initialTopNode;
-
-        ScopeChainHeapNode* moveToHeap() const;
-
-        void deref();
+        ScopeChainNode *_node;
+        
+        void deref() { if (_node && --_node->refCount == 0) release(); }
         void ref() const;
+        
+        void release();
     };
-
-inline ScopeChainHeapNode* ScopeChain::moveToHeap() const
-{
-    if (_node != &m_initialTopNode)
-        return static_cast<ScopeChainHeapNode*>(_node);
-    ScopeChainHeapNode* heapNode = new ScopeChainHeapNode;
-    heapNode->object = m_initialTopNode.object;
-    heapNode->next = m_initialTopNode.next;
-    heapNode->refCount = 1;
-    _node = heapNode;
-    return heapNode;
-}
-
-inline ScopeChain::ScopeChain(const ScopeChain& otherChain)
-{
-    if (!otherChain._node)
-        _node = 0;
-    else {
-        ScopeChainHeapNode* top = otherChain.moveToHeap();
-        ++top->refCount;
-        _node = top;
-    }
-}
 
 inline void ScopeChain::ref() const
 {
-    ASSERT(_node != &m_initialTopNode);
-    for (ScopeChainHeapNode* n = static_cast<ScopeChainHeapNode*>(_node); n; n = n->next) {
-        if (n->refCount++)
+    for (ScopeChainNode *n = _node; n; n = n->next) {
+        if (n->refCount++ != 0)
             break;
     }
 }
 
-inline void ScopeChain::deref()
+inline ScopeChain &ScopeChain::operator=(const ScopeChain &c)
 {
-    ScopeChainHeapNode* node = static_cast<ScopeChainHeapNode*>(_node);
-    if (node == &m_initialTopNode)
-        node = node->next;
-    ScopeChainHeapNode* next;
-    for (; node && --node->refCount == 0; node = next) {
-        next = node->next;
-        delete node;
-    }
-}
-
-inline ScopeChain &ScopeChain::operator=(const ScopeChain& otherChain)
-{
-    otherChain.moveToHeap();
-    otherChain.ref();
+    c.ref();
     deref();
-    _node = otherChain._node;
+    _node = c._node;
     return *this;
 }
 
@@ -158,30 +123,24 @@ inline JSObject *ScopeChain::bottom() const
     return last->object;
 }
 
-inline void ScopeChain::push(JSObject* o)
+inline void ScopeChain::push(JSObject *o)
 {
     ASSERT(o);
-    ScopeChainHeapNode* heapNode = moveToHeap();
-    m_initialTopNode.object = o;
-    m_initialTopNode.next = heapNode;
-    _node = &m_initialTopNode;
+    _node = new ScopeChainNode(_node, o);
 }
 
 inline void ScopeChain::pop()
 {
     ScopeChainNode *oldNode = _node;
     ASSERT(oldNode);
-    ScopeChainHeapNode *newNode = oldNode->next;
+    ScopeChainNode *newNode = oldNode->next;
     _node = newNode;
-
-    if (oldNode != &m_initialTopNode) {
-        ScopeChainHeapNode* oldHeapNode = static_cast<ScopeChainHeapNode*>(oldNode);
-        if (--oldHeapNode->refCount != 0) {
-            if (newNode)
-                ++newNode->refCount;
-        } else {
-            delete oldHeapNode;
-        }
+    
+    if (--oldNode->refCount != 0) {
+        if (newNode)
+            ++newNode->refCount;
+    } else {
+        delete oldNode;
     }
 }
 
