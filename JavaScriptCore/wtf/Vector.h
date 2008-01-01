@@ -648,7 +648,7 @@ namespace WTF {
     template<typename T, size_t inlineCapacity>
     void Vector<T, inlineCapacity>::reserveCapacity(size_t newCapacity)
     {
-        if (newCapacity < capacity())
+        if (newCapacity <= capacity())
             return;
         T* oldBuffer = begin();
         T* oldEnd = end();
