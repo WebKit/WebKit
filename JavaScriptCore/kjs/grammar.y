@@ -1001,9 +1001,9 @@ FormalParameterList:
 ;
 
 FunctionBody:
-    /* not in spec */           { $$ = new FunctionBodyNode(0, 0, 0); }
-  | SourceElements              { $$ = new FunctionBodyNode($1.m_node, $1.m_varDeclarations ? &$1.m_varDeclarations->data : 0, 
-                                                            $1.m_funcDeclarations ? &$1.m_funcDeclarations->data : 0);
+    /* not in spec */           { $$ = FunctionBodyNode::create(0, 0, 0); }
+  | SourceElements              { $$ = FunctionBodyNode::create($1.m_node, $1.m_varDeclarations ? &$1.m_varDeclarations->data : 0, 
+                                                                $1.m_funcDeclarations ? &$1.m_funcDeclarations->data : 0);
                                   // As in mergeDeclarationLists() we have to ref/deref to safely get rid of
                                   // the declaration lists.
                                   if ($1.m_varDeclarations) {

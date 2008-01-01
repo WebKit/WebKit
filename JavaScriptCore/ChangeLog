@@ -1,3 +1,31 @@
+2008-01-01  Darin Adler  <darin@apple.com>
+
+        Reviewed by Oliver.
+
+        - http://bugs.webkit.org/show_bug.cgi?id=16684
+          eliminate debugger overhead from function body execution
+
+        Speeds SunSpider up 1.003x. That's a small amount, but measurable.
+
+        * JavaScriptCore.exp: Updated.
+        * kjs/Parser.h:
+        (KJS::Parser::parse): Create the node with a static member function named create() instead
+        of using new explicitly.
+
+        * kjs/grammar.y: Changed calls to new FunctionBodyNode to use FunctionBodyNode::create().
+
+        * kjs/nodes.cpp:
+        (KJS::ProgramNode::create): Added. Calls new.
+        (KJS::EvalNode::create): Ditto.
+        (KJS::FunctionBodyNode::create): Ditto, but creates FunctionBodyNodeWithDebuggerHooks
+        when a debugger is present.
+        (KJS::FunctionBodyNode::execute): Removed debugger hooks.
+        (KJS::FunctionBodyNodeWithDebuggerHooks::FunctionBodyNodeWithDebuggerHooks): Added.
+        (KJS::FunctionBodyNodeWithDebuggerHooks::execute): Calls the debugger, then the code,
+        then the debugger again.
+
+        * kjs/nodes.h: Added create functions, made the constructors private and protected.
+
 2007-12-30  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Sam.

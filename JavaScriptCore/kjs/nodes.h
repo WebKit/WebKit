@@ -1968,10 +1968,11 @@ namespace KJS {
 
   class ProgramNode : public ScopeNode {
   public:
-    ProgramNode(SourceElements*, DeclarationStacks::VarStack*, DeclarationStacks::FunctionStack*) KJS_FAST_CALL;
+    static ProgramNode* create(SourceElements*, DeclarationStacks::VarStack*, DeclarationStacks::FunctionStack*) KJS_FAST_CALL;
     virtual JSValue* execute(ExecState*) KJS_FAST_CALL;
     
   private:
+    ProgramNode(SourceElements*, DeclarationStacks::VarStack*, DeclarationStacks::FunctionStack*) KJS_FAST_CALL;
     void initializeSymbolTable(ExecState*) KJS_FAST_CALL;
     ALWAYS_INLINE void processDeclarations(ExecState*) KJS_FAST_CALL;
 
@@ -1981,16 +1982,17 @@ namespace KJS {
 
   class EvalNode : public ScopeNode {
   public:
-    EvalNode(SourceElements*, DeclarationStacks::VarStack*, DeclarationStacks::FunctionStack*) KJS_FAST_CALL;
+    static EvalNode* create(SourceElements*, DeclarationStacks::VarStack*, DeclarationStacks::FunctionStack*) KJS_FAST_CALL;
     virtual JSValue* execute(ExecState*) KJS_FAST_CALL;
     
   private:
+    EvalNode(SourceElements*, DeclarationStacks::VarStack*, DeclarationStacks::FunctionStack*) KJS_FAST_CALL;
     ALWAYS_INLINE void processDeclarations(ExecState*) KJS_FAST_CALL;
   };
 
   class FunctionBodyNode : public ScopeNode {
   public:
-    FunctionBodyNode(SourceElements*, DeclarationStacks::VarStack*, DeclarationStacks::FunctionStack*) KJS_FAST_CALL;
+    static FunctionBodyNode* create(SourceElements*, DeclarationStacks::VarStack*, DeclarationStacks::FunctionStack*) KJS_FAST_CALL;
 
     virtual JSValue* execute(ExecState*) KJS_FAST_CALL;
 
@@ -1998,6 +2000,9 @@ namespace KJS {
 
     Vector<Identifier>& parameters() KJS_FAST_CALL { return m_parameters; }
     UString paramString() const KJS_FAST_CALL;
+
+  protected:
+    FunctionBodyNode(SourceElements*, DeclarationStacks::VarStack*, DeclarationStacks::FunctionStack*) KJS_FAST_CALL;
 
   private:
     void initializeSymbolTable(ExecState*) KJS_FAST_CALL;
