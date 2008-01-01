@@ -1,3 +1,11 @@
+2007-12-31  Darin Adler  <darin@apple.com>
+
+        - fix Windows build
+
+        * dom/Document.idl: Temporarily disable querySelector and querySelectorAll, since they are showing
+        up as pure virtual functions. Sam can fix this later.
+        * dom/Element.idl: Ditto.
+
 2007-12-31  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.
