@@ -1,3 +1,10 @@
+2008-01-01  Alp Toker  <alp@atoker.com>
+
+        GTK+ autotools build fix. Track changes in r29051, r29058 and pass the
+        correct parameter to AM_INIT_AUTOMAKE.
+
+        * configure.ac:
+
 2007-12-30  Alp Toker  <alp@atoker.com>
 
         Build fix for older autoconf versions.

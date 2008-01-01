@@ -46,7 +46,6 @@ webcore_built_nosources += \
 	DerivedSources/DocTypeStrings.cpp \
 	DerivedSources/tokenizer.cpp \
 	DerivedSources/ColorData.c \
-	WebCore/bindings/js/JSDOMExceptionConstructor.lut.h \
 	WebCore/bindings/js/JSEventTargetBase.lut.h \
 	WebCore/bindings/js/JSLocation.lut.h \
 	WebCore/bindings/js/JSXMLHttpRequest.lut.h \
@@ -92,6 +91,7 @@ webcore_built_sources += \
 	DerivedSources/JSComment.h \
 	DerivedSources/JSConsole.h \
 	DerivedSources/JSCounter.h \
+	DerivedSources/JSDOMCoreException.h \
 	DerivedSources/JSDOMImplementation.h \
 	DerivedSources/JSDOMParser.h \
 	DerivedSources/JSDOMSelection.h \
@@ -166,6 +166,7 @@ webcore_built_sources += \
 	DerivedSources/JSHistory.h \
 	DerivedSources/JSKeyboardEvent.h \
 	DerivedSources/JSMediaList.h \
+	DerivedSources/JSMessageEvent.h \
 	DerivedSources/JSMouseEvent.h \
 	DerivedSources/JSMutationEvent.h \
 	DerivedSources/JSNamedNodeMap.h \
@@ -212,6 +213,7 @@ webcore_built_sources += \
 	DerivedSources/JSComment.cpp \
 	DerivedSources/JSConsole.cpp \
 	DerivedSources/JSCounter.cpp \
+	DerivedSources/JSDOMCoreException.cpp \
 	DerivedSources/JSDOMImplementation.cpp \
 	DerivedSources/JSDOMParser.cpp \
 	DerivedSources/JSDOMSelection.cpp \
@@ -286,6 +288,7 @@ webcore_built_sources += \
 	DerivedSources/JSHistory.cpp \
 	DerivedSources/JSKeyboardEvent.cpp \
 	DerivedSources/JSMediaList.cpp \
+	DerivedSources/JSMessageEvent.cpp \
 	DerivedSources/JSMouseEvent.cpp \
 	DerivedSources/JSMutationEvent.cpp \
 	DerivedSources/JSNamedNodeMap.cpp \
@@ -336,12 +339,14 @@ IDL_BINDINGS +=  \
 	WebCore/dom/DocumentFragment.idl \
 	WebCore/dom/Document.idl \
 	WebCore/dom/DocumentType.idl \
+	WebCore/dom/DOMCoreException.idl \
 	WebCore/dom/DOMImplementation.idl \
 	WebCore/dom/Element.idl \
 	WebCore/dom/Entity.idl \
 	WebCore/dom/EntityReference.idl \
 	WebCore/dom/Event.idl \
 	WebCore/dom/KeyboardEvent.idl \
+	WebCore/dom/MessageEvent.idl \
 	WebCore/dom/MouseEvent.idl \
 	WebCore/dom/MutationEvent.idl \
 	WebCore/dom/NamedNodeMap.idl \
@@ -445,7 +450,6 @@ webcore_sources += \
 	WebCore/bindings/js/JSCustomVoidCallback.cpp \
 	WebCore/bindings/js/JSCustomXPathNSResolver.cpp \
 	WebCore/bindings/js/JSDocumentCustom.cpp \
-	WebCore/bindings/js/JSDOMExceptionConstructor.cpp \
 	WebCore/bindings/js/JSDOMWindowCustom.cpp \
 	WebCore/bindings/js/JSElementCustom.cpp \
 	WebCore/bindings/js/JSEventCustom.cpp \
@@ -548,6 +552,7 @@ webcore_sources += \
 	WebCore/dom/Document.cpp \
 	WebCore/dom/DocumentFragment.cpp \
 	WebCore/dom/DocumentType.cpp \
+	WebCore/dom/DOMCoreException.cpp \
 	WebCore/dom/DOMImplementation.cpp \
 	WebCore/dom/DynamicNodeList.cpp \
 	WebCore/dom/EditingText.cpp \
@@ -561,6 +566,7 @@ webcore_sources += \
 	WebCore/dom/ExceptionCode.cpp \
 	WebCore/dom/KeyboardEvent.cpp \
 	WebCore/dom/MappedAttribute.cpp \
+	WebCore/dom/MessageEvent.cpp \
 	WebCore/dom/MouseEvent.cpp \
 	WebCore/dom/MouseRelatedEvent.cpp \
 	WebCore/dom/MutationEvent.cpp \
