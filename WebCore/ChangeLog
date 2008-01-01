@@ -1,3 +1,19 @@
+2007-12-31  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=14134
+          <rdar://problem/5655160> REGRESSION (r25353): Whitespace nodes ignored between inline list items
+
+        Test: fast/dynamic/create-renderer-for-whitespace-only-text.html
+
+        * dom/Node.cpp:
+        (WebCore::Node::attach): Added code to check if this node's renderer
+        has become the "previous renderer" of any sibling text node, and if so,
+        ensure that that node gets a renderer if it now needs one.
+        (WebCore::Node::createRendererIfNeeded): Removed the assertion that the
+        node is not attached.
+
 2007-12-31  Darin Adler  <darin@apple.com>
 
         Reviewed by Mitz.

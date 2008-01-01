@@ -1,3 +1,34 @@
+2007-12-31  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        - test and updated results for http://bugs.webkit.org/show_bug.cgi?id=14134
+          <rdar://problem/5655160> REGRESSION (r25353): Whitespace nodes ignored between inline list items
+
+        * fast/dynamic/create-renderer-for-whitespace-only-text.html: Added.
+        * fast/dynamic/style-access-late-stylesheet-load-expected.txt:
+        * platform/mac-leopard/fast/dynamic: Added.
+        * platform/mac-leopard/fast/dynamic/create-renderer-for-whitespace-only-text-expected.checksum: Added.
+        * platform/mac-leopard/fast/dynamic/create-renderer-for-whitespace-only-text-expected.png: Added.
+        * platform/mac/editing/deleting/delete-block-merge-contents-001-expected.txt:
+        * platform/mac/editing/deleting/delete-block-merge-contents-019-expected.txt:
+        * platform/mac/editing/deleting/delete-block-merge-contents-020-expected.txt:
+        * platform/mac/editing/inserting/editable-html-element-expected.txt:
+        * platform/mac/editing/inserting/editing-empty-divs-expected.txt:
+        * platform/mac/editing/pasteboard/paste-TIFF-expected.txt:
+        * platform/mac/editing/selection/4983858-expected.txt:
+        * platform/mac/editing/selection/5136696-expected.txt:
+        * platform/mac/editing/selection/drag-to-contenteditable-iframe-expected.txt:
+        * platform/mac/editing/style/remove-underline-across-paragraph-expected.txt:
+        * platform/mac/editing/style/remove-underline-across-paragraph-in-bold-expected.txt:
+        * platform/mac/editing/style/remove-underline-after-paragraph-expected.txt:
+        * platform/mac/editing/style/remove-underline-after-paragraph-in-bold-expected.txt:
+        * platform/mac/editing/style/remove-underline-from-stylesheet-expected.txt:
+        * platform/mac/fast/dynamic/create-renderer-for-whitespace-only-text-expected.txt: Added.
+        * platform/mac/fast/dynamic/move-node-with-selection-expected.txt:
+        * platform/mac/fast/forms/input-align-expected.txt:
+        * platform/mac/fast/inline/positionedLifetime-expected.txt:
+
 2007-12-31  Darin Adler  <darin@apple.com>
 
         Reviewed by Mitz.
