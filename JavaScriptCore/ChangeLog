@@ -1,3 +1,36 @@
+2008-01-01  Darin Adler  <darin@apple.com>
+
+        Reviewed by Geoff.
+
+        - http://bugs.webkit.org/show_bug.cgi?id=16683
+          speed up function calls by making ScopeChain::push cheaper
+
+        This gives a 1.019x speedup on SunSpider.
+
+        After doing this, I realized this probably will be obsolete when the optimization
+        to avoid creating an activation object is done. When we do that one we should check
+        if rolling this out will speed things up, since this does add overhead at the time
+        you copy the scope chain.
+
+        * kjs/object.h: Removed the ScopeChain::release function. It was
+        marked inline, and called in exactly one place, so moved it there.
+        No idea why it was in this header file!
+
+        * kjs/scope_chain.cpp: Removed the overload of the ScopeChain::push
+        function that takes another ScopeChain. It was unused. I think we used
+        it over in WebCore at one point, but not any more.
+
+        * kjs/scope_chain.h: Changed ScopeChainNode into a struct rather than
+        a class, got rid of its constructor so we can have one that's uninitialized,
+        and moved the refCount into a derived struct, ScopeChainHeapNode. Made _node
+        mutable so it can be changed in the moveToHeap function. Changed the copy
+        constructor and assignment operator to call moveToHeap, since the top node
+        can't be shared when it's embedded in another ScopeChain object. Updated
+        functions as needed to handle the case where the first object isn't on the
+        heap or to add casts for cases where it's guaranteed to be. Changed the push
+        function to always put the new node into the ScopeChain object; it will get
+        put onto the heap when needed later.
+
 2008-01-01  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Darin Adler.
