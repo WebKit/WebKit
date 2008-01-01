@@ -1,3 +1,9 @@
+2008-01-01  Dan Bernstein  <mitz@apple.com>
+
+        - Windows build fix
+
+        * WebCore.vcproj/WebCore.vcproj:
+
 2008-01-01  Sam Weinig  <sam@webkit.org>
 
         Try again to fix the builds

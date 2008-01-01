@@ -7564,14 +7564,6 @@
 					>
 				</File>
 				<File
-					RelativePath="..\bindings\js\JSDOMExceptionConstructor.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\bindings\js\JSDOMExceptionConstructor.h"
-					>
-				</File>
-				<File
 					RelativePath="..\bindings\js\JSDOMWindowCustom.cpp"
 					>
 				</File>
