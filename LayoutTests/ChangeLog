@@ -1,3 +1,12 @@
+2008-01-01  Darin Adler  <darin@apple.com>
+
+        Reviewed by Geoff.
+
+        - updated test results for https://bugs.webkit.org/show_bug.cgi?id=16648
+
+        * fast/regex/test1-expected.txt: Update results changed by restoring the logic to
+        avoid failing on infinite repeats of brackets that match the empty string.
+
 2008-01-01  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Alexey.

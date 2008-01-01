@@ -1259,50 +1259,50 @@ FAILED TO COMPILE
 FAILED TO COMPILE
 
 /(abc|)+/
-    abc: FAIL. Actual results: "null"
-    abcabc: FAIL. Actual results: "null"
-    abcabcabc: FAIL. Actual results: "null"
-    xyz      : FAIL. Actual results: "null"
+    abc: PASS
+    abcabc: PASS
+    abcabcabc: PASS
+    xyz      : PASS
 
 /([a]*)*/
-    a: FAIL. Actual results: "null"
-    aaaaa : FAIL. Actual results: "null"
+    a: PASS
+    aaaaa : PASS
 
 /([ab]*)*/
-    a: FAIL. Actual results: "null"
-    b: FAIL. Actual results: "null"
-    ababab: FAIL. Actual results: "null"
-    aaaabcde: FAIL. Actual results: "null"
-    bbbb    : FAIL. Actual results: "null"
+    a: PASS
+    b: PASS
+    ababab: PASS
+    aaaabcde: PASS
+    bbbb    : PASS
 
 /([^a]*)*/
-    b: FAIL. Actual results: "null"
-    bbbb: FAIL. Actual results: "null"
-    aaa   : FAIL. Actual results: "null"
+    b: PASS
+    bbbb: PASS
+    aaa   : PASS
 
 /([^ab]*)*/
-    cccc: FAIL. Actual results: "null"
-    abab  : FAIL. Actual results: "null"
+    cccc: PASS
+    abab  : PASS
 
 /([a]*?)*/
-    a: FAIL. Actual results: "null"
-    aaaa : FAIL. Actual results: "null"
+    a: PASS
+    aaaa : PASS
 
 /([ab]*?)*/
-    a: FAIL. Actual results: "null"
-    b: FAIL. Actual results: "null"
-    abab: FAIL. Actual results: "null"
-    baba   : FAIL. Actual results: "null"
+    a: PASS
+    b: PASS
+    abab: PASS
+    baba   : PASS
 
 /([^a]*?)*/
-    b: FAIL. Actual results: "null"
-    bbbb: FAIL. Actual results: "null"
-    aaa   : FAIL. Actual results: "null"
+    b: PASS
+    bbbb: PASS
+    aaa   : PASS
 
 /([^ab]*?)*/
-    c: FAIL. Actual results: "null"
-    cccc: FAIL. Actual results: "null"
-    baba   : FAIL. Actual results: "null"
+    c: PASS
+    cccc: PASS
+    baba   : PASS
 
 /(?>a*)*/
 FAILED TO COMPILE
@@ -2366,8 +2366,8 @@ FAILED TO COMPILE
 
 /^(?:a?b?)*$/
     \: FAIL. Actual results: "null"
-    a: FAIL. Actual results: "null"
-    ab: FAIL. Actual results: "null"
+    a: PASS
+    ab: PASS
     aaa   : FAIL. Actual results: "null"
     *** Failers
     dbcb: PASS
@@ -2865,30 +2865,30 @@ FAILED TO COMPILE
 FAILED TO COMPILE
 
 /^(a()*)*/
-    aaaa: FAIL. Actual results: "null"
+    aaaa: FAIL. Actual results: "a,a,"
 
 /^(?:a(?:(?:))*)*/
-    aaaa: FAIL. Actual results: "null"
+    aaaa: FAIL. Actual results: "a"
 
 /^(a()+)+/
-    aaaa: FAIL. Actual results: "null"
+    aaaa: PASS
 
 /^(?:a(?:(?:))+)+/
-    aaaa: FAIL. Actual results: "null"
+    aaaa: PASS
 
 /(a){0,3}(?(1)b|(c|))*D/
 FAILED TO COMPILE
 
 /(a|)*\d/
   aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa: PASS
-  aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa4: FAIL. Actual results: "null"
+  aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa4: PASS
 
 /(?>a|)*\d/
 FAILED TO COMPILE
 
 /(?:a|)*\d/
   aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa: PASS
-  aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa4: FAIL. Actual results: "null"
+  aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa4: PASS
 
 /\Z/g
 Global regex, cannot test matching via JS
@@ -2904,7 +2904,7 @@ FAILED TO COMPILE
 FAILED TO COMPILE
 
 /(.*(.)?)*/
-    abcd: FAIL. Actual results: "null"
+    abcd: FAIL. Actual results: "abcd,,"
 
 /( (A | (?(1)0|) )*   )/x
 Unsupported modifiers: x

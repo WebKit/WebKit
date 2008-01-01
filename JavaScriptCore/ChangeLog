@@ -2,6 +2,30 @@
 
         Reviewed by Geoff.
 
+        - fix http://bugs.webkit.org/show_bug.cgi?id=16648
+          REGRESSION (r28165): Yuku.com navigation prints "jsRegExpExecute failed with result -2"
+          <rdar://problem/5646486> REGRESSION (r28165): Layout test fast/regex/test1 fails intermittently
+
+        Fixes 34 failing test cases in the fast/regex/test1.html test.
+
+        Restored the stack which prevents infinite loops for brackets that match the empty
+        string; it had been removed as an optimization.
+
+        Unfortunately, restoring this stack causes the regular expression test in SunSpider
+        to be 1.095x as slow and the overall test to be 1.004x as slow. Maybe we can find
+        a correct optimization to restore the speed!
+
+        It's possible the original change was on the right track but just off by one.
+
+        * pcre/pcre_exec.cpp: Add back eptrblock, but name it BracketChainNode.
+        (MatchStack::pushNewFrame): Add back the logic needed here.
+        (startNewGroup): Ditto.
+        (match): Ditto.
+
+2008-01-01  Darin Adler  <darin@apple.com>
+
+        Reviewed by Geoff.
+
         - http://bugs.webkit.org/show_bug.cgi?id=16683
           speed up function calls by making ScopeChain::push cheaper
 
