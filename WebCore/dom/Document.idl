@@ -223,13 +223,11 @@ module core {
         // HTML 5
         NodeList            getElementsByClassName(in DOMString tagname);
 
-#if !defined(LANGUAGE_COM) // work around build failure
         // DocumentSelector - Selector API
         Element             querySelector(in [ConvertUndefinedOrNullToNullString] DOMString selectors)
             raises(DOMException);
         NodeList            querySelectorAll(in [ConvertUndefinedOrNullToNullString] DOMString selectors)
             raises(DOMException);
-#endif
     };
 
 }

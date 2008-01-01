@@ -105,13 +105,11 @@ module core {
         // HTML 5
         NodeList getElementsByClassName(in DOMString name);
 
-#if !defined(LANGUAGE_COM) // work around build failure
         // ElementSelector - Selector API
         Element             querySelector(in [ConvertUndefinedOrNullToNullString] DOMString selectors)
             raises(DOMException);
         NodeList            querySelectorAll(in [ConvertUndefinedOrNullToNullString] DOMString selectors)
             raises(DOMException);
-#endif
 
 #if defined(LANGUAGE_OBJECTIVE_C)
         // Objective-C extensions

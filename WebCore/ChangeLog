@@ -1,3 +1,13 @@
+2007-12-31  Sam Weinig  <sam@webkit.org>
+
+        Re-enable querySelector and querySelectorAll and touch the necessary files to not
+        kill the windows build.
+
+        * WebCore.vcproj/build-generated-files.sh:
+        * bindings/scripts/CodeGeneratorCOM.pm:
+        * dom/Document.idl:
+        * dom/Element.idl:
+
 2007-12-31  Darin Adler  <darin@apple.com>
 
         - fix Windows build
