@@ -561,7 +561,11 @@
 				>
 			</File>
 			<File
-				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSDOMExceptionConstructor.lut.h"
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSDOMCoreException.cpp"
+				>
+			</File>
+			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSDOMCoreException.h"
 				>
 			</File>
 			<File
@@ -5946,6 +5950,14 @@
 			</File>
 			<File
 				RelativePath="..\dom\DocumentType.h"
+				>
+			</File>
+			<File
+				RelativePath="..\dom\DOMCoreException.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\dom\DOMCoreException.h"
 				>
 			</File>
 			<File

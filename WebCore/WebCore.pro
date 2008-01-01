@@ -234,7 +234,6 @@ SVGCSSVALUES = $$PWD/css/SVGCSSValueKeywords.in
 STYLESHEETS_EMBED = $$PWD/css/html4.css
 
 LUT_FILES += \
-    bindings/js/JSDOMExceptionConstructor.cpp \
     bindings/js/JSEventTargetBase.cpp \
     bindings/js/JSLocation.cpp \
     bindings/js/JSXMLHttpRequest.cpp \
@@ -273,6 +272,7 @@ IDL_BINDINGS += \
     dom/DocumentFragment.idl \
     dom/Document.idl \
     dom/DocumentType.idl \
+    dom/DOMCoreException.idl \
     dom/DOMImplementation.idl \
     dom/Element.idl \
     dom/Entity.idl \
@@ -383,7 +383,6 @@ SOURCES += \
     bindings/js/JSCustomVoidCallback.cpp \
     bindings/js/JSCustomXPathNSResolver.cpp \
     bindings/js/JSDocumentCustom.cpp \
-    bindings/js/JSDOMExceptionConstructor.cpp \
     bindings/js/JSDOMWindowCustom.cpp \
     bindings/js/JSElementCustom.cpp \
     bindings/js/JSEventCustom.cpp \
@@ -486,6 +485,7 @@ SOURCES += \
     dom/Document.cpp \
     dom/DocumentFragment.cpp \
     dom/DocumentType.cpp \
+    dom/DOMCoreException.cpp \
     dom/DOMImplementation.cpp \
     dom/DynamicNodeList.cpp \
     dom/EditingText.cpp \
