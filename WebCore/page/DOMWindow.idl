@@ -153,7 +153,7 @@ module window {
         attribute StyleSheetListConstructor StyleSheetList;
 
         // FIXME: Implement the commented-out global constructors for interfaces listed in DOM Level 3 Core specification.
-//        attribute DOMExceptionConstructor DOMException;
+        attribute DOMCoreExceptionConstructor DOMException;
 //        attribute DOMStringListConstructor DOMStringList;
 //        attribute NameListConstructor NameList;
 //        attribute DOMImplementationListConstructor DOMImplementationList;

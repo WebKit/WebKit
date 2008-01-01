@@ -26,9 +26,11 @@
 #include "config.h"
 #include "kjs_binding.h"
 
+#include "DOMCoreException.h"
 #include "ExceptionCode.h"
 #include "HTMLImageElement.h"
 #include "HTMLNames.h"
+#include "JSDOMCoreException.h"
 #include "JSNode.h"
 #include "XMLHttpRequest.h"
 
@@ -266,24 +268,9 @@ void setDOMException(ExecState* exec, ExceptionCode ec)
         return;
     }
 
-    ExceptionCodeDescription description;
-    getExceptionCodeDescription(ec, description);
-
-    // 100 characters is a big enough buffer, because there are:
-    //   13 characters in the message
-    //   10 characters in the longest type name
-    //   27 characters in the longest exception name
-    //   20 or so digits in the longest integer's ASCII form (even if int is 64-bit)
-    //   1 byte for a null character
-    // That adds up to about 70 bytes.
-    char buffer[100];
-    if (description.name)
-        sprintf(buffer, "%s: %s Exception %d", description.name, description.typeName, description.code);
-    else
-        sprintf(buffer, "%s Exception %d", description.typeName, description.code);
-
-    JSObject* errorObject = throwError(exec, GeneralError, buffer);
-    errorObject->put(exec, "code", jsNumber(description.code));
+    DOMCoreException* exception = new DOMCoreException(ec);
+    JSValue* errorObject = toJS(exec, exception);
+    exec->setException(errorObject);
 }
 
-}
+} // namespace KJS

@@ -133,6 +133,14 @@ sub GetLegacyHeaderIncludes
     die "Don't know what headers to include for module $module";
 }
 
+sub GetVisibleClassName
+{
+    my $className = shift;
+
+    return "DOMException" if $className eq "DOMCoreException";
+    return $className;
+}
+
 sub AvoidInclusionOfType
 {
     my $type = shift;
@@ -563,6 +571,7 @@ sub GenerateImplementation
     my $hasParent = $hasLegacyParent || $hasRealParent;
     my $parentClassName = GetParentClassName($dataNode);
     my $conditional = $dataNode->extendedAttributes->{"Conditional"};
+    my $visibleClassName = GetVisibleClassName($interfaceName);
 
     # - Add default header template
     @implContentHeader = split("\r", $headerTemplate);
@@ -674,7 +683,7 @@ sub GenerateImplementation
         my $protoClassName;
         $protoClassName = "${className}Prototype";
 
-        push(@implContent, constructorFor($className, $protoClassName, $interfaceName, $dataNode->extendedAttributes->{"CanBeConstructed"}));
+        push(@implContent, constructorFor($className, $protoClassName, $interfaceName, $visibleClassName, $dataNode->extendedAttributes->{"CanBeConstructed"}));
     }
 
     # - Add functions and constants to a hashtable definition
@@ -722,7 +731,7 @@ sub GenerateImplementation
                                \@hashKeys, \@hashValues,
                                \@hashSpecials, \@hashParameters);
 
-    push(@implContent, "const ClassInfo ${className}Prototype::info = { \"${interfaceName}Prototype\", 0, &${className}PrototypeTable };\n\n");
+    push(@implContent, "const ClassInfo ${className}Prototype::info = { \"${visibleClassName}Prototype\", 0, &${className}PrototypeTable };\n\n");
     if ($dataNode->extendedAttributes->{"DoNotCache"}) {
         push(@implContent, "JSObject* ${className}Prototype::self()\n");
         push(@implContent, "{\n");
@@ -753,7 +762,7 @@ sub GenerateImplementation
     }
 
     # - Initialize static ClassInfo object
-    push(@implContent, "const ClassInfo $className" . "::info = { \"$interfaceName\", ");
+    push(@implContent, "const ClassInfo $className" . "::info = { \"${visibleClassName}\", ");
     if ($hasParent) {
         push(@implContent, "&" .$parentClassName . "::info, ");
     } else {
@@ -1734,6 +1743,7 @@ sub constructorFor
     my $className = shift;
     my $protoClassName = shift;
     my $interfaceName = shift;
+    my $visibleClassName = shift;
     my $canConstruct = shift;
 
 my $implContent = << "EOF";
@@ -1762,7 +1772,7 @@ EOF
 $implContent .= << "EOF";
 };
 
-const ClassInfo ${className}Constructor::info = { "${interfaceName}Constructor", 0, &${className}ConstructorTable };
+const ClassInfo ${className}Constructor::info = { "${visibleClassName}Constructor", 0, &${className}ConstructorTable };
 
 bool ${className}Constructor::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
 {

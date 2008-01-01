@@ -39,7 +39,6 @@
 #include "FrameTree.h"
 #include "GCController.h"
 #include "HTMLDocument.h"
-#include "JSDOMExceptionConstructor.h"
 #include "JSDOMWindow.h"
 #include "JSEvent.h"
 #include "JSHTMLAudioElementConstructor.h"
@@ -194,7 +193,6 @@ const ClassInfo Window::info = { "Window", 0, &WindowTable };
   onbeforeunload        Window::Onbeforeunload      DontDelete
 # -- Constructors --
   Audio                 Window::Audio               DontDelete
-  DOMException          Window::DOMException        DontDelete
   Image                 Window::Image               DontDelete
   Option                Window::Option              DontDelete
   XMLHttpRequest        Window::XMLHttpRequest      DontDelete
@@ -460,10 +458,6 @@ JSValue *Window::getValueProperty(ExecState *exec, int token) const
    switch (token) {
    case Crypto:
       return jsUndefined(); // FIXME: implement this
-   case DOMException:
-      if (!allowsAccessFrom(exec))
-        return jsUndefined();
-      return getDOMExceptionConstructor(exec);
     case Event_:
       if (!allowsAccessFrom(exec))
         return jsUndefined();

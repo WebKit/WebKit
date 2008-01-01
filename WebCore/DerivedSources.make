@@ -332,12 +332,13 @@ all : \
     JSConsole.h \
     JSCounter.h \
     JSCSSStyleDeclaration.h \
-    JSDatabase.h \
+    JSDOMCoreException.h \
     JSDOMExceptionConstructor.lut.h \
     JSDOMImplementation.h \
     JSDOMParser.h \
     JSDOMSelection.h \
     JSDOMWindow.h \
+    JSDatabase.h \
     JSDocument.h \
     JSDocumentFragment.h \
     JSDocumentType.h \

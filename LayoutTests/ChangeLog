@@ -1,3 +1,18 @@
+2007-12-31  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Darin.
+
+        Test for http://bugs.webkit.org/show_bug.cgi?id=16637
+        Acid3 expects ExeceptionCode constants to be defined on DOMException objects
+
+        * fast/dom/DOMException: Added.
+        * fast/dom/DOMException/prototype-object-expected.txt: Added.
+        * fast/dom/DOMException/prototype-object.html: Added.
+        * fast/dom/DOMException/resources: Added.
+        * fast/dom/DOMException/resources/prototype-object.js: Added.
+        * fast/dom/Window/window-properties-expected.txt:
+        * http/tests/xmlhttprequest/connection-error-sync-expected.txt:
+
 2007-12-31  Darin Adler  <darin@apple.com>
 
         * fast/dom/HTMLFormElement/elements-not-in-document-expected.txt: Updated results to expect success.
