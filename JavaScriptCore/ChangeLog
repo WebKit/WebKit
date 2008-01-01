@@ -2,6 +2,65 @@
 
         Reviewed by Geoff.
 
+        - http://bugs.webkit.org/show_bug.cgi?id=16685
+          eliminate List::empty() to cut down on PIC branches
+
+        Also included one other speed-up -- remove the call to reserveCapacity from
+        FunctionBodyNode::processDeclarations in all but the most unusual cases.
+
+        Together these make SunSpider 1.016x as fast.
+
+        * JavaScriptCore.exp: Updated.
+        * kjs/ExecState.cpp:
+        (KJS::globalEmptyList): Added. Called only when creating global ExecState
+        instances.
+        (KJS::ExecState::ExecState): Broke constructor up into three separate functions,
+        for the three separate node types. Also went through each of the three and
+        streamlined as much as possible, removing dead code. This prevents us from having
+        to access the global in the function body version of the constructor.
+
+        * kjs/ExecState.h: Added emptyList(). Replaced the constructor with a set of
+        three that are specific to the different node types that can create new execution
+        state objects.
+
+        * kjs/array_object.cpp:
+        (KJS::ArrayProtoFuncToLocaleString::callAsFunction): Use exec->emptyList() instead
+        of List::empty().
+        (KJS::ArrayProtoFuncConcat::callAsFunction): Ditto.
+        (KJS::ArrayProtoFuncSlice::callAsFunction): Ditto.
+        (KJS::ArrayProtoFuncSplice::callAsFunction): Ditto.
+        (KJS::ArrayProtoFuncFilter::callAsFunction): Ditto.
+        * kjs/function.cpp:
+        (KJS::FunctionImp::callAsFunction): Updated to call new ExecState constructor.
+        (KJS::GlobalFuncImp::callAsFunction): Ditto (for eval).
+        * kjs/function_object.cpp:
+        (FunctionObjectImp::construct): Use exec->emptyList() instead of List::empty().
+
+        * kjs/list.cpp: Removed List::empty.
+        * kjs/list.h: Ditto.
+
+        * kjs/nodes.cpp:
+        (KJS::ElementNode::evaluate): Use exec->emptyList() instead of List::empty().
+        (KJS::ArrayNode::evaluate): Ditto.
+        (KJS::ObjectLiteralNode::evaluate): Ditto.
+        (KJS::PropertyListNode::evaluate): Ditto.
+        (KJS::FunctionBodyNode::processDeclarations): Another speed-up. Check the capacity
+        before calling reserveCapacity, because it doesn't get inlined the local storage
+        vector is almost always big enough -- saving the function call overhead is a big
+        deal.
+        (KJS::FuncDeclNode::makeFunction): Use exec->emptyList() instead of List::empty().
+        (KJS::FuncExprNode::evaluate): Ditto.
+        * kjs/object.cpp:
+        (KJS::tryGetAndCallProperty): Ditto.
+        * kjs/property_slot.cpp:
+        (KJS::PropertySlot::functionGetter): Ditto.
+        * kjs/string_object.cpp:
+        (KJS::StringProtoFuncSplit::callAsFunction): Ditto.
+
+2008-01-01  Darin Adler  <darin@apple.com>
+
+        Reviewed by Geoff.
+
         - fix http://bugs.webkit.org/show_bug.cgi?id=16648
           REGRESSION (r28165): Yuku.com navigation prints "jsRegExpExecute failed with result -2"
           <rdar://problem/5646486> REGRESSION (r28165): Layout test fast/regex/test1 fails intermittently

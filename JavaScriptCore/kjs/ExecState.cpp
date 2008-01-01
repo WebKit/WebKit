@@ -31,56 +31,86 @@
 
 namespace KJS {
 
+static inline List* globalEmptyList()
+{
+    static List staticEmptyList;
+    return &staticEmptyList;
+}
+
 // ECMA 10.2
-ExecState::ExecState(JSGlobalObject* globalObject, JSObject* thisV, 
-                     ScopeNode* scopeNode, CodeType type, ExecState* callingExec, ExecState* currentExec,
-                     FunctionImp* func, const List* args)
+
+ExecState::ExecState(JSGlobalObject* globalObject, JSObject* /*thisObject*/, ProgramNode* programNode)
     : m_globalObject(globalObject)
     , m_exception(0)
     , m_propertyNames(CommonIdentifiers::shared())
-    , m_callingExec(callingExec)
-    , m_savedExec(currentExec)
-    , m_scopeNode(scopeNode)
-    , m_function(func)
-    , m_arguments(args)
+    , m_emptyList(globalEmptyList())
+    , m_callingExec(0)
+    , m_savedExec(0)
+    , m_scopeNode(programNode)
+    , m_function(0)
+    , m_arguments(0)
+    , m_activation(0)
+    , m_localStorage(&globalObject->localStorage())
+    , m_variableObject(globalObject)
+    , m_thisVal(globalObject)
     , m_iterationDepth(0)
     , m_switchDepth(0) 
-    , m_codeType(type)
+    , m_codeType(GlobalCode)
 {
-    // create and initialize activation object (ECMA 10.1.6)
-    if (type == FunctionCode) {
-        m_activation = new ActivationImp(this);
-        m_variableObject = m_activation;
-    } else {
-        m_activation = 0;
-        m_variableObject = globalObject;
-    }
-    
-    // ECMA 10.2
-    switch(type) {
-    case EvalCode:
-        if (m_callingExec) {
-            m_scopeChain = m_callingExec->scopeChain();
-            m_variableObject = m_callingExec->variableObject();
-            m_thisVal = m_callingExec->thisValue();
-            break;
-        } // else same as GlobalCode
-    case GlobalCode:
-        m_scopeChain.push(globalObject);
-        m_thisVal = globalObject;
-        break;
-    case FunctionCode:
-        m_scopeChain = func->scope();
-        m_scopeChain.push(m_activation);
-        m_variableObject = m_activation;
-        m_thisVal = thisV;
-        break;
-    }
-    
-    m_localStorage = &m_variableObject->localStorage();
+    // FIXME: This function ignores the "thisObject" parameter, which means that the API for evaluating
+    // a script with a this object that's not the same as the global object is broken, and probably
+    // has been for some time.
+    m_scopeChain.push(globalObject);
+    if (programNode)
+        globalObject->setCurrentExec(this);
+}
 
-    if (scopeNode)
-        m_globalObject->setCurrentExec(this);
+ExecState::ExecState(JSGlobalObject* globalObject, EvalNode* evalNode, ExecState* callingExec)
+    : m_globalObject(globalObject)
+    , m_exception(0)
+    , m_propertyNames(callingExec->m_propertyNames)
+    , m_emptyList(callingExec->m_emptyList)
+    , m_callingExec(callingExec)
+    , m_savedExec(globalObject->currentExec())
+    , m_scopeNode(evalNode)
+    , m_function(0)
+    , m_arguments(0)
+    , m_activation(0)
+    , m_localStorage(callingExec->m_localStorage)
+    , m_scopeChain(callingExec->m_scopeChain)
+    , m_variableObject(callingExec->m_variableObject)
+    , m_thisVal(callingExec->m_thisVal)
+    , m_iterationDepth(0)
+    , m_switchDepth(0) 
+    , m_codeType(EvalCode)
+{    
+    globalObject->setCurrentExec(this);
+}
+
+ExecState::ExecState(JSGlobalObject* globalObject, JSObject* thisObject, 
+                     FunctionBodyNode* functionBodyNode, ExecState* callingExec,
+                     FunctionImp* func, const List& args)
+    : m_globalObject(globalObject)
+    , m_exception(0)
+    , m_propertyNames(callingExec->m_propertyNames)
+    , m_emptyList(callingExec->m_emptyList)
+    , m_callingExec(callingExec)
+    , m_savedExec(globalObject->currentExec())
+    , m_scopeNode(functionBodyNode)
+    , m_function(func)
+    , m_arguments(&args)
+    , m_scopeChain(func->scope())
+    , m_thisVal(thisObject)
+    , m_iterationDepth(0)
+    , m_switchDepth(0) 
+    , m_codeType(FunctionCode)
+{
+    ActivationImp* activation = new ActivationImp(this);
+    m_activation = activation;
+    m_localStorage = &activation->localStorage();
+    m_variableObject = activation;
+    m_scopeChain.push(activation);
+    globalObject->setCurrentExec(this);
 }
 
 ExecState::~ExecState()

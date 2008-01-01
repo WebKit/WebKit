@@ -160,7 +160,7 @@ JSValue* ArrayProtoFuncToLocaleString::callAsFunction(ExecState* exec, JSObject*
         JSObject* o = element->toObject(exec);
         JSValue* conversionFunction = o->get(exec, exec->propertyNames().toLocaleString);
         if (conversionFunction->isObject() && static_cast<JSObject*>(conversionFunction)->implementsCall())
-            str += static_cast<JSObject*>(conversionFunction)->call(exec, o, List::empty())->toString(exec);
+            str += static_cast<JSObject*>(conversionFunction)->call(exec, o, exec->emptyList())->toString(exec);
         else
             str += element->toString(exec);
 
@@ -220,7 +220,7 @@ JSValue* ArrayProtoFuncJoin::callAsFunction(ExecState* exec, JSObject* thisObj, 
 
 JSValue* ArrayProtoFuncConcat::callAsFunction(ExecState* exec, JSObject* thisObj, const List& args)
 {
-    JSObject* arr = static_cast<JSObject*>(exec->lexicalGlobalObject()->arrayConstructor()->construct(exec, List::empty()));
+    JSObject* arr = static_cast<JSObject*>(exec->lexicalGlobalObject()->arrayConstructor()->construct(exec, exec->emptyList()));
     int n = 0;
     JSValue* curArg = thisObj;
     JSObject* curObj = static_cast<JSObject* >(thisObj);
@@ -327,7 +327,7 @@ JSValue* ArrayProtoFuncSlice::callAsFunction(ExecState* exec, JSObject* thisObj,
     // http://developer.netscape.com/docs/manuals/js/client/jsref/array.htm#1193713 or 15.4.4.10
 
     // We return a new array
-    JSObject* resObj = static_cast<JSObject* >(exec->lexicalGlobalObject()->arrayConstructor()->construct(exec, List::empty()));
+    JSObject* resObj = static_cast<JSObject* >(exec->lexicalGlobalObject()->arrayConstructor()->construct(exec, exec->emptyList()));
     JSValue* result = resObj;
     double begin = args[0]->toInteger(exec);
     unsigned length = thisObj->get(exec, exec->propertyNames().length)->toUInt32(exec);
@@ -427,7 +427,7 @@ JSValue* ArrayProtoFuncSort::callAsFunction(ExecState* exec, JSObject* thisObj, 
 JSValue* ArrayProtoFuncSplice::callAsFunction(ExecState* exec, JSObject* thisObj, const List& args)
 {
     // 15.4.4.12
-    JSObject* resObj = static_cast<JSObject* >(exec->lexicalGlobalObject()->arrayConstructor()->construct(exec, List::empty()));
+    JSObject* resObj = static_cast<JSObject* >(exec->lexicalGlobalObject()->arrayConstructor()->construct(exec, exec->emptyList()));
     JSValue* result = resObj;
     unsigned length = thisObj->get(exec, exec->propertyNames().length)->toUInt32(exec);
     int begin = args[0]->toUInt32(exec);
@@ -496,7 +496,7 @@ JSValue* ArrayProtoFuncFilter::callAsFunction(ExecState* exec, JSObject* thisObj
         return throwError(exec, TypeError);
 
     JSObject* applyThis = args[1]->isUndefinedOrNull() ? exec->dynamicGlobalObject() :  args[1]->toObject(exec);
-    JSObject* resultArray = static_cast<JSObject*>(exec->lexicalGlobalObject()->arrayConstructor()->construct(exec, List::empty()));
+    JSObject* resultArray = static_cast<JSObject*>(exec->lexicalGlobalObject()->arrayConstructor()->construct(exec, exec->emptyList()));
 
     unsigned filterIndex = 0;
     unsigned length = thisObj->get(exec, exec->propertyNames().length)->toUInt32(exec);

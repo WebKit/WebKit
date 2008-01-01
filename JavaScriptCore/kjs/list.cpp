@@ -31,12 +31,6 @@ void List::getSlice(int startIndex, List& result) const
     result.m_vector.appendRange(start, end());
 }
 
-const List& List::empty()
-{
-    static const List staticList;
-    return staticList;
-}
-
 List::ListSet& List::markSet()
 {
     static ListSet staticMarkSet;
