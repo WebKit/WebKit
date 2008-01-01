@@ -11,7 +11,7 @@ PASS i.value is 'test'
 PASS f.elements.length is 1
 PASS f.elements[0] is i
 PASS f.elements.first is i
-FAIL f.elements.second should be null (of type object). Was undefined (of type undefined).
+PASS f.elements.second is i
 PASS i.getAttribute('name') is 'second'
 PASS i.name is 'second'
 PASS i.getAttribute('type') is 'password'
@@ -19,8 +19,8 @@ PASS i.type is 'password'
 PASS i.value is 'TEST'
 PASS f.elements.length is 1
 PASS f.elements[0] is i
+PASS f.elements.first is undefined
 PASS f.elements.second is i
-FAIL f.elements.first should be null (of type object). Was undefined (of type undefined).
 PASS successfullyParsed is true
 
 TEST COMPLETE

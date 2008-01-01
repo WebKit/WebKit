@@ -1,3 +1,8 @@
+2007-12-31  Darin Adler  <darin@apple.com>
+
+        * fast/dom/HTMLFormElement/elements-not-in-document-expected.txt: Updated results to expect success.
+        I accdidentally landed an expected failure instead!
+
 2007-12-31  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.
