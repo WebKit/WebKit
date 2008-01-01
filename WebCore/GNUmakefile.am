@@ -1942,7 +1942,6 @@ DerivedSources/JS%.h DerivedSources/JS%.cpp: $(WebCore)/*/%.idl $(SCRIPTS_JS_BIN
 # Clean rules for WebCore
 
 CLEANFILES += \
-	WebCore/bindings/js/JSDomExceptionConstructor.lut.h \
 	WebCore/bindings/js/JSEventTargetBase.lut.h \
 	WebCore/bindings/js/JSHTMLInputElementBaseTable.cpp \
 	WebCore/bindings/js/JSLocation.lut.h \
