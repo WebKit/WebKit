@@ -69,13 +69,18 @@ sub wanted
 my %renames = (
     "HTMLGenericFormElement" => "HTMLFormControlElement",
     "HTMLGenericFormElement_h" => "HTMLFormControlElement_h",
+    "InternalFunctionImp" => "InternalFunction",
     "KURL" => "URL",
     "KURLCFNet" => "URLCF",
     "KURLMac" => "URLMac",
     "KURL_H_" => "URL_h",
+    "RegExpObjectImp" => "RegExpObject",
+    "RegExpObjectImpPrivate" => "RegExpObjectPrivate",
+    "RuntimeObjectImp" => "RuntimeObject",
     "StringImpl" => "SharedString",
     "animationController" => "animation",
     "caseSensitive" => "foldCase",
+    "domString" => "string",
     "equalIgnoringCase" => "equalFoldingCase",
     "kjs_binding" => "JSDOMBinding",
     "kjs_binding_h" => "JSDOMBinding_h",
@@ -85,10 +90,6 @@ my %renames = (
     "kjs_proxy_h" => "ScriptController_h",
     "scriptProxy" => "script",
     "selectionController" => "selection",
-    "RuntimeObjectImp" => "RuntimeObject",
-    "InternalFunctionImp" => "InternalFunction",
-    "RegExpObjectImp" => "RegExpObject",
-    "RegExpObjectImpPrivate" => "RegExpObjectPrivate",
 );
 
 # rename files
