@@ -1,3 +1,14 @@
+2008-01-02  Alice Liu  <alice.liu@apple.com>
+
+        Reviewed by Maciej.
+
+        Added handling for page up and page down in EventSender
+
+        * DumpRenderTree/mac/EventSendingController.mm:
+        (-[EventSendingController keyDown:withModifiers:]):
+        * DumpRenderTree/win/EventSender.cpp:
+        (keyDownCallback):
+
 2008-01-02  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin.

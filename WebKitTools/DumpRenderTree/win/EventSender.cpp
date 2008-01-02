@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -305,7 +305,11 @@ static JSValueRef keyDownCallback(JSContextRef context, JSObjectRef function, JS
     } else if (JSStringIsEqualToUTF8CString(character, "downArrow")) {
         virtualKeyCode = VK_DOWN;
         keyData += KF_EXTENDED << 16;
-    } else if (JSStringIsEqualToUTF8CString(character, "delete"))
+    } else if (JSStringIsEqualToUTF8CString(character, "pageUp"))
+        virtualKeyCode = VK_PRIOR;
+    else if (JSStringIsEqualToUTF8CString(character, "pageDown"))
+        virtualKeyCode = VK_NEXT;
+    else if (JSStringIsEqualToUTF8CString(character, "delete"))
         virtualKeyCode = VK_BACK;
     else {
         charCode = JSStringGetCharactersPtr(character)[0];

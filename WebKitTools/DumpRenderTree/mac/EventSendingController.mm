@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Jonas Witt <jonas.witt@gmail.com>
  * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
  * Copyright (C) 2006 Alexey Proskuryakov <ap@nypop.com>
@@ -361,6 +361,12 @@ BOOL replayingSavedEvents;
         eventCharacter = [NSString stringWithCharacters:&ch length:1];
     } else if ([character isEqualToString:@"downArrow"]) {
         const unichar ch = NSDownArrowFunctionKey;
+        eventCharacter = [NSString stringWithCharacters:&ch length:1];
+    } else if ([character isEqualToString:@"pageUp"]) {
+        const unichar ch = NSPageUpFunctionKey;
+        eventCharacter = [NSString stringWithCharacters:&ch length:1];
+    } else if ([character isEqualToString:@"pageDown"]) {
+        const unichar ch = NSPageDownFunctionKey;
         eventCharacter = [NSString stringWithCharacters:&ch length:1];
     } else if ([character isEqualToString:@"delete"]) {
         const unichar ch = 0x7f;
