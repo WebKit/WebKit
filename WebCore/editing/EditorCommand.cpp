@@ -240,12 +240,6 @@ static bool executeBackColor(Frame* frame, Event*, EditorCommandSource source, c
     return executeApplyStyle(frame, source, EditActionSetBackgroundColor, CSS_PROP_BACKGROUND_COLOR, value);
 }
 
-static bool executeBackwardDelete(Frame* frame, Event*, EditorCommandSource, const String&)
-{
-    frame->editor()->deleteWithDirection(SelectionController::BACKWARD, CharacterGranularity, false, true);
-    return true;
-}
-
 static bool executeCopy(Frame* frame, Event*, EditorCommandSource, const String&)
 {
     frame->editor()->copy();
@@ -269,14 +263,15 @@ static bool executeCut(Frame* frame, Event*, EditorCommandSource, const String&)
 
 static bool executeDelete(Frame* frame, Event*, EditorCommandSource source, const String&)
 {
-    // FIXME: Not sure there's a real reason to have this do something different when invoked from DOM.
-    // At some point we should either merge these or remove this comment.
     switch (source) {
         case CommandFromMenuOrKeyBinding:
+            // Doesn't modify the text if the current selection isn't a range.
             frame->editor()->performDelete();
             return true;
         case CommandFromDOM:
         case CommandFromDOMWithUserInterface:
+            // If the curernt selection is a caret, delete the preceding character. IE performs forwardDelete, but we currently side with Firefox.
+            // Doesn't scroll to make the selection visible, or modify the kill ring (this time, siding with IE, not Firefox).
             TypingCommand::deleteKeyPressed(frame->document(), frame->selectionGranularity() == WordGranularity);
             return true;
     }
@@ -399,14 +394,15 @@ static bool executeFormatBlock(Frame* frame, Event*, EditorCommandSource, const 
 
 static bool executeForwardDelete(Frame* frame, Event*, EditorCommandSource source, const String&)
 {
-    // FIXME: Not sure there's a real reason to have this do something different when invoked from DOM.
-    // At some point we should either merge these or remove this comment.
     switch (source) {
         case CommandFromMenuOrKeyBinding:
             frame->editor()->deleteWithDirection(SelectionController::FORWARD, CharacterGranularity, false, true);
             return true;
         case CommandFromDOM:
         case CommandFromDOMWithUserInterface:
+            // Doesn't scroll to make the selection visible, or modify the kill ring.
+            // ForwardDelete is not implemented in IE or Firefox, so this behavior is only needed for
+            // backward compatibility with ourselves, and for consistency with Delete.
             TypingCommand::forwardDeleteKeyPressed(frame->document());
             return true;
     }
@@ -448,13 +444,14 @@ static bool executeInsertImage(Frame* frame, Event*, EditorCommandSource, const 
 
 static bool executeInsertLineBreak(Frame* frame, Event* event, EditorCommandSource source, const String&)
 {
-    // FIXME: Not sure there's a real reason to have this do something different when invoked from DOM.
-    // At some point we should either merge these or remove this comment.
     switch (source) {
         case CommandFromMenuOrKeyBinding:
             return targetFrame(frame, event)->eventHandler()->handleTextInputEvent("\n", event, true);
         case CommandFromDOM:
         case CommandFromDOMWithUserInterface:
+            // Doesn't scroll to make the selection visible, or modify the kill ring.
+            // InsertLineBreak is not implemented in IE or Firefox, so this behavior is only needed for
+            // backward compatibility with ourselves, and for consistency with other commands.
             TypingCommand::insertLineBreak(frame->document());
             return true;
     }
@@ -960,6 +957,11 @@ static bool supported(Frame*, EditorCommandSource)
     return true;
 }
 
+static bool supportedFromMenuOrKeyBinding(Frame*, EditorCommandSource source)
+{
+    return source == CommandFromMenuOrKeyBinding;
+}
+
 static bool supportedPaste(Frame* frame, EditorCommandSource source)
 {
     switch (source) {
@@ -1129,27 +1131,26 @@ static const CommandMap& createCommandMap()
     struct CommandEntry { const char* name; EditorInternalCommand command; };
     
     static const CommandEntry commands[] = {
-        { "AlignCenter", { executeJustifyCenter, supported, enabledInRichlyEditableText, stateNone, valueNull, notTextInsertion } },
-        { "AlignJustified", { executeJustifyFull, supported, enabledInRichlyEditableText, stateNone, valueNull, notTextInsertion } },
-        { "AlignLeft", { executeJustifyLeft, supported, enabledInRichlyEditableText, stateNone, valueNull, notTextInsertion } },
-        { "AlignRight", { executeJustifyRight, supported, enabledInRichlyEditableText, stateNone, valueNull, notTextInsertion } },
+        { "AlignCenter", { executeJustifyCenter, supportedFromMenuOrKeyBinding, enabledInRichlyEditableText, stateNone, valueNull, notTextInsertion } },
+        { "AlignJustified", { executeJustifyFull, supportedFromMenuOrKeyBinding, enabledInRichlyEditableText, stateNone, valueNull, notTextInsertion } },
+        { "AlignLeft", { executeJustifyLeft, supportedFromMenuOrKeyBinding, enabledInRichlyEditableText, stateNone, valueNull, notTextInsertion } },
+        { "AlignRight", { executeJustifyRight, supportedFromMenuOrKeyBinding, enabledInRichlyEditableText, stateNone, valueNull, notTextInsertion } },
         { "BackColor", { executeBackColor, supported, enabledRangeInRichlyEditableText, stateNone, valueBackColor, notTextInsertion } },
-        { "BackwardDelete", { executeBackwardDelete, supported, enabledInEditableText, stateNone, valueNull, notTextInsertion } },
         { "Bold", { executeToggleBold, supported, enabledInRichlyEditableText, stateBold, valueNull, notTextInsertion } },
         { "Copy", { executeCopy, supported, enabledCopy, stateNone, valueNull, notTextInsertion } },
         { "CreateLink", { executeCreateLink, supported, enabledInRichlyEditableText, stateNone, valueNull, notTextInsertion } },
         { "Cut", { executeCut, supported, enabledCut, stateNone, valueNull, notTextInsertion } },
         { "Delete", { executeDelete, supported, enabledInEditableText, stateNone, valueNull, notTextInsertion } },
-        { "DeleteBackward", { executeDeleteBackward, supported, enabledInEditableText, stateNone, valueNull, notTextInsertion } },
-        { "DeleteBackwardByDecomposingPreviousCharacter", { executeDeleteBackwardByDecomposingPreviousCharacter, supported, enabledInEditableText, stateNone, valueNull, notTextInsertion } },
-        { "DeleteForward", { executeDeleteForward, supported, enabledInEditableText, stateNone, valueNull, notTextInsertion } },
-        { "DeleteToBeginningOfLine", { executeDeleteToBeginningOfLine, supported, enabledInEditableText, stateNone, valueNull, notTextInsertion } },
-        { "DeleteToBeginningOfParagraph", { executeDeleteToBeginningOfParagraph, supported, enabledInEditableText, stateNone, valueNull, notTextInsertion } },
-        { "DeleteToEndOfLine", { executeDeleteToEndOfLine, supported, enabledInEditableText, stateNone, valueNull, notTextInsertion } },
-        { "DeleteToEndOfParagraph", { executeDeleteToEndOfParagraph, supported, enabledInEditableText, stateNone, valueNull, notTextInsertion } },
-        { "DeleteToMark", { executeDeleteToMark, supported, enabledInEditableText, stateNone, valueNull, notTextInsertion } },
-        { "DeleteWordBackward", { executeDeleteWordBackward, supported, enabledInEditableText, stateNone, valueNull, notTextInsertion } },
-        { "DeleteWordForward", { executeDeleteWordForward, supported, enabledInEditableText, stateNone, valueNull, notTextInsertion } },
+        { "DeleteBackward", { executeDeleteBackward, supportedFromMenuOrKeyBinding, enabledInEditableText, stateNone, valueNull, notTextInsertion } },
+        { "DeleteBackwardByDecomposingPreviousCharacter", { executeDeleteBackwardByDecomposingPreviousCharacter, supportedFromMenuOrKeyBinding, enabledInEditableText, stateNone, valueNull, notTextInsertion } },
+        { "DeleteForward", { executeDeleteForward, supportedFromMenuOrKeyBinding, enabledInEditableText, stateNone, valueNull, notTextInsertion } },
+        { "DeleteToBeginningOfLine", { executeDeleteToBeginningOfLine, supportedFromMenuOrKeyBinding, enabledInEditableText, stateNone, valueNull, notTextInsertion } },
+        { "DeleteToBeginningOfParagraph", { executeDeleteToBeginningOfParagraph, supportedFromMenuOrKeyBinding, enabledInEditableText, stateNone, valueNull, notTextInsertion } },
+        { "DeleteToEndOfLine", { executeDeleteToEndOfLine, supportedFromMenuOrKeyBinding, enabledInEditableText, stateNone, valueNull, notTextInsertion } },
+        { "DeleteToEndOfParagraph", { executeDeleteToEndOfParagraph, supportedFromMenuOrKeyBinding, enabledInEditableText, stateNone, valueNull, notTextInsertion } },
+        { "DeleteToMark", { executeDeleteToMark, supportedFromMenuOrKeyBinding, enabledInEditableText, stateNone, valueNull, notTextInsertion } },
+        { "DeleteWordBackward", { executeDeleteWordBackward, supportedFromMenuOrKeyBinding, enabledInEditableText, stateNone, valueNull, notTextInsertion } },
+        { "DeleteWordForward", { executeDeleteWordForward, supportedFromMenuOrKeyBinding, enabledInEditableText, stateNone, valueNull, notTextInsertion } },
         { "FindString", { executeFindString, supported, enabled, stateNone, valueNull, notTextInsertion } },
         { "FontName", { executeFontName, supported, enabledInEditableText, stateNone, valueFontName, notTextInsertion } },
         { "FontSize", { executeFontSize, supported, enabledInEditableText, stateNone, valueFontSize, notTextInsertion } },
@@ -1159,16 +1160,16 @@ static const CommandMap& createCommandMap()
         { "ForwardDelete", { executeForwardDelete, supported, enabledInEditableText, stateNone, valueNull, notTextInsertion } },
         { "HiliteColor", { executeBackColor, supported, enabledInRichlyEditableText, stateNone, valueNull, notTextInsertion } },
         { "Indent", { executeIndent, supported, enabledInRichlyEditableText, stateNone, valueNull, notTextInsertion } },
-        { "InsertBacktab", { executeInsertBacktab, supported, enabledInEditableText, stateNone, valueNull, isTextInsertion } },
-        { "InsertHTML", { executeInsertHTML, supported, enabledInEditableText, stateNone, valueNull, notTextInsertion } },
+        { "InsertBacktab", { executeInsertBacktab, supportedFromMenuOrKeyBinding, enabledInEditableText, stateNone, valueNull, isTextInsertion } },
         { "InsertHorizontalRule", { executeInsertHorizontalRule, supported, enabledInRichlyEditableText, stateNone, valueNull, notTextInsertion } },
+        { "InsertHTML", { executeInsertHTML, supported, enabledInEditableText, stateNone, valueNull, notTextInsertion } },
         { "InsertImage", { executeInsertImage, supported, enabledInRichlyEditableText, stateNone, valueNull, notTextInsertion } },
         { "InsertLineBreak", { executeInsertLineBreak, supported, enabledInEditableText, stateNone, valueNull, isTextInsertion } },
-        { "InsertNewline", { executeInsertNewline, supported, enabledInEditableText, stateNone, valueNull, isTextInsertion } },    
+        { "InsertNewline", { executeInsertNewline, supportedFromMenuOrKeyBinding, enabledInEditableText, stateNone, valueNull, isTextInsertion } },    
         { "InsertNewlineInQuotedContent", { executeInsertNewlineInQuotedContent, supported, enabledInRichlyEditableText, stateNone, valueNull, notTextInsertion } },
         { "InsertOrderedList", { executeInsertOrderedList, supported, enabledInRichlyEditableText, stateOrderedList, valueNull, notTextInsertion } },
         { "InsertParagraph", { executeInsertParagraph, supported, enabledInEditableText, stateNone, valueNull, notTextInsertion } },
-        { "InsertTab", { executeInsertTab, supported, enabledInEditableText, stateNone, valueNull, isTextInsertion } },
+        { "InsertTab", { executeInsertTab, supportedFromMenuOrKeyBinding, enabledInEditableText, stateNone, valueNull, isTextInsertion } },
         { "InsertText", { executeInsertText, supported, enabledInEditableText, stateNone, valueNull, isTextInsertion } },
         { "InsertUnorderedList", { executeInsertUnorderedList, supported, enabledInRichlyEditableText, stateUnorderedList, valueNull, notTextInsertion } },
         { "Italic", { executeToggleItalic, supported, enabledInRichlyEditableText, stateItalic, valueNull, notTextInsertion } },
@@ -1177,48 +1178,48 @@ static const CommandMap& createCommandMap()
         { "JustifyLeft", { executeJustifyLeft, supported, enabledInRichlyEditableText, stateNone, valueNull, notTextInsertion } },
         { "JustifyNone", { executeJustifyLeft, supported, enabledInRichlyEditableText, stateNone, valueNull, notTextInsertion } },
         { "JustifyRight", { executeJustifyRight, supported, enabledInRichlyEditableText, stateNone, valueNull, notTextInsertion } },
-        { "MoveBackward", { executeMoveBackward, supported, enabledInEditableText, stateNone, valueNull, notTextInsertion } },
-        { "MoveBackwardAndModifySelection", { executeMoveBackwardAndModifySelection, supported, enabledInEditableText, stateNone, valueNull, notTextInsertion } },
-        { "MoveDown", { executeMoveDown, supported, enabledInEditableText, stateNone, valueNull, notTextInsertion } },
-        { "MoveDownAndModifySelection", { executeMoveDownAndModifySelection, supported, enabledInEditableText, stateNone, valueNull, notTextInsertion } },
-        { "MoveForward", { executeMoveForward, supported, enabledInEditableText, stateNone, valueNull, notTextInsertion } },
-        { "MoveForwardAndModifySelection", { executeMoveForwardAndModifySelection, supported, enabledInEditableText, stateNone, valueNull, notTextInsertion } },
-        { "MoveLeft", { executeMoveLeft, supported, enabledInEditableText, stateNone, valueNull, notTextInsertion } },
-        { "MoveLeftAndModifySelection", { executeMoveLeftAndModifySelection, supported, enabledInEditableText, stateNone, valueNull, notTextInsertion } },
-        { "MovePageDown", { executeMovePageDown, supported, enabledInEditableText, stateNone, valueNull, notTextInsertion } },
-        { "MovePageDownAndModifySelection", { executeMovePageDownAndModifySelection, supported, enabledInEditableText, stateNone, valueNull, notTextInsertion } },
-        { "MovePageUp", { executeMovePageUp, supported, enabledInEditableText, stateNone, valueNull, notTextInsertion } },
-        { "MovePageUpAndModifySelection", { executeMovePageUpAndModifySelection, supported, enabledInEditableText, stateNone, valueNull, notTextInsertion } },
-        { "MoveParagraphBackwardAndModifySelection", { executeMoveParagraphBackwardAndModifySelection, supported, enabledInEditableText, stateNone, valueNull, notTextInsertion } },
-        { "MoveParagraphForwardAndModifySelection", { executeMoveParagraphForwardAndModifySelection, supported, enabledInEditableText, stateNone, valueNull, notTextInsertion } },
-        { "MoveRight", { executeMoveRight, supported, enabledInEditableText, stateNone, valueNull, notTextInsertion } },
-        { "MoveRightAndModifySelection", { executeMoveRightAndModifySelection, supported, enabledInEditableText, stateNone, valueNull, notTextInsertion } },
-        { "MoveToBeginningOfDocument", { executeMoveToBeginningOfDocument, supported, enabledInEditableText, stateNone, valueNull, notTextInsertion } },
-        { "MoveToBeginningOfDocumentAndModifySelection", { executeMoveToBeginningOfDocumentAndModifySelection, supported, enabledInEditableText, stateNone, valueNull, notTextInsertion } },
-        { "MoveToBeginningOfLine", { executeMoveToBeginningOfLine, supported, enabledInEditableText, stateNone, valueNull, notTextInsertion } },
-        { "MoveToBeginningOfLineAndModifySelection", { executeMoveToBeginningOfLineAndModifySelection, supported, enabledInEditableText, stateNone, valueNull, notTextInsertion } },
-        { "MoveToBeginningOfParagraph", { executeMoveToBeginningOfParagraph, supported, enabledInEditableText, stateNone, valueNull, notTextInsertion } },
-        { "MoveToBeginningOfParagraphAndModifySelection", { executeMoveToBeginningOfParagraphAndModifySelection, supported, enabledInEditableText, stateNone, valueNull, notTextInsertion } },
-        { "MoveToBeginningOfSentence", { executeMoveToBeginningOfSentence, supported, enabledInEditableText, stateNone, valueNull, notTextInsertion } },
-        { "MoveToBeginningOfSentenceAndModifySelection", { executeMoveToBeginningOfSentenceAndModifySelection, supported, enabledInEditableText, stateNone, valueNull, notTextInsertion } },
-        { "MoveToEndOfDocument", { executeMoveToEndOfDocument, supported, enabledInEditableText, stateNone, valueNull, notTextInsertion } },
-        { "MoveToEndOfDocumentAndModifySelection", { executeMoveToEndOfDocumentAndModifySelection, supported, enabledInEditableText, stateNone, valueNull, notTextInsertion } },
-        { "MoveToEndOfLine", { executeMoveToEndOfLine, supported, enabledInEditableText, stateNone, valueNull, notTextInsertion } },
-        { "MoveToEndOfLineAndModifySelection", { executeMoveToEndOfLineAndModifySelection, supported, enabledInEditableText, stateNone, valueNull, notTextInsertion } },
-        { "MoveToEndOfParagraph", { executeMoveToEndOfParagraph, supported, enabledInEditableText, stateNone, valueNull, notTextInsertion } },
-        { "MoveToEndOfParagraphAndModifySelection", { executeMoveToEndOfParagraphAndModifySelection, supported, enabledInEditableText, stateNone, valueNull, notTextInsertion } },
-        { "MoveToEndOfSentence", { executeMoveToEndOfSentence, supported, enabledInEditableText, stateNone, valueNull, notTextInsertion } },
-        { "MoveToEndOfSentenceAndModifySelection", { executeMoveToEndOfSentenceAndModifySelection, supported, enabledInEditableText, stateNone, valueNull, notTextInsertion } },
-        { "MoveUp", { executeMoveUp, supported, enabledInEditableText, stateNone, valueNull, notTextInsertion } },
-        { "MoveUpAndModifySelection", { executeMoveUpAndModifySelection, supported, enabledInEditableText, stateNone, valueNull, notTextInsertion } },
-        { "MoveWordBackward", { executeMoveWordBackward, supported, enabledInEditableText, stateNone, valueNull, notTextInsertion } },
-        { "MoveWordBackwardAndModifySelection", { executeMoveWordBackwardAndModifySelection, supported, enabledInEditableText, stateNone, valueNull, notTextInsertion } },
-        { "MoveWordForward", { executeMoveWordForward, supported, enabledInEditableText, stateNone, valueNull, notTextInsertion } },
-        { "MoveWordForwardAndModifySelection", { executeMoveWordForwardAndModifySelection, supported, enabledInEditableText, stateNone, valueNull, notTextInsertion } },
-        { "MoveWordLeft", { executeMoveWordLeft, supported, enabledInEditableText, stateNone, valueNull, notTextInsertion } },
-        { "MoveWordLeftAndModifySelection", { executeMoveWordLeftAndModifySelection, supported, enabledInEditableText, stateNone, valueNull, notTextInsertion } },
-        { "MoveWordRight", { executeMoveWordRight, supported, enabledInEditableText, stateNone, valueNull, notTextInsertion } },
-        { "MoveWordRightAndModifySelection", { executeMoveWordRightAndModifySelection, supported, enabledInEditableText, stateNone, valueNull, notTextInsertion } },
+        { "MoveBackward", { executeMoveBackward, supportedFromMenuOrKeyBinding, enabledInEditableText, stateNone, valueNull, notTextInsertion } },
+        { "MoveBackwardAndModifySelection", { executeMoveBackwardAndModifySelection, supportedFromMenuOrKeyBinding, enabledInEditableText, stateNone, valueNull, notTextInsertion } },
+        { "MoveDown", { executeMoveDown, supportedFromMenuOrKeyBinding, enabledInEditableText, stateNone, valueNull, notTextInsertion } },
+        { "MoveDownAndModifySelection", { executeMoveDownAndModifySelection, supportedFromMenuOrKeyBinding, enabledInEditableText, stateNone, valueNull, notTextInsertion } },
+        { "MoveForward", { executeMoveForward, supportedFromMenuOrKeyBinding, enabledInEditableText, stateNone, valueNull, notTextInsertion } },
+        { "MoveForwardAndModifySelection", { executeMoveForwardAndModifySelection, supportedFromMenuOrKeyBinding, enabledInEditableText, stateNone, valueNull, notTextInsertion } },
+        { "MoveLeft", { executeMoveLeft, supportedFromMenuOrKeyBinding, enabledInEditableText, stateNone, valueNull, notTextInsertion } },
+        { "MoveLeftAndModifySelection", { executeMoveLeftAndModifySelection, supportedFromMenuOrKeyBinding, enabledInEditableText, stateNone, valueNull, notTextInsertion } },
+        { "MovePageDown", { executeMovePageDown, supportedFromMenuOrKeyBinding, enabledInEditableText, stateNone, valueNull, notTextInsertion } },
+        { "MovePageDownAndModifySelection", { executeMovePageDownAndModifySelection, supportedFromMenuOrKeyBinding, enabledInEditableText, stateNone, valueNull, notTextInsertion } },
+        { "MovePageUp", { executeMovePageUp, supportedFromMenuOrKeyBinding, enabledInEditableText, stateNone, valueNull, notTextInsertion } },
+        { "MovePageUpAndModifySelection", { executeMovePageUpAndModifySelection, supportedFromMenuOrKeyBinding, enabledInEditableText, stateNone, valueNull, notTextInsertion } },
+        { "MoveParagraphBackwardAndModifySelection", { executeMoveParagraphBackwardAndModifySelection, supportedFromMenuOrKeyBinding, enabledInEditableText, stateNone, valueNull, notTextInsertion } },
+        { "MoveParagraphForwardAndModifySelection", { executeMoveParagraphForwardAndModifySelection, supportedFromMenuOrKeyBinding, enabledInEditableText, stateNone, valueNull, notTextInsertion } },
+        { "MoveRight", { executeMoveRight, supportedFromMenuOrKeyBinding, enabledInEditableText, stateNone, valueNull, notTextInsertion } },
+        { "MoveRightAndModifySelection", { executeMoveRightAndModifySelection, supportedFromMenuOrKeyBinding, enabledInEditableText, stateNone, valueNull, notTextInsertion } },
+        { "MoveToBeginningOfDocument", { executeMoveToBeginningOfDocument, supportedFromMenuOrKeyBinding, enabledInEditableText, stateNone, valueNull, notTextInsertion } },
+        { "MoveToBeginningOfDocumentAndModifySelection", { executeMoveToBeginningOfDocumentAndModifySelection, supportedFromMenuOrKeyBinding, enabledInEditableText, stateNone, valueNull, notTextInsertion } },
+        { "MoveToBeginningOfLine", { executeMoveToBeginningOfLine, supportedFromMenuOrKeyBinding, enabledInEditableText, stateNone, valueNull, notTextInsertion } },
+        { "MoveToBeginningOfLineAndModifySelection", { executeMoveToBeginningOfLineAndModifySelection, supportedFromMenuOrKeyBinding, enabledInEditableText, stateNone, valueNull, notTextInsertion } },
+        { "MoveToBeginningOfParagraph", { executeMoveToBeginningOfParagraph, supportedFromMenuOrKeyBinding, enabledInEditableText, stateNone, valueNull, notTextInsertion } },
+        { "MoveToBeginningOfParagraphAndModifySelection", { executeMoveToBeginningOfParagraphAndModifySelection, supportedFromMenuOrKeyBinding, enabledInEditableText, stateNone, valueNull, notTextInsertion } },
+        { "MoveToBeginningOfSentence", { executeMoveToBeginningOfSentence, supportedFromMenuOrKeyBinding, enabledInEditableText, stateNone, valueNull, notTextInsertion } },
+        { "MoveToBeginningOfSentenceAndModifySelection", { executeMoveToBeginningOfSentenceAndModifySelection, supportedFromMenuOrKeyBinding, enabledInEditableText, stateNone, valueNull, notTextInsertion } },
+        { "MoveToEndOfDocument", { executeMoveToEndOfDocument, supportedFromMenuOrKeyBinding, enabledInEditableText, stateNone, valueNull, notTextInsertion } },
+        { "MoveToEndOfDocumentAndModifySelection", { executeMoveToEndOfDocumentAndModifySelection, supportedFromMenuOrKeyBinding, enabledInEditableText, stateNone, valueNull, notTextInsertion } },
+        { "MoveToEndOfLine", { executeMoveToEndOfLine, supportedFromMenuOrKeyBinding, enabledInEditableText, stateNone, valueNull, notTextInsertion } },
+        { "MoveToEndOfLineAndModifySelection", { executeMoveToEndOfLineAndModifySelection, supportedFromMenuOrKeyBinding, enabledInEditableText, stateNone, valueNull, notTextInsertion } },
+        { "MoveToEndOfParagraph", { executeMoveToEndOfParagraph, supportedFromMenuOrKeyBinding, enabledInEditableText, stateNone, valueNull, notTextInsertion } },
+        { "MoveToEndOfParagraphAndModifySelection", { executeMoveToEndOfParagraphAndModifySelection, supportedFromMenuOrKeyBinding, enabledInEditableText, stateNone, valueNull, notTextInsertion } },
+        { "MoveToEndOfSentence", { executeMoveToEndOfSentence, supportedFromMenuOrKeyBinding, enabledInEditableText, stateNone, valueNull, notTextInsertion } },
+        { "MoveToEndOfSentenceAndModifySelection", { executeMoveToEndOfSentenceAndModifySelection, supportedFromMenuOrKeyBinding, enabledInEditableText, stateNone, valueNull, notTextInsertion } },
+        { "MoveUp", { executeMoveUp, supportedFromMenuOrKeyBinding, enabledInEditableText, stateNone, valueNull, notTextInsertion } },
+        { "MoveUpAndModifySelection", { executeMoveUpAndModifySelection, supportedFromMenuOrKeyBinding, enabledInEditableText, stateNone, valueNull, notTextInsertion } },
+        { "MoveWordBackward", { executeMoveWordBackward, supportedFromMenuOrKeyBinding, enabledInEditableText, stateNone, valueNull, notTextInsertion } },
+        { "MoveWordBackwardAndModifySelection", { executeMoveWordBackwardAndModifySelection, supportedFromMenuOrKeyBinding, enabledInEditableText, stateNone, valueNull, notTextInsertion } },
+        { "MoveWordForward", { executeMoveWordForward, supportedFromMenuOrKeyBinding, enabledInEditableText, stateNone, valueNull, notTextInsertion } },
+        { "MoveWordForwardAndModifySelection", { executeMoveWordForwardAndModifySelection, supportedFromMenuOrKeyBinding, enabledInEditableText, stateNone, valueNull, notTextInsertion } },
+        { "MoveWordLeft", { executeMoveWordLeft, supportedFromMenuOrKeyBinding, enabledInEditableText, stateNone, valueNull, notTextInsertion } },
+        { "MoveWordLeftAndModifySelection", { executeMoveWordLeftAndModifySelection, supportedFromMenuOrKeyBinding, enabledInEditableText, stateNone, valueNull, notTextInsertion } },
+        { "MoveWordRight", { executeMoveWordRight, supportedFromMenuOrKeyBinding, enabledInEditableText, stateNone, valueNull, notTextInsertion } },
+        { "MoveWordRightAndModifySelection", { executeMoveWordRightAndModifySelection, supportedFromMenuOrKeyBinding, enabledInEditableText, stateNone, valueNull, notTextInsertion } },
         { "Outdent", { executeOutdent, supported, enabledInRichlyEditableText, stateNone, valueNull, notTextInsertion } },
         { "Paste", { executePaste, supportedPaste, enabledPaste, stateNone, valueNull, notTextInsertion } },
         { "PasteAndMatchStyle", { executePasteAndMatchStyle, supportedPaste, enabledPaste, stateNone, valueNull, notTextInsertion } },
@@ -1226,27 +1227,27 @@ static const CommandMap& createCommandMap()
         { "Redo", { executeRedo, supported, enabledRedo, stateNone, valueNull, notTextInsertion } },
         { "RemoveFormat", { executeRemoveFormat, supported, enabledRangeInEditableText, stateNone, valueNull, notTextInsertion } },
         { "SelectAll", { executeSelectAll, supported, enabled, stateNone, valueNull, notTextInsertion } },
-        { "SelectLine", { executeSelectLine, supported, enabledInEditableText, stateNone, valueNull, notTextInsertion } },
-        { "SelectParagraph", { executeSelectParagraph, supported, enabledInEditableText, stateNone, valueNull, notTextInsertion } },
-        { "SelectSentence", { executeSelectSentence, supported, enabledInEditableText, stateNone, valueNull, notTextInsertion } },
-        { "SelectToMark", { executeSelectToMark, supported, enabledAnySelectionAndMark, stateNone, valueNull, notTextInsertion } },
-        { "SelectWord", { executeSelectWord, supported, enabledInEditableText, stateNone, valueNull, notTextInsertion } },
-        { "SetMark", { executeSetMark, supported, enabledAnySelection, stateNone, valueNull, notTextInsertion } },
+        { "SelectLine", { executeSelectLine, supportedFromMenuOrKeyBinding, enabledInEditableText, stateNone, valueNull, notTextInsertion } },
+        { "SelectParagraph", { executeSelectParagraph, supportedFromMenuOrKeyBinding, enabledInEditableText, stateNone, valueNull, notTextInsertion } },
+        { "SelectSentence", { executeSelectSentence, supportedFromMenuOrKeyBinding, enabledInEditableText, stateNone, valueNull, notTextInsertion } },
+        { "SelectToMark", { executeSelectToMark, supportedFromMenuOrKeyBinding, enabledAnySelectionAndMark, stateNone, valueNull, notTextInsertion } },
+        { "SelectWord", { executeSelectWord, supportedFromMenuOrKeyBinding, enabledInEditableText, stateNone, valueNull, notTextInsertion } },
+        { "SetMark", { executeSetMark, supportedFromMenuOrKeyBinding, enabledAnySelection, stateNone, valueNull, notTextInsertion } },
         { "Strikethrough", { executeStrikethrough, supported, enabledInRichlyEditableText, stateStrikethrough, valueNull, notTextInsertion } },
         { "Subscript", { executeSubscript, supported, enabledInRichlyEditableText, stateSubscript, valueNull, notTextInsertion } },
         { "Superscript", { executeSuperscript, supported, enabledInRichlyEditableText, stateSuperscript, valueNull, notTextInsertion } },
-        { "SwapWithMark", { executeSwapWithMark, supported, enabledAnySelectionAndMark, stateNone, valueNull, notTextInsertion } },
-        { "ToggleBold", { executeToggleBold, supported, enabledInRichlyEditableText, stateBold, valueNull, notTextInsertion } },
-        { "ToggleItalic", { executeToggleItalic, supported, enabledInRichlyEditableText, stateItalic, valueNull, notTextInsertion } },
-        { "ToggleUnderline", { executeUnderline, supported, enabledInRichlyEditableText, stateUnderline, valueNull, notTextInsertion } },
+        { "SwapWithMark", { executeSwapWithMark, supportedFromMenuOrKeyBinding, enabledAnySelectionAndMark, stateNone, valueNull, notTextInsertion } },
+        { "ToggleBold", { executeToggleBold, supportedFromMenuOrKeyBinding, enabledInRichlyEditableText, stateBold, valueNull, notTextInsertion } },
+        { "ToggleItalic", { executeToggleItalic, supportedFromMenuOrKeyBinding, enabledInRichlyEditableText, stateItalic, valueNull, notTextInsertion } },
+        { "ToggleUnderline", { executeUnderline, supportedFromMenuOrKeyBinding, enabledInRichlyEditableText, stateUnderline, valueNull, notTextInsertion } },
         { "Transpose", { executeTranspose, supported, enableCaretInEditableText, stateNone, valueNull, notTextInsertion } },
         { "Underline", { executeUnderline, supported, enabledInRichlyEditableText, stateUnderline, valueNull, notTextInsertion } },
         { "Undo", { executeUndo, supported, enabledUndo, stateNone, valueNull, notTextInsertion } },
         { "Unlink", { executeUnlink, supported, enabledRangeInRichlyEditableText, stateNone, valueNull, notTextInsertion } },
-        { "Unscript", { executeUnscript, supported, enabledInRichlyEditableText, stateNone, valueNull, notTextInsertion } },
+        { "Unscript", { executeUnscript, supportedFromMenuOrKeyBinding, enabledInRichlyEditableText, stateNone, valueNull, notTextInsertion } },
         { "Unselect", { executeUnselect, supported, enabledAnySelection, stateNone, valueNull, notTextInsertion } },
-        { "Yank", { executeYank, supported, enabledInEditableText, stateNone, valueNull, notTextInsertion } },
-        { "YankAndSelect", { executeYankAndSelect, supported, enabledInEditableText, stateNone, valueNull, notTextInsertion } },
+        { "Yank", { executeYank, supportedFromMenuOrKeyBinding, enabledInEditableText, stateNone, valueNull, notTextInsertion } },
+        { "YankAndSelect", { executeYankAndSelect, supportedFromMenuOrKeyBinding, enabledInEditableText, stateNone, valueNull, notTextInsertion } },
     };
 
     // These unsupported commands are listed here since they appear in the Microsoft

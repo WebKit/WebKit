@@ -102,7 +102,6 @@
 "BEGIN:VCALENDAR"
 "BEGIN:VCARD"
 "BP_CreatePluginMIMETypesPreferences"
-"BackwardDelete"
 "CSS"
 "Cache-Control"
 "Content-Encoding"

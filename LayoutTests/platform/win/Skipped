@@ -392,6 +392,17 @@ editing/selection/caret-rtl.html
 # Caret, RenderBlock
 editing/pasteboard/undoable-fragment-removes.html
 
+# Tests that use textInputController to execute commands.
+editing/deleting/5300379.html
+editing/deleting/delete-to-end-of-paragraph.html
+editing/deleting/smart-delete-003.html
+editing/deleting/smart-delete-004.html
+editing/selection/4947387.html
+editing/selection/5195166-1.html
+editing/selection/5195166-2.html
+editing/selection/select-line.html
+editing/selection/selection-actions.html
+
 ################################################################################
 ######################### All of above may be related ##########################
 ################################################################################

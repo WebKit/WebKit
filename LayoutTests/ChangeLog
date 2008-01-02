@@ -2,6 +2,33 @@
 
         Reviewed by Darin.
 
+        Changed tests that were recently modified to use non-standard execCommand identifiers back to
+        textInputController.doCommand, re-added them to Windows skip list.
+
+        Added several tests for commands that have different behavior when invoked manually rather
+        than from JS.
+
+        * editing/deleting/5300379.html:
+        * editing/deleting/delete-to-end-of-paragraph.html:
+        * editing/deleting/smart-delete-003.html:
+        * editing/deleting/smart-delete-004.html:
+        * editing/execCommand/delete-no-scroll-expected.txt: Added.
+        * editing/execCommand/delete-no-scroll.html: Added.
+        * editing/execCommand/forward-delete-no-scroll-expected.txt: Added.
+        * editing/execCommand/forward-delete-no-scroll.html: Added.
+        * editing/execCommand/insert-line-break-no-scroll-expected.txt: Added.
+        * editing/execCommand/insert-line-break-no-scroll.html: Added.
+        * editing/selection/4947387.html:
+        * editing/selection/5195166-1.html:
+        * editing/selection/5195166-2.html:
+        * editing/selection/select-line.html:
+        * editing/selection/selection-actions.html:
+        * platform/win/Skipped:
+
+2008-01-02  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
         http://bugs.webkit.org/show_bug.cgi?id=14555
         action=mailto + method=get - The generated mailto URI is incorrect and the hvalues are encoded twice
 

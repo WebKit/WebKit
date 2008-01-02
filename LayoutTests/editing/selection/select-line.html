@@ -9,5 +9,6 @@ var div = document.getElementById("div");
 var sel = window.getSelection();
 
 sel.setPosition(div, 0);
-document.execCommand("SelectLine");
+if (window.layoutTestController)
+    textInputController.doCommand("selectLine:");
 </script>

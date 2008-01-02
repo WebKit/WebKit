@@ -9,13 +9,17 @@ function log(str) {
     console.appendChild(li);
     li.appendChild(text);
 }
-if (window.layoutTestController)
+if (window.layoutTestController) {
     window.layoutTestController.dumpEditingCallbacks();
-var text = document.getElementById("div").firstChild;
-var selection = window.getSelection();
-selection.setBaseAndExtent(text, 0, text, 0);
-document.execCommand("MoveForwardAndModifySelection");
-document.execCommand("MoveForwardAndModifySelection");
-document.execCommand("MoveForwardAndModifySelection");
-document.execCommand("MoveBackwardAndModifySelection");
+    var text = document.getElementById("div").firstChild;
+    var selection = window.getSelection();
+    selection.setBaseAndExtent(text, 0, text, 0);
+    textInputController.doCommand("moveForwardAndModifySelection:");
+    textInputController.doCommand("moveForwardAndModifySelection:");
+    textInputController.doCommand("moveForwardAndModifySelection:");
+    textInputController.doCommand("moveBackwardAndModifySelection:");
+} else {
+    log("Failure: This test cannot be run manually.")
+}
+
 </script>

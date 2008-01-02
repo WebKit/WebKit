@@ -2,6 +2,25 @@
 
         Reviewed by Darin.
 
+        Resolved several FIXMEs in EditorCommand.
+        Made recently added commands hidden from JS again.
+        Removed BackwardDelete implementation, which used to be dead code, but got exposed now.
+
+        Tests: editing/execCommand/delete-no-scroll.html
+               editing/execCommand/forward-delete-no-scroll.html
+               editing/execCommand/insert-line-break-no-scroll.html
+
+        * editing/EditorCommand.cpp:
+        (WebCore::executeDelete):
+        (WebCore::executeForwardDelete):
+        (WebCore::executeInsertLineBreak):
+        (WebCore::supportedFromMenuOrKeyBinding):
+        (WebCore::CommandEntry::):
+
+2008-01-02  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
         http://bugs.webkit.org/show_bug.cgi?id=14555
         action=mailto + method=get - The generated mailto URI is incorrect and the hvalues are encoded twice
 
