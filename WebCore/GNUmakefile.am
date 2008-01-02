@@ -103,6 +103,7 @@ webcore_built_sources += \
 	DerivedSources/JSEntity.h \
 	DerivedSources/JSEntityReference.h \
 	DerivedSources/JSEvent.h \
+	DerivedSources/JSEventException.h \
 	DerivedSources/JSHTMLAnchorElement.h \
 	DerivedSources/JSHTMLAppletElement.h \
 	DerivedSources/JSHTMLAreaElement.h \
@@ -189,6 +190,7 @@ webcore_built_sources += \
 	DerivedSources/JSTreeWalker.h \
 	DerivedSources/JSUIEvent.h \
 	DerivedSources/JSWheelEvent.h \
+	DerivedSources/JSXMLHttpRequestException.h \
 	DerivedSources/JSXMLSerializer.h \
 	DerivedSources/JSAttr.cpp \
 	DerivedSources/JSBarInfo.cpp \
@@ -225,6 +227,7 @@ webcore_built_sources += \
 	DerivedSources/JSEntity.cpp \
 	DerivedSources/JSEntityReference.cpp \
 	DerivedSources/JSEvent.cpp \
+	DerivedSources/JSEventException.cpp \
 	DerivedSources/JSHTMLAnchorElement.cpp \
 	DerivedSources/JSHTMLAppletElement.cpp \
 	DerivedSources/JSHTMLAreaElement.cpp \
@@ -311,6 +314,7 @@ webcore_built_sources += \
 	DerivedSources/JSTreeWalker.cpp \
 	DerivedSources/JSUIEvent.cpp \
 	DerivedSources/JSWheelEvent.cpp \
+	DerivedSources/JSXMLHttpRequestException.cpp \
 	DerivedSources/JSXMLSerializer.cpp
 
 IDL_BINDINGS +=  \
@@ -345,6 +349,7 @@ IDL_BINDINGS +=  \
 	WebCore/dom/Entity.idl \
 	WebCore/dom/EntityReference.idl \
 	WebCore/dom/Event.idl \
+	WebCore/dom/EventException.idl \
 	WebCore/dom/KeyboardEvent.idl \
 	WebCore/dom/MessageEvent.idl \
 	WebCore/dom/MouseEvent.idl \
@@ -435,6 +440,7 @@ IDL_BINDINGS +=  \
 	WebCore/page/History.idl \
 	WebCore/page/Screen.idl \
 	WebCore/xml/DOMParser.idl \
+	WebCore/xml/XMLHttpRequestException.idl \
 	WebCore/xml/XMLSerializer.idl
 
 webcore_headers += \
@@ -552,7 +558,6 @@ webcore_sources += \
 	WebCore/dom/Document.cpp \
 	WebCore/dom/DocumentFragment.cpp \
 	WebCore/dom/DocumentType.cpp \
-	WebCore/dom/DOMCoreException.cpp \
 	WebCore/dom/DOMImplementation.cpp \
 	WebCore/dom/DynamicNodeList.cpp \
 	WebCore/dom/EditingText.cpp \
@@ -563,6 +568,7 @@ webcore_sources += \
 	WebCore/dom/EventNames.cpp \
 	WebCore/dom/EventTarget.cpp \
 	WebCore/dom/EventTargetNode.cpp \
+	WebCore/dom/ExceptionBase.cpp \
 	WebCore/dom/ExceptionCode.cpp \
 	WebCore/dom/KeyboardEvent.cpp \
 	WebCore/dom/MappedAttribute.cpp \
@@ -1109,16 +1115,19 @@ webcore_built_sources += \
 	DerivedSources/XPathGrammar.h \
 	DerivedSources/XPathGrammar.cpp \
 	DerivedSources/JSXPathEvaluator.h \
+	DerivedSources/JSXPathException.h \
 	DerivedSources/JSXPathExpression.h \
 	DerivedSources/JSXPathNSResolver.h \
 	DerivedSources/JSXPathResult.h \
 	DerivedSources/JSXPathEvaluator.cpp \
+	DerivedSources/JSXPathException.cpp \
 	DerivedSources/JSXPathExpression.cpp \
 	DerivedSources/JSXPathNSResolver.cpp \
 	DerivedSources/JSXPathResult.cpp
 
 IDL_BINDINGS += \
 	WebCore/xml/XPathNSResolver.idl \
+	WebCore/xml/XPathException.idl \
 	WebCore/xml/XPathExpression.idl \
 	WebCore/xml/XPathResult.idl \
 	WebCore/xml/XPathEvaluator.idl

@@ -1,3 +1,9 @@
+2008-01-02  Alp Toker  <alp@atoker.com>
+
+        GTK+ autotools build fix. Track changes in r29073.
+
+        * GNUmakefile.am:
+
 2008-01-01  Darin Adler  <darin@apple.com>
 
         - fix release build
