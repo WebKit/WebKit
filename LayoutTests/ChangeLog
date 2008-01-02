@@ -1,3 +1,41 @@
+2008-01-02  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        http://bugs.webkit.org/show_bug.cgi?id=14555
+        action=mailto + method=get - The generated mailto URI is incorrect and the hvalues are encoded twice
+
+        http://bugs.webkit.org/show_bug.cgi?id=14774
+        Submitted data only includes first input item
+
+        * fast/forms/mailto: Added.
+        * fast/forms/mailto/advanced-get-expected.txt: Added.
+        * fast/forms/mailto/advanced-get.html: Added.
+        * fast/forms/mailto/advanced-put-expected.txt: Added.
+        * fast/forms/mailto/advanced-put.html: Added.
+        * fast/forms/mailto/get-multiple-items-expected.txt: Added.
+        * fast/forms/mailto/get-multiple-items-text-plain-expected.txt: Added.
+        * fast/forms/mailto/get-multiple-items-text-plain.html: Added.
+        * fast/forms/mailto/get-multiple-items-x-www-form-urlencoded-expected.txt: Added.
+        * fast/forms/mailto/get-multiple-items-x-www-form-urlencoded.html: Added.
+        * fast/forms/mailto/get-multiple-items.html: Added.
+        * fast/forms/mailto/get-non-ascii-expected.txt: Added.
+        * fast/forms/mailto/get-non-ascii.html: Added.
+        * fast/forms/mailto/get-non-ascii-text-plain.html: Added.
+        * fast/forms/mailto/get-non-ascii-text-plain-expected.txt: Added.
+        * fast/forms/mailto/get-overwrite-query-expected.txt: Added.
+        * fast/forms/mailto/get-overwrite-query.html: Added.
+        * fast/forms/mailto/post-append-query-expected.txt: Added.
+        * fast/forms/mailto/post-append-query.html: Added.
+        * fast/forms/mailto/post-multiple-items-expected.txt: Added.
+        * fast/forms/mailto/post-multiple-items-multipart-form-data-expected.txt: Added.
+        * fast/forms/mailto/post-multiple-items-multipart-form-data.html: Added.
+        * fast/forms/mailto/post-multiple-items-text-plain-expected.txt: Added.
+        * fast/forms/mailto/post-multiple-items-text-plain.html: Added.
+        * fast/forms/mailto/post-multiple-items-x-www-form-urlencoded-expected.txt: Added.
+        * fast/forms/mailto/post-multiple-items-x-www-form-urlencoded.html: Added.
+        * fast/forms/mailto/post-multiple-items.html: Added.
+
 2008-01-01  Darin Adler  <darin@apple.com>
 
         Reviewed by Eric.

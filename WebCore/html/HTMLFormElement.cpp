@@ -474,9 +474,24 @@ void HTMLFormElement::submit(Event* event, bool activateSubmitButton)
         firstSuccessfulSubmitButton->setActivatedSubmit(true);
 
     if (m_post) {
-        if (!m_multipart)
-            frame->loader()->submitForm("POST", m_url, formData(0), m_target, enctype(), String(), event);
-        else {
+        bool isMailtoForm = m_url.startsWith("mailto:", false);
+        if (m_multipart && isMailtoForm) {
+            setEnctype("application/x-www-form-urlencoded");
+            m_multipart = false;
+        }
+
+        if (!m_multipart) {
+            RefPtr<FormData> data = formData(0);
+            if (isMailtoForm) {
+                String body = data->flattenToString();
+                if (equalIgnoringCase(enctype(), "text/plain")) {
+                    // Convention seems to be to decode, and s/&/\r\n/. Also, spaces are encoded as %20.
+                    body = KURL::decode_string(body.replace('&', "\r\n").replace('+', ' ').deprecatedString() + "\r\n");
+                }
+                data = new FormData((String("body=") + encodeCString(body.latin1())).replace('+', "%20").latin1());
+            }
+            frame->loader()->submitForm("POST", m_url, data, m_target, enctype(), String(), event);
+        } else {
             Vector<char> boundary;
             getUniqueBoundaryString(boundary);
             frame->loader()->submitForm("POST", m_url, formData(boundary.data()), m_target, enctype(), boundary.data(), event);

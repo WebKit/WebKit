@@ -539,32 +539,21 @@ void FrameLoader::submitForm(const char* action, const String& url, PassRefPtr<F
     frameRequest.setFrameName(target.isEmpty() ? m_frame->document()->baseTarget() : target);
 
     // Handle mailto: forms
-    bool mailtoForm = u.protocol() == "mailto";
-    if (mailtoForm) {
-        // Append body=
-        String body;
-        if (equalIgnoringCase(contentType, "multipart/form-data"))
-            // FIXME: is this correct? I suspect not, but what site can we test this on?
-            body = formData->flattenToString();
-        else if (equalIgnoringCase(contentType, "text/plain"))
-            // Convention seems to be to decode, and s/&/\n/
-            body = KURL::decode_string(
-                formData->flattenToString().replace('&', '\n')
-                .replace('+', ' ').deprecatedString()); // Recode for the URL
-        else
-            body = formData->flattenToString();
-
+    bool isMailtoForm = equalIgnoringCase(u.protocol(), "mailto");
+    if (isMailtoForm && strcmp(action, "GET") != 0) {
+        // Append body= for POST mailto, replace the whole query string for GET one.
+        String body = formData->flattenToString();
         String query = u.query();
         if (!query.isEmpty())
             query.append('&');
-        u.setQuery((query + "body=" + KURL::encode_string(body.deprecatedString())).deprecatedString());
+        u.setQuery((query + body).deprecatedString());
     }
 
     if (strcmp(action, "GET") == 0) {
-        if (!mailtoForm)
-            u.setQuery(formData->flattenToString().deprecatedString());
+        u.setQuery(formData->flattenToString().deprecatedString());
     } else {
-        frameRequest.resourceRequest().setHTTPBody(formData.get());
+        if (!isMailtoForm)
+            frameRequest.resourceRequest().setHTTPBody(formData.get());
         frameRequest.resourceRequest().setHTTPMethod("POST");
 
         // construct some user headers if necessary
