@@ -1,5 +1,9 @@
 2008-01-02  Adam Roben  <aroben@apple.com>
 
+        * platform/win/Skipped: Added some more failures.
+
+2008-01-02  Adam Roben  <aroben@apple.com>
+
         Get the Windows bots closer to green
 
         * platform/win/Skipped: Added some new failures.

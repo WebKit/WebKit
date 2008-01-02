@@ -391,6 +391,31 @@ storage/execute-sql-args.html
 # <rdar://5667022> Missing a mousemove event
 fast/events/mousemove-after-drag-over-scrollbar.html
 
+# <rdar://5667267>
+editing/selection/5131716-1.html
+
+# <rdar://5667269>
+editing/selection/drag-to-contenteditable-iframe.html
+
+# <rdar://5667273>
+editing/selection/fake-drag.html
+
+# <rdar://5667275>
+fast/dynamic/layer-hit-test-crash.html
+
+# <rdar://5667277>
+fast/loader/onunload-form-submit-crash-2.html
+
+# <rdar://5667279> Undefined value exception
+http/tests/xmlhttprequest/XMLHttpRequestException.html
+
+# <rdar://5667286> Denied cross-frame access
+plugins/createScriptableObject-before-start.html
+
+# <rdar://5667302>
+svg/dom/animated-tearoff-equality.xhtml
+svg/dom/animated-tearoff-lifespan.xhtml
+
 ################################################################################
 ####################### No bugs filed about the below yet#######################
 ################################################################################
