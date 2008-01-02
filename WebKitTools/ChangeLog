@@ -1,3 +1,12 @@
+2008-01-02  Luca Bruno  <lethalman88@gmail.com>
+
+        Reviewed by Darin.
+
+        http://bugs.webkit.org/show_bug.cgi?id=16674
+        [GTK] run-launcher sets wrong LD_LIBRARY_PATH
+
+        * Scripts/run-launcher:
+
 2007-12-31  Darin Adler  <darin@apple.com>
 
         Suggested by Antti.

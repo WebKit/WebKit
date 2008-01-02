@@ -30,6 +30,7 @@
 # Simplified "run" script for Web Kit Open Source Project.
 
 use strict;
+use File::Spec::Functions qw/catdir/;
 use File::Temp qw/tempfile/;
 use FindBin;
 use lib $FindBin::Bin;
@@ -37,27 +38,28 @@ use webkitdirs;
 
 setConfiguration();
 my $productDir = productDir();
+my $libDir = catdir(productDir(), 'lib');
 my $launcherPath = productDir();
+my @args = @ARGV;
 
 # Check to see that all the frameworks are built.
 checkFrameworks();
 
-# Set up LD_LIBRARY_PATH to point to the product directory.
-print "Starting webkit launcher with LD_LIBRARY_PATH set to point to built WebKit in $productDir.\n";
-
-my @args = @ARGV;
-$ENV{LD_LIBRARY_PATH} = $ENV{LD_LIBRARY_PATH} ? "$productDir:$ENV{LD_LIBRARY_PATH}" : $productDir;
-
 if (isGtk()) {
-  $launcherPath = "$launcherPath/WebKitTools/GtkLauncher/GtkLauncher";
+  $launcherPath = catdir($launcherPath, "WebKitTools", "GtkLauncher", "GtkLauncher");
   # Strip --gtk from the arg-list, since otherwise GtkLauncher will try to
   # interpret it as a URL.
   @args = grep(!/^(--gtk)$/, @args);
 } elsif (isQt()) {
-  $launcherPath = "$launcherPath/bin/QtLauncher";
+  $launcherPath = catdir($launcherPath, "bin", "QtLauncher");
 } else {
   die;
 }
+
+# Set up LD_LIBRARY_PATH to point to the product directory.
+print "Starting webkit launcher with LD_LIBRARY_PATH set to point to built WebKit in $libDir.\n";
+
+$ENV{LD_LIBRARY_PATH} = $ENV{LD_LIBRARY_PATH} ? "$libDir:$ENV{LD_LIBRARY_PATH}" : $libDir;
 
 exec $launcherPath, @args or die;
 
