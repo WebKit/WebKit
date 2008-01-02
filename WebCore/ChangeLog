@@ -1,3 +1,38 @@
+2008-01-01  David D. Kilzer  <ddkilzer@webkit.org>
+
+        Scripting MIME Types application/ecmascript, application/javascript not viewable
+        <http://bugs.webkit.org/show_bug.cgi?id=11063>
+
+        Reviewed by Darin.
+
+        This patch consolidates the list of acceptable MIME types for JavaScript
+        source into the MIMETypeRegistry class, and replaces checks for these
+        types with a call to MIMETypeRegistry::isSupportedJavaScriptMIMEType().
+
+        No tests added since viewing JavaScript source is not testable.
+
+        * dom/DOMImplementation.cpp:
+        (WebCore::DOMImplementation::isTextMIMEType): Use
+        MIMETypeRegistry::isSupportedJavaScriptMIMEType() instead of a single
+        hard-coded MIME type, "application/x-javascript".
+
+        * html/HTMLScriptElement.cpp:
+        (WebCore::HTMLScriptElement::shouldExecuteAsJavaScript): Moved list of
+        JavaScript MIME types from here to
+        MIMETypeRegistry::initialiseSupportedJavaScriptMIMETypes().
+
+        * platform/MIMETypeRegistry.cpp:
+        (WebCore::initialiseSupportedJavaScriptMIMETypes): Added. List of
+        MIME types came from HTMLScriptElement::shouldExecuteAsJavaScript().
+        (WebCore::initialiseSupportedNonImageMimeTypes): Remove single
+        hard-coded MIME type, "application/x-javascript", from the list.
+        (WebCore::initialiseMIMETypeRegistry): Initialise
+        supportedJavaScriptMIMETypes, then pre-populate supportedNonImageMIMETypes
+        with values in supportedJavaScriptMIMETypes.
+        (WebCore::MIMETypeRegistry::isSupportedJavaScriptMIMEType): Added.
+
+        * platform/MIMETypeRegistry.h: Added isSupportedJavaScriptMIMEType().
+
 2008-01-01  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Darin.

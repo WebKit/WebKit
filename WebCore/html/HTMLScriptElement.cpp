@@ -32,6 +32,7 @@
 #include "FrameLoader.h"
 #include "HTMLNames.h"
 #include "kjs_proxy.h"
+#include "MIMETypeRegistry.h"
 #include "Text.h"
 
 namespace WebCore {
@@ -177,28 +178,6 @@ void HTMLScriptElement::notifyFinished(CachedResource* o)
 bool HTMLScriptElement::shouldExecuteAsJavaScript()
 {
     /*
-        Mozilla 1.8 and WinIE 7 both accept text/javascript and text/ecmascript.
-        Mozilla 1.8 accepts application/javascript, application/ecmascript, and application/x-javascript, but WinIE 7 doesn't.
-        WinIE 7 accepts text/javascript1.1 - text/javascript1.3, text/jscript, and text/livescript, but Mozilla 1.8 doesn't.
-        Mozilla 1.8 allows leading and trailing whitespace, but WinIE 7 doesn't.
-        Mozilla 1.8 and WinIE 7 both accept the empty string, but neither accept a whitespace-only string.
-        We want to accept all the values that either of these browsers accept, but not other values.
-     */
-    static const AtomicString validTypes[] = {
-        "text/javascript",
-        "text/ecmascript",
-        "application/javascript",
-        "application/ecmascript",
-        "application/x-javascript",
-        "text/javascript1.1",
-        "text/javascript1.2",
-        "text/javascript1.3",
-        "text/jscript",
-        "text/livescript",
-    };
-    static const unsigned validTypesCount = sizeof(validTypes) / sizeof(validTypes[0]);
-
-    /*
          Mozilla 1.8 accepts javascript1.0 - javascript1.7, but WinIE 7 accepts only javascript1.1 - javascript1.3.
          Mozilla 1.8 and WinIE 7 both accept javascript and livescript.
          WinIE 7 accepts ecmascript and jscript, but Mozilla 1.8 doesn't.
@@ -224,13 +203,12 @@ bool HTMLScriptElement::shouldExecuteAsJavaScript()
     const AtomicString& type = getAttribute(typeAttr);
     if (!type.isEmpty()) {
         String lowerType = type.domString().stripWhiteSpace().lower();
-        for (unsigned i = 0; i < validTypesCount; ++i)
-            if (lowerType == validTypes[i])
-                return true;
+        if (MIMETypeRegistry::isSupportedJavaScriptMIMEType(lowerType))
+            return true;
 
         return false;
     }
-    
+
     const AtomicString& language = getAttribute(languageAttr);
     if (!language.isEmpty()) {
         String lowerLanguage = language.domString().lower();

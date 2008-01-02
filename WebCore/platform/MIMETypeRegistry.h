@@ -39,7 +39,7 @@ public:
     static Vector<String> getExtensionsForMIMEType(const String& type);
     static String getPreferredExtensionForMIMEType(const String& type);
     static String getMIMETypeForPath(const String& path);
-    
+
     // Check to see if a mime type is suitable for being loaded inline as an
     // image (e.g., <img> tags).
     static bool isSupportedImageMIMEType(const String& mimeType);   
@@ -48,16 +48,20 @@ public:
     // document in a frame.
     static bool isSupportedImageResourceMIMEType(const String& mimeType);    
 
+    // Check to see if a mime type is suitable for being loaded as a JavaScript
+    // resource.
+    static bool isSupportedJavaScriptMIMEType(const String& mimeType);    
+
     // Check to see if a non-image mime type is suitable for being loaded as a
-    // document in a frame.
+    // document in a frame.  Includes supported JavaScript MIME types.
     static bool isSupportedNonImageMIMEType(const String& mimeType);
-    
+
     // Check to see if a mime type is suitable for being loaded using <video> and <audio>
     static bool isSupportedMediaMIMEType(const String& mimeType); 
 
     // Check to see if a mime type is a valid Java applet mime type
     static bool isJavaAppletMIMEType(const String& mimeType);
-    
+
     static HashSet<String>& getSupportedImageMIMETypes();
     static HashSet<String>& getSupportedImageResourceMIMETypes();
     static HashSet<String>& getSupportedNonImageMIMETypes();
