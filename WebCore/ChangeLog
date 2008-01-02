@@ -1,5 +1,11 @@
 2008-01-02  Mark Rowe  <mrowe@apple.com>
 
+        Autotools build fix.
+
+        * GNUmakefile.am: Remove files before generating them, not after.
+
+2008-01-02  Mark Rowe  <mrowe@apple.com>
+
         Rubber-stamped by Alp Toker.
 
         Add missing dependencies to some GNUmakefile.am rules.

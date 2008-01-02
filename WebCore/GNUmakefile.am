@@ -1153,8 +1153,8 @@ webcore_sources += \
 # XPath grammar
 # NOTE: older versions of bison do not inject an inclusion guard, so we do it
 $(GENSOURCES)/XPathGrammar.h $(GENSOURCES)/XPathGrammar.cpp : $(WebCore)/xml/XPathGrammar.y
-	$(BISON) -d -p xpathyy $< -o $(GENSOURCES)/XPathGrammar.cpp
 	rm -f $(GENSOURCES)/XPathGrammar.cpp.h $(GENSOURCES)/XPathGrammar.hpp
+	$(BISON) -d -p xpathyy $< -o $(GENSOURCES)/XPathGrammar.cpp
 	touch $(GENSOURCES)/XPathGrammar.cpp.h $(GENSOURCES)/XPathGrammar.hpp
 	echo '#ifndef XPathGrammar_h' > $(GENSOURCES)/XPathGrammar.h
 	echo '#define XPathGrammar_h' >> $(GENSOURCES)/XPathGrammar.h
