@@ -1152,8 +1152,9 @@ webcore_sources += \
 
 # XPath grammar
 # NOTE: older versions of bison do not inject an inclusion guard, so we do it
-DerivedSources/XPathGrammar.h DerivedSources/XPathGrammar.cpp : $(WebCore)/xml/XPathGrammar.y
-	$(BISON) -d -p xpathyy $< -o $@
+$(GENSOURCES)/XPathGrammar.h $(GENSOURCES)/XPathGrammar.cpp : $(WebCore)/xml/XPathGrammar.y
+	$(BISON) -d -p xpathyy $< -o $(GENSOURCES)/XPathGrammar.cpp
+	rm -f $(GENSOURCES)/XPathGrammar.cpp.h $(GENSOURCES)/XPathGrammar.hpp
 	touch $(GENSOURCES)/XPathGrammar.cpp.h $(GENSOURCES)/XPathGrammar.hpp
 	echo '#ifndef XPathGrammar_h' > $(GENSOURCES)/XPathGrammar.h
 	echo '#define XPathGrammar_h' >> $(GENSOURCES)/XPathGrammar.h
@@ -1887,7 +1888,7 @@ DerivedSources/tokenizer.cpp :
 
 # CSS grammar
 # NOTE: older versions of bison do not inject an inclusion guard, so we do it
-DerivedSources/CSSGrammar.h DerivedSources/CSSGrammar.cpp : $(WebCore)/css/CSSGrammar.y
+$(GENSOURCES)/CSSGrammar.h $(GENSOURCES)/CSSGrammar.cpp : $(WebCore)/css/CSSGrammar.y
 	$(BISON) -d -p cssyy $< -o $(GENSOURCES)/CSSGrammar.cpp
 	touch $(GENSOURCES)/CSSGrammar.cpp.h $(GENSOURCES)/CSSGrammar.hpp
 	echo '#ifndef CSSGrammar_h' > $(GENSOURCES)/CSSGrammar.h

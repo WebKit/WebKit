@@ -1,3 +1,12 @@
+2008-01-02  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Alp Toker.
+
+        Autotools build fix.  Make can expand $@ to any of the targets for the rule,
+        while we always want to use the name of the .cpp file as the output file.
+
+        * GNUmakefile.am:
+
 2008-01-02  Luca Bruno  <lethalman88@gmail.com>
 
         Reviewed by Alp Toker.
