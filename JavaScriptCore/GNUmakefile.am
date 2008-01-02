@@ -121,7 +121,7 @@ endif # END ENABLE_DEBUG
 
 DerivedSources/grammar.h: DerivedSources/grammar.cpp
 
-DerivedSources/grammar.cpp:
+DerivedSources/grammar.cpp: $(srcdir)/JavaScriptCore/kjs/grammar.y
 	$(BISON) -d -p kjsyy $(srcdir)/JavaScriptCore/kjs/grammar.y -o $@ > bison_out.txt 2>&1
 	$(PERL) -p -e 'END { if ($$conflict) { unlink "grammar.cpp"; die; } } $$conflict ||= /conflict/' < bison_out.txt
 	cat $(GENSOURCES)/grammar.hpp > $(GENSOURCES)/grammar.h

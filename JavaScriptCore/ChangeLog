@@ -1,3 +1,9 @@
+2008-01-02  Mark Rowe  <mrowe@apple.com>
+
+        Rubber-stamped by Alp Toker.
+
+        * GNUmakefile.am: Add missing dependency on grammar.y.
+
 2008-01-01  Darin Adler  <darin@apple.com>
 
         Reviewed by Eric.
