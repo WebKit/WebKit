@@ -22,24 +22,24 @@ c = 2
 c = 3 /* comment */
 d = 4
 
-// non-ascii identifier letters (not working copy of Mozilla?!)
-var ident = "";
-ident += "\u00E9"; // LATIN SMALL LETTER E WITH ACUTE
-ident += "\u0100"; // LATIN CAPITAL LETTER A WITH MACRON
-ident += "\u02af"; // LATIN SMALL LETTER TURNED H WITH FISHHOOK AND TAIL
-ident += "\u0388"; // GREEK CAPITAL LETTER EPSILON WITH TONOS
-ident += "\u18A8"; // MONGOLIAN LETTER MANCHU ALI GALI BHA
-var code = "var " + ident + " = 11; " + ident + ";";
-var res = eval(code);
-shouldBe("res", "11");
+// non-ASCII identifier letters
+shouldBe("var \u00E9\u0100\u02AF\u0388\u18A8 = 101; \u00E9\u0100\u02AF\u0388\u18A8;", "101");
 
-// invalid identifier letter
-var caught = false;
-try {
-  eval("var f\xf7;"); // 
-} catch (e) {
-  caught = true;
-}
-shouldBeTrue("caught");
+// invalid identifier letters
+shouldThrow("var f\xF7;");
+
+// ASCII identifier characters as escape sequences
+shouldBe("var \\u0061 = 102; a", "102");
+shouldBe("var f\\u0030 = 103; f0", "103");
+
+// non-ASCII identifier letters as escape sequences
+shouldBe("var \\u00E9\\u0100\\u02AF\\u0388\\u18A8 = 104; \\u00E9\\u0100\\u02AF\\u0388\\u18A8;", "104");
+
+// invalid identifier characters as escape sequences
+shouldThrow("var f\\u00F7;");
+shouldThrow("var \\u0030;");
+shouldThrow("var test = { }; test.i= 0; test.i\\u002b= 1; test.i;");
+
+shouldBe("var test = { }; test.i= 0; test.i\u002b= 1; test.i;", "1");
 
 successfullyParsed = true

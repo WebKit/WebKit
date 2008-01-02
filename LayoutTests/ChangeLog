@@ -1,3 +1,15 @@
+2008-01-01  Darin Adler  <darin@apple.com>
+
+        Reviewed by Eric.
+
+        - test for http://bugs.webkit.org/show_bug.cgi?id=16695
+          JSC allows non-identifier codepoints in identifiers (affects Acid3)
+
+        * fast/js/kde/parse-expected.txt: Updated.
+        * fast/js/kde/resources/parse.js: Added tests that cover both the
+        non-ASCII characters themselves and the same characters parsed as
+        \u sequences.
+
 2008-01-01  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Darin.

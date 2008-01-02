@@ -1,5 +1,23 @@
 2008-01-01  Darin Adler  <darin@apple.com>
 
+        Reviewed by Eric.
+
+        - fix for http://bugs.webkit.org/show_bug.cgi?id=16695
+          JSC allows non-identifier codepoints in identifiers (affects Acid3)
+
+        Test: fast/js/kde/parse.html
+
+        * kjs/lexer.cpp:
+        (KJS::Lexer::lex): Added additional states to distinguish Unicode escapes at the
+        start of identifiers from ones inside identifiers. Rejected characters that don't pass
+        the isIdentStart and isIdentPart tests.
+        (KJS::Lexer::convertUnicode): Removed incorrect FIXME comment.
+
+        * kjs/lexer.h: Added new states to distinguish \u escapes at the start of identifiers
+        from \u escapes inside identifiers.
+
+2008-01-01  Darin Adler  <darin@apple.com>
+
         - rolled scope chain optimization out; it was breaking the world
 
 2008-01-01  Darin Adler  <darin@apple.com>
