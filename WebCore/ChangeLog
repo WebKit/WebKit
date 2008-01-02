@@ -1,5 +1,13 @@
 2008-01-02  Mark Rowe  <mrowe@apple.com>
 
+        Rubber-stamped by Alp Toker.
+
+        Add missing dependencies to some GNUmakefile.am rules.
+
+        * GNUmakefile.am:
+
+2008-01-02  Mark Rowe  <mrowe@apple.com>
+
         Reviewed by Alp Toker.
 
         Autotools build fix.  Make can expand $@ to any of the targets for the rule,

@@ -1867,22 +1867,22 @@ DerivedSources/CSSValueKeywords.h: $(WebCore)/css/CSSValueKeywords.in $(WebCore)
 endif !ENABLE_SVG # END ENABLE_SVG
 
 # DOCTYPE strings
-DerivedSources/DocTypeStrings.cpp : 
+$(GENSOURCES)/DocTypeStrings.cpp : $(WebCore)/html/DocTypeStrings.gperf
 	$(GPERF) -CEot -L ANSI-C -k "*" -N findDoctypeEntry -F ,PubIDInfo::eAlmostStandards,PubIDInfo::eAlmostStandards \
 	$(WebCore)/html/DocTypeStrings.gperf > $@
 
 # HTML entity names
-DerivedSources/HTMLEntityNames.c : 
+$(GENSOURCES)/HTMLEntityNames.c : $(WebCore)/html/HTMLEntityNames.gperf
 	$(GPERF) -a -L ANSI-C -C -G -c -o -t -k '*' -N findEntity -D -s 2 \
 	$(WebCore)/html/HTMLEntityNames.gperf > $@
 
 # color names
-DerivedSources/ColorData.c : 
+$(GENSOURCES)/ColorData.c : $(WebCore)/platform/ColorData.gperf
 	$(GPERF) -CDEot -L ANSI-C -k '*' -N findColor -D -s 2 \
 	$(WebCore)/platform/ColorData.gperf > $@
 
 # CSS tokenizer
-DerivedSources/tokenizer.cpp :
+$(GENSOURCES)/tokenizer.cpp : $(WebCore)/css/tokenizer.flex $(WebCore)/css/maketokenizer
 	$(FLEX) -t $(WebCore)/css/tokenizer.flex | \
 	$(PERL) $(WebCore)/css/maketokenizer > $@
 
