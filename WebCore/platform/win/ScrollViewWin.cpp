@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2007, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -689,12 +689,12 @@ void ScrollView::geometryChanged() const
         (*current)->geometryChanged();
 }
 
-void ScrollView::scroll(ScrollDirection direction, ScrollGranularity granularity)
+bool ScrollView::scroll(ScrollDirection direction, ScrollGranularity granularity)
 {
     if  ((direction == ScrollUp || direction == ScrollDown) && m_data->m_vBar)
-        m_data->m_vBar->scroll(direction, granularity);
+        return m_data->m_vBar->scroll(direction, granularity);
     else if (m_data->m_hBar)
-        m_data->m_hBar->scroll(direction, granularity);
+        return m_data->m_hBar->scroll(direction, granularity);
 }
 
 IntRect ScrollView::windowResizerRect()

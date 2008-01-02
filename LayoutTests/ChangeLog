@@ -1,3 +1,14 @@
+2008-01-02  Alice Liu  <alice.liu@apple.com>
+
+        Reviewed by Maciej.
+
+        Added test for <rdar://5283861> (problems scrolling in gmail message content area)
+
+        * fast/frames/iframe-scroll-page-up-down-expected.txt: Added.
+        * fast/frames/iframe-scroll-page-up-down.html: Added.
+        * fast/frames/resources/iframe-scroll-page-up-down-1.html: Added.
+        * fast/frames/resources/iframe-scroll-page-up-down-2.html: Added.
+
 2008-01-02  Adam Roben  <aroben@apple.com>
 
         * platform/win/Skipped: Added some more failures.

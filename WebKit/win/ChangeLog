@@ -1,3 +1,13 @@
+2008-01-02  Alice Liu  <alice.liu@apple.com>
+
+        Reviewed by Maciej.
+
+        Fixed <rdar://5283861> (problems scrolling in gmail message content area)
+
+        * WebView.cpp:
+        (WebView::keyDown):
+        bubble scrolling from a key event
+
 2008-01-01  Matt Lilek  <webkit@mattlilek.com>
 
         Attempt to fix the Windows bots until the bots

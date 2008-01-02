@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007 Apple, Inc.  All rights reserved.
+ * Copyright (C) 2006, 2007, 2008 Apple, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -1476,9 +1476,15 @@ bool WebView::keyDown(WPARAM virtualKeyCode, LPARAM keyData, bool systemKeyDown)
             return false;
     }
 
-    if (!frame->eventHandler()->scrollOverflow(direction, granularity))
-        frame->view()->scroll(direction, granularity);
-    return true;
+    if (!frame->eventHandler()->scrollOverflow(direction, granularity)) {
+        handled = frame->view()->scroll(direction, granularity);
+        Frame* parent = frame->tree()->parent();
+        while(!handled && parent) {
+            handled = parent->view()->scroll(direction, granularity);
+            parent = parent->tree()->parent();
+        }
+    }
+    return handled;
 }
 
 bool WebView::keyPress(WPARAM charCode, LPARAM keyData, bool systemKeyDown)

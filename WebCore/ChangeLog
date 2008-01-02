@@ -1,3 +1,14 @@
+2008-01-02  Alice Liu  <alice.liu@apple.com>
+
+        Reviewed by Maciej.
+
+        Fixed <rdar://5283861> (problems scrolling in gmail message content area)
+
+        * platform/ScrollView.h:
+        * platform/win/ScrollViewWin.cpp:
+        (WebCore::ScrollView::scroll):
+         Changed return value to bool to reflect success of scroll attempt
+
 2008-01-02  Alexey Proskuryakov  <ap@webkit.org>
 
         Fixed a typo (pointed out in review, but I somehow missed it at first).
