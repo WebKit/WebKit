@@ -1,3 +1,13 @@
+2008-01-02  Alice Liu  <alice.liu@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        need to export ASCIICType.h for use in DRT
+
+        * JavaScriptCore.vcproj/WTF/WTF.vcproj:
+        * wtf/ASCIICType.h:
+        (WTF::isASCIIUpper):
+
 2008-01-02  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Beth Dakin.

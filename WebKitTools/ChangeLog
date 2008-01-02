@@ -1,3 +1,15 @@
+2008-01-02  Alice Liu  <alice.liu@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        fixing assertion hit with editing/selection/move-begin-end.html
+
+        * DumpRenderTree/ForwardingHeaders/wtf/ASCIICType.h: Added.
+        * DumpRenderTree/win/DumpRenderTree.vcproj:
+        * DumpRenderTree/win/EventSender.cpp:
+        (keyDownCallback):
+        using isupper will cause an assertion for inputs outside of ascii range. use isASCIIUpper instead.
+
 2008-01-02  Darin Adler  <darin@apple.com>
 
         * Scripts/do-webcore-rename: Some more name change plans.

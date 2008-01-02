@@ -168,6 +168,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\wtf\ASCIICType.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\wtf\Assertions.cpp"
 			>
 		</File>

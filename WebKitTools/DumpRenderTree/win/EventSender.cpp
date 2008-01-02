@@ -32,6 +32,7 @@
 #include "DraggingInfo.h"
 
 #include <WebCore/COMPtr.h>
+#include <wtf/ASCIICType.h>
 #include <wtf/Platform.h>
 #include <JavaScriptCore/JavaScriptCore.h>
 #include <JavaScriptCore/Assertions.h>
@@ -314,7 +315,7 @@ static JSValueRef keyDownCallback(JSContextRef context, JSObjectRef function, JS
     else {
         charCode = JSStringGetCharactersPtr(character)[0];
         virtualKeyCode = LOBYTE(VkKeyScan(charCode));
-        if (isupper(charCode))
+        if (WTF::isASCIIUpper(charCode))
             needsShiftKeyModifier = true;
     }
     JSStringRelease(character);
