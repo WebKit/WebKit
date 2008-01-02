@@ -1,3 +1,31 @@
+2008-01-02  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Beth Dakin.
+
+        Cleanup error_object.h/cpp.
+
+        * kjs/JSGlobalObject.cpp:
+        (KJS::JSGlobalObject::reset):
+        * kjs/error_object.cpp:
+        (KJS::):
+        (KJS::ErrorInstance::ErrorInstance):
+        (KJS::ErrorPrototype::ErrorPrototype):
+        (KJS::ErrorProtoFuncToString::ErrorProtoFuncToString):
+        (KJS::ErrorProtoFuncToString::callAsFunction):
+        (KJS::ErrorObjectImp::ErrorObjectImp):
+        (KJS::ErrorObjectImp::implementsConstruct):
+        (KJS::ErrorObjectImp::construct):
+        (KJS::ErrorObjectImp::callAsFunction):
+        (KJS::NativeErrorPrototype::NativeErrorPrototype):
+        (KJS::NativeErrorImp::NativeErrorImp):
+        (KJS::NativeErrorImp::implementsConstruct):
+        (KJS::NativeErrorImp::construct):
+        (KJS::NativeErrorImp::callAsFunction):
+        (KJS::NativeErrorImp::mark):
+        * kjs/error_object.h:
+        (KJS::ErrorInstance::classInfo):
+        (KJS::NativeErrorImp::classInfo):
+
 2008-01-02  Mark Rowe  <mrowe@apple.com>
 
         Rubber-stamped by Alp Toker.

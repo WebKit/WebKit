@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -213,12 +213,12 @@ void JSGlobalObject::reset(JSValue* prototype)
     d()->regExpPrototype = new RegExpPrototype(exec, d()->objectPrototype, d()->functionPrototype);;
     d()->errorPrototype = new ErrorPrototype(exec, d()->objectPrototype, d()->functionPrototype);
     
-    d()->evalErrorPrototype = new NativeErrorPrototype(exec, d()->errorPrototype, EvalError, "EvalError", "EvalError");
-    d()->rangeErrorPrototype = new NativeErrorPrototype(exec, d()->errorPrototype, RangeError, "RangeError", "RangeError");
-    d()->referenceErrorPrototype = new NativeErrorPrototype(exec, d()->errorPrototype, ReferenceError, "ReferenceError", "ReferenceError");
-    d()->syntaxErrorPrototype = new NativeErrorPrototype(exec, d()->errorPrototype, SyntaxError, "SyntaxError", "SyntaxError");
-    d()->typeErrorPrototype = new NativeErrorPrototype(exec, d()->errorPrototype, TypeError, "TypeError", "TypeError");
-    d()->URIErrorPrototype = new NativeErrorPrototype(exec, d()->errorPrototype, URIError, "URIError", "URIError");
+    d()->evalErrorPrototype = new NativeErrorPrototype(exec, d()->errorPrototype, "EvalError", "EvalError");
+    d()->rangeErrorPrototype = new NativeErrorPrototype(exec, d()->errorPrototype, "RangeError", "RangeError");
+    d()->referenceErrorPrototype = new NativeErrorPrototype(exec, d()->errorPrototype, "ReferenceError", "ReferenceError");
+    d()->syntaxErrorPrototype = new NativeErrorPrototype(exec, d()->errorPrototype, "SyntaxError", "SyntaxError");
+    d()->typeErrorPrototype = new NativeErrorPrototype(exec, d()->errorPrototype, "TypeError", "TypeError");
+    d()->URIErrorPrototype = new NativeErrorPrototype(exec, d()->errorPrototype, "URIError", "URIError");
 
     // Constructors
     d()->objectConstructor = new ObjectObjectImp(exec, d()->objectPrototype, d()->functionPrototype);
