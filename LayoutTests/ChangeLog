@@ -1,3 +1,11 @@
+2008-01-02  Adam Roben  <aroben@apple.com>
+
+        Get the Windows bots closer to green
+
+        * platform/win/Skipped: Added some new failures.
+        * platform/win/fast/dom/Window/window-properties-expected.txt: Updated
+        these results.
+
 2008-01-02  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin.

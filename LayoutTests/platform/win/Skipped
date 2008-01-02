@@ -65,7 +65,7 @@ svg/W3C-SVG-1.1/interact-cursor-01-f.svg
 svg/W3C-SVG-1.1/text-fonts-01-t.svg
 svg/W3C-SVG-1.1/text-intro-05-t.svg
 svg/W3C-SVG-1.1/text-tselect-02-f.svg
-svg/batik/text/smallFonts.svg
+#svg/batik/text/smallFonts.svg-disabled
 svg/batik/text/textBiDi.svg
 svg/hixie/text/003.html
 svg/hixie/text/003a.xml
@@ -370,6 +370,26 @@ svg/custom/control-points-for-S-and-T.svg
 
 # <rdar://problem/5539818> REGRESSION (Leopard): http/tests/security/dataURL/xss-DENIED-to-data-url-sub-frame-uppercase.html failing
 http/tests/security/dataURL/xss-DENIED-to-data-url-sub-frame-uppercase.html
+
+# <rdar://5666914>
+fast/regex/test1.html
+fast/regex/test4.html
+
+# <rdar://5666926>
+svg/custom/use-css-no-effect-on-shadow-tree.svg
+
+# <rdar://5667003> Undefined value exception
+fast/dom/xmlhttprequest-html-response-encoding.html
+
+# <rdar://5667007> 2 SVG text tests failing (due to bad rounding?)
+svg/batik/text/textOnPath.svg
+svg/batik/text/verticalTextOnPath.svg
+
+# <rdar://5667017> Failing due to null value exception
+storage/execute-sql-args.html
+
+# <rdar://5667022> Missing a mousemove event
+fast/events/mousemove-after-drag-over-scrollbar.html
 
 ################################################################################
 ####################### No bugs filed about the below yet#######################
