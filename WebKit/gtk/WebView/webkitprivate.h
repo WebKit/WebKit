@@ -61,6 +61,9 @@ extern "C" {
         WebCore::String applicationNameForUserAgent;
         WebCore::String* userAgent;
 
+        gint lastPopupXPosition;
+        gint lastPopupYPosition;
+
         HashSet<GtkWidget*> children;
         bool editable;
         GtkIMContext* imContext;

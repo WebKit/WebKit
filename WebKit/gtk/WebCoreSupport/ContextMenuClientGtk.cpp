@@ -15,6 +15,7 @@
  */
 
 #include "config.h"
+#include "ContextMenu.h"
 #include "ContextMenuClientGtk.h"
 
 #include "HitTestResult.h"
@@ -30,10 +31,9 @@ void ContextMenuClient::contextMenuDestroyed()
     delete this;
 }
 
-PlatformMenuDescription ContextMenuClient::getCustomMenuFromDefaultItems(ContextMenu*)
+PlatformMenuDescription ContextMenuClient::getCustomMenuFromDefaultItems(ContextMenu* menu)
 {
-    notImplemented();
-    return PlatformMenuDescription();
+    return menu->releasePlatformDescription();
 }
 
 void ContextMenuClient::contextMenuItemSelected(ContextMenuItem*, const ContextMenu*)

@@ -1,3 +1,33 @@
+2008-01-02  Luca Bruno  <lethalman88@gmail.com>
+
+        Reviewed by Alp Toker.
+
+        http://bugs.webkit.org/show_bug.cgi?id=16115
+        [GTK] ContextMenu and ContextMenuItem lacks an implementation
+
+        Add context menu support.
+
+        Based on a patch by Holger Freyther.
+
+        * platform/gtk/ContextMenuGtk.cpp:
+        (WebCore::menuItemActivated):
+        (WebCore::ContextMenu::ContextMenu):
+        (WebCore::ContextMenu::~ContextMenu):
+        (WebCore::ContextMenu::appendItem):
+        (WebCore::ContextMenu::setPlatformDescription):
+        (WebCore::ContextMenu::releasePlatformDescription):
+        * platform/gtk/ContextMenuItemGtk.cpp:
+        (WebCore::ContextMenuItem::ContextMenuItem):
+        (WebCore::ContextMenuItem::~ContextMenuItem):
+        (WebCore::ContextMenuItem::releasePlatformDescription):
+        (WebCore::ContextMenuItem::type):
+        (WebCore::ContextMenuItem::action):
+        (WebCore::ContextMenuItem::setAction):
+        (WebCore::ContextMenuItem::platformSubMenu):
+        (WebCore::ContextMenuItem::setSubMenu):
+        (WebCore::ContextMenuItem::setChecked):
+        (WebCore::ContextMenuItem::setEnabled):
+
 2008-01-02  Alp Toker  <alp@atoker.com>
 
         GTK+ autotools build fix. Track changes in r29073.

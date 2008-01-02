@@ -1,4 +1,6 @@
 /*
+ *  Copyright (C) 2007 Holger Hans Peter Freyther
+ *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
  *  License as published by the Free Software Foundation; either
@@ -17,30 +19,62 @@
 #include "config.h"
 #include "ContextMenu.h"
 
-#include "NotImplemented.h"
+#include "ContextMenuController.h"
+
+#include <gtk/gtk.h>
 
 namespace WebCore {
 
+// TODO: On-the-fly menu item creation and ref-counting correctness checking.
+// See http://bugs.webkit.org/show_bug.cgi?id=16115
+
+static void menuItemActivated(GtkMenuItem* item, ContextMenu* menu)
+{
+    ContextMenuItem contextItem(item);
+    menu->controller()->contextMenuItemSelected(&contextItem);
+}
+
 ContextMenu::ContextMenu(const HitTestResult& result)
     : m_hitTestResult(result)
-    , m_platformDescription(0)
 {
-    notImplemented();
+    m_platformDescription = GTK_MENU(gtk_menu_new());
+
+#if GLIB_CHECK_VERSION(2,10,0)
+    g_object_ref_sink(G_OBJECT(m_platformDescription));
+#else
+    g_object_ref(G_OBJECT(m_platformDescription));
+    gtk_object_sink(GTK_OBJECT(m_platformDescription));
+#endif
 }
 
 ContextMenu::~ContextMenu()
 {
-    notImplemented();
+  if (m_platformDescription)
+      g_object_unref(m_platformDescription);
 }
 
-void ContextMenu::appendItem(ContextMenuItem&)
+void ContextMenu::appendItem(ContextMenuItem& item)
 {
-    notImplemented();
+    ASSERT(m_platformDescription);
+    checkOrEnableIfNeeded(item);
+
+    GtkMenuItem* platformItem = item.releasePlatformDescription();
+    ASSERT(platformItem);
+
+    g_signal_connect(platformItem, "activate", G_CALLBACK(menuItemActivated), this);
+    gtk_menu_shell_append(GTK_MENU_SHELL(m_platformDescription), GTK_WIDGET(platformItem));
+    gtk_widget_show(GTK_WIDGET(platformItem));
+    g_object_unref(platformItem);
 }
 
 void ContextMenu::setPlatformDescription(PlatformMenuDescription menu)
 {
+    ASSERT(menu);
+    if (m_platformDescription)
+        g_object_unref(m_platformDescription);
+
     m_platformDescription = menu;
+    g_object_ref(m_platformDescription);
 }
 
 PlatformMenuDescription ContextMenu::platformDescription() const
@@ -50,8 +84,10 @@ PlatformMenuDescription ContextMenu::platformDescription() const
 
 PlatformMenuDescription ContextMenu::releasePlatformDescription()
 {
-    notImplemented(); 
-    return 0;
+    PlatformMenuDescription description = m_platformDescription;
+    m_platformDescription = 0;
+
+    return description;
 }
 
 }

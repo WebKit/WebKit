@@ -28,7 +28,10 @@
 #include "NotImplemented.h"
 #include "CString.h"
 #include "ChromeClientGtk.h"
+#include "ContextMenu.h"
 #include "ContextMenuClientGtk.h"
+#include "ContextMenuController.h"
+#include "Cursor.h"
 #include "DragClientGtk.h"
 #include "Editor.h"
 #include "EditorClientGtk.h"
@@ -87,6 +90,92 @@ enum {
 static guint webkit_web_view_signals[LAST_SIGNAL] = { 0, };
 
 G_DEFINE_TYPE(WebKitWebView, webkit_web_view, GTK_TYPE_CONTAINER)
+
+static void webkit_web_view_context_menu_position_func(GtkMenu*, gint* x, gint* y, gboolean* pushIn, WebKitWebViewPrivate* data)
+{
+    *pushIn = FALSE;
+    *x = data->lastPopupXPosition;
+    *y = data->lastPopupYPosition;
+}
+
+static gboolean webkit_web_view_forward_context_menu_event(WebKitWebView* webView, const PlatformMouseEvent& event)
+{
+    Page* page = core(webView);
+    page->contextMenuController()->clearContextMenu();
+    Frame* focusedFrame = page->focusController()->focusedOrMainFrame();
+    focusedFrame->view()->setCursor(pointerCursor());
+    bool handledEvent = focusedFrame->eventHandler()->sendContextMenuEvent(event);
+    if (!handledEvent)
+        return FALSE;
+
+    ContextMenu* coreMenu = page->contextMenuController()->contextMenu();
+    if (!coreMenu)
+        return FALSE;
+
+    if (!coreMenu->platformDescription())
+        return FALSE;
+
+
+    WebKitWebViewPrivate* pageData = WEBKIT_WEB_VIEW_GET_PRIVATE(webView);
+    pageData->lastPopupXPosition = event.globalX();
+    pageData->lastPopupYPosition = event.globalY();
+    gtk_menu_popup(GTK_MENU(coreMenu->platformDescription()), NULL, NULL,
+                   reinterpret_cast<GtkMenuPositionFunc>(webkit_web_view_context_menu_position_func), pageData,
+                   event.button() + 1, gtk_get_current_event_time());
+    return TRUE;
+}
+
+static gboolean webkit_web_view_popup_menu_handler(GtkWidget* widget)
+{
+    static const int contextMenuMargin = 1;
+
+    // The context menu event was generated from the keyboard, so show the context menu by the current selection.
+    Page* page = core(WEBKIT_WEB_VIEW(widget));
+    FrameView* view = page->mainFrame()->view();
+    Position start = page->mainFrame()->selectionController()->selection().start();
+    Position end = page->mainFrame()->selectionController()->selection().end();
+
+    int rightAligned = FALSE;
+    IntPoint location;
+
+    if (!start.node() || !end.node())
+        location = IntPoint(rightAligned ? view->contentsWidth() - contextMenuMargin : contextMenuMargin, contextMenuMargin);
+    else {
+        RenderObject* renderer = start.node()->renderer();
+        if (!renderer)
+            return FALSE;
+
+        // Calculate the rect of the first line of the selection (cribbed from -[WebCoreFrameBridge firstRectForDOMRange:]).
+        int extraWidthToEndOfLine = 0;
+        IntRect startCaretRect = renderer->caretRect(start.offset(), DOWNSTREAM, &extraWidthToEndOfLine);
+        IntRect endCaretRect = renderer->caretRect(end.offset(), UPSTREAM);
+
+        IntRect firstRect;
+        if (startCaretRect.y() == endCaretRect.y())
+            firstRect = IntRect(MIN(startCaretRect.x(), endCaretRect.x()),
+                                startCaretRect.y(),
+                                abs(endCaretRect.x() - startCaretRect.x()),
+                                MAX(startCaretRect.height(), endCaretRect.height()));
+        else
+            firstRect = IntRect(startCaretRect.x(),
+                                startCaretRect.y(),
+                                startCaretRect.width() + extraWidthToEndOfLine,
+                                startCaretRect.height());
+
+        location = IntPoint(rightAligned ? firstRect.right() : firstRect.x(), firstRect.bottom());
+    }
+
+    int x, y;
+    gdk_window_get_origin(GTK_WIDGET(view->containingWindow())->window, &x, &y);
+
+    // FIXME: The IntSize(0, -1) is a hack to get the hit-testing to result in the selected element.
+    // Ideally we'd have the position of a context menu event be separate from its target node.
+    location = view->contentsToWindow(location) + IntSize(0, -1);
+    IntPoint global = location + IntSize(x, y);
+    PlatformMouseEvent event(location, global, NoButton, MouseEventPressed, 0, false, false, false, false, gtk_get_current_event_time());
+
+    return webkit_web_view_forward_context_menu_event(WEBKIT_WEB_VIEW(widget), event);
+}
 
 static void webkit_web_view_get_property(GObject *object, guint prop_id, GValue *value, GParamSpec *pspec) {
     WebKitWebView* webView = WEBKIT_WEB_VIEW(object);
@@ -180,7 +269,11 @@ static gboolean webkit_web_view_button_press_event(GtkWidget* widget, GdkEventBu
 
     // FIXME: need to keep track of subframe focus for key events
     gtk_widget_grab_focus(GTK_WIDGET(widget));
-    return frame->eventHandler()->handleMousePressEvent(PlatformMouseEvent(event));
+
+    if (event->button == 3)
+        return webkit_web_view_forward_context_menu_event(WEBKIT_WEB_VIEW(widget), PlatformMouseEvent(event));
+    else
+        return frame->eventHandler()->handleMousePressEvent(PlatformMouseEvent(event));
 }
 
 static gboolean webkit_web_view_button_release_event(GtkWidget* widget, GdkEventButton* event)
@@ -803,6 +896,7 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
     widgetClass->motion_notify_event = webkit_web_view_motion_event;
     widgetClass->scroll_event = webkit_web_view_scroll_event;
     widgetClass->size_allocate = webkit_web_view_size_allocate;
+    widgetClass->popup_menu = webkit_web_view_popup_menu_handler;
 
     GtkContainerClass* containerClass = GTK_CONTAINER_CLASS(webViewClass);
     containerClass->add = webkit_web_view_container_add;
@@ -886,6 +980,7 @@ static void webkit_web_view_init(WebKitWebView* webView)
 
     GTK_WIDGET_SET_FLAGS(webView, GTK_CAN_FOCUS);
     webViewData->mainFrame = WEBKIT_WEB_FRAME(webkit_web_frame_new(webView));
+    webViewData->lastPopupXPosition = webViewData->lastPopupYPosition = -1;
     webViewData->editable = false;
 
 #if GTK_CHECK_VERSION(2,10,0)
