@@ -67,4 +67,5 @@ module core {
         // Introduced in DOM Level 3:
         const unsigned short      TYPE_MISMATCH_ERR              = 17;
     };
+
 }

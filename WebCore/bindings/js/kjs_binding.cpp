@@ -27,12 +27,27 @@
 #include "kjs_binding.h"
 
 #include "DOMCoreException.h"
+#include "EventException.h"
 #include "ExceptionCode.h"
 #include "HTMLImageElement.h"
 #include "HTMLNames.h"
 #include "JSDOMCoreException.h"
+#include "JSEventException.h"
 #include "JSNode.h"
-#include "XMLHttpRequest.h"
+#include "JSRangeException.h"
+#include "JSXMLHttpRequestException.h"
+#include "RangeException.h"
+#include "XMLHttpRequestException.h"
+
+#if ENABLE(SVG)
+#include "JSSVGException.h"
+#include "SVGException.h"
+#endif
+
+#if ENABLE(XPATH)
+#include "JSXPathException.h"
+#include "XPathException.h"
+#endif
 
 using namespace WebCore;
 using namespace HTMLNames;
@@ -263,13 +278,42 @@ void setDOMException(ExecState* exec, ExceptionCode ec)
         return;
 
     // To be removed: See XMLHttpRequest.h.
-    if (ec == PERMISSION_DENIED) {
+    if (ec == XMLHttpRequestException::PERMISSION_DENIED) {
         throwError(exec, GeneralError, "Permission denied");
         return;
     }
 
-    DOMCoreException* exception = new DOMCoreException(ec);
-    JSValue* errorObject = toJS(exec, exception);
+    ExceptionCodeDescription description;
+    getExceptionCodeDescription(ec, description);
+
+    JSValue* errorObject;
+    switch (description.type) {
+        case DOMExceptionType:
+            errorObject = toJS(exec, new DOMCoreException(description));
+            break;
+        case RangeExceptionType:
+            errorObject = toJS(exec, new RangeException(description));
+            break;
+        case EventExceptionType:
+            errorObject = toJS(exec, new EventException(description));
+            break;
+        case XMLHttpRequestExceptionType:
+            errorObject = toJS(exec, new XMLHttpRequestException(description));
+            break;
+#if ENABLE(SVG)
+        case SVGExceptionType:
+            errorObject = toJS(exec, new SVGException(description), 0);
+            break;
+#endif
+#if ENABLE(XPATH)
+        case XPathExceptionType:
+            errorObject = toJS(exec, new XPathException(description));
+            break;
+#endif
+        default:
+            ASSERT_NOT_REACHED();
+    }
+
     exec->setException(errorObject);
 }
 

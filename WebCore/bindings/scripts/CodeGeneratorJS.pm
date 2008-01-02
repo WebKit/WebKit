@@ -666,7 +666,7 @@ sub GenerateImplementation
             my $name = $constant->name;
             push(@hashKeys, $name);
 
-            my $value = HashValueForClassAndName($implClassName, $name);
+            my $value = $constant->value;
             push(@hashValues, $value);
 
             my $special = "DontDelete|ReadOnly";
@@ -699,7 +699,7 @@ sub GenerateImplementation
         my $name = $constant->name;
         push(@hashKeys, $name);
 
-        my $value = HashValueForClassAndName($implClassName, $name);
+        my $value = $constant->value;
         push(@hashValues, $value);
 
         my $special = "DontDelete|ReadOnly";

@@ -26,21 +26,31 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DOMCoreException_h
-#define DOMCodeException_h
+#ifndef ExceptionBase_h
+#define ExceptionBase_h
 
-#include "ExceptionBase.h"
+#include "ExceptionCode.h"
+#include "PlatformString.h"
+#include <wtf/RefCounted.h>
 
 namespace WebCore {
 
-    class DOMCoreException : public ExceptionBase {
+    class ExceptionBase : public RefCounted<ExceptionBase> {
     public:
-        DOMCoreException(const ExceptionCodeDescription& description)
-            : ExceptionBase(description)
-        {
-        }
+        ExceptionBase(const ExceptionCodeDescription&);
+
+        unsigned short code() const { return m_code; }
+        String name() const { return m_name; }
+        String message() const { return m_message; }
+
+        String toString() const;
+
+    private:
+        unsigned short m_code;
+        String m_name;
+        String m_message;
     };
 
 } // namespace WebCore
 
-#endif // DOMCoreException_h
+#endif // ExceptionBase_h

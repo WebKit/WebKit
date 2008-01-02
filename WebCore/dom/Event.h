@@ -37,11 +37,6 @@ namespace WebCore {
     // FIXME: this should probably defined elsewhere.
     typedef unsigned long long DOMTimeStamp;
 
-    // FIXME: these too should probably defined elsewhere.
-    const int EventExceptionOffset = 100;
-    const int EventExceptionMax = 199;
-    enum EventExceptionCode { UNSPECIFIED_EVENT_TYPE_ERR = EventExceptionOffset };
-
     class Event : public RefCounted<Event> {
     public:
         enum PhaseType { 

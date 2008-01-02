@@ -252,6 +252,7 @@ module window {
         attribute TextEventConstructor TextEvent;
         attribute UIEventConstructor UIEvent;
         attribute WheelEventConstructor WheelEvent;
+        attribute EventExceptionConstructor EventException;
 
         attribute NodeFilterConstructor NodeFilter;
         attribute RangeConstructor Range;
@@ -264,6 +265,8 @@ module window {
         attribute DOMParserConstructor DOMParser;
         attribute XMLSerializerConstructor XMLSerializer;
 
+        attribute XMLHttpRequestExceptionConstructor XMLHttpRequestException;
+
 #if defined(ENABLE_VIDEO)
         attribute HTMLAudioElementConstructor HTMLAudioElement;
         attribute HTMLMediaElementConstructor HTMLMediaElement;
@@ -274,6 +277,7 @@ module window {
 #if defined(ENABLE_XPATH)
         attribute XPathEvaluatorConstructor XPathEvaluator;
         attribute XPathResultConstructor XPathResult;
+        attribute XPathExceptionConstructor XPathException;
 #endif
 
 #if defined(ENABLE_SVG)

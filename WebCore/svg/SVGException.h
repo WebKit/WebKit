@@ -24,29 +24,29 @@
 
 #if ENABLE(SVG)
 
-#include <wtf/RefCounted.h>
+#include "ExceptionBase.h"
 
 namespace WebCore {
 
-    const int SVGExceptionOffset = 300;
-    const int SVGExceptionMax = 399;
-
-    enum SVGExceptionCode {
-        SVG_WRONG_TYPE_ERR          = SVGExceptionOffset,
-        SVG_INVALID_VALUE_ERR       = SVGExceptionOffset + 1,
-        SVG_MATRIX_NOT_INVERTABLE   = SVGExceptionOffset + 2
-    };
-
-    class SVGException : public RefCounted<SVGException> {
+    class SVGException : public ExceptionBase {
     public:
-        enum {
-            SVG_WRONG_TYPE_ERR          = 0,
-            SVG_INVALID_VALUE_ERR       = 1,
-            SVG_MATRIX_NOT_INVERTABLE   = 2
+        SVGException(const ExceptionCodeDescription& description)
+            : ExceptionBase(description)
+        {
+        }
+
+        static const int SVGExceptionOffset = 300;
+        static const int SVGExceptionMax = 399;
+
+        enum SVGExceptionCode {
+            SVG_WRONG_TYPE_ERR          = SVGExceptionOffset,
+            SVG_INVALID_VALUE_ERR       = SVGExceptionOffset + 1,
+            SVG_MATRIX_NOT_INVERTABLE   = SVGExceptionOffset + 2
         };
     };
 
 } // namespace WebCore
 
 #endif // ENABLE(SVG)
+
 #endif // SVGException_h

@@ -26,21 +26,28 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DOMCoreException_h
-#define DOMCodeException_h
+#ifndef EventException_h
+#define EventException_h
 
 #include "ExceptionBase.h"
 
 namespace WebCore {
 
-    class DOMCoreException : public ExceptionBase {
+    class EventException : public ExceptionBase {
     public:
-        DOMCoreException(const ExceptionCodeDescription& description)
+        EventException(const ExceptionCodeDescription& description)
             : ExceptionBase(description)
         {
         }
+
+        static const int EventExceptionOffset = 100;
+        static const int EventExceptionMax = 199;
+
+        enum EventExceptionCode {
+            UNSPECIFIED_EVENT_TYPE_ERR = EventExceptionOffset
+        };
     };
 
 } // namespace WebCore
 
-#endif // DOMCoreException_h
+#endif // EventException_h

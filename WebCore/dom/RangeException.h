@@ -27,20 +27,26 @@
 #ifndef RangeException_h
 #define RangeException_h
 
-#include <wtf/RefCounted.h>
+#include "ExceptionBase.h"
 
 namespace WebCore {
 
-const int RangeExceptionOffset = 200;
-const int RangeExceptionMax = 299;
-enum RangeExceptionCode { BAD_BOUNDARYPOINTS_ERR = RangeExceptionOffset + 1, INVALID_NODE_TYPE_ERR };
+    class RangeException : public ExceptionBase {
+    public:
+        RangeException(const ExceptionCodeDescription& description)
+            : ExceptionBase(description)
+        {
+        }
 
-class RangeException : public RefCounted<RangeException> {
-public :
-    static const unsigned short BAD_BOUNDARYPOINTS_ERR = 1;
-    static const unsigned short INVALID_NODE_TYPE_ERR = 2;
-};
+        static const int RangeExceptionOffset = 200;
+        static const int RangeExceptionMax = 299;
 
-} // namespace
+        enum RangeExceptionCode {
+            BAD_BOUNDARYPOINTS_ERR = RangeExceptionOffset + 1,
+            INVALID_NODE_TYPE_ERR
+        };
+    };
 
-#endif
+} // namespace WebCore
+
+#endif // RangeException_h

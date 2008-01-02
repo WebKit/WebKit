@@ -26,28 +26,29 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "DOMCoreException.h"
+#ifndef XMLHttpRequestException_h
+#define XMLHttpRequestException_h
+
+#include "ExceptionBase.h"
 
 namespace WebCore {
 
-DOMCoreException::DOMCoreException(ExceptionCode ec)
-{
-    ExceptionCodeDescription description;
-    getExceptionCodeDescription(ec, description);
+    class XMLHttpRequestException : public ExceptionBase {
+    public:
+        XMLHttpRequestException(const ExceptionCodeDescription& description)
+            : ExceptionBase(description)
+        {
+        }
 
-    m_code = description.code;
+        static const int XMLHttpRequestExceptionOffset = 500;
+        static const int XMLHttpRequestExceptionMax = 699;
 
-    if (description.name) {
-        m_name = description.name;
-        m_message = String::format("%s: %s Exception %d", description.name, description.typeName, description.code);
-    } else
-        m_message = String::format("%s Exception %d", description.typeName, description.code);
-}
-
-String DOMCoreException::toString() const
-{
-    return "Error: " + m_message;
-}
+        enum XMLHttpRequestExceptionCode {
+            PERMISSION_DENIED = XMLHttpRequestExceptionOffset, // Use SECURITY_ERR when that's in DOM Core, http://bugs.webkit.org/show_bug.cgi?id=12182
+            NETWORK_ERR = XMLHttpRequestExceptionOffset + 101
+        };
+    };
 
 } // namespace WebCore
+
+#endif // XMLHttpRequestException_h

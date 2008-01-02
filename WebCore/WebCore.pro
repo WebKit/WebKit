@@ -278,6 +278,7 @@ IDL_BINDINGS += \
     dom/Entity.idl \
     dom/EntityReference.idl \
     dom/Event.idl \
+    dom/EventException.idl \
 #    dom/EventListener.idl \
 #    dom/EventTarget.idl \
     dom/KeyboardEvent.idl \
@@ -370,6 +371,7 @@ IDL_BINDINGS += \
     page/History.idl \
     page/Screen.idl \
     xml/DOMParser.idl \
+    xml/XMLHttpRequestException.idl \
     xml/XMLSerializer.idl
 
 
@@ -485,7 +487,6 @@ SOURCES += \
     dom/Document.cpp \
     dom/DocumentFragment.cpp \
     dom/DocumentType.cpp \
-    dom/DOMCoreException.cpp \
     dom/DOMImplementation.cpp \
     dom/DynamicNodeList.cpp \
     dom/EditingText.cpp \
@@ -496,6 +497,7 @@ SOURCES += \
     dom/EventNames.cpp \
     dom/EventTarget.cpp \
     dom/EventTargetNode.cpp \
+    dom/ExceptionBase.cpp \
     dom/ExceptionCode.cpp \
     dom/KeyboardEvent.cpp \
     dom/MappedAttribute.cpp \
@@ -1141,6 +1143,7 @@ contains(DEFINES, ENABLE_XPATH=1) {
 
     IDL_BINDINGS += \
         xml/XPathNSResolver.idl \
+        xml/XPathException.idl \
         xml/XPathExpression.idl \
         xml/XPathResult.idl \
         xml/XPathEvaluator.idl

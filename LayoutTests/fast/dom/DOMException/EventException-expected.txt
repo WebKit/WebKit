@@ -1,0 +1,16 @@
+Tests the properties of the EventException object.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS e.toString() is "Error: UNSPECIFIED_EVENT_TYPE_ERR: DOM Events Exception 0"
+PASS Object.prototype.toString.call(e) is "[object EventException]"
+PASS Object.prototype.toString.call(e.__proto__) is "[object EventExceptionPrototype]"
+PASS e.constructor.toString() is "[object EventExceptionConstructor]"
+PASS e.constructor is window.EventException
+PASS e.UNSPECIFIED_EVENT_TYPE_ERR is e.constructor.UNSPECIFIED_EVENT_TYPE_ERR
+PASS e.UNSPECIFIED_EVENT_TYPE_ERR is 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

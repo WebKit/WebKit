@@ -1,5 +1,101 @@
 2008-01-01  Sam Weinig  <sam@webkit.org>
 
+        Reviewed by Darin.
+
+        Patch for http://bugs.webkit.org/show_bug.cgi?id=16691
+        Use real JS objects for the rest of the DOMExceptions (EventException, RangeException, etc)
+
+        - Create JS objects for all the different types of exceptions, each with there own prototype and constructor.
+        - Abstract all the logic and storage for exception classes in to an ExceptionBase class.
+        - Move specialized ExceptionCodes into the exception classes. (ie. the EventExceptionCode enum is now in EventException).
+
+        Tests: fast/dom/DOMException/EventException.html
+               fast/dom/DOMException/RangeException.html
+               fast/dom/DOMException/XPathException.html
+               http/tests/xmlhttprequest/XMLHttpRequestException.html
+               svg/custom/SVGException.html
+
+        * DerivedSources.make:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * WebCoreSources.bkl:
+        * bindings/js/JSSVGMatrixCustom.cpp:
+        (WebCore::JSSVGMatrix::inverse):
+        (WebCore::JSSVGMatrix::rotateFromVector):
+        * bindings/js/kjs_binding.cpp:
+        (KJS::setDOMException):
+        * bindings/scripts/CodeGeneratorJS.pm: Use the constant values defined
+        in the IDL as the ObjC bindings do.
+        * bindings/scripts/CodeGeneratorObjC.pm:
+        * dom/DOMCoreException.cpp: Removed.
+        * dom/DOMCoreException.h:
+        (WebCore::DOMCoreException::DOMCoreException):
+        * dom/DOMCoreException.idl:
+        * dom/Event.h:
+        * dom/EventException.h: Copied from WebCore/dom/DOMCoreException.h.
+        (WebCore::EventException::EventException):
+        (WebCore::EventException::):
+        * dom/EventException.idl: Copied from WebCore/dom/DOMCoreException.idl.
+        * dom/EventTargetNode.cpp:
+        (WebCore::EventTargetNode::dispatchEvent):
+        * dom/ExceptionBase.cpp: Copied from WebCore/dom/DOMCoreException.cpp.
+        (WebCore::ExceptionBase::ExceptionBase):
+        (WebCore::ExceptionBase::toString):
+        * dom/ExceptionBase.h: Copied from WebCore/dom/DOMCoreException.h.
+        (WebCore::ExceptionBase::code):
+        * dom/ExceptionCode.cpp:
+        (WebCore::getExceptionCodeDescription):
+        * dom/ExceptionCode.h:
+        (WebCore::):
+        * dom/Range.cpp:
+        (WebCore::Range::insertNode):
+        (WebCore::Range::checkNodeWOffset):
+        (WebCore::Range::checkNodeBA):
+        (WebCore::Range::selectNode):
+        (WebCore::Range::selectNodeContents):
+        (WebCore::Range::surroundContents):
+        * dom/RangeException.h:
+        (WebCore::RangeException::RangeException):
+        (WebCore::RangeException::):
+        * dom/RangeException.idl:
+        * page/DOMWindow.idl:
+        * svg/SVGColor.cpp:
+        (WebCore::SVGColor::setRGBColor):
+        * svg/SVGException.h:
+        (WebCore::SVGException::SVGException):
+        (WebCore::SVGException::):
+        * svg/SVGException.idl:
+        * svg/SVGLocatable.cpp:
+        (WebCore::SVGLocatable::getTransformToElement):
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::dispatchEvent):
+        (WebCore::XMLHttpRequest::open):
+        (WebCore::XMLHttpRequest::send):
+        * xml/XMLHttpRequest.h:
+        * xml/XMLHttpRequestException.h: Copied from WebCore/dom/DOMCoreException.h.
+        (WebCore::XMLHttpRequestException::XMLHttpRequestException):
+        (WebCore::XMLHttpRequestException::):
+        * xml/XMLHttpRequestException.idl: Copied from WebCore/dom/DOMCoreException.idl.
+        * xml/XPathEvaluator.h:
+        * xml/XPathException.h: Copied from WebCore/dom/DOMCoreException.h.
+        (WebCore::XPathException::XPathException):
+        (WebCore::XPathException::):
+        * xml/XPathException.idl: Copied from WebCore/dom/DOMCoreException.idl.
+        * xml/XPathParser.cpp:
+        (WebCore::XPath::Parser::parseStatement):
+        * xml/XPathResult.cpp:
+        (WebCore::XPathResult::convertTo):
+        (WebCore::XPathResult::numberValue):
+        (WebCore::XPathResult::stringValue):
+        (WebCore::XPathResult::booleanValue):
+        (WebCore::XPathResult::singleNodeValue):
+        (WebCore::XPathResult::snapshotLength):
+        (WebCore::XPathResult::iterateNext):
+        (WebCore::XPathResult::snapshotItem):
+
+2008-01-01  Sam Weinig  <sam@webkit.org>
+
         Remove JSDomExceptionConstructor.lut.h from clean step
         as it no longer exists.
 

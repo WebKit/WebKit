@@ -633,6 +633,14 @@
 				>
 			</File>
 			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSEventException.cpp"
+				>
+			</File>
+			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSEventException.h"
+				>
+			</File>
+			<File
 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSEventTargetBase.lut.h"
 				>
 			</File>
@@ -2461,6 +2469,14 @@
 				>
 			</File>
 			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSXMLHttpRequestException.cpp"
+				>
+			</File>
+			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSXMLHttpRequestException.h"
+				>
+			</File>
+			<File
 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSXMLSerializer.cpp"
 				>
 			</File>
@@ -2474,6 +2490,14 @@
 			</File>
 			<File
 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSXPathEvaluator.h"
+				>
+			</File>
+			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSXPathException.cpp"
+				>
+			</File>
+			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSXPathException.h"
 				>
 			</File>
 			<File
@@ -5598,6 +5622,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\xml\XMLHttpRequestException.h"
+				>
+			</File>
+			<File
 				RelativePath="..\xml\XMLSerializer.cpp"
 				>
 			</File>
@@ -5611,6 +5639,10 @@
 			</File>
 			<File
 				RelativePath="..\xml\XPathEvaluator.h"
+				>
+			</File>
+			<File
+				RelativePath="..\xml\XPathException.h"
 				>
 			</File>
 			<File
@@ -5953,10 +5985,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\dom\DOMCoreException.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\dom\DOMCoreException.h"
 				>
 			</File>
@@ -6017,6 +6045,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\dom\EventException.h"
+				>
+			</File>
+			<File
 				RelativePath="..\dom\EventListener.h"
 				>
 			</File>
@@ -6042,6 +6074,14 @@
 			</File>
 			<File
 				RelativePath="..\dom\EventTargetNode.h"
+				>
+			</File>
+			<File
+				RelativePath="..\dom\ExceptionBase.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\dom\ExceptionBase.h"
 				>
 			</File>
 			<File

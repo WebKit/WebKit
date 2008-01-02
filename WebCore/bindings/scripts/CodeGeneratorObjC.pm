@@ -1291,14 +1291,14 @@ sub GenerateImplementation
                 # Special case with rotateFromVector & SVGMatrix        
                 push(@functionContent, "    $exceptionInit\n");
                 push(@functionContent, "    if (x == 0.0 || y == 0.0)\n");
-                push(@functionContent, "        ec = WebCore::SVG_INVALID_VALUE_ERR;\n");
+                push(@functionContent, "        ec = WebCore::SVGException::SVG_INVALID_VALUE_ERR;\n");
                 push(@functionContent, "    $exceptionRaiseOnError\n");
                 push(@functionContent, "    return [DOMSVGMatrix _wrapSVGMatrix:$content];\n");
             } elsif ($svgMatrixInverse) {
                 # Special case with inverse & SVGMatrix
                 push(@functionContent, "    $exceptionInit\n");
                 push(@functionContent, "    if (!$caller->isInvertible())\n");
-                push(@functionContent, "        ec = WebCore::SVG_MATRIX_NOT_INVERTABLE;\n");
+                push(@functionContent, "        ec = WebCore::SVGException::SVG_MATRIX_NOT_INVERTABLE;\n");
                 push(@functionContent, "    $exceptionRaiseOnError\n");
                 push(@functionContent, "    return [DOMSVGMatrix _wrapSVGMatrix:$content];\n");
             } elsif ($returnType eq "void") {

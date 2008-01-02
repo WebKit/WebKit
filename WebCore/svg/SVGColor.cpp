@@ -76,7 +76,7 @@ void SVGColor::setRGBColor(const String& rgbColor, ExceptionCode& ec)
     if (color.isValid())
         m_color = color;
     else
-        ec = SVG_INVALID_VALUE_ERR;
+        ec = SVGException::SVG_INVALID_VALUE_ERR;
 }
 
 Color SVGColor::colorFromRGBColorString(const String& colorString)

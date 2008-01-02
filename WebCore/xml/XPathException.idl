@@ -26,21 +26,25 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DOMCoreException_h
-#define DOMCodeException_h
+module xpath {
 
-#include "ExceptionBase.h"
+    interface [
+        GenerateConstructor,
+        Conditional=XPATH
+    ] XPathException {
 
-namespace WebCore {
+        readonly attribute unsigned short   code;
+        readonly attribute DOMString        name;
+        readonly attribute DOMString        message;
 
-    class DOMCoreException : public ExceptionBase {
-    public:
-        DOMCoreException(const ExceptionCodeDescription& description)
-            : ExceptionBase(description)
-        {
-        }
+#if defined(LANGUAGE_JAVASCRIPT)
+        // Override in a Mozilla compatible format
+        [DontEnum] DOMString toString();
+#endif
+
+        // XPathExceptionCode
+        const unsigned short INVALID_EXPRESSION_ERR = 51;
+        const unsigned short TYPE_ERR = 52;
     };
 
-} // namespace WebCore
-
-#endif // DOMCoreException_h
+}

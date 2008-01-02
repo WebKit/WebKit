@@ -345,9 +345,10 @@ all : \
     JSEntity.h \
     JSEntityReference.h \
     JSEvent.h \
+    JSEventException.h \
     JSEventTargetBase.lut.h \
-    JSHTMLAppletElement.h \
     JSHTMLAnchorElement.h \
+    JSHTMLAppletElement.h \
     JSHTMLAreaElement.h \
     JSHTMLAudioElement.h \
     JSHTMLBaseElement.h \
@@ -577,13 +578,15 @@ all : \
     JSTreeWalker.h \
     JSUIEvent.h \
     JSVoidCallback.h \
+    JSWheelEvent.h \
+    JSXMLHttpRequest.lut.h \
+    JSXMLHttpRequestException.h \
+    JSXMLSerializer.h \
     JSXPathEvaluator.h \
+    JSXPathException.h \
     JSXPathExpression.h \
     JSXPathNSResolver.h \
     JSXPathResult.h \
-    JSWheelEvent.h \
-    JSXMLHttpRequest.lut.h \
-    JSXMLSerializer.h \
     JSXSLTProcessor.lut.h \
     SVGElementFactory.cpp \
     SVGNames.cpp \

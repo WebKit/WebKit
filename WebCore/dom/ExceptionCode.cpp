@@ -26,16 +26,16 @@
 #include "config.h"
 #include "ExceptionCode.h"
 
-#include "Event.h"
+#include "EventException.h"
 #include "RangeException.h"
-#include "XMLHttpRequest.h"
+#include "XMLHttpRequestException.h"
 
 #if ENABLE(SVG)
 #include "SVGException.h"
 #endif
 
 #if ENABLE(XPATH)
-#include "XPathEvaluator.h"
+#include "XPathException.h"
 #endif
 
 namespace WebCore {
@@ -92,48 +92,56 @@ void getExceptionCodeDescription(ExceptionCode ec, ExceptionCodeDescription& des
 {
     ASSERT(ec);
 
-    const char* typeName = "DOM";
+    const char* typeName;
     int code = ec;
     const char* const* nameTable;
     int nameTableSize;
     int nameTableOffset;
-    if (code >= RangeExceptionOffset && code <= RangeExceptionMax) {
+    ExceptionType type;
+    
+    if (code >= RangeException::RangeExceptionOffset && code <= RangeException::RangeExceptionMax) {
+        type = RangeExceptionType;
         typeName = "DOM Range";
-        code -= RangeExceptionOffset;
+        code -= RangeException::RangeExceptionOffset;
         nameTable = rangeExceptionNames;
         nameTableSize = sizeof(rangeExceptionNames) / sizeof(rangeExceptionNames[0]);
-        nameTableOffset = BAD_BOUNDARYPOINTS_ERR;
-    } else if (code >= EventExceptionOffset && code <= EventExceptionMax) {
+        nameTableOffset = RangeException::BAD_BOUNDARYPOINTS_ERR;
+    } else if (code >= EventException::EventExceptionOffset && code <= EventException::EventExceptionMax) {
+        type = EventExceptionType;
         typeName = "DOM Events";
-        code -= EventExceptionOffset;
+        code -= EventException::EventExceptionOffset;
         nameTable = eventExceptionNames;
         nameTableSize = sizeof(eventExceptionNames) / sizeof(eventExceptionNames[0]);
-        nameTableOffset = UNSPECIFIED_EVENT_TYPE_ERR;
-    } else if (code >= XMLHttpRequestExceptionOffset && code <= XMLHttpRequestExceptionMax) {
+        nameTableOffset = EventException::UNSPECIFIED_EVENT_TYPE_ERR;
+    } else if (code >= XMLHttpRequestException::XMLHttpRequestExceptionOffset && code <= XMLHttpRequestException::XMLHttpRequestExceptionMax) {
+        type = XMLHttpRequestExceptionType;
         typeName = "XMLHttpRequest";
-        code -= XMLHttpRequestExceptionOffset;
+        code -= XMLHttpRequestException::XMLHttpRequestExceptionOffset;
         nameTable = xmlHttpRequestExceptionNames;
         nameTableSize = sizeof(xmlHttpRequestExceptionNames) / sizeof(xmlHttpRequestExceptionNames[0]);
         // XMLHttpRequest exception codes start with 101 and we don't want 100 empty elements in the name array
-        nameTableOffset = NETWORK_ERR;
+        nameTableOffset = XMLHttpRequestException::NETWORK_ERR;
 #if ENABLE(XPATH)
-    } else if (code >= XPathExceptionOffset && code <= XPathExceptionMax) {
+    } else if (code >= XPathException::XPathExceptionOffset && code <= XPathException::XPathExceptionMax) {
+        type = XPathExceptionType;
         typeName = "DOM XPath";
-        code -= XPathExceptionOffset;
+        code -= XPathException::XPathExceptionOffset;
         nameTable = xpathExceptionNames;
         nameTableSize = sizeof(xpathExceptionNames) / sizeof(xpathExceptionNames[0]);
         // XPath exception codes start with 51 and we don't want 51 empty elements in the name array
-        nameTableOffset = INVALID_EXPRESSION_ERR;
+        nameTableOffset = XPathException::INVALID_EXPRESSION_ERR;
 #endif
 #if ENABLE(SVG)
-    } else if (code >= SVGExceptionOffset && code <= SVGExceptionMax) {
+    } else if (code >= SVGException::SVGExceptionOffset && code <= SVGException::SVGExceptionMax) {
+        type = SVGExceptionType;
         typeName = "DOM SVG";
-        code -= SVGExceptionOffset;
+        code -= SVGException::SVGExceptionOffset;
         nameTable = svgExceptionNames;
         nameTableSize = sizeof(svgExceptionNames) / sizeof(svgExceptionNames[0]);
-        nameTableOffset = SVG_WRONG_TYPE_ERR;
+        nameTableOffset = SVGException::SVG_WRONG_TYPE_ERR;
 #endif
     } else {
+        type = DOMExceptionType;
         typeName = "DOM";
         nameTable = exceptionNames;
         nameTableSize = sizeof(exceptionNames) / sizeof(exceptionNames[0]);
@@ -143,9 +151,10 @@ void getExceptionCodeDescription(ExceptionCode ec, ExceptionCodeDescription& des
     description.typeName = typeName;
     description.name = (ec >= nameTableOffset && ec - nameTableOffset < nameTableSize) ? nameTable[ec - nameTableOffset] : 0;
     description.code = code;
+    description.type = type;
 
     // All exceptions used in the DOM code should have names.
     ASSERT(description.name);
 }
 
-}
+} // namespace WebCore

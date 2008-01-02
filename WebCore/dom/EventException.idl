@@ -26,21 +26,25 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DOMCoreException_h
-#define DOMCodeException_h
+module events {
 
-#include "ExceptionBase.h"
+    // Introduced in DOM Level 2:
+    interface [
+        GenerateConstructor
+    ] EventException {
 
-namespace WebCore {
+        readonly attribute unsigned short   code;
+        readonly attribute DOMString        name;
+        readonly attribute DOMString        message;
 
-    class DOMCoreException : public ExceptionBase {
-    public:
-        DOMCoreException(const ExceptionCodeDescription& description)
-            : ExceptionBase(description)
-        {
-        }
+#if defined(LANGUAGE_JAVASCRIPT)
+        // Override in a Mozilla compatible format
+        [DontEnum] DOMString toString();
+#endif
+
+        // EventExceptionCode
+        const unsigned short UNSPECIFIED_EVENT_TYPE_ERR = 0;
+
     };
 
-} // namespace WebCore
-
-#endif // DOMCoreException_h
+}

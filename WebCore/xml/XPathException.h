@@ -26,21 +26,33 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DOMCoreException_h
-#define DOMCodeException_h
+#ifndef XPathException_h
+#define XPathException_h
+
+#if ENABLE(XPATH)
 
 #include "ExceptionBase.h"
 
 namespace WebCore {
 
-    class DOMCoreException : public ExceptionBase {
+    class XPathException : public ExceptionBase {
     public:
-        DOMCoreException(const ExceptionCodeDescription& description)
+        XPathException(const ExceptionCodeDescription& description)
             : ExceptionBase(description)
         {
         }
+
+        static const int XPathExceptionOffset = 400;
+        static const int XPathExceptionMax = 499;
+
+        enum XPathExceptionCode {
+            INVALID_EXPRESSION_ERR = XPathExceptionOffset + 51,
+            TYPE_ERR
+        };
     };
 
 } // namespace WebCore
 
-#endif // DOMCoreException_h
+#endif // ENABLE(XPATH)
+
+#endif // XPathException_h

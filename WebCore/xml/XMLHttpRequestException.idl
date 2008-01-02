@@ -26,21 +26,23 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DOMCoreException_h
-#define DOMCodeException_h
+module xml {
 
-#include "ExceptionBase.h"
+    interface [
+        GenerateConstructor
+    ] XMLHttpRequestException {
 
-namespace WebCore {
+        readonly attribute unsigned short   code;
+        readonly attribute DOMString        name;
+        readonly attribute DOMString        message;
 
-    class DOMCoreException : public ExceptionBase {
-    public:
-        DOMCoreException(const ExceptionCodeDescription& description)
-            : ExceptionBase(description)
-        {
-        }
+#if defined(LANGUAGE_JAVASCRIPT)
+        // Override in a Mozilla compatible format
+        [DontEnum] DOMString toString();
+#endif
+
+        // XMLHttpRequestExceptionCode
+        const unsigned short NETWORK_ERR = 101;
     };
 
-} // namespace WebCore
-
-#endif // DOMCoreException_h
+}
