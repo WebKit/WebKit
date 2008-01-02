@@ -1,3 +1,14 @@
+2008-01-01  David D. Kilzer  <ddkilzer@webkit.org>
+
+        Reviewed by Dan.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=16700
+          Fix -[WebDefaultPolicyDelegate webView:decidePolicyForMIMEType:request:frame:decisionListener:]
+
+        * DefaultDelegates/WebDefaultPolicyDelegate.m: Check return value of
+        -[NSFileManager fileExistsAtPath:isDirectory:] before using the value
+        of isDirectory.
+
 2007-12-29  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Eric.
