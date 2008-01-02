@@ -270,7 +270,7 @@ static bool executeDelete(Frame* frame, Event*, EditorCommandSource source, cons
             return true;
         case CommandFromDOM:
         case CommandFromDOMWithUserInterface:
-            // If the curernt selection is a caret, delete the preceding character. IE performs forwardDelete, but we currently side with Firefox.
+            // If the current selection is a caret, delete the preceding character. IE performs forwardDelete, but we currently side with Firefox.
             // Doesn't scroll to make the selection visible, or modify the kill ring (this time, siding with IE, not Firefox).
             TypingCommand::deleteKeyPressed(frame->document(), frame->selectionGranularity() == WordGranularity);
             return true;

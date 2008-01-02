@@ -1,5 +1,11 @@
 2008-01-02  Alexey Proskuryakov  <ap@webkit.org>
 
+        Fixed a typo (pointed out in review, but I somehow missed it at first).
+
+        * editing/EditorCommand.cpp: (WebCore::executeDelete):
+
+2008-01-02  Alexey Proskuryakov  <ap@webkit.org>
+
         Reviewed by Darin.
 
         Resolved several FIXMEs in EditorCommand.
