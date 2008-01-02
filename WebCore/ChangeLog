@@ -1,3 +1,11 @@
+2008-01-01  Darin Adler  <darin@apple.com>
+
+        - fix release build
+
+        * bindings/js/kjs_binding.cpp:
+        (KJS::setDOMException): Initialize to avoid uninitialized variable warning.
+        Removed default so we get a warning if there's a missing case.
+
 2008-01-01  David D. Kilzer  <ddkilzer@webkit.org>
 
         Scripting MIME Types application/ecmascript, application/javascript not viewable

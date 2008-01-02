@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
- *  Copyright (C) 2004, 2005, 2006, 2007 Apple Inc. All rights reserved.
+ *  Copyright (C) 2004, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
  *  Copyright (C) 2007 Samuel Weinig <sam@webkit.org>
  *
  *  This library is free software; you can redistribute it and/or
@@ -286,7 +286,7 @@ void setDOMException(ExecState* exec, ExceptionCode ec)
     ExceptionCodeDescription description;
     getExceptionCodeDescription(ec, description);
 
-    JSValue* errorObject;
+    JSValue* errorObject = 0;
     switch (description.type) {
         case DOMExceptionType:
             errorObject = toJS(exec, new DOMCoreException(description));
@@ -310,10 +310,9 @@ void setDOMException(ExecState* exec, ExceptionCode ec)
             errorObject = toJS(exec, new XPathException(description));
             break;
 #endif
-        default:
-            ASSERT_NOT_REACHED();
     }
 
+    ASSERT(errorObject);
     exec->setException(errorObject);
 }
 
