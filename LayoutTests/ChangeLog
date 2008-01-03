@@ -1,3 +1,17 @@
+2008-01-03  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        http://bugs.webkit.org/show_bug.cgi?id=10909
+        Hixie's XMLHttpRequest/018.html test fails
+
+        This was fixed earlier, just adding a test case.
+
+        * http/tests/xmlhttprequest/web-apps/018-expected.txt: Added.
+        * http/tests/xmlhttprequest/web-apps/018.html: Added.
+        * http/tests/xmlhttprequest/web-apps/resources: Added.
+        * http/tests/xmlhttprequest/web-apps/resources/018-test.xml: Added.
+
 2008-01-02  Darin Adler  <darin@apple.com>
 
         Reviewed by Geoff.
