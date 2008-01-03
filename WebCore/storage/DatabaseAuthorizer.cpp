@@ -25,6 +25,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 #include "config.h"
 #include "DatabaseAuthorizer.h"
 
@@ -207,6 +208,5 @@ int DatabaseAuthorizer::denyBasedOnTableName(const String& tableName)
 
     return SQLAuthAllow;
 }
-
 
 } // namespace WebCore

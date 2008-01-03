@@ -25,6 +25,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 #include "config.h"
 #include "Database.h"
 
@@ -558,6 +559,5 @@ String Database::stringIdentifier() const
     // Return a deep copy for ref counting thread safety
     return m_name.copy();
 }
-
 
 }
