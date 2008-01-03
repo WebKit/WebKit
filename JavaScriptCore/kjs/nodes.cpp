@@ -3703,7 +3703,7 @@ JSValue* DoWhileNode::execute(ExecState* exec)
         exec->popIteration();
 
         if (exec->dynamicGlobalObject()->timedOut())
-            exec->setInterruptedCompletion();
+            return exec->setInterruptedCompletion();
 
         if (statementValue)
             value = statementValue;
