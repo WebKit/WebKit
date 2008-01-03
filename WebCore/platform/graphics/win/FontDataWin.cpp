@@ -170,7 +170,7 @@ FontData* FontData::smallCapsFontData(const FontDescription& fontDescription) co
         } else {
             LOGFONT winfont;
             GetObject(m_font.hfont(), sizeof(LOGFONT), &winfont);
-            winfont.lfHeight = -lroundf(smallCapsHeight * m_font.useGDI() ? 1 : 32);
+            winfont.lfHeight = -lroundf(smallCapsHeight * (m_font.useGDI() ? 1 : 32));
             HFONT hfont = CreateFontIndirect(&winfont);
             m_smallCapsFontData = new FontData(FontPlatformData(hfont, smallCapsHeight, fontDescription.bold(), fontDescription.italic(), m_font.useGDI()));
         }
