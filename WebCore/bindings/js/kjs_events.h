@@ -99,7 +99,7 @@ namespace WebCore {
 
     class JSClipboard : public KJS::DOMObject {
     public:
-        JSClipboard(KJS::ExecState*, Clipboard*);
+        JSClipboard(KJS::JSObject* prototype, Clipboard*);
         virtual ~JSClipboard();
 
         virtual bool getOwnPropertySlot(KJS::ExecState*, const KJS::Identifier&, KJS::PropertySlot&);

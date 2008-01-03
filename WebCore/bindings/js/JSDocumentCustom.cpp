@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple, Inc. All rights reserved.
+ * Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -85,13 +85,13 @@ JSValue* toJS(ExecState* exec, Document* doc)
         return ret;
 
     if (doc->isHTMLDocument())
-        ret = new JSHTMLDocument(exec, static_cast<HTMLDocument*>(doc));
+        ret = new JSHTMLDocument(JSHTMLDocumentPrototype::self(exec), static_cast<HTMLDocument*>(doc));
 #if ENABLE(SVG)
     else if (doc->isSVGDocument())
-        ret = new JSSVGDocument(exec, static_cast<SVGDocument*>(doc));
+        ret = new JSSVGDocument(JSSVGDocumentPrototype::self(exec), static_cast<SVGDocument*>(doc));
 #endif
     else
-        ret = new JSDocument(exec, doc);
+        ret = new JSDocument(JSDocumentPrototype::self(exec), doc);
 
     // Make sure the document is kept around by the window object, and works right with the
     // back/forward cache.

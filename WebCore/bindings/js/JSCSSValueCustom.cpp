@@ -53,17 +53,17 @@ KJS::JSValue* toJS(KJS::ExecState* exec, CSSValue* value)
         return ret;
 
     if (value->isValueList())
-        ret = new JSCSSValueList(exec, static_cast<CSSValueList*>(value));
+        ret = new JSCSSValueList(JSCSSValueListPrototype::self(exec), static_cast<CSSValueList*>(value));
 #if ENABLE(SVG)
     else if (value->isSVGPaint())
-        ret = new JSSVGPaint(exec, static_cast<SVGPaint*>(value));
+        ret = new JSSVGPaint(JSSVGPaintPrototype::self(exec), static_cast<SVGPaint*>(value));
     else if (value->isSVGColor())
-        ret = new JSSVGColor(exec, static_cast<SVGColor*>(value));
+        ret = new JSSVGColor(JSSVGColorPrototype::self(exec), static_cast<SVGColor*>(value));
 #endif
     else if (value->isPrimitiveValue())
-        ret = new JSCSSPrimitiveValue(exec, static_cast<CSSPrimitiveValue*>(value));
+        ret = new JSCSSPrimitiveValue(JSCSSPrimitiveValuePrototype::self(exec), static_cast<CSSPrimitiveValue*>(value));
     else
-        ret = new JSCSSValue(exec, value);
+        ret = new JSCSSValue(JSCSSValuePrototype::self(exec), value);
 
     KJS::ScriptInterpreter::putDOMObject(value, ret);
     return ret;

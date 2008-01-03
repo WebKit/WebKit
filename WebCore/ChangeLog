@@ -1,3 +1,94 @@
+2008-01-02  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Darin.
+
+        Pass the prototype of WebCore JS objects up the constructor chain
+        rather than explicitly setting using setPrototype.  This removes many
+        redundant settings of the prototype on construction.  To avoid a CG 
+        hazard, the prototype must be constructed before before calling the
+        constructor of the JS object.
+
+        - JS objects that inherit from DOMObject, which all bindings objects
+          (except Window) do, now can't implicitly have a jsNull prototype, but
+          must explicitly pass it up the construction chain.
+
+        * bindings/js/JSCSSRuleCustom.cpp:
+        (WebCore::toJS):
+        * bindings/js/JSCSSValueCustom.cpp:
+        (WebCore::toJS):
+        * bindings/js/JSDocumentCustom.cpp:
+        (WebCore::toJS):
+        * bindings/js/JSEventCustom.cpp:
+        (WebCore::toJS):
+        * bindings/js/JSEventTargetNode.cpp:
+        (WebCore::JSEventTargetNode::JSEventTargetNode):
+        * bindings/js/JSEventTargetNode.h:
+        * bindings/js/JSHTMLAllCollection.h:
+        (WebCore::JSHTMLAllCollection::JSHTMLAllCollection):
+        * bindings/js/JSHTMLAudioElementConstructor.cpp:
+        (WebCore::JSHTMLAudioElementConstructor::JSHTMLAudioElementConstructor):
+        * bindings/js/JSHTMLCollectionCustom.cpp:
+        (WebCore::getNamedItems):
+        (WebCore::toJS):
+        * bindings/js/JSHTMLElementWrapperFactory.cpp:
+        (WebCore::createJSHTMLWrapper):
+        * bindings/js/JSHTMLFormElementCustom.cpp:
+        (WebCore::JSHTMLFormElement::nameGetter):
+        * bindings/js/JSHTMLInputElementBase.cpp:
+        (WebCore::JSHTMLInputElementBase::JSHTMLInputElementBase):
+        * bindings/js/JSHTMLInputElementBase.h:
+        * bindings/js/JSHTMLOptionElementConstructor.cpp:
+        (WebCore::JSHTMLOptionElementConstructor::JSHTMLOptionElementConstructor):
+        * bindings/js/JSLocation.cpp:
+        (WebCore::JSLocation::JSLocation):
+        * bindings/js/JSLocation.h:
+        * bindings/js/JSNamedNodesCollection.cpp:
+        (WebCore::JSNamedNodesCollection::JSNamedNodesCollection):
+        * bindings/js/JSNamedNodesCollection.h:
+        * bindings/js/JSNodeCustom.cpp:
+        (WebCore::toJS):
+        * bindings/js/JSSVGElementWrapperFactory.cpp:
+        (WebCore::createJSSVGWrapper):
+        * bindings/js/JSSVGPathSegCustom.cpp:
+        (WebCore::toJS):
+        * bindings/js/JSStyleSheetCustom.cpp:
+        (WebCore::toJS):
+        * bindings/js/JSXMLHttpRequest.cpp:
+        (KJS::JSXMLHttpRequestConstructorImp::JSXMLHttpRequestConstructorImp):
+        (KJS::JSXMLHttpRequestConstructorImp::construct):
+        (KJS::JSXMLHttpRequest::JSXMLHttpRequest):
+        * bindings/js/JSXMLHttpRequest.h:
+        * bindings/js/JSXSLTProcessor.cpp:
+        (KJS::JSXSLTProcessor::JSXSLTProcessor):
+        (KJS::XSLTProcessorConstructorImp::XSLTProcessorConstructorImp):
+        (KJS::XSLTProcessorConstructorImp::implementsConstruct):
+        (KJS::XSLTProcessorConstructorImp::construct):
+        * bindings/js/JSXSLTProcessor.h:
+        * bindings/js/kjs_binding.h:
+        (KJS::DOMObject::DOMObject):
+        (KJS::cacheDOMObject):
+        (KJS::cacheSVGDOMObject):
+        * bindings/js/kjs_css.cpp:
+        (WebCore::JSRGBColor::JSRGBColor):
+        (WebCore::getJSRGBColor):
+        * bindings/js/kjs_css.h:
+        * bindings/js/kjs_events.cpp:
+        (WebCore::JSClipboard::JSClipboard):
+        (WebCore::toJS):
+        * bindings/js/kjs_events.h:
+        * bindings/js/kjs_html.cpp:
+        (WebCore::ImageConstructorImp::ImageConstructorImp):
+        * bindings/js/kjs_navigator.cpp:
+        (KJS::Navigator::Navigator):
+        (KJS::PluginBase::PluginBase):
+        * bindings/js/kjs_navigator.h:
+        * bindings/js/kjs_window.cpp:
+        (KJS::Window::Window):
+        (KJS::Window::location):
+        (KJS::Window::getValueProperty):
+        * bindings/js/kjs_window.h:
+        * bindings/scripts/CodeGeneratorJS.pm:
+
 2008-01-03  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Reviewed by Alp.

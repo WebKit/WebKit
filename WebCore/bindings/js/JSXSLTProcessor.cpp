@@ -58,9 +58,10 @@ const ClassInfo JSXSLTProcessor::info = { "XSLTProcessor", 0, 0 };
 KJS_DEFINE_PROTOTYPE(XSLTProcessorPrototype)
 KJS_IMPLEMENT_PROTOTYPE("XSLTProcessor", XSLTProcessorPrototype)
 
-JSXSLTProcessor::JSXSLTProcessor(ExecState *exec) : m_impl(new XSLTProcessor())
+JSXSLTProcessor::JSXSLTProcessor(JSObject* prototype)
+    : DOMObject(prototype)
+    , m_impl(new XSLTProcessor())
 {
-    setPrototype(XSLTProcessorPrototype::self(exec));
 }
 
 JSXSLTProcessor::~JSXSLTProcessor()
@@ -185,11 +186,21 @@ JSValue* JSXSLTProcessorPrototypeFunctionReset::callAsFunction(ExecState* exec, 
 }
 
 XSLTProcessorConstructorImp::XSLTProcessorConstructorImp(ExecState *exec)
+    : DOMObject(exec->lexicalGlobalObject()->objectPrototype())
 {
-    setPrototype(exec->lexicalGlobalObject()->objectPrototype());
     putDirect(exec->propertyNames().prototype, XSLTProcessorPrototype::self(exec), None);
 }
 
+bool XSLTProcessorConstructorImp::implementsConstruct() const
+{
+    return true;
 }
+
+JSObject* XSLTProcessorConstructorImp::construct(ExecState* exec, const List& args)
+{
+    return new JSXSLTProcessor(XSLTProcessorPrototype::self(exec));
+}
+
+} // namespace KJS
 
 #endif // ENABLE(XSLT)

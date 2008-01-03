@@ -200,7 +200,7 @@ const ClassInfo Window::info = { "Window", 0, &WindowTable };
 @end
 */
 
-Window::Window(DOMWindow* window, JSValue* prototype)
+Window::Window(JSObject* prototype, DOMWindow* window)
     : JSGlobalObject(prototype)
     , m_impl(window)
     , d(new WindowPrivate)
@@ -265,7 +265,7 @@ JSValue* Window::retrieve(Frame* frame)
 WebCore::JSLocation* Window::location() const
 {
     if (!d->loc)
-        d->loc = new JSLocation(impl()->frame());
+        d->loc = new JSLocation(0, impl()->frame()); // FIXME: we need to pass a prototype.
     return d->loc;
 }
 
@@ -471,7 +471,7 @@ JSValue *Window::getValueProperty(ExecState *exec, int token) const
       if (!allowsAccessFrom(exec))
         return jsUndefined();
       // Store the navigator in the object so we get the same one each time.
-      Navigator *n = new Navigator(exec, impl()->frame());
+      Navigator* n = new Navigator(exec->lexicalGlobalObject()->objectPrototype(), impl()->frame());
       // FIXME: this will make the "navigator" object accessible from windows that fail
       // the security check the first time, but not subsequent times, seems weird.
       const_cast<Window *>(this)->putDirect("navigator", n, DontDelete|ReadOnly);

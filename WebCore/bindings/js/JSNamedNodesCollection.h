@@ -37,7 +37,7 @@ namespace WebCore {
     // when multiple nodes have the same name.
     class JSNamedNodesCollection : public KJS::DOMObject {
     public:
-        JSNamedNodesCollection(KJS::ExecState*, const Vector<RefPtr<Node> >&);
+        JSNamedNodesCollection(KJS::JSObject* prototype, const Vector<RefPtr<Node> >&);
 
         virtual bool getOwnPropertySlot(KJS::ExecState*, const KJS::Identifier&, KJS::PropertySlot&);
 

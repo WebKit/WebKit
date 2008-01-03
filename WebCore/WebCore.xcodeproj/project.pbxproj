@@ -11554,7 +11554,6 @@
 				B22277AF0D00BEDC0071B782 /* JSSVGLazyEventListener.cpp */,
 				B22277B00D00BEDC0071B782 /* JSSVGLazyEventListener.h */,
 				B21127A50B3186770009BE53 /* JSSVGPODTypeWrapper.h */,
-				B2D3FC890C2212CB00CF3618 /* JSSVGTransformListCustom.cpp */,
 				93B70D4109EB0C7C009D8468 /* JSXMLHttpRequest.cpp */,
 				93B70D4209EB0C7C009D8468 /* JSXMLHttpRequest.h */,
 				93B70D4509EB0C7C009D8468 /* JSXSLTProcessor.cpp */,
@@ -11629,6 +11628,9 @@
 			children = (
 				BC2ED6BB0C6BD2F000920BFF /* JSAttrCustom.cpp */,
 				1A9EF4560A1B957D00332B63 /* JSCanvasRenderingContext2DCustom.cpp */,
+				BC46C1ED0C0DDBDF0020CFC3 /* JSCSSRuleCustom.cpp */,
+				BC5825F20C0B89380053F1B5 /* JSCSSStyleDeclarationCustom.cpp */,
+				BC20FB7E0C0E8E6C00D1447F /* JSCSSValueCustom.cpp */,
 				51EC925B0CE90DD400F90308 /* JSCustomSQLStatementCallback.cpp */,
 				51EC925C0CE90DD400F90308 /* JSCustomSQLStatementCallback.h */,
 				51EC925D0CE90DD400F90308 /* JSCustomSQLStatementErrorCallback.cpp */,
@@ -11639,9 +11641,6 @@
 				51EC92620CE90DD400F90308 /* JSCustomSQLTransactionErrorCallback.h */,
 				1A3417C80CECFF250049CBDE /* JSCustomVoidCallback.cpp */,
 				1A3417C70CECFF250049CBDE /* JSCustomVoidCallback.h */,
-				BC46C1ED0C0DDBDF0020CFC3 /* JSCSSRuleCustom.cpp */,
-				BC5825F20C0B89380053F1B5 /* JSCSSStyleDeclarationCustom.cpp */,
-				BC20FB7E0C0E8E6C00D1447F /* JSCSSValueCustom.cpp */,
 				1AE830420CAB0ED1002237AE /* JSDatabaseCustom.cpp */,
 				929264760B61FC7200B41D34 /* JSDocumentCustom.cpp */,
 				BCD9C25E0C17AA67005C90A2 /* JSDOMWindowCustom.cpp */,
@@ -11675,6 +11674,7 @@
 				B2C96D8C0B3AF2B7005E80EC /* JSSVGPathSegCustom.cpp */,
 				B297BC6F0B3C14CF0045A590 /* JSSVGPathSegListCustom.cpp */,
 				516BB7910CE91E6800512F79 /* JSSVGPointListCustom.cpp */,
+				B2D3FC890C2212CB00CF3618 /* JSSVGTransformListCustom.cpp */,
 				516BB7920CE91E6800512F79 /* JSTreeWalkerCustom.cpp */,
 			);
 			name = Custom;

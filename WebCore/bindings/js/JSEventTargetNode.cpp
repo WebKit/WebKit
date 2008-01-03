@@ -31,10 +31,9 @@ namespace WebCore {
 
 using namespace KJS;
 
-JSEventTargetNode::JSEventTargetNode(ExecState* exec, Node* n)
-    : JSNode(exec, n)
+JSEventTargetNode::JSEventTargetNode(JSObject* prototype, Node* node)
+    : JSNode(prototype, node)
 {
-    setPrototype(JSEventTargetNodePrototype::self(exec));
 }
 
 bool JSEventTargetNode::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)

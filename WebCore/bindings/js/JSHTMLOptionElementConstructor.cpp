@@ -30,9 +30,9 @@ namespace WebCore {
 using namespace KJS;
 
 JSHTMLOptionElementConstructor::JSHTMLOptionElementConstructor(ExecState* exec, Document* d)
-    : m_doc(d)
+    : KJS::DOMObject(exec->lexicalGlobalObject()->objectPrototype())
+    , m_doc(d)
 {
-    setPrototype(exec->lexicalGlobalObject()->objectPrototype());
     put(exec, exec->propertyNames().length, jsNumber(4), ReadOnly|DontDelete|DontEnum);
 }
 

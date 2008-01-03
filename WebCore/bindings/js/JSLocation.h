@@ -33,6 +33,8 @@ namespace WebCore {
     class JSLocation : public KJS::DOMObject {
         friend class KJS::Window;
     public:
+        JSLocation(KJS::JSObject* protoype, Frame*);
+    
         virtual bool getOwnPropertySlot(KJS::ExecState*, const KJS::Identifier&, KJS::PropertySlot&);
         KJS::JSValue* getValueProperty(KJS::ExecState*, int token) const;
         virtual void put(KJS::ExecState*, const KJS::Identifier&, KJS::JSValue*, int attr = KJS::None);
@@ -49,8 +51,6 @@ namespace WebCore {
         static const KJS::ClassInfo info;
 
     private:
-        JSLocation(Frame*);
-
         Frame* m_frame;
     };
 

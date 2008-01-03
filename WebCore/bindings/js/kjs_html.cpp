@@ -34,9 +34,9 @@ namespace WebCore {
 using namespace KJS;
 
 ImageConstructorImp::ImageConstructorImp(ExecState* exec, Document* doc)
-    : m_doc(doc)
+    : DOMObject(exec->lexicalGlobalObject()->objectPrototype())
+    , m_doc(doc)
 {
-    setPrototype(exec->lexicalGlobalObject()->objectPrototype());
 }
 
 JSObject* ImageConstructorImp::construct(ExecState*  exec, const List& list)

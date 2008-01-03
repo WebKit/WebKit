@@ -36,16 +36,19 @@ namespace KJS {
 class JSXMLHttpRequestConstructorImp : public DOMObject {
 public:
     JSXMLHttpRequestConstructorImp(ExecState*, WebCore::Document*);
+
     virtual bool implementsConstruct() const;
     virtual JSObject* construct(ExecState*, const List&);
+
 private:
     RefPtr<WebCore::Document> doc;
 };
 
 class JSXMLHttpRequest : public DOMObject {
 public:
-    JSXMLHttpRequest(ExecState*, WebCore::Document*);
+    JSXMLHttpRequest(JSObject* prototype, WebCore::Document*);
     ~JSXMLHttpRequest();
+
     virtual const ClassInfo* classInfo() const { return &info; }
     static const ClassInfo info;
     enum { Onload, Onreadystatechange, ReadyState, ResponseText, ResponseXML, Status,

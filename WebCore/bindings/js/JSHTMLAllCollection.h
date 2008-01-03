@@ -34,8 +34,8 @@ namespace WebCore {
 
     class JSHTMLAllCollection : public JSHTMLCollection {
     public:
-        JSHTMLAllCollection(KJS::ExecState* exec, HTMLCollection* collection)
-            : JSHTMLCollection(exec, collection)
+        JSHTMLAllCollection(KJS::JSObject* prototype, HTMLCollection* collection)
+            : JSHTMLCollection(prototype, collection)
         {
         }
 

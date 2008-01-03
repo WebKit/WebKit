@@ -30,7 +30,7 @@ namespace WebCore {
 
     class JSRGBColor : public KJS::DOMObject {
     public:
-        JSRGBColor(KJS::ExecState*, unsigned color);
+        JSRGBColor(KJS::JSObject* prototype, unsigned color);
         ~JSRGBColor();
 
         virtual bool getOwnPropertySlot(KJS::ExecState*, const KJS::Identifier&, KJS::PropertySlot&);

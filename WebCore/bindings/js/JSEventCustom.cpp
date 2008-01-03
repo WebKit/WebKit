@@ -73,25 +73,25 @@ JSValue* toJS(ExecState* exec, Event* event)
         return ret;
 
     if (event->isKeyboardEvent())
-        ret = new JSKeyboardEvent(exec, static_cast<KeyboardEvent*>(event));
+        ret = new JSKeyboardEvent(JSKeyboardEventPrototype::self(exec), static_cast<KeyboardEvent*>(event));
     else if (event->isTextEvent())
-        ret = new JSTextEvent(exec, static_cast<TextEvent*>(event));
+        ret = new JSTextEvent(JSTextEventPrototype::self(exec), static_cast<TextEvent*>(event));
     else if (event->isMouseEvent())
-        ret = new JSMouseEvent(exec, static_cast<MouseEvent*>(event));
+        ret = new JSMouseEvent(JSMouseEventPrototype::self(exec), static_cast<MouseEvent*>(event));
     else if (event->isWheelEvent())
-        ret = new JSWheelEvent(exec, static_cast<WheelEvent*>(event));
+        ret = new JSWheelEvent(JSWheelEventPrototype::self(exec), static_cast<WheelEvent*>(event));
     else if (event->isUIEvent())
-        ret = new JSUIEvent(exec, static_cast<UIEvent*>(event));
+        ret = new JSUIEvent(JSUIEventPrototype::self(exec), static_cast<UIEvent*>(event));
     else if (event->isMutationEvent())
-        ret = new JSMutationEvent(exec, static_cast<MutationEvent*>(event));
+        ret = new JSMutationEvent(JSMutationEventPrototype::self(exec), static_cast<MutationEvent*>(event));
     else if (event->isOverflowEvent())
-        ret = new JSOverflowEvent(exec, static_cast<OverflowEvent*>(event));
+        ret = new JSOverflowEvent(JSOverflowEventPrototype::self(exec), static_cast<OverflowEvent*>(event));
     else if (event->isMessageEvent())
-        ret = new JSMessageEvent(exec, static_cast<MessageEvent*>(event));
+        ret = new JSMessageEvent(JSMessageEventPrototype::self(exec), static_cast<MessageEvent*>(event));
     else if (event->isProgressEvent())
-        ret = new JSProgressEvent(exec, static_cast<ProgressEvent*>(event));
+        ret = new JSProgressEvent(JSProgressEventPrototype::self(exec), static_cast<ProgressEvent*>(event));
     else
-        ret = new JSEvent(exec, event);
+        ret = new JSEvent(JSEventPrototype::self(exec), event);
 
     ScriptInterpreter::putDOMObject(event, ret);
     return ret;

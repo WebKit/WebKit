@@ -34,7 +34,6 @@ namespace WebCore {
     class JSEventListener;
     class JSLocation;
     class JSUnprotectedEventListener;
-    class Location;
     class PausedTimeouts;
     class ScheduledAction;
 }
@@ -49,11 +48,10 @@ namespace KJS {
   // This is the only WebCore JS binding which does not inherit from DOMObject
   class Window : public JSGlobalObject {
     typedef JSGlobalObject Base;
-    
-    friend class WebCore::JSLocation;
+
     friend class WebCore::ScheduledAction;
   protected:
-    Window(WebCore::DOMWindow*, JSValue* prototype);
+    Window(JSObject* prototype, WebCore::DOMWindow*);
 
   public:
     virtual ~Window();

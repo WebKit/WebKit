@@ -323,11 +323,7 @@ sub GenerateHeader
     if ($dataNode->extendedAttributes->{"DoNotCache"}) {
         push(@headerContent, "    $className($passType);\n");
     } else {
-        if (IsSVGTypeNeedingContextParameter($implClassName)) {
-            push(@headerContent, "    $className(KJS::ExecState*, $passType, SVGElement* context);\n");
-        } else {
-            push(@headerContent, "    $className(KJS::ExecState*, $passType);\n");
-        }
+        push(@headerContent, "    $className(KJS::JSObject* prototype, $passType" . (IsSVGTypeNeedingContextParameter($implClassName) ? ", SVGElement* context" : "") .");\n");
     }
 
     # Destructor
@@ -780,40 +776,25 @@ sub GenerateImplementation
     my $podType = $dataNode->extendedAttributes->{"PODType"};
     my $passType = $podType ? "JSSVGPODTypeWrapper<$podType>*" : "$implClassName*";
 
+    my $needsSVGContext = IsSVGTypeNeedingContextParameter($implClassName);
+    my $parentNeedsSVGContext = ($needsSVGContext and $parentClassName =~ /SVG/);
+
     # Constructor
     if ($dataNode->extendedAttributes->{"DoNotCache"}) {
         push(@implContent, "${className}::$className($passType impl)\n");
-        push(@implContent, "    : $parentClassName(impl, ${className}Prototype::self())\n");
+        push(@implContent, "    : $parentClassName(${className}Prototype::self(), impl)\n");
     } else {
-        my $needsSVGContext = IsSVGTypeNeedingContextParameter($implClassName);
-        if ($needsSVGContext) {
-            push(@implContent, "${className}::$className(ExecState* exec, $passType impl, SVGElement* context)\n");
-        } else {
-            push(@implContent, "${className}::$className(ExecState* exec, $passType impl)\n");
-        }
-
+        push(@implContent, "${className}::$className(JSObject* prototype, $passType impl" . ($needsSVGContext ? ", SVGElement* context" : "") . ")\n");
         if ($hasParent) {
-            if ($needsSVGContext and $parentClassName =~ /SVG/) {
-                push(@implContent, "    : $parentClassName(exec, impl, context)\n");
-            } else {
-                push(@implContent, "    : $parentClassName(exec, impl)\n");
-            }
+            push(@implContent, "    : $parentClassName(prototype, impl" . ($parentNeedsSVGContext ? ", context" : "") . ")\n");
         } else {
-            if ($needsSVGContext) {
-                push(@implContent, "    : m_context(context)\n");
-                push(@implContent, "    , m_impl(impl)\n");
-            } else {
-                push(@implContent, "    : m_impl(impl)\n");
-            }            
+            push(@implContent, "    : $parentClassName(prototype)\n");
+            push(@implContent, "    , m_context(context)\n") if $needsSVGContext;
+            push(@implContent, "    , m_impl(impl)\n");  
         }
-    }
 
+    }
     push(@implContent, "{\n");
-
-    if (!$dataNode->extendedAttributes->{"DoNotCache"}) {
-        push(@implContent, "    setPrototype(${className}Prototype::self(exec));\n");
-    }
-
     push(@implContent, "}\n\n");
 
     # Destructor
@@ -1205,11 +1186,11 @@ sub GenerateImplementation
 
         push(@implContent, "{\n");
         if ($podType) {
-            push(@implContent, "    return KJS::cacheSVGDOMObject<JSSVGPODTypeWrapper<$podType>, $className>(exec, obj, context);\n");
+            push(@implContent, "    return KJS::cacheSVGDOMObject<JSSVGPODTypeWrapper<$podType>, $className, ${className}Prototype>(exec, obj, context);\n");
         } elsif (IsSVGTypeNeedingContextParameter($implClassName)) {
-            push(@implContent, "    return KJS::cacheSVGDOMObject<$implClassName, $className>(exec, obj, context);\n");
+            push(@implContent, "    return KJS::cacheSVGDOMObject<$implClassName, $className, ${className}Prototype>(exec, obj, context);\n");
         } else {
-            push(@implContent, "    return KJS::cacheDOMObject<$implClassName, $className>(exec, obj);\n");
+            push(@implContent, "    return KJS::cacheDOMObject<$implClassName, $className, ${className}Prototype>(exec, obj);\n");
         }
         push(@implContent, "}\n");
     }
@@ -1750,8 +1731,8 @@ my $implContent = << "EOF";
 class ${className}Constructor : public DOMObject {
 public:
     ${className}Constructor(ExecState* exec)
+        : DOMObject(exec->lexicalGlobalObject()->objectPrototype())
     {
-        setPrototype(exec->lexicalGlobalObject()->objectPrototype());
         putDirect(exec->propertyNames().prototype, ${protoClassName}::self(exec), None);
     }
     virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);

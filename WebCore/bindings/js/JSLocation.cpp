@@ -56,8 +56,9 @@ const ClassInfo JSLocation::info = { "Location", 0, &JSLocationTable };
 @end
 */
 
-JSLocation::JSLocation(Frame* frame)
-    : m_frame(frame)
+JSLocation::JSLocation(JSObject* /*prototype*/, Frame* frame)
+    : DOMObject(jsNull()) // FIXME: this needs to take a real prototype
+    , m_frame(frame)
 {
 }
 

@@ -44,9 +44,9 @@ JSValue* toJS(ExecState* exec, StyleSheet* styleSheet)
         return ret;
 
     if (styleSheet->isCSSStyleSheet())
-        ret = new JSCSSStyleSheet(exec, static_cast<CSSStyleSheet*>(styleSheet));
+        ret = new JSCSSStyleSheet(JSCSSStyleSheetPrototype::self(exec), static_cast<CSSStyleSheet*>(styleSheet));
     else
-        ret = new JSStyleSheet(exec, styleSheet);
+        ret = new JSStyleSheet(JSStyleSheetPrototype::self(exec), styleSheet);
 
     ScriptInterpreter::putDOMObject(styleSheet, ret);
     return ret;

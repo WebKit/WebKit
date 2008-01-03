@@ -57,11 +57,9 @@ JSValue* JSHTMLInputElementBaseFunctionSetSelectionRange::callAsFunction(ExecSta
 
 const ClassInfo JSHTMLInputElementBase::info = { "JSHTMLInputElementBase", &JSHTMLElement::info, &JSHTMLInputElementBaseTable };
 
-JSHTMLInputElementBase::JSHTMLInputElementBase(ExecState* exec, PassRefPtr<HTMLInputElement> e)
-    : JSHTMLElement(exec, e.get())
+JSHTMLInputElementBase::JSHTMLInputElementBase(KJS::JSObject* prototype, PassRefPtr<HTMLInputElement> e)
+    : JSHTMLElement(prototype, e.get())
 {
-    // We don't really need a prototype, just use our parent class's prototype
-    setPrototype(JSHTMLElementPrototype::self(exec));
 }
 
 bool JSHTMLInputElementBase::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
