@@ -1785,10 +1785,10 @@ FAILED TO COMPILE
     ababbbcbc: PASS
 
 /((\3|b)\2(a)x)+/
-    aaaxabaxbaaxbbax: PASS
+    aaaxabaxbaaxbbax: FAIL. Actual results: "ax,ax,,a"
 
 /((\3|b)\2(a)){2,}/
-    bbaababbabaaaaabbaaaabba: FAIL. Actual results: "null"
+    bbaababbabaaaaabbaaaabba: FAIL. Actual results: "abba,bba,b,a"
 
 /abc/i
     ABC: PASS

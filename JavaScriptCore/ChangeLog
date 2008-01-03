@@ -1,3 +1,49 @@
+2008-01-02  Darin Adler  <darin@apple.com>
+
+        Reviewed by Geoff.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=16696
+          JSCRE fails fails to match Acid3 regexp
+
+        Test: fast/regex/early-acid3-86.html
+
+        The problem was with the cutoff point between backreferences and octal
+        escape sequences. We need to determine the cutoff point by counting the
+        total number of capturing brackets, which requires an extra pass through
+        the expression when compiling it.
+
+        * pcre/pcre_compile.cpp:
+        (CompileData::CompileData): Added numCapturingBrackets. Removed some
+        unused fields.
+        (compileBranch): Use numCapturingBrackets when calling checkEscape.
+        (calculateCompiledPatternLength): Use numCapturingBrackets when calling
+        checkEscape, and also store the bracket count at the end of the compile.
+        (jsRegExpCompile): Call calculateCompiledPatternLength twice -- once to
+        count the number of brackets and then a second time to calculate the length.
+
+2008-01-02  Darin Adler  <darin@apple.com>
+
+        Reviewed by Geoff.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=16696
+          JSCRE fails fails to match Acid3 regexp
+
+        Test: fast/regex/early-acid3-86.html
+
+        The problem was with the cutoff point between backreferences and octal
+        escape sequences. We need to determine the cutoff point by counting the
+        total number of capturing brackets, which requires an extra pass through
+        the expression when compiling it.
+
+        * pcre/pcre_compile.cpp:
+        (CompileData::CompileData): Added numCapturingBrackets. Removed some
+        unused fields.
+        (compileBranch): Use numCapturingBrackets when calling checkEscape.
+        (calculateCompiledPatternLength): Use numCapturingBrackets when calling
+        checkEscape, and also store the bracket count at the end of the compile.
+        (jsRegExpCompile): Call calculateCompiledPatternLength twice -- once to
+        count the number of brackets and then a second time to calculate the length.
+
 2008-01-02  David Kilzer <ddkilzer@webkit.org>
 
         Reviewed and landed by Darin.

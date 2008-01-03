@@ -1,7 +1,37 @@
+2008-01-02  Darin Adler  <darin@apple.com>
+
+        Reviewed by Geoff.
+
+        - test for http://bugs.webkit.org/show_bug.cgi?id=16696
+          JSCRE fails fails to match Acid3 regexp
+
+        * fast/regex/early-acid3-86-expected.txt: Added.
+        * fast/regex/early-acid3-86.html: Added.
+        * fast/regex/resources/early-acid3-86.js: Added.
+
+        * fast/regex/test1-expected.txt: Updated for a few cases where we now fail.
+        But these "failures" represent us replacing PCRE behavior with semantics
+        that are correct for JavaScript regular expressions.
+
 2008-01-02  Alice Liu  <alice.liu@apple.com>
 
         * platform/win/Skipped: removing a fixed test
         this was fixed with r28836 but was left behind on the skipped list
+
+2008-01-02  Darin Adler  <darin@apple.com>
+
+        Reviewed by Geoff.
+
+        - test for http://bugs.webkit.org/show_bug.cgi?id=16696
+          JSCRE fails fails to match Acid3 regexp
+
+        * fast/regex/early-acid3-86-expected.txt: Added.
+        * fast/regex/early-acid3-86.html: Added.
+        * fast/regex/resources/early-acid3-86.js: Added.
+
+        * fast/regex/test1-expected.txt: Updated for a few cases where we now fail.
+        But these "failures" represent us replacing PCRE behavior with semantics
+        that are correct for JavaScript regular expressions.
 
 2008-01-02  Darin Adler  <darin@apple.com>
 
