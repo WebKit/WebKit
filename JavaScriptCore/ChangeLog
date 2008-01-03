@@ -1,3 +1,9 @@
+2008-01-03  Darin Adler  <darin@apple.com>
+
+        * tests/mozilla/expected.html: The fix for bug 16696 also fixed a test
+        case, ecma_3/RegExp/perlstress-002.js, so updated results to expect
+        that test to succeed.
+
 2008-01-02  Darin Adler  <darin@apple.com>
 
         Reviewed by Geoff.
