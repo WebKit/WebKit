@@ -480,7 +480,6 @@ fast/table/frame-and-rules.html
 fast/table/giantCellspacing.html
 
 # Not investigated yet
-dom/html/level2/html/HTMLDocument12.html
 editing/deleting/5408255.html
 editing/deleting/deletionUI-single-instance.html
 editing/pasteboard/input-field-1.html
