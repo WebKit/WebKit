@@ -297,10 +297,9 @@ void ResourceHandleManager::setupPOST(ResourceHandle* job)
 {
     ResourceHandleInternal* d = job->getInternal();
 
-    curl_easy_setopt(d->m_handle, CURLOPT_POST, TRUE);
-
     job->request().httpBody()->flatten(d->m_postBytes);
     if (d->m_postBytes.size() != 0) {
+        curl_easy_setopt(d->m_handle, CURLOPT_POST, TRUE);
         curl_easy_setopt(d->m_handle, CURLOPT_POSTFIELDSIZE, d->m_postBytes.size());
         curl_easy_setopt(d->m_handle, CURLOPT_POSTFIELDS, d->m_postBytes.data());
     }
@@ -330,7 +329,8 @@ void ResourceHandleManager::setupPOST(ResourceHandle* job)
         break;
     }
 
-    curl_easy_setopt(d->m_handle, CURLOPT_HTTPPOST, post);
+    if (post)
+      curl_easy_setopt(d->m_handle, CURLOPT_HTTPPOST, post);
 }
 
 void ResourceHandleManager::add(ResourceHandle* job)

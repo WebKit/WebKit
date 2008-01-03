@@ -1,3 +1,13 @@
+2008-01-03  Luca Bruno  <lethalman88@gmail.com>
+
+        Reviewed by Alp Toker.
+
+        Fix HTTP POST-based logins to sites like Facebook, GMail by ensuring
+        that the two POST methods don't conflict.
+
+        * platform/network/curl/ResourceHandleManager.cpp:
+        (WebCore::ResourceHandleManager::setupPOST):
+
 2008-01-02  Darin Adler  <darin@apple.com>
 
         - touched some files to try to get the Windows buildbot building again
