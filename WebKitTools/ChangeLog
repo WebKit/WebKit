@@ -1,3 +1,13 @@
+2008-01-03  Simon Hausmann  <hausmann@webkit.org>
+
+        Reviewed by Lars.
+
+        Added the first revision of QWebView and started moving functionality from QWebPave over to QWebView and QWebFrame.
+        
+
+        * DumpRenderTree/qt/DumpRenderTree.cpp:
+        (WebCore::DumpRenderTree::DumpRenderTree):
+
 2008-01-02  Sam Weinig  <sam@webkit.org>
 
         * Scripts/do-webcore-rename: Yet more renaming ideas.

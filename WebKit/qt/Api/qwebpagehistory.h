@@ -56,6 +56,7 @@ private:
 };
 
 class QWebPageHistoryPrivate;
+// ### rename to QWebHistory
 class QWEBKIT_EXPORT QWebPageHistory
 {
 public:

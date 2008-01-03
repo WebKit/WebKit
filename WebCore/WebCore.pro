@@ -872,6 +872,7 @@ qt-port {
     $$PWD/platform/qt/SharedTimerQt.h \
     $$PWD/../WebKit/qt/Api/qwebframe.h \
     $$PWD/../WebKit/qt/Api/qwebpage.h \
+    $$PWD/../WebKit/qt/Api/qwebview.h \
     $$PWD/../WebKit/qt/Api/qwebnetworkinterface.h \
     $$PWD/../WebKit/qt/Api/qwebnetworkinterface_p.h \
     $$PWD/../WebKit/qt/Api/qwebobjectplugin.h \
@@ -949,6 +950,7 @@ qt-port {
     ../WebKit/qt/Api/qwebnetworkinterface.cpp \
     ../WebKit/qt/Api/qcookiejar.cpp \
     ../WebKit/qt/Api/qwebpage.cpp \
+    ../WebKit/qt/Api/qwebview.cpp \
     ../WebKit/qt/Api/qwebpagehistory.cpp \
     ../WebKit/qt/Api/qwebsettings.cpp \
     ../WebKit/qt/Api/qwebobjectplugin.cpp \

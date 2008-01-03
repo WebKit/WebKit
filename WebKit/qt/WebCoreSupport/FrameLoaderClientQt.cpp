@@ -79,12 +79,12 @@ void FrameLoaderClientQt::setFrame(QWebFrame* webFrame, Frame* frame)
         return;
     }
 
-    connect(this, SIGNAL(loadStarted(QWebFrame*)),
-            m_webFrame->page(), SIGNAL(loadStarted(QWebFrame *)));
+    connect(this, SIGNAL(loadStarted()),
+            m_webFrame, SIGNAL(loadStarted()));
     connect(this, SIGNAL(loadProgressChanged(int)),
             m_webFrame->page(), SIGNAL(loadProgressChanged(int)));
-    connect(this, SIGNAL(loadFinished(QWebFrame*)),
-            m_webFrame->page(), SIGNAL(loadFinished(QWebFrame *)));
+    connect(this, SIGNAL(loadFinished()),
+            m_webFrame, SIGNAL(loadFinished()));
     connect(this, SIGNAL(titleChanged(const QString&)),
             m_webFrame, SIGNAL(titleChanged(const QString&)));
 }
@@ -396,7 +396,7 @@ void FrameLoaderClientQt::clearUnarchivingState(DocumentLoader*)
 void FrameLoaderClientQt::postProgressStartedNotification()
 {
     if (m_webFrame && m_frame->page())
-        emit loadStarted(m_webFrame);
+        emit loadStarted();
     if (m_frame->tree()->parent())
         return;
     m_webFrame->page()->d->updateNavigationActions();
@@ -411,7 +411,7 @@ void FrameLoaderClientQt::postProgressEstimateChangedNotification()
 void FrameLoaderClientQt::postProgressFinishedNotification()
 {
     if (m_webFrame && m_frame->page())
-        emit loadFinished(m_webFrame);
+        emit loadFinished();
 }
 
 void FrameLoaderClientQt::setMainFrameDocumentReady(bool b)
@@ -561,7 +561,7 @@ String FrameLoaderClientQt::userAgent(const KURL& url)
 void FrameLoaderClientQt::dispatchDidReceiveIcon()
 {
     if (m_webFrame) {
-        emit m_webFrame->page()->iconLoaded();
+        emit m_webFrame->iconLoaded();
     }
 }
 

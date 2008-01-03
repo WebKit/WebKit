@@ -117,7 +117,7 @@ DumpRenderTree::DumpRenderTree()
     m_page->resize(maxViewWidth, maxViewHeight);
     m_page->mainFrame()->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     m_page->mainFrame()->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    connect(m_page, SIGNAL(titleChanged(const QString&)),
+    connect(m_page->mainFrame(), SIGNAL(titleChanged(const QString&)),
             SLOT(titleChanged(const QString&)));
 
     m_eventSender = new EventSender(m_page);

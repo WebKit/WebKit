@@ -1,3 +1,48 @@
+2008-01-03  Simon Hausmann  <hausmann@webkit.org>
+
+        Reviewed by Lars.
+
+        Added the first revision of QWebView and started moving functionality from QWebPave over to QWebView and QWebFrame.
+        
+
+        * Api/headers.pri:
+        * Api/qwebframe.h:
+        * Api/qwebpage.cpp:
+        (QWebPagePrivate::createMainFrame):
+        * Api/qwebpage.h:
+        * Api/qwebpagehistory.h:
+        * Api/qwebview.cpp: Added.
+        (QWebView::QWebView):
+        (QWebView::~QWebView):
+        (QWebView::page):
+        (QWebView::setPage):
+        (QWebView::load):
+        (QWebView::setHtml):
+        (QWebView::history):
+        (QWebView::settings):
+        (QWebView::title):
+        (QWebView::url):
+        (QWebView::icon):
+        (QWebView::selectedText):
+        (QWebView::action):
+        (QWebView::triggerAction):
+        (QWebView::isModified):
+        (QWebView::textInteractionFlags):
+        (QWebView::setTextInteractionFlags):
+        (QWebView::sizeHint):
+        (QWebView::stop):
+        (QWebView::backward):
+        (QWebView::forward):
+        (QWebView::reload):
+        * Api/qwebview.h: Added.
+        * QtLauncher/main.cpp:
+        (MainWindow::MainWindow):
+        (MainWindow::webPage):
+        (MainWindow::changeLocation):
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::setFrame):
+        * WebCoreSupport/FrameLoaderClientQt.h:
+
 2007-12-14  Darin Adler  <darin@apple.com>
 
         Reviewed by Alexey.

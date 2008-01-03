@@ -59,9 +59,9 @@ namespace WebCore {
         void slotCallPolicyFunction(int);
     signals:
         void sigCallPolicyFunction(int);
-        void loadStarted(QWebFrame *frame);
+        void loadStarted();
         void loadProgressChanged(int d);
-        void loadFinished(QWebFrame *frame);
+        void loadFinished();
         void titleChanged(const QString& title);
 
     public:

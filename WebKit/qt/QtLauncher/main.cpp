@@ -28,6 +28,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 #include <qwebpage.h>
+#include <qwebview.h>
 #include <qwebframe.h>
 #include <qwebsettings.h>
 
@@ -284,41 +285,42 @@ class MainWindow : public QMainWindow
 public:
     MainWindow(const QUrl &url = QUrl())
     {
-        page = new WebPage(this);
-        InfoWidget *info = new InfoWidget(page);
+        view = new QWebView(this);
+        view->setPage(new WebPage(view));
+        InfoWidget *info = new InfoWidget(view);
         info->setGeometry(20, 20, info->sizeHint().width(),
                           info->sizeHint().height());
-        connect(page, SIGNAL(loadStarted(QWebFrame*)),
+        connect(view, SIGNAL(loadStarted()),
                 info, SLOT(startLoad()));
-        connect(page, SIGNAL(loadProgressChanged(int)),
+        connect(view, SIGNAL(loadProgressChanged(int)),
                 info, SLOT(changeLoad(int)));
-        connect(page, SIGNAL(loadFinished(QWebFrame*)),
+        connect(view, SIGNAL(loadFinished()),
                 info, SLOT(endLoad()));
-        connect(page, SIGNAL(loadFinished(QWebFrame*)),
+        connect(view, SIGNAL(loadFinished()),
                 this, SLOT(loadFinished()));
-        connect(page, SIGNAL(titleChanged(const QString&)),
+        connect(view, SIGNAL(titleChanged(const QString&)),
                 this, SLOT(setWindowTitle(const QString&)));
-        connect(page, SIGNAL(hoveringOverLink(const QString&, const QString&)),
+        connect(view->page(), SIGNAL(hoveringOverLink(const QString&, const QString&)),
                 this, SLOT(showLinkHover(const QString&, const QString&)));
 
 
-        setCentralWidget(page);
+        setCentralWidget(view);
 
         QToolBar *bar = addToolBar("Navigation");
         urlEdit = new SearchEdit(url.toString());
         urlEdit->setSizePolicy(QSizePolicy::Expanding, urlEdit->sizePolicy().verticalPolicy());
         connect(urlEdit, SIGNAL(returnPressed()),
                 SLOT(changeLocation()));
-        bar->addAction(page->action(QWebPage::GoBack));
-        bar->addAction(page->action(QWebPage::Stop));
-        bar->addAction(page->action(QWebPage::GoForward));
+        bar->addAction(view->action(QWebPage::GoBack));
+        bar->addAction(view->action(QWebPage::Stop));
+        bar->addAction(view->action(QWebPage::GoForward));
         bar->addSeparator();
-        bar->addAction(page->action(QWebPage::Cut));
-        bar->addAction(page->action(QWebPage::Copy));
-        bar->addAction(page->action(QWebPage::Paste));
+        bar->addAction(view->action(QWebPage::Cut));
+        bar->addAction(view->action(QWebPage::Copy));
+        bar->addAction(view->action(QWebPage::Paste));
         bar->addSeparator();
-        bar->addAction(page->action(QWebPage::Undo));
-        bar->addAction(page->action(QWebPage::Redo));
+        bar->addAction(view->action(QWebPage::Undo));
+        bar->addAction(view->action(QWebPage::Redo));
 
         addToolBarBreak();
         bar = addToolBar("Location");
@@ -329,20 +331,20 @@ public:
         hoverLabel->hide();
 
         if (url.isValid())
-            page->open(url);
+            view->load(url);
 
         info->raise();
     }
-    inline QWebPage *webPage() const { return page; }
+    inline QWebPage *webPage() const { return view->page(); }
 protected slots:
     void changeLocation()
     {
         QUrl url(urlEdit->text());
-        page->open(url);
+        view->load(url);
     }
     void loadFinished()
     {
-        urlEdit->setText(page->url().toString());
+        urlEdit->setText(view->url().toString());
     }
     void showLinkHover(const QString &link, const QString &toolTip)
     {
@@ -360,7 +362,7 @@ protected:
                                 300, hoverSize.height());
     }
 private:
-    QWebPage *page;
+    QWebView *view;
     QLineEdit *urlEdit;
     HoverLabel *hoverLabel;
 };

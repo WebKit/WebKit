@@ -85,6 +85,14 @@ Q_SIGNALS:
     void titleChanged(const QString &title);
     void hoveringOverLink(const QString &link, const QString &title, const QString &textContent);
 
+    void loadStarted();
+    void loadFinished();
+
+    /**
+     * Signal is emitted when an icon ("favicon") is loaded from the site.
+     */
+    void iconLoaded();
+
 private:
     friend class QWebPage;
     friend class QWebPagePrivate;

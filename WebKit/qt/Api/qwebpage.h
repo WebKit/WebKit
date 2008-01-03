@@ -85,7 +85,7 @@ public:
         DownloadImageToDisk,
         CopyImageToClipboard,
 
-        GoBack,
+        GoBack, // ###GoBackward instead?
         GoForward,
         Stop,
         Reload,
@@ -140,17 +140,18 @@ public:
     explicit QWebPage(QWidget *parent = 0);
     ~QWebPage();
 
+    // ### move to frame
     void open(const QUrl &url);
     void open(const QWebNetworkRequest &request);
 
     QWebFrame *mainFrame() const;
+    QWebFrame *currentFrame() const;
 
     QWebPageHistory *history() const;
 
     QWebSettings *settings();
 
-    QSize sizeHint() const;
-
+    // ### move to frame
     QString title() const;
     QUrl url() const;
     QPixmap icon() const;
@@ -175,35 +176,12 @@ public:
     QAction *action(WebAction action) const;
     virtual void triggerAction(WebAction action, bool checked = false);
 
-public Q_SLOTS:
-    /**
-     * Stops loading of the page, if loading.
-     */
-    void stop();
-
 Q_SIGNALS:
-    /**
-     * Signal is emitted when load is started on one of the child
-     * frames of the page. The frame on which the load started
-     * is passed.
-     */
-    void loadStarted(QWebFrame *frame);
     /**
      * Signal is emitted when the global progress status changes.
      * It accumulates changes from all the child frames.
      */
     void loadProgressChanged(int progress);
-    /**
-     * Signal is emitted when load has been finished on one of
-     * the child frames of the page. The frame on which the
-     * load finished is passed as an argument.
-     */
-    void loadFinished(QWebFrame *frame);
-    /**
-     * Signal is emitted when the title of this page has changed.
-     * Applies only to the main frame.  Sub-frame titles do not trigger this.
-     */
-    void titleChanged(const QString& title);
     /**
      * Signal is emitted when the mouse is hovering over a link.
      * The first parameter is the link url, the second is the link title
@@ -215,16 +193,13 @@ Q_SIGNALS:
      * Signal is emitted when the statusbar text is changed by the page.
      */
     void statusBarTextChanged(const QString& text);
-    /**
-     * Signal is emitted when an icon ("favicon") is loaded from the site.
-     */
-    void iconLoaded();
 
     void selectionChanged();
 
     /**
       * Signal is emitted when the mainframe()'s initial layout is completed.
      */
+    // ### move to frame
     void initialLayoutComplete();
 
     // ### call addedToHistory instead, something more signal'ish
@@ -233,6 +208,12 @@ Q_SIGNALS:
     void frameCreated(QWebFrame *frame);
 
     void geometryChangeRequest(const QRect& geom);
+
+    //void addEmbeddableWidget(QWidget *widget);
+    //void addEmbeddableWidget(const QString &classid, QWidget *widget);
+    //void removeEmbeddableWidget(QWidget *widget);
+    //QHash<QString, QWidget *> embeddableWidgets() const;
+    //void clearEmbeddableWidgets();
 
 protected:
     virtual QWebPage *createWindow();
