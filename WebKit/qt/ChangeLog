@@ -2,6 +2,29 @@
 
         Reviewed by Lars.
 
+        Moved QWebPage::open to QWebFrame::load and added setHtml.
+        
+
+        * Api/qwebframe.cpp:
+        (QWebFrame::load):
+        (QWebFrame::setHtml):
+        (QWebFrame::setContent):
+        * Api/qwebframe.h:
+        * Api/qwebpage.cpp:
+        * Api/qwebpage.h:
+        * Api/qwebview.cpp:
+        (QWebView::load):
+        (QWebView::setHtml):
+        * Api/qwebview.h:
+        * WebCoreSupport/ChromeClientQt.cpp:
+        (WebCore::ChromeClientQt::createWindow):
+        * WebCoreSupport/InspectorClientQt.cpp:
+        (WebCore::InspectorClientQt::createPage):
+
+2008-01-03  Simon Hausmann  <hausmann@webkit.org>
+
+        Reviewed by Lars.
+
         Added the first revision of QWebView and started moving functionality from QWebPave over to QWebView and QWebFrame.
         
 

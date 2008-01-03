@@ -2,6 +2,16 @@
 
         Reviewed by Lars.
 
+        Moved QWebPage::open to QWebFrame::load and added setHtml.
+        
+
+        * DumpRenderTree/qt/DumpRenderTree.cpp:
+        (WebCore::DumpRenderTree::open):
+
+2008-01-03  Simon Hausmann  <hausmann@webkit.org>
+
+        Reviewed by Lars.
+
         Added the first revision of QWebView and started moving functionality from QWebPave over to QWebView and QWebFrame.
         
 

@@ -308,40 +308,6 @@ QWebPage::~QWebPage()
     delete d;
 }
 
-void QWebPage::open(const QUrl &url)
-{
-    open(QWebNetworkRequest(url));
-}
-
-void QWebPage::open(const QWebNetworkRequest &req)
-{
-    d->insideOpenCall = true;
-
-    QUrl url = req.url();
-    QHttpRequestHeader httpHeader = req.httpHeader();
-    QByteArray postData = req.postData();
-
-    WebCore::ResourceRequest request(KURL(url.toString()));
-
-    QString method = httpHeader.method();
-    if (!method.isEmpty())
-        request.setHTTPMethod(method);
-
-    QList<QPair<QString, QString> > values = httpHeader.values();
-    for (int i = 0; i < values.size(); ++i) {
-        const QPair<QString, QString> &val = values.at(i);
-        request.addHTTPHeaderField(val.first, val.second);
-    }
-
-    if (!postData.isEmpty()) {
-        WTF::RefPtr<WebCore::FormData> formData = new WebCore::FormData(postData.constData(), postData.size());
-        request.setHTTPBody(formData);
-    }
-
-    mainFrame()->d->frame->loader()->load(request);
-    d->insideOpenCall = false;
-}
-
 QUrl QWebPage::url() const
 {
     return QUrl((QString)mainFrame()->d->frame->loader()->url().string());

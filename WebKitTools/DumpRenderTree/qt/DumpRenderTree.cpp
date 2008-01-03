@@ -153,7 +153,7 @@ void DumpRenderTree::open()
 void DumpRenderTree::open(const QUrl& url)
 {
     resetJSObjects();
-    m_page->open(url);
+    m_page->mainFrame()->load(url);
 }
 
 void DumpRenderTree::readStdin(int /* socket */)

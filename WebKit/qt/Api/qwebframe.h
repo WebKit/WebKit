@@ -25,6 +25,7 @@
 #define QWEBFRAME_H
 
 #include <QtCore/qobject.h>
+#include <QtCore/qurl.h>
 
 #include "qwebkitglobal.h"
 
@@ -33,6 +34,7 @@ class QPoint;
 class QPainter;
 class QMouseEvent;
 class QWheelEvent;
+class QWebNetworkRequest;
 
 class QWebFramePrivate;
 class QWebPage;
@@ -54,6 +56,12 @@ protected:
 
 public:
     QWebPage *page() const;
+
+    void load(const QUrl &url);
+    void load(const QWebNetworkRequest &request);
+    void setHtml(const QString &html, const QUrl &baseUrl = QUrl());
+    void setHtml(const QByteArray &html, const QUrl &baseUrl = QUrl());
+    void setContent(const QByteArray &data, const QString &mimeType = QString(), const QUrl &baseUrl = QUrl());
 
     void addToJSWindowObject(const QByteArray &name, QObject *object);
     QString markup() const;

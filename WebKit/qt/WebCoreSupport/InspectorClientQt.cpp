@@ -86,7 +86,7 @@ Page* InspectorClientQt::createPage()
         return m_webPage->d->page;
 
     m_webPage.set(new InspectorClientWebPage(m_inspectedWebPage->d->page->inspectorController()));
-    m_webPage->open(QString::fromLatin1("qrc:/webkit/inspector/inspector.html"));
+    m_webPage->mainFrame()->load(QString::fromLatin1("qrc:/webkit/inspector/inspector.html"));
     m_webPage->setMinimumSize(400,300);
     return m_webPage->d->page;
 }

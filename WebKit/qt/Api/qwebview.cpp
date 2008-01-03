@@ -85,22 +85,27 @@ void QWebView::setPage(QWebPage *page)
 
 void QWebView::load(const QUrl &url)
 {
-    page()->open(url);
+    page()->mainFrame()->load(url);
 }
 
 void QWebView::load(const QWebNetworkRequest &request)
 {
-    page()->open(request);
+    page()->mainFrame()->load(request);
 }
 
 void QWebView::setHtml(const QString &html, const QUrl &baseUrl)
 {
-    // #### FIXME
+    page()->mainFrame()->setHtml(html, baseUrl);
 }
 
 void QWebView::setHtml(const QByteArray &html, const QUrl &baseUrl)
 {
-    // #### FIXME
+    page()->mainFrame()->setHtml(html, baseUrl);
+}
+
+void QWebView::setContent(const QByteArray &data, const QString &mimeType, const QUrl &baseUrl)
+{
+    page()->mainFrame()->setContent(data, mimeType, baseUrl);
 }
 
 QWebPageHistory *QWebView::history() const

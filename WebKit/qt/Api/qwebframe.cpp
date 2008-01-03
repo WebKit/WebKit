@@ -25,6 +25,7 @@
 #include "qwebpage.h"
 #include "qwebpage_p.h"
 #include "qwebframe_p.h"
+#include "qwebnetworkinterface.h"
 
 #include "FocusController.h"
 #include "FrameLoaderClientQt.h"
@@ -35,6 +36,7 @@
 #include "ResourceRequest.h"
 #include "SelectionController.h"
 #include "PlatformScrollBar.h"
+#include "SubstituteData.h"
 
 #include "markup.h"
 #include "RenderTreeAsText.h"
@@ -193,6 +195,69 @@ QString QWebFrame::name() const
 QWebPage * QWebFrame::page() const
 {
     return d->page;
+}
+
+void QWebFrame::load(const QUrl &url)
+{
+    load(QWebNetworkRequest(url));
+}
+
+void QWebFrame::load(const QWebNetworkRequest &req)
+{
+    if (d->parentFrame())
+        d->page->d->insideOpenCall = true;
+
+    QUrl url = req.url();
+    QHttpRequestHeader httpHeader = req.httpHeader();
+    QByteArray postData = req.postData();
+
+    WebCore::ResourceRequest request(KURL(url.toString()));
+
+    QString method = httpHeader.method();
+    if (!method.isEmpty())
+        request.setHTTPMethod(method);
+
+    QList<QPair<QString, QString> > values = httpHeader.values();
+    for (int i = 0; i < values.size(); ++i) {
+        const QPair<QString, QString> &val = values.at(i);
+        request.addHTTPHeaderField(val.first, val.second);
+    }
+
+    if (!postData.isEmpty()) {
+        WTF::RefPtr<WebCore::FormData> formData = new WebCore::FormData(postData.constData(), postData.size());
+        request.setHTTPBody(formData);
+    }
+
+    d->frame->loader()->load(request);
+
+    if (d->parentFrame())
+        d->page->d->insideOpenCall = false;
+}
+
+void QWebFrame::setHtml(const QString &html, const QUrl &baseUrl)
+{
+    KURL kurl(baseUrl.toString());
+    WebCore::ResourceRequest request(kurl);
+    WTF::RefPtr<WebCore::SharedBuffer> data = new WebCore::SharedBuffer(reinterpret_cast<const uchar *>(html.unicode()), html.length() * 2);
+    WebCore::SubstituteData substituteData(data, WebCore::String("text/html"), WebCore::String("utf-16"), kurl);
+    d->frame->loader()->load(request, substituteData);
+}
+
+void QWebFrame::setHtml(const QByteArray &html, const QUrl &baseUrl)
+{
+    setContent(html, QString(), baseUrl);
+}
+
+void QWebFrame::setContent(const QByteArray &data, const QString &mimeType, const QUrl &baseUrl)
+{
+    KURL kurl(baseUrl.toString());
+    WebCore::ResourceRequest request(kurl);
+    WTF::RefPtr<WebCore::SharedBuffer> buffer = new WebCore::SharedBuffer(data.constData(), data.length());
+    QString actualMimeType = mimeType;
+    if (actualMimeType.isEmpty())
+        actualMimeType = QLatin1String("text/html");
+    WebCore::SubstituteData substituteData(buffer, WebCore::String(actualMimeType), WebCore::String(), kurl);
+    d->frame->loader()->load(request, substituteData);
 }
 
 QList<QWebFrame*> QWebFrame::childFrames() const
