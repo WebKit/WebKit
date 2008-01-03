@@ -1,5 +1,15 @@
 2008-01-02  Darin Adler  <darin@apple.com>
 
+        - fix buffer overruns seen on buildbot
+
+        * platform/text/StringImpl.cpp:
+        (WebCore::countCharacter): Added this.
+        (WebCore::StringImpl::toCoordsArray): Use countCharacter instead of incorrect find expression.
+        (WebCore::StringImpl::toLengthArray): Ditto.
+        (WebCore::StringImpl::replace): Added assertions.
+
+2008-01-02  Darin Adler  <darin@apple.com>
+
         Reviewed by Maciej.
 
         - fix http://bugs.webkit.org/show_bug.cgi?id=16657
