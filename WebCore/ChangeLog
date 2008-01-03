@@ -1,3 +1,11 @@
+2008-01-03  Alp Toker  <alp@atoker.com>
+
+        Suggested by Mark Rowe.
+
+        Fix indentation and remove trailing whitespace.
+
+        * platform/network/curl/ResourceHandleManager.cpp:
+
 2008-01-03  Luca Bruno  <lethalman88@gmail.com>
 
         Reviewed by Alp Toker.

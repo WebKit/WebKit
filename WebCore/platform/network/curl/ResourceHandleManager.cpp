@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2004, 2006 Apple Computer, Inc.  All rights reserved.
- * Copyright (C) 2006 Michael Emmel mike.emmel@gmail.com 
+ * Copyright (C) 2006 Michael Emmel mike.emmel@gmail.com
  * Copyright (C) 2007 Alp Toker <alp.toker@collabora.co.uk>
  * Copyright (C) 2007 Holger Hans Peter Freyther
  * All rights reserved.
@@ -24,7 +24,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #include "config.h"
@@ -68,7 +68,7 @@ ResourceHandleManager::~ResourceHandleManager()
 }
 
 void ResourceHandleManager::setCookieJarFileName(const char* cookieJarFileName)
-{ 
+{
     m_cookieJarFileName = strdup(cookieJarFileName);
 }
 
@@ -139,7 +139,7 @@ static size_t headerCallback(char* ptr, size_t size, size_t nmemb, void* data)
 
     /*
      * a) We can finish and send the ResourceResponse
-     * b) We will add the current header to the HTTPHeaderMap of the ResourceResponse 
+     * b) We will add the current header to the HTTPHeaderMap of the ResourceResponse
      */
     if (header == String("\r\n")) {
         CURL* h = d->m_handle;
@@ -147,7 +147,7 @@ static size_t headerCallback(char* ptr, size_t size, size_t nmemb, void* data)
 
         double contentLength = 0;
         err = curl_easy_getinfo(h, CURLINFO_CONTENT_LENGTH_DOWNLOAD, &contentLength);
-        d->m_response.setExpectedContentLength(static_cast<long long int>(contentLength)); 
+        d->m_response.setExpectedContentLength(static_cast<long long int>(contentLength));
 
         const char* hdr;
         err = curl_easy_getinfo(h, CURLINFO_EFFECTIVE_URL, &hdr);
@@ -156,7 +156,7 @@ static size_t headerCallback(char* ptr, size_t size, size_t nmemb, void* data)
         long httpCode = 0;
         err = curl_easy_getinfo(h, CURLINFO_RESPONSE_CODE, &httpCode);
         d->m_response.setHTTPStatusCode(httpCode);
-    
+
         d->m_response.setMimeType(extractMIMETypeFromMediaType(d->m_response.httpHeaderField("Content-Type")));
         d->m_response.setTextEncodingName(extractCharsetFromMediaType(d->m_response.httpHeaderField("Content-Type")));
         d->m_response.setSuggestedFilename(filenameFromHTTPContentDisposition(d->m_response.httpHeaderField("Content-Disposition")));
@@ -330,7 +330,7 @@ void ResourceHandleManager::setupPOST(ResourceHandle* job)
     }
 
     if (post)
-      curl_easy_setopt(d->m_handle, CURLOPT_HTTPPOST, post);
+        curl_easy_setopt(d->m_handle, CURLOPT_HTTPPOST, post);
 }
 
 void ResourceHandleManager::add(ResourceHandle* job)
