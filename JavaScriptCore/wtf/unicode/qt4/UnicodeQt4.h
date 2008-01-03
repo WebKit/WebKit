@@ -292,7 +292,7 @@ namespace WTF {
       return QChar::toCaseFolded(c);
     }
 
-    inline int foldCase(UChar* result, int resultLength, UChar* src, int srcLength,  bool* error)
+    inline int foldCase(UChar* result, int resultLength, const UChar* src, int srcLength,  bool* error)
     {
       // FIXME: handle special casing. Easiest with some low level API in Qt
       *error = false;
@@ -440,7 +440,7 @@ namespace WTF {
       return QChar((unsigned short)c).toLower().unicode();
     }
 
-    inline int foldCase(UChar* result, int resultLength, UChar* src, int srcLength,  bool* error)
+    inline int foldCase(UChar* result, int resultLength, const UChar* src, int srcLength,  bool* error)
     {
       return toLower(result, resultLength, src, srcLength, error);
     }
