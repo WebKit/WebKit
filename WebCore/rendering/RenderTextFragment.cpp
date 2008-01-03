@@ -47,10 +47,10 @@ RenderTextFragment::RenderTextFragment(Node* node, StringImpl* str)
 PassRefPtr<StringImpl> RenderTextFragment::originalText() const
 {
     Node* e = element();
-    StringImpl* result = (e ? static_cast<Text*>(e)->string() : contentString());
+    RefPtr<StringImpl> result = (e ? static_cast<Text*>(e)->string() : contentString());
     if (result && (start() > 0 || start() < result->length()))
         result = result->substring(start(), end());
-    return result;
+    return result.release();
 }
 
 void RenderTextFragment::destroy()

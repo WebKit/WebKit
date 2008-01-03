@@ -23,7 +23,7 @@
 
 namespace WebCore {
 
-StringImpl::operator NSString *() const
+StringImpl::operator NSString *()
 {
     return [NSString stringWithCharacters:m_data length:m_length];
 }

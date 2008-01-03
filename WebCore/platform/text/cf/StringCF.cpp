@@ -38,7 +38,7 @@ String::String(CFStringRef str)
     else {
         Vector<UChar, 1024> buffer(size);
         CFStringGetCharacters(str, CFRangeMake(0, size), (UniChar*)buffer.data());
-        m_impl = new StringImpl(buffer.data(), size);
+        m_impl = StringImpl::create(buffer.data(), size);
     }
 }
 

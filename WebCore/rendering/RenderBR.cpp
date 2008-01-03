@@ -31,7 +31,7 @@
 namespace WebCore {
 
 RenderBR::RenderBR(Node* node)
-    : RenderText(node, new StringImpl("\n"))
+    : RenderText(node, StringImpl::create("\n"))
     , m_lineHeight(-1)
 {
 }

@@ -1057,10 +1057,10 @@ void Range::insertNode(PassRefPtr<Node> newNode, ExceptionCode& ec)
     if(m_startContainer->nodeType() == Node::TEXT_NODE ||
        m_startContainer->nodeType() == Node::CDATA_SECTION_NODE) {
         ec = 0;
-        Text *newText = static_cast<Text*>(m_startContainer.get())->splitText(m_startOffset, ec);
+        RefPtr<Text> newText = static_cast<Text*>(m_startContainer.get())->splitText(m_startOffset, ec);
         if (ec)
             return;
-        m_startContainer->parentNode()->insertBefore(newNode, newText, ec);
+        m_startContainer->parentNode()->insertBefore(newNode, newText.get(), ec);
     } else {
         m_startContainer->insertBefore(newNode, m_startContainer->childNode(m_startOffset), ec);
     }

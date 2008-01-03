@@ -47,7 +47,7 @@ static inline bool isChildOfHiddenContainer(RenderObject* start)
     return false;
 }
 
-RenderSVGInlineText::RenderSVGInlineText(Node* n, StringImpl* str) 
+RenderSVGInlineText::RenderSVGInlineText(Node* n, PassRefPtr<StringImpl> str) 
     : RenderText(n, str)
 {
 }

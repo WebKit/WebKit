@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
- * Copyright (C) 2003, 2004, 2005, 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -51,7 +51,7 @@ Text::~Text()
 {
 }
 
-Text *Text::splitText(unsigned offset, ExceptionCode& ec)
+PassRefPtr<Text> Text::splitText(unsigned offset, ExceptionCode& ec)
 {
     ec = 0;
 
@@ -70,16 +70,14 @@ Text *Text::splitText(unsigned offset, ExceptionCode& ec)
         return 0;
     }
 
-    StringImpl *oldStr = str;
-    Text *newText = createNew(str->substring(offset));
-    str = str->substring(0, offset);
-    str->ref();
+    RefPtr<StringImpl> oldStr = str;
+    PassRefPtr<Text> newText = createNew(oldStr->substring(offset));
+    str = oldStr->substring(0, offset);
 
-    dispatchModifiedEvent(oldStr);
-    oldStr->deref();
+    dispatchModifiedEvent(oldStr.get());
 
     if (parentNode())
-        parentNode()->insertBefore(newText,nextSibling(), ec);
+        parentNode()->insertBefore(newText.get(), nextSibling(), ec);
     if (ec)
         return 0;
 
@@ -183,9 +181,9 @@ bool Text::childTypeAllowed(NodeType)
     return false;
 }
 
-Text *Text::createNew(StringImpl *_str)
+PassRefPtr<Text> Text::createNew(PassRefPtr<StringImpl> string)
 {
-    return new Text(document(), _str);
+    return new Text(document(), string);
 }
 
 String Text::toString() const

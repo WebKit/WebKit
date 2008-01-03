@@ -1,6 +1,6 @@
 /*
  * (C) 1999 Lars Knoll (knoll@kde.org)
- * Copyright (C) 2004, 2005, 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -38,11 +38,7 @@ String::String(const UChar* str, unsigned len)
 {
     if (!str)
         return;
-    
-    if (len == 0)
-        m_impl = StringImpl::empty();
-    else
-        m_impl = new StringImpl(str, len);
+    m_impl = StringImpl::create(str, len);
 }
 
 String::String(const UChar* str)
@@ -54,44 +50,28 @@ String::String(const UChar* str)
     while (str[len] != UChar(0))
         len++;
     
-    if (len == 0)
-        m_impl = StringImpl::empty();
-    else
-        m_impl = new StringImpl(str, len);
+    m_impl = StringImpl::create(str, len);
 }
 
 String::String(const DeprecatedString& str)
 {
     if (str.isNull())
         return;
-    
-    if (str.isEmpty())
-        m_impl = StringImpl::empty();
-    else 
-        m_impl = new StringImpl(reinterpret_cast<const UChar*>(str.unicode()), str.length());
+    m_impl = StringImpl::create(reinterpret_cast<const UChar*>(str.unicode()), str.length());
 }
 
 String::String(const char* str)
 {
     if (!str)
         return;
-
-    int l = strlen(str);
-    if (l == 0)
-        m_impl = StringImpl::empty();
-    else
-        m_impl = new StringImpl(str, l);
+    m_impl = StringImpl::create(str);
 }
 
 String::String(const char* str, unsigned length)
 {
     if (!str)
         return;
-
-    if (length == 0)
-        m_impl = StringImpl::empty();
-    else
-        m_impl = new StringImpl(str, length);
+    m_impl = StringImpl::create(str, length);
 }
 
 void String::append(const String &str)
@@ -115,7 +95,7 @@ void String::append(char c)
         newCharacters[m_impl->length()] = c;
         m_impl = StringImpl::adopt(newCharacters);
     } else
-        m_impl = new StringImpl(&c, 1);
+        m_impl = StringImpl::create(&c, 1);
 }
 
 void String::append(UChar c)
@@ -126,7 +106,7 @@ void String::append(UChar c)
         newCharacters[m_impl->length()] = c;
         m_impl = StringImpl::adopt(newCharacters);
     } else
-        m_impl = new StringImpl(&c, 1);
+        m_impl = StringImpl::create(&c, 1);
 }
 
 String operator+(const String& a, const String& b)
@@ -167,11 +147,7 @@ void String::append(const UChar* charactersToAppend, unsigned lengthToAppend)
     if (!m_impl) {
         if (!charactersToAppend)
             return;
-        if (!lengthToAppend) {
-            m_impl = StringImpl::empty();
-            return;
-        }
-        m_impl = new StringImpl(charactersToAppend, lengthToAppend);
+        m_impl = StringImpl::create(charactersToAppend, lengthToAppend);
         return;
     }
 
@@ -317,7 +293,7 @@ const UChar* String::charactersWithNullTermination()
         return 0;
     if (m_impl->hasTerminatingNullCharacter())
         return m_impl->characters();
-    m_impl = new StringImpl(*m_impl, StringImpl::WithTerminatingNullCharacter());
+    m_impl = StringImpl::createWithTerminatingNullCharacter(*m_impl);
     return m_impl->characters();
 }
 
@@ -365,7 +341,7 @@ String String::format(const char *format, ...)
 
     va_end(args);
     
-    return new StringImpl(buffer.data(), len);
+    return StringImpl::create(buffer.data(), len);
 }
 
 String String::number(int n)
@@ -558,22 +534,14 @@ String::String(const Identifier& str)
 {
     if (str.isNull())
         return;
-    
-    if (str.isEmpty())
-        m_impl = StringImpl::empty();
-    else 
-        m_impl = new StringImpl(reinterpret_cast<const UChar*>(str.data()), str.size());
+    m_impl = StringImpl::create(reinterpret_cast<const UChar*>(str.data()), str.size());
 }
 
 String::String(const UString& str)
 {
     if (str.isNull())
         return;
-    
-    if (str.isEmpty())
-        m_impl = StringImpl::empty();
-    else 
-        m_impl = new StringImpl(reinterpret_cast<const UChar*>(str.data()), str.size());
+    m_impl = StringImpl::create(reinterpret_cast<const UChar*>(str.data()), str.size());
 }
 
 String::operator Identifier() const

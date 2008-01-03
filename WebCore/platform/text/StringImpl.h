@@ -47,109 +47,102 @@ struct StringHash;
 struct UCharBufferTranslator;
 
 class StringImpl : public RefCounted<StringImpl> {
-private:
-    struct WithOneRef { };
-    StringImpl(WithOneRef) : m_length(0), m_data(0), m_hash(0), m_inTable(false), m_hasTerminatingNullCharacter(false) { ref(); }
-    void init(const char*, unsigned length);
-    void init(const UChar*, unsigned length);
-
 protected:
     StringImpl() : m_length(0), m_data(0), m_hash(0), m_inTable(false), m_hasTerminatingNullCharacter(false) { }
-public:
+
+private:
     StringImpl(const UChar*, unsigned length);
     StringImpl(const char*, unsigned length);
-    StringImpl(const char*);
-    StringImpl(const KJS::Identifier&);
-    StringImpl(const KJS::UString&);
-    ~StringImpl();
 
     struct WithTerminatingNullCharacter { };
     StringImpl(const StringImpl&, WithTerminatingNullCharacter);
 
-    static PassRefPtr<StringImpl> createStrippingNull(const UChar*, unsigned len);
-    static StringImpl* adopt(Vector<UChar>&);
+    struct WithOneRef { };
+    StringImpl(WithOneRef) : m_length(0), m_data(0), m_hash(0), m_inTable(false), m_hasTerminatingNullCharacter(false) { ref(); }
 
-    const UChar* characters() const { return m_data; }
-    unsigned length() const { return m_length; }
+public:
+    ~StringImpl();
 
-    bool hasTerminatingNullCharacter() const { return m_hasTerminatingNullCharacter; }
+    static PassRefPtr<StringImpl> create(const UChar*, unsigned length);
+    static PassRefPtr<StringImpl> create(const char*, unsigned length);
+    static PassRefPtr<StringImpl> create(const char*);
 
-    unsigned hash() const { if (m_hash == 0) m_hash = computeHash(m_data, m_length); return m_hash; }
+    static PassRefPtr<StringImpl> createWithTerminatingNullCharacter(const StringImpl&);
+
+    static PassRefPtr<StringImpl> createStrippingNullCharacters(const UChar*, unsigned length);
+    static PassRefPtr<StringImpl> adopt(Vector<UChar>&);
+
+    const UChar* characters() { return m_data; }
+    unsigned length() { return m_length; }
+
+    bool hasTerminatingNullCharacter() { return m_hasTerminatingNullCharacter; }
+
+    unsigned hash() { if (m_hash == 0) m_hash = computeHash(m_data, m_length); return m_hash; }
     static unsigned computeHash(const UChar*, unsigned len);
     static unsigned computeHash(const char*);
     
     // Makes a deep copy. Helpful only if you need to use a String on another thread.
     // Since StringImpl objects are immutable, there's no other reason to make a copy.
-    StringImpl* copy() const { return new StringImpl(m_data, m_length); }
+    PassRefPtr<StringImpl> copy() { return new StringImpl(m_data, m_length); }
 
-    StringImpl* substring(unsigned pos, unsigned len = UINT_MAX) const;
+    PassRefPtr<StringImpl> substring(unsigned pos, unsigned len = UINT_MAX);
 
-    UChar operator[](int pos) const { return m_data[pos]; }
-    UChar32 characterStartingAt(unsigned) const;
+    UChar operator[](int pos) { return m_data[pos]; }
+    UChar32 characterStartingAt(unsigned);
 
-    Length toLength() const;
+    Length toLength();
 
-    bool containsOnlyWhitespace() const;
-    bool containsOnlyWhitespace(unsigned from, unsigned len) const;
+    bool containsOnlyWhitespace();
 
-    int toInt(bool* ok = 0) const; // ignores trailing garbage, unlike DeprecatedString
-    int64_t toInt64(bool* ok = 0) const; // ignores trailing garbage, unlike DeprecatedString
-    uint64_t toUInt64(bool* ok = 0) const; // ignores trailing garbage, unlike DeprecatedString
-    double toDouble(bool* ok = 0) const;
-    float toFloat(bool* ok = 0) const;
+    int toInt(bool* ok = 0); // ignores trailing garbage, unlike DeprecatedString
+    int64_t toInt64(bool* ok = 0); // ignores trailing garbage, unlike DeprecatedString
+    uint64_t toUInt64(bool* ok = 0); // ignores trailing garbage, unlike DeprecatedString
+    double toDouble(bool* ok = 0);
+    float toFloat(bool* ok = 0);
 
-    Length* toCoordsArray(int& len) const;
-    Length* toLengthArray(int& len) const;
-    bool isLower() const;
-    StringImpl* lower() const;
-    StringImpl* upper() const;
-    StringImpl* secure(UChar aChar) const;
-    StringImpl* capitalize(UChar previousCharacter) const;
-    StringImpl* foldCase() const;
+    Length* toCoordsArray(int& len);
+    Length* toLengthArray(int& len);
+    bool isLower();
+    PassRefPtr<StringImpl> lower();
+    PassRefPtr<StringImpl> upper();
+    PassRefPtr<StringImpl> secure(UChar aChar);
+    PassRefPtr<StringImpl> capitalize(UChar previousCharacter);
+    PassRefPtr<StringImpl> foldCase();
 
-    StringImpl* stripWhiteSpace() const;
-    StringImpl* simplifyWhiteSpace() const;
+    PassRefPtr<StringImpl> stripWhiteSpace();
+    PassRefPtr<StringImpl> simplifyWhiteSpace();
 
-    int find(const char*, int index = 0, bool caseSensitive = true) const;
-    int find(UChar, int index = 0) const;
-    int find(const StringImpl*, int index, bool caseSensitive = true) const;
+    int find(const char*, int index = 0, bool caseSensitive = true);
+    int find(UChar, int index = 0);
+    int find(StringImpl*, int index, bool caseSensitive = true);
 
-    int reverseFind(UChar, int index) const;
-    int reverseFind(const StringImpl*, int index, bool caseSensitive = true) const;
+    int reverseFind(UChar, int index);
+    int reverseFind(StringImpl*, int index, bool caseSensitive = true);
     
-    bool startsWith(const StringImpl* m_data, bool caseSensitive = true) const { return find(m_data, 0, caseSensitive) == 0; }
-    bool endsWith(const StringImpl*, bool caseSensitive = true) const;
+    bool startsWith(StringImpl* m_data, bool caseSensitive = true) { return find(m_data, 0, caseSensitive) == 0; }
+    bool endsWith(StringImpl*, bool caseSensitive = true);
 
-    // Does not modify the string.
-    StringImpl* replace(UChar, UChar) const;
-    StringImpl* replace(UChar, const StringImpl*) const;
-    StringImpl* replace(const StringImpl*, const StringImpl*) const;
-    StringImpl* replace(unsigned index, unsigned len, const StringImpl*) const;
+    PassRefPtr<StringImpl> replace(UChar, UChar);
+    PassRefPtr<StringImpl> replace(UChar, StringImpl*);
+    PassRefPtr<StringImpl> replace(StringImpl*, StringImpl*);
+    PassRefPtr<StringImpl> replace(unsigned index, unsigned len, StringImpl*);
 
     static StringImpl* empty();
 
-    Vector<char> ascii() const;
+    Vector<char> ascii();
 
-    WTF::Unicode::Direction defaultWritingDirection() const;
+    WTF::Unicode::Direction defaultWritingDirection();
 
 #if PLATFORM(CF)
-    StringImpl(CFStringRef);
-    CFStringRef createCFString() const;
+    CFStringRef createCFString();
 #endif
 #ifdef __OBJC__
-    StringImpl(NSString*);
-    operator NSString*() const;
+    operator NSString*();
 #endif
-#if PLATFORM(SYMBIAN)
-    StringImpl(const TDesC&);
-    TPtrC des() const;
-#endif
-
-    StringImpl(const DeprecatedString&);
 
 private:
     unsigned m_length;
-    UChar* m_data;
+    const UChar* m_data;
 
     friend class AtomicString;
     friend struct UCharBufferTranslator;
@@ -160,13 +153,13 @@ private:
     bool m_hasTerminatingNullCharacter;
 };
 
-bool equal(const StringImpl*, const StringImpl*);
-bool equal(const StringImpl*, const char*);
-inline bool equal(const char* a, const StringImpl* b) { return equal(b, a); }
+bool equal(StringImpl*, StringImpl*);
+bool equal(StringImpl*, const char*);
+inline bool equal(const char* a, StringImpl* b) { return equal(b, a); }
 
-bool equalIgnoringCase(const StringImpl*, const StringImpl*);
-bool equalIgnoringCase(const StringImpl*, const char*);
-inline bool equalIgnoringCase(const char* a, const StringImpl* b) { return equalIgnoringCase(b, a); }
+bool equalIgnoringCase(StringImpl*, StringImpl*);
+bool equalIgnoringCase(StringImpl*, const char*);
+inline bool equalIgnoringCase(const char* a, StringImpl* b) { return equalIgnoringCase(b, a); }
 
 }
 

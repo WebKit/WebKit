@@ -29,12 +29,9 @@
 
 namespace WebCore {
 
-class CDATASection : public Text
-{
-// ### should these have id==ID_TEXT
+class CDATASection : public Text {
 public:
-    CDATASection(Document *impl, const String &_text);
-    CDATASection(Document *impl);
+    CDATASection(Document*, const String&);
     virtual ~CDATASection();
 
     virtual String nodeName() const;
@@ -44,7 +41,7 @@ public:
     virtual String toString() const;
 
 protected:
-    virtual Text* createNew(StringImpl*);
+    virtual PassRefPtr<Text> createNew(PassRefPtr<StringImpl>);
 };
 
 } // namespace WebCore

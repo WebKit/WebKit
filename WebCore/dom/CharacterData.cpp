@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
- * Copyright (C) 2003, 2004, 2005, 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -22,6 +22,7 @@
 #include "config.h"
 #include "CharacterData.h"
 
+#include "CString.h"
 #include "Document.h"
 #include "EventNames.h"
 #include "ExceptionCode.h"
@@ -36,19 +37,16 @@ using namespace EventNames;
 CharacterData::CharacterData(Document *doc)
     : EventTargetNode(doc)
 {
-    str = 0;
 }
 
 CharacterData::CharacterData(Document *doc, const String &_text)
     : EventTargetNode(doc)
 {
-    str = _text.impl() ? _text.impl() : new StringImpl(static_cast<UChar*>(0), 0);
-    str->ref();
+    str = _text.impl() ? _text.impl() : StringImpl::empty();
 }
 
 CharacterData::~CharacterData()
 {
-    if(str) str->deref();
 }
 
 void CharacterData::setData(const String& data, ExceptionCode& ec)
@@ -59,13 +57,11 @@ void CharacterData::setData(const String& data, ExceptionCode& ec)
         return;
     }
 
-    if (equal(str, data.impl()))
+    if (equal(str.get(), data.impl()))
         return;
 
-    StringImpl* oldStr = str;
+    RefPtr<StringImpl> oldStr = str;
     str = data.impl();
-    if (str)
-        str->ref();
     
     if ((!renderer() || !rendererIsNeeded(renderer()->style())) && attached()) {
         detach();
@@ -73,9 +69,7 @@ void CharacterData::setData(const String& data, ExceptionCode& ec)
     } else if (renderer())
         static_cast<RenderText*>(renderer())->setText(str);
     
-    dispatchModifiedEvent(oldStr);
-    if (oldStr)
-        oldStr->deref();
+    dispatchModifiedEvent(oldStr.get());
     
     document()->removeMarkers(this);
 }
@@ -87,7 +81,7 @@ String CharacterData::substringData( const unsigned offset, const unsigned count
     if (ec)
         return String();
 
-    return str->substring(offset,count);
+    return str->substring(offset, count);
 }
 
 void CharacterData::appendData( const String &arg, ExceptionCode& ec)
@@ -103,9 +97,8 @@ void CharacterData::appendData( const String &arg, ExceptionCode& ec)
     String newStr = str;
     newStr.append(arg);
 
-    StringImpl* oldStr = str;
+    RefPtr<StringImpl> oldStr = str;
     str = newStr.impl();
-    str->ref();
 
     if ((!renderer() || !rendererIsNeeded(renderer()->style())) && attached()) {
         detach();
@@ -113,8 +106,7 @@ void CharacterData::appendData( const String &arg, ExceptionCode& ec)
     } else if (renderer())
         static_cast<RenderText*>(renderer())->setTextWithOffset(str, oldStr->length(), 0);
     
-    dispatchModifiedEvent(oldStr);
-    oldStr->deref();
+    dispatchModifiedEvent(oldStr.get());
 }
 
 void CharacterData::insertData( const unsigned offset, const String &arg, ExceptionCode& ec)
@@ -127,9 +119,8 @@ void CharacterData::insertData( const unsigned offset, const String &arg, Except
     String newStr = str;
     newStr.insert(arg, offset);
 
-    StringImpl* oldStr = str;
+    RefPtr<StringImpl> oldStr = str;
     str = newStr.impl();
-    str->ref();
 
     if ((!renderer() || !rendererIsNeeded(renderer()->style())) && attached()) {
         detach();
@@ -137,8 +128,7 @@ void CharacterData::insertData( const unsigned offset, const String &arg, Except
     } else if (renderer())
         static_cast<RenderText*>(renderer())->setTextWithOffset(str, offset, 0);
     
-    dispatchModifiedEvent(oldStr);
-    oldStr->deref();
+    dispatchModifiedEvent(oldStr.get());
     
     // update the markers for spell checking and grammar checking
     unsigned length = arg.length();
@@ -155,9 +145,8 @@ void CharacterData::deleteData( const unsigned offset, const unsigned count, Exc
     String newStr = str;
     newStr.remove(offset, count);
 
-    StringImpl* oldStr = str;
+    RefPtr<StringImpl> oldStr = str;
     str = newStr.impl();
-    str->ref();
     
     if ((!renderer() || !rendererIsNeeded(renderer()->style())) && attached()) {
         detach();
@@ -165,8 +154,7 @@ void CharacterData::deleteData( const unsigned offset, const unsigned count, Exc
     } else if (renderer())
         static_cast<RenderText*>(renderer())->setTextWithOffset(str, offset, count);
 
-    dispatchModifiedEvent(oldStr);
-    oldStr->deref();
+    dispatchModifiedEvent(oldStr.get());
 
     // update the markers for spell checking and grammar checking
     document()->removeMarkers(this, offset, count);
@@ -190,9 +178,8 @@ void CharacterData::replaceData( const unsigned offset, const unsigned count, co
     newStr.remove(offset, realCount);
     newStr.insert(arg, offset);
 
-    StringImpl *oldStr = str;
+    RefPtr<StringImpl> oldStr = str;
     str = newStr.impl();
-    str->ref();
 
     if ((!renderer() || !rendererIsNeeded(renderer()->style())) && attached()) {
         detach();
@@ -200,8 +187,7 @@ void CharacterData::replaceData( const unsigned offset, const unsigned count, co
     } else if (renderer())
         static_cast<RenderText*>(renderer())->setTextWithOffset(str, offset, count);
     
-    dispatchModifiedEvent(oldStr);
-    oldStr->deref();
+    dispatchModifiedEvent(oldStr.get());
     
     // update the markers for spell checking and grammar checking
     int diff = arg.length() - count;
@@ -212,13 +198,6 @@ void CharacterData::replaceData( const unsigned offset, const unsigned count, co
 String CharacterData::nodeValue() const
 {
     return str;
-}
-
-bool CharacterData::containsOnlyWhitespace(unsigned int from, unsigned int len) const
-{
-    if (str)
-        return str->containsOnlyWhitespace(from, len);
-    return true;
 }
 
 bool CharacterData::containsOnlyWhitespace() const
@@ -239,12 +218,8 @@ void CharacterData::dispatchModifiedEvent(StringImpl *prevValue)
     if (parentNode())
         parentNode()->childrenChanged();
     if (document()->hasListenerType(Document::DOMCHARACTERDATAMODIFIED_LISTENER)) {
-        StringImpl *newValue = str->copy();
-        newValue->ref();
-        ExceptionCode ec = 0;
-        dispatchEvent(new MutationEvent(DOMCharacterDataModifiedEvent,
-                      true,false,0,prevValue,newValue,String(),0),ec);
-        newValue->deref();
+        ExceptionCode ec;
+        dispatchEvent(new MutationEvent(DOMCharacterDataModifiedEvent, true, false, 0, prevValue, str, String(), 0), ec);
     }
     dispatchSubtreeModifiedEvent();
 }
@@ -287,7 +262,7 @@ bool CharacterData::offsetInCharacters() const
 #ifndef NDEBUG
 void CharacterData::dump(TextStream *stream, DeprecatedString ind) const
 {
-    *stream << " str=\"" << String(str).deprecatedString().ascii() << "\"";
+    *stream << " str=\"" << String(str).utf8().data() << "\"";
 
     EventTargetNode::dump(stream,ind);
 }

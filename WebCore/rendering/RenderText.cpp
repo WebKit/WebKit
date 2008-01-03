@@ -42,7 +42,7 @@ using namespace Unicode;
 
 namespace WebCore {
 
-static inline bool charactersAreAllASCII(const StringImpl* text)
+static inline bool charactersAreAllASCII(StringImpl* text)
 {
     const UChar* chars = text->characters();
     unsigned length = text->length();

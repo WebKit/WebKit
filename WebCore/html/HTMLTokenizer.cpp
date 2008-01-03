@@ -1623,7 +1623,7 @@ PassRefPtr<Node> HTMLTokenizer::processToken()
         }
 
 #endif
-        currToken.text = StringImpl::createStrippingNull(buffer, dest - buffer);
+        currToken.text = StringImpl::createStrippingNullCharacters(buffer, dest - buffer);
         if (currToken.tagName != commentAtom)
             currToken.tagName = textAtom;
     } else if (currToken.tagName == nullAtom) {

@@ -29,8 +29,8 @@
 namespace WebCore {
 
     struct StringHash {
-        static unsigned hash(const StringImpl* key) { return key->hash(); }
-        static bool equal(const StringImpl* a, const StringImpl* b)
+        static unsigned hash(StringImpl* key) { return key->hash(); }
+        static bool equal(StringImpl* a, StringImpl* b)
         {
             if (a == b)
                 return true;
@@ -78,7 +78,7 @@ namespace WebCore {
     public:
         // Paul Hsieh's SuperFastHash
         // http://www.azillionmonkeys.com/qed/hash.html
-        static unsigned hash(const StringImpl* str)
+        static unsigned hash(StringImpl* str)
         {
             unsigned l = str->length();
             const UChar* s = str->characters();
@@ -166,7 +166,7 @@ namespace WebCore {
             return hash;
         }
         
-        static bool equal(const StringImpl* a, const StringImpl* b)
+        static bool equal(StringImpl* a, StringImpl* b)
         {
             if (a == b)
                 return true;

@@ -27,9 +27,9 @@
 
 namespace WebCore {
 
-CFStringRef StringImpl::createCFString() const
+CFStringRef StringImpl::createCFString()
 {
-    return CFStringCreateWithCharacters(NULL, (const UniChar*)m_data, m_length);
+    return CFStringCreateWithCharacters(NULL, reinterpret_cast<const UniChar*>(m_data), m_length);
 }
 
 }

@@ -80,7 +80,7 @@ String::String(const wxString& wxstr)
     // conversion to UTF-16 or getting internal buffer isn't supposed to fail:
     wxASSERT_MSG(str != NULL, _T("failed string conversion?"));
 
-    m_impl = new StringImpl(str, len);
+    m_impl = StringImpl::create(str, len);
 }
 
 String::operator wxString() const

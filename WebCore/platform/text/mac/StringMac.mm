@@ -34,7 +34,7 @@ String::String(NSString* str)
     else {
         Vector<UChar, 1024> buffer(size);
         CFStringGetCharacters(reinterpret_cast<CFStringRef>(str), CFRangeMake(0, size), buffer.data());
-        m_impl = new StringImpl(buffer.data(), size);
+        m_impl = StringImpl::create(buffer.data(), size);
     }
 }
 

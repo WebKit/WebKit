@@ -55,6 +55,8 @@ public:
     String(const char*);
     String(const char*, unsigned length);
     String(StringImpl* i) : m_impl(i) { }
+    String(PassRefPtr<StringImpl> i) : m_impl(i) { }
+    String(RefPtr<StringImpl> i) : m_impl(i) { }
 
     static String adopt(Vector<UChar>&);
 
@@ -181,7 +183,6 @@ public:
 #endif
 
 #ifndef NDEBUG
-    // For debugging only, leaks memory.
     Vector<char> ascii() const;
 #endif
 

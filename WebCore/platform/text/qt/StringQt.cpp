@@ -35,30 +35,16 @@ namespace WebCore {
 // String conversions
 String::String(const QString& qstr)
 {
-    if (qstr.isNull()) {
-        m_impl = 0;
+    if (qstr.isNull())
         return;
-    }
-    unsigned int len = qstr.length();
-    const UChar* str = reinterpret_cast<const UChar*>(qstr.constData());
-
-    if (!str)
-        return;
-    
-    if (len == 0)
-        m_impl = StringImpl::empty();
-    else
-        m_impl = new StringImpl(str, len);
+    m_impl = StringImpl::create(reinterpret_cast<const UChar*>(qstr.constData()), qstr.length());
 }
 
 String::String(const QStringRef& ref)
 {
     if (!ref.string()) 
-        m_impl = 0;
-    else if (!ref.length()) 
-        m_impl = StringImpl::empty();
-    else
-        m_impl = new StringImpl(reinterpret_cast<const UChar *>(ref.unicode()), ref.length());
+        return;
+    m_impl = StringImpl::create(reinterpret_cast<const UChar *>(ref.unicode()), ref.length());
 }
 
     

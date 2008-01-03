@@ -70,7 +70,7 @@ const int maxSavedResults = 256;
 // this, even when just clicking in the text field.
 static const int cMaxLen = 524288;
 
-static int numGraphemeClusters(const StringImpl* s)
+static int numGraphemeClusters(StringImpl* s)
 {
     if (!s)
         return 0;
@@ -84,7 +84,7 @@ static int numGraphemeClusters(const StringImpl* s)
     return num;
 }
 
-static int numCharactersInGraphemeClusters(const StringImpl* s, int numGraphemeClusters)
+static int numCharactersInGraphemeClusters(StringImpl* s, int numGraphemeClusters)
 {
     if (!s)
         return 0;

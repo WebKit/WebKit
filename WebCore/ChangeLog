@@ -1,3 +1,162 @@
+2008-01-02  Darin Adler  <darin@apple.com>
+
+        Reviewed by Anders.
+
+        - http://bugs.webkit.org/show_bug.cgi?id=16712
+          change StringImpl to take and return PassRefPtr instead of raw pointers
+
+        Also eliminated use of const StringImpl. Since StringImpl is immutable there
+        is no distinction between a const and non-const one at the moment.
+
+        * WebCore.base.exp: Updated.
+
+        * css/CSSHelper.cpp:
+        (WebCore::parseURL): Make String directly, not by making a StringImpl.
+        * dom/Attr.cpp:
+        (WebCore::Attr::createTextChild): Convert AtomicString to String with domString,
+        not via StringImpl.
+        (WebCore::Attr::setValue): Remove unneed call to impl() when passing a String
+        to a function that takes a String.
+
+        * dom/CDATASection.cpp: Removed unused constructor.
+        (WebCore::CDATASection::cloneNode): Added a now-needed .get().
+        (WebCore::CDATASection::createNew): Changed function to take a PassRefPtr.
+        * dom/CDATASection.h:
+
+        * dom/CharacterData.cpp:
+        (WebCore::CharacterData::CharacterData): Removed unneeded initialization and
+        ref() now that the string is a RefPtr. Also updated to not call "new StringImpl".
+        (WebCore::CharacterData::~CharacterData): Removed unneeded deref() since it's
+        a RefPtr.
+        (WebCore::CharacterData::setData): More of that.
+        (WebCore::CharacterData::substringData): Ditto.
+        (WebCore::CharacterData::appendData): Ditto.
+        (WebCore::CharacterData::insertData): Ditto.
+        (WebCore::CharacterData::deleteData): Ditto.
+        (WebCore::CharacterData::replaceData): Ditto.
+        (WebCore::CharacterData::nodeValue): Ditto.
+        (WebCore::CharacterData::dispatchModifiedEvent): Ditto.
+        (WebCore::CharacterData::dump): Ditto.
+        * dom/CharacterData.h: Changed to use a RefPtr. I could have used a String
+        instead, but since String adds extra branches to handle 0, I figured it was
+        more conservative to just use RefPtr. Later it would be good to figure out
+        which is preferred style and be more consistent. Maybe we'll phase out
+        StringImpl, or maybe we'll go the other way and use it more since it can be
+        more efficient.
+
+        * dom/DOMImplementation.cpp:
+        (WebCore::addString): Changed set to use String rather than StringImpl.
+        (WebCore::isSVG10Feature): Ditto.
+        (WebCore::isSVG11Feature): Ditto.
+        (WebCore::DOMImplementation::createDocument): Replaced custom code to
+        find a colon with a call to String::find.
+
+        * dom/Range.cpp:
+        (WebCore::Range::insertNode): Updated since the result of splitText is now
+        a PassRefPtr.
+
+        * dom/Text.cpp:
+        (WebCore::Text::splitText): Updated since str is now a RefPtr. Also made the
+        result of this function be a PassRefPtr.
+        (WebCore::Text::createRenderer): Ditto.
+        (WebCore::Text::createNew): Made the parameter and result both be PassRefPtr.
+        * dom/Text.h:
+
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::nodeName): Use String::upper.
+
+        * html/HTMLInputElement.cpp:
+        (WebCore::numGraphemeClusters): Remove now-unneeded const.
+        (WebCore::numCharactersInGraphemeClusters): Ditto.
+
+        * html/HTMLTokenizer.cpp:
+        (WebCore::HTMLTokenizer::processToken): Updated for function name change.
+
+        * platform/text/AtomicString.cpp:
+        (WebCore::CStringTranslator::translate): Updated since there is no longer
+        a constructor that takes a string.
+
+        * platform/text/PlatformString.h: Added new constructors that take
+        PassRefPtr and RefPtr. Removed misleading comment.
+
+        * platform/text/String.cpp:
+        (WebCore::String::String): Changed to use StringImpl::create, which handles
+        the empty string automatically.
+        (WebCore::String::append): Ditto.
+        (WebCore::String::charactersWithNullTermination): Similar.
+        (WebCore::String::format): Ditto.
+
+        * platform/text/StringHash.h: Took out unneeded const.
+
+        * platform/text/StringImpl.cpp:
+        (WebCore::deleteUCharVector): Changed to take a const pointer since the
+        buffers are now const UChar buffers.
+        (WebCore::StringImpl::StringImpl): Removed some constructors. Got rid of the
+        separate init functions. The constructors are now private and used only in
+        the create functions and one or two other places.
+        (WebCore::StringImpl::containsOnlyWhitespace): Removed now-meaningless const.
+        (WebCore::StringImpl::substring): Ditto. Also changed return value to be a
+        PassRefPtr.
+        (WebCore::StringImpl::characterStartingAt): Ditto.
+        (WebCore::StringImpl::toLength): Ditto.
+        (WebCore::StringImpl::toCoordsArray): Ditto.
+        (WebCore::StringImpl::toLengthArray): Ditto.
+        (WebCore::StringImpl::isLower): Ditto.
+        (WebCore::StringImpl::lower): Ditto. Changed to use Vector and adopt so we
+        don't have to use new directly here. Makes empty string handling more consistent.
+        (WebCore::StringImpl::upper): Ditto.
+        (WebCore::StringImpl::secure): Ditto.
+        (WebCore::StringImpl::foldCase): Ditto.
+        (WebCore::StringImpl::stripWhiteSpace): Ditto.
+        (WebCore::StringImpl::simplifyWhiteSpace): Ditto.
+        (WebCore::StringImpl::capitalize): Ditto.
+        (WebCore::StringImpl::toInt): Removed now-meaningless const.
+        (WebCore::StringImpl::toInt64): Ditto.
+        (WebCore::StringImpl::toUInt64): Ditto.
+        (WebCore::StringImpl::toDouble): Ditto.
+        (WebCore::StringImpl::toFloat): Ditto.
+        (WebCore::StringImpl::find): Ditto.
+        (WebCore::StringImpl::reverseFind): Ditto.
+        (WebCore::StringImpl::endsWith): Ditto.
+        (WebCore::StringImpl::replace): Ditto.
+        (WebCore::equal): Ditto.
+        (WebCore::equalIgnoringCase): Ditto.
+        (WebCore::StringImpl::ascii): Ditto.
+        (WebCore::StringImpl::defaultWritingDirection): Ditto.
+        (WebCore::StringImpl::createStrippingNullCharacters): Ditto.
+        (WebCore::StringImpl::adopt): Added special case so this uses the shared
+        empty string like other functions. Also optimized the common case where the
+        vector happens to already have the right size so we don't do a fastRealloc
+        at all in those cases.
+        (WebCore::StringImpl::create): Added. These are now the public functions for
+        creating new StringImpl objects. They all implement the shared empty string.
+        (WebCore::StringImpl::createWithTerminatingNullCharacter):
+        * platform/text/StringImpl.h:
+
+        * platform/text/cf/StringCF.cpp:
+        (WebCore::String::String): Use StringImpl::create instead of new StringImpl.
+        * platform/text/cf/StringImplCF.cpp:
+        (WebCore::StringImpl::createCFString): Removed now-obsolete const.
+        * platform/text/mac/StringImplMac.mm:
+        (WebCore::StringImpl::operator NSString *): Ditto.
+        * platform/text/mac/StringMac.mm:
+        (WebCore::String::String): Use StringImpl::create instead of new StringImpl.
+        * platform/text/qt/StringQt.cpp:
+        (WebCore::String::String): Ditto.
+        * platform/text/wx/StringWx.cpp:
+        (WebCore::String::String): Ditto.
+        * rendering/RenderBR.cpp:
+        (WebCore::RenderBR::RenderBR): Ditto.
+
+        * rendering/RenderSVGInlineText.cpp:
+        (WebCore::RenderSVGInlineText::RenderSVGInlineText): Use PassRefPtr.
+        * rendering/RenderSVGInlineText.h:
+
+        * rendering/RenderText.cpp:
+        (WebCore::charactersAreAllASCII): Removed now-unneeded const.
+        * rendering/RenderTextFragment.cpp:
+        (WebCore::RenderTextFragment::originalText): Use RefPtr.
+
 2008-01-02  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Oliver Hunt.

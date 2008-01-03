@@ -60,7 +60,7 @@ struct CStringTranslator
 
     static void translate(StringImpl*& location, const char* const& c, unsigned hash)
     {
-        StringImpl* r = new StringImpl(c);
+        StringImpl* r = new StringImpl(c, strlen(c));
         r->m_hash = hash;
         r->m_inTable = true;
         location = r; 
