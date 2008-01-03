@@ -30,6 +30,7 @@
 
 #import <JavaScriptCore/Assertions.h>
 #import <WebKit/WebKitNSStringExtras.h>
+#import <WebKitSystemInterface.h>
 
 #import <sys/mount.h>
 
@@ -290,6 +291,13 @@
     }
 
     return [carbonPathPieces componentsJoinedByString:@":"];
+}
+
+- (void)_webkit_setMetadataURL:(NSString *)URLString referrer:(NSString *)referrer atPath:(NSString *)path
+{
+    ASSERT(URLString);
+    ASSERT(path);
+    WKSetMetadataURL(URLString, referrer, path);
 }
 
 - (NSString *)_webkit_startupVolumeName

@@ -1,3 +1,16 @@
+2008-01-03  Kevin Decker  <kdecker@apple.com>
+
+        Reviewed by Darin.
+
+        Fixed: <rdar://problem/4106190> Include "Where from" metadata in drag-and-dropped images
+        
+        * Misc/WebNSFileManagerExtras.h:
+        * Misc/WebNSFileManagerExtras.m:
+        (-[NSFileManager _webkit_setMetadataURL:referrer:atPath:]): Added new method. Uses WebKitSystemInterface to set
+        "Where from:" metadata information.
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView namesOfPromisedFilesDroppedAtDestination:]): Added "Where from:" metadata for drag and dropped images.
+        
 2008-01-03  Alice Liu  <alice.liu@apple.com>
 
         Reviewed by Darin.

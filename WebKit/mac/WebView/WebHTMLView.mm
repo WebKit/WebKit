@@ -3073,6 +3073,7 @@ done:
 - (NSArray *)namesOfPromisedFilesDroppedAtDestination:(NSURL *)dropDestination
 {
     NSFileWrapper *wrapper = nil;
+    NSURL *draggingImageURL = nil;
     
     if (WebCore::CachedResource* tiffResource = [self promisedDragTIFFDataSource]) {
         
@@ -3082,7 +3083,7 @@ done:
         
         NSData *data = buffer->createNSData();
         NSURLResponse *response = tiffResource->response().nsURLResponse();
-        
+        draggingImageURL = [response URL];
         wrapper = [[[NSFileWrapper alloc] initRegularFileWithContents:data] autorelease];
         [wrapper setPreferredFilename:[response suggestedFilename]];
     }
@@ -3101,8 +3102,9 @@ noPromisedData:
         
         KURL imageURL = page->dragController()->draggingImageURL();
         ASSERT(!imageURL.isEmpty());
-        
-        wrapper = [[self _dataSource] _fileWrapperForURL:imageURL.getNSURL()];
+        draggingImageURL = imageURL.getNSURL();
+
+        wrapper = [[self _dataSource] _fileWrapperForURL:draggingImageURL];
     }
     
     if (wrapper == nil) {
@@ -3115,7 +3117,10 @@ noPromisedData:
     path = [[NSFileManager defaultManager] _webkit_pathWithUniqueFilenameForPath:path];
     if (![wrapper writeToFile:path atomically:NO updateFilenames:YES])
         LOG_ERROR("Failed to create image file via -[NSFileWrapper writeToFile:atomically:updateFilenames:]");
-
+    
+    if (draggingImageURL)
+        [[NSFileManager defaultManager] _webkit_setMetadataURL:[draggingImageURL absoluteString] referrer:nil atPath:path];
+    
     return [NSArray arrayWithObject:[path lastPathComponent]];
 }
 

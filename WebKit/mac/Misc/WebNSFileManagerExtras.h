@@ -39,6 +39,7 @@
 - (void)_webkit_backgroundRemoveFileAtPath:(NSString *)path;
 - (void)_webkit_backgroundRemoveLeftoverFiles:(NSString *)path;
 - (BOOL)_webkit_removeFileOnlyAtPath:(NSString *)path;
+- (void)_webkit_setMetadataURL:(NSString *)URLString referrer:(NSString *)referrer atPath:(NSString *)path;
 - (NSString *)_webkit_startupVolumeName;
 - (NSString *)_webkit_pathWithUniqueFilenameForPath:(NSString *)path;
 
