@@ -1,3 +1,13 @@
+2008-01-03  Adam Roben  <aroben@apple.com>
+
+        Fix a buffer overrun and a leak introduced in r29098
+
+        Reviewed by Mark.
+
+        * platform/text/StringImpl.cpp:
+        (WebCore::StringImpl::StringImpl): Only allocate one buffer, and make
+        it be big enough to hold the string contents plus the null terminator.
+
 2008-01-03  Simon Hausmann  <hausmann@webkit.org>
 
         Reviewed by Lars.

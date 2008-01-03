@@ -84,12 +84,11 @@ StringImpl::StringImpl(const UChar* str, unsigned len)
 
 StringImpl::StringImpl(const StringImpl& str, WithTerminatingNullCharacter)
     : m_length(str.m_length)
-    , m_data(newUCharVector(str.m_length + 1))
     , m_hash(str.m_hash)
     , m_inTable(false)
     , m_hasTerminatingNullCharacter(true)
 {
-    UChar* data = newUCharVector(str.m_length);
+    UChar* data = newUCharVector(str.m_length + 1);
     memcpy(data, str.m_data, str.m_length * sizeof(UChar));
     data[str.m_length] = 0;
     m_data = data;
