@@ -1,3 +1,11 @@
+2008-01-03  Simon Hausmann  <hausmann@webkit.org>
+
+        Reviewed by Mark Rowe.
+
+        Fix compilation with gcc 4.3: limits.h is needed for INT_MAX.
+
+        * pcre/pcre_exec.cpp:
+
 2008-01-03  Darin Adler  <darin@apple.com>
 
         * tests/mozilla/expected.html: The fix for bug 16696 also fixed a test

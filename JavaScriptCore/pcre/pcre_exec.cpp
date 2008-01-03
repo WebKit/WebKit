@@ -49,6 +49,8 @@ the JavaScript specification. There are also some supporting functions. */
 #include <wtf/ASCIICType.h>
 #include <wtf/Vector.h>
 
+#include <limits.h>
+
 using namespace WTF;
 
 #ifdef __GNUC__
