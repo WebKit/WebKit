@@ -1,3 +1,7 @@
+2008-01-02  Sam Weinig  <sam@webkit.org>
+
+        * Scripts/do-webcore-rename: Yet more renaming ideas.
+
 2008-01-02  Darin Adler  <darin@apple.com>
 
         * Scripts/do-webcore-rename: More renaming ideas. (Maciej, please merge yours with mine.)
