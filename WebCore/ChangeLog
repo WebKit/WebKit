@@ -1,3 +1,9 @@
+2008-01-02  Ada Chan  <adachan@apple.com>
+
+        Fix windows build.
+
+        * WebCore.vcproj/WebCore.vcproj:
+
 2008-01-02  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Dan Bernstein

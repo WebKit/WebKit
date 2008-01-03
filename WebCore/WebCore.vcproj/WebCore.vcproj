@@ -7433,7 +7433,7 @@
 				>
 			</File>
   			<File
- 				RelativePath="..\html\HTMLTableRowsCollection.h"
+ 				RelativePath="..\html\HTMLTableRowsCollection.cpp"
  				>
  			</File>
  			<File
