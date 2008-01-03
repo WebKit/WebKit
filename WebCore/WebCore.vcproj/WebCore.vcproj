@@ -1188,14 +1188,14 @@
 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSMediaList.h"
 				>
 			</File>
- 			<File
- 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSMessageEvent.cpp"
- 				>
- 			</File>
- 			<File
- 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSMessageEvent.h"
- 				>
- 			</File>
+			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSMessageEvent.cpp"
+				>
+			</File>
+			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSMessageEvent.h"
+				>
+			</File>
 			<File
 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSMouseEvent.cpp"
 				>
@@ -1813,22 +1813,6 @@
 				>
 			</File>
 			<File
-				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSSVGGlyphElement.cpp"
-				>
-			</File>
-			<File
-				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSSVGGlyphElement.h"
-				>
-			</File>
-			<File
-				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSSVGMissingGlyphElement.cpp"
-				>
-			</File>
-			<File
-				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSSVGMissingGlyphElement.h"
-				>
-			</File>
-			<File
 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSSVGFontFaceElement.cpp"
 				>
 			</File>
@@ -1882,6 +1866,14 @@
 			</File>
 			<File
 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSSVGGElement.h"
+				>
+			</File>
+			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSSVGGlyphElement.cpp"
+				>
+			</File>
+			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSSVGGlyphElement.h"
 				>
 			</File>
 			<File
@@ -1962,6 +1954,14 @@
 			</File>
 			<File
 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSSVGMetadataElement.h"
+				>
+			</File>
+			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSSVGMissingGlyphElement.cpp"
+				>
+			</File>
+			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSSVGMissingGlyphElement.h"
 				>
 			</File>
 			<File
@@ -3395,10 +3395,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\platform\PlatformString.h"
-				>
-			</File>
-			<File
 				RelativePath="..\platform\PlatformWheelEvent.h"
 				>
 			</File>
@@ -3574,75 +3570,11 @@
 					>
 				</File>
 				<File
-					RelativePath="..\platform\graphics\win\FontCacheWin.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\platform\graphics\win\FontCustomPlatformData.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\platform\graphics\win\FontCustomPlatformData.h"
-					>
-				</File>
-				<File
-					RelativePath="..\platform\graphics\win\FontDatabase.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\platform\graphics\win\FontDatabase.h"
-					>
-				</File>
-				<File
-					RelativePath="..\platform\graphics\win\FontDataWin.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\platform\graphics\win\FontPlatformData.h"
-					>
-				</File>
-				<File
-					RelativePath="..\platform\graphics\win\FontPlatformDataWin.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\platform\graphics\win\FontWin.cpp"
-					>
-					<FileConfiguration
-						Name="Debug|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							AdditionalOptions="$(AnalyzeWithLargeStack)"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							AdditionalOptions="$(AnalyzeWithLargeStack)"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug_Internal|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							AdditionalOptions="$(AnalyzeWithLargeStack)"
-						/>
-					</FileConfiguration>
-				</File>
-				<File
 					RelativePath="..\platform\win\GDIObjectCounter.cpp"
 					>
 				</File>
 				<File
 					RelativePath="..\platform\win\GDIObjectCounter.h"
-					>
-				</File>
-				<File
-					RelativePath="..\platform\graphics\win\GlyphPageTreeNodeWin.cpp"
 					>
 				</File>
 				<File
@@ -3719,10 +3651,6 @@
 				</File>
 				<File
 					RelativePath="..\platform\win\TemporaryLinkStubs.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\platform\text\win\TextBreakIteratorInternalICUWin.cpp"
 					>
 				</File>
 				<File
@@ -3984,6 +3912,70 @@
 						>
 					</File>
 					<File
+						RelativePath="..\platform\graphics\win\FontCacheWin.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\platform\graphics\win\FontCustomPlatformData.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\platform\graphics\win\FontCustomPlatformData.h"
+						>
+					</File>
+					<File
+						RelativePath="..\platform\graphics\win\FontDatabase.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\platform\graphics\win\FontDatabase.h"
+						>
+					</File>
+					<File
+						RelativePath="..\platform\graphics\win\FontDataWin.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\platform\graphics\win\FontPlatformData.h"
+						>
+					</File>
+					<File
+						RelativePath="..\platform\graphics\win\FontPlatformDataWin.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\platform\graphics\win\FontWin.cpp"
+						>
+						<FileConfiguration
+							Name="Debug|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								AdditionalOptions="$(AnalyzeWithLargeStack)"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								AdditionalOptions="$(AnalyzeWithLargeStack)"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Debug_Internal|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								AdditionalOptions="$(AnalyzeWithLargeStack)"
+							/>
+						</FileConfiguration>
+					</File>
+					<File
+						RelativePath="..\platform\graphics\win\GlyphPageTreeNodeWin.cpp"
+						>
+					</File>
+					<File
 						RelativePath="..\platform\graphics\win\IconWin.cpp"
 						>
 					</File>
@@ -4090,10 +4082,6 @@
 				</File>
 				<File
 					RelativePath="..\platform\network\AuthenticationChallenge.h"
-					>
-				</File>
-				<File
-					RelativePath="..\platform\network\win\CookieJarWin.cpp"
 					>
 				</File>
 				<File
@@ -4217,6 +4205,14 @@
 					</File>
 					<File
 						RelativePath="..\platform\network\cf\ResourceResponseCFNet.h"
+						>
+					</File>
+				</Filter>
+				<Filter
+					Name="win"
+					>
+					<File
+						RelativePath="..\platform\network\win\CookieJarWin.cpp"
 						>
 					</File>
 				</Filter>
@@ -4493,6 +4489,14 @@
 					</File>
 					<File
 						RelativePath="..\platform\text\cf\StringImplCF.cpp"
+						>
+					</File>
+				</Filter>
+				<Filter
+					Name="win"
+					>
+					<File
+						RelativePath="..\platform\text\win\TextBreakIteratorInternalICUWin.cpp"
 						>
 					</File>
 				</Filter>
@@ -6112,14 +6116,14 @@
 				RelativePath="..\dom\MappedAttributeEntry.h"
 				>
 			</File>
-  			<File
- 				RelativePath="..\dom\MessageEvent.cpp"
- 				>
- 			</File>
- 			<File
- 				RelativePath="..\dom\MessageEvent.h"
- 				>
- 			</File>
+			<File
+				RelativePath="..\dom\MessageEvent.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\dom\MessageEvent.h"
+				>
+			</File>
 			<File
 				RelativePath="..\dom\MouseEvent.cpp"
 				>
@@ -6313,11 +6317,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\dom\TagNodeList.h"
+				RelativePath="..\dom\TagNodeList.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\dom\TagNodeList.cpp"
+				RelativePath="..\dom\TagNodeList.h"
 				>
 			</File>
 			<File

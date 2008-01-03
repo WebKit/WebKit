@@ -1,3 +1,12 @@
+2008-01-03  Dan Bernstein  <mitz@apple.com>
+
+        Rubber-stamped by Adam Roben.
+
+        - update the project hierarchy to match the on-disk organization of
+          the platform directory.
+
+        * WebCore.vcproj/WebCore.vcproj:
+
 2008-01-03  Adam Roben  <aroben@apple.com>
 
         Fix a buffer overrun and a leak introduced in r29098
