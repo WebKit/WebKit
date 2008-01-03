@@ -1,12 +1,10 @@
-/**
- * This file is part of the DOM implementation for KDE.
- *
+/*
  * Copyright (C) 1997 Martin Jones (mjones@kde.org)
  *           (C) 1997 Torben Weis (weis@kde.org)
  *           (C) 1998 Waldo Bastian (bastian@kde.org)
  *           (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
- * Copyright (C) 2003, 2004, 2005, 2006 Apple Computer, Inc.
+ * Copyright (C) 2003, 2004, 2005, 2006, 2008 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -23,18 +21,18 @@
  * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
  * Boston, MA 02110-1301, USA.
  */
+
 #include "config.h"
 #include "HTMLTableElement.h"
 
-#include "CSSHelper.h"
 #include "CSSPropertyNames.h"
 #include "CSSStyleSheet.h"
 #include "CSSValueKeywords.h"
-#include "Document.h"
 #include "ExceptionCode.h"
-#include "HTMLCollection.h"
 #include "HTMLNames.h"
 #include "HTMLTableCaptionElement.h"
+#include "HTMLTableRowsCollection.h"
+#include "HTMLTableRowElement.h"
 #include "HTMLTableSectionElement.h"
 #include "RenderTable.h"
 #include "Text.h"
@@ -45,22 +43,12 @@ using namespace HTMLNames;
 
 HTMLTableElement::HTMLTableElement(Document *doc)
     : HTMLElement(tableTag, doc)
-    , m_head(0)
-    , m_foot(0)
-    , m_firstBody(0)
-    , m_caption(0)
     , m_borderAttr(false)
     , m_borderColorAttr(false)
     , m_frameAttr(false)
     , m_rulesAttr(UnsetRules)
     , m_padding(1)
 {
-}
-
-HTMLTableElement::~HTMLTableElement()
-{
-    if (m_firstBody)
-        m_firstBody->deref();
 }
 
 bool HTMLTableElement::checkDTD(const Node* newChild)
@@ -74,215 +62,181 @@ bool HTMLTableElement::checkDTD(const Node* newChild)
            newChild->hasTagName(scriptTag);
 }
 
-Node* HTMLTableElement::setCaption(HTMLTableCaptionElement* c)
+HTMLTableCaptionElement* HTMLTableElement::caption() const
 {
-    ExceptionCode ec = 0;
-    if (Node* oc = m_caption)
-        replaceChild(c, oc, ec);
-    else
-        insertBefore(c, firstChild(), ec);
-    m_caption = c;
-    return m_caption;
-}
-
-Node* HTMLTableElement::setTHead(HTMLTableSectionElement* s)
-{
-    ExceptionCode ec = 0;
-    if (Node* h = m_head)
-        replaceChild(s, h, ec);
-    else if (m_foot)
-        insertBefore(s, m_foot, ec);
-    else if (m_firstBody)
-        insertBefore(s, m_firstBody, ec);
-    else
-        appendChild(s, ec);
-    m_head = s;
-    return m_head;
-}
-
-Node* HTMLTableElement::setTFoot(HTMLTableSectionElement *s)
-{
-    ExceptionCode ec = 0;
-    if (Node *f = m_foot)
-        replaceChild(s, f, ec);
-    else if (m_firstBody)
-        insertBefore(s, m_firstBody, ec);
-    else
-        appendChild(s, ec);
-    m_foot = s;
-    return m_foot;
-}
-
-Node* HTMLTableElement::setTBody(HTMLTableSectionElement *s)
-{
-    ExceptionCode ec = 0;
-    Node* r;
-    s->ref();
-    if (Node *fb = m_firstBody) {
-        replaceChild(s, fb, ec);
-        fb->deref();
-        r = s;
-    } else
-        appendChild(s, ec);
-    m_firstBody = s;
-    return m_firstBody;
-}
-
-HTMLElement *HTMLTableElement::createTHead()
-{
-    if (!m_head) {
-        ExceptionCode ec = 0;
-        m_head = new HTMLTableSectionElement(theadTag, document());
-        if (m_foot)
-            insertBefore(m_head, m_foot, ec);
-        else if (m_firstBody)
-            insertBefore(m_head, m_firstBody, ec);
-        else
-            appendChild(m_head, ec);
+    for (Node* child = firstChild(); child; child = child->nextSibling()) {
+        if (child->hasTagName(captionTag))
+            return static_cast<HTMLTableCaptionElement*>(child);
     }
-    return m_head;
+    return 0;
+}
+
+void HTMLTableElement::setCaption(PassRefPtr<HTMLTableCaptionElement> newCaption, ExceptionCode& ec)
+{
+    deleteCaption();
+    insertBefore(newCaption, firstChild(), ec);
+}
+
+HTMLTableSectionElement* HTMLTableElement::tHead() const
+{
+    for (Node* child = firstChild(); child; child = child->nextSibling()) {
+        if (child->hasTagName(theadTag))
+            return static_cast<HTMLTableSectionElement*>(child);
+    }
+    return 0;
+}
+
+void HTMLTableElement::setTHead(PassRefPtr<HTMLTableSectionElement> newHead, ExceptionCode& ec)
+{
+    deleteTHead();
+
+    Node* child;
+    for (child = firstChild(); child; child = child->nextSibling())
+        if (child->isElementNode() && !child->hasTagName(captionTag) && !child->hasTagName(colgroupTag))
+            break;
+
+    insertBefore(newHead, child, ec);
+}
+
+HTMLTableSectionElement* HTMLTableElement::tFoot() const
+{
+    for (Node* child = firstChild(); child; child = child->nextSibling()) {
+        if (child->hasTagName(tfootTag))
+            return static_cast<HTMLTableSectionElement*>(child);
+    }
+    return 0;
+}
+
+void HTMLTableElement::setTFoot(PassRefPtr<HTMLTableSectionElement> newFoot, ExceptionCode& ec)
+{
+    deleteTFoot();
+
+    Node* child;
+    for (child = firstChild(); child; child = child->nextSibling())
+        if (child->isElementNode() && !child->hasTagName(captionTag) && !child->hasTagName(colgroupTag) && !child->hasTagName(theadTag))
+            break;
+
+    insertBefore(newFoot, child, ec);
+}
+
+PassRefPtr<HTMLElement> HTMLTableElement::createTHead()
+{
+    if (HTMLTableSectionElement* existingHead = tHead())
+        return existingHead;
+    RefPtr<HTMLTableSectionElement> head = new HTMLTableSectionElement(theadTag, document());
+    ExceptionCode ec;
+    setTHead(head, ec);
+    return head.release();
 }
 
 void HTMLTableElement::deleteTHead()
 {
-    if (m_head) {
-        ExceptionCode ec = 0;
-        m_head->ref();
-        HTMLElement::removeChild(m_head, ec);
-        m_head->deref();
-    }
-    m_head = 0;
+    ExceptionCode ec;
+    removeChild(tHead(), ec);
 }
 
-HTMLElement *HTMLTableElement::createTFoot()
+PassRefPtr<HTMLElement> HTMLTableElement::createTFoot()
 {
-    if (!m_foot) {
-        ExceptionCode ec = 0;
-        m_foot = new HTMLTableSectionElement(tfootTag, document());
-        if (m_firstBody)
-            insertBefore(m_foot, m_firstBody, ec);
-        else
-            appendChild(m_foot, ec);
-    }
-    return m_foot;
+    if (HTMLTableSectionElement* existingFoot = tFoot())
+        return existingFoot;
+    RefPtr<HTMLTableSectionElement> foot = new HTMLTableSectionElement(tfootTag, document());
+    ExceptionCode ec;
+    setTFoot(foot, ec);
+    return foot.release();
 }
 
 void HTMLTableElement::deleteTFoot()
 {
-    if (m_foot) {
-        ExceptionCode ec = 0;
-        m_foot->ref();
-        HTMLElement::removeChild(m_foot, ec);
-        m_foot->deref();
-    }
-    m_foot = 0;
+    ExceptionCode ec;
+    removeChild(tFoot(), ec);
 }
 
-HTMLElement *HTMLTableElement::createCaption()
+PassRefPtr<HTMLElement> HTMLTableElement::createCaption()
 {
-    if (!m_caption) {
-        ExceptionCode ec = 0;
-        m_caption = new HTMLTableCaptionElement(document());
-        insertBefore(m_caption, firstChild(), ec);
-    }
-    return m_caption;
+    if (HTMLTableCaptionElement* existingCaption = caption())
+        return existingCaption;
+    RefPtr<HTMLTableCaptionElement> caption = new HTMLTableCaptionElement(document());
+    ExceptionCode ec;
+    setCaption(caption, ec);
+    return caption.release();
 }
 
 void HTMLTableElement::deleteCaption()
 {
-    if (m_caption) {
-        ExceptionCode ec = 0;
-        m_caption->ref();
-        HTMLElement::removeChild(m_caption, ec);
-        m_caption->deref();
+    ExceptionCode ec;
+    removeChild(caption(), ec);
+}
+
+HTMLTableSectionElement* HTMLTableElement::lastBody() const
+{
+    for (Node* child = lastChild(); child; child = child->previousSibling()) {
+        if (child->hasTagName(tbodyTag))
+            return static_cast<HTMLTableSectionElement*>(child);
     }
-    m_caption = 0;
+    return 0;
 }
 
 PassRefPtr<HTMLElement> HTMLTableElement::insertRow(int index, ExceptionCode& ec)
 {
-    // The DOM requires that we create a tbody if the table is empty
-    // (cf DOM2TS HTMLTableElement31 test)
-    // (note: this is different from "if the table has no sections", since we can have
-    // <TABLE><TR>)
-    if (!m_firstBody && !m_head && !m_foot)
-        setTBody(new HTMLTableSectionElement(tbodyTag, document()));
-
-    // IE treats index=-1 as default value meaning 'append after last'
-    // This isn't in the DOM. So, not implemented yet.
-    HTMLTableSectionElement* section = 0L;
-    HTMLTableSectionElement* lastSection = 0L;
-    Node *node = firstChild();
-    bool append = (index == -1);
-    bool found = false;
-    for (; node && (index>=0 || append) ; node = node->nextSibling())
-    {
-        // there could be 2 tfoot elements in the table. Only the first one is the "foot", that's why we have the more
-        // complicated if statement below.
-        if (node != m_foot && (node->hasTagName(theadTag) || node->hasTagName(tfootTag) || node->hasTagName(tbodyTag))) {
-            section = static_cast<HTMLTableSectionElement*>(node);
-            lastSection = section;
-            if (!append) {
-                int rows = section->numRows();
-                if (rows >= index) {
-                    found = true;
-                    break;
-                } else
-                    index -= rows;
-            }
-        }
-    }
-    if (!found && m_foot)
-        section = static_cast<HTMLTableSectionElement*>(m_foot);
-
-    // Index == 0 means "insert before first row in current section"
-    // or "append after last row" (if there's no current section anymore)
-    if (!section && (index == 0 || append)) {
-        section = lastSection;
-        index = section ? section->numRows() : 0;
-    }
-    if (section && (index >= 0 || append))
-        return section->insertRow(index, ec);
-    else {
-        // No more sections => index is too big
+    if (index < -1) {
         ec = INDEX_SIZE_ERR;
         return 0;
     }
+
+    HTMLTableRowElement* lastRow = 0;
+    HTMLTableRowElement* row = 0;
+    if (index == -1)
+        lastRow = HTMLTableRowsCollection::lastRow(this);
+    else {
+        for (int i = 0; i <= index; ++i) {
+            row = HTMLTableRowsCollection::rowAfter(this, lastRow);
+            if (!row) {
+                if (i != index) {
+                    ec = INDEX_SIZE_ERR;
+                    return 0;
+                }
+                break;
+            }
+            lastRow = row;
+        }
+    }
+
+    Node* parent;
+    if (lastRow)
+        parent = row ? row->parent() : lastRow->parent();
+    else {
+        parent = lastBody();
+        if (!parent) {
+            RefPtr<HTMLTableSectionElement> newBody = new HTMLTableSectionElement(tbodyTag, document());
+            RefPtr<HTMLTableRowElement> newRow = new HTMLTableRowElement(document());
+            newBody->appendChild(newRow, ec);
+            appendChild(newBody.release(), ec);
+            return newRow.release();
+        }
+    }
+
+    RefPtr<HTMLTableRowElement> newRow = new HTMLTableRowElement(document());
+    parent->insertBefore(newRow, row, ec);
+    return newRow.release();
 }
 
 void HTMLTableElement::deleteRow(int index, ExceptionCode& ec)
 {
-    HTMLTableSectionElement* section = 0L;
-    Node *node = firstChild();
-    bool lastRow = index == -1;
-    HTMLTableSectionElement* lastSection = 0L;
-    bool found = false;
-    for (; node ; node = node->nextSibling())
-    {
-        if (node != m_foot && (node->hasTagName(theadTag) || node->hasTagName(tfootTag) || 
-            node->hasTagName(tbodyTag))) {
-            section = static_cast<HTMLTableSectionElement*>(node);
-            lastSection = section;
-            int rows = section->numRows();
-            if (!lastRow) {
-                if (rows > index) {
-                    found = true;
-                    break;
-                } else
-                    index -= rows;
-            }
+    HTMLTableRowElement* row = 0;
+    if (index == -1)
+        row = HTMLTableRowsCollection::lastRow(this);
+    else {
+        for (int i = 0; i <= index; ++i) {
+            row = HTMLTableRowsCollection::rowAfter(this, row);
+            if (!row)
+                break;
         }
-        section = 0L;
     }
-    if (!found && m_foot)
-        section = static_cast<HTMLTableSectionElement*>(m_foot);
-
-    if (lastRow && lastSection)
-        lastSection->deleteRow(-1, ec);
-    else if (section && index >= 0 && index < section->numRows())
-        section->deleteRow(index, ec);
-    else
+    if (!row) {
         ec = INDEX_SIZE_ERR;
+        return;
+    }
+    row->remove(ec);
 }
 
 ContainerNode* HTMLTableElement::addChild(PassRefPtr<Node> child)
@@ -296,37 +250,8 @@ ContainerNode* HTMLTableElement::addChild(PassRefPtr<Node> child)
         return this;
     }
 
-    // The creation of <tbody> elements relies on the "childAllowed" check,
-    // so we need to do it even for XML documents.
-    ASSERT(child->nodeType() != DOCUMENT_FRAGMENT_NODE);
-    if (!document()->isHTMLDocument() && !childAllowed(child.get()))
-        return 0;
-
-    ContainerNode* container = HTMLElement::addChild(child.get());
-    if (container) {
-        if (!m_caption && child->hasTagName(captionTag))
-            m_caption = static_cast<HTMLTableCaptionElement*>(child.get());
-        else if (!m_head && child->hasTagName(theadTag))
-            m_head = static_cast<HTMLTableSectionElement*>(child.get());
-        else if (!m_foot && child->hasTagName(tfootTag))
-            m_foot = static_cast<HTMLTableSectionElement*>(child.get());
-        else if (!m_firstBody && child->hasTagName(tbodyTag)) {
-            m_firstBody = static_cast<HTMLTableSectionElement*>(child.get());
-            m_firstBody->ref();
-        }
-    }
-    return container;
+    return HTMLElement::addChild(child.get());
 }
-
-void HTMLTableElement::childrenChanged()
-{
-    HTMLElement::childrenChanged();
-    
-    if (m_firstBody && m_firstBody->parentNode() != this) {
-        m_firstBody->deref();
-        m_firstBody = 0;
-    }
-} 
 
 bool HTMLTableElement::mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const
 {
@@ -389,7 +314,7 @@ static bool setTableCellsChanged(Node* n)
     return cellChanged;
 }
 
-void HTMLTableElement::parseMappedAttribute(MappedAttribute *attr)
+void HTMLTableElement::parseMappedAttribute(MappedAttribute* attr)
 {
     if (attr->name() == widthAttr)
         addCSSLength(attr, CSS_PROP_WIDTH, attr->value());
@@ -491,9 +416,13 @@ void HTMLTableElement::parseMappedAttribute(MappedAttribute *attr)
         // The presence of a valid rules attribute causes border collapsing to be enabled.
         if (m_rulesAttr != UnsetRules)
             addCSSProperty(attr, CSS_PROP_BORDER_COLLAPSE, CSS_VAL_COLLAPSE);
-        if (oldRules != m_rulesAttr && m_firstBody)
-            if (setTableCellsChanged(m_firstBody))
+        if (oldRules != m_rulesAttr) {
+            bool cellChanged = false;
+            for (Node* child = firstChild(); child; child = child->nextSibling())
+                cellChanged |= setTableCellsChanged(child);
+            if (cellChanged)
                 setChanged();
+        }
     } else if (attr->name() == cellspacingAttr) {
         if (!attr->value().isEmpty())
             addCSSLength(attr, CSS_PROP_BORDER_SPACING, attr->value());
@@ -652,7 +581,7 @@ bool HTMLTableElement::isURLAttribute(Attribute *attr) const
 
 PassRefPtr<HTMLCollection> HTMLTableElement::rows()
 {
-    return new HTMLCollection(this, HTMLCollection::TableRows);
+    return new HTMLTableRowsCollection(this);
 }
 
 PassRefPtr<HTMLCollection> HTMLTableElement::tBodies()

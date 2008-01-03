@@ -1,5 +1,82 @@
 2008-01-02  Darin Adler  <darin@apple.com>
 
+        Reviewed by Maciej.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=16657
+          Acid3 failure since table.caption and table.thead do not work for nodes added by appendChild
+        - fix http://bugs.webkit.org/show_bug.cgi?id=16659
+          Acid3 expects HTMLTableElement.rows to include a <tr> element that is an immediate child of the <table>
+
+        Tests: dom/html/level2/html/HTMLCollection07.html
+               dom/html/level2/html/HTMLCollection08.html
+               dom/html/level2/xhtml/HTMLCollection07.xhtml
+               dom/html/level2/xhtml/HTMLCollection08.xhtml
+               fast/dom/HTMLTableElement/early-acid3-65-excerpt.html
+               fast/dom/HTMLTableElement/early-acid3-66-excerpt.html
+
+        * GNUmakefile.am: Added HTMLTableRowsCollection.
+        * WebCore.pro: Ditto.
+        * WebCore.vcproj/WebCore.vcproj: Ditto.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+        * WebCoreSources.bkl: Ditto.
+
+        * dom/XMLTokenizer.cpp: Took out stray include.
+
+        * html/HTMLCollection.cpp:
+        (WebCore::HTMLCollection::itemAfter): Removed all the table rows code, since we now use
+        a separate class for that collection. Also got rid of the distinct types for custom collections
+        that don't need them (use Other for both).
+        * html/HTMLCollection.h: Also made firstItem non-virtual because it doesn't need to be virtual.
+
+        * html/HTMLFormCollection.cpp:
+        (WebCore::HTMLFormCollection::HTMLFormCollection): Use Other instead of FormElements
+        for the HTMLCollection type.
+
+        * html/HTMLTableElement.cpp:
+        (WebCore::HTMLTableElement::HTMLTableElement): Eliminated m_head, m_foot, m_firstBody, and m_caption.
+        (WebCore::HTMLTableElement::caption): Added non-inline version. Finds the caption rather than
+        keeping a pointer to it.
+        (WebCore::HTMLTableElement::setCaption): Rewrote.
+        (WebCore::HTMLTableElement::tHead): Ditto.
+        (WebCore::HTMLTableElement::setTHead): Ditto.
+        (WebCore::HTMLTableElement::tFoot): Ditto.
+        (WebCore::HTMLTableElement::setTFoot): Ditto.
+        (WebCore::HTMLTableElement::createTHead): Ditto.
+        (WebCore::HTMLTableElement::deleteTHead): Ditto.
+        (WebCore::HTMLTableElement::createTFoot): Ditto.
+        (WebCore::HTMLTableElement::deleteTFoot): Ditto.
+        (WebCore::HTMLTableElement::createCaption): Ditto.
+        (WebCore::HTMLTableElement::deleteCaption): Ditto.
+        (WebCore::HTMLTableElement::lastBody): Added.
+        (WebCore::HTMLTableElement::insertRow): Rewrote to use a loop based on code in HTMLTableRowsCollection.
+        This is different from the old code mainly in how it handles rows outside any section.
+        (WebCore::HTMLTableElement::deleteRow): Ditto.
+        (WebCore::HTMLTableElement::addChild): Removed code to set the various members. Keeping pointers to
+        these was a possible source of serious bugs too, including crashes with stale pointers, although I
+        didn't write any test cases to prove those bugs existed.
+        (WebCore::HTMLTableElement::parseMappedAttribute): Changed the rules code to visit all cells, not
+        just the cells of the first body. I believe this fixed rendering on some table tests. I think the code
+        visits too many cells and also the use of recursion is overkill, but I didn't try to fix that.
+        (WebCore::HTMLTableElement::rows): Changed to use the new HTMLTableRowsCollection.
+        * html/HTMLTableElement.h: Changed functions to return PassRefPtr, which can be important if strange
+        things like DOM mutation events take things ot of the tree before they are safely referenced by
+        JavaScript wrappers. Also changed functions to take PassRefPtr and added exceptions. Removed unneeded
+        firstTBody and setTBody functions and childrenChanged function override, as well as unused Rules and
+        Frame enums. Removed m_head, m_foot, m_firstBody, and m_caption, and added lastBody function. Removed
+        unneeded friend declaration for HTMLTableCellElement.
+        * html/HTMLTableElement.idl: Allow the setteres for caption, tHead, and tFoot to raise exceptions.
+
+        * html/HTMLTableRowsCollection.cpp: Added. Implements the HTML 5 rule for which rows are in the
+        collection in which order.
+        * html/HTMLTableRowsCollection.h: Added.
+
+        * loader/FTPDirectoryDocument.cpp:
+        (WebCore::FTPDirectoryTokenizer::appendEntry): Use the standard insertRow function instead of
+        coming up with our own way of inserting a row. Simplifies things -- we can remove the code to
+        create a tbody element.
+
+2008-01-02  Darin Adler  <darin@apple.com>
+
         Reviewed by Alice and Tim.
 
         - try to fix GTK and Qt builds

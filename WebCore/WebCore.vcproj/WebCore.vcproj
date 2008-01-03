@@ -7432,6 +7432,14 @@
 				RelativePath="..\html\HTMLTableRowElement.h"
 				>
 			</File>
+  			<File
+ 				RelativePath="..\html\HTMLTableRowsCollection.h"
+ 				>
+ 			</File>
+ 			<File
+ 				RelativePath="..\html\HTMLTableRowsCollection.h"
+ 				>
+ 			</File>
 			<File
 				RelativePath="..\html\HTMLTableSectionElement.cpp"
 				>

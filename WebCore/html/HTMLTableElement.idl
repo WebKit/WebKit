@@ -26,14 +26,13 @@ module html {
         ImplementationUUID=159bb8fe-ffee-4ff9-b507-76741118143f
     ] HTMLTableElement : HTMLElement {
 
-        // FIXME: the dom spec states that the following 3 attributes
         // could raise excepetions on setting.
                  attribute HTMLTableCaptionElement caption
-                     /*setter raises(DOMException)*/;
+                     setter raises(DOMException);
                  attribute HTMLTableSectionElement tHead
-                     /*setter raises(DOMException)*/;
+                     setter raises(DOMException);
                  attribute HTMLTableSectionElement tFoot
-                     /*setter raises(DOMException)*/;
+                     setter raises(DOMException);
 
         readonly attribute HTMLCollection rows;
         readonly attribute HTMLCollection tBodies;

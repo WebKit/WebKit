@@ -728,6 +728,7 @@ webcore_sources += \
 	WebCore/html/HTMLTableElement.cpp \
 	WebCore/html/HTMLTablePartElement.cpp \
 	WebCore/html/HTMLTableRowElement.cpp \
+	WebCore/html/HTMLTableRowsCollection.cpp \
 	WebCore/html/HTMLTableSectionElement.cpp \
 	WebCore/html/HTMLTextAreaElement.cpp \
 	WebCore/html/HTMLTextFieldInnerElement.cpp \

@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
- * Copyright (C) 2003, 2004, 2005, 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -138,11 +138,6 @@ void HTMLCollection::resetCollectionInfo() const
     }
 }
 
-static bool isTableSection(Element* element)
-{
-    return element->hasLocalName(tbodyTag) || element->hasLocalName(tfootTag) || element->hasLocalName(theadTag);
-}
-
 static Node* nextNodeOrSibling(Node* base, Node* node, bool includeChildren)
 {
     return includeChildren ? node->traverseNextNode(base) : node->traverseNextSibling(base);
@@ -163,8 +158,8 @@ Element* HTMLCollection::itemAfter(Element* previous) const
         case DocObjects:
         case DocScripts:
         case DocumentNamedItems:
-        case FormElements:
         case MapAreas:
+        case Other:
         case SelectOptions:
         case WindowNamedItems:
             break;
@@ -173,11 +168,6 @@ Element* HTMLCollection::itemAfter(Element* previous) const
         case TSectionRows:
         case TableTBodies:
             deep = false;
-            break;
-        case TableRows:
-            // Look for table rows inside table sections that are immediately inside
-            // the table, but not in nested table sections.
-            deep = previous && previous->parent() == m_base && isTableSection(previous);
             break;
     }
 
@@ -211,18 +201,6 @@ Element* HTMLCollection::itemAfter(Element* previous) const
             case TRCells:
                 if (e->hasLocalName(tdTag) || e->hasLocalName(thTag))
                     return e;
-                break;
-            case TableRows:
-                // Look for table rows inside table sections that are immediately inside
-                // the table, but not in nested table sections. Accept only rows that are
-                // in those table sections.
-                if (e->parent() == m_base)
-                    deep = isTableSection(e);
-                else {
-                    if (e->hasLocalName(trTag))
-                        return e;
-                    deep = false;
-                }
                 break;
             case TSectionRows:
                 if (e->hasLocalName(trTag))
@@ -262,7 +240,7 @@ Element* HTMLCollection::itemAfter(Element* previous) const
             case NodeChildren:
                 return e;
             case DocumentNamedItems:
-            case FormElements:
+            case Other:
             case WindowNamedItems:
                 ASSERT_NOT_REACHED();
                 break;

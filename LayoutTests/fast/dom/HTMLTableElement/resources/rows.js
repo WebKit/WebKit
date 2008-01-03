@@ -63,7 +63,7 @@ for (i = 0; i < sectionTags.length; ++i)
 
 debug('');
 
-shouldBe('checkNoBodyRowNesting("tr")', '0');
+shouldBe('checkNoBodyRowNesting("tr")', '1');
 
 debug('');
 

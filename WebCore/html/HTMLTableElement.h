@@ -1,12 +1,10 @@
 /*
- * This file is part of the DOM implementation for KDE.
- *
  * Copyright (C) 1997 Martin Jones (mjones@kde.org)
  *           (C) 1997 Torben Weis (weis@kde.org)
  *           (C) 1998 Waldo Bastian (bastian@kde.org)
  *           (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
- * Copyright (C) 2003, 2004, 2005, 2006 Apple Computer, Inc.
+ * Copyright (C) 2003, 2004, 2005, 2006, 2008 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -33,56 +31,31 @@
 namespace WebCore {
 
 class HTMLCollection;
-class HTMLTableSectionElement;
-class HTMLTableCellElement;
 class HTMLTableCaptionElement;
+class HTMLTableSectionElement;
 
 class HTMLTableElement : public HTMLElement {
 public:
-    enum Rules {
-        None    = 0x00,
-        RGroups = 0x01,
-        CGroups = 0x02,
-        Groups  = 0x03,
-        Rows    = 0x05,
-        Cols    = 0x0a,
-        All     = 0x0f
-    };
-    enum Frame {
-        Void   = 0x00,
-        Above  = 0x01,
-        Below  = 0x02,
-        Lhs    = 0x04,
-        Rhs    = 0x08,
-        Hsides = 0x03,
-        Vsides = 0x0c,
-        Box    = 0x0f
-    };
-
     HTMLTableElement(Document*);
-    ~HTMLTableElement();
 
     virtual HTMLTagStatus endTagRequirement() const { return TagStatusRequired; }
     virtual int tagPriority() const { return 9; }
     virtual bool checkDTD(const Node*);
 
-    HTMLTableCaptionElement* caption() const { return m_caption; }
-    Node* setCaption(HTMLTableCaptionElement*);
+    HTMLTableCaptionElement* caption() const;
+    void setCaption(PassRefPtr<HTMLTableCaptionElement>, ExceptionCode&);
 
-    HTMLTableSectionElement* tHead() const { return m_head; }
-    Node* setTHead(HTMLTableSectionElement*);
+    HTMLTableSectionElement* tHead() const;
+    void setTHead(PassRefPtr<HTMLTableSectionElement>, ExceptionCode&);
 
-    HTMLTableSectionElement* tFoot() const { return m_foot; }
-    Node* setTFoot(HTMLTableSectionElement*);
+    HTMLTableSectionElement* tFoot() const;
+    void setTFoot(PassRefPtr<HTMLTableSectionElement>, ExceptionCode&);
 
-    HTMLTableSectionElement* firstTBody() const { return m_firstBody; }
-    Node* setTBody(HTMLTableSectionElement*);
-
-    HTMLElement* createTHead();
+    PassRefPtr<HTMLElement> createTHead();
     void deleteTHead();
-    HTMLElement* createTFoot();
+    PassRefPtr<HTMLElement> createTFoot();
     void deleteTFoot();
-    HTMLElement* createCaption();
+    PassRefPtr<HTMLElement> createCaption();
     void deleteCaption();
     PassRefPtr<HTMLElement> insertRow(int index, ExceptionCode&);
     void deleteRow(int index, ExceptionCode&);
@@ -117,12 +90,11 @@ public:
     String width() const;
     void setWidth(const String&);
 
-    // overrides
     virtual ContainerNode* addChild(PassRefPtr<Node>);
-    virtual void childrenChanged();
-    
     virtual bool mapToEntry(const QualifiedName&, MappedAttributeEntry&) const;
     virtual void parseMappedAttribute(MappedAttribute*);
+    virtual void attach();
+    virtual bool isURLAttribute(Attribute*) const;
 
     // Used to obtain either a solid or outset border decl and to deal with the frame
     // and rules attributes.
@@ -130,17 +102,10 @@ public:
     CSSMutableStyleDeclaration* getSharedCellDecl();
     CSSMutableStyleDeclaration* getSharedGroupDecl(bool rows);
 
-    virtual void attach();
-    
-    virtual bool isURLAttribute(Attribute*) const;
-
+private:
     enum TableRules { UnsetRules, NoneRules, GroupsRules, RowsRules, ColsRules, AllRules };
 
-protected:
-    HTMLTableSectionElement* m_head;
-    HTMLTableSectionElement* m_foot;
-    HTMLTableSectionElement* m_firstBody;
-    HTMLTableCaptionElement* m_caption;
+    HTMLTableSectionElement* lastBody() const;
 
     bool m_borderAttr;          // Sets a precise border width and creates an outset border for the table and for its cells.
     bool m_borderColorAttr;     // Overrides the outset border and makes it solid for the table and cells instead.
@@ -149,7 +114,6 @@ protected:
                                 // are present, to none otherwise).
    
     unsigned short m_padding;
-    friend class HTMLTableCellElement;
 };
 
 } //namespace

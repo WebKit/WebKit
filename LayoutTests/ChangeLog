@@ -1,3 +1,32 @@
+2008-01-02  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - test for http://bugs.webkit.org/show_bug.cgi?id=16657
+          Acid3 failure since table.caption and table.thead do not work for nodes added by appendChild
+        - test for http://bugs.webkit.org/show_bug.cgi?id=16659
+          Acid3 expects HTMLTableElement.rows to include a <tr> element that is an immediate child of the <table>
+
+        * fast/dom/HTMLTableElement/early-acid3-65-excerpt-expected.txt: Added.
+        * fast/dom/HTMLTableElement/early-acid3-65-excerpt.html: Added.
+        * fast/dom/HTMLTableElement/early-acid3-66-excerpt-expected.txt: Added.
+        * fast/dom/HTMLTableElement/early-acid3-66-excerpt.html: Added.
+        * fast/dom/HTMLTableElement/resources/early-acid3-65-excerpt.js: Added.
+        * fast/dom/HTMLTableElement/resources/early-acid3-66-excerpt.js: Added.
+
+        * dom/html/level2/html/HTMLCollection07-expected.txt: Updated to reflect success.
+        * dom/html/level2/html/HTMLCollection08-expected.txt: Updated to reflect success.
+        * dom/xhtml/level2/html/HTMLCollection07-expected.txt: Updated to reflect success.
+        * dom/xhtml/level2/html/HTMLCollection08-expected.txt: Updated to reflect success.
+
+        * fast/dom/HTMLTableElement/resources/rows.js: Changed to expect HTML 5 behavior for rows outside
+        table sections.
+        * fast/dom/HTMLTableElement/rows-expected.txt: Updated.
+
+        * platform/mac/tables/mozilla/bugs/bug30418-expected.checksum: Updated to reflect better results.
+        * platform/mac/tables/mozilla/bugs/bug30418-expected.png: Ditto.
+        * platform/mac/tables/mozilla/bugs/bug30418-expected.txt: Ditto.
+
 2008-01-02  Alice Liu  <alice.liu@apple.com>
 
         Reviewed by Maciej.

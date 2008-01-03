@@ -42,7 +42,6 @@
 #include "HTMLNames.h"
 #include "HTMLScriptElement.h"
 #include "HTMLStyleElement.h"
-#include "HTMLTableSectionElement.h"
 #include "HTMLTokenizer.h"
 #include "ProcessingInstruction.h"
 #include "ResourceHandle.h"

@@ -483,6 +483,7 @@ This file contains the list of files needed to build WebCore.
         html/HTMLTableElement.cpp
         html/HTMLTablePartElement.cpp
         html/HTMLTableRowElement.cpp
+        html/HTMLTableRowsCollection.cpp
         html/HTMLTableSectionElement.cpp
         html/HTMLTextAreaElement.cpp
         html/HTMLTextFieldInnerElement.cpp

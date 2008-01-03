@@ -657,6 +657,7 @@ SOURCES += \
     html/HTMLTableElement.cpp \
     html/HTMLTablePartElement.cpp \
     html/HTMLTableRowElement.cpp \
+    html/HTMLTableRowsCollection.cpp \
     html/HTMLTableSectionElement.cpp \
     html/HTMLTextAreaElement.cpp \
     html/HTMLTextFieldInnerElement.cpp \

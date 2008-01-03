@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
- * Copyright (C) 2003, 2004, 2005, 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -61,13 +61,13 @@ public:
 
         // types not cached in the document; these are types that can't be used on a document
 
-        TableRows,    // all rows in this table or table section
         TableTBodies, // all <tbody> elements in this table
         TSectionRows, // all row elements in this table section
         TRCells,      // all cells in this row
         SelectOptions,
         MapAreas,
-        FormElements
+
+        Other
     };
 
     static const Type FirstUnnamedDocumentCachedType = DocImages;
@@ -82,11 +82,12 @@ public:
     unsigned length() const;
     
     virtual Node* item(unsigned index) const;
-    virtual Node* firstItem() const;
     virtual Node* nextItem() const;
 
     virtual Node* namedItem(const String& name, bool caseSensitive = true) const;
     virtual Node* nextNamedItem(const String& name) const; // In case of multiple items named the same way
+
+    Node* firstItem() const;
 
     void namedItems(const AtomicString& name, Vector<RefPtr<Node> >&) const;
 
