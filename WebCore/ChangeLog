@@ -1,3 +1,14 @@
+2008-01-02  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Dan Bernstein
+        
+        - fixed <rdar://problem/5579010> REGRESSION: Safari inserts newlines in tab names when U+2028 is present
+
+        * loader/DocumentLoader.cpp:
+        (WebCore::canonicalizedTitle):
+        in the code that replaces control characters with white space, also replace the unicode line separator
+        and paragraph separator characters
+
 2008-01-02  Darin Adler  <darin@apple.com>
 
         - fix buffer overruns seen on buildbot

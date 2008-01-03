@@ -41,6 +41,7 @@
 #include "SharedBuffer.h"
 #include "XMLTokenizer.h"
 #include <wtf/Assertions.h>
+#include <wtf/unicode/Unicode.h>
 
 namespace WebCore {
 
@@ -76,7 +77,7 @@ static inline String canonicalizedTitle(const String& title, Frame* frame)
     bool previousCharWasWS = false;
     for (; i < length; ++i) {
         UChar c = characters[i];
-        if (c <= 0x20 || c == 0x7F) {
+        if (c <= 0x20 || c == 0x7F || (WTF::Unicode::category(c) & (WTF::Unicode::Separator_Line | WTF::Unicode::Separator_Paragraph))) {
             if (previousCharWasWS)
                 continue;
             stringBuilder[builderIndex++] = ' ';
