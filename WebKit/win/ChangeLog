@@ -1,3 +1,14 @@
+2008-01-03  Ada Chan  <adachan@apple.com>
+
+        Regression: backspace stopped working on text inputs
+        - Replaced the use of editor command "BackwardDelete" with "DeleteBackward" since it's no longer supported.
+
+        Reviewed by Adam.
+
+        * WebEditorClient.cpp:
+        (WebEditorClient::textWillBeDeletedInTextField):
+        * WebView.cpp:
+
 2008-01-02  Alice Liu  <alice.liu@apple.com>
 
         Reviewed by Maciej.
