@@ -31,12 +31,22 @@
 use strict;
 use warnings;
 
+use Date::Parse qw(str2time);
 use File::Find;
 use File::Temp;
 use File::Spec;
 use FindBin;
 use lib $FindBin::Bin;
 use webkitdirs;
+
+sub lastModifiedToUnixTime($);
+
+# Time in seconds that the new zip file must be newer than the old for us to
+# consider them to be different. If the difference in modification time is less
+# than this threshold, we assume that the files are the same. We need this
+# because the zip file is served from a set of mirrors with slightly different
+# Last-Modified times.
+my $newnessThreshold = 30;
 
 my $sourceDir = sourceDir();
 my $file = "WebKitAuxiliaryLibrary";
@@ -51,13 +61,13 @@ my $result = system "curl -s -I $auxiliaryLibsURL | grep Last-Modified > \"$tmpD
 print STDERR "Couldn't check Last-Modified date of new $zipFile.\n" if $result;
 
 if (!$result && open NEW, "$tmpDir/$file.headers") {
-    my $new = <NEW>;
+    my $new = lastModifiedToUnixTime(<NEW>);
     close NEW;
 
-    if (open OLD, "$webkitLibrariesDir/$file.headers") {
-        my $old = <OLD>;
+    if (defined $new && open OLD, "$webkitLibrariesDir/$file.headers") {
+        my $old = lastModifiedToUnixTime(<OLD>);
         close OLD;
-        if ($old eq $new) {
+        if (defined $old && abs($new - $old) < $newnessThreshold) {
             print "Current $file is up to date\n";
             exit 0;
         }
@@ -100,4 +110,12 @@ sub toUnixPath
     return unless $path;
     chomp($path = `cygpath -u '$path'`);
     return $path;
+}
+
+sub lastModifiedToUnixTime($)
+{
+    my ($str) = @_;
+
+    $str =~ /^Last-Modified: (.*)$/ or return;
+    return str2time($1);
 }

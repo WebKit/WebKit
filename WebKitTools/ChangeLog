@@ -1,3 +1,25 @@
+2008-01-03  Adam Roben  <aroben@apple.com>
+
+        Fix Bug 15663: update-webkit re-downloads WebKitAuxiliaryLibrary unnecessarily
+
+        http://bugs.webkit.org/show_bug.cgi?id=15663
+
+        Added a fuzz factor into the Last-Modified comparison for downloading
+        WebKitAuxiliaryLibrary.zip.
+
+        The zip file is served from a set of mirrors who give Last-Modified
+        times that are off by 1-3 seconds from each other. This was causing
+        the build bots to redownload WebKitAuxiliaryLibrary for every build,
+        which would then cause all of WebCore to rebuild each time.
+
+        Reviewed by Mark.
+
+        * Scripts/update-webkit-auxiliary-libs: Check if the new zip file is
+        at least 30 seconds newer than the old one -- otherwise we assume that
+        the difference in time is due to the mirrors being slightly offset
+        from each other.
+        (sub lastModifiedToUnixTime): Added.
+
 2008-01-03  Alexey Proskuryakov  <ap@webkit.org>
 
         Windows build fix.
