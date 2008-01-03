@@ -1,3 +1,14 @@
+2008-01-03  Alice Liu  <alice.liu@apple.com>
+
+        Reviewed by Darin.
+
+        This fixes pageup/down in iframes.  test for this is fast/frames/iframe-scroll-page-up-down.html
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView doCommandBySelector:]):
+        Have the editor handle all the commands it supports instead of just text commands.
+        If not handled by the editor, the webview will handle the command. 
+
 2008-01-02  Kevin Decker  <kdecker@apple.com>
 
         Reviewed by Darin.

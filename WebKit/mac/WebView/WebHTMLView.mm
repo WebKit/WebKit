@@ -5062,7 +5062,7 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
         Frame* coreFrame = core([self _frame]);
         if (![[webView _editingDelegateForwarder] webView:webView doCommandBySelector:selector] && coreFrame) {
             Editor::Command command = [self coreCommandBySelector:selector];
-            if (command.isTextInsertion())
+            if (command.isSupported())
                 eventWasHandled = command.execute(event);
             else {
                 _private->selectorForDoCommandBySelector = selector;
