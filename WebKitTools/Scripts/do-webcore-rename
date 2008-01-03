@@ -91,7 +91,6 @@ my %renames = (
     "ArrayProtoFuncUnShift" => "ArrayFunctionUnshift",
     "BooleanObjectImp" => "BooleanConstructor",
     "BooleanProtoFunc" => "BooleanFunction",
-    "ClassFunction" => "topBracket",
     "DateObjectFuncImp" => "DateFunction",
     "DateObjectImp" => "DateConstructor",
     "DateProtoFuncGetDate" => "DateFunctionGetDate",
