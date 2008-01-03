@@ -272,8 +272,8 @@ static gboolean webkit_web_view_button_press_event(GtkWidget* widget, GdkEventBu
 
     if (event->button == 3)
         return webkit_web_view_forward_context_menu_event(WEBKIT_WEB_VIEW(widget), PlatformMouseEvent(event));
-    else
-        return frame->eventHandler()->handleMousePressEvent(PlatformMouseEvent(event));
+
+    return frame->eventHandler()->handleMousePressEvent(PlatformMouseEvent(event));
 }
 
 static gboolean webkit_web_view_button_release_event(GtkWidget* widget, GdkEventButton* event)

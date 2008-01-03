@@ -1,3 +1,12 @@
+2008-01-02  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Rubber stamped by Darin.
+
+        Coding Style fix. Do not use an else because we use a return in the
+        if branch.
+
+        * WebView/webkitwebview.cpp:
+
 2008-01-02  Luca Bruno  <lethalman88@gmail.com>
 
         Reviewed by Alp Toker.
