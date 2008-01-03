@@ -1,5 +1,21 @@
 2008-01-02  Darin Adler  <darin@apple.com>
 
+        Reviewed by Alice and Tim.
+
+        - try to fix GTK and Qt builds
+
+        * platform/win/ScrollViewWin.cpp:
+        (WebCore::ScrollView::scroll): Improve logic slightly for the case of
+        vertical scrolling when there's no vertical scroll bar.
+
+        * platform/gtk/ScrollViewGtk.cpp:
+        (WebCore::ScrollView::scroll): Copy the code from Windows. Maybe this
+        should be factored differently.
+        * platform/qt/ScrollViewQt.cpp:
+        (WebCore::ScrollView::scroll): Ditto.
+
+2008-01-02  Darin Adler  <darin@apple.com>
+
         Reviewed by Anders.
 
         - http://bugs.webkit.org/show_bug.cgi?id=16712

@@ -691,10 +691,14 @@ void ScrollView::geometryChanged() const
 
 bool ScrollView::scroll(ScrollDirection direction, ScrollGranularity granularity)
 {
-    if  ((direction == ScrollUp || direction == ScrollDown) && m_data->m_vBar)
-        return m_data->m_vBar->scroll(direction, granularity);
-    else if (m_data->m_hBar)
-        return m_data->m_hBar->scroll(direction, granularity);
+    if (direction == ScrollUp || direction == ScrollDown) {
+        if (m_data->m_vBar)
+            return m_data->m_vBar->scroll(direction, granularity);
+    } else {
+        if (m_data->m_hBar)
+            return m_data->m_hBar->scroll(direction, granularity);
+    }
+    return false;
 }
 
 IntRect ScrollView::windowResizerRect()

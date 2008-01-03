@@ -774,12 +774,16 @@ void ScrollView::geometryChanged() const
         (*current)->geometryChanged();
 }
 
-void ScrollView::scroll(ScrollDirection direction, ScrollGranularity granularity)
+bool ScrollView::scroll(ScrollDirection direction, ScrollGranularity granularity)
 {
-    if  ((direction == ScrollUp || direction == ScrollDown) && m_data->vBar)
-        m_data->vBar->scroll(direction, granularity);
-    else if (m_data->hBar)
-        m_data->hBar->scroll(direction, granularity);
+    if (direction == ScrollUp || direction == ScrollDown) {
+        if (m_data->vBar)
+            return m_data->vBar->scroll(direction, granularity);
+    } else {
+        if (m_data->hBar)
+            return m_data->hBar->scroll(direction, granularity);
+    }
+    return false;
 }
 
 void ScrollView::addToDirtyRegion(const IntRect& containingWindowRect)
