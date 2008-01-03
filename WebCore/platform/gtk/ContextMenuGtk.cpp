@@ -25,7 +25,7 @@
 
 namespace WebCore {
 
-// TODO: On-the-fly menu item creation and ref-counting correctness checking.
+// TODO: ref-counting correctness checking.
 // See http://bugs.webkit.org/show_bug.cgi?id=16115
 
 static void menuItemActivated(GtkMenuItem* item, ContextMenu* menu)
@@ -58,13 +58,12 @@ void ContextMenu::appendItem(ContextMenuItem& item)
     ASSERT(m_platformDescription);
     checkOrEnableIfNeeded(item);
 
-    GtkMenuItem* platformItem = item.releasePlatformDescription();
+    GtkMenuItem* platformItem = ContextMenuItem::createNativeMenuItem(item.releasePlatformDescription());
     ASSERT(platformItem);
 
     g_signal_connect(platformItem, "activate", G_CALLBACK(menuItemActivated), this);
     gtk_menu_shell_append(GTK_MENU_SHELL(m_platformDescription), GTK_WIDGET(platformItem));
     gtk_widget_show(GTK_WIDGET(platformItem));
-    g_object_unref(platformItem);
 }
 
 void ContextMenu::setPlatformDescription(PlatformMenuDescription menu)

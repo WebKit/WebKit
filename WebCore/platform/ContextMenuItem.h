@@ -144,7 +144,22 @@ namespace WebCore {
         bool enabled;
     };
 #elif PLATFORM(GTK)
-    typedef GtkMenuItem* PlatformMenuItemDescription;
+    struct PlatformMenuItemDescription {
+        PlatformMenuItemDescription()
+            : type(ActionType)
+            , action(ContextMenuItemTagNoAction)
+            , subMenu(0)
+            , checked(false)
+            , enabled(true)
+        {}
+
+        ContextMenuItemType type;
+        ContextMenuAction action;
+        String title;
+        GtkMenu* subMenu;
+        bool checked;
+        bool enabled;
+    };
 #elif PLATFORM(WX)
     typedef wxMenuItem* PlatformMenuItemDescription;
 #endif
@@ -154,6 +169,9 @@ namespace WebCore {
         ContextMenuItem(PlatformMenuItemDescription);
         ContextMenuItem(ContextMenu* subMenu = 0);
         ContextMenuItem(ContextMenuItemType type, ContextMenuAction action, const String& title, ContextMenu* subMenu = 0);
+#if PLATFORM(GTK)
+        ContextMenuItem(GtkMenuItem*);
+#endif
         ~ContextMenuItem();
 
         PlatformMenuItemDescription releasePlatformDescription();
@@ -176,6 +194,9 @@ namespace WebCore {
         bool enabled() const;
 
         // FIXME: Do we need a keyboard accelerator here?
+#if PLATFORM(GTK)
+        static GtkMenuItem* createNativeMenuItem(const PlatformMenuItemDescription&);
+#endif
 
     private:
 #if PLATFORM(MAC)

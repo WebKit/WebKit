@@ -1,3 +1,32 @@
+2008-01-03  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Alp.
+
+        -This is from http://bugs.webkit.org/show_bug.cgi?id=16115
+
+        Change the Gtk ContextMenuItem code to generate the GtkMenuItem
+        or GtkCheckMenuItem on the fly. Currently we will create a
+        GtkCheckMenuItem if the ContextMenuItem has been checked. What needs
+        to be done is to change WebCore to tell the platform code if an item
+        is checkable or not.
+
+        * platform/ContextMenuItem.h:
+        (WebCore::PlatformMenuItemDescription::PlatformMenuItemDescription):
+        * platform/gtk/ContextMenuGtk.cpp:
+        (WebCore::ContextMenu::appendItem):
+        * platform/gtk/ContextMenuItemGtk.cpp:
+        (WebCore::ContextMenuItem::ContextMenuItem):
+        (WebCore::ContextMenuItem::~ContextMenuItem):
+        (WebCore::ContextMenuItem::createNativeMenuItem):
+        (WebCore::ContextMenuItem::releasePlatformDescription):
+        (WebCore::ContextMenuItem::type):
+        (WebCore::ContextMenuItem::setType):
+        (WebCore::ContextMenuItem::action):
+        (WebCore::ContextMenuItem::setAction):
+        (WebCore::ContextMenuItem::platformSubMenu):
+        (WebCore::ContextMenuItem::setSubMenu):
+        (WebCore::ContextMenuItem::setChecked):
+
 2008-01-03  Dan Bernstein  <mitz@apple.com>
 
         Rubber-stamped by Adam Roben.
