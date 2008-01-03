@@ -1,3 +1,19 @@
+2008-01-02  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        <rdar://problem/5618086> WebInspector does not expand the DOM tree after being closed
+
+        Closing the Web Inspector causes the DOM tree outline to be torn down, clearing the
+        internal element lookup tables. The represented DOM node object still holds the identifier
+        it was assigned, and a later call to findTreeElement will use that original identifier
+        against a cleared lookup table. In that case we need to fallback on DOM ancestor lookup.
+
+        * page/inspector/treeoutline.js:
+        (TreeOutline.prototype.findTreeElement): If the DOM node already had a __treeElementIdentifier,
+        but the TreeOutline no longer has the element in the _knownTreeElements list do an ancestor lookup
+        instead of an early return.
+
 2008-01-02  Alice Liu  <alice.liu@apple.com>
 
         Reviewed by Maciej.

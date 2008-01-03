@@ -244,12 +244,11 @@ TreeOutline.prototype.findTreeElement = function(representedObject, isAncestor, 
 
     if ("__treeElementIdentifier" in representedObject) {
         var elements = this._knownTreeElements[representedObject.__treeElementIdentifier];
-        if (!elements)
-            return null;
-
-        for (var i = 0; i < elements.length; ++i)
-            if (elements[i].representedObject === representedObject)
-                return elements[i];
+        if (elements) {
+            for (var i = 0; i < elements.length; ++i)
+                if (elements[i].representedObject === representedObject)
+                    return elements[i];
+        }
     }
 
     if (!isAncestor || !(isAncestor instanceof Function) || !getParent || !(getParent instanceof Function))
