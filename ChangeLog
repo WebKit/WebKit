@@ -1,3 +1,15 @@
+2008-01-02  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Rubber stamped by Alp.
+
+        Remove GDK_MULTIHEAD_SAFE and GTK_MULTIHEAD_SAFE because they break
+        the build. At least people doing a debug build on Ubuntu Hardy will see
+        the breakage. I was asked to leave the flags inside the files to ease future
+        debugging.
+
+        * GNUmakefile.am:
+        * WebKit.pri:
+
 2008-01-01  Alp Toker  <alp@atoker.com>
 
         GTK+ autotools build fix. Track changes in r29051, r29058 and pass the
