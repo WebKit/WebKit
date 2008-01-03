@@ -1,3 +1,13 @@
+2008-01-02  Kevin Decker  <kdecker@apple.com>
+
+        Reviewed by Darin.
+        
+        Fixed: <rdar://problem/5660603> QuickDraw plug-ins can cause a 100% reproducible assertion failure in AppKit (breaks Safari UI)
+
+        * Plugins/WebBaseNetscapePluginView.mm:
+        (-[WebBaseNetscapePluginView updateAndSetWindow]): Simplified an early return for non-QuickDraw plug-ins and switched
+        to using the more NSView friendly version of lockFocus, lockFocusIfCanDraw.
+
 2008-01-01  David D. Kilzer  <ddkilzer@webkit.org>
 
         Reviewed by Dan.

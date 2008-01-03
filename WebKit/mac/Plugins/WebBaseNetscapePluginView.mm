@@ -1200,20 +1200,17 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
     // NPP_SetWindow() with an empty NPWindow struct.
     if (!isStarted)
         return;
-    if ((drawingModel == NPDrawingModelCoreGraphics || drawingModel == NPDrawingModelOpenGL)  && ![self canDraw])
+    if (drawingModel != NPDrawingModelQuickDraw && ![self canDraw])
         return;
     
-    BOOL needsFocus = [self window] && ([NSView focusView] != self);
-    if (needsFocus)
-        [self lockFocus];
-
+    BOOL didLockFocus = [NSView focusView] != self && [self lockFocusIfCanDraw];
     PortState portState = [self saveAndSetNewPortState];
     if (portState) {
         [self setWindowIfNecessary];
         [self restorePortState:portState];
         free(portState);
     }   
-    if (needsFocus)
+    if (didLockFocus)
         [self unlockFocus];
 }
 
