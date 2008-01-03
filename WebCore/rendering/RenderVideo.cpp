@@ -66,14 +66,41 @@ void RenderVideo::videoSizeChanged()
     }
 }
 
+IntRect RenderVideo::videoBox() const 
+{
+    IntRect contentRect = contentBox();
+    
+    if (intrinsicSize().isEmpty() || contentRect.isEmpty())
+        return IntRect();
+
+    IntRect resultRect = contentRect;
+    int ratio = contentRect.width() * intrinsicSize().height() - contentRect.height() * intrinsicSize().width();
+    if (ratio > 0) {
+        int newWidth = contentRect.height() * intrinsicSize().width() / intrinsicSize().height();
+        // Just fill the whole area if the difference is one pixel or less (in both sides)
+        if (resultRect.width() - newWidth > 2)
+            resultRect.setWidth(newWidth);
+        resultRect.move((contentRect.width() - resultRect.width()) / 2, 0);
+    } else if (ratio < 0) {
+        int newHeight = contentRect.width() * intrinsicSize().height() / intrinsicSize().width();
+        if (resultRect.height() - newHeight > 2)
+            resultRect.setHeight(newHeight);
+        resultRect.move(0, (contentRect.height() - resultRect.height()) / 2);
+    }
+    return resultRect;
+}
+    
 void RenderVideo::paintReplaced(PaintInfo& paintInfo, int tx, int ty)
 {
-    if (MediaPlayer* video = player()) {
-        updatePlayer();
-        IntRect rect = contentBox();
-        rect.move(tx, ty);
-        video->paint(paintInfo.context, rect);
-    }
+    MediaPlayer* mediaPlayer = player();
+    if (!mediaPlayer)
+        return;
+    updatePlayer();
+    IntRect rect = videoBox();
+    if (rect.isEmpty())
+        return;
+    rect.move(tx, ty);
+    mediaPlayer->paint(paintInfo.context, rect);
 }
 
 void RenderVideo::layout()
@@ -89,22 +116,16 @@ void RenderVideo::updateFromElement()
 }
 
 void RenderVideo::updatePlayer()
-{
-    int x;
-    int y;
-    absolutePosition(x, y);
-    x += borderLeft() + paddingLeft();
-    y += borderTop() + paddingTop();
-    
-    int width = m_width - borderLeft() - borderRight() - paddingLeft() - paddingRight();
-    int height = m_height - borderTop() - borderBottom() - paddingTop() - paddingBottom();
-    
-    IntRect newBounds(x, y, width, height);
-    
-    if (MediaPlayer* p = player()) {
-        p->setParentWidget(document()->view());
-        p->setRect(newBounds);
-        p->setVisible(true);
+{    
+    if (MediaPlayer* mediaPlayer = player()) {
+        int x;
+        int y;
+        absolutePosition(x, y);
+        IntRect videoBounds = videoBox(); 
+        videoBounds.move(x, y);
+        mediaPlayer->setParentWidget(document()->view());
+        mediaPlayer->setRect(videoBounds);
+        mediaPlayer->setVisible(true);
     }    
 }
 

@@ -1,3 +1,22 @@
+2008-01-02  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Oliver.
+
+        Calculate video position and size within the renderer box in WebCore. This
+        way the aspect ratio calculation is not needed in each MediaPlayer implementation.
+        
+        This fixes video aspect ratio on Windows.
+        
+        Covered by an existing pixel test.
+
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.mm:
+        (WebCore::MediaPlayerPrivate::createQTMovieView):
+        * rendering/RenderVideo.cpp:
+        (WebCore::RenderVideo::videoBox):
+        (WebCore::RenderVideo::paintReplaced):
+        (WebCore::RenderVideo::updatePlayer):
+        * rendering/RenderVideo.h:
+
 2008-01-02  Ada Chan  <adachan@apple.com>
 
         Fix windows build.

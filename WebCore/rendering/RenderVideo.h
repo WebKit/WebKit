@@ -60,6 +60,8 @@ private:
 
     bool isWidthSpecified() const;
     bool isHeightSpecified() const;
+    
+    IntRect videoBox() const;
 
     void updatePlayer();
 };

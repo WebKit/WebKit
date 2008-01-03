@@ -226,7 +226,7 @@ void MediaPlayerPrivate::createQTMovieView()
 #endif
     [m_qtMovieView.get() setMovie:m_qtMovie.get()];
     [m_qtMovieView.get() setControllerVisible:NO];
-    [m_qtMovieView.get() setPreservesAspectRatio:YES];
+    [m_qtMovieView.get() setPreservesAspectRatio:NO];
     // the area not covered by video should be transparent
     [m_qtMovieView.get() setFillColor:[NSColor clearColor]];
     wkQTMovieViewSetDrawSynchronously(m_qtMovieView.get(), YES);
