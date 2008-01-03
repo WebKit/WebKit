@@ -31,7 +31,7 @@
 use strict;
 use warnings;
 
-use Date::Parse qw(str2time);
+use HTTP::Date qw(str2time);
 use File::Find;
 use File::Temp;
 use File::Spec;

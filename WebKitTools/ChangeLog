@@ -1,5 +1,13 @@
 2008-01-03  Adam Roben  <aroben@apple.com>
 
+        Use HTTP::Date instead of Date::Parse because it's installed by Cygwin by default
+
+        Rubberstamped by Mark.
+
+        * Scripts/update-webkit-auxiliary-libs:
+
+2008-01-03  Adam Roben  <aroben@apple.com>
+
         Fix Bug 15663: update-webkit re-downloads WebKitAuxiliaryLibrary unnecessarily
 
         http://bugs.webkit.org/show_bug.cgi?id=15663
