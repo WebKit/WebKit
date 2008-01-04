@@ -146,7 +146,7 @@ QWidget* Widget::qwidget() const
         return data->m_widget;
 
     if (data->m_webFrame)
-        return data->m_webFrame->page();
+        return data->m_webFrame->page()->view();
 
     return 0;
 }
@@ -215,6 +215,8 @@ void Widget::invalidateRect(const IntRect& r)
     if (parent() && parent()->isFrameView() && static_cast<FrameView*>(parent())->needsLayout())
         shouldPaint = false;
 
+#if 0
+    // ### QWebPage
     if (shouldPaint) {
         QWebPage* page = qobject_cast<QWebPage*>(canvas);
         QPainter p(page);
@@ -222,6 +224,7 @@ void Widget::invalidateRect(const IntRect& r)
     } else {
         canvas->update(windowRect);
     }
+#endif
 }
 
 void Widget::removeFromParent()

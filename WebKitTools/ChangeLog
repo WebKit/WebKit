@@ -2,6 +2,18 @@
 
         Reviewed by Simon.
 
+        make QWebPage a QObject and get things to compile.
+        
+        Nothing works currently though.
+        
+
+        * DumpRenderTree/qt/DumpRenderTree.cpp:
+        (WebCore::DumpRenderTree::DumpRenderTree):
+
+2008-01-04  Lars Knoll  <lars@trolltech.com>
+
+        Reviewed by Simon.
+
         take a QString as identifier in QWebFrame::addToJSWindowObject.
 
         * DumpRenderTree/qt/DumpRenderTree.cpp:

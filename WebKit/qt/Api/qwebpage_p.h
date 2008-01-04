@@ -109,6 +109,7 @@ public:
 
     QWebPage *q;
     QUndoStack *undoStack;
+    QWidget *view;
 
     QWebNetworkInterface *networkInterface;
 

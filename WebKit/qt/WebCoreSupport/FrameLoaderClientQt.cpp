@@ -950,8 +950,9 @@ Widget* FrameLoaderClientQt::createPlugin(const IntSize&, Element* element, cons
 
     if (object) {
         QWidget *widget = qobject_cast<QWidget *>(object);
-        if (widget) {
-            widget->setParent(m_webFrame->page());
+        QWidget *view = m_webFrame->page()->view();
+        if (widget && view) {
+            widget->setParent(view);
             Widget* w= new Widget();
             w->setQWidget(widget);
             return w;

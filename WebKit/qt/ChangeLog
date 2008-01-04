@@ -1,3 +1,58 @@
+2008-01-04  Lars Knoll  <lars@trolltech.com>
+
+        Reviewed by Simon.
+
+        make QWebPage a QObject and get things to compile.
+        
+        Nothing works currently though.
+        
+
+        * Api/qwebobjectpluginconnector.cpp:
+        * Api/qwebpage.cpp:
+        (QWebPagePrivate::QWebPagePrivate):
+        (QWebPagePrivate::createMainFrame):
+        (QWebPage::QWebPage):
+        (QWebPage::setView):
+        (QWebPage::view):
+        (QWebPage::javaScriptAlert):
+        (QWebPage::javaScriptPrompt):
+        (dragOpToDropAction):
+        (QWebPage::mousePressEvent):
+        (QWebPage::mouseDoubleClickEvent):
+        (QWebPage::mouseReleaseEvent):
+        (QWebPage::wheelEvent):
+        (QWebPage::keyPressEvent):
+        (QWebPage::focusInEvent):
+        * Api/qwebpage.h:
+        * Api/qwebpage_p.h:
+        * Api/qwebview.cpp:
+        (QWebView::QWebView):
+        (QWebView::setPage):
+        (QWebView::resizeEvent):
+        (QWebView::paintEvent):
+        * Api/qwebview.h:
+        * WebCoreSupport/ChromeClientQt.cpp:
+        (WebCore::ChromeClientQt::windowRect):
+        (WebCore::ChromeClientQt::pageRect):
+        (WebCore::ChromeClientQt::focus):
+        (WebCore::ChromeClientQt::unfocus):
+        (WebCore::ChromeClientQt::canTakeFocus):
+        (WebCore::ChromeClientQt::takeFocus):
+        (WebCore::ChromeClientQt::canRunModal):
+        (WebCore::ChromeClientQt::mouseDidMoveOverElement):
+        * WebCoreSupport/DragClientQt.cpp:
+        (WebCore::DragClientQt::startDrag):
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::createPlugin):
+        * WebCoreSupport/InspectorClientQt.cpp:
+        (WebCore::InspectorClientWebPage::createWindow):
+        (WebCore::InspectorClientView::InspectorClientView):
+        (WebCore::InspectorClientView::page):
+        (WebCore::InspectorClientView::hideEvent):
+        (WebCore::InspectorClientView::closeEvent):
+        (WebCore::InspectorClientQt::createPage):
+        (WebCore::InspectorClientQt::closeWindow):
+
 2008-01-04  Simon Hausmann  <hausmann@webkit.org>
 
         Reviewed by Lars.

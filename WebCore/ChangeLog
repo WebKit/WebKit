@@ -1,3 +1,18 @@
+2008-01-04  Lars Knoll  <lars@trolltech.com>
+
+        Reviewed by Simon.
+
+        make QWebPage a QObject and get things to compile.
+
+        Nothing works currently though.
+
+        * platform/qt/ScrollViewQt.cpp:
+        (WebCore::ScrollView::updateContents):
+        (WebCore::ScrollView::update):
+        * platform/qt/WidgetQt.cpp:
+        (WebCore::Widget::qwidget):
+        (WebCore::Widget::invalidateRect):
+
 2008-01-04  Alp Toker  <alp@atoker.com>
 
         Reviewed by Mark Rowe.

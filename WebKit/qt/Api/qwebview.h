@@ -92,7 +92,8 @@ Q_SIGNALS:
     void iconLoaded();
 
 protected:
-    virtual void resizeEvent(QResizeEvent *e);
+    void resizeEvent(QResizeEvent *e);
+    void paintEvent(QPaintEvent *ev);
 
 private:
     QWebViewPrivate *d;

@@ -114,7 +114,7 @@ DumpRenderTree::DumpRenderTree()
 
     m_page = new WebPage(0, this);
     connect(m_page, SIGNAL(frameCreated(QWebFrame *)), this, SLOT(connectFrame(QWebFrame *)));
-    m_page->resize(maxViewWidth, maxViewHeight);
+    m_page->setViewportSize(QSize(maxViewWidth, maxViewHeight));
     m_page->mainFrame()->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     m_page->mainFrame()->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     connect(m_page->mainFrame(), SIGNAL(titleChanged(const QString&)),

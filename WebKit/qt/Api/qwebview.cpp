@@ -21,6 +21,7 @@
 #include "qwebview.h"
 #include "qwebframe.h"
 #include "qevent.h"
+#include "qpainter.h"
 
 class QWebViewPrivate
 {
@@ -44,6 +45,17 @@ QWebView::QWebView(QWidget *parent)
 {
     d = new QWebViewPrivate;
     d->page = 0;
+
+    QPalette pal = palette();
+    pal.setBrush(QPalette::Background, Qt::white);
+
+    setAttribute(Qt::WA_OpaquePaintEvent);
+
+    setPalette(pal);
+    setAcceptDrops(true);
+
+    setMouseTracking(true);
+    setFocusPolicy(Qt::ClickFocus);
 }
 
 /*!
@@ -92,6 +104,7 @@ void QWebView::setPage(QWebPage *page)
     }
     d->page = page;
     if (d->page) {
+        d->page->setView(this);
         // #### connect signals
         QWebFrame *mainFrame = d->page->mainFrame();
         connect(mainFrame, SIGNAL(loadStarted()),
@@ -353,6 +366,32 @@ void QWebView::reload()
 void QWebView::resizeEvent(QResizeEvent *e)
 {
     if (d->page)
-        d->page->resize(e->size());
+        d->page->setViewportSize(e->size());
 }
 
+
+void QWebView::paintEvent(QPaintEvent *ev)
+{
+#ifdef QWEBKIT_TIME_RENDERING
+    QTime time;
+    time.start();
+#endif
+
+    QWebFrame *frame = d->page->mainFrame();
+    frame->layout();
+    QPainter p(this);
+
+    QVector<QRect> vector = ev->region().rects();
+    if (!vector.isEmpty()) {
+        for (int i = 0; i < vector.size(); ++i) {
+            frame->render(&p, vector.at(i));
+        }
+    } else {
+        frame->render(&p, ev->rect());
+    }
+
+#ifdef    QWEBKIT_TIME_RENDERING
+    int elapsed = time.elapsed();
+    qDebug()<<"paint event on "<<ev->region()<<", took to render =  "<<elapsed;
+#endif
+}
