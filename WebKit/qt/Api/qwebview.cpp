@@ -28,6 +28,17 @@ public:
     QWebPage *page;
 };
 
+/*!
+    \class QWebView
+    \since 4.4
+    \brief The QWebview class provides a widget that is used to view and edit web documents.
+
+    QWebView is the main widget component of the QtWebKit web browsing module.
+*/
+
+/*!
+    Constructs an empty QWebView with parent \a parent.
+*/
 QWebView::QWebView(QWidget *parent)
     : QWidget(parent)
 {
@@ -35,6 +46,9 @@ QWebView::QWebView(QWidget *parent)
     d->page = 0;
 }
 
+/*!
+    Destructor.
+*/
 QWebView::~QWebView()
 {
     if (d->page && d->page->parent() == this)
@@ -42,6 +56,11 @@ QWebView::~QWebView()
     delete d;
 }
 
+/*!
+    Returns a pointer to the underlying web page.
+
+    \sa setPage()
+*/
 QWebPage *QWebView::page() const
 {
     if (!d->page) {
@@ -51,6 +70,15 @@ QWebPage *QWebView::page() const
     return d->page;
 }
 
+/*!
+    Makes \a page the new web page of the web view.
+
+    The parent QObject of the provided page remains the owner
+    of the object. If the current document is a child of the web
+    view, then it is deleted.
+
+    \sa page()
+*/
 void QWebView::setPage(QWebPage *page)
 {
     if (d->page == page)
@@ -83,6 +111,9 @@ void QWebView::setPage(QWebPage *page)
     update();
 }
 
+/*!
+    Downloads the specified \a url and displays it.
+*/
 void QWebView::load(const QUrl &url)
 {
     page()->mainFrame()->load(url);
@@ -93,30 +124,69 @@ void QWebView::load(const QWebNetworkRequest &request)
     page()->mainFrame()->load(request);
 }
 
+/*!
+    Sets the content of the web view to the specified \a html.
+
+    External objects referenced in the HTML document are located relative to \a baseUrl.
+*/
 void QWebView::setHtml(const QString &html, const QUrl &baseUrl)
 {
     page()->mainFrame()->setHtml(html, baseUrl);
 }
 
+/*!
+    Sets the content of the web view to the specified \a html.
+
+    External objects referenced in the HTML document are located relative to \a baseUrl.
+*/
 void QWebView::setHtml(const QByteArray &html, const QUrl &baseUrl)
 {
     page()->mainFrame()->setHtml(html, baseUrl);
 }
 
+/*!
+    Sets the content of the web view to the specified content \a data. If the \a mimeType argument
+    is empty it is assumed that the content is HTML.
+
+    External objects referenced in the HTML document are located relative to \a baseUrl.
+*/
 void QWebView::setContent(const QByteArray &data, const QString &mimeType, const QUrl &baseUrl)
 {
     page()->mainFrame()->setContent(data, mimeType, baseUrl);
 }
 
+/*!
+    Returns a pointer to the view's history of navigated web pages.
+
+    It is equivalent to
+
+    \code
+    view->page()->history();
+    \endcode
+*/
 QWebPageHistory *QWebView::history() const
 {
     return page()->history();
 }
 
+/*!
+    Returns a pointer to the view/page specific settings object.
+
+    It is equivalent to
+
+    \code
+    view->page()->settings();
+    \endcode
+*/
 QWebSettings *QWebView::settings() const
 {
     return page()->settings();
 }
+
+/*!
+  \property QWebView::documentTitle
+  \brief the title of the web page currently viewed.
+*/
 
 QString QWebView::title() const
 {
@@ -125,12 +195,22 @@ QString QWebView::title() const
     return QString();
 }
 
+/*!
+    \property QWebView::url
+    \brief the url of the web page currently viewed.
+*/
+
 QUrl QWebView::url() const
 {
     if (d->page)
         return d->page->mainFrame()->url();
     return QUrl();
 }
+
+/*!
+    \property QWebView::icon
+    \brief the icon associated with the web page currently viewed.
+*/
 
 QPixmap QWebView::icon() const
 {
@@ -139,6 +219,11 @@ QPixmap QWebView::icon() const
     return QPixmap();
 }
 
+/*!
+    \property QWebView::selectedText
+    \brief the text currently selected.
+*/
+
 QString QWebView::selectedText() const
 {
     if (d->page)
@@ -146,17 +231,36 @@ QString QWebView::selectedText() const
     return QString();
 }
 
+/*!
+    Returns a pointer to a QAction that encapsulates the specified web action \a action.
+*/
 QAction *QWebView::action(QWebPage::WebAction action) const
 {
     return page()->action(action);
 }
 
+/*!
+    Triggers the specified \a action. If it is a checkable action the specified \a checked state is assumed.
+
+    The following example triggers the copy action and therefore copies any selected text to the clipboard.
+
+    \code
+    view->triggerAction(QWebPage::Copy);
+    \endcode
+*/
 void QWebView::triggerAction(QWebPage::WebAction action, bool checked)
 {
     page()->triggerAction(action, checked);
 }
 
-bool QWebView::isModified()
+/*!
+    \propery QWebView::modified
+    \brief Indicates whether the document was modified by the user or not.
+
+    Parts of HTML documents can be editable for example through the \c{contenteditable} attribute on
+    HTML elements.
+*/
+bool QWebView::isModified() const
 {
     if (d->page)
         return d->page->isModified();
@@ -169,6 +273,12 @@ Qt::TextInteractionFlags QWebView::textInteractionFlags() const
     return Qt::TextInteractionFlags();
 }
 
+/*!
+    \property QWebView::textInteractionFlags
+
+    Specifies how the view should interact with user input.
+*/
+
 void QWebView::setTextInteractionFlags(Qt::TextInteractionFlags flags)
 {
     Q_UNUSED(flags)
@@ -180,30 +290,66 @@ QSize QWebView::sizeHint() const
     return QSize(800, 600); // ####...
 }
 
+/*!
+    Convenience slot that stops loading the document.
+
+    It is equivalent to
+
+    \code
+    view->page()->triggerAction(QWebPage::Stop);
+    \endcode
+*/
 void QWebView::stop()
 {
     if (d->page)
         d->page->triggerAction(QWebPage::Stop);
 }
 
+/*!
+    Convenience slot that loads the previous document in the list of
+    documents built by navigating links. Does nothing if there is no
+    previous document.
+
+    It is equivalent to
+
+    \code
+    view->page()->triggerAction(QWebPage::GoBack);
+    \endcode
+*/
 void QWebView::backward()
 {
     if (d->page)
         d->page->triggerAction(QWebPage::GoBack);
 }
 
+/*!
+    Convenience slot that loads the next document in the list of
+    documents built by navigating links. Does nothing if there is no
+    next document.
+
+    It is equivalent to
+
+    \code
+    view->page()->triggerAction(QWebPage::GoForward);
+    \endcode
+*/
 void QWebView::forward()
 {
     if (d->page)
         d->page->triggerAction(QWebPage::GoForward);
 }
 
+/*!
+    Reloads the current document.
+*/
 void QWebView::reload()
 {
     if (d->page)
         d->page->triggerAction(QWebPage::Reload);
 }
 
+/*! \reimp
+*/
 void QWebView::resizeEvent(QResizeEvent *e)
 {
     if (d->page)

@@ -30,6 +30,12 @@ class QWebViewPrivate;
 class QWEBKIT_EXPORT QWebView : public QWidget
 {
     Q_OBJECT
+    Q_PROPERTY(QString title READ title)
+    Q_PROPERTY(QUrl url READ url)
+    Q_PROPERTY(QPixmap icon READ icon)
+    Q_PROPERTY(QString selectedText READ selectedText)
+    Q_PROPERTY(bool modified READ isModified)
+    Q_PROPERTY(Qt::TextInteractionFlags textInteractionFlags READ textInteractionFlags WRITE setTextInteractionFlags)
 public:
     explicit QWebView(QWidget *parent = 0);
     virtual ~QWebView();
@@ -55,7 +61,7 @@ public:
     QAction *action(QWebPage::WebAction action) const;
     void triggerAction(QWebPage::WebAction action, bool checked = false);
 
-    bool isModified();
+    bool isModified() const;
 
     Qt::TextInteractionFlags textInteractionFlags() const;
     void setTextInteractionFlags(Qt::TextInteractionFlags flags);

@@ -1,3 +1,23 @@
+2008-01-04  Simon Hausmann  <hausmann@webkit.org>
+
+        Reviewed by Lars.
+
+        Added some preliminary class documentation for QWebView, fixed a missing const() and some missing Q_PROPERTYs
+        
+
+        * Api/qwebview.cpp:
+        (QWebView::setHtml):
+        (QWebView::setContent):
+        (QWebView::history):
+        (QWebView::settings):
+        (QWebView::action):
+        (QWebView::triggerAction):
+        (QWebView::stop):
+        (QWebView::backward):
+        (QWebView::forward):
+        (QWebView::reload):
+        * Api/qwebview.h:
+
 2008-01-04  Lars Knoll  <lars@trolltech.com>
 
         Reviewed by Simon.
