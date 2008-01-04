@@ -150,7 +150,7 @@ FontPlatformData::FontPlatformData(HFONT font, float size, bool bold, bool obliq
         GetOutlineTextMetricsW(hdc, bufferSize, metrics);
         WCHAR* faceName = (WCHAR*)((uintptr_t)metrics + (uintptr_t)metrics->otmpFaceName);
 
-        if (bold || oblique) {
+        if (!useGDI && (bold || oblique)) {
             LOGFONT logFont;
 
             int len = min((int)wcslen(faceName), LF_FACESIZE - 1);
@@ -178,9 +178,6 @@ FontPlatformData::FontPlatformData(HFONT font, float size, bool bold, bool obliq
               else if (oblique && !(styles & Italic))
                     m_syntheticOblique = true;
         }
-
-        // For GDI text, synthetic bold and oblique never need to be set.
-        m_syntheticBold = m_syntheticOblique = false;
 
         // Try the face name first.  Windows may end up localizing this name, and CG doesn't know about
         // the localization.  If the create fails, we'll try the PostScript name.
