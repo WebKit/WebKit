@@ -468,5 +468,4 @@ layer at (0,0) size 800x600
       RenderSVGText {text} at (504,576) size 28x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 28x18
           chunk 1 text run 1 at (504.00,576.00) startOffset 0 endOffset 4 width 28.00: "miss"
-selection start: position 0 of child 0 {#text} of child 3 {text} of child 0 {svg} of document
-selection end:   position 0 of child 5 {text} of child 0 {svg} of document
+caret: position 19 of child 0 {#text} of child 3 {text} of child 0 {svg} of document

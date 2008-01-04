@@ -41,6 +41,7 @@
 extern "C" void _NSNewKillRingSequence();
 
 NSPoint lastMousePosition;
+NSPoint lastClickPosition;
 NSArray *webkitDomEventNames;
 NSMutableArray *savedMouseEvents; // mouse events sent between mouseDown and mouseUp are stored here, and then executed at once.
 BOOL replayingSavedEvents;
@@ -182,7 +183,8 @@ BOOL replayingSavedEvents;
 - (void)mouseDown
 {
     [[[mainFrame frameView] documentView] layout];
-    if ([self currentEventTime] - lastClick >= 1)
+    if (([self currentEventTime] - lastClick >= 1) ||
+        !NSEqualPoints(lastMousePosition, lastClickPosition))
         clickCount = 1;
     else
         clickCount++;
@@ -246,6 +248,7 @@ BOOL replayingSavedEvents;
     [targetView mouseUp:event];
     down = NO;
     lastClick = [event timestamp];
+    lastClickPosition = lastMousePosition;
     if (draggingInfo) {
         WebView *webView = [mainFrame webView];
         

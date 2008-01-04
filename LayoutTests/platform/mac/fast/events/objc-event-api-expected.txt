@@ -230,7 +230,7 @@ event type:      mousedown
   eventPhase:    3
   bubbles:       1
   cancelable:    1
-  detail:        2
+  detail:        1
   view:          OK (document: OK)
   button:        0
   clientX:       400
@@ -248,7 +248,7 @@ event type:      mouseup
   eventPhase:    3
   bubbles:       1
   cancelable:    1
-  detail:        2
+  detail:        1
   view:          OK (document: OK)
   button:        0
   clientX:       400
@@ -261,20 +261,7 @@ event type:      click
   eventPhase:    3
   bubbles:       1
   cancelable:    1
-  detail:        2
-  view:          OK (document: OK)
-  button:        0
-  clientX:       400
-  clientY:       150
-  screenX:       -9600
-  screenY:       -9850
-  modifier keys: c:0 s:0 a:0 m:0
-event type:      dblclick
-  target:        <div>
-  eventPhase:    3
-  bubbles:       1
-  cancelable:    1
-  detail:        2
+  detail:        1
   view:          OK (document: OK)
   button:        0
   clientX:       400
@@ -300,7 +287,7 @@ event type:      mousedown
   eventPhase:    3
   bubbles:       1
   cancelable:    1
-  detail:        3
+  detail:        2
   view:          OK (document: OK)
   button:        0
   clientX:       400
@@ -364,7 +351,7 @@ event type:      mouseup
   eventPhase:    3
   bubbles:       1
   cancelable:    1
-  detail:        3
+  detail:        2
   view:          OK (document: OK)
   button:        0
   clientX:       1

@@ -1,3 +1,18 @@
+2008-01-03  Alice Liu  <alice.liu@apple.com>
+
+        Reviewed by Darin, Mitz.
+
+        fixed <rdar://5130762> mousedowns in different locations increase the clickcount incorrectly
+
+        the clickcount should not increase if the last click was at a different location.  it's a new click.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (runTest):
+        * DumpRenderTree/mac/EventSendingController.h:
+        * DumpRenderTree/mac/EventSendingController.mm:
+        (-[EventSendingController mouseDown]):
+        (-[EventSendingController mouseUp]):
+
 2008-01-03  Darin Adler  <darin@apple.com>
 
         Reviewed by Adam.

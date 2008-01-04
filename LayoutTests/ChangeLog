@@ -1,3 +1,20 @@
+2008-01-03  Alice Liu  <alice.liu@apple.com>
+
+        Reviewed by Darin, Mitz.
+
+        updating expected results after fixing clickcount for 
+        <rdar://5130762> mousedowns in different locations increase the clickcount incorrectly
+
+        * fast/forms/focus-selection-input-expected.txt:
+        * fast/forms/focus-selection-textarea-expected.txt:
+        * platform/mac/fast/events/objc-event-api-expected.txt:
+        * platform/mac/fast/inline/dirtyLinesForInline-expected.txt:
+        * platform/mac/fast/text/textIteratorNilRenderer-expected.txt:
+        * platform/mac/svg/custom/pointer-events-image-expected.txt:
+        * platform/mac/svg/custom/pointer-events-path-expected.txt:
+        * platform/mac/svg/custom/pointer-events-text-expected.txt:
+        * platform/mac/svg/custom/text-hit-test-expected.txt:
+
 2008-01-03  Darin Adler  <darin@apple.com>
 
         Reviewed by Mitz.

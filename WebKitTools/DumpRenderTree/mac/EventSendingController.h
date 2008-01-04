@@ -50,3 +50,4 @@
 @end
 
 extern NSPoint lastMousePosition;
+extern NSPoint lastClickPosition;

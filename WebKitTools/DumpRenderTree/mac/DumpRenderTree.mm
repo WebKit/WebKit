@@ -834,7 +834,8 @@ static void runTest(const char *pathOrURL)
 
     if ([WebHistory optionalSharedHistory])
         [WebHistory setOptionalSharedHistory:nil];
-    lastMousePosition = NSMakePoint(0, 0);
+    lastMousePosition = NSZeroPoint;
+    lastClickPosition = NSZeroPoint;
 
     if (currentTest != nil)
         CFRelease(currentTest);
