@@ -174,8 +174,8 @@ inline int atomicDecrement(int volatile* addend) { return InterlockedDecrement(r
 #elif PLATFORM(DARWIN)
 #define WTF_USE_LOCKFREE_THREADSAFESHARED 1
 
-inline void atomicIncrement(int volatile* addend) { OSAtomicIncrement32Barrier(addend); }
-inline int atomicDecrement(int volatile* addend) { return OSAtomicDecrement32Barrier(addend); }
+inline void atomicIncrement(int volatile* addend) { OSAtomicIncrement32Barrier(const_cast<int*>(addend)); }
+inline int atomicDecrement(int volatile* addend) { return OSAtomicDecrement32Barrier(const_cast<int*>(addend)); }
 
 #elif COMPILER(GCC)
 #define WTF_USE_LOCKFREE_THREADSAFESHARED 1
