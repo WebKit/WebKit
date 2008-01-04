@@ -1,3 +1,14 @@
+2008-01-04  Adam Roben  <aroben@apple.com>
+
+        Fix <rdar://4968855> Shift-PageUp/Shift-PageDown only select one line of text
+
+        Test: platform/win/editing/selection/shift-page-down-up.html
+
+        Reviewed by Oliver.
+
+        * WebView.cpp: Correct the commands associated with
+        Shift-PageUp/Shift-PageDown.
+
 2008-01-03  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin.
