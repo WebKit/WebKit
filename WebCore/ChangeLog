@@ -1,3 +1,14 @@
+2008-01-03  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Use platform-provided atomic operations in place of inline assembly to
+        increase portability.
+
+        * platform/Threading.h:
+        (WebCore::atomicIncrement):
+        (WebCore::atomicDecrement):
+
 2008-01-03  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Maciej.

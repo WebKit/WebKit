@@ -64,6 +64,14 @@
 
 #if PLATFORM(WIN_OS)
 #include <windows.h>
+#elif PLATFORM(DARWIN)
+#include <libkern/OSAtomic.h>
+#elif COMPILER(GCC)
+#if (__GNUC__ > 4) || ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 2))
+#include <ext/atomicity.h>
+#else
+#include <bits/atomicity.h>
+#endif
 #endif
 
 #if USE(PTHREADS)
@@ -160,69 +168,21 @@ private:
 #if PLATFORM(WIN_OS)
 #define WTF_USE_LOCKFREE_THREADSAFESHARED 1
 
-inline void atomicIncrement(int volatile* addened) { InterlockedIncrement(reinterpret_cast<long volatile*>(addened)); }
-inline int atomicDecrement(int volatile* addened) { return InterlockedDecrement(reinterpret_cast<long volatile*>(addened)); }
+inline void atomicIncrement(int volatile* addend) { InterlockedIncrement(reinterpret_cast<long volatile*>(addend)); }
+inline int atomicDecrement(int volatile* addend) { return InterlockedDecrement(reinterpret_cast<long volatile*>(addend)); }
 
-#elif COMPILER(GCC) && (PLATFORM(X86) || PLATFORM(X86_64) || PLATFORM(PPC) || PLATFORM(PPC64))
+#elif PLATFORM(DARWIN)
 #define WTF_USE_LOCKFREE_THREADSAFESHARED 1
 
-inline void atomicIncrement(int volatile* addend)
-{
-#if PLATFORM(X86) || PLATFORM(X86_64)
-    __asm__(
-        "lock\n\t"
-        "incl %0":
-        "=m"(*addend): // output (%0)
-        "m"(*addend): // input (%1)
-        "cc"
-    );
-#else
-    int tmp;
-    __asm__(
-        "0:\n\t"
-        "lwarx %1, 0, %2\n\t"
-        "addi %1, %1, 1\n\t"
-        "stwcx. %1, 0, %2\n\t"
-        "bne- 0b":
+inline void atomicIncrement(int volatile* addend) { OSAtomicIncrement32Barrier(addend); }
+inline int atomicDecrement(int volatile* addend) { return OSAtomicDecrement32Barrier(addend); }
 
-        "=m"(*addend), "=&b"(tmp):
-        "r"(addend), "m"(*addend):
-        "cc"
-    );
-#endif
-}
+#elif COMPILER(GCC)
+#define WTF_USE_LOCKFREE_THREADSAFESHARED 1
 
-inline int atomicDecrement(int volatile* addend)
-{
-#if PLATFORM(X86) || PLATFORM(X86_64)
-    int readval = 0;
-    __asm__ __volatile__
-    (
-        "lock\n\t"
-        "xadd %1, %0":
-        "=m"(*addend), "=r"(readval): // outputs (%0, %1)
-        "m"(*addend), "1"(-1): // inputs (%2, %3 == %1)
-        "memory", "cc" // clobbers
-    );
-    return readval - 1;
-#else
-    int readval;
-    __asm__ __volatile__(
-        "sync\n\t"
-        "0:\n\t"
-        "lwarx %1, 0, %2\n\t"
-        "addi %1, %1, -1\n\t"
-        "stwcx. %1, 0, %2\n\t"
-        "bne- 0b\n\t"
-        "isync":
+inline void atomicIncrement(int volatile* addend) { __gnu_cxx::__atomic_add(addend, 1); }
+inline int atomicDecrement(int volatile* addend) { return __gnu_cxx::__exchange_and_add(addend, -1) - 1; }
 
-        "=m"(*addend), "=&b"(readval):
-        "r"(addend), "m"(*addend):
-        "memory", "cc"
-    );
-    return readval;
-#endif
-}
 #endif
 
 template<class T> class ThreadSafeShared : Noncopyable {
