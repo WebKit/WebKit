@@ -1,3 +1,22 @@
+2008-01-03  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        <rdar://problem/5463489> A number of layout tests should be using execCommand instead of textInputController
+
+        Added layoutTestController.execCommand to access editor commands that are not available
+        via document.execCommand.
+
+        * DumpRenderTree/LayoutTestController.cpp:
+        (execCommandCallback):
+        (LayoutTestController::staticFunctions):
+        * DumpRenderTree/LayoutTestController.h:
+        * DumpRenderTree/mac/LayoutTestControllerMac.mm:
+        (LayoutTestController::execCommand):
+        * DumpRenderTree/win/LayoutTestControllerWin.cpp:
+        (LayoutTestController::queueLoad):
+        (LayoutTestController::execCommand):
+
 2008-01-03  Alice Liu  <alice.liu@apple.com>
 
         Reviewed by Darin, Mitz.

@@ -334,6 +334,9 @@ Could be worth adding to the API.
 - (BOOL)_inFastImageScalingMode;
 - (void)_setUseFastImageScalingMode:(BOOL)flag;
 
+// SPI for DumpRenderTree
+- (void)_executeCoreCommandByName:(NSString *)name value:(NSString *)value;
+
 @end
 
 @interface WebView (WebViewPrintingPrivate)

@@ -1619,6 +1619,14 @@ WebFrameLoadDelegateImplementationCache* WebViewGetFrameLoadDelegateImplementati
     return _private->catchesDelegateExceptions;
 }
 
+- (void)_executeCoreCommandByName:(NSString *)name value:(NSString *)value
+{
+    Frame* coreFrame = [[[self mainFrame] _bridge] _frame];
+    if (!coreFrame)
+        return;
+    coreFrame->editor()->command(name).execute(value);
+}
+
 @end
 
 @implementation _WebSafeForwarder

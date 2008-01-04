@@ -20,7 +20,7 @@ if (window.layoutTestController) {
     
     selection.setBaseAndExtent(text, 3 + 5, text, 3);
     // Extending this 5 character selection will select 6 characters.
-    textInputController.doCommand("moveForwardAndModifySelection:");
+    layoutTestController.execCommand("MoveForwardAndModifySelection");
     // Extending it in this way flips the base and the extent.
     if (selection.extentOffset - selection.baseOffset != 6)
         log("Failure: Selection isn't the right size.");

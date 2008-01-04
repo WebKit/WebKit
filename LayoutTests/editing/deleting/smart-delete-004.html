@@ -14,6 +14,6 @@ if (window.layoutTestController) {
     sel.modify("move", "forward", "word");
     sel.modify("move", "forward", "word");
     sel.modify("extend", "backward", "word");
-    textInputController.doCommand("deleteForward:");
+    layoutTestController.execCommand("DeleteForward");
 }
 </script>

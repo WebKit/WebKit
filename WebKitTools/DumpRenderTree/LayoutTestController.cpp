@@ -257,6 +257,31 @@ static JSValueRef encodeHostNameCallback(JSContextRef context, JSObjectRef funct
     return JSValueMakeString(context, encodedHostName.get());
 }
 
+static JSValueRef execCommandCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+    // Has Mac & Windows implementations.
+    if (argumentCount < 1)
+        return JSValueMakeUndefined(context);
+
+    JSRetainPtr<JSStringRef> name(Adopt, JSValueToStringCopy(context, arguments[0], exception));
+    ASSERT(!*exception);
+
+    // Ignoring the second parameter (userInterface), as this command emulates a manual action.
+
+    JSRetainPtr<JSStringRef> value;
+    if (argumentCount >= 3) {
+        value.adopt(JSValueToStringCopy(context, arguments[2], exception));
+        ASSERT(!*exception);
+    } else
+        value.adopt(JSStringCreateWithUTF8CString(""));
+
+
+    LayoutTestController* controller = reinterpret_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    controller->execCommand(name.get(), value.get());
+
+    return JSValueMakeUndefined(context);
+}
+
 static JSValueRef keepWebHistoryCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
     // Has mac implementation
@@ -570,6 +595,7 @@ JSStaticFunction* LayoutTestController::staticFunctions()
         { "dumpSourceAsWebArchive", dumpSourceAsWebArchiveCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "dumpTitleChanges", dumpTitleChangesCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "encodeHostName", encodeHostNameCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+        { "execCommand", execCommandCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "keepWebHistory", keepWebHistoryCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "notifyDone", notifyDoneCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "pathToLocalResource", pathToLocalResourceCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },

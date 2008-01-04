@@ -200,8 +200,8 @@ void LayoutTestController::queueLoad(JSStringRef url, JSStringRef target)
         responseURL = responseURL.substr(0, lastSlash);
 
     wstring wURL = jsStringRefToWString(url);
-    wstring wAbosuluteURL = responseURL + TEXT("/") + wURL;
-    JSRetainPtr<JSStringRef> jsAbsoluteURL(Adopt, JSStringCreateWithCharacters(wAbosuluteURL.data(), wAbosuluteURL.length()));
+    wstring wAbsoluteURL = responseURL + TEXT("/") + wURL;
+    JSRetainPtr<JSStringRef> jsAbsoluteURL(Adopt, JSStringCreateWithCharacters(wAbsoluteURL.data(), wAbsoluteURL.length()));
 
     WorkQueue::shared()->queue(new LoadItem(jsAbsoluteURL.get(), target));
 }
@@ -503,4 +503,25 @@ int LayoutTestController::windowCount()
 {
     // FIXME: Implement!
     return 1;
+}
+
+void LayoutTestController::execCommand(JSStringRef name, JSStringRef value)
+{
+    wstring wName = jsStringRefToWString(name);
+    wstring wValue = jsStringRefToWString(value);
+
+    COMPtr<IWebView> webView;
+    if (FAILED(frame->webView(&webView)))
+        return;
+
+    COMPtr<IWebViewPrivate> viewPrivate;
+    if (FAILED(webView->QueryInterface(&viewPrivate)))
+        return;
+
+    BSTR nameBSTR = SysAllocStringLen((OLECHAR*)wName.c_str(), wName.length());
+    BSTR valueBSTR = SysAllocStringLen((OLECHAR*)wValue.c_str(), wValue.length());
+    viewPrivate->executeCoreCommandByName(nameBSTR, valueBSTR);
+
+    SysFreeString(nameBSTR);
+    SysFreeString(valueBSTR);
 }

@@ -14,10 +14,10 @@ if (window.layoutTestController) {
     var text = document.getElementById("div").firstChild;
     var selection = window.getSelection();
     selection.setBaseAndExtent(text, 0, text, 0);
-    textInputController.doCommand("moveForwardAndModifySelection:");
-    textInputController.doCommand("moveForwardAndModifySelection:");
-    textInputController.doCommand("moveForwardAndModifySelection:");
-    textInputController.doCommand("moveBackwardAndModifySelection:");
+    layoutTestController.execCommand("MoveForwardAndModifySelection");
+    layoutTestController.execCommand("MoveForwardAndModifySelection");
+    layoutTestController.execCommand("MoveForwardAndModifySelection");
+    layoutTestController.execCommand("MoveBackwardAndModifySelection");
 } else {
     log("Failure: This test cannot be run manually.")
 }

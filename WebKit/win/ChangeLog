@@ -1,3 +1,15 @@
+2008-01-03  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        <rdar://problem/5463489> A number of layout tests should be using execCommand instead of textInputController
+
+        * Interfaces/IWebViewPrivate.idl:
+        * WebView.cpp:
+        (WebView::executeCoreCommandByName):
+        * WebView.h:
+        Added an SPI to implement layoutTestController.execCommand.
+
 2008-01-03  Ada Chan  <adachan@apple.com>
 
         Replaced the use of editor command "ForwardDelete" with "DeleteForward" to be consistent

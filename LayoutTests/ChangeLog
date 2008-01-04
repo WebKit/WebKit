@@ -1,3 +1,21 @@
+2008-01-03  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        <rdar://problem/5463489> A number of layout tests should be using execCommand instead of textInputController
+
+        * editing/deleting/5300379.html:
+        * editing/deleting/delete-to-end-of-paragraph.html:
+        * editing/deleting/smart-delete-003.html:
+        * editing/deleting/smart-delete-004.html:
+        * editing/selection/4947387.html:
+        * editing/selection/5195166-1.html:
+        * editing/selection/5195166-2.html:
+        * editing/selection/select-line.html:
+        * editing/selection/selection-actions.html:
+        * platform/win/Skipped:
+        Changed these tests to use layoutTestController.execCommand, so they no longer need to be disabled.
+
 2008-01-03  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Maciej.

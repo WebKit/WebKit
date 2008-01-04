@@ -12,15 +12,15 @@ if (window.layoutTestController) {
     var sel = window.getSelection();
     
     sel.setPosition(text, text.length);
-    textInputController.doCommand("moveToBeginningOfLineAndModifySelection:");
+    layoutTestController.execCommand("MoveToBeginningOfLineAndModifySelection");
     
     sel.setPosition(text, 0);
-    textInputController.doCommand("moveToEndOfLineAndModifySelection:");
+    layoutTestController.execCommand("MoveToEndOfLineAndModifySelection");
 
     sel.setPosition(text, text.length);
-    textInputController.doCommand("moveToBeginningOfParagraphAndModifySelection:");
+    layoutTestController.execCommand("MoveToBeginningOfParagraphAndModifySelection");
     
     sel.setPosition(text, 0);
-    textInputController.doCommand("moveToEndOfParagraphAndModifySelection:");
+    layoutTestController.execCommand("MoveToEndOfParagraphAndModifySelection");
 }
 </script>

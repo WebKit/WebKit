@@ -237,3 +237,14 @@ int LayoutTestController::windowCount()
 {
     return CFArrayGetCount(allWindowsRef);
 }
+
+void LayoutTestController::execCommand(JSStringRef name, JSStringRef value)
+{
+    RetainPtr<CFStringRef> nameCF(AdoptCF, JSStringCopyCFString(kCFAllocatorDefault, name));
+    NSString *nameNS = (NSString *)nameCF.get();
+
+    RetainPtr<CFStringRef> valueCF(AdoptCF, JSStringCopyCFString(kCFAllocatorDefault, value));
+    NSString *valueNS = (NSString *)valueCF.get();
+
+    [[mainFrame webView] _executeCoreCommandByName:nameNS value:valueNS];
+}
