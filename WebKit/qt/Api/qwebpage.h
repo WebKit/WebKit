@@ -221,25 +221,6 @@ protected:
 
     virtual QString userAgentFor(const QUrl& url) const;
 
-
-
-private:
-    void mouseMoveEvent(QMouseEvent*);
-    void mousePressEvent(QMouseEvent*);
-    void mouseDoubleClickEvent(QMouseEvent*);
-    void mouseReleaseEvent(QMouseEvent*);
-    void contextMenuEvent(QContextMenuEvent*);
-    void wheelEvent(QWheelEvent*);
-    void keyPressEvent(QKeyEvent*);
-    void keyReleaseEvent(QKeyEvent*);
-    void focusInEvent(QFocusEvent*);
-    void focusOutEvent(QFocusEvent*);
-
-    void dragEnterEvent(QDragEnterEvent *);
-    void dragLeaveEvent(QDragLeaveEvent *);
-    void dragMoveEvent(QDragMoveEvent *);
-    void dropEvent(QDropEvent *);
-
 private:
     Q_PRIVATE_SLOT(d, void _q_onLoadProgressChanged(int))
     Q_PRIVATE_SLOT(d, void _q_webActionTriggered(bool checked));

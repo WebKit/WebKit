@@ -2,6 +2,34 @@
 
         Reviewed by Simon.
 
+        * Move the various event methods to QWebPagePrivate. This is similar to
+        QTextControl as well.
+        
+
+        * Api/qwebpage.cpp:
+        (QWebPage::event):
+        (QWebPagePrivate::mouseMoveEvent):
+        (QWebPagePrivate::mousePressEvent):
+        (QWebPagePrivate::mouseDoubleClickEvent):
+        (QWebPagePrivate::mouseReleaseEvent):
+        (QWebPagePrivate::contextMenuEvent):
+        (QWebPagePrivate::wheelEvent):
+        (QWebPagePrivate::keyPressEvent):
+        (QWebPagePrivate::keyReleaseEvent):
+        (QWebPagePrivate::focusInEvent):
+        (QWebPagePrivate::focusOutEvent):
+        (QWebPage::focusNextPrevChild):
+        (QWebPagePrivate::dragEnterEvent):
+        (QWebPagePrivate::dragLeaveEvent):
+        (QWebPagePrivate::dragMoveEvent):
+        (QWebPagePrivate::dropEvent):
+        * Api/qwebpage.h:
+        * Api/qwebpage_p.h:
+
+2008-01-04  Holger Hans Peter Freyther  <holger.freyther@trolltech.com>
+
+        Reviewed by Simon.
+
         * Forward the event from QWebView to QWebPage through QObject::event. This
         is similar to the way QTextControl is working.
         

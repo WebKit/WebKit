@@ -790,46 +790,46 @@ bool QWebPage::event(QEvent *ev)
 {
     switch (ev->type()) {
     case QEvent::MouseMove:
-        mouseMoveEvent(static_cast<QMouseEvent*>(ev));
+        d->mouseMoveEvent(static_cast<QMouseEvent*>(ev));
         break;
     case QEvent::MouseButtonPress:
-        mousePressEvent(static_cast<QMouseEvent*>(ev));
+        d->mousePressEvent(static_cast<QMouseEvent*>(ev));
         break;
     case QEvent::MouseButtonDblClick:
-        mouseDoubleClickEvent(static_cast<QMouseEvent*>(ev));
+        d->mouseDoubleClickEvent(static_cast<QMouseEvent*>(ev));
         break;
     case QEvent::MouseButtonRelease:
-        mouseReleaseEvent(static_cast<QMouseEvent*>(ev));
+        d->mouseReleaseEvent(static_cast<QMouseEvent*>(ev));
         break;
     case QEvent::ContextMenu:
-        contextMenuEvent(static_cast<QContextMenuEvent*>(ev));
+        d->contextMenuEvent(static_cast<QContextMenuEvent*>(ev));
         break;
     case QEvent::Wheel:
-        wheelEvent(static_cast<QWheelEvent*>(ev));
+        d->wheelEvent(static_cast<QWheelEvent*>(ev));
         break;
     case QEvent::KeyPress:
-        keyPressEvent(static_cast<QKeyEvent*>(ev));
+        d->keyPressEvent(static_cast<QKeyEvent*>(ev));
         break;
     case QEvent::KeyRelease:
-        keyReleaseEvent(static_cast<QKeyEvent*>(ev));
+        d->keyReleaseEvent(static_cast<QKeyEvent*>(ev));
         break;
     case QEvent::FocusIn:
-        focusInEvent(static_cast<QFocusEvent*>(ev));
+        d->focusInEvent(static_cast<QFocusEvent*>(ev));
         break;
     case QEvent::FocusOut:
-        focusOutEvent(static_cast<QFocusEvent*>(ev));
+        d->focusOutEvent(static_cast<QFocusEvent*>(ev));
         break;
     case QEvent::DragEnter:
-        dragEnterEvent(static_cast<QDragEnterEvent*>(ev));
+        d->dragEnterEvent(static_cast<QDragEnterEvent*>(ev));
         break;
     case QEvent::DragLeave:
-        dragLeaveEvent(static_cast<QDragLeaveEvent*>(ev));
+        d->dragLeaveEvent(static_cast<QDragLeaveEvent*>(ev));
         break;
     case QEvent::DragMove:
-        dragMoveEvent(static_cast<QDragMoveEvent*>(ev));
+        d->dragMoveEvent(static_cast<QDragMoveEvent*>(ev));
         break;
     case QEvent::Drop:
-        dropEvent(static_cast<QDropEvent*>(ev));
+        d->dropEvent(static_cast<QDropEvent*>(ev));
         break;
     default:
         return QObject::event(ev);
@@ -838,9 +838,9 @@ bool QWebPage::event(QEvent *ev)
     return true;
 }
 
-void QWebPage::mouseMoveEvent(QMouseEvent *ev)
+void QWebPagePrivate::mouseMoveEvent(QMouseEvent *ev)
 {
-    QWebFrame *f = d->currentFrame(ev->pos());
+    QWebFrame *f = currentFrame(ev->pos());
     if (!f)
         return;
 
@@ -858,26 +858,26 @@ void QWebPage::mouseMoveEvent(QMouseEvent *ev)
     WebCore::Element *link = result.URLElement();
     if (link != frame->lastHoverElement) {
         frame->lastHoverElement = link;
-        emit hoveringOverLink(result.absoluteLinkURL().prettyURL(), result.title(), result.textContent());
+        emit q->hoveringOverLink(result.absoluteLinkURL().prettyURL(), result.title(), result.textContent());
     }
 }
 
-void QWebPage::mousePressEvent(QMouseEvent *ev)
+void QWebPagePrivate::mousePressEvent(QMouseEvent *ev)
 {
-    d->frameUnderMouse = d->frameAt(ev->pos());
-    if (!d->frameUnderMouse)
+    frameUnderMouse = frameAt(ev->pos());
+    if (!frameUnderMouse)
         return;
 
-    QWebFramePrivate *frame = d->frameUnderMouse->d;
+    QWebFramePrivate *frame = frameUnderMouse->d;
     if (!frame->eventHandler)
         return;
 
     frame->eventHandler->handleMousePressEvent(PlatformMouseEvent(ev, 1));
 }
 
-void QWebPage::mouseDoubleClickEvent(QMouseEvent *ev)
+void QWebPagePrivate::mouseDoubleClickEvent(QMouseEvent *ev)
 {
-    QWebFrame *f = d->currentFrame(ev->pos());
+    QWebFrame *f = currentFrame(ev->pos());
     if (!f)
         return;
 
@@ -888,9 +888,9 @@ void QWebPage::mouseDoubleClickEvent(QMouseEvent *ev)
     frame->eventHandler->handleMousePressEvent(PlatformMouseEvent(ev, 2));
 }
 
-void QWebPage::mouseReleaseEvent(QMouseEvent *ev)
+void QWebPagePrivate::mouseReleaseEvent(QMouseEvent *ev)
 {
-    QWebFrame *f = d->currentFrame(ev->pos());
+    QWebFrame *f = currentFrame(ev->pos());
     if (!f)
         return;
 
@@ -900,12 +900,12 @@ void QWebPage::mouseReleaseEvent(QMouseEvent *ev)
 
     frame->eventHandler->handleMouseReleaseEvent(PlatformMouseEvent(ev, 0));
 
-    d->frameUnderMouse = 0;
+    frameUnderMouse = 0;
 }
 
-void QWebPage::contextMenuEvent(QContextMenuEvent *ev)
+void QWebPagePrivate::contextMenuEvent(QContextMenuEvent *ev)
 {
-    QWebFrame *f = d->currentFrame(ev->pos());
+    QWebFrame *f = currentFrame(ev->pos());
     if (!f)
         return;
 
@@ -913,25 +913,25 @@ void QWebPage::contextMenuEvent(QContextMenuEvent *ev)
     if (!frame->eventHandler)
         return;
 
-    d->page->contextMenuController()->clearContextMenu();
+    page->contextMenuController()->clearContextMenu();
     frame->eventHandler->sendContextMenuEvent(PlatformMouseEvent(ev, 1));
-    ContextMenu *menu = d->page->contextMenuController()->contextMenu();
+    ContextMenu *menu = page->contextMenuController()->contextMenu();
 
-    QWebPageContext oldContext = d->currentContext;
-    d->currentContext = QWebPageContext(menu->hitTestResult());
+    QWebPageContext oldContext = currentContext;
+    currentContext = QWebPageContext(menu->hitTestResult());
 
     const QList<ContextMenuItem> *items = menu->platformDescription();
-    QMenu *qmenu = d->createContextMenu(menu, items);
+    QMenu *qmenu = createContextMenu(menu, items);
     if (qmenu) {
         qmenu->exec(ev->globalPos());
         delete qmenu;
     }
-    d->currentContext = oldContext;
+    currentContext = oldContext;
 }
 
-void QWebPage::wheelEvent(QWheelEvent *ev)
+void QWebPagePrivate::wheelEvent(QWheelEvent *ev)
 {
-    QWebFramePrivate *frame = d->currentFrame(ev->pos())->d;
+    QWebFramePrivate *frame = currentFrame(ev->pos())->d;
 
     bool accepted = false;
     if (frame->eventHandler) {
@@ -946,111 +946,111 @@ void QWebPage::wheelEvent(QWheelEvent *ev)
 //         QWidget::wheelEvent(ev);
 }
 
-void QWebPage::keyPressEvent(QKeyEvent *ev)
+void QWebPagePrivate::keyPressEvent(QKeyEvent *ev)
 {
-    if (!mainFrame()->d->eventHandler)
+    if (!mainFrame->d->eventHandler)
         return;
 
     bool handled = false;
-    QWebFrame *frame = mainFrame();
+    QWebFrame *frame = mainFrame;
     WebCore::Editor *editor = frame->d->frame->editor();
     if (editor->canEdit()) {
         if (ev == QKeySequence::Cut) {
-            triggerAction(Cut);
+            q->triggerAction(QWebPage::Cut);
             handled = true;
         } else if (ev == QKeySequence::Copy) {
-            triggerAction(Copy);
+            q->triggerAction(QWebPage::Copy);
             handled = true;
         } else if (ev == QKeySequence::Paste) {
-            triggerAction(Paste);
+            q->triggerAction(QWebPage::Paste);
             handled = true;
         } else if (ev == QKeySequence::Undo) {
-            triggerAction(Undo);
+            q->triggerAction(QWebPage::Undo);
             handled = true;
         } else if (ev == QKeySequence::Redo) {
-            triggerAction(Redo);
+            q->triggerAction(QWebPage::Redo);
             handled = true;
         } else if(ev == QKeySequence::MoveToNextChar) {
-            triggerAction(MoveToNextChar);
+            q->triggerAction(QWebPage::MoveToNextChar);
             handled = true;
         } else if(ev == QKeySequence::MoveToPreviousChar) {
-            triggerAction(MoveToPreviousChar);
+            q->triggerAction(QWebPage::MoveToPreviousChar);
             handled = true;
         } else if(ev == QKeySequence::MoveToNextWord) {
-            triggerAction(MoveToNextWord);
+            q->triggerAction(QWebPage::MoveToNextWord);
             handled = true;
         } else if(ev == QKeySequence::MoveToPreviousWord) {
-            triggerAction(MoveToPreviousWord);
+            q->triggerAction(QWebPage::MoveToPreviousWord);
             handled = true;
         } else if(ev == QKeySequence::MoveToNextLine) {
-            triggerAction(MoveToNextLine);
+            q->triggerAction(QWebPage::MoveToNextLine);
             handled = true;
         } else if(ev == QKeySequence::MoveToPreviousLine) {
-            triggerAction(MoveToPreviousLine);
+            q->triggerAction(QWebPage::MoveToPreviousLine);
             handled = true;
 //             } else if(ev == QKeySequence::MoveToNextPage) {
 //             } else if(ev == QKeySequence::MoveToPreviousPage) {
         } else if(ev == QKeySequence::MoveToStartOfLine) {
-            triggerAction(MoveToStartOfLine);
+            q->triggerAction(QWebPage::MoveToStartOfLine);
             handled = true;
         } else if(ev == QKeySequence::MoveToEndOfLine) {
-            triggerAction(MoveToEndOfLine);
+            q->triggerAction(QWebPage::MoveToEndOfLine);
             handled = true;
         } else if(ev == QKeySequence::MoveToStartOfBlock) {
-            triggerAction(MoveToStartOfBlock);
+            q->triggerAction(QWebPage::MoveToStartOfBlock);
             handled = true;
         } else if(ev == QKeySequence::MoveToEndOfBlock) {
-            triggerAction(MoveToEndOfBlock);
+            q->triggerAction(QWebPage::MoveToEndOfBlock);
             handled = true;
         } else if(ev == QKeySequence::MoveToStartOfDocument) {
-            triggerAction(MoveToStartOfDocument);
+            q->triggerAction(QWebPage::MoveToStartOfDocument);
             handled = true;
         } else if(ev == QKeySequence::MoveToEndOfDocument) {
-            triggerAction(MoveToEndOfDocument);
+            q->triggerAction(QWebPage::MoveToEndOfDocument);
             handled = true;
         } else if(ev == QKeySequence::SelectNextChar) {
-            triggerAction(SelectNextChar);
+            q->triggerAction(QWebPage::SelectNextChar);
             handled = true;
         } else if(ev == QKeySequence::SelectPreviousChar) {
-            triggerAction(SelectPreviousChar);
+            q->triggerAction(QWebPage::SelectPreviousChar);
             handled = true;
         } else if(ev == QKeySequence::SelectNextWord) {
-            triggerAction(SelectNextWord);
+            q->triggerAction(QWebPage::SelectNextWord);
             handled = true;
         } else if(ev == QKeySequence::SelectPreviousWord) {
-            triggerAction(SelectPreviousWord);
+            q->triggerAction(QWebPage::SelectPreviousWord);
             handled = true;
         } else if(ev == QKeySequence::SelectNextLine) {
-            triggerAction(SelectNextLine);
+            q->triggerAction(QWebPage::SelectNextLine);
             handled = true;
         } else if(ev == QKeySequence::SelectPreviousLine) {
-            triggerAction(SelectPreviousLine);
+            q->triggerAction(QWebPage::SelectPreviousLine);
             handled = true;
 //             } else if(ev == QKeySequence::SelectNextPage) {
 //             } else if(ev == QKeySequence::SelectPreviousPage) {
         } else if(ev == QKeySequence::SelectStartOfLine) {
-            triggerAction(SelectStartOfLine);
+            q->triggerAction(QWebPage::SelectStartOfLine);
             handled = true;
         } else if(ev == QKeySequence::SelectEndOfLine) {
-            triggerAction(SelectEndOfLine);
+            q->triggerAction(QWebPage::SelectEndOfLine);
             handled = true;
         } else if(ev == QKeySequence::SelectStartOfBlock) {
-            triggerAction(SelectStartOfBlock);
+            q->triggerAction(QWebPage::SelectStartOfBlock);
             handled = true;
         } else if(ev == QKeySequence::SelectEndOfBlock) {
-            triggerAction(SelectEndOfBlock);
+            q->triggerAction(QWebPage::SelectEndOfBlock);
             handled = true;
         } else if(ev == QKeySequence::SelectStartOfDocument) {
-            triggerAction(SelectStartOfDocument);
+            q->triggerAction(QWebPage::SelectStartOfDocument);
             handled = true;
         } else if(ev == QKeySequence::SelectEndOfDocument) {
-            triggerAction(SelectEndOfDocument);
+            q->triggerAction(QWebPage::SelectEndOfDocument);
             handled = true;
         } else if(ev == QKeySequence::DeleteStartOfWord) {
-            triggerAction(DeleteStartOfWord);
+            q->triggerAction(QWebPage::DeleteStartOfWord);
             handled = true;
         } else if(ev == QKeySequence::DeleteEndOfWord) {
-            triggerAction(DeleteEndOfWord);
+            q->triggerAction(QWebPage::DeleteEndOfWord);
             handled = true;
 //             } else if(ev == QKeySequence::DeleteEndOfLine) {
         }
@@ -1060,15 +1060,15 @@ void QWebPage::keyPressEvent(QKeyEvent *ev)
     if (!handled) {
         handled = true;
         PlatformScrollbar *h, *v;
-        h = mainFrame()->d->horizontalScrollBar();
-        v = mainFrame()->d->verticalScrollBar();
+        h = mainFrame->d->horizontalScrollBar();
+        v = mainFrame->d->verticalScrollBar();
 
         if (ev == QKeySequence::MoveToNextPage) {
             if (v)
-                v->setValue(v->value() + viewportSize().height());
+                v->setValue(v->value() + q->viewportSize().height());
         } else if (ev == QKeySequence::MoveToPreviousPage) {
             if (v)
-                v->setValue(v->value() - viewportSize().height());
+                v->setValue(v->value() - q->viewportSize().height());
         } else {
             switch (ev->key()) {
             case Qt::Key_Up:
@@ -1097,35 +1097,35 @@ void QWebPage::keyPressEvent(QKeyEvent *ev)
     ev->setAccepted(handled);
 }
 
-void QWebPage::keyReleaseEvent(QKeyEvent *ev)
+void QWebPagePrivate::keyReleaseEvent(QKeyEvent *ev)
 {
     if (ev->isAutoRepeat()) {
         ev->setAccepted(true);
         return;
     }
 
-    if (!mainFrame()->d->eventHandler)
+    if (!mainFrame->d->eventHandler)
         return;
 
-    bool handled = mainFrame()->d->eventHandler->keyEvent(ev);
+    bool handled = mainFrame->d->eventHandler->keyEvent(ev);
     ev->setAccepted(handled);
 }
 
-void QWebPage::focusInEvent(QFocusEvent *ev)
+void QWebPagePrivate::focusInEvent(QFocusEvent *ev)
 {
     if (ev->reason() != Qt::PopupFocusReason) 
-        mainFrame()->d->frame->page()->focusController()->setFocusedFrame(mainFrame()->d->frame);
+        mainFrame->d->frame->page()->focusController()->setFocusedFrame(mainFrame->d->frame);
     // ### QWebPage
     //QWidget::focusInEvent(ev);
 }
 
-void QWebPage::focusOutEvent(QFocusEvent *ev)
+void QWebPagePrivate::focusOutEvent(QFocusEvent *ev)
 {
     // ### QWebPage
     //QWidget::focusOutEvent(ev);
     if (ev->reason() != Qt::PopupFocusReason) {
-        mainFrame()->d->frame->selectionController()->clear();
-        mainFrame()->d->frame->setIsActive(false);
+        mainFrame->d->frame->selectionController()->clear();
+        mainFrame->d->frame->setIsActive(false);
     }
 }
 
@@ -1135,43 +1135,43 @@ bool QWebPage::focusNextPrevChild(bool next)
     return false;
 }
 
-void QWebPage::dragEnterEvent(QDragEnterEvent *ev)
+void QWebPagePrivate::dragEnterEvent(QDragEnterEvent *ev)
 {
 #ifndef QT_NO_DRAGANDDROP
     DragData dragData(ev->mimeData(), ev->pos(), QCursor::pos(), 
                       dropActionToDragOp(ev->possibleActions()));
-    Qt::DropAction action = dragOpToDropAction(d->page->dragController()->dragEntered(&dragData));
+    Qt::DropAction action = dragOpToDropAction(page->dragController()->dragEntered(&dragData));
     ev->setDropAction(action);
     ev->accept();
 #endif
 }
 
-void QWebPage::dragLeaveEvent(QDragLeaveEvent *ev)
+void QWebPagePrivate::dragLeaveEvent(QDragLeaveEvent *ev)
 {
 #ifndef QT_NO_DRAGANDDROP
     DragData dragData(0, IntPoint(), QCursor::pos(), DragOperationNone);
-    d->page->dragController()->dragExited(&dragData);
+    page->dragController()->dragExited(&dragData);
     ev->accept();
 #endif
 }
 
-void QWebPage::dragMoveEvent(QDragMoveEvent *ev)
+void QWebPagePrivate::dragMoveEvent(QDragMoveEvent *ev)
 {
 #ifndef QT_NO_DRAGANDDROP
     DragData dragData(ev->mimeData(), ev->pos(), QCursor::pos(), 
                       dropActionToDragOp(ev->possibleActions()));
-    Qt::DropAction action = dragOpToDropAction(d->page->dragController()->dragUpdated(&dragData));
+    Qt::DropAction action = dragOpToDropAction(page->dragController()->dragUpdated(&dragData));
     ev->setDropAction(action);
     ev->accept();
 #endif
 }
 
-void QWebPage::dropEvent(QDropEvent *ev)
+void QWebPagePrivate::dropEvent(QDropEvent *ev)
 {
 #ifndef QT_NO_DRAGANDDROP
     DragData dragData(ev->mimeData(), ev->pos(), QCursor::pos(), 
                       dropActionToDragOp(ev->possibleActions()));
-    Qt::DropAction action = dragOpToDropAction(d->page->dragController()->performDrag(&dragData));
+    Qt::DropAction action = dragOpToDropAction(page->dragController()->performDrag(&dragData));
     ev->accept();
 #endif
 }

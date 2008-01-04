@@ -78,6 +78,7 @@ private:
     QWebPageContextPrivate *d;
 
     friend class QWebPage;
+    friend class QWebPagePrivate;
 };
 
 class QWebPagePrivate
@@ -95,6 +96,23 @@ public:
     void updateAction(QWebPage::WebAction action);
     void updateNavigationActions();
     void updateEditorActions();
+
+    void mouseMoveEvent(QMouseEvent*);
+    void mousePressEvent(QMouseEvent*);
+    void mouseDoubleClickEvent(QMouseEvent*);
+    void mouseReleaseEvent(QMouseEvent*);
+    void contextMenuEvent(QContextMenuEvent*);
+    void wheelEvent(QWheelEvent*);
+    void keyPressEvent(QKeyEvent*);
+    void keyReleaseEvent(QKeyEvent*);
+    void focusInEvent(QFocusEvent*);
+    void focusOutEvent(QFocusEvent*);
+
+    void dragEnterEvent(QDragEnterEvent *);
+    void dragLeaveEvent(QDragLeaveEvent *);
+    void dragMoveEvent(QDragMoveEvent *);
+    void dropEvent(QDropEvent *);
+
 
     WebCore::ChromeClientQt *chromeClient;
     WebCore::ContextMenuClientQt *contextMenuClient;
