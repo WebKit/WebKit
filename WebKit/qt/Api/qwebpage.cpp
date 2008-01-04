@@ -940,10 +940,6 @@ void QWebPagePrivate::wheelEvent(QWheelEvent *ev)
     }
 
     ev->setAccepted(accepted);
-
-    // ### QWebPage
-//     if (!ev->isAccepted())
-//         QWidget::wheelEvent(ev);
 }
 
 void QWebPagePrivate::keyPressEvent(QKeyEvent *ev)
@@ -1115,14 +1111,10 @@ void QWebPagePrivate::focusInEvent(QFocusEvent *ev)
 {
     if (ev->reason() != Qt::PopupFocusReason) 
         mainFrame->d->frame->page()->focusController()->setFocusedFrame(mainFrame->d->frame);
-    // ### QWebPage
-    //QWidget::focusInEvent(ev);
 }
 
 void QWebPagePrivate::focusOutEvent(QFocusEvent *ev)
 {
-    // ### QWebPage
-    //QWidget::focusOutEvent(ev);
     if (ev->reason() != Qt::PopupFocusReason) {
         mainFrame->d->frame->selectionController()->clear();
         mainFrame->d->frame->setIsActive(false);

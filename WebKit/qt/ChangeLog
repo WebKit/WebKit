@@ -2,6 +2,20 @@
 
         Reviewed by Simon.
 
+        * Remove the todo from QWebPage and move the code to QWebView.
+        
+
+        * Api/qwebpage.cpp:
+        (QWebPagePrivate::wheelEvent):
+        (QWebPagePrivate::focusInEvent):
+        * Api/qwebview.cpp:
+        (QWebView::wheelEvent):
+        (QWebView::focusInEvent):
+
+2008-01-04  Holger Hans Peter Freyther  <holger.freyther@trolltech.com>
+
+        Reviewed by Simon.
+
         * Move the various event methods to QWebPagePrivate. This is similar to
         QTextControl as well.
         
