@@ -1,3 +1,10 @@
+2008-01-03  Darin Adler  <darin@apple.com>
+
+        Reviewed by Adam.
+
+        * Scripts/update-webkit: Make this work a little better for the people at Apple
+        who have a directory named Internal.
+
 2008-01-03  Adam Roben  <aroben@apple.com>
 
         Use HTTP::Date instead of Date::Parse because it's installed by Cygwin by default
