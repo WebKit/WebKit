@@ -187,9 +187,6 @@ Q_SIGNALS:
 
     void selectionChanged();
 
-    // ### call addedToHistory instead, something more signal'ish
-    void addToHistory(const QUrl&);
-
     void frameCreated(QWebFrame *frame);
 
     void geometryChangeRequest(const QRect& geom);

@@ -48,6 +48,7 @@
 #include "qwebframe_p.h"
 #include "qwebobjectplugin_p.h"
 #include "qwebnetworkinterface_p.h"
+#include "qwebhistoryinterface.h"
 
 #include <qfileinfo.h>
 
@@ -597,7 +598,9 @@ void FrameLoaderClientQt::registerForIconNotification(bool)
 
 void FrameLoaderClientQt::updateGlobalHistoryForStandardLoad(const WebCore::KURL& url)
 {
-    emit m_webFrame->page()->addToHistory(QUrl(url.prettyURL()));
+    QWebHistoryInterface *history = QWebHistoryInterface::defaultInterface();
+    if (history)
+        history->addHistoryEntry(url.prettyURL());
 }
 
 void FrameLoaderClientQt::updateGlobalHistoryForReload(const WebCore::KURL&)
