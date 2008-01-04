@@ -47,18 +47,27 @@ media
 http/tests/media
 
 # Layout tests that depend on certain fonts don't match Mac results <rdar://problem/5075790>
+css2.1/t0905-c5525-flthw-00-c-g.html
+css2.1/t0905-c5526-flthw-00-c-g.html
 css2.1/t1202-counter-09-b.html
 css2.1/t1202-counters-09-b.html
 editing/deleting/5144139-2.html
+editing/execCommand/5119244.html
+fast/block/positioning/047.html
 fast/css/beforeSelectorOnCodeElement.html
 fast/css/rtl-ordering.html
 fast/css/text-security.html
+fast/encoding/denormalised-voiced-japanese-chars.html
 fast/encoding/invalid-UTF-8.html
+fast/events/updateLayoutForHitTest.html
 fast/forms/select-visual-hebrew.html
 fast/forms/select-writing-direction-natural.html
 fast/forms/visual-hebrew-text-field.html
 fast/lists/w3-list-styles.html
+fast/text/international/001.html
+fast/text/international/002.html
 fast/text/international/bidi-neutral-run.html
+fast/text/international/wrap-CJK-001.html
 fast/xsl/xslt-text.xml
 svg/W3C-SVG-1.1/fonts-glyph-02-t.svg
 svg/W3C-SVG-1.1/interact-cursor-01-f.svg
@@ -67,6 +76,7 @@ svg/W3C-SVG-1.1/text-intro-05-t.svg
 svg/W3C-SVG-1.1/text-tselect-02-f.svg
 #svg/batik/text/smallFonts.svg-disabled
 svg/batik/text/textBiDi.svg
+svg/batik/text/verticalText.svg
 svg/hixie/text/003.html
 svg/hixie/text/003a.xml
 svg/hixie/viewbox/preserveAspectRatio/002.xml

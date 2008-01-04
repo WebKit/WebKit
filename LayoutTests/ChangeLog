@@ -1,3 +1,12 @@
+2008-01-03  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        - skip tests that are failing because font fallback results in a
+          different font being used on Windows than on Mac.
+
+        * platform/win/Skipped:
+
 2008-01-03  Alice Liu  <alice.liu@apple.com>
 
         Reviewed by Darin, Mitz.
