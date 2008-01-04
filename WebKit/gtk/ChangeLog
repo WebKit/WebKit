@@ -1,3 +1,16 @@
+2008-01-03  Xan Lopez  <xan@gnome.org>
+
+        Reviewed by Alp Toker.
+
+        http://bugs.webkit.org/show_bug.cgi?id=16654
+        [GTK] Signal "navigation-requested" does not react correctly on
+        return TRUE from callbacks
+        
+        * WebView/webkitwebview.cpp: use our own accumulator for signals
+        returning WebKitNavigationResponse. The emission will be stopped
+        when any callback returns anything but
+        WEBKIT_NAVIGATION_RESPONSE_ACCEPT.
+
 2008-01-02  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Rubber stamped by Darin.

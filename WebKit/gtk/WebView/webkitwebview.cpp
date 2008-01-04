@@ -549,6 +549,18 @@ static void webkit_web_view_finalize(GObject* object)
     G_OBJECT_CLASS(webkit_web_view_parent_class)->finalize(object);
 }
 
+static gboolean webkit_navigation_request_handled(GSignalInvocationHint* ihint, GValue* returnAccu, const GValue* handlerReturn, gpointer dummy)
+{
+  gboolean continueEmission = TRUE;
+  int signalHandled = g_value_get_int(handlerReturn);
+  g_value_set_int(returnAccu, signalHandled);
+
+  if (signalHandled != WEBKIT_NAVIGATION_RESPONSE_ACCEPT)
+      continueEmission = FALSE;
+
+  return continueEmission;
+}
+
 static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
 {
     GtkBindingSet* binding_set;
@@ -565,7 +577,7 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
             G_TYPE_FROM_CLASS(webViewClass),
             (GSignalFlags)(G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION),
             G_STRUCT_OFFSET (WebKitWebViewClass, navigation_requested),
-            NULL,
+            webkit_navigation_request_handled,
             NULL,
             webkit_marshal_INT__OBJECT_OBJECT,
             G_TYPE_INT, 2,
