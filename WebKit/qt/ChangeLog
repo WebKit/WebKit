@@ -1,3 +1,13 @@
+2008-01-04  Lars Knoll  <lars@trolltech.com>
+
+        Reviewed by Simon.
+
+        take a QString as identifier in QWebFrame::addToJSWindowObject.
+
+        * Api/qwebframe.cpp:
+        (QWebFrame::addToJSWindowObject):
+        * Api/qwebframe.h:
+
 2008-01-04  Simon Hausmann  <hausmann@webkit.org>
 
         Reviewed by Lars.

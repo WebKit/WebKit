@@ -139,7 +139,7 @@ QWebFrame::~QWebFrame()
     delete d;
 }
 
-void QWebFrame::addToJSWindowObject(const QByteArray &name, QObject *object)
+void QWebFrame::addToJSWindowObject(const QString &name, QObject *object)
 {
       KJS::JSLock lock;
       KJS::Window *window = KJS::Window::retrieveWindow(d->frame.get());
@@ -153,7 +153,7 @@ void QWebFrame::addToJSWindowObject(const QByteArray &name, QObject *object)
         KJS::Bindings::Instance::createRuntimeObject(KJS::Bindings::Instance::QtLanguage,
                                                      object, root);
 
-      window->put(window->globalExec(), KJS::Identifier(name.constData()), runtimeObject);
+      window->put(window->globalExec(), KJS::Identifier((const KJS::UChar *) name.constData(), name.length()), runtimeObject);
 }
 
 

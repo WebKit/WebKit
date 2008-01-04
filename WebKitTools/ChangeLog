@@ -1,3 +1,12 @@
+2008-01-04  Lars Knoll  <lars@trolltech.com>
+
+        Reviewed by Simon.
+
+        take a QString as identifier in QWebFrame::addToJSWindowObject.
+
+        * DumpRenderTree/qt/DumpRenderTree.cpp:
+        (WebCore::DumpRenderTree::initJSObjects):
+
 2008-01-04  Alp Toker  <alp@atoker.com>
 
         GTK+ DRT build fix for breakage introduced in r29149.

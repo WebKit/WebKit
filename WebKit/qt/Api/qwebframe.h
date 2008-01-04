@@ -64,7 +64,7 @@ public:
     void setHtml(const QByteArray &html, const QUrl &baseUrl = QUrl());
     void setContent(const QByteArray &data, const QString &mimeType = QString(), const QUrl &baseUrl = QUrl());
 
-    void addToJSWindowObject(const QByteArray &name, QObject *object);
+    void addToJSWindowObject(const QString &name, QObject *object);
     QString markup() const;
     QString innerText() const;
     QString renderTreeDump() const;

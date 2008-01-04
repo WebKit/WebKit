@@ -182,9 +182,9 @@ void DumpRenderTree::initJSObjects()
 {
     QWebFrame *frame = qobject_cast<QWebFrame*>(sender());
     Q_ASSERT(frame);
-    frame->addToJSWindowObject("layoutTestController", m_controller);
-    frame->addToJSWindowObject("eventSender", m_eventSender);
-    frame->addToJSWindowObject("textInputController", m_textInputController);
+    frame->addToJSWindowObject(QLatin1String("layoutTestController"), m_controller);
+    frame->addToJSWindowObject(QLatin1String("eventSender"), m_eventSender);
+    frame->addToJSWindowObject(QLatin1String("textInputController"), m_textInputController);
 }
 
 
