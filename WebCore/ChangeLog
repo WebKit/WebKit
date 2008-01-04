@@ -2,7 +2,7 @@
 
         Reviewed by Mark Rowe.
 
-        http://bugs.webkit.org/attachment.cgi?bugid=16667&action=enter
+        http://bugs.webkit.org/show_bug.cgi?id=16667
         make -j is failing with the autotools based system
 
         Support parallel code generation. Nearly every use of explicit
