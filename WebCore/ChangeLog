@@ -2,6 +2,20 @@
 
         Reviewed by Mark Rowe.
 
+        http://bugs.webkit.org/attachment.cgi?bugid=16667&action=enter
+        make -j is failing with the autotools based system
+
+        Support parallel code generation. Nearly every use of explicit
+        multiple targets was a potential concurrency bug, though in practice
+        the bison rules were the first to be noticed because they took longer
+        to complete and broke the build immediately.
+
+        * GNUmakefile.am:
+
+2008-01-04  Alp Toker  <alp@atoker.com>
+
+        Reviewed by Mark Rowe.
+
         Re-use a single static dummy surface rather than creating and
         destroying a surface for each CairoPath.
 

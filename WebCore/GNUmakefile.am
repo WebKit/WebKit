@@ -1152,8 +1152,11 @@ webcore_sources += \
 	WebCore/xml/XPathVariableReference.cpp
 
 # XPath grammar
+
+$(GENSOURCES)/XPathGrammar.h: $(GENSOURCES)/XPathGrammar.cpp
+
 # NOTE: older versions of bison do not inject an inclusion guard, so we do it
-$(GENSOURCES)/XPathGrammar.h $(GENSOURCES)/XPathGrammar.cpp : $(WebCore)/xml/XPathGrammar.y
+$(GENSOURCES)/XPathGrammar.cpp: $(WebCore)/xml/XPathGrammar.y
 	rm -f $(GENSOURCES)/XPathGrammar.cpp.h $(GENSOURCES)/XPathGrammar.hpp
 	$(BISON) -d -p xpathyy $< -o $(GENSOURCES)/XPathGrammar.cpp
 	touch $(GENSOURCES)/XPathGrammar.cpp.h $(GENSOURCES)/XPathGrammar.hpp
@@ -1802,7 +1805,7 @@ webkitgtk_sources += \
 	WebCore/svg/graphics/cairo/SVGResourceMaskerCairo.cpp
 
 
-DerivedSources/CSSPropertyNames.h : $(WebCore)/css/CSSPropertyNames.in $(WebCore)/css/SVGCSSPropertyNames.in
+DerivedSources/CSSPropertyNames.h: $(WebCore)/css/CSSPropertyNames.in $(WebCore)/css/SVGCSSPropertyNames.in $(WebCore)/css/makeprop.pl
 	if sort $< $(WebCore)/css/SVGCSSPropertyNames.in | uniq -d | grep -E '^[^#]'; then echo 'Duplicate value!'; exit 1; fi
 	cat $< $(WebCore)/css/SVGCSSPropertyNames.in > CSSPropertyNames.in
 	$(PERL) "$(WebCore)/css/makeprop.pl"
@@ -1838,17 +1841,21 @@ SVG_FEATURES += ENABLE_SVG_ANIMATION=1
 endif
 
 # SVG tag and attribute names (need to pass an extra flag if svg experimental features are enabled)
+DerivedSources/SVGNames.cpp: DerivedSources/SVGElementFactory.cpp
+
 if SVG_FLAGS
-DerivedSources/SVGElementFactory.cpp DerivedSources/SVGNames.cpp : $(WebCore)/dom/make_names.pl $(WebCore)/svg/svgtags.in $(WebCore)/svg/svgattrs.in
+DerivedSources/SVGElementFactory.cpp: $(WebCore)/dom/make_names.pl $(WebCore)/svg/svgtags.in $(WebCore)/svg/svgattrs.in
 	$(PERL) $< --tags $(WebCore)/svg/svgtags.in --attrs $(WebCore)/svg/svgattrs.in --extraDefines "$(SVG_FLAGS)" \
 	--namespace SVG --cppNamespace WebCore --namespaceURI "http://www.w3.org/2000/svg" --factory --attrsNullNamespace --output $(GENSOURCES)
 else
-DerivedSources/SVGElementFactory.cpp DerivedSources/SVGNames.cpp : $(WebCore)/dom/make_names.pl $(WebCore)/svg/svgtags.in $(WebCore)/svg/svgattrs.in
+DerivedSources/SVGElementFactory.cpp: $(WebCore)/dom/make_names.pl $(WebCore)/svg/svgtags.in $(WebCore)/svg/svgattrs.in
 	$(PERL) $< --tags $(WebCore)/svg/svgtags.in --attrs $(WebCore)/svg/svgattrs.in --namespace SVG --cppNamespace WebCore --namespaceURI "http://www.w3.org/2000/svg" --factory --attrsNullNamespace --output $(GENSOURCES)
 
 endif # SVG_FLAGS
 
 # end SVG Features
+
+DerivedSources/XLinkNames.h: DerivedSources/XLinkNames.cpp
 
 DerivedSources/XLinkNames.cpp : $(WebCore)/dom/make_names.pl $(WebCore)/svg/xlinkattrs.in
 	$(PERL) $< --attrs $(WebCore)/svg/xlinkattrs.in --namespace XLink --cppNamespace WebCore --namespaceURI "http://www.w3.org/1999/xlink" --output $(GENSOURCES)
@@ -1888,8 +1895,11 @@ $(GENSOURCES)/tokenizer.cpp : $(WebCore)/css/tokenizer.flex $(WebCore)/css/maket
 	$(PERL) $(WebCore)/css/maketokenizer > $@
 
 # CSS grammar
+
+$(GENSOURCES)/CSSGrammar.h: $(GENSOURCES)/CSSGrammar.cpp
+
 # NOTE: older versions of bison do not inject an inclusion guard, so we do it
-$(GENSOURCES)/CSSGrammar.h $(GENSOURCES)/CSSGrammar.cpp : $(WebCore)/css/CSSGrammar.y
+$(GENSOURCES)/CSSGrammar.cpp: $(WebCore)/css/CSSGrammar.y
 	$(BISON) -d -p cssyy $< -o $(GENSOURCES)/CSSGrammar.cpp
 	touch $(GENSOURCES)/CSSGrammar.cpp.h $(GENSOURCES)/CSSGrammar.hpp
 	echo '#ifndef CSSGrammar_h' > $(GENSOURCES)/CSSGrammar.h
@@ -1916,20 +1926,24 @@ DerivedSources/CharsetData.cpp : $(CHARSET_TABLE_DEPS)
 	$(PERL) $^ kTextEncoding > $@
 
 # lookup tables for old-style JavaScript bindings
-%.lut.h:: %.cpp $(CREATE_HASH_TABLE)
+%.lut.h: %.cpp $(CREATE_HASH_TABLE)
 	$(CREATE_HASH_TABLE) $< > $@
 
 WebCore/bindings/js/%Table.cpp: $(srcdir)/WebCore/bindings/js/JSHTMLInputElementBase.cpp $(CREATE_HASH_TABLE)
 	$(CREATE_HASH_TABLE) $< > $@
 
 # HTML tag and attribute names
-DerivedSources/HTMLNames.h DerivedSources/HTMLNames.cpp: $(WebCore)/dom/make_names.pl $(WebCore)/html/HTMLTagNames.in $(WebCore)/html/HTMLAttributeNames.in
+DerivedSources/HTMLNames.h: DerivedSources/HTMLNames.cpp
+
+DerivedSources/HTMLNames.cpp: $(WebCore)/dom/make_names.pl $(WebCore)/html/HTMLTagNames.in $(WebCore)/html/HTMLAttributeNames.in
 	$(PERL) $< --tags $(WebCore)/html/HTMLTagNames.in --attrs $(WebCore)/html/HTMLAttributeNames.in \
 	    --namespace HTML --namespacePrefix xhtml --cppNamespace WebCore \
 	    --namespaceURI "http://www.w3.org/1999/xhtml" --attrsNullNamespace \
 	    --output $(GENSOURCES)
 
-DerivedSources/XMLNames.h DerivedSources/XMLNames.cpp: $(WebCore)/dom/make_names.pl $(WebCore)/xml/xmlattrs.in
+DerivedSources/XMLNames.h: DerivedSources/XMLNames.cpp
+
+DerivedSources/XMLNames.cpp: $(WebCore)/dom/make_names.pl $(WebCore)/xml/xmlattrs.in
 	$(PERL) $< --attrs $(WebCore)/xml/xmlattrs.in \
             --namespace XML --cppNamespace WebCore --namespaceURI "http://www.w3.org/XML/1998/namespace" \
 	    --output $(GENSOURCES)
@@ -1954,7 +1968,9 @@ vpath %.idl = \
     $(WebCore)/svg \
     $(WebCore)/xml
 
-$(GENSOURCES)/JS%.h $(GENSOURCES)/JS%.cpp: %.idl $(SCRIPTS_JS_BINDINGS)
+$(GENSOURCES)/JS%.h: $(GENSOURCES)/JS%.cpp
+
+$(GENSOURCES)/JS%.cpp: %.idl $(SCRIPTS_JS_BINDINGS)
 	$(PERL) -I $(WebCore)/bindings/scripts \
 	$(WebCore)/bindings/scripts/generate-bindings.pl --defines \
 	"$(FEATURE_DEFINES_JAVASCRIPT)" --generator JS --include $(WebCore)/dom \
