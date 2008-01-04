@@ -1,5 +1,14 @@
 2008-01-03  Ada Chan  <adachan@apple.com>
 
+        Replaced the use of editor command "ForwardDelete" with "DeleteForward" to be consistent
+        with our use of "DeleteBackward".
+
+        Rubber-stamped by Jon.
+
+        * WebView.cpp:
+
+2008-01-03  Ada Chan  <adachan@apple.com>
+
         Regression: backspace stopped working on text inputs
         - Replaced the use of editor command "BackwardDelete" with "DeleteBackward" since it's no longer supported.
 

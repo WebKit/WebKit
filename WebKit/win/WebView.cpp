@@ -1312,8 +1312,8 @@ static const KeyDownEntry keyDownEntries[] = {
 
     { VK_BACK,   0,                  "DeleteBackward"                              },
     { VK_BACK,   ShiftKey,           "DeleteBackward"                              },
-    { VK_DELETE, 0,                  "ForwardDelete"                               },
-    { VK_DELETE, ShiftKey,           "ForwardDelete"                               },
+    { VK_DELETE, 0,                  "DeleteForward"                               },
+    { VK_DELETE, ShiftKey,           "DeleteForward"                               },
     { VK_BACK,   CtrlKey,            "DeleteWordBackward"                          },
     { VK_DELETE, CtrlKey,            "DeleteWordForward"                           },
     
