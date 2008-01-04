@@ -2,6 +2,15 @@
 
         Reviewed by Lars.
 
+        Call the frame arguments for the javascript callbacks "originatingFrame"
+        
+
+        * Api/qwebpage.h:
+
+2008-01-04  Simon Hausmann  <hausmann@webkit.org>
+
+        Reviewed by Lars.
+
         Moved the QWebPage::addToHistory signal into QWebHistoryInterface
         
 

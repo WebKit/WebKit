@@ -203,12 +203,10 @@ protected:
     virtual QObject *createPlugin(const QString &classid, const QUrl &url, const QStringList &paramNames, const QStringList &paramValues);
 
     virtual NavigationRequestResponse navigationRequested(QWebFrame *frame, const QWebNetworkRequest &request, NavigationType type);
-    // ### do we need the frame? maybe include "file dialog" in the name
-    virtual QString chooseFile(QWebFrame *frame, const QString& oldFile);
-    // ### can we unify the next 3 methods? do we need the frame?
-    virtual void javaScriptAlert(QWebFrame *frame, const QString& msg);
-    virtual bool javaScriptConfirm(QWebFrame *frame, const QString& msg);
-    virtual bool javaScriptPrompt(QWebFrame *frame, const QString& msg, const QString& defaultValue, QString* result);
+    virtual QString chooseFile(QWebFrame *originatingFrame, const QString& oldFile);
+    virtual void javaScriptAlert(QWebFrame *originatingFrame, const QString& msg);
+    virtual bool javaScriptConfirm(QWebFrame *originatingFrame, const QString& msg);
+    virtual bool javaScriptPrompt(QWebFrame *originatingFrame, const QString& msg, const QString& defaultValue, QString* result);
     virtual void javaScriptConsoleMessage(const QString& message, unsigned int lineNumber, const QString& sourceID);
 
     virtual QString userAgentFor(const QUrl& url) const;
