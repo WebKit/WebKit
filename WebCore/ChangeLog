@@ -1,3 +1,18 @@
+2008-01-03  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Maciej.
+
+        Fix <rdar://problem/5668517> REGRESSION: Major under painting issues in SVG (carto.net dock example)
+
+        We need to cache the absolute bounds of the <image>,
+        as there's no reliable way to recompute the old bounding
+        box one we have started layout.
+
+        * rendering/RenderSVGImage.cpp:
+        (WebCore::RenderSVGImage::layout):
+        (WebCore::RenderSVGImage::calculateAbsoluteBounds):
+        * rendering/RenderSVGImage.h:
+
 2008-01-03  Alp Toker  <alp@atoker.com>
 
         Reviewed by Mark Rowe.

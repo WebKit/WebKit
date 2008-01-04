@@ -151,6 +151,7 @@ void RenderSVGImage::layout()
     
     calcWidth();
     calcHeight();
+    calculateAbsoluteBounds();
 
     if (checkForRepaint)
         repaintAfterLayoutIfNeeded(oldBounds, oldOutlineBox);
@@ -239,21 +240,26 @@ void RenderSVGImage::imageChanged(CachedImage* image)
     repaintRectangle(absoluteClippedOverflowRect());
 }
 
-IntRect RenderSVGImage::absoluteClippedOverflowRect()
+void RenderSVGImage::calculateAbsoluteBounds()
 {
-    FloatRect repaintRect = absoluteTransform().mapRect(relativeBBox(true));
+    FloatRect absoluteRect = absoluteTransform().mapRect(relativeBBox(true));
 
 #if ENABLE(SVG_FILTERS)
     // Filters can expand the bounding box
     SVGResourceFilter* filter = getFilterById(document(), SVGURIReference::getTarget(style()->svgStyle()->filter()));
     if (filter)
-        repaintRect.unite(filter->filterBBoxForItemBBox(repaintRect));
+        absoluteRect.unite(filter->filterBBoxForItemBBox(absoluteRect));
 #endif
 
-    if (!repaintRect.isEmpty())
-        repaintRect.inflate(1); // inflate 1 pixel for antialiasing
+    if (!absoluteRect.isEmpty())
+        absoluteRect.inflate(1.5f); // inflate 1 pixel for antialiasing, 0.5 due to subpixel position or dimensions.
 
-    return enclosingIntRect(repaintRect);
+    m_absoluteBounds = enclosingIntRect(absoluteRect);
+}
+
+IntRect RenderSVGImage::absoluteClippedOverflowRect()
+{
+    return m_absoluteBounds;
 }
 
 void RenderSVGImage::addFocusRingRects(GraphicsContext* graphicsContext, int tx, int ty)

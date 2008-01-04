@@ -1,3 +1,14 @@
+2008-01-03  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Maciej.
+
+        Testcase for <rdar://problem/5668517> REGRESSION: Major under painting issues in SVG
+
+        * svg/custom/repaint-on-image-bounds-change-expected.checksum: Copied from LayoutTests/svg/custom/resource-client-removal-expected.checksum.
+        * svg/custom/repaint-on-image-bounds-change-expected.png: Copied from LayoutTests/svg/custom/resource-client-removal-expected.png.
+        * svg/custom/repaint-on-image-bounds-change-expected.txt: Added.
+        * svg/custom/repaint-on-image-bounds-change.svg: Added.
+
 2008-01-03  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Sam Weinig.
