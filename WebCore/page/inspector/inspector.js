@@ -147,33 +147,6 @@ var WebInspector = {
         }
     },
 
-    get showingStatusArea()
-    {
-        return this._showingStatusArea;
-    },
-
-    set showingStatusArea(x)
-    {
-        if (this._showingStatusArea === x)
-            return;
-
-        this._showingStatusArea = x;
-
-        var list = document.getElementById("list");
-        var status = document.getElementById("status");
-        var statusButton = document.getElementById("statusToggle");
-
-        if (x) {
-            statusButton.addStyleClass("hide");
-            list.addStyleClass("status-visible");
-            status.addStyleClass("visible");
-        } else {
-            statusButton.removeStyleClass("hide");
-            list.removeStyleClass("status-visible");
-            status.removeStyleClass("visible");
-        }
-    },
-
     get showingSearchResults()
     {
         return this._showingSearchResults;
@@ -281,7 +254,6 @@ WebInspector.loaded = function()
     this.updateBackForwardButtons();
 
     document.getElementById("attachToggle").addEventListener("click", this.toggleAttach.bind(this), true);
-    document.getElementById("statusToggle").addEventListener("click", this.toggleStatusArea.bind(this), true);
 
     document.getElementById("sidebarResizeWidget").addEventListener("mousedown", this.sidebarResizerDragStart, true);
     document.getElementById("sidebarResizer").addEventListener("mousedown", this.sidebarResizerDragStart, true);
@@ -401,13 +373,13 @@ WebInspector.sidebarKeyDown = function(event)
     var nextSelectedElement;
 
     if (this.fileOutline.selectedTreeElement) {
-        if (!this.fileOutline.handleKeyEvent(event) && event.keyIdentifier === "Down" && !event.altKey && this.showingStatusArea) {
+        if (!this.fileOutline.handleKeyEvent(event) && event.keyIdentifier === "Down" && !event.altKey) {
             var nextSelectedElement = this.statusOutline.children[0];
             while (nextSelectedElement && !nextSelectedElement.selectable)
                 nextSelectedElement = nextSelectedElement.traverseNextTreeElement(false);
         }
     } else if (this.statusOutline.selectedTreeElement) {
-        if (!this.showingStatusArea || (!this.statusOutline.handleKeyEvent(event) && event.keyIdentifier === "Up" && !event.altKey)) {
+        if (!this.statusOutline.handleKeyEvent(event) && event.keyIdentifier === "Up" && !event.altKey) {
             var nextSelectedElement = this.fileOutline.children[0];
             var lastSelectable = null;
 
@@ -537,11 +509,6 @@ WebInspector.animateStyle = function(animations, duration, callback, complete)
 WebInspector.toggleAttach = function()
 {
     this.attached = !this.attached;
-}
-
-WebInspector.toggleStatusArea = function()
-{
-    this.showingStatusArea = !this.showingStatusArea;
 }
 
 WebInspector.toolbarDragStart = function(event)
@@ -697,13 +664,11 @@ WebInspector.updateBackForwardButtons = function()
 
 WebInspector.showConsole = function()
 {
-    this.showingStatusArea = true;
     this.navigateToPanel(WebInspector.consolePanel);
 }
 
 WebInspector.showTimeline = function()
 {
-    this.showingStatusArea = true;
     this.navigateToPanel(WebInspector.networkPanel);
 }
 
@@ -765,11 +730,9 @@ WebInspector.addMessageToConsole = function(msg)
     switch (msg.level) {
         case WebInspector.ConsoleMessage.MessageLevel.Warning:
             ++this.consoleListItem.warnings;
-            this.showingStatusArea = true;
             break;
         case WebInspector.ConsoleMessage.MessageLevel.Error:
             ++this.consoleListItem.errors;
-            this.showingStatusArea = true;
             break;
     }
 }

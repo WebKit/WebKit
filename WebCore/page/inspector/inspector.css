@@ -351,22 +351,6 @@ body.inactive #sidebar {
     background-image: url(Images/sidebarActionWidgetPressed.png);
 }
 
-#statusbar #statusToggle {
-    background-image: url(Images/showStatusWidget.png);
-}
-
-#statusbar #statusToggle:active {
-    background-image: url(Images/showStatusWidgetPressed.png);
-}
-
-#statusbar #statusToggle.hide {
-    background-image: url(Images/hideStatusWidget.png);
-}
-
-#statusbar #statusToggle.hide:active {
-    background-image: url(Images/hideStatusWidgetPressed.png);
-}
-
 body.detached #attachToggle {
     background-image: url(Images/sidebarAttachWidget.png);
 }
@@ -386,7 +370,7 @@ body.attached #attachToggle:active {
 #status {
     overflow: hidden;
     position: absolute;
-    bottom: -57px;
+    bottom: 21px;
     left: 0;
     width: 100%;
     height: 78px;
@@ -397,10 +381,6 @@ body.attached #attachToggle:active {
     list-style: none;
     font-size: 11px;
     -webkit-transition: bottom 250ms ease-in-out;
-}
-
-#status.visible {
-    bottom: 21px;
 }
 
 #status li {
@@ -472,7 +452,7 @@ body.attached #attachToggle:active {
     position: absolute;
     top: 0;
     left: 0;
-    bottom: 21px;
+    bottom: 99px;
     width: 100%;
     padding: 2px 0;
     margin: 0;
@@ -480,10 +460,6 @@ body.attached #attachToggle:active {
     list-style: none;
     font-size: 11px;
     -webkit-transition: bottom 250ms ease-in-out;
-}
-
-#list.status-visible {
-    bottom: 99px;
 }
 
 #list > li {

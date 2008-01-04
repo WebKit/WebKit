@@ -1,3 +1,14 @@
+2008-01-04  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Adam Roben.
+
+        <rdar://problem/5671059> Always show the Timeline and Console buttons in the Inspector
+
+        * page/inspector/inspector.css: Remove styles related to the toggle button
+          and make the area always visible. 
+        * page/inspector/inspector.html: Remove the toggle button.
+        * page/inspector/inspector.js: Remove code to toggle the status area.
+
 2008-01-04  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Adam Roben.
