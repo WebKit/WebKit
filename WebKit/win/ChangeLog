@@ -1,3 +1,11 @@
+2008-01-04  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        <rdar://problem/5611712> xsl:sort does not use a case folding sort, and the 'case-order' attribute is ignored (16077)
+
+        * WebKit.vcproj/WebKit.vcproj: Link to icuin{_debug}.lib
+
 2008-01-04  Adam Roben  <aroben@apple.com>
 
         Fix <rdar://4968855> Shift-PageUp/Shift-PageDown only select one line of text

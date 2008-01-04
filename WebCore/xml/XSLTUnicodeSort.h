@@ -28,9 +28,9 @@
 #ifndef XSLTUnicodeSort_h
 #define XSLTUnicodeSort_h
 
-// Only implemented for ICU yet.
-// FIXME: We need to make an abstraction for Unicode collation to implement this for other libraries.
-#if ENABLE(XSLT) && USE(ICU_UNICODE)
+// FIXME: Only works as advertised for ICU with collation support enabled yet, falls back on binary comparison otherwise..
+// We need to make an abstraction for Unicode collation to implement this for other libraries.
+#if ENABLE(XSLT)
 
 #include <libxslt/xsltInternals.h>
 

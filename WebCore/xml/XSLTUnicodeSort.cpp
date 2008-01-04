@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,14 +29,17 @@
 #include "config.h"
 #include "XSLTUnicodeSort.h"
 
-// FIXME: <rdar://5611712> Remove the PLATFORM(WIN) check once ICU on Windows has collation support.
-#if ENABLE(XSLT) && USE(ICU_UNICODE) && !PLATFORM(WIN)
+#if ENABLE(XSLT)
 
 #include <libxslt/templates.h>
 #include <libxslt/xsltutils.h>
+
+#if USE(ICU_UNICODE)
 #include <unicode/ucnv.h>
 #include <unicode/ucol.h>
 #include <unicode/ustring.h>
+#define WTF_USE_ICU_COLLATION !UCONFIG_NO_COLLATION
+#endif
 
 #if PLATFORM(MAC)
 #include "SoftLinking.h"
@@ -119,13 +122,13 @@ void xsltUnicodeSortFunction(xsltTransformContextPtr ctxt, xmlNodePtr *sorts, in
     xmlXPathObjectPtr tmp;    
     int tempstype[XSLT_MAX_SORT], temporder[XSLT_MAX_SORT];
 
-    /* Start ICU change */
+#if USE(ICU_COLLATION)
     UCollator *coll = 0;
     UConverter *conv;
     UErrorCode status;
     UChar *target,*target2;
     int targetlen, target2len;
-    /* End ICU change */
+#endif
 
     if ((ctxt == NULL) || (sorts == NULL) || (nbsorts <= 0) ||
         (nbsorts >= XSLT_MAX_SORT))
@@ -198,7 +201,7 @@ void xsltUnicodeSortFunction(xsltTransformContextPtr ctxt, xmlNodePtr *sorts, in
     if (results == NULL)
         return;
 
-    /* Start ICU change */
+#if USE(ICU_COLLATION)
     status = U_ZERO_ERROR;
     conv = ucnv_open("UTF8", &status);
     if (U_FAILURE(status))
@@ -219,7 +222,7 @@ void xsltUnicodeSortFunction(xsltTransformContextPtr ctxt, xmlNodePtr *sorts, in
         ucol_setAttribute(coll,UCOL_CASE_FIRST,UCOL_UPPER_FIRST,&status);
     if (U_FAILURE(status))
         xsltTransformError(ctxt, NULL, NULL, "xsltICUSortFunction: Error setting collator attribute\n");
-    /* End ICU change */
+#endif
 
     /* Shell's sort of node-set */
     for (incr = len / 2; incr > 0; incr /= 2) {
@@ -250,9 +253,9 @@ void xsltUnicodeSortFunction(xsltTransformContextPtr ctxt, xmlNodePtr *sorts, in
                             tst = 1;
                         else tst = -1;
                     } else {
-                        /* Start ICU change */
-                        targetlen = xmlStrlen(results[j]->stringval) * 2;
-                        target2len = xmlStrlen(results[j + incr]->stringval) * 2;
+#if USE(ICU_COLLATION)
+                        targetlen = xmlStrlen(results[j]->stringval) + 1;
+                        target2len = xmlStrlen(results[j + incr]->stringval) + 1;
                         target = (UChar*)xmlMalloc(targetlen * sizeof(UChar));
                         target2 = (UChar*)xmlMalloc(target2len * sizeof(UChar));
                         targetlen = ucnv_toUChars(conv, target, targetlen, (const char*)results[j]->stringval, -1, &status);
@@ -260,7 +263,10 @@ void xsltUnicodeSortFunction(xsltTransformContextPtr ctxt, xmlNodePtr *sorts, in
                         tst = ucol_strcoll(coll, target, u_strlen(target), target2, u_strlen(target2));
                         xmlFree(target);
                         xmlFree(target2);
-                        /* End ICU change */
+#else
+                        tst = xmlStrcmp(results[j]->stringval,
+                            results[j + incr]->stringval); 
+#endif
                     }
                     if (descending)
                         tst = -tst;
@@ -313,9 +319,9 @@ void xsltUnicodeSortFunction(xsltTransformContextPtr ctxt, xmlNodePtr *sorts, in
                                     tst = 1;
                                 else tst = -1;
                             } else {
-                                /* Start ICU change */
-                                targetlen = xmlStrlen(res[j]->stringval) * 2;
-                                target2len = xmlStrlen(res[j + incr]->stringval) * 2;
+#if USE(ICU_COLLATION)
+                                targetlen = xmlStrlen(res[j]->stringval) + 1;
+                                target2len = xmlStrlen(res[j + incr]->stringval) + 1;
                                 target = (UChar*)xmlMalloc(targetlen * sizeof(UChar));
                                 target2 = (UChar*)xmlMalloc(target2len * sizeof(UChar));
                                 targetlen = ucnv_toUChars(conv, target, targetlen, (const char*)res[j]->stringval, -1, &status);
@@ -323,7 +329,10 @@ void xsltUnicodeSortFunction(xsltTransformContextPtr ctxt, xmlNodePtr *sorts, in
                                 tst = ucol_strcoll(coll, target, u_strlen(target), target2, u_strlen(target2));
                                 xmlFree(target);
                                 xmlFree(target2);
-                                /* End ICU change */
+#else
+                                tst = xmlStrcmp(res[j]->stringval,
+                                    res[j + incr]->stringval); 
+#endif
                             }
                             if (desc)
                                 tst = -tst;
@@ -367,10 +376,10 @@ void xsltUnicodeSortFunction(xsltTransformContextPtr ctxt, xmlNodePtr *sorts, in
         }
     }
 
-    /* Start ICU change */
+#if USE(ICU_COLLATION)
     ucol_close(coll);
     ucnv_close(conv);
-    /* End ICU change */
+#endif
 
     for (j = 0; j < nbsorts; j++) {
         comp = static_cast<xsltStylePreComp*>(sorts[j]->psvi);

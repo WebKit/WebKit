@@ -362,12 +362,9 @@ bool XSLTProcessor::transformToString(Node* sourceNode, String& mimeType, String
 
         xsltTransformContextPtr transformContext = xsltNewTransformContext(sheet, sourceDoc);
         registerXSLTExtensions(transformContext);
-// FIXME: <rdar://5611712> Remove the PLATFORM(WIN) check once ICU on Windows has collation support.
-#if USE(ICU_UNICODE) && !PLATFORM(WIN)
+
         // <http://bugs.webkit.org/show_bug.cgi?id=16077>: XSLT processor <xsl:sort> algorithm only compares by code point
-        // Only implemented for ICU yet.
         xsltSetCtxtSortFunc(transformContext, xsltUnicodeSortFunction);
-#endif
 
         // This is a workaround for a bug in libxslt. 
         // The bug has been fixed in version 1.1.13, so once we ship that this can be removed.

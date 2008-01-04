@@ -1,3 +1,11 @@
+2008-01-04  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        <rdar://problem/5611712> xsl:sort does not use a case folding sort, and the 'case-order' attribute is ignored (16077)
+
+        * platform/win/Skipped: The fix for this bug is now enabled on Windows, take the test out of Skipped list.
+
 2008-01-04  Adam Roben  <aroben@apple.com>
 
         Added a test for <rdar://4968855> Shift-PageUp/Shift-PageDown only select one line of text

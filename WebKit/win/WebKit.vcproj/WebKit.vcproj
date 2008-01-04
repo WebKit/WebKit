@@ -1,7 +1,7 @@
-<?xml version="1.0" encoding="Windows-1252"?>
+<?xml version="1.0" encoding="windows-1251"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="8.00"
+	Version="8,00"
 	Name="WebKit"
 	ProjectGUID="{0662A8A9-82A3-4638-97D8-EC425D8D87C9}"
 	RootNamespace="WebKit"
@@ -71,7 +71,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				LinkLibraryDependencies="false"
-				AdditionalDependencies="delayimp.lib kernel32.lib user32.lib gdi32.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib usp10.lib comctl32.lib version.lib shlwapi.lib libxml2$(LibraryConfigSuffix).lib libxslt$(LibraryConfigSuffix).lib icuuc$(LibraryConfigSuffix).lib SQLite3$(LibraryConfigSuffix).lib pthreadVC2$(LibraryConfigSuffix).lib CoreFoundation$(LibraryConfigSuffix).lib CFNetwork$(LibraryConfigSuffix).lib CoreGraphics$(LibraryConfigSuffix).lib JavaScriptCore$(WebKitConfigSuffix).lib WebKitGUID$(WebKitConfigSuffix).lib WebCore$(WebKitConfigSuffix).lib WTF$(WebKitConfigSuffix).lib WebKitSystemInterface$(WebKitConfigSuffix).lib msimg32.lib"
+				AdditionalDependencies="delayimp.lib kernel32.lib user32.lib gdi32.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib usp10.lib comctl32.lib version.lib shlwapi.lib libxml2$(LibraryConfigSuffix).lib libxslt$(LibraryConfigSuffix).lib icuin$(LibraryConfigSuffix).lib icuuc$(LibraryConfigSuffix).lib SQLite3$(LibraryConfigSuffix).lib pthreadVC2$(LibraryConfigSuffix).lib CoreFoundation$(LibraryConfigSuffix).lib CFNetwork$(LibraryConfigSuffix).lib CoreGraphics$(LibraryConfigSuffix).lib JavaScriptCore$(WebKitConfigSuffix).lib WebKitGUID$(WebKitConfigSuffix).lib WebCore$(WebKitConfigSuffix).lib WTF$(WebKitConfigSuffix).lib WebKitSystemInterface$(WebKitConfigSuffix).lib msimg32.lib"
 				OutputFile="$(OutDir)\$(ProjectName)$(WebKitDLLConfigSuffix).dll"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="&quot;$(WebKitOutputDir)\lib&quot;;&quot;$(WebKitLibrariesDir)\lib&quot;"
@@ -162,7 +162,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				LinkLibraryDependencies="false"
-				AdditionalDependencies="delayimp.lib kernel32.lib user32.lib gdi32.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib usp10.lib comctl32.lib version.lib shlwapi.lib libxml2$(LibraryConfigSuffix).lib libxslt$(LibraryConfigSuffix).lib icuuc$(LibraryConfigSuffix).lib SQLite3$(LibraryConfigSuffix).lib pthreadVC2$(LibraryConfigSuffix).lib CoreFoundation$(LibraryConfigSuffix).lib CFNetwork$(LibraryConfigSuffix).lib CoreGraphics$(LibraryConfigSuffix).lib JavaScriptCore$(WebKitConfigSuffix).lib WebKitGUID$(WebKitConfigSuffix).lib WebCore$(WebKitConfigSuffix).lib WTF$(WebKitConfigSuffix).lib WebKitSystemInterface$(WebKitConfigSuffix).lib msimg32.lib"
+				AdditionalDependencies="delayimp.lib kernel32.lib user32.lib gdi32.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib usp10.lib comctl32.lib version.lib shlwapi.lib libxml2$(LibraryConfigSuffix).lib libxslt$(LibraryConfigSuffix).lib icuin$(LibraryConfigSuffix).lib icuuc$(LibraryConfigSuffix).lib SQLite3$(LibraryConfigSuffix).lib pthreadVC2$(LibraryConfigSuffix).lib CoreFoundation$(LibraryConfigSuffix).lib CFNetwork$(LibraryConfigSuffix).lib CoreGraphics$(LibraryConfigSuffix).lib JavaScriptCore$(WebKitConfigSuffix).lib WebKitGUID$(WebKitConfigSuffix).lib WebCore$(WebKitConfigSuffix).lib WTF$(WebKitConfigSuffix).lib WebKitSystemInterface$(WebKitConfigSuffix).lib msimg32.lib"
 				OutputFile="$(OutDir)\$(ProjectName)$(WebKitDLLConfigSuffix).dll"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="&quot;$(WebKitOutputDir)\lib&quot;;&quot;$(WebKitLibrariesDir)\lib&quot;"
@@ -257,7 +257,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				LinkLibraryDependencies="false"
-				AdditionalDependencies="delayimp.lib kernel32.lib user32.lib gdi32.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib usp10.lib comctl32.lib version.lib shlwapi.lib libxml2$(LibraryConfigSuffix).lib libxslt$(LibraryConfigSuffix).lib icuuc$(LibraryConfigSuffix).lib SQLite3$(LibraryConfigSuffix).lib pthreadVC2$(LibraryConfigSuffix).lib CoreFoundation$(LibraryConfigSuffix).lib CFNetwork$(LibraryConfigSuffix).lib CoreGraphics$(LibraryConfigSuffix).lib JavaScriptCore$(WebKitConfigSuffix).lib WebKitGUID$(WebKitConfigSuffix).lib WebCore$(WebKitConfigSuffix).lib WTF$(WebKitConfigSuffix).lib WebKitSystemInterface$(WebKitConfigSuffix).lib msimg32.lib"
+				AdditionalDependencies="delayimp.lib kernel32.lib user32.lib gdi32.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib usp10.lib comctl32.lib version.lib shlwapi.lib libxml2$(LibraryConfigSuffix).lib libxslt$(LibraryConfigSuffix).lib icuin$(LibraryConfigSuffix).lib icuuc$(LibraryConfigSuffix).lib SQLite3$(LibraryConfigSuffix).lib pthreadVC2$(LibraryConfigSuffix).lib CoreFoundation$(LibraryConfigSuffix).lib CFNetwork$(LibraryConfigSuffix).lib CoreGraphics$(LibraryConfigSuffix).lib JavaScriptCore$(WebKitConfigSuffix).lib WebKitGUID$(WebKitConfigSuffix).lib WebCore$(WebKitConfigSuffix).lib WTF$(WebKitConfigSuffix).lib WebKitSystemInterface$(WebKitConfigSuffix).lib msimg32.lib"
 				OutputFile="$(OutDir)\$(ProjectName)$(WebKitDLLConfigSuffix).dll"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="&quot;$(WebKitOutputDir)\lib&quot;;&quot;$(WebKitLibrariesDir)\lib&quot;"

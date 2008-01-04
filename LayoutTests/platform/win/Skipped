@@ -359,9 +359,6 @@ svg/custom/visibility-override-filter.svg
 # Results are wildly wrong <rdar://5563746>
 svg/css/glyph-orientation-rounding-test.xhtml
 
-# The fix for this test is disabled on Windows <rdar://5611712>
-fast/xsl/sort-unicode.xml
-
 # This test intermittently crashes <rdar://5621979>
 editing/selection/5241148.html
 

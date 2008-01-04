@@ -1,3 +1,19 @@
+2008-01-04  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        <rdar://problem/5611712> xsl:sort does not use a case folding sort, and the 'case-order' attribute is ignored (16077)
+
+        Enable the fix on Windows.
+
+        * xml/XSLTProcessor.cpp: (WebCore::XSLTProcessor::transformToString):
+        Always set a custom sort function, even if it doesn't implement proper collation on the platform.
+
+        * xml/XSLTUnicodeSort.cpp:
+        (WebCore::xsltUnicodeSortFunction):
+        * xml/XSLTUnicodeSort.h:
+        If the platform does not use ICU, or ICU has collation support disabled, fall back to binary comparison.
+
 2008-01-04  Antti Koivisto  <antti@apple.com>
 
         Fix build.
