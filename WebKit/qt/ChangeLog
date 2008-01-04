@@ -2,6 +2,21 @@
 
         Reviewed by Simon.
 
+        add a viewportSize to QWebPage.
+        
+        This is required to eventually make it a QObject only.
+        
+
+        * Api/qwebpage.cpp:
+        (QWebPage::triggerAction):
+        (QWebPage::viewportSize):
+        (QWebPage::setViewportSize):
+        * Api/qwebpage.h:
+
+2008-01-04  Lars Knoll  <lars@trolltech.com>
+
+        Reviewed by Simon.
+
         take a QString as identifier in QWebFrame::addToJSWindowObject.
 
         * Api/qwebframe.cpp:

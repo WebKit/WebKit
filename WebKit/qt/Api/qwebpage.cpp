@@ -562,6 +562,25 @@ void QWebPage::triggerAction(WebAction action, bool checked)
         editor->command(command).execute();
 }
 
+QSize QWebPage::viewportSize() const
+{
+    QWebFrame *frame = mainFrame();
+    if (frame->d->frame && frame->d->frameView)
+        return frame->d->frameView->frameGeometry().size();
+    return QSize(0, 0);
+}
+
+void QWebPage::setViewportSize(const QSize &size) const
+{
+    QWebFrame *frame = mainFrame();
+    if (frame->d->frame && frame->d->frameView) {
+        frame->d->frameView->setFrameGeometry(QRect(QPoint(0, 0), size));
+        frame->d->frame->forceLayout();
+        frame->d->frame->view()->adjustViewSize();
+    }
+}
+
+
 QWebPage::NavigationRequestResponse QWebPage::navigationRequested(QWebFrame *frame, const QWebNetworkRequest &request, QWebPage::NavigationType type)
 {
     Q_UNUSED(request)
@@ -764,11 +783,7 @@ static inline Qt::DropAction dragOpToDropAction(unsigned actions)
 void QWebPage::resizeEvent(QResizeEvent *e)
 {
     QWidget::resizeEvent(e);
-    if (mainFrame()->d->frame && mainFrame()->d->frameView) {
-        mainFrame()->d->frameView->setFrameGeometry(rect());
-        mainFrame()->d->frame->forceLayout();
-        mainFrame()->d->frame->view()->adjustViewSize();
-    }
+    setViewportSize(rect().size());
 }
 
 void QWebPage::paintEvent(QPaintEvent *ev)
