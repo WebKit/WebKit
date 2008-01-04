@@ -11,8 +11,6 @@ AC_SUBST([LIBWEBKITGTK_VERSION])
 
 AM_INIT_AUTOMAKE([foreign subdir-objects])
 
-AM_MAINTAINER_MODE
-
 AC_CANONICAL_HOST
 
 # host checking - inspired by the GTK+ configure.in

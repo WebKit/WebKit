@@ -1,3 +1,15 @@
+2008-01-04  Alp Toker  <alp@atoker.com>
+
+        Rubber-stamped by Mark Rowe.
+
+        Remove AM_MAINTAINER_MODE, as recommended by the automake manual. The
+        "rebuild rules" will now be enabled by default.
+
+        This obviates the need to pass '--enable-maintainer-mode' to
+        configure.
+
+        * configure.ac:
+
 2008-01-02  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Rubber stamped by Alp.
