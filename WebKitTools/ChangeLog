@@ -2,6 +2,19 @@
 
         Reviewed by Simon.
 
+        fix DRT after the changes to QWebPage.
+        
+        The great thing is that we actually don't have
+        any regressions from the QWebPage change :)
+        
+
+        * DumpRenderTree/qt/DumpRenderTree.cpp:
+        (WebCore::DumpRenderTree::DumpRenderTree):
+
+2008-01-04  Lars Knoll  <lars@trolltech.com>
+
+        Reviewed by Simon.
+
         make QWebPage a QObject and get things to compile.
         
         Nothing works currently though.
