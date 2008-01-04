@@ -1,3 +1,17 @@
+2008-01-04  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Darin.
+
+        <rdar://problem/5646437> REGRESSION (r28015): svg/batik/text/smallFonts fails
+
+        Regenerated expected output as filter elements are no longer generated in a default
+        build.  This wasn't done when filters were turned off earlier due to other (now gone)
+        layout failures i didn't want to put in the expected output.
+
+        * platform/mac-leopard/svg/batik/text/smallFonts-expected.txt:
+        * svg/batik/text/smallFonts.svg: Added.
+        * svg/batik/text/smallFonts.svg-disabled: Removed.
+
 2008-01-04  Adam Roben  <aroben@apple.com>
 
         * platform/win/Skipped: Added some more failures.
