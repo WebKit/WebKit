@@ -39,6 +39,7 @@ CFStringEncoding WKGetWebDefaultCFStringEncoding(void);
 float WKSecondsSinceLastInputEvent(void);
 CFStringRef WKPreferRGB32Key(void);
 
+void WKSetMetadataURL(NSString *URLString, NSString *referrer, NSString *path);
 void WKSetNSURLConnectionDefersCallbacks(NSURLConnection *connection, BOOL defers);
 float WKSecondsSinceLastInputEvent(void);
 
