@@ -75,7 +75,7 @@
 		65E0F88508500917007E5CB9 /* WebNSURLRequestExtras.m in Sources */ = {isa = PBXBuildFile; fileRef = 65E0F88308500917007E5CB9 /* WebNSURLRequestExtras.m */; };
 		65E0F9E608500F23007E5CB9 /* WebNSUserDefaultsExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = 65E0F9E408500F23007E5CB9 /* WebNSUserDefaultsExtras.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		65E0F9E708500F23007E5CB9 /* WebNSUserDefaultsExtras.m in Sources */ = {isa = PBXBuildFile; fileRef = 65E0F9E508500F23007E5CB9 /* WebNSUserDefaultsExtras.m */; };
-		65EEDE57084FFC9E0002DB25 /* WebNSFileManagerExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = 65EEDE55084FFC9E0002DB25 /* WebNSFileManagerExtras.h */; };
+		65EEDE57084FFC9E0002DB25 /* WebNSFileManagerExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = 65EEDE55084FFC9E0002DB25 /* WebNSFileManagerExtras.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		65EEDE58084FFC9E0002DB25 /* WebNSFileManagerExtras.m in Sources */ = {isa = PBXBuildFile; fileRef = 65EEDE56084FFC9E0002DB25 /* WebNSFileManagerExtras.m */; };
 		65FFB7FC0AD0B7D30048CD05 /* WebDocumentLoaderMac.h in Headers */ = {isa = PBXBuildFile; fileRef = 65FFB7FA0AD0B7D30048CD05 /* WebDocumentLoaderMac.h */; };
 		65FFB7FD0AD0B7D30048CD05 /* WebDocumentLoaderMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 65FFB7FB0AD0B7D30048CD05 /* WebDocumentLoaderMac.mm */; };
