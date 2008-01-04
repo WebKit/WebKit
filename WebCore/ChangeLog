@@ -1,3 +1,20 @@
+2008-01-03  Darin Adler  <darin@apple.com>
+
+        Reviewed by Mitz.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=16723
+          tables/mozilla/bugs/bug30418.html test failing due to problems updating dynamic border rules
+
+        Test: fast/table/border-changes.html
+
+        * html/HTMLTableElement.h:
+        * html/HTMLTableElement.cpp:
+        (WebCore::HTMLTableElement::parseMappedAttribute): Check the border type before and after
+        parsing attributes, rather than doing this only for the rules attribute.
+        (WebCore::HTMLTableElement::cellBorders): Added.
+        (WebCore::HTMLTableElement::getSharedCellDecl): Changed to use cellBorders to factor out the
+        rule about what type of borders to use.
+
 2008-01-02  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Darin.

@@ -1,3 +1,16 @@
+2008-01-03  Darin Adler  <darin@apple.com>
+
+        Reviewed by Mitz.
+
+        - test for http://bugs.webkit.org/show_bug.cgi?id=16723
+          tables/mozilla/bugs/bug30418.html test failing due to problems updating dynamic border rules
+
+        * fast/table/border-changes-expected.txt: Added.
+        * fast/table/border-changes.html: Added.
+        * fast/table/resources: Added.
+        * fast/table/resources/TEMPLATE.html: Added.
+        * fast/table/resources/border-changes.js: Added.
+
 2008-01-03  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin.

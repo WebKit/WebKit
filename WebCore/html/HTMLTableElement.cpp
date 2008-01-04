@@ -316,6 +316,8 @@ static bool setTableCellsChanged(Node* n)
 
 void HTMLTableElement::parseMappedAttribute(MappedAttribute* attr)
 {
+    CellBorders bordersBefore = cellBorders();
+
     if (attr->name() == widthAttr)
         addCSSLength(attr, CSS_PROP_WIDTH, attr->value());
     else if (attr->name() == heightAttr)
@@ -399,8 +401,6 @@ void HTMLTableElement::parseMappedAttribute(MappedAttribute* attr)
             addCSSProperty(attr, CSS_PROP_BORDER_RIGHT_STYLE, borders[cRight] ? CSS_VAL_SOLID : CSS_VAL_HIDDEN);
         }
     } else if (attr->name() == rulesAttr) {
-        // Cache the value of "rules" so that the pieces of the table can examine it later.
-        TableRules oldRules = m_rulesAttr;
         m_rulesAttr = UnsetRules;
         if (equalIgnoringCase(attr->value(), "none"))
             m_rulesAttr = NoneRules;
@@ -416,13 +416,6 @@ void HTMLTableElement::parseMappedAttribute(MappedAttribute* attr)
         // The presence of a valid rules attribute causes border collapsing to be enabled.
         if (m_rulesAttr != UnsetRules)
             addCSSProperty(attr, CSS_PROP_BORDER_COLLAPSE, CSS_VAL_COLLAPSE);
-        if (oldRules != m_rulesAttr) {
-            bool cellChanged = false;
-            for (Node* child = firstChild(); child; child = child->nextSibling())
-                cellChanged |= setTableCellsChanged(child);
-            if (cellChanged)
-                setChanged();
-        }
     } else if (attr->name() == cellspacingAttr) {
         if (!attr->value().isEmpty())
             addCSSLength(attr, CSS_PROP_BORDER_SPACING, attr->value());
@@ -452,6 +445,14 @@ void HTMLTableElement::parseMappedAttribute(MappedAttribute* attr)
             addCSSProperty(attr, CSS_PROP_VERTICAL_ALIGN, attr->value());
     } else
         HTMLElement::parseMappedAttribute(attr);
+
+    if (bordersBefore != cellBorders()) {
+        bool cellChanged = false;
+        for (Node* child = firstChild(); child; child = child->nextSibling())
+            cellChanged |= setTableCellsChanged(child);
+        if (cellChanged)
+            setChanged();
+    }
 }
 
 CSSMutableStyleDeclaration* HTMLTableElement::additionalAttributeStyleDecl()
@@ -483,11 +484,35 @@ CSSMutableStyleDeclaration* HTMLTableElement::additionalAttributeStyleDecl()
     return decl;
 }
 
+HTMLTableElement::CellBorders HTMLTableElement::cellBorders() const
+{
+    switch (m_rulesAttr) {
+        case NoneRules:
+        case GroupsRules:
+            return NoBorders;
+        case AllRules:
+            return SolidBorders;
+        case ColsRules:
+            return SolidBordersColsOnly;
+        case RowsRules:
+            return SolidBordersRowsOnly;
+        case UnsetRules:
+            if (!m_borderAttr)
+                return NoBorders;
+            if (m_borderColorAttr)
+                return SolidBorders;
+            return InsetBorders;
+    }
+    ASSERT_NOT_REACHED();
+    return NoBorders;
+}
+
 CSSMutableStyleDeclaration* HTMLTableElement::getSharedCellDecl()
 {
-    MappedAttribute attr(cellborderAttr, m_rulesAttr == AllRules ? "solid-all" : 
-                                         (m_rulesAttr == ColsRules ? "solid-cols" : 
-                                         (m_rulesAttr == RowsRules ? "solid-rows" : (!m_borderAttr || m_rulesAttr == GroupsRules || m_rulesAttr == NoneRules ? "none" : (m_borderColorAttr ? "solid" : "inset")))));
+    CellBorders borders = cellBorders();
+
+    static AtomicString cellBorderNames[] = { "none", "solid", "inset", "solid-cols", "solid-rows" };
+    MappedAttribute attr(cellborderAttr, cellBorderNames[borders]);
 
     CSSMappedAttributeDeclaration* decl = getMappedAttributeDecl(ePersistent, &attr);
     if (!decl) {
@@ -498,29 +523,41 @@ CSSMutableStyleDeclaration* HTMLTableElement::getSharedCellDecl()
         
         decl->ref(); // This single ref pins us in the table until the document dies.
         
-        if (m_rulesAttr == ColsRules) {
-            decl->setProperty(CSS_PROP_BORDER_LEFT_WIDTH, CSS_VAL_THIN, false);
-            decl->setProperty(CSS_PROP_BORDER_RIGHT_WIDTH, CSS_VAL_THIN, false);
-            decl->setProperty(CSS_PROP_BORDER_LEFT_STYLE, CSS_VAL_SOLID, false);
-            decl->setProperty(CSS_PROP_BORDER_RIGHT_STYLE, CSS_VAL_SOLID, false);
-            decl->setProperty(CSS_PROP_BORDER_COLOR, "inherit", false);
-        } else if (m_rulesAttr == RowsRules) {
-            decl->setProperty(CSS_PROP_BORDER_TOP_WIDTH, CSS_VAL_THIN, false);
-            decl->setProperty(CSS_PROP_BORDER_BOTTOM_WIDTH, CSS_VAL_THIN, false);
-            decl->setProperty(CSS_PROP_BORDER_TOP_STYLE, CSS_VAL_SOLID, false);
-            decl->setProperty(CSS_PROP_BORDER_BOTTOM_STYLE, CSS_VAL_SOLID, false);
-            decl->setProperty(CSS_PROP_BORDER_COLOR, "inherit", false);
-        } else if (m_rulesAttr != GroupsRules && m_rulesAttr != NoneRules && (m_borderAttr || m_rulesAttr == AllRules)) {
-            decl->setProperty(CSS_PROP_BORDER_WIDTH, "1px", false);
-             int v = (m_borderColorAttr || m_rulesAttr == AllRules) ? CSS_VAL_SOLID : CSS_VAL_INSET;
-            decl->setProperty(CSS_PROP_BORDER_TOP_STYLE, v, false);
-            decl->setProperty(CSS_PROP_BORDER_BOTTOM_STYLE, v, false);
-            decl->setProperty(CSS_PROP_BORDER_LEFT_STYLE, v, false);
-            decl->setProperty(CSS_PROP_BORDER_RIGHT_STYLE, v, false);
-            decl->setProperty(CSS_PROP_BORDER_COLOR, "inherit", false);
+        switch (borders) {
+            case SolidBordersColsOnly:
+                decl->setProperty(CSS_PROP_BORDER_LEFT_WIDTH, CSS_VAL_THIN, false);
+                decl->setProperty(CSS_PROP_BORDER_RIGHT_WIDTH, CSS_VAL_THIN, false);
+                decl->setProperty(CSS_PROP_BORDER_LEFT_STYLE, CSS_VAL_SOLID, false);
+                decl->setProperty(CSS_PROP_BORDER_RIGHT_STYLE, CSS_VAL_SOLID, false);
+                decl->setProperty(CSS_PROP_BORDER_COLOR, "inherit", false);
+                break;
+            case SolidBordersRowsOnly:
+                decl->setProperty(CSS_PROP_BORDER_TOP_WIDTH, CSS_VAL_THIN, false);
+                decl->setProperty(CSS_PROP_BORDER_BOTTOM_WIDTH, CSS_VAL_THIN, false);
+                decl->setProperty(CSS_PROP_BORDER_TOP_STYLE, CSS_VAL_SOLID, false);
+                decl->setProperty(CSS_PROP_BORDER_BOTTOM_STYLE, CSS_VAL_SOLID, false);
+                decl->setProperty(CSS_PROP_BORDER_COLOR, "inherit", false);
+                break;
+            case SolidBorders:
+                decl->setProperty(CSS_PROP_BORDER_WIDTH, "1px", false);
+                decl->setProperty(CSS_PROP_BORDER_TOP_STYLE, CSS_VAL_SOLID, false);
+                decl->setProperty(CSS_PROP_BORDER_BOTTOM_STYLE, CSS_VAL_SOLID, false);
+                decl->setProperty(CSS_PROP_BORDER_LEFT_STYLE, CSS_VAL_SOLID, false);
+                decl->setProperty(CSS_PROP_BORDER_RIGHT_STYLE, CSS_VAL_SOLID, false);
+                decl->setProperty(CSS_PROP_BORDER_COLOR, "inherit", false);
+                break;
+            case InsetBorders:
+                decl->setProperty(CSS_PROP_BORDER_WIDTH, "1px", false);
+                decl->setProperty(CSS_PROP_BORDER_TOP_STYLE, CSS_VAL_INSET, false);
+                decl->setProperty(CSS_PROP_BORDER_BOTTOM_STYLE, CSS_VAL_INSET, false);
+                decl->setProperty(CSS_PROP_BORDER_LEFT_STYLE, CSS_VAL_INSET, false);
+                decl->setProperty(CSS_PROP_BORDER_RIGHT_STYLE, CSS_VAL_INSET, false);
+                decl->setProperty(CSS_PROP_BORDER_COLOR, "inherit", false);
+                break;
+            case NoBorders:
+                decl->setProperty(CSS_PROP_BORDER_WIDTH, "0", false);
+                break;
         }
-        else
-            decl->setProperty(CSS_PROP_BORDER_WIDTH, "0", false);
 
         setMappedAttributeDecl(ePersistent, &attr, decl);
         decl->setParent(0);
