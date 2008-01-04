@@ -1,3 +1,10 @@
+2008-01-04  Alice Liu  <alice.liu@apple.com>
+
+        Reviewed by Mitz.
+
+        * platform/graphics/win/FontCacheWin.cpp:
+        fix loop condition that was causing crash
+
 2008-01-04  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Adam Roben.

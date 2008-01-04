@@ -99,11 +99,11 @@ static const Vector<String>* getLinkedFonts(String& family)
         unsigned i = 0;
         unsigned length = linkedFontsBufferSize / sizeof(*linkedFonts);
         while (i < length) {
-            while (i < linkedFontsBufferSize && linkedFonts[i] != ',')
+            while (i < length && linkedFonts[i] != ',')
                 i++;
             i++;
             unsigned j = i;
-            while (j < linkedFontsBufferSize && linkedFonts[j])
+            while (j < length && linkedFonts[j])
                 j++;
             result->append(String(linkedFonts + i, j - i));
             i = j + 1;
