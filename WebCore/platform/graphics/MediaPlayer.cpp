@@ -226,6 +226,21 @@ void MediaPlayer::getSupportedTypes(HashSet<String>& types)
 {
     MediaPlayerPrivate::getSupportedTypes(types);
 } 
+    
+bool MediaPlayer::isAvailable()
+{
+#if PLATFORM(MAC)
+    static bool availabityKnown = false;
+    static bool isAvailable;
+    if (!availabityKnown) {
+        isAvailable = MediaPlayerPrivate::isAvailable();
+        availabityKnown = true;
+    }
+    return isAvailable;
+#else
+    return true;
+#endif
+} 
 
 void MediaPlayer::networkStateChanged()
 {

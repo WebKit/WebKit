@@ -385,18 +385,24 @@ static PassRefPtr<HTMLElement> marqueeConstructor(const AtomicString&, Document*
 }
 
 #if ENABLE(VIDEO)
-static PassRefPtr<HTMLElement> audioConstructor(const AtomicString&, Document* doc, HTMLFormElement*, bool)
+static PassRefPtr<HTMLElement> audioConstructor(const AtomicString& tagName, Document* doc, HTMLFormElement*, bool)
 {
+    if (!MediaPlayer::isAvailable())
+        return new HTMLElement(QualifiedName(nullAtom, tagName, xhtmlNamespaceURI), doc);
     return new HTMLAudioElement(doc);
 }
 
-static PassRefPtr<HTMLElement> videoConstructor(const AtomicString&, Document* doc, HTMLFormElement*, bool)
+static PassRefPtr<HTMLElement> videoConstructor(const AtomicString& tagName, Document* doc, HTMLFormElement*, bool)
 {
+    if (!MediaPlayer::isAvailable())
+        return new HTMLElement(QualifiedName(nullAtom, tagName, xhtmlNamespaceURI), doc);
     return new HTMLVideoElement(doc);
 }
 
-static PassRefPtr<HTMLElement> sourceConstructor(const AtomicString&, Document* doc, HTMLFormElement*, bool)
+static PassRefPtr<HTMLElement> sourceConstructor(const AtomicString& tagName, Document* doc, HTMLFormElement*, bool)
 {
+    if (!MediaPlayer::isAvailable())
+        return new HTMLElement(QualifiedName(nullAtom, tagName, xhtmlNamespaceURI), doc);
     return new HTMLSourceElement(doc);
 }
 #endif

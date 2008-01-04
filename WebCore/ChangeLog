@@ -1,3 +1,29 @@
+2008-01-04  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Darin.
+        
+        Partial fix for <rdar://problem/5647034>
+        Media tests crash if an old version of QuickTime is installed
+
+        Disable media support if QuickTime is not current enough (>=7.3).
+        
+        Windows patch coming soon.
+
+        * bindings/js/JSHTMLElementWrapperFactory.cpp:
+        (WebCore::createJSHTMLWrapper):
+        * bindings/js/kjs_window.cpp:
+        (KJS::Window::getValueProperty):
+        * html/HTMLElementFactory.cpp:
+        (WebCore::audioConstructor):
+        (WebCore::videoConstructor):
+        (WebCore::sourceConstructor):
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::MediaPlayer::isAvailable):
+        * platform/graphics/MediaPlayer.h:
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.h:
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.mm:
+        (WebCore::MediaPlayerPrivate::isAvailable):
+
 2008-01-04  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Darin Adler.

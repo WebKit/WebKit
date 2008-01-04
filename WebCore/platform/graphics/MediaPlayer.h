@@ -58,6 +58,7 @@ public:
     MediaPlayer(MediaPlayerClient*);
     virtual ~MediaPlayer();
     
+    static bool isAvailable();
     static void getSupportedTypes(HashSet<String>&);
     
     IntSize naturalSize();
