@@ -31,6 +31,7 @@
 #include "FontCache.h"
 #include "FontData.h"
 #include "Font.h"
+#include "StringHash.h"
 #include <windows.h>
 #include <mlang.h>
 #include <ApplicationServices/ApplicationServices.h>
@@ -72,56 +73,74 @@ static int CALLBACK metaFileEnumProc(HDC hdc, HANDLETABLE* table, CONST ENHMETAR
     return true;
 }
 
+static int CALLBACK linkedFontEnumProc(CONST LOGFONT* logFont, CONST TEXTMETRIC* metrics, DWORD fontType, LPARAM hfont)
+{
+    *reinterpret_cast<HFONT*>(hfont) = CreateFontIndirect(logFont);
+    return false;
+}
+
+static const Vector<String>* getLinkedFonts(String& family)
+{
+    static HashMap<String, Vector<String>*> systemLinkMap;
+    Vector<String>* result = systemLinkMap.get(family);
+    if (result)
+        return result;
+
+    result = new Vector<String>;
+    systemLinkMap.set(family, result);
+    HKEY fontLinkKey;
+    if (FAILED(RegOpenKeyEx(HKEY_LOCAL_MACHINE, L"Software\\Microsoft\\Windows NT\\CurrentVersion\\FontLink\\SystemLink", 0, KEY_READ, &fontLinkKey)))
+        return result;
+
+    DWORD linkedFontsBufferSize = 0;
+    RegQueryValueEx(fontLinkKey, family.charactersWithNullTermination(), 0, NULL, NULL, &linkedFontsBufferSize);
+    WCHAR* linkedFonts = reinterpret_cast<WCHAR*>(malloc(linkedFontsBufferSize));
+    if (SUCCEEDED(RegQueryValueEx(fontLinkKey, family.charactersWithNullTermination(), 0, NULL, reinterpret_cast<BYTE*>(linkedFonts), &linkedFontsBufferSize))) {
+        unsigned i = 0;
+        unsigned length = linkedFontsBufferSize / sizeof(*linkedFonts);
+        while (i < length) {
+            while (i < linkedFontsBufferSize && linkedFonts[i] != ',')
+                i++;
+            i++;
+            unsigned j = i;
+            while (j < linkedFontsBufferSize && linkedFonts[j])
+                j++;
+            result->append(String(linkedFonts + i, j - i));
+            i = j + 1;
+        }
+    }
+    free(linkedFonts);
+    RegCloseKey(fontLinkKey);
+    return result;
+}
+
 const FontData* FontCache::getFontDataForCharacters(const Font& font, const UChar* characters, int length)
 {
-    // IMLangFontLink::MapFont Method does what we want.
-    IMLangFontLink2* langFontLink = getFontLinkInterface();
-    if (!langFontLink)
-        return 0;
-
     FontData* fontData = 0;
     HDC hdc = GetDC(0);
     HFONT primaryFont = font.primaryFont()->m_font.hfont();
     HGDIOBJ oldFont = SelectObject(hdc, primaryFont);
     HFONT hfont = 0;
 
-    DWORD acpCodePages;
-    langFontLink->CodePageToCodePages(CP_ACP, &acpCodePages);
-
-    DWORD actualCodePages;
-    long cchActual;
-    langFontLink->GetStrCodePages(characters, length, acpCodePages, &actualCodePages, &cchActual);
-    if (cchActual) {
-        // If simplified Chinese is one of the actual code pages, make one call to MapFont() asking for
-        // simplified Chinese only (and ignore the result). This ensures that we get consistent answers
-        // for characters that are in the simplified Chinese code page as well as other code pages and
-        // characters that are exclusively in the simplified Chinese code page.
-        // FIXME: This needs to be done only once per primary font. We could set a bit in the FontPlatformData
-        // indicating that we have done this.
-        const UINT simplifiedChineseCP = 936;
-        UINT codePage;
-        HFONT result;
-        if (actualCodePages && SUCCEEDED(langFontLink->CodePagesToCodePage(actualCodePages, simplifiedChineseCP, &codePage)) && codePage == simplifiedChineseCP) {
-            DWORD simplifiedChineseCodePages;
-            langFontLink->CodePageToCodePages(simplifiedChineseCP, &simplifiedChineseCodePages);
-            langFontLink->MapFont(hdc, simplifiedChineseCodePages, characters[0], &result);
-            langFontLink->ReleaseFont(result);
-        }
-        if (langFontLink->MapFont(hdc, actualCodePages, characters[0], &result) == S_OK) {
-            // Fill in a log font with the returned font from MLang, and then use that to create a new font.
+    // Special-case characters in the range U+2000..U+200F (spaces, zero width joiner and non-joiner,
+    // right to left and left to right marks). Uniscribe does not tell us what font it will use for these
+    // (presumably because it never renders their glyphs), so we use MapFont to find a font that contains
+    // them.
+    if (characters[0] >= 0x2000 && characters[0] <= 0x200F) {
+        IMLangFontLink2* langFontLink = getFontLinkInterface();
+        if (langFontLink) {
+            HFONT mLangFont;
+            langFontLink->MapFont(hdc, 0, characters[0], &mLangFont);
             LOGFONT lf;
-            GetObject(result, sizeof(LOGFONT), &lf);
-            langFontLink->ReleaseFont(result);
+            GetObject(mLangFont, sizeof(LOGFONT), &lf);
+            langFontLink->ReleaseFont(mLangFont);
             hfont = CreateFontIndirect(&lf);
         }
-    }
-
-    if (!hfont) {
-        // Font linking failed but Uniscribe might still be able to find a fallback font.
-        // To find out what Uniscribe would do, we make it draw into a metafile and intercept
+    } else {
+        // To find out what font Uniscribe would use, we make it draw into a metafile and intercept
         // calls to CreateFontIndirect().
         HDC metaFileDc = CreateEnhMetaFile(hdc, NULL, NULL, NULL);
-        SelectObject(metaFileDc, hfont ? hfont : primaryFont);
+        SelectObject(metaFileDc, primaryFont);
 
         bool scriptStringOutSucceeded = false;
         SCRIPT_STRING_ANALYSIS ssa;
@@ -144,12 +163,44 @@ const FontData* FontCache::getFontDataForCharacters(const Font& font, const UCha
         DeleteEnhMetaFile(metaFile);
     }
 
-    if (hfont) {
+    String familyName;
+    const Vector<String>* linkedFonts = 0;
+    unsigned linkedFontIndex = 0;
+    while (hfont) {
         SelectObject(hdc, hfont);
         WCHAR name[LF_FACESIZE];
         GetTextFace(hdc, LF_FACESIZE, name);
+        familyName = name;
+        // Check if the font contains the desired character.
+        static Vector<char, 512> glyphsetBuffer;
+        glyphsetBuffer.resize(GetFontUnicodeRanges(hdc, NULL));
+        GLYPHSET* glyphset = reinterpret_cast<GLYPHSET*>(glyphsetBuffer.data());
+        GetFontUnicodeRanges(hdc, glyphset);
+        // FIXME: Change this to a binary search.
+        unsigned i = 0;
+        while (i < glyphset->cRanges && glyphset->ranges[i].wcLow <= characters[0])
+            i++;
+        if (i && glyphset->ranges[i - 1].wcLow + glyphset->ranges[i - 1].cGlyphs > characters[0])
+            break;
 
-        String familyName(name);
+        if (!linkedFonts)
+            linkedFonts = getLinkedFonts(familyName);
+        SelectObject(hdc, oldFont);
+        DeleteObject(hfont);
+        hfont = 0;
+
+        if (linkedFonts->size() <= linkedFontIndex)
+            break;
+
+        LOGFONT logFont;
+        logFont.lfCharSet = DEFAULT_CHARSET;
+        memcpy(logFont.lfFaceName, linkedFonts->at(linkedFontIndex).characters(), linkedFonts->at(linkedFontIndex).length() * sizeof(WCHAR));
+        logFont.lfFaceName[linkedFonts->at(linkedFontIndex).length()] = 0;
+        EnumFontFamiliesEx(hdc, &logFont, linkedFontEnumProc, reinterpret_cast<LPARAM>(&hfont), 0);
+        linkedFontIndex++;
+    }
+    
+    if (hfont) {
         if (!familyName.isEmpty()) {
             FontPlatformData* result = getCachedFontPlatformData(font.fontDescription(), familyName);
             if (result)

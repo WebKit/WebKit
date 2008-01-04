@@ -1,3 +1,25 @@
+2008-01-03  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=16548
+          <rdar://problem/5659452> REGRESSION(r28810): Font style and sizes are weird for Japanese text
+
+        * platform/graphics/win/FontCacheWin.cpp:
+        (WebCore::linkedFontEnumProc): Added. This callback is used to fetch
+        a valid LOGFONT for a given family.
+        (WebCore::getLinkedFonts): Added. Returns a vector of font families
+        linked to the given font family by the Windows registry key
+        HKLM\Software\...\FontLink\SystemLink. The registry values typically
+        differ based on the installed language version of Windows.
+        (WebCore::FontCache::getFontDataForCharacters): Changed to not use MLang
+        font mapping, which is Windows code page based, except for characters in
+        the range U+2000..U+200F. Instead, this function gets the font Uniscribe
+        would use for the character. However, that font might not actually
+        contain the character, in which case GDI font linking would substitute a
+        different font. Therefore, this function walks the linked font list
+        until it finds a font that actually contains the character.
+
 2008-01-03  Darin Adler  <darin@apple.com>
 
         Reviewed by Mitz.
