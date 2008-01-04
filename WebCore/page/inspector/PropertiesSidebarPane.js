@@ -82,15 +82,25 @@ WebInspector.ObjectPropertiesSection.prototype = {
 
 WebInspector.ObjectPropertiesSection.prototype.__proto__ = WebInspector.PropertiesSection.prototype;
 
-WebInspector.ObjectPropertyTreeElement = function(object, propertyName)
+WebInspector.ObjectPropertyTreeElement = function(parentObject, propertyName)
 {
+    this.parentObject = parentObject;
+    this.propertyName = propertyName;
+
+    var childObject = this.safePropertyValue(parentObject, propertyName);
+    var isGetter = parentObject.__lookupGetter__(propertyName);
+
     var title = "<span class=\"name\">" + propertyName.escapeHTML() + "</span>: ";
-    title += "<span class=\"value\">" + Object.describe(object[propertyName], true).escapeHTML() + "</span>";
+    if (!isGetter)
+        title += "<span class=\"value\">" + Object.describe(childObject, true).escapeHTML() + "</span>";
+    else
+        // FIXME: this should show something like "getter" once we can change localization (bug 16734).
+        title += "<span class=\"value dimmed\">&mdash;</span>";
 
     var hasSubProperties = false;
-    var type = typeof object[propertyName];
-    if (object[propertyName] && (type === "object" || type === "function")) {
-        for (subPropertyName in object[propertyName]) {
+    var type = typeof childObject;
+    if (childObject && (type === "object" || type === "function")) {
+        for (subPropertyName in childObject) {
             if (subPropertyName === "__treeElementIdentifier")
                 continue;
             hasSubProperties = true;
@@ -98,25 +108,30 @@ WebInspector.ObjectPropertyTreeElement = function(object, propertyName)
         }
     }
 
-    this.object = object;
-    this.propertyName = propertyName;
-
     TreeElement.call(this, title, null, hasSubProperties);
 }
 
 WebInspector.ObjectPropertyTreeElement.prototype = {
+    safePropertyValue: function(object, propertyName)
+    {
+        var getter = object.__lookupGetter__(propertyName);
+        if (getter)
+            return;
+        return object[propertyName];
+    },
+
     onpopulate: function()
     {
         if (this.children.length)
             return;
 
-        var object = this.object[this.propertyName];
-        var properties = Object.sortedProperties(object);
+        var childObject = this.safePropertyValue(this.parentObject, this.propertyName);
+        var properties = Object.sortedProperties(childObject);
         for (var i = 0; i < properties.length; ++i) {
             var propertyName = properties[i];
             if (propertyName === "__treeElementIdentifier")
                 continue;
-            this.appendChild(new WebInspector.ObjectPropertyTreeElement(object, propertyName));
+            this.appendChild(new WebInspector.ObjectPropertyTreeElement(childObject, propertyName));
         }
     }
 }
