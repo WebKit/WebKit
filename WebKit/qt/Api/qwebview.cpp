@@ -395,3 +395,79 @@ void QWebView::paintEvent(QPaintEvent *ev)
     qDebug()<<"paint event on "<<ev->region()<<", took to render =  "<<elapsed;
 #endif
 }
+
+void QWebView::mouseMoveEvent(QMouseEvent* ev)
+{
+    d->page->event(ev);
+}
+
+void QWebView::mousePressEvent(QMouseEvent* ev)
+{
+    d->page->event(ev);
+}
+
+void QWebView::mouseDoubleClickEvent(QMouseEvent* ev)
+{
+    d->page->event(ev);
+}
+
+void QWebView::mouseReleaseEvent(QMouseEvent* ev)
+{
+    d->page->event(ev);
+}
+
+void QWebView::contextMenuEvent(QContextMenuEvent* ev)
+{
+    d->page->event(ev);
+}
+
+void QWebView::wheelEvent(QWheelEvent* ev)
+{
+    d->page->event(ev);
+}
+
+void QWebView::keyPressEvent(QKeyEvent* ev)
+{
+    d->page->event(ev);
+}
+
+void QWebView::keyReleaseEvent(QKeyEvent* ev)
+{
+    d->page->event(ev);
+}
+
+void QWebView::focusInEvent(QFocusEvent* ev)
+{
+    d->page->event(ev);
+}
+
+void QWebView::focusOutEvent(QFocusEvent* ev)
+{
+    d->page->event(ev);
+}
+
+void QWebView::dragEnterEvent(QDragEnterEvent* ev)
+{
+    d->page->event(ev);
+}
+
+void QWebView::dragLeaveEvent(QDragLeaveEvent* ev)
+{
+    d->page->event(ev);
+}
+
+void QWebView::dragMoveEvent(QDragMoveEvent* ev)
+{
+    d->page->event(ev);
+}
+
+void QWebView::dropEvent(QDropEvent* ev)
+{
+    d->page->event(ev);
+}
+
+bool QWebView::focusNextPrevChild(bool next)
+{
+    return d->page->focusNextPrevChild(next);
+}
+

@@ -174,6 +174,9 @@ public:
     QSize viewportSize() const;
     void setViewportSize(const QSize &size) const;
 
+    virtual bool event(QEvent*);
+    virtual bool focusNextPrevChild(bool next);
+
 Q_SIGNALS:
     /**
      * Signal is emitted when the global progress status changes.
@@ -218,22 +221,24 @@ protected:
 
     virtual QString userAgentFor(const QUrl& url) const;
 
-    virtual void mouseMoveEvent(QMouseEvent*);
-    virtual void mousePressEvent(QMouseEvent*);
-    virtual void mouseDoubleClickEvent(QMouseEvent*);
-    virtual void mouseReleaseEvent(QMouseEvent*);
-    virtual void contextMenuEvent(QContextMenuEvent*);
-    virtual void wheelEvent(QWheelEvent*);
-    virtual void keyPressEvent(QKeyEvent*);
-    virtual void keyReleaseEvent(QKeyEvent*);
-    virtual void focusInEvent(QFocusEvent*);
-    virtual void focusOutEvent(QFocusEvent*);
-    virtual bool focusNextPrevChild(bool next);
 
-    virtual void dragEnterEvent(QDragEnterEvent *);
-    virtual void dragLeaveEvent(QDragLeaveEvent *);
-    virtual void dragMoveEvent(QDragMoveEvent *);
-    virtual void dropEvent(QDropEvent *);
+
+private:
+    void mouseMoveEvent(QMouseEvent*);
+    void mousePressEvent(QMouseEvent*);
+    void mouseDoubleClickEvent(QMouseEvent*);
+    void mouseReleaseEvent(QMouseEvent*);
+    void contextMenuEvent(QContextMenuEvent*);
+    void wheelEvent(QWheelEvent*);
+    void keyPressEvent(QKeyEvent*);
+    void keyReleaseEvent(QKeyEvent*);
+    void focusInEvent(QFocusEvent*);
+    void focusOutEvent(QFocusEvent*);
+
+    void dragEnterEvent(QDragEnterEvent *);
+    void dragLeaveEvent(QDragLeaveEvent *);
+    void dragMoveEvent(QDragMoveEvent *);
+    void dropEvent(QDropEvent *);
 
 private:
     Q_PRIVATE_SLOT(d, void _q_onLoadProgressChanged(int))

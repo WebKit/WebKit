@@ -785,6 +785,59 @@ static inline Qt::DropAction dragOpToDropAction(unsigned actions)
     return result;    
 }
 
+
+bool QWebPage::event(QEvent *ev)
+{
+    switch (ev->type()) {
+    case QEvent::MouseMove:
+        mouseMoveEvent(static_cast<QMouseEvent*>(ev));
+        break;
+    case QEvent::MouseButtonPress:
+        mousePressEvent(static_cast<QMouseEvent*>(ev));
+        break;
+    case QEvent::MouseButtonDblClick:
+        mouseDoubleClickEvent(static_cast<QMouseEvent*>(ev));
+        break;
+    case QEvent::MouseButtonRelease:
+        mouseReleaseEvent(static_cast<QMouseEvent*>(ev));
+        break;
+    case QEvent::ContextMenu:
+        contextMenuEvent(static_cast<QContextMenuEvent*>(ev));
+        break;
+    case QEvent::Wheel:
+        wheelEvent(static_cast<QWheelEvent*>(ev));
+        break;
+    case QEvent::KeyPress:
+        keyPressEvent(static_cast<QKeyEvent*>(ev));
+        break;
+    case QEvent::KeyRelease:
+        keyReleaseEvent(static_cast<QKeyEvent*>(ev));
+        break;
+    case QEvent::FocusIn:
+        focusInEvent(static_cast<QFocusEvent*>(ev));
+        break;
+    case QEvent::FocusOut:
+        focusOutEvent(static_cast<QFocusEvent*>(ev));
+        break;
+    case QEvent::DragEnter:
+        dragEnterEvent(static_cast<QDragEnterEvent*>(ev));
+        break;
+    case QEvent::DragLeave:
+        dragLeaveEvent(static_cast<QDragLeaveEvent*>(ev));
+        break;
+    case QEvent::DragMove:
+        dragMoveEvent(static_cast<QDragMoveEvent*>(ev));
+        break;
+    case QEvent::Drop:
+        dropEvent(static_cast<QDropEvent*>(ev));
+        break;
+    default:
+        return QObject::event(ev);
+    }
+
+    return true;
+}
+
 void QWebPage::mouseMoveEvent(QMouseEvent *ev)
 {
     QWebFrame *f = d->currentFrame(ev->pos());
