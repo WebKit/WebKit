@@ -1,3 +1,17 @@
+2008-01-04  Oliver Hunt  <oliver@apple.com>
+
+        RS=Adam
+
+        Update tiger layout test results for svg/batik/text/smallFonts,
+        and move to mac-tiger platform 
+
+        * platform/mac-tiger/svg/batik/text/smallFonts-expected.checksum: Added.
+        * platform/mac-tiger/svg/batik/text/smallFonts-expected.png: Added.
+        * platform/mac/svg/batik/text/smallFonts-expected.txt: Added.
+        * svg/batik/text/smallFonts-expected.checksum: Removed.
+        * svg/batik/text/smallFonts-expected.png: Removed.
+        * svg/batik/text/smallFonts-expected.txt: Removed.
+
 2008-01-04  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin.
