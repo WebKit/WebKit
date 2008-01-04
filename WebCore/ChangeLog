@@ -1,5 +1,11 @@
 2008-01-04  Antti Koivisto  <antti@apple.com>
 
+        Fix build.
+
+        * bindings/js/JSHTMLElementWrapperFactory.cpp:
+
+2008-01-04  Antti Koivisto  <antti@apple.com>
+
         Reviewed by Darin.
         
         Partial fix for <rdar://problem/5647034>
