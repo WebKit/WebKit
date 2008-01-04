@@ -1,3 +1,13 @@
+2008-01-04  Alp Toker  <alp@atoker.com>
+
+        Reviewed by Mark Rowe.
+
+        Re-use a single static dummy surface rather than creating and
+        destroying a surface for each CairoPath.
+
+        * platform/graphics/cairo/CairoPath.h:
+        (WebCore::CairoPath::CairoPath):
+
 2008-01-04  Mark Rowe  <mrowe@apple.com>
 
         Tiger build fix.

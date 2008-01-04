@@ -24,14 +24,14 @@
 
 namespace WebCore {
 
+    // This is necessary since cairo_path_fixed_t isn't exposed in Cairo's public API.
     struct CairoPath {
         cairo_t* m_cr;
 
         CairoPath()
         {
-            cairo_surface_t* pathSurface = cairo_image_surface_create(CAIRO_FORMAT_A8, 1, 1);
+            static cairo_surface_t* pathSurface = cairo_image_surface_create(CAIRO_FORMAT_A8, 1, 1);
             m_cr = cairo_create(pathSurface);
-            cairo_surface_destroy(pathSurface);
         }
 
         ~CairoPath()
