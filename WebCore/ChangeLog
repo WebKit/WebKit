@@ -1,3 +1,17 @@
+2008-01-03  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Reviewed by Darin.
+
+        <rdar://problem/5504775> PDF page will not load first time after Adobe
+        Reader install, unless browser is relaunched
+
+        Refresh and re-search the plugin database if the MIME type is not
+        registered.
+
+        * plugins/win/PluginDatabaseWin.cpp:
+        (WebCore::PluginDatabaseWin::isMIMETypeRegistered):
+        * plugins/win/PluginDatabaseWin.h:
+
 2008-01-03  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.
@@ -44,7 +58,7 @@
         Pass the prototype of WebCore JS objects up the constructor chain
         rather than explicitly setting using setPrototype.  This removes many
         redundant settings of the prototype on construction.  To avoid a CG 
-        hazard, the prototype must be constructed before before calling the
+        hazard, the prototype must be constructed before calling the
         constructor of the JS object.
 
         - JS objects that inherit from DOMObject, which all bindings objects
