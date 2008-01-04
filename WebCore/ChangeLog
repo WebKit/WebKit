@@ -1,5 +1,13 @@
 2008-01-04  Alexey Proskuryakov  <ap@webkit.org>
 
+        Reviewed by Adam Roben.
+
+        Temporarily restore BackwardDelete for Windows nightlies to work correctly.
+
+        * editing/EditorCommand.cpp: (WebCore::CommandEntry::):
+
+2008-01-04  Alexey Proskuryakov  <ap@webkit.org>
+
         Reviewed by Darin.
 
         <rdar://problem/5611712> xsl:sort does not use a case folding sort, and the 'case-order' attribute is ignored (16077)

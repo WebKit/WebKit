@@ -1136,6 +1136,7 @@ static const CommandMap& createCommandMap()
         { "AlignLeft", { executeJustifyLeft, supportedFromMenuOrKeyBinding, enabledInRichlyEditableText, stateNone, valueNull, notTextInsertion } },
         { "AlignRight", { executeJustifyRight, supportedFromMenuOrKeyBinding, enabledInRichlyEditableText, stateNone, valueNull, notTextInsertion } },
         { "BackColor", { executeBackColor, supported, enabledRangeInRichlyEditableText, stateNone, valueBackColor, notTextInsertion } },
+        { "BackwardDelete", { executeDeleteBackward, supportedFromMenuOrKeyBinding, enabledInEditableText, stateNone, valueNull, notTextInsertion } }, // FIXME: remove BackwardDelete when Safari for Windows stops using it.
         { "Bold", { executeToggleBold, supported, enabledInRichlyEditableText, stateBold, valueNull, notTextInsertion } },
         { "Copy", { executeCopy, supported, enabledCopy, stateNone, valueNull, notTextInsertion } },
         { "CreateLink", { executeCreateLink, supported, enabledInRichlyEditableText, stateNone, valueNull, notTextInsertion } },

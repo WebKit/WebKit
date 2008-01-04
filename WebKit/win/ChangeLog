@@ -1,5 +1,14 @@
 2008-01-04  Alexey Proskuryakov  <ap@webkit.org>
 
+        Reviewed by Adam Roben.
+
+        http://bugs.webkit.org/show_bug.cgi?id=16733
+        REGRESSION: Crash on Safari Start
+
+        * Interfaces/IWebViewPrivate.idl: Should have added a new method at the end.
+
+2008-01-04  Alexey Proskuryakov  <ap@webkit.org>
+
         Reviewed by Darin.
 
         <rdar://problem/5611712> xsl:sort does not use a case folding sort, and the 'case-order' attribute is ignored (16077)
