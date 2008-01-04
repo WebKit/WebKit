@@ -119,7 +119,7 @@ javascriptcore_sources += \
 	JavaScriptCore/kjs/AllInOneFile.cpp 
 endif # END ENABLE_DEBUG
 
-DerivedSources/grammar.h: DerivedSources/grammar.cpp
+DerivedSources/grammar.h: DerivedSources/grammar.cpp;
 
 DerivedSources/grammar.cpp: $(srcdir)/JavaScriptCore/kjs/grammar.y
 	$(BISON) -d -p kjsyy $(srcdir)/JavaScriptCore/kjs/grammar.y -o $@ > bison_out.txt 2>&1

@@ -1,3 +1,9 @@
+2008-01-04  Alp Toker  <alp@atoker.com>
+
+        GTK+ autotools build fix. Terminate empty rules.
+
+        * GNUmakefile.am:
+
 2008-01-04  Lars Knoll  <lars@trolltech.com>
 
         Reviewed by Simon.
