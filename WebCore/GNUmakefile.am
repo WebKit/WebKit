@@ -1942,14 +1942,25 @@ SCRIPTS_JS_BINDINGS = \
 	$(WebCore)/bindings/scripts/IDLStructure.pm \
 	$(WebCore)/bindings/scripts/generate-bindings.pl
 
-DerivedSources/JS%.h DerivedSources/JS%.cpp: $(WebCore)/*/%.idl $(SCRIPTS_JS_BINDINGS)
-	$(PERL) -I $(WebCore)/bindings/scripts					\
-	$(WebCore)/bindings/scripts/generate-bindings.pl --defines		\
+vpath %.idl = \
+    $(WebCore) \
+    $(WebCore)/bindings/js \
+    $(WebCore)/bindings/objc \
+    $(WebCore)/css \
+    $(WebCore)/dom \
+    $(WebCore)/html \
+    $(WebCore)/page \
+    $(WebCore)/storage \
+    $(WebCore)/svg \
+    $(WebCore)/xml
+
+$(GENSOURCES)/JS%.h $(GENSOURCES)/JS%.cpp: %.idl $(SCRIPTS_JS_BINDINGS)
+	$(PERL) -I $(WebCore)/bindings/scripts \
+	$(WebCore)/bindings/scripts/generate-bindings.pl --defines \
 	"$(FEATURE_DEFINES_JAVASCRIPT)" --generator JS --include $(WebCore)/dom \
 	--include $(WebCore)/html --include $(WebCore)/css --include $(WebCore)/page \
 	--include $(WebCore)/xml --include $(WebCore)/svg --outputdir $(GENSOURCES) $<
 
-#
 # Clean rules for WebCore
 
 CLEANFILES += \
