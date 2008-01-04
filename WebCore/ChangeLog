@@ -2,6 +2,52 @@
 
         Reviewed by Simon.
 
+        Remove most dependencies of Widget/ScrollView onto native QWidgets.
+
+        This also brings the code closer in line with the Windows code. Seems
+        to work nicely on first try :)
+
+        * page/qt/FrameQt.cpp:
+        (WebCore::Frame::createScriptInstanceForWidget):
+        * platform/Widget.h:
+        * platform/qt/PlatformScreenQt.cpp:
+        (WebCore::screenDepth):
+        (WebCore::screenDepthPerComponent):
+        (WebCore::screenIsMonochrome):
+        (WebCore::screenRect):
+        * platform/qt/PlatformScrollBarQt.cpp:
+        (WebCore::PlatformScrollbar::thumbPosition):
+        (WebCore::PlatformScrollbar::handleMouseMoveEvent):
+        * platform/qt/ScrollViewQt.cpp:
+        (WebCore::ScrollView::ScrollViewPrivate::ScrollViewPrivate):
+        (WebCore::ScrollView::ScrollViewPrivate::scrollBackingStore):
+        (WebCore::ScrollView::updateContents):
+        (WebCore::ScrollView::update):
+        (WebCore::ScrollView::scrollRectIntoViewRecursively):
+        (WebCore::ScrollView::updateScrollbars):
+        (WebCore::ScrollView::addChild):
+        (WebCore::ScrollView::removeChild):
+        (WebCore::ScrollView::paint):
+        * platform/qt/WidgetQt.cpp:
+        (WebCore::WidgetPrivate::WidgetPrivate):
+        (WebCore::WidgetPrivate::~WidgetPrivate):
+        (WebCore::Widget::frameGeometry):
+        (WebCore::Widget::setFrameGeometry):
+        (WebCore::Widget::setCursor):
+        (WebCore::Widget::show):
+        (WebCore::Widget::hide):
+        (WebCore::Widget::nativeWidget):
+        (WebCore::Widget::setNativeWidget):
+        (WebCore::Widget::suppressInvalidation):
+        (WebCore::Widget::setSuppressInvalidation):
+        (WebCore::Widget::invalidateRect):
+        (WebCore::Widget::topLevel):
+        (WebCore::Widget::containingWindow):
+
+2008-01-04  Lars Knoll  <lars@trolltech.com>
+
+        Reviewed by Simon.
+
         make QWebPage a QObject and get things to compile.
 
         Nothing works currently though.

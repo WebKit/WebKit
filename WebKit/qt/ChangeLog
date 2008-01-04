@@ -1,3 +1,20 @@
+2008-01-04  Lars Knoll  <lars@trolltech.com>
+
+        Reviewed by Simon.
+
+        Remove most dependencies of Widget/ScrollView onto native QWidgets.
+        
+        This also brings the code closer in line with the Windows code. Seems
+        to work nicely on first try :)
+        
+
+        * WebCoreSupport/ChromeClientQt.cpp:
+        (WebCore::ChromeClientQt::updateBackingStore):
+        (WebCore::ChromeClientQt::mouseDidMoveOverElement):
+        (WebCore::ChromeClientQt::setToolTip):
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::createPlugin):
+
 2008-01-04  Holger Hans Peter Freyther  <holger.freyther@trolltech.com>
 
         Reviewed by Simon.

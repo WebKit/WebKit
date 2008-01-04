@@ -177,7 +177,7 @@ void PlatformScrollbar::paint(GraphicsContext* graphicsContext, const IntRect& d
 int PlatformScrollbar::thumbPosition() const
 {
     if (isEnabled())
-        return (float)m_currentPos * (trackLength() - thumbLength()) / (m_totalSize - m_visibleSize);
+        return (int)((float)m_currentPos * (trackLength() - thumbLength()) / (m_totalSize - m_visibleSize));
     return 0;
 }
 
@@ -230,7 +230,7 @@ bool PlatformScrollbar::handleMouseMoveEvent(const PlatformMouseEvent& evt)
             delta = max(-thumbPos, delta);
 
         if (delta != 0) {
-            setValue((float)(thumbPos + delta) * (m_totalSize - m_visibleSize) / (trackLen - thumbLen));
+            setValue((int)((float)(thumbPos + delta) * (m_totalSize - m_visibleSize) / (trackLen - thumbLen)));
             m_pressedPos += thumbPosition() - thumbPos;
         }
         

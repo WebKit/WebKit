@@ -99,8 +99,11 @@ static void doScroll(const RenderObject* r, bool isHorizontal, int multiplier)
 
 KJS::Bindings::Instance* Frame::createScriptInstanceForWidget(WebCore::Widget* widget)
 {
+    QWidget* nativeWidget = widget->nativeWidget();
+    if (!nativeWidget)
+        return 0;
     return KJS::Bindings::Instance::createBindingForLanguageInstance(KJS::Bindings::Instance::QtLanguage,
-                                                                     widget->qwidget(),
+                                                                     nativeWidget,
                                                                      bindingRootObject());
 }
 

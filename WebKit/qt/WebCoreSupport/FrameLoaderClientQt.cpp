@@ -954,7 +954,7 @@ Widget* FrameLoaderClientQt::createPlugin(const IntSize&, Element* element, cons
         if (widget && view) {
             widget->setParent(view);
             Widget* w= new Widget();
-            w->setQWidget(widget);
+            w->setNativeWidget(widget);
             return w;
         }
         // FIXME: make things work for widgetless plugins as well

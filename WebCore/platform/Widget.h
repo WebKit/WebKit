@@ -168,15 +168,17 @@ protected:
 #endif
 
 #if PLATFORM(QT)
-        QWidget* qwidget() const;
-        void setQWidget(QWidget *widget);
-        QWidget* containingWindow() const;
+        void setNativeWidget(QWidget *widget);
+        QWidget* nativeWidget() const;
+
+        QWidget *containingWindow() const;
 
         QWebFrame* qwebframe() const;
         void setQWebFrame(QWebFrame *webFrame);
         virtual void setParent(ScrollView*);
         ScrollView* parent() const;
         virtual void geometryChanged() const;
+        ScrollView* topLevel() const;
 
         IntRect convertToContainingWindow(const IntRect&) const;
         IntPoint convertToContainingWindow(const IntPoint&) const;
@@ -184,6 +186,9 @@ protected:
 
         virtual IntPoint convertChildToSelf(const Widget*, const IntPoint&) const;
         virtual IntPoint convertSelfToChild(const Widget*, const IntPoint&) const;
+
+        bool suppressInvalidation() const;
+        void setSuppressInvalidation(bool);
 #endif
 
 #if PLATFORM(MAC)
