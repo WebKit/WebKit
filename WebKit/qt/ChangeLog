@@ -1,3 +1,25 @@
+2008-01-04  Lars Knoll  <lars@trolltech.com>
+
+        Reviewed by Simon.
+
+        moved title(), url(), icon() and initialLayoutComplete() from QWebPage to QWebFrame
+
+        * Api/qwebframe.cpp:
+        (QWebFrame::url):
+        (QWebFrame::icon):
+        (QWebFrame::setVerticalScrollBarPolicy):
+        * Api/qwebframe.h:
+        * Api/qwebpage.cpp:
+        (QWebPage::javaScriptAlert):
+        (QWebPage::javaScriptPrompt):
+        (QWebPage::networkInterface):
+        * Api/qwebpage.h:
+        * Api/qwebview.cpp:
+        (QWebView::title):
+        (QWebView::url):
+        (QWebView::icon):
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+
 2008-01-03  Simon Hausmann  <hausmann@webkit.org>
 
         Reviewed by Lars.

@@ -46,7 +46,6 @@
 #include "FrameLoadRequest.h"
 #include "KURL.h"
 #include "Image.h"
-#include "IconDatabase.h"
 #include "InspectorClientQt.h"
 #include "InspectorController.h"
 #include "FocusController.h"
@@ -308,16 +307,6 @@ QWebPage::~QWebPage()
     delete d;
 }
 
-QUrl QWebPage::url() const
-{
-    return QUrl((QString)mainFrame()->d->frame->loader()->url().string());
-}
-
-QString QWebPage::title() const
-{
-    return mainFrame()->title();
-}
-
 QWebFrame *QWebPage::mainFrame() const
 {
     d->createMainFrame();
@@ -341,13 +330,13 @@ void QWebPage::javaScriptConsoleMessage(const QString& message, unsigned int lin
 void QWebPage::javaScriptAlert(QWebFrame *frame, const QString& msg)
 {
     //FIXME frame pos...
-    QMessageBox::information(this, title(), msg, QMessageBox::Ok);
+    QMessageBox::information(this, mainFrame()->title(), msg, QMessageBox::Ok);
 }
 
 bool QWebPage::javaScriptConfirm(QWebFrame *frame, const QString& msg)
 {
     //FIXME frame pos...
-    return 0 == QMessageBox::information(this, title(), msg, QMessageBox::Yes, QMessageBox::No);
+    return 0 == QMessageBox::information(this, mainFrame()->title(), msg, QMessageBox::Yes, QMessageBox::No);
 }
 
 bool QWebPage::javaScriptPrompt(QWebFrame *frame, const QString& msg, const QString& defaultValue, QString* result)
@@ -355,7 +344,7 @@ bool QWebPage::javaScriptPrompt(QWebFrame *frame, const QString& msg, const QStr
     //FIXME frame pos...
     bool ok = false;
 #ifndef QT_NO_INPUTDIALOG
-    QString x = QInputDialog::getText(this, title(), msg, QLineEdit::Normal, defaultValue, &ok);
+    QString x = QInputDialog::getText(this, mainFrame()->title(), msg, QLineEdit::Normal, defaultValue, &ok);
     if (ok && result) {
         *result = x;
     }
@@ -1164,24 +1153,6 @@ QWebNetworkInterface *QWebPage::networkInterface() const
         return d->networkInterface;
     else
         return QWebNetworkInterface::defaultInterface();
-}
-
-QPixmap QWebPage::icon() const
-{
-    Image* image = iconDatabase()->iconForPageURL(url().toString(), IntSize(16, 16));
-    if (!image || image->isNull()) {
-        image = iconDatabase()->defaultIcon(IntSize(16, 16));
-    }
-
-    if (!image) {
-        return QPixmap();
-    }
-
-    QPixmap *icon = image->getPixmap();
-    if (!icon) {
-        return QPixmap();
-    }
-    return *icon;
 }
 
 QWebSettings *QWebPage::settings()

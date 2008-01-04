@@ -32,6 +32,7 @@
 #include "Frame.h"
 #include "FrameTree.h"
 #include "FrameView.h"
+#include "IconDatabase.h"
 #include "Page.h"
 #include "ResourceRequest.h"
 #include "SelectionController.h"
@@ -187,6 +188,31 @@ QString QWebFrame::title() const
     else return QString();
 }
 
+QUrl QWebFrame::url() const
+{
+    return QUrl((QString)d->frame->loader()->url().string());
+}
+
+QPixmap QWebFrame::icon() const
+{
+    String url = d->frame->loader()->url().string();
+    Image* image = iconDatabase()->iconForPageURL(url, IntSize(16, 16));
+    if (!image || image->isNull()) {
+        image = iconDatabase()->defaultIcon(IntSize(16, 16));
+    }
+
+    if (!image) {
+        return QPixmap();
+    }
+
+    QPixmap *icon = image->getPixmap();
+    if (!icon) {
+        return QPixmap();
+    }
+    return *icon;
+}
+
+
 QString QWebFrame::name() const
 {
     return d->frame->tree()->name();
@@ -284,9 +310,9 @@ Qt::ScrollBarPolicy QWebFrame::verticalScrollBarPolicy() const
 
 void QWebFrame::setVerticalScrollBarPolicy(Qt::ScrollBarPolicy policy)
 {
-    Q_ASSERT(ScrollbarAuto == Qt::ScrollBarAsNeeded);
-    Q_ASSERT(ScrollbarAlwaysOff == Qt::ScrollBarAlwaysOff);
-    Q_ASSERT(ScrollbarAlwaysOn == Qt::ScrollBarAlwaysOn);
+    Q_ASSERT((int)ScrollbarAuto == (int)Qt::ScrollBarAsNeeded);
+    Q_ASSERT((int)ScrollbarAlwaysOff == (int)Qt::ScrollBarAlwaysOff);
+    Q_ASSERT((int)ScrollbarAlwaysOn == (int)Qt::ScrollBarAlwaysOn);
     d->frameView->setVScrollbarMode((ScrollbarMode)policy);
 }
 

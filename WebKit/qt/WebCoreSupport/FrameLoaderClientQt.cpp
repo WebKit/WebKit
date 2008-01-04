@@ -335,7 +335,7 @@ void FrameLoaderClientQt::dispatchDidFinishLoad()
 void FrameLoaderClientQt::dispatchDidFirstLayout()
 {
     if (m_webFrame)
-        emit m_webFrame->page()->initialLayoutComplete();
+        emit m_webFrame->initialLayoutComplete();
 }
 
 

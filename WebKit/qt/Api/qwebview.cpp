@@ -121,21 +121,21 @@ QWebSettings *QWebView::settings() const
 QString QWebView::title() const
 {
     if (d->page)
-        return d->page->title();
+        return d->page->mainFrame()->title();
     return QString();
 }
 
 QUrl QWebView::url() const
 {
     if (d->page)
-        return d->page->url();
+        return d->page->mainFrame()->url();
     return QUrl();
 }
 
 QPixmap QWebView::icon() const
 {
     if (d->page)
-        return d->page->icon();
+        return d->page->mainFrame()->icon();
     return QPixmap();
 }
 
