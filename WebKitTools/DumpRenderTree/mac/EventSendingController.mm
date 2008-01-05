@@ -371,6 +371,12 @@ BOOL replayingSavedEvents;
     } else if ([character isEqualToString:@"pageDown"]) {
         const unichar ch = NSPageDownFunctionKey;
         eventCharacter = [NSString stringWithCharacters:&ch length:1];
+    } else if ([character isEqualToString:@"home"]) {
+        const unichar ch = NSHomeFunctionKey;
+        eventCharacter = [NSString stringWithCharacters:&ch length:1];
+    } else if ([character isEqualToString:@"end"]) {
+        const unichar ch = NSEndFunctionKey;
+        eventCharacter = [NSString stringWithCharacters:&ch length:1];
     } else if ([character isEqualToString:@"delete"]) {
         const unichar ch = 0x7f;
         eventCharacter = [NSString stringWithCharacters:&ch length:1];

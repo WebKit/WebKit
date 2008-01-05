@@ -1,3 +1,15 @@
+2008-01-04  Alice Liu  <alice.liu@apple.com>
+
+        Reviewed by Alexey and Darin.
+
+        Adding "home" and "end" to DRT's keydown since
+        DOM key events can't handle keyIdentifiers at this point. 
+
+        * DumpRenderTree/mac/EventSendingController.mm:
+        (-[EventSendingController keyDown:withModifiers:]):
+        * DumpRenderTree/win/EventSender.cpp:
+        (keyDownCallback):
+
 2008-01-04  Lars Knoll  <lars@trolltech.com>
 
         Reviewed by Simon.

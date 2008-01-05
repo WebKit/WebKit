@@ -215,15 +215,6 @@ fast/dom/wrapper-classes.html
 # This test uses Mac-specific key codes <rdar://problem/5076426>
 fast/events/arrow-navigation.html
 
-# Selection seems to fail for some LayoutTests <rdar://problem/5130762>
-editing/selection/move-begin-end.html
-fast/inline/dirtyLinesForInline.html
-fast/text/textIteratorNilRenderer.html
-svg/custom/pointer-events-image.svg
-svg/custom/pointer-events-path.svg
-svg/custom/pointer-events-text.svg
-svg/custom/text-hit-test.svg
-
 # Emacs bindings are used in LayoutTests which fail on boomer. <rdar://problem/5137352>
 fast/events/keydown-1.html
 

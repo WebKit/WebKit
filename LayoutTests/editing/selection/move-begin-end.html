@@ -13,40 +13,56 @@ if (window.layoutTestController)
                     log('This test must be run by DumpRenderTree!') 
                     return;
                 }
+
+                var onMacPlatform = false;
+                if (navigator.userAgent.search(/\bMac OS X\b/) != -1)
+                    onMacPlatform = true;
                 
                 var area = document.getElementById('area');
                 area.focus();
                 
                 var sel = window.getSelection();
                 // Position the caret at the beginning of the string.
-                eventSender.keyDown(String.fromCharCode(0xf702));
+                eventSender.keyDown("leftArrow");
 
                 // Now move to the end
-                eventSender.keyDown(String.fromCharCode(0xf703), ["metaKey"]);
+                if (onMacPlatform)
+                    eventSender.keyDown("rightArrow", ["metaKey"]);
+                else
+                    eventSender.keyDown("end");
 
                 if (sel.baseOffset != 9 || sel.extentOffset != 9)
                     return;
                 
                 // Now move back to the beginning
-                eventSender.keyDown(String.fromCharCode(0xf702), ["metaKey"]);
+                if (onMacPlatform)
+                    eventSender.keyDown("leftArrow", ["metaKey"]);
+                else
+                    eventSender.keyDown("home");
 
                 if (sel.baseOffset != 0 || sel.extentOffset != 0)
                     return;
 
                 // Now move to the end, selecting
-                eventSender.keyDown(String.fromCharCode(0xf703), ["metaKey", "shiftKey"]);
+                if (onMacPlatform)
+                    eventSender.keyDown("rightArrow", ["metaKey", "shiftKey"]);
+                else
+                    eventSender.keyDown("end",["shiftKey"]);
 
                 if (sel.baseOffset != 0 || sel.extentOffset != 9)
                     return;
 
-                // Deselect but position the caret at the end                
-                eventSender.keyDown(String.fromCharCode(0xf703));
+                // Deselect but position the caret at the end
+                eventSender.keyDown("rightArrow");
                 
                 if (sel.baseOffset != 9 || sel.extentOffset != 9)
                     return;
                 
                 // Now move to the beginning, selecting
-                eventSender.keyDown(String.fromCharCode(0xf702), ["metaKey", "shiftKey"]);
+                if (onMacPlatform)
+                    eventSender.keyDown("leftArrow", ["metaKey", "shiftKey"]);
+                else
+                    eventSender.keyDown("home",["shiftKey"]);
                 
                 if (sel.baseOffset != 9 || sel.extentOffset != 0)
                     return;

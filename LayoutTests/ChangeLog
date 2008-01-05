@@ -1,3 +1,12 @@
+2008-01-04  Alice Liu  <alice.liu@apple.com>
+
+        Reviewed by Alexey and Darin.
+
+        * editing/selection/move-begin-end.html:
+        add a codepath that will test the same kind of functionality for home and end keys
+        * platform/win/Skipped:
+        removing section of tests that have been resolved
+
 2008-01-04  Oliver Hunt  <oliver@apple.com>
 
         RS=Adam
