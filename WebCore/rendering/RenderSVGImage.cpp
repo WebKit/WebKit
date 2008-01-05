@@ -148,9 +148,13 @@ void RenderSVGImage::layout()
     
     // minimum height
     m_height = errorOccurred() ? intrinsicSize().height() : 0;
-    
+
     calcWidth();
     calcHeight();
+
+    SVGImageElement* image = static_cast<SVGImageElement*>(node());
+    m_localBounds = FloatRect(image->x().value(), image->y().value(), image->width().value(), image->height().value());
+
     calculateAbsoluteBounds();
 
     if (checkForRepaint)
@@ -170,29 +174,22 @@ void RenderSVGImage::paint(PaintInfo& paintInfo, int, int)
     if (paintInfo.phase == PaintPhaseForeground) {
         SVGResourceFilter* filter = 0;
 
-        AffineTransform imageCtm(translationForAttributes());
         PaintInfo savedInfo(paintInfo);
 
-        FloatRect boundingBox = FloatRect(narrowPrecisionToFloat(imageCtm.e()), narrowPrecisionToFloat(imageCtm.f()), m_imageWidth, m_imageHeight);
-        prepareToRenderSVGContent(this, paintInfo, boundingBox, filter);
+        prepareToRenderSVGContent(this, paintInfo, m_localBounds, filter);
 
-        SVGImageElement* imageElt = static_cast<SVGImageElement*>(node());
-
-        FloatRect destRect(m_x, m_y, m_imageWidth, m_imageHeight);
+        FloatRect destRect = m_localBounds;
         FloatRect srcRect(0, 0, image()->width(), image()->height());
 
+        SVGImageElement* imageElt = static_cast<SVGImageElement*>(node());
         if (imageElt->preserveAspectRatio()->align() != SVGPreserveAspectRatio::SVG_PRESERVEASPECTRATIO_NONE)
             adjustRectsForAspectRatio(destRect, srcRect, imageElt->preserveAspectRatio());
 
-        paintInfo.context->concatCTM(imageCtm);
         paintInfo.context->drawImage(image(), destRect, srcRect);
 
-        finishRenderSVGContent(this, paintInfo, boundingBox, filter, savedInfo.context);
+        finishRenderSVGContent(this, paintInfo, m_localBounds, filter, savedInfo.context);
     }
     
-    if ((paintInfo.phase == PaintPhaseOutline || paintInfo.phase == PaintPhaseSelfOutline) && style()->outlineWidth())
-        paintOutline(paintInfo.context, 0, 0, width(), height(), style());
-
     paintInfo.context->restore();
 }
 
@@ -208,10 +205,9 @@ bool RenderSVGImage::nodeAtPoint(const HitTestRequest& request, HitTestResult& r
     if (isVisible || !hitRules.requireVisible) {
         double localX, localY;
         absoluteTransform().inverse().map(_x, _y, &localX, &localY);
-        translationForAttributes().inverse().map(localX, localY, &localX, &localY);
 
         if (hitRules.canHitFill) {
-            if (FloatRect(0.0f, 0.0f, m_width, m_height).contains(narrowPrecisionToFloat(localX), narrowPrecisionToFloat(localY))) {
+            if (m_localBounds.contains(narrowPrecisionToFloat(localX), narrowPrecisionToFloat(localY))) {
                 updateHitTestResult(result, IntPoint(_x, _y));
                 return true;
             }
@@ -226,10 +222,9 @@ bool RenderSVGImage::requiresLayer()
     return false;
 }
 
-FloatRect RenderSVGImage::relativeBBox(bool includeStroke) const
+FloatRect RenderSVGImage::relativeBBox(bool) const
 {
-    SVGImageElement* image = static_cast<SVGImageElement*>(node());
-    return FloatRect(image->x().value(), image->y().value(), width(), height());
+    return m_localBounds;
 }
 
 void RenderSVGImage::imageChanged(CachedImage* image)
@@ -252,7 +247,7 @@ void RenderSVGImage::calculateAbsoluteBounds()
 #endif
 
     if (!absoluteRect.isEmpty())
-        absoluteRect.inflate(1.5f); // inflate 1 pixel for antialiasing, 0.5 due to subpixel position or dimensions.
+        absoluteRect.inflate(1); // inflate 1 pixel for antialiasing
 
     m_absoluteBounds = enclosingIntRect(absoluteRect);
 }
@@ -272,26 +267,6 @@ void RenderSVGImage::addFocusRingRects(GraphicsContext* graphicsContext, int tx,
 void RenderSVGImage::absoluteRects(Vector<IntRect>& rects, int, int, bool)
 {
     rects.append(absoluteClippedOverflowRect());
-}
-
-AffineTransform RenderSVGImage::translationForAttributes()
-{
-    SVGImageElement* image = static_cast<SVGImageElement*>(node());
-    return AffineTransform().translate(image->x().value(), image->y().value());
-}
-
-void RenderSVGImage::calcWidth()
-{
-    RenderImage::calcWidth();
-    SVGImageElement* image = static_cast<SVGImageElement*>(node());
-    m_imageWidth = image->width().value();
-}
-
-void RenderSVGImage::calcHeight()
-{
-    RenderImage::calcHeight();
-    SVGImageElement* image = static_cast<SVGImageElement*>(node());
-    m_imageHeight = image->height().value();
 }
 
 }

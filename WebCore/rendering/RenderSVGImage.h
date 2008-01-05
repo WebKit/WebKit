@@ -27,6 +27,7 @@
 #if ENABLE(SVG)
 
 #include "AffineTransform.h"
+#include "FloatRect.h"
 #include "RenderImage.h"
 
 namespace WebCore {
@@ -43,7 +44,6 @@ namespace WebCore {
         
         virtual FloatRect relativeBBox(bool includeStroke = true) const;
         virtual IntRect absoluteClippedOverflowRect();
-        
         virtual void absoluteRects(Vector<IntRect>&, int tx, int ty, bool topLevel = true);
         virtual void addFocusRingRects(GraphicsContext*, int tx, int ty);
 
@@ -57,16 +57,12 @@ namespace WebCore {
 
         virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, int _x, int _y, int _tx, int _ty, HitTestAction);
 
-        virtual void calcWidth();
-        virtual void calcHeight();
         bool calculateLocalTransform();
 
     private:
         void calculateAbsoluteBounds();
-        AffineTransform translationForAttributes();
         AffineTransform m_localTransform;
-        float m_imageWidth;
-        float m_imageHeight;
+        FloatRect m_localBounds;
         IntRect m_absoluteBounds;
     };
 

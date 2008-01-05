@@ -1,3 +1,29 @@
+2008-01-04  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Beth Dakin.
+
+        Fix bounds computation bugs responsible for http://bugs.webkit.org/show_bug.cgi?id=16015
+        and other image repaint bugs.
+
+        We now cache the full local bounds for the <image> element, as otherwise certain
+        combinations of attribute changes could result in incorrect dirty rects.
+        Additionally we no longer use any of the integer bounds fields on RenderObject for
+        determining repaint bounds (this was the principle cause of bug #16015).
+
+        I also removed the outline painting code as it was both wrong, and not correctly
+        repainted.  I feel safe doing this as no other browser or viewer supports outline
+        properties on svg elements.
+
+        I was unable to make a testcase for this unfortunately, despite seemingly deterministic 
+        behaviour :(
+
+        * rendering/RenderSVGImage.cpp:
+        (WebCore::RenderSVGImage::layout):
+        (WebCore::RenderSVGImage::paint):
+        (WebCore::RenderSVGImage::nodeAtPoint):
+        (WebCore::RenderSVGImage::calculateAbsoluteBounds):
+        * rendering/RenderSVGImage.h:
+
 2008-01-04  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Oliver.
