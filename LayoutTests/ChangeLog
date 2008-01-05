@@ -1,5 +1,11 @@
 2008-01-04  Sam Weinig  <sam@webkit.org>
 
+        Add missing expected result.
+
+        * fast/images/border-expected.txt: Added.
+
+2008-01-04  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Oliver Hunt.
 
         Throw exceptions for the CSSPrimitiveValue getters, matching the spec.
