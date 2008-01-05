@@ -1,3 +1,22 @@
+2008-01-04  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Darin.
+        
+        Windows part of <rdar://problem/5647034>
+        Media tests crash if an old version of QuickTime is installed
+
+        Check QuickTime version on Windows too.
+
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::MediaPlayer::isAvailable):
+        * platform/graphics/gtk/MediaPlayerPrivateGStreamer.h:
+        (WebCore::MediaPlayerPrivate::isAvailable):
+        * platform/graphics/win/MediaPlayerPrivateQuickTimeWin.cpp:
+        (WebCore::MediaPlayerPrivate::isAvailable):
+        * platform/graphics/win/MediaPlayerPrivateQuickTimeWin.h:
+        * platform/graphics/win/QTMovieWin.cpp:
+        (QTMovieWin::initializeQuickTime):
+
 2008-01-04  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej and Alice.

@@ -40,6 +40,8 @@
 
 using namespace std;
 
+static const long minimumQuickTimeVersion = 0x07300000; // 7.3
+
 // Resizing GWorlds is slow, give them a minimum size so size of small 
 // videos can be animated smoothly
 static const int cGWorldMinWidth = 640;
@@ -51,8 +53,6 @@ union UppParam {
     long longValue;
     void* ptr;
 };
-
-static void initializeQuickTime();
 
 static MovieDrawingCompleteUPP gMovieDrawingCompleteUPP = 0;
 static HashSet<QTMovieWinPrivate*>* gTaskList;
@@ -531,20 +531,28 @@ void QTMovieWin::getSupportedType(unsigned index, const UChar*& str, unsigned& l
 bool QTMovieWin::initializeQuickTime() 
 {
     static bool initialized = false;
-    static OSErr initializationError = 0;
-    if (initializationError)
-        return false;
+    static bool initializationSucceeded = false;
     if (!initialized) {
-        initializationError = InitializeQTML(0);
-        if (initializationError)
+        initialized = true;
+        // Initialize and check QuickTime version
+        OSErr result = InitializeQTML(0);
+        SInt32 version;
+        if (result == noErr)
+            result = Gestalt(gestaltQuickTime, &version);
+        if (result != noErr) {
+            LOG_ERROR("No QuickTime available. Disabling <video> and <audio> support.");
             return false;
+        }
+        if (version < minimumQuickTimeVersion) {
+            LOG_ERROR("QuickTime version %x detected, at least %x required. Disabling <video> and <audio> support.", version, minimumQuickTimeVersion);
+            return false;
+        }
         EnterMovies();
         setSharedTimerFiredFunction(taskTimerFired);
         gMovieDrawingCompleteUPP = NewMovieDrawingCompleteUPP(movieDrawingCompleteProc);
-
-        initialized = true;
+        initializationSucceeded = true;
     }
-    return true;
+    return initializationSucceeded;
 }
 
 BOOL WINAPI DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpvReserved)

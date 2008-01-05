@@ -388,6 +388,11 @@ void MediaPlayerPrivate::getSupportedTypes(HashSet<String>& types)
     }
 } 
 
+bool MediaPlayerPrivate::isAvailable()
+{
+    return QTMovieWin::initializeQuickTime();
+}
+
 void MediaPlayerPrivate::movieEnded(QTMovieWin* movie)
 {
     ASSERT(m_qtMovie.get() == movie);
