@@ -287,9 +287,8 @@ collect:
   // find a free spot in the block and detach it from the free list
   Cell *newCell = targetBlock->freeList;
   
-  // "next" field is a byte offset -- 0 means next cell, so a zeroed block is already initialized
-  // could avoid the casts by using a cell offset, but this avoids a relatively-slow multiply
-  targetBlock->freeList = reinterpret_cast<Cell*>(reinterpret_cast<char*>(newCell + 1) + newCell->u.freeCell.next);
+  // "next" field is a cell offset -- 0 means next cell, so a zeroed block is already initialized
+  targetBlock->freeList = (newCell + 1) + newCell->u.freeCell.next;
 
   targetBlock->usedCells = static_cast<uint32_t>(targetBlockUsedCells + 1);
   heap.numLiveObjects = numLiveObjects + 1;
@@ -853,7 +852,7 @@ template <Collector::HeapType heapType> size_t Collector::sweep(bool currentThre
                     
                     // put cell on the free list
                     cell->u.freeCell.zeroIfFree = 0;
-                    cell->u.freeCell.next = reinterpret_cast<char*>(freeList) - reinterpret_cast<char*>(cell + 1);
+                    cell->u.freeCell.next = freeList - (cell + 1);
                     freeList = cell;
                 }
             }
@@ -879,7 +878,7 @@ template <Collector::HeapType heapType> size_t Collector::sweep(bool currentThre
                         
                         // put cell on the free list
                         cell->u.freeCell.zeroIfFree = 0;
-                        cell->u.freeCell.next = reinterpret_cast<char*>(freeList) - reinterpret_cast<char*>(cell + 1);
+                        cell->u.freeCell.next = freeList - (cell + 1); 
                         freeList = cell;
                     }
                 }

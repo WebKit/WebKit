@@ -1,3 +1,16 @@
+2008-01-05  Henry Mason  <hmason@mac.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        http://bugs.webkit.org/show_bug.cgi?id=16738
+        Bug 16738: Collector block offset could be stored as an cell offset instead of a byte offset
+
+        Gives a 0.4% SunSpider boost and prettier code.
+
+        * kjs/collector.cpp: Switched to cell offsets from byte offsets
+        (KJS::Collector::heapAllocate):
+        (KJS::Collector::sweep):
+
 2008-01-04  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Maciej Stachowiak.
