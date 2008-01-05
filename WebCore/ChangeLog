@@ -1,3 +1,10 @@
+2008-01-04  Antti Koivisto  <antti@apple.com>
+
+        Try to fix 64-bit build
+
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.mm:
+        (WebCore::MediaPlayerPrivate::isAvailable):
+
 2008-01-04  Stephanie  <slewis@apple.com>
 
         Reviewed by Oliver.

@@ -646,7 +646,7 @@ void MediaPlayerPrivate::getSupportedTypes(HashSet<String>& types)
     
 bool MediaPlayerPrivate::isAvailable()
 {
-    long version;
+    SInt32 version;
     OSErr result;
     // This Carbon API is available in 64 bit too
     result = Gestalt(gestaltQuickTime, &version);
