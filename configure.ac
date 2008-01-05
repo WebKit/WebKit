@@ -181,7 +181,7 @@ AC_MSG_RESULT([$enable_debug])
 AC_MSG_CHECKING([whether to enable HTML5 client-side storage support])
 AC_ARG_ENABLE(database,
               AC_HELP_STRING([--enable-database],
-                             [enable HTML5 client-side storage support [default=no]]),
+                             [enable HTML5 client-side storage support [default=yes]]),
               [],[enable_database="yes"])
 AC_MSG_RESULT([$enable_database])
 
@@ -205,7 +205,7 @@ AC_MSG_RESULT([$enable_video])
 AC_MSG_CHECKING([whether to enable XPath support])
 AC_ARG_ENABLE(xpath,
               AC_HELP_STRING([--enable-xpath],
-                             [enable support for XPath [default=no]]),
+                             [enable support for XPath [default=yes]]),
               [],[enable_xpath="yes"])
 AC_MSG_RESULT([$enable_xpath])
 
@@ -213,7 +213,7 @@ AC_MSG_RESULT([$enable_xpath])
 AC_MSG_CHECKING([whether to enable XSLT support])
 AC_ARG_ENABLE(xslt,
               AC_HELP_STRING([--enable-xslt],
-                             [enable support for XSLT [default=no]]),
+                             [enable support for XSLT [default=yes]]),
               [],[enable_xslt="yes"])
 AC_MSG_RESULT([$enable_xslt])
 
@@ -229,7 +229,7 @@ AC_MSG_RESULT([$enable_svg])
 AC_MSG_CHECKING([whether to enable support for SVG animataion])
 AC_ARG_ENABLE(svg_animation,
               AC_HELP_STRING([--enable-svg-animation],
-                             [enable support for SVG animation feature (experimental) [default=no]]),
+                             [enable support for SVG animation (experimental) [default=no]]),
               [],[enable_svg_animation="no"])
 AC_MSG_RESULT([$enable_svg_animation])
 

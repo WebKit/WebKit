@@ -1,3 +1,12 @@
+2008-01-05  Alp Toker  <alp@atoker.com>
+
+        Rubber-stamped by Mark Rowe.
+
+        Fix configure script output with correct descriptions of the default
+        configuration options.
+
+        * configure.ac:
+
 2008-01-05  Sylvain Pasche  <sylvain.pasche@gmail.com>
 
         Reviewed by Alp Toker.
