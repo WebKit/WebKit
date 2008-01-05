@@ -1,3 +1,12 @@
+2008-01-04  Stephanie  <slewis@apple.com>
+
+        RS by Oliver.
+        
+        Move svg/batik/text/smallFonts.svg
+to skip list since it is still failing on tiger.
+        
+        * platform/mac-tiger/Skipped:
+
 2008-01-04  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej and Alice.
