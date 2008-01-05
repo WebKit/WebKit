@@ -1,3 +1,10 @@
+2008-01-04  Dan Bernstein  <mitz@apple.com>
+
+        - update the list of tests failing on Windows because of font
+          differences and uncomment a test that has been re-enabled on Mac.
+
+        * platform/win/Skipped:
+
 2008-01-04  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Beth Dakin.
