@@ -96,7 +96,6 @@ StringImpl::StringImpl(const StringImpl& str, WithTerminatingNullCharacter)
 
 StringImpl::StringImpl(const char* str, unsigned len)
     : m_length(len)
-    , m_data(newUCharVector(len))
     , m_hash(0)
     , m_inTable(false)
     , m_hasTerminatingNullCharacter(false)

@@ -1,3 +1,14 @@
+2008-01-04  Stephanie  <slewis@apple.com>
+
+        Reviewed by Oliver.
+
+        WARNING: NO TEST CASES ADDED OR CHANGED
+
+        Fix another stringImpl leak.
+
+        * platform/text/StringImpl.cpp: remove an extra allocation
+        (WebCore::StringImpl::StringImpl):
+
 2008-01-04  Alice Liu  <alice.liu@apple.com>
 
         Reviewed by Mitz.
