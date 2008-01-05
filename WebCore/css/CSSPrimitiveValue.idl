@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Computer, Inc.
+ * Copyright (C) 2006, 2008 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -58,15 +58,20 @@ module css {
         [OldStyleObjC] void setFloatValue(in unsigned short unitType,
                                           in float floatValue)
             raises(DOMException);
-        float getFloatValue(in unsigned short unitType);
+        float getFloatValue(in unsigned short unitType)
+            raises(DOMException);
         [OldStyleObjC] void setStringValue(in unsigned short stringType, 
                                            in DOMString stringValue)
             raises(DOMException);
-        DOMString getStringValue();
-        Counter getCounterValue();
-        Rect getRectValue();
+        DOMString getStringValue()
+            raises(DOMException);
+        Counter getCounterValue()
+            raises(DOMException);
+        Rect getRectValue()
+            raises(DOMException);
 #if !defined(LANGUAGE_COM)
-        RGBColor getRGBColorValue();
+        RGBColor getRGBColorValue()
+            raises(DOMException);
 #endif
 
     };

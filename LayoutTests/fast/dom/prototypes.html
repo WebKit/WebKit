@@ -35,7 +35,7 @@ function test()
     shouldBe("Object.prototype.isPrototypeOf(window.Option)", true);
 
     div = document.createElement('div');
-    div.style.color = "black";
+    div.style.color = "rgb(0, 0, 0)";
     cssValue = div.style.getPropertyCSSValue('color'); // actually a CSSPrimitiveValue
     shouldBe("Object.prototype.isPrototypeOf(cssValue)", true);
     

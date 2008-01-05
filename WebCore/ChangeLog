@@ -1,3 +1,29 @@
+2008-01-04  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Oliver Hunt.
+
+        - Match the spec when calling getFloatValue, getStringValue, getCounterValue,
+          getRectValue and getRGBColorValue of CSSPrimitiveValue by throwing exceptions
+          if the type of the CSSPrimitiveValue is not the same as the type requested.
+        - Fix the intermittent assertion failure seen in svg/css/glyph-orientation-rounding-test.xhtml
+
+        Test: fast/css/CSSPrimitiveValue-exceptions.html
+
+        * css/CSSPrimitiveValue.cpp:
+        (WebCore::CSSPrimitiveValue::getDoubleValue):
+        (WebCore::CSSPrimitiveValue::getStringValue):
+        (WebCore::CSSPrimitiveValue::getCounterValue):
+        (WebCore::CSSPrimitiveValue::getRectValue):
+        (WebCore::CSSPrimitiveValue::getRGBColorValue):
+        (WebCore::CSSPrimitiveValue::getPairValue):
+        * css/CSSPrimitiveValue.h:
+        (WebCore::CSSPrimitiveValue::getFloatValue):
+        (WebCore::CSSPrimitiveValue::getIntValue):
+        (WebCore::CSSPrimitiveValue::getCounterValue):
+        (WebCore::CSSPrimitiveValue::getRectValue):
+        (WebCore::CSSPrimitiveValue::getDashboardRegionValue):
+        * css/CSSPrimitiveValue.idl:
+
 2008-01-04  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Darin.

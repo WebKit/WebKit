@@ -1,6 +1,6 @@
 /*
  * (C) 1999-2003 Lars Knoll (knoll@kde.org)
- * Copyright (C) 2004, 2005, 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -398,10 +398,13 @@ double scaleFactorForConversion(unsigned short unitType)
     return factor;
 }
 
-double CSSPrimitiveValue::getDoubleValue(unsigned short unitType)
+double CSSPrimitiveValue::getDoubleValue(unsigned short unitType, ExceptionCode& ec)
 {
-    ASSERT(m_type <= CSS_DIMENSION);
-    ASSERT(unitType <= CSS_DIMENSION);
+    ec = 0;
+    if (m_type < CSS_NUMBER || m_type > CSS_DIMENSION || unitType < CSS_NUMBER || unitType > CSS_DIMENSION) {
+        ec = INVALID_ACCESS_ERR;
+        return 0.0;
+    }
 
     if (unitType == m_type || unitType < CSS_PX || unitType > CSS_PC)
         return m_value.num;
@@ -418,6 +421,28 @@ double CSSPrimitiveValue::getDoubleValue(unsigned short unitType)
 
     return convertedValue;
 }
+
+double CSSPrimitiveValue::getDoubleValue(unsigned short unitType)
+{
+    if (m_type < CSS_NUMBER || m_type > CSS_DIMENSION || unitType < CSS_NUMBER || unitType > CSS_DIMENSION)
+        return 0;
+
+    if (unitType == m_type || unitType < CSS_PX || unitType > CSS_PC)
+        return m_value.num;
+
+    double convertedValue = m_value.num;
+
+    // First convert the value from m_type into CSSPixels
+    double factor = scaleFactorForConversion(m_type);
+    convertedValue *= factor;
+
+    // Now convert from CSSPixels to the specified unitType
+    factor = scaleFactorForConversion(unitType);
+    convertedValue /= factor;
+
+    return convertedValue;
+}
+
 
 void CSSPrimitiveValue::setStringValue(unsigned short stringType, const String& stringValue, ExceptionCode& ec)
 {
@@ -440,6 +465,24 @@ void CSSPrimitiveValue::setStringValue(unsigned short stringType, const String& 
     // FIXME: parse ident
 }
 
+String CSSPrimitiveValue::getStringValue(ExceptionCode& ec) const
+{
+    ec = 0;
+    switch (m_type) {
+        case CSS_STRING:
+        case CSS_ATTR:
+        case CSS_URI:
+            return m_value.string;
+        case CSS_IDENT:
+            return getValueName(m_value.ident);
+        default:
+            ec = INVALID_ACCESS_ERR;
+            break;
+    }
+
+    return String();
+}
+
 String CSSPrimitiveValue::getStringValue() const
 {
     switch (m_type) {
@@ -450,11 +493,54 @@ String CSSPrimitiveValue::getStringValue() const
         case CSS_IDENT:
             return getValueName(m_value.ident);
         default:
-            // FIXME: The CSS 2.1 spec says you should throw an exception here.
             break;
     }
 
     return String();
+}
+
+Counter* CSSPrimitiveValue::getCounterValue(ExceptionCode& ec) const
+{
+    ec = 0;
+    if (m_type != CSS_COUNTER) {
+        ec = INVALID_ACCESS_ERR;
+        return 0;
+    }
+
+    return m_value.counter;
+}
+
+Rect* CSSPrimitiveValue::getRectValue(ExceptionCode& ec) const
+{
+    ec = 0;
+    if (m_type != CSS_RECT) {
+        ec = INVALID_ACCESS_ERR;
+        return 0;
+    }
+
+    return m_value.rect;
+}
+
+unsigned CSSPrimitiveValue::getRGBColorValue(ExceptionCode& ec) const
+{
+    ec = 0;
+    if (m_type != CSS_RGBCOLOR) {
+        ec = INVALID_ACCESS_ERR;
+        return 0;
+    }
+
+    return m_value.rgbcolor;
+}
+
+Pair* CSSPrimitiveValue::getPairValue(ExceptionCode& ec) const
+{
+    ec = 0;
+    if (m_type != CSS_PAIR) {
+        ec = INVALID_ACCESS_ERR;
+        return 0;
+    }
+
+    return m_value.pair;
 }
 
 unsigned short CSSPrimitiveValue::cssValueType() const

@@ -1,5 +1,21 @@
 2008-01-04  Sam Weinig  <sam@webkit.org>
 
+        Reviewed by Oliver Hunt.
+
+        Throw exceptions for the CSSPrimitiveValue getters, matching the spec.
+
+        * fast/css/CSSPrimitiveValue-exceptions-expected.txt: Added.
+        * fast/css/CSSPrimitiveValue-exceptions.html: Added.
+        * fast/css/resources/CSSPrimitiveValue-exceptions.js: Added.
+        * fast/dom/prototypes.html:
+        * fast/dom/wrapper-classes.html:
+        * platform/mac/fast/dom/wrapper-classes-objc.html:
+        * svg/css/glyph-orientation-rounding-test-expected.txt:
+        * svg/css/glyph-orientation-rounding-test.xhtml: Pass in a unit so this doesn't throw.
+        This patch also fixes the associated intermittent failure seen in this test.
+
+2008-01-04  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Kevin McCullough.
 
         - Splits Objective-C tests out of wrapper-classes.html and into platform specific test.

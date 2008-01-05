@@ -1,8 +1,6 @@
 /*
- * This file is part of the DOM implementation for KDE.
- *
  * (C) 1999-2003 Lars Knoll (knoll@kde.org)
- * Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.
+ * Copyright (C) 2004, 2005, 2006, 2008 Apple Inc. All rights reserved.
  * Copyright (C) 2007 Alexey Proskuryakov <ap@webkit.org>
  *
  * This library is free software; you can redistribute it and/or
@@ -111,24 +109,36 @@ public:
     // use with care!!!
     void setPrimitiveType(unsigned short type) { m_type = type; }
 
+    double getDoubleValue(unsigned short unitType, ExceptionCode&);
     double getDoubleValue(unsigned short unitType);
     double getDoubleValue() const { return m_value.num; }
 
     void setFloatValue(unsigned short unitType, double floatValue, ExceptionCode&);
+    float getFloatValue(unsigned short unitType, ExceptionCode& ec) { return static_cast<float>(getDoubleValue(unitType, ec)); }
     float getFloatValue(unsigned short unitType) { return static_cast<float>(getDoubleValue(unitType)); }
     float getFloatValue() const { return static_cast<float>(m_value.num); }
+
+    int getIntValue(unsigned short unitType, ExceptionCode& ec) { return static_cast<int>(getDoubleValue(unitType, ec)); }
     int getIntValue(unsigned short unitType) { return static_cast<int>(getDoubleValue(unitType)); }
     int getIntValue() const { return static_cast<int>(m_value.num); }
 
     void setStringValue(unsigned short stringType, const String& stringValue, ExceptionCode&);
+    String getStringValue(ExceptionCode&) const;
     String getStringValue() const;
 
-    Counter* getCounterValue () const { return m_type != CSS_COUNTER ? 0 : m_value.counter; }
-    Rect* getRectValue () const { return m_type != CSS_RECT ? 0 : m_value.rect; }
+    Counter* getCounterValue(ExceptionCode&) const;
+    Counter* getCounterValue() const { return m_type != CSS_COUNTER ? 0 : m_value.counter; }
+
+    Rect* getRectValue(ExceptionCode&) const;
+    Rect* getRectValue() const { return m_type != CSS_RECT ? 0 : m_value.rect; }
+
+    unsigned getRGBColorValue(ExceptionCode&) const;
     unsigned getRGBColorValue() const { return m_type != CSS_RGBCOLOR ? 0 : m_value.rgbcolor; }
+
+    Pair* getPairValue(ExceptionCode&) const;
     Pair* getPairValue() const { return m_type != CSS_PAIR ? 0 : m_value.pair; }
 
-    DashboardRegion* getDashboardRegionValue () const { return m_type != CSS_DASHBOARD_REGION ? 0 : m_value.region; }
+    DashboardRegion* getDashboardRegionValue() const { return m_type != CSS_DASHBOARD_REGION ? 0 : m_value.region; }
 
     virtual bool isPrimitiveValue() const { return true; }
 
