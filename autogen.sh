@@ -1,8 +1,11 @@
 #! /bin/sh
 
+# Allow invocation from a separate build directory; in that case, we change
+# to the source directory to run the auto*, then change back before running configure
 srcdir=`dirname $0`
 test -z "$srcdir" && srcdir=.
 
+ORIGDIR=`pwd`
 cd $srcdir
 
 DIE=0
@@ -37,4 +40,6 @@ autoheader || exit $?
 automake --foreign --add-missing || exit $?
 autoconf || exit $?
 
-./configure $AUTOGEN_CONFIGURE_ARGS "$@" || exit $?
+cd $ORIGDIR || exit 1
+
+$srcdir/configure $AUTOGEN_CONFIGURE_ARGS "$@" || exit $?
