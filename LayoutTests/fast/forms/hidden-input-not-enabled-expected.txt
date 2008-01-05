@@ -1,0 +1,1 @@
+PASSED! Hidden input types should not respond to :enabled or :disabled

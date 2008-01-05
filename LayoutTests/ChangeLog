@@ -1,3 +1,13 @@
+2008-01-04  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Oliver.
+
+        Test for http://bugs.webkit.org/show_bug.cgi?id=16704 input with 
+        type="hidden" matches :enabled/:disabled (Acid3 bug)
+
+        * fast/forms/hidden-input-not-enabled-expected.txt: Added.
+        * fast/forms/hidden-input-not-enabled.html: Added.
+
 2008-01-04  Sam Weinig  <sam@webkit.org>
 
         Add missing expected result.

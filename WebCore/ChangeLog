@@ -1,3 +1,21 @@
+2008-01-04  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Oliver.
+
+        Fix for http://bugs.webkit.org/show_bug.cgi?id=16704 input with 
+        type="hidden" matches :enabled/:disabled (Acid3 bug)
+
+        Prevent :enabled and :disabled from applying to input type="hidden" 
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::checkOneSelector): Rather than 
+        allowing :enabled and :disabled to apply to all controls, only 
+        allow it to apply to non-"hidden" controls
+        * dom/Element.h:
+        (WebCore::Element::isInputTypeHidden): 
+        * html/HTMLInputElement.h:
+        (WebCore::HTMLInputElement::isInputTypeHidden):
+
 2008-01-04  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Oliver Hunt.
