@@ -209,9 +209,6 @@ svg/custom/use-events-crash.svg
 # Pixel depth and color depth different on boomer <rdar://problem/5137719>
 fast/dom/Window/window-screen-properties.html
 
-# Layout Tests fail in boomer because of not objCWrapperClass. <rdar://problem/5137769>
-fast/dom/wrapper-classes.html
-
 # This test uses Mac-specific key codes <rdar://problem/5076426>
 fast/events/arrow-navigation.html
 

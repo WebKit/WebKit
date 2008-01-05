@@ -1,3 +1,16 @@
+2008-01-04  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Kevin McCullough.
+
+        - Splits Objective-C tests out of wrapper-classes.html and into platform specific test.
+        - Adds tests for .__proto__ and .constructor to JS wrapper tests.
+
+        * fast/dom/wrapper-classes.html:
+        * platform/mac/fast/dom/wrapper-classes-expected.txt:
+        * platform/mac/fast/dom/wrapper-classes-objc-expected.txt: Added.
+        * platform/mac/fast/dom/wrapper-classes-objc.html: Copied from fast/dom/wrapper-classes.html.
+        * platform/win/Skipped:
+
 2008-01-04  Stephanie  <slewis@apple.com>
 
         RS by Oliver.

@@ -1,7 +1,7 @@
 <html>
 <head>
-<link rel="stylesheet" href="../js/resources/js-test-style.css">
-<script src="../js/resources/js-test-pre.js"></script>
+<link rel="stylesheet" href="../../../../fast/js/resources/js-test-style.css">
+<script src="../../../../fast/js/resources/js-test-pre.js"></script>
 <style id="style" media="screen">
 .non-existent-class {
     color: black;
@@ -19,55 +19,45 @@
 if (window.layoutTestController)
     layoutTestController.waitUntilDone();
 
-function jsWrapperClass(node)
+function objCWrapperClass(node)
 {
-    if (!node)
-        return "[null]";
-    var string = Object.prototype.toString.apply(node);
-    return string.substr(8, string.length - 9);
+    if (!window.objCController)
+        return "only works under DumpRenderTree";
+    return objCController.className(node);
 }
 
-function tagJSWrapperClass(tagName)
+function objCObjectOfClass(name)
 {
-    return jsWrapperClass(document.createElement(tagName));
+    if (!window.objCController)
+        return "only works under DumpRenderTree";
+    return objCController.objectOfClass(name);
 }
 
-function tagJSWrapperPrototypeClass(tagName)
+function tagObjCWrapperClass(tagName)
 {
-    return jsWrapperClass(document.createElement(tagName).__proto__);
+    return objCWrapperClass(document.createElement(tagName));
 }
 
-function tagJSWrapperConstructorClass(tagName)
+function testTag(tagName, className, objCClassName)
 {
-    return jsWrapperClass(document.createElement(tagName).constructor);
+    if (!objCClassName)
+        objCClassName = "DOM" + className;
+    if (window.objCController)
+        shouldBe("tagObjCWrapperClass('" + tagName + "')", "'" + objCClassName + "'");
 }
 
-function testTag(tagName, className, prototypeName, constructorName)
+function test(expression, className, objCClassName)
 {
-    if (!prototypeName)
-        prototypeName = className + "Prototype";
-    if (!constructorName)
-        constructorName = className + "Constructor";
-    shouldBe("tagJSWrapperClass('" + tagName + "')", "'" + className + "'");
-    shouldBe("tagJSWrapperPrototypeClass('" + tagName + "')", "'" + prototypeName + "'");
-    shouldBe("tagJSWrapperConstructorClass('" + tagName + "')", "'" + constructorName + "'");
-}
-
-function test(expression, className, prototypeName, constructorName)
-{
-    if (!prototypeName)
-        prototypeName = className + "Prototype";
-    if (!constructorName)
-        constructorName = className + "Constructor";
-    shouldBe("jsWrapperClass(" + expression + ")", "'" + className + "'");
-    shouldBe("jsWrapperClass(" + expression + ".__proto__)", "'" + prototypeName + "'");
-    shouldBe("jsWrapperClass(" + expression + ".constructor)", "'" + constructorName + "'");
+    if (!objCClassName)
+        objCClassName = "DOM" + className;
+    if (window.objCController)
+        shouldBe("objCWrapperClass(" + expression + ")", "'" + objCClassName + "'");
 }
 
 function runTest()
 {
-    // NOTE: This is a sister test to platform/mac/fast/dom/wrapper-class-objc.html which test the Objective-C wrapper classes.  Update accordingly.
-    description("This tests wrapper class names for JavaScript.");
+    // NOTE: This is a sister test to fast/dom/wrapper-class.html which test the JS wrapper classes.  Update accordingly.
+    description("This tests wrapper class names for Objective-C.");
 
     stylesheet = document.getElementById("style").sheet;
     root = document.documentElement;
@@ -79,7 +69,7 @@ function runTest()
     test("document.createAttribute()", "Attr");
     test("document.createComment()", "Comment");
     test("document.createDocumentFragment()", "DocumentFragment");
-    test("document.implementation", "DOMImplementation");
+    test("document.implementation", "DOMImplementation", "DOMImplementation");
     test("root.attributes", "NamedNodeMap");
     test("document.createNodeIterator(root, 0, null, false)", "NodeIterator");
     test("document.getElementsByTagName('div')", "NodeList");
@@ -137,7 +127,7 @@ function runTest()
     debug('Other');
     debug('');
 
-    test("window", "DOMWindow");
+    test("window", "DOMWindow", "DOMAbstractView");
 
     debug('');
     debug('HTML DOM');
@@ -162,7 +152,7 @@ function runTest()
     testTag("basefont", "HTMLBaseFontElement");
     testTag("bdo", "HTMLElement");
     testTag("big", "HTMLElement");
-    testTag("blockquote", "HTMLBlockquoteElement");
+    testTag("blockquote", "HTMLBlockquoteElement", "DOMHTMLElement");
     testTag("body", "HTMLBodyElement");
     testTag("br", "HTMLBRElement");
     testTag("button", "HTMLButtonElement");
@@ -256,6 +246,29 @@ function runTest()
     testTag("wbr", "HTMLElement");
     testTag("xmp", "HTMLPreElement");
     
+    debug('');
+    debug('JavaScript types');
+    debug('');
+
+    shouldBe("objCWrapperClass(null)", "'nil'");
+    shouldBe("objCWrapperClass(undefined)", "'WebUndefined'");
+    shouldBe("objCWrapperClass(0)", "'NSCFNumber'");
+    shouldBe("objCWrapperClass(1)", "'NSCFNumber'");
+    shouldBe("objCWrapperClass(false)", "'NSCFBoolean'");
+    shouldBe("objCWrapperClass(true)", "'NSCFBoolean'");
+    shouldBe("objCWrapperClass('')", "'NSCFString'");
+    shouldBe("objCWrapperClass({ })", "'WebScriptObject'");
+    shouldBe("objCWrapperClass([ ])", "'WebScriptObject'");
+
+    shouldBe("objCObjectOfClass('NSNull')", "null"); // can't test with typeof because typeof null is 'object'
+    shouldBe("typeof objCObjectOfClass('')", "'undefined'");
+    shouldBe("typeof objCObjectOfClass('WebUndefined')", "'undefined'");
+    shouldBe("typeof objCObjectOfClass('NSCFBoolean')", "'boolean'");
+    shouldBe("typeof objCObjectOfClass('NSCFNumber')", "'number'");
+    shouldBe("typeof objCObjectOfClass('NSCFString')", "'string'");
+    shouldBe("typeof objCObjectOfClass('WebScriptObject')", "'object'");
+    shouldBeTrue("objCObjectOfClass('NSArray') instanceof Array");
+
     // Not yet tested:
 
     // CSSCharsetRule
