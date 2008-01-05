@@ -1,3 +1,13 @@
+2008-01-04  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej and Alice.
+
+        - test for <rdar://problem/4404302> Borders where there should be none (canadasmountains.com)
+
+        * fast/images/border.html: Added.
+        * fast/images/resources/TEMPLATE.html: Copied from fast/js/resources/TEMPLATE.html.
+        * fast/images/resources/border.js: Added.
+
 2008-01-04  Alice Liu  <alice.liu@apple.com>
 
         Reviewed by Alexey and Darin.

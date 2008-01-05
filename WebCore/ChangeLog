@@ -1,3 +1,17 @@
+2008-01-04  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej and Alice.
+
+        - fix <rdar://problem/4404302> Borders where there should be none (canadasmountains.com)
+
+        Test: fast/images/border.html
+
+        * html/HTMLImageElement.cpp:
+        (WebCore::HTMLImageElement::parseMappedAttribute): Change the code that handles cases
+        where the border value is not a number to use the value "0" for the border width instead
+        of not setting the border width and style at all. This matches other browsers, and makes
+        more sense.
+
 2008-01-04  Antti Koivisto  <antti@apple.com>
 
         Try to fix 64-bit build

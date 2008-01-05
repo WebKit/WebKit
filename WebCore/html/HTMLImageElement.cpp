@@ -1,9 +1,7 @@
-/**
- * This file is part of the DOM implementation for KDE.
- *
+/*
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
- * Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.
+ * Copyright (C) 2004, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -99,13 +97,11 @@ void HTMLImageElement::parseMappedAttribute(MappedAttribute* attr)
         addCSSLength(attr, CSS_PROP_HEIGHT, attr->value());
     else if (attrName == borderAttr) {
         // border="noborder" -> border="0"
-        if(attr->value().toInt()) {
-            addCSSLength(attr, CSS_PROP_BORDER_WIDTH, attr->value());
-            addCSSProperty(attr, CSS_PROP_BORDER_TOP_STYLE, CSS_VAL_SOLID);
-            addCSSProperty(attr, CSS_PROP_BORDER_RIGHT_STYLE, CSS_VAL_SOLID);
-            addCSSProperty(attr, CSS_PROP_BORDER_BOTTOM_STYLE, CSS_VAL_SOLID);
-            addCSSProperty(attr, CSS_PROP_BORDER_LEFT_STYLE, CSS_VAL_SOLID);
-        }
+        addCSSLength(attr, CSS_PROP_BORDER_WIDTH, attr->value().toInt() ? attr->value() : "0");
+        addCSSProperty(attr, CSS_PROP_BORDER_TOP_STYLE, CSS_VAL_SOLID);
+        addCSSProperty(attr, CSS_PROP_BORDER_RIGHT_STYLE, CSS_VAL_SOLID);
+        addCSSProperty(attr, CSS_PROP_BORDER_BOTTOM_STYLE, CSS_VAL_SOLID);
+        addCSSProperty(attr, CSS_PROP_BORDER_LEFT_STYLE, CSS_VAL_SOLID);
     } else if (attrName == vspaceAttr) {
         addCSSLength(attr, CSS_PROP_MARGIN_TOP, attr->value());
         addCSSLength(attr, CSS_PROP_MARGIN_BOTTOM, attr->value());
