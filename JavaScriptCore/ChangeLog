@@ -1,3 +1,14 @@
+2008-01-04  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Have the two malloc zones print useful diagnostics if their free method are unexpectedly invoked.
+        Due to <rdar://problem/5671357> this can happen if an application attempts to free a pointer that
+        was not allocated by any registered malloc zone on the system.
+
+        * kjs/CollectorHeapIntrospector.h:
+        * wtf/FastMalloc.cpp:
+
 2008-01-04  Alp Toker  <alp@atoker.com>
 
         GTK+ autotools build fix. Terminate empty rules.

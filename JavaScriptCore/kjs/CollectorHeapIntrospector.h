@@ -53,10 +53,17 @@ private:
     static size_t size(malloc_zone_t*, const void*) { return 0; }
     static void* zoneMalloc(malloc_zone_t*, size_t) { LOG_ERROR("malloc is not supported"); return 0; }
     static void* zoneCalloc(malloc_zone_t*, size_t, size_t) { LOG_ERROR("calloc is not supported"); return 0; }
-    static void zoneFree(malloc_zone_t*, void*) { LOG_ERROR("free is not supported"); }
     static void* zoneRealloc(malloc_zone_t*, void*, size_t) { LOG_ERROR("realloc is not supported"); return 0; }
     static void* zoneValloc(malloc_zone_t*, size_t) { LOG_ERROR("valloc is not supported"); return 0; }
     static void zoneDestroy(malloc_zone_t*) { }
+
+    static void zoneFree(malloc_zone_t*, void* ptr)
+    {
+        // Due to <rdar://problem/5671357> zoneFree may be called by the system free even if the pointer
+        // is not in this zone.  When this happens, the pointer being freed was not allocated by any
+        // zone so we need to print a useful error for the application developer.
+        malloc_printf("*** error for object %p: pointer being freed was not allocated\n", ptr);
+    }
 
     malloc_zone_t m_zone;
     CollectorHeap* m_primaryHeap;

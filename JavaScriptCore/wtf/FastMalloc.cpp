@@ -3573,8 +3573,12 @@ void* FastMallocZone::zoneCalloc(malloc_zone_t*, size_t, size_t)
     return 0;
 }
 
-void FastMallocZone::zoneFree(malloc_zone_t*, void*)
+void FastMallocZone::zoneFree(malloc_zone_t*, void* ptr)
 {
+    // Due to <rdar://problem/5671357> zoneFree may be called by the system free even if the pointer
+    // is not in this zone.  When this happens, the pointer being freed was not allocated by any
+    // zone so we need to print a useful error for the application developer.
+    malloc_printf("*** error for object %p: pointer being freed was not allocated\n", ptr);
 }
 
 void* FastMallocZone::zoneRealloc(malloc_zone_t*, void*, size_t)
