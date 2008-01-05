@@ -47,8 +47,8 @@ namespace WTF {
         bool operator!() const { return !m_ptr; }
 
         // This conversion operator allows implicit conversion to bool but not to other integer types.
-        typedef T* (OwnArrayPtr::*UnspecifiedBoolType)() const;
-        operator UnspecifiedBoolType() const { return m_ptr ? &OwnArrayPtr::get : 0; }
+        typedef T* OwnArrayPtr::*UnspecifiedBoolType;
+        operator UnspecifiedBoolType() const { return m_ptr ? &OwnArrayPtr::m_ptr : 0; }
 
         void swap(OwnArrayPtr& o) { std::swap(m_ptr, o.m_ptr); }
 

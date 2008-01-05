@@ -1,3 +1,18 @@
+2008-01-05  Darin Adler  <darin@apple.com>
+
+        Rubber stamped by Maciej Stachowiak.
+
+        - cut down own PIC branches by using a pointer-to-member-data instead of a
+          pointer-to-member-function in WTF smart pointers
+
+        * wtf/OwnArrayPtr.h:
+        * wtf/OwnPtr.h:
+        * wtf/PassRefPtr.h:
+        * wtf/RefPtr.h:
+        * wtf/RetainPtr.h:
+        Use a pointer to the m_ptr member instead of the get member.
+        The GCC compiler generates better code for this idiom.
+
 2008-01-05  Henry Mason  <hmason@mac.com>
 
         Reviewed by Maciej Stachowiak.

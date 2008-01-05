@@ -57,8 +57,8 @@ namespace WTF {
         bool operator!() const { return !m_ptr; }
 
         // This conversion operator allows implicit conversion to bool but not to other integer types.
-        typedef T* (PassRefPtr::*UnspecifiedBoolType)() const;
-        operator UnspecifiedBoolType() const { return m_ptr ? &PassRefPtr::get : 0; }
+        typedef T* PassRefPtr::*UnspecifiedBoolType;
+        operator UnspecifiedBoolType() const { return m_ptr ? &PassRefPtr::m_ptr : 0; }
         
         PassRefPtr& operator=(T*);
         PassRefPtr& operator=(const PassRefPtr&);
