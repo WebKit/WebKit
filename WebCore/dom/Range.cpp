@@ -1054,6 +1054,12 @@ void Range::insertNode(PassRefPtr<Node> newNode, ExceptionCode& ec)
         return;
     }
 
+    unsigned offsetDelta = 0;
+    if (m_startContainer == m_endContainer) {
+        bool isFragment = newNode->nodeType() == Node::DOCUMENT_FRAGMENT_NODE;
+        offsetDelta = isFragment ? newNode->childNodeCount() : 1;
+    }
+    
     if(m_startContainer->nodeType() == Node::TEXT_NODE ||
        m_startContainer->nodeType() == Node::CDATA_SECTION_NODE) {
         ec = 0;
@@ -1064,6 +1070,8 @@ void Range::insertNode(PassRefPtr<Node> newNode, ExceptionCode& ec)
     } else {
         m_startContainer->insertBefore(newNode, m_startContainer->childNode(m_startOffset), ec);
     }
+    
+    m_endOffset += offsetDelta;
 }
 
 String Range::toString(ExceptionCode& ec) const
