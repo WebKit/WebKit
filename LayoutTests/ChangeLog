@@ -1,3 +1,17 @@
+2008-01-06  Andrew Wellington  <proton@wiretapped.net>
+
+        Reviewed by Darin.
+        
+        DOMRange.cloneContents does not work (Acid3 bug)
+        http://bugs.webkit.org/show_bug.cgi?id=16748
+        
+        When cloning an empty range, return an empty DocmentFragment instead of
+        null or undefined.
+
+        * fast/dom/Range/range-clone-empty-expected.txt: Added.
+        * fast/dom/Range/range-clone-empty.html: Added.
+        * fast/dom/Range/resources/range-clone-empty.js: Added.
+
 2008-01-06  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Sam.
