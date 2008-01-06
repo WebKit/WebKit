@@ -406,7 +406,7 @@ void ATSULayoutParameters::initialize(const Font* font, const GraphicsContext* g
                 else
                     break;
             }
-            if (!shapedArabic && ublock_getCode(m_run[i]) == UBLOCK_ARABIC && !r->shapesArabic()) {
+            if (!shapedArabic && WTF::Unicode::isArabicChar(m_run[i]) && !r->shapesArabic()) {
                 shapedArabic = true;
                 if (!m_charBuffer) {
                     m_charBuffer = new UChar[runLength];

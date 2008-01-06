@@ -310,6 +310,11 @@ namespace WTF {
       return QChar::category(c) == QChar::Other_Format;
     }
 
+    inline bool isArabicChar(UChar32 c)
+    {
+        return c >= 0x0600 && c <= 0x06FF;
+    }
+
     inline bool isPrintableChar(UChar32 c)
     {
       const uint test = U_MASK(QChar::Other_Control) |
@@ -453,6 +458,11 @@ namespace WTF {
     inline bool isPrintableChar(UChar32 c)
     {
       return (c & 0xffff0000) == 0 && QChar((unsigned short)c).isPrint();
+    }
+
+    inline bool isArabicChar(UChar32 c)
+    {
+        return c >= 0x0600 && c <= 0x06FF;
     }
 
     inline bool isSeparatorSpace(UChar32 c)

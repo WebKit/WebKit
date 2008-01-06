@@ -1,3 +1,12 @@
+2008-01-06  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Dan.
+
+        Use new helper function isArabicChar() - which also calls ublock_getCode() == UBLOCK_ARABIC on mac.
+
+        * platform/graphics/mac/FontMac.mm:
+        (WebCore::ATSULayoutParameters::initialize):
+
 2008-01-06  Andrew Wellington  <proton@wiretapped.net>
 
         Reviewed by Darin.

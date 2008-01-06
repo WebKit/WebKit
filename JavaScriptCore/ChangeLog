@@ -1,3 +1,14 @@
+2008-01-06  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Dan.
+
+        Add new helper function isArabicChar - SVG Fonts support needs it.
+
+        * wtf/unicode/icu/UnicodeIcu.h:
+        (WTF::Unicode::isArabicChar):
+        * wtf/unicode/qt4/UnicodeQt4.h:
+        (WTF::Unicode::isArabicChar):
+
 2008-01-06  Alp Toker  <alp@atoker.com>
 
         Reviewed by Mark Rowe.
