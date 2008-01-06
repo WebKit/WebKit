@@ -1409,6 +1409,73 @@ CSSStyleSelector::SelectorMatch CSSStyleSelector::checkSelector(CSSSelector* sel
     return SelectorFailsCompletely;
 }
 
+static void addLocalNameToSet(HashSet<AtomicStringImpl*>* set, const QualifiedName& qName)
+{
+    set->add(qName.localName().impl());
+}
+
+static HashSet<AtomicStringImpl*>* createHtmlCaseInsensitiveAttributesSet()
+{
+    // This is the list of attributes in HTML 4.01 with values marked as "[CI]" or case-insensitive
+    // Mozilla treats all other values as case-sensitive, thus so do we.
+    HashSet<AtomicStringImpl*>* attrSet = new HashSet<AtomicStringImpl*>;
+
+    addLocalNameToSet(attrSet, accept_charsetAttr);
+    addLocalNameToSet(attrSet, acceptAttr);
+    addLocalNameToSet(attrSet, alignAttr);
+    addLocalNameToSet(attrSet, alinkAttr);
+    addLocalNameToSet(attrSet, axisAttr);
+    addLocalNameToSet(attrSet, bgcolorAttr);
+    addLocalNameToSet(attrSet, charsetAttr);
+    addLocalNameToSet(attrSet, checkedAttr);
+    addLocalNameToSet(attrSet, clearAttr);
+    addLocalNameToSet(attrSet, codetypeAttr);
+    addLocalNameToSet(attrSet, colorAttr);
+    addLocalNameToSet(attrSet, compactAttr);
+    addLocalNameToSet(attrSet, declareAttr);
+    addLocalNameToSet(attrSet, deferAttr);
+    addLocalNameToSet(attrSet, dirAttr);
+    addLocalNameToSet(attrSet, disabledAttr);
+    addLocalNameToSet(attrSet, enctypeAttr);
+    addLocalNameToSet(attrSet, faceAttr);
+    addLocalNameToSet(attrSet, frameAttr);
+    addLocalNameToSet(attrSet, hreflangAttr);
+    addLocalNameToSet(attrSet, http_equivAttr);
+    addLocalNameToSet(attrSet, langAttr);
+    addLocalNameToSet(attrSet, languageAttr);
+    addLocalNameToSet(attrSet, linkAttr);
+    addLocalNameToSet(attrSet, mediaAttr);
+    addLocalNameToSet(attrSet, methodAttr);
+    addLocalNameToSet(attrSet, multipleAttr);
+    addLocalNameToSet(attrSet, nohrefAttr);
+    addLocalNameToSet(attrSet, noresizeAttr);
+    addLocalNameToSet(attrSet, noshadeAttr);
+    addLocalNameToSet(attrSet, nowrapAttr);
+    addLocalNameToSet(attrSet, readonlyAttr);
+    addLocalNameToSet(attrSet, relAttr);
+    addLocalNameToSet(attrSet, revAttr);
+    addLocalNameToSet(attrSet, rulesAttr);
+    addLocalNameToSet(attrSet, scopeAttr);
+    addLocalNameToSet(attrSet, scrollingAttr);
+    addLocalNameToSet(attrSet, selectedAttr);
+    addLocalNameToSet(attrSet, shapeAttr);
+    addLocalNameToSet(attrSet, targetAttr);
+    addLocalNameToSet(attrSet, textAttr);
+    addLocalNameToSet(attrSet, typeAttr);
+    addLocalNameToSet(attrSet, valignAttr);
+    addLocalNameToSet(attrSet, valuetypeAttr);
+    addLocalNameToSet(attrSet, vlinkAttr);
+
+    return attrSet;
+}
+
+static bool htmlAttributeHasCaseInsensitiveValue(const QualifiedName& attr)
+{
+    static HashSet<AtomicStringImpl*>* htmlCaseInsensitiveAttributesSet = createHtmlCaseInsensitiveAttributesSet();
+    bool isPossibleHTMLAttr = !attr.hasPrefix() && (attr.namespaceURI() == nullAtom);
+    return isPossibleHTMLAttr && htmlCaseInsensitiveAttributesSet->contains(attr.localName().impl());
+}
+
 bool CSSStyleSelector::checkOneSelector(CSSSelector* sel, Element* e, bool isAncestor, bool isSubSelector)
 {
     if (!e)
@@ -1446,9 +1513,11 @@ bool CSSStyleSelector::checkOneSelector(CSSSelector* sel, Element* e, bool isAnc
         if (value.isNull())
             return false; // attribute is not set
 
+        bool caseSensitive = isXMLDoc || !htmlAttributeHasCaseInsensitiveValue(sel->m_attr);
+
         switch (sel->m_match) {
         case CSSSelector::Exact:
-            if ((isXMLDoc && sel->m_value != value) || (!isXMLDoc && !equalIgnoringCase(sel->m_value, value)))
+            if (caseSensitive ? sel->m_value != value : !equalIgnoringCase(sel->m_value, value))
                 return false;
             break;
         case CSSSelector::List:
@@ -1459,7 +1528,7 @@ bool CSSStyleSelector::checkOneSelector(CSSSelector* sel, Element* e, bool isAnc
 
             int startSearchAt = 0;
             while (true) {
-                int foundPos = value.find(sel->m_value, startSearchAt, isXMLDoc);
+                int foundPos = value.find(sel->m_value, startSearchAt, caseSensitive);
                 if (foundPos == -1)
                     return false;
                 if (foundPos == 0 || value[foundPos-1] == ' ') {
@@ -1474,21 +1543,21 @@ bool CSSStyleSelector::checkOneSelector(CSSSelector* sel, Element* e, bool isAnc
             break;
         }
         case CSSSelector::Contain:
-            if (!value.contains(sel->m_value, isXMLDoc))
+            if (!value.contains(sel->m_value, caseSensitive))
                 return false;
             break;
         case CSSSelector::Begin:
-            if (!value.startsWith(sel->m_value, isXMLDoc))
+            if (!value.startsWith(sel->m_value, caseSensitive))
                 return false;
             break;
         case CSSSelector::End:
-            if (!value.endsWith(sel->m_value, isXMLDoc))
+            if (!value.endsWith(sel->m_value, caseSensitive))
                 return false;
             break;
         case CSSSelector::Hyphen:
             if (value.length() < sel->m_value.length())
                 return false;
-            if (!value.startsWith(sel->m_value, isXMLDoc))
+            if (!value.startsWith(sel->m_value, caseSensitive))
                 return false;
             // It they start the same, check for exact match or following '-':
             if (value.length() != sel->m_value.length() && value[sel->m_value.length()] != '-')
@@ -1500,8 +1569,7 @@ bool CSSStyleSelector::checkOneSelector(CSSSelector* sel, Element* e, bool isAnc
             break;
         }
     }
-    if (sel->m_match == CSSSelector::PseudoClass) 
-    {
+    if (sel->m_match == CSSSelector::PseudoClass) {
         switch (sel->pseudoType()) {
             // Pseudo classes:
             case CSSSelector::PseudoEmpty:

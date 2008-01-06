@@ -62,6 +62,21 @@
 
 2008-01-06  Eric Seidel  <eric@webkit.org>
 
+        Reviewed by darin.
+
+        Make attr selectors case-insensitive for certain HTML attributes
+        http://bugs.webkit.org/show_bug.cgi?id=15470
+
+        Test: fast/css/html-attr-case-sensitivity.html
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::addLocalNameToSet):
+        (WebCore::createHtmlCaseInsensitiveAttributesSet):
+        (WebCore::htmlAttributeHasCaseInsensitiveValue):
+        (WebCore::CSSStyleSelector::checkOneSelector):
+
+2008-01-06  Eric Seidel  <eric@webkit.org>
+
         Reviewed by Sam.
 
         Fix :checked matching type='text' and add test case
