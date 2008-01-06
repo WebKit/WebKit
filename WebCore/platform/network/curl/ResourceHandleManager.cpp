@@ -514,10 +514,12 @@ void ResourceHandleManager::cancel(ResourceHandle* job)
 {
     if (removeScheduledJob(job))
         return;
-    ResourceHandleInternal* d = job->getInternal();
-    d->m_cancelled = true;
-    if (!m_downloadTimer.isActive())
-        m_downloadTimer.startOneShot(pollTimeSeconds);
+
+    if (m_downloadTimer.isActive()) {
+        ResourceHandleInternal* d = job->getInternal();
+        d->m_cancelled = true;
+    } else
+        removeFromCurl(job);
 }
 
 } // namespace WebCore
