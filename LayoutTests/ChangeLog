@@ -1,3 +1,9 @@
+2008-01-06  Sam Weinig  <sam@webkit.org>
+
+        Add missing expected result.
+
+        * fast/dom/TreeWalker/TreeWalker-currentNode-expected.txt: Added.
+
 2008-01-06  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin.
