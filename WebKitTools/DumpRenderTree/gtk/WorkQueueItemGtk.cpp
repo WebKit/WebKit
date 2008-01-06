@@ -56,9 +56,7 @@ void LoadItem::invoke() const
 
 void ReloadItem::invoke() const
 {
-    // TODO: Why not just reload the frame?
-    WebKitWebView* webView = webkit_web_frame_get_web_view(mainFrame);
-    webkit_web_view_reload(webView);
+    webkit_web_frame_reload(mainFrame);
 }
 
 void ScriptItem::invoke() const

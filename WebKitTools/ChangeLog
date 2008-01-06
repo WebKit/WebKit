@@ -1,3 +1,14 @@
+2008-01-05  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Alp Toker.
+
+        Fix hang in fast/frames/frame-display-none-focus.html during Gtk layout tests.
+
+        * DumpRenderTree/gtk/DumpRenderTree.cpp:
+        (processWork): Process pending work.
+        (webViewLoadFinished): Schedule processing of pending work.
+        * DumpRenderTree/gtk/WorkQueueItemGtk.cpp: Use webkit_web_frame_reload.
+
 2008-01-05  Darin Adler  <darin@apple.com>
 
         * Scripts/do-webcore-rename: Some more renaming plans.

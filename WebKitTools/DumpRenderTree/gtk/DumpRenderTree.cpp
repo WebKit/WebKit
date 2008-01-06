@@ -39,6 +39,8 @@
 #include <JavaScriptCore/JSStringRef.h>
 #include <JavaScriptCore/JSValueRef.h>
 
+#include <wtf/Assertions.h>
+
 #include <cassert>
 #include <getopt.h>
 #include <stdlib.h>
@@ -240,6 +242,23 @@ void webViewLoadStarted(WebKitWebView* view, WebKitWebFrame* frame, void*)
         topLoadingFrame = frame;
 }
 
+static gboolean processWork(void* data)
+{
+    // quit doing work once a load is in progress
+    while (WorkQueue::shared()->count() > 0 && !topLoadingFrame) {
+        WorkQueueItem* item = WorkQueue::shared()->dequeue();
+        ASSERT(item);
+        item->invoke();
+        delete item;
+    }
+
+    // if we didn't start a new load, then we finished all the commands, so we're ready to dump state
+    if (!topLoadingFrame && !layoutTestController->waitToDump())
+        dump();
+
+    return FALSE;
+}
+
 void webViewLoadFinished(WebKitWebView* view, WebKitWebFrame* frame, void*)
 {
     if (frame != topLoadingFrame)
@@ -251,7 +270,7 @@ void webViewLoadFinished(WebKitWebView* view, WebKitWebFrame* frame, void*)
         return;
 
     if (WorkQueue::shared()->count())
-        fprintf(stderr, "FIXME: [self performSelector:@selector(processWork:) withObject:nil afterDelay:0];\n");
+        g_timeout_add(0, processWork, 0);
      else
         dump();
 }
