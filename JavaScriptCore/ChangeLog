@@ -1,5 +1,9 @@
 2008-01-05  Darin Adler  <darin@apple.com>
 
+        * API/JSRetainPtr.h: One more file that needed the change below.
+
+2008-01-05  Darin Adler  <darin@apple.com>
+
         * wtf/OwnPtr.h: OwnPtr needs the same fix as RefPtr below.
 
 2008-01-05  Adam Roben  <aroben@apple.com>
