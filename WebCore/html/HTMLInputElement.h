@@ -70,7 +70,8 @@ public:
 
     bool autoComplete() const { return m_autocomplete; }
 
-    virtual bool isChecked() const { return checked(); }
+    // isChecked is used by the rendering tree/CSS while checked() is used by JS to determine checked state
+    virtual bool isChecked() const { return checked() && (inputType() == CHECKBOX || inputType() == RADIO); }
     virtual bool isIndeterminate() const { return indeterminate(); }
     
     bool readOnly() const { return isReadOnlyControl(); }
