@@ -26,16 +26,17 @@
  */
 
 #include "config.h"
-#if ENABLE(SVG)
 
-#include <wtf/Assertions.h>
+#if ENABLE(SVG)
+#include "RenderPath.h"
 
 #include <ApplicationServices/ApplicationServices.h>
 #include "CgSupport.h"
-#include "RenderPath.h"
+#include "GraphicsContext.h"
 #include "SVGPaintServer.h"
 #include "SVGRenderStyle.h"
 #include "SVGStyledElement.h"
+#include <wtf/Assertions.h>
 
 namespace WebCore {
 
@@ -63,7 +64,10 @@ bool RenderPath::strokeContains(const FloatPoint& point, bool requiresStroke) co
     
     CGContextBeginPath(context);
     CGContextAddPath(context, cgPath);
-    applyStrokeStyleToContext(context, style(), this);
+
+    GraphicsContext gc(context);
+    applyStrokeStyleToContext(&gc, style(), this);
+
     bool hitSuccess = CGContextPathContainsPoint(context, point, kCGPathStroke);
     CGContextRestoreGState(context);
     

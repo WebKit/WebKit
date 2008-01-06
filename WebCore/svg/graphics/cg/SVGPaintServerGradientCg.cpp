@@ -320,7 +320,7 @@ bool SVGPaintServerGradient::setup(GraphicsContext*& context, const RenderObject
     }
 
     if (isStroked)
-        applyStrokeStyleToContext(contextRef, style, object);
+        applyStrokeStyleToContext(context, style, object);
 
     return true;
 }

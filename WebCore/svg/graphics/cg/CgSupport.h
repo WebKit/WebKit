@@ -39,39 +39,14 @@ class Path;
 class FloatRect;
 class RenderStyle;
 class RenderObject;
+class GraphicsContext;
 
-CFStringRef CFStringFromCGPath(CGPathRef);
-CFStringRef CFStringFromCGAffineTransform(CGAffineTransform);
 CGAffineTransform CGAffineTransformMakeMapBetweenRects(CGRect source, CGRect dest);
 
-void applyStrokeStyleToContext(CGContextRef, RenderStyle*, const RenderObject*);
+void applyStrokeStyleToContext(GraphicsContext*, RenderStyle*, const RenderObject*);
 
 CGContextRef scratchContext();
 FloatRect strokeBoundingBox(const Path& path, RenderStyle*, const RenderObject*);
-
-static inline CGLineCap CGLineCapFromKC(LineCap cap)
-{
-    if (cap == ButtCap)
-        return kCGLineCapButt;
-    else if (cap == RoundCap)
-        return kCGLineCapRound;
-    else if (cap == SquareCap)
-        return kCGLineCapSquare;
-    
-    return kCGLineCapButt;
-}
-
-static inline CGLineJoin CGLineJoinFromKC(LineJoin join)
-{
-    if (join == MiterJoin)
-        return kCGLineJoinMiter;
-    else if (join == RoundJoin)
-        return kCGLineJoinRound;
-    else if (join == BevelJoin)
-        return kCGLineJoinBevel;
-    
-    return kCGLineJoinMiter;
-}
 
 }
 

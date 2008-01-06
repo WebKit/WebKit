@@ -59,7 +59,7 @@ bool SVGPaintServerSolid::setup(GraphicsContext*& context, const RenderObject* o
         CGContextSetStrokeColorSpace(contextRef, deviceRGBColorSpace);
         CGContextSetStrokeColor(contextRef, colorComponents);
 
-        applyStrokeStyleToContext(contextRef, style, object);
+        applyStrokeStyleToContext(context, style, object);
 
         if (isPaintingText)
             context->setTextDrawingMode(cTextStroke);

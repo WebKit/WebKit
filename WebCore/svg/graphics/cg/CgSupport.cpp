@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2005 Apple Computer, Inc.  All rights reserved.
  *               2006 Rob Buis <buis@kde.org>
+ *               2008 Nikolas Zimmermann <zimmermann@kde.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,10 +27,11 @@
 
 
 #include "config.h"
+
 #if ENABLE(SVG)
-#include <ApplicationServices/ApplicationServices.h>
 #include "CgSupport.h"
 
+#include <ApplicationServices/ApplicationServices.h>
 #include "FloatConversion.h"
 #include "GraphicsContext.h"
 #include "RenderStyle.h"
@@ -39,11 +41,6 @@
 
 namespace WebCore {
 
-CFStringRef CFStringFromCGAffineTransform(CGAffineTransform t)
-{
-    return CFStringCreateWithFormat(0, 0, CFSTR("a: %f b: %f c: %f d: %f tx: %f ty: %f"), t.a, t.b, t.c, t.d, t.tx, t.ty);
-}
-
 CGAffineTransform CGAffineTransformMakeMapBetweenRects(CGRect source, CGRect dest)
 {
     CGAffineTransform transform = CGAffineTransformMakeTranslation(dest.origin.x - source.origin.x, dest.origin.y - source.origin.y);
@@ -51,20 +48,17 @@ CGAffineTransform CGAffineTransformMakeMapBetweenRects(CGRect source, CGRect des
     return transform;
 }
 
-void applyStrokeStyleToContext(CGContextRef context, RenderStyle* style, const RenderObject* object)
+void applyStrokeStyleToContext(GraphicsContext* context, RenderStyle* style, const RenderObject* object)
 {
-    /* Shouldn't all these be in the stroke painter? */
-    CGContextSetLineWidth(context, SVGRenderStyle::cssPrimitiveToLength(object, style->svgStyle()->strokeWidth(), 1.0f));
-
-    CGContextSetLineCap(context, CGLineCapFromKC(style->svgStyle()->capStyle()));
-    CGContextSetLineJoin(context, CGLineJoinFromKC(style->svgStyle()->joinStyle()));
-
-    CGContextSetMiterLimit(context, style->svgStyle()->strokeMiterLimit());
+    context->setStrokeThickness(SVGRenderStyle::cssPrimitiveToLength(object, style->svgStyle()->strokeWidth(), 1.0f));
+    context->setLineCap(style->svgStyle()->capStyle());
+    context->setLineJoin(style->svgStyle()->joinStyle());
+    context->setMiterLimit(style->svgStyle()->strokeMiterLimit());
 
     const DashArray& dashes = dashArrayFromRenderingStyle(style);
     double dashOffset = SVGRenderStyle::cssPrimitiveToLength(object, style->svgStyle()->strokeDashOffset(), 0.0f);
 
-    CGContextSetLineDash(context, narrowPrecisionToCGFloat(dashOffset), dashes.data(), dashes.size());
+    CGContextSetLineDash(context->platformContext(), narrowPrecisionToCGFloat(dashOffset), dashes.data(), dashes.size());
 }
 
 CGContextRef scratchContext()
@@ -102,7 +96,10 @@ FloatRect strokeBoundingBox(const Path& path, RenderStyle* style, const RenderOb
 
     CGContextBeginPath(context);
     CGContextAddPath(context, cgPath);
-    applyStrokeStyleToContext(context, style, object);
+
+    GraphicsContext gc(context);
+    applyStrokeStyleToContext(&gc, style, object);
+
     CGContextReplacePathWithStrokedPath(context);
     if (CGContextIsPathEmpty(context)) {
         // CGContextReplacePathWithStrokedPath seems to fail to create a path sometimes, this is not well understood.
@@ -110,8 +107,8 @@ FloatRect strokeBoundingBox(const Path& path, RenderStyle* style, const RenderOb
         CGContextRestoreGState(context);
         return FloatRect();
     }
+
     CGRect box = CGContextGetPathBoundingBox(context);
-        
     CGContextRestoreGState(context);
 
     return FloatRect(box);

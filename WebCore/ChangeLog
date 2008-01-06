@@ -1,5 +1,24 @@
 2008-01-06  Nikolas Zimmermann  <zimmermann@kde.org>
 
+        Reviewed by Oliver.
+
+        Small CG paint server cleanups - use more GraphicsContext method where possible.
+
+        * svg/graphics/cg/CgSupport.cpp:
+        (WebCore::applyStrokeStyleToContext):
+        (WebCore::strokeBoundingBox):
+        * svg/graphics/cg/CgSupport.h:
+        * svg/graphics/cg/RenderPathCg.cpp:
+        (WebCore::RenderPath::strokeContains):
+        * svg/graphics/cg/SVGPaintServerGradientCg.cpp:
+        (WebCore::SVGPaintServerGradient::setup):
+        * svg/graphics/cg/SVGPaintServerPatternCg.cpp:
+        (WebCore::SVGPaintServerPattern::setup):
+        * svg/graphics/cg/SVGPaintServerSolidCg.cpp:
+        (WebCore::SVGPaintServerSolid::setup):
+
+2008-01-06  Nikolas Zimmermann  <zimmermann@kde.org>
+
         Reviewed by Dan.
 
         Use new helper function isArabicChar() - which also calls ublock_getCode() == UBLOCK_ARABIC on mac.
