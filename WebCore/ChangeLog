@@ -1,3 +1,23 @@
+2008-01-05  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Patch for http://bugs.webkit.org/show_bug.cgi?id=16758
+        ASSERT when using TreeWalker methods for a current node outside of the root (Acid3)
+
+        - Ensure that returned nodes are within the root node, or return 0, in adherence with the spec.
+
+        Test: fast/dom/TreeWalker/TreeWalker-currentNode.html
+
+        * dom/TreeWalker.cpp:
+        (WebCore::TreeWalker::parentNode):
+        (WebCore::TreeWalker::firstChild):
+        (WebCore::TreeWalker::lastChild):
+        (WebCore::TreeWalker::previousSibling):
+        (WebCore::TreeWalker::nextSibling):
+        (WebCore::TreeWalker::previousNode):
+        (WebCore::TreeWalker::nextNode):
+
 2008-01-04  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Beth Dakin.

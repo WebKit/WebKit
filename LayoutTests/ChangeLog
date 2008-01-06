@@ -1,3 +1,15 @@
+2008-01-05  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Test for http://bugs.webkit.org/show_bug.cgi?id=16758
+        ASSERT when using TreeWalker methods for a current node outside of the root (Acid3)
+
+        * fast/dom/TreeWalker: Added.
+        * fast/dom/TreeWalker/TreeWalker-currentNode.html: Added.
+        * fast/dom/TreeWalker/resources: Added.
+        * fast/dom/TreeWalker/resources/TreeWalker-currentNode.js: Added.
+
 2008-01-04  Dan Bernstein  <mitz@apple.com>
 
         - update the list of tests failing on Windows because of font
