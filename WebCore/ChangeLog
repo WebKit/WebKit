@@ -2,6 +2,18 @@
 
         Reviewed by Darin.
 
+        http://bugs.webkit.org/show_bug.cgi?id=16731
+        Incorrect node type for whitespace when setting innerHTML in an XHTML document
+
+        Test: fast/dom/xhtml-fragment-whitespace.xhtml
+
+        * dom/XMLTokenizer.cpp: (WebCore::parseXMLDocumentFragment):
+        Use balancedCharactersHandler for ignorable whitespace.
+
+2008-01-06  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
         http://bugs.webkit.org/show_bug.cgi?id=16701
         <rdar://problem/5666580> REGRESSION: URL-encoded space (%20) in livejournal url
         causes page load error
