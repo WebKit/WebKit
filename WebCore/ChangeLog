@@ -1,3 +1,16 @@
+2008-01-06  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        http://bugs.webkit.org/show_bug.cgi?id=16701
+        <rdar://problem/5666580> REGRESSION: URL-encoded space (%20) in livejournal url
+        causes page load error
+
+        Test: http/tests/misc/location-with-space.php
+
+        * platform/network/cf/ResourceRequestCFNet.cpp:
+        (WebCore::ResourceRequest::doUpdatePlatformRequest): Do update its URL, too.
+
 2008-01-06  Andrew Wellington  <proton@wiretapped.net>
 
         Reviewed by Darin.

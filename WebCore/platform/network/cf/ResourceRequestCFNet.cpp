@@ -59,12 +59,13 @@ void ResourceRequest::doUpdatePlatformRequest()
 {
     CFMutableURLRequestRef cfRequest;
 
-    if (m_cfRequest) 
+    RetainPtr<CFURLRef> url(AdoptCF, ResourceRequest::url().createCFURL());
+    RetainPtr<CFURLRef> mainDocumentURL(AdoptCF, ResourceRequest::mainDocumentURL().createCFURL());
+    if (m_cfRequest) {
         cfRequest = CFURLRequestCreateMutableCopy(0, m_cfRequest.get());
-    else {
-        RetainPtr<CFURLRef> url(AdoptCF, ResourceRequest::url().createCFURL());
-        RetainPtr<CFURLRef> mainDocumentURL(AdoptCF, ResourceRequest::mainDocumentURL().createCFURL());
-
+        CFURLRequestSetURL(cfRequest, url.get());
+        CFURLRequestSetMainDocumentURL(cfRequest, mainDocumentURL.get());
+    } else {
         cfRequest = CFURLRequestCreateMutable(0, url.get(), (CFURLRequestCachePolicy)cachePolicy(), timeoutInterval(), mainDocumentURL.get());
     }
 
