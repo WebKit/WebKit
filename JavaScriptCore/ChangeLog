@@ -1,3 +1,16 @@
+2008-01-06  Alp Toker  <alp@atoker.com>
+
+        Reviewed by Mark Rowe.
+
+        Use $(EXEEXT) to account for the .exe extension in the GTK+ Windows
+        build. (This is already done correctly in DerivedSources.make.) Issue
+        noticed by Mikkel when building in Cygwin.
+
+        Add a missing slash. This was a hack from the qmake build system that
+        isn't necessary with autotools.
+
+        * GNUmakefile.am:
+
 2008-01-05  Darin Adler  <darin@apple.com>
 
         * API/JSRetainPtr.h: One more file that needed the change below.

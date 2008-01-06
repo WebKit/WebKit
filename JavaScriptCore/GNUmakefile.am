@@ -125,7 +125,7 @@ DerivedSources/grammar.cpp: $(srcdir)/JavaScriptCore/kjs/grammar.y
 	$(BISON) -d -p kjsyy $(srcdir)/JavaScriptCore/kjs/grammar.y -o $@ > bison_out.txt 2>&1
 	$(PERL) -p -e 'END { if ($$conflict) { unlink "grammar.cpp"; die; } } $$conflict ||= /conflict/' < bison_out.txt
 	cat $(GENSOURCES)/grammar.hpp > $(GENSOURCES)/grammar.h
-	rm -f $(GENSOURCES)grammar.hpp bison_out.txt
+	rm -f $(GENSOURCES)/grammar.hpp bison_out.txt
 
 DerivedSources/lexer.lut.h: $(CREATE_HASH_TABLE) $(srcdir)/JavaScriptCore/kjs/keywords.table
 	$(PERL) $^ > $@
@@ -133,7 +133,7 @@ DerivedSources/lexer.lut.h: $(CREATE_HASH_TABLE) $(srcdir)/JavaScriptCore/kjs/ke
 %_object.lut.h: $(CREATE_HASH_TABLE) %_object.cpp
 	$^ -i > $@
 
-JavaScriptCore/pcre/chartables.c: $(top_builddir)/Programs/dftables
+JavaScriptCore/pcre/chartables.c: $(top_builddir)/Programs/dftables$(EXEEXT)
 	./Programs/dftables $@
 
 noinst_PROGRAMS += \
