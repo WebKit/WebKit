@@ -1,3 +1,16 @@
+2008-01-06  Alp Toker  <alp@atoker.com>
+
+        Reviewed by Eric.
+
+        Cairo canvas refcounting fix. Reference the surface in the constructor
+        to match its destruction in the destructor.
+
+        Fixes a crash triggered by leaving this page:
+          http://philip.html5.org/tests/canvas/misc/globalalpha-pattern.html
+
+        * html/CanvasPattern.cpp:
+        (WebCore::CanvasPattern::CanvasPattern):
+
 2008-01-06  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Sam.

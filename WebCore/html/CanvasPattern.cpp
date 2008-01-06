@@ -76,7 +76,7 @@ CanvasPattern::CanvasPattern(CGImageRef image, bool repeatX, bool repeatY)
 #elif PLATFORM(CAIRO)
 
 CanvasPattern::CanvasPattern(cairo_surface_t* surface, bool repeatX, bool repeatY)
-    : m_platformImage(surface)
+    : m_platformImage(cairo_surface_reference(surface))
     , m_cachedImage(0)
     , m_repeatX(repeatX)
     , m_repeatY(repeatY)
