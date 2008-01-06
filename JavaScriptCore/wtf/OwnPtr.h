@@ -81,7 +81,7 @@ namespace WTF {
         bool operator!() const { return !m_ptr; }
 
         // This conversion operator allows implicit conversion to bool but not to other integer types.
-        typedef T* OwnPtr::*UnspecifiedBoolType;
+        typedef PtrType OwnPtr::*UnspecifiedBoolType;
         operator UnspecifiedBoolType() const { return m_ptr ? &OwnPtr::m_ptr : 0; }
 
         void swap(OwnPtr& o) { std::swap(m_ptr, o.m_ptr); }
