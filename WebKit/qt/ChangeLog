@@ -2,6 +2,31 @@
 
         Reviewed by Simon.
 
+        * Move the QWebPagePrivate methods up to the other private ones
+
+        * Api/qwebpage.cpp:
+        (dropActionToDragOp):
+        (dragOpToDropAction):
+        (QWebPagePrivate::mouseMoveEvent):
+        (QWebPagePrivate::mousePressEvent):
+        (QWebPagePrivate::mouseDoubleClickEvent):
+        (QWebPagePrivate::mouseReleaseEvent):
+        (QWebPagePrivate::contextMenuEvent):
+        (QWebPagePrivate::wheelEvent):
+        (QWebPagePrivate::keyPressEvent):
+        (QWebPagePrivate::keyReleaseEvent):
+        (QWebPagePrivate::focusInEvent):
+        (QWebPagePrivate::focusOutEvent):
+        (QWebPagePrivate::dragEnterEvent):
+        (QWebPagePrivate::dragLeaveEvent):
+        (QWebPagePrivate::dragMoveEvent):
+        (QWebPagePrivate::dropEvent):
+        (QWebPage::focusNextPrevChild):
+
+2008-01-07  Holger Hans Peter Freyther  <holger.freyther@trolltech.com>
+
+        Reviewed by Simon.
+
         * Add reimplemented comments for the methods reimplemented in QWebView and QWebPage.
         
 
