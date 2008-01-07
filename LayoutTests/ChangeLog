@@ -1,5 +1,9 @@
 2008-01-07  Adam Roben  <aroben@apple.com>
 
+        * platform/win/Skipped: Added a few more failures.
+
+2008-01-07  Adam Roben  <aroben@apple.com>
+
         Remove a now incorrect Windows-specific result
 
         This should have been done as part of r29187

@@ -417,6 +417,15 @@ fast/events/overflow-events.html
 # <rdar://5670275>
 fast/loader/onunload-form-submit-crash.html
 
+# <rdar://5673685>
+fast/forms/input-readonly-autoscroll.html
+
+# <rdar://5673709>
+fast/xsl/sort-unicode.xml
+
+# <rdar://5673716>
+fast/loader/opaque-base-url.html
+
 ################################################################################
 ####################### No bugs filed about the below yet#######################
 ################################################################################
