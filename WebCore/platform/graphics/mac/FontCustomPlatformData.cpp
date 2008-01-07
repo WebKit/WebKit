@@ -35,7 +35,7 @@ FontCustomPlatformData::~FontCustomPlatformData()
 
 FontPlatformData FontCustomPlatformData::fontPlatformData(int size, bool bold, bool italic)
 {
-    return FontPlatformData(m_cgFont, FMGetFontFromATSFontRef(m_atsFont), size, bold, italic);
+    return FontPlatformData(m_cgFont, (ATSUFontID)m_atsFont, size, bold, italic);
 }
 
 FontCustomPlatformData* createFontCustomPlatformData(SharedBuffer* buffer)
