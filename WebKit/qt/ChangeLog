@@ -1,5 +1,12 @@
 2008-01-07  Simon Hausmann  <hausmann@webkit.org>
 
+        Build fix for the Windows build. MSVC wants to see the full
+        declaration of arguments even when just passing them through.
+
+        * Api/qwebpage.cpp:
+
+2008-01-07  Simon Hausmann  <hausmann@webkit.org>
+
         Reviewed by Lars.
 
         Added the missing parameters to make it possible to do POST operations from the public API.

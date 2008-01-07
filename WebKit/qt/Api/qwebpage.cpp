@@ -75,6 +75,7 @@
 #include <QPainter>
 #if QT_VERSION >= 0x040400
 #include <QNetworkAccessManager>
+#include <QNetworkRequest>
 #endif
 
 using namespace WebCore;
