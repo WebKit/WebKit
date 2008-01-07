@@ -106,7 +106,7 @@ static void initializeATSUStyle(const FontData* fontData)
         if (status != noErr)
             LOG_ERROR("ATSUCreateStyle failed (%d)", status);
     
-        ATSUFontID fontID = wkGetNSFontATSUFontId(fontData->m_font.font());
+        ATSUFontID fontID = fontData->platformData().m_atsuFontID;
         if (fontID == 0) {
             ATSUDisposeStyle(fontData->m_ATSUStyle);
             LOG_ERROR("unable to get ATSUFontID for %@", fontData->m_font.font());
@@ -116,7 +116,8 @@ static void initializeATSUStyle(const FontData* fontData)
         CGAffineTransform transform = CGAffineTransformMakeScale(1, -1);
         if (fontData->m_font.m_syntheticOblique)
             transform = CGAffineTransformConcat(transform, CGAffineTransformMake(1, 0, -tanf(SYNTHETIC_OBLIQUE_ANGLE * acosf(0) / 90), 1, 0, 0)); 
-        Fixed fontSize = FloatToFixed([fontData->m_font.font() pointSize]);
+        Fixed fontSize = FloatToFixed(fontData->platformData().m_size);
+
         // Turn off automatic kerning until it is supported in the CG code path (6136 in bugzilla)
         Fract kerningInhibitFactor = FloatToFract(1.0);
         ATSUAttributeTag styleTags[4] = { kATSUSizeTag, kATSUFontTag, kATSUFontMatrixTag, kATSUKerningInhibitFactorTag };
