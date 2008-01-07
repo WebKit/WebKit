@@ -1,3 +1,31 @@
+2008-01-06  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Sam.
+
+        Abstract all DateObject.set* functions in preparation for fixing:
+        http://bugs.webkit.org/show_bug.cgi?id=16753
+        
+        SunSpider had random changes here and there but was overall a wash.
+
+        * kjs/date_object.cpp:
+        (KJS::fillStructuresUsingTimeArgs):
+        (KJS::setNewValueFromTimeArgs):
+        (KJS::setNewValueFromDateArgs):
+        (KJS::DateProtoFuncSetMilliSeconds::callAsFunction):
+        (KJS::DateProtoFuncSetUTCMilliseconds::callAsFunction):
+        (KJS::DateProtoFuncSetSeconds::callAsFunction):
+        (KJS::DateProtoFuncSetUTCSeconds::callAsFunction):
+        (KJS::DateProtoFuncSetMinutes::callAsFunction):
+        (KJS::DateProtoFuncSetUTCMinutes::callAsFunction):
+        (KJS::DateProtoFuncSetHours::callAsFunction):
+        (KJS::DateProtoFuncSetUTCHours::callAsFunction):
+        (KJS::DateProtoFuncSetDate::callAsFunction):
+        (KJS::DateProtoFuncSetUTCDate::callAsFunction):
+        (KJS::DateProtoFuncSetMonth::callAsFunction):
+        (KJS::DateProtoFuncSetUTCMonth::callAsFunction):
+        (KJS::DateProtoFuncSetFullYear::callAsFunction):
+        (KJS::DateProtoFuncSetUTCFullYear::callAsFunction):
+
 2008-01-06  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Dan.
