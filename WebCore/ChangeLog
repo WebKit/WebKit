@@ -1,3 +1,12 @@
+2008-01-07  Thiago Macieira  <thiago.macieira@trolltech.com>
+
+        Reviewed by Simon.
+
+        abort() now emits the signals, so disconnect them before you abort()
+
+        * platform/network/qt/QNetworkReplyHandler.cpp:
+        (WebCore::QNetworkReplyHandler::abort):
+
 2008-01-07  Simon Hausmann  <hausmann@webkit.org>
 
         Reviewed by Lars.
