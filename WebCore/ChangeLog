@@ -2,6 +2,15 @@
 
         Reviewed by Lars.
 
+        Use a faster and safer way of flattening the form data.
+
+        * platform/network/qt/QNetworkReplyHandler.cpp:
+        (WebCore::QNetworkReplyHandler::start):
+
+2008-01-07  Simon Hausmann  <hausmann@webkit.org>
+
+        Reviewed by Lars.
+
         Ported of the network backend of the Qt platform to Qt 4.4's new networking API.
 
         * WebCore.pro:

@@ -179,8 +179,9 @@ void QNetworkReplyHandler::start()
             m_reply = manager->get(m_request);
             break;
         case QNetworkAccessManager::PostOperation: {
-            DeprecatedString pd = d->m_request.httpBody()->flattenToString().deprecatedString();
-            m_reply = manager->post(m_request, QByteArray(pd.ascii(), pd.length()));
+            Vector<char> bytes;
+            d->m_request.httpBody()->flatten(bytes);
+            m_reply = manager->post(m_request, QByteArray(bytes.data(), bytes.size()));
             break;
         }
         case QNetworkAccessManager::HeadOperation:
@@ -188,8 +189,9 @@ void QNetworkReplyHandler::start()
             break;
         case QNetworkAccessManager::PutOperation: {
             // ### data?
-            DeprecatedString pd = d->m_request.httpBody()->flattenToString().deprecatedString();
-            m_reply = manager->put(m_request, QByteArray(pd.ascii(), pd.length()));
+            Vector<char> bytes;
+            d->m_request.httpBody()->flatten(bytes);
+            m_reply = manager->put(m_request, QByteArray(bytes.data(), bytes.size()));
             break;
         }
         case QNetworkAccessManager::UnknownOperation:
