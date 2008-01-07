@@ -1,3 +1,14 @@
+2008-01-07  Holger Hans Peter Freyther  <holger.freyther@trolltech.com>
+
+        Reviewed by Lars.
+
+        * This layout is not needed anymore as Widget::invalidateRect will not
+        draw anymore.
+        
+
+        * Api/qwebview.cpp:
+        (QWebView::paintEvent):
+
 2008-01-04  Lars Knoll  <lars@trolltech.com>
 
         Reviewed by Simon.

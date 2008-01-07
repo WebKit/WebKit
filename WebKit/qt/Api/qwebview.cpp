@@ -378,7 +378,6 @@ void QWebView::paintEvent(QPaintEvent *ev)
 #endif
 
     QWebFrame *frame = d->page->mainFrame();
-    frame->layout();
     QPainter p(this);
 
     QVector<QRect> vector = ev->region().rects();
