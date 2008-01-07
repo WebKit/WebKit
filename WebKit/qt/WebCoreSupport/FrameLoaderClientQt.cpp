@@ -53,6 +53,9 @@
 #include <qfileinfo.h>
 
 #include <QDebug>
+#if QT_VERSION >= 0x040400
+#include <QNetworkRequest>
+#endif
 
 namespace WebCore
 {
@@ -798,7 +801,11 @@ void FrameLoaderClientQt::dispatchDecidePolicyForNavigationAction(FramePolicyFun
     Q_ASSERT(!m_policyFunction);
     m_policyFunction = function;
     if (m_webFrame) {
+#if QT_VERSION < 0x040400
         QWebNetworkRequest r(request);
+#else
+        QNetworkRequest r(request.toNetworkRequest());
+#endif
         QWebPage *page = m_webFrame->page();
 
         if (page->d->navigationRequested(m_webFrame, r, QWebPage::NavigationType(action.type())) ==
@@ -883,8 +890,11 @@ ObjectContentType FrameLoaderClientQt::objectContentType(const KURL& url, const 
     if (MIMETypeRegistry::isSupportedImageMIMEType(mimeType))
         return ObjectContentImage;
 
+    // ### FIXME Qt 4.4
+#if QT_VERSION < 0x040400
     if (QWebFactoryLoader::self()->supportsMimeType(mimeType))
         return ObjectContentNetscapePlugin;
+#endif
 
     if (MIMETypeRegistry::isSupportedNonImageMIMEType(mimeType))
         return ObjectContentFrame;
@@ -945,8 +955,11 @@ Widget* FrameLoaderClientQt::createPlugin(const IntSize&, Element* element, cons
         }
     }
 
+    // ### FIXME: qt 4.4
+#if QT_VERSION < 0x040400
     if (!object)
         object = QWebFactoryLoader::self()->create(m_webFrame, qurl, mimeType, params, values);
+#endif
 
     if (object) {
         QWidget *widget = qobject_cast<QWidget *>(object);

@@ -23,6 +23,7 @@
 #define QWEBNETWORKINTERFACE_P_H
 
 #include "qwebnetworkinterface.h"
+#if QT_VERSION < 0x040400
 #include <qthread.h>
 #include <qmutex.h>
 
@@ -216,5 +217,7 @@ public:
 
     QWebNetworkInterface *q;
 };
+
+#endif
 
 #endif

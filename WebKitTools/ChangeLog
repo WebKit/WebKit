@@ -1,3 +1,14 @@
+2008-01-07  Simon Hausmann  <hausmann@webkit.org>
+
+        Reviewed by Lars.
+
+        Ported of the network backend of the Qt platform to Qt 4.4's new networking API.
+        
+
+        * DumpRenderTree/qt/main.cpp:
+        * DumpRenderTree/qt/testplugin.cpp:
+        * DumpRenderTree/qt/testplugin.h:
+
 2008-01-05  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Alp Toker.

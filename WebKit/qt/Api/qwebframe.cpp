@@ -65,6 +65,9 @@
 #include <qdebug.h>
 #include <qevent.h>
 #include <qpainter.h>
+#if QT_VERSION >= 0x040400
+#include <qnetworkrequest.h>
+#endif
 
 using namespace WebCore;
 
@@ -225,9 +228,14 @@ QWebPage * QWebFrame::page() const
 
 void QWebFrame::load(const QUrl &url)
 {
+#if QT_VERSION < 0x040400
     load(QWebNetworkRequest(url));
+#else
+    load(QNetworkRequest(url));
+#endif
 }
 
+#if QT_VERSION < 0x040400
 void QWebFrame::load(const QWebNetworkRequest &req)
 {
     if (d->parentFrame())
@@ -259,6 +267,38 @@ void QWebFrame::load(const QWebNetworkRequest &req)
     if (d->parentFrame())
         d->page->d->insideOpenCall = false;
 }
+
+#else
+
+void QWebFrame::load(const QNetworkRequest &req)
+{
+    if (d->parentFrame())
+        d->page->d->insideOpenCall = true;
+
+    QUrl url = req.url();
+    QByteArray postData; // ### FIXME = req.postData();
+
+    WebCore::ResourceRequest request(KURL(url.toString()));
+
+    // ### FIXME httpHeader.method();
+
+    QList<QByteArray> httpHeaders = req.rawHeaderList();
+    for (int i = 0; i < httpHeaders.size(); ++i) {
+        const QByteArray &headerName = httpHeaders.at(i);
+        request.addHTTPHeaderField(QString::fromLatin1(headerName), QString::fromLatin1(req.rawHeader(headerName)));
+    }
+
+    if (!postData.isEmpty()) {
+        WTF::RefPtr<WebCore::FormData> formData = new WebCore::FormData(postData.constData(), postData.size());
+        request.setHTTPBody(formData);
+    }
+
+    d->frame->loader()->load(request);
+
+    if (d->parentFrame())
+        d->page->d->insideOpenCall = false;
+}
+#endif
 
 void QWebFrame::setHtml(const QString &html, const QUrl &baseUrl)
 {

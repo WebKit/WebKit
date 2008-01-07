@@ -1,3 +1,38 @@
+2008-01-07  Simon Hausmann  <hausmann@webkit.org>
+
+        Reviewed by Lars.
+
+        Ported of the network backend of the Qt platform to Qt 4.4's new networking API.
+        
+
+        * Api/qwebframe.cpp:
+        (QWebFrame::load):
+        * Api/qwebframe.h:
+        * Api/qwebnetworkinterface.cpp:
+        * Api/qwebnetworkinterface.h:
+        * Api/qwebnetworkinterface_p.h:
+        * Api/qwebobjectplugin.cpp:
+        * Api/qwebobjectplugin.h:
+        * Api/qwebobjectplugin_p.h:
+        * Api/qwebobjectpluginconnector.cpp:
+        * Api/qwebobjectpluginconnector.h:
+        * Api/qwebpage.cpp:
+        (QWebPagePrivate::QWebPagePrivate):
+        (QWebPagePrivate::~QWebPagePrivate):
+        (QWebPagePrivate::navigationRequested):
+        (QWebPage::setNetworkInterface):
+        (QWebPage::networkInterface):
+        (QWebPage::setNetworkAccessManager):
+        (QWebPage::networkAccessManager):
+        * Api/qwebpage.h:
+        * Api/qwebpage_p.h:
+        * Api/qwebview.cpp:
+        * Api/qwebview.h:
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::dispatchDecidePolicyForNavigationAction):
+        (WebCore::FrameLoaderClientQt::objectContentType):
+        (WebCore::FrameLoaderClientQt::createPlugin):
+
 2008-01-07  Holger Hans Peter Freyther  <holger.freyther@trolltech.com>
 
         Reviewed by Simon.

@@ -30,6 +30,7 @@ PluginInfo* PlugInInfoStore::createPluginInfoForPluginAtIndex(unsigned i)
 {
     //qDebug() << ">>>>>>>>>>> PlugInInfoStore::createPluginInfoForPluginAtIndex(" << i << ")";
 
+#if QT_VERSION < 0x040400
     QWebFactoryLoader *loader = QWebFactoryLoader::self();
     if (i > loader->m_pluginInfo.count())
         return 0;
@@ -46,12 +47,19 @@ PluginInfo* PlugInInfoStore::createPluginInfoForPluginAtIndex(unsigned i)
         info->mimes.append(mime);
     }
     return info;
+#else
+    return 0; // ### FIXME
+#endif
 }
 
 unsigned PlugInInfoStore::pluginCount() const
 {
+#if QT_VERSION < 0x040400
     //qDebug() << ">>>>>>>>>>> PlugInInfoStore::count =" << QWebFactoryLoader::self()->keys().count();
     return QWebFactoryLoader::self()->keys().count();
+#else
+    return 0;
+#endif
 }
 
 String PlugInInfoStore::pluginNameForMIMEType(const String& mimeType)
@@ -63,7 +71,11 @@ String PlugInInfoStore::pluginNameForMIMEType(const String& mimeType)
     
 bool PlugInInfoStore::supportsMIMEType(const WebCore::String& string)
 {
+#if QT_VERSION < 0x040400
     bool supports = QWebFactoryLoader::self()->supportsMimeType(string);
+#else
+    bool supports = false;
+#endif
     //qDebug() << ">>>>>>>>>>> PlugInInfoStore::supportsMIMEType(" << string << ") =" << supports;
     return supports;
 }

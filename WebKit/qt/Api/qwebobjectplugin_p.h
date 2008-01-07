@@ -4,6 +4,8 @@
 #include <QtCore/qglobal.h>
 #include "qwebobjectplugin.h"
 
+#if QT_VERSION < 0x040400
+
 /*
   FIXME: This is copied from qfactoryloader_p.h.
   Remove this once we made qfactoryloader public in Qt
@@ -68,5 +70,7 @@ public:
     };
     QList<Info> m_pluginInfo;
 };
+
+#endif
 
 #endif

@@ -35,6 +35,8 @@ class QUndoStack;
 class QUrl;
 class QWebFrame;
 class QWebNetworkRequest;
+class QNetworkRequest;
+class QNetworkAccessManager;
 
 class QWebPagePrivate;
 class QWebFrameData;
@@ -154,6 +156,7 @@ public:
     bool isModified() const;
     QUndoStack *undoStack() const;
 
+#if QT_VERSION < 0x040400
     void setNetworkInterface(QWebNetworkInterface *interface);
     QWebNetworkInterface *networkInterface() const;
 
@@ -161,6 +164,11 @@ public:
 #ifndef QT_NO_NETWORKPROXY
     void setNetworkProxy(const QNetworkProxy& proxy);
     QNetworkProxy networkProxy() const;
+#endif
+
+#else
+    void setNetworkAccessManager(QNetworkAccessManager *manager);
+    QNetworkAccessManager *networkAccessManager() const;
 #endif
 
     quint64 totalBytes() const;
@@ -212,7 +220,11 @@ protected:
     virtual QWebPage *createModalDialog();
     virtual QObject *createPlugin(const QString &classid, const QUrl &url, const QStringList &paramNames, const QStringList &paramValues);
 
+#if QT_VERSION < 0x040400
     virtual NavigationRequestResponse navigationRequested(QWebFrame *frame, const QWebNetworkRequest &request, NavigationType type);
+#else
+    virtual NavigationRequestResponse navigationRequested(QWebFrame *frame, const QNetworkRequest &request, NavigationType type);
+#endif
     virtual QString chooseFile(QWebFrame *originatingFrame, const QString& oldFile);
     virtual void javaScriptAlert(QWebFrame *originatingFrame, const QString& msg);
     virtual bool javaScriptConfirm(QWebFrame *originatingFrame, const QString& msg);

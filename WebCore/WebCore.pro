@@ -880,7 +880,8 @@ qt-port {
     $$PWD/../WebKit/qt/Api/qwebobjectpluginconnector.h \
     $$PWD/../WebKit/qt/Api/qwebhistoryinterface.h \
     $$PWD/../WebKit/qt/Api/qcookiejar.h \
-    $$PWD/../WebKit/qt/WebCoreSupport/FrameLoaderClientQt.h
+    $$PWD/../WebKit/qt/WebCoreSupport/FrameLoaderClientQt.h \
+    $$PWD/platform/network/qt/QNetworkReplyHandler.h
 
     SOURCES += \
     page/qt/DragControllerQt.cpp \
@@ -901,6 +902,8 @@ qt-port {
     platform/graphics/qt/IntSizeQt.cpp \
     platform/graphics/qt/PathQt.cpp \
     platform/network/qt/ResourceHandleQt.cpp \
+    platform/network/qt/ResourceRequestQt.cpp \
+    platform/network/qt/QNetworkReplyHandler.cpp \
     editing/qt/EditorQt.cpp \
     platform/qt/ClipboardQt.cpp \
     platform/qt/ContextMenuItemQt.cpp \

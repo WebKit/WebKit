@@ -47,6 +47,9 @@
 #if PLATFORM(QT)
 class QWebFrame;
 class QWebNetworkJob;
+namespace WebCore {
+class QNetworkReplyHandler;
+}
 #endif
 
 #if PLATFORM(MAC)
@@ -153,8 +156,12 @@ namespace WebCore {
         bool m_cancelled;
 #endif
 #if PLATFORM(QT)
-        QWebNetworkJob *m_job;
-        QWebFrame *m_frame;
+#if QT_VERSION < 0x040400
+        QWebNetworkJob* m_job;
+#else
+        QNetworkReplyHandler* m_job;
+#endif
+        QWebFrame* m_frame;
 #endif
 #if PLATFORM(MAC)
         NSURLAuthenticationChallenge *m_currentMacChallenge;

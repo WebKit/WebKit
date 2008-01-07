@@ -22,6 +22,8 @@
 #include <qcoreapplication.h>
 #include <qfileinfo.h>
 
+#if QT_VERSION < 0x040400
+
 #ifndef QT_NO_LIBRARY
 Q_GLOBAL_STATIC_WITH_ARGS(QWebFactoryLoader, loader,
                           (QWebObjectPluginFactoryInterface_iid, QCoreApplication::libraryPaths(), QLatin1String("/webplugins")))
@@ -187,4 +189,4 @@ QStringList QWebObjectPlugin::extensionsForMimetype(const QString &mimeType) con
   from the &lt;param&gt; elements contained in the HTML object tag.
 */
 
-
+#endif

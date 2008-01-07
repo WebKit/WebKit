@@ -129,17 +129,23 @@ public:
     QUndoStack *undoStack;
     QWidget *view;
 
-    QWebNetworkInterface *networkInterface;
-
     bool modified;
 
     bool insideOpenCall;
     quint64 m_totalBytes;
     quint64 m_bytesReceived;
 
+#if QT_VERSION < 0x040400
     QWebPage::NavigationRequestResponse navigationRequested(QWebFrame *frame, const QWebNetworkRequest &request, QWebPage::NavigationType type);
+
+    QWebNetworkInterface *networkInterface;
 #ifndef QT_NO_NETWORKPROXY
     QNetworkProxy networkProxy;
+#endif
+
+#else
+    QWebPage::NavigationRequestResponse navigationRequested(QWebFrame *frame, const QNetworkRequest &request, QWebPage::NavigationType type);
+    QNetworkAccessManager *networkManager;
 #endif
 
     QWebPageHistory history;

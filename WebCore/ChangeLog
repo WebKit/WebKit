@@ -1,3 +1,35 @@
+2008-01-07  Simon Hausmann  <hausmann@webkit.org>
+
+        Reviewed by Lars.
+
+        Ported of the network backend of the Qt platform to Qt 4.4's new networking API.
+
+        * WebCore.pro:
+        * platform/network/ResourceHandleInternal.h:
+        * platform/network/qt/QNetworkReplyHandler.cpp: Added.
+        (WebCore::QNetworkReplyHandler::QNetworkReplyHandler):
+        (WebCore::QNetworkReplyHandler::abort):
+        (WebCore::QNetworkReplyHandler::finish):
+        (WebCore::QNetworkReplyHandler::sendResponseIfNeeded):
+        (WebCore::QNetworkReplyHandler::forwardData):
+        (WebCore::QNetworkReplyHandler::start):
+        * platform/network/qt/QNetworkReplyHandler.h: Added.
+        (WebCore::QNetworkReplyHandler::reply):
+        * platform/network/qt/ResourceHandleQt.cpp:
+        (WebCore::ResourceHandle::start):
+        (WebCore::ResourceHandle::cancel):
+        (WebCore::ResourceHandle::loadResourceSynchronously):
+        * platform/network/qt/ResourceRequest.h:
+        (WebCore::ResourceRequest::ResourceRequest):
+        * platform/network/qt/ResourceRequestQt.cpp: Added.
+        (WebCore::ResourceRequest::toNetworkRequest):
+        * platform/qt/MIMETypeRegistryQt.cpp:
+        (WebCore::MIMETypeRegistry::getMIMETypeForExtension):
+        * platform/qt/PlugInInfoStoreQt.cpp:
+        (WebCore::PlugInInfoStore::createPluginInfoForPluginAtIndex):
+        (WebCore::PlugInInfoStore::pluginCount):
+        (WebCore::PlugInInfoStore::pluginNameForMIMEType):
+
 2008-01-07  Holger Hans Peter Freyther  <holger.freyther@trolltech.com>
 
         Reviewed by Lars.

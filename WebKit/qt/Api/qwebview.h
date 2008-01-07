@@ -26,6 +26,8 @@
 
 class QWebPage;
 class QWebViewPrivate;
+class QNetworkRequest;
+class QWebNetworkRequest;
 
 class QWEBKIT_EXPORT QWebView : public QWidget
 {
@@ -44,7 +46,11 @@ public:
     void setPage(QWebPage *page);
 
     void load(const QUrl &url);
+#if QT_VERSION < 0x040400
     void load(const QWebNetworkRequest &request);
+#else
+    void load(const QNetworkRequest &request);
+#endif
     void setHtml(const QString &html, const QUrl &baseUrl = QUrl());
     void setHtml(const QByteArray &html, const QUrl &baseUrl = QUrl());
     void setContent(const QByteArray &data, const QString &mimeType = QString(), const QUrl &baseUrl = QUrl());

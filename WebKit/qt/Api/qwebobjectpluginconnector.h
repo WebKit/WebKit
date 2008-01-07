@@ -22,6 +22,9 @@
 
 #include "qwebkitglobal.h"
 #include <QtCore/qobject.h>
+
+#if QT_VERSION < 0x040400
+
 #include "qwebnetworkinterface.h"
 
 class QWebFrame;
@@ -60,5 +63,7 @@ private:
 
     QWebObjectPluginConnectorPrivate *d;
 };
+
+#endif
 
 #endif
