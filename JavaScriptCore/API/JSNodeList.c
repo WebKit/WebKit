@@ -26,6 +26,8 @@
 
 #include "JSNode.h"
 #include "JSNodeList.h"
+#include "JSObjectRef.h"
+#include "JSValueRef.h"
 #include "UnusedParam.h"
 #include <wtf/Assertions.h>
 

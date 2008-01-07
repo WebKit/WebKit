@@ -25,7 +25,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+#include "JSContextRef.h"
 #include "JSNode.h"
+#include "JSObjectRef.h"
+#include "JSStringRef.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <wtf/Assertions.h>

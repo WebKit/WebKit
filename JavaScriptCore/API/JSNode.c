@@ -26,6 +26,9 @@
 
 #include "JSNode.h"
 #include "JSNodeList.h"
+#include "JSObjectRef.h"
+#include "JSStringRef.h"
+#include "JSValueRef.h"
 #include "Node.h"
 #include "NodeList.h"
 #include "UnusedParam.h"

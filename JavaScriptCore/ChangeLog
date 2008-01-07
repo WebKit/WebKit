@@ -1,3 +1,18 @@
+2008-01-07  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Darin.
+
+        Fix Mac build.
+
+        * API/JSNode.c:
+        * API/JSNode.h:
+        * API/JSNodeList.c:
+        * API/JSNodeList.h:
+        * API/JavaScript.h:
+        * API/JavaScriptCore.h:
+        * API/minidom.c:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+
 2008-01-07  Alp Toker  <alp@atoker.com>
 
         Reviewed by Darin.
