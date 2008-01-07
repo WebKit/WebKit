@@ -1,3 +1,9 @@
+2008-01-07  Kevin McCullough  <kmccullough@apple.com>
+
+        - Updated to run a test whose failure was only a build bot state issue.
+ 
+        * platform/win/Skipped:
+
 2008-01-07  Adam Roben  <aroben@apple.com>
 
         * platform/win/Skipped: Skip the culprit, not the victim.

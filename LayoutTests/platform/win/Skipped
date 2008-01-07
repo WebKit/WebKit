@@ -371,9 +371,6 @@ fast/dom/xmlhttprequest-html-response-encoding.html
 svg/batik/text/textOnPath.svg
 svg/batik/text/verticalTextOnPath.svg
 
-# <rdar://5667017> Failing due to null value exception
-storage/execute-sql-args.html
-
 # <rdar://5667022> Missing a mousemove event
 fast/events/mousemove-after-drag-over-scrollbar.html
 
