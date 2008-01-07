@@ -1,3 +1,14 @@
+2008-01-04  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Darin.
+
+        - <rdar://problem/5666914> fast/regex/test{1,4}.html are failing
+        DRT did not correctly handle printing the '\0' char.  Now it does.
+
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (dumpFramesAsText):
+        (dump):
+
 2008-01-07  Simon Hausmann  <hausmann@webkit.org>
 
         Reviewed by Lars.

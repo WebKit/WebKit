@@ -361,10 +361,6 @@ svg/custom/control-points-for-S-and-T.svg
 # <rdar://problem/5539818> REGRESSION (Leopard): http/tests/security/dataURL/xss-DENIED-to-data-url-sub-frame-uppercase.html failing
 http/tests/security/dataURL/xss-DENIED-to-data-url-sub-frame-uppercase.html
 
-# <rdar://5666914>
-fast/regex/test1.html
-fast/regex/test4.html
-
 # <rdar://5666926>
 svg/custom/use-css-no-effect-on-shadow-tree.svg
 

@@ -315,7 +315,7 @@ static wstring dumpFramesAsText(IWebFrame* frame)
             return L"";
 
         result.append(L"\n--------\nFrame: '");
-        result.append(name ? name : L"");
+        result.append(name ? name : L"", SysStringLen(name));
         result.append(L"'\n--------\n");
 
         SysFreeString(name);
@@ -326,7 +326,7 @@ static wstring dumpFramesAsText(IWebFrame* frame)
     if (SUCCEEDED(documentElement->QueryInterface(&docPrivate)))
         docPrivate->innerText(&innerText);
 
-    result.append(innerText ? innerText : L"");
+    result.append(innerText ? innerText : L"", SysStringLen(innerText));
     result.append(L"\n");
 
     SysFreeString(innerText);
@@ -568,9 +568,8 @@ void dump()
             unsigned stringLength = SysStringLen(resultString);
             int bufferSize = ::WideCharToMultiByte(CP_UTF8, 0, resultString, stringLength, 0, 0, 0, 0);
             char* buffer = (char*)malloc(bufferSize + 1);
-            int result = ::WideCharToMultiByte(CP_UTF8, 0, resultString, stringLength, buffer, bufferSize + 1, 0, 0);
-            buffer[bufferSize] = '\0';
-            printf("%s", buffer);
+            ::WideCharToMultiByte(CP_UTF8, 0, resultString, stringLength, buffer, bufferSize + 1, 0, 0);
+            fwrite(buffer, 1, bufferSize, stdout);
             free(buffer);
             if (!::layoutTestController->dumpAsText())
                 dumpFrameScrollPosition(frame);
