@@ -1,3 +1,16 @@
+2008-01-07  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Adam.
+
+        Fixes: http://bugs.webkit.org/show_bug.cgi?id=16244
+        DRT doesn't handle platform specific pixel test results correctly.
+
+        <test>-expected.txt files and <test>-expected.png files may now live
+        in different directories (ie. a cross-platform <test>-expected.txt file
+        and a platform-specific <test>-expected.png file).
+
+        * Scripts/run-webkit-tests:
+
 2008-01-04  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Darin.

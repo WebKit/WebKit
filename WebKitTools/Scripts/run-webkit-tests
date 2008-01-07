@@ -78,7 +78,7 @@ sub slowestcmp($$);
 sub splitpath($);
 sub stripExtension($);
 sub isTextOnlyTest($);
-sub expectedDirectoryForTest($;$);
+sub expectedDirectoryForTest($;$;$);
 sub printFailureMessageForTest($$);
 sub toURL($);
 sub toWindowsPath($);
@@ -515,7 +515,7 @@ for my $test (@tests) {
     $durations{$test} = time - $startTime if $report10Slowest;
 
     my $expected;
-    my $expectedDir = expectedDirectoryForTest($base, $isText);
+    my $expectedDir = expectedDirectoryForTest($base, $isText, 0);
     $expectedResultDirectory{$base} = $expectedDir;
 
     if (!$resetResults && open EXPECTED, "<", "$expectedDir/$base-$expectedTag.txt") {
@@ -547,6 +547,8 @@ for my $test (@tests) {
     my $diffResult = "passed";
     
     if ($pixelTests) {
+        my $expectedPixelDir = expectedDirectoryForTest($base, $isText, 1);
+
         my $actualHash = "";
         my $expectedHash = "";
         my $actualPNGSize = 0;
@@ -563,10 +565,10 @@ for my $test (@tests) {
             }
         }
 
-        if ($expectedHash ne $actualHash && -f "$expectedDir/$base-$expectedTag.png") {
-            my $expectedPNGSize = -s "$expectedDir/$base-$expectedTag.png";
+        if ($expectedHash ne $actualHash && -f "$expectedPixelDir/$base-$expectedTag.png") {
+            my $expectedPNGSize = -s "$expectedPixelDir/$base-$expectedTag.png";
             my $expectedPNG = "";
-            open EXPECTEDPNG, "$expectedDir/$base-$expectedTag.png";
+            open EXPECTEDPNG, "$expectedPixelDir/$base-$expectedTag.png";
             read(EXPECTEDPNG, $expectedPNG, $expectedPNGSize);
 
             print DIFFOUT "Content-length: $actualPNGSize\n";
@@ -589,16 +591,16 @@ for my $test (@tests) {
             }
         }
 
-        if ($actualPNGSize && ($resetResults || !-f "$expectedDir/$base-$expectedTag.png")) {
-            mkpath catfile($expectedDir, dirname($base)) if $testDirectory ne $expectedDir;
-            open EXPECTED, ">", "$expectedDir/$base-expected.png" or die "could not create $expectedDir/$base-expected.png\n";
+        if ($actualPNGSize && ($resetResults || !-f "$expectedPixelDir/$base-$expectedTag.png")) {
+            mkpath catfile($expectedPixelDir, dirname($base)) if $testDirectory ne $expectedPixelDir;
+            open EXPECTED, ">", "$expectedPixelDir/$base-expected.png" or die "could not create $expectedPixelDir/$base-expected.png\n";
             print EXPECTED $actualPNG;
             close EXPECTED;
         }
 
         # update the expected hash if the image diff said that there was no difference
-        if ($actualHash ne "" && ($resetResults || !-f "$expectedDir/$base-$expectedTag.checksum")) {
-            open EXPECTED, ">", "$expectedDir/$base-$expectedTag.checksum" or die "could not create $expectedDir/$base-$expectedTag.checksum\n";
+        if ($actualHash ne "" && ($resetResults || !-f "$expectedPixelDir/$base-$expectedTag.checksum")) {
+            open EXPECTED, ">", "$expectedPixelDir/$base-$expectedTag.checksum" or die "could not create $expectedPixelDir/$base-$expectedTag.checksum\n";
             print EXPECTED $actualHash;
             close EXPECTED;
         }
@@ -1337,17 +1339,23 @@ sub isTextOnlyTest($)
     return $isText;
 }
 
-sub expectedDirectoryForTest($;$)
+sub expectedDirectoryForTest($;$;$)
 {
-    my ($base, $isText) = @_;
+    my ($base, $isText, $isPixelTest) = @_;
 
     my @directories = @platformHierarchy;
     push @directories, map { catdir($platformBaseDirectory, $_) } qw(mac-leopard mac) if isCygwin();
     push @directories, $expectedDirectory;
 
     # If we already have expected results, just return their location.
-    foreach my $directory (@directories) {
-        return $directory if (-f "$directory/$base-$expectedTag.txt");
+    if ($isPixelTest) {
+        foreach my $directory (@directories) {
+            return $directory if (-f "$directory/$base-$expectedTag.png");
+        }
+    } else {
+        foreach my $directory (@directories) {
+            return $directory if (-f "$directory/$base-$expectedTag.txt");
+        }
     }
 
     # For platform-specific tests, the results should go right next to the test itself.
