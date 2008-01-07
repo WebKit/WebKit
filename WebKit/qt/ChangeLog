@@ -2,6 +2,23 @@
 
         Reviewed by Lars.
 
+        Added the missing parameters to make it possible to do POST operations from the public API.
+        
+        This is ugly though as it also requires including qnetworkaccessmanager.h. It would be nicer if the
+        two extra arguments were in QNetworkRequest :-/
+        
+
+        * Api/qwebframe.cpp:
+        (QWebFrame::load):
+        * Api/qwebframe.h:
+        * Api/qwebview.cpp:
+        (QWebView::load):
+        * Api/qwebview.h:
+
+2008-01-07  Simon Hausmann  <hausmann@webkit.org>
+
+        Reviewed by Lars.
+
         Ported of the network backend of the Qt platform to Qt 4.4's new networking API.
         
 

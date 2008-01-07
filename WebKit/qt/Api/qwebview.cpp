@@ -135,10 +135,16 @@ void QWebView::load(const QUrl &url)
 #if QT_VERSION < 0x040400
 void QWebView::load(const QWebNetworkRequest &request)
 #else
-void QWebView::load(const QNetworkRequest &request)
+void QWebView::load(const QNetworkRequest &request,
+                    QNetworkAccessManager::Operation operation,
+                    const QByteArray &body)
 #endif
 {
-    page()->mainFrame()->load(request);
+    page()->mainFrame()->load(request
+#if QT_VERSION >= 0x040400
+                              , operation, body
+#endif
+                             );
 }
 
 /*!

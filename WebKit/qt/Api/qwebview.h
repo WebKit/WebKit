@@ -23,6 +23,9 @@
 #include "qwebkitglobal.h"
 #include "qwebpage.h"
 #include <QtGui/qwidget.h>
+#if QT_VERSION >= 0x040400
+#include <QtNetwork/qnetworkaccessmanager.h>
+#endif
 
 class QWebPage;
 class QWebViewPrivate;
@@ -49,7 +52,9 @@ public:
 #if QT_VERSION < 0x040400
     void load(const QWebNetworkRequest &request);
 #else
-    void load(const QNetworkRequest &request);
+    void load(const QNetworkRequest &request,
+              QNetworkAccessManager::Operation operation = QNetworkAccessManager::GetOperation,
+              const QByteArray &body = QByteArray());
 #endif
     void setHtml(const QString &html, const QUrl &baseUrl = QUrl());
     void setHtml(const QByteArray &html, const QUrl &baseUrl = QUrl());
