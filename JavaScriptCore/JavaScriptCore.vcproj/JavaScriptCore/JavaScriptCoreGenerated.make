@@ -3,6 +3,7 @@ all:
     bash build-generated-files.sh "$(WEBKITOUTPUTDIR)" "$(WEBKITLIBRARIESDIR)"
     -mkdir 2>NUL "$(WEBKITOUTPUTDIR)\include\JavaScriptCore\JavaScriptCore"
     xcopy /y /d "..\..\API\APICast.h" "$(WEBKITOUTPUTDIR)\include\JavaScriptCore\JavaScriptCore"
+    xcopy /y /d "..\..\API\JavaScript.h" "$(WEBKITOUTPUTDIR)\include\JavaScriptCore\JavaScriptCore"
     xcopy /y /d "..\..\API\JSBase.h" "$(WEBKITOUTPUTDIR)\include\JavaScriptCore\JavaScriptCore"
     xcopy /y /d "..\..\API\JSContextRef.h" "$(WEBKITOUTPUTDIR)\include\JavaScriptCore\JavaScriptCore"
     xcopy /y /d "..\..\API\JSObjectRef.h" "$(WEBKITOUTPUTDIR)\include\JavaScriptCore\JavaScriptCore"
