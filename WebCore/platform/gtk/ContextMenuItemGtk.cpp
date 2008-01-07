@@ -28,6 +28,76 @@
 
 namespace WebCore {
 
+static const char* gtkStockIDFromContextMenuAction(const ContextMenuAction& action)
+{
+    switch (action) {
+    case ContextMenuItemTagCopyLinkToClipboard:
+    case ContextMenuItemTagCopyImageToClipboard:
+    case ContextMenuItemTagCopy:
+        return GTK_STOCK_COPY;
+    case ContextMenuItemTagOpenLinkInNewWindow:
+    case ContextMenuItemTagOpenImageInNewWindow:
+    case ContextMenuItemTagOpenFrameInNewWindow:
+        return GTK_STOCK_OPEN;
+    case ContextMenuItemTagDownloadLinkToDisk:
+    case ContextMenuItemTagDownloadImageToDisk:
+        return GTK_STOCK_SAVE;
+    case ContextMenuItemTagGoBack:
+        return GTK_STOCK_GO_BACK;
+    case ContextMenuItemTagGoForward:
+        return GTK_STOCK_GO_FORWARD;
+    case ContextMenuItemTagStop:
+        return GTK_STOCK_STOP;
+    case ContextMenuItemTagReload:
+        return GTK_STOCK_REFRESH;
+    case ContextMenuItemTagCut:
+        return GTK_STOCK_CUT;
+    case ContextMenuItemTagPaste:
+        return GTK_STOCK_PASTE;
+    case ContextMenuItemTagSpellingGuess:
+        return GTK_STOCK_INFO;
+    case ContextMenuItemTagIgnoreSpelling:
+        return GTK_STOCK_NO;
+    case ContextMenuItemTagLearnSpelling:
+        return GTK_STOCK_OK;
+    case ContextMenuItemTagOther:
+        return GTK_STOCK_MISSING_IMAGE;
+    case ContextMenuItemTagSearchInSpotlight:
+        return GTK_STOCK_FIND;
+    case ContextMenuItemTagOpenWithDefaultApplication:
+        return GTK_STOCK_OPEN;
+    case ContextMenuItemPDFZoomIn:
+        return GTK_STOCK_ZOOM_IN;
+    case ContextMenuItemPDFZoomOut:
+        return GTK_STOCK_ZOOM_OUT;
+    case ContextMenuItemPDFAutoSize:
+        return GTK_STOCK_ZOOM_FIT;
+    case ContextMenuItemPDFNextPage:
+        return GTK_STOCK_GO_FORWARD;
+    case ContextMenuItemPDFPreviousPage:
+        return GTK_STOCK_GO_BACK;
+    // New tags, not part of API
+    case ContextMenuItemTagOpenLink:
+        return GTK_STOCK_OPEN;
+    case ContextMenuItemTagCheckSpelling:
+        return GTK_STOCK_SPELL_CHECK;
+    case ContextMenuItemTagFontMenu:
+        return GTK_STOCK_SELECT_FONT;
+    case ContextMenuItemTagShowFonts:
+        return GTK_STOCK_SELECT_FONT;
+    case ContextMenuItemTagBold:
+        return GTK_STOCK_BOLD;
+    case ContextMenuItemTagItalic:
+        return GTK_STOCK_ITALIC;
+    case ContextMenuItemTagUnderline:
+        return GTK_STOCK_UNDERLINE;
+    case ContextMenuItemTagShowColors:
+        return GTK_STOCK_SELECT_COLOR;
+    default:
+        return NULL;
+    }
+}
+
 // Extract the ActionType from the menu item
 ContextMenuItem::ContextMenuItem(GtkMenuItem* item)
     : m_platformDescription()
@@ -73,9 +143,15 @@ GtkMenuItem* ContextMenuItem::createNativeMenuItem(const PlatformMenuItemDescrip
         if (menu.checked) {
             item = GTK_MENU_ITEM(gtk_check_menu_item_new_with_label(menu.title.utf8().data()));
             gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(item), menu.checked);
-        } else
-            item = GTK_MENU_ITEM(gtk_menu_item_new_with_label(menu.title.utf8().data()));
-        
+        } else {
+            if (const gchar* stockID = gtkStockIDFromContextMenuAction(menu.action)) {
+                item = GTK_MENU_ITEM(gtk_image_menu_item_new_with_label(menu.title.utf8().data()));
+                GtkWidget* image = gtk_image_new_from_stock(stockID, GTK_ICON_SIZE_MENU);
+                gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(item), image);
+            } else
+                item = GTK_MENU_ITEM(gtk_menu_item_new_with_label(menu.title.utf8().data()));
+        }
+
         ContextMenuAction* menuAction = static_cast<ContextMenuAction*>(malloc(sizeof(ContextMenuAction*)));
         *menuAction = menu.action;
         g_object_set_data(G_OBJECT(item), WEBKIT_CONTEXT_MENU_ACTION, menuAction);
@@ -83,7 +159,7 @@ GtkMenuItem* ContextMenuItem::createNativeMenuItem(const PlatformMenuItemDescrip
         gtk_widget_set_sensitive(GTK_WIDGET(item), menu.enabled);
 
         if (menu.subMenu)
-           gtk_menu_item_set_submenu(item, GTK_WIDGET(menu.subMenu)); 
+           gtk_menu_item_set_submenu(item, GTK_WIDGET(menu.subMenu));
     }
 
     return item;
@@ -114,7 +190,6 @@ ContextMenuAction ContextMenuItem::action() const
 void ContextMenuItem::setAction(ContextMenuAction action)
 {
     m_platformDescription.action = action;
-
 }
 
 String ContextMenuItem::title() const
