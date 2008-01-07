@@ -49,8 +49,8 @@ ContextMenu::ContextMenu(const HitTestResult& result)
 
 ContextMenu::~ContextMenu()
 {
-  if (m_platformDescription)
-      g_object_unref(m_platformDescription);
+    if (m_platformDescription)
+        g_object_unref(m_platformDescription);
 }
 
 void ContextMenu::appendItem(ContextMenuItem& item)

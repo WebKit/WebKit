@@ -2,6 +2,15 @@
 
         Reviewed by Alp Toker.
 
+        * Fix indention
+
+        * platform/gtk/ContextMenuGtk.cpp:
+        (WebCore::ContextMenu::~ContextMenu):
+
+2008-01-07  Holger Freyther  <zecke@selfish.org>
+
+        Reviewed by Alp Toker.
+
         * The ContextMenuController is going to live longer than the ContextMenu. It is
         going to live as long as the WebCore::Page is around where the ContextMenu, specially
         in the case of a SubMenu, is gone before we popup the menu.
