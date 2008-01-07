@@ -1,5 +1,19 @@
 2008-01-07  Darin Adler  <darin@apple.com>
 
+        Rubber stamped by David Kilzer.
+
+        - get rid of empty fpconst.cpp
+
+        * GNUmakefile.am: Remove fpconst.cpp.
+        * JavaScriptCore.pri: Ditto.
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj: Ditto.
+        * JavaScriptCore.xcodeproj/project.pbxproj: Ditto.
+        * JavaScriptCoreSources.bkl: Ditto.
+
+        * kjs/fpconst.cpp: Removed.
+
+2008-01-07  Darin Adler  <darin@apple.com>
+
         Reviewed by David Kilzer.
 
         - fix alignment problem with NaN and Inf globals

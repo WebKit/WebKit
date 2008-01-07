@@ -58,8 +58,7 @@ SOURCES += \
     API/JSStringRef.cpp \
     API/JSValueRef.cpp \
     kjs/JSGlobalObject.cpp \
-    kjs/JSVariableObject.cpp \
-    kjs/fpconst.cpp
+    kjs/JSVariableObject.cpp
 
 # AllInOneFile.cpp helps gcc analize and optimize code
 # Other compilers may be able to do this at link time

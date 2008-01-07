@@ -53,7 +53,6 @@ javascriptcore_sources += \
 	JavaScriptCore/bindings/runtime_root.cpp \
 	JavaScriptCore/kjs/JSGlobalObject.cpp \
 	JavaScriptCore/kjs/JSVariableObject.cpp \
-	JavaScriptCore/kjs/fpconst.cpp \
 	JavaScriptCore/pcre/pcre_compile.cpp \
 	JavaScriptCore/pcre/pcre_exec.cpp \
 	JavaScriptCore/pcre/pcre_tables.cpp \

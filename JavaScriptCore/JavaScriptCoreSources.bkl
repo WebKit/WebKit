@@ -68,7 +68,6 @@ Source files for JSCore.
         kjs/dtoa.cpp
         kjs/error_object.cpp
         kjs/ExecState.cpp
-        kjs/fpconst.cpp
         kjs/function.cpp
         kjs/function_object.cpp
         kjs/identifier.cpp
