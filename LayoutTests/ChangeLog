@@ -1,5 +1,9 @@
 2008-01-07  Adam Roben  <aroben@apple.com>
 
+        * platform/win/Skipped: Skip the culprit, not the victim.
+
+2008-01-07  Adam Roben  <aroben@apple.com>
+
         * platform/win/Skipped: Added a few more failures.
 
 2008-01-07  Adam Roben  <aroben@apple.com>
