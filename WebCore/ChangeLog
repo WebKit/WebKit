@@ -2,6 +2,18 @@
 
         Reviewed by Alp Toker.
 
+        * The ContextMenuController is going to live longer than the ContextMenu. It is
+        going to live as long as the WebCore::Page is around where the ContextMenu, specially
+        in the case of a SubMenu, is gone before we popup the menu.
+
+        * platform/gtk/ContextMenuGtk.cpp:
+        (WebCore::menuItemActivated):
+        (WebCore::ContextMenu::appendItem):
+
+2008-01-07  Holger Freyther  <zecke@selfish.org>
+
+        Reviewed by Alp Toker.
+
         * Fix SubMenu handling
         * Do not connect to the activated signal if we are a separator or submenu
         * Change our type from ActionType to SubMenuType when we have a submenu
