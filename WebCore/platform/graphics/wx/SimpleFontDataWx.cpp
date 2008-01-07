@@ -27,7 +27,8 @@
  */
 
 #include "config.h"
-#include "FontData.h"
+#include "SimpleFontData.h"
+
 #include "FontCache.h"
 #include "FloatRect.h"
 #include "FontDescription.h"
@@ -42,7 +43,7 @@
 namespace WebCore
 {
 
-void FontData::platformInit()
+void SimpleFontData::platformInit()
 {    
     wxFont* font = m_font.font();
     wxFontProperties props = wxFontProperties(font);
@@ -54,29 +55,29 @@ void FontData::platformInit()
     m_lineGap = props.GetLineGap();
 }
 
-void FontData::platformDestroy()
+void SimpleFontData::platformDestroy()
 {
     delete m_smallCapsFontData;
 }
 
-FontData* FontData::smallCapsFontData(const FontDescription& fontDescription) const
+SimpleFontData* SimpleFontData::smallCapsFontData(const FontDescription& fontDescription) const
 {
     if (!m_smallCapsFontData){
         FontDescription desc = FontDescription(fontDescription);
         desc.setSpecifiedSize(0.70f*fontDescription.computedSize());
         const FontPlatformData* pdata = new FontPlatformData(desc, desc.family().family());
-        m_smallCapsFontData = new FontData(*pdata);
+        m_smallCapsFontData = new SimpleFontData(*pdata);
     }
     return m_smallCapsFontData;
 }
 
-bool FontData::containsCharacters(const UChar* characters, int length) const
+bool SimpleFontData::containsCharacters(const UChar* characters, int length) const
 {
     // FIXME: We will need to implement this to load non-ASCII encoding sites
     return true;
 }
 
-void FontData::determinePitch()
+void SimpleFontData::determinePitch()
 {
     if (m_font.font() && m_font.font()->Ok())
         m_treatAsFixedPitch = m_font.font()->IsFixedWidth();
@@ -84,7 +85,7 @@ void FontData::determinePitch()
         m_treatAsFixedPitch = false;
 }
 
-float FontData::platformWidthForGlyph(Glyph glyph) const
+float SimpleFontData::platformWidthForGlyph(Glyph glyph) const
 {
     // TODO: fix this! Make GetTextExtents a method of wxFont in 2.9
     int width = 10;

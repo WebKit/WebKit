@@ -49,13 +49,13 @@ class EditCommand;
 class EditorInternalCommand;
 class EditorClient;
 class EventTargetNode;
-class FontData;
 class Frame;
 class HTMLElement;
 class Pasteboard;
 class Range;
 class SelectionController;
 class Selection;
+class SimpleFontData;
 
 struct CompositionUnderline {
     CompositionUnderline() 
@@ -123,7 +123,7 @@ public:
     void respondToChangedContents(const Selection& endingSelection);
 
     TriState selectionHasStyle(CSSStyleDeclaration*) const;
-    const FontData* fontForSelection(bool&) const;
+    const SimpleFontData* fontForSelection(bool&) const;
     
     TriState selectionUnorderedListState() const;
     TriState selectionOrderedListState() const;

@@ -3287,14 +3287,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\platform\graphics\FontData.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\platform\graphics\FontData.h"
-				>
-			</File>
-			<File
 				RelativePath="..\platform\graphics\FontDescription.h"
 				>
 			</File>
@@ -3813,6 +3805,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\platform\graphics\FontDataBaseClass.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\platform\graphics\FontDataBaseClass.h"
+					>
+				</File>
+				<File
 					RelativePath="..\platform\graphics\GraphicsContext.cpp"
 					>
 				</File>
@@ -3904,6 +3904,22 @@
 					RelativePath="..\platform\graphics\Pen.h"
 					>
 				</File>
+				<File
+					RelativePath="..\platform\graphics\SegmentedFontData.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\platform\graphics\SegmentedFontData.h"
+					>
+				</File>
+				<File
+					RelativePath="..\platform\graphics\SimpleFontData.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\platform\graphics\SimpleFontData.h"
+					>
+				</File>
 				<Filter
 					Name="win"
 					>
@@ -3929,10 +3945,6 @@
 					</File>
 					<File
 						RelativePath="..\platform\graphics\win\FontDatabase.h"
-						>
-					</File>
-					<File
-						RelativePath="..\platform\graphics\win\FontDataWin.cpp"
 						>
 					</File>
 					<File
@@ -4001,6 +4013,10 @@
 					</File>
 					<File
 						RelativePath="..\platform\graphics\win\MediaPlayerPrivateQuickTimeWin.h"
+						>
+					</File>
+					<File
+						RelativePath="..\platform\graphics\win\SimpleFontDataWin.cpp"
 						>
 					</File>
 				</Filter>
@@ -4710,6 +4726,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\css\CSSSegmentedFontFace.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\css\CSSSegmentedFontFace.h"
+				>
+			</File>
+			<File
 				RelativePath="..\css\CSSStyleDeclaration.cpp"
 				>
 			</File>
@@ -4759,6 +4783,14 @@
 			</File>
 			<File
 				RelativePath="..\css\CSSTransformValue.h"
+				>
+			</File>
+			<File
+				RelativePath="..\css\CSSUnicodeRangeValue.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\css\CSSUnicodeRangeValue.h"
 				>
 			</File>
 			<File

@@ -20,16 +20,14 @@
  *
  */
 
-#ifndef FontData_h
-#define FontData_h
+#ifndef SimpleFontData_h
+#define SimpleFontData_h
 
+#include "FontDataBaseClass.h"
 #include "FontPlatformData.h"
 #include "GlyphPageTreeNode.h"
 #include "GlyphWidthMap.h"
-#include <wtf/Noncopyable.h>
 #include <wtf/OwnPtr.h>
-#include <wtf/unicode/Unicode.h>
-
 #if PLATFORM(MAC)
 typedef struct OpaqueATSUStyle* ATSUStyle;
 #endif
@@ -70,14 +68,14 @@ struct SVGFontData {
 
 enum Pitch { UnknownPitch, FixedPitch, VariablePitch };
 
-class FontData : Noncopyable {
+class SimpleFontData : public FontData {
 public:
-    FontData(const FontPlatformData&, bool customFont = false, bool loading = false);
-    ~FontData();
+    SimpleFontData(const FontPlatformData&, bool customFont = false, bool loading = false);
+    virtual ~SimpleFontData();
 
 public:
     const FontPlatformData& platformData() const { return m_font; }
-    FontData* smallCapsFontData(const FontDescription& fontDescription) const;
+    SimpleFontData* smallCapsFontData(const FontDescription& fontDescription) const;
 
     // vertical metrics
     int ascent(float fontSize) const;
@@ -90,7 +88,8 @@ public:
     float widthForGlyph(Glyph) const;
     float platformWidthForGlyph(Glyph) const;
 
-    bool containsCharacters(const UChar* characters, int length) const;
+    virtual const SimpleFontData* fontDataForCharacter(UChar32) const;
+    virtual bool containsCharacters(const UChar*, int length) const;
 
     void determinePitch();
     Pitch pitch() const { return m_treatAsFixedPitch ? FixedPitch : VariablePitch; }
@@ -100,8 +99,9 @@ public:
     SVGFontData* svgFontData() const { return m_svgFontData.get(); }
 #endif
 
-    bool isCustomFont() const { return m_isCustomFont; }
-    bool isLoading() const { return m_isLoading; }
+    virtual bool isCustomFont() const { return m_isCustomFont; }
+    virtual bool isLoading() const { return m_isLoading; }
+    virtual bool isSegmented() const;
 
     const GlyphData& missingGlyphData() const { return m_missingGlyphData; }
 
@@ -165,7 +165,7 @@ public:
 
     GlyphData m_missingGlyphData;
 
-    mutable FontData* m_smallCapsFontData;
+    mutable SimpleFontData* m_smallCapsFontData;
 
 #if PLATFORM(CG)
     float m_syntheticBoldOffset;
@@ -189,4 +189,4 @@ public:
 
 } // namespace WebCore
 
-#endif // FontData_h
+#endif // SimpleFontData_h

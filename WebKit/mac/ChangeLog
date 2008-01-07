@@ -1,3 +1,11 @@
+2008-01-07  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        - <rdar://problem/5665216> Support the unicode-range property in @font-face rules
+
+        * Misc/WebNSAttributedStringExtras.mm:
+
 2008-01-03  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin.

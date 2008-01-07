@@ -28,15 +28,15 @@
 
 #import "BlockExceptions.h"
 #import "CharacterNames.h"
-#import "FontData.h"
 #import "FontFallbackList.h"
 #import "GlyphBuffer.h"
 #import "GraphicsContext.h"
 #import "IntRect.h"
 #import "Logging.h"
+#import "ShapeArabic.h"
+#import "SimpleFontData.h"
 #import "WebCoreSystemInterface.h"
 #import "WebCoreTextRenderer.h"
-#import "ShapeArabic.h"
 
 #define SYNTHETIC_OBLIQUE_ANGLE 14
 
@@ -73,7 +73,7 @@ struct ATSULayoutParameters
     const Font* m_font;
     
     ATSUTextLayout m_layout;
-    const FontData **m_fonts;
+    const SimpleFontData **m_fonts;
     
     UChar *m_charBuffer;
     bool m_hasSyntheticBold;
@@ -94,7 +94,7 @@ static TextRun addDirectionalOverride(const TextRun& run, bool rtl)
     return result;
 }
 
-static void initializeATSUStyle(const FontData* fontData)
+static void initializeATSUStyle(const SimpleFontData* fontData)
 {
     // The two NSFont calls in this method (pointSize and _atsFontID) do not raise exceptions.
 
@@ -166,9 +166,9 @@ static OSStatus overrideLayoutOperation(ATSULayoutOperationSelector iCurrentOper
         Fixed lastNativePos = 0;
         float lastAdjustedPos = 0;
         const UChar* characters = params->m_charBuffer ? params->m_charBuffer : params->m_run.characters();
-        const FontData **renderers = params->m_fonts;
-        const FontData *renderer;
-        const FontData *lastRenderer = 0;
+        const SimpleFontData **renderers = params->m_fonts;
+        const SimpleFontData *renderer;
+        const SimpleFontData *lastRenderer = 0;
         UChar ch, nextCh;
         ByteCount offset = layoutRecords[0].originalOffset;
         nextCh = *(UChar *)(((char *)characters)+offset);
@@ -312,8 +312,8 @@ void ATSULayoutParameters::initialize(const Font* font, const GraphicsContext* g
 {
     m_font = font;
     
-    const FontData* fontData = font->primaryFont();
-    m_fonts = new const FontData*[m_run.length()];
+    const SimpleFontData* fontData = font->primaryFont();
+    m_fonts = new const SimpleFontData*[m_run.length()];
     m_charBuffer = font->isSmallCaps() ? new UChar[m_run.length()] : 0;
     
     ATSUTextLayout layout;
@@ -372,13 +372,17 @@ void ATSULayoutParameters::initialize(const Font* font, const GraphicsContext* g
     UniCharArrayOffset substituteOffset = 0;
     UniCharCount substituteLength;
     UniCharArrayOffset lastOffset;
-    const FontData* substituteFontData = 0;
+    const SimpleFontData* substituteFontData = 0;
 
     while (substituteOffset < runLength) {
+        // FIXME: Using ATSUMatchFontsToText() here results in several problems: the CSS font family list is not necessarily followed for the 2nd
+        // and onwards unmatched characters; segmented fonts do not work correctly; behavior does not match the simple text and Uniscribe code
+        // paths. Change this function to use Font::glyphDataForCharacter() for each character instead. 
         lastOffset = substituteOffset;
         status = ATSUMatchFontsToText(layout, substituteOffset, kATSUToTextEnd, &ATSUSubstituteFont, &substituteOffset, &substituteLength);
         if (status == kATSUFontsMatched || status == kATSUFontsNotMatched) {
-            substituteFontData = m_font->fontDataForCharacters(m_run.characters() + substituteOffset, substituteLength);
+            const FontData* fallbackFontData = m_font->fontDataForCharacters(m_run.characters() + substituteOffset, substituteLength);
+            substituteFontData = fallbackFontData ? fallbackFontData->fontDataForCharacter(m_run[0]) : 0;
             if (substituteFontData) {
                 initializeATSUStyle(substituteFontData);
                 if (substituteFontData->m_ATSUStyle)
@@ -393,7 +397,7 @@ void ATSULayoutParameters::initialize(const Font* font, const GraphicsContext* g
         bool shapedArabic = false;
         bool isSmallCap = false;
         UniCharArrayOffset firstSmallCap = 0;
-        const FontData *r = fontData;
+        const SimpleFontData *r = fontData;
         UniCharArrayOffset i;
         for (i = lastOffset;  ; i++) {
             if (i == substituteOffset || i == substituteOffset + substituteLength) {
@@ -428,7 +432,7 @@ void ATSULayoutParameters::initialize(const Font* font, const GraphicsContext* g
                 }
             }
             if (m_font->isSmallCaps()) {
-                const FontData* smallCapsData = r->smallCapsFontData(m_font->fontDescription());
+                const SimpleFontData* smallCapsData = r->smallCapsFontData(m_font->fontDescription());
                 UChar c = m_charBuffer[i];
                 UChar newC;
                 if (U_GET_GC_MASK(c) & U_GC_M_MASK)
@@ -599,7 +603,7 @@ int Font::offsetForPositionForComplexText(const TextRun& run, int x, bool includ
     return offset;
 }
 
-void Font::drawGlyphs(GraphicsContext* context, const FontData* font, const GlyphBuffer& glyphBuffer, int from, int numGlyphs, const FloatPoint& point) const
+void Font::drawGlyphs(GraphicsContext* context, const SimpleFontData* font, const GlyphBuffer& glyphBuffer, int from, int numGlyphs, const FloatPoint& point) const
 {
     CGContextRef cgContext = context->platformContext();
 

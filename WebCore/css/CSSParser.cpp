@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2003 Lars Knoll (knoll@kde.org)
  * Copyright (C) 2005 Allan Sandfeld Jensen (kde@carewolf.com)
- * Copyright (C) 2004, 2005, 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -44,6 +44,7 @@
 #include "CSSStyleRule.h"
 #include "CSSStyleSheet.h"
 #include "CSSTransformValue.h"
+#include "CSSUnicodeRangeValue.h"
 #include "CSSValueKeywords.h"
 #include "CSSValueList.h"
 #include "Counter.h"
@@ -1070,6 +1071,9 @@ bool CSSParser::parseValue(int propId, bool important)
 
     case CSS_PROP_SRC:  // Only used within @font-face, so cannot use inherit | initial or be !important.  This is a list of urls or local references.
         return parseFontFaceSrc();
+
+    case CSS_PROP_UNICODE_RANGE:
+        return parseFontFaceUnicodeRange();
 
     /* CSS3 properties */
     case CSS_PROP__WEBKIT_APPEARANCE:
@@ -2810,6 +2814,95 @@ bool CSSParser::parseFontFaceSrc()
     
     delete values;
     return false;
+}
+
+bool CSSParser::parseFontFaceUnicodeRange()
+{
+    CSSValueList* values = new CSSValueList();
+    Value* currentValue;
+    bool failed = false;
+    while ((currentValue = valueList->current())) {
+        if (valueList->current()->unit != CSSPrimitiveValue::CSS_UNICODE_RANGE) {
+            failed = true;
+            break;
+        }
+
+        String rangeString = domString(valueList->current()->string);
+        UChar32 from = 0;
+        UChar32 to = 0;
+        unsigned length = rangeString.length();
+
+        if (length < 3) {
+            failed = true;
+            break;
+        }
+
+        unsigned i = 2;
+        while (i < length) {
+            UChar c = rangeString[i];
+            if (c == '-' || c == '?')
+                break;
+            from *= 16;
+            if (c >= '0' && c <= '9')
+                from += c - '0';
+            else if (c >= 'A' && c <= 'F')
+                from += 10 + c - 'A';
+            else if (c >= 'a' && c <= 'f')
+                from += 10 + c - 'a';
+            else {
+                failed = true;
+                break;
+            }
+            i++;
+        }
+        if (failed)
+            break;
+
+        if (i == length)
+            to = from + 1;
+        else if (rangeString[i] == '?') {
+            unsigned span = 1;
+            while (i < length && rangeString[i] == '?') {
+                span *= 16;
+                from *= 16;
+                i++;
+            }
+            if (i < length)
+                failed = true;
+            to = from + span;
+        } else {
+            if (length < i + 2) {
+                failed = true;
+                break;
+            }
+            i++;
+            while (i < length) {
+                UChar c = rangeString[i];
+                to *= 16;
+                if (c >= '0' && c <= '9')
+                    to += c - '0';
+                else if (c >= 'A' && c <= 'F')
+                    to += 10 + c - 'A';
+                else if (c >= 'a' && c <= 'f')
+                    to += 10 + c - 'a';
+                else {
+                    failed = true;
+                    break;
+                }
+                i++;
+            }
+            if (failed)
+                break;
+        }
+        values->append(new CSSUnicodeRangeValue(from, to));
+        valueList->next();
+    }
+    if (failed || !values->length()) {
+        delete values;
+        return false;
+    }
+    addProperty(CSS_PROP_UNICODE_RANGE, values, important);
+    return true;
 }
 
 bool CSSParser::parseColor(const String &name, RGBA32& rgb, bool strict)

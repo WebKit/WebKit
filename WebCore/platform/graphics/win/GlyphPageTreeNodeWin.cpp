@@ -27,13 +27,14 @@
  */
 
 #include "config.h"
-#include "FontData.h"
+#include "GlyphPageTreeNode.h"
 
+#include "SimpleFontData.h"
 #include <WebKitSystemInterface/WebKitSystemInterface.h>
 
 namespace WebCore {
 
-bool GlyphPage::fill(UChar* buffer, unsigned bufferLength, const FontData* fontData)
+bool GlyphPage::fill(unsigned offset, unsigned length, UChar* buffer, unsigned bufferLength, const SimpleFontData* fontData)
 {
     // The bufferLength will be greater than the glyph page size if the buffer has Unicode supplementary characters.
     // We won't support this for now.
@@ -43,12 +44,12 @@ bool GlyphPage::fill(UChar* buffer, unsigned bufferLength, const FontData* fontD
     bool haveGlyphs = false;
     CGGlyph localGlyphBuffer[GlyphPage::size];
     wkGetGlyphs(fontData->platformData().cgFont(), buffer, localGlyphBuffer, bufferLength);
-    for (unsigned i = 0; i < GlyphPage::size; i++) {
+    for (unsigned i = 0; i < length; i++) {
         Glyph glyph = localGlyphBuffer[i];
         if (!glyph)
-            setGlyphDataForIndex(i, 0, 0);
+            setGlyphDataForIndex(offset + i, 0, 0);
         else {
-            setGlyphDataForIndex(i, glyph, fontData);
+            setGlyphDataForIndex(offset + i, glyph, fontData);
             haveGlyphs = true;
         }
     }

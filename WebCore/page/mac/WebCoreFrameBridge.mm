@@ -45,7 +45,6 @@
 #import "EditorClient.h"
 #import "EventHandler.h"
 #import "FloatRect.h"
-#import "FontData.h"
 #import "FormDataStreamMac.h"
 #import "Frame.h"
 #import "FrameLoader.h"
@@ -73,6 +72,7 @@
 #import "ReplaceSelectionCommand.h"
 #import "ResourceRequest.h"
 #import "SelectionController.h"
+#import "SimpleFontData.h"
 #import "SmartReplace.h"
 #import "SubresourceLoader.h"
 #import "SystemTime.h"
@@ -1125,7 +1125,7 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
     bool multipleFonts = false;
     NSFont *font = nil;
     if (m_frame) {
-        const FontData* fd = m_frame->editor()->fontForSelection(multipleFonts);
+        const SimpleFontData* fd = m_frame->editor()->fontForSelection(multipleFonts);
         if (fd)
             font = fd->getNSFont();
     }

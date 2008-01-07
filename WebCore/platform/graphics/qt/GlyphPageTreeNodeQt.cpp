@@ -22,13 +22,13 @@
 #include "config.h"
 #include "GlyphPageTreeNode.h"
 
-#include "FontData.h"
 #include "FontPlatformData.h"
+#include "SimpleFontData.h"
 #include <QFontDatabase>
 
 namespace WebCore {
 
-void GlyphPageTreeNode::pruneTreeCustomFontData(const FontData* fontData)
+void GlyphPageTreeNode::pruneTreeCustomFontData(const SimpleFontData* fontData)
 {
     QFontDatabase::removeApplicationFont(fontData->platformData().handle);
 }

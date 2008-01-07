@@ -3698,6 +3698,8 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     }
     case CSS_PROP_SRC: // Only used in @font-face rules.
         return;
+    case CSS_PROP_UNICODE_RANGE: // Only used in @font-face rules.
+        return;
     case CSS_PROP__WEBKIT_BOX_DIRECTION:
         HANDLE_INHERIT_AND_INITIAL(boxDirection, BoxDirection)
         if (primitiveValue)

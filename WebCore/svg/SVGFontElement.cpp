@@ -24,7 +24,6 @@
 #include "SVGFontElement.h"
 
 #include "Font.h"
-#include "FontData.h"
 #include "GlyphPageTreeNode.h"
 #include "SVGGlyphElement.h"
 #include "SVGMissingGlyphElement.h"

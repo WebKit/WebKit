@@ -28,9 +28,9 @@
 #if ENABLE(SVG_FONTS)
 #include "SVGCSSFontFace.h"
 
-#include "FontData.h"
 #include "FontDescription.h"
 #include "SVGFontFaceElement.h"
+#include "SimpleFontData.h"
 
 namespace WebCore {
 
@@ -55,7 +55,7 @@ void SVGCSSFontFace::addSource(CSSFontFaceSource*)
     // no-op
 }
 
-FontData* SVGCSSFontFace::getFontData(const FontDescription& fontDescription, bool syntheticBold, bool syntheticItalic)
+SimpleFontData* SVGCSSFontFace::getFontData(const FontDescription& fontDescription, bool syntheticBold, bool syntheticItalic)
 {
     if (!isValid())
         return 0;

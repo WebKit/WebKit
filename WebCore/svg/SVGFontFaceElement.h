@@ -28,8 +28,8 @@ namespace WebCore {
 
     class CSSFontFaceRule;
     class CSSMutableStyleDeclaration;
-    class FontData;
     class FontDescription;
+    class SimpleFontData;
     class SVGFontElement;
 
     class SVGFontFaceElement : public SVGElement {
@@ -46,7 +46,7 @@ namespace WebCore {
         String fontFamily() const;
 
         void rebuildFontFace();
-        FontData* createFontData(const FontDescription&) const;
+        SimpleFontData* createFontData(const FontDescription&) const;
 
         // If our parent element is <font>, it will be returned. (this is the case for a SVG Font described in the same document)
         // Otherwhise it will return the <font> element that is referenced by the first valid <font-face-src> element.

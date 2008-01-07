@@ -38,7 +38,6 @@
 #import <WebCore/CSSHelper.h>
 #import <WebCore/Document.h>
 #import <WebCore/Element.h>
-#import <WebCore/FontData.h>
 #import <WebCore/Frame.h>
 #import <WebCore/FrameLoader.h>
 #import <WebCore/HTMLNames.h>
@@ -51,6 +50,7 @@
 #import <WebCore/RenderObject.h>
 #import <WebCore/RenderStyle.h>
 #import <WebCore/RenderText.h>
+#import <WebCore/SimpleFontData.h>
 #import <WebCore/Text.h>
 
 using namespace WebCore;

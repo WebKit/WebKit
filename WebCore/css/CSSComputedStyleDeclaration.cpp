@@ -893,6 +893,7 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
         case CSS_PROP_TEXT_UNDERLINE_MODE:
         case CSS_PROP_TEXT_UNDERLINE_STYLE:
         case CSS_PROP_TEXT_UNDERLINE_WIDTH:
+        case CSS_PROP_UNICODE_RANGE: // Only used in @font-face rules.
         case CSS_PROP__WEBKIT_BORDER_IMAGE:
         case CSS_PROP__WEBKIT_BORDER_RADIUS:
         case CSS_PROP__WEBKIT_COLUMNS:

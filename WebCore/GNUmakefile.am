@@ -522,12 +522,14 @@ webcore_sources += \
 	WebCore/css/CSSRule.cpp \
 	WebCore/css/CSSRuleList.cpp \
 	WebCore/css/CSSSelector.cpp \
+	WebCore/css/CSSSegmentedFontFace.cpp \
 	WebCore/css/CSSStyleDeclaration.cpp \
 	WebCore/css/CSSStyleRule.cpp \
 	WebCore/css/CSSStyleSelector.cpp \
 	WebCore/css/CSSStyleSheet.cpp \
 	WebCore/css/CSSTimingFunctionValue.cpp \
 	WebCore/css/CSSTransformValue.cpp \
+	WebCore/css/CSSUnicodeRangeValue.cpp \
 	WebCore/css/CSSValueList.cpp \
 	WebCore/css/FontFamilyValue.cpp \
 	WebCore/css/FontValue.cpp \
@@ -911,8 +913,10 @@ webkitgtk_sources += \
 	WebCore/platform/graphics/GlyphWidthMap.cpp \
 	WebCore/platform/graphics/FontCache.cpp \
 	WebCore/platform/graphics/Font.cpp \
-	WebCore/platform/graphics/FontData.cpp \
+	WebCore/platform/graphics/FontDataBaseClass.cpp \
 	WebCore/platform/graphics/FontFallbackList.cpp \
+	WebCore/platform/graphics/SegmentedFontData.cpp \
+	WebCore/platform/graphics/SimpleFontData.cpp \
 	WebCore/platform/graphics/StringTruncator.cpp \
 	WebCore/platform/text/TextCodecICU.cpp \
 	WebCore/platform/text/TextBoundariesICU.cpp \
@@ -930,10 +934,10 @@ webkitgtk_sources += \
 	WebCore/platform/gtk/FileChooserGtk.cpp \
 	WebCore/platform/gtk/FileSystemGtk.cpp \
 	WebCore/platform/graphics/gtk/FontCacheGtk.cpp \
-	WebCore/platform/graphics/gtk/FontDataGtk.cpp \
 	WebCore/platform/graphics/gtk/FontGtk.cpp \
 	WebCore/platform/graphics/gtk/FontPlatformDataGtk.cpp \
 	WebCore/platform/graphics/gtk/GlyphPageTreeNodeGtk.cpp \
+	WebCore/platform/graphics/gtk/SimpleFontDataGtk.cpp \
 	WebCore/platform/gtk/KeyEventGtk.cpp \
 	WebCore/platform/gtk/Language.cpp \
 	WebCore/platform/gtk/LocalizedStringsGtk.cpp \

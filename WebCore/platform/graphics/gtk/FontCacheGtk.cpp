@@ -32,7 +32,7 @@
 #include "FontCache.h"
 
 #include "Font.h"
-#include "FontData.h"
+#include "SimpleFontData.h"
 #include <wtf/Assertions.h>
 
 namespace WebCore {
@@ -43,9 +43,9 @@ void FontCache::platformInit()
         ASSERT_NOT_REACHED();
 }
 
-const FontData* FontCache::getFontDataForCharacters(const Font& font, const UChar* characters, int length)
+const SimpleFontData* FontCache::getFontDataForCharacters(const Font& font, const UChar* characters, int length)
 {
-    return new FontData(FontPlatformData(font.fontDescription(), font.family().family()));
+    return new SimpleFontData(FontPlatformData(font.fontDescription(), font.family().family()));
 }
 
 FontPlatformData* FontCache::getSimilarFontPlatformData(const Font& font)

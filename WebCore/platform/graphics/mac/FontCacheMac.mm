@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2007, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,7 +30,7 @@
 #import "FontCache.h"
 
 #import "Font.h"
-#import "FontData.h"
+#import "SimpleFontData.h"
 #import "FontPlatformData.h"
 #import "WebCoreSystemInterface.h"
 #import "WebFontCache.h"
@@ -117,9 +117,9 @@ void FontCache::platformInit()
     wkSetUpFontCache(s);
 }
 
-const FontData* FontCache::getFontDataForCharacters(const Font& font, const UChar* characters, int length)
+const SimpleFontData* FontCache::getFontDataForCharacters(const Font& font, const UChar* characters, int length)
 {
-    const FontPlatformData& platformData = font.primaryFont()->platformData();
+    const FontPlatformData& platformData = font.fontDataAt(0)->fontDataForCharacter(characters[0])->platformData();
     NSFont *nsFont = platformData.font();
 
     NSString *string = [[NSString alloc] initWithCharactersNoCopy:const_cast<UChar*>(characters)
@@ -140,16 +140,29 @@ const FontData* FontCache::getFontDataForCharacters(const Font& font, const UCha
 
     NSFontManager *manager = [NSFontManager sharedFontManager];
 
-    NSFontTraitMask traits = [manager traitsOfFont:nsFont];
-    if (platformData.m_syntheticBold)
-        traits |= NSBoldFontMask;
-    if (platformData.m_syntheticOblique)
-        traits |= NSItalicFontMask;
+    NSFontTraitMask traits;
+    NSInteger weight;
+    CGFloat size;
+
+    if (nsFont) {
+        traits = [manager traitsOfFont:nsFont];
+        if (platformData.m_syntheticBold)
+            traits |= NSBoldFontMask;
+        if (platformData.m_syntheticOblique)
+            traits |= NSItalicFontMask;
+        weight = [manager weightOfFont:nsFont];
+        size = [nsFont pointSize];
+    } else {
+        // For custom fonts nsFont is nil.
+        traits = (font.bold() ? NSBoldFontMask : 0) | (font.italic() ? NSItalicFontMask : 0);
+        weight = 5;
+        size = font.pixelSize();
+    }
 
     NSFont *bestVariation = [manager fontWithFamily:[substituteFont familyName]
         traits:traits
-        weight:[manager weightOfFont:nsFont]
-        size:[nsFont pointSize]];
+        weight:weight
+        size:size];
     if (bestVariation)
         substituteFont = bestVariation;
 

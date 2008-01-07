@@ -451,12 +451,14 @@ SOURCES += \
     css/CSSRule.cpp \
     css/CSSRuleList.cpp \
     css/CSSSelector.cpp \
+    css/CSSSegmentedFontFace.cpp \
     css/CSSStyleDeclaration.cpp \
     css/CSSStyleRule.cpp \
     css/CSSStyleSelector.cpp \
     css/CSSStyleSheet.cpp \
     css/CSSTimingFunctionValue.cpp \
     css/CSSTransformValue.cpp \
+    css/CSSUnicodeRangeValue.cpp \
     css/CSSValueList.cpp \
     css/FontFamilyValue.cpp \
     css/FontValue.cpp \
@@ -860,8 +862,10 @@ gtk-port {
     platform/graphics/GlyphWidthMap.cpp \
     platform/graphics/FontCache.cpp \
     platform/graphics/Font.cpp \
-    platform/graphics/FontData.cpp \
-    platform/graphics/FontFallbackList.cpp 
+    platform/graphics/FontDataBaseClass.cpp \
+    platform/graphics/FontFallbackList.cpp \
+    platform/graphics/SegmentedFontData.cpp \
+    platfomr/graphics/SimpleFontData.cpp 
 }
 
 qt-port {
@@ -916,9 +920,9 @@ qt-port {
     platform/qt/FileSystemQt.cpp \
     platform/graphics/qt/FontCacheQt.cpp \
     platform/graphics/qt/FontCustomPlatformData.cpp \
-    platform/graphics/qt/FontDataQt.cpp \
     platform/graphics/qt/FontQt.cpp \
     platform/graphics/qt/GlyphPageTreeNodeQt.cpp \
+    platform/graphics/qt/SimpleFontDataQt.cpp \
     platform/qt/Localizations.cpp \
     platform/qt/MIMETypeRegistryQt.cpp \
     platform/qt/PasteboardQt.cpp \
@@ -1001,10 +1005,10 @@ gtk-port {
         platform/gtk/FileChooserGtk.cpp \
         platform/gtk/FileSystemGtk.cpp \
         platform/graphics/gtk/FontCacheGtk.cpp \
-        platform/graphics/gtk/FontDataGtk.cpp \
         platform/graphics/gtk/FontGtk.cpp \
         platform/graphics/gtk/FontPlatformDataGtk.cpp \
         platform/graphics/gtk/GlyphPageTreeNodeGtk.cpp \
+        platform/graphics/gtk/SimpleFontDataGtk.cpp \
         platform/gtk/KeyEventGtk.cpp \
         platform/gtk/Language.cpp \
         platform/gtk/LocalizedStringsGtk.cpp \

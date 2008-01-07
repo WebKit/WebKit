@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Nikolas Zimmermann <zimmermann@kde.org>
+ * Copyright (C) 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,33 +23,34 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef SVGCSSFontFace_h
-#define SVGCSSFontFace_h
+#ifndef CSSUnicodeRangeValue_h
+#define CSSUnicodeRangeValue_h
 
-#if ENABLE(SVG_FONTS)
-#include "CSSFontFace.h"
-#include <wtf/OwnPtr.h>
+#include "CSSValue.h"
+#include <wtf/unicode/Unicode.h>
 
 namespace WebCore {
 
-class SVGFontFaceElement;
-
-class SVGCSSFontFace : public CSSFontFace {
+class CSSUnicodeRangeValue : public CSSValue {
 public:
-    SVGCSSFontFace(CSSFontSelector*, SVGFontFaceElement*);
-    virtual ~SVGCSSFontFace();
+    CSSUnicodeRangeValue(UChar32 from, UChar32 to)
+        : m_from(from)
+        , m_to(to)
+    {
+    }
 
-    virtual bool isValid() const;
-    virtual void addSource(CSSFontFaceSource*);
+    virtual ~CSSUnicodeRangeValue();
 
-    virtual SimpleFontData* getFontData(const FontDescription&, bool syntheticBold, bool syntheticItalic);
+    UChar32 from() const { return m_from; }
+    UChar32 to() const { return m_to; }
+
+    virtual String cssText() const;
 
 private:
-    RefPtr<SVGFontFaceElement> m_fontFaceElement;
-    OwnPtr<SimpleFontData> m_fontData;
+    UChar32 m_from;
+    UChar32 m_to;
 };
 
-}
+} // namespace WebCore
 
-#endif // ENABLE(SVG_FONTS)
-#endif
+#endif // CSSUnicodeRangeValue_h

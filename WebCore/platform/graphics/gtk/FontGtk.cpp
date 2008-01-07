@@ -28,14 +28,14 @@
 #include "config.h"
 #include "Font.h"
 
-#include "FontData.h"
 #include "GraphicsContext.h"
 #include "NotImplemented.h"
+#include "SimpleFontData.h"
 #include <cairo.h>
 
 namespace WebCore {
 
-void Font::drawGlyphs(GraphicsContext* graphicsContext, const FontData* font, const GlyphBuffer& glyphBuffer,
+void Font::drawGlyphs(GraphicsContext* graphicsContext, const SimpleFontData* font, const GlyphBuffer& glyphBuffer,
                       int from, int numGlyphs, const FloatPoint& point) const
 {
     cairo_t* context = graphicsContext->platformContext();

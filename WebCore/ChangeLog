@@ -1,3 +1,239 @@
+2008-01-07  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        - <rdar://problem/5665216> Support the unicode-range property in @font-face rules
+
+        * GNUmakefile.am:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * WebCoreSources.bkl:
+        * bindings/objc/DOM.mm:
+        * bridge/mac/WebCoreAXObject.mm:
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+        * css/CSSFontFace.cpp:
+        (WebCore::CSSFontFace::fontLoaded): Changed to call the owning segmented
+        font face.
+        (WebCore::CSSFontFace::getFontData):
+        * css/CSSFontFace.h:
+        (WebCore::CSSFontFace::CSSFontFace):
+        (WebCore::CSSFontFace::setSegmentedFontFace):
+        * css/CSSFontFaceSource.cpp:
+        (WebCore::CSSFontFaceSource::pruneTable): Removed the calls to
+        GlyphPageTreeNode::pruneTreeCustomFontData because the fonts in the
+        font table are not exposed in the glyph page tree. Only the segmented
+        font is, and that is taken care of by the segmented font face.
+        (WebCore::CSSFontFaceSource::getFontData):
+        * css/CSSFontFaceSource.h:
+        * css/CSSFontSelector.cpp:
+        (WebCore::CSSFontSelector::addFontFaceRule): Changed to collect
+        @font-face rules with the same family and traits into a single
+        segmented font face, instead of just retaining the most recent one.
+        (WebCore::CSSFontSelector::fontLoaded):
+        (WebCore::CSSFontSelector::getFontData):
+        * css/CSSFontSelector.h:
+        * css/CSSGrammar.y:
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue):
+        (WebCore::CSSParser::parseFontFaceUnicodeRange): Added. Parses a unicode
+        range value.
+        * css/CSSParser.h:
+        * css/CSSPrimitiveValue.h:
+        (WebCore::CSSPrimitiveValue::):
+        * css/CSSPropertyNames.in:
+        * css/CSSSegmentedFontFace.cpp: Added.
+        (WebCore::CSSSegmentedFontFace::CSSSegmentedFontFace):
+        (WebCore::CSSSegmentedFontFace::~CSSSegmentedFontFace):
+        (WebCore::CSSSegmentedFontFace::pruneTable):
+        (WebCore::CSSSegmentedFontFace::isLoaded):
+        (WebCore::CSSSegmentedFontFace::isValid):
+        (WebCore::CSSSegmentedFontFace::fontLoaded):
+        (WebCore::CSSSegmentedFontFace::overlayRange):
+        (WebCore::CSSSegmentedFontFace::getFontData):
+        * css/CSSSegmentedFontFace.h: Added.
+        (WebCore::FontFaceRange::FontFaceRange):
+        (WebCore::FontFaceRange::from):
+        (WebCore::FontFaceRange::to):
+        (WebCore::FontFaceRange::fontFace):
+        (WebCore::CSSSegmentedFontFace::fontSelector):
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty):
+        * css/CSSUnicodeRangeValue.cpp: Added.
+        (WebCore::CSSUnicodeRangeValue::~CSSUnicodeRangeValue):
+        (WebCore::CSSUnicodeRangeValue::cssText):
+        * css/CSSUnicodeRangeValue.h: Added.
+        (WebCore::CSSUnicodeRangeValue::CSSUnicodeRangeValue):
+        (WebCore::CSSUnicodeRangeValue::from):
+        (WebCore::CSSUnicodeRangeValue::to):
+        * css/SVGCSSFontFace.cpp:
+        (WebCore::SVGCSSFontFace::getFontData):
+        * css/SVGCSSFontFace.h:
+        * editing/Editor.cpp:
+        (WebCore::Editor::fontForSelection):
+        * editing/Editor.h:
+        * page/mac/FrameMac.mm:
+        * page/mac/WebCoreFrameBridge.mm:
+        (-[WebCoreFrameBridge fontForSelection:]):
+        * platform/graphics/Font.cpp:
+        (WebCore::WidthIterator::advance):
+        (WebCore::Font::glyphDataForCharacter):
+        (WebCore::Font::primaryFont): Changed to return the simple font data
+        used for the space character.
+        (WebCore::Font::fontDataAt):
+        (WebCore::Font::fontDataForCharacters):
+        (WebCore::Font::drawGlyphBuffer):
+        * platform/graphics/Font.h:
+        * platform/graphics/FontCache.cpp:
+        (WebCore::FontCache::getCachedFontData):
+        (WebCore::FontCache::getFontData):
+        * platform/graphics/FontCache.h:
+        * platform/graphics/FontData.cpp: Renamed to SimpleFontData.cpp
+        * platform/graphics/FontData.h: Renamed to SimpleFontData.cpp.
+        * platform/graphics/FontDataBaseClass.cpp: Added. This will be renamed
+        FontData.cpp.
+        (WebCore::FontData::~FontData):
+        * platform/graphics/FontDataBaseClass.h: Added. This will be renamed
+        FontData.h.
+        * platform/graphics/FontFallbackList.cpp:
+        (WebCore::FontFallbackList::determinePitch):
+        (WebCore::FontFallbackList::fontDataAt):
+        (WebCore::FontFallbackList::fontDataForCharacters):
+        * platform/graphics/FontFallbackList.h:
+        (WebCore::FontFallbackList::primaryFont):
+        * platform/graphics/FontSelector.h:
+        * platform/graphics/GlyphBuffer.h:
+        (WebCore::GlyphBuffer::fontDataAt):
+        (WebCore::GlyphBuffer::swap):
+        (WebCore::GlyphBuffer::add):
+        * platform/graphics/GlyphPageTreeNode.cpp:
+        (WebCore::GlyphPageTreeNode::pruneTreeCustomFontData):
+        (WebCore::GlyphPageTreeNode::initializePage): Added code to initialize
+        pages for segmented font data.
+        (WebCore::GlyphPageTreeNode::getChild):
+        (WebCore::GlyphPageTreeNode::pruneCustomFontData):
+        * platform/graphics/GlyphPageTreeNode.h:
+        (WebCore::GlyphPage::setGlyphDataForCharacter):
+        (WebCore::GlyphPage::setGlyphDataForIndex):
+        (WebCore::GlyphPageTreeNode::getRootChild):
+        * platform/graphics/SegmentedFontData.cpp: Added.
+        (WebCore::SegmentedFontData::~SegmentedFontData):
+        (WebCore::SegmentedFontData::fontDataForCharacter):
+        (WebCore::SegmentedFontData::containsCharacters):
+        (WebCore::SegmentedFontData::isCustomFont):
+        (WebCore::SegmentedFontData::isLoading):
+        (WebCore::SegmentedFontData::isSegmented):
+        * platform/graphics/SegmentedFontData.h: Added.
+        (WebCore::FontDataRange::FontDataRange):
+        (WebCore::FontDataRange::from):
+        (WebCore::FontDataRange::to):
+        (WebCore::FontDataRange::fontData):
+        (WebCore::SegmentedFontData::appendRange):
+        (WebCore::SegmentedFontData::numRanges):
+        (WebCore::SegmentedFontData::rangeAt):
+        * platform/graphics/SimpleFontData.cpp: Copied from WebCore/platform/graphics/FontData.cpp.
+        (WebCore::SimpleFontData::SimpleFontData):
+        (WebCore::SimpleFontData::~SimpleFontData):
+        (WebCore::SimpleFontData::ascent):
+        (WebCore::SimpleFontData::descent):
+        (WebCore::SimpleFontData::widthForGlyph):
+        (WebCore::SimpleFontData::fontDataForCharacter):
+        (WebCore::SimpleFontData::isSegmented):
+        * platform/graphics/SimpleFontData.h: Copied from WebCore/platform/graphics/FontData.h.
+        (WebCore::SimpleFontData::isCustomFont):
+        (WebCore::SimpleFontData::isLoading):
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        (WebCore::GraphicsContext::setPlatformFont):
+        * platform/graphics/gtk/FontCacheGtk.cpp:
+        (WebCore::FontCache::getFontDataForCharacters):
+        * platform/graphics/gtk/FontDataGtk.cpp: Renamed to
+        SimpleFontDataGtk.cpp.
+        * platform/graphics/gtk/FontGtk.cpp:
+        (WebCore::Font::drawGlyphs):
+        * platform/graphics/gtk/GlyphPageTreeNodeGtk.cpp:
+        (WebCore::GlyphPage::fill):
+        * platform/graphics/gtk/SimpleFontDataGtk.cpp: Copied from WebCore/platform/graphics/gtk/FontDataGtk.cpp.
+        (WebCore::SimpleFontData::platformInit):
+        (WebCore::SimpleFontData::platformDestroy):
+        (WebCore::SimpleFontData::smallCapsFontData):
+        (WebCore::SimpleFontData::containsCharacters):
+        (WebCore::SimpleFontData::determinePitch):
+        (WebCore::SimpleFontData::platformWidthForGlyph):
+        (WebCore::SimpleFontData::setFont):
+        * platform/graphics/mac/FontCacheMac.mm:
+        (WebCore::FontCache::getFontDataForCharacters):
+        * platform/graphics/mac/FontDataMac.mm: Renamed to SimpleFontDataMac.mm.
+        * platform/graphics/mac/FontMac.mm:
+        (WebCore::initializeATSUStyle):
+        (WebCore::overrideLayoutOperation):
+        (WebCore::ATSULayoutParameters::initialize):
+        (WebCore::Font::drawGlyphs):
+        * platform/graphics/mac/GlyphPageTreeNodeMac.cpp:
+        (WebCore::GlyphPage::fill):
+        * platform/graphics/mac/SimpleFontDataMac.mm: Copied from WebCore/platform/graphics/mac/FontDataMac.mm.
+        (WebCore::initFontData):
+        (WebCore::SimpleFontData::platformInit):
+        (WebCore::SimpleFontData::platformDestroy):
+        (WebCore::SimpleFontData::smallCapsFontData):
+        (WebCore::SimpleFontData::containsCharacters):
+        (WebCore::SimpleFontData::determinePitch):
+        (WebCore::SimpleFontData::platformWidthForGlyph):
+        (WebCore::SimpleFontData::checkShapesArabic):
+        * platform/graphics/qt/FontDataQt.cpp: Renamed to SimpleFontDataQt.cpp.
+        * platform/graphics/qt/GlyphPageTreeNodeQt.cpp:
+        (WebCore::GlyphPageTreeNode::pruneTreeCustomFontData):
+        * platform/graphics/qt/SimpleFontDataQt.cpp: Copied from WebCore/platform/graphics/qt/FontDataQt.cpp.
+        * platform/graphics/win/FontCacheWin.cpp:
+        (WebCore::FontCache::getFontDataForCharacters):
+        * platform/graphics/win/FontDataWin.cpp: Renamed to
+        SimpleFontDataWin.cpp.
+        * platform/graphics/win/FontWin.cpp:
+        (WebCore::Font::drawGlyphs):
+        * platform/graphics/win/GlyphPageTreeNodeWin.cpp:
+        (WebCore::GlyphPage::fill):
+        * platform/graphics/win/SimpleFontDataWin.cpp: Copied from WebCore/platform/graphics/win/FontDataWin.cpp.
+        (WebCore::SimpleFontData::setShouldApplyMacAscentHack):
+        (WebCore::SimpleFontData::platformInit):
+        (WebCore::SimpleFontData::platformDestroy):
+        (WebCore::SimpleFontData::smallCapsFontData):
+        (WebCore::SimpleFontData::containsCharacters):
+        (WebCore::SimpleFontData::determinePitch):
+        (WebCore::SimpleFontData::platformWidthForGlyph):
+        (WebCore::SimpleFontData::scriptFontProperties):
+        * platform/graphics/wx/FontCacheWx.cpp:
+        (WebCore::FontCache::getFontDataForCharacters):
+        * platform/graphics/wx/FontDataWx.cpp: Renamed to SimpleFontDataWx.cpp.
+        * platform/graphics/wx/FontWx.cpp:
+        (WebCore::Font::drawGlyphs):
+        * platform/graphics/wx/GlyphMapWx.cpp:
+        (WebCore::GlyphPage::fill):
+        * platform/graphics/wx/SimpleFontDataWx.cpp: Copied from WebCore/platform/graphics/wx/FontDataWx.cpp.
+        (WebCore::SimpleFontData::platformInit):
+        (WebCore::SimpleFontData::platformDestroy):
+        (WebCore::SimpleFontData::smallCapsFontData):
+        (WebCore::SimpleFontData::containsCharacters):
+        (WebCore::SimpleFontData::determinePitch):
+        (WebCore::SimpleFontData::platformWidthForGlyph):
+        * platform/mac/FileChooserMac.mm:
+        * platform/mac/PopupMenuMac.mm:
+        * platform/mac/WebCoreTextRenderer.mm:
+        * platform/win/PopupMenuWin.cpp:
+        * platform/win/UniscribeController.cpp:
+        (WebCore::UniscribeController::advance):
+        (WebCore::UniscribeController::itemizeShapeAndPlace):
+        (WebCore::UniscribeController::shapeAndPlaceItem):
+        (WebCore::UniscribeController::shape):
+        * platform/win/UniscribeController.h:
+        * svg/SVGFont.cpp:
+        (WebCore::Font::drawGlyphsWithSVGFont):
+        * svg/SVGFontElement.cpp:
+        (WebCore::SVGFontElement::collectGlyphs):
+        * svg/SVGFontFaceElement.cpp:
+        (WebCore::SVGFontFaceElement::createFontData):
+        * svg/SVGFontFaceElement.h:
+        * svg/SVGGlyphElement.cpp:
+
 2008-01-07  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Not reviewed. Try to fix mac build by forcing SVGNames regeneration.

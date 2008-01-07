@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,45 +23,64 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef CSSFontSelector_h
-#define CSSFontSelector_h
+#ifndef CSSSegmentedFontFace_h
+#define CSSSegmentedFontFace_h
 
-#include "FontSelector.h"
-
-#include "StringHash.h"
 #include <wtf/HashMap.h>
-#include <wtf/RefPtr.h>
+#include <wtf/PassRefPtr.h>
+#include <wtf/RefCounted.h>
+#include <wtf/Vector.h>
+#include <wtf/unicode/Unicode.h>
 
 namespace WebCore {
 
-class AtomicString;
-class CSSFontFaceRule;
-class CSSSegmentedFontFace;
-class Document;
-class DocLoader;
+class CSSFontFace;
+class CSSFontSelector;
+class FontData;
 class FontDescription;
-class String;
+class SegmentedFontData;
 
-class CSSFontSelector : public FontSelector {
+struct FontFaceRange {
+    FontFaceRange(UChar32 from, UChar32 to, PassRefPtr<CSSFontFace> fontFace)
+        : m_from(from)
+        , m_to(to)
+        , m_fontFace(fontFace)
+    {
+    }
+
+    UChar32 from() const { return m_from; }
+    UChar32 to() const { return m_to; }
+    CSSFontFace* fontFace() const { return m_fontFace.get(); }
+
+private:
+    UChar32 m_from;
+    UChar32 m_to;
+    RefPtr<CSSFontFace> m_fontFace;
+};
+
+class CSSSegmentedFontFace : public RefCounted<CSSSegmentedFontFace> {
 public:
-    CSSFontSelector(Document* doc);
-    virtual ~CSSFontSelector();
+    CSSSegmentedFontFace(CSSFontSelector*);
+    ~CSSSegmentedFontFace();
 
-    virtual FontData* getFontData(const FontDescription& fontDescription, const AtomicString& familyName);
-    
-    void addFontFaceRule(const CSSFontFaceRule*);
+    bool isLoaded() const;
+    bool isValid() const;
+    CSSFontSelector* fontSelector() const { return m_fontSelector; }
 
-    void fontLoaded(CSSSegmentedFontFace*);
+    void fontLoaded(CSSFontFace*);
 
-    bool isEmpty() const;
+    void overlayRange(UChar32 from, UChar32 to, PassRefPtr<CSSFontFace>);
 
-    DocLoader* docLoader() const;
+    FontData* getFontData(const FontDescription&, bool syntheticBold, bool syntheticItalic);
 
-protected:
-    Document* m_document; // No need to ref, since we will always get destroyed before the document does.
-    HashMap<String, RefPtr<CSSSegmentedFontFace> > m_fonts;
+private:
+    void pruneTable();
+
+    CSSFontSelector* m_fontSelector;
+    HashMap<unsigned, SegmentedFontData*> m_fontDataTable;
+    Vector<FontFaceRange, 1> m_ranges;
 };
 
 } // namespace WebCore
 
-#endif // CSSFontSelector_h
+#endif // CSSSegmentedFontFace_h

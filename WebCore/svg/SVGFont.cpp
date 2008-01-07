@@ -23,7 +23,6 @@
 #if ENABLE(SVG_FONTS)
 #include "Font.h"
 
-#include "FontData.h"
 #include "GraphicsContext.h"
 #include "RenderObject.h"
 #include "SVGGlyphElement.h"

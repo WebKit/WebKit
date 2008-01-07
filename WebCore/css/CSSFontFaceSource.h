@@ -35,8 +35,8 @@ namespace WebCore {
 class CachedFont;
 class CSSFontFace;
 class CSSFontSelector;
-class FontData;
 class FontDescription;
+class SimpleFontData;
 
 class CSSFontFaceSource : public CachedResourceClient {
 public:
@@ -52,7 +52,7 @@ public:
 
     virtual void fontLoaded(CachedFont*);
     
-    FontData* getFontData(const FontDescription&, bool syntheticBold, bool syntheticItalic, CSSFontSelector*);
+    SimpleFontData* getFontData(const FontDescription&, bool syntheticBold, bool syntheticItalic, CSSFontSelector*);
     
     void pruneTable();
 
@@ -60,7 +60,7 @@ private:
     AtomicString m_string; // URI for remote, built-in font name for local.
     CachedFont* m_font; // For remote fonts, a pointer to our cached resource.
     CSSFontFace* m_face; // Our owning font face.
-    HashMap<int, FontData*> m_fontDataTable; // A cache of FontDatas for various pixel sizes.
+    HashMap<int, SimpleFontData*> m_fontDataTable; // A cache of FontDatas for various pixel sizes.
 };
 
 }

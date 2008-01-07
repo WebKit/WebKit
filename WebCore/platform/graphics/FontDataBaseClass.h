@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Nikolas Zimmermann <zimmermann@kde.org>
+ * Copyright (C) 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,33 +23,27 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef SVGCSSFontFace_h
-#define SVGCSSFontFace_h
+#ifndef FontDataBaseClass_h
+#define FontDataBaseClass_h
 
-#if ENABLE(SVG_FONTS)
-#include "CSSFontFace.h"
-#include <wtf/OwnPtr.h>
+#include <wtf/Noncopyable.h>
+#include <wtf/unicode/Unicode.h>
 
 namespace WebCore {
 
-class SVGFontFaceElement;
+class SimpleFontData;
 
-class SVGCSSFontFace : public CSSFontFace {
+class FontData : Noncopyable {
 public:
-    SVGCSSFontFace(CSSFontSelector*, SVGFontFaceElement*);
-    virtual ~SVGCSSFontFace();
+    virtual ~FontData();
 
-    virtual bool isValid() const;
-    virtual void addSource(CSSFontFaceSource*);
-
-    virtual SimpleFontData* getFontData(const FontDescription&, bool syntheticBold, bool syntheticItalic);
-
-private:
-    RefPtr<SVGFontFaceElement> m_fontFaceElement;
-    OwnPtr<SimpleFontData> m_fontData;
+    virtual const SimpleFontData* fontDataForCharacter(UChar32) const = 0;
+    virtual bool containsCharacters(const UChar*, int length) const = 0;
+    virtual bool isCustomFont() const = 0;
+    virtual bool isLoading() const = 0;
+    virtual bool isSegmented() const = 0;
 };
 
-}
+} // namespace WebCore
 
-#endif // ENABLE(SVG_FONTS)
-#endif
+#endif // FontDataBaseClass_h

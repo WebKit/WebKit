@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2007, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,10 +30,14 @@
 #include "GlyphPageTreeNode.h"
 
 #include "CharacterNames.h"
-#include "FontData.h"
+#include "SegmentedFontData.h"
+#include "SimpleFontData.h"
 #include <wtf/unicode/Unicode.h>
 
 namespace WebCore {
+
+using std::max;
+using std::min;
 
 HashMap<int, GlyphPageTreeNode*>* GlyphPageTreeNode::roots = 0;
 GlyphPageTreeNode* GlyphPageTreeNode::pageZeroRoot = 0;
@@ -149,7 +153,30 @@ void GlyphPageTreeNode::initializePage(const FontData* fontData, unsigned pageNu
             // routine of our glyph map for actually filling in the page with the glyphs.
             // Success is not guaranteed. For example, Times fails to fill page 260, giving glyph data
             // for only 128 out of 256 characters.
-            bool haveGlyphs = m_page->fill(buffer, bufferLength, fontData);
+            bool haveGlyphs;
+            if (fontData->isSegmented()) {
+                haveGlyphs = false;
+
+                const SegmentedFontData* segmentedFontData = static_cast<const SegmentedFontData*>(fontData);
+                unsigned numRanges = segmentedFontData->numRanges();
+                bool zeroFilled = false;
+                for (unsigned i = 0; i < numRanges; i++) {
+                    const FontDataRange& range = segmentedFontData->rangeAt(i);
+                    int from = max(0, range.from() - static_cast<int>(start));
+                    int to = min(range.to() - static_cast<int>(start), static_cast<int>(GlyphPage::size));
+                    if (from < static_cast<int>(GlyphPage::size) && to > 0) {
+                        if (!zeroFilled) {
+                            if (from > 0 || to < static_cast<int>(GlyphPage::size)) {
+                                for (unsigned i = 0; i < GlyphPage::size; i++)
+                                    m_page->setGlyphDataForIndex(i, 0, 0);
+                            }
+                            zeroFilled = true;
+                        }
+                        haveGlyphs |= m_page->fill(from, to - from, buffer + from * (start < 0x10000 ? 1 : 2), (to - from) * (start < 0x10000 ? 1 : 2), range.fontData());
+                    }
+                }
+            } else
+                haveGlyphs = m_page->fill(0, GlyphPage::size, buffer, bufferLength, static_cast<const SimpleFontData*>(fontData));
 
             if (!haveGlyphs)
                 m_page = 0;

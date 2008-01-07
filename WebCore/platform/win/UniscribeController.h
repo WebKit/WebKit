@@ -52,9 +52,9 @@ public:
 private:    
     void resetControlAndState();
 
-    void itemizeShapeAndPlace(const UChar*, unsigned length, const FontData*, GlyphBuffer*);
-    bool shapeAndPlaceItem(const UChar*, unsigned index, const FontData*, GlyphBuffer*);
-    bool shape(const UChar* str, int len, SCRIPT_ITEM item, const FontData* fontData,
+    void itemizeShapeAndPlace(const UChar*, unsigned length, const SimpleFontData*, GlyphBuffer*);
+    bool shapeAndPlaceItem(const UChar*, unsigned index, const SimpleFontData*, GlyphBuffer*);
+    bool shape(const UChar* str, int len, SCRIPT_ITEM item, const SimpleFontData* fontData,
                Vector<WORD>& glyphs, Vector<WORD>& clusters,
                Vector<SCRIPT_VISATTR>& visualAttributes);
 

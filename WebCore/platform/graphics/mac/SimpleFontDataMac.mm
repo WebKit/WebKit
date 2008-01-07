@@ -28,7 +28,7 @@
  */
 
 #import "config.h"
-#import "FontData.h"
+#import "SimpleFontData.h"
 
 #import "BlockExceptions.h"
 #import "Color.h"
@@ -54,7 +54,7 @@ const float smallCapsFontSizeMultiplier = 0.7f;
 const float contextDPI = 72.0f;
 static inline float scaleEmToUnits(float x, unsigned unitsPerEm) { return x * (contextDPI / (contextDPI * unitsPerEm)); }
 
-bool initFontData(FontData* fontData)
+bool initFontData(SimpleFontData* fontData)
 {
     if (!fontData->m_font.m_cgFont)
         return false;
@@ -96,7 +96,7 @@ static NSString *webFallbackFontFamily(void)
     return webFallbackFontFamily.get();
 }
 
-void FontData::platformInit()
+void SimpleFontData::platformInit()
 {
     m_styleGroup = 0;
     m_ATSUStyleInitialized = false;
@@ -207,7 +207,7 @@ void FontData::platformInit()
         m_xHeight = [m_font.font() xHeight];
 }
 
-void FontData::platformDestroy()
+void SimpleFontData::platformDestroy()
 {
     if (m_styleGroup)
         wkReleaseStyleGroup(m_styleGroup);
@@ -216,13 +216,13 @@ void FontData::platformDestroy()
         ATSUDisposeStyle(m_ATSUStyle);
 }
 
-FontData* FontData::smallCapsFontData(const FontDescription& fontDescription) const
+SimpleFontData* SimpleFontData::smallCapsFontData(const FontDescription& fontDescription) const
 {
     if (!m_smallCapsFontData) {
         if (isCustomFont()) {
             FontPlatformData smallCapsFontData(m_font);
             smallCapsFontData.m_size = smallCapsFontData.m_size * smallCapsFontSizeMultiplier;
-            m_smallCapsFontData = new FontData(smallCapsFontData, true, false);
+            m_smallCapsFontData = new SimpleFontData(smallCapsFontData, true, false);
         } else {
             BEGIN_BLOCK_OBJC_EXCEPTIONS;
             float size = [m_font.font() pointSize] * smallCapsFontSizeMultiplier;
@@ -253,7 +253,7 @@ FontData* FontData::smallCapsFontData(const FontDescription& fontDescription) co
     return m_smallCapsFontData;
 }
 
-bool FontData::containsCharacters(const UChar* characters, int length) const
+bool SimpleFontData::containsCharacters(const UChar* characters, int length) const
 {
     NSString *string = [[NSString alloc] initWithCharactersNoCopy:(UniChar*)characters length:length freeWhenDone:NO];
     NSCharacterSet *set = [[m_font.font() coveredCharacterSet] invertedSet];
@@ -262,7 +262,7 @@ bool FontData::containsCharacters(const UChar* characters, int length) const
     return result;
 }
 
-void FontData::determinePitch()
+void SimpleFontData::determinePitch()
 {
     NSFont* f = m_font.font();
     // Special case Osaka-Mono.
@@ -284,7 +284,7 @@ void FontData::determinePitch()
            [name caseInsensitiveCompare:@"MonotypeCorsiva"] != NSOrderedSame;
 }
 
-float FontData::platformWidthForGlyph(Glyph glyph) const
+float SimpleFontData::platformWidthForGlyph(Glyph glyph) const
 {
     NSFont* font = m_font.font();
     float pointSize = m_font.m_size;
@@ -297,7 +297,7 @@ float FontData::platformWidthForGlyph(Glyph glyph) const
     return advance.width + m_syntheticBoldOffset;
 }
 
-void FontData::checkShapesArabic() const
+void SimpleFontData::checkShapesArabic() const
 {
     ASSERT(!m_checkedShapesArabic);
 

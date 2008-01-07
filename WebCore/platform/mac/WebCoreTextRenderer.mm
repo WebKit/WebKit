@@ -27,7 +27,7 @@
 #import "WebCoreTextRenderer.h"
 
 #import "Font.h"
-#import "FontData.h"
+#import "SimpleFontData.h"
 #import "GraphicsContext.h"
 #import "IntPoint.h"
 #import "WebFontCache.h"

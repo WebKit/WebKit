@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,66 +24,56 @@
  */
 
 #include "config.h"
-#include "CSSFontFace.h"
+#include "SegmentedFontData.h"
 
-#include "CSSFontFaceSource.h"
-#include "CSSSegmentedFontFace.h"
-#include "FontDescription.h"
 #include "SimpleFontData.h"
+#include <wtf/Assertions.h>
 
 namespace WebCore {
 
-CSSFontFace::~CSSFontFace()
+SegmentedFontData::~SegmentedFontData()
 {
-    deleteAllValues(m_sources);
 }
 
-bool CSSFontFace::isLoaded() const
+const SimpleFontData* SegmentedFontData::fontDataForCharacter(UChar32 c) const
 {
-    unsigned size = m_sources.size();
-    for (unsigned i = 0; i < size; i++) {
-        if (!m_sources[i]->isLoaded())
-            return false;
+    Vector<FontDataRange>::const_iterator end = m_ranges.end();
+    for (Vector<FontDataRange>::const_iterator it = m_ranges.begin(); it != end; ++it) {
+        if (it->from() <= c && it->to() > c)
+            return it->fontData();
     }
-    return true;
+    return m_ranges[0].fontData();
 }
 
-bool CSSFontFace::isValid() const
+bool SegmentedFontData::containsCharacters(const UChar* characters, int length) const
 {
-    unsigned size = m_sources.size();
-    if (!size)
-        return false;
-    for (unsigned i = 0; i < size; i++) {
-        if (m_sources[i]->isValid())
+    Vector<FontDataRange>::const_iterator end = m_ranges.end();
+    for (Vector<FontDataRange>::const_iterator it = m_ranges.begin(); it != end; ++it) {
+        if (it->from() <= characters[0] && it->to() > characters[0])
             return true;
     }
     return false;
 }
-    
-void CSSFontFace::addSource(CSSFontFaceSource* source)
+
+bool SegmentedFontData::isCustomFont() const
 {
-    m_sources.append(source);
-    source->setFontFace(this);
+    // All segmented fonts are custom fonts.
+    return true;
 }
 
-void CSSFontFace::fontLoaded(CSSFontFaceSource*)
+bool SegmentedFontData::isLoading() const
 {
-    if (isLoaded())
-        return m_segmentedFontFace->fontLoaded(this);
+    Vector<FontDataRange>::const_iterator end = m_ranges.end();
+    for (Vector<FontDataRange>::const_iterator it = m_ranges.begin(); it != end; ++it) {
+        if (it->fontData()->isLoading())
+            return true;
+    }
+    return false;
 }
 
-SimpleFontData* CSSFontFace::getFontData(const FontDescription& fontDescription, bool syntheticBold, bool syntheticItalic)
+bool SegmentedFontData::isSegmented() const
 {
-    if (!isValid())
-        return 0;
-        
-    // If we hit a local font, we know it is valid, and can just return it.
-    SimpleFontData* result = 0;
-    unsigned size = m_sources.size();
-    for (unsigned i = 0; i < size && !result; i++)
-        result = m_sources[i]->getFontData(fontDescription, syntheticBold, syntheticItalic, m_segmentedFontFace->fontSelector());
-    return result;
+    return true;
 }
 
-}
-
+} // namespace WebCore

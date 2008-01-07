@@ -41,6 +41,7 @@
 #include "EventHandler.h"
 #include "EventNames.h"
 #include "FocusController.h"
+#include "FontDataBaseClass.h"
 #include "FrameView.h"
 #include "HTMLInputElement.h"
 #include "HTMLTextAreaElement.h"
@@ -407,7 +408,7 @@ void Editor::respondToChangedContents(const Selection& endingSelection)
         client()->respondToChangedContents();  
 }
 
-const FontData* Editor::fontForSelection(bool& hasMultipleFonts) const
+const SimpleFontData* Editor::fontForSelection(bool& hasMultipleFonts) const
 {
 #if !PLATFORM(QT)
     hasMultipleFonts = false;
@@ -416,7 +417,7 @@ const FontData* Editor::fontForSelection(bool& hasMultipleFonts) const
         Node* nodeToRemove;
         RenderStyle* style = m_frame->styleForSelectionStart(nodeToRemove); // sets nodeToRemove
 
-        const FontData* result = 0;
+        const SimpleFontData* result = 0;
         if (style)
             result = style->font().primaryFont();
         
@@ -429,7 +430,7 @@ const FontData* Editor::fontForSelection(bool& hasMultipleFonts) const
         return result;
     }
 
-    const FontData* font = 0;
+    const SimpleFontData* font = 0;
 
     RefPtr<Range> range = m_frame->selectionController()->toRange();
     Node* startNode = range->editingStartPosition().node();
@@ -442,7 +443,7 @@ const FontData* Editor::fontForSelection(bool& hasMultipleFonts) const
             if (!renderer)
                 continue;
             // FIXME: Are there any node types that have renderers, but that we should be skipping?
-            const FontData* f = renderer->style()->font().primaryFont();
+            const SimpleFontData* f = renderer->style()->font().primaryFont();
             if (!font)
                 font = f;
             else if (font != f) {

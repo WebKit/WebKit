@@ -39,18 +39,19 @@ namespace WebCore
 {
 
 class AtomicString;
-class FontData;
-class FontPlatformData;
 class Font;
+class FontPlatformData;
+class FontData;
 class FontDescription;
 class FontSelector;
+class SimpleFontData;
 
 class FontCache {
 public:
     static const FontData* getFontData(const Font&, int& familyIndex, FontSelector*);
     
     // This method is implemented by the platform.
-    static const FontData* getFontDataForCharacters(const Font&, const UChar* characters, int length);
+    static const SimpleFontData* getFontDataForCharacters(const Font&, const UChar* characters, int length);
     
     // Also implemented by the platform.
     static void platformInit();
@@ -62,7 +63,7 @@ public:
     static bool fontExists(const FontDescription&, const AtomicString& family);
 
     static FontPlatformData* getCachedFontPlatformData(const FontDescription&, const AtomicString& family, bool checkingAlternateName = false);
-    static FontData* getCachedFontData(const FontPlatformData*);
+    static SimpleFontData* getCachedFontData(const FontPlatformData*);
     static FontPlatformData* getLastResortFallbackFont(const FontDescription&);
     
 private:
@@ -70,7 +71,7 @@ private:
     static FontPlatformData* getSimilarFontPlatformData(const Font&);
     static FontPlatformData* createFontPlatformData(const FontDescription&, const AtomicString& family);
 
-    friend class FontData;
+    friend class SimpleFontData;
     friend class FontFallbackList;
 };
 

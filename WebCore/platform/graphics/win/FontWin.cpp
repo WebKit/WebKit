@@ -26,12 +26,12 @@
 #include "config.h"
 #include "Font.h"
 
-#include "FontData.h"
 #include "FontFallbackList.h"
 #include "GlyphBuffer.h"
 #include "GraphicsContext.h"
 #include "IntRect.h"
 #include "NotImplemented.h"
+#include "SimpleFontData.h"
 #include "UniscribeController.h"
 #include <ApplicationServices/ApplicationServices.h>
 #include <WebKitSystemInterface/WebKitSystemInterface.h>
@@ -41,7 +41,7 @@ namespace WebCore {
 
 const int syntheticObliqueAngle = 14;
 
-void Font::drawGlyphs(GraphicsContext* graphicsContext, const FontData* font, const GlyphBuffer& glyphBuffer, 
+void Font::drawGlyphs(GraphicsContext* graphicsContext, const SimpleFontData* font, const GlyphBuffer& glyphBuffer, 
                       int from, int numGlyphs, const FloatPoint& point) const
 {
     if (font->m_font.useGDI()) {

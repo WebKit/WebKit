@@ -32,10 +32,10 @@
 #include "CairoPath.h"
 #include "FloatRect.h"
 #include "Font.h"
-#include "FontData.h"
 #include "IntRect.h"
 #include "NotImplemented.h"
 #include "Path.h"
+#include "SimpleFontData.h"
 #include <cairo.h>
 #include <math.h>
 #include <stdio.h>
@@ -580,7 +580,7 @@ void GraphicsContext::setPlatformFont(const Font& font)
 #if PLATFORM(GTK)
     // FIXME: is it the right thing to do? Also, doesn't work on Win because
     // there FontData doesn't have ::setFont()
-    const FontData *fontData = font.primaryFont();
+    const SimpleFontData *fontData = font.primaryFont();
     fontData->setFont(m_data->cr);
 #endif
 }

@@ -31,7 +31,7 @@
  */
 
 #include "config.h"
-#include "FontData.h"
+#include "SimpleFontData.h"
 
 #include "FloatRect.h"
 #include "Font.h"
@@ -45,7 +45,7 @@
 
 namespace WebCore {
 
-void FontData::platformInit()
+void SimpleFontData::platformInit()
 {
     cairo_font_extents_t font_extents;
     cairo_text_extents_t text_extents;
@@ -60,7 +60,7 @@ void FontData::platformInit()
     m_lineGap = m_lineSpacing - m_ascent - m_descent;
 }
 
-void FontData::platformDestroy()
+void SimpleFontData::platformDestroy()
 {
     if (m_font.m_pattern && ((FcPattern*)-1 != m_font.m_pattern))
         FcPatternDestroy(m_font.m_pattern);
@@ -70,18 +70,18 @@ void FontData::platformDestroy()
     delete m_smallCapsFontData;
 }
 
-FontData* FontData::smallCapsFontData(const FontDescription& fontDescription) const
+SimpleFontData* SimpleFontData::smallCapsFontData(const FontDescription& fontDescription) const
 {
     if (!m_smallCapsFontData) {
         FontDescription desc = FontDescription(fontDescription);
         desc.setSpecifiedSize(0.70f*fontDescription.computedSize());
         const FontPlatformData* pdata = new FontPlatformData(desc, desc.family().family());
-        m_smallCapsFontData = new FontData(*pdata);
+        m_smallCapsFontData = new SimpleFontData(*pdata);
     }
     return m_smallCapsFontData;
 }
 
-bool FontData::containsCharacters(const UChar* characters, int length) const
+bool SimpleFontData::containsCharacters(const UChar* characters, int length) const
 {
     FT_Face face = cairo_ft_scaled_font_lock_face(m_font.m_scaledFont);
 
@@ -100,12 +100,12 @@ bool FontData::containsCharacters(const UChar* characters, int length) const
     return true;
 }
 
-void FontData::determinePitch()
+void SimpleFontData::determinePitch()
 {
     m_treatAsFixedPitch = m_font.isFixedPitch();
 }
 
-float FontData::platformWidthForGlyph(Glyph glyph) const
+float SimpleFontData::platformWidthForGlyph(Glyph glyph) const
 {
     ASSERT(m_font.m_scaledFont);
 
@@ -119,7 +119,7 @@ float FontData::platformWidthForGlyph(Glyph glyph) const
     return w;
 }
 
-void FontData::setFont(cairo_t* cr) const
+void SimpleFontData::setFont(cairo_t* cr) const
 {
     ASSERT(cr);
     m_font.setFont(cr);

@@ -29,7 +29,7 @@
 #include "config.h"
 #include "UniscribeController.h"
 #include "Font.h"
-#include "FontData.h"
+#include "SimpleFontData.h"
 #include <wtf/MathExtras.h>
 
 namespace WebCore {
@@ -116,8 +116,8 @@ void UniscribeController::advance(unsigned offset, GlyphBuffer* glyphBuffer)
     const UChar* curr = m_run.rtl() ? cp + length  - 1 : cp;
     const UChar* end = m_run.rtl() ? cp - 1 : cp + length;
 
-    const FontData* fontData;
-    const FontData* nextFontData = m_font.glyphDataForCharacter(*curr, false).fontData;
+    const SimpleFontData* fontData;
+    const SimpleFontData* nextFontData = m_font.glyphDataForCharacter(*curr, false).fontData;
 
     UChar newC;
 
@@ -160,7 +160,7 @@ void UniscribeController::advance(unsigned offset, GlyphBuffer* glyphBuffer)
     }
 }
 
-void UniscribeController::itemizeShapeAndPlace(const UChar* cp, unsigned length, const FontData* fontData, GlyphBuffer* glyphBuffer)
+void UniscribeController::itemizeShapeAndPlace(const UChar* cp, unsigned length, const SimpleFontData* fontData, GlyphBuffer* glyphBuffer)
 {
     // ScriptItemize (in Windows XP versions prior to SP2) can overflow by 1.  This is why there is an extra empty item
     // hanging out at the end of the array
@@ -199,7 +199,7 @@ void UniscribeController::resetControlAndState()
     m_state.fOverrideDirection = m_run.directionalOverride();
 }
 
-bool UniscribeController::shapeAndPlaceItem(const UChar* cp, unsigned i, const FontData* fontData, GlyphBuffer* glyphBuffer)
+bool UniscribeController::shapeAndPlaceItem(const UChar* cp, unsigned i, const SimpleFontData* fontData, GlyphBuffer* glyphBuffer)
 {
     // Determine the string for this item.
     const UChar* str = cp + m_items[i].iCharPos;
@@ -386,7 +386,7 @@ bool UniscribeController::shapeAndPlaceItem(const UChar* cp, unsigned i, const F
     return true;
 }
 
-bool UniscribeController::shape(const UChar* str, int len, SCRIPT_ITEM item, const FontData* fontData,
+bool UniscribeController::shape(const UChar* str, int len, SCRIPT_ITEM item, const SimpleFontData* fontData,
                                 Vector<WORD>& glyphs, Vector<WORD>& clusters,
                                 Vector<SCRIPT_VISATTR>& visualAttributes)
 {

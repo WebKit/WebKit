@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2005, 2008 Apple Computer, Inc.  All rights reserved.
  * Copyright (C) 2006 Alexey Proskuryakov
  *
  * Redistribution and use in source and binary forms, with or without
@@ -28,7 +28,7 @@
  */
 
 #include "config.h"
-#include "FontData.h"
+#include "SimpleFontData.h"
 
 #include <wtf/MathExtras.h>
 
@@ -58,7 +58,7 @@ float SVGFontData::convertEmUnitToPixel(float fontSize, float unitsPerEm, float 
 }
 #endif
 
-FontData::FontData(const FontPlatformData& f, bool customFont, bool loading)
+SimpleFontData::SimpleFontData(const FontPlatformData& f, bool customFont, bool loading)
     : m_font(f)
     , m_treatAsFixedPitch(false)
 #if ENABLE(SVG_FONTS)
@@ -108,7 +108,7 @@ FontData::FontData(const FontPlatformData& f, bool customFont, bool loading)
     m_missingGlyphData.glyph = 0;
 }
 
-FontData::~FontData()
+SimpleFontData::~SimpleFontData()
 {
     platformDestroy();
 
@@ -116,7 +116,7 @@ FontData::~FontData()
     // it will be deleted then, so we don't need to do anything here.
 }
 
-int FontData::ascent(float fontSize) const
+int SimpleFontData::ascent(float fontSize) const
 {
 #if ENABLE(SVG_FONTS)
     if (m_svgFontData)
@@ -126,7 +126,7 @@ int FontData::ascent(float fontSize) const
     return m_ascent;
 }
 
-int FontData::descent(float fontSize) const
+int SimpleFontData::descent(float fontSize) const
 {
 #if ENABLE(SVG_FONTS)
     if (m_svgFontData)
@@ -136,7 +136,7 @@ int FontData::descent(float fontSize) const
     return m_descent;
 }
 
-int FontData::lineSpacing(float fontSize) const
+int SimpleFontData::lineSpacing(float fontSize) const
 {
 #if ENABLE(SVG_FONTS)
     if (m_svgFontData)
@@ -146,7 +146,7 @@ int FontData::lineSpacing(float fontSize) const
     return m_lineSpacing;
 }
 
-int FontData::lineGap(float fontSize) const
+int SimpleFontData::lineGap(float fontSize) const
 {
 #if ENABLE(SVG_FONTS)
     if (m_svgFontData)
@@ -156,7 +156,7 @@ int FontData::lineGap(float fontSize) const
     return m_lineGap;
 }
 
-float FontData::xHeight(float fontSize) const
+float SimpleFontData::xHeight(float fontSize) const
 {
 #if ENABLE(SVG_FONTS)
     if (m_svgFontData)
@@ -166,7 +166,7 @@ float FontData::xHeight(float fontSize) const
     return m_xHeight;
 }
 
-float FontData::widthForGlyph(Glyph glyph) const
+float SimpleFontData::widthForGlyph(Glyph glyph) const
 {
     float width = m_glyphToWidthMap.widthForGlyph(glyph);
     if (width != cGlyphWidthUnknown)
@@ -176,6 +176,16 @@ float FontData::widthForGlyph(Glyph glyph) const
     m_glyphToWidthMap.setWidthForGlyph(glyph, width);
     
     return width;
+}
+
+const SimpleFontData* SimpleFontData::fontDataForCharacter(UChar32) const
+{
+    return this;
+}
+
+bool SimpleFontData::isSegmented() const
+{
+    return false;
 }
 
 } // namespace WebCore

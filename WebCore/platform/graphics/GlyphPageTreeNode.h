@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006, 2007, 2008 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -37,14 +37,15 @@ namespace WebCore {
 
 class FontData;
 class GlyphPageTreeNode;
+class SimpleFontData;
 
 typedef unsigned short Glyph;
 
-// Holds the glyph index and the corresponding FontData information for a given
+// Holds the glyph index and the corresponding SimpleFontData information for a given
 // character.
 struct GlyphData {
     Glyph glyph;
-    const FontData* fontData;
+    const SimpleFontData* fontData;
 };
 
 // A GlyphPage contains a fixed-size set of GlyphData mappings for a contiguous
@@ -71,11 +72,11 @@ struct GlyphPage : public RefCounted<GlyphPage> {
     GlyphPageTreeNode* m_owner;
 
     const GlyphData& glyphDataForCharacter(UChar32 c) const { return m_glyphs[c % size]; }
-    void setGlyphDataForCharacter(UChar32 c, Glyph g, const FontData* f)
+    void setGlyphDataForCharacter(UChar32 c, Glyph g, const SimpleFontData* f)
     {
         setGlyphDataForIndex(c % size, g, f);
     }
-    void setGlyphDataForIndex(unsigned index, Glyph g, const FontData* f)
+    void setGlyphDataForIndex(unsigned index, Glyph g, const SimpleFontData* f)
     {
         ASSERT(index < size);
         m_glyphs[index].glyph = g;
@@ -83,7 +84,7 @@ struct GlyphPage : public RefCounted<GlyphPage> {
     }
     GlyphPageTreeNode* owner() const { return m_owner; }
     // Implemented by the platform.
-    bool fill(UChar* characterBuffer, unsigned bufferLength, const FontData* fontData);
+    bool fill(unsigned offset, unsigned length, UChar* characterBuffer, unsigned bufferLength, const SimpleFontData* fontData);
 };
 
 // The glyph page tree is a data structure that maps (FontData, glyph page number)

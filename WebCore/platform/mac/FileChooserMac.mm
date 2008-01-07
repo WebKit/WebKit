@@ -31,7 +31,7 @@
 #import "FileChooser.h"
 
 #import "Document.h"
-#import "FontData.h"
+#import "SimpleFontData.h"
 #import "Frame.h"
 #import "Icon.h"
 #import "LocalizedStrings.h"

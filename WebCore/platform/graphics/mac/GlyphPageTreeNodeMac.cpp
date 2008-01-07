@@ -29,13 +29,13 @@
 #include "config.h"
 #include "GlyphPageTreeNode.h"
 
-#include "FontData.h"
+#include "SimpleFontData.h"
 #include "WebCoreSystemInterface.h"
 #include <ApplicationServices/ApplicationServices.h>
 
 namespace WebCore {
 
-bool GlyphPage::fill(UChar* buffer, unsigned bufferLength, const FontData* fontData)
+bool GlyphPage::fill(unsigned offset, unsigned length, UChar* buffer, unsigned bufferLength, const SimpleFontData* fontData)
 {
     // Use an array of long so we get good enough alignment.
     long glyphVector[(GLYPH_VECTOR_SIZE + sizeof(long) - 1) / sizeof(long)];
@@ -49,7 +49,7 @@ bool GlyphPage::fill(UChar* buffer, unsigned bufferLength, const FontData* fontD
     wkConvertCharToGlyphs(fontData->m_styleGroup, buffer, bufferLength, &glyphVector);
 
     unsigned numGlyphs = wkGetGlyphVectorNumGlyphs(&glyphVector);
-    if (numGlyphs != GlyphPage::size) {
+    if (numGlyphs != length) {
         // This should never happen, perhaps indicates a bad font?
         // If it does happen, the font substitution code will find an alternate font.
         wkClearGlyphVector(&glyphVector);
@@ -58,12 +58,12 @@ bool GlyphPage::fill(UChar* buffer, unsigned bufferLength, const FontData* fontD
 
     bool haveGlyphs = false;
     ATSLayoutRecord* glyphRecord = (ATSLayoutRecord*)wkGetGlyphVectorFirstRecord(glyphVector);
-    for (unsigned i = 0; i < GlyphPage::size; i++) {
+    for (unsigned i = 0; i < length; i++) {
         Glyph glyph = glyphRecord->glyphID;
         if (!glyph)
-            setGlyphDataForIndex(i, 0, 0);
+            setGlyphDataForIndex(offset + i, 0, 0);
         else {
-            setGlyphDataForIndex(i, glyph, fontData);
+            setGlyphDataForIndex(offset + i, glyph, fontData);
             haveGlyphs = true;
         }
         glyphRecord = (ATSLayoutRecord *)((char *)glyphRecord + wkGetGlyphVectorRecordSize(glyphVector));

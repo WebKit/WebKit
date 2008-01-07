@@ -29,8 +29,8 @@
 #include "config.h"
 #include <winsock2.h>
 #include "FontCache.h"
-#include "FontData.h"
 #include "Font.h"
+#include "SimpleFontData.h"
 #include "StringHash.h"
 #include <windows.h>
 #include <mlang.h>
@@ -114,11 +114,11 @@ static const Vector<String>* getLinkedFonts(String& family)
     return result;
 }
 
-const FontData* FontCache::getFontDataForCharacters(const Font& font, const UChar* characters, int length)
+const SimpleFontData* FontCache::getFontDataForCharacters(const Font& font, const UChar* characters, int length)
 {
-    FontData* fontData = 0;
+    SimpleFontData* fontData = 0;
     HDC hdc = GetDC(0);
-    HFONT primaryFont = font.primaryFont()->m_font.hfont();
+    HFONT primaryFont = font.primaryFont()->fontDataForCharacter(characters[0])->m_font.hfont();
     HGDIOBJ oldFont = SelectObject(hdc, primaryFont);
     HFONT hfont = 0;
 

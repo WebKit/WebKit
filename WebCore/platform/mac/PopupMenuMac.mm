@@ -21,7 +21,7 @@
 #import "PopupMenu.h"
 
 #import "EventHandler.h"
-#import "FontData.h"
+#import "SimpleFontData.h"
 #import "Frame.h"
 #import "FrameView.h"
 #import "HTMLNames.h"

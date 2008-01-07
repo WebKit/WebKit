@@ -120,12 +120,14 @@ This file contains the list of files needed to build WebCore.
         css/CSSRule.cpp
         css/CSSRuleList.cpp
         css/CSSSelector.cpp
+        css/CSSSegmentedFontFace.cpp
         css/CSSStyleDeclaration.cpp
         css/CSSStyleRule.cpp
         css/CSSStyleSelector.cpp
         css/CSSStyleSheet.cpp
         css/CSSTransformValue.cpp
         css/CSSTimingFunctionValue.cpp
+        css/CSSUnicodeRangeValue.cpp
         css/CSSValueList.cpp
         css/FontFamilyValue.cpp
         css/FontValue.cpp
@@ -569,11 +571,13 @@ This file contains the list of files needed to build WebCore.
         platform/FileChooser.cpp
         platform/graphics/Font.cpp
         platform/graphics/FontCache.cpp
-        platform/graphics/FontData.cpp
+        platform/graphics/FontDataBaseClass.cpp
         platform/graphics/FontFallbackList.cpp
         platform/graphics/FontFamily.cpp
         platform/graphics/GlyphPageTreeNode.cpp
         platform/graphics/GlyphWidthMap.cpp
+        platform/graphics/SegmentedFontData.cpp
+        platform/graphics/SimpleFontData.cpp
         platform/KURL.cpp
         platform/Logging.cpp
         platform/MIMETypeRegistry.cpp

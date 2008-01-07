@@ -47,6 +47,7 @@ class GlyphPageTreeNode;
 class GraphicsContext;
 class IntPoint;
 class RenderObject;
+class SimpleFontData;
 class SVGPaintServer;
 
 struct GlyphData;
@@ -212,7 +213,7 @@ public:
     int tabWidth() const { return 8 * spaceWidth(); }
 
 #if !PLATFORM(QT)
-    const FontData* primaryFont() const;
+    const SimpleFontData* primaryFont() const;
     const FontData* fontDataAt(unsigned) const;
     const GlyphData& glyphDataForCharacter(UChar32, bool mirror, bool forceSmallCaps = false) const;
     // Used for complex text, and does not utilize the glyph map cache.
@@ -226,7 +227,7 @@ private:
     float floatWidthUsingSVGFont(const TextRun&) const;
     FloatRect selectionRectForTextUsingSVGFont(const TextRun&, const IntPoint&, int h, int from, int to) const;
 #endif
-    void drawGlyphs(GraphicsContext*, const FontData*, const GlyphBuffer&, int from, int to, const FloatPoint&) const;
+    void drawGlyphs(GraphicsContext*, const SimpleFontData*, const GlyphBuffer&, int from, int to, const FloatPoint&) const;
     void drawGlyphBuffer(GraphicsContext*, const GlyphBuffer&, const TextRun&, const FloatPoint&) const;
     void drawComplexText(GraphicsContext*, const TextRun&, const FloatPoint&, int from, int to) const;
     float floatWidthForSimpleText(const TextRun&, GlyphBuffer*) const;

@@ -200,11 +200,11 @@ struct FontDataCacheKeyTraits : WTF::GenericHashTraits<FontPlatformData> {
     }
 };
 
-typedef HashMap<FontPlatformData, FontData*, FontDataCacheKeyHash, FontDataCacheKeyTraits> FontDataCache;
+typedef HashMap<FontPlatformData, SimpleFontData*, FontDataCacheKeyHash, FontDataCacheKeyTraits> FontDataCache;
 
 static FontDataCache* gFontDataCache = 0;
 
-FontData* FontCache::getCachedFontData(const FontPlatformData* platformData)
+SimpleFontData* FontCache::getCachedFontData(const FontPlatformData* platformData)
 {
     if (!platformData)
         return 0;
@@ -212,9 +212,9 @@ FontData* FontCache::getCachedFontData(const FontPlatformData* platformData)
     if (!gFontDataCache)
         gFontDataCache = new FontDataCache;
     
-    FontData* result = gFontDataCache->get(*platformData);
+    SimpleFontData* result = gFontDataCache->get(*platformData);
     if (!result) {
-        result = new FontData(*platformData);
+        result = new SimpleFontData(*platformData);
         gFontDataCache->set(*platformData, result);
     }
         

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
  *           (C) 2007 Nikolas Zimmermann <zimmermann@kde.org>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -36,6 +36,8 @@
 #include "CSSMutableStyleDeclaration.h"
 #include "CSSPrimitiveValue.h"
 #include "CSSPropertyNames.h"
+#include "CSSSegmentedFontFace.h"
+#include "CSSUnicodeRangeValue.h"
 #include "CSSValueKeywords.h"
 #include "CSSValueList.h"
 #include "DocLoader.h"
@@ -45,10 +47,11 @@
 #include "Frame.h"
 #include "NodeList.h"
 #include "RenderObject.h"
-#include "Settings.h"
 #include "SVGCSSFontFace.h"
 #include "SVGFontFaceElement.h"
 #include "SVGNames.h"
+#include "Settings.h"
+#include "SimpleFontData.h"
 
 namespace WebCore {
 
@@ -86,8 +89,9 @@ void CSSFontSelector::addFontFaceRule(const CSSFontFaceRule* fontFaceRule)
     // Obtain the font-family property and the src property.  Both must be defined.
     const CSSMutableStyleDeclaration* style = fontFaceRule->style();
     RefPtr<CSSValue> fontFamily = style->getPropertyCSSValue(CSS_PROP_FONT_FAMILY);
-    RefPtr<CSSValue> src = style->getPropertyCSSValue(CSS_PROP_SRC);    
-    if (!fontFamily || !src || !fontFamily->isValueList() || !src->isValueList())
+    RefPtr<CSSValue> src = style->getPropertyCSSValue(CSS_PROP_SRC);
+    RefPtr<CSSValue> unicodeRange = style->getPropertyCSSValue(CSS_PROP_UNICODE_RANGE);
+    if (!fontFamily || !src || !fontFamily->isValueList() || !src->isValueList() || unicodeRange && !unicodeRange->isValueList())
         return;
 
     CSSValueList* familyList = static_cast<CSSValueList*>(fontFamily.get());
@@ -97,6 +101,8 @@ void CSSFontSelector::addFontFaceRule(const CSSFontFaceRule* fontFaceRule)
     CSSValueList* srcList = static_cast<CSSValueList*>(src.get());
     if (!srcList->length())
         return;
+
+    CSSValueList* rangeList = static_cast<CSSValueList*>(unicodeRange.get());
 
     // Create a FontDescription for this font and set up bold/italic info properly.
     FontDescription fontDescription;
@@ -172,7 +178,7 @@ void CSSFontSelector::addFontFaceRule(const CSSFontFaceRule* fontFaceRule)
                 fontFace = new SVGCSSFontFace(this, svgFontFaceElement);
             else
 #endif
-                fontFace = new CSSFontFace(this);
+                fontFace = new CSSFontFace();
         }
 
         if (source)
@@ -231,12 +237,24 @@ void CSSFontSelector::addFontFaceRule(const CSSFontFaceRule* fontFaceRule)
         if (svgFontFaceElement && fontDescription.smallCaps())
             familyName += "-webkit-svg-small-caps";
 #endif
-
-        m_fonts.set(hashForFont(familyName.lower(), fontDescription.bold(), fontDescription.italic()), fontFace);
+        String hash = hashForFont(familyName.lower(), fontDescription.bold(), fontDescription.italic());
+        CSSSegmentedFontFace* segmentedFontFace = m_fonts.get(hash).get();
+        if (!segmentedFontFace) {
+            segmentedFontFace = new CSSSegmentedFontFace(this);
+            m_fonts.set(hash, segmentedFontFace);
+        }
+        if (rangeList) {
+            unsigned numRanges = rangeList->length();
+            for (unsigned i = 0; i < numRanges; i++) {
+                CSSUnicodeRangeValue* range = static_cast<CSSUnicodeRangeValue*>(rangeList->item(i));
+                segmentedFontFace->overlayRange(range->from(), range->to(), fontFace);
+            }
+        } else
+            segmentedFontFace->overlayRange(0, 0x7FFFFFFF, fontFace);
     }
 }
 
-void CSSFontSelector::fontLoaded(CSSFontFace*)
+void CSSFontSelector::fontLoaded(CSSSegmentedFontFace*)
 {
     if (m_document->inPageCache())
         return;
@@ -266,7 +284,7 @@ FontData* CSSFontSelector::getFontData(const FontDescription& fontDescription, c
     } else
         face = m_fonts.get(hashForFont(family, bold, italic));
 #else
-    RefPtr<CSSFontFace> face = m_fonts.get(hashForFont(family, bold, italic));
+    RefPtr<CSSSegmentedFontFace> face = m_fonts.get(hashForFont(family, bold, italic));
 #endif
 
     // If we don't find a face, and if bold/italic are set, we should try other variants.

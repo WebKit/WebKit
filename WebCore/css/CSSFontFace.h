@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,20 +26,26 @@
 #ifndef CSSFontFace_h
 #define CSSFontFace_h
 
-#include <wtf/Vector.h>
 #include <wtf/RefCounted.h>
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
 class CSSFontFaceSource;
-class CSSFontSelector;
-class FontData;
+class CSSSegmentedFontFace;
 class FontDescription;
+class SimpleFontData;
 
 class CSSFontFace : public RefCounted<CSSFontFace> {
 public:
-    CSSFontFace(CSSFontSelector*);
+    CSSFontFace()
+        : m_segmentedFontFace(0)
+    {
+    }
+
     virtual ~CSSFontFace();
+
+    void setSegmentedFontFace(CSSSegmentedFontFace* segmentedFontFace) { m_segmentedFontFace = segmentedFontFace; }
 
     bool isLoaded() const;
     virtual bool isValid() const;
@@ -48,11 +54,11 @@ public:
 
     void fontLoaded(CSSFontFaceSource*);
 
-    virtual FontData* getFontData(const FontDescription&, bool syntheticBold, bool syntheticItalic);
+    virtual SimpleFontData* getFontData(const FontDescription&, bool syntheticBold, bool syntheticItalic);
 
 private:
+    CSSSegmentedFontFace* m_segmentedFontFace;
     Vector<CSSFontFaceSource*> m_sources;
-    CSSFontSelector* m_fontSelector;
 };
 
 }

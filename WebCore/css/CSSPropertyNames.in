@@ -131,6 +131,7 @@ text-underline-style
 text-underline-width
 top
 unicode-bidi
+unicode-range
 vertical-align
 visibility
 white-space

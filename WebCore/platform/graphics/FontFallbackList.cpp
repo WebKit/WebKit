@@ -53,7 +53,7 @@ void FontFallbackList::invalidate(PassRefPtr<FontSelector> fontSelector)
 
 void FontFallbackList::determinePitch(const Font* font) const
 {
-    m_pitch = primaryFont(font)->pitch();
+    m_pitch = primaryFont(font)->fontDataForCharacter(' ')->pitch();
 }
 
 const FontData* FontFallbackList::fontDataAt(const Font* font, unsigned realizedFontIndex) const

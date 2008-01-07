@@ -23,7 +23,6 @@
 
 #include "Document.h"
 #include "FloatRect.h"
-#include "FontData.h"
 #include "FontSelector.h"
 #include "Frame.h"
 #include "FrameView.h"
@@ -35,6 +34,7 @@
 #include "PlatformScrollBar.h"
 #include "RenderTheme.h"
 #include "RenderView.h"
+#include "SimpleFontData.h"
 #include <tchar.h>
 #include <windows.h>
 

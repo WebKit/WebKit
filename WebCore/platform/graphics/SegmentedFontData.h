@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Nikolas Zimmermann <zimmermann@kde.org>
+ * Copyright (C) 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,33 +23,52 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef SVGCSSFontFace_h
-#define SVGCSSFontFace_h
+#ifndef SegmentedFontData_h
+#define SegmentedFontData_h
 
-#if ENABLE(SVG_FONTS)
-#include "CSSFontFace.h"
-#include <wtf/OwnPtr.h>
+#include "FontDataBaseClass.h"
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
-class SVGFontFaceElement;
+class SimpleFontData;
 
-class SVGCSSFontFace : public CSSFontFace {
-public:
-    SVGCSSFontFace(CSSFontSelector*, SVGFontFaceElement*);
-    virtual ~SVGCSSFontFace();
+struct FontDataRange {
+    FontDataRange(UChar32 from, UChar32 to, const SimpleFontData* fontData)
+        : m_from(from)
+        , m_to(to)
+        , m_fontData(fontData)
+    {
+    }
 
-    virtual bool isValid() const;
-    virtual void addSource(CSSFontFaceSource*);
-
-    virtual SimpleFontData* getFontData(const FontDescription&, bool syntheticBold, bool syntheticItalic);
+    UChar32 from() const { return m_from; }
+    UChar32 to() const { return m_to; }
+    const SimpleFontData* fontData() const { return m_fontData; }
 
 private:
-    RefPtr<SVGFontFaceElement> m_fontFaceElement;
-    OwnPtr<SimpleFontData> m_fontData;
+    UChar32 m_from;
+    UChar32 m_to;
+    const SimpleFontData* m_fontData;
 };
 
-}
+class SegmentedFontData : public FontData {
+public:
+    virtual ~SegmentedFontData();
 
-#endif // ENABLE(SVG_FONTS)
-#endif
+    virtual const SimpleFontData* fontDataForCharacter(UChar32) const;
+    virtual bool containsCharacters(const UChar*, int length) const;
+    virtual bool isCustomFont() const;
+    virtual bool isLoading() const;
+    virtual bool isSegmented() const;
+
+    void appendRange(const FontDataRange& range) { m_ranges.append(range); }
+    unsigned numRanges() const { return m_ranges.size(); }
+    const FontDataRange& rangeAt(unsigned i) const { return m_ranges[i]; }
+
+private:
+    Vector<FontDataRange, 1> m_ranges;
+};
+
+} // namespace WebCore
+
+#endif // SegmentedFontData_h

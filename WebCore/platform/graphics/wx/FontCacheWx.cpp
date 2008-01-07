@@ -29,9 +29,9 @@
 #include "config.h"
 #include "FontCache.h"
 #include "Font.h"
-#include "FontData.h"
 #include "FontPlatformData.h"
 #include "NotImplemented.h"
+#include "SimpleFontData.h"
 
 namespace WebCore {
 
@@ -39,10 +39,10 @@ void FontCache::platformInit()
 {
 }
 
-const FontData* FontCache::getFontDataForCharacters(const Font& font, const UChar* characters, int length)
+const SimpleFontData* FontCache::getFontDataForCharacters(const Font& font, const UChar* characters, int length)
 {
-    FontData* fontData = 0;
-    fontData = new FontData(FontPlatformData(font.fontDescription(), font.family().family()));
+    SimpleFontData* fontData = 0;
+    fontData = new SimpleFontData(FontPlatformData(font.fontDescription(), font.family().family()));
     return fontData;
 }
 

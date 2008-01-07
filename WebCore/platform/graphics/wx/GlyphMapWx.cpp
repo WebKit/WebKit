@@ -27,14 +27,15 @@
  */
 
 #include "config.h"
-#include "FontData.h"
 #include "GlyphPageTreeNode.h"
+
+#include "SimpleFontData.h"
 #include <unicode/utf16.h>
 
 namespace WebCore
 {
 
-bool GlyphPage::fill(UChar* buffer, unsigned bufferLength, const FontData* fontData)
+bool GlyphPage::fill(UChar* buffer, unsigned bufferLength, const SimpleFontData* fontData)
 {
     bool isUtf16 = bufferLength != GlyphPage::size;
 
