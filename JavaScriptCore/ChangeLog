@@ -1,3 +1,25 @@
+2008-01-07  Darin Adler  <darin@apple.com>
+
+        Reviewed by David Kilzer.
+
+        - fix alignment problem with NaN and Inf globals
+
+        * kjs/fpconst.cpp: Move the contents of this file from here back to
+        value.cpp. The reason this was in a separate file is that the DARWIN
+        version of this used a declaration of the globals with a different
+        type to avoid creating "init routines". That's no longer necessary for
+        DARWIN and was never necessary for the non-DARWIN code path.
+        To make this patch easy to merge, I didn't actually delete this file
+        yet. We'll do that in a separate changeset.
+
+        * kjs/value.cpp: If C99's NAN and INFINITY are present, then use them,
+        othrewise use the union trick from fpconst.cpp. I think it would be
+        better to eliminate KJS::NaN and KJS::Inf and just use NAN and INFINITY
+        directly or std::numeric_limits<double>::quiet_nan() and
+        std::numeric_limits<double>::infinity(). But when I tried that, it
+        slowed down SunSpider. Someone else could do that cleanup if they
+        could do it without slowing down the engine.
+
 2008-01-07  Adam Roben  <aroben@apple.com>
 
         Windows build fix
