@@ -158,6 +158,8 @@ public:
 
 protected:
     void paintBackground(GraphicsContext*, const Color&, const BackgroundLayer*, int clipY, int clipHeight, int tx, int ty, int width, int height);
+    void paintBackgrounds(GraphicsContext*, const Color&, const BackgroundLayer*, int clipY, int clipHeight, int tx, int ty, int width, int height);
+
 #if PLATFORM(MAC)
     void paintCustomHighlight(int tx, int ty, const AtomicString& type, bool behindText);
 #endif
@@ -170,8 +172,7 @@ private:
     void paintRootBoxDecorations(PaintInfo&, int tx, int ty);
 
     void calculateBackgroundImageGeometry(const BackgroundLayer*, int tx, int ty, int w, int h, IntRect& destRect, IntPoint& phase, IntSize& tileSize);
-    void paintBackgrounds(GraphicsContext*, const Color&, const BackgroundLayer*, int clipY, int clipHeight, int tx, int ty, int width, int height);
-
+    
     int containingBlockWidthForPositioned(const RenderObject* containingBlock) const;
     int containingBlockHeightForPositioned(const RenderObject* containingBlock) const;
 

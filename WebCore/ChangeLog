@@ -1,3 +1,13 @@
+2008-01-07  David Hyatt  <hyatt@apple.com>
+
+        Fix for bug 13095, CSS3 multiple backgrounds don't work on table cells.
+
+        Reviewed by Dan
+
+        * rendering/RenderBox.h:
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::paintBackgroundsBehindCell):
+
 2008-01-07  Holger Freyther  <zecke@selfish.org>
 
         Reviewed by Alp Toker.
