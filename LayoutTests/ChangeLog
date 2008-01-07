@@ -1,3 +1,16 @@
+2008-01-07  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Adele.
+
+        - <rdar://problem/5667022> fast/events/mousemove-after-drag-over-scrollbar.html
+        failing (missing a mousemove event)
+        - Updated test to reflect it's original intention and filed a different
+        bug about the issue that caused the test to fail on Windows.
+
+        * fast/events/mousemove-after-drag-over-scrollbar-expected.txt:
+        * fast/events/mousemove-after-drag-over-scrollbar.html:
+        * platform/win/Skipped:
+
 2008-01-07  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Oliver.
