@@ -82,9 +82,9 @@ public:
     // vertical metrics
     int ascent(float fontSize) const;
     int descent(float fontSize) const;
-    int lineSpacing() const { return m_lineSpacing; }
-    int lineGap() const { return m_lineGap; }
-    float xHeight() const { return m_xHeight; }
+    int lineSpacing(float fontSize) const;
+    int lineGap(float fontSize) const;
+    float xHeight(float fontSize) const;
     unsigned unitsPerEm() const { return m_unitsPerEm; }
 
     float widthForGlyph(Glyph) const;

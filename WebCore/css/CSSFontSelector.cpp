@@ -43,15 +43,12 @@
 #include "FontCache.h"
 #include "FontFamilyValue.h"
 #include "Frame.h"
+#include "NodeList.h"
 #include "RenderObject.h"
 #include "Settings.h"
-
-#if ENABLE(SVG_FONTS)
-#include "NodeList.h"
 #include "SVGCSSFontFace.h"
 #include "SVGFontFaceElement.h"
 #include "SVGNames.h"
-#endif
 
 namespace WebCore {
 
@@ -103,10 +100,11 @@ void CSSFontSelector::addFontFaceRule(const CSSFontFaceRule* fontFaceRule)
 
     // Create a FontDescription for this font and set up bold/italic info properly.
     FontDescription fontDescription;
-    RefPtr<CSSValue> fontWeight = style->getPropertyCSSValue(CSS_PROP_FONT_WEIGHT);
-    RefPtr<CSSValue> fontStyle = style->getPropertyCSSValue(CSS_PROP_FONT_STYLE);
-    fontDescription.setItalic(fontStyle.get() && static_cast<CSSPrimitiveValue*>(fontStyle.get())->getIdent() != CSS_VAL_NORMAL);
-    if (fontWeight) {
+
+    if (RefPtr<CSSValue> fontStyle = style->getPropertyCSSValue(CSS_PROP_FONT_STYLE))
+        fontDescription.setItalic(static_cast<CSSPrimitiveValue*>(fontStyle.get())->getIdent() != CSS_VAL_NORMAL);
+
+    if (RefPtr<CSSValue> fontWeight = style->getPropertyCSSValue(CSS_PROP_FONT_WEIGHT)) {
         // FIXME: Need to support weights for real, since we're effectively limiting the number of supported weights to two.
         // This behavior could also result in the "last kinda bold variant" described winning even if it isn't the best match for bold.
         switch (static_cast<CSSPrimitiveValue*>(fontWeight.get())->getIdent()) {
@@ -121,6 +119,9 @@ void CSSFontSelector::addFontFaceRule(const CSSFontFaceRule* fontFaceRule)
                 break;
         }
     }
+
+    if (RefPtr<CSSValue> fontVariant = style->getPropertyCSSValue(CSS_PROP_FONT_VARIANT))
+        fontDescription.setSmallCaps(static_cast<CSSPrimitiveValue*>(fontVariant.get())->getIdent() == CSS_VAL_SMALL_CAPS);
 
     // Each item in the src property's list is a single CSSFontFaceSource. Put them all into a CSSFontFace.
     CSSFontFace* fontFace = 0;
@@ -139,13 +140,6 @@ void CSSFontSelector::addFontFaceRule(const CSSFontFaceRule* fontFaceRule)
         CSSFontFaceSrcValue* item = static_cast<CSSFontFaceSrcValue*>(srcList->item(i));
         CSSFontFaceSource* source = 0;
 
-#if ENABLE(SVG_FONTS)
-        // SVG Fonts support (internal fonts, living within the document)
-        svgFontFaceElement = item->svgFontFaceElement();
-        if (svgFontFaceElement)
-            break;
-#endif
-
         if (!item->isLocal()) {
             if (item->isSupportedFormat()) {
                 CachedFont* cachedFont = m_document->docLoader()->requestFont(item->resource());
@@ -153,31 +147,43 @@ void CSSFontSelector::addFontFaceRule(const CSSFontFaceRule* fontFaceRule)
                     source = new CSSFontFaceSource(item->resource(), cachedFont);
             }
         } else {
+            String family = item->resource();
+
+#if ENABLE(SVG_FONTS)
+            // SVG Fonts support (internal fonts, living within the document)
+            svgFontFaceElement = item->svgFontFaceElement();
+            if (svgFontFaceElement) {
+                source = new CSSFontFaceSource(family);
+                foundLocal = true;
+            }
+#endif
+
             // Test the validity of the local font now.  We don't want to include this font if it does not exist
             // on the system.  If it *does* exist on the system, then we don't need to look any further.
-            String family = item->resource();
-            if (FontCache::fontExists(fontDescription, family)) {
+            if (FontCache::fontExists(fontDescription, family) && !foundLocal) {
                 source = new CSSFontFaceSource(family);
                 foundLocal = true;
             }
         }
 
-        if (!fontFace)
-            fontFace = new CSSFontFace(this);
+        if (!fontFace) {
+#if ENABLE(SVG_FONTS)
+            if (svgFontFaceElement)
+                fontFace = new SVGCSSFontFace(this, svgFontFaceElement);
+            else
+#endif
+                fontFace = new CSSFontFace(this);
+        }
 
         if (source)
             fontFace->addSource(source);
-        
+
         // We can just break if we see a local font that is valid.
         if (foundLocal)
             break;
     }
 
-#if ENABLE(SVG_FONTS)
-    ASSERT(fontFace || svgFontFaceElement);
-#else
     ASSERT(fontFace);
-#endif
 
     if (fontFace && !fontFace->isValid()) {
         delete fontFace;
@@ -220,10 +226,10 @@ void CSSFontSelector::addFontFaceRule(const CSSFontFaceRule* fontFaceRule)
             continue;
 
 #if ENABLE(SVG_FONTS)
-        if (svgFontFaceElement) {
-            ASSERT(svgFontFaceElement->fontFamily() == familyName);
-            fontFace = new SVGCSSFontFace(this, svgFontFaceElement);
-        }
+        // SVG allows several <font> elements with the same font-family, differing only
+        // in ie. font-variant. Be sure to pick up the right one - in getFontData below.
+        if (svgFontFaceElement && fontDescription.smallCaps())
+            familyName += "-webkit-svg-small-caps";
 #endif
 
         m_fonts.set(hashForFont(familyName.lower(), fontDescription.bold(), fontDescription.italic()), fontFace);
@@ -250,8 +256,19 @@ FontData* CSSFontSelector::getFontData(const FontDescription& fontDescription, c
     bool syntheticItalic = false;
 
     String family = familyName.domString().lower();
-    
+
+#if ENABLE(SVG_FONTS)
+    RefPtr<CSSFontFace> face;
+
+    if (fontDescription.smallCaps()) {
+        String testFamily = family + "-webkit-svg-small-caps";
+        face = m_fonts.get(hashForFont(testFamily, bold, italic));
+    } else
+        face = m_fonts.get(hashForFont(family, bold, italic));
+#else
     RefPtr<CSSFontFace> face = m_fonts.get(hashForFont(family, bold, italic));
+#endif
+
     // If we don't find a face, and if bold/italic are set, we should try other variants.
     // Bold/italic should try bold first, then italic, then normal (on the assumption that we are better at synthesizing italic than we are
     // at synthesizing bold).
@@ -273,7 +290,22 @@ FontData* CSSFontSelector::getFontData(const FontDescription& fontDescription, c
             face = m_fonts.get(hashForFont(family, false, false));
         }
     }
-    
+
+#if ENABLE(SVG_FONTS)
+    // If no face was found, and if we're a SVG Font we may have hit following case:
+    // <font-face> specified font-weight and/or font-style to be ie. bold and italic.
+    // And the font-family requested is non-bold & non-italic. For SVG Fonts we still
+    // have to return the defined font, and not fallback to the system default.
+    if (!face && !bold)
+        face = m_fonts.get(hashForFont(family, true, italic));
+
+    if (!face && !italic)
+        face = m_fonts.get(hashForFont(family, bold, true));
+
+    if (!face && !bold && !italic)
+        face = m_fonts.get(hashForFont(family, true, true));
+#endif
+
     // If no face was found, then return 0 and let the OS come up with its best match for the name.
     if (!face) {
         // If we were handed a generic family, but there was no match, go ahead and return the correct font based off our

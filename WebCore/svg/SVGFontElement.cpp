@@ -37,6 +37,7 @@ using namespace SVGNames;
 
 SVGFontElement::SVGFontElement(const QualifiedName& tagName, Document* doc)
     : SVGStyledElement(tagName, doc)
+    , m_maximumHashKeyLength(0)
 {
 }
 
@@ -44,62 +45,101 @@ SVGFontElement::~SVGFontElement()
 {
 }
 
-void SVGFontElement::collectGlyphs(const Font& font)
+void SVGFontElement::addGlyphToCache(SVGGlyphElement* glyphElement)
 {
-    m_glyphMap.clear();
+    ASSERT(glyphElement);
 
-    Vector<SVGGlyphElement*> glyphElements;
-    SVGMissingGlyphElement* missingGlyphElement = 0;
+    String glyphString = glyphElement->getAttribute(unicodeAttr);
+    if (glyphString.isEmpty()) // No unicode property, means that glyph will be used in <altGlyph> situations!
+        return;
 
-    for (Node* child = lastChild(); child; child = child->previousSibling()) {
-        if (child->hasTagName(glyphTag))
-            glyphElements.append(static_cast<SVGGlyphElement*>(child));
-        else if (child->hasTagName(missing_glyphTag))
-            missingGlyphElement = static_cast<SVGMissingGlyphElement*>(child);
-    }
+    SVGGlyphIdentifier identifier = glyphElement->buildGlyphIdentifier();
+    identifier.isValid = true;
 
-    Vector<SVGGlyphElement*>::iterator it = glyphElements.begin();
-    Vector<SVGGlyphElement*>::iterator end = glyphElements.end();
+    if (glyphString.length() > m_maximumHashKeyLength)
+        m_maximumHashKeyLength = glyphString.length();
 
-    SVGFontData* svgFontData = 0;
+    GlyphHashMap::iterator glyphsIt = m_glyphMap.find(glyphString);
+    if (glyphsIt == m_glyphMap.end()) {
+        Vector<SVGGlyphIdentifier> glyphs;
+        glyphs.append(identifier);
 
-#if !PLATFORM(QT)
-    // Why doesn't Qt have primaryFont()? The Qt guys will see an assertion, if buildGlyphIdentifier() is called :(
-    const FontData* fontData = font.primaryFont();
-    ASSERT(fontData);
-
-    svgFontData = fontData->svgFontData();
-#endif
-
-    String glyphString;
-    SVGGlyphIdentifier identifier;
-
-    for (; it != end; ++it) {
-        identifier = (*it)->buildGlyphIdentifier(svgFontData);
-        glyphString = (*it)->getAttribute(unicodeAttr);
-
-        // TODO: To support glyph strings consisting of more than one character (ie. 'ffl' ligatures)
-        // we need another hashing scheme. Glyph <-> SVGGlyphIdentifier is not enough.
-
-        // TODO: We skip glyphs with empty paths, this is not correct if the <glyph> has no d="" but children!
-        
-        if (glyphString.length() != 1 || identifier.pathData.isEmpty())
-            continue;
-
-        const GlyphData& glyphData = font.glyphDataForCharacter(glyphString[0], false /* TODO: no rtl, is this correct in all cases? */);
-        m_glyphMap.add(glyphData.glyph, identifier);
+        m_glyphMap.add(glyphString, glyphs);
+    } else {
+        Vector<SVGGlyphIdentifier>& glyphs = (*glyphsIt).second;
+        glyphs.append(identifier);
     }
 }
 
-SVGGlyphIdentifier SVGFontElement::glyphIdentifierForGlyphCode(const Glyph& code) const
+void SVGFontElement::removeGlyphFromCache(SVGGlyphElement* glyphElement)
 {
-    GlyphHashMap& hashMap = const_cast<SVGFontElement*>(this)->m_glyphMap;
+    ASSERT(glyphElement);
 
-    GlyphHashMap::iterator it = hashMap.find(code);
-    if (it == hashMap.end())
-        return SVGGlyphIdentifier();
+    String glyphString = glyphElement->getAttribute(unicodeAttr);
+    if (glyphString.isEmpty()) // No unicode property, means that glyph will be used in <altGlyph> situations!
+        return;
 
-    return it->second;
+    GlyphHashMap::iterator glyphsIt = m_glyphMap.find(glyphString);
+    ASSERT(glyphsIt != m_glyphMap.end());
+
+    Vector<SVGGlyphIdentifier>& glyphs = (*glyphsIt).second;
+
+    if (glyphs.size() == 1)
+        m_glyphMap.remove(glyphString);
+    else {
+        SVGGlyphIdentifier identifier = glyphElement->buildGlyphIdentifier();
+        identifier.isValid = true;
+
+        Vector<SVGGlyphIdentifier>::iterator it = glyphs.begin();
+        Vector<SVGGlyphIdentifier>::iterator end = glyphs.end();
+
+        unsigned int position = 0;
+        for (; it != end; ++it) {
+            if ((*it) == identifier)
+                break;
+
+            position++;
+        }
+
+        ASSERT(position < glyphs.size());
+        glyphs.remove(position);
+    }
+
+    // If we remove a glyph from cache, whose unicode property length is equal to
+    // m_maximumHashKeyLength then we need to recalculate the hash key length, because there
+    // is either no more glyph with that length, or there are still more glyphs with the maximum length.
+    if (glyphString.length() == m_maximumHashKeyLength) {
+        m_maximumHashKeyLength = 0;
+
+        GlyphHashMap::iterator it = m_glyphMap.begin();
+        GlyphHashMap::iterator end = m_glyphMap.end();
+
+        for (; it != end; ++it) {
+            if ((*it).first.length() > m_maximumHashKeyLength)
+                m_maximumHashKeyLength = (*it).first.length();
+        }
+    }
+}
+
+SVGMissingGlyphElement* SVGFontElement::firstMissingGlyphElement() const
+{
+    for (Node* child = firstChild(); child; child = child->nextSibling()) {
+        if (child->hasTagName(missing_glyphTag))
+            return static_cast<SVGMissingGlyphElement*>(child);
+    }
+
+    return 0;
+}
+
+const Vector<SVGGlyphIdentifier>& SVGFontElement::glyphIdentifiersForString(const String& string) const
+{
+    GlyphHashMap::const_iterator it = m_glyphMap.find(string);
+    if (it == m_glyphMap.end()) {
+        static Vector<SVGGlyphIdentifier> s_emptyGlyphList;
+        return s_emptyGlyphList;
+    }
+
+    return (*it).second;
 }
 
 }

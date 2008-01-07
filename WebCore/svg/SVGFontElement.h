@@ -22,31 +22,13 @@
 #define SVGFontElement_h
 
 #if ENABLE(SVG_FONTS)
-#include "SVGStyledElement.h"
-
-#include "GlyphBuffer.h"
 #include "SVGExternalResourcesRequired.h"
 #include "SVGGlyphElement.h"
+#include "SVGStyledElement.h"
 
 namespace WebCore {
 
-    class Font;
-
-    struct GlyphHash {
-        static unsigned hash(const Glyph& glyph) {
-            return StringImpl::computeHash((::UChar*) &glyph, sizeof(Glyph) / sizeof(::UChar));
-        }
-
-        static bool equal(const Glyph& a, const Glyph& b) { return a == b; }
-        static const bool safeToCompareToEmptyOrDeleted = false;
-    };
-
-    struct GlyphHashTraits : WTF::GenericHashTraits<Glyph> {
-        static TraitType deletedValue() { return USHRT_MAX; }
-    };
-
-    typedef HashMap<Glyph, SVGGlyphIdentifier, GlyphHash, GlyphHashTraits> GlyphHashMap;
-
+    class SVGMissingGlyphElement;    
     class SVGFontElement : public SVGStyledElement
                          , public SVGExternalResourcesRequired {
     public:
@@ -56,12 +38,22 @@ namespace WebCore {
         virtual bool rendererIsNeeded(RenderStyle*) { return false; }    
         virtual const SVGElement* contextElement() const { return this; }
 
-        void collectGlyphs(const Font&);
-        SVGGlyphIdentifier glyphIdentifierForGlyphCode(const Glyph&) const;
+        void addGlyphToCache(SVGGlyphElement*);
+        void removeGlyphFromCache(SVGGlyphElement*);
+
+        const Vector<SVGGlyphIdentifier>& glyphIdentifiersForString(const String&) const;
+
+        // Returns the longest hash key length (the 'unicode' property value with the
+        // highest amount of characters) - ie. for <glyph unicode="ffl"/> it will return 3.
+        unsigned int maximumHashKeyLength() const { return m_maximumHashKeyLength; }
+
+        SVGMissingGlyphElement* firstMissingGlyphElement() const;
 
     private:
-        // Map between 'unicode' property of <glyph> and a SVGGlyphIdentifier
+        typedef HashMap<String, Vector<SVGGlyphIdentifier> > GlyphHashMap;
         GlyphHashMap m_glyphMap;
+
+        unsigned int m_maximumHashKeyLength;
     };
 
 } // namespace WebCore

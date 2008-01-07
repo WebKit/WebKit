@@ -47,7 +47,7 @@ namespace WebCore {
         virtual IntRect selectionRect(int absx, int absy, int startPos, int endPos);
 
         // SVGs custom paint text method
-        void paintCharacters(RenderObject::PaintInfo&, int tx, int ty, const SVGChar&, const UChar* chars, int length);
+        void paintCharacters(RenderObject::PaintInfo&, int tx, int ty, const SVGChar&, const UChar* chars, int length, SVGPaintServer*);
 
         // SVGs custom paint selection method
         void paintSelection(int boxStartOffset, const SVGChar&, const UChar*, int length, GraphicsContext*, RenderStyle*, const Font*);

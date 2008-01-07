@@ -136,6 +136,36 @@ int FontData::descent(float fontSize) const
     return m_descent;
 }
 
+int FontData::lineSpacing(float fontSize) const
+{
+#if ENABLE(SVG_FONTS)
+    if (m_svgFontData)
+        return (int) ceilf(SVGFontData::convertEmUnitToPixel(fontSize, m_unitsPerEm, m_lineSpacing));
+#endif
+
+    return m_lineSpacing;
+}
+
+int FontData::lineGap(float fontSize) const
+{
+#if ENABLE(SVG_FONTS)
+    if (m_svgFontData)
+        return SVGFontData::convertEmUnitToPixel(fontSize, m_unitsPerEm, m_lineGap);
+#endif
+
+    return m_lineGap;
+}
+
+float FontData::xHeight(float fontSize) const
+{
+#if ENABLE(SVG_FONTS)
+    if (m_svgFontData)
+        return SVGFontData::convertEmUnitToPixel(fontSize, m_unitsPerEm, m_xHeight);
+#endif
+
+    return m_xHeight;
+}
+
 float FontData::widthForGlyph(Glyph glyph) const
 {
     float width = m_glyphToWidthMap.widthForGlyph(glyph);

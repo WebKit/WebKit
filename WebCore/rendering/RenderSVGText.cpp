@@ -29,6 +29,7 @@
 #include "RenderSVGText.h"
 
 #include "FloatConversion.h"
+#include "FontData.h"
 #include "GraphicsContext.h"
 #include "PointerEventsHitRules.h"
 #include "RenderSVGRoot.h"
@@ -188,8 +189,21 @@ FloatRect RenderSVGText::relativeBBox(bool includeStroke) const
     }
 
     // SVG needs to include the strokeWidth(), not the textStrokeWidth().
-    if (includeStroke && style()->svgStyle()->hasStroke())
-        repaintRect.inflate(SVGRenderStyle::cssPrimitiveToLength(this, style()->svgStyle()->strokeWidth(), 0.0f));
+    if (includeStroke && style()->svgStyle()->hasStroke()) {
+        float strokeWidth = SVGRenderStyle::cssPrimitiveToLength(this, style()->svgStyle()->strokeWidth(), 0.0f);
+
+#if ENABLE(SVG_FONTS)
+        const Font& font = style()->font();
+        if (font.primaryFont()->isSVGFont()) {
+            float scale = SVGFontData::convertEmUnitToPixel(font.size(), font.unitsPerEm(), 1.0f);
+
+            if (scale != 0.0f)
+                strokeWidth /= scale;
+        }
+#endif
+
+        repaintRect.inflate(strokeWidth);
+    }
 
     repaintRect.move(xPos(), yPos());
     return repaintRect;

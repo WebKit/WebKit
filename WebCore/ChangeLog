@@ -1,3 +1,131 @@
+2008-01-06  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Oliver. Parts reviewed by Eric, David Hyatt & Dan & Alexey.
+        Fixes: http://bugs.webkit.org/show_bug.cgi?id=15741 (REGRESSION: svg/W3C-SVG-1.1/fonts-elem-03-b.svg shows worse behavior on TOT)
+
+        Display SVG Fonts, fill svg/SVGFont.cpp with life by adding all needed code to
+        measure & render glyphs contained in SVG Fonts, including ligature lookup support.
+
+        Implement floatWidth/selectionRectForText for SVG Fonts, fixing text selection.
+
+        Support horiz-origin-x/y, horiz-adv-x, vert-adv-y, vert-origin-x/y & arabic-form.
+        Implement simple algorithm to determine the arabic forms for a string (initial, isolated, medial, terminal).
+
+        Removed drawGlyphsWithSVGFont - create a new function drawTextWithSVGFont instead.
+        This doesn't involve creating/using a 'GlyphBuffer' object anymore, which is not
+        required for SVG Fonts anyway (we already know all our offsets/advances/etc..)
+
+        Don't call it from drawSimpleText anymore, but directly in drawText - as Dan suggested.
+
+        <glyph> elements now register themselves in the SVGFontElement's glyph cache.
+        (insertedIntoDocument / removedFromDocument take care of this)
+
+        The cache is built once now, and is kept updated - it's not rebuild anymore
+        on painting (!) - which was a crude hack for testing.
+
+        W3C testcase which include SVG Fonts:
+        svg/W3C-SVG-1.1/animate-elem-03-t.svg (Fixed, of course not the anim itself, but it's SVG Fonts usage)
+        svg/W3C-SVG-1.1/animate-elem-24-t.svg (Ditto)
+        svg/W3C-SVG-1.1/animate-elem-36-t.svg (Ditto)
+        svg/W3C-SVG-1.1/animate-elem-40-t.svg (Ditto)
+        svg/W3C-SVG-1.1/fonts-kern-01-t.svg (missing <vkern>/<hkern> support)
+        svg/W3C-SVG-1.1/fonts-desc-02-t.svg (Fixed, tests CSS font matching based on font-variant attribute)
+        svg/W3C-SVG-1.1/fonts-elem-01-t.svg (Fixed, basic SVG font test)
+        svg/W3C-SVG-1.1/fonts-elem-02-t.svg (Fixed, accuracy test for embedded SVG font)
+        svg/W3C-SVG-1.1/fonts-elem-05-t.svg (Fixed, checks horiz-origin-x support, note: W3C reference image is wrong)
+        svg/W3C-SVG-1.1/fonts-elem-06-t.svg (Fixed, checks horiz-adv-x support)
+        svg/W3C-SVG-1.1/fonts-glyph-02-t.svg (Fixed, checks arabic-form support)
+        svg/W3C-SVG-1.1/fonts-glyph-03-t.svg (Fixed, checks glyph matching based on xml:lang)
+        svg/W3C-SVG-1.1/masking-mask-01-b.svg (Fixed, SVG Fonts & masking)
+        svg/W3C-SVG-1.1/pservers-grad-08-b.svg (Fixed, SVG Fonts & gradient on fill/stroke)
+        svg/W3C-SVG-1.1/render-elems-06-t.svg (Fixed, simple 'fill' property test)
+        svg/W3C-SVG-1.1/render-elems-07-t.svg (Fixed, simple 'stroke' property test - shows SVG Font interprets stroke-width in glyph coordinate system, as demanded by spec)
+        svg/W3C-SVG-1.1/render-elems-08-t.svg (Fixed, simple 'fill' & 'stroke' property test)
+        svg/W3C-SVG-1.1/render-groups-01-b.svg (missing <vkern>/<hkern> support)
+        svg/W3C-SVG-1.1/render-groups-03-t.svg (Ditto)
+        svg/W3C-SVG-1.1/text-altglyph-01-b.svg (no <altGlyph> support yet)
+        svg/W3C-SVG-1.1/text-text-04-t.svg (Fixed, absolute placing of characters pixel perfect now)
+        svg/W3C-SVG-1.1/text-text-05-t.svg (FIXME: problem with text-anchor)
+        svg/W3C-SVG-1.1/text-text-06-t.svg (highlights problem with ligatures & absolute positioned characters)
+
+        Questionable testcases:
+        svg/W3C-SVG-1.1/fonts-glyph-04-t.svg (tests that glyph selection is done in the order in the definition of the font element.)
+        I am not sure why this behaviour is desired, no comment given in spec - doesn't make much sense to me, ignoring it for now.
+
+        Several other batik testcases fixed, which use SVG Fonts in combination with gradients & filters.
+
+        * css/CSSFontSelector.cpp:
+        (WebCore::CSSFontSelector::addFontFaceRule):
+        (WebCore::CSSFontSelector::getFontData):
+        * platform/graphics/Font.cpp:
+        (WebCore::Font::lineSpacing):
+        (WebCore::Font::xHeight):
+        (WebCore::Font::canUseGlyphCache):
+        (WebCore::Font::drawGlyphBuffer):
+        (WebCore::Font::drawText):
+        (WebCore::Font::floatWidth):
+        (WebCore::Font::selectionRectForText):
+        * platform/graphics/Font.h:
+        (WebCore::TextRun::TextRun):
+        (WebCore::TextRun::activePaintServer):
+        (WebCore::TextRun::setActivePaintServer):
+        * platform/graphics/FontData.cpp:
+        (WebCore::FontData::lineSpacing):
+        (WebCore::FontData::lineGap):
+        (WebCore::FontData::xHeight):
+        * platform/graphics/FontData.h:
+        * platform/graphics/win/FontWin.cpp:
+        (WebCore::Font::drawGlyphs):
+        * rendering/RenderSVGText.cpp:
+        (WebCore::RenderSVGText::relativeBBox):
+        * rendering/SVGInlineTextBox.cpp:
+        (WebCore::SVGInlineTextBox::paintCharacters):
+        * rendering/SVGInlineTextBox.h:
+        * rendering/SVGRootInlineBox.cpp:
+        (WebCore::SVGRootInlineBoxPaintWalker::chunkPortionCallback):
+        * svg/SVGFont.cpp:
+        (WebCore::):
+        (WebCore::processArabicFormDetection):
+        (WebCore::charactersWithArabicForm):
+        (WebCore::isCompatibleArabicForm):
+        (WebCore::isCompatibleGlyph):
+        (WebCore::svgFontAndFontFaceElementForFontData):
+        (WebCore::SVGTextRunWalker::SVGTextRunWalker):
+        (WebCore::SVGTextRunWalker::walk):
+        (WebCore::floatWidthUsingSVGFontCallback):
+        (WebCore::floatWidthMissingGlyphCallback):
+        (WebCore::floatWidthOfSubStringUsingSVGFont):
+        (WebCore::Font::floatWidthUsingSVGFont):
+        (WebCore::drawTextUsingSVGFontCallback):
+        (WebCore::drawTextMissingGlyphCallback):
+        (WebCore::Font::drawTextUsingSVGFont):
+        (WebCore::Font::selectionRectForTextUsingSVGFont):
+        * svg/SVGFontElement.cpp:
+        (WebCore::SVGFontElement::SVGFontElement):
+        (WebCore::SVGFontElement::addGlyphToCache):
+        (WebCore::SVGFontElement::removeGlyphFromCache):
+        (WebCore::SVGFontElement::firstMissingGlyphElement):
+        (WebCore::SVGFontElement::glyphIdentifiersForString):
+        * svg/SVGFontElement.h:
+        (WebCore::SVGFontElement::maximumHashKeyLength):
+        * svg/SVGFontFaceElement.cpp:
+        (WebCore::SVGFontFaceElement::createFontData):
+        (WebCore::SVGFontFaceElement::rebuildFontFace):
+        (WebCore::SVGFontFaceElement::associatedFontElement):
+        * svg/SVGFontFaceElement.h:
+        * svg/SVGGlyphElement.cpp:
+        (WebCore::SVGGlyphElement::insertedIntoDocument):
+        (WebCore::SVGGlyphElement::removedFromDocument):
+        (WebCore::parseArabicForm):
+        (WebCore::SVGGlyphElement::inheritUnspecifiedAttributes):
+        (WebCore::SVGGlyphElement::buildGlyphIdentifier):
+        * svg/SVGGlyphElement.h:
+        (WebCore::SVGGlyphIdentifier::):
+        (WebCore::SVGGlyphIdentifier::SVGGlyphIdentifier):
+        (WebCore::SVGGlyphIdentifier::inheritedValue):
+        (WebCore::SVGGlyphIdentifier::operator==):
+        (WebCore::SVGGlyphElement::~SVGGlyphElement):
+
 2008-01-07  David Hyatt  <hyatt@apple.com>
 
         Fix for bug 13095, CSS3 multiple backgrounds don't work on table cells.

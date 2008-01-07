@@ -517,12 +517,12 @@ int Font::descent() const
 
 int Font::lineSpacing() const
 {
-    return primaryFont()->lineSpacing();
+    return primaryFont()->lineSpacing(size());
 }
 
 float Font::xHeight() const
 {
-    return primaryFont()->xHeight();
+    return primaryFont()->xHeight(size());
 }
 
 unsigned Font::unitsPerEm() const
@@ -548,13 +548,6 @@ void Font::setCodePath(CodePath p)
 
 bool Font::canUseGlyphCache(const TextRun& run) const
 {
-#if ENABLE(SVG_FONTS)
-    // SVG fonts don't support any caching for now, we pretend it here to assure SVG
-    // font drawing always ends up in the 'simple code path', when SVG fonts are used.
-    if (primaryFont() && primaryFont()->isSVGFont())
-        return true;
-#endif
-
     switch (codePath) {
         case Auto:
             break;
@@ -661,11 +654,6 @@ void Font::drawGlyphBuffer(GraphicsContext* context, const GlyphBuffer& glyphBuf
         const FontData* nextFontData = glyphBuffer.fontDataAt(nextGlyph);
         FloatSize nextOffset = glyphBuffer.offsetAt(nextGlyph);
         if (nextFontData != fontData || nextOffset != offset) {
-#if ENABLE(SVG_FONTS)
-            if (fontData->isSVGFont())
-                drawGlyphsWithSVGFont(context, run.referencingRenderObject(), fontData, glyphBuffer, lastFrom, nextGlyph - lastFrom, startPoint);
-            else
-#endif
             drawGlyphs(context, fontData, glyphBuffer, lastFrom, nextGlyph - lastFrom, startPoint);
 
             lastFrom = nextGlyph;
@@ -677,11 +665,6 @@ void Font::drawGlyphBuffer(GraphicsContext* context, const GlyphBuffer& glyphBuf
         nextGlyph++;
     }
 
-#if ENABLE(SVG_FONTS)
-    if (fontData->isSVGFont())
-        drawGlyphsWithSVGFont(context, run.referencingRenderObject(), fontData, glyphBuffer, lastFrom, nextGlyph - lastFrom, startPoint);
-    else
-#endif
     drawGlyphs(context, fontData, glyphBuffer, lastFrom, nextGlyph - lastFrom, startPoint);
 }
 
@@ -692,6 +675,14 @@ void Font::drawText(GraphicsContext* context, const TextRun& run, const FloatPoi
         return;
     
     to = (to == -1 ? run.length() : to);
+
+#if ENABLE(SVG_FONTS)
+    if (primaryFont()->isSVGFont()) {
+        drawTextUsingSVGFont(context, run, point, from, to);
+        return;
+    }
+#endif
+
     if (canUseGlyphCache(run))
         drawSimpleText(context, run, point, from, to);
     else
@@ -700,6 +691,11 @@ void Font::drawText(GraphicsContext* context, const TextRun& run, const FloatPoi
 
 float Font::floatWidth(const TextRun& run) const
 {
+#if ENABLE(SVG_FONTS)
+    if (primaryFont()->isSVGFont())
+        return floatWidthUsingSVGFont(run);
+#endif
+
     if (canUseGlyphCache(run))
         return floatWidthForSimpleText(run, 0);
     return floatWidthForComplexText(run);
@@ -714,6 +710,11 @@ float Font::floatWidthForSimpleText(const TextRun& run, GlyphBuffer* glyphBuffer
 
 FloatRect Font::selectionRectForText(const TextRun& run, const IntPoint& point, int h, int from, int to) const
 {
+#if ENABLE(SVG_FONTS)
+    if (primaryFont()->isSVGFont())
+        return selectionRectForTextUsingSVGFont(run, point, h, from, to);
+#endif
+
     to = (to == -1 ? run.length() : to);
     if (canUseGlyphCache(run))
         return selectionRectForSimpleText(run, point, h, from, to);

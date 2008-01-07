@@ -23,7 +23,6 @@
 
 #if ENABLE(SVG_FONTS)
 #include "SVGElement.h"
-#include "GlyphBuffer.h"
 
 namespace WebCore {
 
@@ -31,7 +30,7 @@ namespace WebCore {
     class CSSMutableStyleDeclaration;
     class FontData;
     class FontDescription;
-    struct SVGGlyphIdentifier;
+    class SVGFontElement;
 
     class SVGFontFaceElement : public SVGElement {
     public:
@@ -49,7 +48,9 @@ namespace WebCore {
         void rebuildFontFace();
         FontData* createFontData(const FontDescription&) const;
 
-        SVGGlyphIdentifier glyphIdentifierForGlyphCode(const Glyph&) const;
+        // If our parent element is <font>, it will be returned. (this is the case for a SVG Font described in the same document)
+        // Otherwhise it will return the <font> element that is referenced by the first valid <font-face-src> element.
+        SVGFontElement* associatedFontElement() const;
 
     private:
         RefPtr<CSSFontFaceRule> m_fontFaceRule;

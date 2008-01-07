@@ -29,15 +29,16 @@
 #include "CSSPropertyNames.h"
 #include "CSSStyleSelector.h"
 #include "CSSStyleSheet.h"
+#include "CSSValueKeywords.h"
 #include "CSSValueList.h"
 #include "FontCache.h"
 #include "FontData.h"
 #include "FontPlatformData.h"
 #include "SVGDefinitionSrcElement.h"
-#include "SVGNames.h"
 #include "SVGFontElement.h"
 #include "SVGFontFaceSrcElement.h"
 #include "SVGGlyphElement.h"
+#include "SVGNames.h"
 
 namespace WebCore {
 
@@ -153,7 +154,6 @@ FontData* SVGFontFaceElement::createFontData(const FontDescription& fontDescript
     ASSERT(parentNode()->hasTagName(fontTag));
     SVGFontElement* fontElement = static_cast<SVGFontElement*>(parentNode());
 
-    // Use default fallback platform data - it's not needed anyway...
     FontPlatformData* cachedPlatformData = FontCache::getLastResortFallbackFont(fontDescription);
     if (!cachedPlatformData)
         return 0;
@@ -220,24 +220,22 @@ FontData* SVGFontFaceElement::createFontData(const FontDescription& fontDescript
         fontData->m_ascent = static_cast<int>(ceilf(getAttribute(ascentAttr).toFloat()));
     else if (fontElement->hasAttribute(vert_origin_yAttr))
         fontData->m_ascent = fontData->m_unitsPerEm - static_cast<int>(ceilf(fontElement->getAttribute(vert_origin_yAttr).toFloat()));
-    else {
-        // TODO: Batik actually computes the ascent, based on the glyph dimensions of the glyphs contained in the font.
-        // We may choose the same solution (even if the spec doesn't give a hint), as some W3C SVG 1.1 testcases depend on that.
-        fontData->m_ascent = 0;
-    }
+    else // Match Batik's default value.
+        fontData->m_ascent = fontData->m_unitsPerEm * 0.8;
 
     // Spec: Same syntax and semantics as the 'descent' descriptor within an @font-face rule. The maximum
     // unaccented depth of the font within the font coordinate system. If the attribute is not specified,
     // the effect is as if the attribute were set to the vert-origin-y value for the corresponding font.
-    if (hasAttribute(descentAttr))
+    if (hasAttribute(descentAttr)) {
         fontData->m_descent = static_cast<int>(ceilf(getAttribute(descentAttr).toFloat()));
-    else if (fontElement->hasAttribute(vert_origin_yAttr))
+
+        // Some testcases use a negative descent value, where a positive was meant to be used :(
+        if (fontData->m_descent < 0)
+            fontData->m_descent = -fontData->m_descent;
+    } else if (fontElement->hasAttribute(vert_origin_yAttr))
         fontData->m_descent = static_cast<int>(ceilf(fontElement->getAttribute(vert_origin_yAttr).toFloat()));
-    else {
-        // TODO: Batik actually computes the descent, based on the glyph dimensions of the glyphs contained in the font.
-        // We may choose the same solution (even if the spec doesn't give a hint), as some W3C SVG 1.1 testcases depend on that.
-        fontData->m_descent = 0;
-    }
+    else // Match Batik's default value.
+        fontData->m_descent = fontData->m_unitsPerEm * 0.2;
 
     return fontData.release();
 }
@@ -252,7 +250,7 @@ void SVGFontFaceElement::rebuildFontFace()
     if (parentNode() && parentNode()->hasTagName(fontTag)) {
         RefPtr<CSSValueList> list = new CSSValueList;
 
-        RefPtr<CSSFontFaceSrcValue> src = new CSSFontFaceSrcValue(StringImpl::empty(), false);
+        RefPtr<CSSFontFaceSrcValue> src = new CSSFontFaceSrcValue(StringImpl::empty(), true /* isLocal */);
         src->setSVGFontFaceElement(this);
         list->append(src);
 
@@ -304,14 +302,18 @@ void SVGFontFaceElement::childrenChanged()
     rebuildFontFace();
 }
 
-SVGGlyphIdentifier SVGFontFaceElement::glyphIdentifierForGlyphCode(const Glyph& code) const
+SVGFontElement* SVGFontFaceElement::associatedFontElement() const
 {
-    // We only expect to have this method called by a parent font element
-    ASSERT(parentNode());
-    ASSERT(parentNode()->hasTagName(fontTag));
+    if (Node* parent = parentNode()) {
+        if (parent->hasTagName(fontTag))
+            return static_cast<SVGFontElement*>(parent);
+        else if (parent->hasTagName(defsTag)) {
+            // TODO: Support external SVG fonts!
+            return 0;
+        }
+    }
 
-    SVGFontElement* fontElement = static_cast<SVGFontElement*>(parentNode());
-    return fontElement->glyphIdentifierForGlyphCode(code);
+    return 0;
 }
 
 }
