@@ -785,7 +785,8 @@ static inline Qt::DropAction dragOpToDropAction(unsigned actions)
     return result;    
 }
 
-
+/*! \reimp
+*/
 bool QWebPage::event(QEvent *ev)
 {
     switch (ev->type()) {

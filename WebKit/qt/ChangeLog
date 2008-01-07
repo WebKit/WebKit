@@ -1,5 +1,29 @@
 2008-01-07  Holger Hans Peter Freyther  <holger.freyther@trolltech.com>
 
+        Reviewed by Simon.
+
+        * Add reimplemented comments for the methods reimplemented in QWebView and QWebPage.
+        
+
+        * Api/qwebpage.cpp:
+        (dragOpToDropAction):
+        * Api/qwebview.cpp:
+        (QWebView::mouseMoveEvent):
+        (QWebView::mousePressEvent):
+        (QWebView::mouseDoubleClickEvent):
+        (QWebView::mouseReleaseEvent):
+        (QWebView::contextMenuEvent):
+        (QWebView::keyPressEvent):
+        (QWebView::keyReleaseEvent):
+        (QWebView::focusInEvent):
+        (QWebView::focusOutEvent):
+        (QWebView::dragEnterEvent):
+        (QWebView::dragLeaveEvent):
+        (QWebView::dragMoveEvent):
+        (QWebView::dropEvent):
+
+2008-01-07  Holger Hans Peter Freyther  <holger.freyther@trolltech.com>
+
         Reviewed by Lars.
 
         * This layout is not needed anymore as Widget::invalidateRect will not

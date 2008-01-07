@@ -395,31 +395,43 @@ void QWebView::paintEvent(QPaintEvent *ev)
 #endif
 }
 
+/*! \reimp
+*/
 void QWebView::mouseMoveEvent(QMouseEvent* ev)
 {
     d->page->event(ev);
 }
 
+/*! \reimp
+*/
 void QWebView::mousePressEvent(QMouseEvent* ev)
 {
     d->page->event(ev);
 }
 
+/*! \reimp
+*/
 void QWebView::mouseDoubleClickEvent(QMouseEvent* ev)
 {
     d->page->event(ev);
 }
 
+/*! \reimp
+*/
 void QWebView::mouseReleaseEvent(QMouseEvent* ev)
 {
     d->page->event(ev);
 }
 
+/*! \reimp
+*/
 void QWebView::contextMenuEvent(QContextMenuEvent* ev)
 {
     d->page->event(ev);
 }
 
+/*! \reimp
+*/
 void QWebView::wheelEvent(QWheelEvent* ev)
 {
     d->page->event(ev);
@@ -428,48 +440,66 @@ void QWebView::wheelEvent(QWheelEvent* ev)
         return QWidget::wheelEvent(ev);
 }
 
+/*! \reimp
+*/
 void QWebView::keyPressEvent(QKeyEvent* ev)
 {
     d->page->event(ev);
 }
 
+/*! \reimp
+*/
 void QWebView::keyReleaseEvent(QKeyEvent* ev)
 {
     d->page->event(ev);
 }
 
+/*! \reimp
+*/
 void QWebView::focusInEvent(QFocusEvent* ev)
 {
     d->page->event(ev);
     QWidget::focusInEvent(ev);
 }
 
+/*! \reimp
+*/
 void QWebView::focusOutEvent(QFocusEvent* ev)
 {
     QWidget::focusOutEvent(ev);
     d->page->event(ev);
 }
 
+/*! \reimp
+*/
 void QWebView::dragEnterEvent(QDragEnterEvent* ev)
 {
     d->page->event(ev);
 }
 
+/*! \reimp
+*/
 void QWebView::dragLeaveEvent(QDragLeaveEvent* ev)
 {
     d->page->event(ev);
 }
 
+/*! \reimp
+*/
 void QWebView::dragMoveEvent(QDragMoveEvent* ev)
 {
     d->page->event(ev);
 }
 
+/*! \reimp
+*/
 void QWebView::dropEvent(QDropEvent* ev)
 {
     d->page->event(ev);
 }
 
+/*! \reimp
+*/
 bool QWebView::focusNextPrevChild(bool next)
 {
     return d->page->focusNextPrevChild(next);
