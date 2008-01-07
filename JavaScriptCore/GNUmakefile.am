@@ -3,12 +3,14 @@ nodist_EXTRA_libJavaScriptCore_la_SOURCES = \
 	DerivedSources/dummy.cxx
 
 javascriptcore_cppflags += \
+	-I $(srcdir)/JavaScriptCore/ForwardingHeaders \
 	-I $(srcdir)/JavaScriptCore/bindings \
 	-I $(srcdir)/JavaScriptCore/bindings/c \
 	-I $(top_builddir)/JavaScriptCore/pcre \
 	-I $(top_builddir)/JavaScriptCore/kjs
 
 javascriptcore_h_api += \
+	JavaScriptCore/API/JavaScript.h \
 	JavaScriptCore/API/JavaScriptCore.h \
 	JavaScriptCore/API/JSBase.h \
 	JavaScriptCore/API/JSContextRef.h \
@@ -137,11 +139,24 @@ JavaScriptCore/pcre/chartables.c: $(top_builddir)/Programs/dftables$(EXEEXT)
 	./Programs/dftables $@
 
 noinst_PROGRAMS += \
-	Programs/testkjs \
-	Programs/dftables
+	Programs/dftables \
+	Programs/minidom \
+	Programs/testkjs
 
 # dftables
 Programs_dftables_SOURCES = JavaScriptCore/pcre/dftables.cpp
+
+# minidom
+Programs_minidom_SOURCES = \
+	JavaScriptCore/API/JSNode.c \
+	JavaScriptCore/API/JSNodeList.c \
+	JavaScriptCore/API/Node.c \
+	JavaScriptCore/API/NodeList.c \
+	JavaScriptCore/API/minidom.c
+Programs_minidom_CPPFLAGS = $(global_cppflags)
+Programs_minidom_CXXFLAGS = $(ICU_CFLAGS)
+Programs_minidom_LDADD = $(ICU_LIBS) libJavaScriptCore.la
+Programs_minidom_LDFLAGS = -rpath $(CURDIR)/.libs
 
 # testkjs
 Programs_testkjs_SOURCES = JavaScriptCore/kjs/testkjs.cpp

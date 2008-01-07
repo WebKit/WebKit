@@ -27,7 +27,7 @@
 #ifndef JSNode_h
 #define JSNode_h
 
-#include "JavaScriptCore.h"
+#include <JavaScriptCore/JavaScript.h>
 #include "Node.h"
 
 extern JSObjectRef JSNode_new(JSContextRef context, Node* node);

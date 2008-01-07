@@ -1,3 +1,28 @@
+2008-01-07  Alp Toker  <alp@atoker.com>
+
+        Reviewed by Darin.
+
+        http://bugs.webkit.org/show_bug.cgi?id=16029
+        JavaScriptCore.h is not suitable for platforms other than Mac OS X
+
+        Introduce a new JavaScriptCore/JavaScript.h public API header. This
+        should be used by all new portable code using the JavaScriptCore API.
+
+        JavaScriptCore/JavaScriptCore.h will remain for compatibility with
+        existing applications that depend on it including JSStringRefCF.h
+        which isn't portable.
+
+        Also add minidom to the GTK+/autotools build since we can now support
+        it on all platforms.
+
+        * API/JSNode.h:
+        * API/JSNodeList.h:
+        * API/JavaScript.h: Added.
+        * API/JavaScriptCore.h:
+        * ForwardingHeaders/JavaScriptCore/JavaScript.h: Added.
+        * GNUmakefile.am:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+
 2008-01-06  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Sam.
