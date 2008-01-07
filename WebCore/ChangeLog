@@ -1,3 +1,13 @@
+2008-01-07  Holger Hans Peter Freyther  <holger.freyther@trolltech.com>
+
+        Reviewed by Lars.
+
+        * Remove m_dirtyRegion as it is not used as we pass every dirty region
+        directly to the ChromeClient
+
+        * platform/qt/ScrollViewQt.cpp:
+        (WebCore::ScrollView::paint):
+
 2008-01-06  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Oliver.

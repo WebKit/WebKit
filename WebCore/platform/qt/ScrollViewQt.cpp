@@ -92,7 +92,6 @@ public:
     ScrollbarMode m_hScrollbarMode;
     RefPtr<PlatformScrollbar> m_vBar;
     RefPtr<PlatformScrollbar> m_hBar;
-    QRegion m_dirtyRegion;
     HashSet<Widget*> m_children;
 };
 
@@ -649,9 +648,6 @@ void ScrollView::paint(GraphicsContext* context, const IntRect& rect)
 
         context->restore();
     }
-
-    m_data->m_dirtyRegion = QRegion(); //clear the cache...
-
 }
 
 void ScrollView::wheelEvent(PlatformWheelEvent& e)
