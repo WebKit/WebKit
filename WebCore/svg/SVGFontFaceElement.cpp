@@ -220,7 +220,7 @@ SimpleFontData* SVGFontFaceElement::createFontData(const FontDescription& fontDe
     else if (fontElement->hasAttribute(vert_origin_yAttr))
         fontData->m_ascent = fontData->m_unitsPerEm - static_cast<int>(ceilf(fontElement->getAttribute(vert_origin_yAttr).toFloat()));
     else // Match Batik's default value.
-        fontData->m_ascent = fontData->m_unitsPerEm * 0.8;
+        fontData->m_ascent = fontData->m_unitsPerEm * 0.8f;
 
     // Spec: Same syntax and semantics as the 'descent' descriptor within an @font-face rule. The maximum
     // unaccented depth of the font within the font coordinate system. If the attribute is not specified,
@@ -234,7 +234,7 @@ SimpleFontData* SVGFontFaceElement::createFontData(const FontDescription& fontDe
     } else if (fontElement->hasAttribute(vert_origin_yAttr))
         fontData->m_descent = static_cast<int>(ceilf(fontElement->getAttribute(vert_origin_yAttr).toFloat()));
     else // Match Batik's default value.
-        fontData->m_descent = fontData->m_unitsPerEm * 0.2;
+        fontData->m_descent = fontData->m_unitsPerEm * 0.2f;
 
     return fontData.release();
 }

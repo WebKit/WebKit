@@ -47,11 +47,14 @@
 #include "Frame.h"
 #include "NodeList.h"
 #include "RenderObject.h"
+#include "Settings.h"
+#include "SimpleFontData.h"
+
+#if ENABLE(SVG)
 #include "SVGCSSFontFace.h"
 #include "SVGFontFaceElement.h"
 #include "SVGNames.h"
-#include "Settings.h"
-#include "SimpleFontData.h"
+#endif
 
 namespace WebCore {
 

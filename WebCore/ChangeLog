@@ -1,3 +1,12 @@
+2008-01-07  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Not reviewed. Next try to fix wx/mac leopard build.
+
+        * css/CSSFontSelector.cpp: Need to wrap a SVG* include in ENABLE(SVG) blocks, as this port doesn't build this generated file.
+        * svg/SVGFontFaceElement.cpp:
+        (WebCore::SVGFontFaceElement::createFontData): Fix double<->float conversion issue.
+        * webcore-base.bkl: Undo svg/ include.
+
 2008-01-07  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Dave Hyatt.
