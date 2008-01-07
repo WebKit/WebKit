@@ -106,7 +106,10 @@ ContextMenuItem::ContextMenuItem(GtkMenuItem* item)
         m_platformDescription.type = SeparatorType;
     else if (gtk_menu_item_get_submenu(item))
         m_platformDescription.type = SubmenuType;
-    else
+    else if (GTK_IS_CHECK_MENU_ITEM(item)) {
+        m_platformDescription.type = CheckableActionType;
+        m_platformDescription.checked = gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(item));
+    } else
         m_platformDescription.type = ActionType;
 
     m_platformDescription.action = *static_cast<ContextMenuAction*>(g_object_get_data(G_OBJECT(item), WEBKIT_CONTEXT_MENU_ACTION));
@@ -140,7 +143,7 @@ GtkMenuItem* ContextMenuItem::createNativeMenuItem(const PlatformMenuItemDescrip
     if (menu.type == SeparatorType)
         item = GTK_MENU_ITEM(gtk_separator_menu_item_new());
     else {
-        if (menu.checked) {
+        if (menu.type == CheckableActionType) {
             item = GTK_MENU_ITEM(gtk_check_menu_item_new_with_label(menu.title.utf8().data()));
             gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(item), menu.checked);
         } else {
@@ -227,7 +230,7 @@ void ContextMenuItem::setSubMenu(ContextMenu* menu)
 
 void ContextMenuItem::setChecked(bool shouldCheck)
 {
-    ASSERT(type() == ActionType);
+    ASSERT(type() == ActionType || type() == CheckableActionType);
     m_platformDescription.checked = shouldCheck;
 }
 

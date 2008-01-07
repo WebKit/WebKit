@@ -70,9 +70,9 @@ static void createAndAppendFontSubMenu(const HitTestResult& result, ContextMenuI
 #if PLATFORM(MAC)
     ContextMenuItem showFonts(ActionType, ContextMenuItemTagShowFonts, contextMenuItemTagShowFonts());
 #endif
-    ContextMenuItem bold(ActionType, ContextMenuItemTagBold, contextMenuItemTagBold());
-    ContextMenuItem italic(ActionType, ContextMenuItemTagItalic, contextMenuItemTagItalic());
-    ContextMenuItem underline(ActionType, ContextMenuItemTagUnderline, contextMenuItemTagUnderline());
+    ContextMenuItem bold(CheckableActionType, ContextMenuItemTagBold, contextMenuItemTagBold());
+    ContextMenuItem italic(CheckableActionType, ContextMenuItemTagItalic, contextMenuItemTagItalic());
+    ContextMenuItem underline(CheckableActionType, ContextMenuItemTagUnderline, contextMenuItemTagUnderline());
     ContextMenuItem outline(ActionType, ContextMenuItemTagOutline, contextMenuItemTagOutline());
 #if PLATFORM(MAC)
     ContextMenuItem styles(ActionType, ContextMenuItemTagStyles, contextMenuItemTagStyles());
@@ -104,9 +104,9 @@ static void createAndAppendSpellingAndGrammarSubMenu(const HitTestResult& result
         contextMenuItemTagShowSpellingPanel(true));
     ContextMenuItem checkSpelling(ActionType, ContextMenuItemTagCheckSpelling, 
         contextMenuItemTagCheckSpelling());
-    ContextMenuItem checkAsYouType(ActionType, ContextMenuItemTagCheckSpellingWhileTyping, 
+    ContextMenuItem checkAsYouType(CheckableActionType, ContextMenuItemTagCheckSpellingWhileTyping, 
         contextMenuItemTagCheckSpellingWhileTyping());
-    ContextMenuItem grammarWithSpelling(ActionType, ContextMenuItemTagCheckGrammarWithSpelling, 
+    ContextMenuItem grammarWithSpelling(CheckableActionType, ContextMenuItemTagCheckGrammarWithSpelling, 
         contextMenuItemTagCheckGrammarWithSpelling());
 
     spellingAndGrammarMenu.appendItem(showSpellingPanel);
@@ -126,7 +126,7 @@ static void createAndAppendSpellingSubMenu(const HitTestResult& result, ContextM
         contextMenuItemTagShowSpellingPanel(true));
     ContextMenuItem checkSpelling(ActionType, ContextMenuItemTagCheckSpelling, 
         contextMenuItemTagCheckSpelling());
-    ContextMenuItem checkAsYouType(ActionType, ContextMenuItemTagCheckSpellingWhileTyping, 
+    ContextMenuItem checkAsYouType(CheckableActionType, ContextMenuItemTagCheckSpellingWhileTyping, 
         contextMenuItemTagCheckSpellingWhileTyping());
 
     spellingMenu.appendItem(showSpellingPanel);
@@ -158,8 +158,8 @@ static void createAndAppendWritingDirectionSubMenu(const HitTestResult& result, 
 
     ContextMenuItem defaultItem(ActionType, ContextMenuItemTagDefaultDirection, 
         contextMenuItemTagDefaultDirection());
-    ContextMenuItem ltr(ActionType, ContextMenuItemTagLeftToRight, contextMenuItemTagLeftToRight());
-    ContextMenuItem rtl(ActionType, ContextMenuItemTagRightToLeft, contextMenuItemTagRightToLeft());
+    ContextMenuItem ltr(CheckableActionType, ContextMenuItemTagLeftToRight, contextMenuItemTagLeftToRight());
+    ContextMenuItem rtl(CheckableActionType, ContextMenuItemTagRightToLeft, contextMenuItemTagRightToLeft());
 
     writingDirectionMenu.appendItem(defaultItem);
     writingDirectionMenu.appendItem(ltr);

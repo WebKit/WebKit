@@ -212,6 +212,7 @@ QMenu *QWebPagePrivate::createContextMenu(const WebCore::ContextMenu *webcoreMen
     for (int i = 0; i < items->count(); ++i) {
         const ContextMenuItem &item = items->at(i);
         switch (item.type()) {
+            case WebCore::CheckableActionType: /* fall through */
             case WebCore::ActionType: {
                 QWebPage::WebAction action = webActionForContextMenuAction(item.action());
                 QAction *a = q->action(action);
@@ -221,6 +222,7 @@ QMenu *QWebPagePrivate::createContextMenu(const WebCore::ContextMenu *webcoreMen
                     PlatformMenuItemDescription desc = it.releasePlatformDescription();
                     a->setEnabled(desc.enabled);
                     a->setChecked(desc.checked);
+                    a->setCheckable(item.type() == WebCore::CheckableActionType);
 
                     menu->addAction(a);
                 }

@@ -118,7 +118,7 @@ static void openNewWindow(const KURL& urlToLoad, Frame* frame)
 
 void ContextMenuController::contextMenuItemSelected(ContextMenuItem* item)
 {
-    ASSERT(item->type() == ActionType);
+    ASSERT(item->type() == ActionType || item->type() == CheckableActionType);
 
     if (item->action() >= ContextMenuItemBaseApplicationTag) {
         m_client->contextMenuItemSelected(item, m_contextMenu.get());

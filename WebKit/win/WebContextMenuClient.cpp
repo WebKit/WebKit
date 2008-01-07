@@ -116,7 +116,7 @@ HMENU WebContextMenuClient::getCustomMenuFromDefaultItems(ContextMenu* menu)
 
 void WebContextMenuClient::contextMenuItemSelected(ContextMenuItem* item, const ContextMenu* parentMenu)
 {
-    ASSERT(item->type() == ActionType);
+    ASSERT(item->type() == ActionType || item->type() == CheckableActionType);
 
     COMPtr<IWebUIDelegate> uiDelegate;
     if (FAILED(m_webView->uiDelegate(&uiDelegate)))

@@ -119,6 +119,7 @@ namespace WebCore {
 
     enum ContextMenuItemType {
         ActionType,
+        CheckableActionType,
         SeparatorType,
         SubmenuType
     };

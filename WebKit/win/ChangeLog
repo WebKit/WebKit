@@ -1,3 +1,17 @@
+2008-01-07  Holger Freyther  <zecke@selfish.org>
+
+        Reviewed by Alp Toker.
+
+        * Qt and Gtk must know if a ContextMenuItem is checkable. Add a new ContextMenuItemType for checkable
+        actions.
+        * Use this information in the Gtk platform to create a GtkCheckMenuItem when needed.
+        * Update the ContextMenuController to accept CheckableActionTypes as well.
+        * Change ContextMenu.cpp to use the CheckableActionType. The information if a item is checkable
+        was extracted from ContextMenu::checkOrEnableIfNeeded.
+        * Update the Qt and Windows port.
+
+        * WebContextMenuClient.cpp:
+
 2008-01-04  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Adam Roben.
