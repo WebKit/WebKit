@@ -1,3 +1,633 @@
+2008-01-07  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Rubberstamped by Oliver.
+
+        Fix all SVG layout tests now that DRT works again reliable for SVG pixel tests.
+
+        Move all *-expected.txt files into platform/mac (as most contain text, and other measured values)
+        Leave only -expected.txt files there which dump as text.
+
+        * platform/mac/svg/batik/filters: Added.
+        * platform/mac/svg/batik/filters/filterRegions-expected.checksum: Copied from svg/batik/filters/filterRegions-expected.checksum.
+        * platform/mac/svg/batik/filters/filterRegions-expected.png: Copied from svg/batik/filters/filterRegions-expected.png.
+        * platform/mac/svg/batik/filters/filterRegions-expected.txt: Copied from svg/batik/filters/filterRegions-expected.txt.
+        * platform/mac/svg/batik/masking/maskRegions-expected.txt: Copied from svg/batik/masking/maskRegions-expected.txt.
+        * platform/mac/svg/batik/paints/gradientLimit-expected.txt: Copied from svg/batik/paints/gradientLimit-expected.txt.
+        * platform/mac/svg/batik/paints/patternPreserveAspectRatioA-expected.checksum: Copied from svg/batik/paints/patternPreserveAspectRatioA-expected.checksum.
+        * platform/mac/svg/batik/paints/patternPreserveAspectRatioA-expected.png: Copied from svg/batik/paints/patternPreserveAspectRatioA-expected.png.
+        * platform/mac/svg/batik/paints/patternPreserveAspectRatioA-expected.txt: Copied from svg/batik/paints/patternPreserveAspectRatioA-expected.txt.
+        * platform/mac/svg/batik/paints/patternRegionA-expected.txt: Copied from svg/batik/paints/patternRegionA-expected.txt.
+        * platform/mac/svg/batik/paints/patternRegionB-expected.checksum: Copied from svg/batik/paints/patternRegionB-expected.checksum.
+        * platform/mac/svg/batik/paints/patternRegionB-expected.png: Copied from svg/batik/paints/patternRegionB-expected.png.
+        * platform/mac/svg/batik/paints/patternRegionB-expected.txt: Copied from svg/batik/paints/patternRegionB-expected.txt.
+        * platform/mac/svg/batik/paints/patternRegions-expected.txt: Copied from svg/batik/paints/patternRegions-expected.txt.
+        * platform/mac/svg/batik/text/longTextOnPath-expected.txt: Copied from svg/batik/text/longTextOnPath-expected.txt.
+        * platform/mac/svg/batik/text/textAnchor-expected.checksum: Copied from svg/batik/text/textAnchor-expected.checksum.
+        * platform/mac/svg/batik/text/textAnchor-expected.png: Copied from svg/batik/text/textAnchor-expected.png.
+        * platform/mac/svg/batik/text/textAnchor-expected.txt: Copied from svg/batik/text/textAnchor-expected.txt.
+        * platform/mac/svg/batik/text/textAnchor2-expected.checksum: Copied from svg/batik/text/textAnchor2-expected.checksum.
+        * platform/mac/svg/batik/text/textAnchor2-expected.png: Copied from svg/batik/text/textAnchor2-expected.png.
+        * platform/mac/svg/batik/text/textAnchor2-expected.txt: Copied from svg/batik/text/textAnchor2-expected.txt.
+        * platform/mac/svg/batik/text/textAnchor3-expected.checksum: Copied from svg/batik/text/textAnchor3-expected.checksum.
+        * platform/mac/svg/batik/text/textAnchor3-expected.png: Copied from svg/batik/text/textAnchor3-expected.png.
+        * platform/mac/svg/batik/text/textAnchor3-expected.txt: Copied from svg/batik/text/textAnchor3-expected.txt.
+        * platform/mac/svg/batik/text/textBiDi-expected.txt: Copied from svg/batik/text/textBiDi-expected.txt.
+        * platform/mac/svg/batik/text/textDecoration2-expected.checksum: Copied from svg/batik/text/textDecoration2-expected.checksum.
+        * platform/mac/svg/batik/text/textDecoration2-expected.png: Copied from svg/batik/text/textDecoration2-expected.png.
+        * platform/mac/svg/batik/text/textDecoration2-expected.txt: Copied from svg/batik/text/textDecoration2-expected.txt.
+        * platform/mac/svg/batik/text/textEffect-expected.txt: Copied from svg/batik/text/textEffect-expected.txt.
+        * platform/mac/svg/batik/text/textEffect2-expected.txt: Copied from svg/batik/text/textEffect2-expected.txt.
+        * platform/mac/svg/batik/text/textEffect3-expected.txt: Copied from svg/batik/text/textEffect3-expected.txt.
+        * platform/mac/svg/batik/text/textFeatures-expected.checksum: Copied from svg/batik/text/textFeatures-expected.checksum.
+        * platform/mac/svg/batik/text/textFeatures-expected.png: Copied from svg/batik/text/textFeatures-expected.png.
+        * platform/mac/svg/batik/text/textFeatures-expected.txt: Copied from svg/batik/text/textFeatures-expected.txt.
+        * platform/mac/svg/batik/text/textGlyphOrientationHorizontal-expected.txt: Copied from svg/batik/text/textGlyphOrientationHorizontal-expected.txt.
+        * platform/mac/svg/batik/text/textLayout-expected.checksum: Copied from svg/batik/text/textLayout-expected.checksum.
+        * platform/mac/svg/batik/text/textLayout-expected.png: Copied from svg/batik/text/textLayout-expected.png.
+        * platform/mac/svg/batik/text/textLayout-expected.txt: Copied from svg/batik/text/textLayout-expected.txt.
+        * platform/mac/svg/batik/text/textLayout2-expected.txt: Copied from svg/batik/text/textLayout2-expected.txt.
+        * platform/mac/svg/batik/text/textLength-expected.checksum: Copied from svg/batik/text/textLength-expected.checksum.
+        * platform/mac/svg/batik/text/textLength-expected.png: Copied from svg/batik/text/textLength-expected.png.
+        * platform/mac/svg/batik/text/textLength-expected.txt: Copied from svg/batik/text/textLength-expected.txt.
+        * platform/mac/svg/batik/text/textOnPath-expected.checksum: Copied from svg/batik/text/textOnPath-expected.checksum.
+        * platform/mac/svg/batik/text/textOnPath-expected.png: Copied from svg/batik/text/textOnPath-expected.png.
+        * platform/mac/svg/batik/text/textOnPath-expected.txt: Copied from svg/batik/text/textOnPath-expected.txt.
+        * platform/mac/svg/batik/text/textOnPath2-expected.checksum: Copied from svg/batik/text/textOnPath2-expected.checksum.
+        * platform/mac/svg/batik/text/textOnPath2-expected.png: Copied from svg/batik/text/textOnPath2-expected.png.
+        * platform/mac/svg/batik/text/textOnPath2-expected.txt: Copied from svg/batik/text/textOnPath2-expected.txt.
+        * platform/mac/svg/batik/text/textOnPath3-expected.txt: Copied from svg/batik/text/textOnPath3-expected.txt.
+        * platform/mac/svg/batik/text/textOnPathSpaces-expected.checksum: Copied from svg/batik/text/textOnPathSpaces-expected.checksum.
+        * platform/mac/svg/batik/text/textOnPathSpaces-expected.png: Copied from svg/batik/text/textOnPathSpaces-expected.png.
+        * platform/mac/svg/batik/text/textOnPathSpaces-expected.txt: Copied from svg/batik/text/textOnPathSpaces-expected.txt.
+        * platform/mac/svg/batik/text/textPCDATA-expected.txt: Copied from svg/batik/text/textPCDATA-expected.txt.
+        * platform/mac/svg/batik/text/textPosition-expected.txt: Copied from svg/batik/text/textPosition-expected.txt.
+        * platform/mac/svg/batik/text/textPosition2-expected.txt: Copied from svg/batik/text/textPosition2-expected.txt.
+        * platform/mac/svg/batik/text/textProperties-expected.txt: Copied from svg/batik/text/textProperties-expected.txt.
+        * platform/mac/svg/batik/text/textProperties2-expected.checksum: Copied from svg/batik/text/textProperties2-expected.checksum.
+        * platform/mac/svg/batik/text/textProperties2-expected.png: Copied from svg/batik/text/textProperties2-expected.png.
+        * platform/mac/svg/batik/text/textProperties2-expected.txt: Copied from svg/batik/text/textProperties2-expected.txt.
+        * platform/mac/svg/batik/text/textStyles-expected.txt: Copied from svg/batik/text/textStyles-expected.txt.
+        * platform/mac/svg/batik/text/verticalText-expected.checksum: Copied from svg/batik/text/verticalText-expected.checksum.
+        * platform/mac/svg/batik/text/verticalText-expected.png: Copied from svg/batik/text/verticalText-expected.png.
+        * platform/mac/svg/batik/text/verticalText-expected.txt: Copied from svg/batik/text/verticalText-expected.txt.
+        * platform/mac/svg/batik/text/verticalTextOnPath-expected.checksum: Copied from svg/batik/text/verticalTextOnPath-expected.checksum.
+        * platform/mac/svg/batik/text/verticalTextOnPath-expected.png: Copied from svg/batik/text/verticalTextOnPath-expected.png.
+        * platform/mac/svg/batik/text/verticalTextOnPath-expected.txt: Copied from svg/batik/text/verticalTextOnPath-expected.txt.
+        * platform/mac/svg/batik/text/xmlSpace-expected.txt: Copied from svg/batik/text/xmlSpace-expected.txt.
+        * platform/mac/svg/carto.net/frameless-svg-parse-error-expected.checksum: Added.
+        * platform/mac/svg/carto.net/frameless-svg-parse-error-expected.png: Added.
+        * platform/mac/svg/css/getComputedStyle-basic-expected.checksum: Added.
+        * platform/mac/svg/css/getComputedStyle-basic-expected.png: Added.
+        * platform/mac/svg/css/glyph-orientation-rounding-test-expected.checksum: Added.
+        * platform/mac/svg/css/glyph-orientation-rounding-test-expected.png: Added.
+        * platform/mac/svg/custom/SVGException-expected.checksum: Added.
+        * platform/mac/svg/custom/SVGException-expected.png: Added.
+        * platform/mac/svg/custom/SVGMatrix-interface-expected.checksum: Copied from svg/custom/SVGMatrix-interface-expected.checksum.
+        * platform/mac/svg/custom/SVGMatrix-interface-expected.png: Copied from svg/custom/SVGMatrix-interface-expected.png.
+        * platform/mac/svg/custom/SVGMatrix-interface-expected.txt: Copied from svg/custom/SVGMatrix-interface-expected.txt.
+        * platform/mac/svg/custom/absolute-sized-svg-in-xhtml-expected.checksum: Copied from svg/custom/absolute-sized-svg-in-xhtml-expected.checksum.
+        * platform/mac/svg/custom/absolute-sized-svg-in-xhtml-expected.png: Copied from svg/custom/absolute-sized-svg-in-xhtml-expected.png.
+        * platform/mac/svg/custom/absolute-sized-svg-in-xhtml-expected.txt: Copied from svg/custom/absolute-sized-svg-in-xhtml-expected.txt.
+        * platform/mac/svg/custom/clip-path-referencing-use-expected.checksum: Copied from svg/custom/clip-path-referencing-use-expected.checksum.
+        * platform/mac/svg/custom/clip-path-referencing-use-expected.png: Copied from svg/custom/clip-path-referencing-use-expected.png.
+        * platform/mac/svg/custom/clip-path-referencing-use-expected.txt: Copied from svg/custom/clip-path-referencing-use-expected.txt.
+        * platform/mac/svg/custom/clip-path-referencing-use2-expected.checksum: Copied from svg/custom/clip-path-referencing-use2-expected.checksum.
+        * platform/mac/svg/custom/clip-path-referencing-use2-expected.png: Copied from svg/custom/clip-path-referencing-use2-expected.png.
+        * platform/mac/svg/custom/clip-path-referencing-use2-expected.txt: Copied from svg/custom/clip-path-referencing-use2-expected.txt.
+        * platform/mac/svg/custom/container-opacity-clip-viewBox-expected.checksum: Copied from svg/custom/container-opacity-clip-viewBox-expected.checksum.
+        * platform/mac/svg/custom/container-opacity-clip-viewBox-expected.png: Copied from svg/custom/container-opacity-clip-viewBox-expected.png.
+        * platform/mac/svg/custom/container-opacity-clip-viewBox-expected.txt: Copied from svg/custom/container-opacity-clip-viewBox-expected.txt.
+        * platform/mac/svg/custom/embedded-svg-disallowed-in-dashboard-expected.checksum: Added.
+        * platform/mac/svg/custom/embedded-svg-disallowed-in-dashboard-expected.png: Added.
+        * platform/mac/svg/custom/empty-clip-path-expected.checksum: Copied from svg/custom/empty-clip-path-expected.checksum.
+        * platform/mac/svg/custom/empty-clip-path-expected.png: Copied from svg/custom/empty-clip-path-expected.png.
+        * platform/mac/svg/custom/empty-clip-path-expected.txt: Copied from svg/custom/empty-clip-path-expected.txt.
+        * platform/mac/svg/custom/fill-SVGPaint-interface-expected.checksum: Copied from svg/custom/fill-SVGPaint-interface-expected.checksum.
+        * platform/mac/svg/custom/fill-SVGPaint-interface-expected.png: Copied from svg/custom/fill-SVGPaint-interface-expected.png.
+        * platform/mac/svg/custom/fill-SVGPaint-interface-expected.txt: Copied from svg/custom/fill-SVGPaint-interface-expected.txt.
+        * platform/mac/svg/custom/fill-fallback-expected.checksum: Copied from svg/custom/fill-fallback-expected.checksum.
+        * platform/mac/svg/custom/fill-fallback-expected.png: Copied from svg/custom/fill-fallback-expected.png.
+        * platform/mac/svg/custom/fill-fallback-expected.txt: Copied from svg/custom/fill-fallback-expected.txt.
+        * platform/mac/svg/custom/focus-ring-expected.checksum:
+        * platform/mac/svg/custom/focus-ring-expected.png:
+        * platform/mac/svg/custom/getBBox-js-expected.checksum: Added.
+        * platform/mac/svg/custom/getBBox-js-expected.png: Added.
+        * platform/mac/svg/custom/getPresentationAttribute-expected.checksum: Copied from svg/custom/getPresentationAttribute-expected.checksum.
+        * platform/mac/svg/custom/getPresentationAttribute-expected.png: Copied from svg/custom/getPresentationAttribute-expected.png.
+        * platform/mac/svg/custom/getPresentationAttribute-expected.txt: Copied from svg/custom/getPresentationAttribute-expected.txt.
+        * platform/mac/svg/custom/gradient-rotated-bbox-expected.checksum: Copied from svg/custom/gradient-rotated-bbox-expected.checksum.
+        * platform/mac/svg/custom/gradient-rotated-bbox-expected.png: Copied from svg/custom/gradient-rotated-bbox-expected.png.
+        * platform/mac/svg/custom/gradient-rotated-bbox-expected.txt: Copied from svg/custom/gradient-rotated-bbox-expected.txt.
+        * platform/mac/svg/custom/group-opacity-expected.checksum: Copied from svg/custom/group-opacity-expected.checksum.
+        * platform/mac/svg/custom/group-opacity-expected.png: Copied from svg/custom/group-opacity-expected.png.
+        * platform/mac/svg/custom/group-opacity-expected.txt: Copied from svg/custom/group-opacity-expected.txt.
+        * platform/mac/svg/custom/hit-test-unclosed-subpaths-expected.checksum: Copied from svg/custom/hit-test-unclosed-subpaths-expected.checksum.
+        * platform/mac/svg/custom/hit-test-unclosed-subpaths-expected.png: Copied from svg/custom/hit-test-unclosed-subpaths-expected.png.
+        * platform/mac/svg/custom/hit-test-unclosed-subpaths-expected.txt: Copied from svg/custom/hit-test-unclosed-subpaths-expected.txt.
+        * platform/mac/svg/custom/hit-test-with-br-expected.checksum: Copied from svg/custom/hit-test-with-br-expected.checksum.
+        * platform/mac/svg/custom/hit-test-with-br-expected.png: Copied from svg/custom/hit-test-with-br-expected.png.
+        * platform/mac/svg/custom/hit-test-with-br-expected.txt: Copied from svg/custom/hit-test-with-br-expected.txt.
+        * platform/mac/svg/custom/image-parent-translation-expected.checksum: Copied from svg/custom/image-parent-translation-expected.checksum.
+        * platform/mac/svg/custom/image-parent-translation-expected.png: Copied from svg/custom/image-parent-translation-expected.png.
+        * platform/mac/svg/custom/image-parent-translation-expected.txt: Copied from svg/custom/image-parent-translation-expected.txt.
+        * platform/mac/svg/custom/image-small-width-height-expected.checksum: Copied from svg/custom/image-small-width-height-expected.checksum.
+        * platform/mac/svg/custom/image-small-width-height-expected.png: Copied from svg/custom/image-small-width-height-expected.png.
+        * platform/mac/svg/custom/image-small-width-height-expected.txt: Copied from svg/custom/image-small-width-height-expected.txt.
+        * platform/mac/svg/custom/image-with-prefix-in-webarchive-expected.checksum: Added.
+        * platform/mac/svg/custom/image-with-prefix-in-webarchive-expected.png: Added.
+        * platform/mac/svg/custom/inline-svg-in-xhtml-expected.txt: Copied from svg/custom/inline-svg-in-xhtml-expected.txt.
+        * platform/mac/svg/custom/invalid-lengthlist-expected.checksum: Copied from svg/custom/invalid-lengthlist-expected.checksum.
+        * platform/mac/svg/custom/invalid-lengthlist-expected.png: Copied from svg/custom/invalid-lengthlist-expected.png.
+        * platform/mac/svg/custom/invalid-lengthlist-expected.txt: Copied from svg/custom/invalid-lengthlist-expected.txt.
+        * platform/mac/svg/custom/js-font-test-expected.txt: Copied from svg/custom/js-font-test-expected.txt.
+        * platform/mac/svg/custom/js-svg-constructors-expected.checksum: Copied from svg/custom/js-svg-constructors-expected.checksum.
+        * platform/mac/svg/custom/js-svg-constructors-expected.png: Copied from svg/custom/js-svg-constructors-expected.png.
+        * platform/mac/svg/custom/js-update-transform-addition-expected.checksum: Copied from svg/custom/js-update-transform-addition-expected.checksum.
+        * platform/mac/svg/custom/js-update-transform-addition-expected.png: Copied from svg/custom/js-update-transform-addition-expected.png.
+        * platform/mac/svg/custom/js-update-transform-addition-expected.txt: Copied from svg/custom/js-update-transform-addition-expected.txt.
+        * platform/mac/svg/custom/js-update-transform-changes-expected.checksum: Copied from svg/custom/js-update-transform-changes-expected.checksum.
+        * platform/mac/svg/custom/js-update-transform-changes-expected.png: Copied from svg/custom/js-update-transform-changes-expected.png.
+        * platform/mac/svg/custom/js-update-transform-changes-expected.txt: Copied from svg/custom/js-update-transform-changes-expected.txt.
+        * platform/mac/svg/custom/linking-a-03-b-all-expected.txt: Copied from svg/custom/linking-a-03-b-all-expected.txt.
+        * platform/mac/svg/custom/linking-a-03-b-preserveAspectRatio-expected.txt: Copied from svg/custom/linking-a-03-b-preserveAspectRatio-expected.txt.
+        * platform/mac/svg/custom/linking-a-03-b-transform-expected.txt: Copied from svg/custom/linking-a-03-b-transform-expected.txt.
+        * platform/mac/svg/custom/linking-a-03-b-viewBox-expected.txt: Copied from svg/custom/linking-a-03-b-viewBox-expected.txt.
+        * platform/mac/svg/custom/linking-a-03-b-viewBox-transform-expected.txt: Copied from svg/custom/linking-a-03-b-viewBox-transform-expected.txt.
+        * platform/mac/svg/custom/linking-a-03-b-viewTarget-expected.txt: Copied from svg/custom/linking-a-03-b-viewTarget-expected.txt.
+        * platform/mac/svg/custom/linking-a-03-b-zoomAndPan-expected.txt: Copied from svg/custom/linking-a-03-b-zoomAndPan-expected.txt.
+        * platform/mac/svg/custom/manually-parsed-embedded-svg-disallowed-in-dashboard-expected.checksum: Added.
+        * platform/mac/svg/custom/manually-parsed-embedded-svg-disallowed-in-dashboard-expected.png: Added.
+        * platform/mac/svg/custom/manually-parsed-svg-disallowed-in-dashboard-expected.checksum: Added.
+        * platform/mac/svg/custom/manually-parsed-svg-disallowed-in-dashboard-expected.png: Added.
+        * platform/mac/svg/custom/multiple-title-elements-expected.checksum: Added.
+        * platform/mac/svg/custom/multiple-title-elements-expected.png: Added.
+        * platform/mac/svg/custom/path-getTotalLength-expected.checksum: Added.
+        * platform/mac/svg/custom/path-getTotalLength-expected.png: Added.
+        * platform/mac/svg/custom/pattern-rotate-expected.txt: Copied from svg/custom/pattern-rotate-expected.txt.
+        * platform/mac/svg/custom/percentage-of-html-parent-expected.checksum: Copied from svg/custom/percentage-of-html-parent-expected.checksum.
+        * platform/mac/svg/custom/percentage-of-html-parent-expected.png: Copied from svg/custom/percentage-of-html-parent-expected.png.
+        * platform/mac/svg/custom/percentage-of-html-parent-expected.txt: Copied from svg/custom/percentage-of-html-parent-expected.txt.
+        * platform/mac/svg/custom/repaint-on-image-bounds-change-expected.checksum: Copied from svg/custom/repaint-on-image-bounds-change-expected.checksum.
+        * platform/mac/svg/custom/repaint-on-image-bounds-change-expected.png: Copied from svg/custom/repaint-on-image-bounds-change-expected.png.
+        * platform/mac/svg/custom/repaint-on-image-bounds-change-expected.txt: Copied from svg/custom/repaint-on-image-bounds-change-expected.txt.
+        * platform/mac/svg/custom/resource-client-removal-expected.checksum: Copied from svg/custom/resource-client-removal-expected.checksum.
+        * platform/mac/svg/custom/resource-client-removal-expected.png: Copied from svg/custom/resource-client-removal-expected.png.
+        * platform/mac/svg/custom/resource-client-removal-expected.txt: Copied from svg/custom/resource-client-removal-expected.txt.
+        * platform/mac/svg/custom/root-container-opacity-clip-viewBox-expected.checksum: Copied from svg/custom/root-container-opacity-clip-viewBox-expected.checksum.
+        * platform/mac/svg/custom/root-container-opacity-clip-viewBox-expected.png: Copied from svg/custom/root-container-opacity-clip-viewBox-expected.png.
+        * platform/mac/svg/custom/root-container-opacity-clip-viewBox-expected.txt: Copied from svg/custom/root-container-opacity-clip-viewBox-expected.txt.
+        * platform/mac/svg/custom/scroll-hit-test-expected.checksum: Copied from svg/custom/scroll-hit-test-expected.checksum.
+        * platform/mac/svg/custom/scroll-hit-test-expected.png: Copied from svg/custom/scroll-hit-test-expected.png.
+        * platform/mac/svg/custom/scroll-hit-test-expected.txt: Copied from svg/custom/scroll-hit-test-expected.txt.
+        * platform/mac/svg/custom/shape-rendering-expected.checksum: Copied from svg/custom/shape-rendering-expected.checksum.
+        * platform/mac/svg/custom/shape-rendering-expected.png: Copied from svg/custom/shape-rendering-expected.png.
+        * platform/mac/svg/custom/shape-rendering-expected.txt: Copied from svg/custom/shape-rendering-expected.txt.
+        * platform/mac/svg/custom/stroke-fallback-expected.checksum: Copied from svg/custom/stroke-fallback-expected.checksum.
+        * platform/mac/svg/custom/stroke-fallback-expected.png: Copied from svg/custom/stroke-fallback-expected.png.
+        * platform/mac/svg/custom/stroke-fallback-expected.txt: Copied from svg/custom/stroke-fallback-expected.txt.
+        * platform/mac/svg/custom/stroke-width-click-expected.checksum: Added.
+        * platform/mac/svg/custom/stroke-width-click-expected.png: Added.
+        * platform/mac/svg/custom/stroked-pattern-expected.checksum: Copied from svg/custom/stroked-pattern-expected.checksum.
+        * platform/mac/svg/custom/stroked-pattern-expected.png: Copied from svg/custom/stroked-pattern-expected.png.
+        * platform/mac/svg/custom/stroked-pattern-expected.txt: Copied from svg/custom/stroked-pattern-expected.txt.
+        * platform/mac/svg/custom/style-attribute-font-size-expected.checksum: Copied from svg/custom/style-attribute-font-size-expected.checksum.
+        * platform/mac/svg/custom/style-attribute-font-size-expected.png: Copied from svg/custom/style-attribute-font-size-expected.png.
+        * platform/mac/svg/custom/style-attribute-font-size-expected.txt: Copied from svg/custom/style-attribute-font-size-expected.txt.
+        * platform/mac/svg/custom/svg-disallowed-in-dashboard-object-expected.checksum: Added.
+        * platform/mac/svg/custom/svg-disallowed-in-dashboard-object-expected.png: Added.
+        * platform/mac/svg/custom/svg-features-expected.checksum: Added.
+        * platform/mac/svg/custom/svg-features-expected.png: Added.
+        * platform/mac/svg/custom/svgsvgelement-ctm-expected.checksum: Added.
+        * platform/mac/svg/custom/svgsvgelement-ctm-expected.png: Added.
+        * platform/mac/svg/custom/text-decoration-visibility-expected.checksum: Copied from svg/custom/text-decoration-visibility-expected.checksum.
+        * platform/mac/svg/custom/text-decoration-visibility-expected.png: Copied from svg/custom/text-decoration-visibility-expected.png.
+        * platform/mac/svg/custom/text-decoration-visibility-expected.txt: Copied from svg/custom/text-decoration-visibility-expected.txt.
+        * platform/mac/svg/custom/text-letter-spacing-expected.checksum: Copied from svg/custom/text-letter-spacing-expected.checksum.
+        * platform/mac/svg/custom/text-letter-spacing-expected.png: Copied from svg/custom/text-letter-spacing-expected.png.
+        * platform/mac/svg/custom/text-letter-spacing-expected.txt: Copied from svg/custom/text-letter-spacing-expected.txt.
+        * platform/mac/svg/custom/text-x-dx-lists-expected.checksum: Copied from svg/custom/text-x-dx-lists-expected.checksum.
+        * platform/mac/svg/custom/text-x-dx-lists-expected.png: Copied from svg/custom/text-x-dx-lists-expected.png.
+        * platform/mac/svg/custom/text-x-dx-lists-expected.txt: Copied from svg/custom/text-x-dx-lists-expected.txt.
+        * platform/mac/svg/custom/text-x-override-in-tspan-child-expected.checksum: Copied from svg/custom/text-x-override-in-tspan-child-expected.checksum.
+        * platform/mac/svg/custom/text-x-override-in-tspan-child-expected.png: Copied from svg/custom/text-x-override-in-tspan-child-expected.png.
+        * platform/mac/svg/custom/text-x-override-in-tspan-child-expected.txt: Copied from svg/custom/text-x-override-in-tspan-child-expected.txt.
+        * platform/mac/svg/custom/transform-removeAttributeNS-expected.checksum: Copied from svg/custom/transform-removeAttributeNS-expected.checksum.
+        * platform/mac/svg/custom/transform-removeAttributeNS-expected.png: Copied from svg/custom/transform-removeAttributeNS-expected.png.
+        * platform/mac/svg/custom/transform-removeAttributeNS-expected.txt: Copied from svg/custom/transform-removeAttributeNS-expected.txt.
+        * platform/mac/svg/custom/use-detach-expected.checksum: Copied from svg/custom/use-detach-expected.checksum.
+        * platform/mac/svg/custom/use-detach-expected.png: Copied from svg/custom/use-detach-expected.png.
+        * platform/mac/svg/custom/use-detach-expected.txt: Copied from svg/custom/use-detach-expected.txt.
+        * platform/mac/svg/custom/use-dynamic-append-expected.checksum:
+        * platform/mac/svg/custom/use-dynamic-append-expected.png: Copied from svg/custom/use-dynamic-append-expected.png.
+        * platform/mac/svg/custom/use-dynamic-append-expected.txt: Copied from svg/custom/use-dynamic-append-expected.txt.
+        * platform/mac/svg/custom/use-on-disallowed-foreign-object-1-expected.checksum: Copied from svg/custom/use-on-disallowed-foreign-object-1-expected.checksum.
+        * platform/mac/svg/custom/use-on-disallowed-foreign-object-1-expected.png: Copied from svg/custom/use-on-disallowed-foreign-object-1-expected.png.
+        * platform/mac/svg/custom/use-on-disallowed-foreign-object-1-expected.txt: Copied from svg/custom/use-on-disallowed-foreign-object-1-expected.txt.
+        * platform/mac/svg/custom/use-on-disallowed-foreign-object-2-expected.checksum: Copied from svg/custom/use-on-disallowed-foreign-object-2-expected.checksum.
+        * platform/mac/svg/custom/use-on-disallowed-foreign-object-2-expected.png: Copied from svg/custom/use-on-disallowed-foreign-object-2-expected.png.
+        * platform/mac/svg/custom/use-on-disallowed-foreign-object-2-expected.txt: Copied from svg/custom/use-on-disallowed-foreign-object-2-expected.txt.
+        * platform/mac/svg/custom/use-on-disallowed-foreign-object-3-expected.checksum: Copied from svg/custom/use-on-disallowed-foreign-object-3-expected.checksum.
+        * platform/mac/svg/custom/use-on-disallowed-foreign-object-3-expected.png: Copied from svg/custom/use-on-disallowed-foreign-object-3-expected.png.
+        * platform/mac/svg/custom/use-on-disallowed-foreign-object-3-expected.txt: Copied from svg/custom/use-on-disallowed-foreign-object-3-expected.txt.
+        * platform/mac/svg/custom/use-on-disallowed-foreign-object-4-expected.checksum: Copied from svg/custom/use-on-disallowed-foreign-object-4-expected.checksum.
+        * platform/mac/svg/custom/use-on-disallowed-foreign-object-4-expected.png: Copied from svg/custom/use-on-disallowed-foreign-object-4-expected.png.
+        * platform/mac/svg/custom/use-on-disallowed-foreign-object-4-expected.txt: Copied from svg/custom/use-on-disallowed-foreign-object-4-expected.txt.
+        * platform/mac/svg/custom/use-on-disallowed-foreign-object-5-expected.checksum: Copied from svg/custom/use-on-disallowed-foreign-object-5-expected.checksum.
+        * platform/mac/svg/custom/use-on-disallowed-foreign-object-5-expected.png: Copied from svg/custom/use-on-disallowed-foreign-object-5-expected.png.
+        * platform/mac/svg/custom/use-on-disallowed-foreign-object-5-expected.txt: Copied from svg/custom/use-on-disallowed-foreign-object-5-expected.txt.
+        * platform/mac/svg/custom/use-on-disallowed-foreign-object-6-expected.checksum: Copied from svg/custom/use-on-disallowed-foreign-object-6-expected.checksum.
+        * platform/mac/svg/custom/use-on-disallowed-foreign-object-6-expected.png: Copied from svg/custom/use-on-disallowed-foreign-object-6-expected.png.
+        * platform/mac/svg/custom/use-on-disallowed-foreign-object-6-expected.txt: Copied from svg/custom/use-on-disallowed-foreign-object-6-expected.txt.
+        * platform/mac/svg/custom/use-on-g-containing-foreignObject-and-image-expected.checksum: Copied from svg/custom/use-on-g-containing-foreignObject-and-image-expected.checksum.
+        * platform/mac/svg/custom/use-on-g-containing-foreignObject-and-image-expected.png: Copied from svg/custom/use-on-g-containing-foreignObject-and-image-expected.png.
+        * platform/mac/svg/custom/use-on-g-containing-foreignObject-and-image-expected.txt: Copied from svg/custom/use-on-g-containing-foreignObject-and-image-expected.txt.
+        * platform/mac/svg/custom/use-on-g-containing-symbol-expected.checksum: Copied from svg/custom/use-on-g-containing-symbol-expected.checksum.
+        * platform/mac/svg/custom/use-on-g-containing-symbol-expected.png: Copied from svg/custom/use-on-g-containing-symbol-expected.png.
+        * platform/mac/svg/custom/use-on-g-containing-symbol-expected.txt: Copied from svg/custom/use-on-g-containing-symbol-expected.txt.
+        * platform/mac/svg/custom/use-on-non-svg-namespaced-element-expected.checksum: Copied from svg/custom/use-on-non-svg-namespaced-element-expected.checksum.
+        * platform/mac/svg/custom/use-on-non-svg-namespaced-element-expected.png: Copied from svg/custom/use-on-non-svg-namespaced-element-expected.png.
+        * platform/mac/svg/custom/use-on-non-svg-namespaced-element-expected.txt: Copied from svg/custom/use-on-non-svg-namespaced-element-expected.txt.
+        * platform/mac/svg/dom: Added.
+        * platform/mac/svg/dom/animated-tearoff-equality-expected.checksum: Added.
+        * platform/mac/svg/dom/animated-tearoff-equality-expected.png: Added.
+        * platform/mac/svg/dom/animated-tearoff-lifespan-expected.checksum: Added.
+        * platform/mac/svg/dom/animated-tearoff-lifespan-expected.png: Added.
+        * platform/mac/svg/dom/font-face-elements-expected.checksum: Added.
+        * platform/mac/svg/dom/font-face-elements-expected.png: Added.
+        * platform/mac/svg/dom/length-list-parser-expected.checksum: Added.
+        * platform/mac/svg/dom/length-list-parser-expected.png: Added.
+        * platform/mac/svg/dom/path-parser-expected.checksum: Added.
+        * platform/mac/svg/dom/path-parser-expected.png: Added.
+        * platform/mac/svg/dom/points-parser-expected.checksum: Added.
+        * platform/mac/svg/dom/points-parser-expected.png: Added.
+        * platform/mac/svg/dom/preserve-aspect-ratio-parser-expected.checksum: Added.
+        * platform/mac/svg/dom/preserve-aspect-ratio-parser-expected.png: Added.
+        * platform/mac/svg/dom/rgb-color-parser-expected.checksum: Added.
+        * platform/mac/svg/dom/rgb-color-parser-expected.png: Added.
+        * platform/mac/svg/dom/string-list-parser-expected.checksum: Added.
+        * platform/mac/svg/dom/string-list-parser-expected.png: Added.
+        * platform/mac/svg/dom/svg-element-attribute-js-null-expected.checksum: Added.
+        * platform/mac/svg/dom/svg-element-attribute-js-null-expected.png: Added.
+        * platform/mac/svg/dom/transform-parser-expected.checksum: Added.
+        * platform/mac/svg/dom/transform-parser-expected.png: Added.
+        * platform/mac/svg/hixie/dynamic/001-expected.checksum: Added.
+        * platform/mac/svg/hixie/dynamic/001-expected.png: Added.
+        * platform/mac/svg/hixie/error/013-broken-expected.checksum: Removed.
+        * platform/mac/svg/hixie/error/013-broken-expected.png: Removed.
+        * platform/mac/svg/hixie/error/013-broken-expected.txt: Removed.
+        * platform/mac/svg/hixie/error/013-expected.checksum: Copied from svg/hixie/error/013-expected.checksum.
+        * platform/mac/svg/hixie/error/013-expected.png: Copied from svg/hixie/error/013-expected.png.
+        * platform/mac/svg/hixie/error/013-expected.txt: Copied from svg/hixie/error/013-expected.txt.
+        * platform/mac/svg/text/text-align-01-b-expected.txt: Copied from svg/text/text-align-01-b-expected.txt.
+        * platform/mac/svg/text/text-align-02-b-expected.txt: Copied from svg/text/text-align-02-b-expected.txt.
+        * platform/mac/svg/text/text-align-03-b-expected.checksum: Copied from svg/text/text-align-03-b-expected.checksum.
+        * platform/mac/svg/text/text-align-03-b-expected.png: Copied from svg/text/text-align-03-b-expected.png.
+        * platform/mac/svg/text/text-align-03-b-expected.txt: Copied from svg/text/text-align-03-b-expected.txt.
+        * platform/mac/svg/text/text-align-04-b-expected.checksum: Copied from svg/text/text-align-04-b-expected.checksum.
+        * platform/mac/svg/text/text-align-04-b-expected.png: Copied from svg/text/text-align-04-b-expected.png.
+        * platform/mac/svg/text/text-align-04-b-expected.txt: Copied from svg/text/text-align-04-b-expected.txt.
+        * platform/mac/svg/text/text-align-05-b-expected.txt: Copied from svg/text/text-align-05-b-expected.txt.
+        * platform/mac/svg/text/text-align-06-b-expected.txt: Copied from svg/text/text-align-06-b-expected.txt.
+        * platform/mac/svg/text/text-altglyph-01-b-expected.checksum: Copied from svg/text/text-altglyph-01-b-expected.checksum.
+        * platform/mac/svg/text/text-altglyph-01-b-expected.png: Copied from svg/text/text-altglyph-01-b-expected.png.
+        * platform/mac/svg/text/text-altglyph-01-b-expected.txt: Copied from svg/text/text-altglyph-01-b-expected.txt.
+        * platform/mac/svg/text/text-deco-01-b-expected.checksum: Copied from svg/text/text-deco-01-b-expected.checksum.
+        * platform/mac/svg/text/text-deco-01-b-expected.png: Copied from svg/text/text-deco-01-b-expected.png.
+        * platform/mac/svg/text/text-deco-01-b-expected.txt: Copied from svg/text/text-deco-01-b-expected.txt.
+        * platform/mac/svg/text/text-fonts-01-t-expected.txt: Copied from svg/text/text-fonts-01-t-expected.txt.
+        * platform/mac/svg/text/text-fonts-02-t-expected.checksum: Copied from svg/text/text-fonts-02-t-expected.checksum.
+        * platform/mac/svg/text/text-fonts-02-t-expected.png: Copied from svg/text/text-fonts-02-t-expected.png.
+        * platform/mac/svg/text/text-fonts-02-t-expected.txt: Copied from svg/text/text-fonts-02-t-expected.txt.
+        * platform/mac/svg/text/text-intro-05-t-expected.txt: Copied from svg/text/text-intro-05-t-expected.txt.
+        * platform/mac/svg/text/text-path-01-b-expected.checksum: Copied from svg/text/text-path-01-b-expected.checksum.
+        * platform/mac/svg/text/text-path-01-b-expected.png: Copied from svg/text/text-path-01-b-expected.png.
+        * platform/mac/svg/text/text-path-01-b-expected.txt: Copied from svg/text/text-path-01-b-expected.txt.
+        * platform/mac/svg/text/text-spacing-01-b-expected.checksum: Copied from svg/text/text-spacing-01-b-expected.checksum.
+        * platform/mac/svg/text/text-spacing-01-b-expected.png: Copied from svg/text/text-spacing-01-b-expected.png.
+        * platform/mac/svg/text/text-spacing-01-b-expected.txt: Copied from svg/text/text-spacing-01-b-expected.txt.
+        * platform/mac/svg/text/text-text-01-b-expected.checksum: Copied from svg/text/text-text-01-b-expected.checksum.
+        * platform/mac/svg/text/text-text-01-b-expected.png: Copied from svg/text/text-text-01-b-expected.png.
+        * platform/mac/svg/text/text-text-01-b-expected.txt: Copied from svg/text/text-text-01-b-expected.txt.
+        * platform/mac/svg/text/text-text-03-b-expected.checksum: Copied from svg/text/text-text-03-b-expected.checksum.
+        * platform/mac/svg/text/text-text-03-b-expected.png: Copied from svg/text/text-text-03-b-expected.png.
+        * platform/mac/svg/text/text-text-03-b-expected.txt: Copied from svg/text/text-text-03-b-expected.txt.
+        * platform/mac/svg/text/text-text-04-t-expected.checksum: Copied from svg/text/text-text-04-t-expected.checksum.
+        * platform/mac/svg/text/text-text-04-t-expected.png: Copied from svg/text/text-text-04-t-expected.png.
+        * platform/mac/svg/text/text-text-04-t-expected.txt: Copied from svg/text/text-text-04-t-expected.txt.
+        * platform/mac/svg/text/text-text-05-t-expected.checksum: Copied from svg/text/text-text-05-t-expected.checksum.
+        * platform/mac/svg/text/text-text-05-t-expected.png: Copied from svg/text/text-text-05-t-expected.png.
+        * platform/mac/svg/text/text-text-05-t-expected.txt: Copied from svg/text/text-text-05-t-expected.txt.
+        * platform/mac/svg/text/text-text-06-t-expected.checksum: Copied from svg/text/text-text-06-t-expected.checksum.
+        * platform/mac/svg/text/text-text-06-t-expected.png: Copied from svg/text/text-text-06-t-expected.png.
+        * platform/mac/svg/text/text-text-06-t-expected.txt: Copied from svg/text/text-text-06-t-expected.txt.
+        * platform/mac/svg/text/text-text-07-t-expected.txt: Copied from svg/text/text-text-07-t-expected.txt.
+        * platform/mac/svg/text/text-text-08-b-expected.checksum: Copied from svg/text/text-text-08-b-expected.checksum.
+        * platform/mac/svg/text/text-text-08-b-expected.png: Copied from svg/text/text-text-08-b-expected.png.
+        * platform/mac/svg/text/text-text-08-b-expected.txt: Copied from svg/text/text-text-08-b-expected.txt.
+        * platform/mac/svg/text/text-tref-01-b-expected.checksum: Copied from svg/text/text-tref-01-b-expected.checksum.
+        * platform/mac/svg/text/text-tref-01-b-expected.png: Copied from svg/text/text-tref-01-b-expected.png.
+        * platform/mac/svg/text/text-tref-01-b-expected.txt: Copied from svg/text/text-tref-01-b-expected.txt.
+        * platform/mac/svg/text/text-tselect-01-b-expected.txt: Copied from svg/text/text-tselect-01-b-expected.txt.
+        * platform/mac/svg/text/text-tselect-02-f-expected.checksum: Copied from svg/text/text-tselect-02-f-expected.checksum.
+        * platform/mac/svg/text/text-tselect-02-f-expected.png: Copied from svg/text/text-tselect-02-f-expected.png.
+        * platform/mac/svg/text/text-tselect-02-f-expected.txt: Copied from svg/text/text-tselect-02-f-expected.txt.
+        * platform/mac/svg/text/text-tspan-01-b-expected.checksum: Copied from svg/text/text-tspan-01-b-expected.checksum.
+        * platform/mac/svg/text/text-tspan-01-b-expected.png: Copied from svg/text/text-tspan-01-b-expected.png.
+        * platform/mac/svg/text/text-tspan-01-b-expected.txt: Copied from svg/text/text-tspan-01-b-expected.txt.
+        * platform/mac/svg/text/text-ws-01-t-expected.checksum: Copied from svg/text/text-ws-01-t-expected.checksum.
+        * platform/mac/svg/text/text-ws-01-t-expected.png: Copied from svg/text/text-ws-01-t-expected.png.
+        * platform/mac/svg/text/text-ws-01-t-expected.txt: Copied from svg/text/text-ws-01-t-expected.txt.
+        * platform/mac/svg/text/text-ws-02-t-expected.checksum: Copied from svg/text/text-ws-02-t-expected.checksum.
+        * platform/mac/svg/text/text-ws-02-t-expected.png: Copied from svg/text/text-ws-02-t-expected.png.
+        * platform/mac/svg/text/text-ws-02-t-expected.txt: Copied from svg/text/text-ws-02-t-expected.txt.
+        * platform/mac/svg/webarchive: Added.
+        * platform/mac/svg/webarchive/svg-cursor-subresources-expected.checksum: Added.
+        * platform/mac/svg/webarchive/svg-cursor-subresources-expected.png: Added.
+        * platform/mac/svg/webarchive/svg-feimage-subresources-expected.checksum: Added.
+        * platform/mac/svg/webarchive/svg-feimage-subresources-expected.png: Added.
+        * platform/mac/svg/webarchive/svg-script-subresouces-expected.checksum: Added.
+        * platform/mac/svg/webarchive/svg-script-subresouces-expected.png: Added.
+        * svg/W3C-SVG-1.1/text-align-08-b-expected.txt: Removed.
+        * svg/W3C-SVG-1.1/text-intro-01-t-expected.txt: Removed.
+        * svg/W3C-SVG-1.1/text-intro-02-b-expected.txt: Removed.
+        * svg/W3C-SVG-1.1/text-intro-03-b-expected.txt: Removed.
+        * svg/W3C-SVG-1.1/text-intro-04-t-expected.txt: Removed.
+        * svg/batik/filters/filterRegions-expected.checksum: Removed.
+        * svg/batik/filters/filterRegions-expected.png: Removed.
+        * svg/batik/filters/filterRegions-expected.txt: Removed.
+        * svg/batik/masking/maskRegions-expected.txt: Removed.
+        * svg/batik/paints/gradientLimit-expected.txt: Removed.
+        * svg/batik/paints/patternPreserveAspectRatioA-expected.checksum: Removed.
+        * svg/batik/paints/patternPreserveAspectRatioA-expected.png: Removed.
+        * svg/batik/paints/patternPreserveAspectRatioA-expected.txt: Removed.
+        * svg/batik/paints/patternRegionA-expected.txt: Removed.
+        * svg/batik/paints/patternRegionB-expected.checksum: Removed.
+        * svg/batik/paints/patternRegionB-expected.png: Removed.
+        * svg/batik/paints/patternRegionB-expected.txt: Removed.
+        * svg/batik/paints/patternRegions-expected.txt: Removed.
+        * svg/batik/text/longTextOnPath-expected.txt: Removed.
+        * svg/batik/text/textAnchor-expected.checksum: Removed.
+        * svg/batik/text/textAnchor-expected.png: Removed.
+        * svg/batik/text/textAnchor-expected.txt: Removed.
+        * svg/batik/text/textAnchor2-expected.checksum: Removed.
+        * svg/batik/text/textAnchor2-expected.png: Removed.
+        * svg/batik/text/textAnchor2-expected.txt: Removed.
+        * svg/batik/text/textAnchor3-expected.checksum: Removed.
+        * svg/batik/text/textAnchor3-expected.png: Removed.
+        * svg/batik/text/textAnchor3-expected.txt: Removed.
+        * svg/batik/text/textBiDi-expected.txt: Removed.
+        * svg/batik/text/textDecoration2-expected.checksum: Removed.
+        * svg/batik/text/textDecoration2-expected.png: Removed.
+        * svg/batik/text/textDecoration2-expected.txt: Removed.
+        * svg/batik/text/textEffect-expected.txt: Removed.
+        * svg/batik/text/textEffect2-expected.txt: Removed.
+        * svg/batik/text/textEffect3-expected.txt: Removed.
+        * svg/batik/text/textFeatures-expected.checksum: Removed.
+        * svg/batik/text/textFeatures-expected.png: Removed.
+        * svg/batik/text/textFeatures-expected.txt: Removed.
+        * svg/batik/text/textGlyphOrientationHorizontal-expected.txt: Removed.
+        * svg/batik/text/textLayout-expected.checksum: Removed.
+        * svg/batik/text/textLayout-expected.png: Removed.
+        * svg/batik/text/textLayout-expected.txt: Removed.
+        * svg/batik/text/textLayout2-expected.txt: Removed.
+        * svg/batik/text/textLength-expected.checksum: Removed.
+        * svg/batik/text/textLength-expected.png: Removed.
+        * svg/batik/text/textLength-expected.txt: Removed.
+        * svg/batik/text/textOnPath-expected.checksum: Removed.
+        * svg/batik/text/textOnPath-expected.png: Removed.
+        * svg/batik/text/textOnPath-expected.txt: Removed.
+        * svg/batik/text/textOnPath2-expected.checksum: Removed.
+        * svg/batik/text/textOnPath2-expected.png: Removed.
+        * svg/batik/text/textOnPath2-expected.txt: Removed.
+        * svg/batik/text/textOnPath3-expected.txt: Removed.
+        * svg/batik/text/textOnPathSpaces-expected.checksum: Removed.
+        * svg/batik/text/textOnPathSpaces-expected.png: Removed.
+        * svg/batik/text/textOnPathSpaces-expected.txt: Removed.
+        * svg/batik/text/textPCDATA-expected.txt: Removed.
+        * svg/batik/text/textPosition-expected.txt: Removed.
+        * svg/batik/text/textPosition2-expected.txt: Removed.
+        * svg/batik/text/textProperties-expected.txt: Removed.
+        * svg/batik/text/textProperties2-expected.checksum: Removed.
+        * svg/batik/text/textProperties2-expected.png: Removed.
+        * svg/batik/text/textProperties2-expected.txt: Removed.
+        * svg/batik/text/textStyles-expected.txt: Removed.
+        * svg/batik/text/verticalText-expected.checksum: Removed.
+        * svg/batik/text/verticalText-expected.png: Removed.
+        * svg/batik/text/verticalText-expected.txt: Removed.
+        * svg/batik/text/verticalTextOnPath-expected.checksum: Removed.
+        * svg/batik/text/verticalTextOnPath-expected.png: Removed.
+        * svg/batik/text/verticalTextOnPath-expected.txt: Removed.
+        * svg/batik/text/xmlSpace-expected.txt: Removed.
+        * svg/custom/SVGMatrix-interface-expected.checksum: Removed.
+        * svg/custom/SVGMatrix-interface-expected.png: Removed.
+        * svg/custom/SVGMatrix-interface-expected.txt: Removed.
+        * svg/custom/absolute-sized-svg-in-xhtml-expected.checksum: Removed.
+        * svg/custom/absolute-sized-svg-in-xhtml-expected.png: Removed.
+        * svg/custom/absolute-sized-svg-in-xhtml-expected.txt: Removed.
+        * svg/custom/clip-path-referencing-use-expected.checksum: Removed.
+        * svg/custom/clip-path-referencing-use-expected.png: Removed.
+        * svg/custom/clip-path-referencing-use-expected.txt: Removed.
+        * svg/custom/clip-path-referencing-use2-expected.checksum: Removed.
+        * svg/custom/clip-path-referencing-use2-expected.png: Removed.
+        * svg/custom/clip-path-referencing-use2-expected.txt: Removed.
+        * svg/custom/container-opacity-clip-viewBox-expected.checksum: Removed.
+        * svg/custom/container-opacity-clip-viewBox-expected.png: Removed.
+        * svg/custom/container-opacity-clip-viewBox-expected.txt: Removed.
+        * svg/custom/empty-clip-path-expected.checksum: Removed.
+        * svg/custom/empty-clip-path-expected.png: Removed.
+        * svg/custom/empty-clip-path-expected.txt: Removed.
+        * svg/custom/fill-SVGPaint-interface-expected.checksum: Removed.
+        * svg/custom/fill-SVGPaint-interface-expected.png: Removed.
+        * svg/custom/fill-SVGPaint-interface-expected.txt: Removed.
+        * svg/custom/fill-fallback-expected.checksum: Removed.
+        * svg/custom/fill-fallback-expected.png: Removed.
+        * svg/custom/fill-fallback-expected.txt: Removed.
+        * svg/custom/focus-ring-expected.checksum: Removed.
+        * svg/custom/focus-ring-expected.png: Removed.
+        * svg/custom/focus-ring-expected.txt: Removed.
+        * svg/custom/getPresentationAttribute-expected.checksum: Removed.
+        * svg/custom/getPresentationAttribute-expected.png: Removed.
+        * svg/custom/getPresentationAttribute-expected.txt: Removed.
+        * svg/custom/gradient-rotated-bbox-expected.checksum: Removed.
+        * svg/custom/gradient-rotated-bbox-expected.png: Removed.
+        * svg/custom/gradient-rotated-bbox-expected.txt: Removed.
+        * svg/custom/group-opacity-expected.checksum: Removed.
+        * svg/custom/group-opacity-expected.png: Removed.
+        * svg/custom/group-opacity-expected.txt: Removed.
+        * svg/custom/hit-test-unclosed-subpaths-expected.checksum: Removed.
+        * svg/custom/hit-test-unclosed-subpaths-expected.png: Removed.
+        * svg/custom/hit-test-unclosed-subpaths-expected.txt: Removed.
+        * svg/custom/hit-test-with-br-expected.checksum: Removed.
+        * svg/custom/hit-test-with-br-expected.png: Removed.
+        * svg/custom/hit-test-with-br-expected.txt: Removed.
+        * svg/custom/image-parent-translation-expected.checksum: Removed.
+        * svg/custom/image-parent-translation-expected.png: Removed.
+        * svg/custom/image-parent-translation-expected.txt: Removed.
+        * svg/custom/image-small-width-height-expected.checksum: Removed.
+        * svg/custom/image-small-width-height-expected.png: Removed.
+        * svg/custom/image-small-width-height-expected.txt: Removed.
+        * svg/custom/inline-svg-in-xhtml-expected.txt: Removed.
+        * svg/custom/invalid-lengthlist-expected.checksum: Removed.
+        * svg/custom/invalid-lengthlist-expected.png: Removed.
+        * svg/custom/invalid-lengthlist-expected.txt: Removed.
+        * svg/custom/js-font-test-expected.txt: Removed.
+        * svg/custom/js-svg-constructors-expected.checksum: Removed.
+        * svg/custom/js-svg-constructors-expected.png: Removed.
+        * svg/custom/js-update-transform-addition-expected.checksum: Removed.
+        * svg/custom/js-update-transform-addition-expected.png: Removed.
+        * svg/custom/js-update-transform-addition-expected.txt: Removed.
+        * svg/custom/js-update-transform-changes-expected.checksum: Removed.
+        * svg/custom/js-update-transform-changes-expected.png: Removed.
+        * svg/custom/js-update-transform-changes-expected.txt: Removed.
+        * svg/custom/linking-a-03-b-all-expected.txt: Removed.
+        * svg/custom/linking-a-03-b-preserveAspectRatio-expected.txt: Removed.
+        * svg/custom/linking-a-03-b-transform-expected.txt: Removed.
+        * svg/custom/linking-a-03-b-viewBox-expected.txt: Removed.
+        * svg/custom/linking-a-03-b-viewBox-transform-expected.txt: Removed.
+        * svg/custom/linking-a-03-b-viewTarget-expected.txt: Removed.
+        * svg/custom/linking-a-03-b-zoomAndPan-expected.txt: Removed.
+        * svg/custom/pattern-rotate-expected.txt: Removed.
+        * svg/custom/percentage-of-html-parent-expected.checksum: Removed.
+        * svg/custom/percentage-of-html-parent-expected.png: Removed.
+        * svg/custom/percentage-of-html-parent-expected.txt: Removed.
+        * svg/custom/repaint-on-image-bounds-change-expected.checksum: Removed.
+        * svg/custom/repaint-on-image-bounds-change-expected.png: Removed.
+        * svg/custom/repaint-on-image-bounds-change-expected.txt: Removed.
+        * svg/custom/resource-client-removal-expected.checksum: Removed.
+        * svg/custom/resource-client-removal-expected.png: Removed.
+        * svg/custom/resource-client-removal-expected.txt: Removed.
+        * svg/custom/root-container-opacity-clip-viewBox-expected.checksum: Removed.
+        * svg/custom/root-container-opacity-clip-viewBox-expected.png: Removed.
+        * svg/custom/root-container-opacity-clip-viewBox-expected.txt: Removed.
+        * svg/custom/scroll-hit-test-expected.checksum: Removed.
+        * svg/custom/scroll-hit-test-expected.png: Removed.
+        * svg/custom/scroll-hit-test-expected.txt: Removed.
+        * svg/custom/shape-rendering-expected.checksum: Removed.
+        * svg/custom/shape-rendering-expected.png: Removed.
+        * svg/custom/shape-rendering-expected.txt: Removed.
+        * svg/custom/stroke-fallback-expected.checksum: Removed.
+        * svg/custom/stroke-fallback-expected.png: Removed.
+        * svg/custom/stroke-fallback-expected.txt: Removed.
+        * svg/custom/stroke-width-click-expected.txt: Removed.
+        * svg/custom/stroked-pattern-expected.checksum: Removed.
+        * svg/custom/stroked-pattern-expected.png: Removed.
+        * svg/custom/stroked-pattern-expected.txt: Removed.
+        * svg/custom/style-attribute-font-size-expected.checksum: Removed.
+        * svg/custom/style-attribute-font-size-expected.png: Removed.
+        * svg/custom/style-attribute-font-size-expected.txt: Removed.
+        * svg/custom/text-decoration-visibility-expected.checksum: Removed.
+        * svg/custom/text-decoration-visibility-expected.png: Removed.
+        * svg/custom/text-decoration-visibility-expected.txt: Removed.
+        * svg/custom/text-letter-spacing-expected.checksum: Removed.
+        * svg/custom/text-letter-spacing-expected.png: Removed.
+        * svg/custom/text-letter-spacing-expected.txt: Removed.
+        * svg/custom/text-x-dx-lists-expected.checksum: Removed.
+        * svg/custom/text-x-dx-lists-expected.png: Removed.
+        * svg/custom/text-x-dx-lists-expected.txt: Removed.
+        * svg/custom/text-x-override-in-tspan-child-expected.checksum: Removed.
+        * svg/custom/text-x-override-in-tspan-child-expected.png: Removed.
+        * svg/custom/text-x-override-in-tspan-child-expected.txt: Removed.
+        * svg/custom/transform-removeAttributeNS-expected.checksum: Removed.
+        * svg/custom/transform-removeAttributeNS-expected.png: Removed.
+        * svg/custom/transform-removeAttributeNS-expected.txt: Removed.
+        * svg/custom/use-detach-expected.checksum: Removed.
+        * svg/custom/use-detach-expected.png: Removed.
+        * svg/custom/use-detach-expected.txt: Removed.
+        * svg/custom/use-dynamic-append-expected.png: Removed.
+        * svg/custom/use-dynamic-append-expected.txt: Removed.
+        * svg/custom/use-on-disallowed-foreign-object-1-expected.checksum: Removed.
+        * svg/custom/use-on-disallowed-foreign-object-1-expected.png: Removed.
+        * svg/custom/use-on-disallowed-foreign-object-1-expected.txt: Removed.
+        * svg/custom/use-on-disallowed-foreign-object-2-expected.checksum: Removed.
+        * svg/custom/use-on-disallowed-foreign-object-2-expected.png: Removed.
+        * svg/custom/use-on-disallowed-foreign-object-2-expected.txt: Removed.
+        * svg/custom/use-on-disallowed-foreign-object-3-expected.checksum: Removed.
+        * svg/custom/use-on-disallowed-foreign-object-3-expected.png: Removed.
+        * svg/custom/use-on-disallowed-foreign-object-3-expected.txt: Removed.
+        * svg/custom/use-on-disallowed-foreign-object-4-expected.checksum: Removed.
+        * svg/custom/use-on-disallowed-foreign-object-4-expected.png: Removed.
+        * svg/custom/use-on-disallowed-foreign-object-4-expected.txt: Removed.
+        * svg/custom/use-on-disallowed-foreign-object-5-expected.checksum: Removed.
+        * svg/custom/use-on-disallowed-foreign-object-5-expected.png: Removed.
+        * svg/custom/use-on-disallowed-foreign-object-5-expected.txt: Removed.
+        * svg/custom/use-on-disallowed-foreign-object-6-expected.checksum: Removed.
+        * svg/custom/use-on-disallowed-foreign-object-6-expected.png: Removed.
+        * svg/custom/use-on-disallowed-foreign-object-6-expected.txt: Removed.
+        * svg/custom/use-on-g-containing-foreignObject-and-image-expected.checksum: Removed.
+        * svg/custom/use-on-g-containing-foreignObject-and-image-expected.png: Removed.
+        * svg/custom/use-on-g-containing-foreignObject-and-image-expected.txt: Removed.
+        * svg/custom/use-on-g-containing-symbol-expected.checksum: Removed.
+        * svg/custom/use-on-g-containing-symbol-expected.png: Removed.
+        * svg/custom/use-on-g-containing-symbol-expected.txt: Removed.
+        * svg/custom/use-on-non-svg-namespaced-element-expected.checksum: Removed.
+        * svg/custom/use-on-non-svg-namespaced-element-expected.png: Removed.
+        * svg/custom/use-on-non-svg-namespaced-element-expected.txt: Removed.
+        * svg/hixie/error/013-expected.checksum: Removed.
+        * svg/hixie/error/013-expected.png: Removed.
+        * svg/hixie/error/013-expected.txt: Removed.
+        * svg/text/text-align-01-b-expected.txt: Removed.
+        * svg/text/text-align-02-b-expected.txt: Removed.
+        * svg/text/text-align-03-b-expected.checksum: Removed.
+        * svg/text/text-align-03-b-expected.png: Removed.
+        * svg/text/text-align-03-b-expected.txt: Removed.
+        * svg/text/text-align-04-b-expected.checksum: Removed.
+        * svg/text/text-align-04-b-expected.png: Removed.
+        * svg/text/text-align-04-b-expected.txt: Removed.
+        * svg/text/text-align-05-b-expected.txt: Removed.
+        * svg/text/text-align-06-b-expected.txt: Removed.
+        * svg/text/text-altglyph-01-b-expected.checksum: Removed.
+        * svg/text/text-altglyph-01-b-expected.png: Removed.
+        * svg/text/text-altglyph-01-b-expected.txt: Removed.
+        * svg/text/text-deco-01-b-expected.checksum: Removed.
+        * svg/text/text-deco-01-b-expected.png: Removed.
+        * svg/text/text-deco-01-b-expected.txt: Removed.
+        * svg/text/text-fonts-01-t-expected.txt: Removed.
+        * svg/text/text-fonts-02-t-expected.checksum: Removed.
+        * svg/text/text-fonts-02-t-expected.png: Removed.
+        * svg/text/text-fonts-02-t-expected.txt: Removed.
+        * svg/text/text-intro-05-t-expected.txt: Removed.
+        * svg/text/text-path-01-b-expected.checksum: Removed.
+        * svg/text/text-path-01-b-expected.png: Removed.
+        * svg/text/text-path-01-b-expected.txt: Removed.
+        * svg/text/text-spacing-01-b-expected.checksum: Removed.
+        * svg/text/text-spacing-01-b-expected.png: Removed.
+        * svg/text/text-spacing-01-b-expected.txt: Removed.
+        * svg/text/text-text-01-b-expected.checksum: Removed.
+        * svg/text/text-text-01-b-expected.png: Removed.
+        * svg/text/text-text-01-b-expected.txt: Removed.
+        * svg/text/text-text-03-b-expected.checksum: Removed.
+        * svg/text/text-text-03-b-expected.png: Removed.
+        * svg/text/text-text-03-b-expected.txt: Removed.
+        * svg/text/text-text-04-t-expected.checksum: Removed.
+        * svg/text/text-text-04-t-expected.png: Removed.
+        * svg/text/text-text-04-t-expected.txt: Removed.
+        * svg/text/text-text-05-t-expected.checksum: Removed.
+        * svg/text/text-text-05-t-expected.png: Removed.
+        * svg/text/text-text-05-t-expected.txt: Removed.
+        * svg/text/text-text-06-t-expected.checksum: Removed.
+        * svg/text/text-text-06-t-expected.png: Removed.
+        * svg/text/text-text-06-t-expected.txt: Removed.
+        * svg/text/text-text-07-t-expected.txt: Removed.
+        * svg/text/text-text-08-b-expected.checksum: Removed.
+        * svg/text/text-text-08-b-expected.png: Removed.
+        * svg/text/text-text-08-b-expected.txt: Removed.
+        * svg/text/text-tref-01-b-expected.checksum: Removed.
+        * svg/text/text-tref-01-b-expected.png: Removed.
+        * svg/text/text-tref-01-b-expected.txt: Removed.
+        * svg/text/text-tselect-01-b-expected.txt: Removed.
+        * svg/text/text-tselect-02-f-expected.checksum: Removed.
+        * svg/text/text-tselect-02-f-expected.png: Removed.
+        * svg/text/text-tselect-02-f-expected.txt: Removed.
+        * svg/text/text-tspan-01-b-expected.checksum: Removed.
+        * svg/text/text-tspan-01-b-expected.png: Removed.
+        * svg/text/text-tspan-01-b-expected.txt: Removed.
+        * svg/text/text-ws-01-t-expected.checksum: Removed.
+        * svg/text/text-ws-01-t-expected.png: Removed.
+        * svg/text/text-ws-01-t-expected.txt: Removed.
+        * svg/text/text-ws-02-t-expected.checksum: Removed.
+        * svg/text/text-ws-02-t-expected.png: Removed.
+        * svg/text/text-ws-02-t-expected.txt: Removed.
+
 2008-01-07  Kevin McCullough  <kmccullough@apple.com>
 
         - Updated to run a test whose failure was only a build bot state issue.
