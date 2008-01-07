@@ -58,10 +58,13 @@ void ContextMenu::appendItem(ContextMenuItem& item)
     ASSERT(m_platformDescription);
     checkOrEnableIfNeeded(item);
 
+    ContextMenuItemType type = item.type();
     GtkMenuItem* platformItem = ContextMenuItem::createNativeMenuItem(item.releasePlatformDescription());
     ASSERT(platformItem);
 
-    g_signal_connect(platformItem, "activate", G_CALLBACK(menuItemActivated), this);
+    if (type == ActionType || type == CheckableActionType)
+        g_signal_connect(platformItem, "activate", G_CALLBACK(menuItemActivated), this);
+
     gtk_menu_shell_append(GTK_MENU_SHELL(m_platformDescription), GTK_WIDGET(platformItem));
     gtk_widget_show(GTK_WIDGET(platformItem));
 }

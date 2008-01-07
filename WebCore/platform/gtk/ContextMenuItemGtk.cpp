@@ -129,6 +129,8 @@ ContextMenuItem::ContextMenuItem(ContextMenuItemType type, ContextMenuAction act
     m_platformDescription.type = type;
     m_platformDescription.action = action;
     m_platformDescription.title = title;
+
+    setSubMenu(subMenu);
 }
 
 ContextMenuItem::~ContextMenuItem()
@@ -162,7 +164,7 @@ GtkMenuItem* ContextMenuItem::createNativeMenuItem(const PlatformMenuItemDescrip
         gtk_widget_set_sensitive(GTK_WIDGET(item), menu.enabled);
 
         if (menu.subMenu)
-           gtk_menu_item_set_submenu(item, GTK_WIDGET(menu.subMenu));
+            gtk_menu_item_set_submenu(item, GTK_WIDGET(menu.subMenu)); 
     }
 
     return item;
@@ -216,21 +218,22 @@ void ContextMenuItem::setSubMenu(ContextMenu* menu)
     if (m_platformDescription.subMenu)
         g_object_unref(m_platformDescription.subMenu);
 
-    m_platformDescription.subMenu = menu->releasePlatformDescription();
+    if (!menu)
+        return;
 
-    if (m_platformDescription.subMenu) {
+    m_platformDescription.subMenu = menu->releasePlatformDescription();
+    m_platformDescription.type = SubmenuType;
+
 #if GLIB_CHECK_VERSION(2,10,0)
-        g_object_ref_sink(G_OBJECT(m_platformDescription.subMenu));
+    g_object_ref_sink(G_OBJECT(m_platformDescription.subMenu));
 #else
-        g_object_ref(G_OBJECT(m_platformDescription.subMenu));
-        gtk_object_sink(GTK_OBJECT(m_platformDescription.subMenu));
+    g_object_ref(G_OBJECT(m_platformDescription.subMenu));
+    gtk_object_sink(GTK_OBJECT(m_platformDescription.subMenu));
 #endif
-    }
 }
 
 void ContextMenuItem::setChecked(bool shouldCheck)
 {
-    ASSERT(type() == ActionType || type() == CheckableActionType);
     m_platformDescription.checked = shouldCheck;
 }
 

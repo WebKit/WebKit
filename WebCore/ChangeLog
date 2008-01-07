@@ -2,6 +2,22 @@
 
         Reviewed by Alp Toker.
 
+        * Fix SubMenu handling
+        * Do not connect to the activated signal if we are a separator or submenu
+        * Change our type from ActionType to SubMenuType when we have a submenu
+        * Initialize the SubMenu
+
+        * platform/gtk/ContextMenuGtk.cpp:
+        (WebCore::ContextMenu::appendItem):
+        * platform/gtk/ContextMenuItemGtk.cpp:
+        (WebCore::ContextMenuItem::ContextMenuItem):
+        (WebCore::ContextMenuItem::createNativeMenuItem):
+        (WebCore::ContextMenuItem::setSubMenu):
+
+2008-01-07  Holger Freyther  <zecke@selfish.org>
+
+        Reviewed by Alp Toker.
+
         * Qt and Gtk must know if a ContextMenuItem is checkable. Add a new ContextMenuItemType for checkable
         actions.
         * Use this information in the Gtk platform to create a GtkCheckMenuItem when needed.
