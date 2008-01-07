@@ -1,3 +1,11 @@
+2008-01-07  Adam Roben  <aroben@apple.com>
+
+        Remove a now incorrect Windows-specific result
+
+        This should have been done as part of r29187
+
+        * platform/win/fast/dom/wrapper-classes-expected.txt: Removed.
+
 2008-01-04  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Darin.
