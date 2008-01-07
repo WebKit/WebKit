@@ -1,5 +1,11 @@
 2008-01-07  Nikolas Zimmermann  <zimmermann@kde.org>
 
+        Not reviewed. Try to fix mac build by forcing SVGNames regeneration.
+
+        * svg/svgtags.in:
+
+2008-01-07  Nikolas Zimmermann  <zimmermann@kde.org>
+
         Not reviewed. Proposed build fix for wx.
 
         * webcore-base.bkl:
