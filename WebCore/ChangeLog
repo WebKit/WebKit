@@ -1,3 +1,42 @@
+2008-01-08  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Adam Roben
+        
+        - fixed <rdar://problem/5671668> REGRESSION (r28711-r28730): With caret in an empty form field, 
+          Delete menu item is enabled but shouldn't be
+
+        The enabled logic was incorrect for the Delete menu item. To fix this, I added an EditorCommandSource
+        parameter to the enabled functions so that they can have parallel logic to the execute functions.
+
+        * editing/EditorCommand.cpp:
+        added EditorCommandSource parameter to isEnabled function prototype
+        (WebCore::enabled):
+        added unused EditorCommandSource parameter to these isEnabled functions:
+        (WebCore::enabledAnySelection):
+        (WebCore::enabledAnySelectionAndMark):
+        (WebCore::enableCaretInEditableText):
+        (WebCore::enabledCopy):
+        (WebCore::enabledCut):
+
+        (WebCore::enabledDelete):
+        new function, uses logic previously used by Delete command for DOM sources; uses logic in enabledCut
+        for menu source
+
+        added unused EditorCommandSource parameter to these isEnabled functions:
+        (WebCore::enabledInEditableText):
+        (WebCore::enabledInRichlyEditableText):
+        (WebCore::enabledPaste):
+        (WebCore::enabledRangeInEditableText):
+        (WebCore::enabledRangeInRichlyEditableText):
+        (WebCore::enabledRedo):
+        (WebCore::enabledUndo):
+        
+        (WebCore::CommandEntry::):
+        wire up new enabledDelete function as delete function for Delete command
+        
+        (WebCore::Editor::Command::isEnabled):
+        pass EditorCommandSource parameter to isEnabled function
+
 2008-01-08  Adam Roben  <aroben@apple.com>
 
         Visual C++ Express build fix

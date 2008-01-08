@@ -56,7 +56,7 @@ class EditorInternalCommand {
 public:
     bool (*execute)(Frame*, Event*, EditorCommandSource, const String&);
     bool (*isSupported)(Frame*, EditorCommandSource);
-    bool (*isEnabled)(Frame*, Event*);
+    bool (*isEnabled)(Frame*, Event*, EditorCommandSource);
     TriState (*state)(Frame*, Event*);
     String (*value)(Frame*, Event*);
     bool isTextInsertion;
@@ -979,68 +979,84 @@ static bool supportedPaste(Frame* frame, EditorCommandSource source)
 
 // Enabled functions
 
-static bool enabled(Frame*, Event*)
+static bool enabled(Frame*, Event*, EditorCommandSource)
 {
     return true;
 }
 
-static bool enabledAnySelection(Frame* frame, Event*)
+static bool enabledAnySelection(Frame* frame, Event*, EditorCommandSource)
 {
     return frame->selectionController()->isCaretOrRange();
 }
 
-static bool enabledAnySelectionAndMark(Frame* frame, Event*)
+static bool enabledAnySelectionAndMark(Frame* frame, Event*, EditorCommandSource)
 {
     return frame->selectionController()->isCaretOrRange() && frame->mark().isCaretOrRange();
 }
 
-static bool enableCaretInEditableText(Frame* frame, Event* event)
+static bool enableCaretInEditableText(Frame* frame, Event* event, EditorCommandSource)
 {
     const Selection& selection = frame->editor()->selectionForCommand(event);
     return selection.isCaret() && selection.isContentEditable();
 }
 
-static bool enabledCopy(Frame* frame, Event* source)
+static bool enabledCopy(Frame* frame, Event*, EditorCommandSource)
 {
     return frame->editor()->canDHTMLCopy() || frame->editor()->canCopy();
 }
 
-static bool enabledCut(Frame* frame, Event* source)
+static bool enabledCut(Frame* frame, Event*, EditorCommandSource)
 {
     return frame->editor()->canDHTMLCut() || frame->editor()->canCut();
 }
 
-static bool enabledInEditableText(Frame* frame, Event* event)
+static bool enabledDelete(Frame* frame, Event* event, EditorCommandSource source)
+{
+    switch (source) {
+        case CommandFromMenuOrKeyBinding:
+            // "Delete" from menu only affects selected range, just like Cut but without affecting pasteboard
+            return frame->editor()->canDHTMLCut() || frame->editor()->canCut();
+        case CommandFromDOM:
+        case CommandFromDOMWithUserInterface:
+            // "Delete" from DOM is like delete/backspace keypress, affects selected range if non-empty,
+            // otherwise removes a character
+            return frame->editor()->selectionForCommand(event).isContentEditable();
+    }
+    ASSERT_NOT_REACHED();
+    return false;
+}
+
+static bool enabledInEditableText(Frame* frame, Event* event, EditorCommandSource)
 {
     return frame->editor()->selectionForCommand(event).isContentEditable();
 }
 
-static bool enabledInRichlyEditableText(Frame* frame, Event*)
+static bool enabledInRichlyEditableText(Frame* frame, Event*, EditorCommandSource)
 {
     return frame->selectionController()->isCaretOrRange() && frame->selectionController()->isContentRichlyEditable();
 }
 
-static bool enabledPaste(Frame* frame, Event*)
+static bool enabledPaste(Frame* frame, Event*, EditorCommandSource)
 {
     return frame->editor()->canPaste();
 }
 
-static bool enabledRangeInEditableText(Frame* frame, Event*)
+static bool enabledRangeInEditableText(Frame* frame, Event*, EditorCommandSource)
 {
     return frame->selectionController()->isRange() && frame->selectionController()->isContentEditable();
 }
 
-static bool enabledRangeInRichlyEditableText(Frame* frame, Event*)
+static bool enabledRangeInRichlyEditableText(Frame* frame, Event*, EditorCommandSource)
 {
     return frame->selectionController()->isRange() && frame->selectionController()->isContentRichlyEditable();
 }
 
-static bool enabledRedo(Frame* frame, Event*)
+static bool enabledRedo(Frame* frame, Event*, EditorCommandSource)
 {
     return frame->editor()->canRedo();
 }
 
-static bool enabledUndo(Frame* frame, Event*)
+static bool enabledUndo(Frame* frame, Event*, EditorCommandSource)
 {
     return frame->editor()->canUndo();
 }
@@ -1141,7 +1157,7 @@ static const CommandMap& createCommandMap()
         { "Copy", { executeCopy, supported, enabledCopy, stateNone, valueNull, notTextInsertion } },
         { "CreateLink", { executeCreateLink, supported, enabledInRichlyEditableText, stateNone, valueNull, notTextInsertion } },
         { "Cut", { executeCut, supported, enabledCut, stateNone, valueNull, notTextInsertion } },
-        { "Delete", { executeDelete, supported, enabledInEditableText, stateNone, valueNull, notTextInsertion } },
+        { "Delete", { executeDelete, supported, enabledDelete, stateNone, valueNull, notTextInsertion } },
         { "DeleteBackward", { executeDeleteBackward, supportedFromMenuOrKeyBinding, enabledInEditableText, stateNone, valueNull, notTextInsertion } },
         { "DeleteBackwardByDecomposingPreviousCharacter", { executeDeleteBackwardByDecomposingPreviousCharacter, supportedFromMenuOrKeyBinding, enabledInEditableText, stateNone, valueNull, notTextInsertion } },
         { "DeleteForward", { executeDeleteForward, supportedFromMenuOrKeyBinding, enabledInEditableText, stateNone, valueNull, notTextInsertion } },
@@ -1361,7 +1377,7 @@ bool Editor::Command::isEnabled(Event* triggeringEvent) const
 {
     if (!isSupported() || !m_frame || !m_frame->document())
         return false;
-    return m_command->isEnabled(m_frame.get(), triggeringEvent);
+    return m_command->isEnabled(m_frame.get(), triggeringEvent, m_source);
 }
 
 TriState Editor::Command::state(Event* triggeringEvent) const
