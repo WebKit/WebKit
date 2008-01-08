@@ -1,3 +1,14 @@
+2008-01-07  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Niko.
+
+        Fix painting of SVG <image> when the image must be scaled to retain aspect ratio
+
+        Test: svg/custom/image-with-aspect-ratio-stretch.svg
+
+        * rendering/RenderSVGImage.cpp:
+        (WebCore::RenderSVGImage::adjustRectsForAspectRatio):
+
 2008-01-07  Dan Bernstein  <mitz@apple.com>
 
         Build fix.
