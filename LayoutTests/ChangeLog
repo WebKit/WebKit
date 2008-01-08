@@ -1,3 +1,16 @@
+2008-01-08  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Mitz.
+
+        <rdar://problem/5667286>
+        plugins/createScriptableObject-before-start.html is failing due to denied cross-frame access
+        
+        Use our own test plug-in instead of the Flash plug-in. The Flash plug-in tries to get the URL of the top frame
+        which will cause a security exception.
+        
+        * platform/win/Skipped:
+        * plugins/createScriptableObject-before-start.html:
+
 2008-01-07  Alice Liu  <alice.liu@apple.com>
 
         * platform/win/Skipped:

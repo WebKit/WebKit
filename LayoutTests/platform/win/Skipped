@@ -389,9 +389,6 @@ fast/loader/onunload-form-submit-crash-2.html
 # <rdar://5667279> Undefined value exception
 http/tests/xmlhttprequest/XMLHttpRequestException.html
 
-# <rdar://5667286> Denied cross-frame access
-plugins/createScriptableObject-before-start.html
-
 # <rdar://5667302>
 svg/dom/animated-tearoff-equality.xhtml
 svg/dom/animated-tearoff-lifespan.xhtml
