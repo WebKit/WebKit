@@ -162,7 +162,10 @@ void CSSFontSelector::addFontFaceRule(const CSSFontFaceRule* fontFaceRule)
             // SVG Fonts support (internal fonts, living within the document)
             svgFontFaceElement = item->svgFontFaceElement();
             if (svgFontFaceElement) {
-                source = new CSSFontFaceSource(family);
+                // FIXME: If fontFace is not 0, it means that it is a CSSFontFace rather than a SVGCSSFontFace
+                // and therefore does not support SVG font-face elements, so we just skip this item.
+                if (fontFace)
+                    continue;
                 foundLocal = true;
             }
 #endif

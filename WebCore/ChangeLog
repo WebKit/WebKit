@@ -1,3 +1,15 @@
+2008-01-07  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        - fix leaks seen on the build bot
+
+        * css/CSSFontSelector.cpp:
+        (WebCore::CSSFontSelector::addFontFaceRule): Avoid creating a
+        CSSFontFaceSource for SVG font-face elements going into an
+        SVGCSSFontFace because it just leaks them. Avoid adding SVG font-
+        face elements to a CSSFontFace because it will not work as expected.
+
 2008-01-07  Mark Rowe  <mrowe@apple.com>
 
         Tiger build fix.
