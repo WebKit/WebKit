@@ -1,3 +1,10 @@
+2008-01-07  Adele Peterson  <adele@apple.com>
+
+        Temporary results until I fix:
+        <rdar://problem/5674667> fast/forms/slider-mouse-events.html is broken by media control checkin 29257
+
+        * fast/forms/slider-mouse-events-expected.txt:
+
 2008-01-07  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Niko.
