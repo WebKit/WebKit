@@ -1,3 +1,16 @@
+2008-01-07  Antti Koivisto  <antti@apple.com>
+
+        Rubber stamped by Darin.
+        
+        Enable media tests on Windows.
+
+        * platform/win/Skipped:
+        * platform/win/media: Added.
+        * platform/win/media/audio-controls-rendering-expected.txt: Added.
+        * platform/win/media/video-aspect-ratio-expected.txt: Added.
+        * platform/win/media/video-controls-rendering-expected.txt: Added.
+        * platform/win/media/video-transformed-expected.txt: Added.
+
 2008-01-08  Adele Peterson  <adele@apple.com>
 
         Reviewed by Darin.

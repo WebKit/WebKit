@@ -1,0 +1,68 @@
+layer at (0,0) size 785x765
+  RenderView at (0,0) size 785x600
+layer at (0,0) size 785x600
+  RenderBlock {HTML} at (0,0) size 785x600
+    RenderBody {BODY} at (8,8) size 769x584
+      RenderBlock {P} at (0,0) size 769x21
+        RenderText {#text} at (0,0) size 153x20
+          text run at (0,0) width 153: "Test controls placement."
+      RenderBlock (anonymous) at (0,37) size 769x480
+        RenderVideo {VIDEO} at (0,0) size 320x240
+        RenderBR {BR} at (320,240) size 0x0
+        RenderVideo {VIDEO} at (0,240) size 320x240
+        RenderBR {BR} at (320,480) size 0x0
+      RenderBlock (anonymous) at (0,517) size 769x21
+        RenderBR {BR} at (0,0) size 0x20
+layer at (8,45) size 320x240
+  RenderBlock (relative positioned) {DIV} at (0,0) size 320x240
+layer at (8,269) size 320x21
+  RenderBlock (positioned) {DIV} at (0,224) size 320x16
+    RenderButton {INPUT} at (0,0) size 320x21
+layer at (8,269) size 17x16
+  RenderButton {INPUT} at (0,0) size 17x16
+layer at (24,269) size 17x16
+  RenderButton {INPUT} at (16,0) size 17x16
+layer at (45,269) size 246x21
+  RenderSlider {INPUT} at (37,0) size 246x16
+layer at (45,277) size 246x21
+  RenderBlock (relative positioned) {DIV} at (0,0) size 246x21
+layer at (295,269) size 17x16
+  RenderButton {INPUT} at (287,0) size 17x16
+layer at (311,269) size 17x16
+  RenderButton {INPUT} at (303,0) size 17x16
+layer at (8,285) size 320x240
+  RenderBlock (relative positioned) {DIV} at (0,0) size 320x240
+layer at (8,509) size 320x21
+  RenderBlock (positioned) {DIV} at (0,224) size 320x16
+    RenderButton {INPUT} at (0,0) size 320x21
+layer at (8,509) size 17x16
+  RenderButton {INPUT} at (0,0) size 17x16
+layer at (24,509) size 17x16
+  RenderButton {INPUT} at (16,0) size 17x16
+layer at (45,509) size 246x21
+  RenderSlider {INPUT} at (37,0) size 246x16
+layer at (45,517) size 246x21
+  RenderBlock (relative positioned) {DIV} at (0,0) size 246x21
+layer at (295,509) size 17x16
+  RenderButton {INPUT} at (287,0) size 17x16
+layer at (311,509) size 17x16
+  RenderButton {INPUT} at (303,0) size 17x16
+layer at (8,525) size 320x240
+  RenderVideo {VIDEO} at (8,525) size 320x240
+layer at (8,525) size 320x240
+  RenderBlock (relative positioned) {DIV} at (0,0) size 320x240
+layer at (8,749) size 320x21 backgroundClip at (0,0) size 785x765 clip at (0,0) size 785x765 outlineClip at (0,0) size 785x765
+  RenderBlock (positioned) {DIV} at (0,224) size 320x16
+    RenderButton {INPUT} at (0,0) size 320x21
+layer at (8,749) size 17x16
+  RenderButton {INPUT} at (0,0) size 17x16
+layer at (24,749) size 17x16
+  RenderButton {INPUT} at (16,0) size 17x16
+layer at (45,749) size 246x21 backgroundClip at (0,0) size 785x765 clip at (0,0) size 785x765 outlineClip at (0,0) size 785x765
+  RenderSlider {INPUT} at (37,0) size 246x16
+layer at (45,757) size 246x21 backgroundClip at (0,0) size 785x765 clip at (0,0) size 785x765 outlineClip at (0,0) size 785x765
+  RenderBlock (relative positioned) {DIV} at (0,0) size 246x21
+layer at (295,749) size 17x16
+  RenderButton {INPUT} at (287,0) size 17x16
+layer at (311,749) size 17x16
+  RenderButton {INPUT} at (303,0) size 17x16
