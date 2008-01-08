@@ -1,6 +1,6 @@
 2008-01-07  Nikolas Zimmermann  <zimmermann@kde.org>
 
-        Reviewed by Mark.
+        Reviewed by Oliver.
 
         Build fix affecting all builds - again related to the unicode-range addition.
 
