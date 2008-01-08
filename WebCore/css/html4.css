@@ -2,7 +2,7 @@
  * The default style sheet used to render HTML.
  *
  * Copyright (C) 2000 Lars Knoll (knoll@kde.org)
- * Copyright (C) 2003, 2004, 2005, 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -593,64 +593,72 @@ iframe {
 /* FIXME this is not the final styling */
 
 audio {
-    width: 234px;
-    height: 69px;
+    width: 200px;
+    height: 16px;
 }
 
 audio::-webkit-media-controls-panel, video::-webkit-media-controls-panel {
+    -webkit-appearance: media-background;
     position: absolute;
-    left: 0; right: 0; top: 0; bottom: 0;
-    margin: auto;
-    width: 230px;
-    height: 65px;
-    border: 2px solid #eee;
-    background: rgba(0,0,0,0.6);
-    -webkit-border-radius: 10px;
+    bottom: 0;
+    width: 100%;
+    height: 16px;
     -webkit-user-select: none;
 }
 
-video::-webkit-media-controls-panel {
-    margin-bottom: 10%;
+audio::-webkit-media-controls-mute-button, video::-webkit-media-controls-mute-button {
+    -webkit-appearance: media-mute-button;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 17px;
+    height: 16px;
 }
 
 audio::-webkit-media-controls-play-button, video::-webkit-media-controls-play-button {
-    -webkit-appearance: none;
+    -webkit-appearance: media-play-button;
     position: absolute;
-    margin: 5px auto auto auto;
-    left: 0; right: 0; top: 0; bottom: 0;
-    border: 0;
-    color: white;
-    background: transparent;
-    cursor: pointer;
-    text-align: center; 
-    font-size: 25pt;
-    width: 2em;
-    height: 1.2em;
-}
-
-audio::-webkit-media-controls-timeline, video::-webkit-media-controls-timeline {
-    -webkit-appearance: slider-horizontal;
-    position: absolute;
-    margin: auto auto 5px 10px;
-    left: 0; right: 0; top: 0; bottom: 1px;
-    width: 60%;
-    height: 12px;
-    border: 2px solid white;
-    -webkit-border-radius: 6px;
-    z-index: 1;
+    top: 0;
+    left: 16px;
+    width: 17px;
+    height: 16px;
 }
 
 audio::-webkit-media-controls-time-display, video::-webkit-media-controls-time-display {
+    display: none;
+}
+
+audio::-webkit-media-controls-timeline, video::-webkit-media-controls-timeline {
+    -webkit-appearance: media-slider;
     position: absolute;
-    margin: auto 5px 5px 5px;
-    left: 0; right: 0; top: 0; bottom: 0px;
-    height: 1.2em;
-    text-align: right;
-    padding-right: 5px;
-    -webkit-border-radius: 7px;
-    background-color: #eee;
-    color: black;
-    font-size: 10pt;
+    top: 0;
+    left: 32px;
+    right: 32px;
+    height: 16px;
+    margin: 0px 5px;
+}
+
+audio::-webkit-media-controls-seek-back-button, video::-webkit-media-controls-seek-back-button {
+    -webkit-appearance: media-seek-back-button;
+    position: absolute;
+    top: 0;
+    right: 16px;
+    width: 17px;
+    height: 16px;
+}
+
+
+audio::-webkit-media-controls-seek-forward-button, video::-webkit-media-controls-seek-forward-button {
+    -webkit-appearance: media-seek-forward-button;
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 17px;
+    height: 16px;
+}
+
+audio::-webkit-media-controls-fullscreen-button, video::-webkit-media-controls-fullscreen-button {
+    display: none;
 }
 
 /* noscript is handled internally, as it depends on settings */

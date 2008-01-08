@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -92,7 +92,7 @@ public:
     void setPlaybackRate(float, ExceptionCode&);
     PassRefPtr<TimeRanges> played() const;
     PassRefPtr<TimeRanges> seekable() const;
-    bool ended();
+    bool ended() const;
     bool autoplay() const;    
     void setAutoplay(bool b);
     void play(ExceptionCode&);
@@ -119,6 +119,8 @@ public:
     void setVolume(float, ExceptionCode&);
     bool muted() const;
     void setMuted(bool);
+
+    bool canPlay() const;
 
 protected:
     float getTimeOffsetAttribute(const QualifiedName&, float valueOnError) const;

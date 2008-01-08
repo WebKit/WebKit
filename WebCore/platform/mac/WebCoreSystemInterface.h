@@ -1,5 +1,5 @@
 /*
- * Copyright 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright 2006, 2007, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -40,6 +40,7 @@ typedef struct _NSRect NSRect;
 #endif
 
 #ifdef __OBJC__
+@class NSData;
 @class NSEvent;
 @class NSFont;
 @class NSMutableURLRequest;
@@ -48,6 +49,7 @@ typedef struct _NSRect NSRect;
 @class QTMovieView;
 #else
 typedef struct NSArray NSArray;
+typedef struct NSData NSData;
 typedef struct NSDate NSDate;
 typedef struct NSEvent NSEvent;
 typedef struct NSFont NSFont;
@@ -101,6 +103,15 @@ extern BOOL (*wkGetGlyphTransformedAdvances)(CGFontRef, NSFont*, CGAffineTransfo
 extern ATSLayoutRecord* (*wkGetGlyphVectorFirstRecord)(void* glyphVector);
 extern int (*wkGetGlyphVectorNumGlyphs)(void* glyphVector);
 extern size_t (*wkGetGlyphVectorRecordSize)(void* glyphVector);
+extern NSData* (*wkGetMediaControlBackgroundImageData)(void);
+extern void (*wkDrawMediaFullscreenButton)(CGContextRef context, CGRect rect, BOOL active);
+extern void (*wkDrawMediaMuteButton)(CGContextRef context, CGRect rect, BOOL active);
+extern void (*wkDrawMediaPauseButton)(CGContextRef context, CGRect rect, BOOL active);
+extern void (*wkDrawMediaPlayButton)(CGContextRef context, CGRect rect, BOOL active);
+extern void (*wkDrawMediaSeekBackButton)(CGContextRef context, CGRect rect, BOOL active);
+extern void (*wkDrawMediaSeekForwardButton)(CGContextRef context, CGRect rect, BOOL active);
+extern void (*wkDrawMediaSliderThumb)(CGContextRef context, CGRect rect, BOOL active);
+extern void (*wkDrawMediaUnMuteButton)(CGContextRef context, CGRect rect, BOOL active);
 extern NSString* (*wkGetPreferredExtensionForMIMEType)(NSString*);
 extern NSArray* (*wkGetExtensionsForMIMEType)(NSString*);
 extern NSString* (*wkGetMIMETypeForExtension)(NSString*);

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -20,6 +20,7 @@
 #import "config.h"
 #import "RenderThemeMac.h"
 
+#import "BitmapImage.h"
 #import "CSSStyleSelector.h"
 #import "CSSValueKeywords.h"
 #import "Document.h"
@@ -28,10 +29,13 @@
 #import "FrameView.h"
 #import "GraphicsContext.h"
 #import "HTMLInputElement.h"
+#import "HTMLMediaElement.h"
+#import "HTMLNames.h"
 #import "Image.h"
 #import "LocalCurrentGraphicsContext.h"
 #import "RenderSlider.h"
 #import "RenderView.h"
+#import "SharedBuffer.h"
 #import "WebCoreSystemInterface.h"
 #import <Cocoa/Cocoa.h>
 #import <wtf/RetainPtr.h>
@@ -77,6 +81,8 @@ using std::min;
 
 namespace WebCore {
 
+using namespace HTMLNames;
+
 enum {
     topMargin,
     rightMargin,
@@ -99,6 +105,7 @@ RenderTheme* theme()
 
 RenderThemeMac::RenderThemeMac()
     : m_resizeCornerImage(0)
+    , m_mediaControlBackgroundImage(0)
     , m_isSliderThumbHorizontalPressed(false)
     , m_isSliderThumbVerticalPressed(false)
     , m_notificationObserver(AdoptNS, [[WebCoreRenderThemeNotificationObserver alloc] initWithTheme:this])
@@ -113,6 +120,7 @@ RenderThemeMac::~RenderThemeMac()
 {
     [[NSNotificationCenter defaultCenter] removeObserver:m_notificationObserver.get()];
     delete m_resizeCornerImage;
+    delete m_mediaControlBackgroundImage;
 }
 
 Color RenderThemeMac::platformActiveSelectionBackgroundColor() const
@@ -831,6 +839,7 @@ bool RenderThemeMac::paintCapsLockIndicator(RenderObject* o, const RenderObject:
     if (paintInfo.context->paintingDisabled())
         return true;
 
+    LocalCurrentGraphicsContext localContext(paintInfo.context);
     wkDrawCapsLockIndicator(paintInfo.context->platformContext(), r);
     
     return false;
@@ -1200,7 +1209,7 @@ bool RenderThemeMac::paintSliderTrack(RenderObject* o, const RenderObject::Paint
 {
     IntRect bounds = r;
 
-    if (o->style()->appearance() ==  SliderHorizontalAppearance) {
+    if (o->style()->appearance() ==  SliderHorizontalAppearance || o->style()->appearance() ==  MediaSliderAppearance) {
         bounds.setHeight(trackWidth);
         bounds.setY(r.y() + r.height() / 2 - trackWidth / 2);
     } else if (o->style()->appearance() == SliderVerticalAppearance) {
@@ -1291,7 +1300,9 @@ const int sliderThumbHeight = 15;
 
 void RenderThemeMac::adjustSliderThumbSize(RenderObject* o) const
 {
-    if (o->style()->appearance() == SliderThumbHorizontalAppearance || o->style()->appearance() == SliderThumbVerticalAppearance) {
+    if (o->style()->appearance() == SliderThumbHorizontalAppearance || 
+        o->style()->appearance() == SliderThumbVerticalAppearance ||
+        o->style()->appearance() == MediaSliderThumbAppearance) {
         o->style()->setWidth(Length(sliderThumbWidth, Fixed));
         o->style()->setHeight(Length(sliderThumbHeight, Fixed));
     }
@@ -1473,6 +1484,103 @@ bool RenderThemeMac::paintSearchFieldResultsButton(RenderObject* o, const Render
     NSRect bounds = [search searchButtonRectForBounds:NSRect(input->renderer()->absoluteBoundingBoxRect())];
     [[search searchButtonCell] drawWithFrame:bounds inView:o->view()->frameView()->getDocumentView()];
     [[search searchButtonCell] setControlView:nil];
+    return false;
+}
+
+bool RenderThemeMac::paintMediaBackground(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
+{
+    if (!m_mediaControlBackgroundImage) {
+        m_mediaControlBackgroundImage = new BitmapImage;
+        m_mediaControlBackgroundImage->setData(SharedBuffer::wrapNSData(wkGetMediaControlBackgroundImageData()), true);
+    }
+    
+    LocalCurrentGraphicsContext localContext(paintInfo.context);
+    paintInfo.context->drawTiledImage(m_mediaControlBackgroundImage, r,
+                                        IntRect(0, 0, m_mediaControlBackgroundImage->width(), m_mediaControlBackgroundImage->height()),
+                                        Image::RepeatTile, Image::StretchTile);
+    
+    return false;
+}
+
+bool RenderThemeMac::paintMediaFullscreenButton(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
+{
+    Node* node = o->element();
+    if (!node)
+        return false;
+
+    LocalCurrentGraphicsContext localContext(paintInfo.context);
+    wkDrawMediaFullscreenButton(paintInfo.context->platformContext(), r, node->active());
+    return false;
+}
+
+bool RenderThemeMac::paintMediaMuteButton(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
+{
+    Node* node = o->element();
+    Node* mediaNode = node ? node->shadowAncestorNode() : 0;
+    if (!mediaNode || (!mediaNode->hasTagName(videoTag) && !mediaNode->hasTagName(audioTag)))
+        return false;
+
+    HTMLMediaElement* mediaElement = static_cast<HTMLMediaElement*>(mediaNode);
+    if (!mediaElement)
+        return false;
+    
+    LocalCurrentGraphicsContext localContext(paintInfo.context);
+    if (mediaElement->muted())
+        wkDrawMediaUnMuteButton(paintInfo.context->platformContext(), r, node->active());
+    else
+        wkDrawMediaMuteButton(paintInfo.context->platformContext(), r, node->active());        
+    return false;
+}
+
+bool RenderThemeMac::paintMediaPlayButton(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
+{
+    Node* node = o->element();
+    Node* mediaNode = node ? node->shadowAncestorNode() : 0;
+    if (!mediaNode || (!mediaNode->hasTagName(videoTag) && !mediaNode->hasTagName(audioTag)))
+        return false;
+
+    HTMLMediaElement* mediaElement = static_cast<HTMLMediaElement*>(mediaNode);
+    if (!mediaElement)
+        return false;
+
+    LocalCurrentGraphicsContext localContext(paintInfo.context);
+    if (mediaElement->canPlay())
+        wkDrawMediaPlayButton(paintInfo.context->platformContext(), r, node->active());
+    else
+        wkDrawMediaPauseButton(paintInfo.context->platformContext(), r, node->active());        
+    return false;
+}
+
+bool RenderThemeMac::paintMediaSeekBackButton(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
+{
+    Node* node = o->element();
+    if (!node)
+        return false;
+
+    LocalCurrentGraphicsContext localContext(paintInfo.context);
+    wkDrawMediaSeekBackButton(paintInfo.context->platformContext(), r, node->active());
+    return false;
+}
+
+bool RenderThemeMac::paintMediaSeekForwardButton(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
+{
+    Node* node = o->element();
+    if (!node)
+        return false;
+
+    LocalCurrentGraphicsContext localContext(paintInfo.context);
+    wkDrawMediaSeekForwardButton(paintInfo.context->platformContext(), r, node->active());
+    return false;
+}
+
+bool RenderThemeMac::paintMediaSliderThumb(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
+{
+    Node* node = o->element();
+    if (!node)
+        return false;
+
+    LocalCurrentGraphicsContext localContext(paintInfo.context);
+    wkDrawMediaSliderThumb(paintInfo.context->platformContext(), r, node->active());
     return false;
 }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2006 Apple Computer, Inc. All rights reserved.
+ * Copyright 2006, 2007, 2008 Apple Computer, Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -46,6 +46,15 @@ BOOL (*wkGetGlyphTransformedAdvances)(CGFontRef, NSFont*, CGAffineTransform*, AT
 ATSLayoutRecord* (*wkGetGlyphVectorFirstRecord)(void* glyphVector);
 int (*wkGetGlyphVectorNumGlyphs)(void* glyphVector);
 size_t (*wkGetGlyphVectorRecordSize)(void* glyphVector);
+NSData*(*wkGetMediaControlBackgroundImageData)(void);
+void (*wkDrawMediaFullscreenButton)(CGContextRef context, CGRect rect, BOOL active);
+void (*wkDrawMediaMuteButton)(CGContextRef context, CGRect rect, BOOL active);
+void (*wkDrawMediaPauseButton)(CGContextRef context, CGRect rect, BOOL active);
+void (*wkDrawMediaPlayButton)(CGContextRef context, CGRect rect, BOOL active);
+void (*wkDrawMediaSeekBackButton)(CGContextRef context, CGRect rect, BOOL active);
+void (*wkDrawMediaSeekForwardButton)(CGContextRef context, CGRect rect, BOOL active);
+void (*wkDrawMediaSliderThumb)(CGContextRef context, CGRect rect, BOOL active);
+void (*wkDrawMediaUnMuteButton)(CGContextRef context, CGRect rect, BOOL active);
 NSString* (*wkGetPreferredExtensionForMIMEType)(NSString*);
 NSArray* (*wkGetExtensionsForMIMEType)(NSString*);
 NSString* (*wkGetMIMETypeForExtension)(NSString*);

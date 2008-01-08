@@ -1,7 +1,7 @@
 /**
  * This file is part of the theme implementation for form controls in WebCore.
  *
- * Copyright (C) 2005 Apple Computer, Inc.
+ * Copyright (C) 2005, 2006, 2007, 2008 Apple Computer, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -73,6 +73,7 @@ void RenderTheme::adjustStyle(CSSStyleSelector* selector, RenderStyle* style, El
             return adjustMenuListStyle(selector, style, e);
         case MenulistButtonAppearance:
             return adjustMenuListButtonStyle(selector, style, e);
+        case MediaSliderAppearance:
         case SliderHorizontalAppearance:
         case SliderVerticalAppearance:
             return adjustSliderTrackStyle(selector, style, e);
@@ -121,12 +122,29 @@ bool RenderTheme::paint(RenderObject* o, const RenderObject::PaintInfo& paintInf
             return paintMenuList(o, paintInfo, r);
         case SliderHorizontalAppearance:
         case SliderVerticalAppearance:
+        case MediaSliderAppearance:
             return paintSliderTrack(o, paintInfo, r);
         case SliderThumbHorizontalAppearance:
         case SliderThumbVerticalAppearance:
             if (o->parent()->isSlider())
                 return paintSliderThumb(o, paintInfo, r);
             // We don't support drawing a slider thumb without a parent slider
+            break;
+        case MediaBackgroundAppearance:
+            return paintMediaBackground(o, paintInfo, r);
+        case MediaFullscreenButtonAppearance:
+            return paintMediaFullscreenButton(o, paintInfo, r);
+        case MediaPlayButtonAppearance:
+            return paintMediaPlayButton(o, paintInfo, r);
+        case MediaMuteButtonAppearance:
+            return paintMediaMuteButton(o, paintInfo, r);
+        case MediaSeekBackButtonAppearance:
+            return paintMediaSeekBackButton(o, paintInfo, r);
+        case MediaSeekForwardButtonAppearance:
+            return paintMediaSeekForwardButton(o, paintInfo, r);
+        case MediaSliderThumbAppearance:
+            if (o->parent()->isSlider())
+                return paintMediaSliderThumb(o, paintInfo, r);
             break;
         case MenulistButtonAppearance:
         case TextFieldAppearance:

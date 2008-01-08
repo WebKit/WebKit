@@ -1,6 +1,6 @@
 /*      
     WebKitSystemInterface.h
-    Copyright (C) 2005, 2006, 2007 Apple Inc. All rights reserved.    
+    Copyright (C) 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.    
 
     Public header file.
 */
@@ -164,6 +164,16 @@ float WKQTMovieMaxTimeLoaded(QTMovie* movie);
 void WKQTMovieViewSetDrawSynchronously(QTMovieView* view, BOOL sync);
 
 CFStringRef WKCopyFoundationCacheDirectory(void);
+
+NSData *WKGetMediaControlBackgroundImageData(void);
+void WKDrawMediaFullscreenButton(CGContextRef context, CGRect rect, BOOL active);
+void WKDrawMediaMuteButton(CGContextRef context, CGRect rect, BOOL active);
+void WKDrawMediaPauseButton(CGContextRef context, CGRect rect, BOOL active);
+void WKDrawMediaPlayButton(CGContextRef context, CGRect rect, BOOL active);
+void WKDrawMediaSeekBackButton(CGContextRef context, CGRect rect, BOOL active);
+void WKDrawMediaSeekForwardButton(CGContextRef context, CGRect rect, BOOL active);
+void WKDrawMediaSliderThumb(CGContextRef context, CGRect rect, BOOL active);
+void WKDrawMediaUnMuteButton(CGContextRef context, CGRect rect, BOOL active);
 
 #ifdef __cplusplus
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2007, 2008 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,8 +35,11 @@ namespace WebCore {
     
 class HTMLInputElement;
 class HTMLMediaElement;
+class MediaControlMuteButtonElement;
 class MediaControlPlayButtonElement;
+class MediaControlSeekButtonElement;
 class MediaControlTimelineElement;
+class MediaControlFullscreenButtonElement;
 class MediaPlayer;
 
 class RenderMedia : public RenderReplaced {
@@ -68,9 +71,13 @@ public:
 private:
     void createControlsShadowRoot();
     void createPanel();
+    void createMuteButton();
     void createPlayButton();
+    void createSeekBackButton();
+    void createSeekForwardButton();
     void createTimeline();
     void createTimeDisplay();
+    void createFullscreenButton();
     
     void timeUpdateTimerFired(Timer<RenderMedia>*);
     void updateTimeDisplay();
@@ -81,9 +88,15 @@ private:
 
     RefPtr<HTMLElement> m_controlsShadowRoot;
     RefPtr<HTMLElement> m_panel;
+    RefPtr<MediaControlMuteButtonElement> m_muteButton;
     RefPtr<MediaControlPlayButtonElement> m_playButton;
+    RefPtr<MediaControlSeekButtonElement> m_seekBackButton;
+    RefPtr<MediaControlSeekButtonElement> m_seekForwardButton;
     RefPtr<MediaControlTimelineElement> m_timeline;
+    RefPtr<MediaControlFullscreenButtonElement> m_fullscreenButton;
     RefPtr<HTMLElement> m_timeDisplay;
+    EventTargetNode* m_lastUnderNode;
+    EventTargetNode* m_nodeUnderMouse;
     
     Timer<RenderMedia> m_timeUpdateTimer;
     Timer<RenderMedia> m_opacityAnimationTimer;

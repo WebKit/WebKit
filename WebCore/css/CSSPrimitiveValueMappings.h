@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2007 Alexey Proskuryakov <ap@nypop.com>.
+ * Copyright (C) 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -189,6 +190,30 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EAppearance e)
             break;
         case ListItemAppearance:
             m_value.ident = CSS_VAL_LISTITEM;
+            break;
+        case MediaBackgroundAppearance:
+            m_value.ident = CSS_VAL_MEDIA_BACKGROUND;
+            break;
+        case MediaFullscreenButtonAppearance:
+            m_value.ident = CSS_VAL_MEDIA_FULLSCREEN_BUTTON;
+            break;
+        case MediaPlayButtonAppearance:
+            m_value.ident = CSS_VAL_MEDIA_PLAY_BUTTON;
+            break;
+        case MediaMuteButtonAppearance:
+            m_value.ident = CSS_VAL_MEDIA_MUTE_BUTTON;
+            break;
+        case MediaSeekBackButtonAppearance:
+            m_value.ident = CSS_VAL_MEDIA_SEEK_BACK_BUTTON;
+            break;
+        case MediaSeekForwardButtonAppearance:
+            m_value.ident = CSS_VAL_MEDIA_SEEK_FORWARD_BUTTON;
+            break;
+        case MediaSliderAppearance:
+            m_value.ident = CSS_VAL_MEDIA_SLIDER;
+            break;
+        case MediaSliderThumbAppearance:
+            m_value.ident = CSS_VAL_MEDIA_SLIDERTHUMB;
             break;
         case MenulistAppearance:
             m_value.ident = CSS_VAL_MENULIST;

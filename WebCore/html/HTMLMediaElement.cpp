@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2007, 2008 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -616,7 +616,7 @@ void HTMLMediaElement::setPlaybackRate(float rate, ExceptionCode& ec)
     }
 }
 
-bool HTMLMediaElement::ended()
+bool HTMLMediaElement::ended() const
 {
     return endedPlayback();
 }
@@ -793,6 +793,11 @@ void HTMLMediaElement::setMuted(bool muted)
         if (m_player)
             m_player->setMuted(muted);
     }
+}
+
+bool HTMLMediaElement::canPlay() const
+{
+    return paused() || ended() || networkState() < LOADED_METADATA;
 }
 
 String HTMLMediaElement::pickMedia()

@@ -493,6 +493,14 @@ button
 button-bevel
 listbox
 listitem
+media-background
+media-fullscreen-button
+media-mute-button
+media-play-button
+media-seek-back-button
+media-seek-forward-button
+media-slider
+media-sliderthumb
 menulist
 menulist-button
 menulist-text

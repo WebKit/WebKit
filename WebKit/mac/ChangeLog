@@ -1,3 +1,13 @@
+2008-01-07  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Antti, Adam, and Mitz.
+
+        WebKit part of fix for 
+        <rdar://problem/5619073> Updated look for <video> controls
+        <rdar://problem/5619057> Add volume control to video controls
+
+        * WebCoreSupport/WebSystemInterface.m: (InitWebCoreSystemInterface):
+
 2008-01-07  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Dave Hyatt.

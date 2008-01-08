@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2007, 2008 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Alexey Proskuryakov (ap@webkit.org)
  *
  * Redistribution and use in source and binary forms, with or without
@@ -1238,13 +1238,13 @@ void EventHandler::updateMouseEventTargetNode(Node* targetNode, const PlatformMo
     // If we're capturing, we always go right to that node.
     if (m_capturingMouseEventsNode)
         result = m_capturingMouseEventsNode.get();
-    
-    // If the target node is a text node, dispatch on the parent node - rdar://4196646
-    if (result && result->isTextNode())
-        result = result->parentNode();
-    if (result)
-        result = result->shadowAncestorNode();
-        
+    else {
+        // If the target node is a text node, dispatch on the parent node - rdar://4196646
+        if (result && result->isTextNode())
+            result = result->parentNode();
+        if (result)
+            result = result->shadowAncestorNode();
+    }
     m_nodeUnderMouse = result;
     
     // Fire mouseout/mouseover if the mouse has shifted to a different node.

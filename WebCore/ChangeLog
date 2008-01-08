@@ -1,3 +1,114 @@
+2008-01-07  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Antti, Adam, and Mitz.
+
+        WebCore part of fix for 
+        <rdar://problem/5619073> Updated look for <video> controls
+        <rdar://problem/5619057> Add volume control to video controls
+
+        * WebCore.base.exp: Added symbols for WebKitSystemInterface drawing methods.
+        * WebCore.xcodeproj/project.pbxproj: Added MediaControlElements.h/cpp
+        * WebCore.vcproj/WebCore.vcproj: ditto.
+
+        * css/CSSPrimitiveValueMappings.h: (WebCore::CSSPrimitiveValue::CSSPrimitiveValue): Added cases for new appearances.
+        * css/CSSSelector.cpp: (WebCore::CSSSelector::extractPseudoType): Added cases for new types.
+        * css/CSSSelector.h: (WebCore::CSSSelector::): Added new pseudo elements.
+        * css/CSSStyleSelector.cpp: (WebCore::CSSStyleSelector::checkOneSelector): ditto.
+        * css/CSSValueKeywords.in: Added keywords for new control appearance styles.
+        * css/html4.css: Added new styles for new controls.
+
+        * html/HTMLMediaElement.cpp: (WebCore::HTMLMediaElement::canPlay): Added. Takes loading state into account.
+        * html/HTMLMediaElement.h:
+
+        * page/EventHandler.cpp: (WebCore::EventHandler::updateMouseEventTargetNode): Make sure the events always go to the capturing node, if there is one.
+
+        * platform/mac/WebCoreSystemInterface.h: Added drawing methods for controls.
+        * platform/mac/WebCoreSystemInterface.mm: ditto.
+
+        * rendering/MediaControlElements.cpp: Added.
+        (WebCore::MediaControlShadowRootElement::MediaControlShadowRootElement): Moved from RenderMedia.  Made this relatively positioned, instead of absolute.
+        (WebCore::MediaControlInputElement::MediaControlInputElement): Moved from RenderMedia.  Removed call to updateFromElement, 
+         since its too early to do this here, and causes crashes for the slider.
+        (WebCore::MediaControlInputElement::attachToParent): Moved from RenderMedia.
+        (WebCore::MediaControlInputElement::update): ditto.
+        (WebCore::MediaControlMuteButtonElement::MediaControlMuteButtonElement): Added.
+        (WebCore::MediaControlMuteButtonElement::defaultEventHandler): ditto.
+        (WebCore::MediaControlPlayButtonElement::MediaControlPlayButtonElement): Moved from RenderMedia.
+        (WebCore::MediaControlPlayButtonElement::defaultEventHandler): ditto.
+        (WebCore::MediaControlSeekButtonElement::MediaControlSeekButtonElement): Added.
+        (WebCore::MediaControlSeekButtonElement::defaultEventHandler): ditto.
+        (WebCore::MediaControlSeekButtonElement::seekTimerFired): ditto.
+        (WebCore::MediaControlTimelineElement::MediaControlTimelineElement): Moved from RenderMedia.
+        (WebCore::MediaControlTimelineElement::defaultEventHandler): ditto.
+        (WebCore::MediaControlTimelineElement::update): ditto. 
+        (WebCore::MediaControlFullscreenButtonElement::MediaControlFullscreenButtonElement): Added.
+        (WebCore::MediaControlFullscreenButtonElement::defaultEventHandler): ditto.
+        * rendering/MediaControlElements.h: Added. Moved from RenderMedia.
+        (WebCore::MediaControlShadowRootElement::isShadowNode):
+        (WebCore::MediaControlShadowRootElement::shadowParentNode):
+        (WebCore::RenderMediaControlShadowRoot::RenderMediaControlShadowRoot):
+        (WebCore::RenderMediaControlShadowRoot::setParent):
+
+        * rendering/RenderMedia.cpp: Moved control element classes to MediaControlElements files.
+        (WebCore::RenderMedia::RenderMedia): No need to initialize RefPtrs.
+        (WebCore::RenderMedia::layout): Set the position for the controlsRenderer.
+        (WebCore::RenderMedia::createPanel): Added nil check for the renderer.
+        (WebCore::RenderMedia::createMuteButton): Added.
+        (WebCore::RenderMedia::createSeekBackButton): ditto.
+        (WebCore::RenderMedia::createSeekForwardButton): ditto.
+        (WebCore::RenderMedia::createTimeDisplay): Added nil check for the renderer.
+        (WebCore::RenderMedia::createFullscreenButton): Added.
+        (WebCore::RenderMedia::updateControls): Create, delete, and update new controls when appropriate.
+        (WebCore::RenderMedia::updateControlVisibility): Don't fade controls for audio controls. 
+        (WebCore::RenderMedia::forwardEvent): Forward events for new controls.
+        * rendering/RenderMedia.h: Added new methods for creating new controls.
+
+        * rendering/RenderObject.cpp: (WebCore::RenderObject::containingBlock): Updated special case for media elements, which are replaced elements, 
+          but also can contain children (the controls' container) that may need to look for the containing block.
+
+        * rendering/RenderSlider.cpp: (WebCore::RenderSlider::createThumbStyle): Added case for MediaSliderAppearance.
+
+        * rendering/RenderStyle.h: Added appearance constants and pseudo ids for new controls.
+        (WebCore::):
+        (WebCore::RenderStyle::):
+
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::adjustStyle): Added cases for new appearances.
+        (WebCore::RenderTheme::paint): ditto.
+        * rendering/RenderTheme.h: Added new methods for painting new appearances.
+        (WebCore::RenderTheme::paintMediaBackground):
+        (WebCore::RenderTheme::paintMediaFullscreenButton):
+        (WebCore::RenderTheme::paintMediaPlayButton):
+        (WebCore::RenderTheme::paintMediaMuteButton):
+        (WebCore::RenderTheme::paintMediaSeekBackButton):
+        (WebCore::RenderTheme::paintMediaSeekForwardButton):
+        (WebCore::RenderTheme::paintMediaSliderThumb):
+        * rendering/RenderThemeMac.h:
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::RenderThemeMac): Initialize m_mediaControlBackgroundImage.
+        (WebCore::RenderThemeMac::~RenderThemeMac): Delete m_mediaControlBackgroundImage.
+        (WebCore::RenderThemeMac::paintCapsLockIndicator): Use LocalCurrentGraphicsContext here too, since we use it in all other painting methods.
+        (WebCore::RenderThemeMac::paintSliderTrack): Added case for MediaSliderAppearance.
+        (WebCore::RenderThemeMac::adjustSliderThumbSize): Added case for MediaSliderThumbAppearance.
+        (WebCore::RenderThemeMac::paintMediaBackground): Draws the new artwork for the controls.
+        (WebCore::RenderThemeMac::paintMediaFullscreenButton): ditto.
+        (WebCore::RenderThemeMac::paintMediaMuteButton): ditto.
+        (WebCore::RenderThemeMac::paintMediaPlayButton): ditto.
+        (WebCore::RenderThemeMac::paintMediaSeekBackButton): ditto.
+        (WebCore::RenderThemeMac::paintMediaSeekForwardButton): ditto.
+        (WebCore::RenderThemeMac::paintMediaSliderThumb): ditto.
+        * rendering/RenderThemeSafari.cpp: Draws the new artwork on Windows.
+        (WebCore::RenderThemeSafari::paintSliderTrack):
+        (WebCore::RenderThemeSafari::adjustSliderThumbSize):
+        (WebCore::RenderThemeSafari::paintMediaBackground):
+        (WebCore::RenderThemeSafari::paintMediaFullscreenButton):
+        (WebCore::RenderThemeSafari::paintMediaMuteButton):
+        (WebCore::RenderThemeSafari::paintMediaPlayButton):
+        (WebCore::RenderThemeSafari::paintMediaSeekBackButton):
+        (WebCore::RenderThemeSafari::paintMediaSeekForwardButton):
+        (WebCore::RenderThemeSafari::paintMediaSliderThumb):
+        * rendering/RenderThemeSafari.h:
+
 2008-01-07  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Darin Adler.

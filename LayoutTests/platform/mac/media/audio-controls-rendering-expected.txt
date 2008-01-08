@@ -6,65 +6,65 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,0) size 784x18
         RenderText {#text} at (0,0) size 153x18
           text run at (0,0) width 153: "Test controls placement."
-      RenderBlock (anonymous) at (0,34) size 784x174
-        RenderMedia {AUDIO} at (0,0) size 234x69 [bgcolor=#0000FF]
-        RenderBR {BR} at (234,69) size 0x0
-        RenderBR {BR} at (0,69) size 0x18
-        RenderMedia {AUDIO} at (0,87) size 320x69 [bgcolor=#0000FF]
-        RenderBR {BR} at (320,156) size 0x0
-        RenderBR {BR} at (0,156) size 0x18
-      RenderBlock (anonymous) at (0,208) size 784x18
+      RenderBlock (anonymous) at (0,34) size 784x68
+        RenderMedia {AUDIO} at (0,0) size 200x16 [bgcolor=#0000FF]
+        RenderBR {BR} at (200,16) size 0x0
+        RenderBR {BR} at (0,16) size 0x18
+        RenderMedia {AUDIO} at (0,34) size 320x16 [bgcolor=#0000FF]
+        RenderBR {BR} at (320,50) size 0x0
+        RenderBR {BR} at (0,50) size 0x18
+      RenderBlock (anonymous) at (0,102) size 784x18
         RenderBR {BR} at (0,0) size 0x18
-layer at (8,42) size 234x69
-  RenderBlock (positioned) {DIV} at (8,42) size 234x69
-layer at (8,42) size 234x69
-  RenderBlock (positioned) {DIV} at (0,0) size 234x69 [bgcolor=#00000099] [border: (2px solid #EEEEEE)]
-layer at (92,49) size 66x40
-  RenderButton {INPUT} at (84,7) size 66x40 [color=#FFFFFF]
-    RenderBlock (anonymous) at (0,0) size 66x40
-      RenderText at (23,0) size 19x38
-        text run at (23,0) width 19: ">"
-layer at (15,88) size 220x16
-  RenderBlock (positioned) {DIV} at (7,46) size 220x16 [bgcolor=#EEEEEE]
-    RenderText {#text} at (165,0) size 50x15
-      text run at (165,0) width 50: "00:00:00"
-layer at (8,129) size 320x69
-  RenderBlock (positioned) {DIV} at (8,129) size 320x69
-layer at (51,129) size 234x69
-  RenderBlock (positioned) {DIV} at (43,0) size 234x69 [bgcolor=#00000099] [border: (2px solid #EEEEEE)]
-layer at (135,136) size 66x40
-  RenderButton {INPUT} at (84,7) size 66x40 [color=#FFFFFF]
-    RenderBlock (anonymous) at (0,0) size 66x40
-      RenderText at (23,0) size 19x38
-        text run at (23,0) width 19: ">"
-layer at (58,175) size 220x16
-  RenderBlock (positioned) {DIV} at (7,46) size 220x16 [bgcolor=#EEEEEE]
-    RenderText {#text} at (165,0) size 50x15
-      text run at (165,0) width 50: "00:00:00"
-layer at (8,216) size 320x100
-  RenderMedia {AUDIO} at (8,216) size 320x100 [bgcolor=#0000FF]
-layer at (8,216) size 320x100
-  RenderBlock (positioned) {DIV} at (0,0) size 320x100
-layer at (51,231) size 234x69
-  RenderBlock (positioned) {DIV} at (43,15) size 234x69 [bgcolor=#00000099] [border: (2px solid #EEEEEE)]
-layer at (135,238) size 66x40
-  RenderButton {INPUT} at (84,7) size 66x40 [color=#FFFFFF]
-    RenderBlock (anonymous) at (0,0) size 66x40
-      RenderText at (23,0) size 19x38
-        text run at (23,0) width 19: ">"
-layer at (58,277) size 220x16
-  RenderBlock (positioned) {DIV} at (7,46) size 220x16 [bgcolor=#EEEEEE]
-    RenderText {#text} at (165,0) size 50x15
-      text run at (165,0) width 50: "00:00:00"
-layer at (20,87) size 142x17
-  RenderSlider zI: 1 {INPUT} at (12,45) size 142x16 [border: (2px solid #FFFFFF)]
-layer at (22,90) size 15x15
-  RenderBlock (relative positioned) {DIV} at (2,2) size 15x15
-layer at (63,174) size 142x17
-  RenderSlider zI: 1 {INPUT} at (12,45) size 142x16 [border: (2px solid #FFFFFF)]
-layer at (65,177) size 15x15
-  RenderBlock (relative positioned) {DIV} at (2,2) size 15x15
-layer at (63,276) size 142x17
-  RenderSlider zI: 1 {INPUT} at (12,45) size 142x16 [border: (2px solid #FFFFFF)]
-layer at (65,279) size 15x15
-  RenderBlock (relative positioned) {DIV} at (2,2) size 15x15
+layer at (8,42) size 200x16
+  RenderBlock (relative positioned) {DIV} at (0,0) size 200x16
+layer at (8,42) size 200x18
+  RenderBlock (positioned) {DIV} at (0,0) size 200x16
+    RenderButton {INPUT} at (0,0) size 200x18
+layer at (8,42) size 17x16
+  RenderButton {INPUT} at (0,0) size 17x16
+layer at (24,42) size 17x16
+  RenderButton {INPUT} at (16,0) size 17x16
+layer at (45,42) size 126x16
+  RenderSlider {INPUT} at (37,0) size 126x16
+layer at (45,43) size 15x15
+  RenderBlock (relative positioned) {DIV} at (0,0) size 15x15
+layer at (175,42) size 17x16
+  RenderButton {INPUT} at (167,0) size 17x16
+layer at (191,42) size 17x16
+  RenderButton {INPUT} at (183,0) size 17x16
+layer at (8,76) size 320x16
+  RenderBlock (relative positioned) {DIV} at (0,0) size 320x16
+layer at (8,76) size 320x18
+  RenderBlock (positioned) {DIV} at (0,0) size 320x16
+    RenderButton {INPUT} at (0,0) size 320x18
+layer at (8,76) size 17x16
+  RenderButton {INPUT} at (0,0) size 17x16
+layer at (24,76) size 17x16
+  RenderButton {INPUT} at (16,0) size 17x16
+layer at (45,76) size 246x16
+  RenderSlider {INPUT} at (37,0) size 246x16
+layer at (45,77) size 15x15
+  RenderBlock (relative positioned) {DIV} at (0,0) size 15x15
+layer at (295,76) size 17x16
+  RenderButton {INPUT} at (287,0) size 17x16
+layer at (311,76) size 17x16
+  RenderButton {INPUT} at (303,0) size 17x16
+layer at (8,110) size 320x100
+  RenderMedia {AUDIO} at (8,110) size 320x100 [bgcolor=#0000FF]
+layer at (8,110) size 320x100
+  RenderBlock (relative positioned) {DIV} at (0,0) size 320x100
+layer at (8,194) size 320x18
+  RenderBlock (positioned) {DIV} at (0,84) size 320x16
+    RenderButton {INPUT} at (0,0) size 320x18
+layer at (8,194) size 17x16
+  RenderButton {INPUT} at (0,0) size 17x16
+layer at (24,194) size 17x16
+  RenderButton {INPUT} at (16,0) size 17x16
+layer at (45,194) size 246x16
+  RenderSlider {INPUT} at (37,0) size 246x16
+layer at (45,195) size 15x15
+  RenderBlock (relative positioned) {DIV} at (0,0) size 15x15
+layer at (295,194) size 17x16
+  RenderButton {INPUT} at (287,0) size 17x16
+layer at (311,194) size 17x16
+  RenderButton {INPUT} at (303,0) size 17x16

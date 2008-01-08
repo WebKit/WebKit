@@ -1,3 +1,15 @@
+2008-01-07  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Antti, Adam, and Mitz.
+
+        WebKitLibraries part of fix for 
+        <rdar://problem/5619073> Updated look for <video> controls
+        <rdar://problem/5619057> Add volume control to video controls
+
+        * WebKitSystemInterface.h:
+        * libWebKitSystemInterfaceLeopard.a:
+        * libWebKitSystemInterfaceTiger.a:
+
 2008-01-03  Mark Rowe  <mrowe@apple.com>
 
         Update Tiger library to a G3-friendly version.

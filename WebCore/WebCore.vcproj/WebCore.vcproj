@@ -5069,6 +5069,14 @@
 				RelativePath="..\rendering\ListMarkerBox.h"
 				>
 			</File>
+                        <File
+                        	RelativePath="..\rendering\MediaControlElements.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\rendering\MediaControlElements.h"
+				>
+			</File>
 			<File
 				RelativePath="..\rendering\PointerEventsHitRules.cpp"
 				>

@@ -1,5 +1,5 @@
 /*
- * Copyright 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright 2006, 2007, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -48,6 +48,14 @@ void InitWebCoreSystemInterface(void)
     INIT(DrawBezeledTextArea);
     INIT(DrawBezeledTextFieldCell);
     INIT(DrawFocusRing);
+    INIT(DrawMediaFullscreenButton);
+    INIT(DrawMediaMuteButton);
+    INIT(DrawMediaPauseButton);
+    INIT(DrawMediaPlayButton);
+    INIT(DrawMediaSeekBackButton);
+    INIT(DrawMediaSeekForwardButton);
+    INIT(DrawMediaSliderThumb);
+    INIT(DrawMediaUnMuteButton);
     INIT(DrawTextFieldCellFocusRing);
     INIT(FontSmoothingModeIsLCD);
     INIT(GetATSStyleGroup);
@@ -60,6 +68,7 @@ void InitWebCoreSystemInterface(void)
     INIT(GetGlyphVectorFirstRecord);
     INIT(GetGlyphVectorNumGlyphs);
     INIT(GetGlyphVectorRecordSize);
+    INIT(GetMediaControlBackgroundImageData);
     INIT(GetMIMETypeForExtension);
     INIT(GetNSFontATSUFontId);
     INIT(GetNSURLResponseCalculatedExpiration);

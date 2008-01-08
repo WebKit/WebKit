@@ -1,3 +1,4 @@
+
 .objc_class_name_DOMAbstractView
 .objc_class_name_DOMAttr
 .objc_class_name_DOMCDATASection
@@ -744,6 +745,15 @@ _wkGetGlyphVectorFirstRecord
 _wkGetGlyphVectorNumGlyphs
 _wkGetGlyphVectorRecordSize
 _wkGetMIMETypeForExtension
+_wkGetMediaControlBackgroundImageData
+_wkDrawMediaFullscreenButton
+_wkDrawMediaMuteButton
+_wkDrawMediaPauseButton
+_wkDrawMediaPlayButton
+_wkDrawMediaSeekBackButton
+_wkDrawMediaSeekForwardButton
+_wkDrawMediaSliderThumb
+_wkDrawMediaUnMuteButton
 _wkGetNSFontATSUFontId
 _wkGetNSURLResponseCalculatedExpiration
 _wkGetNSURLResponseLastModifiedDate

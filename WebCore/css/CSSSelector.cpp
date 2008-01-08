@@ -3,7 +3,7 @@
  *               1999 Waldo Bastian (bastian@kde.org)
  *               2001 Andreas Schlapbach (schlpbch@iam.unibe.ch)
  *               2001-2003 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2002, 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2002, 2006, 2007, 2008 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -94,6 +94,9 @@ void CSSSelector::extractPseudoType() const
     static AtomicString mediaControlsPlayButton("-webkit-media-controls-play-button");
     static AtomicString mediaControlsTimeDisplay("-webkit-media-controls-time-display");
     static AtomicString mediaControlsTimeline("-webkit-media-controls-timeline");
+    static AtomicString mediaControlsSeekBackButton("-webkit-media-controls-seek-back-button");
+    static AtomicString mediaControlsSeekForwardButton("-webkit-media-controls-seek-forward-button");
+    static AtomicString mediaControlsFullscreenButton("-webkit-media-controls-fullscreen-button");
     static AtomicString notStr("not(");
     static AtomicString root("root");
     static AtomicString searchCancelButton("-webkit-search-cancel-button");
@@ -172,6 +175,15 @@ void CSSSelector::extractPseudoType() const
         element = true;
     } else if (m_value == mediaControlsTimeline) {
         m_pseudoType = PseudoMediaControlsTimeline;
+        element = true;
+    } else if (m_value == mediaControlsSeekBackButton) {
+        m_pseudoType = PseudoMediaControlsSeekBackButton;
+        element = true;
+    } else if (m_value == mediaControlsSeekForwardButton) {
+        m_pseudoType = PseudoMediaControlsSeekForwardButton;
+        element = true;
+    } else if (m_value == mediaControlsFullscreenButton) {
+        m_pseudoType = PseudoMediaControlsFullscreenButton;
         element = true;
     } else if (m_value == notStr)
         m_pseudoType = PseudoNot;

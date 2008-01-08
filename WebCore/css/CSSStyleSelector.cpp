@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 2004-2005 Allan Sandfeld Jensen (kde@carewolf.com)
  *           (C) 2006 Nicholas Shanks (webkit@nickshanks.com)
- * Copyright (C) 2005, 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
  * Copyright (C) 2007 Alexey Proskuryakov <ap@webkit.org>
  *
  * This library is free software; you can redistribute it and/or
@@ -1777,6 +1777,15 @@ bool CSSStyleSelector::checkOneSelector(CSSSelector* sel, Element* e, bool isAnc
                 return true;
             case CSSSelector::PseudoMediaControlsTimeline:
                 dynamicPseudo = RenderStyle::MEDIA_CONTROLS_TIMELINE;
+                return true;
+            case CSSSelector::PseudoMediaControlsSeekBackButton:
+                dynamicPseudo = RenderStyle::MEDIA_CONTROLS_SEEK_BACK_BUTTON;
+                return true;
+            case CSSSelector::PseudoMediaControlsSeekForwardButton:
+                dynamicPseudo = RenderStyle::MEDIA_CONTROLS_SEEK_FORWARD_BUTTON;
+                return true;
+            case CSSSelector::PseudoMediaControlsFullscreenButton:
+                dynamicPseudo = RenderStyle::MEDIA_CONTROLS_FULLSCREEN_BUTTON;
                 return true;
             case CSSSelector::PseudoUnknown:
             case CSSSelector::PseudoNotParsed:

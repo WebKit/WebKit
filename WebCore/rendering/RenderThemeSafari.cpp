@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc.
+ * Copyright (C) 2007, 2008 Apple Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -29,6 +29,7 @@
 #include "FrameView.h"
 #include "GraphicsContext.h"
 #include "HTMLInputElement.h"
+#include "HTMLMediaElement.h"
 #include "RenderSlider.h"
 #include "RenderView.h"
 #include "RetainPtr.h"
@@ -892,7 +893,8 @@ bool RenderThemeSafari::paintSliderTrack(RenderObject* o, const RenderObject::Pa
 {
     IntRect bounds = r;
 
-    if (o->style()->appearance() ==  SliderHorizontalAppearance) {
+    if (o->style()->appearance() ==  SliderHorizontalAppearance || 
+        o->style()->appearance() == MediaSliderAppearance) {
         bounds.setHeight(trackWidth);
         bounds.setY(r.y() + r.height() / 2 - trackWidth / 2);
     } else if (o->style()->appearance() == SliderVerticalAppearance) {
@@ -952,7 +954,9 @@ const int sliderThumbHeight = 15;
 
 void RenderThemeSafari::adjustSliderThumbSize(RenderObject* o) const
 {
-    if (o->style()->appearance() == SliderThumbHorizontalAppearance || o->style()->appearance() == SliderThumbVerticalAppearance) {
+    if (o->style()->appearance() == SliderThumbHorizontalAppearance || 
+        o->style()->appearance() == SliderThumbVerticalAppearance ||
+        o->style()->appearance() == MediaSliderThumbAppearance) {
         o->style()->setWidth(Length(sliderThumbWidth, Fixed));
         o->style()->setHeight(Length(sliderThumbHeight, Fixed));
     }
@@ -1102,7 +1106,83 @@ bool RenderThemeSafari::paintSearchFieldResultsButton(RenderObject* o, const Ren
     paintThemePart(SearchFieldResultsButtonPart, paintInfo.context->platformContext(), searchRect, controlSizeFromRect(searchRect, searchFieldSizes()), determineState(o));
     return false;
 }
+#if ENABLE(VIDEO)
+bool RenderThemeSafari::paintMediaBackground(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
+{
+    ASSERT(SafariThemeLibrary());
 
+    paintThemePart(MediaBackgroundPart, paintInfo.context->platformContext(), r, NSRegularControlSize, 0);
+
+    return false;
+
+}
+
+bool RenderThemeSafari::paintMediaFullscreenButton(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
+{
+    ASSERT(SafariThemeLibrary());
+
+    paintThemePart(MediaFullscreenButtonPart, paintInfo.context->platformContext(), r, NSRegularControlSize, determineState(o));
+
+    return false;
+}
+
+bool RenderThemeSafari::paintMediaMuteButton(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
+{
+    ASSERT(SafariThemeLibrary());
+
+    Node* node = o->element();
+    HTMLMediaElement* mediaElement = node ? static_cast<HTMLMediaElement*>(node->shadowAncestorNode()) : 0;
+
+    if (!node || !mediaElement)
+        return false;
+
+    paintThemePart(mediaElement->muted() ? MediaUnMuteButtonPart : MediaMuteButtonPart, paintInfo.context->platformContext(), r, NSRegularControlSize, determineState(o));
+
+    return false;
+}
+
+bool RenderThemeSafari::paintMediaPlayButton(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
+{
+    ASSERT(SafariThemeLibrary());
+
+    Node* node = o->element();
+    HTMLMediaElement* mediaElement = node ? static_cast<HTMLMediaElement*>(node->shadowAncestorNode()) : 0;
+
+    if (!node || !mediaElement)
+        return false;
+
+    paintThemePart(mediaElement->canPlay() ? MediaPlayButtonPart : MediaPauseButtonPart, paintInfo.context->platformContext(), r, NSRegularControlSize, determineState(o));
+
+    return false;
+}
+
+bool RenderThemeSafari::paintMediaSeekBackButton(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
+{
+    ASSERT(SafariThemeLibrary());
+
+    paintThemePart(MediaSeekBackButtonPart, paintInfo.context->platformContext(), r, NSRegularControlSize, determineState(o));
+
+    return false;
+}
+
+bool RenderThemeSafari::paintMediaSeekForwardButton(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
+{
+    ASSERT(SafariThemeLibrary());
+
+    paintThemePart(MediaSeekForwardButtonPart, paintInfo.context->platformContext(), r, NSRegularControlSize, determineState(o));
+
+    return false;
+}
+
+bool RenderThemeSafari::paintMediaSliderThumb(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
+{
+    ASSERT(SafariThemeLibrary());
+
+    paintThemePart(MediaSliderThumbPart, paintInfo.context->platformContext(), r, NSRegularControlSize, determineState(o));
+
+    return false;
+}
+#endif
 } // namespace WebCore
 
 #endif // defined(USE_SAFARI_THEME)

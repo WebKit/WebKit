@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2006 Apple Computer, Inc.
+ * Copyright (C) 2006, 2007, 2008 Apple Computer, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -199,6 +199,8 @@ RenderStyle* RenderSlider::createThumbStyle(RenderStyle* parentStyle, RenderStyl
        style->setAppearance(SliderThumbVerticalAppearance);
     else if (parentStyle->appearance() == SliderHorizontalAppearance)
        style->setAppearance(SliderThumbHorizontalAppearance);
+    else if (parentStyle->appearance() == MediaSliderAppearance)
+        style->setAppearance(MediaSliderThumbAppearance);
 
     return style;
 }
