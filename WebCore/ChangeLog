@@ -1,3 +1,9 @@
+2008-01-07  Adele Peterson  <adele@apple.com>
+
+        Add missing newline.
+
+        * rendering/MediaControlElements.cpp:
+
 2008-01-07  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Reviewed by Hyatt.
