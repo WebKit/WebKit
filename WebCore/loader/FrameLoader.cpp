@@ -1766,6 +1766,9 @@ bool FrameLoader::canCachePage()
         && m_frame->document()
         && !m_frame->document()->applets()->length()
         && !m_frame->document()->hasWindowEventListener(unloadEvent)
+#if ENABLE(DATABASE)
+        && !m_frame->document()->hasOpenDatabases()
+#endif
         && m_frame->page()
         && m_frame->page()->backForwardList()->enabled()
         && m_frame->page()->backForwardList()->capacity() > 0

@@ -285,6 +285,9 @@ Document::Document(DOMImplementation* impl, Frame* frame, bool isXHTML)
     , m_useSecureKeyboardEntryWhenActive(false)
     , m_isXHTML(isXHTML)
     , m_numNodeLists(0)
+#if ENABLE(DATABASE)
+    , m_hasOpenDatabases(false)
+#endif
 #if USE(LOW_BANDWIDTH_DISPLAY)
     , m_inLowBandwidthDisplay(false)
 #endif

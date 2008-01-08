@@ -1,3 +1,21 @@
+2008-01-07  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Brady.
+
+        - fixed <rdar://problem/5644300> Back/Forward Cache should not include pages with databases
+        
+        Track whether a document has ever opened a database; if so, exclude it from b/f caching (for now)
+        
+        * dom/Document.cpp:
+        (WebCore::Document::Document):
+        * dom/Document.h:
+        (WebCore::Document::setHasOpenDatabases):
+        (WebCore::Document::hasOpenDatabases):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::canCachePage):
+        * storage/Database.cpp:
+        (WebCore::Database::openDatabase):
+
 2008-01-07  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Oliver Hunt.
