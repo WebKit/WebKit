@@ -1,3 +1,14 @@
+2008-01-07  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by John Sullivan.
+
+        <rdar://problem/5674119> Make the Web Inspector toolbar the normal size when not docked
+
+        * page/inspector/inspector.css: Changed CSS rules to have the toolbar and buttons be
+          normal height when not docked, and small when docked. Also added some cursor properties
+          prevent showing the text cursor over areas that are not selectable.
+        * page/inspector/Images: A few images added and old ones removed or renamed.
+
 2008-01-07  Alp Toker  <alp@atoker.com>
 
         Prospective GTK+ autotools/qmake VIDEO build fix for breakage

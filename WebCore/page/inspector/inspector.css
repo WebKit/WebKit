@@ -28,6 +28,7 @@
 
 body {
     -webkit-user-select: none;
+    cursor: default;
     height: 100%;
     width: 100%;
     overflow: hidden;
@@ -38,6 +39,10 @@ body {
 
 iframe, a img {
     border: none;
+}
+
+img {
+    -webkit-user-drag: none;
 }
 
 .focused .selected {
@@ -57,7 +62,7 @@ iframe, a img {
     top: 0;
     left: 0;
     right: 0;
-    height: 28px;
+    height: 32px;
     background-color: rgb(245, 245, 250);
     background-image: url(Images/toolbarBackground.png);
     background-repeat: repeat-x;
@@ -78,6 +83,7 @@ body.inactive #toolbar {
 }
 
 body.attached #toolbar {
+    height: 28px;
     border-top: 1px solid rgb(80, 80, 80);
     background-image: url(Images/darkShadow.png), url(Images/toolbarBackground.png);
     background-position: center -2px, top;
@@ -93,38 +99,75 @@ body.attached.inactive #toolbar {
 
 #toolbar button, #toolbar button:disabled:active {
     border-width: 3px 3px 4px 3px;
-    -webkit-border-image: url(Images/toolbarButton.png) 3 3 4 3;
-    height: 19px;
+    border-style: none;
+    border-color: transparent;
+    background-color: transparent;
+    -webkit-border-image: url(Images/toolbarButtonNormal.png) 3 3 4 3;
+    height: 23px;
     -webkit-box-sizing: border-box;
     vertical-align: middle;
-    line-height: 7px;
+    line-height: 10px;
 }
 
 #toolbar button:focus {
     outline: none;
 }
 
-#toolbar button:active, #toolbar button.selected {
-    -webkit-border-image: url(Images/toolbarButtonPressed.png) 3 3 4 3;
+#toolbar button:active {
+    -webkit-border-image: url(Images/toolbarButtonNormalPressed.png) 3 3 4 3;
 }
 
-body.inactive #toolbar button:active, body.inactive #toolbar button.selected {
-    -webkit-border-image: url(Images/toolbarButtonPressedInactive.png) 3 3 4 3;
+#toolbar button.selected {
+    -webkit-border-image: url(Images/toolbarButtonNormalSelected.png) 3 3 4 3;
+}
+
+body.inactive #toolbar button:active {
+    -webkit-border-image: url(Images/toolbarButtonNormalPressedInactive.png) 3 3 4 3;
+}
+
+body.inactive #toolbar button.selected {
+    -webkit-border-image: url(Images/toolbarButtonNormalSelectedInactive.png) 3 3 4 3;
 }
 
 body.inactive #toolbar button, body.inactive #toolbar button:disabled:active {
-    -webkit-border-image: url(Images/toolbarButtonInactive.png) 3 3 4 3;
+    -webkit-border-image: url(Images/toolbarButtonNormalInactive.png) 3 3 4 3;
+}
+
+body.attached #toolbar button {
+    height: 19px;
+    line-height: 7px;
+    -webkit-border-image: url(Images/toolbarButtonSmall.png) 3 3 4 3;
+}
+
+body.attached #toolbar button:active {
+    -webkit-border-image: url(Images/toolbarButtonSmallPressed.png) 3 3 4 3;
+}
+
+body.attached #toolbar button.selected {
+    -webkit-border-image: url(Images/toolbarButtonSmallSelected.png) 3 3 4 3;
+}
+
+body.attached.inactive #toolbar button:active {
+    -webkit-border-image: url(Images/toolbarButtonSmallPressedInactive.png) 3 3 4 3;
+}
+
+body.attached.inactive #toolbar button.selected {
+    -webkit-border-image: url(Images/toolbarButtonSmallSelectedInactive.png) 3 3 4 3;
+}
+
+body.attached.inactive #toolbar button, body.inactive #toolbar button:disabled:active {
+    -webkit-border-image: url(Images/toolbarButtonSmallInactive.png) 3 3 4 3;
 }
 
 #toolbar select, #toolbar select:disabled:active {
     background-color: transparent;
-    border-width: 3px 12px 4px 3px;
+    border-width: 3px 10px 4px 3px;
     border-color: transparent;
-    -webkit-border-image: url(Images/toolbarPopup.png) 3 12 4 3;
-    height: 19px;
+    -webkit-border-image: url(Images/toolbarPopupButtonNormal.png) 3 10 4 3;
+    height: 23px;
     font-size: 10px;
     padding-left: 8px;
-    padding-right: 4px;
+    padding-right: 6px;
     -webkit-box-sizing: border-box;
     -webkit-border-radius: 0;
     -webkit-appearance: none;
@@ -135,31 +178,61 @@ body.inactive #toolbar button, body.inactive #toolbar button:disabled:active {
     outline: none;
 }
 
-#toolbar select:active, #toolbar select.selected {
-    -webkit-border-image: url(Images/toolbarPopupPressed.png) 3 12 4 3;
+#toolbar select:active {
+    -webkit-border-image: url(Images/toolbarPopupButtonNormalPressed.png) 3 10 4 3;
 }
 
-body.inactive #toolbar select:active, body.inactive #toolbar select.selected {
-    -webkit-border-image: url(Images/toolbarPopupPressedInactive.png) 3 12 4 3;
+body.inactive #toolbar select:active {
+    -webkit-border-image: url(Images/toolbarPopupButtonNormalPressedInactive.png) 3 10 4 3;
 }
 
 body.inactive #toolbar select, body.inactive #toolbar select:disabled:active {
-    -webkit-border-image: url(Images/toolbarPopupInactive.png) 3 12 4 3;
+    -webkit-border-image: url(Images/toolbarPopupButtonNormalInactive.png) 3 10 4 3;
+}
+
+body.attached #toolbar select, #toolbar select:disabled:active {
+    -webkit-border-image: url(Images/toolbarPopupButtonSmall.png) 3 10 4 3;
+    height: 19px;
+}
+
+body.attached #toolbar select:active {
+    -webkit-border-image: url(Images/toolbarPopupButtonSmallPressed.png) 3 10 4 3;
+}
+
+body.attached.inactive #toolbar select:active {
+    -webkit-border-image: url(Images/toolbarPopupButtonSmallPressedInactive.png) 3 10 4 3;
+}
+
+body.attached.inactive #toolbar select, body.inactive #toolbar select:disabled:active {
+    -webkit-border-image: url(Images/toolbarPopupButtonSmallInactive.png) 3 10 4 3;
 }
 
 #toolbar .split-button-divider {
     width: 1px;
-    height: 19px;
-    content: url(Images/toolbarSplitButtonDivider.png);
+    height: 23px;
+    content: url(Images/toolbarSplitButtonDividerNormal.png);
     vertical-align: middle;
 }
 
 body.inactive #toolbar .split-button-divider {
-    content: url(Images/toolbarSplitButtonDividerInactive.png);
+    content: url(Images/toolbarSplitButtonDividerNormalInactive.png);
+}
+
+body.attached #toolbar .split-button-divider {
+    height: 19px;
+    content: url(Images/toolbarSplitButtonDividerSmall.png);
+}
+
+body.attached.inactive #toolbar .split-button-divider {
+    content: url(Images/toolbarSplitButtonDividerSmallInactive.png);
 }
 
 #toolbar .split-button {
     padding: 0;
+    width: 26px;
+}
+
+body.attached #toolbar .split-button {
     width: 20px;
 }
 
@@ -177,52 +250,85 @@ body.inactive #toolbar .split-button-divider {
 }
 
 #back img {
+    content: url(Images/backNormal.png);
+    vertical-align: middle;
+    margin-top: -1px;
+    width: 8px;
+    height: 10px;
+}
+
+body.attached #back img {
     content: url(Images/treeLeftTriangleBlack.png);
-    position: relative;
-    top: -1px;
-    left: -1px;
+    margin-top: -1px;
+    margin-left: -1px;
     width: 8px;
     height: 8px;
 }
 
 #back:disabled img, #forward:disabled img {
-    opacity: 0.5;
+    opacity: 0.45;
 }
 
 #forward img {
+    content: url(Images/forwardNormal.png);
+    vertical-align: middle;
+    margin-top: -1px;
+    margin-left: 1px;
+    width: 8px;
+    height: 10px;
+}
+
+body.attached #forward img {
     content: url(Images/treeRightTriangleBlack.png);
-    position: relative;
-    top: -1px;
-    left: 2px;
+    margin-top: -1px;
     width: 8px;
     height: 8px;
 }
 
 .view-button-source img {
-    content: url(Images/sourceViewButton.png);
-    position: relative;
-    top: -1px;
-    width: 8px;
-    height: 7px;
-    opacity: 0.66;
+    content: url(Images/sourceViewNormal.png);
+    vertical-align: middle;
+    margin-top: 1px;
+    margin-left: -1px;
+    width: 11px;
+    height: 11px;
 }
 
 .view-button-source.selected img {
-    opacity: 1;
+    content: url(Images/sourceViewNormalSelected.png);
+}
+
+body.attached .view-button-source img {
+    content: url(Images/sourceViewSmall.png);
+    width: 8px;
+    height: 8px;
+}
+
+body.attached .view-button-source.selected img {
+    content: url(Images/sourceViewSmallSelected.png);
 }
 
 .view-button-dom img {
-    content: url(Images/domViewButton.png);
-    position: relative;
-    top: -1px;
-    left: 1px;
-    width: 10px;
-    height: 7px;
-    opacity: 0.66;
+    content: url(Images/domViewNormal.png);
+    vertical-align: middle;
+    margin-top: 1px;
+    margin-left: 3px;
+    width: 11px;
+    height: 11px;
 }
 
 .view-button-dom.selected img {
-    opacity: 1;
+    content: url(Images/domViewNormalSelected.png);
+}
+
+body.attached .view-button-dom img {
+    content: url(Images/domViewSmall.png);
+    width: 10px;
+    height: 8px;
+}
+
+body.attached .view-button-dom.selected img {
+    content: url(Images/domViewSmallSelected.png);
 }
 
 #toolbarButtons {
@@ -233,11 +339,12 @@ body.inactive #toolbar .split-button-divider {
 
 #search {
     float: right;
-    width: 200px;
+    width: 210px;
+    font-size: 16px;
 }
 
-#search:focus {
-    outline: 1px auto;
+body.attached #search {
+    font-size: 12px;
 }
 
 #searchResults {
@@ -292,7 +399,7 @@ body.inactive .focused .selected .search-results-section {
 
 #sidebar {
     position: absolute;
-    top: 28px;
+    top: 32px;
     left: 0;
     bottom: 0;
     width: 200px;
@@ -303,6 +410,10 @@ body.inactive .focused .selected .search-results-section {
 
 body.inactive #sidebar {
     background-color: rgb(232, 232, 232);
+}
+
+body.attached #sidebar {
+    top: 28px;
 }
 
 #statusbar {
@@ -503,7 +614,6 @@ body.attached #attachToggle:active {
     position: relative;
     height: 37px;
     -webkit-box-sizing: border-box;
-    -webkit-user-drag: element;
 }
 
 #list > ol > li:-webkit-drag {
@@ -559,7 +669,6 @@ body.attached #attachToggle:active {
     right: 0;
     max-width: 20px;
     max-height: 22px;
-    -webkit-user-drag: none;
     -webkit-box-sizing: border-box;
     border-top: 6px solid transparent;
 }
@@ -652,13 +761,17 @@ body.inactive #sidebar li.selected {
 
 #main {
     position: absolute;
-    top: 28px;
+    top: 32px;
     left: 200px;
     right: 0;
     bottom: 0;
     overflow: hidden;
     background-color: white;
     z-index: -100;
+}
+
+body.attached #main {
+    top: 28px;
 }
 
 #panels {
@@ -689,6 +802,7 @@ body.inactive #sidebar li.selected {
 .content {
     display: none;
     -webkit-user-select: text;
+    cursor: auto;
     overflow: none;
     position: absolute;
     top: 0;
@@ -830,12 +944,14 @@ body.inactive #sidebar li.selected {
     border-left: 1px solid rgb(64%, 64%, 64%);
     -webkit-box-sizing: border-box;
     -webkit-user-select: none;
+    cursor: default;
     overflow: auto;
     padding: 0;
 }
 
 .crumbs {
     -webkit-user-select: none;
+    cursor: default;
     -webkit-box-sizing: border-box;
     position: absolute;
     left: 0;
@@ -866,7 +982,6 @@ body.inactive #sidebar li.selected {
     padding-right: 2px;
     white-space: nowrap;
     float: right;
-    cursor: default;
 }
 
 .crumbs .crumb.collapsed > * {
@@ -943,6 +1058,7 @@ body.inactive #sidebar li.selected {
     margin: 0;
     color: black;
     -webkit-user-select: none;
+    cursor: default;
     min-width: 100%;
     -webkit-box-sizing: border-box;
 }
@@ -1135,6 +1251,7 @@ body:not(.inactive) .focused .outline-disclosure li.selected * {
     text-overflow: ellipsis;
     overflow: hidden;
     -webkit-user-select: text;
+    cursor: auto;
     outline: none;
 }
 
@@ -1166,6 +1283,7 @@ body:not(.inactive) .focused .outline-disclosure li.selected * {
     margin-top: 0;
     padding-right: 2px;
     -webkit-user-select: none;
+    cursor: default;
 }
 
 .section .properties li.parent.expanded::before {
@@ -1385,6 +1503,8 @@ body:not(.inactive) .focused .outline-disclosure li.selected * {
     left: 0;
     right: 0;
     overflow: auto;
+    -webkit-user-select: text;
+    cursor: auto;
 }
 
 .console-prompt {
@@ -1410,7 +1530,6 @@ body:not(.inactive) .focused .outline-disclosure li.selected * {
     border-bottom: 1px solid rgb(75%, 75%, 75%);
     word-break: break-word;
     position: relative;
-    -webkit-user-select: text;
 }
 
 .console-command a:hover {
@@ -1479,48 +1598,71 @@ body:not(.inactive) .focused .outline-disclosure li.selected * {
 }
 
 .view-button-browse img {
-    content: url(Images/databaseBrowserViewButton.png);
-    position: relative;
-    top: -1px;
-    left: 1px;
+    content: url(Images/databaseBrowserViewNormal.png);
+    vertical-align: middle;
+    margin-top: -1px;
+    margin-left: 1px;
     width: 11px;
-    height: 7px;
-    opacity: 0.66;
+    height: 11px;
 }
 
 .view-button-browse.selected img {
-    opacity: 1;
+    content: url(Images/databaseBrowserViewNormalSelected.png);
+}
+
+body.attached .view-button-browse img {
+    content: url(Images/databaseBrowserViewSmall.png);
+    width: 11px;
+    height: 8px;
+    margin-top: 1px;
+    margin-left: 2px;
+}
+
+body.attached .view-button-browse.selected img {
+    content: url(Images/databaseBrowserViewSmallSelected.png);
 }
 
 .view-button-query img {
-    content: url(Images/databaseQueryViewButton.png);
-    position: relative;
-    top: -1px;
-    left: 0px;
-    width: 10px;
-    height: 7px;
-    opacity: 0.66;
+    content: url(Images/databaseQueryViewNormal.png);
+    vertical-align: middle;
+    margin-top: -1px;
+    margin-left: -1px;
+    width: 11px;
+    height: 11px;
 }
 
 .view-button-query.selected img {
-    opacity: 1;
+    content: url(Images/databaseQueryViewNormalSelected.png);
+}
+
+body.attached .view-button-query img {
+    content: url(Images/databaseQueryViewSmall.png);
+    width: 10px;
+    height: 8px;
+    margin-top: 1px;
+}
+
+body.attached .view-button-query.selected img {
+    content: url(Images/databaseQueryViewSmallSelected.png);
 }
 
 .database-table-reload {
     padding-left: 0;
     padding-right: 0;
-    width: 20px;
+    width: 28px;
     margin-left: 6px;
+}
+
+body.attached .database-table-reload {
+    width: 20px;
 }
 
 .database-table-reload img {
     content: url(Images/reload.png);
-    position: relative;
-    top: -2px;
-    left: 0px;
+    vertical-align: middle;
+    margin-top: -2px;
     width: 10px;
-    height: 11px;
-    opacity: 0.7;
+    height: 13px;
 }
 
 .query.content {
@@ -1749,6 +1891,7 @@ body:not(.inactive) .focused .outline-disclosure li.selected * {
     background-position: top, bottom;
     overflow: hidden;
     -webkit-user-select: text;
+    cursor: auto;
 }
 
 .network-info table {
