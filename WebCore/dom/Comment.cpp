@@ -59,7 +59,7 @@ Node::NodeType Comment::nodeType() const
 
 PassRefPtr<Node> Comment::cloneNode(bool /*deep*/)
 {
-    return document()->createComment(str);
+    return document()->createComment(m_str);
 }
 
 // DOM Section 1.1.1

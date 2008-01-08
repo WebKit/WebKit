@@ -35,9 +35,9 @@ public:
 
     // DOM methods & attributes for CharacterData
 
-    String data() const { return str; }
+    String data() const { return m_str; }
     void setData(const String&, ExceptionCode&);
-    unsigned length() const { return str->length(); }
+    unsigned length() const { return m_str->length(); }
     String substringData(unsigned offset, unsigned count, ExceptionCode&);
     void appendData(const String&, ExceptionCode&);
     void insertData(unsigned offset, const String&, ExceptionCode&);
@@ -55,7 +55,7 @@ public:
 
     virtual bool isCharacterDataNode() const { return true; }
     virtual int maxCharacterOffset() const;
-    StringImpl* string() { return str.get(); }
+    StringImpl* string() { return m_str.get(); }
     virtual void checkCharDataOperation(unsigned offset, ExceptionCode&);
 
     virtual bool offsetInCharacters() const;
@@ -66,7 +66,7 @@ public:
 #endif
 
 protected:
-    RefPtr<StringImpl> str;
+    RefPtr<StringImpl> m_str;
 
     void dispatchModifiedEvent(StringImpl* oldValue);
 };

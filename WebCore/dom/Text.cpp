@@ -59,7 +59,7 @@ PassRefPtr<Text> Text::splitText(unsigned offset, ExceptionCode& ec)
     
     // INDEX_SIZE_ERR: Raised if the specified offset is negative or greater than
     // the number of 16-bit units in data.
-    if (offset > str->length()) {
+    if (offset > m_str->length()) {
         ec = INDEX_SIZE_ERR;
         return 0;
     }
@@ -70,9 +70,9 @@ PassRefPtr<Text> Text::splitText(unsigned offset, ExceptionCode& ec)
         return 0;
     }
 
-    RefPtr<StringImpl> oldStr = str;
+    RefPtr<StringImpl> oldStr = m_str;
     PassRefPtr<Text> newText = createNew(oldStr->substring(offset));
-    str = oldStr->substring(0, offset);
+    m_str = oldStr->substring(0, offset);
 
     dispatchModifiedEvent(oldStr.get());
 
@@ -82,7 +82,7 @@ PassRefPtr<Text> Text::splitText(unsigned offset, ExceptionCode& ec)
         return 0;
 
     if (renderer())
-        static_cast<RenderText*>(renderer())->setText(str);
+        static_cast<RenderText*>(renderer())->setText(m_str);
 
     return newText;
 }
@@ -104,7 +104,7 @@ Node::NodeType Text::nodeType() const
 
 PassRefPtr<Node> Text::cloneNode(bool /*deep*/)
 {
-    return document()->createTextNode(str);
+    return document()->createTextNode(m_str);
 }
 
 bool Text::rendererIsNeeded(RenderStyle *style)
@@ -153,10 +153,10 @@ RenderObject *Text::createRenderer(RenderArena *arena, RenderStyle *style)
 {
 #if ENABLE(SVG)
     if (parentNode()->isSVGElement())
-        return new (arena) RenderSVGInlineText(this, str);
+        return new (arena) RenderSVGInlineText(this, m_str);
 #endif // ENABLE(SVG)
     
-    return new (arena) RenderText(this, str);
+    return new (arena) RenderText(this, m_str);
 }
 
 void Text::attach()
@@ -171,7 +171,7 @@ void Text::recalcStyle( StyleChange change )
         if (renderer())
             renderer()->setStyle(parentNode()->renderer()->style());
     if (changed() && renderer() && renderer()->isText())
-        static_cast<RenderText*>(renderer())->setText(str);
+        static_cast<RenderText*>(renderer())->setText(m_str);
     setChanged(NoStyleChange);
 }
 
