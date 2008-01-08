@@ -1,3 +1,14 @@
+2008-01-07  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Fix ASSERTION FAILED: dstOffset + srcSegmentLength == static_cast<int>(data.size())
+        when the replacment string is a different length.
+
+        * platform/text/StringImpl.cpp:
+        (WebCore::StringImpl::replace): Move the parenthesis to be around only the subtraction in
+        the Vector size calculation, correcting the order of math operations.
+
 2008-01-07  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Eric. Hopefully fix build with mac tiger after the unicode-range addition. NSInteger not available there.
