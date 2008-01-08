@@ -550,7 +550,6 @@
 		65FEA86909833ADE00BED4AB /* Page.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65FEA86809833ADE00BED4AB /* Page.cpp */; };
 		75793E830D0CE0B3007FC0AC /* MessageEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 75793E800D0CE0B3007FC0AC /* MessageEvent.cpp */; };
 		75793E840D0CE0B3007FC0AC /* MessageEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 75793E810D0CE0B3007FC0AC /* MessageEvent.h */; };
-		75793E850D0CE0B3007FC0AC /* MessageEvent.idl in Resources */ = {isa = PBXBuildFile; fileRef = 75793E820D0CE0B3007FC0AC /* MessageEvent.idl */; };
 		75793EC80D0CE72D007FC0AC /* JSMessageEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 75793EC60D0CE72D007FC0AC /* JSMessageEvent.cpp */; };
 		75793EC90D0CE72D007FC0AC /* JSMessageEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 75793EC70D0CE72D007FC0AC /* JSMessageEvent.h */; };
 		75793ED30D0CE85B007FC0AC /* DOMMessageEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 75793ED00D0CE85B007FC0AC /* DOMMessageEvent.h */; };
@@ -2572,322 +2571,202 @@
 		B22279720D00BF220071B782 /* RadialGradientAttributes.h in Headers */ = {isa = PBXBuildFile; fileRef = B22277DC0D00BF1F0071B782 /* RadialGradientAttributes.h */; };
 		B22279730D00BF220071B782 /* SVGAElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B22277DD0D00BF1F0071B782 /* SVGAElement.cpp */; };
 		B22279740D00BF220071B782 /* SVGAElement.h in Headers */ = {isa = PBXBuildFile; fileRef = B22277DE0D00BF1F0071B782 /* SVGAElement.h */; };
-		B22279750D00BF220071B782 /* SVGAElement.idl in Resources */ = {isa = PBXBuildFile; fileRef = B22277DF0D00BF1F0071B782 /* SVGAElement.idl */; };
 		B22279760D00BF220071B782 /* SVGAngle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B22277E00D00BF1F0071B782 /* SVGAngle.cpp */; };
 		B22279770D00BF220071B782 /* SVGAngle.h in Headers */ = {isa = PBXBuildFile; fileRef = B22277E10D00BF1F0071B782 /* SVGAngle.h */; };
-		B22279780D00BF220071B782 /* SVGAngle.idl in Resources */ = {isa = PBXBuildFile; fileRef = B22277E20D00BF1F0071B782 /* SVGAngle.idl */; };
 		B22279790D00BF220071B782 /* SVGAnimateColorElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B22277E30D00BF1F0071B782 /* SVGAnimateColorElement.cpp */; };
 		B222797A0D00BF220071B782 /* SVGAnimateColorElement.h in Headers */ = {isa = PBXBuildFile; fileRef = B22277E40D00BF1F0071B782 /* SVGAnimateColorElement.h */; };
-		B222797B0D00BF220071B782 /* SVGAnimateColorElement.idl in Resources */ = {isa = PBXBuildFile; fileRef = B22277E50D00BF1F0071B782 /* SVGAnimateColorElement.idl */; };
-		B222797C0D00BF220071B782 /* SVGAnimatedAngle.idl in Resources */ = {isa = PBXBuildFile; fileRef = B22277E60D00BF1F0071B782 /* SVGAnimatedAngle.idl */; };
-		B222797D0D00BF220071B782 /* SVGAnimatedBoolean.idl in Resources */ = {isa = PBXBuildFile; fileRef = B22277E70D00BF1F0071B782 /* SVGAnimatedBoolean.idl */; };
-		B222797E0D00BF220071B782 /* SVGAnimatedEnumeration.idl in Resources */ = {isa = PBXBuildFile; fileRef = B22277E80D00BF1F0071B782 /* SVGAnimatedEnumeration.idl */; };
-		B222797F0D00BF220071B782 /* SVGAnimatedInteger.idl in Resources */ = {isa = PBXBuildFile; fileRef = B22277E90D00BF1F0071B782 /* SVGAnimatedInteger.idl */; };
-		B22279800D00BF220071B782 /* SVGAnimatedLength.idl in Resources */ = {isa = PBXBuildFile; fileRef = B22277EA0D00BF1F0071B782 /* SVGAnimatedLength.idl */; };
-		B22279810D00BF220071B782 /* SVGAnimatedLengthList.idl in Resources */ = {isa = PBXBuildFile; fileRef = B22277EB0D00BF1F0071B782 /* SVGAnimatedLengthList.idl */; };
-		B22279820D00BF220071B782 /* SVGAnimatedNumber.idl in Resources */ = {isa = PBXBuildFile; fileRef = B22277EC0D00BF1F0071B782 /* SVGAnimatedNumber.idl */; };
-		B22279830D00BF220071B782 /* SVGAnimatedNumberList.idl in Resources */ = {isa = PBXBuildFile; fileRef = B22277ED0D00BF1F0071B782 /* SVGAnimatedNumberList.idl */; };
 		B22279840D00BF220071B782 /* SVGAnimatedPathData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B22277EE0D00BF1F0071B782 /* SVGAnimatedPathData.cpp */; };
 		B22279850D00BF220071B782 /* SVGAnimatedPathData.h in Headers */ = {isa = PBXBuildFile; fileRef = B22277EF0D00BF1F0071B782 /* SVGAnimatedPathData.h */; };
-		B22279860D00BF220071B782 /* SVGAnimatedPathData.idl in Resources */ = {isa = PBXBuildFile; fileRef = B22277F00D00BF1F0071B782 /* SVGAnimatedPathData.idl */; };
 		B22279870D00BF220071B782 /* SVGAnimatedPoints.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B22277F10D00BF1F0071B782 /* SVGAnimatedPoints.cpp */; };
 		B22279880D00BF220071B782 /* SVGAnimatedPoints.h in Headers */ = {isa = PBXBuildFile; fileRef = B22277F20D00BF1F0071B782 /* SVGAnimatedPoints.h */; };
-		B22279890D00BF220071B782 /* SVGAnimatedPoints.idl in Resources */ = {isa = PBXBuildFile; fileRef = B22277F30D00BF1F0071B782 /* SVGAnimatedPoints.idl */; };
-		B222798A0D00BF220071B782 /* SVGAnimatedPreserveAspectRatio.idl in Resources */ = {isa = PBXBuildFile; fileRef = B22277F40D00BF1F0071B782 /* SVGAnimatedPreserveAspectRatio.idl */; };
-		B222798B0D00BF220071B782 /* SVGAnimatedRect.idl in Resources */ = {isa = PBXBuildFile; fileRef = B22277F50D00BF1F0071B782 /* SVGAnimatedRect.idl */; };
-		B222798C0D00BF220071B782 /* SVGAnimatedString.idl in Resources */ = {isa = PBXBuildFile; fileRef = B22277F60D00BF1F0071B782 /* SVGAnimatedString.idl */; };
 		B222798D0D00BF220071B782 /* SVGAnimatedTemplate.h in Headers */ = {isa = PBXBuildFile; fileRef = B22277F70D00BF1F0071B782 /* SVGAnimatedTemplate.h */; };
-		B222798E0D00BF220071B782 /* SVGAnimatedTransformList.idl in Resources */ = {isa = PBXBuildFile; fileRef = B22277F80D00BF1F0071B782 /* SVGAnimatedTransformList.idl */; };
 		B222798F0D00BF220071B782 /* SVGAnimateElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B22277F90D00BF1F0071B782 /* SVGAnimateElement.cpp */; };
 		B22279900D00BF220071B782 /* SVGAnimateElement.h in Headers */ = {isa = PBXBuildFile; fileRef = B22277FA0D00BF1F0071B782 /* SVGAnimateElement.h */; };
-		B22279910D00BF220071B782 /* SVGAnimateElement.idl in Resources */ = {isa = PBXBuildFile; fileRef = B22277FB0D00BF1F0071B782 /* SVGAnimateElement.idl */; };
 		B22279920D00BF220071B782 /* SVGAnimateMotionElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B22277FC0D00BF1F0071B782 /* SVGAnimateMotionElement.cpp */; };
 		B22279930D00BF220071B782 /* SVGAnimateMotionElement.h in Headers */ = {isa = PBXBuildFile; fileRef = B22277FD0D00BF1F0071B782 /* SVGAnimateMotionElement.h */; };
 		B22279940D00BF220071B782 /* SVGAnimateTransformElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B22277FE0D00BF1F0071B782 /* SVGAnimateTransformElement.cpp */; };
 		B22279950D00BF220071B782 /* SVGAnimateTransformElement.h in Headers */ = {isa = PBXBuildFile; fileRef = B22277FF0D00BF1F0071B782 /* SVGAnimateTransformElement.h */; };
-		B22279960D00BF220071B782 /* SVGAnimateTransformElement.idl in Resources */ = {isa = PBXBuildFile; fileRef = B22278000D00BF1F0071B782 /* SVGAnimateTransformElement.idl */; };
 		B22279970D00BF220071B782 /* SVGAnimationElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B22278010D00BF1F0071B782 /* SVGAnimationElement.cpp */; };
 		B22279980D00BF220071B782 /* SVGAnimationElement.h in Headers */ = {isa = PBXBuildFile; fileRef = B22278020D00BF1F0071B782 /* SVGAnimationElement.h */; };
-		B22279990D00BF220071B782 /* SVGAnimationElement.idl in Resources */ = {isa = PBXBuildFile; fileRef = B22278030D00BF1F0071B782 /* SVGAnimationElement.idl */; };
-		B222799A0D00BF220071B782 /* svgattrs.in in Resources */ = {isa = PBXBuildFile; fileRef = B22278040D00BF1F0071B782 /* svgattrs.in */; };
 		B222799B0D00BF220071B782 /* SVGCircleElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B22278050D00BF1F0071B782 /* SVGCircleElement.cpp */; };
 		B222799C0D00BF220071B782 /* SVGCircleElement.h in Headers */ = {isa = PBXBuildFile; fileRef = B22278060D00BF1F0071B782 /* SVGCircleElement.h */; };
-		B222799D0D00BF220071B782 /* SVGCircleElement.idl in Resources */ = {isa = PBXBuildFile; fileRef = B22278070D00BF1F0071B782 /* SVGCircleElement.idl */; };
 		B222799E0D00BF220071B782 /* SVGClipPathElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B22278080D00BF1F0071B782 /* SVGClipPathElement.cpp */; };
 		B222799F0D00BF220071B782 /* SVGClipPathElement.h in Headers */ = {isa = PBXBuildFile; fileRef = B22278090D00BF1F0071B782 /* SVGClipPathElement.h */; };
-		B22279A00D00BF220071B782 /* SVGClipPathElement.idl in Resources */ = {isa = PBXBuildFile; fileRef = B222780A0D00BF1F0071B782 /* SVGClipPathElement.idl */; };
 		B22279A10D00BF220071B782 /* SVGColor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B222780B0D00BF1F0071B782 /* SVGColor.cpp */; };
 		B22279A20D00BF220071B782 /* SVGColor.h in Headers */ = {isa = PBXBuildFile; fileRef = B222780C0D00BF1F0071B782 /* SVGColor.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		B22279A30D00BF220071B782 /* SVGColor.idl in Resources */ = {isa = PBXBuildFile; fileRef = B222780D0D00BF1F0071B782 /* SVGColor.idl */; };
 		B22279A40D00BF220071B782 /* SVGComponentTransferFunctionElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B222780E0D00BF1F0071B782 /* SVGComponentTransferFunctionElement.cpp */; };
 		B22279A50D00BF220071B782 /* SVGComponentTransferFunctionElement.h in Headers */ = {isa = PBXBuildFile; fileRef = B222780F0D00BF1F0071B782 /* SVGComponentTransferFunctionElement.h */; };
-		B22279A60D00BF220071B782 /* SVGComponentTransferFunctionElement.idl in Resources */ = {isa = PBXBuildFile; fileRef = B22278100D00BF1F0071B782 /* SVGComponentTransferFunctionElement.idl */; };
 		B22279A70D00BF220071B782 /* SVGCursorElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B22278110D00BF1F0071B782 /* SVGCursorElement.cpp */; };
 		B22279A80D00BF220071B782 /* SVGCursorElement.h in Headers */ = {isa = PBXBuildFile; fileRef = B22278120D00BF1F0071B782 /* SVGCursorElement.h */; };
-		B22279A90D00BF220071B782 /* SVGCursorElement.idl in Resources */ = {isa = PBXBuildFile; fileRef = B22278130D00BF1F0071B782 /* SVGCursorElement.idl */; };
 		B22279AA0D00BF220071B782 /* SVGDefinitionSrcElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B22278140D00BF1F0071B782 /* SVGDefinitionSrcElement.cpp */; };
 		B22279AB0D00BF220071B782 /* SVGDefinitionSrcElement.h in Headers */ = {isa = PBXBuildFile; fileRef = B22278150D00BF1F0071B782 /* SVGDefinitionSrcElement.h */; };
-		B22279AC0D00BF220071B782 /* SVGDefinitionSrcElement.idl in Resources */ = {isa = PBXBuildFile; fileRef = B22278160D00BF1F0071B782 /* SVGDefinitionSrcElement.idl */; };
 		B22279AD0D00BF220071B782 /* SVGDefsElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B22278170D00BF1F0071B782 /* SVGDefsElement.cpp */; };
 		B22279AE0D00BF220071B782 /* SVGDefsElement.h in Headers */ = {isa = PBXBuildFile; fileRef = B22278180D00BF1F0071B782 /* SVGDefsElement.h */; };
-		B22279AF0D00BF220071B782 /* SVGDefsElement.idl in Resources */ = {isa = PBXBuildFile; fileRef = B22278190D00BF1F0071B782 /* SVGDefsElement.idl */; };
 		B22279B00D00BF220071B782 /* SVGDescElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B222781A0D00BF1F0071B782 /* SVGDescElement.cpp */; };
 		B22279B10D00BF220071B782 /* SVGDescElement.h in Headers */ = {isa = PBXBuildFile; fileRef = B222781B0D00BF1F0071B782 /* SVGDescElement.h */; };
-		B22279B20D00BF220071B782 /* SVGDescElement.idl in Resources */ = {isa = PBXBuildFile; fileRef = B222781C0D00BF1F0071B782 /* SVGDescElement.idl */; };
 		B22279B30D00BF220071B782 /* SVGDocument.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B222781D0D00BF1F0071B782 /* SVGDocument.cpp */; };
 		B22279B40D00BF220071B782 /* SVGDocument.h in Headers */ = {isa = PBXBuildFile; fileRef = B222781E0D00BF1F0071B782 /* SVGDocument.h */; };
-		B22279B50D00BF220071B782 /* SVGDocument.idl in Resources */ = {isa = PBXBuildFile; fileRef = B222781F0D00BF1F0071B782 /* SVGDocument.idl */; };
 		B22279B60D00BF220071B782 /* SVGElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B22278200D00BF1F0071B782 /* SVGElement.cpp */; };
 		B22279B70D00BF220071B782 /* SVGElement.h in Headers */ = {isa = PBXBuildFile; fileRef = B22278210D00BF1F0071B782 /* SVGElement.h */; };
-		B22279B80D00BF220071B782 /* SVGElement.idl in Resources */ = {isa = PBXBuildFile; fileRef = B22278220D00BF1F0071B782 /* SVGElement.idl */; };
 		B22279B90D00BF220071B782 /* SVGElementInstance.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B22278230D00BF1F0071B782 /* SVGElementInstance.cpp */; };
 		B22279BA0D00BF220071B782 /* SVGElementInstance.h in Headers */ = {isa = PBXBuildFile; fileRef = B22278240D00BF1F0071B782 /* SVGElementInstance.h */; };
-		B22279BB0D00BF220071B782 /* SVGElementInstance.idl in Resources */ = {isa = PBXBuildFile; fileRef = B22278250D00BF1F0071B782 /* SVGElementInstance.idl */; };
 		B22279BC0D00BF220071B782 /* SVGElementInstanceList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B22278260D00BF1F0071B782 /* SVGElementInstanceList.cpp */; };
 		B22279BD0D00BF220071B782 /* SVGElementInstanceList.h in Headers */ = {isa = PBXBuildFile; fileRef = B22278270D00BF1F0071B782 /* SVGElementInstanceList.h */; };
-		B22279BE0D00BF220071B782 /* SVGElementInstanceList.idl in Resources */ = {isa = PBXBuildFile; fileRef = B22278280D00BF1F0071B782 /* SVGElementInstanceList.idl */; };
 		B22279BF0D00BF220071B782 /* SVGEllipseElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B22278290D00BF1F0071B782 /* SVGEllipseElement.cpp */; };
 		B22279C00D00BF220071B782 /* SVGEllipseElement.h in Headers */ = {isa = PBXBuildFile; fileRef = B222782A0D00BF1F0071B782 /* SVGEllipseElement.h */; };
-		B22279C10D00BF220071B782 /* SVGEllipseElement.idl in Resources */ = {isa = PBXBuildFile; fileRef = B222782B0D00BF1F0071B782 /* SVGEllipseElement.idl */; };
 		B22279C20D00BF220071B782 /* SVGException.h in Headers */ = {isa = PBXBuildFile; fileRef = B222782C0D00BF1F0071B782 /* SVGException.h */; };
-		B22279C30D00BF220071B782 /* SVGException.idl in Resources */ = {isa = PBXBuildFile; fileRef = B222782D0D00BF1F0071B782 /* SVGException.idl */; };
 		B22279C40D00BF220071B782 /* SVGExternalResourcesRequired.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B222782E0D00BF1F0071B782 /* SVGExternalResourcesRequired.cpp */; };
 		B22279C50D00BF220071B782 /* SVGExternalResourcesRequired.h in Headers */ = {isa = PBXBuildFile; fileRef = B222782F0D00BF1F0071B782 /* SVGExternalResourcesRequired.h */; };
-		B22279C60D00BF220071B782 /* SVGExternalResourcesRequired.idl in Resources */ = {isa = PBXBuildFile; fileRef = B22278300D00BF1F0071B782 /* SVGExternalResourcesRequired.idl */; };
 		B22279C70D00BF220071B782 /* SVGFEBlendElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B22278310D00BF1F0071B782 /* SVGFEBlendElement.cpp */; };
 		B22279C80D00BF220071B782 /* SVGFEBlendElement.h in Headers */ = {isa = PBXBuildFile; fileRef = B22278320D00BF1F0071B782 /* SVGFEBlendElement.h */; };
-		B22279C90D00BF220071B782 /* SVGFEBlendElement.idl in Resources */ = {isa = PBXBuildFile; fileRef = B22278330D00BF1F0071B782 /* SVGFEBlendElement.idl */; };
 		B22279CA0D00BF220071B782 /* SVGFEColorMatrixElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B22278340D00BF1F0071B782 /* SVGFEColorMatrixElement.cpp */; };
 		B22279CB0D00BF220071B782 /* SVGFEColorMatrixElement.h in Headers */ = {isa = PBXBuildFile; fileRef = B22278350D00BF1F0071B782 /* SVGFEColorMatrixElement.h */; };
-		B22279CC0D00BF220071B782 /* SVGFEColorMatrixElement.idl in Resources */ = {isa = PBXBuildFile; fileRef = B22278360D00BF1F0071B782 /* SVGFEColorMatrixElement.idl */; };
 		B22279CD0D00BF220071B782 /* SVGFEComponentTransferElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B22278370D00BF1F0071B782 /* SVGFEComponentTransferElement.cpp */; };
 		B22279CE0D00BF220071B782 /* SVGFEComponentTransferElement.h in Headers */ = {isa = PBXBuildFile; fileRef = B22278380D00BF1F0071B782 /* SVGFEComponentTransferElement.h */; };
-		B22279CF0D00BF220071B782 /* SVGFEComponentTransferElement.idl in Resources */ = {isa = PBXBuildFile; fileRef = B22278390D00BF1F0071B782 /* SVGFEComponentTransferElement.idl */; };
 		B22279D00D00BF220071B782 /* SVGFECompositeElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B222783A0D00BF1F0071B782 /* SVGFECompositeElement.cpp */; };
 		B22279D10D00BF220071B782 /* SVGFECompositeElement.h in Headers */ = {isa = PBXBuildFile; fileRef = B222783B0D00BF1F0071B782 /* SVGFECompositeElement.h */; };
-		B22279D20D00BF220071B782 /* SVGFECompositeElement.idl in Resources */ = {isa = PBXBuildFile; fileRef = B222783C0D00BF1F0071B782 /* SVGFECompositeElement.idl */; };
 		B22279D30D00BF220071B782 /* SVGFEDiffuseLightingElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B222783D0D00BF1F0071B782 /* SVGFEDiffuseLightingElement.cpp */; };
 		B22279D40D00BF220071B782 /* SVGFEDiffuseLightingElement.h in Headers */ = {isa = PBXBuildFile; fileRef = B222783E0D00BF1F0071B782 /* SVGFEDiffuseLightingElement.h */; };
-		B22279D50D00BF220071B782 /* SVGFEDiffuseLightingElement.idl in Resources */ = {isa = PBXBuildFile; fileRef = B222783F0D00BF1F0071B782 /* SVGFEDiffuseLightingElement.idl */; };
 		B22279D60D00BF220071B782 /* SVGFEDisplacementMapElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B22278400D00BF1F0071B782 /* SVGFEDisplacementMapElement.cpp */; };
 		B22279D70D00BF220071B782 /* SVGFEDisplacementMapElement.h in Headers */ = {isa = PBXBuildFile; fileRef = B22278410D00BF1F0071B782 /* SVGFEDisplacementMapElement.h */; };
-		B22279D80D00BF220071B782 /* SVGFEDisplacementMapElement.idl in Resources */ = {isa = PBXBuildFile; fileRef = B22278420D00BF1F0071B782 /* SVGFEDisplacementMapElement.idl */; };
 		B22279D90D00BF220071B782 /* SVGFEDistantLightElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B22278430D00BF1F0071B782 /* SVGFEDistantLightElement.cpp */; };
 		B22279DA0D00BF220071B782 /* SVGFEDistantLightElement.h in Headers */ = {isa = PBXBuildFile; fileRef = B22278440D00BF1F0071B782 /* SVGFEDistantLightElement.h */; };
-		B22279DB0D00BF220071B782 /* SVGFEDistantLightElement.idl in Resources */ = {isa = PBXBuildFile; fileRef = B22278450D00BF1F0071B782 /* SVGFEDistantLightElement.idl */; };
 		B22279DC0D00BF220071B782 /* SVGFEFloodElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B22278460D00BF1F0071B782 /* SVGFEFloodElement.cpp */; };
 		B22279DD0D00BF220071B782 /* SVGFEFloodElement.h in Headers */ = {isa = PBXBuildFile; fileRef = B22278470D00BF1F0071B782 /* SVGFEFloodElement.h */; };
-		B22279DE0D00BF220071B782 /* SVGFEFloodElement.idl in Resources */ = {isa = PBXBuildFile; fileRef = B22278480D00BF1F0071B782 /* SVGFEFloodElement.idl */; };
 		B22279DF0D00BF220071B782 /* SVGFEFuncAElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B22278490D00BF1F0071B782 /* SVGFEFuncAElement.cpp */; };
 		B22279E00D00BF220071B782 /* SVGFEFuncAElement.h in Headers */ = {isa = PBXBuildFile; fileRef = B222784A0D00BF1F0071B782 /* SVGFEFuncAElement.h */; };
-		B22279E10D00BF220071B782 /* SVGFEFuncAElement.idl in Resources */ = {isa = PBXBuildFile; fileRef = B222784B0D00BF1F0071B782 /* SVGFEFuncAElement.idl */; };
 		B22279E20D00BF220071B782 /* SVGFEFuncBElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B222784C0D00BF1F0071B782 /* SVGFEFuncBElement.cpp */; };
 		B22279E30D00BF220071B782 /* SVGFEFuncBElement.h in Headers */ = {isa = PBXBuildFile; fileRef = B222784D0D00BF1F0071B782 /* SVGFEFuncBElement.h */; };
-		B22279E40D00BF220071B782 /* SVGFEFuncBElement.idl in Resources */ = {isa = PBXBuildFile; fileRef = B222784E0D00BF1F0071B782 /* SVGFEFuncBElement.idl */; };
 		B22279E50D00BF220071B782 /* SVGFEFuncGElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B222784F0D00BF1F0071B782 /* SVGFEFuncGElement.cpp */; };
 		B22279E60D00BF220071B782 /* SVGFEFuncGElement.h in Headers */ = {isa = PBXBuildFile; fileRef = B22278500D00BF1F0071B782 /* SVGFEFuncGElement.h */; };
-		B22279E70D00BF220071B782 /* SVGFEFuncGElement.idl in Resources */ = {isa = PBXBuildFile; fileRef = B22278510D00BF200071B782 /* SVGFEFuncGElement.idl */; };
 		B22279E80D00BF220071B782 /* SVGFEFuncRElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B22278520D00BF200071B782 /* SVGFEFuncRElement.cpp */; };
 		B22279E90D00BF220071B782 /* SVGFEFuncRElement.h in Headers */ = {isa = PBXBuildFile; fileRef = B22278530D00BF200071B782 /* SVGFEFuncRElement.h */; };
-		B22279EA0D00BF220071B782 /* SVGFEFuncRElement.idl in Resources */ = {isa = PBXBuildFile; fileRef = B22278540D00BF200071B782 /* SVGFEFuncRElement.idl */; };
 		B22279EB0D00BF220071B782 /* SVGFEGaussianBlurElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B22278550D00BF200071B782 /* SVGFEGaussianBlurElement.cpp */; };
 		B22279EC0D00BF220071B782 /* SVGFEGaussianBlurElement.h in Headers */ = {isa = PBXBuildFile; fileRef = B22278560D00BF200071B782 /* SVGFEGaussianBlurElement.h */; };
-		B22279ED0D00BF220071B782 /* SVGFEGaussianBlurElement.idl in Resources */ = {isa = PBXBuildFile; fileRef = B22278570D00BF200071B782 /* SVGFEGaussianBlurElement.idl */; };
 		B22279EE0D00BF220071B782 /* SVGFEImageElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B22278580D00BF200071B782 /* SVGFEImageElement.cpp */; };
 		B22279EF0D00BF220071B782 /* SVGFEImageElement.h in Headers */ = {isa = PBXBuildFile; fileRef = B22278590D00BF200071B782 /* SVGFEImageElement.h */; };
-		B22279F00D00BF220071B782 /* SVGFEImageElement.idl in Resources */ = {isa = PBXBuildFile; fileRef = B222785A0D00BF200071B782 /* SVGFEImageElement.idl */; };
 		B22279F10D00BF220071B782 /* SVGFELightElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B222785B0D00BF200071B782 /* SVGFELightElement.cpp */; };
 		B22279F20D00BF220071B782 /* SVGFELightElement.h in Headers */ = {isa = PBXBuildFile; fileRef = B222785C0D00BF200071B782 /* SVGFELightElement.h */; };
 		B22279F30D00BF220071B782 /* SVGFEMergeElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B222785D0D00BF200071B782 /* SVGFEMergeElement.cpp */; };
 		B22279F40D00BF220071B782 /* SVGFEMergeElement.h in Headers */ = {isa = PBXBuildFile; fileRef = B222785E0D00BF200071B782 /* SVGFEMergeElement.h */; };
-		B22279F50D00BF220071B782 /* SVGFEMergeElement.idl in Resources */ = {isa = PBXBuildFile; fileRef = B222785F0D00BF200071B782 /* SVGFEMergeElement.idl */; };
 		B22279F60D00BF220071B782 /* SVGFEMergeNodeElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B22278600D00BF200071B782 /* SVGFEMergeNodeElement.cpp */; };
 		B22279F70D00BF220071B782 /* SVGFEMergeNodeElement.h in Headers */ = {isa = PBXBuildFile; fileRef = B22278610D00BF200071B782 /* SVGFEMergeNodeElement.h */; };
-		B22279F80D00BF220071B782 /* SVGFEMergeNodeElement.idl in Resources */ = {isa = PBXBuildFile; fileRef = B22278620D00BF200071B782 /* SVGFEMergeNodeElement.idl */; };
 		B22279F90D00BF220071B782 /* SVGFEOffsetElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B22278630D00BF200071B782 /* SVGFEOffsetElement.cpp */; };
 		B22279FA0D00BF220071B782 /* SVGFEOffsetElement.h in Headers */ = {isa = PBXBuildFile; fileRef = B22278640D00BF200071B782 /* SVGFEOffsetElement.h */; };
-		B22279FB0D00BF220071B782 /* SVGFEOffsetElement.idl in Resources */ = {isa = PBXBuildFile; fileRef = B22278650D00BF200071B782 /* SVGFEOffsetElement.idl */; };
 		B22279FC0D00BF220071B782 /* SVGFEPointLightElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B22278660D00BF200071B782 /* SVGFEPointLightElement.cpp */; };
 		B22279FD0D00BF220071B782 /* SVGFEPointLightElement.h in Headers */ = {isa = PBXBuildFile; fileRef = B22278670D00BF200071B782 /* SVGFEPointLightElement.h */; };
-		B22279FE0D00BF220071B782 /* SVGFEPointLightElement.idl in Resources */ = {isa = PBXBuildFile; fileRef = B22278680D00BF200071B782 /* SVGFEPointLightElement.idl */; };
 		B22279FF0D00BF220071B782 /* SVGFESpecularLightingElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B22278690D00BF200071B782 /* SVGFESpecularLightingElement.cpp */; };
 		B2227A000D00BF220071B782 /* SVGFESpecularLightingElement.h in Headers */ = {isa = PBXBuildFile; fileRef = B222786A0D00BF200071B782 /* SVGFESpecularLightingElement.h */; };
-		B2227A010D00BF220071B782 /* SVGFESpecularLightingElement.idl in Resources */ = {isa = PBXBuildFile; fileRef = B222786B0D00BF200071B782 /* SVGFESpecularLightingElement.idl */; };
 		B2227A020D00BF220071B782 /* SVGFESpotLightElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B222786C0D00BF200071B782 /* SVGFESpotLightElement.cpp */; };
 		B2227A030D00BF220071B782 /* SVGFESpotLightElement.h in Headers */ = {isa = PBXBuildFile; fileRef = B222786D0D00BF200071B782 /* SVGFESpotLightElement.h */; };
-		B2227A040D00BF220071B782 /* SVGFESpotLightElement.idl in Resources */ = {isa = PBXBuildFile; fileRef = B222786E0D00BF200071B782 /* SVGFESpotLightElement.idl */; };
 		B2227A050D00BF220071B782 /* SVGFETileElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B222786F0D00BF200071B782 /* SVGFETileElement.cpp */; };
 		B2227A060D00BF220071B782 /* SVGFETileElement.h in Headers */ = {isa = PBXBuildFile; fileRef = B22278700D00BF200071B782 /* SVGFETileElement.h */; };
-		B2227A070D00BF220071B782 /* SVGFETileElement.idl in Resources */ = {isa = PBXBuildFile; fileRef = B22278710D00BF200071B782 /* SVGFETileElement.idl */; };
 		B2227A080D00BF220071B782 /* SVGFETurbulenceElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B22278720D00BF200071B782 /* SVGFETurbulenceElement.cpp */; };
 		B2227A090D00BF220071B782 /* SVGFETurbulenceElement.h in Headers */ = {isa = PBXBuildFile; fileRef = B22278730D00BF200071B782 /* SVGFETurbulenceElement.h */; };
-		B2227A0A0D00BF220071B782 /* SVGFETurbulenceElement.idl in Resources */ = {isa = PBXBuildFile; fileRef = B22278740D00BF200071B782 /* SVGFETurbulenceElement.idl */; };
 		B2227A0B0D00BF220071B782 /* SVGFilterElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B22278750D00BF200071B782 /* SVGFilterElement.cpp */; };
 		B2227A0C0D00BF220071B782 /* SVGFilterElement.h in Headers */ = {isa = PBXBuildFile; fileRef = B22278760D00BF200071B782 /* SVGFilterElement.h */; };
-		B2227A0D0D00BF220071B782 /* SVGFilterElement.idl in Resources */ = {isa = PBXBuildFile; fileRef = B22278770D00BF200071B782 /* SVGFilterElement.idl */; };
 		B2227A0E0D00BF220071B782 /* SVGFilterPrimitiveStandardAttributes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B22278780D00BF200071B782 /* SVGFilterPrimitiveStandardAttributes.cpp */; };
 		B2227A0F0D00BF220071B782 /* SVGFilterPrimitiveStandardAttributes.h in Headers */ = {isa = PBXBuildFile; fileRef = B22278790D00BF200071B782 /* SVGFilterPrimitiveStandardAttributes.h */; };
-		B2227A100D00BF220071B782 /* SVGFilterPrimitiveStandardAttributes.idl in Resources */ = {isa = PBXBuildFile; fileRef = B222787A0D00BF200071B782 /* SVGFilterPrimitiveStandardAttributes.idl */; };
 		B2227A110D00BF220071B782 /* SVGFitToViewBox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B222787B0D00BF200071B782 /* SVGFitToViewBox.cpp */; };
 		B2227A120D00BF220071B782 /* SVGFitToViewBox.h in Headers */ = {isa = PBXBuildFile; fileRef = B222787C0D00BF200071B782 /* SVGFitToViewBox.h */; };
-		B2227A130D00BF220071B782 /* SVGFitToViewBox.idl in Resources */ = {isa = PBXBuildFile; fileRef = B222787D0D00BF200071B782 /* SVGFitToViewBox.idl */; };
 		B2227A140D00BF220071B782 /* SVGFontFaceElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B222787E0D00BF200071B782 /* SVGFontFaceElement.cpp */; };
 		B2227A150D00BF220071B782 /* SVGFontFaceElement.h in Headers */ = {isa = PBXBuildFile; fileRef = B222787F0D00BF200071B782 /* SVGFontFaceElement.h */; };
-		B2227A160D00BF220071B782 /* SVGFontFaceElement.idl in Resources */ = {isa = PBXBuildFile; fileRef = B22278800D00BF200071B782 /* SVGFontFaceElement.idl */; };
 		B2227A170D00BF220071B782 /* SVGFontFaceFormatElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B22278810D00BF200071B782 /* SVGFontFaceFormatElement.cpp */; };
 		B2227A180D00BF220071B782 /* SVGFontFaceFormatElement.h in Headers */ = {isa = PBXBuildFile; fileRef = B22278820D00BF200071B782 /* SVGFontFaceFormatElement.h */; };
-		B2227A190D00BF220071B782 /* SVGFontFaceFormatElement.idl in Resources */ = {isa = PBXBuildFile; fileRef = B22278830D00BF200071B782 /* SVGFontFaceFormatElement.idl */; };
 		B2227A1A0D00BF220071B782 /* SVGFontFaceNameElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B22278840D00BF200071B782 /* SVGFontFaceNameElement.cpp */; };
 		B2227A1B0D00BF220071B782 /* SVGFontFaceNameElement.h in Headers */ = {isa = PBXBuildFile; fileRef = B22278850D00BF200071B782 /* SVGFontFaceNameElement.h */; };
-		B2227A1C0D00BF220071B782 /* SVGFontFaceNameElement.idl in Resources */ = {isa = PBXBuildFile; fileRef = B22278860D00BF200071B782 /* SVGFontFaceNameElement.idl */; };
 		B2227A1D0D00BF220071B782 /* SVGFontFaceSrcElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B22278870D00BF200071B782 /* SVGFontFaceSrcElement.cpp */; };
 		B2227A1E0D00BF220071B782 /* SVGFontFaceSrcElement.h in Headers */ = {isa = PBXBuildFile; fileRef = B22278880D00BF200071B782 /* SVGFontFaceSrcElement.h */; };
-		B2227A1F0D00BF220071B782 /* SVGFontFaceSrcElement.idl in Resources */ = {isa = PBXBuildFile; fileRef = B22278890D00BF200071B782 /* SVGFontFaceSrcElement.idl */; };
 		B2227A200D00BF220071B782 /* SVGFontFaceUriElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B222788A0D00BF200071B782 /* SVGFontFaceUriElement.cpp */; };
 		B2227A210D00BF220071B782 /* SVGFontFaceUriElement.h in Headers */ = {isa = PBXBuildFile; fileRef = B222788B0D00BF200071B782 /* SVGFontFaceUriElement.h */; };
-		B2227A220D00BF220071B782 /* SVGFontFaceUriElement.idl in Resources */ = {isa = PBXBuildFile; fileRef = B222788C0D00BF200071B782 /* SVGFontFaceUriElement.idl */; };
 		B2227A230D00BF220071B782 /* SVGForeignObjectElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B222788D0D00BF200071B782 /* SVGForeignObjectElement.cpp */; };
 		B2227A240D00BF220071B782 /* SVGForeignObjectElement.h in Headers */ = {isa = PBXBuildFile; fileRef = B222788E0D00BF200071B782 /* SVGForeignObjectElement.h */; };
-		B2227A250D00BF220071B782 /* SVGForeignObjectElement.idl in Resources */ = {isa = PBXBuildFile; fileRef = B222788F0D00BF200071B782 /* SVGForeignObjectElement.idl */; };
 		B2227A260D00BF220071B782 /* SVGGElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B22278900D00BF200071B782 /* SVGGElement.cpp */; };
 		B2227A270D00BF220071B782 /* SVGGElement.h in Headers */ = {isa = PBXBuildFile; fileRef = B22278910D00BF200071B782 /* SVGGElement.h */; };
-		B2227A280D00BF220071B782 /* SVGGElement.idl in Resources */ = {isa = PBXBuildFile; fileRef = B22278920D00BF200071B782 /* SVGGElement.idl */; };
 		B2227A290D00BF220071B782 /* SVGGradientElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B22278930D00BF200071B782 /* SVGGradientElement.cpp */; };
 		B2227A2A0D00BF220071B782 /* SVGGradientElement.h in Headers */ = {isa = PBXBuildFile; fileRef = B22278940D00BF200071B782 /* SVGGradientElement.h */; };
-		B2227A2B0D00BF220071B782 /* SVGGradientElement.idl in Resources */ = {isa = PBXBuildFile; fileRef = B22278950D00BF200071B782 /* SVGGradientElement.idl */; };
 		B2227A2C0D00BF220071B782 /* SVGImageElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B22278960D00BF200071B782 /* SVGImageElement.cpp */; };
 		B2227A2D0D00BF220071B782 /* SVGImageElement.h in Headers */ = {isa = PBXBuildFile; fileRef = B22278970D00BF200071B782 /* SVGImageElement.h */; };
-		B2227A2E0D00BF220071B782 /* SVGImageElement.idl in Resources */ = {isa = PBXBuildFile; fileRef = B22278980D00BF200071B782 /* SVGImageElement.idl */; };
 		B2227A2F0D00BF220071B782 /* SVGLangSpace.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B22278990D00BF200071B782 /* SVGLangSpace.cpp */; };
 		B2227A300D00BF220071B782 /* SVGLangSpace.h in Headers */ = {isa = PBXBuildFile; fileRef = B222789A0D00BF200071B782 /* SVGLangSpace.h */; };
-		B2227A310D00BF220071B782 /* SVGLangSpace.idl in Resources */ = {isa = PBXBuildFile; fileRef = B222789B0D00BF200071B782 /* SVGLangSpace.idl */; };
 		B2227A320D00BF220071B782 /* SVGLength.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B222789C0D00BF200071B782 /* SVGLength.cpp */; };
 		B2227A330D00BF220071B782 /* SVGLength.h in Headers */ = {isa = PBXBuildFile; fileRef = B222789D0D00BF200071B782 /* SVGLength.h */; };
-		B2227A340D00BF220071B782 /* SVGLength.idl in Resources */ = {isa = PBXBuildFile; fileRef = B222789E0D00BF200071B782 /* SVGLength.idl */; };
 		B2227A350D00BF220071B782 /* SVGLengthList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B222789F0D00BF200071B782 /* SVGLengthList.cpp */; };
 		B2227A360D00BF220071B782 /* SVGLengthList.h in Headers */ = {isa = PBXBuildFile; fileRef = B22278A00D00BF200071B782 /* SVGLengthList.h */; };
-		B2227A370D00BF220071B782 /* SVGLengthList.idl in Resources */ = {isa = PBXBuildFile; fileRef = B22278A10D00BF200071B782 /* SVGLengthList.idl */; };
 		B2227A380D00BF220071B782 /* SVGLinearGradientElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B22278A20D00BF200071B782 /* SVGLinearGradientElement.cpp */; };
 		B2227A390D00BF220071B782 /* SVGLinearGradientElement.h in Headers */ = {isa = PBXBuildFile; fileRef = B22278A30D00BF200071B782 /* SVGLinearGradientElement.h */; };
-		B2227A3A0D00BF220071B782 /* SVGLinearGradientElement.idl in Resources */ = {isa = PBXBuildFile; fileRef = B22278A40D00BF200071B782 /* SVGLinearGradientElement.idl */; };
 		B2227A3B0D00BF220071B782 /* SVGLineElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B22278A50D00BF200071B782 /* SVGLineElement.cpp */; };
 		B2227A3C0D00BF220071B782 /* SVGLineElement.h in Headers */ = {isa = PBXBuildFile; fileRef = B22278A60D00BF200071B782 /* SVGLineElement.h */; };
-		B2227A3D0D00BF220071B782 /* SVGLineElement.idl in Resources */ = {isa = PBXBuildFile; fileRef = B22278A70D00BF200071B782 /* SVGLineElement.idl */; };
 		B2227A3E0D00BF220071B782 /* SVGList.h in Headers */ = {isa = PBXBuildFile; fileRef = B22278A80D00BF200071B782 /* SVGList.h */; };
 		B2227A3F0D00BF220071B782 /* SVGListTraits.h in Headers */ = {isa = PBXBuildFile; fileRef = B22278A90D00BF200071B782 /* SVGListTraits.h */; };
 		B2227A400D00BF220071B782 /* SVGLocatable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B22278AA0D00BF200071B782 /* SVGLocatable.cpp */; };
 		B2227A410D00BF220071B782 /* SVGLocatable.h in Headers */ = {isa = PBXBuildFile; fileRef = B22278AB0D00BF200071B782 /* SVGLocatable.h */; };
-		B2227A420D00BF220071B782 /* SVGLocatable.idl in Resources */ = {isa = PBXBuildFile; fileRef = B22278AC0D00BF200071B782 /* SVGLocatable.idl */; };
 		B2227A430D00BF220071B782 /* SVGMarkerElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B22278AD0D00BF200071B782 /* SVGMarkerElement.cpp */; };
 		B2227A440D00BF220071B782 /* SVGMarkerElement.h in Headers */ = {isa = PBXBuildFile; fileRef = B22278AE0D00BF200071B782 /* SVGMarkerElement.h */; };
-		B2227A450D00BF220071B782 /* SVGMarkerElement.idl in Resources */ = {isa = PBXBuildFile; fileRef = B22278AF0D00BF200071B782 /* SVGMarkerElement.idl */; };
 		B2227A460D00BF220071B782 /* SVGMaskElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B22278B00D00BF200071B782 /* SVGMaskElement.cpp */; };
 		B2227A470D00BF220071B782 /* SVGMaskElement.h in Headers */ = {isa = PBXBuildFile; fileRef = B22278B10D00BF200071B782 /* SVGMaskElement.h */; };
-		B2227A480D00BF220071B782 /* SVGMaskElement.idl in Resources */ = {isa = PBXBuildFile; fileRef = B22278B20D00BF200071B782 /* SVGMaskElement.idl */; };
-		B2227A490D00BF220071B782 /* SVGMatrix.idl in Resources */ = {isa = PBXBuildFile; fileRef = B22278B30D00BF200071B782 /* SVGMatrix.idl */; };
 		B2227A4A0D00BF220071B782 /* SVGMetadataElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B22278B40D00BF200071B782 /* SVGMetadataElement.cpp */; };
 		B2227A4B0D00BF220071B782 /* SVGMetadataElement.h in Headers */ = {isa = PBXBuildFile; fileRef = B22278B50D00BF200071B782 /* SVGMetadataElement.h */; };
-		B2227A4C0D00BF220071B782 /* SVGMetadataElement.idl in Resources */ = {isa = PBXBuildFile; fileRef = B22278B60D00BF200071B782 /* SVGMetadataElement.idl */; };
 		B2227A4D0D00BF220071B782 /* SVGMPathElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B22278B70D00BF200071B782 /* SVGMPathElement.cpp */; };
 		B2227A4E0D00BF220071B782 /* SVGMPathElement.h in Headers */ = {isa = PBXBuildFile; fileRef = B22278B80D00BF200071B782 /* SVGMPathElement.h */; };
-		B2227A4F0D00BF220071B782 /* SVGNumber.idl in Resources */ = {isa = PBXBuildFile; fileRef = B22278B90D00BF200071B782 /* SVGNumber.idl */; };
 		B2227A500D00BF220071B782 /* SVGNumberList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B22278BA0D00BF200071B782 /* SVGNumberList.cpp */; };
 		B2227A510D00BF220071B782 /* SVGNumberList.h in Headers */ = {isa = PBXBuildFile; fileRef = B22278BB0D00BF200071B782 /* SVGNumberList.h */; };
-		B2227A520D00BF220071B782 /* SVGNumberList.idl in Resources */ = {isa = PBXBuildFile; fileRef = B22278BC0D00BF200071B782 /* SVGNumberList.idl */; };
 		B2227A530D00BF220071B782 /* SVGPaint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B22278BD0D00BF200071B782 /* SVGPaint.cpp */; };
 		B2227A540D00BF220071B782 /* SVGPaint.h in Headers */ = {isa = PBXBuildFile; fileRef = B22278BE0D00BF200071B782 /* SVGPaint.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		B2227A550D00BF220071B782 /* SVGPaint.idl in Resources */ = {isa = PBXBuildFile; fileRef = B22278BF0D00BF200071B782 /* SVGPaint.idl */; };
 		B2227A560D00BF220071B782 /* SVGParserUtilities.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B22278C00D00BF200071B782 /* SVGParserUtilities.cpp */; };
 		B2227A570D00BF220071B782 /* SVGParserUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = B22278C10D00BF200071B782 /* SVGParserUtilities.h */; };
 		B2227A580D00BF220071B782 /* SVGPathElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B22278C20D00BF200071B782 /* SVGPathElement.cpp */; };
 		B2227A590D00BF220071B782 /* SVGPathElement.h in Headers */ = {isa = PBXBuildFile; fileRef = B22278C30D00BF200071B782 /* SVGPathElement.h */; };
-		B2227A5A0D00BF220071B782 /* SVGPathElement.idl in Resources */ = {isa = PBXBuildFile; fileRef = B22278C40D00BF200071B782 /* SVGPathElement.idl */; };
 		B2227A5B0D00BF220071B782 /* SVGPathSeg.h in Headers */ = {isa = PBXBuildFile; fileRef = B22278C50D00BF200071B782 /* SVGPathSeg.h */; };
-		B2227A5C0D00BF220071B782 /* SVGPathSeg.idl in Resources */ = {isa = PBXBuildFile; fileRef = B22278C60D00BF200071B782 /* SVGPathSeg.idl */; };
 		B2227A5D0D00BF220071B782 /* SVGPathSegArc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B22278C70D00BF200071B782 /* SVGPathSegArc.cpp */; };
 		B2227A5E0D00BF220071B782 /* SVGPathSegArc.h in Headers */ = {isa = PBXBuildFile; fileRef = B22278C80D00BF200071B782 /* SVGPathSegArc.h */; };
-		B2227A5F0D00BF220071B782 /* SVGPathSegArcAbs.idl in Resources */ = {isa = PBXBuildFile; fileRef = B22278C90D00BF200071B782 /* SVGPathSegArcAbs.idl */; };
-		B2227A600D00BF220071B782 /* SVGPathSegArcRel.idl in Resources */ = {isa = PBXBuildFile; fileRef = B22278CA0D00BF200071B782 /* SVGPathSegArcRel.idl */; };
 		B2227A610D00BF220071B782 /* SVGPathSegClosePath.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B22278CB0D00BF200071B782 /* SVGPathSegClosePath.cpp */; };
 		B2227A620D00BF220071B782 /* SVGPathSegClosePath.h in Headers */ = {isa = PBXBuildFile; fileRef = B22278CC0D00BF200071B782 /* SVGPathSegClosePath.h */; };
-		B2227A630D00BF220071B782 /* SVGPathSegClosePath.idl in Resources */ = {isa = PBXBuildFile; fileRef = B22278CD0D00BF200071B782 /* SVGPathSegClosePath.idl */; };
 		B2227A640D00BF220071B782 /* SVGPathSegCurvetoCubic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B22278CE0D00BF200071B782 /* SVGPathSegCurvetoCubic.cpp */; };
 		B2227A650D00BF220071B782 /* SVGPathSegCurvetoCubic.h in Headers */ = {isa = PBXBuildFile; fileRef = B22278CF0D00BF200071B782 /* SVGPathSegCurvetoCubic.h */; };
-		B2227A660D00BF220071B782 /* SVGPathSegCurvetoCubicAbs.idl in Resources */ = {isa = PBXBuildFile; fileRef = B22278D00D00BF200071B782 /* SVGPathSegCurvetoCubicAbs.idl */; };
-		B2227A670D00BF220071B782 /* SVGPathSegCurvetoCubicRel.idl in Resources */ = {isa = PBXBuildFile; fileRef = B22278D10D00BF200071B782 /* SVGPathSegCurvetoCubicRel.idl */; };
 		B2227A680D00BF220071B782 /* SVGPathSegCurvetoCubicSmooth.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B22278D20D00BF200071B782 /* SVGPathSegCurvetoCubicSmooth.cpp */; };
 		B2227A690D00BF220071B782 /* SVGPathSegCurvetoCubicSmooth.h in Headers */ = {isa = PBXBuildFile; fileRef = B22278D30D00BF200071B782 /* SVGPathSegCurvetoCubicSmooth.h */; };
-		B2227A6A0D00BF220071B782 /* SVGPathSegCurvetoCubicSmoothAbs.idl in Resources */ = {isa = PBXBuildFile; fileRef = B22278D40D00BF200071B782 /* SVGPathSegCurvetoCubicSmoothAbs.idl */; };
-		B2227A6B0D00BF220071B782 /* SVGPathSegCurvetoCubicSmoothRel.idl in Resources */ = {isa = PBXBuildFile; fileRef = B22278D50D00BF200071B782 /* SVGPathSegCurvetoCubicSmoothRel.idl */; };
 		B2227A6C0D00BF220071B782 /* SVGPathSegCurvetoQuadratic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B22278D60D00BF200071B782 /* SVGPathSegCurvetoQuadratic.cpp */; };
 		B2227A6D0D00BF220071B782 /* SVGPathSegCurvetoQuadratic.h in Headers */ = {isa = PBXBuildFile; fileRef = B22278D70D00BF200071B782 /* SVGPathSegCurvetoQuadratic.h */; };
-		B2227A6E0D00BF220071B782 /* SVGPathSegCurvetoQuadraticAbs.idl in Resources */ = {isa = PBXBuildFile; fileRef = B22278D80D00BF200071B782 /* SVGPathSegCurvetoQuadraticAbs.idl */; };
-		B2227A6F0D00BF220071B782 /* SVGPathSegCurvetoQuadraticRel.idl in Resources */ = {isa = PBXBuildFile; fileRef = B22278D90D00BF200071B782 /* SVGPathSegCurvetoQuadraticRel.idl */; };
 		B2227A700D00BF220071B782 /* SVGPathSegCurvetoQuadraticSmooth.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B22278DA0D00BF200071B782 /* SVGPathSegCurvetoQuadraticSmooth.cpp */; };
 		B2227A710D00BF220071B782 /* SVGPathSegCurvetoQuadraticSmooth.h in Headers */ = {isa = PBXBuildFile; fileRef = B22278DB0D00BF200071B782 /* SVGPathSegCurvetoQuadraticSmooth.h */; };
-		B2227A720D00BF220071B782 /* SVGPathSegCurvetoQuadraticSmoothAbs.idl in Resources */ = {isa = PBXBuildFile; fileRef = B22278DC0D00BF200071B782 /* SVGPathSegCurvetoQuadraticSmoothAbs.idl */; };
-		B2227A730D00BF220071B782 /* SVGPathSegCurvetoQuadraticSmoothRel.idl in Resources */ = {isa = PBXBuildFile; fileRef = B22278DD0D00BF200071B782 /* SVGPathSegCurvetoQuadraticSmoothRel.idl */; };
 		B2227A740D00BF220071B782 /* SVGPathSegLineto.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B22278DE0D00BF200071B782 /* SVGPathSegLineto.cpp */; };
 		B2227A750D00BF220071B782 /* SVGPathSegLineto.h in Headers */ = {isa = PBXBuildFile; fileRef = B22278DF0D00BF200071B782 /* SVGPathSegLineto.h */; };
-		B2227A760D00BF220071B782 /* SVGPathSegLinetoAbs.idl in Resources */ = {isa = PBXBuildFile; fileRef = B22278E00D00BF200071B782 /* SVGPathSegLinetoAbs.idl */; };
 		B2227A770D00BF220071B782 /* SVGPathSegLinetoHorizontal.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B22278E10D00BF200071B782 /* SVGPathSegLinetoHorizontal.cpp */; };
 		B2227A780D00BF220071B782 /* SVGPathSegLinetoHorizontal.h in Headers */ = {isa = PBXBuildFile; fileRef = B22278E20D00BF200071B782 /* SVGPathSegLinetoHorizontal.h */; };
-		B2227A790D00BF220071B782 /* SVGPathSegLinetoHorizontalAbs.idl in Resources */ = {isa = PBXBuildFile; fileRef = B22278E30D00BF200071B782 /* SVGPathSegLinetoHorizontalAbs.idl */; };
-		B2227A7A0D00BF220071B782 /* SVGPathSegLinetoHorizontalRel.idl in Resources */ = {isa = PBXBuildFile; fileRef = B22278E40D00BF200071B782 /* SVGPathSegLinetoHorizontalRel.idl */; };
-		B2227A7B0D00BF220071B782 /* SVGPathSegLinetoRel.idl in Resources */ = {isa = PBXBuildFile; fileRef = B22278E50D00BF200071B782 /* SVGPathSegLinetoRel.idl */; };
 		B2227A7C0D00BF220071B782 /* SVGPathSegLinetoVertical.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B22278E60D00BF200071B782 /* SVGPathSegLinetoVertical.cpp */; };
 		B2227A7D0D00BF220071B782 /* SVGPathSegLinetoVertical.h in Headers */ = {isa = PBXBuildFile; fileRef = B22278E70D00BF200071B782 /* SVGPathSegLinetoVertical.h */; };
-		B2227A7E0D00BF220071B782 /* SVGPathSegLinetoVerticalAbs.idl in Resources */ = {isa = PBXBuildFile; fileRef = B22278E80D00BF200071B782 /* SVGPathSegLinetoVerticalAbs.idl */; };
-		B2227A7F0D00BF220071B782 /* SVGPathSegLinetoVerticalRel.idl in Resources */ = {isa = PBXBuildFile; fileRef = B22278E90D00BF200071B782 /* SVGPathSegLinetoVerticalRel.idl */; };
 		B2227A800D00BF220071B782 /* SVGPathSegList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B22278EA0D00BF200071B782 /* SVGPathSegList.cpp */; };
 		B2227A810D00BF220071B782 /* SVGPathSegList.h in Headers */ = {isa = PBXBuildFile; fileRef = B22278EB0D00BF200071B782 /* SVGPathSegList.h */; };
-		B2227A820D00BF220071B782 /* SVGPathSegList.idl in Resources */ = {isa = PBXBuildFile; fileRef = B22278EC0D00BF210071B782 /* SVGPathSegList.idl */; };
 		B2227A830D00BF220071B782 /* SVGPathSegMoveto.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B22278ED0D00BF210071B782 /* SVGPathSegMoveto.cpp */; };
 		B2227A840D00BF220071B782 /* SVGPathSegMoveto.h in Headers */ = {isa = PBXBuildFile; fileRef = B22278EE0D00BF210071B782 /* SVGPathSegMoveto.h */; };
-		B2227A850D00BF220071B782 /* SVGPathSegMovetoAbs.idl in Resources */ = {isa = PBXBuildFile; fileRef = B22278EF0D00BF210071B782 /* SVGPathSegMovetoAbs.idl */; };
-		B2227A860D00BF220071B782 /* SVGPathSegMovetoRel.idl in Resources */ = {isa = PBXBuildFile; fileRef = B22278F00D00BF210071B782 /* SVGPathSegMovetoRel.idl */; };
 		B2227A870D00BF220071B782 /* SVGPatternElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B22278F10D00BF210071B782 /* SVGPatternElement.cpp */; };
 		B2227A880D00BF220071B782 /* SVGPatternElement.h in Headers */ = {isa = PBXBuildFile; fileRef = B22278F20D00BF210071B782 /* SVGPatternElement.h */; };
-		B2227A890D00BF220071B782 /* SVGPatternElement.idl in Resources */ = {isa = PBXBuildFile; fileRef = B22278F30D00BF210071B782 /* SVGPatternElement.idl */; };
-		B2227A8A0D00BF220071B782 /* SVGPoint.idl in Resources */ = {isa = PBXBuildFile; fileRef = B22278F40D00BF210071B782 /* SVGPoint.idl */; };
 		B2227A8B0D00BF220071B782 /* SVGPointList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B22278F50D00BF210071B782 /* SVGPointList.cpp */; };
 		B2227A8C0D00BF220071B782 /* SVGPointList.h in Headers */ = {isa = PBXBuildFile; fileRef = B22278F60D00BF210071B782 /* SVGPointList.h */; };
-		B2227A8D0D00BF220071B782 /* SVGPointList.idl in Resources */ = {isa = PBXBuildFile; fileRef = B22278F70D00BF210071B782 /* SVGPointList.idl */; };
 		B2227A8E0D00BF220071B782 /* SVGPolyElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B22278F80D00BF210071B782 /* SVGPolyElement.cpp */; };
 		B2227A8F0D00BF220071B782 /* SVGPolyElement.h in Headers */ = {isa = PBXBuildFile; fileRef = B22278F90D00BF210071B782 /* SVGPolyElement.h */; };
 		B2227A900D00BF220071B782 /* SVGPolygonElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B22278FA0D00BF210071B782 /* SVGPolygonElement.cpp */; };
 		B2227A910D00BF220071B782 /* SVGPolygonElement.h in Headers */ = {isa = PBXBuildFile; fileRef = B22278FB0D00BF210071B782 /* SVGPolygonElement.h */; };
-		B2227A920D00BF220071B782 /* SVGPolygonElement.idl in Resources */ = {isa = PBXBuildFile; fileRef = B22278FC0D00BF210071B782 /* SVGPolygonElement.idl */; };
 		B2227A930D00BF220071B782 /* SVGPolylineElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B22278FD0D00BF210071B782 /* SVGPolylineElement.cpp */; };
 		B2227A940D00BF220071B782 /* SVGPolylineElement.h in Headers */ = {isa = PBXBuildFile; fileRef = B22278FE0D00BF210071B782 /* SVGPolylineElement.h */; };
-		B2227A950D00BF220071B782 /* SVGPolylineElement.idl in Resources */ = {isa = PBXBuildFile; fileRef = B22278FF0D00BF210071B782 /* SVGPolylineElement.idl */; };
 		B2227A960D00BF220071B782 /* SVGPreserveAspectRatio.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B22279000D00BF210071B782 /* SVGPreserveAspectRatio.cpp */; };
 		B2227A970D00BF220071B782 /* SVGPreserveAspectRatio.h in Headers */ = {isa = PBXBuildFile; fileRef = B22279010D00BF210071B782 /* SVGPreserveAspectRatio.h */; };
-		B2227A980D00BF220071B782 /* SVGPreserveAspectRatio.idl in Resources */ = {isa = PBXBuildFile; fileRef = B22279020D00BF210071B782 /* SVGPreserveAspectRatio.idl */; };
 		B2227A990D00BF220071B782 /* SVGRadialGradientElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B22279030D00BF210071B782 /* SVGRadialGradientElement.cpp */; };
 		B2227A9A0D00BF220071B782 /* SVGRadialGradientElement.h in Headers */ = {isa = PBXBuildFile; fileRef = B22279040D00BF210071B782 /* SVGRadialGradientElement.h */; };
-		B2227A9B0D00BF220071B782 /* SVGRadialGradientElement.idl in Resources */ = {isa = PBXBuildFile; fileRef = B22279050D00BF210071B782 /* SVGRadialGradientElement.idl */; };
-		B2227A9C0D00BF220071B782 /* SVGRect.idl in Resources */ = {isa = PBXBuildFile; fileRef = B22279060D00BF210071B782 /* SVGRect.idl */; };
 		B2227A9D0D00BF220071B782 /* SVGRectElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B22279070D00BF210071B782 /* SVGRectElement.cpp */; };
 		B2227A9E0D00BF220071B782 /* SVGRectElement.h in Headers */ = {isa = PBXBuildFile; fileRef = B22279080D00BF210071B782 /* SVGRectElement.h */; };
-		B2227A9F0D00BF220071B782 /* SVGRectElement.idl in Resources */ = {isa = PBXBuildFile; fileRef = B22279090D00BF210071B782 /* SVGRectElement.idl */; };
 		B2227AA00D00BF220071B782 /* SVGRenderingIntent.h in Headers */ = {isa = PBXBuildFile; fileRef = B222790A0D00BF210071B782 /* SVGRenderingIntent.h */; };
-		B2227AA10D00BF220071B782 /* SVGRenderingIntent.idl in Resources */ = {isa = PBXBuildFile; fileRef = B222790B0D00BF210071B782 /* SVGRenderingIntent.idl */; };
 		B2227AA20D00BF220071B782 /* SVGScriptElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B222790C0D00BF210071B782 /* SVGScriptElement.cpp */; };
 		B2227AA30D00BF220071B782 /* SVGScriptElement.h in Headers */ = {isa = PBXBuildFile; fileRef = B222790D0D00BF210071B782 /* SVGScriptElement.h */; };
-		B2227AA40D00BF220071B782 /* SVGScriptElement.idl in Resources */ = {isa = PBXBuildFile; fileRef = B222790E0D00BF210071B782 /* SVGScriptElement.idl */; };
 		B2227AA50D00BF220071B782 /* SVGSetElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B222790F0D00BF210071B782 /* SVGSetElement.cpp */; };
 		B2227AA60D00BF220071B782 /* SVGSetElement.h in Headers */ = {isa = PBXBuildFile; fileRef = B22279100D00BF210071B782 /* SVGSetElement.h */; };
-		B2227AA70D00BF220071B782 /* SVGSetElement.idl in Resources */ = {isa = PBXBuildFile; fileRef = B22279110D00BF210071B782 /* SVGSetElement.idl */; };
 		B2227AA80D00BF220071B782 /* SVGStopElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B22279120D00BF210071B782 /* SVGStopElement.cpp */; };
 		B2227AA90D00BF220071B782 /* SVGStopElement.h in Headers */ = {isa = PBXBuildFile; fileRef = B22279130D00BF210071B782 /* SVGStopElement.h */; };
-		B2227AAA0D00BF220071B782 /* SVGStopElement.idl in Resources */ = {isa = PBXBuildFile; fileRef = B22279140D00BF210071B782 /* SVGStopElement.idl */; };
 		B2227AAB0D00BF220071B782 /* SVGStringList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B22279150D00BF210071B782 /* SVGStringList.cpp */; };
 		B2227AAC0D00BF220071B782 /* SVGStringList.h in Headers */ = {isa = PBXBuildFile; fileRef = B22279160D00BF210071B782 /* SVGStringList.h */; };
-		B2227AAD0D00BF220071B782 /* SVGStringList.idl in Resources */ = {isa = PBXBuildFile; fileRef = B22279170D00BF210071B782 /* SVGStringList.idl */; };
 		B2227AAE0D00BF220071B782 /* SVGStylable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B22279180D00BF210071B782 /* SVGStylable.cpp */; };
 		B2227AAF0D00BF220071B782 /* SVGStylable.h in Headers */ = {isa = PBXBuildFile; fileRef = B22279190D00BF210071B782 /* SVGStylable.h */; };
-		B2227AB00D00BF220071B782 /* SVGStylable.idl in Resources */ = {isa = PBXBuildFile; fileRef = B222791A0D00BF210071B782 /* SVGStylable.idl */; };
 		B2227AB10D00BF220071B782 /* SVGStyledElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B222791B0D00BF210071B782 /* SVGStyledElement.cpp */; };
 		B2227AB20D00BF220071B782 /* SVGStyledElement.h in Headers */ = {isa = PBXBuildFile; fileRef = B222791C0D00BF210071B782 /* SVGStyledElement.h */; };
 		B2227AB30D00BF220071B782 /* SVGStyledLocatableElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B222791D0D00BF210071B782 /* SVGStyledLocatableElement.cpp */; };
@@ -2896,78 +2775,54 @@
 		B2227AB60D00BF220071B782 /* SVGStyledTransformableElement.h in Headers */ = {isa = PBXBuildFile; fileRef = B22279200D00BF210071B782 /* SVGStyledTransformableElement.h */; };
 		B2227AB70D00BF220071B782 /* SVGStyleElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B22279210D00BF210071B782 /* SVGStyleElement.cpp */; };
 		B2227AB80D00BF220071B782 /* SVGStyleElement.h in Headers */ = {isa = PBXBuildFile; fileRef = B22279220D00BF210071B782 /* SVGStyleElement.h */; };
-		B2227AB90D00BF220071B782 /* SVGStyleElement.idl in Resources */ = {isa = PBXBuildFile; fileRef = B22279230D00BF210071B782 /* SVGStyleElement.idl */; };
 		B2227ABA0D00BF220071B782 /* SVGSVGElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B22279240D00BF210071B782 /* SVGSVGElement.cpp */; };
 		B2227ABB0D00BF220071B782 /* SVGSVGElement.h in Headers */ = {isa = PBXBuildFile; fileRef = B22279250D00BF210071B782 /* SVGSVGElement.h */; };
-		B2227ABC0D00BF220071B782 /* SVGSVGElement.idl in Resources */ = {isa = PBXBuildFile; fileRef = B22279260D00BF210071B782 /* SVGSVGElement.idl */; };
 		B2227ABD0D00BF220071B782 /* SVGSwitchElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B22279270D00BF210071B782 /* SVGSwitchElement.cpp */; };
 		B2227ABE0D00BF220071B782 /* SVGSwitchElement.h in Headers */ = {isa = PBXBuildFile; fileRef = B22279280D00BF210071B782 /* SVGSwitchElement.h */; };
-		B2227ABF0D00BF220071B782 /* SVGSwitchElement.idl in Resources */ = {isa = PBXBuildFile; fileRef = B22279290D00BF210071B782 /* SVGSwitchElement.idl */; };
 		B2227AC00D00BF220071B782 /* SVGSymbolElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B222792A0D00BF210071B782 /* SVGSymbolElement.cpp */; };
 		B2227AC10D00BF220071B782 /* SVGSymbolElement.h in Headers */ = {isa = PBXBuildFile; fileRef = B222792B0D00BF210071B782 /* SVGSymbolElement.h */; };
-		B2227AC20D00BF220071B782 /* SVGSymbolElement.idl in Resources */ = {isa = PBXBuildFile; fileRef = B222792C0D00BF210071B782 /* SVGSymbolElement.idl */; };
-		B2227AC30D00BF220071B782 /* svgtags.in in Resources */ = {isa = PBXBuildFile; fileRef = B222792D0D00BF210071B782 /* svgtags.in */; };
 		B2227AC40D00BF220071B782 /* SVGTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B222792E0D00BF210071B782 /* SVGTests.cpp */; };
 		B2227AC50D00BF220071B782 /* SVGTests.h in Headers */ = {isa = PBXBuildFile; fileRef = B222792F0D00BF210071B782 /* SVGTests.h */; };
-		B2227AC60D00BF220071B782 /* SVGTests.idl in Resources */ = {isa = PBXBuildFile; fileRef = B22279300D00BF210071B782 /* SVGTests.idl */; };
 		B2227AC70D00BF220071B782 /* SVGTextContentElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B22279310D00BF210071B782 /* SVGTextContentElement.cpp */; };
 		B2227AC80D00BF220071B782 /* SVGTextContentElement.h in Headers */ = {isa = PBXBuildFile; fileRef = B22279320D00BF210071B782 /* SVGTextContentElement.h */; };
-		B2227AC90D00BF220071B782 /* SVGTextContentElement.idl in Resources */ = {isa = PBXBuildFile; fileRef = B22279330D00BF210071B782 /* SVGTextContentElement.idl */; };
 		B2227ACA0D00BF220071B782 /* SVGTextElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B22279340D00BF210071B782 /* SVGTextElement.cpp */; };
 		B2227ACB0D00BF220071B782 /* SVGTextElement.h in Headers */ = {isa = PBXBuildFile; fileRef = B22279350D00BF210071B782 /* SVGTextElement.h */; };
-		B2227ACC0D00BF220071B782 /* SVGTextElement.idl in Resources */ = {isa = PBXBuildFile; fileRef = B22279360D00BF210071B782 /* SVGTextElement.idl */; };
 		B2227ACD0D00BF220071B782 /* SVGTextPathElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B22279370D00BF210071B782 /* SVGTextPathElement.cpp */; };
 		B2227ACE0D00BF220071B782 /* SVGTextPathElement.h in Headers */ = {isa = PBXBuildFile; fileRef = B22279380D00BF210071B782 /* SVGTextPathElement.h */; };
-		B2227ACF0D00BF220071B782 /* SVGTextPathElement.idl in Resources */ = {isa = PBXBuildFile; fileRef = B22279390D00BF210071B782 /* SVGTextPathElement.idl */; };
 		B2227AD00D00BF220071B782 /* SVGTextPositioningElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B222793A0D00BF210071B782 /* SVGTextPositioningElement.cpp */; };
 		B2227AD10D00BF220071B782 /* SVGTextPositioningElement.h in Headers */ = {isa = PBXBuildFile; fileRef = B222793B0D00BF210071B782 /* SVGTextPositioningElement.h */; };
-		B2227AD20D00BF220071B782 /* SVGTextPositioningElement.idl in Resources */ = {isa = PBXBuildFile; fileRef = B222793C0D00BF210071B782 /* SVGTextPositioningElement.idl */; };
 		B2227AD30D00BF220071B782 /* SVGTitleElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B222793D0D00BF210071B782 /* SVGTitleElement.cpp */; };
 		B2227AD40D00BF220071B782 /* SVGTitleElement.h in Headers */ = {isa = PBXBuildFile; fileRef = B222793E0D00BF210071B782 /* SVGTitleElement.h */; };
-		B2227AD50D00BF220071B782 /* SVGTitleElement.idl in Resources */ = {isa = PBXBuildFile; fileRef = B222793F0D00BF210071B782 /* SVGTitleElement.idl */; };
 		B2227AD60D00BF220071B782 /* SVGTransform.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B22279400D00BF210071B782 /* SVGTransform.cpp */; };
 		B2227AD70D00BF220071B782 /* SVGTransform.h in Headers */ = {isa = PBXBuildFile; fileRef = B22279410D00BF210071B782 /* SVGTransform.h */; };
-		B2227AD80D00BF220071B782 /* SVGTransform.idl in Resources */ = {isa = PBXBuildFile; fileRef = B22279420D00BF210071B782 /* SVGTransform.idl */; };
 		B2227AD90D00BF220071B782 /* SVGTransformable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B22279430D00BF210071B782 /* SVGTransformable.cpp */; };
 		B2227ADA0D00BF220071B782 /* SVGTransformable.h in Headers */ = {isa = PBXBuildFile; fileRef = B22279440D00BF210071B782 /* SVGTransformable.h */; };
-		B2227ADB0D00BF220071B782 /* SVGTransformable.idl in Resources */ = {isa = PBXBuildFile; fileRef = B22279450D00BF210071B782 /* SVGTransformable.idl */; };
 		B2227ADC0D00BF220071B782 /* SVGTransformDistance.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B22279460D00BF210071B782 /* SVGTransformDistance.cpp */; };
 		B2227ADD0D00BF220071B782 /* SVGTransformDistance.h in Headers */ = {isa = PBXBuildFile; fileRef = B22279470D00BF210071B782 /* SVGTransformDistance.h */; };
 		B2227ADE0D00BF220071B782 /* SVGTransformList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B22279480D00BF210071B782 /* SVGTransformList.cpp */; };
 		B2227ADF0D00BF220071B782 /* SVGTransformList.h in Headers */ = {isa = PBXBuildFile; fileRef = B22279490D00BF210071B782 /* SVGTransformList.h */; };
-		B2227AE00D00BF220071B782 /* SVGTransformList.idl in Resources */ = {isa = PBXBuildFile; fileRef = B222794A0D00BF210071B782 /* SVGTransformList.idl */; };
 		B2227AE10D00BF220071B782 /* SVGTRefElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B222794B0D00BF210071B782 /* SVGTRefElement.cpp */; };
 		B2227AE20D00BF220071B782 /* SVGTRefElement.h in Headers */ = {isa = PBXBuildFile; fileRef = B222794C0D00BF210071B782 /* SVGTRefElement.h */; };
-		B2227AE30D00BF220071B782 /* SVGTRefElement.idl in Resources */ = {isa = PBXBuildFile; fileRef = B222794D0D00BF210071B782 /* SVGTRefElement.idl */; };
 		B2227AE40D00BF220071B782 /* SVGTSpanElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B222794E0D00BF210071B782 /* SVGTSpanElement.cpp */; };
 		B2227AE50D00BF220071B782 /* SVGTSpanElement.h in Headers */ = {isa = PBXBuildFile; fileRef = B222794F0D00BF210071B782 /* SVGTSpanElement.h */; };
-		B2227AE60D00BF220071B782 /* SVGTSpanElement.idl in Resources */ = {isa = PBXBuildFile; fileRef = B22279500D00BF210071B782 /* SVGTSpanElement.idl */; };
 		B2227AE70D00BF220071B782 /* SVGUnitTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = B22279510D00BF210071B782 /* SVGUnitTypes.h */; };
-		B2227AE80D00BF220071B782 /* SVGUnitTypes.idl in Resources */ = {isa = PBXBuildFile; fileRef = B22279520D00BF210071B782 /* SVGUnitTypes.idl */; };
 		B2227AE90D00BF220071B782 /* SVGURIReference.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B22279530D00BF210071B782 /* SVGURIReference.cpp */; };
 		B2227AEA0D00BF220071B782 /* SVGURIReference.h in Headers */ = {isa = PBXBuildFile; fileRef = B22279540D00BF210071B782 /* SVGURIReference.h */; };
-		B2227AEB0D00BF220071B782 /* SVGURIReference.idl in Resources */ = {isa = PBXBuildFile; fileRef = B22279550D00BF210071B782 /* SVGURIReference.idl */; };
 		B2227AEC0D00BF220071B782 /* SVGUseElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B22279560D00BF210071B782 /* SVGUseElement.cpp */; };
 		B2227AED0D00BF220071B782 /* SVGUseElement.h in Headers */ = {isa = PBXBuildFile; fileRef = B22279570D00BF210071B782 /* SVGUseElement.h */; };
-		B2227AEE0D00BF220071B782 /* SVGUseElement.idl in Resources */ = {isa = PBXBuildFile; fileRef = B22279580D00BF210071B782 /* SVGUseElement.idl */; };
 		B2227AEF0D00BF220071B782 /* SVGViewElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B22279590D00BF210071B782 /* SVGViewElement.cpp */; };
 		B2227AF00D00BF220071B782 /* SVGViewElement.h in Headers */ = {isa = PBXBuildFile; fileRef = B222795A0D00BF210071B782 /* SVGViewElement.h */; };
-		B2227AF10D00BF220071B782 /* SVGViewElement.idl in Resources */ = {isa = PBXBuildFile; fileRef = B222795B0D00BF210071B782 /* SVGViewElement.idl */; };
 		B2227AF20D00BF220071B782 /* SVGViewSpec.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B222795C0D00BF210071B782 /* SVGViewSpec.cpp */; };
 		B2227AF30D00BF220071B782 /* SVGViewSpec.h in Headers */ = {isa = PBXBuildFile; fileRef = B222795D0D00BF210071B782 /* SVGViewSpec.h */; };
-		B2227AF40D00BF220071B782 /* SVGViewSpec.idl in Resources */ = {isa = PBXBuildFile; fileRef = B222795E0D00BF210071B782 /* SVGViewSpec.idl */; };
 		B2227AF50D00BF220071B782 /* SVGZoomAndPan.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B222795F0D00BF210071B782 /* SVGZoomAndPan.cpp */; };
 		B2227AF60D00BF220071B782 /* SVGZoomAndPan.h in Headers */ = {isa = PBXBuildFile; fileRef = B22279600D00BF210071B782 /* SVGZoomAndPan.h */; };
-		B2227AF70D00BF220071B782 /* SVGZoomAndPan.idl in Resources */ = {isa = PBXBuildFile; fileRef = B22279610D00BF210071B782 /* SVGZoomAndPan.idl */; };
 		B2227AFC0D00BF8F0071B782 /* SVGRenderStyle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2227AF80D00BF8F0071B782 /* SVGRenderStyle.cpp */; };
 		B2227AFD0D00BF8F0071B782 /* SVGRenderStyle.h in Headers */ = {isa = PBXBuildFile; fileRef = B2227AF90D00BF8F0071B782 /* SVGRenderStyle.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		B2227AFE0D00BF8F0071B782 /* SVGRenderStyleDefs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2227AFA0D00BF8F0071B782 /* SVGRenderStyleDefs.cpp */; };
 		B2227AFF0D00BF8F0071B782 /* SVGRenderStyleDefs.h in Headers */ = {isa = PBXBuildFile; fileRef = B2227AFB0D00BF8F0071B782 /* SVGRenderStyleDefs.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		B2227B050D00BFF10071B782 /* SVGCSSComputedStyleDeclaration.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2227B000D00BFF10071B782 /* SVGCSSComputedStyleDeclaration.cpp */; };
 		B2227B060D00BFF10071B782 /* SVGCSSParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2227B010D00BFF10071B782 /* SVGCSSParser.cpp */; };
-		B2227B070D00BFF10071B782 /* SVGCSSPropertyNames.in in Resources */ = {isa = PBXBuildFile; fileRef = B2227B020D00BFF10071B782 /* SVGCSSPropertyNames.in */; };
 		B2227B080D00BFF10071B782 /* SVGCSSStyleSelector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2227B030D00BFF10071B782 /* SVGCSSStyleSelector.cpp */; };
-		B2227B090D00BFF10071B782 /* SVGCSSValueKeywords.in in Resources */ = {isa = PBXBuildFile; fileRef = B2227B040D00BFF10071B782 /* SVGCSSValueKeywords.in */; };
 		B222F6980AB771950022EFAD /* JSSVGAngle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B222F6960AB771950022EFAD /* JSSVGAngle.cpp */; };
 		B222F6990AB771950022EFAD /* JSSVGAngle.h in Headers */ = {isa = PBXBuildFile; fileRef = B222F6970AB771950022EFAD /* JSSVGAngle.h */; };
 		B222F69C0AB771B80022EFAD /* JSSVGElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B222F69A0AB771B80022EFAD /* JSSVGElement.cpp */; };
@@ -3193,7 +3048,6 @@
 		B28C6A2C0D00C44800334AA4 /* SVGTimer.h in Headers */ = {isa = PBXBuildFile; fileRef = B28C6A230D00C44800334AA4 /* SVGTimer.h */; };
 		B28C6A2D0D00C44800334AA4 /* TimeScheduler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B28C6A240D00C44800334AA4 /* TimeScheduler.cpp */; };
 		B28C6A2E0D00C44800334AA4 /* TimeScheduler.h in Headers */ = {isa = PBXBuildFile; fileRef = B28C6A250D00C44800334AA4 /* TimeScheduler.h */; };
-		B28C6A2F0D00C44800334AA4 /* xlinkattrs.in in Resources */ = {isa = PBXBuildFile; fileRef = B28C6A260D00C44800334AA4 /* xlinkattrs.in */; };
 		B297BC700B3C14CF0045A590 /* JSSVGPathSegListCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B297BC6F0B3C14CF0045A590 /* JSSVGPathSegListCustom.cpp */; };
 		B2A015A80AF6CD53006BCE0E /* GraphicsContext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2A015920AF6CD53006BCE0E /* GraphicsContext.cpp */; };
 		B2A015A90AF6CD53006BCE0E /* GraphicsContext.h in Headers */ = {isa = PBXBuildFile; fileRef = B2A015930AF6CD53006BCE0E /* GraphicsContext.h */; };
@@ -3203,13 +3057,10 @@
 		B2A10B940B3818D700099AA4 /* ImageBufferCG.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2A10B930B3818D700099AA4 /* ImageBufferCG.cpp */; };
 		B2A1F2AA0CEF0ABF00442F6A /* SVGFontElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2A1F2A10CEF0ABF00442F6A /* SVGFontElement.cpp */; };
 		B2A1F2AB0CEF0ABF00442F6A /* SVGFontElement.h in Headers */ = {isa = PBXBuildFile; fileRef = B2A1F2A20CEF0ABF00442F6A /* SVGFontElement.h */; };
-		B2A1F2AC0CEF0ABF00442F6A /* SVGFontElement.idl in Resources */ = {isa = PBXBuildFile; fileRef = B2A1F2A30CEF0ABF00442F6A /* SVGFontElement.idl */; };
 		B2A1F2AD0CEF0ABF00442F6A /* SVGGlyphElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2A1F2A40CEF0ABF00442F6A /* SVGGlyphElement.cpp */; };
 		B2A1F2AE0CEF0ABF00442F6A /* SVGGlyphElement.h in Headers */ = {isa = PBXBuildFile; fileRef = B2A1F2A50CEF0ABF00442F6A /* SVGGlyphElement.h */; };
-		B2A1F2AF0CEF0ABF00442F6A /* SVGGlyphElement.idl in Resources */ = {isa = PBXBuildFile; fileRef = B2A1F2A60CEF0ABF00442F6A /* SVGGlyphElement.idl */; };
 		B2A1F2B00CEF0ABF00442F6A /* SVGMissingGlyphElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2A1F2A70CEF0ABF00442F6A /* SVGMissingGlyphElement.cpp */; };
 		B2A1F2B10CEF0ABF00442F6A /* SVGMissingGlyphElement.h in Headers */ = {isa = PBXBuildFile; fileRef = B2A1F2A80CEF0ABF00442F6A /* SVGMissingGlyphElement.h */; };
-		B2A1F2B20CEF0ABF00442F6A /* SVGMissingGlyphElement.idl in Resources */ = {isa = PBXBuildFile; fileRef = B2A1F2A90CEF0ABF00442F6A /* SVGMissingGlyphElement.idl */; };
 		B2AE9B9D0C3AF27400F23F7F /* DOMSVGTextPathElement.mm in Sources */ = {isa = PBXBuildFile; fileRef = B2AE9B9C0C3AF27400F23F7F /* DOMSVGTextPathElement.mm */; };
 		B2AFFC7C0D00A5C10030074D /* FontCacheMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = B2AFFC740D00A5C10030074D /* FontCacheMac.mm */; };
 		B2AFFC7D0D00A5C10030074D /* FontCustomPlatformData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2AFFC750D00A5C10030074D /* FontCustomPlatformData.cpp */; };
@@ -3219,9 +3070,6 @@
 		B2AFFC810D00A5C10030074D /* FontPlatformData.h in Headers */ = {isa = PBXBuildFile; fileRef = B2AFFC790D00A5C10030074D /* FontPlatformData.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		B2AFFC820D00A5C10030074D /* FontPlatformDataMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = B2AFFC7A0D00A5C10030074D /* FontPlatformDataMac.mm */; };
 		B2AFFC830D00A5C10030074D /* GlyphPageTreeNodeMac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2AFFC7B0D00A5C10030074D /* GlyphPageTreeNodeMac.cpp */; };
-		B2AFFC900D00A5DF0030074D /* character-sets.txt in Resources */ = {isa = PBXBuildFile; fileRef = B2AFFC850D00A5DF0030074D /* character-sets.txt */; };
-		B2AFFC910D00A5DF0030074D /* mac-encodings.txt in Resources */ = {isa = PBXBuildFile; fileRef = B2AFFC860D00A5DF0030074D /* mac-encodings.txt */; };
-		B2AFFC920D00A5DF0030074D /* make-charset-table.pl in Resources */ = {isa = PBXBuildFile; fileRef = B2AFFC870D00A5DF0030074D /* make-charset-table.pl */; };
 		B2AFFC930D00A5DF0030074D /* ShapeArabic.c in Sources */ = {isa = PBXBuildFile; fileRef = B2AFFC880D00A5DF0030074D /* ShapeArabic.c */; };
 		B2AFFC940D00A5DF0030074D /* ShapeArabic.h in Headers */ = {isa = PBXBuildFile; fileRef = B2AFFC890D00A5DF0030074D /* ShapeArabic.h */; };
 		B2AFFC950D00A5DF0030074D /* StringImplMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = B2AFFC8A0D00A5DF0030074D /* StringImplMac.mm */; };
@@ -3317,7 +3165,6 @@
 		B2E27CA00B0F2B0900F17C7B /* FloatPoint3D.h in Headers */ = {isa = PBXBuildFile; fileRef = B2E27C9E0B0F2B0900F17C7B /* FloatPoint3D.h */; };
 		B2E4EC970D00C22B00432643 /* SVGZoomEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2E4EC940D00C22B00432643 /* SVGZoomEvent.cpp */; };
 		B2E4EC980D00C22B00432643 /* SVGZoomEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = B2E4EC950D00C22B00432643 /* SVGZoomEvent.h */; };
-		B2E4EC990D00C22B00432643 /* SVGZoomEvent.idl in Resources */ = {isa = PBXBuildFile; fileRef = B2E4EC960D00C22B00432643 /* SVGZoomEvent.idl */; };
 		B2EBDC9C0AF77E3400AE4A68 /* SVGRenderTreeAsText.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2EBDC9A0AF77E3400AE4A68 /* SVGRenderTreeAsText.cpp */; };
 		B2EBDC9D0AF77E3400AE4A68 /* SVGRenderTreeAsText.h in Headers */ = {isa = PBXBuildFile; fileRef = B2EBDC9B0AF77E3400AE4A68 /* SVGRenderTreeAsText.h */; };
 		B2ED97710B1F55CE00257D0F /* GraphicsContextCG.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2ED97700B1F55CE00257D0F /* GraphicsContextCG.cpp */; };
@@ -3633,21 +3480,17 @@
 		BC5A86B50C3367E800EEA649 /* JSDOMSelection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC5A86B30C3367E800EEA649 /* JSDOMSelection.cpp */; };
 		BC5A86B60C3367E800EEA649 /* JSDOMSelection.h in Headers */ = {isa = PBXBuildFile; fileRef = BC5A86B40C3367E800EEA649 /* JSDOMSelection.h */; };
 		BC60D6E90D28D83400B9918F /* DOMCoreException.h in Headers */ = {isa = PBXBuildFile; fileRef = BC60D6E80D28D83400B9918F /* DOMCoreException.h */; };
-		BC60D6EC0D28D99900B9918F /* DOMCoreException.idl in Resources */ = {isa = PBXBuildFile; fileRef = BC60D6EB0D28D99900B9918F /* DOMCoreException.idl */; };
 		BC60D7C00D29A46300B9918F /* JSDOMCoreException.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC60D7BE0D29A46300B9918F /* JSDOMCoreException.cpp */; };
 		BC60D7C10D29A46300B9918F /* JSDOMCoreException.h in Headers */ = {isa = PBXBuildFile; fileRef = BC60D7BF0D29A46300B9918F /* JSDOMCoreException.h */; };
 		BC60D8F20D2A11E000B9918F /* ExceptionBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC60D8F00D2A11E000B9918F /* ExceptionBase.cpp */; };
 		BC60D8F30D2A11E000B9918F /* ExceptionBase.h in Headers */ = {isa = PBXBuildFile; fileRef = BC60D8F10D2A11E000B9918F /* ExceptionBase.h */; };
 		BC60D90C0D2A17CE00B9918F /* EventException.h in Headers */ = {isa = PBXBuildFile; fileRef = BC60D9090D2A17CE00B9918F /* EventException.h */; };
-		BC60D90D0D2A17CE00B9918F /* EventException.idl in Resources */ = {isa = PBXBuildFile; fileRef = BC60D90A0D2A17CE00B9918F /* EventException.idl */; };
 		BC60D9BF0D2A269A00B9918F /* JSEventException.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC60D9BD0D2A269A00B9918F /* JSEventException.cpp */; };
 		BC60D9C00D2A269A00B9918F /* JSEventException.h in Headers */ = {isa = PBXBuildFile; fileRef = BC60D9BE0D2A269A00B9918F /* JSEventException.h */; };
 		BC60D9C90D2A29E500B9918F /* XMLHttpRequestException.h in Headers */ = {isa = PBXBuildFile; fileRef = BC60D9C70D2A29E500B9918F /* XMLHttpRequestException.h */; };
-		BC60D9CA0D2A29E500B9918F /* XMLHttpRequestException.idl in Resources */ = {isa = PBXBuildFile; fileRef = BC60D9C80D2A29E500B9918F /* XMLHttpRequestException.idl */; };
 		BC60DA390D2A302800B9918F /* JSXMLHttpRequestException.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC60DA370D2A302800B9918F /* JSXMLHttpRequestException.cpp */; };
 		BC60DA3A0D2A302800B9918F /* JSXMLHttpRequestException.h in Headers */ = {isa = PBXBuildFile; fileRef = BC60DA380D2A302800B9918F /* JSXMLHttpRequestException.h */; };
 		BC60DA5B0D2A31F700B9918F /* XPathException.h in Headers */ = {isa = PBXBuildFile; fileRef = BC60DA590D2A31F700B9918F /* XPathException.h */; };
-		BC60DA5C0D2A31F700B9918F /* XPathException.idl in Resources */ = {isa = PBXBuildFile; fileRef = BC60DA5A0D2A31F700B9918F /* XPathException.idl */; };
 		BC60DB490D2A3D1E00B9918F /* JSXPathException.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC60DB470D2A3D1E00B9918F /* JSXPathException.cpp */; };
 		BC60DB4A0D2A3D1E00B9918F /* JSXPathException.h in Headers */ = {isa = PBXBuildFile; fileRef = BC60DB480D2A3D1E00B9918F /* JSXPathException.h */; };
 		BC64B4CB0CB4295D005F2B62 /* CachedFont.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC64B4C90CB4295D005F2B62 /* CachedFont.cpp */; };
@@ -14431,149 +14274,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				1C6B7C9A0CEFC9D00076DE61 /* InspectorLocalizedStrings.js in Resources */,
-				B22279750D00BF220071B782 /* SVGAElement.idl in Resources */,
-				B22279780D00BF220071B782 /* SVGAngle.idl in Resources */,
-				B222797B0D00BF220071B782 /* SVGAnimateColorElement.idl in Resources */,
-				B22279910D00BF220071B782 /* SVGAnimateElement.idl in Resources */,
-				B22279960D00BF220071B782 /* SVGAnimateTransformElement.idl in Resources */,
-				B222797C0D00BF220071B782 /* SVGAnimatedAngle.idl in Resources */,
-				B222797D0D00BF220071B782 /* SVGAnimatedBoolean.idl in Resources */,
-				B222797E0D00BF220071B782 /* SVGAnimatedEnumeration.idl in Resources */,
-				B222797F0D00BF220071B782 /* SVGAnimatedInteger.idl in Resources */,
-				B22279800D00BF220071B782 /* SVGAnimatedLength.idl in Resources */,
-				B22279810D00BF220071B782 /* SVGAnimatedLengthList.idl in Resources */,
-				B22279820D00BF220071B782 /* SVGAnimatedNumber.idl in Resources */,
-				B22279830D00BF220071B782 /* SVGAnimatedNumberList.idl in Resources */,
-				B22279860D00BF220071B782 /* SVGAnimatedPathData.idl in Resources */,
-				B22279890D00BF220071B782 /* SVGAnimatedPoints.idl in Resources */,
-				B222798A0D00BF220071B782 /* SVGAnimatedPreserveAspectRatio.idl in Resources */,
-				B222798B0D00BF220071B782 /* SVGAnimatedRect.idl in Resources */,
-				B222798C0D00BF220071B782 /* SVGAnimatedString.idl in Resources */,
-				B222798E0D00BF220071B782 /* SVGAnimatedTransformList.idl in Resources */,
-				B22279990D00BF220071B782 /* SVGAnimationElement.idl in Resources */,
-				B2227B070D00BFF10071B782 /* SVGCSSPropertyNames.in in Resources */,
-				B2227B090D00BFF10071B782 /* SVGCSSValueKeywords.in in Resources */,
-				B222799D0D00BF220071B782 /* SVGCircleElement.idl in Resources */,
-				B22279A00D00BF220071B782 /* SVGClipPathElement.idl in Resources */,
-				B22279A30D00BF220071B782 /* SVGColor.idl in Resources */,
-				B22279A60D00BF220071B782 /* SVGComponentTransferFunctionElement.idl in Resources */,
-				B22279A90D00BF220071B782 /* SVGCursorElement.idl in Resources */,
-				B22279AC0D00BF220071B782 /* SVGDefinitionSrcElement.idl in Resources */,
-				B22279AF0D00BF220071B782 /* SVGDefsElement.idl in Resources */,
-				B22279B20D00BF220071B782 /* SVGDescElement.idl in Resources */,
-				B22279B50D00BF220071B782 /* SVGDocument.idl in Resources */,
-				B22279B80D00BF220071B782 /* SVGElement.idl in Resources */,
-				B22279BB0D00BF220071B782 /* SVGElementInstance.idl in Resources */,
-				B22279BE0D00BF220071B782 /* SVGElementInstanceList.idl in Resources */,
-				B22279C10D00BF220071B782 /* SVGEllipseElement.idl in Resources */,
-				B22279C30D00BF220071B782 /* SVGException.idl in Resources */,
-				B22279C60D00BF220071B782 /* SVGExternalResourcesRequired.idl in Resources */,
-				B22279C90D00BF220071B782 /* SVGFEBlendElement.idl in Resources */,
-				B22279CC0D00BF220071B782 /* SVGFEColorMatrixElement.idl in Resources */,
-				B22279CF0D00BF220071B782 /* SVGFEComponentTransferElement.idl in Resources */,
-				B22279D20D00BF220071B782 /* SVGFECompositeElement.idl in Resources */,
-				B22279D50D00BF220071B782 /* SVGFEDiffuseLightingElement.idl in Resources */,
-				B22279D80D00BF220071B782 /* SVGFEDisplacementMapElement.idl in Resources */,
-				B22279DB0D00BF220071B782 /* SVGFEDistantLightElement.idl in Resources */,
-				B22279DE0D00BF220071B782 /* SVGFEFloodElement.idl in Resources */,
-				B22279E10D00BF220071B782 /* SVGFEFuncAElement.idl in Resources */,
-				B22279E40D00BF220071B782 /* SVGFEFuncBElement.idl in Resources */,
-				B22279E70D00BF220071B782 /* SVGFEFuncGElement.idl in Resources */,
-				B22279EA0D00BF220071B782 /* SVGFEFuncRElement.idl in Resources */,
-				B22279ED0D00BF220071B782 /* SVGFEGaussianBlurElement.idl in Resources */,
-				B22279F00D00BF220071B782 /* SVGFEImageElement.idl in Resources */,
-				B22279F50D00BF220071B782 /* SVGFEMergeElement.idl in Resources */,
-				B22279F80D00BF220071B782 /* SVGFEMergeNodeElement.idl in Resources */,
-				B22279FB0D00BF220071B782 /* SVGFEOffsetElement.idl in Resources */,
-				B22279FE0D00BF220071B782 /* SVGFEPointLightElement.idl in Resources */,
-				B2227A010D00BF220071B782 /* SVGFESpecularLightingElement.idl in Resources */,
-				B2227A040D00BF220071B782 /* SVGFESpotLightElement.idl in Resources */,
-				B2227A070D00BF220071B782 /* SVGFETileElement.idl in Resources */,
-				B2227A0A0D00BF220071B782 /* SVGFETurbulenceElement.idl in Resources */,
-				B2227A0D0D00BF220071B782 /* SVGFilterElement.idl in Resources */,
-				B2227A100D00BF220071B782 /* SVGFilterPrimitiveStandardAttributes.idl in Resources */,
-				B2227A130D00BF220071B782 /* SVGFitToViewBox.idl in Resources */,
-				B2227A160D00BF220071B782 /* SVGFontFaceElement.idl in Resources */,
-				B2227A190D00BF220071B782 /* SVGFontFaceFormatElement.idl in Resources */,
-				B2227A1C0D00BF220071B782 /* SVGFontFaceNameElement.idl in Resources */,
-				B2227A1F0D00BF220071B782 /* SVGFontFaceSrcElement.idl in Resources */,
-				B2227A220D00BF220071B782 /* SVGFontFaceUriElement.idl in Resources */,
-				B2227A250D00BF220071B782 /* SVGForeignObjectElement.idl in Resources */,
-				B2227A280D00BF220071B782 /* SVGGElement.idl in Resources */,
-				B2227A2B0D00BF220071B782 /* SVGGradientElement.idl in Resources */,
-				B2227A2E0D00BF220071B782 /* SVGImageElement.idl in Resources */,
-				B2227A310D00BF220071B782 /* SVGLangSpace.idl in Resources */,
-				B2227A340D00BF220071B782 /* SVGLength.idl in Resources */,
-				B2227A370D00BF220071B782 /* SVGLengthList.idl in Resources */,
-				B2227A3D0D00BF220071B782 /* SVGLineElement.idl in Resources */,
-				B2227A3A0D00BF220071B782 /* SVGLinearGradientElement.idl in Resources */,
-				B2227A420D00BF220071B782 /* SVGLocatable.idl in Resources */,
-				B2227A450D00BF220071B782 /* SVGMarkerElement.idl in Resources */,
-				B2227A480D00BF220071B782 /* SVGMaskElement.idl in Resources */,
-				B2227A490D00BF220071B782 /* SVGMatrix.idl in Resources */,
-				B2227A4C0D00BF220071B782 /* SVGMetadataElement.idl in Resources */,
-				B2227A4F0D00BF220071B782 /* SVGNumber.idl in Resources */,
-				B2227A520D00BF220071B782 /* SVGNumberList.idl in Resources */,
-				B2227A550D00BF220071B782 /* SVGPaint.idl in Resources */,
-				B2227A5A0D00BF220071B782 /* SVGPathElement.idl in Resources */,
-				B2227A5C0D00BF220071B782 /* SVGPathSeg.idl in Resources */,
-				B2227A5F0D00BF220071B782 /* SVGPathSegArcAbs.idl in Resources */,
-				B2227A600D00BF220071B782 /* SVGPathSegArcRel.idl in Resources */,
-				B2227A630D00BF220071B782 /* SVGPathSegClosePath.idl in Resources */,
-				B2227A660D00BF220071B782 /* SVGPathSegCurvetoCubicAbs.idl in Resources */,
-				B2227A670D00BF220071B782 /* SVGPathSegCurvetoCubicRel.idl in Resources */,
-				B2227A6A0D00BF220071B782 /* SVGPathSegCurvetoCubicSmoothAbs.idl in Resources */,
-				B2227A6B0D00BF220071B782 /* SVGPathSegCurvetoCubicSmoothRel.idl in Resources */,
-				B2227A6E0D00BF220071B782 /* SVGPathSegCurvetoQuadraticAbs.idl in Resources */,
-				B2227A6F0D00BF220071B782 /* SVGPathSegCurvetoQuadraticRel.idl in Resources */,
-				B2227A720D00BF220071B782 /* SVGPathSegCurvetoQuadraticSmoothAbs.idl in Resources */,
-				B2227A730D00BF220071B782 /* SVGPathSegCurvetoQuadraticSmoothRel.idl in Resources */,
-				B2227A760D00BF220071B782 /* SVGPathSegLinetoAbs.idl in Resources */,
-				B2227A790D00BF220071B782 /* SVGPathSegLinetoHorizontalAbs.idl in Resources */,
-				B2227A7A0D00BF220071B782 /* SVGPathSegLinetoHorizontalRel.idl in Resources */,
-				B2227A7B0D00BF220071B782 /* SVGPathSegLinetoRel.idl in Resources */,
-				B2227A7E0D00BF220071B782 /* SVGPathSegLinetoVerticalAbs.idl in Resources */,
-				B2227A7F0D00BF220071B782 /* SVGPathSegLinetoVerticalRel.idl in Resources */,
-				B2227A820D00BF220071B782 /* SVGPathSegList.idl in Resources */,
-				B2227A850D00BF220071B782 /* SVGPathSegMovetoAbs.idl in Resources */,
-				B2227A860D00BF220071B782 /* SVGPathSegMovetoRel.idl in Resources */,
-				B2227A890D00BF220071B782 /* SVGPatternElement.idl in Resources */,
-				B2227A8A0D00BF220071B782 /* SVGPoint.idl in Resources */,
-				B2227A8D0D00BF220071B782 /* SVGPointList.idl in Resources */,
-				B2227A920D00BF220071B782 /* SVGPolygonElement.idl in Resources */,
-				B2227A950D00BF220071B782 /* SVGPolylineElement.idl in Resources */,
-				B2227A980D00BF220071B782 /* SVGPreserveAspectRatio.idl in Resources */,
-				B2227A9B0D00BF220071B782 /* SVGRadialGradientElement.idl in Resources */,
-				B2227A9C0D00BF220071B782 /* SVGRect.idl in Resources */,
-				B2227A9F0D00BF220071B782 /* SVGRectElement.idl in Resources */,
-				B2227AA10D00BF220071B782 /* SVGRenderingIntent.idl in Resources */,
-				B2227ABC0D00BF220071B782 /* SVGSVGElement.idl in Resources */,
-				B2227AA40D00BF220071B782 /* SVGScriptElement.idl in Resources */,
-				B2227AA70D00BF220071B782 /* SVGSetElement.idl in Resources */,
-				B2227AAA0D00BF220071B782 /* SVGStopElement.idl in Resources */,
-				B2227AAD0D00BF220071B782 /* SVGStringList.idl in Resources */,
-				B2227AB00D00BF220071B782 /* SVGStylable.idl in Resources */,
-				B2227AB90D00BF220071B782 /* SVGStyleElement.idl in Resources */,
-				B2227ABF0D00BF220071B782 /* SVGSwitchElement.idl in Resources */,
-				B2227AC20D00BF220071B782 /* SVGSymbolElement.idl in Resources */,
-				B2227AE30D00BF220071B782 /* SVGTRefElement.idl in Resources */,
-				B2227AE60D00BF220071B782 /* SVGTSpanElement.idl in Resources */,
-				B2227AC60D00BF220071B782 /* SVGTests.idl in Resources */,
-				B2227AC90D00BF220071B782 /* SVGTextContentElement.idl in Resources */,
-				B2227ACC0D00BF220071B782 /* SVGTextElement.idl in Resources */,
-				B2227ACF0D00BF220071B782 /* SVGTextPathElement.idl in Resources */,
-				B2227AD20D00BF220071B782 /* SVGTextPositioningElement.idl in Resources */,
-				B2227AD50D00BF220071B782 /* SVGTitleElement.idl in Resources */,
-				B2227AD80D00BF220071B782 /* SVGTransform.idl in Resources */,
-				B2227AE00D00BF220071B782 /* SVGTransformList.idl in Resources */,
-				B2227ADB0D00BF220071B782 /* SVGTransformable.idl in Resources */,
-				B2227AEB0D00BF220071B782 /* SVGURIReference.idl in Resources */,
-				B2227AE80D00BF220071B782 /* SVGUnitTypes.idl in Resources */,
-				B2227AEE0D00BF220071B782 /* SVGUseElement.idl in Resources */,
-				B2227AF10D00BF220071B782 /* SVGViewElement.idl in Resources */,
-				B2227AF40D00BF220071B782 /* SVGViewSpec.idl in Resources */,
-				B2227AF70D00BF220071B782 /* SVGZoomAndPan.idl in Resources */,
-				B2E4EC990D00C22B00432643 /* SVGZoomEvent.idl in Resources */,
 				B25599480D00D8BA00BB825C /* WKArithmeticFilter.cikernel in Resources */,
 				B255994B0D00D8BA00BB825C /* WKComponentMergeFilter.cikernel in Resources */,
 				B255994E0D00D8BA00BB825C /* WKDiffuseLightingFilter.cikernel in Resources */,
@@ -14587,10 +14287,8 @@
 				B25599680D00D8BA00BB825C /* WKSpecularLightingFilter.cikernel in Resources */,
 				B255996B0D00D8BA00BB825C /* WKSpotLightFilter.cikernel in Resources */,
 				B255996E0D00D8BA00BB825C /* WKTableTransferFilter.cikernel in Resources */,
-				75793E850D0CE0B3007FC0AC /* MessageEvent.idl in Resources */,
 				46F9D5DD0B0D60170028EE36 /* aliasCursor.png in Resources */,
 				46D4F2490AF97E810035385A /* cellCursor.png in Resources */,
-				B2AFFC900D00A5DF0030074D /* character-sets.txt in Resources */,
 				46D4F24A0AF97E810035385A /* contextMenuCursor.png in Resources */,
 				4614A1FE0B23A8D600446E1C /* copyCursor.png in Resources */,
 				464EA2730B8A350B00A8E6E3 /* crossHairCursor.png in Resources */,
@@ -14601,8 +14299,6 @@
 				85136C9B0AED665900F90A3D /* helpCursor.png in Resources */,
 				06693F7B0BFBC91700216072 /* inspector in Resources */,
 				85136C9C0AED665900F90A3D /* linkCursor.png in Resources */,
-				B2AFFC910D00A5DF0030074D /* mac-encodings.txt in Resources */,
-				B2AFFC920D00A5DF0030074D /* make-charset-table.pl in Resources */,
 				AB4261D80A2F6C9700BDD17D /* missingImage.tiff in Resources */,
 				85136C9D0AED665900F90A3D /* moveCursor.png in Resources */,
 				46F9D5DE0B0D60170028EE36 /* noDropCursor.png in Resources */,
@@ -14618,22 +14314,12 @@
 				85136CA40AED665900F90A3D /* southEastResizeCursor.png in Resources */,
 				85136CA50AED665900F90A3D /* southResizeCursor.png in Resources */,
 				85136CA60AED665900F90A3D /* southWestResizeCursor.png in Resources */,
-				B222799A0D00BF220071B782 /* svgattrs.in in Resources */,
-				B2227AC30D00BF220071B782 /* svgtags.in in Resources */,
 				ED048ABC0833F132006E1E67 /* textAreaResizeCorner.tiff in Resources */,
 				46D4F24B0AF97E810035385A /* verticalTextCursor.png in Resources */,
 				85136CA70AED665900F90A3D /* waitCursor.png in Resources */,
 				85136CA80AED665900F90A3D /* westResizeCursor.png in Resources */,
-				B28C6A2F0D00C44800334AA4 /* xlinkattrs.in in Resources */,
 				1AB1AE7A0C051FDE00139F4F /* zoomInCursor.png in Resources */,
 				1AB1AE7B0C051FDE00139F4F /* zoomOutCursor.png in Resources */,
-				B2A1F2AC0CEF0ABF00442F6A /* SVGFontElement.idl in Resources */,
-				B2A1F2AF0CEF0ABF00442F6A /* SVGGlyphElement.idl in Resources */,
-				B2A1F2B20CEF0ABF00442F6A /* SVGMissingGlyphElement.idl in Resources */,
-				BC60D6EC0D28D99900B9918F /* DOMCoreException.idl in Resources */,
-				BC60D90D0D2A17CE00B9918F /* EventException.idl in Resources */,
-				BC60D9CA0D2A29E500B9918F /* XMLHttpRequestException.idl in Resources */,
-				BC60DA5C0D2A31F700B9918F /* XPathException.idl in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
