@@ -1,3 +1,10 @@
+2008-01-08  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Adam. 
+
+        * rendering/RenderThemeSafari.cpp: Use the SafariTheme version number to decide whether or not to
+        paint the media controls in RenderThemeSafari.
+
 2008-01-08  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Adele and John.
