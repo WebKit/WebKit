@@ -60,17 +60,12 @@
             <element>
                 <name>symbol</name>
                 <url>http://www.w3.org/TR/SVG11/struct.html#SymbolElement</url>
-                <issues>
-                    <issue>SVGs are not supported as real image types <bug>5971</bug></issue>
-                </issues>
+                <status>Implemented</status>
             </element>
             <element>
                 <name>use</name>
                 <url>http://www.w3.org/TR/SVG11/struct.html#UseElement</url>
-                <issues>
-                    <issue>&lt;use&gt; does not handle recursion correctly <bug>6000</bug></issue>
-                    <issue>SVGs are not supported as real image types <bug>5971</bug></issue>
-                </issues>
+                <status>Implemented</status>
             </element>
         </elements>
     </module>
@@ -92,6 +87,7 @@
             <element>
                 <name>image</name>
                 <url>http://www.w3.org/TR/SVG11/struct.html#ImageElement</url>
+                <status>Implemented</status>
                  <issues>
                     <issue>&lt;image&gt; does not support color-profile property <bug>6036</bug></issue>
                 </issues>
@@ -158,22 +154,12 @@
             <element>
                 <name>text</name>
                 <url>http://www.w3.org/TR/SVG11/text.html#TextElement</url>
-                <status>Partial</status>
-                <issues>
-                    <issue>does not respect x, y, dx, dy offset lists <bug>6420</bug></issue>
-                    <issue>textLength attribute is not respected <bug>6421</bug></issue>
-                    <issue>lengthAdjust attribute is not respected <bug>6422</bug></issue>
-                    <issue>textAnchor attribute is not respected <bug>6423</bug></issue>
-                    <issue>dominant-baseline attribute is not respected <bug>6424</bug></issue>
-                </issues>
+                <status>Implemented</status>
             </element>
             <element>
                 <name>tspan</name>
                 <url>http://www.w3.org/TR/SVG11/text.html#TSpanElement</url>
-                <status>Partial</status>
-                <issues>
-                    <issue>ignores positioning attributes <bug>6559</bug></issue>
-                </issues>
+                <status>Implemented</status>
             </element>
             <element>
                 <name>tref</name>
@@ -183,7 +169,7 @@
             <element>
                 <name>textPath</name>
                 <url>http://www.w3.org/TR/SVG11/text.html#TextPathElement</url>
-                <status>Unimplemented</status>
+                <status>Implemented</status>
                 <issues>
                     <issue>&lt;textPath&gt; element not implemented <bug>6425</bug></issue>
                 </issues>
@@ -245,12 +231,10 @@
             <element>
                 <name>linearGradient</name>
                 <url>http://www.w3.org/TR/SVG11/pservers.html#LinearGradientElement</url>
-                <status>Partial</status>
+                <status>Implemented</status>
                 <issues>
                     <issue>Reflect and repeat not supported <bug>5968</bug></issue>
                     <issue>color-interpolation not supported for gradients <bug>6034</bug></issue>
-                    <issue>Gradient appears and disappears in SVG <bug>6716</bug></issue>
-                    <issue>Gradients aren't pixel-perfect <bug>8628</bug></issue>
                 </issues>
             </element>
             <element>
@@ -297,10 +281,7 @@
             <element>
                 <name>mask</name>
                 <url>http://www.w3.org/TR/SVG11/masking.html#MaskElement</url>
-                <status>Partial</status>
-                <issues>
-                    <issue>does not support maskUnits or maskContentUnits <bug>6409</bug></issue>
-                </issues>
+                <status>Implemented</status>
             </element>
         </elements>
     </module>
@@ -378,9 +359,6 @@
             <element>
                 <name>feImage</name>
                 <url>http://www.w3.org/TR/SVG11/filters.html#feImageElement</url>
-                <issues>
-                    <issue>SVGs are not supported as a real image type <bug>5971</bug></issue>
-                </issues>
             </element>
             <element>
                 <name>feMerge</name>
@@ -471,9 +449,6 @@
             <element>
                 <name>cursor</name>
                 <url>http://www.w3.org/TR/SVG11/interact.html#CursorElement</url>
-                <issues>
-                    <issue>SVGs are not supported as real image types <bug>5971</bug></issue>
-                </issues>
             </element>
         </elements>
     </module>
@@ -485,9 +460,6 @@
                 <name>a</name>
                 <url>http://www.w3.org/TR/SVG11/linking.html#AElement</url>
                 <status>Implemented</status>
-                <issues>
-                    <issue>SVG does not support tabbing navigation between web page links <bug>8823</bug></issue>
-                </issues>
             </element>
         </elements>
     </module>
@@ -498,9 +470,9 @@
             <element>
                 <name>view</name>
                 <url>http://www.w3.org/TR/SVG11/linking.html#ViewElement</url>
-                <status>Unimplemented</status>
+                <status>Partial</status>
                 <issues>
-                    <issue>SVG &lt;view&gt; is unimplemented <bug>5996</bug></issue>
+                    <issue>SVGViewSpec DOM bindings are missing <bug>15495</bug></issue>
                 </issues>
             </element>
         </elements>
@@ -528,22 +500,22 @@
             <element>
                 <name>set</name>
                 <url>http://www.w3.org/TR/SVG11/animate.html#SetElement</url>
-                <status>Implemented</status>
+                <status>Partial</status>
             </element>
             <element>
                 <name>animateMotion</name>
                 <url>http://www.w3.org/TR/SVG11/animate.html#AnimateMotionElement</url>
-                <status>Unimplemented</status>
+                <status>Partial</status>
             </element>
             <element>
                 <name>animateTransform</name>
                 <url>http://www.w3.org/TR/SVG11/animate.html#AnimateTransformElement</url>
-                <status>Implemented</status>
+                <status>Partial</status>
             </element>
             <element>
                 <name>animateColor</name>
                 <url>http://www.w3.org/TR/SVG11/animate.html#AnimateColorElement</url>
-                <status>Implemented</status>
+                <status>Partial</status>
                 <issues>
                     <issue>color-interpolation not supported for animateColor <bug>6034</bug></issue>
                 </issues>
@@ -551,7 +523,7 @@
             <element>
                 <name>mpath</name>
                 <url>http://www.w3.org/TR/SVG11/animate.html#mpathElement</url>
-                <status>Unimplemented</status>
+                <status>Implemented</status>
             </element>
         </elements>
     </module>
@@ -562,31 +534,22 @@
             <element>
                 <name>font</name>
                 <url>http://www.w3.org/TR/SVG11/fonts.html#FontFaceElement</url>
-                <status>Unimplemented</status>
-                <issues>
-                    <issue>Implement SVGFontElement <bug>10650</bug></issue>
-                </issues>
+                <status>Implemented</status>
             </element>
             <element>
                 <name>font-face</name>
                 <url>http://www.w3.org/TR/SVG11/fonts.html#FontFaceNameElement</url>
-                <status>Unimplemented</status>
-                <issues>
-                    <issue>Implement SVGFontFace*Elements <bug>10652</bug></issue>
-                </issues>
+                <status>Implemented</status>
             </element>
             <element>
                 <name>glyph</name>
                 <url>http://www.w3.org/TR/SVG11/fonts.html#GlyphElement</url>
-                <status>Unimplemented</status>
-                <issues>
-                    <issue>Implement SVGGlyphElement <bug>10651</bug></issue>
-                </issues>
+                <status>Implemented</status>
             </element>
             <element>
                 <name>missing-glyph</name>
                 <url>http://www.w3.org/TR/SVG11/fonts.html#MissingGlyphElement</url>
-                <status>Unimplemented</status>
+                <status>Implemented</status>
             </element>
             <element>
                 <name>hkern</name>
@@ -601,27 +564,27 @@
             <element>
                 <name>font-face-src</name>
                 <url>http://www.w3.org/TR/SVG11/fonts.html#FontFaceSrcElement</url>
-                <status>Unimplemented</status>
+                <status>Implemented</status>
             </element>
             <element>
                 <name>font-face-uri</name>
                 <url>http://www.w3.org/TR/SVG11/fonts.html#FontFaceNameElement</url>
-                <status>Unimplemented</status>
+                <status>Implemented</status>
             </element>
             <element>
                 <name>font-face-format</name>
                 <url>http://www.w3.org/TR/SVG11/fonts.html#FontFaceNameElement</url>
-                <status>Unimplemented</status>
+                <status>Implemented</status>
             </element>
             <element>
                 <name>font-face-name</name>
                 <url>http://www.w3.org/TR/SVG11/fonts.html#FontFaceNameElement</url>
-                <status>Unimplemented</status>
+                <status>Implemented</status>
             </element>
             <element>
                 <name>definition-src</name>
                 <url>http://www.w3.org/TR/SVG11/fonts.html#DefinitionSrcElement</url>
-                <status>Unimplemented</status>
+                <status>Partial</status>
             </element>
          </elements>
     </module>

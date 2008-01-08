@@ -1,3 +1,9 @@
+2008-01-07  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Mark Rowe.
+
+        * projects/svg/status.xml: remove fixed bugs.
+
 2007-12-30  Mark Rowe  <mrowe@apple.com>
 
         Unreviewed.  Update WordPress to 2.3.2, which includes security fixes.
