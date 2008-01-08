@@ -1,5 +1,12 @@
 2008-01-08  Dan Bernstein  <mitz@apple.com>
 
+        - add bug number
+
+        * platform/graphics/mac/FontCustomPlatformData.cpp:
+        (WebCore::createFontCustomPlatformData):
+
+2008-01-08  Dan Bernstein  <mitz@apple.com>
+
         Try to fix the Qt build.
 
         * WebCore.pro:
