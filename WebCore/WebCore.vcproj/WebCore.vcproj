@@ -3805,11 +3805,11 @@
 					>
 				</File>
 				<File
-					RelativePath="..\platform\graphics\FontDataBaseClass.cpp"
+					RelativePath="..\platform\graphics\FontData.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\platform\graphics\FontDataBaseClass.h"
+					RelativePath="..\platform\graphics\FontData.h"
 					>
 				</File>
 				<File

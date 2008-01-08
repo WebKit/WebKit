@@ -23,7 +23,7 @@
 #ifndef SimpleFontData_h
 #define SimpleFontData_h
 
-#include "FontDataBaseClass.h"
+#include "FontData.h"
 #include "FontPlatformData.h"
 #include "GlyphPageTreeNode.h"
 #include "GlyphWidthMap.h"

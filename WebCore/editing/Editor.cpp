@@ -41,7 +41,7 @@
 #include "EventHandler.h"
 #include "EventNames.h"
 #include "FocusController.h"
-#include "FontDataBaseClass.h"
+#include "FontData.h"
 #include "FrameView.h"
 #include "HTMLInputElement.h"
 #include "HTMLTextAreaElement.h"

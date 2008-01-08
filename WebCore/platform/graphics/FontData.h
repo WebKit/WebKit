@@ -23,13 +23,27 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
-#include "FontDataBaseClass.h"
+#ifndef FontData_h
+#define FontData_h
+
+#include <wtf/Noncopyable.h>
+#include <wtf/unicode/Unicode.h>
 
 namespace WebCore {
 
-FontData::~FontData()
-{
-}
+class SimpleFontData;
+
+class FontData : Noncopyable {
+public:
+    virtual ~FontData();
+
+    virtual const SimpleFontData* fontDataForCharacter(UChar32) const = 0;
+    virtual bool containsCharacters(const UChar*, int length) const = 0;
+    virtual bool isCustomFont() const = 0;
+    virtual bool isLoading() const = 0;
+    virtual bool isSegmented() const = 0;
+};
 
 } // namespace WebCore
+
+#endif // FontData_h

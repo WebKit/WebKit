@@ -737,7 +737,7 @@ SOURCES += \
     platform/graphics/FloatPoint.cpp \
     platform/graphics/FloatRect.cpp \
     platform/graphics/FloatSize.cpp \
-    platform/graphics/FontDataBaseClass.cpp \
+    platform/graphics/FontData.cpp \
     platform/graphics/GraphicsContext.cpp \
     platform/graphics/GraphicsTypes.cpp \
     platform/graphics/Image.cpp \

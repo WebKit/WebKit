@@ -913,7 +913,7 @@ webkitgtk_sources += \
 	WebCore/platform/graphics/GlyphWidthMap.cpp \
 	WebCore/platform/graphics/FontCache.cpp \
 	WebCore/platform/graphics/Font.cpp \
-	WebCore/platform/graphics/FontDataBaseClass.cpp \
+	WebCore/platform/graphics/FontData.cpp \
 	WebCore/platform/graphics/FontFallbackList.cpp \
 	WebCore/platform/graphics/SegmentedFontData.cpp \
 	WebCore/platform/graphics/SimpleFontData.cpp \

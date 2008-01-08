@@ -571,7 +571,7 @@ This file contains the list of files needed to build WebCore.
         platform/FileChooser.cpp
         platform/graphics/Font.cpp
         platform/graphics/FontCache.cpp
-        platform/graphics/FontDataBaseClass.cpp
+        platform/graphics/FontData.cpp
         platform/graphics/FontFallbackList.cpp
         platform/graphics/FontFamily.cpp
         platform/graphics/GlyphPageTreeNode.cpp

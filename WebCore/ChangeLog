@@ -1,5 +1,24 @@
 2008-01-08  Dan Bernstein  <mitz@apple.com>
 
+        Rubber-stamped by Sam Weinig.
+
+        - rename FontDataBaseClass.{cpp,h} back to FontData.{cpp,h}
+
+        * GNUmakefile.am:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * WebCoreSources.bkl:
+        * editing/Editor.cpp:
+        * platform/graphics/FontData.cpp: Copied from WebCore/platform/graphics/FontDataBaseClass.cpp.
+        * platform/graphics/FontData.h: Copied from WebCore/platform/graphics/FontDataBaseClass.h.
+        * platform/graphics/FontDataBaseClass.cpp: Removed.
+        * platform/graphics/FontDataBaseClass.h: Removed.
+        * platform/graphics/SegmentedFontData.h:
+        * platform/graphics/SimpleFontData.h:
+
+2008-01-08  Dan Bernstein  <mitz@apple.com>
+
         Fix a Wx build error.
 
         * platform/graphics/wx/GlyphMapWx.cpp:
