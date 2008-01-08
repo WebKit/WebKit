@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="windows-1251"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="8,00"
+	Version="8.00"
 	Name="QTMovieWin"
 	ProjectGUID="{E498CA9D-3BD2-4D52-8E37-C8DC76526325}"
 	RootNamespace="QuickTimeWin"
@@ -25,6 +25,7 @@
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
+				CommandLine="set PATH=%SystemDrive%\cygwin\bin;%PATH%&#x0D;&#x0A;bash auto-version.sh &quot;$(InputDir).&quot; &quot;$(IntDir)&quot;&#x0D;&#x0A;"
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
@@ -56,6 +57,7 @@
 			/>
 			<Tool
 				Name="VCResourceCompilerTool"
+				AdditionalIncludeDirectories="$(IntDir)\include"
 			/>
 			<Tool
 				Name="VCPreLinkEventTool"
@@ -110,6 +112,7 @@
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
+				CommandLine="set PATH=%SystemDrive%\cygwin\bin;%PATH%&#x0D;&#x0A;bash auto-version.sh &quot;$(InputDir).&quot; &quot;$(IntDir)&quot;&#x0D;&#x0A;"
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
@@ -138,6 +141,7 @@
 			/>
 			<Tool
 				Name="VCResourceCompilerTool"
+				AdditionalIncludeDirectories="$(IntDir)\include"
 			/>
 			<Tool
 				Name="VCPreLinkEventTool"
@@ -191,6 +195,7 @@
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
+				CommandLine="set PATH=%SystemDrive%\cygwin\bin;%PATH%&#x0D;&#x0A;bash auto-version.sh &quot;$(InputDir).&quot; &quot;$(IntDir)&quot;&#x0D;&#x0A;"
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
@@ -222,6 +227,7 @@
 			/>
 			<Tool
 				Name="VCResourceCompilerTool"
+				AdditionalIncludeDirectories="$(IntDir)\include"
 			/>
 			<Tool
 				Name="VCPreLinkEventTool"
@@ -302,6 +308,10 @@
 			Filter="rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav"
 			UniqueIdentifier="{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}"
 			>
+			<File
+				RelativePath=".\QTMovieWin.rc"
+				>
+			</File>
 		</Filter>
 	</Files>
 	<Globals>

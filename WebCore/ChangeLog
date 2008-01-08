@@ -1,3 +1,15 @@
+2008-01-07  Steve Falkenburg  <sfalken@apple.com>
+
+        Add version resource to QTMovieWin.dll
+        
+        Reviewed by Adam.
+
+        * WebCore.vcproj/PRODUCTVERSION: Copied from ../WebKit/win/WebKit.vcproj/PRODUCTVERSION.
+        * WebCore.vcproj/QTMovieWin.rc: Added.
+        * WebCore.vcproj/QTMovieWin.vcproj:
+        * WebCore.vcproj/VERSION: Copied from ../WebKit/win/WebKit.vcproj/VERSION.
+        * WebCore.vcproj/auto-version.sh: Copied from ../WebKit/win/WebKit.vcproj/auto-version.sh.
+
 2008-01-07  Dan Bernstein  <mitz@apple.com>
 
         Build fix.
