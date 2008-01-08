@@ -1,3 +1,10 @@
+2008-01-07  Steve Falkenburg  <sfalken@apple.com>
+
+        Build fix.
+
+        * WebCore.vcproj/WebCore.sln:
+        * WebCore.vcproj/WebCore.submit.sln:
+
 2008-01-07  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Niko.
