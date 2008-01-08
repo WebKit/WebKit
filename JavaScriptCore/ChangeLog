@@ -1,3 +1,11 @@
+2008-01-07  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Mark.
+
+        Enable SVG_FONTS by default.
+
+        * Configurations/JavaScriptCore.xcconfig:
+
 2008-01-07  Darin Adler  <darin@apple.com>
 
         Rubber stamped by David Kilzer.
