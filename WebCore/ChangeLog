@@ -1,5 +1,11 @@
 2008-01-07  Nikolas Zimmermann  <zimmermann@kde.org>
 
+        Reviewed by Eric. Hopefully fix build with mac tiger after the unicode-range addition. NSInteger not available there.
+
+        * platform/graphics/mac/FontCacheMac.mm:
+
+2008-01-07  Nikolas Zimmermann  <zimmermann@kde.org>
+
         Reviewed by Oliver. Fix build error introduced by Dan's unicode-range support patch & enabling SVG_FONTS by default.
 
         * css/CSSFontSelector.cpp:

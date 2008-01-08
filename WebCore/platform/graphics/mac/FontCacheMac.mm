@@ -35,6 +35,10 @@
 #import "WebCoreSystemInterface.h"
 #import "WebFontCache.h"
 
+#ifdef BUILDING_ON_TIGER
+typedef int NSInteger;
+#endif
+
 namespace WebCore {
 
 static bool getAppDefaultValue(CFStringRef key, int *v)
