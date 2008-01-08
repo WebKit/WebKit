@@ -10,22 +10,38 @@
     <file>inspector.js</file>
     <file>treeoutline.js</file>
     <file>utilities.js</file>
+    <file>Images/alternateTableRows.png</file>
     <file>Images/attachedShadow.png</file>
+    <file>Images/backNormal.png</file>
     <file>Images/bottomShadow.png</file>
     <file>Images/breadcrumbBackground.png</file>
     <file>Images/checker.png</file>
     <file>Images/console.png</file>
     <file>Images/darkShadow.png</file>
+    <file>Images/database.png</file>
+    <file>Images/databaseBrowserViewNormal.png</file>
+    <file>Images/databaseBrowserViewNormalSelected.png</file>
+    <file>Images/databaseBrowserViewSmall.png</file>
+    <file>Images/databaseBrowserViewSmallSelected.png</file>
+    <file>Images/databaseQueryViewNormal.png</file>
+    <file>Images/databaseQueryViewNormalSelected.png</file>
+    <file>Images/databaseQueryViewSmall.png</file>
+    <file>Images/databaseQueryViewSmallSelected.png</file>
     <file>Images/disclosureDownPressed.png</file>
     <file>Images/disclosureRightDown.png</file>
     <file>Images/disclosureRightPressed.png</file>
     <file>Images/document.png</file>
-    <file>Images/domViewButton.png</file>
-    <file>Images/domViewButtonSelected.png</file>
+    <file>Images/domViewNormal.png</file>
+    <file>Images/domViewNormalSelected.png</file>
+    <file>Images/domViewSmall.png</file>
+    <file>Images/domViewSmallSelected.png</file>
     <file>Images/downTriangle.png</file>
     <file>Images/errorIcon.png</file>
     <file>Images/errorMediumIcon.png</file>
     <file>Images/folder.png</file>
+    <file>Images/forwardNormal.png</file>
+    <file>Images/glossyHeader.png</file>
+    <file>Images/glossyHeaderPressed.png</file>
     <file>Images/goArrow.png</file>
     <file>Images/gradient.png</file>
     <file>Images/gradientHighlight.png</file>
@@ -40,6 +56,8 @@
     <file>Images/paneHeaderActive.png</file>
     <file>Images/plainDocument.png</file>
     <file>Images/popupArrows.png</file>
+    <file>Images/popupArrowsBlack.png</file>
+    <file>Images/reload.png</file>
     <file>Images/rightTriangle.png</file>
     <file>Images/segment.png</file>
     <file>Images/segmentEnd.png</file>
@@ -64,8 +82,10 @@
     <file>Images/sidebarSelectionGrayTall.png</file>
     <file>Images/sidebarSelectionTall.png</file>
     <file>Images/sidebarStatusAreaBackground.png</file>
-    <file>Images/sourceViewButton.png</file>
-    <file>Images/sourceViewButtonSelected.png</file>
+    <file>Images/sourceViewNormal.png</file>
+    <file>Images/sourceViewNormalSelected.png</file>
+    <file>Images/sourceViewSmall.png</file>
+    <file>Images/sourceViewSmallSelected.png</file>
     <file>Images/splitviewDimple.png</file>
     <file>Images/splitviewDividerBackground.png</file>
     <file>Images/tab.png</file>
@@ -85,12 +105,26 @@
     <file>Images/toggleUp.png</file>
     <file>Images/toolbarBackground.png</file>
     <file>Images/toolbarBackgroundInactive.png</file>
-    <file>Images/toolbarButton.png</file>
-    <file>Images/toolbarButtonInactive.png</file>
-    <file>Images/toolbarButtonPressed.png</file>
-    <file>Images/toolbarButtonPressedInactive.png</file>
-    <file>Images/toolbarSplitButtonDivider.png</file>
-    <file>Images/toolbarSplitButtonDividerInactive.png</file>
+    <file>Images/toolbarButtonNormal.png</file>
+    <file>Images/toolbarButtonNormalInactive.png</file>
+    <file>Images/toolbarButtonNormalPressed.png</file>
+    <file>Images/toolbarButtonNormalSelected.png</file>
+    <file>Images/toolbarButtonNormalSelectedInactive.png</file>
+    <file>Images/toolbarButtonSmall.png</file>
+    <file>Images/toolbarButtonSmallInactive.png</file>
+    <file>Images/toolbarButtonSmallPressed.png</file>
+    <file>Images/toolbarButtonSmallSelected.png</file>
+    <file>Images/toolbarButtonSmallSelectedInactive.png</file>
+    <file>Images/toolbarPopupButtonNormal.png</file>
+    <file>Images/toolbarPopupButtonNormalInactive.png</file>
+    <file>Images/toolbarPopupButtonNormalPressed.png</file>
+    <file>Images/toolbarPopupButtonSmall.png</file>
+    <file>Images/toolbarPopupButtonSmallInactive.png</file>
+    <file>Images/toolbarPopupButtonSmallPressed.png</file>
+    <file>Images/toolbarSplitButtonDividerNormal.png</file>
+    <file>Images/toolbarSplitButtonDividerNormalInactive.png</file>
+    <file>Images/toolbarSplitButtonDividerSmall.png</file>
+    <file>Images/toolbarSplitButtonDividerSmallInactive.png</file>
     <file>Images/treeDownTriangleBlack.png</file>
     <file>Images/treeDownTriangleWhite.png</file>
     <file>Images/treeLeftTriangleBlack.png</file>

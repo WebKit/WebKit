@@ -1,3 +1,9 @@
+2008-01-08  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Not reviewed. Try to fix Qt builds after Timothy's inspector changes.
+
+        * page/inspector/WebKit.qrc:
+
 2008-01-08  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Mark.
