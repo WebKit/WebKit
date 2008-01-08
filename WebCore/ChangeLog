@@ -1,3 +1,12 @@
+2008-01-08  Luca Bruno  <lethalman88@gmail.com>
+
+        Reviewed by Alp Toker.
+
+        Support copying the selected URL to the clipboard.
+
+        * platform/gtk/PasteboardGtk.cpp:
+        (WebCore::Pasteboard::writeURL): implemented
+
 2008-01-08  David D. Kilzer  <ddkilzer@webkit.org>
 
         Renamed CharacterData::m_str to m_data
