@@ -24,12 +24,12 @@
 
 namespace WebCore {
 
-FontData::FontData(const FontPlatformData& font, bool customFont, bool loading)
+SimpleFontData::SimpleFontData(const FontPlatformData& font, bool customFont, bool loading)
     : m_font(font), m_isCustomFont(customFont), m_isLoading(loading)
 {
 }
 
-FontData::~FontData()
+SimpleFontData::~SimpleFontData()
 {
 }
 
