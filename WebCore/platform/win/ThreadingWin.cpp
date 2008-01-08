@@ -61,19 +61,6 @@ static void storeThreadHandleByIdentifier(DWORD threadID, HANDLE threadHandle)
     threadMap().add(threadID, threadHandle);
 }
 
-static ThreadIdentifier identifierByThreadHandle(HANDLE threadHandle)
-{
-    MutexLocker locker(threadMapMutex());
-
-    HashMap<DWORD, HANDLE>::iterator i = threadMap().begin();
-    for (; i != threadMap().end(); ++i) {
-        if (i->second == threadHandle)
-            return i->first;
-    }
-
-    return 0;
-}
-
 static HANDLE threadHandleForIdentifier(ThreadIdentifier id)
 {
     MutexLocker locker(threadMapMutex());

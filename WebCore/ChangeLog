@@ -1,3 +1,13 @@
+2008-01-08  Steve Falkenburg  <sfalken@apple.com>
+
+        Fix a couple of compiler warnings.
+        
+        Reviewed by Mitz.
+
+        * platform/win/ThreadingWin.cpp:
+        * platform/win/UniscribeController.cpp: Remove unused function.
+        (WebCore::UniscribeController::advance): Fix bogus warning about un-initialized variable.
+
 2008-01-08  Adele Peterson  <adele@apple.com>
 
         Reviewed by Darin.

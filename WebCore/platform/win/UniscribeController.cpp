@@ -119,7 +119,7 @@ void UniscribeController::advance(unsigned offset, GlyphBuffer* glyphBuffer)
     const SimpleFontData* fontData;
     const SimpleFontData* nextFontData = m_font.glyphDataForCharacter(*curr, false).fontData;
 
-    UChar newC;
+    UChar newC = 0;
 
     bool isSmallCaps;
     bool nextIsSmallCaps = m_font.isSmallCaps() && !(U_GET_GC_MASK(*curr) & U_GC_M_MASK) && (newC = u_toupper(*curr)) != *curr;
