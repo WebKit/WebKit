@@ -1,3 +1,44 @@
+2008-01-08  Dan Bernstein  <mitz@apple.com>
+
+        Rubber-stamped by Sam Weinig.
+
+        - prefix all member variables in CSSStyleSelector with m_
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::CSSStyleSelector):
+        (WebCore::CSSStyleSelector::init):
+        (WebCore::CSSStyleSelector::setEncodedURL):
+        (WebCore::CSSStyleSelector::loadDefaultStyle):
+        (WebCore::CSSStyleSelector::matchRules):
+        (WebCore::CSSStyleSelector::matchRulesForList):
+        (WebCore::CSSStyleSelector::initElementAndPseudoState):
+        (WebCore::CSSStyleSelector::initForStyleResolve):
+        (WebCore::CSSStyleSelector::canShareStyleWithElement):
+        (WebCore::CSSStyleSelector::locateSharedStyle):
+        (WebCore::CSSStyleSelector::matchUARules):
+        (WebCore::CSSStyleSelector::styleForElement):
+        (WebCore::CSSStyleSelector::pseudoStyleForElement):
+        (WebCore::CSSStyleSelector::updateFont):
+        (WebCore::CSSStyleSelector::cacheBorderAndBackground):
+        (WebCore::CSSStyleSelector::checkSelector):
+        (WebCore::CSSStyleSelector::checkOneSelector):
+        (WebCore::CSSStyleSelector::applyProperty):
+        (WebCore::CSSStyleSelector::mapBackgroundImage):
+        (WebCore::CSSStyleSelector::mapBackgroundSize):
+        (WebCore::CSSStyleSelector::mapBackgroundXPosition):
+        (WebCore::CSSStyleSelector::mapBackgroundYPosition):
+        (WebCore::CSSStyleSelector::checkForTextSizeAdjust):
+        (WebCore::CSSStyleSelector::getColorFromPrimitiveValue):
+        * css/CSSStyleSelector.h:
+        (WebCore::CSSStyleSelector::):
+        (WebCore::CSSRuleData::CSSRuleData):
+        (WebCore::CSSRuleDataList::CSSRuleDataList):
+        (WebCore::CSSRuleDataList::append):
+        * css/SVGCSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applySVGProperty):
+        * rendering/RenderStyle.cpp:
+        (WebCore::RenderStyle::isStyleAvailable):
+
 2008-01-08  David D. Kilzer  <ddkilzer@apple.com>
 
         Removed unnecessary files from Copy Bundle Resources build phase.

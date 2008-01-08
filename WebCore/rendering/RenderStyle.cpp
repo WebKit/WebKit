@@ -1035,7 +1035,7 @@ bool RenderStyle::operator==(const RenderStyle& o) const
 
 bool RenderStyle::isStyleAvailable() const
 {
-    return this != CSSStyleSelector::styleNotYetAvailable;
+    return this != CSSStyleSelector::m_styleNotYetAvailable;
 }
 
 static inline int pseudoBit(RenderStyle::PseudoId pseudo)
