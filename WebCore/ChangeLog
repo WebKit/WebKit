@@ -1,5 +1,11 @@
 2008-01-08  Dan Bernstein  <mitz@apple.com>
 
+        Fix a Wx build failure.
+
+        * webcore-wx.bkl:
+
+2008-01-08  Dan Bernstein  <mitz@apple.com>
+
         Fix a Qt build failure.
 
         * WebCore.pro:
