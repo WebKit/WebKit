@@ -79,7 +79,7 @@ GraphicsContext::GraphicsContext(HDC hdc)
 
 HDC GraphicsContext::getWindowsContext(const IntRect& dstRect, bool supportAlphaBlend)
 {
-    if (m_data->m_transparencyCount) {
+    if (inTransparencyLayer()) {
         if (dstRect.isEmpty())
             return 0;
 
@@ -134,9 +134,11 @@ HDC GraphicsContext::getWindowsContext(const IntRect& dstRect, bool supportAlpha
     return m_data->m_hdc;
 }
 
+bool GraphicsContext::inTransparencyLayer() const { return m_data->m_transparencyCount; }
+
 void GraphicsContext::releaseWindowsContext(HDC hdc, const IntRect& dstRect, bool supportAlphaBlend)
 {
-    if (hdc && m_data->m_transparencyCount) {
+    if (hdc && inTransparencyLayer()) {
         if (dstRect.isEmpty())
             return;
 

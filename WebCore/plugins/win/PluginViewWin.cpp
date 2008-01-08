@@ -472,24 +472,23 @@ void PluginViewWin::paint(GraphicsContext* context, const IntRect& rect)
     if (m_isWindowed || context->paintingDisabled())
         return;
 
-    HDC hdc = context->getWindowsContext(frameGeometry());
-
-    // FIXME: This is completely wrong and will break in the presence of opacity, SVG transforms
-    // and CSS transforms.
-    // The plugin expects that the passed in DC has window coordinates.
-    // (This probably breaks funky SVG transform stuff)
-    XFORM transform;
-    GetWorldTransform(hdc, &transform);
-    transform.eDx = 0;
-    transform.eDy = 0;
-    SetWorldTransform(hdc, &transform);
-
+    ASSERT(parent()->isFrameView());
+    IntRect rectInWindow = static_cast<FrameView*>(parent())->contentsToWindow(frameGeometry());
+    HDC hdc = context->getWindowsContext(rectInWindow, m_isTransparent);
     NPEvent npEvent;
+
+    if (!context->inTransparencyLayer()) {
+        // The plugin expects that the passed in DC has window coordinates.
+        XFORM transform;
+        GetWorldTransform(hdc, &transform);
+        transform.eDx = 0;
+        transform.eDy = 0;
+        SetWorldTransform(hdc, &transform);
+    }
 
     m_npWindow.type = NPWindowTypeDrawable;
     m_npWindow.window = hdc;
 
-    ASSERT(parent()->isFrameView());
     IntPoint p = static_cast<FrameView*>(parent())->contentsToWindow(frameGeometry().location());
     
     WINDOWPOS windowpos;
@@ -517,7 +516,7 @@ void PluginViewWin::paint(GraphicsContext* context, const IntRect& rect)
 
     dispatchNPEvent(npEvent);
 
-    context->releaseWindowsContext(hdc, frameGeometry());
+    context->releaseWindowsContext(hdc, frameGeometry(), m_isTransparent);
 }
 
 void PluginViewWin::handleKeyboardEvent(KeyboardEvent* event)

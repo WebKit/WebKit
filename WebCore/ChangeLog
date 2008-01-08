@@ -1,3 +1,27 @@
+2008-01-07  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Reviewed by Hyatt.
+
+        <rdar://problem/5673489> Safari does not render windowless plugins in an
+        iframe when opacity < 1.0
+
+        Plugins in transparency layers handle their own world transforms, so
+        only apply the horizontal/vertical transform if we are not in a
+        transparency layer.
+
+        * platform/graphics/GraphicsContext.h: Add a Windows-platform-only
+        inTransparencyLayer() function
+        * platform/win/GraphicsContextWin.cpp:
+        (WebCore::GraphicsContext::getWindowsContext): Use inTransparencyLayer()
+        (WebCore::GraphicsContext::inTransparencyLayer):
+        (WebCore::GraphicsContext::releaseWindowsContext): Use
+        inTransparencyLayer()
+        * plugins/win/PluginViewWin.cpp:
+        (WebCore::PluginViewWin::paint): When retrieving the HDC, use the rect
+        relative to the window. Pass m_isTransparent to
+        get/releaseWindowsContext(). Only set the world transform if we are not
+        in a transparency layer.
+
 2008-01-07  Adele Peterson  <adele@apple.com>
 
         Build fix.  Need to wrap these classes in #if ENABLE(VIDEO)
