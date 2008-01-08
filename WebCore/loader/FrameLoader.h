@@ -260,7 +260,7 @@ namespace WebCore {
 
         void sendRemainingDelegateMessages(unsigned long identifier, const ResourceResponse&, int length, const ResourceError&);
         void requestFromDelegate(ResourceRequest&, unsigned long& identifier, ResourceError&);
-        void loadedResourceFromMemoryCache(const ResourceRequest&, const ResourceResponse&, int length);
+        void loadedResourceFromMemoryCache(const CachedResource*);
 
         void recursiveCheckLoadComplete();
         void checkLoadComplete();
@@ -386,8 +386,8 @@ namespace WebCore {
 
         KURL completeURL(const String& url);
 
-        void didTellBridgeAboutLoad(const String& url);
-        bool haveToldBridgeAboutLoad(const String& url);
+        void didTellClientAboutLoad(const String& url);
+        bool haveToldClientAboutLoad(const String& url);
 
         KURL originalRequestURL() const;
 
@@ -554,7 +554,6 @@ namespace WebCore {
         void dispatchDidReceiveResponse(DocumentLoader*, unsigned long identifier, const ResourceResponse&);
         void dispatchDidReceiveContentLength(DocumentLoader*, unsigned long identifier, int length);
         void dispatchDidFinishLoading(DocumentLoader*, unsigned long identifier);
-        bool dispatchDidLoadResourceFromMemoryCache(DocumentLoader*, const ResourceRequest&, const ResourceResponse&, int length);
 
         static bool isLocationChange(const ScheduledRedirection&);
 
@@ -585,7 +584,7 @@ namespace WebCore {
 
         CachePolicy m_cachePolicy;
 
-        HashSet<String> m_urlsBridgeKnowsAbout;
+        HashSet<String> m_urlsClientKnowsAbout;
 
         OwnPtr<FormSubmission> m_deferredFormSubmission;
 

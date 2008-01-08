@@ -3144,14 +3144,14 @@ void FrameLoader::tokenizerProcessedData()
     checkCompleted();
 }
 
-void FrameLoader::didTellBridgeAboutLoad(const String& url)
+void FrameLoader::didTellClientAboutLoad(const String& url)
 {
-    m_urlsBridgeKnowsAbout.add(url);
+    m_urlsClientKnowsAbout.add(url);
 }
 
-bool FrameLoader::haveToldBridgeAboutLoad(const String& url)
+bool FrameLoader::haveToldClientAboutLoad(const String& url)
 {
-    return m_urlsBridgeKnowsAbout.contains(url);
+    return m_urlsClientKnowsAbout.contains(url);
 }
 
 void FrameLoader::handledOnloadEvents()
@@ -3292,7 +3292,7 @@ void FrameLoader::loadResourceSynchronously(const ResourceRequest& request, Reso
 
     if (error.isNull()) {
         ASSERT(!newRequest.isNull());
-        didTellBridgeAboutLoad(newRequest.url().string());
+        didTellClientAboutLoad(newRequest.url().string());
         ResourceHandle::loadResourceSynchronously(newRequest, error, response, data);
     }
     
@@ -3677,16 +3677,31 @@ void FrameLoader::requestFromDelegate(ResourceRequest& request, unsigned long& i
     request = newRequest;
 }
 
-void FrameLoader::loadedResourceFromMemoryCache(const ResourceRequest& request, const ResourceResponse& response, int length)
+void FrameLoader::loadedResourceFromMemoryCache(const CachedResource* resource)
 {
-    if (dispatchDidLoadResourceFromMemoryCache(m_documentLoader.get(), request, response, length))
+    ResourceRequest request(resource->url());
+    const ResourceResponse& response = resource->response();
+    SharedBuffer* data = resource->data();
+    int length = data ? data->size() : 0;
+
+    if (Page* page = m_frame->page())
+        page->inspectorController()->didLoadResourceFromMemoryCache(m_documentLoader.get(), request, response, length);
+
+    if (!resource->sendResourceLoadCallbacks() || haveToldClientAboutLoad(resource->url()))
         return;
+
+    if (m_client->dispatchDidLoadResourceFromMemoryCache(m_documentLoader.get(), request, response, length)) {
+        didTellClientAboutLoad(resource->url());
+        return;
+    }
 
     unsigned long identifier;
     ResourceError error;
     ResourceRequest r(request);
     requestFromDelegate(r, identifier, error);
     sendRemainingDelegateMessages(identifier, response, length, error);
+
+    didTellClientAboutLoad(resource->url());
 }
 
 void FrameLoader::applyUserAgent(ResourceRequest& request)
@@ -4679,16 +4694,6 @@ void FrameLoader::dispatchDidFinishLoading(DocumentLoader* loader, unsigned long
 
     if (Page* page = m_frame->page())
         page->inspectorController()->didFinishLoading(loader, identifier);
-}
-
-bool FrameLoader::dispatchDidLoadResourceFromMemoryCache(DocumentLoader* loader, const ResourceRequest& request, const ResourceResponse& response, int length)
-{
-    bool result = m_client->dispatchDidLoadResourceFromMemoryCache(loader, request, response, length);
-
-    if (Page* page = m_frame->page())
-        page->inspectorController()->didLoadResourceFromMemoryCache(loader, request, response, length);
-
-    return result;
 }
 
 #if USE(LOW_BANDWIDTH_DISPLAY)

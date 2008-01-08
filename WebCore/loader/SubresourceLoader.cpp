@@ -77,7 +77,7 @@ SubresourceLoader::~SubresourceLoader()
 
 bool SubresourceLoader::load(const ResourceRequest& r)
 {
-    m_frame->loader()->didTellBridgeAboutLoad(r.url().string());
+    m_frame->loader()->didTellClientAboutLoad(r.url().string());
     
     return ResourceLoader::load(r);
 }

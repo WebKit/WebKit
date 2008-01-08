@@ -1,3 +1,33 @@
+2008-01-08  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Adam Roben.
+
+        <rdar://problem/5676515> List of scripts and images missing when opening Web Inspector from new window (16567)
+
+        InspectorController::didLoadResourceFromMemoryCache was not being called for
+        resources that loaded from the memory cache that the FrameLoader's client
+        has already been notified about. This fix always calls the InspectorController
+        when loading a memory cached resource. No test possible for the Web Inspector.
+
+        * loader/DocLoader.cpp:
+        (WebCore::DocLoader::checkCacheObjectStatus): Moved most of the logic to
+        FrameLoader::loadedResourceFromMemoryCache so the InspectorController can always be notified.
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::didTellClientAboutLoad): Renamed from didTellBridgeAboutLoad.
+        (WebCore::FrameLoader::haveToldClientAboutLoad): Renamed from haveToldBridgeAboutLoad.
+        (WebCore::FrameLoader::loadResourceSynchronously): Call the renamed didTellClientAboutLoad.
+        (WebCore::FrameLoader::loadedResourceFromMemoryCache): Only takes a CachedResource now.
+        Always call InspectorController. If the resource's sendResourceLoadCallbacks is false or
+        didTellClientAboutLoad is true, do an early return. Otherwise call the client and call
+        didTellClientAboutLoad.
+        (WebCore::FrameLoader::dispatchDidLoadResourceFromMemoryCache): Removed, work now done
+        in FrameLoader::loadedResourceFromMemoryCache.
+        * loader/FrameLoader.h: Renamed {didTell,haveTold}BridgeAboutLoad to {didTell,haveTold}ClientAboutLoad.
+        Made loadedResourceFromMemoryCache only take a CachedResource. Renamed m_urlsBridgeKnowsAbout to 
+        m_urlsClientKnowsAbout.
+        * loader/SubresourceLoader.cpp:
+        (WebCore::SubresourceLoader::load): Call the renamed didTellClientAboutLoad.
+
 2008-01-08  Dan Bernstein  <mitz@apple.com>
 
         Rubber-stamped by Sam Weinig.
