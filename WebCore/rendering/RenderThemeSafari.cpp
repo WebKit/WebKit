@@ -30,6 +30,7 @@
 #include "GraphicsContext.h"
 #include "HTMLInputElement.h"
 #include "HTMLMediaElement.h"
+#include "HTMLNames.h"
 #include "RenderSlider.h"
 #include "RenderView.h"
 #include "RetainPtr.h"
@@ -43,6 +44,7 @@ using std::min;
  
 namespace WebCore {
 
+using namespace HTMLNames;
 using namespace SafariTheme;
 
 enum {
@@ -1131,9 +1133,12 @@ bool RenderThemeSafari::paintMediaMuteButton(RenderObject* o, const RenderObject
     ASSERT(SafariThemeLibrary());
 
     Node* node = o->element();
-    HTMLMediaElement* mediaElement = node ? static_cast<HTMLMediaElement*>(node->shadowAncestorNode()) : 0;
+    Node* mediaNode = node ? node->shadowAncestorNode() : 0;
+    if (!mediaNode || (!mediaNode->hasTagName(videoTag) && !mediaNode->hasTagName(audioTag)))
+        return false;
 
-    if (!node || !mediaElement)
+    HTMLMediaElement* mediaElement = static_cast<HTMLMediaElement*>(mediaNode);
+    if (!mediaElement)
         return false;
 
     paintThemePart(mediaElement->muted() ? MediaUnMuteButtonPart : MediaMuteButtonPart, paintInfo.context->platformContext(), r, NSRegularControlSize, determineState(o));
@@ -1146,9 +1151,12 @@ bool RenderThemeSafari::paintMediaPlayButton(RenderObject* o, const RenderObject
     ASSERT(SafariThemeLibrary());
 
     Node* node = o->element();
-    HTMLMediaElement* mediaElement = node ? static_cast<HTMLMediaElement*>(node->shadowAncestorNode()) : 0;
+    Node* mediaNode = node ? node->shadowAncestorNode() : 0;
+    if (!mediaNode || (!mediaNode->hasTagName(videoTag) && !mediaNode->hasTagName(audioTag)))
+        return false;
 
-    if (!node || !mediaElement)
+    HTMLMediaElement* mediaElement = static_cast<HTMLMediaElement*>(mediaNode);
+    if (!mediaElement)
         return false;
 
     paintThemePart(mediaElement->canPlay() ? MediaPlayButtonPart : MediaPauseButtonPart, paintInfo.context->platformContext(), r, NSRegularControlSize, determineState(o));
@@ -1183,6 +1191,7 @@ bool RenderThemeSafari::paintMediaSliderThumb(RenderObject* o, const RenderObjec
     return false;
 }
 #endif
+
 } // namespace WebCore
 
 #endif // defined(USE_SAFARI_THEME)
