@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="Windows-1252"?>
+<?xml version="1.0" encoding="windows-1251"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="8.00"
@@ -64,7 +64,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="&quot;$(ProgramFiles)\QuickTime SDK\Libraries\QTMLClient.lib&quot; WTF$(WebKitConfigSuffix).lib winmm.lib pthreadVC2$(WebKitConfigSuffix).lib Msimg32.lib"
+				AdditionalDependencies="&quot;$(ProgramFiles)\QuickTime SDK\Libraries\QTMLClient.lib&quot; WTF$(WebKitConfigSuffix).lib winmm.lib pthreadVC2$(WebKitConfigSuffix).lib Msimg32.lib user32.lib advapi32.lib"
 				OutputFile="$(OutDir)\$(ProjectName)$(WebKitConfigSuffix).dll"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="&quot;$(WebKitOutputDir)\lib&quot;;$(WebKitLibrariesDir)\lib"
@@ -148,7 +148,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="&quot;$(ProgramFiles)\QuickTime SDK\Libraries\QTMLClient.lib&quot; WTF$(WebKitConfigSuffix).lib winmm.lib pthreadVC2$(WebKitConfigSuffix).lib Msimg32.lib"
+				AdditionalDependencies="&quot;$(ProgramFiles)\QuickTime SDK\Libraries\QTMLClient.lib&quot; WTF$(WebKitConfigSuffix).lib winmm.lib pthreadVC2$(WebKitConfigSuffix).lib Msimg32.lib user32.lib advapi32.lib"
 				OutputFile="$(OutDir)\$(ProjectName)$(WebKitConfigSuffix).dll"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="&quot;$(WebKitOutputDir)\lib&quot;;$(WebKitLibrariesDir)\lib"
@@ -234,7 +234,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="&quot;$(ProgramFiles)\QuickTime SDK\Libraries\QTMLClient.lib&quot; WTF$(WebKitConfigSuffix).lib winmm.lib pthreadVC2$(WebKitConfigSuffix).lib Msimg32.lib"
+				AdditionalDependencies="&quot;$(ProgramFiles)\QuickTime SDK\Libraries\QTMLClient.lib&quot; WTF$(WebKitConfigSuffix).lib winmm.lib pthreadVC2$(WebKitConfigSuffix).lib Msimg32.lib user32.lib advapi32.lib"
 				OutputFile="$(OutDir)\$(ProjectName)$(WebKitConfigSuffix).dll"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="&quot;$(WebKitOutputDir)\lib&quot;;$(WebKitLibrariesDir)\lib"

@@ -1,3 +1,11 @@
+2008-01-08  Adam Roben  <aroben@apple.com>
+
+        Visual C++ Express build fix
+
+        * WebCore.vcproj/QTMovieWin.vcproj: Explicitly link against user32.lib
+        and advapi32.lib. VS implicitly links against these, VC++ Express
+        doesn't.
+
 2008-01-08  Dan Bernstein  <mitz@apple.com>
 
         - add bug number
