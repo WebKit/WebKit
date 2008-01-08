@@ -1,5 +1,11 @@
 2008-01-07  Antti Koivisto  <antti@apple.com>
 
+        Try to fix the Windows build.
+
+        * WebKit.vcproj/WebKit.sln:
+
+2008-01-07  Antti Koivisto  <antti@apple.com>
+
         Reviewed by Steve.
         
         Re-enable media support in Windows build.

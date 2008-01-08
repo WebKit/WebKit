@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 9.00
-# Visual C++ Express 2005
+# Visual Studio 2005
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "WebKit", "WebKit.vcproj", "{0662A8A9-82A3-4638-97D8-EC425D8D87C9}"
 	ProjectSection(ProjectDependencies) = postProject
 		{011D10F1-B656-4A1B-A0C3-3842F02122C5} = {011D10F1-B656-4A1B-A0C3-3842F02122C5}
@@ -193,8 +193,11 @@ Global
 		{0A324352-B3B6-496C-9E5B-4C7E923E628B}.Release|Win32.ActiveCfg = Release|Win32
 		{0A324352-B3B6-496C-9E5B-4C7E923E628B}.Release|Win32.Build.0 = Release|Win32
 		{E498CA9D-3BD2-4D52-8E37-C8DC76526325}.Debug_Internal|Win32.ActiveCfg = Debug_Internal|Win32
+		{E498CA9D-3BD2-4D52-8E37-C8DC76526325}.Debug_Internal|Win32.Build.0 = Debug_Internal|Win32
 		{E498CA9D-3BD2-4D52-8E37-C8DC76526325}.Debug|Win32.ActiveCfg = Debug|Win32
+		{E498CA9D-3BD2-4D52-8E37-C8DC76526325}.Debug|Win32.Build.0 = Debug|Win32
 		{E498CA9D-3BD2-4D52-8E37-C8DC76526325}.Release|Win32.ActiveCfg = Release|Win32
+		{E498CA9D-3BD2-4D52-8E37-C8DC76526325}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
