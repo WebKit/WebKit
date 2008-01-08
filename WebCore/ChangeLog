@@ -1,3 +1,14 @@
+2008-01-08  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by NOBODY (Build fix).
+
+        Set the ENABLE_SVG_FONTS flag in Windows build, now builds, 
+        I'm not sure if it just caused the right files to regenerate,
+        or if there's some configuration weirdness in the non-SVG-fonts
+        build. 
+
+        * WebCore.vcproj/WebCore.vcproj:
+
 2008-01-07  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Brady.
