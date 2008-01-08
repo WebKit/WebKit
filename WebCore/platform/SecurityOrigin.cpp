@@ -39,22 +39,33 @@
 
 namespace WebCore {
 
-SecurityOrigin::SecurityOrigin()
+SecurityOrigin::SecurityOrigin(const KURL& url)
     : m_port(0)
     , m_portSet(false)
     , m_noAccess(false)
     , m_domainWasSetInDOM(false)
 {
-}
+    if (url.isEmpty())
+      return;
 
-void SecurityOrigin::clear()
-{
-    m_protocol = String();
-    m_host = String();
-    m_port = 0;
-    m_portSet = false;
-    m_noAccess = false;
-    m_domainWasSetInDOM = false;
+    m_protocol = url.protocol().lower();
+
+    // These protocols do not represent principals.
+    if (m_protocol == "about" || m_protocol == "javascript")
+        m_protocol = String();
+
+    if (m_protocol.isEmpty())
+        return;
+
+    // data: URLs are not allowed access to anything other than themselves.
+    if (m_protocol == "data")
+        m_noAccess = true;
+
+    m_host = url.host().lower();
+    m_port = url.port();
+
+    if (m_port)
+        m_portSet = true;
 }
 
 bool SecurityOrigin::isEmpty() const
@@ -62,43 +73,19 @@ bool SecurityOrigin::isEmpty() const
     return m_protocol.isEmpty();
 }
 
-void SecurityOrigin::setForURL(const KURL& url)
-{
-    clear();
-
-    if (url.isEmpty())
-      return;
-
-    m_protocol = url.protocol().lower();
-    m_host = url.host().lower();
-    m_port = url.port();
-
-    if (m_port)
-        m_portSet = true;
-
-    // data: URLs are not allowed access to anything other than themselves.
-    if (m_protocol == "data")
-        m_noAccess = true;
-}
-
 PassRefPtr<SecurityOrigin> SecurityOrigin::createForFrame(Frame* frame)
 {
-    RefPtr<SecurityOrigin> origin = new SecurityOrigin();
-
     if (!frame)
-        return origin;
+        return new SecurityOrigin(KURL());
 
     FrameLoader* loader = frame->loader();
-    const KURL& securityPolicyURL = loader->url();
 
-    origin->setForURL(securityPolicyURL);
-
-    if (!origin->isEmpty() && origin->m_protocol != "about")
+    RefPtr<SecurityOrigin> origin = new SecurityOrigin(loader->url());
+    if (!origin->isEmpty())
         return origin;
 
-    // In the case of about:blank or javascript: URLs (which create 
-    // documents using the "about" protocol) do we want to use the
-    // parent or openers origin.
+    // If we do not obtain a principal from the URL, then we try to find a
+    // principal via the frame hierarchy.
 
     Frame* openerFrame = frame->tree()->parent();
     if (!openerFrame) {

@@ -849,6 +849,11 @@ public:
     void initSecurityOrigin();
     SecurityOrigin* securityOrigin() const { return m_securityOrigin.get(); }
 
+    // Explicitly override the security origin for this document.
+    // Note: It is dangerous to change the security origin of a document
+    //       that already contains content.
+    void setSecurityOrigin(SecurityOrigin* o) { m_securityOrigin = o; }
+
     bool processingLoadEvent() const { return m_processingLoadEvent; }
 
 #if ENABLE(DATABASE)

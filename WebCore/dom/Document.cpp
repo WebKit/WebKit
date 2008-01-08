@@ -3716,6 +3716,9 @@ bool Document::useSecureKeyboardEntryWhenActive() const
 
 void Document::initSecurityOrigin()
 {
+    if (m_securityOrigin && !m_securityOrigin->isEmpty())
+        return;  // m_securityOrigin has already been initialized.
+
     m_securityOrigin = SecurityOrigin::createForFrame(m_frame);
 }
 

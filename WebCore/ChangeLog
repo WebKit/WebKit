@@ -1,3 +1,61 @@
+2008-01-07  Adam Barth  <hk9565@gmail.com>
+
+        Reviewed by Sam Weinig
+
+        Fixes: http://bugs.webkit.org/show_bug.cgi?id=16523
+        <rdar://problem/5657447>
+
+        When a frame is created with the URL "about:blank" or "", it should
+        inherit its SecurityOrigin from its opener.  However, once it has
+        decided on that SecurityOrigin, it should not change its mind.
+        Prior to this patch, several events could induce the frame to change
+        its SecurityOrigin, permitting an attacker to inject script into an
+        arbitrary SecurityOrigin.
+
+        This patch makes several changes:
+
+        1) Documents refuse to change from one SecurityOrigin to another
+           unless explicitly instructed to do so.
+
+        2) Navigating to a JavaScript URL that produces a value
+           preserves the current SecurityOrigin explicitly instead of
+           relying on the URL to preserve the origin (which fails for
+           about:blank URLs and SecurityOrigins with document.domain set).
+
+           Ideally, we should not preserve the URL at all.  Instead, the
+           frame's URL should be the JavaScript URL, as in Firefox, but this
+           would require changes that are too risky for this patch.  I'll
+           file this as a separate issue.
+
+        3) Various methods of navigating to JavaScript URLs were not
+           properly handling JavaScript that returned a value (and should
+           therefore replace the current document).  This patch unifies
+           those code paths with the path that works.
+
+           There are still a handful of bugs relating to the handling of
+           JavaScript URLs, but I'll file those as separate issues.
+
+        Tests: http/tests/security/aboutBlank/xss-DENIED-navigate-opener-document-write.html
+               http/tests/security/aboutBlank/xss-DENIED-navigate-opener-javascript-url.html
+               http/tests/security/aboutBlank/xss-DENIED-set-opener.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::initSecurityOrigin):
+        * dom/Document.h:
+        (WebCore::Document::setSecurityOrigin):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::changeLocation):
+        (WebCore::FrameLoader::urlSelected):
+        (WebCore::FrameLoader::requestFrame):
+        (WebCore::FrameLoader::submitForm):
+        (WebCore::FrameLoader::executeIfJavaScriptURL):
+        (WebCore::FrameLoader::begin):
+        * loader/FrameLoader.h:
+        * platform/SecurityOrigin.cpp:
+        (WebCore::SecurityOrigin::setForURL):
+        (WebCore::SecurityOrigin::createForFrame):
+        * platform/SecurityOrigin.h:
+
 2008-01-07  Adele Peterson  <adele@apple.com>
 
         Forgot to check in these changes in my last checkin.

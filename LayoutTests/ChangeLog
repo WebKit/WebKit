@@ -1,3 +1,26 @@
+2008-01-07  Adam Barth  <hk9565@gmail.com>
+
+        Reviewed by Sam Weinig.
+
+        Fixes: http://bugs.webkit.org/show_bug.cgi?id=16523
+
+        Adds new LayoutTests for scripting from about:blank windows.  These
+        windows should inherit its SecurityOrigin from its opener and should
+        refuse to change their origins when their opener changes exogenously
+        (the navigate-opener tests) or explicitly (the set-opener test).
+
+        * http/tests/security/aboutBlank: Added.
+        * http/tests/security/aboutBlank/xss-DENIED-navigate-opener-document-write-expected.txt: Added.
+        * http/tests/security/aboutBlank/xss-DENIED-navigate-opener-document-write.html: Added.
+        * http/tests/security/aboutBlank/xss-DENIED-navigate-opener-javascript-url-expected.txt: Added.
+        * http/tests/security/aboutBlank/xss-DENIED-navigate-opener-javascript-url.html: Added.
+        * http/tests/security/aboutBlank/xss-DENIED-set-opener-expected.txt: Added.
+        * http/tests/security/aboutBlank/xss-DENIED-set-opener.html: Added.
+        * http/tests/security/resources/innocent-victim-with-notify.html: Added.
+        * http/tests/security/resources/innocent-victim.html: Added.
+        * http/tests/security/resources/libwrapjs.js: Added.
+        * http/tests/security/resources/open-window.html: Added.
+
 2008-01-07  Adele Peterson  <adele@apple.com>
 
         Reviewed by Antti, Adam, and Mitz.
