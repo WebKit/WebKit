@@ -178,7 +178,7 @@ void CSSFontSelector::addFontFaceRule(const CSSFontFaceRule* fontFaceRule)
         if (!fontFace) {
 #if ENABLE(SVG_FONTS)
             if (svgFontFaceElement)
-                fontFace = new SVGCSSFontFace(this, svgFontFaceElement);
+                fontFace = new SVGCSSFontFace(svgFontFaceElement);
             else
 #endif
                 fontFace = new CSSFontFace();

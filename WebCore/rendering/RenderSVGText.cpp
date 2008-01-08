@@ -29,10 +29,10 @@
 #include "RenderSVGText.h"
 
 #include "FloatConversion.h"
-#include "FontData.h"
 #include "GraphicsContext.h"
 #include "PointerEventsHitRules.h"
 #include "RenderSVGRoot.h"
+#include "SimpleFontData.h"
 #include "SVGLengthList.h"
 #include "SVGResourceFilter.h"
 #include "SVGRootInlineBox.h"

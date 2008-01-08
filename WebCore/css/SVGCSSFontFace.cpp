@@ -34,8 +34,8 @@
 
 namespace WebCore {
 
-SVGCSSFontFace::SVGCSSFontFace(CSSFontSelector* selector, SVGFontFaceElement* fontFace)
-    : CSSFontFace(selector)
+SVGCSSFontFace::SVGCSSFontFace(SVGFontFaceElement* fontFace)
+    : CSSFontFace()
     , m_fontFaceElement(fontFace)
 {
     ASSERT(fontFace);

@@ -1,3 +1,21 @@
+2008-01-07  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Mark.
+
+        Build fix affecting all builds - again related to the unicode-range addition.
+
+        * css/CSSFontSelector.cpp:
+        (WebCore::CSSFontSelector::addFontFaceRule):
+        * css/SVGCSSFontFace.cpp:
+        (WebCore::SVGCSSFontFace::SVGCSSFontFace):
+        * css/SVGCSSFontFace.h:
+        * rendering/RenderSVGText.cpp:
+        * svg/SVGFont.cpp:
+        (WebCore::svgFontAndFontFaceElementForFontData):
+        (WebCore::floatWidthMissingGlyphCallback):
+        (WebCore::drawTextMissingGlyphCallback):
+        * svg/SVGFontFaceElement.cpp:
+
 2008-01-07  Adele Peterson  <adele@apple.com>
 
         Reviewed by Antti, Adam, and Mitz.

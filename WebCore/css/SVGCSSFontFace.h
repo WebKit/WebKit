@@ -36,7 +36,7 @@ class SVGFontFaceElement;
 
 class SVGCSSFontFace : public CSSFontFace {
 public:
-    SVGCSSFontFace(CSSFontSelector*, SVGFontFaceElement*);
+    SVGCSSFontFace(SVGFontFaceElement*);
     virtual ~SVGCSSFontFace();
 
     virtual bool isValid() const;
