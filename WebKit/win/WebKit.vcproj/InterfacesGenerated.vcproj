@@ -23,8 +23,8 @@
 			<Tool
 				Name="VCNMakeTool"
 				BuildCommandLine="set PATH=%SystemDrive%\cygwin\bin;%PATH%&#x0D;&#x0A;bash build-generated-files.sh &quot;$(WebKitOutputDir)&quot;&#x0D;&#x0A;"
-				ReBuildCommandLine="del /s /q &quot;$(WebKitOutputDir)\obj\WebKit\DOMInterfaces&quot;&#x0D;&#x0A;set PATH=%SystemDrive%\cygwin\bin;%PATH%&#x0D;&#x0A;bash build-generated-files.sh &quot;$(WebKitOutputDir)&quot;&#x0D;&#x0A;"
-				CleanCommandLine="del /s /q &quot;$(WebKitOutputDir)\obj\WebKit\DOMInterfaces&quot;&#x0D;&#x0A;"
+				ReBuildCommandLine="del /s /q &quot;$(WebKitOutputDir)\obj\WebKit\DerivedSources&quot;&#x0D;&#x0A;set PATH=%SystemDrive%\cygwin\bin;%PATH%&#x0D;&#x0A;bash build-generated-files.sh &quot;$(WebKitOutputDir)&quot;&#x0D;&#x0A;"
+				CleanCommandLine="del /s /q &quot;$(WebKitOutputDir)\obj\WebKit\DerivedSources&quot;&#x0D;&#x0A;"
 				Output=""
 				PreprocessorDefinitions=""
 				IncludeSearchPath=""
