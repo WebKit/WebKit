@@ -737,6 +737,7 @@ SOURCES += \
     platform/graphics/FloatPoint.cpp \
     platform/graphics/FloatRect.cpp \
     platform/graphics/FloatSize.cpp \
+    platform/graphics/FontDataBaseClass.cpp \
     platform/graphics/GraphicsContext.cpp \
     platform/graphics/GraphicsTypes.cpp \
     platform/graphics/Image.cpp \
@@ -862,7 +863,6 @@ gtk-port {
     platform/graphics/GlyphWidthMap.cpp \
     platform/graphics/FontCache.cpp \
     platform/graphics/Font.cpp \
-    platform/graphics/FontDataBaseClass.cpp \
     platform/graphics/FontFallbackList.cpp \
     platform/graphics/SegmentedFontData.cpp \
     platform/graphics/SimpleFontData.cpp 
