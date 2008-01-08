@@ -28,6 +28,11 @@
 
 namespace WebCore {
 
+FontCustomPlatformData::~FontCustomPlatformData()
+{
+    QFontDatabase::removeApplicationFont(handle);
+}
+
 FontPlatformData FontCustomPlatformData::fontPlatformData(int size, bool bold, bool italic)
 {
     FontPlatformData result;

@@ -30,6 +30,8 @@ class SharedBuffer;
 class FontPlatformData;
 
 struct FontCustomPlatformData : Noncopyable {
+    ~FontCustomPlatformData();
+
     int handle; // for use with QFontDatabase::addApplicationFont/removeApplicationFont
 
     FontPlatformData fontPlatformData(int size, bool bold, bool italic);

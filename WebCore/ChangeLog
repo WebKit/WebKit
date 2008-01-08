@@ -1,5 +1,17 @@
 2008-01-07  Dan Bernstein  <mitz@apple.com>
 
+        Build fix.
+
+        * platform/graphics/qt/FontCustomPlatformData.cpp:
+        (WebCore::FontCustomPlatformData::~FontCustomPlatformData): Added.
+        Calls QFontDatabase::removeApplicationFont().
+        * platform/graphics/qt/FontCustomPlatformData.h:
+        * platform/graphics/qt/GlyphPageTreeNodeQt.cpp:
+        (WebCore::GlyphPageTreeNode::pruneTreeCustomFontData): Removed the
+        implementation because Qt does not use the WebCore glyph cache.
+
+2008-01-07  Dan Bernstein  <mitz@apple.com>
+
         Reviewed by Oliver Hunt.
 
         - fix an assertion failure in svg/W3C-SVG-1.1/fonts-elem-03-b.svg on
