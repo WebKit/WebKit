@@ -64,6 +64,10 @@ FontCustomPlatformData* createFontCustomPlatformData(SharedBuffer* buffer)
     }
     
     CGFontRef cgFontRef = CGFontCreateWithPlatformFont(&fontRef);
+    if (!CGFontGetNumberOfGlyphs(cgFontRef)) {
+        CFRelease(cgFontRef);
+        cgFontRef = 0;
+    }
     if (!cgFontRef) {
         ATSFontDeactivate(containerRef, NULL, kATSOptionFlagsDefault);
         return 0;

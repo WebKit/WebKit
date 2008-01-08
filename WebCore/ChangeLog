@@ -1,3 +1,18 @@
+2008-01-07  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        - fix an assertion failure in svg/W3C-SVG-1.1/fonts-elem-03-b.svg on
+          Tiger and multiple SVG layout test failures on Leopard.
+
+        * css/CSSSegmentedFontFace.cpp:
+        (WebCore::CSSSegmentedFontFace::getFontData): Avoid returning an
+        empty SegmentedFontData.
+        * platform/graphics/mac/FontCustomPlatformData.cpp:
+        (WebCore::createFontCustomPlatformData): Avoid creating a font that
+        contains no glyphs. On Leopard, ATS might create such a font given
+        data in an unsupported format (such as SVG).
+
 2008-01-07  Steve Falkenburg  <sfalken@apple.com>
 
         Build fix.

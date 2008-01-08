@@ -127,7 +127,12 @@ FontData* CSSSegmentedFontFace::getFontData(const FontDescription& fontDescripti
             fontData->appendRange(FontDataRange(m_ranges[i].from(), m_ranges[i].to(), static_cast<const SimpleFontData*>(rangeFontData)));
         }
     }
-    m_fontDataTable.set(hashKey, fontData);
+    if (fontData->numRanges())
+        m_fontDataTable.set(hashKey, fontData);
+    else {
+        delete fontData;
+        fontData = 0;
+    }
 
     return fontData;
 }
