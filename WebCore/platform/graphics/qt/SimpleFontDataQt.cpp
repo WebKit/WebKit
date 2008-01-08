@@ -33,4 +33,19 @@ SimpleFontData::~SimpleFontData()
 {
 }
 
+bool SimpleFontData::containsCharacters(const UChar* characters, int length) const
+{
+    return true;
+}
+
+const SimpleFontData* SimpleFontData::fontDataForCharacter(UChar32) const
+{
+    return this;
+}
+
+bool SimpleFontData::isSegmented() const
+{
+    return false;
+}
+
 }

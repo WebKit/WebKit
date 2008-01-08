@@ -1,3 +1,12 @@
+2008-01-08  Dan Bernstein  <mitz@apple.com>
+
+        Fix a Qt build error.
+
+        * platform/graphics/qt/SimpleFontDataQt.cpp:
+        (WebCore::SimpleFontData::containsCharacters):
+        (WebCore::SimpleFontData::fontDataForCharacter):
+        (WebCore::SimpleFontData::isSegmented):
+
 2008-01-08  Adam Roben  <aroben@apple.com>
 
         Windows build fix.
