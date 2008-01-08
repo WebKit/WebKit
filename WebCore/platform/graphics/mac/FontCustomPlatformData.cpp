@@ -64,10 +64,12 @@ FontCustomPlatformData* createFontCustomPlatformData(SharedBuffer* buffer)
     }
     
     CGFontRef cgFontRef = CGFontCreateWithPlatformFont(&fontRef);
+#ifndef BUILDING_ON_TIGER
     if (!CGFontGetNumberOfGlyphs(cgFontRef)) {
         CFRelease(cgFontRef);
         cgFontRef = 0;
     }
+#endif
     if (!cgFontRef) {
         ATSFontDeactivate(containerRef, NULL, kATSOptionFlagsDefault);
         return 0;

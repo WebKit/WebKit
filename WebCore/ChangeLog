@@ -1,3 +1,11 @@
+2008-01-07  Mark Rowe  <mrowe@apple.com>
+
+        Tiger build fix.
+
+        * platform/graphics/mac/FontCustomPlatformData.cpp:
+        (WebCore::createFontCustomPlatformData): Only include this code on Leopard.
+        It's not needed on Tiger, and breaks the build.
+
 2008-01-07  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Steve.
