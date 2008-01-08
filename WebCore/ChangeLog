@@ -1,3 +1,12 @@
+2008-01-08  Adam Roben  <aroben@apple.com>
+
+        Windows build fix.
+
+        Touch config.h to force a rebuild (apparently changing preprocessor
+        definitions in the .vcproj doesn't force a rebuild).
+
+        * config.h:
+
 2008-01-08  Dan Bernstein  <mitz@apple.com>
 
         Fix a Wx build failure.
