@@ -201,9 +201,6 @@ http/tests/security/javascriptURL/xss-DENIED-to-javascript-url-in-foreign-domain
 fast/dom/Window/setting-properties-on-closed-window.html
 svg/custom/use-events-crash.svg
 
-# Pixel depth and color depth different on boomer <rdar://problem/5137719>
-fast/dom/Window/window-screen-properties.html
-
 # This test uses Mac-specific key codes <rdar://problem/5076426>
 fast/events/arrow-navigation.html
 
