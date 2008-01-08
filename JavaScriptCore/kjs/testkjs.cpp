@@ -53,7 +53,6 @@
 using namespace KJS;
 using namespace WTF;
 
-static void testIsInteger();
 static bool fillBufferWithContentsOfFile(const UString& fileName, Vector<char>& buffer);
 
 class StopWatch
@@ -117,6 +116,7 @@ class GlobalImp : public JSGlobalObject {
 public:
   virtual UString className() const { return "global"; }
 };
+COMPILE_ASSERT(!IsInteger<GlobalImp>::value, WTF_IsInteger_GlobalImp_false);
 
 class TestFunctionImp : public JSObject {
 public:
@@ -302,8 +302,6 @@ static void parseArguments(int argc, char** argv, Vector<UString>& fileNames, bo
 
 int kjsmain(int argc, char** argv)
 {
-  testIsInteger();
-
   JSLock lock;
   
   bool prettyPrint = false;
@@ -317,32 +315,6 @@ int kjsmain(int argc, char** argv)
 #endif
 
   return success ? 0 : 3;
-}
-
-static void testIsInteger()
-{
-  // Unit tests for WTF::IsInteger. Don't have a better place for them now.
-  // FIXME: move these once we create a unit test directory for WTF.
-
-  ASSERT(IsInteger<bool>::value);
-  ASSERT(IsInteger<char>::value);
-  ASSERT(IsInteger<signed char>::value);
-  ASSERT(IsInteger<unsigned char>::value);
-  ASSERT(IsInteger<short>::value);
-  ASSERT(IsInteger<unsigned short>::value);
-  ASSERT(IsInteger<int>::value);
-  ASSERT(IsInteger<unsigned int>::value);
-  ASSERT(IsInteger<long>::value);
-  ASSERT(IsInteger<unsigned long>::value);
-  ASSERT(IsInteger<long long>::value);
-  ASSERT(IsInteger<unsigned long long>::value);
-
-  ASSERT(!IsInteger<char*>::value);
-  ASSERT(!IsInteger<const char* >::value);
-  ASSERT(!IsInteger<volatile char* >::value);
-  ASSERT(!IsInteger<double>::value);
-  ASSERT(!IsInteger<float>::value);
-  ASSERT(!IsInteger<GlobalImp>::value);
 }
 
 static bool fillBufferWithContentsOfFile(const UString& fileName, Vector<char>& buffer)

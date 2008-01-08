@@ -1,3 +1,13 @@
+2008-01-07  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Turn testIsInteger assertions into compile-time asserts and move them into HashTraits.h
+        where possible.
+
+        * kjs/testkjs.cpp:
+        * wtf/HashTraits.h:
+
 2008-01-07  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Mark.
