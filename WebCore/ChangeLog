@@ -1,3 +1,16 @@
+2008-01-08  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        <rdar://problem/5659812> CrashTracer: 462 crashes in Safari at com.apple.WebCore:
+        WebCore::Node::setChanged + 96
+
+        Test: fast/dom/cssTarget-crash.html
+
+        * dom/Node.cpp: (WebCore::Node::removedFromDocument):
+        Check to see if the node being removed is currently set as the Document's cssTarget.
+Ê Ê Ê Ê If it is, clear the cssTarget to prevent a hanging reference to it.
+
 2008-01-08  Adam Roben  <aroben@apple.com>
 
         * svg/svgtags.in: Touch this again for the sake of the Windows bots.

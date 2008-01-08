@@ -847,6 +847,9 @@ void Node::insertedIntoDocument()
 
 void Node::removedFromDocument()
 {
+    if (m_document && m_document->getCSSTarget() == this)
+        m_document->setCSSTarget(0);
+
     setInDocument(false);
     removedFromTree(false);
 }
