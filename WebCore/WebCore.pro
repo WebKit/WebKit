@@ -865,7 +865,7 @@ gtk-port {
     platform/graphics/FontDataBaseClass.cpp \
     platform/graphics/FontFallbackList.cpp \
     platform/graphics/SegmentedFontData.cpp \
-    platfomr/graphics/SimpleFontData.cpp 
+    platform/graphics/SimpleFontData.cpp 
 }
 
 qt-port {

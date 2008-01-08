@@ -41,7 +41,7 @@ FontPlatformData* FontCache::getCachedFontPlatformData(const FontDescription&, c
     return 0;
 }
 
-FontData* FontCache::getCachedFontData(const FontPlatformData*)
+SimpleFontData* FontCache::getCachedFontData(const FontPlatformData*)
 {
     return 0;
 }
