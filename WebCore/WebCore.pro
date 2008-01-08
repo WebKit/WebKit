@@ -745,6 +745,7 @@ SOURCES += \
     platform/graphics/Path.cpp \
     platform/graphics/PathTraversalState.cpp \
     platform/graphics/Pen.cpp \
+    platform/graphics/SegmentedFontData.cpp \
     platform/KURL.cpp \
     platform/Logging.cpp \
     platform/MIMETypeRegistry.cpp \
@@ -864,7 +865,6 @@ gtk-port {
     platform/graphics/FontCache.cpp \
     platform/graphics/Font.cpp \
     platform/graphics/FontFallbackList.cpp \
-    platform/graphics/SegmentedFontData.cpp \
     platform/graphics/SimpleFontData.cpp 
 }
 

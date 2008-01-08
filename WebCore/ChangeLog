@@ -1,3 +1,9 @@
+2008-01-08  Dan Bernstein  <mitz@apple.com>
+
+        Fix a Qt build failure.
+
+        * WebCore.pro:
+
 2008-01-08  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Adam Roben
