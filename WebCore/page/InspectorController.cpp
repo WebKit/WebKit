@@ -68,17 +68,19 @@
 
 namespace WebCore {
 
-static void callSimpleFunction(JSContextRef context, JSObjectRef thisObject, const char* functionName)
+static JSValueRef callSimpleFunction(JSContextRef context, JSObjectRef thisObject, const char* functionName)
 {
     ASSERT_ARG(context, context);
     ASSERT_ARG(thisObject, thisObject);
 
-    JSStringRef string = JSStringCreateWithUTF8CString(functionName);
-    JSObjectRef function = JSValueToObject(context, JSObjectGetProperty(context, thisObject, string, 0), 0);
-    JSStringRelease(string);
+    JSRetainPtr<JSStringRef> functionNameString(Adopt, JSStringCreateWithUTF8CString(functionName));
+    JSObjectRef function = JSValueToObject(context, JSObjectGetProperty(context, thisObject, functionNameString.get(), 0), 0);
 
-    JSObjectCallAsFunction(context, function, thisObject, 0, 0, 0);
+    return JSObjectCallAsFunction(context, function, thisObject, 0, 0, 0);
 }
+
+#pragma mark -
+#pragma mark ConsoleMessage Struct
 
 struct ConsoleMessage {
     ConsoleMessage(MessageSource s, MessageLevel l, const String& m, unsigned li, const String& u)
@@ -96,6 +98,9 @@ struct ConsoleMessage {
     unsigned line;
     String url;
 };
+
+#pragma mark -
+#pragma mark InspectorResource Struct
 
 struct InspectorResource : public RefCounted<InspectorResource> {
     // Keep these in sync with WebInspector.Resource.Type
@@ -202,6 +207,9 @@ struct InspectorResource : public RefCounted<InspectorResource> {
     double endTime;
 };
 
+#pragma mark -
+#pragma mark InspectorDatabaseResource Struct
+
 #if ENABLE(DATABASE)
 struct InspectorDatabaseResource : public RefCounted<InspectorDatabaseResource> {
     InspectorDatabaseResource(Database* database, String domain, String name, String version)
@@ -240,6 +248,9 @@ struct InspectorDatabaseResource : public RefCounted<InspectorDatabaseResource> 
     JSObjectRef scriptObject;
 };
 #endif
+
+#pragma mark -
+#pragma mark JavaScript Callbacks
 
 static JSValueRef addSourceToFrame(JSContextRef ctx, JSObjectRef /*function*/, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* /*exception*/)
 {
@@ -440,20 +451,17 @@ static JSValueRef search(JSContextRef ctx, JSObjectRef /*function*/, JSObjectRef
     if (!node)
         return JSValueMakeUndefined(ctx);
 
-    JSStringRef string = JSValueToStringCopy(ctx, arguments[1], 0);
-    String target(JSStringGetCharactersPtr(string), JSStringGetLength(string));
-    JSStringRelease(string);
+    JSRetainPtr<JSStringRef> searchString(Adopt, JSValueToStringCopy(ctx, arguments[1], 0));
+    String target(JSStringGetCharactersPtr(searchString.get()), JSStringGetLength(searchString.get()));
 
-    JSObjectRef globalObject = JSContextGetGlobalObject(ctx);
-    JSStringRef constructorString = JSStringCreateWithUTF8CString("Array");
-    JSObjectRef arrayConstructor = JSValueToObject(ctx, JSObjectGetProperty(ctx, globalObject, constructorString, 0), 0);
-    JSStringRelease(constructorString);
-    JSObjectRef array = JSObjectCallAsConstructor(ctx, arrayConstructor, 0, 0, 0);
+    JSObjectRef global = JSContextGetGlobalObject(ctx);
+    JSRetainPtr<JSStringRef> arrayString(Adopt, JSStringCreateWithUTF8CString("Array"));
+    JSObjectRef arrayConstructor = JSValueToObject(ctx, JSObjectGetProperty(ctx, global, arrayString.get(), 0), 0);
 
-    JSStringRef pushString = JSStringCreateWithUTF8CString("push");
-    JSValueRef pushValue = JSObjectGetProperty(ctx, array, pushString, 0);
-    JSStringRelease(pushString);
-    JSObjectRef push = JSValueToObject(ctx, pushValue, 0);
+    JSObjectRef result = JSObjectCallAsConstructor(ctx, arrayConstructor, 0, 0, 0);
+
+    JSRetainPtr<JSStringRef> pushString(Adopt, JSStringCreateWithUTF8CString("push"));
+    JSObjectRef pushFunction = JSValueToObject(ctx, JSObjectGetProperty(ctx, result, pushString.get(), 0), 0);
 
     RefPtr<Range> searchRange(rangeOfContents(node));
 
@@ -471,12 +479,12 @@ static JSValueRef search(JSContextRef ctx, JSObjectRef /*function*/, JSObjectRef
 
         KJS::JSLock lock;
         JSValueRef arg0 = toRef(toJS(toJS(ctx), resultRange.get()));
-        JSObjectCallAsFunction(ctx, push, array, 1, &arg0, 0);
+        JSObjectCallAsFunction(ctx, pushFunction, result, 1, &arg0, 0);
 
         setStart(searchRange.get(), newStart);
     } while (true);
 
-    return array;
+    return result;
 }
 
 #if ENABLE(DATABASE)
@@ -494,23 +502,20 @@ static JSValueRef databaseTableNames(JSContextRef ctx, JSObjectRef /*function*/,
         return JSValueMakeUndefined(ctx);
 
     JSObjectRef global = JSContextGetGlobalObject(ctx);
-    JSStringRef arrayString = JSStringCreateWithUTF8CString("Array");
-    JSObjectRef arrayConstructor = JSValueToObject(ctx, JSObjectGetProperty(ctx, global, arrayString, 0), 0);
-    JSStringRelease(arrayString);
+    JSRetainPtr<JSStringRef> arrayString(Adopt, JSStringCreateWithUTF8CString("Array"));
+    JSObjectRef arrayConstructor = JSValueToObject(ctx, JSObjectGetProperty(ctx, global, arrayString.get(), 0), 0);
 
     JSObjectRef result = JSObjectCallAsConstructor(ctx, arrayConstructor, 0, 0, 0);
 
-    JSStringRef pushString = JSStringCreateWithUTF8CString("push");
-    JSObjectRef pushFunction = JSValueToObject(ctx, JSObjectGetProperty(ctx, result, pushString, 0), 0);
-    JSStringRelease(pushString);
+    JSRetainPtr<JSStringRef> pushString(Adopt, JSStringCreateWithUTF8CString("push"));
+    JSObjectRef pushFunction = JSValueToObject(ctx, JSObjectGetProperty(ctx, result, pushString.get(), 0), 0);
 
     Vector<String> tableNames = database->tableNames();
     unsigned length = tableNames.size();
     for (unsigned i = 0; i < length; ++i) {
         String tableName = tableNames[i];
-        JSStringRef tableNameString = JSStringCreateWithCharacters(tableName.characters(), tableName.length());
-        JSValueRef tableNameValue = JSValueMakeString(ctx, tableNameString);
-        JSStringRelease(tableNameString);
+        JSRetainPtr<JSStringRef> tableNameString(Adopt, JSStringCreateWithCharacters(tableName.characters(), tableName.length()));
+        JSValueRef tableNameValue = JSValueMakeString(ctx, tableNameString.get());
 
         JSValueRef pushArguments[] = { tableNameValue };
         JSObjectCallAsFunction(ctx, pushFunction, result, 1, pushArguments, 0);
@@ -539,11 +544,8 @@ static JSValueRef localizedStrings(JSContextRef ctx, JSObjectRef /*function*/, J
     if (url.isNull())
         return JSValueMakeNull(ctx);
 
-    JSStringRef urlString = JSStringCreateWithCharacters(url.characters(), url.length());
-    JSValueRef urlValue = JSValueMakeString(ctx, urlString);
-    JSStringRelease(urlString);
-
-    return urlValue;
+    JSRetainPtr<JSStringRef> urlString(Adopt, JSStringCreateWithCharacters(url.characters(), url.length()));
+    return JSValueMakeString(ctx, urlString.get());
 }
 
 static JSValueRef platform(JSContextRef ctx, JSObjectRef /*function*/, JSObjectRef thisObject, size_t /*argumentCount*/, const JSValueRef[] /*arguments[]*/, JSValueRef* /*exception*/)
@@ -586,6 +588,9 @@ static JSValueRef moveByUnrestricted(JSContextRef ctx, JSObjectRef /*function*/,
     return JSValueMakeUndefined(ctx);
 }
 
+#pragma mark -
+#pragma mark InspectorController Class
+
 InspectorController::InspectorController(Page* page, InspectorClient* client)
     : m_inspectedPage(page)
     , m_client(client)
@@ -607,9 +612,8 @@ InspectorController::~InspectorController()
 
     if (m_scriptContext) {
         JSObjectRef global = JSContextGetGlobalObject(m_scriptContext);
-        JSStringRef controllerProperty = JSStringCreateWithUTF8CString("InspectorController");
-        JSObjectRef controller = JSValueToObject(m_scriptContext, JSObjectGetProperty(m_scriptContext, global, controllerProperty, 0), 0);
-        JSStringRelease(controllerProperty);
+        JSRetainPtr<JSStringRef> controllerProperty(Adopt, JSStringCreateWithUTF8CString("InspectorController"));
+        JSObjectRef controller = JSValueToObject(m_scriptContext, JSObjectGetProperty(m_scriptContext, global, controllerProperty.get(), 0), 0);
         JSObjectSetPrivate(controller, 0);
     }
 
@@ -670,9 +674,8 @@ void InspectorController::focusNode()
 
     m_nodeToFocus = 0;
 
-    JSStringRef functionProperty = JSStringCreateWithUTF8CString("updateFocusedNode");
-    JSObjectRef function = JSValueToObject(m_scriptContext, JSObjectGetProperty(m_scriptContext, m_scriptObject, functionProperty, 0), 0);
-    JSStringRelease(functionProperty);
+    JSRetainPtr<JSStringRef> functionProperty(Adopt, JSStringCreateWithUTF8CString("updateFocusedNode"));
+    JSObjectRef function = JSValueToObject(m_scriptContext, JSObjectGetProperty(m_scriptContext, m_scriptObject, functionProperty.get(), 0), 0);
     ASSERT(function);
 
     JSObjectCallAsFunction(m_scriptContext, function, m_scriptObject, 1, &arg0, 0);
@@ -793,9 +796,8 @@ void InspectorController::windowScriptObjectAvailable()
     m_controllerScriptObject = JSObjectMake(m_scriptContext, controllerClass, reinterpret_cast<void*>(this));
     ASSERT(m_controllerScriptObject);
 
-    JSStringRef controllerObjectString = JSStringCreateWithUTF8CString("InspectorController");
-    JSObjectSetProperty(m_scriptContext, global, controllerObjectString, m_controllerScriptObject, kJSPropertyAttributeNone, 0);
-    JSStringRelease(controllerObjectString);
+    JSRetainPtr<JSStringRef> controllerObjectString(Adopt, JSStringCreateWithUTF8CString("InspectorController"));
+    JSObjectSetProperty(m_scriptContext, global, controllerObjectString.get(), m_controllerScriptObject, kJSPropertyAttributeNone, 0);
 }
 
 void InspectorController::scriptObjectReady()
@@ -807,9 +809,8 @@ void InspectorController::scriptObjectReady()
     JSObjectRef global = JSContextGetGlobalObject(m_scriptContext);
     ASSERT(global);
 
-    JSStringRef inspectorString = JSStringCreateWithUTF8CString("WebInspector");
-    JSValueRef inspectorValue = JSObjectGetProperty(m_scriptContext, global, inspectorString, 0);
-    JSStringRelease(inspectorString);
+    JSRetainPtr<JSStringRef> inspectorString(Adopt, JSStringCreateWithUTF8CString("WebInspector"));
+    JSValueRef inspectorValue = JSObjectGetProperty(m_scriptContext, global, inspectorString.get(), 0);
 
     ASSERT(inspectorValue);
     if (!inspectorValue)
@@ -893,15 +894,13 @@ static void addHeaders(JSContextRef context, JSObjectRef object, const HTTPHeade
 {
     ASSERT_ARG(context, context);
     ASSERT_ARG(object, object);
-    
+
     HTTPHeaderMap::const_iterator end = headers.end();
     for (HTTPHeaderMap::const_iterator it = headers.begin(); it != end; ++it) {
-        JSStringRef field = JSStringCreateWithCharacters(it->first.characters(), it->first.length());
-        JSStringRef valueString = JSStringCreateWithCharacters(it->second.characters(), it->second.length());
-        JSValueRef value = JSValueMakeString(context, valueString);
-        JSObjectSetProperty(context, object, field, value, kJSPropertyAttributeNone, 0);
-        JSStringRelease(field);
-        JSStringRelease(valueString);
+        JSRetainPtr<JSStringRef> field(Adopt, JSStringCreateWithCharacters(it->first.characters(), it->first.length()));
+        JSRetainPtr<JSStringRef> valueString(Adopt, JSStringCreateWithCharacters(it->second.characters(), it->second.length()));
+        JSValueRef value = JSValueMakeString(context, valueString.get());
+        JSObjectSetProperty(context, object, field.get(), value, kJSPropertyAttributeNone, 0);
     }
 }
 
@@ -938,29 +937,24 @@ JSObjectRef InspectorController::addScriptResource(InspectorResource* resource)
     if (!m_scriptContext || !m_scriptObject)
         return 0;
 
-    JSStringRef resourceString = JSStringCreateWithUTF8CString("Resource");
-    JSObjectRef resourceConstructor = JSValueToObject(m_scriptContext, JSObjectGetProperty(m_scriptContext, m_scriptObject, resourceString, 0), 0);
-    JSStringRelease(resourceString);
+    JSRetainPtr<JSStringRef> resourceString(Adopt, JSStringCreateWithUTF8CString("Resource"));
+    JSObjectRef resourceConstructor = JSValueToObject(m_scriptContext, JSObjectGetProperty(m_scriptContext, m_scriptObject, resourceString.get(), 0), 0);
 
     String urlString = resource->requestURL.string();
-    JSStringRef url = JSStringCreateWithCharacters(urlString.characters(), urlString.length());
-    JSValueRef urlValue = JSValueMakeString(m_scriptContext, url);
-    JSStringRelease(url);
+    JSRetainPtr<JSStringRef> url(Adopt, JSStringCreateWithCharacters(urlString.characters(), urlString.length()));
+    JSValueRef urlValue = JSValueMakeString(m_scriptContext, url.get());
 
     urlString = resource->requestURL.host();
-    JSStringRef domain = JSStringCreateWithCharacters(urlString.characters(), urlString.length());
-    JSValueRef domainValue = JSValueMakeString(m_scriptContext, domain);
-    JSStringRelease(domain);
+    JSRetainPtr<JSStringRef> domain(Adopt, JSStringCreateWithCharacters(urlString.characters(), urlString.length()));
+    JSValueRef domainValue = JSValueMakeString(m_scriptContext, domain.get());
 
     urlString = resource->requestURL.path();
-    JSStringRef path = JSStringCreateWithCharacters(urlString.characters(), urlString.length());
-    JSValueRef pathValue = JSValueMakeString(m_scriptContext, path);
-    JSStringRelease(path);
+    JSRetainPtr<JSStringRef> path(Adopt, JSStringCreateWithCharacters(urlString.characters(), urlString.length()));
+    JSValueRef pathValue = JSValueMakeString(m_scriptContext, path.get());
 
     urlString = resource->requestURL.lastPathComponent();
-    JSStringRef lastPathComponent = JSStringCreateWithCharacters(urlString.characters(), urlString.length());
-    JSValueRef lastPathComponentValue = JSValueMakeString(m_scriptContext, lastPathComponent);
-    JSStringRelease(lastPathComponent);
+    JSRetainPtr<JSStringRef> lastPathComponent(Adopt, JSStringCreateWithCharacters(urlString.characters(), urlString.length()));
+    JSValueRef lastPathComponentValue = JSValueMakeString(m_scriptContext, lastPathComponent.get());
 
     JSValueRef identifier = JSValueMakeNumber(m_scriptContext, resource->identifier);
     JSValueRef mainResource = JSValueMakeBoolean(m_scriptContext, m_mainResource == resource);
@@ -973,9 +967,8 @@ JSObjectRef InspectorController::addScriptResource(InspectorResource* resource)
 
     ASSERT(result);
 
-    JSStringRef addResourceString = JSStringCreateWithUTF8CString("addResource");
-    JSObjectRef addResourceFunction = JSValueToObject(m_scriptContext, JSObjectGetProperty(m_scriptContext, m_scriptObject, addResourceString, 0), 0);
-    JSStringRelease(addResourceString);
+    JSRetainPtr<JSStringRef> addResourceString(Adopt, JSStringCreateWithUTF8CString("addResource"));
+    JSObjectRef addResourceFunction = JSValueToObject(m_scriptContext, JSObjectGetProperty(m_scriptContext, m_scriptObject, addResourceString.get(), 0), 0);
 
     JSValueRef addArguments[] = { result };
     JSObjectCallAsFunction(m_scriptContext, addResourceFunction, m_scriptObject, 1, addArguments, 0);
@@ -1007,9 +1000,8 @@ void InspectorController::removeScriptResource(InspectorResource* resource)
     if (!resource || !resource->scriptObject)
         return;
 
-    JSStringRef removeResourceString = JSStringCreateWithUTF8CString("removeResource");
-    JSObjectRef removeResourceFunction = JSValueToObject(m_scriptContext, JSObjectGetProperty(m_scriptContext, m_scriptObject, removeResourceString, 0), 0);
-    JSStringRelease(removeResourceString);
+    JSRetainPtr<JSStringRef> removeResourceString(Adopt, JSStringCreateWithUTF8CString("removeResource"));
+    JSObjectRef removeResourceFunction = JSValueToObject(m_scriptContext, JSObjectGetProperty(m_scriptContext, m_scriptObject, removeResourceString.get(), 0), 0);
 
     JSValueRef arguments[] = { resource->scriptObject };
     JSObjectCallAsFunction(m_scriptContext, removeResourceFunction, m_scriptObject, 1, arguments, 0);
@@ -1040,50 +1032,40 @@ void InspectorController::updateScriptResourceRequest(InspectorResource* resourc
         return;
 
     String urlString = resource->requestURL.string();
-    JSStringRef url = JSStringCreateWithCharacters(urlString.characters(), urlString.length());
-    JSValueRef urlValue = JSValueMakeString(m_scriptContext, url);
-    JSStringRelease(url);
+    JSRetainPtr<JSStringRef> url(Adopt, JSStringCreateWithCharacters(urlString.characters(), urlString.length()));
+    JSValueRef urlValue = JSValueMakeString(m_scriptContext, url.get());
 
     urlString = resource->requestURL.host();
-    JSStringRef domain = JSStringCreateWithCharacters(urlString.characters(), urlString.length());
-    JSValueRef domainValue = JSValueMakeString(m_scriptContext, domain);
-    JSStringRelease(domain);
+    JSRetainPtr<JSStringRef> domain(Adopt, JSStringCreateWithCharacters(urlString.characters(), urlString.length()));
+    JSValueRef domainValue = JSValueMakeString(m_scriptContext, domain.get());
 
     urlString = resource->requestURL.path();
-    JSStringRef path = JSStringCreateWithCharacters(urlString.characters(), urlString.length());
-    JSValueRef pathValue = JSValueMakeString(m_scriptContext, path);
-    JSStringRelease(path);
+    JSRetainPtr<JSStringRef> path(Adopt, JSStringCreateWithCharacters(urlString.characters(), urlString.length()));
+    JSValueRef pathValue = JSValueMakeString(m_scriptContext, path.get());
 
     urlString = resource->requestURL.lastPathComponent();
-    JSStringRef lastPathComponent = JSStringCreateWithCharacters(urlString.characters(), urlString.length());
-    JSValueRef lastPathComponentValue = JSValueMakeString(m_scriptContext, lastPathComponent);
-    JSStringRelease(lastPathComponent);
+    JSRetainPtr<JSStringRef> lastPathComponent(Adopt, JSStringCreateWithCharacters(urlString.characters(), urlString.length()));
+    JSValueRef lastPathComponentValue = JSValueMakeString(m_scriptContext, lastPathComponent.get());
 
     JSValueRef mainResourceValue = JSValueMakeBoolean(m_scriptContext, m_mainResource == resource);
 
-    JSStringRef propertyName = JSStringCreateWithUTF8CString("url");
-    JSObjectSetProperty(m_scriptContext, resource->scriptObject, propertyName, urlValue, kJSPropertyAttributeNone, 0);
-    JSStringRelease(propertyName);
+    JSRetainPtr<JSStringRef> propertyName(Adopt, JSStringCreateWithUTF8CString("url"));
+    JSObjectSetProperty(m_scriptContext, resource->scriptObject, propertyName.get(), urlValue, kJSPropertyAttributeNone, 0);
 
-    propertyName = JSStringCreateWithUTF8CString("domain");
-    JSObjectSetProperty(m_scriptContext, resource->scriptObject, propertyName, domainValue, kJSPropertyAttributeNone, 0);
-    JSStringRelease(propertyName);
+    propertyName.adopt(JSStringCreateWithUTF8CString("domain"));
+    JSObjectSetProperty(m_scriptContext, resource->scriptObject, propertyName.get(), domainValue, kJSPropertyAttributeNone, 0);
 
-    propertyName = JSStringCreateWithUTF8CString("path");
-    JSObjectSetProperty(m_scriptContext, resource->scriptObject, propertyName, pathValue, kJSPropertyAttributeNone, 0);
-    JSStringRelease(propertyName);
+    propertyName.adopt(JSStringCreateWithUTF8CString("path"));
+    JSObjectSetProperty(m_scriptContext, resource->scriptObject, propertyName.get(), pathValue, kJSPropertyAttributeNone, 0);
 
-    propertyName = JSStringCreateWithUTF8CString("lastPathComponent");
-    JSObjectSetProperty(m_scriptContext, resource->scriptObject, propertyName, lastPathComponentValue, kJSPropertyAttributeNone, 0);
-    JSStringRelease(propertyName);
+    propertyName.adopt(JSStringCreateWithUTF8CString("lastPathComponent"));
+    JSObjectSetProperty(m_scriptContext, resource->scriptObject, propertyName.get(), lastPathComponentValue, kJSPropertyAttributeNone, 0);
 
-    propertyName = JSStringCreateWithUTF8CString("requestHeaders");
-    JSObjectSetProperty(m_scriptContext, resource->scriptObject, propertyName, scriptObjectForRequest(m_scriptContext, resource), kJSPropertyAttributeNone, 0);
-    JSStringRelease(propertyName);
+    propertyName.adopt(JSStringCreateWithUTF8CString("requestHeaders"));
+    JSObjectSetProperty(m_scriptContext, resource->scriptObject, propertyName.get(), scriptObjectForRequest(m_scriptContext, resource), kJSPropertyAttributeNone, 0);
 
-    propertyName = JSStringCreateWithUTF8CString("mainResource");
-    JSObjectSetProperty(m_scriptContext, resource->scriptObject, propertyName, mainResourceValue, kJSPropertyAttributeNone, 0);
-    JSStringRelease(propertyName);
+    propertyName.adopt(JSStringCreateWithUTF8CString("mainResource"));
+    JSObjectSetProperty(m_scriptContext, resource->scriptObject, propertyName.get(), mainResourceValue, kJSPropertyAttributeNone, 0);
 }
 
 void InspectorController::updateScriptResourceResponse(InspectorResource* resource)
@@ -1093,41 +1075,33 @@ void InspectorController::updateScriptResourceResponse(InspectorResource* resour
     if (!resource->scriptObject || !m_scriptContext)
         return;
 
-    JSStringRef mimeType = JSStringCreateWithCharacters(resource->mimeType.characters(), resource->mimeType.length());
-    JSValueRef mimeTypeValue = JSValueMakeString(m_scriptContext, mimeType);
-    JSStringRelease(mimeType);
+    JSRetainPtr<JSStringRef> mimeType(Adopt, JSStringCreateWithCharacters(resource->mimeType.characters(), resource->mimeType.length()));
+    JSValueRef mimeTypeValue = JSValueMakeString(m_scriptContext, mimeType.get());
 
-    JSStringRef suggestedFilename = JSStringCreateWithCharacters(resource->suggestedFilename.characters(), resource->suggestedFilename.length());
-    JSValueRef suggestedFilenameValue = JSValueMakeString(m_scriptContext, suggestedFilename);
-    JSStringRelease(suggestedFilename);
+    JSRetainPtr<JSStringRef> suggestedFilename(Adopt, JSStringCreateWithCharacters(resource->suggestedFilename.characters(), resource->suggestedFilename.length()));
+    JSValueRef suggestedFilenameValue = JSValueMakeString(m_scriptContext, suggestedFilename.get());
 
     JSValueRef expectedContentLengthValue = JSValueMakeNumber(m_scriptContext, static_cast<double>(resource->expectedContentLength));
     JSValueRef statusCodeValue = JSValueMakeNumber(m_scriptContext, resource->responseStatusCode);
 
-    JSStringRef propertyName = JSStringCreateWithUTF8CString("mimeType");
-    JSObjectSetProperty(m_scriptContext, resource->scriptObject, propertyName, mimeTypeValue, kJSPropertyAttributeNone, 0);
-    JSStringRelease(propertyName);
+    JSRetainPtr<JSStringRef> propertyName(Adopt, JSStringCreateWithUTF8CString("mimeType"));
+    JSObjectSetProperty(m_scriptContext, resource->scriptObject, propertyName.get(), mimeTypeValue, kJSPropertyAttributeNone, 0);
 
-    propertyName = JSStringCreateWithUTF8CString("suggestedFilename");
-    JSObjectSetProperty(m_scriptContext, resource->scriptObject, propertyName, suggestedFilenameValue, kJSPropertyAttributeNone, 0);
-    JSStringRelease(propertyName);
+    propertyName.adopt(JSStringCreateWithUTF8CString("suggestedFilename"));
+    JSObjectSetProperty(m_scriptContext, resource->scriptObject, propertyName.get(), suggestedFilenameValue, kJSPropertyAttributeNone, 0);
 
-    propertyName = JSStringCreateWithUTF8CString("expectedContentLength");
-    JSObjectSetProperty(m_scriptContext, resource->scriptObject, propertyName, expectedContentLengthValue, kJSPropertyAttributeNone, 0);
-    JSStringRelease(propertyName);
+    propertyName.adopt(JSStringCreateWithUTF8CString("expectedContentLength"));
+    JSObjectSetProperty(m_scriptContext, resource->scriptObject, propertyName.get(), expectedContentLengthValue, kJSPropertyAttributeNone, 0);
 
-    propertyName = JSStringCreateWithUTF8CString("statusCode");
-    JSObjectSetProperty(m_scriptContext, resource->scriptObject, propertyName, statusCodeValue, kJSPropertyAttributeNone, 0);
-    JSStringRelease(propertyName);
-    
-    propertyName = JSStringCreateWithUTF8CString("responseHeaders");
-    JSObjectSetProperty(m_scriptContext, resource->scriptObject, propertyName, scriptObjectForResponse(m_scriptContext, resource), kJSPropertyAttributeNone, 0);
-    JSStringRelease(propertyName);
+    propertyName.adopt(JSStringCreateWithUTF8CString("statusCode"));
+    JSObjectSetProperty(m_scriptContext, resource->scriptObject, propertyName.get(), statusCodeValue, kJSPropertyAttributeNone, 0);
+
+    propertyName.adopt(JSStringCreateWithUTF8CString("responseHeaders"));
+    JSObjectSetProperty(m_scriptContext, resource->scriptObject, propertyName.get(), scriptObjectForResponse(m_scriptContext, resource), kJSPropertyAttributeNone, 0);
 
     JSValueRef typeValue = JSValueMakeNumber(m_scriptContext, resource->type());
-    propertyName = JSStringCreateWithUTF8CString("type");
-    JSObjectSetProperty(m_scriptContext, resource->scriptObject, propertyName, typeValue, kJSPropertyAttributeNone, 0);
-    JSStringRelease(propertyName);
+    propertyName.adopt(JSStringCreateWithUTF8CString("type"));
+    JSObjectSetProperty(m_scriptContext, resource->scriptObject, propertyName.get(), typeValue, kJSPropertyAttributeNone, 0);
 }
 
 void InspectorController::updateScriptResource(InspectorResource* resource, int length)
@@ -1139,9 +1113,8 @@ void InspectorController::updateScriptResource(InspectorResource* resource, int 
 
     JSValueRef lengthValue = JSValueMakeNumber(m_scriptContext, length);
 
-    JSStringRef propertyName = JSStringCreateWithUTF8CString("contentLength");
-    JSObjectSetProperty(m_scriptContext, resource->scriptObject, propertyName, lengthValue, kJSPropertyAttributeNone, 0);
-    JSStringRelease(propertyName);
+    JSRetainPtr<JSStringRef> propertyName(Adopt, JSStringCreateWithUTF8CString("contentLength"));
+    JSObjectSetProperty(m_scriptContext, resource->scriptObject, propertyName.get(), lengthValue, kJSPropertyAttributeNone, 0);
 }
 
 void InspectorController::updateScriptResource(InspectorResource* resource, bool finished, bool failed)
@@ -1154,14 +1127,11 @@ void InspectorController::updateScriptResource(InspectorResource* resource, bool
     JSValueRef failedValue = JSValueMakeBoolean(m_scriptContext, failed);
     JSValueRef finishedValue = JSValueMakeBoolean(m_scriptContext, finished);
 
-    JSStringRef propertyName = JSStringCreateWithUTF8CString("failed");
-    JSObjectSetProperty(m_scriptContext, resource->scriptObject, propertyName, failedValue, kJSPropertyAttributeNone, 0);
-    JSStringRelease(propertyName);
+    JSRetainPtr<JSStringRef> propertyName(Adopt, JSStringCreateWithUTF8CString("failed"));
+    JSObjectSetProperty(m_scriptContext, resource->scriptObject, propertyName.get(), failedValue, kJSPropertyAttributeNone, 0);
 
-    propertyName = JSStringCreateWithUTF8CString("finished");
-    JSObjectSetProperty(m_scriptContext, resource->scriptObject, propertyName, finishedValue, kJSPropertyAttributeNone, 0);
-    JSStringRelease(propertyName);
-
+    propertyName.adopt(JSStringCreateWithUTF8CString("finished"));
+    JSObjectSetProperty(m_scriptContext, resource->scriptObject, propertyName.get(), finishedValue, kJSPropertyAttributeNone, 0);
 }
 
 void InspectorController::updateScriptResource(InspectorResource* resource, double startTime, double responseReceivedTime, double endTime)
@@ -1175,17 +1145,14 @@ void InspectorController::updateScriptResource(InspectorResource* resource, doub
     JSValueRef responseReceivedTimeValue = JSValueMakeNumber(m_scriptContext, responseReceivedTime);
     JSValueRef endTimeValue = JSValueMakeNumber(m_scriptContext, endTime);
 
-    JSStringRef propertyName = JSStringCreateWithUTF8CString("startTime");
-    JSObjectSetProperty(m_scriptContext, resource->scriptObject, propertyName, startTimeValue, kJSPropertyAttributeNone, 0);
-    JSStringRelease(propertyName);
+    JSRetainPtr<JSStringRef> propertyName(Adopt, JSStringCreateWithUTF8CString("startTime"));
+    JSObjectSetProperty(m_scriptContext, resource->scriptObject, propertyName.get(), startTimeValue, kJSPropertyAttributeNone, 0);
 
-    propertyName = JSStringCreateWithUTF8CString("responseReceivedTime");
-    JSObjectSetProperty(m_scriptContext, resource->scriptObject, propertyName, responseReceivedTimeValue, kJSPropertyAttributeNone, 0);
-    JSStringRelease(propertyName);
+    propertyName.adopt(JSStringCreateWithUTF8CString("responseReceivedTime"));
+    JSObjectSetProperty(m_scriptContext, resource->scriptObject, propertyName.get(), responseReceivedTimeValue, kJSPropertyAttributeNone, 0);
 
-    propertyName = JSStringCreateWithUTF8CString("endTime");
-    JSObjectSetProperty(m_scriptContext, resource->scriptObject, propertyName, endTimeValue, kJSPropertyAttributeNone, 0);
-    JSStringRelease(propertyName);
+    propertyName.adopt(JSStringCreateWithUTF8CString("endTime"));
+    JSObjectSetProperty(m_scriptContext, resource->scriptObject, propertyName.get(), endTimeValue, kJSPropertyAttributeNone, 0);
 }
 
 void InspectorController::populateScriptResources()
@@ -1227,23 +1194,19 @@ JSObjectRef InspectorController::addDatabaseScriptResource(InspectorDatabaseReso
     if (!m_scriptContext || !m_scriptObject)
         return 0;
 
-    JSStringRef databaseString = JSStringCreateWithUTF8CString("Database");
-    JSObjectRef databaseConstructor = JSValueToObject(m_scriptContext, JSObjectGetProperty(m_scriptContext, m_scriptObject, databaseString, 0), 0);
-    JSStringRelease(databaseString);
+    JSRetainPtr<JSStringRef> databaseString(Adopt, JSStringCreateWithUTF8CString("Database"));
+    JSObjectRef databaseConstructor = JSValueToObject(m_scriptContext, JSObjectGetProperty(m_scriptContext, m_scriptObject, databaseString.get(), 0), 0);
 
     JSValueRef database = toRef(toJS(toJS(m_scriptContext), resource->database.get()));
 
-    JSStringRef domain = JSStringCreateWithCharacters(resource->domain.characters(), resource->domain.length());
-    JSValueRef domainValue = JSValueMakeString(m_scriptContext, domain);
-    JSStringRelease(domain);
+    JSRetainPtr<JSStringRef> domain(Adopt, JSStringCreateWithCharacters(resource->domain.characters(), resource->domain.length()));
+    JSValueRef domainValue = JSValueMakeString(m_scriptContext, domain.get());
 
-    JSStringRef name = JSStringCreateWithCharacters(resource->name.characters(), resource->name.length());
-    JSValueRef nameValue = JSValueMakeString(m_scriptContext, name);
-    JSStringRelease(name);
+    JSRetainPtr<JSStringRef> name(Adopt, JSStringCreateWithCharacters(resource->name.characters(), resource->name.length()));
+    JSValueRef nameValue = JSValueMakeString(m_scriptContext, name.get());
 
-    JSStringRef version = JSStringCreateWithCharacters(resource->version.characters(), resource->version.length());
-    JSValueRef versionValue = JSValueMakeString(m_scriptContext, version);
-    JSStringRelease(version);
+    JSRetainPtr<JSStringRef> version(Adopt, JSStringCreateWithCharacters(resource->version.characters(), resource->version.length()));
+    JSValueRef versionValue = JSValueMakeString(m_scriptContext, version.get());
 
     JSValueRef arguments[] = { database, domainValue, nameValue, versionValue };
     JSObjectRef result = JSObjectCallAsConstructor(m_scriptContext, databaseConstructor, 4, arguments, 0);
@@ -1252,9 +1215,8 @@ JSObjectRef InspectorController::addDatabaseScriptResource(InspectorDatabaseReso
 
     ASSERT(result);
 
-    JSStringRef addResourceString = JSStringCreateWithUTF8CString("addResource");
-    JSObjectRef addResourceFunction = JSValueToObject(m_scriptContext, JSObjectGetProperty(m_scriptContext, m_scriptObject, addResourceString, 0), 0);
-    JSStringRelease(addResourceString);
+    JSRetainPtr<JSStringRef> addResourceString(Adopt, JSStringCreateWithUTF8CString("addResource"));
+    JSObjectRef addResourceFunction = JSValueToObject(m_scriptContext, JSObjectGetProperty(m_scriptContext, m_scriptObject, addResourceString.get(), 0), 0);
 
     JSValueRef addArguments[] = { result };
     JSObjectCallAsFunction(m_scriptContext, addResourceFunction, m_scriptObject, 1, addArguments, 0);
@@ -1274,9 +1236,8 @@ void InspectorController::removeDatabaseScriptResource(InspectorDatabaseResource
     if (!resource || !resource->scriptObject)
         return;
 
-    JSStringRef removeResourceString = JSStringCreateWithUTF8CString("removeResource");
-    JSObjectRef removeResourceFunction = JSValueToObject(m_scriptContext, JSObjectGetProperty(m_scriptContext, m_scriptObject, removeResourceString, 0), 0);
-    JSStringRelease(removeResourceString);
+    JSRetainPtr<JSStringRef> removeResourceString(Adopt, JSStringCreateWithUTF8CString("removeResource"));
+    JSObjectRef removeResourceFunction = JSValueToObject(m_scriptContext, JSObjectGetProperty(m_scriptContext, m_scriptObject, removeResourceString.get(), 0), 0);
 
     JSValueRef arguments[] = { resource->scriptObject };
     JSObjectCallAsFunction(m_scriptContext, removeResourceFunction, m_scriptObject, 1, arguments, 0);
@@ -1289,26 +1250,22 @@ void InspectorController::addScriptConsoleMessage(const ConsoleMessage* message)
 {
     ASSERT_ARG(message, message);
 
-    JSStringRef messageConstructorString = JSStringCreateWithUTF8CString("ConsoleMessage");
-    JSObjectRef messageConstructor = JSValueToObject(m_scriptContext, JSObjectGetProperty(m_scriptContext, m_scriptObject, messageConstructorString, 0), 0);
-    JSStringRelease(messageConstructorString);
+    JSRetainPtr<JSStringRef> messageConstructorString(Adopt, JSStringCreateWithUTF8CString("ConsoleMessage"));
+    JSObjectRef messageConstructor = JSValueToObject(m_scriptContext, JSObjectGetProperty(m_scriptContext, m_scriptObject, messageConstructorString.get(), 0), 0);
 
-    JSStringRef addMessageString = JSStringCreateWithUTF8CString("addMessageToConsole");
-    JSObjectRef addMessage = JSValueToObject(m_scriptContext, JSObjectGetProperty(m_scriptContext, m_scriptObject, addMessageString, 0), 0);
-    JSStringRelease(addMessageString);
+    JSRetainPtr<JSStringRef> addMessageString(Adopt, JSStringCreateWithUTF8CString("addMessageToConsole"));
+    JSObjectRef addMessage = JSValueToObject(m_scriptContext, JSObjectGetProperty(m_scriptContext, m_scriptObject, addMessageString.get(), 0), 0);
 
     JSValueRef sourceValue = JSValueMakeNumber(m_scriptContext, message->source);
     JSValueRef levelValue = JSValueMakeNumber(m_scriptContext, message->level);
-    JSStringRef messageString = JSStringCreateWithCharacters(message->message.characters(), message->message.length());
-    JSValueRef messageValue = JSValueMakeString(m_scriptContext, messageString);
+    JSRetainPtr<JSStringRef> messageString(Adopt, JSStringCreateWithCharacters(message->message.characters(), message->message.length()));
+    JSValueRef messageValue = JSValueMakeString(m_scriptContext, messageString.get());
     JSValueRef lineValue = JSValueMakeNumber(m_scriptContext, message->line);
-    JSStringRef urlString = JSStringCreateWithCharacters(message->url.characters(), message->url.length());
-    JSValueRef urlValue = JSValueMakeString(m_scriptContext, urlString);
+    JSRetainPtr<JSStringRef> urlString(Adopt, JSStringCreateWithCharacters(message->url.characters(), message->url.length()));
+    JSValueRef urlValue = JSValueMakeString(m_scriptContext, urlString.get());
 
     JSValueRef args[] = { sourceValue, levelValue, messageValue, lineValue, urlValue };
     JSObjectRef messageObject = JSObjectCallAsConstructor(m_scriptContext, messageConstructor, 5, args, 0);
-    JSStringRelease(messageString);
-    JSStringRelease(urlString);
 
     JSObjectCallAsFunction(m_scriptContext, addMessage, m_scriptObject, 1, &messageObject, 0);
 }

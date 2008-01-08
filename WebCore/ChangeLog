@@ -1,3 +1,30 @@
+2008-01-08  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Use JSRetainPtr in the Web Inspector everywhere we own a JSStringRef.
+        Also added some #pragma marks to help find places in the file.
+
+        * page/InspectorController.cpp:
+        (WebCore::callSimpleFunction): Use JSRetainPtr<JSStringRef>.
+        And return the result of JSObjectCallAsFunction.
+        (WebCore::search): Use JSRetainPtr<JSStringRef>.
+        (WebCore::databaseTableNames): Ditto.
+        (WebCore::localizedStrings): Ditto.
+        (WebCore::InspectorController::~InspectorController): Ditto.
+        (WebCore::InspectorController::focusNode): Ditto.
+        (WebCore::InspectorController::windowScriptObjectAvailable): Ditto.
+        (WebCore::InspectorController::scriptObjectReady): Ditto.
+        (WebCore::addHeaders): Ditto.
+        (WebCore::InspectorController::addScriptResource): Ditto.
+        (WebCore::InspectorController::removeScriptResource): Ditto.
+        (WebCore::InspectorController::updateScriptResourceRequest): Ditto.
+        (WebCore::InspectorController::updateScriptResourceResponse): Ditto.
+        (WebCore::InspectorController::updateScriptResource): Ditto.
+        (WebCore::InspectorController::addDatabaseScriptResource): Ditto.
+        (WebCore::InspectorController::removeDatabaseScriptResource): Ditto.
+        (WebCore::InspectorController::addScriptConsoleMessage): Ditto.
+
 2008-01-08  Dan Bernstein  <mitz@apple.com>
 
         Rubber-stamped by Sam Weinig.
