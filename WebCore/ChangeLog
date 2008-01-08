@@ -1,3 +1,12 @@
+2008-01-08  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Mark.
+
+        - remove duplicate definition of getElementById from HTMLDocument IDL (and ObjC bindings)
+
+        * bindings/objc/PublicDOMInterfaces.h:
+        * html/HTMLDocument.idl:
+
 2008-01-08  David D. Kilzer  <ddkilzer@webkit.org>
 
         Renamed CharacterData::str to m_str to match coding style

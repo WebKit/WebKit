@@ -31,12 +31,11 @@ module html {
         [Custom] void write(in DOMString text);
         [Custom] void writeln(in DOMString text);
 
-        // Extensions
-        Element getElementById(in DOMString elementId);
-
         readonly attribute HTMLCollection embeds;
         readonly attribute HTMLCollection plugins;
         readonly attribute HTMLCollection scripts;
+
+        // Extensions
 
 #if defined(LANGUAGE_JAVASCRIPT)
         // FIXME: These should eventually be available (if they are wanted) for all languages.

@@ -363,7 +363,6 @@
 - (void)close;
 - (void)write:(NSString *)text;
 - (void)writeln:(NSString *)text;
-- (DOMElement *)getElementById:(NSString *)elementId;
 @end
 
 @interface DOMHTMLElement : DOMElement
