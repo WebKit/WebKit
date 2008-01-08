@@ -1,3 +1,32 @@
+2008-01-08  David D. Kilzer  <ddkilzer@webkit.org>
+
+        Renamed CharacterData::m_str to m_data
+
+        Rubber-stamped by Adam again.
+
+        No test cases added since there is no change in behavior.
+
+        * dom/CDATASection.cpp:
+        * dom/CharacterData.cpp:
+        (WebCore::CharacterData::CharacterData):
+        (WebCore::CharacterData::setData):
+        (WebCore::CharacterData::substringData):
+        (WebCore::CharacterData::appendData):
+        (WebCore::CharacterData::insertData):
+        (WebCore::CharacterData::deleteData):
+        (WebCore::CharacterData::replaceData):
+        (WebCore::CharacterData::nodeValue):
+        (WebCore::CharacterData::containsOnlyWhitespace):
+        (WebCore::CharacterData::dispatchModifiedEvent):
+        (WebCore::CharacterData::checkCharDataOperation):
+        (WebCore::CharacterData::dump):
+        * dom/CharacterData.h:
+        * dom/Comment.cpp:
+        * dom/Text.cpp:
+        (WebCore::Text::splitText):
+        (WebCore::Text::createRenderer):
+        (WebCore::Text::recalcStyle):
+
 2008-01-08  Steve Falkenburg  <sfalken@apple.com>
 
         Fix a couple of compiler warnings.

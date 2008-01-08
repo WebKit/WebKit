@@ -42,7 +42,7 @@ CharacterData::CharacterData(Document *doc)
 CharacterData::CharacterData(Document *doc, const String &_text)
     : EventTargetNode(doc)
 {
-    m_str = _text.impl() ? _text.impl() : StringImpl::empty();
+    m_data = _text.impl() ? _text.impl() : StringImpl::empty();
 }
 
 CharacterData::~CharacterData()
@@ -57,17 +57,17 @@ void CharacterData::setData(const String& data, ExceptionCode& ec)
         return;
     }
 
-    if (equal(m_str.get(), data.impl()))
+    if (equal(m_data.get(), data.impl()))
         return;
 
-    RefPtr<StringImpl> oldStr = m_str;
-    m_str = data.impl();
+    RefPtr<StringImpl> oldStr = m_data;
+    m_data = data.impl();
     
     if ((!renderer() || !rendererIsNeeded(renderer()->style())) && attached()) {
         detach();
         attach();
     } else if (renderer())
-        static_cast<RenderText*>(renderer())->setText(m_str);
+        static_cast<RenderText*>(renderer())->setText(m_data);
     
     dispatchModifiedEvent(oldStr.get());
     
@@ -81,7 +81,7 @@ String CharacterData::substringData( const unsigned offset, const unsigned count
     if (ec)
         return String();
 
-    return m_str->substring(offset, count);
+    return m_data->substring(offset, count);
 }
 
 void CharacterData::appendData( const String &arg, ExceptionCode& ec)
@@ -94,17 +94,17 @@ void CharacterData::appendData( const String &arg, ExceptionCode& ec)
         return;
     }
 
-    String newStr = m_str;
+    String newStr = m_data;
     newStr.append(arg);
 
-    RefPtr<StringImpl> oldStr = m_str;
-    m_str = newStr.impl();
+    RefPtr<StringImpl> oldStr = m_data;
+    m_data = newStr.impl();
 
     if ((!renderer() || !rendererIsNeeded(renderer()->style())) && attached()) {
         detach();
         attach();
     } else if (renderer())
-        static_cast<RenderText*>(renderer())->setTextWithOffset(m_str, oldStr->length(), 0);
+        static_cast<RenderText*>(renderer())->setTextWithOffset(m_data, oldStr->length(), 0);
     
     dispatchModifiedEvent(oldStr.get());
 }
@@ -116,17 +116,17 @@ void CharacterData::insertData( const unsigned offset, const String &arg, Except
     if (ec)
         return;
 
-    String newStr = m_str;
+    String newStr = m_data;
     newStr.insert(arg, offset);
 
-    RefPtr<StringImpl> oldStr = m_str;
-    m_str = newStr.impl();
+    RefPtr<StringImpl> oldStr = m_data;
+    m_data = newStr.impl();
 
     if ((!renderer() || !rendererIsNeeded(renderer()->style())) && attached()) {
         detach();
         attach();
     } else if (renderer())
-        static_cast<RenderText*>(renderer())->setTextWithOffset(m_str, offset, 0);
+        static_cast<RenderText*>(renderer())->setTextWithOffset(m_data, offset, 0);
     
     dispatchModifiedEvent(oldStr.get());
     
@@ -142,17 +142,17 @@ void CharacterData::deleteData( const unsigned offset, const unsigned count, Exc
     if (ec)
         return;
 
-    String newStr = m_str;
+    String newStr = m_data;
     newStr.remove(offset, count);
 
-    RefPtr<StringImpl> oldStr = m_str;
-    m_str = newStr.impl();
+    RefPtr<StringImpl> oldStr = m_data;
+    m_data = newStr.impl();
     
     if ((!renderer() || !rendererIsNeeded(renderer()->style())) && attached()) {
         detach();
         attach();
     } else if (renderer())
-        static_cast<RenderText*>(renderer())->setTextWithOffset(m_str, offset, count);
+        static_cast<RenderText*>(renderer())->setTextWithOffset(m_data, offset, count);
 
     dispatchModifiedEvent(oldStr.get());
 
@@ -169,23 +169,23 @@ void CharacterData::replaceData( const unsigned offset, const unsigned count, co
         return;
 
     unsigned realCount;
-    if (offset + count > m_str->length())
-        realCount = m_str->length()-offset;
+    if (offset + count > m_data->length())
+        realCount = m_data->length()-offset;
     else
         realCount = count;
 
-    String newStr = m_str;
+    String newStr = m_data;
     newStr.remove(offset, realCount);
     newStr.insert(arg, offset);
 
-    RefPtr<StringImpl> oldStr = m_str;
-    m_str = newStr.impl();
+    RefPtr<StringImpl> oldStr = m_data;
+    m_data = newStr.impl();
 
     if ((!renderer() || !rendererIsNeeded(renderer()->style())) && attached()) {
         detach();
         attach();
     } else if (renderer())
-        static_cast<RenderText*>(renderer())->setTextWithOffset(m_str, offset, count);
+        static_cast<RenderText*>(renderer())->setTextWithOffset(m_data, offset, count);
     
     dispatchModifiedEvent(oldStr.get());
     
@@ -197,13 +197,13 @@ void CharacterData::replaceData( const unsigned offset, const unsigned count, co
 
 String CharacterData::nodeValue() const
 {
-    return m_str;
+    return m_data;
 }
 
 bool CharacterData::containsOnlyWhitespace() const
 {
-    if (m_str)
-        return m_str->containsOnlyWhitespace();
+    if (m_data)
+        return m_data->containsOnlyWhitespace();
     return true;
 }
 
@@ -219,7 +219,7 @@ void CharacterData::dispatchModifiedEvent(StringImpl *prevValue)
         parentNode()->childrenChanged();
     if (document()->hasListenerType(Document::DOMCHARACTERDATAMODIFIED_LISTENER)) {
         ExceptionCode ec;
-        dispatchEvent(new MutationEvent(DOMCharacterDataModifiedEvent, true, false, 0, prevValue, m_str, String(), 0), ec);
+        dispatchEvent(new MutationEvent(DOMCharacterDataModifiedEvent, true, false, 0, prevValue, m_data, String(), 0), ec);
     }
     dispatchSubtreeModifiedEvent();
 }
@@ -230,7 +230,7 @@ void CharacterData::checkCharDataOperation( const unsigned offset, ExceptionCode
 
     // INDEX_SIZE_ERR: Raised if the specified offset is negative or greater than the number of 16-bit
     // units in data.
-    if (offset > m_str->length()) {
+    if (offset > m_data->length()) {
         ec = INDEX_SIZE_ERR;
         return;
     }
@@ -249,7 +249,7 @@ int CharacterData::maxCharacterOffset() const
 
 bool CharacterData::rendererIsNeeded(RenderStyle *style)
 {
-    if (!m_str || m_str->length() == 0)
+    if (!m_data || m_data->length() == 0)
         return false;
     return EventTargetNode::rendererIsNeeded(style);
 }
@@ -262,7 +262,7 @@ bool CharacterData::offsetInCharacters() const
 #ifndef NDEBUG
 void CharacterData::dump(TextStream *stream, DeprecatedString ind) const
 {
-    *stream << " m_str=\"" << String(m_str).utf8().data() << "\"";
+    *stream << " m_data=\"" << String(m_data).utf8().data() << "\"";
 
     EventTargetNode::dump(stream, ind);
 }
