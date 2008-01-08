@@ -1,3 +1,13 @@
+2008-01-07  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Steve.
+
+        Re-enable media support in Windows build.
+
+        * WebCore.vcproj/QTMovieWin.vcproj:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.vcproj/build-generated-files.sh:
+
 2008-01-07  Steve Falkenburg  <sfalken@apple.com>
 
         Add version resource to QTMovieWin.dll

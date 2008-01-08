@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="windows-1251"?>
+<?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="8.00"
@@ -64,12 +64,12 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="&quot;$(ProgramFiles)\QuickTime SDK\Libraries\QTMLClient.lib&quot; WTF$(WebKitConfigSuffix).lib winmm.lib pthreadVC2$(LibraryConfigSuffix).lib Msimg32.lib"
+				AdditionalDependencies="&quot;$(ProgramFiles)\QuickTime SDK\Libraries\QTMLClient.lib&quot; WTF$(WebKitConfigSuffix).lib winmm.lib pthreadVC2$(WebKitConfigSuffix).lib Msimg32.lib"
 				OutputFile="$(OutDir)\$(ProjectName)$(WebKitConfigSuffix).dll"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="&quot;$(WebKitOutputDir)\lib&quot;;$(WebKitLibrariesDir)\lib"
 				IgnoreAllDefaultLibraries="false"
-				DelayLoadDLLs="pthreadVC2$(LibraryConfigSuffix).dll;Msimg32.dll"
+				DelayLoadDLLs=""
 				GenerateDebugInformation="true"
 				SubSystem="2"
 				ImportLibrary="$(WebKitOutputDir)\lib\$(TargetName).lib"
@@ -148,11 +148,11 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="&quot;$(ProgramFiles)\QuickTime SDK\Libraries\QTMLClient.lib&quot; WTF$(WebKitConfigSuffix).lib winmm.lib pthreadVC2$(LibraryConfigSuffix).lib Msimg32.lib"
+				AdditionalDependencies="&quot;$(ProgramFiles)\QuickTime SDK\Libraries\QTMLClient.lib&quot; WTF$(WebKitConfigSuffix).lib winmm.lib pthreadVC2$(WebKitConfigSuffix).lib Msimg32.lib"
 				OutputFile="$(OutDir)\$(ProjectName)$(WebKitConfigSuffix).dll"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="&quot;$(WebKitOutputDir)\lib&quot;;$(WebKitLibrariesDir)\lib"
-				DelayLoadDLLs="pthreadVC2$(LibraryConfigSuffix).dll;Msimg32.dll"
+				DelayLoadDLLs=""
 				GenerateDebugInformation="true"
 				SubSystem="2"
 				OptimizeReferences="2"
@@ -234,12 +234,12 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="&quot;$(ProgramFiles)\QuickTime SDK\Libraries\QTMLClient.lib&quot; WTF$(WebKitConfigSuffix).lib winmm.lib pthreadVC2$(LibraryConfigSuffix).lib Msimg32.lib"
+				AdditionalDependencies="&quot;$(ProgramFiles)\QuickTime SDK\Libraries\QTMLClient.lib&quot; WTF$(WebKitConfigSuffix).lib winmm.lib pthreadVC2$(WebKitConfigSuffix).lib Msimg32.lib"
 				OutputFile="$(OutDir)\$(ProjectName)$(WebKitConfigSuffix).dll"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="&quot;$(WebKitOutputDir)\lib&quot;;$(WebKitLibrariesDir)\lib"
 				IgnoreAllDefaultLibraries="false"
-				DelayLoadDLLs="pthreadVC2$(LibraryConfigSuffix).dll;Msimg32.dll"
+				DelayLoadDLLs=""
 				GenerateDebugInformation="true"
 				SubSystem="2"
 				ImportLibrary="$(WebKitOutputDir)\lib\$(TargetName).lib"
