@@ -82,7 +82,7 @@ void HTMLSliderThumbElement::defaultEventHandler(Event* event)
             m_initialPosition = static_cast<RenderSlider*>(renderer()->parent())->currentPosition();
             m_inDragMode = true;
             
-            document()->frame()->eventHandler()->setCapturingMouseEventsNode(this);
+            document()->frame()->eventHandler()->setCapturingMouseEventsNode(m_shadowParent);
             
             event->setDefaultHandled();
             return;
@@ -109,6 +109,8 @@ void HTMLSliderThumbElement::defaultEventHandler(Event* event)
                 slider->setCurrentPosition(newPosition);
                 slider->valueChanged();
             }
+            event->setDefaultHandled();
+            return;
         }
     }
 

@@ -1,5 +1,17 @@
 2008-01-08  Adele Peterson  <adele@apple.com>
 
+        Reviewed by Darin.
+
+        Fix for <rdar://problem/5674667> fast/forms/slider-mouse-events.html is broken by media control checkin 29257
+
+        * rendering/RenderSlider.cpp: (WebCore::HTMLSliderThumbElement::defaultEventHandler):
+          After fixing a bug in EventHandler to make sure events always go to the capturing node, this bug was exposed.
+          MouseMove and MouseUp events were going to the thumb element, but not to the slider input element.  
+          This change makes the input element the capturing node, and then the input element forwards the mouse events to the thumb element.
+          I also added a missing call to setDefaultHandled for the mousemove event.
+
+2008-01-08  Adele Peterson  <adele@apple.com>
+
         Reviewed by Adam. 
 
         * rendering/RenderThemeSafari.cpp: Use the SafariTheme version number to decide whether or not to
