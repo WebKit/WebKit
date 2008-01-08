@@ -1,3 +1,10 @@
+2008-01-07  Dan Bernstein  <mitz@apple.com>
+
+        Build fix.
+
+        * platform/graphics/qt/GlyphPageTreeNodeQt.cpp:
+        (WebCore::GlyphPageTreeNode::pruneTreeCustomFontData):
+
 2008-01-07  Adele Peterson  <adele@apple.com>
 
         Add missing newline.

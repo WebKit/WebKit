@@ -28,7 +28,7 @@
 
 namespace WebCore {
 
-void GlyphPageTreeNode::pruneTreeCustomFontData(const SimpleFontData* fontData)
+void GlyphPageTreeNode::pruneTreeCustomFontData(const FontData* fontData)
 {
     QFontDatabase::removeApplicationFont(fontData->platformData().handle);
 }
