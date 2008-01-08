@@ -1130,6 +1130,7 @@ contains(DEFINES, ENABLE_VIDEO=1) {
         html/HTMLVideoElement.cpp \
         html/TimeRanges.cpp \
         platform/graphics/MediaPlayer.cpp \
+        rendering/MediaControlElements.cpp \
         rendering/RenderVideo.cpp \
         rendering/RenderMedia.cpp \
         bindings/js/JSHTMLAudioElementConstructor.cpp 

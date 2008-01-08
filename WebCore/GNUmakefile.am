@@ -1098,6 +1098,7 @@ webcore_sources += \
 	WebCore/html/HTMLVideoElement.cpp \
 	WebCore/html/TimeRanges.cpp \
 	WebCore/platform/graphics/MediaPlayer.cpp \
+	WebCore/rendering/MediaControlElements.cpp \
 	WebCore/rendering/RenderVideo.cpp \
 	WebCore/rendering/RenderMedia.cpp \
 	WebCore/bindings/js/JSHTMLAudioElementConstructor.cpp
