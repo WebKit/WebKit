@@ -9,7 +9,7 @@
 
         * dom/Node.cpp: (WebCore::Node::removedFromDocument):
         Check to see if the node being removed is currently set as the Document's cssTarget.
-Ê Ê Ê Ê If it is, clear the cssTarget to prevent a hanging reference to it.
+        If it is, clear the cssTarget to prevent a hanging reference to it.
 
 2008-01-08  Adam Roben  <aroben@apple.com>
 
