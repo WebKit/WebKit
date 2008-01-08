@@ -1,5 +1,12 @@
 2008-01-08  Dan Bernstein  <mitz@apple.com>
 
+        Fix a Wx build error.
+
+        * platform/graphics/wx/GlyphMapWx.cpp:
+        (WebCore::GlyphPage::fill):
+
+2008-01-08  Dan Bernstein  <mitz@apple.com>
+
         Fix a Qt build error.
 
         * platform/graphics/qt/SimpleFontDataQt.cpp:

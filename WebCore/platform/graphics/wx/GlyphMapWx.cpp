@@ -35,11 +35,11 @@
 namespace WebCore
 {
 
-bool GlyphPage::fill(UChar* buffer, unsigned bufferLength, const SimpleFontData* fontData)
+bool GlyphPage::fill(unsigned offset, unsigned length, UChar* buffer, unsigned bufferLength, const SimpleFontData* fontData)
 {
-    bool isUtf16 = bufferLength != GlyphPage::size;
+    bool isUtf16 = bufferLength != length;
 
-    for (unsigned i = 0; i < GlyphPage::size; i++) {
+    for (unsigned i = 0; i < length; i++) {
         UChar32 character;
 
         if(isUtf16) {
@@ -50,7 +50,7 @@ bool GlyphPage::fill(UChar* buffer, unsigned bufferLength, const SimpleFontData*
             character = buffer[i];
         }
 
-        setGlyphDataForIndex(i, character, fontData);
+        setGlyphDataForIndex(offset + i, character, fontData);
     }
 
     return true;
