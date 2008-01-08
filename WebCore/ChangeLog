@@ -1,3 +1,20 @@
+2008-01-08  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Adele and John.
+
+        Fix <rdar://problem/5652740> Crash occurs at WebCore::Widget::getView() after
+        dragging file into window that contains web page ( http://www.econocraft.com/flood_arch.htm )
+
+        We hit this crash if the page reloads between DragController::dragUpdated
+        and DragController::performDrag, meaning that m_document starts pointing to
+        a now viewless document.  This is picked up by an assertion in performDrag
+        which I have now replaced with an assignment given that the assertion is 
+        invalid -- it is possible for m_document to be changed between dragUpdated
+        performDrag
+
+        * page/DragController.cpp:
+        (WebCore::DragController::performDrag):
+
 2008-01-08  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin.

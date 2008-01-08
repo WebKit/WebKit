@@ -175,7 +175,7 @@ DragOperation DragController::dragUpdated(DragData* dragData)
 bool DragController::performDrag(DragData* dragData)
 {   
     ASSERT(dragData);
-    ASSERT(m_document == m_page->mainFrame()->documentAtPoint(dragData->clientPosition()));
+    m_document = m_page->mainFrame()->documentAtPoint(dragData->clientPosition());
     if (m_isHandlingDrag) {
         ASSERT(m_dragDestinationAction & DragDestinationActionDHTML);
         m_client->willPerformDragDestinationAction(DragDestinationActionDHTML, dragData);
