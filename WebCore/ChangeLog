@@ -1,3 +1,15 @@
+2008-01-09  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Adam Roben and Anders Carlsson
+        
+        - fixed <rdar://problem/5469398> Repro assertion failure in context menu code due to 
+          missing-but-expected Reload item
+
+        * platform/ContextMenu.cpp:
+        (WebCore::ContextMenu::populate):
+        use isLoadingInAPISense when deciding whether to include Stop or Reload in context
+        menu, to match the WebKit API
+
 2008-01-09  Mark Rowe  <mrowe@apple.com>
 
         Fix Windows debug build for opensource developers.

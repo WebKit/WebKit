@@ -31,6 +31,7 @@
 #include "CSSPropertyNames.h"
 #include "ContextMenuController.h"
 #include "Document.h"
+#include "DocumentLoader.h"
 #include "Editor.h"
 #include "Frame.h"
 #include "FrameLoader.h"
@@ -274,7 +275,9 @@ void ContextMenu::populate()
                 if (loader->canGoBackOrForward(1))
                     appendItem(ForwardItem);
 
-                if (loader->isLoading())
+                // use isLoadingInAPISense rather than isLoading because Stop/Reload are
+                // intended to match WebKit's API, not WebCore's internal notion of loading status
+                if (loader->documentLoader()->isLoadingInAPISense())
                     appendItem(StopItem);
                 else
                     appendItem(ReloadItem);
