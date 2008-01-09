@@ -2,6 +2,17 @@
 
         Reviewed by Adam Roben.
 
+        <rdar://problem/5673716> fast/loader/opaque-base-url.html is failing
+        <rdar://problem/5670275> fast/loader/onunload-form-submit-crash.html is failing
+        <rdar://problem/5667277> fast/loader/onunload-form-submit-crash-2.html is failing
+
+        * fast/loader/meta-refresh-vs-open.html: Changed to be more DRT-friendly.
+        * platform/win/Skipped: Removed tests that were victims of the above.
+
+2008-01-09  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Adam Roben.
+
         Fix fast/encoding/frame-default-enc.html, which is failing on buildbot.
 
         Internal frame names for this test are changing for no apparent reason (see r25269).

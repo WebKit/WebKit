@@ -8,12 +8,28 @@ if (window.layoutTestController) {
 </script>
 <meta http-equiv="refresh" content="0;url=data:text/plain,You should not have been redirected here.">
 </head>
-<body onload="if (window.layoutTestController) document.write('<p>FAIL: onload</p>'); else alert('FAIL: onload');">
+<body>
 <iframe id="ifrm" src="about:blank"></iframe>
 <script>
+    document.body.onload = function() {
+        if (window.layoutTestController)
+            document.write('<p>FAIL: onload</p>');
+        else
+            alert('FAIL: onload');
+    }
+
+    // Having a subframe open should prevent refresh.
     document.getElementById("ifrm").contentDocument.open();
-    if (window.layoutTestController)
-        setTimeout("layoutTestController.notifyDone()", 500);
+
+    setTimeout(function () {
+        // Test succeeded, now remove traps and return to a state that won't confuse our test runner.
+        document.body.onload = function() {};
+        if (window.stop)
+            stop();
+        document.getElementById("ifrm").contentDocument.close();
+        if (window.layoutTestController)
+            layoutTestController.notifyDone();
+      }, 500);
 </script>
 <p>SUCCESS - shouldn't refresh or invoke onload.</p>
 </body>

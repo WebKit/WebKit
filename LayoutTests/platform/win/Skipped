@@ -389,9 +389,6 @@ editing/selection/fake-drag.html
 # <rdar://5667275>
 fast/dynamic/layer-hit-test-crash.html
 
-# <rdar://5667277>
-fast/loader/onunload-form-submit-crash-2.html
-
 # <rdar://5667279> Undefined value exception
 http/tests/xmlhttprequest/XMLHttpRequestException.html
 
@@ -405,17 +402,11 @@ http/tests/security/cross-frame-access-put.html
 # <rdar://5670257> This test makes editing/selection/5131716-{2,3,4}.html fail
 editing/selection/4895428-3.html
 
-# <rdar://5670275>
-fast/loader/onunload-form-submit-crash.html
-
 # <rdar://5673685>
 fast/forms/input-readonly-autoscroll.html
 
 # <rdar://5673709>
 fast/xsl/sort-unicode.xml
-
-# <rdar://5673716>
-fast/loader/opaque-base-url.html
 
 ################################################################################
 ####################### No bugs filed about the below yet#######################
