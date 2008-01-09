@@ -5,7 +5,19 @@
 <script>
 if (window.layoutTestController) {
     layoutTestController.dumpAsText();
-    layoutTestController.dumpChildFramesAsText();
+    layoutTestController.waitUntilDone();
+}
+
+window.done = function(charset) {
+    document.open();
+    document.write("<body><p>The following line should be your browser's default encoding, and not x-mac-cyrillic.</p>");
+    document.write("<p>" + charset + "</p>");
+    <!-- It's unlikely that anyone has x-mac-cyrillic as default -->
+
+    document.close();
+
+    if (window.layoutTestController)
+        layoutTestController.notifyDone();
 }
 </script>
 </head>

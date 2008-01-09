@@ -1,3 +1,16 @@
+2008-01-09  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Adam Roben.
+
+        Fix fast/encoding/frame-default-enc.html, which is failing on buildbot.
+
+        Internal frame names for this test are changing for no apparent reason (see r25269).
+        Make the test independent of the names.
+
+        * fast/encoding/frame-default-enc-expected.txt:
+        * fast/encoding/frame-default-enc.html:
+        * fast/encoding/resources/frame-default-enc-frame.html:
+
 2008-01-09  Adam Roben  <aroben@apple.com>
 
         Update some test results
