@@ -84,7 +84,8 @@ enum {
     PROP_0,
 
     PROP_COPY_TARGET_LIST,
-    PROP_PASTE_TARGET_LIST
+    PROP_PASTE_TARGET_LIST,
+    PROP_EDITABLE
 };
 
 static guint webkit_web_view_signals[LAST_SIGNAL] = { 0, };
@@ -177,7 +178,8 @@ static gboolean webkit_web_view_popup_menu_handler(GtkWidget* widget)
     return webkit_web_view_forward_context_menu_event(WEBKIT_WEB_VIEW(widget), event);
 }
 
-static void webkit_web_view_get_property(GObject *object, guint prop_id, GValue *value, GParamSpec *pspec) {
+static void webkit_web_view_get_property(GObject* object, guint prop_id, GValue* value, GParamSpec* pspec)
+{
     WebKitWebView* webView = WEBKIT_WEB_VIEW(object);
 
     switch(prop_id) {
@@ -187,7 +189,25 @@ static void webkit_web_view_get_property(GObject *object, guint prop_id, GValue 
     case PROP_PASTE_TARGET_LIST:
         g_value_set_boxed(value, webkit_web_view_get_paste_target_list(webView));
         break;
+    case PROP_EDITABLE:
+        g_value_set_boolean(value, webkit_web_view_get_editable(webView));
+        break;
     default:
+        G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
+        break;
+    }
+}
+
+static void webkit_web_view_set_property(GObject* object, guint prop_id, const GValue* value, GParamSpec *pspec)
+{
+    WebKitWebView* webView = WEBKIT_WEB_VIEW(object);
+
+    switch(prop_id) {
+    case PROP_EDITABLE:
+        webkit_web_view_set_editable(webView, g_value_get_boolean(value));
+        break;
+    default:
+        g_assert_not_reached();
         break;
     }
 }
@@ -893,10 +913,10 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
     webViewClass->copy_clipboard = webkit_web_view_real_copy_clipboard;
     webViewClass->paste_clipboard = webkit_web_view_real_paste_clipboard;
 
-    G_OBJECT_CLASS(webViewClass)->finalize = webkit_web_view_finalize;
-
     GObjectClass* objectClass = G_OBJECT_CLASS(webViewClass);
+    objectClass->finalize = webkit_web_view_finalize;
     objectClass->get_property = webkit_web_view_get_property;
+    objectClass->set_property = webkit_web_view_set_property;
 
     GtkWidgetClass* widgetClass = GTK_WIDGET_CLASS(webViewClass);
     widgetClass->realize = webkit_web_view_realize;
@@ -953,21 +973,29 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
     gtk_binding_entry_add_signal(binding_set, GDK_Insert, GDK_SHIFT_MASK,
                                  "paste_clipboard", 0);
 
-    /* Properties */
-    GParamFlags flags = (GParamFlags)(G_PARAM_READABLE|G_PARAM_STATIC_NAME|G_PARAM_STATIC_NICK|G_PARAM_STATIC_BLURB);
+    /*
+     * properties
+     */
     g_object_class_install_property(objectClass, PROP_COPY_TARGET_LIST,
                                     g_param_spec_boxed("copy-target-list",
                                                        "Target list",
                                                        "The list of targets this Web view supports for copying to the clipboard",
                                                        GTK_TYPE_TARGET_LIST,
-                                                       flags));
+                                                       WEBKIT_PARAM_READABLE));
 
     g_object_class_install_property(objectClass, PROP_PASTE_TARGET_LIST,
                                     g_param_spec_boxed("paste-target-list",
                                                        "Target list",
                                                        "The list of targets this Web view supports for pasting to the clipboard",
                                                        GTK_TYPE_TARGET_LIST,
-                                                       flags));
+                                                       WEBKIT_PARAM_READABLE));
+
+    g_object_class_install_property(objectClass, PROP_EDITABLE,
+                                    g_param_spec_boolean("editable",
+                                                         "Editable",
+                                                         "Whether content can be modified by the user",
+                                                         FALSE,
+                                                         WEBKIT_PARAM_READWRITE));
 }
 
 static void webkit_web_view_init(WebKitWebView* webView)
