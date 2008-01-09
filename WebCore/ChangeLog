@@ -1,5 +1,13 @@
 2008-01-08  Alp Toker  <alp@atoker.com>
 
+        Rubber-stamped by Mark Rowe.
+
+        Enable VIDEO by default in the GTK+ qmake build.
+
+        * WebCore.pro:
+
+2008-01-08  Alp Toker  <alp@atoker.com>
+
         GTK+ VIDEO build fix for breakage introduced in r29328.
 
         Issue noticed by Ori_B.
