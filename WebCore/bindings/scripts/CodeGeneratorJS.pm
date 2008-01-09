@@ -546,7 +546,7 @@ sub GenerateHeader
         push(@headerContent,"// Functions\n\n");
         foreach my $function (@{$dataNode->functions}) {
             push(@headerContent, prototypeFunctionFor($className, $codeGenerator->WK_ucfirst($function->signature->name)));
-        }        
+        }
     }
 
     push(@headerContent, "} // namespace WebCore\n\n");

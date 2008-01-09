@@ -342,6 +342,11 @@
 
 2008-01-08  Adam Roben  <aroben@apple.com>
 
+        * bindings/scripts/CodeGeneratorJS.pm: Touch this so the bindings will
+        rebuild on Windows now that the media elements are enabled.
+
+2008-01-08  Adam Roben  <aroben@apple.com>
+
         * svg/svgtags.in: Touch this again for the sake of the Windows bots.
 
 2008-01-08  Timothy Hatcher  <timothy@apple.com>

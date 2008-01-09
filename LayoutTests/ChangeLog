@@ -1,3 +1,11 @@
+2008-01-08  Adam Roben  <aroben@apple.com>
+
+        Fix fast/dom/Window/window-properties.html on Windows
+
+        Windows now has the same results as other platforms.
+
+        * platform/win/fast/dom/Window/window-properties-expected.txt: Removed.
+
 2008-01-08  Dan Bernstein  <mitz@apple.com>
 
         - remove a test from the skipped list
