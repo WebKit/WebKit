@@ -1,3 +1,12 @@
+2008-01-08  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Weinig.
+        
+        Test cross-frame access to media properties.
+
+        * http/tests/security/cross-frame-access-get-expected.txt:
+        * http/tests/security/cross-frame-access-get.html:
+
 2008-01-07  Antti Koivisto  <antti@apple.com>
 
         Rubber stamped by Darin.

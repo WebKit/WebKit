@@ -362,6 +362,16 @@ CONSOLE MESSAGE: line 1: Unsafe JavaScript attempt to access frame with URL http
 
 CONSOLE MESSAGE: line 1: Unsafe JavaScript attempt to access frame with URL http://localhost:8000/security/resources/cross-frame-iframe-for-get-test.html from frame with URL http://127.0.0.1:8000/security/cross-frame-access-get.html. Domains, protocols and ports must match.
 
+CONSOLE MESSAGE: line 1: Unsafe JavaScript attempt to access frame with URL http://localhost:8000/security/resources/cross-frame-iframe-for-get-test.html from frame with URL http://127.0.0.1:8000/security/cross-frame-access-get.html. Domains, protocols and ports must match.
+
+CONSOLE MESSAGE: line 1: Unsafe JavaScript attempt to access frame with URL http://localhost:8000/security/resources/cross-frame-iframe-for-get-test.html from frame with URL http://127.0.0.1:8000/security/cross-frame-access-get.html. Domains, protocols and ports must match.
+
+CONSOLE MESSAGE: line 1: Unsafe JavaScript attempt to access frame with URL http://localhost:8000/security/resources/cross-frame-iframe-for-get-test.html from frame with URL http://127.0.0.1:8000/security/cross-frame-access-get.html. Domains, protocols and ports must match.
+
+CONSOLE MESSAGE: line 1: Unsafe JavaScript attempt to access frame with URL http://localhost:8000/security/resources/cross-frame-iframe-for-get-test.html from frame with URL http://127.0.0.1:8000/security/cross-frame-access-get.html. Domains, protocols and ports must match.
+
+CONSOLE MESSAGE: line 1: Unsafe JavaScript attempt to access frame with URL http://localhost:8000/security/resources/cross-frame-iframe-for-get-test.html from frame with URL http://127.0.0.1:8000/security/cross-frame-access-get.html. Domains, protocols and ports must match.
+
 This test checks cross-frame access security (rdar://problem/5251309).
 
 
@@ -393,6 +403,7 @@ PASS: canGet('targetWindow.window') should be 'true' and is.
 ----- tests for getting of not allowed Constructors -----
 
 PASS: canGet('targetWindow.Attr') should be 'false' and is.
+PASS: canGet('targetWindow.Audio') should be 'false' and is.
 PASS: canGet('targetWindow.CDATASection') should be 'false' and is.
 PASS: canGet('targetWindow.CSSPrimitiveValue') should be 'false' and is.
 PASS: canGet('targetWindow.CSSRule') should be 'false' and is.
@@ -412,6 +423,7 @@ PASS: canGet('targetWindow.EntityReference') should be 'false' and is.
 PASS: canGet('targetWindow.EvalError') should be 'false' and is.
 PASS: canGet('targetWindow.Event') should be 'false' and is.
 PASS: canGet('targetWindow.HTMLAnchorElement') should be 'false' and is.
+PASS: canGet('targetWindow.HTMLAudioElement') should be 'false' and is.
 PASS: canGet('targetWindow.HTMLAppletElement') should be 'false' and is.
 PASS: canGet('targetWindow.HTMLAreaElement') should be 'false' and is.
 PASS: canGet('targetWindow.HTMLBRElement') should be 'false' and is.
@@ -444,6 +456,7 @@ PASS: canGet('targetWindow.HTMLLegendElement') should be 'false' and is.
 PASS: canGet('targetWindow.HTMLLinkElement') should be 'false' and is.
 PASS: canGet('targetWindow.HTMLMapElement') should be 'false' and is.
 PASS: canGet('targetWindow.HTMLMarqueeElement') should be 'false' and is.
+PASS: canGet('targetWindow.HTMLMediaElement') should be 'false' and is.
 PASS: canGet('targetWindow.HTMLMenuElement') should be 'false' and is.
 PASS: canGet('targetWindow.HTMLMetaElement') should be 'false' and is.
 PASS: canGet('targetWindow.HTMLModElement') should be 'false' and is.
@@ -456,6 +469,7 @@ PASS: canGet('targetWindow.HTMLPreElement') should be 'false' and is.
 PASS: canGet('targetWindow.HTMLQuoteElement') should be 'false' and is.
 PASS: canGet('targetWindow.HTMLScriptElement') should be 'false' and is.
 PASS: canGet('targetWindow.HTMLSelectElement') should be 'false' and is.
+PASS: canGet('targetWindow.HTMLSourceElement') should be 'false' and is.
 PASS: canGet('targetWindow.HTMLStyleElement') should be 'false' and is.
 PASS: canGet('targetWindow.HTMLTableCaptionElement') should be 'false' and is.
 PASS: canGet('targetWindow.HTMLTableCellElement') should be 'false' and is.
@@ -466,6 +480,7 @@ PASS: canGet('targetWindow.HTMLTableSectionElement') should be 'false' and is.
 PASS: canGet('targetWindow.HTMLTextAreaElement') should be 'false' and is.
 PASS: canGet('targetWindow.HTMLTitleElement') should be 'false' and is.
 PASS: canGet('targetWindow.HTMLUListElement') should be 'false' and is.
+PASS: canGet('targetWindow.HTMLVideoElement') should be 'false' and is.
 PASS: canGet('targetWindow.Image') should be 'false' and is.
 PASS: canGet('targetWindow.MutationEvent') should be 'false' and is.
 PASS: canGet('targetWindow.Node') should be 'false' and is.
