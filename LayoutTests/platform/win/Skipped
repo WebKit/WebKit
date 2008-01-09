@@ -405,9 +405,6 @@ http/tests/security/cross-frame-access-put.html
 # <rdar://5670257> This test makes editing/selection/5131716-{2,3,4}.html fail
 editing/selection/4895428-3.html
 
-# <rdar://5670265>
-fast/events/overflow-events.html
-
 # <rdar://5670275>
 fast/loader/onunload-form-submit-crash.html
 
