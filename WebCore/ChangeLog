@@ -1,3 +1,21 @@
+2008-01-08  Xan Lopez  <xan@gnome.org>
+
+        Reviewed by Alp Toker.
+
+        http://bugs.webkit.org/show_bug.cgi?id=15610
+        [GTK] Text rendering using Pango
+
+        Use Pango to render Complex path text.
+
+        * platform/graphics/gtk/FontGtk.cpp:
+        (WebCore::utf16_to_utf8):
+        (WebCore::convertUniCharToUTF8):
+        (WebCore::setPangoAttributes):
+        (WebCore::Font::drawGlyphs):
+        (WebCore::Font::drawComplexText):
+        (WebCore::Font::floatWidthForComplexText):
+        (WebCore::Font::offsetForPositionForComplexText):
+
 2008-01-08  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Darin Adler.
