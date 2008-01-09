@@ -1,3 +1,26 @@
+2008-01-08  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/5665860> With the web inspector displayed, a crash occurs
+        at WebCore::Frame::document() when navigating back to previous page
+
+        This fixes the crash, but the inspector was totally broken with back/forward.
+        So this also fixes back/forward navigation so the right main resource shows
+        up in the inspector.
+
+        * page/InspectorController.cpp:
+        (WebCore::addSourceToFrame): Add some null checks for the frame when
+        getting the textEncoding. This was the crash.
+        (WebCore::InspectorController::addScriptResource): Create a script object
+        only if needed, and always add it by calling addResource.
+        (WebCore::InspectorController::didCommitLoad): Check if the loader is 
+        loading from the page cache, and clear m_mainResource. If the load is
+        normal, then call addAndUpdateScriptResource with the main resource. 
+        (WebCore::InspectorController::identifierForInitialRequest): If the load
+        is from the page cache and the resource is the main resource call
+        addAndUpdateScriptResource since didCommitLoad did not do it.
+
 2008-01-08  Alp Toker  <alp@atoker.com>
 
         Back out VIDEO by default in the GTK+ qmake build. The build bot
