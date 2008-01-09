@@ -4,6 +4,7 @@
  *           (C) 2006 Nicholas Shanks (webkit@nickshanks.com)
  * Copyright (C) 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
  * Copyright (C) 2007 Alexey Proskuryakov <ap@webkit.org>
+ * Copyright (C) 2007, 2008 Eric Seidel <eric@webkit.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -27,8 +28,8 @@
 #include "CSSBorderImageValue.h"
 #include "CSSCursorImageValue.h"
 #include "CSSFontFace.h"
-#include "CSSFontFaceSource.h"
 #include "CSSFontFaceRule.h"
+#include "CSSFontFaceSource.h"
 #include "CSSImageValue.h"
 #include "CSSImportRule.h"
 #include "CSSMediaRule.h"
@@ -62,6 +63,7 @@
 #include "ShadowValue.h"
 #include "StyleSheetList.h"
 #include "UserAgentStyleSheets.h"
+#include "XMLNames.h"
 #include "loader.h"
 
 #if ENABLE(SVG)
@@ -760,6 +762,8 @@ bool CSSStyleSelector::canShareStyleWithElement(Node* n)
             (s->focused() == m_element->focused()) &&
             (s != s->document()->getCSSTarget() && m_element != m_element->document()->getCSSTarget()) &&
             (s->getAttribute(typeAttr) == m_element->getAttribute(typeAttr)) &&
+            (s->getAttribute(XMLNames::langAttr) == m_element->getAttribute(XMLNames::langAttr)) &&
+            (s->getAttribute(langAttr) == m_element->getAttribute(langAttr)) &&
             (s->getAttribute(readonlyAttr) == m_element->getAttribute(readonlyAttr))) {
             bool isControl = s->isControl();
             if (isControl != m_element->isControl())
@@ -1696,7 +1700,22 @@ bool CSSStyleSelector::checkOneSelector(CSSSelector* sel, Element* e, bool isAnc
                     return true;
                 break;
             case CSSSelector::PseudoLang: {
-                const AtomicString& value = e->getAttribute(langAttr);
+                Node* n = e;
+                AtomicString value;
+                // The language property is inherited, so we iterate over the parents
+                // to find the first language.
+                while (n && value.isEmpty()) {
+                    if (n->isElementNode()) {
+                        // Spec: xml:lang takes precedence -- http://www.w3.org/TR/xhtml1/#C_7
+                        value = static_cast<Element*>(n)->getAttribute(XMLNames::langAttr);
+                        if (value.isEmpty())
+                            value = static_cast<Element*>(n)->getAttribute(langAttr);
+                    } else if (n->isDocumentNode())
+                        // checking the MIME content-language
+                        value = static_cast<Document*>(n)->contentLanguage();
+
+                    n = n->parent();
+                }
                 if (value.isEmpty() || !value.startsWith(sel->m_argument, false))
                     break;
                 if (value.length() != sel->m_argument.length() && value[sel->m_argument.length()] != '-')

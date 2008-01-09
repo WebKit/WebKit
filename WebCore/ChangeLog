@@ -1,3 +1,26 @@
+2007-10-01  Allan Sandfeld Jensen  <sandfeld@kde.org>
+
+        Reworked by Eric, Reviewed by Hyatt.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=9454
+        Add support for :lang inheritance and xml:lang support.
+
+        Tests: fast/selectors/lang-inheritance.html
+               fast/selectors/lang-inheritance2.html
+               fast/selectors/lang-vs-xml-lang.html
+               fast/selectors/lang-vs-xml-lang-xhtml.xhtml
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::canShareStyleWithElement): Do not share style between elements with
+        different LANG-attribute.
+        (WebCore::CSSStyleSelector::checkOneSelector): Change :lang() to recursively check the LANG attribute
+        for all the elements parents and the content-language of the document.
+        * dom/Document.cpp:
+        (WebCore::Document::processHttpEquiv): Parse MIME Content-Language
+        * dom/Document.h:
+        (WebCore::Document::contentLanguage):
+        (WebCore::Document::setContentLanguage):
+
 2008-01-08  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Brady.

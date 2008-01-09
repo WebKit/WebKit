@@ -1836,7 +1836,8 @@ void Document::processHttpEquiv(const String &equiv, const String &content)
         // FIXME: make setCookie work on XML documents too; e.g. in case of <html:meta .....>
         if (isHTMLDocument())
             static_cast<HTMLDocument*>(this)->setCookie(content);
-    }
+    } else if (equalIgnoringCase(equiv, "content-language"))
+        setContentLanguage(content);
 }
 
 MouseEventWithHitTestResults Document::prepareMouseEvent(const HitTestRequest& request, const IntPoint& documentPoint, const PlatformMouseEvent& event)

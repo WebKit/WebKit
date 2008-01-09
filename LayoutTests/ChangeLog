@@ -1,3 +1,29 @@
+2007-10-01  Allan Sandfeld Jensen  <sandfeld@kde.org>
+
+        Updated by Eric, Reviewed by Hyatt.
+
+        - tests and updates for http://bugs.webkit.org/show_bug.cgi?id=9454
+
+        * fast/selectors/lang-inheritance-expected.checksum: Added.
+        * fast/selectors/lang-inheritance-expected.png: Added.
+        * fast/selectors/lang-inheritance-expected.txt: Added.
+        * fast/selectors/lang-inheritance.html: Added.
+        * fast/selectors/lang-inheritance2-expected.checksum: Added.
+        * fast/selectors/lang-inheritance2-expected.png: Added.
+        * fast/selectors/lang-inheritance2-expected.txt: Added.
+        * fast/selectors/lang-inheritance2.html: Added.
+        * fast/selectors/lang-vs-xml-lang-expected.checksum: Added.
+        * fast/selectors/lang-vs-xml-lang-expected.png: Added.
+        * fast/selectors/lang-vs-xml-lang-expected.txt: Added.
+        * fast/selectors/lang-vs-xml-lang-xhtml-expected.checksum: Added.
+        * fast/selectors/lang-vs-xml-lang-xhtml-expected.png: Added.
+        * fast/selectors/lang-vs-xml-lang-xhtml-expected.txt: Added.
+        * fast/selectors/lang-vs-xml-lang-xhtml.xhtml: Added.
+        * fast/selectors/lang-vs-xml-lang.html: Added.
+        * svg/W3C-SVG-1.1/styling-css-05-b-expected.checksum:
+        * svg/W3C-SVG-1.1/styling-css-05-b-expected.png:
+        * svg/W3C-SVG-1.1/styling-css-05-b-expected.txt:
+
 2008-01-08  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Darin.
