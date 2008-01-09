@@ -1,5 +1,10 @@
 2008-01-08  Adam Roben  <aroben@apple.com>
 
+        * fast/replaced/image-map.html: Disabled this until bug 16782 is
+        fixed.
+
+2008-01-08  Adam Roben  <aroben@apple.com>
+
         Fix fast/dom/Window/window-properties.html on Windows
 
         Windows now has the same results as other platforms.
