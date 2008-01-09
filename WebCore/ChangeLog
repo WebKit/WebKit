@@ -1,5 +1,11 @@
 2008-01-08  Alp Toker  <alp@atoker.com>
 
+        Win build fix for breakage introduced in r29328.
+
+        * WebCore.vcproj/WebCore.vcproj:
+
+2008-01-08  Alp Toker  <alp@atoker.com>
+
         Rubber-stamped by Mark Rowe.
 
         Enable VIDEO by default in the GTK+ qmake build.

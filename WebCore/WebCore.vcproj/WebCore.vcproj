@@ -7692,11 +7692,11 @@
 					>
 				</File>
 				<File
-					RelativePath="..\bindings\js\JSHTMLAudioElementConstructor.cpp"
+					RelativePath="..\bindings\js\JSAudioConstructor.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\bindings\js\JSHTMLAudioElementConstructor.h"
+					RelativePath="..\bindings\js\JSAudioConstructor.h"
 					>
 				</File>
 				<File
