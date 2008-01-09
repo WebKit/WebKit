@@ -1133,7 +1133,7 @@ contains(DEFINES, ENABLE_VIDEO=1) {
         rendering/MediaControlElements.cpp \
         rendering/RenderVideo.cpp \
         rendering/RenderMedia.cpp \
-        bindings/js/JSHTMLAudioElementConstructor.cpp 
+        bindings/js/JSAudioConstructor.cpp
 
     gtk-port {
         SOURCES += \

@@ -1101,7 +1101,7 @@ webcore_sources += \
 	WebCore/rendering/MediaControlElements.cpp \
 	WebCore/rendering/RenderVideo.cpp \
 	WebCore/rendering/RenderMedia.cpp \
-	WebCore/bindings/js/JSHTMLAudioElementConstructor.cpp
+	WebCore/bindings/js/JSAudioConstructor.cpp
 
 webkitgtk_sources += \
 	WebCore/platform/graphics/gtk/MediaPlayerPrivateGStreamer.cpp \
