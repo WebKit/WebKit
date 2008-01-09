@@ -1,3 +1,17 @@
+2008-01-09  Adam Roben  <aroben@apple.com>
+
+        Update some test results
+
+        Reviewed by Anders.
+
+        * fast/dom/Window/window-properties-expected.txt: Updated after
+        r29328.
+        * platform/win/media/audio-controls-rendering-expected.txt:
+        Regenerated results with the correct fonts.
+        * platform/win/media/video-aspect-ratio-expected.txt: Ditto.
+        * platform/win/media/video-controls-rendering-expected.txt: Ditto.
+        * platform/win/media/video-transformed-expected.txt: Ditto.
+
 2007-10-01  Allan Sandfeld Jensen  <sandfeld@kde.org>
 
         Updated by Eric, Reviewed by Hyatt.
