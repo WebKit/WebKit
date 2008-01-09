@@ -26,7 +26,7 @@
 #include "config.h"
 
 #if ENABLE(VIDEO)
-#include "JSHTMLAudioElementConstructor.h"
+#include "JSAudioConstructor.h"
 
 #include "Document.h"
 #include "HTMLAudioElement.h"
@@ -37,19 +37,19 @@ using namespace KJS;
 
 namespace WebCore {
 
-JSHTMLAudioElementConstructor::JSHTMLAudioElementConstructor(ExecState* exec, Document* d)
+JSAudioConstructor::JSAudioConstructor(ExecState* exec, Document* d)
     : DOMObject(exec->lexicalGlobalObject()->objectPrototype())
     , m_doc(d)
 {
     put(exec, exec->propertyNames().length, jsNumber(1), ReadOnly|DontDelete|DontEnum);
 }
 
-bool JSHTMLAudioElementConstructor::implementsConstruct() const
+bool JSAudioConstructor::implementsConstruct() const
 {
     return true;
 }
 
-JSObject* JSHTMLAudioElementConstructor::construct(ExecState* exec, const List& args)
+JSObject* JSAudioConstructor::construct(ExecState* exec, const List& args)
 {
     int exception = 0;
     RefPtr<Element> el(m_doc->createElement("audio", exception));

@@ -1,0 +1,13 @@
+Test that media constructors behave consistently.
+
+TEST(audioJS instanceof HTMLAudioElement) OK
+TEST(audioJS instanceof HTMLMediaElement) OK
+TEST(!(audioJS instanceof HTMLVideoElement)) OK
+TEST(audioElem instanceof HTMLAudioElement) OK
+TEST(audioElem instanceof HTMLMediaElement) OK
+TEST(!(audioElem instanceof HTMLVideoElement)) OK
+TEST(videoElem instanceof HTMLVideoElement) OK
+TEST(videoElem instanceof HTMLMediaElement) OK
+TEST(!(videoElem instanceof HTMLAudioElement)) OK
+END OF TEST
+

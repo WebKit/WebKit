@@ -1,0 +1,20 @@
+<body>
+<p>Test that media constructors behave consistently.</p>
+<video></video>
+<audio></audio>
+<script src=video-test.js></script>
+<script>
+var audioJS = new Audio();
+var videoElem = document.getElementsByTagName('video')[0];
+var audioElem = document.getElementsByTagName('audio')[0];
+test("audioJS instanceof HTMLAudioElement");
+test("audioJS instanceof HTMLMediaElement");
+test("!(audioJS instanceof HTMLVideoElement)");
+test("audioElem instanceof HTMLAudioElement");
+test("audioElem instanceof HTMLMediaElement");
+test("!(audioElem instanceof HTMLVideoElement)");
+test("videoElem instanceof HTMLVideoElement");
+test("videoElem instanceof HTMLMediaElement");
+test("!(videoElem instanceof HTMLAudioElement)");
+endTest();
+</script>

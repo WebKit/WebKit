@@ -41,7 +41,7 @@
 #include "HTMLDocument.h"
 #include "JSDOMWindow.h"
 #include "JSEvent.h"
-#include "JSHTMLAudioElementConstructor.h"
+#include "JSAudioConstructor.h"
 #include "JSHTMLCollection.h"
 #include "JSHTMLOptionElementConstructor.h"
 #include "JSXMLHttpRequest.h"
@@ -499,7 +499,7 @@ JSValue *Window::getValueProperty(ExecState *exec, int token) const
         return jsUndefined();
       if (!MediaPlayer::isAvailable())
         return jsUndefined();
-      return new JSHTMLAudioElementConstructor(exec, impl()->frame()->document());
+      return new JSAudioConstructor(exec, impl()->frame()->document());
 #else
       return jsUndefined();
 #endif

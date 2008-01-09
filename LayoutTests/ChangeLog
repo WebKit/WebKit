@@ -1,3 +1,12 @@
+2008-01-08  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Darin.
+        
+        Test that media element constructors behave consistently.
+
+        * media/constructors-expected.txt: Added.
+        * media/constructors.html: Added.
+
 2008-01-08  Adam Roben  <aroben@apple.com>
 
         * fast/replaced/image-map.html: Disabled this until bug 16782 is

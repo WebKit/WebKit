@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef JSHTMLAudioElementConstructor_h
-#define JSHTMLAudioElementConstructor_h
+#ifndef JSAudioConstructor_h
+#define JSAudioConstructor_h
 
 #if ENABLE(VIDEO)
 
@@ -33,9 +33,9 @@
 
 namespace WebCore {
 
-    class JSHTMLAudioElementConstructor : public KJS::DOMObject {
+    class JSAudioConstructor : public KJS::DOMObject {
     public:
-        JSHTMLAudioElementConstructor(KJS::ExecState*, Document*);
+        JSAudioConstructor(KJS::ExecState*, Document*);
         virtual bool implementsConstruct() const;
         virtual KJS::JSObject *construct(KJS::ExecState*, const KJS::List& args);
     private:

@@ -1,3 +1,27 @@
+2008-01-08  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Darin.
+        
+        HTMLAudioElement needs generated constructor. Otherwise video instanceof HTMLAudioElement is true which is 
+        bit strange.
+        
+        Renamed custom constructor JSHTMLAudioElementConstructor to JSAudioConstructor to avoid name clashes.
+
+        Test: media/constructors.html
+
+        * ChangeLog:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSAudioConstructor.cpp: Copied from WebCore/bindings/js/JSHTMLAudioElementConstructor.cpp.
+        (WebCore::JSAudioConstructor::JSAudioConstructor):
+        (WebCore::JSAudioConstructor::implementsConstruct):
+        (WebCore::JSAudioConstructor::construct):
+        * bindings/js/JSAudioConstructor.h: Copied from WebCore/bindings/js/JSHTMLAudioElementConstructor.h.
+        * bindings/js/JSHTMLAudioElementConstructor.cpp: Removed.
+        * bindings/js/JSHTMLAudioElementConstructor.h: Removed.
+        * bindings/js/kjs_window.cpp:
+        (KJS::Window::getValueProperty):
+        * html/HTMLAudioElement.idl:
+
 2008-01-08  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Mitz.
