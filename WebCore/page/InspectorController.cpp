@@ -594,7 +594,8 @@ InspectorController::~InspectorController()
         JSObjectRef global = JSContextGetGlobalObject(m_scriptContext);
         JSRetainPtr<JSStringRef> controllerProperty(Adopt, JSStringCreateWithUTF8CString("InspectorController"));
         JSObjectRef controller = JSValueToObject(m_scriptContext, JSObjectGetProperty(m_scriptContext, global, controllerProperty.get(), 0), 0);
-        JSObjectSetPrivate(controller, 0);
+        if (controller)
+            JSObjectSetPrivate(controller, 0);
     }
 
     if (m_page)

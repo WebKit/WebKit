@@ -1,3 +1,15 @@
+2008-01-08  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Brady.
+
+        Bug 16678: Unreproducible crash in KJS::JSObject::inherits() after using Web Inspector
+        http://bugs.webkit.org/show_bug.cgi?id=16678
+
+        Add a NULL check for controller before calling JSObjectSetPrivate.
+
+        * page/InspectorController.cpp:
+        (WebCore::InspectorController::~InspectorController):
+
 2008-01-08  Xan Lopez  <xan@gnome.org>
 
         Reviewed by Alp Toker.
