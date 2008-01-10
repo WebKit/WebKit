@@ -197,7 +197,7 @@ PlatformKeyboardEvent::PlatformKeyboardEvent(HWND, WPARAM code, LPARAM keyData, 
     , m_shiftKey(GetKeyState(VK_SHIFT) & HIGH_BIT_MASK_SHORT)
     , m_ctrlKey(GetKeyState(VK_CONTROL) & HIGH_BIT_MASK_SHORT)
     , m_altKey(GetKeyState(VK_MENU) & HIGH_BIT_MASK_SHORT)
-    , m_metaKey(m_altKey)
+    , m_metaKey(false)
     , m_isSystemKey(systemKey)
 {
 }

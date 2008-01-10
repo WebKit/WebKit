@@ -1,3 +1,13 @@
+2008-01-10  Ada Chan  <adachan@apple.com>
+
+        Fix fast/forms/input-radio-checked-tab.html
+        Meta key is not the same as Alt key on windows.
+
+        Reviewed by Darin.
+
+        * platform/win/KeyEventWin.cpp:
+        (WebCore::PlatformKeyboardEvent::PlatformKeyboardEvent):
+
 2008-01-10  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by John Sullivan.
