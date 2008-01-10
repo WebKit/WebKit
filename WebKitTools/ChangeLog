@@ -1,3 +1,11 @@
+2008-01-09  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+        
+        - add some more renames, adjust some
+
+        * Scripts/do-webcore-rename:
+
 2008-01-07  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Oliver.
