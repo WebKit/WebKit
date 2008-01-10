@@ -1,3 +1,12 @@
+2008-01-10  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Adam Roben.
+
+        <rdar://problem/5667003> fast/dom/xmlhttprequest-html-response-encoding.html is failing
+
+        * xml/XMLHttpRequest.cpp: (WebCore::XMLHttpRequest::send): Do not disable sniffing for file://
+        requests, as CFNetwork doesn't perform extension to MIME type mapping then.
+
 2008-01-10  Adam Roben  <aroben@apple.com>
 
         Fixes to allow multiple FrameViews on Windows

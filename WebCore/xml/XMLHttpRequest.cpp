@@ -474,10 +474,13 @@ void XMLHttpRequest::send(const String& body, ExceptionCode& ec)
         gcProtectNullTolerant(KJS::ScriptInterpreter::getDOMObject(this));
     }
   
-    // create can return null here, for example if we're no longer attached to a page.
-    // this is true while running onunload handlers
-    // FIXME: Maybe create can return false for other reasons too?
-    m_loader = SubresourceLoader::create(m_doc->frame(), this, request, false, true, false);
+    // SubresourceLoader::create can return null here, for example if we're no longer attached to a page.
+    // This is true while running onunload handlers.
+    // FIXME: We need to be able to send XMLHttpRequests from onunload, <http://bugs.webkit.org/show_bug.cgi?id=10904>.
+    // FIXME: Maybe create can return null for other reasons too?
+    // We need to keep content sniffing enabled for local files due to CFNetwork not providing a MIME type
+    // for local files otherwise, <rdar://problem/5671813>.
+    m_loader = SubresourceLoader::create(m_doc->frame(), this, request, false, true, request.url().isLocalFile());
 }
 
 void XMLHttpRequest::abort()

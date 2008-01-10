@@ -1,3 +1,11 @@
+2008-01-10  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Adam Roben.
+
+        <rdar://problem/5667003> fast/dom/xmlhttprequest-html-response-encoding.html is failing
+
+        * platform/win/Skipped: Remove the fixed test.
+
 2008-01-10  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Darin, Sam, and Adam.
