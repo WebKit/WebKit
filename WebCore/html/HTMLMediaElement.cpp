@@ -80,6 +80,7 @@ HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document* doc)
     , m_bufferingRate(0)
     , m_loadNestingLevel(0)
     , m_terminateLoadBelowNestingLevel(0)
+    , m_pausedInternal(false)
     , m_player(0)
 {
     document()->registerForCacheCallbacks(this);
@@ -967,6 +968,12 @@ void HTMLMediaElement::updateMediaPlayer()
     if (!m_player)
         return;
     
+    if (m_pausedInternal) {
+        if (!m_player->paused())
+            m_player->pause();
+        return;
+    }
+    
     m_player->setEndTime(currentLoop() == playCount() - 1 ? effectiveEnd() : effectiveLoopEnd());
 
     bool shouldBePlaying = activelyPlaying() && currentTime() < effectiveEnd();
@@ -977,6 +984,12 @@ void HTMLMediaElement::updateMediaPlayer()
     
     if (renderer())
         renderer()->updateFromElement();
+}
+    
+void HTMLMediaElement::setPausedInternal(bool b)
+{
+    m_pausedInternal = b;
+    updateMediaPlayer();
 }
     
 void HTMLMediaElement::willSaveToCache()

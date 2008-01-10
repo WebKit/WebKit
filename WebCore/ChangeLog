@@ -1,3 +1,21 @@
+2008-01-10  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Adele.
+
+        Fix <rdar://problem/5658048>
+        After <video> has finished playing, dragging the scroller on different location of controller starts to play movie
+        
+        - Move to paused state if the playback had ended and the controller is used to seek to earlier time
+        - Pause video playback during drag so the knob does not constantly try to escape from the mouse pointer
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::HTMLMediaElement):
+        (WebCore::HTMLMediaElement::updateMediaPlayer):
+        (WebCore::HTMLMediaElement::setPausedInternal):
+        * html/HTMLMediaElement.h:
+        * rendering/MediaControlElements.cpp:
+        (WebCore::MediaControlTimelineElement::defaultEventHandler):
+
 2008-01-10  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Adam Roben.

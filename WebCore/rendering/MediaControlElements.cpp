@@ -38,6 +38,7 @@
 #include "FloatConversion.h"
 #include "Frame.h"
 #include "HTMLNames.h"
+#include "RenderSlider.h"
 
 namespace WebCore {
 
@@ -188,13 +189,29 @@ MediaControlTimelineElement::MediaControlTimelineElement(Document* doc, HTMLMedi
 
 void MediaControlTimelineElement::defaultEventHandler(Event* event)
 {
+    RenderSlider* slider = static_cast<RenderSlider*>(renderer());
+    bool oldInDragMode = slider && slider->inDragMode();
     float oldTime = narrowPrecisionToFloat(value().toDouble());
+    bool oldEnded = m_mediaElement->ended();
+
     HTMLInputElement::defaultEventHandler(event);
+
     float time = narrowPrecisionToFloat(value().toDouble());
     if (oldTime != time || event->type() == inputEvent) {
         ExceptionCode ec;
         m_mediaElement->setCurrentTime(time, ec);
     }
+    // Media element stays in non-paused state when it reaches end. If the slider is now dragged
+    // to some other position the playback resumes which does not match usual media player UIs.
+    // Get the expected behavior by pausing explicitly in this case.
+    if (oldEnded && !m_mediaElement->ended() && !m_mediaElement->paused()) {
+        ExceptionCode ec;
+        m_mediaElement->pause(ec);
+    }
+    // Pause playback during drag, but do it without using DOM API which would generate events 
+    bool inDragMode = slider && slider->inDragMode();
+    if (inDragMode != oldInDragMode)
+        m_mediaElement->setPausedInternal(inDragMode);
 }
 
 void MediaControlTimelineElement::update(bool updateDuration) 
