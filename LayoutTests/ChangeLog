@@ -1,5 +1,9 @@
 2008-01-10  Adam Roben  <aroben@apple.com>
 
+        * platform/win/Skipped: Removed a test that was fixed in r26826.
+
+2008-01-10  Adam Roben  <aroben@apple.com>
+
         * platform/win/Skipped: Removed a test that was fixed in r28372.
 
 2008-01-10  Alexey Proskuryakov  <ap@webkit.org>

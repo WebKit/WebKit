@@ -207,9 +207,6 @@ http/tests/security/aboutBlank/xss-DENIED-navigate-opener-javascript-url.html
 fast/dom/Window/setting-properties-on-closed-window.html
 svg/custom/use-events-crash.svg
 
-# This test uses Mac-specific key codes <rdar://problem/5076426>
-fast/events/arrow-navigation.html
-
 # Emacs bindings are used in LayoutTests which fail on boomer. <rdar://problem/5137352>
 fast/events/keydown-1.html
 
