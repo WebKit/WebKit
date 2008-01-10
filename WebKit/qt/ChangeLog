@@ -1,3 +1,15 @@
+2008-01-10  Simon Hausmann  <hausmann@webkit.org>
+
+        Reviewed by Lars.
+
+        Make the reset() functions not do anything on the default QWebSettings object.
+        
+
+        * Api/qwebsettings.cpp:
+        (QWebSettings::resetFontSize):
+        (QWebSettings::resetFontFamily):
+        (QWebSettings::clearAttribute):
+
 2008-01-10  Lars Knoll  <lars@trolltech.com>
 
         Reviewed by Simon.
