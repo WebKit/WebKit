@@ -72,7 +72,8 @@ public:
     void init(QWebFrame *qframe, WebCore::Page *page,
               QWebFrameData *frameData);
 
-    QWebFrame *parentFrame();
+    inline QWebFrame *parentFrame() { return qobject_cast<QWebFrame*>(q->parent()); }
+
     WebCore::PlatformScrollbar *horizontalScrollBar() const;
     WebCore::PlatformScrollbar *verticalScrollBar() const;
 

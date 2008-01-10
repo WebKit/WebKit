@@ -98,11 +98,6 @@ void QWebFramePrivate::init(QWebFrame *qframe, WebCore::Page *webcorePage, QWebF
                      page, SIGNAL(hoveringOverLink(const QString&, const QString&, const QString&)));
 }
 
-QWebFrame *QWebFramePrivate::parentFrame()
-{
-    return qobject_cast<QWebFrame*>(q->parent());
-}
-
 WebCore::PlatformScrollbar *QWebFramePrivate::horizontalScrollBar() const
 {
     Q_ASSERT(frameView);
@@ -114,6 +109,23 @@ WebCore::PlatformScrollbar *QWebFramePrivate::verticalScrollBar() const
     Q_ASSERT(frameView);
     return frameView->verticalScrollBar();
 }
+
+/*!
+    \class QWebFrame
+    \since 4.4
+    \brief The QWebFrame class represents a frame in a web page.
+
+    QWebFrame represents a frame inside a web page. Each QWebPage
+    object contains at least one frame, the mainFrame(). Additional
+    frames will be created for HTML &lt;frame&gt; or &lt;iframe&gt;
+    elements.
+
+    QWebFrame objects are created and controlled by the web page. You
+    can connect to the web pages frameCreated() signal to find out
+    about creation of new frames.
+
+    \sa QWebPage
+*/
 
 QWebFrame::QWebFrame(QWebPage *parent, QWebFrameData *frameData)
     : QObject(parent)
@@ -143,6 +155,14 @@ QWebFrame::~QWebFrame()
     delete d;
 }
 
+/*!
+  Make \a object available under \a name from within the frames
+  JavaScript context. The \a object will be inserted as a child of the
+  frames window object.
+
+  Qt properties will be exposed as JavaScript properties and slots as
+  JavaScript methods.
+*/
 void QWebFrame::addToJSWindowObject(const QString &name, QObject *object)
 {
       KJS::JSLock lock;
@@ -160,7 +180,9 @@ void QWebFrame::addToJSWindowObject(const QString &name, QObject *object)
       window->put(window->globalExec(), KJS::Identifier((const KJS::UChar *) name.constData(), name.length()), runtimeObject);
 }
 
-
+/*!
+  returns the markup (HTML) contained in the current frame.
+*/
 QString QWebFrame::markup() const
 {
     if (!d->frame->document())
@@ -168,6 +190,9 @@ QString QWebFrame::markup() const
     return createMarkup(d->frame->document());
 }
 
+/*!
+  returns the content of this frame as plain text.
+*/
 QString QWebFrame::innerText() const
 {
     if (d->frameView->layoutPending())
@@ -177,6 +202,9 @@ QString QWebFrame::innerText() const
     return documentElement->innerText();
 }
 
+/*!
+  returns a dump of the rendering tree. Mainly useful for debugging html.
+*/
 QString QWebFrame::renderTreeDump() const
 {
     if (d->frameView->layoutPending())
@@ -185,6 +213,10 @@ QString QWebFrame::renderTreeDump() const
     return externalRepresentation(d->frame->renderer());
 }
 
+/*!
+  The title of the frame as defined by the HTML &lt;title&gt;
+  element.
+*/
 QString QWebFrame::title() const
 {
     if (d->frame->document())
@@ -192,11 +224,17 @@ QString QWebFrame::title() const
     else return QString();
 }
 
+/*!
+  The url of this frame.
+*/
 QUrl QWebFrame::url() const
 {
     return QUrl((QString)d->frame->loader()->url().string());
 }
 
+/*!
+  The icon associated with this frame.
+*/
 QPixmap QWebFrame::icon() const
 {
     String url = d->frame->loader()->url().string();
@@ -216,17 +254,25 @@ QPixmap QWebFrame::icon() const
     return *icon;
 }
 
-
+/*!
+  The name of this frame as defined by the parent frame.
+*/
 QString QWebFrame::name() const
 {
     return d->frame->tree()->name();
 }
 
-QWebPage * QWebFrame::page() const
+/*!
+  The web page that contains this frame.
+*/
+QWebPage *QWebFrame::page() const
 {
     return d->page;
 }
 
+/*!
+  Load \a url into this frame.
+*/
 void QWebFrame::load(const QUrl &url)
 {
 #if QT_VERSION < 0x040400
@@ -271,6 +317,10 @@ void QWebFrame::load(const QWebNetworkRequest &req)
 
 #else
 
+/*!
+  Load \a request into this frame. Use the method specified in \a
+  operation. \a body is optional and is only used for POST operations.
+*/
 void QWebFrame::load(const QNetworkRequest &req,
                      QNetworkAccessManager::Operation operation,
                      const QByteArray &body)
@@ -318,6 +368,10 @@ void QWebFrame::load(const QNetworkRequest &req,
 }
 #endif
 
+/*!
+  Sets the content of this frame to \a html. \a baseUrl is optional and used to resolve relative
+  URLs in the document.
+*/
 void QWebFrame::setHtml(const QString &html, const QUrl &baseUrl)
 {
     KURL kurl(baseUrl.toString());
@@ -327,11 +381,19 @@ void QWebFrame::setHtml(const QString &html, const QUrl &baseUrl)
     d->frame->loader()->load(request, substituteData);
 }
 
+/*!
+  \overload
+*/
 void QWebFrame::setHtml(const QByteArray &html, const QUrl &baseUrl)
 {
     setContent(html, QString(), baseUrl);
 }
 
+/*!
+  Sets the content of this frame to data assuming \a mimeType. If
+  \a mimeType is not specified it defaults to 'text/html'.  \a baseUrl
+  us optional and used to resolve relative URLs in the document.
+*/
 void QWebFrame::setContent(const QByteArray &data, const QString &mimeType, const QUrl &baseUrl)
 {
     KURL kurl(baseUrl.toString());
@@ -344,6 +406,21 @@ void QWebFrame::setContent(const QByteArray &data, const QString &mimeType, cons
     d->frame->loader()->load(request, substituteData);
 }
 
+
+/*!
+  Returns the parent frame of this frame, or 0 if the frame is the web pages
+  main frame.
+
+  This is equivalent to qobject_cast<QWebFrame*>(frame->parent()).
+*/
+QWebFrame *QWebFrame::parentFrame() const
+{
+    return d->parentFrame();
+}
+
+/*!
+  Returns a list of all frames that are direct children of this frame.
+*/
 QList<QWebFrame*> QWebFrame::childFrames() const
 {
     QList<QWebFrame*> rc;
@@ -360,7 +437,13 @@ QList<QWebFrame*> QWebFrame::childFrames() const
     return rc;
 }
 
+/*!
+  \property QWebFrame::verticalScrollBarPolicy
 
+  This property defines the vertical scrollbar policy.
+
+  \sa Qt::ScrollBarPolicy
+*/
 Qt::ScrollBarPolicy QWebFrame::verticalScrollBarPolicy() const
 {
     return (Qt::ScrollBarPolicy) d->frameView->vScrollbarMode();
@@ -374,6 +457,13 @@ void QWebFrame::setVerticalScrollBarPolicy(Qt::ScrollBarPolicy policy)
     d->frameView->setVScrollbarMode((ScrollbarMode)policy);
 }
 
+/*!
+  \property QWebFrame::horizontalScrollBarPolicy
+
+  This property defines the horizontal scrollbar policy.
+
+  \sa Qt::ScrollBarPolicy
+*/
 Qt::ScrollBarPolicy QWebFrame::horizontalScrollBarPolicy() const
 {
     return (Qt::ScrollBarPolicy) d->frameView->hScrollbarMode();
@@ -384,7 +474,10 @@ void QWebFrame::setHorizontalScrollBarPolicy(Qt::ScrollBarPolicy policy)
     d->frameView->setHScrollbarMode((ScrollbarMode)policy);
 }
 
-void QWebFrame::render(QPainter *painter, const QRegion &source)
+/*!
+  Render the frame into \a painter clipping to \a clip.
+*/
+void QWebFrame::render(QPainter *painter, const QRegion &clip)
 {
     if (!d->frameView || !d->frame->renderer())
         return;
@@ -392,11 +485,14 @@ void QWebFrame::render(QPainter *painter, const QRegion &source)
     layout();
 
     GraphicsContext ctx(painter);
-    QVector<QRect> vector = source.rects();
+    QVector<QRect> vector = clip.rects();
     for (int i = 0; i < vector.size(); ++i) 
         d->frameView->paint(&ctx, vector.at(i));
 }
 
+/*!
+  Ensure that the content of the frame and all subframes are correctly layouted.
+*/
 void QWebFrame::layout()
 {
     if (!d->frameView)
@@ -405,18 +501,27 @@ void QWebFrame::layout()
     d->frameView->layoutIfNeededRecursive();
 }
 
+/*!
+  returns the position of the frame relative to it's parent frame.
+*/
 QPoint QWebFrame::pos() const
 {
     Q_ASSERT(d->frameView);
     return d->pos();
 }
 
+/*!
+  return the geometry of the frame relative to it's parent frame.
+*/
 QRect QWebFrame::geometry() const
 {
     Q_ASSERT(d->frameView);
     return d->frameView->frameGeometry();
 }
 
+/*!
+  Evaluate JavaScript defined by \a scriptSource using this frame as context.
+*/
 QString QWebFrame::evaluateJavaScript(const QString& scriptSource)
 {
     KJSProxy *proxy = d->frame->scriptProxy();
@@ -430,3 +535,70 @@ QString QWebFrame::evaluateJavaScript(const QString& scriptSource)
     return rc;
 }
 
+
+
+/*!
+  \fn void QWebFrame::cleared()
+
+  This signal is emitted whenever the content of the frame is cleared
+  (e.g. before starting a new load).
+*/
+
+/*!
+  \fn void QWebFrame::loadDone(bool ok)
+
+  This signal is emitted when the frame is completely loaded. \a ok will indicate whether the load
+  was successful or any error occurred.
+*/
+
+/*!
+  \fn void QWebFrame::provisionalLoad()
+
+  \internal
+*/
+
+/*!
+  \fn void QWebFrame::titleChanged(const QString &title)
+
+  This signal is emitted whenever the title of the frame changes.
+
+  \sa title()
+*/
+
+/*!
+  \fn void QWebFrame::hoveringOverLink(const QString &link, const QString &title, const QString &textContent)
+
+  This signal is emitted whenever the mouse cursor is hovering over a
+  link. It can be used to display information about the link in
+  e.g. the status bar.
+*/
+
+
+/*!
+  \fn void QWebFrame::loadStarted()
+
+  This signal is emitted when a new load of the frame is started.
+*/
+
+/*!
+  \fn void QWebFrame::loadFinished()
+  
+  This signal is emitted when a load of the frame is finished.
+*/
+
+    /**
+      * Signal is emitted when the mainframe()'s initial layout is completed.
+     */
+/*!
+  \fn void QWebFrame::initialLayoutComplete()
+
+  This signal is emitted when the first (initial) layout of the frame
+  has happened. This is the earliest time something can be shown on
+  the screen.
+*/
+    
+/*!
+  \fn void QWebFrame::iconLoaded()
+
+  This signal is emitted when the icon ("favicon") associated with the frame has been loaded.
+*/
