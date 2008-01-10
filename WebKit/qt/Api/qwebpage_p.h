@@ -26,6 +26,7 @@
 #include <qpointer.h>
 
 #include "qwebpage.h"
+#include "qwebhistory.h"
 #include "qwebframe.h"
 
 #include <wtf/RefPtr.h>
@@ -148,7 +149,7 @@ public:
     QNetworkAccessManager *networkManager;
 #endif
 
-    QWebPageHistory history;
+    QWebHistory history;
     QWebPageContext currentContext;
     QWebSettings *settings;
 

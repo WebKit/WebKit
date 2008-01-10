@@ -1,5 +1,5 @@
-#ifndef QWEBPAGEHISTORY_P_H
-#define QWEBPAGEHISTORY_P_H
+#ifndef QWEBHISTORY_P_H
+#define QWEBHISTORY_P_H
 
 #include "BackForwardList.h"
 #include "HistoryItem.h"
@@ -20,15 +20,15 @@ public:
     WebCore::HistoryItem *item;
 };
 
-class QWebPageHistoryPrivate : public QSharedData
+class QWebHistoryPrivate : public QSharedData
 {
 public:
-    QWebPageHistoryPrivate(WebCore::BackForwardList *l)
+    QWebHistoryPrivate(WebCore::BackForwardList *l)
     {
         l->ref();
         lst = l;
     }
-    ~QWebPageHistoryPrivate()
+    ~QWebHistoryPrivate()
     {
         lst->deref();
     }

@@ -1,3 +1,50 @@
+2008-01-10  Lars Knoll  <lars@trolltech.com>
+
+        Reviewed by Simon.
+
+        rename QWebPageHistory to QWebHistory.
+        
+
+        * Api/qwebhistory.cpp: Added.
+        (QWebHistoryItem::QWebHistoryItem):
+        (QWebHistoryItem::operator=):
+        (QWebHistoryItem::~QWebHistoryItem):
+        (QWebHistoryItem::originalUrl):
+        (QWebHistoryItem::currentUrl):
+        (QWebHistoryItem::title):
+        (QWebHistoryItem::lastVisited):
+        (QWebHistoryItem::icon):
+        (QWebHistory::QWebHistory):
+        (QWebHistory::~QWebHistory):
+        (QWebHistory::clear):
+        (QWebHistory::items):
+        (QWebHistory::backItems):
+        (QWebHistory::forwardItems):
+        (QWebHistory::canGoBack):
+        (QWebHistory::canGoForward):
+        (QWebHistory::goBack):
+        (QWebHistory::goForward):
+        (QWebHistory::goToItem):
+        (QWebHistory::backItem):
+        (QWebHistory::currentItem):
+        (QWebHistory::forwardItem):
+        (QWebHistory::itemAtIndex):
+        * Api/qwebhistory.h: Added.
+        * Api/qwebhistory_p.h: Added.
+        (QWebHistoryItemPrivate::QWebHistoryItemPrivate):
+        (QWebHistoryItemPrivate::~QWebHistoryItemPrivate):
+        (QWebHistoryPrivate::QWebHistoryPrivate):
+        (QWebHistoryPrivate::~QWebHistoryPrivate):
+        * Api/qwebpage.cpp:
+        (QWebPagePrivate::QWebPagePrivate):
+        * Api/qwebpage.h:
+        * Api/qwebpage_p.h:
+        * Api/qwebpagehistory.cpp: Removed.
+        * Api/qwebpagehistory.h: Removed.
+        * Api/qwebpagehistory_p.h: Removed.
+        * Api/qwebview.cpp:
+        * Api/qwebview.h:
+
 2008-01-10  Simon Hausmann  <hausmann@webkit.org>
 
         Reviewed by Lars.

@@ -187,7 +187,7 @@ void QWebView::setContent(const QByteArray &data, const QString &mimeType, const
     view->page()->history();
     \endcode
 */
-QWebPageHistory *QWebView::history() const
+QWebHistory *QWebView::history() const
 {
     return page()->history();
 }

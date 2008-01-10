@@ -958,7 +958,7 @@ qt-port {
     ../WebKit/qt/Api/qcookiejar.cpp \
     ../WebKit/qt/Api/qwebpage.cpp \
     ../WebKit/qt/Api/qwebview.cpp \
-    ../WebKit/qt/Api/qwebpagehistory.cpp \
+    ../WebKit/qt/Api/qwebhistory.cpp \
     ../WebKit/qt/Api/qwebsettings.cpp \
     ../WebKit/qt/Api/qwebobjectplugin.cpp \
     ../WebKit/qt/Api/qwebobjectpluginconnector.cpp \

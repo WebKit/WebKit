@@ -1,3 +1,12 @@
+2008-01-10  Lars Knoll  <lars@trolltech.com>
+
+        Reviewed by Simon.
+
+        rename QWebPageHistory to QWebHistory.
+        
+
+        * DumpRenderTree/qt/jsobjects.cpp:
+
 2008-01-09  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.

@@ -27,6 +27,7 @@
  */
 #include <jsobjects.h>
 #include <qwebpage.h>
+#include <qwebhistory.h>
 #include <qwebframe.h>
 #include <qevent.h>
 #include <qapplication.h>

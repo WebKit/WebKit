@@ -27,8 +27,8 @@
 #include "qwebpage_p.h"
 #include "qwebframe_p.h"
 #include "qwebnetworkinterface.h"
-#include "qwebpagehistory.h"
-#include "qwebpagehistory_p.h"
+#include "qwebhistory.h"
+#include "qwebhistory_p.h"
 #include "qwebsettings.h"
 
 #include "Frame.h"
@@ -129,7 +129,7 @@ QWebPagePrivate::QWebPagePrivate(QWebPage *qq)
 #endif
     insideOpenCall = false;
 
-    history.d = new QWebPageHistoryPrivate(page->backForwardList());
+    history.d = new QWebHistoryPrivate(page->backForwardList());
     memset(actions, 0, sizeof(actions));
 }
 
@@ -711,7 +711,7 @@ QWebFrame *QWebPage::currentFrame() const
     Returns a pointer to the view's history of navigated web pages.
 
 */
-QWebPageHistory *QWebPage::history() const
+QWebHistory *QWebPage::history() const
 {
     return &d->history;
 }

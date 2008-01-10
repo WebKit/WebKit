@@ -19,8 +19,8 @@
     This class provides all functionality needed for loading images, style sheets and html
     pages from the web. It has a memory cache for these objects.
 */
-#include "qwebpagehistory.h"
-#include "qwebpagehistory_p.h"
+#include "qwebhistory.h"
+#include "qwebhistory_p.h"
 
 #include "DeprecatedString.h"
 #include "PlatformString.h"
@@ -79,17 +79,17 @@ QWebHistoryItem::QWebHistoryItem(QWebHistoryItemPrivate *priv)
     d = priv;
 }
 
-QWebPageHistory::QWebPageHistory()
+QWebHistory::QWebHistory()
     : d(0)
 {
 }
 
-QWebPageHistory::~QWebPageHistory()
+QWebHistory::~QWebHistory()
 {
     delete d;
 }
 
-void QWebPageHistory::clear()
+void QWebHistory::clear()
 {
     RefPtr<WebCore::HistoryItem> current = d->lst->currentItem();
     int capacity = d->lst->capacity();
@@ -99,7 +99,7 @@ void QWebPageHistory::clear()
     d->lst->goToItem(current.get());
 }
 
-QList<QWebHistoryItem> QWebPageHistory::items() const
+QList<QWebHistoryItem> QWebHistory::items() const
 {
     const WebCore::HistoryItemVector &items = d->lst->entries();
 
@@ -111,7 +111,7 @@ QList<QWebHistoryItem> QWebPageHistory::items() const
     return ret;
 }
 
-QList<QWebHistoryItem> QWebPageHistory::backItems(int maxItems) const
+QList<QWebHistoryItem> QWebHistory::backItems(int maxItems) const
 {
     WebCore::HistoryItemVector items(maxItems);
     d->lst->backListWithLimit(maxItems, items);
@@ -124,7 +124,7 @@ QList<QWebHistoryItem> QWebPageHistory::backItems(int maxItems) const
     return ret;
 }
 
-QList<QWebHistoryItem> QWebPageHistory::forwardItems(int maxItems) const
+QList<QWebHistoryItem> QWebHistory::forwardItems(int maxItems) const
 {
     WebCore::HistoryItemVector items(maxItems);
     d->lst->forwardListWithLimit(maxItems, items);
@@ -137,53 +137,53 @@ QList<QWebHistoryItem> QWebPageHistory::forwardItems(int maxItems) const
     return ret;
 }
 
-bool QWebPageHistory::canGoBack() const
+bool QWebHistory::canGoBack() const
 {
     return d->lst->backListCount() > 0;
 }
 
-bool QWebPageHistory::canGoForward() const
+bool QWebHistory::canGoForward() const
 {
     return d->lst->forwardListCount() > 0;
 }
 
-void QWebPageHistory::goBack()
+void QWebHistory::goBack()
 {
     d->lst->goBack();
 }
 
-void QWebPageHistory::goForward()
+void QWebHistory::goForward()
 {
     d->lst->goBack();
 }
 
-void QWebPageHistory::goToItem(const QWebHistoryItem &item)
+void QWebHistory::goToItem(const QWebHistoryItem &item)
 {
     d->lst->goToItem(item.d->item);
 }
 
-QWebHistoryItem QWebPageHistory::backItem() const
+QWebHistoryItem QWebHistory::backItem() const
 {
     WebCore::HistoryItem *i = d->lst->backItem();
     QWebHistoryItemPrivate *priv = new QWebHistoryItemPrivate(i);
     return QWebHistoryItem(priv);
 }
 
-QWebHistoryItem QWebPageHistory::currentItem() const
+QWebHistoryItem QWebHistory::currentItem() const
 {
     WebCore::HistoryItem *i = d->lst->currentItem();
     QWebHistoryItemPrivate *priv = new QWebHistoryItemPrivate(i);
     return QWebHistoryItem(priv);
 }
 
-QWebHistoryItem QWebPageHistory::forwardItem() const
+QWebHistoryItem QWebHistory::forwardItem() const
 {
     WebCore::HistoryItem *i = d->lst->forwardItem();
     QWebHistoryItemPrivate *priv = new QWebHistoryItemPrivate(i);
     return QWebHistoryItem(priv);
 }
 
-QWebHistoryItem QWebPageHistory::itemAtIndex(int i) const
+QWebHistoryItem QWebHistory::itemAtIndex(int i) const
 {
     WebCore::HistoryItem *item = d->lst->itemAtIndex(i);
 

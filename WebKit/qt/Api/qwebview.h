@@ -23,6 +23,7 @@
 #include "qwebkitglobal.h"
 #include "qwebpage.h"
 #include <QtGui/qwidget.h>
+#include <QtCore/qurl.h>
 #if QT_VERSION >= 0x040400
 #include <QtNetwork/qnetworkaccessmanager.h>
 #endif
@@ -60,7 +61,7 @@ public:
     void setHtml(const QByteArray &html, const QUrl &baseUrl = QUrl());
     void setContent(const QByteArray &data, const QString &mimeType = QString(), const QUrl &baseUrl = QUrl());
 
-    QWebPageHistory *history() const;
+    QWebHistory *history() const;
     QWebSettings *settings() const;
 
     QString title() const;
