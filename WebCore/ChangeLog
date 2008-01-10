@@ -1,3 +1,13 @@
+2008-01-10  Luca Bruno  <lethalman88@gmail.com>
+
+        Reviewed by Alp Toker.
+
+        Back out r29206 which was causing regressions in curl http job
+        cancellation.
+
+        * platform/network/curl/ResourceHandleManager.cpp
+        (ResourceHandleManager::cancel): 
+
 2008-01-10  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Darin, Sam, and Adam.
