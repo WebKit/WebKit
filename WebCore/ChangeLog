@@ -1,3 +1,17 @@
+2008-01-10  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Alice Liu.
+
+        <rdar://problem/5658603> Crash in InsertNodeBefore::doUnapply() on Undo in Yahoo Mail
+        <rdar://problem/5658709> Crash in RenderView::setSelection on Undo in Yahoo Mail
+        
+        Make sure we have an updated layout before we perform any editing work.
+
+        * editing/EditCommand.cpp:
+        (WebCore::EditCommand::apply):
+        (WebCore::EditCommand::unapply):
+        (WebCore::EditCommand::reapply):
+
 2008-01-10  Luca Bruno  <lethalman88@gmail.com>
 
         Reviewed by Alp Toker.
