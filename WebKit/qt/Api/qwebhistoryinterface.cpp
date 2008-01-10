@@ -77,6 +77,18 @@ QWebHistoryInterface *QWebHistoryInterface::defaultInterface()
     return default_interface;
 }
 
+/*!
+  \class QWebHistoryInterface
+  \since 4.4
+  \brief The QWebHistoryInterface is an interface to implement link history.
+
+  The QWebHistoryInterface is an interface that can be used to
+  implement link history. It contains two pure virtual methods that
+  are called by the WebKit engine.  addHistoryEntry() is used to add
+  pages that have been visited to the interface, while
+  historyContains() is used to query whether this page has been
+  visited by the user.
+*/
 QWebHistoryInterface::QWebHistoryInterface(QObject *parent) : QObject(parent)
 {
 }
@@ -84,3 +96,15 @@ QWebHistoryInterface::QWebHistoryInterface(QObject *parent) : QObject(parent)
 QWebHistoryInterface::~QWebHistoryInterface()
 {
 }
+
+/*!
+  \fn bool QWebHistoryInterface::historyContains(const QString &url) const
+
+  Called by the WebKit engine to query whether a certain url has been visited by the user already.
+*/
+
+/*!
+  \fn void QWebHistoryInterface::addHistoryEntry(const QString &url) const
+
+  Called by WebKit to add another url to the list of visited pages.
+*/

@@ -2,6 +2,17 @@
 
         Reviewed by Simon.
 
+        Document QWebHistoryInterface.
+        
+
+        * Api/qwebhistoryinterface.cpp:
+        (QWebHistoryInterface::defaultInterface):
+        (QWebHistoryInterface::~QWebHistoryInterface):
+
+2008-01-10  Lars Knoll  <lars@trolltech.com>
+
+        Reviewed by Simon.
+
         Documentation for QWebFrame.
         
 
