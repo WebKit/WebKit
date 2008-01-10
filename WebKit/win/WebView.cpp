@@ -1372,9 +1372,13 @@ const char* WebView::interpretKeyEvent(const KeyboardEvent* evt)
     if (evt->ctrlKey())
         modifiers |= CtrlKey;
 
-    return evt->type() == keydownEvent ? 
-        keyDownCommandsMap->get(modifiers << 16 | evt->keyCode()) :
-        keyPressCommandsMap->get(modifiers << 16 | evt->charCode());
+    if (evt->type() == keydownEvent) {
+        int mapKey = modifiers << 16 | evt->keyCode();
+        return mapKey ? keyDownCommandsMap->get(mapKey) : 0;
+    }
+
+    int mapKey = modifiers << 16 | evt->charCode();
+    return mapKey ? keyPressCommandsMap->get(mapKey) : 0;
 }
 
 bool WebView::handleEditingKeyboardEvent(KeyboardEvent* evt)
