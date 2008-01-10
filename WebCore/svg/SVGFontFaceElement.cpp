@@ -40,6 +40,8 @@
 #include "SVGGlyphElement.h"
 #include "SVGNames.h"
 
+#include <math.h>
+
 namespace WebCore {
 
 using namespace SVGNames;
