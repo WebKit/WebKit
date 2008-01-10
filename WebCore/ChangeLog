@@ -1,3 +1,19 @@
+2008-01-10  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by John Sullivan.
+
+        <rdar://problem/5455889>
+        REGRESSION: BumperCar crashes when attempting to load a long invalid URL
+        
+        Make sure to call FrameLoader::receivedMainResourceError before calling
+        FrameLoader::didFailToLoad. The call to receivedMainResourceError takes care of
+        clearing out the provisional document loader so that we won't call the didFail
+        ResourceLoadDelegate method twice. This also makes us call the FrameLoadDelegate method
+        didFailPrivisionalLoad before calling the ResourceLoadDelegate method, which Safari 2.0 does.
+        
+        * loader/MainResourceLoader.cpp:
+        (WebCore::MainResourceLoader::receivedError):
+
 2008-01-10  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Adele.

@@ -64,15 +64,16 @@ void MainResourceLoader::receivedError(const ResourceError& error)
     RefPtr<MainResourceLoader> protect(this);
     RefPtr<Frame> protectFrame(m_frame);
 
+    // It is important that we call FrameLoader::receivedMainResourceError before calling 
+    // FrameLoader::didFailToLoad because receivedMainResourceError clears out the relevant
+    // document loaders. Also, receivedMainResourceError ends up calling a FrameLoadDelegate method
+    // and didFailToLoad calls a ResourceLoadDelegate method and they need to be in the correct order.
+    frameLoader()->receivedMainResourceError(error, true);
+
     if (!cancelled()) {
         ASSERT(!reachedTerminalState());
         frameLoader()->didFailToLoad(this, error);
-    }
-    
-    if (frameLoader())
-        frameLoader()->receivedMainResourceError(error, true);
-
-    if (!cancelled()) {
+        
         releaseResources();
     }
 
