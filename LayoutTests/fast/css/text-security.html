@@ -18,6 +18,20 @@ function init()
 
 <style>
 
+@font-face {
+    font-family: 'times';
+    src: local('Times');
+}
+
+/* Match Mac OS X's font fallback behavior on Windows */
+
+@font-face {
+    font-family: 'times';
+    src: local('Lucida Grande');
+    /* black square and white bullet */
+    unicode-range: U+25A0 U+25E6;
+}
+
 .square { -webkit-text-security: square; }
 .bullet { -webkit-text-security: disc; }
 .circle { -webkit-text-security: circle; }

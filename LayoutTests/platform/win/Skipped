@@ -57,9 +57,6 @@ css2.1/t0905-c5525-fltblck-00-d-ag.html
 css2.1/t1202-counter-09-b.html
 css2.1/t1202-counters-09-b.html
 editing/deleting/5144139-2.html
-fast/css/beforeSelectorOnCodeElement.html
-fast/css/rtl-ordering.html
-fast/css/text-security.html
 fast/encoding/denormalised-voiced-japanese-chars.html
 fast/encoding/invalid-UTF-8.html
 fast/events/updateLayoutForHitTest.html

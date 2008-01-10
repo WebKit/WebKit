@@ -1,3 +1,15 @@
+2008-01-10  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by John Sullivan.
+
+        - make more tests pass on Windows by forcing font fallback to match
+          Mac OS X.
+
+        * fast/css/beforeSelectorOnCodeElement.html:
+        * fast/css/rtl-ordering.html:
+        * fast/css/text-security.html:
+        * platform/win/Skipped:
+
 2008-01-09  Ada Chan  <adachan@apple.com>
 
         Tests tabbing with different combinations of modifiers keys, where some

@@ -1,7 +1,22 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-8">
-<title>-khtml-rtl-ordering</title>
+<title>-webkit-rtl-ordering</title>
+<style>
+@font-face {
+    font-family: 'times';
+    src: local('Times');
+}
+
+/* Match Mac OS X's font fallback behavior on Windows */
+
+@font-face {
+    font-family: 'times';
+    src: local('Lucida Grande');
+    /* Hebrew */
+    unicode-range: U+0590-0600;
+}
+</style>
 </head>
 <body>
 <p>
@@ -14,7 +29,7 @@ This tests for a regression against <i><a href="http://bugzilla.opendarwin.org/s
 <input type="button" value="כפתור">
 <hr>
 <p>The following lines should be identical:</p>
-<p style="-khtml-rtl-ordering: logical;">
+<p style="-webkit-rtl-ordering: logical;">
 המאה ה-21
 </p>
 <p>
