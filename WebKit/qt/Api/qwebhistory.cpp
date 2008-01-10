@@ -28,39 +28,72 @@
 
 #include <QSharedData>
 
+/*!
+  class QWebHistoryItem
+  \since 4.4
+  \brief QWebHistoryItem represents on item in the history of a QWebPage
+
+  QWebHistoryItem represents on entry in the history stack of a web page.
+
+  \sa QWebPage::history() QWebHistory
+
+  QWebHistoryItem objects are value based and explicitly shared. 
+*/
+
+/*!
+  Constructs a history item from \a other.
+*/
 QWebHistoryItem::QWebHistoryItem(const QWebHistoryItem &other)
     : d(other.d)
 {
 }
 
+/*!
+  Assigns the \a other history item to this.
+*/
 QWebHistoryItem &QWebHistoryItem::operator=(const QWebHistoryItem &other)
 {
     d = other.d;
     return *this;
 }
 
+/*!
+  Destructs a history item.
+*/
 QWebHistoryItem::~QWebHistoryItem()
 {
 }
 
+/*!
+ The original url associated with the history item.
+*/
 QUrl QWebHistoryItem::originalUrl() const
 {
     return QUrl(d->item->originalURL().string());
 }
 
 
+/*!
+ The current url associated with the history item.
+*/
 QUrl QWebHistoryItem::currentUrl() const
 {
     return QUrl(d->item->url().string());
 }
 
 
+/*!
+ The title of the page associated with the history item.
+*/
 QString QWebHistoryItem::title() const
 {
     return d->item->title();
 }
 
 
+/*!
+ The time when the apge associated with the item was last visited.
+*/
 QDateTime QWebHistoryItem::lastVisited() const
 {
     //FIXME : this will be wrong unless we correctly set lastVisitedTime ourselves
@@ -68,16 +101,31 @@ QDateTime QWebHistoryItem::lastVisited() const
 }
 
 
+/*!
+ The icon associated with the history item.
+*/
 QPixmap QWebHistoryItem::icon() const
 {
     return *d->item->icon()->getPixmap();
 }
 
-
+/*!
+  \internal
+*/
 QWebHistoryItem::QWebHistoryItem(QWebHistoryItemPrivate *priv)
 {
     d = priv;
 }
+
+/*!
+  \class QWebHistory
+  \since 4.4
+  \brief QWebHistory represents the history of a QWebPage
+
+  Each QWebPage contains a history of visited pages that can be accessed by QWebPage::history().
+  QWebHistory represents this history and makes it possible to navigate it.
+*/
+
 
 QWebHistory::QWebHistory()
     : d(0)
@@ -89,6 +137,9 @@ QWebHistory::~QWebHistory()
     delete d;
 }
 
+/*!
+  Clears the history.
+*/
 void QWebHistory::clear()
 {
     RefPtr<WebCore::HistoryItem> current = d->lst->currentItem();
@@ -99,6 +150,9 @@ void QWebHistory::clear()
     d->lst->goToItem(current.get());
 }
 
+/*!
+  returns a list of all items currently in the history.
+*/
 QList<QWebHistoryItem> QWebHistory::items() const
 {
     const WebCore::HistoryItemVector &items = d->lst->entries();
@@ -111,6 +165,9 @@ QList<QWebHistoryItem> QWebHistory::items() const
     return ret;
 }
 
+/*!
+  returns the list of items that are in the backwards history.
+*/
 QList<QWebHistoryItem> QWebHistory::backItems(int maxItems) const
 {
     WebCore::HistoryItemVector items(maxItems);
@@ -124,6 +181,9 @@ QList<QWebHistoryItem> QWebHistory::backItems(int maxItems) const
     return ret;
 }
 
+/*!
+  returns the list of items that are in the forward history.
+*/
 QList<QWebHistoryItem> QWebHistory::forwardItems(int maxItems) const
 {
     WebCore::HistoryItemVector items(maxItems);
@@ -137,31 +197,49 @@ QList<QWebHistoryItem> QWebHistory::forwardItems(int maxItems) const
     return ret;
 }
 
+/*!
+  returns true if we have an item to go back to.
+*/
 bool QWebHistory::canGoBack() const
 {
     return d->lst->backListCount() > 0;
 }
 
+/*!
+  returns true if we have an item to go forward to.
+*/
 bool QWebHistory::canGoForward() const
 {
     return d->lst->forwardListCount() > 0;
 }
 
+/*!
+  goes back one history item.
+*/
 void QWebHistory::goBack()
 {
     d->lst->goBack();
 }
 
+/*!
+  goes forward one history item.
+*/
 void QWebHistory::goForward()
 {
     d->lst->goBack();
 }
 
+/*!
+  goes to item \a item in the history.
+*/
 void QWebHistory::goToItem(const QWebHistoryItem &item)
 {
     d->lst->goToItem(item.d->item);
 }
 
+/*!
+  returns the item before the current item.
+*/
 QWebHistoryItem QWebHistory::backItem() const
 {
     WebCore::HistoryItem *i = d->lst->backItem();
@@ -169,6 +247,9 @@ QWebHistoryItem QWebHistory::backItem() const
     return QWebHistoryItem(priv);
 }
 
+/*!
+  returns the current item.
+*/
 QWebHistoryItem QWebHistory::currentItem() const
 {
     WebCore::HistoryItem *i = d->lst->currentItem();
@@ -176,6 +257,9 @@ QWebHistoryItem QWebHistory::currentItem() const
     return QWebHistoryItem(priv);
 }
 
+/*!
+  returns the item after the current item.
+*/
 QWebHistoryItem QWebHistory::forwardItem() const
 {
     WebCore::HistoryItem *i = d->lst->forwardItem();
@@ -183,6 +267,9 @@ QWebHistoryItem QWebHistory::forwardItem() const
     return QWebHistoryItem(priv);
 }
 
+/*!
+  returns the item at index \a i.
+*/
 QWebHistoryItem QWebHistory::itemAtIndex(int i) const
 {
     WebCore::HistoryItem *item = d->lst->itemAtIndex(i);

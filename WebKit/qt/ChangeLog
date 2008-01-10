@@ -1,3 +1,25 @@
+2008-01-10  Lars Knoll  <lars@trolltech.com>
+
+        Reviewed by Simon.
+
+        document QWebHistory
+        
+
+        * Api/qwebhistory.cpp:
+        (QWebHistoryItem::QWebHistoryItem):
+        (QWebHistoryItem::operator=):
+        (QWebHistoryItem::~QWebHistoryItem):
+        (QWebHistoryItem::originalUrl):
+        (QWebHistoryItem::currentUrl):
+        (QWebHistoryItem::title):
+        (QWebHistoryItem::icon):
+        (QWebHistory::canGoBack):
+        (QWebHistory::canGoForward):
+        (QWebHistory::goBack):
+        (QWebHistory::goForward):
+        (QWebHistory::goToItem):
+        * Api/qwebhistory.h:
+
 2008-01-10  Simon Hausmann  <hausmann@webkit.org>
 
         Reviewed by Lars.
