@@ -32,7 +32,7 @@ public:
 /*!
     \class QWebView
     \since 4.4
-    \brief The QWebview class provides a widget that is used to view and edit web documents.
+    \brief The QWebView class provides a widget that is used to view and edit web documents.
 
     QWebView is the main widget component of the QtWebKit web browsing module.
 */
@@ -210,7 +210,6 @@ QWebSettings *QWebView::settings() const
   \property QWebView::documentTitle
   \brief the title of the web page currently viewed.
 */
-
 QString QWebView::title() const
 {
     if (d->page)
@@ -222,7 +221,6 @@ QString QWebView::title() const
     \property QWebView::url
     \brief the url of the web page currently viewed.
 */
-
 QUrl QWebView::url() const
 {
     if (d->page)
@@ -234,7 +232,6 @@ QUrl QWebView::url() const
     \property QWebView::icon
     \brief the icon associated with the web page currently viewed.
 */
-
 QPixmap QWebView::icon() const
 {
     if (d->page)
@@ -246,7 +243,6 @@ QPixmap QWebView::icon() const
     \property QWebView::selectedText
     \brief the text currently selected.
 */
-
 QString QWebView::selectedText() const
 {
     if (d->page)
@@ -379,7 +375,8 @@ void QWebView::resizeEvent(QResizeEvent *e)
         d->page->setViewportSize(e->size());
 }
 
-
+/*! \reimp
+*/
 void QWebView::paintEvent(QPaintEvent *ev)
 {
 #ifdef QWEBKIT_TIME_RENDERING

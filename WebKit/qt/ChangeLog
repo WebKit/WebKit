@@ -1,3 +1,39 @@
+2008-01-10  Simon Hausmann  <hausmann@webkit.org>
+
+        Reviewed by Lars.
+
+        Added a whole bunch of docs for QWebPage and fixed some minor doc glitches in QWebView.
+        
+
+        * Api/qwebpage.cpp:
+        (QWebPagePrivate::dropEvent):
+        (QWebPage::QWebPage):
+        (QWebPage::~QWebPage):
+        (QWebPage::mainFrame):
+        (QWebPage::currentFrame):
+        (QWebPage::history):
+        (QWebPage::setView):
+        (QWebPage::view):
+        (QWebPage::javaScriptConsoleMessage):
+        (QWebPage::javaScriptAlert):
+        (QWebPage::javaScriptConfirm):
+        (QWebPage::javaScriptPrompt):
+        (QWebPage::createWindow):
+        (QWebPage::createModalDialog):
+        (openNewWindow):
+        (QWebPage::triggerAction):
+        (QWebPage::viewportSize):
+        (QWebPage::navigationRequested):
+        (QWebPage::selectedText):
+        (QWebPage::isModified):
+        (QWebPage::focusNextPrevChild):
+        (QWebPage::settings):
+        (QWebPage::networkProxy):
+        (QWebPage::setNetworkAccessManager):
+        (QWebPage::networkAccessManager):
+        (QWebPagePrivate::_q_onLoadProgressChanged):
+        * Api/qwebview.cpp:
+
 2008-01-07  Holger Freyther  <zecke@selfish.org>
 
         Reviewed by Alp Toker.
