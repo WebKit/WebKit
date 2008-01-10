@@ -598,7 +598,6 @@ void ScrollView::paint(GraphicsContext* context, const IntRect& rect)
         return;
 
     IntRect documentDirtyRect = rect;
-    documentDirtyRect.intersect(frameGeometry());
 
     context->save();
 
@@ -608,7 +607,8 @@ void ScrollView::paint(GraphicsContext* context, const IntRect& rect)
     context->translate(-contentsX(), -contentsY());
     documentDirtyRect.move(contentsX(), contentsY());
 
-    context->clip(enclosingIntRect(visibleContentRect()));
+    documentDirtyRect.intersect(enclosingIntRect(visibleContentRect()));
+    context->clip(documentDirtyRect);
 
     static_cast<const FrameView*>(this)->frame()->paint(context, documentDirtyRect);
 

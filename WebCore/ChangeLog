@@ -1,3 +1,14 @@
+2008-01-10  Lars Knoll  <lars@trolltech.com>
+
+        Reviewed by Simon.
+
+        fix the drawing errors that where introduced due to refactoring.
+
+        Correctly clip to the rectangle we want to draw in ScrollView::paint().
+
+        * platform/qt/ScrollViewQt.cpp:
+        (WebCore::ScrollView::paint):
+
 2008-01-10  Simon Hausmann  <hausmann@webkit.org>
 
         Reviewed by Lars.

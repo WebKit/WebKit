@@ -387,14 +387,7 @@ void QWebView::paintEvent(QPaintEvent *ev)
     QWebFrame *frame = d->page->mainFrame();
     QPainter p(this);
 
-    QVector<QRect> vector = ev->region().rects();
-    if (!vector.isEmpty()) {
-        for (int i = 0; i < vector.size(); ++i) {
-            frame->render(&p, vector.at(i));
-        }
-    } else {
-        frame->render(&p, ev->rect());
-    }
+    frame->render(&p, ev->region());
 
 #ifdef    QWEBKIT_TIME_RENDERING
     int elapsed = time.elapsed();

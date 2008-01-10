@@ -1,3 +1,20 @@
+2008-01-10  Lars Knoll  <lars@trolltech.com>
+
+        Reviewed by Simon.
+
+        fix the drawing errors that where introduced due to refactoring.
+        
+        Correctly clip to the rectangle we want to draw in ScrollView::paint().
+        
+
+        * Api/qwebframe.cpp:
+        (QWebFrame::render):
+        * Api/qwebframe.h:
+        * Api/qwebview.cpp:
+        (QWebView::paintEvent):
+        * WebCoreSupport/ChromeClientQt.cpp:
+        (WebCore::ChromeClientQt::scrollBackingStore):
+
 2008-01-10  Simon Hausmann  <hausmann@webkit.org>
 
         Reviewed by Lars.
