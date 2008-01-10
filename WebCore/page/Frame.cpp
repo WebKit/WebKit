@@ -1767,6 +1767,8 @@ void Frame::pageDestroyed()
         if (KJS::Window* w = KJS::Window::retrieveWindow(this))
             w->disconnectFrame();
 
+    clearScriptObjects();
+    
     d->m_page = 0;
 }
 

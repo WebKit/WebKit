@@ -1,3 +1,15 @@
+2008-01-09  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Darin.
+
+        <rdar://problem/5532361> 
+        CrashTracer: 9840 crashes in Safari at com.apple.JavaScriptCore: KJS::Bindings::CInstance::~CInstance [in-charge deleting] + 35
+        
+        Clear the frame's plugin root objects so that they don't outlive the plugin bundle.
+        
+        * page/Frame.cpp:
+        (WebCore::Frame::pageDestroyed):
+
 2008-01-09  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Adam Roben and Anders Carlsson
