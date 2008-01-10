@@ -1,3 +1,14 @@
+2008-01-10  David Hyatt  <hyatt@apple.com>
+
+        Fix for bug 16247, visibility:hidden not honored when hit testing inline replaced elements.
+
+        Reviewed by adele
+
+        Added fast/css/visibility-hit-test.html test case.
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::nodeAtPoint):
+
 2008-01-10  Lars Knoll  <lars@trolltech.com>
 
         Reviewed by Simon.
