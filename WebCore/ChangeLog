@@ -1,3 +1,15 @@
+2008-01-09  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Sam.
+
+        - refactor SecurityOrigin in preparation for merging with SecurityOriginData
+
+        * platform/SecurityOrigin.cpp:
+        (WebCore::SecurityOrigin::SecurityOrigin):
+        (WebCore::SecurityOrigin::create):
+        (WebCore::SecurityOrigin::createForFrame):
+        * platform/SecurityOrigin.h:
+
 2008-01-09  Ada Chan  <adachan@apple.com>
 
         Tabs with ctrl, meta, or altgraph modifier key down should not advance focus.

@@ -39,33 +39,21 @@
 
 namespace WebCore {
 
-SecurityOrigin::SecurityOrigin(const KURL& url)
-    : m_port(0)
-    , m_portSet(false)
+SecurityOrigin::SecurityOrigin(const String& protocol, const String& host, unsigned short port)
+    : m_protocol(protocol.lower())
+    , m_host(host.lower())
+    , m_port(port)
+    , m_portSet(port)
     , m_noAccess(false)
     , m_domainWasSetInDOM(false)
 {
-    if (url.isEmpty())
-      return;
-
-    m_protocol = url.protocol().lower();
-
-    // These protocols do not represent principals.
+    // These protocols do not create security origins; the owner frame provides the origin
     if (m_protocol == "about" || m_protocol == "javascript")
         m_protocol = String();
-
-    if (m_protocol.isEmpty())
-        return;
 
     // data: URLs are not allowed access to anything other than themselves.
     if (m_protocol == "data")
         m_noAccess = true;
-
-    m_host = url.host().lower();
-    m_port = url.port();
-
-    if (m_port)
-        m_portSet = true;
 }
 
 bool SecurityOrigin::isEmpty() const
@@ -73,34 +61,37 @@ bool SecurityOrigin::isEmpty() const
     return m_protocol.isEmpty();
 }
 
+PassRefPtr<SecurityOrigin> SecurityOrigin::create(const String& protocol, const String& host, unsigned short port, SecurityOrigin* ownerFrameOrigin)
+{
+    RefPtr<SecurityOrigin> origin = new SecurityOrigin(protocol, host, port);
+
+    // If we do not obtain a meaningful origin from the URL, then we try to find one
+    // via the frame hierarchy.
+    // We alias the SecurityOrigins to match Firefox, see Bug 15313
+    // http://bugs.webkit.org/show_bug.cgi?id=15313
+    if (origin->isEmpty() && ownerFrameOrigin)
+        return ownerFrameOrigin;
+
+    return origin.release();
+}
+
 PassRefPtr<SecurityOrigin> SecurityOrigin::createForFrame(Frame* frame)
 {
     if (!frame)
-        return new SecurityOrigin(KURL());
+        return create("", "", 0, 0);
 
     FrameLoader* loader = frame->loader();
+    KURL url = loader->url();
 
-    RefPtr<SecurityOrigin> origin = new SecurityOrigin(loader->url());
-    if (!origin->isEmpty())
-        return origin;
+    Frame* ownerFrame = frame->tree()->parent();
+    if (!ownerFrame)
+        ownerFrame = loader->opener();
 
-    // If we do not obtain a principal from the URL, then we try to find a
-    // principal via the frame hierarchy.
+    SecurityOrigin* ownerFrameOrigin = 0;
+    if (ownerFrame && ownerFrame->document())
+        ownerFrameOrigin = ownerFrame->document()->securityOrigin();
 
-    Frame* openerFrame = frame->tree()->parent();
-    if (!openerFrame) {
-        openerFrame = loader->opener();
-        if (!openerFrame)
-            return origin;
-    }
-
-    Document* openerDocument = openerFrame->document();
-    if (!openerDocument)
-        return origin;
-
-    // We alias the SecurityOrigins to match Firefox, see Bug 15313
-    // http://bugs.webkit.org/show_bug.cgi?id=15313
-    return openerDocument->securityOrigin();
+    return create(url.protocol(), url.host(), url.port(), ownerFrameOrigin);
 }
 
 void SecurityOrigin::setDomainFromDOM(const String& newDomain)
