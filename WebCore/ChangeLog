@@ -1,3 +1,16 @@
+2008-01-09  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Mitz.
+
+        Fix http://bugs.webkit.org/show_bug.cgi?id=16376
+        <rdar://problem/5665206>
+        <video> element fails to play frames when navigating back to page (16376)
+        
+        Don't make MediaPlayer visible when it is actually in page cache.
+
+        * rendering/RenderVideo.cpp:
+        (WebCore::RenderVideo::updatePlayer):
+
 2008-01-09  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Darin.

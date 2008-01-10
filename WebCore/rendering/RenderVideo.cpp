@@ -116,17 +116,21 @@ void RenderVideo::updateFromElement()
 }
 
 void RenderVideo::updatePlayer()
-{    
-    if (MediaPlayer* mediaPlayer = player()) {
-        int x;
-        int y;
-        absolutePosition(x, y);
-        IntRect videoBounds = videoBox(); 
-        videoBounds.move(x, y);
-        mediaPlayer->setParentWidget(document()->view());
-        mediaPlayer->setRect(videoBounds);
-        mediaPlayer->setVisible(true);
-    }    
+{
+    MediaPlayer* mediaPlayer = player();
+    if (!mediaPlayer)
+        return;
+    Document* doc = document();
+    if (doc->inPageCache())
+        return;
+    int x;
+    int y;
+    absolutePosition(x, y);
+    IntRect videoBounds = videoBox(); 
+    videoBounds.move(x, y);
+    mediaPlayer->setParentWidget(doc->view());
+    mediaPlayer->setRect(videoBounds);
+    mediaPlayer->setVisible(true);
 }
 
 bool RenderVideo::isWidthSpecified() const
