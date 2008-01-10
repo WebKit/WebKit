@@ -91,7 +91,6 @@ tables/mozilla/bugs/bug113424.html
 tables/mozilla_expected_failures/bugs/bug11331.html
 
 # No advanced text <rdar://problems/4516194>
-css1/text_properties/text-transCapitalize.html
 css2.1/t0805-c5518-brdr-t-01-e.html
 css2.1/t0805-c5519-brdr-r-00-a.html
 css2.1/t0805-c5519-brdr-r-01-e.html

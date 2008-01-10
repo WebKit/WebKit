@@ -1,3 +1,24 @@
+2008-01-09  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        - move a WebKit test which was inadvertently added to a test suite
+          directory into a custom test directory and change it to give the same
+          results on Windows.
+
+        * css1/text_properties/text-transCapitalize.html: Removed.
+        * fast/text/capitalize-boundaries.html: Copied from LayoutTests/css1/text_properties/text-transCapitalize.html,
+        updated the Bugzilla URL and added @font-face rules to make Windows
+        results match Mac OS X.
+        * platform/mac/css1/text_properties/text-transCapitalize-expected.checksum: Removed.
+        * platform/mac/css1/text_properties/text-transCapitalize-expected.png: Removed.
+        * platform/mac/css1/text_properties/text-transCapitalize-expected.txt: Removed.
+        * platform/mac/fast/text/capitalize-boundaries-expected.checksum: Copied from LayoutTests/platform/mac/css1/text_properties/text-transCapitalize-expected.checksum.
+        * platform/mac/fast/text/capitalize-boundaries-expected.png: Copied from LayoutTests/platform/mac/css1/text_properties/text-transCapitalize-expected.png.
+        * platform/mac/fast/text/capitalize-boundaries-expected.txt: Copied from LayoutTests/platform/mac/css1/text_properties/text-transCapitalize-expected.txt.
+        * platform/qt/css1/text_properties/text-transCapitalize-expected.txt: Removed.
+        * platform/win/Skipped: Removed css1/text_properties/text-transCapitalize.html.
+
 2008-01-09  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Adam Roben.
