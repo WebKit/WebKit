@@ -256,7 +256,6 @@ static void setDefaultsToConsistentValuesForTesting()
     [preferences setDefaultFixedFontSize:13];
     [preferences setMinimumFontSize:1];
     [preferences setJavaEnabled:NO];
-    [preferences setJavaScriptCanOpenWindowsAutomatically:YES];
     [preferences setEditableLinkBehavior:WebKitEditableLinkOnlyLiveWithShiftKey];
     [preferences setTabsToLinks:NO];
     [preferences setDOMPasteAllowed:YES];
@@ -802,6 +801,7 @@ static void resetWebViewToConsistentStateBeforeTesting()
     WebPreferences *preferences = [webView preferences];
     [preferences setPrivateBrowsingEnabled:NO];
     [preferences setAuthorAndUserStylesEnabled:YES];
+    [preferences setJavaScriptCanOpenWindowsAutomatically:YES];
 
     [WebView _setUsesTestModeFocusRingColor:YES];
 }

@@ -523,6 +523,19 @@ static JSValueRef windowCountCallback(JSContextRef context, JSObjectRef function
     return JSValueMakeNumber(context, windows);
 }
 
+static JSValueRef setPopupBlockingEnabledCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+    // Has mac & windows implementation
+    if (argumentCount < 1)
+        return JSValueMakeUndefined(context);
+
+    LayoutTestController* controller = reinterpret_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    controller->setPopupBlockingEnabled(JSValueToBoolean(context, arguments[0]));
+
+    return JSValueMakeUndefined(context);
+}
+
+
 // Static Values
 
 static JSValueRef getGlobalFlagCallback(JSContextRef context, JSObjectRef thisObject, JSStringRef propertyName, JSValueRef* exception)
@@ -613,6 +626,7 @@ JSStaticFunction* LayoutTestController::staticFunctions()
         { "setCustomPolicyDelegate", setCustomPolicyDelegateCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "setMainFrameIsFirstResponder", setMainFrameIsFirstResponderCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "setPrivateBrowsingEnabled", setPrivateBrowsingEnabledCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+        { "setPopupBlockingEnabled", setPopupBlockingEnabledCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "setTabKeyCyclesThroughElements", setTabKeyCyclesThroughElementsCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "setUseDashboardCompatibilityMode", setUseDashboardCompatibilityModeCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "setUserStyleSheetEnabled", setUserStyleSheetEnabledCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },

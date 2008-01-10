@@ -191,6 +191,11 @@ void LayoutTestController::setAuthorAndUserStylesEnabled(bool flag)
     // FIXME: implement
 }
 
+void LayoutTestController::setPopupBlockingEnabled(bool popupBlockingEnabled)
+{
+    // FIXME: implement
+}
+
 void LayoutTestController::execCommand(JSStringRef name, JSStringRef value)
 {
     // FIXME: implement

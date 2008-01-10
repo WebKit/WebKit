@@ -186,6 +186,7 @@ fast/lists/drag-into-marker.html
 fast/dom/open-and-close-by-DOM.html
 fast/dom/Document/early-document-access.html
 fast/events/attempt-scroll-with-no-scrollbars.html
+fast/events/open-window-from-another-frame.html
 fast/history/history_reload.html
 http/tests/navigation/new-window-redirect-history.html
 http/tests/navigation/target-frame-from-window.html

@@ -1,3 +1,23 @@
+2008-01-09  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Darin, Sam and Adam.
+
+        -<rdar://problem/5654486> REGRESSION (Safari 3.0.4-TOT): clicking on
+        link in gmail message displays JavaScript alert falsely complaining
+        about pop-up blocking.
+        - Added the ability to enable the pop-up blocker via the
+        LayoutTestController.
+
+        * DumpRenderTree/LayoutTestController.cpp:
+        (setPopupBlockingEnabledCallback):
+        (LayoutTestController::staticFunctions):
+        * DumpRenderTree/LayoutTestController.h:
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (setDefaultsToConsistentValuesForTesting):
+        (resetWebViewToConsistentStateBeforeTesting):
+        * DumpRenderTree/mac/LayoutTestControllerMac.mm:
+        (LayoutTestController::setPopupBlockingEnabled):
+
 2008-01-10  Lars Knoll  <lars@trolltech.com>
 
         Reviewed by Simon.

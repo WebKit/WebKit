@@ -1,3 +1,20 @@
+2008-01-10  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Darin, Sam, and Adam.
+
+        - <rdar://problem/5654486> REGRESSION (Safari 3.0.4-TOT): clicking on
+        - link in gmail message displays JavaScript alert falsely complaining
+        about pop-up blocking
+        - When trying to open a new window, we now see if the user gesture 
+        occurred in the global dynamic object instead of the frame since that is
+        the only place an event can occur. 
+
+        * bindings/js/kjs_window.cpp: - Check the dynamic global object instead
+        of the frame.
+        (KJS::allowPopUp):
+        (KJS::showModalDialog):
+        (KJS::WindowProtoFuncOpen::callAsFunction):
+
 2008-01-10  David Hyatt  <hyatt@apple.com>
 
         Fix for bug 16247, visibility:hidden not honored when hit testing inline replaced elements.

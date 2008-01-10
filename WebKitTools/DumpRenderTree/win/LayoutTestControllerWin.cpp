@@ -281,6 +281,19 @@ void LayoutTestController::setPrivateBrowsingEnabled(bool privateBrowsingEnabled
     preferences->setPrivateBrowsingEnabled(privateBrowsingEnabled);
 }
 
+void LayoutTestController::setPopupBlockingEnabled(bool privateBrowsingEnabled)
+{
+    COMPtr<IWebView> webView;
+    if (FAILED(frame->webView(&webView)))
+        return;
+
+    COMPtr<IWebPreferences> preferences;
+    if (FAILED(webView->preferences(&preferences)))
+        return;
+
+    preferences->setJavaScriptCanOpenWindowsAutomatically(!privateBrowsingEnabled);
+}
+
 void LayoutTestController::setTabKeyCyclesThroughElements(bool shouldCycle)
 {
     COMPtr<IWebView> webView;

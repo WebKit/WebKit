@@ -186,6 +186,11 @@ void LayoutTestController::setPrivateBrowsingEnabled(bool privateBrowsingEnabled
     [[[mainFrame webView] preferences] setPrivateBrowsingEnabled:privateBrowsingEnabled];
 }
 
+void LayoutTestController::setPopupBlockingEnabled(bool popupBlockingEnabled)
+{
+    [[[mainFrame webView] preferences] setJavaScriptCanOpenWindowsAutomatically:!popupBlockingEnabled];
+}
+
 void LayoutTestController::setTabKeyCyclesThroughElements(bool cycles)
 {
     [[mainFrame webView] setTabKeyCyclesThroughElements:cycles];

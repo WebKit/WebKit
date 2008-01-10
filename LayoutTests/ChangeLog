@@ -1,3 +1,20 @@
+2008-01-10  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Darin, Sam, and Adam.
+
+        -<rdar://problem/5654486> REGRESSION (Safari 3.0.4-TOT): clicking on
+        link in gmail message displays JavaScript alert falsely complaining
+        about pop-up blocking
+        - When trying to open a new window, we now see if the user gesture
+        occurred in the global dynamic object instead of the frame since that is
+        the only place an event can occur.
+
+        * fast/events/open-window-from-another-frame-expected.txt: Added.
+        * fast/events/open-window-from-another-frame.html: Added.
+        * fast/events/resources/open-window-from-another-frame-otherFrame.html: Added.
+        * fast/events/resources/window-opened.html: Added.
+        * platform/win/Skipped:
+
 2008-01-10  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.

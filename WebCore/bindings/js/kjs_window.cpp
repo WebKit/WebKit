@@ -278,10 +278,11 @@ void Window::mark()
         d->loc->mark();
 }
 
-static bool allowPopUp(Frame* frame)
+static bool allowPopUp(ExecState* exec)
 {
-    if (!frame)
-        return false;
+    Frame* frame = Window::retrieveActive(exec)->impl()->frame();
+
+    ASSERT(frame);
     if (frame->scriptProxy()->processingUserGesture())
         return true;
     Settings* settings = frame->settings();
@@ -379,7 +380,7 @@ static bool canShowModalDialogNow(const Frame* frame)
 
 static JSValue* showModalDialog(ExecState* exec, Frame* frame, const String& url, JSValue* dialogArgs, const String& featureArgs)
 {
-    if (!canShowModalDialogNow(frame) || !allowPopUp(frame))
+    if (!canShowModalDialogNow(frame) || !allowPopUp(exec))
         return jsUndefined();
 
     const HashMap<String, String> features = parseModalDialogFeatures(featureArgs);
@@ -1050,7 +1051,7 @@ JSValue* WindowProtoFuncOpen::callAsFunction(ExecState* exec, JSObject* thisObj,
 
     // Because FrameTree::find() returns true for empty strings, we must check for empty framenames.
     // Otherwise, illegitimate window.open() calls with no name will pass right through the popup blocker.
-    if (!allowPopUp(frame) && (frameName.isEmpty() || !frame->tree()->find(frameName)))
+    if (!allowPopUp(exec) && (frameName.isEmpty() || !frame->tree()->find(frameName)))
         return jsUndefined();
 
     // Get the target frame for the special cases of _top and _parent.  In those
