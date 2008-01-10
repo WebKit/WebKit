@@ -1,3 +1,22 @@
+2008-01-10  Simon Hausmann  <hausmann@webkit.org>
+
+        Reviewed by Lars.
+
+        http://bugs.webkit.org/show_bug.cgi?id=16588
+
+        Added a (last) Frame argument to ResourceHandle::loadResourceSynchronously.
+        This allows implementing the synchronous loading correctly for the Qt port where the networking
+        backend is bound to the page.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::loadResourceSynchronously):
+        * platform/network/ResourceHandle.h:
+        * platform/network/cf/ResourceHandleCFNet.cpp:
+        * platform/network/curl/ResourceHandleCurl.cpp:
+        * platform/network/mac/ResourceHandleMac.mm:
+        * platform/network/qt/ResourceHandleQt.cpp:
+        (WebCore::ResourceHandle::loadResourceSynchronously):
+
 2008-01-10  Kevin Ollivier  <kevino@theolliviers.com>
 
         wx build fix for changes in r29328

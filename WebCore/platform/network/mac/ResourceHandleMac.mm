@@ -229,7 +229,7 @@ bool ResourceHandle::willLoadFromCache(ResourceRequest& request)
     return nsURLResponse;
 }
 
-void ResourceHandle::loadResourceSynchronously(const ResourceRequest& request, ResourceError& error, ResourceResponse& response, Vector<char>& data)
+void ResourceHandle::loadResourceSynchronously(const ResourceRequest& request, ResourceError& error, ResourceResponse& response, Vector<char>& data, Frame*)
 {
     NSError *nsError = nil;
     
