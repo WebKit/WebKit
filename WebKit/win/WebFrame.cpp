@@ -1069,13 +1069,6 @@ void WebFrame::initWithWebFrameView(IWebFrameView* /*view*/, IWebView* webView, 
     this->AddRef(); // We release this ref in frameLoaderDestroyed()
     Frame* frame = new Frame(page, ownerElement, this);
     d->frame = frame;
-
-    FrameView* frameView = new FrameView(frame);
-
-    frame->setView(frameView);
-    frameView->deref(); // FrameViews are created with a ref count of 1. Release this ref since we've assigned it to frame.
-
-    frameView->setContainingWindow(viewWindow);
 }
 
 Frame* WebFrame::impl()
@@ -1838,16 +1831,43 @@ void WebFrame::savePlatformDataToCachedPage(CachedPage* cachedPage)
 
 void WebFrame::transitionToCommittedFromCachedPage(CachedPage*)
 {
-    transitionToCommittedForNewPage();
 }
 
 void WebFrame::transitionToCommittedForNewPage()
 {
-    ASSERT(core(this));
+    Frame* frame = core(this);
+    ASSERT(frame);
 
-    // On the mac, this is done in Frame::setView, but since we don't have separate
-    // frame views, we'll just do it here instead.
-    core(this)->loader()->resetMultipleFormSubmissionProtection();
+    Page* page = frame->page();
+    ASSERT(page);
+
+    bool isMainFrame = frame == page->mainFrame();
+
+    if (isMainFrame && frame->view())
+        frame->view()->detachFromWindow();
+
+    frame->setView(0);
+
+    FrameView* frameView;
+    if (isMainFrame) {
+        RECT rect;
+        d->webView->frameRect(&rect);
+        frameView = new FrameView(frame, IntRect(rect).size());
+    } else
+        frameView = new FrameView(frame);
+
+    frame->setView(frameView);
+    frameView->deref(); // FrameViews are created with a ref count of 1. Release this ref since we've assigned it to frame.
+
+    HWND viewWindow;
+    if (SUCCEEDED(d->webView->viewWindow(reinterpret_cast<OLE_HANDLE*>(&viewWindow))))
+        frameView->setContainingWindow(viewWindow);
+
+    if (isMainFrame)
+        frameView->attachToWindow();
+
+    if (frame->ownerRenderer())
+        frame->ownerRenderer()->setWidget(frameView);
 }
 
 void WebFrame::updateGlobalHistoryForStandardLoad(const KURL& url)

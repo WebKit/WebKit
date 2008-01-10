@@ -50,6 +50,13 @@ template <typename T> class Timer;
 class FrameView : public ScrollView {
 public:
     FrameView(Frame*);
+
+    // On the Mac, FrameViews always get their size from the underlying NSView,
+    // so passing in a size is nonsensical.
+#if !PLATFORM(MAC)
+    FrameView(Frame*, const IntSize& initialSize);
+#endif
+
     virtual ~FrameView();
 
     Frame* frame() const { return m_frame.get(); }

@@ -79,6 +79,7 @@ void Widget::setGtkWidget(GtkWidget* widget)
 
 Widget::~Widget()
 {
+    ASSERT(!parent());
     delete data;
 }
 

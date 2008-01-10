@@ -1,3 +1,25 @@
+2008-01-10  Adam Roben  <aroben@apple.com>
+
+        Fixes to allow multiple FrameViews on Windows
+
+        Reviewed by Hyatt.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::FrameView): Added a new constructor that takes an
+        IntSize to specify the FrameView's initial size.
+        (WebCore::FrameView::scheduleRelayout): Added an assertion that our
+        Document is not in the page cache.
+        * page/FrameView.h:
+        * platform/gtk/WidgetGtk.cpp:
+        (WebCore::Widget::~Widget): Add a warm, fuzzy ASSERT.
+        * platform/qt/WidgetQt.cpp:
+        (WebCore::Widget::~Widget): Ditto.
+        * rendering/RenderWidget.cpp:
+        (WebCore::RenderWidget::setWidget): Make sure to remove any existing
+        Widget from the Widget hierarchy before deleting it. One instance
+        where this is needed is when setWidget is called during FrameView
+        creation on Windows.
+
 2008-01-10  Alp Toker  <alp@atoker.com>
 
         Include math.h to get ceilf(). Part of the SVG font GTK+ build fix.

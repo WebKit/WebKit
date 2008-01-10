@@ -144,6 +144,18 @@ FrameView::FrameView(Frame* frame)
     show();
 }
 
+#if !PLATFORM(MAC)
+FrameView::FrameView(Frame* frame, const IntSize& initialSize)
+    : m_refCount(1)
+    , m_frame(frame)
+    , d(new FrameViewPrivate(this))
+{
+    init();
+    Widget::setFrameGeometry(IntRect(x(), y(), initialSize.width(), initialSize.height()));
+    show();
+}
+#endif
+
 FrameView::~FrameView()
 {
     if (d->postLayoutTasksTimer.isActive()) {
@@ -699,6 +711,7 @@ void FrameView::layoutTimerFired(Timer<FrameView>*)
 
 void FrameView::scheduleRelayout()
 {
+    ASSERT(!m_frame->document() || !m_frame->document()->inPageCache());
     ASSERT(m_frame->view() == this);
 
     if (d->layoutRoot) {

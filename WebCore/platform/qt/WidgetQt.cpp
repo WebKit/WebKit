@@ -79,6 +79,7 @@ Widget::Widget()
 
 Widget::~Widget()
 {
+    Q_ASSERT(!parent());
     delete data;
     data = 0;
 }

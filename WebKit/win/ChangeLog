@@ -1,3 +1,46 @@
+2008-01-10  Adam Roben  <aroben@apple.com>
+
+        Fix many bugs by giving Windows one FrameView per page load
+        
+        Bugs include:
+            <rdar://5659200>
+                Windows back/forward cache causes crashes in the layout tests
+            <rdar://5659355>
+            <http://bugs.webkit.org/show_bug.cgi?id=16808>
+                REGRESSION: PLT broken on Windows due to back/forward cache
+            <rdar://5663654>
+            <http://bugs.webkit.org/show_bug.cgi?id=16607>
+                Random crashes in FrameView::scheduleRelayout while surfing
+                Thinkgeek
+
+        On Windows until now we've only had one FrameView per Frame. Once the
+        back/forward cache was turned on this started causing assertions to
+        fail and crashes to occur due to a single FrameView being both in the
+        back/forward cache (possibly multiple times!) and used by a live
+        document. We now create a new FrameView for each page load, just as
+        Mac does.
+
+        This has the side-effect of plugging some of the world leaks seen at
+        the end of the PLT.
+
+        Reviewed by Hyatt.
+
+        * WebFrame.cpp:
+        (WebFrame::initWithWebFrameView): Don't create the FrameView right
+        away -- it'll be created when the load is committed.
+        (WebFrame::transitionToCommittedFromCachedPage): Match the Mac by no
+        longer calling resetMultipleFormSubmissionProtection here.
+        (WebFrame::transitionToCommittedForNewPage): Ported code from
+        -[WebCoreFrameBridge
+        createFrameViewWithNSView:marginWidth:marginHeight:],
+        -[WebCoreFrameBridge installInFrame:], and moved code here from
+        WebFrame::initWithWebFrameView and WebView::initWithFrame. WebCore
+        takes care of resetMultipleFormSubmissionProtection, just like it does
+        on the Mac.
+        * WebView.cpp:
+        (WebView::initWithFrame): Moved FrameView initialization code to
+        WebFrame::transitionToCommittedForNewPage.
+
 2008-01-09  Ada Chan  <adachan@apple.com>
 
         Fix crash that could happen if the key we are passing to the HashMap is 0 in WebView::interpretKeyEvent().
