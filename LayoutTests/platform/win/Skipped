@@ -282,9 +282,6 @@ webarchive
 svg/webarchive
 svg/custom/image-with-prefix-in-webarchive.svg
 
-# Negatively-sized RenderView <rdar://problem/5230387>
-fast/events/focusingUnloadedFrame.html
-
 # <rdar://problem/5230396> layoutTestController.addFileToPasteboardOnDrag is unimplemented
 fast/forms/dragging-to-file-input.html
 
