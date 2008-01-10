@@ -1,3 +1,9 @@
+2008-01-10  Kevin Ollivier  <kevino@theolliviers.com>
+
+        wx build fix for changes in r29328
+
+        * WebCoreSources.bkl:
+
 2008-01-09  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Sam.
