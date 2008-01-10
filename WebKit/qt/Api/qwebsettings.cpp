@@ -143,6 +143,12 @@ void QWebSettingsPrivate::apply()
     }
 }
 
+/*!
+    Returns the global default settings object.
+
+    Any setting changed on the default object is automatically applied to all
+    QWebPage instances where the particular setting is not overriden already.
+*/
 QWebSettings *QWebSettings::defaultSettings()
 {
     static QWebSettings *global = 0;
@@ -151,6 +157,9 @@ QWebSettings *QWebSettings::defaultSettings()
     return global;
 }
 
+/*!
+    \internal
+*/
 QWebSettings::QWebSettings()
     : d(new QWebSettingsPrivate)
 {
@@ -170,6 +179,9 @@ QWebSettings::QWebSettings()
     d->attributes.insert(QWebSettings::JavascriptEnabled, true);
 }
 
+/*!
+    \internal
+*/
 QWebSettings::QWebSettings(WebCore::Settings *settings)
     : d(new QWebSettingsPrivate(settings))
 {
@@ -178,18 +190,27 @@ QWebSettings::QWebSettings(WebCore::Settings *settings)
     allSettings()->append(d);
 }
 
+/*!
+    \internal
+*/
 QWebSettings::~QWebSettings()
 {
     if (d->settings)
         allSettings()->removeAll(d);
 }
 
+/*!
+    Sets the font size for \a type to \a size.
+*/
 void QWebSettings::setFontSize(FontSize type, int size)
 {
     d->fontSizes.insert(type, size);
     d->apply();
 }
 
+/*!
+    Returns the default font size for \a type.
+*/
 int QWebSettings::fontSize(FontSize type) const
 {
     int defaultValue = 0;
@@ -200,23 +221,44 @@ int QWebSettings::fontSize(FontSize type) const
     return d->fontSizes.value(type, defaultValue);
 }
 
+/*!
+    Resets the font size for \a type to the size specified in the default settings object.
+*/
 void QWebSettings::resetFontSize(FontSize type)
 {
     d->fontSizes.remove(type);
     d->apply();
 }
 
+/*!
+    Specifies the location of a user stylesheet to load with every web page.
+
+    The location can be a URL as well as a path on the local filesystem.
+
+    \sa userStyleSheetLocation
+*/
 void QWebSettings::setUserStyleSheetLocation(const QString &location)
 {
     d->userStyleSheetLocation = location;
     d->apply();
 }
 
+/*!
+    Returns the location of the user stylesheet.
+
+    \sa setUserStyleSheetLocation
+*/
 QString QWebSettings::userStyleSheetLocation() const
 {
     return d->userStyleSheetLocation;
 }
 
+/*!
+    Enables or disables the icon database. The icon database is used to store favicons
+    associated with web sites.
+
+    If \a enabled is true then \a location specifies a filename the icons will be stored.
+*/
 void QWebSettings::setIconDatabaseEnabled(bool enabled, const QString &location)
 {
     WebCore::iconDatabase()->setEnabled(enabled);
@@ -231,11 +273,19 @@ void QWebSettings::setIconDatabaseEnabled(bool enabled, const QString &location)
     }
 }
 
+/*!
+    Returns whether the icon database is enabled or not.
+
+    \sa setIconDatabaseEnabled
+*/
 bool QWebSettings::iconDatabaseEnabled()
 {
     return WebCore::iconDatabase()->isEnabled() && WebCore::iconDatabase()->isOpen();
 }
 
+/*!
+    Sets \a graphic to be drawn when QtWebKit needs to drawn an image of the given \a type.
+*/
 void QWebSettings::setWebGraphic(WebGraphic type, const QPixmap &graphic)
 {
     WebGraphicHash *h = graphics();
@@ -245,17 +295,26 @@ void QWebSettings::setWebGraphic(WebGraphic type, const QPixmap &graphic)
         h->insert(type, graphic);
 }
 
+/*!
+    Returns a previously set pixmap that is used to draw replacement graphics of the specified \a type.
+*/
 QPixmap QWebSettings::webGraphic(WebGraphic type)
 {
     return graphics()->value(type);
 }
 
+/*!
+    Sets the default font family to \a family for the specified \a type of font.
+*/
 void QWebSettings::setFontFamily(FontType type, const QString &family)
 {
     d->fontFamilies.insert(type, family);
     d->apply();
 }
 
+/*!
+    Returns the default font family to \a family for the specified \a type of font.
+*/
 QString QWebSettings::fontFamily(FontType type) const
 {
     QString defaultValue;
@@ -266,18 +325,27 @@ QString QWebSettings::fontFamily(FontType type) const
     return d->fontFamilies.value(type, defaultValue);
 }
 
+/*!
+    Resets the font family for specified \a type of fonts in a web page to the default.
+*/
 void QWebSettings::resetFontFamily(FontType type)
 {
     d->fontFamilies.remove(type);
     d->apply();
 }
 
+/*!
+    Enables or disables the specified \a attr feature depending on the value of \a on.
+*/
 void QWebSettings::setAttribute(WebAttribute attr, bool on)
 {
     d->attributes.insert(attr, on);
     d->apply();
 }
 
+/*!
+    Returns true if \a attr is enabled; false otherwise.
+*/
 bool QWebSettings::testAttribute(WebAttribute attr) const
 {
     bool defaultValue = false;
@@ -288,6 +356,9 @@ bool QWebSettings::testAttribute(WebAttribute attr) const
     return d->attributes.value(attr, defaultValue);
 }
 
+/*!
+    Clears the setting of \a attr. The global default for \a attr will be used instead.
+*/
 void QWebSettings::clearAttribute(WebAttribute attr)
 {
     d->attributes.remove(attr);

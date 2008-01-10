@@ -1,3 +1,22 @@
+2008-01-10  Simon Hausmann  <hausmann@webkit.org>
+
+        Reviewed by Lars.
+
+        Documentation for QWebSettings
+        
+
+        * Api/qwebsettings.cpp:
+        (QWebSettings::~QWebSettings):
+        (QWebSettings::setFontSize):
+        (QWebSettings::resetFontSize):
+        (QWebSettings::setUserStyleSheetLocation):
+        (QWebSettings::userStyleSheetLocation):
+        (QWebSettings::iconDatabaseEnabled):
+        (QWebSettings::webGraphic):
+        (QWebSettings::setFontFamily):
+        (QWebSettings::resetFontFamily):
+        (QWebSettings::setAttribute):
+
 2008-01-10  Lars Knoll  <lars@trolltech.com>
 
         Reviewed by Simon.
