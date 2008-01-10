@@ -1,3 +1,13 @@
+2008-01-09  Ada Chan  <adachan@apple.com>
+
+        Tests tabbing with different combinations of modifiers keys, where some
+        should advance focus and some should not.
+
+        Reviewed by Darin.
+
+        * fast/forms/tabs-with-modifiers-expected.txt: Added.
+        * fast/forms/tabs-with-modifiers.html: Copied from fast/forms/focus2.html.
+
 2008-01-09  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.

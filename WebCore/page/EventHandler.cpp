@@ -1591,7 +1591,7 @@ void EventHandler::defaultKeyboardEventHandler(KeyboardEvent* event)
         if (event->defaultHandled())
             return;
         if (event->keyIdentifier() == "U+0009")
-            defaultTabEventHandler(event, false);
+            defaultTabEventHandler(event);
    }
    if (event->type() == keypressEvent) {
         m_frame->editor()->handleKeyboardEvent(event);
@@ -1847,20 +1847,25 @@ void EventHandler::defaultTextInputEventHandler(TextEvent* event)
     }
 }
 
-void EventHandler::defaultTabEventHandler(Event* event, bool isBackTab)
+void EventHandler::defaultTabEventHandler(KeyboardEvent* event)
 {
-    Page* page = m_frame->page();
-    // Tabs can be used in design mode editing. You can still move out with back tab.
-    if (!page || !page->tabKeyCyclesThroughElements() || (m_frame->document()->inDesignMode() && !isBackTab))
+    // We should only advance focus on tabs if no special modifier keys are held down.
+    if (event->ctrlKey() || event->metaKey() || event->altGraphKey())
         return;
-    FocusController* focus = page->focusController();
-    KeyboardEvent* keyboardEvent = findKeyboardEvent(event);
-    bool handled;
-    if (isBackTab)
-        handled = focus->advanceFocus(FocusDirectionBackward, keyboardEvent);
-    else
-        handled = focus->advanceFocus(keyboardEvent); // get direction from keyboard event
-    if (handled)
+
+    Page* page = m_frame->page();
+    if (!page)
+        return;
+    if (!page->tabKeyCyclesThroughElements())
+        return;
+
+    FocusDirection focusDirection = event->shiftKey() ? FocusDirectionBackward : FocusDirectionForward;
+
+    // Tabs can be used in design mode editing. You can still move out with back tab.
+    if (m_frame->document()->inDesignMode() && focusDirection == FocusDirectionForward)
+        return;
+
+    if (page->focusController()->advanceFocus(focusDirection, event))
         event->setDefaultHandled();
 }
 

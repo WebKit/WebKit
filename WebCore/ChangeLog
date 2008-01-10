@@ -1,3 +1,21 @@
+2008-01-09  Ada Chan  <adachan@apple.com>
+
+        Tabs with ctrl, meta, or altgraph modifier key down should not advance focus.
+
+        Reviewed by Darin.
+
+        Test: fast/forms/tabs-with-modifiers.html
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::defaultKeyboardEventHandler):
+        (WebCore::EventHandler::defaultTabEventHandler): bail if ctrl, meta, or altgraph key is down.  
+        Clean up the code a bit.
+        * page/EventHandler.h:
+        * page/FocusController.cpp: Remove the advanceFocus() that takes in a KeyboardEvent.  It was
+        only called in EventHandler::defaultTabEventHandler() but we have cleaned up the code there and
+        no longer needs it.
+        * page/FocusController.h:
+
 2008-01-09  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Mitz.
