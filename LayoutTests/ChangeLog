@@ -1,5 +1,17 @@
 2008-01-10  Dan Bernstein  <mitz@apple.com>
 
+        Reviewed by Darin Adler.
+
+        - re-enable crashing test after fixing http://bugs.webkit.org/show_bug.cgi?id=16782
+          <rdar://problem/5675331> REGRESSION(r29266): Reproducible crash in fast/replaced/image-map.html
+
+        * fast/replaced/image-map-expected.txt: Updated results for the new
+        behavior, which is to replace the document with the success message.
+        * fast/replaced/image-map.html: Copied from LayoutTests/fast/replaced/image-map.html-disabled.
+        * fast/replaced/image-map.html-disabled: Removed.
+
+2008-01-10  Dan Bernstein  <mitz@apple.com>
+
         Reviewed by John Sullivan.
 
         - make more tests pass on Windows by forcing font fallback to match
