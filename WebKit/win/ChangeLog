@@ -1,5 +1,15 @@
 2008-01-10  Maciej Stachowiak  <mjs@apple.com>
 
+        Not reviewed, build fix.
+        
+        - try to fix build
+
+        * WebDatabaseManager.cpp:
+        (WebDatabaseManager::databasesWithOrigin):
+        * WebSecurityOrigin.h:
+
+2008-01-10  Maciej Stachowiak  <mjs@apple.com>
+
         Reviewed by Sam.
 
         - remove SecurityOriginData and fold its functionality into SecurityOrigin

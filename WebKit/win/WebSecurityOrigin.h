@@ -36,7 +36,7 @@ class DECLSPEC_UUID("6EB8D98F-2723-4472-88D3-5936F9D6E631") WebSecurityOrigin : 
 public:
     // WebSecurityOrigin
     static WebSecurityOrigin* createInstance(WebCore::SecurityOrigin* origin);
-    const WebCore::SecurityOrigin* securityOrigin() const { return m_securityOrigin.get(); }
+    WebCore::SecurityOrigin* securityOrigin() const { return m_securityOrigin.get(); }
 
     // IUnknown
     virtual HRESULT STDMETHODCALLTYPE QueryInterface( 
