@@ -1,5 +1,11 @@
 2008-01-11  Mark Rowe  <mrowe@apple.com>
 
+        Qt build fix.
+
+        * platform/qt/TemporaryLinkStubs.cpp: Include CString.h.
+
+2008-01-11  Mark Rowe  <mrowe@apple.com>
+
         Qt build fix.  Add link stubs for the new FileSystem.h functions introduced
         in r29399.
 

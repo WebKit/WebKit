@@ -32,6 +32,7 @@
 #include "config.h"
 
 #include "AXObjectCache.h"
+#include "CString.h"
 #include "CachedResource.h"
 #include "CookieJar.h"
 #include "Cursor.h"
