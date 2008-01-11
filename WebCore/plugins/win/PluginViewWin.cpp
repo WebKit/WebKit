@@ -848,7 +848,7 @@ void PluginViewWin::performRequest(PluginRequestWin* request)
             m_streams.add(stream);
             stream->start();
         } else {
-            m_parentFrame->loader()->urlSelected(request->frameLoadRequest(), 0, false, true);
+            m_parentFrame->loader()->load(request->frameLoadRequest().resourceRequest(), request->frameLoadRequest().frameName());
       
             // FIXME: <rdar://problem/4807469> This should be sent when the document has finished loading
             if (request->sendNotification()) {

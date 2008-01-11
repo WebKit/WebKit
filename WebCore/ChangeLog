@@ -1,3 +1,13 @@
+2008-01-10  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam.
+
+        Use the correct frame loader load method. Using the old method would not cause a 
+        new window to be open if the frame navigation was not allowed.
+        
+        * plugins/win/PluginViewWin.cpp:
+        (WebCore::PluginViewWin::performRequest):
+
 2008-01-10  Alp Toker  <alp@atoker.com>
 
         SVG font build fix for GTK+/autotools.
