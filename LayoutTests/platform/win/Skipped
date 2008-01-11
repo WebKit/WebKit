@@ -164,6 +164,7 @@ editing/pasteboard/4861080.html
 editing/pasteboard/4947130.html
 editing/pasteboard/drag-drop-dead-frame.html
 editing/pasteboard/drag-drop-modifies-page.html
+editing/pasteboard/drag-image-in-about-blank-frame.html
 editing/pasteboard/drag-image-to-contenteditable-in-iframe.html
 editing/pasteboard/drag-selected-image-to-contenteditable.html
 editing/pasteboard/drop-link.html
@@ -172,6 +173,7 @@ editing/pasteboard/subframe-dragndrop-1.html
 editing/selection/4895428-1.html
 editing/selection/4895428-4.html
 editing/selection/drag-select-1.html
+editing/selection/drag-to-contenteditable-iframe.html
 editing/selection/selection-background.html
 fast/events/5056619.html
 fast/events/drag-in-frames.html
@@ -364,14 +366,8 @@ svg/custom/use-css-no-effect-on-shadow-tree.svg
 svg/batik/text/textOnPath.svg
 svg/batik/text/verticalTextOnPath.svg
 
-# <rdar://5667259>
-editing/pasteboard/drag-image-in-about-blank-frame.html
-
 # <rdar://5667267>
 editing/selection/5131716-1.html
-
-# <rdar://5667269>
-editing/selection/drag-to-contenteditable-iframe.html
 
 # <rdar://5667273>
 editing/selection/fake-drag.html
