@@ -169,11 +169,6 @@ table {
     border-color: gray
 }
 
-table[align="center"] {
-    margin-left: auto;
-    margin-right: auto
-}
-
 thead {
     display: table-header-group;
     vertical-align: middle;

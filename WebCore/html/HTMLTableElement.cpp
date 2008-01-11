@@ -438,8 +438,13 @@ void HTMLTableElement::parseMappedAttribute(MappedAttribute* attr)
         addCSSLength(attr, CSS_PROP_MARGIN_LEFT, attr->value());
         addCSSLength(attr, CSS_PROP_MARGIN_RIGHT, attr->value());
     } else if (attr->name() == alignAttr) {
-        if (!attr->value().isEmpty())
-            addCSSProperty(attr, CSS_PROP_FLOAT, attr->value());
+        if (!attr->value().isEmpty()) {
+            if (equalIgnoringCase(attr->value(), "center")) {
+                addCSSProperty(attr, CSS_PROP_MARGIN_LEFT, CSS_VAL_AUTO);
+                addCSSProperty(attr, CSS_PROP_MARGIN_RIGHT, CSS_VAL_AUTO);
+            } else
+                addCSSProperty(attr, CSS_PROP_FLOAT, attr->value());
+        }
     } else if (attr->name() == valignAttr) {
         if (!attr->value().isEmpty())
             addCSSProperty(attr, CSS_PROP_VERTICAL_ALIGN, attr->value());
