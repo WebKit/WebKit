@@ -1,3 +1,16 @@
+2008-01-11  Adam Roben  <aroben@apple.com>
+
+        Fix a crash when pathToLocalResource fails and a leak
+
+        Reviewed by Darin.
+
+        * DumpRenderTree/LayoutTestController.cpp:
+        (pathToLocalResourceCallback): Dont leak the JSStringRef, and make
+        sure not to pass null to JSValueMakeString.
+        * DumpRenderTree/win/LayoutTestControllerWin.cpp:
+        (LayoutTestController::pathToLocalResource): Print an error message if
+        the conversion fails so it's clear what happened.
+
 2008-01-11  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by John Sullivan.

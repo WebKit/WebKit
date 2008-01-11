@@ -149,9 +149,13 @@ void LayoutTestController::notifyDone()
 
 JSStringRef LayoutTestController::pathToLocalResource(JSContextRef context, JSStringRef url)
 {
+    wstring input(JSStringGetCharactersPtr(url), JSStringGetLength(url));
+
     wstring localPath;
-    if (!resolveCygwinPath(wstring(JSStringGetCharactersPtr(url), JSStringGetLength(url)), localPath))
+    if (!resolveCygwinPath(input, localPath)) {
+        printf("ERROR: Failed to resolve Cygwin path %S\n", input.c_str());
         return 0;
+    }
 
     return JSStringCreateWithCharacters(localPath.c_str(), localPath.length());
 }
