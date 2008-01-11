@@ -12,9 +12,6 @@ SOURCES += \
     pcre_ucp_searchfuncs.cpp \
     pcre_xclass.cpp
 
-CTGENFILE += \
-    dftables.cpp
-
 !CONFIG(QTDIR_build) {
     defineTest(addExtraCompiler) {
         QMAKE_EXTRA_COMPILERS += $$1
@@ -27,8 +24,7 @@ CTGENFILE += \
 
 # GENERATOR: "chartables.c": compile and execute the chartables generator (and add it to sources)
 ctgen.output = $$GENERATED_SOURCES_DIR/chartables.c
-ctgen.commands = $$OUTPUT_DIR/JavaScriptCore/pcre/tmp/dftables ${QMAKE_FILE_OUT}
-ctgen.input = CTGENFILE
+ctgen.commands = dftables ${QMAKE_FILE_OUT}
 ctgen.CONFIG += target_predeps no_link
 ctgen.variable_out = GENERATED_SOURCES
 ctgen.dependency_type = TYPE_C

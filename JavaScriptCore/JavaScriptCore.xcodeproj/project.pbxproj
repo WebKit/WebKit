@@ -13,9 +13,6 @@
 			buildPhases = (
 				65FB3F6509D11E9100F49DEB /* Generate Derived Sources */,
 			);
-			dependencies = (
-				5D2F21D80BDFAB1D0082B294 /* PBXTargetDependency */,
-			);
 			name = "Derived Sources";
 			productName = "Derived Sources";
 		};
@@ -223,7 +220,6 @@
 		932FC11D0824A6A3005B3C75 /* create_hash_table in Headers */ = {isa = PBXBuildFile; fileRef = F692A8540255597D01FF60F7 /* create_hash_table */; settings = {ATTRIBUTES = (Private, ); }; };
 		935AF46C09E9D9DB00ACD1D8 /* Forward.h in Headers */ = {isa = PBXBuildFile; fileRef = 935AF46909E9D9DB00ACD1D8 /* Forward.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		935AF46E09E9D9DB00ACD1D8 /* UnusedParam.h in Headers */ = {isa = PBXBuildFile; fileRef = 935AF46B09E9D9DB00ACD1D8 /* UnusedParam.h */; };
-		935F69FE08245057003D1A45 /* dftables.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6541720E039E08B90058BFEB /* dftables.cpp */; };
 		937013480CA97E0E00FA14D3 /* pcre_ucp_searchfuncs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 937013470CA97E0E00FA14D3 /* pcre_ucp_searchfuncs.cpp */; settings = {COMPILER_FLAGS = "-Wno-sign-compare"; }; };
 		938C4F6A0CA06BC700D9310A /* ASCIICType.h in Headers */ = {isa = PBXBuildFile; fileRef = 938C4F690CA06BC700D9310A /* ASCIICType.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		938C4F6C0CA06BCE00D9310A /* DisallowCType.h in Headers */ = {isa = PBXBuildFile; fileRef = 938C4F6B0CA06BCE00D9310A /* DisallowCType.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -255,22 +251,6 @@
 			);
 		};
 		1CFE4BF10B0BA22200CC444D /* PBXBuildRule */ = {
-			isa = PBXBuildRule;
-			compilerSpec = com.apple.compilers.gcc.4_0;
-			fileType = sourcecode.cpp;
-			isEditable = 1;
-			outputFiles = (
-			);
-		};
-		5DAD97A80B39B78E0014FEFE /* PBXBuildRule */ = {
-			isa = PBXBuildRule;
-			compilerSpec = com.apple.compilers.gcc.4_0;
-			fileType = sourcecode.c;
-			isEditable = 1;
-			outputFiles = (
-			);
-		};
-		5DAD97A80B39B88E0014FEFE /* PBXBuildRule */ = {
 			isa = PBXBuildRule;
 			compilerSpec = com.apple.compilers.gcc.4_0;
 			fileType = sourcecode.cpp;
@@ -363,13 +343,6 @@
 			proxyType = 1;
 			remoteGlobalIDString = 14BD59BE0A3E8F9000BAF59C;
 			remoteInfo = testapi;
-		};
-		5D2F21D70BDFAB1D0082B294 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 935F69F508244FEA003D1A45;
-			remoteInfo = dftables;
 		};
 		65FB3F7D09D11EF300F49DEB /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -506,7 +479,6 @@
 		652246A40C8D7A0E007BDAF7 /* HashIterators.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HashIterators.h; sourceTree = "<group>"; };
 		65400C0F0A69BAF200509887 /* PropertyNameArray.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = PropertyNameArray.cpp; sourceTree = "<group>"; };
 		65400C100A69BAF200509887 /* PropertyNameArray.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = PropertyNameArray.h; sourceTree = "<group>"; };
-		6541720E039E08B90058BFEB /* dftables.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; name = dftables.cpp; path = pcre/dftables.cpp; sourceTree = "<group>"; tabWidth = 8; };
 		6541720F039E08B90058BFEB /* pcre.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; name = pcre.h; path = pcre/pcre.h; sourceTree = "<group>"; tabWidth = 8; };
 		6541BD6E08E80A17002CBEE7 /* TCPageMap.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = TCPageMap.h; sourceTree = "<group>"; tabWidth = 8; };
 		6541BD6F08E80A17002CBEE7 /* TCSpinLock.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = TCSpinLock.h; sourceTree = "<group>"; tabWidth = 8; };
@@ -577,7 +549,6 @@
 		933A349D038AE80F008635CE /* identifier.cpp */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = identifier.cpp; sourceTree = "<group>"; tabWidth = 8; };
 		935AF46909E9D9DB00ACD1D8 /* Forward.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Forward.h; sourceTree = "<group>"; };
 		935AF46B09E9D9DB00ACD1D8 /* UnusedParam.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UnusedParam.h; sourceTree = "<group>"; };
-		935F69F608244FEA003D1A45 /* dftables */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = dftables; sourceTree = BUILT_PRODUCTS_DIR; };
 		937013470CA97E0E00FA14D3 /* pcre_ucp_searchfuncs.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = pcre_ucp_searchfuncs.cpp; path = pcre/pcre_ucp_searchfuncs.cpp; sourceTree = "<group>"; };
 		9374D3A7038D9D74008635CE /* scope_chain.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = scope_chain.h; sourceTree = "<group>"; tabWidth = 8; };
 		9374D3A8038D9D74008635CE /* scope_chain.cpp */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = scope_chain.cpp; sourceTree = "<group>"; tabWidth = 8; };
@@ -698,13 +669,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		935F69F408244FEA003D1A45 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -737,7 +701,6 @@
 				932FC3C20824BB70005B3C75 /* Resources */,
 				034768DFFF38A50411DB9C8B /* Products */,
 				0867D69AFE84028FC02AAC07 /* Frameworks */,
-				932FC3C10824BB61005B3C75 /* Intermediates */,
 				1C90513E0BA9E8830081E9D0 /* Configurations */,
 			);
 			name = JavaScriptCore;
@@ -1069,7 +1032,6 @@
 		65417203039E01F90058BFEB /* pcre */ = {
 			isa = PBXGroup;
 			children = (
-				6541720E039E08B90058BFEB /* dftables.cpp */,
 				6541720F039E08B90058BFEB /* pcre.h */,
 				930754BF08B0F68000AB3056 /* pcre_compile.cpp */,
 				930754E908B0F78500AB3056 /* pcre_exec.cpp */,
@@ -1080,16 +1042,6 @@
 				93E26BFC08B151D400F85226 /* ucpinternal.h */,
 			);
 			name = pcre;
-			sourceTree = "<group>";
-			tabWidth = 4;
-			usesTabs = 0;
-		};
-		932FC3C10824BB61005B3C75 /* Intermediates */ = {
-			isa = PBXGroup;
-			children = (
-				935F69F608244FEA003D1A45 /* dftables */,
-			);
-			name = Intermediates;
 			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 0;
@@ -1375,24 +1327,6 @@
 			productReference = 932F5BE10822A1C700736975 /* testkjs */;
 			productType = "com.apple.product-type.tool";
 		};
-		935F69F508244FEA003D1A45 /* dftables */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 149C275808902AFE008A9EFC /* Build configuration list for PBXNativeTarget "dftables" */;
-			buildPhases = (
-				935F69F308244FEA003D1A45 /* Sources */,
-				935F69F408244FEA003D1A45 /* Frameworks */,
-			);
-			buildRules = (
-				5DAD97A80B39B78E0014FEFE /* PBXBuildRule */,
-				5DAD97A80B39B88E0014FEFE /* PBXBuildRule */,
-			);
-			dependencies = (
-			);
-			name = dftables;
-			productName = dftables;
-			productReference = 935F69F608244FEA003D1A45 /* dftables */;
-			productType = "com.apple.product-type.tool";
-		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -1409,7 +1343,6 @@
 				932F5BE30822A1C700736975 /* All */,
 				932F5B3E0822A1C700736975 /* JavaScriptCore */,
 				65FB3F6609D11E9100F49DEB /* Derived Sources */,
-				935F69F508244FEA003D1A45 /* dftables */,
 				1412111F0A48793C00480255 /* minidom */,
 				14BD59BE0A3E8F9000BAF59C /* testapi */,
 				932F5BDA0822A1C700736975 /* testkjs */,
@@ -1584,14 +1517,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		935F69F308244FEA003D1A45 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				935F69FE08245057003D1A45 /* dftables.cpp in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -1619,11 +1544,6 @@
 			isa = PBXTargetDependency;
 			target = 14BD59BE0A3E8F9000BAF59C /* testapi */;
 			targetProxy = 14BD59C60A3E8FA400BAF59C /* PBXContainerItemProxy */;
-		};
-		5D2F21D80BDFAB1D0082B294 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 935F69F508244FEA003D1A45 /* dftables */;
-			targetProxy = 5D2F21D70BDFAB1D0082B294 /* PBXContainerItemProxy */;
 		};
 		65FB3F7E09D11EF300F49DEB /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -1661,27 +1581,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				PRODUCT_NAME = minidom;
-			};
-			name = Production;
-		};
-		149C275908902AFE008A9EFC /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				PRODUCT_NAME = dftables;
-			};
-			name = Debug;
-		};
-		149C275A08902AFE008A9EFC /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				PRODUCT_NAME = dftables;
-			};
-			name = Release;
-		};
-		149C275C08902AFE008A9EFC /* Production */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				PRODUCT_NAME = dftables;
 			};
 			name = Production;
 		};
@@ -1834,16 +1733,6 @@
 				1412113A0A48798400480255 /* Debug */,
 				1412113B0A48798400480255 /* Release */,
 				1412113C0A48798400480255 /* Production */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Production;
-		};
-		149C275808902AFE008A9EFC /* Build configuration list for PBXNativeTarget "dftables" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				149C275908902AFE008A9EFC /* Debug */,
-				149C275A08902AFE008A9EFC /* Release */,
-				149C275C08902AFE008A9EFC /* Production */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Production;

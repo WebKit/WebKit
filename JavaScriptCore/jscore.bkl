@@ -103,12 +103,6 @@ JavaScriptCore Bakefile project file.
         
     </exe>
 
-    <exe id="dftables">
-        <dirname>$(SRCDIR)</dirname>
-        <include>$(SRCDIR)/wtf</include>
-        <sources>$(SRCDIR)/pcre/dftables.cpp</sources>
-    </exe>
-
     <action id="DerivedSources">
         <is-phony />
         <command>bash make-generated-sources.sh</command>

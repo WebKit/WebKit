@@ -1,3 +1,33 @@
+2008-01-10  David Kilzer  <ddkilzer@apple.com>
+
+        dftables should be rewritten as a script
+
+        <http://bugs.webkit.org/show_bug.cgi?id=16818>
+        <rdar://problem/5681463>
+
+        Reviewed by Darin.
+
+        Rewrote the dftables utility in Perl.  Attempted to switch all
+        build systems to call the script directly instead of building
+        a binary first.  Only the Xcode build was able to be tested.
+
+        * DerivedSources.make: Added pcre directory to VPATH and changed
+        to invoke dftables directly.
+        * GNUmakefile.am: Removed build information and changed to invoke
+        dftables directly.
+        * JavaScriptCore.vcproj/JavaScriptCore.sln: Removed reference to
+        dftables project.
+        * JavaScriptCore.vcproj/JavaScriptCoreSubmit.sln: Ditto.
+        * JavaScriptCore.vcproj/dftables: Removed.
+        * JavaScriptCore.vcproj/dftables/dftables.vcproj: Removed.
+        * JavaScriptCore.xcodeproj/project.pbxproj: Removed dftables target.
+        * jscore.bkl: Removed dftables executable definition.
+        * pcre/dftables: Copied from JavaScriptCore/pcre/dftables.cpp.
+        * pcre/dftables.cpp: Removed.
+        * pcre/dftables.pro: Removed.
+        * pcre/pcre.pri: Removed references to dftables.cpp and changed to
+        invoke dftables directly.
+
 2008-01-10  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.

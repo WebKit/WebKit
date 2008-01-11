@@ -1,3 +1,14 @@
+2008-01-10  David Kilzer  <ddkilzer@apple.com>
+
+        dftables should be rewritten as a script
+
+        <http://bugs.webkit.org/show_bug.cgi?id=16818>
+        <rdar://problem/5681463>
+
+        Reviewed by Darin.
+
+        * WebKit.vcproj/WebKit.sln: Removed reference to dftables project.
+
 2008-01-10  Adam Roben  <aroben@apple.com>
 
         Fix many bugs by giving Windows one FrameView per page load

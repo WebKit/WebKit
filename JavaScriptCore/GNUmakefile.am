@@ -134,16 +134,12 @@ DerivedSources/lexer.lut.h: $(CREATE_HASH_TABLE) $(srcdir)/JavaScriptCore/kjs/ke
 %_object.lut.h: $(CREATE_HASH_TABLE) %_object.cpp
 	$^ -i > $@
 
-JavaScriptCore/pcre/chartables.c: $(top_builddir)/Programs/dftables$(EXEEXT)
-	./Programs/dftables $@
+JavaScriptCore/pcre/chartables.c: $(srcdir)/JavaScriptCore/pcre/dftables
+	$^ $@
 
 noinst_PROGRAMS += \
-	Programs/dftables \
 	Programs/minidom \
 	Programs/testkjs
-
-# dftables
-Programs_dftables_SOURCES = JavaScriptCore/pcre/dftables.cpp
 
 # minidom
 Programs_minidom_SOURCES = \

@@ -26,6 +26,7 @@
 
 VPATH = \
     $(JavaScriptCore)/kjs \
+    $(JavaScriptCore)/pcre \
 #
 
 .PHONY : all
@@ -60,5 +61,5 @@ grammar.cpp: grammar.y
 
 # character tables for PCRE
 
-chartables.c : $(BUILT_PRODUCTS_DIR)/dftables$(DFTABLES_EXTENSION)
+chartables.c : dftables
 	$^ $@
