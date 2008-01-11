@@ -1,3 +1,16 @@
+2008-01-11  Ada Chan  <adachan@apple.com>
+
+        <rdar://problem/5681557> On Windows Safari, mouse events are ignored after clicking on link that triggers download
+        Moved the call to cache page from provisionalLoadStarted() to commitProvisionalLoad(), since 
+        provisionalLoadStarted() can be called for cases that do not result in a page navigation, for example,
+        when a link to download a file has been clicked.
+
+        Reviewed by John and Anders.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::provisionalLoadStarted):
+        (WebCore::FrameLoader::commitProvisionalLoad):
+
 2008-01-11  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Reviewed by Anders.
