@@ -200,12 +200,6 @@ else
         fi
         
         cd $WK_ROOT/JavaScriptCore
-        # FIXME: The below is needed because Bakefile doesn't yet properly set dependencies on 
-        # creating the build dir. Everything works when you do make all, but not when you
-        # try to make a specific target. For more info, see: http://www.bakefile.org/ticket/167
-        mkdir -p obj-gnu
-        mkdir -p obj-msvc
-        do_make . "" dftables$EXE
         ./make-generated-sources.sh
         if [ $? != 0 ]; then
             exit $? 

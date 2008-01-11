@@ -1,3 +1,10 @@
+2008-01-10  Kevin Ollivier  <kevino@theolliviers.com>
+
+        wx build fix. Don't build dftables any longer since it's now a Perl
+        script.
+
+        * wx/build-wxwebkit:
+
 2008-01-10  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.
