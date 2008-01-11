@@ -2,6 +2,15 @@
 
         Not reviewed, build fix.
         
+        - more build fixing
+
+        * WebDatabaseManager.cpp:
+        * WebSecurityOrigin.h:
+
+2008-01-10  Maciej Stachowiak  <mjs@apple.com>
+
+        Not reviewed, build fix.
+        
         - try to fix build
 
         * WebDatabaseManager.cpp:
