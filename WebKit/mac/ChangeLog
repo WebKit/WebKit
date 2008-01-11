@@ -1,5 +1,13 @@
 2008-01-10  Maciej Stachowiak  <mjs@apple.com>
 
+        Not reviewed. Build fix.
+        
+        - Attempt to fix mac build.
+
+        * Storage/WebDatabaseManager.mm:
+
+2008-01-10  Maciej Stachowiak  <mjs@apple.com>
+
         Reviewed by Sam.
 
         - remove SecurityOriginData and fold its functionality into SecurityOrigin

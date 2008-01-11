@@ -34,6 +34,7 @@
 #import "WebSecurityOriginInternal.h"
 
 #import <WebCore/DatabaseTracker.h>
+#import <WebCore/SecurityOrigin.h>
 
 using namespace WebCore;
 
