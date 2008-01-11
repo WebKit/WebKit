@@ -1448,6 +1448,7 @@ webcore_built_sources += \
 	DerivedSources/JSSVGFETileElement.cpp \
 	DerivedSources/JSSVGFETurbulenceElement.cpp \
 	DerivedSources/JSSVGFilterElement.cpp \
+	DerivedSources/JSSVGFontElement.cpp \
 	DerivedSources/JSSVGFontFaceElement.cpp \
 	DerivedSources/JSSVGFontFaceFormatElement.cpp \
 	DerivedSources/JSSVGFontFaceNameElement.cpp \
@@ -1455,6 +1456,7 @@ webcore_built_sources += \
 	DerivedSources/JSSVGFontFaceUriElement.cpp \
 	DerivedSources/JSSVGForeignObjectElement.cpp \
 	DerivedSources/JSSVGGElement.cpp \
+	DerivedSources/JSSVGGlyphElement.cpp \
 	DerivedSources/JSSVGGradientElement.cpp \
 	DerivedSources/JSSVGImageElement.cpp \
 	DerivedSources/JSSVGLengthList.cpp \
@@ -1462,6 +1464,7 @@ webcore_built_sources += \
 	DerivedSources/JSSVGLinearGradientElement.cpp \
 	DerivedSources/JSSVGMaskElement.cpp \
 	DerivedSources/JSSVGMarkerElement.cpp \
+	DerivedSources/JSSVGMissingGlyphElement.cpp \
 	DerivedSources/JSSVGZoomEvent.cpp
 
 IDL_BINDINGS += \
@@ -1826,31 +1829,41 @@ DerivedSources/CSSValueKeywords.h : $(WebCore)/css/CSSValueKeywords.in $(WebCore
 
 # SVG Features
 if ENABLE_SVG_USE
+FEATURE_DEFINES_JAVASCRIPT += ENABLE_SVG_USE=1
 SVG_FEATURES += ENABLE_SVG_USE=1
+webcore_cppflags += -DENABLE_SVG_USE=1
 endif
 
 if ENABLE_SVG_FONTS
+FEATURE_DEFINES_JAVASCRIPT += ENABLE_SVG_FONTS=1
 SVG_FEATURES += ENABLE_SVG_FONTS=1
+webcore_cppflags += -DENABLE_SVG_FONTS=1
 endif
 
 if ENABLE_SVG_FILTERS
+FEATURE_DEFINES_JAVASCRIPT += ENABLE_SVG_FILTERS=1
 SVG_FEATURES += ENABLE_SVG_FILTERS=1
+webcore_cppflags += -DENABLE_SVG_FILTERS=1
 endif
 
 if ENABLE_SVG_AS_IMAGE
+FEATURE_DEFINES_JAVASCRIPT += ENABLE_SVG_AS_IMAGE=1
 SVG_FEATURES += ENABLE_SVG_AS_IMAGE=1
+webcore_cppflags += -DENABLE_SVG_AS_IMAGE=1
 endif
 
 if ENABLE_SVG_ANIMATION
+FEATURE_DEFINES_JAVASCRIPT += ENABLE_SVG_ANIMATION=1
 SVG_FEATURES += ENABLE_SVG_ANIMATION=1
+webcore_cppflags += -DENABLE_SVG_ANIMATION=1
 endif
 
 # SVG tag and attribute names (need to pass an extra flag if svg experimental features are enabled)
-DerivedSources/SVGNames.cpp: DerivedSources/SVGElementFactory.cpp
+DerivedSources/SVGNames.cpp: DerivedSources/SVGElementFactory.cpp;
 
 if SVG_FLAGS
 DerivedSources/SVGElementFactory.cpp: $(WebCore)/dom/make_names.pl $(WebCore)/svg/svgtags.in $(WebCore)/svg/svgattrs.in
-	$(PERL) $< --tags $(WebCore)/svg/svgtags.in --attrs $(WebCore)/svg/svgattrs.in --extraDefines "$(SVG_FLAGS)" \
+	$(PERL) $< --tags $(WebCore)/svg/svgtags.in --attrs $(WebCore)/svg/svgattrs.in --extraDefines "$(SVG_FEATURES)" \
 	--namespace SVG --cppNamespace WebCore --namespaceURI "http://www.w3.org/2000/svg" --factory --attrsNullNamespace --output $(GENSOURCES)
 else
 DerivedSources/SVGElementFactory.cpp: $(WebCore)/dom/make_names.pl $(WebCore)/svg/svgtags.in $(WebCore)/svg/svgattrs.in

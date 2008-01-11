@@ -313,16 +313,16 @@ if test "$enable_coverage" = "yes"; then
 fi
 
 # check for SVG features, enabling SVG if necessary
-if test "$enable_svg" = "no" && (\
-   test "$enable_svg_animation" = "yes" || \
+if test "$enable_svg_animation" = "yes" || \
    test "$enable_svg_filters" = "yes" || \
    test "$enable_svg_fonts" = "yes" || \
    test "$enable_svg_as_image" = "yes" || \
-   test "$enable_svg_use_element" = "yes"); then
-
-   AC_MSG_WARN([SVG feature(s) requested but SVG is disabled.. Enabling SVG support])
-   enable_svg = yes
-   svg_flags = yes
+   test "$enable_svg_use_element" = "yes"; then
+   svg_flags=yes
+   if test "$enable_svg" = "no"; then
+       AC_MSG_WARN([SVG feature(s) requested but SVG is disabled.. Enabling SVG support])
+       enable_svg=yes
+   fi
 fi
 
 # OS conditionals

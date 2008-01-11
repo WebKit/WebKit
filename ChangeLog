@@ -1,3 +1,9 @@
+2008-01-10  Alp Toker  <alp@atoker.com>
+
+        SVG font build fix for GTK+/autotools.
+
+        * configure.ac:
+
 2008-01-05  Alp Toker  <alp@atoker.com>
 
         Rubber-stamped by Mark Rowe.
