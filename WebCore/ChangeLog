@@ -1,3 +1,10 @@
+2008-01-11  Antti Koivisto  <antti@apple.com>
+
+        Add a standalone version of the blog post video player as a manual test.
+
+        * manual-tests/resources/touch-poster.png: Added.
+        * manual-tests/video-player.html: Added.
+
 2008-01-10  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Adam.
