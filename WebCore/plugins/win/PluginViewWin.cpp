@@ -848,8 +848,6 @@ void PluginViewWin::performRequest(PluginRequestWin* request)
             m_streams.add(stream);
             stream->start();
         } else {
-            // Find the frame for navigation
-//            Frame* frame = 
             m_parentFrame->loader()->urlSelected(request->frameLoadRequest(), 0, false, true);
       
             // FIXME: <rdar://problem/4807469> This should be sent when the document has finished loading
