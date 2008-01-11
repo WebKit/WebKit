@@ -1,3 +1,15 @@
+2008-01-10  John Sullivan  <sullivan@apple.com>
+
+        Written by Hyatt, reviewed by me
+        
+        - fixed <rdar://problem/5654297> Mail crashes occurs at WebCore::FontFallbackList::fontDataAt() when attempting to display 
+          a <video> element that uses controls attribute
+
+        * rendering/MediaControlElements.cpp:
+        (WebCore::MediaControlShadowRootElement::MediaControlShadowRootElement):
+        force the render style to inherit from the media element's style; Hyatt filed 5682383 to cover cleaning
+        up this architecture, but this one-line fix will prevent the crash in the meantime
+
 2008-01-10  Ada Chan  <adachan@apple.com>
 
         Fix fast/forms/input-radio-checked-tab.html
