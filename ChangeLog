@@ -1,3 +1,9 @@
+2008-01-11  Mark Rowe  <mrowe@apple.com>
+
+        Attempt to fix the GTK+ and Qt builds.
+
+        * WebKit.pro:
+
 2008-01-10  Alp Toker  <alp@atoker.com>
 
         SVG font build fix for GTK+/autotools.
