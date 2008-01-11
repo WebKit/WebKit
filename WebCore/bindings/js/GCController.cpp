@@ -28,7 +28,10 @@
 
 #include <kjs/JSLock.h>
 #include <kjs/collector.h>
+
+#if USE(PTHREADS)
 #include <pthread.h>
+#endif
 
 using namespace KJS;
 
@@ -72,6 +75,7 @@ void GCController::garbageCollectNow()
 
 void GCController::garbageCollectOnAlternateThreadForDebugging(bool waitUntilDone)
 {
+#if USE(PTHREADS)
     pthread_t thread;
     pthread_create(&thread, NULL, collect, NULL);
 
@@ -79,6 +83,7 @@ void GCController::garbageCollectOnAlternateThreadForDebugging(bool waitUntilDon
         JSLock::DropAllLocks dropLocks; // Otherwise our lock would deadlock the collect thread we're joining
         pthread_join(thread, NULL);
     }
+#endif
 }
 
 } // namespace WebCore

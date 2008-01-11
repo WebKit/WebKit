@@ -1,3 +1,9 @@
+2008-01-11  Geoffrey Garen  <ggaren@apple.com>
+
+        Try to fix Qt build: don't use pthreads if they're not available.
+
+        * bindings/js/GCController.cpp:
+
 2008-01-10  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by John Sullivan.
