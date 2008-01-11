@@ -1,3 +1,7 @@
+2008-01-11  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        * platform/win/Skipped: Remove a test that was fixed in r29419.
+
 2008-01-11  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Adam Roben.

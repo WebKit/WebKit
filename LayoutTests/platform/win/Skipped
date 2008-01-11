@@ -401,9 +401,6 @@ http/tests/security/cross-frame-access-get.html
 media/audio-controls-rendering.html
 media/video-controls-rendering.html
 
-# <rdar://5683529>
-plugins/embed-inside-object.html
-
 ################################################################################
 ####################### No bugs filed about the below yet#######################
 ################################################################################
