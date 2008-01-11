@@ -1,3 +1,7 @@
+2008-01-11  Adam Roben  <aroben@apple.com>
+
+        * platform/win/Skipped: Added some new failures.
+
 2008-01-10  Stephanie  <slewis@apple.com>
 
         RS=Oliver.

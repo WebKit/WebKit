@@ -398,6 +398,19 @@ fast/forms/input-readonly-autoscroll.html
 # <rdar://5673709>
 fast/xsl/sort-unicode.xml
 
+# <rdar://5683523> Failing on at least one bot
+fast/dom/Window/window-screen-properties.html
+
+# <rdar://5683524>
+http/tests/security/cross-frame-access-get.html
+
+# <rdar://5683527>
+media/audio-controls-rendering.html
+media/video-controls-rendering.html
+
+# <rdar://5683529>
+plugins/embed-inside-object.html
+
 ################################################################################
 ####################### No bugs filed about the below yet#######################
 ################################################################################
