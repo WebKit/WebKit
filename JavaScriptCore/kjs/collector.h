@@ -54,9 +54,10 @@ namespace KJS {
     
     static void collectOnMainThreadOnly(JSValue*);
 
-    static size_t numGlobalObjects();
-    static size_t numProtectedObjects();
-    static HashCountedSet<const char*>* rootObjectTypeCounts();
+    static size_t globalObjectCount();
+    static size_t protectedObjectCount();
+    static size_t protectedGlobalObjectCount();
+    static HashCountedSet<const char*>* protectedObjectTypeCounts();
 
     class Thread;
     static void registerThread();

@@ -28,8 +28,12 @@
 #include "WebJavaScriptCollector.h"
 
 #pragma warning(push, 0)
-#include <WebCore/JavaScriptStatistics.h>
+#include <JavaScriptCore/collector.h>
+#include <WebCore/GCController.h>
 #pragma warning(pop)
+
+using namespace KJS;
+using namespace WebCore;
 
 // WebJavaScriptCollector ---------------------------------------------------------------------------
 
@@ -85,14 +89,14 @@ ULONG STDMETHODCALLTYPE WebJavaScriptCollector::Release(void)
 
 HRESULT STDMETHODCALLTYPE WebJavaScriptCollector::collect()
 {
-    WebCore::JavaScriptStatistics::garbageCollect();
+    gcController().garbageCollectNow();
     return S_OK;
 }
 
 HRESULT STDMETHODCALLTYPE WebJavaScriptCollector::collectOnAlternateThread( 
     /* [in] */ BOOL waitUntilDone)
 {
-    WebCore::JavaScriptStatistics::garbageCollectOnAlternateThread(!!waitUntilDone);
+    gcController().garbageCollectOnAlternateThread(!!waitUntilDone);
     return S_OK;
 }
 
@@ -104,6 +108,6 @@ HRESULT STDMETHODCALLTYPE WebJavaScriptCollector::objectCount(
         return E_POINTER;
     }
 
-    *count = (UINT)WebCore::JavaScriptStatistics::objectCount();
+    *count = (UINT)Collector::size();
     return S_OK;
 }

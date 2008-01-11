@@ -39,8 +39,6 @@
 		066C77310AB603FD00238CC4 /* RenderFileUploadControl.h in Headers */ = {isa = PBXBuildFile; fileRef = 066C772F0AB603FD00238CC4 /* RenderFileUploadControl.h */; };
 		06E81ED70AB5D5E900C87837 /* LocalCurrentGraphicsContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 06E81ED60AB5D5E900C87837 /* LocalCurrentGraphicsContext.h */; };
 		06E81EEC0AB5DA9700C87837 /* LocalCurrentGraphicsContext.mm in Sources */ = {isa = PBXBuildFile; fileRef = 06E81EEB0AB5DA9700C87837 /* LocalCurrentGraphicsContext.mm */; };
-		06FC442D0BAE5A9E0090EDE1 /* JavaScriptStatistics.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 06FC442B0BAE5A9E0090EDE1 /* JavaScriptStatistics.cpp */; };
-		06FC442E0BAE5A9E0090EDE1 /* JavaScriptStatistics.h in Headers */ = {isa = PBXBuildFile; fileRef = 06FC442C0BAE5A9E0090EDE1 /* JavaScriptStatistics.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0A4844990CA44CB200B7BD48 /* SoftLinking.h in Headers */ = {isa = PBXBuildFile; fileRef = 0A4844980CA44CB200B7BD48 /* SoftLinking.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1402645E0AFDC19B005919E2 /* LoggingMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1402645D0AFDC19B005919E2 /* LoggingMac.mm */; };
 		1403B99709EB13AF00797C7F /* DOMWindow.h in Headers */ = {isa = PBXBuildFile; fileRef = 1403B99509EB13AF00797C7F /* DOMWindow.h */; };
@@ -53,7 +51,7 @@
 		1419D2C50CEA6F6100FF507A /* TreeShared.h in Headers */ = {isa = PBXBuildFile; fileRef = 1419D2C40CEA6F6100FF507A /* TreeShared.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		142011B60A003133008303F9 /* JSCSSStyleDeclaration.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 142011B40A003133008303F9 /* JSCSSStyleDeclaration.cpp */; };
 		142011B70A003133008303F9 /* JSCSSStyleDeclaration.h in Headers */ = {isa = PBXBuildFile; fileRef = 142011B50A003133008303F9 /* JSCSSStyleDeclaration.h */; };
-		1432E8470C51493800B1500F /* GCController.h in Headers */ = {isa = PBXBuildFile; fileRef = 1432E8460C51493800B1500F /* GCController.h */; };
+		1432E8470C51493800B1500F /* GCController.h in Headers */ = {isa = PBXBuildFile; fileRef = 1432E8460C51493800B1500F /* GCController.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1432E8490C51493F00B1500F /* GCController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1432E8480C51493F00B1500F /* GCController.cpp */; };
 		1477E7760BF4134A00152872 /* PageCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1477E7740BF4134A00152872 /* PageCache.cpp */; };
 		1477E7770BF4134A00152872 /* PageCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 1477E7750BF4134A00152872 /* PageCache.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -4246,8 +4244,6 @@
 		066C772F0AB603FD00238CC4 /* RenderFileUploadControl.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = RenderFileUploadControl.h; sourceTree = "<group>"; };
 		06E81ED60AB5D5E900C87837 /* LocalCurrentGraphicsContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LocalCurrentGraphicsContext.h; sourceTree = "<group>"; };
 		06E81EEB0AB5DA9700C87837 /* LocalCurrentGraphicsContext.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = LocalCurrentGraphicsContext.mm; sourceTree = "<group>"; };
-		06FC442B0BAE5A9E0090EDE1 /* JavaScriptStatistics.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JavaScriptStatistics.cpp; sourceTree = "<group>"; };
-		06FC442C0BAE5A9E0090EDE1 /* JavaScriptStatistics.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JavaScriptStatistics.h; sourceTree = "<group>"; };
 		0A4844980CA44CB200B7BD48 /* SoftLinking.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SoftLinking.h; sourceTree = "<group>"; };
 		1402645D0AFDC19B005919E2 /* LoggingMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = LoggingMac.mm; sourceTree = "<group>"; };
 		1403B90C09EB124500797C7F /* DOMWindow.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = DOMWindow.idl; sourceTree = "<group>"; };
@@ -8420,8 +8416,6 @@
 				55998A5C052B59CC0017A6C1 /* AXObjectCache.h */,
 				4B3043B50AE0363200A82647 /* EditorClient.h */,
 				BC94D1560C275CAB006BC617 /* GlobalHistory.h */,
-				06FC442B0BAE5A9E0090EDE1 /* JavaScriptStatistics.cpp */,
-				06FC442C0BAE5A9E0090EDE1 /* JavaScriptStatistics.h */,
 			);
 			path = bridge;
 			sourceTree = "<group>";
@@ -13651,7 +13645,6 @@
 				1A762C7A0A074F2600989F5B /* JSXPathResult.h in Headers */,
 				93B70D6209EB0C7C009D8468 /* JSXSLTProcessor.h in Headers */,
 				656581F009D1508D000E61D7 /* JSXSLTProcessor.lut.h in Headers */,
-				06FC442E0BAE5A9E0090EDE1 /* JavaScriptStatistics.h in Headers */,
 				93309DF4099E64920056E581 /* JoinTextNodesCommand.h in Headers */,
 				6593923809AE4346002C531F /* KURL.h in Headers */,
 				85031B440A44EFC700F992E0 /* KeyboardEvent.h in Headers */,
@@ -15266,7 +15259,6 @@
 				1A762C770A074F2600989F5B /* JSXPathNSResolver.cpp in Sources */,
 				1A762C790A074F2600989F5B /* JSXPathResult.cpp in Sources */,
 				93B70D6109EB0C7C009D8468 /* JSXSLTProcessor.cpp in Sources */,
-				06FC442D0BAE5A9E0090EDE1 /* JavaScriptStatistics.cpp in Sources */,
 				93309DF3099E64920056E581 /* JoinTextNodesCommand.cpp in Sources */,
 				6593923709AE4346002C531F /* KURL.cpp in Sources */,
 				1A98956B0AA78F80005EF5EF /* KURLCFNet.cpp in Sources */,

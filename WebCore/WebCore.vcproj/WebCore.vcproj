@@ -6440,14 +6440,6 @@
 				RelativePath="..\bridge\GlobalHistory.h"
 				>
 			</File>
-			<File
-				RelativePath="..\bridge\JavaScriptStatistics.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\bridge\JavaScriptStatistics.h"
-				>
-			</File>
 			<Filter
 				Name="win"
 				>

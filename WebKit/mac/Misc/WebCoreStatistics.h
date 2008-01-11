@@ -37,11 +37,13 @@
 + (NSArray *)statistics;
 
 + (size_t)javaScriptObjectsCount;
-+ (size_t)javaScriptInterpretersCount;
++ (size_t)javaScriptGlobalObjectsCount;
 + (size_t)javaScriptProtectedObjectsCount;
-+ (NSCountedSet *)javaScriptRootObjectTypeCounts;
++ (size_t)javaScriptProtectedGlobalObjectsCount;
++ (NSCountedSet *)javaScriptProtectedObjectTypeCounts;
+
 + (void)garbageCollectJavaScriptObjects;
-+ (void)garbageCollectJavaScriptObjectsOnAlternateThread:(BOOL)waitUntilDone;
++ (void)garbageCollectJavaScriptObjectsOnAlternateThreadForDebugging:(BOOL)waitUntilDone;
 
 + (size_t)iconPageURLMappingCount;
 + (size_t)iconRetainedPageURLCount;
@@ -54,14 +56,14 @@
 + (void)startIgnoringWebCoreNodeLeaks;
 + (void)stopIgnoringWebCoreNodeLeaks;
 
-// These have been moved to WebCache but need to be around because they're needed by Tiger Safari.
+// Deprecated, but used by older versions of Safari.
 + (void)emptyCache;
 + (void)setCacheDisabled:(BOOL)disabled;
-
-// Deprecated
 + (size_t)javaScriptNoGCAllowedObjectsCount;
 + (size_t)javaScriptReferencedObjectsCount;
 + (NSSet *)javaScriptRootObjectClasses;
++ (NSCountedSet *)javaScriptRootObjectTypeCounts;
++ (size_t)javaScriptInterpretersCount;
 
 @end
 

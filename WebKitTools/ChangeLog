@@ -1,3 +1,10 @@
+2008-01-11  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by John Sullivan.
+
+        * DumpRenderTree/mac/GCControllerMac.mm:
+        (GCController::collectOnAlternateThread): Updated for name change.
+
 2008-01-10  Kevin Ollivier  <kevino@theolliviers.com>
 
         wx build fix. Don't build dftables any longer since it's now a Perl

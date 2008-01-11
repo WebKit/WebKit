@@ -1,3 +1,19 @@
+2008-01-10  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by John Sullivan.
+
+        Fixed some world leak reports:
+        * <rdar://problem/5669436> PLT complains about world leak of 1 JavaScript
+        Interpreter after running cvs-base suite
+
+        * <rdar://problem/5669423> PLT complains about world leak if browser
+        window is open when PLT starts
+        
+        * kjs/collector.h: Added the ability to distinguish between global
+        objects and GC-protected global objects, since we only consider the
+        latter to be world leaks.
+        * kjs/collector.cpp:
+
 2008-01-11  Mark Rowe  <mrowe@apple.com>
 
         Silence qmake warning about ctgen lacking input.

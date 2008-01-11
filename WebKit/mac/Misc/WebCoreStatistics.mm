@@ -29,12 +29,15 @@
 #import "WebCoreStatistics.h"
 
 #import "WebCache.h"
+#import <JavaScriptCore/collector.h>
+#import <JavaScriptCore/interpreter.h>
+#import <WebCore/GCController.h>
 #import <WebCore/IconDatabase.h>
-#import <WebCore/JavaScriptStatistics.h>
 #import <WebCore/Node.h>
 #import <WebKit/WebFrameBridge.h>
 #import <WebKit/WebFrameInternal.h>
 
+using namespace KJS;
 using namespace WebCore;
 
 @implementation WebCoreStatistics
@@ -46,41 +49,51 @@ using namespace WebCore;
 
 + (size_t)javaScriptObjectsCount
 {
-    return JavaScriptStatistics::objectCount();
+    JSLock lock;
+    return Collector::size();
 }
 
-+ (size_t)javaScriptInterpretersCount
++ (size_t)javaScriptGlobalObjectsCount
 {
-    return JavaScriptStatistics::interpreterCount();
+    JSLock lock;
+    return Collector::globalObjectCount();
 }
 
 + (size_t)javaScriptProtectedObjectsCount
 {
-    return JavaScriptStatistics::protectedObjectCount();
+    JSLock lock;
+    return Collector::protectedObjectCount();
 }
 
-+ (NSCountedSet *)javaScriptRootObjectTypeCounts
++ (size_t)javaScriptProtectedGlobalObjectsCount
 {
+    JSLock lock;
+    return Collector::protectedGlobalObjectCount();
+}
+
++ (NSCountedSet *)javaScriptProtectedObjectTypeCounts
+{
+    JSLock lock;
+    
     NSCountedSet *result = [NSCountedSet set];
 
-    HashCountedSet<const char*>* counts = JavaScriptStatistics::rootObjectTypeCounts();
+    OwnPtr<HashCountedSet<const char*> > counts(Collector::protectedObjectTypeCounts());
     HashCountedSet<const char*>::iterator end = counts->end();
     for (HashCountedSet<const char*>::iterator it = counts->begin(); it != end; ++it)
         for (unsigned i = 0; i < it->second; ++i)
             [result addObject:[NSString stringWithUTF8String:it->first]];
     
-    delete counts;
     return result;
 }
 
 + (void)garbageCollectJavaScriptObjects
 {
-    JavaScriptStatistics::garbageCollect();
+    gcController().garbageCollectNow();
 }
 
-+ (void)garbageCollectJavaScriptObjectsOnAlternateThread:(BOOL)waitUntilDone;
++ (void)garbageCollectJavaScriptObjectsOnAlternateThreadForDebugging:(BOOL)waitUntilDone;
 {
-    JavaScriptStatistics::garbageCollectOnAlternateThread(waitUntilDone);
+    gcController().garbageCollectOnAlternateThreadForDebugging(waitUntilDone);
 }
 
 + (size_t)iconPageURLMappingCount
@@ -105,12 +118,14 @@ using namespace WebCore;
 
 + (BOOL)shouldPrintExceptions
 {
-    return JavaScriptStatistics::shouldPrintExceptions();
+    JSLock lock;
+    return Interpreter::shouldPrintExceptions();
 }
 
 + (void)setShouldPrintExceptions:(BOOL)print
 {
-    JavaScriptStatistics::setShouldPrintExceptions(print);
+    JSLock lock;
+    Interpreter::setShouldPrintExceptions(print);
 }
 
 + (void)emptyCache
@@ -141,12 +156,23 @@ using namespace WebCore;
 
 + (size_t)javaScriptReferencedObjectsCount
 {
-    return JavaScriptStatistics::protectedObjectCount();
+    JSLock lock;
+    return Collector::protectedObjectCount();
 }
 
 + (NSSet *)javaScriptRootObjectClasses
 {
     return [self javaScriptRootObjectTypeCounts];
+}
+
++ (size_t)javaScriptInterpretersCount
+{
+    return [self javaScriptProtectedGlobalObjectsCount];
+}
+
++ (NSCountedSet *)javaScriptRootObjectTypeCounts
+{
+    return [self javaScriptProtectedObjectTypeCounts];
 }
 
 @end

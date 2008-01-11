@@ -38,7 +38,7 @@ void GCController::collect() const
 
 void GCController::collectOnAlternateThread(bool waitUntilDone) const
 {
-    [WebCoreStatistics garbageCollectJavaScriptObjectsOnAlternateThread:waitUntilDone];
+    [WebCoreStatistics garbageCollectJavaScriptObjectsOnAlternateThreadForDebugging:waitUntilDone];
 }
 
 size_t GCController::getJSObjectCount() const

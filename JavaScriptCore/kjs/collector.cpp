@@ -972,7 +972,7 @@ size_t Collector::size()
   return primaryHeap.numLiveObjects + numberHeap.numLiveObjects; 
 }
 
-size_t Collector::numGlobalObjects()
+size_t Collector::globalObjectCount()
 {
   size_t count = 0;
   if (JSGlobalObject::head()) {
@@ -985,7 +985,21 @@ size_t Collector::numGlobalObjects()
   return count;
 }
 
-size_t Collector::numProtectedObjects()
+size_t Collector::protectedGlobalObjectCount()
+{
+  size_t count = 0;
+  if (JSGlobalObject::head()) {
+    JSGlobalObject* o = JSGlobalObject::head();
+    do {
+      if (protectedValues().contains(o))
+        ++count;
+      o = o->next();
+    } while (o != JSGlobalObject::head());
+  }
+  return count;
+}
+
+size_t Collector::protectedObjectCount()
 {
   return protectedValues().size();
 }
@@ -1023,7 +1037,7 @@ static const char *typeName(JSCell *val)
   return name;
 }
 
-HashCountedSet<const char*>* Collector::rootObjectTypeCounts()
+HashCountedSet<const char*>* Collector::protectedObjectTypeCounts()
 {
     HashCountedSet<const char*>* counts = new HashCountedSet<const char*>;
 
