@@ -1,3 +1,16 @@
+2008-01-11  Steve Falkenburg  <sfalken@apple.com>
+
+        Add shared vsprops to help unify our Windows tools settings.
+
+        Reviewed by Hyatt.
+
+        * win/tools: Added.
+        * win/tools/WinTools.make: Added.
+        * win/tools/vsprops: Added.
+        * win/tools/vsprops/common.vsprops: Added.
+        * win/tools/vsprops/debug.vsprops: Added.
+        * win/tools/vsprops/release.vsprops: Added.
+
 2008-01-07  Mark Rowe  <mrowe@apple.com>
 
         Update Tiger library to a G3-friendly version.
