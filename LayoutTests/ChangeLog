@@ -1,3 +1,12 @@
+2008-01-10  Stephanie  <slewis@apple.com>
+
+        RS=Oliver.
+
+        Move svg/batik/text/smallfonts.svg to the right skip list.
+
+        * platform/mac-tiger/Skipped:
+        * platform/mac/Skipped:
+
 2008-01-10  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.

@@ -3,3 +3,6 @@ fast/events/mouseout-on-window.html
 
 # <rdar://problem/5643675> window.scrollTo scrolls a window with no scrollbars
 fast/events/attempt-scroll-with-no-scrollbars.html
+
+# see bug <rdar://problem/5646437> REGRESSION (r28015): svg/batik/text/smallFonts fails
+svg/batik/text/smallFonts.svg
