@@ -96,7 +96,7 @@ HRESULT STDMETHODCALLTYPE WebJavaScriptCollector::collect()
 HRESULT STDMETHODCALLTYPE WebJavaScriptCollector::collectOnAlternateThread( 
     /* [in] */ BOOL waitUntilDone)
 {
-    gcController().garbageCollectOnAlternateThread(!!waitUntilDone);
+    gcController().garbageCollectOnAlternateThreadForDebugging(!!waitUntilDone);
     return S_OK;
 }
 
