@@ -833,8 +833,9 @@ void PluginViewWin::performRequest(PluginRequestWin* request)
 {
     // don't let a plugin start any loads if it is no longer part of a document that is being 
     // displayed unless the loads are in the same frame as the plugin.
+    const String& targetFrameName = request->frameLoadRequest().frameName();
     if (m_parentFrame->loader()->documentLoader() != m_parentFrame->loader()->activeDocumentLoader() &&
-        (request->frameLoadRequest().frameName().isNull() || m_parentFrame->tree()->name() != request->frameLoadRequest().frameName()))
+        (targetFrameName.isNull() || m_parentFrame->tree()->find(targetFrameName) != m_parentFrame))
         return;
 
     KURL requestURL = request->frameLoadRequest().resourceRequest().url();
@@ -843,12 +844,12 @@ void PluginViewWin::performRequest(PluginRequestWin* request)
     if (jsString.isNull()) {
         // if this is not a targeted request, create a stream for it. otherwise,
         // just pass it off to the loader
-        if (request->frameLoadRequest().frameName().isEmpty()) {
+        if (targetFrameName.isEmpty()) {
             PluginStream* stream = new PluginStream(this, m_parentFrame, request->frameLoadRequest().resourceRequest(), request->sendNotification(), request->notifyData(), plugin()->pluginFuncs(), instance());
             m_streams.add(stream);
             stream->start();
         } else {
-            m_parentFrame->loader()->load(request->frameLoadRequest().resourceRequest(), request->frameLoadRequest().frameName());
+            m_parentFrame->loader()->load(request->frameLoadRequest().resourceRequest(), targetFrameName);
       
             // FIXME: <rdar://problem/4807469> This should be sent when the document has finished loading
             if (request->sendNotification()) {
@@ -863,13 +864,13 @@ void PluginViewWin::performRequest(PluginRequestWin* request)
 
     // Targeted JavaScript requests are only allowed on the frame that contains the JavaScript plugin
     // and this has been made sure in ::load.
-    ASSERT(request->frameLoadRequest().frameName().isEmpty() || m_parentFrame->tree()->find(request->frameLoadRequest().frameName()) == m_parentFrame);
+    ASSERT(targetFrameName.isEmpty() || m_parentFrame->tree()->find(targetFrameName) == m_parentFrame);
     
     // Executing a script can cause the plugin view to be destroyed, so we keep a reference to the parent frame.
     RefPtr<Frame> parentFrame = m_parentFrame;
     JSValue* result = m_parentFrame->loader()->executeScript(jsString, request->shouldAllowPopups());
 
-    if (request->frameLoadRequest().frameName().isNull()) {
+    if (targetFrameName.isNull()) {
         String resultString;
 
         CString cstr;
@@ -914,7 +915,7 @@ NPError PluginViewWin::load(const FrameLoadRequest& frameLoadRequest, bool sendN
     if (url.isEmpty())
         return NPERR_INVALID_URL;
 
-    String target = frameLoadRequest.frameName();
+    const String& targetFrameName = frameLoadRequest.frameName();
     String jsString = scriptStringIfJavaScriptURL(url);
 
     if (!jsString.isNull()) {
@@ -924,7 +925,7 @@ NPError PluginViewWin::load(const FrameLoadRequest& frameLoadRequest, bool sendN
             return NPERR_GENERIC_ERROR;
         } 
         
-        if (!target.isNull() && m_parentFrame->tree()->name() != target) {
+        if (!targetFrameName.isNull() && m_parentFrame->tree()->find(targetFrameName) != m_parentFrame) {
             // For security reasons, only allow JS requests to be made on the frame that contains the plug-in.
             return NPERR_INVALID_PARAM;
         }

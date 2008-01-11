@@ -1,3 +1,17 @@
+2008-01-11  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Reviewed by Anders.
+
+        <rdar://problem/5683529> plugins/embed-inside-object.html is timing
+        out/failing
+
+        Revert to using FrameTree::find() so that frame aliases like "_self" and
+        "_current" are interpreted properly
+
+        * plugins/win/PluginViewWin.cpp:
+        (WebCore::PluginViewWin::performRequest):
+        (WebCore::PluginViewWin::load):
+
 2008-01-11  Alp Toker  <alp@atoker.com>
 
         Reviewed by Dave Hyatt and Mark Rowe.
