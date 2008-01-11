@@ -82,6 +82,7 @@ public:
 
     void registerDrawingCallback();
     void drawingComplete();
+    void updateGWorld();
     void createGWorld();
     void deleteGWorld();
 
@@ -98,6 +99,7 @@ public:
     double m_lastLoadStateCheckTime;
     int m_width;
     int m_height;
+    bool m_visible;
     GWorldPtr m_gWorld;
     int m_gWorldWidth;
     int m_gWorldHeight;
@@ -117,6 +119,7 @@ QTMovieWinPrivate::QTMovieWinPrivate()
     , m_lastLoadStateCheckTime(0)
     , m_width(0)
     , m_height(0)
+    , m_visible(false)
     , m_gWorld(0)
     , m_gWorldWidth(0)
     , m_gWorldHeight(0)
@@ -218,6 +221,23 @@ void QTMovieWinPrivate::drawingComplete()
     m_client->movieNewImageAvailable(m_movieWin);
 }
 
+void QTMovieWinPrivate::updateGWorld()
+{
+    bool shouldBeVisible = m_visible;
+    if (!m_height || !m_width)
+        shouldBeVisible = false;
+
+    if (shouldBeVisible && !m_gWorld)
+        createGWorld();
+    else if (!shouldBeVisible && m_gWorld)
+        deleteGWorld();
+    else if (m_gWorld && (m_width > m_gWorldWidth || m_height > m_gWorldHeight)) {
+        // need a bigger, better gWorld
+        deleteGWorld();
+        createGWorld();
+    }
+}
+
 void QTMovieWinPrivate::createGWorld()
 {
     ASSERT(!m_gWorld);
@@ -255,11 +275,7 @@ void QTMovieWinPrivate::setSize(int width, int height)
     bounds.right = width;
     bounds.bottom = height;
     SetMovieBox(m_movie, &bounds);
-    if (m_gWorld && (m_width > m_gWorldWidth || m_height > m_gWorldHeight)) {
-        // need a bigger, better gWorld
-        deleteGWorld();
-        createGWorld();
-    }
+    updateGWorld();
 }
 
 void QTMovieWinPrivate::deleteGWorld()
@@ -270,6 +286,8 @@ void QTMovieWinPrivate::deleteGWorld()
     m_savedGWorld = 0;
     DisposeGWorld(m_gWorld); 
     m_gWorld = 0;
+    m_gWorldWidth = 0;
+    m_gWorldHeight = 0;
 }
 
 
@@ -380,13 +398,8 @@ void QTMovieWin::setSize(int width, int height)
 
 void QTMovieWin::setVisible(bool b)
 {
-    if (!m_private->m_height || !m_private->m_width)
-        b = false;
-
-    if (b && !m_private->m_gWorld)
-        m_private->createGWorld();
-    else if (!b && m_private->m_gWorld)
-        m_private->deleteGWorld();
+    m_private->m_visible = b;
+    m_private->updateGWorld();
 }
 
 void QTMovieWin::paint(HDC hdc, int x, int y)
@@ -412,7 +425,8 @@ void QTMovieWin::load(const UChar* url, int len)
 {
     if (m_private->m_movie) {
         m_private->endTask();
-        setVisible(false);
+        if (m_private->m_gWorld)
+            m_private->deleteGWorld();
         DisposeMovie(m_private->m_movie);
         m_private->m_movie = 0;
     }  

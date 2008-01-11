@@ -1,3 +1,21 @@
+2008-01-10  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Adam.
+
+        Fix <rdar://problem/5682767>
+        Video does not show up in http://webkit.org/blog/140/html5-media-support/ on Windows
+        
+        Take care that GWorld is created and deletes when needed as size or visibility changes.
+
+        * platform/graphics/win/MediaPlayerPrivateQuickTimeWin.cpp:
+        (WebCore::MediaPlayerPrivate::load):
+        * platform/graphics/win/QTMovieWin.cpp:
+        (QTMovieWinPrivate::QTMovieWinPrivate):
+        (QTMovieWinPrivate::updateGWorld):
+        (QTMovieWinPrivate::setSize):
+        (QTMovieWin::setVisible):
+        (QTMovieWin::initializeQuickTime):
+
 2008-01-11  David Hyatt  <hyatt@apple.com>
 
         Fix for bug 11188, setting hspace on a table overrides align=center.  Fix align=center to be done using

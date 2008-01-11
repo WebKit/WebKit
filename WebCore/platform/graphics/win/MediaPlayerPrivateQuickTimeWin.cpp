@@ -81,6 +81,7 @@ void MediaPlayerPrivate::load(const String& url)
     m_qtMovie->load(url.characters(), url.length());
     m_qtMovie->setMuted(m_player->m_muted);
     m_qtMovie->setVolume(m_player->m_volume);
+    m_qtMovie->setVisible(m_player->m_visible);
 }
 
 void MediaPlayerPrivate::play()
