@@ -3431,14 +3431,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\platform\SecurityOriginData.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\platform\SecurityOriginData.h"
-				>
-			</File>
-			<File
 				RelativePath="..\platform\SharedBuffer.cpp"
 				>
 			</File>

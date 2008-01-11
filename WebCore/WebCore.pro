@@ -761,7 +761,6 @@ SOURCES += \
     platform/ScrollBar.cpp \
 #    platform/SearchPopupMenu.cpp \
     platform/SecurityOrigin.cpp \
-    platform/SecurityOriginData.cpp \
     platform/text/SegmentedString.cpp \
     platform/SharedBuffer.cpp \
     platform/text/String.cpp \

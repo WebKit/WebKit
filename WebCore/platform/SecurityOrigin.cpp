@@ -35,7 +35,6 @@
 #include "FrameTree.h"
 #include "KURL.h"
 #include "PlatformString.h"
-#include "SecurityOriginData.h"
 
 namespace WebCore {
 
@@ -93,6 +92,12 @@ PassRefPtr<SecurityOrigin> SecurityOrigin::createForFrame(Frame* frame)
 
     return create(url.protocol(), url.host(), url.port(), ownerFrameOrigin);
 }
+
+PassRefPtr<SecurityOrigin> SecurityOrigin::copy()
+{
+    return create(m_protocol.copy(), m_host.copy(), m_port, 0);
+}
+
 
 void SecurityOrigin::setDomainFromDOM(const String& newDomain)
 {
@@ -159,9 +164,44 @@ String SecurityOrigin::toString() const
     return m_protocol + ":" + m_host + ":" + String::number(m_port);
 }
 
-SecurityOriginData SecurityOrigin::securityOriginData() const
+static const char SeparatorCharacter = '_';
+
+PassRefPtr<SecurityOrigin> SecurityOrigin::createFromIdentifier(const String& stringIdentifier)
+{ 
+    // Make sure there's a first separator
+    int separator1 = stringIdentifier.find(SeparatorCharacter);
+    if (separator1 == -1)
+        return create("", "", 0, 0);
+        
+    // Make sure there's a second separator
+    int separator2 = stringIdentifier.find(SeparatorCharacter, separator1 + 1);
+    if (separator2 == -1)
+        return create("", "", 0, 0);
+        
+    // Make sure there's not a third separator
+    if (stringIdentifier.reverseFind(SeparatorCharacter) != separator2)
+        return create("", "", 0, 0);
+        
+    // Make sure the port section is a valid port number or doesn't exist
+    bool portOkay;
+    int port = stringIdentifier.right(stringIdentifier.length() - separator2 - 1).toInt(&portOkay);
+    if (!portOkay && separator2 + 1 == static_cast<int>(stringIdentifier.length()))
+        return create("", "", 0, 0);
+    
+    if (port < 0 || port > 65535)
+        return create("", "", 0, 0);
+        
+    // Split out the 3 sections of data
+    String protocol = stringIdentifier.substring(0, separator1);
+    String host = stringIdentifier.substring(separator1 + 1, separator2 - separator1 - 1);
+    return create(protocol, host, port, 0);
+}
+    
+    
+String SecurityOrigin::stringIdentifier() const 
 {
-    return SecurityOriginData(m_protocol, m_host, m_port);
+    static String separatorString = String(&SeparatorCharacter, 1);
+    return m_protocol + separatorString + m_host + separatorString + String::number(m_port); 
 }
 
 } // namespace WebCore

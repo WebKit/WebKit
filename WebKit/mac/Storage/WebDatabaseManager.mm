@@ -57,12 +57,12 @@ NSString *WebDatabaseIdentifierKey = @"WebDatabaseIdentifierKey";
 
 - (NSArray *)origins
 {
-    Vector<WebCoreSecurityOriginData> coreOrigins;
+    Vector<RefPtr<SecurityOrigin> > coreOrigins;
     DatabaseTracker::tracker().origins(coreOrigins);
     NSMutableArray *webOrigins = [[NSMutableArray alloc] initWithCapacity:coreOrigins.size()];
 
     for (unsigned i = 0; i < coreOrigins.size(); ++i) {
-        WebSecurityOrigin *webOrigin = [[WebSecurityOrigin alloc] _initWithWebCoreSecurityOriginData:&coreOrigins[i]];
+        WebSecurityOrigin *webOrigin = [[WebSecurityOrigin alloc] _initWithWebCoreSecurityOrigin:coreOrigins[i].get()];
         [webOrigins addObject:webOrigin];
         [webOrigin release];
     }
@@ -73,7 +73,7 @@ NSString *WebDatabaseIdentifierKey = @"WebDatabaseIdentifierKey";
 - (NSArray *)databasesWithOrigin:(WebSecurityOrigin *)origin
 {
     Vector<String> nameVector;
-    if (!DatabaseTracker::tracker().databaseNamesForOrigin(*[origin _core], nameVector))
+    if (!DatabaseTracker::tracker().databaseNamesForOrigin([origin _core], nameVector))
         return nil;
     
     NSMutableArray *names = [[NSMutableArray alloc] initWithCapacity:nameVector.size()];
@@ -88,7 +88,7 @@ NSString *WebDatabaseIdentifierKey = @"WebDatabaseIdentifierKey";
 {
     static id keys[3] = {WebDatabaseDisplayNameKey, WebDatabaseExpectedSizeKey, WebDatabaseUsageKey};
     
-    DatabaseDetails details = DatabaseTracker::tracker().detailsForNameAndOrigin(databaseIdentifier, *[origin _core]);
+    DatabaseDetails details = DatabaseTracker::tracker().detailsForNameAndOrigin(databaseIdentifier, [origin _core]);
     if (!details.isValid())
         return nil;
         
@@ -113,12 +113,12 @@ NSString *WebDatabaseIdentifierKey = @"WebDatabaseIdentifierKey";
 
 - (void)deleteDatabasesWithOrigin:(WebSecurityOrigin *)origin
 {
-    DatabaseTracker::tracker().deleteDatabasesWithOrigin(*[origin _core]);
+    DatabaseTracker::tracker().deleteDatabasesWithOrigin([origin _core]);
 }
 
 - (void)deleteDatabase:(NSString *)databaseIdentifier withOrigin:(WebSecurityOrigin *)origin
 {
-    DatabaseTracker::tracker().deleteDatabase(*[origin _core], databaseIdentifier);
+    DatabaseTracker::tracker().deleteDatabase([origin _core], databaseIdentifier);
 }
 
 @end

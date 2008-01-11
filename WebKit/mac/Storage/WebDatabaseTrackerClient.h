@@ -27,15 +27,14 @@
  */
 
 #import <WebCore/DatabaseTrackerClient.h>
-#import <WebCore/SecurityOriginData.h>
 
 class WebDatabaseTrackerClient : public WebCore::DatabaseTrackerClient {
 public:
     static WebDatabaseTrackerClient* sharedWebDatabaseTrackerClient();
     
     virtual ~WebDatabaseTrackerClient();
-    virtual void dispatchDidModifyOrigin(const WebCore::SecurityOriginData&);
-    virtual void dispatchDidModifyDatabase(const WebCore::SecurityOriginData&, const WebCore::String& databaseIdentifier);
+    virtual void dispatchDidModifyOrigin(WebCore::SecurityOrigin*);
+    virtual void dispatchDidModifyDatabase(WebCore::SecurityOrigin*, const WebCore::String& databaseIdentifier);
 private:
     WebDatabaseTrackerClient();
 };

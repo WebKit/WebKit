@@ -27,14 +27,14 @@
  */
 
 namespace WebCore {
-    class SecurityOriginData;
+    class SecurityOrigin;
 }
 
-typedef WebCore::SecurityOriginData WebCoreSecurityOriginData;
+typedef WebCore::SecurityOrigin WebCoreSecurityOrigin;
 
 @interface WebSecurityOrigin (WebInternal)
 
-- (id)_initWithWebCoreSecurityOriginData:(const WebCoreSecurityOriginData *)securityOriginData;
-- (WebCoreSecurityOriginData *)_core;
+- (id)_initWithWebCoreSecurityOrigin:(WebCoreSecurityOrigin *)origin;
+- (WebCoreSecurityOrigin *)_core;
 
 @end

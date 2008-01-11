@@ -335,13 +335,13 @@ void ChromeClientQt::print(Frame*)
     notImplemented();
 }
 
-unsigned long long ChromeClientQt::requestQuotaIncreaseForNewDatabase(Frame*, const SecurityOriginData&, const String&, unsigned long long)
+unsigned long long ChromeClientQt::requestQuotaIncreaseForNewDatabase(Frame*, SecurityOrigin*, const String&, unsigned long long)
 {
     notImplemented();
     return 0;
 }
 
-unsigned long long ChromeClientQt::requestQuotaIncreaseForDatabaseOperation(Frame*, const SecurityOriginData&, const String&, unsigned long long)
+unsigned long long ChromeClientQt::requestQuotaIncreaseForDatabaseOperation(Frame*, SecurityOrigin*, const String&, unsigned long long)
 {
     notImplemented();
     return 0;

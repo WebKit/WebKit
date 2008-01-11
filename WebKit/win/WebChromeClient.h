@@ -98,8 +98,8 @@ public:
 
     virtual void print(WebCore::Frame*);
 
-    virtual unsigned long long requestQuotaIncreaseForNewDatabase(WebCore::Frame*, const WebCore::SecurityOriginData&, const WebCore::String&, unsigned long long);
-    virtual unsigned long long requestQuotaIncreaseForDatabaseOperation(WebCore::Frame*, const WebCore::SecurityOriginData&, const WebCore::String&, unsigned long long);
+    virtual unsigned long long requestQuotaIncreaseForNewDatabase(WebCore::Frame*, WebCore::SecurityOrigin*, const WebCore::String&, unsigned long long);
+    virtual unsigned long long requestQuotaIncreaseForDatabaseOperation(WebCore::Frame*, WebCore::SecurityOrigin*, const WebCore::String&, unsigned long long);
 
     virtual WebView* webView() const { return m_webView; }
 

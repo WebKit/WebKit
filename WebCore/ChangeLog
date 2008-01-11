@@ -1,3 +1,79 @@
+2008-01-10  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Sam.
+
+        - remove SecurityOriginData and fold its functionality into SecurityOrigin
+
+        * GNUmakefile.am:
+        * WebCore.base.exp:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * WebCoreSources.bkl:
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::postMessage):
+        * dom/Document.cpp:
+        (WebCore::Document::domain):
+        * page/Chrome.cpp:
+        (WebCore::Chrome::requestQuotaIncreaseForNewDatabase):
+        (WebCore::Chrome::requestQuotaIncreaseForDatabaseOperation):
+        * page/Chrome.h:
+        * page/ChromeClient.h:
+        * platform/SecurityOrigin.cpp:
+        (WebCore::SecurityOrigin::copy):
+        (WebCore::SecurityOrigin::createFromIdentifier):
+        (WebCore::SecurityOrigin::stringIdentifier):
+        * platform/SecurityOrigin.h:
+        (WebCore::SecurityOrigin::host):
+        (WebCore::SecurityOrigin::protocol):
+        (WebCore::SecurityOrigin::port):
+        (WebCore::SecurityOrigin::equal):
+        * platform/SecurityOriginData.cpp: Removed.
+        * platform/SecurityOriginData.h: Removed.
+        * storage/Database.cpp:
+        (WebCore::Database::openDatabase):
+        (WebCore::Database::Database):
+        (WebCore::Database::securityOriginCopy):
+        * storage/Database.h:
+        * storage/DatabaseTracker.cpp:
+        (WebCore::SecurityOriginHash::hash):
+        (WebCore::SecurityOriginHash::equal):
+        (WebCore::SecurityOriginTraits::deletedValue):
+        (WebCore::SecurityOriginTraits::emptyValue):
+        (WebCore::DatabaseTracker::canEstablishDatabase):
+        (WebCore::DatabaseTracker::hasEntryForOrigin):
+        (WebCore::DatabaseTracker::hasEntryForDatabase):
+        (WebCore::DatabaseTracker::establishEntryForOrigin):
+        (WebCore::DatabaseTracker::fullPathForDatabase):
+        (WebCore::DatabaseTracker::populateOrigins):
+        (WebCore::DatabaseTracker::origins):
+        (WebCore::DatabaseTracker::databaseNamesForOrigin):
+        (WebCore::DatabaseTracker::detailsForNameAndOrigin):
+        (WebCore::DatabaseTracker::setDatabaseDetails):
+        (WebCore::DatabaseTracker::usageForDatabase):
+        (WebCore::DatabaseTracker::usageForOrigin):
+        (WebCore::DatabaseTracker::quotaForOrigin):
+        (WebCore::DatabaseTracker::setQuota):
+        (WebCore::DatabaseTracker::addDatabase):
+        (WebCore::DatabaseTracker::deleteAllDatabases):
+        (WebCore::DatabaseTracker::deleteDatabasesWithOrigin):
+        (WebCore::DatabaseTracker::deleteDatabase):
+        (WebCore::DatabaseTracker::deleteDatabaseFile):
+        (WebCore::notificationQueue):
+        (WebCore::DatabaseTracker::scheduleNotifyDatabaseChanged):
+        (WebCore::DatabaseTracker::notifyDatabasesChanged):
+        * storage/DatabaseTracker.h:
+        * storage/DatabaseTrackerClient.h:
+        * storage/SQLTransaction.cpp:
+        (WebCore::SQLTransaction::openTransactionAndPreflight):
+        (WebCore::SQLTransaction::runStatements):
+        (WebCore::SQLTransaction::deliverQuotaIncreaseCallback):
+        (WebCore::SQLTransaction::postflightAndCommit):
+        (WebCore::SQLTransaction::cleanupAfterTransactionErrorCallback):
+        * svg/graphics/SVGImageEmptyClients.h:
+        (WebCore::SVGEmptyChromeClient::requestQuotaIncreaseForNewDatabase):
+        (WebCore::SVGEmptyChromeClient::requestQuotaIncreaseForDatabaseOperation):
+
 2008-01-10  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam.

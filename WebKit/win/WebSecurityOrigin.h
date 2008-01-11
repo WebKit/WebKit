@@ -30,13 +30,13 @@
 #define WebSecurityOrigin_h
 
 #include "IWebSecurityOrigin.h"
-#include <WebCore/SecurityOriginData.h>
+#include <WebCore/SecurityOrigin.h>
 
 class DECLSPEC_UUID("6EB8D98F-2723-4472-88D3-5936F9D6E631") WebSecurityOrigin : public IWebSecurityOrigin {
 public:
     // WebSecurityOrigin
-    static WebSecurityOrigin* createInstance(const WebCore::SecurityOriginData& securityOriginData);
-    const WebCore::SecurityOriginData& securityOriginData() const { return m_securityOriginData; }
+    static WebSecurityOrigin* createInstance(WebCore::SecurityOrigin* origin);
+    const WebCore::SecurityOrigin* securityOrigin() const { return m_securityOrigin.get(); }
 
     // IUnknown
     virtual HRESULT STDMETHODCALLTYPE QueryInterface( 
@@ -66,11 +66,11 @@ public:
     virtual HRESULT STDMETHODCALLTYPE setQuota( 
         /* [in] */ unsigned long long quota);
 private:
-    WebSecurityOrigin(const WebCore::SecurityOriginData&);
+    WebSecurityOrigin(WebCore::SecurityOrigin*);
     ~WebSecurityOrigin();
 
     ULONG m_refCount;
-    WebCore::SecurityOriginData m_securityOriginData;
+    RefPtr<WebCore::SecurityOrigin> m_securityOrigin;
 };
 
 #endif // WebSecurityOrigin_h

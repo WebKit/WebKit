@@ -32,6 +32,7 @@
 #import "WebSecurityOriginPrivate.h"
 #import "WebSecurityOriginInternal.h"
 #import <wtf/RetainPtr.h>
+#import <WebCore/SecurityOrigin.h>
 
 using namespace WebCore;
 
@@ -49,17 +50,17 @@ WebDatabaseTrackerClient::~WebDatabaseTrackerClient()
 {
 }
     
-void WebDatabaseTrackerClient::dispatchDidModifyOrigin(const SecurityOriginData& origin)
+void WebDatabaseTrackerClient::dispatchDidModifyOrigin(SecurityOrigin* origin)
 {
-     RetainPtr<WebSecurityOrigin> webSecurityOrigin(AdoptNS, [[WebSecurityOrigin alloc] _initWithWebCoreSecurityOriginData:&origin]);
+     RetainPtr<WebSecurityOrigin> webSecurityOrigin(AdoptNS, [[WebSecurityOrigin alloc] _initWithWebCoreSecurityOrigin:origin]);
 
     [[NSNotificationCenter defaultCenter] postNotificationName:WebDatabaseDidModifyOriginNotification 
                                                         object:webSecurityOrigin.get()];
 }
 
-void WebDatabaseTrackerClient::dispatchDidModifyDatabase(const SecurityOriginData& origin, const String& databaseIdentifier)
+void WebDatabaseTrackerClient::dispatchDidModifyDatabase(SecurityOrigin* origin, const String& databaseIdentifier)
 {
-    RetainPtr<WebSecurityOrigin> webSecurityOrigin(AdoptNS, [[WebSecurityOrigin alloc] _initWithWebCoreSecurityOriginData:&origin]);
+    RetainPtr<WebSecurityOrigin> webSecurityOrigin(AdoptNS, [[WebSecurityOrigin alloc] _initWithWebCoreSecurityOrigin:origin]);
     RetainPtr<NSDictionary> userInfo(AdoptNS, [[NSDictionary alloc] 
                                                initWithObjectsAndKeys:(NSString *)databaseIdentifier, WebDatabaseIdentifierKey, nil]);
     

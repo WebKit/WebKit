@@ -829,7 +829,6 @@ webcore_sources += \
 	WebCore/platform/text/RegularExpression.cpp \
 	WebCore/platform/ScrollBar.cpp \
 	WebCore/platform/SecurityOrigin.cpp \
-	WebCore/platform/SecurityOriginData.cpp \
 	WebCore/platform/text/SegmentedString.cpp \
 	WebCore/platform/SharedBuffer.cpp \
 	WebCore/platform/text/String.cpp \

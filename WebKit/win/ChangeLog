@@ -1,3 +1,33 @@
+2008-01-10  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Sam.
+
+        - remove SecurityOriginData and fold its functionality into SecurityOrigin
+
+        * WebChromeClient.cpp:
+        (WebChromeClient::requestQuotaIncreaseForNewDatabase):
+        (WebChromeClient::requestQuotaIncreaseForDatabaseOperation):
+        * WebChromeClient.h:
+        * WebDatabaseManager.cpp:
+        (WebDatabaseManager::origins):
+        (WebDatabaseManager::databasesWithOrigin):
+        (WebDatabaseManager::detailsForDatabaseWithOrigin):
+        (WebDatabaseManager::deleteDatabasesWithOrigin):
+        (WebDatabaseManager::deleteDatabaseWithOrigin):
+        (WebDatabaseManager::dispatchDidModifyOrigin):
+        (WebDatabaseManager::dispatchDidModifyDatabase):
+        * WebDatabaseManager.h:
+        * WebSecurityOrigin.cpp:
+        (WebSecurityOrigin::createInstance):
+        (WebSecurityOrigin::WebSecurityOrigin):
+        (WebSecurityOrigin::protocol):
+        (WebSecurityOrigin::domain):
+        (WebSecurityOrigin::port):
+        (WebSecurityOrigin::usage):
+        (WebSecurityOrigin::quota):
+        (WebSecurityOrigin::setQuota):
+        * WebSecurityOrigin.h:
+
 2008-01-10  David Kilzer  <ddkilzer@apple.com>
 
         dftables should be rewritten as a script

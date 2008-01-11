@@ -50,7 +50,6 @@ namespace WebCore {
 class DatabaseAuthorizer;
 class DatabaseThread;
 class Document;
-class SecurityOriginData;
 class SQLResultSet;
 class SQLTransactionCallback;
 class SQLTransactionErrorCallback;
@@ -83,7 +82,7 @@ public:
     Vector<String> tableNames();
 
     Document* document() const { return m_document; }
-    SecurityOriginData securityOriginData() const;
+    PassRefPtr<SecurityOrigin> securityOriginCopy() const;
     String stringIdentifier() const;
     
     bool getVersionFromDatabase(String&);

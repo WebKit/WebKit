@@ -33,7 +33,7 @@
 #include "Document.h"
 #include "FileSystem.h"
 #include "Page.h"
-#include "SecurityOriginData.h"
+#include "SecurityOrigin.h"
 #include "SQLiteStatement.h"
 
 namespace WebCore {
@@ -41,37 +41,40 @@ namespace WebCore {
 // HTML5 SQL Storage spec suggests 5MB as the default quota per origin
 static const unsigned DefaultOriginQuota = 5242880;
 
-struct SecurityOriginDataHash {
-    static unsigned hash(const SecurityOriginData& data)
+struct SecurityOriginHash {
+    static unsigned hash(RefPtr<SecurityOrigin> origin)
     {
         unsigned hashCodes[3] = {
-            data.protocol().impl() ? data.protocol().impl()->hash() : 0,
-            data.host().impl() ? data.host().impl()->hash() : 0,
-            data.port()
+            origin->protocol().impl() ? origin->protocol().impl()->hash() : 0,
+            origin->host().impl() ? origin->host().impl()->hash() : 0,
+            origin->port()
         };
         return StringImpl::computeHash(reinterpret_cast<UChar*>(hashCodes), 3 * sizeof(unsigned) / sizeof(UChar));
     }
          
-    static bool equal(const SecurityOriginData& a, const SecurityOriginData& b)
+    static bool equal(RefPtr<SecurityOrigin> a, RefPtr<SecurityOrigin> b)
     {
-        return a == b;
+        if (a == 0 || b == 0)
+            return a == b;
+        return a->equal(b.get());
     }
 
     static const bool safeToCompareToEmptyOrDeleted = true;
 };
 
-struct SecurityOriginDataTraits : WTF::GenericHashTraits<SecurityOriginData> {
-    static const SecurityOriginData& deletedValue()
-    {
+
+struct SecurityOriginTraits : WTF::GenericHashTraits<RefPtr<SecurityOrigin> > {
+    static const bool emptyValueIsZero = true;
+    static const RefPtr<SecurityOrigin>& deletedValue() 
+    { 
         // Okay deleted value because file: protocols should always have port 0
-        static SecurityOriginData key("file", "", 1);
-        return key;
+        static const RefPtr<SecurityOrigin> securityOriginDeletedValue = SecurityOrigin::create("file", "", 1, 0);    
+        return securityOriginDeletedValue; 
     }
-    static const SecurityOriginData& emptyValue()
-    {
-        // Okay empty value because file: protocols should always have port 0
-        static SecurityOriginData key("file", "", 2);
-        return key;
+
+    static SecurityOrigin* emptyValue() 
+    { 
+        return 0;
     }
 };
 
@@ -125,19 +128,19 @@ void DatabaseTracker::openTrackerDatabase()
 
 bool DatabaseTracker::canEstablishDatabase(Document* document, const String& name, const String& displayName, unsigned long estimatedSize)
 {
-    SecurityOriginData originData = document->securityOrigin()->securityOriginData();
+    SecurityOrigin* origin = document->securityOrigin();
     
     // If this origin has no databases yet, establish an entry in the tracker database with the default quota
-    if (!hasEntryForOrigin(originData))
-        establishEntryForOrigin(originData);
+    if (!hasEntryForOrigin(origin))
+        establishEntryForOrigin(origin);
     
     // If a database already exists, you can always establish a handle to it
-    if (hasEntryForDatabase(originData, name))
+    if (hasEntryForDatabase(origin, name))
         return true;
         
     // If the new database will fit as-is, allow its creation
-    unsigned long long usage = usageForOrigin(originData);
-    if (usage + estimatedSize < quotaForOrigin(originData))
+    unsigned long long usage = usageForOrigin(origin);
+    if (usage + estimatedSize < quotaForOrigin(origin))
         return true;
     
     // Otherwise, ask the UI Delegate for a new quota
@@ -146,46 +149,46 @@ bool DatabaseTracker::canEstablishDatabase(Document* document, const String& nam
         return false;
     
     // If no displayName was specified, pass the standard (required) name instead
-    unsigned long long newQuota = page->chrome()->requestQuotaIncreaseForNewDatabase(document->frame(), originData, displayName.length() > 0 ? displayName : name, estimatedSize);
-    setQuota(originData, newQuota);
+    unsigned long long newQuota = page->chrome()->requestQuotaIncreaseForNewDatabase(document->frame(), origin, displayName.length() > 0 ? displayName : name, estimatedSize);
+    setQuota(origin, newQuota);
     
     return usage + estimatedSize <= newQuota;
 }
 
-bool DatabaseTracker::hasEntryForOrigin(const SecurityOriginData& origin)
+bool DatabaseTracker::hasEntryForOrigin(SecurityOrigin* origin)
 {
     populateOrigins();
     return m_originQuotaMap->contains(origin);
 }
 
-bool DatabaseTracker::hasEntryForDatabase(const SecurityOriginData& origin, const String& databaseIdentifier)
+bool DatabaseTracker::hasEntryForDatabase(SecurityOrigin* origin, const String& databaseIdentifier)
 {
     SQLiteStatement statement(m_database, "SELECT guid FROM Databases WHERE origin=? AND name=?;");
 
     if (statement.prepare() != SQLResultOk)
         return false;
 
-    statement.bindText(1, origin.stringIdentifier());
+    statement.bindText(1, origin->stringIdentifier());
     statement.bindText(2, databaseIdentifier);
 
     return statement.step() == SQLResultRow;
 }
 
-void DatabaseTracker::establishEntryForOrigin(const SecurityOriginData& origin)
+void DatabaseTracker::establishEntryForOrigin(SecurityOrigin* origin)
 {
     ASSERT(!hasEntryForOrigin(origin));
     
     SQLiteStatement statement(m_database, "INSERT INTO Origins VALUES (?, ?)");
     if (statement.prepare() != SQLResultOk) {
-        LOG_ERROR("Unable to establish origin %s in the tracker", origin.stringIdentifier().ascii().data());
+        LOG_ERROR("Unable to establish origin %s in the tracker", origin->stringIdentifier().ascii().data());
         return;
     }
         
-    statement.bindText(1, origin.stringIdentifier());
+    statement.bindText(1, origin->stringIdentifier());
     statement.bindInt64(2, m_defaultQuota);
     
     if (statement.step() != SQLResultDone) {
-        LOG_ERROR("Unable to establish origin %s in the tracker", origin.stringIdentifier().ascii().data());
+        LOG_ERROR("Unable to establish origin %s in the tracker", origin->stringIdentifier().ascii().data());
         return;
     }
 
@@ -196,9 +199,9 @@ void DatabaseTracker::establishEntryForOrigin(const SecurityOriginData& origin)
         m_client->dispatchDidModifyOrigin(origin);
 }
 
-String DatabaseTracker::fullPathForDatabase(const SecurityOriginData& origin, const String& name, bool createIfNotExists)
+String DatabaseTracker::fullPathForDatabase(SecurityOrigin* origin, const String& name, bool createIfNotExists)
 {
-    String originIdentifier = origin.stringIdentifier();
+    String originIdentifier = origin->stringIdentifier();
     String originPath = pathByAppendingComponent(m_databasePath, originIdentifier);
     
     // Make sure the path for this SecurityOrigin exists
@@ -222,7 +225,7 @@ String DatabaseTracker::fullPathForDatabase(const SecurityOriginData& origin, co
         return "";
         
     if (result != SQLResultDone) {
-        LOG_ERROR("Failed to retrieve filename from Database Tracker for origin %s, name %s", origin.stringIdentifier().ascii().data(), name.ascii().data());
+        LOG_ERROR("Failed to retrieve filename from Database Tracker for origin %s, name %s", origin->stringIdentifier().ascii().data(), name.ascii().data());
         return "";
     }
     statement.finalize();
@@ -260,7 +263,7 @@ void DatabaseTracker::populateOrigins()
     if (m_originQuotaMap)
         return;
 
-    m_originQuotaMap.set(new HashMap<SecurityOriginData, unsigned long long, SecurityOriginDataHash, SecurityOriginDataTraits>);
+    m_originQuotaMap.set(new HashMap<RefPtr<SecurityOrigin>, unsigned long long, SecurityOriginHash, SecurityOriginTraits>);
 
     if (!m_database.isOpen())
         return;
@@ -271,8 +274,9 @@ void DatabaseTracker::populateOrigins()
         return;
 
     int result;
+    RefPtr<SecurityOrigin> origin = SecurityOrigin::createFromIdentifier(statement.getColumnText16(0));
     while ((result = statement.step()) == SQLResultRow)
-        m_originQuotaMap->set(statement.getColumnText16(0), statement.getColumnInt64(1));
+        m_originQuotaMap->set(origin.get(), statement.getColumnInt64(1));
 
     if (result != SQLResultDone)
         LOG_ERROR("Failed to read in all origins from the database");
@@ -280,7 +284,7 @@ void DatabaseTracker::populateOrigins()
     return;
 }
 
-void DatabaseTracker::origins(Vector<SecurityOriginData>& result)
+void DatabaseTracker::origins(Vector<RefPtr<SecurityOrigin> >& result)
 {
     if (!m_originQuotaMap)
         populateOrigins();
@@ -288,7 +292,7 @@ void DatabaseTracker::origins(Vector<SecurityOriginData>& result)
     copyKeysToVector(*(m_originQuotaMap.get()), result);
 }
 
-bool DatabaseTracker::databaseNamesForOrigin(const SecurityOriginData& origin, Vector<String>& resultVector)
+bool DatabaseTracker::databaseNamesForOrigin(SecurityOrigin* origin, Vector<String>& resultVector)
 {
     if (!m_database.isOpen())
         return false;
@@ -298,23 +302,23 @@ bool DatabaseTracker::databaseNamesForOrigin(const SecurityOriginData& origin, V
     if (statement.prepare() != SQLResultOk)
         return false;
 
-    statement.bindText(1, origin.stringIdentifier());
+    statement.bindText(1, origin->stringIdentifier());
 
     int result;
     while ((result = statement.step()) == SQLResultRow)
         resultVector.append(statement.getColumnText16(0));
 
     if (result != SQLResultDone) {
-        LOG_ERROR("Failed to retrieve all database names for origin %s", origin.stringIdentifier().ascii().data());
+        LOG_ERROR("Failed to retrieve all database names for origin %s", origin->stringIdentifier().ascii().data());
         return false;
     }
 
     return true;
 }
 
-DatabaseDetails DatabaseTracker::detailsForNameAndOrigin(const String& name, const SecurityOriginData& origin)
+DatabaseDetails DatabaseTracker::detailsForNameAndOrigin(const String& name, SecurityOrigin* origin)
 {
-    String originIdentifier = origin.stringIdentifier();
+    String originIdentifier = origin->stringIdentifier();
         
     SQLiteStatement statement(m_database, "SELECT displayName, estimatedSize FROM Databases WHERE origin=? AND name=?");
     if (statement.prepare() != SQLResultOk)
@@ -335,9 +339,9 @@ DatabaseDetails DatabaseTracker::detailsForNameAndOrigin(const String& name, con
     return DatabaseDetails(name, statement.getColumnText(0), statement.getColumnInt64(1), usageForDatabase(name, origin));
 }
 
-void DatabaseTracker::setDatabaseDetails(const SecurityOriginData& origin, const String& name, const String& displayName, unsigned long estimatedSize)
+void DatabaseTracker::setDatabaseDetails(SecurityOrigin* origin, const String& name, const String& displayName, unsigned long estimatedSize)
 {
-    String originIdentifier = origin.stringIdentifier();
+    String originIdentifier = origin->stringIdentifier();
     int64_t guid = 0;
     
     SQLiteStatement statement(m_database, "SELECT guid FROM Databases WHERE origin=? AND name=?");
@@ -382,7 +386,7 @@ void DatabaseTracker::setDatabaseDetails(const SecurityOriginData& origin, const
         m_client->dispatchDidModifyDatabase(origin, name);
 }
 
-unsigned long long DatabaseTracker::usageForDatabase(const String& name, const SecurityOriginData& origin)
+unsigned long long DatabaseTracker::usageForDatabase(const String& name, SecurityOrigin* origin)
 {
     String path = fullPathForDatabase(origin, name, false);
     if (path.isEmpty())
@@ -392,7 +396,7 @@ unsigned long long DatabaseTracker::usageForDatabase(const String& name, const S
     return fileSize(path, size) ? size : 0;
 }
 
-unsigned long long DatabaseTracker::usageForOrigin(const SecurityOriginData& origin)
+unsigned long long DatabaseTracker::usageForOrigin(SecurityOrigin* origin)
 {
     Vector<String> names;
     databaseNamesForOrigin(origin, names);
@@ -404,13 +408,13 @@ unsigned long long DatabaseTracker::usageForOrigin(const SecurityOriginData& ori
     return result;
 }
 
-unsigned long long DatabaseTracker::quotaForOrigin(const SecurityOriginData& origin)
+unsigned long long DatabaseTracker::quotaForOrigin(SecurityOrigin* origin)
 {
     populateOrigins();
     return m_originQuotaMap->get(origin);
 }
 
-void DatabaseTracker::setQuota(const SecurityOriginData& origin, unsigned long long quota)
+void DatabaseTracker::setQuota(SecurityOrigin* origin, unsigned long long quota)
 {
     populateOrigins();
     if (!m_originQuotaMap->contains(origin))
@@ -423,19 +427,19 @@ void DatabaseTracker::setQuota(const SecurityOriginData& origin, unsigned long l
     bool error = statement.prepare() != SQLResultOk;
     if (!error) {
         statement.bindInt64(1, quota);
-        statement.bindText(2, origin.stringIdentifier());
+        statement.bindText(2, origin->stringIdentifier());
         
         error = !statement.executeCommand();
     }
         
     if (error)
-        LOG_ERROR("Failed to set quota %llu in tracker database for origin %s", quota, origin.stringIdentifier().ascii().data());
+        LOG_ERROR("Failed to set quota %llu in tracker database for origin %s", quota, origin->stringIdentifier().ascii().data());
     
     if (m_client)
         m_client->dispatchDidModifyOrigin(origin);
 }
     
-bool DatabaseTracker::addDatabase(const SecurityOriginData& origin, const String& name, const String& path)
+bool DatabaseTracker::addDatabase(SecurityOrigin* origin, const String& name, const String& path)
 {
     if (!m_database.isOpen())
         return false;
@@ -448,12 +452,12 @@ bool DatabaseTracker::addDatabase(const SecurityOriginData& origin, const String
     if (statement.prepare() != SQLResultOk)
         return false;
 
-    statement.bindText(1, origin.stringIdentifier());
+    statement.bindText(1, origin->stringIdentifier());
     statement.bindText(2, name);
     statement.bindText(3, path);
 
     if (!statement.executeCommand()) {
-        LOG_ERROR("Failed to add database %s to origin %s: %s\n", name.ascii().data(), origin.stringIdentifier().ascii().data(), statement.lastErrorMsg());
+        LOG_ERROR("Failed to add database %s to origin %s: %s\n", name.ascii().data(), origin->stringIdentifier().ascii().data(), statement.lastErrorMsg());
         return false;
     }
     
@@ -467,38 +471,38 @@ void DatabaseTracker::deleteAllDatabases()
 {
     populateOrigins();
     
-    HashMap<SecurityOriginData, unsigned long long, SecurityOriginDataHash, SecurityOriginDataTraits>::const_iterator iter = m_originQuotaMap->begin();
-    HashMap<SecurityOriginData, unsigned long long, SecurityOriginDataHash, SecurityOriginDataTraits>::const_iterator end = m_originQuotaMap->end();
+    HashMap<RefPtr<SecurityOrigin>, unsigned long long, SecurityOriginHash, SecurityOriginTraits>::const_iterator iter = m_originQuotaMap->begin();
+    HashMap<RefPtr<SecurityOrigin>, unsigned long long, SecurityOriginHash, SecurityOriginTraits>::const_iterator end = m_originQuotaMap->end();
 
     for (; iter != end; ++iter)
-        deleteDatabasesWithOrigin(iter->first);
+        deleteDatabasesWithOrigin(iter->first.get());
 }
 
-void DatabaseTracker::deleteDatabasesWithOrigin(const SecurityOriginData& origin)
+void DatabaseTracker::deleteDatabasesWithOrigin(SecurityOrigin* origin)
 {
     Vector<String> databaseNames;
     if (!databaseNamesForOrigin(origin, databaseNames)) {
-        LOG_ERROR("Unable to retrieve list of database names for origin %s", origin.stringIdentifier().ascii().data());
+        LOG_ERROR("Unable to retrieve list of database names for origin %s", origin->stringIdentifier().ascii().data());
         return;
     }
     
     for (unsigned i = 0; i < databaseNames.size(); ++i) {
         if (!deleteDatabaseFile(origin, databaseNames[i])) {
-            LOG_ERROR("Unable to delete file for database %s in origin %s", databaseNames[i].ascii().data(), origin.stringIdentifier().ascii().data());
+            LOG_ERROR("Unable to delete file for database %s in origin %s", databaseNames[i].ascii().data(), origin->stringIdentifier().ascii().data());
             return;
         }
     }
     
     SQLiteStatement statement(m_database, "DELETE FROM Databases WHERE origin=?");
     if (statement.prepare() != SQLResultOk) {
-        LOG_ERROR("Unable to prepare deletion of databases from origin %s from tracker", origin.stringIdentifier().ascii().data());
+        LOG_ERROR("Unable to prepare deletion of databases from origin %s from tracker", origin->stringIdentifier().ascii().data());
         return;
     }
         
-    statement.bindText(1, origin.stringIdentifier());
+    statement.bindText(1, origin->stringIdentifier());
     
     if (!statement.executeCommand()) {
-        LOG_ERROR("Unable to execute deletion of databases from origin %s from tracker", origin.stringIdentifier().ascii().data());
+        LOG_ERROR("Unable to execute deletion of databases from origin %s from tracker", origin->stringIdentifier().ascii().data());
         return;
     }
     
@@ -509,24 +513,24 @@ void DatabaseTracker::deleteDatabasesWithOrigin(const SecurityOriginData& origin
     }
 }
 
-void DatabaseTracker::deleteDatabase(const SecurityOriginData& origin, const String& name)
+void DatabaseTracker::deleteDatabase(SecurityOrigin* origin, const String& name)
 {
     if (!deleteDatabaseFile(origin, name)) {
-        LOG_ERROR("Unable to delete file for database %s in origin %s", name.ascii().data(), origin.stringIdentifier().ascii().data());
+        LOG_ERROR("Unable to delete file for database %s in origin %s", name.ascii().data(), origin->stringIdentifier().ascii().data());
         return;
     }
     
     SQLiteStatement statement(m_database, "DELETE FROM Databases WHERE origin=? AND name=?");
     if (statement.prepare() != SQLResultOk) {
-        LOG_ERROR("Unable to prepare deletion of database %s from origin %s from tracker", name.ascii().data(), origin.stringIdentifier().ascii().data());
+        LOG_ERROR("Unable to prepare deletion of database %s from origin %s from tracker", name.ascii().data(), origin->stringIdentifier().ascii().data());
         return;
     }
         
-    statement.bindText(1, origin.stringIdentifier());
+    statement.bindText(1, origin->stringIdentifier());
     statement.bindText(2, name);
     
     if (!statement.executeCommand()) {
-        LOG_ERROR("Unable to execute deletion of database %s from origin %s from tracker", name.ascii().data(), origin.stringIdentifier().ascii().data());
+        LOG_ERROR("Unable to execute deletion of database %s from origin %s from tracker", name.ascii().data(), origin->stringIdentifier().ascii().data());
         return;
     }
     
@@ -536,7 +540,7 @@ void DatabaseTracker::deleteDatabase(const SecurityOriginData& origin, const Str
     }
 }
 
-bool DatabaseTracker::deleteDatabaseFile(const SecurityOriginData& origin, const String& name)
+bool DatabaseTracker::deleteDatabaseFile(SecurityOrigin* origin, const String& name)
 {
     String fullPath = fullPathForDatabase(origin, name, false);
     if (fullPath.isEmpty())
@@ -566,17 +570,17 @@ static Mutex& notificationMutex()
     return mutex;
 }
 
-static Vector<pair<SecurityOriginData, String> >& notificationQueue()
+static Vector<pair<SecurityOrigin*, String> >& notificationQueue()
 {
-    static Vector<pair<SecurityOriginData, String> > queue;
+    static Vector<pair<SecurityOrigin*, String> > queue;
     return queue;
 }
 
-void DatabaseTracker::scheduleNotifyDatabaseChanged(const SecurityOriginData& origin, const String& name)
+void DatabaseTracker::scheduleNotifyDatabaseChanged(SecurityOrigin* origin, const String& name)
 {
     MutexLocker locker(notificationMutex());
 
-    notificationQueue().append(pair<SecurityOriginData, String>(origin.copy(), name.copy()));
+    notificationQueue().append(pair<SecurityOrigin*, String>(origin, name.copy()));
     scheduleForNotification();
 }
 
@@ -598,7 +602,7 @@ void DatabaseTracker::notifyDatabasesChanged()
     // mechanism to inclue which tracker the notification goes out on, as well
     DatabaseTracker& theTracker(tracker());
 
-    Vector<pair<SecurityOriginData, String> > notifications;
+    Vector<pair<SecurityOrigin*, String> > notifications;
     {
         MutexLocker locker(notificationMutex());
 

@@ -39,7 +39,7 @@
 #include <WebCore/COMPtr.h>
 #include <WebCore/DatabaseTracker.h>
 #include <WebCore/FileSystem.h>
-#include <WebCore/SecurityOriginData.h>
+#include <WebCore/SecurityOrigin.h>
 
 using namespace WebCore;
 
@@ -187,7 +187,7 @@ ULONG STDMETHODCALLTYPE WebDatabaseManager::Release()
     return newRef;
 }
 
-template<> struct COMVariantSetter<SecurityOriginData> : COMIUnknownVariantSetter<WebSecurityOrigin, SecurityOriginData> {};
+template<> struct COMVariantSetter<SecurityOrigin*> : COMIUnknownVariantSetter<WebSecurityOrigin, SecurityOrigin*> {};
 
 // IWebDatabaseManager -------------------------------------------------------------
 HRESULT STDMETHODCALLTYPE WebDatabaseManager::sharedWebDatabaseManager( 
@@ -212,9 +212,9 @@ HRESULT STDMETHODCALLTYPE WebDatabaseManager::origins(
     if (this != s_sharedWebDatabaseManager)
         return E_FAIL;
 
-    Vector<SecurityOriginData> origins;
+    Vector<RefPtr<SecurityOrigin> > origins;
     DatabaseTracker::tracker().origins(origins);
-    COMPtr<COMEnumVariant<Vector<SecurityOriginData> > > enumVariant(AdoptCOM, COMEnumVariant<Vector<SecurityOriginData> >::adopt(origins));
+        COMPtr<COMEnumVariant<Vector<RefPtr<SecurityOrigin> > > > enumVariant(AdoptCOM, COMEnumVariant<Vector<RefPtr<SecurityOrigin> > >::adopt(origins));
 
     *result = enumVariant.releaseRef();
     return S_OK;
@@ -237,7 +237,7 @@ HRESULT STDMETHODCALLTYPE WebDatabaseManager::databasesWithOrigin(
         return E_FAIL;
 
     Vector<String> databaseNames;
-    DatabaseTracker::tracker().databaseNamesForOrigin(webSecurityOrigin->securityOriginData(), databaseNames);
+    DatabaseTracker::tracker().databaseNamesForOrigin(webSecurityOrigin->securityOrigi(), databaseNames);
 
     COMPtr<COMEnumVariant<Vector<String> > > enumVariant(AdoptCOM, COMEnumVariant<Vector<String> >::adopt(databaseNames));
 
@@ -263,7 +263,7 @@ HRESULT STDMETHODCALLTYPE WebDatabaseManager::detailsForDatabaseWithOrigin(
         return E_FAIL;
 
     DatabaseDetails details = DatabaseTracker::tracker().detailsForNameAndOrigin(String(databaseName, SysStringLen(databaseName)),
-        webSecurityOrigin->securityOriginData());
+        webSecurityOrigin->securityOrigin());
 
     if (!details.isValid())
         return E_INVALIDARG;
@@ -295,7 +295,7 @@ HRESULT STDMETHODCALLTYPE WebDatabaseManager::deleteDatabasesWithOrigin(
     if (!webSecurityOrigin)
         return E_FAIL;
 
-    DatabaseTracker::tracker().deleteDatabasesWithOrigin(webSecurityOrigin->securityOriginData());
+    DatabaseTracker::tracker().deleteDatabasesWithOrigin(webSecurityOrigin->securityOrigin());
 
     return S_OK;
 }
@@ -317,12 +317,12 @@ HRESULT STDMETHODCALLTYPE WebDatabaseManager::deleteDatabaseWithOrigin(
     if (!webSecurityOrigin)
         return E_FAIL;
 
-    DatabaseTracker::tracker().deleteDatabase(webSecurityOrigin->securityOriginData(), String(databaseName, SysStringLen(databaseName)));
+    DatabaseTracker::tracker().deleteDatabase(webSecurityOrigin->securityOrigin(), String(databaseName, SysStringLen(databaseName)));
 
     return S_OK;
 }
 
-void WebDatabaseManager::dispatchDidModifyOrigin(const SecurityOriginData& origin)
+void WebDatabaseManager::dispatchDidModifyOrigin(SecurityOrigin* origin)
 {
     static BSTR databaseDidModifyOriginName = SysAllocString(WebDatabaseDidModifyOriginNotification);
     IWebNotificationCenter* notifyCenter = WebNotificationCenter::defaultCenterInternal();
@@ -331,7 +331,7 @@ void WebDatabaseManager::dispatchDidModifyOrigin(const SecurityOriginData& origi
     notifyCenter->postNotificationName(databaseDidModifyOriginName, securityOrigin.get(), 0);
 }
 
-void WebDatabaseManager::dispatchDidModifyDatabase(const SecurityOriginData& origin, const String& databaseName)
+void WebDatabaseManager::dispatchDidModifyDatabase(SecurityOrigin* origin, const String& databaseName)
 {
     static BSTR databaseDidModifyOriginName = SysAllocString(WebDatabaseDidModifyDatabaseNotification);
     IWebNotificationCenter* notifyCenter = WebNotificationCenter::defaultCenterInternal();

@@ -30,14 +30,14 @@
 
 namespace WebCore {
 
-class SecurityOriginData;
+class SecurityOrigin;
 class String;
 
 class DatabaseTrackerClient {
 public:
     virtual ~DatabaseTrackerClient() { }
-    virtual void dispatchDidModifyOrigin(const SecurityOriginData&) = 0;
-    virtual void dispatchDidModifyDatabase(const SecurityOriginData&, const String& databaseName) = 0;
+    virtual void dispatchDidModifyOrigin(SecurityOrigin*) = 0;
+    virtual void dispatchDidModifyDatabase(SecurityOrigin*, const String& databaseName) = 0;
 };
 
 } // namespace WebCore

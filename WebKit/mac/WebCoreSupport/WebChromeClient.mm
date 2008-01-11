@@ -412,17 +412,17 @@ void WebChromeClient::print(Frame* frame)
     CallUIDelegate(m_webView, @selector(webView:printFrameView:), frameView);
 }
 
-unsigned long long WebChromeClient::requestQuotaIncreaseForNewDatabase(WebCore::Frame* frame, const WebCore::SecurityOriginData& origin, const WebCore::String& databaseDisplayName, unsigned long long estimatedSize)
+unsigned long long WebChromeClient::requestQuotaIncreaseForNewDatabase(WebCore::Frame* frame, WebCore::SecurityOrigin* origin, const WebCore::String& databaseDisplayName, unsigned long long estimatedSize)
 {
-    WebSecurityOrigin *webOrigin = [[WebSecurityOrigin alloc] _initWithWebCoreSecurityOriginData:reinterpret_cast<const WebCoreSecurityOriginData*>(&origin)];
+    WebSecurityOrigin *webOrigin = [[WebSecurityOrigin alloc] _initWithWebCoreSecurityOrigin:origin];
     unsigned long long result = CallUIDelegateReturningUnsignedLongLong(m_webView, @selector(webView:frame:quotaForSecurityOrigin:toCreateDatabase:withEstimatedSize:), kit(frame), webOrigin, (NSString *)databaseDisplayName, estimatedSize);
     [webOrigin release];
     return result;
 }
 
-unsigned long long WebChromeClient::requestQuotaIncreaseForDatabaseOperation(WebCore::Frame* frame, const WebCore::SecurityOriginData& origin, const WebCore::String& databaseIdentifier, unsigned long long proposedNewQuota)
+unsigned long long WebChromeClient::requestQuotaIncreaseForDatabaseOperation(WebCore::Frame* frame, WebCore::SecurityOrigin* origin, const WebCore::String& databaseIdentifier, unsigned long long proposedNewQuota)
 {
-    WebSecurityOrigin *webOrigin = [[WebSecurityOrigin alloc] _initWithWebCoreSecurityOriginData:reinterpret_cast<const WebCoreSecurityOriginData*>(&origin)];
+    WebSecurityOrigin *webOrigin = [[WebSecurityOrigin alloc] _initWithWebCoreSecurityOrigin:origin];
     unsigned long long result = CallUIDelegateReturningUnsignedLongLong(m_webView, @selector(webView:frame:quotaForSecurityOrigin:fromProposedQuota:database:), kit(frame), webOrigin, proposedNewQuota, (NSString *)databaseIdentifier);
     [webOrigin release];
     return result;

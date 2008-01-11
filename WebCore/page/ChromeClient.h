@@ -30,7 +30,7 @@ namespace WebCore {
     class HitTestResult;
     class IntRect;
     class Page;
-    class SecurityOriginData;
+    class SecurityOrigin;
     class String;
     
     struct FrameLoadRequest;
@@ -104,8 +104,8 @@ namespace WebCore {
 
         virtual void print(Frame*) = 0;
 
-        virtual unsigned long long requestQuotaIncreaseForNewDatabase(Frame*, const SecurityOriginData& origin, const String& databaseDisplayName, unsigned long long estimatedSize) = 0;
-        virtual unsigned long long requestQuotaIncreaseForDatabaseOperation(Frame*, const SecurityOriginData& origin, const String& databaseIdentifier, unsigned long long proposedNewQuota) = 0;
+        virtual unsigned long long requestQuotaIncreaseForNewDatabase(Frame*, SecurityOrigin* origin, const String& databaseDisplayName, unsigned long long estimatedSize) = 0;
+        virtual unsigned long long requestQuotaIncreaseForDatabaseOperation(Frame*, SecurityOrigin* origin, const String& databaseIdentifier, unsigned long long proposedNewQuota) = 0;
 };
 
 }

@@ -43,7 +43,6 @@
 #include "Logging.h"
 #include "NotImplemented.h"
 #include "Page.h"
-#include "SecurityOriginData.h"
 #include "SQLiteDatabase.h"
 #include "SQLiteStatement.h"
 #include "SQLResultSet.h"
@@ -109,7 +108,7 @@ PassRefPtr<Database> Database::openDatabase(Document* document, const String& na
        return 0;
     }
     
-    DatabaseTracker::tracker().setDatabaseDetails(document->securityOrigin()->securityOriginData(), name, displayName, estimatedSize);
+    DatabaseTracker::tracker().setDatabaseDetails(document->securityOrigin(), name, displayName, estimatedSize);
 
     document->setHasOpenDatabases();
 
@@ -151,7 +150,7 @@ Database::Database(Document* document, const String& name, const String& expecte
     m_databaseThread = document->databaseThread();
     ASSERT(m_databaseThread);
 
-    m_filename = DatabaseTracker::tracker().fullPathForDatabase(m_securityOrigin->securityOriginData(), m_name);
+    m_filename = DatabaseTracker::tracker().fullPathForDatabase(m_securityOrigin.get(), m_name);
 }
 
 Database::~Database()
@@ -550,10 +549,9 @@ void Database::setExpectedVersion(const String& version)
     m_expectedVersion = version.copy();
 }
 
-SecurityOriginData Database::securityOriginData() const
+PassRefPtr<SecurityOrigin> Database::securityOriginCopy() const
 {
-    // Return a deep copy for ref counting thread safety
-    return m_securityOrigin->securityOriginData().copy();
+    return m_securityOrigin->copy();
 }
 
 String Database::stringIdentifier() const

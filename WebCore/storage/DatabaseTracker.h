@@ -39,33 +39,33 @@ namespace WebCore {
 
 class DatabaseTrackerClient;
 class Document;
-class SecurityOriginData;
+class SecurityOrigin;
 
-struct SecurityOriginDataHash;
-struct SecurityOriginDataTraits;
+struct SecurityOriginHash;
+struct SecurityOriginTraits;
 
 class DatabaseTracker {
 public:
     void setDatabasePath(const String&);
     const String& databasePath();
 
-    bool canEstablishDatabase(Document* document, const String& name, const String& displayName, unsigned long estimatedSize);
-    void setDatabaseDetails(const SecurityOriginData& origin, const String& name, const String& displayName, unsigned long estimatedSize);
-    String fullPathForDatabase(const SecurityOriginData& origin, const String& name, bool createIfNotExists = true);
+    bool canEstablishDatabase(Document*, const String& name, const String& displayName, unsigned long estimatedSize);
+    void setDatabaseDetails(SecurityOrigin*, const String& name, const String& displayName, unsigned long estimatedSize);
+    String fullPathForDatabase(SecurityOrigin*, const String& name, bool createIfNotExists = true);
 
-    void origins(Vector<SecurityOriginData>& result);
-    bool databaseNamesForOrigin(const SecurityOriginData& origin, Vector<String>& result);
+    void origins(Vector<RefPtr<SecurityOrigin> >& result);
+    bool databaseNamesForOrigin(SecurityOrigin*, Vector<String>& result);
 
-    DatabaseDetails detailsForNameAndOrigin(const String&, const SecurityOriginData&);
+    DatabaseDetails detailsForNameAndOrigin(const String&, SecurityOrigin*);
     
-    unsigned long long usageForDatabase(const String&, const SecurityOriginData&);
-    unsigned long long usageForOrigin(const SecurityOriginData&);
-    unsigned long long quotaForOrigin(const SecurityOriginData&);
-    void setQuota(const SecurityOriginData&, unsigned long long);
+    unsigned long long usageForDatabase(const String&, SecurityOrigin*);
+    unsigned long long usageForOrigin(SecurityOrigin*);
+    unsigned long long quotaForOrigin(SecurityOrigin*);
+    void setQuota(SecurityOrigin*, unsigned long long);
     
     void deleteAllDatabases();
-    void deleteDatabasesWithOrigin(const SecurityOriginData& origin);
-    void deleteDatabase(const SecurityOriginData& origin, const String& name);
+    void deleteDatabasesWithOrigin(SecurityOrigin*);
+    void deleteDatabase(SecurityOrigin*, const String& name);
 
     void setClient(DatabaseTrackerClient*);
     
@@ -73,7 +73,7 @@ public:
     unsigned long long defaultOriginQuota() const;
     
     // From a secondary thread, must be thread safe with its data
-    void scheduleNotifyDatabaseChanged(const SecurityOriginData&, const String& name);
+    void scheduleNotifyDatabaseChanged(SecurityOrigin*, const String& name);
     
     static DatabaseTracker& tracker();
 private:
@@ -81,17 +81,17 @@ private:
 
     void openTrackerDatabase();
     
-    bool hasEntryForOrigin(const SecurityOriginData&);
-    bool hasEntryForDatabase(const SecurityOriginData&, const String& databaseIdentifier);
-    void establishEntryForOrigin(const SecurityOriginData&);
+    bool hasEntryForOrigin(SecurityOrigin*);
+    bool hasEntryForDatabase(SecurityOrigin*, const String& databaseIdentifier);
+    void establishEntryForOrigin(SecurityOrigin*);
     
-    bool addDatabase(const SecurityOriginData& origin, const String& name, const String& path);
+    bool addDatabase(SecurityOrigin*, const String& name, const String& path);
     void populateOrigins();
     
-    bool deleteDatabaseFile(const SecurityOriginData& origin, const String& name);
+    bool deleteDatabaseFile(SecurityOrigin*, const String& name);
 
     SQLiteDatabase m_database;
-    mutable OwnPtr<HashMap<SecurityOriginData, unsigned long long, SecurityOriginDataHash, SecurityOriginDataTraits> > m_originQuotaMap;
+    mutable OwnPtr<HashMap<RefPtr<SecurityOrigin>, unsigned long long, SecurityOriginHash, SecurityOriginTraits> > m_originQuotaMap;
 
     String m_databasePath;
     

@@ -1,3 +1,14 @@
+2008-01-10  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Sam.
+
+        - remove SecurityOriginData and fold its functionality into SecurityOrigin
+
+        * WebCoreSupport/ChromeClientGtk.cpp:
+        (WebKit::ChromeClient::requestQuotaIncreaseForNewDatabase):
+        (WebKit::ChromeClient::requestQuotaIncreaseForDatabaseOperation):
+        * WebCoreSupport/ChromeClientGtk.h:
+
 2008-01-09  Luca Bruno  <lethalman88@gmail.com>
 
         Reviewed by Alp Toker.

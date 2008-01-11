@@ -30,7 +30,7 @@
 #import "WebSecurityOriginInternal.h"
 
 #import <WebCore/DatabaseTracker.h>
-#import <WebCore/SecurityOriginData.h>
+#import <WebCore/SecurityOrigin.h>
 
 using namespace WebCore;
 
@@ -47,35 +47,36 @@ using namespace WebCore;
     if (!self)
         return nil;
     
-    WebCoreSecurityOriginData *originData = new WebCoreSecurityOriginData(protocol, domain, port);  
-    _private = reinterpret_cast<WebSecurityOriginPrivate*>(originData);
+    RefPtr<SecurityOrigin> origin = SecurityOrigin::create(protocol, domain, port, 0);
+    origin->ref();
+    _private = reinterpret_cast<WebSecurityOriginPrivate*>(origin.get());
 
     return self;
 }
 
 - (NSString*)protocol
 {
-    return reinterpret_cast<WebCoreSecurityOriginData*>(_private)->protocol();
+    return reinterpret_cast<SecurityOrigin*>(_private)->protocol();
 }
 
 - (NSString*)domain
 {
-    return reinterpret_cast<WebCoreSecurityOriginData*>(_private)->host();
+    return reinterpret_cast<SecurityOrigin*>(_private)->host();
 }
 
 - (unsigned short)port
 {
-    return reinterpret_cast<WebCoreSecurityOriginData*>(_private)->port();
+    return reinterpret_cast<SecurityOrigin*>(_private)->port();
 }
 
 - (unsigned long long)usage
 {
-    return DatabaseTracker::tracker().usageForOrigin(*reinterpret_cast<WebCoreSecurityOriginData*>(_private));
+    return DatabaseTracker::tracker().usageForOrigin(reinterpret_cast<SecurityOrigin*>(_private));
 }
 
 - (unsigned long long)quota
 {
-    return DatabaseTracker::tracker().quotaForOrigin(*reinterpret_cast<WebCoreSecurityOriginData*>(_private));
+    return DatabaseTracker::tracker().quotaForOrigin(reinterpret_cast<SecurityOrigin*>(_private));
 }
 
 // Sets the storage quota (in bytes)
@@ -83,7 +84,7 @@ using namespace WebCore;
 // This will simply prevent new data from being added to databases in that origin
 - (void)setQuota:(unsigned long long)quota
 {
-    DatabaseTracker::tracker().setQuota(*reinterpret_cast<WebCoreSecurityOriginData*>(_private), quota);
+    DatabaseTracker::tracker().setQuota(reinterpret_cast<SecurityOrigin*>(_private), quota);
 }
 
 - (BOOL)isEqual:(id)anObject
@@ -92,18 +93,20 @@ using namespace WebCore;
         return NO;
     }
     
-    return *[self _core] == *[anObject _core];
+    return [self _core]->equal([anObject _core]);
 }
 
 - (void)dealloc
 {
-    delete reinterpret_cast<WebCoreSecurityOriginData*>(_private);
+    if (_private)
+        reinterpret_cast<SecurityOrigin*>(_private)->deref();
     [super dealloc];
 }
 
 - (void)finalize
 {
-    delete reinterpret_cast<WebCoreSecurityOriginData*>(_private);
+    if (_private)
+        reinterpret_cast<SecurityOrigin*>(_private)->deref();
     [super finalize];
 }
 
@@ -111,22 +114,22 @@ using namespace WebCore;
 
 @implementation WebSecurityOrigin (WebInternal)
 
-- (id)_initWithWebCoreSecurityOriginData:(const WebCoreSecurityOriginData *)securityOriginData
+- (id)_initWithWebCoreSecurityOrigin:(SecurityOrigin*)origin
 {
-    ASSERT(securityOriginData);
+    ASSERT(origin);
     self = [super init];
     if (!self)
         return nil;
 
-    WebCoreSecurityOriginData *originData = new WebCoreSecurityOriginData(*securityOriginData);  
-    _private = reinterpret_cast<WebSecurityOriginPrivate*>(originData);
+    origin->ref();
+    _private = reinterpret_cast<WebSecurityOriginPrivate*>(origin);
 
     return self;
 }
 
-- (WebCoreSecurityOriginData *)_core
+- (SecurityOrigin *)_core
 {
-    return reinterpret_cast<WebCoreSecurityOriginData*>(_private);
+    return reinterpret_cast<SecurityOrigin*>(_private);
 }
 
 @end

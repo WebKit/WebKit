@@ -116,8 +116,8 @@ public:
 
     virtual void print(Frame*) { }
 
-    virtual unsigned long long requestQuotaIncreaseForNewDatabase(Frame*, const SecurityOriginData&, const String&, unsigned long long) { return 0; }
-    virtual unsigned long long requestQuotaIncreaseForDatabaseOperation(Frame*, const SecurityOriginData&, const String&, unsigned long long) { return 0; }
+    virtual unsigned long long requestQuotaIncreaseForNewDatabase(Frame*, SecurityOrigin*, const String&, unsigned long long) { return 0; }
+    virtual unsigned long long requestQuotaIncreaseForDatabaseOperation(Frame*, SecurityOrigin*, const String&, unsigned long long) { return 0; }
 };
 
 class SVGEmptyFrameLoaderClient : public FrameLoaderClient {

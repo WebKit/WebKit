@@ -36,16 +36,16 @@
 using namespace WebCore;
 
 // WebSecurityOrigin ---------------------------------------------------------------
-WebSecurityOrigin* WebSecurityOrigin::createInstance(const SecurityOriginData& securityOriginData)
+WebSecurityOrigin* WebSecurityOrigin::createInstance(SecurityOrigin* securityOrigin)
 {
-    WebSecurityOrigin* origin = new WebSecurityOrigin(securityOriginData);
+    WebSecurityOrigin* origin = new WebSecurityOrigin(securityOrigin);
     origin->AddRef();
     return origin;
 }
 
-WebSecurityOrigin::WebSecurityOrigin(const SecurityOriginData& securityOriginData)
+WebSecurityOrigin::WebSecurityOrigin(SecurityOrigin* securityOrigin)
     : m_refCount(0)
-    , m_securityOriginData(securityOriginData)
+    , m_securityOrigin(securityOrigin)
 {
     gClassCount++;
 }
@@ -94,7 +94,7 @@ HRESULT STDMETHODCALLTYPE WebSecurityOrigin::protocol(
     if (!result)
         return E_POINTER;
 
-    *result = BString(m_securityOriginData.protocol()).release();
+    *result = BString(m_securityOrigin->protocol()).release();
 
     return S_OK;
 }
@@ -105,7 +105,7 @@ HRESULT STDMETHODCALLTYPE WebSecurityOrigin::domain(
     if (!result)
         return E_POINTER;
 
-    *result = BString(m_securityOriginData.host()).release();
+    *result = BString(m_securityOrigin->host()).release();
 
     return S_OK;
 }
@@ -116,7 +116,7 @@ HRESULT STDMETHODCALLTYPE WebSecurityOrigin::port(
     if (!result)
         return E_POINTER;
 
-    *result = m_securityOriginData.port();
+    *result = m_securityOrigin->port();
 
     return S_OK;
 }
@@ -127,7 +127,7 @@ HRESULT STDMETHODCALLTYPE WebSecurityOrigin::usage(
     if (!result)
         return E_POINTER;
 
-    *result = DatabaseTracker::tracker().usageForOrigin(m_securityOriginData);
+    *result = DatabaseTracker::tracker().usageForOrigin(m_securityOrigin.get());
 
     return S_OK;
 }
@@ -138,14 +138,14 @@ HRESULT STDMETHODCALLTYPE WebSecurityOrigin::quota(
     if (!result)
         return E_POINTER;
 
-    *result = DatabaseTracker::tracker().quotaForOrigin(m_securityOriginData);
+    *result = DatabaseTracker::tracker().quotaForOrigin(m_securityOrigin.get());
     return S_OK;
 }
         
 HRESULT STDMETHODCALLTYPE WebSecurityOrigin::setQuota( 
     /* [in] */ unsigned long long quota) 
 {
-    DatabaseTracker::tracker().setQuota(m_securityOriginData, quota);
+    DatabaseTracker::tracker().setQuota(m_securityOrigin.get(), quota);
 
     return S_OK;
 }

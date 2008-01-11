@@ -1,3 +1,38 @@
+2008-01-10  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Sam.
+
+        - remove SecurityOriginData and fold its functionality into SecurityOrigin
+
+        * Storage/WebDatabaseManager.mm:
+        (-[WebDatabaseManager origins]):
+        (-[WebDatabaseManager databasesWithOrigin:]):
+        (-[WebDatabaseManager detailsForDatabase:withOrigin:]):
+        (-[WebDatabaseManager deleteDatabasesWithOrigin:]):
+        (-[WebDatabaseManager deleteDatabase:withOrigin:]):
+        * Storage/WebDatabaseTrackerClient.h:
+        * Storage/WebDatabaseTrackerClient.mm:
+        (WebDatabaseTrackerClient::dispatchDidModifyOrigin):
+        (WebDatabaseTrackerClient::dispatchDidModifyDatabase):
+        * Storage/WebSecurityOrigin.mm:
+        (-[WebSecurityOrigin initWithProtocol:domain:port:]):
+        (-[WebSecurityOrigin protocol]):
+        (-[WebSecurityOrigin domain]):
+        (-[WebSecurityOrigin port]):
+        (-[WebSecurityOrigin usage]):
+        (-[WebSecurityOrigin quota]):
+        (-[WebSecurityOrigin setQuota:]):
+        (-[WebSecurityOrigin isEqual:]):
+        (-[WebSecurityOrigin dealloc]):
+        (-[WebSecurityOrigin finalize]):
+        (-[WebSecurityOrigin _initWithWebCoreSecurityOrigin:]):
+        (-[WebSecurityOrigin _core]):
+        * Storage/WebSecurityOriginInternal.h:
+        * WebCoreSupport/WebChromeClient.h:
+        * WebCoreSupport/WebChromeClient.mm:
+        (WebChromeClient::requestQuotaIncreaseForNewDatabase):
+        (WebChromeClient::requestQuotaIncreaseForDatabaseOperation):
+
 2008-01-10  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.
