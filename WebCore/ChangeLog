@@ -1,3 +1,35 @@
+2008-01-11  Rodney Dawes  <dobey@wayofthemonkey.com>
+
+        Reviewed by Anders Carlsson.
+
+        Bug 16779: Make the PluginStream implementation be shared across platforms
+        http://bugs.webkit.org/show_bug.cgi?id=16779
+
+        Add the new shared PluginStream files to the GTK+ and Win32 builds.
+        Add PluginStreamClient class for the streamDidFinishLoading method.
+        Add open/close/write methods to FileSystem for temporary file handling.
+        Add PluginDebug.h and npfunctions.h for shared PluginStream.
+        Add shared PluginStream.
+        Remove PluginStreamWin.
+        Update PluginViewWin to use shared PluginStream and PluginStreamClass.
+
+        * GNUmakefile.am:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * platform/FileSystem.h:
+        * platform/gtk/FileSystemGtk.cpp:
+        * platform/win/FileSystemWin.cpp:
+        * plugins/PluginDebug.h:
+        * plugins/PluginStream.cpp:
+        * plugins/PluginStream.h:
+        * plugins/npfunctions.h:
+        * plugins/win/PluginDebug: Moved to PluginDebug.h.
+        * plugins/win/PluginStreamWin.cpp: Moved to PluginStream.cpp.
+        * plugins/win/PluginStreamWin.h: Moved to PluginStream.h
+        * plugins/win/PluginViewWin.cpp:
+        * plugins/win/PluginViewWin.h:
+        * plugins/win/npfunctions.h: Moved to npfunctions.h
+
 2008-01-11  Geoffrey Garen  <ggaren@apple.com>
 
         Try to fix Mac build: Edit the right .exp file.

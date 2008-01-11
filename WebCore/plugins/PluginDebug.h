@@ -26,9 +26,9 @@
 #ifndef PLUGIN_DEBUG_H__
 #define PLUGIN_DEBUG_H__
 
-#include "npapi.h"
+#include "npruntime_internal.h"
 
-static char* errorStrings[] = {
+static const char* errorStrings[] = {
     "No errors occurred.", /* NPERR_NO_ERROR */
     "Error with no specific error code occurred.", /* NPERR_GENERIC_ERROR */
     "Invalid instance passed to the plug-in.", /* NPERR_INVALID_INSTANCE_ERROR */

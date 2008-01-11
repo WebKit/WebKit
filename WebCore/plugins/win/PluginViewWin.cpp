@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2008 Collabora, Ltd. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -52,7 +53,6 @@
 #include "kjs_window.h"
 #include "PluginDebug.h"
 #include "PluginPackageWin.h"
-#include "PluginStreamWin.h"
 #include "npruntime_impl.h"
 #include "runtime_root.h"
 #include "Settings.h"
@@ -739,9 +739,9 @@ void PluginViewWin::stop()
     if (!m_isStarted)
         return;
 
-    HashSet<RefPtr<PluginStreamWin> > streams = m_streams;
-    HashSet<RefPtr<PluginStreamWin> >::iterator end = streams.end();
-    for (HashSet<RefPtr<PluginStreamWin> >::iterator it = streams.begin(); it != end; ++it) {
+    HashSet<RefPtr<PluginStream> > streams = m_streams;
+    HashSet<RefPtr<PluginStream> >::iterator end = streams.end();
+    for (HashSet<RefPtr<PluginStream> >::iterator it = streams.begin(); it != end; ++it) {
         (*it)->stop();
         disconnectStream((*it).get());
     }
@@ -844,7 +844,7 @@ void PluginViewWin::performRequest(PluginRequestWin* request)
         // if this is not a targeted request, create a stream for it. otherwise,
         // just pass it off to the loader
         if (request->frameLoadRequest().frameName().isEmpty()) {
-            PluginStreamWin* stream = new PluginStreamWin(this, m_parentFrame, request->frameLoadRequest().resourceRequest(), request->sendNotification(), request->notifyData());
+            PluginStream* stream = new PluginStream(this, m_parentFrame, request->frameLoadRequest().resourceRequest(), request->sendNotification(), request->notifyData(), plugin()->pluginFuncs(), instance());
             m_streams.add(stream);
             stream->start();
         } else {
@@ -876,7 +876,7 @@ void PluginViewWin::performRequest(PluginRequestWin* request)
         if (getString(parentFrame->scriptProxy(), result, resultString))
             cstr = resultString.utf8();
 
-        RefPtr<PluginStreamWin> stream = new PluginStreamWin(this, parentFrame.get(), request->frameLoadRequest().resourceRequest(), request->sendNotification(), request->notifyData());
+        RefPtr<PluginStream> stream = new PluginStream(this, m_parentFrame, request->frameLoadRequest().resourceRequest(), request->sendNotification(), request->notifyData(), plugin()->pluginFuncs(), instance());
         m_streams.add(stream);
         stream->sendJavaScriptStream(requestURL, cstr);
     }
@@ -1234,9 +1234,9 @@ int32 PluginViewWin::write(NPStream* stream, int32 len, void* buffer)
 
 NPError PluginViewWin::destroyStream(NPStream* stream, NPReason reason)
 {
-    PluginStreamWin* browserStream = static_cast<PluginStreamWin*>(stream->ndata);
+    PluginStream* browserStream = static_cast<PluginStream*>(stream->ndata);
 
-    if (!stream || PluginStreamWin::ownerForStream(stream) != m_instance)
+    if (!stream || PluginStream::ownerForStream(stream) != m_instance)
         return NPERR_INVALID_INSTANCE_ERROR;
 
     browserStream->cancelAndDestroyStream(reason);
@@ -1437,7 +1437,7 @@ PluginViewWin::~PluginViewWin()
         m_plugin->unload();
 }
 
-void PluginViewWin::disconnectStream(PluginStreamWin* stream)
+void PluginViewWin::disconnectStream(PluginStream* stream)
 {
     ASSERT(m_streams.contains(stream));
 
@@ -1615,7 +1615,7 @@ void PluginViewWin::didReceiveResponse(const ResourceResponse& response)
     ASSERT(m_loadManually);
     ASSERT(!m_manualStream);
 
-    m_manualStream = new PluginStreamWin(this, m_parentFrame, m_parentFrame->loader()->activeDocumentLoader()->request(), false, 0);
+    m_manualStream = new PluginStream(this, m_parentFrame, m_parentFrame->loader()->activeDocumentLoader()->request(), false, 0, plugin()->pluginFuncs(), instance());
     m_manualStream->setLoadManually(true);
 
     m_manualStream->didReceiveResponse(0, response);

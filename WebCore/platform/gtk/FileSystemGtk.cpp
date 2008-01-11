@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2007 Holger Hans Peter Freyther
+ * Copyright (C) 2008 Collabora, Ltd.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -25,6 +26,7 @@
 
 #include <glib.h>
 #include <glib/gstdio.h>
+#include <glib/gutils.h>
 
 namespace WebCore {
 
@@ -88,5 +90,45 @@ bool makeAllDirectories(const String& path)
     g_free(filename);
 
     return result == 0;
+}
+
+CString openTemporaryFile(const char* prefix, PlatformFileHandle& handle)
+{
+    gchar* filename = g_strdup_printf("%sXXXXXX", prefix);
+    gchar* tempPath = g_build_filename(g_get_tmp_dir(), filename, NULL);
+    g_free(filename);
+
+    int fileDescriptor = g_mkstemp(tempPath);
+    if (!isHandleValid(fileDescriptor)) {
+        LOG_ERROR("Can't create a temporary file.");
+        g_free(tempPath);
+        return 0;
+    }
+    CString tempFilePath = tempPath;
+    g_free(tempPath);
+
+    handle = fileDescriptor;
+    return tempFilePath;
+}
+
+void closeFile(PlatformFileHandle& handle)
+{
+    if (isHandleValid(handle)) {
+        close(handle);
+        handle = invalidPlatformFileHandle;
+    }
+}
+
+int writeToFile(PlatformFileHandle handle, const char* data, int length)
+{
+    int totalBytesWritten = 0;
+    while (totalBytesWritten < length) {
+        int bytesWritten = write(handle, data, length - totalBytesWritten);
+        if (bytesWritten < 0)
+            return -1;
+        totalBytesWritten += bytesWritten;
+    }
+
+    return totalBytesWritten;
 }
 }

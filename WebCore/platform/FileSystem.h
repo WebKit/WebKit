@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2008 Collabora, Ltd. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -39,6 +40,14 @@ namespace WebCore {
 class CString;
 class String;
 
+#if PLATFORM(WIN)
+typedef HANDLE PlatformFileHandle;
+const PlatformFileHandle invalidPlatformFileHandle = INVALID_HANDLE_VALUE;
+#else
+typedef int PlatformFileHandle;
+const PlatformFileHandle invalidPlatformFileHandle = -1;
+#endif
+
 bool fileExists(const String&);
 bool deleteFile(const String&);
 bool fileSize(const String&, long long& result);
@@ -47,6 +56,13 @@ bool makeAllDirectories(const String& path);
 String homeDirectoryPath();
 
 CString fileSystemRepresentation(const String&);
+
+inline bool isHandleValid(const PlatformFileHandle& handle) { return handle != invalidPlatformFileHandle; }
+
+/* Prefix is what the filename should be prefixed with, not the full path */
+CString openTemporaryFile(const char* prefix, PlatformFileHandle&);
+void closeFile(PlatformFileHandle&);
+int writeToFile(PlatformFileHandle, const char* data, int length);
 
 #if PLATFORM(WIN)
 String localUserSpecificStorageDirectory();

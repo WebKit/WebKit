@@ -5,6 +5,7 @@ FEATURE_DEFINES_JAVASCRIPT := LANGUAGE_JAVASCRIPT=1
 SVG_FEATURES :=
 
 webcore_cppflags += \
+	-I $(srcdir)/JavaScriptCore/bindings \
 	-I $(srcdir)/WebCore \
 	-I $(srcdir)/WebCore/ForwardingHeaders \
 	-I $(srcdir)/WebCore/platform \
@@ -844,6 +845,7 @@ webcore_sources += \
 	WebCore/platform/Timer.cpp \
 	WebCore/platform/text/UnicodeRange.cpp \
 	WebCore/platform/Widget.cpp \
+	WebCore/plugins/PluginStream.cpp \
 	WebCore/rendering/AutoTableLayout.cpp \
 	WebCore/rendering/bidi.cpp \
 	WebCore/rendering/break_lines.cpp \

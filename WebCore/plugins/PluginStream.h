@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2006, 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2008 Collabora, Ltd.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,16 +24,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef PluginStreamWin_H
-#define PluginStreamWin_H
+#ifndef PluginStream_H
+#define PluginStream_H
 
-#include <winsock2.h>
-#include <windows.h>
-#include <wtf/HashMap.h>
-#include <wtf/Vector.h>
-#include <wtf/OwnPtr.h>
-#include <wtf/RefCounted.h>
 #include "CString.h"
+#include "FileSystem.h"
 #include "KURL.h"
 #include "npfunctions.h"
 #include "NetscapePlugInStreamLoader.h"
@@ -41,17 +37,27 @@
 #include "ResourceResponse.h"
 #include "StringHash.h"
 #include "Timer.h"
+#include <wtf/HashMap.h>
+#include <wtf/Vector.h>
+#include <wtf/OwnPtr.h>
+#include <wtf/RefCounted.h>
 
 namespace WebCore {
     class Frame;
-    class PluginViewWin;
+    class PluginStream;
 
     enum PluginStreamState { StreamBeforeStarted, StreamStarted, StreamStopped };
 
-    class PluginStreamWin : public RefCounted<PluginStreamWin>, private NetscapePlugInStreamLoaderClient {
+    class PluginStreamClient {
     public:
-        PluginStreamWin(PluginViewWin*, Frame*, const ResourceRequest&, bool sendNotification, void* notifyData);
-        ~PluginStreamWin();
+        virtual ~PluginStreamClient() {}
+        virtual void streamDidFinishLoading(PluginStream*) {}
+    };
+
+    class PluginStream : public RefCounted<PluginStream>, private NetscapePlugInStreamLoaderClient {
+    public:
+        PluginStream(PluginStreamClient*, Frame*, const ResourceRequest&, bool sendNotification, void* notifyData, const NPPluginFuncs*, NPP instance);
+        ~PluginStream();
         
         void start();
         void stop();
@@ -78,20 +84,20 @@ namespace WebCore {
         ResourceRequest m_resourceRequest;
         ResourceResponse m_resourceResponse;
 
+        PluginStreamClient* m_client;
         Frame* m_frame;
         RefPtr<NetscapePlugInStreamLoader> m_loader;
-        PluginViewWin* m_pluginView;
         void* m_notifyData;
         bool m_sendNotification;
         PluginStreamState m_streamState;
         bool m_loadManually;
 
-        Timer<PluginStreamWin> m_delayDeliveryTimer;
-        void delayDeliveryTimerFired(Timer<PluginStreamWin>*);
+        Timer<PluginStream> m_delayDeliveryTimer;
+        void delayDeliveryTimerFired(Timer<PluginStream>*);
 
         OwnPtr< Vector<char> > m_deliveryData;
 
-        HANDLE m_tempFileHandle;
+        PlatformFileHandle m_tempFileHandle;
 
         const NPPluginFuncs* m_pluginFuncs;
         NPP m_instance;

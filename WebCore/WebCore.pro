@@ -776,6 +776,7 @@ SOURCES += \
     platform/Timer.cpp \
     platform/text/UnicodeRange.cpp \
     platform/Widget.cpp \
+    plugins/PluginStream.cpp \
     rendering/AutoTableLayout.cpp \
     rendering/bidi.cpp \
     rendering/break_lines.cpp \

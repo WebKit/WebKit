@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2008 Collabora, Ltd. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -154,6 +155,47 @@ static String cachedStorageDirectory(DWORD pathIdentifier)
     return directory;
 }
 
+
+CString openTemporaryFile(const char* prefix, PlatformFileHandle& handle)
+{
+    char tempPath[MAX_PATH];
+    int tempPathLength = ::GetTempPathA(_countof(tempPath), tempPath);
+    if (tempPathLength <= 0 || tempPathLength > _countof(tempPath))
+        return 0;
+
+    char tempFile[MAX_PATH];
+    if (::GetTempFileNameA(tempPath, prefix, 0, tempFile) > 0) {
+        HANDLE tempHandle = ::CreateFileA(tempFile, GENERIC_READ | GENERIC_WRITE, 0, 0, 
+            CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+
+        if (isHandleValid(tempHandle)) {
+            handle = tempHandle;
+            return tempFile;
+        }
+    }
+    return 0;
+}
+
+void closeFile(PlatformFileHandle& handle)
+{
+    if (isHandleValid(handle)) {
+        ::CloseHandle(handle);
+        handle = invalidPlatformFileHandle;
+    }
+}
+
+int writeToFile(PlatformFileHandle handle, const char* data, int length)
+{
+    if (!isHandleValid(handle))
+        return -1;
+
+    DWORD bytesWritten;
+    bool success = WriteFile(handle, data, length, &bytesWritten, 0);
+
+    if (!success)
+        return -1;
+    return static_cast<int>(bytesWritten);
+}
 String localUserSpecificStorageDirectory()
 {
     return cachedStorageDirectory(CSIDL_LOCAL_APPDATA);
