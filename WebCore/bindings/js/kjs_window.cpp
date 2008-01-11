@@ -1333,7 +1333,13 @@ void Window::timerFired(DOMWindowTimer* timer)
         int timeoutId = timer->timeoutId();
 
         timer->action()->execute(this);
-        if (d->m_timeouts.contains(timeoutId) && timer->repeatInterval() && timer->repeatInterval() < cMinimumTimerInterval) {
+        // The DOMWindowTimer object may have been deleted or replaced during execution,
+        // so we re-fetch it.
+        timer = d->m_timeouts.get(timeoutId);
+        if (!timer)
+            return;
+
+        if (timer->repeatInterval() && timer->repeatInterval() < cMinimumTimerInterval) {
             timer->setNestingLevel(timer->nestingLevel() + 1);
             if (timer->nestingLevel() >= cMaxTimerNestingLevel)
                 timer->augmentRepeatInterval(cMinimumTimerInterval - timer->repeatInterval());

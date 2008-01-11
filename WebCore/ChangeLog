@@ -1,3 +1,17 @@
+2008-01-10  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        - fix a crash when calling alert() from a repeating timer
+
+        On non-Mac platforms, the PageGroupLoadDeferrer pauses DOM timers during
+        alert() and other similar functions, which deletes the actual
+        DOMWindowTimer objects and replaces them with new objects when resuming.
+
+        * bindings/js/kjs_window.cpp:
+        (KJS::Window::timerFired): Re-fetch the timer object from the map in
+        case it has been deleted or replaced.
+
 2008-01-10  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Sam.
