@@ -30,7 +30,7 @@
 #include "CachedResourceClient.h"
 #include "CachedResourceClientWalker.h"
 #include "FontPlatformData.h"
-#if PLATFORM(CG) || PLATFORM(QT)
+#if PLATFORM(CG) || PLATFORM(QT) || PLATFORM(GTK)
 #include "FontCustomPlatformData.h"
 #endif
 #include "TextResourceDecoder.h"
@@ -49,7 +49,7 @@ CachedFont::CachedFont(DocLoader* dl, const String &url)
 
 CachedFont::~CachedFont()
 {
-#if PLATFORM(CG) || PLATFORM(QT)
+#if PLATFORM(CG) || PLATFORM(QT) || PLATFORM(GTK)
     delete m_fontData;
 #endif
 }
@@ -83,7 +83,7 @@ void CachedFont::beginLoadIfNeeded(DocLoader* dl)
 
 bool CachedFont::ensureCustomFontData()
 {
-#if PLATFORM(CG) || PLATFORM(QT)
+#if PLATFORM(CG) || PLATFORM(QT) || PLATFORM(GTK)
     if (!m_fontData && !m_errorOccurred && !m_loading) {
         m_fontData = createFontCustomPlatformData(m_data.get());
         if (!m_fontData)
@@ -95,7 +95,7 @@ bool CachedFont::ensureCustomFontData()
 
 FontPlatformData CachedFont::platformDataFromCustomData(int size, bool bold, bool italic)
 {
-#if PLATFORM(CG) || PLATFORM(QT)
+#if PLATFORM(CG) || PLATFORM(QT) || PLATFORM(GTK)
     ASSERT(m_fontData);
     return m_fontData->fontPlatformData(size, bold, italic);
 #else
@@ -105,7 +105,7 @@ FontPlatformData CachedFont::platformDataFromCustomData(int size, bool bold, boo
 
 void CachedFont::allReferencesRemoved()
 {
-#if PLATFORM(CG) || PLATFORM(QT)
+#if PLATFORM(CG) || PLATFORM(QT) || PLATFORM(GTK)
     if (m_fontData) {
         delete m_fontData;
         m_fontData = 0;

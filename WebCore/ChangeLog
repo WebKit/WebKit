@@ -1,3 +1,35 @@
+2008-01-11  Alp Toker  <alp@atoker.com>
+
+        Reviewed by Dave Hyatt and Mark Rowe.
+
+        http://bugs.webkit.org/show_bug.cgi?id=16089
+        [GTK] Support custom fonts, CachedFont::platformDataFromCustomData()
+
+        Add support for CSS2 @font-face custom/downloadable fonts to the GTK+
+        port.
+
+        * GNUmakefile.am:
+        * WebCore.pro:
+        * loader/CachedFont.cpp:
+        (WebCore::CachedFont::~CachedFont):
+        (WebCore::CachedFont::ensureCustomFontData):
+        (WebCore::CachedFont::platformDataFromCustomData):
+        (WebCore::CachedFont::allReferencesRemoved):
+        * platform/graphics/gtk/FontCustomPlatformData.cpp: Added.
+        (WebCore::FontCustomPlatformData::~FontCustomPlatformData):
+        (WebCore::FontCustomPlatformData::fontPlatformData):
+        (WebCore::releaseData):
+        (WebCore::createFontCustomPlatformData):
+        * platform/graphics/gtk/FontCustomPlatformData.h: Added.
+        (WebCore::FontCustomPlatformData::FontCustomPlatformData):
+        * platform/graphics/gtk/FontPlatformData.h:
+        * platform/graphics/gtk/FontPlatformDataGtk.cpp:
+        (WebCore::FontPlatformData::FontPlatformData):
+        (WebCore::FontPlatformData::init):
+        (WebCore::FontPlatformData::isFixedPitch):
+        * platform/graphics/gtk/SimpleFontDataGtk.cpp:
+        (WebCore::SimpleFontData::platformDestroy):
+
 2008-01-11  Adam Roben  <aroben@apple.com>
 
         Remove FrameLoader::committedFirstRealDocumentLoad

@@ -49,6 +49,9 @@ public:
         { }
 
     FontPlatformData(const FontDescription&, const AtomicString& family);
+
+    FontPlatformData(cairo_font_face_t* fontFace, int size, bool bold, bool italic);
+
     ~FontPlatformData();
 
     static bool init();

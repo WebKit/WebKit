@@ -1,10 +1,7 @@
 /*
- * This file is part of the internal font implementation.  It should not be included by anyone other than
- * FontMac.cpp, FontWin.cpp and Font.cpp.
- *
  * Copyright (C) 2006 Apple Computer, Inc.
  * Copyright (C) 2006 Michael Emmel mike.emmel@gmail.com 
- * Copyright (C) 2007 Alp Toker <alp@atoker.com>
+ * Copyright (C) 2007, 2008 Alp Toker <alp@atoker.com>
  * Copyright (C) 2007 Holger Hans Peter Freyther
  * All rights reserved.
  *
@@ -22,7 +19,6 @@
  * along with this library; see the file COPYING.LIB.  If not, write to
  * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
  * Boston, MA 02110-1301, USA.
- *
  */
 
 #include "config.h"
@@ -111,16 +107,36 @@ freePattern:
     FcPatternDestroy(pattern);
 }
 
+FontPlatformData::FontPlatformData(cairo_font_face_t* fontFace, int size, bool bold, bool italic)
+    : m_pattern(0)
+    , m_fontDescription()
+    , m_scaledFont(0)
+{
+    cairo_matrix_t fontMatrix;
+    cairo_matrix_init_scale(&fontMatrix, size, size);
+    cairo_matrix_t ctm;
+    cairo_matrix_init_identity(&ctm);
+    cairo_font_options_t* options = cairo_font_options_create();
+
+    // We force antialiasing and disable hinting to provide consistent
+    // typographic qualities for custom fonts on all platforms.
+    cairo_font_options_set_hint_style(options, CAIRO_HINT_STYLE_NONE);
+    cairo_font_options_set_antialias(options, CAIRO_ANTIALIAS_GRAY);
+
+    m_scaledFont = cairo_scaled_font_create(fontFace, &fontMatrix, &ctm, options);
+    cairo_font_options_destroy(options);
+}
+
 bool FontPlatformData::init()
 {
-    static bool initialized;
+    static bool initialized = false;
     if (initialized)
         return true;
-    initialized = true;
     if (!FcInit()) {
         fprintf(stderr, "Can't init font config library\n");
         return false;
     }
+    initialized = true;
     return true;
 }
 
@@ -130,6 +146,10 @@ FontPlatformData::~FontPlatformData()
 
 bool FontPlatformData::isFixedPitch()
 {
+    // TODO: Support isFixedPitch() for custom fonts.
+    if (!m_pattern)
+        return false;
+
     int spacing;
     if (FcPatternGetInteger(m_pattern, FC_SPACING, 0, &spacing) == FcResultMatch)
         return spacing == FC_MONO;

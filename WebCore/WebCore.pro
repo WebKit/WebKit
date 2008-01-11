@@ -1005,6 +1005,7 @@ gtk-port {
         platform/gtk/FileChooserGtk.cpp \
         platform/gtk/FileSystemGtk.cpp \
         platform/graphics/gtk/FontCacheGtk.cpp \
+        platform/graphics/gtk/FontCustomPlatformData.cpp \
         platform/graphics/gtk/FontGtk.cpp \
         platform/graphics/gtk/FontPlatformDataGtk.cpp \
         platform/graphics/gtk/GlyphPageTreeNodeGtk.cpp \

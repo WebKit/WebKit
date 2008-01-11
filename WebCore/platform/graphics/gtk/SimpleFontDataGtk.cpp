@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
  * Copyright (C) 2006 Michael Emmel mike.emmel@gmail.com 
- * Copyright (C) 2007 Alp Toker <alp.toker@collabora.co.uk>
+ * Copyright (C) 2007, 2008 Alp Toker <alp@atoker.com>
  * Copyright (C) 2007 Holger Hans Peter Freyther
  * All rights reserved.
  *
@@ -62,11 +62,18 @@ void SimpleFontData::platformInit()
 
 void SimpleFontData::platformDestroy()
 {
-    if (m_font.m_pattern && ((FcPattern*)-1 != m_font.m_pattern))
-        FcPatternDestroy(m_font.m_pattern);
+    if (!isCustomFont()) {
+        if (m_font.m_pattern && ((FcPattern*)-1 != m_font.m_pattern)) {
+            FcPatternDestroy(m_font.m_pattern);
+            m_font.m_pattern = 0;
+        }
 
-    if (m_font.m_scaledFont)
-        cairo_scaled_font_destroy(m_font.m_scaledFont);
+        if (m_font.m_scaledFont) {
+            cairo_scaled_font_destroy(m_font.m_scaledFont);
+            m_font.m_scaledFont = 0;
+        }
+    }
+
     delete m_smallCapsFontData;
 }
 

@@ -935,6 +935,7 @@ webkitgtk_sources += \
 	WebCore/platform/gtk/FileChooserGtk.cpp \
 	WebCore/platform/gtk/FileSystemGtk.cpp \
 	WebCore/platform/graphics/gtk/FontCacheGtk.cpp \
+	WebCore/platform/graphics/gtk/FontCustomPlatformData.cpp \
 	WebCore/platform/graphics/gtk/FontGtk.cpp \
 	WebCore/platform/graphics/gtk/FontPlatformDataGtk.cpp \
 	WebCore/platform/graphics/gtk/GlyphPageTreeNodeGtk.cpp \
