@@ -114,6 +114,7 @@ static inline int getValueID(const char* tagStr, int len)
 #define YYLTYPE_IS_TRIVIAL 1
 #define YYMAXDEPTH 10000
 #define YYDEBUG 0
+// FIXME: Replace with %parse-param { CSSParser* parser } once we can depend on bison 2.x
 #define YYPARSE_PARAM parser
 
 %}
