@@ -1584,13 +1584,7 @@ static LRESULT CALLBACK WebViewWndProc(HWND hWnd, UINT message, WPARAM wParam, L
 
     switch (message) {
         case WM_PAINT: {
-            COMPtr<IWebDataSource> dataSource;
-            mainFrameImpl->dataSource(&dataSource);
-            Frame* coreFrame = core(mainFrameImpl);
-            if (!webView->isPainting() && (!dataSource || coreFrame && (coreFrame->view()->didFirstLayout() || !coreFrame->loader()->committedFirstRealDocumentLoad())))
-                webView->paint(0, 0);
-            else
-                ValidateRect(hWnd, 0);
+            webView->paint(0, 0);
             break;
         }
         case WM_PRINTCLIENT:

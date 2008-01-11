@@ -1,3 +1,21 @@
+2008-01-11  Adam Roben  <aroben@apple.com>
+
+        Fix Bug 16828: WebView never paints if first page load is canceled after being committed but before layout
+
+        <http://bugs.webkit.org/show_bug.cgi?id=16828>
+        <rdar://5682402>
+
+        Now that we have 1) a real loader and 2) multiple FrameViews per
+        Frame, we no longer need the hackery we had in our WM_PAINT handler
+        that decided whether or not to paint. We now always want to paint,
+        letting the swapping of FrameViews that happens in
+        transitionToCommittedForNewPage handle which document gets painted.
+
+        Reviewed by Hyatt.
+
+        * WebView.cpp:
+        (WebViewWndProc): Removed hackery that decided sometimes not to paint.
+
 2008-01-11  Mark Rowe  <mrowe@apple.com>
 
         Windows build fix.  Update to match method name in WebCore.
