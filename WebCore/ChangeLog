@@ -1,3 +1,20 @@
+2008-01-10  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adele.
+
+        No functional changes, only code cleanup.
+
+        * css/MediaQueryEvaluator.cpp:
+        (WebCore::compareValue): renamed from cmpvalue
+        (WebCore::colorMediaFeatureEval):
+        (WebCore::device_aspect_ratioMediaFeatureEval):
+        (WebCore::device_pixel_ratioMediaFeatureEval):
+        (WebCore::gridMediaFeatureEval):
+        (WebCore::device_heightMediaFeatureEval):
+        (WebCore::device_widthMediaFeatureEval):
+        (WebCore::heightMediaFeatureEval):
+        (WebCore::widthMediaFeatureEval):
+
 2008-01-10  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Anders Carlsson.
