@@ -831,6 +831,12 @@ static bool getString(KJSProxy* proxy, JSValue* result, String& string)
 
 void PluginViewWin::performRequest(PluginRequestWin* request)
 {
+    // don't let a plugin start any loads if it is no longer part of a document that is being 
+    // displayed unless the loads are in the same frame as the plugin.
+    if (m_parentFrame->loader()->documentLoader() != m_parentFrame->loader()->activeDocumentLoader() &&
+        (request->frameLoadRequest().frameName().isNull() || m_parentFrame->tree()->name() != request->frameLoadRequest().frameName()))
+        return;
+
     KURL requestURL = request->frameLoadRequest().resourceRequest().url();
     String jsString = scriptStringIfJavaScriptURL(requestURL);
 
@@ -842,6 +848,8 @@ void PluginViewWin::performRequest(PluginRequestWin* request)
             m_streams.add(stream);
             stream->start();
         } else {
+            // Find the frame for navigation
+//            Frame* frame = 
             m_parentFrame->loader()->urlSelected(request->frameLoadRequest(), 0, false, true);
       
             // FIXME: <rdar://problem/4807469> This should be sent when the document has finished loading
@@ -890,6 +898,7 @@ void PluginViewWin::requestTimerFired(Timer<PluginViewWin>* timer)
         m_requestTimer.startOneShot(0);
 
     performRequest(request);
+    delete request;
 }
 
 void PluginViewWin::scheduleRequest(PluginRequestWin* request)
@@ -908,29 +917,19 @@ NPError PluginViewWin::load(const FrameLoadRequest& frameLoadRequest, bool sendN
         return NPERR_INVALID_URL;
 
     String target = frameLoadRequest.frameName();
-
-    // don't let a plugin start any loads if it is no longer part of a document that is being 
-    // displayed unless the loads are in the same frame as the plugin.
-    if (m_parentFrame->loader()->documentLoader() != m_parentFrame->loader()->activeDocumentLoader() &&
-        (target.isNull() || m_parentFrame->tree()->find(target) != m_parentFrame))
-        return NPERR_GENERIC_ERROR;
-
     String jsString = scriptStringIfJavaScriptURL(url);
+
     if (!jsString.isNull()) {
         Settings* settings = m_parentFrame->settings();
         if (!settings || !settings->isJavaScriptEnabled()) {
             // Return NPERR_GENERIC_ERROR if JS is disabled. This is what Mozilla does.
             return NPERR_GENERIC_ERROR;
-        } else if (target.isNull() && m_mode == NP_FULL) {
-            // Don't allow a JavaScript request from a standalone plug-in that is self-targetted
-            // because this can cause the user to be redirected to a blank page (3424039).
+        } 
+        
+        if (!target.isNull() && m_parentFrame->tree()->name() != target) {
+            // For security reasons, only allow JS requests to be made on the frame that contains the plug-in.
             return NPERR_INVALID_PARAM;
         }
-    }
-
-    if (!jsString.isNull() && !target.isNull() && m_parentFrame->tree()->find(target) != m_parentFrame) {
-        // For security reasons, only allow JS requests to be made on the frame that contains the plug-in.
-        return NPERR_INVALID_PARAM;
     }
 
     PluginRequestWin* request = new PluginRequestWin(frameLoadRequest, sendNotification, notifyData, arePopupsAllowed());

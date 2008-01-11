@@ -10,6 +10,21 @@
 
 2008-01-10  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Jon.
+
+        Fix an assert that would happen when a plug-in tries to load a URL while a provisional load is going.
+        
+        * plugins/win/PluginViewWin.cpp:
+        (WebCore::PluginViewWin::performRequest):
+        Move document loader check here since we don't start loading until here and a new document load could have started in the meantime.
+        
+        (WebCore::PluginViewWin::requestTimerFired):
+        Don't leak the plugin requests.
+        
+        (WebCore::PluginViewWin::load):
+
+2008-01-10  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by John Sullivan.
 
         <rdar://problem/5455889>
