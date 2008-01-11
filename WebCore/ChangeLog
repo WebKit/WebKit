@@ -1,3 +1,35 @@
+2008-01-10  Adam Barth  <hk9565@gmail.com>
+
+        Reviewed by Sam Weinig and Anders Carlsson.
+
+        Fixes: http://bugs.webkit.org/show_bug.cgi?id=16522
+        <rdar://problem/5657355>
+
+        This patch makes two changes:
+
+        1) Java calls FrameLoader::load in a slightly different way than
+           JavaScript, which previously let a malicious web site bypass the
+           shouldAllowNavigation check.  This patch adds that check to that
+           code path.
+
+        2) FrameLoader now wraps calls to m_frame->tree()->find(name) with
+           findFrameForNavigation, which calls shouldAllowNavigation.  This
+           treats disallowed frame navigations as if the named frame did not
+           exist, resulting in a popup window when appropriate.
+
+        Tests: http/tests/security/frameNavigation/xss-DENIED-plugin-navigation.html
+               http/tests/security/frameNavigation/xss-DENIED-targeted-link-navigation.html
+
+        * WebCore.base.exp:
+        * bindings/js/kjs_window.cpp:
+        (KJS::WindowProtoFuncOpen::callAsFunction):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::createWindow):
+        (WebCore::FrameLoader::load):
+        (WebCore::FrameLoader::post):
+        (WebCore::FrameLoader::findFrameForNavigation):
+        * loader/FrameLoader.h:
+
 2008-01-10  John Sullivan  <sullivan@apple.com>
 
         Written by Hyatt, reviewed by me

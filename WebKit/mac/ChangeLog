@@ -1,3 +1,14 @@
+2008-01-10  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Fixes: http://bugs.webkit.org/show_bug.cgi?id=16522
+        <rdar://problem/5657355>
+
+        * Plugins/WebBaseNetscapePluginView.mm:
+        (-[WebBaseNetscapePluginView loadPluginRequest:]): call findFrameForNavigation
+        to ensure the shouldAllowNavigation check is made.
+
 2008-01-07  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Mark.

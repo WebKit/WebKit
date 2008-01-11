@@ -202,6 +202,8 @@ http/tests/security/javascriptURL/xss-DENIED-to-javascript-url-in-foreign-domain
 http/tests/security/aboutBlank/xss-DENIED-set-opener.html
 http/tests/security/aboutBlank/xss-DENIED-navigate-opener-document-write.html
 http/tests/security/aboutBlank/xss-DENIED-navigate-opener-javascript-url.html
+http/tests/security/frameNavigation/xss-DENIED-plugin-navigation.html
+http/tests/security/frameNavigation/xss-DENIED-targeted-link-navigation.html
 
 # DRT is not fully implemented in boomer <rdar://problem/5128261>
 fast/dom/Window/setting-properties-on-closed-window.html

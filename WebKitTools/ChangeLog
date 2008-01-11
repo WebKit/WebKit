@@ -1,3 +1,22 @@
+2008-01-10  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Make DRT track open windows instead of allocated windows so that
+        we can avoid ASSERTION due to late deallocs out of our control.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (dumpBackForwardListForAllWindows):
+        (runTest):
+        * DumpRenderTree/mac/DumpRenderTreeMac.h:
+        * DumpRenderTree/mac/DumpRenderTreeWindow.h:
+        * DumpRenderTree/mac/DumpRenderTreeWindow.mm:
+        (+[DumpRenderTreeWindow openWindows]):
+        (-[DumpRenderTreeWindow initWithContentRect:styleMask:backing:defer:]):
+        (-[DumpRenderTreeWindow close]):
+        * DumpRenderTree/mac/LayoutTestControllerMac.mm:
+        (LayoutTestController::windowCount):
+
 2008-01-10  Ada Chan  <adachan@apple.com>
 
         Meta key is not the same as Alt key on windows.

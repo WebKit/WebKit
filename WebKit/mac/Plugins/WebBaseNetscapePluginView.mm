@@ -2130,8 +2130,7 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
     if (frameName) {
         // FIXME - need to get rid of this window creation which
         // bypasses normal targeted link handling
-        frame = [[self webFrame] findFrameNamed:frameName];
-    
+        frame = kit([[self webFrame] _frameLoader]->findFrameForNavigation(frameName));
         if (frame == nil) {
             WebView *currentWebView = [self webView];
             NSDictionary *features = [[NSDictionary alloc] init];

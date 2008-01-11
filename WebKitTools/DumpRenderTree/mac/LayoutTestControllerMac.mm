@@ -240,7 +240,7 @@ void LayoutTestController::setWaitToDump(bool waitUntilDone)
 
 int LayoutTestController::windowCount()
 {
-    return CFArrayGetCount(allWindowsRef);
+    return CFArrayGetCount(openWindowsRef);
 }
 
 void LayoutTestController::execCommand(JSStringRef name, JSStringRef value)

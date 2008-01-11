@@ -32,5 +32,5 @@
 
 @interface DumpRenderTreeWindow : NSWindow
 // I'm not sure why we can't just use [NSApp windows]
-+ (NSArray *)allWindows;
++ (NSArray *)openWindows;
 @end

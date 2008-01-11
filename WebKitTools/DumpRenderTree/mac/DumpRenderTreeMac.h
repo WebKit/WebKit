@@ -38,7 +38,7 @@
 @class WebFrame;
 @class WebView;
 
-extern CFMutableArrayRef allWindowsRef;
+extern CFMutableArrayRef openWindowsRef;
 extern CFMutableSetRef disallowedURLs;
 extern WebFrame* mainFrame;
 extern WebFrame* topLoadingFrame;

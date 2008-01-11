@@ -35,7 +35,7 @@
 // FIXME: This file is ObjC++ only because of this include. :(
 #import "LayoutTestController.h"
 
-CFMutableArrayRef allWindowsRef = 0;
+CFMutableArrayRef openWindowsRef = 0;
 
 static CFArrayCallBacks NonRetainingArrayCallbacks = {
     0,
@@ -47,29 +47,28 @@ static CFArrayCallBacks NonRetainingArrayCallbacks = {
 
 @implementation DumpRenderTreeWindow
 
-+ (NSArray *)allWindows
++ (NSArray *)openWindows
 {
-    return [[(NSArray *)allWindowsRef copy] autorelease];
+    return [[(NSArray *)openWindowsRef copy] autorelease];
 }
 
 - (id)initWithContentRect:(NSRect)contentRect styleMask:(unsigned int)styleMask backing:(NSBackingStoreType)bufferingType defer:(BOOL)deferCreation
 {
-    if (!allWindowsRef)
-        allWindowsRef = CFArrayCreateMutable(NULL, 0, &NonRetainingArrayCallbacks);
+    if (!openWindowsRef)
+        openWindowsRef = CFArrayCreateMutable(NULL, 0, &NonRetainingArrayCallbacks);
 
-    CFArrayAppendValue(allWindowsRef, self);
+    CFArrayAppendValue(openWindowsRef, self);
             
     return [super initWithContentRect:contentRect styleMask:styleMask backing:bufferingType defer:deferCreation];
 }
 
-- (void)dealloc
+- (void)close
 {
-    CFRange arrayRange = CFRangeMake(0, CFArrayGetCount(allWindowsRef));
-    CFIndex i = CFArrayGetFirstIndexOfValue(allWindowsRef, arrayRange, self);
+    CFRange arrayRange = CFRangeMake(0, CFArrayGetCount(openWindowsRef));
+    CFIndex i = CFArrayGetFirstIndexOfValue(openWindowsRef, arrayRange, self);
     assert(i != -1);
-
-    CFArrayRemoveValueAtIndex(allWindowsRef, i);
-    [super dealloc];
+    CFArrayRemoveValueAtIndex(openWindowsRef, i);
+    [super close];
 }
 
 - (BOOL)isKeyWindow

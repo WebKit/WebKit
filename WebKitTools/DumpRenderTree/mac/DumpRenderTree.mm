@@ -706,10 +706,10 @@ static const char *methodNameStringForFailedTest()
 
 static void dumpBackForwardListForAllWindows()
 {
-    CFArrayRef allWindows = (CFArrayRef)[DumpRenderTreeWindow allWindows];
-    unsigned count = CFArrayGetCount(allWindows);
+    CFArrayRef openWindows = (CFArrayRef)[DumpRenderTreeWindow openWindows];
+    unsigned count = CFArrayGetCount(openWindows);
     for (unsigned i = 0; i < count; i++) {
-        NSWindow *window = (NSWindow *)CFArrayGetValueAtIndex(allWindows, i);
+        NSWindow *window = (NSWindow *)CFArrayGetValueAtIndex(openWindows, i);
         WebView *webView = [[[window contentView] subviews] objectAtIndex:0];
         dumpBackForwardListForWebView(webView);
     }
@@ -866,8 +866,8 @@ static void runTest(const char *pathOrURL)
     WorkQueue::shared()->clear();
 
     if (layoutTestController->closeRemainingWindowsWhenComplete()) {
-        NSArray* array = [DumpRenderTreeWindow allWindows];
-        
+        NSArray* array = [DumpRenderTreeWindow openWindows];
+
         unsigned count = [array count];
         for (unsigned i = 0; i < count; i++) {
             NSWindow *window = [array objectAtIndex:i];
@@ -888,9 +888,9 @@ static void runTest(const char *pathOrURL)
     
     [pool release];
 
-    // We should only have our main window left when we're done
-    ASSERT(CFArrayGetCount(allWindowsRef) == 1);
-    ASSERT(CFArrayGetValueAtIndex(allWindowsRef, 0) == [[mainFrame webView] window]);
+    // We should only have our main window left open when we're done
+    ASSERT(CFArrayGetCount(openWindowsRef) == 1);
+    ASSERT(CFArrayGetValueAtIndex(openWindowsRef, 0) == [[mainFrame webView] window]);
 
     delete layoutTestController;
     layoutTestController = 0;

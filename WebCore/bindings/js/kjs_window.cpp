@@ -329,6 +329,18 @@ static Frame* createWindow(ExecState* exec, Frame* openerFrame, const String& ur
         request.setHTTPReferrer(activeFrame->loader()->outgoingReferrer());
     FrameLoadRequest frameRequest(request, frameName);
 
+    FrameLoader* loader;
+    if (activeFrame)
+        // We need to use the active frame's loader to let FrameLoader know
+        // which principal is requesting the navigation.  Unfortunately, there
+        // might not be an activeFrame, in which case we resort to using the
+        // opener's loader.
+        //
+        // See http://bugs.webkit.org/show_bug.cgi?id=16522
+        loader = activeFrame->loader();
+    else
+        loader = openerFrame->loader();
+
     // FIXME: It's much better for client API if a new window starts with a URL, here where we
     // know what URL we are going to open. Unfortunately, this code passes the empty string
     // for the URL, but there's a reason for that. Before loading we have to set up the opener,
@@ -337,7 +349,7 @@ static Frame* createWindow(ExecState* exec, Frame* openerFrame, const String& ur
     // We'd have to resolve all those issues to pass the URL instead of "".
 
     bool created;
-    Frame* newFrame = openerFrame->loader()->createWindow(frameRequest, windowFeatures, created);
+    Frame* newFrame = loader->createWindow(frameRequest, windowFeatures, created);
     if (!newFrame)
         return 0;
 
@@ -1063,11 +1075,12 @@ JSValue* WindowProtoFuncOpen::callAsFunction(ExecState* exec, JSObject* thisObj,
     } else if (frameName == "_parent") {
         if (Frame* parent = frame->tree()->parent())
             frame = parent;
-        if (!activeFrame->loader()->shouldAllowNavigation(frame))
-            return jsUndefined();
         topOrParent = true;
     }
     if (topOrParent) {
+        if (!activeFrame->loader()->shouldAllowNavigation(frame))
+            return jsUndefined();
+
         String completedURL;
         if (!urlString.isEmpty())
             completedURL = activeFrame->document()->completeURL(urlString);

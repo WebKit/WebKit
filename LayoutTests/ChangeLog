@@ -1,3 +1,19 @@
+2008-01-10  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Tests for http://bugs.webkit.org/show_bug.cgi?id=16522
+        <rdar://problem/5657355>
+
+        * http/tests/security/frameNavigation/resources/frame-with-link-to-navigate.html: Added.
+        * http/tests/security/frameNavigation/resources/frame-with-plugin-to-navigate.html: Added.
+        * http/tests/security/frameNavigation/resources/navigation-happened.html: Added.
+        * http/tests/security/frameNavigation/xss-DENIED-plugin-navigation-expected.txt: Added.
+        * http/tests/security/frameNavigation/xss-DENIED-plugin-navigation.html: Added.
+        * http/tests/security/frameNavigation/xss-DENIED-targeted-link-navigation-expected.txt: Added.
+        * http/tests/security/frameNavigation/xss-DENIED-targeted-link-navigation.html: Added.
+        * platform/win/Skipped:
+
 2008-01-10  Adam Roben  <aroben@apple.com>
 
         * platform/win/Skipped: Removed a test that was fixed in r26826.

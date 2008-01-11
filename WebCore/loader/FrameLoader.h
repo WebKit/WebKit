@@ -435,6 +435,7 @@ namespace WebCore {
         void iconLoadDecisionAvailable();
 
         bool shouldAllowNavigation(Frame* targetFrame) const;
+        Frame* findFrameForNavigation(const AtomicString& name);
 
     private:
         PassRefPtr<HistoryItem> createHistoryItem(bool useOriginal);
