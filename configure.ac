@@ -174,7 +174,7 @@ AC_MSG_CHECKING([whether to do a debug build])
 AC_ARG_ENABLE(debug,
               AC_HELP_STRING([--enable-debug],
                              [turn on debugging [default=no]]),
-              [enable_debug="yes"],[enable_debug="no"])
+              [],[enable_debug="no"])
 AC_MSG_RESULT([$enable_debug])
 
 # check whether to build with database support
@@ -198,7 +198,7 @@ AC_MSG_CHECKING([whether to enable HTML5 video support])
 AC_ARG_ENABLE(video,
               AC_HELP_STRING([--enable-video],
                              [enable HTML5 video support [default=no]]),
-              [enable_video="yes"],[enable_video="no"])
+              [],[enable_video="no"])
 AC_MSG_RESULT([$enable_video])
 
 # check whether to enable XPath support
