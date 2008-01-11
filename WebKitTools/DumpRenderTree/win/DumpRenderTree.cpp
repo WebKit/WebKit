@@ -679,6 +679,11 @@ static void runTest(const char* pathOrURL)
 
     MSG msg;
     while (GetMessage(&msg, 0, 0, 0)) {
+        // We get spurious WM_MOUSELEAVE events which make event handling machinery think that mouse button
+        // is released during dragging (see e.g. fast\dynamic\layer-hit-test-crash.html).
+        // Mouse can never leave WebView during normal DumpRenderTree operation, so we just ignore all such events.
+        if (msg.message == WM_MOUSELEAVE)
+            continue;
         TranslateMessage(&msg);
         DispatchMessage(&msg);
     }

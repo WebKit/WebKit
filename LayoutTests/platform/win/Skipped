@@ -372,9 +372,6 @@ editing/selection/5131716-1.html
 # <rdar://5667273>
 editing/selection/fake-drag.html
 
-# <rdar://5667275>
-fast/dynamic/layer-hit-test-crash.html
-
 # <rdar://5667279> Undefined value exception
 http/tests/xmlhttprequest/XMLHttpRequestException.html
 

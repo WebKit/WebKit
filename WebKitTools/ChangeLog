@@ -1,3 +1,13 @@
+2008-01-11  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Adam Roben.
+
+        <rdar://problem/5667275> fast/dynamic/layer-hit-test-crash.html is failing
+
+        * DumpRenderTree/win/DumpRenderTree.cpp: (runTest): Ignore WM_MOUSELEAVE events,
+        as these are only posted because the test window is not a normal visible one, and
+        they confuse drag&drop machinery.
+
 2008-01-11  Adam Roben  <aroben@apple.com>
 
         Fix a crash when pathToLocalResource fails and a leak
