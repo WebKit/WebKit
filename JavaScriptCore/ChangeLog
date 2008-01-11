@@ -1,3 +1,14 @@
+2008-01-11  Simon Hausmann  <hausmann@webkit.org>
+
+        Reviewed by Mark Rowe.
+
+        Fix the (clean) qmake build. For generating chartables.c we don't
+        depend on a separate input source file anymore, the dftables perl
+        script is enough. So use that instead as value for the .input
+        variable, to ensure that qmake also generates a rule to call dftables.
+
+        * pcre/pcre.pri:
+
 2008-01-10  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by John Sullivan.
