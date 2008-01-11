@@ -1,5 +1,11 @@
 2008-01-11  Geoffrey Garen  <ggaren@apple.com>
 
+        Try to fix Mac build: Edit the right .exp file.
+
+        * WebCore.base.exp:
+
+2008-01-11  Geoffrey Garen  <ggaren@apple.com>
+
         Try to fix Qt build: don't use pthreads if they're not available.
 
         * bindings/js/GCController.cpp:
