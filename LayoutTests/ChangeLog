@@ -1,3 +1,11 @@
+2008-01-12  Dan Bernstein  <mitz@apple.com>
+
+        Update expected results for fast/replaced/image-map-expected after
+        r29432 disabled document replacement by the JavaScript result in this
+        case.
+
+        * fast/replaced/image-map-expected.txt:
+
 2008-01-12  Holger Hans Peter Freyther  <holger.freyther@trolltech.com>
 
         Reviewed by Ap.
