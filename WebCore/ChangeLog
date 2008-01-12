@@ -1,3 +1,21 @@
+2008-01-11  Luca Bruno  <lethalman88@gmail.com>
+
+        Reviewed by Alp Toker.
+
+        http://bugs.webkit.org/show_bug.cgi?id=16729
+        [cURL] Allow multiple files for upload
+
+        * platform/network/ResourceHandleInternal.h:
+        (WebCore::ResourceHandleInternal::ResourceHandleInternal):
+        * platform/network/curl/ResourceHandleCurl.cpp:
+        (WebCore::ResourceHandleInternal::~ResourceHandleInternal):
+        * platform/network/curl/ResourceHandleManager.cpp:
+        (WebCore::readCallback): added
+        (WebCore::ResourceHandleManager::setupPOST): setup for streaming the POST
+        (WebCore::ResourceHandleManager::startJob):
+        (WebCore::ResourceHandleManager::cancel): revert the previous patch for regression
+        * platform/network/curl/ResourceHandleManager.h:
+
 2008-01-11  Christian Dywan  <christian@imendio.com>
 
         Reviewed by Alp Toker.

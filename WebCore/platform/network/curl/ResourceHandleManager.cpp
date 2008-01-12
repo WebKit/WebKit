@@ -31,6 +31,7 @@
 #include "ResourceHandleManager.h"
 
 #include "CString.h"
+#include "FileSystem.h"
 #include "MIMETypeRegistry.h"
 #include "NotImplemented.h"
 #include "ResourceHandle.h"
@@ -191,6 +192,70 @@ static size_t headerCallback(char* ptr, size_t size, size_t nmemb, void* data)
     return totalSize;
 }
 
+/* This is called to obtain HTTP POST or PUT data.
+   Iterate through FormData elements and upload files.
+   Carefully respect the given buffer size and fill the rest of the data at the next calls.
+*/
+size_t readCallback(void* ptr, size_t size, size_t nmemb, void* data)
+{
+    ResourceHandle* job = static_cast<ResourceHandle*>(data);
+    ResourceHandleInternal* d = job->getInternal();
+    if (d->m_cancelled)
+        return 0;
+
+    size_t sent = 0;
+    size_t toSend = size * nmemb;
+    if (!toSend)
+        return 0;
+
+    Vector<FormDataElement> elements = job->request().httpBody()->elements();
+    if (d->m_formDataElementIndex >= elements.size())
+        return 0;
+
+    FormDataElement element = elements[d->m_formDataElementIndex];
+
+    if (element.m_type == FormDataElement::encodedFile) {
+        if (!d->m_file)
+            d->m_file = fopen(element.m_filename.utf8().data(), "rb");
+
+        if (!d->m_file) {
+            // FIXME: show a user error?
+#ifndef NDEBUG
+            printf("Failed while trying to open %s for upload\n", element.m_filename.utf8().data());
+#endif
+            job->cancel();
+            return 0;
+        }
+
+        sent = fread(ptr, size, nmemb, d->m_file);
+        if (!size && ferror(d->m_file)) {
+            // FIXME: show a user error?
+#ifndef NDEBUG
+            printf("Failed while trying to read %s for upload\n", element.m_filename.utf8().data());
+#endif
+            job->cancel();
+            return 0;
+        }
+        if (feof(d->m_file)) {
+            fclose(d->m_file);
+            d->m_file = 0;
+            d->m_formDataElementIndex++;
+        }
+    } else {
+        size_t elementSize = element.m_data.size() - d->m_formDataElementDataOffset;
+        sent = elementSize > toSend ? toSend : elementSize;
+        memcpy(ptr, element.m_data.data() + d->m_formDataElementDataOffset, sent);
+        if (elementSize > sent)
+            d->m_formDataElementDataOffset += sent;
+        else {
+            d->m_formDataElementDataOffset = 0;
+            d->m_formDataElementIndex++;
+        }
+    }
+
+    return sent;
+}
+
 void ResourceHandleManager::downloadTimerCallback(Timer<ResourceHandleManager>* timer)
 {
     startScheduledJobs();
@@ -288,49 +353,67 @@ void ResourceHandleManager::removeFromCurl(ResourceHandle* job)
     d->m_handle = 0;
 }
 
-void ResourceHandleManager::setupPUT(ResourceHandle*)
+void ResourceHandleManager::setupPUT(ResourceHandle*, struct curl_slist**)
 {
     notImplemented();
 }
 
-void ResourceHandleManager::setupPOST(ResourceHandle* job)
+/* Calculate the length of the POST.
+   Force chunked data transfer if size of files can't be obtained.
+ */
+void ResourceHandleManager::setupPOST(ResourceHandle* job, struct curl_slist** headers)
 {
     ResourceHandleInternal* d = job->getInternal();
-
-    job->request().httpBody()->flatten(d->m_postBytes);
-    if (d->m_postBytes.size() != 0) {
-        curl_easy_setopt(d->m_handle, CURLOPT_POST, TRUE);
-        curl_easy_setopt(d->m_handle, CURLOPT_POSTFIELDSIZE, d->m_postBytes.size());
-        curl_easy_setopt(d->m_handle, CURLOPT_POSTFIELDS, d->m_postBytes.data());
-    }
-
     Vector<FormDataElement> elements = job->request().httpBody()->elements();
-    size_t size = elements.size();
-    struct curl_httppost* lastItem = 0;
-    struct curl_httppost* post = 0;
-    for (size_t i = 0; i < size; i++) {
-        if (elements[i].m_type != FormDataElement::encodedFile)
-            continue;
-        CString cstring = elements[i].m_filename.utf8();
-        ASSERT(!d->m_fileName);
-        d->m_fileName = strdup(cstring.data());
+    size_t numElements = elements.size();
 
-        // Fill in the file upload field
-        curl_formadd(&post, &lastItem, CURLFORM_COPYNAME, "sendfile", CURLFORM_FILE, d->m_fileName, CURLFORM_END);
+    if (!numElements)
+        return;
 
-        // Fill in the filename field
-        curl_formadd(&post, &lastItem, CURLFORM_COPYNAME, "filename", CURLFORM_COPYCONTENTS, d->m_fileName, CURLFORM_END);
-
-        // FIXME: We should not add a "submit" field for each file uploaded. Review this code.
-        // Fill in the submit field too, even if this is rarely needed
-        curl_formadd(&post, &lastItem, CURLFORM_COPYNAME, "submit", CURLFORM_COPYCONTENTS, "send", CURLFORM_END);
-
-        // FIXME: should we support more than one file?
-        break;
+    // Do not stream for simple POST data
+    if (numElements == 1) {
+        job->request().httpBody()->flatten(d->m_postBytes);
+        if (d->m_postBytes.size() != 0) {
+            curl_easy_setopt(d->m_handle, CURLOPT_POST, TRUE);
+            curl_easy_setopt(d->m_handle, CURLOPT_POSTFIELDSIZE, d->m_postBytes.size());
+            curl_easy_setopt(d->m_handle, CURLOPT_POSTFIELDS, d->m_postBytes.data()); 
+        }
+        return;
     }
 
-    if (post)
-        curl_easy_setopt(d->m_handle, CURLOPT_HTTPPOST, post);
+    // Obtain the total size of the POST
+    static const long long maxCurlOffT = (1LL << (sizeof(curl_off_t) * 8 - 1)) - 1;
+    curl_off_t size = 0;
+    bool chunkedTransfer = false;
+    for (size_t i = 0; i < numElements; i++) {
+        FormDataElement element = elements[i];
+        if (element.m_type == FormDataElement::encodedFile) {
+            long long fileSizeResult;
+            if (fileSize(element.m_filename, fileSizeResult)) {
+                if (fileSizeResult > maxCurlOffT) {
+                    // File size is too big for specifying it to cURL
+                    chunkedTransfer = true;
+                    break;
+                }
+                size += fileSizeResult;
+            } else {
+                chunkedTransfer = true;
+                break;
+            }
+        } else
+            size += elements[i].m_data.size();
+    }
+
+    curl_easy_setopt(d->m_handle, CURLOPT_POST, TRUE);
+
+    // cURL guesses that we want chunked encoding as long as we specify the header
+    if (chunkedTransfer)
+        *headers = curl_slist_append(*headers, "Transfer-Encoding: chunked");
+    else
+        curl_easy_setopt(d->m_handle, CURLOPT_POSTFIELDSIZE_LARGE, size);
+
+    curl_easy_setopt(d->m_handle, CURLOPT_READFUNCTION, readCallback);
+    curl_easy_setopt(d->m_handle, CURLOPT_READDATA, job);
 }
 
 void ResourceHandleManager::add(ResourceHandle* job)
@@ -345,7 +428,7 @@ void ResourceHandleManager::add(ResourceHandle* job)
 bool ResourceHandleManager::removeScheduledJob(ResourceHandle* job)
 {
     int size = m_resourceHandleList.size();
-    for (int i=0; i < size; i++) {
+    for (int i = 0; i < size; i++) {
         if (job == m_resourceHandleList[i]) {
             m_resourceHandleList.remove(i);
             return true;
@@ -471,8 +554,8 @@ void ResourceHandleManager::startJob(ResourceHandle* job)
         curl_easy_setopt(d->m_handle, CURLOPT_COOKIEJAR, m_cookieJarFileName);
     }
 
+    struct curl_slist* headers = 0;
     if (job->request().httpHeaderFields().size() > 0) {
-        struct curl_slist* headers = 0;
         HTTPHeaderMap customHeaders = job->request().httpHeaderFields();
         HTTPHeaderMap::const_iterator end = customHeaders.end();
         for (HTTPHeaderMap::const_iterator it = customHeaders.begin(); it != end; ++it) {
@@ -484,18 +567,21 @@ void ResourceHandleManager::startJob(ResourceHandle* job)
             CString headerLatin1 = headerString.latin1();
             headers = curl_slist_append(headers, headerLatin1.data());
         }
-        curl_easy_setopt(d->m_handle, CURLOPT_HTTPHEADER, headers);
-        d->m_customHeaders = headers;
     }
 
     if ("GET" == job->request().httpMethod())
         curl_easy_setopt(d->m_handle, CURLOPT_HTTPGET, TRUE);
     else if ("POST" == job->request().httpMethod())
-        setupPOST(job);
+        setupPOST(job, &headers);
     else if ("PUT" == job->request().httpMethod())
-        setupPUT(job);
+        setupPUT(job, &headers);
     else if ("HEAD" == job->request().httpMethod())
         curl_easy_setopt(d->m_handle, CURLOPT_NOBODY, TRUE);
+
+    if (headers) {
+        curl_easy_setopt(d->m_handle, CURLOPT_HTTPHEADER, headers);
+        d->m_customHeaders = headers;
+    }
 
     m_runningJobs++;
     CURLMcode ret = curl_multi_add_handle(m_curlMultiHandle, d->m_handle);

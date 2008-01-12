@@ -44,8 +44,8 @@ public:
     void cancel(ResourceHandle*);
     void setCookieJarFileName(const char* cookieJarFileName);
 
-    void setupPOST(ResourceHandle*);
-    void setupPUT(ResourceHandle*);
+    void setupPOST(ResourceHandle*, struct curl_slist**);
+    void setupPUT(ResourceHandle*, struct curl_slist**);
 
 private:
     ResourceHandleManager();

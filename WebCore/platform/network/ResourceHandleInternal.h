@@ -96,9 +96,11 @@ namespace WebCore {
 #if USE(CURL)
             , m_handle(0)
             , m_url(0)
-            , m_fileName(0)
             , m_customHeaders(0)
             , m_cancelled(false)
+            , m_file(0)
+            , m_formDataElementIndex(0)
+            , m_formDataElementDataOffset(0)
 #endif
 #if PLATFORM(QT)
             , m_job(0)
@@ -149,11 +151,14 @@ namespace WebCore {
 #if USE(CURL)
         CURL* m_handle;
         char* m_url;
-        char* m_fileName;
         struct curl_slist* m_customHeaders;        
-        Vector<char> m_postBytes;
         ResourceResponse m_response;
         bool m_cancelled;
+
+        FILE* m_file;
+        size_t m_formDataElementIndex;
+        size_t m_formDataElementDataOffset;
+        Vector<char> m_postBytes;
 #endif
 #if PLATFORM(QT)
 #if QT_VERSION < 0x040400
