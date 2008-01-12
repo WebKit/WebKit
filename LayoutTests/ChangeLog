@@ -1,3 +1,16 @@
+2008-01-11  Anyang Ren  <anyang.ren@gmail.com>
+
+        Reviewed by Darin Adler.
+
+        Add a new regression test for
+        http://bugs.webkit.org/show_bug.cgi?id=15960
+        The view source mode should skip an empty attribute value only if
+        the attribute name is not followed by an equal sign (=).
+
+        * fast/frames/resources/viewsource-frame-1.html: Added.
+        * fast/frames/viewsource-empty-attribute-value-expected.txt: Added.
+        * fast/frames/viewsource-empty-attribute-value.html: Added.
+
 2008-01-11  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
 
         Reviewed by Maciej.

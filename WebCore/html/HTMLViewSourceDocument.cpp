@@ -128,6 +128,7 @@ void HTMLViewSourceDocument::addViewSourceToken(Token* token)
             unsigned size = guide->size();
             unsigned begin = 0;
             unsigned currAttr = 0;
+            Attribute* attr = 0;
             for (unsigned i = 0; i < size; i++) {
                 if (guide->at(i) == 'a' || guide->at(i) == 'x' || guide->at(i) == 'v') {
                     // Add in the string.
@@ -135,9 +136,14 @@ void HTMLViewSourceDocument::addViewSourceToken(Token* token)
                      
                     begin = i + 1;
 
-                    if (token->attrs && currAttr < token->attrs->length()) {
+                    if (guide->at(i) == 'a') {
+                        if (token->attrs && currAttr < token->attrs->length())
+                            attr = token->attrs->attributeItem(currAttr++);
+                        else
+                            attr = 0;
+                    }
+                    if (attr) {
                         if (guide->at(i) == 'a') {
-                            Attribute* attr = token->attrs->attributeItem(currAttr);
                             String name = attr->name().toString();
                             if (doctype)
                                 addText(name, "webkit-html-doctype");
@@ -147,10 +153,7 @@ void HTMLViewSourceDocument::addViewSourceToken(Token* token)
                                 if (m_current != m_tbody)
                                     m_current = static_cast<Element*>(m_current->parent());
                             }
-                            if (attr->value().isNull() || attr->value().isEmpty())
-                                currAttr++;
                         } else {
-                            Attribute* attr = token->attrs->attributeItem(currAttr);
                             String value = attr->value().domString();
                             if (doctype)
                                 addText(value, "webkit-html-doctype");
@@ -164,7 +167,6 @@ void HTMLViewSourceDocument::addViewSourceToken(Token* token)
                                 if (m_current != m_tbody)
                                     m_current = static_cast<Element*>(m_current->parent());
                             }
-                            currAttr++;
                         }
                     }
                 }
