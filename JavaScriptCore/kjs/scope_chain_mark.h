@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2003, 2006 Apple Inc.
+ *  Copyright (C) 2003, 2006, 2008 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -18,9 +18,11 @@
  *
  */
 
-#include "scope_chain.h"
+#ifndef scope_chain_mark_h
+#define scope_chain_mark_h
+
 #include "Activation.h"
-#include "object.h"
+#include "scope_chain.h"
 
 namespace KJS {
 
@@ -43,3 +45,5 @@ namespace KJS {
     }
 
 } // namespace KJS
+
+#endif

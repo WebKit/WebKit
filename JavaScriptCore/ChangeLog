@@ -1,3 +1,10 @@
+2008-01-12  Darin Adler  <darin@apple.com>
+
+        - try to fix Qt build
+
+        * kjs/function.cpp: Added include of scope_chain_mark.h.
+        * kjs/scope_chain_mark.h: Added multiple-include guards.
+
 2008-01-12  Mark Rowe  <mrowe@apple.com>
 
         Another Windows build fix.
