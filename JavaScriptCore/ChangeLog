@@ -1,5 +1,18 @@
 2008-01-12  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
 
+        Reviewed by Mark Rowe.
+
+        Fixes leaking of ActivationStackNode objects.
+
+        * kjs/JSGlobalObject.cpp:
+        (KJS::JSGlobalObject::deleteActivationStack):
+        (KJS::JSGlobalObject::~JSGlobalObject):
+        (KJS::JSGlobalObject::init):
+        (KJS::JSGlobalObject::reset):
+        * kjs/JSGlobalObject.h:
+
+2008-01-12  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
+
         Reviewed by Maciej.
 
         Fixes a problem with the ActivationImp tear-off patch (r29425) where
