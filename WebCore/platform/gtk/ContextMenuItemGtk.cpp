@@ -146,15 +146,15 @@ GtkMenuItem* ContextMenuItem::createNativeMenuItem(const PlatformMenuItemDescrip
         item = GTK_MENU_ITEM(gtk_separator_menu_item_new());
     else {
         if (menu.type == CheckableActionType) {
-            item = GTK_MENU_ITEM(gtk_check_menu_item_new_with_label(menu.title.utf8().data()));
+            item = GTK_MENU_ITEM(gtk_check_menu_item_new_with_mnemonic(menu.title.utf8().data()));
             gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(item), menu.checked);
         } else {
             if (const gchar* stockID = gtkStockIDFromContextMenuAction(menu.action)) {
-                item = GTK_MENU_ITEM(gtk_image_menu_item_new_with_label(menu.title.utf8().data()));
+                item = GTK_MENU_ITEM(gtk_image_menu_item_new_with_mnemonic(menu.title.utf8().data()));
                 GtkWidget* image = gtk_image_new_from_stock(stockID, GTK_ICON_SIZE_MENU);
                 gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(item), image);
             } else
-                item = GTK_MENU_ITEM(gtk_menu_item_new_with_label(menu.title.utf8().data()));
+                item = GTK_MENU_ITEM(gtk_menu_item_new_with_mnemonic(menu.title.utf8().data()));
         }
 
         ContextMenuAction* menuAction = static_cast<ContextMenuAction*>(malloc(sizeof(ContextMenuAction*)));

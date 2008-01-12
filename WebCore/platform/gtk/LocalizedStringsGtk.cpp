@@ -53,7 +53,7 @@ String resetButtonDefaultLabel()
 
 String searchableIndexIntroduction()
 {
-    return String::fromUTF8(_("Searchable Index"));
+    return String::fromUTF8(_("_Searchable Index"));
 }
 
 String fileButtonChooseFileLabel()
@@ -63,77 +63,77 @@ String fileButtonChooseFileLabel()
 
 String fileButtonNoFileSelectedLabel()
 { 
-    return String::fromUTF8(_("No file selected"));
+    return String::fromUTF8(_("(None)"));
 }
 
 String contextMenuItemTagOpenLinkInNewWindow()
 {
-    return String::fromUTF8(_("Open Link in New Window"));
+    return String::fromUTF8(_("Open Link in New _Window"));
 }
 
 String contextMenuItemTagDownloadLinkToDisk()
 {
-    return String::fromUTF8(_("Download Linked File"));
+    return String::fromUTF8(_("_Download Linked File"));
 }
 
 String contextMenuItemTagCopyLinkToClipboard()
 {
-    return String::fromUTF8(_("Copy Link"));
+    return String::fromUTF8(_("Copy Link Loc_ation"));
 }
 
 String contextMenuItemTagOpenImageInNewWindow()
 { 
-    return String::fromUTF8(_("Open Image in New Window"));
+    return String::fromUTF8(_("Open _Image in New Window"));
 }
 
 String contextMenuItemTagDownloadImageToDisk()
 {
-    return String::fromUTF8(_("Download Image"));
+    return String::fromUTF8(_("Sa_ve Image As"));
 }
 
 String contextMenuItemTagCopyImageToClipboard()
 {
-    return String::fromUTF8(_("Copy Image"));
+    return String::fromUTF8(_("Cop_y Image"));
 }
 
 String contextMenuItemTagOpenFrameInNewWindow()
 {
-    return String::fromUTF8(_("Open Frame in New Window"));
+    return String::fromUTF8(_("Open _Frame in New Window"));
 }
 
 String contextMenuItemTagCopy()
 {
-    return String::fromUTF8(_("Copy"));
+    return String::fromUTF8(_("_Copy"));
 }
 
 String contextMenuItemTagGoBack()
 {
-    return String::fromUTF8(_("Back"));
+    return String::fromUTF8(_("_Back"));
 }
 
 String contextMenuItemTagGoForward()
 {
-    return String::fromUTF8(_("Forward"));
+    return String::fromUTF8(_("_Forward"));
 }
 
 String contextMenuItemTagStop()
 {
-    return String::fromUTF8(_("Stop"));
+    return String::fromUTF8(_("_Stop"));
 }
 
 String contextMenuItemTagReload()
 {
-    return String::fromUTF8(_("Reload"));
+    return String::fromUTF8(_("_Reload"));
 }
 
 String contextMenuItemTagCut()
 {
-    return String::fromUTF8(_("Cut"));
+    return String::fromUTF8(_("Cu_t"));
 }
 
 String contextMenuItemTagPaste()
 {
-    return String::fromUTF8(_("Paste"));
+    return String::fromUTF8(_("_Paste"));
 }
 
 String contextMenuItemTagNoGuessesFound()
@@ -143,107 +143,107 @@ String contextMenuItemTagNoGuessesFound()
 
 String contextMenuItemTagIgnoreSpelling()
 {
-    return String::fromUTF8(_("Ignore Spelling"));
+    return String::fromUTF8(_("_Ignore Spelling"));
 }
 
 String contextMenuItemTagLearnSpelling()
 {
-    return String::fromUTF8(_("Learn Spelling"));
+    return String::fromUTF8(_("_Learn Spelling"));
 }
 
 String contextMenuItemTagSearchWeb()
 {
-    return String::fromUTF8(_("Search with MSN"));
+    return String::fromUTF8(_("_Search the Web"));
 }
 
 String contextMenuItemTagLookUpInDictionary()
 {
-    return String::fromUTF8(_("Look Up in Dictionary"));
+    return String::fromUTF8(_("_Look Up in Dictionary"));
 }
 
 String contextMenuItemTagOpenLink()
 {
-    return String::fromUTF8(_("Open Link"));
+    return String::fromUTF8(_("_Open Link"));
 }
 
 String contextMenuItemTagIgnoreGrammar()
 {
-    return String::fromUTF8(_("Ignore Grammar"));
+    return String::fromUTF8(_("Ignore _Grammar"));
 }
 
 String contextMenuItemTagSpellingMenu()
 {
-    return String::fromUTF8(_("Spelling and Grammar"));
+    return String::fromUTF8(_("Spelling and _Grammar"));
 }
 
 String contextMenuItemTagShowSpellingPanel(bool show)
 {
-    return String::fromUTF8(show ? _("Show Spelling and Grammar") : _("Hide Spelling and Grammar"));
+    return String::fromUTF8(show ? _("_Show Spelling and Grammar") : _("_Hide Spelling and Grammar"));
 }
 
 String contextMenuItemTagCheckSpelling()
 {
-    return String::fromUTF8(_("Check Document Now"));
+    return String::fromUTF8(_("_Check Document Now"));
 }
 
 String contextMenuItemTagCheckSpellingWhileTyping()
 {
-    return String::fromUTF8(_("Check Spelling While Typing"));
+    return String::fromUTF8(_("Check Spelling While _Typing"));
 }
 
 String contextMenuItemTagCheckGrammarWithSpelling()
 {
-    return String::fromUTF8(_("Check Grammar With Spelling"));
+    return String::fromUTF8(_("Check _Grammar With Spelling"));
 }
 
 String contextMenuItemTagFontMenu()
 {
-    return String::fromUTF8(_("Font"));
+    return String::fromUTF8(_("_Font"));
 }
 
 String contextMenuItemTagBold()
 {
-    return String::fromUTF8(_("Bold"));
+    return String::fromUTF8(_("_Bold"));
 }
 
 String contextMenuItemTagItalic()
 {
-    return String::fromUTF8(_("Italic"));
+    return String::fromUTF8(_("_Italic"));
 }
 
 String contextMenuItemTagUnderline()
 {
-    return String::fromUTF8(_("Underline"));
+    return String::fromUTF8(_("_Underline"));
 }
 
 String contextMenuItemTagOutline()
 {
-    return String::fromUTF8(_("Outline"));
+    return String::fromUTF8(_("_Outline"));
 }
 
 String contextMenuItemTagWritingDirectionMenu()
 {
-    return String::fromUTF8(_("Write Direction"));
+    return String::fromUTF8(_("_Writing Direction"));
 }
 
 String contextMenuItemTagDefaultDirection()
 {
-    return String::fromUTF8(_("Default"));
+    return String::fromUTF8(_("_Default"));
 }
 
 String contextMenuItemTagLeftToRight()
 {
-    return String::fromUTF8(_("Left to Right"));
+    return String::fromUTF8(_("_Left to Right"));
 }
 
 String contextMenuItemTagRightToLeft()
 {
-    return String::fromUTF8(_("Right to Left"));
+    return String::fromUTF8(_("_Right to Left"));
 }
 
 String contextMenuItemTagInspectElement()
 {
-    return String::fromUTF8(_("Inspect Element"));
+    return String::fromUTF8(_("Inspect _Element"));
 }
 
 String searchMenuNoRecentSearchesText()
@@ -258,7 +258,7 @@ String searchMenuRecentSearchesText()
 
 String searchMenuClearRecentSearchesText()
 {
-    return String::fromUTF8(_("Clear recent searches"));
+    return String::fromUTF8(_("_Clear recent searches"));
 }
 
 String unknownFileSizeText()
