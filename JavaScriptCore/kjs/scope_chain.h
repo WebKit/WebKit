@@ -80,6 +80,7 @@ namespace KJS {
         void clear() { deref(); _node = 0; }
         void push(JSObject *);
         void push(const ScopeChain &);
+        void replaceTop(JSObject*);
         void pop();
         
         void mark();
@@ -127,6 +128,12 @@ inline void ScopeChain::push(JSObject *o)
 {
     ASSERT(o);
     _node = new ScopeChainNode(_node, o);
+}
+
+inline void ScopeChain::replaceTop(JSObject* o)
+{
+    ASSERT(o);
+    _node->object = o;
 }
 
 inline void ScopeChain::pop()

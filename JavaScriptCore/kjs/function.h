@@ -36,6 +36,7 @@ namespace KJS {
   class ActivationImp;
   class FunctionBodyNode;
   class FunctionPrototype;
+  class JSGlobalObject;
 
   class InternalFunctionImp : public JSObject {
   public:
@@ -135,53 +136,6 @@ namespace KJS {
 
     ActivationImp* _activationObject;
     mutable IndexToNameMap indexToNameMap;
-  };
-
-  class ActivationImp : public JSVariableObject {
-  private:
-    using JSVariableObject::JSVariableObjectData;
-
-    struct ActivationImpData : public JSVariableObjectData {
-        ActivationImpData(ExecState* e)
-            : JSVariableObjectData(&e->function()->body->symbolTable())
-            , exec(e)
-            , function(e->function()) // Store this pointer for marking, to keep our symbol table / scope alive after exec has gone out of scope.
-            , argumentsObject(0)
-        {
-        }
-
-        ExecState* exec;
-        FunctionImp* function;
-        Arguments* argumentsObject;
-    };
-
-  public:
-    ActivationImp(ExecState* exec)
-        : JSVariableObject(new ActivationImpData(exec))
-    {
-    }
-
-    virtual ~ActivationImp()
-    {
-        delete d();
-    }
-
-    virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
-    virtual void put(ExecState*, const Identifier& propertyName, JSValue* value, int attr = None);
-    virtual bool deleteProperty(ExecState*, const Identifier& propertyName);
-
-    virtual const ClassInfo* classInfo() const { return &info; }
-    static const ClassInfo info;
-
-    virtual void mark();
-
-    virtual bool isActivationObject() { return true; }
-
-  private:
-    static PropertySlot::GetValueFunc getArgumentsGetter();
-    static JSValue* argumentsGetter(ExecState*, JSObject*, const Identifier&, const PropertySlot& slot);
-    void createArgumentsObject(ExecState*);
-    ActivationImpData* d() { return static_cast<ActivationImpData*>(JSVariableObject::d); }
   };
 
   class GlobalFuncImp : public InternalFunctionImp {

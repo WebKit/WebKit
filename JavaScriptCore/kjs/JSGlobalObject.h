@@ -27,6 +27,8 @@
 
 namespace KJS {
 
+    class ActivationImp;
+    class ActivationStackNode;
     class ArrayObjectImp;
     class ArrayPrototype;
     class BooleanObjectImp;
@@ -128,6 +130,9 @@ namespace KJS {
             NativeErrorPrototype* URIErrorPrototype;
 
             SymbolTable inlineSymbolTable;
+
+            ActivationStackNode* activations;
+            size_t activationCount;
         };
 
     public:
@@ -227,6 +232,10 @@ namespace KJS {
 
         virtual bool allowsAccessFrom(const JSGlobalObject*) const { return true; }
 
+        ActivationImp* pushActivation(ExecState*);
+        void popActivation();
+        void tearOffActivation(ExecState*, bool markAsRelic = false);
+
     private:
         void init();
         
@@ -234,6 +243,8 @@ namespace KJS {
 
         bool checkTimeout();
         void resetTimeoutCheck();
+
+        void checkActivationCount();
 
         static JSGlobalObject* s_head;
     };

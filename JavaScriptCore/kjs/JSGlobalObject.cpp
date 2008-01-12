@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2008 Cameron Zwarich (cwzwarich@uwaterloo.ca)
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,7 +30,7 @@
 #include "config.h"
 #include "JSGlobalObject.h"
 
-#include "SavedBuiltins.h"
+#include "Activation.h"
 #include "array_object.h"
 #include "bool_object.h"
 #include "date_object.h"
@@ -40,6 +41,7 @@
 #include "number_object.h"
 #include "object_object.h"
 #include "regexp_object.h"
+#include "SavedBuiltins.h"
 #include "string_object.h"
 
 #if HAVE(SYS_TIME_H)
@@ -199,6 +201,9 @@ void JSGlobalObject::reset(JSValue* prototype)
     d()->URIErrorConstructor = 0;
 
     ExecState* exec = &d()->globalExec;
+
+    d()->activations = new ActivationStackNode;
+    d()->activationCount = 0;
 
     // Prototypes
     d()->functionPrototype = new FunctionPrototype(exec);
@@ -492,6 +497,57 @@ void JSGlobalObject::mark()
 ExecState* JSGlobalObject::globalExec()
 {
     return &d()->globalExec;
+}
+
+ActivationImp* JSGlobalObject::pushActivation(ExecState* exec)
+{
+    if (d()->activationCount == activationStackNodeSize) {
+        ActivationStackNode* newNode = new ActivationStackNode;
+        newNode->prev = d()->activations;
+        d()->activations = newNode;
+        d()->activationCount = 0;
+    }
+    
+    StackActivation* stackEntry = &d()->activations->data[d()->activationCount++];
+    stackEntry->activationStorage.init(exec);
+    
+    return &(stackEntry->activationStorage);
+}
+
+inline void JSGlobalObject::checkActivationCount()
+{
+    if (!d()->activationCount) {
+        ActivationStackNode* prev = d()->activations->prev;
+        delete d()->activations;
+        d()->activations = prev;
+        d()->activationCount = activationStackNodeSize;
+    }
+}
+
+void JSGlobalObject::popActivation()
+{
+    checkActivationCount();
+    d()->activations->data[--d()->activationCount].activationDataStorage.localStorage.shrink(0);    
+}
+
+void JSGlobalObject::tearOffActivation(ExecState* exec, bool leaveRelic)
+{
+    if (exec->codeType() == FunctionCode && static_cast<ActivationImp*>(exec->activationObject())->isOnStack()) {
+        ActivationImp* oldActivation = static_cast<ActivationImp*>(exec->activationObject());
+        ActivationImp* newActivation = new ActivationImp(*oldActivation->d(), leaveRelic);
+        
+        if (!leaveRelic) {
+            checkActivationCount();
+            d()->activationCount--;
+        }
+        
+        oldActivation->d()->localStorage.shrink(0);
+        
+        exec->setActivationObject(newActivation);
+        exec->setVariableObject(newActivation);
+        exec->setLocalStorage(&(newActivation->localStorage()));
+        exec->replaceScopeChainTop(newActivation);
+    }
 }
 
 } // namespace KJS

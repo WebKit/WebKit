@@ -25,9 +25,11 @@
 #include "config.h"
 #include "ExecState.h"
 
+#include "Activation.h"
 #include "JSGlobalObject.h"
 #include "function.h"
 #include "internal.h"
+#include "scope_chain_mark.h"
 
 namespace KJS {
 
@@ -105,7 +107,7 @@ ExecState::ExecState(JSGlobalObject* globalObject, JSObject* thisObject,
     , m_switchDepth(0) 
     , m_codeType(FunctionCode)
 {
-    ActivationImp* activation = new ActivationImp(this);
+    ActivationImp* activation = globalObject->pushActivation(this);
     m_activation = activation;
     m_localStorage = &activation->localStorage();
     m_variableObject = activation;
@@ -115,6 +117,9 @@ ExecState::ExecState(JSGlobalObject* globalObject, JSObject* thisObject,
 
 ExecState::~ExecState()
 {
+    if (m_codeType == FunctionCode && m_activation->needsPop())
+        m_globalObject->popActivation();
+    
     m_globalObject->setCurrentExec(m_savedExec);
 }
 

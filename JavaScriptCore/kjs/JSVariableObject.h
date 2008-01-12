@@ -56,6 +56,8 @@ namespace KJS {
         // without increasing their own size (since there's a hard limit on the
         // size of a JSCell).
         struct JSVariableObjectData {
+            JSVariableObjectData() { }
+
             JSVariableObjectData(SymbolTable* s)
                 : symbolTable(s) // Subclass owns this pointer.
             {
@@ -65,6 +67,8 @@ namespace KJS {
             SymbolTable* symbolTable; // Maps name -> index in localStorage.
 
         };
+
+        JSVariableObject() { }
 
         JSVariableObject(JSVariableObjectData* data)
             : d(data) // Subclass owns this pointer.

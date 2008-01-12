@@ -1,3 +1,67 @@
+2008-01-11  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
+
+        Reviewed by Maciej.
+
+        Optimized ActivationImp allocation, so that activation records are now
+        first allocated on an explicitly managed stack and only heap allocated
+        when necessary. Roughly a 5% improvement on SunSpider, and a larger
+        improvement on benchmarks that use more function calls.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * kjs/Activation.h: Added.
+        (KJS::ActivationImp::ActivationData::ActivationData):
+        (KJS::ActivationImp::ActivationImp):
+        (KJS::ActivationImp::classInfo):
+        (KJS::ActivationImp::isActivationObject):
+        (KJS::ActivationImp::isOnStack):
+        (KJS::ActivationImp::d):
+        (KJS::StackActivation::StackActivation):
+        * kjs/ExecState.cpp:
+        (KJS::ExecState::ExecState):
+        (KJS::ExecState::~ExecState):
+        * kjs/ExecState.h:
+        (KJS::ExecState::replaceScopeChainTop):
+        (KJS::ExecState::setActivationObject):
+        (KJS::ExecState::setLocalStorage):
+        * kjs/JSGlobalObject.cpp:
+        (KJS::JSGlobalObject::reset):
+        (KJS::JSGlobalObject::pushActivation):
+        (KJS::JSGlobalObject::checkActivationCount):
+        (KJS::JSGlobalObject::popActivationHelper):
+        (KJS::JSGlobalObject::popActivation):
+        (KJS::JSGlobalObject::tearOffActivation):
+        * kjs/JSGlobalObject.h:
+        * kjs/JSVariableObject.h:
+        (KJS::JSVariableObject::JSVariableObjectData::JSVariableObjectData):
+        (KJS::JSVariableObject::JSVariableObject):
+        * kjs/function.cpp:
+        (KJS::FunctionImp::argumentsGetter):
+        (KJS::ActivationImp::ActivationImp):
+        (KJS::ActivationImp::~ActivationImp):
+        (KJS::ActivationImp::init):
+        (KJS::ActivationImp::getOwnPropertySlot):
+        (KJS::ActivationImp::markHelper):
+        (KJS::ActivationImp::mark):
+        (KJS::ActivationImp::ActivationData::ActivationData):
+        (KJS::GlobalFuncImp::callAsFunction):
+        * kjs/function.h:
+        * kjs/nodes.cpp:
+        (KJS::PostIncResolveNode::evaluate):
+        (KJS::PostDecResolveNode::evaluate):
+        (KJS::PreIncResolveNode::evaluate):
+        (KJS::PreDecResolveNode::evaluate):
+        (KJS::ReadModifyResolveNode::evaluate):
+        (KJS::AssignResolveNode::evaluate):
+        (KJS::WithNode::execute):
+        (KJS::TryNode::execute):
+        (KJS::FunctionBodyNode::processDeclarations):
+        (KJS::FuncExprNode::evaluate):
+        * kjs/object.h:
+        * kjs/scope_chain.h:
+        (KJS::ScopeChain::replace):
+        * kjs/scope_chain_mark.h: Added.
+        (KJS::ScopeChain::mark):
+
 2008-01-11  Simon Hausmann  <hausmann@webkit.org>
 
         Reviewed by Mark Rowe.

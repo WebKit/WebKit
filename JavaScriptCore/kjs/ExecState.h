@@ -77,6 +77,7 @@ namespace KJS  {
         bool hadException() const { return !!m_exception; }
         
         const ScopeChain& scopeChain() const { return m_scopeChain; }
+        void replaceScopeChainTop(JSObject* o) { m_scopeChain.replaceTop(o); }
         
         JSVariableObject* variableObject() const { return m_variableObject; }
         void setVariableObject(JSVariableObject* v) { m_variableObject = v; }
@@ -87,6 +88,7 @@ namespace KJS  {
         ExecState* savedExec() { return m_savedExec; }
         
         ActivationImp* activationObject() { return m_activation; }
+        void setActivationObject(ActivationImp* a) { m_activation = a; }
         CodeType codeType() { return m_codeType; }
         ScopeNode* scopeNode() { return m_scopeNode; }
         FunctionImp* function() const { return m_function; }
@@ -112,6 +114,7 @@ namespace KJS  {
         const List& emptyList() const { return *m_emptyList; }
 
         LocalStorage& localStorage() { return *m_localStorage; }
+        void setLocalStorage(LocalStorage* s) { m_localStorage = s; }
 
         // These are only valid right after calling execute().
         ComplType completionType() const { return m_completionType; }

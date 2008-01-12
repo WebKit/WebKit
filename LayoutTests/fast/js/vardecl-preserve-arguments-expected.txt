@@ -59,6 +59,7 @@ PASS argumentsLengthOverrideInnerBlock3(1) is 1
 PASS 'object' is 'object'
 PASS 7 is 7
 PASS argumentsLengthOverrideInnerBlock3('a','b') is 2
+PASS argumentsTearOff1() is 2
 PASS typeof undefined is 'undefined'
 PASS 'undefined' is 'undefined'
 PASS typeof arguments is 'object'

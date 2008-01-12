@@ -1,3 +1,12 @@
+2008-01-11  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
+
+        Reviewed by Maciej.
+
+        Added a new forwarding header, because Activation.h has been separated
+        from function.h
+
+        * ForwardingHeaders/kjs/Activation.h: Added.
+
 2008-01-11  Luca Bruno  <lethalman88@gmail.com>
 
         Reviewed by Alp Toker.

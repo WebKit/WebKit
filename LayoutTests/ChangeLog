@@ -1,3 +1,12 @@
+2008-01-11  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
+
+        Reviewed by Maciej.
+
+        Added a test case that came up when developing the ActivationImp tear-off.
+
+        * fast/js/resources/vardecl-preserve-arguments.js:
+        * fast/js/vardecl-preserve-arguments-expected.txt:
+
 2008-01-11  Justin Garcia  <justin.garcia@apple.com>
 
         <rdar://problem/5541054> editing/pasteboard/paste-RTFD.html failing on Tiger

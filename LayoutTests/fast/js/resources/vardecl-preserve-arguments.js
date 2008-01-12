@@ -111,6 +111,24 @@ function argumentsLengthOverrideInnerBlock3() {
   return argslen;
 }
 
+function argumentsTearOff1()
+{
+    return argumentsTearOff2(2);
+}
+
+function argumentsTearOff2(b)
+{
+    var v = b;
+    var w = argumentsTearOff1.arguments;
+    argumentsTearOff3(3);
+    return v;
+}
+
+function argumentsTearOff3(c)
+{
+    var v = c;
+}
+
 shouldBe("argumentsLength()", "0");
 shouldBe("argumentsLength(1)", "1");
 shouldBe("argumentsLength('a','b')", "2");
@@ -141,6 +159,8 @@ shouldBe("argumentsLengthOverrideInnerBlock2('a','b')", "2");
 shouldBe("argumentsLengthOverrideInnerBlock3()", "0");
 shouldBe("argumentsLengthOverrideInnerBlock3(1)", "1");
 shouldBe("argumentsLengthOverrideInnerBlock3('a','b')", "2");
+
+shouldBe("argumentsTearOff1()", "2");
 
 // this tests that behaviour should persists for
 // the program source elements also

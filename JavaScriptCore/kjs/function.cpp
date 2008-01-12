@@ -26,6 +26,7 @@
 #include "config.h"
 #include "function.h"
 
+#include "Activation.h"
 #include "ExecState.h"
 #include "JSGlobalObject.h"
 #include "Parser.h"
@@ -84,12 +85,13 @@ JSValue* FunctionImp::callAsFunction(ExecState* exec, JSObject* thisObj, const L
 JSValue* FunctionImp::argumentsGetter(ExecState* exec, JSObject*, const Identifier& propertyName, const PropertySlot& slot)
 {
   FunctionImp* thisObj = static_cast<FunctionImp*>(slot.slotBase());
-  ExecState* e = exec;
-  while (e) {
-    if (e->function() == thisObj)
+  
+  for (ExecState* e = exec; e; e = e->callingExecState())
+    if (e->function() == thisObj) {
+      e->dynamicGlobalObject()->tearOffActivation(e, e == exec);
       return e->activationObject()->get(exec, propertyName);
-    e = e->callingExecState();
-  }
+    }
+  
   return jsNull();
 }
 
@@ -340,6 +342,26 @@ bool Arguments::deleteProperty(ExecState* exec, const Identifier& propertyName)
 
 const ClassInfo ActivationImp::info = { "Activation", 0, 0 };
 
+ActivationImp::ActivationImp(const ActivationData& oldData, bool leaveRelic)
+{
+    JSVariableObject::d = new ActivationData(oldData);
+    d()->leftRelic = leaveRelic;
+}
+
+ActivationImp::~ActivationImp()
+{
+    if (!d()->isOnStack)
+        delete d();
+}
+
+void ActivationImp::init(ExecState* exec)
+{
+    d()->symbolTable = &exec->function()->body->symbolTable();
+    d()->exec = exec;
+    d()->function = exec->function();
+    d()->argumentsObject = 0;
+}
+
 JSValue* ActivationImp::argumentsGetter(ExecState* exec, JSObject*, const Identifier&, const PropertySlot& slot)
 {
   ActivationImp* thisObj = static_cast<ActivationImp*>(slot.slotBase());
@@ -367,6 +389,14 @@ bool ActivationImp::getOwnPropertySlot(ExecState* exec, const Identifier& proper
 
     // Only return the built-in arguments object if it wasn't overridden above.
     if (propertyName == exec->propertyNames().arguments) {
+        for (ExecState* e = exec; e; e = e->callingExecState())
+            if (e->function() == d()->function) {
+                e->dynamicGlobalObject()->tearOffActivation(e, e == exec);
+                ActivationImp* newActivation = e->activationObject();
+                slot.setCustom(newActivation, newActivation->getArgumentsGetter());
+                return true;
+            }
+        
         slot.setCustom(this, getArgumentsGetter());
         return true;
     }
@@ -398,15 +428,29 @@ void ActivationImp::put(ExecState*, const Identifier& propertyName, JSValue* val
     _prop.put(propertyName, value, attr, (attr == None || attr == DontDelete));
 }
 
-void ActivationImp::mark()
+void ActivationImp::markChildren()
 {
-    JSVariableObject::mark();
+    LocalStorage& localStorage = d()->localStorage;
+    size_t size = localStorage.size();
+    
+    for (size_t i = 0; i < size; ++i) {
+        JSValue* value = localStorage[i].value;
+        
+        if (!value->marked())
+            value->mark();
+    }
     
     if (!d()->function->marked())
         d()->function->mark();
-
+    
     if (d()->argumentsObject && !d()->argumentsObject->marked())
-        d()->argumentsObject->mark();
+        d()->argumentsObject->mark();    
+}
+
+void ActivationImp::mark()
+{
+    JSObject::mark();
+    markChildren();
 }
 
 void ActivationImp::createArgumentsObject(ExecState* exec)
@@ -415,6 +459,15 @@ void ActivationImp::createArgumentsObject(ExecState* exec)
     // we can retrieve our argument list from the ExecState for our function 
     // call instead of storing the list ourselves.
     d()->argumentsObject = new Arguments(exec, d()->exec->function(), *d()->exec->arguments(), this);
+}
+
+ActivationImp::ActivationData::ActivationData(const ActivationData& old)
+    : JSVariableObjectData(old)
+    , exec(old.exec)
+    , function(old.function)
+    , argumentsObject(old.argumentsObject)
+    , isOnStack(false)
+{
 }
 
 // ------------------------------ GlobalFunc -----------------------------------
@@ -696,6 +749,9 @@ JSValue* GlobalFuncImp::callAsFunction(ExecState* exec, JSObject* thisObj, const
         bool switchGlobal = thisObj && thisObj != exec->dynamicGlobalObject() && thisObj->isGlobalObject();
 
         // enter a new execution context
+        if (!switchGlobal)
+            exec->dynamicGlobalObject()->tearOffActivation(exec);
+        
         JSGlobalObject* globalObject = switchGlobal ? static_cast<JSGlobalObject*>(thisObj) : exec->dynamicGlobalObject();
         ExecState newExec(globalObject, evalNode.get(), exec);
           
