@@ -164,8 +164,8 @@ const ClassInfo Window::info = { "Window", 0, &WindowTable };
   crypto                Window::Crypto              DontDelete|ReadOnly
   event                 Window::Event_              DontDelete
   location              Window::Location_           DontDelete
-  navigator             Window::Navigator_          DontDelete|ReadOnly
-  clientInformation     Window::ClientInformation   DontDelete|ReadOnly
+  navigator             Window::Navigator_          DontDelete
+  clientInformation     Window::ClientInformation   DontDelete
 # -- Event Listeners --
   onabort               Window::Onabort             DontDelete
   onblur                Window::Onblur              DontDelete
@@ -488,8 +488,8 @@ JSValue *Window::getValueProperty(ExecState *exec, int token) const
       Navigator* n = new Navigator(exec->lexicalGlobalObject()->objectPrototype(), impl()->frame());
       // FIXME: this will make the "navigator" object accessible from windows that fail
       // the security check the first time, but not subsequent times, seems weird.
-      const_cast<Window *>(this)->putDirect("navigator", n, DontDelete|ReadOnly);
-      const_cast<Window *>(this)->putDirect("clientInformation", n, DontDelete|ReadOnly);
+      const_cast<Window *>(this)->putDirect("navigator", n, DontDelete);
+      const_cast<Window *>(this)->putDirect("clientInformation", n, DontDelete);
       return n;
     }
     case Image:

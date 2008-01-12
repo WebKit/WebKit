@@ -900,7 +900,9 @@ sub GenerateImplementation
                 . ($attribute->signature->type =~ /Constructor$/ ? "Constructor" : "")
                 . "AttrNum: {\n");
 
-            if ($dataNode->extendedAttributes->{"CheckDomainSecurity"} && !$attribute->signature->extendedAttributes->{"DoNotCheckDomainSecurity"}) {
+            if ($dataNode->extendedAttributes->{"CheckDomainSecurity"} && 
+                !$attribute->signature->extendedAttributes->{"DoNotCheckDomainSecurity"} &&
+                !$attribute->signature->extendedAttributes->{"DoNotCheckDomainSecurityOnRead"}) {
                 push(@implContent, "        if (!allowsAccessFrom(exec))\n");
                 push(@implContent, "            return jsUndefined();\n");
             }
@@ -1014,9 +1016,9 @@ sub GenerateImplementation
                         $constructorType =~ s/Constructor$//;
                         $implIncludes{"JS" . $constructorType . ".h"} = 1;
                         push(@implContent, "        // Shadowing a built-in constructor\n");
-                        push(@implContent, "        JSObject::put(exec, \"$name\", value);\n");
+                        push(@implContent, "        putDirect(\"$name\", value);\n");
                     } elsif ($attribute->signature->extendedAttributes->{"Replaceable"}) {
-                        push(@implContent, "        JSObject::put(exec, \"$name\", value);\n");
+                        push(@implContent, "        putDirect(\"$name\", value);\n");
                     } else {
                         if ($podType) {
                             push(@implContent, "        $podType imp(*impl());\n");

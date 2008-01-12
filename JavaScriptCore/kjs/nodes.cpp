@@ -4326,7 +4326,7 @@ void ProgramNode::initializeSymbolTable(ExecState* exec)
     m_varIndexes.resize(size);
     for (size_t i = 0; i < size; ++i) {
         const Identifier& ident = m_varStack[i].first;
-        if (variableObject->getDirect(ident)) {
+        if (variableObject->hasProperty(exec, ident)) {
             m_varIndexes[i] = missingSymbolMarker(); // Signal not to initialize this declaration.
             continue;
         }
@@ -4474,7 +4474,7 @@ void EvalNode::processDeclarations(ExecState* exec)
     for (i = 0, size = m_varStack.size(); i < size; ++i) {
         Identifier& ident = m_varStack[i].first;
         bool isConstant = m_varStack[i].second & DeclarationStacks::IsConstant;
-        if (variableObject->hasOwnProperty(exec, ident))
+        if (variableObject->hasProperty(exec, ident))
             continue;
         int attributes = minAttributes;
         if (isConstant)

@@ -29,12 +29,12 @@ module window {
         // DOM Level 0
         readonly attribute Screen screen;
         readonly attribute [DoNotCheckDomainSecurity] History history;
-        readonly attribute BarInfo locationbar;
-        readonly attribute BarInfo menubar;
-        readonly attribute BarInfo personalbar;
-        readonly attribute BarInfo scrollbars;
-        readonly attribute BarInfo statusbar;
-        readonly attribute BarInfo toolbar;
+        attribute [Replaceable] BarInfo locationbar;
+        attribute [Replaceable] BarInfo menubar;
+        attribute [Replaceable] BarInfo personalbar;
+        attribute [Replaceable] BarInfo scrollbars;
+        attribute [Replaceable] BarInfo statusbar;
+        attribute [Replaceable] BarInfo toolbar;
 
         DOMSelection getSelection();
 
@@ -60,18 +60,18 @@ module window {
                      in boolean searchInFrames,
                      in boolean showDialog);
 
-        readonly attribute boolean offscreenBuffering;
+        attribute [Replaceable] boolean offscreenBuffering;
 
-        readonly attribute long outerHeight;
-        readonly attribute long outerWidth;
-        readonly attribute long innerHeight;
-        readonly attribute long innerWidth;
-        readonly attribute long screenX;
-        readonly attribute long screenY;
-        readonly attribute long screenLeft;
-        readonly attribute long screenTop;
-        readonly attribute long scrollX;
-        readonly attribute long scrollY;
+        attribute [Replaceable] long outerHeight;
+        attribute [Replaceable] long outerWidth;
+        attribute [Replaceable] long innerHeight;
+        attribute [Replaceable] long innerWidth;
+        attribute [Replaceable] long screenX;
+        attribute [Replaceable] long screenY;
+        attribute [Replaceable] long screenLeft;
+        attribute [Replaceable] long screenTop;
+        attribute [Replaceable] long scrollX;
+        attribute [Replaceable] long scrollY;
         readonly attribute long pageXOffset;
         readonly attribute long pageYOffset;
 
@@ -85,25 +85,25 @@ module window {
 
         readonly attribute [DoNotCheckDomainSecurity] boolean closed;
 
-        readonly attribute [DoNotCheckDomainSecurity] unsigned long length;
+        attribute [Replaceable, DoNotCheckDomainSecurityOnRead] unsigned long length;
 
-                 attribute DOMString name;
+        attribute DOMString name;
 
-                 attribute DOMString status;
-                 attribute DOMString defaultStatus;
+        attribute [Replaceable] DOMString status;
+        attribute [Replaceable] DOMString defaultStatus;
 #if defined(LANGUAGE_JAVASCRIPT)
-                 // This attribute is an alias of defaultStatus and is necessary for legacy uses.
-                 attribute DOMString defaultstatus;
+        // This attribute is an alias of defaultStatus and is necessary for legacy uses.
+        attribute [Replaceable] DOMString defaultstatus;
 #endif
 
         // Self referential attributes
-        readonly attribute [DoNotCheckDomainSecurity] DOMWindow self;
+        attribute [Replaceable, DoNotCheckDomainSecurityOnRead] DOMWindow self;
         readonly attribute [DoNotCheckDomainSecurity] DOMWindow window;
-        readonly attribute [DoNotCheckDomainSecurity] DOMWindow frames;
+        attribute [Replaceable, DoNotCheckDomainSecurityOnRead] DOMWindow frames;
 
-        readonly attribute [DoNotCheckDomainSecurity] DOMWindow opener;
-        readonly attribute [DoNotCheckDomainSecurity] DOMWindow parent;
-        readonly attribute [DoNotCheckDomainSecurity] DOMWindow top;
+        attribute [Replaceable, DoNotCheckDomainSecurityOnRead] DOMWindow opener;
+        attribute [Replaceable, DoNotCheckDomainSecurity] DOMWindow parent;
+        attribute [Replaceable, DoNotCheckDomainSecurity] DOMWindow top;
 
         // DOM Level 2 AbstractView Interface
         readonly attribute Document document;
@@ -116,7 +116,7 @@ module window {
         CSSRuleList getMatchedCSSRules(in Element element,
                                        in DOMString pseudoElement,
                                        in [Optional] boolean authorOnly);
-        readonly attribute double devicePixelRatio;
+        attribute [Replaceable] double devicePixelRatio;
 
 #if defined(ENABLE_DATABASE)
         Database openDatabase(in DOMString name, in DOMString version, in DOMString displayName, in unsigned long estimatedSize)

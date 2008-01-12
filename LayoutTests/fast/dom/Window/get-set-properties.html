@@ -1,4 +1,4 @@
-<p>Tests getting and setting window properties and functions.</p>
+<p>This page tests getting and setting window properties and functions.</p>
 <pre id="console"></pre>
 
 <script>
@@ -57,46 +57,37 @@ function canSet(keyPath)
 }
 
 var windowReadWriteProperties = [
-    "addEventListener", 
-    "alert", 
-    "atob", 
     "Attr", 
-    "btoa", 
-    "captureEvents", 
     "CDATASection", 
-    "CharacterData", 
-    "clearInterval", 
-    "clearTimeout",
-    "Comment", 
-    "console", 
     "CSSPrimitiveValue", 
     "CSSRule", 
     "CSSStyleDeclaration", 
     "CSSValue", 
-    "Document", 
-    "DocumentFragment", 
-    "DocumentType", 
+    "CharacterData", 
+    "Comment", 
     "DOMException", 
     "DOMImplementation", 
     "DOMParser", 
+    "Document", 
+    "DocumentFragment", 
+    "DocumentType", 
     "Element", 
     "Entity", 
     "EntityReference", 
     "EvalError", 
     "Event", 
-    "event", 
     "HTMLAnchorElement", 
     "HTMLAppletElement", 
     "HTMLAreaElement", 
+    "HTMLBRElement", 
     "HTMLBaseElement", 
     "HTMLBaseFontElement", 
     "HTMLBodyElement", 
-    "HTMLBRElement", 
     "HTMLButtonElement", 
     "HTMLCanvasElement", 
+    "HTMLDListElement", 
     "HTMLDirectoryElement", 
     "HTMLDivElement", 
-    "HTMLDListElement", 
     "HTMLDocument", 
     "HTMLElement", 
     "HTMLFieldSetElement", 
@@ -104,17 +95,17 @@ var windowReadWriteProperties = [
     "HTMLFormElement", 
     "HTMLFrameElement", 
     "HTMLFrameSetElement", 
+    "HTMLHRElement", 
     "HTMLHeadElement", 
     "HTMLHeadingElement", 
-    "HTMLHRElement", 
     "HTMLHtmlElement", 
     "HTMLIFrameElement", 
     "HTMLImageElement", 
     "HTMLInputElement", 
     "HTMLIsIndexElement", 
+    "HTMLLIElement", 
     "HTMLLabelElement", 
     "HTMLLegendElement", 
-    "HTMLLIElement", 
     "HTMLLinkElement", 
     "HTMLMapElement", 
     "HTMLMarqueeElement", 
@@ -161,45 +152,54 @@ var windowReadWriteProperties = [
     "XPathEvaluator", 
     "XPathResult", 
     "XSLTProcessor",
-];
-
-var windowReadOnlyProperties = [
+    "addEventListener", 
+    "alert", 
+    "atob", 
+    "btoa", 
+    "captureEvents", 
+    "clearInterval", 
+    "clearTimeout",
     "clientInformation", 
-    "closed",
+    "console", 
     "defaultStatus", 
     "defaultstatus", 
     "devicePixelRatio", 
-    "document",
+    "event", 
     "frames",
-    "history",
     "innerHeight", 
     "innerWidth", 
     "length",
     "locationbar", 
     "menubar", 
-    "name",
     "navigator", 
     "offscreenBuffering", 
     "opener",
     "outerHeight", 
     "outerWidth", 
-    "pageXOffset", 
-    "pageYOffset", 
     "parent",
     "personalbar",
-    "screen", 
     "screenLeft", 
     "screenTop", 
     "screenX", 
     "screenY", 
-    "scrollbars",
     "scrollX", 
     "scrollY", 
+    "scrollbars",
     "self",
     "status", 
     "statusbar",
     "toolbar",
-    "top",
+    "top"
+];
+
+var windowReadOnlyProperties = [
+    "closed",
+    "document",
+    "history",
+    "name",
+    "pageXOffset", 
+    "pageYOffset", 
+    "screen", 
     "window"
 ];
 
@@ -276,7 +276,7 @@ window.onload = function()
         shouldBeFalse("canSet('" + property + "')");
     }
 
-    log("\n----- tests for getting/setting function -----\n");
+    log("\n----- tests for getting/setting functions -----\n");
 
     for (var i = 0; i < windowFunctions.length; i++) { //>
         var property = windowFunctions[i];

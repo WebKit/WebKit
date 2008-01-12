@@ -1,3 +1,33 @@
+2008-01-11  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Oliver Hunt.
+        
+        Fixed <rdar://problem/5665251> REGRESSION (r28880-r28886): Global
+        variable access (16644)
+        
+        This bug was caused by var declarations shadowing built-in properties of
+        the global object.
+        
+        To match Firefox, we've decided that var declarations will never shadow
+        built-in properties of the global object or its prototypes. We used to
+        behave more like IE, which allows shadowing, but walking that line got
+        us into trouble with websites that sent us down the Firefox codepath.
+
+        * kjs/JSVariableObject.h:
+        (KJS::JSVariableObject::symbolTableGet): New code to support calling
+        hasProperty before the variable object is fully initialized (so you
+        can call it during initialization).
+
+        * kjs/nodes.cpp:.
+        (KJS::ProgramNode::initializeSymbolTable): Always do a full hasProperty
+        check when looking for duplicates, not getDirect, since it only checks
+        the property map, and not hasOwnProperty, since it doesn't check
+        prototypes.
+        (KJS::EvalNode::processDeclarations): ditto
+
+        * kjs/property_slot.h:
+        (KJS::PropertySlot::ungettableGetter): Best function name evar.
+
 2008-01-11  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
 
         Reviewed by Maciej.

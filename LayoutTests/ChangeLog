@@ -1,3 +1,32 @@
+2008-01-11  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Oliver Hunt.
+        
+        Fixed <rdar://problem/5665251> REGRESSION (r28880-r28886): Global
+        variable access (16644)
+        
+        Added a test. Updated other tests to match new behavior.
+        
+        * fast/js/var-declarations-shadowing-expected.txt: Added.
+        * fast/js/var-declarations-shadowing.html: Added.
+
+        * fast/dom/HTMLScriptElement/script-load-events.html: Changed this test
+        a bit because the original design made it hard to understand why it was failing.
+        * fast/dom/HTMLScriptElement/script-load-events-expected.txt:
+        
+        * fast/dom/Window/get-set-properties.html: Changed this test to expect
+        our new behavior, which matches Firefox.
+        * fast/dom/Window/get-set-properties-expected.txt:
+
+        * fast/dom/Window/window-property-shadowing.html: Removed some cases
+        that differed from Firefox. 
+        * fast/dom/Window/window-property-shadowing-expected.txt: 
+
+        * http/tests/security/cross-frame-access-put-expected.txt: This test emits
+        more "Unsafe JavaScript attempt" messages now because property sets that
+        used to be prohibited (somewhat accidentally) by the ReadOnly attribute
+        are now prohibited by security checks.
+
 2008-01-11  Anyang Ren  <anyang.ren@gmail.com>
 
         Reviewed by Darin Adler.

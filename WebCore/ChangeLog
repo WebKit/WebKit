@@ -1,3 +1,32 @@
+2008-01-11  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Oliver Hunt.
+        
+        Fixed <rdar://problem/5665251> REGRESSION (r28880-r28886): Global
+        variable access (16644)
+        
+        Removed the ReadOnly bit from some properties, to match Firefox. Also
+        removed status-related setters, to allow using their names as variable
+        names.
+        
+        * bindings/scripts/CodeGeneratorJS.pm: Added support for properties that
+        are one-way across domain boundaries, to match Firefox.
+
+        * bindings/js/kjs_window.cpp: Changed ReadOnly declarations to match FF.
+
+        * bindings/scripts/CodeGeneratorJS.pm: Don't use JSObject:: because
+        we don't know that JSObject is our base class.
+
+        * page/DOMWindow.idl: Replaced lots of readonly declarations with
+        [Replaceable] declarations.
+
+        * page/DOMWindow.h: Removed interfaces for setting status text via the
+        DOM. (They were getting in the way of, e.g., "var status"
+        declarations.) By default, IE 7 and FF disable these interfaces in order
+        to defend against phishing attacks that try to spoof domain names in the
+        statusbar.
+        * page/DOMWindow.cpp:
+
 2008-01-11  Anyang Ren  <anyang.ren@gmail.com>
 
         Reviewed by Darin Adler.
