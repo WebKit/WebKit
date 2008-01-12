@@ -1239,6 +1239,9 @@ sub openHTTPDIfNeeded()
             chmod(0755, "/usr/lib/apache/libphp4.dll");
         }
         $httpdConfig = "$windowsConfDirectory/cygwin-httpd.conf";
+    } elsif (isDebianBased()) {
+        $httpdPath = "/usr/sbin/apache2";
+        $httpdConfig = "$testDirectory/http/conf/apache2-debian-httpd.conf";
     } else {
         $httpdConfig = "$testDirectory/http/conf/httpd.conf";
         $httpdConfig = "$testDirectory/http/conf/apache2-httpd.conf" if `$httpdPath -v` =~ m|Apache/2|;

@@ -1,3 +1,15 @@
+2008-01-12  Holger Hans Peter Freyther  <holger.freyther@trolltech.com>
+
+        Reviewed by Ap.
+
+        * Make launching of the WebKit httpd work on GNU/Debian/Linux
+        
+        The configuration of Apache2 and installation does not depend on
+        the kernel but on the distribution policy. Make launching of httpd
+        work for Debian derived distributions.
+
+        * http/conf/apache2-debian-httpd.conf: Added.
+
 2008-01-11  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Oliver Hunt.

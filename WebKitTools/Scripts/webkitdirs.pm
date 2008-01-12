@@ -497,6 +497,12 @@ sub determineIsWx()
     }
 }
 
+# Determine if this is debian, ubuntu, linspire....
+sub isDebianBased()
+{
+    return -e "/etc/debian_version";
+}
+
 sub isCygwin()
 {
     return ($^O eq "cygwin");
