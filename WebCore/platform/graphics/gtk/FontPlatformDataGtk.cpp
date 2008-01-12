@@ -31,6 +31,7 @@
 #include <cairo-ft.h>
 #include <cairo.h>
 #include <fontconfig/fcfreetype.h>
+#include <gtk/gtk.h>
 
 namespace WebCore {
 
@@ -55,7 +56,8 @@ FontPlatformData::FontPlatformData(const FontDescription& fontDescription, const
 
     FcPattern* pattern = FcPatternCreate();
     cairo_font_face_t* fontFace;
-    cairo_font_options_t* options;
+    static const cairo_font_options_t* defaultOptions = cairo_font_options_create();
+    const cairo_font_options_t* options;
     cairo_matrix_t fontMatrix;
 
     if (!FcPatternAddString(pattern, FC_FAMILY, reinterpret_cast<const FcChar8*>(fcfamily)))
@@ -98,10 +100,18 @@ FontPlatformData::FontPlatformData(const FontDescription& fontDescription, const
     cairo_matrix_t ctm;
     cairo_matrix_init_scale(&fontMatrix, m_fontDescription.computedSize(), m_fontDescription.computedSize());
     cairo_matrix_init_identity(&ctm);
-    options = cairo_font_options_create();
+
+#if GTK_CHECK_VERSION(2,10,0)
+    if (GdkScreen* screen = gdk_screen_get_default())
+        options = gdk_screen_get_font_options(screen);
+    else
+        options = defaultOptions;
+#else
+    options = defaultOptions;
+#endif
+
     m_scaledFont = cairo_scaled_font_create(fontFace, &fontMatrix, &ctm, options);
     cairo_font_face_destroy(fontFace);
-    cairo_font_options_destroy(options);
 
 freePattern:
     FcPatternDestroy(pattern);

@@ -1,3 +1,16 @@
+2008-01-11  Sylvain Pasche  <sylvain.pasche@gmail.com>
+
+        Reviewed by Alp Toker.
+
+        [Gtk] Uneven glyph spacing with subpixel antialiasing
+        http://bugs.webkit.org/show_bug.cgi?id=16715
+
+        Use cairo font options from the default GDK screen when creating a
+        scaled font.
+
+        * platform/graphics/gtk/FontPlatformDataGtk.cpp:
+        (WebCore::FontPlatformData::FontPlatformData):
+
 2008-01-11  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
 
         Reviewed by Maciej.
