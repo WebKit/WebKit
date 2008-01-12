@@ -38,6 +38,21 @@
 
 namespace WebCore {
 
+static bool isDefaultPortForProtocol(unsigned short port, String protocol)
+{
+    if (protocol.isEmpty())
+        return false;
+
+    static HashMap<String, unsigned> defaultPorts;
+    if (defaultPorts.isEmpty()) {
+        defaultPorts.set("http", 80);
+        defaultPorts.set("https", 443);
+        defaultPorts.set("ftp", 21);
+        defaultPorts.set("ftps", 990);
+    }
+    return defaultPorts.get(protocol) == port;
+}
+
 SecurityOrigin::SecurityOrigin(const String& protocol, const String& host, unsigned short port)
     : m_protocol(protocol.lower())
     , m_host(host.lower())
@@ -53,6 +68,12 @@ SecurityOrigin::SecurityOrigin(const String& protocol, const String& host, unsig
     // data: URLs are not allowed access to anything other than themselves.
     if (m_protocol == "data")
         m_noAccess = true;
+
+
+    if (isDefaultPortForProtocol(m_port, m_protocol)) {
+        m_port = 0;
+        m_portSet = false;
+    }   
 }
 
 bool SecurityOrigin::isEmpty() const
