@@ -244,7 +244,6 @@ namespace KJS {
         bool checkTimeout();
         void resetTimeoutCheck();
 
-        void deleteActivationStack();
         void checkActivationCount();
 
         static JSGlobalObject* s_head;
