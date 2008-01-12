@@ -117,7 +117,7 @@ void LayoutTestController::notifyDone()
 
 JSStringRef LayoutTestController::pathToLocalResource(JSContextRef context, JSStringRef url)
 {
-    return url; // Do nothing on mac.
+    return JSStringRetain(url); // Do nothing on mac.
 }
 
 void LayoutTestController::queueBackNavigation(int howFarBack)

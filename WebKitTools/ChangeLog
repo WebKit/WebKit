@@ -1,3 +1,12 @@
+2008-01-12  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Fix crash in http/tests/security/local-JavaScript-from-remote.html under guard malloc.
+
+        * DumpRenderTree/mac/LayoutTestControllerMac.mm: Retain string before returning it to
+        match the callers expectations that it can take ownership of the string.
+
 2008-01-11  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Adam Roben.
