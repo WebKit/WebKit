@@ -1,3 +1,15 @@
+2008-01-12  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
+
+        Reviewed by Maciej.
+
+        Fixes a problem with the ActivationImp tear-off patch (r29425) where
+        some of the calls to JSGlobalObject::tearOffActivation() were using
+        the wrong test to determine whether it should leave a relic behind.
+
+        * kjs/function.cpp:
+        (KJS::FunctionImp::argumentsGetter):
+        (KJS::ActivationImp::getOwnPropertySlot):
+
 2008-01-11  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Oliver Hunt.
