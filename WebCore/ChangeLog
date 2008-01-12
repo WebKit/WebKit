@@ -1,3 +1,16 @@
+2008-01-12  Adam Barth  <hk9565@gmail.com>
+
+        Reviewed by Maciej (and also tweaked a little bit).
+
+        - more thorough fix for some crashing tests
+          http://bugs.webkit.org/show_bug.cgi?id=16782
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::urlSelected):
+        (WebCore::FrameLoader::submitForm):
+        (WebCore::FrameLoader::executeIfJavaScriptURL):
+        * loader/FrameLoader.h:
+
 2008-01-12  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Sam.
