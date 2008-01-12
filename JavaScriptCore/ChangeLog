@@ -1,5 +1,11 @@
 2008-01-12  Mark Rowe  <mrowe@apple.com>
 
+        Another Windows build fix.
+
+        * kjs/Activation.h:
+
+2008-01-12  Mark Rowe  <mrowe@apple.com>
+
         Attempted Windows build fix.  Use struct consistently when forward-declaring
         ActivationStackNode and StackActivation.
 

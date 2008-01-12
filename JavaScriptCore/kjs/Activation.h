@@ -32,11 +32,10 @@ namespace KJS {
 
     class Arguments;
     class FunctionImp;
-    struct StackActivation;
 
     class ActivationImp : public JSVariableObject {
         friend class JSGlobalObject;
-        friend class StackActivation;
+        friend struct StackActivation;
     private:
         struct ActivationData : public JSVariableObjectData {
             ActivationData() : isOnStack(true), leftRelic(false) { }
