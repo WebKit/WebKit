@@ -165,8 +165,12 @@ libWebKitGtk_la_LDFLAGS := \
 # Extra checks and flags
 global_cppflags += \
 	-DBUILDING_GTK__=1 \
-	-DUSE_SYSTEM_MALLOC \
 	-DWTF_CHANGES
+
+if !ENABLE_FAST_MALLOC
+global_cppflags += \
+	-DUSE_SYSTEM_MALLOC
+endif
 
 if TARGET_X11
 global_cppflags += -DXP_UNIX

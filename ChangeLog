@@ -1,3 +1,13 @@
+2008-01-11  Alp Toker  <alp@atoker.com>
+
+        Reviewed by Oliver Hunt.
+
+        Enable FastMalloc by default in GTK+/autotools and add a configure
+        switch.
+
+        * GNUmakefile.am:
+        * configure.ac:
+
 2008-01-11  Luca Bruno  <lethalman88@gmail.com>
 
         Reviewed by Alp Toker.

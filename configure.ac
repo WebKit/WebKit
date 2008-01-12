@@ -273,6 +273,14 @@ AC_ARG_ENABLE(coverage,
               [],[enable_coverage="no"])
 AC_MSG_RESULT([$enable_coverage])
 
+# check whether to enable FastMalloc
+AC_MSG_CHECKING([whether to enable optimized memory allocator])
+AC_ARG_ENABLE(fast_malloc,
+              AC_HELP_STRING([--enable-fast-malloc],
+                             [enable optimized memory allocator default=yes, default=no for debug builds]),
+              [],[if test "$enable_debug" = "yes"; then enable_fast_malloc="no"; else enable_fast_malloc="yes"; fi])
+AC_MSG_RESULT([$enable_fast_malloc])
+
 # Add '-g' flag to gcc if it's debug build
 if test "$enable_debug" = "yes"; then
    CXXFLAGS="$CXXFLAGS -g"
@@ -351,6 +359,7 @@ AM_CONDITIONAL([ENABLE_SVG_FONTS],[test "$enable_svg_fonts" = "yes"])
 AM_CONDITIONAL([ENABLE_SVG_AS_IMAGE],[test "$enable_svg_as_image" = "yes"])
 AM_CONDITIONAL([ENABLE_SVG_USE],[test "$enable_svg_use_element" = "yes"])
 AM_CONDITIONAL([ENABLE_COVERAGE],[test "$enable_coverage" = "yes"])
+AM_CONDITIONAL([ENABLE_FAST_MALLOC],[test "$enable_fast_malloc" = "yes"])
 AM_CONDITIONAL([SVG_FLAGS],[test "$svg_flags" = "yes"])
 
 AC_CONFIG_FILES([
@@ -367,6 +376,7 @@ WebKit was configured with the following options:
  Target                            : $with_webkit_target
  Enable debug                      : $enable_debug
  Code coverage support             : $enable_coverage
+ Optimized memory allocator        : $enable_fast_malloc
  HTML5 client-side storage support : $enable_database
  HTML5 video element support       : $enable_video
  Icon database support             : $enable_icon_database
