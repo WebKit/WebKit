@@ -28,7 +28,7 @@ INCLUDEPATH += $$GENERATED_SOURCES_DIR
 }
 
 DEPENDPATH += css dom loader editing history html \
-    loader page platform platform/graphics platform/network platform/text rendering xml \
+    loader page platform platform/graphics platform/network platform/text plugins rendering xml \
     bindings/js
 
 include($$OUTPUT_DIR/config.pri)

@@ -1,3 +1,14 @@
+2008-01-12  Rodney Dawes  <dobey@wayofthemonkey.com>
+
+        Gtk debug build fix.  Reviewed by Mark Rowe.
+
+        Add plugin logging channel, and use it rather than Win32-specific debugging methods _RPTF1 _RPTF2 and _CRT_WARN.
+
+        * WebCore.pro: Add plugins directory to DEPENDPATH so dependencies are correctly tracked.
+        * platform/Logging.cpp:
+        * platform/Logging.h:
+        * plugins/PluginDebug.h:
+
 2008-01-12  Adam Barth  <hk9565@gmail.com>
 
         Reviewed by Maciej (and also tweaked a little bit).
