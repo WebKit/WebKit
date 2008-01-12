@@ -32,7 +32,7 @@ namespace KJS {
 
     class Arguments;
     class FunctionImp;
-    class StackActivation;
+    struct StackActivation;
 
     class ActivationImp : public JSVariableObject {
         friend class JSGlobalObject;
