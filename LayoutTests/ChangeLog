@@ -1,3 +1,16 @@
+2008-01-11  Justin Garcia  <justin.garcia@apple.com>
+
+        <rdar://problem/5541054> editing/pasteboard/paste-RTFD.html failing on Tiger
+
+        * editing/pasteboard/paste-RTFD.html: Mention the Tiger bug that this demonstrates.
+        * platform/mac-leopard/editing/pasteboard/paste-RTFD-expected.checksum: Added.
+        * platform/mac-leopard/editing/pasteboard/paste-RTFD-expected.png: Added.
+        * platform/mac-leopard/editing/pasteboard/paste-RTFD-expected.txt: Updated expected results
+        to reflect the new info included in the test.
+        * platform/mac/editing/pasteboard/paste-RTFD-expected.checksum: Ditto.
+        * platform/mac/editing/pasteboard/paste-RTFD-expected.png:
+        * platform/mac/editing/pasteboard/paste-RTFD-expected.txt:
+
 2008-01-11  Jon Honeycutt  <jhoneycutt@apple.com>
 
         * platform/win/Skipped: Remove a test that was fixed in r29419.
