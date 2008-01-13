@@ -1,3 +1,15 @@
+2008-01-13  Brent Fulgham  <bfulgham@gmail.com>
+
+        Reviewed by Maciej.
+
+        - http://bugs.webkit.org/show_bug.cgi?id=16314
+          Script to launch Drosera
+
+        * Scripts/gdb-drosera: Added.
+        * Scripts/run-drosera: Added.
+        * Scripts/run-drosera-nightly.cmd: Added.
+        * Scripts/webkitdirs.pm: Added runDrosera function.
+
 2008-01-13  Dan Bernstein  <mitz@apple.com>
 
         - fix breakage due to last-minute change
