@@ -1,3 +1,15 @@
+2008-01-13  Michael Goddard  <michael.goddard@trolltech.com>
+
+        Reviewed by Anders Carlsson.
+
+        Move RuntimeObjectImp creations into Instance.
+        Make the ctor protected, and Instance a friend class, so
+        that all creation of RuntimeObjectImps goes through
+        one place.
+
+        * bindings/js/kjs_dom.cpp:
+        (WebCore::getRuntimeObject):
+
 2008-01-12  Rodney Dawes  <dobey@wayofthemonkey.com>
 
         Gtk debug build fix.  Reviewed by Mark Rowe.

@@ -101,6 +101,9 @@ public:
     
     static Instance* createBindingForLanguageInstance(BindingLanguage, void* nativeInstance, PassRefPtr<RootObject>);
     static JSObject* createRuntimeObject(BindingLanguage, void* nativeInstance, PassRefPtr<RootObject>);
+    static JSObject* createRuntimeObject(Instance*);
+
+    static Instance* getInstance(JSObject*, BindingLanguage);
 
     void ref() { _refCount++; }
     void deref() 
@@ -137,6 +140,8 @@ public:
     RootObject* rootObject() const;
     
     virtual ~Instance();
+
+    virtual BindingLanguage getBindingLanguage() const = 0;
 
 protected:
     RefPtr<RootObject> _rootObject;

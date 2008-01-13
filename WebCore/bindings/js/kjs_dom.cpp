@@ -102,7 +102,7 @@ JSValue* getRuntimeObject(ExecState* exec, Node* n)
         HTMLPlugInElement* plugInElement = static_cast<HTMLPlugInElement*>(n);
         if (plugInElement->getInstance() && plugInElement->getInstance()->rootObject())
             // The instance is owned by the PlugIn element.
-            return new RuntimeObjectImp(plugInElement->getInstance());
+            return KJS::Bindings::Instance::createRuntimeObject(plugInElement->getInstance());
     }
 #endif
 

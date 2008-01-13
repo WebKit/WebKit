@@ -64,6 +64,8 @@ public:
     
     NPObject *getObject() const { return _object; }
 
+    virtual BindingLanguage getBindingLanguage() const { return CLanguage; }
+
 private:
     mutable CClass *_class;
     NPObject *_object;

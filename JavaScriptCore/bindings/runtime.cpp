@@ -105,7 +105,7 @@ Instance* Instance::createBindingForLanguageInstance(BindingLanguage language, v
 #endif
 #if PLATFORM(QT)
         case Instance::QtLanguage: {
-            newInstance = new Bindings::QtInstance((QObject *)nativeInstance, rootObject);
+            newInstance = Bindings::QtInstance::getQtInstance((QObject *)nativeInstance, rootObject);
             break;
         }
 #endif
@@ -119,13 +119,36 @@ Instance* Instance::createBindingForLanguageInstance(BindingLanguage language, v
 JSObject* Instance::createRuntimeObject(BindingLanguage language, void* nativeInstance, PassRefPtr<RootObject> rootObject)
 {
     Instance* instance = Instance::createBindingForLanguageInstance(language, nativeInstance, rootObject);
-    
+
+    return createRuntimeObject(instance);
+}
+
+JSObject* Instance::createRuntimeObject(Instance* instance)
+{
+#if PLATFORM(QT)
+    if (instance->getBindingLanguage() == QtLanguage)
+        return QtInstance::getRuntimeObject(static_cast<QtInstance*>(instance));
+#endif
     JSLock lock;
     return new RuntimeObjectImp(instance);
 }
 
-RootObject* Instance::rootObject() const 
-{ 
+Instance* Instance::getInstance(JSObject* object, BindingLanguage language)
+{
+    if (!object)
+        return 0;
+    if (!object->inherits(&RuntimeObjectImp::info))
+        return 0;
+    Instance* instance = (static_cast<RuntimeObjectImp*>(object))->getInternalInstance();
+    if (!instance)
+        return 0;
+    if (instance->getBindingLanguage() != language)
+        return 0;
+    return instance;
+}
+
+RootObject* Instance::rootObject() const
+{
     return _rootObject && _rootObject->isValid() ? _rootObject.get() : 0;
 }
 

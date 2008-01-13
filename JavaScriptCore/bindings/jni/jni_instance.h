@@ -83,7 +83,9 @@ public:
     JSValue *stringValue() const;
     JSValue *numberValue() const;
     JSValue *booleanValue() const;
-        
+
+    virtual BindingLanguage getBindingLanguage() const { return JavaLanguage; }
+
 private:
     RefPtr<JObjectWrapper> _instance;
     mutable JavaClass *_class;

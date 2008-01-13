@@ -20,41 +20,100 @@
 #include "config.h"
 #include "qt_instance.h"
 
+#include "list.h"
 #include "qt_class.h"
 #include "qt_runtime.h"
-#include "list.h"
+#include "runtime_object.h"
 
 #include <qmetaobject.h>
 #include <qdebug.h>
+#include <qhash.h>
 
 namespace KJS {
 namespace Bindings {
 
+// Cache QtInstances
+typedef QMultiHash<void*, QtInstance*> QObjectInstanceMap;
+static QObjectInstanceMap cachedInstances;
+
+// Cache JSObjects
+typedef QHash<QtInstance*, JSObject*> InstanceJSObjectMap;
+static InstanceJSObjectMap cachedObjects;
+
+// Derived RuntimeObject
+class QtRuntimeObjectImp : public RuntimeObjectImp {
+    public:
+        QtRuntimeObjectImp(Instance*);
+        ~QtRuntimeObjectImp();
+        virtual void invalidate();
+    protected:
+        void removeFromCache();
+};
+
+QtRuntimeObjectImp::QtRuntimeObjectImp(Instance* instance)
+    : RuntimeObjectImp(instance)
+{
+}
+
+QtRuntimeObjectImp::~QtRuntimeObjectImp()
+{
+    removeFromCache();
+}
+
+void QtRuntimeObjectImp::invalidate()
+{
+    removeFromCache();
+    RuntimeObjectImp::invalidate();
+}
+
+void QtRuntimeObjectImp::removeFromCache()
+{
+    JSLock lock;
+    QtInstance* key = cachedObjects.key(this);
+    if (key)
+        cachedObjects.remove(key);
+}
+
+// QtInstance
 QtInstance::QtInstance(QObject* o, PassRefPtr<RootObject> rootObject)
-    : Instance(rootObject),
-      _class(0),
-      _object(o)
+    : Instance(rootObject)
+    , _class(0)
+    , _object(o)
+    , _hashkey(o)
 {
 }
 
-QtInstance::~QtInstance() 
+QtInstance::~QtInstance()
 {
+    JSLock lock;
+    cachedObjects.remove(this);
+    cachedInstances.remove(_hashkey);
 }
 
-QtInstance::QtInstance(const QtInstance& other)
-    : Instance(other.rootObject()), _class(0), _object(other._object)
+QtInstance* QtInstance::getQtInstance(QObject* o, PassRefPtr<RootObject> rootObject)
 {
+    JSLock lock;
+
+    foreach(QtInstance* instance, cachedInstances.values(o)) {
+        if (instance->rootObject() == rootObject)
+            return instance;
+    }
+
+    QtInstance* ret = new QtInstance(o, rootObject);
+    cachedInstances.insert(o, ret);
+
+    return ret;
 }
 
-QtInstance& QtInstance::operator=(const QtInstance& other)
+JSObject* QtInstance::getRuntimeObject(QtInstance* instance)
 {
-    if (this == &other)
-        return *this;
-
-    _object = other._object;
-    _class = 0;
-
-    return *this;
+    JSLock lock;
+    JSObject* ret = cachedObjects.value(instance);
+    if (!ret) {
+        ret = new QtRuntimeObjectImp(instance);
+        cachedObjects.insert(instance, ret);
+    }
+    return ret;
 }
 
 Class* QtInstance::getClass() const

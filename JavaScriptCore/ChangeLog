@@ -1,3 +1,54 @@
+2008-01-13  Michael Goddard  <michael.goddard@trolltech.com>
+
+        Reviewed by Anders Carlsson.
+
+        Add binding language type to Instance.
+        Allows runtime determination of the type of an
+        Instance, to allow safe casting.  Doesn't actually
+        add any safe casting yet, though.
+
+        Add a helper function to get an Instance from a JSObject*.
+        Given an object and the expected binding language, see if
+        the JSObject actually wraps an Instance of the given type
+        and return it.  Otherwise return 0.
+
+        Move RuntimeObjectImp creations into Instance.
+        Make the ctor protected, and Instance a friend class, so
+        that all creation of RuntimeObjectImps goes through
+        one place.
+
+        Remove copy ctor/assignment operator for QtInstance.
+        Instance itself is Noncopyable, so QtInstance doesn't
+        need to have these.
+
+        Add caching for QtInstance and associated RuntimeObjectImps.
+        Push any dealings with QtLanguage bindings into QtInstance,
+        and cache them there, rather than in the Instance layer.  Add
+        a QtRuntimeObjectImp to help with caching.
+
+        * JavaScriptCore.exp:
+        * bindings/c/c_instance.h:
+        * bindings/jni/jni_instance.h:
+        * bindings/objc/objc_instance.h:
+        * bindings/qt/qt_instance.cpp:
+        (KJS::Bindings::QtRuntimeObjectImp::QtRuntimeObjectImp):
+        (KJS::Bindings::QtRuntimeObjectImp::~QtRuntimeObjectImp):
+        (KJS::Bindings::QtRuntimeObjectImp::invalidate):
+        (KJS::Bindings::QtRuntimeObjectImp::removeFromCache):
+        (KJS::Bindings::QtInstance::QtInstance):
+        (KJS::Bindings::QtInstance::~QtInstance):
+        (KJS::Bindings::QtInstance::getQtInstance):
+        (KJS::Bindings::QtInstance::getRuntimeObject):
+        * bindings/qt/qt_instance.h:
+        (KJS::Bindings::QtInstance::getBindingLanguage):
+        * bindings/runtime.cpp:
+        (KJS::Bindings::Instance::createBindingForLanguageInstance):
+        (KJS::Bindings::Instance::createRuntimeObject):
+        (KJS::Bindings::Instance::getInstance):
+        * bindings/runtime.h:
+        * bindings/runtime_object.h:
+        (KJS::RuntimeObjectImp::getInternalInstance):
+
 2008-01-12  Alp Toker  <alp@atoker.com>
 
         Reviewed by Mark Rowe.

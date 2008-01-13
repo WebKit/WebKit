@@ -35,15 +35,9 @@ class QtClass;
 class QtInstance : public Instance
 {
 public:
-    QtInstance(QObject* instance, PassRefPtr<RootObject>);
-        
     ~QtInstance ();
     
     virtual Class* getClass() const;
-    
-    QtInstance (const QtInstance &other);
-
-    QtInstance &operator=(const QtInstance &other);
     
     virtual void begin();
     virtual void end();
@@ -62,9 +56,16 @@ public:
     
     QObject* getObject() const { return _object; }
 
+    virtual BindingLanguage getBindingLanguage() const { return QtLanguage; }
+
+    static QtInstance* getQtInstance(QObject*, PassRefPtr<RootObject>);
+    static JSObject* getRuntimeObject(QtInstance*);
+
 private:
+    QtInstance(QObject*, PassRefPtr<RootObject>); // Factory produced only..
     mutable QtClass* _class;
     QPointer<QObject> _object;
+    QObject* _hashkey;
 };
 
 } // namespace Bindings
