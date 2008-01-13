@@ -50,6 +50,7 @@
 
 struct IWebFrame;
 struct IWebPolicyDelegate;
+struct IWebView;
 typedef struct HWND__* HWND;
 
 extern IWebFrame* topLoadingFrame;
@@ -59,7 +60,12 @@ extern IWebPolicyDelegate* policyDelegate;
 extern HWND webViewWindow;
 
 #include <string>
+#include <wtf/HashMap.h>
+#include <wtf/Vector.h>
 
 std::wstring urlSuitableForTestResult(const std::wstring& url);
+IWebView* createWebViewAndOffscreenWindow(HWND* webViewWindow = 0);
+Vector<HWND>& openWindows();
+HashMap<HWND, IWebView*>& windowToWebViewMap();
 
 #endif // DumpRenderTreeWin_h

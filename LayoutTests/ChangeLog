@@ -1,5 +1,13 @@
 2008-01-13  Dan Bernstein  <mitz@apple.com>
 
+        Reviewed by Adam Roben.
+
+        - enable tests affected by <rdar://problem/5132009> Windows DRT does not support multiple windows
+
+        * platform/win/Skipped:
+
+2008-01-13  Dan Bernstein  <mitz@apple.com>
+
         Change test to match the results landed in r29424. The test changes were
         omitted in that check-in.
 

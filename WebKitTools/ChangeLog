@@ -1,3 +1,32 @@
+2008-01-13  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Adam Roben.
+
+        - fix <rdar://problem/5132009> Windows DRT does not support multiple windows
+
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (DumpRenderTreeWndProc):
+        (initialize):
+        (dumpBackForwardList):
+        (dumpBackForwardListForAllWindows):
+        (dump):
+        (resetWebViewToConsistentStateBeforeTesting): Factored out of
+        runTest().
+        (runTest):
+        (allWindows): Added. Returns a vector of all open windows.
+        (windowToWebViewMap): Added. Returns a map from open windows to their
+        WebViews.
+        (createWebViewAndOffscreenWindow): Factored out of main() to be
+        reusable for creating extra windows.
+        (main):
+        * DumpRenderTree/win/DumpRenderTreeWin.h:
+        * DumpRenderTree/win/LayoutTestControllerWin.cpp:
+        (LayoutTestController::windowCount): Implemented.
+        * DumpRenderTree/win/UIDelegate.cpp:
+        (UIDelegate::createWebViewWithRequest): Implemented.
+        (UIDelegate::webViewClose): Implemented.
+        * DumpRenderTree/win/UIDelegate.h:
+
 2008-01-12  Alp Toker  <alp@atoker.com>
 
         Reviewed by Mark Rowe.

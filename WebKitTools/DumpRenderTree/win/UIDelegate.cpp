@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,6 +31,7 @@
 
 #include "DraggingInfo.h"
 #include "EventSender.h"
+#include "LayoutTestController.h"
 
 #include <WebCore/COMPtr.h>
 #include <wtf/Platform.h>
@@ -191,4 +192,24 @@ HRESULT STDMETHODCALLTYPE UIDelegate::webViewGetDlgCode(
         return E_POINTER;
     *code = 0;
     return E_NOTIMPL;
+}
+
+HRESULT STDMETHODCALLTYPE UIDelegate::createWebViewWithRequest( 
+        /* [in] */ IWebView *sender,
+        /* [in] */ IWebURLRequest *request,
+        /* [retval][out] */ IWebView **newWebView)
+{
+    if (!::layoutTestController->canOpenWindows())
+        return E_FAIL;
+    *newWebView = createWebViewAndOffscreenWindow();
+    return S_OK;
+}
+
+HRESULT STDMETHODCALLTYPE UIDelegate::webViewClose( 
+        /* [in] */ IWebView *sender)
+{
+    HWND hostWindow;
+    sender->hostWindow(reinterpret_cast<OLE_HANDLE*>(&hostWindow));
+    DestroyWindow(hostWindow);
+    return S_OK;
 }

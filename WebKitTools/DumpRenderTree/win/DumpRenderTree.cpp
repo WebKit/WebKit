@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2006, 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2005, 2006, 2007, 2008 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -90,10 +90,13 @@ volatile bool done;
 IWebFrame* topLoadingFrame;     // !nil iff a load is in progress
 static COMPtr<IWebHistoryItem> prevTestBFItem;  // current b/f item at the end of the previous test
 IWebPolicyDelegate* policyDelegate; 
+COMPtr<FrameLoadDelegate> sharedFrameLoadDelegate;
+COMPtr<UIDelegate> sharedUIDelegate;
+COMPtr<EditingDelegate> sharedEditingDelegate;
+COMPtr<ResourceLoadDelegate> sharedResourceLoadDelegate;
 
 IWebFrame* frame;
 HWND webViewWindow;
-static HWND hostWindow;
 
 LayoutTestController* layoutTestController = 0;
 CFRunLoopTimerRef waitToDumpWatchdog = 0; 
@@ -119,6 +122,16 @@ static LRESULT CALLBACK DumpRenderTreeWndProc(HWND hWnd, UINT msg, WPARAM wParam
             // The test ran long enough to time out
             timedOut = true;
             PostQuitMessage(0);
+            return 0;
+            break;
+        case WM_DESTROY:
+            for (unsigned i = openWindows().size() - 1; i >= 0; --i) {
+                if (openWindows()[i] == hWnd) {
+                    openWindows().remove(i);
+                    windowToWebViewMap().remove(hWnd);
+                    break;
+                }
+            }
             return 0;
             break;
         default:
@@ -173,7 +186,7 @@ static const wstring& fontsPath()
 #define WEBKITDLL TEXT("WebKit.dll")
 #endif
 
-static void initialize(HMODULE hModule)
+static void initialize()
 {
     if (HMODULE webKitModule = LoadLibrary(WEBKITDLL))
         if (FARPROC dllRegisterServer = GetProcAddress(webKitModule, "DllRegisterServer"))
@@ -227,7 +240,7 @@ static void initialize(HMODULE hModule)
     wcex.lpfnWndProc   = DumpRenderTreeWndProc;
     wcex.cbClsExtra    = 0;
     wcex.cbWndExtra    = 0;
-    wcex.hInstance     = hModule;
+    wcex.hInstance     = GetModuleHandle(0);
     wcex.hIcon         = 0;
     wcex.hCursor       = LoadCursor(0, IDC_ARROW);
     wcex.hbrBackground = 0;
@@ -236,9 +249,6 @@ static void initialize(HMODULE hModule)
     wcex.hIconSm       = 0;
 
     RegisterClassEx(&wcex);
-
-    hostWindow = CreateWindowEx(WS_EX_TOOLWINDOW, kDumpRenderTreeClassName, TEXT("DumpRenderTree"), WS_POPUP,
-      -maxViewWidth, -maxViewHeight, maxViewWidth, maxViewHeight, 0, 0, hModule, 0);
 }
 
 void displayWebView()
@@ -452,14 +462,11 @@ exit:
         ::SafeArrayDestroy(arrPtr);
 }
 
-static void dumpBackForwardList(IWebFrame* frame)
+static void dumpBackForwardList(IWebView* webView)
 {
-    assert(frame);
+    ASSERT(webView);
 
     printf("\n============== Back Forward List ==============\n");
-    COMPtr<IWebView> webView;
-    if (FAILED(frame->webView(&webView)))
-        return;
 
     COMPtr<IWebBackForwardList> bfList;
     if (FAILED(webView->backForwardList(&bfList)))
@@ -519,6 +526,16 @@ static void dumpBackForwardList(IWebFrame* frame)
     printf("===============================================\n");
 }
 
+static void dumpBackForwardListForAllWindows()
+{
+    unsigned count = openWindows().size();
+    for (unsigned i = 0; i < count; i++) {
+        HWND window = openWindows()[i];
+        IWebView* webView = windowToWebViewMap().get(window);
+        dumpBackForwardList(webView);
+    }
+}
+
 void dump()
 {
     COMPtr<IWebDataSource> dataSource;
@@ -575,7 +592,7 @@ void dump()
                 dumpFrameScrollPosition(frame);
         }
         if (::layoutTestController->dumpBackForwardList())
-            dumpBackForwardList(frame);
+            dumpBackForwardListForAllWindows();
     }
 
     if (printSeparators)
@@ -598,6 +615,28 @@ fail:
 static bool shouldLogFrameLoadDelegates(const char* pathOrURL)
 {
     return strstr(pathOrURL, "loading/");
+}
+
+static void resetWebViewToConsistentStateBeforeTesting()
+{
+    COMPtr<IWebView> webView;
+    if (FAILED(frame->webView(&webView))) 
+        return;
+
+    webView->setPolicyDelegate(0);
+
+    COMPtr<IWebIBActions> webIBActions(Query, webView);
+    if (webIBActions)
+        webIBActions->makeTextStandardSize(0);
+
+    COMPtr<IWebPreferences> preferences;
+    if (SUCCEEDED(webView->preferences(&preferences))) {
+        preferences->setPrivateBrowsingEnabled(FALSE);
+        preferences->setJavaScriptCanOpenWindowsAutomatically(TRUE);
+        COMPtr<IWebPreferencesPrivate> prefsPrivate(Query, preferences);
+        if (prefsPrivate)
+            prefsPrivate->setAuthorAndUserStylesEnabled(TRUE);
+    }
 }
 
 static void runTest(const char* pathOrURL)
@@ -639,30 +678,21 @@ static void runTest(const char* pathOrURL)
     if (history)
         history->setOptionalSharedHistory(0);
 
+    resetWebViewToConsistentStateBeforeTesting();
+
     prevTestBFItem = 0;
     COMPtr<IWebView> webView;
     if (SUCCEEDED(frame->webView(&webView))) {
         COMPtr<IWebBackForwardList> bfList;
         if (SUCCEEDED(webView->backForwardList(&bfList)))
             bfList->currentItem(&prevTestBFItem);
-
-        webView->setPolicyDelegate(NULL);
-
-        COMPtr<IWebIBActions> webIBActions;
-        if (SUCCEEDED(webView->QueryInterface(IID_IWebIBActions, (void**)&webIBActions)))
-            webIBActions->makeTextStandardSize(0);
-
-        COMPtr<IWebPreferences> preferences;
-        if (SUCCEEDED(webView->preferences(&preferences))) {
-            preferences->setPrivateBrowsingEnabled(FALSE);
-            COMPtr<IWebPreferencesPrivate> prefsPrivate(Query, preferences);
-            if (prefsPrivate)
-                prefsPrivate->setAuthorAndUserStylesEnabled(TRUE);
-        }
     }
 
     WorkQueue::shared()->clear();
     WorkQueue::shared()->setFrozen(false);
+
+    HWND hostWindow;
+    webView->hostWindow(reinterpret_cast<OLE_HANDLE*>(&hostWindow));
 
     // Set the test timeout timer
     SetTimer(hostWindow, timeoutId, timeoutValue, 0);
@@ -698,6 +728,20 @@ static void runTest(const char* pathOrURL)
     }
 
     frame->stopLoading();
+
+    if (::layoutTestController->closeRemainingWindowsWhenComplete()) {
+        Vector<HWND> windows = openWindows();
+        unsigned size = windows.size();
+        for (i = 0; i < size; i++) {
+            HWND window = windows[i];
+
+            // Don't try to close the main window
+            if (window == hostWindow)
+                continue;
+
+            DestroyWindow(window);
+        }
+    }
 
 exit:
     SysFreeString(urlBStr);
@@ -849,13 +893,102 @@ static void stopJavaScriptThreads(void)
     }
 }
 
+Vector<HWND>& openWindows()
+{
+    static Vector<HWND> vector;
+    return vector;
+}
+
+HashMap<HWND, IWebView*>& windowToWebViewMap()
+{
+    static HashMap<HWND, IWebView*> map;
+    return map;
+}
+
+IWebView* createWebViewAndOffscreenWindow(HWND* webViewWindow)
+{
+    HWND hostWindow = CreateWindowEx(WS_EX_TOOLWINDOW, kDumpRenderTreeClassName, TEXT("DumpRenderTree"), WS_POPUP,
+      -maxViewWidth, -maxViewHeight, maxViewWidth, maxViewHeight, 0, 0, GetModuleHandle(0), 0);
+
+    IWebView* webView;
+
+    HRESULT hr = CoCreateInstance(CLSID_WebView, 0, CLSCTX_ALL, IID_IWebView, (void**)&webView);
+    if (FAILED(hr)) {
+        fprintf(stderr, "Failed to create CLSID_WebView instance, error 0x%x\n", hr);
+        return 0;
+    }
+
+    if (FAILED(webView->setHostWindow((OLE_HANDLE)(ULONG64)hostWindow)))
+        return 0;
+
+    RECT clientRect;
+    clientRect.bottom = clientRect.left = clientRect.top = clientRect.right = 0;
+    BSTR groupName = SysAllocString(L"org.webkit.DumpRenderTree");
+    bool failed = FAILED(webView->initWithFrame(clientRect, 0, groupName));
+    SysFreeString(groupName);
+    if (failed)
+        return 0;
+
+    COMPtr<IWebViewPrivate> viewPrivate;
+    if (FAILED(webView->QueryInterface(&viewPrivate)))
+        return 0;
+
+    viewPrivate->setShouldApplyMacFontAscentHack(TRUE);
+
+    BSTR pluginPath = SysAllocStringLen(0, exePath().length() + _tcslen(TestPluginDir));
+    _tcscpy(pluginPath, exePath().c_str());
+    _tcscat(pluginPath, TestPluginDir);
+    failed = FAILED(viewPrivate->addAdditionalPluginPath(pluginPath));
+    SysFreeString(pluginPath);
+    if (failed)
+        return 0;
+
+    HWND viewWindow;
+    if (FAILED(viewPrivate->viewWindow(reinterpret_cast<OLE_HANDLE*>(&viewWindow))))
+        return 0;
+    if (webViewWindow)
+        *webViewWindow = viewWindow;
+
+    SetWindowPos(viewWindow, 0, 0, 0, maxViewWidth, maxViewHeight, 0);
+    ShowWindow(hostWindow, SW_SHOW);
+
+    if (FAILED(webView->setFrameLoadDelegate(sharedFrameLoadDelegate.get())))
+        return 0;
+
+    if (FAILED(viewPrivate->setFrameLoadDelegatePrivate(sharedFrameLoadDelegate.get())))
+        return 0;
+
+    if (FAILED(webView->setUIDelegate(sharedUIDelegate.get())))
+        return 0;
+
+    COMPtr<IWebViewEditing> viewEditing;
+    if (FAILED(webView->QueryInterface(&viewEditing)))
+        return 0;
+
+    if (FAILED(viewEditing->setEditingDelegate(sharedEditingDelegate.get())))
+        return 0;
+
+    if (FAILED(webView->setResourceLoadDelegate(sharedResourceLoadDelegate.get())))
+        return 0;
+
+    COMPtr<IWebPreferences> preferences;
+    if (FAILED(webView->preferences(&preferences)))
+        return 0;
+
+    initializePreferences(preferences.get());
+
+    openWindows().append(hostWindow);
+    windowToWebViewMap().set(hostWindow, webView);
+    return webView;
+}
+
 int main(int argc, char* argv[])
 {
     leakChecking = false;
 
     _setmode(1, _O_BINARY);
 
-    initialize(GetModuleHandle(0));
+    initialize();
 
     Vector<const char*> tests;
 
@@ -878,78 +1011,15 @@ int main(int argc, char* argv[])
         tests.append(argv[i]);
     }
 
-    COMPtr<IWebView> webView;
-    HRESULT hr = CoCreateInstance(CLSID_WebView, 0, CLSCTX_ALL, IID_IWebView, (void**)&webView);
-    if (FAILED(hr)) {
-        fprintf(stderr, "Failed to create CLSID_WebView instance, error 0x%x\n", hr);
-        return -1;
-    }
-
-    if (FAILED(webView->setHostWindow((OLE_HANDLE)(ULONG64)hostWindow)))
-        return -1;
-
-    RECT clientRect;
-    clientRect.bottom = clientRect.left = clientRect.top = clientRect.right = 0;
-    BSTR groupName = SysAllocString(L"org.webkit.DumpRenderTree");
-    bool failed = FAILED(webView->initWithFrame(clientRect, 0, groupName));
-    SysFreeString(groupName);
-    if (failed)
-        return -1;
-
-    COMPtr<IWebViewPrivate> viewPrivate;
-    if (FAILED(webView->QueryInterface(&viewPrivate)))
-        return -1;
-    webView->Release();
-
-    viewPrivate->setShouldApplyMacFontAscentHack(TRUE);
-
-    BSTR pluginPath = SysAllocStringLen(0, exePath().length() + _tcslen(TestPluginDir));
-    _tcscpy(pluginPath, exePath().c_str());
-    _tcscat(pluginPath, TestPluginDir);
-    failed = FAILED(viewPrivate->addAdditionalPluginPath(pluginPath));
-    SysFreeString(pluginPath);
-    if (failed)
-        return -1;
-
-    if (FAILED(viewPrivate->viewWindow((OLE_HANDLE*)&webViewWindow)))
-        return -1;
-
-    SetWindowPos(webViewWindow, 0, 0, 0, maxViewWidth, maxViewHeight, 0);
-    ShowWindow(hostWindow, SW_SHOW);
-
-    COMPtr<FrameLoadDelegate> frameLoadDelegate;
-    frameLoadDelegate.adoptRef(new FrameLoadDelegate);
-    if (FAILED(webView->setFrameLoadDelegate(frameLoadDelegate.get())))
-        return -1;
-    if (FAILED(viewPrivate->setFrameLoadDelegatePrivate(frameLoadDelegate.get())))
-        return -1;
-
     policyDelegate = new PolicyDelegate();
+    sharedFrameLoadDelegate.adoptRef(new FrameLoadDelegate);
+    sharedUIDelegate.adoptRef(new UIDelegate);
+    sharedEditingDelegate.adoptRef(new EditingDelegate);
+    sharedResourceLoadDelegate.adoptRef(new ResourceLoadDelegate);
 
-    COMPtr<UIDelegate> uiDelegate;
-    uiDelegate.adoptRef(new UIDelegate);
-    if (FAILED(webView->setUIDelegate(uiDelegate.get())))
+    COMPtr<IWebView> webView(AdoptCOM, createWebViewAndOffscreenWindow(&webViewWindow));
+    if (!webView)
         return -1;
-
-    COMPtr<IWebViewEditing> viewEditing;
-    if (FAILED(webView->QueryInterface(&viewEditing)))
-        return -1;
-    webView->Release();
-
-    COMPtr<EditingDelegate> editingDelegate;
-    editingDelegate.adoptRef(new EditingDelegate);
-    if (FAILED(viewEditing->setEditingDelegate(editingDelegate.get())))
-        return -1;
-
-    COMPtr<ResourceLoadDelegate> resourceLoadDelegate(AdoptCOM, new ResourceLoadDelegate);
-    if (FAILED(webView->setResourceLoadDelegate(resourceLoadDelegate.get())))
-        return -1;
-
-    COMPtr<IWebPreferences> preferences;
-    if (FAILED(webView->preferences(&preferences)))
-        return -1;
-
-    initializePreferences(preferences.get());
 
     COMPtr<IWebIconDatabase> iconDatabase;
     COMPtr<IWebIconDatabase> tmpIconDatabase;

@@ -518,8 +518,7 @@ void LayoutTestController::setWaitToDump(bool waitUntilDone)
 
 int LayoutTestController::windowCount()
 {
-    // FIXME: Implement!
-    return 1;
+    return openWindows().size();
 }
 
 void LayoutTestController::execCommand(JSStringRef name, JSStringRef value)
