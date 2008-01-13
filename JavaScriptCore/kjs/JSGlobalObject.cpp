@@ -90,6 +90,15 @@ static inline unsigned getCurrentTime() {
 
 JSGlobalObject* JSGlobalObject::s_head = 0;
 
+void JSGlobalObject::deleteActivationStack()
+{
+    ActivationStackNode* prevNode = 0;
+    for (ActivationStackNode* currentNode = d()->activations; currentNode; currentNode = prevNode) {
+        prevNode = currentNode->prev;
+        delete currentNode;
+    }
+}
+
 JSGlobalObject::~JSGlobalObject()
 {
     ASSERT(JSLock::currentThreadIsHoldingLock());
@@ -102,6 +111,8 @@ JSGlobalObject::~JSGlobalObject()
     s_head = d()->next;
     if (s_head == this)
         s_head = 0;
+    
+    deleteActivationStack();
     
     delete d();
 }
@@ -127,6 +138,8 @@ void JSGlobalObject::init()
     d()->currentExec = 0;
     d()->recursion = 0;
     d()->debugger = 0;
+    
+    d()->activations = 0;
     
     reset(prototype());
 }
@@ -202,7 +215,10 @@ void JSGlobalObject::reset(JSValue* prototype)
 
     ExecState* exec = &d()->globalExec;
 
-    d()->activations = new ActivationStackNode;
+    deleteActivationStack();
+    ActivationStackNode* newStackNode = new ActivationStackNode;
+    newStackNode->prev = 0;    
+    d()->activations = newStackNode;
     d()->activationCount = 0;
 
     // Prototypes

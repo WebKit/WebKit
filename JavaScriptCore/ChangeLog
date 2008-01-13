@@ -1,3 +1,17 @@
+2008-01-12  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
+
+        Reviewed by Mark Rowe.
+
+        Fix http://bugs.webkit.org/show_bug.cgi?id=16852
+        Fixes leaking of ActivationStackNode objects.
+
+        * kjs/JSGlobalObject.cpp:
+        (KJS::JSGlobalObject::deleteActivationStack):
+        (KJS::JSGlobalObject::~JSGlobalObject):
+        (KJS::JSGlobalObject::init):
+        (KJS::JSGlobalObject::reset):
+        * kjs/JSGlobalObject.h:
+
 2008-01-12  Darin Adler  <darin@apple.com>
 
         - try to fix Qt Windows build
