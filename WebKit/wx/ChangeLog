@@ -1,3 +1,10 @@
+2008-01-12  Kevin Ollivier  <kevino@theolliviers.com>
+
+        wx build fix. Add WebCore/icu/include dir for OS X boxes with
+        only stock ICU installed.
+
+        * dependencies.bkl:
+
 2008-01-10  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Sam.
