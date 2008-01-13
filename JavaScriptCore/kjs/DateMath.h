@@ -68,7 +68,7 @@ const double msPerHour = 60.0 * 60.0 * 1000.0;
 const double msPerDay = 24.0 * 60.0 * 60.0 * 1000.0;
 
 // Intentionally overridding the default tm of the system
-// Not all OS' have the same members of their tm's
+// Tee members of tm differ on various operating systems.
 struct GregorianDateTime : Noncopyable {
     GregorianDateTime()
         : second(0)
@@ -101,7 +101,7 @@ struct GregorianDateTime : Noncopyable {
         , year(inTm.tm_year)
         , isDST(inTm.tm_isdst)
     {
-#if !PLATFORM(WIN_OS)
+#if !PLATFORM(WIN_OS) && !PLATFORM(SOLARIS)
         utcOffset = static_cast<int>(inTm.tm_gmtoff);
 
         int inZoneSize = strlen(inTm.tm_zone) + 1;
@@ -128,7 +128,7 @@ struct GregorianDateTime : Noncopyable {
         ret.tm_year  =  year;
         ret.tm_isdst =  isDST;
 
-#if !PLATFORM(WIN_OS)
+#if !PLATFORM(WIN_OS) && !PLATFORM(SOLARIS)
         ret.tm_gmtoff = static_cast<long>(utcOffset);
         ret.tm_zone = timeZone;
 #endif

@@ -57,6 +57,13 @@
 #define WTF_PLATFORM_FREEBSD 1
 #endif
 
+/* PLATFORM(SOLARIS) */
+/* Operating system level dependencies for Solaris that should be used */
+/* regardless of operating environment */
+#if defined(sun) || defined(__sun)
+#define WTF_PLATFORM_SOLARIS 1
+#endif
+
 /* PLATFORM(UNIX) */
 /* Operating system level dependencies for Unix-like systems that */
 /* should be used regardless of operating environment */

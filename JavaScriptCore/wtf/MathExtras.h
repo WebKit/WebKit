@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,6 +30,10 @@
 #include <stdlib.h>
 #include <time.h>
 
+#if PLATFORM(SOLARIS) && COMPILER(GCC)
+#include <ieeefp.h>
+#endif
+
 #if COMPILER(MSVC)
 
 #include <xmath.h>
@@ -55,6 +59,20 @@ const float piOverFourFloat = 0.785398163397448309616f;
 #else
 const double piOverFourDouble = M_PI_4;
 const float piOverFourFloat = static_cast<float>(M_PI_4);
+#endif
+
+#if PLATFORM(SOLARIS) && COMPILER(GCC)
+
+#ifndef isfinite
+inline bool isfinite(double x) { return finite(x) && !isnand(x); }
+#endif
+#ifndef isinf
+inline bool isinf(double x) { return !finite(x) && !isnand(x); }
+#endif
+#ifndef signbit
+inline bool signbit(double x) { return x < 0.0; } // FIXME: Wrong for negative 0.
+#endif
+
 #endif
 
 #if COMPILER(MSVC)

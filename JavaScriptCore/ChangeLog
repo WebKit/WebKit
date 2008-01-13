@@ -1,3 +1,27 @@
+2008-01-13  Marius Bugge Monsen  <mbm@trolltech.com>
+
+        Contributions and review by Adriaan de Groot,
+        Simon Hausmann, Eric Seidel, and Darin Adler.
+
+        - http://bugs.webkit.org/show_bug.cgi?id=16590
+          Compilation fixes for Solaris.
+
+        * kjs/DateMath.h:
+        (KJS::GregorianDateTime::GregorianDateTime): Use the WIN_OS code path
+        for SOLARIS too, presumably because Solaris also lacks the tm_gtoff and tm_zone
+        fields.
+        (KJS::GregorianDateTime::operator tm): Ditto.
+
+        * kjs/collector.cpp:
+        (KJS::currentThreadStackBase): Use thr_stksegment on Solaris.
+
+        * wtf/MathExtras.h:
+        (isfinite): Implement for Solaris.
+        (isinf): Ditto.
+        (signbit): Ditto. But this one is wrong, so I added a FIXME.
+
+        * wtf/Platform.h: Define PLATFORM(SOLARIS) when "sun" or "__sun" is defined.
+
 2008-01-13  Michael Goddard  <michael.goddard@trolltech.com>
 
         Reviewed by Anders Carlsson.
