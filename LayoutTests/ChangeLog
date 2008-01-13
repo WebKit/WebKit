@@ -1,3 +1,10 @@
+2008-01-13  Dan Bernstein  <mitz@apple.com>
+
+        Change test to match the results landed in r29424. The test changes were
+        omitted in that check-in.
+
+        * editing/pasteboard/paste-RTFD.html:
+
 2008-01-12  Dan Bernstein  <mitz@apple.com>
 
         Update expected results for fast/replaced/image-map-expected after

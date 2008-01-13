@@ -45,6 +45,9 @@ function editingTest() {
 <title>RTFD paste test</title>
 </head>
 <body>
+<p>
+    On Tiger, this test demonstrates a bug in AppKit's -[NSString _documentFromRange:] method where it produces fragments with extra trailing and leading newlines.  This bug is fixed in Leopard.
+</p>
 <div contentEditable="true" id="root" class="editing">
 <div id="test"> </div>
 </div>
