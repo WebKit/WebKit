@@ -71,7 +71,7 @@ BEGIN_EVENT_TABLE(wxWebFrame, wxFrame)
     EVT_MENU(ID_LOADFILE, wxWebFrame::OnLoadFile)
     EVT_TEXT_ENTER(ID_TEXTCTRL, wxWebFrame::OnAddressBarEnter)
     EVT_TEXT_ENTER(ID_SEARCHCTRL, wxWebFrame::OnSearchCtrlEnter)
-    EVT_WEBVIEW_STATE_CHANGED(wxWebFrame::OnStateChangedEvent)
+    EVT_WEBVIEW_LOAD(wxWebFrame::OnLoadEvent)
     EVT_WEBVIEW_BEFORE_LOAD(wxWebFrame::OnBeforeLoad)
     EVT_MENU(ID_BACK, wxWebFrame::OnBack)
     EVT_MENU(ID_FORWARD, wxWebFrame::OnForward)
@@ -208,21 +208,21 @@ void wxWebFrame::OnLoadFile(wxCommandEvent& WXUNUSED(event))
     }
 }
 
-void wxWebFrame::OnStateChangedEvent(wxWebViewStateChangedEvent& event)
+void wxWebFrame::OnLoadEvent(wxWebViewLoadEvent& event)
 {
     if (GetStatusBar() != NULL){
-        if (event.GetState() == wxWEBVIEW_STATE_NEGOTIATING) {
+        if (event.GetState() == wxWEBVIEW_LOAD_NEGOTIATING) {
             GetStatusBar()->SetStatusText(_("Contacting ") + event.GetURL());
         }
-        else if (event.GetState() == wxWEBVIEW_STATE_TRANSFERRING) {
+        else if (event.GetState() == wxWEBVIEW_LOAD_TRANSFERRING) {
             GetStatusBar()->SetStatusText(_("Loading ") + event.GetURL());
         }
-        else if (event.GetState() == wxWEBVIEW_STATE_STOP) {
+        else if (event.GetState() == wxWEBVIEW_LOAD_ONLOAD_HANDLED) {
             GetStatusBar()->SetStatusText(_("Load complete."));
             addressBar->SetValue(event.GetURL());
             SetTitle(webview->GetPageTitle());
         }
-        else if (event.GetState() == wxWEBVIEW_STATE_FAILED) {
+        else if (event.GetState() == wxWEBVIEW_LOAD_FAILED) {
             GetStatusBar()->SetStatusText(_("Failed to load ") + event.GetURL());
         }
     }

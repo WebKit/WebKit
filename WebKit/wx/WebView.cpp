@@ -26,6 +26,7 @@
 #include "config.h"
 #include "DeprecatedString.h"
 #include "Document.h"
+#include "Element.h"
 #include "Editor.h"
 #include "EventHandler.h"
 #include "Frame.h"
@@ -34,12 +35,14 @@
 #include "GraphicsContext.h"
 #include "HTMLFrameOwnerElement.h"
 #include "Logging.h"
+#include "markup.h"
 #include "Page.h"
 #include "PlatformKeyboardEvent.h"
 #include "PlatformMouseEvent.h"
 #include "PlatformString.h"
 #include "PlatformWheelEvent.h"
 #include "RenderObject.h"
+#include "RenderTreeAsText.h"
 #include "Settings.h"
 
 #include "ChromeClientWx.h"
@@ -82,13 +85,13 @@ int rint(double val)
 // wxWebView Events
 // ----------------------------------------------------------------------------
 
-IMPLEMENT_DYNAMIC_CLASS(wxWebViewStateChangedEvent, wxCommandEvent)
+IMPLEMENT_DYNAMIC_CLASS(wxWebViewLoadEvent, wxCommandEvent)
 
-DEFINE_EVENT_TYPE(wxEVT_WEBVIEW_STATE_CHANGED)
+DEFINE_EVENT_TYPE(wxEVT_WEBVIEW_LOAD)
 
-wxWebViewStateChangedEvent::wxWebViewStateChangedEvent(wxWindow* win)
+wxWebViewLoadEvent::wxWebViewLoadEvent(wxWindow* win)
 {
-    SetEventType( wxEVT_WEBVIEW_STATE_CHANGED);
+    SetEventType( wxEVT_WEBVIEW_LOAD);
     SetEventObject( win );
     SetId(win->GetId());
 }
@@ -123,6 +126,17 @@ DEFINE_EVENT_TYPE(wxEVT_WEBVIEW_RIGHT_CLICK)
 wxWebViewRightClickEvent::wxWebViewRightClickEvent(wxWindow* win)
 {
     SetEventType(wxEVT_WEBVIEW_RIGHT_CLICK);
+    SetEventObject(win);
+    SetId(win->GetId());
+}
+
+IMPLEMENT_DYNAMIC_CLASS(wxWebViewConsoleMessageEvent, wxCommandEvent)
+
+DEFINE_EVENT_TYPE(wxEVT_WEBVIEW_CONSOLE_MESSAGE)
+
+wxWebViewConsoleMessageEvent::wxWebViewConsoleMessageEvent(wxWindow* win)
+{
+    SetEventType(wxEVT_WEBVIEW_CONSOLE_MESSAGE);
     SetEventObject(win);
     SetId(win->GetId());
 }
@@ -183,7 +197,7 @@ wxWebView::wxWebView(wxWindow* parent, int id, const wxPoint& position,
     }
     else {
         WebCore::EditorClientWx* editorClient = new WebCore::EditorClientWx();
-        m_impl->page = new WebCore::Page(new WebCore::ChromeClientWx(), new WebCore::ContextMenuClientWx(), editorClient, new WebCore::DragClientWx(), new WebCore::InspectorClientWx());
+        m_impl->page = new WebCore::Page(new WebCore::ChromeClientWx(this), new WebCore::ContextMenuClientWx(), editorClient, new WebCore::DragClientWx(), new WebCore::InspectorClientWx());
         editorClient->setPage(m_impl->page);
     }
     
@@ -243,6 +257,9 @@ void wxWebView::Reload()
 wxString wxWebView::GetPageSource()
 {
     if (m_impl->frame) {
+        if (m_impl->frameView && m_impl->frameView->layoutPending())
+            m_impl->frameView->layout();
+    
         WebCore::Document* doc = m_impl->frame->document();
         
         if (doc) {
@@ -261,6 +278,31 @@ void wxWebView::SetPageSource(const wxString& source, const wxString& baseUrl)
         loader->write(source);
         loader->end();
     }
+}
+
+wxString wxWebView::GetInnerText()
+{
+    if (m_impl->frameView && m_impl->frameView->layoutPending())
+        m_impl->frameView->layout();
+        
+    WebCore::Element *documentElement = m_impl->frame->document()->documentElement();
+    return documentElement->innerText();
+}
+
+wxString wxWebView::GetAsMarkup()
+{
+    if (!m_impl->frame || !m_impl->frame->document())
+        return wxEmptyString;
+
+    return createMarkup(m_impl->frame->document());
+}
+
+wxString wxWebView::GetExternalRepresentation()
+{
+    if (m_impl->frameView && m_impl->frameView->layoutPending())
+        m_impl->frameView->layout();
+
+    return externalRepresentation(m_impl->frame->renderer());
 }
 
 wxString wxWebView::RunScript(const wxString& javascript)

@@ -46,6 +46,11 @@
 
 namespace WebCore {
 
+ChromeClientWx::ChromeClientWx(wxWebView* webView)
+{
+    m_webView = webView;
+}
+
 ChromeClientWx::~ChromeClientWx()
 {
 }
@@ -192,11 +197,17 @@ void ChromeClientWx::setResizable(bool)
     notImplemented();
 }
 
-void ChromeClientWx::addMessageToConsole(const String&,
-                                          unsigned int,
-                                          const String&)
+void ChromeClientWx::addMessageToConsole(const String& message,
+                                          unsigned int lineNumber,
+                                          const String& sourceID)
 {
-    notImplemented();
+    if (m_webView) {
+        wxWebViewConsoleMessageEvent wkEvent(m_webView);
+        wkEvent.SetMessage(message);
+        wkEvent.SetLineNumber(lineNumber);
+        wkEvent.SetSourceID(sourceID);
+        m_webView->GetEventHandler()->ProcessEvent(wkEvent);
+    }
 }
 
 bool ChromeClientWx::canRunBeforeUnloadConfirmPanel()

@@ -1,5 +1,42 @@
 2008-01-12  Kevin Ollivier  <kevino@theolliviers.com>
 
+        Reviewed by Darin Adler.
+
+        wxWebKit API changes in preparation for DRT implementation. 
+        Specifically:
+
+        - Add CONSOLE_MESSAGE callback so clients can choose how to handle
+        console messages.
+        - Add more load events, and rename wxWebViewStateChangedEvent to 
+        wxWebViewLoadEvent to reflect that all 'states' are load states.
+        - Add wxWebView impls. for GetInnerText(), GetAsMarkup() and 
+        GetExternalRepresentation()
+
+        * WebFrame.cpp:
+        (wxWebFrame::OnLoadEvent):
+        * WebFrame.h:
+        * WebKitSupport/ChromeClientWx.cpp:
+        (WebCore::ChromeClientWx::ChromeClientWx):
+        (WebCore::ChromeClientWx::addMessageToConsole):
+        * WebKitSupport/ChromeClientWx.h:
+        * WebKitSupport/FrameLoaderClientWx.cpp:
+        (WebCore::FrameLoaderClientWx::dispatchDidHandleOnloadEvents):
+        (WebCore::FrameLoaderClientWx::dispatchDidStartProvisionalLoad):
+        (WebCore::FrameLoaderClientWx::dispatchDidCommitLoad):
+        (WebCore::FrameLoaderClientWx::dispatchDidFinishDocumentLoad):
+        (WebCore::FrameLoaderClientWx::postProgressFinishedNotification):
+        * WebView.cpp:
+        (wxWebViewLoadEvent::wxWebViewLoadEvent):
+        (wxWebViewConsoleMessageEvent::wxWebViewConsoleMessageEvent):
+        (wxWebView::wxWebView):
+        (wxWebView::GetPageSource):
+        (wxWebView::GetInnerText):
+        (wxWebView::GetAsMarkup):
+        (wxWebView::GetExternalRepresentation):
+        * WebView.h:
+
+2008-01-12  Kevin Ollivier  <kevino@theolliviers.com>
+
         wx build fix. Add WebCore/icu/include dir for OS X boxes with
         only stock ICU installed.
 

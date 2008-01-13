@@ -60,7 +60,7 @@ protected:
     void OnLoadFile(wxCommandEvent& event);
     void OnAddressBarEnter(wxCommandEvent& event);
     void OnSearchCtrlEnter(wxCommandEvent& event);
-    void OnStateChangedEvent(wxWebViewStateChangedEvent& event);
+    void OnLoadEvent(wxWebViewLoadEvent& event);
     void OnBeforeLoad(wxWebViewBeforeLoadEvent& event);
     void OnBack(wxCommandEvent& event);
     void OnForward(wxCommandEvent& event);
