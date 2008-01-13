@@ -371,7 +371,7 @@ String stringWithRebalancedWhitespace(const String& string, bool startIsStartOfP
     static DeprecatedString nbsp("\xa0");
     static DeprecatedString pattern(" \xa0");
 
-    DeprecatedString rebalancedString = string.copy().deprecatedString();
+    DeprecatedString rebalancedString = string.deprecatedString();
 
     rebalancedString.replace(noBreakSpace, ' ');
     rebalancedString.replace('\n', ' ');

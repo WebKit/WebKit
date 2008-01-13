@@ -1118,7 +1118,7 @@ void IconDatabase::performOpenInitialization()
     }
     
     if (!isValidDatabase(m_syncDB)) {
-        LOG(IconDatabase, "%s is missing or in an invalid state - reconstructing", m_syncDB.path().ascii().data());
+        LOG(IconDatabase, "%s is missing or in an invalid state - reconstructing", m_completeDatabasePath.ascii().data());
         m_syncDB.clearAllTables();
         createDatabaseTables(m_syncDB);
     }

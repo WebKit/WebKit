@@ -2628,7 +2628,7 @@ void Document::setDomain(const String& newDomain)
     if (newLength >= oldLength)
         return;
 
-    String test = domain().copy();
+    String test = domain();
     // Check that it's a subdomain, not e.g. "ebkit.org"
     if (test[oldLength - newLength - 1] != '.')
         return;
@@ -2710,10 +2710,10 @@ bool Document::parseQualifiedName(const String &qualifiedName, String &prefix, S
 
     if (!sawColon) {
         prefix = String();
-        localName = qualifiedName.copy();
+        localName = qualifiedName;
     } else {
         prefix = qualifiedName.substring(0, colonPos);
-        localName = qualifiedName.substring(colonPos + 1, length - (colonPos + 1));
+        localName = qualifiedName.substring(colonPos + 1);
     }
 
     return true;
@@ -3401,10 +3401,8 @@ PassRefPtr<Attr> Document::createAttributeNS(const String &namespaceURI, const S
     String prefix;
     int colonpos;
     if ((colonpos = qualifiedName.find(':')) >= 0) {
-        prefix = qualifiedName.copy();
-        localName = qualifiedName.copy();
-        prefix.truncate(colonpos);
-        localName.remove(0, colonpos+1);
+        prefix = qualifiedName.substring(0, colonpos);
+        localName = qualifiedName.substring(colonpos + 1);
     }
 
     if (!isValidName(localName)) {

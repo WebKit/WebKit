@@ -1,6 +1,48 @@
-2008-01-13  Oliver Hunt  <oliver@apple.com>
+2008-01-13  Darin Adler  <darin@apple.com>
 
-        Reviewed by NOBODY (build fix).
+        Reviewed by Eric.
+
+        - http://bugs.webkit.org/show_bug.cgi?id=16861
+          get rid of unnecessary string copying
+
+        * dom/Document.cpp:
+        (WebCore::Document::setDomain): Removed unneeded call to copy.
+        (WebCore::Document::parseQualifiedName): Removed unneeded call to copy, and
+        unneeded length argument to substring, which stops at the end of the string
+        if you don't specify a length.
+        (WebCore::Document::createAttributeNS): Replaced code that was calling copy
+        with more-efficient code using the substring function.
+        * dom/StyledElement.cpp:
+        (WebCore::StyledElement::addCSSColor): Removed unneeded call to copy.
+        * editing/InsertIntoTextNodeCommand.cpp:
+        (WebCore::InsertIntoTextNodeCommand::InsertIntoTextNodeCommand): Removed
+        unneeded copy and also initialized text instead of assigning to it.
+        (WebCore::InsertIntoTextNodeCommand::doApply): Removed redundant assertions.
+        (WebCore::InsertIntoTextNodeCommand::doUnapply): Ditto.
+
+        * editing/htmlediting.cpp:
+        (WebCore::stringWithRebalancedWhitespace): Removed unneeded call to copy.
+        This one was particularly bad since we just turned around and copied it again!
+
+        * editing/markup.cpp:
+        (WebCore::stringValueForRange): Removed unneeded call to copy.
+
+        * loader/icon/IconDatabase.cpp:
+        (WebCore::IconDatabase::performOpenInitialization): Changed logging code to not
+        get the path from the database object. This was the only reason the database
+        had to keep its path around.
+
+        * platform/sql/SQLiteDatabase.cpp:
+        (WebCore::SQLiteDatabase::open): Use a local variable instead of a data member to
+        convert the string to a null-terminated one.
+        (WebCore::SQLiteDatabase::close): Removed the code to clear out m_path.
+        * platform/sql/SQLiteDatabase.h: Removed the m_path data member and the path
+        functio member. Also tweaked formatting and comments a bit. Removed the unused
+        escapeSQLString function.
+
+        * platform/text/String.cpp: (WebCore::operator+): Removed uneeded calls to copy.
+
+2008-01-13  Oliver Hunt  <oliver@apple.com>
 
         Attempt to fix QT build
 
@@ -1515,8 +1557,6 @@
         (WebCore::Text::recalcStyle):
 
 2008-01-08  Oliver Hunt  <oliver@apple.com>
-
-        Reviewed by NOBODY (Build fix).
 
         Set the ENABLE_SVG_FONTS flag in Windows build, now builds, 
         I'm not sure if it just caused the right files to regenerate,
@@ -16322,7 +16362,7 @@
 
 2007-11-09  Simon Hausmann  <hausmann@kde.org>
 
-        Reviewed by nobody, build/link fix for Qt/Windows.
+        build/link fix for Qt/Windows.
 
         userIdleTime() is stubbed in win/SystemTimeWin.cpp, so don't
         define it twice.
@@ -17872,8 +17912,6 @@
         LGPL'ed files contain incorrect FSF address
         <http://bugs.webkit.org/show_bug.cgi?id=14885>
 
-        Reviewed by NOBODY (follow-up fix).
-
         * bindings/js/JSSVGTransformListCustom.cpp:
         * ksvg2/svg/SVGException.idl:
         * ksvg2/svg/SVGTextPathElement.cpp:
@@ -18710,8 +18748,6 @@
         (WebCore::elementHasTextDecorationProperty): Ditto.
 
 2007-10-30  Antti Koivisto  <antti@apple.com>
-
-        Reviewed by NOBODY.
 
         Add missing files.
 

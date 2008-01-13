@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006, 2007, 2008 Apple Inc. All rights reserved.
  * Copyright (C) 2007 Justin Haygood (jhaygood@reaktix.com)
  *
  * Redistribution and use in source and binary forms, with or without
@@ -51,17 +51,14 @@ extern const int SQLResultRow;
 extern const int SQLResultSchema;
 extern const int SQLResultFull;
 
-
-class SQLiteDatabase : public Noncopyable
-{
-friend class SQLiteTransaction;
+class SQLiteDatabase : public Noncopyable {
+    friend class SQLiteTransaction;
 public:
     SQLiteDatabase();
     ~SQLiteDatabase();
 
     bool open(const String& filename);
     bool isOpen() const { return m_db; }
-    String path() const { return m_path; }
     void close();
 
     bool executeCommand(const String&);
@@ -79,7 +76,6 @@ public:
     void setBusyTimeout(int ms);
     void setBusyHandler(int(*)(void*, int));
     
-    // TODO - add pragma and sqlite_master accessors here
     void setFullsync(bool);
     
     // Gets/sets the maximum size in bytes
@@ -93,9 +89,7 @@ public:
     // FULL - Any writing calls to the DB block until the data is actually on the disk surface
     // NORMAL - SQLite pauses at some critical moments when writing, but much less than FULL
     // OFF - Calls return immediately after the data has been passed to disk
-    enum SynchronousPragma {
-        SyncOff = 0, SyncNormal = 1, SyncFull = 2
-    };
+    enum SynchronousPragma { SyncOff = 0, SyncNormal = 1, SyncFull = 2 };
     void setSynchronous(SynchronousPragma);
     
     int lastError();
@@ -108,9 +102,10 @@ public:
     
     void setAuthorizer(PassRefPtr<SQLiteAuthorizer>);
 
-    // (un)lock's the database like a mutex
+    // (un)locks the database like a mutex
     void lock();
     void unlock();
+
 private:
     static int authorizerFunction(void*, int, const char*, const char*, const char*, const char*);
 
@@ -118,7 +113,6 @@ private:
     
     int pageSize();
     
-    String   m_path;
     sqlite3* m_db;
     int m_lastError;
     int m_pageSize;
@@ -133,15 +127,6 @@ private:
     
 }; // class SQLiteDatabase
 
-inline String escapeSQLString(const String& s)
-{
-    String es = s;
-    es.replace('\'', "''");
-    return es;
-}
-
 } // namespace WebCore
-
-
 
 #endif

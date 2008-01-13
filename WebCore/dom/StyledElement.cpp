@@ -332,7 +332,7 @@ void StyledElement::addCSSLength(MappedAttribute* attr, int id, const String &va
 }
 
 /* color parsing that tries to match as close as possible IE 6. */
-void StyledElement::addCSSColor(MappedAttribute* attr, int id, const String &c)
+void StyledElement::addCSSColor(MappedAttribute* attr, int id, const String& c)
 {
     // this is the only case no color gets applied in IE.
     if (!c.length())
@@ -344,7 +344,7 @@ void StyledElement::addCSSColor(MappedAttribute* attr, int id, const String &c)
     if (attr->decl()->setProperty(id, c, false))
         return;
     
-    String color = c.copy();
+    String color = c;
     // not something that fits the specs.
     
     // we're emulating IEs color parser here. It maps transparent to black, otherwise it tries to build a rgb value

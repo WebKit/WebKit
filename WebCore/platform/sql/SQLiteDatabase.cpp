@@ -60,10 +60,9 @@ bool SQLiteDatabase::open(const String& filename)
 {
     close();
     
-    //SQLite expects a null terminator on its UTF16 strings
-    m_path = filename.copy();
-    
-    m_lastError = sqlite3_open16(m_path.charactersWithNullTermination(), &m_db);
+    // SQLite expects a null terminator on its UTF-16 strings.
+    String path = filename;
+    m_lastError = sqlite3_open16(path.charactersWithNullTermination(), &m_db);
     if (m_lastError != SQLITE_OK) {
         LOG_ERROR("SQLite database failed to load from %s\nCause - %s", filename.ascii().data(),
             sqlite3_errmsg(m_db));
@@ -85,7 +84,6 @@ void SQLiteDatabase::close()
 {
     if (m_db) {
         sqlite3_close(m_db);
-        m_path.truncate(0);
         m_db = 0;
     }
 

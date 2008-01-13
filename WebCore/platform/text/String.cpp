@@ -112,10 +112,10 @@ void String::append(UChar c)
 String operator+(const String& a, const String& b)
 {
     if (a.isEmpty())
-        return b.copy();
+        return b;
     if (b.isEmpty())
-        return a.copy();
-    String c = a.copy();
+        return a;
+    String c = a;
     c += b;
     return c;
 }
