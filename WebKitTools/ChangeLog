@@ -1,5 +1,12 @@
 2008-01-13  Dan Bernstein  <mitz@apple.com>
 
+        - fix breakage due to last-minute change
+
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (runTest): Declare the loop variable.
+
+2008-01-13  Dan Bernstein  <mitz@apple.com>
+
         Reviewed by Adam Roben.
 
         - fix <rdar://problem/5132009> Windows DRT does not support multiple windows

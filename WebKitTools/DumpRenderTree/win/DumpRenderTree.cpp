@@ -732,7 +732,7 @@ static void runTest(const char* pathOrURL)
     if (::layoutTestController->closeRemainingWindowsWhenComplete()) {
         Vector<HWND> windows = openWindows();
         unsigned size = windows.size();
-        for (i = 0; i < size; i++) {
+        for (unsigned i = 0; i < size; i++) {
             HWND window = windows[i];
 
             // Don't try to close the main window
