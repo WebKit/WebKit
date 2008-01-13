@@ -1,8 +1,19 @@
 2008-01-13  Oliver Hunt  <oliver@apple.com>
 
+        Reviewed by NOBODY (build fix).
+
+        Attempt to fix QT build
+
+        * html/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::willDraw):
+
+2008-01-13  Oliver Hunt  <oliver@apple.com>
+
         Reviewed by Mark Rowe.
 
         Avoid repainting the entire canvas element when possible.
+
+        http://bugs.webkit.org/show_bug.cgi?id=16859
 
         We now only register the dirty regions of a canvas for repainting, rather
         than the entire element (though repaint coalescing may choose to combine

@@ -1090,7 +1090,7 @@ void CanvasRenderingContext2D::willDraw(const FloatRect& r)
     cairo_get_matrix(cr, &m);
     transform = m;
 #elif PLATFORM(QT)
-    transform = c->platformContext().combinedMatrix();
+    transform = c->platformContext()->combinedMatrix();
 #else
     notImplemented();
     FloatRect completeBounds(0, 0, m_canvas->width(), m_canvas->height());
