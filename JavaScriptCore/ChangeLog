@@ -1,3 +1,11 @@
+2008-01-12  Alp Toker  <alp@atoker.com>
+
+        Reviewed by Mark Rowe.
+
+        Hide non-public symbols in GTK+/autotools release builds.
+
+        * GNUmakefile.am:
+
 2008-01-12  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
 
         Reviewed by Mark Rowe.

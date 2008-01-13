@@ -1,20 +1,23 @@
-noinst_PROGRAMS += Programs/GtkLauncher Programs/DumpRenderTree
+noinst_PROGRAMS += \
+	Programs/GtkLauncher \
+	Programs/DumpRenderTree
 
 # GtkLauncher
-Programs_GtkLauncher_CPPFLAGS := \
+Programs_GtkLauncher_CPPFLAGS = \
 	-I $(srcdir)/WebKit/gtk/WebView \
 	$(global_cppflags)
 
-Programs_GtkLauncher_SOURCES := WebKitTools/GtkLauncher/main.c
+Programs_GtkLauncher_SOURCES = \
+	WebKitTools/GtkLauncher/main.c
 
-Programs_GtkLauncher_CFLAGS := \
+Programs_GtkLauncher_CFLAGS = \
 	$(DEPENDENCIES_CFLAGS) \
 	$(ICU_CFLAGS) \
 	$(SQLITE3_CFLAGS) \
 	$(GSTREAMER_CFLAGS) \
 	$(LIBXSLT_CFLAGS)
 
-Programs_GtkLauncher_LDADD := \
+Programs_GtkLauncher_LDADD = \
 	$(DEPENDENCIES_LIBS) \
 	$(ICU_LIBS) \
 	$(SQLITE3_LIBS) \
@@ -23,16 +26,16 @@ Programs_GtkLauncher_LDADD := \
 	libJavaScriptCore.la \
 	libWebKitGtk.la
 
-Programs_GtkLauncher_LDFLAGS := -ljpeg -rpath $(CURDIR)/.libs
+Programs_GtkLauncher_LDFLAGS = -ljpeg -rpath $(CURDIR)/.libs
 
 # DumpRenderTree
-Programs_DumpRenderTree_CPPFLAGS := \
+Programs_DumpRenderTree_CPPFLAGS = \
 	-I $(srcdir)/WebKitTools/DumpRenderTree \
 	-I $(srcdir)/WebKitTools/DumpRenderTree/gtk \
 	-I $(srcdir)/WebKit/gtk/WebView \
 	$(global_cppflags)
 
-Programs_DumpRenderTree_SOURCES := \
+Programs_DumpRenderTree_SOURCES = \
 	WebKitTools/DumpRenderTree/gtk/DumpRenderTree.cpp \
 	WebKitTools/DumpRenderTree/LayoutTestController.cpp \
 	WebKitTools/DumpRenderTree/GCController.cpp \
@@ -41,6 +44,6 @@ Programs_DumpRenderTree_SOURCES := \
 	WebKitTools/DumpRenderTree/gtk/LayoutTestControllerGtk.cpp \
 	WebKitTools/DumpRenderTree/gtk/WorkQueueItemGtk.cpp
 
-Programs_DumpRenderTree_CXXFLAGS := $(DEPENDENCIES_CFLAGS) $(AM_CXXFLAGS)
-Programs_DumpRenderTree_LDADD := $(DEPENDENCIES_LIBS) libJavaScriptCore.la libWebKitGtk.la
-Programs_DumpRenderTree_LDFLAGS := -rpath $(CURDIR)/.libs 
+Programs_DumpRenderTree_CXXFLAGS = $(DEPENDENCIES_CFLAGS) $(AM_CXXFLAGS)
+Programs_DumpRenderTree_LDADD = $(DEPENDENCIES_LIBS) libJavaScriptCore.la libWebKitGtk.la
+Programs_DumpRenderTree_LDFLAGS = -rpath $(CURDIR)/.libs 
