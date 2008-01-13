@@ -1077,7 +1077,28 @@ void CanvasRenderingContext2D::willDraw(const FloatRect& r)
 {
     if (!m_canvas)
         return;
-    m_canvas->willDraw(r);
+    GraphicsContext* c = drawingContext();
+    if (!c)
+        return;
+    
+    AffineTransform transform;
+#if PLATFORM(CG)
+    transform = CGContextGetCTM(c->platformContext());
+#elif PLATFORM(CAIRO)
+    cairo_t* cr = c->platformContext();
+    cairo_matrix_t m;
+    cairo_get_matrix(cr, &m);
+    transform = m;
+#elif PLATFORM(QT)
+    transform = c->platformContext().combinedMatrix();
+#else
+    notImplemented();
+    FloatRect completeBounds(0, 0, m_canvas->width(), m_canvas->height());
+    m_canvas->willDraw(completeBounds);
+    return;
+#endif
+    
+    m_canvas->willDraw(transform.mapRect(r));
 }
 
 GraphicsContext* CanvasRenderingContext2D::drawingContext() const

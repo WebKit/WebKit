@@ -149,14 +149,15 @@ CanvasRenderingContext* HTMLCanvasElement::getContext(const String& type)
     return 0;
 }
 
-void HTMLCanvasElement::willDraw(const FloatRect&)
+void HTMLCanvasElement::willDraw(const FloatRect& rect)
 {
-    // FIXME: Change to repaint just the dirty rect for speed.
-    // Until we start doing this, we won't know if the rects passed in are
-    // accurate. Also don't forget to take into account the transform
-    // on the context when determining what needs to be repainted.
-    if (renderer())
-        renderer()->repaint();
+    if (RenderObject* ro = renderer()) {
+        // Handle CSS triggered scaling
+        float widthScale = static_cast<float>(ro->width()) / static_cast<float>(m_size.width());
+        float heightScale = static_cast<float>(ro->height()) / static_cast<float>(m_size.height());
+        FloatRect r(rect.x() * widthScale, rect.y() * heightScale, rect.width() * widthScale, rect.height() * heightScale);
+        ro->repaintRectangle(enclosingIntRect(r));
+    }
 }
 
 void HTMLCanvasElement::reset()

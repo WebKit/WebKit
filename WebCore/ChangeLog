@@ -1,3 +1,22 @@
+2008-01-13  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        Avoid repainting the entire canvas element when possible.
+
+        We now only register the dirty regions of a canvas for repainting, rather
+        than the entire element (though repaint coalescing may choose to combine
+        these regions).  This doesn't cause a measurable regression in the worst
+        case (clearing the canvas repeatedly), but is a moderate-large win if only
+        a minor update has occurred.  If there is any CSS scaling applied to the
+        canvas almost any update short of clearing the entire element is substantially
+        faster.
+
+        * html/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::willDraw):
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::willDraw):
+
 2008-01-13  Michael Goddard  <michael.goddard@trolltech.com>
 
         Reviewed by Anders Carlsson.
