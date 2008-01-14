@@ -1,3 +1,18 @@
+2008-01-14  Adam Roben  <aroben@apple.com>
+
+        Fix Bug 16871: Crash when loading apple.com/startpage
+
+        <http://bugs.webkit.org/show_bug.cgi?id=16871>
+        <rdar://problem/5686670>
+
+        Patch written by Darin, reviewed by me.
+
+        * kjs/ExecState.cpp:
+        (KJS::ExecState::mark): Call ActivationImp::markChildren if our
+        m_activation is on the stack. This is what ScopeChain::mark also does,
+        but apparently in some cases it's possible for an ExecState's
+        ActivationImp to not be in any ScopeChain.
+
 2008-01-14  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Oliver.
