@@ -1,3 +1,14 @@
+2008-01-14  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by David Kilzer.
+
+        http://bugs.webkit.org/show_bug.cgi?id=16787
+        array.splice() with 1 element not working
+
+        * fast/js/array-splice-expected.txt: Added.
+        * fast/js/array-splice.html: Added.
+        * fast/js/resources/array-splice.js: Added.
+
 2008-01-13  Eric Seidel  <eric@webkit.org>
 
         Reviewed by darin.

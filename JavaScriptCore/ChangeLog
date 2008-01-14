@@ -1,3 +1,16 @@
+2008-01-14  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by David Kilzer.
+
+        http://bugs.webkit.org/show_bug.cgi?id=16787
+        array.splice() with 1 element not working
+
+        Test: fast/js/array-splice.html
+
+        * kjs/array_object.cpp:
+        (KJS::ArrayProtoFuncSplice::callAsFunction): Implement this Mozilla extension, and fix
+        some other edge cases.
+
 2008-01-13  Steve Falkenburg  <sfalken@apple.com>
 
         Share common files across projects.

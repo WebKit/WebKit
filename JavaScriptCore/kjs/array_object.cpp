@@ -430,12 +430,19 @@ JSValue* ArrayProtoFuncSplice::callAsFunction(ExecState* exec, JSObject* thisObj
     JSObject* resObj = static_cast<JSObject* >(exec->lexicalGlobalObject()->arrayConstructor()->construct(exec, exec->emptyList()));
     JSValue* result = resObj;
     unsigned length = thisObj->get(exec, exec->propertyNames().length)->toUInt32(exec);
+    if (!args.size())
+        return jsUndefined();
     int begin = args[0]->toUInt32(exec);
     if (begin < 0)
         begin = std::max<int>(begin + length, 0);
     else
         begin = std::min<int>(begin, length);
-    unsigned int deleteCount = std::min<int>(std::max<int>(args[1]->toUInt32(exec), 0), length - begin);
+
+    unsigned int deleteCount;
+    if (args.size() > 1)
+        deleteCount = std::min<int>(std::max<int>(args[1]->toUInt32(exec), 0), length - begin);
+    else
+        deleteCount = length - begin;
 
     for (unsigned int k = 0; k < deleteCount; k++) {
         if (JSValue* v = getProperty(exec, thisObj, k + begin))
