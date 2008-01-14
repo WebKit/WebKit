@@ -121,6 +121,7 @@ my $strictTesting = 0;
 my $generateNewResults = 1;
 my $stripEditingCallbacks = isCygwin();
 my $root;
+my $reverseTests = 0;
 my $randomizeTests = 0;
 
 my $expectedTag = "expected";
@@ -172,6 +173,7 @@ Usage: $programName [options] [testdir|testpath ...]
   --reset-results                 Reset ALL results (including pixel tests if --pixel-tests is set)
   -o|--results-directory          Output results directory (default: $testResultsDirectory)
   --random                        Run the tests in a random order
+  --reverse                       Run the tests in reverse alphabetical order
   --root                          Path to root tools build
   -1|--singly                     Isolate each test case run (implies --verbose)
   --skipped=[default|ignore|only] Specifies how to treat the Skipped file
@@ -217,6 +219,7 @@ my $getOptionsResult = GetOptions(
     'strict' => \$strictTesting,
     'strip-editing-callbacks!' => \$stripEditingCallbacks,
     'random' => \$randomizeTests,
+    'reverse' => \$reverseTests,
     'root=s' => \$root,
     'add-platform-exceptions' => \$addPlatformExceptions,
 );
@@ -453,6 +456,9 @@ print "Testing ", scalar @tests, " test cases.\n";
 my $overallStartTime = time;
 
 my %expectedResultDirectory;
+
+# Reverse the tests
+@tests = reverse @tests if $reverseTests;
 
 # Shuffle the array
 @tests = shuffle(@tests) if $randomizeTests;

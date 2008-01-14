@@ -2,6 +2,16 @@
 
         Reviewed by Darin.
 
+        * Allow to run the tests in reverse order to spot test cases where the result depends on the order
+        the tests were ran.
+        * This is from http://bugs.webkit.org/show_bug.cgi?id=16869
+
+        * Scripts/run-webkit-tests:
+
+2008-01-14  Holger Hans Peter Freyther  <holger.freyther@trolltech.com>
+
+        Reviewed by Darin.
+
         * Randomize tests array to spot test cases where the results depends on the order
         the tests are ran.
         * This is from http://bugs.webkit.org/show_bug.cgi?id=16869
