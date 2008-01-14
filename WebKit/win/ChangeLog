@@ -1,3 +1,29 @@
+2008-01-11  Steve Falkenburg  <sfalken@apple.com>
+
+        Share common files across projects.
+        
+        Unify vsprops files
+        Debug:          common.vsprops, debug.vsprops
+        Debug_Internal: common.vsprops, debug.vsprops, debug_internal.vsprops
+        Release:        common.vsprops, release.vsprops
+        
+        Shared properties can go into common.vsprops, shared debug settings can go into debug.vsprops.
+        debug_internal.vsprops will be mostly empty except for file path prefix modifiers.
+
+        Pull auto-version.sh, VERSION, and PRODUCTVERSION from tools.
+
+        Reviewed by Adam Roben.
+
+        * WebKit.vcproj/Interfaces.vcproj:
+        * WebKit.vcproj/PRODUCTVERSION: Removed.
+        * WebKit.vcproj/VERSION: Removed.
+        * WebKit.vcproj/WebKit.vcproj:
+        * WebKit.vcproj/WebKitGUID.vcproj:
+        * WebKit.vcproj/auto-version.sh: Removed.
+        * WebKit.vcproj/debug.vsprops: Removed.
+        * WebKit.vcproj/debug_internal.vsprops: Removed.
+        * WebKit.vcproj/release.vsprops: Removed.
+
 2008-01-11  Adam Roben  <aroben@apple.com>
 
         Fix Bug 16828: WebView never paints if first page load is canceled after being committed but before layout

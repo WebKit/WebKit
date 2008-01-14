@@ -1,5 +1,30 @@
 2008-01-11  Steve Falkenburg  <sfalken@apple.com>
 
+        Share common files across projects.
+        
+        Unify vsprops files
+        Debug:          common.vsprops, debug.vsprops
+        Debug_Internal: common.vsprops, debug.vsprops, debug_internal.vsprops
+        Release:        common.vsprops, release.vsprops
+        
+        Shared properties can go into common.vsprops, shared debug settings can go into debug.vsprops.
+        debug_internal.vsprops will be mostly empty except for file path prefix modifiers.
+
+        Moved auto-version.sh, VERSION, PRODUCTVERSION to tools.
+
+        Reviewed by Adam Roben.
+
+        * win/tools/WinTools.make:
+        * win/tools/scripts: Added.
+        * win/tools/scripts/PRODUCTVERSION: Added.
+        * win/tools/scripts/VERSION: Added.
+        * win/tools/scripts/auto-version.sh: Copied from WebCore/WebCore.vcproj/auto-version.sh.
+        * win/tools/vsprops/debug.vsprops:
+        * win/tools/vsprops/debug_internal.vsprops: Added.
+        * win/tools/vsprops/release.vsprops:
+
+2008-01-11  Steve Falkenburg  <sfalken@apple.com>
+
         Add shared vsprops to help unify our Windows tools settings.
 
         Reviewed by Hyatt.

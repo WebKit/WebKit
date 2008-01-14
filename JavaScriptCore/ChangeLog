@@ -1,3 +1,24 @@
+2008-01-13  Steve Falkenburg  <sfalken@apple.com>
+
+        Share common files across projects.
+        
+        Unify vsprops files
+        Debug:          common.vsprops, debug.vsprops
+        Debug_Internal: common.vsprops, debug.vsprops, debug_internal.vsprops
+        Release:        common.vsprops, release.vsprops
+        
+        Shared properties can go into common.vsprops, shared debug settings can go into debug.vsprops.
+        debug_internal.vsprops will be mostly empty except for file path prefix modifiers.
+
+        Reviewed by Adam Roben.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.vcproj/WTF/WTF.vcproj:
+        * JavaScriptCore.vcproj/debug.vsprops: Removed.
+        * JavaScriptCore.vcproj/debug_internal.vsprops: Removed.
+        * JavaScriptCore.vcproj/release.vsprops: Removed.
+        * JavaScriptCore.vcproj/testkjs/testkjs.vcproj:
+
 2008-01-13  Marius Bugge Monsen  <mbm@trolltech.com>
 
         Contributions and review by Adriaan de Groot,

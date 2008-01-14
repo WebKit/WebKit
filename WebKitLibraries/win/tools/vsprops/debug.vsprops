@@ -4,9 +4,18 @@
 	Version="8.00"
 	Name="debug"
 	>
-	<UserMacro
-		Name="ConfigSuffix"
+  <UserMacro
+		Name="WebKitConfigSuffix"
 		Value="_debug"
 		PerformEnvironmentSet="true"
+	/>
+  <UserMacro
+		Name="LibraryConfigSuffix"
+		Value=""
+		PerformEnvironmentSet="true"
+	/>
+  <UserMacro
+		Name="WebKitDLLConfigSuffix"
+		Value=""
 	/>
 </VisualStudioPropertySheet>

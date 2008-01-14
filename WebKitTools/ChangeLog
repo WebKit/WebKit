@@ -1,3 +1,32 @@
+2008-01-13  Steve Falkenburg  <sfalken@apple.com>
+
+        Share common files across projects.
+        
+        Unify vsprops files
+        Debug:          common.vsprops, debug.vsprops
+        Debug_Internal: common.vsprops, debug.vsprops, debug_internal.vsprops
+        Release:        common.vsprops, release.vsprops
+        
+        Shared properties can go into common.vsprops, shared debug settings can go into debug.vsprops.
+        debug_internal.vsprops will be mostly empty except for file path prefix modifiers.
+
+        Pull auto-version.sh, VERSION, and PRODUCTVERSION from tools.
+
+        Reviewed by Adam Roben.
+
+        * Drosera/win/Drosera.vcproj/Drosera.vcproj:
+        * Drosera/win/Drosera.vcproj/PRODUCTVERSION: Removed.
+        * Drosera/win/Drosera.vcproj/VERSION: Removed.
+        * Drosera/win/Drosera.vcproj/auto-version.sh: Removed.
+        * Drosera/win/Drosera.vcproj/debug.vsprops: Removed.
+        * Drosera/win/Drosera.vcproj/debug_internal.vsprops: Removed.
+        * Drosera/win/Drosera.vcproj/release.vsprops: Removed.
+        * DumpRenderTree/win/DumpRenderTree.vcproj:
+        * DumpRenderTree/win/TestNetscapePlugin/TestNetscapePlugin.vcproj:
+        * DumpRenderTree/win/debug.vsprops: Removed.
+        * DumpRenderTree/win/debug_internal.vsprops: Removed.
+        * DumpRenderTree/win/release.vsprops: Removed.
+
 2008-01-13  Brent Fulgham  <bfulgham@gmail.com>
 
         Reviewed by Maciej.
