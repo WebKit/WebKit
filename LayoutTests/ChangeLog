@@ -1,5 +1,11 @@
 2008-01-14  Alexey Proskuryakov  <ap@webkit.org>
 
+        Remove a test that doesn't fail for me - let's see what the bot thinks.
+
+        * platform/win/Skipped: Removed http/tests/xmlhttprequest/XMLHttpRequestException.html.
+
+2008-01-14  Alexey Proskuryakov  <ap@webkit.org>
+
         Reviewed by David Kilzer.
 
         http://bugs.webkit.org/show_bug.cgi?id=16787
