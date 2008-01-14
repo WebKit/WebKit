@@ -164,17 +164,11 @@ void RenderBox::destroy()
     if (hasOverrideSize())
         gOverrideSizeMap->remove(this);
 
-    RenderLayer* layer = m_layer;
-    RenderArena* arena = renderArena();
-
     // This must be done before we destroy the RenderObject.
-    if (layer)
-        layer->clearClipRect();
+    if (m_layer)
+        m_layer->clearClipRect();
 
     RenderObject::destroy();
-
-    if (layer)
-        layer->destroy(arena);
 }
 
 int RenderBox::minPrefWidth() const

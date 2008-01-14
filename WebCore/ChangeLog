@@ -1,3 +1,18 @@
+2008-01-13  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=16865
+          fast/layers/resize-layer-deletion-crash.html crashes under GuardMalloc
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::destroy): Removed the call to
+        RenderLayer::destroy() from here, because ~RenderLayer() calls
+        RenderObject() methods.
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::destroy): Added the call to
+        RenderLayer::destroy() here.
+
 2008-01-13  Eric Seidel  <eric@webkit.org>
 
         Reviewed by darin.

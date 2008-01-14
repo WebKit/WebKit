@@ -2545,7 +2545,12 @@ void RenderObject::destroy()
 
     remove();
 
-    arenaDelete(document()->renderArena(), this);
+    RenderArena* arena = renderArena();
+
+    if (hasLayer())
+        layer()->destroy(arena);
+
+    arenaDelete(arena, this);
 }
 
 void RenderObject::arenaDelete(RenderArena* arena, void* base)
