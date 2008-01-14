@@ -232,6 +232,7 @@ my %renames = (
     "StringProtoFuncToUpperCase" => "StringFunctionToUpperCase",
     "StringProtoFuncValueOf" => "StringFunctionValueOf",
     "TestFunctionImp" => "TestFunction",
+    "ThreadSafeShared" => "ThreadSafeRefCounted",
     "XSLTProcessorConstructorImp" => "JSXSLTProcessorConstructor",
     "XSLTProcessorPrototype" => "JSXSLTProcessorPrototype",
     "animationController" => "animation",
