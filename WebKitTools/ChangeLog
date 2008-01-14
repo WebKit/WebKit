@@ -1,3 +1,13 @@
+2008-01-14  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Adam Roben.
+
+        - try to fix failure in fast/dom/Window/window-onFocus.html seen on the
+          build bots
+
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (resetWebViewToConsistentStateBeforeTesting): Focus the web view.
+
 2008-01-13  Steve Falkenburg  <sfalken@apple.com>
 
         Share common files across projects.

@@ -637,6 +637,14 @@ static void resetWebViewToConsistentStateBeforeTesting()
         if (prefsPrivate)
             prefsPrivate->setAuthorAndUserStylesEnabled(TRUE);
     }
+
+    COMPtr<IWebViewPrivate> webViewPrivate(Query, webView);
+    if (!webViewPrivate)
+        return;
+
+    HWND viewWindow;
+    if (SUCCEEDED(webViewPrivate->viewWindow(reinterpret_cast<OLE_HANDLE*>(&viewWindow))) && viewWindow)
+        SetFocus(viewWindow);
 }
 
 static void runTest(const char* pathOrURL)
