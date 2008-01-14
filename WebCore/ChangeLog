@@ -1,3 +1,34 @@
+2008-01-14  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam.
+
+        - fix mistakes Sam noticed in my re-speed-up patch
+
+        * dom/Element.cpp:
+        (WebCore::Element::virtualHasTagName): Moved out of header file. No reason to make
+        this inline.
+        * dom/Element.h: Moved virtualHasTagName out of header file.
+
+        * dom/Node.cpp:
+        (WebCore::Node::virtualHasTagName): Moved out of header file. No reason to make
+        this inline.
+        * dom/Node.h: Removed incorrect "virtual" on hasTagName and moved virtualHasTagName
+        out of header file.
+
+        * platform/text/StringBuffer.h: Added. Has just the new StringBuffer class.
+
+        * platform/text/StringImpl.h: Removed StringBuffer class.
+
+        * loader/DocumentLoader.cpp: Added StringBuffer.h include.
+        * platform/text/String.cpp: Ditto.
+        * platform/text/StringImpl.cpp: Ditto.
+        * platform/text/TextCodecLatin1.cpp: Ditto.
+        * platform/text/TextCodecUTF16.cpp: Ditto.
+        * platform/text/TextCodecUserDefined.cpp: Ditto.
+
+        * WebCore.vcproj/WebCore.vcproj: Added StringBuffer.h.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+
 2008-01-14  Dave Hyatt  <hyatt@apple.com>
 
         Clean up all the misplaced graphics files after the recent file moves.  Clean up the project to

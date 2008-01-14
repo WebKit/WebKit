@@ -203,6 +203,11 @@ Node* Node::virtualLastChild() const
     return 0;
 }
 
+bool Node::virtualHasTagName(const QualifiedName&) const
+{
+    return false;
+}
+
 Node *Node::lastDescendant() const
 {
     Node *n = const_cast<Node *>(this);

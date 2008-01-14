@@ -28,6 +28,7 @@
 
 #include "CString.h"
 #include "PlatformString.h"
+#include "StringBuffer.h"
 
 using std::auto_ptr;
 

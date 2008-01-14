@@ -201,7 +201,7 @@ private:
     void updateFocusAppearanceSoonAfterAttach();
     void cancelFocusAppearanceUpdate();
 
-    virtual bool virtualHasTagName(const QualifiedName& name) const { return hasTagName(name); }
+    virtual bool virtualHasTagName(const QualifiedName&) const;
 
 protected:
     mutable RefPtr<NamedAttrMap> namedAttrMap;

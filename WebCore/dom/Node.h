@@ -91,7 +91,7 @@ public:
 
     // DOM methods & attributes for Node
 
-    virtual bool hasTagName(const QualifiedName& name) const { return virtualHasTagName(name); }
+    bool hasTagName(const QualifiedName& name) const { return virtualHasTagName(name); }
     virtual String nodeName() const = 0;
     virtual String nodeValue() const;
     virtual void setNodeValue(const String&, ExceptionCode&);
@@ -500,7 +500,7 @@ private:
 
     virtual Node* virtualFirstChild() const;
     virtual Node* virtualLastChild() const;
-    virtual bool virtualHasTagName(const QualifiedName&) const { return false; }
+    virtual bool virtualHasTagName(const QualifiedName&) const;
 };
 
 } //namespace

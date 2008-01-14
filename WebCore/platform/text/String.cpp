@@ -23,6 +23,7 @@
 
 #include "CString.h"
 #include "DeprecatedString.h"
+#include "StringBuffer.h"
 #include "TextEncoding.h"
 #include <kjs/identifier.h>
 #include <wtf/StringExtras.h>

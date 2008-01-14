@@ -39,6 +39,7 @@
 #include "MainResourceLoader.h"
 #include "PlatformString.h"
 #include "SharedBuffer.h"
+#include "StringBuffer.h"
 #include "XMLTokenizer.h"
 #include <wtf/Assertions.h>
 #include <wtf/unicode/Unicode.h>

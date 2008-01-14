@@ -1571,6 +1571,7 @@
 		9392F1500AD1862300691BD4 /* CounterNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9392F14F0AD1862300691BD4 /* CounterNode.cpp */; };
 		939885C308B7E3D100E707C4 /* EventNames.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 939885C108B7E3D100E707C4 /* EventNames.cpp */; };
 		939885C408B7E3D100E707C4 /* EventNames.h in Headers */ = {isa = PBXBuildFile; fileRef = 939885C208B7E3D100E707C4 /* EventNames.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		939B3E4E0D3C1E8400B4A92B /* StringBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 939B3E4D0D3C1E8400B4A92B /* StringBuffer.h */; };
 		93A1EAA00A5634C9006960A0 /* ImageDocumentMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 93A1EA9F0A5634C9006960A0 /* ImageDocumentMac.mm */; };
 		93A1EAA80A563508006960A0 /* ImageDocumentMac.h in Headers */ = {isa = PBXBuildFile; fileRef = 93A1EAA70A563508006960A0 /* ImageDocumentMac.h */; };
 		93A38B4B0D0E5808006872C2 /* EditorCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93A38B4A0D0E5808006872C2 /* EditorCommand.cpp */; };
@@ -5791,6 +5792,7 @@
 		93955A4203D72932008635CE /* RenderTreeAsText.cpp */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderTreeAsText.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		939885C108B7E3D100E707C4 /* EventNames.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EventNames.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		939885C208B7E3D100E707C4 /* EventNames.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = EventNames.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
+		939B3E4D0D3C1E8400B4A92B /* StringBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StringBuffer.h; sourceTree = "<group>"; };
 		93A1EA9F0A5634C9006960A0 /* ImageDocumentMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ImageDocumentMac.mm; sourceTree = "<group>"; };
 		93A1EAA70A563508006960A0 /* ImageDocumentMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImageDocumentMac.h; sourceTree = "<group>"; };
 		93A38B4A0D0E5808006872C2 /* EditorCommand.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EditorCommand.cpp; sourceTree = "<group>"; };
@@ -11295,6 +11297,7 @@
 			isa = PBXGroup;
 			children = (
 				B2B264590D00A77E000ACC1D /* cf */,
+				B2C3D9F90D006C1D00EF6F26 /* mac */,
 				B2C3D9ED0D006C1D00EF6F26 /* AtomicString.cpp */,
 				B2C3D9EE0D006C1D00EF6F26 /* AtomicString.h */,
 				B2C3D9EF0D006C1D00EF6F26 /* AtomicStringImpl.h */,
@@ -11306,13 +11309,13 @@
 				B2C3D9F50D006C1D00EF6F26 /* CharacterNames.h */,
 				B2C3D9F60D006C1D00EF6F26 /* CString.cpp */,
 				B2C3D9F70D006C1D00EF6F26 /* CString.h */,
-				B2C3D9F90D006C1D00EF6F26 /* mac */,
 				B2C3D9FB0D006C1D00EF6F26 /* PlatformString.h */,
 				B2C3D9FC0D006C1D00EF6F26 /* RegularExpression.cpp */,
 				B2C3D9FD0D006C1D00EF6F26 /* RegularExpression.h */,
 				B2C3D9FE0D006C1D00EF6F26 /* SegmentedString.cpp */,
 				B2C3D9FF0D006C1D00EF6F26 /* SegmentedString.h */,
 				B2C3DA000D006C1D00EF6F26 /* String.cpp */,
+				939B3E4D0D3C1E8400B4A92B /* StringBuffer.h */,
 				B2C3DA010D006C1D00EF6F26 /* StringHash.h */,
 				B2C3DA020D006C1D00EF6F26 /* StringImpl.cpp */,
 				B2C3DA030D006C1D00EF6F26 /* StringImpl.h */,
@@ -14194,6 +14197,7 @@
 				371F53E90D2704F900ECE0D5 /* CSSUnicodeRangeValue.h in Headers */,
 				ABFE7E130D32FAF60066F4D2 /* MediaControlElements.h in Headers */,
 				E4EEFFC90D34550C00469A58 /* JSAudioConstructor.h in Headers */,
+				939B3E4E0D3C1E8400B4A92B /* StringBuffer.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
