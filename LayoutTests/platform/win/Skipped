@@ -275,9 +275,6 @@ editing/pasteboard/emacs-ctrl-a-k-y.html
 editing/pasteboard/emacs-ctrl-k-y-001.html
 editing/pasteboard/emacs-cntl-y-001.html
 
-# <rdar://5507285> Back/forward list is missing entries
-http/tests/navigation/javascriptlink-frames.html
-
 # <rdar://5508270> Intermittently time out
 editing/selection/5057506-2.html
 editing/selection/5057506.html
@@ -371,9 +368,6 @@ fast/xsl/sort-unicode.xml
 # <rdar://5683523> Failing on at least one bot
 fast/dom/Window/window-screen-properties.html
 
-# <rdar://5683524>
-http/tests/security/cross-frame-access-get.html
-
 # <rdar://5683527>
 media/audio-controls-rendering.html
 media/video-controls-rendering.html
@@ -411,7 +405,7 @@ fast/forms/plaintext-mode-2.html
 fast/forms/textarea-paste-newline.html
 
 # Unimplemented part of DRT. (This test is currently disabled).
-# http/tests/plugins/npapi-response-headers.html
+http/tests/plugins/npapi-response-headers.html
 
 # Timed out Loading Page (check if missing DRT functionality)
 editing/selection/4975120.html
@@ -420,10 +414,6 @@ fast/encoding/char-encoding.html
 fast/frames/frame-navigation.html
 http/tests/incremental/slow-utf8-css.pl
 http/tests/incremental/slow-utf8-text.pl
-http/tests/local/file-url-sent-as-referer.html
-http/tests/misc/redirect-to-about-blank.html
-http/tests/xmlhttprequest/basic-auth.html
-http/tests/multipart/invalid-image-data.html
 
 # Random sizing issues (Renderblock, RenderTableCells)
 fast/forms/searchfield-heights.html
@@ -436,9 +426,6 @@ editing/deleting/deletionUI-single-instance.html
 editing/pasteboard/input-field-1.html
 editing/selection/contains-boundaries.html
 editing/undo/5378473.html
-http/tests/multipart/win-boundary-crash.html
-http/tests/plugins/npapi-response-headers.html
-http/tests/xmlhttprequest/connection-error-sync.html
 http/tests/xmlhttprequest/failed-auth.html
 plugins/netscape-plugin-setwindow-size.html
 svg/custom/gradient-stop-style-change.svg
