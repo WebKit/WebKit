@@ -1,5 +1,9 @@
 2008-01-14  Adam Roben  <aroben@apple.com>
 
+        * platform/win/Skipped: Fixed a typo pointed out by Alexey.
+
+2008-01-14  Adam Roben  <aroben@apple.com>
+
         * platform/win/Skipped: Added some intermittent failures.
 
 2008-01-14  Adam Roben  <aroben@apple.com>

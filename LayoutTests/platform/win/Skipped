@@ -384,7 +384,7 @@ storage/execute-sql-args.html
 # <rdar://5313536> Intermittently fails
 fast/dom/frame-loading-via-document-write.html
 
-# <rdar://5686522> Intermittently fails
+# <rdar://5686552> Intermittently fails
 svg/css/glyph-orientation-rounding-test.xhtml
 
 ################################################################################
