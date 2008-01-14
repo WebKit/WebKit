@@ -349,6 +349,9 @@ editing/selection/5131716-1.html
 # <rdar://5667273>
 editing/selection/fake-drag.html
 
+# <rdar://5667279> Undefined value exception
+http/tests/xmlhttprequest/XMLHttpRequestException.html
+
 # <rdar://5667302>
 svg/dom/animated-tearoff-equality.xhtml
 svg/dom/animated-tearoff-lifespan.xhtml
@@ -430,5 +433,6 @@ editing/pasteboard/input-field-1.html
 editing/selection/contains-boundaries.html
 editing/undo/5378473.html
 http/tests/xmlhttprequest/failed-auth.html
+http/tests/xmlhttprequest/connection-error-sync.html
 plugins/netscape-plugin-setwindow-size.html
 svg/custom/gradient-stop-style-change.svg
