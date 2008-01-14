@@ -902,7 +902,7 @@ sub GenerateImplementation
 
             if ($dataNode->extendedAttributes->{"CheckDomainSecurity"} && 
                 !$attribute->signature->extendedAttributes->{"DoNotCheckDomainSecurity"} &&
-                !$attribute->signature->extendedAttributes->{"DoNotCheckDomainSecurityOnRead"}) {
+                !$attribute->signature->extendedAttributes->{"DoNotCheckDomainSecurityOnGet"}) {
                 push(@implContent, "        if (!allowsAccessFrom(exec))\n");
                 push(@implContent, "            return jsUndefined();\n");
             }

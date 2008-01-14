@@ -85,7 +85,7 @@ module window {
 
         readonly attribute [DoNotCheckDomainSecurity] boolean closed;
 
-        attribute [Replaceable, DoNotCheckDomainSecurityOnRead] unsigned long length;
+        attribute [Replaceable, DoNotCheckDomainSecurityOnGet] unsigned long length;
 
         attribute DOMString name;
 
@@ -97,11 +97,11 @@ module window {
 #endif
 
         // Self referential attributes
-        attribute [Replaceable, DoNotCheckDomainSecurityOnRead] DOMWindow self;
+        attribute [Replaceable, DoNotCheckDomainSecurityOnGet] DOMWindow self;
         readonly attribute [DoNotCheckDomainSecurity] DOMWindow window;
-        attribute [Replaceable, DoNotCheckDomainSecurityOnRead] DOMWindow frames;
+        attribute [Replaceable, DoNotCheckDomainSecurityOnGet] DOMWindow frames;
 
-        attribute [Replaceable, DoNotCheckDomainSecurityOnRead] DOMWindow opener;
+        attribute [Replaceable, DoNotCheckDomainSecurityOnGet] DOMWindow opener;
         attribute [Replaceable, DoNotCheckDomainSecurity] DOMWindow parent;
         attribute [Replaceable, DoNotCheckDomainSecurity] DOMWindow top;
 

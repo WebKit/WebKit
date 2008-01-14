@@ -1,3 +1,19 @@
+2008-01-14  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
+        
+        Some cleanup to my last patch.
+
+        Removed one unused setter declaration and one unused setter definition.
+        
+        Renamed DoNotCheckDomainSecurityOnRead to DoNotCheckDomainSecurityOnGet
+        because "get" is all over the IDL files, and "read" is not.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * page/DOMWindow.h:
+        (WebCore::DOMWindow::defaultstatus):
+        * page/DOMWindow.idl:
+
 2008-01-14  Dan Bernstein  <mitz@apple.com>
 
         Rubber-stamped by Alice Liu.
