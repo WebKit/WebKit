@@ -1,5 +1,11 @@
 2008-01-14  Adam Roben  <aroben@apple.com>
 
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj: Added
+        some headers that were missing from the vcproj so their contents will
+        be included in Find in Files.
+
+2008-01-14  Adam Roben  <aroben@apple.com>
+
         Fix Bug 16871: Crash when loading apple.com/startpage
 
         <http://bugs.webkit.org/show_bug.cgi?id=16871>

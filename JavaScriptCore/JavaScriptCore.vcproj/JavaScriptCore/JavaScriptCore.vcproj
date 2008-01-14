@@ -173,6 +173,10 @@
 			Name="KJS"
 			>
 			<File
+				RelativePath="..\..\kjs\Activation.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\kjs\array_instance.cpp"
 				>
 			</File>
@@ -202,6 +206,10 @@
 			</File>
 			<File
 				RelativePath="..\..\kjs\collector.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\kjs\CollectorHeapIntrospector.h"
 				>
 			</File>
 			<File
@@ -313,6 +321,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\kjs\JSGlobalObject.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\kjs\JSImmediate.cpp"
 				>
 			</File>
@@ -329,6 +341,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\kjs\JSType.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\kjs\JSVariableObject.cpp"
 				>
 			</File>
@@ -342,6 +358,10 @@
 			</File>
 			<File
 				RelativePath="..\..\kjs\JSWrapperObject.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\kjs\LabelStack.h"
 				>
 			</File>
 			<File
@@ -378,6 +398,10 @@
 			</File>
 			<File
 				RelativePath="..\..\kjs\math_object.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\kjs\NodeInfo.h"
 				>
 			</File>
 			<File
@@ -486,6 +510,10 @@
 			</File>
 			<File
 				RelativePath="..\..\kjs\scope_chain.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\kjs\scope_chain_mark.h"
 				>
 			</File>
 			<File
