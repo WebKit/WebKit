@@ -60,6 +60,8 @@ use IPC::Open2;
 use IPC::Open3;
 use Time::HiRes qw(time);
 
+use List::Util 'shuffle';
+
 use lib $FindBin::Bin;
 use webkitdirs;
 use POSIX;
@@ -119,6 +121,7 @@ my $strictTesting = 0;
 my $generateNewResults = 1;
 my $stripEditingCallbacks = isCygwin();
 my $root;
+my $randomizeTests = 0;
 
 my $expectedTag = "expected";
 my $actualTag = "actual";
@@ -168,6 +171,7 @@ Usage: $programName [options] [testdir|testpath ...]
   -r|--repaint-tests              Run repaint tests (implies --pixel-tests)
   --reset-results                 Reset ALL results (including pixel tests if --pixel-tests is set)
   -o|--results-directory          Output results directory (default: $testResultsDirectory)
+  --random                        Run the tests in a random order
   --root                          Path to root tools build
   -1|--singly                     Isolate each test case run (implies --verbose)
   --skipped=[default|ignore|only] Specifies how to treat the Skipped file
@@ -212,6 +216,7 @@ my $getOptionsResult = GetOptions(
     'valgrind' => \$useValgrind,
     'strict' => \$strictTesting,
     'strip-editing-callbacks!' => \$stripEditingCallbacks,
+    'random' => \$randomizeTests,
     'root=s' => \$root,
     'add-platform-exceptions' => \$addPlatformExceptions,
 );
@@ -448,6 +453,9 @@ print "Testing ", scalar @tests, " test cases.\n";
 my $overallStartTime = time;
 
 my %expectedResultDirectory;
+
+# Shuffle the array
+@tests = shuffle(@tests) if $randomizeTests;
 
 for my $test (@tests) {
     next if $test eq 'results.html';
