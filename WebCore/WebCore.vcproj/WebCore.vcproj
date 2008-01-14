@@ -8437,10 +8437,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\svg\SVGFont.h"
-				>
-			</File>
-			<File
 				RelativePath="..\svg\SVGFontElement.cpp"
 				>
 			</File>

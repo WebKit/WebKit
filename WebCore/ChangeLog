@@ -1,3 +1,11 @@
+2008-01-14  Dan Bernstein  <mitz@apple.com>
+
+        Rubber-stamped by Alice Liu.
+
+        - remove reference to nonexistent file
+
+        * WebCore.vcproj/WebCore.vcproj: Removed reference to SVGFont.h.
+
 2008-01-14  Darin Adler  <darin@apple.com>
 
         Reviewed by Adam.
