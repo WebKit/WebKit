@@ -5,7 +5,7 @@
               (C) 1999 Lars Knoll (knoll@kde.org)
               (C) 1999 Antti Koivisto (koivisto@kde.org)
               (C) 2001 Dirk Mueller (mueller@kde.org)
-    Copyright (C) 2004, 2005, 2006, 2007 Apple Inc. All rights reserved.
+    Copyright (C) 2004, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
     Copyright (C) 2005, 2006 Alexey Proskuryakov (ap@nypop.com)
 
     This library is free software; you can redistribute it and/or
@@ -311,7 +311,7 @@ HTMLTokenizer::State HTMLTokenizer::parseSpecial(SegmentedString &src, State sta
             continue;
         }
         if (scriptCodeResync && !tquote && ch == '>') {
-            src.advance(m_lineNumber);
+            src.advancePastNonNewline();
             scriptCodeSize = scriptCodeResync-1;
             scriptCodeResync = 0;
             scriptCode[ scriptCodeSize ] = scriptCode[ scriptCodeSize + 1 ] = 0;
@@ -363,11 +363,11 @@ HTMLTokenizer::State HTMLTokenizer::parseSpecial(SegmentedString &src, State sta
         state.setEscaped(!state.escaped() && ch == '\\');
         if (!scriptCodeResync && (state.inTextArea() || state.inTitle()) && !src.escaped() && ch == '&') {
             UChar* scriptCodeDest = scriptCode+scriptCodeSize;
-            src.advance(m_lineNumber);
+            src.advancePastNonNewline();
             state = parseEntity(src, scriptCodeDest, state, m_cBufferPos, true, false);
-            scriptCodeSize = scriptCodeDest-scriptCode;
+            scriptCodeSize = scriptCodeDest - scriptCode;
         } else {
-            scriptCode[scriptCodeSize++] = *src;
+            scriptCode[scriptCodeSize++] = ch;
             src.advance(m_lineNumber);
         }
     }
@@ -562,23 +562,22 @@ HTMLTokenizer::State HTMLTokenizer::parseComment(SegmentedString &src, State sta
 {
     // FIXME: Why does this code even run for comments inside <script> and <style>? This seems bogus.
     checkScriptBuffer(src.length());
-    while ( !src.isEmpty() ) {
-        scriptCode[ scriptCodeSize++ ] = *src;
-
-        if (*src == '>') {
+    while (!src.isEmpty()) {
+        UChar ch = *src;
+        scriptCode[scriptCodeSize++] = ch;
+        if (ch == '>') {
             bool handleBrokenComments = brokenComments && !(state.inScript() || state.inStyle());
             int endCharsCount = 1; // start off with one for the '>' character
             if (scriptCodeSize > 2 && scriptCode[scriptCodeSize-3] == '-' && scriptCode[scriptCodeSize-2] == '-') {
                 endCharsCount = 3;
-            }
-            else if (scriptCodeSize > 3 && scriptCode[scriptCodeSize-4] == '-' && scriptCode[scriptCodeSize-3] == '-' && 
+            } else if (scriptCodeSize > 3 && scriptCode[scriptCodeSize-4] == '-' && scriptCode[scriptCodeSize-3] == '-' && 
                 scriptCode[scriptCodeSize-2] == '!') {
                 // Other browsers will accept --!> as a close comment, even though it's
                 // not technically valid.
                 endCharsCount = 4;
             }
             if (handleBrokenComments || endCharsCount > 1) {
-                src.advance(m_lineNumber);
+                src.advancePastNonNewline();
                 if (!(state.inTitle() || state.inScript() || state.inXmp() || state.inTextArea() || state.inStyle())) {
                     checkScriptBuffer();
                     scriptCode[scriptCodeSize] = 0;
@@ -606,10 +605,10 @@ HTMLTokenizer::State HTMLTokenizer::parseServer(SegmentedString& src, State stat
 {
     checkScriptBuffer(src.length());
     while (!src.isEmpty()) {
-        scriptCode[scriptCodeSize++] = *src;
-        if (*src == '>' &&
-            scriptCodeSize > 1 && scriptCode[scriptCodeSize-2] == '%') {
-            src.advance(m_lineNumber);
+        UChar ch = *src;
+        scriptCode[scriptCodeSize++] = ch;
+        if (ch == '>' && scriptCodeSize > 1 && scriptCode[scriptCodeSize-2] == '%') {
+            src.advancePastNonNewline();
             state.setInServer(false);
             scriptCodeSize = 0;
             return state; // Finished parsing server include
@@ -634,7 +633,7 @@ HTMLTokenizer::State HTMLTokenizer::parseProcessingInstruction(SegmentedString &
         else if (chbegin == '>' && (!tquote || oldchar == '?')) {
             // We got a '?>' sequence
             state.setInProcessingInstruction(false);
-            src.advance(m_lineNumber);
+            src.advancePastNonNewline();
             state.setDiscardLF(true);
             return state; // Finished parsing comment!
         }
@@ -653,7 +652,7 @@ HTMLTokenizer::State HTMLTokenizer::parseText(SegmentedString &src, State state)
         if (state.skipLF()) {
             state.setSkipLF(false);
             if (cc == '\n') {
-                src.advance(m_lineNumber);
+                src.advancePastNewline(m_lineNumber);
                 continue;
             }
         }
@@ -691,20 +690,18 @@ HTMLTokenizer::State HTMLTokenizer::parseEntity(SegmentedString &src, UChar*& de
             return state;
         
         case SearchEntity:
-            if(cc == '#') {
+            if (cc == '#') {
                 cBuffer[cBufferPos++] = cc;
-                src.advance(m_lineNumber);
+                src.advancePastNonNewline();
                 state.setEntityState(NumericSearch);
-            }
-            else
+            } else
                 state.setEntityState(EntityName);
-
             break;
 
         case NumericSearch:
             if (cc == 'x' || cc == 'X') {
                 cBuffer[cBufferPos++] = cc;
-                src.advance(m_lineNumber);
+                src.advancePastNonNewline();
                 state.setEntityState(Hexadecimal);
             } else if (cc >= '0' && cc <= '9')
                 state.setEntityState(Decimal);
@@ -727,7 +724,7 @@ HTMLTokenizer::State HTMLTokenizer::parseEntity(SegmentedString &src, UChar*& de
                     digit = (cc - 'A' + 10) & 0xF; // handle both upper and lower case without a branch
                 EntityUnicodeValue = EntityUnicodeValue * 16 + digit;
                 cBuffer[cBufferPos++] = cc;
-                src.advance(m_lineNumber);
+                src.advancePastNonNewline();
             }
             if (cBufferPos == 10)  
                 state.setEntityState(SearchSemicolon);
@@ -746,7 +743,7 @@ HTMLTokenizer::State HTMLTokenizer::parseEntity(SegmentedString &src, UChar*& de
 
                 EntityUnicodeValue = EntityUnicodeValue * 10 + (cc - '0');
                 cBuffer[cBufferPos++] = cc;
-                src.advance(m_lineNumber);
+                src.advancePastNonNewline();
             }
             if (cBufferPos == 9)  
                 state.setEntityState(SearchSemicolon);
@@ -764,7 +761,7 @@ HTMLTokenizer::State HTMLTokenizer::parseEntity(SegmentedString &src, UChar*& de
                 }
 
                 cBuffer[cBufferPos++] = cc;
-                src.advance(m_lineNumber);
+                src.advancePastNonNewline();
             }
             if (cBufferPos == 9) 
                 state.setEntityState(SearchSemicolon);
@@ -808,7 +805,7 @@ HTMLTokenizer::State HTMLTokenizer::parseEntity(SegmentedString &src, UChar*& de
             if (EntityUnicodeValue > 0 && EntityUnicodeValue <= 0x10FFFF) {
                 if (!inViewSourceMode()) {
                     if (*src == ';')
-                        src.advance(m_lineNumber);
+                        src.advancePastNonNewline();
                     if (EntityUnicodeValue <= 0xFFFF) {
                         checkBuffer();
                         src.push(fixUpChar(EntityUnicodeValue));
@@ -827,7 +824,7 @@ HTMLTokenizer::State HTMLTokenizer::parseEntity(SegmentedString &src, UChar*& de
                     dest += cBufferPos;
                     if (*src == ';') {
                         *dest++ = ';';
-                        src.advance(m_lineNumber);
+                        src.advancePastNonNewline();
                     }
                 }
             } else {
@@ -879,7 +876,7 @@ HTMLTokenizer::State HTMLTokenizer::parseTag(SegmentedString &src, State state)
                         kdDebug( 6036 ) << "Found comment" << endl;
 #endif
                         // Found '<!--' sequence
-                        src.advance(m_lineNumber);
+                        src.advancePastNonNewline();
                         dest = buffer; // ignore the previous part of this tag
                         state.setInComment(true);
                         state.setTagState(NoTag);
@@ -889,7 +886,7 @@ HTMLTokenizer::State HTMLTokenizer::parseTag(SegmentedString &src, State state)
                         // can handle this case.  Only do this in quirks mode. -dwh
                         if (!src.isEmpty() && *src == '>' && m_doc->inCompatMode()) {
                           state.setInComment(false);
-                          src.advance(m_lineNumber);
+                          src.advancePastNonNewline();
                           if (!src.isEmpty())
                               cBuffer[cBufferPos++] = *src;
                         }
@@ -900,7 +897,7 @@ HTMLTokenizer::State HTMLTokenizer::parseTag(SegmentedString &src, State state)
                         return state; // Finished parsing tag!
                     }
                     cBuffer[cBufferPos++] = *src;
-                    src.advance(m_lineNumber);
+                    src.advancePastNonNewline();
                     break;
                 }
                 else
@@ -921,7 +918,7 @@ HTMLTokenizer::State HTMLTokenizer::parseTag(SegmentedString &src, State state)
                     cBuffer[cBufferPos++] = curchar + ('a' - 'A');
                 else
                     cBuffer[cBufferPos++] = curchar;
-                src.advance(m_lineNumber);
+                src.advancePastNonNewline();
             }
 
             // Disadvantage: we add the possible rest of the tag
@@ -1035,16 +1032,15 @@ HTMLTokenizer::State HTMLTokenizer::parseTag(SegmentedString &src, State state)
 
                 // In this mode just ignore any quotes or slashes we encounter and treat them like spaces.
                 if (!isASCIISpace(curchar) && curchar != '\'' && curchar != '"' && curchar != '/') {
-                    if(curchar == '=') {
+                    if (curchar == '=') {
 #ifdef TOKEN_DEBUG
                         kdDebug(6036) << "found equal" << endl;
 #endif
                         state.setTagState(SearchValue);
                         if (inViewSourceMode())
                             currToken.addViewSourceChar(curchar);
-                        src.advance(m_lineNumber);
-                    }
-                    else {
+                        src.advancePastNonNewline();
+                    } else {
                         currToken.addAttribute(m_doc, attrName, emptyAtom, inViewSourceMode());
                         dest = buffer;
                         state.setTagState(SearchAttribute);
@@ -1069,7 +1065,7 @@ HTMLTokenizer::State HTMLTokenizer::parseTag(SegmentedString &src, State state)
                         state.setTagState(QuotedValue);
                         if (inViewSourceMode())
                             currToken.addViewSourceChar(curchar);
-                        src.advance(m_lineNumber);
+                        src.advancePastNonNewline();
                     } else
                         state.setTagState(Value);
 
@@ -1084,46 +1080,43 @@ HTMLTokenizer::State HTMLTokenizer::parseTag(SegmentedString &src, State state)
 #if defined(TOKEN_DEBUG) && TOKEN_DEBUG > 1
             qDebug("QuotedValue");
 #endif
-            while(!src.isEmpty()) {
+            while (!src.isEmpty()) {
                 checkBuffer();
 
                 UChar curchar = *src;
-                if (curchar == '>' && attrName.isEmpty()) {
-                    // Handle a case like <img '>.  Just go ahead and be willing
-                    // to close the whole tag.  Don't consume the character and
-                    // just go back into SearchEnd while ignoring the whole
-                    // value.
-                    // FIXME: Note that this is actually not a very good solution. It's
-                    // an interim hack and doesn't handle the general case of
-                    // unmatched quotes among attributes that have names. -dwh
-                    while(dest > buffer+1 && (*(dest-1) == '\n' || *(dest-1) == '\r'))
-                        dest--; // remove trailing newlines
-                    AtomicString v(buffer+1, dest-buffer-1);
-                    attrName = v; // Just make the name/value match. (FIXME: Is this some WinIE quirk?)
-                    currToken.addAttribute(m_doc, attrName, v, inViewSourceMode());
-                    if (inViewSourceMode())
-                        currToken.addViewSourceChar('x');
-                    state.setTagState(SearchAttribute);
-                    dest = buffer;
-                    tquote = NoQuote;
-                    break;
-                }
-                
-                if(curchar <= '\'' && !src.escaped()) {
-                    // ### attributes like '&{blaa....};' are supposed to be treated as jscript.
-                    if ( curchar == '&' )
-                    {
-                        src.advance(m_lineNumber);
+                if (curchar <= '>' && !src.escaped()) {
+                    if (curchar == '>' && attrName.isEmpty()) {
+                        // Handle a case like <img '>.  Just go ahead and be willing
+                        // to close the whole tag.  Don't consume the character and
+                        // just go back into SearchEnd while ignoring the whole
+                        // value.
+                        // FIXME: Note that this is actually not a very good solution.
+                        // It doesn't handle the general case of
+                        // unmatched quotes among attributes that have names. -dwh
+                        while (dest > buffer + 1 && (dest[-1] == '\n' || dest[-1] == '\r'))
+                            dest--; // remove trailing newlines
+                        AtomicString v(buffer + 1, dest - buffer - 1);
+                        attrName = v; // Just make the name/value match. (FIXME: Is this some WinIE quirk?)
+                        currToken.addAttribute(m_doc, attrName, v, inViewSourceMode());
+                        if (inViewSourceMode())
+                            currToken.addViewSourceChar('x');
+                        state.setTagState(SearchAttribute);
+                        dest = buffer;
+                        tquote = NoQuote;
+                        break;
+                    }
+                    
+                    if (curchar == '&') {
+                        src.advancePastNonNewline();
                         state = parseEntity(src, dest, state, cBufferPos, true, true);
                         break;
                     }
-                    else if ( (tquote == SingleQuote && curchar == '\'') ||
-                              (tquote == DoubleQuote && curchar == '\"') )
-                    {
+
+                    if ((tquote == SingleQuote && curchar == '\'') || (tquote == DoubleQuote && curchar == '\"')) {
                         // some <input type=hidden> rely on trailing spaces. argh
-                        while(dest > buffer+1 && (*(dest-1) == '\n' || *(dest-1) == '\r'))
+                        while (dest > buffer + 1 && (dest[-1] == '\n' || dest[-1] == '\r'))
                             dest--; // remove trailing newlines
-                        AtomicString v(buffer+1, dest-buffer-1);
+                        AtomicString v(buffer + 1, dest - buffer - 1);
                         if (attrName.isEmpty()) {
                             attrName = v; // Make the name match the value. (FIXME: Is this a WinIE quirk?)
                             if (inViewSourceMode())
@@ -1136,11 +1129,12 @@ HTMLTokenizer::State HTMLTokenizer::parseTag(SegmentedString &src, State state)
                         tquote = NoQuote;
                         if (inViewSourceMode())
                             currToken.addViewSourceChar(curchar);
-                        src.advance(m_lineNumber);
+                        src.advancePastNonNewline();
                         break;
                     }
                 }
-                *dest++ = *src;
+
+                *dest++ = curchar;
                 src.advance(m_lineNumber);
             }
             break;
@@ -1151,11 +1145,10 @@ HTMLTokenizer::State HTMLTokenizer::parseTag(SegmentedString &src, State state)
             while(!src.isEmpty()) {
                 checkBuffer();
                 UChar curchar = *src;
-                if(curchar <= '>' && !src.escaped()) {
+                if (curchar <= '>' && !src.escaped()) {
                     // parse Entities
-                    if ( curchar == '&' )
-                    {
-                        src.advance(m_lineNumber);
+                    if (curchar == '&') {
+                        src.advancePastNonNewline();
                         state = parseEntity(src, dest, state, cBufferPos, true, true);
                         break;
                     }
@@ -1172,7 +1165,7 @@ HTMLTokenizer::State HTMLTokenizer::parseTag(SegmentedString &src, State state)
                     }
                 }
 
-                *dest++ = *src;
+                *dest++ = curchar;
                 src.advance(m_lineNumber);
             }
             break;
@@ -1181,15 +1174,14 @@ HTMLTokenizer::State HTMLTokenizer::parseTag(SegmentedString &src, State state)
 #if defined(TOKEN_DEBUG) && TOKEN_DEBUG > 1
                 qDebug("SearchEnd");
 #endif
-            while(!src.isEmpty()) {
-                if (*src == '>' || *src == '<')
+            while (!src.isEmpty()) {
+                UChar ch = *src;
+                if (ch == '>' || ch == '<')
                     break;
-
-                if (*src == '/')
+                if (ch == '/')
                     currToken.flat = true;
-
                 if (inViewSourceMode())
-                    currToken.addViewSourceChar(*src);
+                    currToken.addViewSourceChar(ch);
                 src.advance(m_lineNumber);
             }
             if (src.isEmpty()) break;
@@ -1464,11 +1456,11 @@ bool HTMLTokenizer::write(const SegmentedString& str, bool appendData)
                 state = parseTag(src, state);
             }
         } else if (cc == '&' && !src.escaped()) {
-            src.advance(m_lineNumber);
+            src.advancePastNonNewline();
             state = parseEntity(src, dest, state, m_cBufferPos, true, state.hasTagState());
         } else if (cc == '<' && !src.escaped()) {
             tagStartLineno = m_lineNumber;
-            src.advance(m_lineNumber);
+            src.advancePastNonNewline();
             state.setStartTag(true);
         } else if (cc == '\n' || cc == '\r') {
             if (state.discardLF())
@@ -1488,7 +1480,7 @@ bool HTMLTokenizer::write(const SegmentedString& str, bool appendData)
         } else {
             state.setDiscardLF(false);
             *dest++ = cc;
-            src.advance(m_lineNumber);
+            src.advancePastNonNewline();
         }
     }
     

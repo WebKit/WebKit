@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2007, 2008 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -28,8 +28,8 @@ namespace WTF {
 
 template<class T> class RefCounted : Noncopyable {
 public:
-    RefCounted()
-        : m_refCount(0)
+    RefCounted(int initialRefCount = 0)
+        : m_refCount(initialRefCount)
 #ifndef NDEBUG
         , m_deletionHasBegun(false)
 #endif

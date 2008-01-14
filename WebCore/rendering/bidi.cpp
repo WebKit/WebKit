@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000 Lars Knoll (knoll@kde.org)
- * Copyright (C) 2004, 2006, 2007 Apple Inc. All right reserved.
+ * Copyright (C) 2004, 2006, 2007, 2008 Apple Inc. All right reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -438,7 +438,7 @@ static void addMidpoint(const BidiIterator& midpoint)
         return;
 
     if (smidpoints->size() <= sNumMidpoints)
-        smidpoints->resize(sNumMidpoints + 10);
+        smidpoints->grow(sNumMidpoints + 10);
 
     BidiIterator* midpoints = smidpoints->data();
     midpoints[sNumMidpoints++] = midpoint;

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004, 2006, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -118,7 +118,7 @@ void TextCodecLatin1::registerCodecs(TextCodecRegistrar registrar)
 
 String TextCodecLatin1::decode(const char* bytes, size_t length, bool)
 {
-    Vector <UChar> characters(length);
+    StringBuffer characters(length);
 
     // Convert the string a fast way and simultaneously do an efficient check to see if it's all ASCII.
     unsigned char ored = 0;
@@ -161,7 +161,7 @@ static CString encodeComplexWindowsLatin1(const UChar* characters, size_t length
                 char entityBuffer[16];
                 sprintf(entityBuffer, "&#%u;", c);
                 size_t entityLength = strlen(entityBuffer);
-                result.resize(resultLength + entityLength + length - i);
+                result.grow(resultLength + entityLength + length - i);
                 bytes = result.data();
                 memcpy(bytes + resultLength, entityBuffer, entityLength);
                 resultLength += entityLength;

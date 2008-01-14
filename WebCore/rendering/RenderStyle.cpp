@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 1999 Antti Koivisto (koivisto@kde.org)
- * Copyright (C) 2004, 2005, 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -870,21 +870,6 @@ bool StyleInheritedData::operator==(const StyleInheritedData& o) const
         orphans == o.orphans &&
         page_break_inside == o.page_break_inside;
 }
-
-bool CursorList::operator==(const CursorList& other) const
-{
-    // If the lists aren't the same size, then they can't be equivalent.
-    if (size() != other.size())
-        return false;
-        
-    for (unsigned i = 0; i < size(); i++) {
-        if (m_vector[i] != other.m_vector[i])
-            return false;
-    }
-    
-    return true;
-}
-
 
 static inline bool operator!=(const CounterContent& a, const CounterContent& b)
 {

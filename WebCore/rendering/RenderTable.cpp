@@ -1,10 +1,10 @@
-/**
+/*
  * Copyright (C) 1997 Martin Jones (mjones@kde.org)
  *           (C) 1997 Torben Weis (weis@kde.org)
  *           (C) 1998 Waldo Bastian (bastian@kde.org)
  *           (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
- * Copyright (C) 2003, 2004, 2005, 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Alexey Proskuryakov (ap@nypop.com)
  *
  * This library is free software; you can redistribute it and/or
@@ -544,7 +544,7 @@ void RenderTable::splitColumn(int pos, int firstSpan)
 {
     // we need to add a new columnStruct
     int oldSize = m_columns.size();
-    m_columns.resize(oldSize + 1);
+    m_columns.grow(oldSize + 1);
     int oldSpan = m_columns[pos].span;
     ASSERT(oldSpan > firstSpan);
     m_columns[pos].span = firstSpan;
@@ -557,7 +557,7 @@ void RenderTable::splitColumn(int pos, int firstSpan)
             static_cast<RenderTableSection*>(child)->splitColumn(pos, oldSize + 1);
     }
 
-    m_columnPos.resize(numEffCols() + 1);
+    m_columnPos.grow(numEffCols() + 1);
     setNeedsLayoutAndPrefWidthsRecalc();
 }
 
@@ -566,7 +566,7 @@ void RenderTable::appendColumn(int span)
     // easy case.
     int pos = m_columns.size();
     int newSize = pos + 1;
-    m_columns.resize(newSize);
+    m_columns.grow(newSize);
     m_columns[pos].span = span;
 
     // change width of all rows.
@@ -575,7 +575,7 @@ void RenderTable::appendColumn(int span)
             static_cast<RenderTableSection*>(child)->appendColumn(pos);
     }
 
-    m_columnPos.resize(numEffCols() + 1);
+    m_columnPos.grow(numEffCols() + 1);
     setNeedsLayoutAndPrefWidthsRecalc();
 }
 

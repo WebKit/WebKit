@@ -1,6 +1,5 @@
-/* This file is part of the KDE project
- *
- * Copyright (C) 2004, 2006 Apple Computer, Inc.
+/*
+ * Copyright (C) 2004, 2006, 2008 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -53,7 +52,7 @@ void FormData::appendData(const void* data, size_t size)
         m_elements.append(FormDataElement());
     FormDataElement& e = m_elements.last();
     size_t oldSize = e.m_data.size();
-    e.m_data.resize(oldSize + size);
+    e.m_data.grow(oldSize + size);
     memcpy(e.m_data.data() + oldSize, data, size);
 }
 
@@ -72,7 +71,7 @@ void FormData::flatten(Vector<char>& data) const
         if (e.m_type == FormDataElement::data) {
             size_t oldSize = data.size();
             size_t delta = e.m_data.size();
-            data.resize(oldSize + delta);
+            data.grow(oldSize + delta);
             memcpy(data.data() + oldSize, e.m_data.data(), delta);
         }
     }

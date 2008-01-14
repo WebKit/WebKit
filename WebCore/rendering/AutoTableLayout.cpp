@@ -1,9 +1,7 @@
 /*
- * This file is part of the HTML rendering engine for KDE.
- *
  * Copyright (C) 2002 Lars Knoll (knoll@kde.org)
  *           (C) 2002 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2003, 2006 Apple Computer, Inc.
+ * Copyright (C) 2003, 2006, 2008 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -477,7 +475,7 @@ void AutoTableLayout::insertSpanCell(RenderTableCell *cell)
 
     int size = m_spanCells.size();
     if (!size || m_spanCells[size-1] != 0) {
-        m_spanCells.resize(size + 10);
+        m_spanCells.grow(size + 10);
         for (int i = 0; i < 10; i++)
             m_spanCells[size+i] = 0;
         size += 10;

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2004, 2007, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -787,7 +787,7 @@ DeprecatedString KURL::decode_string(const DeprecatedString& urlString, const Te
         // Copy the entire %-escape sequence into an 8-bit buffer.
         int encodedRunLength = encodedRunEnd - encodedRunPosition;
         buffer.clear();
-        buffer.resize(encodedRunLength + 1);
+        buffer.grow(encodedRunLength + 1);
         urlString.copyLatin1(buffer.data(), encodedRunPosition, encodedRunLength);
 
         // Decode the %-escapes into bytes.

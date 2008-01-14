@@ -1,6 +1,6 @@
 /*
     Copyright (C) 1999 Lars Knoll (knoll@mpi-hd.mpg.de)
-    Copyright (C) 2003, 2004, 2005, 2006, 2007 Apple Inc. All rights reserved.
+    Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
     Copyright (C) 2005, 2006, 2007 Alexey Proskuryakov (ap@nypop.com)
 
     This library is free software; you can redistribute it and/or
@@ -395,7 +395,7 @@ bool TextResourceDecoder::checkForCSSCharset(const char* data, size_t len, bool&
     }
 
     size_t oldSize = m_buffer.size();
-    m_buffer.resize(oldSize + len);
+    m_buffer.grow(oldSize + len);
     memcpy(m_buffer.data() + oldSize, data, len);
 
     movedDataToBuffer = true;
@@ -477,7 +477,7 @@ bool TextResourceDecoder::checkForHeadCharset(const char* data, size_t len, bool
     // through the HTML head several times.
 
     size_t oldSize = m_buffer.size();
-    m_buffer.resize(oldSize + len);
+    m_buffer.grow(oldSize + len);
     memcpy(m_buffer.data() + oldSize, data, len);
 
     movedDataToBuffer = true;
@@ -710,19 +710,19 @@ String TextResourceDecoder::decode(const char* data, size_t len)
 
     if (!movedDataToBuffer) {
         size_t oldSize = m_buffer.size();
-        m_buffer.resize(oldSize + len);
+        m_buffer.grow(oldSize + len);
         memcpy(m_buffer.data() + oldSize, data, len);
     }
 
     String result = m_decoder.decode(m_buffer.data(), m_buffer.size());
-    m_buffer.resize(0);
+    m_buffer.clear();
     return result;
 }
 
 String TextResourceDecoder::flush()
 {
     String result = m_decoder.decode(m_buffer.data(), m_buffer.size(), true);
-    m_buffer.resize(0);
+    m_buffer.clear();
     return result;
 }
 

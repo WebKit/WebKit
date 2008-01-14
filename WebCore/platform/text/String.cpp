@@ -74,14 +74,18 @@ String::String(const char* str, unsigned length)
     m_impl = StringImpl::create(str, length);
 }
 
-void String::append(const String &str)
+void String::append(const String& str)
 {
+    // FIXME: This is extremely inefficient. So much so that we might want to take this
+    // out of String's API. We can make it better by optimizing the case where exactly
+    // one String is pointing at this StringImpl, but even then it's going to require a
+    // call to fastMalloc every single time.
     if (str.m_impl) {
         if (m_impl) {
-            Vector<UChar> newCharacters(m_impl->length() + str.length());
-            memcpy(newCharacters.data(), m_impl->characters(), m_impl->length() * sizeof(UChar));
-            memcpy(newCharacters.data() + m_impl->length(), str.characters(), str.length() * sizeof(UChar));
-            m_impl = StringImpl::adopt(newCharacters);
+            StringBuffer buffer(m_impl->length() + str.length());
+            memcpy(buffer.characters(), m_impl->characters(), m_impl->length() * sizeof(UChar));
+            memcpy(buffer.characters() + m_impl->length(), str.characters(), str.length() * sizeof(UChar));
+            m_impl = StringImpl::adopt(buffer);
         } else
             m_impl = str.m_impl;
     }
@@ -89,22 +93,30 @@ void String::append(const String &str)
 
 void String::append(char c)
 {
+    // FIXME: This is extremely inefficient. So much so that we might want to take this
+    // out of String's API. We can make it better by optimizing the case where exactly
+    // one String is pointing at this StringImpl, but even then it's going to require a
+    // call to fastMalloc every single time.
     if (m_impl) {
-        Vector<UChar> newCharacters(m_impl->length() + 1);
-        memcpy(newCharacters.data(), m_impl->characters(), m_impl->length() * sizeof(UChar));
-        newCharacters[m_impl->length()] = c;
-        m_impl = StringImpl::adopt(newCharacters);
+        StringBuffer buffer(m_impl->length() + 1);
+        memcpy(buffer.characters(), m_impl->characters(), m_impl->length() * sizeof(UChar));
+        buffer[m_impl->length()] = c;
+        m_impl = StringImpl::adopt(buffer);
     } else
         m_impl = StringImpl::create(&c, 1);
 }
 
 void String::append(UChar c)
 {
+    // FIXME: This is extremely inefficient. So much so that we might want to take this
+    // out of String's API. We can make it better by optimizing the case where exactly
+    // one String is pointing at this StringImpl, but even then it's going to require a
+    // call to fastMalloc every single time.
     if (m_impl) {
-        Vector<UChar> newCharacters(m_impl->length() + 1);
-        memcpy(newCharacters.data(), m_impl->characters(), m_impl->length() * sizeof(UChar));
-        newCharacters[m_impl->length()] = c;
-        m_impl = StringImpl::adopt(newCharacters);
+        StringBuffer buffer(m_impl->length() + 1);
+        memcpy(buffer.characters(), m_impl->characters(), m_impl->length() * sizeof(UChar));
+        buffer[m_impl->length()] = c;
+        m_impl = StringImpl::adopt(buffer);
     } else
         m_impl = StringImpl::create(&c, 1);
 }
@@ -155,9 +167,9 @@ void String::append(const UChar* charactersToAppend, unsigned lengthToAppend)
         return;
 
     ASSERT(charactersToAppend);
-    Vector<UChar> buffer(length() + lengthToAppend);
-    memcpy(buffer.data(), characters(), length() * sizeof(UChar));
-    memcpy(buffer.data() + length(), charactersToAppend, lengthToAppend * sizeof(UChar));
+    StringBuffer buffer(length() + lengthToAppend);
+    memcpy(buffer.characters(), characters(), length() * sizeof(UChar));
+    memcpy(buffer.characters() + length(), charactersToAppend, lengthToAppend * sizeof(UChar));
     m_impl = StringImpl::adopt(buffer);
 }
 
@@ -174,10 +186,10 @@ void String::insert(const UChar* charactersToInsert, unsigned lengthToInsert, un
         return;
 
     ASSERT(charactersToInsert);
-    Vector<UChar> buffer(length() + lengthToInsert);
-    memcpy(buffer.data(), characters(), position * sizeof(UChar));
-    memcpy(buffer.data() + position, charactersToInsert, lengthToInsert * sizeof(UChar));
-    memcpy(buffer.data() + position + lengthToInsert, characters() + position, (length() - position) * sizeof(UChar));
+    StringBuffer buffer(length() + lengthToInsert);
+    memcpy(buffer.characters(), characters(), position * sizeof(UChar));
+    memcpy(buffer.characters() + position, charactersToInsert, lengthToInsert * sizeof(UChar));
+    memcpy(buffer.characters() + position + lengthToInsert, characters() + position, (length() - position) * sizeof(UChar));
     m_impl = StringImpl::adopt(buffer);
 }
 
@@ -206,8 +218,8 @@ void String::truncate(unsigned position)
 {
     if (position >= length())
         return;
-    Vector<UChar> buffer(position);
-    memcpy(buffer.data(), characters(), position * sizeof(UChar));
+    StringBuffer buffer(position);
+    memcpy(buffer.characters(), characters(), position * sizeof(UChar));
     m_impl = StringImpl::adopt(buffer);
 }
 
@@ -219,9 +231,9 @@ void String::remove(unsigned position, int lengthToRemove)
         return;
     if (static_cast<unsigned>(lengthToRemove) > length() - position)
         lengthToRemove = length() - position;
-    Vector<UChar> buffer(length() - lengthToRemove);
-    memcpy(buffer.data(), characters(), position * sizeof(UChar));
-    memcpy(buffer.data() + position, characters() + position + lengthToRemove,
+    StringBuffer buffer(length() - lengthToRemove);
+    memcpy(buffer.characters(), characters(), position * sizeof(UChar));
+    memcpy(buffer.characters() + position, characters() + position + lengthToRemove,
         (length() - lengthToRemove - position) * sizeof(UChar));
     m_impl = StringImpl::adopt(buffer);
 }
@@ -334,7 +346,7 @@ String String::format(const char *format, ...)
     if (result < 0)
         return String();
     unsigned len = result;
-    buffer.resize(len + 1);
+    buffer.grow(len + 1);
     
     // Now do the formatting again, guaranteed to fit.
     vsnprintf(buffer.data(), buffer.size(), format, args);
@@ -556,15 +568,6 @@ String::operator UString() const
     if (!m_impl)
         return UString();
     return UString(reinterpret_cast<const KJS::UChar*>(m_impl->characters()), m_impl->length());
-}
-
-String String::adopt(Vector<UChar>& buffer)
-{
-    // For an empty buffer, construct an empty string, not a null string,
-    // and use a standard constructor so we get the shared empty string.
-    if (buffer.isEmpty())
-        return "";
-    return StringImpl::adopt(buffer);
 }
 
 } // namespace WebCore

@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004, 2005, 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -91,7 +91,7 @@ public:
 
     // DOM methods & attributes for Node
 
-    virtual bool hasTagName(const QualifiedName&) const { return false; }
+    virtual bool hasTagName(const QualifiedName& name) const { return virtualHasTagName(name); }
     virtual String nodeName() const = 0;
     virtual String nodeValue() const;
     virtual void setNodeValue(const String&, ExceptionCode&);
@@ -500,6 +500,7 @@ private:
 
     virtual Node* virtualFirstChild() const;
     virtual Node* virtualLastChild() const;
+    virtual bool virtualHasTagName(const QualifiedName&) const { return false; }
 };
 
 } //namespace

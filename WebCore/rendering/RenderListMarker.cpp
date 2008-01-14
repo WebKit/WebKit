@@ -1,9 +1,7 @@
-/**
- * This file is part of the DOM implementation for KDE.
- *
+/*
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
- * Copyright (C) 2003, 2004, 2005, 2006 Apple Computer, Inc.
+ * Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Andrew Wellington (proton@wiretapped.net)
  *
  * This library is free software; you can redistribute it and/or
@@ -608,7 +606,7 @@ void RenderListMarker::paint(PaintInfo& paintInfo, int tx, int ty)
     Vector<UChar> reversedText;
     if (textNeedsReversing) {
         int length = m_text.length();
-        reversedText.resize(length);
+        reversedText.grow(length);
         for (int i = 0; i < length; ++i)
             reversedText[length - i - 1] = m_text[i];
         textRun = TextRun(reversedText.data(), length);

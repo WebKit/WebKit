@@ -1,3 +1,26 @@
+2008-01-14  Darin Adler  <darin@apple.com>
+
+        Reviewed by Adam.
+
+        - re-speed-up the page load test (my StringImpl change slowed it down)
+
+        * wtf/RefCounted.h:
+        (WTF::RefCounted::RefCounted): Allow derived classes to start with a reference
+        count other than 0. Eventually everyone will want to start with a 1. This is a
+        staged change. For now, there's a default of 0, and you can specify 1. Later,
+        there will be no default and everyone will have to specify. And then later, there
+        will be a default of 1. Eventually, we can take away even the option of starting
+        with 0!
+
+        * wtf/Vector.h:
+        (WTF::Vector::Vector): Sped up creation of non-empty vectors by removing the
+        overhead of first constructing something empty and then calling resize.
+        (WTF::Vector::clear): Sped up the common case of calling clear on an empty
+        vector by adding a check for that case.
+        (WTF::Vector::releaseBuffer): Marked this function inline and removed a branch
+        in the case of vectors with no inline capacity (normal vectors) by leaving out
+        the code to copy the inline buffer in that case.
+
 2008-01-14  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by David Kilzer.

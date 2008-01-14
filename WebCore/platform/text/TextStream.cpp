@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -114,7 +114,7 @@ TextStream& TextStream::operator<<(const char* s)
     if (m_hasByteArray) {
         unsigned length = strlen(s);
         unsigned oldSize = m_byteArray.size();
-        m_byteArray.resize(oldSize + length);
+        m_byteArray.grow(oldSize + length);
         memcpy(m_byteArray.data() + oldSize, s, length);
     }
     if (m_string)
@@ -127,7 +127,7 @@ TextStream& TextStream::operator<<(const DeprecatedString& s)
     if (m_hasByteArray) {
         unsigned length = s.length();
         unsigned oldSize = m_byteArray.size();
-        m_byteArray.resize(oldSize + length);
+        m_byteArray.grow(oldSize + length);
         memcpy(m_byteArray.data() + oldSize, s.latin1(), length);
     }
     if (m_string)

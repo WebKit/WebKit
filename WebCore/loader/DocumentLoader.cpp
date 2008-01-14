@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2007, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -60,7 +60,7 @@ static inline String canonicalizedTitle(const String& title, Frame* frame)
     unsigned length = title.length();
     unsigned i;
 
-    Vector<UChar> stringBuilder(length);
+    StringBuffer buffer(length);
     unsigned builderIndex = 0;
 
     // Skip leading spaces and leading characters that would convert to spaces
@@ -80,13 +80,13 @@ static inline String canonicalizedTitle(const String& title, Frame* frame)
         if (c <= 0x20 || c == 0x7F || (WTF::Unicode::category(c) & (WTF::Unicode::Separator_Line | WTF::Unicode::Separator_Paragraph))) {
             if (previousCharWasWS)
                 continue;
-            stringBuilder[builderIndex++] = ' ';
+            buffer[builderIndex++] = ' ';
             previousCharWasWS = true;
         } else if (c == '\\') {
-            stringBuilder[builderIndex++] = frame->backslashAsCurrencySymbol();
+            buffer[builderIndex++] = frame->backslashAsCurrencySymbol();
             previousCharWasWS = false;
         } else {
-            stringBuilder[builderIndex++] = c;
+            buffer[builderIndex++] = c;
             previousCharWasWS = false;
         }
     }
@@ -94,15 +94,15 @@ static inline String canonicalizedTitle(const String& title, Frame* frame)
     // Strip trailing spaces
     while (builderIndex > 0) {
         --builderIndex;
-        if (stringBuilder[builderIndex] != ' ')
+        if (buffer[builderIndex] != ' ')
             break;
     }
 
-    if (!builderIndex && stringBuilder[builderIndex] == ' ')
+    if (!builderIndex && buffer[builderIndex] == ' ')
         return "";
 
-    stringBuilder.resize(builderIndex + 1);
-    return String::adopt(stringBuilder);
+    buffer.shrink(builderIndex + 1);
+    return String::adopt(buffer);
 }
 
 static void cancelAll(const ResourceLoaderSet& loaders)

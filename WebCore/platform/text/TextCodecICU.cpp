@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2006, 2007, 2008 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Alexey Proskuryakov <ap@nypop.com>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -334,7 +334,7 @@ CString TextCodecICU::encode(const UChar* characters, size_t length, bool allowE
         err = U_ZERO_ERROR;
         ucnv_fromUnicode(m_converterICU, &target, targetLimit, &source, sourceLimit, 0, true, &err);
         size_t count = target - buffer;
-        result.resize(size + count);
+        result.grow(size + count);
         memcpy(result.data() + size, buffer, count);
         size += count;
     } while (err == U_BUFFER_OVERFLOW_ERROR);

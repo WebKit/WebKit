@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2005, 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -60,10 +60,7 @@ struct CStringTranslator
 
     static void translate(StringImpl*& location, const char* const& c, unsigned hash)
     {
-        StringImpl* r = new StringImpl(c, strlen(c));
-        r->m_hash = hash;
-        r->m_inTable = true;
-        location = r; 
+        location = new StringImpl(c, strlen(c), hash); 
     }
 };
 
@@ -134,11 +131,7 @@ struct UCharBufferTranslator {
 
     static void translate(StringImpl*& location, const UCharBuffer& buf, unsigned hash)
     {
-        StringImpl *r = new StringImpl(buf.s, buf.length);
-        r->m_hash = hash;
-        r->m_inTable = true;
-        
-        location = r; 
+        location = new StringImpl(buf.s, buf.length, hash); 
     }
 };
 

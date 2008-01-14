@@ -1,6 +1,4 @@
 /*
- * This file is part of the DOM implementation for KDE.
- *
  * Copyright (C) 2000 Lars Knoll (knoll@kde.org)
  *           (C) 2000 Antti Koivisto (koivisto@kde.org)
  *           (C) 2000 Dirk Mueller (mueller@kde.org)
@@ -1301,8 +1299,8 @@ public:
         return m_vector[i];
     }
 
-    bool operator==(const CursorList&) const;
-    bool operator!=(const CursorList& o) const { return !(*this == o); }
+    bool operator==(const CursorList& o) const { return m_vector == o.m_vector; }
+    bool operator!=(const CursorList& o) const { return m_vector != o.m_vector; }
 
     size_t size() const { return m_vector.size(); }
     void append(const CursorData& cursorData) { m_vector.append(cursorData); }

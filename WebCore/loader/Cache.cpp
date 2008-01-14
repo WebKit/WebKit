@@ -2,7 +2,7 @@
     Copyright (C) 1998 Lars Knoll (knoll@mpi-hd.mpg.de)
     Copyright (C) 2001 Dirk Mueller (mueller@kde.org)
     Copyright (C) 2002 Waldo Bastian (bastian@kde.org)
-    Copyright (C) 2004, 2005, 2006, 2007 Apple Inc. All rights reserved.
+    Copyright (C) 2004, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -337,7 +337,7 @@ Cache::LRUList* Cache::lruListFor(CachedResource* resource)
     resource->m_lruIndex = queueIndex;
 #endif
     if (m_allResources.size() <= queueIndex)
-        m_allResources.resize(queueIndex + 1);
+        m_allResources.grow(queueIndex + 1);
     return &m_allResources[queueIndex];
 }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2006, 2007, 2008 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Alexey Proskuryakov <ap@nypop.com>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -88,7 +88,7 @@ CString TextEncoding::encode(const UChar* characters, size_t length, bool allowE
     UErrorCode err = U_ZERO_ERROR;
     if (unorm_quickCheck(source, sourceLength, UNORM_NFC, &err) != UNORM_YES) {
         // First try using the length of the original string, since normalization to NFC rarely increases length.
-        normalizedCharacters.resize(sourceLength);
+        normalizedCharacters.grow(sourceLength);
         int32_t normalizedLength = unorm_normalize(source, length, UNORM_NFC, 0, normalizedCharacters.data(), length, &err);
         if (err == U_BUFFER_OVERFLOW_ERROR) {
             err = U_ZERO_ERROR;

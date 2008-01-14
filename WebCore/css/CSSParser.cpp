@@ -22,6 +22,7 @@
 #include "config.h"
 #include "CSSParser.h"
 
+#include "CString.h"
 #include "CSSTimingFunctionValue.h"
 #include "CSSBorderImageValue.h"
 #include "CSSCharsetRule.h"
@@ -58,6 +59,7 @@
 #include "MediaQueryExp.h"
 #include "Pair.h"
 #include "ShadowValue.h"
+#include <kjs/dtoa.h>
 
 #define YYDEBUG 0
 
@@ -2242,13 +2244,14 @@ CSSValue* CSSParser::parseTransitionProperty()
 {
     Value* value = valueList->current();
     if (value->unit == CSSPrimitiveValue::CSS_IDENT) {
-        DeprecatedString str = deprecatedString(value->string);
+        String str = domString(value->string);
         str.lower();
         if (str == "all")
             return new CSSPrimitiveValue(cAnimateAll);
         if (str == "none")
             return new CSSPrimitiveValue(cAnimateNone);
-        int result = getPropertyID(str.ascii(), str.length());
+        CString propertyName = str.utf8();
+        int result = getPropertyID(propertyName.data(), propertyName.length());
         if (result)
             return new CSSPrimitiveValue(result);
     }
@@ -3548,6 +3551,16 @@ static inline int yyerror(const char*) { return 1; }
 
 #include "CSSGrammar.h"
 
+static inline float convertASCIIToFloat(const UChar* characters, unsigned length)
+{
+    Vector<char, 256> bytes(length + 1);
+    for (unsigned i = 0; i < length; ++i)
+        bytes[i] = characters[i];
+    bytes[length] = 0;
+    char* end;
+    return narrowPrecisionToFloat(kjs_strtod(bytes.data(), &end));
+}
+
 int CSSParser::lex(void* yylvalWithoutType)
 {
     YYSTYPE* yylval = static_cast<YYSTYPE*>(yylvalWithoutType);
@@ -3609,7 +3622,7 @@ int CSSParser::lex(void* yylvalWithoutType)
         length--;
     case FLOATTOKEN:
     case INTEGER:
-        yylval->val = DeprecatedString((DeprecatedChar*)t, length).toFloat();
+        yylval->val = convertASCIIToFloat(t, length);
         break;
 
     default:

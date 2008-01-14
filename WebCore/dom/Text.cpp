@@ -71,7 +71,7 @@ PassRefPtr<Text> Text::splitText(unsigned offset, ExceptionCode& ec)
     }
 
     RefPtr<StringImpl> oldStr = m_data;
-    PassRefPtr<Text> newText = createNew(oldStr->substring(offset));
+    RefPtr<Text> newText = createNew(oldStr->substring(offset));
     m_data = oldStr->substring(0, offset);
 
     dispatchModifiedEvent(oldStr.get());
@@ -84,7 +84,7 @@ PassRefPtr<Text> Text::splitText(unsigned offset, ExceptionCode& ec)
     if (renderer())
         static_cast<RenderText*>(renderer())->setText(m_data);
 
-    return newText;
+    return newText.release();
 }
 
 const AtomicString& Text::localName() const

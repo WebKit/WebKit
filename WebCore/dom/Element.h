@@ -3,7 +3,7 @@
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Peter Kelly (pmk@post.com)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2003, 2004, 2005, 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -98,7 +98,7 @@ public:
 
     const QualifiedName& tagQName() const { return m_tagName; }
     String tagName() const { return nodeName(); }
-    virtual bool hasTagName(const QualifiedName& tagName) const { return m_tagName.matches(tagName); }
+    bool hasTagName(const QualifiedName& tagName) const { return m_tagName.matches(tagName); }
     
     // A fast function for checking the local name against another atomic string.
     bool hasLocalName(const AtomicString& other) const { return m_tagName.localName() == other; }
@@ -200,6 +200,8 @@ private:
     
     void updateFocusAppearanceSoonAfterAttach();
     void cancelFocusAppearanceUpdate();
+
+    virtual bool virtualHasTagName(const QualifiedName& name) const { return hasTagName(name); }
 
 protected:
     mutable RefPtr<NamedAttrMap> namedAttrMap;

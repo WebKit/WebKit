@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004, 2006, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -75,8 +75,8 @@ String TextCodecUTF16::decode(const char* bytes, size_t length, bool)
     size_t numBytes = length + m_haveBufferedByte;
     size_t numChars = numBytes / 2;
 
-    Vector<UChar> buffer(numChars);
-    UChar* q = buffer.data();
+    StringBuffer buffer(numChars);
+    UChar* q = buffer.characters();
 
     if (m_haveBufferedByte) {
         UChar c;
@@ -112,7 +112,7 @@ String TextCodecUTF16::decode(const char* bytes, size_t length, bool)
         m_bufferedByte = p[0];
     }
 
-    buffer.resize(q - buffer.data());
+    buffer.shrink(q - buffer.characters());
 
     return String::adopt(buffer);
 }

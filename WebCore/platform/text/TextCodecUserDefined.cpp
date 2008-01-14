@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple, Inc.  All rights reserved.
+ * Copyright (C) 2007, 2008 Apple, Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -50,14 +50,14 @@ void TextCodecUserDefined::registerCodecs(TextCodecRegistrar registrar)
 
 String TextCodecUserDefined::decode(const char* bytes, size_t length, bool)
 {
-    Vector<UChar> characters(length);
+    StringBuffer buffer(length);
 
     for (size_t i = 0; i < length; ++i) {
         signed char c = bytes[i];
-        characters[i] = c & 0xf7ff;
+        buffer[i] = c & 0xF7FF;
     }
 
-    return String::adopt(characters);
+    return String::adopt(buffer);
 }
 
 static CString encodeComplexUserDefined(const UChar* characters, size_t length, bool allowEntities)
@@ -78,7 +78,7 @@ static CString encodeComplexUserDefined(const UChar* characters, size_t length, 
                 char entityBuffer[16];
                 sprintf(entityBuffer, "&#%u;", c);
                 size_t entityLength = strlen(entityBuffer);
-                result.resize(resultLength + entityLength + length - i);
+                result.grow(resultLength + entityLength + length - i);
                 bytes = result.data();
                 memcpy(bytes + resultLength, entityBuffer, entityLength);
                 resultLength += entityLength;

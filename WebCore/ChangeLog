@@ -1,3 +1,202 @@
+2008-01-14  Darin Adler  <darin@apple.com>
+
+        Reviewed by Adam.
+
+        - re-speed-up the page load test (my StringImpl change slowed it down)
+          <rdar://problem/5677241> 1.5% PLT regression from r29098
+
+        To reverse the slowdown I caused by changing StringImpl, I tightened it up,
+        and also did a little optimization in the HTML tokenizer and in other clients
+        of Vector.
+
+        * WebCore.base.exp: Removed export of a now-inline function.
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseTransitionProperty): Removed use of DeprecatedString
+        to get property ID. This could be sped up even more by writing a fast path
+        to use a local Vector<char> rather than allocating a string.
+        (WebCore::convertASCIIToFloat): Added. Allows numeric conversion without
+        allocating a string object to hold the number.
+        (WebCore::CSSParser::lex): Changed to call convertASCIIToFloat instead of
+        DeprecatedString::toFloat.
+
+        * dom/Element.h:
+        (WebCore::Element::hasTagName): Made this non-virtual and inline if you have
+        an Element*. It's still virtual if you have a Node*.
+        (WebCore::Element::virtualHasTagName): Virtual version that makes the Node*
+        case work.
+
+        * dom/Node.h:
+        (WebCore::Node::hasTagName): Made this non-virtual and inline so that Element
+        can override it with an inline. This is the same technique we use for
+        firstChild and lastChild.
+        (WebCore::Node::virtualHasTagName): This is the private virtual that Element
+        overrides.
+
+        * dom/Text.cpp:
+        (WebCore::Text::splitText): Clean up by using a RefPtr here instead of a
+        PassRefPtr.
+
+        * html/HTMLTokenizer.cpp:
+        (WebCore::HTMLTokenizer::parseSpecial): Use the new advancePastNonNewline(),
+        which is more efficient in cases where we know the character is not a newline
+        and hence we don't have to update the line number.
+        (WebCore::HTMLTokenizer::parseComment): Ditto.
+        (WebCore::HTMLTokenizer::parseServer): Ditto.
+        (WebCore::HTMLTokenizer::parseProcessingInstruction): Ditto.
+        (WebCore::HTMLTokenizer::parseText): Ditto.
+        (WebCore::HTMLTokenizer::parseEntity): Ditto.
+        (WebCore::HTMLTokenizer::parseTag): Ditto. Also streamline the QuotedValue case
+        so there's one less branch taken for non-punctuation characters since this
+        code path is *so* hot.
+        (WebCore::HTMLTokenizer::write): More of the same.
+
+        * loader/Cache.cpp:
+        (WebCore::Cache::lruListFor): Use Vector::grow instead of resize.
+
+        * loader/DocumentLoader.cpp:
+        (WebCore::canonicalizedTitle): Use StringBuffer instead of Vector<UChar>.
+
+        * loader/TextResourceDecoder.cpp:
+        (WebCore::TextResourceDecoder::checkForCSSCharset): Use Vector::grow instead of resize.
+        (WebCore::TextResourceDecoder::checkForHeadCharset): Ditto.
+        (WebCore::TextResourceDecoder::decode): Use Vector::grow and shrink instead of resize.
+        (WebCore::TextResourceDecoder::flush): Use Vector::shrink instead of resize.
+
+        * platform/KURL.cpp:
+        (WebCore::KURL::decode_string): Use Vector::grow instead of resize.
+
+        * platform/SharedBuffer.cpp:
+        (WebCore::SharedBuffer::clear): Use Vector::shrink instead of resize.
+
+        * platform/graphics/BitmapImage.cpp:
+        (WebCore::BitmapImage::cacheFrame): Use Vector::grow instead of resize.
+
+        * platform/network/FormData.cpp:
+        (WebCore::FormData::appendData): Use Vector::grow instead of resize.
+        (WebCore::FormData::flatten): Ditto.
+
+        * platform/text/AtomicString.cpp:
+        (WebCore::CStringTranslator::translate): Use a new StringImpl constructor made just
+        for use by AtomicString. Avoids setting fields twice, and also preserves reference
+        count behavior (which I changed for the other constructors, since they're entirely
+        private and used only inside the class).
+        (WebCore::UCharBufferTranslator::translate): Ditto.
+
+        * platform/text/Base64.cpp:
+        (WebCore::base64Encode): Use Vector::grow instead of resize.
+        (WebCore::base64Decode): Use Vector::grow and shrink instead of resize.
+
+        * platform/text/PlatformString.h:
+        (WebCore::String::adopt): Added an overload for the new StringBuffer class. Also
+        made both versions inline.
+
+        * platform/text/SegmentedString.h:
+        (WebCore::SegmentedString::advancePastNewline): Added. One less branch for case
+        where the character is known to be a newline.
+        (WebCore::SegmentedString::advancePastNonNewline): Added. Less code for case where
+        the character is known not to be a newline.
+
+        * platform/text/String.cpp:
+        (WebCore::String::append): Use StringBuffer instead of Vector<UChar>.
+        (WebCore::String::insert): Ditto.
+        (WebCore::String::truncate): Ditto.
+        (WebCore::String::remove): Ditto.
+        (WebCore::String::format): Use Vector::grow instead of resize.
+
+        * platform/text/StringImpl.cpp:
+        (WebCore::StringImpl::StringImpl): Changed constructors to start with a refCount
+        of 1 instead of 0, and made them all inline. Eliminates the WithOneRef constructor
+        since they all behave this way now. The only exceptions are the constructors for
+        AtomicString, which retain the old behavior.
+        (WebCore::StringImpl::empty): Simplified, since we no longer need to use the
+        special WithOneRef constructor.
+        (WebCore::StringImpl::toCoordsArray): Use StringBuffer instead of Vector<UChar>.
+        (WebCore::StringImpl::lower): Ditto.
+        (WebCore::StringImpl::upper): Ditto.
+        (WebCore::StringImpl::secure): Ditto.
+        (WebCore::StringImpl::foldCase): Ditto.
+        (WebCore::StringImpl::simplifyWhiteSpace): Ditto. Also change to use Vector::shrink
+        instead of resize (since half of the function uses Vector<UChar>).
+        (WebCore::StringImpl::capitalize): Use StringBuffer instead of Vector<UChar>.
+        (WebCore::StringImpl::replace): Ditto.
+        (WebCore::StringImpl::ascii): Streamlined a bit.
+        (WebCore::StringImpl::createStrippingNullCharacters): Use StringBuffer insetad of
+        Vector<UChar>. Took out checks for null characters and 0 length that aren't needed.
+        Coded the check for null characters in a slightly more efficient way. Since this
+        is so hot, didn't call adopt at all, putting the code right in here, including
+        the call to the StringImpl constructor and adoptRef (for the fast case).
+        (WebCore::StringImpl::adopt): Added a version for the new StringBuffer class.
+        Removed the attempt to resize the buffer at the time we adopt based on measuring
+        actual use and realizing that it's just a character here or there and not worth
+        a call to fastRealloc. Changed to use adoptRef since the constructor now starts
+        with a refCount of 1.
+        (WebCore::StringImpl::create): Changed to use adoptRef since the constructor now
+        starts with a refCount of 1.
+        (WebCore::StringImpl::createWithTerminatingNullCharacter): Ditto.
+        (WebCore::StringImpl::copy): Ditto. Also made non-inline since the constructor
+        itself is now inline.
+
+        * platform/text/StringImpl.h: Added a StringBuffer class that's useful for
+        putting characters into a buffer before creating an immutable string. Not good
+        at resizing the way Vector<UChar> is, so only useful for things that rarely need
+        to be resized. Added a new AdoptBuffer constructor and empty constructor, but
+        made all constructors private so they can be inlined and only used inside the
+        StringImpl class. Added two new constructors for AtomicString. Made copy()
+        no longer inline. Changed the type of the [] operator to unsigned instead of
+        int and added an assertion. Made the hash functions inline.
+
+        * platform/text/TextCodecICU.cpp:
+        (WebCore::TextCodecICU::encode): Use Vector::grow instead of resize.
+
+        * platform/text/TextCodecLatin1.cpp:
+        (WebCore::TextCodecLatin1::decode): Use StringBuffer instead of Vector<UChar>.
+        (WebCore::encodeComplexWindowsLatin1): Use Vector::grow instead of resize.
+
+        * platform/text/TextCodecUTF16.cpp:
+        (WebCore::TextCodecUTF16::decode): Use StringBuffer instead of Vector<UChar>.
+
+        * platform/text/TextCodecUserDefined.cpp:
+        (WebCore::TextCodecUserDefined::decode): Use StringBuffer instead of Vector<UChar>.
+        (WebCore::encodeComplexUserDefined): Use Vector::grow instead of resize.
+
+        * platform/text/TextEncoding.cpp:
+        (WebCore::TextEncoding::encode): Use Vector::grow instead of resize.
+
+        * platform/text/TextStream.cpp:
+        (WebCore::TextStream::operator<<): Use Vector::grow instead of resize.
+
+        * platform/text/mac/TextCodecMac.cpp:
+        (WebCore::TextCodecMac::encode): Use Vector::grow instead of resize.
+
+        * rendering/AutoTableLayout.cpp:
+        (WebCore::AutoTableLayout::insertSpanCell): Use Vector::grow instead of resize.
+
+        * rendering/RenderFrameSet.h:
+        (WebCore::FrameEdgeInfo::FrameEdgeInfo): Allocate vectors with the correct initial
+        size instead of calling resize on them after allocating empty.
+
+        * rendering/RenderListMarker.cpp:
+        (WebCore::RenderListMarker::paint): Use Vector::grow instead of resize.
+
+        * rendering/RenderStyle.cpp: Removed CursorList::operator==.
+        * rendering/RenderStyle.h:
+        (WebCore::CursorList::operator==): Implemented using the Vector ==.
+        (WebCore::CursorList::operator!=): Ditto.
+
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::splitColumn): Use Vector::grow instead of resize.
+        (WebCore::RenderTable::appendColumn): Ditto.
+
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::ensureRows): Use Vector::grow instead of resize.
+
+        * rendering/bidi.cpp:
+        (WebCore::addMidpoint): Use Vector::grow instead of resize.
+
+        * xml/XPathNodeSet.h:
+        (WebCore::XPath::NodeSet::clear): Use Vector::shrink instead of resize.
+
 2008-01-13  Steve Falkenburg  <sfalken@apple.com>
 
         Share common files across projects.

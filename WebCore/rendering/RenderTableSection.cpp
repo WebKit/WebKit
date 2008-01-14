@@ -1,12 +1,10 @@
-/**
- * This file is part of the DOM implementation for KDE.
- *
+/*
  * Copyright (C) 1997 Martin Jones (mjones@kde.org)
  *           (C) 1997 Torben Weis (weis@kde.org)
  *           (C) 1998 Waldo Bastian (bastian@kde.org)
  *           (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
- * Copyright (C) 2003, 2004, 2005, 2006 Apple Computer, Inc.
+ * Copyright (C) 2003, 2004, 2005, 2006, 2008 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Alexey Proskuryakov (ap@nypop.com)
  *
  * This library is free software; you can redistribute it and/or
@@ -168,7 +166,7 @@ bool RenderTableSection::ensureRows(int numRows)
             size_t maxSize = numeric_limits<size_t>::max() / sizeof(RowStruct);
             if (static_cast<size_t>(numRows) > maxSize)
                 return false;
-            m_grid.resize(numRows);
+            m_grid.grow(numRows);
         }
         m_gridRows = numRows;
         int nCols = table()->numEffCols();

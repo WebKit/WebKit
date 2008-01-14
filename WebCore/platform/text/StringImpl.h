@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
- * Copyright (C) 2005, 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -46,19 +46,58 @@ struct Length;
 struct StringHash;
 struct UCharBufferTranslator;
 
-class StringImpl : public RefCounted<StringImpl> {
-protected:
-    StringImpl() : m_length(0), m_data(0), m_hash(0), m_inTable(false), m_hasTerminatingNullCharacter(false) { }
+class StringBuffer : Noncopyable {
+public:
+    explicit StringBuffer(unsigned length)
+        : m_length(length)
+        , m_data(static_cast<UChar*>(fastMalloc(length * sizeof(UChar))))
+    {
+    }
+    ~StringBuffer()
+    {
+        fastFree(m_data);
+    }
+
+    void shrink(unsigned newLength)
+    {
+        ASSERT(newLength <= m_length);
+        m_length = newLength;
+    }
+
+    void resize(unsigned newLength)
+    {
+        if (newLength > m_length)
+            m_data = static_cast<UChar*>(fastRealloc(m_data, newLength * sizeof(UChar)));
+        m_length = newLength;
+    }
+
+    unsigned length() const { return m_length; }
+    UChar* characters() { return m_data; }
+
+    UChar& operator[](unsigned i) { ASSERT(i < m_length); return m_data[i]; }
+
+    UChar* release() { UChar* data = m_data; m_data = 0; return data; }
 
 private:
+    unsigned m_length;
+    UChar* m_data;
+};
+
+class StringImpl : public RefCounted<StringImpl> {
+private:
+    StringImpl();
     StringImpl(const UChar*, unsigned length);
     StringImpl(const char*, unsigned length);
+
+    struct AdoptBuffer { };
+    StringImpl(UChar*, unsigned length, AdoptBuffer);
 
     struct WithTerminatingNullCharacter { };
     StringImpl(const StringImpl&, WithTerminatingNullCharacter);
 
-    struct WithOneRef { };
-    StringImpl(WithOneRef) : m_length(0), m_data(0), m_hash(0), m_inTable(false), m_hasTerminatingNullCharacter(false) { ref(); }
+    // For AtomicString.
+    StringImpl(const UChar*, unsigned length, unsigned hash);
+    StringImpl(const char*, unsigned length, unsigned hash);
 
 public:
     ~StringImpl();
@@ -70,6 +109,7 @@ public:
     static PassRefPtr<StringImpl> createWithTerminatingNullCharacter(const StringImpl&);
 
     static PassRefPtr<StringImpl> createStrippingNullCharacters(const UChar*, unsigned length);
+    static PassRefPtr<StringImpl> adopt(StringBuffer&);
     static PassRefPtr<StringImpl> adopt(Vector<UChar>&);
 
     const UChar* characters() { return m_data; }
@@ -83,11 +123,11 @@ public:
     
     // Makes a deep copy. Helpful only if you need to use a String on another thread.
     // Since StringImpl objects are immutable, there's no other reason to make a copy.
-    PassRefPtr<StringImpl> copy() { return new StringImpl(m_data, m_length); }
+    PassRefPtr<StringImpl> copy();
 
     PassRefPtr<StringImpl> substring(unsigned pos, unsigned len = UINT_MAX);
 
-    UChar operator[](int pos) { return m_data[pos]; }
+    UChar operator[](unsigned i) { ASSERT(i < m_length); return m_data[i]; }
     UChar32 characterStartingAt(unsigned);
 
     Length toLength();
@@ -141,13 +181,12 @@ public:
 #endif
 
 private:
-    unsigned m_length;
-    const UChar* m_data;
-
     friend class AtomicString;
     friend struct UCharBufferTranslator;
     friend struct CStringTranslator;
-    
+
+    unsigned m_length;
+    const UChar* m_data;
     mutable unsigned m_hash;
     bool m_inTable;
     bool m_hasTerminatingNullCharacter;
@@ -160,6 +199,91 @@ inline bool equal(const char* a, StringImpl* b) { return equal(b, a); }
 bool equalIgnoringCase(StringImpl*, StringImpl*);
 bool equalIgnoringCase(StringImpl*, const char*);
 inline bool equalIgnoringCase(const char* a, StringImpl* b) { return equalIgnoringCase(b, a); }
+
+// Golden ratio - arbitrary start value to avoid mapping all 0's to all 0's
+// or anything like that.
+const unsigned phi = 0x9e3779b9U;
+
+// Paul Hsieh's SuperFastHash
+// http://www.azillionmonkeys.com/qed/hash.html
+inline unsigned StringImpl::computeHash(const UChar* data, unsigned length)
+{
+    unsigned hash = phi;
+    
+    // Main loop.
+    for (unsigned pairCount = length >> 1; pairCount; pairCount--) {
+        hash += data[0];
+        unsigned tmp = (data[1] << 11) ^ hash;
+        hash = (hash << 16) ^ tmp;
+        data += 2;
+        hash += hash >> 11;
+    }
+    
+    // Handle end case.
+    if (length & 1) {
+        hash += data[0];
+        hash ^= hash << 11;
+        hash += hash >> 17;
+    }
+
+    // Force "avalanching" of final 127 bits.
+    hash ^= hash << 3;
+    hash += hash >> 5;
+    hash ^= hash << 2;
+    hash += hash >> 15;
+    hash ^= hash << 10;
+
+    // This avoids ever returning a hash code of 0, since that is used to
+    // signal "hash not computed yet", using a value that is likely to be
+    // effectively the same as 0 when the low bits are masked.
+    hash |= !hash << 31;
+    
+    return hash;
+}
+
+// Paul Hsieh's SuperFastHash
+// http://www.azillionmonkeys.com/qed/hash.html
+inline unsigned StringImpl::computeHash(const char* data)
+{
+    // This hash is designed to work on 16-bit chunks at a time. But since the normal case
+    // (above) is to hash UTF-16 characters, we just treat the 8-bit chars as if they
+    // were 16-bit chunks, which should give matching results
+
+    unsigned hash = phi;
+    
+    // Main loop
+    for (;;) {
+        unsigned char b0 = data[0];
+        if (!b0)
+            break;
+        unsigned char b1 = data[1];
+        if (!b1) {
+            hash += b0;
+            hash ^= hash << 11;
+            hash += hash >> 17;
+            break;
+        }
+        hash += b0;
+        unsigned tmp = (b1 << 11) ^ hash;
+        hash = (hash << 16) ^ tmp;
+        data += 2;
+        hash += hash >> 11;
+    }
+    
+    // Force "avalanching" of final 127 bits.
+    hash ^= hash << 3;
+    hash += hash >> 5;
+    hash ^= hash << 2;
+    hash += hash >> 15;
+    hash ^= hash << 10;
+
+    // This avoids ever returning a hash code of 0, since that is used to
+    // signal "hash not computed yet", using a value that is likely to be
+    // effectively the same as 0 when the low bits are masked.
+    hash |= !hash << 31;
+    
+    return hash;
+}
 
 }
 

@@ -1,7 +1,6 @@
 // -*- mode: c++; c-basic-offset: 4 -*-
 /*
- *  This file is part of the KDE libraries
- *  Copyright (C) 2005, 2006 Apple Computer, Inc.
+ *  Copyright (C) 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -401,9 +400,10 @@ namespace WTF {
         }
         
         explicit Vector(size_t size) 
-            : m_size(0)
+            : m_size(size)
+            , m_impl(size)
         {
-            resize(size);
+            TypeOperations::initialize(begin(), end());
         }
 
         ~Vector()
@@ -455,7 +455,7 @@ namespace WTF {
         void resize(size_t size);
         void reserveCapacity(size_t newCapacity);
 
-        void clear() { shrink(0); }
+        void clear() { if (m_size) shrink(0); }
 
         template<typename U> void append(const U*, size_t);
         template<typename U> void append(const U&);
@@ -774,10 +774,10 @@ namespace WTF {
     }
 
     template<typename T, size_t inlineCapacity>
-    T* Vector<T, inlineCapacity>::releaseBuffer()
+    inline T* Vector<T, inlineCapacity>::releaseBuffer()
     {
         T* buffer = m_impl.releaseBuffer();
-        if (!buffer && m_size) {
+        if (inlineCapacity && !buffer && m_size) {
             // If the vector had some data, but no buffer to release,
             // that means it was using the inline buffer. In that case,
             // we create a brand new buffer so the caller always gets one.
@@ -785,6 +785,7 @@ namespace WTF {
             buffer = static_cast<T*>(fastMalloc(bytes));
             memcpy(buffer, data(), bytes);
         }
+        ASSERT(buffer);
         m_size = 0;
         return buffer;
     }

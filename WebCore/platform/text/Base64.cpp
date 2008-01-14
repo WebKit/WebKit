@@ -1,7 +1,7 @@
 /*
    Copyright (C) 2000-2001 Dawit Alemayehu <adawit@kde.org>
    Copyright (C) 2006 Alexey Proskuryakov <ap@webkit.org>
-   Copyright (C) 2007 Apple Inc. All rights reserved.
+   Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU Lesser General Public License (LGPL)
@@ -86,7 +86,7 @@ void base64Encode(const Vector<char>& in, Vector<char>& out, bool insertLFs)
         out_len += ((out_len - 1) / 76);
 
     int count = 0;
-    out.resize(out_len);
+    out.grow(out_len);
 
     // 3-byte to 4-byte conversion + 0-63 to ascii printable conversion
     if (len > 1) {
@@ -143,7 +143,7 @@ bool base64Decode(const char* data, unsigned len, Vector<char>& out)
     while (len && data[len-1] == '=')
         --len;
 
-    out.resize(len);
+    out.grow(len);
     for (unsigned idx = 0; idx < len; idx++) {
         unsigned char ch = data[idx];
         if ((ch > 47 && ch < 58) || (ch > 64 && ch < 91) || (ch > 96 && ch < 123) || ch == '+' || ch == '/' || ch == '=')
@@ -176,7 +176,7 @@ bool base64Decode(const char* data, unsigned len, Vector<char>& out)
         out[didx] = (((out[sidx + 1] << 4) & 255) | ((out[sidx + 2] >> 2) & 017));
 
     if (outLen < out.size())
-        out.resize(outLen);
+        out.shrink(outLen);
 
     return true;
 }
