@@ -1,5 +1,9 @@
 2008-01-14  Darin Adler  <darin@apple.com>
 
+        * Scripts/run-webkit-tests: More ignore list tweaking.
+
+2008-01-14  Darin Adler  <darin@apple.com>
+
         * Scripts/run-webkit-tests: Add another leak to the ignore list.
 
 2008-01-14  Dan Bernstein  <mitz@apple.com>
