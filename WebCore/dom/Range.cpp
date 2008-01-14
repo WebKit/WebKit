@@ -979,6 +979,8 @@ PassRefPtr<DocumentFragment> Range::cloneContents( int &ec  )
 
 void Range::insertNode(PassRefPtr<Node> newNode, ExceptionCode& ec)
 {
+    ec = 0;
+
     if (m_detached) {
         ec = INVALID_STATE_ERR;
         return;
@@ -1030,8 +1032,7 @@ void Range::insertNode(PassRefPtr<Node> newNode, ExceptionCode& ec)
                 return;
             }
         }
-    }
-    else {
+    } else {
         if (!checkAgainst->childTypeAllowed(newNode->nodeType())) {
             ec = HIERARCHY_REQUEST_ERR;
             return;
@@ -1046,7 +1047,7 @@ void Range::insertNode(PassRefPtr<Node> newNode, ExceptionCode& ec)
     }
 
     // INVALID_NODE_TYPE_ERR: Raised if newNode is an Attr, Entity, Notation, or Document node.
-    if( newNode->nodeType() == Node::ATTRIBUTE_NODE ||
+    if (newNode->nodeType() == Node::ATTRIBUTE_NODE ||
         newNode->nodeType() == Node::ENTITY_NODE ||
         newNode->nodeType() == Node::NOTATION_NODE ||
         newNode->nodeType() == Node::DOCUMENT_NODE) {
@@ -1054,24 +1055,31 @@ void Range::insertNode(PassRefPtr<Node> newNode, ExceptionCode& ec)
         return;
     }
 
-    unsigned offsetDelta = 0;
-    if (m_startContainer == m_endContainer) {
-        bool isFragment = newNode->nodeType() == Node::DOCUMENT_FRAGMENT_NODE;
-        offsetDelta = isFragment ? newNode->childNodeCount() : 1;
-    }
-    
-    if(m_startContainer->nodeType() == Node::TEXT_NODE ||
-       m_startContainer->nodeType() == Node::CDATA_SECTION_NODE) {
-        ec = 0;
+    unsigned endOffsetDelta = 0;
+    if (m_startContainer->nodeType() == Node::TEXT_NODE ||
+        m_startContainer->nodeType() == Node::CDATA_SECTION_NODE) {
         RefPtr<Text> newText = static_cast<Text*>(m_startContainer.get())->splitText(m_startOffset, ec);
         if (ec)
             return;
+
+        if (m_startContainer == m_endContainer)
+            endOffsetDelta = -m_startOffset;
+
         m_startContainer->parentNode()->insertBefore(newNode, newText.get(), ec);
+        if (ec)
+            return;
+        m_endContainer = newText;
     } else {
+        if (m_startContainer == m_endContainer) {
+            bool isFragment = newNode->nodeType() == Node::DOCUMENT_FRAGMENT_NODE;
+            endOffsetDelta = isFragment ? newNode->childNodeCount() : 1;
+        }
+
         m_startContainer->insertBefore(newNode, m_startContainer->childNode(m_startOffset), ec);
+        if (ec)
+            return;
     }
-    
-    m_endOffset += offsetDelta;
+    m_endOffset += endOffsetDelta;
 }
 
 String Range::toString(ExceptionCode& ec) const

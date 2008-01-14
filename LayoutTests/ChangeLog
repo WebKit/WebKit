@@ -1,3 +1,19 @@
+2008-01-13  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by darin.
+        
+        range-insertNode-separate-endContainer validates proper range behavior
+        and does not change with this patch.
+        range-insertNode-splittext demonstrates the issue fixed by this patch
+        http://bugs.webkit.org/show_bug.cgi?id=16765
+
+        * fast/dom/Range/range-insertNode-separate-endContainer-expected.txt: Added.
+        * fast/dom/Range/range-insertNode-separate-endContainer.html: Added.
+        * fast/dom/Range/range-insertNode-splittext-expected.txt: Added.
+        * fast/dom/Range/range-insertNode-splittext.html: Added.
+        * fast/dom/Range/resources/range-insertNode-separate-endContainer.js: Added.
+        * fast/dom/Range/resources/range-insertNode-splittext.js: Added.
+
 2008-01-13  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Adam Roben.

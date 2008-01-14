@@ -1,3 +1,22 @@
+2008-01-13  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by darin.
+
+        Range.insertNode does not update endContainer endIndex correctly
+        in the case where it had to split a text node.
+        http://bugs.webkit.org/show_bug.cgi?id=16765
+        
+        Darin pointed out during review that we still don't handle the dynamic
+        range case (where the dom tree changes not using range methods)
+        Thus this code will get ripped out when we add that.  The test cases
+        are still valid and useful however, so I'm landing this as-is.
+
+        Tests: fast/dom/Range/range-insertNode-separate-endContainer.html
+               fast/dom/Range/range-insertNode-splittext.html
+
+        * dom/Range.cpp:
+        (WebCore::Range::insertNode): handle the splitText case correctly.
+
 2008-01-13  Darin Adler  <darin@apple.com>
 
         Reviewed by Eric.
