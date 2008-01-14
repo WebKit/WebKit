@@ -372,6 +372,9 @@ fast/dom/Window/window-screen-properties.html
 media/audio-controls-rendering.html
 media/video-controls-rendering.html
 
+# <rdar://5686091> This test crashes, and sometimes freezes buildbot.
+fast/frames/frame-name-reset.html
+
 ################################################################################
 ####################### No bugs filed about the below yet#######################
 ################################################################################
