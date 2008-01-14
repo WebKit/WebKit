@@ -381,6 +381,12 @@ fast/frames/frame-name-reset.html
 # <rdar://5667017>
 storage/execute-sql-args.html
 
+# <rdar://5313536> Intermittently fails
+fast/dom/frame-loading-via-document-write.html
+
+# <rdar://5686522> Intermittently fails
+svg/css/glyph-orientation-rounding-test.xhtml
+
 ################################################################################
 ####################### No bugs filed about the below yet#######################
 ################################################################################
