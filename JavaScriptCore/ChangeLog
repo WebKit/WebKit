@@ -1,3 +1,15 @@
+2008-01-14  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Oliver.
+
+        -<rdar://problem/5622667> REGRESSION (Leopard-ToT): Endless loading loop
+        trying to view techreport.com comments
+        - We need to set values in the map, because if they are already in the
+        map they will not be reset when we use add().
+
+        * kjs/array_instance.cpp:
+        (KJS::ArrayInstance::put):
+
 2008-01-14  Darin Adler  <darin@apple.com>
 
         Reviewed by Adam.

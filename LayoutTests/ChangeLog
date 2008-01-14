@@ -1,3 +1,16 @@
+2008-01-11  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Oliver.
+
+        - <rdar://problem/5622667> REGRESSION (Leopard-ToT): Endless loading
+        loop trying to view techreport.com comments
+        - Any resetting of a value in an array of sufficient size, would cause
+        the second value to be lost.
+
+        * fast/js/array-reset-large-index-expected.txt: Added.
+        * fast/js/array-reset-large-index.html: Added.
+        * fast/js/resources/array-reset-large-index.js: Added.
+
 2008-01-14  Adam Roben  <aroben@apple.com>
 
         * platform/win/Skipped: Fixed a typo pointed out by Alexey.
@@ -8964,7 +8977,7 @@ to skip list since it is still failing on tiger.
 
         - test for http://bugs.webkit.org/show_bug.cgi?id=15181
           text-transform: uppercase not working in input (submit, reset, button) elements
-          <rdar://problem/5474647>
+          rdar://problem/5474647>
 
         * fast/forms/button-text-transform.html: Added.
         * platform/mac/fast/forms/button-text-transform-expected.checksum: Added.

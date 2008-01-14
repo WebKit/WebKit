@@ -249,13 +249,13 @@ void ArrayInstance::put(ExecState* exec, unsigned i, JSValue* value, int attribu
             map = new SparseArrayValueMap;
             storage->m_sparseValueMap = map;
         }
-        map->add(i, value);
+        map->set(i, value);
         return;
     }
 
     unsigned newNumValuesInVector = storage->m_numValuesInVector + 1;
     if (!isDenseEnoughForVector(i + 1, newNumValuesInVector)) {
-        map->add(i, value);
+        map->set(i, value);
         return;
     }
 
