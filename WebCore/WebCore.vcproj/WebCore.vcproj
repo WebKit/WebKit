@@ -3247,90 +3247,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\platform\graphics\Font.cpp"
-				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						AdditionalOptions="$(AnalyzeWithLargeStack)"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						AdditionalOptions="$(AnalyzeWithLargeStack)"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug_Internal|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						AdditionalOptions="$(AnalyzeWithLargeStack)"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\platform\graphics\Font.h"
-				>
-			</File>
-			<File
-				RelativePath="..\platform\graphics\FontCache.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\platform\graphics\FontCache.h"
-				>
-			</File>
-			<File
-				RelativePath="..\platform\graphics\FontDescription.h"
-				>
-			</File>
-			<File
-				RelativePath="..\platform\graphics\FontFallbackList.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\platform\graphics\FontFallbackList.h"
-				>
-			</File>
-			<File
-				RelativePath="..\platform\graphics\FontFamily.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\platform\graphics\FontFamily.h"
-				>
-			</File>
-			<File
-				RelativePath="..\platform\graphics\FontSelector.h"
-				>
-			</File>
-			<File
-				RelativePath="..\platform\graphics\GlyphBuffer.h"
-				>
-			</File>
-			<File
-				RelativePath="..\platform\graphics\GlyphPageTreeNode.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\platform\graphics\GlyphPageTreeNode.h"
-				>
-			</File>
-			<File
-				RelativePath="..\platform\graphics\GlyphWidthMap.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\platform\graphics\GlyphWidthMap.h"
-				>
-			</File>
-			<File
 				RelativePath="..\platform\KURL.cpp"
 				>
 			</File>
@@ -3562,10 +3478,6 @@
 					>
 				</File>
 				<File
-					RelativePath="..\platform\win\GraphicsContextWin.cpp"
-					>
-				</File>
-				<File
 					RelativePath="..\platform\win\KeyEventWin.cpp"
 					>
 				</File>
@@ -3643,14 +3555,6 @@
 				</File>
 				<File
 					RelativePath="..\platform\win\ThreadingWin.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\platform\win\UniscribeController.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\platform\win\UniscribeController.h"
 					>
 				</File>
 				<File
@@ -3797,11 +3701,95 @@
 					>
 				</File>
 				<File
+					RelativePath="..\platform\graphics\Font.cpp"
+					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							AdditionalOptions="$(AnalyzeWithLargeStack)"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							AdditionalOptions="$(AnalyzeWithLargeStack)"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug_Internal|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							AdditionalOptions="$(AnalyzeWithLargeStack)"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\platform\graphics\Font.h"
+					>
+				</File>
+				<File
+					RelativePath="..\platform\graphics\FontCache.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\platform\graphics\FontCache.h"
+					>
+				</File>
+				<File
 					RelativePath="..\platform\graphics\FontData.cpp"
 					>
 				</File>
 				<File
 					RelativePath="..\platform\graphics\FontData.h"
+					>
+				</File>
+				<File
+					RelativePath="..\platform\graphics\FontDescription.h"
+					>
+				</File>
+				<File
+					RelativePath="..\platform\graphics\FontFallbackList.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\platform\graphics\FontFallbackList.h"
+					>
+				</File>
+				<File
+					RelativePath="..\platform\graphics\FontFamily.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\platform\graphics\FontFamily.h"
+					>
+				</File>
+				<File
+					RelativePath="..\platform\graphics\FontSelector.h"
+					>
+				</File>
+				<File
+					RelativePath="..\platform\graphics\GlyphBuffer.h"
+					>
+				</File>
+				<File
+					RelativePath="..\platform\graphics\GlyphPageTreeNode.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\platform\graphics\GlyphPageTreeNode.h"
+					>
+				</File>
+				<File
+					RelativePath="..\platform\graphics\GlyphWidthMap.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\platform\graphics\GlyphWidthMap.h"
 					>
 				</File>
 				<File
@@ -3980,6 +3968,10 @@
 						>
 					</File>
 					<File
+						RelativePath="..\platform\graphics\win\GraphicsContextWin.cpp"
+						>
+					</File>
+					<File
 						RelativePath="..\platform\graphics\win\IconWin.cpp"
 						>
 					</File>
@@ -4009,6 +4001,14 @@
 					</File>
 					<File
 						RelativePath="..\platform\graphics\win\SimpleFontDataWin.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\platform\graphics\win\UniscribeController.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\platform\graphics\win\UniscribeController.h"
 						>
 					</File>
 				</Filter>
@@ -7568,6 +7568,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\bindings\js\JSAudioConstructor.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\bindings\js\JSAudioConstructor.h"
+					>
+				</File>
+				<File
 					RelativePath="..\bindings\js\JSCanvasRenderingContext2DCustom.cpp"
 					>
 				</File>
@@ -7673,14 +7681,6 @@
 				</File>
 				<File
 					RelativePath="..\bindings\js\JSHTMLAppletElementCustom.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\bindings\js\JSAudioConstructor.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\bindings\js\JSAudioConstructor.h"
 					>
 				</File>
 				<File

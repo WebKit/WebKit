@@ -1,3 +1,18 @@
+2008-01-14  Dave Hyatt  <hyatt@apple.com>
+
+        Clean up all the misplaced graphics files after the recent file moves.  Clean up the project to
+        accurately reflect the location of all the graphics files.
+        
+        Reviewed by Adam
+
+        * WebCore.vcproj/WebCore.vcproj:
+        * platform/graphics/win/GraphicsContextWin.cpp: Copied from platform/win/GraphicsContextWin.cpp.
+        * platform/graphics/win/UniscribeController.cpp: Copied from platform/win/UniscribeController.cpp.
+        * platform/graphics/win/UniscribeController.h: Copied from platform/win/UniscribeController.h.
+        * platform/win/GraphicsContextWin.cpp: Removed.
+        * platform/win/UniscribeController.cpp: Removed.
+        * platform/win/UniscribeController.h: Removed.
+
 2008-01-14  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Sam Weinig.
