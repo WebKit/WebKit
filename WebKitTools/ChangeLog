@@ -1,3 +1,15 @@
+2008-01-11  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
+        
+        Fixed the waitUntilDone watchdog timer -- the old code never added the
+        timer to the run loop, so it didn't do anything.
+
+        * DumpRenderTree/mac/LayoutTestControllerMac.mm:
+        (LayoutTestController::setWaitToDump):
+        * DumpRenderTree/win/LayoutTestControllerWin.cpp:
+        (LayoutTestController::setWaitToDump):
+
 2008-01-14  Steve Falkenburg  <sfalken@apple.com>
 
         Use shared vsprops for most vcproj properties.
