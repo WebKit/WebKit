@@ -25,6 +25,9 @@
 
 #import "WebCache.h"
 
+#import "WebPreferences.h"
+#import "WebView.h"
+#import "WebViewInternal.h"
 #import <WebCore/Cache.h>
 
 @implementation WebCache
@@ -63,10 +66,10 @@
 
 + (void)empty
 {
-    if (WebCore::cache()->disabled())
-        return;
-    WebCore::cache()->setDisabled(YES);
-    WebCore::cache()->setDisabled(NO);
+    // Toggling the cache model like this forces the cache to evict all its in-memory resources.
+    WebCacheModel cacheModel = [WebView _cacheModel];
+    [WebView _setCacheModel:WebCacheModelDocumentViewer];
+    [WebView _setCacheModel:cacheModel];
 }
 
 + (void)setDisabled:(BOOL)disabled

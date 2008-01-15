@@ -1,3 +1,18 @@
+2008-01-15  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Andre Boule.
+
+        Fixed <rdar://problem/5667627> [WebCache empty] implementation should
+        not disable/enable the cache
+        
+        Toggle the cache model instead -- toggling disable/enable just causes
+        the cache to forget about resources, not reclaim their memory.
+
+        * Misc/WebCache.mm:
+        (+[WebCache empty]):
+        * WebView/WebView.mm:
+        * WebView/WebViewInternal.h:
+
 2008-01-15  Adele Peterson  <adele@apple.com>
 
         Reviewed by Adam and Antti.

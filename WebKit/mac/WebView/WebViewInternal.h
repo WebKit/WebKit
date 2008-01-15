@@ -28,6 +28,7 @@
 
 // This header contains WebView declarations that can be used anywhere in the Web Kit, but are neither SPI nor API.
 
+#import "WebPreferences.h"
 #import "WebViewPrivate.h"
 #import "WebTypesInternal.h"
 
@@ -67,7 +68,8 @@ typedef WebCore::Page WebCorePage;
 
 @interface WebView (WebViewMiscInternal)
 
-+ (void)_setCacheModelIfNecessary;
++ (void)_setCacheModel:(WebCacheModel)cacheModel;
++ (WebCacheModel)_cacheModel;
 - (WebCorePage*)page;
 - (NSMenu *)_menuForElement:(NSDictionary *)element defaultItems:(NSArray *)items;
 - (id)_UIDelegateForwarder;

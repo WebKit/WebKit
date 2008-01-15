@@ -366,8 +366,6 @@ static int pluginDatabaseClientCount = 0;
 @end
 
 @interface WebView (WebFileInternal)
-+ (void)_setCacheModel:(WebCacheModel)cacheModel;
-+ (WebCacheModel)_cacheModel;
 - (WebFrame *)_selectedOrMainFrame;
 - (WebFrameBridge *)_bridgeForSelectedOrMainFrame;
 - (BOOL)_isLoading;
