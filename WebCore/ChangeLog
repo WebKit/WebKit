@@ -1,3 +1,12 @@
+2008-01-15  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Mark Rowe.
+
+        Some logging channels weren't initialized from user defaults.
+
+        * platform/mac/LoggingMac.mm: (WebCore::InitializeLoggingChannelsIfNecessary):
+        Initialize LogPlatformLeaks, LogStorageAPI, LogMedia, LogPlugin.
+
 2008-01-14  Steve Falkenburg  <sfalken@apple.com>
 
         Use shared vsprops for most vcproj properties.
