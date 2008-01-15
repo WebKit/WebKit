@@ -1,3 +1,16 @@
+2008-01-15  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        <rdar://problem/5342813> REGRESSION: Safari encodes mailto URLs incorrectly
+
+        * fast/encoding/mailto-always-utf-8-expected.txt: Added.
+        * fast/encoding/mailto-always-utf-8.html: Added.
+
+        * fast/forms/mailto/get-non-ascii-always-utf-8-expected.txt: Added.
+        * fast/forms/mailto/get-non-ascii-always-utf-8.html: Added.
+        We didn't have this problem for forms, adding the test to guard against future regressions.
+
 2008-01-15  Adele Peterson  <adele@apple.com>
 
         Reviewed by Adam and Antti.

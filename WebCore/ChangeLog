@@ -1,3 +1,13 @@
+2008-01-15  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        <rdar://problem/5342813> REGRESSION: Safari encodes mailto URLs incorrectly
+
+        Test: fast/encoding/mailto-always-utf-8.html
+
+        * platform/KURL.cpp: (WebCore::encodeRelativeString): Always use UTF-8 for mailto URLs.
+
 2008-01-15  Adele Peterson  <adele@apple.com>
 
         Reviewed by Adam and Antti.

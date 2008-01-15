@@ -1461,7 +1461,7 @@ static char *encodeRelativeString(const KURL &base, const DeprecatedString &rel,
     char *strBuffer;
 
     TextEncoding pathEncoding(UTF8Encoding());
-    TextEncoding otherEncoding = encoding.isValid() ? encoding : UTF8Encoding();
+    TextEncoding otherEncoding = (encoding.isValid() && !rel.startsWith("mailto:", false)) ? encoding : UTF8Encoding();
     
     int pathEnd = -1;
     if (pathEncoding != otherEncoding) {
