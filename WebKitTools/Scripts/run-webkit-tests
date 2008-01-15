@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+f#!/usr/bin/perl
 
 # Copyright (C) 2005, 2006, 2007 Apple Inc. All rights reserved.
 # Copyright (C) 2006 Alexey Proskuryakov (ap@nypop.com)
@@ -1040,6 +1040,8 @@ sub countAndPrintLeaks($$$)
             "_CFHTTPReadStreamReadMark", # leak in CFNetwork, rdar://problem/5441468
             "httpProtocolStart", # leak in CFNetwork, rdar://problem/5468837
             "_CFURLConnectionSendCallbacks", # leak in CFNetwork, rdar://problem/5441600
+            "DispatchQTMsg", # leak in Quicktime, PPC only, <rdar://problem/5667132>
+            "QTMovieContentView createVisualContext", # leak in Quicktime, PPC only, <rdar://problem/5667132>
         );
     }
 
