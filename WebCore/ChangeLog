@@ -1,3 +1,17 @@
+2008-01-14  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by mjs.
+
+        Remove a couple more uses of DeprecatedString
+
+        No functional changes, thus no test case.
+
+        * dom/Document.cpp:
+        (WebCore::Document::write):
+        (WebCore::Document::writeln):
+        (WebCore::Document::recalcStyleSelector):
+        * dom/Document.h:
+
 2008-01-14  Pierre-Luc Beaudoin  <pierre-luc.beaudoin@collabora.co.uk>
 
         Reviewed by Alp Toker.

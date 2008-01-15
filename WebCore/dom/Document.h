@@ -355,7 +355,6 @@ public:
     void cancelParsing();
 
     void write(const String& text);
-    void write(const DeprecatedString &text);
     void writeln(const String& text);
     void finishParsing();
     void clear();
