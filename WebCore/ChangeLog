@@ -1,3 +1,21 @@
+2008-01-14  Finnur Thorarinsson  <finnur.webkit@gmail.com>
+
+        Reviewed by hyatt & eseidel.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=16844
+        RenderText::addLineBoxRects erroneously includes last char for boundingBox
+
+        This patch fixes an issue with addLineBoxRects not correctly calculating the 
+        rects due to an off-by-one error in using box->end(). We were assuming that 
+        end() gives the index past the last character, when in fact it gives the 
+        index _of_ the last character. 
+
+        Eric Seidel and I could not find a way to test this via DRT. This method is 
+        only used by WebKit or Safari for displaying selection rects AFAICT.
+
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::addLineBoxRects):
+
 2008-01-14  Darin Adler  <darin@apple.com>
 
         Reviewed by Geoff.
