@@ -74,6 +74,7 @@ SOFT_LINK_LIBRARY(SafariTheme)
 #endif
 
 SOFT_LINK(SafariTheme, paintThemePart, void, __stdcall, (ThemePart part, CGContextRef context, const CGRect& rect, NSControlSize size, ThemeControlState state), (part, context, rect, size, state))
+SOFT_LINK(SafariTheme, STPaintProgressIndicator, void, APIENTRY, (ProgressIndicatorType type, CGContextRef context, const CGRect& rect, NSControlSize size, ThemeControlState state, float value), (type, context, rect, size, state, value))
 
 ThemeControlState RenderThemeSafari::determineState(RenderObject* o) const
 {
@@ -960,15 +961,19 @@ bool RenderThemeSafari::paintSliderThumb(RenderObject* o, const RenderObject::Pa
 
 const int sliderThumbWidth = 15;
 const int sliderThumbHeight = 15;
+const int mediaSliderThumbWidth = 13;
+const int mediaSliderThumbHeight = 14;
 
 void RenderThemeSafari::adjustSliderThumbSize(RenderObject* o) const
 {
-    if (o->style()->appearance() == SliderThumbHorizontalAppearance || 
-        o->style()->appearance() == SliderThumbVerticalAppearance ||
-        o->style()->appearance() == MediaSliderThumbAppearance) {
+    if (o->style()->appearance() == SliderThumbHorizontalAppearance || o->style()->appearance() == SliderThumbVerticalAppearance) {
         o->style()->setWidth(Length(sliderThumbWidth, Fixed));
         o->style()->setHeight(Length(sliderThumbHeight, Fixed));
+    } else if (o->style()->appearance() == MediaSliderThumbAppearance) {
+        o->style()->setWidth(Length(mediaSliderThumbWidth, Fixed));
+        o->style()->setHeight(Length(mediaSliderThumbHeight, Fixed));
     }
+
 }
 
 bool RenderThemeSafari::paintSearchField(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
@@ -1116,18 +1121,6 @@ bool RenderThemeSafari::paintSearchFieldResultsButton(RenderObject* o, const Ren
     return false;
 }
 #if ENABLE(VIDEO)
-bool RenderThemeSafari::paintMediaBackground(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
-{
-    ASSERT(SafariThemeLibrary());
-
-#if defined(SAFARI_THEME_VERSION) && SAFARI_THEME_VERSION >= 2
-    paintThemePart(MediaBackgroundPart, paintInfo.context->platformContext(), r, NSRegularControlSize, 0);
-#endif
-
-    return false;
-
-}
-
 bool RenderThemeSafari::paintMediaFullscreenButton(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
 {
     ASSERT(SafariThemeLibrary());
@@ -1198,6 +1191,28 @@ bool RenderThemeSafari::paintMediaSeekForwardButton(RenderObject* o, const Rende
     paintThemePart(MediaSeekForwardButtonPart, paintInfo.context->platformContext(), r, NSRegularControlSize, determineState(o));
 #endif
 
+    return false;
+}
+
+bool RenderThemeSafari::paintMediaSliderTrack(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
+{
+    Node* node = o->element();
+    Node* mediaNode = node ? node->shadowAncestorNode() : 0;
+    if (!mediaNode || (!mediaNode->hasTagName(videoTag) && !mediaNode->hasTagName(audioTag)))
+        return false;
+
+    HTMLMediaElement* mediaElement = static_cast<HTMLMediaElement*>(mediaNode);
+    if (!mediaElement)
+        return false;
+
+    float percentLoaded = 0;
+    if (MediaPlayer* player = mediaElement->player())
+        if (player->duration())
+            percentLoaded = player->maxTimeBuffered() / player->duration();
+
+#if defined(SAFARI_THEME_VERSION) && SAFARI_THEME_VERSION >= 2
+    STPaintProgressIndicator(SafariTheme::MediaType, paintInfo.context->platformContext(), r, NSRegularControlSize, 0, percentLoaded);
+#endif
     return false;
 }
 

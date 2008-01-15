@@ -54,6 +54,7 @@ void InitWebCoreSystemInterface(void)
     INIT(DrawMediaPlayButton);
     INIT(DrawMediaSeekBackButton);
     INIT(DrawMediaSeekForwardButton);
+    INIT(DrawMediaSliderTrack);
     INIT(DrawMediaSliderThumb);
     INIT(DrawMediaUnMuteButton);
     INIT(DrawTextFieldCellFocusRing);
@@ -68,7 +69,6 @@ void InitWebCoreSystemInterface(void)
     INIT(GetGlyphVectorFirstRecord);
     INIT(GetGlyphVectorNumGlyphs);
     INIT(GetGlyphVectorRecordSize);
-    INIT(GetMediaControlBackgroundImageData);
     INIT(GetMIMETypeForExtension);
     INIT(GetNSFontATSUFontId);
     INIT(GetNSURLResponseCalculatedExpiration);

@@ -593,7 +593,6 @@ audio {
 }
 
 audio::-webkit-media-controls-panel, video::-webkit-media-controls-panel {
-    -webkit-appearance: media-background;
     position: absolute;
     bottom: 0;
     width: 100%;
@@ -630,7 +629,6 @@ audio::-webkit-media-controls-timeline, video::-webkit-media-controls-timeline {
     left: 32px;
     right: 32px;
     height: 16px;
-    margin: 0px 5px;
 }
 
 audio::-webkit-media-controls-seek-back-button, video::-webkit-media-controls-seek-back-button {

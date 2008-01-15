@@ -164,6 +164,8 @@ void HTMLMediaElement::initAndDispatchProgressEvent(const AtomicString& eventNam
     unsigned loaded = m_player ? m_player->bytesLoaded() : 0;
     unsigned total = m_player ? m_player->totalBytes() : 0;
     dispatchProgressEvent(eventName, totalKnown, loaded, total);
+    if (renderer())
+        renderer()->updateFromElement();
 }
 
 void HTMLMediaElement::dispatchEventAsync(const AtomicString& eventName)

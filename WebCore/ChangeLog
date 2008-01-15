@@ -1,3 +1,30 @@
+2008-01-15  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Adam and Antti.
+
+        WebCore part of fix for <rdar://problem/5619062> Add load progress indicator to video controls
+
+        * WebCore.base.exp: Removed symbol for wkGetMediaControlBackgroundImageData.  Added symbol for wkDrawMediaSliderTrack.
+        * css/CSSPrimitiveValueMappings.h: (WebCore::CSSPrimitiveValue::CSSPrimitiveValue): Removed case for MediaBackgroundAppearance.
+        * css/html4.css: Removed -webkit-appearance: media-background rule for the media panel element.  Removed unnecessary margin for slider.
+        * rendering/RenderStyle.h: (WebCore::): Removed MediaBackgroundAppearance.
+
+        * html/HTMLMediaElement.cpp: (WebCore::HTMLMediaElement::initAndDispatchProgressEvent):
+          Call updateMediaPlayer more frequently so the load progress control gets updated appropriately.
+        * platform/mac/WebCoreSystemInterface.h: Removed wkGetMediaControlBackgroundImageData.  Added wkDrawMediaSliderTrack.
+        * platform/mac/WebCoreSystemInterface.mm: ditto.
+
+        * rendering/RenderTheme.h: Removed paintMediaBackground. Added paintMediaSliderTrack.
+        * rendering/RenderTheme.cpp: (WebCore::RenderTheme::paint): Call paintMediaSliderTrack for elements with MediaSliderAppearance.
+        * rendering/RenderThemeMac.h: Removed paintMediaBackground. Added paintMediaSliderTrack.
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::adjustSliderThumbSize): Added different sizes for the media slider thumb.
+        (WebCore::RenderThemeMac::paintMediaSliderTrack): Added.  Calls wkDrawMediaSliderTrack with the percentage the media has loaded.
+        * rendering/RenderThemeSafari.cpp: ditto.
+        (WebCore::RenderThemeSafari::adjustSliderThumbSize):
+        (WebCore::RenderThemeSafari::paintMediaSliderTrack):
+        * rendering/RenderThemeSafari.h:
+
 2008-01-15  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Mark Rowe.

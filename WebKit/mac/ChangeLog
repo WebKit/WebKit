@@ -1,3 +1,12 @@
+2008-01-15  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Adam and Antti.
+
+        WebKit part of fix for <rdar://problem/5619062> Add load progress indicator to video controls
+
+        * WebCoreSupport/WebSystemInterface.m: (InitWebCoreSystemInterface):
+          Removed initialization for GetMediaControlBackgroundImageData.  Added initialization for DrawMediaSliderTrack.
+
 2008-01-10  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by John Sullivan.

@@ -1,3 +1,19 @@
+2008-01-15  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Adam and Antti.
+
+        Updated tests for <rdar://problem/5619062> Add load progress indicator to video controls
+
+        * platform/mac/media/audio-controls-rendering-expected.checksum:
+        * platform/mac/media/audio-controls-rendering-expected.png:
+        * platform/mac/media/audio-controls-rendering-expected.txt:
+        * platform/mac/media/video-controls-rendering-expected.checksum:
+        * platform/mac/media/video-controls-rendering-expected.png:
+        * platform/mac/media/video-controls-rendering-expected.txt:
+        * platform/mac/media/video-display-toggle-expected.checksum:
+        * platform/mac/media/video-display-toggle-expected.png:
+        * platform/mac/media/video-display-toggle-expected.txt:
+
 2008-01-14  Stephanie  <slewis@apple.com>
 
         RS=Oliver

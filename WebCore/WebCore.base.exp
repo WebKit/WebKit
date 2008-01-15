@@ -733,6 +733,7 @@ _wkDrawMediaPlayButton
 _wkDrawMediaSeekBackButton
 _wkDrawMediaSeekForwardButton
 _wkDrawMediaSliderThumb
+_wkDrawMediaSliderTrack
 _wkDrawMediaUnMuteButton
 _wkDrawTextFieldCellFocusRing
 _wkFontSmoothingModeIsLCD
@@ -747,7 +748,6 @@ _wkGetGlyphVectorFirstRecord
 _wkGetGlyphVectorNumGlyphs
 _wkGetGlyphVectorRecordSize
 _wkGetMIMETypeForExtension
-_wkGetMediaControlBackgroundImageData
 _wkGetNSFontATSUFontId
 _wkGetNSURLResponseCalculatedExpiration
 _wkGetNSURLResponseLastModifiedDate

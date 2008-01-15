@@ -103,13 +103,13 @@ extern BOOL (*wkGetGlyphTransformedAdvances)(CGFontRef, NSFont*, CGAffineTransfo
 extern ATSLayoutRecord* (*wkGetGlyphVectorFirstRecord)(void* glyphVector);
 extern int (*wkGetGlyphVectorNumGlyphs)(void* glyphVector);
 extern size_t (*wkGetGlyphVectorRecordSize)(void* glyphVector);
-extern NSData* (*wkGetMediaControlBackgroundImageData)(void);
 extern void (*wkDrawMediaFullscreenButton)(CGContextRef context, CGRect rect, BOOL active);
 extern void (*wkDrawMediaMuteButton)(CGContextRef context, CGRect rect, BOOL active);
 extern void (*wkDrawMediaPauseButton)(CGContextRef context, CGRect rect, BOOL active);
 extern void (*wkDrawMediaPlayButton)(CGContextRef context, CGRect rect, BOOL active);
 extern void (*wkDrawMediaSeekBackButton)(CGContextRef context, CGRect rect, BOOL active);
 extern void (*wkDrawMediaSeekForwardButton)(CGContextRef context, CGRect rect, BOOL active);
+extern void (*wkDrawMediaSliderTrack)(CGContextRef context, CGRect rect, float percentLoaded);
 extern void (*wkDrawMediaSliderThumb)(CGContextRef context, CGRect rect, BOOL active);
 extern void (*wkDrawMediaUnMuteButton)(CGContextRef context, CGRect rect, BOOL active);
 extern NSString* (*wkGetPreferredExtensionForMIMEType)(NSString*);

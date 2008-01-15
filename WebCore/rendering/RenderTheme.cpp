@@ -122,7 +122,6 @@ bool RenderTheme::paint(RenderObject* o, const RenderObject::PaintInfo& paintInf
             return paintMenuList(o, paintInfo, r);
         case SliderHorizontalAppearance:
         case SliderVerticalAppearance:
-        case MediaSliderAppearance:
             return paintSliderTrack(o, paintInfo, r);
         case SliderThumbHorizontalAppearance:
         case SliderThumbVerticalAppearance:
@@ -130,8 +129,6 @@ bool RenderTheme::paint(RenderObject* o, const RenderObject::PaintInfo& paintInf
                 return paintSliderThumb(o, paintInfo, r);
             // We don't support drawing a slider thumb without a parent slider
             break;
-        case MediaBackgroundAppearance:
-            return paintMediaBackground(o, paintInfo, r);
         case MediaFullscreenButtonAppearance:
             return paintMediaFullscreenButton(o, paintInfo, r);
         case MediaPlayButtonAppearance:
@@ -142,6 +139,8 @@ bool RenderTheme::paint(RenderObject* o, const RenderObject::PaintInfo& paintInf
             return paintMediaSeekBackButton(o, paintInfo, r);
         case MediaSeekForwardButtonAppearance:
             return paintMediaSeekForwardButton(o, paintInfo, r);
+        case MediaSliderAppearance:
+            return paintMediaSliderTrack(o, paintInfo, r);
         case MediaSliderThumbAppearance:
             if (o->parent()->isSlider())
                 return paintMediaSliderThumb(o, paintInfo, r);

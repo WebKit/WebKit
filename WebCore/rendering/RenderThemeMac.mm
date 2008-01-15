@@ -1297,14 +1297,17 @@ bool RenderThemeMac::paintSliderThumb(RenderObject* o, const RenderObject::Paint
 
 const int sliderThumbWidth = 15;
 const int sliderThumbHeight = 15;
+const int mediaSliderThumbWidth = 13;
+const int mediaSliderThumbHeight = 14;
 
 void RenderThemeMac::adjustSliderThumbSize(RenderObject* o) const
 {
-    if (o->style()->appearance() == SliderThumbHorizontalAppearance || 
-        o->style()->appearance() == SliderThumbVerticalAppearance ||
-        o->style()->appearance() == MediaSliderThumbAppearance) {
+    if (o->style()->appearance() == SliderThumbHorizontalAppearance || o->style()->appearance() == SliderThumbVerticalAppearance) {
         o->style()->setWidth(Length(sliderThumbWidth, Fixed));
         o->style()->setHeight(Length(sliderThumbHeight, Fixed));
+    } else if (o->style()->appearance() == MediaSliderThumbAppearance) {
+        o->style()->setWidth(Length(mediaSliderThumbWidth, Fixed));
+        o->style()->setHeight(Length(mediaSliderThumbHeight, Fixed));
     }
 }
 
@@ -1487,21 +1490,6 @@ bool RenderThemeMac::paintSearchFieldResultsButton(RenderObject* o, const Render
     return false;
 }
 
-bool RenderThemeMac::paintMediaBackground(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
-{
-    if (!m_mediaControlBackgroundImage) {
-        m_mediaControlBackgroundImage = new BitmapImage;
-        m_mediaControlBackgroundImage->setData(SharedBuffer::wrapNSData(wkGetMediaControlBackgroundImageData()), true);
-    }
-    
-    LocalCurrentGraphicsContext localContext(paintInfo.context);
-    paintInfo.context->drawTiledImage(m_mediaControlBackgroundImage, r,
-                                        IntRect(0, 0, m_mediaControlBackgroundImage->width(), m_mediaControlBackgroundImage->height()),
-                                        Image::RepeatTile, Image::StretchTile);
-    
-    return false;
-}
-
 bool RenderThemeMac::paintMediaFullscreenButton(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
 {
     Node* node = o->element();
@@ -1570,6 +1558,26 @@ bool RenderThemeMac::paintMediaSeekForwardButton(RenderObject* o, const RenderOb
 
     LocalCurrentGraphicsContext localContext(paintInfo.context);
     wkDrawMediaSeekForwardButton(paintInfo.context->platformContext(), r, node->active());
+    return false;
+}
+
+bool RenderThemeMac::paintMediaSliderTrack(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
+{
+    Node* node = o->element();
+    Node* mediaNode = node ? node->shadowAncestorNode() : 0;
+    if (!mediaNode || (!mediaNode->hasTagName(videoTag) && !mediaNode->hasTagName(audioTag)))
+        return false;
+
+    HTMLMediaElement* mediaElement = static_cast<HTMLMediaElement*>(mediaNode);
+    if (!mediaElement)
+        return false;
+
+    float percentLoaded = 0;
+    if (MediaPlayer* player = mediaElement->player())
+        if (player->duration())
+            percentLoaded = player->maxTimeBuffered() / player->duration();
+
+    wkDrawMediaSliderTrack(paintInfo.context->platformContext(), r, percentLoaded);
     return false;
 }
 

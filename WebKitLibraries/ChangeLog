@@ -1,3 +1,15 @@
+2008-01-15  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Adam and Antti.
+
+        Updated libraries for <rdar://problem/5619062> Add load progress indicator to video controls
+
+        * WebKitSystemInterface.h:
+        * libWebKitSystemInterfaceLeopard.a:
+        * libWebKitSystemInterfaceTiger.a:
+        * win/include/SafariTheme: Added.
+        * win/include/SafariTheme/SafariThemeConstants.h: Added. Placeholder empty header until we release an updated WebKitSupportLibrary.
+
 2008-01-14  Steve Falkenburg  <sfalken@apple.com>
 
         Use shared vsprops for most vcproj properties.

@@ -191,9 +191,6 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EAppearance e)
         case ListItemAppearance:
             m_value.ident = CSS_VAL_LISTITEM;
             break;
-        case MediaBackgroundAppearance:
-            m_value.ident = CSS_VAL_MEDIA_BACKGROUND;
-            break;
         case MediaFullscreenButtonAppearance:
             m_value.ident = CSS_VAL_MEDIA_FULLSCREEN_BUTTON;
             break;
