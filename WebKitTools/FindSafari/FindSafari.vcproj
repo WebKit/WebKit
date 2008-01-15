@@ -16,9 +16,8 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="$(WebKitOutputDir)\bin"
-			IntermediateDirectory="$(WebKitOutputDir)\obj\$(ProjectName)\$(ConfigurationName)"
 			ConfigurationType="1"
+			InheritedPropertySheets="$(WebKitLibrariesDir)\tools\vsprops\common.vsprops;$(WebKitLibrariesDir)\tools\vsprops\debug.vsprops;$(WebKitLibrariesDir)\tools\vsprops\debug_internal.vsprops"
 			CharacterSet="1"
 			>
 			<Tool
@@ -38,13 +37,6 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				Optimization="0"
-				MinimalRebuild="true"
-				BasicRuntimeChecks="3"
-				RuntimeLibrary="3"
-				WarningLevel="3"
-				Detect64BitPortabilityProblems="true"
-				DebugInformationFormat="4"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -58,8 +50,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="shlwapi.lib advapi32.lib ole32.lib"
-				GenerateDebugInformation="true"
-				TargetMachine="1"
+				SubSystem="1"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -88,9 +79,8 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="$(WebKitOutputDir)\bin"
-			IntermediateDirectory="$(WebKitOutputDir)\obj\$(ProjectName)\$(ConfigurationName)"
 			ConfigurationType="1"
+			InheritedPropertySheets="$(WebKitLibrariesDir)\tools\vsprops\release.vsprops;$(WebKitLibrariesDir)\tools\vsprops\common.vsprops"
 			CharacterSet="1"
 			WholeProgramOptimization="1"
 			>
@@ -111,10 +101,6 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				RuntimeLibrary="2"
-				WarningLevel="3"
-				Detect64BitPortabilityProblems="true"
-				DebugInformationFormat="3"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -128,10 +114,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="shlwapi.lib advapi32.lib ole32.lib"
-				GenerateDebugInformation="true"
-				OptimizeReferences="2"
-				EnableCOMDATFolding="2"
-				TargetMachine="1"
+				SubSystem="1"
 			/>
 			<Tool
 				Name="VCALinkTool"

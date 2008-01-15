@@ -18,7 +18,6 @@
 		<Configuration
 			Name="Debug|Win32"
 			OutputDirectory="$(WebKitOutputDir)\lib"
-			IntermediateDirectory="$(WebKitOutputDir)\obj\WebKit\$(ConfigurationName)\$(ProjectName)"
 			ConfigurationType="4"
 			InheritedPropertySheets="$(WebKitLibrariesDir)\tools\vsprops\common.vsprops;$(WebKitLibrariesDir)\tools\vsprops\debug.vsprops"
 			CharacterSet="1"
@@ -43,19 +42,8 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				Optimization="0"
 				AdditionalIncludeDirectories="$(WebKitOutputDir)\$(ConfigurationName)\WebKit"
-				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;WEBKITGUID_EXPORTS;_WIN32_WINNT=0x500"
-				MinimalRebuild="true"
-				ExceptionHandling="0"
-				BasicRuntimeChecks="3"
-				RuntimeLibrary="3"
-				RuntimeTypeInfo="false"
-				UsePrecompiledHeader="0"
-				WarningLevel="4"
-				WarnAsError="true"
-				Detect64BitPortabilityProblems="true"
-				DebugInformationFormat="3"
+				PreprocessorDefinitions="_USRDLL;WEBKITGUID_EXPORTS"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -68,7 +56,6 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="$(OutDir)\$(ProjectName)$(WebKitConfigSuffix).lib"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -90,7 +77,6 @@
 		<Configuration
 			Name="Release|Win32"
 			OutputDirectory="$(WebKitOutputDir)\lib"
-			IntermediateDirectory="$(WebKitOutputDir)\obj\WebKit\$(ConfigurationName)\$(ProjectName)"
 			ConfigurationType="4"
 			InheritedPropertySheets="$(WebKitLibrariesDir)\tools\vsprops\common.vsprops;$(WebKitLibrariesDir)\tools\vsprops\release.vsprops"
 			CharacterSet="1"
@@ -117,15 +103,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalIncludeDirectories="$(WebKitOutputDir)\$(ConfigurationName)\WebKit"
-				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;WEBKITGUID_EXPORTS;_WIN32_WINNT=0x500"
-				ExceptionHandling="0"
-				RuntimeLibrary="2"
-				RuntimeTypeInfo="false"
-				UsePrecompiledHeader="0"
-				WarningLevel="4"
-				WarnAsError="true"
-				Detect64BitPortabilityProblems="true"
-				DebugInformationFormat="3"
+				PreprocessorDefinitions="_USRDLL;WEBKITGUID_EXPORTS"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -138,7 +116,65 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="$(OutDir)\$(ProjectName)$(WebKitConfigSuffix).lib"
+			/>
+			<Tool
+				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCPostBuildEventTool"
+				CommandLine=""
+			/>
+		</Configuration>
+		<Configuration
+			Name="Debug_Internal|Win32"
+			OutputDirectory="$(WebKitOutputDir)\lib"
+			ConfigurationType="4"
+			InheritedPropertySheets="$(WebKitLibrariesDir)\tools\vsprops\common.vsprops;$(WebKitLibrariesDir)\tools\vsprops\debug.vsprops;$(WebKitLibrariesDir)\tools\vsprops\debug_internal.vsprops"
+			CharacterSet="1"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+				AdditionalIncludeDirectories="Interfaces"
+				OutputDirectory="Debug"
+				HeaderFileName="$(InputName).h"
+			/>
+			<Tool
+				Name="VCCLCompilerTool"
+				AdditionalIncludeDirectories="$(WebKitOutputDir)\$(ConfigurationName)\WebKit"
+				PreprocessorDefinitions="_USRDLL;WEBKITGUID_EXPORTS"
+			/>
+			<Tool
+				Name="VCManagedResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
+			<Tool
+				Name="VCLibrarianTool"
 			/>
 			<Tool
 				Name="VCALinkTool"

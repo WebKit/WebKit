@@ -18,11 +18,9 @@
 		<Configuration
 			Name="Debug|Win32"
 			OutputDirectory="$(WebKitOutputDir)\lib"
-			IntermediateDirectory="$(WebKitOutputDir)\obj\$(ProjectName)\$(ConfigurationName)"
 			ConfigurationType="4"
-			InheritedPropertySheets="$(WebKitLibrariesDir)\tools\vsprops\common.vsprops;$(WebKitLibrariesDir)\tools\vsprops\debug.vsprops"
+			InheritedPropertySheets="$(WebKitLibrariesDir)\tools\vsprops\debug.vsprops;$(WebKitLibrariesDir)\tools\vsprops\common.vsprops"
 			CharacterSet="1"
-			DeleteExtensionsOnClean="*.obj;*.ilk;*.tlb;*.tli;*.tlh;*.tmp;*.rsp;*.pgc;*.pgd;$(TargetPath)"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -44,20 +42,8 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				Optimization="0"
 				AdditionalIncludeDirectories="&quot;$(WebKitOutputDir)\obj\JavaScriptCore\DerivedSources\&quot;;../../;&quot;../../os-win32/&quot;;../../pcre/;../../kjs/;../../wtf/;&quot;$(WebKitLibrariesDir)\include&quot;;&quot;$(WebKitLibrariesDir)\include\icu&quot;;../../../icu/include;../../bindings;../../bindings/c;../../bindings/jni;&quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;;&quot;$(WebKitLibrariesDir)\include\pthreads&quot;;&quot;$(WebKitLibrariesDir)\Include\CoreFoundation\OSXCompatibilityHeaders&quot;"
-				PreprocessorDefinitions="HAVE_CONFIG_H;WIN32;__STD_C;_SCL_SECURE_NO_DEPRECATE;_CRT_SECURE_NO_DEPRECATE"
-				MinimalRebuild="true"
-				ExceptionHandling="0"
-				BasicRuntimeChecks="3"
-				RuntimeLibrary="3"
-				RuntimeTypeInfo="false"
-				UsePrecompiledHeader="0"
-				WarningLevel="4"
-				WarnAsError="true"
-				Detect64BitPortabilityProblems="false"
-				DebugInformationFormat="3"
-				DisableSpecificWarnings="4018;4127;4355;4389;4510;4512;4610;4706;4800;4996"
+				PreprocessorDefinitions="HAVE_CONFIG_H;__STD_C"
 				ForcedIncludeFiles=""
 			/>
 			<Tool
@@ -72,7 +58,6 @@
 			<Tool
 				Name="VCLibrarianTool"
 				AdditionalDependencies="winmm.lib"
-				OutputFile="$(OutDir)\$(ProjectName)$(WebKitConfigSuffix).lib"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -94,11 +79,9 @@
 		<Configuration
 			Name="Release|Win32"
 			OutputDirectory="$(WebKitOutputDir)\lib"
-			IntermediateDirectory="$(WebKitOutputDir)\obj\$(ProjectName)\$(ConfigurationName)"
 			ConfigurationType="4"
 			InheritedPropertySheets="$(WebKitLibrariesDir)\tools\vsprops\common.vsprops;$(WebKitLibrariesDir)\tools\vsprops\release.vsprops"
 			CharacterSet="1"
-			DeleteExtensionsOnClean="*.obj;*.ilk;*.tlb;*.tli;*.tlh;*.tmp;*.rsp;*.pgc;*.pgd;$(TargetPath)"
 			WholeProgramOptimization="1"
 			>
 			<Tool
@@ -122,16 +105,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalIncludeDirectories="&quot;$(WebKitOutputDir)\obj\JavaScriptCore\DerivedSources\&quot;;../../;&quot;../../os-win32/&quot;;../../pcre/;../../kjs/;../../wtf/;&quot;$(WebKitLibrariesDir)\include&quot;;&quot;$(WebKitLibrariesDir)\include\icu&quot;;../../../icu/include;../../bindings;../../bindings/c;../../bindings/jni;&quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;;&quot;$(WebKitLibrariesDir)\include\pthreads&quot;;&quot;$(WebKitLibrariesDir)\Include\CoreFoundation\OSXCompatibilityHeaders&quot;"
-				PreprocessorDefinitions="HAVE_CONFIG_H;WIN32;__STD_C;NDEBUG;_SCL_SECURE_NO_DEPRECATE;_CRT_SECURE_NO_DEPRECATE"
-				ExceptionHandling="0"
-				RuntimeLibrary="2"
-				RuntimeTypeInfo="false"
-				UsePrecompiledHeader="0"
-				WarningLevel="4"
-				WarnAsError="true"
-				Detect64BitPortabilityProblems="false"
-				DebugInformationFormat="3"
-				DisableSpecificWarnings="4018;4127;4355;4389;4510;4512;4610;4706;4800;4996"
+				PreprocessorDefinitions="HAVE_CONFIG_H;__STD_C"
 				ForcedIncludeFiles=""
 			/>
 			<Tool
@@ -146,7 +120,67 @@
 			<Tool
 				Name="VCLibrarianTool"
 				AdditionalDependencies="winmm.lib"
-				OutputFile="$(OutDir)\$(ProjectName)$(WebKitConfigSuffix).lib"
+			/>
+			<Tool
+				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCPostBuildEventTool"
+				CommandLine="mkdir 2&gt;NUL &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\wtf\*.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\wtf\unicode\*.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\wtf\unicode\icu\*.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\os-win32\*.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\kjs\*.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\kjs\create_hash_table&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\pcre\pcre.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\bindings\npruntime.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\bindings\npapi.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\bindings\npruntime_internal.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\bindings\npruntime_impl.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\bindings\NP_jsobject.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\bindings\runtime_object.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\bindings\runtime_root.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\bindings\runtime.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;"
+			/>
+		</Configuration>
+		<Configuration
+			Name="Debug_Internal|Win32"
+			OutputDirectory="$(WebKitOutputDir)\lib"
+			ConfigurationType="4"
+			InheritedPropertySheets="$(WebKitLibrariesDir)\tools\vsprops\common.vsprops;$(WebKitLibrariesDir)\tools\vsprops\debug.vsprops;$(WebKitLibrariesDir)\tools\vsprops\debug_internal.vsprops"
+			CharacterSet="1"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+				CommandLine=""
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+				Description=""
+				CommandLine=""
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+			/>
+			<Tool
+				Name="VCCLCompilerTool"
+				AdditionalIncludeDirectories="&quot;$(WebKitOutputDir)\obj\JavaScriptCore\DerivedSources\&quot;;../../;&quot;../../os-win32/&quot;;../../pcre/;../../kjs/;../../wtf/;&quot;$(WebKitLibrariesDir)\include&quot;;&quot;$(WebKitLibrariesDir)\include\icu&quot;;../../../icu/include;../../bindings;../../bindings/c;../../bindings/jni;&quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;;&quot;$(WebKitLibrariesDir)\include\pthreads&quot;;&quot;$(WebKitLibrariesDir)\Include\CoreFoundation\OSXCompatibilityHeaders&quot;"
+				PreprocessorDefinitions="HAVE_CONFIG_H;__STD_C"
+				ForcedIncludeFiles=""
+			/>
+			<Tool
+				Name="VCManagedResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
+			<Tool
+				Name="VCLibrarianTool"
+				AdditionalDependencies="winmm.lib"
 			/>
 			<Tool
 				Name="VCALinkTool"

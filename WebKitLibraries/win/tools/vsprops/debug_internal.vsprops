@@ -4,21 +4,22 @@
 	Version="8.00"
 	Name="debug_internal"
 	>
-  <Tool
+	<Tool
 		Name="VCCLCompilerTool"
 		PreprocessorDefinitions="USE_DEBUG_SAFARI_THEME"
+		RuntimeLibrary="3"
 	/>
-  <UserMacro
+	<UserMacro
 		Name="WebKitConfigSuffix"
 		Value="_debug"
 		PerformEnvironmentSet="true"
 	/>
-  <UserMacro
+	<UserMacro
 		Name="LibraryConfigSuffix"
 		Value="_debug"
 		PerformEnvironmentSet="true"
 	/>
-  <UserMacro
+	<UserMacro
 		Name="WebKitDLLConfigSuffix"
 		Value="_debug"
 	/>

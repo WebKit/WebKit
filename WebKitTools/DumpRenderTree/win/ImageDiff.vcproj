@@ -16,9 +16,8 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="$(WebKitOutputDir)\bin"
-			IntermediateDirectory="$(WebKitOutputDir)\obj\$(ProjectName)\$(ConfigurationName)"
 			ConfigurationType="1"
+			InheritedPropertySheets="$(WebKitLibrariesDir)\tools\vsprops\common.vsprops;$(WebKitLibrariesDir)\tools\vsprops\debug.vsprops"
 			CharacterSet="2"
 			>
 			<Tool
@@ -38,16 +37,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				Optimization="0"
 				AdditionalIncludeDirectories="&quot;$(WebKitOutputDir)\include&quot;;&quot;$(WebKitOutputDir)\include\WebCore\ForwardingHeaders&quot;;&quot;$(WebKitLibrariesDir)\include&quot;"
-				PreprocessorDefinitions="_CRT_SECURE_NO_WARNINGS"
-				MinimalRebuild="true"
-				BasicRuntimeChecks="3"
-				RuntimeLibrary="3"
-				WarningLevel="4"
-				WarnAsError="true"
-				Detect64BitPortabilityProblems="true"
-				DebugInformationFormat="4"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -60,11 +50,9 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				LinkLibraryDependencies="false"
-				AdditionalDependencies="CoreGraphics.lib CoreFoundation.lib"
-				AdditionalLibraryDirectories="$(WebKitOutputDir)\lib;$(WebKitLibrariesDir)\lib"
-				GenerateDebugInformation="true"
-				TargetMachine="1"
+				AdditionalDependencies="CoreGraphics$(LibraryConfigSuffix).lib CoreFoundation$(LibraryConfigSuffix).lib"
+				AdditionalLibraryDirectories=""
+				SubSystem="1"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -93,9 +81,8 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="$(WebKitOutputDir)\bin"
-			IntermediateDirectory="$(WebKitOutputDir)\obj\$(ProjectName)\$(ConfigurationName)"
 			ConfigurationType="1"
+			InheritedPropertySheets="$(WebKitLibrariesDir)\tools\vsprops\release.vsprops;$(WebKitLibrariesDir)\tools\vsprops\common.vsprops"
 			CharacterSet="2"
 			WholeProgramOptimization="1"
 			>
@@ -117,12 +104,6 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalIncludeDirectories="&quot;$(WebKitOutputDir)\include&quot;;&quot;$(WebKitOutputDir)\include\WebCore\ForwardingHeaders&quot;;&quot;$(WebKitLibrariesDir)\include&quot;"
-				PreprocessorDefinitions="_CRT_SECURE_NO_WARNINGS"
-				RuntimeLibrary="2"
-				WarningLevel="4"
-				WarnAsError="true"
-				Detect64BitPortabilityProblems="true"
-				DebugInformationFormat="3"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -135,13 +116,9 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				LinkLibraryDependencies="false"
-				AdditionalDependencies="CoreGraphics.lib CoreFoundation.lib"
-				AdditionalLibraryDirectories="$(WebKitOutputDir)\lib;$(WebKitLibrariesDir)\lib"
-				GenerateDebugInformation="true"
-				OptimizeReferences="2"
-				EnableCOMDATFolding="2"
-				TargetMachine="1"
+				AdditionalDependencies="CoreGraphics$(LibraryConfigSuffix).lib CoreFoundation$(LibraryConfigSuffix).lib"
+				AdditionalLibraryDirectories=""
+				SubSystem="1"
 			/>
 			<Tool
 				Name="VCALinkTool"

@@ -1,3 +1,13 @@
+2008-01-14  Steve Falkenburg  <sfalken@apple.com>
+
+        Use shared vsprops for most vcproj properties.
+        
+        Reviewed by Darin.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj: Add missing Debug_Internal config.
+        * JavaScriptCore.vcproj/WTF/WTF.vcproj: Add missing Debug_Internal config.
+        * JavaScriptCore.vcproj/testkjs/testkjs.vcproj:
+
 2008-01-14  Adam Roben  <aroben@apple.com>
 
         * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj: Added

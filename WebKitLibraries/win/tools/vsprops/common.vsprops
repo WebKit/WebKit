@@ -3,5 +3,42 @@
 	ProjectType="Visual C++"
 	Version="8.00"
 	Name="common"
+	OutputDirectory="$(WebKitOutputDir)\bin"
+	IntermediateDirectory="$(WebKitOutputDir)\obj\$(ProjectName)\$(ConfigurationName)"
 	>
+	<Tool
+		Name="VCCLCompilerTool"
+		PreprocessorDefinitions="WIN32;_WINDOWS;_WIN32_WINNT=0x500;_CRT_SECURE_NO_DEPRECATE;_SCL_SECURE_NO_DEPRECATE;__PRODUCTION__=0$(PRODUCTION);_HAS_EXCEPTIONS=0"
+		ExceptionHandling="0"
+		RuntimeTypeInfo="false"
+		WarningLevel="4"
+		WarnAsError="true"
+		DebugInformationFormat="3"
+		DisableSpecificWarnings="4018;4068;4099;4100;4127;4138;4189;4244;4275;4291;4355;4389;4510;4512;4610;4706;4800;4996;6011;6031;6211;6246;6255;6387"
+	/>
+	<Tool
+		Name="VCLibrarianTool"
+		OutputFile="$(OutDir)\$(ProjectName)$(WebKitConfigSuffix).lib"
+	/>
+	<Tool
+		Name="VCLinkerTool"
+		LinkLibraryDependencies="false"
+		OutputFile="$(OutDir)\$(ProjectName)$(WebKitConfigSuffix).exe"
+		AdditionalLibraryDirectories="&quot;$(WebKitOutputDir)\lib&quot;;&quot;$(WebKitLibrariesDir)\lib&quot;"
+		GenerateDebugInformation="true"
+		SubSystem="2"
+		ImportLibrary="$(WebKitOutputDir)\lib\$(TargetName).lib"
+		TargetMachine="1"
+	/>
+	<Tool
+		Name="VCMIDLTool"
+		PreprocessorDefinitions="__PRODUCTION__=0$(PRODUCTION)"
+		WarnAsError="true"
+		HeaderFileName="$(OutDir)\$(InputName).h"
+	/>
+	<Tool
+		Name="VCResourceCompilerTool"
+		Culture="1033"
+		AdditionalIncludeDirectories="&quot;$(IntDir)\include&quot;"
+	/>
 </VisualStudioPropertySheet>

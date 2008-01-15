@@ -1,3 +1,14 @@
+2008-01-14  Steve Falkenburg  <sfalken@apple.com>
+
+        Use shared vsprops for most vcproj properties.
+        
+        Reviewed by Darin.
+
+        * win/tools/vsprops/common.vsprops:
+        * win/tools/vsprops/debug.vsprops:
+        * win/tools/vsprops/debug_internal.vsprops:
+        * win/tools/vsprops/release.vsprops:
+
 2008-01-11  Steve Falkenburg  <sfalken@apple.com>
 
         Share common files across projects.

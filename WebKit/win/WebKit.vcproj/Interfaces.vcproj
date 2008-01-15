@@ -18,7 +18,6 @@
 		<Configuration
 			Name="Debug|Win32"
 			OutputDirectory="$(WebKitOutputDir)\include\WebKit"
-			IntermediateDirectory="$(WebKitOutputDir)\obj\WebKit\$(ConfigurationName)\$(ProjectName)"
 			ConfigurationType="4"
 			InheritedPropertySheets="$(WebKitLibrariesDir)\tools\vsprops\common.vsprops;$(WebKitLibrariesDir)\tools\vsprops\debug.vsprops"
 			CharacterSet="1"
@@ -38,14 +37,10 @@
 			/>
 			<Tool
 				Name="VCMIDLTool"
-				PreprocessorDefinitions="__PRODUCTION__=0$(PRODUCTION)"
 				AdditionalIncludeDirectories="&quot;$(WebKitOutputDir)\obj\WebKit\DerivedSources&quot;;..\Interfaces"
-				WarningLevel="1"
-				WarnAsError="true"
 				GenerateTypeLibrary="false"
 				TypeLibraryName="$(ProjectDir)\WebKit.tlb"
 				OutputDirectory="$(WebKitOutputDir)\obj\WebKit\$(ProjectName)"
-				HeaderFileName="$(OutDir)\$(InputName).h"
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
@@ -91,7 +86,6 @@
 		<Configuration
 			Name="Release|Win32"
 			OutputDirectory="$(WebKitOutputDir)\include\WebKit"
-			IntermediateDirectory="$(WebKitOutputDir)\obj\WebKit\$(ConfigurationName)\$(ProjectName)"
 			ConfigurationType="4"
 			InheritedPropertySheets="$(WebKitLibrariesDir)\tools\vsprops\common.vsprops;$(WebKitLibrariesDir)\tools\vsprops\release.vsprops"
 			CharacterSet="1"
@@ -112,14 +106,10 @@
 			/>
 			<Tool
 				Name="VCMIDLTool"
-				PreprocessorDefinitions="__PRODUCTION__=0$(PRODUCTION)"
 				AdditionalIncludeDirectories="&quot;$(WebKitOutputDir)\obj\WebKit\DerivedSources&quot;;..\Interfaces"
-				WarningLevel="1"
-				WarnAsError="true"
 				GenerateTypeLibrary="false"
 				TypeLibraryName="$(ProjectDir)\WebKit.tlb"
 				OutputDirectory="$(WebKitOutputDir)\obj\WebKit\$(ProjectName)"
-				HeaderFileName="$(OutDir)\$(InputName).h"
 			/>
 			<Tool
 				Name="VCCLCompilerTool"

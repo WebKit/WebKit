@@ -17,8 +17,6 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="$(WebKitOutputDir)\bin"
-			IntermediateDirectory="$(WebKitOutputDir)\obj\$(ProjectName)\$(ConfigurationName)"
 			ConfigurationType="2"
 			InheritedPropertySheets="$(WebKitLibrariesDir)\tools\vsprops\common.vsprops;$(WebKitLibrariesDir)\tools\vsprops\debug.vsprops"
 			CharacterSet="1"
@@ -41,23 +39,15 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				Optimization="0"
 				AdditionalIncludeDirectories="&quot;$(ProjectDir)..\&quot;;&quot;$(ProjectDir)..\ForwardingHeaders&quot;;&quot;$(WebKitLibrariesDir)\Include\JavaScriptCore&quot;;&quot;$(WebKitOutputDir)\Include\JavaScriptCore&quot;;&quot;$(WebKitLibrariesDir)\Include\WebCore\ForwardingHeaders&quot;;&quot;$(WebKitOutputDir)\Include\WebCore\ForwardingHeaders&quot;;&quot;$(WebKitOutputDir)\Include&quot;;&quot;$(ProgramFiles)/QuickTime SDK/cincludes&quot;;&quot;$(WebKitLibrariesDir)\include&quot;"
-				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;QTMOVIEWIN_EXPORTS"
-				MinimalRebuild="true"
-				BasicRuntimeChecks="3"
-				RuntimeLibrary="3"
-				UsePrecompiledHeader="0"
-				WarningLevel="3"
-				Detect64BitPortabilityProblems="true"
-				DebugInformationFormat="4"
+				PreprocessorDefinitions="_USRDLL;QTMOVIEWIN_EXPORTS"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
 			/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				AdditionalIncludeDirectories="$(IntDir)\include"
+				AdditionalIncludeDirectories=""
 			/>
 			<Tool
 				Name="VCPreLinkEventTool"
@@ -66,14 +56,8 @@
 				Name="VCLinkerTool"
 				AdditionalDependencies="&quot;$(ProgramFiles)\QuickTime SDK\Libraries\QTMLClient.lib&quot; WTF$(WebKitConfigSuffix).lib winmm.lib pthreadVC2$(LibraryConfigSuffix).lib Msimg32.lib user32.lib advapi32.lib"
 				OutputFile="$(OutDir)\$(ProjectName)$(WebKitConfigSuffix).dll"
-				LinkIncremental="2"
-				AdditionalLibraryDirectories="&quot;$(WebKitOutputDir)\lib&quot;;$(WebKitLibrariesDir)\lib"
-				IgnoreAllDefaultLibraries="false"
+				AdditionalLibraryDirectories=""
 				DelayLoadDLLs=""
-				GenerateDebugInformation="true"
-				SubSystem="2"
-				ImportLibrary="$(WebKitOutputDir)\lib\$(TargetName).lib"
-				TargetMachine="1"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -103,8 +87,6 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="$(WebKitOutputDir)\bin"
-			IntermediateDirectory="$(WebKitOutputDir)\obj\$(ProjectName)\$(ConfigurationName)"
 			ConfigurationType="2"
 			InheritedPropertySheets="$(WebKitLibrariesDir)\tools\vsprops\common.vsprops;$(WebKitLibrariesDir)\tools\vsprops\release.vsprops"
 			CharacterSet="1"
@@ -129,19 +111,14 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalIncludeDirectories="&quot;$(ProjectDir)..\&quot;;&quot;$(ProjectDir)..\ForwardingHeaders&quot;;&quot;$(WebKitLibrariesDir)\Include\JavaScriptCore&quot;;&quot;$(WebKitOutputDir)\Include\JavaScriptCore&quot;;&quot;$(WebKitLibrariesDir)\Include\WebCore\ForwardingHeaders&quot;;&quot;$(WebKitOutputDir)\Include\WebCore\ForwardingHeaders&quot;;&quot;$(WebKitOutputDir)\Include&quot;;&quot;$(ProgramFiles)/QuickTime SDK/cincludes&quot;;&quot;$(WebKitLibrariesDir)\include&quot;"
-				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;QTMOVIEWIN_EXPORTS"
-				RuntimeLibrary="2"
-				UsePrecompiledHeader="0"
-				WarningLevel="3"
-				Detect64BitPortabilityProblems="true"
-				DebugInformationFormat="3"
+				PreprocessorDefinitions="_USRDLL;QTMOVIEWIN_EXPORTS"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
 			/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				AdditionalIncludeDirectories="$(IntDir)\include"
+				AdditionalIncludeDirectories=""
 			/>
 			<Tool
 				Name="VCPreLinkEventTool"
@@ -150,15 +127,8 @@
 				Name="VCLinkerTool"
 				AdditionalDependencies="&quot;$(ProgramFiles)\QuickTime SDK\Libraries\QTMLClient.lib&quot; WTF$(WebKitConfigSuffix).lib winmm.lib pthreadVC2$(LibraryConfigSuffix).lib Msimg32.lib user32.lib advapi32.lib"
 				OutputFile="$(OutDir)\$(ProjectName)$(WebKitConfigSuffix).dll"
-				LinkIncremental="1"
-				AdditionalLibraryDirectories="&quot;$(WebKitOutputDir)\lib&quot;;$(WebKitLibrariesDir)\lib"
+				AdditionalLibraryDirectories=""
 				DelayLoadDLLs=""
-				GenerateDebugInformation="true"
-				SubSystem="2"
-				OptimizeReferences="2"
-				EnableCOMDATFolding="2"
-				ImportLibrary="$(WebKitOutputDir)\lib\$(TargetName).lib"
-				TargetMachine="1"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -187,8 +157,6 @@
 		</Configuration>
 		<Configuration
 			Name="Debug_Internal|Win32"
-			OutputDirectory="$(WebKitOutputDir)\bin"
-			IntermediateDirectory="$(WebKitOutputDir)\obj\$(ProjectName)\$(ConfigurationName)"
 			ConfigurationType="2"
 			InheritedPropertySheets="$(WebKitLibrariesDir)\tools\vsprops\common.vsprops;$(WebKitLibrariesDir)\tools\vsprops\debug.vsprops;$(WebKitLibrariesDir)\tools\vsprops\debug_internal.vsprops"
 			CharacterSet="1"
@@ -211,23 +179,15 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				Optimization="0"
 				AdditionalIncludeDirectories="&quot;$(ProjectDir)..\&quot;;&quot;$(ProjectDir)..\ForwardingHeaders&quot;;&quot;$(WebKitLibrariesDir)\Include\JavaScriptCore&quot;;&quot;$(WebKitOutputDir)\Include\JavaScriptCore&quot;;&quot;$(WebKitLibrariesDir)\Include\WebCore\ForwardingHeaders&quot;;&quot;$(WebKitOutputDir)\Include\WebCore\ForwardingHeaders&quot;;&quot;$(WebKitOutputDir)\Include&quot;;&quot;$(ProgramFiles)/QuickTime SDK/cincludes&quot;;&quot;$(WebKitLibrariesDir)\include&quot;"
-				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;QTMOVIEWIN_EXPORTS"
-				MinimalRebuild="true"
-				BasicRuntimeChecks="3"
-				RuntimeLibrary="3"
-				UsePrecompiledHeader="0"
-				WarningLevel="3"
-				Detect64BitPortabilityProblems="true"
-				DebugInformationFormat="4"
+				PreprocessorDefinitions="_USRDLL;QTMOVIEWIN_EXPORTS"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
 			/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				AdditionalIncludeDirectories="$(IntDir)\include"
+				AdditionalIncludeDirectories=""
 			/>
 			<Tool
 				Name="VCPreLinkEventTool"
@@ -236,14 +196,8 @@
 				Name="VCLinkerTool"
 				AdditionalDependencies="&quot;$(ProgramFiles)\QuickTime SDK\Libraries\QTMLClient.lib&quot; WTF$(WebKitConfigSuffix).lib winmm.lib pthreadVC2$(LibraryConfigSuffix).lib Msimg32.lib user32.lib advapi32.lib"
 				OutputFile="$(OutDir)\$(ProjectName)$(WebKitConfigSuffix).dll"
-				LinkIncremental="2"
-				AdditionalLibraryDirectories="&quot;$(WebKitOutputDir)\lib&quot;;$(WebKitLibrariesDir)\lib"
-				IgnoreAllDefaultLibraries="false"
+				AdditionalLibraryDirectories=""
 				DelayLoadDLLs=""
-				GenerateDebugInformation="true"
-				SubSystem="2"
-				ImportLibrary="$(WebKitOutputDir)\lib\$(TargetName).lib"
-				TargetMachine="1"
 			/>
 			<Tool
 				Name="VCALinkTool"

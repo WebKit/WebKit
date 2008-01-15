@@ -550,7 +550,7 @@ bool QTMovieWin::initializeQuickTime()
         initialized = true;
         // Initialize and check QuickTime version
         OSErr result = InitializeQTML(0);
-        SInt32 version;
+        SInt32 version = 0;
         if (result == noErr)
             result = Gestalt(gestaltQuickTime, &version);
         if (result != noErr) {

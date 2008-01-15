@@ -17,8 +17,6 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="$(WebKitOutputDir)\bin\TestNetscapePlugin$(WebKitConfigSuffix)"
-			IntermediateDirectory="$(WebKitOutputDir)\obj\$(ProjectName)\$(ConfigurationName)"
 			ConfigurationType="2"
 			InheritedPropertySheets="$(WebKitLibrariesDir)\tools\vsprops\common.vsprops;$(WebKitLibrariesDir)\tools\vsprops\debug.vsprops"
 			CharacterSet="1"
@@ -40,37 +38,23 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				Optimization="0"
 				AdditionalIncludeDirectories="&quot;$(WebKitOutputDir)\Include&quot;;&quot;$(WebKitOutputDir)\Include\JavaScriptCore&quot;;&quot;$(WebKitOutputDir)\Include\WebCore\ForwardingHeaders&quot;;&quot;$(ProjectDir)..\..\TestNetscapePlugin.subproj&quot;"
-				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;TESTNETSCAPEPLUGIN_EXPORTS;_CRT_NONSTDC_NO_DEPRECATE;_CRT_SECURE_NO_WARNINGS;snprintf=_snprintf"
-				MinimalRebuild="true"
-				BasicRuntimeChecks="3"
-				RuntimeLibrary="3"
-				UsePrecompiledHeader="0"
-				WarningLevel="3"
-				Detect64BitPortabilityProblems="true"
-				DebugInformationFormat="3"
-				DisableSpecificWarnings="4267"
+				PreprocessorDefinitions="_USRDLL;TESTNETSCAPEPLUGIN_EXPORTS;snprintf=_snprintf"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
 			/>
 			<Tool
 				Name="VCResourceCompilerTool"
+				AdditionalIncludeDirectories=""
 			/>
 			<Tool
 				Name="VCPreLinkEventTool"
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				ShowProgress="0"
 				OutputFile="$(OutDir)\np$(ProjectName)$(WebKitConfigSuffix).dll"
-				LinkIncremental="2"
-				GenerateManifest="false"
 				ModuleDefinitionFile="TestNetscapePlugin.def"
-				GenerateDebugInformation="true"
-				SubSystem="2"
-				TargetMachine="1"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -99,8 +83,6 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="$(WebKitOutputDir)\bin\TestNetscapePlugin"
-			IntermediateDirectory="$(WebKitOutputDir)\obj\$(ProjectName)\$(ConfigurationName)"
 			ConfigurationType="2"
 			InheritedPropertySheets="$(WebKitLibrariesDir)\tools\vsprops\common.vsprops;$(WebKitLibrariesDir)\tools\vsprops\release.vsprops"
 			CharacterSet="1"
@@ -124,19 +106,14 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalIncludeDirectories="&quot;$(WebKitOutputDir)\Include&quot;;&quot;$(WebKitOutputDir)\Include\JavaScriptCore&quot;;&quot;$(WebKitOutputDir)\Include\WebCore\ForwardingHeaders&quot;;&quot;$(ProjectDir)..\..\TestNetscapePlugin.subproj&quot;"
-				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;TESTNETSCAPEPLUGIN_EXPORTS;_CRT_NONSTDC_NO_DEPRECATE;_CRT_SECURE_NO_WARNINGS;snprintf=_snprintf"
-				RuntimeLibrary="2"
-				UsePrecompiledHeader="0"
-				WarningLevel="3"
-				Detect64BitPortabilityProblems="true"
-				DebugInformationFormat="3"
-				DisableSpecificWarnings="4267"
+				PreprocessorDefinitions="_USRDLL;TESTNETSCAPEPLUGIN_EXPORTS;snprintf=_snprintf"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
 			/>
 			<Tool
 				Name="VCResourceCompilerTool"
+				AdditionalIncludeDirectories=""
 			/>
 			<Tool
 				Name="VCPreLinkEventTool"
@@ -144,14 +121,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				OutputFile="$(OutDir)\np$(ProjectName)$(WebKitConfigSuffix).dll"
-				LinkIncremental="1"
-				GenerateManifest="false"
 				ModuleDefinitionFile="TestNetscapePlugin.def"
-				GenerateDebugInformation="true"
-				SubSystem="2"
-				OptimizeReferences="2"
-				EnableCOMDATFolding="2"
-				TargetMachine="1"
 			/>
 			<Tool
 				Name="VCALinkTool"

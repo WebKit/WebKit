@@ -1,3 +1,15 @@
+2008-01-14  Steve Falkenburg  <sfalken@apple.com>
+
+        Use shared vsprops for most vcproj properties.
+        
+        Reviewed by Darin.
+
+        * Drosera/win/Drosera.vcproj/Drosera.vcproj:
+        * DumpRenderTree/win/DumpRenderTree.vcproj:
+        * DumpRenderTree/win/ImageDiff.vcproj:
+        * DumpRenderTree/win/TestNetscapePlugin/TestNetscapePlugin.vcproj:
+        * FindSafari/FindSafari.vcproj:
+
 2008-01-14  Stephanie  <slewis@apple.com>
 
        Reviewed by NOBODY.

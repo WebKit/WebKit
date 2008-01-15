@@ -1,3 +1,13 @@
+2008-01-14  Steve Falkenburg  <sfalken@apple.com>
+
+        Use shared vsprops for most vcproj properties.
+        
+        Reviewed by Darin.
+
+        * WebKit.vcproj/Interfaces.vcproj:
+        * WebKit.vcproj/WebKit.vcproj:
+        * WebKit.vcproj/WebKitGUID.vcproj: Add missing Debug_Internal config.
+
 2008-01-11  Steve Falkenburg  <sfalken@apple.com>
 
         Share common files across projects.

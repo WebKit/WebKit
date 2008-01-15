@@ -17,15 +17,13 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="$(WebKitOutputDir)\bin"
-			IntermediateDirectory="$(WebKitOutputDir)\obj\$(ProjectName)\$(ConfigurationName)"
 			ConfigurationType="1"
 			InheritedPropertySheets="$(WebKitLibrariesDir)\tools\vsprops\common.vsprops;$(WebKitLibrariesDir)\tools\vsprops\debug.vsprops"
 			CharacterSet="1"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
-				CommandLine="mkdir 2&gt;NUL &quot;$(WebKitOutputDir)\include\DumpRenderTree&quot;&#x0D;&#x0A;mkdir 2&gt;NUL &quot;$(WebKitOutputDir)\include\DumpRenderTree\ForwardingHeaders&quot;&#x0D;&#x0A;mkdir 2&gt;NUL &quot;$(WebKitOutputDir)\include\DumpRenderTree\ForwardingHeaders\wtf&quot;&#x0D;&#x0A;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\ForwardingHeaders\wtf\*.h&quot; &quot;$(WebKitOutputDir)\include\DumpRenderTree\ForwardingHeaders\wtf&quot;"
+				CommandLine="mkdir 2&gt;NUL &quot;$(WebKitOutputDir)\include\DumpRenderTree&quot;&#x0D;&#x0A;mkdir 2&gt;NUL &quot;$(WebKitOutputDir)\include\DumpRenderTree\ForwardingHeaders&quot;&#x0D;&#x0A;mkdir 2&gt;NUL &quot;$(WebKitOutputDir)\include\DumpRenderTree\ForwardingHeaders\wtf&quot;&#x0D;&#x0A;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\ForwardingHeaders\wtf\*.h&quot; &quot;$(WebKitOutputDir)\include\DumpRenderTree\ForwardingHeaders\wtf&quot;&#x0D;&#x0A;"
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
@@ -41,16 +39,9 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				Optimization="0"
 				AdditionalIncludeDirectories="&quot;$(ProjectDir)\.&quot;;&quot;$(ProjectDir)\..&quot;;&quot;$(ProjectDir)\..\cg&quot;;&quot;$(WebKitOutputDir)\Include&quot;;&quot;$(WebKitOutputDir)\Include\DumpRenderTree\ForwardingHeaders&quot;;&quot;$(WebKitOutputDir)\Include\JavaScriptCore&quot;;&quot;$(WebKitLibrariesDir)\Include&quot;;&quot;$(WebKitLibrariesDir)\include\pthreads&quot;;&quot;$(WebKitOutputDir)\Include\WebCore&quot;;&quot;$(WebKitLibrariesDir)\Include\WebCore&quot;"
-				PreprocessorDefinitions="WIN32;_CONSOLE;_SCL_SECURE_NO_DEPRECATE;_CRT_SECURE_NO_DEPRECATE"
-				MinimalRebuild="true"
-				BasicRuntimeChecks="3"
-				RuntimeLibrary="2"
-				UsePrecompiledHeader="0"
-				WarningLevel="1"
-				Detect64BitPortabilityProblems="true"
-				DebugInformationFormat="3"
+				PreprocessorDefinitions="_CONSOLE"
+				DisableSpecificWarnings="4146"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -64,11 +55,8 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="WebKitGUID$(WebKitConfigSuffix).lib WebKit$(WebKitDLLConfigSuffix).lib WTF$(WebKitConfigSuffix).lib CoreGraphics$(LibraryConfigSuffix).lib CoreFoundation$(LibraryConfigSuffix).lib pthreadVC2$(LibraryConfigSuffix).lib gdi32.lib ole32.lib oleaut32.lib user32.lib shlwapi.lib"
-				OutputFile="$(OutDir)\$(ProjectName)$(WebKitConfigSuffix).exe"
-				LinkIncremental="2"
-				AdditionalLibraryDirectories="&quot;$(WebKitOutputDir)\lib&quot;;&quot;$(WebKitLibrariesDir)\lib&quot;;&quot;$(WebKitOutputDir)\bin&quot;"
-				DelayLoadDLLs="CoreGraphics$(LibraryConfigSuffix).dll;CoreFoundation$(LibraryConfigSuffix).dll;pthreadVC2$(LibraryConfigSuffix).dll"
-				GenerateDebugInformation="true"
+				AdditionalLibraryDirectories=""
+				DelayLoadDLLs=""
 				SubSystem="1"
 				TargetMachine="1"
 			/>
@@ -100,8 +88,6 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="$(WebKitOutputDir)\bin"
-			IntermediateDirectory="$(WebKitOutputDir)\obj\$(ProjectName)\$(ConfigurationName)"
 			ConfigurationType="1"
 			InheritedPropertySheets="$(WebKitLibrariesDir)\tools\vsprops\common.vsprops;$(WebKitLibrariesDir)\tools\vsprops\release.vsprops"
 			CharacterSet="1"
@@ -109,7 +95,7 @@
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
-				CommandLine="mkdir 2&gt;NUL &quot;$(WebKitOutputDir)\include\DumpRenderTree&quot;&#x0D;&#x0A;mkdir 2&gt;NUL &quot;$(WebKitOutputDir)\include\DumpRenderTree\ForwardingHeaders&quot;&#x0D;&#x0A;mkdir 2&gt;NUL &quot;$(WebKitOutputDir)\include\DumpRenderTree\ForwardingHeaders\wtf&quot;&#x0D;&#x0A;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\ForwardingHeaders\wtf\*.h&quot; &quot;$(WebKitOutputDir)\include\DumpRenderTree\ForwardingHeaders\wtf&quot;"
+				CommandLine="mkdir 2&gt;NUL &quot;$(WebKitOutputDir)\include\DumpRenderTree&quot;&#x0D;&#x0A;mkdir 2&gt;NUL &quot;$(WebKitOutputDir)\include\DumpRenderTree\ForwardingHeaders&quot;&#x0D;&#x0A;mkdir 2&gt;NUL &quot;$(WebKitOutputDir)\include\DumpRenderTree\ForwardingHeaders\wtf&quot;&#x0D;&#x0A;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\ForwardingHeaders\wtf\*.h&quot; &quot;$(WebKitOutputDir)\include\DumpRenderTree\ForwardingHeaders\wtf&quot;&#x0D;&#x0A;"
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
@@ -126,12 +112,8 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalIncludeDirectories="&quot;$(ProjectDir)\.&quot;;&quot;$(ProjectDir)\..&quot;;&quot;$(ProjectDir)\..\cg&quot;;&quot;$(WebKitOutputDir)\Include&quot;;&quot;$(WebKitOutputDir)\Include\DumpRenderTree\ForwardingHeaders&quot;;&quot;$(WebKitOutputDir)\Include\JavaScriptCore&quot;;&quot;$(WebKitLibrariesDir)\Include&quot;;&quot;$(WebKitLibrariesDir)\include\pthreads&quot;;&quot;$(WebKitOutputDir)\Include\WebCore&quot;;&quot;$(WebKitLibrariesDir)\Include\WebCore&quot;"
-				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;_SCL_SECURE_NO_DEPRECATE;_CRT_SECURE_NO_DEPRECATE"
-				RuntimeLibrary="2"
-				UsePrecompiledHeader="0"
-				WarningLevel="1"
-				Detect64BitPortabilityProblems="true"
-				DebugInformationFormat="3"
+				PreprocessorDefinitions="_CONSOLE"
+				DisableSpecificWarnings="4146"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -145,14 +127,9 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="WebKitGUID$(WebKitConfigSuffix).lib WebKit$(WebKitDLLConfigSuffix).lib WTF$(WebKitConfigSuffix).lib CoreGraphics$(LibraryConfigSuffix).lib CoreFoundation$(LibraryConfigSuffix).lib pthreadVC2$(LibraryConfigSuffix).lib gdi32.lib ole32.lib oleaut32.lib user32.lib shlwapi.lib"
-				OutputFile="$(OutDir)\$(ProjectName)$(WebKitConfigSuffix).exe"
-				LinkIncremental="1"
-				AdditionalLibraryDirectories="&quot;$(WebKitOutputDir)\lib&quot;;&quot;$(WebKitLibrariesDir)\lib&quot;;&quot;$(WebKitOutputDir)\bin&quot;"
-				DelayLoadDLLs="CoreGraphics$(LibraryConfigSuffix).dll;CoreFoundation$(LibraryConfigSuffix).dll;pthreadVC2$(LibraryConfigSuffix).dll"
-				GenerateDebugInformation="true"
+				AdditionalLibraryDirectories=""
+				DelayLoadDLLs=""
 				SubSystem="1"
-				OptimizeReferences="2"
-				EnableCOMDATFolding="2"
 				TargetMachine="1"
 			/>
 			<Tool
@@ -183,15 +160,13 @@
 		</Configuration>
 		<Configuration
 			Name="Debug_Internal|Win32"
-			OutputDirectory="$(WebKitOutputDir)\bin"
-			IntermediateDirectory="$(WebKitOutputDir)\obj\$(ProjectName)\$(ConfigurationName)"
 			ConfigurationType="1"
 			InheritedPropertySheets="$(WebKitLibrariesDir)\tools\vsprops\common.vsprops;$(WebKitLibrariesDir)\tools\vsprops\debug.vsprops;$(WebKitLibrariesDir)\tools\vsprops\debug_internal.vsprops"
 			CharacterSet="1"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
-				CommandLine="mkdir 2&gt;NUL &quot;$(WebKitOutputDir)\include\DumpRenderTree&quot;&#x0D;&#x0A;mkdir 2&gt;NUL &quot;$(WebKitOutputDir)\include\DumpRenderTree\ForwardingHeaders&quot;&#x0D;&#x0A;mkdir 2&gt;NUL &quot;$(WebKitOutputDir)\include\DumpRenderTree\ForwardingHeaders\wtf&quot;&#x0D;&#x0A;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\ForwardingHeaders\wtf\*.h&quot; &quot;$(WebKitOutputDir)\include\DumpRenderTree\ForwardingHeaders\wtf&quot;"
+				CommandLine="mkdir 2&gt;NUL &quot;$(WebKitOutputDir)\include\DumpRenderTree&quot;&#x0D;&#x0A;mkdir 2&gt;NUL &quot;$(WebKitOutputDir)\include\DumpRenderTree\ForwardingHeaders&quot;&#x0D;&#x0A;mkdir 2&gt;NUL &quot;$(WebKitOutputDir)\include\DumpRenderTree\ForwardingHeaders\wtf&quot;&#x0D;&#x0A;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\ForwardingHeaders\wtf\*.h&quot; &quot;$(WebKitOutputDir)\include\DumpRenderTree\ForwardingHeaders\wtf&quot;&#x0D;&#x0A;"
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
@@ -207,16 +182,9 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				Optimization="0"
 				AdditionalIncludeDirectories="&quot;$(ProjectDir)\.&quot;;&quot;$(ProjectDir)\..&quot;;&quot;$(ProjectDir)\..\cg&quot;;&quot;$(WebKitOutputDir)\Include&quot;;&quot;$(WebKitOutputDir)\Include\DumpRenderTree\ForwardingHeaders&quot;;&quot;$(WebKitOutputDir)\Include\JavaScriptCore&quot;;&quot;$(WebKitLibrariesDir)\Include&quot;;&quot;$(WebKitLibrariesDir)\include\pthreads&quot;;&quot;$(WebKitOutputDir)\Include\WebCore&quot;;&quot;$(WebKitLibrariesDir)\Include\WebCore&quot;"
-				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;_SCL_SECURE_NO_DEPRECATE;_CRT_SECURE_NO_DEPRECATE"
-				MinimalRebuild="true"
-				BasicRuntimeChecks="3"
-				RuntimeLibrary="3"
-				UsePrecompiledHeader="0"
-				WarningLevel="1"
-				Detect64BitPortabilityProblems="true"
-				DebugInformationFormat="3"
+				PreprocessorDefinitions="_CONSOLE"
+				DisableSpecificWarnings="4146"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -230,13 +198,9 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="WebKitGUID$(WebKitConfigSuffix).lib WebKit$(WebKitDLLConfigSuffix).lib WTF$(WebKitConfigSuffix).lib CoreGraphics$(LibraryConfigSuffix).lib CoreFoundation$(LibraryConfigSuffix).lib pthreadVC2$(LibraryConfigSuffix).lib gdi32.lib ole32.lib oleaut32.lib user32.lib shlwapi.lib"
-				OutputFile="$(OutDir)\$(ProjectName)$(WebKitConfigSuffix).exe"
-				LinkIncremental="2"
-				AdditionalLibraryDirectories="&quot;$(WebKitOutputDir)\lib&quot;;&quot;$(WebKitLibrariesDir)\lib&quot;;&quot;$(WebKitOutputDir)\bin&quot;"
-				DelayLoadDLLs="CoreGraphics$(LibraryConfigSuffix).dll;CoreFoundation$(LibraryConfigSuffix).dll;pthreadVC2$(LibraryConfigSuffix).dll"
-				GenerateDebugInformation="true"
+				AdditionalLibraryDirectories=""
+				DelayLoadDLLs=""
 				SubSystem="1"
-				TargetMachine="1"
 			/>
 			<Tool
 				Name="VCALinkTool"

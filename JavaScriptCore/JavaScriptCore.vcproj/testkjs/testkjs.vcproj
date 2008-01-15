@@ -17,8 +17,6 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="$(WebKitOutputDir)\bin"
-			IntermediateDirectory="$(WebKitOutputDir)\obj\JavaScriptCore\$(ProjectName)\$(ConfigurationName)"
 			ConfigurationType="1"
 			InheritedPropertySheets="$(WebKitLibrariesDir)\tools\vsprops\common.vsprops;$(WebKitLibrariesDir)\tools\vsprops\debug.vsprops"
 			CharacterSet="1"
@@ -41,19 +39,8 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				Optimization="0"
 				AdditionalIncludeDirectories="&quot;$(WebKitOutputDir)\include&quot;;&quot;$(WebKitOutputDir)\obj\JavaScriptCore\$(ConfigurationName)\DerivedSources\&quot;;../../;&quot;../../os-win32/&quot;;../../pcre/;../../kjs/;../../wtf/;&quot;$(WebKitLibrariesDir)\include\icu&quot;;../../../icu/include;&quot;$(WebKitLibrariesDir)\include&quot;"
-				PreprocessorDefinitions="HAVE_CONFIG_H;WIN32;__STD_C;_SCL_SECURE_NO_DEPRECATE;_CRT_SECURE_NO_DEPRECATE"
-				MinimalRebuild="true"
-				ExceptionHandling="0"
-				BasicRuntimeChecks="3"
-				RuntimeLibrary="2"
-				UsePrecompiledHeader="0"
-				WarningLevel="4"
-				WarnAsError="true"
-				Detect64BitPortabilityProblems="true"
-				DebugInformationFormat="3"
-				DisableSpecificWarnings="4127;4355;4510;4512;4610;4706;4800;4996"
+				PreprocessorDefinitions="HAVE_CONFIG_H;__STD_C"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -66,15 +53,10 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				LinkLibraryDependencies="false"
 				AdditionalDependencies="JavaScriptCore$(WebKitConfigSuffix).lib WTF$(WebKitConfigSuffix).lib icuuc$(LibraryConfigSuffix).lib winmm.lib pthreadVC2$(LibraryConfigSuffix).lib"
-				OutputFile="$(OutDir)\$(ProjectName)$(WebKitConfigSuffix).exe"
-				LinkIncremental="2"
-				AdditionalLibraryDirectories="&quot;$(WebKitOutputDir)\lib&quot;;&quot;$(WebKitLibrariesDir)\lib&quot;;..\..\..\icu\lib"
-				DelayLoadDLLs="icuuc36$(LibraryConfigSuffix).dll;pthreadVC2$(LibraryConfigSuffix).dll"
-				GenerateDebugInformation="true"
+				AdditionalLibraryDirectories=""
+				DelayLoadDLLs=""
 				SubSystem="1"
-				TargetMachine="1"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -104,8 +86,6 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="$(WebKitOutputDir)\bin"
-			IntermediateDirectory="$(WebKitOutputDir)\obj\JavaScriptCore\$(ProjectName)\$(ConfigurationName)"
 			ConfigurationType="1"
 			InheritedPropertySheets="$(WebKitLibrariesDir)\tools\vsprops\common.vsprops;$(WebKitLibrariesDir)\tools\vsprops\release.vsprops"
 			CharacterSet="1"
@@ -130,15 +110,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalIncludeDirectories="&quot;$(WebKitOutputDir)\include&quot;;&quot;$(WebKitOutputDir)\obj\JavaScriptCore\$(ConfigurationName)\DerivedSources\&quot;;../../;&quot;../../os-win32/&quot;;../../pcre/;../../kjs/;../../wtf/;&quot;$(WebKitLibrariesDir)\include\icu&quot;;../../../icu/include;&quot;$(WebKitLibrariesDir)\include&quot;"
-				PreprocessorDefinitions="HAVE_CONFIG_H;WIN32;__STD_C;NDEBUG;_SCL_SECURE_NO_DEPRECATE;_CRT_SECURE_NO_DEPRECATE"
-				ExceptionHandling="0"
-				RuntimeLibrary="2"
-				UsePrecompiledHeader="0"
-				WarningLevel="4"
-				WarnAsError="true"
-				Detect64BitPortabilityProblems="true"
-				DebugInformationFormat="3"
-				DisableSpecificWarnings="4127;4355;4510;4512;4610;4706;4800;4996"
+				PreprocessorDefinitions="HAVE_CONFIG_H;__STD_C"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -151,17 +123,10 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				LinkLibraryDependencies="false"
 				AdditionalDependencies="JavaScriptCore$(WebKitConfigSuffix).lib WTF$(WebKitConfigSuffix).lib icuuc$(LibraryConfigSuffix).lib winmm.lib pthreadVC2$(LibraryConfigSuffix).lib"
-				OutputFile="$(OutDir)\$(ProjectName)$(WebKitConfigSuffix).exe"
-				LinkIncremental="1"
-				AdditionalLibraryDirectories="&quot;$(WebKitOutputDir)\lib&quot;;&quot;$(WebKitLibrariesDir)\lib&quot;;..\..\..\icu\lib"
-				DelayLoadDLLs="icuuc36$(LibraryConfigSuffix).dll;pthreadVC2$(LibraryConfigSuffix).dll"
-				GenerateDebugInformation="true"
+				AdditionalLibraryDirectories=""
+				DelayLoadDLLs=""
 				SubSystem="1"
-				OptimizeReferences="2"
-				EnableCOMDATFolding="2"
-				TargetMachine="1"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -191,8 +156,6 @@
 		</Configuration>
 		<Configuration
 			Name="Debug_Internal|Win32"
-			OutputDirectory="$(WebKitOutputDir)\bin"
-			IntermediateDirectory="$(WebKitOutputDir)\obj\JavaScriptCore\$(ProjectName)\$(ConfigurationName)"
 			ConfigurationType="1"
 			InheritedPropertySheets="$(WebKitLibrariesDir)\tools\vsprops\common.vsprops;$(WebKitLibrariesDir)\tools\vsprops\debug.vsprops;$(WebKitLibrariesDir)\tools\vsprops\debug_internal.vsprops"
 			CharacterSet="1"
@@ -215,19 +178,8 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				Optimization="0"
 				AdditionalIncludeDirectories="&quot;$(WebKitOutputDir)\include&quot;;&quot;$(WebKitOutputDir)\obj\JavaScriptCore\$(ConfigurationName)\DerivedSources\&quot;;../../;&quot;../../os-win32/&quot;;../../pcre/;../../kjs/;../../wtf/;&quot;$(WebKitLibrariesDir)\include\icu&quot;;../../../icu/include;&quot;$(WebKitLibrariesDir)\include&quot;"
-				PreprocessorDefinitions="HAVE_CONFIG_H;WIN32;__STD_C;_SCL_SECURE_NO_DEPRECATE;_CRT_SECURE_NO_DEPRECATE"
-				MinimalRebuild="true"
-				ExceptionHandling="0"
-				BasicRuntimeChecks="3"
-				RuntimeLibrary="2"
-				UsePrecompiledHeader="0"
-				WarningLevel="4"
-				WarnAsError="true"
-				Detect64BitPortabilityProblems="true"
-				DebugInformationFormat="3"
-				DisableSpecificWarnings="4127;4355;4510;4512;4610;4706;4800;4996"
+				PreprocessorDefinitions="HAVE_CONFIG_H;__STD_C"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -240,15 +192,10 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				LinkLibraryDependencies="false"
 				AdditionalDependencies="JavaScriptCore$(WebKitConfigSuffix).lib WTF$(WebKitConfigSuffix).lib icuuc$(LibraryConfigSuffix).lib winmm.lib pthreadVC2$(LibraryConfigSuffix).lib"
-				OutputFile="$(OutDir)\$(ProjectName)$(WebKitConfigSuffix).exe"
-				LinkIncremental="2"
-				AdditionalLibraryDirectories="&quot;$(WebKitOutputDir)\lib&quot;;&quot;$(WebKitLibrariesDir)\lib&quot;;..\..\..\icu\lib"
-				DelayLoadDLLs="icuuc36$(LibraryConfigSuffix).dll;pthreadVC2$(LibraryConfigSuffix).dll"
-				GenerateDebugInformation="true"
+				AdditionalLibraryDirectories=""
+				DelayLoadDLLs=""
 				SubSystem="1"
-				TargetMachine="1"
 			/>
 			<Tool
 				Name="VCALinkTool"

@@ -17,8 +17,6 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="$(WebKitOutputDir)\bin"
-			IntermediateDirectory="$(WebKitOutputDir)\obj\$(ProjectName)\$(ConfigurationName)"
 			ConfigurationType="1"
 			InheritedPropertySheets="$(WebKitLibrariesDir)\tools\vsprops\common.vsprops;$(WebKitLibrariesDir)\tools\vsprops\debug.vsprops"
 			CharacterSet="1"
@@ -41,21 +39,10 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				Optimization="0"
 				AdditionalIncludeDirectories="&quot;$(ProjectDir)&quot;;&quot;$(ProjectDir)\..&quot;;&quot;$(ProjectDir)\..\..&quot;;&quot;$(ProjectDir)\..\..\ForwardingHeaders&quot;;&quot;$(WebKitOutputDir)\Include&quot;;&quot;$(WebKitOutputDir)\Include\JavaScriptCore&quot;;&quot;$(WebKitLibrariesDir)\Include&quot;;&quot;$(WebKitLibrariesDir)\Include\JavaScriptCore&quot;;&quot;$(IntDir)\include&quot;"
-				PreprocessorDefinitions="WIN32;_WINDOWS;STRICT;_DEBUG;_CRT_SECURE_NO_DEPRECATE;__APPLICATION_NAME__=\&quot;$(ProjectName)\&quot;"
-				MinimalRebuild="true"
-				ExceptionHandling="1"
-				BasicRuntimeChecks="3"
-				RuntimeLibrary="2"
-				RuntimeTypeInfo="false"
+				PreprocessorDefinitions="STRICT;__APPLICATION_NAME__=\&quot;$(ProjectName)\&quot;"
 				UsePrecompiledHeader="2"
 				PrecompiledHeaderThrough="DroseraPrefix.h"
-				WarningLevel="4"
-				WarnAsError="true"
-				Detect64BitPortabilityProblems="false"
-				DebugInformationFormat="3"
-				DisableSpecificWarnings="4127"
 				ForcedIncludeFiles="DroseraPrefix.h"
 			/>
 			<Tool
@@ -69,13 +56,12 @@
 			/>
 			<Tool
 				Name="VCPreLinkEventTool"
-				CommandLine="xcopy /y /d &quot;$(WebKitOutputDir)\obj\Drosera\$(ConfigurationName)\vc80.*&quot; &quot;$(WebKitOutputDir)\lib&quot;"
+				CommandLine=""
 			/>
 			<Tool
 				Name="VCLinkerTool"
 				LinkLibraryDependencies="false"
 				AdditionalDependencies="CoreFoundation$(LibraryConfigSuffix).lib CoreGraphics$(LibraryConfigSuffix).lib WebKit$(WebKitDLLConfigSuffix).lib WebKitGUID$(WebKitConfigSuffix).lib WTF$(WebKitConfigSuffix).lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib"
-				OutputFile="$(OutDir)\$(ProjectName)$(WebKitConfigSuffix).exe"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="&quot;$(WebKitOutputDir)\lib&quot;;&quot;$(WebKitLibrariesDir)\lib&quot;"
 				IgnoreAllDefaultLibraries="false"
@@ -114,8 +100,6 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="$(WebKitOutputDir)\bin"
-			IntermediateDirectory="$(WebKitOutputDir)\obj\$(ProjectName)\$(ConfigurationName)"
 			ConfigurationType="1"
 			InheritedPropertySheets="$(WebKitLibrariesDir)\tools\vsprops\common.vsprops;$(WebKitLibrariesDir)\tools\vsprops\release.vsprops"
 			CharacterSet="1"
@@ -140,19 +124,10 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/EHsc"
-				InlineFunctionExpansion="1"
 				AdditionalIncludeDirectories="&quot;$(ProjectDir)&quot;;&quot;$(ProjectDir)\..&quot;;&quot;$(ProjectDir)\..\..&quot;;&quot;$(ProjectDir)\..\..\ForwardingHeaders&quot;;&quot;$(WebKitOutputDir)\Include&quot;;&quot;$(WebKitOutputDir)\Include\JavaScriptCore&quot;;&quot;$(WebKitLibrariesDir)\Include&quot;;&quot;$(WebKitLibrariesDir)\Include\JavaScriptCore&quot;;&quot;$(IntDir)\include&quot;"
-				PreprocessorDefinitions="WIN32;_WINDOWS;STRICT;NDEBUG;_CRT_SECURE_NO_DEPRECATE;__APPLICATION_NAME__=\&quot;$(ProjectName)\&quot;"
-				ExceptionHandling="0"
-				RuntimeLibrary="2"
-				RuntimeTypeInfo="false"
+				PreprocessorDefinitions="STRICT;__APPLICATION_NAME__=\&quot;$(ProjectName)\&quot;"
 				UsePrecompiledHeader="2"
 				PrecompiledHeaderThrough="DroseraPrefix.h"
-				WarningLevel="4"
-				WarnAsError="true"
-				Detect64BitPortabilityProblems="false"
-				DebugInformationFormat="3"
-				DisableSpecificWarnings="4127"
 				ForcedIncludeFiles="DroseraPrefix.h"
 			/>
 			<Tool
@@ -171,7 +146,6 @@
 				Name="VCLinkerTool"
 				LinkLibraryDependencies="false"
 				AdditionalDependencies="CoreFoundation$(LibraryConfigSuffix).lib CoreGraphics$(LibraryConfigSuffix).lib WebKit$(WebKitDLLConfigSuffix).lib WebKitGUID$(WebKitConfigSuffix).lib WTF$(WebKitConfigSuffix).lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib"
-				OutputFile="$(OutDir)\$(ProjectName)$(WebKitConfigSuffix).exe"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="&quot;$(WebKitOutputDir)\lib&quot;;&quot;$(WebKitLibrariesDir)\lib&quot;"
 				DelayLoadDLLs=""
@@ -210,8 +184,7 @@
 		</Configuration>
 		<Configuration
 			Name="Debug_Internal|Win32"
-			OutputDirectory="$(WebKitOutputDir)\bin"
-			IntermediateDirectory="$(WebKitOutputDir)\obj\$(ProjectName)\$(ConfigurationName)"
+			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="1"
 			InheritedPropertySheets="$(WebKitLibrariesDir)\tools\vsprops\common.vsprops;$(WebKitLibrariesDir)\tools\vsprops\debug.vsprops;$(WebKitLibrariesDir)\tools\vsprops\debug_internal.vsprops"
 			CharacterSet="1"
@@ -234,21 +207,10 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				Optimization="0"
 				AdditionalIncludeDirectories="&quot;$(ProjectDir)&quot;;&quot;$(ProjectDir)\..&quot;;&quot;$(ProjectDir)\..\..&quot;;&quot;$(ProjectDir)\..\..\ForwardingHeaders&quot;;&quot;$(WebKitOutputDir)\Include&quot;;&quot;$(WebKitOutputDir)\Include\JavaScriptCore&quot;;&quot;$(WebKitLibrariesDir)\Include&quot;;&quot;$(WebKitLibrariesDir)\Include\JavaScriptCore&quot;;&quot;$(IntDir)\include&quot;"
-				PreprocessorDefinitions="WIN32;_WINDOWS;STRICT;_DEBUG;_CRT_SECURE_NO_DEPRECATE;__APPLICATION_NAME__=\&quot;$(ProjectName)\&quot;"
-				MinimalRebuild="true"
-				ExceptionHandling="1"
-				BasicRuntimeChecks="3"
-				RuntimeLibrary="2"
-				RuntimeTypeInfo="false"
+				PreprocessorDefinitions="STRICT;__APPLICATION_NAME__=\&quot;$(ProjectName)\&quot;"
 				UsePrecompiledHeader="2"
 				PrecompiledHeaderThrough="DroseraPrefix.h"
-				WarningLevel="4"
-				WarnAsError="true"
-				Detect64BitPortabilityProblems="false"
-				DebugInformationFormat="3"
-				DisableSpecificWarnings="4127"
 				ForcedIncludeFiles="DroseraPrefix.h"
 			/>
 			<Tool
@@ -262,13 +224,12 @@
 			/>
 			<Tool
 				Name="VCPreLinkEventTool"
-				CommandLine="xcopy /y /d &quot;$(WebKitOutputDir)\obj\Drosera\$(ConfigurationName)\vc80.*&quot; &quot;$(WebKitOutputDir)\lib&quot;"
+				CommandLine=""
 			/>
 			<Tool
 				Name="VCLinkerTool"
 				LinkLibraryDependencies="false"
 				AdditionalDependencies="CoreFoundation$(LibraryConfigSuffix).lib CoreGraphics$(LibraryConfigSuffix).lib WebKit$(WebKitDLLConfigSuffix).lib WebKitGUID$(WebKitConfigSuffix).lib WTF$(WebKitConfigSuffix).lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib"
-				OutputFile="$(OutDir)\$(ProjectName)$(WebKitConfigSuffix).exe"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="&quot;$(WebKitOutputDir)\lib&quot;;&quot;$(WebKitLibrariesDir)\lib&quot;"
 				IgnoreAllDefaultLibraries="false"
