@@ -1,5 +1,16 @@
 2008-01-14  Darin Adler  <darin@apple.com>
 
+        Reviewed by Geoff.
+
+        - fix crash seen in layout tests
+
+        * html/HTMLFrameSetElement.cpp:
+        (WebCore::HTMLFrameSetElement::attach):
+        Remove incorrect cast to HTMLElement* for parentNode(). The parent is either an
+        HTMLElement or a Document, not necessarily an HTMLElement.
+
+2008-01-14  Darin Adler  <darin@apple.com>
+
         Reviewed by Sam.
 
         - fix mistakes Sam noticed in my re-speed-up patch
