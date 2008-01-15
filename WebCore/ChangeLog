@@ -1,3 +1,16 @@
+2008-01-14  Pierre-Luc Beaudoin  <pierre-luc.beaudoin@collabora.co.uk>
+
+        Reviewed by Alp Toker.
+
+        Build fix: missing symbols when compiling WebKit/Gtk+ with --enable-svg-filters
+        http://bugs.webkit.org/show_bug.cgi?id=16874
+
+        * GNUmakefile.am:
+        * svg/graphics/cairo/SVGResourceFilterCairo.cpp: Added.
+        (WebCore::SVGResourceFilter::createPlatformData):
+        (WebCore::SVGResourceFilter::prepareFilter):
+        (WebCore::SVGResourceFilter::applyFilter):
+
 2008-01-14  Finnur Thorarinsson  <finnur.webkit@gmail.com>
 
         Reviewed by hyatt & eseidel.
