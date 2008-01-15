@@ -61,12 +61,12 @@ global_cflags := \
 	-Wall -W -Wcast-align -Wchar-subscripts -Wreturn-type \
 	-Wformat -Wformat-security -Wno-format-y2k -Wundef \
 	-Wmissing-format-attribute -Wpointer-arith -Wwrite-strings \
-	-Wno-unused-parameter
+	-Wno-unused-parameter $(SYMBOL_VISIBILITY_INLINES)
 
 if !ENABLE_DEBUG
 global_cflags += \
 	-fno-rtti -fno-exceptions \
-	-fvisibility=hidden -fvisibility-inlines-hidden
+	$(SYMBOL_VISIBILITY)
 endif
 
 # Shared libraries

@@ -1,3 +1,14 @@
+2008-01-15  Alp Toker  <alp@atoker.com>
+
+        GTK+/autotools build fix for GCC < 4. Use the -fvisibility compiler
+        flags only when they're available.
+
+        Additionally, use -fvisibility-inlines-hidden in both debug and
+        release builds when available to match the Mac build.
+
+        * GNUmakefile.am:
+        * configure.ac:
+
 2008-01-12  Alp Toker  <alp@atoker.com>
 
         Reviewed by Mark Rowe.

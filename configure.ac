@@ -53,6 +53,18 @@ AM_PROG_CC_STDC
 AC_PROG_CXX
 AM_PROG_CC_C_O
 
+# check for -fvisibility=hidden compiler support (GCC >= 4)	
+saved_CFLAGS="$CFLAGS"
+CFLAGS="$CFLAGS -fvisibility=hidden -fvisibility-inlines-hidden"
+AC_MSG_CHECKING([if ${CXX} supports -fvisibility=hidden -fvisibility-inlines-hidden])
+AC_COMPILE_IFELSE([char foo;],
+      [ AC_MSG_RESULT([yes])
+        SYMBOL_VISIBILITY="-fvisibility=hidden" SYMBOL_VISIBILITY_INLINES="-fvisibility-inlines-hidden" ],
+        AC_MSG_RESULT([no]))
+CFLAGS="$saved_CFLAGS"
+AC_SUBST(SYMBOL_VISIBILITY)
+AC_SUBST(SYMBOL_VISIBILITY_INLINES)
+
 AC_PATH_PROG(PERL, perl)
 if test -z "$PERL"; then
    AC_MSG_ERROR([You need 'perl' to compile WebKit])
