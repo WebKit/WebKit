@@ -1,3 +1,17 @@
+2008-01-16  Holger Freyther  <holger.freyther@trolltech.com>
+
+        Reviewed by Simon.
+
+        * Add core and kit functions to QWebFramePrivate to convert from
+        QWebFrame to WebCore::Frame and vice versa.
+        
+
+        * Api/qwebframe.cpp:
+        (QWebFramePrivate::core):
+        (QWebFramePrivate::kit):
+        * Api/qwebframe.h:
+        * Api/qwebframe_p.h:
+
 2008-01-16  Lars Knoll  <lars@trolltech.com>
 
         Reviewed by Simon.

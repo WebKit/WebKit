@@ -80,6 +80,9 @@ public:
     inline QPoint pos() const
     { return frameView->frameGeometry().topLeft(); }
 
+    static WebCore::Frame* core(QWebFrame*);
+    static QWebFrame* kit(WebCore::Frame*);
+
     QWebFrame *q;
     WebCore::FrameLoaderClientQt *frameLoaderClient;
     WTF::RefPtr<WebCore::Frame> frame;
