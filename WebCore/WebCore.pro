@@ -1069,8 +1069,22 @@ gtk-port {
 
 contains(DEFINES, ENABLE_DATABASE=1) {
     FEATURE_DEFINES_JAVASCRIPT += ENABLE_DATABASE=1
-    qt-port: INCLUDEPATH += $$[QT_INSTALL_PREFIX]/src/3rdparty/sqlite/
-    LIBS += -lsqlite3
+
+    CONFIG(QTDIR_build) {
+        # some what copied from src/plugins/sqldrivers/sqlite/sqlite.pro
+        system-sqlite {
+            LIBS *= $$QT_LFLAGS_SQLITE
+            QMAKE_CXXFLAGS *= $$QT_CFLAGS_SQLITE
+        } else {
+            CONFIG(release, debug|release):DEFINES *= NDEBUG
+            INCLUDEPATH += $$QT_SOURCE_TREE/src/3rdparty/sqlite/
+            SOURCES += $$QT_SOURCE_TREE/src/3rdparty/sqlite/sqlite3.c
+        }
+    } else {
+        qt-port: INCLUDEPATH += $$[QT_INSTALL_PREFIX]/src/3rdparty/sqlite/
+        LIBS += -lsqlite3
+    }
+
     SOURCES += \
         platform/sql/SQLiteAuthorizer.cpp \
         platform/sql/SQLiteDatabase.cpp \

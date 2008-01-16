@@ -1,3 +1,14 @@
+2008-01-16  Brad Hughes  <bhughes@trolltech.com>
+
+        Reviewed by Lars.
+
+        Improve the sqlite3 dependency when building WebKit inside Qt.
+
+        Build sqlite3 into QtWebKit if a system sqlite3 development package
+        can't be found.
+
+        * WebCore.pro:
+
 2008-01-16  Lars Knoll  <lars@trolltech.com>
 
         Reviewed by Simon Hausmann <simon.hausmann@trolltech.com>.
