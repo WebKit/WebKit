@@ -1,5 +1,14 @@
 2008-01-16  David Hyatt  <hyatt@apple.com>
 
+        Update layout tests after fix for <rdar://problem/5681647>.
+
+        * platform/mac/tables/mozilla/bugs/bug101674-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug2973-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug57828-2-expected.txt:
+        * platform/mac/tables/mozilla_expected_failures/bugs/97619-expected.txt:
+
+2008-01-16  David Hyatt  <hyatt@apple.com>
+
         Reviewed by Eric Seidel
 
         http://bugs.webkit.org/show_bug.cgi?id=14846
