@@ -31,7 +31,7 @@ namespace WebCore {
 QNetworkRequest ResourceRequest::toNetworkRequest() const
 {
     QNetworkRequest request;
-    request.setUrl(QUrl(url().string()));
+    request.setUrl(url());
 
     const HTTPHeaderMap &headers = httpHeaderFields();
     for (HTTPHeaderMap::const_iterator it = headers.begin(), end = headers.end();

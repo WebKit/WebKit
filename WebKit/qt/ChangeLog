@@ -1,3 +1,28 @@
+2008-01-16  Lars Knoll  <lars@trolltech.com>
+
+        Reviewed by Simon.
+
+        add conversion methods from and to QUrl to KURL.
+        
+        Use them in the places I found at the moment. Fixes a bug
+        where form data was encoded twice.
+        Also fix QWebSettings to take a QUrl for the user style sheet
+        location.
+        
+
+        * Api/qwebframe.cpp:
+        (QWebFrame::load):
+        * Api/qwebpage.cpp:
+        (QWebPage::createPlugin):
+        (frameLoadRequest):
+        (QWebPage::triggerAction):
+        * Api/qwebsettings.cpp:
+        (QWebSettingsPrivate::apply):
+        * Api/qwebsettings.h:
+        * WebCoreSupport/ChromeClientQt.cpp:
+        (WebCore::ChromeClientQt::createWindow):
+        (WebCore::ChromeClientQt::show):
+
 2008-01-16  Holger Hans Peter Freyther  <holger.freyther@trolltech.com>
 
         Reviewed by Lars.

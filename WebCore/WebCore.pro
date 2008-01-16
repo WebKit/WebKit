@@ -923,6 +923,7 @@ qt-port {
     platform/graphics/qt/FontQt.cpp \
     platform/graphics/qt/GlyphPageTreeNodeQt.cpp \
     platform/graphics/qt/SimpleFontDataQt.cpp \
+    platform/qt/KURLQt.cpp \
     platform/qt/Localizations.cpp \
     platform/qt/MIMETypeRegistryQt.cpp \
     platform/qt/PasteboardQt.cpp \

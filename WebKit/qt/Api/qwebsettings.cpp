@@ -34,6 +34,7 @@
 
 #include <QHash>
 #include <QSharedData>
+#include <QUrl>
 
 class QWebSettingsPrivate
 {
@@ -46,7 +47,7 @@ public:
     QHash<int, QString> fontFamilies;
     QHash<int, int> fontSizes;
     QHash<int, bool> attributes;
-    QString userStyleSheetLocation;
+    QUrl userStyleSheetLocation;
 
     void apply();
     WebCore::Settings *settings;
@@ -134,7 +135,7 @@ void QWebSettingsPrivate::apply()
                                       global->attributes.value(QWebSettings::DeveloperExtrasEnabled));
         settings->setDeveloperExtrasEnabled(value);
 
-        QString location = (!userStyleSheetLocation.isEmpty()) ? userStyleSheetLocation : global->userStyleSheetLocation;
+        QUrl location = !userStyleSheetLocation.isEmpty() ? userStyleSheetLocation : global->userStyleSheetLocation;
         settings->setUserStyleSheetLocation(WebCore::KURL(location));
     } else {
         QList<QWebSettingsPrivate *> settings = *::allSettings();
@@ -241,7 +242,7 @@ void QWebSettings::resetFontSize(FontSize type)
 
     \sa userStyleSheetLocation
 */
-void QWebSettings::setUserStyleSheetLocation(const QString &location)
+void QWebSettings::setUserStyleSheetLocation(const QUrl &location)
 {
     d->userStyleSheetLocation = location;
     d->apply();
@@ -252,7 +253,7 @@ void QWebSettings::setUserStyleSheetLocation(const QString &location)
 
     \sa setUserStyleSheetLocation
 */
-QString QWebSettings::userStyleSheetLocation() const
+QUrl QWebSettings::userStyleSheetLocation() const
 {
     return d->userStyleSheetLocation;
 }

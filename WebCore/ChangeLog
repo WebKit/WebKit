@@ -1,3 +1,24 @@
+2008-01-16  Lars Knoll  <lars@trolltech.com>
+
+        Reviewed by Simon.
+
+        add conversion methods from and to QUrl to KURL.
+
+        Use them in the places I found at the moment. Fixes a bug
+        where form data was encoded twice.
+        Also fix QWebSettings to take a QUrl for the user style sheet
+        location.
+
+        * WebCore.pro:
+        * platform/KURL.h:
+        * platform/network/qt/QNetworkReplyHandler.cpp:
+        (WebCore::QNetworkReplyHandler::sendResponseIfNeeded):
+        * platform/network/qt/ResourceRequestQt.cpp:
+        (WebCore::ResourceRequest::toNetworkRequest):
+        * platform/qt/KURLQt.cpp: Added.
+        (WebCore::KURL::KURL):
+        (WebCore::KURL::operator QUrl):
+
 2008-01-15  Darin Adler  <darin@apple.com>
 
         Rubber-stamped by Maciej Stachowiak and Oliver Hunt.

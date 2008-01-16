@@ -118,7 +118,7 @@ void QNetworkReplyHandler::sendResponseIfNeeded()
         }
     }
 
-    KURL url(m_reply->url().toString());
+    KURL url(m_reply->url());
     String contentDisposition = QString::fromAscii(m_reply->rawHeader("Content-Disposition"));
 
     ResourceResponse response(url, mimeType,
@@ -141,7 +141,7 @@ void QNetworkReplyHandler::sendResponseIfNeeded()
     if (redirection.isValid()) {
         QUrl newUrl = m_reply->url().resolved(redirection);
         ResourceRequest newRequest = m_resourceHandle->request();
-        newRequest.setURL(KURL(newUrl.toString()));
+        newRequest.setURL(newUrl);
         client->willSendRequest(m_resourceHandle, newRequest, response);
 
         if (statusCode >= 301 && statusCode <= 303 && m_method == QNetworkAccessManager::PostOperation)

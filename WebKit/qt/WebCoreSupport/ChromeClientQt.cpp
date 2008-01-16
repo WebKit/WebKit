@@ -140,8 +140,7 @@ Page* ChromeClientQt::createWindow(Frame*, const FrameLoadRequest& request, cons
     QWebPage *newPage = features.dialog ? m_webPage->createModalDialog() : m_webPage->createWindow();
     if (!newPage)
         return 0;
-    KURL url = request.resourceRequest().url();
-    newPage->mainFrame()->load(QUrl(url.prettyURL()));
+    newPage->mainFrame()->load(request.resourceRequest().url());
     return newPage->d->page;
 }
 

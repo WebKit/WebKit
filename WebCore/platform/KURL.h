@@ -41,6 +41,9 @@ typedef const struct __CFURL * CFURLRef;
 class NSURL;
 #endif
 #endif
+#if PLATFORM(QT)
+class QUrl;
+#endif
 
 namespace WebCore {
 
@@ -64,6 +67,9 @@ public:
 #endif
 #if PLATFORM(CF)
     KURL(CFURLRef);
+#endif
+#if PLATFORM(QT)
+    KURL(const QUrl&);
 #endif
 
     bool isNull() const { return urlString.isNull(); }
@@ -104,6 +110,9 @@ public:
 #endif
 #if PLATFORM(MAC)
     NSURL *getNSURL() const;
+#endif
+#if PLATFORM(QT)
+    operator QUrl() const;
 #endif
 
     bool isLocalFile() const;
