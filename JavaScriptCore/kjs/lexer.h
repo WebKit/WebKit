@@ -126,10 +126,10 @@ namespace KJS {
     KJS::Identifier* makeIdentifier(const Vector<UChar>& buffer);
     UString* makeUString(const Vector<UChar>& buffer);
 
-    const UChar *code;
+    const UChar* code;
     unsigned int length;
     int yycolumn;
-    int bol;     // begin of line
+    int atLineStart;
     bool error;
 
     // current and following unicode characters (int to allow for -1 for end-of-file marker)
