@@ -205,10 +205,10 @@ bool RenderThemeSafari::isControlStyled(const RenderStyle* style, const BorderDa
     if (style->appearance() == TextFieldAppearance || style->appearance() == TextAreaAppearance || style->appearance() == ListboxAppearance)
         return style->border() != border;
 #if !defined(SAFARI_THEME_VERSION) || SAFARI_THEME_VERSION < 2
-    if (style->appearance() == MediaBackgroundAppearance || style->appearance() == MediaFullscreenButtonAppearance ||
-        style->appearance() == MediaMuteButtonAppearance || style->appearance() == MediaPlayButtonAppearance ||
-        style->appearance() == MediaSeekBackButtonAppearance || style->appearance() == MediaSeekForwardButtonAppearance ||
-        style->appearance() == MediaSliderAppearance || style->appearance() == MediaSliderThumbAppearance)
+    if (style->appearance() == MediaFullscreenButtonAppearance || style->appearance() == MediaMuteButtonAppearance || 
+        style->appearance() == MediaPlayButtonAppearance || style->appearance() == MediaSeekBackButtonAppearance || 
+        style->appearance() == MediaSeekForwardButtonAppearance || style->appearance() == MediaSliderAppearance || 
+        style->appearance() == MediaSliderThumbAppearance)
         return true;
 #endif
     return RenderTheme::isControlStyled(style, border, background, backgroundColor);

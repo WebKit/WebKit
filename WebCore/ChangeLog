@@ -1,3 +1,9 @@
+2008-01-15  Adele Peterson  <adele@apple.com>
+
+        Build fix.
+
+        * rendering/RenderThemeSafari.cpp: Removing MediaBackgroundAppearance.
+
 2008-01-14  Samuel Weinig  <sam@webkit.org>
 
         Reviewed by Darin.
