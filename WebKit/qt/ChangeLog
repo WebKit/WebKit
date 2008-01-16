@@ -2,6 +2,18 @@
 
         Reviewed by Holger.
 
+        Fix crash when bringing up the context menu on maps.google.com.
+        
+        If the website provides its own context menu then we don't have a ContextMenu pointer.
+        
+
+        * Api/qwebpage.cpp:
+        (QWebPagePrivate::contextMenuEvent):
+
+2008-01-16  Simon Hausmann  <hausmann@webkit.org>
+
+        Reviewed by Holger.
+
         Don't crash when receiving all sorts of events on a default constructed QWebView without a page.
 
         * Api/qwebview.cpp:

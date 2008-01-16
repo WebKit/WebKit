@@ -372,6 +372,11 @@ void QWebPagePrivate::contextMenuEvent(QContextMenuEvent *ev)
     WebCore::Frame* focusedFrame = page->focusController()->focusedOrMainFrame();
     focusedFrame->eventHandler()->sendContextMenuEvent(PlatformMouseEvent(ev, 1));
     ContextMenu *menu = page->contextMenuController()->contextMenu();
+    // If the website defines its own handler then sendContextMenuEvent takes care of
+    // calling/showing it and the context menu pointer will be zero. This is the case
+    // on maps.google.com for example.
+    if (!menu)
+        return;
 
     QWebPageContext oldContext = currentContext;
     currentContext = QWebPageContext(menu->hitTestResult());
