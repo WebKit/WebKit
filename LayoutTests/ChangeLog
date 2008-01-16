@@ -1,5 +1,16 @@
 2008-01-16  David Hyatt  <hyatt@apple.com>
 
+        Reviewed by Eric Seidel
+
+        http://bugs.webkit.org/show_bug.cgi?id=14846
+
+        * fast/table/dynamic-cellpadding.html: Added.
+        * platform/mac/fast/table/dynamic-cellpadding-expected.checksum: Added.
+        * platform/mac/fast/table/dynamic-cellpadding-expected.png: Added.
+        * platform/mac/fast/table/dynamic-cellpadding-expected.txt: Added.
+
+2008-01-16  David Hyatt  <hyatt@apple.com>
+
         Reviewed by Beth.
 
         <rdar://problem/5681647> Item pages on http://www.stendmarsofa.com/ hang Safari

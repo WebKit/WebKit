@@ -1,5 +1,19 @@
 2008-01-16  David Hyatt  <hyatt@apple.com>
 
+        Fix for http://bugs.webkit.org/show_bug.cgi?id=14846, cell padding can't be changed dynamically.
+
+        Reviewed by Eric Seidel
+
+        Added fast/table/dynamic-cellpadding.html
+
+        * html/HTMLTableElement.cpp:
+        (WebCore::HTMLTableElement::parseMappedAttribute):
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::setCellPadding):
+        * rendering/RenderTable.h:
+
+2008-01-16  David Hyatt  <hyatt@apple.com>
+
         Fix for <rdar://problem/5681647> Item pages on http://www.stendmarsofa.com/ hang Safari
 
         This regression was caused by an attempt to implement a WinIE quirk in RenderBlock::calcInlinePrefWidths.

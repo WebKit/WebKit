@@ -94,6 +94,28 @@ void RenderTable::setStyle(RenderStyle* newStyle)
     }
 }
 
+void RenderTable::setCellPadding(unsigned p)
+{
+    if (p == m_padding)
+        return;
+    
+    m_padding = p;
+    for (RenderObject* section = firstChild(); section; section = section->nextSibling()) {
+        if (section->isTableSection()) {
+            for (RenderObject* row = section->firstChild(); row; row = row->nextSibling()) {
+                if (row->isTableRow()) {
+                    for (RenderObject* cell = row->firstChild(); cell; cell = cell->nextSibling()) {
+                        if (cell->isTableCell()) {
+                            cell->setChildNeedsLayout(true);
+                            cell->setPrefWidthsDirty(true);
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
 static inline void resetSectionPointerIfNotBefore(RenderTableSection*& ptr, RenderObject* before)
 {
     if (!before || !ptr)

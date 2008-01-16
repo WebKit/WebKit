@@ -317,7 +317,7 @@ static bool setTableCellsChanged(Node* n)
 void HTMLTableElement::parseMappedAttribute(MappedAttribute* attr)
 {
     CellBorders bordersBefore = cellBorders();
-
+    
     if (attr->name() == widthAttr)
         addCSSLength(attr, CSS_PROP_WIDTH, attr->value());
     else if (attr->name() == heightAttr)
@@ -424,11 +424,8 @@ void HTMLTableElement::parseMappedAttribute(MappedAttribute* attr)
             m_padding = max(0, attr->value().toInt());
         else
             m_padding = 1;
-        if (renderer() && renderer()->isTable()) {
+        if (renderer() && renderer()->isTable())
             static_cast<RenderTable*>(renderer())->setCellPadding(m_padding);
-            if (!renderer()->needsLayout())
-                renderer()->setNeedsLayout(true);
-        }
     } else if (attr->name() == colsAttr) {
         // ###
     } else if (attr->name() == vspaceAttr) {

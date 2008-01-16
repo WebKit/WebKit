@@ -86,7 +86,7 @@ public:
     const Color& bgColor() const { return style()->backgroundColor(); }
 
     unsigned cellPadding() const { return m_padding; }
-    void setCellPadding(unsigned p) { m_padding = p; }
+    void setCellPadding(unsigned);
 
     int outerBorderTop() const;
     int outerBorderBottom() const;
