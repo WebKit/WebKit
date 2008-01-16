@@ -155,7 +155,7 @@ JS_EXPORT bool JSValueIsStrictEqual(JSContextRef ctx, JSValueRef a, JSValueRef b
 @abstract Tests whether a JavaScript value is an object constructed by a given constructor, as compared by the JS instanceof operator.
 @param ctx The execution context to use.
 @param value The JSValue to test.
-@param object The constructor to test against.
+@param constructor The constructor to test against.
 @param exception A pointer to a JSValueRef in which to store an exception, if any. Pass NULL if you do not care to store an exception.
 @result true if value is an object constructed by constructor, as compared by the JS instanceof operator, otherwise false.
 */

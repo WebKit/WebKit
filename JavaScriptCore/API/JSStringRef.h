@@ -36,11 +36,11 @@
 extern "C" {
 #endif
 
+#if !defined(WIN32) && !defined(_WIN32)
 /*!
 @typedef JSChar
 @abstract A Unicode character.
 */
-#if !defined(WIN32) && !defined(_WIN32)
     typedef unsigned short JSChar;
 #else
     typedef wchar_t JSChar;

@@ -1,3 +1,15 @@
+2008-01-15  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Adam Roben.
+        
+        Some tweaks to our headerdoc, suggested by David Gatwood on the docs
+        team.
+
+        * API/JSBase.h:
+        * API/JSObjectRef.h:
+        * API/JSStringRef.h:
+        * API/JSValueRef.h:
+
 2008-01-15  Alp Toker  <alp@atoker.com>
 
         Rubber-stamped by Anders.
