@@ -1,3 +1,80 @@
+2008-01-15  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Geoffrey Garen.
+
+        Fix <rdar://problem/5595552> r27608 introduced a 20% increase in JS binary size, 4% increase in WebCore binary size
+
+        - Update JS Function implementations to use a static function based method. This decreases
+          the binary size of an Intel only build by 1013.5K.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::customGetOwnPropertySlot):
+        * bindings/js/JSEventTargetBase.cpp:
+        (WebCore::jsEventTargetAddEventListener):
+        (WebCore::jsEventTargetRemoveEventListener):
+        (WebCore::jsEventTargetDispatchEvent):
+        (WebCore::retrieveEventTargetAndCorrespondingNode):
+        * bindings/js/JSEventTargetBase.h:
+        * bindings/js/JSHTMLInputElementBase.cpp:
+        (WebCore::jsHTMLInputElementBaseFunctionSetSelectionRange):
+        (WebCore::JSHTMLInputElementBase::getOwnPropertySlot):
+        * bindings/js/JSHTMLInputElementBase.h:
+        * bindings/js/JSLocation.cpp:
+        (WebCore::JSLocation::getOwnPropertySlot):
+        (WebCore::jsLocationProtoFuncReplace):
+        (WebCore::jsLocationProtoFuncReload):
+        (WebCore::jsLocationProtoFuncAssign):
+        (WebCore::jsLocationProtoFuncToString):
+        * bindings/js/JSLocation.h:
+        * bindings/js/JSXMLHttpRequest.cpp:
+        (KJS::jsXMLHttpRequestPrototypeFunctionAbort):
+        (KJS::jsXMLHttpRequestPrototypeFunctionGetAllResponseHeaders):
+        (KJS::jsXMLHttpRequestPrototypeFunctionGetResponseHeader):
+        (KJS::jsXMLHttpRequestPrototypeFunctionOpen):
+        (KJS::jsXMLHttpRequestPrototypeFunctionSend):
+        (KJS::jsXMLHttpRequestPrototypeFunctionSetRequestHeader):
+        (KJS::jsXMLHttpRequestPrototypeFunctionOverrideMIMEType):
+        (KJS::jsXMLHttpRequestPrototypeFunctionAddEventListener):
+        (KJS::jsXMLHttpRequestPrototypeFunctionRemoveEventListener):
+        (KJS::jsXMLHttpRequestPrototypeFunctionDispatchEvent):
+        * bindings/js/JSXMLHttpRequest.h:
+        * bindings/js/JSXSLTProcessor.cpp:
+        (KJS::jsXSLTProcessorPrototypeFunctionImportStylesheet):
+        (KJS::jsXSLTProcessorPrototypeFunctionTransformToFragment):
+        (KJS::jsXSLTProcessorPrototypeFunctionTransformToDocument):
+        (KJS::jsXSLTProcessorPrototypeFunctionSetParameter):
+        (KJS::jsXSLTProcessorPrototypeFunctionGetParameter):
+        (KJS::jsXSLTProcessorPrototypeFunctionRemoveParameter):
+        (KJS::jsXSLTProcessorPrototypeFunctionClearParameters):
+        (KJS::jsXSLTProcessorPrototypeFunctionReset):
+        * bindings/js/JSXSLTProcessor.h:
+        * bindings/js/kjs_events.cpp:
+        (WebCore::jsClipboardPrototypeFunctionClearData):
+        (WebCore::jsClipboardPrototypeFunctionGetData):
+        (WebCore::jsClipboardPrototypeFunctionSetData):
+        (WebCore::jsClipboardPrototypeFunctionSetDragImage):
+        * bindings/js/kjs_events.h:
+        * bindings/js/kjs_navigator.cpp:
+        (KJS::pluginsFunctionRefresh):
+        (KJS::navigatorProtoFuncJavaEnabled):
+        * bindings/js/kjs_navigator.h:
+        * bindings/js/kjs_window.cpp:
+        (KJS::Window::getOwnPropertySlot):
+        (KJS::windowProtoFuncAToB):
+        (KJS::windowProtoFuncBToA):
+        (KJS::windowProtoFuncOpen):
+        (KJS::windowProtoFuncSetTimeout):
+        (KJS::windowProtoFuncClearTimeout):
+        (KJS::windowProtoFuncSetInterval):
+        (KJS::windowProtoFuncAddEventListener):
+        (KJS::windowProtoFuncRemoveEventListener):
+        (KJS::windowProtoFuncShowModalDialog):
+        (KJS::windowProtoFuncNotImplemented):
+        * bindings/js/kjs_window.h:
+        * bindings/scripts/CodeGenerator.pm:
+        * bindings/scripts/CodeGeneratorJS.pm:
+
 2008-01-15  Adele Peterson  <adele@apple.com>
 
         Reviewed by Dan.

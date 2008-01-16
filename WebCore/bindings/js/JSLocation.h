@@ -54,14 +54,11 @@ namespace WebCore {
         Frame* m_frame;
     };
 
-#define FOR_EACH_CLASS(macro) \
-    macro(JSLocationProtoFuncAssign) \
-    macro(JSLocationProtoFuncToString) \
-    macro(JSLocationProtoFuncReplace) \
-    macro(JSLocationProtoFuncReload) \
-
-FOR_EACH_CLASS(KJS_IMPLEMENT_PROTOTYPE_FUNCTION_WITH_CREATE)
-#undef FOR_EACH_CLASS
+    // Functions
+    KJS::JSValue* jsLocationProtoFuncAssign(KJS::ExecState*, KJS::JSObject*, const KJS::List&);
+    KJS::JSValue* jsLocationProtoFuncToString(KJS::ExecState*, KJS::JSObject*, const KJS::List&);
+    KJS::JSValue* jsLocationProtoFuncReplace(KJS::ExecState*, KJS::JSObject*, const KJS::List&);
+    KJS::JSValue* jsLocationProtoFuncReload(KJS::ExecState*, KJS::JSObject*, const KJS::List&);
 
 } // namespace WebCore
 

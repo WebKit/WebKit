@@ -81,53 +81,45 @@ namespace KJS {
   /**
    * @internal
    *
-   * Classes to implement all methods that are properties of the
+   * Functions to implement all methods that are properties of the
    * String.prototype object
    */
-#define FOR_EACH_CLASS(macro) \
-    macro(StringProtoFuncToString) \
-    macro(StringProtoFuncValueOf) \
-    macro(StringProtoFuncCharAt) \
-    macro(StringProtoFuncCharCodeAt) \
-    macro(StringProtoFuncConcat) \
-    macro(StringProtoFuncIndexOf) \
-    macro(StringProtoFuncLastIndexOf) \
-    macro(StringProtoFuncMatch) \
-    macro(StringProtoFuncReplace) \
-    macro(StringProtoFuncSearch) \
-    macro(StringProtoFuncSlice) \
-    macro(StringProtoFuncSplit) \
-    macro(StringProtoFuncSubstr) \
-    macro(StringProtoFuncSubstring) \
-    macro(StringProtoFuncToLowerCase) \
-    macro(StringProtoFuncToUpperCase) \
-    macro(StringProtoFuncToLocaleLowerCase) \
-    macro(StringProtoFuncToLocaleUpperCase) \
-    macro(StringProtoFuncLocaleCompare) \
 
-#define FOR_EACH_CLASS_NOT_PURE_ECMA(macro) \
-    macro(StringProtoFuncBig) \
-    macro(StringProtoFuncSmall) \
-    macro(StringProtoFuncBlink) \
-    macro(StringProtoFuncBold) \
-    macro(StringProtoFuncFixed) \
-    macro(StringProtoFuncItalics) \
-    macro(StringProtoFuncStrike) \
-    macro(StringProtoFuncSub) \
-    macro(StringProtoFuncSup) \
-    macro(StringProtoFuncFontcolor) \
-    macro(StringProtoFuncFontsize) \
-    macro(StringProtoFuncAnchor) \
-    macro(StringProtoFuncLink) \
+  JSValue* stringProtoFuncToString(ExecState*, JSObject*, const List&);
+  JSValue* stringProtoFuncValueOf(ExecState*, JSObject*, const List&);
+  JSValue* stringProtoFuncCharAt(ExecState*, JSObject*, const List&);
+  JSValue* stringProtoFuncCharCodeAt(ExecState*, JSObject*, const List&);
+  JSValue* stringProtoFuncConcat(ExecState*, JSObject*, const List&);
+  JSValue* stringProtoFuncIndexOf(ExecState*, JSObject*, const List&);
+  JSValue* stringProtoFuncLastIndexOf(ExecState*, JSObject*, const List&);
+  JSValue* stringProtoFuncMatch(ExecState*, JSObject*, const List&);
+  JSValue* stringProtoFuncReplace(ExecState*, JSObject*, const List&);
+  JSValue* stringProtoFuncSearch(ExecState*, JSObject*, const List&);
+  JSValue* stringProtoFuncSlice(ExecState*, JSObject*, const List&);
+  JSValue* stringProtoFuncSplit(ExecState*, JSObject*, const List&);
+  JSValue* stringProtoFuncSubstr(ExecState*, JSObject*, const List&);
+  JSValue* stringProtoFuncSubstring(ExecState*, JSObject*, const List&);
+  JSValue* stringProtoFuncToLowerCase(ExecState*, JSObject*, const List&);
+  JSValue* stringProtoFuncToUpperCase(ExecState*, JSObject*, const List&);
+  JSValue* stringProtoFuncToLocaleLowerCase(ExecState*, JSObject*, const List&);
+  JSValue* stringProtoFuncToLocaleUpperCase(ExecState*, JSObject*, const List&);
+  JSValue* stringProtoFuncLocaleCompare(ExecState*, JSObject*, const List&);
 
-FOR_EACH_CLASS(KJS_IMPLEMENT_PROTOTYPE_FUNCTION_WITH_CREATE)
 #ifndef KJS_PURE_ECMA
-FOR_EACH_CLASS_NOT_PURE_ECMA(KJS_IMPLEMENT_PROTOTYPE_FUNCTION_WITH_CREATE)
-#endif
-
-#undef FOR_EACH_CLASS
-#undef FOR_EACH_CLASS_NOT_PURE_ECMA
-
+  JSValue* stringProtoFuncBig(ExecState*, JSObject*, const List&);
+  JSValue* stringProtoFuncSmall(ExecState*, JSObject*, const List&);
+  JSValue* stringProtoFuncBlink(ExecState*, JSObject*, const List&);
+  JSValue* stringProtoFuncBold(ExecState*, JSObject*, const List&);
+  JSValue* stringProtoFuncFixed(ExecState*, JSObject*, const List&);
+  JSValue* stringProtoFuncItalics(ExecState*, JSObject*, const List&);
+  JSValue* stringProtoFuncStrike(ExecState*, JSObject*, const List&);
+  JSValue* stringProtoFuncSub(ExecState*, JSObject*, const List&);
+  JSValue* stringProtoFuncSup(ExecState*, JSObject*, const List&);
+  JSValue* stringProtoFuncFontcolor(ExecState*, JSObject*, const List&);
+  JSValue* stringProtoFuncFontsize(ExecState*, JSObject*, const List&);
+  JSValue* stringProtoFuncAnchor(ExecState*, JSObject*, const List&);
+  JSValue* stringProtoFuncLink(ExecState*, JSObject*, const List&);
+#endif // KJS_PURE_ECMA
 
   /**
    * @internal

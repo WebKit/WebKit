@@ -31,6 +31,8 @@
 
 #include "JSEventTargetBase.lut.h"
 
+using namespace KJS;
+
 namespace WebCore {
 
 /* Source for JSEventTargetPropertiesTable
@@ -80,27 +82,75 @@ onunload      WebCore::JSEventTargetProperties::OnUnload               DontDelet
 
 /*
 @begin JSEventTargetPrototypeTable 5
-addEventListener        &WebCore::JSEventTargetPrototypeFunction<WebCore::JSEventTargetProperties::AddEventListener>::create    DontDelete|Function 3
-removeEventListener     &WebCore::JSEventTargetPrototypeFunction<WebCore::JSEventTargetProperties::RemoveEventListener>::create DontDelete|Function 3
-dispatchEvent           &WebCore::JSEventTargetPrototypeFunction<WebCore::JSEventTargetProperties::DispatchEvent>::create       DontDelete|Function 1
+addEventListener        WebCore::jsEventTargetAddEventListener    DontDelete|Function 3
+removeEventListener     WebCore::jsEventTargetRemoveEventListener DontDelete|Function 3
+dispatchEvent           WebCore::jsEventTargetDispatchEvent       DontDelete|Function 1
 @end
 */
 
+JSValue* jsEventTargetAddEventListener(ExecState* exec, JSObject* thisObj, const List& args)
+{
+    DOMExceptionTranslator exception(exec);
+
+    Node* eventNode = 0;
+    EventTarget* eventTarget = 0;
+    if (!retrieveEventTargetAndCorrespondingNode(exec, thisObj, eventNode, eventTarget))
+        return throwError(exec, TypeError);
+
+    Frame* frame = eventNode->document()->frame();
+    if (!frame)
+        return jsUndefined();
+
+    if (JSEventListener* listener = Window::retrieveWindow(frame)->findOrCreateJSEventListener(args[1]))
+        eventTarget->addEventListener(args[0]->toString(exec), listener, args[2]->toBoolean(exec));
+
+    return jsUndefined();
+}
+
+JSValue* jsEventTargetRemoveEventListener(ExecState* exec, JSObject* thisObj, const List& args)
+{
+    DOMExceptionTranslator exception(exec);
+
+    Node* eventNode = 0;
+    EventTarget* eventTarget = 0;
+    if (!retrieveEventTargetAndCorrespondingNode(exec, thisObj, eventNode, eventTarget))
+        return throwError(exec, TypeError);
+
+    Frame* frame = eventNode->document()->frame();
+    if (!frame)
+        return jsUndefined();
+
+    if (JSEventListener* listener = Window::retrieveWindow(frame)->findJSEventListener(args[1]))
+        eventTarget->removeEventListener(args[0]->toString(exec), listener, args[2]->toBoolean(exec));
+
+    return jsUndefined();
+}
+
+JSValue* jsEventTargetDispatchEvent(ExecState* exec, JSObject* thisObj, const List& args)
+{
+    Node* eventNode = 0;
+    EventTarget* eventTarget = 0;
+    if (!retrieveEventTargetAndCorrespondingNode(exec, thisObj, eventNode, eventTarget))
+        return throwError(exec, TypeError);
+
+    DOMExceptionTranslator exception(exec);
+    return jsBoolean(eventTarget->dispatchEvent(toEvent(args[0]), exception));
+}
+
 bool retrieveEventTargetAndCorrespondingNode(KJS::ExecState*, KJS::JSObject* thisObj, Node*& eventNode, EventTarget*& eventTarget)
 {
-    if (thisObj->inherits(&JSNode::info)) {
-        JSEventTargetNode* jsNode = static_cast<JSEventTargetNode*>(thisObj);
-        ASSERT(jsNode);
+    if (!thisObj->inherits(&JSNode::info))
+        return false;
 
-        EventTargetNode* node = static_cast<EventTargetNode*>(jsNode->impl());
-        ASSERT(node);
+    JSEventTargetNode* jsNode = static_cast<JSEventTargetNode*>(thisObj);
+    ASSERT(jsNode);
 
-        eventNode = node;
-        eventTarget = node;
-        return true;
-    }
+    EventTargetNode* node = static_cast<EventTargetNode*>(jsNode->impl());
+    ASSERT(node);
 
-    return false;
+    eventNode = node;
+    eventTarget = node;
+    return true;
 }
 
 AtomicString eventNameForPropertyToken(int token)

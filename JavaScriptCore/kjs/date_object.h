@@ -60,64 +60,59 @@ namespace KJS {
     };
 
     /**
-        * @internal
+     * @internal
      *
-     * Class to implement all methods that are properties of the
+     * Functions to implement all methods that are properties of the
      * Date.prototype object
      */
     
     // Non-normative properties (Appendix B)
     // GetYear, SetYear, ToGMTString
 
-#define FOR_EACH_CLASS(macro) \
-    macro(DateProtoFuncToString) \
-    macro(DateProtoFuncToUTCString) \
-    macro(DateProtoFuncToDateString) \
-    macro(DateProtoFuncToTimeString) \
-    macro(DateProtoFuncToLocaleString) \
-    macro(DateProtoFuncToLocaleDateString) \
-    macro(DateProtoFuncToLocaleTimeString) \
-    macro(DateProtoFuncValueOf) \
-    macro(DateProtoFuncGetTime) \
-    macro(DateProtoFuncGetFullYear) \
-    macro(DateProtoFuncGetUTCFullYear) \
-    macro(DateProtoFuncToGMTString) \
-    macro(DateProtoFuncGetMonth) \
-    macro(DateProtoFuncGetUTCMonth) \
-    macro(DateProtoFuncGetDate) \
-    macro(DateProtoFuncGetUTCDate) \
-    macro(DateProtoFuncGetDay) \
-    macro(DateProtoFuncGetUTCDay) \
-    macro(DateProtoFuncGetHours) \
-    macro(DateProtoFuncGetUTCHours) \
-    macro(DateProtoFuncGetMinutes) \
-    macro(DateProtoFuncGetUTCMinutes) \
-    macro(DateProtoFuncGetSeconds) \
-    macro(DateProtoFuncGetUTCSeconds) \
-    macro(DateProtoFuncGetMilliSeconds) \
-    macro(DateProtoFuncGetUTCMilliseconds) \
-    macro(DateProtoFuncGetTimezoneOffset) \
-    macro(DateProtoFuncSetTime) \
-    macro(DateProtoFuncSetMilliSeconds) \
-    macro(DateProtoFuncSetUTCMilliseconds) \
-    macro(DateProtoFuncSetSeconds) \
-    macro(DateProtoFuncSetUTCSeconds) \
-    macro(DateProtoFuncSetMinutes) \
-    macro(DateProtoFuncSetUTCMinutes) \
-    macro(DateProtoFuncSetHours) \
-    macro(DateProtoFuncSetUTCHours) \
-    macro(DateProtoFuncSetDate) \
-    macro(DateProtoFuncSetUTCDate) \
-    macro(DateProtoFuncSetMonth) \
-    macro(DateProtoFuncSetUTCMonth) \
-    macro(DateProtoFuncSetFullYear) \
-    macro(DateProtoFuncSetUTCFullYear) \
-    macro(DateProtoFuncSetYear) \
-    macro(DateProtoFuncGetYear) \
-
-FOR_EACH_CLASS(KJS_IMPLEMENT_PROTOTYPE_FUNCTION_WITH_CREATE)
-#undef FOR_EACH_CLASS
-
+    JSValue* dateProtoFuncToString(ExecState*, JSObject*, const List&);
+    JSValue* dateProtoFuncToUTCString(ExecState*, JSObject*, const List&);
+    JSValue* dateProtoFuncToDateString(ExecState*, JSObject*, const List&);
+    JSValue* dateProtoFuncToTimeString(ExecState*, JSObject*, const List&);
+    JSValue* dateProtoFuncToLocaleString(ExecState*, JSObject*, const List&);
+    JSValue* dateProtoFuncToLocaleDateString(ExecState*, JSObject*, const List&);
+    JSValue* dateProtoFuncToLocaleTimeString(ExecState*, JSObject*, const List&);
+    JSValue* dateProtoFuncValueOf(ExecState*, JSObject*, const List&);
+    JSValue* dateProtoFuncGetTime(ExecState*, JSObject*, const List&);
+    JSValue* dateProtoFuncGetFullYear(ExecState*, JSObject*, const List&);
+    JSValue* dateProtoFuncGetUTCFullYear(ExecState*, JSObject*, const List&);
+    JSValue* dateProtoFuncToGMTString(ExecState*, JSObject*, const List&);
+    JSValue* dateProtoFuncGetMonth(ExecState*, JSObject*, const List&);
+    JSValue* dateProtoFuncGetUTCMonth(ExecState*, JSObject*, const List&);
+    JSValue* dateProtoFuncGetDate(ExecState*, JSObject*, const List&);
+    JSValue* dateProtoFuncGetUTCDate(ExecState*, JSObject*, const List&);
+    JSValue* dateProtoFuncGetDay(ExecState*, JSObject*, const List&);
+    JSValue* dateProtoFuncGetUTCDay(ExecState*, JSObject*, const List&);
+    JSValue* dateProtoFuncGetHours(ExecState*, JSObject*, const List&);
+    JSValue* dateProtoFuncGetUTCHours(ExecState*, JSObject*, const List&);
+    JSValue* dateProtoFuncGetMinutes(ExecState*, JSObject*, const List&);
+    JSValue* dateProtoFuncGetUTCMinutes(ExecState*, JSObject*, const List&);
+    JSValue* dateProtoFuncGetSeconds(ExecState*, JSObject*, const List&);
+    JSValue* dateProtoFuncGetUTCSeconds(ExecState*, JSObject*, const List&);
+    JSValue* dateProtoFuncGetMilliSeconds(ExecState*, JSObject*, const List&);
+    JSValue* dateProtoFuncGetUTCMilliseconds(ExecState*, JSObject*, const List&);
+    JSValue* dateProtoFuncGetTimezoneOffset(ExecState*, JSObject*, const List&);
+    JSValue* dateProtoFuncSetTime(ExecState*, JSObject*, const List&);
+    JSValue* dateProtoFuncSetMilliSeconds(ExecState*, JSObject*, const List&);
+    JSValue* dateProtoFuncSetUTCMilliseconds(ExecState*, JSObject*, const List&);
+    JSValue* dateProtoFuncSetSeconds(ExecState*, JSObject*, const List&);
+    JSValue* dateProtoFuncSetUTCSeconds(ExecState*, JSObject*, const List&);
+    JSValue* dateProtoFuncSetMinutes(ExecState*, JSObject*, const List&);
+    JSValue* dateProtoFuncSetUTCMinutes(ExecState*, JSObject*, const List&);
+    JSValue* dateProtoFuncSetHours(ExecState*, JSObject*, const List&);
+    JSValue* dateProtoFuncSetUTCHours(ExecState*, JSObject*, const List&);
+    JSValue* dateProtoFuncSetDate(ExecState*, JSObject*, const List&);
+    JSValue* dateProtoFuncSetUTCDate(ExecState*, JSObject*, const List&);
+    JSValue* dateProtoFuncSetMonth(ExecState*, JSObject*, const List&);
+    JSValue* dateProtoFuncSetUTCMonth(ExecState*, JSObject*, const List&);
+    JSValue* dateProtoFuncSetFullYear(ExecState*, JSObject*, const List&);
+    JSValue* dateProtoFuncSetUTCFullYear(ExecState*, JSObject*, const List&);
+    JSValue* dateProtoFuncSetYear(ExecState*, JSObject*, const List&);
+    JSValue* dateProtoFuncGetYear(ExecState*, JSObject*, const List&);
 
     /**
      * @internal

@@ -61,18 +61,14 @@ public:
     virtual JSObject* construct(ExecState*, const List&);
 };
 
-#define FOR_EACH_CLASS(macro) \
-    macro(JSXSLTProcessorPrototypeFunctionImportStylesheet) \
-    macro(JSXSLTProcessorPrototypeFunctionTransformToFragment) \
-    macro(JSXSLTProcessorPrototypeFunctionTransformToDocument) \
-    macro(JSXSLTProcessorPrototypeFunctionSetParameter) \
-    macro(JSXSLTProcessorPrototypeFunctionGetParameter) \
-    macro(JSXSLTProcessorPrototypeFunctionRemoveParameter) \
-    macro(JSXSLTProcessorPrototypeFunctionClearParameters) \
-    macro(JSXSLTProcessorPrototypeFunctionReset) \
-
-FOR_EACH_CLASS(KJS_IMPLEMENT_PROTOTYPE_FUNCTION_WITH_CREATE)
-#undef FOR_EACH_CLASS
+JSValue* jsXSLTProcessorPrototypeFunctionImportStylesheet(ExecState*, JSObject*, const List&);
+JSValue* jsXSLTProcessorPrototypeFunctionTransformToFragment(ExecState*, JSObject*, const List&);
+JSValue* jsXSLTProcessorPrototypeFunctionTransformToDocument(ExecState*, JSObject*, const List&);
+JSValue* jsXSLTProcessorPrototypeFunctionSetParameter(ExecState*, JSObject*, const List&);
+JSValue* jsXSLTProcessorPrototypeFunctionGetParameter(ExecState*, JSObject*, const List&);
+JSValue* jsXSLTProcessorPrototypeFunctionRemoveParameter(ExecState*, JSObject*, const List&);
+JSValue* jsXSLTProcessorPrototypeFunctionClearParameters(ExecState*, JSObject*, const List&);
+JSValue* jsXSLTProcessorPrototypeFunctionReset(ExecState*, JSObject*, const List&);
 
 } // namespace KJS
 

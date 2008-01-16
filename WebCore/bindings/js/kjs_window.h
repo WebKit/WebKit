@@ -164,20 +164,17 @@ namespace KJS {
     OwnPtr<WindowPrivate> d;
   };
 
-#define FOR_EACH_CLASS(macro) \
-    macro(WindowProtoFuncAToB) \
-    macro(WindowProtoFuncBToA) \
-    macro(WindowProtoFuncOpen) \
-    macro(WindowProtoFuncSetTimeout) \
-    macro(WindowProtoFuncClearTimeout) \
-    macro(WindowProtoFuncSetInterval) \
-    macro(WindowProtoFuncAddEventListener) \
-    macro(WindowProtoFuncRemoveEventListener) \
-    macro(WindowProtoFuncShowModalDialog) \
-    macro(WindowProtoFuncNotImplemented) \
-
-FOR_EACH_CLASS(KJS_IMPLEMENT_PROTOTYPE_FUNCTION_WITH_CREATE)
-#undef FOR_EACH_CLASS
+  // Functions
+  JSValue* windowProtoFuncAToB(ExecState*, JSObject*, const List&);
+  JSValue* windowProtoFuncBToA(ExecState*, JSObject*, const List&);
+  JSValue* windowProtoFuncOpen(ExecState*, JSObject*, const List&);
+  JSValue* windowProtoFuncSetTimeout(ExecState*, JSObject*, const List&);
+  JSValue* windowProtoFuncClearTimeout(ExecState*, JSObject*, const List&);
+  JSValue* windowProtoFuncSetInterval(ExecState*, JSObject*, const List&);
+  JSValue* windowProtoFuncAddEventListener(ExecState*, JSObject*, const List&);
+  JSValue* windowProtoFuncRemoveEventListener(ExecState*, JSObject*, const List&);
+  JSValue* windowProtoFuncShowModalDialog(ExecState*, JSObject*, const List&);
+  JSValue* windowProtoFuncNotImplemented(ExecState*, JSObject*, const List&);
 
 } // namespace KJS
 

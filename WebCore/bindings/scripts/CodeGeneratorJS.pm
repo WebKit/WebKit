@@ -545,7 +545,8 @@ sub GenerateHeader
     if ($numFunctions > 0) {
         push(@headerContent,"// Functions\n\n");
         foreach my $function (@{$dataNode->functions}) {
-            push(@headerContent, prototypeFunctionFor($className, $codeGenerator->WK_ucfirst($function->signature->name)));
+            my $functionName = $codeGenerator->WK_lcfirst($className) . "PrototypeFunction" . $codeGenerator->WK_ucfirst($function->signature->name);
+            push(@headerContent, "KJS::JSValue* ${functionName}(KJS::ExecState*, KJS::JSObject*, const KJS::List&);\n");
         }
     }
 
@@ -709,7 +710,7 @@ sub GenerateImplementation
         my $name = $function->signature->name;
         push(@hashKeys, $name);
 
-        my $value = "&" . $className . "PrototypeFunction" . $codeGenerator->WK_ucfirst($name) . "::create";
+        my $value = $codeGenerator->WK_lcfirst($className) . "PrototypeFunction" . $codeGenerator->WK_ucfirst($name);
         push(@hashValues, $value);
 
         my @specials = ();
@@ -1061,8 +1062,8 @@ sub GenerateImplementation
     # Functions
     if ($numFunctions > 0) {
         foreach my $function (@{$dataNode->functions}) {
-            my $functionClassName = $className . "PrototypeFunction" . $codeGenerator->WK_ucfirst($function->signature->name);
-            push(@implContent, "JSValue* ${functionClassName}::callAsFunction(ExecState* exec, JSObject* thisObj, const List& args)\n");
+            my $functionName = $codeGenerator->WK_lcfirst($className) . "PrototypeFunction" . $codeGenerator->WK_ucfirst($function->signature->name);
+            push(@implContent, "JSValue* ${functionName}(ExecState* exec, JSObject* thisObj, const List& args)\n");
             push(@implContent, "{\n");
             push(@implContent, "    if (!thisObj->inherits(&${className}::info))\n");
             push(@implContent, "        return throwError(exec, TypeError);\n");
@@ -1767,33 +1768,6 @@ JSValue* ${className}Constructor::getValueProperty(ExecState*, int token) const
     // The token is the numeric value of its associated constant
     return jsNumber(token);
 }
-
-EOF
-
-    return $implContent;
-}
-
-sub prototypeFunctionFor
-{
-    my ($className, $functionName) = @_;
-    my $name = $className . "PrototypeFunction" . $functionName;
-
-my $implContent = << "EOF";
-class ${name} : public KJS::InternalFunctionImp {
-public: \
-    static KJS::InternalFunctionImp* create(KJS::ExecState* exec, int len, const KJS::Identifier& name)
-    {
-        return new ${name}(exec, len, name);
-    }
-
-    ${name}(KJS::ExecState* exec, int len, const KJS::Identifier& name)
-        : KJS::InternalFunctionImp(static_cast<KJS::FunctionPrototype*>(exec->lexicalGlobalObject()->functionPrototype()), name)
-    {
-        put(exec, exec->propertyNames().length, KJS::jsNumber(len), KJS::DontDelete | KJS::ReadOnly | KJS::DontEnum);
-    }
-
-    virtual KJS::JSValue* callAsFunction(KJS::ExecState*, KJS::JSObject*, const KJS::List&);
-};
 
 EOF
 

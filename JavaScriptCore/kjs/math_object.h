@@ -40,30 +40,24 @@ namespace KJS {
     enum { Euler, Ln2, Ln10, Log2E, Log10E, Pi, Sqrt1_2, Sqrt2 };
   };
 
-
-#define FOR_EACH_CLASS(macro) \
-    macro(MathProtoFuncAbs) \
-    macro(MathProtoFuncACos) \
-    macro(MathProtoFuncASin) \
-    macro(MathProtoFuncATan) \
-    macro(MathProtoFuncATan2) \
-    macro(MathProtoFuncCeil) \
-    macro(MathProtoFuncCos) \
-    macro(MathProtoFuncExp) \
-    macro(MathProtoFuncFloor) \
-    macro(MathProtoFuncLog) \
-    macro(MathProtoFuncMax) \
-    macro(MathProtoFuncMin) \
-    macro(MathProtoFuncPow) \
-    macro(MathProtoFuncRandom) \
-    macro(MathProtoFuncRound) \
-    macro(MathProtoFuncSin) \
-    macro(MathProtoFuncSqrt) \
-    macro(MathProtoFuncTan) \
-
-FOR_EACH_CLASS(KJS_IMPLEMENT_PROTOTYPE_FUNCTION_WITH_CREATE)
-#undef FOR_EACH_CLASS
-
+  JSValue* mathProtoFuncAbs(ExecState*, JSObject*, const List&);
+  JSValue* mathProtoFuncACos(ExecState*, JSObject*, const List&);
+  JSValue* mathProtoFuncASin(ExecState*, JSObject*, const List&);
+  JSValue* mathProtoFuncATan(ExecState*, JSObject*, const List&);
+  JSValue* mathProtoFuncATan2(ExecState*, JSObject*, const List&);
+  JSValue* mathProtoFuncCeil(ExecState*, JSObject*, const List&);
+  JSValue* mathProtoFuncCos(ExecState*, JSObject*, const List&);
+  JSValue* mathProtoFuncExp(ExecState*, JSObject*, const List&);
+  JSValue* mathProtoFuncFloor(ExecState*, JSObject*, const List&);
+  JSValue* mathProtoFuncLog(ExecState*, JSObject*, const List&);
+  JSValue* mathProtoFuncMax(ExecState*, JSObject*, const List&);
+  JSValue* mathProtoFuncMin(ExecState*, JSObject*, const List&);
+  JSValue* mathProtoFuncPow(ExecState*, JSObject*, const List&);
+  JSValue* mathProtoFuncRandom(ExecState*, JSObject*, const List&);
+  JSValue* mathProtoFuncRound(ExecState*, JSObject*, const List&);
+  JSValue* mathProtoFuncSin(ExecState*, JSObject*, const List&);
+  JSValue* mathProtoFuncSqrt(ExecState*, JSObject*, const List&);
+  JSValue* mathProtoFuncTan(ExecState*, JSObject*, const List&);
 
 } // namespace KJS
 

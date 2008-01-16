@@ -356,10 +356,10 @@ const ClassInfo JSClipboard::info = { "Clipboard", 0, &JSClipboardTable };
   types         WebCore::JSClipboard::Types                                DontDelete|ReadOnly
 @end
 @begin JSClipboardPrototypeTable 4
-  clearData     &WebCore::JSClipboardPrototypeFunctionClearData::create    DontDelete|Function 0
-  getData       &WebCore::JSClipboardPrototypeFunctionGetData::create      DontDelete|Function 1
-  setData       &WebCore::JSClipboardPrototypeFunctionSetData::create      DontDelete|Function 2
-  setDragImage  &WebCore::JSClipboardPrototypeFunctionSetDragImage::create DontDelete|Function 3
+  clearData     WebCore::jsClipboardPrototypeFunctionClearData    DontDelete|Function 0
+  getData       WebCore::jsClipboardPrototypeFunctionGetData      DontDelete|Function 1
+  setData       WebCore::jsClipboardPrototypeFunctionSetData      DontDelete|Function 2
+  setDragImage  WebCore::jsClipboardPrototypeFunctionSetDragImage DontDelete|Function 3
 @end
 */
 
@@ -432,7 +432,7 @@ void JSClipboard::putValueProperty(ExecState* exec, int token, JSValue* value, i
     }
 }
 
-JSValue* JSClipboardPrototypeFunctionClearData::callAsFunction(ExecState* exec, JSObject* thisObj, const List& args)
+JSValue* jsClipboardPrototypeFunctionClearData(ExecState* exec, JSObject* thisObj, const List& args)
 {
     if (!thisObj->inherits(&JSClipboard::info))
         return throwError(exec, TypeError);
@@ -449,7 +449,7 @@ JSValue* JSClipboardPrototypeFunctionClearData::callAsFunction(ExecState* exec, 
         return throwError(exec, SyntaxError, "clearData: Invalid number of arguments");
 }
 
-JSValue* JSClipboardPrototypeFunctionGetData::callAsFunction(ExecState* exec, JSObject* thisObj, const List& args)
+JSValue* jsClipboardPrototypeFunctionGetData(ExecState* exec, JSObject* thisObj, const List& args)
 {
     if (!thisObj->inherits(&JSClipboard::info))
         return throwError(exec, TypeError);
@@ -466,7 +466,7 @@ JSValue* JSClipboardPrototypeFunctionGetData::callAsFunction(ExecState* exec, JS
         return throwError(exec, SyntaxError, "getData: Invalid number of arguments");
 }
 
-JSValue* JSClipboardPrototypeFunctionSetData::callAsFunction(ExecState* exec, JSObject* thisObj, const List& args)
+JSValue* jsClipboardPrototypeFunctionSetData(ExecState* exec, JSObject* thisObj, const List& args)
 {
     if (!thisObj->inherits(&JSClipboard::info))
         return throwError(exec, TypeError);
@@ -478,7 +478,7 @@ JSValue* JSClipboardPrototypeFunctionSetData::callAsFunction(ExecState* exec, JS
     return throwError(exec, SyntaxError, "setData: Invalid number of arguments");
 }
 
-JSValue* JSClipboardPrototypeFunctionSetDragImage::callAsFunction(ExecState* exec, JSObject* thisObj, const List& args)
+JSValue* jsClipboardPrototypeFunctionSetDragImage(ExecState* exec, JSObject* thisObj, const List& args)
 {
     if (!thisObj->inherits(&JSClipboard::info))
         return throwError(exec, TypeError);

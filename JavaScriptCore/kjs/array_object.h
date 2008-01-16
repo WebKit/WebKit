@@ -48,29 +48,25 @@ namespace KJS {
 
   };
 
-#define FOR_EACH_CLASS(macro) \
-    macro(ArrayProtoFuncToString) \
-    macro(ArrayProtoFuncToLocaleString) \
-    macro(ArrayProtoFuncConcat) \
-    macro(ArrayProtoFuncJoin) \
-    macro(ArrayProtoFuncPop) \
-    macro(ArrayProtoFuncPush) \
-    macro(ArrayProtoFuncReverse) \
-    macro(ArrayProtoFuncShift) \
-    macro(ArrayProtoFuncSlice) \
-    macro(ArrayProtoFuncSort) \
-    macro(ArrayProtoFuncSplice) \
-    macro(ArrayProtoFuncUnShift) \
-    macro(ArrayProtoFuncEvery) \
-    macro(ArrayProtoFuncForEach) \
-    macro(ArrayProtoFuncSome) \
-    macro(ArrayProtoFuncIndexOf) \
-    macro(ArrayProtoFuncFilter) \
-    macro(ArrayProtoFuncMap) \
-    macro(ArrayProtoFuncLastIndexOf) \
-
-FOR_EACH_CLASS(KJS_IMPLEMENT_PROTOTYPE_FUNCTION_WITH_CREATE)
-#undef FOR_EACH_CLASS
+  JSValue* arrayProtoFuncToString(ExecState*, JSObject*, const List&);
+  JSValue* arrayProtoFuncToLocaleString(ExecState*, JSObject*, const List&);
+  JSValue* arrayProtoFuncConcat(ExecState*, JSObject*, const List&);
+  JSValue* arrayProtoFuncJoin(ExecState*, JSObject*, const List&);
+  JSValue* arrayProtoFuncPop(ExecState*, JSObject*, const List&);
+  JSValue* arrayProtoFuncPush(ExecState*, JSObject*, const List&);
+  JSValue* arrayProtoFuncReverse(ExecState*, JSObject*, const List&);
+  JSValue* arrayProtoFuncShift(ExecState*, JSObject*, const List&);
+  JSValue* arrayProtoFuncSlice(ExecState*, JSObject*, const List&);
+  JSValue* arrayProtoFuncSort(ExecState*, JSObject*, const List&);
+  JSValue* arrayProtoFuncSplice(ExecState*, JSObject*, const List&);
+  JSValue* arrayProtoFuncUnShift(ExecState*, JSObject*, const List&);
+  JSValue* arrayProtoFuncEvery(ExecState*, JSObject*, const List&);
+  JSValue* arrayProtoFuncForEach(ExecState*, JSObject*, const List&);
+  JSValue* arrayProtoFuncSome(ExecState*, JSObject*, const List&);
+  JSValue* arrayProtoFuncIndexOf(ExecState*, JSObject*, const List&);
+  JSValue* arrayProtoFuncFilter(ExecState*, JSObject*, const List&);
+  JSValue* arrayProtoFuncMap(ExecState*, JSObject*, const List&);
+  JSValue* arrayProtoFuncLastIndexOf(ExecState*, JSObject*, const List&);
 
 } // namespace KJS
 

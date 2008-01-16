@@ -11390,6 +11390,8 @@
 				93F8B3060A300FEA00F61AB8 /* CodeGeneratorJS.pm */,
 				1432E8480C51493F00B1500F /* GCController.cpp */,
 				1432E8460C51493800B1500F /* GCController.h */,
+				E4EEFFC60D34550C00469A58 /* JSAudioConstructor.cpp */,
+				E4EEFFC70D34550C00469A58 /* JSAudioConstructor.h */,
 				E10B93C20B73C291003ED890 /* JSCustomXPathNSResolver.cpp */,
 				E10B937B0B73C00A003ED890 /* JSCustomXPathNSResolver.h */,
 				B25BE50E0D06B70800B524C6 /* JSEventTargetBase.cpp */,
@@ -11486,8 +11488,6 @@
 		BC4EDEF70C08F414007EDD49 /* Custom */ = {
 			isa = PBXGroup;
 			children = (
-				E4EEFFC60D34550C00469A58 /* JSAudioConstructor.cpp */,
-				E4EEFFC70D34550C00469A58 /* JSAudioConstructor.h */,
 				BC2ED6BB0C6BD2F000920BFF /* JSAttrCustom.cpp */,
 				1A9EF4560A1B957D00332B63 /* JSCanvasRenderingContext2DCustom.cpp */,
 				BC46C1ED0C0DDBDF0020CFC3 /* JSCSSRuleCustom.cpp */,

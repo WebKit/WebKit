@@ -36,19 +36,13 @@ namespace WebCore {
 @begin JSHTMLInputElementBasePrototypeTable 0
 @end
 @begin JSHTMLInputElementBaseFunctionTable 1
-  setSelectionRange     &WebCore::JSHTMLInputElementBaseFunctionSetSelectionRange::create         DontDelete|Function 2
+  setSelectionRange     WebCore::jsHTMLInputElementBaseFunctionSetSelectionRange         DontDelete|Function 2
 @end
 */
 
-KJS_IMPLEMENT_PROTOTYPE_FUNCTION_WITH_CREATE(JSHTMLInputElementBasePrototypeFunction)
 KJS_IMPLEMENT_PROTOTYPE("JSHTMLInputElementBase", JSHTMLInputElementBasePrototype)
 
-JSValue* JSHTMLInputElementBasePrototypeFunction::callAsFunction(ExecState*, JSObject*, const List&)
-{
-    return 0;
-}
-
-JSValue* JSHTMLInputElementBaseFunctionSetSelectionRange::callAsFunction(ExecState* exec, JSObject* thisObj, const List& args)
+JSValue* jsHTMLInputElementBaseFunctionSetSelectionRange(ExecState* exec, JSObject* thisObj, const List& args)
 {
     HTMLInputElement& input = *static_cast<HTMLInputElement*>(static_cast<JSHTMLInputElementBase*>(thisObj)->impl());
     input.setSelectionRange(args[0]->toInt32(exec), args[1]->toInt32(exec));
@@ -72,8 +66,8 @@ bool JSHTMLInputElementBase::getOwnPropertySlot(ExecState* exec, const Identifie
     
     // otherwise, do our own function lookup on our function table
     const HashEntry* entry = Lookup::findEntry(&JSHTMLInputElementBaseFunctionTable, propertyName);
-    if (entry && (entry->attr & KJS::Function) && entry->value.functionValue == &WebCore::JSHTMLInputElementBaseFunctionSetSelectionRange::create) {
-        slot.setStaticEntry(this, entry, staticFunctionGetter); 
+    if (entry && (entry->attr & KJS::Function) && entry->value.functionValue == jsHTMLInputElementBaseFunctionSetSelectionRange) {
+        slot.setStaticEntry(this, entry, staticFunctionGetter);
         return true;
     }
     ASSERT(!entry);

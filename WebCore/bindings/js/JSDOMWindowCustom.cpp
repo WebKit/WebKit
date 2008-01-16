@@ -72,10 +72,10 @@ bool JSDOMWindow::customGetOwnPropertySlot(KJS::ExecState* exec, const KJS::Iden
         const KJS::HashEntry* entry = KJS::Lookup::findEntry(static_cast<KJS::JSObject*>(proto)->classInfo()->propHashTable, propertyName);
         if (entry) {
             if (entry->attr & KJS::Function) {
-                if (entry->value.functionValue == &JSDOMWindowPrototypeFunctionFocus::create
-                    || entry->value.functionValue == &JSDOMWindowPrototypeFunctionBlur::create
-                    || entry->value.functionValue == &JSDOMWindowPrototypeFunctionClose::create
-                    || entry->value.functionValue == &JSDOMWindowPrototypeFunctionPostMessage::create)
+                if (entry->value.functionValue == jsDOMWindowPrototypeFunctionFocus
+                    || entry->value.functionValue == jsDOMWindowPrototypeFunctionBlur
+                    || entry->value.functionValue == jsDOMWindowPrototypeFunctionClose
+                    || entry->value.functionValue == jsDOMWindowPrototypeFunctionPostMessage)
                         slot.setStaticEntry(this, entry, KJS::staticFunctionGetter);
                 else {
                     if (!allowsAccessFrom(exec))

@@ -36,8 +36,6 @@ namespace KJS {
    * An entry in a hash table.
    */
   struct HashEntry {
-    typedef InternalFunctionImp* (*ConstructFunctionObject)(ExecState*, int, const Identifier&);
-
     /**
      * s is the key (e.g. a property name)
      */
@@ -48,7 +46,7 @@ namespace KJS {
      */
     union {
       intptr_t intValue;
-      ConstructFunctionObject functionValue;
+      PrototypeFunction::JSMemberFunction functionValue;
     } value;
 
     /**
@@ -134,7 +132,7 @@ namespace KJS {
         return cachedVal;
 
       const HashEntry* entry = slot.staticEntry();
-      JSValue* val = entry->value.functionValue(exec, entry->params, propertyName); 
+      JSValue* val = new PrototypeFunction(exec, entry->params, propertyName, entry->value.functionValue);
       thisObj->putDirect(propertyName, val, entry->attr);
       return val;
   }
@@ -298,7 +296,6 @@ namespace KJS {
  *
  * Using those macros is very simple: define the hashtable (e.g. "DOMNodePrototypeTable"), then
  * KJS_DEFINE_PROTOTYPE(DOMNodePrototype)
- * KJS_IMPLEMENT_PROTOFUNC(DOMNodePrototypeFunction)
  * KJS_IMPLEMENT_PROTOTYPE("DOMNode", DOMNodePrototype, DOMNodePrototypeFunction)
  * and use DOMNodePrototype::self(exec) as prototype in the DOMNode constructor.
  * If the prototype has a "parent prototype", e.g. DOMElementPrototype falls back on DOMNodePrototype,
@@ -341,22 +338,5 @@ namespace KJS {
     { \
       return getStaticFunctionSlot<JSObject>(exec, &ClassPrototype##Table, this, propertyName, slot); \
     }
-
-#define KJS_IMPLEMENT_PROTOTYPE_FUNCTION_WITH_CREATE(ClassFunction) \
-    class ClassFunction : public KJS::InternalFunctionImp { \
-    public: \
-        static KJS::InternalFunctionImp* create(KJS::ExecState* exec, int len, const KJS::Identifier& name) \
-        { \
-            return new ClassFunction(exec, len, name); \
-        } \
-        ClassFunction(KJS::ExecState* exec, int len, const KJS::Identifier& name) \
-            : KJS::InternalFunctionImp(static_cast<KJS::FunctionPrototype*>(exec->lexicalGlobalObject()->functionPrototype()), name) \
-        { \
-            put(exec, exec->propertyNames().length, KJS::jsNumber(len), KJS::DontDelete | KJS::ReadOnly | KJS::DontEnum); \
-        } \
-        \
-        /* Macro user needs to implement the callAsFunction function. */ \
-        virtual KJS::JSValue* callAsFunction(KJS::ExecState*, KJS::JSObject*, const KJS::List&); \
-    }; \
 
 #endif // KJS_lookup_h

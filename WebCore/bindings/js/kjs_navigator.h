@@ -44,7 +44,8 @@ namespace KJS {
     WebCore::Frame *m_frame;
   };
 
-  KJS_IMPLEMENT_PROTOTYPE_FUNCTION_WITH_CREATE(NavigatorProtoFuncJavaEnabled)
+  // Functions
+  JSValue* navigatorProtoFuncJavaEnabled(ExecState*, JSObject*, const List&);
 
 } // namespace
 

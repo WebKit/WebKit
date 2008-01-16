@@ -61,116 +61,13 @@ namespace WebCore {
         };
     };
 
-    // Event target prototype sharing functionality
-    template<int JSEventTargetPrototypeFunctionIdentifier>
-    class JSEventTargetPrototypeFunctionBase : public KJS::InternalFunctionImp {
-    public:
-        JSEventTargetPrototypeFunctionBase(KJS::ExecState* exec, int len, const KJS::Identifier& name) 
-            : KJS::InternalFunctionImp(static_cast<KJS::FunctionPrototype*>(exec->lexicalGlobalObject()->functionPrototype()), name) 
-        { 
-            put(exec, exec->propertyNames().length, KJS::jsNumber(len), KJS::DontDelete | KJS::ReadOnly | KJS::DontEnum); 
-        }
-
-        static KJS::InternalFunctionImp* create(KJS::ExecState*, int len, const KJS::Identifier& name);
-        virtual KJS::JSValue* callAsFunction(KJS::ExecState*, KJS::JSObject*, const KJS::List&) = 0;
-    };
-
-    template<int JSEventTargetPrototypeFunctionIdentifier>
-    class JSEventTargetPrototypeFunction : public JSEventTargetPrototypeFunctionBase<JSEventTargetPrototypeFunctionIdentifier> {
-    public:
-        JSEventTargetPrototypeFunction(KJS::ExecState* exec, int len, const KJS::Identifier& name) 
-            : JSEventTargetPrototypeFunctionBase<JSEventTargetPrototypeFunctionIdentifier>(exec, len, name)
-        {
-            // This constructor is not meant to be called, the template spezializations need to implement it.
-            ASSERT_NOT_REACHED();    
-        }
-    };
-
     // Helper function for the partial specializated template functions below 
     bool retrieveEventTargetAndCorrespondingNode(KJS::ExecState*, KJS::JSObject* thisObj, Node*&, EventTarget*&);
 
-    template<>
-    class JSEventTargetPrototypeFunction<JSEventTargetProperties::AddEventListener> : public JSEventTargetPrototypeFunctionBase<JSEventTargetProperties::AddEventListener> {
-    public:
-        JSEventTargetPrototypeFunction<JSEventTargetProperties::AddEventListener>(KJS::ExecState* exec, int len, const KJS::Identifier& name) 
-            : JSEventTargetPrototypeFunctionBase<JSEventTargetProperties::AddEventListener>(exec, len, name)
-        { 
-        }
-
-        virtual KJS::JSValue* callAsFunction(KJS::ExecState* exec, KJS::JSObject* thisObj, const KJS::List& args)
-        {
-            KJS::DOMExceptionTranslator exception(exec);
-
-            Node* eventNode = 0;
-            EventTarget* eventTarget = 0;
-            if (!retrieveEventTargetAndCorrespondingNode(exec, thisObj, eventNode, eventTarget))
-                return KJS::throwError(exec, KJS::TypeError);
-
-            Frame* frame = eventNode->document()->frame();
-            if (!frame)
-                return KJS::jsUndefined();
-
-            if (JSEventListener* listener = KJS::Window::retrieveWindow(frame)->findOrCreateJSEventListener(args[1]))
-                eventTarget->addEventListener(args[0]->toString(exec), listener, args[2]->toBoolean(exec));
-
-            return KJS::jsUndefined();
-        }
-    };
-
-    template<>
-    class JSEventTargetPrototypeFunction<JSEventTargetProperties::RemoveEventListener> : public JSEventTargetPrototypeFunctionBase<JSEventTargetProperties::RemoveEventListener> {
-    public:
-        JSEventTargetPrototypeFunction<JSEventTargetProperties::RemoveEventListener>(KJS::ExecState* exec, int len, const KJS::Identifier& name) 
-            : JSEventTargetPrototypeFunctionBase<JSEventTargetProperties::RemoveEventListener>(exec, len, name)
-        { 
-        }
-
-        virtual KJS::JSValue* callAsFunction(KJS::ExecState* exec, KJS::JSObject* thisObj, const KJS::List& args)
-        {
-            KJS::DOMExceptionTranslator exception(exec);
-
-            Node* eventNode = 0;
-            EventTarget* eventTarget = 0;
-            if (!retrieveEventTargetAndCorrespondingNode(exec, thisObj, eventNode, eventTarget))
-                return KJS::throwError(exec, KJS::TypeError);
-
-            Frame* frame = eventNode->document()->frame();
-            if (!frame)
-                return KJS::jsUndefined();
-
-            if (JSEventListener* listener = KJS::Window::retrieveWindow(frame)->findJSEventListener(args[1]))
-                eventTarget->removeEventListener(args[0]->toString(exec), listener, args[2]->toBoolean(exec));
-
-            return KJS::jsUndefined();
-        }
-    };
- 
-    template<>
-    class JSEventTargetPrototypeFunction<JSEventTargetProperties::DispatchEvent> : public JSEventTargetPrototypeFunctionBase<JSEventTargetProperties::DispatchEvent> {
-    public:
-        JSEventTargetPrototypeFunction<JSEventTargetProperties::DispatchEvent>(KJS::ExecState* exec, int len, const KJS::Identifier& name) 
-            : JSEventTargetPrototypeFunctionBase<JSEventTargetProperties::DispatchEvent>(exec, len, name)
-        { 
-        }
-
-        virtual KJS::JSValue* callAsFunction(KJS::ExecState* exec, KJS::JSObject* thisObj, const KJS::List& args)
-        {
-            Node* eventNode = 0;
-            EventTarget* eventTarget = 0;
-            if (!retrieveEventTargetAndCorrespondingNode(exec, thisObj, eventNode, eventTarget))
-                return KJS::throwError(exec, KJS::TypeError);
-
-            KJS::DOMExceptionTranslator exception(exec);
-            return KJS::jsBoolean(eventTarget->dispatchEvent(toEvent(args[0]), exception));
-        }
-    };
-
-    // This creation function relies upon above specializations
-    template<int JSEventTargetPrototypeFunctionIdentifier>
-    KJS::InternalFunctionImp* JSEventTargetPrototypeFunctionBase<JSEventTargetPrototypeFunctionIdentifier>::create(KJS::ExecState* exec, int len, const KJS::Identifier& name)
-    {
-        return new JSEventTargetPrototypeFunction<JSEventTargetPrototypeFunctionIdentifier>(exec, len, name); 
-    }
+    // Functions
+    KJS::JSValue* jsEventTargetAddEventListener(KJS::ExecState*, KJS::JSObject*, const KJS::List&);
+    KJS::JSValue* jsEventTargetRemoveEventListener(KJS::ExecState*, KJS::JSObject*, const KJS::List&);
+    KJS::JSValue* jsEventTargetDispatchEvent(KJS::ExecState*, KJS::JSObject*, const KJS::List&);
 
     // Helper function for getValueProperty/putValueProperty
     AtomicString eventNameForPropertyToken(int token);

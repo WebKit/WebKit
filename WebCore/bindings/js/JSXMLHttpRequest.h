@@ -68,21 +68,17 @@ private:
     RefPtr<WebCore::XMLHttpRequest> m_impl;
 };
 
-#define FOR_EACH_CLASS(macro) \
-    macro(JSXMLHttpRequestPrototypeFunctionAbort) \
-    macro(JSXMLHttpRequestPrototypeFunctionGetAllResponseHeaders) \
-    macro(JSXMLHttpRequestPrototypeFunctionGetResponseHeader) \
-    macro(JSXMLHttpRequestPrototypeFunctionOpen) \
-    macro(JSXMLHttpRequestPrototypeFunctionSend) \
-    macro(JSXMLHttpRequestPrototypeFunctionSetRequestHeader) \
-    macro(JSXMLHttpRequestPrototypeFunctionOverrideMIMEType) \
-    macro(JSXMLHttpRequestPrototypeFunctionAddEventListener) \
-    macro(JSXMLHttpRequestPrototypeFunctionRemoveEventListener) \
-    macro(JSXMLHttpRequestPrototypeFunctionDispatchEvent) \
+JSValue* jsXMLHttpRequestPrototypeFunctionAbort(ExecState*, JSObject*, const List&);
+JSValue* jsXMLHttpRequestPrototypeFunctionGetAllResponseHeaders(ExecState*, JSObject*, const List&);
+JSValue* jsXMLHttpRequestPrototypeFunctionGetResponseHeader(ExecState*, JSObject*, const List&);
+JSValue* jsXMLHttpRequestPrototypeFunctionOpen(ExecState*, JSObject*, const List&);
+JSValue* jsXMLHttpRequestPrototypeFunctionSend(ExecState*, JSObject*, const List&);
+JSValue* jsXMLHttpRequestPrototypeFunctionSetRequestHeader(ExecState*, JSObject*, const List&);
+JSValue* jsXMLHttpRequestPrototypeFunctionOverrideMIMEType(ExecState*, JSObject*, const List&);
+JSValue* jsXMLHttpRequestPrototypeFunctionAddEventListener(ExecState*, JSObject*, const List&);
+JSValue* jsXMLHttpRequestPrototypeFunctionRemoveEventListener(ExecState*, JSObject*, const List&);
+JSValue* jsXMLHttpRequestPrototypeFunctionDispatchEvent(ExecState*, JSObject*, const List&);
 
-FOR_EACH_CLASS(KJS_IMPLEMENT_PROTOTYPE_FUNCTION_WITH_CREATE)
-#undef FOR_EACH_CLASS
+} // namespace KJS
 
-} // namespace
-
-#endif
+#endif // JSXMLHttpRequest_h

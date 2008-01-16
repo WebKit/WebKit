@@ -44,24 +44,24 @@ const ClassInfo MathObjectImp::info = { "Math", 0, &mathTable };
   PI            MathObjectImp::Pi              DontEnum|DontDelete|ReadOnly
   SQRT1_2       MathObjectImp::Sqrt1_2         DontEnum|DontDelete|ReadOnly
   SQRT2         MathObjectImp::Sqrt2           DontEnum|DontDelete|ReadOnly
-  abs           &MathProtoFuncAbs::create      DontEnum|Function 1
-  acos          &MathProtoFuncACos::create     DontEnum|Function 1
-  asin          &MathProtoFuncASin::create     DontEnum|Function 1
-  atan          &MathProtoFuncATan::create     DontEnum|Function 1
-  atan2         &MathProtoFuncATan2::create    DontEnum|Function 2
-  ceil          &MathProtoFuncCeil::create     DontEnum|Function 1
-  cos           &MathProtoFuncCos::create      DontEnum|Function 1
-  exp           &MathProtoFuncExp::create      DontEnum|Function 1
-  floor         &MathProtoFuncFloor::create    DontEnum|Function 1
-  log           &MathProtoFuncLog::create      DontEnum|Function 1
-  max           &MathProtoFuncMax::create      DontEnum|Function 2
-  min           &MathProtoFuncMin::create      DontEnum|Function 2
-  pow           &MathProtoFuncPow::create      DontEnum|Function 2
-  random        &MathProtoFuncRandom::create   DontEnum|Function 0 
-  round         &MathProtoFuncRound::create    DontEnum|Function 1
-  sin           &MathProtoFuncSin::create      DontEnum|Function 1
-  sqrt          &MathProtoFuncSqrt::create     DontEnum|Function 1
-  tan           &MathProtoFuncTan::create      DontEnum|Function 1
+  abs           mathProtoFuncAbs               DontEnum|Function 1
+  acos          mathProtoFuncACos              DontEnum|Function 1
+  asin          mathProtoFuncASin              DontEnum|Function 1
+  atan          mathProtoFuncATan              DontEnum|Function 1
+  atan2         mathProtoFuncATan2             DontEnum|Function 2
+  ceil          mathProtoFuncCeil              DontEnum|Function 1
+  cos           mathProtoFuncCos               DontEnum|Function 1
+  exp           mathProtoFuncExp               DontEnum|Function 1
+  floor         mathProtoFuncFloor             DontEnum|Function 1
+  log           mathProtoFuncLog               DontEnum|Function 1
+  max           mathProtoFuncMax               DontEnum|Function 2
+  min           mathProtoFuncMin               DontEnum|Function 2
+  pow           mathProtoFuncPow               DontEnum|Function 2
+  random        mathProtoFuncRandom            DontEnum|Function 0 
+  round         mathProtoFuncRound             DontEnum|Function 1
+  sin           mathProtoFuncSin               DontEnum|Function 1
+  sqrt          mathProtoFuncSqrt              DontEnum|Function 1
+  tan           mathProtoFuncTan               DontEnum|Function 1
 @end
 */
 
@@ -115,38 +115,38 @@ JSValue *MathObjectImp::getValueProperty(ExecState *, int token) const
 
 // ------------------------------ Functions --------------------------------
 
-JSValue* MathProtoFuncAbs::callAsFunction(ExecState* exec, JSObject*, const List& args)
+JSValue* mathProtoFuncAbs(ExecState* exec, JSObject*, const List& args)
 {
     double arg = args[0]->toNumber(exec);
     return signbit(arg) ? jsNumber(-arg) : jsNumber(arg);
 }
 
-JSValue* MathProtoFuncACos::callAsFunction(ExecState* exec, JSObject*, const List& args)
+JSValue* mathProtoFuncACos(ExecState* exec, JSObject*, const List& args)
 {
     double arg = args[0]->toNumber(exec);
     return jsNumber(acos(arg));
 }
 
-JSValue* MathProtoFuncASin::callAsFunction(ExecState* exec, JSObject*, const List& args)
+JSValue* mathProtoFuncASin(ExecState* exec, JSObject*, const List& args)
 {
     double arg = args[0]->toNumber(exec);
     return jsNumber(asin(arg));
 }
 
-JSValue* MathProtoFuncATan::callAsFunction(ExecState* exec, JSObject*, const List& args)
+JSValue* mathProtoFuncATan(ExecState* exec, JSObject*, const List& args)
 {
     double arg = args[0]->toNumber(exec);
     return jsNumber(atan(arg));
 }
 
-JSValue* MathProtoFuncATan2::callAsFunction(ExecState* exec, JSObject*, const List& args)
+JSValue* mathProtoFuncATan2(ExecState* exec, JSObject*, const List& args)
 {
     double arg = args[0]->toNumber(exec);
     double arg2 = args[1]->toNumber(exec);
     return jsNumber(atan2(arg, arg2));
 }
 
-JSValue* MathProtoFuncCeil::callAsFunction(ExecState* exec, JSObject*, const List& args)
+JSValue* mathProtoFuncCeil(ExecState* exec, JSObject*, const List& args)
 {
     double arg = args[0]->toNumber(exec);
     if (signbit(arg) && arg > -1.0)
@@ -154,19 +154,19 @@ JSValue* MathProtoFuncCeil::callAsFunction(ExecState* exec, JSObject*, const Lis
     return jsNumber(ceil(arg));
 }
 
-JSValue* MathProtoFuncCos::callAsFunction(ExecState* exec, JSObject*, const List& args)
+JSValue* mathProtoFuncCos(ExecState* exec, JSObject*, const List& args)
 {
     double arg = args[0]->toNumber(exec);
     return jsNumber(cos(arg));
 }
 
-JSValue* MathProtoFuncExp::callAsFunction(ExecState* exec, JSObject*, const List& args)
+JSValue* mathProtoFuncExp(ExecState* exec, JSObject*, const List& args)
 {
     double arg = args[0]->toNumber(exec);
     return jsNumber(exp(arg));
 }
 
-JSValue* MathProtoFuncFloor::callAsFunction(ExecState* exec, JSObject*, const List& args)
+JSValue* mathProtoFuncFloor(ExecState* exec, JSObject*, const List& args)
 {
     double arg = args[0]->toNumber(exec);
     if (signbit(arg) && arg == 0.0)
@@ -174,13 +174,13 @@ JSValue* MathProtoFuncFloor::callAsFunction(ExecState* exec, JSObject*, const Li
     return jsNumber(floor(arg));
 }
 
-JSValue* MathProtoFuncLog::callAsFunction(ExecState* exec, JSObject*, const List& args)
+JSValue* mathProtoFuncLog(ExecState* exec, JSObject*, const List& args)
 {
     double arg = args[0]->toNumber(exec);
     return jsNumber(log(arg));
 }
 
-JSValue* MathProtoFuncMax::callAsFunction(ExecState* exec, JSObject*, const List& args)
+JSValue* mathProtoFuncMax(ExecState* exec, JSObject*, const List& args)
 {
     unsigned argsCount = args.size();
     double result = -Inf;
@@ -196,7 +196,7 @@ JSValue* MathProtoFuncMax::callAsFunction(ExecState* exec, JSObject*, const List
     return jsNumber(result);
 }
 
-JSValue* MathProtoFuncMin::callAsFunction(ExecState* exec, JSObject*, const List& args)
+JSValue* mathProtoFuncMin(ExecState* exec, JSObject*, const List& args)
 {
     unsigned argsCount = args.size();
     double result = +Inf;
@@ -212,7 +212,7 @@ JSValue* MathProtoFuncMin::callAsFunction(ExecState* exec, JSObject*, const List
     return jsNumber(result);
 }
 
-JSValue* MathProtoFuncPow::callAsFunction(ExecState* exec, JSObject*, const List& args)
+JSValue* mathProtoFuncPow(ExecState* exec, JSObject*, const List& args)
 {
     // ECMA 15.8.2.1.13
 
@@ -228,7 +228,7 @@ JSValue* MathProtoFuncPow::callAsFunction(ExecState* exec, JSObject*, const List
 
 static bool didInitRandom;
 
-JSValue* MathProtoFuncRandom::callAsFunction(ExecState*, JSObject*, const List&)
+JSValue* mathProtoFuncRandom(ExecState*, JSObject*, const List&)
 {
     if (!didInitRandom) {
         wtf_random_init();
@@ -237,7 +237,7 @@ JSValue* MathProtoFuncRandom::callAsFunction(ExecState*, JSObject*, const List&)
     return jsNumber(wtf_random());
 }
 
-JSValue* MathProtoFuncRound::callAsFunction(ExecState* exec, JSObject*, const List& args)
+JSValue* mathProtoFuncRound(ExecState* exec, JSObject*, const List& args)
 {
     double arg = args[0]->toNumber(exec);
     if (signbit(arg) && arg >= -0.5)
@@ -245,19 +245,19 @@ JSValue* MathProtoFuncRound::callAsFunction(ExecState* exec, JSObject*, const Li
     return jsNumber(floor(arg + 0.5));
 }
 
-JSValue* MathProtoFuncSin::callAsFunction(ExecState* exec, JSObject*, const List& args)
+JSValue* mathProtoFuncSin(ExecState* exec, JSObject*, const List& args)
 {
     double arg = args[0]->toNumber(exec);
     return jsNumber(sin(arg));
 }
 
-JSValue* MathProtoFuncSqrt::callAsFunction(ExecState* exec, JSObject*, const List& args)
+JSValue* mathProtoFuncSqrt(ExecState* exec, JSObject*, const List& args)
 {
     double arg = args[0]->toNumber(exec);
     return jsNumber(sqrt(arg));
 }
 
-JSValue* MathProtoFuncTan::callAsFunction(ExecState* exec, JSObject*, const List& args)
+JSValue* mathProtoFuncTan(ExecState* exec, JSObject*, const List& args)
 {
     double arg = args[0]->toNumber(exec);
     return jsNumber(tan(arg));

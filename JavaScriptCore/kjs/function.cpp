@@ -856,4 +856,19 @@ JSValue* GlobalFuncImp::callAsFunction(ExecState* exec, JSObject* thisObj, const
   return res;
 }
 
-} // namespace
+// ------------------------------ PrototypeFunction -------------------------------
+
+PrototypeFunction::PrototypeFunction(ExecState* exec, int len, const Identifier& name, JSMemberFunction function)
+    : InternalFunctionImp(exec->lexicalGlobalObject()->functionPrototype(), name)
+    , m_function(function)
+{
+    ASSERT_ARG(function, function);
+    put(exec, exec->propertyNames().length, jsNumber(len), DontDelete | ReadOnly | DontEnum);
+}
+
+JSValue* PrototypeFunction::callAsFunction(ExecState* exec, JSObject* thisObj, const List& args)
+{
+    return m_function(exec, thisObj, args);
+}
+
+} // namespace KJS

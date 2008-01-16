@@ -1,3 +1,150 @@
+2008-01-15  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Geoffrey Garen.
+
+        Fix <rdar://problem/5595552> r27608 introduced a 20% increase in JS binary size, 4% increase in WebCore binary size
+
+        - This changes the way JS functions that use Lookup tables are handled.  Instead using
+          one class per function, which allowed specialization of the virtual callAsFunction
+          method, we now use on class, PrototypeFunction, which takes a pointer to a static
+          function to use as the implementation.  This significantly decreases the binary size
+          of JavaScriptCore (about 145k on an Intel only build) while still keeping some of the
+          speedup r27608 garnered (SunSpider says this is 1.005x as slow, which should leave some
+          wiggle room from the original 1% speedup) and keeps the functions implementations in separate
+          functions to help with optimizations.
+
+        * JavaScriptCore.exp:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * kjs/array_object.cpp:
+        (KJS::arrayProtoFuncToString):
+        (KJS::arrayProtoFuncToLocaleString):
+        (KJS::arrayProtoFuncJoin):
+        (KJS::arrayProtoFuncConcat):
+        (KJS::arrayProtoFuncPop):
+        (KJS::arrayProtoFuncPush):
+        (KJS::arrayProtoFuncReverse):
+        (KJS::arrayProtoFuncShift):
+        (KJS::arrayProtoFuncSlice):
+        (KJS::arrayProtoFuncSort):
+        (KJS::arrayProtoFuncSplice):
+        (KJS::arrayProtoFuncUnShift):
+        (KJS::arrayProtoFuncFilter):
+        (KJS::arrayProtoFuncMap):
+        (KJS::arrayProtoFuncEvery):
+        (KJS::arrayProtoFuncForEach):
+        (KJS::arrayProtoFuncSome):
+        (KJS::arrayProtoFuncIndexOf):
+        (KJS::arrayProtoFuncLastIndexOf):
+        * kjs/array_object.h:
+        * kjs/date_object.cpp:
+        (KJS::DatePrototype::getOwnPropertySlot):
+        (KJS::dateProtoFuncToString):
+        (KJS::dateProtoFuncToUTCString):
+        (KJS::dateProtoFuncToDateString):
+        (KJS::dateProtoFuncToTimeString):
+        (KJS::dateProtoFuncToLocaleString):
+        (KJS::dateProtoFuncToLocaleDateString):
+        (KJS::dateProtoFuncToLocaleTimeString):
+        (KJS::dateProtoFuncValueOf):
+        (KJS::dateProtoFuncGetTime):
+        (KJS::dateProtoFuncGetFullYear):
+        (KJS::dateProtoFuncGetUTCFullYear):
+        (KJS::dateProtoFuncToGMTString):
+        (KJS::dateProtoFuncGetMonth):
+        (KJS::dateProtoFuncGetUTCMonth):
+        (KJS::dateProtoFuncGetDate):
+        (KJS::dateProtoFuncGetUTCDate):
+        (KJS::dateProtoFuncGetDay):
+        (KJS::dateProtoFuncGetUTCDay):
+        (KJS::dateProtoFuncGetHours):
+        (KJS::dateProtoFuncGetUTCHours):
+        (KJS::dateProtoFuncGetMinutes):
+        (KJS::dateProtoFuncGetUTCMinutes):
+        (KJS::dateProtoFuncGetSeconds):
+        (KJS::dateProtoFuncGetUTCSeconds):
+        (KJS::dateProtoFuncGetMilliSeconds):
+        (KJS::dateProtoFuncGetUTCMilliseconds):
+        (KJS::dateProtoFuncGetTimezoneOffset):
+        (KJS::dateProtoFuncSetTime):
+        (KJS::dateProtoFuncSetMilliSeconds):
+        (KJS::dateProtoFuncSetUTCMilliseconds):
+        (KJS::dateProtoFuncSetSeconds):
+        (KJS::dateProtoFuncSetUTCSeconds):
+        (KJS::dateProtoFuncSetMinutes):
+        (KJS::dateProtoFuncSetUTCMinutes):
+        (KJS::dateProtoFuncSetHours):
+        (KJS::dateProtoFuncSetUTCHours):
+        (KJS::dateProtoFuncSetDate):
+        (KJS::dateProtoFuncSetUTCDate):
+        (KJS::dateProtoFuncSetMonth):
+        (KJS::dateProtoFuncSetUTCMonth):
+        (KJS::dateProtoFuncSetFullYear):
+        (KJS::dateProtoFuncSetUTCFullYear):
+        (KJS::dateProtoFuncSetYear):
+        (KJS::dateProtoFuncGetYear):
+        * kjs/date_object.h:
+        * kjs/function.cpp:
+        (KJS::PrototypeFunction::PrototypeFunction):
+        (KJS::PrototypeFunction::callAsFunction):
+        * kjs/function.h:
+        * kjs/lookup.h:
+        (KJS::HashEntry::):
+        (KJS::staticFunctionGetter):
+        * kjs/math_object.cpp:
+        (KJS::mathProtoFuncAbs):
+        (KJS::mathProtoFuncACos):
+        (KJS::mathProtoFuncASin):
+        (KJS::mathProtoFuncATan):
+        (KJS::mathProtoFuncATan2):
+        (KJS::mathProtoFuncCeil):
+        (KJS::mathProtoFuncCos):
+        (KJS::mathProtoFuncExp):
+        (KJS::mathProtoFuncFloor):
+        (KJS::mathProtoFuncLog):
+        (KJS::mathProtoFuncMax):
+        (KJS::mathProtoFuncMin):
+        (KJS::mathProtoFuncPow):
+        (KJS::mathProtoFuncRandom):
+        (KJS::mathProtoFuncRound):
+        (KJS::mathProtoFuncSin):
+        (KJS::mathProtoFuncSqrt):
+        (KJS::mathProtoFuncTan):
+        * kjs/math_object.h:
+        * kjs/string_object.cpp:
+        (KJS::stringProtoFuncToString):
+        (KJS::stringProtoFuncValueOf):
+        (KJS::stringProtoFuncCharAt):
+        (KJS::stringProtoFuncCharCodeAt):
+        (KJS::stringProtoFuncConcat):
+        (KJS::stringProtoFuncIndexOf):
+        (KJS::stringProtoFuncLastIndexOf):
+        (KJS::stringProtoFuncMatch):
+        (KJS::stringProtoFuncSearch):
+        (KJS::stringProtoFuncReplace):
+        (KJS::stringProtoFuncSlice):
+        (KJS::stringProtoFuncSplit):
+        (KJS::stringProtoFuncSubstr):
+        (KJS::stringProtoFuncSubstring):
+        (KJS::stringProtoFuncToLowerCase):
+        (KJS::stringProtoFuncToUpperCase):
+        (KJS::stringProtoFuncToLocaleLowerCase):
+        (KJS::stringProtoFuncToLocaleUpperCase):
+        (KJS::stringProtoFuncLocaleCompare):
+        (KJS::stringProtoFuncBig):
+        (KJS::stringProtoFuncSmall):
+        (KJS::stringProtoFuncBlink):
+        (KJS::stringProtoFuncBold):
+        (KJS::stringProtoFuncFixed):
+        (KJS::stringProtoFuncItalics):
+        (KJS::stringProtoFuncStrike):
+        (KJS::stringProtoFuncSub):
+        (KJS::stringProtoFuncSup):
+        (KJS::stringProtoFuncFontcolor):
+        (KJS::stringProtoFuncFontsize):
+        (KJS::stringProtoFuncAnchor):
+        (KJS::stringProtoFuncLink):
+        * kjs/string_object.h:
+
 2008-01-15  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Adam Roben.

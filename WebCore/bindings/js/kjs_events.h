@@ -121,15 +121,11 @@ namespace WebCore {
     KJS::JSValue* toJS(KJS::ExecState*, Clipboard*);
     Clipboard* toClipboard(KJS::JSValue*);
 
-#define FOR_EACH_CLASS(macro) \
-    macro(JSClipboardPrototypeFunctionClearData) \
-    macro(JSClipboardPrototypeFunctionGetData) \
-    macro(JSClipboardPrototypeFunctionSetData) \
-    macro(JSClipboardPrototypeFunctionSetDragImage) \
-
-FOR_EACH_CLASS(KJS_IMPLEMENT_PROTOTYPE_FUNCTION_WITH_CREATE)
-#undef FOR_EACH_CLASS
-
+    // Functions
+    KJS::JSValue* jsClipboardPrototypeFunctionClearData(KJS::ExecState*, KJS::JSObject*, const KJS::List&);
+    KJS::JSValue* jsClipboardPrototypeFunctionGetData(KJS::ExecState*, KJS::JSObject*, const KJS::List&);
+    KJS::JSValue* jsClipboardPrototypeFunctionSetData(KJS::ExecState*, KJS::JSObject*, const KJS::List&);
+    KJS::JSValue* jsClipboardPrototypeFunctionSetDragImage(KJS::ExecState*, KJS::JSObject*, const KJS::List&);
 
 } // namespace WebCore
 

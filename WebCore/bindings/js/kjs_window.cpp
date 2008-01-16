@@ -146,19 +146,19 @@ const ClassInfo Window::info = { "Window", 0, &WindowTable };
 @begin WindowTable 118
 # Warning, when adding a function to this object you need to add a case in Window::get
 # -- Functions --
-  atob                  &WindowProtoFuncAToB::create                DontDelete|Function 1
-  btoa                  &WindowProtoFuncBToA::create                DontDelete|Function 1
-  open                  &WindowProtoFuncOpen::create                DontDelete|Function 3
-  setTimeout            &WindowProtoFuncSetTimeout::create          DontDelete|Function 2
-  clearTimeout          &WindowProtoFuncClearTimeout::create        DontDelete|Function 1
-  setInterval           &WindowProtoFuncSetInterval::create         DontDelete|Function 2
-  clearInterval         &WindowProtoFuncClearTimeout::create        DontDelete|Function 1
-  addEventListener      &WindowProtoFuncAddEventListener::create    DontDelete|Function 3
-  removeEventListener   &WindowProtoFuncRemoveEventListener::create DontDelete|Function 3
-  showModalDialog       &WindowProtoFuncShowModalDialog::create     DontDelete|Function 1
+  atob                  windowProtoFuncAToB                DontDelete|Function 1
+  btoa                  windowProtoFuncBToA                DontDelete|Function 1
+  open                  windowProtoFuncOpen                DontDelete|Function 3
+  setTimeout            windowProtoFuncSetTimeout          DontDelete|Function 2
+  clearTimeout          windowProtoFuncClearTimeout        DontDelete|Function 1
+  setInterval           windowProtoFuncSetInterval         DontDelete|Function 2
+  clearInterval         windowProtoFuncClearTimeout        DontDelete|Function 1
+  addEventListener      windowProtoFuncAddEventListener    DontDelete|Function 3
+  removeEventListener   windowProtoFuncRemoveEventListener DontDelete|Function 3
+  showModalDialog       windowProtoFuncShowModalDialog     DontDelete|Function 1
 # Not implemented
-  captureEvents         &WindowProtoFuncNotImplemented::create      DontDelete|Function 0
-  releaseEvents         &WindowProtoFuncNotImplemented::create      DontDelete|Function 0
+  captureEvents         windowProtoFuncNotImplemented      DontDelete|Function 0
+  releaseEvents         windowProtoFuncNotImplemented      DontDelete|Function 0
 
 # -- Attributes --
   crypto                Window::Crypto              DontDelete|ReadOnly
@@ -624,7 +624,7 @@ bool Window::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName,
   const HashEntry* entry = Lookup::findEntry(&WindowTable, propertyName);
   if (entry) {
     if (entry->attr & Function) {
-      if (entry->value.functionValue == &WindowProtoFuncShowModalDialog::create) {
+      if (entry->value.functionValue == &windowProtoFuncShowModalDialog) {
         if (!canShowModalDialog(impl()->frame()))
           return false;
       }
@@ -987,7 +987,7 @@ Event* Window::currentEvent()
     return d->m_evt;
 }
 
-JSValue* WindowProtoFuncAToB::callAsFunction(ExecState* exec, JSObject* thisObj, const List& args)
+JSValue* windowProtoFuncAToB(ExecState* exec, JSObject* thisObj, const List& args)
 {
     if (!thisObj->inherits(&Window::info))
         return throwError(exec, TypeError);
@@ -1016,7 +1016,7 @@ JSValue* WindowProtoFuncAToB::callAsFunction(ExecState* exec, JSObject* thisObj,
     return jsString(String(out.data(), out.size()));
 }
 
-JSValue* WindowProtoFuncBToA::callAsFunction(ExecState* exec, JSObject* thisObj, const List& args)
+JSValue* windowProtoFuncBToA(ExecState* exec, JSObject* thisObj, const List& args)
 {
     if (!thisObj->inherits(&Window::info))
         return throwError(exec, TypeError);
@@ -1044,7 +1044,7 @@ JSValue* WindowProtoFuncBToA::callAsFunction(ExecState* exec, JSObject* thisObj,
     return jsString(String(out.data(), out.size()));
 }
 
-JSValue* WindowProtoFuncOpen::callAsFunction(ExecState* exec, JSObject* thisObj, const List& args)
+JSValue* windowProtoFuncOpen(ExecState* exec, JSObject* thisObj, const List& args)
 {
     if (!thisObj->inherits(&Window::info))
         return throwError(exec, TypeError);
@@ -1111,7 +1111,7 @@ JSValue* WindowProtoFuncOpen::callAsFunction(ExecState* exec, JSObject* thisObj,
     return Window::retrieve(frame); // global object
 }
 
-JSValue* WindowProtoFuncSetTimeout::callAsFunction(ExecState* exec, JSObject* thisObj, const List& args)
+JSValue* windowProtoFuncSetTimeout(ExecState* exec, JSObject* thisObj, const List& args)
 {
     if (!thisObj->inherits(&Window::info))
         return throwError(exec, TypeError);
@@ -1131,7 +1131,7 @@ JSValue* WindowProtoFuncSetTimeout::callAsFunction(ExecState* exec, JSObject* th
     return jsUndefined();
 }
 
-JSValue* WindowProtoFuncClearTimeout::callAsFunction(ExecState* exec, JSObject* thisObj, const List& args)
+JSValue* windowProtoFuncClearTimeout(ExecState* exec, JSObject* thisObj, const List& args)
 {
     // Also the implementation for window.clearInterval()
 
@@ -1143,7 +1143,7 @@ JSValue* WindowProtoFuncClearTimeout::callAsFunction(ExecState* exec, JSObject* 
     return jsUndefined();
 }
 
-JSValue* WindowProtoFuncSetInterval::callAsFunction(ExecState* exec, JSObject* thisObj, const List& args)
+JSValue* windowProtoFuncSetInterval(ExecState* exec, JSObject* thisObj, const List& args)
 {
     if (!thisObj->inherits(&Window::info))
         return throwError(exec, TypeError);
@@ -1167,7 +1167,7 @@ JSValue* WindowProtoFuncSetInterval::callAsFunction(ExecState* exec, JSObject* t
 
 }
 
-JSValue* WindowProtoFuncAddEventListener::callAsFunction(ExecState* exec, JSObject* thisObj, const List& args)
+JSValue* windowProtoFuncAddEventListener(ExecState* exec, JSObject* thisObj, const List& args)
 {
     if (!thisObj->inherits(&Window::info))
         return throwError(exec, TypeError);
@@ -1186,7 +1186,7 @@ JSValue* WindowProtoFuncAddEventListener::callAsFunction(ExecState* exec, JSObje
     return jsUndefined();
 }
 
-JSValue* WindowProtoFuncRemoveEventListener::callAsFunction(ExecState* exec, JSObject* thisObj, const List& args)
+JSValue* windowProtoFuncRemoveEventListener(ExecState* exec, JSObject* thisObj, const List& args)
 {
     if (!thisObj->inherits(&Window::info))
         return throwError(exec, TypeError);
@@ -1205,7 +1205,7 @@ JSValue* WindowProtoFuncRemoveEventListener::callAsFunction(ExecState* exec, JSO
     return jsUndefined();
 }
 
-JSValue* WindowProtoFuncShowModalDialog::callAsFunction(ExecState* exec, JSObject* thisObj, const List& args)
+JSValue* windowProtoFuncShowModalDialog(ExecState* exec, JSObject* thisObj, const List& args)
 {
     if (!thisObj->inherits(&Window::info))
         return throwError(exec, TypeError);
@@ -1217,7 +1217,7 @@ JSValue* WindowProtoFuncShowModalDialog::callAsFunction(ExecState* exec, JSObjec
     return showModalDialog(exec, frame, valueToStringWithUndefinedOrNullCheck(exec, args[0]), args[1], valueToStringWithUndefinedOrNullCheck(exec, args[2]));
 }
 
-JSValue* WindowProtoFuncNotImplemented::callAsFunction(ExecState* exec, JSObject* thisObj, const List& args)
+JSValue* windowProtoFuncNotImplemented(ExecState* exec, JSObject* thisObj, const List& args)
 {
     if (!thisObj->inherits(&Window::info))
         return throwError(exec, TypeError);

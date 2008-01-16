@@ -391,7 +391,7 @@
 		146AAB2A0B66A84900E55F16 /* JSStringRefCF.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSStringRefCF.h; sourceTree = "<group>"; };
 		146AAB370B66A94400E55F16 /* JSStringRefCF.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSStringRefCF.cpp; sourceTree = "<group>"; };
 		14760863099C633800437128 /* JSImmediate.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSImmediate.cpp; sourceTree = "<group>"; };
-		1482B6EA0A4300B300517CFC /* JSValueRef.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JSValueRef.h; path = ../API/JSValueRef.h; sourceTree = "<group>"; };
+		1482B6EA0A4300B300517CFC /* JSValueRef.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSValueRef.h; sourceTree = "<group>"; };
 		1482B74B0A43032800517CFC /* JSStringRef.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSStringRef.h; sourceTree = "<group>"; };
 		1482B74C0A43032800517CFC /* JSStringRef.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSStringRef.cpp; sourceTree = "<group>"; };
 		1482B78A0A4305AB00517CFC /* APICast.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APICast.h; sourceTree = "<group>"; };
@@ -741,9 +741,9 @@
 		1432EBD70A34CAD400717B9F /* API */ = {
 			isa = PBXGroup;
 			children = (
+				1482B78A0A4305AB00517CFC /* APICast.h */,
 				1CAA8B4A0D32C39A0041BCFF /* JavaScript.h */,
 				1CAA8B4B0D32C39A0041BCFF /* JavaScriptCore.h */,
-				1482B78A0A4305AB00517CFC /* APICast.h */,
 				1421359A0A677F4F00A8195E /* JSBase.cpp */,
 				142711380A460BBB0080EEEA /* JSBase.h */,
 				1440F8AD0A508D200005F061 /* JSCallbackConstructor.cpp */,
@@ -765,6 +765,7 @@
 				146AAB370B66A94400E55F16 /* JSStringRefCF.cpp */,
 				146AAB2A0B66A84900E55F16 /* JSStringRefCF.h */,
 				14BD5A2B0A3E91F600BAF59C /* JSValueRef.cpp */,
+				1482B6EA0A4300B300517CFC /* JSValueRef.h */,
 			);
 			path = API;
 			sourceTree = "<group>";
@@ -930,7 +931,6 @@
 		65417200039E01BA0058BFEB /* kjs */ = {
 			isa = PBXGroup;
 			children = (
-				14F252600D08DF2F004ECFFF /* JSVariableObject.cpp */,
 				659126BC0BDD1728001921FB /* AllInOneFile.cpp */,
 				93ADFCE60CCBD7AC00D30B08 /* array_instance.cpp */,
 				938772E5038BFE19008635CE /* array_instance.h */,
@@ -977,7 +977,7 @@
 				65EA4C99092AF9E20093D800 /* JSLock.cpp */,
 				65EA4C9A092AF9E20093D800 /* JSLock.h */,
 				14ABB454099C2A0F00E2A24F /* JSType.h */,
-				1482B6EA0A4300B300517CFC /* JSValueRef.h */,
+				14F252600D08DF2F004ECFFF /* JSVariableObject.cpp */,
 				14F252560D08DD8D004ECFFF /* JSVariableObject.h */,
 				65C7A1710A8EAACB00FA37EA /* JSWrapperObject.cpp */,
 				65C7A1720A8EAACB00FA37EA /* JSWrapperObject.h */,
