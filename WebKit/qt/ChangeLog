@@ -2,6 +2,25 @@
 
         Reviewed by Simon.
 
+        Change hoveringOverLink implementation to have less issues.
+        
+        * Currently we only compare a pointer. In the worst case we
+        could delete the Element we have pointed to and a new one
+        gets the same address. But even if that doesn't happen the
+        WebCore::Element is mutable and JavaScript could change the
+        URL, Title or Content. So we have to compare all these three
+        attributes.
+        * This does not seem to be a performance impact.
+        
+
+        * Api/qwebpage.cpp:
+        (QWebPagePrivate::mouseMoveEvent):
+        * Api/qwebpage_p.h:
+
+2008-01-16  Holger Freyther  <holger.freyther@trolltech.com>
+
+        Reviewed by Simon.
+
         * Move the hoverElement from QWebFrame to QWebPage. As it is
         only used there.
         
