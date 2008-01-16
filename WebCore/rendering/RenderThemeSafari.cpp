@@ -74,7 +74,7 @@ SOFT_LINK_LIBRARY(SafariTheme)
 #endif
 
 SOFT_LINK(SafariTheme, paintThemePart, void, __stdcall, (ThemePart part, CGContextRef context, const CGRect& rect, NSControlSize size, ThemeControlState state), (part, context, rect, size, state))
-#if !defined(SAFARI_THEME_VERSION) || SAFARI_THEME_VERSION < 2
+#if defined(SAFARI_THEME_VERSION) && SAFARI_THEME_VERSION >= 2
 SOFT_LINK(SafariTheme, STPaintProgressIndicator, void, APIENTRY, (ProgressIndicatorType type, CGContextRef context, const CGRect& rect, NSControlSize size, ThemeControlState state, float value), (type, context, rect, size, state, value))
 #endif
 

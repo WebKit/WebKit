@@ -1,5 +1,11 @@
 2008-01-15  Adele Peterson  <adele@apple.com>
 
+        Build fix.  This time for real.
+
+        * rendering/RenderThemeSafari.cpp:
+
+2008-01-15  Adele Peterson  <adele@apple.com>
+
         Build fix.
 
         * rendering/RenderThemeSafari.cpp:
