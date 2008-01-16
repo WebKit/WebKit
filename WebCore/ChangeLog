@@ -2,6 +2,56 @@
 
         Reviewed by Simon Hausmann <simon.hausmann@trolltech.com>.
 
+        Implement GraphicsContext::clipOut and fix transparency layers.
+
+        Transparency layers where broken in two ways: It always used the
+        complete device rect as the size of the layer pixmap and the pixmaps
+        where not correctly initialized to transparent.
+
+        This fixes the worst drawing errors in the Inspector and makes drawing it
+        10 times faster.
+
+        * platform/graphics/qt/GraphicsContextQt.cpp:
+        (WebCore::toQtLineJoin):
+        (WebCore::TransparencyLayer::TransparencyLayer):
+        (WebCore::GraphicsContextPlatformPrivate::p):
+        (WebCore::GraphicsContext::platformContext):
+        (WebCore::GraphicsContext::savePlatformState):
+        (WebCore::GraphicsContext::restorePlatformState):
+        (WebCore::GraphicsContext::drawRect):
+        (WebCore::GraphicsContext::drawLine):
+        (WebCore::GraphicsContext::drawEllipse):
+        (WebCore::GraphicsContext::strokeArc):
+        (WebCore::GraphicsContext::drawConvexPolygon):
+        (WebCore::GraphicsContext::fillRect):
+        (WebCore::GraphicsContext::fillRoundedRect):
+        (WebCore::GraphicsContext::clip):
+        (WebCore::GraphicsContext::drawFocusRing):
+        (WebCore::GraphicsContext::beginTransparencyLayer):
+        (WebCore::GraphicsContext::endTransparencyLayer):
+        (WebCore::GraphicsContext::clearRect):
+        (WebCore::GraphicsContext::strokeRect):
+        (WebCore::GraphicsContext::setLineCap):
+        (WebCore::GraphicsContext::setLineJoin):
+        (WebCore::GraphicsContext::setMiterLimit):
+        (WebCore::GraphicsContext::setAlpha):
+        (WebCore::GraphicsContext::setCompositeOperation):
+        (WebCore::GraphicsContext::clipOut):
+        (WebCore::GraphicsContext::translate):
+        (WebCore::GraphicsContext::origin):
+        (WebCore::GraphicsContext::rotate):
+        (WebCore::GraphicsContext::scale):
+        (WebCore::GraphicsContext::clipOutEllipseInRect):
+        (WebCore::GraphicsContext::addInnerRoundedRectClip):
+        (WebCore::GraphicsContext::setPlatformStrokeStyle):
+        (WebCore::GraphicsContext::setPlatformStrokeThickness):
+        (WebCore::GraphicsContext::setPlatformFillColor):
+        (WebCore::GraphicsContext::setUseAntialiasing):
+
+2008-01-16  Lars Knoll  <lars@trolltech.com>
+
+        Reviewed by Simon Hausmann <simon.hausmann@trolltech.com>.
+
         Trivially implement the themed search field by mapping it to a text field
 
         Also add a bunch of notImplemented warnings for other places where we don't
