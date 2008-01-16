@@ -1,3 +1,27 @@
+2008-01-16  Lars Knoll  <lars@trolltech.com>
+
+        Reviewed by Simon Hausmann <simon.hausmann@trolltech.com>.
+
+        Trivially implement the themed search field by mapping it to a text field
+
+        Also add a bunch of notImplemented warnings for other places where we don't
+        have an implementatin in RenderTheme.
+
+        * platform/qt/RenderThemeQt.cpp:
+        (WebCore::RenderThemeQt::paintTextField):
+        (WebCore::RenderThemeQt::paintMenuListButton):
+        (WebCore::RenderThemeQt::adjustMenuListButtonStyle):
+        (WebCore::RenderThemeQt::paintSliderTrack):
+        (WebCore::RenderThemeQt::paintSliderThumb):
+        (WebCore::RenderThemeQt::paintSearchField):
+        (WebCore::RenderThemeQt::adjustSearchFieldStyle):
+        (WebCore::RenderThemeQt::adjustSearchFieldCancelButtonStyle):
+        (WebCore::RenderThemeQt::paintSearchFieldCancelButton):
+        (WebCore::RenderThemeQt::adjustSearchFieldDecorationStyle):
+        (WebCore::RenderThemeQt::paintSearchFieldDecoration):
+        (WebCore::RenderThemeQt::adjustSearchFieldResultsDecorationStyle):
+        (WebCore::RenderThemeQt::paintSearchFieldResultsDecoration):
+
 2008-01-16  Holger Freyther  <holger.freyther@trolltech.com>
 
         Reviewed by Simon.
