@@ -1,7 +1,6 @@
-// -*- c-basic-offset: 2 -*-
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- *  Copyright (C) 2007 Apple Inc. All Rights Reserved.
+ *  Copyright (C) 2007, 2008 Apple Inc. All Rights Reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -65,52 +64,41 @@ const ClassInfo MathObjectImp::info = { "Math", 0, &mathTable };
 @end
 */
 
-MathObjectImp::MathObjectImp(ExecState * /*exec*/,
-                             ObjectPrototype *objProto)
-  : JSObject(objProto)
+MathObjectImp::MathObjectImp(ExecState*, ObjectPrototype* objectPrototype)
+    : JSObject(objectPrototype)
 {
 }
 
 // ECMA 15.8
 
-bool MathObjectImp::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName, PropertySlot &slot)
+bool MathObjectImp::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot &slot)
 {
-  return getStaticPropertySlot<MathObjectImp, JSObject>(exec, &mathTable, this, propertyName, slot);
+    return getStaticPropertySlot<MathObjectImp, JSObject>(exec, &mathTable, this, propertyName, slot);
 }
 
-JSValue *MathObjectImp::getValueProperty(ExecState *, int token) const
+JSValue* MathObjectImp::getValueProperty(ExecState*, int token) const
 {
-  double d = -42; // ;)
-  switch (token) {
-  case Euler:
-    d = exp(1.0);
-    break;
-  case Ln2:
-    d = log(2.0);
-    break;
-  case Ln10:
-    d = log(10.0);
-    break;
-  case Log2E:
-    d = 1.0/log(2.0);
-    break;
-  case Log10E:
-    d = 1.0/log(10.0);
-    break;
-  case Pi:
-    d = piDouble;
-    break;
-  case Sqrt1_2:
-    d = sqrt(0.5);
-    break;
-  case Sqrt2:
-    d = sqrt(2.0);
-    break;
-  default:
-    ASSERT(0);
-  }
+    switch (token) {
+    case Euler:
+        return jsNumber(exp(1.0));
+    case Ln2:
+        return jsNumber(log(2.0));
+    case Ln10:
+        return jsNumber(log(10.0));
+    case Log2E:
+        return jsNumber(1.0 / log(2.0));
+    case Log10E:
+        return jsNumber(1.0 / log(10.0));
+    case Pi:
+        return jsNumber(piDouble);
+    case Sqrt1_2:
+        return jsNumber(sqrt(0.5));
+    case Sqrt2:
+        return jsNumber(sqrt(2.0));
+    }
 
-  return jsNumber(d);
+    ASSERT_NOT_REACHED();
+    return 0;
 }
 
 // ------------------------------ Functions --------------------------------
@@ -123,27 +111,22 @@ JSValue* mathProtoFuncAbs(ExecState* exec, JSObject*, const List& args)
 
 JSValue* mathProtoFuncACos(ExecState* exec, JSObject*, const List& args)
 {
-    double arg = args[0]->toNumber(exec);
-    return jsNumber(acos(arg));
+    return jsNumber(acos(args[0]->toNumber(exec)));
 }
 
 JSValue* mathProtoFuncASin(ExecState* exec, JSObject*, const List& args)
 {
-    double arg = args[0]->toNumber(exec);
-    return jsNumber(asin(arg));
+    return jsNumber(asin(args[0]->toNumber(exec)));
 }
 
 JSValue* mathProtoFuncATan(ExecState* exec, JSObject*, const List& args)
 {
-    double arg = args[0]->toNumber(exec);
-    return jsNumber(atan(arg));
+    return jsNumber(atan(args[0]->toNumber(exec)));
 }
 
 JSValue* mathProtoFuncATan2(ExecState* exec, JSObject*, const List& args)
 {
-    double arg = args[0]->toNumber(exec);
-    double arg2 = args[1]->toNumber(exec);
-    return jsNumber(atan2(arg, arg2));
+    return jsNumber(atan2(args[0]->toNumber(exec), args[1]->toNumber(exec)));
 }
 
 JSValue* mathProtoFuncCeil(ExecState* exec, JSObject*, const List& args)
@@ -156,14 +139,12 @@ JSValue* mathProtoFuncCeil(ExecState* exec, JSObject*, const List& args)
 
 JSValue* mathProtoFuncCos(ExecState* exec, JSObject*, const List& args)
 {
-    double arg = args[0]->toNumber(exec);
-    return jsNumber(cos(arg));
+    return jsNumber(cos(args[0]->toNumber(exec)));
 }
 
 JSValue* mathProtoFuncExp(ExecState* exec, JSObject*, const List& args)
 {
-    double arg = args[0]->toNumber(exec);
-    return jsNumber(exp(arg));
+    return jsNumber(exp(args[0]->toNumber(exec)));
 }
 
 JSValue* mathProtoFuncFloor(ExecState* exec, JSObject*, const List& args)
@@ -176,8 +157,7 @@ JSValue* mathProtoFuncFloor(ExecState* exec, JSObject*, const List& args)
 
 JSValue* mathProtoFuncLog(ExecState* exec, JSObject*, const List& args)
 {
-    double arg = args[0]->toNumber(exec);
-    return jsNumber(log(arg));
+    return jsNumber(log(args[0]->toNumber(exec)));
 }
 
 JSValue* mathProtoFuncMax(ExecState* exec, JSObject*, const List& args)
@@ -247,20 +227,17 @@ JSValue* mathProtoFuncRound(ExecState* exec, JSObject*, const List& args)
 
 JSValue* mathProtoFuncSin(ExecState* exec, JSObject*, const List& args)
 {
-    double arg = args[0]->toNumber(exec);
-    return jsNumber(sin(arg));
+    return jsNumber(sin(args[0]->toNumber(exec)));
 }
 
 JSValue* mathProtoFuncSqrt(ExecState* exec, JSObject*, const List& args)
 {
-    double arg = args[0]->toNumber(exec);
-    return jsNumber(sqrt(arg));
+    return jsNumber(sqrt(args[0]->toNumber(exec)));
 }
 
 JSValue* mathProtoFuncTan(ExecState* exec, JSObject*, const List& args)
 {
-    double arg = args[0]->toNumber(exec);
-    return jsNumber(tan(arg));
+    return jsNumber(tan(args[0]->toNumber(exec)));
 }
 
 } // namespace KJS

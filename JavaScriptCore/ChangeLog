@@ -1,5 +1,29 @@
 2008-01-16  Sam Weinig  <sam@webkit.org>
 
+        Reviewed by Oliver.
+
+        Clean up MathObjectImp, it needed a little scrubbing.
+
+        * kjs/math_object.cpp:
+        (KJS::MathObjectImp::MathObjectImp):
+        (KJS::MathObjectImp::getOwnPropertySlot):
+        (KJS::MathObjectImp::getValueProperty):
+        (KJS::mathProtoFuncACos):
+        (KJS::mathProtoFuncASin):
+        (KJS::mathProtoFuncATan):
+        (KJS::mathProtoFuncATan2):
+        (KJS::mathProtoFuncCos):
+        (KJS::mathProtoFuncExp):
+        (KJS::mathProtoFuncLog):
+        (KJS::mathProtoFuncSin):
+        (KJS::mathProtoFuncSqrt):
+        (KJS::mathProtoFuncTan):
+        * kjs/math_object.h:
+        (KJS::MathObjectImp::classInfo):
+        (KJS::MathObjectImp::):
+
+2008-01-16  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Geoffrey Garen.
 
         Rename Lexer variable bol to atLineStart.
