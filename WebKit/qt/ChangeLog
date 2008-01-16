@@ -2,6 +2,41 @@
 
         Reviewed by Simon.
 
+        EventHandler changes/fixes in QWebPage:
+        -mouse{Press,Move,Release}Event:
+        Send the event always to the mainFrame of the QWebPage.
+        
+        -contextMenuEvent, key{Press,Release}Event:
+        Send the event to the focused frame.
+        
+        This is following the Windows port and fixes a issue with the
+        Web Inspector where we were sending the events to a wrong frame.
+        
+        It is guaranteed that the mainFrame will always have an eventHandler
+        and frameView set. There is no need to check for this in QWebPage.
+        
+
+        * Api/qwebframe.cpp:
+        (QWebFramePrivate::init):
+        * Api/qwebframe_p.h:
+        (QWebFramePrivate::QWebFramePrivate):
+        * Api/qwebpage.cpp:
+        (QWebPagePrivate::updateEditorActions):
+        (QWebPagePrivate::mouseMoveEvent):
+        (QWebPagePrivate::mousePressEvent):
+        (QWebPagePrivate::mouseDoubleClickEvent):
+        (QWebPagePrivate::mouseReleaseEvent):
+        (QWebPagePrivate::contextMenuEvent):
+        (QWebPagePrivate::wheelEvent):
+        (QWebPagePrivate::keyPressEvent):
+        (QWebPagePrivate::keyReleaseEvent):
+        (QWebPagePrivate::focusInEvent):
+        * Api/qwebpage_p.h:
+
+2008-01-16  Holger Freyther  <holger.freyther@trolltech.com>
+
+        Reviewed by Simon.
+
         * Add core and kit functions to QWebFramePrivate to convert from
         QWebFrame to WebCore::Frame and vice versa.
         

@@ -66,7 +66,6 @@ public:
         , frame(0)
         , frameView(0)
         , page(0)
-        , eventHandler(0)
         , lastHoverElement(0)
         {}
     void init(QWebFrame *qframe, WebCore::Page *page,
@@ -88,7 +87,6 @@ public:
     WTF::RefPtr<WebCore::Frame> frame;
     WTF::RefPtr<WebCore::FrameView> frameView;
     QWebPage *page;
-    WebCore::EventHandler *eventHandler;
     WebCore::Element *lastHoverElement;
 };
 

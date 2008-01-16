@@ -332,81 +332,41 @@ void QWebPagePrivate::updateEditorActions()
 
 void QWebPagePrivate::mouseMoveEvent(QMouseEvent *ev)
 {
-    QWebFrame *f = currentFrame(ev->pos());
-    if (!f)
-        return;
-
-    QWebFramePrivate *frame = f->d;
-    if (!frame->frameView)
-        return;
-
-    frame->eventHandler->handleMouseMoveEvent(PlatformMouseEvent(ev, 0));
+    QWebFramePrivate::core(mainFrame)->eventHandler()->handleMouseMoveEvent(PlatformMouseEvent(ev, 0));
     const int xOffset =
-        frame->horizontalScrollBar() ? frame->horizontalScrollBar()->value() : 0;
+        mainFrame->d->horizontalScrollBar() ? mainFrame->d->horizontalScrollBar()->value() : 0;
     const int yOffset =
-        frame->verticalScrollBar() ? frame->verticalScrollBar()->value() : 0;
+        mainFrame->d->verticalScrollBar() ? mainFrame->d->verticalScrollBar()->value() : 0;
     IntPoint pt(ev->x() + xOffset, ev->y() + yOffset);
-    WebCore::HitTestResult result = frame->eventHandler->hitTestResultAtPoint(pt, false);
+    WebCore::HitTestResult result = QWebFramePrivate::core(mainFrame)->eventHandler()->hitTestResultAtPoint(pt, false);
     WebCore::Element *link = result.URLElement();
-    if (link != frame->lastHoverElement) {
-        frame->lastHoverElement = link;
+    if (link != mainFrame->d->lastHoverElement) {
+        mainFrame->d->lastHoverElement = link;
         emit q->hoveringOverLink(result.absoluteLinkURL().prettyURL(), result.title(), result.textContent());
     }
 }
 
 void QWebPagePrivate::mousePressEvent(QMouseEvent *ev)
 {
-    frameUnderMouse = frameAt(ev->pos());
-    if (!frameUnderMouse)
-        return;
-
-    QWebFramePrivate *frame = frameUnderMouse->d;
-    if (!frame->eventHandler)
-        return;
-
-    frame->eventHandler->handleMousePressEvent(PlatformMouseEvent(ev, 1));
+    QWebFramePrivate::core(mainFrame)->eventHandler()->handleMousePressEvent(PlatformMouseEvent(ev, 1));
 }
 
 void QWebPagePrivate::mouseDoubleClickEvent(QMouseEvent *ev)
 {
-    QWebFrame *f = currentFrame(ev->pos());
-    if (!f)
-        return;
-
-    QWebFramePrivate *frame = f->d;
-    if (!frame->eventHandler)
-        return;
-
-    frame->eventHandler->handleMousePressEvent(PlatformMouseEvent(ev, 2));
+    QWebFramePrivate::core(mainFrame)->eventHandler()->handleMousePressEvent(PlatformMouseEvent(ev, 2));
 }
 
 void QWebPagePrivate::mouseReleaseEvent(QMouseEvent *ev)
 {
-    QWebFrame *f = currentFrame(ev->pos());
-    if (!f)
-        return;
-
-    QWebFramePrivate *frame = f->d;
-    if (!frame->frameView)
-        return;
-
-    frame->eventHandler->handleMouseReleaseEvent(PlatformMouseEvent(ev, 0));
-
-    frameUnderMouse = 0;
+    QWebFramePrivate::core(mainFrame)->eventHandler()->handleMouseReleaseEvent(PlatformMouseEvent(ev, 0));
 }
 
 void QWebPagePrivate::contextMenuEvent(QContextMenuEvent *ev)
 {
-    QWebFrame *f = currentFrame(ev->pos());
-    if (!f)
-        return;
-
-    QWebFramePrivate *frame = f->d;
-    if (!frame->eventHandler)
-        return;
-
     page->contextMenuController()->clearContextMenu();
-    frame->eventHandler->sendContextMenuEvent(PlatformMouseEvent(ev, 1));
+
+    WebCore::Frame* focusedFrame = page->focusController()->focusedOrMainFrame();
+    focusedFrame->eventHandler()->sendContextMenuEvent(PlatformMouseEvent(ev, 1));
     ContextMenu *menu = page->contextMenuController()->contextMenu();
 
     QWebPageContext oldContext = currentContext;
@@ -423,25 +383,16 @@ void QWebPagePrivate::contextMenuEvent(QContextMenuEvent *ev)
 
 void QWebPagePrivate::wheelEvent(QWheelEvent *ev)
 {
-    QWebFramePrivate *frame = currentFrame(ev->pos())->d;
-
-    bool accepted = false;
-    if (frame->eventHandler) {
-        WebCore::PlatformWheelEvent pev(ev);
-        accepted = frame->eventHandler->handleWheelEvent(pev);
-    }
-
+    WebCore::PlatformWheelEvent pev(ev);
+    bool accepted = QWebFramePrivate::core(mainFrame)->eventHandler()->handleWheelEvent(pev);
     ev->setAccepted(accepted);
 }
 
 void QWebPagePrivate::keyPressEvent(QKeyEvent *ev)
 {
-    if (!mainFrame->d->eventHandler)
-        return;
-
     bool handled = false;
-    QWebFrame *frame = mainFrame;
-    WebCore::Editor *editor = frame->d->frame->editor();
+    WebCore::Frame *frame = page->focusController()->focusedOrMainFrame();
+    WebCore::Editor *editor = frame->editor();
     if (editor->canEdit()) {
         if (ev == QKeySequence::Cut) {
             q->triggerAction(QWebPage::Cut);
@@ -544,7 +495,7 @@ void QWebPagePrivate::keyPressEvent(QKeyEvent *ev)
         }
     }
     if (!handled) 
-        handled = frame->d->eventHandler->keyEvent(ev);
+        handled = frame->eventHandler()->keyEvent(ev);
     if (!handled) {
         handled = true;
         PlatformScrollbar *h, *v;
@@ -592,24 +543,22 @@ void QWebPagePrivate::keyReleaseEvent(QKeyEvent *ev)
         return;
     }
 
-    if (!mainFrame->d->eventHandler)
-        return;
-
-    bool handled = mainFrame->d->eventHandler->keyEvent(ev);
+    WebCore::Frame* frame = page->focusController()->focusedOrMainFrame();
+    bool handled = frame->eventHandler()->keyEvent(ev);
     ev->setAccepted(handled);
 }
 
 void QWebPagePrivate::focusInEvent(QFocusEvent *ev)
 {
     if (ev->reason() != Qt::PopupFocusReason) 
-        mainFrame->d->frame->page()->focusController()->setFocusedFrame(mainFrame->d->frame);
+        page->focusController()->setFocusedFrame(QWebFramePrivate::core(mainFrame));
 }
 
 void QWebPagePrivate::focusOutEvent(QFocusEvent *ev)
 {
     if (ev->reason() != Qt::PopupFocusReason) {
-        mainFrame->d->frame->selectionController()->clear();
-        mainFrame->d->frame->setIsActive(false);
+        QWebFramePrivate::core(mainFrame)->selectionController()->clear();
+        QWebFramePrivate::core(mainFrame)->setIsActive(false);
     }
 }
 

@@ -121,10 +121,6 @@ public:
     WebCore::Page *page;
 
     QPointer<QWebFrame> mainFrame;
-    QPointer<QWebFrame> frameUnderMouse;
-
-    inline QWebFrame *currentFrame(const QPoint &pos) const
-    { return frameUnderMouse ? static_cast<QWebFrame *>(frameUnderMouse) : frameAt(pos); }
 
     QWebPage *q;
     QUndoStack *undoStack;
