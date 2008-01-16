@@ -1,3 +1,9 @@
+2008-01-16  Steve Falkenburg  <sfalken@apple.com>
+
+        Build fix.
+
+        * win/tools/vsprops/release.vsprops:
+
 2008-01-15  Adele Peterson  <adele@apple.com>
 
         Reviewed by Adam and Antti.
