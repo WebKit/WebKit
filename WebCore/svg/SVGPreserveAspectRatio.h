@@ -65,10 +65,10 @@ namespace WebCore {
         void setMeetOrSlice(unsigned short);
         unsigned short meetOrSlice() const;
         
-        AffineTransform getCTM(float logicX, float logicY,
-                               float logicWidth, float logicHeight,
-                               float physX, float physY,
-                               float physWidth, float physHeight);
+        AffineTransform getCTM(double logicX, double logicY,
+                               double logicWidth, double logicHeight,
+                               double physX, double physY,
+                               double physWidth, double physHeight);
 
         // Helper
         bool parsePreserveAspectRatio(const UChar*& currParam, const UChar* end, bool validate = true);

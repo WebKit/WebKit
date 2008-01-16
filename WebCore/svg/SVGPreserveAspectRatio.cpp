@@ -163,18 +163,18 @@ bail_out:
     return ret;
 }
 
-AffineTransform SVGPreserveAspectRatio::getCTM(float logicX, float logicY,
-                                               float logicWidth, float logicHeight,
-                                               float /*physX*/, float /*physY*/,
-                                               float physWidth, float physHeight)
+AffineTransform SVGPreserveAspectRatio::getCTM(double logicX, double logicY,
+                                               double logicWidth, double logicHeight,
+                                               double /*physX*/, double /*physY*/,
+                                               double physWidth, double physHeight)
 {
     AffineTransform temp;
 
     if (align() == SVG_PRESERVEASPECTRATIO_UNKNOWN)
         return temp;
 
-    float vpar = logicWidth / logicHeight;
-    float svgar = physWidth / physHeight;
+    double vpar = logicWidth / logicHeight;
+    double svgar = physWidth / physHeight;
 
     if (align() == SVG_PRESERVEASPECTRATIO_NONE) {
         temp.scale(physWidth / logicWidth, physHeight / logicHeight);

@@ -1,3 +1,14 @@
+2008-01-15  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        - updated results for <rdar://problem/5666926> svg/custom/use-css-no-effect-on-shadow-tree.svg is failing
+
+        * platform/mac-leopard/svg/hixie/viewbox/preserveAspectRatio/001-expected.txt:
+        * platform/mac/svg/custom/use-css-no-effect-on-shadow-tree-expected.txt:
+        * platform/mac/svg/hixie/links/001-expected.txt:
+        * platform/win/Skipped:
+
 2008-01-15  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin.

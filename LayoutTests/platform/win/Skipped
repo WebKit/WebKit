@@ -228,11 +228,9 @@ svg/custom/mask-excessive-malloc.svg
 # String::Number prints floating point numbers differently on Win than X. <rdar://problem/5127993>
 svg/custom/path-bad-data.svg
 svg/dom/length-list-parser.html
-svg/hixie/links/001.xml
 svg/hixie/perf/001.xml
 svg/hixie/perf/002.xml
 svg/hixie/perf/007.xml
-svg/hixie/viewbox/preserveAspectRatio/001.xml
 
 # <rdar://problem/5663632> TextStream::operator<<(float) rounding differs between Mac OS X and Windows
 svg/batik/paints/patternRegions.svg
@@ -335,9 +333,6 @@ svg/custom/control-points-for-S-and-T.svg
 
 # <rdar://problem/5539818> REGRESSION (Leopard): http/tests/security/dataURL/xss-DENIED-to-data-url-sub-frame-uppercase.html failing
 http/tests/security/dataURL/xss-DENIED-to-data-url-sub-frame-uppercase.html
-
-# <rdar://5666926>
-svg/custom/use-css-no-effect-on-shadow-tree.svg
 
 # <rdar://5667007> 2 SVG text tests failing (due to bad rounding?)
 svg/batik/text/textOnPath.svg
