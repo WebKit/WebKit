@@ -1,3 +1,16 @@
+2008-01-16  Holger Hans Peter Freyther  <holger.freyther@trolltech.com>
+
+        Reviewed by Lars.
+
+        * Make the InspectorClientView inherit from QWebView instead of QWidget. This
+        way paintEvent, mouse{Press,Release}Event and other events get forwarded to
+        the QWebPage/WebInspector automatically.
+        
+
+        * WebCoreSupport/InspectorClientQt.cpp:
+        (WebCore::InspectorClientWebPage::createWindow):
+        (WebCore::InspectorClientView::InspectorClientView):
+
 2008-01-10  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Sam.

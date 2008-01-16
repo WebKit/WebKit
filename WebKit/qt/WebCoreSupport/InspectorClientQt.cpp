@@ -32,6 +32,8 @@
 
 #include "qwebpage.h"
 #include "qwebpage_p.h"
+#include "qwebview.h"
+
 #include <QtCore/QCoreApplication>
 
 #include "InspectorController.h"
@@ -46,27 +48,25 @@ class InspectorClientWebPage : public QWebPage
 public:
     QWebPage* createWindow()
     {
-        QWidget *w = new QWidget(0);
+        QWidget *w = new QWebView(0);
         QWebPage *page = new QWebPage(w);
         page->setView(w);
         connect(page, SIGNAL(destroyed()), w, SLOT(deleteLater()));
         return page;
     }
 };
-    
 
-class InspectorClientView : public QWidget {
+
+class InspectorClientView : public QWebView {
 public:
     InspectorClientView(InspectorController* controller)
-        : QWidget(0)
+        : QWebView(0)
         , m_controller(controller)
-        , m_page(new InspectorClientWebPage)
     {
-        m_page->setView(this);
-        connect(m_page, SIGNAL(destroyed()), SLOT(deleteLater()));
+        setPage(new InspectorClientWebPage);
+        connect(page(), SIGNAL(destroyed()), SLOT(deleteLater()));
     }
 
-    QWebPage* page() const { return m_page; }
 protected:
     void hideEvent(QHideEvent* ev)
     {
@@ -82,7 +82,6 @@ protected:
 
 private:
     InspectorController* m_controller;
-    QWebPage* m_page;
 };
 
 
