@@ -2,6 +2,14 @@
 
         Reviewed by Lars.
 
+        Made the url property read-write.
+
+        * Api/qwebview.h:
+
+2008-01-16  Simon Hausmann  <hausmann@webkit.org>
+
+        Reviewed by Lars.
+
         Don't crash when showing a default initialized QWebView that has no page/frame yet.
 
         * Api/qwebview.cpp:

@@ -37,7 +37,7 @@ class QWEBKIT_EXPORT QWebView : public QWidget
 {
     Q_OBJECT
     Q_PROPERTY(QString title READ title)
-    Q_PROPERTY(QUrl url READ url)
+    Q_PROPERTY(QUrl url READ url WRITE load)
     Q_PROPERTY(QPixmap icon READ icon)
     Q_PROPERTY(QString selectedText READ selectedText)
     Q_PROPERTY(bool modified READ isModified)
