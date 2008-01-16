@@ -1,5 +1,11 @@
 2008-01-15  Dan Bernstein  <mitz@apple.com>
 
+        - updated Tiger results for <rdar://problem/5666926>
+
+        * platform/mac/svg/hixie/viewbox/preserveAspectRatio/001-expected.txt:
+
+2008-01-15  Dan Bernstein  <mitz@apple.com>
+
         Reviewed by Darin Adler.
 
         - updated results for <rdar://problem/5666926> svg/custom/use-css-no-effect-on-shadow-tree.svg is failing
