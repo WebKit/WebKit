@@ -1,3 +1,16 @@
+2008-01-16  Simon Hausmann  <hausmann@webkit.org>
+
+        Reviewed by Lars Knoll <lars@trolltech.com>.
+
+        Fix crashes in the new networking code.
+
+        When the ResourceLoader cancels the handle we have to make sure not to access
+        the resource handle afterwards again.
+
+        * platform/network/qt/QNetworkReplyHandler.cpp:
+        (WebCore::QNetworkReplyHandler::finish):
+        (WebCore::QNetworkReplyHandler::forwardData):
+
 2008-01-16  Lars Knoll  <lars@trolltech.com>
 
         Reviewed by Simon.
