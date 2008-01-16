@@ -1,3 +1,12 @@
+2008-01-15  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Dan.
+
+        Fix for <rdar://problem/5682492> With the <video> element, the audio is heard when forwarding or rewinding a movie while it's playing
+
+        * rendering/MediaControlElements.cpp: (WebCore::MediaControlSeekButtonElement::defaultEventHandler):
+          Instead of pausing the media when you stop seeking on mouse up, pause the video when you first start seeking on mouse down. 
+
 2008-01-15  Alp Toker  <alp@atoker.com>
 
         Rubber-stamped by Anders.
