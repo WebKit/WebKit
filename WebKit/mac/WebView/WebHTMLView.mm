@@ -2733,20 +2733,19 @@ static void _updateActiveStateTimerCallback(CFRunLoopTimerRef timer, void *info)
 
 - (void)setNeedsDisplay:(BOOL)flag
 {
-    LOG(View, "%@ flag = %d", self, (int)flag);
-    [super setNeedsDisplay: flag];
+    LOG(View, "%@ setNeedsDisplay:%@", self, flag ? @"YES" : @"NO");
+    [super setNeedsDisplay:flag];
 }
 
 - (void)setNeedsLayout: (BOOL)flag
 {
-    LOG(View, "%@ flag = %d", self, (int)flag);
+    LOG(View, "%@ setNeedsLayout:%@", self, flag ? @"YES" : @"NO");
     _private->needsLayout = flag;
 }
 
-
 - (void)setNeedsToApplyStyles: (BOOL)flag
 {
-    LOG(View, "%@ flag = %d", self, (int)flag);
+    LOG(View, "%@ setNeedsToApplyStyles:%@", self, flag ? @"YES" : @"NO");
     _private->needsToApplyStyles = flag;
 }
 
