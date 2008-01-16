@@ -4,9 +4,9 @@
 
         Fix <rdar://problem/5595552> r27608 introduced a 20% increase in JS binary size, 4% increase in WebCore binary size
 
-        - This changes the way JS functions that use Lookup tables are handled.  Instead using
+        - This changes the way JS functions that use Lookup tables are handled.  Instead of using
           one class per function, which allowed specialization of the virtual callAsFunction
-          method, we now use on class, PrototypeFunction, which takes a pointer to a static
+          method, we now use one class, PrototypeFunction, which takes a pointer to a static
           function to use as the implementation.  This significantly decreases the binary size
           of JavaScriptCore (about 145k on an Intel only build) while still keeping some of the
           speedup r27608 garnered (SunSpider says this is 1.005x as slow, which should leave some
