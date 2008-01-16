@@ -125,15 +125,12 @@ ExecState::~ExecState()
 
 void ExecState::mark()
 {
-    for (ExecState* exec = this; exec; exec = exec->m_callingExec)
+    for (ExecState* exec = this; exec; exec = exec->m_callingExec) {
         exec->m_scopeChain.mark();
 
-    // FIXME: It is surprising that this code is necessary, since at first
-    // glance it seems that all ActivationImps should be in a ScopeChain.
-    // However, <http://bugs.webkit.org/show_bug.cgi?id=16871> proves that is
-    // not the case.
-    if (m_activation && m_activation->isOnStack())
-        m_activation->markChildren();
+        if (exec->m_savedExec != exec->m_callingExec && exec->m_savedExec)
+            exec->m_savedExec->mark();
+    }
 }
 
 JSGlobalObject* ExecState::lexicalGlobalObject() const

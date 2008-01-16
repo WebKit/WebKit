@@ -1,3 +1,26 @@
+2008-01-16  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
+
+        Reviewed by Maciej & Darin.
+
+        Fixes Bug 16868: Gmail crash
+          and Bug 16871: Crash when loading apple.com/startpage
+
+        <http://bugs.webkit.org/show_bug.cgi?id=16868>
+        <rdar://problem/5686108>
+
+        <http://bugs.webkit.org/show_bug.cgi?id=16871>
+        <rdar://problem/5686670>
+
+        Adds ActivationImp tear-off for cross-window eval() and fixes an
+        existing garbage collection issue exposed by the ActivationImp tear-off
+        patch (r29425) that can occur when an ExecState's m_callingExec is
+        different than its m_savedExec.
+
+        * kjs/ExecState.cpp:
+        (KJS::ExecState::mark):
+        * kjs/function.cpp:
+        (KJS::GlobalFuncImp::callAsFunction):
+
 2008-01-16  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Oliver.

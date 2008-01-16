@@ -750,9 +750,7 @@ JSValue* GlobalFuncImp::callAsFunction(ExecState* exec, JSObject* thisObj, const
         bool switchGlobal = thisObj && thisObj != exec->dynamicGlobalObject() && thisObj->isGlobalObject();
 
         // enter a new execution context
-        if (!switchGlobal)
-            exec->dynamicGlobalObject()->tearOffActivation(exec);
-        
+        exec->dynamicGlobalObject()->tearOffActivation(exec);
         JSGlobalObject* globalObject = switchGlobal ? static_cast<JSGlobalObject*>(thisObj) : exec->dynamicGlobalObject();
         ExecState newExec(globalObject, evalNode.get(), exec);
           

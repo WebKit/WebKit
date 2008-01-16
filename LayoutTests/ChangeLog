@@ -1,3 +1,18 @@
+2008-01-16  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
+
+        Reviewed by Maciej.
+
+        Added a test that checks whether ActivationImp tear-off occurs before
+        a cross-window eval(). Relevant to
+
+        Bug 16868: Gmail crash
+
+        <http://bugs.webkit.org/show_bug.cgi?id=16868>
+        <rdar://problem/5686108>
+
+        * fast/js/window-eval-tearoff-expected.txt: Added.
+        * fast/js/window-eval-tearoff.html: Added.
+
 2008-01-16  David Hyatt  <hyatt@apple.com>
 
         Update layout tests after fix for <rdar://problem/5681647>.
