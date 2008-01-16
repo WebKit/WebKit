@@ -1,3 +1,17 @@
+2008-01-16  Lars Knoll  <lars@trolltech.com>
+
+        Reviewed by Simon Hausmann <simon.hausmann@trolltech.com>.
+
+        Removed a whole bunch of notImplemented() warnings.
+        
+        I don't want to hide the real warnings in lots of things that
+        I am by now pretty certain we won't need.
+        
+
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::dispatchWillSubmitForm):
+        (WebCore::FrameLoaderClientQt::canShowMIMEType):
+
 2008-01-16  Simon Hausmann  <hausmann@webkit.org>
 
         Reviewed by Holger.

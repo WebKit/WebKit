@@ -163,8 +163,13 @@ void FrameLoaderClientQt::invalidateCurrentItemPageCache()
 }
 
 void FrameLoaderClientQt::savePlatformDataToCachedPage(CachedPage*) 
-{ 
+{
     notImplemented();
+}
+
+bool FrameLoaderClientQt::privateBrowsingEnabled() const
+{
+    return false;
 }
 
 void FrameLoaderClientQt::transitionToCommittedFromCachedPage(CachedPage*)
@@ -196,7 +201,6 @@ void FrameLoaderClientQt::forceLayout()
 
 void FrameLoaderClientQt::forceLayoutForNonHTML()
 {
-    notImplemented();
 }
 
 
@@ -232,7 +236,6 @@ void FrameLoaderClientQt::willCloseDocument()
 
 void FrameLoaderClientQt::detachedFromParent2()
 {
-    notImplemented();
 }
 
 
@@ -292,7 +295,6 @@ void FrameLoaderClientQt::dispatchDidChangeLocationWithinPage()
 
 void FrameLoaderClientQt::dispatchWillClose()
 {
-    notImplemented();
 }
 
 
@@ -368,7 +370,6 @@ void FrameLoaderClientQt::dispatchWillSubmitForm(FramePolicyFunction function,
 
 void FrameLoaderClientQt::dispatchDidLoadMainResource(DocumentLoader*)
 {
-    notImplemented();
 }
 
 
@@ -426,7 +427,7 @@ void FrameLoaderClientQt::setMainFrameDocumentReady(bool b)
 
 void FrameLoaderClientQt::willChangeTitle(DocumentLoader*)
 {
-    notImplemented();
+    // no need for, dispatchDidReceiveTitle is the right callback
 }
 
 
@@ -460,7 +461,6 @@ void FrameLoaderClientQt::setDefersLoading(bool)
 
 bool FrameLoaderClientQt::isArchiveLoadPending(ResourceLoader*) const
 {
-    notImplemented();
     return false;
 }
 
@@ -490,8 +490,6 @@ bool FrameLoaderClientQt::canShowMIMEType(const String& MIMEType) const
 
 bool FrameLoaderClientQt::representationExistsForURLScheme(const String& URLScheme) const
 {
-    notImplemented();
-//    qDebug() << "    scheme is" << URLScheme;
     return false;
 }
 
@@ -711,7 +709,6 @@ void FrameLoaderClientQt::download(WebCore::ResourceHandle*, const WebCore::Reso
 
 void FrameLoaderClientQt::assignIdentifierToInitialRequest(unsigned long identifier, WebCore::DocumentLoader*, const WebCore::ResourceRequest&)
 {
-    notImplemented();
 }
 
 void FrameLoaderClientQt::dispatchWillSendRequest(WebCore::DocumentLoader*, unsigned long, WebCore::ResourceRequest& request, const WebCore::ResourceResponse& response)
@@ -830,7 +827,6 @@ void FrameLoaderClientQt::startDownload(const WebCore::ResourceRequest&)
 
 bool FrameLoaderClientQt::willUseArchive(WebCore::ResourceLoader*, const WebCore::ResourceRequest&, const WebCore::KURL&) const
 {
-    notImplemented();
     return false;
 }
 
@@ -992,7 +988,6 @@ Widget* FrameLoaderClientQt::createJavaAppletWidget(const IntSize&, Element*, co
 
 String FrameLoaderClientQt::overrideMediaType() const
 {
-    notImplemented();
     return String();
 }
 
