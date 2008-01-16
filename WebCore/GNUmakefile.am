@@ -37,7 +37,6 @@ webkitgtk_cppflags += \
 	-I $(srcdir)/WebCore/platform/gtk \
 	-I $(srcdir)/WebCore/platform/graphics/gtk \
 	-I $(srcdir)/WebCore/platform/graphics/cairo \
-	-I $(srcdir)/WebCore/platform/network/curl \
 	-I $(srcdir)/WebCore/loader/gtk \
 	-I $(srcdir)/WebCore/page/gtk \
 	-I $(srcdir)/WebKit/gtk/WebCoreSupport \
@@ -967,8 +966,6 @@ webkitgtk_sources += \
 	WebCore/platform/graphics/gtk/ImageGtk.cpp \
 	WebCore/platform/graphics/gtk/IntPointGtk.cpp \
 	WebCore/platform/graphics/gtk/IntRectGtk.cpp \
-	WebCore/platform/network/curl/ResourceHandleCurl.cpp \
-	WebCore/platform/network/curl/ResourceHandleManager.cpp \
 	WebCore/platform/graphics/cairo/AffineTransformCairo.cpp \
 	WebCore/platform/graphics/cairo/GraphicsContextCairo.cpp \
 	WebCore/platform/graphics/cairo/ImageBufferCairo.cpp \
@@ -982,6 +979,21 @@ webkitgtk_sources += \
 	WebCore/platform/image-decoders/bmp/BMPImageDecoder.cpp \
 	WebCore/platform/image-decoders/ico/ICOImageDecoder.cpp \
 	WebCore/platform/image-decoders/xbm/XBMImageDecoder.cpp 
+
+# ----
+# curl http backend
+# ----
+if USE_CURL
+
+webcore_cppflags += \
+	-DWTF_USE_CURL=1 \
+	-I $(srcdir)/WebCore/platform/network/curl
+
+webcore_sources += \
+	WebCore/platform/network/curl/ResourceHandleCurl.cpp \
+	WebCore/platform/network/curl/ResourceHandleManager.cpp
+
+endif # END USE_CURL
 
 # ----
 # Database Support

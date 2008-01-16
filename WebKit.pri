@@ -36,6 +36,7 @@ gtk-port {
 
     # We use the curl http backend on all platforms
     PKGCONFIG += libcurl
+    DEFINES += WTF_USE_CURL=1
 
     LIBS += -lWebKitGtk -ljpeg -lpng
 

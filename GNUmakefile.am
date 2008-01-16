@@ -138,6 +138,7 @@ libWebKitGtk_la_CXXFLAGS = \
 	-fno-strict-aliasing \
 	$(global_cflags) \
 	$(DEPENDENCIES_CFLAGS) \
+	$(LIBCURL_CFLAGS) \
 	$(SQLITE3_CFLAGS) \
 	$(GSTREAMER_CFLAGS) \
 	$(LIBXSLT_CFLAGS) \
@@ -147,6 +148,7 @@ libWebKitGtk_la_CFLAGS = \
 	-fno-strict-aliasing \
 	$(global_cflags) \
 	$(DEPENDENCIES_CFLAGS) \
+	$(LIBCURL_CFLAGS) \
 	$(SQLITE3_CFLAGS) \
 	$(GSTREAMER_CFLAGS) \
 	$(LIBXSLT_CFLAGS) \
@@ -162,6 +164,7 @@ libWebKitGtk_la_LIBADD = libJavaScriptCore.la
 libWebKitGtk_la_LDFLAGS = \
 	$(webkitgtk_ldflags) \
 	$(DEPENDENCIES_LIBS) \
+	$(LIBCURL_LIBS) \
 	$(ICU_LIBS) \
 	$(SQLITE3_LIBS) \
 	$(GSTREAMER_LIBS) \

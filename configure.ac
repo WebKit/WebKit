@@ -148,6 +148,22 @@ esac
 
 AC_MSG_RESULT([$with_webkit_target])
 
+
+# determine the http backend
+AC_MSG_CHECKING([the HTTP backend to use])
+AC_ARG_WITH(http_backend,
+            AC_HELP_STRING([--with-http-backend=@<:@curl@:>@],
+                           [Select HTTP backend [default=curl]]),
+            [],[http_backend="curl"])
+
+case "$http_backend" in
+     curl) ;;
+     *) AC_MSG_ERROR([Invalid HTTP backend: must be curl.]) ;;
+esac
+
+AC_MSG_RESULT([$http_backend])
+
+
 # minimum base dependencies
 GLIB_REQUIRED_VERSION=2.0
 GOBJECT_REQUIRED_VERSION=2.0
@@ -156,11 +172,11 @@ PANGO_REQUIRED_VERSION=1.0
 CAIRO_REQUIRED_VERSION=1.2
 FONTCONFIG_REQUIRED_VERSION=2.4
 FREETYPE2_REQUIRED_VERSION=9.0
-LIBCURL_REQUIRED_VERSION=7.15
 LIBXML_REQUIRED_VERSION=2.6
 
 # optional modules
 GTK_REQUIRED_VERSION=2.0
+LIBCURL_REQUIRED_VERSION=7.15
 LIBXSLT_REQUIRED_VERSION=1.1.7
 SQLITE_REQUIRED_VERSION=3.0
 GSTREAMER_REQUIRED_VERSION=0.10
@@ -172,7 +188,6 @@ PKG_CHECK_MODULES([DEPENDENCIES],
                   gthread-2.0 >= $GTHREAD_REQUIRED_VERSION
                   gtk+-2.0 >= $GTK_REQUIRED_VERSION
                   pango >= $PANGO_REQUIRED_VERSION
-                  libcurl >= $LIBCURL_REQUIRED_VERSION
                   cairo >= $CAIRO_REQUIRED_VERSION
                   cairo-ft,
                   fontconfig >= $FONTCONFIG_REQUIRED_VERSION
@@ -299,6 +314,14 @@ if test "$enable_debug" = "yes"; then
    CFLAGS="$CFLAGS -g"
 fi
 
+# check if curl is available
+if test "$http_backend" = "curl"; then
+   PKG_CHECK_MODULES([LIBCURL],
+                     [libcurl >= $LIBCURL_REQUIRED_VERSION])
+   AC_SUBST([LIBCURL_CFLAGS])
+   AC_SUBST([LIBCURL_LIBS])
+fi
+
 # check if sqlite 3 is available
 if test "$enable_icon_database" = "yes" || test "$enable_database" = "yes"; then
    PKG_CHECK_MODULES([SQLITE3], [sqlite3 >= $SQLITE_REQUIRED_VERSION])
@@ -357,6 +380,9 @@ AM_CONDITIONAL([TARGET_WIN32], [test "$with_webkit_target" = "win32"])
 AM_CONDITIONAL([TARGET_QUARTZ], [test "$with_webkit_target" = "quartz"])
 AM_CONDITIONAL([TARGET_DIRECTFB], [test "$with_webkit_target" = "directfb"])
 
+# HTTP backend conditionals
+AM_CONDITIONAL([USE_CURL], [test "$http_backend" = "curl"])
+
 # WebKit feature conditionals
 AM_CONDITIONAL([ENABLE_DEBUG],[test "$enable_debug" = "yes"])
 AM_CONDITIONAL([ENABLE_DATABASE],[test "$enable_database" = "yes"])
@@ -386,6 +412,7 @@ echo "
 WebKit was configured with the following options:
 
  Target                            : $with_webkit_target
+ HTTP backend                      : $http_backend
  Enable debug                      : $enable_debug
  Code coverage support             : $enable_coverage
  Optimized memory allocator        : $enable_fast_malloc

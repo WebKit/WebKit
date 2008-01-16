@@ -1,5 +1,16 @@
 2008-01-15  Alp Toker  <alp@atoker.com>
 
+        Rubber-stamped by Anders.
+
+        Make the HTTP backend configurable in the GTK+ port. curl is currently
+        the only option.
+
+        * GNUmakefile.am:
+        * WebKit.pri:
+        * configure.ac:
+
+2008-01-15  Alp Toker  <alp@atoker.com>
+
         GTK+/autotools build fix for GCC < 4. Use the -fvisibility compiler
         flags only when they're available.
 
