@@ -1,3 +1,25 @@
+2008-01-16  David Hyatt  <hyatt@apple.com>
+
+        Fix for <rdar://problem/5681647> Item pages on http://www.stendmarsofa.com/ hang Safari
+
+        This regression was caused by an attempt to implement a WinIE quirk in RenderBlock::calcInlinePrefWidths.
+        The original patch introduced pathological O(n^2) behavior into this function even when the quirk didn't need
+        to apply.  In addition the quirk was only partially implemented (the full quirk did not care what was adjacent
+        to images and also needed bidi.cpp patched, since the quirk applies both when computing pref widths and when
+        laying out).
+
+        This new patch rewrites the quirk to be complete.  The original test case attached to the bug that tested a variety
+        of image/text combinations now fully matches WinIE.
+
+        Reviewed by Beth
+
+        Added fast/table/unbreakable-images-quirk.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::calcInlinePrefWidths):
+        * rendering/bidi.cpp:
+        (WebCore::RenderBlock::findNextLineBreak):
+
 2008-01-16  Rodney Dawes  <dobey@wayofthemonkey.com>
 
         Reviewed by Jon Honeycutt
