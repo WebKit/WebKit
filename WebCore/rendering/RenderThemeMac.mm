@@ -105,7 +105,6 @@ RenderTheme* theme()
 
 RenderThemeMac::RenderThemeMac()
     : m_resizeCornerImage(0)
-    , m_mediaControlBackgroundImage(0)
     , m_isSliderThumbHorizontalPressed(false)
     , m_isSliderThumbVerticalPressed(false)
     , m_notificationObserver(AdoptNS, [[WebCoreRenderThemeNotificationObserver alloc] initWithTheme:this])
@@ -120,7 +119,6 @@ RenderThemeMac::~RenderThemeMac()
 {
     [[NSNotificationCenter defaultCenter] removeObserver:m_notificationObserver.get()];
     delete m_resizeCornerImage;
-    delete m_mediaControlBackgroundImage;
 }
 
 Color RenderThemeMac::platformActiveSelectionBackgroundColor() const

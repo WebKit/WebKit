@@ -1,3 +1,14 @@
+2008-01-15  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Sam.
+
+        Remove unused variable for old media control background drawing code.
+
+        * rendering/RenderThemeMac.h:
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::RenderThemeMac):
+        (WebCore::RenderThemeMac::~RenderThemeMac):
+
 2008-01-15  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Geoffrey Garen.
