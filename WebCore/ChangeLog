@@ -1,3 +1,15 @@
+2008-01-16  Holger Hans Peter Freyther  <holger.freyther@trolltech.com>
+
+        Reviewed by Lars.
+
+        * Set the cursor on the containingWindow() instead of the
+        nativeWidget()
+        * This should be safe even with plugins as the cursor is set
+        on the mouse events.
+
+        * platform/qt/WidgetQt.cpp:
+        (WebCore::Widget::setCursor):
+
 2008-01-16  Brad Hughes  <bhughes@trolltech.com>
 
         Reviewed by Lars.

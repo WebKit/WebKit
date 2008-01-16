@@ -115,8 +115,8 @@ void Widget::setFocus()
 void Widget::setCursor(const Cursor& cursor)
 {
 #ifndef QT_NO_CURSOR
-    if (data->m_widget)
-        data->m_widget->setCursor(cursor.impl());
+    if (QWidget* widget = containingWindow())
+        widget->setCursor(cursor.impl());
 #endif
 }
 
