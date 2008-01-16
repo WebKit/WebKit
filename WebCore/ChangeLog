@@ -1,3 +1,18 @@
+2008-01-16  Holger Freyther  <holger.freyther@trolltech.com>
+
+        Reviewed by Simon.
+
+        * Follow the EventHandlerWin.cpp and always return true in the handlers.
+        * Match the windows implementation more closely as well.
+        * This is fixing "selection" bugs with the Web Inspector
+
+        * page/qt/EventHandlerQt.cpp:
+        (WebCore::EventHandler::focusDocumentView):
+        (WebCore::EventHandler::passMousePressEventToSubframe):
+        (WebCore::EventHandler::passMouseMoveEventToSubframe):
+        (WebCore::EventHandler::passMouseReleaseEventToSubframe):
+        (WebCore::EventHandler::passMousePressEventToScrollbar):
+
 2008-01-16  Simon Hausmann  <hausmann@webkit.org>
 
         Reviewed by Lars Knoll <lars@trolltech.com>.
