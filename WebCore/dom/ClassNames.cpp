@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2007 David Smith (catfish.man@gmail.com)
- * Copyright (C) 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -22,24 +22,11 @@
 #include "ClassNames.h"
 
 namespace WebCore {
-    
-bool ClassNames::contains(const AtomicString& str) const 
-{
-    if (!m_nameVector)
-        return false;
-
-    for (size_t i = 0; i < m_nameVector->size(); ++i) {
-        if ((*m_nameVector)[i] == str)
-            return true;
-    }
-
-    return false;
-}
 
 void ClassNames::parseClassAttribute(const String& classStr, const bool inCompatMode)
 {
     if (!m_nameVector)
-        m_nameVector.set(new Vector<AtomicString>);
+        m_nameVector.set(new ClassNameVector);
     else
         m_nameVector->clear();
 

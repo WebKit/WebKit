@@ -390,7 +390,8 @@ void CSSStyleSelector::matchRules(CSSRuleSet* rules, int& firstRuleIndex, int& l
         matchRulesForList(rules->getIDRules(m_element->getIDAttribute().impl()), firstRuleIndex, lastRuleIndex);
     if (m_element->hasClass()) {
         const ClassNames& classNames = *m_element->getClassNames();
-        for (size_t i = 0; i < classNames.size(); ++i)
+        size_t classNamesSize = classNames.size();
+        for (size_t i = 0; i < classNamesSize; ++i)
             matchRulesForList(rules->getClassRules(classNames[i].impl()), firstRuleIndex, lastRuleIndex);
     }
     matchRulesForList(rules->getTagRules(m_element->localName().impl()), firstRuleIndex, lastRuleIndex);
@@ -1500,12 +1501,7 @@ bool CSSStyleSelector::checkOneSelector(CSSSelector* sel, Element* e, bool isAnc
         if (sel->m_match == CSSSelector::Class) {
             if (!e->hasClass())
                 return false;
-            const ClassNames& classNames = *e->getClassNames();
-            for (size_t i = 0; i < classNames.size(); ++i) {
-                if (classNames[i] == sel->m_value)
-                    return true;
-            }
-            return false;
+            return e->getClassNames()->contains(sel->m_value);
         } else if (sel->m_match == CSSSelector::Id)
             return e->hasID() && e->getIDAttribute() == sel->m_value;
         else if (m_style && (e != m_element || !m_styledElement || (!m_styledElement->isMappedAttribute(sel->m_attr) && sel->m_attr != typeAttr && sel->m_attr != readonlyAttr))) {

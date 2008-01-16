@@ -1,3 +1,23 @@
+2008-01-14  Samuel Weinig  <sam@webkit.org>
+
+        Reviewed by Darin.
+
+        Fix for <rdar://problem/5671040>
+        REGRESSION: 6% HTML iBench regression from r28722 (getElementsByClassName)
+
+        On my most consistent tests, this brings the HTML iBench from 1.46 -> 1.41,
+        which does not completely make up reported regression, but I was not able to
+        reproduce those findings either.
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::matchRules):
+        (WebCore::CSSStyleSelector::checkOneSelector):
+        * dom/ClassNames.cpp:
+        (WebCore::ClassNames::parseClassAttribute):
+        * dom/ClassNames.h:
+        (WebCore::ClassNames::contains):
+        (WebCore::ClassNames::operator[]):
+
 2008-01-15  Adele Peterson  <adele@apple.com>
 
         Build fix.  This time for real.

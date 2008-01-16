@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Computer, Inc.
+ * Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -28,20 +28,34 @@
 namespace WebCore {
 
     class ClassNames {
+        typedef Vector<AtomicString, 8> ClassNameVector;
     public:
         ClassNames()
         {
         }
 
-        bool contains(const AtomicString&) const;
+        bool contains(const AtomicString& str) const
+        {
+            if (!m_nameVector)
+                return false;
+
+            size_t size = m_nameVector->size();
+            for (size_t i = 0; i < size; ++i) {
+                if (m_nameVector->at(i) == str)
+                    return true;
+            }
+
+            return false;
+        }
+
         void parseClassAttribute(const String&, const bool inCompatMode);
 
         size_t size() const { return m_nameVector ? m_nameVector->size() : 0; }
         void clear() { if (m_nameVector) m_nameVector->clear(); }
-        const AtomicString& operator[](size_t i) const { return m_nameVector ? (*m_nameVector)[i] : nullAtom; }
+        const AtomicString& operator[](size_t i) const { ASSERT(m_nameVector); return m_nameVector->at(i); }
 
     private:
-        OwnPtr<Vector<AtomicString> > m_nameVector;
+        OwnPtr<ClassNameVector> m_nameVector;
     };
 
     inline static bool isClassWhitespace(UChar c)
