@@ -27,7 +27,6 @@
 
 #include "config.h"
 #include "PluginPackageWin.h"
-#include "PluginDatabaseWin.h"
 
 #include "Timer.h"
 #include "DeprecatedString.h"
@@ -116,12 +115,6 @@ PluginPackageWin::PluginPackageWin(const String& path, const FILETIME& lastModif
     m_parentDirectory = m_path.left(m_path.length() - m_fileName.length() - 1);
 }
 
-void PluginPackageWin::getFileVersion(DWORD& mostSignificant, DWORD& leastSignificant) const
-{
-    mostSignificant = m_fileVersionMS;
-    leastSignificant = m_fileVersionLS;
-}
-
 void PluginPackageWin::storeFileVersion(LPVOID versionInfoData)
 {
     VS_FIXEDFILEINFO* info;
@@ -130,6 +123,25 @@ void PluginPackageWin::storeFileVersion(LPVOID versionInfoData)
         return;
     m_fileVersionLS = info->dwFileVersionLS;
     m_fileVersionMS = info->dwFileVersionMS;
+}
+
+bool PluginPackageWin::isPluginBlacklisted()
+{
+    static const DWORD silverlightPluginMinRequiredVersionMSDWORD = 0x00010000;
+    static const DWORD silverlightPluginMinRequiredVersionLSDWORD = 0x51BE0000;
+
+    if (name() == "Silverlight Plug-In") {
+        // workaround for <rdar://5557379> Crash in Silverlight when opening microsoft.com.
+        // the latest 1.0 version of Silverlight does not reproduce this crash, so allow it
+        // and any newer versions
+        if (m_fileVersionMS < silverlightPluginMinRequiredVersionMSDWORD ||
+            (m_fileVersionMS == silverlightPluginMinRequiredVersionMSDWORD && m_fileVersionLS < silverlightPluginMinRequiredVersionLSDWORD))
+            return true;
+    } else if (fileName() == "npmozax.dll")
+        // Bug 15217: Mozilla ActiveX control complains about missing xpcom_core.dll
+        return true;
+
+    return false;
 }
 
 bool PluginPackageWin::fetchInfo()
@@ -157,7 +169,7 @@ bool PluginPackageWin::fetchInfo()
 
     storeFileVersion(versionInfoData);
 
-    if (PluginDatabaseWin::isPluginBlacklisted(this)) {
+    if (isPluginBlacklisted()) {
         fastFree(versionInfoData);
         return false;
     }

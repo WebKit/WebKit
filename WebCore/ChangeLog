@@ -1,3 +1,19 @@
+2008-01-16  Rodney Dawes  <dobey@wayofthemonkey.com>
+
+        Reviewed by Jon Honeycutt
+
+        Move isPluginBlacklisted to PluginPackageWin.cpp, to avoid
+        a circular dependency on PluginDatabaseWin
+        Remove the getFileVersion method, and just check the versions directly
+        in isPluginBlacklisted, as it was the only caller
+
+        http://bugs.webkit.org/show_bug.cgi?id=16884
+
+        * plugins/win/PluginDatabaseWin.cpp:
+        * plugins/win/PluginDatabaseWin.h:
+        * plugins/win/PluginPackageWin.cpp:
+        * plugins/win/PluginPackageWin.h:
+
 2008-01-16  Holger Hans Peter Freyther  <holger.freyther@trolltech.com>
 
         Reviewed by Lars.

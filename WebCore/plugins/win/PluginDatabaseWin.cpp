@@ -34,9 +34,6 @@
 
 namespace WebCore {
 
-static const DWORD silverlightPluginMinRequiredVersionMSDWORD = 0x00010000;
-static const DWORD silverlightPluginMinRequiredVersionLSDWORD = 0x51BE0000;
-
 PluginDatabaseWin* PluginDatabaseWin::installedPlugins()
 {
     static PluginDatabaseWin* plugins = 0;
@@ -446,25 +443,6 @@ bool PluginDatabaseWin::isMIMETypeRegistered(const String& mimeType)
         return true;
     // No plugin was found, try refreshing the database and searching again
     return (refresh() && m_registeredMIMETypes.contains(mimeType));
-}
-
-bool PluginDatabaseWin::isPluginBlacklisted(PluginPackageWin* plugin)
-{
-    if (plugin->name() == "Silverlight Plug-In") {
-        // workaround for <rdar://5557379> Crash in Silverlight when opening microsoft.com.
-        // the latest 1.0 version of Silverlight does not reproduce this crash, so allow it
-        // and any newer versions
-        DWORD fileVersionMS;
-        DWORD fileVersionLS;
-        plugin->getFileVersion(fileVersionMS, fileVersionLS);
-        if (fileVersionMS < silverlightPluginMinRequiredVersionMSDWORD ||
-            (fileVersionMS == silverlightPluginMinRequiredVersionMSDWORD && fileVersionLS < silverlightPluginMinRequiredVersionLSDWORD))
-            return true;
-    } else if (plugin->fileName() == "npmozax.dll")
-        // Bug 15217: Mozilla ActiveX control complains about missing xpcom_core.dll
-        return true;
-
-    return false;
 }
 
 PluginPackageWin* PluginDatabaseWin::pluginForMIMEType(const String& mimeType)
