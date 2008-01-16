@@ -47,6 +47,7 @@ class SQLResultSet;
 class JSCustomSQLTransactionCallback : public SQLTransactionCallback {
 public:
     JSCustomSQLTransactionCallback(KJS::JSObject* callback, Frame*);
+    virtual ~JSCustomSQLTransactionCallback();
     
     virtual void handleEvent(SQLTransaction*, bool& raisedException);
 private:

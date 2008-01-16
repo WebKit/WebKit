@@ -31,6 +31,7 @@
 
 #include "CString.h"
 #include "Frame.h"
+#include "Logging.h"
 #include "kjs_proxy.h"
 #include "JSSQLTransaction.h"
 #include "Page.h"
@@ -39,12 +40,37 @@ namespace WebCore {
     
 using namespace KJS;
     
+#ifndef NDEBUG
+WTFLogChannel LogWebCoreSQLLeaks =  { 0x00000000, "", WTFLogChannelOn };
+
+struct JSCustomSQLTransactionCallbackCounter { 
+    static int count; 
+    ~JSCustomSQLTransactionCallbackCounter() 
+    { 
+        if (count)
+            LOG(WebCoreSQLLeaks, "LEAK: %d JSCustomSQLTransactionCallback\n", count);
+    }
+};
+int JSCustomSQLTransactionCallbackCounter::count = 0;
+static JSCustomSQLTransactionCallbackCounter counter;
+#endif
+
 JSCustomSQLTransactionCallback::JSCustomSQLTransactionCallback(JSObject* callback, Frame* frame)
     : m_callback(callback)
     , m_frame(frame)
 {
+#ifndef NDEBUG
+    ++JSCustomSQLTransactionCallbackCounter::count;
+#endif
 }
     
+JSCustomSQLTransactionCallback::~JSCustomSQLTransactionCallback()
+{
+#ifndef NDEBUG
+    --JSCustomSQLTransactionCallbackCounter::count;
+#endif
+}
+
 void JSCustomSQLTransactionCallback::handleEvent(SQLTransaction* transaction, bool& raisedException)
 {
     ASSERT(m_callback);
