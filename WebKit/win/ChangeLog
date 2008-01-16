@@ -1,3 +1,14 @@
+2008-01-15  Steve Falkenburg  <sfalken@apple.com>
+
+        <rdar://problem/5663888> Cannot type into a JavaScript prompt created from a timer
+        
+        Allow nested timers from javascript prompts to allow for WebView-based edit fields.
+        
+        Reviewed by Darin.
+
+        * WebChromeClient.cpp:
+        (WebChromeClient::runJavaScriptPrompt):
+
 2008-01-14  Steve Falkenburg  <sfalken@apple.com>
 
         Use shared vsprops for most vcproj properties.
