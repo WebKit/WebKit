@@ -1,3 +1,12 @@
+2008-01-15  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Beth Dakin.
+
+        Remove unneeded variable.
+
+        * kjs/string_object.cpp:
+        (KJS::StringProtoFuncSubstr::callAsFunction):
+
 2008-01-14  Steve Falkenburg  <sfalken@apple.com>
 
         Use shared vsprops for most vcproj properties.
