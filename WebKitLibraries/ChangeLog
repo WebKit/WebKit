@@ -1,5 +1,13 @@
 2008-01-16  Steve Falkenburg  <sfalken@apple.com>
 
+        Use recommended security-related compiler settings.
+        
+        Reviewed by Adam.
+
+        * win/tools/vsprops/common.vsprops:
+
+2008-01-16  Steve Falkenburg  <sfalken@apple.com>
+
         Build fix.
 
         * win/tools/vsprops/release.vsprops:

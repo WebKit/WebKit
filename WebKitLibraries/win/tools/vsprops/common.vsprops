@@ -8,6 +8,7 @@
 	>
 	<Tool
 		Name="VCCLCompilerTool"
+		AdditionalOptions="/GS"
 		PreprocessorDefinitions="WIN32;_WINDOWS;_WIN32_WINNT=0x500;_CRT_SECURE_NO_DEPRECATE;_SCL_SECURE_NO_DEPRECATE;__PRODUCTION__=0$(PRODUCTION);_HAS_EXCEPTIONS=0"
 		ExceptionHandling="0"
 		RuntimeTypeInfo="false"
@@ -23,6 +24,7 @@
 	<Tool
 		Name="VCLinkerTool"
 		LinkLibraryDependencies="false"
+		AdditionalOptions="/SAFESEH /NXCOMPAT /FIXED:NO /dynamicbase"
 		OutputFile="$(OutDir)\$(ProjectName)$(WebKitConfigSuffix).exe"
 		AdditionalLibraryDirectories="&quot;$(WebKitOutputDir)\lib&quot;;&quot;$(WebKitLibrariesDir)\lib&quot;"
 		GenerateDebugInformation="true"
