@@ -2,6 +2,20 @@
 
         Reviewed by Simon.
 
+        * Move the hoverElement from QWebFrame to QWebPage. As it is
+        only used there.
+        
+
+        * Api/qwebframe_p.h:
+        (QWebFramePrivate::QWebFramePrivate):
+        * Api/qwebpage.cpp:
+        (QWebPagePrivate::mouseMoveEvent):
+        * Api/qwebpage_p.h:
+
+2008-01-16  Holger Freyther  <holger.freyther@trolltech.com>
+
+        Reviewed by Simon.
+
         EventHandler changes/fixes in QWebPage:
         -mouse{Press,Move,Release}Event:
         Send the event always to the mainFrame of the QWebPage.

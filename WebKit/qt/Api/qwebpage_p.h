@@ -38,6 +38,7 @@ namespace WebCore
     class ContextMenuItem;
     class ContextMenu;
     class EditorClientQt;
+    class Element;
     class Node;
     class Page;
 }
@@ -125,6 +126,7 @@ public:
     QWebPage *q;
     QUndoStack *undoStack;
     QWidget *view;
+    WebCore::Element *lastHoverElement;
 
     bool modified;
 
