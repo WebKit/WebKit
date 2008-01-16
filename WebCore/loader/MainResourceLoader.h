@@ -74,6 +74,9 @@ namespace WebCore {
         void stopLoadingForPolicyChange();
         bool isPostOrRedirectAfterPost(const ResourceRequest& newRequest, const ResourceResponse& redirectResponse);
 
+        static void callContinueAfterNavigationPolicy(void*, const ResourceRequest&, PassRefPtr<FormState>, bool shouldContinue);
+        void continueAfterNavigationPolicy(const ResourceRequest&, bool shouldContinue);
+
         static void callContinueAfterContentPolicy(void*, PolicyAction);
         void continueAfterContentPolicy(PolicyAction);
         void continueAfterContentPolicy(PolicyAction, const ResourceResponse&);

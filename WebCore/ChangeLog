@@ -1,3 +1,18 @@
+2008-01-15  Darin Adler  <darin@apple.com>
+
+        Rubber-stamped by Maciej Stachowiak and Oliver Hunt.
+
+        - fix <rdar://problem/5689748> REGRESSION: Cannot redirect to protocols handled by external applications
+
+        Put navigation policy delegate calls back for redirects.
+        Just rolled out the change where I took them out.
+
+        * loader/MainResourceLoader.cpp:
+        (WebCore::MainResourceLoader::callContinueAfterNavigationPolicy):
+        (WebCore::MainResourceLoader::continueAfterNavigationPolicy):
+        (WebCore::MainResourceLoader::willSendRequest):
+        * loader/MainResourceLoader.h:
+
 2008-01-15  Adele Peterson  <adele@apple.com>
 
         Reviewed by Sam.
