@@ -1395,6 +1395,11 @@ BidiIterator RenderBlock::findNextLineBreak(BidiIterator &start, BidiState &bidi
 
     bool autoWrapWasEverTrueOnLine = false;
     
+    // Firefox and Opera will allow a table cell to grow to fit an image inside it under
+    // very specific cirucumstances (in order to match common WinIE renderings). 
+    // Not supporting the quirk has caused us to mis-render some real sites. (See Bugzilla 10517.) 
+    bool allowImagesToBreak = !style()->htmlHacks() || !isTableCell() || !style()->width().isIntrinsicOrAuto();
+
     EWhiteSpace currWS = style()->whiteSpace();
     EWhiteSpace lastWS = currWS;
     while (o) {
@@ -1520,7 +1525,7 @@ BidiIterator RenderBlock::findNextLineBreak(BidiIterator &start, BidiState &bidi
                     o->marginRight() + o->borderRight() + o->paddingRight();
         } else if (o->isReplaced()) {
             // Break on replaced elements if either has normal white-space.
-            if (autoWrap || RenderStyle::autoWrap(lastWS)) {
+            if ((autoWrap || RenderStyle::autoWrap(lastWS)) && (!o->isImage() || allowImagesToBreak)) {
                 w += tmpW;
                 tmpW = 0;
                 lBreak.obj = o;
@@ -1874,7 +1879,7 @@ BidiIterator RenderBlock::findNextLineBreak(BidiIterator &start, BidiState &bidi
             previous = o;
         o = next;
 
-        if (!last->isFloatingOrPositioned() && last->isReplaced() && autoWrap && 
+        if (!last->isFloatingOrPositioned() && last->isReplaced() && autoWrap && (!last->isImage() || allowImagesToBreak) &&
             (!last->isListMarker() || static_cast<RenderListMarker*>(last)->isInside())) {
             w += tmpW;
             tmpW = 0;
