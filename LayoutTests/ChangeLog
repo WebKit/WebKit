@@ -1,3 +1,14 @@
+2008-01-16  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Beth.
+
+        <rdar://problem/5681647> Item pages on http://www.stendmarsofa.com/ hang Safari
+
+        * fast/table/unbreakable-images-quirk.html: Added.
+        * platform/mac/fast/table/unbreakable-images-quirk-expected.checksum: Added.
+        * platform/mac/fast/table/unbreakable-images-quirk-expected.png: Added.
+        * platform/mac/fast/table/unbreakable-images-quirk-expected.txt: Added.
+
 2008-01-16  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Adam Roben.
