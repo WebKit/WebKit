@@ -1,3 +1,16 @@
+2008-01-16  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Adam Roben.
+
+        - copied Windows expected results for
+          svg/hixie/viewbox/preserveAspectRatio/001.xml from Tiger
+
+        * platform/win/svg: Added.
+        * platform/win/svg/hixie: Added.
+        * platform/win/svg/hixie/viewbox: Added.
+        * platform/win/svg/hixie/viewbox/preserveAspectRatio: Added.
+        * platform/win/svg/hixie/viewbox/preserveAspectRatio/001-expected.txt: Copied from LayoutTests/platform/mac/svg/hixie/viewbox/preserveAspectRatio/001-expected.txt.
+
 2008-01-15  Dan Bernstein  <mitz@apple.com>
 
         - updated Tiger results for <rdar://problem/5666926>
