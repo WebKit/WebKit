@@ -1,3 +1,19 @@
+2008-01-16  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Geoffrey Garen and Anders Carlsson.
+
+        Remove uses of KJS_PURE_ECMA as we don't ever build with it defined,
+        and we have many features that are not included in the ECMA spec.
+
+        * kjs/lexer.cpp:
+        (KJS::Lexer::Lexer):
+        (KJS::Lexer::setCode):
+        (KJS::Lexer::nextLine):
+        (KJS::Lexer::lex):
+        * kjs/lexer.h:
+        * kjs/string_object.cpp:
+        * kjs/string_object.h:
+
 2008-01-15  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Geoffrey Garen.

@@ -153,10 +153,7 @@ const ClassInfo StringPrototype::info = { "String", &StringInstance::info, &stri
   toLocaleLowerCase     &stringProtoFuncToLocaleLowerCase DontEnum|Function       0
   toLocaleUpperCase     &stringProtoFuncToLocaleUpperCase DontEnum|Function       0
   localeCompare         &stringProtoFuncLocaleCompare     DontEnum|Function       1
-#
-# Under here: html extension, should only exist if KJS_PURE_ECMA is not defined
-# I guess we need to generate two hashtables in the .lut.h file, and use #ifdef
-# to select the right one... TODO. #####
+
   big                   &stringProtoFuncBig               DontEnum|Function       0
   small                 &stringProtoFuncSmall             DontEnum|Function       0
   blink                 &stringProtoFuncBlink             DontEnum|Function       0
@@ -893,8 +890,6 @@ JSValue* stringProtoFuncLocaleCompare(ExecState* exec, JSObject* thisObj, const 
     return jsNumber(localeCompare(s, a0->toString(exec)));
 }
 
-#ifndef KJS_PURE_ECMA
-
 JSValue* stringProtoFuncBig(ExecState* exec, JSObject* thisObj, const List&)
 {
     // This optimizes the common case that thisObj is a StringInstance
@@ -989,8 +984,6 @@ JSValue* stringProtoFuncLink(ExecState* exec, JSObject* thisObj, const List& arg
     JSValue* a0 = args[0];
     return jsString("<a href=\"" + a0->toString(exec) + "\">" + s + "</a>");
 }
-
-#endif // KJS_PURE_ECMA
 
 // ------------------------------ StringObjectImp ------------------------------
 
