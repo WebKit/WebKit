@@ -379,6 +379,8 @@ void QWebView::resizeEvent(QResizeEvent *e)
 */
 void QWebView::paintEvent(QPaintEvent *ev)
 {
+    if (!d->page)
+        return;
 #ifdef QWEBKIT_TIME_RENDERING
     QTime time;
     time.start();
