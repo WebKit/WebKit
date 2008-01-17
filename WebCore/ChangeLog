@@ -1,3 +1,15 @@
+2008-01-17  Holger Hans Peter Freyther  <holger.freyther@trolltech.com>
+
+        Reviewed by Simon.
+
+        * Make the nice 'safari' feature work on our port. When viewing a single image, clicking
+        on the image will zoom it.
+        * It seems like our platform can only determine the size of the image once it is completely
+        loaded. Call m_doc->imageChanged on the last chunk of data as well.
+
+        * loader/ImageDocument.cpp:
+        (WebCore::ImageTokenizer::finish):
+
 2008-01-17  Simon Hausmann  <hausmann@webkit.org>
 
         Reviewed by Lars.

@@ -125,6 +125,7 @@ void ImageTokenizer::finish()
 #if PLATFORM(MAC)
         finishImageLoad(m_doc, cachedImage);
 #endif
+        m_doc->imageChanged();
     }
 
     m_doc->finishedParsing();
