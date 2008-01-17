@@ -303,8 +303,9 @@ void FrameLoaderClientQt::dispatchDidStartProvisionalLoad()
 
 void FrameLoaderClientQt::dispatchDidReceiveTitle(const String& title)
 {
-    QString t = title;
-    emit titleChanged(t);
+    // ### hack
+    emit m_webFrame->urlChanged(m_webFrame->url());
+    emit titleChanged(title);
 }
 
 

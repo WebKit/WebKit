@@ -110,6 +110,7 @@ Q_SIGNALS:
     void provisionalLoad();
     void titleChanged(const QString &title);
     void hoveringOverLink(const QString &link, const QString &title, const QString &textContent);
+    void urlChanged(const QUrl &url);
 
     void loadStarted();
     void loadFinished();

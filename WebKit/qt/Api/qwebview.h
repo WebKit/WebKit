@@ -102,6 +102,7 @@ Q_SIGNALS:
     void linkClicked(const QUrl &url);
     void selectionChanged();
     void iconLoaded();
+    void urlChanged(const QUrl &url);
 
 protected:
     void resizeEvent(QResizeEvent *e);

@@ -115,6 +115,8 @@ void QWebView::setPage(QWebPage *page)
                 this, SIGNAL(titleChanged(const QString&)));
         connect(mainFrame, SIGNAL(iconLoaded()),
                 this, SIGNAL(iconLoaded()));
+        connect(mainFrame, SIGNAL(urlChanged(const QUrl &)),
+                this, SIGNAL(urlChanged(const QUrl &)));
 
         connect(d->page, SIGNAL(loadProgressChanged(int)),
                 this, SIGNAL(loadProgressChanged(int)));
@@ -543,4 +545,20 @@ bool QWebView::focusNextPrevChild(bool next)
         return d->page->focusNextPrevChild(next);
     return QWidget::focusNextPrevChild(next);
 }
+
+/*!
+  \fn void QWebView::titleChanged(const QString &title)
+
+  This signal is emitted whenever the title of the main frame changes.
+
+  \sa title()
+*/
+
+/*!
+  \fn void QWebView::urlChanged(const QUrl &url)
+
+  This signal is emitted whenever the url of the main frame changes.
+
+  \sa url()
+*/
 
