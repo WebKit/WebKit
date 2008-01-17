@@ -238,7 +238,7 @@ static struct tm *localTimeQt(const time_t *const timep, struct tm *result)
     return result;
 }
 
-#define localtime_s(x, y) localTimeQt(x, y)
+#define localtime_r(x, y) localTimeQt(x, y)
 #endif
 
 static String processFileDateString(const FTPTime& fileTime)
@@ -266,7 +266,7 @@ static String processFileDateString(const FTPTime& fileTime)
     // If it was today or yesterday, lets just do that - but we have to compare to the current time
     struct tm now;
     time_t now_t = time(NULL);
-    localtime_s(&now_t, &now);
+    localtime_r(&now_t, &now);
     
     // localtime does "year = current year - 1900", compensate for that for readability and comparison purposes
     now.tm_year += 1900;
