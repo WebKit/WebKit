@@ -31,6 +31,7 @@
 #include "ScrollView.h"
 
 #include "FloatRect.h"
+#include "FocusController.h"
 #include "Frame.h"
 #include "FrameView.h"
 #include "GraphicsContext.h"
@@ -244,7 +245,7 @@ IntRect ScrollView::ScrollViewPrivate::windowClipRect() const
 
 bool ScrollView::ScrollViewPrivate::isActive() const
 {
-    Page* page = static_cast<const FrameView*>(m_view)->frame()->page();
+    Page* page = static_cast<const FrameView*>(view)->frame()->page();
     return page && page->focusController()->isActive();
 }
 

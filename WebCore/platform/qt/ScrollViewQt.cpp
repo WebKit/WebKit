@@ -33,6 +33,7 @@
 #include "ScrollView.h"
 #include "FrameView.h"
 #include "FloatRect.h"
+#include "FocusController.h"
 #include "IntPoint.h"
 #include "PlatformMouseEvent.h"
 #include "PlatformWheelEvent.h"
