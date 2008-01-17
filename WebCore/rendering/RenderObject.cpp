@@ -59,6 +59,7 @@
 #include "RenderText.h"
 #include "RenderTheme.h"
 #include "RenderView.h"
+#include "SelectionController.h"
 #include "TextResourceDecoder.h"
 #include "TextStream.h"
 #include <algorithm>
@@ -2038,7 +2039,7 @@ Color RenderObject::selectionBackgroundColor() const
         if (pseudoStyle && pseudoStyle->backgroundColor().isValid())
             color = pseudoStyle->backgroundColor().blendWithWhite();
         else
-            color = document()->frame()->isActive() ?
+            color = document()->frame()->selectionController()->isFocusedAndActive() ?
                     theme()->activeSelectionBackgroundColor() :
                     theme()->inactiveSelectionBackgroundColor();
     }
@@ -2056,7 +2057,7 @@ Color RenderObject::selectionForegroundColor() const
             if (!color.isValid())
                 color = pseudoStyle->color();
         } else
-            color = document()->frame()->isActive() ?
+            color = document()->frame()->selectionController()->isFocusedAndActive() ?
                     theme()->platformActiveSelectionForegroundColor() :
                     theme()->platformInactiveSelectionForegroundColor();
     }

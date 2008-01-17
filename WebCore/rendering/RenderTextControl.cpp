@@ -1231,7 +1231,7 @@ void RenderTextControl::capsLockStateMayHaveChanged()
         if (Document* d = document())
             if (Frame* f = d->frame())
                 shouldDrawCapsLockIndicator = !m_multiLine && static_cast<HTMLInputElement*>(n)->inputType() == HTMLInputElement::PASSWORD && 
-                                               f->isActive() && d->focusedNode() == n && PlatformKeyboardEvent::currentCapsLockState();
+                                               f->selectionController()->isFocusedAndActive() && d->focusedNode() == n && PlatformKeyboardEvent::currentCapsLockState();
 
     if (shouldDrawCapsLockIndicator != m_shouldDrawCapsLockIndicator) {
         m_shouldDrawCapsLockIndicator = shouldDrawCapsLockIndicator;

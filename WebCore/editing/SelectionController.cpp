@@ -30,6 +30,7 @@
 #include "Document.h"
 #include "Editor.h"
 #include "Element.h"
+#include "EventHandler.h"
 #include "EventNames.h"
 #include "ExceptionCode.h"
 #include "FocusController.h"
@@ -43,6 +44,7 @@
 #include "HitTestResult.h"
 #include "Page.h"
 #include "Range.h"
+#include "RenderTheme.h"
 #include "RenderView.h"
 #include "TextIterator.h"
 #include "TypingCommand.h"
@@ -65,6 +67,7 @@ SelectionController::SelectionController(Frame* frame, bool isDragCaretControlle
     , m_isDragCaretController(isDragCaretController)
     , m_isCaretBlinkingSuspended(false)
     , m_xPosForVerticalArrowNavigation(NoXPosForVerticalArrowNavigation)
+    , m_focused(false)
 {
 }
 
@@ -1018,6 +1021,61 @@ bool SelectionController::isInsideNode() const
     if (!startNode)
         return false;
     return !isTableElement(startNode) && !editingIgnoresContent(startNode);
+}
+
+void SelectionController::focusedOrActiveStateChanged()
+{
+    bool activeAndFocused = isFocusedAndActive();
+
+    // Because RenderObject::selectionBackgroundColor() and
+    // RenderObject::selectionForegroundColor() check if the frame is active,
+    // we have to update places those colors were painted.
+    if (m_frame->view())
+        m_frame->view()->updateContents(enclosingIntRect(m_frame->selectionRect()));
+
+    // Caret appears in the active frame.
+    if (activeAndFocused)
+        m_frame->setSelectionFromNone();
+    m_frame->setCaretVisible(activeAndFocused);
+
+    // Update for caps lock state
+    m_frame->eventHandler()->capsLockStateMayHaveChanged();
+
+    // Because CSSStyleSelector::checkOneSelector() and
+    // RenderTheme::isFocused() check if the frame is active, we have to
+    // update style and theme state that depended on those.
+    if (Node* node = m_frame->document()->focusedNode()) {
+        node->setChanged();
+        if (RenderObject* renderer = node->renderer())
+            if (renderer && renderer->style()->hasAppearance())
+                theme()->stateChanged(renderer, FocusState);
+    }
+
+    // Secure keyboard entry is set by the active frame.
+    if (m_frame->document()->useSecureKeyboardEntryWhenActive())
+        m_frame->setUseSecureKeyboardEntry(activeAndFocused);
+}
+
+void SelectionController::pageActivationChanged()
+{
+    focusedOrActiveStateChanged();
+}
+
+void SelectionController::setFocused(bool flag)
+{
+    if (m_focused == flag)
+        return;
+    m_focused = flag;
+
+    focusedOrActiveStateChanged();
+
+    if (Document* doc = m_frame->document())
+        doc->dispatchWindowEvent(flag ? focusEvent : blurEvent, false, false);
+}
+
+bool SelectionController::isFocusedAndActive() const
+{
+    return m_focused && m_frame->page() && m_frame->page()->focusController()->isActive();
 }
   
 #ifndef NDEBUG

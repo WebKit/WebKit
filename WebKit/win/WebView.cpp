@@ -1661,18 +1661,18 @@ static LRESULT CALLBACK WebViewWndProc(HWND hWnd, UINT message, WPARAM wParam, L
                 uiDelegatePrivate->webViewReceivedFocus(webView);
             // FIXME: Merge this logic with updateActiveState, and switch this over to use updateActiveState
 
+            webView->page()->focusController()->setActive(true);
+
             // It's ok to just always do setWindowHasFocus, since we won't fire the focus event on the DOM
             // window unless the value changes.  It's also ok to do setIsActive inside focus,
             // because Windows has no concept of having to update control tints (e.g., graphite vs. aqua)
             // and therefore only needs to update the selection (which is limited to the focused frame).
             FocusController* focusController = webView->page()->focusController();
             if (Frame* frame = focusController->focusedFrame()) {
-                frame->setIsActive(true);
-
                 // If the previously focused window is a child of ours (for example a plugin), don't send any
                 // focus events.
                 if (!IsChild(hWnd, reinterpret_cast<HWND>(wParam)))
-                    frame->setWindowHasFocus(true);
+                    frame->selectionController()->setFocused(true);
             } else
                 focusController->setFocusedFrame(webView->page()->mainFrame());
             break;
@@ -1693,12 +1693,11 @@ static LRESULT CALLBACK WebViewWndProc(HWND hWnd, UINT message, WPARAM wParam, L
             FocusController* focusController = webView->page()->focusController();
             webView->resetIME(focusController->focusedOrMainFrame());
             if (GetAncestor(hWnd, GA_ROOT) != newFocusWnd) {
+                webView->page()->focusController()->setActive(false);
                 if (Frame* frame = focusController->focusedOrMainFrame()) {
-                    frame->setIsActive(false);
-
                     // If we're losing focus to a child of ours, don't send blur events.
                     if (!IsChild(hWnd, newFocusWnd))
-                        frame->setWindowHasFocus(false);
+                        frame->selectionController()->setFocused(false);
                 }
             } else
                 focusController->setFocusedFrame(0);
@@ -2664,8 +2663,6 @@ HRESULT STDMETHODCALLTYPE WebView::searchFor(
 
 HRESULT STDMETHODCALLTYPE WebView::updateActiveState()
 {
-    Frame* frame = m_page->mainFrame();
-
     HWND window = ::GetAncestor(m_viewWindow, GA_ROOT);
     HWND activeWindow = ::GetActiveWindow();
     bool windowIsKey = window == activeWindow;
@@ -2673,10 +2670,7 @@ HRESULT STDMETHODCALLTYPE WebView::updateActiveState()
 
     bool windowOrSheetIsKey = windowIsKey || (window == activeWindow);
 
-    frame->setIsActive(windowIsKey);            
-
-    Frame* focusedFrame = m_page->focusController()->focusedOrMainFrame();
-    frame->setWindowHasFocus(frame == focusedFrame && windowOrSheetIsKey);
+    m_page->focusController()->setActive(windowOrSheetIsKey);
 
     return S_OK;
 }

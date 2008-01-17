@@ -29,6 +29,7 @@
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
 #include "RenderStyle.h"
+#include "SelectionController.h"
 
 // The methods in this file are shared by all themes on every platform.
 
@@ -377,7 +378,7 @@ bool RenderTheme::isFocused(const RenderObject* o) const
         return false;
     Document* document = node->document();
     Frame* frame = document->frame();
-    return node == document->focusedNode() && frame && frame->isActive();
+    return node == document->focusedNode() && frame && frame->selectionController()->isFocusedAndActive();
 }
 
 bool RenderTheme::isPressed(const RenderObject* o) const

@@ -1727,10 +1727,10 @@ static void _updateMouseoverTimerCallback(CFRunLoopTimerRef timer, void *info)
     BOOL windowOrSheetIsKey = windowIsKey || [[window attachedSheet] isKeyWindow];
 
     BOOL isActive = !_private->resigningFirstResponder && windowIsKey && [self _web_firstResponderCausesFocusDisplay];
-    frame->setIsActive(isActive);            
+    page->focusController()->setActive(isActive);
 
     Frame* focusedFrame = page->focusController()->focusedOrMainFrame();
-    frame->setWindowHasFocus(frame == focusedFrame && windowOrSheetIsKey);
+    frame->selectionController()->setFocused(frame == focusedFrame && windowOrSheetIsKey);
 }
 
 - (void)_writeSelectionToPasteboard:(NSPasteboard *)pasteboard

@@ -1,3 +1,16 @@
+2008-01-16  Adam Roben  <aroben@apple.com>
+
+        Updated for renames/removal of WebCore methods.
+
+        Reviewed by Darin.
+
+        * Plugins/WebPluginController.mm:
+        (-[WebPluginController webPlugInContainerSelectionColor]): Changed to
+        ask isFocusedAndActive directly, instead of going through the frame
+        bridge.
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView _updateActiveState]): Updated for method renames.
+
 2008-01-16  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Adam and Dan

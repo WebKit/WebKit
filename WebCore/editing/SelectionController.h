@@ -111,6 +111,11 @@ public:
     void setCaretBlinkingSuspended(bool suspended) { m_isCaretBlinkingSuspended = suspended; }
     bool isCaretBlinkingSuspended() const { return m_isCaretBlinkingSuspended; }
 
+    // Focus
+    void setFocused(bool);
+    bool isFocusedAndActive() const;
+    void pageActivationChanged();
+
 #ifndef NDEBUG
     void formatForDebugger(char* buffer, unsigned length) const;
     void showTreeForThis() const;
@@ -135,6 +140,8 @@ private:
     void notifyAccessibilityForSelectionChange() {};
 #endif
 
+    void focusedOrActiveStateChanged();
+
     Selection m_sel;
 
     IntRect m_caretRect;            // caret coordinates, size, and position
@@ -152,6 +159,7 @@ private:
     bool m_isCaretBlinkingSuspended;
     
     int m_xPosForVerticalArrowNavigation;
+    bool m_focused;
 };
 
 inline bool operator==(const SelectionController& a, const SelectionController& b)

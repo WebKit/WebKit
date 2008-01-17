@@ -1,3 +1,68 @@
+2008-01-16  Adam Roben  <aroben@apple.com>
+
+        Move focused/active state from Frame to SelectionController/FocusController
+
+        This is the first part of <rdar://5006915> Inactive look for Aqua
+        controls.
+
+        The following methods were moved/renamed:
+            - Frame::setIsActive -> FocusController::setActive
+            - Frame::isActive -> SelectionController::isActiveAndFocused
+            - Frame::setWindowHasFocus -> SelectionController::setFocused
+
+        Active state is now correctly a Page-level concept.
+
+        The Mac parts of this patch were written by Darin.
+
+        Reviewed by Darin.
+
+        All tests pass.
+
+        * WebCore.base.exp: Updated for method renames.
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::checkOneSelector): Ditto.
+        * editing/SelectionController.cpp:
+        (WebCore::SelectionController::SelectionController): Initialize new
+        member.
+        (WebCore::SelectionController::focusedOrActiveStateChanged): New
+        private method. Most of this code came from Frame::setIsActive.
+        (WebCore::SelectionController::pageActivationChanged): Added.
+        (WebCore::SelectionController::setFocused): Added. Replaces
+        Frame::setWindowHasFocus.
+        (WebCore::SelectionController::isFocusedAndActive): Added. Replaces
+        Frame::isActive.
+        * editing/SelectionController.h:
+        * page/FocusController.cpp:
+        (WebCore::FocusController::FocusController): Initialize new member.
+        (WebCore::FocusController::setFocusedFrame): Changed to just call
+        SelectionController::setFocused, since active state has doesn't change
+        when the focused frame changes.
+        (WebCore::FocusController::setActive): Added. Replaces
+        Frame::setIsActive.
+        * page/FocusController.h:
+        (WebCore::FocusController::isActive): Added.
+        * page/Frame.cpp:
+        (WebCore::Frame::setDocument): Updated for method renames.
+        (WebCore::Frame::setFocusedNodeIfNeeded): Ditto.
+        (WebCore::Frame::updateSecureKeyboardEntryIfActive): Ditto.
+        (WebCore::FramePrivate::FramePrivate): Removed initialization of
+        removed members.
+        * page/Frame.h:
+        * page/FramePrivate.h:
+        * page/mac/WebCoreFrameBridge.h: Removed -selectionColor.
+        * page/mac/WebCoreFrameBridge.mm: Ditto.
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::paintItemForeground): Updated for method
+        renames.
+        (WebCore::RenderListBox::paintItemBackground): Ditto.
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::selectionBackgroundColor): Ditto.
+        (WebCore::RenderObject::selectionForegroundColor): Ditto.
+        * rendering/RenderTextControl.cpp:
+        (WebCore::RenderTextControl::capsLockStateMayHaveChanged): Ditto.
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::isFocused): Ditto.
+
 2008-01-17  Holger Hans Peter Freyther  <holger.freyther@trolltech.com>
 
         Reviewed by Simon.

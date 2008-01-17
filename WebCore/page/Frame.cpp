@@ -275,7 +275,7 @@ void Frame::setDocument(PassRefPtr<Document> newDoc)
     }
 
     d->m_doc = newDoc;
-    if (d->m_doc && d->m_isActive)
+    if (d->m_doc && selectionController()->isFocusedAndActive())
         setUseSecureKeyboardEntry(d->m_doc->useSecureKeyboardEntryWhenActive());
         
     if (d->m_doc && !d->m_doc->attached())
@@ -585,7 +585,7 @@ static bool isFrameElement(const Node *n)
 
 void Frame::setFocusedNodeIfNeeded()
 {
-    if (!document() || selectionController()->isNone() || !d->m_isActive)
+    if (!document() || selectionController()->isNone() || !selectionController()->isFocusedAndActive())
         return;
 
     Node* target = selectionController()->rootEditableElement();
@@ -832,7 +832,7 @@ void Frame::setUseSecureKeyboardEntry(bool)
 
 void Frame::updateSecureKeyboardEntryIfActive()
 {
-    if (d->m_isActive)
+    if (selectionController()->isFocusedAndActive())
         setUseSecureKeyboardEntry(d->m_doc->useSecureKeyboardEntryWhenActive());
 }
 
@@ -1535,58 +1535,6 @@ void Frame::setSelectionFromNone()
         selectionController()->setSelection(Selection(Position(node, 0), DOWNSTREAM));
 }
 
-bool Frame::isActive() const
-{
-    return d->m_isActive;
-}
-
-void Frame::setIsActive(bool flag)
-{
-    if (d->m_isActive == flag)
-        return;
-    d->m_isActive = flag;
-
-    // Because RenderObject::selectionBackgroundColor() and
-    // RenderObject::selectionForegroundColor() check if the frame is active,
-    // we have to update places those colors were painted.
-    if (d->m_view)
-        d->m_view->updateContents(enclosingIntRect(selectionRect()));
-
-    // Caret appears in the active frame.
-    if (flag)
-        setSelectionFromNone();
-    setCaretVisible(flag);
-
-    // Update for caps lock state
-    eventHandler()->capsLockStateMayHaveChanged();
-
-    // Because CSSStyleSelector::checkOneSelector() and
-    // RenderTheme::isFocused() check if the frame is active, we have to
-    // update style and theme state that depended on those.
-    if (d->m_doc) {
-        if (Node* node = d->m_doc->focusedNode()) {
-            node->setChanged();
-            if (RenderObject* renderer = node->renderer())
-                if (renderer && renderer->style()->hasAppearance())
-                    theme()->stateChanged(renderer, FocusState);
-        }
-    }
-
-    // Secure keyboard entry is set by the active frame.
-    if (d->m_doc->useSecureKeyboardEntryWhenActive())
-        setUseSecureKeyboardEntry(flag);
-}
-
-void Frame::setWindowHasFocus(bool flag)
-{
-    if (d->m_windowHasFocus == flag)
-        return;
-    d->m_windowHasFocus = flag;
-    
-    if (Document *doc = document())
-        doc->dispatchWindowEvent(flag ? focusEvent : blurEvent, false, false);
-}
-
 bool Frame::inViewSourceMode() const
 {
     return d->m_inViewSourceMode;
@@ -1952,14 +1900,12 @@ FramePrivate::FramePrivate(Page* page, Frame* parent, Frame* thisFrame, HTMLFram
     , m_animationController(thisFrame)
     , m_caretVisible(false)
     , m_caretPaint(true)
-    , m_isActive(false)
     , m_isPainting(false)
     , m_lifeSupportTimer(thisFrame, &Frame::lifeSupportTimerFired)
     , m_loader(new FrameLoader(thisFrame, frameLoaderClient))
     , m_userStyleSheetLoader(0)
     , m_paintRestriction(PaintRestrictionNone)
     , m_highlightTextMatches(false)
-    , m_windowHasFocus(false)
     , m_inViewSourceMode(false)
     , frameCount(0)
     , m_prohibitsScrolling(false)

@@ -29,6 +29,7 @@
 #include "Element.h"
 #include "Editor.h"
 #include "EventHandler.h"
+#include "FocusController.h"
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "FrameView.h"
@@ -43,6 +44,7 @@
 #include "PlatformWheelEvent.h"
 #include "RenderObject.h"
 #include "RenderTreeAsText.h"
+#include "SelectionController.h"
 #include "Settings.h"
 
 #include "ChromeClientWx.h"
@@ -556,7 +558,7 @@ void wxWebView::OnKeyEvents(wxKeyEvent& event)
 void wxWebView::OnSetFocus(wxFocusEvent& event)
 {
     if (m_impl->frame) {
-        m_impl->frame->setWindowHasFocus(true);
+        m_impl->frame->selectionController()->setFocused(true);
     }
     event.Skip();
 }
@@ -564,15 +566,15 @@ void wxWebView::OnSetFocus(wxFocusEvent& event)
 void wxWebView::OnKillFocus(wxFocusEvent& event)
 {
     if (m_impl->frame) {
-        m_impl->frame->setWindowHasFocus(false);
+        m_impl->frame->selectionController()->setFocused(false);
     }
     event.Skip();
 }
 
 void wxWebView::OnActivate(wxActivateEvent& event)
 {
-    if (m_impl->frame) {
-        m_impl->frame->setIsActive(event.GetActive());
+    if (m_impl->page) {
+        m_impl->page->focusController()->setActive(event.GetActive());
     }
     event.Skip();
 }

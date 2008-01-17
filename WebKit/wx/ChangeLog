@@ -1,3 +1,14 @@
+2008-01-16  Adam Roben  <aroben@apple.com>
+
+        Updated for WebCore method renames.
+
+        Reviewed by Darin.
+
+        * WebView.cpp:
+        (wxWebView::OnSetFocus):
+        (wxWebView::OnKillFocus):
+        (wxWebView::OnActivate):
+
 2008-01-12  Kevin Ollivier  <kevino@theolliviers.com>
 
         Reviewed by Darin Adler.

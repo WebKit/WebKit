@@ -56,6 +56,7 @@ using namespace HTMLNames;
 
 FocusController::FocusController(Page* page)
     : m_page(page)
+    , m_isActive(false)
 {
 }
 
@@ -64,17 +65,13 @@ void FocusController::setFocusedFrame(PassRefPtr<Frame> frame)
     if (m_focusedFrame == frame)
         return;
 
-    if (m_focusedFrame) {
-        m_focusedFrame->setWindowHasFocus(false);
-        m_focusedFrame->setIsActive(false);
-    }
+    if (m_focusedFrame)
+        m_focusedFrame->selectionController()->setFocused(false);
 
     m_focusedFrame = frame;
 
-    if (m_focusedFrame) {
-        m_focusedFrame->setWindowHasFocus(true);
-        m_focusedFrame->setIsActive(true);
-    }
+    if (m_focusedFrame)
+        m_focusedFrame->selectionController()->setFocused(true);
 }
 
 Frame* FocusController::focusedOrMainFrame()
@@ -290,6 +287,17 @@ bool FocusController::setFocusedNode(Node* node, PassRefPtr<Frame> newFocusedFra
     m_page->editorClient()->setInputMethodState(node->shouldUseInputMethod());
 
     return true;
+}
+
+void FocusController::setActive(bool active)
+{
+    if (m_isActive == active)
+        return;
+
+    m_isActive = active;
+
+    if (Frame* frame = focusedFrame())
+        frame->selectionController()->pageActivationChanged();
 }
 
 } // namespace WebCore

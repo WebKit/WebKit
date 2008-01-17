@@ -189,9 +189,6 @@ public:
     void clearTimers();
     static void clearTimers(FrameView*);
 
-    bool isActive() const;
-    void setIsActive(bool flag);
-
     // Convenience, to avoid repeating the code to dig down to get this.
     UChar backslashAsCurrencySymbol() const;
 
@@ -224,8 +221,6 @@ public:
 public:
     void sendResizeEvent();
     void sendScrollEvent();
-
-    void setWindowHasFocus(bool flag);
 
 // === to be moved into FrameView
 
@@ -337,9 +332,10 @@ public:
     void revealCaret(const RenderLayer::ScrollAlignment& = RenderLayer::gAlignCenterIfNeeded) const;
     void setSelectionFromNone();
 
+    void setUseSecureKeyboardEntry(bool);
+
 private:
     void caretBlinkTimerFired(Timer<Frame>*);
-    void setUseSecureKeyboardEntry(bool);
 
 public:
     SelectionController* dragCaretController() const;

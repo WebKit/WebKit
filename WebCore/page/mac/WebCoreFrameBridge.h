@@ -171,8 +171,6 @@ enum WebScrollGranularity {
 - (void)setBaseBackgroundColor:(NSColor *)backgroundColor;
 - (void)setDrawsBackground:(BOOL)drawsBackround;
 
-- (NSColor *)selectionColor;
-
 - (id)accessibilityTree;
 
 - (DOMRange *)rangeByAlteringCurrentSelection:(WebCore::SelectionController::EAlteration)alteration direction:(WebCore::SelectionController::EDirection)direction granularity:(WebCore::TextGranularity)granularity;

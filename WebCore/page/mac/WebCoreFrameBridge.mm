@@ -784,11 +784,6 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
     _shouldCreateRenderers = f;
 }
 
-- (NSColor *)selectionColor
-{
-    return m_frame->isActive() ? [NSColor selectedTextBackgroundColor] : [NSColor secondarySelectedControlColor];
-}
-
 - (id)accessibilityTree
 {
     AXObjectCache::enableAccessibility();

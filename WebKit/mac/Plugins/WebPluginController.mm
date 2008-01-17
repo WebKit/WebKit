@@ -363,7 +363,10 @@ static void cancelOutstandingCheck(const void *item, void *context)
 
 - (NSColor *)webPlugInContainerSelectionColor
 {
-    return [[_dataSource _bridge] selectionColor];
+    bool primary = true;
+    if (Frame* frame = core([self webFrame]))
+        primary = frame->selectionController()->isFocusedAndActive();
+    return primary ? [NSColor selectedTextBackgroundColor] : [NSColor secondarySelectedControlColor];
 }
 
 // For compatibility only.

@@ -1,3 +1,17 @@
+2008-01-16  Adam Roben  <aroben@apple.com>
+
+        Updated for changes to WebCore methods
+
+        Focus and active state are now handled (somewhat) separately. Future
+        patches will further separate these concepts.
+
+        Reviewed by Darin.
+
+        * WebView.cpp:
+        (WebViewWndProc): Updated for method renames.
+        (WebView::updateActiveState): Only change the active state here. Focus
+        is handled inside WM_SETFOCUS and WM_KILLFOCUS message handlers.
+
 2008-01-16  Steve Falkenburg  <sfalken@apple.com>
 
         <rdar://problem/5097419> Cursor flickers when over window resizer
