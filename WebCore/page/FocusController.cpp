@@ -296,6 +296,14 @@ void FocusController::setActive(bool active)
 
     m_isActive = active;
 
+    // FIXME: It would be nice to make Mac use this implementation someday.
+    // Right now Mac calls updateControlTints from within WebKit, and moving
+    // the call to here is not simple.
+#if !PLATFORM(MAC)
+    if (FrameView* view = m_page->mainFrame()->view())
+        view->updateControlTints();
+#endif
+
     if (Frame* frame = focusedFrame())
         frame->selectionController()->pageActivationChanged();
 }

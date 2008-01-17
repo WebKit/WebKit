@@ -1,5 +1,48 @@
 2008-01-16  Adam Roben  <aroben@apple.com>
 
+        Update scroll bars/form controls when FocusController::isActive changes
+
+        Part of <rdar://5006915> Inactive look for Aqua controls
+
+        Reviewed by Darin.
+
+        All tests pass.
+
+        * page/FocusController.cpp:
+        (WebCore::FocusController::setActive): Update control tints when the
+        active state changes.
+        * page/FrameView.cpp:
+        (WebCore::FrameView::updateControlTints): On Windows, we have to ask
+        ScrollView to paint so that the outermost scroll bars will paint. On
+        Mac, the outermost scroll bars are taken care of by NSScroller.
+        * platform/PopupMenu.h: Updated for ScrollBarClient changes.
+        * platform/ScrollBar.h: Added a new ScrollBarClient method.
+        * platform/win/PlatformScrollBarSafari.cpp:
+        (WebCore::PlatformScrollbar::paint): Invalidate when updating control
+        tints so that we can paint with the new tint later.
+        (WebCore::PlatformScrollbar::paintButton): Pass the active state down
+        to SafariTheme.
+        (WebCore::PlatformScrollbar::paintTrack): Ditto.
+        (WebCore::PlatformScrollbar::paintThumb): Ditto.
+        * platform/win/ScrollViewWin.cpp:
+        (WebCore::ScrollView::ScrollViewPrivate::isActive): Added.
+        (WebCore::ScrollView::paint): Pass paint calls on down if we're
+        updating control tints so the scroll bars can invalidate.
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::isActive): Added.
+        * rendering/RenderLayer.h:
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::isActive): Added.
+        * rendering/RenderListBox.h:
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::isActive): Added.
+        * rendering/RenderTheme.h:
+        * rendering/RenderThemeSafari.cpp:
+        (WebCore::RenderThemeSafari::determineState): Pass the active state
+        down to SafariTheme.
+
+2008-01-16  Adam Roben  <aroben@apple.com>
+
         Move focused/active state from Frame to SelectionController/FocusController
 
         This is the first part of <rdar://5006915> Inactive look for Aqua

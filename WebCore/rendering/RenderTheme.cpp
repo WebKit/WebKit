@@ -24,10 +24,12 @@
 
 #include "CSSValueKeywords.h"
 #include "Document.h"
+#include "FocusController.h"
 #include "Frame.h"
 #include "GraphicsContext.h"
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
+#include "Page.h"
 #include "RenderStyle.h"
 #include "SelectionController.h"
 
@@ -348,6 +350,25 @@ bool RenderTheme::stateChanged(RenderObject* o, ControlState state) const
     // Repaint the control.
     o->repaint();
     return true;
+}
+
+// FIXME: It would be nice to set this state on the RenderObjects instead of
+// having to dig up to the FocusController at paint time.
+bool RenderTheme::isActive(const RenderObject* o) const
+{
+    Node* node = o->element();
+    if (!node)
+        return false;
+
+    Frame* frame = node->document()->frame();
+    if (!frame)
+        return false;
+
+    Page* page = frame->page();
+    if (!page)
+        return false;
+
+    return page->focusController()->isActive();
 }
 
 bool RenderTheme::isChecked(const RenderObject* o) const

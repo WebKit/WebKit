@@ -1029,13 +1029,17 @@ void FrameView::updateControlTints()
     if (!m_frame || m_frame->loader()->url().isEmpty()) 
         return;
     
-    Document* doc = m_frame->document();
-    if (doc && theme()->supportsControlTints() && m_frame->renderer()) {
-        doc->updateLayout(); // Ensure layout is up to date.
+    if (theme()->supportsControlTints() && m_frame->renderer()) {
+        if (needsLayout())
+            layout();
         PlatformGraphicsContext* const noContext = 0;
         GraphicsContext context(noContext);
         context.setUpdatingControlTints(true);
+#if !PLATFORM(MAC)
+        ScrollView::paint(&context, frameGeometry());
+#else
         m_frame->paint(&context, enclosingIntRect(visibleContentRect()));
+#endif
     }
 }
 

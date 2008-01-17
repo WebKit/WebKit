@@ -130,6 +130,7 @@ public:
     virtual void adjustSliderThumbSize(RenderObject*) const;
 
     // Methods for state querying
+    bool isActive(const RenderObject*) const;
     bool isChecked(const RenderObject*) const;
     bool isIndeterminate(const RenderObject*) const;
     bool isEnabled(const RenderObject*) const;

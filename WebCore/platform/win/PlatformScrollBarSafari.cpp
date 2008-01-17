@@ -228,6 +228,11 @@ void PlatformScrollbar::setEnabled(bool enabled)
 
 void PlatformScrollbar::paint(GraphicsContext* graphicsContext, const IntRect& damageRect)
 {
+    if (graphicsContext->updatingControlTints()) {
+        invalidate();
+        return;
+    }
+
     if (graphicsContext->paintingDisabled())
         return;
 
@@ -360,6 +365,8 @@ void PlatformScrollbar::paintButton(GraphicsContext* context, const IntRect& rec
 
     ThemePart part;
     ThemeControlState state = 0;
+    if (m_client->isActive())
+        state |= ActiveState;
     if (m_orientation == HorizontalScrollbar)
         part = start ? ScrollLeftArrowPart : ScrollRightArrowPart;
     else
@@ -386,6 +393,8 @@ void PlatformScrollbar::paintTrack(GraphicsContext* context, const IntRect& rect
 
     ThemePart part = m_orientation == HorizontalScrollbar ? HScrollTrackPart : VScrollTrackPart;
     ThemeControlState state = 0;
+    if (m_client->isActive())
+        state |= ActiveState;
     if (hasButtons())
         state |= EnabledState;
 
@@ -402,6 +411,8 @@ void PlatformScrollbar::paintThumb(GraphicsContext* context, const IntRect& rect
 
     ThemePart part = m_orientation == HorizontalScrollbar ? HScrollThumbPart : VScrollThumbPart;
     ThemeControlState state = 0;
+    if (m_client->isActive())
+        state |= ActiveState;
     if (isEnabled())
         state |= EnabledState;
 

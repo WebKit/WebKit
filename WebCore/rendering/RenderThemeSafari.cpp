@@ -26,6 +26,7 @@
 #include "CSSValueKeywords.h"
 #include "Document.h"
 #include "Element.h"
+#include "Frame.h"
 #include "FrameView.h"
 #include "GraphicsContext.h"
 #include "HTMLInputElement.h"
@@ -81,6 +82,8 @@ SOFT_LINK(SafariTheme, STPaintProgressIndicator, void, APIENTRY, (ProgressIndica
 ThemeControlState RenderThemeSafari::determineState(RenderObject* o) const
 {
     ThemeControlState result = 0;
+    if (isActive(o))
+        result |= SafariTheme::ActiveState;
     if (isEnabled(o) && !isReadOnlyControl(o))
         result |= SafariTheme::EnabledState;
     if (isPressed(o))

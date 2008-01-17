@@ -49,6 +49,7 @@
 #include "EventHandler.h"
 #include "EventNames.h"
 #include "FloatRect.h"
+#include "FocusController.h"
 #include "Frame.h"
 #include "FrameView.h"
 #include "FrameTree.h"
@@ -58,6 +59,7 @@
 #include "HitTestRequest.h"
 #include "HitTestResult.h"
 #include "OverflowEvent.h"
+#include "Page.h"
 #include "PlatformMouseEvent.h"
 #include "PlatformScrollBar.h" 
 #include "RenderArena.h"
@@ -1013,6 +1015,12 @@ IntRect RenderLayer::windowClipRect() const
     if (!frameView)
         return IntRect();
     return frameView->windowClipRectForLayer(this, false);
+}
+
+bool RenderLayer::isActive() const
+{
+    Page* page = renderer()->document()->frame()->page();
+    return page && page->focusController()->isActive();
 }
 
 PassRefPtr<Scrollbar> RenderLayer::createScrollbar(ScrollbarOrientation orientation)

@@ -1,5 +1,14 @@
 2008-01-16  Adam Roben  <aroben@apple.com>
 
+        Updated for ScrollBarClient changes
+
+        Reviewed by Darin.
+
+        * WebScrollBar.h:
+        (WebScrollBar::isActive): Added.
+
+2008-01-16  Adam Roben  <aroben@apple.com>
+
         Updated for changes to WebCore methods
 
         Focus and active state are now handled (somewhat) separately. Future

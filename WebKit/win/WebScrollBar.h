@@ -117,9 +117,10 @@ public:
 protected:
     // ScrollbarClient
     virtual void valueChanged(Scrollbar*);
-
-    // Used to obtain a window clip rect.
     virtual IntRect windowClipRect() const;
+
+    // FIXME: We should provide a way to set this value.
+    virtual bool isActive() const { return true; }
 
     ULONG m_refCount;
     RefPtr<WebCore::PlatformScrollbar> m_scrollBar;

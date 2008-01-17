@@ -35,6 +35,7 @@
 #include "Document.h"
 #include "EventHandler.h"
 #include "EventNames.h"
+#include "FocusController.h"
 #include "Frame.h"
 #include "FrameView.h"
 #include "GraphicsContext.h"
@@ -43,6 +44,7 @@
 #include "HTMLOptionElement.h"
 #include "HTMLSelectElement.h"
 #include "HitTestResult.h"
+#include "Page.h"
 #include "PlatformScrollBar.h" 
 #include "RenderTheme.h"
 #include "RenderView.h"
@@ -544,6 +546,12 @@ IntRect RenderListBox::windowClipRect() const
         return IntRect();
 
     return frameView->windowClipRectForLayer(enclosingLayer(), true);
+}
+
+bool RenderListBox::isActive() const
+{
+    Page* page = document()->frame()->page();
+    return page && page->focusController()->isActive();
 }
 
 bool RenderListBox::isScrollable() const
