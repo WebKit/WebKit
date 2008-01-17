@@ -1,3 +1,13 @@
+2008-01-17  Simon Hausmann  <hausmann@webkit.org>
+
+        Reviewed by Holger.
+
+        Don't link QtWebKit against libQtXml when building against Qt 4.4.
+
+        This is not necessary anymore since QXmlStream has been moved into QtCore.
+
+        * WebCore.pro:
+
 2008-01-17  Håvard Wall  <hwall@trolltech.com>
 
         Reviewed by Simon Hausmann <hausmann@webkit.org>.

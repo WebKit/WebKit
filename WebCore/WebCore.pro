@@ -204,7 +204,8 @@ INCLUDEPATH +=  $$PWD \
                 $$PWD/platform/image-decoders \
                 $$PWD/plugins
 
-QT += network xml
+QT += network
+lessThan(QT_MINOR_VERSION, 4): QT += xml
 
 QMAKE_EXTRA_TARGETS += generated_files
 
