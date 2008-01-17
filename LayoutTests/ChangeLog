@@ -1,3 +1,7 @@
+2008-01-17  Adam Roben  <aroben@apple.com>
+
+        * platform/win/Skipped: Added another failure.
+
 2008-01-17  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Dave Hyatt.
