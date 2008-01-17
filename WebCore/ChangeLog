@@ -1,5 +1,13 @@
 2008-01-17  Simon Hausmann  <hausmann@webkit.org>
 
+        Reviewed by Lars.
+
+        Set the library version of QtWebKit to the Qt version.
+
+        * WebCore.pro:
+
+2008-01-17  Simon Hausmann  <hausmann@webkit.org>
+
         Reviewed by Holger.
 
         Re-enable gzip compression as accepted encoding, now that the bug is fixed in Qt 4.4's network module.

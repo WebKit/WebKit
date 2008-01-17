@@ -1757,6 +1757,7 @@ qt-port:!CONFIG(QTDIR_build) {
     prf.files = $$PWD/../WebKit/qt/Api/qtwebkit.prf
     prf.path = $$[QT_INSTALL_PREFIX]/mkspecs/features
 
+    VERSION=$${QT_MAJOR_VERSION}.$${QT_MINOR_VERSION}.$${QT_PATCH_VERSION}
 
     win32-* {
         DLLDESTDIR = $$OUTPUT_DIR/bin
