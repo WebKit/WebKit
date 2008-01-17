@@ -103,6 +103,7 @@ SOFT_LINK_POINTER(QTKit, QTSecurityPolicyNoCrossSiteAttribute, NSString *)
 // Older versions of the QTKit header don't have these constants.
 #if !defined QTKIT_VERSION_MAX_ALLOWED || QTKIT_VERSION_MAX_ALLOWED <= QTKIT_VERSION_7_0
 enum {
+    QTMovieLoadStateError = -1L,
     QTMovieLoadStateLoaded  = 2000L,
     QTMovieLoadStatePlayable = 10000L,
     QTMovieLoadStatePlaythroughOK = 20000L,
@@ -722,8 +723,7 @@ void MediaPlayerPrivate::disableUnsupportedTracks(unsigned& enabledTrackCount)
     
     unsigned trackCount = [tracks count];
     enabledTrackCount = trackCount;
-    for (unsigned trackIndex = 0; trackIndex < trackCount; trackIndex++)
-    {
+    for (unsigned trackIndex = 0; trackIndex < trackCount; trackIndex++) {
         // Grab the track at the current index. If there isn't one there, then
         // we can move onto the next one.
         QTTrack *track = [tracks objectAtIndex:trackIndex];

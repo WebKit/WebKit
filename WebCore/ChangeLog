@@ -1,5 +1,12 @@
 2008-01-16  Antti Koivisto  <antti@apple.com>
 
+        Fix Tiger build.
+
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.mm:
+        (WebCore::MediaPlayerPrivate::disableUnsupportedTracks):
+
+2008-01-16  Antti Koivisto  <antti@apple.com>
+
         Reviewed by Adele.
         
         OS X fix for <rdar://problem/5605682>
