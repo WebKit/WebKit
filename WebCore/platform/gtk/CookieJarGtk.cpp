@@ -28,17 +28,17 @@ namespace WebCore {
 
 static HashMap<String, String> cookieJar;
 
-void setCookies(const KURL& url, const KURL& /*policyURL*/, const String& value)
+void setCookies(Document* /*document*/, const KURL& url, const KURL& /*policyURL*/, const String& value)
 {
     cookieJar.set(url.string(), value);
 }
 
-String cookies(const KURL& url)
+String cookies(const Document* /*document*/, const KURL& url)
 {
     return cookieJar.get(url.string());
 }
 
-bool cookiesEnabled()
+bool cookiesEnabled(const Document* /*document*/)
 {
     return true;
 }

@@ -1,3 +1,15 @@
+2008-01-17  Simon Hausmann  <hausmann@webkit.org>
+
+        Reviewed by Maciej, Lars, Holger.
+
+        http://bugs.webkit.org/show_bug.cgi?id=16589
+
+        Add a document parameter to WebCore::cookies, setCookies and cookiesEnabled.
+
+        * Api/qwebnetworkinterface.cpp:
+        (QWebNetworkRequestPrivate::init):
+        (QWebNetworkManager::started):
+
 2008-01-17  Warwick Allison  <warwick@trolltech.com>
 
         Reviewed by Simon Hausmann <hausmann@webkit.org>.

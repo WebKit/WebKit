@@ -38,7 +38,7 @@ typedef unsigned int NSUInteger;
 
 namespace WebCore {
 
-String cookies(const KURL& url)
+String cookies(const Document* /*document*/, const KURL& url)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
@@ -62,7 +62,7 @@ String cookies(const KURL& url)
     return String();
 }
 
-void setCookies(const KURL& url, const KURL& policyBaseURL, const String& cookieStr)
+void setCookies(Document* /*document*/, const KURL& url, const KURL& policyBaseURL, const String& cookieStr)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
@@ -82,7 +82,7 @@ void setCookies(const KURL& url, const KURL& policyBaseURL, const String& cookie
     END_BLOCK_OBJC_EXCEPTIONS;
 }
 
-bool cookiesEnabled()
+bool cookiesEnabled(const Document* /*document*/)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 

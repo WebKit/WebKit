@@ -2579,12 +2579,12 @@ Element* Document::ownerElement() const
 
 String Document::cookie() const
 {
-    return cookies(url());
+    return cookies(this, url());
 }
 
 void Document::setCookie(const String& value)
 {
-    setCookies(url(), policyBaseURL().deprecatedString(), value);
+    setCookies(this, url(), policyBaseURL().deprecatedString(), value);
 }
 
 String Document::referrer() const

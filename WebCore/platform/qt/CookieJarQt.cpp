@@ -32,30 +32,67 @@
 #include "KURL.h"
 #include "PlatformString.h"
 
+#if QT_VERSION >= 0x040400
+#include "Document.h"
+#include "qwebpage.h"
+#include "qwebframe.h"
+#include "FrameLoaderClientQt.h"
+#include <QNetworkAccessManager>
+#include <QNetworkCookie>
+#else
 #include <qcookiejar.h>
+#endif
 
 namespace WebCore {
 
-void setCookies(const KURL& url, const KURL& policyURL, const String& value)
+void setCookies(Document* document, const KURL& url, const KURL& policyURL, const String& value)
 {
-    QUrl u((QString)url.string());
-    QUrl p((QString)policyURL.string());
+    QUrl u(url);
+    QUrl p(policyURL);
+#if QT_VERSION >= 0x040400
+    QWebFrame* frame = static_cast<FrameLoaderClientQt*>(document->frame()->loader()->client())->webFrame();
+    QWebPage* page = frame->page();
+    QNetworkAccessManager* manager = page->networkAccessManager();
+    QNetworkCookieJar* jar = manager->cookieJar();
+
+    QList<QNetworkCookie> cookies = QNetworkCookie::parseCookies(QString(value).toAscii());
+    jar->setCookiesFromUrl(cookies, p);
+#else
     QCookieJar::cookieJar()->setCookies(u, p, (QString)value);
+#endif
 }
 
-String cookies(const KURL& url)
+String cookies(const Document* document, const KURL& url)
 {
-    QUrl u((QString)url.string());
+    QUrl u(url);
+#if QT_VERSION >= 0x040400
+    QWebFrame* frame = static_cast<FrameLoaderClientQt*>(document->frame()->loader()->client())->webFrame();
+    QWebPage* page = frame->page();
+    QNetworkAccessManager* manager = page->networkAccessManager();
+    QNetworkCookieJar* jar = manager->cookieJar();
+
+    QList<QNetworkCookie> cookies = jar->cookiesForUrl(u);
+    if (cookies.isEmpty())
+        return String();
+
+    return QString::fromAscii(cookies.first().toRawForm());
+#else
     QString cookies = QCookieJar::cookieJar()->cookies(u);
     int idx = cookies.indexOf(QLatin1Char(';'));
     if (idx > 0)
         cookies = cookies.left(idx);
     return cookies;
+#endif
 }
 
-bool cookiesEnabled()
+bool cookiesEnabled(const Document* document)
 {
+#if QT_VERSION >= 0x040400
+    // ###
+    return true;
+#else
     return QCookieJar::cookieJar()->isEnabled();
+#endif
 }
 
 }

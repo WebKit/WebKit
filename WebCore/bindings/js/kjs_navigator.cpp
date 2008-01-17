@@ -217,7 +217,7 @@ JSValue* Navigator::getValueProperty(ExecState* exec, int token) const
   case _MimeTypes:
     return new MimeTypes(exec);
   case CookieEnabled:
-    return jsBoolean(cookiesEnabled());
+    return jsBoolean(cookiesEnabled(m_frame->document()));
   }
   return 0;
 }
