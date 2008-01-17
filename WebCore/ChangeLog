@@ -1,3 +1,29 @@
+2008-01-16  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Adele.
+        
+        OS X fix for <rdar://problem/5605682>
+        Disallow streaming protocols for media elements
+        and <rdar://problem/5668711>
+        Limit the container and codec types that the <video> tag supports
+        
+        - Disable unsupported QuickTime tracks types. 
+        - Disallow streaming protocols (for now).
+        - Set QTMovie QTMoviePreventExternalURLLinksAttribute and QTSecurityPolicyNoCrossSiteAttribute 
+          to limit QuickTime's access to external resources.
+        
+        Windows patch coming up.
+
+        Tests: media/broken-video.html
+               media/unsupported-rtsp.html
+               media/unsupported-tracks.html
+
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.h:
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.mm:
+        (WebCore::MediaPlayerPrivate::createQTMovie):
+        (WebCore::MediaPlayerPrivate::updateStates):
+        (WebCore::MediaPlayerPrivate::disableUnsupportedTracks):
+
 2008-01-16  Rodney Dawes  <dobey@wayofthemonkey.com>
 
         Reviewed by Alp Toker.

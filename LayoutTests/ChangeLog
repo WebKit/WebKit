@@ -1,3 +1,25 @@
+2008-01-16  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Adele.
+        
+        Tests for <rdar://problem/5605682>
+        Disallow streaming protocols for media elements
+        and <rdar://problem/5668711>
+        Limit the container and codec types that the <video> tag supports
+        
+        - test that rtsp: protocol is disabled (for now).
+        - test that QuickTime files with unsupported track types are handled correctly
+        - test that broken video file produces an error
+
+        * media/broken-video-expected.txt: Added.
+        * media/broken-video.html: Added.
+        * media/content/garbage.mp4: Added.
+        * media/content/unsupported_track.mov: Added.
+        * media/unsupported-rtsp-expected.txt: Added.
+        * media/unsupported-rtsp.html: Added.
+        * media/unsupported-tracks-expected.txt: Added.
+        * media/unsupported-tracks.html: Added.
+
 2008-01-16  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
 
         Reviewed by Maciej.

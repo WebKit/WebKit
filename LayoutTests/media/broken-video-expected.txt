@@ -1,0 +1,6 @@
+Test that QuickTime file with broken content generates an error.
+
+EVENT(error)
+TEST(video.error) OK
+END OF TEST
+
