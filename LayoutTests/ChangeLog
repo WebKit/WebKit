@@ -1,3 +1,34 @@
+2008-01-17  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        - make more test pass on Windows by using @font-face to force font
+          fallback to match Mac OS X.
+
+        * editing/deleting/5144139-2.html:
+        * fast/encoding/invalid-UTF-8.html:
+        * fast/events/updateLayoutForHitTest.html:
+        * fast/forms/select-visual-hebrew.html:
+        * fast/forms/select-writing-direction-natural.html:
+        * fast/forms/visual-hebrew-text-field.html:
+        * fast/text/in-rendered-text-rtl.html:
+        * fast/text/international/bidi-L2-run-reordering.html:
+        * fast/text/international/bidi-LDB-2-CSS.html:
+        * fast/text/international/bidi-LDB-2-HTML.html:
+        * fast/text/international/bidi-LDB-2-formatting-characters.html:
+        * fast/text/international/bidi-european-terminators.html:
+        * fast/text/international/bidi-ignored-for-first-child-inline.html:
+        * fast/text/international/bidi-innertext.html:
+        * fast/text/international/bidi-listbox-atsui.html:
+        * fast/text/international/bidi-listbox.html:
+        * fast/text/international/bidi-menulist.html:
+        * fast/text/international/bidi-override.html:
+        * fast/text/international/resources: Added.
+        * fast/text/international/resources/Mac-compatible-font-fallback.css: Added.
+        * fast/text/international/rtl-caret.html:
+        * platform/mac/editing/deleting/5144139-2-expected.txt:
+        * platform/win/Skipped:
+
 2008-01-17  Adam Roben  <aroben@apple.com>
 
         * platform/win/Skipped: Added another failure.

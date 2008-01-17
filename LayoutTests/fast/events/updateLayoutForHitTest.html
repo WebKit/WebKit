@@ -47,7 +47,13 @@ function toggleStatsSearch(triangleSpan)
     <SPAN class="triangle" id="tri" onclick="toggleStatsSearch(this)">&#x25b8;</SPAN> Project
     <DIV class="searchField" name="divProject"><P></P>Call me Ishmael.</DIV>
 </DIV>
-    
+    <style>
+        @font-face {
+            font-family: 'times';
+            src: local('Lucida Grande');
+            unicode-range: U+25B8 U+25BE;
+        }
+    </style>
     <script>
         if (window.eventSender) {
             eventSender.mouseMoveTo(23,26);
