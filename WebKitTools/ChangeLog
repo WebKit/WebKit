@@ -1,3 +1,11 @@
+2008-01-17  Steve Falkenburg  <sfalken@apple.com>
+
+        Re-add DEBUG_WEBKIT_HAS_SUFFIX.
+        
+        Rubber-stamped by Jon Honeycutt.
+
+        * DumpRenderTree/win/DumpRenderTree.vcproj:
+
 2008-01-16  Alp Toker  <alp@atoker.com>
 
         Reviewed by Mark Rowe.
