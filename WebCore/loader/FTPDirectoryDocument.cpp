@@ -207,8 +207,6 @@ static bool wasLastDayOfMonth(int year, int month, int day)
 
 #if PLATFORM(QT)
 
-namespace WebCore
-{
 /*!
  Replacement for localtime_r() which is not available on MinGW.
 
@@ -231,7 +229,6 @@ struct tm gmtimeQt(const QDateTime &input)
     result.tm_hour = time.hour();
 
     return result;
-}
 }
 
 static struct tm *localTimeQt(const time_t *const timep, struct tm *result)
