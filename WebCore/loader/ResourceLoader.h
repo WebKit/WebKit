@@ -105,7 +105,7 @@ namespace WebCore {
         ResourceHandle* handle() const { return m_handle.get(); }
         bool sendResourceLoadCallbacks() const { return m_sendResourceLoadCallbacks; }
 
-        void setShouldBufferData(bool shouldBufferData) { m_shouldBufferData = shouldBufferData; }
+        void setShouldBufferData(bool shouldBufferData);
 
     protected:
         ResourceLoader(Frame*, bool sendResourceLoadCallbacks, bool shouldContentSniff);

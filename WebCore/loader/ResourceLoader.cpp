@@ -149,6 +149,16 @@ FrameLoader* ResourceLoader::frameLoader() const
     return m_frame->loader();
 }
 
+void ResourceLoader::setShouldBufferData(bool shouldBufferData)
+{ 
+    m_shouldBufferData = shouldBufferData; 
+
+    // Reset any already buffered data
+    if (!m_shouldBufferData)
+        m_resourceData = 0;
+}
+    
+
 void ResourceLoader::addData(const char* data, int length, bool allAtOnce)
 {
     if (!m_shouldBufferData)

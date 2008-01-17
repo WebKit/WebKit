@@ -1,3 +1,27 @@
+2008-01-17  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Oliver.
+
+        <rdar://problem/5636742>
+        CrashTracer: [USER] 1302 crashes in Safari at com.apple.WebCore: WTF::Vector<char, 0ul>::reserveCapacity + 78
+        
+        When loading full-frame plug-ins, disable buffering data for the main resource loader. Otherwise, this can cause us
+        to crash when loading large files such as movies in the browser. We already do this for embedded plug-ins.
+        
+        * WebCore.base.exp:
+        * loader/DocumentLoader.h:
+        (WebCore::DocumentLoader::mainResourceLoader):
+        New accessor method.
+        
+        * loader/PluginDocument.cpp:
+        (WebCore::PluginTokenizer::writeRawData):
+        Disable buffering for the main resource loader.
+        
+        * loader/ResourceLoader.cpp:
+        (WebCore::ResourceLoader::setShouldBufferData):
+        * loader/ResourceLoader.h:
+        Have this free the buffer when disabling buffering.
+
 2008-01-17  Adam Roben  <aroben@apple.com>
 
         More Qt/GTK+ build fixing.

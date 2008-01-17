@@ -68,6 +68,7 @@ namespace WebCore {
         virtual void detachFromFrame();
 
         FrameLoader* frameLoader() const;
+        MainResourceLoader* mainResourceLoader() const { return m_mainResourceLoader.get(); }
         PassRefPtr<SharedBuffer> mainResourceData() const;
 
         const ResourceRequest& originalRequest() const;
