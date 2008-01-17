@@ -567,10 +567,8 @@ void QWebPagePrivate::focusInEvent(QFocusEvent *ev)
 
 void QWebPagePrivate::focusOutEvent(QFocusEvent *ev)
 {
-    if (ev->reason() != Qt::PopupFocusReason) {
-        QWebFramePrivate::core(mainFrame)->selectionController()->clear();
-        QWebFramePrivate::core(mainFrame)->setIsActive(false);
-    }
+    if (ev->reason() != Qt::PopupFocusReason)
+        page->focusController()->setFocusedFrame(0);
 }
 
 void QWebPagePrivate::dragEnterEvent(QDragEnterEvent *ev)

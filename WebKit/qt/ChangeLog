@@ -1,5 +1,18 @@
 2008-01-17  Simon Hausmann  <shausman@trolltech.com>
 
+        Reviewed by Lars.
+
+        Fix form elements not focusing correctly after the qt widget lost its focus.
+        
+        When receiving a focus out event notify the focus controller. Otherwise its
+        m_focusedFrame variable remains unchanged and setFocusedFrame on a focusIn
+        event shortcuts and doesn't call setActive(true).
+        
+
+        * Api/qwebpage.cpp:
+
+2008-01-17  Simon Hausmann  <shausman@trolltech.com>
+
         Reviewed by Holger.
 
         Lots of updates to the documentation.
