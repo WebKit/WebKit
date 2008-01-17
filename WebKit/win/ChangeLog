@@ -1,3 +1,12 @@
+2008-01-16  Steve Falkenburg  <sfalken@apple.com>
+
+        <rdar://problem/5097419> Cursor flickers when over window resizer
+        
+        Reviewed by Sam.
+
+        * WebView.cpp:
+        (WebViewWndProc): Don't set the resize cursor when over the non-border resize area.
+
 2008-01-15  Steve Falkenburg  <sfalken@apple.com>
 
         <rdar://problem/5663888> Cannot type into a JavaScript prompt created from a timer
