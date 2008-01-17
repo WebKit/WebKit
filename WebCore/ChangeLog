@@ -1,3 +1,17 @@
+2008-01-16  David Hyatt  <hyatt@apple.com>
+
+        Fix for http://bugs.webkit.org/show_bug.cgi?id=16611
+
+        Make sure vertical-align length values are offset from their parents rather than being absolute to the
+        line.
+
+        Reviewed by olliej
+
+        Added fast/css/vertical-align-lengths.html
+
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::getVerticalPosition):
+
 2008-01-16  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Dave Hyatt.

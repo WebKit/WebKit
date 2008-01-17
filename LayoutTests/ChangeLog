@@ -1,3 +1,15 @@
+2008-01-16  David Hyatt  <hyatt@apple.com>
+
+       Fix for http://bugs.webkit.org/show_bug.cgi?id=16611
+
+       Reviewed by olliej
+
+        * ChangeLog:
+        * fast/css/vertical-align-lengths.html: Added.
+        * platform/mac/fast/css/vertical-align-lengths-expected.checksum: Added.
+        * platform/mac/fast/css/vertical-align-lengths-expected.png: Added.
+        * platform/mac/fast/css/vertical-align-lengths-expected.txt: Added.
+
 2008-01-16  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Dave Hyatt.
