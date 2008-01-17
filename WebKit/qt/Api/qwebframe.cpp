@@ -26,6 +26,7 @@
 #include "qwebpage_p.h"
 #include "qwebframe_p.h"
 
+#include "DocumentLoader.h"
 #include "FocusController.h"
 #include "FrameLoaderClientQt.h"
 #include "Frame.h"
@@ -220,7 +221,7 @@ QString QWebFrame::renderTreeDump() const
 QString QWebFrame::title() const
 {
     if (d->frame->document())
-        return d->frame->document()->title();
+        return d->frame->loader()->documentLoader()->title();
     else return QString();
 }
 
