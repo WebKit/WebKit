@@ -1,3 +1,12 @@
+2008-01-17  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Adam Roben.
+
+        http://bugs.webkit.org/show_bug.cgi?id=16908
+        run-webkit-tests complains about missing FindSafari.exe
+
+        * Scripts/webkitdirs.pm: Append _debug as appropriate.
+
 2008-01-17  Steve Falkenburg  <sfalken@apple.com>
 
         Re-add DEBUG_WEBKIT_HAS_SUFFIX.

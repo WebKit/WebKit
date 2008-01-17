@@ -315,7 +315,11 @@ sub installedSafariPath
     if (isOSX()) {
         $safariBundle = "/Applications/Safari.app";
     } elsif (isCygwin()) {
-        $safariBundle = `"$configurationProductDir/FindSafari.exe"`;
+        my $findSafariName = "FindSafari";
+        $findSafariName .= "_debug" if $configuration ne "Release";
+        $findSafariName .= ".exe";
+
+        $safariBundle = `"$configurationProductDir/$findSafariName"`;
         $safariBundle =~ s/[\r\n]+$//;
         $safariBundle = `cygpath -u '$safariBundle'`;
         $safariBundle =~ s/[\r\n]+$//;
