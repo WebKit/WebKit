@@ -2,6 +2,16 @@
 
         Reviewed by Lars.
 
+        Fixed docs and sanity checks in QWebSettings::setIconDatabaseEnabled
+        
+
+        * Api/qwebsettings.cpp:
+        (QWebSettings::setIconDatabaseEnabled):
+
+2008-01-17  Simon Hausmann  <shausman@trolltech.com>
+
+        Reviewed by Lars.
+
         Added QWebView::createWindow() which is forwarded from QWebPage::createWindow() for convenience.
         
 

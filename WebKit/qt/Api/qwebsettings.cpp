@@ -35,6 +35,7 @@
 #include <QHash>
 #include <QSharedData>
 #include <QUrl>
+#include <QFileInfo>
 
 class QWebSettingsPrivate
 {
@@ -262,19 +263,18 @@ QUrl QWebSettings::userStyleSheetLocation() const
     Enables or disables the icon database. The icon database is used to store favicons
     associated with web sites.
 
-    If \a enabled is true then \a location specifies a filename the icons will be stored.
+    If \a enabled is true then \a location must be specified and point to an existing directory
+    where the icons are stored.
 */
 void QWebSettings::setIconDatabaseEnabled(bool enabled, const QString &location)
 {
     WebCore::iconDatabase()->setEnabled(enabled);
     if (enabled) {
-      if (!location.isEmpty()) {
-          WebCore::iconDatabase()->open(location);
-      } else {
-          WebCore::iconDatabase()->open(WebCore::iconDatabase()->defaultDatabaseFilename());
-      }
+        QFileInfo info(location);
+        if (info.isDir() && info.isWritable())
+            WebCore::iconDatabase()->open(location);
     } else {
-      WebCore::iconDatabase()->close();
+        WebCore::iconDatabase()->close();
     }
 }
 
