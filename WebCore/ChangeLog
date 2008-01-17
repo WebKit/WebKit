@@ -251,7 +251,7 @@
 
         - fix determinePitch for segmented fonts
 
-        Covered by and existing test.
+        Covered by fast/css/font-face-implicit-local-font.html
 
         * platform/graphics/FontFallbackList.cpp:
         (WebCore::FontFallbackList::determinePitch): If the primary font is
