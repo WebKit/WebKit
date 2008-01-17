@@ -486,32 +486,40 @@ void QWebView::focusOutEvent(QFocusEvent* ev)
 */
 void QWebView::dragEnterEvent(QDragEnterEvent* ev)
 {
+#ifndef QT_NO_DRAGANDDROP
     if (d->page)
         d->page->event(ev);
+#endif
 }
 
 /*! \reimp
 */
 void QWebView::dragLeaveEvent(QDragLeaveEvent* ev)
 {
+#ifndef QT_NO_DRAGANDDROP
     if (d->page)
         d->page->event(ev);
+#endif
 }
 
 /*! \reimp
 */
 void QWebView::dragMoveEvent(QDragMoveEvent* ev)
 {
+#ifndef QT_NO_DRAGANDDROP
     if (d->page)
         d->page->event(ev);
+#endif
 }
 
 /*! \reimp
 */
 void QWebView::dropEvent(QDropEvent* ev)
 {
+#ifndef QT_NO_DRAGANDDROP
     if (d->page)
         d->page->event(ev);
+#endif
 }
 
 /*! \reimp
