@@ -201,7 +201,8 @@ INCLUDEPATH +=  $$PWD \
                 $$PWD/html \
                 $$PWD/bindings/js \
                 $$PWD/svg \
-                $$PWD/platform/image-decoders
+                $$PWD/platform/image-decoders \
+                $$PWD/plugins
 
 QT += network xml
 

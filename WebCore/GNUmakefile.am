@@ -30,6 +30,7 @@ webcore_cppflags += \
 	-I $(srcdir)/WebCore/platform/image-decoders/jpeg \
 	-I $(srcdir)/WebCore/platform/image-decoders/png \
 	-I $(srcdir)/WebCore/platform/image-decoders/xbm \
+	-I $(srcdir)/WebCore/plugins \
 	-I $(srcdir)/WebCore/rendering \
 	-I $(top_builddir)/WebCore/bindings/js
 

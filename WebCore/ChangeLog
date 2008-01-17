@@ -1,3 +1,15 @@
+2008-01-16  Rodney Dawes  <dobey@wayofthemonkey.com>
+
+        Reviewed by Alp Toker.
+
+        http://bugs.webkit.org/show_bug.cgi?id=16897
+        Add shared plugins directory to INCLUDE path
+
+        Add the plugins directory to INCLUDEPATH
+
+        * GNUmakefile.am:
+        * WebCore.pro:
+
 2008-01-16  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Sam Weinig.
