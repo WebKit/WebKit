@@ -502,7 +502,7 @@ void QWebNetworkManager::started(QWebNetworkJob *job)
     DEBUG() << job->d->response.toString();
 
     QStringList cookies = job->d->response.allValues("Set-Cookie");
-    KURL url(job->url().toString());
+    KURL url(job->url());
     foreach (QString c, cookies) {
         setCookies(url, url, c);
     }
@@ -554,7 +554,7 @@ void QWebNetworkManager::started(QWebNetworkJob *job)
             QUrl newUrl = job->d->request.url.resolved(location);
             if (job->d->resourceHandle) {
                 ResourceRequest newRequest = job->d->resourceHandle->request();
-                newRequest.setURL(KURL(newUrl.toString()));
+                newRequest.setURL(KURL(newUrl));
                 if (client)
                     client->willSendRequest(job->d->resourceHandle, newRequest, response);
             }
