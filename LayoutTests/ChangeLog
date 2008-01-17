@@ -1,4 +1,10 @@
 2008-01-16  Antti Koivisto  <antti@apple.com>
+       
+        Add tests for unsupported types to Windows skip list for now.
+
+        * platform/win/Skipped:
+
+2008-01-16  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Adele.
         
