@@ -122,8 +122,6 @@ JSValue* regExpProtoFuncToString(ExecState* exec, JSObject* thisObj, const List&
     if (thisObj->get(exec, exec->propertyNames().multiline)->toBoolean(exec))
         result += "m";
     return jsString(result);
-
-    return jsUndefined();
 }
 
 // ------------------------------ RegExpImp ------------------------------------

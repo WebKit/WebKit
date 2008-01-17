@@ -1,3 +1,10 @@
+2008-01-17  Antti Koivisto  <antti@apple.com>
+
+        Fix Windows build.
+
+        * kjs/regexp_object.cpp:
+        (KJS::regExpProtoFuncToString):
+
 2008-01-16  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Darin.
