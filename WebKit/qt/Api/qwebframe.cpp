@@ -25,7 +25,6 @@
 #include "qwebpage.h"
 #include "qwebpage_p.h"
 #include "qwebframe_p.h"
-#include "qwebnetworkinterface.h"
 
 #include "FocusController.h"
 #include "FrameLoaderClientQt.h"
@@ -67,6 +66,8 @@
 #include <qpainter.h>
 #if QT_VERSION >= 0x040400
 #include <qnetworkrequest.h>
+#else
+#include "qwebnetworkinterface.h"
 #endif
 #include <qregion.h>
 

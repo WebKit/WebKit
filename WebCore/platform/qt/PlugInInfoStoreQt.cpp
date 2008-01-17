@@ -20,9 +20,11 @@
     pages from the web. It has a memory cache for these objects.
 */
 #include "PlugInInfoStore.h"
-#include "qwebobjectplugin_p.h"
-#include "NotImplemented.h"
 #include "qdebug.h"
+#if QT_VERSION < 0x040400
+#include "qwebobjectplugin_p.h"
+#endif
+#include "NotImplemented.h"
 
 namespace WebCore {
 

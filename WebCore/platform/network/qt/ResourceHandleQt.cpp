@@ -34,7 +34,6 @@
 #include "DeprecatedString.h"
 #include "ResourceHandleClient.h"
 #include "ResourceHandleInternal.h"
-#include "qwebnetworkinterface_p.h"
 #include "qwebpage_p.h"
 #include "ChromeClientQt.h"
 #include "FrameLoaderClientQt.h"
@@ -49,6 +48,8 @@
 #include <QNetworkAccessManager>
 #include <QNetworkRequest>
 #include <QNetworkReply>
+#else
+#include "qwebnetworkinterface_p.h"
 #endif
 
 namespace WebCore {

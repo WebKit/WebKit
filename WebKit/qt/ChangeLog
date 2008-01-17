@@ -1,3 +1,14 @@
+2008-01-17  Simon Hausmann  <shausman@trolltech.com>
+
+        Reviewed by Holger.
+
+        Fix compilation against Qt 4.4 without files that are specific for the Qt 4.3 build.
+        
+
+        * Api/qwebframe.cpp:
+        * Api/qwebpage.cpp:
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+
 2008-01-17  Lincoln Ramsay  <lincoln.ramsay@trolltech.com>
 
         Reviewed by Simon Hausmann <hausmann@webkit.org>.

@@ -878,11 +878,6 @@ qt-port {
     $$PWD/../WebKit/qt/Api/qwebframe.h \
     $$PWD/../WebKit/qt/Api/qwebpage.h \
     $$PWD/../WebKit/qt/Api/qwebview.h \
-    $$PWD/../WebKit/qt/Api/qwebnetworkinterface.h \
-    $$PWD/../WebKit/qt/Api/qwebnetworkinterface_p.h \
-    $$PWD/../WebKit/qt/Api/qwebobjectplugin.h \
-    $$PWD/../WebKit/qt/Api/qwebobjectplugin_p.h \
-    $$PWD/../WebKit/qt/Api/qwebobjectpluginconnector.h \
     $$PWD/../WebKit/qt/Api/qwebhistoryinterface.h \
     $$PWD/../WebKit/qt/Api/qcookiejar.h \
     $$PWD/../WebKit/qt/WebCoreSupport/FrameLoaderClientQt.h \
@@ -956,19 +951,32 @@ qt-port {
     ../WebKit/qt/WebCoreSupport/FrameLoaderClientQt.cpp \
     ../WebKit/qt/WebCoreSupport/InspectorClientQt.cpp \
     ../WebKit/qt/Api/qwebframe.cpp \
-    ../WebKit/qt/Api/qwebnetworkinterface.cpp \
     ../WebKit/qt/Api/qcookiejar.cpp \
     ../WebKit/qt/Api/qwebpage.cpp \
     ../WebKit/qt/Api/qwebview.cpp \
     ../WebKit/qt/Api/qwebhistory.cpp \
     ../WebKit/qt/Api/qwebsettings.cpp \
-    ../WebKit/qt/Api/qwebobjectplugin.cpp \
-    ../WebKit/qt/Api/qwebobjectpluginconnector.cpp \
     ../WebKit/qt/Api/qwebhistoryinterface.cpp \
     platform/ThreadingNone.cpp
 
     unix: SOURCES += platform/qt/SystemTimeQt.cpp
     else: SOURCES += platform/win/SystemTimeWin.cpp
+
+    # Files belonging to the Qt 4.3 build
+    lessThan(QT_MINOR_VERSION, 4) {
+        HEADERS += \
+            $$PWD/../WebKit/qt/Api/qwebnetworkinterface.h \
+            $$PWD/../WebKit/qt/Api/qwebnetworkinterface_p.h \
+            $$PWD/../WebKit/qt/Api/qwebobjectplugin.h \
+            $$PWD/../WebKit/qt/Api/qwebobjectplugin_p.h \
+            $$PWD/../WebKit/qt/Api/qwebobjectpluginconnector.h
+
+        SOURCES += \
+            ../WebKit/qt/Api/qwebnetworkinterface.cpp \
+            ../WebKit/qt/Api/qwebobjectplugin.cpp \
+            ../WebKit/qt/Api/qwebobjectpluginconnector.cpp
+
+     }
 }
 
 gtk-port {

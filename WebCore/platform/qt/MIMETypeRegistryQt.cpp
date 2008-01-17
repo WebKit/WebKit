@@ -29,7 +29,9 @@
 #include "MIMETypeRegistry.h"
 
 #include "NotImplemented.h"
+#if QT_VERSION < 0x040400
 #include "qwebobjectplugin_p.h"
+#endif
 
 namespace WebCore {
 

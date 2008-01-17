@@ -46,8 +46,6 @@
 #include "qwebpage.h"
 #include "qwebframe.h"
 #include "qwebframe_p.h"
-#include "qwebobjectplugin_p.h"
-#include "qwebnetworkinterface_p.h"
 #include "qwebhistoryinterface.h"
 
 #include <qfileinfo.h>
@@ -55,6 +53,9 @@
 #include <QDebug>
 #if QT_VERSION >= 0x040400
 #include <QNetworkRequest>
+#else
+#include "qwebnetworkinterface_p.h"
+#include "qwebobjectplugin_p.h"
 #endif
 
 namespace WebCore
