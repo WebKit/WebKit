@@ -41,25 +41,18 @@ ErrorInstance::ErrorInstance(JSObject* prototype)
 // ------------------------------ ErrorPrototype ----------------------------
 
 // ECMA 15.9.4
-ErrorPrototype::ErrorPrototype(ExecState* exec, ObjectPrototype* objectProto, FunctionPrototype* funcProto)
-    : JSObject(objectProto)
+ErrorPrototype::ErrorPrototype(ExecState* exec, ObjectPrototype* objectPrototype, FunctionPrototype* functionPrototype)
+    : JSObject(objectPrototype)
 {
     // The constructor will be added later in ErrorObjectImp's constructor
 
     put(exec, exec->propertyNames().name, jsString("Error"), DontEnum);
     put(exec, exec->propertyNames().message, jsString("Unknown error"), DontEnum);
-    putDirectFunction(new ErrorProtoFuncToString(exec, funcProto), DontEnum);
+
+    putDirectFunction(new PrototypeFunction(exec, functionPrototype, 0, exec->propertyNames().toString, errorProtoFuncToString), DontEnum);
 }
 
-// ------------------------------ ErrorProtoFunc ----------------------------
-
-ErrorProtoFuncToString::ErrorProtoFuncToString(ExecState* exec, FunctionPrototype* funcProto)
-    : InternalFunctionImp(funcProto, exec->propertyNames().toString)
-{
-    putDirect(exec->propertyNames().length, jsNumber(0), DontDelete|ReadOnly|DontEnum);
-}
-
-JSValue* ErrorProtoFuncToString::callAsFunction(ExecState* exec, JSObject* thisObj, const List&)
+JSValue* errorProtoFuncToString(ExecState* exec, JSObject* thisObj, const List&)
 {
     UString s = "Error";
 

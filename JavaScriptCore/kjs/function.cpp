@@ -471,15 +471,7 @@ ActivationImp::ActivationData::ActivationData(const ActivationData& old)
 {
 }
 
-// ------------------------------ GlobalFunc -----------------------------------
-
-
-GlobalFuncImp::GlobalFuncImp(ExecState* exec, FunctionPrototype* funcProto, int i, int len, const Identifier& name)
-  : InternalFunctionImp(funcProto, name)
-  , id(i)
-{
-  putDirect(exec->propertyNames().length, len, DontDelete|ReadOnly|DontEnum);
-}
+// ------------------------------ Global Functions -----------------------------------
 
 static JSValue* encode(ExecState* exec, const List& args, const char* do_not_escape)
 {
@@ -700,164 +692,183 @@ static double parseFloat(const UString& s)
     return s.toDouble( true /*tolerant*/, false /* NaN for empty string */ );
 }
 
-JSValue* GlobalFuncImp::callAsFunction(ExecState* exec, JSObject* thisObj, const List& args)
+JSValue* globalFuncEval(ExecState* exec, JSObject* thisObj, const List& args)
 {
-  JSValue* res = jsUndefined();
-
-  static const char do_not_escape[] =
-    "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-    "abcdefghijklmnopqrstuvwxyz"
-    "0123456789"
-    "*+-./@_";
-
-  static const char do_not_escape_when_encoding_URI_component[] =
-    "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-    "abcdefghijklmnopqrstuvwxyz"
-    "0123456789"
-    "!'()*-._~";
-  static const char do_not_escape_when_encoding_URI[] =
-    "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-    "abcdefghijklmnopqrstuvwxyz"
-    "0123456789"
-    "!#$&'()*+,-./:;=?@_~";
-  static const char do_not_unescape_when_decoding_URI[] =
-    "#$&+,/:;=?@";
-
-  switch (id) {
-    case Eval: { // eval()
-      JSValue* x = args[0];
-      if (!x->isString())
+    JSValue* x = args[0];
+    if (!x->isString())
         return x;
-      else {
-        UString s = x->toString(exec);
-        
-        int sourceId;
-        int errLine;
-        UString errMsg;
-        RefPtr<EvalNode> evalNode = parser().parse<EvalNode>(UString(), 0, s.data(), s.size(), &sourceId, &errLine, &errMsg);
 
-        Debugger* dbg = exec->dynamicGlobalObject()->debugger();
-        if (dbg) {
-          bool cont = dbg->sourceParsed(exec, sourceId, UString(), s, 0, errLine, errMsg);
-          if (!cont)
+    UString s = x->toString(exec);
+
+    int sourceId;
+    int errLine;
+    UString errMsg;
+    RefPtr<EvalNode> evalNode = parser().parse<EvalNode>(UString(), 0, s.data(), s.size(), &sourceId, &errLine, &errMsg);
+
+    Debugger* dbg = exec->dynamicGlobalObject()->debugger();
+    if (dbg) {
+        bool cont = dbg->sourceParsed(exec, sourceId, UString(), s, 0, errLine, errMsg);
+        if (!cont)
             return jsUndefined();
-        }
-
-        // no program node means a syntax occurred
-        if (!evalNode)
-          return throwError(exec, SyntaxError, errMsg, errLine, sourceId, NULL);
-
-        bool switchGlobal = thisObj && thisObj != exec->dynamicGlobalObject() && thisObj->isGlobalObject();
-
-        // enter a new execution context
-        exec->dynamicGlobalObject()->tearOffActivation(exec);
-        JSGlobalObject* globalObject = switchGlobal ? static_cast<JSGlobalObject*>(thisObj) : exec->dynamicGlobalObject();
-        ExecState newExec(globalObject, evalNode.get(), exec);
-          
-        if (switchGlobal) {
-            newExec.pushScope(thisObj);
-            newExec.setVariableObject(static_cast<JSGlobalObject*>(thisObj));
-        }
-        JSValue* value = evalNode->execute(&newExec);
-        if (switchGlobal)
-            newExec.popScope();
-
-        if (newExec.completionType() == Throw) {
-            exec->setException(value);
-            return value;
-        }
-        return value ? value : jsUndefined();
-      }
     }
-  case ParseInt:
-    res = jsNumber(parseInt(args[0]->toString(exec), args[1]->toInt32(exec)));
-    break;
-  case ParseFloat:
-    res = jsNumber(parseFloat(args[0]->toString(exec)));
-    break;
-  case IsNaN:
-    res = jsBoolean(isnan(args[0]->toNumber(exec)));
-    break;
-  case IsFinite: {
+
+    // No program node means a syntax occurred
+    if (!evalNode)
+        return throwError(exec, SyntaxError, errMsg, errLine, sourceId, NULL);
+
+    bool switchGlobal = thisObj && thisObj != exec->dynamicGlobalObject() && thisObj->isGlobalObject();
+
+    // enter a new execution context
+    exec->dynamicGlobalObject()->tearOffActivation(exec);
+    JSGlobalObject* globalObject = switchGlobal ? static_cast<JSGlobalObject*>(thisObj) : exec->dynamicGlobalObject();
+    ExecState newExec(globalObject, evalNode.get(), exec);
+
+    if (switchGlobal) {
+        newExec.pushScope(thisObj);
+        newExec.setVariableObject(static_cast<JSGlobalObject*>(thisObj));
+    }
+    JSValue* value = evalNode->execute(&newExec);
+    if (switchGlobal)
+        newExec.popScope();
+
+    if (newExec.completionType() == Throw) {
+        exec->setException(value);
+        return value;
+    }
+
+    return value ? value : jsUndefined();
+}
+
+JSValue* globalFuncParseInt(ExecState* exec, JSObject*, const List& args)
+{
+    return jsNumber(parseInt(args[0]->toString(exec), args[1]->toInt32(exec)));
+}
+
+JSValue* globalFuncParseFloat(ExecState* exec, JSObject*, const List& args)
+{
+    return jsNumber(parseFloat(args[0]->toString(exec)));
+}
+
+JSValue* globalFuncIsNaN(ExecState* exec, JSObject*, const List& args)
+{
+    return jsBoolean(isnan(args[0]->toNumber(exec)));
+}
+
+JSValue* globalFuncIsFinite(ExecState* exec, JSObject*, const List& args)
+{
     double n = args[0]->toNumber(exec);
-    res = jsBoolean(!isnan(n) && !isinf(n));
-    break;
-  }
-  case DecodeURI:
-    res = decode(exec, args, do_not_unescape_when_decoding_URI, true);
-    break;
-  case DecodeURIComponent:
-    res = decode(exec, args, "", true);
-    break;
-  case EncodeURI:
-    res = encode(exec, args, do_not_escape_when_encoding_URI);
-    break;
-  case EncodeURIComponent:
-    res = encode(exec, args, do_not_escape_when_encoding_URI_component);
-    break;
-  case Escape:
-    {
-      UString r = "", s, str = args[0]->toString(exec);
-      const UChar* c = str.data();
-      for (int k = 0; k < str.size(); k++, c++) {
+    return jsBoolean(!isnan(n) && !isinf(n));
+}
+
+JSValue* globalFuncDecodeURI(ExecState* exec, JSObject*, const List& args)
+{
+    static const char do_not_unescape_when_decoding_URI[] =
+        "#$&+,/:;=?@";
+
+    return decode(exec, args, do_not_unescape_when_decoding_URI, true);
+}
+
+JSValue* globalFuncDecodeURIComponent(ExecState* exec, JSObject*, const List& args)
+{
+    return decode(exec, args, "", true);
+}
+
+JSValue* globalFuncEncodeURI(ExecState* exec, JSObject*, const List& args)
+{
+    static const char do_not_escape_when_encoding_URI[] =
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+        "abcdefghijklmnopqrstuvwxyz"
+        "0123456789"
+        "!#$&'()*+,-./:;=?@_~";
+
+    return encode(exec, args, do_not_escape_when_encoding_URI);
+}
+
+JSValue* globalFuncEncodeURIComponent(ExecState* exec, JSObject*, const List& args)
+{
+    static const char do_not_escape_when_encoding_URI_component[] =
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+        "abcdefghijklmnopqrstuvwxyz"
+        "0123456789"
+        "!'()*-._~";
+
+    return encode(exec, args, do_not_escape_when_encoding_URI_component);
+}
+
+JSValue* globalFuncEscape(ExecState* exec, JSObject*, const List& args)
+{
+    static const char do_not_escape[] =
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+        "abcdefghijklmnopqrstuvwxyz"
+        "0123456789"
+        "*+-./@_";
+
+    UString r = "", s, str = args[0]->toString(exec);
+    const UChar* c = str.data();
+    for (int k = 0; k < str.size(); k++, c++) {
         int u = c->uc;
         if (u > 255) {
-          char tmp[7];
-          sprintf(tmp, "%%u%04X", u);
-          s = UString(tmp);
-        } else if (u != 0 && strchr(do_not_escape, (char)u)) {
-          s = UString(c, 1);
-        } else {
-          char tmp[4];
-          sprintf(tmp, "%%%02X", u);
-          s = UString(tmp);
+            char tmp[7];
+            sprintf(tmp, "%%u%04X", u);
+            s = UString(tmp);
+        } else if (u != 0 && strchr(do_not_escape, (char)u))
+            s = UString(c, 1);
+        else {
+            char tmp[4];
+            sprintf(tmp, "%%%02X", u);
+            s = UString(tmp);
         }
         r += s;
-      }
-      res = jsString(r);
-      break;
     }
-  case UnEscape:
-    {
-      UString s = "", str = args[0]->toString(exec);
-      int k = 0, len = str.size();
-      while (k < len) {
+
+    return jsString(r);
+}
+
+JSValue* globalFuncUnescape(ExecState* exec, JSObject*, const List& args)
+{
+    UString s = "", str = args[0]->toString(exec);
+    int k = 0, len = str.size();
+    while (k < len) {
         const UChar* c = str.data() + k;
         UChar u;
-        if (*c == UChar('%') && k <= len - 6 && *(c+1) == UChar('u')) {
-          if (Lexer::isHexDigit((c+2)->uc) && Lexer::isHexDigit((c+3)->uc) &&
-              Lexer::isHexDigit((c+4)->uc) && Lexer::isHexDigit((c+5)->uc)) {
-          u = Lexer::convertUnicode((c+2)->uc, (c+3)->uc,
-                                    (c+4)->uc, (c+5)->uc);
-          c = &u;
-          k += 5;
-          }
-        } else if (*c == UChar('%') && k <= len - 3 &&
-                   Lexer::isHexDigit((c+1)->uc) && Lexer::isHexDigit((c+2)->uc)) {
-          u = UChar(Lexer::convertHex((c+1)->uc, (c+2)->uc));
-          c = &u;
-          k += 2;
+        if (*c == UChar('%') && k <= len - 6 && *(c + 1) == UChar('u')) {
+            if (Lexer::isHexDigit((c + 2)->uc) && Lexer::isHexDigit((c + 3)->uc) && Lexer::isHexDigit((c + 4)->uc) && Lexer::isHexDigit((c + 5)->uc)) {
+                u = Lexer::convertUnicode((c + 2)->uc, (c + 3)->uc, (c + 4)->uc, (c + 5)->uc);
+                c = &u;
+                k += 5;
+            }
+        } else if (*c == UChar('%') && k <= len - 3 && Lexer::isHexDigit((c + 1)->uc) && Lexer::isHexDigit((c + 2)->uc)) {
+            u = UChar(Lexer::convertHex((c+1)->uc, (c+2)->uc));
+            c = &u;
+            k += 2;
         }
         k++;
         s += UString(c, 1);
-      }
-      res = jsString(s);
-      break;
     }
-#ifndef NDEBUG
-  case KJSPrint:
-    puts(args[0]->toString(exec).ascii());
-    break;
-#endif
-  }
 
-  return res;
+    return jsString(s);
 }
+
+#ifndef NDEBUG
+JSValue* globalFuncKJSPrint(ExecState* exec, JSObject*, const List& args)
+{
+    puts(args[0]->toString(exec).ascii());
+    return jsUndefined();
+}
+#endif
 
 // ------------------------------ PrototypeFunction -------------------------------
 
 PrototypeFunction::PrototypeFunction(ExecState* exec, int len, const Identifier& name, JSMemberFunction function)
     : InternalFunctionImp(exec->lexicalGlobalObject()->functionPrototype(), name)
+    , m_function(function)
+{
+    ASSERT_ARG(function, function);
+    put(exec, exec->propertyNames().length, jsNumber(len), DontDelete | ReadOnly | DontEnum);
+}
+
+PrototypeFunction::PrototypeFunction(ExecState* exec, FunctionPrototype* functionPrototype, int len, const Identifier& name, JSMemberFunction function)
+    : InternalFunctionImp(functionPrototype, name)
     , m_function(function)
 {
     ASSERT_ARG(function, function);

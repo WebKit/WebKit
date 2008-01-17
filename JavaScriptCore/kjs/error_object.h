@@ -38,12 +38,7 @@ namespace KJS {
         ErrorPrototype(ExecState*, ObjectPrototype*, FunctionPrototype*);
     };
 
-    class ErrorProtoFuncToString : public InternalFunctionImp {
-    public:
-        ErrorProtoFuncToString(ExecState*, FunctionPrototype*);
-
-        virtual JSValue* callAsFunction(ExecState*, JSObject*, const List&);
-    };
+    JSValue* errorProtoFuncToString(ExecState*, JSObject*, const List&);
 
     class ErrorObjectImp : public InternalFunctionImp {
     public:

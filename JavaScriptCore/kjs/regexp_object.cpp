@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- *  Copyright (C) 2003, 2007 Apple Inc. All Rights Reserved.
+ *  Copyright (C) 2003, 2007, 2008 Apple Inc. All Rights Reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -39,88 +39,91 @@ namespace KJS {
 
 // ------------------------------ RegExpPrototype ---------------------------
 
+static JSValue* regExpProtoFuncTest(ExecState*, JSObject*, const List&);
+static JSValue* regExpProtoFuncExec(ExecState*, JSObject*, const List&);
+static JSValue* regExpProtoFuncCompile(ExecState*, JSObject*, const List&);
+static JSValue* regExpProtoFuncToString(ExecState*, JSObject*, const List&);
+
 // ECMA 15.10.5
 
 const ClassInfo RegExpPrototype::info = { "RegExpPrototype", 0, 0 };
 
-RegExpPrototype::RegExpPrototype(ExecState *exec,
-                                       ObjectPrototype *objProto,
-                                       FunctionPrototype *funcProto)
-  : JSObject(objProto)
+RegExpPrototype::RegExpPrototype(ExecState* exec, ObjectPrototype* objectPrototype, FunctionPrototype* functionPrototype)
+    : JSObject(objectPrototype)
 {
-  static const Identifier* compilePropertyName = new Identifier("compile");
-  static const Identifier* execPropertyName = new Identifier("exec");
-  static const Identifier* testPropertyName = new Identifier("test");
+    static const Identifier* compilePropertyName = new Identifier("compile");
+    static const Identifier* execPropertyName = new Identifier("exec");
+    static const Identifier* testPropertyName = new Identifier("test");
 
-  putDirectFunction(new RegExpProtoFunc(exec, funcProto, RegExpProtoFunc::Compile, 0, *compilePropertyName), DontEnum);
-  putDirectFunction(new RegExpProtoFunc(exec, funcProto, RegExpProtoFunc::Exec, 0, *execPropertyName), DontEnum);
-  putDirectFunction(new RegExpProtoFunc(exec, funcProto, RegExpProtoFunc::Test, 0, *testPropertyName), DontEnum);
-  putDirectFunction(new RegExpProtoFunc(exec, funcProto, RegExpProtoFunc::ToString, 0, exec->propertyNames().toString), DontEnum);
+    putDirectFunction(new PrototypeFunction(exec, functionPrototype, 0, *compilePropertyName, regExpProtoFuncCompile), DontEnum);
+    putDirectFunction(new PrototypeFunction(exec, functionPrototype, 0, *execPropertyName, regExpProtoFuncExec), DontEnum);
+    putDirectFunction(new PrototypeFunction(exec, functionPrototype, 0, *testPropertyName, regExpProtoFuncTest), DontEnum);
+    putDirectFunction(new PrototypeFunction(exec, functionPrototype, 0, exec->propertyNames().toString, regExpProtoFuncToString), DontEnum);
 }
 
-// ------------------------------ RegExpProtoFunc ---------------------------
-
-RegExpProtoFunc::RegExpProtoFunc(ExecState* exec, FunctionPrototype* funcProto, int i, int len, const Identifier& name)
-   : InternalFunctionImp(funcProto, name), id(i)
-{
-  putDirect(exec->propertyNames().length, len, DontDelete | ReadOnly | DontEnum);
-}
-
-JSValue *RegExpProtoFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const List &args)
-{
-  if (!thisObj->inherits(&RegExpImp::info)) {
-    if (thisObj->inherits(&RegExpPrototype::info)) {
-      switch (id) {
-        case ToString: return jsString("//");
-      }
-    }
+// ------------------------------ Functions ---------------------------
     
-    return throwError(exec, TypeError);
-  }
+JSValue* regExpProtoFuncTest(ExecState* exec, JSObject* thisObj, const List& args)
+{
+    if (!thisObj->inherits(&RegExpImp::info))
+        return throwError(exec, TypeError);
 
-    switch (id) {
-        case Test:
-            return static_cast<RegExpImp*>(thisObj)->test(exec, args);
-        case Exec:
-            return static_cast<RegExpImp*>(thisObj)->exec(exec, args);
-  case Compile:
-  {
+    return static_cast<RegExpImp*>(thisObj)->test(exec, args);
+}
+
+JSValue* regExpProtoFuncExec(ExecState* exec, JSObject* thisObj, const List& args)
+{
+    if (!thisObj->inherits(&RegExpImp::info))
+        return throwError(exec, TypeError);
+
+    return static_cast<RegExpImp*>(thisObj)->exec(exec, args);
+}
+
+JSValue* regExpProtoFuncCompile(ExecState* exec, JSObject* thisObj, const List& args)
+{
+    if (!thisObj->inherits(&RegExpImp::info))
+        return throwError(exec, TypeError);
+
     RefPtr<RegExp> regExp;
     JSValue* arg0 = args[0];
     JSValue* arg1 = args[1];
     
     if (arg0->isObject(&RegExpImp::info)) {
-      if (!arg1->isUndefined())
-        return throwError(exec, TypeError, "Cannot supply flags when constructing one RegExp from another.");
-      regExp = static_cast<RegExpImp*>(arg0)->regExp();
+        if (!arg1->isUndefined())
+            return throwError(exec, TypeError, "Cannot supply flags when constructing one RegExp from another.");
+        regExp = static_cast<RegExpImp*>(arg0)->regExp();
     } else {
-      UString pattern = args.isEmpty() ? UString("") : arg0->toString(exec);
-      UString flags = arg1->isUndefined() ? UString("") : arg1->toString(exec);
-      regExp = new RegExp(pattern, flags);
+        UString pattern = args.isEmpty() ? UString("") : arg0->toString(exec);
+        UString flags = arg1->isUndefined() ? UString("") : arg1->toString(exec);
+        regExp = new RegExp(pattern, flags);
     }
 
     if (!regExp->isValid())
-      return throwError(exec, SyntaxError, UString("Invalid regular expression: ").append(regExp->errorMessage()));
+        return throwError(exec, SyntaxError, UString("Invalid regular expression: ").append(regExp->errorMessage()));
 
     static_cast<RegExpImp*>(thisObj)->setRegExp(regExp.release());
     static_cast<RegExpImp*>(thisObj)->put(exec, exec->propertyNames().lastIndex, jsNumber(0), DontDelete|DontEnum);
     return jsUndefined();
-  }
-  case ToString:
-    UString result = "/" + thisObj->get(exec, exec->propertyNames().source)->toString(exec) + "/";
-    if (thisObj->get(exec, exec->propertyNames().global)->toBoolean(exec)) {
-      result += "g";
-    }
-    if (thisObj->get(exec, exec->propertyNames().ignoreCase)->toBoolean(exec)) {
-      result += "i";
-    }
-    if (thisObj->get(exec, exec->propertyNames().multiline)->toBoolean(exec)) {
-      result += "m";
-    }
-    return jsString(result);
-  }
+}
 
-  return jsUndefined();
+JSValue* regExpProtoFuncToString(ExecState* exec, JSObject* thisObj, const List&)
+{
+    if (!thisObj->inherits(&RegExpImp::info)) {
+        if (thisObj->inherits(&RegExpPrototype::info))
+            return jsString("//");
+        return throwError(exec, TypeError);
+    }
+
+    UString result = "/" + thisObj->get(exec, exec->propertyNames().source)->toString(exec) + "/";
+    if (thisObj->get(exec, exec->propertyNames().global)->toBoolean(exec))
+        result += "g";
+    if (thisObj->get(exec, exec->propertyNames().ignoreCase)->toBoolean(exec))
+        result += "i";
+    if (thisObj->get(exec, exec->propertyNames().multiline)->toBoolean(exec))
+        result += "m";
+    return jsString(result);
+
+    return jsUndefined();
 }
 
 // ------------------------------ RegExpImp ------------------------------------

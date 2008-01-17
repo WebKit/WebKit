@@ -56,20 +56,6 @@ namespace KJS {
     Identifier m_name;
   };
 
-  /**
-   * @internal
-   *
-   * The initial value of Function.prototype (and thus all objects created
-   * with the Function constructor)
-   */
-  class FunctionPrototype : public InternalFunctionImp {
-  public:
-    FunctionPrototype(ExecState *exec);
-    virtual ~FunctionPrototype();
-
-    virtual JSValue *callAsFunction(ExecState *exec, JSObject *thisObj, const List &args);
-  };
-
   class FunctionImp : public InternalFunctionImp {
     friend class ActivationImp;
   public:
@@ -143,6 +129,7 @@ namespace KJS {
     typedef KJS::JSValue* (*JSMemberFunction)(ExecState*, JSObject*, const List&);
 
     PrototypeFunction(ExecState*, int len, const Identifier&, JSMemberFunction);
+    PrototypeFunction(ExecState*, FunctionPrototype*, int len, const Identifier&, JSMemberFunction);
 
     virtual JSValue* callAsFunction(ExecState* exec, JSObject* thisObj, const List&);
 
@@ -150,22 +137,25 @@ namespace KJS {
     const JSMemberFunction m_function;
   };
 
-  class GlobalFuncImp : public InternalFunctionImp {
-  public:
-    GlobalFuncImp(ExecState*, FunctionPrototype*, int i, int len, const Identifier&);
-    virtual JSValue* callAsFunction(ExecState*, JSObject* thisObj, const List& args);
-    enum { Eval, ParseInt, ParseFloat, IsNaN, IsFinite, Escape, UnEscape,
-           DecodeURI, DecodeURIComponent, EncodeURI, EncodeURIComponent
-#ifndef NDEBUG
-           , KJSPrint
-#endif
-};
-  private:
-    int id;
-  };
 
-  static const double mantissaOverflowLowerBound = 9007199254740992.0;
-  double parseIntOverflow(const char* s, int length, int radix);
+    // Global Functions
+    JSValue* globalFuncEval(ExecState*, JSObject*, const List&);
+    JSValue* globalFuncParseInt(ExecState*, JSObject*, const List&);
+    JSValue* globalFuncParseFloat(ExecState*, JSObject*, const List&);
+    JSValue* globalFuncIsNaN(ExecState*, JSObject*, const List&);
+    JSValue* globalFuncIsFinite(ExecState*, JSObject*, const List&);
+    JSValue* globalFuncDecodeURI(ExecState*, JSObject*, const List&);
+    JSValue* globalFuncDecodeURIComponent(ExecState*, JSObject*, const List&);
+    JSValue* globalFuncEncodeURI(ExecState*, JSObject*, const List&);
+    JSValue* globalFuncEncodeURIComponent(ExecState*, JSObject*, const List&);
+    JSValue* globalFuncEscape(ExecState*, JSObject*, const List&);
+    JSValue* globalFuncUnescape(ExecState*, JSObject*, const List&);
+#ifndef NDEBUG
+    JSValue* globalFuncKJSPrint(ExecState*, JSObject*, const List&);
+#endif
+
+    static const double mantissaOverflowLowerBound = 9007199254740992.0;
+    double parseIntOverflow(const char*, int length, int radix);
 
 } // namespace
 

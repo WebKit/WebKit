@@ -1,7 +1,6 @@
-// -*- c-basic-offset: 2 -*-
 /*
- *  This file is part of the KDE libraries
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
+ *  Copyright (C) 2008 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -26,54 +25,31 @@
 
 namespace KJS {
 
-  class FunctionPrototype;
+    /**
+     * @internal
+     *
+     * The initial value of Object.prototype (and thus all objects created
+     * with the Object constructor
+     */
+    class ObjectPrototype : public JSObject {
+    public:
+        ObjectPrototype(ExecState*, FunctionPrototype*);
+    };
 
-  /**
-   * @internal
-   *
-   * The initial value of Object.prototype (and thus all objects created
-   * with the Object constructor
-   */
-  class ObjectPrototype : public JSObject {
-  public:
-    ObjectPrototype(ExecState *exec, FunctionPrototype *funcProto);
-  };
+    /**
+     * @internal
+     *
+     * The initial value of the the global variable's "Object" property
+     */
+    class ObjectObjectImp : public InternalFunctionImp {
+    public:
+        ObjectObjectImp(ExecState*, ObjectPrototype*, FunctionPrototype*);
 
-  /**
-   * @internal
-   *
-   * Class to implement all methods that are properties of the
-   * Object.prototype object
-   */
-  class ObjectProtoFunc : public InternalFunctionImp {
-  public:
-    ObjectProtoFunc(ExecState* exec, FunctionPrototype* funcProto, int i, int len, const Identifier&);
+        virtual bool implementsConstruct() const;
+        virtual JSObject* construct(ExecState*, const List&);
+        virtual JSValue* callAsFunction(ExecState*, JSObject*, const List&);
+    };
 
-    virtual JSValue *callAsFunction(ExecState *, JSObject *, const List &args);
+} // namespace KJS
 
-    enum { ToString, ToLocaleString, ValueOf, HasOwnProperty, IsPrototypeOf, PropertyIsEnumerable,
-           DefineGetter, DefineSetter, LookupGetter, LookupSetter };
-  private:
-    int id;
-  };
-
-  /**
-   * @internal
-   *
-   * The initial value of the the global variable's "Object" property
-   */
-  class ObjectObjectImp : public InternalFunctionImp {
-  public:
-
-    ObjectObjectImp(ExecState *exec,
-                    ObjectPrototype *objProto,
-                    FunctionPrototype *funcProto);
-
-    virtual bool implementsConstruct() const;
-    virtual JSObject *construct(ExecState *, const List &args);
-    virtual JSValue *callAsFunction(ExecState *, JSObject *, const List &args);
-  };
-
-} // namespace
-
-#endif
+#endif // _OBJECT_OBJECT_H_

@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- *  Copyright (C) 2003, 2007 Apple Inc. All Rights Reserved.
+ *  Copyright (C) 2003, 2007, 2008 Apple Inc. All Rights Reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -31,19 +31,9 @@ namespace KJS {
     class RegExpPrototype : public JSObject {
     public:
         RegExpPrototype(ExecState*, ObjectPrototype*, FunctionPrototype*);
+
         virtual const ClassInfo* classInfo() const { return &info; }
         static const ClassInfo info;
-    };
-
-    class RegExpProtoFunc : public InternalFunctionImp {
-    public:
-        enum { Compile, Exec, Test, ToString };
-
-        RegExpProtoFunc(ExecState*, FunctionPrototype*, int id, int len, const Identifier&);
-        virtual JSValue* callAsFunction(ExecState*, JSObject*, const List&);
-
-    private:
-        int id;
     };
 
     class RegExpImp : public JSObject {

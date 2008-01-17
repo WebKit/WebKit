@@ -231,7 +231,7 @@ void JSGlobalObject::reset(JSValue* prototype)
     d()->booleanPrototype = new BooleanPrototype(exec, d()->objectPrototype, d()->functionPrototype);
     d()->numberPrototype = new NumberPrototype(exec, d()->objectPrototype, d()->functionPrototype);
     d()->datePrototype = new DatePrototype(exec, d()->objectPrototype);
-    d()->regExpPrototype = new RegExpPrototype(exec, d()->objectPrototype, d()->functionPrototype);;
+    d()->regExpPrototype = new RegExpPrototype(exec, d()->objectPrototype, d()->functionPrototype);
     d()->errorPrototype = new ErrorPrototype(exec, d()->objectPrototype, d()->functionPrototype);
     
     d()->evalErrorPrototype = new NativeErrorPrototype(exec, d()->errorPrototype, "EvalError", "EvalError");
@@ -311,19 +311,19 @@ void JSGlobalObject::reset(JSValue* prototype)
 
     // Set global functions.
 
-    putDirectFunction(new GlobalFuncImp(exec, d()->functionPrototype, GlobalFuncImp::Eval, 1, "eval"), DontEnum);
-    putDirectFunction(new GlobalFuncImp(exec, d()->functionPrototype, GlobalFuncImp::ParseInt, 2, "parseInt"), DontEnum);
-    putDirectFunction(new GlobalFuncImp(exec, d()->functionPrototype, GlobalFuncImp::ParseFloat, 1, "parseFloat"), DontEnum);
-    putDirectFunction(new GlobalFuncImp(exec, d()->functionPrototype, GlobalFuncImp::IsNaN, 1, "isNaN"), DontEnum);
-    putDirectFunction(new GlobalFuncImp(exec, d()->functionPrototype, GlobalFuncImp::IsFinite, 1, "isFinite"), DontEnum);
-    putDirectFunction(new GlobalFuncImp(exec, d()->functionPrototype, GlobalFuncImp::Escape, 1, "escape"), DontEnum);
-    putDirectFunction(new GlobalFuncImp(exec, d()->functionPrototype, GlobalFuncImp::UnEscape, 1, "unescape"), DontEnum);
-    putDirectFunction(new GlobalFuncImp(exec, d()->functionPrototype, GlobalFuncImp::DecodeURI, 1, "decodeURI"), DontEnum);
-    putDirectFunction(new GlobalFuncImp(exec, d()->functionPrototype, GlobalFuncImp::DecodeURIComponent, 1, "decodeURIComponent"), DontEnum);
-    putDirectFunction(new GlobalFuncImp(exec, d()->functionPrototype, GlobalFuncImp::EncodeURI, 1, "encodeURI"), DontEnum);
-    putDirectFunction(new GlobalFuncImp(exec, d()->functionPrototype, GlobalFuncImp::EncodeURIComponent, 1, "encodeURIComponent"), DontEnum);
+    putDirectFunction(new PrototypeFunction(exec, d()->functionPrototype, 1, "eval", globalFuncEval), DontEnum);
+    putDirectFunction(new PrototypeFunction(exec, d()->functionPrototype, 2, "parseInt", globalFuncParseInt), DontEnum);
+    putDirectFunction(new PrototypeFunction(exec, d()->functionPrototype, 1, "parseFloat", globalFuncParseFloat), DontEnum);
+    putDirectFunction(new PrototypeFunction(exec, d()->functionPrototype, 1, "isNaN", globalFuncIsNaN), DontEnum);
+    putDirectFunction(new PrototypeFunction(exec, d()->functionPrototype, 1, "isFinite", globalFuncIsFinite), DontEnum);
+    putDirectFunction(new PrototypeFunction(exec, d()->functionPrototype, 1, "escape", globalFuncEscape), DontEnum);
+    putDirectFunction(new PrototypeFunction(exec, d()->functionPrototype, 1, "unescape", globalFuncUnescape), DontEnum);
+    putDirectFunction(new PrototypeFunction(exec, d()->functionPrototype, 1, "decodeURI", globalFuncDecodeURI), DontEnum);
+    putDirectFunction(new PrototypeFunction(exec, d()->functionPrototype, 1, "decodeURIComponent", globalFuncDecodeURIComponent), DontEnum);
+    putDirectFunction(new PrototypeFunction(exec, d()->functionPrototype, 1, "encodeURI", globalFuncEncodeURI), DontEnum);
+    putDirectFunction(new PrototypeFunction(exec, d()->functionPrototype, 1, "encodeURIComponent", globalFuncEncodeURIComponent), DontEnum);
 #ifndef NDEBUG
-    putDirectFunction(new GlobalFuncImp(exec, d()->functionPrototype, GlobalFuncImp::KJSPrint, 1, "kjsprint"), DontEnum);
+    putDirectFunction(new PrototypeFunction(exec, d()->functionPrototype, 1, "kjsprint", globalFuncKJSPrint), DontEnum);
 #endif
 
     // Set prototype, and also insert the object prototype at the end of the chain.

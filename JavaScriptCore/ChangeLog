@@ -1,3 +1,86 @@
+2008-01-16  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Darin.
+
+        Fix for http://bugs.webkit.org/show_bug.cgi?id=16901
+        Convert remaining JS function objects to use the new PrototypeFunction class
+
+        - Moves Boolean, Function, RegExp, Number, Object and Global functions to their
+          own static function implementations so that they can be used with the
+          PrototypeFunction class.  SunSpider says this is 1.003x as fast.
+
+        * kjs/JSGlobalObject.cpp:
+        (KJS::JSGlobalObject::reset):
+        * kjs/array_object.h:
+        * kjs/bool_object.cpp:
+        (KJS::BooleanInstance::BooleanInstance):
+        (KJS::BooleanPrototype::BooleanPrototype):
+        (KJS::booleanProtoFuncToString):
+        (KJS::booleanProtoFuncValueOf):
+        (KJS::BooleanObjectImp::BooleanObjectImp):
+        (KJS::BooleanObjectImp::implementsConstruct):
+        (KJS::BooleanObjectImp::construct):
+        (KJS::BooleanObjectImp::callAsFunction):
+        * kjs/bool_object.h:
+        (KJS::BooleanInstance::classInfo):
+        * kjs/error_object.cpp:
+        (KJS::ErrorPrototype::ErrorPrototype):
+        (KJS::errorProtoFuncToString):
+        * kjs/error_object.h:
+        * kjs/function.cpp:
+        (KJS::globalFuncEval):
+        (KJS::globalFuncParseInt):
+        (KJS::globalFuncParseFloat):
+        (KJS::globalFuncIsNaN):
+        (KJS::globalFuncIsFinite):
+        (KJS::globalFuncDecodeURI):
+        (KJS::globalFuncDecodeURIComponent):
+        (KJS::globalFuncEncodeURI):
+        (KJS::globalFuncEncodeURIComponent):
+        (KJS::globalFuncEscape):
+        (KJS::globalFuncUnEscape):
+        (KJS::globalFuncKJSPrint):
+        (KJS::PrototypeFunction::PrototypeFunction):
+        * kjs/function.h:
+        * kjs/function_object.cpp:
+        (KJS::FunctionPrototype::FunctionPrototype):
+        (KJS::functionProtoFuncToString):
+        (KJS::functionProtoFuncApply):
+        (KJS::functionProtoFuncCall):
+        * kjs/function_object.h:
+        * kjs/number_object.cpp:
+        (KJS::NumberPrototype::NumberPrototype):
+        (KJS::numberProtoFuncToString):
+        (KJS::numberProtoFuncToLocaleString):
+        (KJS::numberProtoFuncValueOf):
+        (KJS::numberProtoFuncToFixed):
+        (KJS::numberProtoFuncToExponential):
+        (KJS::numberProtoFuncToPrecision):
+        * kjs/number_object.h:
+        (KJS::NumberInstance::classInfo):
+        (KJS::NumberObjectImp::classInfo):
+        (KJS::NumberObjectImp::):
+        * kjs/object_object.cpp:
+        (KJS::ObjectPrototype::ObjectPrototype):
+        (KJS::objectProtoFuncValueOf):
+        (KJS::objectProtoFuncHasOwnProperty):
+        (KJS::objectProtoFuncIsPrototypeOf):
+        (KJS::objectProtoFuncDefineGetter):
+        (KJS::objectProtoFuncDefineSetter):
+        (KJS::objectProtoFuncLookupGetter):
+        (KJS::objectProtoFuncLookupSetter):
+        (KJS::objectProtoFuncPropertyIsEnumerable):
+        (KJS::objectProtoFuncToLocaleString):
+        (KJS::objectProtoFuncToString):
+        * kjs/object_object.h:
+        * kjs/regexp_object.cpp:
+        (KJS::RegExpPrototype::RegExpPrototype):
+        (KJS::regExpProtoFuncTest):
+        (KJS::regExpProtoFuncExec):
+        (KJS::regExpProtoFuncCompile):
+        (KJS::regExpProtoFuncToString):
+        * kjs/regexp_object.h:
+
 2008-01-16  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
 
         Reviewed by Maciej & Darin.

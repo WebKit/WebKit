@@ -27,70 +27,50 @@
 
 namespace KJS {
 
-  class NumberInstance : public JSWrapperObject {
-  public:
-    NumberInstance(JSObject *proto);
+    class NumberInstance : public JSWrapperObject {
+    public:
+        NumberInstance(JSObject* prototype);
 
-    virtual const ClassInfo *classInfo() const { return &info; }
-    static const ClassInfo info;
-  };
+        virtual const ClassInfo* classInfo() const { return &info; }
+        static const ClassInfo info;
+    };
 
-  /**
-   * @internal
-   *
-   * The initial value of Number.prototype (and thus all objects created
-   * with the Number constructor
-   */
-  class NumberPrototype : public NumberInstance {
-  public:
-    NumberPrototype(ExecState *exec,
-                       ObjectPrototype *objProto,
-                       FunctionPrototype *funcProto);
-  };
+    /**
+     * @internal
+     *
+     * The initial value of Number.prototype (and thus all objects created
+     * with the Number constructor
+     */
+    class NumberPrototype : public NumberInstance {
+    public:
+        NumberPrototype(ExecState*, ObjectPrototype*, FunctionPrototype*);
+    };
 
-  /**
-   * @internal
-   *
-   * Class to implement all methods that are properties of the
-   * Number.prototype object
-   */
-  class NumberProtoFunc : public InternalFunctionImp {
-  public:
-    NumberProtoFunc(ExecState*, FunctionPrototype*, int i, int len, const Identifier&);
+    /**
+     * @internal
+     *
+     * The initial value of the the global variable's "Number" property
+     */
+    class NumberObjectImp : public InternalFunctionImp {
+    public:
+        NumberObjectImp(ExecState*, FunctionPrototype*, NumberPrototype*);
 
-    virtual JSValue *callAsFunction(ExecState *exec, JSObject *thisObj, const List &args);
+        virtual bool implementsConstruct() const;
+        virtual JSObject* construct(ExecState*, const List&);
 
-    enum { ToString, ToLocaleString, ValueOf, ToFixed, ToExponential, ToPrecision };
-  private:
-    int id;
-  };
+        virtual JSValue* callAsFunction(ExecState*, JSObject*, const List&);
 
-  /**
-   * @internal
-   *
-   * The initial value of the the global variable's "Number" property
-   */
-  class NumberObjectImp : public InternalFunctionImp {
-  public:
-    NumberObjectImp(ExecState *exec,
-                    FunctionPrototype *funcProto,
-                    NumberPrototype *numberProto);
+        bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
+        JSValue* getValueProperty(ExecState*, int token) const;
 
-    virtual bool implementsConstruct() const;
-    virtual JSObject *construct(ExecState *exec, const List &args);
+        virtual const ClassInfo* classInfo() const { return &info; }
+        static const ClassInfo info;
 
-    virtual JSValue *callAsFunction(ExecState *exec, JSObject *thisObj, const List &args);
+        enum { NaNValue, NegInfinity, PosInfinity, MaxValue, MinValue };
 
-    bool getOwnPropertySlot(ExecState *, const Identifier&, PropertySlot&);
-    JSValue *getValueProperty(ExecState *exec, int token) const;
+        JSObject* construct(const List&);
+    };
 
-    virtual const ClassInfo *classInfo() const { return &info; }
-    static const ClassInfo info;
-    enum { NaNValue, NegInfinity, PosInfinity, MaxValue, MinValue };
+} // namespace KJS
 
-    JSObject *construct(const List &);
-  };
-
-} // namespace
-
-#endif
+#endif // NUMBER_OBJECT_H_

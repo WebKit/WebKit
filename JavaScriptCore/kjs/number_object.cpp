@@ -41,34 +41,36 @@ NumberInstance::NumberInstance(JSObject* proto)
     : JSWrapperObject(proto)
 {
 }
+
 // ------------------------------ NumberPrototype ---------------------------
+
+static JSValue* numberProtoFuncToString(ExecState*, JSObject*, const List&);
+static JSValue* numberProtoFuncToLocaleString(ExecState*, JSObject*, const List&);
+static JSValue* numberProtoFuncValueOf(ExecState*, JSObject*, const List&);
+static JSValue* numberProtoFuncToFixed(ExecState*, JSObject*, const List&);
+static JSValue* numberProtoFuncToExponential(ExecState*, JSObject*, const List&);
+static JSValue* numberProtoFuncToPrecision(ExecState*, JSObject*, const List&);
 
 // ECMA 15.7.4
 
-NumberPrototype::NumberPrototype(ExecState* exec, ObjectPrototype* objProto, FunctionPrototype* funcProto)
-    : NumberInstance(objProto)
+NumberPrototype::NumberPrototype(ExecState* exec, ObjectPrototype* objectPrototype, FunctionPrototype* functionPrototype)
+    : NumberInstance(objectPrototype)
 {
     setInternalValue(jsNumber(0));
 
     // The constructor will be added later, after NumberObjectImp has been constructed
 
-    putDirectFunction(new NumberProtoFunc(exec, funcProto, NumberProtoFunc::ToString,       1, exec->propertyNames().toString), DontEnum);
-    putDirectFunction(new NumberProtoFunc(exec, funcProto, NumberProtoFunc::ToLocaleString, 0, exec->propertyNames().toLocaleString), DontEnum);
-    putDirectFunction(new NumberProtoFunc(exec, funcProto, NumberProtoFunc::ValueOf,        0, exec->propertyNames().valueOf), DontEnum);
-    putDirectFunction(new NumberProtoFunc(exec, funcProto, NumberProtoFunc::ToFixed,        1, exec->propertyNames().toFixed), DontEnum);
-    putDirectFunction(new NumberProtoFunc(exec, funcProto, NumberProtoFunc::ToExponential,  1, exec->propertyNames().toExponential), DontEnum);
-    putDirectFunction(new NumberProtoFunc(exec, funcProto, NumberProtoFunc::ToPrecision,    1, exec->propertyNames().toPrecision), DontEnum);
+    putDirectFunction(new PrototypeFunction(exec, functionPrototype, 1, exec->propertyNames().toString, numberProtoFuncToString), DontEnum);
+    putDirectFunction(new PrototypeFunction(exec, functionPrototype, 0, exec->propertyNames().toLocaleString, numberProtoFuncToLocaleString), DontEnum);
+    putDirectFunction(new PrototypeFunction(exec, functionPrototype, 0, exec->propertyNames().valueOf, numberProtoFuncValueOf), DontEnum);
+    putDirectFunction(new PrototypeFunction(exec, functionPrototype, 1, exec->propertyNames().toFixed, numberProtoFuncToFixed), DontEnum);
+    putDirectFunction(new PrototypeFunction(exec, functionPrototype, 1, exec->propertyNames().toExponential, numberProtoFuncToExponential), DontEnum);
+    putDirectFunction(new PrototypeFunction(exec, functionPrototype, 1, exec->propertyNames().toPrecision, numberProtoFuncToPrecision), DontEnum);
 }
 
+// ------------------------------ Functions ---------------------------
 
-// ------------------------------ NumberProtoFunc ---------------------------
-
-NumberProtoFunc::NumberProtoFunc(ExecState* exec, FunctionPrototype* funcProto, int i, int len, const Identifier& name)
-    : InternalFunctionImp(funcProto, name)
-    , id(i)
-{
-    putDirect(exec->propertyNames().length, len, DontDelete|ReadOnly|DontEnum);
-}
+// ECMA 15.7.4.2 - 15.7.4.7
 
 static UString integer_part_noexp(double d)
 {
@@ -140,8 +142,14 @@ static double intPow10(int e)
     return static_cast<double>(result);
 }
 
-static JSValue* numberToString(ExecState* exec, JSValue* v, const List& args)
+
+JSValue* numberProtoFuncToString(ExecState* exec, JSObject* thisObj, const List& args)
 {
+    if (!thisObj->inherits(&NumberInstance::info))
+        return throwError(exec, TypeError);
+
+    JSValue* v = static_cast<NumberInstance*>(thisObj)->internalValue();
+
     double radixAsDouble = args[0]->toInteger(exec); // nan -> 0
     if (radixAsDouble == 10 || args[0]->isUndefined())
         return jsString(v->toString(exec));
@@ -200,8 +208,30 @@ static JSValue* numberToString(ExecState* exec, JSValue* v, const List& args)
     return jsString(startOfResultString);
 }
 
-static JSValue* numberToFixed(ExecState* exec, JSValue* v, const List& args)
+JSValue* numberProtoFuncToLocaleString(ExecState* exec, JSObject* thisObj, const List&)
 {
+    if (!thisObj->inherits(&NumberInstance::info))
+        return throwError(exec, TypeError);
+
+    // TODO
+    return jsString(static_cast<NumberInstance*>(thisObj)->internalValue()->toString(exec));
+}
+
+JSValue* numberProtoFuncValueOf(ExecState* exec, JSObject* thisObj, const List&)
+{
+    if (!thisObj->inherits(&NumberInstance::info))
+        return throwError(exec, TypeError);
+
+    return static_cast<NumberInstance*>(thisObj)->internalValue()->toJSNumber(exec);
+}
+
+JSValue* numberProtoFuncToFixed(ExecState* exec, JSObject* thisObj, const List& args)
+{
+    if (!thisObj->inherits(&NumberInstance::info))
+        return throwError(exec, TypeError);
+
+    JSValue* v = static_cast<NumberInstance*>(thisObj)->internalValue();
+
     JSValue* fractionDigits = args[0];
     double df = fractionDigits->toInteger(exec);
     if (!(df >= 0 && df <= 20))
@@ -281,8 +311,13 @@ void exponentialPartToString(char* buf, int& i, int decimalPoint)
     buf[i++] = static_cast<char>('0' + exponential % 10);
 }
 
-static JSValue* numberToExponential(ExecState* exec, JSValue* v, const List& args)
+JSValue* numberProtoFuncToExponential(ExecState* exec, JSObject* thisObj, const List& args)
 {
+    if (!thisObj->inherits(&NumberInstance::info))
+        return throwError(exec, TypeError);
+
+    JSValue* v = static_cast<NumberInstance*>(thisObj)->internalValue();
+
     double x = v->toNumber(exec);
 
     if (isnan(x) || isinf(x))
@@ -346,9 +381,14 @@ static JSValue* numberToExponential(ExecState* exec, JSValue* v, const List& arg
 
     return jsString(buf);
 }
-    
-static JSValue* numberToPrecision(ExecState* exec, JSValue* v, const List& args)
+
+JSValue* numberProtoFuncToPrecision(ExecState* exec, JSObject* thisObj, const List& args)
 {
+    if (!thisObj->inherits(&NumberInstance::info))
+        return throwError(exec, TypeError);
+
+    JSValue* v = static_cast<NumberInstance*>(thisObj)->internalValue();
+
     double doublePrecision = args[0]->toIntegerPreserveNaN(exec);
     double x = v->toNumber(exec);
     if (args[0]->isUndefined() || isnan(x) || isinf(x))
@@ -407,31 +447,6 @@ static JSValue* numberToPrecision(ExecState* exec, JSValue* v, const List& args)
         return jsString(s + m);
     }
     return jsString(s + "0." + char_sequence('0', -(e + 1)) + m);
-}
-
-// ECMA 15.7.4.2 - 15.7.4.7
-JSValue* NumberProtoFunc::callAsFunction(ExecState* exec, JSObject* thisObj, const List& args)
-{
-    // no generic function. "this" has to be a Number object
-    if (!thisObj->inherits(&NumberInstance::info))
-        return throwError(exec, TypeError);
-
-    JSValue* v = static_cast<NumberInstance*>(thisObj)->internalValue();
-    switch (id) {
-    case ToString:
-        return numberToString(exec, v, args);
-    case ToLocaleString: /* TODO */
-        return jsString(v->toString(exec));
-    case ValueOf:
-        return v->toJSNumber(exec);
-    case ToFixed:
-        return numberToFixed(exec, v, args);
-    case ToExponential:
-        return numberToExponential(exec, v, args);
-    case ToPrecision:
-        return numberToPrecision(exec, v, args);
-    }
-    return 0;
 }
 
 // ------------------------------ NumberObjectImp ------------------------------
