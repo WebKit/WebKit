@@ -552,7 +552,7 @@ bool QWebView::focusNextPrevChild(bool next)
 /*!
   \fn void QWebView::titleChanged(const QString &title)
 
-  This signal is emitted whenever the title of the main frame changes.
+  This signal is emitted whenever the \a title of the main frame changes.
 
   \sa title()
 */
@@ -601,13 +601,5 @@ bool QWebView::focusNextPrevChild(bool next)
     This signal is emitted when the global progress status changes.
     The current value is provided by \a progress in percent.
     It accumulates changes from all the child frames.
-*/
-
-/*!
-    \fn void QWebView::titleChanged(const QString &title)
-
-    This signal is emitted whenever the title of the frame changes.
-
-    \sa title()
 */
 

@@ -573,7 +573,7 @@ QWebFrame* QWebFramePrivate::kit(WebCore::Frame* coreFrame)
 /*!
   \fn void QWebFrame::titleChanged(const QString &title)
 
-  This signal is emitted whenever the title of the frame changes.
+  This signal is emitted whenever the \a title of the frame changes.
 
   \sa title()
 */
