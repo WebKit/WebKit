@@ -47,7 +47,7 @@ namespace WebCore
 #endif
 
 
-void setCookies(const Document* /*document*/, const KURL& url, const KURL& policyURL, const String& value)
+void setCookies(Document* /*document*/, const KURL& url, const KURL& policyURL, const String& value)
 {
 #if USE(CFNETWORK)
     // <rdar://problem/5632883> CFHTTPCookieStorage happily stores an empty cookie, which would be sent as "Cookie: =".
