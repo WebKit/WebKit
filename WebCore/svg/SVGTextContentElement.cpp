@@ -314,9 +314,8 @@ static Vector<SVGInlineTextBox*> findInlineTextBoxInTextChunks(const SVGTextCont
 static inline SVGRootInlineBox* rootInlineBoxForTextContentElement(const SVGTextContentElement* element)
 {
     RenderObject* object = element->renderer();
-    ASSERT(object);
-
-    if (!object->isSVGText() || object->isText())
+    
+    if (!object || !object->isSVGText() || object->isText())
         return 0;
 
     RenderSVGText* svgText = static_cast<RenderSVGText*>(object);

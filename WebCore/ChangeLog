@@ -1,3 +1,20 @@
+2008-01-17  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Anders.
+
+        <rdar://problem/5692940> Crash when attempting to get text properties in
+        SVG with no renderer
+
+        We use the element renderer to calculate the text element bounds,
+        however there was no check against the possibility of the text dimension
+        properties being requested on a element with no renderer (eg. unattached, 
+        display: none).
+
+        Test: svg/text/text-property-with-display-none.html
+
+        * svg/SVGTextContentElement.cpp:
+        (WebCore::rootInlineBoxForTextContentElement):
+
 2008-01-17  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Oliver.
