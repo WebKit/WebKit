@@ -284,6 +284,9 @@ void QWebFrame::load(const QUrl &url)
 }
 
 #if QT_VERSION < 0x040400
+/*!
+  Load network request \a req into this frame.
+*/
 void QWebFrame::load(const QWebNetworkRequest &req)
 {
     if (d->parentFrame())
@@ -319,7 +322,7 @@ void QWebFrame::load(const QWebNetworkRequest &req)
 #else
 
 /*!
-  Load \a request into this frame. Use the method specified in \a
+  Load network request \a req into this frame. Use the method specified in \a
   operation. \a body is optional and is only used for POST operations.
 */
 void QWebFrame::load(const QNetworkRequest &req,
@@ -391,7 +394,7 @@ void QWebFrame::setHtml(const QByteArray &html, const QUrl &baseUrl)
 }
 
 /*!
-  Sets the content of this frame to data assuming \a mimeType. If
+  Sets the content of this frame to \a data assuming \a mimeType. If
   \a mimeType is not specified it defaults to 'text/html'.  \a baseUrl
   us optional and used to resolve relative URLs in the document.
 */
@@ -578,7 +581,7 @@ QWebFrame* QWebFramePrivate::kit(WebCore::Frame* coreFrame)
 /*!
   \fn void QWebFrame::urlChanged(const QUrl &url)
 
-  This signal is emitted whenever the url of the frame changes.
+  This signal is emitted whenever the \a url of the frame changes.
 
   \sa url()
 */
@@ -588,7 +591,8 @@ QWebFrame* QWebFramePrivate::kit(WebCore::Frame* coreFrame)
 
   This signal is emitted whenever the mouse cursor is hovering over a
   link. It can be used to display information about the link in
-  e.g. the status bar.
+  e.g. the status bar. The signal arguments consist of the \a link destination, the \a title and the
+  link text as \a textContent .
 */
 
 
@@ -604,9 +608,6 @@ QWebFrame* QWebFramePrivate::kit(WebCore::Frame* coreFrame)
   This signal is emitted when a load of the frame is finished.
 */
 
-    /**
-      * Signal is emitted when the mainframe()'s initial layout is completed.
-     */
 /*!
   \fn void QWebFrame::initialLayoutComplete()
 

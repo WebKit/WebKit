@@ -58,6 +58,7 @@ class QWEBKIT_EXPORT QWebPage : public QObject
 
     Q_PROPERTY(bool modified READ isModified)
     Q_PROPERTY(QString selectedText READ selectedText)
+    Q_PROPERTY(QSize viewportSize READ viewportSize WRITE setViewportSize)
 public:
     enum NavigationRequestResponse {
         AcceptNavigationRequest,
@@ -186,27 +187,11 @@ public:
     virtual bool focusNextPrevChild(bool next);
 
 Q_SIGNALS:
-    /**
-     * Signal is emitted when the global progress status changes.
-     * It accumulates changes from all the child frames.
-     */
     void loadProgressChanged(int progress);
-    /**
-     * Signal is emitted when the mouse is hovering over a link.
-     * The first parameter is the link url, the second is the link title
-     * if any, and third is the text content. Method is emitter with both
-     * empty parameters when the mouse isn't hovering over any link element.
-     */
     void hoveringOverLink(const QString &link, const QString &title, const QString &textContent = QString());
-    /**
-     * Signal is emitted when the statusbar text is changed by the page.
-     */
     void statusBarTextChanged(const QString& text);
-
     void selectionChanged();
-
     void frameCreated(QWebFrame *frame);
-
     void geometryChangeRequest(const QRect& geom);
 
     //void addEmbeddableWidget(QWidget *widget);

@@ -209,7 +209,7 @@ QWebSettings *QWebView::settings() const
 }
 
 /*!
-  \property QWebView::documentTitle
+  \property QWebView::title
   \brief the title of the web page currently viewed.
 */
 QString QWebView::title() const
@@ -275,7 +275,7 @@ void QWebView::triggerAction(QWebPage::WebAction action, bool checked)
 }
 
 /*!
-    \propery QWebView::modified
+    \property QWebView::modified
     \brief Indicates whether the document was modified by the user or not.
 
     Parts of HTML documents can be editable for example through the \c{contenteditable} attribute on
@@ -306,6 +306,9 @@ void QWebView::setTextInteractionFlags(Qt::TextInteractionFlags flags)
     // ### FIXME (add to page)
 }
 
+/*!
+    \reimp
+*/
 QSize QWebView::sizeHint() const
 {
     return QSize(800, 600); // ####...
@@ -557,8 +560,54 @@ bool QWebView::focusNextPrevChild(bool next)
 /*!
   \fn void QWebView::urlChanged(const QUrl &url)
 
-  This signal is emitted whenever the url of the main frame changes.
+  This signal is emitted whenever the \a url of the main frame changes.
 
   \sa url()
+*/
+
+/*!
+    \fn void QWebView::statusBarTextChanged(const QString& text)
+
+    This signal is emitted when the statusbar \a text is changed by the page.
+*/
+
+/*!
+    \fn void QWebView::iconLoaded()
+
+    This signal is emitted whenever the icon of the page is loaded or changes.
+*/
+
+/*!
+    \fn void QWebView::loadStarted()
+
+    This signal is emitted when a new load of the frame is started.
+*/
+
+/*!
+    \fn void QWebView::loadFinished()
+
+    This signal is emitted when a load of the frame is finished.
+*/
+
+/*!
+    \fn void QWebView::selectionChanged()
+
+    This signal is emitted whenever the selection changes.
+*/
+
+/*!
+    \fn void QWebView::loadProgressChanged(int progress)
+
+    This signal is emitted when the global progress status changes.
+    The current value is provided by \a progress in percent.
+    It accumulates changes from all the child frames.
+*/
+
+/*!
+    \fn void QWebView::titleChanged(const QString &title)
+
+    This signal is emitted whenever the title of the frame changes.
+
+    \sa title()
 */
 
