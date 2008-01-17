@@ -36,6 +36,7 @@
 
 #include <WebCore/IntRect.h>
 #include <WebCore/Timer.h>
+#include <WebCore/WindowMessageListener.h>
 #include <wtf/OwnPtr.h>
 
 class WebFrame;
@@ -57,6 +58,7 @@ class WebView
     , public IWebViewEditingActions
     , public IWebNotificationObserver
     , public IDropTarget
+    , WebCore::WindowMessageListener
 {
 public:
     static WebView* createInstance();
@@ -630,6 +632,8 @@ public:
     virtual HRESULT STDMETHODCALLTYPE setProhibitsMainFrameScrolling(BOOL);
     virtual HRESULT STDMETHODCALLTYPE setShouldApplyMacFontAscentHack(BOOL);
 
+    virtual HRESULT STDMETHODCALLTYPE windowAncestryDidChange();
+
     // WebView
     WebCore::Page* page();
     bool handleMouseEvent(UINT, WPARAM, LPARAM);
@@ -703,6 +707,10 @@ public:
     static bool didSetCacheModel();
     static WebCacheModel maxCacheModelInAnyInstance();
 
+    void updateActiveStateSoon() const;
+
+    HWND topLevelParent() const { return m_topLevelParent; }
+
 protected:
     HIMC getIMMContext();
     void releaseIMMContext(HIMC);
@@ -720,6 +728,8 @@ protected:
     // AllWebViewSet functions
     void addToAllWebViewsSet();
     void removeFromAllWebViewsSet();
+
+    virtual void windowReceivedMessage(HWND, UINT message, WPARAM, LPARAM);
 
     ULONG m_refCount;
     WebCore::String m_groupName;
@@ -771,6 +781,8 @@ protected:
 
     WebCore::Timer<WebView> m_closeWindowTimer;
     OwnPtr<TRACKMOUSEEVENT> m_mouseOutTracker;
+
+    HWND m_topLevelParent;
 };
 
 #endif

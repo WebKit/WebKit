@@ -138,4 +138,6 @@ interface IWebViewPrivate : IUnknown
 
     // SPI for DumpRenderTree
     HRESULT executeCoreCommandByName([in] BSTR name, [in] BSTR value);
+
+    HRESULT windowAncestryDidChange();
 }

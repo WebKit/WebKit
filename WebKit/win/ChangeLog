@@ -1,5 +1,49 @@
 2008-01-16  Adam Roben  <aroben@apple.com>
 
+        Trigger activation changes at the right time by listening for WM_NCACTIVATE
+
+        This is the final part of <rdar://5006915> Inactive look for Aqua
+        controls
+
+        WebView now listens to messages sent to its top-level parent window.
+        When the top-level parent receives a WM_NCACTIVATE message, WebView
+        recalculates whether it is contained within the current active window.
+
+        Reviewed by Darin.
+
+        * Interfaces/IWebViewPrivate.idl:
+        (IWebViewPrivate::windowAncestryDidChange): Added. WebKit clients
+        should call this when they change the parent window chain of a
+        WebView.
+        * WebView.cpp:
+        (WebView::WebView): Initialize new member.
+        (findTopLevelParent): Added.
+        (WebViewWndProc):
+            - Separated activation handling from focus handling, now that
+              activation handling is taken care of by updateActiveState
+              exclusively.
+            - Compare top-level parents in our WM_KILLFOCUS handler so that we
+              really know if focus is staying inside our top-level window.
+            - Update our active state on WM_WINDOWPOSCHANGED.
+            - Added a WM_TIMER handler.
+        (WebView::initWithFrame): Call windowAncestryDidChange after setting
+        up our HWND as a child of the host window.
+        (WebView::windowReceivedMessage): Added. Update our active state when
+        our top-level parent receives a WM_NCACTIVATE message.
+        (WebView::updateActiveStateSoon): Added.
+        (WebView::setHostWindow): Call windowAncestryDidChange after changing
+        the host window.
+        (WebView::updateActiveState): We are active if our top-level parent is
+        the same as the top-level parent of the active window.
+        (WebView::windowAncestryDidChange): Added. Recalculates our top-level
+        parent and registers as a listener for the new top-level parent's
+        messages.
+        * WebView.h: Made WebView and WindowMessageListener so that it can
+        utilize WindowMessageBroadcaster to listen to its top-level parent's
+        messages.
+
+2008-01-16  Adam Roben  <aroben@apple.com>
+
         Updated for ScrollBarClient changes
 
         Reviewed by Darin.
