@@ -14,7 +14,7 @@ layer at (0,0) size 800x600
           text run at (0,0) width 444: "In the next line, the digits should be in Times, but the letters should be "
           text run at (444,0) width 68: "in Courier."
       RenderBlock (anonymous) at (0,86) size 784x28
-        RenderInline {SPAN} at (0,0) size 294x28
-          RenderText {#text} at (0,0) size 294x28
-            text run at (0,0) width 294: "ABCDEFGHIJ 1234567890"
+        RenderInline {SPAN} at (0,0) size 274x28
+          RenderText {#text} at (0,0) size 274x28
+            text run at (0,0) width 274: "ABCDEFGHIJ 1234567890"
         RenderText {#text} at (0,0) size 0x0

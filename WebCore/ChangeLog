@@ -1,3 +1,16 @@
+2008-01-17  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        - fix determinePitch for segmented fonts
+
+        Covered by and existing test.
+
+        * platform/graphics/FontFallbackList.cpp:
+        (WebCore::FontFallbackList::determinePitch): If the primary font is
+        segmented, treat as fixed pitch only if it has only one segment
+        and that segment is fixed-pitch.
+
 2008-01-16  David Hyatt  <hyatt@apple.com>
 
         Fix for http://bugs.webkit.org/show_bug.cgi?id=16611

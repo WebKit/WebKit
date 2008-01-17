@@ -31,6 +31,7 @@
 
 #include "Font.h"
 #include "FontCache.h"
+#include "SegmentedFontData.h"
 
 namespace WebCore {
 
@@ -53,7 +54,17 @@ void FontFallbackList::invalidate(PassRefPtr<FontSelector> fontSelector)
 
 void FontFallbackList::determinePitch(const Font* font) const
 {
-    m_pitch = primaryFont(font)->fontDataForCharacter(' ')->pitch();
+    const FontData* fontData = primaryFont(font);
+    if (!fontData->isSegmented())
+        m_pitch = static_cast<const SimpleFontData*>(fontData)->pitch();
+    else {
+        const SegmentedFontData* segmentedFontData = static_cast<const SegmentedFontData*>(fontData);
+        unsigned numRanges = segmentedFontData->numRanges();
+        if (numRanges == 1)
+            m_pitch = segmentedFontData->rangeAt(0).fontData()->pitch();
+        else
+            m_pitch = VariablePitch;
+    }
 }
 
 const FontData* FontFallbackList::fontDataAt(const Font* font, unsigned realizedFontIndex) const
