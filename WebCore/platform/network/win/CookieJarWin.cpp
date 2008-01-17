@@ -27,6 +27,7 @@
 #include "KURL.h"
 #include "PlatformString.h"
 #include "DeprecatedString.h"
+#include "Document.h"
 #include "ResourceHandle.h"
 #include <windows.h>
 #if USE(CFNETWORK)
