@@ -107,6 +107,8 @@ protected:
     void resizeEvent(QResizeEvent *e);
     void paintEvent(QPaintEvent *ev);
 
+    virtual QWebView *createWindow();
+
     virtual void mouseMoveEvent(QMouseEvent*);
     virtual void mousePressEvent(QMouseEvent*);
     virtual void mouseDoubleClickEvent(QMouseEvent*);
@@ -125,6 +127,7 @@ protected:
     virtual bool focusNextPrevChild(bool next);
 
 private:
+    friend class QWebPage;
     QWebViewPrivate *d;
 };
 

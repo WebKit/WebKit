@@ -397,6 +397,15 @@ void QWebView::paintEvent(QPaintEvent *ev)
 #endif
 }
 
+/*!
+    This function is called whenever WebKit wants to create a new window, for example as a result of
+    a JavaScript request to open a document in a new window.
+*/
+QWebView *QWebView::createWindow()
+{
+    return 0;
+}
+
 /*! \reimp
 */
 void QWebView::mouseMoveEvent(QMouseEvent* ev)
