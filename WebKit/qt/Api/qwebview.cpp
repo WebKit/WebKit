@@ -454,6 +454,8 @@ void QWebView::keyPressEvent(QKeyEvent* ev)
 {
     if (d->page)
         d->page->event(ev);
+    if (!ev->isAccepted())
+        QWidget::keyPressEvent(ev);
 }
 
 /*! \reimp
@@ -462,6 +464,8 @@ void QWebView::keyReleaseEvent(QKeyEvent* ev)
 {
     if (d->page)
         d->page->event(ev);
+    if (!ev->isAccepted())
+        QWidget::keyReleaseEvent(ev);
 }
 
 /*! \reimp
