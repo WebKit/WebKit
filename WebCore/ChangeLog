@@ -1,3 +1,18 @@
+2008-01-17  Frans Englich  <fenglich@trolltech.com>
+
+        Reviewed by Simon Hausmann <hausmann@webkit.org>.
+
+        Fixes compilation with MinGW.
+        Neither localtime_r nor localtime_s are available on MingW, so instead of
+        calling back to the thread-unsafe localtime use QDateTime instead.
+
+        * loader/FTPDirectoryDocument.cpp:
+        (WebCore::FTPDirectoryTokenizer::WebCore::processFilesizeString):
+        (WebCore::FTPDirectoryTokenizer::WebCore::wasLastDayOfMonth):
+        (WebCore::FTPDirectoryTokenizer::WebCore::WebCore::gmtimeQt):
+        * loader/FTPDirectoryParser.cpp:
+        (WebCore::parseOneFTPLine):
+
 2008-01-17  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Dave Hyatt.
