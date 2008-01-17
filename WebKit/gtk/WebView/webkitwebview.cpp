@@ -1065,12 +1065,47 @@ WebKitSettings* webkit_web_view_get_settings(WebKitWebView* webView)
 
 void webkit_web_view_go_backward(WebKitWebView* webView)
 {
+    g_warning("webkit_web_view_go_backward() is obsolete; use webkit_web_view_go_back()");
+    webkit_web_view_go_back(webView);
+}
+
+/**
+ * webkit_web_view_go_back:
+ * @web_view: a #WebKitWebView
+ *
+ * Loads the previous history item.
+ */
+void webkit_web_view_go_back(WebKitWebView* webView)
+{
     g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
 
     Frame* frame = core(webkit_web_view_get_main_frame(webView));
     frame->loader()->goBackOrForward(-1);
 }
 
+/**
+ * webkit_web_view_go_back_or_forward:
+ * @web_view: a #WebKitWebView
+ * @steps: the number of steps
+ *
+ * Loads the history item that is the number of @steps away from the current
+ * item. Negative values represent steps backward while positive values
+ * represent steps forward.
+ */
+void webkit_web_view_go_back_or_forward(WebKitWebView* webView, gint steps)
+{
+    g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
+
+    Frame* frame = core(webkit_web_view_get_main_frame(webView));
+    frame->loader()->goBackOrForward(steps);
+}
+
+/**
+ * webkit_web_view_go_forward:
+ * @web_view: a #WebKitWebView
+ *
+ * Loads the next history item.
+ */
 void webkit_web_view_go_forward(WebKitWebView* webView)
 {
     g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
@@ -1081,12 +1116,53 @@ void webkit_web_view_go_forward(WebKitWebView* webView)
 
 gboolean webkit_web_view_can_go_backward(WebKitWebView* webView)
 {
+    g_warning("webkit_web_view_can_go_backward() is obsolete; use webkit_web_view_can_go_back()");
+    return webkit_web_view_can_go_back(webView);
+}
+
+/**
+ * webkit_web_view_can_go_back:
+ * @web_view: a #WebKitWebView
+ *
+ * Determines whether #web_view has a previous history item.
+ *
+ * Return value: %TRUE if able to move back, %FALSE otherwise
+ */
+gboolean webkit_web_view_can_go_back(WebKitWebView* webView)
+{
     g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), FALSE);
 
     Frame* frame = core(webkit_web_view_get_main_frame(webView));
     return frame->loader()->canGoBackOrForward(-1);
 }
 
+/**
+ * webkit_web_view_can_go_back_or_forward:
+ * @web_view: a #WebKitWebView
+ * @steps: the number of steps
+ *
+ * Determines whether #web_view has a history item of @steps. Negative values
+ * represent steps backward while positive values represent steps forward.
+ *
+ * Return value: %TRUE if able to move back or forward the given number of
+ * steps, %FALSE otherwise
+ */
+gboolean webkit_web_view_can_go_back_or_forward(WebKitWebView* webView, gint steps)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), FALSE);
+
+    Frame* frame = core(webkit_web_view_get_main_frame(webView));
+    return frame->loader()->canGoBackOrForward(steps);
+}
+
+/**
+ * webkit_web_view_can_go_forward:
+ * @web_view: a #WebKitWebView
+ *
+ * Determines whether #web_view has a next history item.
+ *
+ * Return value: %TRUE if able to move forward, %FALSE otherwise
+ */
 gboolean webkit_web_view_can_go_forward(WebKitWebView* webView)
 {
     g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), FALSE);

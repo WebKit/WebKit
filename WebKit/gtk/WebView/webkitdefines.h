@@ -28,8 +28,10 @@
     #else
         #define WEBKIT_API __declspec(dllimport)
     #endif
+    #define WEBKIT_OBSOLETE_API WEBKIT_API
 #else
     #define WEBKIT_API __attribute__((visibility("default")))
+    #define WEBKIT_OBSOLETE_API WEBKIT_API __attribute__((deprecated))
 #endif
 
 #ifndef WEBKIT_API

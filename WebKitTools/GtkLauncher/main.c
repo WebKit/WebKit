@@ -97,7 +97,7 @@ destroy_cb (GtkWidget* widget, gpointer data)
 static void
 go_back_cb (GtkWidget* widget, gpointer data)
 {
-    webkit_web_view_go_backward (web_view);
+    webkit_web_view_go_back (web_view);
 }
 
 static void

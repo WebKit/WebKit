@@ -1,3 +1,17 @@
+2008-01-16  Alp Toker  <alp@atoker.com>
+
+        Reviewed by Mark Rowe.
+
+        http://bugs.webkit.org/show_bug.cgi?id=16218
+        [GTK] API: Should this entry point be called go_back rather than go_backward?
+
+        Track back/forward API changes in the tools.
+
+        * DumpRenderTree/gtk/WorkQueueItemGtk.cpp:
+        (BackForwardItem::invoke):
+        * GtkLauncher/main.c:
+        (go_back_cb):
+
 2008-01-16  Adam Roben  <aroben@apple.com>
 
         Windows build fix after r29488

@@ -1,3 +1,19 @@
+2008-01-16  Alp Toker  <alp@atoker.com>
+
+        Reviewed by Mark Rowe.
+
+        http://bugs.webkit.org/show_bug.cgi?id=16218
+        [GTK] API: Should this entry point be called go_back rather than go_backward?
+
+        Obsolete 'backward' terminology in API in favour of 'back'. Introduce
+        step-based back/forward functions.
+
+        Document more functions.
+
+        * WebView/webkitdefines.h:
+        * WebView/webkitwebview.cpp:
+        * WebView/webkitwebview.h:
+
 2008-01-10  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Sam.

@@ -71,13 +71,5 @@ void ScriptItem::invoke() const
 void BackForwardItem::invoke() const
 {
     WebKitWebView* webView = webkit_web_frame_get_web_view(mainFrame);
-    if (m_howFar == 1)
-        webkit_web_view_go_forward(webView);
-    else if (m_howFar == -1)
-        webkit_web_view_go_backward(webView);
-    else {
-        g_warning("Can't go backward/forward\n");
-        //notImplemented();
-        // TODO: API doesn't yet support arbitrary back/forward
-    }
+    webkit_web_view_go_back_or_forward(webView, m_howFar);
 }
