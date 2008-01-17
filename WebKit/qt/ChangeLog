@@ -1,3 +1,14 @@
+2008-01-17  Lars Knoll  <lars@trolltech.com>
+
+        Reviewed by Lars.
+
+        add a 0 pointer check.
+
+        Fixes a crash in the demo web browser.
+
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::dispatchDecidePolicyForMIMEType):
+
 2008-01-17  Simon Hausmann  <hausmann@webkit.org>
 
         Reviewed by Holger.

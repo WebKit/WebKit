@@ -771,6 +771,8 @@ WebCore::Frame* FrameLoaderClientQt::dispatchCreatePage()
     if (!m_webFrame)
         return 0;
     QWebPage *newPage = m_webFrame->page()->createWindow();
+    if (!newPage)
+        return 0;
     return newPage->mainFrame()->d->frame.get();
 }
 
