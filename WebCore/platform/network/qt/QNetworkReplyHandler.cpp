@@ -58,9 +58,6 @@ QNetworkReplyHandler::QNetworkReplyHandler(ResourceHandle *handle)
 
     m_request = r.toNetworkRequest();
 
-    // ### temporary workaround for gzip decoding bug in the new QHttp
-    m_request.setRawHeader("Accept-Encoding", "identity");
-
     start();
 }
 
