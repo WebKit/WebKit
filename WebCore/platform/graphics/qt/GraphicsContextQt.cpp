@@ -622,10 +622,10 @@ void GraphicsContext::beginTransparencyLayer(float opacity)
     QTransform transform = p->transform().inverted(&ok);
     if (ok) {
         QRectF deviceClip = transform.mapRect(clip);
-        x = int(qBound(0., deviceClip.x(), (qreal)w));
-        y = int(qBound(0., deviceClip.y(), (qreal)h));
-        w = int(qBound(0., deviceClip.width(), (qreal)w) + 2);
-        h = int(qBound(0., deviceClip.height(), (qreal)h) + 2);
+        x = int(qBound(qreal(0), deviceClip.x(), (qreal)w));
+        y = int(qBound(qreal(0), deviceClip.y(), (qreal)h));
+        w = int(qBound(qreal(0), deviceClip.width(), (qreal)w) + 2);
+        h = int(qBound(qreal(0), deviceClip.height(), (qreal)h) + 2);
     }
     TransparencyLayer * layer = new TransparencyLayer(m_data->p(), QRect(x, y, w, h));
 
