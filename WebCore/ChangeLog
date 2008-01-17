@@ -1,3 +1,15 @@
+2008-01-17  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        http://bugs.webkit.org/show_bug.cgi?id=16902
+        <rdar://problem/5692566> fast/encoding/mailto-always-utf-8.html fails when run after
+        fast/dom/Window/window-property-shadowing.html
+
+        Test: fast/dom/Window/window-property-shadowing_.html
+
+        * loader/FrameLoader.cpp: (WebCore::FrameLoader::clear): Clear the frame name, too.
+
 2008-01-17  Adam Roben  <aroben@apple.com>
 
         Qt/GTK+ build fix.

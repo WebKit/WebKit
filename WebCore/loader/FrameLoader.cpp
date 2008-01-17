@@ -802,6 +802,8 @@ void FrameLoader::clear(bool clearWindowProperties, bool clearScriptObjects)
     if (clearWindowProperties) {
         m_frame->clearScriptProxy();
         m_frame->clearDOMWindow();
+        if (!m_frame->tree()->parent())
+            m_frame->tree()->setName(String());
     }
 
     m_frame->selectionController()->clear();
