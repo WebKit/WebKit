@@ -6,7 +6,7 @@
 	>
 	<Tool
 		Name="VCCLCompilerTool"
-		PreprocessorDefinitions="USE_DEBUG_SAFARI_THEME"
+		PreprocessorDefinitions="USE_DEBUG_SAFARI_THEME;DEBUG_INTERNAL"
 		RuntimeLibrary="3"
 	/>
 	<UserMacro
