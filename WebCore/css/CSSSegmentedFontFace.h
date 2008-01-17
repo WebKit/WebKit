@@ -69,6 +69,7 @@ public:
 
     void fontLoaded(CSSFontFace*);
 
+    unsigned numRanges() const { return m_ranges.size(); }
     void overlayRange(UChar32 from, UChar32 to, PassRefPtr<CSSFontFace>);
 
     FontData* getFontData(const FontDescription&, bool syntheticBold, bool syntheticItalic);

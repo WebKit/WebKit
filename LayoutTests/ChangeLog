@@ -1,3 +1,15 @@
+2008-01-16  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        - add test for @font-face rules with unicode-range: always use a local
+          font where not explicitly overlaid.
+
+        * fast/css/font-face-implicit-local-font.html: Added.
+        * platform/mac-leopard/fast/css/font-face-implicit-local-font-expected.checksum: Added.
+        * platform/mac-leopard/fast/css/font-face-implicit-local-font-expected.png: Added.
+        * platform/mac/fast/css/font-face-implicit-local-font-expected.txt: Added.
+
 2008-01-16  Antti Koivisto  <antti@apple.com>
        
         Add tests for unsupported types to Windows skip list for now.

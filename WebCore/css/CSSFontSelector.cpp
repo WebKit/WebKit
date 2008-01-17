@@ -250,6 +250,15 @@ void CSSFontSelector::addFontFaceRule(const CSSFontFaceRule* fontFaceRule)
             m_fonts.set(hash, segmentedFontFace);
         }
         if (rangeList) {
+            // A local font matching the font description should come first, so that it gets used for
+            // any character not overlaid by explicit @font-face rules for the family.
+            if (!segmentedFontFace->numRanges() && FontCache::fontExists(fontDescription, familyName)) {
+                CSSFontFace* implicitFontFace = new CSSFontFace();
+                implicitFontFace->addSource(new CSSFontFaceSource(familyName));
+                ASSERT(implicitFontFace->isValid());
+                segmentedFontFace->overlayRange(0, 0x7FFFFFFF, implicitFontFace);
+            }
+
             unsigned numRanges = rangeList->length();
             for (unsigned i = 0; i < numRanges; i++) {
                 CSSUnicodeRangeValue* range = static_cast<CSSUnicodeRangeValue*>(rangeList->item(i));

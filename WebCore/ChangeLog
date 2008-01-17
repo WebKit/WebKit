@@ -1,3 +1,19 @@
+2008-01-16  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        - fix for @font-face rules with unicode-range: always use a local font where not
+          explicitly overlaid.
+
+        Test: fast/css/font-face-implicit-local-font.html
+
+        * css/CSSFontSelector.cpp:
+        (WebCore::CSSFontSelector::addFontFaceRule): Changed to insert an implicit
+        @font-face rule with the local font the matches the family and description before
+        any explicit @font-face rules that overlay specific ranges of the same font.
+        * css/CSSSegmentedFontFace.h:
+        (WebCore::CSSSegmentedFontFace::numRanges): Addded.
+
 2008-01-16  Antti Koivisto  <antti@apple.com>
 
         Fix Tiger build.
