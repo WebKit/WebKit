@@ -1,3 +1,11 @@
+2008-01-18  Simon Hausmann  <hausmann@webkit.org>
+
+        Reviewed by Holger.
+
+        Coding style fixes and added a comment about the include order.
+
+        * WebKit_pch.h:
+
 2008-01-18  Marius Storm-Olsen  <marius@trolltech.com>
 
         Reviewed by Simon Hausmann <hausmann@webkit.org>.
