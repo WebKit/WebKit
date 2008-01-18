@@ -1,3 +1,22 @@
+2008-01-18  Mark Rowe  <mrowe@apple.com>
+
+        Rubber-stamped by Adam Roben.
+
+        Fix mixed line endings in FileSystemWin.cpp and set svn:eol-style to native
+        to try and keep them consistent in the future.
+
+        * platform/win/FileSystemWin.cpp:
+        (WebCore::fileSize):
+        (WebCore::fileExists):
+        (WebCore::deleteFile):
+        (WebCore::pathByAppendingComponent):
+        (WebCore::fileSystemRepresentation):
+        (WebCore::makeAllDirectories):
+        (WebCore::homeDirectoryPath):
+        (WebCore::bundleName):
+        (WebCore::storageDirectory):
+        (WebCore::cachedStorageDirectory):
+
 2008-01-18  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Adam.
