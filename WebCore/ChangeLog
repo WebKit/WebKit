@@ -2,6 +2,19 @@
 
         Reviewed by Holger.
 
+        Fix fast/forms/button-state-restore.html
+        
+        Similar to the fix for fast/forms/form-post-urlencoded.html transform POST
+        requests to data urls into GET.
+        
+
+        * platform/network/qt/QNetworkReplyHandler.cpp:
+        (WebCore::QNetworkReplyHandler::start):
+
+2008-01-18  Simon Hausmann  <hausmann@webkit.org>
+
+        Reviewed by Holger.
+
         Fix LayoutTests/fast/cookies/local-file-can-set-cookies.html
         
         In WebCore::cookies() don't return the full raw form but only the name=value

@@ -193,11 +193,13 @@ void QNetworkReplyHandler::start()
 
     QNetworkAccessManager* manager = d->m_frame->page()->networkAccessManager();
 
-    // Post requests on files don't really make sense, but for
-    // fast/forms/form-post-urlencoded.html we still need to retrieve the file,
-    // which means we map it to a Get instead.
+    const QUrl url = m_request.url();
+    const QString scheme = url.scheme();
+    // Post requests on files and data don't really make sense, but for
+    // fast/forms/form-post-urlencoded.html and for fast/forms/button-state-restore.html
+    // we still need to retrieve the file/data, which means we map it to a Get instead.
     if (m_method == QNetworkAccessManager::PostOperation
-        && !m_request.url().toLocalFile().isEmpty())
+        && (!url.toLocalFile().isEmpty() || url.scheme() == QLatin1String("data")))
         m_method = QNetworkAccessManager::GetOperation;
 
     switch (m_method) {
@@ -233,7 +235,6 @@ void QNetworkReplyHandler::start()
 
     // For http(s) we know that the headers are complete upon metaDataChanged() emission, so we
     // can send the response as early as possible
-    QString scheme = m_request.url().scheme();
     if (scheme == QLatin1String("http") || scheme == QLatin1String("https"))
         connect(m_reply, SIGNAL(metaDataChanged()),
                 this, SLOT(sendResponseIfNeeded()));
