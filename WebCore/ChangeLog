@@ -1,3 +1,11 @@
+2008-01-18  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Antti.
+
+        Fix for <rdar://problem/5679490> media controls fade in and out too jerkily and too slowly
+
+        * rendering/RenderMedia.cpp: Shorten the duration for the fade in/out animation.
+
 2008-01-18  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Oliver.

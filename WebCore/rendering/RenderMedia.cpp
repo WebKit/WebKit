@@ -51,7 +51,7 @@ using namespace EventNames;
 static const double cTimeUpdateRepeatDelay = 0.2;
 static const double cOpacityAnimationRepeatDelay = 0.05;
 // FIXME get this from style
-static const double cOpacityAnimationDuration = 0.5;
+static const double cOpacityAnimationDuration = 0.1;
 
 RenderMedia::RenderMedia(HTMLMediaElement* video)
     : RenderReplaced(video)
