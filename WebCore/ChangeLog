@@ -1,3 +1,23 @@
+2008-01-17  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Adele.
+
+        Windows fix for <rdar://problem/5605682>
+        Disallow streaming protocols for media elements
+        and <rdar://problem/5668711>
+        Limit the container and codec types that the <video> tag supports
+        
+        - Disable unsupported QuickTime tracks types. 
+        - Disallow streaming protocols (for now).
+
+        * WebCore.vcproj/WebCore.vcproj:
+        * platform/graphics/win/MediaPlayerPrivateQuickTimeWin.cpp:
+        (WebCore::MediaPlayerPrivate::updateStates):
+        * platform/graphics/win/QTMovieWin.cpp:
+        (QTMovieWin::load):
+        (QTMovieWin::disableUnsupportedTracks):
+        * platform/graphics/win/QTMovieWin.h:
+
 2008-01-17  Oliver Hunt  <oliver@apple.com>
 
         Support smart copy and paste during drag and drop

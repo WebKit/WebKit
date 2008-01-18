@@ -28,9 +28,11 @@
 
 #include "QTMovieWin.h"
 
-#include <GXMath.h>
+// Put Movies.h first so build failures here point clearly to QuickTime
 #include <Movies.h>
+#include <GXMath.h>
 #include <QTML.h>
+
 #include "QTMovieWinTimer.h"
 
 #include <wtf/Assertions.h>
@@ -438,7 +440,14 @@ void QTMovieWin::load(const UChar* url, int len)
     bool boolTrue = true;
 
     // Create a URL data reference of type CFURL 
-    CFStringRef urlStringRef = CFStringCreateWithCharacters (kCFAllocatorDefault, reinterpret_cast<const UniChar*>(url), len);
+    CFStringRef urlStringRef = CFStringCreateWithCharacters(kCFAllocatorDefault, reinterpret_cast<const UniChar*>(url), len);
+    
+    // Disable streaming support for now. 
+    if (CFStringHasPrefix(urlStringRef, CFSTR("rtsp:"))) {
+        m_private->m_loadError = noMovieFound;
+        goto end;
+    }
+
     CFURLRef urlRef = CFURLCreateWithString(kCFAllocatorDefault, urlStringRef, 0); 
 
     // Add the movie data location to the property array 
@@ -477,9 +486,25 @@ void QTMovieWin::load(const UChar* url, int len)
     movieProps[moviePropCount].propStatus = 0; 
     moviePropCount++; 
 
-    m_private->m_loadError = NewMovieFromProperties(moviePropCount, movieProps, 0, NULL, &m_private->m_movie);
-    m_private->startTask();
+    movieProps[moviePropCount].propClass = kQTPropertyClass_MovieInstantiation;
+    movieProps[moviePropCount].propID = '!url'; // kQTInteractivePropertyID_BlockExternalURLLinks
+    movieProps[moviePropCount].propValueSize = sizeof(boolTrue); 
+    movieProps[moviePropCount].propValueAddress = &boolTrue; 
+    movieProps[moviePropCount].propStatus = 0; 
+    moviePropCount++; 
 
+    movieProps[moviePropCount].propClass = kQTPropertyClass_MovieInstantiation; 
+    movieProps[moviePropCount].propID = 'site'; // kQTSecurityPolicyPropertyID_NoCrossSite; 
+    movieProps[moviePropCount].propValueSize = sizeof(boolTrue); 
+    movieProps[moviePropCount].propValueAddress = &boolTrue; 
+    movieProps[moviePropCount].propStatus = 0; 
+    moviePropCount++; 
+
+    m_private->m_loadError = NewMovieFromProperties(moviePropCount, movieProps, 0, NULL, &m_private->m_movie);
+
+    CFRelease(urlRef);
+end:
+    m_private->startTask();
     // get the load fail callback quickly 
     if (m_private->m_loadError)
         updateTaskTimer(0);
@@ -487,7 +512,109 @@ void QTMovieWin::load(const UChar* url, int len)
         m_private->registerDrawingCallback();
 
     CFRelease(urlStringRef);
-    CFRelease(urlRef);
+}
+
+void QTMovieWin::disableUnsupportedTracks(unsigned& enabledTrackCount)
+{
+    if (!m_private->m_movie) {
+        enabledTrackCount = 0;
+        return;
+    }
+
+    static HashSet<OSType>* allowedTrackTypes = 0;
+    if (!allowedTrackTypes) {
+        allowedTrackTypes = new HashSet<OSType>;
+        allowedTrackTypes->add(VideoMediaType);
+        allowedTrackTypes->add(SoundMediaType);
+        allowedTrackTypes->add(TextMediaType);
+        allowedTrackTypes->add(BaseMediaType);
+        allowedTrackTypes->add('clcp'); // Closed caption
+        allowedTrackTypes->add('sbtl'); // Subtitle
+    }
+
+    long trackCount = GetMovieTrackCount(m_private->m_movie);
+    enabledTrackCount = trackCount;
+    
+    // Track indexes are 1-based. yuck. These things must descend from old-
+    // school mac resources or something.
+    for (long trackIndex = 1; trackIndex <= trackCount; trackIndex++) {
+        // Grab the track at the current index. If there isn't one there, then
+        // we can move onto the next one.
+        Track currentTrack = GetMovieIndTrack(m_private->m_movie, trackIndex);
+        if (!currentTrack)
+            continue;
+        
+        // Check to see if the track is disabled already, we should move along.
+        // We don't need to re-disable it.
+        if (!GetTrackEnabled(currentTrack))
+            continue;
+
+        // Grab the track's media. We're going to check to see if we need to
+        // disable the tracks. They could be unsupported. <rdar://problem/4983892>
+        Media trackMedia = GetTrackMedia(currentTrack);
+        if (!trackMedia)
+            continue;
+        
+        // Grab the media type for this track. Make sure that we don't
+        // get an error in doing so. If we do, then something really funky is
+        // wrong.
+        OSType mediaType;
+        GetMediaHandlerDescription(trackMedia, &mediaType, nil, nil);
+        OSErr mediaErr = GetMoviesError();    
+        if (mediaErr != noErr)
+            continue;
+        
+        if (!allowedTrackTypes->contains(mediaType)) {
+            SetTrackEnabled(currentTrack, false);
+            --enabledTrackCount;
+        }
+        
+        // Grab the track reference count for chapters. This will tell us if it
+        // has chapter tracks in it. If there aren't any references, then we
+        // can move on the next track.
+        long referenceCount = GetTrackReferenceCount(currentTrack, kTrackReferenceChapterList);
+        if (referenceCount <= 0)
+            continue;
+        
+        long referenceIndex = 0;        
+        while (1) {
+            // If we get nothing here, we've overstepped our bounds and can stop
+            // looking. Chapter indices here are 1-based as well - hence, the
+            // pre-increment.
+            referenceIndex++;
+            Track chapterTrack = GetTrackReference(currentTrack, kTrackReferenceChapterList, referenceIndex);
+            if (!chapterTrack)
+                break;
+            
+            // Try to grab the media for the track.
+            Media chapterMedia = GetTrackMedia(chapterTrack);
+            if (!chapterMedia)
+                continue;
+        
+            // Grab the media type for this track. Make sure that we don't
+            // get an error in doing so. If we do, then something really
+            // funky is wrong.
+            OSType mediaType;
+            GetMediaHandlerDescription(chapterMedia, &mediaType, nil, nil);
+            OSErr mediaErr = GetMoviesError();
+            if (mediaErr != noErr)
+                continue;
+            
+            // Check to see if the track is a video track. We don't care about
+            // other non-video tracks.
+            if (mediaType != VideoMediaType)
+                continue;
+            
+            // Check to see if the track is already disabled. If it is, we
+            // should move along.
+            if (!GetTrackEnabled(chapterTrack))
+                continue;
+            
+            // Disabled the evil, evil track.
+            SetTrackEnabled(chapterTrack, false);
+            --enabledTrackCount;
+        }
+    }
 }
 
 pascal OSErr movieDrawingCompleteProc(Movie movie, long data)

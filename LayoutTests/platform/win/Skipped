@@ -45,12 +45,6 @@ http/tests/security/cross-frame-access-protocol.html
 # Crashes on Windows <rdar://problem/5674277>
 media/video-display-toggle.html
 
-# Disallow streaming protocols for media elements <rdar://problem/5605682>
-media/unsupported-rtsp.html
-
-# Limit the container and codec types that the <video> tag supports <rdar://problem/5605682>
-media/unsupported-tracks.html
-
 # Fails, could be problem with the test setup <rdar://problem/5674282>
 http/tests/media/video-play-stall.html
 http/tests/media/video-seekable-stall.html

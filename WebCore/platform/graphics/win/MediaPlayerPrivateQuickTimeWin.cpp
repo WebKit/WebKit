@@ -310,7 +310,16 @@ void MediaPlayerPrivate::updateStates()
     MediaPlayer::NetworkState oldNetworkState = m_networkState;
     MediaPlayer::ReadyState oldReadyState = m_readyState;
   
-    long loadState = m_qtMovie ? m_qtMovie->loadState() : -1;
+    long loadState = m_qtMovie ? m_qtMovie->loadState() : QTMovieLoadStateError;
+
+    if (loadState >= QTMovieLoadStateLoaded && m_networkState < MediaPlayer::LoadedMetaData) {
+        unsigned enabledTrackCount;
+        m_qtMovie->disableUnsupportedTracks(enabledTrackCount);
+        // FIXME: We should differentiate between load errors and decode errors <rdar://problem/5605692>
+        if (!enabledTrackCount)
+            loadState = QTMovieLoadStateError;
+    }
+
     // "Loaded" is reserved for fully buffered movies, never the case when streaming
     if (loadState >= QTMovieLoadStateComplete && !m_isStreaming) {
         if (m_networkState < MediaPlayer::Loaded)
@@ -328,7 +337,7 @@ void MediaPlayerPrivate::updateStates()
         if (m_networkState < MediaPlayer::LoadedMetaData)
             m_networkState = MediaPlayer::LoadedMetaData;
         m_readyState = MediaPlayer::DataUnavailable;
-    } else if (loadState >= 0) {
+    } else if (loadState > QTMovieLoadStateError) {
         if (m_networkState < MediaPlayer::Loading)
             m_networkState = MediaPlayer::Loading;
         m_readyState = MediaPlayer::DataUnavailable;        
