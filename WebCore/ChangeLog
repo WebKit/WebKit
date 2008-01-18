@@ -1,3 +1,25 @@
+2008-01-17  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Brady Eidson.
+
+        Fixed <rdar://problem/5622424> World Leak dialog when closing a page
+        that has a Database
+        
+        The problem was that each transaction and SQL statement would hold on
+        to its callback indefinitely. By design, callbacks often establish
+        reference cycles to temporarily protect their execution environments.
+        To break the cycle, we need to explicitly release each callback as soon
+        as it is no longer needed.
+
+        * storage/SQLStatement.cpp:
+        (WebCore::SQLStatement::performCallback): Release our callback objects
+        after performing our callback.
+
+        * storage/SQLTransaction.cpp:
+        (WebCore::SQLTransaction::postflightAndCommit): Release our callback
+        objects after the transaction has terminated.
+        (WebCore::SQLTransaction::cleanupAfterTransactionErrorCallback): ditto.
+
 2008-01-18  Adele Peterson  <adele@apple.com>
 
         Reviewed by Antti.

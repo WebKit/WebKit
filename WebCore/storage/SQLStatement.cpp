@@ -161,6 +161,10 @@ bool SQLStatement::performCallback(SQLTransaction* transaction)
     } else if (m_statementCallback)
         m_statementCallback->handleEvent(transaction, m_resultSet.get(), callbackError);
 
+    // Now release our callbacks, to break reference cycles.
+    m_statementCallback = 0;
+    m_statementErrorCallback = 0;
+
     return callbackError;
 }
 

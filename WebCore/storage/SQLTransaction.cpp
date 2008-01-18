@@ -339,6 +339,10 @@ void SQLTransaction::postflightAndCommit()
     // Transaction Step 10 - End transaction steps
     // There is no next step
     m_nextStep = 0;
+
+    // Now release our callbacks, to break reference cycles.
+    m_callback = 0;
+    m_errorCallback = 0;
 }
 
 void SQLTransaction::handleTransactionError(bool inCallback)
@@ -406,8 +410,10 @@ void SQLTransaction::cleanupAfterTransactionErrorCallback()
     
     // Transaction is complete!  There is no next step
     m_nextStep = 0;
+
+    // Now release our callbacks, to break reference cycles.
+    m_callback = 0;
+    m_errorCallback = 0;
 }
 
 } // namespace WebCore
-
-
