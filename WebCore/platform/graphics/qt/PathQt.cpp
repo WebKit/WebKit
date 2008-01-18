@@ -224,7 +224,7 @@ String Path::debugString() const
 void Path::apply(void* info, PathApplierFunction function) const
 {
     PathElement pelement;
-    FloatPoint points[2];
+    FloatPoint points[3];
     pelement.points = points;
     for (int i = 0; i < m_path->elementCount(); ++i) {
         const QPainterPath::Element& cur = m_path->elementAt(i);

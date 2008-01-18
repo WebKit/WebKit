@@ -2,6 +2,24 @@
 
         Reviewed by Holger.
 
+        Fix svg/custom/path-getTotalLength.svg
+        
+        Path::apply creates a PathElement and its points array on the stack,
+        to fill it in from the QPainterPath data and then use the platform
+        independent path applier functions to calculate properties such as
+        the length. For converting a QPainterPath::CurveToElement we need
+        three points in the path element. However we allocated only two
+        on the stack and as a result we got memory corruption and the
+        failing test.
+        
+
+        * platform/graphics/qt/PathQt.cpp:
+        (WebCore::Path::apply):
+
+2008-01-18  Simon Hausmann  <hausmann@webkit.org>
+
+        Reviewed by Holger.
+
         Fix LayoutTests/fast/dom/document-attribute-js-null.html
         
         Don't crash when trying to get/set cookies without a frameloader.
