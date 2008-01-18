@@ -328,6 +328,9 @@ static inline void* currentThreadStackBase()
         MOV pTib, EAX
     }
     return (void*)pTib->StackBase;
+#elif PLATFORM(WIN_OS) && PLATFORM(X86_64) && COMPILER(MSVC)
+    PNT_TIB64 pTib = reinterpret_cast<PNT_TIB64>(NtCurrentTeb());
+    return (void*)pTib->StackBase;
 #elif PLATFORM(WIN_OS) && PLATFORM(X86) && COMPILER(GCC)
     // offset 0x18 from the FS segment register gives a pointer to
     // the thread information block for the current thread

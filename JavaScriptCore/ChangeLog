@@ -2,6 +2,16 @@
 
         Reviewed by Simon Hausmann <hausmann@webkit.org>.
 
+        Fix compilation on Win64(2): Implemented currentThreadStackBase on X86-64 on Windows
+        
+
+        * kjs/collector.cpp:
+        (KJS::Collector::heapAllocate):
+
+2008-01-18  Prasanth Ullattil  <prasanth.ullattil@trolltech.com>
+
+        Reviewed by Simon Hausmann <hausmann@webkit.org>.
+
         Fix compilation on Win64(1): Define WTF_PLATFORM_X86_64 correctly on Win64.
         
 
