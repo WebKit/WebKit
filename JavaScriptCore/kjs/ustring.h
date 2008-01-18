@@ -165,6 +165,7 @@ namespace KJS {
       mutable unsigned _hash;
       bool isIdentifier;
       UString::Rep* baseString;
+      int reportedCost;
 
       // potentially shared data
       UChar *buf;
@@ -442,22 +443,26 @@ inline unsigned UString::toArrayIndex(bool *ok) const
     return i;
 }
 
+// We'd rather not do shared substring append for small strings, since
+// this runs too much risk of a tiny initial string holding down a
+// huge buffer.
+// FIXME: this should be size_t but that would cause warnings until we
+// fix UString sizes to be size_t instad of int
+static const int minShareSize = Collector::minExtraCostSize / sizeof(UChar);
+
 inline size_t UString::cost() const
 {
-    // If this string is sharing with a base, then don't count any cost. We will never share
-    // with a base that wasn't already big enough to register extra cost, so a string holding that
-    // buffer has already paid extra cost at some point; and if we just
-    // enlarged it by a huge amount, it must have been by appending a string
-    // that itself paid extra cost, or a huge number of small strings. Either way, GC will come
-    // relatively soon.
-  
-    // If we didn't do this, the shared substring optimization would result
-    // in constantly garbage collecting when sharing with one big string.
+   size_t capacity = (m_rep->baseString->capacity + m_rep->baseString->preCapacity) * sizeof(UChar);
+   size_t reportedCost = m_rep->baseString->reportedCost;
+   ASSERT(capacity >= reportedCost);
 
-    if (!m_rep->baseIsSelf())
-        return 0;
+   size_t capacityDelta = capacity - reportedCost;
 
-    return (m_rep->capacity + m_rep->preCapacity) * sizeof(UChar);
+   if (capacityDelta < static_cast<unsigned int>(minShareSize))
+       return 0;
+
+   m_rep->baseString->reportedCost = capacity;
+   return capacityDelta;
 }
 
 } // namespace

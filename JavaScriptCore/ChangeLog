@@ -1,3 +1,17 @@
+2008-01-18  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Geoff.
+
+        - Correctly report cost of appended strings to trigger GC.
+
+        * kjs/ustring.cpp:
+        (KJS::):
+        (KJS::UString::Rep::create):
+        (KJS::UString::UString): Don't create unnecssary objects.
+        (KJS::UString::cost): Report cost if necessary but also keep track of 
+        reported cost.
+        * kjs/ustring.h:
+
 2008-01-18  Simon Hausmann  <hausmann@webkit.org>
 
         Reviewed by Holger.

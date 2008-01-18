@@ -77,15 +77,6 @@ static inline UChar* reallocChars(UChar* buffer, size_t length)
     return static_cast<UChar*>(fastRealloc(buffer, sizeof(UChar) * length));
 }
 
-// we'd rather not do shared substring append for small strings, since
-// this runs too much risk of a tiny initial string holding down a
-// huge buffer. This is also tuned to match the extra cost size, so we
-// don't ever share a buffer that wouldn't be over the extra cost
-// threshold already.
-// FIXME: this should be size_t but that would cause warnings until we
-// fix UString sizes to be size_t instad of int
-static const int minShareSize = Collector::minExtraCostSize / sizeof(UChar);
-
 COMPILE_ASSERT(sizeof(UChar) == 2, uchar_is_2_bytes)
 
 CString::CString(const char *c)
@@ -173,8 +164,8 @@ bool operator==(const CString& c1, const CString& c2)
 
 // Hack here to avoid a global with a constructor; point to an unsigned short instead of a UChar.
 static unsigned short almostUChar;
-UString::Rep UString::Rep::null = { 0, 0, 1, 0, 0, &UString::Rep::null, 0, 0, 0, 0, 0 };
-UString::Rep UString::Rep::empty = { 0, 0, 1, 0, 0, &UString::Rep::empty, reinterpret_cast<UChar*>(&almostUChar), 0, 0, 0, 0 };
+UString::Rep UString::Rep::null = { 0, 0, 1, 0, 0, &UString::Rep::null, 0, 0, 0, 0, 0, 0 };
+UString::Rep UString::Rep::empty = { 0, 0, 1, 0, 0, &UString::Rep::empty, 0, reinterpret_cast<UChar*>(&almostUChar), 0, 0, 0, 0 };
 const int normalStatBufferSize = 4096;
 static char *statBuffer = 0; // FIXME: This buffer is never deallocated.
 static int statBufferSize = 0;
@@ -201,6 +192,7 @@ PassRefPtr<UString::Rep> UString::Rep::create(UChar *d, int l)
   r->_hash = 0;
   r->isIdentifier = 0;
   r->baseString = r;
+  r->reportedCost = 0;
   r->buf = d;
   r->usedCapacity = l;
   r->capacity = l;
@@ -230,6 +222,7 @@ PassRefPtr<UString::Rep> UString::Rep::create(PassRefPtr<Rep> base, int offset, 
   r->_hash = 0;
   r->isIdentifier = 0;
   r->baseString = base.releaseRef();
+  r->reportedCost = 0;
   r->buf = 0;
   r->usedCapacity = 0;
   r->capacity = 0;
@@ -497,7 +490,7 @@ UString::UString(const UString &a, const UString &b)
         m_rep = Rep::create(a.m_rep, 0, length);
     } else
         m_rep = &Rep::null;
-  } else if (-bOffset == b.usedPreCapacity() && bSize >= minShareSize && 4 * bSize >= aSize) {
+  } else if (-bOffset == b.usedPreCapacity() && bSize >= minShareSize  && 4 * bSize >= aSize) {
     // - b reaches the beginning of its buffer so it qualifies for shared prepend
     // - also, it's at least a quarter the length of a - prepending to a much shorter
     //   string does more harm than good
@@ -1288,6 +1281,7 @@ CString UString::UTF8String(bool strict) const
 
   return CString(buffer.data(), p - buffer.data());
 }
+
 
 
 } // namespace KJS

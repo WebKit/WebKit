@@ -1,3 +1,13 @@
+2008-01-18  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Geoff.
+
+        - Correctly report cost of appended strings to trigger GC.
+
+        * fast/js/garbage-collect-after-string-appends-expected.txt: Added.
+        * fast/js/garbage-collect-after-string-appends.html: Added.
+        * fast/js/resources/garbage-collect-after-string-appends.js: Added.
+
 2008-01-18  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Oliver.
