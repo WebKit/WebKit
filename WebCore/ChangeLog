@@ -2720,7 +2720,6 @@
 
         Test: media/constructors.html
 
-        * ChangeLog:
         * WebCore.xcodeproj/project.pbxproj:
         * bindings/js/JSAudioConstructor.cpp: Copied from WebCore/bindings/js/JSHTMLAudioElementConstructor.cpp.
         (WebCore::JSAudioConstructor::JSAudioConstructor):
@@ -8853,7 +8852,6 @@
     
         It doesn't really matter where the QTMovieView is.
 
-        * ChangeLog:
         * platform/graphics/mac/MediaPlayerPrivateQTKit.mm:
         (WebCore::MediaPlayerPrivate::createQTMovieView):
         (WebCore::MediaPlayerPrivate::setRect):
@@ -17963,7 +17961,6 @@
 
         Fix occasional blank video with poster attribute.
 
-        * ChangeLog:
         * html/HTMLMediaElement.cpp:
         (WebCore::HTMLMediaElement::load):
         (WebCore::HTMLMediaElement::didRestoreFromCache):
@@ -22376,7 +22373,6 @@
         of safariPluginsPath() and uses shell API funcs for determining filename
         and parent directory from a full path.
 
-        * ChangeLog:
         * plugins/win/PluginDatabaseWin.cpp:
         (WebCore::safariPluginsPath): Cache return value. Use API functions to
         build the path
