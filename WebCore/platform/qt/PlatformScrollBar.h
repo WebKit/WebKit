@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2004, 2005, 2006, 2007 Apple Inc.  All rights reserved.
  * Copyright (C) 2007 Staikos Computing Services Inc. <info@staikos.net>
+ * Copyright (C) 2007 Trolltech ASA
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -56,14 +57,13 @@ public:
     virtual bool handleMousePressEvent(const PlatformMouseEvent&);
     virtual bool handleMouseReleaseEvent(const PlatformMouseEvent&);
 
-    virtual IntRect windowClipRect() const;
-
     bool isEnabled() const;
 
     static int horizontalScrollbarHeight(ScrollbarControlSize size = RegularScrollbar);
     static int verticalScrollbarWidth(ScrollbarControlSize size = RegularScrollbar);
 
     void autoscrollTimerFired(Timer<PlatformScrollbar>*);
+    void invalidate();
 
 protected:    
     virtual void updateThumbPosition();

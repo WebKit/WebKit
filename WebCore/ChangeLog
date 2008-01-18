@@ -2,6 +2,19 @@
 
         Reviewed by Simon.
 
+        * Remove our windowClipRect reimplementation and instead have our own
+        Widget::invalidate implementation that is invalidating
+        IntRect(0, 0, width(), height()) without trying to clip it (in contrast
+        to Widget::invalidateRect)
+
+        * platform/qt/PlatformScrollBar.h:
+        * platform/qt/PlatformScrollBarQt.cpp:
+        (WebCore::PlatformScrollbar::invalidate):
+
+2008-01-18  Holger Hans Peter Freyther  <holger.freyther@trolltech.com>
+
+        Reviewed by Simon.
+
         * Change the coordinate transformation in the PlatformMouseEvent handlers
         * We want to convert from coordinates of the containing window to our local
         position on the scrollbar.
