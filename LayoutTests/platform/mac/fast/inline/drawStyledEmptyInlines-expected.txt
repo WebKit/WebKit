@@ -23,16 +23,16 @@ layer at (0,0) size 800x600
         RenderBR {BR} at (0,18) size 0x18
         RenderText {#text} at (0,36) size 261x18
           text run at (0,36) width 261: "There should be a blue box after this text:"
-        RenderInline {A} at (0,0) size 10x18 [bgcolor=#0000FF]
+        RenderInline {A} at (0,0) size 10x28 [bgcolor=#0000FF]
         RenderText {#text} at (271,36) size 4x18
           text run at (271,36) width 4: " "
         RenderBR {BR} at (275,50) size 0x0
-        RenderInline {A} at (0,0) size 10x18 [bgcolor=#0000FF]
+        RenderInline {A} at (0,0) size 10x28 [bgcolor=#0000FF]
         RenderText {#text} at (10,54) size 277x18
           text run at (10,54) width 277: "There should be a blue box before this text. "
         RenderBR {BR} at (0,0) size 0x0
         RenderBR {BR} at (0,72) size 0x18
-        RenderInline {A} at (0,0) size 10x18
+        RenderInline {A} at (0,0) size 10x28
         RenderText {#text} at (10,90) size 323x18
           text run at (10,90) width 323: "There should be 10px of space left before this text. "
         RenderBR {BR} at (0,0) size 0x0

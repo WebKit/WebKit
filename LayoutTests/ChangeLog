@@ -1,5 +1,38 @@
 2008-01-18  David Hyatt  <hyatt@apple.com>
 
+        Update inline results after previous checkins.  New results match Firefox more closely.
+
+        * platform/mac/fast/inline/001-expected.checksum:
+        * platform/mac/fast/inline/001-expected.png:
+        * platform/mac/fast/inline/002-expected.checksum:
+        * platform/mac/fast/inline/002-expected.png:
+        * platform/mac/fast/inline/br-text-decoration-expected.checksum:
+        * platform/mac/fast/inline/br-text-decoration-expected.png:
+        * platform/mac/fast/inline/continuation-outlines-expected.checksum:
+        * platform/mac/fast/inline/continuation-outlines-expected.png:
+        * platform/mac/fast/inline/continuation-outlines-with-layers-expected.checksum:
+        * platform/mac/fast/inline/continuation-outlines-with-layers-expected.png:
+        * platform/mac/fast/inline/dirtyLinesForInline-expected.checksum:
+        * platform/mac/fast/inline/dirtyLinesForInline-expected.png:
+        * platform/mac/fast/inline/drawStyledEmptyInlines-expected.checksum:
+        * platform/mac/fast/inline/drawStyledEmptyInlines-expected.png:
+        * platform/mac/fast/inline/drawStyledEmptyInlines-expected.txt:
+        * platform/mac/fast/inline/drawStyledEmptyInlinesWithWS-expected.checksum:
+        * platform/mac/fast/inline/drawStyledEmptyInlinesWithWS-expected.png:
+        * platform/mac/fast/inline/emptyInlinesWithinLists-expected.checksum:
+        * platform/mac/fast/inline/emptyInlinesWithinLists-expected.png:
+        * platform/mac/fast/inline/emptyInlinesWithinLists-expected.txt:
+        * platform/mac/fast/inline/inline-borders-with-bidi-override-expected.checksum:
+        * platform/mac/fast/inline/inline-borders-with-bidi-override-expected.png:
+        * platform/mac/fast/inline/outline-continuations-expected.checksum:
+        * platform/mac/fast/inline/outline-continuations-expected.png:
+        * platform/mac/fast/inline/positionedLifetime-expected.checksum:
+        * platform/mac/fast/inline/positionedLifetime-expected.png:
+        * platform/mac/fast/inline/styledEmptyInlinesWithBRs-expected.checksum:
+        * platform/mac/fast/inline/styledEmptyInlinesWithBRs-expected.png:
+
+2008-01-18  David Hyatt  <hyatt@apple.com>
+
         Fix for http://bugs.webkit.org/show_bug.cgi?id=15665
 
         Reviewed by Beth
