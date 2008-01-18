@@ -2,6 +2,17 @@
 
         Reviewed by Simon.
 
+        * Make the qDebug more usable. Do not have an additional newline and print
+        the untranslated coordinates as well.
+
+        * platform/qt/PlatformScrollBarQt.cpp:
+        (WebCore::PlatformScrollbar::handleMouseMoveEvent):
+        (WebCore::PlatformScrollbar::handleMousePressEvent):
+
+2008-01-18  Holger Hans Peter Freyther  <holger.freyther@trolltech.com>
+
+        Reviewed by Simon.
+
         * Dead code, remove it
 
         * platform/qt/PlatformScrollBarQt.cpp:

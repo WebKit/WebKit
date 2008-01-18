@@ -198,7 +198,7 @@ int PlatformScrollbar::trackLength() const
 bool PlatformScrollbar::handleMouseMoveEvent(const PlatformMouseEvent& evt)
 {
     const QPoint pos = parent()->convertFromContainingWindow(evt.pos());
-    //qDebug() << "PlatformScrollbar::handleMouseMoveEvent" << m_opt.rect << pos << endl;
+    //qDebug() << "PlatformScrollbar::handleMouseMoveEvent" << m_opt.rect << pos << evt.pos();
 
     m_opt.state |= QStyle::State_MouseOver;
     const QPoint ctlPt = m_opt.rect.topLeft();
@@ -275,7 +275,7 @@ bool PlatformScrollbar::handleMouseOutEvent(const PlatformMouseEvent& evt)
 bool PlatformScrollbar::handleMousePressEvent(const PlatformMouseEvent& evt)
 {
     const QPoint pos = parent()->convertFromContainingWindow(evt.pos());
-    //qDebug() << "PlatformScrollbar::handleMousePressEvent" << m_opt.rect << pos << endl;
+    //qDebug() << "PlatformScrollbar::handleMousePressEvent" << m_opt.rect << pos << evt.pos();
 
     const QPoint ctlPt = m_opt.rect.topLeft();
     m_opt.rect.moveTo(0, 0);
