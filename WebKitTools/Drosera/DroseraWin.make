@@ -5,7 +5,7 @@ BUILDSTYLE=Debug_Internal
 !ENDIF
 
 install:
-	set WebKitLibrariesDir="$(SRCROOT)\AppleInternal"
+	set WebKitLibrariesDir=$(SRCROOT)\AppleInternal
 	set WebKitOutputDir=$(OBJROOT)
 	set PRODUCTION=1
 	devenv "win\Drosera.vcproj\Drosera.vcproj" /rebuild $(BUILDSTYLE)

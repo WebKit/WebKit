@@ -5,7 +5,7 @@ BUILDSTYLE=Debug_Internal
 !ENDIF
 
 install:
-	set WebKitLibrariesDir="$(SRCROOT)\AppleInternal"
+	set WebKitLibrariesDir=$(SRCROOT)\AppleInternal
 	set WebKitOutputDir=$(OBJROOT)
 	set PRODUCTION=1
 	xcopy "$(SRCROOT)\AppleInternal\obj\WebKit\DOMInterfaces\*" "$(OBJROOT)\obj\WebKit\DOMInterfaces" /e/v/i/h/y
