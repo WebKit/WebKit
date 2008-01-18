@@ -68,6 +68,7 @@ void QNetworkReplyHandler::abort()
         disconnect(m_reply, 0, this, 0);
         m_reply->abort();
         deleteLater();
+        m_reply = 0;
     }
 }
 

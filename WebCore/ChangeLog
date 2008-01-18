@@ -1,3 +1,15 @@
+2008-01-18  Simon Hausmann  <hausmann@webkit.org>
+
+        Reviewed by Holger.
+
+        Make QNetworkReplyHandler::abort() more robust against multiple invocations.
+
+        During DRT runs I see cancel() being called on the same handle multiple times. Guard
+        against this a bit better by setting m_reply to 0 after we called abort() on it.
+
+        * platform/network/qt/QNetworkReplyHandler.cpp:
+        (WebCore::QNetworkReplyHandler::abort):
+
 2008-01-18  Holger Hans Peter Freyther  <holger.freyther@trolltech.com>
 
         Reviewed by Simon.
