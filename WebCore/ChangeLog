@@ -1,3 +1,20 @@
+2008-01-18  Geoffrey Garen  <ggaren@apple.com>
+
+        Not reviewed: rolling out a previous patch.
+        
+        Fixed <rdar://problem/5695439> Crash during GCController destructor on
+        quitting browser
+
+        Used svn merge to roll out r29603 because it introduced some crashes
+        on quit.
+        
+        GC relies on static hash tables, so it's not safe to GC from a static
+        destructor, which might run after the static hash tables' destructors.
+
+        * bindings/js/GCController.cpp:
+        (WebCore::GCController::garbageCollectNow):
+        * bindings/js/GCController.h:
+
 2008-01-18  David Hyatt  <hyatt@apple.com>
 
         Fix for http://bugs.webkit.org/show_bug.cgi?id=14975

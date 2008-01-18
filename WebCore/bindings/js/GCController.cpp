@@ -55,14 +55,6 @@ GCController::GCController()
 {
 }
 
-#ifndef NDEBUG
-GCController::~GCController()
-{
-    if (m_GCTimer.isActive())
-        garbageCollectNow();
-}
-#endif
-
 void GCController::garbageCollectSoon()
 {
     if (!m_GCTimer.isActive())
@@ -77,8 +69,6 @@ void GCController::gcTimerFired(Timer<GCController>*)
 
 void GCController::garbageCollectNow()
 {
-    m_GCTimer.stop();
-
     JSLock lock;
     Collector::collect();
 }

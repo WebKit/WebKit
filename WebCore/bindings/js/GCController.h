@@ -42,9 +42,6 @@ namespace WebCore {
 
     private:
         GCController(); // Use gcController() instead
-#ifndef NDEBUG
-        ~GCController();
-#endif
         void gcTimerFired(Timer<GCController>*);
         
         Timer<GCController> m_GCTimer;
