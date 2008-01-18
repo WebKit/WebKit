@@ -1,3 +1,14 @@
+2008-01-18  Marius Storm-Olsen  <marius@trolltech.com>
+
+        Reviewed by Simon Hausmann <hausmann@webkit.org>.
+
+        Add use of precompiled header, when building inside Qt.
+        
+        Compiling WebKit was taking forever; 17 minutes on my machine for _one_ build! Adding the PCH at least brings it down to 12 minutes for one build, for me.
+        
+
+        * WebKit_pch.h: Added.
+
 2008-01-18  Holger Hans Peter Freyther  <holger.freyther@trolltech.com>
 
         Reviewed by Simon.
