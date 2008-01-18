@@ -431,7 +431,7 @@ void InlineFlowBox::computeLogicalBoxHeights(int& maxPositionTop, int& maxPositi
         }
         else
             setBaseline(object()->baselinePosition(m_firstLine, true));
-        if (hasTextChildren() || object()->hasBordersPaddingOrMargin() || strictMode) {
+        if (hasTextChildren() || strictMode) {
             int ascent = baseline();
             int descent = height() - ascent;
             if (maxAscent < ascent)
@@ -546,7 +546,7 @@ void InlineFlowBox::placeBoxesVertically(int y, int maxHeight, int maxAscent, bo
         setHeight(font.ascent() + font.descent());
         setYPos(yPos() + baseline() - font.ascent());
         setBaseline(font.ascent());
-        if (hasTextChildren() || object()->hasBordersPaddingOrMargin() || strictMode) {
+        if (hasTextChildren() || strictMode) {
             selectionTop = min(selectionTop, yPos());
             selectionBottom = max(selectionBottom, yPos() + height());
         }
