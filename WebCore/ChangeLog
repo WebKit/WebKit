@@ -2,6 +2,19 @@
 
         Reviewed by Holger.
 
+        Fix LayoutTests/fast/dom/document-attribute-js-null.html
+        
+        Don't crash when trying to get/set cookies without a frameloader.
+        
+
+        * platform/qt/CookieJarQt.cpp:
+        (WebCore::setCookies):
+        (WebCore::cookies):
+
+2008-01-18  Simon Hausmann  <hausmann@webkit.org>
+
+        Reviewed by Holger.
+
         Fix fast/dom/xmlhttprequest-get.xhtml
         
         For local file requests remove the content length and the last-modified
