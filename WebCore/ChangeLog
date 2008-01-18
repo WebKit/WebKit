@@ -1,3 +1,17 @@
+2008-01-18  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Adam Roben.
+
+        <rdar://problem/5693558> REGRESSION (r29581): no form field focus
+        rings and inactive text selection after loading a page
+        Bug 16910: [GTK] REGRESSION: keyboard cursor doesn't blink
+        Bug 16917: REGRESSION (r29581/2): Google Maps search box loses focused appearance
+
+        * page/FocusController.cpp:
+        (WebCore::FocusController::setActive): Use focusedOrMainFrame() instead of focusedFrame()
+        to call selectionController()->pageActivationChanged() for cases when the focusedFrame()
+        has not been set yet. 
+
 2008-01-18  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Brady.

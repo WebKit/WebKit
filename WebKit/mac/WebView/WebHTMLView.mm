@@ -1692,11 +1692,6 @@ static void _updateMouseoverTimerCallback(CFRunLoopTimerRef timer, void *info)
     [_private->highlighters removeObjectForKey:type];
 }
 
-- (BOOL)_web_firstResponderCausesFocusDisplay
-{
-    return [[self window] firstResponder] == self || [[self window] firstResponder] == [self _frameView];
-}
-
 - (void)_updateFocusedAndActiveState
 {
     [self _cancelUpdateFocusedAndActiveStateTimer];
@@ -1726,8 +1721,10 @@ static void _updateMouseoverTimerCallback(CFRunLoopTimerRef timer, void *info)
     BOOL windowIsKey = [window isKeyWindow];
     BOOL windowOrSheetIsKey = windowIsKey || [[window attachedSheet] isKeyWindow];
 
-    BOOL isActive = !_private->resigningFirstResponder && windowIsKey && [self _web_firstResponderCausesFocusDisplay];
-    page->focusController()->setActive(isActive);
+    // FIXME: this can move to WebView since active state is Page level, not Frame level.
+    NSResponder *firstResponder = [window firstResponder];
+    if (firstResponder == self || firstResponder == [self _frameView])
+        page->focusController()->setActive(!_private->resigningFirstResponder && windowIsKey);
 
     Frame* focusedFrame = page->focusController()->focusedOrMainFrame();
     frame->selectionController()->setFocused(frame == focusedFrame && windowOrSheetIsKey);

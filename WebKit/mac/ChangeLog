@@ -1,3 +1,20 @@
+2008-01-17  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Adam Roben.
+
+        <rdar://problem/5693558> REGRESSION (r29581): no form field focus rings
+        and inactive text selection after loading a page
+        Bug 16917: REGRESSION (r29581/2): Google Maps search box loses focused appearance
+
+        The problem was other frames were changing the FocusController's active
+        status to false after the first responder frame set it to true. The last
+        frame to call _updateActiveState would win.
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView _updateActiveState]): Only call page->focusController()->setActive()
+        if the first responder is the current WebHTMLView or the WebFrameView.
+        (-[WebHTMLView _web_firstResponderCausesFocusDisplay]): Removed, inlined code in _updateActiveState.
+
 2008-01-18  Adam Roben  <aroben@apple.com>
 
         Rename _updateActiveState to _updateFocusedAndActiveState

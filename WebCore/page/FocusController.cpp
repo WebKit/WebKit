@@ -304,8 +304,7 @@ void FocusController::setActive(bool active)
         view->updateControlTints();
 #endif
 
-    if (Frame* frame = focusedFrame())
-        frame->selectionController()->pageActivationChanged();
+    focusedOrMainFrame()->selectionController()->pageActivationChanged();
 }
 
 } // namespace WebCore
