@@ -1,5 +1,26 @@
 2008-01-17  Oliver Hunt  <oliver@apple.com>
 
+        Support smart copy and paste during drag and drop
+        
+        Reviewed by Alice
+        
+        In order for the drag and drop tests in Windows DRT to pass
+        we need to support smart cut and paste operations during
+        drag and drop on windows.
+        
+        There is no layout test as drag and drop is still unsupported
+        on windows.  Once supported smart drag/drop is tested by existing
+        tests
+
+        * platform/win/ClipboardUtilitiesWin.cpp:
+        (WebCore::smartPasteFormat):
+        * platform/win/ClipboardUtilitiesWin.h:
+        * platform/win/ClipboardWin.cpp:
+        (WebCore::ClipboardWin::writeRange):
+        * platform/win/DragDataWin.cpp:
+
+2008-01-17  Oliver Hunt  <oliver@apple.com>
+
         Reviewed by Anders.
 
         <rdar://problem/5692940> Crash when attempting to get text properties in

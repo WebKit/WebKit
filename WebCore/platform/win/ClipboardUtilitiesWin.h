@@ -49,6 +49,7 @@ FORMATETC* filenameWFormat();
 FORMATETC* filenameFormat();
 FORMATETC* htmlFormat();
 FORMATETC* cfHDropFormat();
+FORMATETC* smartPasteFormat();
 
 DeprecatedCString markupToCF_HTML(const String& markup, const String& srcURL);
 String urlToMarkup(const KURL& url, const String& title);

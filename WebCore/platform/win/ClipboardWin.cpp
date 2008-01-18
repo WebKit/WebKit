@@ -33,6 +33,7 @@
 #include "DeprecatedString.h"
 #include "Document.h"
 #include "DragData.h"
+#include "Editor.h"
 #include "Element.h"
 #include "EventHandler.h"
 #include "Frame.h"
@@ -728,6 +729,10 @@ void ClipboardWin::writeRange(Range* selectedRange, Frame* frame)
     medium.hGlobal = createGlobalData(str);
     if (medium.hGlobal && FAILED(m_writableDataObject->SetData(plainTextWFormat(), &medium, TRUE)))
         ::GlobalFree(medium.hGlobal);
+
+    medium.hGlobal = 0;
+    if (frame->editor()->canSmartCopyOrDelete())
+        m_writableDataObject->SetData(smartPasteFormat(), &medium, TRUE);
 }
 
 bool ClipboardWin::hasData()

@@ -265,6 +265,13 @@ FORMATETC* htmlFormat()
     return &htmlFormat;
 }
 
+FORMATETC* smartPasteFormat()
+{
+    static UINT cf = RegisterClipboardFormat(L"WebKit Smart Paste Format");
+    static FORMATETC htmlFormat = {cf, 0, DVASPECT_CONTENT, -1, TYMED_HGLOBAL};
+    return &htmlFormat;
+}
+
 static bool urlFromPath(CFStringRef path, String& url)
 {
     if (!path)
