@@ -2,6 +2,14 @@
 
         Reviewed by Simon.
 
+        * Dead code, remove it
+
+        * platform/qt/PlatformScrollBarQt.cpp:
+
+2008-01-18  Holger Hans Peter Freyther  <holger.freyther@trolltech.com>
+
+        Reviewed by Simon.
+
         * Coding-Style fixes.
 
         * platform/qt/PlatformScrollBarQt.cpp:
