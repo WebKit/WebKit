@@ -1,3 +1,21 @@
+2008-01-18  Simon Hausmann  <hausmann@webkit.org>
+
+        Reviewed by Holger.
+
+        Fix return type conversions from Qt slots to JS values.
+        
+        This also fixes fast/dom/open-and-close-by-DOM.html, which called
+        layoutTestController.windowCount().
+        
+        When constructing the QVariant that holds the return type we cannot
+        use the QVarian(Type) constuctor as that will create a null variant.
+        We have to use the QVariant(Type, void *) constructor instead, just
+        like in QMetaObject::read() for example.
+        
+
+        * bindings/qt/qt_instance.cpp:
+        (KJS::Bindings::QtInstance::getRuntimeObject):
+
 2008-01-18  Prasanth Ullattil  <prasanth.ullattil@trolltech.com>
 
         Reviewed by Simon Hausmann <hausmann@webkit.org>.
