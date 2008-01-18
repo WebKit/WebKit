@@ -127,16 +127,26 @@ void QNetworkReplyHandler::sendResponseIfNeeded()
                               encoding,
                               filenameFromHTTPContentDisposition(contentDisposition));
 
+    const bool isLocalFileReply = (m_reply->url().scheme() == QLatin1String("file"));
     int statusCode = m_reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
-    if (m_reply->url().scheme() != QLatin1String("file"))
+    if (!isLocalFileReply)
         response.setHTTPStatusCode(statusCode);
     else if (m_reply->error() == QNetworkReply::ContentNotFoundError)
         response.setHTTPStatusCode(404);
 
 
-    /* Fill in the other fields */
-    foreach (QByteArray headerName, m_reply->rawHeaderList())
+    /* Fill in the other fields
+     * For local file requests remove the content length and the last-modified
+     * headers as required by fast/dom/xmlhttprequest-get.xhtml
+     */
+    foreach (QByteArray headerName, m_reply->rawHeaderList()) {
+
+        if (isLocalFileReply
+            && (headerName == "Content-Length" || headerName == "Last-Modified"))
+            continue;
+
         response.setHTTPHeaderField(QString::fromAscii(headerName), QString::fromAscii(m_reply->rawHeader(headerName)));
+    }
 
     QUrl redirection = m_reply->attribute(QNetworkRequest::RedirectionTargetAttribute).toUrl();
     if (redirection.isValid()) {

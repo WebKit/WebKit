@@ -2,6 +2,19 @@
 
         Reviewed by Holger.
 
+        Fix fast/dom/xmlhttprequest-get.xhtml
+        
+        For local file requests remove the content length and the last-modified
+        headers in the response.
+        
+
+        * platform/network/qt/QNetworkReplyHandler.cpp:
+        (WebCore::QNetworkReplyHandler::sendResponseIfNeeded):
+
+2008-01-18  Simon Hausmann  <hausmann@webkit.org>
+
+        Reviewed by Holger.
+
         Fix fast/forms/form-post-urlencoded.html.
         
         Post requests on files don't really make sense, but for
