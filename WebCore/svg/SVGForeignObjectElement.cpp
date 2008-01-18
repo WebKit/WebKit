@@ -21,7 +21,7 @@
 
 #include "config.h"
 
-#if ENABLE(SVG)
+#if ENABLE(SVG) && ENABLE(SVG_FOREIGN_OBJECT)
 #include "SVGForeignObjectElement.h"
 
 #include "CSSPropertyNames.h"
@@ -91,6 +91,6 @@ bool SVGForeignObjectElement::childShouldCreateRenderer(Node* child) const
 
 } // namespace WebCore
 
-#endif // ENABLE(SVG)
+#endif // ENABLE(SVG) && ENABLE(SVG_FOREIGN_OBJECT)
 
 // vim:ts=4:noet

@@ -1,3 +1,27 @@
+2008-01-18  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Oliver.
+
+        Disables SVG foreign object for <rdar://problem/5686989> turn off 
+        SVG foreignobject because it does not repaint/dirty correctly
+
+        * DerivedSources.make:
+        * WebCore.SVG.ForeignObject.exp: Added.
+        * WebCore.SVG.exp:
+        * bindings/js/JSSVGElementWrapperFactory.cpp:
+        (WebCore::createJSSVGWrapper):
+        * rendering/RenderForeignObject.cpp:
+        * rendering/RenderForeignObject.h:
+        * svg/SVGForeignObjectElement.cpp:
+        * svg/SVGForeignObjectElement.h:
+        * svg/SVGForeignObjectElement.idl:
+        * svg/SVGLocatable.cpp:
+        (WebCore::SVGLocatable::nearestViewportElement):
+        (WebCore::SVGLocatable::farthestViewportElement):
+        * svg/SVGUseElement.cpp:
+        (WebCore::isDisallowedElement):
+        * svg/svgtags.in:
+
 2008-01-18  Mark Rowe  <mrowe@apple.com>
 
         Rubber-stamped by Adam Roben.

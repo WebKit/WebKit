@@ -22,7 +22,7 @@
 
 #ifndef RenderForeignObject_h
 #define RenderForeignObject_h
-#if ENABLE(SVG)
+#if ENABLE(SVG) && ENABLE(SVG_FOREIGN_OBJECT)
 
 #include "AffineTransform.h"
 #include "RenderSVGBlock.h"
@@ -57,5 +57,5 @@ public:
 
 } // namespace WebCore
 
-#endif // ENABLE(SVG)
+#endif // ENABLE(SVG) && ENABLE(SVG_FOREIGN_OBJECT)
 #endif // RenderForeignObject_h

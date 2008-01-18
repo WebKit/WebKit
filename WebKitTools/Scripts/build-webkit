@@ -43,6 +43,7 @@ my $svgSupport = 1;
 my $svgExperimentalSupport = 0;
 my $svgAnimationSupport = $svgExperimentalSupport;
 my $svgFiltersSupport = $svgExperimentalSupport;
+my $svgForeignObjectSupport = $svgForeignObjectSupport;
 my $svgUseSupport = 1;
 my $svgFontsSupport = 1;
 my $svgAsImageSupport = 1;
@@ -62,6 +63,7 @@ Usage: $programName [options] [options to pass to build system]
                                 implies SVG Support)
   --[no-]svg-animation          Toggle SVG animation support (default: $svgAnimationSupport, implies SVG Support)
   --[no-]svg-filters            Toggle SVG filters support (default: $svgFiltersSupport, implies SVG Support)
+  --[no-]svg-foreign-object     Toggle SVG forgeing object support (default: $svgForeignObjectSupport, implies SVG Support)
   --[no-]svg-fonts              Toggle SVG fonts support (default: $svgFontsSupport, implies SVG Support)
   --[no-]svg-as-image           Toggle SVG as Image support (default: $svgAsImageSupport, implies SVG Support)
   --[no-]svg-use                Toggle SVG use element support (default: $svgUseSupport, implies SVG Support)
@@ -75,6 +77,7 @@ GetOptions('svg!' => \$svgSupport,
            'svg-experimental!' => \$svgExperimentalSupport,
            'svg-animation!' => \$svgAnimationSupport,
            'svg-filters!' => \$svgFiltersSupport,
+           'svg-foreign-object!' => \$svgForeignObjectSupport,
            'svg-fonts!' => \$svgFontsSupport,
            'svg-as-image!' => \$svgAsImageSupport,
            'svg-use!' => \$svgUseSupport,
@@ -93,6 +96,7 @@ if ($showHelp) {
 $svgExperimentalSupport = 0 unless $svgSupport;
 $svgAnimationSupport = 0 unless $svgSupport;
 $svgFiltersSupport = 0 unless $svgSupport;
+$svgForeignObjectSupport = 0 unless $svgSupport;
 $svgFontsSupport = 0 unless $svgSupport;
 $svgAsImageSupport = 0 unless $svgSupport;
 $svgUseSupport = 0 unless $svgSupport;
@@ -100,6 +104,7 @@ $svgUseSupport = 0 unless $svgSupport;
 if ($svgExperimentalSupport) {
     $svgAnimationSupport = 1;
     $svgFiltersSupport = 1;
+    $svgForeignObjectSupport = 1;
     $svgFontsSupport = 1;
     $svgAsImageSupport = 1;
     $svgUseSupport = 1;
@@ -140,6 +145,7 @@ push @overrideFeatureDefinesOption, "ENABLE_ICONDATABASE";
 push @overrideFeatureDefinesOption, "ENABLE_SVG" if $svgSupport;
 push @overrideFeatureDefinesOption, "ENABLE_SVG_ANIMATION" if $svgAnimationSupport;
 push @overrideFeatureDefinesOption, "ENABLE_SVG_FILTERS" if $svgFiltersSupport;
+push @overrifeFeatureDefinesOption, "ENABLE_SVG_FOREIGN_OBJECT" if $svgForeignObjectSupport;
 push @overrideFeatureDefinesOption, "ENABLE_SVG_FONTS" if $svgFontsSupport;
 push @overrideFeatureDefinesOption, "ENABLE_SVG_AS_IMAGE" if $svgAsImageSupport;
 push @overrideFeatureDefinesOption, "ENABLE_SVG_USE" if $svgUseSupport;
@@ -262,11 +268,12 @@ if ($svgSupport) {
     print "\n NOTE: WebKit has been built with SVG support enabled.\n";
     print " $launcherName will have SVG viewing capabilities.\n";
 }
-if ($svgAnimationSupport or $svgFiltersSupport or $svgFontsSupport or $svgAsImageSupport or $svgUseSupport) {
+if ($svgAnimationSupport or $svgFiltersSupport or $svgForeignObjectSupport or $svgFontsSupport or $svgAsImageSupport or $svgUseSupport) {
     print "\n NOTE: WebKit has been built with experimental SVG features enabled.\n";
     print " Your build supports: \n";
     print "  * Basic SVG animation.\n" if $svgAnimationSupport;
     print "  * SVG filters.\n" if $svgFiltersSupport;
+    print "  * SVG foreign object.\n" if $svgForeignObjectSupport;
     print "  * SVG fonts.\n" if $svgFontsSupport;
     print "  * SVG as image.\n" if $svgAsImageSupport;
     print "  * SVG <use> support.\n" if $svgUseSupport;

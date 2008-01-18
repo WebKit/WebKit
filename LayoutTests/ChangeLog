@@ -1,3 +1,72 @@
+2008-01-18  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Oliver.
+
+        Changed test results from disabling SVG foreign object for <rdar://
+        problem/5686989> turn off SVG foreignobject because it does not 
+        repaint/dirty correctly
+
+        * platform/mac/svg/custom/baseval-animval-equality-expected.checksum: Replaced.
+        * platform/mac/svg/custom/baseval-animval-equality-expected.png: Replaced.
+        * platform/mac/svg/custom/baseval-animval-equality-expected.txt: Replaced.
+        * platform/mac/svg/custom/dominant-baseline-hanging-expected.checksum: Replaced.
+        * platform/mac/svg/custom/dominant-baseline-hanging-expected.png: Replaced.
+        * platform/mac/svg/custom/dominant-baseline-hanging-expected.txt: Replaced.
+        * platform/mac/svg/custom/dynamic-svg-document-creation-expected.checksum: Replaced.
+        * platform/mac/svg/custom/dynamic-svg-document-creation-expected.png: Replaced.
+        * platform/mac/svg/custom/dynamic-svg-document-creation-expected.txt: Replaced.
+        * platform/mac/svg/custom/fill-SVGPaint-interface-expected.checksum: Replaced.
+        * platform/mac/svg/custom/fill-SVGPaint-interface-expected.png: Replaced.
+        * platform/mac/svg/custom/fill-SVGPaint-interface-expected.txt: Replaced.
+        * platform/mac/svg/custom/foreign-object-skew-expected.checksum: Replaced.
+        * platform/mac/svg/custom/foreign-object-skew-expected.png: Replaced.
+        * platform/mac/svg/custom/foreign-object-skew-expected.txt: Replaced.
+        * platform/mac/svg/custom/foreignObject-crash-on-hover-expected.checksum: Replaced.
+        * platform/mac/svg/custom/foreignObject-crash-on-hover-expected.png: Replaced.
+        * platform/mac/svg/custom/foreignObject-crash-on-hover-expected.txt: Replaced.
+        * platform/mac/svg/custom/getPresentationAttribute-expected.checksum: Replaced.
+        * platform/mac/svg/custom/getPresentationAttribute-expected.png: Replaced.
+        * platform/mac/svg/custom/getPresentationAttribute-expected.txt: Replaced.
+        * platform/mac/svg/custom/use-on-disallowed-foreign-object-1-expected.checksum: Replaced.
+        * platform/mac/svg/custom/use-on-disallowed-foreign-object-1-expected.png: Replaced.
+        * platform/mac/svg/custom/use-on-disallowed-foreign-object-1-expected.txt: Replaced.
+        * platform/mac/svg/custom/use-on-disallowed-foreign-object-2-expected.checksum: Replaced.
+        * platform/mac/svg/custom/use-on-disallowed-foreign-object-2-expected.png: Replaced.
+        * platform/mac/svg/custom/use-on-disallowed-foreign-object-2-expected.txt: Replaced.
+        * platform/mac/svg/custom/use-on-disallowed-foreign-object-3-expected.checksum: Replaced.
+        * platform/mac/svg/custom/use-on-disallowed-foreign-object-3-expected.png: Replaced.
+        * platform/mac/svg/custom/use-on-disallowed-foreign-object-3-expected.txt: Replaced.
+        * platform/mac/svg/custom/use-on-disallowed-foreign-object-4-expected.checksum: Replaced.
+        * platform/mac/svg/custom/use-on-disallowed-foreign-object-4-expected.png: Replaced.
+        * platform/mac/svg/custom/use-on-disallowed-foreign-object-4-expected.txt: Replaced.
+        * platform/mac/svg/custom/use-on-disallowed-foreign-object-5-expected.checksum: Replaced.
+        * platform/mac/svg/custom/use-on-disallowed-foreign-object-5-expected.png: Replaced.
+        * platform/mac/svg/custom/use-on-disallowed-foreign-object-5-expected.txt: Replaced.
+        * platform/mac/svg/custom/use-on-disallowed-foreign-object-6-expected.checksum: Replaced.
+        * platform/mac/svg/custom/use-on-disallowed-foreign-object-6-expected.png: Replaced.
+        * platform/mac/svg/custom/use-on-disallowed-foreign-object-6-expected.txt: Replaced.
+        * platform/mac/svg/custom/use-on-g-containing-foreignObject-and-image-expected.checksum: Replaced.
+        * platform/mac/svg/custom/use-on-g-containing-foreignObject-and-image-expected.png: Replaced.
+        * platform/mac/svg/custom/use-on-g-containing-foreignObject-and-image-expected.txt: Replaced.
+        * platform/mac/svg/custom/use-on-non-svg-namespaced-element-expected.checksum: Replaced.
+        * platform/mac/svg/custom/use-on-non-svg-namespaced-element-expected.png: Replaced.
+        * platform/mac/svg/custom/use-on-non-svg-namespaced-element-expected.txt: Replaced.
+        * platform/mac/svg/hixie/mixed/006-expected.checksum: Replaced.
+        * platform/mac/svg/hixie/mixed/006-expected.png: Replaced.
+        * platform/mac/svg/hixie/mixed/006-expected.txt: Replaced.
+        * platform/mac/svg/hixie/mixed/007-expected.checksum: Replaced.
+        * platform/mac/svg/hixie/mixed/007-expected.png: Replaced.
+        * platform/mac/svg/hixie/mixed/007-expected.txt: Replaced.
+        * platform/mac/svg/hixie/mixed/008-expected.checksum: Replaced.
+        * platform/mac/svg/hixie/mixed/008-expected.png: Replaced.
+        * platform/mac/svg/hixie/mixed/008-expected.txt: Replaced.
+        * platform/mac/svg/hixie/mixed/009-expected.checksum: Replaced.
+        * platform/mac/svg/hixie/mixed/009-expected.png: Replaced.
+        * platform/mac/svg/hixie/mixed/009-expected.txt: Replaced.
+        * platform/mac/svg/hixie/mixed/011-expected.checksum: Replaced.
+        * platform/mac/svg/hixie/mixed/011-expected.png: Replaced.
+        * platform/mac/svg/hixie/mixed/011-expected.txt: Replaced.
+
 2008-01-18  Adam Roben  <aroben@apple.com>
 
         Reviewed by Adele.

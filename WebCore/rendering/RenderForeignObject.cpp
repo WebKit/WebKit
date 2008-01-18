@@ -22,7 +22,7 @@
 
 #include "config.h"
 
-#if ENABLE(SVG)
+#if ENABLE(SVG) && ENABLE(SVG_FOREIGN_OBJECT)
 #include "RenderForeignObject.h"
 
 #include "GraphicsContext.h"
@@ -129,4 +129,4 @@ bool RenderForeignObject::nodeAtPoint(const HitTestRequest& request, HitTestResu
 
 } // namespace WebCore
 
-#endif // ENABLE(SVG)
+#endif // ENABLE(SVG) && ENABLE(SVG_FOREIGN_OBJECT)

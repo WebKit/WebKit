@@ -235,6 +235,14 @@ typedef JSNode* (*CreateSVGElementWrapperFunction)(ExecState*, PassRefPtr<SVGEle
 #define FOR_EACH_FILTER_TAG(macro)
 #endif
 
+#if ENABLE(SVG_FOREIGN_OBJECT)
+#define FOR_EACH_FOREIGN_OBJECT_TAG(macro) \
+    macro(foreignObject, ForeignObject) \
+    // end of macro
+#else
+#define FOR_EACH_FOREIGN_OBJECT_TAG(macro)
+#endif
+
 #define FOR_EACH_TAG(macro) \
     macro(a, A) \
     macro(circle, Circle) \
@@ -243,7 +251,6 @@ typedef JSNode* (*CreateSVGElementWrapperFunction)(ExecState*, PassRefPtr<SVGEle
     macro(defs, Defs) \
     macro(desc, Desc) \
     macro(ellipse, Ellipse) \
-    macro(foreignObject, ForeignObject) \
     macro(g, G) \
     macro(image, Image) \
     macro(linearGradient, LinearGradient) \
@@ -282,6 +289,7 @@ FOR_EACH_TAG(CREATE_WRAPPER_FUNCTION)
 FOR_EACH_ANIMATION_TAG(CREATE_WRAPPER_FUNCTION)
 FOR_EACH_FONT_TAG(CREATE_WRAPPER_FUNCTION)
 FOR_EACH_FILTER_TAG(CREATE_WRAPPER_FUNCTION)
+FOR_EACH_FOREIGN_OBJECT_TAG(CREATE_WRAPPER_FUNCTION)
 
 #undef CREATE_WRAPPER_FUNCTION
 
@@ -294,6 +302,7 @@ FOR_EACH_TAG(ADD_TO_HASH_MAP)
 FOR_EACH_ANIMATION_TAG(ADD_TO_HASH_MAP)
 FOR_EACH_FONT_TAG(ADD_TO_HASH_MAP)
 FOR_EACH_FILTER_TAG(ADD_TO_HASH_MAP)
+FOR_EACH_FOREIGN_OBJECT_TAG(ADD_TO_HASH_MAP)
 #undef ADD_TO_HASH_MAP
     }
     CreateSVGElementWrapperFunction createWrapperFunction = map.get(element->localName().impl());

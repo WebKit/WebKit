@@ -45,8 +45,12 @@ SVGElement* SVGLocatable::nearestViewportElement(const SVGStyledElement* e)
     Node* n = e->parentNode();
     while (n && !n->isDocumentNode()) {
         if (n->hasTagName(SVGNames::svgTag) || n->hasTagName(SVGNames::symbolTag) ||
-            n->hasTagName(SVGNames::imageTag) || n->hasTagName(SVGNames::foreignObjectTag))
+            n->hasTagName(SVGNames::imageTag))
             return static_cast<SVGElement*>(n);
+#if ENABLE(SVG_FOREIGN_OBJECT)
+        if (n->hasTagName(SVGNames::foreignObjectTag))
+            return static_cast<SVGElement*>(n);
+#endif
 
         n = n->parentNode();
     }
@@ -64,8 +68,12 @@ SVGElement* SVGLocatable::farthestViewportElement(const SVGStyledElement* e)
     Node* n = e->parentNode();
     while (n && !n->isDocumentNode()) {
         if (n->hasTagName(SVGNames::svgTag) || n->hasTagName(SVGNames::symbolTag) ||
-            n->hasTagName(SVGNames::imageTag) || n->hasTagName(SVGNames::foreignObjectTag))
+            n->hasTagName(SVGNames::imageTag))
             farthest = static_cast<SVGElement*>(n);
+#if ENABLE(SVG_FOREIGN_OBJECT)
+        if (n->hasTagName(SVGNames::foreignObjectTag))
+            farthest = static_cast<SVGElement*>(n);
+#endif
 
         n = n->parentNode();
     }
