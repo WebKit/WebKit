@@ -60,6 +60,33 @@
             <img src="win_watsongui.jpg" alt="Dr Watson window">
         </li>
     </ol>
+    <h4>Windows Vista</h4>
+    <p>Windows Vista does not include Dr. Watson. Instead, Windows Error Reporting (WER) has been integrated into the operating system.
+       By default, Vista uploads the crash logs to Microsoft, but does not save a local copy. This is configurable via the registry.</p>
+    <ol>
+        <li>
+            <p>Save the following text to a file named <tt>wer.reg</tt>:</p><tt style="white-space:pre">Windows Registry Editor Version 5.00
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\Windows Error Reporting]
+"ForceQueue"=dword:00000001
+</tt>
+        </li>
+        <li><p>Double-click the file from Windows Explorer and respond affirmatively to any prompts.</p></li>
+        <li><p>Reboot</p></li>        
+    </ol>
+    <p>
+        The next time Safari (or any other application) crashes, the crash information will be written into a folder located inside <tt>%LOCALAPPDATA%\Microsoft\Windows\WER\ReportQueue</tt>.
+        Check the modification date to make sure you are using the correct file.
+    </p>
+    <p>Be sure to include the following files in your bug report:</p>
+    <dl style="margin-left:2em">
+        <dt><tt>WER<em>xxxx</em>.tmp.mdmp</tt></dt>
+        <dd>This is the most important file. It contains the crash dump that can be opened inside Visual Studio or other Windows debuggers.</dd>
+        <dt><tt>WER<em>xxxx</em>.tmp.version.txt</tt></dt>
+        <dd>Contains the operating system version and other hardware information.</dd>
+        <dt><tt>WER<em>xxxx</em>.tmp.appcompat.txt</tt></dt>
+        <dd>Lists all of the DLLs loaded at the time of the crash with their version information.</dd>
+    </dl>
 </div>
 
 <?php
