@@ -274,9 +274,10 @@ void DatabaseTracker::populateOrigins()
         return;
 
     int result;
-    RefPtr<SecurityOrigin> origin = SecurityOrigin::createFromIdentifier(statement.getColumnText16(0));
-    while ((result = statement.step()) == SQLResultRow)
+    while ((result = statement.step()) == SQLResultRow) {
+        RefPtr<SecurityOrigin> origin = SecurityOrigin::createFromIdentifier(statement.getColumnText16(0));
         m_originQuotaMap->set(origin.get(), statement.getColumnInt64(1));
+    }
 
     if (result != SQLResultDone)
         LOG_ERROR("Failed to read in all origins from the database");
