@@ -1,3 +1,13 @@
+2008-01-18  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Adam Roben.
+
+        Fix plugin-related tests in Debug_Internal configuration, which are failing because of CRT version mismatch
+        between DRT and TestNetscapePlugin.
+
+        * DumpRenderTree/win/TestNetscapePlugin/TestNetscapePlugin.vcproj: Added a Debug_Internal configuration.
+        * DumpRenderTree/DumpRenderTree.sln: Use this configuration.
+
 2008-01-18  Simon Hausmann  <hausmann@webkit.org>
 
         Reviewed by Holger.
