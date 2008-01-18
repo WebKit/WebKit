@@ -89,13 +89,13 @@ private:
 
 };
 
-ImageDecoderQt::ReadContext::ReadContext(const IncomingData & data, LoadMode loadMode, ImageList &target) :
-    m_loadMode(loadMode),
-    m_data(data.data(), data.size()),
-    m_buffer(&m_data),
-    m_reader(&m_buffer),
-    m_target(target),
-    m_dataFormat(QImage::Format_Invalid)
+ImageDecoderQt::ReadContext::ReadContext(const IncomingData & data, LoadMode loadMode, ImageList &target)
+    : m_loadMode(loadMode)
+    , m_data(data.data(), data.size())
+    , m_buffer(&m_data)
+    , m_reader(&m_buffer)
+    , m_target(target)
+    , m_dataFormat(QImage::Format_Invalid)
 {
     m_buffer.open(QIODevice::ReadOnly);
 }
