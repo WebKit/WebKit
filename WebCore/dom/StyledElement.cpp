@@ -254,11 +254,6 @@ CSSStyleDeclaration* StyledElement::style()
     return getInlineStyleDecl();
 }
 
-CSSMutableStyleDeclaration* StyledElement::additionalAttributeStyleDecl()
-{
-    return 0;
-}
-
 const ClassNames* StyledElement::getClassNames() const
 {
     return namedAttrMap ? mappedAttributes()->getClassNames() : 0;

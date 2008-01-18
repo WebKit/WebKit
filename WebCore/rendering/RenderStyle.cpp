@@ -30,7 +30,7 @@ namespace WebCore {
 static RenderStyle* defaultStyle;
 
 StyleSurroundData::StyleSurroundData()
-    : margin(Fixed), padding(Auto)
+    : margin(Fixed), padding(Fixed)
 {
 }
 

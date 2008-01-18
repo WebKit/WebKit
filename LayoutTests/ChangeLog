@@ -1,3 +1,43 @@
+2008-01-18  David Hyatt  <hyatt@apple.com>
+
+        Updated results for http://bugs.webkit.org/show_bug.cgi?id=14975
+
+        Reviewed by Antti
+
+        * fast/css/computed-style-without-renderer-expected.txt:
+        * fast/css/padding-no-renderer-expected.txt: Added.
+        * fast/css/padding-no-renderer.html: Added.
+        * platform/mac/fast/css/acid2-expected.checksum:
+        * platform/mac/fast/css/acid2-expected.png:
+        * platform/mac/fast/css/acid2-expected.txt:
+        * platform/mac/fast/css/acid2-pixel-expected.checksum:
+        * platform/mac/fast/css/acid2-pixel-expected.png:
+        * platform/mac/fast/css/acid2-pixel-expected.txt:
+        * platform/mac/fast/frames/viewsource-attribute-expected.checksum:
+        * platform/mac/fast/frames/viewsource-attribute-expected.png:
+        * platform/mac/fast/frames/viewsource-attribute-expected.txt:
+        * platform/mac/fast/lists/ordered-list-with-no-ol-tag-expected.checksum:
+        * platform/mac/fast/lists/ordered-list-with-no-ol-tag-expected.png:
+        * platform/mac/fast/lists/ordered-list-with-no-ol-tag-expected.txt:
+        * platform/mac/fast/table/add-before-anonymous-child-expected.checksum:
+        * platform/mac/fast/table/add-before-anonymous-child-expected.png:
+        * platform/mac/fast/table/add-before-anonymous-child-expected.txt:
+        * platform/mac/fast/table/cell-absolute-child-expected.checksum:
+        * platform/mac/fast/table/cell-absolute-child-expected.png:
+        * platform/mac/fast/table/cell-absolute-child-expected.txt:
+        * platform/mac/fast/table/frame-and-rules-expected.checksum:
+        * platform/mac/fast/table/frame-and-rules-expected.png:
+        * platform/mac/fast/table/frame-and-rules-expected.txt:
+        * platform/mac/http/tests/misc/acid2-expected.checksum:
+        * platform/mac/http/tests/misc/acid2-expected.png:
+        * platform/mac/http/tests/misc/acid2-expected.txt:
+        * platform/mac/http/tests/misc/acid2-pixel-expected.checksum:
+        * platform/mac/http/tests/misc/acid2-pixel-expected.png:
+        * platform/mac/http/tests/misc/acid2-pixel-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug30985-expected.checksum:
+        * platform/mac/tables/mozilla/bugs/bug30985-expected.png:
+        * platform/mac/tables/mozilla/bugs/bug30985-expected.txt:
+
 2008-01-18  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Dave Hyatt.

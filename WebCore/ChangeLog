@@ -1,3 +1,69 @@
+2008-01-18  David Hyatt  <hyatt@apple.com>
+
+        Fix for http://bugs.webkit.org/show_bug.cgi?id=14975
+
+        Computed size of padding is incorrect because we default padding to auto.  This is a made-up value that
+        was only used to implement cellpadding on tables.  We needed this made-up value in order to tell that
+        padding wasn't set so that we could then apply cellpadding.
+       
+        This patch rewrites cellpadding to be like other browsers.  Instead of being a setting on the table
+        renderer that applies to all cells (even ones that were not <td>s), cellpadding is now mapped into the
+        style of <td>s.  With this change it effectively becomes a content model feature and not a rendering
+        feature.
+
+        For example, a <td> will pick up cellpadding even when it is not a cell and/or the enclosing <table> is
+        not a table.  Anonymous cells and CSS-display-type cells will now never pick up cellpadding.  This behavior
+        is all consistent with other browsers.
+
+        Reviewed by Antti
+
+        Added fast/css/padding-no-renderer.html
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::canShareStyleWithElement):
+        (WebCore::CSSStyleSelector::styleForElement):
+        * css/CSSStyleSelector.h:
+        * dom/StyledElement.cpp:
+        * dom/StyledElement.h:
+        (WebCore::StyledElement::canHaveAdditionalAttributeStyleDecls):
+        (WebCore::StyledElement::additionalAttributeStyleDecls):
+        * html/HTMLTableCellElement.cpp:
+        (WebCore::HTMLTableCellElement::additionalAttributeStyleDecls):
+        * html/HTMLTableCellElement.h:
+        (WebCore::HTMLTableCellElement::canHaveAdditionalAttributeStyleDecls):
+        * html/HTMLTableColElement.cpp:
+        (WebCore::HTMLTableColElement::additionalAttributeStyleDecls):
+        * html/HTMLTableColElement.h:
+        (WebCore::HTMLTableColElement::canHaveAdditionalAttributeStyleDecls):
+        * html/HTMLTableElement.cpp:
+        (WebCore::HTMLTableElement::parseMappedAttribute):
+        (WebCore::HTMLTableElement::additionalAttributeStyleDecls):
+        (WebCore::HTMLTableElement::addSharedCellDecls):
+        (WebCore::HTMLTableElement::addSharedCellBordersDecl):
+        (WebCore::HTMLTableElement::addSharedCellPaddingDecl):
+        (WebCore::HTMLTableElement::addSharedGroupDecls):
+        (WebCore::HTMLTableElement::attach):
+        * html/HTMLTableElement.h:
+        (WebCore::HTMLTableElement::canHaveAdditionalAttributeStyleDecls):
+        * html/HTMLTableSectionElement.cpp:
+        (WebCore::HTMLTableSectionElement::additionalAttributeStyleDecls):
+        * html/HTMLTableSectionElement.h:
+        (WebCore::HTMLTableSectionElement::canHaveAdditionalAttributeStyleDecls):
+        * rendering/AutoTableLayout.cpp:
+        (WebCore::AutoTableLayout::recalcColumn):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::paddingTop):
+        (WebCore::RenderObject::paddingBottom):
+        (WebCore::RenderObject::paddingLeft):
+        (WebCore::RenderObject::paddingRight):
+        * rendering/RenderStyle.cpp:
+        (WebCore::StyleSurroundData::StyleSurroundData):
+        * rendering/RenderStyle.h:
+        (WebCore::RenderStyle::initialPadding):
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::RenderTable):
+        * rendering/RenderTable.h:
+
 2008-01-18  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Dave Hyatt.

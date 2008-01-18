@@ -766,7 +766,8 @@ bool CSSStyleSelector::canShareStyleWithElement(Node* n)
             (s->getAttribute(typeAttr) == m_element->getAttribute(typeAttr)) &&
             (s->getAttribute(XMLNames::langAttr) == m_element->getAttribute(XMLNames::langAttr)) &&
             (s->getAttribute(langAttr) == m_element->getAttribute(langAttr)) &&
-            (s->getAttribute(readonlyAttr) == m_element->getAttribute(readonlyAttr))) {
+            (s->getAttribute(readonlyAttr) == m_element->getAttribute(readonlyAttr)) &&
+            (s->getAttribute(cellpaddingAttr) == m_element->getAttribute(cellpaddingAttr))) {
             bool isControl = s->isControl();
             if (isControl != m_element->isControl())
                 return false;
@@ -939,12 +940,17 @@ RenderStyle* CSSStyleSelector::styleForElement(Element* e, RenderStyle* defaultP
             // Now we check additional mapped declarations.
             // Tables and table cells share an additional mapped rule that must be applied
             // after all attributes, since their mapped style depends on the values of multiple attributes.
-            CSSMutableStyleDeclaration* attributeDecl = m_styledElement->additionalAttributeStyleDecl();
-            if (attributeDecl) {
-                lastAuthorRule = m_matchedDecls.size();
-                if (firstAuthorRule == -1)
-                    firstAuthorRule = lastAuthorRule;
-                addMatchedDeclaration(attributeDecl);
+            if (m_styledElement->canHaveAdditionalAttributeStyleDecls()) {
+                m_additionalAttributeStyleDecls.clear();
+                m_styledElement->additionalAttributeStyleDecls(m_additionalAttributeStyleDecls);
+                if (!m_additionalAttributeStyleDecls.isEmpty()) {
+                    unsigned additionalDeclsSize = m_additionalAttributeStyleDecls.size();
+                    if (firstAuthorRule == -1)
+                        firstAuthorRule = m_matchedDecls.size();
+                    lastAuthorRule = m_matchedDecls.size() + additionalDeclsSize - 1;
+                    for (unsigned i = 0; i < additionalDeclsSize; i++)
+                        addMatchedDeclaration(m_additionalAttributeStyleDecls[i]);
+                }
             }
         }
     

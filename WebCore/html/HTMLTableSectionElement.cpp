@@ -66,13 +66,14 @@ ContainerNode* HTMLTableSectionElement::addChild(PassRefPtr<Node> child)
 }
 
 // used by table row groups to share style decls created by the enclosing table.
-CSSMutableStyleDeclaration* HTMLTableSectionElement::additionalAttributeStyleDecl()
+void HTMLTableSectionElement::additionalAttributeStyleDecls(Vector<CSSMutableStyleDeclaration*>& results)
 {
     Node* p = parentNode();
     while (p && !p->hasTagName(tableTag))
         p = p->parentNode();
-
-    return p ?  static_cast<HTMLTableElement*>(p)->getSharedGroupDecl(true) : 0;
+    if (!p)
+        return;
+    static_cast<HTMLTableElement*>(p)->addSharedGroupDecls(true, results);
 }
 
 // these functions are rather slow, since we need to get the row at

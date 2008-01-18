@@ -116,12 +116,14 @@ void HTMLTableCellElement::parseMappedAttribute(MappedAttribute *attr)
 }
 
 // used by table cells to share style decls created by the enclosing table.
-CSSMutableStyleDeclaration* HTMLTableCellElement::additionalAttributeStyleDecl()
+void HTMLTableCellElement::additionalAttributeStyleDecls(Vector<CSSMutableStyleDeclaration*>& results)
 {
     Node* p = parentNode();
     while (p && !p->hasTagName(tableTag))
         p = p->parentNode();
-    return p ? static_cast<HTMLTableElement*>(p)->getSharedCellDecl() : 0;
+    if (!p)
+        return;
+    static_cast<HTMLTableElement*>(p)->addSharedCellDecls(results);
 }
 
 bool HTMLTableCellElement::isURLAttribute(Attribute *attr) const

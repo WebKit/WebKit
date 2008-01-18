@@ -86,12 +86,16 @@ void HTMLTableColElement::parseMappedAttribute(MappedAttribute *attr)
 }
 
 // used by table columns and column groups to share style decls created by the enclosing table.
-CSSMutableStyleDeclaration* HTMLTableColElement::additionalAttributeStyleDecl()
+void HTMLTableColElement::additionalAttributeStyleDecls(Vector<CSSMutableStyleDeclaration*>& results)
 {
+    if (!hasLocalName(colgroupTag))
+        return;
     Node* p = parentNode();
     while (p && !p->hasTagName(tableTag))
         p = p->parentNode();
-    return hasLocalName(colgroupTag) && p ? static_cast<HTMLTableElement*>(p)->getSharedGroupDecl(false) : 0;
+    if (!p)
+        return;
+    static_cast<HTMLTableElement*>(p)->addSharedGroupDecls(false, results);
 }
 
 String HTMLTableColElement::align() const

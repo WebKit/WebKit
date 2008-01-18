@@ -2150,7 +2150,7 @@ public:
     static Length initialMaxSize() { return Length(undefinedLength, Fixed); }
     static Length initialOffset() { return Length(); }
     static Length initialMargin() { return Length(Fixed); }
-    static Length initialPadding() { return Length(Auto); }
+    static Length initialPadding() { return Length(Fixed); }
     static Length initialTextIndent() { return Length(Fixed); }
     static EVerticalAlign initialVerticalAlign() { return BASELINE; }
     static int initialWidows() { return 2; }

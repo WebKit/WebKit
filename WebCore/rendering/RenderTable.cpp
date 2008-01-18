@@ -56,7 +56,6 @@ RenderTable::RenderTable(Node* node)
     , m_frame(Void)
     , m_rules(None)
     , m_hasColElements(false)
-    , m_padding(0)
     , m_needsSectionRecalc(0)
     , m_hSpacing(0)
     , m_vSpacing(0)
@@ -91,28 +90,6 @@ void RenderTable::setStyle(RenderStyle* newStyle)
             m_tableLayout = new FixedTableLayout(this);
         else
             m_tableLayout = new AutoTableLayout(this);
-    }
-}
-
-void RenderTable::setCellPadding(unsigned p)
-{
-    if (p == m_padding)
-        return;
-    
-    m_padding = p;
-    for (RenderObject* section = firstChild(); section; section = section->nextSibling()) {
-        if (section->isTableSection()) {
-            for (RenderObject* row = section->firstChild(); row; row = row->nextSibling()) {
-                if (row->isTableRow()) {
-                    for (RenderObject* cell = row->firstChild(); cell; cell = cell->nextSibling()) {
-                        if (cell->isTableCell()) {
-                            cell->setChildNeedsLayout(true);
-                            cell->setPrefWidthsDirty(true);
-                        }
-                    }
-                }
-            }
-        }
     }
 }
 

@@ -239,8 +239,11 @@ class StyledElement;
         RefPtr<CSSFontSelector> m_fontSelector;
 
         HashSet<AtomicStringImpl*> m_selectorAttrs;
-
+        
+        Vector<CSSMutableStyleDeclaration*> m_additionalAttributeStyleDecls;
+        
         void applyProperty(int id, CSSValue*);
+
 #if ENABLE(SVG)
         void applySVGProperty(int id, CSSValue*);
 #endif

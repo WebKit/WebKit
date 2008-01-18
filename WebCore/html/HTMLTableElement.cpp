@@ -317,7 +317,8 @@ static bool setTableCellsChanged(Node* n)
 void HTMLTableElement::parseMappedAttribute(MappedAttribute* attr)
 {
     CellBorders bordersBefore = cellBorders();
-    
+    unsigned short oldPadding = m_padding;
+
     if (attr->name() == widthAttr)
         addCSSLength(attr, CSS_PROP_WIDTH, attr->value());
     else if (attr->name() == heightAttr)
@@ -424,8 +425,6 @@ void HTMLTableElement::parseMappedAttribute(MappedAttribute* attr)
             m_padding = max(0, attr->value().toInt());
         else
             m_padding = 1;
-        if (renderer() && renderer()->isTable())
-            static_cast<RenderTable*>(renderer())->setCellPadding(m_padding);
     } else if (attr->name() == colsAttr) {
         // ###
     } else if (attr->name() == vspaceAttr) {
@@ -448,7 +447,9 @@ void HTMLTableElement::parseMappedAttribute(MappedAttribute* attr)
     } else
         HTMLElement::parseMappedAttribute(attr);
 
-    if (bordersBefore != cellBorders()) {
+    if (bordersBefore != cellBorders() || oldPadding != m_padding) {
+        if (oldPadding != m_padding)
+            m_paddingDecl = 0;
         bool cellChanged = false;
         for (Node* child = firstChild(); child; child = child->nextSibling())
             cellChanged |= setTableCellsChanged(child);
@@ -457,10 +458,10 @@ void HTMLTableElement::parseMappedAttribute(MappedAttribute* attr)
     }
 }
 
-CSSMutableStyleDeclaration* HTMLTableElement::additionalAttributeStyleDecl()
+void HTMLTableElement::additionalAttributeStyleDecls(Vector<CSSMutableStyleDeclaration*>& results)
 {
     if ((!m_borderAttr && !m_borderColorAttr) || m_frameAttr)
-        return 0;
+        return;
         
     MappedAttribute attr(tableborderAttr, m_borderColorAttr ? "solid" : "outset");
     CSSMappedAttributeDeclaration* decl = getMappedAttributeDecl(ePersistent, &attr);
@@ -483,7 +484,9 @@ CSSMutableStyleDeclaration* HTMLTableElement::additionalAttributeStyleDecl()
         decl->setNode(0);
         decl->setMappedState(ePersistent, attr.name(), attr.value());
     }
-    return decl;
+    
+    
+    results.append(decl);
 }
 
 HTMLTableElement::CellBorders HTMLTableElement::cellBorders() const
@@ -509,7 +512,13 @@ HTMLTableElement::CellBorders HTMLTableElement::cellBorders() const
     return NoBorders;
 }
 
-CSSMutableStyleDeclaration* HTMLTableElement::getSharedCellDecl()
+void HTMLTableElement::addSharedCellDecls(Vector<CSSMutableStyleDeclaration*>& results)
+{
+    addSharedCellBordersDecl(results);
+    addSharedCellPaddingDecl(results);
+}
+
+void HTMLTableElement::addSharedCellBordersDecl(Vector<CSSMutableStyleDeclaration*>& results)
 {
     CellBorders borders = cellBorders();
 
@@ -566,13 +575,44 @@ CSSMutableStyleDeclaration* HTMLTableElement::getSharedCellDecl()
         decl->setNode(0);
         decl->setMappedState(ePersistent, attr.name(), attr.value());
     }
-    return decl;
+    
+    results.append(decl);
 }
 
-CSSMutableStyleDeclaration* HTMLTableElement::getSharedGroupDecl(bool rows)
+void HTMLTableElement::addSharedCellPaddingDecl(Vector<CSSMutableStyleDeclaration*>& results)
+{
+    if (m_padding == 0)
+        return;
+
+    if (!m_paddingDecl) {
+        String numericStr = String::number(m_padding);
+        MappedAttribute attr(cellpaddingAttr, numericStr);
+        m_paddingDecl = getMappedAttributeDecl(eUniversal, &attr);
+        if (!m_paddingDecl) {
+            m_paddingDecl = new CSSMappedAttributeDeclaration(0);
+            m_paddingDecl->setParent(document()->elementSheet());
+            m_paddingDecl->setNode(this);
+            m_paddingDecl->setStrictParsing(false); // Mapped attributes are just always quirky.
+            
+            m_paddingDecl->setProperty(CSS_PROP_PADDING_TOP, numericStr, false);
+            m_paddingDecl->setProperty(CSS_PROP_PADDING_RIGHT, numericStr, false);
+            m_paddingDecl->setProperty(CSS_PROP_PADDING_BOTTOM, numericStr, false);
+            m_paddingDecl->setProperty(CSS_PROP_PADDING_LEFT, numericStr, false);
+        }
+        setMappedAttributeDecl(eUniversal, &attr, m_paddingDecl.get());
+        m_paddingDecl->setParent(0);
+        m_paddingDecl->setNode(0);
+        m_paddingDecl->setMappedState(eUniversal, attr.name(), attr.value());
+    }
+    
+    results.append(m_paddingDecl.get());
+}
+
+void HTMLTableElement::addSharedGroupDecls(bool rows, Vector<CSSMutableStyleDeclaration*>& results)
+
 {
     if (m_rulesAttr != GroupsRules)
-        return 0;
+        return;
 
     MappedAttribute attr(rulesAttr, rows ? "rowgroups" : "colgroups");
     CSSMappedAttributeDeclaration* decl = getMappedAttributeDecl(ePersistent, &attr);
@@ -602,15 +642,13 @@ CSSMutableStyleDeclaration* HTMLTableElement::getSharedGroupDecl(bool rows)
         decl->setMappedState(ePersistent, attr.name(), attr.value());
     }
 
-    return decl;
+    results.append(decl);
 }
 
 void HTMLTableElement::attach()
 {
     ASSERT(!m_attached);
     HTMLElement::attach();
-    if (renderer() && renderer()->isTable())
-        static_cast<RenderTable*>(renderer())->setCellPadding(m_padding);
 }
 
 bool HTMLTableElement::isURLAttribute(Attribute *attr) const

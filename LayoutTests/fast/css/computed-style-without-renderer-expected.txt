@@ -53,10 +53,10 @@ Computed style of an element whose parent's 'display' value is 'none':
     outline-width: 0px
     overflow-x: visible
     overflow-y: visible
-    padding-bottom: auto
-    padding-left: auto
-    padding-right: auto
-    padding-top: auto
+    padding-bottom: 0px
+    padding-left: 0px
+    padding-right: 0px
+    padding-top: 0px
     page-break-after: auto
     page-break-before: auto
     page-break-inside: auto

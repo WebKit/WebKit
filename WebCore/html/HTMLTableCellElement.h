@@ -55,7 +55,8 @@ public:
     virtual void parseMappedAttribute(MappedAttribute*);
 
     // used by table cells to share style decls created by the enclosing table.
-    virtual CSSMutableStyleDeclaration* additionalAttributeStyleDecl();
+    virtual bool canHaveAdditionalAttributeStyleDecls() const { return true; }
+    virtual void additionalAttributeStyleDecls(Vector<CSSMutableStyleDeclaration*>&);
     
     virtual bool isURLAttribute(Attribute*) const;
 
