@@ -17,6 +17,29 @@
 
 2008-01-18  David Hyatt  <hyatt@apple.com>
 
+        Fix for http://bugs.webkit.org/show_bug.cgi?id=15665
+
+        Building on Beth's earlier work to start building line boxes for empty inlines, this patch makes more
+        empty inline cases work.  Empty inlines on lines by themselves now set isLineEmpty to false so that
+        bidiReorderLine will get properly called.  In addition, the "shrink boxes with no text children" quirk
+        needs to be disabled for inlines with padding, margins or borders.
+
+        Reviewed by Beth
+
+        Added fast/inline/inline-padding-disables-text-quirk.html
+
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::computeLogicalBoxHeights):
+        (WebCore::InlineFlowBox::placeBoxesVertically):
+        (WebCore::InlineFlowBox::shrinkBoxesWithNoTextChildren):
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::hasBordersPaddingOrMargin):
+        * rendering/bidi.cpp:
+        (WebCore::inlineFlowRequiresLineBox):
+        (WebCore::RenderBlock::findNextLineBreak):
+
+2008-01-18  David Hyatt  <hyatt@apple.com>
+
         Fix for http://bugs.webkit.org/show_bug.cgi?id=14975
 
         Computed size of padding is incorrect because we default padding to auto.  This is a made-up value that

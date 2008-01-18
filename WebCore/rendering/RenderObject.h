@@ -324,6 +324,10 @@ public:
     bool hasBoxDecorations() const { return m_paintBackground; }
     bool mustRepaintBackgroundOrBorder() const;
 
+    bool hasBordersPaddingOrMargin() const { return borderLeft() != 0 || borderRight() != 0 || borderTop() != 0 || borderBottom() != 0 ||
+                                                    paddingLeft() != 0 || paddingRight() != 0 || paddingTop() != 0 || paddingBottom() != 0 ||
+                                                    marginLeft() != 0 || marginRight() != 0 || marginTop() != 0 || marginBottom() != 0; }
+
     bool needsLayout() const { return m_needsLayout || m_normalChildNeedsLayout || m_posChildNeedsLayout; }
     bool selfNeedsLayout() const { return m_needsLayout; }
     bool posChildNeedsLayout() const { return m_posChildNeedsLayout; }

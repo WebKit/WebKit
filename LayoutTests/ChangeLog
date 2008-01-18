@@ -1,5 +1,16 @@
 2008-01-18  David Hyatt  <hyatt@apple.com>
 
+        Fix for http://bugs.webkit.org/show_bug.cgi?id=15665
+
+        Reviewed by Beth
+
+        * fast/inline/inline-padding-disables-text-quirk.html: Added.
+        * platform/mac/fast/inline/inline-padding-disables-text-quirk-expected.checksum: Added.
+        * platform/mac/fast/inline/inline-padding-disables-text-quirk-expected.png: Added.
+        * platform/mac/fast/inline/inline-padding-disables-text-quirk-expected.txt: Added.
+
+2008-01-18  David Hyatt  <hyatt@apple.com>
+
         Updated results for http://bugs.webkit.org/show_bug.cgi?id=14975
 
         Reviewed by Antti
