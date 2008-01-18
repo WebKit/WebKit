@@ -93,7 +93,7 @@ interface IWebViewPrivate : IUnknown
     HRESULT visibleContentRect([out, retval] LPRECT rect);
     
     // SPI for DumpRenderTree
-    HRESULT updateActiveState();
+    HRESULT updateFocusedAndActiveState();
 
     // Support for displaying multiple text matches.
     HRESULT markAllMatchesForText([in] BSTR search, [in] BOOL caseSensitive, [in] BOOL highlight, [in] UINT limit, [out] UINT* matches);

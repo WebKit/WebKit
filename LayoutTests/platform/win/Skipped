@@ -421,8 +421,3 @@ http/tests/xmlhttprequest/failed-auth.html
 http/tests/xmlhttprequest/connection-error-sync.html
 plugins/netscape-plugin-setwindow-size.html
 svg/custom/gradient-stop-style-change.svg
-
-# <rdar://problem/5693854> REGRESSION: fast/events/content-changed-during-drop.html and fast/events/frame-click-focus.html fail due to 29581
-fast/events/content-changed-during-drop.html
-fast/events/frame-click-focus.html
-

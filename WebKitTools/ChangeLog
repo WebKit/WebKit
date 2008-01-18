@@ -1,3 +1,19 @@
+2008-01-18  Adam Roben  <aroben@apple.com>
+
+        Updated for method renames
+
+        Reviewed by Adele.
+
+        * DumpRenderTree/mac/FrameLoadDelegate.mm:
+        (-[FrameLoadDelegate webView:didCommitLoadForFrame:]):
+        * DumpRenderTree/mac/LayoutTestControllerMac.mm:
+        (LayoutTestController::setMainFrameIsFirstResponder):
+        (LayoutTestController::setWindowIsKey):
+        * DumpRenderTree/mac/UIDelegate.mm:
+        (-[UIDelegate webViewFocus:]):
+        * DumpRenderTree/win/FrameLoadDelegate.cpp:
+        (FrameLoadDelegate::didCommitLoadForFrame):
+
 2008-01-18  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Adam Roben.

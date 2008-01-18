@@ -1,3 +1,24 @@
+2008-01-18  Adam Roben  <aroben@apple.com>
+
+        Fix <rdar://5693854> REGRESSION (r29581): fast/events/frame-click-focus.html failing
+
+        Restored the previous behavior of IWebViewPrivate::updateActiveState,
+        which DRT depends on, and renamed it to
+        IWebViewPrivate::updateFocusedAndActiveState to be clearer about its
+        side-effects.
+
+        Reviewed by Adele.
+
+        * Interfaces/IWebViewPrivate.idl:
+        * WebView.cpp:
+        (WebViewWndProc): Removed some FIXMEs that we no longer want to fix
+        because the current design is better.
+        (WebView::updateActiveState): This is now just a method of WebView,
+        not any of its public interfaces.
+        (WebView::updateFocusedAndActiveState): Performs the tasks that the
+        old IWebViewPrivate::updateActiveState performed.
+        * WebView.h:
+
 2008-01-18  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Adam Roben.

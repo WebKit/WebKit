@@ -100,7 +100,7 @@ DumpRenderTreeDraggingInfo *draggingInfo = nil;
     layoutTestController->setWindowIsKey(true);
     NSView *documentView = [[mainFrame frameView] documentView];
     if ([documentView isKindOfClass:[WebHTMLView class]])
-        [(WebHTMLView *)documentView _updateActiveState];
+        [(WebHTMLView *)documentView _updateFocusedAndActiveState];
 }
 
 - (WebView *)webView:(WebView *)sender createWebViewWithRequest:(NSURLRequest *)request

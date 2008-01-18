@@ -410,7 +410,7 @@ static NSCellStateValue kit(TriState state)
 {
     ASSERT(!autoscrollTimer);
     ASSERT(!autoscrollTriggerEvent);
-    ASSERT(!updateActiveStateTimer);
+    ASSERT(!updateFocusedAndActiveStateTimer);
     ASSERT(!updateMouseoverTimer);
     
     [mouseDownEvent release];
@@ -801,12 +801,12 @@ static NSURL* uniqueURLWithRelativePart(NSString *relativePart)
     _private->mouseDownEvent = event;
 }
 
-- (void)_cancelUpdateActiveStateTimer
+- (void)_cancelUpdateFocusedAndActiveStateTimer
 {
-    if (_private->updateActiveStateTimer) {
-        CFRunLoopTimerInvalidate(_private->updateActiveStateTimer);
-        CFRelease(_private->updateActiveStateTimer);
-        _private->updateActiveStateTimer = NULL;
+    if (_private->updateFocusedAndActiveStateTimer) {
+        CFRunLoopTimerInvalidate(_private->updateFocusedAndActiveStateTimer);
+        CFRelease(_private->updateFocusedAndActiveStateTimer);
+        _private->updateFocusedAndActiveStateTimer = NULL;
     }
 }
 
@@ -1697,9 +1697,9 @@ static void _updateMouseoverTimerCallback(CFRunLoopTimerRef timer, void *info)
     return [[self window] firstResponder] == self || [[self window] firstResponder] == [self _frameView];
 }
 
-- (void)_updateActiveState
+- (void)_updateFocusedAndActiveState
 {
-    [self _cancelUpdateActiveStateTimer];
+    [self _cancelUpdateFocusedAndActiveStateTimer];
 
     // This method does the job of updating the view based on the view's firstResponder-ness and
     // the window key-ness of the window containing this view. This involves four kinds of 
@@ -1759,7 +1759,7 @@ static void _updateMouseoverTimerCallback(CFRunLoopTimerRef timer, void *info)
     if (!_private || _private->closed)
         return;
     [self _cancelUpdateMouseoverTimer];
-    [self _cancelUpdateActiveStateTimer];
+    [self _cancelUpdateFocusedAndActiveStateTimer];
     [self _clearLastHitViewIfSelf];
     // FIXME: This is slow; should remove individual observers instead.
     [[NSNotificationCenter defaultCenter] removeObserver:self];
@@ -2524,10 +2524,10 @@ WEBCORE_COMMAND(yankAndSelect)
     }
 }
 
-static void _updateActiveStateTimerCallback(CFRunLoopTimerRef timer, void *info)
+static void _updateFocusedAndActiveStateTimerCallback(CFRunLoopTimerRef timer, void *info)
 {
     WebHTMLView *view = (WebHTMLView *)info;
-    [view _updateActiveState];
+    [view _updateFocusedAndActiveState];
 }
 
 - (void)viewWillMoveToWindow:(NSWindow *)window
@@ -2544,7 +2544,7 @@ static void _updateActiveStateTimerCallback(CFRunLoopTimerRef timer, void *info)
     [self removeWindowObservers];
     [self removeSuperviewObservers];
     [self _cancelUpdateMouseoverTimer];
-    [self _cancelUpdateActiveStateTimer];
+    [self _cancelUpdateFocusedAndActiveStateTimer];
     
     [[self _pluginController] stopAllPlugins];
 }
@@ -2571,11 +2571,11 @@ static void _updateActiveStateTimerCallback(CFRunLoopTimerRef timer, void *info)
         // at the time this code is running. However, it will be there on the next
         // crank of the run loop. Doing this helps to make a blinking caret appear 
         // in a new, empty window "automatic".
-        if (!_private->updateActiveStateTimer) {
+        if (!_private->updateFocusedAndActiveStateTimer) {
             CFRunLoopTimerContext context = { 0, self, NULL, NULL, NULL };
-            _private->updateActiveStateTimer = CFRunLoopTimerCreate(NULL, CFAbsoluteTimeGetCurrent(), 0, 0, 0,
-                                                                    _updateActiveStateTimerCallback, &context);
-            CFRunLoopAddTimer(CFRunLoopGetCurrent(), _private->updateActiveStateTimer, kCFRunLoopDefaultMode);
+            _private->updateFocusedAndActiveStateTimer = CFRunLoopTimerCreate(NULL, CFAbsoluteTimeGetCurrent(), 0, 0, 0,
+                                                                    _updateFocusedAndActiveStateTimerCallback, &context);
+            CFRunLoopAddTimer(CFRunLoopGetCurrent(), _private->updateFocusedAndActiveStateTimer, kCFRunLoopDefaultMode);
         }
         
         [[self _pluginController] startAllPlugins];
@@ -2871,7 +2871,7 @@ static void _updateActiveStateTimerCallback(CFRunLoopTimerRef timer, void *info)
         [self addMouseMovedObserver];
 
     if (keyWindow == [self window] || keyWindow == [[self window] attachedSheet])
-        [self _updateActiveState];
+        [self _updateFocusedAndActiveState];
 }
 
 - (void)windowDidResignKey:(NSNotification *)notification
@@ -2882,7 +2882,7 @@ static void _updateActiveStateTimerCallback(CFRunLoopTimerRef timer, void *info)
         [self removeMouseMovedObserver];
 
     if (formerKeyWindow == [self window] || formerKeyWindow == [[self window] attachedSheet]) {
-        [self _updateActiveState];
+        [self _updateFocusedAndActiveState];
         [_private->compController endRevertingChange:NO moveLeft:NO];
     }
 }
@@ -3159,7 +3159,7 @@ noPromisedData:
     if (![[self _webView] _isPerformingProgrammaticFocus])
         direction = [[self window] keyViewSelectionDirection];
 
-    [self _updateActiveState];
+    [self _updateFocusedAndActiveState];
     [self _updateFontPanel];
     
     Frame* frame = core([self _frame]);
@@ -3194,7 +3194,7 @@ noPromisedData:
             if (![[self _webView] _isPerformingProgrammaticFocus])
                 [self clearFocus];
         }
-        [self _updateActiveState];
+        [self _updateFocusedAndActiveState];
         _private->resigningFirstResponder = NO;
     }
     return resign;

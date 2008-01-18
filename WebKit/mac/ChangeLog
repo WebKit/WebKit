@@ -1,3 +1,25 @@
+2008-01-18  Adam Roben  <aroben@apple.com>
+
+        Rename _updateActiveState to _updateFocusedAndActiveState
+
+        Also renamed any related methods/members similarly.
+
+        Reviewed by Adele.
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLViewPrivate dealloc]):
+        (-[WebHTMLView _cancelUpdateFocusedAndActiveStateTimer]):
+        (-[WebHTMLView close]):
+        (_updateFocusedAndActiveStateTimerCallback):
+        (-[WebHTMLView viewWillMoveToWindow:]):
+        (-[WebHTMLView viewDidMoveToWindow]):
+        (-[WebHTMLView windowDidBecomeKey:]):
+        (-[WebHTMLView windowDidResignKey:]):
+        (-[WebHTMLView becomeFirstResponder]):
+        (-[WebHTMLView resignFirstResponder]):
+        * WebView/WebHTMLViewInternal.h:
+        * WebView/WebHTMLViewPrivate.h:
+
 2008-01-17  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Darin

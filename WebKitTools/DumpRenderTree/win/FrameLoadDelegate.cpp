@@ -160,7 +160,7 @@ HRESULT STDMETHODCALLTYPE FrameLoadDelegate::didCommitLoadForFrame(
     HRESULT hr = webView->QueryInterface(&webViewPrivate);
     if (FAILED(hr))
         return hr;
-    webViewPrivate->updateActiveState();
+    webViewPrivate->updateFocusedAndActiveState();
 
     if (!done && layoutTestController->dumpFrameLoadCallbacks())
         printf("%s - didCommitLoadForFrame\n",

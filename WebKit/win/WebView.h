@@ -569,7 +569,7 @@ public:
     virtual HRESULT STDMETHODCALLTYPE visibleContentRect( 
         /* [retval][out] */ LPRECT rect);
 
-    virtual HRESULT STDMETHODCALLTYPE updateActiveState(void);
+    virtual HRESULT STDMETHODCALLTYPE updateFocusedAndActiveState();
 
     virtual HRESULT STDMETHODCALLTYPE executeCoreCommandByName(BSTR name, BSTR value);
 
@@ -710,6 +710,8 @@ public:
     void updateActiveStateSoon() const;
 
     HWND topLevelParent() const { return m_topLevelParent; }
+
+    void updateActiveState();
 
 protected:
     HIMC getIMMContext();

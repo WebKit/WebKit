@@ -1,3 +1,10 @@
+2008-01-18  Adam Roben  <aroben@apple.com>
+
+        Reviewed by Adele.
+
+        * platform/win/Skipped: Removed a fixed test, and a test that passes
+        for me locally.
+
 2008-01-17  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Adele.

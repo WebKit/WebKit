@@ -113,7 +113,7 @@
 - (DOMDocumentFragment *)_documentFragmentFromPasteboard:(NSPasteboard *)pasteboard forType:(NSString *)pboardType inContext:(DOMRange *)context subresources:(NSArray **)subresources;
 
 // SPI for DumpRenderTree
-- (void)_updateActiveState;
+- (void)_updateFocusedAndActiveState;
 
 // SPI for printing (should be converted to API someday). When the WebHTMLView isn't being printed
 // directly, this method must be called before paginating, or the computed height might be incorrect.
