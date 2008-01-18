@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2007 Apple Inc.  All rights reserved.
  * Copyright (C) 2007 Staikos Computing Services Inc. <info@staikos.net>
+ * Copyright (C) 2007 Trolltech ASA
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -48,10 +49,11 @@ const double cInitialTimerDelay = 0.25;
 const double cNormalTimerDelay = 0.05;
 
 PlatformScrollbar::PlatformScrollbar(ScrollbarClient* client, ScrollbarOrientation orientation, ScrollbarControlSize size)
-    : Scrollbar(client, orientation, size), m_pressedPos(0),
-      m_pressedPart(QStyle::SC_None),
-      m_hoveredPart(QStyle::SC_None),
-      m_scrollTimer(this, &PlatformScrollbar::autoscrollTimerFired)
+    : Scrollbar(client, orientation, size)
+    , m_pressedPos(0)
+    , m_pressedPart(QStyle::SC_None)
+    , m_hoveredPart(QStyle::SC_None)
+    , m_scrollTimer(this, &PlatformScrollbar::autoscrollTimerFired)
 {
     QStyle *s = QApplication::style();
 

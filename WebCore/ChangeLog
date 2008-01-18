@@ -2,6 +2,15 @@
 
         Reviewed by Simon.
 
+        * Coding-Style fixes.
+
+        * platform/qt/PlatformScrollBarQt.cpp:
+        (WebCore::PlatformScrollbar::PlatformScrollbar):
+
+2008-01-18  Holger Hans Peter Freyther  <holger.freyther@trolltech.com>
+
+        Reviewed by Simon.
+
         * Coding-Style fix
 
         * platform/graphics/qt/ImageDecoderQt.cpp:
