@@ -1,3 +1,13 @@
+2008-01-18  Beth Dakin  <bdakin@apple.com>
+
+        Checked in new results for another test affected by disabling SVG 
+        foreign object.
+
+        * platform/mac-leopard/svg/custom/stroke-width-click-expected.txt: Removed.
+        * platform/mac/svg/custom/stroke-width-click-expected.checksum: Removed.
+        * platform/mac/svg/custom/stroke-width-click-expected.png: Removed.
+        * svg/custom/stroke-width-click-expected.txt:
+
 2008-01-18  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Geoff.
