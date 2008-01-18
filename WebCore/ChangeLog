@@ -1,3 +1,12 @@
+2008-01-18  Prasanth Ullattil  <prasanth.ullattil@trolltech.com>
+
+        Reviewed by Simon Hausmann <hausmann@webkit.org>.
+
+        Fix compilation in Win64(3): Due to the size of size_t cast the return value explicitly to double() to make sure the right Value() constructor is called.
+
+        * xml/XPathFunctions.cpp:
+        (WebCore::XPath::FunCount::evaluate):
+
 2008-01-18  Holger Hans Peter Freyther  <holger.freyther@trolltech.com>
 
         Reviewed by Simon.
