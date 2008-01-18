@@ -1,3 +1,19 @@
+2008-01-18  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        - tests for <rdar://problem/5615307> Repro crash in WebKit!WebCore::RenderContainer::destroyLeftoverChildren
+
+        * fast/table/insert-cell-before-form.html: Added.
+        * fast/table/insert-row-before-form.html: Added.
+        * platform/mac-leopard/fast/table: Added.
+        * platform/mac-leopard/fast/table/insert-cell-before-form-expected.checksum: Added.
+        * platform/mac-leopard/fast/table/insert-cell-before-form-expected.png: Added.
+        * platform/mac-leopard/fast/table/insert-row-before-form-expected.checksum: Added.
+        * platform/mac-leopard/fast/table/insert-row-before-form-expected.png: Added.
+        * platform/mac/fast/table/insert-cell-before-form-expected.txt: Added.
+        * platform/mac/fast/table/insert-row-before-form-expected.txt: Added.
+
 2008-01-18  Beth Dakin  <bdakin@apple.com>
 
         Checked in new results for another test affected by disabling SVG 

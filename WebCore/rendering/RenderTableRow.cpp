@@ -103,7 +103,7 @@ void RenderTableRow::addChild(RenderObject* child, RenderObject* beforeChild)
     } 
     
     // If the next renderer is actually wrapped in an anonymous table cell, we need to go up and find that.
-    while (beforeChild && !beforeChild->isTableCell())
+    while (beforeChild && beforeChild->parent() != this)
         beforeChild = beforeChild->parent();
 
     RenderTableCell* cell = static_cast<RenderTableCell*>(child);
@@ -112,6 +112,7 @@ void RenderTableRow::addChild(RenderObject* child, RenderObject* beforeChild)
     if (parent())
         section()->addCell(cell, this);
 
+    ASSERT(!beforeChild || beforeChild->isTableCell() || isTableRow && beforeChild->element() && beforeChild->element()->hasTagName(formTag) && document()->isHTMLDocument());
     RenderContainer::addChild(cell, beforeChild);
 
     if (beforeChild || nextSibling())

@@ -1,3 +1,20 @@
+2008-01-18  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        - fix <rdar://problem/5615307> Repro crash in WebKit!WebCore::RenderContainer::destroyLeftoverChildren
+
+        Test: fast/table/insert-row-before-form.html
+
+        * rendering/RenderTableRow.cpp:
+        (WebCore::RenderTableRow::addChild): Changed to ensure that the
+        object a new cell is inserted before is a child of the row, and
+        added an assertion that that object is either a cell or a form.
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::addChild): Changed to ensure that the
+        object a new row is inserted before is a child of the table section, and
+        added an assertion that that object is either a table row or a form.
+
 2008-01-18  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Brady Eidson.
