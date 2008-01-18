@@ -197,14 +197,11 @@ int PlatformScrollbar::trackLength() const
 
 bool PlatformScrollbar::handleMouseMoveEvent(const PlatformMouseEvent& evt)
 {
-    const QPoint pos = parent()->convertFromContainingWindow(evt.pos());
+    const QPoint pos = convertFromContainingWindow(evt.pos());
     //qDebug() << "PlatformScrollbar::handleMouseMoveEvent" << m_opt.rect << pos << evt.pos();
 
     m_opt.state |= QStyle::State_MouseOver;
-    const QPoint ctlPt = m_opt.rect.topLeft();
-    m_opt.rect.moveTo(0, 0);
-    QStyle::SubControl sc = QApplication::style()->hitTestComplexControl(QStyle::CC_ScrollBar, &m_opt, QPoint(pos) - ctlPt, 0);
-    m_opt.rect.moveTo(ctlPt);
+    QStyle::SubControl sc = QApplication::style()->hitTestComplexControl(QStyle::CC_ScrollBar, &m_opt, pos, 0);
 
     if (sc == m_pressedPart) {
         m_opt.state |= QStyle::State_Sunken;
@@ -274,13 +271,10 @@ bool PlatformScrollbar::handleMouseOutEvent(const PlatformMouseEvent& evt)
 
 bool PlatformScrollbar::handleMousePressEvent(const PlatformMouseEvent& evt)
 {
-    const QPoint pos = parent()->convertFromContainingWindow(evt.pos());
+    const QPoint pos = convertFromContainingWindow(evt.pos());
     //qDebug() << "PlatformScrollbar::handleMousePressEvent" << m_opt.rect << pos << evt.pos();
 
-    const QPoint ctlPt = m_opt.rect.topLeft();
-    m_opt.rect.moveTo(0, 0);
-    QStyle::SubControl sc = QApplication::style()->hitTestComplexControl(QStyle::CC_ScrollBar, &m_opt, QPoint(pos) - ctlPt, 0);
-    m_opt.rect.moveTo(ctlPt);
+    QStyle::SubControl sc = QApplication::style()->hitTestComplexControl(QStyle::CC_ScrollBar, &m_opt, pos, 0);
     switch (sc) {
         case QStyle::SC_ScrollBarAddLine:
         case QStyle::SC_ScrollBarSubLine:
