@@ -447,7 +447,7 @@ inline unsigned UString::toArrayIndex(bool *ok) const
 // this runs too much risk of a tiny initial string holding down a
 // huge buffer.
 // FIXME: this should be size_t but that would cause warnings until we
-// fix UString sizes to be size_t instad of int
+// fix UString sizes to be size_t instead of int
 static const int minShareSize = Collector::minExtraCostSize / sizeof(UChar);
 
 inline size_t UString::cost() const
