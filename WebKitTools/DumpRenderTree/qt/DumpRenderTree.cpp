@@ -57,6 +57,7 @@ const unsigned int maxViewWidth = 800;
 const unsigned int maxViewHeight = 600;
 
 class WebPage : public QWebPage {
+    Q_OBJECT
 public:
     WebPage(QWidget *parent, DumpRenderTree *drt);
 
@@ -67,9 +68,15 @@ public:
     bool javaScriptConfirm(QWebFrame *frame, const QString& msg);
     bool javaScriptPrompt(QWebFrame *frame, const QString& msg, const QString& defaultValue, QString* result);
 
+private slots:
+    void setViewGeometry(const QRect &r)
+    {
+        QWidget *v = view();
+        if (v)
+            v->setGeometry(r);
+    }
 private:
     DumpRenderTree *m_drt;
-    QWidget *m_view;
 };
 
 WebPage::WebPage(QWidget *parent, DumpRenderTree *drt)
@@ -77,6 +84,8 @@ WebPage::WebPage(QWidget *parent, DumpRenderTree *drt)
 {
     settings()->setAttribute(QWebSettings::JavascriptCanOpenWindows, true);
     settings()->setAttribute(QWebSettings::JavascriptCanAccessClipboard, true);
+    connect(this, SIGNAL(geometryChangeRequest(const QRect &)),
+            this, SLOT(setViewGeometry(const QRect & )));
 }
 
 QWebPage *WebPage::createWindow()
@@ -296,3 +305,5 @@ int DumpRenderTree::windowCount() const
 }
 
 }
+
+#include "DumpRenderTree.moc"
