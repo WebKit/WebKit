@@ -1,3 +1,18 @@
+2008-01-18  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Adam.
+
+        Fix unreachable code warning in RenderVideo on Windows.
+        
+        Make switch cases explicit.
+
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::isWidthSpecified):
+        (WebCore::RenderImage::isHeightSpecified):
+        * rendering/RenderVideo.cpp:
+        (WebCore::RenderVideo::isWidthSpecified):
+        (WebCore::RenderVideo::isHeightSpecified):
+
 2008-01-18  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Adam Roben.

@@ -306,9 +306,15 @@ bool RenderImage::isWidthSpecified() const
         case Fixed:
         case Percent:
             return true;
-        default:
+        case Auto:
+        case Relative: // FIXME: Shouldn't this case return true?
+        case Static:
+        case Intrinsic:
+        case MinIntrinsic:
             return false;
     }
+    ASSERT(false);
+    return false;
 }
 
 bool RenderImage::isHeightSpecified() const
@@ -317,9 +323,15 @@ bool RenderImage::isHeightSpecified() const
         case Fixed:
         case Percent:
             return true;
-        default:
+        case Auto:
+        case Relative: // FIXME: Shouldn't this case return true?
+        case Static:
+        case Intrinsic:
+        case MinIntrinsic:
             return false;
     }
+    ASSERT(false);
+    return false;
 }
 
 int RenderImage::calcReplacedWidth() const
