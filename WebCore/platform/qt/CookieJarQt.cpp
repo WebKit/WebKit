@@ -87,7 +87,7 @@ String cookies(const Document* document, const KURL& url)
     if (cookies.isEmpty())
         return String();
 
-    return QString::fromAscii(cookies.first().toRawForm());
+    return QString::fromAscii(cookies.first().toRawForm(QNetworkCookie::NameAndValueOnly));
 #else
     QString cookies = QCookieJar::cookieJar()->cookies(u);
     int idx = cookies.indexOf(QLatin1Char(';'));

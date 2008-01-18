@@ -2,6 +2,20 @@
 
         Reviewed by Holger.
 
+        Fix LayoutTests/fast/cookies/local-file-can-set-cookies.html
+        
+        In WebCore::cookies() don't return the full raw form but only the name=value
+        part. This fixes the getter part of the above test. The above test also
+        requires a parsing fix in Qt 4.4's QNetworkCookie to fully pass.
+        
+
+        * platform/qt/CookieJarQt.cpp:
+        (WebCore::cookies):
+
+2008-01-18  Simon Hausmann  <hausmann@webkit.org>
+
+        Reviewed by Holger.
+
         Fix svg/custom/path-getTotalLength.svg
         
         Path::apply creates a PathElement and its points array on the stack,
