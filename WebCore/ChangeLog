@@ -1,3 +1,17 @@
+2008-01-18  Holger Hans Peter Freyther  <holger.freyther@trolltech.com>
+
+        Reviewed by Simon.
+
+        * httpBody() can return 0 and other ports (cf/mac) check for this condition
+        * Looking at the cf/mac implementation we might need to call setHTTPBody somewhere
+        as well.
+        
+
+        WARNING: NO TEST CASES ADDED OR CHANGED
+
+        * platform/network/qt/QNetworkReplyHandler.cpp:
+        (WebCore::QNetworkReplyHandler::start):
+
 2008-01-18  Prasanth Ullattil  <prasanth.ullattil@trolltech.com>
 
         Reviewed by Simon Hausmann <hausmann@webkit.org>.
