@@ -1,3 +1,18 @@
+2008-01-17  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Fixed: lots of WebCore leaks reported when quitting Safari
+        
+        If we're quitting with a GC still scheduled, do the GC before quitting.
+        That way, WebCore's leak counters won't count objects that were
+        scheduled for GC.
+
+        * bindings/js/GCController.cpp:
+        (WebCore::GCController::~GCController):
+        (WebCore::GCController::garbageCollectNow):
+        * bindings/js/GCController.h:
+
 2008-01-17  Alp Toker  <alp@atoker.com>
 
         Reviewed by Oliver Hunt.
