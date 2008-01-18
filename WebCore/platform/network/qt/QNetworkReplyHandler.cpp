@@ -183,6 +183,13 @@ void QNetworkReplyHandler::start()
 
     QNetworkAccessManager* manager = d->m_frame->page()->networkAccessManager();
 
+    // Post requests on files don't really make sense, but for
+    // fast/forms/form-post-urlencoded.html we still need to retrieve the file,
+    // which means we map it to a Get instead.
+    if (m_method == QNetworkAccessManager::PostOperation
+        && !m_request.url().toLocalFile().isEmpty())
+        m_method = QNetworkAccessManager::GetOperation;
+
     switch (m_method) {
         case QNetworkAccessManager::GetOperation:
             m_reply = manager->get(m_request);

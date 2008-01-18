@@ -2,6 +2,20 @@
 
         Reviewed by Holger.
 
+        Fix fast/forms/form-post-urlencoded.html.
+        
+        Post requests on files don't really make sense, but for
+        fast/forms/form-post-urlencoded.html we still need to retrieve the file,
+        which means we map it to a Get instead.
+        
+
+        * platform/network/qt/QNetworkReplyHandler.cpp:
+        (WebCore::QNetworkReplyHandler::start):
+
+2008-01-18  Simon Hausmann  <hausmann@webkit.org>
+
+        Reviewed by Holger.
+
         Make QNetworkReplyHandler::abort() more robust against multiple invocations.
 
         During DRT runs I see cancel() being called on the same handle multiple times. Guard
