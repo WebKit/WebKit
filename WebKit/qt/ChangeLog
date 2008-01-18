@@ -1,3 +1,18 @@
+2008-01-18  Holger Hans Peter Freyther  <holger.freyther@trolltech.com>
+
+        Reviewed by Simon.
+
+        * Ask the WebCore::IconDatabase only if our URL is not empty. Otherwise
+        we will see a crash in a HashSet.
+        * It is crashing there because the StringImpl of an empty String is 0.
+        * We avoid this crash by checking for isEmpty() in WebKit as there is no
+        use to ask the iconDatabase for an empty string. We will fallback to the
+        defaultIcon.
+        
+
+        * Api/qwebframe.cpp:
+        (QWebFrame::icon):
+
 2008-01-17  Simon Hausmann  <hausmann@webkit.org>
 
         Reviewed by Holger.

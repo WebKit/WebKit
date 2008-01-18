@@ -239,7 +239,12 @@ QUrl QWebFrame::url() const
 QPixmap QWebFrame::icon() const
 {
     String url = d->frame->loader()->url().string();
-    Image* image = iconDatabase()->iconForPageURL(url, IntSize(16, 16));
+
+    Image* image = 0;
+    if (!url.isEmpty()) {
+        image = iconDatabase()->iconForPageURL(url, IntSize(16, 16));
+    }
+
     if (!image || image->isNull()) {
         image = iconDatabase()->defaultIcon(IntSize(16, 16));
     }
