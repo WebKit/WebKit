@@ -1,3 +1,9 @@
+2008-01-18  Adam Roben  <aroben@apple.com>
+
+        Build fix
+
+        * Scripts/build-webkit:
+
 2008-01-18  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Oliver.
