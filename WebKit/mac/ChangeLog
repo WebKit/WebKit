@@ -1,3 +1,13 @@
+2008-01-17  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Darin
+        
+        - fixed <rdar://problem/5692068> -1 WebFrameView world leaks reported after closing view source window
+
+        * WebView/WebFrameView.mm:
+        (-[WebFrameView initWithCoder:]):
+        override to bump the global WebFrameView count
+
 2008-01-16  Adam Roben  <aroben@apple.com>
 
         Updated for renames/removal of WebCore methods.

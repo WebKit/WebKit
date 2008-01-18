@@ -289,6 +289,14 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
 
 @implementation WebFrameView
 
+- initWithCoder:(NSCoder *)decoder
+{
+    // Older nibs containing WebViews will also contain WebFrameViews. We need to keep track of
+    // their count also to match the decrement in -dealloc.
+    ++WebFrameViewCount;
+    return [super initWithCoder:decoder];
+}
+
 - initWithFrame:(NSRect)frame
 {
     self = [super initWithFrame:frame];
