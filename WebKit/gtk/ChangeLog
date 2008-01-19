@@ -1,3 +1,17 @@
+2008-01-18  Luca Bruno  <lethalman88@gmail.com>
+
+        Reviewed by Alp Toker.
+
+        http://bugs.webkit.org/show_bug.cgi?id=16910
+        [GTK] REGRESSION: keyboard cursor doesn't blink
+
+        http://bugs.webkit.org/show_bug.cgi?id=16863
+        [GTK] REGRESSION: tab focusing doesn't work
+
+        * WebView/webkitwebview.cpp:
+        (webkit_web_view_focus_in_event): Added. Set the active frame.
+        (webkit_web_view_class_init):
+
 2008-01-16  Alp Toker  <alp@atoker.com>
 
         Reviewed by Mark Rowe.
