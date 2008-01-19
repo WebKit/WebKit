@@ -2,6 +2,12 @@
 
         - Build fix.
 
+        * kjs/ustring.h:
+
+2008-01-18  Kevin McCullough  <kmccullough@apple.com>
+
+        - Build fix.
+
         * kjs/ustring.cpp:
         * kjs/ustring.h:
         (KJS::UString::cost):
