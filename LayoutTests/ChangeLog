@@ -1,5 +1,16 @@
 2008-01-18  Adele Peterson  <adele@apple.com>
 
+        Reviewed by Oliver.
+
+        Fix for <rdar://5683527> media/{audio,video|-controls-rendering.html failing
+        
+        Remove platform specific results from media directory, since they should match the mac.  Also, remove these tests from the skipped list.
+        
+        * platform/win/Skipped:
+        * platform/win/media: Removed.
+
+2008-01-18  Adele Peterson  <adele@apple.com>
+
         Updating these results again.  I accidently checked in the other results with some local changes.
 
         * platform/mac/media/audio-controls-rendering-expected.checksum:
