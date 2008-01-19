@@ -42,8 +42,6 @@ EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotificatio
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: shouldDeleteDOMRange:range from 39 of #text > SPAN > DIV > BODY > HTML > #document to 40 of #text > SPAN > DIV > BODY > HTML > #document
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 39 of #text > SPAN > DIV > BODY > HTML > #document to 39 of #text > SPAN > DIV > BODY > HTML > #document toDOMRange:range from 39 of #text > SPAN > DIV > BODY > HTML > #document to 39 of #text > SPAN > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
-EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 EDITING DELEGATE: shouldDeleteDOMRange:range from 38 of #text > SPAN > DIV > BODY > HTML > #document to 39 of #text > SPAN > DIV > BODY > HTML > #document
 EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 38 of #text > SPAN > DIV > BODY > HTML > #document to 38 of #text > SPAN > DIV > BODY > HTML > #document toDOMRange:range from 38 of #text > SPAN > DIV > BODY > HTML > #document to 38 of #text > SPAN > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE

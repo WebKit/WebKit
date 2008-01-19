@@ -1,3 +1,15 @@
+2008-01-19  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        - fix <rdar://problem/5645813> CrashTracer: [USER] 6 crashes in Safari at com.apple.WebCore: WebCore::RenderBox::destroy + 116
+
+        Test: editing/selection/inconsistent-in-removeChildNode.html
+
+        * editing/SelectionController.cpp:
+        (WebCore::SelectionController::nodeWillBeRemoved): If the selection
+        base or extent are not visible any more, adjust the selection.
+
 2008-01-19  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Eric Seidel.

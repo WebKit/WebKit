@@ -1,3 +1,33 @@
+2008-01-19  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        - test and updated results for <rdar://problem/5645813> CrashTracer: [USER] 6 crashes in Safari at com.apple.WebCore: WebCore::RenderBox::destroy + 116
+
+        * editing/selection/inconsistent-in-removeChildNode.html: Added.
+        * platform/mac-leopard/editing/pasteboard/paste-RTFD-expected.txt:
+        * platform/mac-leopard/editing/selection: Added.
+        * platform/mac-leopard/editing/selection/inconsistent-in-removeChildNode-expected.checksum: Added.
+        * platform/mac-leopard/editing/selection/inconsistent-in-removeChildNode-expected.png: Added.
+        * platform/mac/editing/deleting/collapse-whitespace-3587601-fix-expected.txt:
+        * platform/mac/editing/deleting/delete-3608462-fix-expected.txt:
+        * platform/mac/editing/deleting/delete-4083333-fix-expected.txt:
+        * platform/mac/editing/deleting/delete-leading-ws-001-expected.txt:
+        * platform/mac/editing/deleting/delete-line-011-expected.txt:
+        * platform/mac/editing/execCommand/find-after-replace-expected.txt:
+        * platform/mac/editing/execCommand/paste-1-expected.txt:
+        * platform/mac/editing/execCommand/paste-2-expected.txt:
+        * platform/mac/editing/pasteboard/emacs-ctrl-k-y-001-expected.txt:
+        * platform/mac/editing/selection/inconsistent-in-removeChildNode-expected.txt: Added.
+        * platform/mac/editing/selection/move-between-blocks-no-001-expected.txt:
+        * platform/mac/editing/selection/replace-selection-1-expected.txt:
+        * platform/mac/editing/style/remove-underline-across-paragraph-expected.txt:
+        * platform/mac/editing/style/remove-underline-across-paragraph-in-bold-expected.txt:
+        * platform/mac/editing/style/remove-underline-after-paragraph-in-bold-expected.txt:
+        * platform/mac/editing/style/remove-underline-expected.txt:
+        * platform/mac/editing/style/remove-underline-in-bold-expected.txt:
+        * platform/mac/editing/style/unbold-in-bold-expected.txt:
+
 2008-01-18  Adele Peterson  <adele@apple.com>
 
         Reviewed by Oliver.
