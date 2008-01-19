@@ -124,6 +124,9 @@ my $root;
 my $reverseTests = 0;
 my $randomizeTests = 0;
 
+# Default to --no-http for Qt, Gtk and wx for now.
+$testHTTP = 0 if (isQt() || isGtk() || isWx());
+
 my $expectedTag = "expected";
 my $actualTag = "actual";
 my $diffsTag = "diffs";
@@ -248,9 +251,6 @@ $verbose = 1 if $testsPerDumpTool == 1;
 if ($shouldCheckLeaks && $testsPerDumpTool > 1000) {
     print STDERR "\nWARNING: Running more than 1000 tests at a time with MallocStackLogging enabled may cause a crash.\n\n";
 }
-
-# Force --no-http for Qt/Linux, for now.
-$testHTTP = 0 if (isQt() || isGtk());
 
 # Stack logging does not play well with QuickTime on Tiger (rdar://problem/5537157)
 $testMedia = 0 if $shouldCheckLeaks && isTiger();

@@ -1,3 +1,13 @@
+2008-01-19  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Alp Toker.
+
+        Allow the --http flag to run-webkit-tests to override
+        the default behaviour of disabling HTTP tests for Qt,
+        Gtk and Wx.
+
+        * Scripts/run-webkit-tests:
+
 2008-01-19  David Kilzer  <ddkilzer@apple.com>
 
         <rdar://problem/5695344> check-for-global-initializers script never checks any object files
