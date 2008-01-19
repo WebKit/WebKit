@@ -244,6 +244,25 @@ AC_ARG_ENABLE(xslt,
               [],[enable_xslt="yes"])
 AC_MSG_RESULT([$enable_xslt])
 
+# check whether to enable SVG experimental features
+# Enable all SVG if it is
+AC_MSG_CHECKING([whether to enable SVG experimental features])
+AC_ARG_ENABLE(svg_experimental,
+              AC_HELP_STRING([--enable-svg-experimental],
+                             [enable support for SVG experimental features [default=no]]),
+              [],[enable_svg_experimental="no"])
+AC_MSG_RESULT([$enable_svg_experimental])
+
+if test "$enable_svg_experimental" = "yes"; then
+   enable_svg=yes
+   enable_svg_animation=yes
+   enable_svg_filters=yes
+   enable_svg_fonts=yes
+   enable_svg_foreign_object=yes
+   enable_svg_as_image=yes
+   enable_svg_use_element=yes
+fi
+
 # check whether to enable SVG support
 AC_MSG_CHECKING([whether to enable SVG support])
 AC_ARG_ENABLE(svg,
@@ -275,6 +294,14 @@ AC_ARG_ENABLE(svg_fonts,
                              [enable support for SVG fonts (experimental) [default=no]]),
               [],[enable_svg_fonts="no"])
 AC_MSG_RESULT([$enable_svg_fonts])
+
+# check whether to enable foreign objects support for SVG
+AC_MSG_CHECKING([whether to enable support for SVG foreign objects])
+AC_ARG_ENABLE(svg_foreign_object,
+              AC_HELP_STRING([--enable-svg-foreign-object],
+                             [enable support for SVG foreign objects (experimental) [default=no]]),
+              [],[enable_svg_foreign_object="no"])
+AC_MSG_RESULT([$enable_svg_foreign_object])
 
 # check whether to enable SVG As Image support
 AC_MSG_CHECKING([whether to enable SVG as Image support])
@@ -359,6 +386,7 @@ fi
 if test "$enable_svg_animation" = "yes" || \
    test "$enable_svg_filters" = "yes" || \
    test "$enable_svg_fonts" = "yes" || \
+   test "$enable_svg_foreign_object" = "yes" || \
    test "$enable_svg_as_image" = "yes" || \
    test "$enable_svg_use_element" = "yes"; then
    svg_flags=yes
@@ -394,6 +422,7 @@ AM_CONDITIONAL([ENABLE_SVG],[test "$enable_svg" = "yes"])
 AM_CONDITIONAL([ENABLE_SVG_ANIMATION],[test "$enable_svg_animation" = "yes"])
 AM_CONDITIONAL([ENABLE_SVG_FILTERS],[test "$enable_svg_filters" = "yes"])
 AM_CONDITIONAL([ENABLE_SVG_FONTS],[test "$enable_svg_fonts" = "yes"])
+AM_CONDITIONAL([ENABLE_SVG_FOREIGN_OBJECT],[test "$enable_svg_foreign_object" = "yes"])
 AM_CONDITIONAL([ENABLE_SVG_AS_IMAGE],[test "$enable_svg_as_image" = "yes"])
 AM_CONDITIONAL([ENABLE_SVG_USE],[test "$enable_svg_use_element" = "yes"])
 AM_CONDITIONAL([ENABLE_COVERAGE],[test "$enable_coverage" = "yes"])
@@ -423,6 +452,7 @@ WebKit was configured with the following options:
  SVG animation support             : $enable_svg_animation
  SVG filters support               : $enable_svg_filters
  SVG fonts support                 : $enable_svg_fonts
+ SVG foreign object support        : $enable_svg_foreign_object
  SVG as image support              : $enable_svg_as_image
  SVG use element support           : $enable_svg_use_element
  XPATH support                     : $enable_xpath
