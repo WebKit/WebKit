@@ -319,9 +319,6 @@ http/tests/security/dataURL/xss-DENIED-to-data-url-sub-frame-uppercase.html
 svg/batik/text/textOnPath.svg
 svg/batik/text/verticalTextOnPath.svg
 
-# <rdar://5667267>
-editing/selection/5131716-1.html
-
 # <rdar://5667273>
 editing/selection/fake-drag.html
 

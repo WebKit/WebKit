@@ -1,3 +1,14 @@
+2008-01-18  Kevin McCullough  <kmccullough@apple.com>
+
+        Rubber stamped by Geoff.
+
+        - <rdar://5667267> editing/selection/5131716-1.html is failing
+        The problem is when the fonts are not present, but they should be
+        available now.  This may have failed for other reasons in the past
+        that are now fixed.
+
+        * platform/win/Skipped:
+
 2008-01-18  Adele Peterson  <adele@apple.com>
 
         Reviewed by Antti.
