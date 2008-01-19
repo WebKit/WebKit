@@ -1,6 +1,18 @@
-<iframe name="testiframe" src="data:text/html,<p>test iframe</p>"></iframe>
-<img name="testimage" src="data:image/jpg,">
-<script>
-window.existingCustomProperty = 1; 
-window.Object.prototype.prototypeCustomProperty = 1;
-</script>
+<html>
+<head>
+    <script>
+        window.existingCustomProperty = 1; 
+        window.Object.prototype.prototypeCustomProperty = 1;
+
+        window.onload = function()
+        {
+            if (window.layoutTestController)
+                layoutTestController.globalFlag = true;
+        }
+    </script>
+</head>
+<body>
+    <iframe name="testiframe" src="data:text/html,<p>test iframe</p>"></iframe>
+    <img name="testimage" src="data:image/jpg,">
+</body>
+</html>

@@ -1,3 +1,14 @@
+2008-01-18  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Beth Dakin.
+
+        Fix for <rdar://problem/5683524> http/tests/security/cross-frame-access-get.html is failing
+
+        - Guard against possible timing related failures using polling.
+
+        * http/tests/security/:
+        * http/tests/security/resources/cross-frame-iframe-for-get-test.html:
+
 2008-01-18  David Hyatt  <hyatt@apple.com>
 
         Update inline results after previous checkins.  New results match Firefox more closely.
