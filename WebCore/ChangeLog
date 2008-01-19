@@ -1,3 +1,12 @@
+2008-01-18  Stephanie  <slewis@apple.com>
+
+        Reviewed by Oliver.
+
+        Workaround for <rdar://problem/5695848>.  Set mime_type for local files based on file extension. 
+
+        * platform/network/cf/ResourceResponseCFNet.cpp:
+        (WebCore::ResourceResponse::doUpdateResourceResponse):
+
 2008-01-18  Ada Chan  <adachan@apple.com>
 
         <rdar://problem/5682340> REGRESSION (r28188): Context menu appears at wrong place when clicking in iframe whose parent is scrolled (16827)

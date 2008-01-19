@@ -96,6 +96,23 @@ void ResourceResponse::doUpdateResourceResponse()
             m_httpHeaderFields.set((CFStringRef)keys[i], (CFStringRef)values[i]);
     } else
         m_httpStatusCode = 0;
+
+    // FIXME: This is a workaround for <rdar://problem/5695848>. This code should be removed once that bug is fixed.
+    if (m_url.isLocalFile() && ( m_mimeType == "text/html" || m_mimeType == "text/plain" )) {
+        const String& path = m_url.path();
+        static const String xhtmlExt(".xhtml");
+        static const String htmlExt(".html");
+        static const String xmlExt(".xml");
+        static const String svgExt(".svg");
+        if (path.endsWith(xhtmlExt, false))
+            m_mimeType = "application/xhtml+xml";
+        else if (path.endsWith(htmlExt, false))
+            m_mimeType = "text/html";
+        else if (path.endsWith(xmlExt, false))
+            m_mimeType = "text/xml";
+        else if (path.endsWith(svgExt, false))
+            m_mimeType = "image/svg+xml";
+    }
 }
 
 }
