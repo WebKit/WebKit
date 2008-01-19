@@ -1,3 +1,16 @@
+2008-01-18  Adele Peterson  <adele@apple.com>
+
+        Updating these results again.  I accidently checked in the other results with some local changes.
+
+        * platform/mac/media/audio-controls-rendering-expected.checksum:
+        * platform/mac/media/audio-controls-rendering-expected.png:
+        * platform/mac/media/video-controls-rendering-expected.checksum:
+        * platform/mac/media/video-controls-rendering-expected.png:
+        * platform/mac/media/video-display-toggle-expected.checksum:
+        * platform/mac/media/video-display-toggle-expected.png:
+        * platform/mac/media/video-seek-past-end-playing-expected.checksum:
+        * platform/mac/media/video-seek-past-end-playing-expected.png:
+
 2008-01-18  Beth Dakin  <bdakin@apple.com>
 
         Rubber stamped by Darin.
