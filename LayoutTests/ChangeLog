@@ -1,3 +1,17 @@
+2008-01-18  Beth Dakin  <bdakin@apple.com>
+
+        Rubber stamped by Darin.
+
+        These are updated test results after http://bugs.webkit.org/
+        show_bug.cgi?id=15765 ASSERTION FAILED: m_frame->page() in 
+        FrameLoader::tokenizerProcessedData using the new GMail interface 
+        was checked in. This is a TEMPORARY fix until http://
+        bugs.webkit.org/show_bug.cgi?id=16853 really addresses this 
+        problem.
+
+        * http/tests/loading/gmail-assert-on-load-expected.txt:
+        * http/tests/loading/onload-vs-immediate-refresh-expected.txt:
+
 2008-01-18  Kevin McCullough  <kmccullough@apple.com>
 
         Rubber stamped by Geoff.
