@@ -1,3 +1,24 @@
+2008-01-19  David Kilzer  <ddkilzer@apple.com>
+
+        <rdar://problem/5695344> check-for-global-initializers script never checks any object files
+
+        Reviewed by Darin.
+
+        We now touch a check-for-global-initializers.timestamp file in
+        the TARGET_TEMP_DIR directory to determine when new object files
+        have been compiled and thus need to be checked.  If the timestamp
+        file doesn't exist, all object files will be checked.
+
+        Previously the modification time of the "executable" (the
+        framework binary, e.g., WebKit.framework/WebKit) was used, but
+        since this was the last file modified at the end of the compile
+        phase, no object files would ever get checked!
+
+        Also added JSCustomSQLTransactionCallback.o to the list of files
+        since it has static initializers in Debug builds of WebCore.
+
+        * Scripts/check-for-global-initializers:
+
 2008-01-18  Adam Roben  <aroben@apple.com>
 
         Build fix
