@@ -1,3 +1,14 @@
+2008-01-18  Holger Hans Peter Freyther  <holger.freyther@trolltech.com>
+
+        Reviewed by Darin, landed by Beth.
+
+        -test for http://bugs.webkit.org/show_bug.cgi?id=15765
+        Gmail hitting an assert in FrameLoader::tokenizerProcessedData
+
+        * http/tests/loading/gmail-assert-on-load-expected.txt: Added.
+        * http/tests/loading/gmail-assert-on-load.html: Added.
+        * http/tests/loading/resources/gmail-assert-on-load-frame.html: Added.
+
 2008-01-18  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Beth Dakin.

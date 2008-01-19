@@ -1,3 +1,19 @@
+2008-01-18  Holger Hans Peter Freyther  <holger.freyther@trolltech.com>
+
+        Reviewed by Darin, landed by Beth.
+
+        - fixed http://bugs.webkit.org/show_bug.cgi?id=15765
+
+        The call to HTMLTokenizer::write might result in a call to ::end which will invoke
+        HTMLParser::finished() or Document::finishedParsing(). HTMLParser::finished() will eventually
+        call Document::finishedParsing. The Document will delete the calling HTMLTokenizer and from the deleted
+        tokenizer we will call into FrameLoader::tokenizerProcessedData.
+        -) FrameLoader::tokenizerProcessedData calls FrameLoader::checkCompleted which gets called from the Document::finishedParsing
+           (FrameLoader::finishedParsing).
+
+        * html/HTMLTokenizer.cpp:
+        (WebCore::HTMLTokenizer::timerFired):
+
 2008-01-18  David Hyatt  <hyatt@apple.com>
 
         Don't apply the border/margin/padding check to root line boxes, since their renderers

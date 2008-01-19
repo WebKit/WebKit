@@ -1529,15 +1529,9 @@ void HTMLTokenizer::timerFired(Timer<HTMLTokenizer>*)
         m_timer.startOneShot(0);
         return;
     }
-    
-    RefPtr<Frame> frame = m_fragment ? 0 : m_doc->frame();
 
-    // Invoke write() as though more data came in.
-    bool didCallEnd = write(SegmentedString(), true);
-  
-    // If we called end() during the write,  we need to let WebKit know that we're done processing the data.
-    if (didCallEnd && frame)
-        frame->loader()->tokenizerProcessedData();
+    // Invoke write() as though more data came in. This might cause us to get deleted.
+    write(SegmentedString(), true);
 }
 
 void HTMLTokenizer::end()
