@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2007 Holger Hans Peter Freyther
- * Copyright (C) 2007 Christian Dywan <christian@twotoasts.de>
+ * Copyright (C) 2007, 2008 Christian Dywan <christian@imendio.com>
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -46,7 +46,15 @@ void ChromeClient::chromeDestroyed()
 
 FloatRect ChromeClient::windowRect()
 {
-    notImplemented();
+    if (!m_webView)
+        return FloatRect();
+    GtkWidget* window = gtk_widget_get_toplevel(GTK_WIDGET(m_webView));
+    if (window) {
+        gint left, top, width, height;
+        gtk_window_get_position(GTK_WINDOW(window), &left, &top);
+        gtk_window_get_size(GTK_WINDOW(window), &width, &height);
+        return IntRect(left, top, width, height);
+    }
     return FloatRect();
 }
 
@@ -57,24 +65,32 @@ void ChromeClient::setWindowRect(const FloatRect& r)
 
 FloatRect ChromeClient::pageRect()
 {
-    notImplemented();
-    return FloatRect();
+    if (!m_webView)
+        return FloatRect();
+    GtkAllocation allocation = GTK_WIDGET(m_webView)->allocation;
+    return IntRect(allocation.x, allocation.y, allocation.width, allocation.height);
 }
 
 float ChromeClient::scaleFactor()
 {
-    notImplemented();
+    // Not implementable
     return 1.0;
 }
 
 void ChromeClient::focus()
 {
-    notImplemented();
+    if (!m_webView)
+        return;
+    gtk_widget_grab_focus(GTK_WIDGET(m_webView));
 }
 
 void ChromeClient::unfocus()
 {
-    notImplemented();
+    if (!m_webView)
+        return;
+    GtkWidget* window = gtk_widget_get_toplevel(GTK_WIDGET(m_webView));
+    if (window)
+        gtk_window_set_focus(GTK_WINDOW(window), NULL);
 }
 
 Page* ChromeClient::createWindow(Frame*, const FrameLoadRequest&, const WindowFeatures& features)
@@ -164,25 +180,24 @@ void ChromeClient::closeWindowSoon()
 
 bool ChromeClient::canTakeFocus(FocusDirection)
 {
-    notImplemented();
-    return true;
+    if (!m_webView)
+        return false;
+    return GTK_WIDGET_CAN_FOCUS(m_webView);
 }
 
 void ChromeClient::takeFocus(FocusDirection)
 {
-    notImplemented();
+    unfocus();
 }
 
 bool ChromeClient::canRunBeforeUnloadConfirmPanel()
 {
-    notImplemented();
-    return false;
+    return true;
 }
 
-bool ChromeClient::runBeforeUnloadConfirmPanel(const WebCore::String&, WebCore::Frame*)
+bool ChromeClient::runBeforeUnloadConfirmPanel(const WebCore::String& message, WebCore::Frame* frame)
 {
-    notImplemented();
-    return false;
+    return runJavaScriptConfirm(frame, message);
 }
 
 void ChromeClient::addMessageToConsole(const WebCore::String& message, unsigned int lineNumber, const WebCore::String& sourceId)
