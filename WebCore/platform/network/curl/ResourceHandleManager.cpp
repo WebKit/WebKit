@@ -512,6 +512,9 @@ void ResourceHandleManager::startJob(ResourceHandle* job)
         return;
     }
 
+    // Remove any fragment part, otherwise curl will send it as part of the request.
+    kurl.setRef("");
+
     ResourceHandleInternal* d = job->getInternal();
     DeprecatedString url = kurl.deprecatedString();
 

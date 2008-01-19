@@ -1,3 +1,14 @@
+2008-01-19  Alp Toker  <alp@atoker.com>
+
+        Reviewed by Mark Rowe.
+
+        Remove any fragment part from the URL to be requested just before
+        passing it to curl, otherwise curl sends it as part of the HTTP/local
+        file request, causing page loads to fail.
+
+        * platform/network/curl/ResourceHandleManager.cpp:
+        (WebCore::ResourceHandleManager::startJob):
+
 2008-01-19  Jan Michael Alonzo  <jmalonzo@unpluggable.com>
 
         Reviewed by Alp Toker.
