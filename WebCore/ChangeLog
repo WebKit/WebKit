@@ -1,3 +1,16 @@
+2008-01-18  Ada Chan  <adachan@apple.com>
+
+        <rdar://problem/5682340> REGRESSION (r28188): Context menu appears at wrong place when clicking in iframe whose parent is scrolled (16827)
+        Calling absolutePosition() in EventHandler::hitTestResultAtPoint() is extremely inefficient and passing in
+        true as fixed before was wrong.  Use HitTestResult::localPoint() instead, and take into account border and padding widths.
+
+        Reviewed by Hyatt and Darin.
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::hitTestResultAtPoint):
+        * rendering/HitTestResult.cpp:
+        (WebCore::HitTestResult::operator=):
+
 2008-01-18  Holger Hans Peter Freyther  <holger.freyther@trolltech.com>
 
         Reviewed by Darin, landed by Beth.
