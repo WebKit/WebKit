@@ -1282,6 +1282,4 @@ CString UString::UTF8String(bool strict) const
   return CString(buffer.data(), p - buffer.data());
 }
 
-
-
 } // namespace KJS

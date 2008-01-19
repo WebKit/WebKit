@@ -458,7 +458,7 @@ inline size_t UString::cost() const
 
    size_t capacityDelta = capacity - reportedCost;
 
-   if (capacityDelta < static_cast<unsigned int>(minShareSize))
+   if (capacityDelta < static_cast<size_t>(minShareSize))
        return 0;
 
    m_rep->baseString->reportedCost = capacity;

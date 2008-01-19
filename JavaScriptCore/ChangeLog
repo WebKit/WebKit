@@ -1,5 +1,13 @@
 2008-01-18  Kevin McCullough  <kmccullough@apple.com>
 
+        - Build fix.
+
+        * kjs/ustring.cpp:
+        * kjs/ustring.h:
+        (KJS::UString::cost):
+
+2008-01-18  Kevin McCullough  <kmccullough@apple.com>
+
         Reviewed by Geoff.
 
         - Correctly report cost of appended strings to trigger GC.
