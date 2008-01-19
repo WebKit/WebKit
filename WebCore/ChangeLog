@@ -1,3 +1,11 @@
+2008-01-19  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Eric Seidel.
+
+        Build fix for --svg-foreign-object path
+
+        * svg/SVGForeignObjectElement.idl:
+
 2008-01-18  Stephanie  <slewis@apple.com>
 
         Reviewed by Oliver.
