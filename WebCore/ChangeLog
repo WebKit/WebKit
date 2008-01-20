@@ -1,5 +1,21 @@
 2008-01-19  Alp Toker  <alp@atoker.com>
 
+        Reviewed by Alp Toker.
+
+        http://bugs.webkit.org/show_bug.cgi?id=16944
+        Use of GST_PLUGIN_DEFINE_STATIC results in a module-level constructor
+
+        http://bugzilla.gnome.org/show_bug.cgi?id=510547
+        Epiphany/Webkit fails to start due to initializing threads twice
+
+        Don't call GST_PLUGIN_DEFINE_STATIC() as it performs g_thread_init()
+        in the global initializer, breaking subsequent calls to
+        g_thread_init() in applications.
+
+        * platform/graphics/gtk/VideoSinkGStreamer.cpp:
+
+2008-01-19  Alp Toker  <alp@atoker.com>
+
         Reviewed by Mark Rowe.
 
         Remove any fragment part from the URL to be requested just before

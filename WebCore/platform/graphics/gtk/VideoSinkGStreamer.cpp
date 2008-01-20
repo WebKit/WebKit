@@ -312,24 +312,3 @@ webkit_video_sink_set_surface(WebKitVideoSink* sink, cairo_surface_t* surface)
         cairo_surface_destroy(priv->surface);
     priv->surface = cairo_surface_reference(surface);
 }
-
-static gboolean
-plugin_init(GstPlugin* plugin)
-{
-    return gst_element_register(plugin, "webkitsink", GST_RANK_PRIMARY, WEBKIT_TYPE_VIDEO_SINK);
-}
-
-#define VERSION "0.1"
-#define PACKAGE "webkit"
-
-GST_PLUGIN_DEFINE_STATIC(
-    GST_VERSION_MAJOR,
-    GST_VERSION_MINOR,
-    "webkitsink",
-    "Element to render to WebKit Cairo surfaces",
-    plugin_init,
-    VERSION,
-    "LGPL", /* license */
-    PACKAGE,
-    ""
-);
