@@ -1,3 +1,22 @@
+2008-01-20  Collin Jackson  <webkit@collinjackson.com>
+
+        Reviewed by Sam Weinig.
+
+        Fix for http://bugs.webkit.org/show_bug.cgi?id=16775
+
+        We now use frame()->loader()->url() for postMessage, preventing a
+        malicious sender from overwriting the uri property (using a <base> tag,
+        for example). Also, use frame->loader()->url().host() instead of 
+        instead of document()->SecurityOrigin()->domain() to reflect a recent
+        clarification in the HTML5 spec. 
+
+        Tests: http/tests/security/postMessage/domain-affected-by-document-domain.html
+               http/tests/security/postMessage/domain-and-uri-unaffected-by-base-tag.html
+               http/tests/security/postMessage/javascript-page-still-sends-domain.html
+
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::postMessage):
+
 2008-01-20  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Adele.

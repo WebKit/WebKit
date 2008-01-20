@@ -23,6 +23,8 @@
 #include "Document.h"
 #include "DOMWindow.h"
 #include "ExceptionCode.h"
+#include "Frame.h"
+#include "FrameLoader.h"
 #include "kjs_window.h"
 #include "kjs/object.h"
 #include "kjs/value.h"
@@ -118,8 +120,8 @@ KJS::JSValue* JSDOMWindow::postMessage(KJS::ExecState* exec, const KJS::List& ar
     DOMWindow* window = impl();
     
     DOMWindow* source = static_cast<JSDOMWindow*>(exec->dynamicGlobalObject())->impl();
-    String domain = source->document()->securityOrigin()->host();
-    String uri = source->document()->documentURI();
+    String domain = source->frame()->loader()->url().host();
+    String uri = source->frame()->loader()->url().string();
     String message = args[0]->toString(exec);
     
     if (exec->hadException())

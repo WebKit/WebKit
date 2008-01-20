@@ -1,3 +1,20 @@
+2008-01-20  Collin Jackson  <webkit@collinjackson.com>
+
+        Reviewed by Sam Weinig.
+
+        Tests for http://bugs.webkit.org/show_bug.cgi?id=16775
+
+        * http/tests/security/postMessage: Added.
+        * http/tests/security/postMessage/domain-and-uri-unaffected-by-base-tag-expected.txt: Added.
+        * http/tests/security/postMessage/domain-and-uri-unaffected-by-base-tag.html: Added.
+        * http/tests/security/postMessage/domain-unaffected-by-document-domain-expected.txt: Added.
+        * http/tests/security/postMessage/domain-unaffected-by-document-domain.html: Added.
+        * http/tests/security/postMessage/javascript-page-still-sends-domain-expected.txt: Added.
+        * http/tests/security/postMessage/javascript-page-still-sends-domain.html: Added.
+        * http/tests/security/postMessage/resources: Added.
+        * http/tests/security/postMessage/resources/javascript-post-message-sender.html: Added.
+        * http/tests/security/postMessage/resources/post-message-listener.html: Added.
+
 2008-01-20  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Adele.
