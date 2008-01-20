@@ -1,3 +1,19 @@
+2008-01-20  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Adele.
+
+        Fix <rdar://problem/5695451>
+        Middle part of the media timeline missing on Windows if load failed
+
+        Add some null checking to avoid getting garbage results from the functions.
+
+        * platform/graphics/MediaPlayer.cpp:
+        * platform/graphics/win/QTMovieWin.cpp:
+        (QTMovieWin::duration):
+        (QTMovieWin::currentTime):
+        (QTMovieWin::setCurrentTime):
+        (QTMovieWin::maxTimeLoaded):
+
 2008-01-19  Alp Toker  <alp@atoker.com>
 
         Reviewed by Mark Rowe.

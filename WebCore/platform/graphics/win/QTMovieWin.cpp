@@ -331,6 +331,8 @@ void QTMovieWin::setRate(float rate)
 
 float QTMovieWin::duration() const
 {
+    if (!m_private->m_movie)
+        return 0;
     TimeValue val = GetMovieDuration(m_private->m_movie);
     TimeScale scale = GetMovieTimeScale(m_private->m_movie);
     return static_cast<float>(val) / scale;
@@ -338,6 +340,8 @@ float QTMovieWin::duration() const
 
 float QTMovieWin::currentTime() const
 {
+    if (!m_private->m_movie)
+        return 0;
     TimeValue val = GetMovieTime(m_private->m_movie, 0);
     TimeScale scale = GetMovieTimeScale(m_private->m_movie);
     return static_cast<float>(val) / scale;
@@ -345,6 +349,8 @@ float QTMovieWin::currentTime() const
 
 void QTMovieWin::setCurrentTime(float time) const
 {
+    if (!m_private->m_movie)
+        return;
     m_private->m_seeking = true;
     TimeScale scale = GetMovieTimeScale(m_private->m_movie);
     SetMovieTimeValue(m_private->m_movie, TimeValue(time * scale));
@@ -373,6 +379,8 @@ unsigned QTMovieWin::dataSize() const
 
 float QTMovieWin::maxTimeLoaded() const
 {
+    if (!m_private->m_movie)
+        return 0;
     TimeValue val;
     GetMaxLoadedTimeInMovie(m_private->m_movie, &val);
     TimeScale scale = GetMovieTimeScale(m_private->m_movie);

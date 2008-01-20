@@ -1,3 +1,12 @@
+2008-01-20  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Adele.
+
+        Update test so it checks the state of time related properties after the failure.
+
+        * media/video-error-does-not-exist-expected.txt:
+        * media/video-error-does-not-exist.html:
+
 2008-01-19  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Maciej Stachowiak.

@@ -1,8 +1,17 @@
+<p>Test that the media element is in correct state after load fails.</p>
 <video controls></video>
 <script src=video-test.js></script>
 <script>
 test("!video.error");
 waitForEventAndTest("load", "false");
-waitForEventTestAndEnd("emptied", "video.error.code == MediaError.MEDIA_ERR_NETWORK");
+waitForEvent("emptied", function () {
+    test("video.error.code == MediaError.MEDIA_ERR_NETWORK");
+    test("video.duration == 0");
+    test("video.currentTime == 0");
+    test("video.buffered.length == 0");
+    test("video.seekable.length == 0");
+    test("video.buffered.length == 0");
+    endTest();
+});
 video.src = "content/does-not-exist.mpeg";
 </script>
