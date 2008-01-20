@@ -1,6 +1,6 @@
 2008-01-19  Alp Toker  <alp@atoker.com>
 
-        Reviewed by Alp Toker.
+        Reviewed by Mark Rowe.
 
         http://bugs.webkit.org/show_bug.cgi?id=16944
         Use of GST_PLUGIN_DEFINE_STATIC results in a module-level constructor
