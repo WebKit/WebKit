@@ -1,3 +1,10 @@
+2008-01-21  Antti Koivisto  <antti@apple.com>
+        
+        Try to make the test less timing dependent to fix occasional test bot failures.
+
+        * media/video-seek-past-end-paused-expected.txt:
+        * media/video-seek-past-end-paused.html:
+
 2008-01-20  Dan Bernstein  <mitz@apple.com>
 
         - update Tiger-specific results for r29667

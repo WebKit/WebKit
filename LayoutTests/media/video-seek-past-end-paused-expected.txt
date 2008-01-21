@@ -3,9 +3,7 @@ Test that seeking paused video past it's duration time sets currentTime to durat
 RUN(video.load())
 EVENT(load)
 RUN(video.currentTime = 500)
-EVENT(timeupdate) TEST(video.currentTime == video.duration) OK
-EVENT(timeupdate) TEST(video.currentTime == video.duration) OK
-EVENT(timeupdate) TEST(video.currentTime == video.duration) OK
-EVENT(timeupdate) TEST(video.currentTime == video.duration) OK
+EVENT(timeupdate)
+TEST(video.currentTime == video.duration) OK
 END OF TEST
 
