@@ -1,3 +1,13 @@
+2008-01-20  Alp Toker  <alp@atoker.com>
+
+        Reviewed by Mark Rowe.
+
+        Attach the widget's style to its window and set the background to the
+        base background to avoid black flicker when repainting. This is
+        similar to what GtkTextView does.
+
+        * WebView/webkitwebview.cpp:
+
 2008-01-19  Christian Dywan  <christian@imendio.com>
 
         Reviewed by Alp Toker.
