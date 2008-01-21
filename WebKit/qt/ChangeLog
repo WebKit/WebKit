@@ -1,3 +1,12 @@
+2008-01-21  Benjamin Meyer  <bmeyer@trolltech.com>
+
+        Reviewed by Simon.
+
+        Change QWebHistoryInterface::addHistoryEntry() from const to non-const
+        
+
+        * Api/qwebhistoryinterface.h:
+
 2008-01-21  Adam Treat  <treat@kde.org>
 
         Reviewed by Simon.

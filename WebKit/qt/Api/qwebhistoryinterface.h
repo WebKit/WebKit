@@ -37,7 +37,7 @@ public:
     static QWebHistoryInterface *defaultInterface();
 
     virtual bool historyContains(const QString &url) const = 0;
-    virtual void addHistoryEntry(const QString &url) const = 0;
+    virtual void addHistoryEntry(const QString &url) = 0;
 };
 
 #endif
