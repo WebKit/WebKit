@@ -55,7 +55,7 @@ QWebView::QWebView(QWidget *parent)
     setAcceptDrops(true);
 
     setMouseTracking(true);
-    setFocusPolicy(Qt::ClickFocus);
+    setFocusPolicy(Qt::WheelFocus);
 }
 
 /*!
@@ -544,8 +544,8 @@ void QWebView::dropEvent(QDropEvent* ev)
 */
 bool QWebView::focusNextPrevChild(bool next)
 {
-    if (d->page)
-        return d->page->focusNextPrevChild(next);
+    if (d->page && d->page->focusNextPrevChild(next))
+        return true;
     return QWidget::focusNextPrevChild(next);
 }
 

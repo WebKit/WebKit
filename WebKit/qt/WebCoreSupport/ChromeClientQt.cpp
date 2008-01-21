@@ -116,22 +116,18 @@ void ChromeClientQt::unfocus()
 
 bool ChromeClientQt::canTakeFocus(FocusDirection)
 {
-    if (!m_webPage)
-        return false;
-    QWidget* view = m_webPage->view();
-    if (!view)
-        return false;
-    return view->focusPolicy() != Qt::NoFocus;
+    // This is called when cycling through links/focusable objects and we
+    // reach the last focusable object. Then we want to claim that we can
+    // take the focus to avoid wrapping.
+    return true;
 }
 
 void ChromeClientQt::takeFocus(FocusDirection)
 {
-    if (!m_webPage)
-        return;
-    QWidget* view = m_webPage->view();
-    if (!view)
-        return;
-    view->clearFocus();
+    // don't do anything. This is only called when cycling to links/focusable objects,
+    // which in turn is called from focusNextPrevChild. We let focusNextPrevChild
+    // call QWidget::focusNextPrevChild accordingly, so there is no need to do anything
+    // here.
 }
 
 
@@ -289,7 +285,7 @@ bool ChromeClientQt::shouldInterruptJavaScript()
 
 bool ChromeClientQt::tabsToLinks() const
 {
-    return false;
+    return m_webPage->settings()->testAttribute(QWebSettings::LinksIncludedInFocusChain);
 }
 
 IntRect ChromeClientQt::windowResizerRect() const

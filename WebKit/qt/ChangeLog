@@ -1,3 +1,35 @@
+2008-01-21  Simon Hausmann  <hausmann@webkit.org>
+
+        Reviewed by Holger.
+
+        Fix focus chain handling and cycling through focusable objects (links) using tab/backtab.
+        
+        * Fix GraphicsContext::drawFocusRing to also draw single focus rects.
+        * Implemented QWebPage::focusNextPrevChild by sending fake tab/shift-tab events
+        and make the return value depend on whether we successfully determined a focusable
+        node or not.
+        * Changed QWebView::focusNextPrevChild() to call the base QWidget implementation correctly
+        if we could not handle the focus chain ourselves.
+        * Changed the focus policy of QWebView to correctly use WheelFocus instead of ClickFocus.
+        * Made ChromeClientQt::canTakeFocus() and takeFocus() dummy method since they are only
+        used to control the situation of stepping out of the focus chain inside the page.
+        * Made inclusion of links in the focus chain configurable through QWebSettings::LinksIncludedInFocusChain.
+        The layout tests expect this to be disabled but for the user it seems sensible to have it
+        on by default, hence the default in qwebsettings.cpp
+        
+
+        * Api/qwebpage.cpp:
+        (QWebPage::focusNextPrevChild):
+        * Api/qwebsettings.cpp:
+        (QWebSettings::QWebSettings):
+        * Api/qwebsettings.h:
+        * Api/qwebview.cpp:
+        (QWebView::QWebView):
+        (QWebView::focusNextPrevChild):
+        * WebCoreSupport/ChromeClientQt.cpp:
+        (WebCore::ChromeClientQt::canTakeFocus):
+        (WebCore::ChromeClientQt::takeFocus):
+
 2008-01-18  Simon Hausmann  <hausmann@webkit.org>
 
         Reviewed by Holger.

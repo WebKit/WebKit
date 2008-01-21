@@ -536,28 +536,32 @@ void GraphicsContext::drawFocusRing(const Color& color)
     const Vector<IntRect>& rects = focusRingRects();
     unsigned rectCount = rects.size();
 
-    if (rects.size() > 1)
-    {
-        QPainterPath path;
-        for (int i = 0; i < rectCount; ++i)
-            path.addRect(QRectF(rects[i]));
-        QPainter *p = m_data->p();
-        p->save();
-        QPen nPen = p->pen();
-        nPen.setColor(color);
-        p->setBrush(Qt::NoBrush);
-        nPen.setStyle(Qt::DotLine);
-        p->setPen(nPen);
+    if (rects.size() == 0)
+        return;
+
+    QPainterPath path;
+    for (int i = 0; i < rectCount; ++i)
+        path.addRect(QRectF(rects[i]));
+    QPainter *p = m_data->p();
+
+    const QPen oldPen = p->pen();
+    const QBrush oldBrush = p->brush();
+
+    QPen nPen = p->pen();
+    nPen.setColor(color);
+    p->setBrush(Qt::NoBrush);
+    nPen.setStyle(Qt::DotLine);
+    p->setPen(nPen);
 #if 0
-        // FIXME How do we do a bounding outline with Qt?
-        QPainterPathStroker stroker;
-        QPainterPath newPath = stroker.createStroke(path);
-        p->strokePath(newPath, nPen);
+    // FIXME How do we do a bounding outline with Qt?
+    QPainterPathStroker stroker;
+    QPainterPath newPath = stroker.createStroke(path);
+    p->strokePath(newPath, nPen);
 #else
-        p->drawRect(path.boundingRect());
+    p->drawRect(path.boundingRect());
 #endif
-        p->restore();
-    }
+    p->setPen(oldPen);
+    p->setBrush(oldBrush);
 }
 
 void GraphicsContext::drawLineForText(const IntPoint& origin, int width, bool printing)

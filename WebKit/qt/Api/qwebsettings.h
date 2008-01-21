@@ -57,7 +57,8 @@ public:
         PrivateBrowsingEnabled,
         JavascriptCanOpenWindows,
         JavascriptCanAccessClipboard,
-        DeveloperExtrasEnabled
+        DeveloperExtrasEnabled,
+        LinksIncludedInFocusChain
     };
     enum WebGraphic {
         MissingImageGraphic,
