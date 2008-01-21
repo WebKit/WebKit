@@ -1343,6 +1343,10 @@ static inline RefPtr<Element> createXHTMLParserErrorHeader(Document* doc, const 
 
 void XMLTokenizer::insertErrorMessageBlock()
 {
+#ifdef USE_QXMLSTREAM
+    if (m_parsingFragment)
+        return;
+#endif
     // One or more errors occurred during parsing of the code. Display an error block to the user above
     // the normal content (the DOM tree is created manually and includes line/col info regarding 
     // where the errors are located)

@@ -1,3 +1,20 @@
+2008-01-21  Simon Hausmann  <hausmann@webkit.org>
+
+        Reviewed by Holger.
+
+        Fix error reporting when parsing X(HT)ML fragments.
+        
+        We use the regular XMLTokenizer write()/.../end() sequence to parse those
+        fragments, but we should not report any parsing errors inline inside the
+        content. Instead we should just return the error and the DOM layer will take
+        care of throwing an exception.
+        
+        This fixes fast/innerHTML/innerHTML-changing-document-properties.xhtml
+        
+
+        * dom/XMLTokenizer.cpp:
+        (WebCore::createXHTMLParserErrorHeader):
+
 2008-01-21  Holger Freyther  <holger.freyther@trolltech.com>
 
         Reviewed by Simon.
