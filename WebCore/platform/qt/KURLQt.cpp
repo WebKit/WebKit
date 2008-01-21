@@ -23,6 +23,12 @@
 
 namespace WebCore {
 
+static const char hexnumbers[] = "0123456789ABCDEF";
+static inline char toHex(char c)
+{
+    return hexnumbers[c & 0xf];
+}
+
 KURL::KURL(const QUrl& url)
 {
     *this = KURL(url.toEncoded().constData());
@@ -30,7 +36,31 @@ KURL::KURL(const QUrl& url)
 
 KURL::operator QUrl() const
 {
-    QByteArray ba = urlString.ascii();
+    QByteArray ba;
+    ba.reserve(urlString.length());
+
+    for (const char *src = urlString.ascii(); *src; ++src) {
+        const char chr = *src;
+
+        switch (chr) {
+            case '{':
+            case '}':
+            case '|':
+            case '\\':
+            case '^':
+            case '[':
+            case ']':
+            case '`':
+                ba.append('%');
+                ba.append(toHex((chr & 0xf0) >> 4));
+                ba.append(toHex(chr & 0xf));
+                break;
+            default:
+                ba.append(chr);
+                break;
+        }
+    }
+
     QUrl url = QUrl::fromEncoded(ba);
     return url;
 }
