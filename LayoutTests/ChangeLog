@@ -1,3 +1,14 @@
+2008-01-21  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Rubber stamped by Oliver.
+
+        Add missing layout test results.
+
+        * platform/mac/svg/custom/stroke-width-click-expected.checksum: Added.
+        * platform/mac/svg/custom/stroke-width-click-expected.png: Added.
+        * platform/mac/svg/text/text-property-with-display-none-expected.checksum: Added.
+        * platform/mac/svg/text/text-property-with-display-none-expected.png: Added.
+
 2008-01-21  David Hyatt  <hyatt@apple.com>
 
         http://bugs.webkit.org/show_bug.cgi?id=16935
