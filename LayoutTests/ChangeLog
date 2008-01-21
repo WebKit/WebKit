@@ -1,3 +1,9 @@
+2008-01-21  Adele Peterson  <adele@apple.com>
+
+        Adding media/{audio,video}-controls-rendering.html back to the skipped list, since they're still failing on some machines.
+
+        * platform/win/Skipped:
+
 2008-01-21  Antti Koivisto  <antti@apple.com>
         
         Try to make the test less timing dependent to fix occasional test bot failures.
