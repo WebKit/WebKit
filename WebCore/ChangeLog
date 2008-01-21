@@ -2,6 +2,17 @@
 
         Reviewed by Holger.
 
+        Fix access key support and fast/forms/legend-access-key.html
+
+        SVN revision 26664 changed the default access key for the non-mac build to Alt
+        while this test relies on Ctrl.
+
+        * page/EventHandler.cpp:
+
+2008-01-21  Simon Hausmann  <hausmann@webkit.org>
+
+        Reviewed by Holger.
+
         Fix error reporting when parsing X(HT)ML fragments.
         
         We use the regular XMLTokenizer write()/.../end() sequence to parse those

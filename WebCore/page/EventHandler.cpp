@@ -1473,7 +1473,7 @@ static EventTargetNode* eventTargetNodeForDocument(Document* doc)
 
 bool EventHandler::handleAccessKey(const PlatformKeyboardEvent& evt)
 {
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) || PLATFORM(QT)
     if (evt.ctrlKey())
 #else
     if (evt.altKey())
