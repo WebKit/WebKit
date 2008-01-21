@@ -1,3 +1,13 @@
+2008-01-21  Adam Treat  <treat@kde.org>
+
+        Reviewed by Simon.
+
+        * Don't leak the d-pointer in QWebSettings.
+        
+
+        * Api/qwebsettings.cpp:
+        (QWebSettings::~QWebSettings):
+
 2008-01-21  Simon Hausmann  <hausmann@webkit.org>
 
         Reviewed by Holger.

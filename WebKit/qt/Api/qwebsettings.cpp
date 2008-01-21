@@ -200,6 +200,8 @@ QWebSettings::~QWebSettings()
 {
     if (d->settings)
         allSettings()->removeAll(d);
+
+    delete d;
 }
 
 /*!
