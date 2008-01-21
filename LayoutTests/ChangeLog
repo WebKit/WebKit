@@ -1,3 +1,9 @@
+2008-01-20  Dan Bernstein  <mitz@apple.com>
+
+        - update Tiger-specific results for r29667
+
+        * platform/mac/editing/pasteboard/paste-RTFD-expected.txt:
+
 2008-01-20  Collin Jackson  <webkit@collinjackson.com>
 
         Reviewed by Sam Weinig.
