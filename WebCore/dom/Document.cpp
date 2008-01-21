@@ -2262,7 +2262,10 @@ bool Document::setFocusedNode(PassRefPtr<Node> newFocusedNode)
 
     if (m_focusedNode == newFocusedNode)
         return true;
-        
+
+    if (m_inPageCache)
+        return false;
+
     bool focusChangeBlocked = false;
     RefPtr<Node> oldFocusedNode = m_focusedNode;
     m_focusedNode = 0;
