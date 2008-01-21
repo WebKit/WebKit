@@ -1,3 +1,14 @@
+2008-01-21  David Hyatt  <hyatt@apple.com>
+
+        http://bugs.webkit.org/show_bug.cgi?id=16935
+
+        Reviewed by olliej
+
+        * fast/layers/positioned-inside-root-with-margins.html: Added.
+        * platform/mac/fast/layers/positioned-inside-root-with-margins-expected.checksum: Added.
+        * platform/mac/fast/layers/positioned-inside-root-with-margins-expected.png: Added.
+        * platform/mac/fast/layers/positioned-inside-root-with-margins-expected.txt: Added.
+
 2008-01-21  Adele Peterson  <adele@apple.com>
 
         Adding media/{audio,video}-controls-rendering.html back to the skipped list, since they're still failing on some machines.

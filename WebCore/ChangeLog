@@ -1,3 +1,18 @@
+2008-01-21  David Hyatt  <hyatt@apple.com>
+
+        Fix for http://bugs.webkit.org/show_bug.cgi?id=16935
+
+        Fix a bug in layers where the positioned ancestor was being computed incorrectly (the root should not
+        automatically be included).
+
+        Reviewed by olliej
+
+        Added fast/layers/positioned-inside-root-with-margins.html
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::stackingContext):
+        (WebCore::RenderLayer::enclosingPositionedAncestor):
+
 2008-01-21  Simon Hausmann  <hausmann@webkit.org>
 
         Reviewed by Holger.
