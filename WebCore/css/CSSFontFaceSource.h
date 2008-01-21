@@ -28,8 +28,11 @@
 
 #include "AtomicString.h"
 #include "CachedResourceClient.h"
-#include "SVGFontFaceElement.h"
 #include <wtf/HashMap.h>
+
+#if ENABLE(SVG_FONTS)
+#include "SVGFontFaceElement.h"
+#endif
 
 namespace WebCore {
 

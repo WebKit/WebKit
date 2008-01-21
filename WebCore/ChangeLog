@@ -1,5 +1,12 @@
 2008-01-21  Nikolas Zimmermann  <zimmermann@kde.org>
 
+        Not reviewed. Build fix for ports that don't build SVG: wx.
+
+        * css/CSSFontFaceSource.h: Wrap include in ENABLE(SVG_FONTS) blocks.
+        * css/CSSFontFaceSrcValue.h: Ditto.
+
+2008-01-21  Nikolas Zimmermann  <zimmermann@kde.org>
+
         Not reviewed. Build fix for Qt/Gtk.
 
         * platform/graphics/SimpleFontData.h:

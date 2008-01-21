@@ -28,7 +28,10 @@
 
 #include "CSSValue.h"
 #include "PlatformString.h"
+
+#if ENABLE(SVG_FONTS)
 #include "SVGFontFaceElement.h"
+#endif
 
 namespace WebCore {
 
