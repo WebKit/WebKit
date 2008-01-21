@@ -42,7 +42,9 @@ namespace WebCore {
 SimpleFontData::SimpleFontData(const FontPlatformData& f, bool customFont, bool loading, SVGFontData* svgFontData)
     : m_font(f)
     , m_treatAsFixedPitch(false)
+#if ENABLE(SVG_FONTS)
     , m_svgFontData(svgFontData)
+#endif
     , m_isCustomFont(customFont)
     , m_isLoading(loading)
     , m_smallCapsFontData(0)

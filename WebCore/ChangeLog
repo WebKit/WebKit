@@ -1,5 +1,12 @@
 2008-01-21  Nikolas Zimmermann  <zimmermann@kde.org>
 
+        Not reviewed. Another build fix for Gtk/Linux & Wx/Mac.
+
+        * platform/graphics/SimpleFontData.cpp:
+        (WebCore::SimpleFontData::SimpleFontData):
+
+2008-01-21  Nikolas Zimmermann  <zimmermann@kde.org>
+
         Not reviewed. Build fix for Qt/Gtk & Wx.
 
         * css/CSSFontSelector.cpp:
