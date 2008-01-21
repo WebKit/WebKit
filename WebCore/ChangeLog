@@ -1,5 +1,14 @@
 2008-01-21  Nikolas Zimmermann  <zimmermann@kde.org>
 
+        Not reviewed. Build fix for Qt/Gtk & Wx.
+
+        * css/CSSFontSelector.cpp:
+        * platform/graphics/SegmentedFontData.cpp:
+        (WebCore::SegmentedFontData::isSVGFont): Remove SVG_FONTS block, it's a pure virtual function in the base class.
+        * platform/graphics/SegmentedFontData.h:
+
+2008-01-21  Nikolas Zimmermann  <zimmermann@kde.org>
+
         Not reviewed. Build fix for ports that don't build SVG: wx.
 
         * css/CSSFontFaceSource.h: Wrap include in ENABLE(SVG_FONTS) blocks.

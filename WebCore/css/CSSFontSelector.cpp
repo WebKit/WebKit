@@ -49,10 +49,9 @@
 #include "RenderObject.h"
 #include "Settings.h"
 #include "SimpleFontData.h"
-#include "SVGFontFaceElement.h"
 
-// Ports which don't use SVG, don't generate SVGNames.h
 #if ENABLE(SVG)
+#include "SVGFontFaceElement.h"
 #include "SVGNames.h"
 #endif
 
