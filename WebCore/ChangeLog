@@ -1,5 +1,13 @@
 2008-01-21  Nikolas Zimmermann  <zimmermann@kde.org>
 
+        Not reviewed. Build fix for Qt/Gtk.
+
+        * platform/graphics/SimpleFontData.h:
+        (WebCore::SimpleFontData::svgFontData):
+        (WebCore::SimpleFontData::isSVGFont):
+
+2008-01-21  Nikolas Zimmermann  <zimmermann@kde.org>
+
         Reviewed by Eric. Older parts reviewed by Dan.
 
         Fixes: http://bugs.webkit.org/show_bug.cgi?id=16880 (SVGCSSFontFace should die, instead integrate within the FontCache.)

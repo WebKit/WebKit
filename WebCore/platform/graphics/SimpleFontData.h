@@ -73,16 +73,18 @@ public:
     void determinePitch();
     Pitch pitch() const { return m_treatAsFixedPitch ? FixedPitch : VariablePitch; }
 
+#if ENABLE(SVG_FONTS)
+    SVGFontData* svgFontData() const { return m_svgFontData.get(); }
     virtual bool isSVGFont() const { return m_svgFontData; }
+#else
+    virtual bool isSVGFont() const { return false; }
+#endif
+
     virtual bool isCustomFont() const { return m_isCustomFont; }
     virtual bool isLoading() const { return m_isLoading; }
     virtual bool isSegmented() const;
 
     const GlyphData& missingGlyphData() const { return m_missingGlyphData; }
-
-#if ENABLE(SVG_FONTS)
-    SVGFontData* svgFontData() const { return m_svgFontData.get(); }
-#endif
 
 #if PLATFORM(MAC)
     NSFont* getNSFont() const { return m_font.font(); }
