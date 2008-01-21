@@ -1,5 +1,73 @@
 2008-01-21  Nikolas Zimmermann  <zimmermann@kde.org>
 
+        Reviewed by Eric.
+
+        Update layout test results after adding missing-glyph support.
+        Add new layout test svg/custom/glyph-selection-lang-attribute.svg.
+
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-24-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/fonts-elem-01-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/fonts-elem-02-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/fonts-elem-05-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/fonts-elem-06-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/fonts-glyph-02-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/fonts-glyph-03-t-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1/fonts-glyph-03-t-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/fonts-glyph-03-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/fonts-glyph-04-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/fonts-kern-01-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/masking-mask-01-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/pservers-grad-08-b-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1/pservers-grad-08-b-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/pservers-grad-08-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/render-elems-06-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/render-elems-07-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/render-elems-08-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/render-groups-01-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/render-groups-03-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/text-altglyph-01-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/text-text-04-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/text-text-05-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/text-text-06-t-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1/text-text-06-t-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/text-text-06-t-expected.txt:
+        * platform/mac/svg/batik/text/textEffect-expected.checksum:
+        * platform/mac/svg/batik/text/textEffect-expected.png:
+        * platform/mac/svg/batik/text/textEffect-expected.txt:
+        * platform/mac/svg/batik/text/textEffect3-expected.checksum:
+        * platform/mac/svg/batik/text/textEffect3-expected.png:
+        * platform/mac/svg/batik/text/textEffect3-expected.txt:
+        * platform/mac/svg/batik/text/textPosition2-expected.txt:
+        * platform/mac/svg/custom/dominant-baseline-hanging-expected.checksum:
+        * platform/mac/svg/custom/dominant-baseline-hanging-expected.png:
+        * platform/mac/svg/custom/glyph-selection-lang-attribute-expected.checksum: Added.
+        * platform/mac/svg/custom/glyph-selection-lang-attribute-expected.png: Added.
+        * platform/mac/svg/custom/glyph-selection-lang-attribute-expected.txt: Added.
+        * platform/mac/svg/custom/scrolling-embedded-svg-file-image-repaint-problem-expected.txt:
+        * platform/mac/svg/custom/use-on-g-containing-foreignObject-and-image-expected.checksum:
+        * platform/mac/svg/custom/use-on-g-containing-foreignObject-and-image-expected.png:
+        * platform/mac/svg/hixie/mixed/008-expected.checksum:
+        * platform/mac/svg/hixie/mixed/008-expected.png:
+        * platform/mac/svg/hixie/mixed/009-expected.checksum:
+        * platform/mac/svg/hixie/mixed/009-expected.png:
+        * platform/mac/svg/hixie/viewbox/preserveAspectRatio/001-expected.checksum:
+        * platform/mac/svg/hixie/viewbox/preserveAspectRatio/001-expected.png:
+        * platform/mac/svg/text/text-altglyph-01-b-expected.checksum:
+        * platform/mac/svg/text/text-altglyph-01-b-expected.png:
+        * platform/mac/svg/text/text-altglyph-01-b-expected.txt:
+        * platform/mac/svg/text/text-text-04-t-expected.checksum:
+        * platform/mac/svg/text/text-text-04-t-expected.png:
+        * platform/mac/svg/text/text-text-04-t-expected.txt:
+        * platform/mac/svg/text/text-text-05-t-expected.checksum:
+        * platform/mac/svg/text/text-text-05-t-expected.png:
+        * platform/mac/svg/text/text-text-05-t-expected.txt:
+        * platform/mac/svg/text/text-text-06-t-expected.checksum:
+        * platform/mac/svg/text/text-text-06-t-expected.png:
+        * platform/mac/svg/text/text-text-06-t-expected.txt:
+        * svg/custom/glyph-selection-lang-attribute.svg: Added.
+
+2008-01-21  Nikolas Zimmermann  <zimmermann@kde.org>
+
         Rubber stamped by Oliver.
 
         Add missing layout test results.

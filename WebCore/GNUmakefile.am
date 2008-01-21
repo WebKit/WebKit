@@ -1633,7 +1633,6 @@ webcore_sources += \
 	WebCore/css/SVGCSSComputedStyleDeclaration.cpp \
 	WebCore/css/SVGCSSParser.cpp \
 	WebCore/css/SVGCSSStyleSelector.cpp \
-	WebCore/css/SVGCSSFontFace.cpp \
 	WebCore/rendering/SVGRenderStyle.cpp \
 	WebCore/rendering/SVGRenderStyleDefs.cpp \
 	WebCore/rendering/SVGRenderTreeAsText.cpp \
@@ -1694,6 +1693,7 @@ webcore_sources += \
 	WebCore/svg/SVGFilterPrimitiveStandardAttributes.cpp \
 	WebCore/svg/SVGFitToViewBox.cpp \
 	WebCore/svg/SVGFont.cpp \
+	WebCore/svg/SVGFontData.cpp \
 	WebCore/svg/SVGFontElement.cpp \
 	WebCore/svg/SVGFontFaceElement.cpp \
 	WebCore/svg/SVGFontFaceFormatElement.cpp \

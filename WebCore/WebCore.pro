@@ -1366,7 +1366,6 @@ contains(DEFINES, ENABLE_SVG=1) {
         css/SVGCSSComputedStyleDeclaration.cpp \
         css/SVGCSSParser.cpp \
         css/SVGCSSStyleSelector.cpp \
-        css/SVGCSSFontFace.cpp \
         rendering/SVGRenderStyle.cpp \
         rendering/SVGRenderStyleDefs.cpp \
         bindings/js/JSSVGLazyEventListener.cpp \
@@ -1427,6 +1426,7 @@ contains(DEFINES, ENABLE_SVG=1) {
         svg/SVGFilterPrimitiveStandardAttributes.cpp \
         svg/SVGFitToViewBox.cpp \
         svg/SVGFont.cpp \
+        svg/SVGFontData.cpp \
         svg/SVGFontElement.cpp \
         svg/SVGFontFaceElement.cpp \
         svg/SVGFontFaceFormatElement.cpp \

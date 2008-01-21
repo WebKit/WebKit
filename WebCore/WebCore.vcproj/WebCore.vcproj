@@ -4894,10 +4894,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\css\SVGCSSFontFace.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\css\SVGCSSParser.cpp"
 				>
 			</File>
@@ -8402,6 +8398,14 @@
 			</File>
 			<File
 				RelativePath="..\svg\SVGFont.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\svg\SVGFontData.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\svg\SVGFontData.h"
 				>
 			</File>
 			<File

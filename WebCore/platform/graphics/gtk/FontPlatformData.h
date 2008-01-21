@@ -50,6 +50,7 @@ public:
 
     FontPlatformData(const FontDescription&, const AtomicString& family);
 
+    FontPlatformData(float size, bool bold, bool italic);
     FontPlatformData(cairo_font_face_t* fontFace, int size, bool bold, bool italic);
 
     ~FontPlatformData();
@@ -57,6 +58,7 @@ public:
     static bool init();
 
     bool isFixedPitch();
+    float size() const { return m_fontDescription.specifiedSize(); }
 
     void setFont(cairo_t*) const;
 

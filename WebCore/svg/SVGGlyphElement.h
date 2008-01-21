@@ -29,6 +29,7 @@
 
 namespace WebCore {
 
+    class AtomicString;
     struct SVGFontData;
 
     // Describe a SVG <glyph> element
@@ -106,9 +107,14 @@ namespace WebCore {
         virtual bool rendererIsNeeded(RenderStyle*) { return false; }
 
         SVGGlyphIdentifier buildGlyphIdentifier() const;
-        static void inheritUnspecifiedAttributes(SVGGlyphIdentifier&, SVGFontData*);
-    };
 
+        // Helper function used by SVGFont
+        static void inheritUnspecifiedAttributes(SVGGlyphIdentifier&, const SVGFontData*);
+        static String querySVGFontLanguage(const SVGElement*);
+
+        // Helper function shared between SVGGlyphElement & SVGMissingGlyphElement
+        static SVGGlyphIdentifier buildGenericGlyphIdentifier(const SVGElement*);
+    };
 
 } // namespace WebCore
 

@@ -22,11 +22,7 @@
 #if ENABLE(SVG_FONTS)
 #include "SVGMissingGlyphElement.h"
 
-#include "SVGNames.h"
-
 namespace WebCore {
-
-using namespace SVGNames;
 
 SVGMissingGlyphElement::SVGMissingGlyphElement(const QualifiedName& tagName, Document* doc)
     : SVGStyledElement(tagName, doc)

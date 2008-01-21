@@ -117,6 +117,13 @@ freePattern:
     FcPatternDestroy(pattern);
 }
 
+FontPlatformData(float size, bool bold, bool italic)
+    : m_pattern(0)
+    , m_fontDescription()
+    , m_scaledFont(0)
+{
+}
+
 FontPlatformData::FontPlatformData(cairo_font_face_t* fontFace, int size, bool bold, bool italic)
     : m_pattern(0)
     , m_fontDescription()

@@ -2829,6 +2829,8 @@
 		B223622F0C3AF0710008CA9B /* DOMSVGTextPathElementInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = B223622C0C3AF0710008CA9B /* DOMSVGTextPathElementInternal.h */; };
 		B23540F20D00782E002382FA /* StringTruncator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B23540F00D00782E002382FA /* StringTruncator.cpp */; };
 		B23540F30D00782E002382FA /* StringTruncator.h in Headers */ = {isa = PBXBuildFile; fileRef = B23540F10D00782E002382FA /* StringTruncator.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		B237C8A70D344D110013F707 /* SVGFontData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B237C8A50D344D110013F707 /* SVGFontData.cpp */; };
+		B237C8A80D344D110013F707 /* SVGFontData.h in Headers */ = {isa = PBXBuildFile; fileRef = B237C8A60D344D110013F707 /* SVGFontData.h */; };
 		B24055650B5BE640002A28C0 /* DOMSVGElementInstanceInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = B24055630B5BE640002A28C0 /* DOMSVGElementInstanceInternal.h */; };
 		B24055660B5BE640002A28C0 /* DOMSVGElementInstanceListInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = B24055640B5BE640002A28C0 /* DOMSVGElementInstanceListInternal.h */; };
 		B255992C0D00D8BA00BB825C /* CgSupport.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B25598900D00D8B800BB825C /* CgSupport.cpp */; };
@@ -3155,8 +3157,6 @@
 		B2CB92640B5BDA02009BAA78 /* DOMSVGElementInstanceList.mm in Sources */ = {isa = PBXBuildFile; fileRef = B2CB92600B5BDA02009BAA78 /* DOMSVGElementInstanceList.mm */; };
 		B2CCEC470C6CA9F1006A5424 /* RenderSVGViewportContainer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2CCEC450C6CA9F1006A5424 /* RenderSVGViewportContainer.cpp */; };
 		B2CCEC480C6CA9F1006A5424 /* RenderSVGViewportContainer.h in Headers */ = {isa = PBXBuildFile; fileRef = B2CCEC460C6CA9F1006A5424 /* RenderSVGViewportContainer.h */; };
-		B2D19A480CEF9DC1000E033B /* SVGCSSFontFace.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2D19A460CEF9DC1000E033B /* SVGCSSFontFace.cpp */; };
-		B2D19A490CEF9DC1000E033B /* SVGCSSFontFace.h in Headers */ = {isa = PBXBuildFile; fileRef = B2D19A470CEF9DC1000E033B /* SVGCSSFontFace.h */; };
 		B2D3FC8A0C2212CB00CF3618 /* JSSVGTransformListCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2D3FC890C2212CB00CF3618 /* JSSVGTransformListCustom.cpp */; };
 		B2E27C9F0B0F2B0900F17C7B /* FloatPoint3D.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2E27C9D0B0F2B0900F17C7B /* FloatPoint3D.cpp */; };
 		B2E27CA00B0F2B0900F17C7B /* FloatPoint3D.h in Headers */ = {isa = PBXBuildFile; fileRef = B2E27C9E0B0F2B0900F17C7B /* FloatPoint3D.h */; };
@@ -6893,6 +6893,8 @@
 		B223622C0C3AF0710008CA9B /* DOMSVGTextPathElementInternal.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DOMSVGTextPathElementInternal.h; sourceTree = "<group>"; };
 		B23540F00D00782E002382FA /* StringTruncator.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = StringTruncator.cpp; sourceTree = "<group>"; };
 		B23540F10D00782E002382FA /* StringTruncator.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = StringTruncator.h; sourceTree = "<group>"; };
+		B237C8A50D344D110013F707 /* SVGFontData.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = SVGFontData.cpp; sourceTree = "<group>"; };
+		B237C8A60D344D110013F707 /* SVGFontData.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SVGFontData.h; sourceTree = "<group>"; };
 		B24055630B5BE640002A28C0 /* DOMSVGElementInstanceInternal.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DOMSVGElementInstanceInternal.h; sourceTree = "<group>"; };
 		B24055640B5BE640002A28C0 /* DOMSVGElementInstanceListInternal.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DOMSVGElementInstanceListInternal.h; sourceTree = "<group>"; };
 		B25598900D00D8B800BB825C /* CgSupport.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = CgSupport.cpp; sourceTree = "<group>"; };
@@ -7223,8 +7225,6 @@
 		B2CB92600B5BDA02009BAA78 /* DOMSVGElementInstanceList.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMSVGElementInstanceList.mm; sourceTree = "<group>"; };
 		B2CCEC450C6CA9F1006A5424 /* RenderSVGViewportContainer.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = RenderSVGViewportContainer.cpp; sourceTree = "<group>"; };
 		B2CCEC460C6CA9F1006A5424 /* RenderSVGViewportContainer.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = RenderSVGViewportContainer.h; sourceTree = "<group>"; };
-		B2D19A460CEF9DC1000E033B /* SVGCSSFontFace.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = SVGCSSFontFace.cpp; sourceTree = "<group>"; };
-		B2D19A470CEF9DC1000E033B /* SVGCSSFontFace.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SVGCSSFontFace.h; sourceTree = "<group>"; };
 		B2D3FC890C2212CB00CF3618 /* JSSVGTransformListCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSSVGTransformListCustom.cpp; sourceTree = "<group>"; };
 		B2E27C9D0B0F2B0900F17C7B /* FloatPoint3D.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = FloatPoint3D.cpp; sourceTree = "<group>"; };
 		B2E27C9E0B0F2B0900F17C7B /* FloatPoint3D.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = FloatPoint3D.h; sourceTree = "<group>"; };
@@ -10742,6 +10742,8 @@
 				B222787C0D00BF200071B782 /* SVGFitToViewBox.h */,
 				B222787D0D00BF200071B782 /* SVGFitToViewBox.idl */,
 				B262B8030D1F32D000158F09 /* SVGFont.cpp */,
+				B237C8A50D344D110013F707 /* SVGFontData.cpp */,
+				B237C8A60D344D110013F707 /* SVGFontData.h */,
 				B2A1F2A10CEF0ABF00442F6A /* SVGFontElement.cpp */,
 				B2A1F2A20CEF0ABF00442F6A /* SVGFontElement.h */,
 				B2A1F2A30CEF0ABF00442F6A /* SVGFontElement.idl */,
@@ -11952,8 +11954,6 @@
 				93CA4CA209DF93FA00DF8677 /* svg.css */,
 				B2227B000D00BFF10071B782 /* SVGCSSComputedStyleDeclaration.cpp */,
 				B2227B010D00BFF10071B782 /* SVGCSSParser.cpp */,
-				B2D19A460CEF9DC1000E033B /* SVGCSSFontFace.cpp */,
-				B2D19A470CEF9DC1000E033B /* SVGCSSFontFace.h */,
 				B2227B020D00BFF10071B782 /* SVGCSSPropertyNames.in */,
 				B2227B030D00BFF10071B782 /* SVGCSSStyleSelector.cpp */,
 				B2227B040D00BFF10071B782 /* SVGCSSValueKeywords.in */,
@@ -14170,7 +14170,6 @@
 				B27B283D0CEF0C3600D39D54 /* DOMSVGGlyphElementInternal.h in Headers */,
 				B27B283E0CEF0C3600D39D54 /* DOMSVGMissingGlyphElement.h in Headers */,
 				B27B28400CEF0C3600D39D54 /* DOMSVGMissingGlyphElementInternal.h in Headers */,
-				B2D19A490CEF9DC1000E033B /* SVGCSSFontFace.h in Headers */,
 				BCA379150D163E5500B793D6 /* JSLocation.h in Headers */,
 				BCA3793F0D1647E000B793D6 /* JSLocation.lut.h in Headers */,
 				75793E840D0CE0B3007FC0AC /* MessageEvent.h in Headers */,
@@ -14196,6 +14195,7 @@
 				371F51A10D262FA000ECE0D5 /* CSSSegmentedFontFace.h in Headers */,
 				371F53E90D2704F900ECE0D5 /* CSSUnicodeRangeValue.h in Headers */,
 				ABFE7E130D32FAF60066F4D2 /* MediaControlElements.h in Headers */,
+				B237C8A80D344D110013F707 /* SVGFontData.h in Headers */,
 				E4EEFFC90D34550C00469A58 /* JSAudioConstructor.h in Headers */,
 				939B3E4E0D3C1E8400B4A92B /* StringBuffer.h in Headers */,
 			);
@@ -14236,7 +14236,6 @@
 		0867D690FE84028FC02AAC07 /* Project object */ = {
 			isa = PBXProject;
 			buildConfigurationList = 149C284308902B11008A9EFC /* Build configuration list for PBXProject "WebCore" */;
-			compatibilityVersion = "Xcode 2.4";
 			hasScannedForEncodings = 1;
 			knownRegions = (
 				English,
@@ -15770,7 +15769,6 @@
 				B27B28390CEF0C3600D39D54 /* DOMSVGFontElement.mm in Sources */,
 				B27B283C0CEF0C3600D39D54 /* DOMSVGGlyphElement.mm in Sources */,
 				B27B283F0CEF0C3600D39D54 /* DOMSVGMissingGlyphElement.mm in Sources */,
-				B2D19A480CEF9DC1000E033B /* SVGCSSFontFace.cpp in Sources */,
 				B262B8040D1F32D000158F09 /* SVGFont.cpp in Sources */,
 				BC7FA6200D1F0CBD00DB22A9 /* DynamicNodeList.cpp in Sources */,
 				BC7FA62E0D1F0EFF00DB22A9 /* StaticNodeList.cpp in Sources */,
@@ -15787,6 +15785,7 @@
 				371F51A20D262FA000ECE0D5 /* CSSSegmentedFontFace.cpp in Sources */,
 				371F53EA0D2704F900ECE0D5 /* CSSUnicodeRangeValue.cpp in Sources */,
 				ABFE7E120D32FAF60066F4D2 /* MediaControlElements.cpp in Sources */,
+				B237C8A70D344D110013F707 /* SVGFontData.cpp in Sources */,
 				E4EEFFC80D34550C00469A58 /* JSAudioConstructor.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

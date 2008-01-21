@@ -1,3 +1,113 @@
+2008-01-21  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Eric. Older parts reviewed by Dan.
+
+        Fixes: http://bugs.webkit.org/show_bug.cgi?id=16880 (SVGCSSFontFace should die, instead integrate within the FontCache.)
+        Fixes: http://bugs.webkit.org/show_bug.cgi?id=16784 (In-document fonts work only as the first child to font-face-src)
+
+        Proper integration of SVG Fonts within the existing custom font concept, removing the need for a custom SVGCSSFontFace.
+        Integrate within the CSSFontFaceSource logic for caching support, as well as the framework for external SVG Fonts.
+
+        Proper handling of missing glyphs, using <missing-glyph> element. If that is not specified in a font, fallback to non-SVG font rendering.
+
+        * GNUmakefile.am:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSFontFaceSource.cpp:
+        (WebCore::CSSFontFaceSource::getFontData):
+        * css/CSSFontFaceSource.h:
+        (WebCore::CSSFontFaceSource::svgFontFaceElement):
+        (WebCore::CSSFontFaceSource::setSVGFontFaceElement):
+        * css/CSSFontFaceSrcValue.h:
+        (WebCore::CSSFontFaceSrcValue::m_isLocal):
+        (WebCore::CSSFontFaceSrcValue::~CSSFontFaceSrcValue):
+        (WebCore::CSSFontFaceSrcValue::svgFontFaceElement):
+        (WebCore::CSSFontFaceSrcValue::setSVGFontFaceElement):
+        * css/CSSFontSelector.cpp:
+        (WebCore::CSSFontSelector::addFontFaceRule):
+        * css/SVGCSSFontFace.cpp: Removed.
+        * css/SVGCSSFontFace.h: Removed.
+        * platform/graphics/Font.cpp:
+        (WebCore::Font::ascent):
+        (WebCore::Font::descent):
+        (WebCore::Font::lineSpacing):
+        (WebCore::Font::xHeight):
+        (WebCore::Font::fontSelector):
+        * platform/graphics/Font.h:
+        * platform/graphics/FontData.h:
+        * platform/graphics/SegmentedFontData.cpp:
+        (WebCore::SegmentedFontData::isSVGFont):
+        * platform/graphics/SegmentedFontData.h:
+        * platform/graphics/SimpleFontData.cpp:
+        (WebCore::SimpleFontData::SimpleFontData):
+        * platform/graphics/SimpleFontData.h:
+        (WebCore::SimpleFontData::ascent):
+        (WebCore::SimpleFontData::descent):
+        (WebCore::SimpleFontData::lineSpacing):
+        (WebCore::SimpleFontData::lineGap):
+        (WebCore::SimpleFontData::xHeight):
+        (WebCore::SimpleFontData::isSVGFont):
+        (WebCore::SimpleFontData::svgFontData):
+        * platform/graphics/gtk/FontPlatformData.h:
+        (WebCore::FontPlatformData::size):
+        * platform/graphics/gtk/FontPlatformDataGtk.cpp:
+        (WebCore::FontPlatformData):
+        * platform/graphics/mac/FontPlatformData.h:
+        (WebCore::FontPlatformData::FontPlatformData):
+        (WebCore::FontPlatformData::size):
+        * platform/graphics/win/FontPlatformData.h:
+        * platform/graphics/win/FontPlatformDataWin.cpp:
+        (WebCore::FontPlatformData::FontPlatformData):
+        * rendering/RenderSVGText.cpp:
+        (WebCore::RenderSVGText::relativeBBox):
+        * svg/SVGFont.cpp:
+        (WebCore::convertEmUnitToPixel):
+        (WebCore::isCompatibleGlyph):
+        (WebCore::svgFontAndFontFaceElementForFontData):
+        (WebCore::SVGTextRunWalker::SVGTextRunWalker):
+        (WebCore::SVGTextRunWalker::walk):
+        (WebCore::floatWidthUsingSVGFontCallback):
+        (WebCore::floatWidthMissingGlyphCallback):
+        (WebCore::floatWidthOfSubStringUsingSVGFont):
+        (WebCore::drawTextUsingSVGFontCallback):
+        (WebCore::drawTextMissingGlyphCallback):
+        (WebCore::Font::drawTextUsingSVGFont):
+        * svg/SVGFontData.cpp: Added.
+        (WebCore::SVGFontData::SVGFontData):
+        (WebCore::SVGFontData::~SVGFontData):
+        * svg/SVGFontData.h: Added.
+        (WebCore::SVGFontData::svgFontFaceElement):
+        (WebCore::SVGFontData::horizontalOriginX):
+        (WebCore::SVGFontData::horizontalOriginY):
+        (WebCore::SVGFontData::horizontalAdvanceX):
+        (WebCore::SVGFontData::verticalOriginX):
+        (WebCore::SVGFontData::verticalOriginY):
+        (WebCore::SVGFontData::verticalAdvanceY):
+        * svg/SVGFontFaceElement.cpp:
+        (WebCore::SVGFontFaceElement::unitsPerEm):
+        (WebCore::SVGFontFaceElement::xHeight):
+        (WebCore::SVGFontFaceElement::horizontalOriginX):
+        (WebCore::SVGFontFaceElement::horizontalOriginY):
+        (WebCore::SVGFontFaceElement::horizontalAdvanceX):
+        (WebCore::SVGFontFaceElement::verticalOriginX):
+        (WebCore::SVGFontFaceElement::verticalOriginY):
+        (WebCore::SVGFontFaceElement::verticalAdvanceY):
+        (WebCore::SVGFontFaceElement::ascent):
+        (WebCore::SVGFontFaceElement::descent):
+        (WebCore::SVGFontFaceElement::fontFamily):
+        (WebCore::SVGFontFaceElement::associatedFontElement):
+        (WebCore::SVGFontFaceElement::rebuildFontFace):
+        * svg/SVGFontFaceElement.h:
+        * svg/SVGGlyphElement.cpp:
+        (WebCore::SVGGlyphElement::inheritUnspecifiedAttributes):
+        (WebCore::parseSVGGlyphAttribute):
+        (WebCore::SVGGlyphElement::buildGenericGlyphIdentifier):
+        (WebCore::SVGGlyphElement::buildGlyphIdentifier):
+        * svg/SVGGlyphElement.h:
+        * svg/SVGMissingGlyphElement.cpp:
+        * svg/svgattrs.in:
+
 2008-01-21  Darin Adler  <darin@apple.com>
 
         Reviewed by John Sullivan.

@@ -28,8 +28,6 @@ namespace WebCore {
 
     class CSSFontFaceRule;
     class CSSMutableStyleDeclaration;
-    class FontDescription;
-    class SimpleFontData;
     class SVGFontElement;
 
     class SVGFontFaceElement : public SVGElement {
@@ -43,18 +41,25 @@ namespace WebCore {
         virtual void insertedIntoDocument();
 
         unsigned unitsPerEm() const;
+        int xHeight() const;
+        float horizontalOriginX() const;
+        float horizontalOriginY() const;
+        float horizontalAdvanceX() const;
+        float verticalOriginX() const;
+        float verticalOriginY() const;
+        float verticalAdvanceY() const;
+        int ascent() const;
+        int descent() const;
         String fontFamily() const;
 
-        void rebuildFontFace();
-        SimpleFontData* createFontData(const FontDescription&) const;
-
-        // If our parent element is <font>, it will be returned. (this is the case for a SVG Font described in the same document)
-        // Otherwhise it will return the <font> element that is referenced by the first valid <font-face-src> element.
         SVGFontElement* associatedFontElement() const;
+        void rebuildFontFace();
 
     private:
         RefPtr<CSSFontFaceRule> m_fontFaceRule;
         RefPtr<CSSMutableStyleDeclaration> m_styleDeclaration;
+
+        RefPtr<SVGFontElement> m_fontElement;
     };
 
 } // namespace WebCore

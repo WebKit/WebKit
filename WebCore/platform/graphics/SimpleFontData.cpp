@@ -30,46 +30,47 @@
 #include "config.h"
 #include "SimpleFontData.h"
 
-#include <wtf/MathExtras.h>
-
 #if ENABLE(SVG_FONTS)
+#include "SVGFontData.h"
 #include "SVGFontFaceElement.h"
 #endif
 
+#include <wtf/MathExtras.h>
+
 namespace WebCore {
 
-#if ENABLE(SVG_FONTS)
-// Don't implement constructor in the header to save a SVGFontFaceElement.h include.
-SVGFontData::SVGFontData(SVGFontFaceElement* element)
-    : fontFaceElement(element)
-    , horizontalOriginX(0.0f)
-    , horizontalOriginY(0.0f)
-    , horizontalAdvanceX(0.0f)
-    , verticalOriginX(0.0f)
-    , verticalOriginY(0.0f)
-    , verticalAdvanceY(0.0f)
-{
-}
-
-float SVGFontData::convertEmUnitToPixel(float fontSize, float unitsPerEm, float value)
-{
-    ASSERT(unitsPerEm > 0.0f);
-    return value * fontSize / unitsPerEm;
-}
-#endif
-
-SimpleFontData::SimpleFontData(const FontPlatformData& f, bool customFont, bool loading)
+SimpleFontData::SimpleFontData(const FontPlatformData& f, bool customFont, bool loading, SVGFontData* svgFontData)
     : m_font(f)
     , m_treatAsFixedPitch(false)
-#if ENABLE(SVG_FONTS)
-    , m_svgFontData(0)
-#endif
+    , m_svgFontData(svgFontData)
     , m_isCustomFont(customFont)
     , m_isLoading(loading)
     , m_smallCapsFontData(0)
-{    
+{
+#if ENABLE(SVG_FONTS) && !PLATFORM(QT)
+    if (SVGFontFaceElement* svgFontFaceElement = svgFontData ? svgFontData->svgFontFaceElement() : 0) {
+       m_unitsPerEm = svgFontFaceElement->unitsPerEm();
+
+       float scale = f.size();
+       if (m_unitsPerEm)
+           scale /= m_unitsPerEm;
+
+        m_ascent = svgFontFaceElement->ascent() * scale;
+        m_descent = svgFontFaceElement->descent() * scale;
+        m_xHeight = svgFontFaceElement->xHeight() * scale;
+
+        m_spaceGlyph = 0;
+        m_spaceWidth = 0;
+        m_adjustedSpaceWidth = 0;
+        determinePitch();
+        m_missingGlyphData.fontData = this;
+        m_missingGlyphData.glyph = 0;
+        return;
+    }
+#endif
+
     platformInit();
-    
+
     GlyphPage* glyphPageZero = GlyphPageTreeNode::getRootChild(this, 0)->page();
     if (!glyphPageZero) {
         LOG_ERROR("Failed to get glyph page zero.");
@@ -114,56 +115,6 @@ SimpleFontData::~SimpleFontData()
 
     // We only get deleted when the cache gets cleared.  Since the smallCapsRenderer is also in that cache,
     // it will be deleted then, so we don't need to do anything here.
-}
-
-int SimpleFontData::ascent(float fontSize) const
-{
-#if ENABLE(SVG_FONTS)
-    if (m_svgFontData)
-        return SVGFontData::convertEmUnitToPixel(fontSize, m_unitsPerEm, m_ascent);
-#endif
-
-    return m_ascent;
-}
-
-int SimpleFontData::descent(float fontSize) const
-{
-#if ENABLE(SVG_FONTS)
-    if (m_svgFontData)
-        return SVGFontData::convertEmUnitToPixel(fontSize, m_unitsPerEm, m_descent);
-#endif
-
-    return m_descent;
-}
-
-int SimpleFontData::lineSpacing(float fontSize) const
-{
-#if ENABLE(SVG_FONTS)
-    if (m_svgFontData)
-        return (int) ceilf(SVGFontData::convertEmUnitToPixel(fontSize, m_unitsPerEm, m_lineSpacing));
-#endif
-
-    return m_lineSpacing;
-}
-
-int SimpleFontData::lineGap(float fontSize) const
-{
-#if ENABLE(SVG_FONTS)
-    if (m_svgFontData)
-        return SVGFontData::convertEmUnitToPixel(fontSize, m_unitsPerEm, m_lineGap);
-#endif
-
-    return m_lineGap;
-}
-
-float SimpleFontData::xHeight(float fontSize) const
-{
-#if ENABLE(SVG_FONTS)
-    if (m_svgFontData)
-        return SVGFontData::convertEmUnitToPixel(fontSize, m_unitsPerEm, m_xHeight);
-#endif
-
-    return m_xHeight;
 }
 
 float SimpleFontData::widthForGlyph(Glyph glyph) const

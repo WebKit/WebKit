@@ -31,9 +31,14 @@
 #include "CSSFontSelector.h"
 #include "DocLoader.h"
 #include "FontCache.h"
-#include "SimpleFontData.h"
 #include "FontDescription.h"
 #include "GlyphPageTreeNode.h"
+#include "SimpleFontData.h"
+
+#if ENABLE(SVG_FONTS)
+#include "SVGFontData.h"
+#include "FontCustomPlatformData.h" 
+#endif
 
 namespace WebCore {
 
@@ -88,21 +93,41 @@ SimpleFontData* CSSFontFaceSource::getFontData(const FontDescription& fontDescri
     if (!isValid())
         return 0;
 
-    if (!m_font)
-        // We're local.  Just return a SimpleFontData from the normal cache.
-        return FontCache::getCachedFontData(FontCache::getCachedFontPlatformData(fontDescription, m_string));
-    
+#if ENABLE(SVG_FONTS)
+    if (!m_font && !m_svgFontFaceElement) {
+#else
+    if (!m_font) {
+#endif
+        FontPlatformData* data = FontCache::getCachedFontPlatformData(fontDescription, m_string);
+        SimpleFontData* fontData = FontCache::getCachedFontData(data);
+
+        // We're local. Just return a SimpleFontData from the normal cache.
+        return fontData;
+    }
+
     // See if we have a mapping in our FontData cache.
-    SimpleFontData* cachedData = m_fontDataTable.get(fontDescription.computedPixelSize());
-    if (cachedData)
+    if (SimpleFontData* cachedData = m_fontDataTable.get(fontDescription.computedPixelSize()))
         return cachedData;
-    
+
+    OwnPtr<SimpleFontData> fontData;
+
     // If we are still loading, then we let the system pick a font.
     if (isLoaded()) {
-        // Create new FontPlatformData from our CGFontRef, point size and ATSFontRef.
-        if (!m_font->ensureCustomFontData())
-            return 0;
-        cachedData = new SimpleFontData(m_font->platformDataFromCustomData(fontDescription.computedPixelSize(), syntheticBold, syntheticItalic), true, false);
+#if ENABLE(SVG_FONTS)
+        if (m_svgFontFaceElement)
+            fontData.set(new SimpleFontData(FontPlatformData(fontDescription.computedPixelSize(), syntheticBold, syntheticItalic),
+                                            true, false, new SVGFontData(m_svgFontFaceElement.get())));
+#endif
+
+        if (!fontData) {
+            ASSERT(m_font);
+
+            // Create new FontPlatformData from our CGFontRef, point size and ATSFontRef.
+            if (!m_font->ensureCustomFontData())
+                return 0;
+
+            fontData.set(new SimpleFontData(m_font->platformDataFromCustomData(fontDescription.computedPixelSize(), syntheticBold, syntheticItalic), true, false));
+        }
     } else {
         // Kick off the load now.
         m_font->beginLoadIfNeeded(fontSelector->docLoader());
@@ -110,12 +135,11 @@ SimpleFontData* CSSFontFaceSource::getFontData(const FontDescription& fontDescri
         FontPlatformData* tempData = FontCache::getCachedFontPlatformData(fontDescription, m_string);
         if (!tempData)
             tempData = FontCache::getLastResortFallbackFont(fontDescription);
-        cachedData = new SimpleFontData(*tempData, true, true);
+        fontData.set(new SimpleFontData(*tempData, true, true));
     }
 
-    m_fontDataTable.set(fontDescription.computedPixelSize(), cachedData);
-
-    return cachedData;
+    m_fontDataTable.set(fontDescription.computedPixelSize(), fontData.get());
+    return fontData.release();
 }
 
 }

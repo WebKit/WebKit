@@ -47,6 +47,16 @@ struct FontPlatformData {
     : m_syntheticBold(false), m_syntheticOblique(false), m_cgFont(0), m_atsuFontID(0), m_size(0), m_font((NSFont*)-1)
     {}
 
+    FontPlatformData(float s, bool b, bool o)
+        : m_syntheticBold(b)
+        , m_syntheticOblique(o)
+        , m_cgFont(0)
+        , m_atsuFontID(0)
+        , m_size(s)
+        , m_font(0)
+    {
+    }
+
     FontPlatformData(NSFont* f = 0, bool b = false, bool o = false);
     
     FontPlatformData(CGFontRef f, ATSUFontID fontID, float s, bool b , bool o)
@@ -57,6 +67,8 @@ struct FontPlatformData {
     FontPlatformData(const FontPlatformData& f);
     
     ~FontPlatformData();
+
+    float size() const { return m_size; }
 
     bool m_syntheticBold;
     bool m_syntheticOblique;

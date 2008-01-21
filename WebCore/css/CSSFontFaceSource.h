@@ -28,6 +28,7 @@
 
 #include "AtomicString.h"
 #include "CachedResourceClient.h"
+#include "SVGFontFaceElement.h"
 #include <wtf/HashMap.h>
 
 namespace WebCore {
@@ -56,11 +57,20 @@ public:
     
     void pruneTable();
 
+#if ENABLE(SVG_FONTS)
+    SVGFontFaceElement* svgFontFaceElement() const { return m_svgFontFaceElement.get(); }
+    void setSVGFontFaceElement(SVGFontFaceElement* element) { m_svgFontFaceElement = element; }
+#endif
+
 private:
     AtomicString m_string; // URI for remote, built-in font name for local.
     CachedFont* m_font; // For remote fonts, a pointer to our cached resource.
     CSSFontFace* m_face; // Our owning font face.
     HashMap<int, SimpleFontData*> m_fontDataTable; // A cache of FontDatas for various pixel sizes.
+
+#if ENABLE(SVG_FONTS)
+    RefPtr<SVGFontFaceElement> m_svgFontFaceElement;
+#endif
 };
 
 }
