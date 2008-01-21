@@ -1412,7 +1412,7 @@ QNetworkAccessManager *QWebPage::networkAccessManager() const
 QString QWebPage::userAgentFor(const QUrl& url) const
 {
     Q_UNUSED(url)
-    return QLatin1String("Mozilla/5.0 (Macintosh; U; Intel Mac OS X; en) AppleWebKit/418.9.1 (KHTML, like Gecko) Safari/419.3 Qt");
+    return QLatin1String("Mozilla/5.0 (Macintosh; U; Intel Mac OS X; en) AppleWebKit/523.15 (KHTML, like Gecko) Safari/419.3 Qt");
 }
 
 
