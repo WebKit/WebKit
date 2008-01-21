@@ -1,3 +1,13 @@
+2008-01-20  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Remove code bracketed by REMOVE_SAFARI_DOM_TREE_DEBUG_ITEM as we are no longer
+        interested in supporting Safari 2 with TOT WebKit.
+
+        * WebView/WebView.mm:
+        (+[WebView initialize]):
+
 2008-01-17  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Adam Roben.

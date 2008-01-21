@@ -1678,13 +1678,6 @@ WebFrameLoadDelegateImplementationCache* WebViewGetFrameLoadDelegateImplementati
         return;
     initialized = YES;
 
-#ifdef REMOVE_SAFARI_DOM_TREE_DEBUG_ITEM
-    // This prevents open source users from crashing when using the Show DOM Tree menu item in Safari 2.
-    // FIXME: remove this when we no longer need to support Safari 2.
-    if ([[[NSBundle mainBundle] bundleIdentifier] isEqualToString:@"com.apple.Safari"] && [[NSUserDefaults standardUserDefaults] boolForKey:@"IncludeDebugMenu"])
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_finishedLaunching) name:NSApplicationDidFinishLaunchingNotification object:NSApp];
-#endif
-
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_applicationWillTerminate) name:NSApplicationWillTerminateNotification object:NSApp];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_preferencesChangedNotification:) name:WebPreferencesChangedNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_preferencesRemovedNotification:) name:WebPreferencesRemovedNotification object:nil];
@@ -1696,24 +1689,6 @@ WebFrameLoadDelegateImplementationCache* WebViewGetFrameLoadDelegateImplementati
     if (!pluginDatabaseClientCount)
         [WebPluginDatabase closeSharedDatabase];
 }
-
-#ifdef REMOVE_SAFARI_DOM_TREE_DEBUG_ITEM
-// FIXME: remove this when it is no longer needed to prevent Safari from crashing
-+ (void)_finishedLaunching
-{
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_removeDOMTreeMenuItem:) name:NSMenuDidAddItemNotification object:[NSApp mainMenu]];
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:NSApplicationDidFinishLaunchingNotification object:NSApp];
-}
-
-+(void)_removeDOMTreeMenuItem:(NSNotification *)notification
-{
-    NSMenu *debugMenu = [[[[NSApp mainMenu] itemArray] lastObject] submenu];
-    NSMenuItem *domTree = [debugMenu itemWithTitle:@"Show DOM Tree"];
-    if (domTree)
-        [debugMenu removeItem:domTree];
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:NSMenuDidAddItemNotification object:[NSApp mainMenu]];
-}
-#endif
 
 + (BOOL)canShowMIMEType:(NSString *)MIMEType
 {
