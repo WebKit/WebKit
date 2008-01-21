@@ -84,6 +84,7 @@ void QNetworkReplyHandler::finish()
         return;
     if (m_redirected) {
         m_redirected = false;
+        m_responseSent = false;
         start();
     } else if (m_reply->error() != QNetworkReply::NoError) {
         QUrl url = m_reply->url();
@@ -153,14 +154,15 @@ void QNetworkReplyHandler::sendResponseIfNeeded()
         QUrl newUrl = m_reply->url().resolved(redirection);
         ResourceRequest newRequest = m_resourceHandle->request();
         newRequest.setURL(newUrl);
-        client->willSendRequest(m_resourceHandle, newRequest, response);
 
-        if (statusCode >= 301 && statusCode <= 303 && m_method == QNetworkAccessManager::PostOperation)
+        if (((statusCode >= 301 && statusCode <= 303) || statusCode == 307) && m_method == QNetworkAccessManager::PostOperation) {
             m_method = QNetworkAccessManager::GetOperation;
-        m_redirected = true;
-        m_responseSent = false;
+            newRequest.setHTTPMethod("GET");
+        }
 
-        m_request.setUrl(newUrl);
+        client->willSendRequest(m_resourceHandle, newRequest, response);
+        m_redirected = true;
+        m_request = newRequest.toNetworkRequest();
     } else {
         client->didReceiveResponse(m_resourceHandle, response);
     }

@@ -2,6 +2,27 @@
 
         Reviewed by Simon.
 
+        Fix some issues with redirections.
+        
+        * Ensure that we deliver the response to the ResourceHandleClient only once by
+        setting m_responseSent back to false only before calling start() for the
+        redirection
+        * Added 307 as another HTTP status code that causes a redirection after POST to
+        become get, just like in MainResourceLoader::isPostOrRedirectAfterPost
+        * Also set the HTTP method on the ResourceRequest to GET before passing it to
+        willSendRequest.
+        * willSendRequest's newRequest argument is actually an in/out argument and could be
+        modified in theory, so set m_request accordingly after the call.
+        
+
+        * platform/network/qt/QNetworkReplyHandler.cpp:
+        (WebCore::QNetworkReplyHandler::finish):
+        (WebCore::QNetworkReplyHandler::sendResponseIfNeeded):
+
+2008-01-21  Holger Freyther  <holger.freyther@trolltech.com>
+
+        Reviewed by Simon.
+
         Fixed WebCore::cookies() to return all cookies, not only the first one.
         
         Fixes login into mail.yahoo.com.
