@@ -144,9 +144,6 @@ namespace WebCore {
         void setAuthorAndUserStylesEnabled(bool);
         bool authorAndUserStylesEnabled() const { return m_authorAndUserStylesEnabled; }
         
-        void setDefaultDatabaseOriginQuota(unsigned long long);
-        unsigned long long defaultDatabaseOriginQuota() const;
-        
         void setFontRenderingMode(FontRenderingMode mode);
         FontRenderingMode fontRenderingMode() const;
 

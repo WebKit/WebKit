@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -90,7 +90,7 @@ NSString *WebDatabaseIdentifierKey = @"WebDatabaseIdentifierKey";
     static id keys[3] = {WebDatabaseDisplayNameKey, WebDatabaseExpectedSizeKey, WebDatabaseUsageKey};
     
     DatabaseDetails details = DatabaseTracker::tracker().detailsForNameAndOrigin(databaseIdentifier, [origin _core]);
-    if (!details.isValid())
+    if (details.name().isNull())
         return nil;
         
     id objects[3];
@@ -108,13 +108,7 @@ NSString *WebDatabaseIdentifierKey = @"WebDatabaseIdentifierKey";
 
 - (void)deleteOrigin:(WebSecurityOrigin *)origin
 {
-    // FIXME: this needs to delete the origin as well as the databases therein
-    [self deleteDatabasesWithOrigin:origin];
-}
-
-- (void)deleteDatabasesWithOrigin:(WebSecurityOrigin *)origin
-{
-    DatabaseTracker::tracker().deleteDatabasesWithOrigin([origin _core]);
+    DatabaseTracker::tracker().deleteOrigin([origin _core]);
 }
 
 - (void)deleteDatabase:(NSString *)databaseIdentifier withOrigin:(WebSecurityOrigin *)origin
@@ -137,7 +131,7 @@ void WebKitInitializeDatabasesIfNecessary()
     if (!databasesDirectory || ![databasesDirectory isKindOfClass:[NSString class]])
         databasesDirectory = @"~/Library/WebKit/Databases";
 
-    DatabaseTracker::tracker().setDatabasePath([databasesDirectory stringByStandardizingPath]);
+    DatabaseTracker::tracker().setDatabaseDirectoryPath([databasesDirectory stringByStandardizingPath]);
 
     // Set the DatabaseTrackerClient
     DatabaseTracker::tracker().setClient(WebDatabaseTrackerClient::sharedWebDatabaseTrackerClient());

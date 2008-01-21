@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
  * Copyright (C) 2006 David Smith (catfish.man@gmail.com)
  *
  * Redistribution and use in source and binary forms, with or without
@@ -976,7 +976,6 @@ static bool debugWidget = true;
         settings->setUserStyleSheetLocation([NSURL URLWithString:@""]);
     settings->setNeedsAdobeFrameReloadingQuirk([self _needsAdobeFrameReloadingQuirk]);
     settings->setNeedsKeyboardEventDisambiguationQuirks([self _needsKeyboardEventDisambiguationQuirks]);
-    settings->setDefaultDatabaseOriginQuota([preferences defaultDatabaseQuota]); 
 }
 
 static inline IMP getMethod(id o, SEL s)
@@ -4286,37 +4285,6 @@ static inline float CallDelegateReturningFloat(WebView *self, id delegate, SEL s
     return 0.0f;
 }
 
-typedef unsigned long long (*ObjCMsgSendULLRet)(id, SEL, ...);
-static const ObjCMsgSendULLRet objc_msgSend_ullret = reinterpret_cast<ObjCMsgSendULLRet>(objc_msgSend);
-
-static inline unsigned long long CallDelegateReturningUnsignedLongLong(WebView *self, id delegate, SEL selector, id object1, id object2, id object3, unsigned long long integer)
-{
-    if (!delegate || ![delegate respondsToSelector:selector])
-        return 0;
-    if (!self->_private->catchesDelegateExceptions)
-        return objc_msgSend_ullret(delegate, selector, self, object1, object2, object3, integer);
-    @try {
-        return objc_msgSend_ullret(delegate, selector, self, object1, object2, object3, integer);
-    } @catch(id exception) {
-        ReportDiscardedDelegateException(selector, exception);
-    }
-    return 0;
-}
-
-static inline unsigned long long CallDelegateReturningUnsignedLongLong(WebView *self, id delegate, SEL selector, id object1, id object2, unsigned long long integer, id object3)
-{
-    if (!delegate || ![delegate respondsToSelector:selector])
-        return 0;
-    if (!self->_private->catchesDelegateExceptions)
-        return objc_msgSend_ullret(delegate, selector, self, object1, object2, integer, object3);
-    @try {
-        return objc_msgSend_ullret(delegate, selector, self, object1, object2, integer, object3);
-    } @catch(id exception) {
-        ReportDiscardedDelegateException(selector, exception);
-    }
-    return 0;
-}
-
 static inline BOOL CallDelegateReturningBoolean(BOOL result, WebView *self, id delegate, SEL selector)
 {
     if (!delegate || ![delegate respondsToSelector:selector])
@@ -4523,16 +4491,6 @@ id CallUIDelegate(WebView *self, SEL selector, id object, NSUInteger integer)
 float CallUIDelegateReturningFloat(WebView *self, SEL selector)
 {
     return CallDelegateReturningFloat(self, self->_private->UIDelegate, selector);
-}
-
-unsigned long long CallUIDelegateReturningUnsignedLongLong(WebView *self, SEL selector, id object1, id object2, id object3, unsigned long long integer)
-{
-    return CallDelegateReturningUnsignedLongLong(self, self->_private->UIDelegate, selector, object1, object2, object3, integer);
-}
-
-unsigned long long CallUIDelegateReturningUnsignedLongLong(WebView *self, SEL selector, id object1, id object2, unsigned long long integer, id object3)
-{
-    return CallDelegateReturningUnsignedLongLong(self, self->_private->UIDelegate, selector, object1, object2, integer, object3);
 }
 
 BOOL CallUIDelegateReturningBoolean(BOOL result, WebView *self, SEL selector)

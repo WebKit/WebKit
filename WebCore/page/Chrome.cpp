@@ -343,16 +343,6 @@ void Chrome::print(Frame* frame)
     m_client->print(frame);
 }
 
-unsigned long long Chrome::requestQuotaIncreaseForNewDatabase(Frame* frame, SecurityOrigin* origin, const String& databaseDisplayName, unsigned long long estimatedSize)
-{
-    return m_client->requestQuotaIncreaseForNewDatabase(frame, origin, databaseDisplayName, estimatedSize);
-}
-
-unsigned long long Chrome::requestQuotaIncreaseForDatabaseOperation(Frame* frame, SecurityOrigin* origin, const String& databaseIdentifier, unsigned long long proposedNewQuota)
-{
-    return m_client->requestQuotaIncreaseForDatabaseOperation(frame, origin, databaseIdentifier, proposedNewQuota);
-}
-
 PageGroupLoadDeferrer::PageGroupLoadDeferrer(Page* page, bool deferSelf)
 {
     const HashSet<Page*>* group = page->frameNamespace();

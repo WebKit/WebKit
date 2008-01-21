@@ -45,6 +45,12 @@ bool deleteFile(const String& path)
     return false;
 }
 
+bool deleteEmptyDirectory(const String& path)
+{
+    notImplemented();
+    return false;
+}
+
 bool fileSize(const String& path, long long& resultSize)
 {
     notImplemented();

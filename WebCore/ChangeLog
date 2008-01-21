@@ -1,3 +1,131 @@
+2008-01-21  Darin Adler  <darin@apple.com>
+
+        Reviewed by John Sullivan.
+
+        - fix <rdar://problem/5644324> Delegate-less WebKit clients should have no databases
+
+        - remove the default database quota setting
+
+        - simplify the quota-related client calls by merging the one for a new database with
+          the one for an existing database, adding a feature where you can get details about
+          a database being created using the same functions that work on the other databases,
+          and removing the parameters and return values, instead having clients use a function
+          to set the quota
+
+        - fix unsafe multi-thread access to the database tracker's quota map
+        - fix bug in deleteAllDatabases where it would iterate a HashMap while modifying it
+
+        The tracker database is now only created when we set the quota for a database origin.
+        Thus asking for info about databases won't cause anything to be written to disk.
+
+        * WebCore.base.exp: Updated.
+
+        * bindings/js/GCController.cpp: Added an #if to get rid of an unused function warning.
+
+        * page/Chrome.cpp: Removed database-related functions. There's no problem having the
+        code deal directly with the client.
+        * page/Chrome.h: Ditto. Also made Chrome inherit from Noncopyable.
+
+        * page/ChromeClient.h: Replaced the two quota-related functions with a single one.
+        The details about the state of databases in the origin are now available by asking
+        for database details. There's also no need to pass the security origin, since
+        it's easy to get that from the frame's document.
+
+        * page/Settings.cpp: Removed the default quota setting.
+        * page/Settings.h: Ditto.
+
+        * platform/FileSystem.h: Added deleteEmptyDirectory.
+        * platform/gtk/FileSystemGtk.cpp:
+        (WebCore::deleteEmptyDirectory): Added.
+        * platform/posix/FileSystemPOSIX.cpp:
+        (WebCore::deleteEmptyDirectory): Added.
+        * platform/qt/FileSystemQt.cpp:
+        (WebCore::deleteEmptyDirectory): Added.
+        * platform/win/FileSystemWin.cpp:
+        (WebCore::deleteEmptyDirectory): Added.
+        * platform/wx/FileSystemWx.cpp:
+        (WebCore::deleteEmptyDirectory): Added placeholder.
+
+        * storage/DatabaseDetails.h: Removed the isValid() function since its name is
+        confusing -- we removed our other isValid() functions. For the few callers that
+        need this, it's fine to just check name().isEmpty(). Made the member functions
+        all const.
+
+        * storage/DatabaseTracker.cpp:
+        (WebCore::DatabaseTracker::DatabaseTracker): Removed m_defaultQuota initialization.
+        Added m_proposedDatabase and m_thread.
+        (WebCore::DatabaseTracker::setDatabaseDirectoryPath): Got rid of code that would
+        open the tracker database here. This might slightly speed up launch time, since
+        we won't do the I/O until we have to, and before we were actually creating an SQL
+        database in this code that's run when we go to the first webpage.
+        (WebCore::DatabaseTracker::trackerDatabasePath): Added.
+        (WebCore::DatabaseTracker::openTrackerDatabase): Added a boolean parameter telling
+        this function whether to create the database. Made this function safe to call if
+        the database is already open. Also made the function fail quietly if the path has
+        not been set yet.
+        (WebCore::DatabaseTracker::canEstablishDatabase): Got rid of the call to the
+        establishEntryForOrigin function. The origin is now put in the tracker database
+        when the quota is set to a non-zero value. When judging if there's enough space
+        for the new database, require at least one byte even if estimatedSize is 0, and
+        check for overflow. Also added code here to populate the origins map, which
+        guarantees it will be ready when the database uses it on another thread later.
+        Also changed this to call the new ChromeClient function.
+        (WebCore::DatabaseTracker::hasEntryForDatabase): Added code to open the
+        tracker database, since that's no longer done by setDatabaseDirectoryPath.
+        (WebCore::DatabaseTracker::originPath): Added.
+        (WebCore::DatabaseTracker::fullPathForDatabase): Added code so that this will
+        return a null string for the proposed database if called from within the
+        ChromeClient function. Also switched from empty string to null string for the
+        error cases.
+        (WebCore::DatabaseTracker::populateOrigins): Added code to open the tracker
+        database.
+        (WebCore::DatabaseTracker::databaseNamesForOrigin): Ditto.
+        (WebCore::DatabaseTracker::detailsForNameAndOrigin): Ditto. Also added code that
+        will return the details of the proposed database if called from within the
+        ChromeClient function. This is how the client can learn of the display name and
+        the estimated size of the new database.
+        (WebCore::DatabaseTracker::setDatabaseDetails): Added code to open the tracker
+        database.
+        (WebCore::DatabaseTracker::quotaForOrigin): Made this code OK to call on a non-main
+        thread by using m_quotaMapGuard to guard access to the map. Other code runs on the
+        main thread only, and only functions that write to the map use the lock.
+        (WebCore::DatabaseTracker::setQuota): Changed this function so it can insert the
+        initial quota as well as updating an existing quota. Added locking since this
+        function modifies the quota map. Added code to open the tracker database. Added
+        an early exit if the quota is already correct, which is guarantees that if you
+        set a quota to 0 it won't trigger creation of a tracker database.
+        (WebCore::DatabaseTracker::addDatabase): Added code to open the tracker database.
+        (WebCore::DatabaseTracker::deleteAllDatabases): Made a copy of the quota map before
+        iterating it to find all the origins. This fixes a problem with the old code where
+        it would modify the map while iterating it, which gives assertions in debug builds
+        and unpredictable results.
+        (WebCore::DatabaseTracker::deleteOrigin): Replaced deleteDatabasesWithOrigin with
+        this function. Added code to open the tracker database if needed. Added code to
+        delete the origin from the tracker database, and to close the tracker database
+        and delete files and directories as needed if we are deleting the final origin.
+        (WebCore::DatabaseTracker::deleteDatabase): Added code to open the tracker database
+        if needed.
+
+        * storage/DatabaseTracker.h: Renamed databasePath to databaseDirectoryPath for
+        clarity, including the data member, and the getter and setter functions.
+        Replaced deleteDatabasesWithOrigin with deleteOrigin. Removed the functions
+        dealing with default origin quota. There is no default any more; origins start
+        with no quota and the client must set a quota. Added trackerDatabasePath and
+        originPath helper functions. Added a boolean parameter to openTrackerDatabase
+        to tell it whether to create the database or not. Removed the
+        establishEntryForOrigin function. Renamed m_originQuotaMap to just m_quotaMap,
+        and added m_quotaMapGuard. Added a QuotaMap typedef. Added m_proposedDatabase,
+        which holds the origin and details for the current proposed database during
+        the client callback function that must decide whether to grant quota. Added a
+        m_thread data member for debugging use to assert if functions that can only
+        be called on a single thread are misused.
+
+        * storage/SQLTransaction.cpp:
+        (WebCore::SQLTransaction::deliverQuotaIncreaseCallback): Changed to call the
+        new exceededDatabaseQuota function instead of the old one.
+
+        * svg/graphics/SVGImageEmptyClients.h: Updated for the change to ChromeClient.
+
 2008-01-21  David Hyatt  <hyatt@apple.com>
 
         Fix for http://bugs.webkit.org/show_bug.cgi?id=16935

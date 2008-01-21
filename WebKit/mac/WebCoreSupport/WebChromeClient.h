@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006, 2007, 2008 Apple Inc. All rights reserved.
  * Copyright (C) 2007 Trolltech ASA
  *
  * Redistribution and use in source and binary forms, with or without
@@ -100,8 +100,7 @@ public:
 
     virtual void print(WebCore::Frame*);
 
-    virtual unsigned long long requestQuotaIncreaseForNewDatabase(WebCore::Frame*, WebCore::SecurityOrigin* origin, const WebCore::String& databaseDisplayName, unsigned long long estimatedSize);
-    virtual unsigned long long requestQuotaIncreaseForDatabaseOperation(WebCore::Frame*, WebCore::SecurityOrigin* origin, const WebCore::String& databaseIdentifier, unsigned long long proposedNewQuota);
+    virtual void exceededDatabaseQuota(WebCore::Frame*, const WebCore::String& databaseName);
 
 private:
     WebView *m_webView;

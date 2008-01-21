@@ -93,8 +93,7 @@ namespace WebKit {
 
         virtual void print(WebCore::Frame*);
 
-        virtual unsigned long long requestQuotaIncreaseForNewDatabase(WebCore::Frame*, WebCore::SecurityOrigin*, const WebCore::String&, unsigned long long);
-        virtual unsigned long long requestQuotaIncreaseForDatabaseOperation(WebCore::Frame*, WebCore::SecurityOrigin*, const WebCore::String&, unsigned long long);
+        virtual void exceededDatabaseQuota(Frame*, const String&);
 
     private:
         WebKitWebView* m_webView;

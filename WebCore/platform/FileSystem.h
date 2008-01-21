@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Collabora, Ltd. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -31,7 +31,6 @@
 #define FileSystem_h
 
 #include <wtf/Platform.h>
-#include <wtf/Vector.h>
 
 typedef const struct __CFData* CFDataRef;
 
@@ -50,6 +49,7 @@ const PlatformFileHandle invalidPlatformFileHandle = -1;
 
 bool fileExists(const String&);
 bool deleteFile(const String&);
+bool deleteEmptyDirectory(const String&);
 bool fileSize(const String&, long long& result);
 String pathByAppendingComponent(const String& path, const String& component);
 bool makeAllDirectories(const String& path);
@@ -59,7 +59,7 @@ CString fileSystemRepresentation(const String&);
 
 inline bool isHandleValid(const PlatformFileHandle& handle) { return handle != invalidPlatformFileHandle; }
 
-/* Prefix is what the filename should be prefixed with, not the full path */
+// Prefix is what the filename should be prefixed with, not the full path.
 CString openTemporaryFile(const char* prefix, PlatformFileHandle&);
 void closeFile(PlatformFileHandle&);
 int writeToFile(PlatformFileHandle, const char* data, int length);

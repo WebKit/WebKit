@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2007 Holger Hans Peter Freyther
  * Copyright (C) 2008 Collabora, Ltd.
+ * Copyright (C) 2008 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -50,6 +51,19 @@ bool deleteFile(const String& path)
 
     if (filename) {
         result = g_remove(filename) == 0;
+        g_free(filename);
+    }
+    
+    return result;
+}
+
+bool deleteEmptyDirectory(const String& path)
+{
+    bool result = false;
+    gchar* filename = g_filename_from_utf8(path.utf8().data(), -1, 0, 0, 0);
+
+    if (filename) {
+        result = g_rmdir(filename) == 0;
         g_free(filename);
     }
     

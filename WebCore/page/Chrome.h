@@ -1,6 +1,6 @@
 // -*- mode: c++; c-basic-offset: 4 -*-
 /*
- * Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2007, 2008 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -23,6 +23,7 @@
 
 #include "FocusDirection.h"
 #include <wtf/Forward.h>
+#include <wtf/Noncopyable.h>
 #include <wtf/RefPtr.h>
 
 #if PLATFORM(MAC)
@@ -40,7 +41,6 @@ namespace WebCore {
     class HitTestResult;
     class IntRect;
     class Page;
-    class SecurityOrigin;
     class String;
     
     struct FrameLoadRequest;
@@ -61,7 +61,7 @@ namespace WebCore {
         ErrorMessageLevel
     };
 
-    class Chrome {
+    class Chrome : Noncopyable {
     public:
         Chrome(Page*, ChromeClient*);
         ~Chrome();
@@ -125,9 +125,6 @@ namespace WebCore {
         void setToolTip(const HitTestResult&);
 
         void print(Frame*);
-
-        unsigned long long requestQuotaIncreaseForNewDatabase(Frame*, SecurityOrigin*, const String& databaseDisplayName, unsigned long long estimatedSize);
-        unsigned long long requestQuotaIncreaseForDatabaseOperation(Frame*, SecurityOrigin* origin, const String& databaseIdentifier, unsigned long long proposedNewQuota);
         
 #if PLATFORM(MAC)
         void focusNSView(NSView*);

@@ -1,3 +1,43 @@
+2008-01-21  Darin Adler  <darin@apple.com>
+
+        Reviewed by John Sullivan.
+
+        - fix <rdar://problem/5644324> Delegate-less WebKit clients should have no databases
+        - fix incorrect value for WebDatabaseDisplayNameKey in header
+        
+        * Interfaces/IWebDatabaseManager.idl: Renamed detailsForDatabaseWithOrigin to
+        detailsForDatabase. Replaced deleteDatabasesWithOrigin with deleteOrigin.
+        Renamed deleteDatabaseWithOrigin to deleteDatabase. Fixed incorrect value for
+        WebDatabaseDisplayNameKey.
+        * Interfaces/IWebPreferencesPrivate.idl: Removed defaultDatabaseQuota and
+        setDefaultDatabaseQuota.
+        * Interfaces/IWebUIDelegatePrivate.idl: Replaced the two database quota functions
+        with a single one.
+
+        * WebChromeClient.cpp:
+        (WebChromeClient::exceededDatabaseQuota): Replaced the two database quota functions
+        with a single one.
+        * WebChromeClient.h: Ditto.
+
+        * WebDatabaseManager.cpp:
+        (WebDatabaseManager::detailsForDatabase): Changed to check for a name of null to
+        detect a nonexistent database rather than using isValid.
+        (WebDatabaseManager::deleteOrigin): Updated for name change (actually a semantic
+        change too, but both have the same name).
+        (WebDatabaseManager::deleteDatabase): Updated for name change.
+        (WebKitSetWebDatabasesPathIfNecessary): Ditto.
+
+        * WebDatabaseManager.h: Updated for name changes.
+
+        * WebPreferenceKeysPrivate.h: Removed WebKitDefaultDatabaseQuotaKey.
+        * WebPreferences.cpp:
+        (WebPreferences::initializeDefaultSettings): Removed the default for
+        WebKitDefaultDatabaseQuotaKey.
+        * WebPreferences.h: Removed defaultDatabaseQuota and setDefaultDatabaseQuota.
+        * WebView.cpp:
+        (WebView::notifyPreferencesChanged): Removed the code to set the
+        default database origin quota in WebCore::Settings based on IWebPreferencesPrivate.
+
 2008-01-19  Mark Rowe  <mrowe@apple.com>
 
         Fix inconsistent line endings and set svn:eol-style=native

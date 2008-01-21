@@ -1,3 +1,13 @@
+2008-01-21  Darin Adler  <darin@apple.com>
+
+        Reviewed by John Sullivan.
+
+        - updated for changes to ChromeClient database functions
+
+        * WebKitSupport/ChromeClientWx.cpp:
+        (WebCore::ChromeClientWx::exceededDatabaseQuota):
+        * WebKitSupport/ChromeClientWx.h:
+
 2008-01-16  Adam Roben  <aroben@apple.com>
 
         Updated for WebCore method renames.

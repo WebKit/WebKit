@@ -301,22 +301,6 @@ void Settings::setAuthorAndUserStylesEnabled(bool authorAndUserStylesEnabled)
     setNeedsReapplyStylesInAllFrames(m_page);
 }
 
-void Settings::setDefaultDatabaseOriginQuota(unsigned long long quota)
-{
-#if ENABLE(DATABASE)
-    DatabaseTracker::tracker().setDefaultOriginQuota(quota);
-#endif
-}
-
-unsigned long long Settings::defaultDatabaseOriginQuota() const
-{
-#if ENABLE(DATABASE)
-    return DatabaseTracker::tracker().defaultOriginQuota();
-#else
-    return 0;
-#endif
-}
-
 void Settings::setFontRenderingMode(FontRenderingMode mode)
 {
     if (fontRenderingMode() == mode)

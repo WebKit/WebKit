@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Collabora, Ltd. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -63,6 +63,12 @@ bool deleteFile(const String& path)
 {
     String filename = path;
     return !!DeleteFileW(filename.charactersWithNullTermination());
+}
+
+bool deleteEmptyDirectory(const String& path)
+{
+    String filename = path;
+    return !!RemoveDirectoryW(filename.charactersWithNullTermination());
 }
 
 String pathByAppendingComponent(const String& path, const String& component)

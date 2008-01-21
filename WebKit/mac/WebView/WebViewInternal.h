@@ -169,8 +169,6 @@ id CallUIDelegate(WebView *, SEL, id, BOOL);
 id CallUIDelegate(WebView *, SEL, id, id, id);
 id CallUIDelegate(WebView *, SEL, id, NSUInteger);
 float CallUIDelegateReturningFloat(WebView *, SEL);
-unsigned long long CallUIDelegateReturningUnsignedLongLong(WebView *, SEL, id, id, id, unsigned long long);
-unsigned long long CallUIDelegateReturningUnsignedLongLong(WebView *, SEL, id, id, unsigned long long, id);
 BOOL CallUIDelegateReturningBoolean(BOOL, WebView *, SEL);
 BOOL CallUIDelegateReturningBoolean(BOOL, WebView *, SEL, id);
 BOOL CallUIDelegateReturningBoolean(BOOL, WebView *, SEL, id, id);

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,11 +25,14 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 #include "config.h"
 #include "SQLTransaction.h"
 
+#include "ChromeClient.h"
 #include "Database.h"
 #include "DatabaseAuthorizer.h"
+#include "DatabaseDetails.h"
 #include "DatabaseTracker.h"
 #include "Document.h"
 #include "ExceptionCode.h"
@@ -294,9 +297,8 @@ void SQLTransaction::deliverQuotaIncreaseCallback()
     RefPtr<SecurityOrigin> origin = m_database->securityOriginCopy();
     
     unsigned long long currentQuota = DatabaseTracker::tracker().quotaForOrigin(origin.get());
-    unsigned long long newQuota = page->chrome()->requestQuotaIncreaseForDatabaseOperation(m_database->document()->frame(), origin.get(), m_database->stringIdentifier(), currentQuota + DefaultQuotaSizeIncrease);
-    
-    DatabaseTracker::tracker().setQuota(origin.get(), newQuota);
+    page->chrome()->client()->exceededDatabaseQuota(m_database->document()->frame(), m_database->stringIdentifier());
+    unsigned long long newQuota = DatabaseTracker::tracker().quotaForOrigin(origin.get());
     
     // If the new quota ended up being larger than the old quota, we will retry the statement.
     if (newQuota > currentQuota)

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2007, 2008 Apple Inc. All rights reserved.
  * Copyright (C) 2007 Trolltech ASA
  *
  * Redistribution and use in source and binary forms, with or without
@@ -44,6 +44,7 @@
 #import "WebViewInternal.h"
 #import <WebCore/BlockExceptions.h>
 #import <WebCore/FloatRect.h>
+#import <WebCore/Frame.h>
 #import <WebCore/FrameLoadRequest.h>
 #import <WebCore/HitTestResult.h>
 #import <WebCore/IntRect.h>
@@ -363,7 +364,7 @@ bool WebChromeClient::shouldInterruptJavaScript()
     return CallUIDelegate(m_webView, @selector(webViewShouldInterruptJavaScript:));
 }
 
-void WebChromeClient::setStatusbarText(const WebCore::String& status)
+void WebChromeClient::setStatusbarText(const String& status)
 {
     // We want the temporaries allocated here to be released even before returning to the 
     // event loop; see <http://bugs.webkit.org/show_bug.cgi?id=9880>.
@@ -412,19 +413,10 @@ void WebChromeClient::print(Frame* frame)
     CallUIDelegate(m_webView, @selector(webView:printFrameView:), frameView);
 }
 
-unsigned long long WebChromeClient::requestQuotaIncreaseForNewDatabase(WebCore::Frame* frame, WebCore::SecurityOrigin* origin, const WebCore::String& databaseDisplayName, unsigned long long estimatedSize)
+void WebChromeClient::exceededDatabaseQuota(Frame* frame, const String& databaseName)
 {
-    WebSecurityOrigin *webOrigin = [[WebSecurityOrigin alloc] _initWithWebCoreSecurityOrigin:origin];
-    unsigned long long result = CallUIDelegateReturningUnsignedLongLong(m_webView, @selector(webView:frame:quotaForSecurityOrigin:toCreateDatabase:withEstimatedSize:), kit(frame), webOrigin, (NSString *)databaseDisplayName, estimatedSize);
+    WebSecurityOrigin *webOrigin = [[WebSecurityOrigin alloc] _initWithWebCoreSecurityOrigin:frame->document()->securityOrigin()];
+    CallUIDelegate(m_webView, @selector(webView:frame:exceededDatabaseQuotaForSecurityOrigin:database:), kit(frame), webOrigin, (NSString *)databaseName);
     [webOrigin release];
-    return result;
-}
-
-unsigned long long WebChromeClient::requestQuotaIncreaseForDatabaseOperation(WebCore::Frame* frame, WebCore::SecurityOrigin* origin, const WebCore::String& databaseIdentifier, unsigned long long proposedNewQuota)
-{
-    WebSecurityOrigin *webOrigin = [[WebSecurityOrigin alloc] _initWithWebCoreSecurityOrigin:origin];
-    unsigned long long result = CallUIDelegateReturningUnsignedLongLong(m_webView, @selector(webView:frame:quotaForSecurityOrigin:fromProposedQuota:database:), kit(frame), webOrigin, proposedNewQuota, (NSString *)databaseIdentifier);
-    [webOrigin release];
-    return result;
 }
     

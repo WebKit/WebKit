@@ -1,3 +1,13 @@
+2008-01-21  Darin Adler  <darin@apple.com>
+
+        Reviewed by John Sullivan.
+
+        - updated for changes to ChromeClient database functions
+
+        * WebCoreSupport/ChromeClientQt.cpp:
+        (WebCore::ChromeClientQt::exceededDatabaseQuota):
+        * WebCoreSupport/ChromeClientQt.h:
+
 2008-01-21  Benjamin Meyer  <bmeyer@trolltech.com>
 
         Reviewed by Simon.

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2006, 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -87,31 +87,13 @@ enum {
 - (void)webView:(WebView *)sender saveFrameView:(WebFrameView *)frameView showingPanel:(BOOL)showingPanel;
 
 /*!
-    @method webView:quotaForSecurityOrigin:toCreateDatabase:withEstimatedSize:
-    @param sender The WebView sending the delegate method
+    @method webView:frame:exceededDatabaseQuotaForSecurityOrigin:database:
+    @param sender The WebView sending the delegate method.
     @param frame The WebFrame whose JavaScript initiated this call.
-    @param origin The security origin of the database that needs a larger quota to create a database
-    @param newDatabaseName The display name of the new database
-    @param estimatedSize The estimated maximum usage of the new database
-    @result The new quota, in bytes
-    @discussion If the new quota is less than or equal to the current usage for the given security origin, the new database will not be created.
-    Otherwise the database will created, even if the new quota doesn't allow for the entire estimated size.
+    @param origin The security origin that needs a larger quota.
+    @param databaseIdentifier The identifier of the database involved.
 */
-- (unsigned long long)webView:(WebView *)sender frame:(WebFrame *)frame quotaForSecurityOrigin:(WebSecurityOrigin *)origin toCreateDatabase:(NSString *)newDatabaseName withEstimatedSize:(unsigned long long)estimatedSize;
-
-/*!
-    @method webView:quotaForSecurityOrigin:fromProposedQuota:database:
-    @param sender The WebView sending the delegate method
-    @param frame The WebFrame whose JavaScript initiated this call.
-    @param origin The security origin of the database that has reached its size limit
-    @param proposedNewQuota WebKit's best guess as to the required new quota
-    @param databaseIdentifier The string identifier of the database
-    @result The new quota, in bytes
-    @discussion If the new quota is less than the proposedNewQuota, the current database operation will fail.
-    If the new quota is equal to or greater than the proposedNewQuota, the current database operation will continue, 
-    possibly calling this delegate method again to request even more space
-*/
-- (unsigned long long)webView:(WebView *)sender frame:(WebFrame *)frame quotaForSecurityOrigin:(WebSecurityOrigin *)origin fromProposedQuota:(unsigned long long)proposedNewQuota database:(NSString *)databaseIdentifier;
+- (void)webView:(WebView *)sender frame:(WebFrame *)frame exceededDatabaseQuotaForSecurityOrigin:(WebSecurityOrigin *)origin database:(NSString *)databaseIdentifier;
 
 - (WebView *)webView:(WebView *)sender createWebViewWithRequest:(NSURLRequest *)request windowFeatures:(NSDictionary *)features;
 

@@ -24,7 +24,7 @@
  */
 
 cpp_quote("/*")
-cpp_quote(" * Copyright (C) 2007 Apple Inc.  All rights reserved.")
+cpp_quote(" * Copyright (C) 2007, 2008 Apple Inc. All rights reserved.")
 cpp_quote(" *")
 cpp_quote(" * Redistribution and use in source and binary forms, with or without")
 cpp_quote(" * modification, are permitted provided that the following conditions")
@@ -51,7 +51,7 @@ cpp_quote(" */")
 import "oaidl.idl";
 import "ocidl.idl";
 
-cpp_quote("#define WebDatabaseDisplayNameKey TEXT(\"WebDatabaseExpectedSizeKey\")")
+cpp_quote("#define WebDatabaseDisplayNameKey TEXT(\"WebDatabaseDisplayNameKey\")")
 cpp_quote("#define WebDatabaseExpectedSizeKey TEXT(\"WebDatabaseExpectedSizeKey\")")
 cpp_quote("#define WebDatabaseUsageKey TEXT(\"WebDatabaseUsageKey\")")
 
@@ -73,9 +73,9 @@ interface IWebDatabaseManager : IUnknown
 
     HRESULT origins([out, retval] IEnumVARIANT** result);
     HRESULT databasesWithOrigin([in] IWebSecurityOrigin* origin, [out, retval] IEnumVARIANT** result);
-    HRESULT detailsForDatabaseWithOrigin([in] BSTR databaseName, [in] IWebSecurityOrigin* origin, [out, retval] IPropertyBag **result);
+    HRESULT detailsForDatabase([in] BSTR databaseName, [in] IWebSecurityOrigin* origin, [out, retval] IPropertyBag **result);
 
     HRESULT deleteAllDatabases();
-    HRESULT deleteDatabasesWithOrigin([in] IWebSecurityOrigin* origin);
-    HRESULT deleteDatabaseWithOrigin([in] BSTR databaseName, [in] IWebSecurityOrigin* origin);
+    HRESULT deleteOrigin([in] IWebSecurityOrigin* origin);
+    HRESULT deleteDatabase([in] BSTR databaseName, [in] IWebSecurityOrigin* origin);
 }

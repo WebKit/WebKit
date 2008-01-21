@@ -459,36 +459,14 @@ void WebChromeClient::print(Frame* frame)
             uiDelegate2->printFrame(m_webView, kit(frame));
 }
 
-unsigned long long WebChromeClient::requestQuotaIncreaseForNewDatabase(Frame* frame, SecurityOrigin* origin, const String& databaseDisplayName, unsigned long long estimatedSize)
+void WebChromeClient::exceededDatabaseQuota(Frame* frame, const String& databaseIdentifier)
 {
-    COMPtr<WebSecurityOrigin> webOrigin(AdoptCOM, WebSecurityOrigin::createInstance(origin));
-    unsigned long long result = 0;
+    COMPtr<WebSecurityOrigin> origin(AdoptCOM, WebSecurityOrigin::createInstance(frame->document()->securityOrigin()));
     COMPtr<IWebUIDelegate> uiDelegate;
     if (SUCCEEDED(m_webView->uiDelegate(&uiDelegate))) {
         COMPtr<IWebUIDelegatePrivate3> uiDelegatePrivate3(Query, uiDelegate);
-        if (uiDelegatePrivate3 &&
-            SUCCEEDED(uiDelegatePrivate3->quotaForSecurityOriginForNewDatabase(m_webView, kit(frame), webOrigin.get(), BString(databaseDisplayName), estimatedSize, &result)))
-            return result;
+        uiDelegatePrivate3->exceededDatabaseQuota(m_webView, kit(frame), origin.get(), BString(databaseIdentifier));
     }
-    // an error happened - just return the current quota
-    webOrigin->quota(&result);
-    return result;
-}
-
-unsigned long long WebChromeClient::requestQuotaIncreaseForDatabaseOperation(Frame* frame, SecurityOrigin* origin, const String& databaseIdentifier, unsigned long long proposedNewQuota)
-{
-    COMPtr<WebSecurityOrigin> webOrigin(AdoptCOM, WebSecurityOrigin::createInstance(origin));
-    unsigned long long result = 0;
-    COMPtr<IWebUIDelegate> uiDelegate;
-    if (SUCCEEDED(m_webView->uiDelegate(&uiDelegate))) {
-        COMPtr<IWebUIDelegatePrivate3> uiDelegatePrivate3(Query, uiDelegate);
-        if (uiDelegatePrivate3 &&
-            SUCCEEDED(uiDelegatePrivate3->quotaForSecurityOriginForDatabaseOperation(m_webView, kit(frame), webOrigin.get(), proposedNewQuota, BString(databaseIdentifier), &result)))
-            return result;
-    }
-    // an error happened - just return the current quota
-    webOrigin->quota(&result);
-    return result;
 }
 
 COMPtr<IWebUIDelegate> WebChromeClient::uiDelegate()

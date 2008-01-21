@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,6 +25,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 #include "config.h"
 #include "WebDatabaseManager.h"
 #include "WebKitDLL.h"
@@ -245,7 +246,7 @@ HRESULT STDMETHODCALLTYPE WebDatabaseManager::databasesWithOrigin(
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE WebDatabaseManager::detailsForDatabaseWithOrigin( 
+HRESULT STDMETHODCALLTYPE WebDatabaseManager::detailsForDatabase( 
     /* [in] */ BSTR databaseName,
     /* [in] */ IWebSecurityOrigin* origin,
     /* [retval][out] */ IPropertyBag** result)
@@ -265,7 +266,7 @@ HRESULT STDMETHODCALLTYPE WebDatabaseManager::detailsForDatabaseWithOrigin(
     DatabaseDetails details = DatabaseTracker::tracker().detailsForNameAndOrigin(String(databaseName, SysStringLen(databaseName)),
         webSecurityOrigin->securityOrigin());
 
-    if (!details.isValid())
+    if (details.name().isNull())
         return E_INVALIDARG;
 
     *result = DatabaseDetailsPropertyBag::createInstance(details);
@@ -282,7 +283,7 @@ HRESULT STDMETHODCALLTYPE WebDatabaseManager::deleteAllDatabases()
     return S_OK;
 }
    
-HRESULT STDMETHODCALLTYPE WebDatabaseManager::deleteDatabasesWithOrigin( 
+HRESULT STDMETHODCALLTYPE WebDatabaseManager::deleteOrigin( 
     /* [in] */ IWebSecurityOrigin* origin)
 {
     if (!origin)
@@ -295,12 +296,12 @@ HRESULT STDMETHODCALLTYPE WebDatabaseManager::deleteDatabasesWithOrigin(
     if (!webSecurityOrigin)
         return E_FAIL;
 
-    DatabaseTracker::tracker().deleteDatabasesWithOrigin(webSecurityOrigin->securityOrigin());
+    DatabaseTracker::tracker().deleteOrigin(webSecurityOrigin->securityOrigin());
 
     return S_OK;
 }
     
-HRESULT STDMETHODCALLTYPE WebDatabaseManager::deleteDatabaseWithOrigin( 
+HRESULT STDMETHODCALLTYPE WebDatabaseManager::deleteDatabase( 
     /* [in] */ BSTR databaseName,
     /* [in] */ IWebSecurityOrigin* origin)
 {
@@ -357,8 +358,7 @@ void WebKitSetWebDatabasesPathIfNecessary()
         return;
 
     WebCore::String databasesDirectory = WebCore::pathByAppendingComponent(WebCore::localUserSpecificStorageDirectory(), "Databases");
-    WebCore::DatabaseTracker::tracker().setDatabasePath(databasesDirectory);
+    WebCore::DatabaseTracker::tracker().setDatabaseDirectoryPath(databasesDirectory);
 
     pathSet = true;
 }
-

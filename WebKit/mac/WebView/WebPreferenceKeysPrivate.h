@@ -74,7 +74,6 @@
 #define WebKitUseSiteSpecificSpoofingPreferenceKey @"WebKitUseSiteSpecificSpoofing"
 #define WebKitEditableLinkBehaviorPreferenceKey @"WebKitEditableLinkBehavior"
 #define WebKitCacheModelPreferenceKey @"WebKitCacheModelPreferenceKey"
-#define WebKitDefaultDatabaseQuotaKey @"WebKitDefaultDatabaseQuota"
 
 // CoreGraphics deferred updates are disabled if WebKitEnableCoalescedUpdatesPreferenceKey is set
 // to NO, or has no value.  For compatibility with Mac OS X 10.4.6, deferred updates are OFF by

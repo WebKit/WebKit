@@ -288,12 +288,6 @@ public:
      virtual HRESULT STDMETHODCALLTYPE automaticallyDetectsCacheModel(
          /* [out, retval] */ BOOL* automaticallyDetectsCacheModel);
 
-    virtual HRESULT STDMETHODCALLTYPE defaultDatabaseQuota(
-        /* [retval][out] */ unsigned long long *quota);
-
-    virtual HRESULT STDMETHODCALLTYPE setDefaultDatabaseQuota( 
-        /* [in] */ unsigned long long quota);
-
     virtual HRESULT STDMETHODCALLTYPE setAuthorAndUserStylesEnabled(BOOL);
     virtual HRESULT STDMETHODCALLTYPE authorAndUserStylesEnabled(BOOL*);
 

@@ -3914,12 +3914,6 @@ HRESULT WebView::notifyPreferencesChanged(IWebNotification* notification)
 
     COMPtr<IWebPreferencesPrivate> prefsPrivate(Query, preferences);
     if (prefsPrivate) {
-        unsigned long long defaultQuota = 0;
-        hr = prefsPrivate->defaultDatabaseQuota(&defaultQuota);
-        if (FAILED(hr))
-            return hr;
-        settings->setDefaultDatabaseOriginQuota(defaultQuota);
-
         hr = prefsPrivate->authorAndUserStylesEnabled(&enabled);
         if (FAILED(hr))
             return hr;

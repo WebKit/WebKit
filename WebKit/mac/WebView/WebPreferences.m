@@ -332,7 +332,6 @@ static WebCacheModel cacheModelForMainBundle(void)
         [NSNumber numberWithInt:cacheModelForMainBundle()], WebKitCacheModelPreferenceKey,
         [NSNumber numberWithBool:NO],  WebKitDeveloperExtrasEnabledPreferenceKey,
         [NSNumber numberWithBool:YES],  WebKitAuthorAndUserStylesEnabledPreferenceKey,
-        [NSNumber numberWithUnsignedLongLong:5242880], WebKitDefaultDatabaseQuotaKey,
         nil];
 
     // This value shouldn't ever change, which is assumed in the initialization of WebKitPDFDisplayModePreferenceKey above
@@ -975,16 +974,6 @@ static NSString *classIBCreatorID = nil;
 - (void)willAddToWebView
 {
     ++_private->numWebViews;
-}
-
-- (unsigned long long)defaultDatabaseQuota
-{
-    return [self _unsignedLongLongValueForKey:WebKitDefaultDatabaseQuotaKey];
-}
-
-- (void)setDefaultDatabaseQuota:(unsigned long long)quota
-{
-    [self _setUnsignedLongLongValue:quota forKey:WebKitDefaultDatabaseQuotaKey];
 }
 
 @end

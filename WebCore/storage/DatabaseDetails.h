@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,6 +25,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 #ifndef DatabaseDetails_h
 #define DatabaseDetails_h
 
@@ -37,22 +38,22 @@ public:
     DatabaseDetails()
         : m_expectedUsage(0)
         , m_currentUsage(0)
-    { }
-    
+    {
+    }
+
     DatabaseDetails(const String& databaseName, const String& displayName, unsigned long long expectedUsage, unsigned long long currentUsage)
         : m_name(databaseName)
         , m_displayName(displayName)
         , m_expectedUsage(expectedUsage)
         , m_currentUsage(currentUsage)
-    { }
-    
-    bool isValid() const { return !(m_name.isEmpty() && m_displayName.isEmpty() && !m_expectedUsage && !m_currentUsage); }
-    
-    const String& name() { return m_name; }
-    const String& displayName() { return m_displayName; }
-    unsigned long long expectedUsage() { return m_expectedUsage; }
-    unsigned long long currentUsage() { return m_currentUsage; }
-    
+    {
+    }
+
+    const String& name() const { return m_name; }
+    const String& displayName() const { return m_displayName; }
+    unsigned long long expectedUsage() const { return m_expectedUsage; }
+    unsigned long long currentUsage() const { return m_currentUsage; }
+
 private:
     String m_name;
     String m_displayName;

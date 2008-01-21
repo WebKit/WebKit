@@ -191,7 +191,6 @@ void WebPreferences::initializeDefaultSettings()
 
     RetainPtr<CFStringRef> cacheModelRef(AdoptCF, CFStringCreateWithFormat(0, 0, CFSTR("%d"), WebCacheModelDocumentViewer));
     CFDictionaryAddValue(defaults, CFSTR(WebKitCacheModelPreferenceKey), cacheModelRef.get());
-    CFDictionaryAddValue(defaults, CFSTR(WebKitDefaultDatabaseQuotaKey), CFSTR("5242880"));     // 5 MB
 
     CFDictionaryAddValue(defaults, CFSTR(WebKitAuthorAndUserStylesEnabledPreferenceKey), kCFBooleanTrue);
 
@@ -1130,28 +1129,6 @@ HRESULT WebPreferences::automaticallyDetectsCacheModel(BOOL* automaticallyDetect
         return E_POINTER;
 
     *automaticallyDetectsCacheModel = m_automaticallyDetectsCacheModel;
-    return S_OK;
-}
-
-HRESULT STDMETHODCALLTYPE WebPreferences::defaultDatabaseQuota(unsigned long long* quota)
-{
-    if (!quota)
-        return E_POINTER;
-
-    long long value = longlongValueForKey(CFSTR(WebKitDefaultDatabaseQuotaKey));
-    if (value < 0 || value > LLONG_MAX) {
-        value = 0;
-        setDefaultDatabaseQuota(0);
-    }
-    *quota = value;
-    return S_OK;
-}
-
-HRESULT STDMETHODCALLTYPE WebPreferences::setDefaultDatabaseQuota(unsigned long long quota)
-{
-    if (quota > LLONG_MAX)
-        quota = 0;
-    setLongLongValue(CFSTR(WebKitDefaultDatabaseQuotaKey), quota);
     return S_OK;
 }
 

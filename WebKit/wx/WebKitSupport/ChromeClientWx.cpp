@@ -308,21 +308,15 @@ void ChromeClientWx::setToolTip(const String&)
 {
     notImplemented();
 }
+
 void ChromeClientWx::print(Frame*)
 {
     notImplemented();
 }
 
-unsigned long long ChromeClientWx::requestQuotaIncreaseForNewDatabase(Frame*, SecurityOrigin*, const String&, unsigned long long)
+void ChromeClientWx::exceededDatabaseQuota(Frame*, const String&)
 {
     notImplemented();
-    return 0;
-}
-
-unsigned long long ChromeClientWx::requestQuotaIncreaseForDatabaseOperation(Frame*, SecurityOrigin*, const String&, unsigned long long)
-{
-    notImplemented();
-    return 0;
 }
 
 }

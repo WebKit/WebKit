@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2007 Staikos Computing Services Inc.
  * Copyright (C) 2007 Holger Hans Peter Freyther
+ * Copyright (C) 2008 Apple, Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -43,6 +44,11 @@ bool fileExists(const String& path)
 bool deleteFile(const String& path)
 {
     return QFile::remove(path);
+}
+
+bool deleteEmptyDirectory(const String& path)
+{
+    return QDir::rmdir(path);
 }
 
 bool fileSize(const String& path, long long& result)

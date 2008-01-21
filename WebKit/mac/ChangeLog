@@ -1,3 +1,42 @@
+2008-01-21  Darin Adler  <darin@apple.com>
+
+        Reviewed by John Sullivan.
+
+        - fix <rdar://problem/5644324> Delegate-less WebKit clients should have no databases
+        - add a missing export of WebDatabaseExpectedSizeKey
+        - implement deleteOrigin: and remove deleteDatabasesWithOrigin:
+
+        * Storage/WebDatabaseManager.mm:
+        (-[WebDatabaseManager detailsForDatabase:withOrigin:]): Updated to check for a null
+        name instead of calling isValid().
+        (-[WebDatabaseManager deleteOrigin:]): Implemented.
+        (WebKitInitializeDatabasesIfNecessary): Updated for name change.
+
+        * Storage/WebDatabaseManagerPrivate.h: Removed deleteDatabasesWithOrigin:.
+
+        * WebCoreSupport/WebChromeClient.h: Updated for changes to ChromeClient.
+        * WebCoreSupport/WebChromeClient.mm:
+        (WebChromeClient::exceededDatabaseQuota): Replaced the two different client functions
+        we had before with a single one.
+
+        * WebKit.exp: Added missing export for WebDatabaseExpectedSizeKey.
+
+        * WebView/WebPreferenceKeysPrivate.h: Removed WebKitDefaultDatabaseQuotaKey.
+        * WebView/WebPreferences.m:
+        (+[WebPreferences initialize]): Removed the default for WebKitDefaultDatabaseQuotaKey.
+        * WebView/WebPreferencesPrivate.h: Removed defaultDatabaseQuota and
+        setDefaultDatabaseQuota:.
+
+        * WebView/WebUIDelegatePrivate.h: Replaced the two different database quota delegate
+        methods we had before with a single one.
+
+        * WebView/WebView.mm:
+        (-[WebView _preferencesChangedNotification:]): Removed the code to set the
+        default database origin quota in WebCore::Settings based on WebPreferences.
+
+        * WebView/WebViewInternal.h: Removed delegate method dispatch functions for unusual
+        types of parameters that the database UI delegate methods had before.
+
 2008-01-20  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Dan Bernstein.

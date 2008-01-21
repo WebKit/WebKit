@@ -104,8 +104,7 @@ public:
 
     virtual void print(Frame*);
 
-    virtual unsigned long long requestQuotaIncreaseForNewDatabase(Frame*, SecurityOrigin*, const String&, unsigned long long);
-    virtual unsigned long long requestQuotaIncreaseForDatabaseOperation(Frame*, SecurityOrigin*, const String&, unsigned long long);    
+    virtual void exceededDatabaseQuota(Frame*, const String&);
 
 private:
     wxWebView* m_webView;

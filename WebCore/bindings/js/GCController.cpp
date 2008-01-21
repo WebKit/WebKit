@@ -37,12 +37,16 @@ using namespace KJS;
 
 namespace WebCore {
 
+#if USE(PTHREADS)
+
 static void* collect(void*)
 {
     JSLock lock;
     Collector::collect();
     return 0;
 }
+
+#endif
 
 GCController& gcController()
 {

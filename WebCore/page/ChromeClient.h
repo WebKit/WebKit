@@ -1,6 +1,6 @@
 // -*- mode: c++; c-basic-offset: 4 -*-
 /*
- * Copyright (C) 2006-2007 Apple, Inc.
+ * Copyright (C) 2006, 2007, 2008 Apple, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -30,7 +30,6 @@ namespace WebCore {
     class HitTestResult;
     class IntRect;
     class Page;
-    class SecurityOrigin;
     class String;
     
     struct FrameLoadRequest;
@@ -38,7 +37,6 @@ namespace WebCore {
     
     class ChromeClient {
     public:
-        virtual ~ChromeClient() {  }
         virtual void chromeDestroyed() = 0;
         
         virtual void setWindowRect(const FloatRect&) = 0;
@@ -104,9 +102,11 @@ namespace WebCore {
 
         virtual void print(Frame*) = 0;
 
-        virtual unsigned long long requestQuotaIncreaseForNewDatabase(Frame*, SecurityOrigin* origin, const String& databaseDisplayName, unsigned long long estimatedSize) = 0;
-        virtual unsigned long long requestQuotaIncreaseForDatabaseOperation(Frame*, SecurityOrigin* origin, const String& databaseIdentifier, unsigned long long proposedNewQuota) = 0;
-};
+        virtual void exceededDatabaseQuota(Frame*, const String& databaseName) = 0;
+
+    protected:
+        virtual ~ChromeClient() { }
+    };
 
 }
 

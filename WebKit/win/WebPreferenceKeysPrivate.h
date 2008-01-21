@@ -67,7 +67,6 @@
 #define WebKitPDFDisplayModePreferenceKey "WebKitPDFDisplayMode"
 #define WebKitPDFScaleFactorPreferenceKey "WebKitPDFScaleFactor"
 #define WebKitEditableLinkBehaviorPreferenceKey "WebKitEditableLinkBehavior"
-#define WebKitDefaultDatabaseQuotaKey "WebKitDefaultDatabaseQuota"
 
 // Window display is throttled to 60 frames per second if WebKitThrottleWindowDisplayPreferenceKey
 // is set to YES.  The window display throttle is OFF by default for compatibility with Mac OS X

@@ -308,16 +308,9 @@ void ChromeClient::print(Frame* frame)
     webkit_web_frame_print(kit(frame));
 }
 
-unsigned long long ChromeClient::requestQuotaIncreaseForNewDatabase(Frame*, SecurityOrigin*, const String&, unsigned long long)
+void ChromeClient::exceededDatabaseQuota(Frame*, const String&)
 {
     notImplemented();
-    return 0;
 }
 
-unsigned long long ChromeClient::requestQuotaIncreaseForDatabaseOperation(Frame*, SecurityOrigin*, const String&, unsigned long long)
-{
-    notImplemented();
-    return 0;
-}
-        
 }

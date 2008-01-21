@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,6 +25,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 #include "config.h"
 #include "FileSystem.h"
 
@@ -61,6 +62,17 @@ bool deleteFile(const String& path)
 
     // unlink(...) returns 0 on successful deletion of the path and non-zero in any other case (including invalid permissions or non-existent file)
     return !unlink(fsRep.data());
+}
+
+bool deleteEmptyDirectory(const String& path)
+{
+    CString fsRep = fileSystemRepresentation(path);
+
+    if (!fsRep.data() || fsRep.data()[0] == '\0')
+        return false;
+
+    // rmdir(...) returns 0 on successful deletion of the path and non-zero in any other case (including invalid permissions or non-existent file)
+    return !rmdir(fsRep.data());
 }
 
 bool fileSize(const String& path, long long& result)

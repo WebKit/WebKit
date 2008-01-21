@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,6 +25,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 #ifndef WebDatabaseManager_h
 #define WebDatabaseManager_h
 
@@ -56,17 +57,17 @@ public:
         /* [in] */ IWebSecurityOrigin* origin,
         /* [retval][out] */ IEnumVARIANT** result);
         
-    virtual HRESULT STDMETHODCALLTYPE detailsForDatabaseWithOrigin( 
+    virtual HRESULT STDMETHODCALLTYPE detailsForDatabase( 
         /* [in] */ BSTR databaseName,
         /* [in] */ IWebSecurityOrigin* origin,
         /* [retval][out] */ IPropertyBag** result);
         
     virtual HRESULT STDMETHODCALLTYPE deleteAllDatabases();
         
-    virtual HRESULT STDMETHODCALLTYPE deleteDatabasesWithOrigin( 
+    virtual HRESULT STDMETHODCALLTYPE deleteOrigin( 
         /* [in] */ IWebSecurityOrigin* origin);
         
-    virtual HRESULT STDMETHODCALLTYPE deleteDatabaseWithOrigin( 
+    virtual HRESULT STDMETHODCALLTYPE deleteDatabase( 
         /* [in] */ BSTR databaseName,
         /* [in] */ IWebSecurityOrigin* origin);
 
