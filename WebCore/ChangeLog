@@ -1,3 +1,16 @@
+2008-01-20  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Mitz.
+
+        Fix http://bugs.webkit.org/show_bug.cgi?id=16816 , rdar://problem/5682985
+        
+        Correctly trigger willPerformDragDestinationAction when a drop causes a 
+        load to occur.  The logic that originally did this was lost during the
+        great drag migration of '07.
+
+        * page/DragController.cpp:
+        (WebCore::DragController::performDrag):
+
 2008-01-20  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.
