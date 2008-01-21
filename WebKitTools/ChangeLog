@@ -1,3 +1,10 @@
+2008-01-21  Darin Adler  <darin@apple.com>
+
+        Reviewed by Mitz and Adam.
+
+        * Scripts/svn-create-patch: Sort ChangeLog files first. Also slightly improved the
+        sorting speed by doing all sort criteria in a single pass instead of three sorts.
+
 2008-01-21  Simon Hausmann  <hausmann@webkit.org>
 
         Reviewed by Holger.

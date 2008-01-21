@@ -66,6 +66,7 @@ sub isBinaryMimeType($);
 sub manufacturePatchForAdditionWithHistory($);
 sub numericcmp($$);
 sub outputBinaryContent($);
+sub patchpathcmp($$);
 sub pathcmp($$);
 sub processPaths(\@);
 sub splitpath($);
@@ -83,21 +84,38 @@ if (!$result || $showHelp) {
     exit 1;
 }
 
+# Sort the diffs for easier reviewing.
 my %paths = processPaths(@ARGV);
 
-# Generate a list of files requiring diffs
+# Generate a list of files requiring diffs.
 my %diffFiles;
 for my $path (keys %paths) {
     generateFileList($path, %diffFiles);
 }
 
-# Generate the diff for source code files, test files then binary files for easy reviewing
-for my $fileData (sort binarycmp sort testfilecmp sort pathcmp values %diffFiles) {
-    generateDiff($fileData);
+# Generate the diffs, in a order chosen for easy reviewing.
+for my $path (sort patchpathcmp values %diffFiles) {
+    generateDiff($path);
 }
 
 exit 0;
 
+# Overall sort, considering multiple criteria.
+sub patchpathcmp($$)
+{
+    my ($a, $b) = @_;
+
+    # All binary files come after all non-binary files.
+    my $result = binarycmp($a, $b);
+    return $result if $result;
+
+    # All test files come after all non-test files.
+    $result = testfilecmp($a, $b);
+    return $result if $result;
+
+    # Final sort is a "smart" sort by directory and file name.
+    return pathcmp($a, $b);
+}
 
 # Sort so text files appear before binary files.
 sub binarycmp($$)
@@ -354,6 +372,7 @@ sub outputBinaryContent($)
 # Sort first by directory, then by file, so all paths in one directory are grouped
 # rather than being interspersed with items from subdirectories.
 # Use numericcmp to sort directory and filenames to make order logical.
+# Also include a special case for ChangeLog, which comes first in any directory.
 sub pathcmp($$)
 {
     my ($fileDataA, $fileDataB) = @_;
@@ -362,6 +381,8 @@ sub pathcmp($$)
     my ($dirb, $nameb) = splitpath($fileDataB->{path});
 
     return numericcmp($dira, $dirb) if $dira ne $dirb;
+    return -1 if $namea eq "ChangeLog" && $nameb ne "ChangeLog";
+    return +1 if $namea ne "ChangeLog" && $nameb eq "ChangeLog";
     return numericcmp($namea, $nameb);
 }
 
