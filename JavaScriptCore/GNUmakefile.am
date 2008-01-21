@@ -149,15 +149,15 @@ Programs_minidom_SOURCES = \
 	JavaScriptCore/API/NodeList.c \
 	JavaScriptCore/API/minidom.c
 Programs_minidom_CPPFLAGS = $(global_cppflags)
-Programs_minidom_CXXFLAGS = $(global_cflags) $(ICU_CFLAGS)
-Programs_minidom_LDADD = $(ICU_LIBS) libJavaScriptCore.la
+Programs_minidom_CXXFLAGS = $(global_cflags)
+Programs_minidom_LDADD = libJavaScriptCore.la
 Programs_minidom_LDFLAGS = -rpath $(CURDIR)/.libs
 
 # testkjs
 Programs_testkjs_SOURCES = JavaScriptCore/kjs/testkjs.cpp
 Programs_testkjs_CPPFLAGS = $(global_cppflags)
-Programs_testkjs_CXXFLAGS = $(global_cflags) $(ICU_CFLAGS)
-Programs_testkjs_LDADD = $(ICU_LIBS) libJavaScriptCore.la
+Programs_testkjs_CXXFLAGS = $(global_cflags)
+Programs_testkjs_LDADD = libJavaScriptCore.la
 Programs_testkjs_LDFLAGS = -rpath $(CURDIR)/.libs
 
 # Clean rules for JavaScriptCore

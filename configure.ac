@@ -129,9 +129,13 @@ AC_PATH_PROG(icu_config, icu-config, no)
 if test "$icu_config" = "no"; then
    AC_MSG_ERROR([Cannot find icu-config. ICU library is needed.])
 fi
-ICU_CFLAGS=`$icu_config --cflags`
+
+# We don't use --cflags as this gives us a lot of things that we don't
+# necessarily want, like debugging and optimization flags
+# See man (1) icu-config for more info.
+ICU_CPPFLAGS=`$icu_config --cppflags`
 ICU_LIBS=`$icu_config --ldflags`
-AC_SUBST([ICU_CFLAGS])
+AC_SUBST([ICU_CPPFLAGS])
 AC_SUBST([ICU_LIBS])
 
 # determine the GDK/GTK+ target

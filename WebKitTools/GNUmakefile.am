@@ -12,17 +12,10 @@ Programs_GtkLauncher_SOURCES = \
 
 Programs_GtkLauncher_CFLAGS = \
 	$(DEPENDENCIES_CFLAGS) \
-	$(ICU_CFLAGS) \
-	$(SQLITE3_CFLAGS) \
-	$(GSTREAMER_CFLAGS) \
-	$(LIBXSLT_CFLAGS)
+	$(global_cflags)
 
 Programs_GtkLauncher_LDADD = \
 	$(DEPENDENCIES_LIBS) \
-	$(ICU_LIBS) \
-	$(SQLITE3_LIBS) \
-	$(GSTREAMER_LIBS) \
-	$(LIBXSLT_LIBS) \
 	libJavaScriptCore.la \
 	libWebKitGtk.la
 
@@ -44,6 +37,13 @@ Programs_DumpRenderTree_SOURCES = \
 	WebKitTools/DumpRenderTree/gtk/LayoutTestControllerGtk.cpp \
 	WebKitTools/DumpRenderTree/gtk/WorkQueueItemGtk.cpp
 
-Programs_DumpRenderTree_CXXFLAGS = $(DEPENDENCIES_CFLAGS) $(AM_CXXFLAGS)
-Programs_DumpRenderTree_LDADD = $(DEPENDENCIES_LIBS) libJavaScriptCore.la libWebKitGtk.la
+Programs_DumpRenderTree_CXXFLAGS = \
+	$(DEPENDENCIES_CFLAGS) \
+	$(global_cflags)
+
+Programs_DumpRenderTree_LDADD = \
+	$(DEPENDENCIES_LIBS) \
+	libJavaScriptCore.la \
+	libWebKitGtk.la
+
 Programs_DumpRenderTree_LDFLAGS = -rpath $(CURDIR)/.libs 

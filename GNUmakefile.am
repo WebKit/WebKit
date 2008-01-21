@@ -94,13 +94,16 @@ libJavaScriptCore_la_SOURCES = \
 	$(javascriptcore_built_sources) \
 	$(javascriptcore_sources)
 
-libJavaScriptCore_la_LDFLAGS = -lpthread
+libJavaScriptCore_la_LDFLAGS = $(ICU_LIBS) -lpthread
 
 libJavaScriptCore_la_CXXFLAGS = $(global_cflags) -fstrict-aliasing
 
 libJavaScriptCore_la_CFLAGS = $(global_cflags) -fstrict-aliasing
 
-libJavaScriptCore_la_CPPFLAGS = $(global_cppflags) $(javascriptcore_cppflags)
+libJavaScriptCore_la_CPPFLAGS = \
+	$(global_cppflags) \
+	$(javascriptcore_cppflags) \
+	$(ICU_CPPFLAGS)
 
 #
 # WebCore
@@ -157,7 +160,8 @@ libWebKitGtk_la_CFLAGS = \
 libWebKitGtk_la_CPPFLAGS = \
 	$(global_cppflags) \
 	$(webcore_cppflags) \
-	$(webkitgtk_cppflags)
+	$(webkitgtk_cppflags) \
+	$(ICU_CPPFLAGS)
 
 libWebKitGtk_la_LIBADD = libJavaScriptCore.la
 
