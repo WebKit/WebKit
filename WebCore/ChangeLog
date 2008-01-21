@@ -1,3 +1,15 @@
+2008-01-21  Holger Freyther  <holger.freyther@trolltech.com>
+
+        Reviewed by Simon.
+
+        Fixed WebCore::cookies() to return all cookies, not only the first one.
+        
+        Fixes login into mail.yahoo.com.
+        
+
+        * platform/qt/CookieJarQt.cpp:
+        (WebCore::cookies):
+
 2008-01-20  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Mitz.
