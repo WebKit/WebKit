@@ -93,7 +93,7 @@ namespace WebKit {
 
         virtual void print(WebCore::Frame*);
 
-        virtual void exceededDatabaseQuota(Frame*, const String&);
+        virtual void exceededDatabaseQuota(WebCore::Frame*, const WebCore::String&);
 
     private:
         WebKitWebView* m_webView;
