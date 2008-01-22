@@ -1,3 +1,13 @@
+2008-01-22  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Alp.
+
+        Initialize missing variables, m_lineGap / m_lineSpacing.
+        Only noticeable when trying to render HTML text using SVG Fonts (which is not possible with trunk, but with my local version).
+
+        * platform/graphics/SimpleFontData.cpp:
+        (WebCore::SimpleFontData::SimpleFontData):
+
 2008-01-22  Alp Toker  <alp@atoker.com>
 
         Reviewed by Nikolas.
