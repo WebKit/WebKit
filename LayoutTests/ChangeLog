@@ -1,3 +1,15 @@
+2008-01-22  Dan Bernstein  <mitz@apple.com>
+ 
+         Reviewed by Eric.
+ 
+         - test for http://bugs.webkit.org/show_bug.cgi?id=16967
+           <rdar://problem/5699344> Reproducible crash when navigating back to a page using SVG fonts
+ 
+         * platform/mac/svg/custom/font-platformDestroy-crash-expected.checksum: Added.
+         * platform/mac/svg/custom/font-platformDestroy-crash-expected.png: Added.
+         * svg/custom/font-platformDestroy-crash-expected.txt: Added.
+         * svg/custom/font-platformDestroy-crash.svg: Added.
+ 
 2008-01-22  Lars Knoll  <lars@trolltech.com>
 
         Reviewed by Simon.

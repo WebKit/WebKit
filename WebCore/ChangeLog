@@ -1,3 +1,17 @@
+2008-01-22  Dan Bernstein  <mitz@apple.com>
+ 
+         Reviewed by Eric.
+ 
+         - fix http://bugs.webkit.org/show_bug.cgi?id=16967
+           <rdar://problem/5699344> Reproducible crash when navigating back to a page using SVG fonts
+ 
+         Test: svg/custom/font-platformDestroy-crash.svg
+ 
+         * platform/graphics/SimpleFontData.cpp:
+         (WebCore::SimpleFontData::~SimpleFontData): Changed to call
+         platformDestroy() only if platformInit() was called from the
+         constructor.
+
 2008-01-22  Lars Knoll  <lars@trolltech.com>
 
         Reviewed by Simon.
