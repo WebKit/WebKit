@@ -48,7 +48,7 @@ bool deleteFile(const String& path)
 
 bool deleteEmptyDirectory(const String& path)
 {
-    return QDir::rmdir(path);
+    return QDir::root().rmdir(path);
 }
 
 bool fileSize(const String& path, long long& result)
