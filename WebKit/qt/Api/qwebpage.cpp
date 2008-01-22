@@ -334,22 +334,7 @@ void QWebPagePrivate::updateEditorActions()
 
 void QWebPagePrivate::mouseMoveEvent(QMouseEvent *ev)
 {
-    QWebFramePrivate::core(mainFrame)->eventHandler()->handleMouseMoveEvent(PlatformMouseEvent(ev, 0));
-    const int xOffset =
-        mainFrame->d->horizontalScrollBar() ? mainFrame->d->horizontalScrollBar()->value() : 0;
-    const int yOffset =
-        mainFrame->d->verticalScrollBar() ? mainFrame->d->verticalScrollBar()->value() : 0;
-    IntPoint pt(ev->x() + xOffset, ev->y() + yOffset);
-    WebCore::HitTestResult result = QWebFramePrivate::core(mainFrame)->eventHandler()->hitTestResultAtPoint(pt, false);
-
-    if (result.absoluteLinkURL() != lastHoverURL
-        || result.title() != lastHoverTitle
-        || result.textContent() != lastHoverContent) {
-        lastHoverURL = result.absoluteLinkURL();
-        lastHoverTitle = result.title();
-        lastHoverContent = result.textContent();
-        emit q->hoveringOverLink(lastHoverURL.prettyURL(), lastHoverTitle, lastHoverContent);
-    }
+    QWebFramePrivate::core(mainFrame)->eventHandler()->mouseMoved(PlatformMouseEvent(ev, 0));
 }
 
 void QWebPagePrivate::mousePressEvent(QMouseEvent *ev)

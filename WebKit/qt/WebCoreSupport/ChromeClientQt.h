@@ -31,6 +31,8 @@
 #include "ChromeClient.h"
 #include "FloatRect.h"
 #include "RefCounted.h"
+#include "KURL.h"
+#include "PlatformString.h"
 
 class QWebPage;
 
@@ -92,7 +94,7 @@ namespace WebCore {
         virtual bool runJavaScriptConfirm(Frame*, const String&);
         virtual bool runJavaScriptPrompt(Frame*, const String& message, const String& defaultValue, String& result);
         virtual bool shouldInterruptJavaScript();
-        
+
         virtual void setStatusbarText(const String&);
 
         virtual bool tabsToLinks() const;
@@ -110,6 +112,9 @@ namespace WebCore {
         virtual void exceededDatabaseQuota(Frame*, const String&);
 
         QWebPage* m_webPage;
+        WebCore::KURL lastHoverURL;
+        WebCore::String lastHoverTitle;
+        WebCore::String lastHoverContent;
     };
 }
 

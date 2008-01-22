@@ -130,10 +130,6 @@ public:
     QUndoStack *undoStack;
     QWidget *view;
 
-    WebCore::KURL lastHoverURL;
-    WebCore::String lastHoverTitle;
-    WebCore::String lastHoverContent;
-
     bool modified;
 
     bool insideOpenCall;
