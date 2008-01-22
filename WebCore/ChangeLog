@@ -1,3 +1,9 @@
+2008-01-22  Alp Toker  <alp@atoker.com>
+
+        GTK+/qmake build fix.
+
+        * WebCore.pro:
+
 2008-01-22  Adam Roben  <aroben@apple.com>
 
         Add HTMLFrameOwnerElement::scrollingMode

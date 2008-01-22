@@ -989,8 +989,8 @@ gtk-port {
         ../WebKit/gtk/WebView/webkitdefines.h \
         ../WebKit/gtk/WebView/webkitnetworkrequest.h \
         ../WebKit/gtk/WebView/webkitprivate.h \
-        ../WebKit/gtk/WebView/webkitsettings.h \
         ../WebKit/gtk/WebView/webkitwebframe.h \
+        ../WebKit/gtk/WebView/webkitwebsettings.h \
         ../WebKit/gtk/WebView/webkitwebview.h \
         ../WebKit/gtk/WebCoreSupport/ChromeClientGtk.h \
         ../WebKit/gtk/WebCoreSupport/ContextMenuClientGtk.h \
@@ -1066,8 +1066,8 @@ gtk-port {
         platform/image-decoders/xbm/XBMImageDecoder.cpp \
         ../WebKit/gtk/WebView/webkitnetworkrequest.cpp \
         ../WebKit/gtk/WebView/webkitprivate.cpp \
-        ../WebKit/gtk/WebView/webkitsettings.cpp \
         ../WebKit/gtk/WebView/webkitwebframe.cpp \
+        ../WebKit/gtk/WebView/webkitwebsettings.cpp \
         ../WebKit/gtk/WebView/webkitwebview.cpp \
         ../WebKit/gtk/WebCoreSupport/ChromeClientGtk.cpp \
         ../WebKit/gtk/WebCoreSupport/ContextMenuClientGtk.cpp \
