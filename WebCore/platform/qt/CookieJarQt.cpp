@@ -45,21 +45,31 @@
 
 namespace WebCore {
 
+#if QT_VERSION >= 0x040400
+static QNetworkCookieJar *cookieJar(const Document *document)
+{
+    Frame *frame = document->frame();
+    if (!frame)
+        return 0;
+    FrameLoader *loader = frame->loader();
+    if (!loader)
+        return 0;
+    QWebFrame* webFrame = static_cast<FrameLoaderClientQt*>(loader->client())->webFrame();
+    QWebPage* page = webFrame->page();
+    QNetworkAccessManager* manager = page->networkAccessManager();
+    QNetworkCookieJar* jar = manager->cookieJar();
+    return jar;
+}
+#endif
+
 void setCookies(Document* document, const KURL& url, const KURL& policyURL, const String& value)
 {
     QUrl u(url);
     QUrl p(policyURL);
 #if QT_VERSION >= 0x040400
-    Frame *frame = document->frame();
-    if (!frame)
+    QNetworkCookieJar* jar = cookieJar(document);
+    if (!jar)
         return;
-    FrameLoader *loader = frame->loader();
-    if (!loader)
-        return;
-    QWebFrame* webFrame = static_cast<FrameLoaderClientQt*>(loader->client())->webFrame();
-    QWebPage* page = webFrame->page();
-    QNetworkAccessManager* manager = page->networkAccessManager();
-    QNetworkCookieJar* jar = manager->cookieJar();
 
     QList<QNetworkCookie> cookies = QNetworkCookie::parseCookies(QString(value).toAscii());
     jar->setCookiesFromUrl(cookies, p);
@@ -72,16 +82,9 @@ String cookies(const Document* document, const KURL& url)
 {
     QUrl u(url);
 #if QT_VERSION >= 0x040400
-    Frame *frame = document->frame();
-    if (!frame)
+    QNetworkCookieJar* jar = cookieJar(document);
+    if (!jar)
         return String();
-    FrameLoader *loader = frame->loader();
-    if (!loader)
-        return String();
-    QWebFrame* webFrame = static_cast<FrameLoaderClientQt*>(loader->client())->webFrame();
-    QWebPage* page = webFrame->page();
-    QNetworkAccessManager* manager = page->networkAccessManager();
-    QNetworkCookieJar* jar = manager->cookieJar();
 
     QList<QNetworkCookie> cookies = jar->cookiesForUrl(u);
     if (cookies.isEmpty())
@@ -104,8 +107,8 @@ String cookies(const Document* document, const KURL& url)
 bool cookiesEnabled(const Document* document)
 {
 #if QT_VERSION >= 0x040400
-    // ###
-    return true;
+    QNetworkCookieJar* jar = cookieJar(document);
+    return (jar != 0);
 #else
     return QCookieJar::cookieJar()->isEnabled();
 #endif

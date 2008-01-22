@@ -2,6 +2,18 @@
 
         Reviewed by Simon.
 
+        cleanup the CookieJarQt implementation and implement cookiesEnabled.
+
+        * platform/qt/CookieJarQt.cpp:
+        (WebCore::cookieJar):
+        (WebCore::setCookies):
+        (WebCore::cookies):
+        (WebCore::cookiesEnabled):
+
+2008-01-22  Lars Knoll  <lars@trolltech.com>
+
+        Reviewed by Simon.
+
         Ported the font implementation to use the new QFont features of Qt 4.4.
         
 
