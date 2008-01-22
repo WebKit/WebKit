@@ -74,18 +74,19 @@ static bool isSVG10Feature(const String &feature)
     static bool initialized = false;
     static HashSet<String, CaseFoldingHash> svgFeatures;
     if (!initialized) {
-        // Sadly, we cannot claim to implement any SVG 1.0 feature set, due to
-        // lack of Font support.
-        // http://bugs.webkit.org/show_bug.cgi?id=15480
-//      addString(svgFeatures, "svg");
-//      addString(svgFeatures, "svg.static");
+#if ENABLE(SVG_USE) && ENABLE(SVG_FOREIGN_OBJECT) && ENABLE(SVG_FILTER) && ENABLE(SVG_FONTS)
+        addString(svgFeatures, "svg");
+        addString(svgFeatures, "svg.static");
+#endif
 //      addString(svgFeatures, "svg.animation");
 //      addString(svgFeatures, "svg.dynamic");
 //      addString(svgFeatures, "svg.dom.animation");
 //      addString(svgFeatures, "svg.dom.dynamic");
-//      addString(svgFeatures, "dom");
-//      addString(svgFeatures, "dom.svg");
-//      addString(svgFeatures, "dom.svg.static");
+#if ENABLE(SVG_USE) && ENABLE(SVG_FOREIGN_OBJECT) && ENABLE(SVG_FILTER) && ENABLE(SVG_FONTS)
+        addString(svgFeatures, "dom");
+        addString(svgFeatures, "dom.svg");
+        addString(svgFeatures, "dom.svg.static");
+#endif
 //      addString(svgFeatures, "svg.all");
 //      addString(svgFeatures, "dom.svg.all");
         initialized = true;
@@ -101,10 +102,12 @@ static bool isSVG11Feature(const String &feature)
         // Sadly, we cannot claim to implement any of the SVG 1.1 generic feature sets
         // lack of Font and Filter support.
         // http://bugs.webkit.org/show_bug.cgi?id=15480
-//      addString(svgFeatures, "SVG");
-//      addString(svgFeatures, "SVGDOM");
-//      addString(svgFeatures, "SVG-static");
-//      addString(svgFeatures, "SVGDOM-static");
+#if ENABLE(SVG_USE) && ENABLE(SVG_FOREIGN_OBJECT) && ENABLE(SVG_FILTER) && ENABLE(SVG_FONTS)
+        addString(svgFeatures, "SVG");
+        addString(svgFeatures, "SVGDOM");
+        addString(svgFeatures, "SVG-static");
+        addString(svgFeatures, "SVGDOM-static");
+#endif
 //      addString(svgFeatures, "SVG-animation);
 //      addString(svgFeatures, "SVGDOM-animation);
 //      addString(svgFeatures, "SVG-dynamic);
@@ -128,7 +131,7 @@ static bool isSVG11Feature(const String &feature)
         addString(svgFeatures, "GraphicsAttribute");
         addString(svgFeatures, "BaseGraphicsAttribute");
         addString(svgFeatures, "Marker");
-//      addString(svgFeatures, "ColorProfile");
+//      addString(svgFeatures, "ColorProfile"); // requires color-profile, bug 6037
         addString(svgFeatures, "Gradient");
         addString(svgFeatures, "Pattern");
         addString(svgFeatures, "Clip");
@@ -145,12 +148,16 @@ static bool isSVG11Feature(const String &feature)
         addString(svgFeatures, "Hyperlinking");
         addString(svgFeatures, "XlinkAttribute");
         addString(svgFeatures, "ExternalResourcesRequired");
-//      addString(svgFeatures, "View");
+//      addString(svgFeatures, "View"); // buggy <view> support, bug 16962
         addString(svgFeatures, "Script");
-//      addString(svgFeatures, "Animation");
-//      addString(svgFeatures, "Font");
-//      addString(svgFeatures, "BasicFont");
+//      addString(svgFeatures, "Animation"); // <animate> support missing
+#if ENABLE(SVG_FONTS)
+        addString(svgFeatures, "Font");
+        addString(svgFeatures, "BasicFont");
+#endif
+#if ENABLE(SVG_FOREIGN_OBJECT)
         addString(svgFeatures, "Extensibility");
+#endif
         initialized = true;
     }
     return svgFeatures.contains(feature);

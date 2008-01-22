@@ -1,3 +1,13 @@
+2008-01-21  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Nikolas & Oliver.
+        
+        Tested by svg/custom/svg-features.html
+        
+        * dom/DOMImplementation.cpp:
+        (WebCore::isSVG10Feature): use ENABLE(SVG_*) conditionals
+        (WebCore::isSVG11Feature): use ENABLE(SVG_*) conditionals
+
 2008-01-21  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Maciej Stachowiak.

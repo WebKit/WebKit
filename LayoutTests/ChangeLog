@@ -1,3 +1,9 @@
+2008-01-21  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Nikolas & Oliver.
+        
+        * svg/custom/svg-features-expected.txt: updated to reflect foreignObject off and fonts on
+
 2008-01-21  Geoffrey Garen  <ggaren@apple.com>
 
         Layout test for http://bugs.webkit.org/show_bug.cgi?id=16909
