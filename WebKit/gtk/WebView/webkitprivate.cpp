@@ -36,16 +36,6 @@
 using namespace WebCore;
 
 namespace WebKit {
-void apply(WebKitSettings*, WebCore::Settings*)
-{
-    notImplemented();
-}
-
-WebKitSettings* create(WebCore::Settings*)
-{
-    notImplemented();
-    return 0;
-}
 
 WebKitWebView* getViewFromFrame(WebKitWebFrame* frame)
 {

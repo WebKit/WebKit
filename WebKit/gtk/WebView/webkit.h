@@ -23,6 +23,7 @@
 #include <webkitdefines.h>
 #include <webkitnetworkrequest.h>
 #include <webkitwebframe.h>
+#include <webkitwebsettings.h>
 #include <webkitwebview.h>
 
 #endif /* __WEBKIT_H__ */

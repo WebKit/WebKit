@@ -85,7 +85,8 @@ enum {
 
     PROP_COPY_TARGET_LIST,
     PROP_PASTE_TARGET_LIST,
-    PROP_EDITABLE
+    PROP_EDITABLE,
+    PROP_SETTINGS
 };
 
 static guint webkit_web_view_signals[LAST_SIGNAL] = { 0, };
@@ -192,9 +193,11 @@ static void webkit_web_view_get_property(GObject* object, guint prop_id, GValue*
     case PROP_EDITABLE:
         g_value_set_boolean(value, webkit_web_view_get_editable(webView));
         break;
+    case PROP_SETTINGS:
+        g_value_set_object(value, webkit_web_view_get_settings(webView));
+        break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
-        break;
     }
 }
 
@@ -206,9 +209,11 @@ static void webkit_web_view_set_property(GObject* object, guint prop_id, const G
     case PROP_EDITABLE:
         webkit_web_view_set_editable(webView, g_value_get_boolean(value));
         break;
-    default:
-        g_assert_not_reached();
+    case PROP_SETTINGS:
+        webkit_web_view_set_settings(webView, WEBKIT_WEB_SETTINGS(g_value_get_object(value)));
         break;
+    default:
+        G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
     }
 }
 
@@ -575,7 +580,7 @@ static void webkit_web_view_finalize(GObject* object)
 
     WebKitWebViewPrivate* webViewData = WEBKIT_WEB_VIEW_GET_PRIVATE(WEBKIT_WEB_VIEW(object));
     delete webViewData->corePage;
-    delete webViewData->settings;
+    g_object_unref(webViewData->webSettings);
     g_object_unref(webViewData->mainFrame);
     g_object_unref(webViewData->imContext);
     gtk_target_list_unref(webViewData->copy_target_list);
@@ -1007,6 +1012,13 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
                                                        GTK_TYPE_TARGET_LIST,
                                                        WEBKIT_PARAM_READABLE));
 
+    g_object_class_install_property(objectClass, PROP_SETTINGS,
+                                    g_param_spec_object("settings",
+                                                        "Settings",
+                                                        "An associated WebKitWebSettings instance",
+                                                        WEBKIT_TYPE_WEB_SETTINGS,
+                                                        WEBKIT_PARAM_READWRITE));
+
     g_object_class_install_property(objectClass, PROP_EDITABLE,
                                     g_param_spec_boolean("editable",
                                                          "Editable",
@@ -1015,25 +1027,148 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
                                                          WEBKIT_PARAM_READWRITE));
 }
 
+static void webkit_web_view_screen_changed(WebKitWebView* webView, GdkScreen* previousScreen, gpointer userdata)
+{
+    WebKitWebViewPrivate* webViewData = WEBKIT_WEB_VIEW_GET_PRIVATE(webView);
+    WebKitWebSettings* webSettings = webViewData->webSettings;
+    Settings* settings = webViewData->corePage->settings();
+
+    guint defaultFontSize, defaultMonospaceFontSize, minimumFontSize, minimumLogicalFontSize;
+
+    g_object_get(G_OBJECT(webSettings),
+                 "default-font-size", &defaultFontSize,
+                 "default-monospace-font-size", &defaultMonospaceFontSize,
+                 "minimum-font-size", &minimumFontSize,
+                 "minimum-logical-font-size", &minimumLogicalFontSize,
+                 NULL);
+
+#if GTK_CHECK_VERSION(2, 10, 0)
+    GdkScreen* screen = gtk_widget_has_screen(GTK_WIDGET(webView)) ? gtk_widget_get_screen(GTK_WIDGET(webView)) : gdk_screen_get_default();
+    guint DPI = gdk_screen_get_resolution(screen);
+#else
+    guint DPI = 96;
+    g_warning("Cannot retrieve resolution, falling back to 96 DPI");
+#endif
+    settings->setDefaultFontSize(defaultFontSize / 72.0 * DPI);
+    settings->setDefaultFixedFontSize(defaultMonospaceFontSize / 72.0 * DPI);
+    settings->setMinimumFontSize(minimumFontSize / 72.0 * DPI);
+    settings->setMinimumLogicalFontSize(minimumLogicalFontSize / 72.0 * DPI);
+}
+
+static void webkit_web_view_update_settings(WebKitWebView* webView)
+{
+    WebKitWebViewPrivate* webViewData = WEBKIT_WEB_VIEW_GET_PRIVATE(webView);
+    WebKitWebSettings* webSettings = webViewData->webSettings;
+    Settings* settings = webViewData->corePage->settings();
+
+    gchar* defaultEncoding, *cursiveFontFamily, *defaultFontFamily, *fantasyFontFamily, *monospaceFontFamily, *sansSerifFontFamily, *serifFontFamily, *userStylesheetUri;
+    gboolean autoLoadImages, autoShrinkImages, printBackgrounds, enableScripts, enablePlugins, resizableTextAreas;
+
+    g_object_get(G_OBJECT(webSettings),
+                 "default-encoding", &defaultEncoding,
+                 "cursive-font-family", &cursiveFontFamily,
+                 "default-font-family", &defaultFontFamily,
+                 "fantasy-font-family", &fantasyFontFamily,
+                 "monospace-font-family", &monospaceFontFamily,
+                 "sans-serif-font-family", &sansSerifFontFamily,
+                 "serif-font-family", &serifFontFamily,
+                 "auto-load-images", &autoLoadImages,
+                 "auto-shrink-images", &autoShrinkImages,
+                 "print-backgrounds", &printBackgrounds,
+                 "enable-scripts", &enableScripts,
+                 "enable-plugins", &enablePlugins,
+                 "resizable-text-areas", &resizableTextAreas,
+                 "user-stylesheet-uri", &userStylesheetUri,
+                 NULL);
+
+    settings->setDefaultTextEncodingName(defaultEncoding);
+    settings->setCursiveFontFamily(cursiveFontFamily);
+    settings->setStandardFontFamily(defaultFontFamily);
+    settings->setFantasyFontFamily(fantasyFontFamily);
+    settings->setFixedFontFamily(monospaceFontFamily);
+    settings->setSansSerifFontFamily(sansSerifFontFamily);
+    settings->setSerifFontFamily(serifFontFamily);
+    settings->setLoadsImagesAutomatically(autoLoadImages);
+    settings->setShrinksStandaloneImagesToFit(autoShrinkImages);
+    settings->setShouldPrintBackgrounds(printBackgrounds);
+    settings->setJavaScriptEnabled(enableScripts);
+    settings->setPluginsEnabled(enablePlugins);
+    settings->setTextAreasAreResizable(resizableTextAreas);
+    settings->setUserStyleSheetLocation(userStylesheetUri);
+
+    g_free(defaultEncoding);
+    g_free(cursiveFontFamily);
+    g_free(defaultFontFamily);
+    g_free(fantasyFontFamily);
+    g_free(monospaceFontFamily);
+    g_free(sansSerifFontFamily);
+    g_free(serifFontFamily);
+    g_free(userStylesheetUri);
+
+    webkit_web_view_screen_changed(webView, NULL, NULL);
+}
+
+static void webkit_web_view_settings_notify(WebKitWebSettings* webSettings, GParamSpec* pspec, WebKitWebView* webView)
+{
+    WebKitWebViewPrivate* webViewData = WEBKIT_WEB_VIEW_GET_PRIVATE(webView);
+    Settings* settings = webViewData->corePage->settings();
+
+    const gchar* name = g_intern_string(pspec->name);
+    GValue value = {0, 0};
+    g_value_init(&value, pspec->value_type);
+    g_object_get_property(G_OBJECT(webSettings), name, &value);
+
+    if (name == g_intern_string("default-encoding"))
+        settings->setDefaultTextEncodingName(g_value_get_string(&value));
+    else if (name == g_intern_string("cursive-font-family"))
+        settings->setCursiveFontFamily(g_value_get_string(&value));
+    else if (name == g_intern_string("default-font-family"))
+        settings->setStandardFontFamily(g_value_get_string(&value));
+    else if (name == g_intern_string("fantasy-font-family"))
+        settings->setFantasyFontFamily(g_value_get_string(&value));
+    else if (name == g_intern_string("monospace-font-family"))
+        settings->setFixedFontFamily(g_value_get_string(&value));
+    else if (name == g_intern_string("sans-serif-font-family"))
+        settings->setSansSerifFontFamily(g_value_get_string(&value));
+    else if (name == g_intern_string("serif-font-family"))
+        settings->setSerifFontFamily(g_value_get_string(&value)); 
+    else if (name == g_intern_string("default-font-size"))
+        settings->setDefaultFontSize(g_value_get_int(&value));
+    else if (name == g_intern_string("default-monospace-font-size"))
+        settings->setDefaultFixedFontSize(g_value_get_int(&value));
+    else if (name == g_intern_string("minimum-font-size"))
+        settings->setMinimumFontSize(g_value_get_int(&value));
+    else if (name == g_intern_string("minimum-logical-font-size"))
+        settings->setMinimumLogicalFontSize(g_value_get_int(&value));
+    else if (name == g_intern_string("auto-load-images"))
+        settings->setLoadsImagesAutomatically(g_value_get_boolean(&value));
+    else if (name == g_intern_string("auto-shrink-images"))
+        settings->setShrinksStandaloneImagesToFit(g_value_get_boolean(&value));
+    else if (name == g_intern_string("print-backgrounds"))
+        settings->setShouldPrintBackgrounds(g_value_get_boolean(&value));
+    else if (name == g_intern_string("enable-scripts"))
+        settings->setJavaScriptEnabled(g_value_get_boolean(&value));
+    else if (name == g_intern_string("enable-plugins"))
+        settings->setPluginsEnabled(g_value_get_boolean(&value));
+    else if (name == g_intern_string("resizable-text-areas"))
+        settings->setTextAreasAreResizable(g_value_get_boolean(&value));
+    else if (name == g_intern_string("user-stylesheet-uri"))
+        settings->setUserStyleSheetLocation(g_value_get_string(&value));
+    else
+        g_warning("Unexpected setting '%s'", name);
+    g_value_unset(&value);
+}
+
 static void webkit_web_view_init(WebKitWebView* webView)
 {
-    WebKitWebViewPrivate* webViewData = WEBKIT_WEB_VIEW_GET_PRIVATE(WEBKIT_WEB_VIEW(webView));
+    WebKitWebViewPrivate* webViewData = WEBKIT_WEB_VIEW_GET_PRIVATE(webView);
     webViewData->imContext = gtk_im_multicontext_new();
     webViewData->corePage = new Page(new WebKit::ChromeClient(webView), new WebKit::ContextMenuClient, new WebKit::EditorClient(webView), new WebKit::DragClient, new WebKit::InspectorClient);
 
-    Settings* settings = webViewData->corePage->settings();
-    settings->setLoadsImagesAutomatically(true);
-    settings->setMinimumFontSize(5);
-    settings->setDOMPasteAllowed(true);
-    settings->setMinimumLogicalFontSize(5);
-    settings->setShouldPrintBackgrounds(true);
-    settings->setJavaScriptEnabled(true);
-    settings->setDefaultFixedFontSize(14);
-    settings->setDefaultFontSize(14);
-    settings->setSerifFontFamily("Times New Roman");
-    settings->setSansSerifFontFamily("Arial");
-    settings->setFixedFontFamily("Courier New");
-    settings->setStandardFontFamily("Arial");
+    webViewData->webSettings = webkit_web_settings_new();
+    webkit_web_view_update_settings(webView);
+    g_signal_connect(webView, "screen-changed", G_CALLBACK(webkit_web_view_screen_changed), NULL);
+    g_signal_connect(webViewData->webSettings, "notify", G_CALLBACK(webkit_web_view_settings_notify), webView);
 
     GTK_WIDGET_SET_FLAGS(webView, GTK_CAN_FOCUS);
     webViewData->mainFrame = WEBKIT_WEB_FRAME(webkit_web_frame_new(webView));
@@ -1064,20 +1199,26 @@ GtkWidget* webkit_web_view_new(void)
     return GTK_WIDGET(webView);
 }
 
-void webkit_web_view_set_settings(WebKitWebView* webView, WebKitSettings* settings)
+void webkit_web_view_set_settings(WebKitWebView* webView, WebKitWebSettings* webSettings)
 {
     g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
-    g_return_if_fail(settings);
+    g_return_if_fail(WEBKIT_IS_WEB_SETTINGS(webSettings));
 
-    notImplemented();
+    WebKitWebViewPrivate* webViewData = WEBKIT_WEB_VIEW_GET_PRIVATE(webView);
+    g_signal_handlers_disconnect_by_func(webViewData->webSettings, (gpointer)webkit_web_view_settings_notify, webView);
+    g_object_unref(webViewData->webSettings);
+    g_object_ref(webSettings);
+    webViewData->webSettings = webSettings;
+    webkit_web_view_update_settings(webView);
+    g_signal_connect(webSettings, "notify", G_CALLBACK(webkit_web_view_settings_notify), webView);
 }
 
-WebKitSettings* webkit_web_view_get_settings(WebKitWebView* webView)
+WebKitWebSettings* webkit_web_view_get_settings(WebKitWebView* webView)
 {
     g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), NULL);
 
-    notImplemented();
-    return NULL;
+    WebKitWebViewPrivate* webViewData = WEBKIT_WEB_VIEW_GET_PRIVATE(webView);
+    return webViewData->webSettings;
 }
 
 void webkit_web_view_go_backward(WebKitWebView* webView)

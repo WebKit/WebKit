@@ -1,3 +1,14 @@
+2008-01-22  Christian Dywan  <christian@imendio.com>
+
+        Reviewed by Alp Toker.
+
+        [GTK] API: WebKitWebSettings is not usable
+        http://bugs.webkit.org/show_bug.cgi?id=16219
+
+        Implement WebKitWebSettings.
+
+        * GNUmakefile.am:
+
 2008-01-22  Simon Hausmann  <hausmann@webkit.org>
 
         Reviewed by Lars.

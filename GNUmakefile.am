@@ -238,6 +238,7 @@ webkitgtk_h_api += \
 	WebKit/gtk/WebView/webkitdefines.h \
 	WebKit/gtk/WebView/webkitnetworkrequest.h \
 	WebKit/gtk/WebView/webkitwebframe.h \
+	WebKit/gtk/WebView/webkitwebsettings.h \
 	WebKit/gtk/WebView/webkitwebview.h 
 
 webkitgtk_built_sources += \
@@ -246,7 +247,6 @@ webkitgtk_built_sources += \
 
 webkitgtk_headers += \
 	WebKit/gtk/WebView/webkitprivate.h \
-	WebKit/gtk/WebView/webkitsettings.h \
 	WebKit/gtk/WebCoreSupport/ChromeClientGtk.h \
 	WebKit/gtk/WebCoreSupport/ContextMenuClientGtk.h \
 	WebKit/gtk/WebCoreSupport/DragClientGtk.h \
@@ -258,8 +258,8 @@ webkitgtk_headers += \
 webkitgtk_sources += \
 	WebKit/gtk/WebView/webkitnetworkrequest.cpp \
 	WebKit/gtk/WebView/webkitprivate.cpp \
-	WebKit/gtk/WebView/webkitsettings.cpp \
 	WebKit/gtk/WebView/webkitwebframe.cpp \
+	WebKit/gtk/WebView/webkitwebsettings.cpp \
 	WebKit/gtk/WebView/webkitwebview.cpp \
 	WebKit/gtk/WebCoreSupport/ChromeClientGtk.cpp \
 	WebKit/gtk/WebCoreSupport/ContextMenuClientGtk.cpp \

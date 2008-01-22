@@ -24,6 +24,7 @@
 #include <JavaScriptCore/JSBase.h>
 
 #include "webkitdefines.h"
+#include "webkitwebsettings.h"
 
 G_BEGIN_DECLS
 
@@ -181,10 +182,16 @@ WEBKIT_API void
 webkit_web_view_set_editable (WebKitWebView* web_view, gboolean flag);
 
 WEBKIT_API GtkTargetList*
-webkit_web_view_get_copy_target_list (WebKitWebView* webView);
+webkit_web_view_get_copy_target_list (WebKitWebView* web_view);
 
 WEBKIT_API GtkTargetList*
-webkit_web_view_get_paste_target_list (WebKitWebView* webView);
+webkit_web_view_get_paste_target_list (WebKitWebView* web_view);
+
+WEBKIT_API void
+webkit_web_view_set_settings (WebKitWebView* web_view, WebKitWebSettings* settings);
+
+WEBKIT_API WebKitWebSettings*
+webkit_web_view_get_settings (WebKitWebView* web_view);
 
 G_END_DECLS
 

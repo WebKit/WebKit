@@ -1,3 +1,23 @@
+2008-01-22  Christian Dywan  <christian@imendio.com>
+
+        Reviewed by Alp Toker.
+
+        [GTK] API: WebKitWebSettings is not usable
+        http://bugs.webkit.org/show_bug.cgi?id=16219
+
+        Implement WebKitWebSettings.
+
+        * WebView/headers.pri:
+        * WebView/webkit.h:
+        * WebView/webkitprivate.cpp:
+        * WebView/webkitprivate.h:
+        * WebView/webkitsettings.cpp: Removed.
+        * WebView/webkitsettings.h: Removed.
+        * WebView/webkitwebsettings.cpp: Added.
+        * WebView/webkitwebsettings.h: Added.
+        * WebView/webkitwebview.cpp:
+        * WebView/webkitwebview.h:
+
 2008-01-21  Alp Toker  <alp@atoker.com>
 
         GTK+ build fix for breakage introduced in r29698.
