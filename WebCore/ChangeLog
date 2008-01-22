@@ -1,3 +1,10 @@
+2008-01-21  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Not reviewed. Another Wx build fix.
+
+        * platform/graphics/wx/FontWx.cpp:
+        (WebCore::Font::drawGlyphs):
+
 2008-01-21  Darin Adler  <darin@apple.com>
 
         - try to fix Qt build
