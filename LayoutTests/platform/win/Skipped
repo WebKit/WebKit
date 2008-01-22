@@ -332,9 +332,6 @@ svg/dom/animated-tearoff-lifespan.xhtml
 # <rdar://5670235> Sometimes spews output into the next test
 http/tests/security/cross-frame-access-put.html
 
-# <rdar://5670257> This test makes editing/selection/5131716-{2,3,4}.html fail
-editing/selection/4895428-3.html
-
 # <rdar://5673685>
 fast/forms/input-readonly-autoscroll.html
 

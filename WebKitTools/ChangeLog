@@ -1,3 +1,11 @@
+2008-01-22  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Adam Roben.
+
+        <rdar://problem/5670257> editing/selection/4895428-3.html makes editing/selection/5131716-2.html fail
+
+        * DumpRenderTree/win/EventSender.cpp: (makeEventSender): Reset static variables for a new test.
+
 2008-01-21  Jan Michael Alonzo  <jmalonzo@unpluggable.com>
 
         Reviewed by Alp Toker.

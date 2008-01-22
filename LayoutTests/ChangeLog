@@ -1,3 +1,11 @@
+2008-01-22  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Adam Roben.
+
+        <rdar://problem/5670257> editing/selection/4895428-3.html makes editing/selection/5131716-2.html fail
+
+        * platform/win/Skipped: Removed this test, as it doesn't cause problems any more.
+
 2008-01-22  Adam Roben  <aroben@apple.com>
 
         Tests for <rdar://5693599> REGRESSION (r29369): scroll bars are drawing when they shouldn't be on an ad on cnn.com
