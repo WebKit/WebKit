@@ -24,7 +24,7 @@
 
 namespace WebCore {
 
-SimpleFontData::SimpleFontData(const FontPlatformData& font, bool customFont, bool loading)
+SimpleFontData::SimpleFontData(const FontPlatformData& font, bool customFont, bool loading, SVGFontData*)
     : m_font(font), m_isCustomFont(customFont), m_isLoading(loading)
 {
 }
