@@ -1,3 +1,13 @@
+2008-01-22  Lars Knoll  <lars@trolltech.com>
+
+        Reviewed by Simon.
+
+        setup a family for cursive and fantasy fonts as well.
+        
+
+        * Api/qwebsettings.cpp:
+        (QWebSettings::QWebSettings):
+
 2008-01-22  Benjamin Meyer  <bmeyer@trolltech.com>
 
         Reviewed by Simon.

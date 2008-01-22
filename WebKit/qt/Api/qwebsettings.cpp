@@ -172,10 +172,11 @@ QWebSettings::QWebSettings()
     d->fontSizes.insert(QWebSettings::DefaultFontSize, 14);
     d->fontSizes.insert(QWebSettings::DefaultFixedFontSize, 14);
     d->fontFamilies.insert(QWebSettings::StandardFont, QLatin1String("Arial"));
-    d->fontFamilies.insert(QWebSettings::StandardFont, QLatin1String("Arial"));
-    d->fontFamilies.insert(QWebSettings::FixedFont, QLatin1String("Courier"));
+    d->fontFamilies.insert(QWebSettings::FixedFont, QLatin1String("Courier New"));
     d->fontFamilies.insert(QWebSettings::SerifFont, QLatin1String("Times New Roman"));
     d->fontFamilies.insert(QWebSettings::SansSerifFont, QLatin1String("Arial"));
+    d->fontFamilies.insert(QWebSettings::CursiveFont, QLatin1String("Arial"));
+    d->fontFamilies.insert(QWebSettings::FantasyFont, QLatin1String("Arial"));
 
     d->attributes.insert(QWebSettings::AutoLoadImages, true);
     d->attributes.insert(QWebSettings::JavascriptEnabled, true);
