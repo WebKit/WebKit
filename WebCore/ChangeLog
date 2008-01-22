@@ -1,3 +1,18 @@
+2008-01-22  Alp Toker  <alp@atoker.com>
+
+        Reviewed by Nikolas.
+
+        Fix Cairo SVG fonts following changes in r29700.
+
+        Set the font description's details as needed in FontPlatformData and
+        eliminate GraphicsContext::setPlatformFont() since it was redundant
+        and assumed all fonts were Cairo fonts.
+
+        * platform/graphics/GraphicsContext.cpp:
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        * platform/graphics/gtk/FontPlatformDataGtk.cpp:
+        (WebCore::FontPlatformData::FontPlatformData):
+
 2008-01-22  Dan Bernstein  <mitz@apple.com>
  
          Reviewed by Eric.

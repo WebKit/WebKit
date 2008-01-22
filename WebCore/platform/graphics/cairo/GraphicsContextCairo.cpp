@@ -572,19 +572,6 @@ void GraphicsContext::setPlatformStrokeStyle(const StrokeStyle& strokeStyle)
     }
 }
 
-void GraphicsContext::setPlatformFont(const Font& font)
-{
-    if (paintingDisabled())
-        return;
-
-#if PLATFORM(GTK)
-    // FIXME: is it the right thing to do? Also, doesn't work on Win because
-    // there FontData doesn't have ::setFont()
-    const SimpleFontData *fontData = font.primaryFont();
-    fontData->setFont(m_data->cr);
-#endif
-}
-
 void GraphicsContext::setURLForRect(const KURL& link, const IntRect& destRect)
 {
     notImplemented();

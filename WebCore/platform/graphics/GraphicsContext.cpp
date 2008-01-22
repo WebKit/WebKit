@@ -435,7 +435,9 @@ void GraphicsContext::setPlatformTextDrawingMode(int mode)
 void GraphicsContext::setPlatformStrokeStyle(const StrokeStyle&)
 {
 }
+#endif
 
+#if !PLATFORM(QT)
 void GraphicsContext::setPlatformFont(const Font&)
 {
 }
