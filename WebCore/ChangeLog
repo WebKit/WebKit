@@ -1,5 +1,14 @@
 2008-01-21  Nikolas Zimmermann  <zimmermann@kde.org>
 
+        Not reviewed. Yet another win/gtk build fix.
+
+        * platform/graphics/gtk/FontPlatformDataGtk.cpp:
+        (WebCore::FontPlatformData::FontPlatformData):
+        * platform/graphics/win/FontWin.cpp:
+        (WebCore::Font::drawGlyphs):
+
+2008-01-21  Nikolas Zimmermann  <zimmermann@kde.org>
+
         Not reviewed. Another build fix for Gtk/Linux & Wx/Mac.
 
         * platform/graphics/SimpleFontData.cpp:

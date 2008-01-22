@@ -117,7 +117,7 @@ freePattern:
     FcPatternDestroy(pattern);
 }
 
-FontPlatformData(float size, bool bold, bool italic)
+FontPlatformData::FontPlatformData(float size, bool bold, bool italic)
     : m_pattern(0)
     , m_fontDescription()
     , m_scaledFont(0)
