@@ -45,13 +45,13 @@ void SVGPaintServer::teardown(GraphicsContext*&, const RenderObject*, SVGPaintTa
 
 void SVGPaintServer::renderPath(GraphicsContext*& context, const RenderObject* path, SVGPaintTargetType type) const
 {
-    RenderStyle* style = path->style();
+    RenderStyle* style = path ? path->style() : 0;
     CGContextRef contextRef = context->platformContext();
 
-    if ((type & ApplyToFillTargetType) && style->svgStyle()->hasFill())
+    if ((type & ApplyToFillTargetType) && (!style || style->svgStyle()->hasFill()))
         fillPath(contextRef, path);
 
-    if ((type & ApplyToStrokeTargetType) && style->svgStyle()->hasStroke())
+    if ((type & ApplyToStrokeTargetType) && (!style || style->svgStyle()->hasStroke()))
         strokePath(contextRef, path);
 }
 
@@ -68,7 +68,7 @@ void SVGPaintServer::clipToStrokePath(CGContextRef context, const RenderObject*)
 
 void SVGPaintServer::fillPath(CGContextRef context, const RenderObject* path) const
 {
-    if (path->style()->svgStyle()->fillRule() == RULE_EVENODD)
+    if (!path || path->style()->svgStyle()->fillRule() == RULE_EVENODD)
         CGContextEOFillPath(context);
     else
         CGContextFillPath(context);
@@ -76,7 +76,7 @@ void SVGPaintServer::fillPath(CGContextRef context, const RenderObject* path) co
 
 void SVGPaintServer::clipToFillPath(CGContextRef context, const RenderObject* path) const
 {
-    if (path->style()->svgStyle()->fillRule() == RULE_EVENODD)
+    if (!path || path->style()->svgStyle()->fillRule() == RULE_EVENODD)
         CGContextEOClip(context);
     else
         CGContextClip(context);

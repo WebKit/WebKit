@@ -33,15 +33,16 @@ namespace WebCore {
 bool SVGPaintServerSolid::setup(GraphicsContext*& context, const RenderObject* object, SVGPaintTargetType type, bool isPaintingText) const
 {
     CGContextRef contextRef = context->platformContext();
-    RenderStyle* style = object->style();
+    RenderStyle* style = object ? object->style() : 0;
 
     static CGColorSpaceRef deviceRGBColorSpace = CGColorSpaceCreateDeviceRGB(); // This should be shared from GraphicsContext, or some other central location
 
-    if ((type & ApplyToFillTargetType) && style->svgStyle()->hasFill()) {
+    if ((type & ApplyToFillTargetType) && (!style || style->svgStyle()->hasFill())) {
         CGFloat colorComponents[4];
         color().getRGBA(colorComponents[0], colorComponents[1], colorComponents[2], colorComponents[3]);
         ASSERT(!color().hasAlpha());
-        colorComponents[3] = style->svgStyle()->fillOpacity(); // SVG/CSS colors are not specified w/o alpha
+        if (style)
+            colorComponents[3] = style->svgStyle()->fillOpacity(); // SVG/CSS colors are not specified w/o alpha
 
         CGContextSetFillColorSpace(contextRef, deviceRGBColorSpace);
         CGContextSetFillColor(contextRef, colorComponents);
@@ -50,16 +51,18 @@ bool SVGPaintServerSolid::setup(GraphicsContext*& context, const RenderObject* o
             context->setTextDrawingMode(cTextFill);
     }
 
-    if ((type & ApplyToStrokeTargetType) && style->svgStyle()->hasStroke()) {
+    if ((type & ApplyToStrokeTargetType) && (!style || style->svgStyle()->hasStroke())) {
         CGFloat colorComponents[4];
         color().getRGBA(colorComponents[0], colorComponents[1], colorComponents[2], colorComponents[3]);
         ASSERT(!color().hasAlpha());
-        colorComponents[3] = style->svgStyle()->strokeOpacity(); // SVG/CSS colors are not specified w/o alpha
+        if (style)
+            colorComponents[3] = style->svgStyle()->strokeOpacity(); // SVG/CSS colors are not specified w/o alpha
 
         CGContextSetStrokeColorSpace(contextRef, deviceRGBColorSpace);
         CGContextSetStrokeColor(contextRef, colorComponents);
 
-        applyStrokeStyleToContext(context, style, object);
+        if (style)
+            applyStrokeStyleToContext(context, style, object);
 
         if (isPaintingText)
             context->setTextDrawingMode(cTextStroke);

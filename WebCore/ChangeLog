@@ -2,6 +2,22 @@
 
         Reviewed by Alp.
 
+        Allow to use SVGPaintServerSolid without RenderObject/RenderStyle. Used later to draw SVG Fonts in HTML.
+
+        * svg/graphics/SVGPaintServer.cpp:
+        (WebCore::SVGPaintServer::sharedSolidPaintServer):
+        * svg/graphics/SVGPaintServer.h:
+        * svg/graphics/cg/SVGPaintServerCg.cpp:
+        (WebCore::SVGPaintServer::renderPath):
+        (WebCore::SVGPaintServer::fillPath):
+        (WebCore::SVGPaintServer::clipToFillPath):
+        * svg/graphics/cg/SVGPaintServerSolidCg.cpp:
+        (WebCore::SVGPaintServerSolid::setup):
+
+2008-01-22  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Alp.
+
         Initialize missing variables, m_lineGap / m_lineSpacing.
         Only noticeable when trying to render HTML text using SVG Fonts (which is not possible with trunk, but with my local version).
 

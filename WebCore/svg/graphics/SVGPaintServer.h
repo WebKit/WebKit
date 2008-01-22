@@ -63,6 +63,7 @@ namespace WebCore {
     class GraphicsContext;
     class RenderObject;
     class RenderStyle;
+    class SVGPaintServerSolid;
 
     class SVGPaintServer : public SVGResource {
     public:
@@ -83,6 +84,7 @@ namespace WebCore {
 
         static SVGPaintServer* strokePaintServer(const RenderStyle*, const RenderObject*);
         static SVGPaintServer* fillPaintServer(const RenderStyle*, const RenderObject*);
+        static SVGPaintServerSolid* sharedSolidPaintServer();
 
     protected:
 #if PLATFORM(CG)
