@@ -1,3 +1,15 @@
+2008-01-22  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Darin and Adam.
+
+        <rdar://problem/5688975>
+        div element on microsoft site has wrong left offset.
+        
+        Add new method for testing the return vale of NPN_GetProperty.
+        
+        * DumpRenderTree/TestNetscapePlugIn.subproj/PluginObject.cpp:
+        (pluginInvoke):
+
 2008-01-22  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Adam Roben.

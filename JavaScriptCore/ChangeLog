@@ -1,3 +1,16 @@
+2008-01-22  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Darin and Adam.
+
+        <rdar://problem/5688975>
+        div element on microsoft site has wrong left offset.
+        
+        Return true even if NPN_GetProperty returns null or undefined. This matches Firefox 
+        (and is what the Silverlight plug-in expects).
+        
+        * bindings/NP_jsobject.cpp:
+        (_NPN_GetProperty):
+
 2008-01-21  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Maciej Stachowiak.

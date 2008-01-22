@@ -239,14 +239,6 @@ bool _NPN_GetProperty(NPP, NPObject* o, NPIdentifier propertyName, NPVariant* va
         else
             result = obj->imp->get(exec, i->value.number);
 
-        if (result->isNull()) {
-            NULL_TO_NPVARIANT(*variant);
-            return false;
-        }
-        if (result->isUndefined()) {
-            VOID_TO_NPVARIANT(*variant);
-            return false;
-        }
         convertValueToNPVariant(exec, result, variant);
         return true;
     }

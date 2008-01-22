@@ -1,3 +1,15 @@
+2008-01-22  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Darin and Adam.
+
+        <rdar://problem/5688975>
+        div element on microsoft site has wrong left offset.
+        
+        Add test.
+        
+        * plugins/netscape-get-property-return-value-expected.txt: Added.
+        * plugins/netscape-get-property-return-value.html: Added.
+
 2008-01-22  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Adam Roben.
