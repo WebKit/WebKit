@@ -76,7 +76,7 @@ namespace KJS {
         struct JSGlobalObjectData : public JSVariableObjectData {
             JSGlobalObjectData(JSGlobalObject* globalObject)
                 : JSVariableObjectData(&inlineSymbolTable)
-                , globalExec(globalObject, globalObject, 0)
+                , globalExec(globalObject)
             {
             }
 
@@ -87,7 +87,6 @@ namespace KJS {
             CompatMode compatMode;
             
             ExecState globalExec;
-            ExecState* currentExec;
             int recursion;
 
             unsigned timeoutTime;
@@ -210,9 +209,6 @@ namespace KJS {
 
         Debugger* debugger() const { return d()->debugger; }
         void setDebugger(Debugger* debugger) { d()->debugger = debugger; }
-
-        void setCurrentExec(ExecState* exec) { d()->currentExec = exec; }
-        ExecState* currentExec() const { return d()->currentExec; }
 
         // FIXME: Let's just pick one compatible behavior and go with it.
         void setCompatMode(CompatMode mode) { d()->compatMode = mode; }

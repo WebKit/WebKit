@@ -1,3 +1,22 @@
+2008-01-21  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Adapted WebCore to the fix for http://bugs.webkit.org/show_bug.cgi?id=16909
+        REGRESSION: Amazon.com crash (ActivationImp)
+
+        * bindings/js/kjs_proxy.cpp:
+        (WebCore::KJSProxy::~KJSProxy): No convenient way to make this assertion
+        anymore. (It wasn't firing for anyone, anyway, so it's no big loss.)
+
+        * bindings/objc/WebScriptObject.mm:
+        (+[WebScriptObject throwException:]): Use the ExecState stack, instead
+        of currentExec.
+        (-[WebScriptObject setException:]): ditto. Also, a slight change in
+        behavior: If no ExecStates are active, we no longer throw an exception
+        in the global ExecState. The JavaScriptCore ChangeLog explains why.
+        This also matches the behavior of +throwException.
+
 2008-01-21  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Not reviewed. Try to fix Qt build, after the rmdir() fixes.c

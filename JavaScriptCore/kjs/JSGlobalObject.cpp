@@ -135,7 +135,6 @@ void JSGlobalObject::init()
     d()->timeoutTime = 0;
     d()->timeoutCheckCount = 0;
 
-    d()->currentExec = 0;
     d()->recursion = 0;
     d()->debugger = 0;
     
@@ -471,9 +470,6 @@ void JSGlobalObject::restoreBuiltins(const SavedBuiltins& builtins)
 void JSGlobalObject::mark()
 {
     JSVariableObject::mark();
-
-    if (d()->currentExec)
-        d()->currentExec->mark();
 
     markIfNeeded(d()->globalExec.exception());
 

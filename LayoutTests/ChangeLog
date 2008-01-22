@@ -1,3 +1,11 @@
+2008-01-21  Geoffrey Garen  <ggaren@apple.com>
+
+        Layout test for http://bugs.webkit.org/show_bug.cgi?id=16909
+        REGRESSION: Amazon.com crash (ActivationImp)
+
+        * fast/js/exec-state-marking-expected.txt: Added.
+        * fast/js/exec-state-marking.html: Added.
+
 2008-01-21  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Eric.

@@ -51,6 +51,8 @@ namespace KJS  {
     class ScopeNode;
     struct LocalStorageEntry;
     
+    typedef Vector<ExecState*, 16> ExecStateStack;
+
     /**
      * Represents the current state of script execution. This is
      * passed as the first argument to most functions.
@@ -85,7 +87,6 @@ namespace KJS  {
         JSObject* thisValue() const { return m_thisVal; }
         
         ExecState* callingExecState() { return m_callingExec; }
-        ExecState* savedExec() { return m_savedExec; }
         
         ActivationImp* activationObject() { return m_activation; }
         void setActivationObject(ActivationImp* a) { m_activation = a; }
@@ -106,8 +107,6 @@ namespace KJS  {
         void popSwitch() { m_switchDepth--; }
         bool inSwitch() const { return (m_switchDepth > 0); }
 
-        void mark();
-        
         // These pointers are used to avoid accessing global variables for these,
         // to avoid taking PIC branches in Mach-O binaries.
         const CommonIdentifiers& propertyNames() const { return *m_propertyNames; }
@@ -178,11 +177,15 @@ namespace KJS  {
             return 0;
         }
 
+        ExecState(JSGlobalObject*);
         ExecState(JSGlobalObject*, JSObject* thisObject, ProgramNode*);
         ExecState(JSGlobalObject*, EvalNode*, ExecState* callingExecState);
         ExecState(JSGlobalObject*, JSObject* thisObject, FunctionBodyNode*,
             ExecState* callingExecState, FunctionImp*, const List& args);
         ~ExecState();
+
+        static void markActiveExecStates();
+        static ExecStateStack& activeExecStates();
 
     private:
         // ExecStates are always stack-allocated, and the garbage collector
@@ -194,7 +197,7 @@ namespace KJS  {
         const List* m_emptyList;
 
         ExecState* m_callingExec;
-        ExecState* m_savedExec;
+
         ScopeNode* m_scopeNode;
         
         FunctionImp* m_function;

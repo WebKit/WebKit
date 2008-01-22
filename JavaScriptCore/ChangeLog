@@ -1,3 +1,27 @@
+2008-01-21  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+        
+        Fixed http://bugs.webkit.org/show_bug.cgi?id=16909
+        REGRESSION: Amazon.com crash (ActivationImp)
+        
+        (and a bunch of other crashes)
+        
+        Plus, a .7% SunSpider speedup to boot.
+        
+        Replaced the buggy currentExec and savedExec mechanisms with an
+        explicit ExecState stack.
+
+        * kjs/collector.cpp:
+        (KJS::Collector::collect): Explicitly mark the ExecState stack.
+
+        (KJS::Collector::reportOutOfMemoryToAllExecStates): Slight change in
+        behavior: We no longer throw an exception in any global ExecStates,
+        since global ExecStates are more like pseudo-ExecStates, and aren't
+        used for script execution. (It's unclear what would happen if you left
+        an exception waiting around in a global ExecState, but it probably
+        wouldn't be good.)
+
 2008-01-21  Jan Michael Alonzo  <jmalonzo@unpluggable.com>
 
         Reviewed by Alp Toker.
