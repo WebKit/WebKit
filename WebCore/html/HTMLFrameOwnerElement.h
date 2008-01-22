@@ -48,6 +48,8 @@ public:
     bool createdByParser() const { return m_createdByParser; }
     void setCreatedByParser(bool createdByParser) { m_createdByParser = createdByParser; }
 
+    virtual ScrollbarMode scrollingMode() const { return ScrollbarAuto; }
+
 private:
     friend class Frame;
     Frame* m_contentFrame;

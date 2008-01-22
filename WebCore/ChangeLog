@@ -1,3 +1,18 @@
+2008-01-22  Adam Roben  <aroben@apple.com>
+
+        Add HTMLFrameOwnerElement::scrollingMode
+
+        This new virtual method is overridden by HTMLFrameElementBase to
+        provide the scrolling mode set on the frame or iframe element. Object
+        elements always have scrolling=auto, so there's no need to override
+        this method for HTMLPlugInElement.
+
+        Reviewed by Hyatt.
+
+        * html/HTMLFrameElementBase.h: Declare scrollingMode as virtual.
+        * html/HTMLFrameOwnerElement.h:
+        (WebCore::HTMLFrameOwnerElement::scrollingMode): Added.
+
 2008-01-22  David Hyatt  <hyatt@apple.com>
 
         Fix for <rdar://problem/5698481> REGRESSION: Web Inspector source view gutter double divider and no padding

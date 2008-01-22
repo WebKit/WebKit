@@ -1,3 +1,18 @@
+2008-01-22  Adam Roben  <aroben@apple.com>
+
+        Tests for <rdar://5693599> REGRESSION (r29369): scroll bars are drawing when they shouldn't be on an ad on cnn.com
+
+        Reviewed by Hyatt.
+
+        * fast/frames/frame-scrolling-attribute.html: Added.
+        * fast/frames/iframe-scrolling-attribute.html: Added.
+        * platform/mac/fast/frames/frame-scrolling-attribute-expected.checksum: Added.
+        * platform/mac/fast/frames/frame-scrolling-attribute-expected.png: Added.
+        * platform/mac/fast/frames/frame-scrolling-attribute-expected.txt: Added.
+        * platform/mac/fast/frames/iframe-scrolling-attribute-expected.checksum: Added.
+        * platform/mac/fast/frames/iframe-scrolling-attribute-expected.png: Added.
+        * platform/mac/fast/frames/iframe-scrolling-attribute-expected.txt: Added.
+
 2008-01-22  Dan Bernstein  <mitz@apple.com>
  
          Reviewed by Eric.

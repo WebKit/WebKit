@@ -1868,6 +1868,9 @@ void WebFrame::transitionToCommittedForNewPage()
 
     if (frame->ownerRenderer())
         frame->ownerRenderer()->setWidget(frameView);
+
+    if (HTMLFrameOwnerElement* owner = frame->ownerElement())
+        frame->view()->setScrollbarsMode(owner->scrollingMode());
 }
 
 void WebFrame::updateGlobalHistoryForStandardLoad(const KURL& url)

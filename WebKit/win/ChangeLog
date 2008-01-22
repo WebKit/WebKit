@@ -1,3 +1,24 @@
+2008-01-22  Adam Roben  <aroben@apple.com>
+
+        Fix <rdar://5693599> REGRESSION (r29369): scroll bars are drawing when they shouldn't be on an ad on cnn.com
+
+        Now that we have multiple FrameViews per Frame on Windows, we need to
+        make sure each FrameView gets its scrolling mode set correctly. On Mac
+        this works because WebFrameView holds the scrolling mode and a single
+        WebFrameView is shared by many FrameViews. On Windows, we have no such
+        shared object, so we just ask the Frame's owner element for the
+        scrolling mode.
+
+        Tests: fast/frames/frame-scrolling-attribute.html
+               fast/frames/iframe-scrolling-attribute.html
+
+        Reviewed by Hyatt.
+
+        * WebFrame.cpp:
+        (WebFrame::transitionToCommittedForNewPage): Set the scrolling mode
+        on the FrameView based on the scrolling mode of the Frame's owner
+        element.
+
 2008-01-21  Darin Adler  <darin@apple.com>
 
         Reviewed by John Sullivan.

@@ -48,7 +48,7 @@ public:
     
     virtual bool isURLAttribute(Attribute*) const;
 
-    ScrollbarMode scrollingMode() const { return m_scrolling; }
+    virtual ScrollbarMode scrollingMode() const { return m_scrolling; }
     
     int getMarginWidth() const { return m_marginWidth; }
     int getMarginHeight() const { return m_marginHeight; }
