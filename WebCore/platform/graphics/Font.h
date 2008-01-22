@@ -150,7 +150,7 @@ public:
     Font(const FontPlatformData&, bool isPrinting); // This constructor is only used if the platform wants to start with a native font.
 #endif
     ~Font();
-    
+
     Font(const Font&);
     Font& operator=(const Font&);
 
@@ -163,14 +163,14 @@ public:
 
     int pixelSize() const { return fontDescription().computedPixelSize(); }
     float size() const { return fontDescription().computedSize(); }
-    
+
     void update(PassRefPtr<FontSelector>) const;
 
     void drawText(GraphicsContext*, const TextRun&, const FloatPoint&, int from = 0, int to = -1) const;
 
     int width(const TextRun&) const;
     float floatWidth(const TextRun&) const;
-    
+
     int offsetForPosition(const TextRun&, int position, bool includePartialGlyphs) const;
     FloatRect selectionRectForText(const TextRun&, const IntPoint&, int h, int from = 0, int to = -1) const;
 
@@ -178,9 +178,13 @@ public:
 
     short wordSpacing() const { return m_wordSpacing; }
     short letterSpacing() const { return m_letterSpacing; }
+#if !PLATFORM(QT)
     void setWordSpacing(short s) { m_wordSpacing = s; }
     void setLetterSpacing(short s) { m_letterSpacing = s; }
-
+#else
+    void setWordSpacing(short s);
+    void setLetterSpacing(short s);
+#endif
     bool isFixedPitch() const;
     bool isPrinterFont() const { return m_fontDescription.usePrinterFont(); }
     
@@ -196,12 +200,12 @@ public:
 #if !PLATFORM(QT)
     bool isPlatformFont() const { return m_isPlatformFont; }
 #endif
-    
+
 #if PLATFORM(QT)
     inline const QFont &font() const { return m_font; }
     inline const QFont &scFont() const { return m_scFont; }
 #endif
-    
+
     // Metrics that we query the FontFallbackList for.
     int ascent() const;
     int descent() const;
@@ -238,18 +242,18 @@ private:
     FloatRect selectionRectForComplexText(const TextRun&, const IntPoint&, int h, int from, int to) const;
 #endif
     friend struct WidthIterator;
-    
+
     // Useful for debugging the different font rendering code paths.
 public:
 #if !PLATFORM(QT)
     enum CodePath { Auto, Simple, Complex };
     static void setCodePath(CodePath);
     static CodePath codePath;
-    
+
     static const uint8_t gRoundingHackCharacterTable[256];
     static bool isRoundingHackCharacter(UChar32 c)
     {
-        return (((c & ~0xFF) == 0 && gRoundingHackCharacterTable[c])); 
+        return (((c & ~0xFF) == 0 && gRoundingHackCharacterTable[c]));
     }
 
     FontSelector* fontSelector() const;

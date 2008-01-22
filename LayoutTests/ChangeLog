@@ -1,3 +1,27 @@
+2008-01-22  Lars Knoll  <lars@trolltech.com>
+
+        Reviewed by Simon.
+
+        Ported the font implementation to use the new QFont features of Qt 4.4.
+        
+
+        * platform/qt/css1/text_properties/letter_spacing-expected.txt:
+        * platform/qt/css2.1/t1604-c541-word-sp-01-b-a-expected.txt:
+        * platform/qt/fast/css-generated-content/wbr-with-before-content-expected.txt:
+        * platform/qt/fast/css/ex-after-font-variant-expected.txt:
+        * platform/qt/fast/css/word-space-extra-expected.txt:
+        * platform/qt/fast/encoding/denormalised-voiced-japanese-chars-expected.txt:
+        * platform/qt/fast/repaint/continuation-after-outline-expected.txt:
+        * platform/qt/fast/text/atsui-multiple-renderers-expected.txt:
+        * platform/qt/fast/text/atsui-small-caps-punctuation-size-expected.txt:
+        * platform/qt/fast/text/basic/003-expected.txt:
+        * platform/qt/fast/text/basic/013-expected.txt:
+        * platform/qt/fast/text/large-text-composed-char-expected.txt:
+        * platform/qt/fast/text/letter-spacing-negative-opacity-expected.txt:
+        * platform/qt/fast/text/wide-zero-width-space-expected.txt:
+        * platform/qt/fast/text/word-break-soft-hyphen-expected.txt: Added.
+        * platform/qt/tables/mozilla/images/adforce_imgis_com-expected.txt:
+
 2008-01-21  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Nikolas & Oliver.

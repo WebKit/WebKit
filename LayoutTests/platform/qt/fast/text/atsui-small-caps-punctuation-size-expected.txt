@@ -22,9 +22,9 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,103) size 784x19
         RenderText {#text} at (0,0) size 49x19
           text run at (0,0) width 49: "ATSUI: "
-        RenderInline {SPAN} at (0,0) size 39x19
-          RenderText {#text} at (49,0) size 39x19
-            text run at (49,0) width 39: "A?b?e\x{300}"
+        RenderInline {SPAN} at (0,0) size 43x19
+          RenderText {#text} at (49,0) size 43x19
+            text run at (49,0) width 43: "A?b?e\x{300}"
       RenderBlock {P} at (0,136) size 784x19
         RenderText {#text} at (0,0) size 29x19
           text run at (0,0) width 29: "CG: "

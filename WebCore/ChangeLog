@@ -1,3 +1,33 @@
+2008-01-22  Lars Knoll  <lars@trolltech.com>
+
+        Reviewed by Simon.
+
+        Ported the font implementation to use the new QFont features of Qt 4.4.
+        
+
+        * platform/graphics/Font.h:
+        (WebCore::Font::setWordSpacing):
+        (WebCore::Font::setLetterSpacing):
+        (WebCore::Font::font):
+        (WebCore::Font::):
+        * platform/graphics/qt/FontQt.cpp:
+        (WebCore::Font::Font):
+        (WebCore::Font::setWordSpacing):
+        (WebCore::Font::setLetterSpacing):
+        (WebCore::qstring):
+        (WebCore::setupLayout):
+        (WebCore::Font::drawText):
+        (WebCore::Font::width):
+        (WebCore::Font::floatWidth):
+        (WebCore::Font::offsetForPosition):
+        (WebCore::Font::selectionRectForText):
+        (WebCore::generateComponents):
+        (WebCore::cursorToX):
+        (WebCore::Font::~Font):
+        (WebCore::Font::operator=):
+        (WebCore::Font::operator==):
+        (WebCore::Font::update):
+
 2008-01-21  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Nikolas & Oliver.

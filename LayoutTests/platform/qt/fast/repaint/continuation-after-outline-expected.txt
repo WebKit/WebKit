@@ -14,7 +14,7 @@ layer at (0,0) size 800x94
               text run at (21,0) width 7: "x"
           RenderText {#text} at (0,0) size 0x0
       RenderBlock (anonymous) at (0,59) size 784x19
-        RenderText {#text} at (0,0) size 4x19
-          text run at (0,0) width 4: "\x{19}"
+        RenderText {#text} at (0,0) size 0x19
+          text run at (0,0) width 0: "\x{19}"
         RenderText {#text} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0
