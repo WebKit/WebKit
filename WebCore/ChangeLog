@@ -1,3 +1,14 @@
+2008-01-22  David Hyatt  <hyatt@apple.com>
+
+        Fix for <rdar://problem/5698481> REGRESSION: Web Inspector source view gutter double divider and no padding
+
+        Now that cellpadding cascades properly on <td>s, we need to make the view source padding rules in the user
+        agent sheet have !important in order to override author settings.
+
+        Reviewed by Tim
+
+        * css/view-source.css:
+
 2008-01-22  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Alp.
