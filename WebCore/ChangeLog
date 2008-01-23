@@ -1,3 +1,16 @@
+2008-01-22  Darin Adler  <darin@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        - turn full repainting back on for <canvas> until we get incremental
+          repaint working properly
+
+        Ollie and I came up with a plan for testing this, but for now we should
+        just fall back on the "repaint everything" behavior we have always had.
+
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::willDraw): Just call repaint.
+
 2008-01-22  Alp Toker  <alp@atoker.com>
 
         GTK+/qmake build fix.

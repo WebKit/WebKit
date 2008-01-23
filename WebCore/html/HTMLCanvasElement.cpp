@@ -152,11 +152,15 @@ CanvasRenderingContext* HTMLCanvasElement::getContext(const String& type)
 void HTMLCanvasElement::willDraw(const FloatRect& rect)
 {
     if (RenderObject* ro = renderer()) {
+#ifdef CANVAS_INCREMENTAL_REPAINT
         // Handle CSS triggered scaling
         float widthScale = static_cast<float>(ro->width()) / static_cast<float>(m_size.width());
         float heightScale = static_cast<float>(ro->height()) / static_cast<float>(m_size.height());
         FloatRect r(rect.x() * widthScale, rect.y() * heightScale, rect.width() * widthScale, rect.height() * heightScale);
         ro->repaintRectangle(enclosingIntRect(r));
+#else
+        ro->repaint();
+#endif
     }
 }
 
@@ -324,6 +328,7 @@ QImage HTMLCanvasElement::createPlatformImage() const
 }
 
 #elif PLATFORM(CAIRO)
+
 cairo_surface_t* HTMLCanvasElement::createPlatformImage() const
 {
     if (!m_surface)
