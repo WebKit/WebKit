@@ -864,7 +864,7 @@ PassRefPtr<Frame> FrameLoaderClientQt::createFrame(const KURL& url, const String
     QWebFrame* webFrame = new QWebFrame(m_webFrame, &frameData);
     emit m_webFrame->page()->frameCreated(webFrame);
 
-    RefPtr<Frame> childFrame = webFrame->d->frame;
+    RefPtr<Frame> childFrame = adoptRef(webFrame->d->frame.get());
 
     // FIXME: All of the below should probably be moved over into WebCore
     childFrame->tree()->setName(name);

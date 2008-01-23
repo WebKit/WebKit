@@ -1,3 +1,13 @@
+2008-01-23  Holger Hans Peter Freyther  <holger.freyther@trolltech.com>
+
+        * Rubber stamped by Simon
+
+        * Fix leaking of sub frames (WebCore::Frame). We keep one reference too many.
+        This was found while working on the page-cache, other ports are not affected.
+
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::createFrame):
+
 2008-01-23  Rohan McGovern  <rohan.mcgovern@trolltech.com>
 
         Reviewed by Simon Hausmann <hausmann@webkit.org>.
