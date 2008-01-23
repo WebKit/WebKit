@@ -864,7 +864,6 @@ void QWebPage::triggerAction(WebAction action, bool checked)
             break;
         case OpenFrameInNewWindow:
             break;
-        case DownloadLinkToDisk:
         case CopyLinkToClipboard:
             editor->copyURL(d->currentContext.linkUrl(), d->currentContext.text());
             break;
@@ -872,6 +871,9 @@ void QWebPage::triggerAction(WebAction action, bool checked)
             openNewWindow(d->currentContext.imageUrl(), frame);
             break;
         case DownloadImageToDisk:
+        case DownloadLinkToDisk:
+            frame->loader()->client()->startDownload(WebCore::ResourceRequest(d->currentContext.linkUrl(), frame->loader()->outgoingReferrer()));
+            break;
         case CopyImageToClipboard:
             break;
         case GoBack:
@@ -1556,6 +1558,20 @@ QWebFrame *QWebPageContext::targetFrame() const
 
     This signal is emitted whenever the document wants to change the position and size of the
     page to \a geom. This can happen for example through JavaScript.
+*/
+
+/*!
+    \fn void QWebPage::handleUnsupportedContent(QNetworkReply *reply)
+
+    This signals is emitted when webkit cannot handle a link the user navigated to.
+
+    At signal emissions time the meta data of the QNetworkReply is available.
+*/
+
+/*!
+    \fn void QWebPage::download(const QNetworkRequest &request)
+
+    This signals is emitted when the user decides to download a link.
 */
 
 #include "moc_qwebpage.cpp"

@@ -42,6 +42,9 @@
 #include "HistoryItem.h"
 #include "HTMLFormElement.h"
 #include "NotImplemented.h"
+#include "QNetworkReplyHandler.h"
+#include "ResourceHandleInternal.h"
+#include "ResourceHandle.h"
 
 #include "qwebpage.h"
 #include "qwebframe.h"
@@ -53,6 +56,7 @@
 #include <QDebug>
 #if QT_VERSION >= 0x040400
 #include <QNetworkRequest>
+#include <QNetworkReply>
 #else
 #include "qwebnetworkinterface_p.h"
 #include "qwebobjectplugin_p.h"
@@ -699,9 +703,19 @@ WTF::PassRefPtr<WebCore::DocumentLoader> FrameLoaderClientQt::createDocumentLoad
     return loader.release();
 }
 
-void FrameLoaderClientQt::download(WebCore::ResourceHandle*, const WebCore::ResourceRequest&, const WebCore::ResourceRequest&, const WebCore::ResourceResponse&)
+void FrameLoaderClientQt::download(WebCore::ResourceHandle* handle, const WebCore::ResourceRequest&, const WebCore::ResourceRequest&, const WebCore::ResourceResponse&)
 {
-    notImplemented();
+#if QT_VERSION >= 0x040400
+    QNetworkReplyHandler* handler = handle->getInternal()->m_job;
+    QNetworkReply* reply = handler->release();
+    if (reply) {
+        QWebPage *page = m_webFrame->page();
+        if (page->receivers(SIGNAL(handleUnsupportedContent(QNetworkReply *))))
+            emit m_webFrame->page()->handleUnsupportedContent(reply);
+        else
+            reply->abort();
+    }
+#endif
 }
 
 void FrameLoaderClientQt::assignIdentifierToInitialRequest(unsigned long identifier, WebCore::DocumentLoader*, const WebCore::ResourceRequest&)
@@ -777,12 +791,15 @@ WebCore::Frame* FrameLoaderClientQt::dispatchCreatePage()
     return newPage->mainFrame()->d->frame.get();
 }
 
-void FrameLoaderClientQt::dispatchDecidePolicyForMIMEType(FramePolicyFunction function, const WebCore::String&, const WebCore::ResourceRequest&)
+void FrameLoaderClientQt::dispatchDecidePolicyForMIMEType(FramePolicyFunction function, const WebCore::String& MIMEType, const WebCore::ResourceRequest&)
 {
     // we need to call directly here
     Q_ASSERT(!m_policyFunction);
     m_policyFunction = function;
-    slotCallPolicyFunction(PolicyUse);
+    if (canShowMIMEType(MIMEType))
+        slotCallPolicyFunction(PolicyUse);
+    else
+        slotCallPolicyFunction(PolicyDownload);
 }
 
 void FrameLoaderClientQt::dispatchDecidePolicyForNewWindowAction(FramePolicyFunction function, const WebCore::NavigationAction&, const WebCore::ResourceRequest&, const WebCore::String&)
@@ -819,9 +836,12 @@ void FrameLoaderClientQt::dispatchUnableToImplementPolicy(const WebCore::Resourc
     notImplemented();
 }
 
-void FrameLoaderClientQt::startDownload(const WebCore::ResourceRequest&)
+void FrameLoaderClientQt::startDownload(const WebCore::ResourceRequest& request)
 {
-    notImplemented();
+#if QT_VERSION >= 0x040400
+    QWebPage *page = m_webFrame->page();
+    emit m_webFrame->page()->download(request.toNetworkRequest());
+#endif
 }
 
 bool FrameLoaderClientQt::willUseArchive(WebCore::ResourceLoader*, const WebCore::ResourceRequest&, const WebCore::KURL&) const

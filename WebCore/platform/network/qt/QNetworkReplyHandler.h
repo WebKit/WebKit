@@ -42,6 +42,8 @@ public:
 
     void abort();
 
+    QNetworkReply *release();
+
 private slots:
     void finish();
     void sendResponseIfNeeded();

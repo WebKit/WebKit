@@ -35,6 +35,7 @@ class QUrl;
 class QWebFrame;
 class QWebNetworkRequest;
 class QNetworkRequest;
+class QNetworkReply;
 class QNetworkAccessManager;
 class QWebHistory;
 
@@ -193,6 +194,11 @@ Q_SIGNALS:
     void selectionChanged();
     void frameCreated(QWebFrame *frame);
     void geometryChangeRequest(const QRect& geom);
+
+#if QT_VERSION >= 0x040400
+    void handleUnsupportedContent(QNetworkReply *reply);
+    void download(const QNetworkRequest &request);
+#endif
 
     //void addEmbeddableWidget(QWidget *widget);
     //void addEmbeddableWidget(const QString &classid, QWidget *widget);

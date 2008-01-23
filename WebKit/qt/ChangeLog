@@ -1,3 +1,23 @@
+2008-01-23  Simon Hausmann  <hausmann@webkit.org>
+
+        Reviewed by Lars.
+
+        Implemented FrameLoaderClient::startDownload() and FrameLoaderClient::download().
+        
+        Added two signals to QWebPage to handle downloading of links and handling of
+        unsupported content.
+        
+
+        * Api/qwebpage.cpp:
+        (QWebPage::triggerAction):
+        * Api/qwebpage.h:
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::download):
+        (WebCore::FrameLoaderClientQt::assignIdentifierToInitialRequest):
+        (WebCore::FrameLoaderClientQt::dispatchDecidePolicyForMIMEType):
+        (WebCore::FrameLoaderClientQt::dispatchDecidePolicyForNewWindowAction):
+        (WebCore::FrameLoaderClientQt::willUseArchive):
+
 2008-01-22  Lars Knoll  <lars@trolltech.com>
 
         Reviewed by Simon.

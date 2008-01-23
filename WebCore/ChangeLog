@@ -1,3 +1,17 @@
+2008-01-23  Simon Hausmann  <hausmann@webkit.org>
+
+        Reviewed by Lars.
+
+        Implemented FrameLoaderClient::startDownload() and FrameLoaderClient::download().
+        
+        Added two signals to QWebPage to handle downloading of links and handling of
+        unsupported content.
+        
+
+        * platform/network/qt/QNetworkReplyHandler.cpp:
+        (WebCore::QNetworkReplyHandler::release):
+        * platform/network/qt/QNetworkReplyHandler.h:
+
 2008-01-22  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Adele Peterson.
