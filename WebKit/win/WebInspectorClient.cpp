@@ -57,6 +57,12 @@ static LPCTSTR kWebInspectorPointerProp = TEXT("WebInspectorPointer");
 
 static const unsigned defaultAttachedHeight = 300;
 
+static const IntRect& defaultWindowRect()
+{
+    static IntRect rect(60, 200, 750, 650);
+    return rect;
+}
+
 WebInspectorClient::WebInspectorClient(WebView* webView)
     : m_inspectedWebView(webView)
     , m_hwnd(0)
@@ -95,8 +101,9 @@ Page* WebInspectorClient::createPage()
     registerWindowClass();
 
     m_hwnd = ::CreateWindowEx(0, kWebInspectorWindowClassName, 0, WS_OVERLAPPEDWINDOW,
-                              0, 0, 0, 0,
-                              0, 0, 0, 0);
+        defaultWindowRect().x(), defaultWindowRect().y(), defaultWindowRect().width(), defaultWindowRect().height(),
+        0, 0, 0, 0);
+
     if (!m_hwnd)
         return 0;
 
@@ -107,7 +114,8 @@ Page* WebInspectorClient::createPage()
     if (FAILED(m_webView->setHostWindow((OLE_HANDLE)(ULONG64)m_hwnd)))
         return 0;
 
-    RECT rect = {0};
+    RECT rect;
+    GetClientRect(m_hwnd, &rect);
     if (FAILED(m_webView->initWithFrame(rect, 0, 0)))
         return 0;
 
@@ -146,7 +154,7 @@ void WebInspectorClient::showWindow()
         return;
 
     updateWindowTitle();
-    ::SetWindowPos(m_hwnd, HWND_TOP, 60, 200, 750, 650, SWP_SHOWWINDOW);
+    ::SetWindowPos(m_hwnd, HWND_TOP, 0, 0, 0, 0, SWP_SHOWWINDOW | SWP_NOMOVE | SWP_NOSIZE);
     m_inspectedWebView->page()->inspectorController()->setWindowVisible(true);
 }
 

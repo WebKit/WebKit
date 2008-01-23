@@ -1,5 +1,22 @@
 2008-01-23  Adam Roben  <aroben@apple.com>
 
+        Fix <rdar://5698502> Inspector window reverts to default position/size unexpectedly
+
+        Reviewed by Hyatt.
+
+        * WebInspectorClient.cpp:
+        (defaultWindowRect): Added.
+        (WebInspectorClient::createPage):
+            - Use defaultWindowRect() to set the initial size/position of the
+              Inspector window.
+            - Pass the Inspector window's client rect to
+              IWebView::initWithFrame so that the WebView will be initially
+              sized to fill the window.
+        (WebInspectorClient::showWindow): Don't move/resize the window back to
+        the defaults every time this method is called.
+
+2008-01-23  Adam Roben  <aroben@apple.com>
+
         Fix <rdar://5700620> REGRESSION (r28190): "Open frame in new tab" instead of "Open link in new tab" @ digg.com
 
         Test: fast/events/contextmenu-scrolled-page-with-frame.html
