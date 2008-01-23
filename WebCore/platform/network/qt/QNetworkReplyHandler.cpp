@@ -38,10 +38,10 @@ namespace WebCore {
 
 QNetworkReplyHandler::QNetworkReplyHandler(ResourceHandle *handle)
     : QObject(0)
-      , m_resourceHandle(handle)
-      , m_reply(0)
-      , m_redirected(false)
-      , m_responseSent(false)
+    , m_resourceHandle(handle)
+    , m_reply(0)
+    , m_redirected(false)
+    , m_responseSent(false)
 {
     const ResourceRequest &r = m_resourceHandle->request();
 

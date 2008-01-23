@@ -1,3 +1,12 @@
+2008-01-23  Holger Hans Peter Freyther  <holger.freyther@trolltech.com>
+
+        Reviewed by Simon.
+
+        * Coding-Style fixes
+
+        * platform/network/qt/QNetworkReplyHandler.cpp:
+        (WebCore::QNetworkReplyHandler::QNetworkReplyHandler):
+
 2008-01-23  Michael Brasser  <michael.brasser@trolltech.com>
 
         Reviewed by Simon.
