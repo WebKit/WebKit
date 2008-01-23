@@ -1028,7 +1028,8 @@ bool WebView::handleContextMenuEvent(WPARAM wParam, LPARAM lParam)
     // not run.
     m_page->contextMenuController()->clearContextMenu();
 
-    HitTestResult result = m_page->mainFrame()->eventHandler()->hitTestResultAtPoint(IntPoint(coords.x, coords.y), false);
+    IntPoint documentPoint(m_page->mainFrame()->view()->windowToContents(coords));
+    HitTestResult result = m_page->mainFrame()->eventHandler()->hitTestResultAtPoint(documentPoint, false);
     Frame* targetFrame = result.innerNonSharedNode() ? result.innerNonSharedNode()->document()->frame() : m_page->focusController()->focusedOrMainFrame();
 
     targetFrame->view()->setCursor(pointerCursor());

@@ -1,3 +1,16 @@
+2008-01-23  Adam Roben  <aroben@apple.com>
+
+        Fix <rdar://5700620> REGRESSION (r28190): "Open frame in new tab" instead of "Open link in new tab" @ digg.com
+
+        Test: fast/events/contextmenu-scrolled-page-with-frame.html
+
+        Reviewed by Dan.
+
+        * WebView.cpp:
+        (WebView::handleContextMenuEvent): Translate the mouse coordinates
+        into document coordinates before performing the hit-test. This is what
+        EventHandler does internally.
+
 2008-01-23  Steve Falkenburg  <sfalken@apple.com>
 
         <rdar://problem/5699509> Allow file upload dialog to be localized.
