@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2007 Trolltech ASA
+    Copyright (C) 2007-2008 Trolltech ASA
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -26,6 +26,9 @@
 #include <QNetworkRequest>
 #include <QNetworkAccessManager>
 
+#include "FormData.h"
+
+class QFile;
 class QNetworkReply;
 
 namespace WebCore {
@@ -58,6 +61,36 @@ private:
     bool m_responseSent;
     QNetworkAccessManager::Operation m_method;
     QNetworkRequest m_request;
+};
+
+// Self destructing QIODevice for FormData
+//  For QNetworkAccessManager::put we will have to gurantee that the
+//  QIODevice is valid as long finished() of the QNetworkReply has not
+//  been emitted. With the presence of QNetworkReplyHandler::release I do
+//  not want to gurantee this.
+class FormDataIODevice : public QIODevice {
+    Q_OBJECT
+public:
+    FormDataIODevice(FormData*);
+    ~FormDataIODevice();
+
+    void setParent(QNetworkReply*);
+    bool isSequential() const;
+
+protected:
+    qint64 readData(char*, qint64);
+    qint64 writeData(const char*, qint64);
+
+private Q_SLOTS:
+    void slotFinished();
+
+private:
+    void moveToNextElement();
+
+private:
+    Vector<FormDataElement> m_formElements;
+    QFile* m_currentFile;
+    qint64 m_currentDelta;
 };
 
 }

@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2007 Trolltech ASA
+    Copyright (C) 2007-2008 Trolltech ASA
     Copyright (C) 2007 Staikos Computing Services Inc.  <info@staikos.net>
 
     This library is free software; you can redistribute it and/or
@@ -29,12 +29,102 @@
 #include "ResourceHandleInternal.h"
 #include "ResourceResponse.h"
 #include "ResourceRequest.h"
+#include <QFile>
 #include <QNetworkReply>
 #include <QNetworkCookie>
 #include <qwebframe.h>
 #include <qwebpage.h>
 
+#include <QDebug>
+
 namespace WebCore {
+
+// Take a deep copy of the FormDataElement
+FormDataIODevice::FormDataIODevice(FormData* data)
+    : m_formElements(data ? data->elements() : Vector<FormDataElement>())
+    , m_currentFile(0)
+    , m_currentDelta(0)
+{
+    setOpenMode(FormDataIODevice::ReadOnly);
+}
+
+FormDataIODevice::~FormDataIODevice()
+{
+    delete m_currentFile;
+}
+
+void FormDataIODevice::moveToNextElement()
+{
+    if (m_currentFile)
+        m_currentFile->close();
+    m_currentDelta = 0;
+
+    m_formElements.remove(0);
+
+    if (m_formElements.isEmpty() || m_formElements[0].m_type == FormDataElement::data)
+        return;
+
+    if (!m_currentFile)
+        m_currentFile = new QFile;
+
+    m_currentFile->setFileName(m_formElements[0].m_filename);
+    m_currentFile->open(QFile::ReadOnly);
+}
+
+// m_formElements[0] is the current item. If the destination buffer is
+// big enough we are going to read from more than one FormDataElement
+qint64 FormDataIODevice::readData(char* destination, qint64 size)
+{
+    if (m_formElements.isEmpty())
+        return -1;
+
+    qint64 copied = 0;
+    while (copied < size && !m_formElements.isEmpty()) {
+        const FormDataElement& element = m_formElements[0];
+        const qint64 available = size-copied;
+
+        if (element.m_type == FormDataElement::data) {
+            const qint64 toCopy = qMin<qint64>(available, element.m_data.size() - m_currentDelta);
+            memcpy(destination+copied, element.m_data.data()+m_currentDelta, toCopy); 
+            m_currentDelta += toCopy;
+            copied += toCopy;
+
+            if (m_currentDelta == element.m_data.size())
+                moveToNextElement();
+        } else {
+            const QByteArray data = m_currentFile->read(available);
+            memcpy(destination+copied, data.constData(), data.size());
+            copied += data.size();
+
+            if (m_currentFile->atEnd() || !m_currentFile->isOpen())
+                moveToNextElement();
+        }
+    }
+
+    return copied;
+}
+
+qint64 FormDataIODevice::writeData(const char*, qint64)
+{
+    return -1;
+}
+
+void FormDataIODevice::setParent(QNetworkReply* reply)
+{
+    QIODevice::setParent(reply);
+
+    connect(reply, SIGNAL(finished()), SLOT(slotFinished()));
+}
+
+bool FormDataIODevice::isSequential() const
+{
+    return true;
+}
+
+void FormDataIODevice::slotFinished()
+{
+    deleteLater();
+}
 
 QNetworkReplyHandler::QNetworkReplyHandler(ResourceHandle *handle)
     : QObject(0)
@@ -219,21 +309,18 @@ void QNetworkReplyHandler::start()
             m_reply = manager->get(m_request);
             break;
         case QNetworkAccessManager::PostOperation: {
-            Vector<char> bytes;
-            if (d->m_request.httpBody())
-                d->m_request.httpBody()->flatten(bytes);
-            m_reply = manager->post(m_request, QByteArray(bytes.data(), bytes.size()));
+            FormDataIODevice* postDevice = new FormDataIODevice(d->m_request.httpBody()); 
+            m_reply = manager->post(m_request, postDevice);
+            postDevice->setParent(m_reply);
             break;
         }
         case QNetworkAccessManager::HeadOperation:
             m_reply = manager->head(m_request);
             break;
         case QNetworkAccessManager::PutOperation: {
-            // ### data?
-            Vector<char> bytes;
-            if (d->m_request.httpBody())
-                d->m_request.httpBody()->flatten(bytes);
-            m_reply = manager->put(m_request, QByteArray(bytes.data(), bytes.size()));
+            FormDataIODevice* putDevice = new FormDataIODevice(d->m_request.httpBody()); 
+            m_reply = manager->put(m_request, putDevice);
+            putDevice->setParent(m_reply);
             break;
         }
         case QNetworkAccessManager::UnknownOperation:

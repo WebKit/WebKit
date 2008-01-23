@@ -2,6 +2,27 @@
 
         Reviewed by Simon.
 
+        * FormData::flatten does not include to be uploaded files. Create our own QIODevice
+        for the QNetworkAccessManager and feed the complete content of the FormData* to
+        the (HTTP) backend.
+        * Try to optimize the ::readData implementation to fill the buffer as best as possible
+
+        * platform/network/qt/QNetworkReplyHandler.cpp:
+        (WebCore::FormDataIODevice::FormDataIODevice):
+        (WebCore::FormDataIODevice::~FormDataIODevice):
+        (WebCore::FormDataIODevice::moveToNextElement):
+        (WebCore::FormDataIODevice::readData):
+        (WebCore::FormDataIODevice::writeData):
+        (WebCore::FormDataIODevice::setParent):
+        (WebCore::FormDataIODevice::isSequential):
+        (WebCore::FormDataIODevice::slotFinished):
+        (WebCore::QNetworkReplyHandler::start):
+        * platform/network/qt/QNetworkReplyHandler.h:
+
+2008-01-23  Holger Hans Peter Freyther  <holger.freyther@trolltech.com>
+
+        Reviewed by Simon.
+
         * Coding-Style fixes
 
         * platform/network/qt/QNetworkReplyHandler.cpp:
