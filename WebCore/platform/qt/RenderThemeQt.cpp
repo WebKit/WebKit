@@ -26,7 +26,9 @@
 
 #include "config.h"
 
+#include "qwebpage.h"
 #include "RenderThemeQt.h"
+#include "ChromeClientQt.h"
 #include "NotImplemented.h"
 
 #include <QApplication>
@@ -40,6 +42,7 @@
 
 #include "Color.h"
 #include "Document.h"
+#include "Page.h"
 #include "Font.h"
 #include "RenderTheme.h"
 #include "GraphicsContext.h"
@@ -238,9 +241,9 @@ bool RenderThemeQt::paintButton(RenderObject* o, const RenderObject::PaintInfo& 
     if(appearance == PushButtonAppearance || appearance == ButtonAppearance)
         style->drawControl(QStyle::CE_PushButton, &option, painter);
     else if(appearance == RadioAppearance)
-        style->drawControl(QStyle::CE_RadioButton, &option, painter);
+        style->drawPrimitive(QStyle::PE_IndicatorRadioButton, &option, painter, widget);
     else if(appearance == CheckboxAppearance)
-        style->drawControl(QStyle::CE_CheckBox, &option, painter);
+        style->drawPrimitive(QStyle::PE_IndicatorCheckBox, &option, painter, widget);
 
     return false;
 }
@@ -487,6 +490,14 @@ EAppearance RenderThemeQt::applyTheme(QStyleOption& option, RenderObject* o) con
 
     if(result == RadioAppearance || result == CheckboxAppearance)
         option.state |= (isChecked(o) ? QStyle::State_On : QStyle::State_Off);
+
+    // If the webview has a custom palette, use it
+    Page* page = o->document()->page();
+    if (page) {
+        QWidget* view = static_cast<ChromeClientQt*>(page->chrome()->client())->m_webPage->view();
+        if (view)
+            option.palette = view->palette();
+    }
 
     return result;
 }

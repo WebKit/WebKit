@@ -539,9 +539,6 @@ void GraphicsContext::drawFocusRing(const Color& color)
     if (rects.size() == 0)
         return;
 
-    QPainterPath path;
-    for (int i = 0; i < rectCount; ++i)
-        path.addRect(QRectF(rects[i]));
     QPainter *p = m_data->p();
 
     const QPen oldPen = p->pen();
@@ -554,11 +551,15 @@ void GraphicsContext::drawFocusRing(const Color& color)
     p->setPen(nPen);
 #if 0
     // FIXME How do we do a bounding outline with Qt?
+    QPainterPath path;
+    for (int i = 0; i < rectCount; ++i)
+        path.addRect(QRectF(rects[i]));
     QPainterPathStroker stroker;
     QPainterPath newPath = stroker.createStroke(path);
     p->strokePath(newPath, nPen);
 #else
-    p->drawRect(path.boundingRect());
+    for (int i = 0; i < rectCount; ++i)
+        p->drawRect(QRectF(rects[i]));
 #endif
     p->setPen(oldPen);
     p->setBrush(oldBrush);

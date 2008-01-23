@@ -1,3 +1,18 @@
+2008-01-23  Michael Brasser  <michael.brasser@trolltech.com>
+
+        Reviewed by Simon.
+
+        Rendering fixes for Qtopia.
+
+        Make the focus ring work with line breaks (until we have QPainterPath::simplify) and
+        call QStyle with better arguments when painting themed elements.
+
+        * platform/graphics/qt/GraphicsContextQt.cpp:
+        (WebCore::GraphicsContext::drawFocusRing):
+        * platform/qt/RenderThemeQt.cpp:
+        (WebCore::RenderThemeQt::paintButton):
+        (WebCore::RenderThemeQt::applyTheme):
+
 2008-01-23  Holger Hans Peter Freyther  <holger.freyther@trolltech.com>
 
         Reviewed by Simon.
