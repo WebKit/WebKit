@@ -91,7 +91,7 @@ static inline DragOperation dropActionToDragOp(Qt::DropActions actions)
         result |= DragOperationMove;
     if (actions & Qt::LinkAction)
         result |= DragOperationLink;
-    return (DragOperation)result;    
+    return (DragOperation)result;
 }
 
 static inline Qt::DropAction dragOpToDropAction(unsigned actions)
@@ -103,7 +103,7 @@ static inline Qt::DropAction dragOpToDropAction(unsigned actions)
         result = Qt::MoveAction;
     else if (actions & DragOperationLink)
         result = Qt::LinkAction;
-    return result;    
+    return result;
 }
 
 QWebPagePrivate::QWebPagePrivate(QWebPage *qq)
@@ -490,38 +490,54 @@ void QWebPagePrivate::keyPressEvent(QKeyEvent *ev)
 //             } else if(ev == QKeySequence::DeleteEndOfLine) {
         }
     }
-    if (!handled) 
+    if (!handled)
         handled = frame->eventHandler()->keyEvent(ev);
     if (!handled) {
         handled = true;
         PlatformScrollbar *h, *v;
         h = mainFrame->d->horizontalScrollBar();
         v = mainFrame->d->verticalScrollBar();
-
-        if (ev == QKeySequence::MoveToNextPage) {
+        QFont defaultFont;
+        if (view)
+            defaultFont = view->font();
+        QFontMetrics fm(defaultFont);
+        int fontHeight = fm.height();
+        if (ev == QKeySequence::MoveToNextPage
+            || ev->key() == Qt::Key_Space) {
             if (v)
-                v->setValue(v->value() + q->viewportSize().height());
+                v->setValue(v->value() + q->viewportSize().height() - fontHeight);
         } else if (ev == QKeySequence::MoveToPreviousPage) {
             if (v)
-                v->setValue(v->value() - q->viewportSize().height());
+                v->setValue(v->value() - q->viewportSize().height() + fontHeight);
+        } else if (ev->key() == Qt::Key_Up && ev->modifiers() == Qt::ControlModifier) {
+            if (v)
+                v->setValue(0);
+        } else if (ev->key() == Qt::Key_Down && ev->modifiers() == Qt::ControlModifier) {
+            if (v)
+                v->setValue(INT_MAX);
         } else {
             switch (ev->key()) {
             case Qt::Key_Up:
                 if (v)
-                    v->setValue(v->value() - 10);
+                    v->setValue(v->value() - fontHeight);
                 break;
             case Qt::Key_Down:
                 if (v)
-                    v->setValue(v->value() + 10);
+                    v->setValue(v->value() + fontHeight);
                 break;
             case Qt::Key_Left:
                 if (h)
-                    h->setValue(h->value() - 10);
+                    h->setValue(h->value() - fontHeight);
                 break;
             case Qt::Key_Right:
                 if (h)
-                    h->setValue(h->value() + 10);
+                    h->setValue(h->value() + fontHeight);
                 break;
+            case Qt::Key_Backspace:
+                if (ev->modifiers() == Qt::ShiftModifier)
+                    q->triggerAction(QWebPage::GoForward);
+                else
+                    q->triggerAction(QWebPage::GoBack);
             default:
                 handled = false;
                 break;
@@ -546,7 +562,7 @@ void QWebPagePrivate::keyReleaseEvent(QKeyEvent *ev)
 
 void QWebPagePrivate::focusInEvent(QFocusEvent *ev)
 {
-    if (ev->reason() != Qt::PopupFocusReason) 
+    if (ev->reason() != Qt::PopupFocusReason)
         page->focusController()->setFocusedFrame(QWebFramePrivate::core(mainFrame));
 }
 
@@ -559,7 +575,7 @@ void QWebPagePrivate::focusOutEvent(QFocusEvent *ev)
 void QWebPagePrivate::dragEnterEvent(QDragEnterEvent *ev)
 {
 #ifndef QT_NO_DRAGANDDROP
-    DragData dragData(ev->mimeData(), ev->pos(), QCursor::pos(), 
+    DragData dragData(ev->mimeData(), ev->pos(), QCursor::pos(),
                       dropActionToDragOp(ev->possibleActions()));
     Qt::DropAction action = dragOpToDropAction(page->dragController()->dragEntered(&dragData));
     ev->setDropAction(action);
@@ -579,7 +595,7 @@ void QWebPagePrivate::dragLeaveEvent(QDragLeaveEvent *ev)
 void QWebPagePrivate::dragMoveEvent(QDragMoveEvent *ev)
 {
 #ifndef QT_NO_DRAGANDDROP
-    DragData dragData(ev->mimeData(), ev->pos(), QCursor::pos(), 
+    DragData dragData(ev->mimeData(), ev->pos(), QCursor::pos(),
                       dropActionToDragOp(ev->possibleActions()));
     Qt::DropAction action = dragOpToDropAction(page->dragController()->dragUpdated(&dragData));
     ev->setDropAction(action);
@@ -590,7 +606,7 @@ void QWebPagePrivate::dragMoveEvent(QDragMoveEvent *ev)
 void QWebPagePrivate::dropEvent(QDropEvent *ev)
 {
 #ifndef QT_NO_DRAGANDDROP
-    DragData dragData(ev->mimeData(), ev->pos(), QCursor::pos(), 
+    DragData dragData(ev->mimeData(), ev->pos(), QCursor::pos(),
                       dropActionToDragOp(ev->possibleActions()));
     Qt::DropAction action = dragOpToDropAction(page->dragController()->performDrag(&dragData));
     ev->accept();

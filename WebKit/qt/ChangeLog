@@ -1,3 +1,22 @@
+2008-01-23  Benjamin Meyer  <bmeyer@trolltech.com>
+
+        Reviewed by Simon.
+
+        Tweak key presses even to match commonly expected behavior
+        - space key == page down
+        - page down moved down not a page, but slightly less then a page so you don't loose your spot when reading.
+        - Use font height rather then a hard coded "10" for left, right, up, down
+        - Ctrl-Up moves to the top of the page
+        - Ctrl-Down move to the bottom of the page
+        - Backspace == GoBack
+        - Shift-Backspace == GoForward
+        
+
+        * Api/qwebpage.cpp:
+        (dropActionToDragOp):
+        (dragOpToDropAction):
+        (QWebPagePrivate::keyPressEvent):
+
 2008-01-23  Simon Hausmann  <hausmann@webkit.org>
 
         Reviewed by Lars.
