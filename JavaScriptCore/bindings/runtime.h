@@ -144,6 +144,8 @@ public:
     virtual BindingLanguage getBindingLanguage() const = 0;
 
 protected:
+    static JSObject* reallyCreateRuntimeObject(Instance*);
+
     RefPtr<RootObject> _rootObject;
     unsigned _refCount;
 };

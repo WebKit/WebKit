@@ -1,3 +1,169 @@
+2008-01-23  Michael Goddard <michael.goddard@trolltech.com>
+
+        Reviewed by Lars Knoll <lars@trolltech.com>.
+
+        Reworked the JavaScriptCore Qt bindings:
+        
+        * Add initial support for string and variant arrays, as well
+        as sub QObjects in the JS bindings.
+        
+        * Don't expose fields marked as not scriptable by moc.
+        
+        * Add support for dynamic properties and accessing named
+        QObject children of an object (like QtScript and older
+        IE DOM style JS).
+        * Add support for custom toString methods.
+        
+        * Fine tune some bindings to be closer to QtScript.
+        Make void functions return undefined, and empty/
+        null QStrings return a zero length string.
+        
+        * Create framework for allowing more direct method calls.
+        Since RuntimeMethod doesn't allow us to add additional
+        methods/properties to a function, add these classes.
+        Start prototyping object.signal.connect(...).
+        
+        * Add signal support to the Qt bindings.
+        Allow connecting to signals (object.signal.connect(slot)),
+        disconnecting, and emitting signals.  Currently chooses
+        the first signal that matches the name, so this will need
+        improvement.
+        
+        * Add property names, and resolve signals closer to use.
+        Enumerating properties now returns some of the Qt properties
+        and signals.  Slots and methods aren't quite present.  Also,
+        resolve signal connections etc. closer to the time of use, so
+        we can do more dynamic resolution based on argument type etc.
+        Still picks the first one with the same name, at the moment.
+        
+        * Make signature comparison code consistent.
+        Use the same code for checking meta signatures in
+        the method and fallback getters, and avoid a
+        QByteArray construction when we can.
+        
+        * Fix minor memory leak, and handle pointers better.
+        Delete the private object in the dtors, and use RefPtrs
+        for holding Instances etc.
+        
+        * Handle method lookup better.
+        Allow invocation time method lookup based on the arguments,
+        which is closer to QtScript behaviour.  Also, cache the
+        method lists and delete them in the QtClass dtor (stops
+        a memory leak).
+        
+        * Improve JS to Qt data type conversions.
+        Add some support for Date & RegExp JS objects,
+        and provide some metrics on the quality of the
+        conversion.
+        
+        * A couple of fixes for autotest failures.
+        Better support for converting lists, read/write only
+        QMetaProperty support, modified slot search order...)
+        
+
+        * bindings/qt/qt_class.cpp:
+        (KJS::Bindings::QtClass::QtClass):
+        (KJS::Bindings::QtClass::~QtClass):
+        (KJS::Bindings::QtClass::name):
+        (KJS::Bindings::QtClass::fallbackObject):
+        (KJS::Bindings::QtClass::methodsNamed):
+        (KJS::Bindings::QtClass::fieldNamed):
+        * bindings/qt/qt_class.h:
+        * bindings/qt/qt_instance.cpp:
+        (KJS::Bindings::QtInstance::QtInstance):
+        (KJS::Bindings::QtInstance::~QtInstance):
+        (KJS::Bindings::QtInstance::getRuntimeObject):
+        (KJS::Bindings::QtInstance::getClass):
+        (KJS::Bindings::QtInstance::implementsCall):
+        (KJS::Bindings::QtInstance::getPropertyNames):
+        (KJS::Bindings::QtInstance::invokeMethod):
+        (KJS::Bindings::QtInstance::invokeDefaultMethod):
+        (KJS::Bindings::QtInstance::stringValue):
+        (KJS::Bindings::QtInstance::booleanValue):
+        (KJS::Bindings::QtInstance::valueOf):
+        (KJS::Bindings::QtField::name):
+        (KJS::Bindings::QtField::valueFromInstance):
+        (KJS::Bindings::QtField::setValueToInstance):
+        * bindings/qt/qt_instance.h:
+        (KJS::Bindings::QtInstance::getBindingLanguage):
+        (KJS::Bindings::QtInstance::getObject):
+        * bindings/qt/qt_runtime.cpp:
+        (KJS::Bindings::QWKNoDebug::QWKNoDebug):
+        (KJS::Bindings::QWKNoDebug::~QWKNoDebug):
+        (KJS::Bindings::QWKNoDebug::operator<<):
+        (KJS::Bindings::):
+        (KJS::Bindings::valueRealType):
+        (KJS::Bindings::convertValueToQVariant):
+        (KJS::Bindings::convertQVariantToValue):
+        (KJS::Bindings::QtRuntimeMethod::QtRuntimeMethod):
+        (KJS::Bindings::QtRuntimeMethod::~QtRuntimeMethod):
+        (KJS::Bindings::QtRuntimeMethod::codeType):
+        (KJS::Bindings::QtRuntimeMethod::execute):
+        (KJS::Bindings::QtRuntimeMethodData::~QtRuntimeMethodData):
+        (KJS::Bindings::QtRuntimeMetaMethodData::~QtRuntimeMetaMethodData):
+        (KJS::Bindings::QtRuntimeConnectionMethodData::~QtRuntimeConnectionMethodData):
+        (KJS::Bindings::QtMethodMatchType::):
+        (KJS::Bindings::QtMethodMatchType::QtMethodMatchType):
+        (KJS::Bindings::QtMethodMatchType::kind):
+        (KJS::Bindings::QtMethodMatchType::isValid):
+        (KJS::Bindings::QtMethodMatchType::isVariant):
+        (KJS::Bindings::QtMethodMatchType::isMetaType):
+        (KJS::Bindings::QtMethodMatchType::isUnresolved):
+        (KJS::Bindings::QtMethodMatchType::isMetaEnum):
+        (KJS::Bindings::QtMethodMatchType::enumeratorIndex):
+        (KJS::Bindings::QtMethodMatchType::variant):
+        (KJS::Bindings::QtMethodMatchType::metaType):
+        (KJS::Bindings::QtMethodMatchType::metaEnum):
+        (KJS::Bindings::QtMethodMatchType::unresolved):
+        (KJS::Bindings::QtMethodMatchType::typeId):
+        (KJS::Bindings::QtMethodMatchType::name):
+        (KJS::Bindings::QtMethodMatchData::QtMethodMatchData):
+        (KJS::Bindings::QtMethodMatchData::isValid):
+        (KJS::Bindings::QtMethodMatchData::firstUnresolvedIndex):
+        (KJS::Bindings::indexOfMetaEnum):
+        (KJS::Bindings::findMethodIndex):
+        (KJS::Bindings::findSignalIndex):
+        (KJS::Bindings::QtRuntimeMetaMethod::QtRuntimeMetaMethod):
+        (KJS::Bindings::QtRuntimeMetaMethod::mark):
+        (KJS::Bindings::QtRuntimeMetaMethod::callAsFunction):
+        (KJS::Bindings::QtRuntimeMetaMethod::getOwnPropertySlot):
+        (KJS::Bindings::QtRuntimeMetaMethod::lengthGetter):
+        (KJS::Bindings::QtRuntimeMetaMethod::connectGetter):
+        (KJS::Bindings::QtRuntimeMetaMethod::disconnectGetter):
+        (KJS::Bindings::QtRuntimeConnectionMethod::QtRuntimeConnectionMethod):
+        (KJS::Bindings::QtRuntimeConnectionMethod::callAsFunction):
+        (KJS::Bindings::QtRuntimeConnectionMethod::getOwnPropertySlot):
+        (KJS::Bindings::QtRuntimeConnectionMethod::lengthGetter):
+        (KJS::Bindings::QtConnectionObject::QtConnectionObject):
+        (KJS::Bindings::QtConnectionObject::~QtConnectionObject):
+        (KJS::Bindings::QtConnectionObject::metaObject):
+        (KJS::Bindings::QtConnectionObject::qt_metacast):
+        (KJS::Bindings::QtConnectionObject::qt_metacall):
+        (KJS::Bindings::QtConnectionObject::execute):
+        (KJS::Bindings::QtConnectionObject::match):
+        (KJS::Bindings::::QtArray):
+        (KJS::Bindings::::~QtArray):
+        (KJS::Bindings::::rootObject):
+        (KJS::Bindings::::setValueAt):
+        (KJS::Bindings::::valueAt):
+        * bindings/qt/qt_runtime.h:
+        (KJS::Bindings::QtField::):
+        (KJS::Bindings::QtField::QtField):
+        (KJS::Bindings::QtField::fieldType):
+        (KJS::Bindings::QtMethod::QtMethod):
+        (KJS::Bindings::QtMethod::name):
+        (KJS::Bindings::QtMethod::numParameters):
+        (KJS::Bindings::QtArray::getLength):
+        (KJS::Bindings::QtRuntimeMethod::d_func):
+        (KJS::Bindings::QtRuntimeMetaMethod::d_func):
+        (KJS::Bindings::QtRuntimeConnectionMethod::d_func):
+        (KJS::Bindings::):
+        * bindings/runtime.cpp:
+        (KJS::Bindings::Instance::createBindingForLanguageInstance):
+        (KJS::Bindings::Instance::createRuntimeObject):
+        (KJS::Bindings::Instance::reallyCreateRuntimeObject):
+        * bindings/runtime.h:
+
 2008-01-22  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Darin and Adam.

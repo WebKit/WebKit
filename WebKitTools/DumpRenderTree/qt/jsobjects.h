@@ -31,6 +31,7 @@
 #include <qobject.h>
 #include <qdebug.h>
 #include <qpoint.h>
+#include <qstringlist.h>
 
 class QWebFrame;
 namespace WebCore {
@@ -69,7 +70,7 @@ public slots:
     void dumpEditingCallbacks();
     void queueReload();
     void provisionalLoad();
-    void setCloseRemainingWindowsWhenComplete(bool) {}
+    void setCloseRemainingWindowsWhenComplete(bool=false) {}
     int windowCount();
     void display() {}
     void clearBackForwardList();
@@ -104,7 +105,7 @@ public slots:
     void mouseUp();
     void mouseMoveTo(int x, int y);
     void leapForward(int ms);
-    void keyDown(const QString &string, const QStringList &modifiers);
+    void keyDown(const QString &string, const QStringList &modifiers=QStringList());
     void clearKillRing() {}
 
 private:

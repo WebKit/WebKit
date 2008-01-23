@@ -83,7 +83,7 @@ void Instance::setValueOfField(ExecState *exec, const Field *aField, JSValue *aV
 Instance* Instance::createBindingForLanguageInstance(BindingLanguage language, void* nativeInstance, PassRefPtr<RootObject> rootObject)
 {
     Instance *newInstance = 0;
-    
+
     switch (language) {
 #if HAVE(JNI)
         case Instance::JavaLanguage: {
@@ -129,7 +129,13 @@ JSObject* Instance::createRuntimeObject(Instance* instance)
     if (instance->getBindingLanguage() == QtLanguage)
         return QtInstance::getRuntimeObject(static_cast<QtInstance*>(instance));
 #endif
+    return reallyCreateRuntimeObject(instance);
+}
+
+JSObject* Instance::reallyCreateRuntimeObject(Instance* instance)
+{
     JSLock lock;
+
     return new RuntimeObjectImp(instance);
 }
 
@@ -147,8 +153,8 @@ Instance* Instance::getInstance(JSObject* object, BindingLanguage language)
     return instance;
 }
 
-RootObject* Instance::rootObject() const
-{
+RootObject* Instance::rootObject() const 
+{ 
     return _rootObject && _rootObject->isValid() ? _rootObject.get() : 0;
 }
 

@@ -31,14 +31,14 @@ namespace KJS {
 namespace Bindings {
 
 QtClass::QtClass(const QMetaObject* mo)
-    : metaObject(mo)
+    : m_metaObject(mo)
 {
 }
 
 QtClass::~QtClass()
 {
 }
-    
+
 typedef HashMap<const QMetaObject*, QtClass*> ClassesByMetaObject;
 static ClassesByMetaObject* classesByMetaObject = 0;
 
@@ -59,42 +59,163 @@ QtClass* QtClass::classForObject(QObject* o)
 
 const char* QtClass::name() const
 {
-    return metaObject->className();
+    return m_metaObject->className();
 }
 
-MethodList QtClass::methodsNamed(const Identifier& identifier, Instance*) const
+// We use this to get at signals (so we can return a proper function object,
+// and not get wrapped in RuntimeMethod).  Also, use this for methods,
+// so we can cache the JSValue* and return the same JSValue for the same
+// identifier...
+//
+// Unfortunately... we need to gcProtect our JSValues, since we don't have
+// access to an actual JS class that can mark() our JSValues.
+//
+JSValue* QtClass::fallbackObject(ExecState *exec, Instance *inst, const Identifier &identifier)
 {
-    MethodList methodList;
+    QtInstance* qtinst = static_cast<QtInstance*>(inst);
 
-    const char* name = identifier.ascii();
+    QByteArray name(identifier.ascii());
 
-    int count = metaObject->methodCount();
-    for (int i = 0; i < count; ++i) {
-        const QMetaMethod m = metaObject->method(i);
-        if (m.methodType() == QMetaMethod::Signal)
-            continue;
-        if (m.access() != QMetaMethod::Public)
-            continue;
-        QByteArray signature = m.signature();
-        signature.truncate(signature.indexOf('('));
-        if (signature == name) {
-            Method* method = new QtMethod(metaObject, i, signature, m.parameterTypes().size()); 
-            methodList.append(method);
-            break;
+    // First see if we have a cache hit
+    JSValue* val = qtinst->m_methods.value(name);
+    if (val)
+        return val;
+
+    // Nope, create an entry
+    QByteArray normal = QMetaObject::normalizedSignature(name.constData());
+
+    // See if there is an exact match
+    int index = -1;
+    if (normal.contains('(') && (index = m_metaObject->indexOfMethod(normal)) != -1) {
+        QMetaMethod m = m_metaObject->method(index);
+        if (m.access() != QMetaMethod::Private) {
+            JSValue *val = new QtRuntimeMetaMethod(exec, identifier, static_cast<QtInstance*>(inst), index, normal);
+            gcProtect(val);
+            qtinst->m_methods.insert(name, val);
+            return val;
         }
     }
-    
-    return methodList;
+
+    // Nope.. try a basename match
+    int count = m_metaObject->methodCount();
+    for (index = count - 1; index >= 0; --index) {
+        const QMetaMethod m = m_metaObject->method(index);
+        if (m.access() == QMetaMethod::Private)
+            continue;
+
+        QByteArray signature = m.signature();
+        signature.truncate(signature.indexOf('('));
+
+        if (normal == signature) {
+            JSValue* val = new QtRuntimeMetaMethod(exec, identifier, static_cast<QtInstance*>(inst), index, normal);
+            gcProtect(val);
+            qtinst->m_methods.insert(name, val);
+            return val;
+        }
+    }
+
+    return jsUndefined();
 }
 
-
-Field* QtClass::fieldNamed(const Identifier& identifier, Instance*) const
+// This functionality is handled by the fallback case above...
+MethodList QtClass::methodsNamed(const Identifier&, Instance*) const
 {
-    int index = metaObject->indexOfProperty(identifier.ascii());
-    if (index < 0)
-        return 0;
+    return MethodList();
+}
 
-    return new QtField(metaObject->property(index));
+// ### we may end up with a different search order than QtScript by not
+// folding this code into the fallbackMethod above, but Fields propagate out
+// of the binding code
+Field* QtClass::fieldNamed(const Identifier& identifier, Instance* instance) const
+{
+    // Check static properties first
+    QtInstance* qtinst = static_cast<QtInstance*>(instance);
+
+    QObject* obj = qtinst->getObject();
+    UString ustring = identifier.ustring();
+    QString objName(QString::fromUtf16((const ushort*)ustring.rep()->data(),ustring.size()));
+    QByteArray ba = objName.toAscii();
+
+    // First check for a cached field
+    QtField* f = qtinst->m_fields.value(objName);
+
+    if (obj) {
+        if (f) {
+            // We only cache real metaproperties, but we do store the
+            // other types so we can delete them later
+            if (f->fieldType() == QtField::MetaProperty)
+                return f;
+            else if (f->fieldType() == QtField::DynamicProperty) {
+                if (obj->dynamicPropertyNames().indexOf(ba) >= 0)
+                    return f;
+                else {
+                    // Dynamic property that disappeared
+                    qtinst->m_fields.remove(objName);
+                    delete f;
+                }
+            } else {
+                QList<QObject*> children = obj->children();
+                for (int index = 0; index < children.count(); ++index) {
+                    QObject *child = children.at(index);
+                    if (child->objectName() == objName)
+                        return f;
+                }
+
+                // Didn't find it, delete it from the cache
+                qtinst->m_fields.remove(objName);
+                delete f;
+            }
+        }
+
+        int index = m_metaObject->indexOfProperty(identifier.ascii());
+        if (index >= 0) {
+            QMetaProperty prop = m_metaObject->property(index);
+
+            if (prop.isScriptable(obj)) {
+                f = new QtField(prop);
+                qtinst->m_fields.insert(objName, f);
+                return f;
+            }
+        }
+
+        // Dynamic properties
+        index = obj->dynamicPropertyNames().indexOf(ba);
+        if (index >= 0) {
+            f = new QtField(ba);
+            qtinst->m_fields.insert(objName, f);
+            return f;
+        }
+
+        // Child objects
+
+        QList<QObject*> children = obj->children();
+        for (index = 0; index < children.count(); ++index) {
+            QObject *child = children.at(index);
+            if (child->objectName() == objName) {
+                f = new QtField(child);
+                qtinst->m_fields.insert(objName, f);
+                return f;
+            }
+        }
+
+        // Nothing named this
+        return 0;
+    } else {
+        QByteArray ba(identifier.ascii());
+        // For compatibility with qtscript, cached methods don't cause
+        // errors until they are accessed, so don't blindly create an error
+        // here.
+        if (qtinst->m_methods.contains(ba))
+            return 0;
+
+        // deleted qobject, but can't throw an error from here (no exec)
+        // create a fake QtField that will throw upon access
+        if (!f) {
+            f = new QtField(ba);
+            qtinst->m_fields.insert(objName, f);
+        }
+        return f;
+    }
 }
 
 }

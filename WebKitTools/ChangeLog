@@ -1,3 +1,26 @@
+2008-01-23  Michael Goddard <michael.goddard@trolltech.com>
+
+        Reviewed by Lars Knoll <lars@trolltech.com>.
+
+        Reworked the JavaScriptCore Qt bindings:
+        
+        * Update JS DRT controller for Qt JS binding changes.
+        There were two functions that needed some changes
+        so that the layout tests would work, so this makes
+        a few tests pass again.
+        
+        * Bump the timeout for layout tests up to 11s.
+        At least some tests have an internal timeout of
+        10 seconds, so make the waitUntilDone approach
+        wait at least 11s.  fast/dom/open-and-close-by-DOM.html
+        is one of these - now the failure message is more
+        accurate.
+        
+
+        * DumpRenderTree/qt/jsobjects.cpp:
+        (LayoutTestController::waitUntilDone):
+        * DumpRenderTree/qt/jsobjects.h:
+
 2008-01-22  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Darin and Adam.
