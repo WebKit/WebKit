@@ -37,6 +37,7 @@
 #import "RenderView.h"
 #import "SharedBuffer.h"
 #import "WebCoreSystemInterface.h"
+#import <Carbon/Carbon.h>
 #import <Cocoa/Cocoa.h>
 #import <wtf/RetainPtr.h>
 #import <math.h>
@@ -240,6 +241,34 @@ static RGBA32 convertNSColorToColor(NSColor *color)
     return makeRGB(pixel[0], pixel[1], pixel[2]);
 }
 
+static RGBA32 menuBackgroundColor()
+{
+    NSBitmapImageRep *offscreenRep = [[NSBitmapImageRep alloc] initWithBitmapDataPlanes:nil
+                                                                             pixelsWide:1
+                                                                             pixelsHigh:1
+                                                                          bitsPerSample:8
+                                                                        samplesPerPixel:4
+                                                                               hasAlpha:YES
+                                                                               isPlanar:NO
+                                                                         colorSpaceName:NSCalibratedRGBColorSpace
+                                                                            bytesPerRow:4
+                                                                           bitsPerPixel:32];
+
+    CGContextRef context = static_cast<CGContextRef>([[NSGraphicsContext graphicsContextWithBitmapImageRep:offscreenRep] graphicsPort]);
+    CGRect rect = CGRectMake(0, 0, 1, 1);
+    HIThemeMenuDrawInfo drawInfo;
+    drawInfo.version =  0;
+    drawInfo.menuType = kThemeMenuTypePopUp;
+    HIThemeDrawMenuBackground(&rect, &drawInfo, context, kHIThemeOrientationInverted);
+
+    NSUInteger pixel[4];
+    [offscreenRep getPixel:pixel atX:0 y:0];
+
+    [offscreenRep release];
+
+    return makeRGB(pixel[0], pixel[1], pixel[2]);
+}
+
 void RenderThemeMac::platformColorsDidChange()
 {
     m_systemColorCache.clear();
@@ -308,7 +337,7 @@ Color RenderThemeMac::systemColor(int cssValueId) const
             color = convertNSColorToColor([NSColor textColor]);
             break;
         case CSS_VAL_MENU:
-            color = convertNSColorToColor([NSColor selectedMenuItemColor]);
+            color = menuBackgroundColor();
             break;
         case CSS_VAL_MENUTEXT:
             color = convertNSColorToColor([NSColor selectedMenuItemTextColor]);

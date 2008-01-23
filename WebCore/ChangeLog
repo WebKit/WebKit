@@ -1,3 +1,20 @@
+2008-01-22  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Adele Peterson.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=16905
+          <rdar://problem/5692407> REGRESSION (3.0.4-TOT): "menu" pseudocolor is badly chosen
+
+        The regression test for this is fast/css/css2-system-color.html which
+        is currently disabled.
+
+        * rendering/RenderThemeMac.mm:
+        (WebCore::menuBackgroundColor): Added. Uses HIThemeDrawMenuBackground
+        to draw the menu item background into a bitmap graphics context and
+        returns the color of the pixel at (0, 0).
+        (WebCore::RenderThemeMac::systemColor): Changed to call
+        menuBackgroundColor for the CSS2 menu color.
+
 2008-01-22  Darin Adler  <darin@apple.com>
 
         Reviewed by Oliver Hunt.
