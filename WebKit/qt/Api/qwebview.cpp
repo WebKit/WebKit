@@ -185,9 +185,7 @@ void QWebView::setContent(const QByteArray &data, const QString &mimeType, const
 
     It is equivalent to
 
-    \code
-    view->page()->history();
-    \endcode
+    \snippet doc/src/snippets/code/src.3rdparty.webkit.WebKit.qt.Api.qwebview.cpp 0
 */
 QWebHistory *QWebView::history() const
 {
@@ -199,9 +197,7 @@ QWebHistory *QWebView::history() const
 
     It is equivalent to
 
-    \code
-    view->page()->settings();
-    \endcode
+    \snippet doc/src/snippets/code/src.3rdparty.webkit.WebKit.qt.Api.qwebview.cpp 1
 */
 QWebSettings *QWebView::settings() const
 {
@@ -265,9 +261,7 @@ QAction *QWebView::action(QWebPage::WebAction action) const
 
     The following example triggers the copy action and therefore copies any selected text to the clipboard.
 
-    \code
-    view->triggerAction(QWebPage::Copy);
-    \endcode
+    \snippet doc/src/snippets/code/src.3rdparty.webkit.WebKit.qt.Api.qwebview.cpp 2
 */
 void QWebView::triggerAction(QWebPage::WebAction action, bool checked)
 {
@@ -319,9 +313,7 @@ QSize QWebView::sizeHint() const
 
     It is equivalent to
 
-    \code
-    view->page()->triggerAction(QWebPage::Stop);
-    \endcode
+    \snippet doc/src/snippets/code/src.3rdparty.webkit.WebKit.qt.Api.qwebview.cpp 3
 */
 void QWebView::stop()
 {
@@ -336,9 +328,7 @@ void QWebView::stop()
 
     It is equivalent to
 
-    \code
-    view->page()->triggerAction(QWebPage::GoBack);
-    \endcode
+    \snippet doc/src/snippets/code/src.3rdparty.webkit.WebKit.qt.Api.qwebview.cpp 4
 */
 void QWebView::backward()
 {
@@ -353,9 +343,7 @@ void QWebView::backward()
 
     It is equivalent to
 
-    \code
-    view->page()->triggerAction(QWebPage::GoForward);
-    \endcode
+    \snippet doc/src/snippets/code/src.3rdparty.webkit.WebKit.qt.Api.qwebview.cpp 5
 */
 void QWebView::forward()
 {
