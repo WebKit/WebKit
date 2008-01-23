@@ -37,6 +37,7 @@ class HTMLGenericFormElement;
 class HTMLImageElement;
 class HTMLInputElement;
 class HTMLFormCollection;
+class TextEncoding;
 
 class HTMLFormElement : public HTMLElement {
 public:
@@ -122,6 +123,8 @@ public:
     
 private:
     void parseEnctype(const String&);
+    bool isMailtoForm() const;
+    TextEncoding dataEncoding() const;
     PassRefPtr<FormData> formData(const char* boundary) const;
     unsigned formElementIndex(HTMLGenericFormElement*);
 

@@ -1,3 +1,24 @@
+2008-01-23  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        <rdar://problem/4200075> Missing support for accented chars in mailto forms
+
+        With some combinations of form parameters, this was resulting in regressed behavior.
+
+        Tests: fast/forms/mailto/get-non-ascii-text-plain-latin-1.html
+               fast/forms/mailto/post-text-plain-with-accept-charset.html
+               fast/forms/mailto/post-text-plain.html
+
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::formData): Ignore accept-charset for mailto forms, which are always
+        encoded as UTF-8.
+        (WebCore::HTMLFormElement::isMailtoForm): Added.
+        (WebCore::HTMLFormElement::dataEncoding): Added (factored out from formData).
+        (WebCore::HTMLFormElement::submit): When round-tripping in text/plain case, use utf-8 encoding.
+        * html/HTMLFormElement.h: Added a isMailtoForm() function. It may be a bit unfortunate that
+        its result is calculated repeatedly, but this doesn't seem to be anywhere near hot code.
+
 2008-01-22  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Alice Liu.

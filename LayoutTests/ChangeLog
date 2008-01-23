@@ -1,3 +1,20 @@
+2008-01-23  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        <rdar://problem/4200075> Missing support for accented chars in mailto forms
+
+        * fast/forms/mailto/get-non-ascii-always-utf-8-expected.txt:
+        * fast/forms/mailto/get-non-ascii-text-plain-latin-1-expected.txt: Added.
+        * fast/forms/mailto/get-non-ascii-text-plain-latin-1.html: Added.
+        These results do not match Firefox, which uses page encoding for GET. Mail.app fails to create
+        a message then; there doesn't seem to be any reason for GET to be different from POST.
+
+        * fast/forms/mailto/post-text-plain-expected.txt: Added.
+        * fast/forms/mailto/post-text-plain-with-accept-charset-expected.txt: Added.
+        * fast/forms/mailto/post-text-plain-with-accept-charset.html: Added.
+        * fast/forms/mailto/post-text-plain.html: Added.
+
 2008-01-23  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Alice Liu.
