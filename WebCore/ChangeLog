@@ -1,3 +1,22 @@
+2008-01-23  Lars Knoll  <lars@trolltech.com>
+
+        Reviewed by Holger Freyther <holger.freyther@trolltech.com>.
+
+        Fix rendering of the Scrollbar as well as mouse handling for some styles.
+
+        The QStyle expects that that painter is set up to clip to the scrollbar bounds
+        and some of the styles seem to paint somewhat outside of these bounds. Clipping to
+        the scrollbar bounds before drawing removes some artifacts.
+
+        Also set m_opt.rect.topLeft to (0/0) in the mouse handlers. Fixes some issues with
+        the oxygen style.
+
+
+        * platform/qt/PlatformScrollBarQt.cpp:
+        (WebCore::PlatformScrollbar::paint):
+        (WebCore::PlatformScrollbar::handleMouseMoveEvent):
+        (WebCore::PlatformScrollbar::handleMousePressEvent):
+
 2008-01-23  Michael Brasser  <michael.brasser@trolltech.com>
 
         Reviewed by Simon.

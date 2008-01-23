@@ -151,11 +151,14 @@ void PlatformScrollbar::paint(GraphicsContext* graphicsContext, const IntRect& d
     if (graphicsContext->paintingDisabled() || !m_opt.rect.isValid())
         return;
 
+    QRect clip = m_opt.rect.intersected(damageRect);
     // Don't paint anything if the scrollbar doesn't intersect the damage rect.
-    if (!m_opt.rect.intersects(damageRect))
+    if (clip.isEmpty())
         return;
 
     QPainter *p = graphicsContext->platformContext();
+    p->save();
+    p->setClipRect(clip);
     m_opt.sliderValue = value();
     m_opt.sliderPosition = value();
     m_opt.pageStep = m_visibleSize;
@@ -173,7 +176,7 @@ void PlatformScrollbar::paint(GraphicsContext* graphicsContext, const IntRect& d
     m_opt.rect.moveTo(QPoint(0, 0));
     QApplication::style()->drawComplexControl(QStyle::CC_ScrollBar, &m_opt, p, 0);
     m_opt.rect.moveTo(topLeft);
-    p->translate(-topLeft);
+    p->restore();
 }
 
 int PlatformScrollbar::thumbPosition() const
@@ -201,7 +204,10 @@ bool PlatformScrollbar::handleMouseMoveEvent(const PlatformMouseEvent& evt)
     //qDebug() << "PlatformScrollbar::handleMouseMoveEvent" << m_opt.rect << pos << evt.pos();
 
     m_opt.state |= QStyle::State_MouseOver;
+    const QPoint topLeft = m_opt.rect.topLeft();
+    m_opt.rect.moveTo(QPoint(0, 0));
     QStyle::SubControl sc = QApplication::style()->hitTestComplexControl(QStyle::CC_ScrollBar, &m_opt, pos, 0);
+    m_opt.rect.moveTo(topLeft);
 
     if (sc == m_pressedPart) {
         m_opt.state |= QStyle::State_Sunken;
@@ -274,7 +280,10 @@ bool PlatformScrollbar::handleMousePressEvent(const PlatformMouseEvent& evt)
     const QPoint pos = convertFromContainingWindow(evt.pos());
     //qDebug() << "PlatformScrollbar::handleMousePressEvent" << m_opt.rect << pos << evt.pos();
 
+    const QPoint topLeft = m_opt.rect.topLeft();
+    m_opt.rect.moveTo(QPoint(0, 0));
     QStyle::SubControl sc = QApplication::style()->hitTestComplexControl(QStyle::CC_ScrollBar, &m_opt, pos, 0);
+    m_opt.rect.moveTo(topLeft);
     switch (sc) {
         case QStyle::SC_ScrollBarAddLine:
         case QStyle::SC_ScrollBarSubLine:
