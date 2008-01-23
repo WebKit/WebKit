@@ -1,3 +1,14 @@
+2008-01-23  Holger Hans Peter Freyther  <holger.freyther@trolltech.com>
+
+        * Rubber stamped by Simon
+
+        * Load images incrementally. This will show warnings on the console
+        and we want to fix them for Qt4.4. If that happens we have to remove
+        the comment from the enum inside the ImageDecoderQt.cpp
+
+        * platform/graphics/qt/ImageDecoderQt.cpp:
+        (WebCore::ImageDecoderQt::setData):
+
 2008-01-23  Lars Knoll  <lars@trolltech.com>
 
         Reviewed by Holger Freyther <holger.freyther@trolltech.com>.
