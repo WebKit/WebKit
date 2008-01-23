@@ -80,6 +80,7 @@ HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document* doc)
     , m_loadNestingLevel(0)
     , m_terminateLoadBelowNestingLevel(0)
     , m_pausedInternal(false)
+    , m_inPageCache(false)
     , m_player(0)
 {
     document()->registerForCacheCallbacks(this);
@@ -1008,14 +1009,18 @@ void HTMLMediaElement::willSaveToCache()
             dispatchHTMLEvent(emptiedEvent, false, true);
         }
     }
+    m_inPageCache = true;
     // Stop the playback without generating events
     setPausedInternal(true);
     if (m_player)
         m_player->setVisible(false);
+    if (renderer())
+        renderer()->updateFromElement();
 }
 
 void HTMLMediaElement::didRestoreFromCache()
 {
+    m_inPageCache = false;
     setPausedInternal(false);
     if (renderer())
         renderer()->updateFromElement();

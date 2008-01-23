@@ -1,5 +1,22 @@
 2008-01-23  Antti Koivisto  <antti@apple.com>
 
+        Reviewed by Hyatt, Adele.
+
+        Timers for media controls keep running when the page is in the page cache.
+        
+        Stop timers in RenderMedia and get rid of the controls tree when the page goes to the cache. 
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::HTMLMediaElement):
+        (WebCore::HTMLMediaElement::willSaveToCache):
+        (WebCore::HTMLMediaElement::didRestoreFromCache):
+        * html/HTMLMediaElement.h:
+        (WebCore::HTMLMediaElement::inPageCache):
+        * rendering/RenderMedia.cpp:
+        (WebCore::RenderMedia::updateControls):
+
+2008-01-23  Antti Koivisto  <antti@apple.com>
+
         Reviewed by Adam.
 
         Video that had already played to the end would start playing (from beginning) on back/forward navigation.

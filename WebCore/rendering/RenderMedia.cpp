@@ -218,7 +218,7 @@ void RenderMedia::updateFromElement()
 void RenderMedia::updateControls()
 {
     HTMLMediaElement* media = mediaElement();
-    if (!media->controls()) {
+    if (!media->controls() || media->inPageCache()) {
         if (m_controlsShadowRoot) {
             m_controlsShadowRoot->detach();
             m_panel = 0;
@@ -231,6 +231,9 @@ void RenderMedia::updateControls()
             m_fullscreenButton = 0;
             m_controlsShadowRoot = 0;
         }
+        m_opacityAnimationTo = 1.0f;
+        m_opacityAnimationTimer.stop();
+        m_timeUpdateTimer.stop();
         return;
     }
     
