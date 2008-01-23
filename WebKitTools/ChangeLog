@@ -1,3 +1,12 @@
+2008-01-23  Steve Falkenburg  <sfalken@apple.com>
+
+        <rdar://problem/5698732> Copyright strings should include 2008
+
+        Reviewed by Sam.
+
+        * Drosera/win/Drosera.vcproj/Drosera.rc:
+        * DumpRenderTree/win/TestNetscapePlugin/TestNetscapePlugin.rc:
+
 2008-01-23  Alp Toker  <alp@atoker.com>
 
         Rubber-stamped by Mark Rowe.

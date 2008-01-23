@@ -11,6 +11,14 @@
 
 2008-01-23  Steve Falkenburg  <sfalken@apple.com>
 
+        <rdar://problem/5698732> Copyright strings should include 2008
+
+        Reviewed by Sam.
+
+        * WebCore.vcproj/QTMovieWin.rc:
+
+2008-01-23  Steve Falkenburg  <sfalken@apple.com>
+
         <rdar://problem/5699509> Allow file upload dialog to be localized.
 
         Reviewed by Darin.

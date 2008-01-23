@@ -42,7 +42,7 @@ BEGIN
             VALUE "FileVersion", __VERSION_TEXT__
             VALUE "CompanyName", "Apple Inc."
             VALUE "InternalName", "WebKit"
-            VALUE "LegalCopyright", "Copyright Apple Inc. 2006, 2007"
+            VALUE "LegalCopyright", "Copyright Apple Inc. 2003-2008"
             VALUE "OriginalFilename", "WebKit.dll"
             VALUE "ProductName", " WebKit"
             VALUE "ProductVersion", __BUILD_NUMBER_SHORT__
@@ -69,3 +69,4 @@ IDR_DELETE_BUTTON_PRESSED        PNG                     "deleteButtonPressed.pn
 IDR_ZOOM_IN_CURSOR               PNG                     "zoomInCursor.png"
 IDR_ZOOM_OUT_CURSOR              PNG                     "zoomOutCursor.png"
 IDR_VERTICAL_TEXT_CURSOR         PNG                     "verticalTextCursor.png"
+
