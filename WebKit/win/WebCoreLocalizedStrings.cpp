@@ -81,4 +81,5 @@ String WebCore::AXListMarkerText() { return String(LPCTSTR_UI_STRING("list marke
 String WebCore::AXImageMapText() { return String(LPCTSTR_UI_STRING("image map", "accessibility role description for image map")); }
 String WebCore::AXHeadingText() { return String(LPCTSTR_UI_STRING("heading", "accessibility role description for headings")); }
 String WebCore::unknownFileSizeText() { return String(LPCTSTR_UI_STRING("Unknown", "Unknown filesize FTP directory listing item")); }
-
+String WebCore::uploadFileText() { return String(LPCTSTR_UI_STRING("Upload file", "(Windows) Form submit file upload dialog title")); }
+String WebCore::allFilesText() { return String(LPCTSTR_UI_STRING("All Files", "(Windows) Form submit file upload all files pop-up")); }

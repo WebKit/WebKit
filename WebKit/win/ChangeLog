@@ -1,3 +1,14 @@
+2008-01-23  Steve Falkenburg  <sfalken@apple.com>
+
+        <rdar://problem/5699509> Allow file upload dialog to be localized.
+        
+        Reviewed by Darin.
+
+        * English.lproj/Localizable.strings: Updated.
+        * WebCoreLocalizedStrings.cpp:
+        (WebCore::uploadFileText): Added.
+        (WebCore::allFilesText): Added.
+
 2008-01-22  Adam Roben  <aroben@apple.com>
 
         Fix <rdar://5693599> REGRESSION (r29369): scroll bars are drawing when they shouldn't be on an ad on cnn.com

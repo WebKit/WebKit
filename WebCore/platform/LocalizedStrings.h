@@ -94,6 +94,11 @@ namespace WebCore {
     String AXHeadingText();
 
     String unknownFileSizeText();
+
+#if PLATFORM(WIN)
+    String uploadFileText();
+    String allFilesText();
+#endif
 }
 
 #endif

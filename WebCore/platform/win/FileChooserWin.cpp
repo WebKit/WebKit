@@ -67,10 +67,13 @@ void FileChooser::openFileChooser(Document* document)
 
     ofn.lStructSize = sizeof(ofn);
     ofn.hwndOwner = view->containingWindow();
-    ofn.lpstrFilter = _T("All Files\0*.*\0\0");
+    String allFiles = allFilesText();
+    allFiles.append(TEXT("\0*.*\0\0"), 6);
+    ofn.lpstrFilter = allFiles.charactersWithNullTermination();
     ofn.lpstrFile = fileBuf;
     ofn.nMaxFile = sizeof(fileBuf);
-    ofn.lpstrTitle = _T("Upload file");
+    String dialogTitle = uploadFileText();
+    ofn.lpstrTitle = dialogTitle.charactersWithNullTermination();
     ofn.Flags = OFN_ENABLESIZING | OFN_FILEMUSTEXIST | OFN_PATHMUSTEXIST;
 
     // We need this protector because otherwise we can be deleted if the file upload control is detached while
