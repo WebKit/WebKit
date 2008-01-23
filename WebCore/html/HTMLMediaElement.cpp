@@ -67,7 +67,6 @@ HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document* doc)
     , m_begun(false)
     , m_loadedFirstFrame(false)
     , m_autoplaying(true)
-    , m_wasPlayingBeforeMovingToPageCache(false)
     , m_currentLoop(0)
     , m_volume(0.5f)
     , m_muted(false)
@@ -1009,20 +1008,15 @@ void HTMLMediaElement::willSaveToCache()
             dispatchHTMLEvent(emptiedEvent, false, true);
         }
     }
-    
-    ExceptionCode ec;
-    m_wasPlayingBeforeMovingToPageCache = !paused();
-    if (m_wasPlayingBeforeMovingToPageCache)
-        pause(ec);
+    // Stop the playback without generating events
+    setPausedInternal(true);
     if (m_player)
         m_player->setVisible(false);
 }
 
 void HTMLMediaElement::didRestoreFromCache()
 {
-    ExceptionCode ec;
-    if (m_wasPlayingBeforeMovingToPageCache)
-        play(ec);
+    setPausedInternal(false);
     if (renderer())
         renderer()->updateFromElement();
 }

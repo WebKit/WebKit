@@ -1,3 +1,14 @@
+2008-01-23  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Adam.
+
+        Video that had already played to the end would start playing (from beginning) on back/forward navigation.
+        
+        Use setPausedInternal() instead of pause(). This avoid generating pause/play events and matches specification text.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::willSaveToCache):
+
 2008-01-23  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin.
