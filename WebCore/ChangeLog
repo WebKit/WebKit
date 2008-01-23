@@ -1,3 +1,23 @@
+2008-01-23  Adam Roben  <aroben@apple.com>
+
+        Fix behavior of type-to-select in <select> menus
+
+        In r27825 we started posting both a WM_KEYDOWN and WM_CHAR message
+        whenever a key was pressed in the dropdown menu. However, since posted
+        messages go through TranslateMessage, the WM_KEYDOWN was generating
+        another WM_CHAR message, so two WM_CHAR messages in a row would reach
+        the WebView. This caused the searching to happen twice for each key,
+        so typing "dog" would search for "ddoogg".
+
+        Reviewed by Darin.
+
+        * platform/win/PopupMenuWin.cpp:
+        (WebCore::PopupWndProc): Repost the WM_KEYDOWN message to the WebView.
+        This is will generate a WM_CHAR message which will trigger the
+        type-to-select behavior. This is very similar to our behavior prior to
+        r27825, except that we're now calling PostMessage instead of
+        SendMessage.
+
 2008-01-23  Alp Toker  <alp@atoker.com>
 
         Rubber-stamped by Mark Rowe.

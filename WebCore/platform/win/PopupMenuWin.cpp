@@ -679,7 +679,11 @@ static LRESULT CALLBACK PopupWndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
                         popup->client()->hidePopup();
                         break;
                     default:
-                        lResult = 1;
+                        if (isASCIIPrintable(wParam))
+                            // Send the keydown to the WebView so it can be used for type-to-select.
+                            ::PostMessage(popup->client()->clientDocument()->view()->containingWindow(), message, wParam, lParam);
+                        else
+                            lResult = 1;
                         break;
                 }
             }
@@ -702,14 +706,7 @@ static LRESULT CALLBACK PopupWndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
                     case 0x08:   // Backspace
                     case 0x0A:   // Linefeed
                     default:     // Character
-                        if (isASCIIPrintable(wParam)) {
-                            // Send a WM_KEYDOWN event and the current WM_CHAR event to the WebView
-                            // so that it can perform type-to-select.
-                            HWND webView = popup->client()->clientDocument()->view()->containingWindow();
-                            ::PostMessage(webView, WM_KEYDOWN, LOBYTE(VkKeyScan(LOWORD(wParam))), lParam);
-                            ::PostMessage(webView, message, wParam, lParam);
-                        } else
-                            lResult = 1;
+                        lResult = 1;
                         break;
                 }
             }
