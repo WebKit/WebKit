@@ -1,3 +1,13 @@
+2008-01-23  Rohan McGovern  <rohan.mcgovern@trolltech.com>
+
+        Reviewed by Simon Hausmann <hausmann@webkit.org>.
+
+        Fix Qtopia compilation with QT_NO_TOOLTIP
+        
+
+        * WebCoreSupport/ChromeClientQt.cpp:
+        (WebCore::ChromeClientQt::print):
+
 2008-01-23  Geir Vattekar  <gvatteka@trolltech.com>
 
         Reviewed by Simon.
