@@ -18,7 +18,9 @@
  * Boston, MA 02110-1301, USA.
  *
  */
+#include "config.h"
 #include "QWebPopup.h"
+#include "RenderStyle.h"
 
 #include <QCoreApplication>
 #include <QMouseEvent>
@@ -28,6 +30,8 @@ namespace WebCore {
 QWebPopup::QWebPopup(PopupMenuClient* client)
 {
     m_client = client;
+    if (m_client)
+        setFont(m_client->clientStyle()->font().font());
     connect(this, SIGNAL(activated(int)),
             SLOT(activeChanged(int)));
 }

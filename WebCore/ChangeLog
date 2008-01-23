@@ -1,3 +1,12 @@
+2008-01-23  Michael Brasser  <michael.brasser@trolltech.com>
+
+        Reviewed by Simon.
+
+        use PopupClient's font for popup menu. Otherwise, in Qtopia, the popup's font is much bigger (QApplication::font()?) and the text doesn't fit.
+
+        * platform/qt/QWebPopup.cpp:
+        (WebCore::QWebPopup::QWebPopup):
+
 2008-01-23  Simon Hausmann  <hausmann@webkit.org>
 
         Reviewed by Lars.
