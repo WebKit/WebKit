@@ -3,11 +3,11 @@ nodist_EXTRA_libJavaScriptCore_la_SOURCES = \
 	DerivedSources/dummy.cxx
 
 javascriptcore_cppflags += \
-	-I $(srcdir)/JavaScriptCore/ForwardingHeaders \
-	-I $(srcdir)/JavaScriptCore/bindings \
-	-I $(srcdir)/JavaScriptCore/bindings/c \
-	-I $(top_builddir)/JavaScriptCore/pcre \
-	-I $(top_builddir)/JavaScriptCore/kjs
+	-I$(srcdir)/JavaScriptCore/ForwardingHeaders \
+	-I$(srcdir)/JavaScriptCore/bindings \
+	-I$(srcdir)/JavaScriptCore/bindings/c \
+	-I$(top_builddir)/JavaScriptCore/pcre \
+	-I$(top_builddir)/JavaScriptCore/kjs
 
 javascriptcore_h_api += \
 	JavaScriptCore/API/JavaScript.h \

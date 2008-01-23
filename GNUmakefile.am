@@ -50,11 +50,11 @@ EXTRA_DIST :=
 global_cppflags := 
 
 global_cppflags += \
-	-I $(srcdir)/JavaScriptCore \
-	-I $(srcdir)/JavaScriptCore/ForwardingHeaders \
-	-I $(srcdir)/JavaScriptCore/wtf \
-	-I $(srcdir)/JavaScriptCore/kjs \
-	-I $(top_builddir)/DerivedSources
+	-I$(srcdir)/JavaScriptCore \
+	-I$(srcdir)/JavaScriptCore/ForwardingHeaders \
+	-I$(srcdir)/JavaScriptCore/wtf \
+	-I$(srcdir)/JavaScriptCore/kjs \
+	-I$(top_builddir)/DerivedSources
 
 # Default compiler flags
 global_cflags := \
@@ -229,7 +229,7 @@ endif
 #
 # WEBKIT GTK+
 webkitgtk_cppflags += \
--I $(top_builddir)/WebKit/gtk/WebView \
+-I$(top_builddir)/WebKit/gtk/WebView \
 -DBUILDING_CAIRO__=1 \
 -DBUILD_WEBKIT
 

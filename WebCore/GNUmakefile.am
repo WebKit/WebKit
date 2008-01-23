@@ -5,43 +5,43 @@ FEATURE_DEFINES_JAVASCRIPT := LANGUAGE_JAVASCRIPT=1
 SVG_FEATURES :=
 
 webcore_cppflags += \
-	-I $(srcdir)/JavaScriptCore/bindings \
-	-I $(srcdir)/WebCore \
-	-I $(srcdir)/WebCore/ForwardingHeaders \
-	-I $(srcdir)/WebCore/platform \
-	-I $(srcdir)/WebCore/platform/network \
-	-I $(srcdir)/WebCore/platform/graphics \
-	-I $(srcdir)/WebCore/platform/text \
-	-I $(srcdir)/WebCore/loader \
-	-I $(srcdir)/WebCore/loader/icon \
-	-I $(srcdir)/WebCore/css \
-	-I $(srcdir)/WebCore/dom \
-	-I $(srcdir)/WebCore/page \
-	-I $(srcdir)/WebCore/bridge \
-	-I $(srcdir)/WebCore/editing \
-	-I $(srcdir)/WebCore/history \
-	-I $(srcdir)/WebCore/xml \
-	-I $(srcdir)/WebCore/html \
-	-I $(srcdir)/WebCore/bindings/js \
-	-I $(srcdir)/WebCore/platform/image-decoders \
-	-I $(srcdir)/WebCore/platform/image-decoders/bmp \
-	-I $(srcdir)/WebCore/platform/image-decoders/gif \
-	-I $(srcdir)/WebCore/platform/image-decoders/ico \
-	-I $(srcdir)/WebCore/platform/image-decoders/jpeg \
-	-I $(srcdir)/WebCore/platform/image-decoders/png \
-	-I $(srcdir)/WebCore/platform/image-decoders/xbm \
-	-I $(srcdir)/WebCore/plugins \
-	-I $(srcdir)/WebCore/rendering \
-	-I $(top_builddir)/WebCore/bindings/js
+	-I$(srcdir)/JavaScriptCore/bindings \
+	-I$(srcdir)/WebCore \
+	-I$(srcdir)/WebCore/ForwardingHeaders \
+	-I$(srcdir)/WebCore/platform \
+	-I$(srcdir)/WebCore/platform/network \
+	-I$(srcdir)/WebCore/platform/graphics \
+	-I$(srcdir)/WebCore/platform/text \
+	-I$(srcdir)/WebCore/loader \
+	-I$(srcdir)/WebCore/loader/icon \
+	-I$(srcdir)/WebCore/css \
+	-I$(srcdir)/WebCore/dom \
+	-I$(srcdir)/WebCore/page \
+	-I$(srcdir)/WebCore/bridge \
+	-I$(srcdir)/WebCore/editing \
+	-I$(srcdir)/WebCore/history \
+	-I$(srcdir)/WebCore/xml \
+	-I$(srcdir)/WebCore/html \
+	-I$(srcdir)/WebCore/bindings/js \
+	-I$(srcdir)/WebCore/platform/image-decoders \
+	-I$(srcdir)/WebCore/platform/image-decoders/bmp \
+	-I$(srcdir)/WebCore/platform/image-decoders/gif \
+	-I$(srcdir)/WebCore/platform/image-decoders/ico \
+	-I$(srcdir)/WebCore/platform/image-decoders/jpeg \
+	-I$(srcdir)/WebCore/platform/image-decoders/png \
+	-I$(srcdir)/WebCore/platform/image-decoders/xbm \
+	-I$(srcdir)/WebCore/plugins \
+	-I$(srcdir)/WebCore/rendering \
+	-I$(top_builddir)/WebCore/bindings/js
 
 webkitgtk_cppflags += \
-	-I $(srcdir)/WebCore/platform/gtk \
-	-I $(srcdir)/WebCore/platform/graphics/gtk \
-	-I $(srcdir)/WebCore/platform/graphics/cairo \
-	-I $(srcdir)/WebCore/loader/gtk \
-	-I $(srcdir)/WebCore/page/gtk \
-	-I $(srcdir)/WebKit/gtk/WebCoreSupport \
-	-I $(srcdir)/WebKit/gtk/WebView
+	-I$(srcdir)/WebCore/platform/gtk \
+	-I$(srcdir)/WebCore/platform/graphics/gtk \
+	-I$(srcdir)/WebCore/platform/graphics/cairo \
+	-I$(srcdir)/WebCore/loader/gtk \
+	-I$(srcdir)/WebCore/page/gtk \
+	-I$(srcdir)/WebKit/gtk/WebCoreSupport \
+	-I$(srcdir)/WebKit/gtk/WebView
 
 webcore_built_nosources += \
 	DerivedSources/DocTypeStrings.cpp \
@@ -988,7 +988,7 @@ if USE_CURL
 
 webcore_cppflags += \
 	-DWTF_USE_CURL=1 \
-	-I $(srcdir)/WebCore/platform/network/curl
+	-I$(srcdir)/WebCore/platform/network/curl
 
 webcore_sources += \
 	WebCore/platform/network/curl/ResourceHandleCurl.cpp \
@@ -1023,8 +1023,8 @@ IDL_BINDINGS += \
 
 webcore_cppflags += \
 	-DENABLE_DATABASE=1 \
-	-I $(top_srcdir)/WebCore/platform/sql \
-	-I $(top_srcdir)/WebCore/storage
+	-I$(top_srcdir)/WebCore/platform/sql \
+	-I$(top_srcdir)/WebCore/storage
 
 webcore_sources += \
 	WebCore/platform/sql/SQLiteAuthorizer.cpp \
@@ -1213,7 +1213,7 @@ if ENABLE_SVG
 FEATURE_DEFINES_JAVASCRIPT += ENABLE_SVG=1
 
 webkitgtk_cppflags += \
-	-I $(srcdir)/WebCore/svg/graphics/cairo
+	-I$(srcdir)/WebCore/svg/graphics/cairo
 
 webcore_built_sources += \
 	DerivedSources/XLinkNames.cpp \
@@ -1618,9 +1618,9 @@ IDL_BINDINGS += \
 
 webcore_cppflags += \
 	-DENABLE_SVG=1 \
-	-I \$(top_srcdir)/WebCore/svg \
-	-I \$(top_srcdir)/WebCore/svg/graphics \
-	-I \$(top_srcdir)/WebCore/svg/graphics/filters
+	-I\$(top_srcdir)/WebCore/svg \
+	-I\$(top_srcdir)/WebCore/svg/graphics \
+	-I\$(top_srcdir)/WebCore/svg/graphics/filters
 
 webcore_sources += \
 	WebCore/bindings/js/JSSVGElementWrapperFactory.cpp \
@@ -2010,7 +2010,7 @@ vpath %.idl = \
 DerivedSources/JS%.h: DerivedSources/JS%.cpp;
 
 DerivedSources/JS%.cpp: %.idl $(SCRIPTS_JS_BINDINGS)
-	$(PERL) -I $(WebCore)/bindings/scripts \
+	$(PERL) -I$(WebCore)/bindings/scripts \
 	$(WebCore)/bindings/scripts/generate-bindings.pl --defines \
 	"$(FEATURE_DEFINES_JAVASCRIPT)" --generator JS --include $(WebCore)/dom \
 	--include $(WebCore)/html --include $(WebCore)/css --include $(WebCore)/page \

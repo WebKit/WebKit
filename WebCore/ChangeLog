@@ -1,3 +1,11 @@
+2008-01-23  Alp Toker  <alp@atoker.com>
+
+        Rubber-stamped by Mark Rowe.
+
+        Remove whitespace after -I in automake include lists.
+
+        * GNUmakefile.am:
+
 2008-01-23  Holger Hans Peter Freyther  <holger.freyther@trolltech.com>
 
         * Rubber stamped by Simon
