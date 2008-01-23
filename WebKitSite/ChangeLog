@@ -1,3 +1,29 @@
+2008-01-21  David Smith  <catfish.man@gmail.com>
+
+        Reviewed by Darin.
+        
+        Added a modified version of the MooTools SlickSpeed Selector Test/Benchmark to show off querySelectorAll. MIT licensed.
+
+        * perf/slickspeed: Added.
+        * perf/slickspeed/config.ini: Added.
+        * perf/slickspeed/footer.html: Added.
+        * perf/slickspeed/frameworks: Added.
+        * perf/slickspeed/frameworks/DomQuery.js: Added.
+        * perf/slickspeed/frameworks/dummy.js: Added.
+        * perf/slickspeed/frameworks/jquery-1.2.1.js: Added.
+        * perf/slickspeed/frameworks/prototype.js: Added.
+        * perf/slickspeed/header.html: Added.
+        * perf/slickspeed/index.php: Added.
+        * perf/slickspeed/instructions.txt: Added.
+        * perf/slickspeed/logo.png: Added.
+        * perf/slickspeed/selectors.list: Added.
+        * perf/slickspeed/style.css: Added.
+        * perf/slickspeed/system: Added.
+        * perf/slickspeed/system/index.php: Added.
+        * perf/slickspeed/system/slickspeed.js: Added.
+        * perf/slickspeed/system/template.php: Added.
+        * perf/slickspeed/template.html: Added.
+
 2008-01-17  Steve Falkenburg  <sfalken@apple.com>
 
         Added Vista crash logging information.
