@@ -1,3 +1,12 @@
+2008-01-23  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Alice Liu.
+        
+        <rdar://problem/5658727> Undo/redo for pasted or typed text in yahoo mail becomes disabled after one round of being selected
+
+        * editing/undo/5658727-expected.txt: Added.
+        * editing/undo/5658727.html: Added.
+
 2008-01-23  Adam Roben  <aroben@apple.com>
 
         Add a test for <rdar://5700620> REGRESSION (r28190): "Open frame in

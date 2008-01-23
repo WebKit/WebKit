@@ -397,12 +397,14 @@ void RenderTextControl::updateFromElement()
         else
             value = value.replace('\\', backslashAsCurrencySymbol());
         if (value != text() || !m_innerText->hasChildNodes()) {
+            if (value != text()) {
+                if (Frame* frame = document()->frame())
+                    frame->editor()->clearUndoRedoOperations();
+            }
             ExceptionCode ec = 0;
             m_innerText->setInnerText(value, ec);
             if (value.endsWith("\n") || value.endsWith("\r"))
                 m_innerText->appendChild(new HTMLBRElement(document()), ec);
-            if (Frame* frame = document()->frame())
-                frame->editor()->clearUndoRedoOperations();
             m_dirty = false;
             m_userEdited = false;
         }

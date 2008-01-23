@@ -1,3 +1,14 @@
+2008-01-22  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Alice Liu.
+
+        <rdar://problem/5658727> Undo/redo for pasted or typed text in yahoo mail becomes disabled after one round of being selected
+
+        * rendering/RenderTextControl.cpp:
+        (WebCore::RenderTextControl::updateFromElement): If value == text() and
+        m_innerText is empty, then value and text() are "". In that case both DOM 
+        mutations are no-ops and there is no reason to clear the Undo stack.
+
 2008-01-23  Steve Falkenburg  <sfalken@apple.com>
 
         <rdar://problem/5699509> Allow file upload dialog to be localized.
