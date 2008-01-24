@@ -3,6 +3,16 @@
         Reviewed by Simon.
 
         Code style cleanups.
+        Add spaces before/after braces in inline function.
+        
+
+        * bindings/qt/qt_instance.h:
+
+2008-01-24  Michael Goddard  <michael.goddard@trolltech.com>
+
+        Reviewed by Simon.
+
+        Code style cleanups.
         Remove spaces and unneeded declared parameter names.
         
 
