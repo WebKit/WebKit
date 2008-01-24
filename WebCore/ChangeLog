@@ -1,3 +1,16 @@
+2008-01-24  Holger Hans Peter Freyther  <holger.freyther@trolltech.com>
+
+        Reviewed by Simon.
+
+        * Fix "QObject::startTimer: QTimer can only be used with threads started with QThread"
+        * The JSC GCController gets automatically destructed on application exit, it will stop
+        its timer and we try to schedule the next timer. Now the GCController can get destructed
+        after our QApplication is gone. This will trigger the above warning, we can avoid this
+        by checking if our qApp is still around.
+
+        * platform/qt/SharedTimerQt.cpp:
+        (WebCore::setSharedTimerFireTime):
+
 2008-01-24  Morten Johan Sørvig  <msorvig@trolltech.com>
 
         Reviewed by Simon.
