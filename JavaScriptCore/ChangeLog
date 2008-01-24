@@ -1,3 +1,25 @@
+2008-01-24  Michael Goddard  <michael.goddard@trolltech.com>
+
+        Reviewed by Simon.
+
+        Clear stale RuntimeObjectImps.
+        Since other objects can have refs to the QtInstance,
+        we can't rely on the QtInstance being deleted when the
+        RuntimeObjectImp is invalidate or deleted.  This
+        could result in a stale JSObject being returned for
+        a valid Instance.
+        
+
+        * bindings/qt/qt_instance.cpp:
+        (KJS::Bindings::QtRuntimeObjectImp::QtRuntimeObjectImp):
+        (KJS::Bindings::QtRuntimeObjectImp::~QtRuntimeObjectImp):
+        (KJS::Bindings::QtRuntimeObjectImp::invalidate):
+        (KJS::Bindings::QtRuntimeObjectImp::removeFromCache):
+        (KJS::Bindings::QtInstance::getRuntimeObject):
+        * bindings/runtime.cpp:
+        (KJS::Bindings::Instance::createRuntimeObject):
+        * bindings/runtime.h:
+
 2008-01-23  Alp Toker  <alp@atoker.com>
 
         Rubber-stamped by Mark Rowe.

@@ -42,6 +42,41 @@ static QObjectInstanceMap cachedInstances;
 typedef QHash<QtInstance*, JSObject*> InstanceJSObjectMap;
 static InstanceJSObjectMap cachedObjects;
 
+// Derived RuntimeObject
+class QtRuntimeObjectImp : public RuntimeObjectImp {
+    public:
+        QtRuntimeObjectImp(Instance *instance);
+        ~QtRuntimeObjectImp();
+        virtual void invalidate();
+    protected:
+        void removeFromCache();
+};
+
+QtRuntimeObjectImp::QtRuntimeObjectImp(Instance *instance)
+    : RuntimeObjectImp(instance)
+{
+}
+
+QtRuntimeObjectImp::~QtRuntimeObjectImp()
+{
+    removeFromCache();
+}
+
+void QtRuntimeObjectImp::invalidate()
+{
+    removeFromCache();
+    RuntimeObjectImp::invalidate();
+}
+
+void QtRuntimeObjectImp::removeFromCache()
+{
+    JSLock lock;
+    QtInstance *key = cachedObjects.key(this);
+    if (key)
+        cachedObjects.remove(key);
+}
+
+// QtInstance
 QtInstance::QtInstance(QObject* o, PassRefPtr<RootObject> rootObject)
     : Instance(rootObject)
     , m_class(0)
@@ -89,7 +124,7 @@ JSObject* QtInstance::getRuntimeObject(QtInstance* instance)
     JSLock lock;
     JSObject* ret = cachedObjects.value(instance);
     if (!ret) {
-        ret = Instance::reallyCreateRuntimeObject(instance);
+        ret = new QtRuntimeObjectImp(instance);
         cachedObjects.insert(instance, ret);
     }
     return ret;

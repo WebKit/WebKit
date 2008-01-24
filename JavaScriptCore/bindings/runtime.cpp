@@ -129,11 +129,6 @@ JSObject* Instance::createRuntimeObject(Instance* instance)
     if (instance->getBindingLanguage() == QtLanguage)
         return QtInstance::getRuntimeObject(static_cast<QtInstance*>(instance));
 #endif
-    return reallyCreateRuntimeObject(instance);
-}
-
-JSObject* Instance::reallyCreateRuntimeObject(Instance* instance)
-{
     JSLock lock;
 
     return new RuntimeObjectImp(instance);
