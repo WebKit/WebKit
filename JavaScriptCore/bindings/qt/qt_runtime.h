@@ -121,6 +121,7 @@ class QtRuntimeMetaMethodData : public QtRuntimeMethodData {
     public:
         ~QtRuntimeMetaMethodData();
         QByteArray m_signature;
+        bool m_allowPrivate;
         int m_index;
         QtRuntimeConnectionMethod *m_connect;
         QtRuntimeConnectionMethod *m_disconnect;
@@ -152,7 +153,7 @@ protected:
 class QtRuntimeMetaMethod : public QtRuntimeMethod
 {
 public:
-    QtRuntimeMetaMethod(ExecState *exec, const Identifier &n, PassRefPtr<QtInstance> inst, int index, const QByteArray& signature );
+    QtRuntimeMetaMethod(ExecState *exec, const Identifier &n, PassRefPtr<QtInstance> inst, int index, const QByteArray& signature, bool allowPrivate);
 
     virtual bool getOwnPropertySlot(ExecState *, const Identifier&, PropertySlot&);
     virtual JSValue *callAsFunction(ExecState *exec, JSObject *thisObj, const List &args);

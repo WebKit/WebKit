@@ -20,11 +20,13 @@
 #include "config.h"
 #include "qt_instance.h"
 
+#include "JSGlobalObject.h"
 #include "list.h"
 #include "qt_class.h"
 #include "qt_runtime.h"
 #include "PropertyNameArray.h"
 #include "runtime_object.h"
+#include "object_object.h"
 
 #include <qmetaobject.h>
 #include <qdebug.h>
@@ -48,6 +50,10 @@ class QtRuntimeObjectImp : public RuntimeObjectImp {
         QtRuntimeObjectImp(Instance*);
         ~QtRuntimeObjectImp();
         virtual void invalidate();
+
+        // Additions
+        virtual bool implementsConstruct() const {return implementsCall();}
+        virtual JSObject* construct(ExecState* exec, const List& args);
     protected:
         void removeFromCache();
 };
@@ -76,12 +82,25 @@ void QtRuntimeObjectImp::removeFromCache()
         cachedObjects.remove(key);
 }
 
+JSObject* QtRuntimeObjectImp::construct(ExecState* exec, const List& args)
+{
+    // ECMA 15.2.2.1 (?)
+    JSValue *val = callAsFunction(exec, this, args);
+
+    if (!val || val->type() == NullType || val->type() == UndefinedType)
+        return new JSObject(exec->lexicalGlobalObject()->objectPrototype());
+    else
+        return val->toObject(exec);
+}
+
 // QtInstance
 QtInstance::QtInstance(QObject* o, PassRefPtr<RootObject> rootObject)
     : Instance(rootObject)
     , m_class(0)
     , m_object(o)
     , m_hashkey(o)
+    , m_defaultMethod(0)
+    , m_defaultMethodIndex(-2)
 {
 }
 
@@ -102,6 +121,9 @@ QtInstance::~QtInstance()
         delete f;
     }
     m_fields.clear();
+
+    if (m_defaultMethod)
+        gcUnprotect(m_defaultMethod);
 }
 
 QtInstance* QtInstance::getQtInstance(QObject* o, PassRefPtr<RootObject> rootObject)
@@ -147,12 +169,6 @@ void QtInstance::end()
     // Do nothing.
 }
 
-bool QtInstance::implementsCall() const
-{
-    // typeof object that implements call == function
-    return false;
-}
-
 void QtInstance::getPropertyNames(ExecState* , PropertyNameArray& array)
 {
     // This is the enumerable properties, so put:
@@ -191,13 +207,51 @@ JSValue* QtInstance::invokeMethod(ExecState*, const MethodList&, const List&)
     return jsUndefined();
 }
 
-JSValue* QtInstance::invokeDefaultMethod(ExecState* exec, const List& )
+bool QtInstance::implementsCall() const
 {
-    // ### QtScript tries to invoke a meta method qscript_call
-    if (!getObject()) {
-        return throwError(exec, GeneralError, "cannot call function of deleted QObject");
+    // See if we have qscript_call
+    if (m_defaultMethodIndex == -2) {
+        if (m_object) {
+            const QMetaObject* meta = m_object->metaObject();
+            int count = meta->methodCount();
+            const QByteArray defsig("qscript_call");
+            for (int index = count - 1; index >= 0; --index) {
+                const QMetaMethod m = meta->method(index);
+
+                QByteArray signature = m.signature();
+                signature.truncate(signature.indexOf('('));
+
+                if (defsig == signature) {
+                    m_defaultMethodIndex = index;
+                    break;
+                }
+            }
+        }
+
+        if (m_defaultMethodIndex == -2) // Not checked
+            m_defaultMethodIndex = -1; // No qscript_call
     }
-    return jsUndefined();
+
+    // typeof object that implements call == function
+    return (m_defaultMethodIndex >= 0);
+}
+
+JSValue* QtInstance::invokeDefaultMethod(ExecState* exec, const List& args)
+{
+    // QtScript tries to invoke a meta method qscript_call
+    if (!getObject())
+        return throwError(exec, GeneralError, "cannot call function of deleted QObject");
+
+    // implementsCall will update our default method cache, if possible
+    if (implementsCall()) {
+        if (!m_defaultMethod) {
+            m_defaultMethod = new QtRuntimeMetaMethod(exec, Identifier("[[Call]]"),this, m_defaultMethodIndex, QByteArray("qscript_call"), true);
+            gcProtect(m_defaultMethod);
+        }
+
+        return m_defaultMethod->callAsFunction(exec, 0, args); // Luckily QtRuntimeMetaMethod ignores the obj parameter
+    } else
+        return throwError(exec, TypeError, "not a function");
 }
 
 JSValue* QtInstance::defaultValue(JSType hint) const

@@ -33,6 +33,7 @@ namespace Bindings {
 
 class QtClass;
 class QtField;
+class QtRuntimeMetaMethod;
 
 class QtInstance : public Instance
 {
@@ -73,6 +74,8 @@ private:
     QObject* m_hashkey;
     mutable QHash<QByteArray,JSValue*> m_methods;
     mutable QHash<QString,QtField*> m_fields;
+    mutable QtRuntimeMetaMethod* m_defaultMethod;
+    mutable int m_defaultMethodIndex;
 };
 
 } // namespace Bindings

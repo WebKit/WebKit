@@ -904,6 +904,7 @@ static int indexOfMetaEnum(const QMetaObject *meta, const QByteArray &str)
 static int findMethodIndex(ExecState* exec,
                            const QMetaObject* meta,
                            const QByteArray& signature,
+                           bool allowPrivate,
                            const List& jsArgs,
                            QVarLengthArray<QVariant, 10> &vars,
                            void** vvars,
@@ -918,7 +919,7 @@ static int findMethodIndex(ExecState* exec,
         const QMetaMethod m = meta->method(i);
 
         // Don't choose private methods
-        if (m.access() == QMetaMethod::Private)
+        if (m.access() == QMetaMethod::Private && !allowPrivate)
             continue;
 
         // try and find all matching named methods
@@ -1148,7 +1149,7 @@ static int findSignalIndex(const QMetaObject* meta, int initialIndex, QByteArray
     return index;
 }
 
-QtRuntimeMetaMethod::QtRuntimeMetaMethod(ExecState* exec, const Identifier& ident, PassRefPtr<QtInstance> inst, int index, const QByteArray& signature)
+QtRuntimeMetaMethod::QtRuntimeMetaMethod(ExecState* exec, const Identifier& ident, PassRefPtr<QtInstance> inst, int index, const QByteArray& signature, bool allowPrivate)
     : QtRuntimeMethod (new QtRuntimeMetaMethodData(), exec, ident, inst)
 {
     QW_D(QtRuntimeMetaMethod);
@@ -1156,6 +1157,7 @@ QtRuntimeMetaMethod::QtRuntimeMetaMethod(ExecState* exec, const Identifier& iden
     d->m_index = index;
     d->m_connect = 0;
     d->m_disconnect = 0;
+    d->m_allowPrivate = allowPrivate;
 }
 
 void QtRuntimeMetaMethod::mark()
@@ -1186,7 +1188,7 @@ JSValue* QtRuntimeMetaMethod::callAsFunction(ExecState* exec, JSObject*, const L
 
         int methodIndex;
         JSObject* errorObj = 0;
-        if ((methodIndex = findMethodIndex(exec, obj->metaObject(), d->m_signature, args, vargs, (void**)qargs, &errorObj)) != -1) {
+        if ((methodIndex = findMethodIndex(exec, obj->metaObject(), d->m_signature, d->m_allowPrivate, args, vargs, (void **)qargs, &errorObj)) != -1) {
             if (obj->qt_metacall(QMetaObject::InvokeMetaMethod, methodIndex, qargs) >= 0)
                 return jsUndefined();
 
