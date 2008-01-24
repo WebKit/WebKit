@@ -34,6 +34,7 @@ use FindBin;
 use lib $FindBin::Bin;
 
 use File::Basename;
+use File::Spec;
 use Getopt::Long;
 use VCSUtils;
 
@@ -54,7 +55,16 @@ my $getOptionsResult = GetOptions(
     'w|warnings!'    => \$printWarnings,
 );
 
-my @changeLogFiles = grep { basename($_) eq "ChangeLog" } @ARGV;
+sub findChangeLog {
+    return $_ if basename($_) eq "ChangeLog";
+
+    my $file = File::Spec->catfile($_, "ChangeLog");
+    return $file if -d $_ and -e $file;
+
+    return undef;
+}
+
+my @changeLogFiles = grep { defined $_ } map { findChangeLog($_) } @ARGV;
 
 if (scalar(@changeLogFiles) != scalar(@ARGV)) {
     print STDERR "ERROR: Files listed on command-line that are not ChangeLogs.\n";
