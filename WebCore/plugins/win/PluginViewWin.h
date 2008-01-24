@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2006, 2007, 2008 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Collabora, Ltd. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -35,6 +35,7 @@
 #include "KURL.h"
 #include "PlatformString.h"
 #include "PluginStream.h"
+#include "PluginQuirkSet.h"
 #include "ResourceRequest.h"
 #include "Timer.h"
 #include "Widget.h"
@@ -64,17 +65,6 @@ namespace WebCore {
     class PluginStream;
     class ResourceError;
     class ResourceResponse;
-    
-    enum PluginQuirks {
-        PluginQuirkWantsMozillaUserAgent = 1 << 0,
-        PluginQuirkDeferFirstSetWindowCall = 1 << 1,
-        PluginQuirkThrottleInvalidate = 1 << 2, 
-        PluginQuirkRemoveWindowlessVideoParam = 1 << 3,
-        PluginQuirkThrottleWMUserPlusOneMessages = 1 << 4,
-        PluginQuirkDontUnloadPlugin = 1 << 5,
-        PluginQuirkDontCallWndProcForSameMessageRecursively = 1 << 6,
-        PluginQuirkHasModalMessageLoop = 1 << 7
-    };
 
     enum PluginStatus {
         PluginStatusCanNotFindPlugin,
@@ -202,7 +192,7 @@ namespace WebCore {
         HashSet<RefPtr<PluginStream> > m_streams;
         Vector<PluginRequestWin*> m_requests;
 
-        int m_quirks;
+        PluginQuirkSet m_quirks;
         bool m_isWindowed;
         bool m_isTransparent;
         bool m_isVisible;

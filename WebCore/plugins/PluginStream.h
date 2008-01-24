@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2006, 2007 Apple Inc.  All rights reserved.
- * Copyright (C) 2008 Collabora, Ltd.  All rights reserved.
+ * Copyright (C) 2006, 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2008 Collabora, Ltd. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,6 +33,7 @@
 #include "npfunctions.h"
 #include "NetscapePlugInStreamLoader.h"
 #include "PlatformString.h"
+#include "PluginQuirkSet.h"
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
 #include "StringHash.h"
@@ -56,7 +57,7 @@ namespace WebCore {
 
     class PluginStream : public RefCounted<PluginStream>, private NetscapePlugInStreamLoaderClient {
     public:
-        PluginStream(PluginStreamClient*, Frame*, const ResourceRequest&, bool sendNotification, void* notifyData, const NPPluginFuncs*, NPP instance);
+        PluginStream(PluginStreamClient*, Frame*, const ResourceRequest&, bool sendNotification, void* notifyData, const NPPluginFuncs*, NPP instance, const PluginQuirkSet&);
         ~PluginStream();
         
         void start();
@@ -107,6 +108,7 @@ namespace WebCore {
         CString m_path;
         NPReason m_reason;
         NPStream m_stream;
+        PluginQuirkSet m_quirks;
     };
 
 } // namespace WebCore

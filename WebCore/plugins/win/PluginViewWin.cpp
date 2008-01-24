@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2007, 2008 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Collabora, Ltd. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -282,12 +282,12 @@ LRESULT
 PluginViewWin::wndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
     if (message == m_lastMessage &&
-        (m_quirks & PluginQuirkDontCallWndProcForSameMessageRecursively) && 
+        m_quirks.contains(PluginQuirkDontCallWndProcForSameMessageRecursively) && 
         m_isCallingPluginWndProc)
         return 1;
 
     if (message == WM_USER + 1 &&
-        (m_quirks & PluginQuirkThrottleWMUserPlusOneMessages)) {
+        m_quirks.contains(PluginQuirkThrottleWMUserPlusOneMessages)) {
         if (!m_messageThrottler)
             m_messageThrottler.set(new PluginMessageThrottlerWin(this));
 
@@ -845,7 +845,7 @@ void PluginViewWin::performRequest(PluginRequestWin* request)
         // if this is not a targeted request, create a stream for it. otherwise,
         // just pass it off to the loader
         if (targetFrameName.isEmpty()) {
-            PluginStream* stream = new PluginStream(this, m_parentFrame, request->frameLoadRequest().resourceRequest(), request->sendNotification(), request->notifyData(), plugin()->pluginFuncs(), instance());
+            PluginStream* stream = new PluginStream(this, m_parentFrame, request->frameLoadRequest().resourceRequest(), request->sendNotification(), request->notifyData(), plugin()->pluginFuncs(), instance(), m_quirks);
             m_streams.add(stream);
             stream->start();
         } else {
@@ -877,7 +877,7 @@ void PluginViewWin::performRequest(PluginRequestWin* request)
         if (getString(parentFrame->scriptProxy(), result, resultString))
             cstr = resultString.utf8();
 
-        RefPtr<PluginStream> stream = new PluginStream(this, m_parentFrame, request->frameLoadRequest().resourceRequest(), request->sendNotification(), request->notifyData(), plugin()->pluginFuncs(), instance());
+        RefPtr<PluginStream> stream = new PluginStream(this, m_parentFrame, request->frameLoadRequest().resourceRequest(), request->sendNotification(), request->notifyData(), plugin()->pluginFuncs(), instance(), m_quirks);
         m_streams.add(stream);
         stream->sendJavaScriptStream(requestURL, cstr);
     }
@@ -1246,7 +1246,7 @@ NPError PluginViewWin::destroyStream(NPStream* stream, NPReason reason)
 
 const char* PluginViewWin::userAgent()
 {
-    if (m_quirks & PluginQuirkWantsMozillaUserAgent)
+    if (m_quirks.contains(PluginQuirkWantsMozillaUserAgent))
         return MozillaUserAgent;
 
     if (m_userAgent.isNull())
@@ -1344,7 +1344,7 @@ void PluginViewWin::invalidateRect(NPRect* rect)
         RECT invalidRect(r);
         InvalidateRect(m_window, &invalidRect, FALSE);
     } else {
-        if (m_quirks & PluginQuirkThrottleInvalidate) {
+        if (m_quirks.contains(PluginQuirkThrottleInvalidate)) {
             m_invalidRects.append(r);
             if (!m_invalidateTimer.isActive())
                 m_invalidateTimer.startOneShot(0.001);
@@ -1434,7 +1434,7 @@ PluginViewWin::~PluginViewWin()
 
     m_parentFrame->cleanupScriptObjectsForPlugin(this);
 
-    if (m_plugin && !(m_quirks & PluginQuirkDontUnloadPlugin))
+    if (m_plugin && !m_quirks.contains(PluginQuirkDontUnloadPlugin))
         m_plugin->unload();
 }
 
@@ -1449,48 +1449,49 @@ void PluginViewWin::determineQuirks(const String& mimeType)
 {
     // The flash plugin only requests windowless plugins if we return a mozilla user agent
     if (mimeType == "application/x-shockwave-flash") {
-        m_quirks |= PluginQuirkWantsMozillaUserAgent;
-        m_quirks |= PluginQuirkThrottleInvalidate;
-        m_quirks |= PluginQuirkThrottleWMUserPlusOneMessages;
+        m_quirks.add(PluginQuirkWantsMozillaUserAgent);
+        m_quirks.add(PluginQuirkThrottleInvalidate);
+        m_quirks.add(PluginQuirkThrottleWMUserPlusOneMessages);
+        m_quirks.add(PluginQuirkFlashURLNotifyBug);
     }
 
     // The WMP plugin sets its size on the first NPP_SetWindow call and never updates its size, so
     // call SetWindow when the plugin view has a correct size
     if (m_plugin->name().contains("Microsoft") && m_plugin->name().contains("Windows Media")) {
-        m_quirks |= PluginQuirkDeferFirstSetWindowCall;
+        m_quirks.add(PluginQuirkDeferFirstSetWindowCall);
 
         // Windowless mode does not work at all with the WMP plugin so just remove that parameter 
         // and don't pass it to the plug-in.
-        m_quirks |= PluginQuirkRemoveWindowlessVideoParam;
+        m_quirks.add(PluginQuirkRemoveWindowlessVideoParam);
 
         // WMP has a modal message loop that it enters whenever we call it or
         // ask it to paint. This modal loop can deliver messages to other
         // windows in WebKit at times when they are not expecting them (for
         // example, delivering a WM_PAINT message during a layout), and these
         // can cause crashes.
-        m_quirks |= PluginQuirkHasModalMessageLoop;
+        m_quirks.add(PluginQuirkHasModalMessageLoop);
     }
 
     // The DivX plugin sets its size on the first NPP_SetWindow call and never updates its size, so
     // call SetWindow when the plugin view has a correct size
     if (mimeType == "video/divx")
-        m_quirks |= PluginQuirkDeferFirstSetWindowCall;
+        m_quirks.add(PluginQuirkDeferFirstSetWindowCall);
 
     // FIXME: This is a workaround for a problem in our NPRuntime bindings; if a plug-in creates an
     // NPObject and passes it to a function it's not possible to see what root object that NPObject belongs to.
     // Thus, we don't know that the object should be invalidated when the plug-in instance goes away.
     // See <rdar://problem/5487742>.
     if (mimeType == "application/x-silverlight")
-        m_quirks |= PluginQuirkDontUnloadPlugin;
+        m_quirks.add(PluginQuirkDontUnloadPlugin);
 
     // Because a single process cannot create multiple VMs, and we cannot reliably unload a
     // Java VM, we cannot unload the Java plugin, or we'll lose reference to our only VM
     if (MIMETypeRegistry::isJavaAppletMIMEType(mimeType))
-        m_quirks |= PluginQuirkDontUnloadPlugin;
+        m_quirks.add(PluginQuirkDontUnloadPlugin);
 
     // Prevent the Real plugin from calling the Window Proc recursively, causing the stack to overflow.
     if (mimeType == "audio/x-pn-realaudio-plugin")
-        m_quirks |= PluginQuirkDontCallWndProcForSameMessageRecursively;
+        m_quirks.add(PluginQuirkDontCallWndProcForSameMessageRecursively);
 }
 
 void PluginViewWin::setParameters(const Vector<String>& paramNames, const Vector<String>& paramValues)
@@ -1504,7 +1505,7 @@ void PluginViewWin::setParameters(const Vector<String>& paramNames, const Vector
     m_paramValues = reinterpret_cast<char**>(fastMalloc(sizeof(char*) * size));
 
     for (unsigned i = 0; i < size; i++) {
-        if ((m_quirks & PluginQuirkRemoveWindowlessVideoParam) && equalIgnoringCase(paramNames[i], "windowlessvideo"))
+        if (m_quirks.contains(PluginQuirkRemoveWindowlessVideoParam) && equalIgnoringCase(paramNames[i], "windowlessvideo"))
             continue;
 
         m_paramNames[paramCount] = createUTF8String(paramNames[i]);
@@ -1531,7 +1532,6 @@ PluginViewWin::PluginViewWin(Frame* parentFrame, const IntSize& size, PluginPack
     , m_paramValues(0)
     , m_window(0)
     , m_pluginWndProc(0)
-    , m_quirks(0)
     , m_isWindowed(true)
     , m_isTransparent(false)
     , m_isVisible(false)
@@ -1605,7 +1605,7 @@ void PluginViewWin::init()
         m_npWindow.window = 0;
     }
 
-    if (!(m_quirks & PluginQuirkDeferFirstSetWindowCall))
+    if (!m_quirks.contains(PluginQuirkDeferFirstSetWindowCall))
         setNPWindowRect(frameGeometry());
 
     m_status = PluginStatusLoadedSuccessfully;
@@ -1616,7 +1616,7 @@ void PluginViewWin::didReceiveResponse(const ResourceResponse& response)
     ASSERT(m_loadManually);
     ASSERT(!m_manualStream);
 
-    m_manualStream = new PluginStream(this, m_parentFrame, m_parentFrame->loader()->activeDocumentLoader()->request(), false, 0, plugin()->pluginFuncs(), instance());
+    m_manualStream = new PluginStream(this, m_parentFrame, m_parentFrame->loader()->activeDocumentLoader()->request(), false, 0, plugin()->pluginFuncs(), instance(), m_quirks);
     m_manualStream->setLoadManually(true);
 
     m_manualStream->didReceiveResponse(0, response);
@@ -1648,7 +1648,7 @@ void PluginViewWin::didFail(const ResourceError& error)
 
 void PluginViewWin::setCallingPlugin(bool b) const
 {
-    if (!(m_quirks & PluginQuirkHasModalMessageLoop))
+    if (!m_quirks.contains(PluginQuirkHasModalMessageLoop))
         return;
 
     if (b)

@@ -7933,6 +7933,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\plugins\PluginQuirkSet.h"
+				>
+			</File>
+			<File
 				RelativePath="..\plugins\PluginStream.cpp"
 				>
 			</File>

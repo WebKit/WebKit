@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2006, 2007, 2008 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Collabora, Ltd. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -51,7 +51,7 @@ static StreamMap& streams()
     return staticStreams;
 }
 
-PluginStream::PluginStream(PluginStreamClient* client, Frame* frame, const ResourceRequest& resourceRequest, bool sendNotification, void* notifyData, const NPPluginFuncs* pluginFuncs, NPP instance)
+PluginStream::PluginStream(PluginStreamClient* client, Frame* frame, const ResourceRequest& resourceRequest, bool sendNotification, void* notifyData, const NPPluginFuncs* pluginFuncs, NPP instance, const PluginQuirkSet& quirks)
     : m_resourceRequest(resourceRequest)
     , m_client(client)
     , m_frame(frame)
@@ -64,6 +64,7 @@ PluginStream::PluginStream(PluginStreamClient* client, Frame* frame, const Resou
     , m_tempFileHandle(invalidPlatformFileHandle)
     , m_pluginFuncs(pluginFuncs)
     , m_instance(instance)
+    , m_quirks(quirks)
 {
     ASSERT(m_instance);
 
@@ -231,22 +232,42 @@ void PluginStream::destroyStream()
 
     closeFile(m_tempFileHandle);
 
-    if (m_stream.ndata != 0) {
+    bool newStreamCalled = m_stream.ndata;
+
+    if (newStreamCalled) {
         if (m_reason == NPRES_DONE && (m_transferMode == NP_ASFILE || m_transferMode == NP_ASFILEONLY)) {
             ASSERT(!m_path.isNull());
 
             m_pluginFuncs->asfile(m_instance, &m_stream, m_path.data());
         }
 
-        NPError npErr;
-        npErr = m_pluginFuncs->destroystream(m_instance, &m_stream, m_reason);
+        NPError npErr = m_pluginFuncs->destroystream(m_instance, &m_stream, m_reason);
         LOG_NPERROR(npErr);
 
         m_stream.ndata = 0;
     }
 
-    if (m_sendNotification)
+    if (m_sendNotification) {
+        // Flash 9 can dereference null if we call NPP_URLNotify without first calling NPP_NewStream
+        // for requests made with NPN_PostURLNotify; see <rdar://5588807>
+        if (!newStreamCalled && m_quirks.contains(PluginQuirkFlashURLNotifyBug) &&
+            equalIgnoringCase(m_resourceRequest.httpMethod(), "POST")) {
+            // Protect the stream if NPN_DestroyStream is called from NPP_NewStream
+            RefPtr<PluginStream> protect(this);
+
+            m_transferMode = NP_NORMAL;
+            m_stream.url = "";
+            m_stream.notifyData = m_notifyData;
+
+            m_pluginFuncs->newstream(m_instance, "", &m_stream, false, &m_transferMode);
+            m_pluginFuncs->destroystream(m_instance, &m_stream, m_reason);
+
+            // in successful requests, the URL is dynamically allocated and freed in our
+            // destructor, so reset it to 0
+            m_stream.url = 0;
+        }
         m_pluginFuncs->urlnotify(m_instance, m_resourceRequest.url().deprecatedString().utf8(), m_reason, m_notifyData);
+    }
 
     m_streamState = StreamStopped;
 

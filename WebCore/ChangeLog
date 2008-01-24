@@ -1,3 +1,48 @@
+2008-01-24  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Reviewed by Anders.
+
+        <rdar://problem/5588807> Crash in Flash when destroying plug-in (found
+        using yahoo beta mail)
+
+        Flash can dereference NULL in the call to NPP_URLNotify if a request
+        made with NPN_PostURLNotify fails before NPP_NewStream is called.
+
+        Work around this by creating a quirk, PluginQuirkFlashURLNotifyBug, and
+        checking for this quirk before calling NPP_URLNotify for any request
+        made with NPN_PostURLNotify. If the quirk is present, call NPP_NewStream
+        and NPP_DestroyStream before calling NPP_URLNotify.
+
+        * WebCore.vcproj/WebCore.vcproj:
+        * plugins/PluginQuirkSet.h: Added. Moved quirks out of PluginViewWin so
+        PluginViewWin and PluginStream could share it. Created a class,
+        PluginQuirkSet, to store plug-in quirks
+        (WebCore::):
+        (WebCore::PluginQuirkSet::PluginQuirkSet):
+        (WebCore::PluginQuirkSet::add):
+        (WebCore::PluginQuirkSet::contains):
+        * plugins/PluginStream.cpp:
+        (WebCore::PluginStream::PluginStream): Copy the PluginQuirkSet for this
+        plug-in
+        (WebCore::PluginStream::destroyStream): Check for the FlashURLNotifyBug
+        quirk
+        * plugins/PluginStream.h:
+        * plugins/win/PluginViewWin.cpp:
+        (WebCore::PluginViewWin::performRequest): Pass the quirks when creating
+        the PluginStream
+        (WebCore::PluginViewWin::didReceiveResponse): Same
+        (WebCore::PluginViewWin::wndProc): Use add / contains instead of
+        bit ops
+        (WebCore::PluginViewWin::userAgent): Same
+        (WebCore::PluginViewWin::invalidateRect): Same
+        (WebCore::PluginViewWin::~PluginViewWin): Same
+        (WebCore::PluginViewWin::determineQuirks): Same
+        (WebCore::PluginViewWin::setParameters): Same
+        (WebCore::PluginViewWin::PluginViewWin): Same
+        (WebCore::PluginViewWin::init): Same
+        (WebCore::PluginViewWin::setCallingPlugin): Same
+        * plugins/win/PluginViewWin.h:
+
 2008-01-24  David Hyatt  <hyatt@apple.com>
 
         http://bugs.webkit.org/show_bug.cgi?id=16982
