@@ -270,7 +270,7 @@ void QWebView::triggerAction(QWebPage::WebAction action, bool checked)
 
 /*!
     \property QWebView::modified
-    \brief Indicates whether the document was modified by the user or not.
+    \brief whether the document was modified by the user
 
     Parts of HTML documents can be editable for example through the \c{contenteditable} attribute on
     HTML elements.
@@ -290,8 +290,9 @@ Qt::TextInteractionFlags QWebView::textInteractionFlags() const
 
 /*!
     \property QWebView::textInteractionFlags
+    \brief how the view should handle user input
 
-    Specifies how the view should interact with user input.
+    Specifies how the user can interact with the text on the page.
 */
 
 void QWebView::setTextInteractionFlags(Qt::TextInteractionFlags flags)
@@ -590,4 +591,3 @@ bool QWebView::focusNextPrevChild(bool next)
     The current value is provided by \a progress in percent.
     It accumulates changes from all the child frames.
 */
-

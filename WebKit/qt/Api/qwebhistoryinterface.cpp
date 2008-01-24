@@ -80,7 +80,7 @@ QWebHistoryInterface *QWebHistoryInterface::defaultInterface()
 /*!
   \class QWebHistoryInterface
   \since 4.4
-  \brief The QWebHistoryInterface is an interface to implement link history.
+  \brief The QWebHistoryInterface class provides an interface to implement link history.
 
   The QWebHistoryInterface is an interface that can be used to
   implement link history. It contains two pure virtual methods that

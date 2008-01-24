@@ -1,3 +1,14 @@
+2008-01-24  David Boddie  <dboddie@trolltech.com>
+
+        Reviewed by Simon.
+
+        Documentation tidying.
+        
+
+        * Api/qwebframe.cpp:
+        * Api/qwebhistoryinterface.cpp:
+        * Api/qwebview.cpp:
+
 2008-01-24  Jarek Kobus  <jkobus@trolltech.com>
 
         Reviewed by Simon.
