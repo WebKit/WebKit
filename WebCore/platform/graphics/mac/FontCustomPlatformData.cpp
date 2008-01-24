@@ -40,6 +40,8 @@ FontPlatformData FontCustomPlatformData::fontPlatformData(int size, bool bold, b
 
 FontCustomPlatformData* createFontCustomPlatformData(SharedBuffer* buffer)
 {
+    ASSERT_ARG(buffer, buffer);
+
     // Use ATS to activate the font.
     ATSFontContainerRef containerRef = 0;
 

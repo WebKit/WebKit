@@ -1,5 +1,23 @@
 2008-01-24  Adam Roben  <aroben@apple.com>
 
+        Better fix for Bug 16996
+
+        Rubberstamped by Mitz.
+
+        * loader/CachedFont.cpp:
+        (WebCore::CachedFont::ensureCustomFontData): Don't call
+        createFontCustomPlatformData if m_data is null.
+        * platform/graphics/gtk/FontCustomPlatformData.cpp:
+        (WebCore::createFontCustomPlatformData): Added an assertion.
+        * platform/graphics/mac/FontCustomPlatformData.cpp:
+        (WebCore::createFontCustomPlatformData): Ditto.
+        * platform/graphics/qt/FontCustomPlatformData.cpp:
+        (WebCore::createFontCustomPlatformData): Ditto.
+        * platform/graphics/win/FontCustomPlatformData.cpp:
+        (WebCore::createFontCustomPlatformData): Ditto.
+
+2008-01-24  Adam Roben  <aroben@apple.com>
+
         Fix Bug 16996: Crash in createFontCustomPlatformData when loading
         0-byte font via @font-face
 

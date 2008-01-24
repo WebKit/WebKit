@@ -84,7 +84,7 @@ void CachedFont::beginLoadIfNeeded(DocLoader* dl)
 bool CachedFont::ensureCustomFontData()
 {
 #if PLATFORM(CG) || PLATFORM(QT) || PLATFORM(GTK)
-    if (!m_fontData && !m_errorOccurred && !m_loading) {
+    if (!m_fontData && !m_errorOccurred && !m_loading && m_data) {
         m_fontData = createFontCustomPlatformData(m_data.get());
         if (!m_fontData)
             m_errorOccurred = true;
