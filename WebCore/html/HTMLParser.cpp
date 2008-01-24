@@ -1380,6 +1380,12 @@ void HTMLParser::createHead()
     document->documentElement()->insertBefore(head, body, ec);
     if (ec)
         head = 0;
+        
+    // If the body does not exist yet, then the <head> should be pushed as the current block.
+    if (head && !body) {
+        pushBlock(head->localName(), head->tagPriority());
+        setCurrent(head);
+    }
 }
 
 PassRefPtr<Node> HTMLParser::handleIsindex(Token* t)

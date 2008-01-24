@@ -1,3 +1,14 @@
+2008-01-24  David Hyatt  <hyatt@apple.com>
+
+        http://bugs.webkit.org/show_bug.cgi?id=16982
+
+        Make sure to make <head> the current block if it is created before a <body> already exists.
+
+        Reviewed by Dan
+
+        * html/HTMLParser.cpp:
+        (WebCore::HTMLParser::createHead):
+
 2008-01-24  Alexey Proskuryakov  <ap@webkit.org>
 
         http://bugs.webkit.org/show_bug.cgi?id=16993
