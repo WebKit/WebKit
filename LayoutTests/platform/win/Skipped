@@ -358,6 +358,10 @@ fast/dom/frame-loading-via-document-write.html
 # <rdar://5686552> Intermittently fails
 svg/css/glyph-orientation-rounding-test.xhtml
 
+# <rdar://5692566> Fails if run after fast/dom/Window/window-property-shadowing.html
+# <http://bugs.webkit.org/show_bug.cgi?id=16902>
+fast/encoding/mailto-always-utf-8.html
+
 ################################################################################
 ####################### No bugs filed about the below yet#######################
 ################################################################################

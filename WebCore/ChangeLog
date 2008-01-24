@@ -1,3 +1,13 @@
+2008-01-24  Alexey Proskuryakov  <ap@webkit.org>
+
+        http://bugs.webkit.org/show_bug.cgi?id=16993
+        <rdar://problem/5704331> REGRESSION: Loading page leads to many unexpected redirections
+
+        Rolled out r29590, which was not a correct fix for <rdar://problem/5692566>.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::clear):
+
 2008-01-24  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Adam.
