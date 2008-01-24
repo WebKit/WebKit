@@ -28,10 +28,11 @@
 namespace WebCore {
 
 QWebPopup::QWebPopup(PopupMenuClient* client)
+    : m_client(client)
 {
-    m_client = client;
-    if (m_client)
-        setFont(m_client->clientStyle()->font().font());
+    Q_ASSERT(m_client);
+
+    setFont(m_client->clientStyle()->font().font());
     connect(this, SIGNAL(activated(int)),
             SLOT(activeChanged(int)));
 }
@@ -47,17 +48,15 @@ void QWebPopup::exec()
 void QWebPopup::hideEvent(QHideEvent* e)
 {
     QComboBox::hideEvent(e);
-    if (m_client)
-        m_client->hidePopup();
+    m_client->hidePopup();
 }
 
 void QWebPopup::activeChanged(int index)
 {
-    if (m_client) {
-        if (index >= 0)
-            m_client->valueChanged(index);
-        m_client->hidePopup();
-    }
+    if (index < 0)
+        return;
+
+    m_client->valueChanged(index);
 }
 
 }
