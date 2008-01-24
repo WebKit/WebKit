@@ -1,3 +1,11 @@
+2008-01-24  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Adam Roben.
+
+        <rdar://problem/5702734> REGRESSION(r28936/r15890): Shift+del does not work in win Safari
+
+        * WebView.cpp: Fixed keyDownEntries to list this shortcut (and related ones, for consistency).
+
 2008-01-23  Steve Falkenburg  <sfalken@apple.com>
 
         <rdar://problem/5698732> Copyright strings should include 2008

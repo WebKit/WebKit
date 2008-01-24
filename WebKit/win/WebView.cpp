@@ -1320,7 +1320,6 @@ static const KeyDownEntry keyDownEntries[] = {
     { VK_BACK,   0,                  "DeleteBackward"                              },
     { VK_BACK,   ShiftKey,           "DeleteBackward"                              },
     { VK_DELETE, 0,                  "DeleteForward"                               },
-    { VK_DELETE, ShiftKey,           "DeleteForward"                               },
     { VK_BACK,   CtrlKey,            "DeleteWordBackward"                          },
     { VK_DELETE, CtrlKey,            "DeleteWordForward"                           },
     
@@ -1336,10 +1335,15 @@ static const KeyDownEntry keyDownEntries[] = {
     { VK_RETURN, AltKey,             "InsertNewline"                               },
     { VK_RETURN, AltKey | ShiftKey,  "InsertNewline"                               },
 
+    // It's not quite clear whether clipboard shortcuts and Undo/Redo should be handled
+    // in the application or in WebKit. We chose WebKit.
     { 'C',       CtrlKey,            "Copy"                                        },
     { 'V',       CtrlKey,            "Paste"                                       },
     { 'X',       CtrlKey,            "Cut"                                         },
     { 'A',       CtrlKey,            "SelectAll"                                   },
+    { VK_INSERT, CtrlKey,            "Copy"                                        },
+    { VK_DELETE, ShiftKey,           "Cut"                                         },
+    { VK_INSERT, ShiftKey,           "Paste"                                       }
     { 'Z',       CtrlKey,            "Undo"                                        },
     { 'Z',       CtrlKey | ShiftKey, "Redo"                                        },
 };
