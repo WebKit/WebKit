@@ -1,3 +1,16 @@
+2008-01-24  Morten Johan Sørvig  <msorvig@trolltech.com>
+
+        Reviewed by Simon.
+
+        Qt/Mac: Make sure the scrollbars does not overlap the grow box.
+
+        When showing only one scrollbar we need to move it so it doesn't overlap the
+        grow box. This is similar to the code in QAbstractScrollArea.
+
+
+        * platform/qt/ScrollViewQt.cpp:
+        (WebCore::ScrollView::updateScrollbars):
+
 2008-01-15  Michael Goddard  <michael.goddard@trolltech.com>
 
         Reviewed by Darin.

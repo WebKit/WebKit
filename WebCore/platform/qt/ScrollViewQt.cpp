@@ -47,6 +47,10 @@
 #include <QWidget>
 #include <QPainter>
 
+#ifdef Q_WS_MAC
+#include <Carbon/Carbon.h>
+#endif
+
 #include "qwebframe.h"
 #include "qwebpage.h"
 
@@ -510,7 +514,30 @@ void ScrollView::updateScrollbars(const IntSize& desiredOffset)
     IntSize maxScrollPosition(contentsWidth() - visibleWidth(), contentsHeight() - visibleHeight());
     IntSize scroll = desiredOffset.shrunkTo(maxScrollPosition);
     scroll.clampNegativeToZero();
- 
+
+    QPoint scrollbarOffset;
+#ifdef Q_WS_MAC
+    // On Mac, offset the scrollbars so they don't cover the grow box. Check if the window 
+    // has a grow box, and then check if the bottom-right corner of the scroll view 
+    // intersercts it. The calculations are done in global coordinates.
+    QWidget* contentWidget = containingWindow();
+    if (contentWidget) {
+        QWidget* windowWidget = contentWidget->window();
+        if (windowWidget) {
+            HIViewRef growBox = 0;
+            HIViewFindByID(HIViewGetRoot(HIViewGetWindow(HIViewRef(contentWidget->winId()))), kHIViewWindowGrowBoxID, &growBox);
+            const QPoint contentBr = contentWidget->mapToGlobal(QPoint(0,0)) + contentWidget->size();
+            const QPoint windowBr = windowWidget->mapToGlobal(QPoint(0,0)) + windowWidget->size();
+            const QPoint contentOffset = (windowBr - contentBr);
+            const int growBoxSize = 15;
+            const bool enableOffset = (growBox != 0 && contentOffset.x() >= 0 && contentOffset. y() >= 0);
+            scrollbarOffset = enableOffset ? QPoint(growBoxSize - qMin(contentOffset.x(), growBoxSize),
+                                                    growBoxSize - qMin(contentOffset.y(), growBoxSize))
+                                           : QPoint(0,0);
+        }
+    }
+#endif
+
     if (m_data->m_hBar) {
         int clientWidth = visibleWidth();
         m_data->m_hBar->setEnabled(contentsWidth() > clientWidth);
@@ -519,7 +546,7 @@ void ScrollView::updateScrollbars(const IntSize& desiredOffset)
         IntRect oldRect(m_data->m_hBar->frameGeometry());
         IntRect hBarRect = IntRect(0,
                                    height() - m_data->m_hBar->height(),
-                                   width() - (m_data->m_vBar ? m_data->m_vBar->width() : 0),
+                                   width() - (m_data->m_vBar ? m_data->m_vBar->width() : scrollbarOffset.x()),
                                    m_data->m_hBar->height());
         m_data->m_hBar->setRect(hBarRect);
         if (!m_data->m_scrollbarsSuppressed && oldRect != m_data->m_hBar->frameGeometry())
@@ -543,7 +570,7 @@ void ScrollView::updateScrollbars(const IntSize& desiredOffset)
         IntRect vBarRect = IntRect(width() - m_data->m_vBar->width(), 
                                    0,
                                    m_data->m_vBar->width(),
-                                   height() - (m_data->m_hBar ? m_data->m_hBar->height() : 0));
+                                   height() - (m_data->m_hBar ? m_data->m_hBar->height() : scrollbarOffset.y()));
         m_data->m_vBar->setRect(vBarRect);
         if (!m_data->m_scrollbarsSuppressed && oldRect != m_data->m_vBar->frameGeometry())
             m_data->m_vBar->invalidate();
