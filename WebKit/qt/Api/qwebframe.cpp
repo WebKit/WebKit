@@ -230,7 +230,7 @@ QString QWebFrame::title() const
 */
 QUrl QWebFrame::url() const
 {
-    return QUrl((QString)d->frame->loader()->url().string());
+    return d->frame->loader()->url();
 }
 
 /*!
