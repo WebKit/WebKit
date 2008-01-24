@@ -1,3 +1,15 @@
+2008-01-24  Adam Roben  <aroben@apple.com>
+
+        Test for Bug 16996: Crash in createFontCustomPlatformData when loading
+        0-byte font via @font-face
+
+        <http://bugs.webkit.org/show_bug.cgi?id=16996>
+
+        Reviewed by Hyatt.
+
+        * fast/loader/font-face-empty-expected.txt: Added.
+        * fast/loader/font-face-empty.html: Added.
+
 2008-01-24  Alexey Proskuryakov  <ap@webkit.org>
 
         http://bugs.webkit.org/show_bug.cgi?id=16993
