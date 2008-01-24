@@ -163,7 +163,7 @@ void MediaPlayerPrivate::createQTMovie(const String& url)
     
     m_qtMovie = 0;
     
-    // Disable streaming support for now. 
+    // Disable streaming support for now, <rdar://problem/5693967>
     if (url.startsWith("rtsp:"))
         return;
     
@@ -551,11 +551,12 @@ void MediaPlayerPrivate::updateStates()
     } else if (loadState >= QTMovieLoadStatePlaythroughOK) {
         if (m_networkState < MediaPlayer::LoadedFirstFrame && !seeking())
             m_networkState = MediaPlayer::LoadedFirstFrame;
-        m_readyState = ([m_qtMovie.get() rate] == 0 && m_startedPlaying) ? MediaPlayer::DataUnavailable : MediaPlayer::CanPlayThrough;
+        m_readyState = MediaPlayer::CanPlayThrough;
     } else if (loadState >= QTMovieLoadStatePlayable) {
         if (m_networkState < MediaPlayer::LoadedFirstFrame && !seeking())
             m_networkState = MediaPlayer::LoadedFirstFrame;
-        m_readyState = ([m_qtMovie.get() rate] == 0 && m_startedPlaying) ? MediaPlayer::DataUnavailable : MediaPlayer::CanPlay;
+        // FIXME: This might not work correctly in streaming case, <rdar://problem/5693967>
+        m_readyState = currentTime() < maxTimeLoaded() ? MediaPlayer::CanPlay : MediaPlayer::DataUnavailable;
     } else if (loadState >= QTMovieLoadStateLoaded) {
         if (m_networkState < MediaPlayer::LoadedMetaData)
             m_networkState = MediaPlayer::LoadedMetaData;

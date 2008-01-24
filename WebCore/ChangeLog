@@ -1,6 +1,22 @@
 2008-01-24  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Adam.
+        
+        If the media is playing and the load stalls the playback wont restart by seeking backwards.
+        
+        We should be in CAN_PLAY state if the current time is less than the maximum loaded time. Rate 
+        tricks were for streaming case and are not necessary now since that is now disabled.
+        
+        Windows patch coming separately.
+
+        Test: http/tests/media/video-play-stall-seek.html
+
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.mm:
+        (WebCore::MediaPlayerPrivate::updateStates):
+
+2008-01-24  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Adam.
 
         Fix <rdar://problem/5684815>
         After navigating back to the page that contains a <audio> that has been muted, the audio is still heard

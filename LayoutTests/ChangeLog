@@ -1,3 +1,13 @@
+2008-01-23  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Adam.
+        
+        Test that playback can be resumed by seeking backwards after a stall.
+
+        * http/tests/media/video-play-stall-seek-expected.txt: Added.
+        * http/tests/media/video-play-stall-seek.html: Added.
+        * platform/win/Skipped:
+
 2008-01-15  Michael Goddard  <michael.goddard@trolltech.com>
 
         Reviewed by Darin.

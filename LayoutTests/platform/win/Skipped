@@ -48,6 +48,7 @@ media/video-display-toggle.html
 # Fails, could be problem with the test setup <rdar://problem/5674282>
 http/tests/media/video-play-stall.html
 http/tests/media/video-seekable-stall.html
+http/tests/media/video-play-stall-seek.html
 
 # Fails <rdar://problem/5674289>
 media/video-seek-past-end-paused.html
