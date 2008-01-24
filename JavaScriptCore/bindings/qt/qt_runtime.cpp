@@ -347,13 +347,13 @@ QVariant convertValueToQVariant(ExecState* exec, JSValue* value, QMetaType::Type
                 GregorianDateTime gdt;
                 date->getUTCTime(gdt);
                 if (hint == QMetaType::QDateTime) {
-                    ret = QDateTime(QDate(gdt.year, gdt.month, gdt.monthDay), QTime(gdt.hour, gdt.minute, gdt.second), Qt::UTC);
+                    ret = QDateTime(QDate(gdt.year + 1900, gdt.month + 1, gdt.monthDay), QTime(gdt.hour, gdt.minute, gdt.second), Qt::UTC);
                     dist = 0;
                 } else if (hint == QMetaType::QDate) {
-                    ret = QDate(gdt.year, gdt.month, gdt.monthDay);
+                    ret = QDate(gdt.year + 1900, gdt.month + 1, gdt.monthDay);
                     dist = 1;
                 } else {
-                    ret = QTime(gdt.hour, gdt.minute, gdt.second);
+                    ret = QTime(gdt.hour + 1900, gdt.minute, gdt.second);
                     dist = 2;
                 }
             } else if (type == Number) {
@@ -361,14 +361,14 @@ QVariant convertValueToQVariant(ExecState* exec, JSValue* value, QMetaType::Type
                 GregorianDateTime gdt;
                 msToGregorianDateTime(b, true, gdt);
                 if (hint == QMetaType::QDateTime) {
-                    ret = QDateTime(QDate(gdt.year, gdt.month, gdt.monthDay), QTime(gdt.hour, gdt.minute, gdt.second), Qt::UTC);
-                    dist = 2;
+                    ret = QDateTime(QDate(gdt.year + 1900, gdt.month + 1, gdt.monthDay), QTime(gdt.hour, gdt.minute, gdt.second), Qt::UTC);
+                    dist = 6;
                 } else if (hint == QMetaType::QDate) {
-                    ret = QDate(gdt.year, gdt.month, gdt.monthDay);
-                    dist = 3;
+                    ret = QDate(gdt.year + 1900, gdt.month + 1, gdt.monthDay);
+                    dist = 8;
                 } else {
                     ret = QTime(gdt.hour, gdt.minute, gdt.second);
-                    dist = 4;
+                    dist = 10;
                 }
             } else if (type == String) {
                 UString ustring = value->toString(exec);
@@ -657,14 +657,14 @@ JSValue* convertQVariantToValue(ExecState* exec, PassRefPtr<RootObject> root, co
         else if (type == QMetaType::QTime)
             time = variant.value<QTime>();
         else {
-            QDateTime dt = variant.value<QDateTime>();
+            QDateTime dt = variant.value<QDateTime>().toLocalTime();
             date = dt.date();
             time = dt.time();
         }
 
-        // ### There's probably a UTC bug here.
+        // Dates specified this way are in local time (we convert DateTimes above)
         args.append(jsNumber(date.year()));
-        args.append(jsNumber(date.month()));
+        args.append(jsNumber(date.month() - 1));
         args.append(jsNumber(date.day()));
         args.append(jsNumber(time.hour()));
         args.append(jsNumber(time.minute()));

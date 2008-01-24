@@ -2,6 +2,22 @@
 
         Reviewed by Simon.
 
+        Fix QDateTime to JS Date conversion.
+        Several conversion errors (some UTC related, some month
+        offset related) and the conversion distance for Date
+        to DateTime conversion weights were fixed (it should never
+        be better to convert a JS Number into a Date rather than
+        an int).
+        
+
+        * bindings/qt/qt_runtime.cpp:
+        (KJS::Bindings::convertValueToQVariant):
+        (KJS::Bindings::convertQVariantToValue):
+
+2008-01-24  Michael Goddard  <michael.goddard@trolltech.com>
+
+        Reviewed by Simon.
+
         Add support for calling QObjects.
         Add support for invokeDefaultMethod (via a call to
         a specific slot), and also allow using it as a
