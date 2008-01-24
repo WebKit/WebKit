@@ -2,6 +2,20 @@
 
         Reviewed by Simon.
 
+        * Attempt to fix showing of popup again after a popup has been shown but
+        the user did not select any item (e.g. clicked outside of the popup)
+        * Keep track of the popup status using the virtuals showPopup and hidePopup
+        and do not go into recursion when hiding a popup.
+
+        * platform/qt/QWebPopup.cpp:
+        (WebCore::QWebPopup::showPopup):
+        (WebCore::QWebPopup::hidePopup):
+        * platform/qt/QWebPopup.h:
+
+2008-01-24  Holger Hans Peter Freyther  <holger.freyther@trolltech.com>
+
+        Reviewed by Simon.
+
         * Assert the presence of the PopupMenuClient
 
         * platform/qt/QWebPopup.cpp:
