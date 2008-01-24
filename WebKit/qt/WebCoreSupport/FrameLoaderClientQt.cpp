@@ -53,6 +53,7 @@
 
 #include <qfileinfo.h>
 
+#include <QCoreApplication>
 #include <QDebug>
 #if QT_VERSION >= 0x040400
 #include <QNetworkRequest>
@@ -651,7 +652,8 @@ void FrameLoaderClientQt::committedLoad(WebCore::DocumentLoader* loader, const c
 
 WebCore::ResourceError FrameLoaderClientQt::cancelledError(const WebCore::ResourceRequest& request)
 {
-    return ResourceError("Error", -999, request.url().prettyURL(), QObject::tr("QWebFrame", "Request cancelled"));
+    return ResourceError("Error", -999, request.url().prettyURL(),
+            QCoreApplication::translate("QWebFrame", "Request cancelled", 0, QCoreApplication::UnicodeUTF8));
 }
 
 // copied from WebKit/Misc/WebKitErrors[Private].h
@@ -667,28 +669,33 @@ enum {
     
 WebCore::ResourceError FrameLoaderClientQt::blockedError(const WebCore::ResourceRequest& request)
 {
-    return ResourceError("Error", WebKitErrorCannotUseRestrictedPort, request.url().prettyURL(), QObject::tr("QWebFrame", "Request blocked"));
+    return ResourceError("Error", WebKitErrorCannotUseRestrictedPort, request.url().prettyURL(),
+            QCoreApplication::translate("QWebFrame", "Request blocked", 0, QCoreApplication::UnicodeUTF8));
 }
 
 
 WebCore::ResourceError FrameLoaderClientQt::cannotShowURLError(const WebCore::ResourceRequest& request)
 {
-    return ResourceError("Error", WebKitErrorCannotShowURL, request.url().string(), QObject::tr("QWebFrame", "Cannot show URL"));
+    return ResourceError("Error", WebKitErrorCannotShowURL, request.url().string(),
+            QCoreApplication::translate("QWebFrame", "Cannot show URL", 0, QCoreApplication::UnicodeUTF8));
 }
 
 WebCore::ResourceError FrameLoaderClientQt::interruptForPolicyChangeError(const WebCore::ResourceRequest& request)
 {
-    return ResourceError("Error", WebKitErrorFrameLoadInterruptedByPolicyChange, request.url().string(), QObject::tr("QWebFrame", "Frame load interruped by policy change"));
+    return ResourceError("Error", WebKitErrorFrameLoadInterruptedByPolicyChange, request.url().string(),
+            QCoreApplication::translate("QWebFrame", "Frame load interruped by policy change", 0, QCoreApplication::UnicodeUTF8));
 }
 
 WebCore::ResourceError FrameLoaderClientQt::cannotShowMIMETypeError(const WebCore::ResourceResponse& response)
 {
-    return ResourceError("Error", WebKitErrorCannotShowMIMEType, response.url().string(), QObject::tr("QWebFrame", "Cannot show mimetype"));
+    return ResourceError("Error", WebKitErrorCannotShowMIMEType, response.url().string(),
+            QCoreApplication::translate("QWebFrame", "Cannot show mimetype", 0, QCoreApplication::UnicodeUTF8));
 }
 
 WebCore::ResourceError FrameLoaderClientQt::fileDoesNotExistError(const WebCore::ResourceResponse& response)
 {
-    return ResourceError("Error", -998 /* ### */, response.url().string(), QObject::tr("QWebFrame", "File does not exist"));
+    return ResourceError("Error", -998 /* ### */, response.url().string(),
+            QCoreApplication::translate("QWebFrame", "File does not exist", 0, QCoreApplication::UnicodeUTF8));
 }
 
 bool FrameLoaderClientQt::shouldFallBack(const WebCore::ResourceError&)

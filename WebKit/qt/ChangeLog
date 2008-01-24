@@ -1,3 +1,18 @@
+2008-01-24  Jarek Kobus  <jkobus@trolltech.com>
+
+        Reviewed by Simon.
+
+        Text for translations were used wrongly as comments
+        
+
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::):
+        (WebCore::FrameLoaderClientQt::cannotShowURLError):
+        (WebCore::FrameLoaderClientQt::interruptForPolicyChangeError):
+        (WebCore::FrameLoaderClientQt::cannotShowMIMETypeError):
+        (WebCore::FrameLoaderClientQt::fileDoesNotExistError):
+        (WebCore::FrameLoaderClientQt::shouldFallBack):
+
 2008-01-24  Holger Hans Peter Freyther  <holger.freyther@trolltech.com>
 
         Reviewed by Simon.
