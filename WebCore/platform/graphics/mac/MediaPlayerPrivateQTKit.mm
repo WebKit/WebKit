@@ -127,7 +127,6 @@ using namespace std;
 -(void)rateChanged:(NSNotification *)notification;
 -(void)sizeChanged:(NSNotification *)notification;
 -(void)timeChanged:(NSNotification *)notification;
--(void)volumeChanged:(NSNotification *)notification;
 -(void)didEnd:(NSNotification *)notification;
 @end
 
@@ -184,7 +183,6 @@ void MediaPlayerPrivate::createQTMovie(const String& url)
         return;
     
     [m_qtMovie.get() setVolume:m_player->volume()];
-    [m_qtMovie.get() setMuted:m_player->muted()];
     
     [[NSNotificationCenter defaultCenter] addObserver:m_objcObserver.get()
                                              selector:@selector(loadStateChanged:) 
@@ -201,10 +199,6 @@ void MediaPlayerPrivate::createQTMovie(const String& url)
     [[NSNotificationCenter defaultCenter] addObserver:m_objcObserver.get()
                                              selector:@selector(timeChanged:) 
                                                  name:QTMovieTimeDidChangeNotification 
-                                               object:m_qtMovie.get()];
-    [[NSNotificationCenter defaultCenter] addObserver:m_objcObserver.get()
-                                             selector:@selector(volumeChanged:) 
-                                                 name:QTMovieVolumeDidChangeNotification 
                                                object:m_qtMovie.get()];
     [[NSNotificationCenter defaultCenter] addObserver:m_objcObserver.get()
                                              selector:@selector(didEnd:) 
@@ -467,13 +461,6 @@ void MediaPlayerPrivate::setVolume(float volume)
     [m_qtMovie.get() setVolume:volume];  
 }
 
-void MediaPlayerPrivate::setMuted(bool b)
-{
-    if (!m_qtMovie)
-        return;
-    [m_qtMovie.get() setMuted:b];
-}
-
 void MediaPlayerPrivate::setRate(float rate)
 {
     if (!m_qtMovie)
@@ -609,11 +596,6 @@ void MediaPlayerPrivate::timeChanged()
 {
     updateStates();
     m_player->timeChanged();
-}
-
-void MediaPlayerPrivate::volumeChanged()
-{
-    m_player->volumeChanged();
 }
 
 void MediaPlayerPrivate::didEnd()
@@ -840,14 +822,6 @@ void MediaPlayerPrivate::disableUnsupportedTracks(unsigned& enabledTrackCount)
         [self performSelector:_cmd withObject:nil afterDelay:0];
     else
         m_callback->timeChanged();
-}
-
-- (void)volumeChanged:(NSNotification *)notification
-{
-    if (m_delayCallbacks)
-        [self performSelector:_cmd withObject:nil afterDelay:0];
-    else
-        m_callback->volumeChanged();
 }
 
 - (void)didEnd:(NSNotification *)notification

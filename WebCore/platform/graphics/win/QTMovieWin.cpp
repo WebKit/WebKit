@@ -362,15 +362,6 @@ void QTMovieWin::setVolume(float volume)
     SetMovieVolume(m_private->m_movie, static_cast<short>(volume * 256));
 }
 
-void QTMovieWin::setMuted(bool muted)
-{
-    // FIXME: Implement mute using setVolume in HTMLMediaElement, remove it everywhere else
-    if (muted)
-        SetMovieVolume(m_private->m_movie, 0);
-    else
-        SetMovieVolume(m_private->m_movie, 128);
-}
-
 unsigned QTMovieWin::dataSize() const
 {
     // FIXME: How to get this?

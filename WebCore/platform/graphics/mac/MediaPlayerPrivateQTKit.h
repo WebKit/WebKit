@@ -70,7 +70,6 @@ public:
     
     void setRate(float);
     void setVolume(float);
-    void setMuted(bool);
     
     int dataRate() const;
     
@@ -90,7 +89,6 @@ public:
     void rateChanged();
     void sizeChanged();
     void timeChanged();
-    void volumeChanged();
     void didEnd();
     
     void repaint();

@@ -1,3 +1,37 @@
+2008-01-24  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Adam.
+
+        Fix <rdar://problem/5684815>
+        After navigating back to the page that contains a <audio> that has been muted, the audio is still heard
+        
+        - get rid of the separate muted state in MediaPlayer, maintain the state in the cross platform code only
+        - remove volumeChanged() callbacks from HTMLMediaElement and OS X MediaPlayer, they were not used for anything
+        - rename updateMediaPlayer -> updatePlayState which tells more about what it actually does
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::load):
+        (WebCore::HTMLMediaElement::setReadyState):
+        (WebCore::HTMLMediaElement::play):
+        (WebCore::HTMLMediaElement::pause):
+        (WebCore::HTMLMediaElement::setVolume):
+        (WebCore::HTMLMediaElement::setMuted):
+        (WebCore::HTMLMediaElement::checkIfSeekNeeded):
+        (WebCore::HTMLMediaElement::mediaPlayerTimeChanged):
+        (WebCore::HTMLMediaElement::updateVolume):
+        (WebCore::HTMLMediaElement::updatePlayState):
+        (WebCore::HTMLMediaElement::setPausedInternal):
+        * html/HTMLMediaElement.h:
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::MediaPlayer::MediaPlayer):
+        * platform/graphics/MediaPlayer.h:
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.h:
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.mm:
+        (WebCore::MediaPlayerPrivate::createQTMovie):
+        * platform/graphics/win/MediaPlayerPrivateQuickTimeWin.h:
+        * platform/graphics/win/QTMovieWin.cpp:
+        * platform/graphics/win/QTMovieWin.h:
+
 2008-01-24  Holger Hans Peter Freyther  <holger.freyther@trolltech.com>
 
         Reviewed by Simon.

@@ -79,7 +79,6 @@ void MediaPlayerPrivate::load(const String& url)
 
     m_qtMovie.set(new QTMovieWin(this));
     m_qtMovie->load(url.characters(), url.length());
-    m_qtMovie->setMuted(m_player->m_muted);
     m_qtMovie->setVolume(m_player->m_volume);
     m_qtMovie->setVisible(m_player->m_visible);
 }
@@ -229,13 +228,6 @@ void MediaPlayerPrivate::setVolume(float volume)
     if (!m_qtMovie)
         return;
     m_qtMovie->setVolume(volume);
-}
-
-void MediaPlayerPrivate::setMuted(bool b)
-{
-    if (!m_qtMovie)
-        return;
-    m_qtMovie->setMuted(b);
 }
 
 void MediaPlayerPrivate::setRate(float rate)

@@ -75,7 +75,6 @@ public:
     void setCurrentTime(float) const;
 
     void setVolume(float);
-    void setMuted(bool);
 
     unsigned dataSize() const;
 
