@@ -1,3 +1,15 @@
+2008-01-23  David Kilzer  <ddkilzer@apple.com>
+
+        <rdar://problem/5702947> WebCore: CGContextDrawPDFDocument will be deprecated
+
+        Reviewed by Darin.
+
+        No test cases added since there is no change in behavior.
+
+        * platform/graphics/cg/PDFDocumentImage.cpp:
+        (WebCore::PDFDocumentImage::draw): Replace CGContextDrawPDFDocument() with
+        calls to CG methods that perform the equivalent work.
+
 2008-01-23  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Hyatt, Adele.
