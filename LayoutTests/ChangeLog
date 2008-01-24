@@ -1,3 +1,12 @@
+2008-01-15  Michael Goddard  <michael.goddard@trolltech.com>
+
+        Reviewed by Darin.
+
+        Add a test for a crash encountered with -webkit-border-image.
+
+        * fast/css/border-image-crash-expected.txt: Added.
+        * fast/css/border-image-crash.html: Added.
+
 2008-01-23  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin.

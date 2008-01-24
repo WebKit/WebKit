@@ -1,3 +1,16 @@
+2008-01-15  Michael Goddard  <michael.goddard@trolltech.com>
+
+        Reviewed by Darin.
+
+        While parsing -webkit-border-image, store
+        the border widths as naked pointers rather
+        than as OwnPtrs, since they point to the
+        middle of an array.
+
+        Test: fast/css/border-image-crash.html
+
+        * css/CSSParser.cpp:
+
 2008-01-24  Holger Hans Peter Freyther  <holger.freyther@trolltech.com>
 
         Reviewed by Simon.

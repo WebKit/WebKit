@@ -3211,14 +3211,14 @@ struct BorderImageParseContext
     void commitSlash() { m_allowBreak = m_allowSlash = m_allowNumber = false; m_allowWidth = true; }
     void commitWidth(Value* val) {
         if (!m_borderTop)
-            m_borderTop.set(val);
+            m_borderTop = val;
         else if (!m_borderRight)
-            m_borderRight.set(val);
+            m_borderRight = val;
         else if (!m_borderBottom)
-            m_borderBottom.set(val);
+            m_borderBottom = val;
         else {
             ASSERT(!m_borderLeft);
-            m_borderLeft.set(val);
+            m_borderLeft = val;
         }
 
         m_allowBreak = m_allowRule = true;
@@ -3291,10 +3291,10 @@ struct BorderImageParseContext
     RefPtr<CSSPrimitiveValue> m_bottom;
     RefPtr<CSSPrimitiveValue> m_left;
     
-    OwnPtr<Value> m_borderTop;
-    OwnPtr<Value> m_borderRight;
-    OwnPtr<Value> m_borderBottom;
-    OwnPtr<Value> m_borderLeft;
+    Value* m_borderTop;
+    Value* m_borderRight;
+    Value* m_borderBottom;
+    Value* m_borderLeft;
     
     int m_horizontalRule;
     int m_verticalRule;
