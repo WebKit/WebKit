@@ -45,14 +45,14 @@ static InstanceJSObjectMap cachedObjects;
 // Derived RuntimeObject
 class QtRuntimeObjectImp : public RuntimeObjectImp {
     public:
-        QtRuntimeObjectImp(Instance *instance);
+        QtRuntimeObjectImp(Instance*);
         ~QtRuntimeObjectImp();
         virtual void invalidate();
     protected:
         void removeFromCache();
 };
 
-QtRuntimeObjectImp::QtRuntimeObjectImp(Instance *instance)
+QtRuntimeObjectImp::QtRuntimeObjectImp(Instance* instance)
     : RuntimeObjectImp(instance)
 {
 }
@@ -71,7 +71,7 @@ void QtRuntimeObjectImp::invalidate()
 void QtRuntimeObjectImp::removeFromCache()
 {
     JSLock lock;
-    QtInstance *key = cachedObjects.key(this);
+    QtInstance* key = cachedObjects.key(this);
     if (key)
         cachedObjects.remove(key);
 }

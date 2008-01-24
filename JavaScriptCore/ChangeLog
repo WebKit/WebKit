@@ -2,6 +2,17 @@
 
         Reviewed by Simon.
 
+        Code style cleanups.
+        Remove spaces and unneeded declared parameter names.
+        
+
+        * bindings/qt/qt_instance.cpp:
+        (KJS::Bindings::QtRuntimeObjectImp::removeFromCache):
+
+2008-01-24  Michael Goddard  <michael.goddard@trolltech.com>
+
+        Reviewed by Simon.
+
         Clear stale RuntimeObjectImps.
         Since other objects can have refs to the QtInstance,
         we can't rely on the QtInstance being deleted when the
