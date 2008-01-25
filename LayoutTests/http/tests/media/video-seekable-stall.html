@@ -11,6 +11,6 @@ waitForEvent('canplay', function () {
     testException("video.currentTime = video.duration - 1", "DOMException.INDEX_SIZE_ERR");
     endTest();
 } );
-video.src = "http://127.0.0.1:8000/media/video-load-and-stall.cgi?name=../../../media/content/test.mp4&stallAt=80000";
+video.src = "http://127.0.0.1:8000/media/video-load-and-stall.cgi?name=../../../media/content/test.mp4&stallAt=100000";
 video.load();
 </script>

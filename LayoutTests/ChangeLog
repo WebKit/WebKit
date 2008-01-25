@@ -1,3 +1,21 @@
+2008-01-25  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Darin.
+        
+        Fix <rdar://problem/5674282>
+        Some media tests fail on Windows
+        
+        - fix the script to exit cleanly
+        - slightly increase the amount of data to hand out before stalling, apparently
+          QT on Windows needs more to start playback
+
+        * http/tests/media/remove-while-loading.html:
+        * http/tests/media/video-load-and-stall.cgi:
+        * http/tests/media/video-play-stall-seek.html:
+        * http/tests/media/video-play-stall.html:
+        * http/tests/media/video-seekable-stall.html:
+        * platform/win/Skipped:
+
 2008-01-25  Adele Peterson  <adele@apple.com>
 
         Reviewed by Sam.
@@ -95,7 +113,7 @@
         * platform/mac/media/video-width-height-expected.checksum:
         * platform/mac/media/video-width-height-expected.png:
 
-2008-01-25  Antti Koivisto  <koivisto@iki.fi>
+2008-01-25  Antti Koivisto  <antti@apple.com>
 
         <rdar://problem/5674277>
         Test media/video-display-toggle.html crashes on Windows

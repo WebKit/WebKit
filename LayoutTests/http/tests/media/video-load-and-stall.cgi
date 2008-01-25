@@ -18,8 +18,7 @@ my ($buf, $data, $n);
 while (($n = read FILE, $data, 1024) != 0) {
     $total += $n;
     if ($total > $stallAt) {
-        close(FILE);
-        return;
+        last;
     }
     print $data;
 }
