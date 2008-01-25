@@ -351,6 +351,9 @@ fast/encoding/mailto-always-utf-8.html
 # <rdar://problem/5706770> http/tests/xmlhttprequest/readystatechange.html is failing on buildbot
 http/tests/xmlhttprequest/readystatechange.html
 
+# <rdar://problem/5706788> http/tests/security/cross-frame-access-port-explicit-domain.html fails on Windows
+http/tests/security/cross-frame-access-port-explicit-domain.html
+
 ################################################################################
 ####################### No bugs filed about the below yet#######################
 ################################################################################

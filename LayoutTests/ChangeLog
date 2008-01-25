@@ -1,5 +1,11 @@
 2008-01-25  Alexey Proskuryakov  <ap@webkit.org>
 
+        <rdar://problem/5706788> http/tests/security/cross-frame-access-port-explicit-domain.html fails on Windows
+
+        * platform/win/Skipped:
+
+2008-01-25  Alexey Proskuryakov  <ap@webkit.org>
+
         http/tests/xmlhttprequest/readystatechange.html fails on buildbot.
 
         * platform/win/Skipped:
