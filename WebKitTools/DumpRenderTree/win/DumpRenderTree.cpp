@@ -40,6 +40,7 @@
 #include <wtf/Vector.h>
 #include <WebCore/COMPtr.h>
 #include <CoreFoundation/CoreFoundation.h>
+#include <CFNetwork/CFURLCachePriv.h>
 #include <JavaScriptCore/JavaScriptCore.h>
 #include <math.h>
 #include <pthread.h>
@@ -1039,6 +1040,8 @@ int main(int argc, char* argv[])
         
     if (FAILED(webView->mainFrame(&frame)))
         return -1;
+
+    CFURLCacheRemoveAllCachedResponses(CFURLCacheSharedURLCache());
 
 #ifdef _DEBUG
     _CrtMemState entryToMainMemCheckpoint;

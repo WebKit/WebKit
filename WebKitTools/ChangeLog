@@ -1,3 +1,13 @@
+2008-01-25  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Mark Rowe.
+
+        <rdar://problem/5699933> http/tests/security/cross-frame-access-get.html is still failing
+
+        * DumpRenderTree/win/DumpRenderTree.cpp: (main): Clear HTTP cache to ensure consistent test environment
+        (matching Mac DRT).
+        * DumpRenderTree/win/DumpRenderTree.vcproj: Link to CFNetwork.
+
 2008-01-24  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Ada Chan.

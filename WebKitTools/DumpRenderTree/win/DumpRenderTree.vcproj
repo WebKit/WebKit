@@ -1,7 +1,7 @@
-<?xml version="1.0" encoding="Windows-1252"?>
+<?xml version="1.0" encoding="windows-1251"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="8.00"
+	Version="8,00"
 	Name="DumpRenderTree"
 	ProjectGUID="{6567DFD4-D6DE-4CD5-825D-17E353D160E1}"
 	RootNamespace="DumpRenderTree"
@@ -54,7 +54,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="WebKitGUID$(WebKitConfigSuffix).lib WebKit$(WebKitDLLConfigSuffix).lib WTF$(WebKitConfigSuffix).lib CoreGraphics$(LibraryConfigSuffix).lib CoreFoundation$(LibraryConfigSuffix).lib pthreadVC2$(LibraryConfigSuffix).lib gdi32.lib ole32.lib oleaut32.lib user32.lib shlwapi.lib"
+				AdditionalDependencies="WebKitGUID$(WebKitConfigSuffix).lib WebKit$(WebKitDLLConfigSuffix).lib WTF$(WebKitConfigSuffix).lib CoreGraphics$(LibraryConfigSuffix).lib CoreFoundation$(LibraryConfigSuffix).lib CFNetwork$(LibraryConfigSuffix).lib pthreadVC2$(LibraryConfigSuffix).lib gdi32.lib ole32.lib oleaut32.lib user32.lib shlwapi.lib"
 				AdditionalLibraryDirectories=""
 				DelayLoadDLLs=""
 				SubSystem="1"
@@ -126,7 +126,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="WebKitGUID$(WebKitConfigSuffix).lib WebKit$(WebKitDLLConfigSuffix).lib WTF$(WebKitConfigSuffix).lib CoreGraphics$(LibraryConfigSuffix).lib CoreFoundation$(LibraryConfigSuffix).lib pthreadVC2$(LibraryConfigSuffix).lib gdi32.lib ole32.lib oleaut32.lib user32.lib shlwapi.lib"
+				AdditionalDependencies="WebKitGUID$(WebKitConfigSuffix).lib WebKit$(WebKitDLLConfigSuffix).lib WTF$(WebKitConfigSuffix).lib CoreGraphics$(LibraryConfigSuffix).lib CoreFoundation$(LibraryConfigSuffix).lib CFNetwork$(LibraryConfigSuffix).lib pthreadVC2$(LibraryConfigSuffix).lib gdi32.lib ole32.lib oleaut32.lib user32.lib shlwapi.lib"
 				AdditionalLibraryDirectories=""
 				DelayLoadDLLs=""
 				SubSystem="1"
@@ -197,7 +197,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="WebKitGUID$(WebKitConfigSuffix).lib WebKit$(WebKitDLLConfigSuffix).lib WTF$(WebKitConfigSuffix).lib CoreGraphics$(LibraryConfigSuffix).lib CoreFoundation$(LibraryConfigSuffix).lib pthreadVC2$(LibraryConfigSuffix).lib gdi32.lib ole32.lib oleaut32.lib user32.lib shlwapi.lib"
+				AdditionalDependencies="WebKitGUID$(WebKitConfigSuffix).lib WebKit$(WebKitDLLConfigSuffix).lib WTF$(WebKitConfigSuffix).lib CoreGraphics$(LibraryConfigSuffix).lib CoreFoundation$(LibraryConfigSuffix).lib CFNetwork$(LibraryConfigSuffix).lib pthreadVC2$(LibraryConfigSuffix).lib gdi32.lib ole32.lib oleaut32.lib user32.lib shlwapi.lib"
 				AdditionalLibraryDirectories=""
 				DelayLoadDLLs=""
 				SubSystem="1"
