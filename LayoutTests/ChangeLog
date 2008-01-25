@@ -1,3 +1,100 @@
+2008-01-25  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Sam.
+
+        Adding new test and updated results for:
+        <rdar://problem/5679452> Finish tweaking layout/alignment of media controls slider to match QuickTime plug-in
+
+        * fast/forms/slider-padding.html: Added.
+        * platform/mac/fast/forms/slider-padding-expected.checksum: Added.
+        * platform/mac/fast/forms/slider-padding-expected.png: Added.
+        * platform/mac/fast/forms/slider-padding-expected.txt: Added.
+        * platform/mac/media/audio-controls-rendering-expected.checksum:
+        * platform/mac/media/audio-controls-rendering-expected.png:
+        * platform/mac/media/audio-controls-rendering-expected.txt:
+        * platform/mac/media/broken-video-expected.checksum:
+        * platform/mac/media/broken-video-expected.png:
+        * platform/mac/media/progress-event-expected.checksum:
+        * platform/mac/media/progress-event-expected.png:
+        * platform/mac/media/unsupported-rtsp-expected.checksum:
+        * platform/mac/media/unsupported-rtsp-expected.png:
+        * platform/mac/media/unsupported-tracks-expected.checksum:
+        * platform/mac/media/unsupported-tracks-expected.png:
+        * platform/mac/media/video-append-source-expected.checksum:
+        * platform/mac/media/video-append-source-expected.png:
+        * platform/mac/media/video-autoplay-expected.checksum:
+        * platform/mac/media/video-autoplay-expected.png:
+        * platform/mac/media/video-buffered-expected.checksum:
+        * platform/mac/media/video-buffered-expected.png:
+        * platform/mac/media/video-controls-expected.checksum:
+        * platform/mac/media/video-controls-expected.png:
+        * platform/mac/media/video-controls-rendering-expected.checksum:
+        * platform/mac/media/video-controls-rendering-expected.png:
+        * platform/mac/media/video-controls-rendering-expected.txt:
+        * platform/mac/media/video-currentTime-set2-expected.checksum:
+        * platform/mac/media/video-currentTime-set2-expected.png:
+        * platform/mac/media/video-display-toggle-expected.checksum:
+        * platform/mac/media/video-display-toggle-expected.png:
+        * platform/mac/media/video-display-toggle-expected.txt:
+        * platform/mac/media/video-dom-autoplay-expected.checksum:
+        * platform/mac/media/video-dom-autoplay-expected.png:
+        * platform/mac/media/video-dom-src-expected.checksum:
+        * platform/mac/media/video-dom-src-expected.png:
+        * platform/mac/media/video-dom-start-expected.checksum:
+        * platform/mac/media/video-dom-start-expected.png:
+        * platform/mac/media/video-error-abort-expected.checksum:
+        * platform/mac/media/video-error-abort-expected.png:
+        * platform/mac/media/video-error-does-not-exist-expected.checksum:
+        * platform/mac/media/video-error-does-not-exist-expected.png:
+        * platform/mac/media/video-load-networkState-expected.checksum:
+        * platform/mac/media/video-load-networkState-expected.png:
+        * platform/mac/media/video-load-readyState-expected.checksum:
+        * platform/mac/media/video-load-readyState-expected.png:
+        * platform/mac/media/video-muted-expected.checksum:
+        * platform/mac/media/video-muted-expected.png:
+        * platform/mac/media/video-no-autoplay-expected.checksum:
+        * platform/mac/media/video-no-autoplay-expected.png:
+        * platform/mac/media/video-pause-empty-events-expected.checksum:
+        * platform/mac/media/video-pause-empty-events-expected.png:
+        * platform/mac/media/video-play-empty-events-expected.checksum:
+        * platform/mac/media/video-play-empty-events-expected.png:
+        * platform/mac/media/video-play-pause-events-expected.checksum:
+        * platform/mac/media/video-play-pause-events-expected.png:
+        * platform/mac/media/video-play-pause-exception-expected.checksum:
+        * platform/mac/media/video-play-pause-exception-expected.png:
+        * platform/mac/media/video-seek-past-end-paused-expected.checksum:
+        * platform/mac/media/video-seek-past-end-paused-expected.png:
+        * platform/mac/media/video-seek-past-end-playing-expected.checksum:
+        * platform/mac/media/video-seek-past-end-playing-expected.png:
+        * platform/mac/media/video-seekable-expected.checksum:
+        * platform/mac/media/video-seekable-expected.png:
+        * platform/mac/media/video-seeking-expected.checksum:
+        * platform/mac/media/video-seeking-expected.png:
+        * platform/mac/media/video-size-expected.checksum:
+        * platform/mac/media/video-size-expected.png:
+        * platform/mac/media/video-source-expected.checksum:
+        * platform/mac/media/video-source-expected.png:
+        * platform/mac/media/video-source-media-expected.checksum:
+        * platform/mac/media/video-source-media-expected.png:
+        * platform/mac/media/video-source-type-expected.checksum:
+        * platform/mac/media/video-source-type-expected.png:
+        * platform/mac/media/video-src-change-expected.checksum:
+        * platform/mac/media/video-src-change-expected.png:
+        * platform/mac/media/video-src-expected.checksum:
+        * platform/mac/media/video-src-expected.png:
+        * platform/mac/media/video-src-remove-expected.checksum:
+        * platform/mac/media/video-src-remove-expected.png:
+        * platform/mac/media/video-src-set-expected.checksum:
+        * platform/mac/media/video-src-set-expected.png:
+        * platform/mac/media/video-src-source-expected.checksum:
+        * platform/mac/media/video-src-source-expected.png:
+        * platform/mac/media/video-start-expected.checksum:
+        * platform/mac/media/video-start-expected.png:
+        * platform/mac/media/video-volume-expected.checksum:
+        * platform/mac/media/video-volume-expected.png:
+        * platform/mac/media/video-width-height-expected.checksum:
+        * platform/mac/media/video-width-height-expected.png:
+
 2008-01-25  Antti Koivisto  <koivisto@iki.fi>
 
         <rdar://problem/5674277>

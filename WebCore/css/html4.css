@@ -629,6 +629,7 @@ audio::-webkit-media-controls-timeline, video::-webkit-media-controls-timeline {
     left: 32px;
     right: 32px;
     height: 16px;
+    padding: 0px 2px;
 }
 
 audio::-webkit-media-controls-seek-back-button, video::-webkit-media-controls-seek-back-button {

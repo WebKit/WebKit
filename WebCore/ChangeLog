@@ -1,3 +1,16 @@
+2008-01-25  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Sam.
+
+        Fix for <rdar://problem/5679452> Finish tweaking layout/alignment of media controls slider to match QuickTime plug-in
+
+        * css/html4.css: Add horizontal padding to the media slider.
+        * rendering/RenderSlider.cpp:
+        (WebCore::HTMLSliderThumbElement::defaultEventHandler): Replace use of absoluteBoundingBox() with width() and height()
+        (WebCore::RenderSlider::positionForOffset): ditto. Also, use the trackSize() for the maximum offset.
+        (WebCore::RenderSlider::layout):  Use contentWidth() and contentHeight() to take padding into account.
+        (WebCore::RenderSlider::trackSize): ditto.
+
 2008-01-24  Adam Roben  <aroben@apple.com>
 
         Better fix for Bug 16996

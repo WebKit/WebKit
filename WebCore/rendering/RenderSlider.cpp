@@ -102,9 +102,9 @@ void HTMLSliderThumbElement::defaultEventHandler(Event* event)
             RenderSlider* slider = static_cast<RenderSlider*>(renderer()->parent());
             int newPosition = slider->positionForOffset(
                 IntPoint(m_initialPosition + mouseEvent->pageX() - m_initialClickPoint.x()
-                        + (renderer()->absoluteBoundingBoxRect().width() / 2), 
+                        + (renderer()->width() / 2), 
                     m_initialPosition + mouseEvent->pageY() - m_initialClickPoint.y()
-                        + (renderer()->absoluteBoundingBoxRect().height() / 2)));
+                        + (renderer()->height() / 2)));
             if (slider->currentPosition() != newPosition) {
                 slider->setCurrentPosition(newPosition);
                 slider->valueChanged();
@@ -227,10 +227,10 @@ void RenderSlider::layout()
 
         if (style()->appearance() == SliderVerticalAppearance) {
             // FIXME: Handle percentage widths correctly. See http://bugs.webkit.org/show_bug.cgi?id=12104
-            m_thumb->renderer()->style()->setLeft(Length(m_width / 2 - m_thumb->renderer()->style()->width().value() / 2, Fixed));
+            m_thumb->renderer()->style()->setLeft(Length(contentWidth() / 2 - m_thumb->renderer()->style()->width().value() / 2, Fixed));
         } else {
             // FIXME: Handle percentage heights correctly. See http://bugs.webkit.org/show_bug.cgi?id=12104
-            m_thumb->renderer()->style()->setTop(Length(m_height / 2 - m_thumb->renderer()->style()->height().value() / 2, Fixed));
+            m_thumb->renderer()->style()->setTop(Length(contentHeight() / 2 - m_thumb->renderer()->style()->height().value() / 2, Fixed));
         }
 
         if (relayoutChildren)
@@ -338,14 +338,12 @@ int RenderSlider::positionForOffset(const IntPoint& p)
         return 0;
    
     int position;
-    if (style()->appearance() == SliderVerticalAppearance) {
-        position = max(0, min(p.y() - (m_thumb->renderer()->absoluteBoundingBoxRect().height() / 2), 
-                              absoluteBoundingBoxRect().height() - m_thumb->renderer()->absoluteBoundingBoxRect().height()));
-    } else {
-        position = max(0, min(p.x() - (m_thumb->renderer()->absoluteBoundingBoxRect().width() / 2), 
-                              absoluteBoundingBoxRect().width() - m_thumb->renderer()->absoluteBoundingBoxRect().width()));
-    }
-    return position;
+    if (style()->appearance() == SliderVerticalAppearance)
+        position = p.y() - m_thumb->renderer()->height() / 2;
+    else
+        position = p.x() - m_thumb->renderer()->width() / 2;
+    
+    return max(0, min(position, trackSize()));
 }
 
 void RenderSlider::valueChanged()
@@ -384,8 +382,8 @@ int RenderSlider::trackSize()
         return 0;
 
     if (style()->appearance() == SliderVerticalAppearance)
-        return absoluteBoundingBoxRect().height() - m_thumb->renderer()->absoluteBoundingBoxRect().height();
-    return absoluteBoundingBoxRect().width() - m_thumb->renderer()->absoluteBoundingBoxRect().width();
+        return contentHeight() - m_thumb->renderer()->height();
+    return contentWidth() - m_thumb->renderer()->width();
 }
 
 void RenderSlider::forwardEvent(Event* evt)
