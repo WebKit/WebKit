@@ -124,20 +124,6 @@ fast/text/international/bidi-fallback-font-weight.html
 fast/text/international/bidi-neutral-directionality-paragraph-start.html
 fast/text/international/thai-line-breaks.html
 
-# DRT doesn't support undo/redo <rdar://problem/5131975>
-editing/deleting/delete-and-undo.html
-editing/deleting/delete-by-word-002.html
-editing/undo/undo-misspellings.html
-editing/undo/undo-typing-001.html
-fast/forms/input-paste-undo.html
-fast/forms/plaintext-mode-1.html
-editing/undo/undo-combined-delete-boundary.html
-editing/undo/undo-combined-delete.html
-editing/undo/undo-delete-boundary.html
-editing/undo/undo-delete.html
-editing/undo/undo-forward-delete-boundary.html
-editing/undo/undo-forward-delete.html
-
 # ASSERT in ClipboardWin::setData <rdar://problem/5015941>
 editing/execCommand/copy-without-selection.html
 

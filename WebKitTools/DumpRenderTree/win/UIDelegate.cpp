@@ -35,6 +35,7 @@
 
 #include <WebCore/COMPtr.h>
 #include <wtf/Platform.h>
+#include <wtf/Vector.h>
 #include <JavaScriptCore/Assertions.h>
 #include <JavaScriptCore/JavaScriptCore.h>
 #include <WebKit/IWebFramePrivate.h>
@@ -43,13 +44,127 @@
 
 using std::wstring;
 
+class DRTUndoObject {
+public:
+    DRTUndoObject(IWebUndoTarget* target, BSTR actionName, IUnknown* obj)
+        : m_target(target)
+        , m_actionName(SysAllocString(actionName))
+        , m_obj(obj)
+    {
+    }
+
+    ~DRTUndoObject()
+    {
+        SysFreeString(m_actionName);
+    }
+
+    void invoke()
+    {
+        m_target->invoke(m_actionName, m_obj.get());
+    }
+
+private:
+    IWebUndoTarget* m_target;
+    BSTR m_actionName;
+    COMPtr<IUnknown> m_obj;
+};
+
+class DRTUndoStack {
+public:
+    ~DRTUndoStack() { deleteAllValues(m_undoVector); }
+
+    bool isEmpty() const { return m_undoVector.isEmpty(); }
+    void clear() { deleteAllValues(m_undoVector); m_undoVector.clear(); }
+
+    void push(DRTUndoObject* undoObject) { m_undoVector.append(undoObject); }
+    DRTUndoObject* pop() { DRTUndoObject* top = m_undoVector.last(); m_undoVector.removeLast(); return top; }
+
+private:
+    Vector<DRTUndoObject*> m_undoVector;
+};
+
+class DRTUndoManager {
+public:
+    DRTUndoManager();
+
+    void removeAllActions();
+    void registerUndoWithTarget(IWebUndoTarget* target, BSTR actionName, IUnknown* obj);
+    void redo();
+    void undo();
+    bool canRedo() { return !m_redoStack->isEmpty(); }
+    bool canUndo() { return !m_undoStack->isEmpty(); }
+
+private:
+    OwnPtr<DRTUndoStack> m_redoStack;
+    OwnPtr<DRTUndoStack> m_undoStack;
+    bool m_isRedoing;
+    bool m_isUndoing;
+};
+
+DRTUndoManager::DRTUndoManager()
+    : m_redoStack(new DRTUndoStack)
+    , m_undoStack(new DRTUndoStack)
+    , m_isRedoing(false)
+    , m_isUndoing(false)
+{
+}
+
+void DRTUndoManager::removeAllActions()
+{
+    m_redoStack->clear();
+    m_undoStack->clear();
+}
+
+void DRTUndoManager::registerUndoWithTarget(IWebUndoTarget* target, BSTR actionName, IUnknown* obj)
+{
+    if (!m_isUndoing && !m_isRedoing)
+        m_redoStack->clear();
+
+    DRTUndoStack* stack = m_isUndoing ? m_redoStack.get() : m_undoStack.get();
+    stack->push(new DRTUndoObject(target, actionName, obj));
+}
+
+void DRTUndoManager::redo()
+{
+    if (!canRedo())
+        return;
+
+    m_isRedoing = true;
+
+    DRTUndoObject* redoObject = m_redoStack->pop();
+    redoObject->invoke();
+    delete redoObject;
+
+    m_isRedoing = false;
+}
+
+void DRTUndoManager::undo()
+{
+    if (!canUndo())
+        return;
+
+    m_isUndoing = true;
+
+    DRTUndoObject* undoObject = m_undoStack->pop();
+    undoObject->invoke();
+    delete undoObject;
+
+    m_isUndoing = false;
+}
+
 UIDelegate::UIDelegate()
     : m_refCount(1)
+    , m_undoManager(new DRTUndoManager)
 {
     m_frame.bottom = 0;
     m_frame.top = 0;
     m_frame.left = 0;
     m_frame.right = 0;
+}
+
+void UIDelegate::resetUndoManager()
+{
+    m_undoManager.set(new DRTUndoManager);
 }
 
 HRESULT STDMETHODCALLTYPE UIDelegate::QueryInterface(REFIID riid, void** ppvObject)
@@ -96,6 +211,62 @@ HRESULT STDMETHODCALLTYPE UIDelegate::trackCustomPopupMenu(
         /* [in] */ LPPOINT point)
 {
     // Do nothing
+    return S_OK;
+}
+
+HRESULT STDMETHODCALLTYPE UIDelegate::registerUndoWithTarget(
+        /* [in] */ IWebUndoTarget* target,
+        /* [in] */ BSTR actionName,
+        /* [in] */ IUnknown* actionArg)
+{
+    m_undoManager->registerUndoWithTarget(target, actionName, actionArg);
+    return S_OK;
+}
+
+HRESULT STDMETHODCALLTYPE UIDelegate::removeAllActionsWithTarget(
+        /* [in] */ IWebUndoTarget*)
+{
+    m_undoManager->removeAllActions();
+    return S_OK;
+}
+
+HRESULT STDMETHODCALLTYPE UIDelegate::setActionTitle(
+        /* [in] */ BSTR actionTitle)
+{
+    // It is not neccessary to implement this for DRT because there is
+    // menu to write out the title to.
+    return S_OK;
+}
+
+HRESULT STDMETHODCALLTYPE UIDelegate::undo()
+{
+    m_undoManager->undo();
+    return S_OK;
+}
+
+HRESULT STDMETHODCALLTYPE UIDelegate::redo()
+{
+    m_undoManager->redo();
+    return S_OK;
+}
+
+HRESULT STDMETHODCALLTYPE UIDelegate::canUndo(
+        /* [retval][out] */ BOOL* result)
+{
+    if (!result)
+        return E_POINTER;
+
+    *result = m_undoManager->canUndo();
+    return S_OK;
+}
+
+HRESULT STDMETHODCALLTYPE UIDelegate::canRedo(
+        /* [retval][out] */ BOOL* result)
+{
+    if (!result)
+        return E_POINTER;
+
+    *result = m_undoManager->canRedo();
     return S_OK;
 }
 

@@ -1,3 +1,42 @@
+2008-01-24  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Ada Chan.
+
+        Fix for <rdar://5131975> DumpRenderTree doesn't support undo/redo
+
+        - Adds simplified UndoManager to windows DRT to allow testing the
+          undo/redo code paths in WebCore and WebKit.  This is a temporary
+          solution to an issue that should eventually be solved by having a
+          shared UndoManager in WebKit.
+
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (runTest):
+        * DumpRenderTree/win/UIDelegate.cpp:
+        (DRTUndoObject::DRTUndoObject):
+        (DRTUndoObject::invoke):
+        (DRTUndoStack::~DRTUndoStack):
+        (DRTUndoStack::isEmpty):
+        (DRTUndoStack::clear):
+        (DRTUndoStack::push):
+        (DRTUndoStack::pop):
+        (DRTUndoManager::canRedo):
+        (DRTUndoManager::canUndo):
+        (DRTUndoManager::DRTUndoManager):
+        (DRTUndoManager::removeAllActions):
+        (DRTUndoManager::registerUndoWithTarget):
+        (DRTUndoManager::redo):
+        (DRTUndoManager::undo):
+        (UIDelegate::UIDelegate):
+        (UIDelegate::resetUndoManager):
+        (UIDelegate::registerUndoWithTarget):
+        (UIDelegate::removeAllActionsWithTarget):
+        (UIDelegate::setActionTitle):
+        (UIDelegate::undo):
+        (UIDelegate::redo):
+        (UIDelegate::canUndo):
+        (UIDelegate::canRedo):
+        * DumpRenderTree/win/UIDelegate.h:
+
 2008-01-23  Adam Roben  <aroben@apple.com>
 
         Allow directories containing ChangeLogs to be passed to

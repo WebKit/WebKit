@@ -1,3 +1,12 @@
+2008-01-24  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Ada Chan.
+
+        <rdar://5131975> DumpRenderTree doesn't support undo/redo
+
+        * platform/win/Skipped: With undo/redo support enabled, we can now
+        remove the undo tests from the Skipped list.
+
 2008-01-24  Adam Roben  <aroben@apple.com>
 
         Test for Bug 16996: Crash in createFontCustomPlatformData when loading

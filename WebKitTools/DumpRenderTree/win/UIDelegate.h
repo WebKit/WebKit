@@ -31,13 +31,16 @@
 
 #include <WebKit/IWebUIDelegate.h>
 #include <WebKit/IWebUIDelegatePrivate.h>
+#include <wtf/OwnPtr.h>
 #include <windef.h>
+
+class DRTUndoManager;
 
 class UIDelegate : public IWebUIDelegate, IWebUIDelegatePrivate {
 public:
     UIDelegate();
 
-    void processWork();
+    void resetUndoManager();
 
     // IUnknown
     virtual HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, void** ppvObject);
@@ -227,23 +230,23 @@ public:
     virtual HRESULT STDMETHODCALLTYPE registerUndoWithTarget( 
         /* [in] */ IWebUndoTarget *target,
         /* [in] */ BSTR actionName,
-        /* [in] */ IUnknown *actionArg) { return E_NOTIMPL; }
+        /* [in] */ IUnknown *actionArg);
     
     virtual HRESULT STDMETHODCALLTYPE removeAllActionsWithTarget( 
-        /* [in] */ IWebUndoTarget *target) { return E_NOTIMPL; }
+        /* [in] */ IWebUndoTarget *target);
     
     virtual HRESULT STDMETHODCALLTYPE setActionTitle( 
-        /* [in] */ BSTR actionTitle) { return E_NOTIMPL; }
+        /* [in] */ BSTR actionTitle);
     
-    virtual HRESULT STDMETHODCALLTYPE undo( void) { return E_NOTIMPL; }
+    virtual HRESULT STDMETHODCALLTYPE undo();
     
-    virtual HRESULT STDMETHODCALLTYPE redo( void) { return E_NOTIMPL; }
+    virtual HRESULT STDMETHODCALLTYPE redo();
     
     virtual HRESULT STDMETHODCALLTYPE canUndo( 
-        /* [retval][out] */ BOOL *result) { return E_NOTIMPL; }
+        /* [retval][out] */ BOOL *result);
     
     virtual HRESULT STDMETHODCALLTYPE canRedo( 
-        /* [retval][out] */ BOOL *result) { return E_NOTIMPL; }
+        /* [retval][out] */ BOOL *result);
 
 protected:
     // IWebUIDelegatePrivate
@@ -295,6 +298,7 @@ protected:
 
 private:
     RECT m_frame;
+    OwnPtr<DRTUndoManager> m_undoManager;
 };
 
 #endif
