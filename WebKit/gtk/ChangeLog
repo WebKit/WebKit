@@ -1,3 +1,15 @@
+2008-01-25  Ori Bernstein  <ori@eigenstate.org>
+
+        Reviewed by Alp Toker.
+
+        http://bugs.webkit.org/show_bug.cgi?id=16795
+        WebKitGtk crashes when there is no focused Frame
+
+        Add a null check. focusedFrame() isn't used directly anywhere else so
+        this is the only case that needs to be fixed.
+
+        * WebView/webkitwebview.cpp:
+
 2008-01-22  Christian Dywan  <christian@imendio.com>
 
         Reviewed by Alp Toker.

@@ -309,7 +309,7 @@ static gboolean webkit_web_view_button_release_event(GtkWidget* widget, GdkEvent
     WebKitWebViewPrivate* webViewData = WEBKIT_WEB_VIEW_GET_PRIVATE(web_view);
     Frame* focusedFrame = webViewData->corePage->focusController()->focusedFrame();
 
-    if (focusedFrame->editor()->canEdit()) {
+    if (focusedFrame && focusedFrame->editor()->canEdit()) {
         GdkWindow* window = gtk_widget_get_parent_window(widget);
         gtk_im_context_set_client_window(webViewData->imContext, window);
 #ifdef MAEMO_CHANGES
