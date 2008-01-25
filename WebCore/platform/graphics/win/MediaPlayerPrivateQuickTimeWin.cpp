@@ -320,11 +320,11 @@ void MediaPlayerPrivate::updateStates()
     } else if (loadState >= QTMovieLoadStatePlaythroughOK) {
         if (m_networkState < MediaPlayer::LoadedFirstFrame && !seeking())
             m_networkState = MediaPlayer::LoadedFirstFrame;
-        m_readyState = (m_qtMovie->rate() == 0.0f && m_startedPlaying) ? MediaPlayer::DataUnavailable : MediaPlayer::CanPlayThrough;
+        m_readyState = MediaPlayer::CanPlayThrough;
     } else if (loadState >= QTMovieLoadStatePlayable) {
         if (m_networkState < MediaPlayer::LoadedFirstFrame && !seeking())
             m_networkState = MediaPlayer::LoadedFirstFrame;
-        m_readyState = (m_qtMovie->rate() == 0.0f && m_startedPlaying) ? MediaPlayer::DataUnavailable : MediaPlayer::CanPlay;
+        m_readyState = currentTime() < maxTimeLoaded() ? MediaPlayer::CanPlay : MediaPlayer::DataUnavailable;
     } else if (loadState >= QTMovieLoadStateLoaded) {
         if (m_networkState < MediaPlayer::LoadedMetaData)
             m_networkState = MediaPlayer::LoadedMetaData;
