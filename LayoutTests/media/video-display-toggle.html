@@ -1,6 +1,6 @@
 <html>
     <head>
-        <script>            
+        <script>
             function toggleDisplay()
             {
                 var video = document.getElementById('vid');
@@ -8,13 +8,13 @@
                     video.style.display = "inline-block";
                 else
                     video.style.display = "none";
-                
+                document.body.offsetLeft;
             }
             function test()
             {
                 if (window.layoutTestController)
                     layoutTestController.waitUntilDone();
-                document.getElementById('vid').addEventListener("load", test2);    
+                document.getElementById('vid').addEventListener("load", test2);
             }
             function test2()
             {
@@ -22,7 +22,7 @@
                 toggleDisplay();
 
                 if (window.layoutTestController)
-                    layoutTestController.notifyDone(); 
+                    layoutTestController.notifyDone();
             }
         </script>
     </head>

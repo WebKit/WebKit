@@ -42,9 +42,6 @@ http/tests/ssl
 http/tests/security/cross-frame-access-protocol-explicit-domain.html
 http/tests/security/cross-frame-access-protocol.html
 
-# Crashes on Windows <rdar://problem/5674277>
-media/video-display-toggle.html
-
 # Fails, could be problem with the test setup <rdar://problem/5674282>
 http/tests/media/video-play-stall.html
 http/tests/media/video-seekable-stall.html

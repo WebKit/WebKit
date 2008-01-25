@@ -1,3 +1,14 @@
+2008-01-25  Antti Koivisto  <koivisto@iki.fi>
+
+        <rdar://problem/5674277>
+        Test media/video-display-toggle.html crashes on Windows
+        
+        Appears to be some problem in DRT when test ends with layout pending.
+        Fixed by forcing layout, this improves test coverage too.
+
+        * media/video-display-toggle.html:
+        * platform/win/Skipped:
+
 2008-01-25  Alexey Proskuryakov  <ap@webkit.org>
 
         <rdar://problem/5706788> http/tests/security/cross-frame-access-port-explicit-domain.html fails on Windows
