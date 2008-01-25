@@ -2,6 +2,12 @@
 
         Build fix.
 
+        * JavaScriptCore.vcproj/JavaScriptCore.sln:
+
+2008-01-24  Steve Falkenburg  <sfalken@apple.com>
+
+        Build fix.
+
         * JavaScriptCore.vcproj/JavaScriptCoreSubmit.sln:
 
 2008-01-24  Michael Goddard  <michael.goddard@trolltech.com>
