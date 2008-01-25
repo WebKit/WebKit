@@ -1,3 +1,10 @@
+2008-01-24  Steve Falkenburg  <sfalken@apple.com>
+
+        Build fix
+
+        * WebKit.vcproj/WebKit.sln:
+        * WebKit.vcproj/WebKit.submit.sln:
+
 2008-01-24  Adam Roben  <aroben@apple.com>
 
         Build fix
