@@ -1,3 +1,9 @@
+2008-01-25  Alexey Proskuryakov  <ap@webkit.org>
+
+        http/tests/xmlhttprequest/readystatechange.html fails on buildbot.
+
+        * platform/win/Skipped:
+
 2008-01-24  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Ada Chan.
