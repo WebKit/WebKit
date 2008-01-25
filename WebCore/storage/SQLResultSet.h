@@ -29,12 +29,8 @@
 #ifndef SQLResultSet_h
 #define SQLResultSet_h
 
-#include "SQLValue.h"
-
-#include "PlatformString.h"
 #include "SQLResultSetRowList.h"
 #include "Threading.h"
-#include <wtf/Vector.h>
 
 namespace WebCore {
 

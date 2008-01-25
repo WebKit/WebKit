@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006, 2007, 2008 Apple Inc. All rights reserved.
  * Copyright (C) 2007 Justin Haygood (jhaygood@reaktix.com)
  *
  * Redistribution and use in source and binary forms, with or without
@@ -196,7 +196,7 @@ void SQLiteDatabase::clearAllTables()
 {
     String query = "SELECT name FROM sqlite_master WHERE type='table';";
     Vector<String> tables;
-    if (!SQLiteStatement(*this, query).returnTextResults16(0, tables)) {
+    if (!SQLiteStatement(*this, query).returnTextResults(0, tables)) {
         LOG(SQLDatabase, "Unable to retrieve list of tables from database");
         return;
     }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006, 2007, 2008 Apple Inc. All rights reserved.
  * Copyright (C) 2007 Justin Haygood (jhaygood@reaktix.com)
  *
  * Redistribution and use in source and binary forms, with or without
@@ -1151,7 +1151,7 @@ bool IconDatabase::checkIntegrity()
         return false;
     }
         
-    String resultText = integrity.getColumnText16(0);
+    String resultText = integrity.getColumnText(0);
         
     // A successful, no-error integrity check will be "ok" - all other strings imply failure
     if (resultText == "ok")
@@ -1178,8 +1178,8 @@ void IconDatabase::performURLImport()
         
     int result = query.step();
     while (result == SQLResultRow) {
-        String pageURL = query.getColumnText16(0);
-        String iconURL = query.getColumnText16(1);
+        String pageURL = query.getColumnText(0);
+        String iconURL = query.getColumnText(1);
 
         {
             MutexLocker locker(m_urlAndIconLock);
@@ -1575,7 +1575,7 @@ void IconDatabase::pruneUnretainedIcons()
     int result;
     while ((result = pageSQL.step()) == SQLResultRow) {
         MutexLocker locker(m_urlAndIconLock);
-        if (!m_pageURLToRecordMap.contains(pageSQL.getColumnText16(1)))
+        if (!m_pageURLToRecordMap.contains(pageSQL.getColumnText(1)))
             pageIDsToDelete.append(pageSQL.getColumnInt64(0));
     }
     

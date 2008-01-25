@@ -68,7 +68,7 @@ bool SQLStatement::execute(Database* db)
     int result = statement.prepare();
 
     if (result != SQLResultOk) {
-        LOG(StorageAPI, "Unable to verify correctness of statement %s - error %i (%s)", m_statement.ascii().data(), result, statement.lastErrorMsg());
+        LOG(StorageAPI, "Unable to verify correctness of statement %s - error %i (%s)", m_statement.ascii().data(), result, database->lastErrorMsg());
         m_error = new SQLError(1, database->lastErrorMsg());
         return false;
     }
@@ -104,12 +104,12 @@ bool SQLStatement::execute(Database* db)
         SQLResultSetRowList* rows = resultSet->rows();
 
         for (int i = 0; i < columnCount; i++)
-            rows->addColumn(statement.getColumnName16(i));
+            rows->addColumn(statement.getColumnName(i));
 
         do {
             for (int i = 0; i < columnCount; i++) {
                 // FIXME: Look at the column type?
-                rows->addResult(statement.getColumnText16(i));
+                rows->addResult(statement.getColumnText(i));
             }
 
             result = statement.step();

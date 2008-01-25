@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006, 2007, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,29 +26,24 @@
 #ifndef SQLiteStatement_h
 #define SQLiteStatement_h
 
-#include "PlatformString.h"
 #include "SQLiteDatabase.h"
-#include <wtf/Noncopyable.h>
 
-typedef struct sqlite3_stmt sqlite3_stmt;
+struct sqlite3_stmt;
 
 namespace WebCore {
 
-class SQLiteDatabase;
 class SQLValue;
 
-class SQLiteStatement : public Noncopyable
-{
+class SQLiteStatement : public Noncopyable {
 public:
-    SQLiteStatement(SQLiteDatabase& db, const String&);
+    SQLiteStatement(SQLiteDatabase&, const String&);
     ~SQLiteStatement();
     
     int prepare();
-    bool isPrepared() const { return m_statement; }
     int bindBlob(int index, const void* blob, int size);
-    int bindText(int index, const String& text);
-    int bindInt64(int index, int64_t integer);
-    int bindDouble(int index, double number);
+    int bindText(int index, const String&);
+    int bindInt64(int index, int64_t);
+    int bindDouble(int index, double);
     int bindNull(int index);
     int bindValue(int index, const SQLValue&);
     unsigned bindParameterCount() const;
@@ -57,7 +52,7 @@ public:
     int finalize();
     int reset();
     
-    int prepareAndStep() { prepare();  return step(); }
+    int prepareAndStep() { if (int error = prepare()) return error; return step(); }
     
     // prepares, steps, and finalizes the query.
     // returns true if all 3 steps succeed with step() returning SQLITE_DONE
@@ -76,9 +71,7 @@ public:
     int columnCount();
     
     String getColumnName(int col);
-    String getColumnName16(int col);
     String getColumnText(int col);
-    String getColumnText16(int col);
     double getColumnDouble(int col);
     int getColumnInt(int col);
     int64_t getColumnInt64(int col);
@@ -86,20 +79,19 @@ public:
     void getColumnBlobAsVector(int col, Vector<char>&);
 
     bool returnTextResults(int col, Vector<String>&);
-    bool returnTextResults16(int col, Vector<String>&);
     bool returnIntResults(int col, Vector<int>&);
     bool returnInt64Results(int col, Vector<int64_t>&);
     bool returnDoubleResults(int col, Vector<double>&);
 
-    int lastError() { return m_database.lastError(); }
-    const char* lastErrorMsg() { return m_database.lastErrorMsg(); }
-    
     SQLiteDatabase* database() { return &m_database; }
+
 private:
     SQLiteDatabase& m_database;
-    String      m_query;
-
+    String m_query;
     sqlite3_stmt* m_statement;
+#ifndef NDEBUG
+    bool m_isPrepared;
+#endif
 };
 
 } // namespace WebCore

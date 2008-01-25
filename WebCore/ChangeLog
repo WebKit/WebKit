@@ -1,3 +1,95 @@
+2008-01-25  Darin Adler  <darin@apple.com>
+
+        Reviewed by Anders.
+
+        - fix <rdar://problem/5691072> ASSERTION FAILED: isPrepared() when executing an empty statement
+
+        For empty statements, SQLite returns 0 for the statement. We have to cope with that.
+
+        Test: storage/empty-statement.html
+
+        * platform/sql/SQLiteStatement.cpp:
+        (WebCore::sqlite3_prepare16_v2): Added overload so we don't need an #if inside the prepare
+        function.
+        (WebCore::SQLiteStatement::SQLiteStatement): Initialize the m_isPrepared boolean. Removed
+        the code to add a null character to the end of the string; instead we will use
+        charactersWithNullTermination.
+        (WebCore::SQLiteStatement::prepare): Set m_isPrepared based on the error value returned.
+        Use the error value from sqlite3_prepare16_v2, not from lastError().
+        (WebCore::SQLiteStatement::step): Assert that the statement is prepared rather than checking
+        it at runtime. However, in the case where this is called with m_statement of 0, return
+        success rather than an error. That's needed for empty statements.
+        (WebCore::SQLiteStatement::finalize): Use early return idiom for clarity. When there is no
+        statement, return SQLITE_OK instead of calling lastError().
+        (WebCore::SQLiteStatement::reset): Use early return idiom for clarity. When there is no
+        statement, return SQLITE_OK rather than SQLITE_ERROR, but assert the statement is prepared.
+        (WebCore::SQLiteStatement::executeCommand): Adjust the code that does a prepare so that it
+        will work for empty statements. Do we really need to allow calling this without prepare?
+        It would be simpler to just be able to assert that it's prepared.
+        (WebCore::SQLiteStatement::returnsAtLeastOneResult): Ditto.
+        (WebCore::SQLiteStatement::bindBlob): Added some assertions. Return SQLITE_ERROR if this
+        is called with m_statement of 0 (should not be possible without assertions firing first).
+        Return the actual error code rather than lastError().
+        (WebCore::SQLiteStatement::bindText): Ditto. Also simplified the special case for empty
+        strings, since it requires any non-null pointer, not a pointer to a global zero character.
+        (WebCore::SQLiteStatement::bindInt64): Ditto.
+        (WebCore::SQLiteStatement::bindDouble): Ditto.
+        (WebCore::SQLiteStatement::bindNull): Ditto.
+        (WebCore::SQLiteStatement::bindValue): Moved default case out of the switch to take
+        advantage of the gcc compiler warning for unhandled enum values in a switch.
+        (WebCore::SQLiteStatement::bindParameterCount): Added assertion and code to handle the
+        empty statement case.
+        (WebCore::SQLiteStatement::columnCount): Added assertion and changed the code to use
+        the early-return idiom.
+        (WebCore::SQLiteStatement::getColumnName): Removed getColumnName16 -- we always use 16-bit
+        characters and have no reason to ever use the 8-bit function. Added assertions about the
+        passed-in column number. It's a little strange that this function checks the column number
+        for too-large column numbers, but not for negative ones. I didn't change that for now.
+        (WebCore::SQLiteStatement::getColumnText): Ditto.
+        (WebCore::SQLiteStatement::getColumnDouble): Ditto.
+        (WebCore::SQLiteStatement::getColumnInt): Ditto.
+        (WebCore::SQLiteStatement::getColumnInt64): Ditto.
+        (WebCore::SQLiteStatement::getColumnBlobAsVector): Ditto.
+        (WebCore::SQLiteStatement::getColumnBlob): Tightened up function a bit, including use of
+        the early-return idiom and replacing the multiple "size = 0" with a single one at the
+        start of the function.
+        (WebCore::SQLiteStatement::returnTextResults): Added a failure case when the prepare
+        call doesn't work. Cleared the vector earlier to make the failure code simpler. Moved
+        the declaration of the result boolean down lower to make it clearer what it's for.
+        Changed use of lastError() to call on the database, to make it clearer that there's
+        no per-statement last error kept around. It'd be even better to not use lastError() here.
+        (WebCore::SQLiteStatement::returnIntResults): Ditto.
+        (WebCore::SQLiteStatement::returnInt64Results): Ditto.
+        (WebCore::SQLiteStatement::returnDoubleResults): Ditto.
+        (WebCore::SQLiteStatement::isExpired): Changed to use || rather than ?: because I think
+        it's slightly easier to read that way.
+
+        * platform/sql/SQLiteStatement.h: Removed unneeded includes and forward declarations.
+        Also removed unnneeded functions isPrepared, getColumnName16, getColumnText16,
+        returnTextResults16, lastError, and lastErrorMsg. Changed prepareAndStep so that it
+        checks the result of prepare before callling step. Added a debug-only m_isPrepared boolean.
+
+        * loader/icon/IconDatabase.cpp:
+        (WebCore::IconDatabase::checkIntegrity): Remove 16 suffix from text-related function names.
+        (WebCore::IconDatabase::performURLImport): Ditto.
+        (WebCore::IconDatabase::pruneUnretainedIcons): Ditto.
+        * platform/sql/SQLiteDatabase.cpp:
+        (WebCore::SQLiteDatabase::clearAllTables): Ditto.
+        * storage/Database.cpp:
+        (WebCore::retrieveTextResultFromDatabase): Ditto.
+        (WebCore::Database::performGetTableNames): Ditto.
+        * storage/DatabaseTracker.cpp:
+        (WebCore::DatabaseTracker::fullPathForDatabase): Ditto.
+        (WebCore::DatabaseTracker::populateOrigins): Ditto.
+        (WebCore::DatabaseTracker::databaseNamesForOrigin): Ditto.
+        (WebCore::DatabaseTracker::addDatabase): Ditto.
+        * storage/SQLStatement.cpp:
+        (WebCore::SQLStatement::execute): Ditto.
+
+        * platform/sql/SQLiteDatabase.h: Removed unneeded includes.
+        * storage/SQLResultSet.h: Ditto.
+        * storage/SQLResultSetRowList.h: Ditto.
+
 2008-01-25  Adele Peterson  <adele@apple.com>
 
         Reviewed by Sam.

@@ -29,10 +29,7 @@
 #ifndef SQLResultSetRowList_h
 #define SQLResultSetRowList_h
 
-#include "PlatformString.h"
-#include <wtf/RefCounted.h>
 #include "SQLValue.h"
-#include <wtf/Vector.h>
 
 namespace WebCore {
 
@@ -45,11 +42,11 @@ public:
     void addResult(const SQLValue& result) { m_result.append(result); }
 
     unsigned length() const;
+
 private:
     Vector<String> m_columns;
     Vector<SQLValue> m_result;
 };
-
 
 }
 

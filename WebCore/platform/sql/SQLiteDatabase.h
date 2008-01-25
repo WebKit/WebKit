@@ -29,14 +29,12 @@
 
 #include "PlatformString.h"
 #include "Threading.h"
-#include <wtf/Noncopyable.h>
-#include <wtf/Vector.h>
 
 #if COMPILER(MSVC)
 #pragma warning(disable: 4800)
 #endif
 
-typedef struct sqlite3 sqlite3;
+struct sqlite3;
 
 namespace WebCore {
 
