@@ -1433,7 +1433,7 @@ bool WebView::keyDown(WPARAM virtualKeyCode, LPARAM keyData, bool systemKeyDown)
 
     // These events cannot be canceled, and we have no default handling for them.
     // FIXME: match IE list more closely, see <http://msdn2.microsoft.com/en-us/library/ms536938.aspx>.
-    if (systemKeyDown)
+    if (systemKeyDown && virtualKeyCode != VK_RETURN)
         return false;
 
     if (handled) {
