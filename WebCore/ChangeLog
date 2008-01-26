@@ -1,3 +1,15 @@
+2008-01-25  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Adele.
+        
+        (this is for r29798, my commit failed to include the log)
+        
+        Windows fix to match r29773
+        If the media is playing and the load stalls the playback wont restart by seeking backwards.      
+
+        * platform/graphics/win/MediaPlayerPrivateQuickTimeWin.cpp:
+        (WebCore::MediaPlayerPrivate::updateStates):
+
 2008-01-25  Darin Adler  <darin@apple.com>
 
         Reviewed by Anders.
