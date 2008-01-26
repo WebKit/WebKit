@@ -1,3 +1,16 @@
+2008-01-26  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Alp Toker.
+
+        Fix http://bugs.webkit.org/show_bug.cgi?id=17007.
+        Bug 17007: [GTK] autogen.sh attempts to use "libtoolize" on the Mac
+
+        libtoolize is installed as glibtoolize on Mac OS X to avoid naming conflicts
+        with other system commands.  Check for the presence of glibtoolize if libtoolize
+        cannot be found.
+
+        * autogen.sh:
+
 2008-01-23  Alp Toker  <alp@atoker.com>
 
         Rubber-stamped by Mark Rowe.
