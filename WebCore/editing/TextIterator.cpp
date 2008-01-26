@@ -1020,7 +1020,7 @@ void WordAwareIterator::advance()
     
     while (1) {
         // If this chunk ends in whitespace we can just use it as our chunk.
-        if (DeprecatedChar(m_textIterator.characters()[m_textIterator.length() - 1]).isSpace())
+        if (isSpaceOrNewline(m_textIterator.characters()[m_textIterator.length() - 1]))
             return;
 
         // If this is the first chunk that failed, save it in previousText before look ahead
@@ -1031,7 +1031,7 @@ void WordAwareIterator::advance()
 
         // Look ahead to next chunk.  If it is whitespace or a break, we can use the previous stuff
         m_textIterator.advance();
-        if (m_textIterator.atEnd() || m_textIterator.length() == 0 || DeprecatedChar(m_textIterator.characters()[0]).isSpace()) {
+        if (m_textIterator.atEnd() || m_textIterator.length() == 0 || isSpaceOrNewline(m_textIterator.characters()[0])) {
             m_didLookAhead = true;
             return;
         }

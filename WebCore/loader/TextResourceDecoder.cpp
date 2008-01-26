@@ -26,7 +26,6 @@
 #include "CString.h"
 #include "DOMImplementation.h"
 #include "DeprecatedCString.h"
-#include "DeprecatedString.h"
 #include "HTMLNames.h"
 #include "TextCodec.h"
 #include <wtf/ASCIICType.h>

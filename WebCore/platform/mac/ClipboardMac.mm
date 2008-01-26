@@ -200,7 +200,7 @@ String ClipboardMac::getData(const String& type, bool& success) const
     // sure it doesn't change between our testing the change count and accessing the data.
     if (cocoaValue && m_changeCount == [m_pasteboard.get() changeCount]) {
         success = true;
-        return String(DeprecatedString::fromNSString(cocoaValue));
+        return cocoaValue;
     }
 
     return String();

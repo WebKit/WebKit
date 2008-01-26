@@ -30,7 +30,6 @@
 #import "MediaPlayerPrivateQTKit.h"
 
 #import "BlockExceptions.h"
-#import "DeprecatedString.h"
 #import "GraphicsContext.h"
 #import "KURL.h"
 #import "ScrollView.h"

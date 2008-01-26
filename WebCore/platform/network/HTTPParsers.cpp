@@ -30,7 +30,6 @@
 #include "config.h"
 #include "HTTPParsers.h"
 
-#include "DeprecatedString.h"
 #include "PlatformString.h"
 
 namespace WebCore {
@@ -137,7 +136,7 @@ String extractMIMETypeFromMediaType(const String& mediaType)
         UChar c = mediaType[offset];
         if (c == ';')
             break;
-        else if (DeprecatedChar(c).isSpace()) // FIXME: This seems wrong, " " is an invalid MIME type character according to RFC 2045.  bug 8644
+        else if (isSpaceOrNewline(c)) // FIXME: This seems wrong, " " is an invalid MIME type character according to RFC 2045.  bug 8644
             continue;
         // FIXME: This is a very slow way to build a string, given WebCore::String's implementation.
         mimeType += String(&c, 1);

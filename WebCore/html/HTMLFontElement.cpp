@@ -52,7 +52,7 @@ static bool parseFontSizeNumber(const String& s, int& size)
     unsigned pos = 0;
     
     // Skip leading spaces.
-    while (DeprecatedChar(s[pos]).isSpace())
+    while (isSpaceOrNewline(s[pos]))
         ++pos;
     
     // Skip a plus or minus.

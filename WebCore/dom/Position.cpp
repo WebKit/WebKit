@@ -635,7 +635,7 @@ Position Position::leadingWhitespacePosition(EAffinity affinity, bool considerNo
     if (prev != *this && prev.node()->inSameContainingBlockFlowElement(node()) && prev.node()->isTextNode()) {
         String string = static_cast<Text *>(prev.node())->data();
         UChar c = string[prev.offset()];
-        if (considerNonCollapsibleWhitespace ? (DeprecatedChar(c).isSpace() || c == noBreakSpace) : isCollapsibleWhitespace(c))
+        if (considerNonCollapsibleWhitespace ? (isSpaceOrNewline(c) || c == noBreakSpace) : isCollapsibleWhitespace(c))
             if (isEditablePosition(prev))
                 return prev;
     }
@@ -654,7 +654,7 @@ Position Position::trailingWhitespacePosition(EAffinity affinity, bool considerN
     UChar c = v.characterAfter();
     // The space must not be in another paragraph and it must be editable.
     if (!isEndOfParagraph(v) && v.next(true).isNotNull())
-        if (considerNonCollapsibleWhitespace ? (DeprecatedChar(c).isSpace() || c == noBreakSpace) : isCollapsibleWhitespace(c))
+        if (considerNonCollapsibleWhitespace ? (isSpaceOrNewline(c) || c == noBreakSpace) : isCollapsibleWhitespace(c))
             return *this;
     
     return Position();

@@ -43,6 +43,7 @@ class wxString;
 namespace WebCore {
 
 class CString;
+class DeprecatedString;
 struct StringHash;
 
 class String {

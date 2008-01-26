@@ -425,7 +425,7 @@ HTMLTokenizer::State HTMLTokenizer::scriptHandler(State state)
     }
 
     state = processListing(SegmentedString(scriptCode, scriptCodeSize), state);
-    DeprecatedString exScript(reinterpret_cast<DeprecatedChar*>(buffer), dest - buffer);
+    String scriptCode(buffer, dest - buffer);
     processToken();
     currToken.tagName = scriptTag.localName();
     currToken.beginTag = false;
@@ -467,7 +467,7 @@ HTMLTokenizer::State HTMLTokenizer::scriptHandler(State state)
             else
                 prependingSrc = src;
             setSrc(SegmentedString());
-            state = scriptExecution(exScript, state, DeprecatedString::null, scriptStartLineno);
+            state = scriptExecution(scriptCode, state, String(), scriptStartLineno);
         }
     }
 
@@ -500,12 +500,12 @@ HTMLTokenizer::State HTMLTokenizer::scriptHandler(State state)
     return state;
 }
 
-HTMLTokenizer::State HTMLTokenizer::scriptExecution(const DeprecatedString& str, State state, DeprecatedString scriptURL, int baseLine)
+HTMLTokenizer::State HTMLTokenizer::scriptExecution(const String& str, State state, const String& scriptURL, int baseLine)
 {
     if (m_fragment || !m_doc->frame())
         return state;
     m_executingScript++;
-    DeprecatedString url = scriptURL.isNull() ? m_doc->frame()->document()->url() : scriptURL;
+    DeprecatedString url = scriptURL.isNull() ? m_doc->frame()->document()->url() : scriptURL.deprecatedString();
 
     SegmentedString *savedPrependingSrc = currentPrependingSrc;
     SegmentedString prependingSrc;
@@ -1725,7 +1725,7 @@ void HTMLTokenizer::notifyFinished(CachedResource*)
 
         // make sure we forget about the script before we execute the new one
         // infinite recursion might happen otherwise
-        DeprecatedString cachedScriptUrl( cs->url().deprecatedString() );
+        String cachedScriptUrl(cs->url());
         bool errorOccurred = cs->errorOccurred();
         cs->deref(this);
         RefPtr<Node> n = scriptNode.release();
@@ -1739,7 +1739,7 @@ void HTMLTokenizer::notifyFinished(CachedResource*)
             EventTargetNodeCast(n.get())->dispatchHTMLEvent(errorEvent, true, false);
         else {
             if (static_cast<HTMLScriptElement*>(n.get())->shouldExecuteAsJavaScript())
-                m_state = scriptExecution(scriptSource.deprecatedString(), m_state, cachedScriptUrl);
+                m_state = scriptExecution(scriptSource, m_state, cachedScriptUrl);
             EventTargetNodeCast(n.get())->dispatchHTMLEvent(loadEvent, false, false);
         }
 
@@ -1761,8 +1761,7 @@ void HTMLTokenizer::notifyFinished(CachedResource*)
             SegmentedString rest = pendingSrc;
             pendingSrc.clear();
             write(rest, false);
-            // we might be deleted at this point, do not
-            // access any members.
+            // we might be deleted at this point, do not access any members.
         }
     }
 }

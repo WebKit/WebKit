@@ -67,8 +67,8 @@ static inline void mapAttributeToCSSProperty(HashMap<AtomicStringImpl*, int>* pr
     if (cssPropertyName)
         propertyId = getPropertyID(cssPropertyName, strlen(cssPropertyName));
     else {
-        DeprecatedString propertyName = attrName.localName().deprecatedString();
-        propertyId = getPropertyID(propertyName.ascii(), propertyName.length());
+        CString propertyName = attrName.localName().domString().utf8();
+        propertyId = getPropertyID(propertyName.data(), propertyName.length());
     }
     if (propertyId < 1)
         fprintf(stderr, "Failed to find property: %s\n", attrName.localName().deprecatedString().ascii());

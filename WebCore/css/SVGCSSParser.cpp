@@ -33,7 +33,6 @@
 #include "CSSValueKeywords.h"
 #include "CSSValueList.h"
 #include "SVGPaint.h"
-#include "DeprecatedString.h"
 
 using namespace std;
 

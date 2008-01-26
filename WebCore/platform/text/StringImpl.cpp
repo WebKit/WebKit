@@ -26,9 +26,9 @@
 #include "StringImpl.h"
 
 #include "AtomicString.h"
-#include "DeprecatedString.h"
 #include "CString.h"
 #include "CharacterNames.h"
+#include "DeprecatedString.h"
 #include "FloatConversion.h"
 #include "Length.h"
 #include "StringBuffer.h"
@@ -48,13 +48,6 @@ using KJS::UString;
 
 namespace WebCore {
 
-static inline bool isSpace(UChar c)
-{
-    // Use isASCIISpace() for basic Latin-1.
-    // This will include newlines, which aren't included in Unicode DirWS.
-    return c <= 0x7F ? isASCIISpace(c) : direction(c) == WhiteSpaceNeutral;
-}    
-    
 static inline UChar* newUCharVector(unsigned n)
 {
     return static_cast<UChar*>(fastMalloc(sizeof(UChar) * n));
@@ -224,7 +217,7 @@ static Length parseLength(const UChar* data, unsigned length)
         return Length(1, Relative);
 
     unsigned i = 0;
-    while (i < length && isSpace(data[i]))
+    while (i < length && isSpaceOrNewline(data[i]))
         ++i;
     if (i < length && (data[i] == '+' || data[i] == '-'))
         ++i;
@@ -239,7 +232,7 @@ static Length parseLength(const UChar* data, unsigned length)
         ++i;
 
     /* IE Quirk: Skip any whitespace (20 % => 20%) */
-    while (i < length && isSpace(data[i]))
+    while (i < length && isSpaceOrNewline(data[i]))
         ++i;
 
     if (ok) {
@@ -447,7 +440,7 @@ PassRefPtr<StringImpl> StringImpl::stripWhiteSpace()
     unsigned end = m_length - 1;
     
     // skip white space from start
-    while (start <= end && isSpace(m_data[start])) 
+    while (start <= end && isSpaceOrNewline(m_data[start]))
         start++;
     
     // only white space
@@ -455,7 +448,7 @@ PassRefPtr<StringImpl> StringImpl::stripWhiteSpace()
         return empty();
 
     // skip white space from end
-    while (end && isSpace(m_data[end]))         
+    while (end && isSpaceOrNewline(m_data[end]))
         end--;
 
     return create(m_data + start, end + 1 - start);
@@ -472,9 +465,9 @@ PassRefPtr<StringImpl> StringImpl::simplifyWhiteSpace()
     UChar* to = data.characters();
     
     while (true) {
-        while (from != fromend && isSpace(*from))
+        while (from != fromend && isSpaceOrNewline(*from))
             from++;
-        while (from != fromend && !isSpace(*from))
+        while (from != fromend && !isSpaceOrNewline(*from))
             to[outc++] = *from++;
         if (from != fromend)
             to[outc++] = ' ';
@@ -526,7 +519,7 @@ int StringImpl::toInt(bool* ok)
 
     // Allow leading spaces.
     for (; i != m_length; ++i)
-        if (!isSpace(m_data[i]))
+        if (!isSpaceOrNewline(m_data[i]))
             break;
     
     // Allow sign.
@@ -547,7 +540,7 @@ int64_t StringImpl::toInt64(bool* ok)
 
     // Allow leading spaces.
     for (; i != m_length; ++i)
-        if (!isSpace(m_data[i]))
+        if (!isSpaceOrNewline(m_data[i]))
             break;
     
     // Allow sign.
@@ -568,7 +561,7 @@ uint64_t StringImpl::toUInt64(bool* ok)
 
     // Allow leading spaces.
     for (; i != m_length; ++i)
-        if (!isSpace(m_data[i]))
+        if (!isSpaceOrNewline(m_data[i]))
             break;
 
     // Allow digits.

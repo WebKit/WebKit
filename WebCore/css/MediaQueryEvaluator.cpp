@@ -31,7 +31,6 @@
 #include "Chrome.h"
 #include "CSSPrimitiveValue.h"
 #include "CSSValueList.h"
-#include "DeprecatedString.h"
 #include "FloatRect.h"
 #include "Frame.h"
 #include "FrameView.h"
@@ -166,7 +165,7 @@ static bool parseAspectRatio(CSSValue* value, int& h, int& v)
                 && i1->isPrimitiveValue() && static_cast<CSSPrimitiveValue*>(i1)->primitiveType() == CSSPrimitiveValue::CSS_STRING
                 && i2->isPrimitiveValue() && static_cast<CSSPrimitiveValue*>(i2)->primitiveType() == CSSPrimitiveValue::CSS_NUMBER) {
                 String str = static_cast<CSSPrimitiveValue*>(i1)->getStringValue();
-                if (!str.isNull() && str.length() == 1 && str[0] == DeprecatedChar('/')) {
+                if (!str.isNull() && str.length() == 1 && str[0] == '/') {
                     h = static_cast<CSSPrimitiveValue*>(i0)->getIntValue(CSSPrimitiveValue::CSS_NUMBER);
                     v = static_cast<CSSPrimitiveValue*>(i2)->getIntValue(CSSPrimitiveValue::CSS_NUMBER);
                     return true;

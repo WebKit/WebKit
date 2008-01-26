@@ -27,7 +27,6 @@
 #include "SVGLength.h"
 
 #include "CSSHelper.h"
-#include "DeprecatedString.h"
 #include "FloatConversion.h"
 #include "FrameView.h"
 #include "RenderObject.h"

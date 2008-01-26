@@ -27,6 +27,7 @@
 
 #include "Attr.h"
 #include "CSSStyleSelector.h"
+#include "CString.h"
 #include "Document.h"
 #include "HTMLNames.h"
 #include "PlatformString.h"
@@ -74,8 +75,8 @@ static inline void mapAttributeToCSSProperty(HashMap<AtomicStringImpl*, int>* pr
     if (cssPropertyName)
         propertyId = getPropertyID(cssPropertyName, strlen(cssPropertyName));
     else {
-        DeprecatedString propertyName = attrName.localName().deprecatedString();
-        propertyId = getPropertyID(propertyName.ascii(), propertyName.length());
+        CString propertyName = attrName.localName().domString().utf8();
+        propertyId = getPropertyID(propertyName.data(), propertyName.length());
     }
     ASSERT(propertyId > 0);
     propertyNameToIdMap->set(attrName.localName().impl(), propertyId);

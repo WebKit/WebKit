@@ -22,12 +22,13 @@
 #ifndef StringImpl_h
 #define StringImpl_h
 
-#include <wtf/RefCounted.h>
-#include <wtf/unicode/Unicode.h>
 #include <kjs/identifier.h>
-#include <wtf/Forward.h>
-#include <wtf/Vector.h>
 #include <limits.h>
+#include <wtf/ASCIICType.h>
+#include <wtf/Forward.h>
+#include <wtf/RefCounted.h>
+#include <wtf/Vector.h>
+#include <wtf/unicode/Unicode.h>
 
 #if PLATFORM(CF)
 typedef const struct __CFString * CFStringRef;
@@ -40,7 +41,6 @@ typedef const struct __CFString * CFStringRef;
 namespace WebCore {
 
 class AtomicString;
-class DeprecatedString;
 class StringBuffer;
 
 struct CStringTranslator;
@@ -248,6 +248,13 @@ inline unsigned StringImpl::computeHash(const char* data)
     hash |= !hash << 31;
     
     return hash;
+}
+
+static inline bool isSpaceOrNewline(UChar c)
+{
+    // Use isASCIISpace() for basic Latin-1.
+    // This will include newlines, which aren't included in Unicode DirWS.
+    return c <= 0x7F ? WTF::isASCIISpace(c) : WTF::Unicode::direction(c) == WTF::Unicode::WhiteSpaceNeutral;
 }
 
 }

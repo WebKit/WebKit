@@ -1,3 +1,57 @@
+2008-01-25  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Sam and Darin.
+
+        Fire a warning shot in DeprecatedChar's direction.
+
+        Remove DeprecatedChar::isSpace() usage, in preparation for removing DeprecatedChar
+        Remove a needless String -> DeprecatedString -> String conversion for <script> tags
+
+        * css/MediaQueryEvaluator.cpp:
+        (WebCore::parseAspectRatio):
+        * css/SVGCSSParser.cpp:
+        * dom/Position.cpp:
+        (WebCore::Position::leadingWhitespacePosition):
+        (WebCore::Position::trailingWhitespacePosition):
+        * editing/TextIterator.cpp:
+        (WebCore::WordAwareIterator::advance):
+        * html/HTMLFontElement.cpp:
+        (WebCore::parseFontSizeNumber):
+        * html/HTMLTokenizer.cpp:
+        (WebCore::HTMLTokenizer::scriptHandler):
+        (WebCore::HTMLTokenizer::scriptExecution):
+        (WebCore::HTMLTokenizer::notifyFinished):
+        * html/HTMLTokenizer.h:
+        * loader/CachedCSSStyleSheet.cpp:
+        * loader/TextResourceDecoder.cpp:
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.mm:
+        * platform/mac/ClipboardMac.mm:
+        (WebCore::ClipboardMac::getData):
+        * platform/network/HTTPParsers.cpp:
+        (WebCore::extractMIMETypeFromMediaType):
+        * platform/text/PlatformString.h:
+        * platform/text/StringImpl.cpp:
+        (WebCore::parseLength):
+        (WebCore::StringImpl::stripWhiteSpace):
+        (WebCore::StringImpl::simplifyWhiteSpace):
+        (WebCore::StringImpl::toInt):
+        (WebCore::StringImpl::toInt64):
+        (WebCore::StringImpl::toUInt64):
+        * platform/text/StringImpl.h:
+        (WebCore::isSpaceOrNewline):
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::placeBoxesHorizontally):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::updateFirstLetter):
+        * rendering/bidi.cpp:
+        (WebCore::RenderBlock::computeHorizontalPositionsForLine):
+        * svg/SVGFontFaceElement.cpp:
+        (WebCore::mapAttributeToCSSProperty):
+        * svg/SVGLength.cpp:
+        * svg/SVGStyledElement.cpp:
+        (WebCore::mapAttributeToCSSProperty):
+        * xml/XPathParser.cpp:
+
 2008-01-25  Stephanie Lewis  <slewis@apple.com>
 
         Reviewed by Tim.
