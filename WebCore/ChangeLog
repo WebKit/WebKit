@@ -1,3 +1,13 @@
+2008-01-25  U-SLEWIS-WIN\Stephanie  <slewis@apple.com>
+
+        Reviewed by Tim.
+
+        expand workaround for <rdar://5695848> to include js files so that the
+        web inspector can work
+
+        * platform/network/cf/ResourceResponseCFNet.cpp:
+        (WebCore::ResourceResponse::doUpdateResourceResponse):
+
 2008-01-25  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Adele.

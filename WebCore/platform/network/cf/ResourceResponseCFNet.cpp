@@ -104,12 +104,15 @@ void ResourceResponse::doUpdateResourceResponse()
         static const String htmlExt(".html");
         static const String xmlExt(".xml");
         static const String svgExt(".svg");
+        static const String jsExt(".js");
         if (path.endsWith(xhtmlExt, false))
             m_mimeType = "application/xhtml+xml";
         else if (path.endsWith(htmlExt, false))
             m_mimeType = "text/html";
         else if (path.endsWith(xmlExt, false))
             m_mimeType = "text/xml";
+        else if (path.endsWith(jsExt, false))
+            m_mimeType = "text/javascript";
         else if (path.endsWith(svgExt, false))
             m_mimeType = "image/svg+xml";
     }
