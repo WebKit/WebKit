@@ -1,3 +1,76 @@
+2008-01-26  Darin Adler  <darin@apple.com>
+
+        Reviewed by Eric Seidel.
+
+        - http://bugs.webkit.org/show_bug.cgi?id=16860
+          a bit of cleanup after the Activation optimization
+
+        * JavaScriptCore.exp: Export the GlobalExecState constructor instead of
+        the global flavor of the ExecState constructor. It'd probably be cleaner
+        to not export either one, but JSGlobalObject inlines the code that
+        constructs the ExecState. If we changed that, we could remove this export.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj: Re-sorted a few things and
+        put the new source files into the kjs group rather than at the top level.
+
+        * kjs/ExecState.cpp:
+        (KJS::ExecState::ExecState): Marked inline and updated for data member
+        name changes. This is now only for use for the derived classes. Also removed
+        code that sets the unused m_savedExec data member for the global case. That
+        data member is only used for the other two types.
+        (KJS::ExecState::~ExecState): Marked inline and removed all the code.
+        The derived class destructors now inclde the appropriate code.
+        (KJS::ExecState::lexicalGlobalObject): Removed unneeded special case for
+        an empty scope chain. The bottom function already returns 0 for that case,
+        so the general case code handles it fine. Also changed to use data members
+        directly rather than calling functions.
+        (KJS::GlobalExecState::GlobalExecState): Added. Calls through to the base
+        class constructor.
+        (KJS::GlobalExecState::~GlobalExecState): Added.
+        (KJS::InterpreterExecState::InterpreterExecState): Added. Moved code to
+        manipulate activeExecStates here since we don't want to have to check for the
+        special case of globalExec.
+        (KJS::InterpreterExecState::~InterpreterExecState): Added.
+        (KJS::EvalExecState::EvalExecState): Added.
+        (KJS::EvalExecState::~EvalExecState): Added.
+        (KJS::FunctionExecState::FunctionExecState): Added.
+        (KJS::FunctionExecState::~FunctionExecState): Added.
+
+        * kjs/ExecState.h: Tweaked the header, includes, and declarations a bit.
+        Made ExecState inherit from Noncopyable. Reformatted some comments and
+        made them a bit more brief. Rearranged declarations a little bit and removed
+        unused savedExec function. Changed seenLabels function to return a reference
+        rather than a pointer. Made constructors and destructor protected, and also
+        did the same with all data members. Renamed m_thisVal to m_thisValue and
+        ls to m_labelStack. Added three new derived classes for each of the
+        types of ExecState. The primary goal here was to remove a branch from the
+        code in the destructor, but it's also clearer than overloading the arguments
+        to the ExecState constructor.
+
+        * kjs/JSGlobalObject.cpp:
+        (KJS::getCurrentTime): Fixed formatting.
+        (KJS::JSGlobalObject::pushActivation): Removed parentheses that don't make
+        the expression clearer -- other similar sites didn't have these parentheses,
+        even the one a couple lines earlier that sets stackEntry.
+        (KJS::JSGlobalObject::tearOffActivation): Got rid of unneeded static_cast
+        (I think I mentioned this during patch review) and used an early exit so that
+        the entire contents of the function aren't nested inside an if statement.
+        Also removed the check of codeType, instead checking Activation for 0.
+        For now, I kept the codeType check, but inside an assertion.
+
+        * kjs/JSGlobalObject.h: Changed type of globalExec to GlobalExecState.
+        * kjs/function.cpp:
+        (KJS::FunctionImp::callAsFunction): Changed type to FunctionExecState.
+        (KJS::GlobalFuncImp::callAsFunction): Changed type to EvalExecState.
+        * kjs/interpreter.cpp:
+        (KJS::Interpreter::evaluate): Changed type to GlobalExecState.
+
+        * kjs/nodes.cpp:
+        (KJS::ContinueNode::execute): Changed code since seenLabels() returns a
+        reference now instead of a pointer.
+        (KJS::BreakNode::execute): Ditto.
+        (KJS::LabelNode::execute): Ditto.
+
 2008-01-26  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Mark Rowe.

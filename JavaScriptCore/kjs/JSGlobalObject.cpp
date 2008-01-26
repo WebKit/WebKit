@@ -73,7 +73,8 @@ static inline void markIfNeeded(JSValue* v)
 // Returns the current time in milliseconds
 // It doesn't matter what "current time" is here, just as long as
 // it's possible to measure the time difference correctly.
-static inline unsigned getCurrentTime() {
+static inline unsigned getCurrentTime()
+{
 #if HAVE(SYS_TIME_H)
     struct timeval tv;
     gettimeofday(&tv, 0);
@@ -522,8 +523,7 @@ ActivationImp* JSGlobalObject::pushActivation(ExecState* exec)
     
     StackActivation* stackEntry = &d()->activations->data[d()->activationCount++];
     stackEntry->activationStorage.init(exec);
-    
-    return &(stackEntry->activationStorage);
+    return &stackEntry->activationStorage;
 }
 
 inline void JSGlobalObject::checkActivationCount()
@@ -544,22 +544,24 @@ void JSGlobalObject::popActivation()
 
 void JSGlobalObject::tearOffActivation(ExecState* exec, bool leaveRelic)
 {
-    if (exec->codeType() == FunctionCode && static_cast<ActivationImp*>(exec->activationObject())->isOnStack()) {
-        ActivationImp* oldActivation = static_cast<ActivationImp*>(exec->activationObject());
-        ActivationImp* newActivation = new ActivationImp(*oldActivation->d(), leaveRelic);
-        
-        if (!leaveRelic) {
-            checkActivationCount();
-            d()->activationCount--;
-        }
-        
-        oldActivation->d()->localStorage.shrink(0);
-        
-        exec->setActivationObject(newActivation);
-        exec->setVariableObject(newActivation);
-        exec->setLocalStorage(&(newActivation->localStorage()));
-        exec->replaceScopeChainTop(newActivation);
+    ActivationImp* oldActivation = exec->activationObject();
+    if (!oldActivation || !oldActivation->isOnStack())
+        return;
+
+    ASSERT(exec->codeType() == FunctionCode);
+    ActivationImp* newActivation = new ActivationImp(*oldActivation->d(), leaveRelic);
+    
+    if (!leaveRelic) {
+        checkActivationCount();
+        d()->activationCount--;
     }
+    
+    oldActivation->d()->localStorage.shrink(0);
+    
+    exec->setActivationObject(newActivation);
+    exec->setVariableObject(newActivation);
+    exec->setLocalStorage(&newActivation->localStorage());
+    exec->replaceScopeChainTop(newActivation);
 }
 
 } // namespace KJS

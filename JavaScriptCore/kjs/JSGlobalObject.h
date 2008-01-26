@@ -86,7 +86,7 @@ namespace KJS {
             Debugger* debugger;
             CompatMode compatMode;
             
-            ExecState globalExec;
+            GlobalExecState globalExec;
             int recursion;
 
             unsigned timeoutTime;

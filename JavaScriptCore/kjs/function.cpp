@@ -72,7 +72,7 @@ void FunctionImp::mark()
 
 JSValue* FunctionImp::callAsFunction(ExecState* exec, JSObject* thisObj, const List& args)
 {
-    ExecState newExec(exec->dynamicGlobalObject(), thisObj, body.get(), exec, this, args);
+    FunctionExecState newExec(exec->dynamicGlobalObject(), thisObj, body.get(), exec, this, args);
     JSValue* result = body->execute(&newExec);
     if (newExec.completionType() == Throw) {
         exec->setException(result);
@@ -721,7 +721,7 @@ JSValue* globalFuncEval(ExecState* exec, JSObject* thisObj, const List& args)
     // enter a new execution context
     exec->dynamicGlobalObject()->tearOffActivation(exec);
     JSGlobalObject* globalObject = switchGlobal ? static_cast<JSGlobalObject*>(thisObj) : exec->dynamicGlobalObject();
-    ExecState newExec(globalObject, evalNode.get(), exec);
+    EvalExecState newExec(globalObject, evalNode.get(), exec);
 
     if (switchGlobal) {
         newExec.pushScope(thisObj);

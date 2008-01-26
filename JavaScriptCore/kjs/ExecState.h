@@ -2,7 +2,7 @@
 /*
  *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2003, 2007 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003, 2007, 2008 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -21,22 +21,17 @@
  *
  */
 
-#ifndef ExecState_H
-#define ExecState_H
+#ifndef ExecState_h
+#define ExecState_h
 
 #include "LabelStack.h"
 #include "LocalStorage.h"
+#include "completion.h"
+#include "list.h"
 #include "scope_chain.h"
-#include "types.h"
 
 namespace KJS  {
 
-    enum CodeType {
-        GlobalCode,
-        EvalCode,
-        FunctionCode,
-    };
-    
     class ActivationImp;
     class CommonIdentifiers;
     class EvalNode;
@@ -47,29 +42,20 @@ namespace KJS  {
     class JSGlobalObject;
     class JSVariableObject;
     class ProgramNode;
-    class ScopeChain;
     class ScopeNode;
-    struct LocalStorageEntry;
+    
+    enum CodeType { GlobalCode, EvalCode, FunctionCode };
     
     typedef Vector<ExecState*, 16> ExecStateStack;
 
-    /**
-     * Represents the current state of script execution. This is
-     * passed as the first argument to most functions.
-     */
-    class ExecState {
-        friend class Interpreter;
-        friend class FunctionImp;
-        friend class GlobalFuncImp;
+    // Represents the current state of script execution.
+    // Passed as the first argument to most functions.
+    class ExecState : Noncopyable {
     public:
-        /**
-         * Returns the global object that was in scope when the current script started executing.
-         */
+        // Global object that was in scope when the current script started executing.
         JSGlobalObject* dynamicGlobalObject() const { return m_globalObject; }
         
-        /**
-         * Returns the global object that was in scope when the current body of code was defined.
-         */
+        // Global object that was in scope when the current body of code was defined.
         JSGlobalObject* lexicalGlobalObject() const;
                 
         void setException(JSValue* e) { m_exception = e; }
@@ -79,12 +65,14 @@ namespace KJS  {
         bool hadException() const { return !!m_exception; }
         
         const ScopeChain& scopeChain() const { return m_scopeChain; }
+        void pushScope(JSObject* s) { m_scopeChain.push(s); }
+        void popScope() { m_scopeChain.pop(); }
         void replaceScopeChainTop(JSObject* o) { m_scopeChain.replaceTop(o); }
         
         JSVariableObject* variableObject() const { return m_variableObject; }
         void setVariableObject(JSVariableObject* v) { m_variableObject = v; }
         
-        JSObject* thisValue() const { return m_thisVal; }
+        JSObject* thisValue() const { return m_thisValue; }
         
         ExecState* callingExecState() { return m_callingExec; }
         
@@ -95,9 +83,7 @@ namespace KJS  {
         FunctionImp* function() const { return m_function; }
         const List* arguments() const { return m_arguments; }
         
-        void pushScope(JSObject* s) { m_scopeChain.push(s); }
-        void popScope() { m_scopeChain.pop(); }
-        LabelStack* seenLabels() { return &ls; }
+        LabelStack& seenLabels() { return m_labelStack; }
         
         void pushIteration() { m_iterationDepth++; }
         void popIteration() { m_iterationDepth--; }
@@ -177,6 +163,10 @@ namespace KJS  {
             return 0;
         }
 
+        static void markActiveExecStates();
+        static ExecStateStack& activeExecStates();
+
+    protected:
         ExecState(JSGlobalObject*);
         ExecState(JSGlobalObject*, JSObject* thisObject, ProgramNode*);
         ExecState(JSGlobalObject*, EvalNode*, ExecState* callingExecState);
@@ -184,10 +174,6 @@ namespace KJS  {
             ExecState* callingExecState, FunctionImp*, const List& args);
         ~ExecState();
 
-        static void markActiveExecStates();
-        static ExecStateStack& activeExecStates();
-
-    private:
         // ExecStates are always stack-allocated, and the garbage collector
         // marks the stack, so we don't need to protect the objects below from GC.
 
@@ -207,9 +193,9 @@ namespace KJS  {
 
         ScopeChain m_scopeChain;
         JSVariableObject* m_variableObject;
-        JSObject* m_thisVal;
+        JSObject* m_thisValue;
         
-        LabelStack ls;
+        LabelStack m_labelStack;
         int m_iterationDepth;
         int m_switchDepth;
         CodeType m_codeType;
@@ -218,6 +204,31 @@ namespace KJS  {
         const Identifier* m_breakOrContinueTarget;
     };
 
+    class GlobalExecState : public ExecState {
+    public:
+        GlobalExecState(JSGlobalObject*);
+        ~GlobalExecState();
+    };
+
+    class InterpreterExecState : public ExecState {
+    public:
+        InterpreterExecState(JSGlobalObject*, JSObject* thisObject, ProgramNode*);
+        ~InterpreterExecState();
+    };
+
+    class EvalExecState : public ExecState {
+    public:
+        EvalExecState(JSGlobalObject*, EvalNode*, ExecState* callingExecState);
+        ~EvalExecState();
+    };
+
+    class FunctionExecState : public ExecState {
+    public:
+        FunctionExecState(JSGlobalObject*, JSObject* thisObject, FunctionBodyNode*,
+            ExecState* callingExecState, FunctionImp*, const List& args);
+        ~FunctionExecState();
+    };
+
 } // namespace KJS
 
-#endif // ExecState_H
+#endif // ExecState_h

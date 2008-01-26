@@ -119,7 +119,7 @@ Completion Interpreter::evaluate(ExecState* exec, const UString& sourceURL, int 
         res = Completion(Throw, exec->exception());
     else {
         // execute the code
-        ExecState newExec(globalObject, thisObj, progNode.get());
+        InterpreterExecState newExec(globalObject, thisObj, progNode.get());
         JSValue* value = progNode->execute(&newExec);
         res = Completion(newExec.completionType(), value);
     }

@@ -1,9 +1,8 @@
 // -*- mode: c++; c-basic-offset: 4 -*-
 /*
- *  This file is part of the KDE libraries
  *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2003, 2007 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003, 2007, 2008 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -42,7 +41,7 @@ static inline List* globalEmptyList()
 // ECMA 10.2
 
 // The constructor for the globalExec pseudo-ExecState
-ExecState::ExecState(JSGlobalObject* globalObject)
+inline ExecState::ExecState(JSGlobalObject* globalObject)
     : m_globalObject(globalObject)
     , m_exception(0)
     , m_propertyNames(CommonIdentifiers::shared())
@@ -54,7 +53,7 @@ ExecState::ExecState(JSGlobalObject* globalObject)
     , m_activation(0)
     , m_localStorage(&globalObject->localStorage())
     , m_variableObject(globalObject)
-    , m_thisVal(globalObject)
+    , m_thisValue(globalObject)
     , m_iterationDepth(0)
     , m_switchDepth(0) 
     , m_codeType(GlobalCode)
@@ -62,7 +61,7 @@ ExecState::ExecState(JSGlobalObject* globalObject)
     m_scopeChain.push(globalObject);
 }
 
-ExecState::ExecState(JSGlobalObject* globalObject, JSObject* /*thisObject*/, ProgramNode* programNode)
+inline ExecState::ExecState(JSGlobalObject* globalObject, JSObject* /*thisObject*/, ProgramNode* programNode)
     : m_globalObject(globalObject)
     , m_exception(0)
     , m_propertyNames(CommonIdentifiers::shared())
@@ -74,7 +73,7 @@ ExecState::ExecState(JSGlobalObject* globalObject, JSObject* /*thisObject*/, Pro
     , m_activation(0)
     , m_localStorage(&globalObject->localStorage())
     , m_variableObject(globalObject)
-    , m_thisVal(globalObject)
+    , m_thisValue(globalObject)
     , m_iterationDepth(0)
     , m_switchDepth(0) 
     , m_codeType(GlobalCode)
@@ -83,11 +82,10 @@ ExecState::ExecState(JSGlobalObject* globalObject, JSObject* /*thisObject*/, Pro
     // a script with a this object that's not the same as the global object is broken, and probably
     // has been for some time.
     ASSERT(m_scopeNode);
-    activeExecStates().append(this);
     m_scopeChain.push(globalObject);
 }
 
-ExecState::ExecState(JSGlobalObject* globalObject, EvalNode* evalNode, ExecState* callingExec)
+inline ExecState::ExecState(JSGlobalObject* globalObject, EvalNode* evalNode, ExecState* callingExec)
     : m_globalObject(globalObject)
     , m_exception(0)
     , m_propertyNames(callingExec->m_propertyNames)
@@ -100,18 +98,17 @@ ExecState::ExecState(JSGlobalObject* globalObject, EvalNode* evalNode, ExecState
     , m_localStorage(callingExec->m_localStorage)
     , m_scopeChain(callingExec->m_scopeChain)
     , m_variableObject(callingExec->m_variableObject)
-    , m_thisVal(callingExec->m_thisVal)
+    , m_thisValue(callingExec->m_thisValue)
     , m_iterationDepth(0)
     , m_switchDepth(0) 
     , m_codeType(EvalCode)
 {    
     ASSERT(m_scopeNode);
-    activeExecStates().append(this);
 }
 
-ExecState::ExecState(JSGlobalObject* globalObject, JSObject* thisObject, 
-                     FunctionBodyNode* functionBodyNode, ExecState* callingExec,
-                     FunctionImp* func, const List& args)
+inline ExecState::ExecState(JSGlobalObject* globalObject, JSObject* thisObject, 
+         FunctionBodyNode* functionBodyNode, ExecState* callingExec,
+         FunctionImp* func, const List& args)
     : m_globalObject(globalObject)
     , m_exception(0)
     , m_propertyNames(callingExec->m_propertyNames)
@@ -121,13 +118,12 @@ ExecState::ExecState(JSGlobalObject* globalObject, JSObject* thisObject,
     , m_function(func)
     , m_arguments(&args)
     , m_scopeChain(func->scope())
-    , m_thisVal(thisObject)
+    , m_thisValue(thisObject)
     , m_iterationDepth(0)
     , m_switchDepth(0) 
     , m_codeType(FunctionCode)
 {
     ASSERT(m_scopeNode);
-    activeExecStates().append(this);
 
     ActivationImp* activation = globalObject->pushActivation(this);
     m_activation = activation;
@@ -136,26 +132,16 @@ ExecState::ExecState(JSGlobalObject* globalObject, JSObject* thisObject,
     m_scopeChain.push(activation);
 }
 
-ExecState::~ExecState()
+inline ExecState::~ExecState()
 {
-    ASSERT(m_scopeNode && activeExecStates().last() == this || !m_scopeNode);
-    if (m_scopeNode)
-        activeExecStates().removeLast();
-
-    if (m_activation && m_activation->needsPop())
-        m_globalObject->popActivation();
 }
 
 JSGlobalObject* ExecState::lexicalGlobalObject() const
 {
-    if (scopeChain().isEmpty())
-        return dynamicGlobalObject();
-    
-    JSObject* object = scopeChain().bottom();
+    JSObject* object = m_scopeChain.bottom();
     if (object && object->isGlobalObject())
         return static_cast<JSGlobalObject*>(object);
-
-    return dynamicGlobalObject();
+    return m_globalObject;
 }
 
 void ExecState::markActiveExecStates() 
@@ -165,10 +151,65 @@ void ExecState::markActiveExecStates()
         (*it)->m_scopeChain.mark();
 }
 
-ExecStateStack& ExecState::activeExecStates()
+static inline ExecStateStack& inlineActiveExecStates()
 {
     static ExecStateStack staticActiveExecStates;
     return staticActiveExecStates;
+}
+
+ExecStateStack& ExecState::activeExecStates()
+{
+    return inlineActiveExecStates();
+}
+
+GlobalExecState::GlobalExecState(JSGlobalObject* globalObject)
+    : ExecState(globalObject)
+{
+}
+
+GlobalExecState::~GlobalExecState()
+{
+}
+
+InterpreterExecState::InterpreterExecState(JSGlobalObject* globalObject, JSObject* thisObject, ProgramNode* programNode)
+    : ExecState(globalObject, thisObject, programNode)
+{
+    inlineActiveExecStates().append(this);
+}
+
+InterpreterExecState::~InterpreterExecState()
+{
+    ASSERT(inlineActiveExecStates().last() == this);
+    inlineActiveExecStates().removeLast();
+}
+
+EvalExecState::EvalExecState(JSGlobalObject* globalObject, EvalNode* evalNode, ExecState* callingExec)
+    : ExecState(globalObject, evalNode, callingExec)
+{
+    inlineActiveExecStates().append(this);
+}
+
+EvalExecState::~EvalExecState()
+{
+    ASSERT(inlineActiveExecStates().last() == this);
+    inlineActiveExecStates().removeLast();
+}
+
+FunctionExecState::FunctionExecState(JSGlobalObject* globalObject, JSObject* thisObject, 
+         FunctionBodyNode* functionBodyNode, ExecState* callingExec,
+         FunctionImp* func, const List& args)
+    : ExecState(globalObject, thisObject, functionBodyNode, callingExec, func, args)
+{
+    inlineActiveExecStates().append(this);
+}
+
+FunctionExecState::~FunctionExecState()
+{
+    ASSERT(inlineActiveExecStates().last() == this);
+    inlineActiveExecStates().removeLast();
+
+    if (m_activation->needsPop())
+        m_globalObject->popActivation();
 }
 
 } // namespace KJS
