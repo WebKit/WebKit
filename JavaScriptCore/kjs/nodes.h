@@ -721,10 +721,8 @@ namespace KJS {
   public:
     PostfixBracketNode(ExpressionNode* b, ExpressionNode* s) KJS_FAST_CALL : m_base(b), m_subscript(s) {}
     virtual void optimizeVariableAccess(SymbolTable&, DeclarationStacks::NodeStack&) KJS_FAST_CALL;
-    virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
     virtual Precedence precedence() const { return PrecPostfix; }
   protected:
-    virtual bool isIncrement() const = 0;
     RefPtr<ExpressionNode> m_base;
     RefPtr<ExpressionNode> m_subscript;
   };
@@ -733,26 +731,22 @@ namespace KJS {
   public:
     PostIncBracketNode(ExpressionNode* b, ExpressionNode* s) KJS_FAST_CALL : PostfixBracketNode(b, s) {}
     virtual JSValue* evaluate(ExecState*) KJS_FAST_CALL;
-  protected:
-    virtual bool isIncrement() const { return true; }
+    virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
   };
 
   class PostDecBracketNode : public PostfixBracketNode {
   public:
     PostDecBracketNode(ExpressionNode* b, ExpressionNode* s) KJS_FAST_CALL : PostfixBracketNode(b, s) {}
     virtual JSValue* evaluate(ExecState*) KJS_FAST_CALL;
-  protected:
-    virtual bool isIncrement() const { return false; }
+    virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
   };
 
     class PostfixDotNode : public ExpressionNode {
   public:
     PostfixDotNode(ExpressionNode* b, const Identifier& i) KJS_FAST_CALL : m_base(b), m_ident(i) {}
     virtual void optimizeVariableAccess(SymbolTable&, DeclarationStacks::NodeStack&) KJS_FAST_CALL;
-    virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
     virtual Precedence precedence() const { return PrecPostfix; }
   protected:
-    virtual bool isIncrement() const = 0;
     RefPtr<ExpressionNode> m_base;
     Identifier m_ident;
   };
@@ -761,16 +755,14 @@ namespace KJS {
   public:
     PostIncDotNode(ExpressionNode*  b, const Identifier& i) KJS_FAST_CALL : PostfixDotNode(b, i) {}
     virtual JSValue* evaluate(ExecState*) KJS_FAST_CALL;
-  protected:
-    virtual bool isIncrement() const { return true; }
+    virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
   };
 
   class PostDecDotNode : public PostfixDotNode {
   public:
     PostDecDotNode(ExpressionNode*  b, const Identifier& i) KJS_FAST_CALL : PostfixDotNode(b, i) {}
     virtual JSValue* evaluate(ExecState*) KJS_FAST_CALL;
-  protected:
-    virtual bool isIncrement() const { return false; }
+    virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
   };
 
   class PostfixErrorNode : public ExpressionNode {
@@ -973,10 +965,8 @@ namespace KJS {
     PrefixBracketNode(ExpressionNode* b, ExpressionNode* s) KJS_FAST_CALL : m_base(b), m_subscript(s) {}
     
     virtual void optimizeVariableAccess(SymbolTable&, DeclarationStacks::NodeStack&) KJS_FAST_CALL;
-    virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
     virtual Precedence precedence() const { return PrecUnary; }
   protected:
-    virtual bool isIncrement() const = 0;
     RefPtr<ExpressionNode> m_base;
     RefPtr<ExpressionNode> m_subscript;
   };
@@ -985,26 +975,22 @@ namespace KJS {
   public:
     PreIncBracketNode(ExpressionNode*  b, ExpressionNode*  s) KJS_FAST_CALL : PrefixBracketNode(b, s) {}
     virtual JSValue* evaluate(ExecState*) KJS_FAST_CALL;
-  protected:
-    bool isIncrement() const { return true; }
+    virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
   };
   
   class PreDecBracketNode : public PrefixBracketNode {
   public:
     PreDecBracketNode(ExpressionNode*  b, ExpressionNode*  s) KJS_FAST_CALL : PrefixBracketNode(b, s) {}
     virtual JSValue* evaluate(ExecState*) KJS_FAST_CALL;
-  protected:
-    bool isIncrement() const { return false; }
+    virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
   };
 
   class PrefixDotNode : public ExpressionNode {
   public:
     PrefixDotNode(ExpressionNode* b, const Identifier& i) KJS_FAST_CALL : m_base(b), m_ident(i) {}
     virtual void optimizeVariableAccess(SymbolTable&, DeclarationStacks::NodeStack&) KJS_FAST_CALL;
-    virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
     virtual Precedence precedence() const { return PrecPostfix; }
   protected:
-    virtual bool isIncrement() const = 0;
     RefPtr<ExpressionNode> m_base;
     Identifier m_ident;
   };
@@ -1013,16 +999,14 @@ namespace KJS {
   public:
     PreIncDotNode(ExpressionNode* b, const Identifier& i) KJS_FAST_CALL : PrefixDotNode(b, i) {}
     virtual JSValue* evaluate(ExecState*) KJS_FAST_CALL;
-  protected:
-    virtual bool isIncrement() const { return true; }
+    virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
   };
 
   class PreDecDotNode : public PrefixDotNode {
   public:
     PreDecDotNode(ExpressionNode* b, const Identifier& i) KJS_FAST_CALL : PrefixDotNode(b, i) {}
     virtual JSValue* evaluate(ExecState*) KJS_FAST_CALL;
-  protected:
-    virtual bool isIncrement() const { return false; }
+    virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
   };
 
   class PrefixErrorNode : public ExpressionNode {

@@ -261,6 +261,16 @@ template <typename T> static inline void streamLeftAssociativeBinaryOperator(Sou
     streamLeftAssociativeBinaryOperator(s, p, o, l.get(), r.get());
 }
 
+static inline void bracketNodeStreamTo(SourceStream& s, const RefPtr<ExpressionNode>& base, const RefPtr<ExpressionNode>& subscript)
+{
+    s << PrecCall << base.get() << "[" << subscript.get() << "]";
+}
+
+static inline void dotNodeStreamTo(SourceStream& s, const RefPtr<ExpressionNode>& base, const Identifier& ident)
+{
+    s << DotExpr << PrecCall << base.get() << "." << ident;
+}
+
 // --------
 
 UString Node::toString() const
@@ -419,12 +429,14 @@ void FunctionCallResolveNode::streamTo(SourceStream& s) const
 
 void FunctionCallBracketNode::streamTo(SourceStream& s) const
 {
-    s << PrecCall << base << "[" << subscript << "]" << args;
+    bracketNodeStreamTo(s, base, subscript);
+    s << args;
 }
 
 void FunctionCallDotNode::streamTo(SourceStream& s) const
 {
-    s << DotExpr << PrecCall << base << "." << ident << args;
+    dotNodeStreamTo(s, base, ident);
+    s << args;
 }
 
 void PostIncResolveNode::streamTo(SourceStream& s) const
@@ -437,22 +449,28 @@ void PostDecResolveNode::streamTo(SourceStream& s) const
     s << m_ident << "--";
 }
 
-void PostfixBracketNode::streamTo(SourceStream& s) const
+void PostIncBracketNode::streamTo(SourceStream& s) const
 {
-    s << PrecCall << m_base << "[" << m_subscript << "]";
-    if (isIncrement())
-        s << "++";
-    else
-        s << "--";
+    bracketNodeStreamTo(s, m_base, m_subscript);
+    s << "++";
 }
 
-void PostfixDotNode::streamTo(SourceStream& s) const
+void PostDecBracketNode::streamTo(SourceStream& s) const
 {
-    s << DotExpr << PrecCall << m_base << "." << m_ident;
-    if (isIncrement())
-        s << "++";
-    else
-        s << "--";
+    bracketNodeStreamTo(s, m_base, m_subscript);
+    s << "--";
+}
+
+void PostIncDotNode::streamTo(SourceStream& s) const
+{
+    dotNodeStreamTo(s, m_base, m_ident);
+    s << "++";
+}
+
+void PostDecDotNode::streamTo(SourceStream& s) const
+{
+    dotNodeStreamTo(s, m_base, m_ident);
+    s << "--";
 }
 
 void PostfixErrorNode::streamTo(SourceStream& s) const
@@ -471,12 +489,14 @@ void DeleteResolveNode::streamTo(SourceStream& s) const
 
 void DeleteBracketNode::streamTo(SourceStream& s) const
 {
-    s << "delete " << PrecCall << m_base << "[" << m_subscript << "]";
+    s << "delete ";
+    bracketNodeStreamTo(s, m_base, m_subscript);
 }
 
 void DeleteDotNode::streamTo(SourceStream& s) const
 {
-    s << "delete " << DotExpr << PrecCall << m_base << "." << m_ident;
+    s << "delete ";
+    dotNodeStreamTo(s, m_base, m_ident);
 }
 
 void DeleteValueNode::streamTo(SourceStream& s) const
@@ -509,22 +529,28 @@ void PreDecResolveNode::streamTo(SourceStream& s) const
     s << "--" << m_ident;
 }
 
-void PrefixBracketNode::streamTo(SourceStream& s) const
+void PreIncBracketNode::streamTo(SourceStream& s) const
 {
-    if (isIncrement())
-        s << "++";
-    else
-        s << "--";
-    s << PrecCall << m_base << "[" << m_subscript << "]";
+    s << "++";
+    bracketNodeStreamTo(s, m_base, m_subscript);
 }
 
-void PrefixDotNode::streamTo(SourceStream& s) const
+void PreDecBracketNode::streamTo(SourceStream& s) const
 {
-    if (isIncrement())
-        s << "++";
-    else
-        s << "--";
-    s << DotExpr << PrecCall << m_base << "." << m_ident;
+    s << "--";
+    bracketNodeStreamTo(s, m_base, m_subscript);
+}
+
+void PreIncDotNode::streamTo(SourceStream& s) const
+{
+    s << "++";
+    dotNodeStreamTo(s, m_base, m_ident);
+}
+
+void PreDecDotNode::streamTo(SourceStream& s) const
+{
+    s << "--";
+    dotNodeStreamTo(s, m_base, m_ident);
 }
 
 void PrefixErrorNode::streamTo(SourceStream& s) const
@@ -689,24 +715,26 @@ void AssignResolveNode::streamTo(SourceStream& s) const
 
 void ReadModifyBracketNode::streamTo(SourceStream& s) const
 {
-    s << PrecCall << m_base << '[' << m_subscript << "] "
-        << operatorString(m_oper) << ' ' << PrecAssignment << m_right;
+    bracketNodeStreamTo(s, m_base, m_subscript);
+    s << ' ' << operatorString(m_oper) << ' ' << PrecAssignment << m_right;
 }
 
 void AssignBracketNode::streamTo(SourceStream& s) const
 {
-    s << PrecCall << m_base << '[' << m_subscript << "] = " << PrecAssignment << m_right;
+    bracketNodeStreamTo(s, m_base, m_subscript);
+    s << " = " << PrecAssignment << m_right;
 }
 
 void ReadModifyDotNode::streamTo(SourceStream& s) const
 {
-    s << DotExpr << PrecCall << m_base << "." << m_ident << ' '
-        << operatorString(m_oper) << ' ' << PrecAssignment << m_right;
+    dotNodeStreamTo(s, m_base, m_ident);
+    s << ' ' << operatorString(m_oper) << ' ' << PrecAssignment << m_right;
 }
 
 void AssignDotNode::streamTo(SourceStream& s) const
 {
-    s << DotExpr << PrecCall << m_base << "." << m_ident << " = " << PrecAssignment << m_right;
+    dotNodeStreamTo(s, m_base, m_ident);
+    s << " = " << PrecAssignment << m_right;
 }
 
 void AssignErrorNode::streamTo(SourceStream& s) const
@@ -806,7 +834,7 @@ void DoWhileNode::streamTo(SourceStream& s) const
 
 void WhileNode::streamTo(SourceStream& s) const
 {
-  s << Endl << "while (" << expr << ')' << Indent << statement << Unindent;
+    s << Endl << "while (" << expr << ')' << Indent << statement << Unindent;
 }
 
 void ForNode::streamTo(SourceStream& s) const
@@ -933,4 +961,4 @@ void FuncExprNode::streamTo(SourceStream& s) const
     s << "function " << ident << '(' << param << ')' << body;
 }
 
-}
+} // namespace KJS

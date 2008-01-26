@@ -1,3 +1,33 @@
+2008-01-26  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Mark Rowe.
+
+        Cleanup node2string a little.
+        - Remove some unnecessary branching.
+        - Factor out bracket and dot streaming into static inline functions.
+
+        * kjs/nodes.h:
+        * kjs/nodes2string.cpp:
+        (KJS::bracketNodeStreamTo):
+        (KJS::dotNodeStreamTo):
+        (KJS::FunctionCallBracketNode::streamTo):
+        (KJS::FunctionCallDotNode::streamTo):
+        (KJS::PostIncBracketNode::streamTo):
+        (KJS::PostDecBracketNode::streamTo):
+        (KJS::PostIncDotNode::streamTo):
+        (KJS::PostDecDotNode::streamTo):
+        (KJS::DeleteBracketNode::streamTo):
+        (KJS::DeleteDotNode::streamTo):
+        (KJS::PreIncBracketNode::streamTo):
+        (KJS::PreDecBracketNode::streamTo):
+        (KJS::PreIncDotNode::streamTo):
+        (KJS::PreDecDotNode::streamTo):
+        (KJS::ReadModifyBracketNode::streamTo):
+        (KJS::AssignBracketNode::streamTo):
+        (KJS::ReadModifyDotNode::streamTo):
+        (KJS::AssignDotNode::streamTo):
+        (KJS::WhileNode::streamTo):
+
 2008-01-26  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Darin Adler.
