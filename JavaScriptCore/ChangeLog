@@ -1,3 +1,16 @@
+2008-01-25  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Maciej.
+
+        Fix for bug 17012: REGRESSION: JSC can't round trip an object literal
+
+        Add logic to ensure that object literals and function expressions get
+        parenthesis when necessary.
+
+        * kjs/nodes.h:
+        * kjs/nodes2string.cpp:
+        (KJS::SourceStream::operator<<):
+
 2008-01-24  Steve Falkenburg  <sfalken@apple.com>
 
         Build fix.

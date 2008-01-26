@@ -402,6 +402,10 @@ PASS compileAndSerialize('(!a)++') is '(!a)++'
 PASS compileAndSerialize('!a--') is '!a--'
 PASS compileAndSerialize('!(a--)') is '!a--'
 PASS compileAndSerialize('(!a)--') is '(!a)--'
+PASS compileAndSerializeLeftmostTest('({ }).x') is '({ }).x'
+PASS compileAndSerializeLeftmostTest('x = { }') is 'x = { }'
+PASS compileAndSerializeLeftmostTest('(function () { })()') is '(function () { })()'
+PASS compileAndSerializeLeftmostTest('x = function () { }') is 'x = function () { }'
 PASS successfullyParsed is true
 
 TEST COMPLETE

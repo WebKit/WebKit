@@ -13,6 +13,16 @@ function compileAndSerialize(expression)
     return serializedString;
 }
 
+function compileAndSerializeLeftmostTest(expression)
+{
+    var f = eval("(function () { " + expression + "; })");
+    var serializedString = f.toString();
+    serializedString = serializedString.replace(/[ \t\r\n]+/g, " ");
+    serializedString = serializedString.replace("function () { ", "");
+    serializedString = serializedString.replace("; }", "");
+    return serializedString;
+}
+
 var removesExtraParentheses = compileAndSerialize("(a + b) + c") == "a + b + c";
 
 function testLeftAssociativeSame(opA, opB)
@@ -127,6 +137,9 @@ shouldBe("compileAndSerialize('(!a)++')", "'(!a)++'");
 shouldBe("compileAndSerialize('!a--')", "'!a--'");
 shouldBe("compileAndSerialize('!(a--)')", "'!a--'");
 shouldBe("compileAndSerialize('(!a)--')", "'(!a)--'");
-
+shouldBe("compileAndSerializeLeftmostTest('({ }).x')", "'({ }).x'");
+shouldBe("compileAndSerializeLeftmostTest('x = { }')", "'x = { }'");
+shouldBe("compileAndSerializeLeftmostTest('(function () { })()')", "'(function () { })()'");
+shouldBe("compileAndSerializeLeftmostTest('x = function () { }')", "'x = function () { }'");
 
 var successfullyParsed = true;

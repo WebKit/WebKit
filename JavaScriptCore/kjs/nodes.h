@@ -133,7 +133,8 @@ namespace KJS {
     // Serialization.
     virtual void streamTo(SourceStream&) const KJS_FAST_CALL = 0;
     virtual Precedence precedence() const = 0;
-    
+    virtual bool needsParensIfLeftmost() const { return false; }
+
     // Used for iterative, depth-first traversal of the node tree. Does not cross function call boundaries.
     virtual void optimizeVariableAccess(SymbolTable&, DeclarationStacks::NodeStack&) KJS_FAST_CALL { }
 
@@ -435,6 +436,7 @@ namespace KJS {
     virtual JSValue* evaluate(ExecState*) KJS_FAST_CALL;
     virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
     virtual Precedence precedence() const { return PrecPrimary; }
+    virtual bool needsParensIfLeftmost() const { return true; }
   private:
     RefPtr<PropertyListNode> list;
   };
@@ -2020,6 +2022,7 @@ namespace KJS {
     virtual JSValue *evaluate(ExecState*) KJS_FAST_CALL;
     virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
     virtual Precedence precedence() const { return PrecMember; }
+    virtual bool needsParensIfLeftmost() const { return true; }
   private:
     void addParams() KJS_FAST_CALL;
     // Used for streamTo

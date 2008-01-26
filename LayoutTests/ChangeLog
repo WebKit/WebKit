@@ -1,3 +1,12 @@
+2008-01-25  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Maciej.
+
+        Add additional check for using Function.toString on a function with object literals
+
+        * fast/js/function-toString-parentheses-expected.txt:
+        * fast/js/resources/function-toString-parentheses.js:
+
 2008-01-25  Darin Adler  <darin@apple.com>
 
         Reviewed by Anders.
