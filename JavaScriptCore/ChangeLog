@@ -1,3 +1,17 @@
+2008-01-26  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Fix http://bugs.webkit.org/show_bug.cgi?id=17001
+        Bug 17001: Build error with Gtk port on Mac OS X
+
+        If both XP_MACOSX and XP_UNIX are defined then X11.h and Carbon.h will both be included.
+        These provide conflicting definitions for a type named 'Cursor'.  As XP_UNIX is set by
+        the build system when targeting X11, it doesn't make sense for XP_MACOSX to also be set
+        in this instance.
+
+        * bindings/npapi.h: Don't define XP_MACOSX if XP_UNIX is defined.
+
 2008-01-26  Darin Adler  <darin@apple.com>
 
         Reviewed by Oliver.

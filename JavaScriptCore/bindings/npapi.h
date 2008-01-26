@@ -71,7 +71,7 @@
 #    endif /* XP_PC */
 #endif /* __MWERKS__ */
 
-#if defined(__APPLE_CC__) && !defined(__MACOS_CLASSIC__)
+#if defined(__APPLE_CC__) && !defined(__MACOS_CLASSIC__) && !defined(XP_UNIX)
 #   define XP_MACOSX
 #endif
 
