@@ -1,3 +1,15 @@
+2008-01-26  Darin Adler  <darin@apple.com>
+
+        Reviewed by Oliver.
+
+        - test for http://bugs.webkit.org/show_bug.cgi?id=17013
+          JSC can't round trip certain for-loops
+
+        * fast/js/resources/toString-for-var-decl.js: Streamlined the test a bit, with more
+        of the execution within shouldBe so that exceptions are caught for us. Added a new
+        test case reflecting the just-fixed bug.
+        * fast/js/toString-for-var-decl-expected.txt: Updated.
+
 2008-01-25  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Maciej.

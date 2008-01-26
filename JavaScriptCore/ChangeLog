@@ -1,3 +1,21 @@
+2008-01-26  Darin Adler  <darin@apple.com>
+
+        Reviewed by Oliver.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=17013
+          JSC can't round trip certain for-loops
+
+        Test: fast/js/toString-for-var-decl.html
+
+        * kjs/nodes.h: Added PlaceholderTrueNode so we can put nodes into
+        for loops without injecting the word "true" into them (nice, but not
+        the bug fix). Fixed ForNode constructor so expr1WasVarDecl is set
+        only when there is an expression, since it's common for the actual
+        variable declaration to be moved by the parser.
+
+        * kjs/nodes2string.cpp:
+        (KJS::PlaceholderTrueNode::streamTo): Added. Empty.
+
 2008-01-25  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Maciej.

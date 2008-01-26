@@ -1,26 +1,18 @@
 description(
-"This test checks that toString() round-trip does not change meaning of functions that contain var declarations inside for -loop."
+"This test checks for a couple of specific ways that bugs in toString() round trips have changed the meanings of functions with var declarations inside for loops."
 );
 
 function f1() { for (var j = 1 in []) {}  }
 var f2 = function () { for (var j = 1; j < 10; ++j) {}  }
 var f3 = function () { for (j = 1;j < 10; ++j) {}  }
+var f4 = function () { for (var j;;) {}  }
 
-unevalf = function(x) { return '(' + x.toString() + ')'; }
+var unevalf = function(x) { return '(' + x.toString() + ')'; }
 
-try {
-    uf1 = unevalf(f1);
-    ueuf1 = unevalf(eval(unevalf(f1)));
-}  catch(e) {};
-try {
-    uf2 = unevalf(f2);
-    ueuf2 = unevalf(eval(unevalf(f2)));
-} catch(e) {};
-
-uf3 = unevalf(f3);
-
-shouldBe("ueuf1", "uf1");
-shouldBe("ueuf2", "uf2");
-shouldBe("uf2 != uf3", "true");
+shouldBe("unevalf(eval(unevalf(f1)))", "unevalf(f1)");
+shouldBe("unevalf(eval(unevalf(f2)))", "unevalf(f2)");
+shouldBe("unevalf(eval(unevalf(f3)))", "unevalf(f3)");
+shouldBe("unevalf(eval(unevalf(f4)))", "unevalf(f4)");
+shouldBe("unevalf(f2) != unevalf(f3)", "true");
 
 var successfullyParsed = true;

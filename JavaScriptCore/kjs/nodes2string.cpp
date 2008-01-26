@@ -287,6 +287,10 @@ void TrueNode::streamTo(SourceStream& s) const
     s << "true";
 }
 
+void PlaceholderTrueNode::streamTo(SourceStream&) const
+{
+}
+
 void NumberNode::streamTo(SourceStream& s) const
 {
     s << value();
