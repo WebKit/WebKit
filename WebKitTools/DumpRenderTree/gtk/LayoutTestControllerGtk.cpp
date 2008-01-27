@@ -201,3 +201,12 @@ void LayoutTestController::execCommand(JSStringRef name, JSStringRef value)
     // FIXME: implement
 }
 
+void LayoutTestController::setPersistentUserStyleSheetLocation(JSStringRef jsURL)
+{
+    // FIXME: implement
+}
+
+void LayoutTestController::clearPersistentUserStyleSheet()
+{
+    // FIXME: implement
+}

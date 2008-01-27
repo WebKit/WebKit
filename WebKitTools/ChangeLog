@@ -1,3 +1,11 @@
+2008-01-27  Jan Michael Alonzo  <jmalonzo@unpluggable.com>
+
+        GTK+ DRT build fix for breakage introduced in r29822.
+
+        * DumpRenderTree/gtk/LayoutTestControllerGtk.cpp:
+        (LayoutTestController::setPersistentUserStyleSheetLocation):
+        (LayoutTestController::clearPersistentUserStyleSheet):
+
 2008-01-27  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.
