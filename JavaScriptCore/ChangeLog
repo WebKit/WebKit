@@ -2,6 +2,63 @@
 
         Reviewed by Oliver.
 
+        - fix <rdar://problem/5657450> REGRESSION: const is broken
+
+        Test: fast/js/const.html
+
+        SunSpider said this was 0.3% slower. And I saw some Shark samples in
+        JSGlobalObject::put -- not a lot but a few. We may be able to regain the
+        speed, but for now we will take that small hit for correctness sake.
+
+        * kjs/JSGlobalObject.cpp:
+        (KJS::JSGlobalObject::put): Pass the checkReadOnly flag in to symbolTablePut
+        instead of passing attributes.
+
+        * kjs/JSVariableObject.h:
+        (KJS::JSVariableObject::symbolTablePut): Removed the code to set attributes
+        here, since we only set attributes when creating a property. Added the code
+        to check read-only here, since we need that to implement const!
+
+        * kjs/function.cpp:
+        (KJS::ActivationImp::put): Pass the checkReadOnly flag in to symbolTablePut
+        instead of passing attributes.
+
+        * kjs/nodes.cpp:
+        (KJS::isConstant): Added.
+        (KJS::PostIncResolveNode::optimizeVariableAccess): Create a PostIncConstNode
+        if optimizing for a local variable and the variable is constant.
+        (KJS::PostDecResolveNode::optimizeVariableAccess): Ditto. But PostDecConstNode.
+        (KJS::PreIncResolveNode::optimizeVariableAccess): Ditto. But PreIncConstNode.
+        (KJS::PreDecResolveNode::optimizeVariableAccess): Ditto. But PreDecConstNode.
+        (KJS::PreIncConstNode::evaluate): Return the value + 1.
+        (KJS::PreDecConstNode::evaluate): Return the value - 1.
+        (KJS::PostIncConstNode::evaluate): Return the value converted to a number.
+        (KJS::PostDecConstNode::evaluate): Ditto.
+        (KJS::ReadModifyResolveNode::optimizeVariableAccess): Create a ReadModifyConstNode
+        if optimizing for a local variable and the variable is constant.
+        (KJS::AssignResolveNode::optimizeVariableAccess): Ditto. But AssignConstNode.
+        (KJS::ScopeNode::optimizeVariableAccess): Pass the local storage to the
+        node optimizeVariableAccess functions, since that's where we need to look to
+        figure out if a variable is constant.
+        (KJS::FunctionBodyNode::processDeclarations): Moved the call to
+        optimizeVariableAccess until after localStorage is set up.
+        (KJS::ProgramNode::processDeclarations): Ditto.
+
+        * kjs/nodes.h: Fixed the IsConstant and HasInitializer values. They are used
+        as flag masks, so a value of 0 will not work for IsConstant. Changed the
+        first parameter to optimizeVariableAccess to be a const reference to a symbol
+        table and added a const reference to local storage. Added classes for const
+        versions of local variable access: PostIncConstNode, PostDecConstNode,
+        PreIncConstNode, PreDecConstNode, ReadModifyConstNode, and AssignConstNode.
+
+        * kjs/object.cpp:
+        (KJS::JSObject::put): Tweaked comments a bit, and changed the checkReadOnly
+        expression to match the form used at the two other call sites.
+
+2008-01-27  Darin Adler  <darin@apple.com>
+
+        Reviewed by Oliver.
+
         - fix http://bugs.webkit.org/show_bug.cgi?id=16498
           ''.constructor.toString() gives [function]
 
@@ -273,7 +330,6 @@
         be better to convert a JS Number into a Date rather than
         an int).
         
-
         * bindings/qt/qt_runtime.cpp:
         (KJS::Bindings::convertValueToQVariant):
         (KJS::Bindings::convertQVariantToValue):
@@ -309,7 +365,6 @@
 
         Code style cleanups.
         Add spaces before/after braces in inline function.
-        
 
         * bindings/qt/qt_instance.h:
 
@@ -319,7 +374,6 @@
 
         Code style cleanups.
         Remove spaces and unneeded declared parameter names.
-        
 
         * bindings/qt/qt_instance.cpp:
         (KJS::Bindings::QtRuntimeObjectImp::removeFromCache):
@@ -334,7 +388,6 @@
         RuntimeObjectImp is invalidate or deleted.  This
         could result in a stale JSObject being returned for
         a valid Instance.
-        
 
         * bindings/qt/qt_instance.cpp:
         (KJS::Bindings::QtRuntimeObjectImp::QtRuntimeObjectImp):
@@ -415,7 +468,6 @@
         * A couple of fixes for autotest failures.
         Better support for converting lists, read/write only
         QMetaProperty support, modified slot search order...)
-        
 
         * bindings/qt/qt_class.cpp:
         (KJS::Bindings::QtClass::QtClass):

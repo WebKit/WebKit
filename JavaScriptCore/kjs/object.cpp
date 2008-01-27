@@ -208,7 +208,6 @@ void JSObject::put(ExecState* exec, const Identifier &propertyName, JSValue *val
 {
   ASSERT(value);
 
-  // non-standard netscape extension
   if (propertyName == exec->propertyNames().underscoreProto) {
     JSObject* proto = value->getObject();
     while (proto) {
@@ -221,12 +220,10 @@ void JSObject::put(ExecState* exec, const Identifier &propertyName, JSValue *val
     return;
   }
 
-  /* TODO: check for write permissions directly w/o this call */
-  /* Doesn't look very easy with the PropertyMap API - David */
-  // putValue() is used for JS assignemnts. It passes no attribute.
-  // Assume that a C++ implementation knows what it is doing
-  // and let it override the canPut() check.
-  bool checkReadOnly = !(attr & (ReadOnly | DontEnum | Internal | Function | GetterSetter));
+  // The put calls from JavaScript execution either have no attributes set, or in some cases
+  // have DontDelete set. For those calls, respect the ReadOnly flag.
+  bool checkReadOnly = !(attr & ~DontDelete);
+
   // Check if there are any setters or getters in the prototype chain
   JSObject *obj = this;
   bool hasGettersOrSetters = false;

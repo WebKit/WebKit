@@ -82,7 +82,7 @@ namespace KJS {
         }
 
         bool symbolTableGet(const Identifier&, PropertySlot&);
-        bool symbolTablePut(const Identifier&, JSValue*, int attr);
+        bool symbolTablePut(const Identifier&, JSValue*, bool checkReadOnly);
 
         JSVariableObjectData* d;
     };
@@ -110,17 +110,16 @@ namespace KJS {
         return false;
     }
 
-    inline bool JSVariableObject::symbolTablePut(const Identifier& propertyName, JSValue* value, int attr)
+    inline bool JSVariableObject::symbolTablePut(const Identifier& propertyName, JSValue* value, bool checkReadOnly)
     {
         size_t index = symbolTable().get(propertyName.ustring().rep());
-        if (index != missingSymbolMarker()) {
-            LocalStorageEntry& entry = d->localStorage[index];
-            entry.value = value;
-            entry.attributes = attr;
+        if (index == missingSymbolMarker())
+            return false;
+        LocalStorageEntry& entry = d->localStorage[index];
+        if (checkReadOnly && (entry.attributes & ReadOnly))
             return true;
-        }
-
-        return false;
+        entry.value = value;
+        return true;
     }
 
 } // namespace KJS

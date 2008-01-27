@@ -2,6 +2,19 @@
 
         Reviewed by Oliver.
 
+        - tests for <rdar://problem/5657450> REGRESSION: const is broken
+
+        * fast/js/const-expected.txt: Updated with results that express success
+        rather than failure, and to include the many new tests I added.
+        * fast/js/kde/const-expected.txt: Ditto.
+        * fast/js/resources/const.js: Added many new tests, covering the various
+        cases of const in globals, function locals, the slow case inside eval,
+        the different node types, and the values of the expressions.
+
+2008-01-27  Darin Adler  <darin@apple.com>
+
+        Reviewed by Oliver.
+
         - test for http://bugs.webkit.org/show_bug.cgi?id=16498
           ''.constructor.toString() gives [function]
 

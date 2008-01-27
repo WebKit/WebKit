@@ -153,7 +153,7 @@ bool JSGlobalObject::getOwnPropertySlot(ExecState* exec, const Identifier& prope
 
 void JSGlobalObject::put(ExecState* exec, const Identifier& propertyName, JSValue* value, int attr)
 {
-    if (symbolTablePut(propertyName, value, attr))
+    if (symbolTablePut(propertyName, value, !(attr & ~DontDelete)))
         return;
     return JSVariableObject::put(exec, propertyName, value, attr);
 }
