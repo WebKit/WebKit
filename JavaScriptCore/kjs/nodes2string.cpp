@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 2002 Harri Porten (porten@kde.org)
- *  Copyright (C) 2003, 2004, 2005, 2006, 2007 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
  *  Copyright (C) 2007 Eric Seidel <eric@webkit.org>
  *
  *  This library is free software; you can redistribute it and/or
@@ -37,7 +37,7 @@ namespace KJS {
 enum EndlType { Endl };
 enum IndentType { Indent };
 enum UnindentType { Unindent };
-enum ObjectAccessType { ObjectAccess };
+enum DotExprType { DotExpr };
 
 class SourceStream {
 public:
@@ -51,7 +51,7 @@ public:
     SourceStream& operator<<(EndlType);
     SourceStream& operator<<(IndentType);
     SourceStream& operator<<(UnindentType);
-    SourceStream& operator<<(ObjectAccessType);
+    SourceStream& operator<<(DotExprType);
     SourceStream& operator<<(Precedence);
     SourceStream& operator<<(const Node*);
     template <typename T> SourceStream& operator<<(const RefPtr<T>& n) { return *this << n.get(); }
@@ -200,13 +200,15 @@ SourceStream& SourceStream::operator<<(const Node* n)
 {
     bool needParens = (m_precedence != PrecExpression && n->precedence() > m_precedence) || (m_atStartOfStatement && n->needsParensIfLeftmost());
     m_precedence = PrecExpression;
-    if (n) {
-        if (needParens)
-            m_string.append('(');
-        n->streamTo(*this);
-        if (needParens)
-            m_string.append(')');
+    if (!n)
+        return *this;
+    if (needParens) {
+        m_numberNeedsParens = false;
+        m_string.append('(');
     }
+    n->streamTo(*this);
+    if (needParens)
+        m_string.append(')');
     return *this;
 }
 
@@ -235,7 +237,7 @@ SourceStream& SourceStream::operator<<(UnindentType)
     return *this;
 }
 
-inline SourceStream& SourceStream::operator<<(ObjectAccessType)
+inline SourceStream& SourceStream::operator<<(DotExprType)
 {
     m_numberNeedsParens = true;
     return *this;
@@ -263,12 +265,12 @@ template <typename T> static inline void streamLeftAssociativeBinaryOperator(Sou
 
 static inline void bracketNodeStreamTo(SourceStream& s, const RefPtr<ExpressionNode>& base, const RefPtr<ExpressionNode>& subscript)
 {
-    s << ObjectAccess << PrecCall << base.get() << "[" << subscript.get() << "]";
+    s << PrecCall << base.get() << "[" << subscript.get() << "]";
 }
 
 static inline void dotNodeStreamTo(SourceStream& s, const RefPtr<ExpressionNode>& base, const Identifier& ident)
 {
-    s << ObjectAccess << PrecCall << base.get() << "." << ident;
+    s << DotExpr << PrecCall << base.get() << "." << ident;
 }
 
 // --------
@@ -414,7 +416,7 @@ void ArgumentsNode::streamTo(SourceStream& s) const
 
 void NewExprNode::streamTo(SourceStream& s) const
 {
-    s << "new " << ObjectAccess << PrecMember << expr << args;
+    s << "new " << PrecMember << expr << args;
 }
 
 void FunctionCallValueNode::streamTo(SourceStream& s) const

@@ -1,3 +1,34 @@
+2008-01-26  Darin Adler  <darin@apple.com>
+
+        Reviewed by Oliver.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=17027
+          Incorrect Function.toString behaviour with read/modify/write operators performed on negative numbers
+
+        Test: fast/js/function-toString-parentheses.html
+
+        The problem here was that a NumberNode with a negative number in it had the wrong
+        precedence. It's not a primary expression, it's a unary operator with a primary
+        expression after it.
+
+        Once the precedence of NumberNode was fixed, the cases from bug 17020 were also
+        fixed without trying to treat bracket nodes like dot nodes. That wasn't needed.
+        The reason we handle numbers before dot nodes specially is that the dot is a
+        legal character in a number. The same is not true of a bracket. Eventually we
+        could get smarter, and only add the parentheses when there is actual ambiguity.
+        There is none if the string form of the number already has a dot in it, or if
+        it's a number with a alphabetic name like infinity or NAN.
+
+        * kjs/nodes.h: Renamed back from ObjectAccess to DotExpr.
+        (KJS::NumberNode::precedence): Return PrecUnary for negative numbers, since
+        they serialize as a unary operator, not a primary expression.
+        * kjs/nodes2string.cpp:
+        (KJS::SourceStream::operator<<): Clear m_numberNeedsParens if this adds
+        parens; one set is enough.
+        (KJS::bracketNodeStreamTo): Remove unneeded special flag here. Normal
+        operator precedence suffices.
+        (KJS::NewExprNode::streamTo): Ditto.
+
 2008-01-26  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Maciej and Darin.

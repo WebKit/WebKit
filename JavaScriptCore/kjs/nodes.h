@@ -30,6 +30,7 @@
 #include "regexp.h"
 #include "SymbolTable.h"
 #include <wtf/ListRefPtr.h>
+#include <wtf/MathExtras.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/Vector.h>
 
@@ -252,7 +253,7 @@ namespace KJS {
     virtual int32_t evaluateToInt32(ExecState*) KJS_FAST_CALL;
     virtual uint32_t evaluateToUInt32(ExecState*) KJS_FAST_CALL;
     virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
-    virtual Precedence precedence() const { return PrecPrimary; }
+    virtual Precedence precedence() const { return signbit(m_double) ? PrecUnary : PrecPrimary; }
 
     virtual bool isNumber() const KJS_FAST_CALL { return true; }
     double value() const KJS_FAST_CALL { return m_double; }

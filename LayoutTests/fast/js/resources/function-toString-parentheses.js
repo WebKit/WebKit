@@ -137,13 +137,62 @@ shouldBe("compileAndSerialize('(!a)++')", "'(!a)++'");
 shouldBe("compileAndSerialize('!a--')", "'!a--'");
 shouldBe("compileAndSerialize('!(a--)')", "'!a--'");
 shouldBe("compileAndSerialize('(!a)--')", "'(!a)--'");
+
 shouldBe("compileAndSerialize('(-1)[a]')", "'(-1)[a]'");
 shouldBe("compileAndSerialize('(-1)[a] = b')", "'(-1)[a] = b'");
 shouldBe("compileAndSerialize('(-1)[a] += b')", "'(-1)[a] += b'");
 shouldBe("compileAndSerialize('(-1)[a]++')", "'(-1)[a]++'");
 shouldBe("compileAndSerialize('++(-1)[a]')", "'++(-1)[a]'");
 shouldBe("compileAndSerialize('(-1)[a]()')", "'(-1)[a]()'");
+
 shouldBe("compileAndSerialize('new (-1)()')", "'new (-1)()'");
+
+shouldBe("compileAndSerialize('(-1).a')", "'(-1).a'");
+shouldBe("compileAndSerialize('(-1).a = b')", "'(-1).a = b'");
+shouldBe("compileAndSerialize('(-1).a += b')", "'(-1).a += b'");
+shouldBe("compileAndSerialize('(-1).a++')", "'(-1).a++'");
+shouldBe("compileAndSerialize('++(-1).a')", "'++(-1).a'");
+shouldBe("compileAndSerialize('(-1).a()')", "'(-1).a()'");
+
+shouldBe("compileAndSerialize('(- 0)[a]')", "'(- 0)[a]'");
+shouldBe("compileAndSerialize('(- 0)[a] = b')", "'(- 0)[a] = b'");
+shouldBe("compileAndSerialize('(- 0)[a] += b')", "'(- 0)[a] += b'");
+shouldBe("compileAndSerialize('(- 0)[a]++')", "'(- 0)[a]++'");
+shouldBe("compileAndSerialize('++(- 0)[a]')", "'++(- 0)[a]'");
+shouldBe("compileAndSerialize('(- 0)[a]()')", "'(- 0)[a]()'");
+
+shouldBe("compileAndSerialize('new (- 0)()')", "'new (- 0)()'");
+
+shouldBe("compileAndSerialize('(- 0).a')", "'(- 0).a'");
+shouldBe("compileAndSerialize('(- 0).a = b')", "'(- 0).a = b'");
+shouldBe("compileAndSerialize('(- 0).a += b')", "'(- 0).a += b'");
+shouldBe("compileAndSerialize('(- 0).a++')", "'(- 0).a++'");
+shouldBe("compileAndSerialize('++(- 0).a')", "'++(- 0).a'");
+shouldBe("compileAndSerialize('(- 0).a()')", "'(- 0).a()'");
+
+shouldBe("compileAndSerialize('(1)[a]')", "'1[a]'");
+shouldBe("compileAndSerialize('(1)[a] = b')", "'1[a] = b'");
+shouldBe("compileAndSerialize('(1)[a] += b')", "'1[a] += b'");
+shouldBe("compileAndSerialize('(1)[a]++')", "'1[a]++'");
+shouldBe("compileAndSerialize('++(1)[a]')", "'++1[a]'");
+shouldBe("compileAndSerialize('(1)[a]()')", "'1[a]()'");
+
+shouldBe("compileAndSerialize('new (1)()')", "'new 1()'");
+
+shouldBe("compileAndSerialize('(1).a')", "'(1).a'");
+shouldBe("compileAndSerialize('(1).a = b')", "'(1).a = b'");
+shouldBe("compileAndSerialize('(1).a += b')", "'(1).a += b'");
+shouldBe("compileAndSerialize('(1).a++')", "'(1).a++'");
+shouldBe("compileAndSerialize('++(1).a')", "'++(1).a'");
+shouldBe("compileAndSerialize('(1).a()')", "'(1).a()'");
+
+for (i = 0; i < assignmentOperators.length; ++i) {
+    var op = assignmentOperators[i];
+    shouldBe("compileAndSerialize('(-1) " + op + " a')", "'(-1) " + op + " a'");
+    shouldBe("compileAndSerialize('(- 0) " + op + " a')", "'(- 0) " + op + " a'");
+    shouldBe("compileAndSerialize('1 " + op + " a')", "'1 " + op + " a'");
+}
+
 shouldBe("compileAndSerializeLeftmostTest('({ }).x')", "'({ }).x'");
 shouldBe("compileAndSerializeLeftmostTest('x = { }')", "'x = { }'");
 shouldBe("compileAndSerializeLeftmostTest('(function () { })()')", "'(function () { })()'");
