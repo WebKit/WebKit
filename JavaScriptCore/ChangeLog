@@ -1,3 +1,14 @@
+2008-01-26  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Darin.
+
+        Fix Bug 17018: Incorrect code generated from Function.toString for get/setters in object literals
+
+        Don't quote getter and setter names during output, as that is simply wrong.
+
+        * kjs/nodes2string.cpp:
+        (KJS::PropertyNode::streamTo):
+
 2008-01-26  Darin Adler  <darin@apple.com>
 
         Reviewed by Eric Seidel.

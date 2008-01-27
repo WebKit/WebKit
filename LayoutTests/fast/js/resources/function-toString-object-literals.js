@@ -30,6 +30,9 @@ shouldBe("compileAndSerialize('a = { \"1hi\": null }')", "'a = { \"1hi\": null }
 shouldBe("compileAndSerialize('a = { \"\\\'\": null }')", "'a = { \"\\\'\": null }'");
 shouldBe("compileAndSerialize('a = { \"\\\\\"\": null }')", "'a = { \"\\\\\"\": null }'");
 
+shouldBe("compileAndSerialize('a = { get x() { } }')", "'a = { get x() { } }'");
+shouldBe("compileAndSerialize('a = { set x(y) { } }')", "'a = { set x(y) { } }'");
+
 shouldThrow("compileAndSerialize('a = { --1: null }')");
 shouldThrow("compileAndSerialize('a = { -NaN: null }')");
 shouldThrow("compileAndSerialize('a = { -0: null }')");

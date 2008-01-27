@@ -1,3 +1,12 @@
+2008-01-26  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Darin.
+
+        Add test for getters and setters as part of fix for bug #17018
+
+        * fast/js/function-toString-object-literals-expected.txt:
+        * fast/js/resources/function-toString-object-literals.js:
+
 2008-01-26  Darin Adler  <darin@apple.com>
 
         Reviewed by Oliver.

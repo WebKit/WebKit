@@ -380,11 +380,11 @@ void PropertyNode::streamTo(SourceStream& s) const
         case Setter: {
             const FuncExprNode* func = static_cast<const FuncExprNode*>(assign.get());
             if (type == Getter)
-                s << "get \""; 
+                s << "get "; 
             else
-                s << "set \"";
+                s << "set ";
             s << escapeStringForPrettyPrinting(name().ustring())
-                << "\"(" << func->param << ')' << func->body;
+                << "(" << func->param << ')' << func->body;
             break;
         }
     }
