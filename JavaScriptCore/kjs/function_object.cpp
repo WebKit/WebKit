@@ -1,8 +1,6 @@
-// -*- c-basic-offset: 2 -*-
 /*
- *  This file is part of the KDE libraries
  *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
- *  Copyright (C) 2003, 2004, 2005, 2006 Apple Computer, Inc.
+ *  Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -78,10 +76,7 @@ JSValue* functionProtoFuncToString(ExecState* exec, JSObject* thisObj, const Lis
         return jsString("function " + fi->functionName().ustring() + "(" + fi->body->paramString() + ") " + fi->body->toString());
     }
 
-    if (thisObj->inherits(&InternalFunctionImp::info) && !static_cast<InternalFunctionImp*>(thisObj)->functionName().isNull())
-        return jsString("\nfunction " + static_cast<InternalFunctionImp*>(thisObj)->functionName().ustring() + "() {\n    [native code]\n}\n");
-
-    return jsString("[function]");
+    return jsString("function " + static_cast<InternalFunctionImp*>(thisObj)->functionName().ustring() + "() {\n    [native code]\n}");
 }
 
 JSValue* functionProtoFuncApply(ExecState* exec, JSObject* thisObj, const List& args)
@@ -136,7 +131,7 @@ JSValue* functionProtoFuncCall(ExecState* exec, JSObject* thisObj, const List& a
 // ------------------------------ FunctionObjectImp ----------------------------
 
 FunctionObjectImp::FunctionObjectImp(ExecState* exec, FunctionPrototype* functionPrototype)
-    : InternalFunctionImp(functionPrototype)
+    : InternalFunctionImp(functionPrototype, functionPrototype->classInfo()->className)
 {
     putDirect(exec->propertyNames().prototype, functionPrototype, DontEnum | DontDelete | ReadOnly);
 

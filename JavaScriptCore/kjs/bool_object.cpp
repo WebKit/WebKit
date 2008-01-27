@@ -85,7 +85,7 @@ JSValue* booleanProtoFuncValueOf(ExecState* exec, JSObject* thisObj, const List&
 
 
 BooleanObjectImp::BooleanObjectImp(ExecState* exec, FunctionPrototype* functionPrototype, BooleanPrototype* booleanPrototype)
-    : InternalFunctionImp(functionPrototype)
+    : InternalFunctionImp(functionPrototype, booleanPrototype->classInfo()->className)
 {
     putDirect(exec->propertyNames().prototype, booleanPrototype, DontEnum | DontDelete | ReadOnly);
 

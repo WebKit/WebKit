@@ -1,7 +1,7 @@
 // -*- c-basic-offset: 2 -*-
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- *  Copyright (C) 2003, 2006, 2007 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003, 2006, 2007, 2008 Apple Inc. All rights reserved.
  *  Copyright (C) 2007 Cameron Zwarich (cwzwarich@uwaterloo.ca)
  *  Copyright (C) 2007 Maks Orlovich
  *
@@ -41,7 +41,6 @@ namespace KJS {
   class InternalFunctionImp : public JSObject {
   public:
     InternalFunctionImp();
-    InternalFunctionImp(FunctionPrototype*);
     InternalFunctionImp(FunctionPrototype*, const Identifier&);
 
     virtual bool implementsCall() const;

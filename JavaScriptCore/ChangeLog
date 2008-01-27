@@ -1,3 +1,49 @@
+2008-01-27  Darin Adler  <darin@apple.com>
+
+        Reviewed by Oliver.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=16498
+          ''.constructor.toString() gives [function]
+
+        Test: fast/js/function-names.html
+
+        * kjs/array_object.cpp:
+        (KJS::ArrayObjectImp::ArrayObjectImp): Use the class name as the constructor's function name.
+        * kjs/bool_object.cpp:
+        (KJS::BooleanObjectImp::BooleanObjectImp): Ditto.
+        * kjs/date_object.cpp:
+        (KJS::DateObjectImp::DateObjectImp): Ditto.
+        * kjs/error_object.cpp:
+        (KJS::ErrorPrototype::ErrorPrototype): Make the error object be an Error.
+        (KJS::ErrorObjectImp::ErrorObjectImp): Use the class name as the constructor's function name.
+        (KJS::NativeErrorPrototype::NativeErrorPrototype): Take const UString&.
+        (KJS::NativeErrorImp::NativeErrorImp): Use the prototype's name as the constructor's function
+        name.
+        * kjs/error_object.h: Change ErrorPrototype to inherit from ErrorInstance. Change the
+        NativeErrorImp constructor to take a NativeErrorPrototype pointer for its prototype.
+        * kjs/function.h: Removed unneeded constructor for internal functions without names.
+        We want to avoid those!
+        * kjs/function_object.cpp:
+        (KJS::functionProtoFuncToString): Removed code that writes out just [function] for functions
+        that have no names. There's no reason to do that.
+        (KJS::FunctionObjectImp::FunctionObjectImp): Use the class name as the constructor's
+        function name.
+        * kjs/internal.cpp: Removed the unused constructor.
+        * kjs/number_object.cpp:
+        (KJS::fractionalPartToString): Marked static for internal linkage.
+        (KJS::exponentialPartToString): Ditto.
+        (KJS::numberProtoFuncToPrecision): Removed an unneeded else.
+        (KJS::NumberObjectImp::NumberObjectImp): Use the class name as the constructor's
+        function name.
+        (KJS::NumberObjectImp::getValueProperty): Tweaked formatting.
+        * kjs/object_object.cpp:
+        (KJS::ObjectObjectImp::ObjectObjectImp): Use "Object" for the function name.
+        * kjs/regexp_object.cpp:
+        (KJS::RegExpObjectImp::RegExpObjectImp): Use "RegExp" for the function name.
+        * kjs/string_object.cpp:
+        (KJS::StringObjectImp::StringObjectImp): Use the class name as the constructor's
+        function name.
+
 2008-01-26  Darin Adler  <darin@apple.com>
 
         Reviewed by Oliver.

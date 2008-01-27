@@ -285,7 +285,7 @@ struct RegExpObjectImpPrivate {
 };
 
 RegExpObjectImp::RegExpObjectImp(ExecState* exec, FunctionPrototype* funcProto, RegExpPrototype* regProto)
-  : InternalFunctionImp(funcProto)
+  : InternalFunctionImp(funcProto, "RegExp")
   , d(new RegExpObjectImpPrivate)
 {
   // ECMA 15.10.5.1 RegExp.prototype

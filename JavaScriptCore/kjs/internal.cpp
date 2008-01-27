@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 1999-2002 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2004, 2007 Apple Inc. All rights reserved.
+ *  Copyright (C) 2004, 2007, 2008 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -223,11 +223,6 @@ bool LabelStack::contains(const Identifier &id) const
 const ClassInfo InternalFunctionImp::info = { "Function", 0, 0 };
 
 InternalFunctionImp::InternalFunctionImp()
-{
-}
-
-InternalFunctionImp::InternalFunctionImp(FunctionPrototype* funcProto)
-  : JSObject(funcProto)
 {
 }
 

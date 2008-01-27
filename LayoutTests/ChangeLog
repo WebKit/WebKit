@@ -1,3 +1,15 @@
+2008-01-27  Darin Adler  <darin@apple.com>
+
+        Reviewed by Oliver.
+
+        - test for http://bugs.webkit.org/show_bug.cgi?id=16498
+          ''.constructor.toString() gives [function]
+
+        * fast/js/function-names-expected.txt: Updated for new tests.
+        * fast/js/kde/resources/function.js: Updated test to expect the format that Gecko uses
+        for native code, which we now match character for character.
+        * fast/js/resources/function-names.js: Added tests for the names of all the constructors.
+
 2008-01-27  Matt Perry  <mpComplete@gmail.com>
 
         Reviewed by Darin.

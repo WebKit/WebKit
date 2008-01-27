@@ -175,7 +175,7 @@ JSValue* objectProtoFuncToString(ExecState*, JSObject* thisObj, const List&)
 // ------------------------------ ObjectObjectImp --------------------------------
 
 ObjectObjectImp::ObjectObjectImp(ExecState* exec, ObjectPrototype* objProto, FunctionPrototype* funcProto)
-  : InternalFunctionImp(funcProto)
+  : InternalFunctionImp(funcProto, "Object")
 {
   // ECMA 15.2.3.1
   putDirect(exec->propertyNames().prototype, objProto, DontEnum|DontDelete|ReadOnly);

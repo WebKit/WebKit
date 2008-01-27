@@ -160,7 +160,7 @@ function groupFunc(a, b) { return (a+b)*3; } // check for () being preserved
 eval("var groupClone = " + groupFunc);
 shouldBe("groupClone(1, 2)", "9");
 
-var sinStr = '\nfunction sin() {\n    [native code]\n}\n'
+var sinStr = 'function sin() {\n    [native code]\n}'
 shouldBe("String(Math.sin)", "sinStr");
 
 ///////////////////////////////

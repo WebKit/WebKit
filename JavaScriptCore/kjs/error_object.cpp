@@ -42,7 +42,7 @@ ErrorInstance::ErrorInstance(JSObject* prototype)
 
 // ECMA 15.9.4
 ErrorPrototype::ErrorPrototype(ExecState* exec, ObjectPrototype* objectPrototype, FunctionPrototype* functionPrototype)
-    : JSObject(objectPrototype)
+    : ErrorInstance(objectPrototype)
 {
     // The constructor will be added later in ErrorObjectImp's constructor
 
@@ -71,12 +71,11 @@ JSValue* errorProtoFuncToString(ExecState* exec, JSObject* thisObj, const List&)
 // ------------------------------ ErrorObjectImp -------------------------------
 
 ErrorObjectImp::ErrorObjectImp(ExecState* exec, FunctionPrototype* funcProto, ErrorPrototype* errorProto)
-    : InternalFunctionImp(funcProto)
+    : InternalFunctionImp(funcProto, errorProto->classInfo()->className)
 {
     // ECMA 15.11.3.1 Error.prototype
     putDirect(exec->propertyNames().prototype, errorProto, DontEnum|DontDelete|ReadOnly);
     putDirect(exec->propertyNames().length, jsNumber(1), DontDelete|ReadOnly|DontEnum);
-    //putDirect(namePropertyName, jsString(n));
 }
 
 bool ErrorObjectImp::implementsConstruct() const
@@ -106,7 +105,7 @@ JSValue* ErrorObjectImp::callAsFunction(ExecState* exec, JSObject* /*thisObj*/, 
 
 // ------------------------------ NativeErrorPrototype ----------------------
 
-NativeErrorPrototype::NativeErrorPrototype(ExecState* exec, ErrorPrototype* errorProto, UString name, UString message)
+NativeErrorPrototype::NativeErrorPrototype(ExecState* exec, ErrorPrototype* errorProto, const UString& name, const UString& message)
     : JSObject(errorProto)
 {
     putDirect(exec->propertyNames().name, jsString(name), 0);
@@ -117,8 +116,8 @@ NativeErrorPrototype::NativeErrorPrototype(ExecState* exec, ErrorPrototype* erro
 
 const ClassInfo NativeErrorImp::info = { "Function", &InternalFunctionImp::info, 0 };
 
-NativeErrorImp::NativeErrorImp(ExecState* exec, FunctionPrototype* funcProto, JSObject* prot)
-    : InternalFunctionImp(funcProto)
+NativeErrorImp::NativeErrorImp(ExecState* exec, FunctionPrototype* funcProto, NativeErrorPrototype* prot)
+    : InternalFunctionImp(funcProto, Identifier(prot->getDirect(exec->propertyNames().name)->getString()))
     , proto(prot)
 {
     putDirect(exec->propertyNames().length, jsNumber(1), DontDelete|ReadOnly|DontEnum); // ECMA 15.11.7.5
