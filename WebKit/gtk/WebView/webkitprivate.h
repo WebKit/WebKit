@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2007 Holger Hans Peter Freyther
+ * Copyrifht (C) 2008 Jan Michael C. Alonzo
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -31,19 +32,30 @@
 #include "webkitwebframe.h"
 #include "webkitwebsettings.h"
 #include "webkitnetworkrequest.h"
+#include "webkitwebbackforwardlist.h"
 
+#include "BackForwardList.h"
+#include "HistoryItem.h"
 #include "Settings.h"
 #include "Page.h"
 #include "Frame.h"
 #include "FrameLoaderClient.h"
+
+#include <glib.h>
 
 namespace WebKit {
     WebKitWebView* getViewFromFrame(WebKitWebFrame*);
 
     WebCore::Frame* core(WebKitWebFrame*);
     WebKitWebFrame* kit(WebCore::Frame*);
+
     WebCore::Page* core(WebKitWebView*);
     WebKitWebView* kit(WebCore::Page*);
+
+    WebCore::HistoryItem* core(WebKitWebHistoryItem*);
+    WebKitWebHistoryItem* kit(WebCore::HistoryItem*);
+
+    WebCore::BackForwardList* core(WebKitWebBackForwardList*);
 }
 
 extern "C" {
@@ -62,6 +74,8 @@ extern "C" {
         WebCore::String applicationNameForUserAgent;
         WebCore::String* userAgent;
 
+        WebKitWebBackForwardList* backForwardList;
+        
         gint lastPopupXPosition;
         gint lastPopupYPosition;
 
@@ -91,7 +105,12 @@ extern "C" {
         gchar* uri;
     };
 
+    /* WebKitWebFrame private function */
     WebKitWebFrame* webkit_web_frame_init_with_web_view(WebKitWebView*, WebCore::HTMLFrameOwnerElement*);
+
+    /* WebKitWebHistoryItem private function */
+    WebKitWebHistoryItem* webkit_web_history_item_new_with_core_item(WebCore::HistoryItem*);
+    
 
     // TODO: Move these to webkitwebframe.h once these functions are fully
     // implemented and their API has been discussed.

@@ -25,5 +25,7 @@
 #include <webkitwebframe.h>
 #include <webkitwebsettings.h>
 #include <webkitwebview.h>
+#include <webkitwebbackforwardlist.h>
+#include <webkitwebhistoryitem.h>
 
 #endif /* __WEBKIT_H__ */

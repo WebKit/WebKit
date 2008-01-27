@@ -3,6 +3,7 @@
  *  Copyright (C) 2007 Christian Dywan <christian@twotoasts.de>
  *  Copyright (C) 2007 Xan Lopez <xan@gnome.org>
  *  Copyright (C) 2007 Alp Toker <alp@atoker.com>
+ *  Copyright (C) 2008 Jan Alonzo <jmalonzo@unpluggable.com>
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -24,8 +25,11 @@
 #include "webkitwebview.h"
 #include "webkit-marshal.h"
 #include "webkitprivate.h"
+#include "webkitwebbackforwardlist.h"
+#include "webkitwebhistoryitem.h"
 
 #include "NotImplemented.h"
+#include "BackForwardList.h"
 #include "CString.h"
 #include "ChromeClientGtk.h"
 #include "ContextMenu.h"
@@ -37,6 +41,7 @@
 #include "EditorClientGtk.h"
 #include "EventHandler.h"
 #include "FocusController.h"
+#include "FrameLoaderTypes.h"
 #include "HitTestRequest.h"
 #include "HitTestResult.h"
 #include "GraphicsContext.h"
@@ -579,7 +584,10 @@ static void webkit_web_view_finalize(GObject* object)
     webkit_web_view_stop_loading(WEBKIT_WEB_VIEW(object));
 
     WebKitWebViewPrivate* webViewData = WEBKIT_WEB_VIEW_GET_PRIVATE(WEBKIT_WEB_VIEW(object));
+
     delete webViewData->corePage;
+
+    g_object_unref(webViewData->backForwardList);
     g_object_unref(webViewData->webSettings);
     g_object_unref(webViewData->mainFrame);
     g_object_unref(webViewData->imContext);
@@ -1175,6 +1183,9 @@ static void webkit_web_view_init(WebKitWebView* webView)
     webViewData->lastPopupXPosition = webViewData->lastPopupYPosition = -1;
     webViewData->editable = false;
 
+    /* Initialize the view's back/forward list */
+    webViewData->backForwardList = webkit_web_back_forward_list_new_with_web_view(webView);
+
 #if GTK_CHECK_VERSION(2,10,0)
     GdkAtom textHtml = gdk_atom_intern_static_string("text/html");
 #else
@@ -1221,6 +1232,64 @@ WebKitWebSettings* webkit_web_view_get_settings(WebKitWebView* webView)
     return webViewData->webSettings;
 }
 
+/**
+ * webkit_web_view_set_maintains_back_forward_list:
+ * @webView: a #WebKitWebView
+ * @flag: to tell the view to maintain a back or forward list
+ *
+ * Set the view to maintain a back or forward list of history items.
+ */
+void webkit_web_view_set_maintains_back_forward_list(WebKitWebView* webView, gboolean flag)
+{
+    g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
+
+    core(webView)->backForwardList()->setEnabled(flag);
+}
+
+/**
+ * webkit_web_view_get_back_forward_list:
+ * @webView: a #WebKitWebView
+ *
+ * Returns a #WebKitWebBackForwardList
+ * 
+ * Return value: the #WebKitWebBackForwardList
+ */
+WebKitWebBackForwardList* webkit_web_view_get_back_forward_list(WebKitWebView* webView)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), NULL);
+
+    WebKitWebViewPrivate* webViewData = WEBKIT_WEB_VIEW_GET_PRIVATE(WEBKIT_WEB_VIEW(webView));
+
+    if (!webViewData->corePage || !webViewData->corePage->backForwardList()->enabled())
+        return NULL;
+
+    return webViewData->backForwardList;
+}
+
+/**
+ * webkit_web_view_go_to_back_forward_item:
+ * @webView: a #WebKitWebView
+ * @item: a #WebKitWebHistoryItem*
+ *
+ * Go to the specified #WebKitWebHistoryItem
+ *
+ * Return value: %TRUE if loading of item is successful, %FALSE if not
+ */
+gboolean webkit_web_view_go_to_back_forward_item(WebKitWebView* webView, WebKitWebHistoryItem* item)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), FALSE);
+    g_return_val_if_fail(WEBKIT_IS_WEB_HISTORY_ITEM(item), FALSE);
+
+    core(webView)->goToItem(core(item), FrameLoadTypeIndexedBackForward);
+    return TRUE;
+}
+
+/**
+ * webkit_web_view_go_backward:
+ * @webView: the #WebKitWebView
+ *
+ * Go to the previous page, if there's any.
+ */
 void webkit_web_view_go_backward(WebKitWebView* webView)
 {
     g_warning("webkit_web_view_go_backward() is obsolete; use webkit_web_view_go_back()");
@@ -1237,8 +1306,7 @@ void webkit_web_view_go_back(WebKitWebView* webView)
 {
     g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
 
-    Frame* frame = core(webkit_web_view_get_main_frame(webView));
-    frame->loader()->goBackOrForward(-1);
+    core(webView)->goBack();
 }
 
 /**
@@ -1268,10 +1336,17 @@ void webkit_web_view_go_forward(WebKitWebView* webView)
 {
     g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
 
-    Frame* frame = core(webkit_web_view_get_main_frame(webView));
-    frame->loader()->goBackOrForward(1);
+    core(webView)->goForward();
 }
 
+/**
+ * webkit_web_view_can_go_backward:
+ * @webView: the #WebKitWebView
+ *
+ * Checks whether the view can go back to the previous page
+ *
+ * Return value: %TRUE if the page can go back, otherwise returns %FALSE
+ */
 gboolean webkit_web_view_can_go_backward(WebKitWebView* webView)
 {
     g_warning("webkit_web_view_can_go_backward() is obsolete; use webkit_web_view_can_go_back()");
@@ -1290,8 +1365,12 @@ gboolean webkit_web_view_can_go_back(WebKitWebView* webView)
 {
     g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), FALSE);
 
-    Frame* frame = core(webkit_web_view_get_main_frame(webView));
-    return frame->loader()->canGoBackOrForward(-1);
+    Page* page = core(webView);
+
+    if (!page || !page->backForwardList()->backItem())
+        return FALSE;
+
+    return TRUE;
 }
 
 /**
@@ -1325,8 +1404,15 @@ gboolean webkit_web_view_can_go_forward(WebKitWebView* webView)
 {
     g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), FALSE);
 
-    Frame* frame = core(webkit_web_view_get_main_frame(webView));
-    return frame->loader()->canGoBackOrForward(1);
+    Page* page = core(webView);
+
+    if (!page)
+        return FALSE;
+
+    if (!page->backForwardList()->forwardItem())
+        return FALSE;
+
+    return TRUE;
 }
 
 void webkit_web_view_open(WebKitWebView* webView, const gchar* uri)

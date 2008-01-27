@@ -989,7 +989,9 @@ gtk-port {
         ../WebKit/gtk/WebView/webkitdefines.h \
         ../WebKit/gtk/WebView/webkitnetworkrequest.h \
         ../WebKit/gtk/WebView/webkitprivate.h \
+        ../WebKit/gtk/WebView/webkitwebbackforwardlist.h \
         ../WebKit/gtk/WebView/webkitwebframe.h \
+        ../WebKit/gtk/WebView/webkitwebhistoryitem.h \
         ../WebKit/gtk/WebView/webkitwebsettings.h \
         ../WebKit/gtk/WebView/webkitwebview.h \
         ../WebKit/gtk/WebCoreSupport/ChromeClientGtk.h \
@@ -1066,7 +1068,9 @@ gtk-port {
         platform/image-decoders/xbm/XBMImageDecoder.cpp \
         ../WebKit/gtk/WebView/webkitnetworkrequest.cpp \
         ../WebKit/gtk/WebView/webkitprivate.cpp \
+        ../WebKit/gtk/WebView/webkitwebbackforwardlist.cpp \
         ../WebKit/gtk/WebView/webkitwebframe.cpp \
+        ../WebKit/gtk/WebView/webkitwebhistoryitem.cpp \
         ../WebKit/gtk/WebView/webkitwebsettings.cpp \
         ../WebKit/gtk/WebView/webkitwebview.cpp \
         ../WebKit/gtk/WebCoreSupport/ChromeClientGtk.cpp \

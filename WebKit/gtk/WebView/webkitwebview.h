@@ -24,6 +24,8 @@
 #include <JavaScriptCore/JSBase.h>
 
 #include "webkitdefines.h"
+#include "webkitwebbackforwardlist.h"
+#include "webkitwebhistoryitem.h"
 #include "webkitwebsettings.h"
 
 G_BEGIN_DECLS
@@ -91,8 +93,14 @@ webkit_web_view_get_type (void);
 WEBKIT_API GtkWidget*
 webkit_web_view_new (void);
 
-WEBKIT_OBSOLETE_API gboolean
-webkit_web_view_can_go_backward (WebKitWebView* web_view);
+WEBKIT_API void
+webkit_web_view_set_maintains_back_forward_list (WebKitWebView* web_view, gboolean flag); 
+
+WEBKIT_API WebKitWebBackForwardList*
+webkit_web_view_get_back_forward_list (WebKitWebView* web_view);
+
+WEBKIT_API gboolean
+webkit_web_view_go_to_back_forward_item (WebKitWebView *web_view, WebKitWebHistoryItem* item);
 
 WEBKIT_API gboolean
 webkit_web_view_can_go_back (WebKitWebView* web_view);
@@ -102,9 +110,6 @@ webkit_web_view_can_go_back_or_forward (WebKitWebView* web_view, gint steps);
 
 WEBKIT_API gboolean
 webkit_web_view_can_go_forward (WebKitWebView* web_view);
-
-WEBKIT_OBSOLETE_API void
-webkit_web_view_go_backward (WebKitWebView* web_view);
 
 WEBKIT_API void
 webkit_web_view_go_back (WebKitWebView* web_view);
@@ -192,6 +197,12 @@ webkit_web_view_set_settings (WebKitWebView* web_view, WebKitWebSettings* settin
 
 WEBKIT_API WebKitWebSettings*
 webkit_web_view_get_settings (WebKitWebView* web_view);
+
+WEBKIT_OBSOLETE_API gboolean
+webkit_web_view_can_go_backward (WebKitWebView* web_view);
+
+WEBKIT_OBSOLETE_API void
+webkit_web_view_go_backward (WebKitWebView* web_view);
 
 G_END_DECLS
 

@@ -1,3 +1,14 @@
+2008-01-27  Jan Michael Alonzo  <jmalonzo@unpluggable.com>
+
+        Reviewed by Alp Toker.
+
+        http://bugs.webkit.org/show_bug.cgi?id=14811
+        [gtk] [request] add a webkit_gtk_page_go_to_history_item function
+
+        Added webkit/gtk webkitwebbackforwardlist and webkitwebhistoryitem
+
+        * WebCore.pro:
+
 2008-01-27  Matt Perry  <mpComplete@gmail.com>
 
         Reviewed and tweaked quite a bit by Darin.

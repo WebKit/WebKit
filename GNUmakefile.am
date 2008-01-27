@@ -237,7 +237,9 @@ webkitgtk_h_api += \
 	WebKit/gtk/WebView/webkit.h \
 	WebKit/gtk/WebView/webkitdefines.h \
 	WebKit/gtk/WebView/webkitnetworkrequest.h \
+	WebKit/gtk/WebView/webkitwebbackforwardlist.h \
 	WebKit/gtk/WebView/webkitwebframe.h \
+	WebKit/gtk/WebView/webkitwebhistoryitem.h \
 	WebKit/gtk/WebView/webkitwebsettings.h \
 	WebKit/gtk/WebView/webkitwebview.h 
 
@@ -258,7 +260,9 @@ webkitgtk_headers += \
 webkitgtk_sources += \
 	WebKit/gtk/WebView/webkitnetworkrequest.cpp \
 	WebKit/gtk/WebView/webkitprivate.cpp \
+	WebKit/gtk/WebView/webkitwebbackforwardlist.cpp \
 	WebKit/gtk/WebView/webkitwebframe.cpp \
+	WebKit/gtk/WebView/webkitwebhistoryitem.cpp \
 	WebKit/gtk/WebView/webkitwebsettings.cpp \
 	WebKit/gtk/WebView/webkitwebview.cpp \
 	WebKit/gtk/WebCoreSupport/ChromeClientGtk.cpp \
