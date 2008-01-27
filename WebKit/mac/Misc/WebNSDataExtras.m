@@ -92,10 +92,10 @@
     }
     if (somethingChanged) {
         if (useUniCharPtr) {
-            result = (NSString *)CFMakeCollectable(CFStringCreateWithCharacters(NULL, uniCharPtr, len));
+            result = (NSString *)CFMakeCollectable(CFStringCreateWithCharactersNoCopy(NULL, uniCharPtr, len, NULL));
         } 
         else {
-            result = (NSString *)CFMakeCollectable(CFStringCreateWithCString(NULL, charPtr, kCFStringEncodingISOLatin1));
+            result = (NSString *)CFMakeCollectable(CFStringCreateWithCStringNoCopy(NULL, charPtr, kCFStringEncodingISOLatin1, NULL));
         }
     } 
     else {

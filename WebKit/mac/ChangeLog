@@ -1,3 +1,13 @@
+2008-01-26  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Fix leaks seen after loading <http://www.funnyordie.com/videos/d70b5a11cb>.
+
+        * Misc/WebNSDataExtras.m:
+        (-[NSString _web_capitalizeRFC822HeaderFieldName]): Transfer ownerhip of the allocated buffers
+        to the new CFString so that they will be freed when no longer needed.
+
 2008-01-26  Greg Bolsinga  <bolsinga@apple.com>
 
         <rdar://problem/5708388> WebDashboardRegion.h duplicated between WebCore / WebKit
