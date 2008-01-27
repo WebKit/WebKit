@@ -1,5 +1,13 @@
 2008-01-27  Darin Adler  <darin@apple.com>
 
+        - updated some test results I missed that were affected by my fix for bug 16498 
+
+        * fast/dom/xmlhttprequest-get-expected.txt:
+        * http/tests/security/cross-frame-access-put-expected.txt:
+        * plugins/inner-html-display-none-expected.txt:
+
+2008-01-27  Darin Adler  <darin@apple.com>
+
         Reviewed by Oliver.
 
         - tests for <rdar://problem/5657450> REGRESSION: const is broken

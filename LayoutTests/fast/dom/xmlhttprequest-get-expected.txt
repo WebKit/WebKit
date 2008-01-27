@@ -48,23 +48,17 @@ cancelable : 'false'
 clipboardData : 'undefined'
 currentTarget : '[object JSXMLHttpRequest]'
 eventPhase : '0'
-initEvent : '
-function initEvent() {
+initEvent : 'function initEvent() {
     [native code]
-}
-'
-preventDefault : '
-function preventDefault() {
+}'
+preventDefault : 'function preventDefault() {
     [native code]
-}
-'
+}'
 returnValue : 'true'
 srcElement : '[object JSXMLHttpRequest]'
-stopPropagation : '
-function stopPropagation() {
+stopPropagation : 'function stopPropagation() {
     [native code]
-}
-'
+}'
 target : '[object JSXMLHttpRequest]'
 type : 'load'
 
