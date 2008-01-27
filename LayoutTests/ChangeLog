@@ -1,5 +1,12 @@
 2008-01-27  Darin Adler  <darin@apple.com>
 
+        * http/tests/security/cross-frame-access-put-expected.txt: Updated again.
+        Not sure why, but I generated a different result the first time I tried.
+        I suspect this test gives different results depending on what other tests
+        are run with it.
+
+2008-01-27  Darin Adler  <darin@apple.com>
+
         - updated some test results I missed that were affected by my fix for bug 16498 
 
         * fast/dom/xmlhttprequest-get-expected.txt:
