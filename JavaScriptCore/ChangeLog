@@ -1,5 +1,21 @@
 2008-01-26  Oliver Hunt  <oliver@apple.com>
 
+        Reviewed by Maciej and Darin.
+
+        Fix for http://bugs.webkit.org/show_bug.cgi?id=17020
+        Function.toString does not parenthesise numbers for the bracket accessor
+
+        It turns out that logic was there for all of the dot accessor nodes to make numbers be
+        parenthesised properly, so it was a trivial extension to extend that to the bracket nodes.
+        I renamed the enum type to reflect the fact that it is now used for both dot and bracket
+        accessors.
+
+        * kjs/nodes2string.cpp:
+        (KJS::bracketNodeStreamTo):
+        (KJS::BracketAccessorNode::streamTo):
+
+2008-01-26  Oliver Hunt  <oliver@apple.com>
+
         Reviewed by Darin.
 
         Fix Bug 17018: Incorrect code generated from Function.toString for get/setters in object literals

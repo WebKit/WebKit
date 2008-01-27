@@ -37,7 +37,7 @@ namespace KJS {
 enum EndlType { Endl };
 enum IndentType { Indent };
 enum UnindentType { Unindent };
-enum DotExprType { DotExpr };
+enum ObjectAccessType { ObjectAccess };
 
 class SourceStream {
 public:
@@ -51,7 +51,7 @@ public:
     SourceStream& operator<<(EndlType);
     SourceStream& operator<<(IndentType);
     SourceStream& operator<<(UnindentType);
-    SourceStream& operator<<(DotExprType);
+    SourceStream& operator<<(ObjectAccessType);
     SourceStream& operator<<(Precedence);
     SourceStream& operator<<(const Node*);
     template <typename T> SourceStream& operator<<(const RefPtr<T>& n) { return *this << n.get(); }
@@ -235,7 +235,7 @@ SourceStream& SourceStream::operator<<(UnindentType)
     return *this;
 }
 
-inline SourceStream& SourceStream::operator<<(DotExprType)
+inline SourceStream& SourceStream::operator<<(ObjectAccessType)
 {
     m_numberNeedsParens = true;
     return *this;
@@ -263,12 +263,12 @@ template <typename T> static inline void streamLeftAssociativeBinaryOperator(Sou
 
 static inline void bracketNodeStreamTo(SourceStream& s, const RefPtr<ExpressionNode>& base, const RefPtr<ExpressionNode>& subscript)
 {
-    s << PrecCall << base.get() << "[" << subscript.get() << "]";
+    s << ObjectAccess << PrecCall << base.get() << "[" << subscript.get() << "]";
 }
 
 static inline void dotNodeStreamTo(SourceStream& s, const RefPtr<ExpressionNode>& base, const Identifier& ident)
 {
-    s << DotExpr << PrecCall << base.get() << "." << ident;
+    s << ObjectAccess << PrecCall << base.get() << "." << ident;
 }
 
 // --------
@@ -392,12 +392,12 @@ void PropertyNode::streamTo(SourceStream& s) const
 
 void BracketAccessorNode::streamTo(SourceStream& s) const
 {
-    s << PrecCall << expr1 << "[" << expr2 << "]";
+    bracketNodeStreamTo(s, expr1, expr2);
 }
 
 void DotAccessorNode::streamTo(SourceStream& s) const
 {
-    s << DotExpr << PrecCall << expr << "." << ident;
+    dotNodeStreamTo(s, expr, ident);
 }
 
 void ArgumentListNode::streamTo(SourceStream& s) const
@@ -414,7 +414,7 @@ void ArgumentsNode::streamTo(SourceStream& s) const
 
 void NewExprNode::streamTo(SourceStream& s) const
 {
-    s << "new " << PrecMember << expr << args;
+    s << "new " << ObjectAccess << PrecMember << expr << args;
 }
 
 void FunctionCallValueNode::streamTo(SourceStream& s) const
