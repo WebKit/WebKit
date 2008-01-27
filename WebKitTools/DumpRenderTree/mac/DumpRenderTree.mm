@@ -68,6 +68,7 @@
 #import <mach-o/getsect.h>
 #import <objc/objc-runtime.h>
 #import <wtf/Assertions.h>
+#import <wtf/RetainPtr.h>
 
 @interface DumpRenderTreeEvent : NSEvent
 @end
@@ -112,12 +113,17 @@ static int repaintSweepHorizontallyDefault;
 static int dumpTree = YES;
 static BOOL printSeparators;
 static NSString *currentTest = nil;
+static RetainPtr<CFStringRef> persistentUserStyleSheetLocation;
 
 static WebHistoryItem *prevTestBFItem = nil;  // current b/f item at the end of the previous test
 
 const unsigned maxViewHeight = 600;
 const unsigned maxViewWidth = 800;
 
+void setPersistentUserStyleSheetLocation(CFStringRef url)
+{
+    persistentUserStyleSheetLocation = url;
+}
 
 static BOOL shouldIgnoreWebCoreNodeLeaks(CFStringRef URLString)
 {
@@ -802,6 +808,12 @@ static void resetWebViewToConsistentStateBeforeTesting()
     [preferences setPrivateBrowsingEnabled:NO];
     [preferences setAuthorAndUserStylesEnabled:YES];
     [preferences setJavaScriptCanOpenWindowsAutomatically:YES];
+
+    if (persistentUserStyleSheetLocation) {
+        [preferences setUserStyleSheetLocation:[NSURL URLWithString:(NSString *)(persistentUserStyleSheetLocation.get())]];
+        [preferences setUserStyleSheetEnabled:YES];
+    } else
+        [preferences setUserStyleSheetEnabled:NO];
 
     [WebView _setUsesTestModeFocusRingColor:YES];
 }

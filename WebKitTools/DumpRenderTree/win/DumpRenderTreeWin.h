@@ -51,6 +51,7 @@
 struct IWebFrame;
 struct IWebPolicyDelegate;
 struct IWebView;
+typedef const struct __CFString* CFStringRef;
 typedef struct HWND__* HWND;
 
 extern IWebFrame* topLoadingFrame;
@@ -67,5 +68,7 @@ std::wstring urlSuitableForTestResult(const std::wstring& url);
 IWebView* createWebViewAndOffscreenWindow(HWND* webViewWindow = 0);
 Vector<HWND>& openWindows();
 HashMap<HWND, IWebView*>& windowToWebViewMap();
+
+void setPersistentUserStyleSheetLocation(CFStringRef);
 
 #endif // DumpRenderTreeWin_h

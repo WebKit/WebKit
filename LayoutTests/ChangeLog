@@ -1,3 +1,17 @@
+2008-01-27  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        - make some CSS2.1 tests pass on Windows by using @font-face to force
+          font fallback to match Mac OS X.
+
+        * platform/win/Skipped:
+        * platform/win/css2.1: Added.
+        * platform/win/css2.1/resources: Added.
+        * platform/win/css2.1/resources/Mac-compatible-font-fallback.css: Added.
+        * platform/win/css2.1/resources/run-webkit-tests-epilogue.html: Added.
+        * platform/win/css2.1/resources/run-webkit-tests-prologue.html: Added.
+
 2008-01-27  Darin Adler  <darin@apple.com>
 
         * http/tests/security/cross-frame-access-put-expected.txt: Updated again.

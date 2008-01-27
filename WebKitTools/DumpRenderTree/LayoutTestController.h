@@ -63,6 +63,8 @@ public:
     void setUseDashboardCompatibilityMode(bool flag);
     void setUserStyleSheetEnabled(bool flag);
     void setUserStyleSheetLocation(JSStringRef path);
+    void setPersistentUserStyleSheetLocation(JSStringRef path);
+    void clearPersistentUserStyleSheet();
     int windowCount();
 
     bool dumpAsText() const { return m_dumpAsText; }

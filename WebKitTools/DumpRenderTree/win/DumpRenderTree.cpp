@@ -37,6 +37,7 @@
 #include "UIDelegate.h"
 #include "WorkQueueItem.h"
 #include "WorkQueue.h"
+#include <wtf/RetainPtr.h>
 #include <wtf/Vector.h>
 #include <WebCore/COMPtr.h>
 #include <CoreFoundation/CoreFoundation.h>
@@ -80,6 +81,7 @@ static bool printSeparators;
 static bool leakChecking = false;
 static bool timedOut = false;
 static bool threaded = false;
+static RetainPtr<CFStringRef> persistentUserStyleSheetLocation;
 
 static const char* currentTest;
 
@@ -107,6 +109,11 @@ static const unsigned timeoutId = 10;
 
 const unsigned maxViewWidth = 800;
 const unsigned maxViewHeight = 600;
+
+void setPersistentUserStyleSheetLocation(CFStringRef url)
+{
+    persistentUserStyleSheetLocation = url;
+}
 
 wstring urlSuitableForTestResult(const wstring& url)
 {
@@ -222,7 +229,8 @@ static void initialize()
         TEXT("Times Bold Italic.ttf"),
         TEXT("Times Bold.ttf"),
         TEXT("Times Italic.ttf"),
-        TEXT("Times Roman.ttf")
+        TEXT("Times Roman.ttf"),
+        TEXT("WebKit Layout Tests.ttf")
     };
 
     wstring resourcesPath = fontsPath();
@@ -634,6 +642,17 @@ static void resetWebViewToConsistentStateBeforeTesting()
     if (SUCCEEDED(webView->preferences(&preferences))) {
         preferences->setPrivateBrowsingEnabled(FALSE);
         preferences->setJavaScriptCanOpenWindowsAutomatically(TRUE);
+
+        if (persistentUserStyleSheetLocation) {
+            Vector<wchar_t> urlCharacters(CFStringGetLength(persistentUserStyleSheetLocation.get()));
+            CFStringGetCharacters(persistentUserStyleSheetLocation.get(), CFRangeMake(0, CFStringGetLength(persistentUserStyleSheetLocation.get())), (UniChar *)urlCharacters.data());
+            BSTR url = SysAllocStringLen(urlCharacters.data(), urlCharacters.size());
+            preferences->setUserStyleSheetLocation(url);
+            SysFreeString(url);
+            preferences->setUserStyleSheetEnabled(TRUE);
+        } else
+            preferences->setUserStyleSheetEnabled(FALSE);
+
         COMPtr<IWebPreferencesPrivate> prefsPrivate(Query, preferences);
         if (prefsPrivate)
             prefsPrivate->setAuthorAndUserStylesEnabled(TRUE);

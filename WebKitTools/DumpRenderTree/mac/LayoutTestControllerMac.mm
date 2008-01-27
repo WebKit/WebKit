@@ -213,6 +213,17 @@ void LayoutTestController::setUserStyleSheetLocation(JSStringRef path)
     [[WebPreferences standardPreferences] setUserStyleSheetLocation:url];
 }
 
+void LayoutTestController::setPersistentUserStyleSheetLocation(JSStringRef jsURL)
+{
+    RetainPtr<CFStringRef> urlString(AdoptCF, JSStringCopyCFString(0, jsURL));
+    ::setPersistentUserStyleSheetLocation(urlString.get());
+}
+
+void LayoutTestController::clearPersistentUserStyleSheet()
+{
+    ::setPersistentUserStyleSheetLocation(0);
+}
+
 void LayoutTestController::setWindowIsKey(bool windowIsKey)
 {
     m_windowIsKey = windowIsKey;

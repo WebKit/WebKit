@@ -481,6 +481,17 @@ void LayoutTestController::setUserStyleSheetLocation(JSStringRef jsURL)
     SysFreeString(resultPathBSTR);
 }
 
+void LayoutTestController::setPersistentUserStyleSheetLocation(JSStringRef jsURL)
+{
+    RetainPtr<CFStringRef> urlString(AdoptCF, JSStringCopyCFString(0, jsURL));
+    ::setPersistentUserStyleSheetLocation(urlString.get());
+}
+
+void LayoutTestController::clearPersistentUserStyleSheet()
+{
+    ::setPersistentUserStyleSheetLocation(0);
+}
+
 void LayoutTestController::setWindowIsKey(bool flag)
 {
     COMPtr<IWebView> webView;

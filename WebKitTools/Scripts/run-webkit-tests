@@ -90,6 +90,7 @@ sub htmlForExpectedAndActualResults($);
 sub deleteExpectedAndActualResults($);
 sub recordActualResultsAndDiff($$);
 sub buildPlatformHierarchy();
+sub epiloguesAndPrologues($$);
 
 # Argument handling
 my $addPlatformExceptions = 0;
@@ -466,24 +467,45 @@ my %expectedResultDirectory;
 for my $test (@tests) {
     next if $test eq 'results.html';
 
+    my $newDumpTool = not $isDumpToolOpen;
     openDumpTool();
 
     my $base = stripExtension($test);
     
+    my $dir = $base;
+    $dir =~ s|/[^/]+$||;
+
+    if ($newDumpTool || $dir ne $lastDirectory) {
+        foreach my $logue (epiloguesAndPrologues($newDumpTool ? "" : $lastDirectory, $dir)) {
+            if (isCygwin()) {
+                $logue = toWindowsPath($logue);
+            } else {
+                $logue = canonpath($logue);
+            }
+            if ($verbose) {
+                print "running epilogue or prologue $logue\n";
+            }
+            print OUT "$logue\n";
+            # Discard the output.
+            while (<IN>) {
+                last if /#EOF/;
+            }
+        }
+    }
+
     if ($verbose) {
         print "running $test -> ";
         $atLineStart = 0;
     } elsif (!$quiet) {
-        my $dir = $base;
-        $dir =~ s|/[^/]+$||;
         if ($dir ne $lastDirectory) {
             print "\n" unless $atLineStart;
             print "$dir ";
-            $lastDirectory = $dir;
         }
         print ".";
         $atLineStart = 0;
     }
+
+    $lastDirectory = $dir;
 
     my $result;
 
@@ -1524,4 +1546,40 @@ sub buildPlatformHierarchy()
     }
 
     return @hierarchy;
+}
+
+sub epiloguesAndPrologues($$) {
+    my ($lastDirectory, $directory) = @_;
+    my @lastComponents = split('/', $lastDirectory);
+    my @components = split('/', $directory);
+
+    while (@lastComponents) {
+        if ($lastComponents[0] ne $components[0]) {
+            last;
+        }
+        shift @components;
+        shift @lastComponents;
+    }
+
+    my @result;
+    my $leaving = $lastDirectory;
+    foreach (@lastComponents) {
+        my $epilogue = $leaving . "/resources/run-webkit-tests-epilogue.html";
+        foreach (@platformHierarchy) {
+            push @result, catdir($_, $epilogue) if (stat(catdir($_, $epilogue)));
+        }
+        push @result, catdir($testDirectory, $epilogue) if (stat(catdir($testDirectory, $epilogue)));
+        $leaving =~ s|(^\|/)[^/]+$||;
+    }
+
+    my $entering = $leaving;
+    foreach (@components) {
+        $entering .= '/' . $_;
+        my $prologue = $entering . "/resources/run-webkit-tests-prologue.html";
+        push @result, catdir($testDirectory, $prologue) if (stat(catdir($testDirectory, $prologue)));
+        foreach (reverse @platformHierarchy) {
+            push @result, catdir($_, $prologue) if (stat(catdir($_, $prologue)));
+        }
+    }
+    return @result;
 }

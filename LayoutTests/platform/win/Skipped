@@ -46,7 +46,6 @@ http/tests/security/cross-frame-access-protocol.html
 media/video-seek-past-end-paused.html
 
 # Layout tests that depend on certain fonts don't match Mac results <rdar://problem/5075790>
-css2.1/t0905-c5525-fltblck-00-d-ag.html
 css2.1/t1202-counter-09-b.html
 css2.1/t1202-counters-09-b.html
 fast/encoding/denormalised-voiced-japanese-chars.html
@@ -75,34 +74,6 @@ tables/mozilla/bugs/bug113424.html
 tables/mozilla_expected_failures/bugs/bug11331.html
 
 # No advanced text <rdar://problems/4516194>
-css2.1/t0805-c5518-brdr-t-01-e.html
-css2.1/t0805-c5519-brdr-r-00-a.html
-css2.1/t0805-c5519-brdr-r-01-e.html
-css2.1/t0805-c5520-brdr-b-01-e.html
-css2.1/t0805-c5521-brdr-l-00-a.html
-css2.1/t0805-c5521-brdr-l-01-e.html
-css2.1/t0805-c5521-ibrdr-l-00-a.html
-css2.1/t0905-c414-flt-02-c.html
-css2.1/t0905-c414-flt-03-c.html
-css2.1/t0905-c414-flt-04-c.html
-css2.1/t0905-c414-flt-fit-01-d-g.html
-css2.1/t0905-c5525-fltblck-01-d.html
-css2.1/t0905-c5525-fltcont-00-d-g.html
-css2.1/t0905-c5525-fltwidth-00-c-g.html
-css2.1/t0905-c5525-fltwidth-02-c-g.html
-css2.1/t0905-c5525-fltwidth-03-c-g.html
-css2.1/t0905-c5525-fltwrap-00-b.html
-css2.1/t1202-counter-03-b.html
-css2.1/t1202-counter-04-b.html
-css2.1/t1202-counters-03-b.html
-css2.1/t1202-counters-04-b.html
-css2.1/t1205-c566-list-stl-01-c-g.html
-css2.1/t090501-c414-flt-01-b.html
-css2.1/t090501-c414-flt-03-b-g.html
-css2.1/t090501-c414-flt-ln-01-d-g.html
-css2.1/t090501-c5525-flt-l-00-b-g.html
-css2.1/t090501-c5525-flt-r-00-b-g.html
-css2.1/t100304-c43-rpl-bbx-01-d-g.html
 fast/text/atsui-multiple-renderers.html
 fast/text/atsui-pointtooffset-calls-cg.html
 fast/text/atsui-spacing-features.html

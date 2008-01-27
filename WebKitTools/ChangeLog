@@ -1,3 +1,45 @@
+2008-01-27  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        - add support for directory prologues and epilogues to run-webkit-tests
+        - allow setting a persistent user style sheet in DumpRenderTree
+        - activate the WebKit Layout Tests font in Windows DumpRenderTree
+
+        * DumpRenderTree/LayoutTestController.cpp:
+        (clearPersistentUserStyleSheetCallback): Added.
+        (setPersistentUserStyleSheetLocationCallback): Added.
+        (LayoutTestController::staticFunctions): Added.
+        clearPersistentUserStyleSheet and setPersistentUserStyleSheet.
+        * DumpRenderTree/LayoutTestController.h:
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (setPersistentUserStyleSheetLocation): Added.
+        (resetWebViewToConsistentStateBeforeTesting): Added the user style sheet
+        to the set of things this function resets. Now it either disables the
+        user style sheet or sets it to the persistent user style sheet and
+        enables it.
+        * DumpRenderTree/mac/DumpRenderTreeMac.h:
+        * DumpRenderTree/mac/LayoutTestControllerMac.mm:
+        (LayoutTestController::setPersistentUserStyleSheetLocation): Added.
+        (LayoutTestController::clearPersistentUserStyleSheet): Added.
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (setPersistentUserStyleSheetLocation): Added.
+        (initialize): Added the WebKit Layout Tests font to the set of fonts to
+        install.
+        (resetWebViewToConsistentStateBeforeTesting): See DumpRenderTree.mm.
+        * DumpRenderTree/win/DumpRenderTreeWin.h:
+        * DumpRenderTree/win/LayoutTestControllerWin.cpp:
+        (LayoutTestController::setPersistentUserStyleSheetLocation): Added.
+        (LayoutTestController::clearPersistentUserStyleSheet): Added.
+        * Scripts/run-webkit-tests: Changed to look for, and if found process in
+        DumpRenderTree, files named run-webkit-tests-prologue.html and
+        run-webkit-tests-epilogue.html in the resources subdirectory of any
+        test directory and platform test results directory. The prologues are
+        processed before the first test from the directory (and its
+        subdirectories) is run, and the epilogues are processed after the last
+        test from the directory is run. Platform-specific prologues and
+        epilogues are processed in order of specificity.
+
 2008-01-25  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Mark Rowe.

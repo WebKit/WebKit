@@ -38,6 +38,8 @@
 @class WebFrame;
 @class WebView;
 
+typedef const struct __CFString* CFStringRef;
+
 extern CFMutableArrayRef openWindowsRef;
 extern CFMutableSetRef disallowedURLs;
 extern WebFrame* mainFrame;
@@ -50,5 +52,6 @@ extern const unsigned maxViewHeight;
 extern const unsigned maxViewWidth;
 
 WebView* createWebViewAndOffscreenWindow();
+void setPersistentUserStyleSheetLocation(CFStringRef);
 
 #endif // DumpRenderTreeMac_h 
