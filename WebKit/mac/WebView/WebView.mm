@@ -36,7 +36,6 @@
 #import "WebChromeClient.h"
 #import "WebContextMenuClient.h"
 #import "WebDOMOperationsPrivate.h"
-#import "WebDashboardRegion.h"
 #import "WebDatabaseManagerInternal.h"
 #import "WebDatabaseManagerPrivate.h"
 #import "WebDataSourceInternal.h"
@@ -124,6 +123,7 @@
 #import <WebKit/DOM.h>
 #import <WebKit/DOMExtensions.h>
 #import <WebKit/DOMPrivate.h>
+#import <WebKit/WebDashboardRegion.h>
 #import <WebKitSystemInterface.h>
 #import <mach-o/dyld.h>
 #import <objc/objc-runtime.h>

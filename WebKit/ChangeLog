@@ -1,3 +1,11 @@
+2008-01-26  Greg Bolsinga  <bolsinga@apple.com>
+
+        <rdar://problem/5708388> WebDashboardRegion.h duplicated between WebCore / WebKit
+
+        Reviewed by Darin.
+
+        * WebKit.xcodeproj/project.pbxproj: Removed WebDashboardRegion.h.
+
 2008-01-23  Steve Falkenburg  <sfalken@apple.com>
 
         Update localization exceptions.
