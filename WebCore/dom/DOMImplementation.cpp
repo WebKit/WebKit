@@ -346,7 +346,7 @@ bool DOMImplementation::isTextMIMEType(const String& mimeType)
 PassRefPtr<HTMLDocument> DOMImplementation::createHTMLDocument(const String& title)
 {
     RefPtr<HTMLDocument> d = new HTMLDocument(this, 0);
-    d->open();
+    d->open("text/html", false);
     d->write("<html><head><title>" + title + "</title></head><body></body></html>");
     return d.release();
 }

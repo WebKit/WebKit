@@ -1,3 +1,76 @@
+2008-01-27  Matt Perry  <mpComplete@gmail.com>
+
+        Reviewed and tweaked quite a bit by Darin.
+
+        Fix for http://bugs.webkit.org/show_bug.cgi?id=14959
+        No back forward entry added for pages created in javascript
+
+        A new HistoryItem is created for calls to Document::open. Calls to
+        Document::write save the written data to a SharedBuffer that is also
+        stored on the HistoryItem. When the user navigates back to a
+        HistoryItem that has a valid buffer, that data is used for the page
+        content.
+
+        Tests: http/tests/navigation/document-open-adds-history-item.html
+               http/tests/navigation/document-open-delayed-adds-history-item.html
+               http/tests/navigation/document-open-new-window-adds-history-item.html
+               http/tests/navigation/document-open-replace-no-history-item.html
+
+        * bindings/js/JSHTMLDocumentCustom.cpp:
+        (WebCore::JSHTMLDocument::open): Pass a MIME type of either "text/html" or
+        "text/plain" and a boolean for "replace" in rather than always setting replace
+        to true and the MIME type to "text/html".
+
+        * dom/DOMImplementation.cpp:
+        (WebCore::DOMImplementation::createHTMLDocument): Pass in MIME type and
+        replace boolean explicitly, since we don't want to rely on Document::open()'s
+        default.
+
+        * dom/Document.cpp:
+        (WebCore::Document::open): Correctly determine the "replace" boolean.
+        Pass along the MIME type, replace boolean, and shared buffer to the
+        frame loader's didExplicitOpen function.
+        (WebCore::Document::write): Pass MIME type and replace boolean explicitly
+        to the open function so we don't do treat it as replace if you write without
+        an open. Store text written by the script so it can be used later for history.
+        (WebCore::Document::clear): Drop the text written byt he script.
+
+        * dom/Document.h: Added MIME type and replace boolean parameters for open.
+        Had to keep the old version for the sake of DOM bindings. Added the shared
+        buffer used for text written by script.
+
+        * history/HistoryItem.cpp:
+        (WebCore::HistoryItem::HistoryItem): Copy m_substituteData.
+        (WebCore::HistoryItem::substituteData): Added.
+        (WebCore::HistoryItem::setSubstituteData): Added.
+        * history/HistoryItem.h: Added m_substituteData, getter, and setter.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::didExplicitOpen): Added code to create or update the
+        history item, including attaching the shared buffer that will contain all
+        the data written by script.
+        (WebCore::FrameLoader::load): Added a SubstituteData parameter, passed through
+        when creating the document loader.
+        (WebCore::FrameLoader::reloadAllowingStaleData): Create the document loader
+        with the substitute data from the current history item.
+        (WebCore::FrameLoader::reload): Ditto.
+        (WebCore::FrameLoader::shouldTreatURLAsSameAsCurrent): If the current history
+        item has substitute data, then consider the URL from the substitute data
+        rather than the one in the history item itself.
+        (WebCore::FrameLoader::loadItem): Pass in the history item's substitute data.
+        * loader/FrameLoader.h: Added parameters to load and didExplicitOpen.
+
+        * platform/text/CharacterNames.h: Added byteOrderMark, and also added it under
+        its other official name, zeroWidthNoBreakSpace.
+
+        * xml/DOMParser.cpp:
+        (WebCore::DOMParser::parseFromString): Pass in MIME type and replace boolean
+        explicitly, since we don't want to rely on Document::open()'s default.
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::getResponseXML): Ditto.
+        * xml/XSLTProcessor.cpp:
+        (WebCore::XSLTProcessor::createDocumentFromSource): Ditto.
+
 2008-01-25  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Sam and Darin.

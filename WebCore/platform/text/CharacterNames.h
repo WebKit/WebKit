@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -37,6 +37,7 @@ namespace WebCore {
 
     const UChar blackSquare = 0x25A0;
     const UChar bullet = 0x2022;
+    const UChar byteOrderMark = 0xFEFF;
     const UChar horizontalEllipsis = 0x2026;
     const UChar ideographicSpace = 0x3000;
     const UChar leftToRightMark = 0x200E;
@@ -51,6 +52,7 @@ namespace WebCore {
     const UChar rightToLeftOverride = 0x202E;
     const UChar softHyphen = 0x00AD;
     const UChar whiteBullet = 0x25E6;
+    const UChar zeroWidthNoBreakSpace = 0xFEFF;
     const UChar zeroWidthSpace = 0x200B;
 
 }

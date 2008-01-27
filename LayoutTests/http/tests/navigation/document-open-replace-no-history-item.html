@@ -1,0 +1,22 @@
+<html>
+<head>
+<script src="resources/document-open.js"></script>
+<script>
+    function runTest()
+    {
+        window.firstVisit = true;
+        document.open("text/html", "replace");
+        document.writeln("<script>" + window.stopTest + "<" + "/script>");
+        document.writeln("<body onload='stopTest();'>");
+        document.writeln("This generated document and its contents should be in the back/forward list.");
+        document.writeln("This page should have replaced the originating page as well.");
+        document.writeln("</body>");
+        document.close();
+    }
+</script>
+</head>
+<body onload="startTest()">
+This tests that document.open does not create a back/forward item if "replace"
+is specified.
+</body>
+</html>

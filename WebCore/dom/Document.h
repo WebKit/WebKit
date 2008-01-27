@@ -82,6 +82,7 @@ namespace WebCore {
     class RegisteredEventListener;
     class RenderArena;
     class Settings;
+    class SharedBuffer;
     class StyleSheet;
     class StyleSheetList;
     class Text;
@@ -348,14 +349,15 @@ public:
     // to get visually ordered hebrew and arabic pages right
     void setVisuallyOrdered();
 
-    void open();
+    void open(const String& mimeType, bool replace);
+    void open(); // Deprecated.
     void implicitOpen();
     void close();
     void implicitClose();
     void cancelParsing();
 
-    void write(const String& text);
-    void writeln(const String& text);
+    void write(const String&);
+    void writeln(const String&);
     void finishParsing();
     void clear();
 
@@ -925,6 +927,9 @@ private:
     bool m_useSecureKeyboardEntryWhenActive;
 
     bool m_isXHTML;
+
+    // Contains the text written to the document by script, eg through document.write().
+    RefPtr<SharedBuffer> m_textWrittenByScript;
 
     unsigned m_numNodeLists;
 

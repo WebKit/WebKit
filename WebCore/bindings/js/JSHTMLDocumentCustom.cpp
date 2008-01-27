@@ -109,7 +109,21 @@ JSValue* JSHTMLDocument::open(ExecState* exec, const List& args)
     }
 
     // In the case of two parameters or fewer, do a normal document open.
-    static_cast<HTMLDocument*>(impl())->open();
+
+    // Anything other than undefined or text/html is treated as plain text.
+    const char* mimeType;
+    if (args[0]->isUndefined() || equalIgnoringCase(String(args[0]->toString(exec)), "text/html"))
+        mimeType = "text/html";
+    else
+        mimeType = "text/plain";
+    if (exec->hadException())
+        return jsUndefined();
+
+    bool replace = equalIgnoringCase(String(args[1]->toString(exec)), "replace");
+    if (exec->hadException())
+        return jsUndefined();
+
+    static_cast<HTMLDocument*>(impl())->open(mimeType, replace);
     return jsUndefined();
 }
 

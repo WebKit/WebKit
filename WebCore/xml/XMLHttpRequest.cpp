@@ -172,10 +172,10 @@ Document* XMLHttpRequest::getResponseXML(ExceptionCode& ec) const
             m_responseXML = 0;
         } else {
             m_responseXML = m_doc->implementation()->createDocument(0);
-            m_responseXML->open();
+            m_responseXML->open(responseMIMEType(), false);
             m_responseXML->setURL(m_url.deprecatedString());
-            // FIXME: set Last-Modified and cookies (currently, those are only available for HTMLDocuments).
-            m_responseXML->write(String(m_responseText));
+            // FIXME: Set Last-Modified and cookies (currently, those are only available for HTMLDocument).
+            m_responseXML->write(m_responseText);
             m_responseXML->finishParsing();
             m_responseXML->close();
             

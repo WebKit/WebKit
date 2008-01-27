@@ -238,11 +238,15 @@ RefPtr<Document> XSLTProcessor::createDocumentFromSource(const String& sourceStr
     String documentSource = sourceString;
 
     RefPtr<Document> result;
+    String resultMIMEType;
     if (sourceMIMEType == "text/plain") {
         result = ownerDocument->implementation()->createDocument(frame);
         transformTextStringToXHTMLDocumentString(documentSource);
-    } else
+        resultMIMEType = "application/xhtml+xml";
+    } else {
         result = ownerDocument->implementation()->createDocument(sourceMIMEType, frame, false);
+        resultMIMEType = sourceMIMEType;
+    }
     
     // Before parsing, we need to save & detach the old document and get the new document
     // in place. We have to do this only if we're rendering the result document.
@@ -253,7 +257,7 @@ RefPtr<Document> XSLTProcessor::createDocumentFromSource(const String& sourceStr
         frame->setDocument(result);
     }
     
-    result->open();
+    result->open(resultMIMEType, false);
     if (sourceIsDocument) {
         result->setURL(ownerDocument->url());
         result->setBaseURL(ownerDocument->baseURL());

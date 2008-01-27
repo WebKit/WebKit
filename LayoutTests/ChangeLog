@@ -1,3 +1,19 @@
+2008-01-27  Matt Perry  <mpComplete@gmail.com>
+
+        Reviewed by Darin.
+
+        Test cases for fix to http://bugs.webkit.org/show_bug.cgi?id=14959
+        No back forward entry added for pages created in javascript.
+
+        * http/tests/navigation/document-open-adds-history-item-expected.txt: Added.
+        * http/tests/navigation/document-open-adds-history-item.html: Added.
+        * http/tests/navigation/document-open-delayed-adds-history-item-expected.txt: Added.
+        * http/tests/navigation/document-open-delayed-adds-history-item.html: Added.
+        * http/tests/navigation/document-open-new-window-adds-history-item-expected.txt: Added.
+        * http/tests/navigation/document-open-new-window-adds-history-item.html: Added.
+        * http/tests/navigation/document-open-replace-no-history-item-expected.txt: Added.
+        * http/tests/navigation/document-open-replace-no-history-item.html: Added.
+
 2008-01-26  Darin Adler  <darin@apple.com>
 
         Reviewed by Oliver.
@@ -3569,6 +3585,7 @@ to skip list since it is still failing on tiger.
         * platform/mac/svg/custom/foreignObject-crash-on-hover-expected.txt: Added.
         * svg/custom/foreignObject-crash-on-hover.xml: Added.
 
+>>>>>>> .r29342
 2007-12-21  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Adele.

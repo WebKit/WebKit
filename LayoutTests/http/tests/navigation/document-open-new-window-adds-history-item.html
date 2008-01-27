@@ -1,0 +1,25 @@
+<html>
+<head>
+<script src="resources/document-open.js"></script>
+<script>
+    function runTest()
+    {
+        if (window.layoutTestController) {
+            layoutTestController.setCanOpenWindows();
+        }
+        w = window.open('');
+        w.firstVisit = true;
+        w.focus();
+        w.document.open();
+        w.document.writeln("<script>" + window.stopTest + "<" + "/script>");
+        w.document.writeln("<body onload='stopTest();'>");
+        w.document.writeln("This generated document and its contents should be in the back/forward list.");
+        w.document.writeln("</body>");
+        w.document.close();
+    }
+</script>
+</head>
+<body onload="startTest()">
+This tests that document.open in a new window creates a back/forward item.
+</body>
+</html>
