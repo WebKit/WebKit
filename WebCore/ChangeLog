@@ -1,5 +1,11 @@
 2008-01-28  Oliver Hunt  <oliver@apple.com>
 
+        Yet another Wx build fix
+
+        * platform/graphics/wx/GraphicsContextWx.cpp:
+
+2008-01-28  Oliver Hunt  <oliver@apple.com>
+
         Wx build fix
 
         * platform/graphics/wx/GraphicsContextWx.cpp:
