@@ -39,8 +39,8 @@ class NSURLRequest;
 
 namespace WebCore {
 
-    struct ResourceRequest : ResourceRequestBase {
-
+    class ResourceRequest : public ResourceRequestBase {
+    public:
         ResourceRequest(const String& url) 
             : ResourceRequestBase(KURL(url.deprecatedString()), UseProtocolCachePolicy)
         {

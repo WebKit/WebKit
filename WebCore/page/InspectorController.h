@@ -47,7 +47,7 @@ class ResourceError;
 struct ConsoleMessage;
 struct InspectorDatabaseResource;
 struct InspectorResource;
-struct ResourceRequest;
+class ResourceRequest;
 
 class InspectorController {
 public:

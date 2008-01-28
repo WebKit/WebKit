@@ -41,11 +41,11 @@ namespace WebCore {
         ReturnCacheDataDontLoad, // results of a post - allow stale data and only use cache
     };
 
-    struct ResourceRequest;
+    class ResourceRequest;
 
     // Do not use this type directly.  Use ResourceRequest instead.
-    struct ResourceRequestBase {
-
+    class ResourceRequestBase {
+    public:
         bool isNull() const;
         bool isEmpty() const;
 

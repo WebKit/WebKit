@@ -1,3 +1,15 @@
+2008-01-28  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        Use class instead of struct to appease MSVC.
+
+        * history/HistoryItem.h:
+        * loader/FrameLoaderClient.h:
+        * page/InspectorController.h:
+        * platform/network/ResourceRequestBase.h:
+        * platform/network/mac/ResourceRequest.h:
+
 2008-01-28  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.

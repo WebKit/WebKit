@@ -49,7 +49,7 @@ namespace WebCore {
 class Document;
 class Image;
 class KURL;
-struct ResourceRequest;
+class ResourceRequest;
 
 class HistoryItem;
 typedef Vector<RefPtr<HistoryItem> > HistoryItemVector;
