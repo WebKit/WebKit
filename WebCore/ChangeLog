@@ -1,3 +1,17 @@
+2008-01-28  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Adam Roben.
+
+        - fix svg/W3C-SVG-1.1/fonts-glyph-04-t.svg failure on Windows
+
+        The results differed between Mac OS X and Windows because the code was
+        using a 0-size font, which Mac OS X changes to 12pt.
+
+        * svg/SVGFont.cpp:
+        (WebCore::floatWidthMissingGlyphCallback): Use the font description of
+        the primary font to initialize the fallback font.
+        (WebCore::drawTextMissingGlyphCallback): Ditto.
+
 2008-01-28  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Nikolas Zimmermann.

@@ -1,3 +1,11 @@
+2008-01-28  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Adam Roben.
+
+        - updated results for a test that was failing on Windows
+
+        * platform/mac/svg/W3C-SVG-1.1/fonts-glyph-04-t-expected.txt:
+
 2008-01-28  Alexey Proskuryakov  <ap@webkit.org>
 
         <rdar://problem/5667017> storage/execute-sql-args.html failing -- openDatabase returning null on buildbot
