@@ -1,3 +1,89 @@
+2008-01-27  Alp Toker  <alp@atoker.com>
+
+        Reviewed by Mark Rowe.
+
+        http://bugs.webkit.org/show_bug.cgi?id=17029
+        Use of deprecated class function but declares GTK_DISABLE_DEPRECATED
+
+        Sync gtkdrawing.h (1.51) and gtk2drawing.c (1.71) from Mozilla
+        upstream.
+
+        Adapt RenderThemeGtk.cpp to track minor changes.
+
+        * platform/gtk/RenderThemeGtk.cpp:
+        (WebCore::gtkTextDirection):
+        (WebCore::adjustMozStyle):
+        (WebCore::setMozState):
+        (WebCore::paintMozWidget):
+        * platform/gtk/gtk2drawing.c:
+        (setup_widget_prototype):
+        (ensure_hpaned_widget):
+        (ensure_vpaned_widget):
+        (ensure_toggle_button_widget):
+        (ensure_combo_box_entry_widget):
+        (ensure_dropdown_entry_widget):
+        (moz_gtk_get_dropdown_button):
+        (ensure_arrow_widget):
+        (ensure_toolbar_separator_widget):
+        (ensure_statusbar_widget):
+        (ensure_frame_widget):
+        (ensure_menu_separator_widget):
+        (ensure_tree_view_widget):
+        (ensure_tree_header_cell_widget):
+        (ensure_expander_widget):
+        (ConvertGtkState):
+        (moz_gtk_button_paint):
+        (moz_gtk_widget_get_focus):
+        (moz_gtk_splitter_get_metrics):
+        (moz_gtk_toggle_paint):
+        (moz_gtk_scrollbar_button_paint):
+        (moz_gtk_scrollbar_trough_paint):
+        (moz_gtk_scrollbar_thumb_paint):
+        (moz_gtk_spin_paint):
+        (moz_gtk_spin_updown_paint):
+        (moz_gtk_scale_paint):
+        (moz_gtk_scale_thumb_paint):
+        (moz_gtk_gripper_paint):
+        (moz_gtk_hpaned_paint):
+        (moz_gtk_vpaned_paint):
+        (moz_gtk_entry_paint):
+        (moz_gtk_treeview_paint):
+        (moz_gtk_tree_header_cell_paint):
+        (moz_gtk_tree_header_sort_arrow_paint):
+        (moz_gtk_treeview_expander_paint):
+        (moz_gtk_expander_paint):
+        (moz_gtk_option_menu_paint):
+        (moz_gtk_downarrow_paint):
+        (moz_gtk_dropdown_arrow_paint):
+        (moz_gtk_container_paint):
+        (moz_gtk_toggle_label_paint):
+        (moz_gtk_toolbar_paint):
+        (moz_gtk_toolbar_separator_paint):
+        (moz_gtk_tooltip_paint):
+        (moz_gtk_resizer_paint):
+        (moz_gtk_frame_paint):
+        (moz_gtk_progressbar_paint):
+        (moz_gtk_progress_chunk_paint):
+        (moz_gtk_get_tab_thickness):
+        (moz_gtk_tab_paint):
+        (moz_gtk_tabpanels_paint):
+        (moz_gtk_menu_bar_paint):
+        (moz_gtk_menu_popup_paint):
+        (moz_gtk_menu_separator_paint):
+        (moz_gtk_menu_item_paint):
+        (moz_gtk_menu_arrow_paint):
+        (moz_gtk_check_menu_item_paint):
+        (moz_gtk_window_paint):
+        (moz_gtk_get_widget_border):
+        (moz_gtk_get_dropdown_arrow_size):
+        (moz_gtk_get_toolbar_separator_width):
+        (moz_gtk_get_expander_size):
+        (moz_gtk_get_treeview_expander_size):
+        (moz_gtk_get_menu_separator_height):
+        (moz_gtk_widget_paint):
+        (moz_gtk_shutdown):
+        * platform/gtk/gtkdrawing.h:
+
 2008-01-27  Jan Michael Alonzo  <jmalonzo@unpluggable.com>
 
         Reviewed by Alp Toker.
