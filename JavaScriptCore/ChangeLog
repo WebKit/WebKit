@@ -1,3 +1,14 @@
+2008-01-28  Sam Weinig  <sam@webkit.org>
+
+        Rubber-stamped by Darin Adler.
+
+        - Fix whitespace in nodes.h/cpp and nodes2string.cpp.
+
+        (NOTE: Specific changed functions elided for space and clarity)
+        * kjs/nodes.cpp:
+        * kjs/nodes.h:
+        * kjs/nodes2string.cpp:
+
 2008-01-27  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Oliver Hunt.
