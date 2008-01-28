@@ -575,6 +575,21 @@ void CanvasRenderingContext2D::clip()
     clearPathForDashboardBackwardCompatibilityMode();
 }
 
+bool CanvasRenderingContext2D::isPointInPath(const float x, const float y)
+{
+    GraphicsContext* c = drawingContext();
+    if (!c)
+        return false;
+    FloatPoint point(x, y);
+    // We have to invert the current transform to ensure we correctly handle the
+    // transforms applied to the current path.
+    AffineTransform ctm = c->getCTM();
+    if (!ctm.isInvertible())
+        return false;
+    FloatPoint transformedPoint = ctm.inverse().mapPoint(point);
+    return state().m_path.contains(transformedPoint);
+}
+
 void CanvasRenderingContext2D::clearRect(float x, float y, float width, float height, ExceptionCode& ec)
 {
     ec = 0;
@@ -1080,25 +1095,8 @@ void CanvasRenderingContext2D::willDraw(const FloatRect& r)
     GraphicsContext* c = drawingContext();
     if (!c)
         return;
-    
-    AffineTransform transform;
-#if PLATFORM(CG)
-    transform = CGContextGetCTM(c->platformContext());
-#elif PLATFORM(CAIRO)
-    cairo_t* cr = c->platformContext();
-    cairo_matrix_t m;
-    cairo_get_matrix(cr, &m);
-    transform = m;
-#elif PLATFORM(QT)
-    transform = c->platformContext()->combinedMatrix();
-#else
-    notImplemented();
-    FloatRect completeBounds(0, 0, m_canvas->width(), m_canvas->height());
-    m_canvas->willDraw(completeBounds);
-    return;
-#endif
-    
-    m_canvas->willDraw(transform.mapRect(r));
+
+    m_canvas->willDraw(c->getCTM().mapRect(r));
 }
 
 GraphicsContext* CanvasRenderingContext2D::drawingContext() const

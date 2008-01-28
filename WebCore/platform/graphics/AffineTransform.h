@@ -41,6 +41,7 @@ namespace WebCore {
 
 class IntPoint;
 class IntRect;
+class FloatPoint;
 class FloatRect;
 
 class AffineTransform {
@@ -60,6 +61,7 @@ public:
     void setMatrix(double a, double b, double c, double d, double e, double f);
     void map(double x, double y, double *x2, double *y2) const;
     IntPoint mapPoint(const IntPoint&) const;
+    FloatPoint mapPoint(const FloatPoint&) const;
     IntRect mapRect(const IntRect&) const;
     FloatRect mapRect(const FloatRect&) const;
     

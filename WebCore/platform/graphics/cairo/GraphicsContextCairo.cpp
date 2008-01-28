@@ -128,6 +128,14 @@ GraphicsContext::~GraphicsContext()
     delete m_data;
 }
 
+AffineTransform GraphicsContext::getCTM() const
+{
+    cairo_t* cr = platformContext();
+    cairo_matrix_t m;
+    cairo_get_matrix(cr, &m);
+    return m;
+}
+
 cairo_t* GraphicsContext::platformContext() const
 {
     return m_data->cr;

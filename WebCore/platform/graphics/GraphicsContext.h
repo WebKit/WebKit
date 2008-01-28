@@ -216,6 +216,7 @@ namespace WebCore {
         void setURLForRect(const KURL&, const IntRect&);
 
         void concatCTM(const AffineTransform&);
+        AffineTransform getCTM() const;
 
         void setUseAntialiasing(bool = true);
 

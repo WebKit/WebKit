@@ -1,3 +1,33 @@
+2008-01-27  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Bug 16629: <canvas> does not support isPointInPath()
+
+        Relatively trivial change to implement pointInPath and add
+        it to the bindings.  Most of this patch is the addition of
+        GraphicsContext::getCTM() by pulling the various platform
+        implementations from CanvasRenderingContext2D::willDraw
+
+        Test: fast/canvas/pointInPath.html
+
+        * html/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::isPointInPath):
+        (WebCore::CanvasRenderingContext2D::willDraw):
+        * html/CanvasRenderingContext2D.h:
+        * html/CanvasRenderingContext2D.idl:
+        * platform/graphics/AffineTransform.cpp:
+        (WebCore::AffineTransform::mapPoint):
+          Support mapping of FloatRects
+        * platform/graphics/AffineTransform.h:
+        * platform/graphics/GraphicsContext.h:
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        (WebCore::GraphicsContext::getCTM):
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::GraphicsContext::getCTM):
+        * platform/graphics/qt/GraphicsContextQt.cpp:
+        (WebCore::GraphicsContext::getCTM):
+
 2008-01-27  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin.

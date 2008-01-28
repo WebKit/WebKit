@@ -682,6 +682,11 @@ void GraphicsContext::concatCTM(const AffineTransform& transform)
     m_data->m_userToDeviceTransformKnownToBeIdentity = false;
 }
 
+AffineTransform GraphicsContext::getCTM() const
+{
+    return CGContextGetCTM(platformContext());
+}
+
 FloatRect GraphicsContext::roundToDevicePixels(const FloatRect& rect)
 {
     // It is not enough just to round to pixels in device space. The rotation part of the 

@@ -1,3 +1,13 @@
+2008-01-27  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Test case for canvas.pointInPath
+
+        * fast/canvas/pointInPath-expected.txt: Added.
+        * fast/canvas/pointInPath.html: Added.
+        * fast/canvas/pointInPath.js: Added.
+
 2008-01-27  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin.

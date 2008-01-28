@@ -126,6 +126,8 @@ namespace WebCore {
         void stroke();
         void clip();
 
+        bool isPointInPath(const float x, const float y);
+
         void clearRect(float x, float y, float width, float height, ExceptionCode&);
         void fillRect(float x, float y, float width, float height, ExceptionCode&);
         void strokeRect(float x, float y, float width, float height, ExceptionCode&);
