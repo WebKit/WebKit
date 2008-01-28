@@ -1,5 +1,11 @@
 2008-01-28  Oliver Hunt  <oliver@apple.com>
 
+        More wx fixes
+
+        * platform/graphics/wx/AffineTransformWx.cpp:
+
+2008-01-28  Oliver Hunt  <oliver@apple.com>
+
         And another Wx build fix
 
         * platform/graphics/wx/AffineTransformWx.cpp:

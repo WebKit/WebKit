@@ -26,6 +26,7 @@
 #include "config.h"
 #include "AffineTransform.h"
 
+#include "FloatRect.h"
 #include "IntRect.h"
 #include "NotImplemented.h"
 
