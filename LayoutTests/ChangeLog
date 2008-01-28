@@ -1,3 +1,13 @@
+2008-01-27  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        http://bugs.webkit.org/show_bug.cgi?id=17014
+        REGRESSION: EUC-CN code A3A0 is mapped to U+E5E5 instead of U+3000
+
+        * fast/encoding/char-decoding-expected.txt:
+        * fast/encoding/char-decoding.html:
+
 2008-01-27  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.

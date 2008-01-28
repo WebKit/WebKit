@@ -40,6 +40,13 @@ testDecode('UTF-8', '%E2%88%9A', 'U+221A');
 testDecode('macintosh', '%C3', 'U+221A');
 testDecode('MacRoman', '%C3', 'U+221A');
 
+// <http://bugs.webkit.org/show_bug.cgi?id=17014> EUC-CN code A3A0 is mapped to U+E5E5 instead of U+3000
+testDecode('gb2312', '%A3%A0', 'U+3000');
+testDecode('gb_2312-80', '%A3%A0', 'U+3000');
+testDecode('chinese', '%A3%A0', 'U+3000');
+testDecode('gbk', '%A3%A0', 'U+3000');
+testDecode('gb18030', '%A3%A0', 'U+3000');
+
 debug('');
 
 successfullyParsed = true;

@@ -256,8 +256,8 @@ String TextCodecMac::decode(const char* bytes, size_t length, bool flush)
 
     String resultString = String::adopt(result);
 
-    // Workaround for a bug in the Text Encoding Converter (see bug 3225472).
-    // Simplified Chinese pages use the code U+A3A0 to mean "full-width space".
+    // <rdar://problem/3225472>
+    // Simplified Chinese pages use the code A3A0 to mean "full-width space".
     // But GB18030 decodes it to U+E5E5, which is correct in theory but not in practice.
     // To work around, just change all occurences of U+E5E5 to U+3000 (ideographic space).
     if (m_encoding == kCFStringEncodingGB_18030_2000)

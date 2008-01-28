@@ -6,6 +6,11 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 PASS decode('UTF-8', '%E2%88%9A') is 'U+221A'
 PASS decode('macintosh', '%C3') is 'U+221A'
 PASS decode('MacRoman', '%C3') is 'U+221A'
+PASS decode('gb2312', '%A3%A0') is 'U+3000'
+PASS decode('gb_2312-80', '%A3%A0') is 'U+3000'
+PASS decode('chinese', '%A3%A0') is 'U+3000'
+PASS decode('gbk', '%A3%A0') is 'U+3000'
+PASS decode('gb18030', '%A3%A0') is 'U+3000'
 
 PASS successfullyParsed is true
 

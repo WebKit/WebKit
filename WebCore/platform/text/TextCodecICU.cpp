@@ -27,6 +27,7 @@
 #include "config.h"
 #include "TextCodecICU.h"
 
+#include "CharacterNames.h"
 #include "CString.h"
 #include "PlatformString.h"
 #include <unicode/ucnv.h>
@@ -249,7 +250,14 @@ String TextCodecICU::decode(const char* bytes, size_t length, bool flush)
         return String();
     }
 
-    return String::adopt(result);
+    String resultString = String::adopt(result);
+
+    // <http://bugs.webkit.org/show_bug.cgi?id=17014>
+    // Simplified Chinese pages use the code A3A0 to mean "full-width space", but ICU decodes it as U+E5E5.
+    if (m_encoding == "GBK" || m_encoding == "gb18030")
+        resultString.replace(0xE5E5, ideographicSpace);
+
+    return resultString;
 }
 
 // We need to apply these fallbacks ourselves as they are not currently supported by ICU and
