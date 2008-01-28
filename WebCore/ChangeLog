@@ -1,5 +1,12 @@
 2008-01-28  Oliver Hunt  <oliver@apple.com>
 
+        Wx build fix
+
+        * platform/graphics/wx/GraphicsContextWx.cpp:
+        (WebCore::GraphicsContext::getCTM):
+
+2008-01-28  Oliver Hunt  <oliver@apple.com>
+
         Gtk build fix
 
         * platform/graphics/cairo/GraphicsContextCairo.cpp:

@@ -26,6 +26,7 @@
 #include "config.h"
 #include "GraphicsContext.h"
 
+#include "AffineTransform.h"
 #include "FloatRect.h"
 #include "Font.h"
 #include "IntRect.h"
@@ -352,6 +353,13 @@ void GraphicsContext::clip(const Path&)
 { 
     notImplemented();
 }
+
+AffineTransform GraphicsContext::getCTM() 
+{ 
+    notImplemented();
+    return AffineTransform();
+}
+
 void GraphicsContext::translate(float tx, float ty) 
 { 
 #if USE(WXGC)
