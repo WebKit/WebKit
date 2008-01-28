@@ -1,3 +1,16 @@
+2008-01-28  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=16774
+          REGRESSION (r27464-r27504) javascript popup menu does not display 'close' button
+
+        Test: fast/dynamic/float-no-longer-overhanging.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::addOverhangingFloats): If a child's float turns
+        out not to be overhanging at this time, ensure that the child paints it.
+
 2008-01-28  Oliver Hunt  <oliver@apple.com>
 
         More wx fixes

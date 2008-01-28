@@ -2689,7 +2689,9 @@ int RenderBlock::addOverhangingFloats(RenderBlock* child, int xoff, int yoff)
                 }
                 m_floatingObjects->append(floatingObj);
             }
-        }
+        } else
+            r->noPaint = false;
+
         if (!r->noPaint && !r->node->hasLayer()) {
             IntRect floatOverflowRect = r->node->overflowRect(false);
             floatOverflowRect.move(r->left + r->node->marginLeft(), r->startY + r->node->marginTop());

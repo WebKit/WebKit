@@ -1,3 +1,15 @@
+2008-01-28  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        - pixel test for http://bugs.webkit.org/show_bug.cgi?id=16774
+          REGRESSION (r27464-r27504) javascript popup menu does not display 'close' button
+
+        * fast/dynamic/float-no-longer-overhanging.html: Added.
+        * platform/mac/fast/dynamic/float-no-longer-overhanging-expected.checksum: Added.
+        * platform/mac/fast/dynamic/float-no-longer-overhanging-expected.png: Added.
+        * platform/mac/fast/dynamic/float-no-longer-overhanging-expected.txt: Added.
+
 2008-01-28  Oliver Hunt  <oliver@apple.com>
 
         RS=Mark.
