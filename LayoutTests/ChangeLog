@@ -1,3 +1,9 @@
+2008-01-28  Alexey Proskuryakov  <ap@webkit.org>
+
+        <rdar://problem/5667017> storage/execute-sql-args.html failing -- openDatabase returning null on buildbot
+
+        * platform/win/Skipped: Removed a passing test.
+
 2008-01-28  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.
