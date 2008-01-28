@@ -1,3 +1,14 @@
+2008-01-28  Oliver Hunt  <oliver@apple.com>
+
+        RS=Mark.
+
+        Due to a difference between the collision bounds for paths
+        in different versions of CG these tests need modiifed to 
+        pass on tiger and leopard.
+
+        * fast/canvas/pointInPath-expected.txt:
+        * fast/canvas/pointInPath.js:
+
 2008-01-27  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Sam Weinig.
