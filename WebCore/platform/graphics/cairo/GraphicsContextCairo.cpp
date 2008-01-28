@@ -29,6 +29,7 @@
 
 #if PLATFORM(CAIRO)
 
+#include "AffineTransform.h"
 #include "CairoPath.h"
 #include "FloatRect.h"
 #include "Font.h"

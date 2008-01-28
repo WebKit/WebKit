@@ -1,3 +1,9 @@
+2008-01-28  Oliver Hunt  <oliver@apple.com>
+
+        Gtk build fix
+
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+
 2008-01-27  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Sam Weinig.
