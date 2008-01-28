@@ -1,5 +1,12 @@
 2008-01-28  Oliver Hunt  <oliver@apple.com>
 
+        And another Wx build fix
+
+        * platform/graphics/wx/AffineTransformWx.cpp:
+        (WebCore::AffineTransform::mapRect):
+
+2008-01-28  Oliver Hunt  <oliver@apple.com>
+
         Yet another Wx build fix
 
         * platform/graphics/wx/GraphicsContextWx.cpp:
