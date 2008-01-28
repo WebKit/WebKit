@@ -1,3 +1,43 @@
+2008-01-28  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Eric, Dan & Oliver.
+
+        Fixes: http://bugs.webkit.org/show_bug.cgi?id=16980
+
+        Support external SVG Fonts, by reusing the custom font handling logic.
+        This enables us - as first engine - to render HTML pages using SVG Fonts.
+
+        Fixes fonts-elem-03-b.svg / fonts-elem-04-b.svg / fonts-elem-07-b.svg
+        Add new testcase svg-fonts-in-html.html.
+
+        * css/CSSFontFaceSource.cpp:
+        (WebCore::CSSFontFaceSource::getFontData):
+        * css/CSSFontFaceSource.h:
+        * css/CSSFontFaceSrcValue.cpp:
+        (WebCore::CSSFontFaceSrcValue::isSVGFontFaceSrc):
+        (WebCore::CSSFontFaceSrcValue::isSupportedFormat):
+        * css/CSSFontFaceSrcValue.h:
+        * css/CSSFontSelector.cpp:
+        (WebCore::CSSFontSelector::addFontFaceRule):
+        * loader/CachedFont.cpp:
+        (WebCore::CachedFont::~CachedFont):
+        (WebCore::CachedFont::ensureSVGFontData):
+        (WebCore::CachedFont::extractFontFromSVGData):
+        (WebCore::CachedFont::platformDataFromSVGData):
+        * loader/CachedFont.h:
+        * platform/graphics/Font.cpp:
+        (WebCore::Font::offsetForPosition):
+        * platform/graphics/Font.h:
+        * svg/SVGFont.cpp:
+        (WebCore::floatWidthOfSubStringUsingSVGFont):
+        (WebCore::Font::drawTextUsingSVGFont):
+        (WebCore::Font::offsetForPositionForTextUsingSVGFont):
+        * svg/SVGFontFaceElement.cpp:
+        (WebCore::SVGFontFaceElement::rebuildFontFace):
+        * svg/SVGFontFaceElement.h:
+        * svg/SVGFontFaceUriElement.cpp:
+        (WebCore::SVGFontFaceUriElement::srcValue):
+
 2008-01-28  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Adam Roben.

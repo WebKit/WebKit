@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
- *           (C) 2007 Nikolas Zimmermann <zimmermann@kde.org>
+ *           (C) 2007, 2008 Nikolas Zimmermann <zimmermann@kde.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -140,13 +140,17 @@ void CSSFontSelector::addFontFaceRule(const CSSFontFaceRule* fontFaceRule)
     bool foundLocal = false;
 
 #if ENABLE(SVG_FONTS)
-    bool foundInDocumentSVGFont = false;
+    bool foundSVGFont = false;
 #endif
 
     for (i = 0; i < srcLength; i++) {
         // An item in the list either specifies a string (local font name) or a URL (remote font to download).
         CSSFontFaceSrcValue* item = static_cast<CSSFontFaceSrcValue*>(srcList->item(i));
         CSSFontFaceSource* source = 0;
+
+#if ENABLE(SVG_FONTS)
+        foundSVGFont = item->isSVGFontFaceSrc() || item->svgFontFaceElement();
+#endif
 
         if (!item->isLocal()) {
             if (item->isSupportedFormat()) {
@@ -157,21 +161,14 @@ void CSSFontSelector::addFontFaceRule(const CSSFontFaceRule* fontFaceRule)
         } else {
             String family = item->resource();
 
-#if ENABLE(SVG_FONTS)
-            foundInDocumentSVGFont = item->svgFontFaceElement() != 0;
-#endif
-
             // Test the validity of the local font now.  We don't want to include this font if it does not exist
             // on the system.  If it *does* exist on the system, then we don't need to look any further.
             if (FontCache::fontExists(fontDescription, family)
-#if ENABLE(SVG_FONTS)    
-                || foundInDocumentSVGFont
+#if ENABLE(SVG_FONTS)
+                || foundSVGFont
 #endif
                ) {
                 source = new CSSFontFaceSource(family);
-#if ENABLE(SVG_FONTS)
-                source->setSVGFontFaceElement(item->svgFontFaceElement());
-#endif
                 foundLocal = true;
             }
         }
@@ -179,8 +176,12 @@ void CSSFontSelector::addFontFaceRule(const CSSFontFaceRule* fontFaceRule)
         if (!fontFace)
             fontFace = new CSSFontFace();
 
-        if (source)
+        if (source) {
+#if ENABLE(SVG_FONTS)
+            source->setSVGFontFaceElement(item->svgFontFaceElement());
+#endif
             fontFace->addSource(source);
+        }
 
         // We can just break if we see a local font that is valid.
         if (foundLocal)
@@ -232,9 +233,10 @@ void CSSFontSelector::addFontFaceRule(const CSSFontFaceRule* fontFaceRule)
 #if ENABLE(SVG_FONTS)
         // SVG allows several <font> elements with the same font-family, differing only
         // in ie. font-variant. Be sure to pick up the right one - in getFontData below.
-        if (foundInDocumentSVGFont && fontDescription.smallCaps())
+        if (foundSVGFont && fontDescription.smallCaps())
             familyName += "-webkit-svg-small-caps";
 #endif
+
         String hash = hashForFont(familyName.lower(), fontDescription.bold(), fontDescription.italic());
         CSSSegmentedFontFace* segmentedFontFace = m_fonts.get(hash).get();
         if (!segmentedFontFace) {

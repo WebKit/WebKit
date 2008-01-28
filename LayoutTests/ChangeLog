@@ -1,3 +1,24 @@
+2008-01-28  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Eric, Dan & Oliver.
+
+        Update layout tests after adding external SVG Fonts support.
+
+        * platform/mac/svg/W3C-SVG-1.1/fonts-elem-03-b-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1/fonts-elem-03-b-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/fonts-elem-03-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/fonts-elem-04-b-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1/fonts-elem-04-b-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/fonts-elem-04-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/fonts-elem-07-b-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1/fonts-elem-07-b-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/fonts-elem-07-b-expected.txt:
+        * platform/mac/svg/custom/svg-fonts-in-html-expected.checksum: Added.
+        * platform/mac/svg/custom/svg-fonts-in-html-expected.png: Added.
+        * platform/mac/svg/custom/svg-fonts-in-html-expected.txt: Added.
+        * svg/custom/resources/graffiti.svg: Added.
+        * svg/custom/svg-fonts-in-html.html: Added.
+
 2008-01-28  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Adam Roben.

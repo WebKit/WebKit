@@ -28,6 +28,13 @@
 
 namespace WebCore {
 
+#if ENABLE(SVG_FONTS)
+bool CSSFontFaceSrcValue::isSVGFontFaceSrc() const
+{
+    return equalIgnoringCase(m_format, "svg");
+}
+#endif
+
 bool CSSFontFaceSrcValue::isSupportedFormat() const
 {
     // Normally we would just check the format, but in order to avoid conflicts with the old WinIE style of font-face,
@@ -38,8 +45,12 @@ bool CSSFontFaceSrcValue::isSupportedFormat() const
             return false;
         return true;
     }
-    
-    return equalIgnoringCase(m_format, "truetype") || equalIgnoringCase(m_format, "opentype");
+
+    return equalIgnoringCase(m_format, "truetype") || equalIgnoringCase(m_format, "opentype")
+#if ENABLE(SVG_FONTS)
+           || isSVGFontFaceSrc()
+#endif
+           ;
 }
 
 String CSSFontFaceSrcValue::cssText() const

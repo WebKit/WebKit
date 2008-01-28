@@ -36,8 +36,11 @@
 #include "SimpleFontData.h"
 
 #if ENABLE(SVG_FONTS)
+#include "FontCustomPlatformData.h"
+#include "HTMLNames.h"
 #include "SVGFontData.h"
-#include "FontCustomPlatformData.h" 
+#include "SVGFontElement.h"
+#include "SVGURIReference.h"
 #endif
 
 namespace WebCore {
@@ -113,25 +116,57 @@ SimpleFontData* CSSFontFaceSource::getFontData(const FontDescription& fontDescri
 
     // If we are still loading, then we let the system pick a font.
     if (isLoaded()) {
+        if (m_font) {
 #if ENABLE(SVG_FONTS)
-        if (m_svgFontFaceElement)
-            fontData.set(new SimpleFontData(FontPlatformData(fontDescription.computedPixelSize(), syntheticBold, syntheticItalic),
-                                            true, false, new SVGFontData(m_svgFontFaceElement.get())));
-#endif
-
-        if (!fontData) {
-            ASSERT(m_font);
-
-            // Create new FontPlatformData from our CGFontRef, point size and ATSFontRef.
-            if (!m_font->ensureCustomFontData())
+            // For SVG fonts parse the external SVG document, and extract the <font> element.
+            if (!m_font->ensureSVGFontData())
                 return 0;
 
-            fontData.set(new SimpleFontData(m_font->platformDataFromCustomData(fontDescription.computedPixelSize(), syntheticBold, syntheticItalic), true, false));
+            if (!m_externalSVGFontElement)
+                m_externalSVGFontElement = m_font->getSVGFontById(SVGURIReference::getTarget(m_string));
+
+            if (m_externalSVGFontElement) {
+                SVGFontFaceElement* fontFaceElement = 0;
+
+                // Select first <font-face> child
+                for (Node* fontChild = m_externalSVGFontElement->firstChild(); fontChild; fontChild = fontChild->nextSibling()) {
+                    if (fontChild->hasTagName(SVGNames::font_faceTag)) {
+                        fontFaceElement = static_cast<SVGFontFaceElement*>(fontChild);
+                        break;
+                    }
+                }
+
+                if (fontFaceElement) {
+                    if (!m_svgFontFaceElement) {
+                        // We're created using a CSS @font-face rule, that means we're not associated with a SVGFontFaceElement.
+                        // Use the imported <font-face> tag as referencing font-face element for these cases.
+                        m_svgFontFaceElement = fontFaceElement;
+                    }
+
+                    SVGFontData* svgFontData = new SVGFontData(fontFaceElement);
+                    fontData.set(new SimpleFontData(m_font->platformDataFromCustomData(fontDescription.computedPixelSize(), syntheticBold, syntheticItalic), true, false, svgFontData));
+                }
+            } else
+#endif
+            {
+                // Create new FontPlatformData from our CGFontRef, point size and ATSFontRef.
+                if (!m_font->ensureCustomFontData())
+                    return 0;
+
+                fontData.set(new SimpleFontData(m_font->platformDataFromCustomData(fontDescription.computedPixelSize(), syntheticBold, syntheticItalic), true, false));
+            }
+        } else {
+#if ENABLE(SVG_FONTS)
+            // In-Document SVG Fonts
+            if (m_svgFontFaceElement) {
+                SVGFontData* svgFontData = new SVGFontData(m_svgFontFaceElement.get());
+                fontData.set(new SimpleFontData(FontPlatformData(fontDescription.computedPixelSize(), syntheticBold, syntheticItalic), true, false, svgFontData));
+            }
+#endif
         }
     } else {
         // Kick off the load now.
         m_font->beginLoadIfNeeded(fontSelector->docLoader());
-
         FontPlatformData* tempData = FontCache::getCachedFontPlatformData(fontDescription, m_string);
         if (!tempData)
             tempData = FontCache::getLastResortFallbackFont(fontDescription);

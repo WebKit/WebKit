@@ -33,6 +33,7 @@
 #include "SVGFontFaceElement.h"
 #include "SVGMissingGlyphElement.h"
 #include "SVGPaintServer.h"
+#include "SVGPaintServerSolid.h"
 #include "XMLNames.h"
 
 using namespace WTF::Unicode;
@@ -366,17 +367,19 @@ static float floatWidthOfSubStringUsingSVGFont(const Font* font, const TextRun& 
         data.scale = convertEmUnitToPixel(font->size(), fontFaceElement->unitsPerEm(), 1.0f);
         data.length = 0.0f;
 
-        if (RenderObject* renderObject = run.referencingRenderObject()) {
-            bool isVerticalText = isVerticalWritingMode(renderObject->style()->svgStyle());
+        String language;
+        bool isVerticalText = false; // Holds true for HTML text
 
-            String language;
+        // TODO: language matching & svg glyphs should be possible for HTML text, too.
+        if (RenderObject* renderObject = run.referencingRenderObject()) {
+            isVerticalText = isVerticalWritingMode(renderObject->style()->svgStyle());
+
             if (SVGElement* element = static_cast<SVGElement*>(renderObject->element()))
                 language = element->getAttribute(XMLNames::langAttr);
-
-            SVGTextRunWalker<SVGTextRunWalkerMeasuredLengthData> runWalker(fontData, fontElement, data, floatWidthUsingSVGFontCallback, floatWidthMissingGlyphCallback);
-            runWalker.walk(run, isVerticalText, language, 0, run.length());
         }
 
+        SVGTextRunWalker<SVGTextRunWalkerMeasuredLengthData> runWalker(fontData, fontElement, data, floatWidthUsingSVGFontCallback, floatWidthMissingGlyphCallback);
+        runWalker.walk(run, isVerticalText, language, 0, run.length());
         return data.length;
     }
 
@@ -470,24 +473,41 @@ void Font::drawTextUsingSVGFont(GraphicsContext* context, const TextRun& run,
             return;
 
         SVGTextRunWalkerDrawTextData data;
+        data.currentPoint = point;
+        data.scale = convertEmUnitToPixel(size(), fontFaceElement->unitsPerEm(), 1.0f);
 
+        // Required to be valid for SVG text only.
         data.renderObject = run.referencingRenderObject();
-        ASSERT(data.renderObject);
-
         data.activePaintServer = run.activePaintServer();
+
+        // If renderObject is not set, we're dealing for HTML text rendered using SVG Fonts.
+        if (!data.renderObject) {
+            ASSERT(!data.activePaintServer);
+
+            // TODO: We're only supporting simple filled HTML text so far.
+            SVGPaintServerSolid* solidPaintServer = SVGPaintServer::sharedSolidPaintServer();
+            solidPaintServer->setColor(context->fillColor());
+
+            data.activePaintServer = solidPaintServer;
+        }
+
         ASSERT(data.activePaintServer);
 
-        data.scale = convertEmUnitToPixel(size(), fontFaceElement->unitsPerEm(), 1.0f);
-        data.isVerticalText = isVerticalWritingMode(data.renderObject->style()->svgStyle());    
+        data.isVerticalText = false;
         data.xStartOffset = floatWidthOfSubStringUsingSVGFont(this, run, run.rtl() ? to : 0, run.rtl() ? run.length() : from);
-        data.currentPoint = point;
         data.glyphOrigin = FloatPoint();
         data.context = context;
 
         String language;
-        if (SVGElement* element = static_cast<SVGElement*>(data.renderObject->element()))
-            language = element->getAttribute(XMLNames::langAttr);
 
+        // TODO: language matching & svg glyphs should be possible for HTML text, too.
+        if (data.renderObject) {    
+            data.isVerticalText = isVerticalWritingMode(data.renderObject->style()->svgStyle());    
+
+            if (SVGElement* element = static_cast<SVGElement*>(data.renderObject->element()))
+                language = element->getAttribute(XMLNames::langAttr);
+        }
+        
         if (!data.isVerticalText) {
             data.glyphOrigin.setX(fontData->horizontalOriginX() * data.scale);
             data.glyphOrigin.setY(fontData->horizontalOriginY() * data.scale);
@@ -502,6 +522,14 @@ FloatRect Font::selectionRectForTextUsingSVGFont(const TextRun& run, const IntPo
 {
     return FloatRect(point.x() + floatWidthOfSubStringUsingSVGFont(this, run, run.rtl() ? to : 0, run.rtl() ? run.length() : from),
                      point.y(), floatWidthOfSubStringUsingSVGFont(this, run, from, to), height);
+}
+
+int Font::offsetForPositionForTextUsingSVGFont(const TextRun&, int position, bool includePartialGlyphs) const
+{
+    // TODO: Fix text selection when HTML text is drawn using a SVG Font
+    // We need to integrate the SVG text selection code in the offsetForPosition() framework.
+    // This will also fix a major issue, that SVG Text code can't select arabic strings properly.
+    return 0;
 }
 
 }

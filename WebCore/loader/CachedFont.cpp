@@ -29,6 +29,7 @@
 #include "Cache.h"
 #include "CachedResourceClient.h"
 #include "CachedResourceClientWalker.h"
+#include "DOMImplementation.h"
 #include "FontPlatformData.h"
 #if PLATFORM(CG) || PLATFORM(QT) || PLATFORM(GTK)
 #include "FontCustomPlatformData.h"
@@ -36,6 +37,14 @@
 #include "TextResourceDecoder.h"
 #include "loader.h"
 #include <wtf/Vector.h>
+
+#if ENABLE(SVG_FONTS)
+#include "HTMLNames.h"
+#include "NodeList.h"
+#include "SVGElement.h"
+#include "SVGFontElement.h"
+#include "SVGGElement.h"
+#endif
 
 namespace WebCore {
 
@@ -93,15 +102,58 @@ bool CachedFont::ensureCustomFontData()
     return m_fontData;
 }
 
-FontPlatformData CachedFont::platformDataFromCustomData(int size, bool bold, bool italic)
+FontPlatformData CachedFont::platformDataFromCustomData(float size, bool bold, bool italic)
 {
+#if ENABLE(SVG_FONTS)
+    if (m_externalSVGDocument)
+        return FontPlatformData(size, bold, italic);
+#endif
 #if PLATFORM(CG) || PLATFORM(QT) || PLATFORM(GTK)
     ASSERT(m_fontData);
-    return m_fontData->fontPlatformData(size, bold, italic);
+    return m_fontData->fontPlatformData(static_cast<int>(size), bold, italic);
 #else
     return FontPlatformData();
 #endif
 }
+
+#if ENABLE(SVG_FONTS)
+bool CachedFont::ensureSVGFontData()
+{
+    if (!m_externalSVGDocument && !m_errorOccurred && !m_loading && m_data) {
+        m_externalSVGDocument = new SVGDocument(DOMImplementation::instance(), 0);
+        m_externalSVGDocument->open();
+
+        TextResourceDecoder decoder("application/xml");
+        m_externalSVGDocument->write(decoder.decode(m_data->data(), m_data->size()));
+
+        m_externalSVGDocument->finishParsing();
+        m_externalSVGDocument->close();
+    }
+
+    return m_externalSVGDocument;
+}
+
+SVGFontElement* CachedFont::getSVGFontById(const String& fontName) const
+{
+    RefPtr<NodeList> list = m_externalSVGDocument->getElementsByTagName(SVGNames::fontTag.localName());
+    if (!list)
+        return 0;
+
+    unsigned fonts = list->length();
+    for (unsigned i = 0; i < fonts; ++i) {
+        Node* node = list->item(i);
+        ASSERT(node);
+
+        if (static_cast<Element*>(node)->getAttribute(HTMLNames::idAttr) != fontName)
+            continue;
+
+        ASSERT(node->hasTagName(SVGNames::fontTag));
+        return static_cast<SVGFontElement*>(node);
+    }
+
+    return 0;
+}
+#endif
 
 void CachedFont::allReferencesRemoved()
 {

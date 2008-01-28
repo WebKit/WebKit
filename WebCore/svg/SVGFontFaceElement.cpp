@@ -303,25 +303,6 @@ void SVGFontFaceElement::rebuildFontFace()
     if (!parentNode())
         return;
 
-    // Special handling for local SVG fonts (those which have a <font> parent, and are only used within the document)
-    if (parentNode() && parentNode()->hasTagName(fontTag)) {
-        RefPtr<CSSValueList> list = new CSSValueList;
-
-        RefPtr<CSSFontFaceSrcValue> src = new CSSFontFaceSrcValue(fontFamily(), true /* isLocal */);
-        src->setSVGFontFaceElement(this);
-        list->append(src);
-
-        CSSProperty srcProperty(CSS_PROP_SRC, list);
-        const CSSProperty* srcPropertyRef = &srcProperty;
-        m_styleDeclaration->addParsedProperties(&srcPropertyRef, 1);
-
-        m_fontElement = static_cast<SVGFontElement*>(parentNode());
-        document()->updateStyleSelector();
-        return;
-    }
-
-    // TODO: External SVG fonts support - re use existing "custom font" handling logic.
-
     // we currently ignore all but the first src element, alternatively we could concat them
     SVGFontFaceSrcElement* srcElement = 0;
     SVGDefinitionSrcElement* definitionSrc = 0;
@@ -339,12 +320,35 @@ void SVGFontFaceElement::rebuildFontFace()
         m_styleDeclaration->setProperty(CSS_PROP_DEFINITION_SRC, definitionSrc->getAttribute(XLinkNames::hrefAttr), false);
 #endif
 
-    if (srcElement) {
-        // This is the only class (other than CSSParser) to create CSSValue objects and set them on the CSSStyleDeclaration manually
-        // we use the addParsedProperties method, and fake having an array of CSSProperty pointers.
-        CSSProperty srcProperty(CSS_PROP_SRC, srcElement->srcValue());
-        const CSSProperty* srcPropertyRef = &srcProperty;
-        m_styleDeclaration->addParsedProperties(&srcPropertyRef, 1);
+    bool describesParentFont = parentNode()->hasTagName(fontTag);
+    RefPtr<CSSValueList> list;
+
+    if (describesParentFont) {
+        m_fontElement = static_cast<SVGFontElement*>(parentNode());
+
+        list = new CSSValueList;
+        list->append(new CSSFontFaceSrcValue(fontFamily(), true));
+    } else if (srcElement)
+        list = srcElement->srcValue();
+
+    if (!list)
+        return;
+
+    // Parse in-memory CSS rules
+    CSSProperty srcProperty(CSS_PROP_SRC, list);
+    const CSSProperty* srcPropertyRef = &srcProperty;
+    m_styleDeclaration->addParsedProperties(&srcPropertyRef, 1);
+
+    if (describesParentFont) {    
+        // Traverse parsed CSS values and associate CSSFontFaceSrcValue elements with ourselves.
+        RefPtr<CSSValue> src = m_styleDeclaration->getPropertyCSSValue(CSS_PROP_SRC);
+        CSSValueList* srcList = static_cast<CSSValueList*>(src.get());
+
+        unsigned srcLength = srcList ? srcList->length() : 0;
+        for (unsigned i = 0; i < srcLength; i++) {
+            if (CSSFontFaceSrcValue* item = static_cast<CSSFontFaceSrcValue*>(srcList->item(i)))
+                item->setSVGFontFaceElement(this);
+        }
     }
 
     document()->updateStyleSelector();

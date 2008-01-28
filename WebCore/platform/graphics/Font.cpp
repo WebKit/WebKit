@@ -741,6 +741,11 @@ FloatRect Font::selectionRectForSimpleText(const TextRun& run, const IntPoint& p
 
 int Font::offsetForPosition(const TextRun& run, int x, bool includePartialGlyphs) const
 {
+#if ENABLE(SVG_FONTS)
+    if (primaryFont()->isSVGFont())
+        return offsetForPositionForTextUsingSVGFont(run, x, includePartialGlyphs);
+#endif
+
     if (canUseGlyphCache(run))
         return offsetForPositionForSimpleText(run, x, includePartialGlyphs);
     return offsetForPositionForComplexText(run, x, includePartialGlyphs);

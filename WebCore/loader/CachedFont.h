@@ -29,12 +29,18 @@
 #include "CachedResource.h"
 #include <wtf/Vector.h>
 
+#if ENABLE(SVG_FONTS)
+#include "SVGElement.h"
+#include "SVGDocument.h"
+#endif
+
 namespace WebCore {
 
 class DocLoader;
 class Cache;
 class FontCustomPlatformData;
 class FontPlatformData;
+class SVGFontElement;
 
 class CachedFont : public CachedResource {
 public:
@@ -52,13 +58,22 @@ public:
     void checkNotify();
 
     void beginLoadIfNeeded(DocLoader* dl);
-    bool ensureCustomFontData();
 
-    FontPlatformData platformDataFromCustomData(int size, bool bold, bool italic);
+    bool ensureCustomFontData();
+    FontPlatformData platformDataFromCustomData(float size, bool bold, bool italic);
+
+#if ENABLE(SVG_FONTS)
+    bool ensureSVGFontData();
+    SVGFontElement* getSVGFontById(const String&) const;
+#endif
 
 private:
     FontCustomPlatformData* m_fontData;
     bool m_loadInitiated;
+
+#if ENABLE(SVG_FONTS)
+    RefPtr<SVGDocument> m_externalSVGDocument;
+#endif
 
     friend class Cache;
 };
