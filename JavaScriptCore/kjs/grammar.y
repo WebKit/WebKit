@@ -127,9 +127,9 @@ static void appendToVarDeclarationList(ParserRefCountedData<DeclarationStacks::V
 static inline void appendToVarDeclarationList(ParserRefCountedData<DeclarationStacks::VarStack>*& varDecls, ConstDeclNode* decl)
 {
     unsigned attrs = DeclarationStacks::IsConstant;
-    if (decl->init)
+    if (decl->m_init)
         attrs |= DeclarationStacks::HasInitializer;        
-    appendToVarDeclarationList(varDecls, decl->ident, attrs);
+    appendToVarDeclarationList(varDecls, decl->m_ident, attrs);
 }
 
 %}
@@ -791,7 +791,7 @@ ConstDeclarationList:
                                           $$.m_funcDeclarations = 0; }
   | ConstDeclarationList ',' ConstDeclaration
                                         {  $$.m_node.head = $1.m_node.head;
-                                          $1.m_node.tail->next = $3;
+                                          $1.m_node.tail->m_next = $3;
                                           $$.m_node.tail = $3;
                                           $$.m_varDeclarations = $1.m_varDeclarations;
                                           appendToVarDeclarationList($$.m_varDeclarations, $3);

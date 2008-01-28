@@ -1,3 +1,18 @@
+2008-01-27  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Oliver Hunt.
+
+        Patch for http://bugs.webkit.org/show_bug.cgi?id=17025
+        nodes.h/cpp has been rolling around in the mud - lets hose it down
+
+        - Rename member variables to use the m_ prefix.
+
+        (NOTE: Specific changed functions elided for space and clarity)
+        * kjs/grammar.y:
+        * kjs/nodes.cpp:
+        * kjs/nodes.h:
+        * kjs/nodes2string.cpp:
+
 2008-01-27  Darin Adler  <darin@apple.com>
 
         Reviewed by Oliver.

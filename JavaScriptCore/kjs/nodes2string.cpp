@@ -325,68 +325,68 @@ void ThisNode::streamTo(SourceStream& s) const
 
 void ResolveNode::streamTo(SourceStream& s) const
 {
-    s << ident;
+    s << m_ident;
 }
 
 void ElementNode::streamTo(SourceStream& s) const
 {
-    for (const ElementNode* n = this; n; n = n->next.get()) {
-        for (int i = 0; i < n->elision; i++)
+    for (const ElementNode* n = this; n; n = n->m_next.get()) {
+        for (int i = 0; i < n->m_elision; i++)
             s << ',';
-        s << PrecAssignment << n->node;
-        if (n->next)
+        s << PrecAssignment << n->m_node;
+        if (n->m_next)
             s << ',';
     }
 }
 
 void ArrayNode::streamTo(SourceStream& s) const
 {
-    s << '[' << element;
-    for (int i = 0; i < elision; i++)
+    s << '[' << m_element;
+    for (int i = 0; i < m_elision; i++)
         s << ',';
     // Parser consumes one elision comma if there's array elements 
     // present in the expression.
-    if (opt && element)
+    if (m_opt && m_element)
         s << ',';
     s << ']';
 }
 
 void ObjectLiteralNode::streamTo(SourceStream& s) const
 {
-    if (list)
-        s << "{ " << list << " }";
+    if (m_list)
+        s << "{ " << m_list << " }";
     else
         s << "{ }";
 }
 
 void PropertyListNode::streamTo(SourceStream& s) const
 {
-    s << node;
-    for (const PropertyListNode* n = next.get(); n; n = n->next.get())
-        s << ", " << n->node;
+    s << m_node;
+    for (const PropertyListNode* n = m_next.get(); n; n = n->m_next.get())
+        s << ", " << n->m_node;
 }
 
 void PropertyNode::streamTo(SourceStream& s) const
 {
-    switch (type) {
+    switch (m_type) {
         case Constant: {
             UString propertyName = name().ustring();
             if (isParserRoundTripNumber(propertyName))
                 s << propertyName;
             else
                 s << '"' << escapeStringForPrettyPrinting(propertyName) << '"';
-            s << ": " << PrecAssignment << assign;
+            s << ": " << PrecAssignment << m_assign;
             break;
         }
         case Getter:
         case Setter: {
-            const FuncExprNode* func = static_cast<const FuncExprNode*>(assign.get());
-            if (type == Getter)
+            const FuncExprNode* func = static_cast<const FuncExprNode*>(m_assign.get());
+            if (m_type == Getter)
                 s << "get "; 
             else
                 s << "set ";
             s << escapeStringForPrettyPrinting(name().ustring())
-                << "(" << func->param << ')' << func->body;
+                << "(" << func->m_parameter << ')' << func->m_body;
             break;
         }
     }
@@ -394,51 +394,51 @@ void PropertyNode::streamTo(SourceStream& s) const
 
 void BracketAccessorNode::streamTo(SourceStream& s) const
 {
-    bracketNodeStreamTo(s, expr1, expr2);
+    bracketNodeStreamTo(s, m_base, m_subscript);
 }
 
 void DotAccessorNode::streamTo(SourceStream& s) const
 {
-    dotNodeStreamTo(s, expr, ident);
+    dotNodeStreamTo(s, m_base, m_ident);
 }
 
 void ArgumentListNode::streamTo(SourceStream& s) const
 {
-    s << PrecAssignment << expr;
-    for (ArgumentListNode* n = next.get(); n; n = n->next.get())
-        s << ", " << PrecAssignment << n->expr;
+    s << PrecAssignment << m_expr;
+    for (ArgumentListNode* n = m_next.get(); n; n = n->m_next.get())
+        s << ", " << PrecAssignment << n->m_expr;
 }
 
 void ArgumentsNode::streamTo(SourceStream& s) const
 {
-    s << '(' << listNode << ')';
+    s << '(' << m_listNode << ')';
 }
 
 void NewExprNode::streamTo(SourceStream& s) const
 {
-    s << "new " << PrecMember << expr << args;
+    s << "new " << PrecMember << m_expr << m_args;
 }
 
 void FunctionCallValueNode::streamTo(SourceStream& s) const
 {
-    s << PrecCall << expr << args;
+    s << PrecCall << m_expr << m_args;
 }
 
 void FunctionCallResolveNode::streamTo(SourceStream& s) const
 {
-    s << ident << args;
+    s << m_ident << m_args;
 }
 
 void FunctionCallBracketNode::streamTo(SourceStream& s) const
 {
-    bracketNodeStreamTo(s, base, subscript);
-    s << args;
+    bracketNodeStreamTo(s, m_base, m_subscript);
+    s << m_args;
 }
 
 void FunctionCallDotNode::streamTo(SourceStream& s) const
 {
-    dotNodeStreamTo(s, base, ident);
-    s << args;
+    dotNodeStreamTo(s, m_base, m_ident);
+    s << m_args;
 }
 
 void PostIncResolveNode::streamTo(SourceStream& s) const
@@ -508,7 +508,7 @@ void DeleteValueNode::streamTo(SourceStream& s) const
 
 void VoidNode::streamTo(SourceStream& s) const
 {
-    s << "void " << PrecUnary << expr;
+    s << "void " << PrecUnary << m_expr;
 }
 
 void TypeOfValueNode::streamTo(SourceStream& s) const
@@ -570,139 +570,139 @@ void UnaryPlusNode::streamTo(SourceStream& s) const
 
 void NegateNode::streamTo(SourceStream& s) const
 {
-    s << "- " << PrecUnary << expr;
+    s << "- " << PrecUnary << m_expr;
 }
 
 void BitwiseNotNode::streamTo(SourceStream& s) const
 {
-    s << "~" << PrecUnary << expr;
+    s << "~" << PrecUnary << m_expr;
 }
 
 void LogicalNotNode::streamTo(SourceStream& s) const
 {
-    s << "!" << PrecUnary << expr;
+    s << "!" << PrecUnary << m_expr;
 }
 
 void MultNode::streamTo(SourceStream& s) const
 {
-    streamLeftAssociativeBinaryOperator(s, precedence(), "*", term1, term2);
+    streamLeftAssociativeBinaryOperator(s, precedence(), "*", m_term1, m_term2);
 }
 
 void DivNode::streamTo(SourceStream& s) const
 {
-    streamLeftAssociativeBinaryOperator(s, precedence(), "/", term1, term2);
+    streamLeftAssociativeBinaryOperator(s, precedence(), "/", m_term1, m_term2);
 }
 
 void ModNode::streamTo(SourceStream& s) const
 {
-    streamLeftAssociativeBinaryOperator(s, precedence(), "%", term1, term2);
+    streamLeftAssociativeBinaryOperator(s, precedence(), "%", m_term1, m_term2);
 }
 
 void AddNode::streamTo(SourceStream& s) const
 {
-    streamLeftAssociativeBinaryOperator(s, precedence(), "+", term1, term2);
+    streamLeftAssociativeBinaryOperator(s, precedence(), "+", m_term1, m_term2);
 }
 
 void SubNode::streamTo(SourceStream& s) const
 {
-    streamLeftAssociativeBinaryOperator(s, precedence(), "-", term1, term2);
+    streamLeftAssociativeBinaryOperator(s, precedence(), "-", m_term1, m_term2);
 }
 
 void LeftShiftNode::streamTo(SourceStream& s) const
 {
-    streamLeftAssociativeBinaryOperator(s, precedence(), "<<", term1, term2);
+    streamLeftAssociativeBinaryOperator(s, precedence(), "<<", m_term1, m_term2);
 }
 
 void RightShiftNode::streamTo(SourceStream& s) const
 {
-    streamLeftAssociativeBinaryOperator(s, precedence(), ">>", term1, term2);
+    streamLeftAssociativeBinaryOperator(s, precedence(), ">>", m_term1, m_term2);
 }
 
 void UnsignedRightShiftNode::streamTo(SourceStream& s) const
 {
-    streamLeftAssociativeBinaryOperator(s, precedence(), ">>>", term1, term2);
+    streamLeftAssociativeBinaryOperator(s, precedence(), ">>>", m_term1, m_term2);
 }
 
 void LessNode::streamTo(SourceStream& s) const
 {
-    streamLeftAssociativeBinaryOperator(s, precedence(), "<", expr1, expr2);
+    streamLeftAssociativeBinaryOperator(s, precedence(), "<", m_expr1, m_expr2);
 }
 
 void GreaterNode::streamTo(SourceStream& s) const
 {
-    streamLeftAssociativeBinaryOperator(s, precedence(), ">", expr1, expr2);
+    streamLeftAssociativeBinaryOperator(s, precedence(), ">", m_expr1, m_expr2);
 }
 
 void LessEqNode::streamTo(SourceStream& s) const
 {
-    streamLeftAssociativeBinaryOperator(s, precedence(), "<=", expr1, expr2);
+    streamLeftAssociativeBinaryOperator(s, precedence(), "<=", m_expr1, m_expr2);
 }
 
 void GreaterEqNode::streamTo(SourceStream& s) const
 {
-    streamLeftAssociativeBinaryOperator(s, precedence(), ">=", expr1, expr2);
+    streamLeftAssociativeBinaryOperator(s, precedence(), ">=", m_expr1, m_expr2);
 }
 
 void InstanceOfNode::streamTo(SourceStream& s) const
 {
-    streamLeftAssociativeBinaryOperator(s, precedence(), "instanceof", expr1, expr2);
+    streamLeftAssociativeBinaryOperator(s, precedence(), "instanceof", m_expr1, m_expr2);
 }
 
 void InNode::streamTo(SourceStream& s) const
 {
-    streamLeftAssociativeBinaryOperator(s, precedence(), "in", expr1, expr2);
+    streamLeftAssociativeBinaryOperator(s, precedence(), "in", m_expr1, m_expr2);
 }
 
 void EqualNode::streamTo(SourceStream& s) const
 {
-    streamLeftAssociativeBinaryOperator(s, precedence(), "==", expr1, expr2);
+    streamLeftAssociativeBinaryOperator(s, precedence(), "==", m_expr1, m_expr2);
 }
 
 void NotEqualNode::streamTo(SourceStream& s) const
 {
-    streamLeftAssociativeBinaryOperator(s, precedence(), "!=", expr1, expr2);
+    streamLeftAssociativeBinaryOperator(s, precedence(), "!=", m_expr1, m_expr2);
 }
 
 void StrictEqualNode::streamTo(SourceStream& s) const
 {
-    streamLeftAssociativeBinaryOperator(s, precedence(), "===", expr1, expr2);
+    streamLeftAssociativeBinaryOperator(s, precedence(), "===", m_expr1, m_expr2);
 }
 
 void NotStrictEqualNode::streamTo(SourceStream& s) const
 {
-    streamLeftAssociativeBinaryOperator(s, precedence(), "!==", expr1, expr2);
+    streamLeftAssociativeBinaryOperator(s, precedence(), "!==", m_expr1, m_expr2);
 }
 
 void BitAndNode::streamTo(SourceStream& s) const
 {
-    streamLeftAssociativeBinaryOperator(s, precedence(), "&", expr1, expr2);
+    streamLeftAssociativeBinaryOperator(s, precedence(), "&", m_expr1, m_expr2);
 }
 
 void BitXOrNode::streamTo(SourceStream& s) const
 {
-    streamLeftAssociativeBinaryOperator(s, precedence(), "^", expr1, expr2);
+    streamLeftAssociativeBinaryOperator(s, precedence(), "^", m_expr1, m_expr2);
 }
 
 void BitOrNode::streamTo(SourceStream& s) const
 {
-    streamLeftAssociativeBinaryOperator(s, precedence(), "|", expr1, expr2);
+    streamLeftAssociativeBinaryOperator(s, precedence(), "|", m_expr1, m_expr2);
 }
 
 void LogicalAndNode::streamTo(SourceStream& s) const
 {
-    streamLeftAssociativeBinaryOperator(s, precedence(), "&&", expr1, expr2);
+    streamLeftAssociativeBinaryOperator(s, precedence(), "&&", m_expr1, m_expr2);
 }
 
 void LogicalOrNode::streamTo(SourceStream& s) const
 {
-    streamLeftAssociativeBinaryOperator(s, precedence(), "||", expr1, expr2);
+    streamLeftAssociativeBinaryOperator(s, precedence(), "||", m_expr1, m_expr2);
 }
 
 void ConditionalNode::streamTo(SourceStream& s) const
 {
-    s << PrecLogicalOr << logical
-        << " ? " << PrecAssignment << expr1
-        << " : " << PrecAssignment << expr2;
+    s << PrecLogicalOr << m_logical
+        << " ? " << PrecAssignment << m_expr1
+        << " : " << PrecAssignment << m_expr2;
 }
 
 void ReadModifyResolveNode::streamTo(SourceStream& s) const
@@ -747,24 +747,24 @@ void AssignErrorNode::streamTo(SourceStream& s) const
 
 void CommaNode::streamTo(SourceStream& s) const
 {
-    s << PrecAssignment << expr1 << ", " << PrecAssignment << expr2;
+    s << PrecAssignment << m_expr1 << ", " << PrecAssignment << m_expr2;
 }
 
 void ConstDeclNode::streamTo(SourceStream& s) const
 {
-    s << ident;
-    if (init)
-        s << " = " << init;
-    for (ConstDeclNode* n = next.get(); n; n = n->next.get()) {
-        s << ", " << ident;
-        if (init)
-            s << " = " << init;
+    s << m_ident;
+    if (m_init)
+        s << " = " << m_init;
+    for (ConstDeclNode* n = m_next.get(); n; n = n->m_next.get()) {
+        s << ", " << m_ident;
+        if (m_init)
+            s << " = " << m_init;
     }
 }
 
 void ConstStatementNode::streamTo(SourceStream& s) const
 {
-    s << Endl << "const " << next << ';';
+    s << Endl << "const " << m_next << ';';
 }
 
 static inline void statementListStreamTo(const Vector<RefPtr<StatementNode> >& nodes, SourceStream& s)
@@ -809,12 +809,12 @@ void EmptyStatementNode::streamTo(SourceStream& s) const
 
 void ExprStatementNode::streamTo(SourceStream& s) const
 {
-    s << Endl << expr << ';';
+    s << Endl << m_expr << ';';
 }
 
 void VarStatementNode::streamTo(SourceStream& s) const
 {
-    s << Endl << "var " << expr << ';';
+    s << Endl << "var " << m_expr << ';';
 }
 
 void IfNode::streamTo(SourceStream& s) const
@@ -830,74 +830,74 @@ void IfElseNode::streamTo(SourceStream& s) const
 
 void DoWhileNode::streamTo(SourceStream& s) const
 {
-    s << Endl << "do " << Indent << statement << Unindent << Endl
-        << "while (" << expr << ");";
+    s << Endl << "do " << Indent << m_statement << Unindent << Endl
+        << "while (" << m_expr << ");";
 }
 
 void WhileNode::streamTo(SourceStream& s) const
 {
-    s << Endl << "while (" << expr << ')' << Indent << statement << Unindent;
+    s << Endl << "while (" << m_expr << ')' << Indent << m_statement << Unindent;
 }
 
 void ForNode::streamTo(SourceStream& s) const
 {
     s << Endl << "for ("
-        << (expr1WasVarDecl ? "var " : "")
-        << expr1
-        << "; " << expr2
-        << "; " << expr3
-        << ')' << Indent << statement << Unindent;
+        << (m_expr1WasVarDecl ? "var " : "")
+        << m_expr1
+        << "; " << m_expr2
+        << "; " << m_expr3
+        << ')' << Indent << m_statement << Unindent;
 }
 
 void ForInNode::streamTo(SourceStream& s) const
 {
     s << Endl << "for (";
-    if (identIsVarDecl) {
+    if (m_identIsVarDecl) {
         s << "var ";
-        if (init)
-            s << init;
+        if (m_init)
+            s << m_init;
         else
-            s << PrecLeftHandSide << lexpr;
+            s << PrecLeftHandSide << m_lexpr;
     } else
-        s << PrecLeftHandSide << lexpr;
+        s << PrecLeftHandSide << m_lexpr;
 
-    s << " in " << expr << ')' << Indent << statement << Unindent;
+    s << " in " << m_expr << ')' << Indent << m_statement << Unindent;
 }
 
 void ContinueNode::streamTo(SourceStream& s) const
 {
     s << Endl << "continue";
-    if (!ident.isNull())
-        s << ' ' << ident;
+    if (!m_ident.isNull())
+        s << ' ' << m_ident;
     s << ';';
 }
 
 void BreakNode::streamTo(SourceStream& s) const
 {
     s << Endl << "break";
-    if (!ident.isNull())
-        s << ' ' << ident;
+    if (!m_ident.isNull())
+        s << ' ' << m_ident;
     s << ';';
 }
 
 void ReturnNode::streamTo(SourceStream& s) const
 {
     s << Endl << "return";
-    if (value)
-        s << ' ' << value;
+    if (m_value)
+        s << ' ' << m_value;
     s << ';';
 }
 
 void WithNode::streamTo(SourceStream& s) const
 {
-    s << Endl << "with (" << expr << ") " << statement;
+    s << Endl << "with (" << m_expr << ") " << m_statement;
 }
 
 void CaseClauseNode::streamTo(SourceStream& s) const
 {
     s << Endl;
-    if (expr)
-        s << "case " << expr;
+    if (m_expr)
+        s << "case " << m_expr;
     else
         s << "default";
     s << ":" << Indent;
@@ -913,54 +913,54 @@ void ClauseListNode::streamTo(SourceStream& s) const
 
 void CaseBlockNode::streamTo(SourceStream& s) const
 {
-    for (const ClauseListNode* n = list1.get(); n; n = n->getNext())
+    for (const ClauseListNode* n = m_list1.get(); n; n = n->getNext())
         s << n->getClause();
-    s << def;
-    for (const ClauseListNode* n = list2.get(); n; n = n->getNext())
+    s << m_defaultClause;
+    for (const ClauseListNode* n = m_list2.get(); n; n = n->getNext())
         s << n->getClause();
 }
 
 void SwitchNode::streamTo(SourceStream& s) const
 {
-    s << Endl << "switch (" << expr << ") {"
-        << Indent << block << Unindent
+    s << Endl << "switch (" << m_expr << ") {"
+        << Indent << m_block << Unindent
         << Endl << "}";
 }
 
 void LabelNode::streamTo(SourceStream& s) const
 {
-    s << Endl << label << ":" << Indent << statement << Unindent;
+    s << Endl << m_label << ":" << Indent << m_statement << Unindent;
 }
 
 void ThrowNode::streamTo(SourceStream& s) const
 {
-    s << Endl << "throw " << expr << ';';
+    s << Endl << "throw " << m_expr << ';';
 }
 
 void TryNode::streamTo(SourceStream& s) const
 {
-    s << Endl << "try " << tryBlock;
-    if (catchBlock)
-        s << Endl << "catch (" << exceptionIdent << ')' << catchBlock;
-    if (finallyBlock)
-        s << Endl << "finally " << finallyBlock;
+    s << Endl << "try " << m_tryBlock;
+    if (m_catchBlock)
+        s << Endl << "catch (" << m_exceptionIdent << ')' << m_catchBlock;
+    if (m_finallyBlock)
+        s << Endl << "finally " << m_finallyBlock;
 }
 
 void ParameterNode::streamTo(SourceStream& s) const
 {
-    s << id;
-    for (ParameterNode* n = next.get(); n; n = n->next.get())
-        s << ", " << n->id;
+    s << m_ident;
+    for (ParameterNode* n = m_next.get(); n; n = n->m_next.get())
+        s << ", " << n->m_ident;
 }
 
 void FuncDeclNode::streamTo(SourceStream& s) const
 {
-    s << Endl << "function " << ident << '(' << param << ')' << body;
+    s << Endl << "function " << m_ident << '(' << m_parameter << ')' << m_body;
 }
 
 void FuncExprNode::streamTo(SourceStream& s) const
 {
-    s << "function " << ident << '(' << param << ')' << body;
+    s << "function " << m_ident << '(' << m_parameter << ')' << m_body;
 }
 
 } // namespace KJS
