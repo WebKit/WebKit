@@ -1,3 +1,13 @@
+2008-01-28  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Nikolas Zimmermann.
+
+        - fix leaks introduced in r29838
+
+        * svg/SVGFont.cpp:
+        (WebCore::floatWidthMissingGlyphCallback):
+        (WebCore::drawTextMissingGlyphCallback):
+
 2008-01-28  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Eric, Dan & Oliver.
