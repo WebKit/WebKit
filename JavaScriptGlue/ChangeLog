@@ -1,3 +1,16 @@
+2008-01-28  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by darin.
+        
+        Add icu headers to JSG in preparation for depending on ::UChar.
+
+        * Configurations/Base.xcconfig:
+        * ForwardingHeaders/wtf/unicode: Added.
+        * ForwardingHeaders/wtf/unicode/Unicode.h: Added.
+        * ForwardingHeaders/wtf/unicode/icu: Added.
+        * ForwardingHeaders/wtf/unicode/icu/UnicodeIcu.h: Added.
+        * icu: Copied from ../JavaScriptCore/icu.
+
 2007-12-19  Geoffrey Garen  <ggaren@apple.com>
 
         Build fix.
