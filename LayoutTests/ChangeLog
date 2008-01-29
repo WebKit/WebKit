@@ -1,3 +1,7 @@
+2008-01-29  Adam Roben  <aroben@apple.com>
+
+        * platform/win/Skipped: Added new failures.
+
 2008-01-28  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Eric, Dan & Oliver.

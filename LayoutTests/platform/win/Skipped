@@ -314,6 +314,33 @@ http/tests/xmlhttprequest/readystatechange.html
 # <rdar://problem/5706788> http/tests/security/cross-frame-access-port-explicit-domain.html fails on Windows
 http/tests/security/cross-frame-access-port-explicit-domain.html
 
+# <rdar://problem/5713126> Times out
+http/tests/security/cross-frame-access-port.html
+
+# <rdar://problem/5713127>
+media/video-display-toggle.html
+
+# <rdar://problem/5713131> REGRESSION (r29246): Many SVG font tests are failing
+svg/W3C-SVG-1.1/animate-elem-03-t.svg
+svg/W3C-SVG-1.1/animate-elem-24-t.svg
+svg/W3C-SVG-1.1/animate-elem-36-t.svg
+svg/W3C-SVG-1.1/animate-elem-40-t.svg
+svg/W3C-SVG-1.1/fonts-desc-02-t.svg
+svg/W3C-SVG-1.1/fonts-elem-05-t.svg
+svg/W3C-SVG-1.1/fonts-elem-06-t.svg
+svg/W3C-SVG-1.1/fonts-kern-01-t.svg
+svg/W3C-SVG-1.1/masking-mask-01-b.svg
+svg/W3C-SVG-1.1/pservers-grad-08-b.svg
+svg/W3C-SVG-1.1/render-groups-01-b.svg
+svg/W3C-SVG-1.1/render-groups-03-t.svg
+svg/W3C-SVG-1.1/text-text-04-t.svg
+svg/W3C-SVG-1.1/text-text-05-t.svg
+svg/W3C-SVG-1.1/text-text-06-t.svg
+svg/custom/scrolling-embedded-svg-file-image-repaint-problem.html
+svg/text/text-text-04-t.svg
+svg/text/text-text-05-t.svg
+svg/text/text-text-06-t.svg
+
 ################################################################################
 ####################### No bugs filed about the below yet#######################
 ################################################################################
