@@ -1,3 +1,12 @@
+2008-01-29  David Kilzer  <ddkilzer@apple.com>
+
+        Refactor ChangeLog path code
+
+        Reviewed by Adam.
+
+        * Scripts/prepare-ChangeLog: Simplify code in one foreach() loop, and extract
+        duplicate code in another foreach() loop.
+
 2008-01-29  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin.

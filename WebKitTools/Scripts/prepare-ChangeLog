@@ -263,11 +263,7 @@ foreach my $file (sort keys %function_lists) {
 # Get the latest ChangeLog files from svn.
 my @logs = ();
 foreach my $prefix (sort keys %files) {
-    if ($prefix eq "") {
-        push @logs, "ChangeLog";
-    } else {
-        push @logs, File::Spec->catfile($prefix, "ChangeLog");
-    }
+    push @logs, File::Spec->catfile($prefix || ".", "ChangeLog");
 }
 
 if (@logs && $updateChangeLogs && $isSVN) {
@@ -293,13 +289,14 @@ if (@logs && $updateChangeLogs && $isSVN) {
 
 # Write out a new ChangeLog file.
 foreach my $prefix (sort keys %files) {
-    print STDERR "  Editing the ${prefix}ChangeLog file.\n";
-    open OLD_CHANGE_LOG, "${prefix}ChangeLog" or die "Could not open ${prefix}ChangeLog file: $!.\n";
+    my $changeLogPath = File::Spec->catfile($prefix || ".", "ChangeLog");
+    print STDERR "  Editing the ${changeLogPath} file.\n";
+    open OLD_CHANGE_LOG, ${changeLogPath} or die "Could not open ${changeLogPath} file: $!.\n";
     # It's less efficient to read the whole thing into memory than it would be
     # to read it while we prepend to it later, but I like doing this part first.
     my @old_change_log = <OLD_CHANGE_LOG>;
     close OLD_CHANGE_LOG;
-    open CHANGE_LOG, "> ${prefix}ChangeLog" or die "Could not write ${prefix}ChangeLog\n.";
+    open CHANGE_LOG, "> ${changeLogPath}" or die "Could not write ${changeLogPath}\n.";
     print CHANGE_LOG "$date  $name  <$email_address>\n\n";
 
     my ($reviewer, $description) = reviewerAndDescriptionForGitCommit($gitCommit) if $gitCommit;
