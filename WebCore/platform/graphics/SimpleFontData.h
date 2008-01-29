@@ -75,9 +75,9 @@ public:
 
 #if ENABLE(SVG_FONTS)
     SVGFontData* svgFontData() const { return m_svgFontData.get(); }
-    virtual bool isSVGFont() const { return m_svgFontData; }
+    bool isSVGFont() const { return m_svgFontData; }
 #else
-    virtual bool isSVGFont() const { return false; }
+    bool isSVGFont() const { return false; }
 #endif
 
     virtual bool isCustomFont() const { return m_isCustomFont; }

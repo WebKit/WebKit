@@ -39,7 +39,6 @@ public:
 
     virtual const SimpleFontData* fontDataForCharacter(UChar32) const = 0;
     virtual bool containsCharacters(const UChar*, int length) const = 0;
-    virtual bool isSVGFont() const = 0;
     virtual bool isCustomFont() const = 0;
     virtual bool isLoading() const = 0;
     virtual bool isSegmented() const = 0;

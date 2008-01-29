@@ -1,5 +1,17 @@
 2008-01-28  Dan Bernstein  <mitz@apple.com>
 
+        Reviewed by Sam Weinig.
+
+        - make isSVGFont non-virtual
+
+        * platform/graphics/FontData.h:
+        * platform/graphics/SegmentedFontData.cpp:
+        * platform/graphics/SegmentedFontData.h:
+        * platform/graphics/SimpleFontData.h:
+        (WebCore::SimpleFontData::isSVGFont):
+
+2008-01-28  Dan Bernstein  <mitz@apple.com>
+
         Reviewed by Adam Roben.
 
         - fix <rdar://problem/5700824> Chunky scrolling + scrolling artifacts @ netflix.com/Notebook
