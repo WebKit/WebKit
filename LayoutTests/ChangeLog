@@ -1,3 +1,13 @@
+2008-01-29  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Nikolas.
+        
+        Acid3 after double-attach
+        http://bugs.webkit.org/show_bug.cgi?id=17058
+
+        * svg/custom/textPath-assert-expected.txt: Added.
+        * svg/custom/textPath-assert.svg: Added.
+
 2008-01-29  Adam Roben  <aroben@apple.com>
 
         * platform/win/Skipped: Added new failures.

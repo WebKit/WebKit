@@ -59,7 +59,6 @@ namespace WebCore
         virtual ~SVGTextPathElement();
  
         virtual void insertedIntoDocument();
-        virtual void buildPendingResource();
 
         virtual void parseMappedAttribute(MappedAttribute* attr);
         virtual bool rendererIsNeeded(RenderStyle* style) { return StyledElement::rendererIsNeeded(style); }

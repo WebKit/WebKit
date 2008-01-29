@@ -1,3 +1,19 @@
+2008-01-29  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Nikolas.
+
+        Acid3 after double-attach
+        http://bugs.webkit.org/show_bug.cgi?id=17058
+        
+        I believe SVGTextPathElement::buildPendingResource() was entirely
+        bogus, removing it did not cause any tests to fail.
+
+        Test: svg/custom/textPath-assert.svg
+
+        * svg/SVGTextPathElement.cpp:
+        (WebCore::SVGTextPathElement::insertedIntoDocument): remove buildPendingResource()
+        * svg/SVGTextPathElement.h:
+
 2008-01-29  Adam Roben  <aroben@apple.com>
 
         Fix Bug 16234: Inspector should support searching for elements by CSS selectors

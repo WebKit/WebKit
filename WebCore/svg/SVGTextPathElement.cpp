@@ -99,18 +99,6 @@ void SVGTextPathElement::insertedIntoDocument()
         document()->accessSVGExtensions()->addPendingResource(id, this);
         return;
     }
-
-    buildPendingResource();
-}
-
-void SVGTextPathElement::buildPendingResource()
-{
-    // FIXME: Real logic here!
-    if (attached())
-        detach();
-    
-    ASSERT(!attached());
-    attach();
 }
 
 }
