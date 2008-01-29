@@ -157,8 +157,6 @@ plugins/undefined-property-crash.html
 svg/custom/mask-excessive-malloc.svg
 
 # String::Number prints floating point numbers differently on Win than X. <rdar://problem/5127993>
-svg/custom/path-bad-data.svg
-svg/dom/length-list-parser.html
 svg/hixie/perf/001.xml
 svg/hixie/perf/002.xml
 svg/hixie/perf/007.xml
@@ -275,10 +273,6 @@ editing/selection/fake-drag.html
 # <rdar://5667279> Undefined value exception
 http/tests/xmlhttprequest/XMLHttpRequestException.html
 
-# <rdar://5667302>
-svg/dom/animated-tearoff-equality.xhtml
-svg/dom/animated-tearoff-lifespan.xhtml
-
 # <rdar://5670235> Sometimes spews output into the next test
 http/tests/security/cross-frame-access-put.html
 
@@ -319,27 +313,6 @@ http/tests/security/cross-frame-access-port.html
 
 # <rdar://problem/5713127>
 media/video-display-toggle.html
-
-# <rdar://problem/5713131> REGRESSION (r29246): Many SVG font tests are failing
-svg/W3C-SVG-1.1/animate-elem-03-t.svg
-svg/W3C-SVG-1.1/animate-elem-24-t.svg
-svg/W3C-SVG-1.1/animate-elem-36-t.svg
-svg/W3C-SVG-1.1/animate-elem-40-t.svg
-svg/W3C-SVG-1.1/fonts-desc-02-t.svg
-svg/W3C-SVG-1.1/fonts-elem-05-t.svg
-svg/W3C-SVG-1.1/fonts-elem-06-t.svg
-svg/W3C-SVG-1.1/fonts-kern-01-t.svg
-svg/W3C-SVG-1.1/masking-mask-01-b.svg
-svg/W3C-SVG-1.1/pservers-grad-08-b.svg
-svg/W3C-SVG-1.1/render-groups-01-b.svg
-svg/W3C-SVG-1.1/render-groups-03-t.svg
-svg/W3C-SVG-1.1/text-text-04-t.svg
-svg/W3C-SVG-1.1/text-text-05-t.svg
-svg/W3C-SVG-1.1/text-text-06-t.svg
-svg/custom/scrolling-embedded-svg-file-image-repaint-problem.html
-svg/text/text-text-04-t.svg
-svg/text/text-text-05-t.svg
-svg/text/text-text-06-t.svg
 
 ################################################################################
 ####################### No bugs filed about the below yet#######################

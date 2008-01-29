@@ -1,3 +1,11 @@
+2008-01-29  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Adam Roben and Oliver Hunt.
+
+        - remove skipped tests after fixing <rdar://problem/5713131> REGRESSION (r29246): Many SVG font tests are failing
+
+        * platform/win/Skipped:
+
 2008-01-29  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Nikolas.
