@@ -1,3 +1,23 @@
+2008-01-29  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        <rdar://problem/5710692> All storage tests fail/crash
+
+        * DumpRenderTree/mac/UIDelegate.mm:
+        (-[UIDelegate webView:frame:exceededDatabaseQuotaForSecurityOrigin:database:]): Set an
+        arbitrary quota of 5 megabytes.
+
+        (-[UIDelegate webView:frame:quotaForSecurityOrigin:toCreateDatabase:withEstimatedSize:]):
+        (-[UIDelegate webView:frame:quotaForSecurityOrigin:fromProposedQuota:database:]):
+        Removed unused (I think) code.
+        
+        * DumpRenderTree/win/UIDelegate.cpp:
+        (UIDelegate::QueryInterface): IWebUIDelegatePrivate3 is now supported.
+        (UIDelegate::webViewPainted): A stub implementation.
+        (UIDelegate::exceededDatabaseQuota): Set an arbitrary quota of 5 megabytes.
+        * DumpRenderTree/win/UIDelegate.h:
+
 2008-01-27  Jan Michael Alonzo  <jmalonzo@unpluggable.com>
 
         GTK+ DRT build fix for breakage introduced in r29822.

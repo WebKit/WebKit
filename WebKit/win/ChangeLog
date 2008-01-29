@@ -1,3 +1,12 @@
+2008-01-29  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        <rdar://problem/5710692> All storage tests fail/crash
+
+        * WebChromeClient.cpp: (WebChromeClient::exceededDatabaseQuota): Clients that do not implement
+        database quota callbacks should have no database support - but not crash.
+
 2008-01-26  Steve Falkenburg  <sfalken@apple.com>
 
         <rdar://problem/5707607> REGRESSION: I hear a beep when selecting Alt-enter in address or search fields

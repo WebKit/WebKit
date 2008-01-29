@@ -126,14 +126,10 @@ DumpRenderTreeDraggingInfo *draggingInfo = nil;
     [window close];
 }
 
-- (unsigned long long)webView:(WebView *)sender frame:(WebFrame *) quotaForSecurityOrigin:(WebSecurityOrigin *)origin toCreateDatabase:(NSString *)newDatabaseName withEstimatedSize:(unsigned long long)estimatedSize
+- (void)webView:(WebView *)sender frame:(WebFrame *)frame exceededDatabaseQuotaForSecurityOrigin:(WebSecurityOrigin *)origin database:(NSString *)databaseIdentifier
 {
-    return estimatedSize;
-}
-
-- (unsigned long long)webView:(WebView *)sender frame:(WebFrame *) quotaForSecurityOrigin:(WebSecurityOrigin *)origin fromProposedQuota:(unsigned long long)proposedNewQuota database:(NSString *)databaseIdentifier
-{
-    return proposedNewQuota;
+    static const unsigned long long defaultQuota = 5 * 1024 * 1024;
+    [origin setQuota:defaultQuota];
 }
 
 

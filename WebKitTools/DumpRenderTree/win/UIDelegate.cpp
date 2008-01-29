@@ -176,6 +176,10 @@ HRESULT STDMETHODCALLTYPE UIDelegate::QueryInterface(REFIID riid, void** ppvObje
         *ppvObject = static_cast<IWebUIDelegate*>(this);
     else if (IsEqualGUID(riid, IID_IWebUIDelegatePrivate))
         *ppvObject = static_cast<IWebUIDelegatePrivate*>(this);
+    else if (IsEqualGUID(riid, IID_IWebUIDelegatePrivate2))
+        *ppvObject = static_cast<IWebUIDelegatePrivate2*>(this);
+    else if (IsEqualGUID(riid, IID_IWebUIDelegatePrivate3))
+        *ppvObject = static_cast<IWebUIDelegatePrivate3*>(this);
     else
         return E_NOINTERFACE;
 
@@ -382,5 +386,23 @@ HRESULT STDMETHODCALLTYPE UIDelegate::webViewClose(
     HWND hostWindow;
     sender->hostWindow(reinterpret_cast<OLE_HANDLE*>(&hostWindow));
     DestroyWindow(hostWindow);
+    return S_OK;
+}
+
+HRESULT STDMETHODCALLTYPE UIDelegate::webViewPainted( 
+        /* [in] */ IWebView *sender)
+{
+    return S_OK;
+}
+
+HRESULT STDMETHODCALLTYPE UIDelegate::exceededDatabaseQuota( 
+        /* [in] */ IWebView *sender,
+        /* [in] */ IWebFrame *frame,
+        /* [in] */ IWebSecurityOrigin *origin,
+        /* [in] */ BSTR databaseIdentifier)
+{
+    static const unsigned long long defaultQuota = 5 * 1024 * 1024;
+    origin->setQuota(defaultQuota);
+
     return S_OK;
 }
