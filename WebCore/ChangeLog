@@ -1,3 +1,15 @@
+2008-01-29  Adam Roben  <aroben@apple.com>
+
+        Fix <rdar://5713302> Web Inspector on Windows is not using the
+        localized strings
+
+        Reviewed by Steve.
+
+        * WebCore.vcproj/WebCore.vcproj: Copy InspectorLocalizedStrings.js to
+        $WebKitOutputDir.
+        * page/InspectorController.cpp: Touch this to force the project to
+        build.
+
 2008-01-29  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Nikolas.

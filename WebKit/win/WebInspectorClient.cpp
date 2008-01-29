@@ -41,7 +41,6 @@
 #include <WebCore/FloatRect.h>
 #include <WebCore/FrameView.h>
 #include <WebCore/InspectorController.h>
-#include <WebCore/NotImplemented.h>
 #include <WebCore/Page.h>
 #include <WebCore/RenderObject.h>
 #pragma warning(pop)
@@ -61,6 +60,11 @@ static const IntRect& defaultWindowRect()
 {
     static IntRect rect(60, 200, 750, 650);
     return rect;
+}
+
+static CFBundleRef getWebKitBundle()
+{
+    return CFBundleGetBundleWithIdentifier(CFSTR("com.apple.WebKit"));
 }
 
 WebInspectorClient::WebInspectorClient(WebView* webView)
@@ -127,7 +131,7 @@ Page* WebInspectorClient::createPage()
     COMPtr<WebMutableURLRequest> request;
     request.adoptRef(WebMutableURLRequest::createInstance());
 
-    RetainPtr<CFURLRef> htmlURLRef(AdoptCF, ::CFBundleCopyResourceURL(::CFBundleGetBundleWithIdentifier(CFSTR("com.apple.WebKit")), CFSTR("inspector"), CFSTR("html"), CFSTR("inspector")));
+    RetainPtr<CFURLRef> htmlURLRef(AdoptCF, CFBundleCopyResourceURL(getWebKitBundle(), CFSTR("inspector"), CFSTR("html"), CFSTR("inspector")));
     if (!htmlURLRef)
         return 0;
 
@@ -144,8 +148,11 @@ Page* WebInspectorClient::createPage()
 
 String WebInspectorClient::localizedStringsURL()
 {
-    notImplemented();
-    return String();
+    RetainPtr<CFURLRef> url(AdoptCF, CFBundleCopyResourceURL(getWebKitBundle(), CFSTR("InspectorLocalizedStrings"), CFSTR("js"), 0));
+    if (!url)
+        return String();
+
+    return CFURLGetString(url.get());
 }
 
 void WebInspectorClient::showWindow()

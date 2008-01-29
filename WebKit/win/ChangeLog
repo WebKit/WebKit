@@ -1,3 +1,15 @@
+2008-01-29  Adam Roben  <aroben@apple.com>
+
+        Fix <rdar://5713302> Web Inspector on Windows is not using the
+        localized strings
+
+        Reviewed by Steve.
+
+        * WebInspectorClient.cpp:
+        (getWebKitBundle): Added.
+        (WebInspectorClient::createPage): Call getWebKitBundle.
+        (WebInspectorClient::localizedStringsURL): Implemented.
+
 2008-01-29  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin.
