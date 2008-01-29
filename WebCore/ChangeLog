@@ -1,3 +1,15 @@
+2008-01-29  Adam Roben  <aroben@apple.com>
+
+        Fix <rdar://5711136> Full-screen Flash on 1up.com is unresponsive
+
+        Reviewed by Anders and Darin.
+
+        No test possible.
+
+        * plugins/win/PluginViewWin.cpp:
+        (WebCore::PluginViewWin::wndProc): Set/release capture on mouse
+        down/up, like Firefox does.
+
 2008-01-28  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Sam Weinig.

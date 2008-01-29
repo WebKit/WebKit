@@ -281,6 +281,23 @@ static bool isWindowsMessageUserGesture(UINT message)
 LRESULT
 PluginViewWin::wndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
+    // <rdar://5711136> Sometimes Flash will call SetCapture before creating
+    // a full-screen window and will not release it, which causes the
+    // full-screen window to never receive mouse events. We set/release capture
+    // on mouse down/up before sending the event to the plug-in to prevent that.
+    switch (message) {
+        case WM_LBUTTONDOWN:
+        case WM_MBUTTONDOWN:
+        case WM_RBUTTONDOWN:
+            ::SetCapture(hWnd);
+            break;
+        case WM_LBUTTONUP:
+        case WM_MBUTTONUP:
+        case WM_RBUTTONUP:
+            ::ReleaseCapture();
+            break;
+    }
+
     if (message == m_lastMessage &&
         m_quirks.contains(PluginQuirkDontCallWndProcForSameMessageRecursively) && 
         m_isCallingPluginWndProc)
