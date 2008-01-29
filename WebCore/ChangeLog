@@ -1,3 +1,14 @@
+2008-01-28  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Adam Roben.
+
+        - fix <rdar://problem/5700824> Chunky scrolling + scrolling artifacts @ netflix.com/Notebook
+
+        * platform/win/ScrollViewWin.cpp:
+        (WebCore::ScrollView::ScrollViewPrivate::valueChanged): Send the scroll
+        event before updating the window, thus giving event handlers a chance
+        to update layout for the new scroll position, eliminating the jitter.
+
 2008-01-28  Adam Roben  <aroben@apple.com>
 
         Fix <rdar://5555260> Gmail doesn't load when a user stylesheet is specified
