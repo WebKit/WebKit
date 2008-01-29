@@ -1,3 +1,34 @@
+2008-01-28  Adam Roben  <aroben@apple.com>
+
+        Fix <rdar://5555260> Gmail doesn't load when a user stylesheet is specified
+
+        Reviewed by Darin.
+
+        A null value exception was being thrown in Gmail's JS code because a
+        call to document.write failed. document.write failed because
+        Document::close had not yet been called. Document::close was not
+        called because the Document was considered to not be "complete" in
+        FrameLoader::checkComplete because the user stylesheet was in the
+        process of loading. The user stylesheet was loading because it had
+        previously been evicted from the cache and was loading fresh from
+        disk. It had been evicted from the cache because the calculation of
+        the expiration date was incorrectly casting/overflowing in
+        ResourceResponseCFNet.cpp.
+
+        We now calculate the expiration date in a way that does not cause us
+        to overflow a time_t, and we correctly clamp the value to the range of
+        a time_t. I also made the fix for the last modified date, though that
+        was not causing any bug I am aware of.
+
+        In the long-term it seems like whether or not Document::close is
+        called should not be dependent upon whether the user stylesheet has
+        finished loading or not.
+
+        * platform/network/cf/ResourceResponseCFNet.cpp:
+        (WebCore::toTimeT): Added. Converts from CFAbsoluteTime to time_t and
+        clamps to the range of time_t.
+        (WebCore::ResourceResponse::doUpdateResourceResponse): Call toTimeT.
+
 2008-01-28  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Nikolas Zimmermann.
