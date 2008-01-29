@@ -869,15 +869,37 @@ WebInspector.performSearch = function(query)
         }
 
         var domResults = [];
+        const searchResultsProperty = "__includedInInspectorSearchResults";
+        function addNodesToDOMResults(nodes, length, getItem)
+        {
+            for (var i = 0; i < length; ++i) {
+                var node = getItem(nodes, i);
+                if (searchResultsProperty in node)
+                    continue;
+                node[searchResultsProperty] = true;
+                domResults.push(node);
+            }
+        }
+
+        function cleanUpDOMResultsNodes()
+        {
+            for (var i = 0; i < domResults.length; ++i)
+                delete domResults[i][searchResultsProperty];
+        }
+
         if (resource.category === this.resourceCategories.documents) {
+            var doc = resource.documentNode;
             try {
-                var doc = resource.documentNode;
-                var nodeList = doc.evaluate(xpathQuery, doc, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE);
-                for (var j = 0; j < nodeList.snapshotLength; ++j)
-                    domResults.push(nodeList.snapshotItem(i));
+                var result = doc.evaluate(xpathQuery, doc, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE);
+                addNodesToDOMResults(result, result.snapshotLength, function(l, i) { return l.snapshotItem(i); });
             } catch(err) {
                 // ignore any exceptions. the query might be malformed, but we allow that.
             }
+
+            var result = doc.querySelectorAll(query);
+            addNodesToDOMResults(result, result.length, function(l, i) { return l.item(i); });
+
+            cleanUpDOMResultsNodes();
         }
 
         if ((!sourceResults || !sourceResults.length) && !domResults.length)

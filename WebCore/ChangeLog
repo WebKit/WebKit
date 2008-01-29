@@ -1,5 +1,19 @@
 2008-01-29  Adam Roben  <aroben@apple.com>
 
+        Fix Bug 16234: Inspector should support searching for elements by CSS selectors
+
+        <http://bugs.webkit.org/show_bugs.cgi?id=16234>
+        <rdar://5712862>
+
+        Reviewed by Tim.
+
+        * page/inspector/inspector.js: Use Document.querySelectorAll to search
+        for elements by CSS selector. Also store a custom property on nodes
+        being added to the search results to avoid showing the same node more
+        than once.
+
+2008-01-29  Adam Roben  <aroben@apple.com>
+
         Fix <rdar://5711136> Full-screen Flash on 1up.com is unresponsive
 
         Reviewed by Anders and Darin.
