@@ -7,7 +7,6 @@
 	<Tool
 		Name="VCCLCompilerTool"
 		Optimization="0"
-		PreprocessorDefinitions="_DEBUG"
 		MinimalRebuild="true"
 		BasicRuntimeChecks="3"
 		RuntimeLibrary="2"
@@ -18,7 +17,6 @@
 	/>
 	<Tool
 		Name="VCResourceCompilerTool"
-		PreprocessorDefinitions="_DEBUG"
 	/>
 	<UserMacro
 		Name="WebKitConfigSuffix"

@@ -1,3 +1,12 @@
+2008-01-29  Alexey Proskuryakov  <ap@webkit.org>
+
+        Debug (external) build fix.
+
+        Removed _DEBUG preprocessor definition, which indicates that debug libraries are used (while they aren't).
+        This preprocessor definition is automatically set by Visual Studio as needed anyway.
+
+        * win/tools/vsprops/debug.vsprops:
+
 2008-01-17  Steve Falkenburg  <sfalken@apple.com>
 
         Add preprocessor define accidently dropped in my unification,
