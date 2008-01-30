@@ -1,3 +1,13 @@
+2008-01-29  Antti Koivisto  <antti@apple.com>
+
+        Some comment cleanup.
+
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.mm:
+        (WebCore::MediaPlayerPrivate::disableUnsupportedTracks):
+        * platform/graphics/win/QTMovieWin.cpp:
+        (QTMovieWin::load):
+        (QTMovieWin::disableUnsupportedTracks):
+
 2008-01-29  Adele Peterson  <adele@apple.com>
 
         Reviewed by Antti.

@@ -718,7 +718,7 @@ void MediaPlayerPrivate::disableUnsupportedTracks(unsigned& enabledTrackCount)
             continue;
         
         // Grab the track's media. We're going to check to see if we need to
-        // disable the tracks. They could be unsupported. <rdar://problem/4983892>
+        // disable the tracks. They could be unsupported.
         QTMedia *trackMedia = [track media];
         if (!trackMedia)
             continue;

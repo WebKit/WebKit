@@ -486,14 +486,14 @@ void QTMovieWin::load(const UChar* url, int len)
     moviePropCount++; 
 
     movieProps[moviePropCount].propClass = kQTPropertyClass_MovieInstantiation;
-    movieProps[moviePropCount].propID = '!url'; // kQTInteractivePropertyID_BlockExternalURLLinks
+    movieProps[moviePropCount].propID = '!url';
     movieProps[moviePropCount].propValueSize = sizeof(boolTrue); 
     movieProps[moviePropCount].propValueAddress = &boolTrue; 
     movieProps[moviePropCount].propStatus = 0; 
     moviePropCount++; 
 
     movieProps[moviePropCount].propClass = kQTPropertyClass_MovieInstantiation; 
-    movieProps[moviePropCount].propID = 'site'; // kQTSecurityPolicyPropertyID_NoCrossSite; 
+    movieProps[moviePropCount].propID = 'site';
     movieProps[moviePropCount].propValueSize = sizeof(boolTrue); 
     movieProps[moviePropCount].propValueAddress = &boolTrue; 
     movieProps[moviePropCount].propStatus = 0; 
@@ -549,7 +549,7 @@ void QTMovieWin::disableUnsupportedTracks(unsigned& enabledTrackCount)
             continue;
 
         // Grab the track's media. We're going to check to see if we need to
-        // disable the tracks. They could be unsupported. <rdar://problem/4983892>
+        // disable the tracks. They could be unsupported.
         Media trackMedia = GetTrackMedia(currentTrack);
         if (!trackMedia)
             continue;
