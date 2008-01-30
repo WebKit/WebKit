@@ -1,3 +1,11 @@
+2008-01-29  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Antti.
+
+        Removing test from Skipped list for <rdar://5683527> media/{audio,video|-controls-rendering.html failing
+        
+        * platform/win/Skipped:
+
 2008-01-29  Dan Bernstein  <mitz@apple.com>
 
         - re-add  a couple of tests that are still failing back to the list
@@ -3785,7 +3793,6 @@ to skip list since it is still failing on tiger.
         * platform/mac/svg/custom/foreignObject-crash-on-hover-expected.txt: Added.
         * svg/custom/foreignObject-crash-on-hover.xml: Added.
 
->>>>>>> .r29342
 2007-12-21  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Adele.

@@ -1,3 +1,12 @@
+2008-01-29  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Antti.
+
+        Fix for <rdar://5683527> media/{audio,video|-controls-rendering.html failing
+        
+        * rendering/RenderThemeSafari.cpp: (WebCore::RenderThemeSafari::isControlStyled):
+        Don't treat all media controls as styled.  This causes builds with an old version of SafariTheme to have different metrics for these controls.
+
 2008-01-29  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Dave Hyatt.
