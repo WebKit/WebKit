@@ -2,6 +2,14 @@
 
         Reviewed by Dave Hyatt.
 
+        - try to make this test more robust on slower machines
+
+        * fast/css/font-face-remote.html:
+
+2008-01-29  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Dave Hyatt.
+
         - test for http://bugs.webkit.org/show_bug.cgi?id=17085
           <rdar://problem/5714136> REGRESSION (r29839): All remote fonts are treated as SVG fonts
 
