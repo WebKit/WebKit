@@ -1,3 +1,11 @@
+2008-01-30  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Make ResourceTreeElement inherit the prototype of TreeElement.
+
+        * page/inspector/Resource.js:
+
 2008-01-30  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Adam Roben.

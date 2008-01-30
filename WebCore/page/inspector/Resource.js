@@ -661,29 +661,30 @@ WebInspector.Resource.prototype = {
 
 WebInspector.ResourceTreeElement = function(resource)
 {
-    var item = new TreeElement("", resource, false);
-    item.onselect = WebInspector.ResourceTreeElement.selected;
-    item.ondeselect = WebInspector.ResourceTreeElement.deselected;
-    item.onreveal = WebInspector.ResourceTreeElement.revealed;
-    return item;
+    TreeElement.call(this, "", resource, false);
+    this.resource = resource;
 }
 
-WebInspector.ResourceTreeElement.selected = function(element)
-{
-    var selectedElement = WebInspector.statusOutline.selectedTreeElement;
-    if (selectedElement)
-        selectedElement.deselect();
-    element.representedObject.select();
+WebInspector.ResourceTreeElement.prototype = {
+    onselect: function()
+    {
+        var selectedElement = WebInspector.fileOutline.selectedTreeElement;
+        if (selectedElement)
+            selectedElement.deselect();
+        this.resource.select();
+    },
+
+    ondeselect: function()
+    {
+        this.resource.deselect();
+    },
+
+    onreveal: function()
+    {
+        if (!this.listItemElement || !this.treeOutline || !this.treeOutline.childrenListElement)
+            return;
+        this.treeOutline.childrenListElement.scrollToElement(this.listItemElement);
+    }
 }
 
-WebInspector.ResourceTreeElement.deselected = function(element)
-{
-    element.representedObject.deselect();
-}
-
-WebInspector.ResourceTreeElement.revealed = function(element)
-{
-    if (!element.listItemElement || !element.treeOutline || !element.treeOutline.childrenListElement)
-        return;
-    element.treeOutline.childrenListElement.scrollToElement(element.listItemElement);
-}
+WebInspector.ResourceTreeElement.prototype.__proto__ = TreeElement.prototype;
