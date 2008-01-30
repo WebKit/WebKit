@@ -50,6 +50,7 @@ namespace WebCore {
 
 CachedFont::CachedFont(DocLoader* dl, const String &url)
     : CachedResource(url, FontResource), m_fontData(0)
+    , m_isSVGFont(false)
 {
     // Don't load the file yet.  Wait for an access before triggering the load.
     m_loading = true;
@@ -93,6 +94,9 @@ void CachedFont::beginLoadIfNeeded(DocLoader* dl)
 bool CachedFont::ensureCustomFontData()
 {
 #if PLATFORM(CG) || PLATFORM(QT) || PLATFORM(GTK)
+#if ENABLE(SVG_FONTS)
+    ASSERT(!m_isSVGFont);
+#endif
     if (!m_fontData && !m_errorOccurred && !m_loading && m_data) {
         m_fontData = createFontCustomPlatformData(m_data.get());
         if (!m_fontData)
@@ -119,6 +123,7 @@ FontPlatformData CachedFont::platformDataFromCustomData(float size, bool bold, b
 #if ENABLE(SVG_FONTS)
 bool CachedFont::ensureSVGFontData()
 {
+    ASSERT(m_isSVGFont);
     if (!m_externalSVGDocument && !m_errorOccurred && !m_loading && m_data) {
         m_externalSVGDocument = new SVGDocument(DOMImplementation::instance(), 0);
         m_externalSVGDocument->open();
@@ -135,6 +140,7 @@ bool CachedFont::ensureSVGFontData()
 
 SVGFontElement* CachedFont::getSVGFontById(const String& fontName) const
 {
+    ASSERT(m_isSVGFont);
     RefPtr<NodeList> list = m_externalSVGDocument->getElementsByTagName(SVGNames::fontTag.localName());
     if (!list)
         return 0;

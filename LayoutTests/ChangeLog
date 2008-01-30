@@ -1,3 +1,19 @@
+2008-01-29  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        - test for http://bugs.webkit.org/show_bug.cgi?id=17085
+          <rdar://problem/5714136> REGRESSION (r29839): All remote fonts are treated as SVG fonts
+
+        This is the first @font-face test that actually tests loading font data
+        from a URL.
+
+        * fast/css/font-face-remote.html: Added.
+        * fast/css/resources/Ahem.ttf: Added.
+        * platform/mac/fast/css/font-face-remote-expected.checksum: Added.
+        * platform/mac/fast/css/font-face-remote-expected.png: Added.
+        * platform/mac/fast/css/font-face-remote-expected.txt: Added.
+
 2008-01-29  Adele Peterson  <adele@apple.com>
 
         Reviewed by Oliver.

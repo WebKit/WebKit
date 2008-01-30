@@ -1,3 +1,33 @@
+2008-01-29  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=17085
+          <rdar://problem/5714136> REGRESSION (r29839): All remote fonts are treated as SVG fonts
+
+        Test: fast/css/font-face-remote.html
+
+        Added an isSVGFont method to CachedFont and use it to decide how to
+        process the font data. Currently whether the data is SVG is determined
+        based on the format property in the @font-face rule, but in the future
+        the MIME type or other metadata may be used when the format is
+        unspecified.
+
+        * css/CSSFontFaceSource.cpp:
+        (WebCore::CSSFontFaceSource::getFontData): Changed to parse the data as
+        SVG only if the CachedFont is an SVG font.
+        * css/CSSFontSelector.cpp:
+        (WebCore::CSSFontSelector::addFontFaceRule): Mark the CachedFont as an
+        SVG font based on format.
+        * loader/CachedFont.cpp:
+        (WebCore::CachedFont::CachedFont): Initialize m_isSVGFont to false.
+        (WebCore::CachedFont::ensureCustomFontData):
+        (WebCore::CachedFont::ensureSVGFontData):
+        (WebCore::CachedFont::getSVGFontById):
+        * loader/CachedFont.h:
+        (WebCore::CachedFont::isSVGFont): Added.
+        (WebCore::CachedFont::setSVGFont): Added.
+
 2008-01-29  Antti Koivisto  <antti@apple.com>
 
         Some comment cleanup.

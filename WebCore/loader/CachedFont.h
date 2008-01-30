@@ -63,6 +63,8 @@ public:
     FontPlatformData platformDataFromCustomData(float size, bool bold, bool italic);
 
 #if ENABLE(SVG_FONTS)
+    bool isSVGFont() const { return m_isSVGFont; }
+    void setSVGFont(bool isSVG) { m_isSVGFont = isSVG; }
     bool ensureSVGFontData();
     SVGFontElement* getSVGFontById(const String&) const;
 #endif
@@ -72,6 +74,7 @@ private:
     bool m_loadInitiated;
 
 #if ENABLE(SVG_FONTS)
+    bool m_isSVGFont;
     RefPtr<SVGDocument> m_externalSVGDocument;
 #endif
 

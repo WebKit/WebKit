@@ -28,7 +28,7 @@
 
 #include "CSSFontSelector.h"
 #include "AtomicString.h"
-#include "CString.h"
+#include "CachedFont.h"
 #include "CSSFontFace.h"
 #include "CSSFontFaceRule.h"
 #include "CSSFontFaceSource.h"
@@ -155,8 +155,13 @@ void CSSFontSelector::addFontFaceRule(const CSSFontFaceRule* fontFaceRule)
         if (!item->isLocal()) {
             if (item->isSupportedFormat()) {
                 CachedFont* cachedFont = m_document->docLoader()->requestFont(item->resource());
-                if (cachedFont)
+                if (cachedFont) {
+#if ENABLE(SVG_FONTS)
+                    if (foundSVGFont)
+                        cachedFont->setSVGFont(true);
+#endif
                     source = new CSSFontFaceSource(item->resource(), cachedFont);
+                }
             }
         } else {
             String family = item->resource();
