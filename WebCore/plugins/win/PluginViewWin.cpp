@@ -1464,6 +1464,9 @@ void PluginViewWin::disconnectStream(PluginStream* stream)
 
 void PluginViewWin::determineQuirks(const String& mimeType)
 {
+    static const unsigned lastKnownUnloadableRealPlayerVersionLS = 0x000B0B24;
+    static const unsigned lastKnownUnloadableRealPlayerVersionMS = 0x00060000;
+
     // The flash plugin only requests windowless plugins if we return a mozilla user agent
     if (mimeType == "application/x-shockwave-flash") {
         m_quirks.add(PluginQuirkWantsMozillaUserAgent);
@@ -1506,9 +1509,15 @@ void PluginViewWin::determineQuirks(const String& mimeType)
     if (MIMETypeRegistry::isJavaAppletMIMEType(mimeType))
         m_quirks.add(PluginQuirkDontUnloadPlugin);
 
-    // Prevent the Real plugin from calling the Window Proc recursively, causing the stack to overflow.
-    if (mimeType == "audio/x-pn-realaudio-plugin")
+    if (mimeType == "audio/x-pn-realaudio-plugin") {
+        // Prevent the Real plugin from calling the Window Proc recursively, causing the stack to overflow.
         m_quirks.add(PluginQuirkDontCallWndProcForSameMessageRecursively);
+
+        // Unloading RealPlayer versions newer than 10.5 can cause a hang; see rdar://5669317.
+        // FIXME: Resume unloading when this bug in the RealPlayer Plug-In is fixed (rdar://5713147)
+        if (m_plugin->compareFileVersion(lastKnownUnloadableRealPlayerVersionMS, lastKnownUnloadableRealPlayerVersionLS) > 0)
+            m_quirks.add(PluginQuirkDontUnloadPlugin);
+    }
 }
 
 void PluginViewWin::setParameters(const Vector<String>& paramNames, const Vector<String>& paramValues)

@@ -1,3 +1,28 @@
+2008-01-30  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Reviewed by Darin.
+
+        <rdar://problem/5669317> Crash closing pop up window with Real Player
+        content
+
+        Some RealPlayer versions hang on unload. To prevent this hang, don't
+        unload versions since the last known unloadable version.
+        <rdar://problem/5713147> tracks revisiting this when the bug in
+        RealPlayer is fixed and we can again unload the plug-in.
+
+        * plugins/win/PluginPackageWin.cpp:
+        (WebCore::PluginPackageWin::compareFileVersion): Compare the plug-in's
+        file version to the passed file version, returning -1, 0, or 1 if the
+        plug-in's version is less than, equal to, or greater than the version
+        passed.
+        (WebCore::PluginPackageWin::isPluginBlacklisted): Use
+        compareFileVersion()
+        * plugins/win/PluginPackageWin.h:
+        * plugins/win/PluginViewWin.cpp:
+        (WebCore::PluginViewWin::determineQuirks): If the plug-in version is
+        newer than the last-known unloadable version, add the DontUnloadPlugin
+        quirk
+
 2008-01-29  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Tim Hatcher.
