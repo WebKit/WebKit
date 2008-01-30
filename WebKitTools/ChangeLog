@@ -1,3 +1,12 @@
+2008-01-30  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Adam Roben.
+
+        One more debug (external) fix.
+
+        * DumpRenderTree/win/DumpRenderTree.cpp: TestNetscapePlugin is built with a _debug suffix in both DebugInternal
+        and Debug configurations. 
+
 2008-01-29  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Sam Weinig. Sam Weinig.

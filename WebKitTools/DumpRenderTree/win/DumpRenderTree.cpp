@@ -63,7 +63,7 @@
 
 using std::wstring;
 
-#ifdef _DEBUG
+#ifndef NDEBUG
 const LPWSTR TestPluginDir = L"TestNetscapePlugin_Debug";
 #else
 const LPWSTR TestPluginDir = L"TestNetscapePlugin";
