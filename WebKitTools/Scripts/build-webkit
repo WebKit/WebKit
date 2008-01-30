@@ -197,6 +197,21 @@ if (isOSX()) {
         system "mkdir", "-p", "$productDir/usr/local/include";
         system "ditto", $srcHeader, $header;
     }
+
+    $srcLib = "WebKitLibraries/libWebCoreSQLite3.a";
+    $lib = "$productDir/libWebCoreSQLite3.a";
+    if (!-e $lib || -M $lib > -M $srcLib) {
+        print "Updating $lib\n";
+        system "ditto", $srcLib, $lib;
+        system "ranlib", $lib;
+    }
+
+    my $srcHeaderDir = "WebKitLibraries/WebCoreSQLite3";
+    my $headerDir = "$productDir/WebCoreSQLite3";
+    if (!-e $headerDir || -M $headerDir > -M $srcHeaderDir) {
+        print "Updating $headerDir\n";
+        system "ditto", $srcHeaderDir, $headerDir;
+    }
 }
 
 if (isGtk() && isDarwin() && !$ENV{QMAKESPEC}) {

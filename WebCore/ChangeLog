@@ -1,3 +1,14 @@
+2008-01-29  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Tim Hatcher.
+
+        <rdar://problem/5600926> WebCore on Tiger must link to its own copy of SQLite 3.4 or newer (so HTML database behavior will be correct).
+
+        * Configurations/Base.xcconfig: Update the header search path on Tiger.
+        * Configurations/DebugRelease.xcconfig: Update the header search path on Tiger.
+        * Configurations/WebCore.xcconfig: Link against libWebCoreSQLite3.a when building on Tiger.
+        * WebCore.xcodeproj/project.pbxproj: Update the header search path in Production builds on Tiger.
+
 2008-01-29  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Adam Roben and Oliver Hunt.

@@ -1,3 +1,11 @@
+2008-01-29  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Tim Hatcher.
+
+        <rdar://problem/5600926> WebCore on Tiger must link to its own copy of SQLite 3.4 or newer (so HTML database behavior will be correct).
+
+        * Scripts/build-webkit: Copy SQLite static library and headers into the build directory.
+
 2008-01-29  David Kilzer  <ddkilzer@apple.com>
 
         Refactor ChangeLog path code
