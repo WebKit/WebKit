@@ -403,32 +403,30 @@ bool Database::performOpenAndVerify(ExceptionCode& e)
 
 void Database::performTransactionStep()
 {
-    // Do not perform transaction if a callback is scheduled
-    {
-        MutexLocker locker(m_callbackMutex);
-        if (s_globalCallbackScheduled)
-            return;
-    }
-    
+    // Do not perform a transaction if a global callback is scheduled.
+    MutexLocker locker(globalCallbackMutex());
+    if (s_globalCallbackScheduled)
+        return;
+
     {
         MutexLocker locker(m_transactionMutex);
-        
+
         if (!m_currentTransaction) {
             ASSERT(m_transactionQueue.size());
             m_currentTransaction = m_transactionQueue.first();
             m_transactionQueue.removeFirst();
         }
     }
-    
+
     // If this step completes the entire transaction, clear the working transaction
     // and schedule the next one if necessary
     if (!m_currentTransaction->performNextStep())
         return;
-        
+
     {
         MutexLocker locker(m_transactionMutex);
         m_currentTransaction = 0;
-        
+
         if (m_transactionQueue.size())
             m_databaseThread->scheduleTask(this, new DatabaseTransactionTask);
     }

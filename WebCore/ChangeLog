@@ -1,5 +1,17 @@
 2008-01-30  Timothy Hatcher  <timothy@apple.com>
 
+        Reviewed by Darin Adler.
+
+        <rdar://problem/5688428> Reproducible assertion failure in SQLTransaction::performNextStep() (16876)
+
+        Revised fix to use the globalCallbackMutex() mutex and hold the mutex
+        for the entire function scope.
+
+        * storage/Database.cpp:
+        (WebCore::Database::performTransactionStep):
+
+2008-01-30  Timothy Hatcher  <timothy@apple.com>
+
         Reviewed by Adam Roben.
 
         Make ResourceTreeElement inherit the prototype of TreeElement.
