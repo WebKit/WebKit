@@ -403,6 +403,13 @@ bool Database::performOpenAndVerify(ExceptionCode& e)
 
 void Database::performTransactionStep()
 {
+    // Do not perform transaction if a callback is scheduled
+    {
+        MutexLocker locker(m_callbackMutex);
+        if (s_globalCallbackScheduled)
+            return;
+    }
+    
     {
         MutexLocker locker(m_transactionMutex);
         
