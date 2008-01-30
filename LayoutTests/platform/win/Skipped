@@ -273,6 +273,10 @@ editing/selection/fake-drag.html
 # <rdar://5667279> Undefined value exception
 http/tests/xmlhttprequest/XMLHttpRequestException.html
 
+# <rdar://5667302>
+svg/dom/animated-tearoff-equality.xhtml
+svg/dom/animated-tearoff-lifespan.xhtml
+
 # <rdar://5670235> Sometimes spews output into the next test
 http/tests/security/cross-frame-access-put.html
 

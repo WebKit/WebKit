@@ -1,3 +1,9 @@
+2008-01-29  Dan Bernstein  <mitz@apple.com>
+
+        - re-add  a couple of tests that are still failing back to the list
+
+        * platform/win/Skipped:
+
 2008-01-29  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Sam Weinig. Sam Weinig.
