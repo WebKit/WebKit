@@ -31,8 +31,8 @@ WARNING_CFLAGS_x86_64 = $(WARNING_CFLAGS_BASE);
 
 // These will be overriden in Debug and Release on Tiger 10.4 by DebugRelease.xcconfig.
 SQLITE3_HEADER_SEARCH_PATHS = $(SQLITE3_HEADER_SEARCH_PATHS_$(MAC_OS_X_VERSION_MAJOR));
-SQLITE3_HEADER_SEARCH_PATHS_ = /usr/include/WebCoreSQLite3;
-SQLITE3_HEADER_SEARCH_PATHS_1040 = /usr/include/WebCoreSQLite3;
+SQLITE3_HEADER_SEARCH_PATHS_ = /usr/local/include/WebCoreSQLite3;
+SQLITE3_HEADER_SEARCH_PATHS_1040 = /usr/local/include/WebCoreSQLite3;
 SQLITE3_HEADER_SEARCH_PATHS_1050 = ;
 
 

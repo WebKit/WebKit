@@ -1,3 +1,11 @@
+2008-01-29  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Brady Eidson.
+
+        Add the correct directory to the header search paths in Production builds.
+
+        * Configurations/Base.xcconfig:
+
 2008-01-29  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Dave Hyatt.
