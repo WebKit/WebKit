@@ -1,3 +1,10 @@
+2008-01-30  Jessica Kahn  <jess@apple.com>
+
+        Reviewed by Tim Hatcher.
+
+        * coding/coding-style.html:
+        Adding a note about avoiding explicit nil/NO initialization of Objective-C instance variables.
+
 2008-01-21  David Smith  <catfish.man@gmail.com>
 
         Reviewed by Darin.
