@@ -115,6 +115,37 @@ Page* WebInspectorClient::createPage()
 
     m_webView.adoptRef(WebView::createInstance());
 
+    // Keep preferences separate from the rest of the client, making sure we are using expected preference values.
+    // One reason this is good is that it keeps the inspector out of history via "private browsing".
+    COMPtr<WebPreferences> preferences(AdoptCOM, WebPreferences::createInstance());
+    if (FAILED(preferences->setAutosaves(FALSE)))
+        return 0;
+    if (FAILED(preferences->setPrivateBrowsingEnabled(TRUE)))
+        return 0;
+    if (FAILED(preferences->setLoadsImagesAutomatically(TRUE)))
+        return 0;
+    if (FAILED(preferences->setAuthorAndUserStylesEnabled(TRUE)))
+        return 0;
+    if (FAILED(preferences->setAllowsAnimatedImages(TRUE)))
+        return 0;
+    if (FAILED(preferences->setLoadsImagesAutomatically(TRUE)))
+        return 0;
+    if (FAILED(preferences->setPlugInsEnabled(FALSE)))
+        return 0;
+    if (FAILED(preferences->setJavaEnabled(FALSE)))
+        return 0;
+    if (FAILED(preferences->setUserStyleSheetEnabled(FALSE)))
+        return 0;
+    if (FAILED(preferences->setTabsToLinks(FALSE)))
+        return 0;
+    if (FAILED(preferences->setMinimumFontSize(0)))
+        return 0;
+    if (FAILED(preferences->setMinimumLogicalFontSize(9)))
+        return 0;
+
+    if (FAILED(m_webView->setPreferences(preferences.get())))
+        return 0;
+
     if (FAILED(m_webView->setHostWindow((OLE_HANDLE)(ULONG64)m_hwnd)))
         return 0;
 

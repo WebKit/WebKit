@@ -1,5 +1,20 @@
 2008-01-29  Adam Roben  <aroben@apple.com>
 
+        Fix Bug 16786: "Display images when page opens" preference affects
+        Inspector
+
+        <http://bugs.webkit.org/show_bug.cgi?id=16786>
+        <rdar://5712914>
+
+        Reviewed by Anders and Darin.
+
+        * WebInspectorClient.cpp:
+        (WebInspectorClient::createPage): Create our own custom WebPreferences
+        so that we won't be affected by global preference changes. This
+        matches what Mac does.
+
+2008-01-29  Adam Roben  <aroben@apple.com>
+
         Fix <rdar://5713302> Web Inspector on Windows is not using the
         localized strings
 
