@@ -1,3 +1,14 @@
+2008-01-30  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Adam Roben.
+
+        Don't include SecurityOrigin.h in Document.h so that we can avoid massive
+        recompilation when changing the SecurityOrigin.
+
+        * dom/Document.cpp:
+        (WebCore::Document::setSecurityOrigin):
+        * dom/Document.h:
+
 2008-01-30  Tim Omernick  <timo@apple.com>
 
         Reviewed by Tim Hatcher and Brady.

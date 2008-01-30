@@ -26,11 +26,11 @@
 
 #include "AXObjectCache.h"
 #include "CDATASection.h"
-#include "CString.h"
 #include "CSSHelper.h"
 #include "CSSStyleSelector.h"
 #include "CSSStyleSheet.h"
 #include "CSSValueKeywords.h"
+#include "CString.h"
 #include "ClassNodeList.h"
 #include "Comment.h"
 #include "CookieJar.h"
@@ -53,7 +53,6 @@
 #include "FrameLoader.h"
 #include "FrameTree.h"
 #include "FrameView.h"
-#include "HistoryItem.h"
 #include "HTMLBodyElement.h"
 #include "HTMLDocument.h"
 #include "HTMLElementFactory.h"
@@ -68,6 +67,7 @@
 #include "HTMLStyleElement.h"
 #include "HTMLTitleElement.h"
 #include "HTTPParsers.h"
+#include "HistoryItem.h"
 #include "HitTestRequest.h"
 #include "HitTestResult.h"
 #include "KeyboardEvent.h"
@@ -3742,6 +3742,11 @@ void Document::initSecurityOrigin()
         return;  // m_securityOrigin has already been initialized.
 
     m_securityOrigin = SecurityOrigin::createForFrame(m_frame);
+}
+
+void Document::setSecurityOrigin(SecurityOrigin* securityOrigin)
+{
+    m_securityOrigin = securityOrigin;
 }
 
 void Document::updateFocusAppearanceSoon()
