@@ -1,3 +1,12 @@
+2008-01-29  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Tim Hatcher.
+
+        Look for headers relative to NEXT_ROOT so that build-root picks up the WebCoreSQLite
+        version of sqlite3.h rather than the older system version.
+
+        * Configurations/Base.xcconfig:
+
 2008-01-29  Dan Bernstein  <mitz@apple.com>
 
         - build fix
