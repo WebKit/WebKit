@@ -1,5 +1,20 @@
 2008-01-29  Dan Bernstein  <mitz@apple.com>
 
+        Reviewed by Dave Hyatt.
+
+        - make Font instances cache their primary font
+
+        * WebCore.base.exp:
+        * platform/graphics/Font.cpp:
+        (WebCore::Font::Font):
+        (WebCore::Font::operator=):
+        (WebCore::Font::cachePrimaryFont):
+        (WebCore::Font::update):
+        * platform/graphics/Font.h:
+        (WebCore::Font::primaryFont):
+
+2008-01-29  Dan Bernstein  <mitz@apple.com>
+
         - Leopard build fix
 
         * platform/graphics/SimpleFontData.cpp:
