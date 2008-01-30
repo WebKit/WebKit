@@ -57,9 +57,9 @@ SimpleFontData::SimpleFontData(const FontPlatformData& f, bool customFont, bool 
        if (m_unitsPerEm)
            scale /= m_unitsPerEm;
 
-        m_ascent = svgFontFaceElement->ascent() * scale;
-        m_descent = svgFontFaceElement->descent() * scale;
-        m_xHeight = svgFontFaceElement->xHeight() * scale;
+        m_ascent = static_cast<int>(svgFontFaceElement->ascent() * scale);
+        m_descent = static_cast<int>(svgFontFaceElement->descent() * scale);
+        m_xHeight = static_cast<int>(svgFontFaceElement->xHeight() * scale);
         m_lineGap = 0.1f * f.size();
         m_lineSpacing = m_ascent + m_descent + m_lineGap;
     

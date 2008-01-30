@@ -1,3 +1,10 @@
+2008-01-29  Dan Bernstein  <mitz@apple.com>
+
+        - Leopard build fix
+
+        * platform/graphics/SimpleFontData.cpp:
+        (WebCore::SimpleFontData::SimpleFontData):
+
 2008-01-29  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Tim Hatcher.
