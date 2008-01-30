@@ -29,6 +29,8 @@ function didFinishLoading(childWindow) // called by subframes
         shouldBe('f' in childWindow, "'f' in childWindow", true);
         shouldBe(typeof childWindow.f, "childWindow.f", "function");
         
+        childWindow.name = "test";
+        
         childWindow.location = "window-property-clearing-iframe1.html";
         
         ++count;
@@ -37,6 +39,8 @@ function didFinishLoading(childWindow) // called by subframes
         shouldBe(childWindow.x, "childWindow.x", undefined);
         shouldBe('f' in childWindow, "'f' in childWindow", false);
         shouldBe(typeof childWindow.f, "typeof childWindow.f", "undefined");
+        shouldBe('name' in childWindow, "'name' in childWindow", true);
+        shouldBe(childWindow.name, "childWindow.name", "test");
     
         if (window.layoutTestController)
             layoutTestController.notifyDone();

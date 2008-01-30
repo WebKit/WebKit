@@ -38,11 +38,8 @@
                                                              frame:(WebFrame *)frame
                                                   decisionListener:(id<WebPolicyDecisionListener>)listener
 {
-    NSString *frameName = [frame name];
-    NSString *requestURL = [[request URL] absoluteString];
-    printf("Frame %s attempted to load %s\n", [frameName UTF8String], [requestURL UTF8String]);
+    printf("Policy delegate: attempt to load %s\n", [[[request URL] absoluteString] UTF8String]);
     [listener ignore];
 }
-
 
 @end

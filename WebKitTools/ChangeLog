@@ -1,3 +1,20 @@
+2008-01-29  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig. Sam Weinig.
+        
+        Fixed <rdar://problem/5692566> fast/encoding/mailto-always-utf-8.html
+        fails when run after fast/dom/Window/window-property-shadowing.html (16902)
+
+        Modified our policy delegates not to output window.name. Since a
+        previous test may have explicitly set window.name, we can't rely on its
+        implicit value in test results.
+
+        * DumpRenderTree/mac/PolicyDelegate.mm:
+        (-[PolicyDelegate webView:decidePolicyForNavigationAction:request:frame:decisionListener:]):
+
+        * DumpRenderTree/win/PolicyDelegate.cpp:
+        (PolicyDelegate::decidePolicyForNavigationAction):
+
 2008-01-29  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Tim Hatcher.

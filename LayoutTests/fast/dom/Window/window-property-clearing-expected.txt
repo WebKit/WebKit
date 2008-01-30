@@ -12,4 +12,6 @@ PASS: 'x' in childWindow should be false and is.
 PASS: childWindow.x should be undefined and is.
 PASS: 'f' in childWindow should be false and is.
 PASS: typeof childWindow.f should be undefined and is.
+PASS: 'name' in childWindow should be true and is.
+PASS: childWindow.name should be test and is.
 

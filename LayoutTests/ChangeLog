@@ -1,3 +1,43 @@
+2008-01-29  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig. Sam Weinig.
+        
+        Fixed <rdar://problem/5692566> fast/encoding/mailto-always-utf-8.html
+        fails when run after fast/dom/Window/window-property-shadowing.html (16902)
+
+        These layout tests demonstrate the expected behavior of window.name,
+        including the fact that one test can change the window.name value seen
+        by another test:
+
+        * fast/dom/Window/window-property-shadowing-name-expected.txt: Added.
+        * fast/dom/Window/window-property-shadowing-name.html: Added.
+        * fast/dom/Window/window-property-clearing-expected.txt:
+        * fast/dom/Window/window-property-clearing.html:
+        
+        Modified these expected results not to depend on window.name. Since a
+        previous test may have explicitly set window.name, we can't rely on its
+        implicit value:
+
+        * fast/encoding/mailto-always-utf-8-expected.txt:
+        * fast/forms/mailto/advanced-get-expected.txt:
+        * fast/forms/mailto/advanced-put-expected.txt:
+        * fast/forms/mailto/get-multiple-items-expected.txt:
+        * fast/forms/mailto/get-multiple-items-text-plain-expected.txt:
+        * fast/forms/mailto/get-multiple-items-x-www-form-urlencoded-expected.txt:
+        * fast/forms/mailto/get-non-ascii-always-utf-8-expected.txt:
+        * fast/forms/mailto/get-non-ascii-expected.txt:
+        * fast/forms/mailto/get-non-ascii-text-plain-expected.txt:
+        * fast/forms/mailto/get-non-ascii-text-plain-latin-1-expected.txt:
+        * fast/forms/mailto/get-overwrite-query-expected.txt:
+        * fast/forms/mailto/post-append-query-expected.txt:
+        * fast/forms/mailto/post-multiple-items-expected.txt:
+        * fast/forms/mailto/post-multiple-items-multipart-form-data-expected.txt:
+        * fast/forms/mailto/post-multiple-items-text-plain-expected.txt:
+        * fast/forms/mailto/post-multiple-items-x-www-form-urlencoded-expected.txt:
+        * fast/forms/mailto/post-text-plain-expected.txt:
+        * fast/forms/mailto/post-text-plain-with-accept-charset-expected.txt:
+        * http/tests/security/feed-urls-from-remote-expected.txt:
+
 2008-01-29  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Adam Roben and Oliver Hunt.

@@ -74,14 +74,10 @@ HRESULT STDMETHODCALLTYPE PolicyDelegate::decidePolicyForNavigationAction(
     /*[in]*/ IWebFrame* frame, 
     /*[in]*/ IWebPolicyDecisionListener* listener)
 {
-    BSTR frameName;
-    frame->name(&frameName);
-
     BSTR url;
     request->URL(&url);
 
-    printf("Frame %S attempted to load %S\n", frameName ? frameName : TEXT(""), url ? url : TEXT(""));
-    SysFreeString(frameName);
+    printf("Policy delegate: attempt to load %S\n", url ? url : TEXT(""));
     SysFreeString(url);
     listener->ignore();
 
