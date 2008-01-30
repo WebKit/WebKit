@@ -115,9 +115,27 @@ Page* WebInspectorClient::createPage()
 
     m_webView.adoptRef(WebView::createInstance());
 
+    if (FAILED(m_webView->setHostWindow((OLE_HANDLE)(ULONG64)m_hwnd)))
+        return 0;
+
+    RECT rect;
+    GetClientRect(m_hwnd, &rect);
+    if (FAILED(m_webView->initWithFrame(rect, 0, 0)))
+        return 0;
+
     // Keep preferences separate from the rest of the client, making sure we are using expected preference values.
     // One reason this is good is that it keeps the inspector out of history via "private browsing".
-    COMPtr<WebPreferences> preferences(AdoptCOM, WebPreferences::createInstance());
+    // FIXME: It's crazy that we have to do this song and dance to end up with
+    // a private WebPreferences object, even within WebKit. We should make this
+    // process simpler, and consider whether we can make it simpler for WebKit
+    // clients as well.
+    COMPtr<WebPreferences> tempPreferences(AdoptCOM, WebPreferences::createInstance());
+    COMPtr<IWebPreferences> iPreferences;
+    if (FAILED(tempPreferences->initWithIdentifier(BString(L"WebInspectorPreferences"), &iPreferences)))
+        return 0;
+    COMPtr<WebPreferences> preferences(Query, iPreferences);
+    if (!preferences)
+        return 0;
     if (FAILED(preferences->setAutosaves(FALSE)))
         return 0;
     if (FAILED(preferences->setPrivateBrowsingEnabled(TRUE)))
@@ -144,14 +162,6 @@ Page* WebInspectorClient::createPage()
         return 0;
 
     if (FAILED(m_webView->setPreferences(preferences.get())))
-        return 0;
-
-    if (FAILED(m_webView->setHostWindow((OLE_HANDLE)(ULONG64)m_hwnd)))
-        return 0;
-
-    RECT rect;
-    GetClientRect(m_hwnd, &rect);
-    if (FAILED(m_webView->initWithFrame(rect, 0, 0)))
         return 0;
 
     m_webView->setProhibitsMainFrameScrolling(TRUE);

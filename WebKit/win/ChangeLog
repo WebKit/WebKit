@@ -1,5 +1,16 @@
 2008-01-29  Adam Roben  <aroben@apple.com>
 
+        Fix a crash when opening the Inspector
+
+        Reviewed by Anders.
+
+        * WebInspectorClient.cpp:
+        (WebInspectorClient::createPage): Call
+        WebPreferences::initWithIdentifier so our custom WebPreferences will
+        have all its members initialized.
+
+2008-01-29  Adam Roben  <aroben@apple.com>
+
         Fix Bug 16786: "Display images when page opens" preference affects
         Inspector
 
