@@ -1,3 +1,14 @@
+2008-01-30  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Move off deprecated NSTableView methods.
+
+        * WebView/WebHTMLView.mm:
+        (-[WebTextCompleteController _buildUI]): Switch from -setDrawsGrid: to -setGridStyleMask:.
+        (-[WebTextCompleteController _placePopupWindow:]): Switch from -selectRow:byExtendingSelection: to -selectRowIndexes:byExtendingSelection:.
+        (-[WebTextCompleteController filterKeyDown:]): Ditto.
+
 2008-01-26  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Darin Adler.

@@ -5230,7 +5230,7 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
     [_tableView setAutoresizingMask:NSViewWidthSizable];
     [_tableView addTableColumn:column];
     [column release];
-    [_tableView setDrawsGrid:NO];
+    [_tableView setGridStyleMask:NSTableViewGridNone];
     [_tableView setCornerView:nil];
     [_tableView setHeaderView:nil];
     [_tableView setColumnAutoresizingStyle:NSTableViewUniformColumnAutoresizingStyle];
@@ -5291,7 +5291,7 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
     [_popupWindow setFrame:windowFrame display:NO];
     
     [_tableView reloadData];
-    [_tableView selectRow:0 byExtendingSelection:NO];
+    [_tableView selectRowIndexes:[NSIndexSet indexSetWithIndex:0] byExtendingSelection:NO];
     [_tableView scrollRowToVisible:0];
     [self _reflectSelection];
     [_popupWindow setLevel:NSPopUpMenuWindowLevel];
@@ -5397,7 +5397,7 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
     if (c == NSUpArrowFunctionKey) {
         int selectedRow = [_tableView selectedRow];
         if (0 < selectedRow) {
-            [_tableView selectRow:selectedRow - 1 byExtendingSelection:NO];
+            [_tableView selectRowIndexes:[NSIndexSet indexSetWithIndex:selectedRow - 1] byExtendingSelection:NO];
             [_tableView scrollRowToVisible:selectedRow - 1];
         }
         return YES;
@@ -5405,7 +5405,7 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
     if (c == NSDownArrowFunctionKey) {
         int selectedRow = [_tableView selectedRow];
         if (selectedRow < (int)[_completions count] - 1) {
-            [_tableView selectRow:selectedRow + 1 byExtendingSelection:NO];
+            [_tableView selectRowIndexes:[NSIndexSet indexSetWithIndex:selectedRow + 1] byExtendingSelection:NO];
             [_tableView scrollRowToVisible:selectedRow + 1];
         }
         return YES;
