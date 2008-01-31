@@ -1,3 +1,29 @@
+2008-01-31  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=17107
+          <rdar://problem/5716722> REGRESSION (r29834): Article text on redhat.com magazine site appears to be painting twice
+
+        Test: fast/block/float/intruding-painted-twice.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::layoutBlock): Pass 'false' for the new
+        makeChildPaintOtherFloats parameter to addOverhangingFloats() because at
+        this point we are only taking away floats from the child.
+        (WebCore::RenderBlock::layoutBlockChildren): Pass 'true' for the new
+        makeChildPaintOtherFloats parameter to addOverhangingFloats() iff the
+        child was not laid out again. Only in that case, it may have overhanging
+        floats that it does not paint because they used to be overhanging from
+        the parent, but now they are not.
+        (WebCore::RenderBlock::addOverhangingFloats): Refined the conditions for
+        making the child paint the float: require that the float be a descendant
+        of the child (the other case is when it intrudes into the child from
+        another sibling) and that it does not have a layer (in which case it
+        paints itself). In addition, do the check only if the caller passed
+        'true' for the makeChildPaintOtherFloats parameter.
+        * rendering/RenderBlock.h:
+
 2008-01-30  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Sam Weinig.

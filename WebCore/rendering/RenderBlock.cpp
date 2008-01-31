@@ -603,7 +603,7 @@ void RenderBlock::layoutBlock(bool relayoutChildren)
                 if (child->isBlockFlow() && !child->isFloatingOrPositioned()) {
                     RenderBlock* block = static_cast<RenderBlock*>(child);
                     if (block->floatBottom() + block->yPos() > m_height)
-                        addOverhangingFloats(block, -block->xPos(), -block->yPos());
+                        addOverhangingFloats(block, -block->xPos(), -block->yPos(), false);
                 }
             }
         }
@@ -1225,7 +1225,9 @@ void RenderBlock::layoutBlockChildren(bool relayoutChildren, int& maxFloatBottom
         if (child->isRenderBlock())
             previousFloatBottom = max(previousFloatBottom, oldRect.y() + static_cast<RenderBlock*>(child)->floatBottom());
 
-        child->layoutIfNeeded();
+        bool childNeededLayout = child->needsLayout();
+        if (childNeededLayout)
+            child->layout();
 
         // Now determine the correct ypos based off examination of collapsing margin
         // values.
@@ -1251,7 +1253,7 @@ void RenderBlock::layoutBlockChildren(bool relayoutChildren, int& maxFloatBottom
         }
         // If the child has overhanging floats that intrude into following siblings (or possibly out
         // of this block), then the parent gets notified of the floats now.
-        maxFloatBottom = max(maxFloatBottom, addOverhangingFloats(static_cast<RenderBlock *>(child), -child->xPos(), -child->yPos()));
+        maxFloatBottom = max(maxFloatBottom, addOverhangingFloats(static_cast<RenderBlock *>(child), -child->xPos(), -child->yPos(), !childNeededLayout));
 
         // Update our overflow in case the child spills out the block.
         m_overflowTop = min(m_overflowTop, child->yPos() + child->overflowTop(false));
@@ -2647,7 +2649,7 @@ RenderBlock::clearFloats()
         addIntrudingFloats(block, xoffset, offset);
 }
 
-int RenderBlock::addOverhangingFloats(RenderBlock* child, int xoff, int yoff)
+int RenderBlock::addOverhangingFloats(RenderBlock* child, int xoff, int yoff, bool makeChildPaintOtherFloats)
 {
     // Prevent floats from being added to the canvas by the root element, e.g., <html>.
     if (child->hasOverflowClip() || !child->containsFloats() || child->isRoot())
@@ -2689,7 +2691,11 @@ int RenderBlock::addOverhangingFloats(RenderBlock* child, int xoff, int yoff)
                 }
                 m_floatingObjects->append(floatingObj);
             }
-        } else
+        } else if (makeChildPaintOtherFloats && r->noPaint && !r->node->hasLayer() && r->node->isDescendantOf(child))
+            // The float is not overhanging from this block, so if it is a descendant of the child, the child should
+            // paint it (the other case is that it is intruding into the child), unless it has its own layer.
+            // If makeChildPaintOtherFloats is false, it means that the child must already know about all the floats
+            // it should paint.
             r->noPaint = false;
 
         if (!r->noPaint && !r->node->hasLayer()) {

@@ -1,3 +1,15 @@
+2008-01-31  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        - pixel test for http://bugs.webkit.org/show_bug.cgi?id=17107
+          <rdar://problem/5716722> REGRESSION (r29834): Article text on redhat.com magazine site appears to be painting twice
+
+        * fast/block/float/intruding-painted-twice.html: Added.
+        * platform/mac-leopard/fast/block/float/intruding-painted-twice-expected.checksum: Added.
+        * platform/mac-leopard/fast/block/float/intruding-painted-twice-expected.png: Added.
+        * platform/mac/fast/block/float/intruding-painted-twice-expected.txt: Added.
+
 2008-01-30  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Sam Weinig.

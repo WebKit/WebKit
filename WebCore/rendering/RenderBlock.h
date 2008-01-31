@@ -176,7 +176,7 @@ public:
 
     virtual bool hasOverhangingFloats() { return !hasColumns() && floatBottom() > m_height; }
     void addIntrudingFloats(RenderBlock* prev, int xoffset, int yoffset);
-    int addOverhangingFloats(RenderBlock* child, int xoffset, int yoffset);
+    int addOverhangingFloats(RenderBlock* child, int xoffset, int yoffset, bool makeChildPaintOtherFloats);
 
     int nearestFloatBottom(int height) const;
     int floatBottom() const;
