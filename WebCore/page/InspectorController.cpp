@@ -1597,6 +1597,12 @@ void InspectorController::drawNodeHighlight(GraphicsContext& context) const
         return;
     IntRect nodeRect(renderer->absoluteBoundingBoxRect());
 
+    Vector<IntRect> rects;
+    if (renderer->isInline() || (renderer->isText() && !m_highlightedNode->isSVGElement()))
+        renderer->addLineBoxRects(rects);
+    if (rects.isEmpty())
+        rects.append(nodeRect);
+
     if (!overlayRect.contains(nodeRect) && !nodeRect.contains(enclosingIntRect(overlayRect))) {
         Element* element;
         if (m_highlightedNode->isElementNode())
@@ -1606,13 +1612,20 @@ void InspectorController::drawNodeHighlight(GraphicsContext& context) const
         element->scrollIntoViewIfNeeded();
     }
 
-    context.clipOut(nodeRect);
-
+    // Draw translucent gray fill, out of which we will cut holes.
     context.fillRect(overlayRect, overlayFillColor);
 
-    IntRect outlineRect(nodeRect);
-    outlineRect.inflate(outlineThickness);
-    context.fillRect(outlineRect, Color::white);
+    // Draw white frames around holes in first pass, so they will be erased in
+    // places where holes overlap or abut.
+    for (size_t i = 0; i < rects.size(); ++i) {
+        IntRect rect = rects[i];
+        rect.inflate(outlineThickness);
+        context.fillRect(rect, Color::white);
+    }
+
+    // Erase holes in second pass.
+    for (size_t i = 0; i < rects.size(); ++i)
+        context.clearRect(rects[i]);
 }
 
 } // namespace WebCore

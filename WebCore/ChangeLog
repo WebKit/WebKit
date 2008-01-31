@@ -1,5 +1,22 @@
 2008-01-31  Adam Roben  <aroben@apple.com>
 
+        Add line box drawing code to InspectorController::drawNodeHighlight
+
+        This makes drawNodeHighlight a complete replacement for the painting
+        code in WebKit/mac/WebNodeHighlightView.mm, and also brings line box
+        rects to Windows for the first time.
+
+        Reviewed by Darin.
+
+        * dom/Node.h: Changed isSVGElement to always exist, but to only be
+        virtual when ENABLE(SVG) is true. This way you can always call
+        node->isSVGElement() without checking ENABLE(SVG).
+        * page/InspectorController.cpp:
+        (WebCore::InspectorController::drawNodeHighlight): Ported line box
+        rect code from the Mac implementation in WebNodeHighlightView.mm.
+
+2008-01-31  Adam Roben  <aroben@apple.com>
+
         Put more knowledge about the node highlight in WebCore
 
         InspectorController now calculates the overlay rect and node rect when
