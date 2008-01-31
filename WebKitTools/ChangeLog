@@ -1,3 +1,11 @@
+2008-01-30  Stephanie  <slewis@apple.com>
+
+        Reviewed by Geoff.
+
+        Add an option to run-webkit-tests to merge leaks results and print the number of unique leaks found under a certain call depth.  This should make it easier for the buildbots to track new leaks.
+
+        * Scripts/run-webkit-tests:
+
 2008-01-30  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Adam Roben.

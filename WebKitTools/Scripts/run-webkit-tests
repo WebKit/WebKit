@@ -91,6 +91,7 @@ sub deleteExpectedAndActualResults($);
 sub recordActualResultsAndDiff($$);
 sub buildPlatformHierarchy();
 sub epiloguesAndPrologues($$);
+sub parseLeaksandPrintUniqueLeaks();
 
 # Argument handling
 my $addPlatformExceptions = 0;
@@ -124,6 +125,8 @@ my $stripEditingCallbacks = isCygwin();
 my $root;
 my $reverseTests = 0;
 my $randomizeTests = 0;
+my $mergeDepth;
+my @leaksFilenames;
 
 # Default to --no-http for Qt, Gtk and wx for now.
 $testHTTP = 0 if (isQt() || isGtk() || isWx());
@@ -191,6 +194,7 @@ Usage: $programName [options] [testdir|testpath ...]
   --threshold t                   Ignore pixel value deviations less than or equal to t
   --valgrind                      Run DumpRenderTree inside valgrind (Qt/Linux only)
   -v|--verbose                    More verbose output (overrides --quiet)
+  -m|--merge-leak-depth arg       Merges leak callStacks and prints the number of unique leaks beneath a callstack depth of arg.  Defaults to 5.
 EOF
 
 my $getOptionsResult = GetOptions(
@@ -226,6 +230,7 @@ my $getOptionsResult = GetOptions(
     'reverse' => \$reverseTests,
     'root=s' => \$root,
     'add-platform-exceptions' => \$addPlatformExceptions,
+    'merge-leak-depth|m:5' => \$mergeDepth,
 );
 
 if (!$getOptionsResult || $showHelp) {
@@ -872,8 +877,13 @@ if ($shouldCheckLeaks && $pixelTests) {
 }
 
 if ($totalLeaks) {
-    print "\nWARNING: $totalLeaks total leaks found!\n";
-    print "See above for individual leaks results.\n" if ($leaksOutputFileNumber > 2);
+    if ($mergeDepth) {
+        parseLeaksandPrintUniqueLeaks();
+    }
+    else { 
+        print "\nWARNING: $totalLeaks total leaks found!\n";
+        print "See above for individual leaks results.\n" if ($leaksOutputFileNumber > 2);
+    }
 }
 
 close IN;
@@ -1097,6 +1107,8 @@ sub countAndPrintLeaks($$$)
         open LEAKS, ">", $leaksFilePath or die;
         print LEAKS $leaksOutput;
         close LEAKS;
+        
+        push( @leaksFilenames, $leaksFilePath );
     }
 
     return $adjustedCount;
@@ -1582,4 +1594,27 @@ sub epiloguesAndPrologues($$) {
         }
     }
     return @result;
+}
+    
+sub parseLeaksandPrintUniqueLeaks() {
+    return unless @leaksFilenames;
+     
+    my $mergedFilenames = join " ", @leaksFilenames;
+    my $parseMallocHistoryTool = sourceDir() . "/WebKitTools/Scripts/parse-malloc-history";
+    
+    open MERGED_LEAKS, "cat $mergedFilenames | $parseMallocHistoryTool --merge-depth $mergeDepth  - |" ;
+    my @leakLines = <MERGED_LEAKS>;
+    close MERGED_LEAKS;
+    
+    my $uniqueLeakCount = 0;
+    my $totalBytes;
+    foreach my $line (@leakLines) {
+        ++$uniqueLeakCount if ($line =~ /^(\d*)\scalls/);
+        $totalBytes = $1 if $line =~ /^total\:\s(.*)\s\(/;
+    }
+    
+    print "\nWARNING: $totalLeaks total leaks found for a total of $totalBytes!\n";
+    print "WARNING: $uniqueLeakCount unique leaks found!\n";
+    print "See above for individual leaks results.\n" if ($leaksOutputFileNumber > 2);
+    
 }
