@@ -48,15 +48,12 @@ static bool allowsAccessFromFrame(ExecState* exec, Frame* frame)
 bool JSHistory::customGetOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
 {
     // Allow access to back(), forward() and go() from any frame.
-    JSValue* proto = prototype();
-    if (proto->isObject()) {
-        const HashEntry* entry = Lookup::findEntry(static_cast<JSObject*>(proto)->classInfo()->propHashTable, propertyName);
-        if (entry && entry->attr & Function) {
-            if (entry->value.functionValue == jsHistoryPrototypeFunctionBack
-                    || entry->value.functionValue == jsHistoryPrototypeFunctionForward
-                    || entry->value.functionValue == jsHistoryPrototypeFunctionGo)
-                return false;
-        }
+    const HashEntry* entry = Lookup::findEntry(JSHistoryPrototype::info.propHashTable, propertyName);
+    if (entry && entry->attr & Function) {
+        if (entry->value.functionValue == jsHistoryPrototypeFunctionBack
+                || entry->value.functionValue == jsHistoryPrototypeFunctionForward
+                || entry->value.functionValue == jsHistoryPrototypeFunctionGo)
+            return false;
     }
 
     // Allow access to toString() from any frame as well.
