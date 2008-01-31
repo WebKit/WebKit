@@ -40,6 +40,7 @@
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "FrameTree.h"
+#include "GraphicsContext.h"
 #include "HTMLFrameOwnerElement.h"
 #include "InspectorClient.h"
 #include "JSRange.h"
@@ -1575,6 +1576,20 @@ void InspectorController::moveWindowBy(float x, float y) const
     FloatRect frameRect = m_page->chrome()->windowRect();
     frameRect.move(x, y);
     m_page->chrome()->setWindowRect(frameRect);
+}
+
+void InspectorController::drawNodeHighlight(GraphicsContext& context, const IntRect& overlayRect, const IntRect& highlightedNodeRect)
+{
+    static const Color overlayFillColor(0, 0, 0, 128);
+    static const int outlineThickness = 1;
+
+    context.clipOut(highlightedNodeRect);
+
+    context.fillRect(overlayRect, overlayFillColor);
+
+    IntRect outlineRect(highlightedNodeRect);
+    outlineRect.inflate(outlineThickness);
+    context.fillRect(outlineRect, Color::white);
 }
 
 } // namespace WebCore

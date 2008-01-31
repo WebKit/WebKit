@@ -1,3 +1,17 @@
+2008-01-31  Adam Roben  <aroben@apple.com>
+
+        Add node highlight drawing code to InspectorController
+
+        The code came from WebKit/win/WebNodeHighlight.cpp. It's not quite as
+        complete as the Mac implementation (in particular, it doesn't handle
+        line-box rects), but it's a start.
+
+        Reviewed by Darin.
+
+        * page/InspectorController.cpp:
+        (WebCore::InspectorController::drawNodeHighlight): Added.
+        * page/InspectorController.h:
+
 2008-01-31  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Dave Hyatt.

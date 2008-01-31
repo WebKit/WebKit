@@ -32,6 +32,7 @@
 #pragma warning(push, 0)
 #include <WebCore/Color.h>
 #include <WebCore/GraphicsContext.h>
+#include <WebCore/InspectorController.h>
 #include <WebCore/WindowMessageBroadcaster.h>
 #pragma warning(pop)
 #include <wtf/OwnPtr.h>
@@ -123,25 +124,15 @@ void WebNodeHighlight::updateWindow()
 
     void* pixels = 0;
     OwnPtr<HBITMAP> hbmp(::CreateDIBSection(hdc, &bitmapInfo, DIB_RGB_COLORS, &pixels, 0, 0));
-    if (!hbmp) {
-        DWORD error = ::GetLastError();
-        error++;
-        return;
-    }
 
     ::SelectObject(hdc, hbmp.get());
 
     GraphicsContext context(hdc);
 
-    context.clipOut(m_rect);
+    IntRect overlayRect(webViewRect);
+    overlayRect.setLocation(IntPoint(0, 0));
 
-    FloatRect overlayRect(webViewRect);
-    overlayRect.setLocation(FloatPoint(0, 0));
-    context.fillRect(overlayRect, Color(0, 0, 0, 128));
-
-    IntRect outlineRect(m_rect);
-    outlineRect.inflate(1);
-    context.fillRect(outlineRect, Color::white);
+    InspectorController::drawNodeHighlight(context, overlayRect, m_rect);
 
     BLENDFUNCTION bf;
     bf.BlendOp = AC_SRC_OVER;

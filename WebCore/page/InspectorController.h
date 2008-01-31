@@ -39,6 +39,7 @@ namespace WebCore {
 
 class Database;
 class DocumentLoader;
+class GraphicsContext;
 class InspectorClient;
 class Node;
 class ResourceResponse;
@@ -118,6 +119,8 @@ public:
     const ResourcesMap& resources() const { return m_resources; }
 
     void moveWindowBy(float x, float y) const;
+
+    static void drawNodeHighlight(GraphicsContext&, const IntRect& overlayRect, const IntRect& highlightedNodeRect);
 
 private:
     void focusNode();
