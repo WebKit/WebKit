@@ -295,7 +295,6 @@ static CachedResourceClient* promisedDataClient()
 - (void)_updateTextSizeMultiplier;
 - (DOMRange *)_selectedRange;
 - (BOOL)_shouldDeleteRange:(DOMRange *)range;
-- (BOOL)_canSmartReplaceWithPasteboard:(NSPasteboard *)pasteboard;
 - (NSView *)_hitViewForEvent:(NSEvent *)event;
 - (void)_writeSelectionWithPasteboardTypes:(NSArray *)types toPasteboard:(NSPasteboard *)pasteboard cachedAttributedString:(NSAttributedString *)attributedString;
 - (DOMRange *)_documentRange;
@@ -728,11 +727,6 @@ static NSURL* uniqueURLWithRelativePart(NSString *relativePart)
 {
     Frame* coreFrame = core([self _frame]);
     return coreFrame && coreFrame->editor()->shouldDeleteRange(core(range));
-}
-
-- (BOOL)_canSmartReplaceWithPasteboard:(NSPasteboard *)pasteboard
-{
-    return [[self _webView] smartInsertDeleteEnabled] && [[pasteboard types] containsObject:WebSmartPastePboardType];
 }
 
 - (NSView *)_hitViewForEvent:(NSEvent *)event
@@ -1516,6 +1510,24 @@ static void _updateMouseoverTimerCallback(CFRunLoopTimerRef timer, void *info)
     // turn it off again after adjusting the size.
     [self _web_setPrintingModeRecursiveAndAdjustViewSize];
     [self _web_clearPrintingModeRecursive];
+}
+
+- (void)_smartInsertForString:(NSString *)pasteString replacingRange:(DOMRange *)rangeToReplace beforeString:(NSString **)beforeString afterString:(NSString **)afterString
+{
+    if (!pasteString || !rangeToReplace || ![[self _webView] smartInsertDeleteEnabled]) {
+        if (beforeString)
+            *beforeString = nil;
+        if (afterString)
+            *afterString = nil;
+        return;
+    }
+    
+    [[self _bridge] smartInsertForString:pasteString replacingRange:rangeToReplace beforeString:beforeString afterString:afterString];
+}
+
+- (BOOL)_canSmartReplaceWithPasteboard:(NSPasteboard *)pasteboard
+{
+    return [[self _webView] smartInsertDeleteEnabled] && [[pasteboard types] containsObject:WebSmartPastePboardType];
 }
 
 - (void)_startAutoscrollTimer: (NSEvent *)triggerEvent

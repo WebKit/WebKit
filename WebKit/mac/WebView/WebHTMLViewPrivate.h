@@ -120,4 +120,7 @@
 // Typically this would be called from inside an override of -[NSView knowsPageRange:].
 - (void)_layoutForPrinting;
 
+- (BOOL)_canSmartReplaceWithPasteboard:(NSPasteboard *)pasteboard;
+
+
 @end

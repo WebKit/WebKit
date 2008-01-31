@@ -1,3 +1,17 @@
+2008-01-30  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Darin Adler.
+        
+        <rdar://problem/5708115> REGRESSION: Words selected with a double click and copied won't paste into Mail
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView _smartInsertForString:replacingRange:beforeString:afterString:]): Brought 
+        this back, it's used by Mail.
+        (-[WebHTMLView _canSmartReplaceWithPasteboard:]): This WebInternal method is
+        also used by Mail.  Moved to WebPrivate.
+        * WebView/WebHTMLViewPrivate.h: Expose two methods that Mail uses here, so that we don't
+        accidently remove them in the future.
+
 2008-01-30  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Oliver Hunt.
