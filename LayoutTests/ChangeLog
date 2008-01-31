@@ -1,3 +1,36 @@
+2008-01-31  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Adam Roben.
+
+        - change several tests that use Mac-only fonts to use fonts that are
+          available on both Windows and Mac OS X 
+
+        * fast/text/monospace-width-cache.html:
+        * platform/mac/fast/text/monospace-width-cache-expected.checksum:
+        * platform/mac/fast/text/monospace-width-cache-expected.png:
+        * platform/mac/fast/text/monospace-width-cache-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug10633-expected.checksum:
+        * platform/mac/tables/mozilla/bugs/bug10633-expected.png:
+        * platform/mac/tables/mozilla/bugs/bug10633-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug113424-expected.checksum:
+        * platform/mac/tables/mozilla/bugs/bug113424-expected.png:
+        * platform/mac/tables/mozilla/bugs/bug113424-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug23151-expected.checksum:
+        * platform/mac/tables/mozilla/bugs/bug23151-expected.png:
+        * platform/mac/tables/mozilla/bugs/bug23151-expected.txt:
+        * platform/mac/tables/mozilla/core/bloomberg-expected.checksum:
+        * platform/mac/tables/mozilla/core/bloomberg-expected.png:
+        * platform/mac/tables/mozilla/core/bloomberg-expected.txt:
+        * platform/mac/tables/mozilla_expected_failures/bugs/bug11331-expected.checksum:
+        * platform/mac/tables/mozilla_expected_failures/bugs/bug11331-expected.png:
+        * platform/mac/tables/mozilla_expected_failures/bugs/bug11331-expected.txt:
+        * platform/win/Skipped:
+        * tables/mozilla/bugs/bug10633.html:
+        * tables/mozilla/bugs/bug113424.html:
+        * tables/mozilla/bugs/bug23151.html:
+        * tables/mozilla/core/bloomberg.html:
+        * tables/mozilla_expected_failures/bugs/bug11331.html:
+
 2008-01-30  Samuel Weinig  <sam@webkit.org>
 
         Reviewed by Darin Adler.

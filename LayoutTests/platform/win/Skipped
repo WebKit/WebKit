@@ -67,11 +67,6 @@ svg/hixie/viewbox/preserveAspectRatio/002.xml
 svg/text/text-fonts-01-t.svg
 svg/text/text-intro-05-t.svg
 svg/text/text-tselect-02-f.svg
-tables/mozilla/core/bloomberg.html
-tables/mozilla/bugs/bug10633.html
-tables/mozilla/bugs/bug23151.html
-tables/mozilla/bugs/bug113424.html
-tables/mozilla_expected_failures/bugs/bug11331.html
 
 # No advanced text <rdar://problems/4516194>
 fast/text/atsui-multiple-renderers.html
@@ -79,7 +74,6 @@ fast/text/atsui-pointtooffset-calls-cg.html
 fast/text/atsui-spacing-features.html
 fast/text/cg-fallback-bolding.html
 fast/text/cg-vs-atsui.html
-fast/text/monospace-width-cache.html
 fast/text/international/003.html
 fast/text/international/bidi-AN-after-L.html
 fast/text/international/bidi-CS-after-AN.html
