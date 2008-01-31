@@ -1175,7 +1175,12 @@ JSObjectRef InspectorController::addDatabaseScriptResource(InspectorDatabaseReso
     JSRetainPtr<JSStringRef> databaseString(Adopt, JSStringCreateWithUTF8CString("Database"));
     JSObjectRef databaseConstructor = JSValueToObject(m_scriptContext, JSObjectGetProperty(m_scriptContext, m_scriptObject, databaseString.get(), 0), 0);
 
-    JSValueRef database = toRef(toJS(toJS(m_scriptContext), resource->database.get()));
+    JSValueRef database;
+
+    {
+        KJS::JSLock lock;
+        database = toRef(toJS(toJS(m_scriptContext), resource->database.get()));
+    }
 
     JSRetainPtr<JSStringRef> domain(Adopt, JSStringCreateWithCharacters(resource->domain.characters(), resource->domain.length()));
     JSValueRef domainValue = JSValueMakeString(m_scriptContext, domain.get());

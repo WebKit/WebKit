@@ -1,3 +1,15 @@
+2008-01-30  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Darin Adler.
+
+        ASSERTION FAILED: JSLock::lockCount() > 0 when opening the
+        Web Inspector on a page with a Database.
+
+        Fix the ASSERT by taking a JSLock before calling toJS().
+
+        * page/InspectorController.cpp:
+        (WebCore::InspectorController::addDatabaseScriptResource):
+
 2008-01-30  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Darin.
