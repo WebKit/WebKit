@@ -1,5 +1,24 @@
 2008-01-30  Dan Bernstein  <mitz@apple.com>
 
+        Reviewed by Sam Weinig.
+
+        - change the interpretation of unicode-range values in "from-to" form
+          to include the "to" character.
+
+        Test: fast/css/font-face-unicode-range.html
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseFontFaceUnicodeRange):
+        * css/CSSSegmentedFontFace.cpp:
+        (WebCore::CSSSegmentedFontFace::overlayRange):
+        * platform/graphics/GlyphPageTreeNode.cpp:
+        (WebCore::GlyphPageTreeNode::initializePage):
+        * platform/graphics/SegmentedFontData.cpp:
+        (WebCore::SegmentedFontData::fontDataForCharacter):
+        (WebCore::SegmentedFontData::containsCharacters):
+
+2008-01-30  Dan Bernstein  <mitz@apple.com>
+
         Reviewed by Darin Adler.
 
         - prune references to custom fonts' SimpleFontData from the glyph page

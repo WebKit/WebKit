@@ -163,7 +163,7 @@ void GlyphPageTreeNode::initializePage(const FontData* fontData, unsigned pageNu
                 for (unsigned i = 0; i < numRanges; i++) {
                     const FontDataRange& range = segmentedFontData->rangeAt(i);
                     int from = max(0, range.from() - static_cast<int>(start));
-                    int to = min(range.to() - static_cast<int>(start), static_cast<int>(GlyphPage::size));
+                    int to = 1 + min(range.to() - static_cast<int>(start), static_cast<int>(GlyphPage::size) - 1);
                     if (from < static_cast<int>(GlyphPage::size) && to > 0) {
                         if (!zeroFilled) {
                             if (from > 0 || to < static_cast<int>(GlyphPage::size)) {

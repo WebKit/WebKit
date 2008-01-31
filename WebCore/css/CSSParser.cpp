@@ -2862,7 +2862,7 @@ bool CSSParser::parseFontFaceUnicodeRange()
             break;
 
         if (i == length)
-            to = from + 1;
+            to = from;
         else if (rangeString[i] == '?') {
             unsigned span = 1;
             while (i < length && rangeString[i] == '?') {
@@ -2872,7 +2872,7 @@ bool CSSParser::parseFontFaceUnicodeRange()
             }
             if (i < length)
                 failed = true;
-            to = from + span;
+            to = from + span - 1;
         } else {
             if (length < i + 2) {
                 failed = true;

@@ -1,3 +1,19 @@
+2008-01-30  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        - add a test for the unicode-range @font-face property
+        - update @font-face rules in existing tests after changing unicode-range
+          values in "from-to" form to include the "to" character
+
+        * fast/css/font-face-unicode-range.html: Added.
+        * fast/css/rtl-ordering.html:
+        * fast/text/international/resources/Mac-compatible-font-fallback.css:
+        * platform/mac-leopard/fast/css/font-face-unicode-range-expected.checksum: Added.
+        * platform/mac-leopard/fast/css/font-face-unicode-range-expected.png: Added.
+        * platform/mac/fast/css/font-face-unicode-range-expected.txt: Added.
+        * platform/win/css2.1/resources/Mac-compatible-font-fallback.css:
+
 2008-01-30  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Darin Adler.
