@@ -1,0 +1,11 @@
+<div contenteditable="true">
+    <div>There should be a single empty H1 block below.</div>
+    <div id="div"><br></div>
+    <div id="div">There should be a single empty H1 block above.</div>
+</div>
+
+<script>
+div = document.getElementById("div");
+window.getSelection().setPosition(div, 0);
+document.execCommand("FormatBlock", false, "h1");
+</script>

@@ -1,3 +1,18 @@
+2008-01-30  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Darin Adler.
+        
+        <rdar://problem/5700414> REGRESSION (Adama-ToT): Selecting "Header 1" style in Leopard Server wiki inserts newline
+
+        * editing/execCommand/5700414-1.html: Added.
+        * editing/execCommand/5700414-2.html: Added.
+        * platform/mac/editing/execCommand/5700414-1-expected.checksum: Added.
+        * platform/mac/editing/execCommand/5700414-1-expected.png: Added.
+        * platform/mac/editing/execCommand/5700414-1-expected.txt: Added.
+        * platform/mac/editing/execCommand/5700414-2-expected.checksum: Added.
+        * platform/mac/editing/execCommand/5700414-2-expected.png: Added.
+        * platform/mac/editing/execCommand/5700414-2-expected.txt: Added.
+
 2008-01-29  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Dave Hyatt.

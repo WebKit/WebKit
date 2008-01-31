@@ -1,0 +1,11 @@
+<div contenteditable="true">
+    <div>There should an empty H1 block below, followed by a normal empty paragraph.</div>
+    <div id="div"><br><br></div>
+    <div id="div">There should be a single empty paragraph above.</div>
+</div>
+
+<script>
+div = document.getElementById("div");
+window.getSelection().setPosition(div, 0);
+document.execCommand("FormatBlock", false, "h1");
+</script>
