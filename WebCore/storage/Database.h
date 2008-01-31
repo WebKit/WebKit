@@ -138,6 +138,8 @@ private:
     RefPtr<SQLTransaction> m_transactionPendingCallback;
 
 #ifndef NDEBUG
+    ThreadIdentifier m_transactionStepThread;
+
     String databaseDebugName() const { return m_securityOrigin->toString() + "::" + m_name; }
 #endif
 

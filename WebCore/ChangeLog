@@ -1,3 +1,24 @@
+2008-01-30  Darin Adler  <darin@apple.com>
+
+        Reviewed by Tim Hatcher.
+
+        New fix for <rdar://problem/5688428> Reproducible assertion failure
+        in SQLTransaction::performNextStep() (16876)
+
+        Fixes a deadlock that was happening for all Database use. All
+        storage layout tests pass.
+
+        * storage/Database.cpp:
+        (WebCore::CurrentThreadSetter::CurrentThreadSetter): New helper class
+        to set the current thread and zero it on destruction.
+        (WebCore::CurrentThreadSetter::~CurrentThreadSetter): Set threadIdentifierStorage to 0.
+        (WebCore::Database::Database): Set m_transactionStepThread to 0.
+        (WebCore::Database::performTransactionStep): Set m_transactionStepThread to currentThread().
+        (WebCore::Database::scheduleTransactionCallback): Assert m_transactionStepThread
+        is currentThread().
+        * storage/Database.h: Add m_transactionStepThread for debug builds
+        to track which thread performTransactionStep() was called on. 
+
 2008-01-30  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Darin Adler.

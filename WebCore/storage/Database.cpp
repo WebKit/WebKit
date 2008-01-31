@@ -48,6 +48,27 @@
 #include "SQLResultSet.h"
 
 namespace WebCore {
+        
+#ifndef NDEBUG
+class CurrentThreadSetter {
+public:
+    CurrentThreadSetter(ThreadIdentifier& thread)
+        : threadIdentifierStorage(thread)
+    {
+        ASSERT(!thread);
+        thread = currentThread();
+    }
+
+    ~CurrentThreadSetter()
+    {
+        ASSERT(threadIdentifierStorage == currentThread());
+        threadIdentifierStorage = 0;
+    }
+
+private:
+    ThreadIdentifier& threadIdentifierStorage;
+};
+#endif
 
 Mutex& Database::globalCallbackMutex()
 {
@@ -124,6 +145,9 @@ Database::Database(Document* document, const String& name, const String& expecte
     , m_guid(0)
     , m_expectedVersion(expectedVersion)
     , m_databaseThread(0)
+#ifndef NDEBUG
+    , m_transactionStepThread(0)
+#endif
 {
     ASSERT(document);
     m_securityOrigin = document->securityOrigin();
@@ -403,6 +427,10 @@ bool Database::performOpenAndVerify(ExceptionCode& e)
 
 void Database::performTransactionStep()
 {
+#ifndef NDEBUG
+    CurrentThreadSetter threadSetter(m_transactionStepThread);
+#endif
+
     // Do not perform a transaction if a global callback is scheduled.
     MutexLocker locker(globalCallbackMutex());
     if (s_globalCallbackScheduled)
@@ -460,18 +488,19 @@ void Database::scheduleTransactionStep()
 }
 
 void Database::scheduleTransactionCallback(SQLTransaction* transaction)
-{    
-    MutexLocker locker(globalCallbackMutex());
-    {
-        MutexLocker locker(m_callbackMutex);
-        
-        ASSERT(!m_transactionPendingCallback);
-        m_transactionPendingCallback = transaction;
-        globalCallbackSet().add(this);
-        if (!s_globalCallbackScheduled) {
-            callOnMainThread(deliverAllPendingCallbacks);
-            s_globalCallbackScheduled = true;
-        }
+{
+    ASSERT(m_transactionStepThread == currentThread());
+
+    MutexLocker locker(m_callbackMutex);
+
+    ASSERT(!m_transactionPendingCallback);
+    m_transactionPendingCallback = transaction;
+
+    globalCallbackSet().add(this);
+
+    if (!s_globalCallbackScheduled) {
+        callOnMainThread(deliverAllPendingCallbacks);
+        s_globalCallbackScheduled = true;
     }
 }
 
