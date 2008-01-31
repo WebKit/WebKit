@@ -1,3 +1,41 @@
+2008-01-31  Alp Toker  <alp@atoker.com>
+
+        Reviewed by Adam Roben.
+
+        http://bugs.webkit.org/show_bug.cgi?id=17006
+        [GTK] Header path should be webkit/webkit.h
+
+        Move the GTK+ API sources as needed and update the build systems.
+
+        * WebView: Removed.
+        * WebView/headers.pri: Removed.
+        * WebView/webkit-marshal.list: Removed.
+        * WebView/webkit.h: Removed.
+        * WebView/webkitdefines.h: Removed.
+        * WebView/webkitnetworkrequest.cpp: Removed.
+        * WebView/webkitnetworkrequest.h: Removed.
+        * WebView/webkitprivate.cpp: Removed.
+        * WebView/webkitprivate.h: Removed.
+        * WebView/webkitwebbackforwardlist.cpp: Removed.
+        * WebView/webkitwebbackforwardlist.h: Removed.
+        * WebView/webkitwebframe.cpp: Removed.
+        * WebView/webkitwebframe.h: Removed.
+        * WebView/webkitwebhistoryitem.cpp: Removed.
+        * WebView/webkitwebhistoryitem.h: Removed.
+        * WebView/webkitwebsettings.cpp: Removed.
+        * WebView/webkitwebsettings.h: Removed.
+        * WebView/webkitwebview.cpp: Removed.
+        * WebView/webkitwebview.h: Removed.
+        * webkit: Copied from WebKit/gtk/WebView.
+        * webkit/webkit.h:
+        * webkit/webkitnetworkrequest.h:
+        * webkit/webkitprivate.h:
+        * webkit/webkitwebbackforwardlist.h:
+        * webkit/webkitwebframe.h:
+        * webkit/webkitwebhistoryitem.h:
+        * webkit/webkitwebsettings.h:
+        * webkit/webkitwebview.h:
+
 2008-01-27  Jan Michael Alonzo  <jmalonzo@unpluggable.com>
 
         Reviewed by Alp Toker.

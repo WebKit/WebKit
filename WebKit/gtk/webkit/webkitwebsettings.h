@@ -22,7 +22,7 @@
 
 #include <glib-object.h>
 
-#include "webkitdefines.h"
+#include <webkit/webkitdefines.h>
 
 G_BEGIN_DECLS
 

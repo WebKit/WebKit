@@ -20,12 +20,12 @@
 #ifndef __WEBKIT_H__
 #define __WEBKIT_H__
 
-#include <webkitdefines.h>
-#include <webkitnetworkrequest.h>
-#include <webkitwebframe.h>
-#include <webkitwebsettings.h>
-#include <webkitwebview.h>
-#include <webkitwebbackforwardlist.h>
-#include <webkitwebhistoryitem.h>
+#include <webkit/webkitdefines.h>
+#include <webkit/webkitnetworkrequest.h>
+#include <webkit/webkitwebframe.h>
+#include <webkit/webkitwebsettings.h>
+#include <webkit/webkitwebview.h>
+#include <webkit/webkitwebbackforwardlist.h>
+#include <webkit/webkitwebhistoryitem.h>
 
 #endif /* __WEBKIT_H__ */

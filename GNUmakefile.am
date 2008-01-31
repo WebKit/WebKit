@@ -125,7 +125,7 @@ webkitgtk_cleanfiles :=
 
 # No need to touch the following variables unless you have to. If you need to change the values
 # for the following variables, use the "webkitgtk_" variables above
-libWebKitGtk_ladir := $(prefix)/include/WebKit
+libWebKitGtk_ladir := $(prefix)/include/WebKit/webkit
 
 libWebKitGtk_la_HEADERS = $(webkitgtk_h_api)
 
@@ -229,26 +229,26 @@ endif
 #
 # WEBKIT GTK+
 webkitgtk_cppflags += \
--I$(top_builddir)/WebKit/gtk/WebView \
+-I$(top_builddir)/WebKit/gtk/webkit \
 -DBUILDING_CAIRO__=1 \
 -DBUILD_WEBKIT
 
 webkitgtk_h_api += \
-	WebKit/gtk/WebView/webkit.h \
-	WebKit/gtk/WebView/webkitdefines.h \
-	WebKit/gtk/WebView/webkitnetworkrequest.h \
-	WebKit/gtk/WebView/webkitwebbackforwardlist.h \
-	WebKit/gtk/WebView/webkitwebframe.h \
-	WebKit/gtk/WebView/webkitwebhistoryitem.h \
-	WebKit/gtk/WebView/webkitwebsettings.h \
-	WebKit/gtk/WebView/webkitwebview.h 
+	WebKit/gtk/webkit/webkit.h \
+	WebKit/gtk/webkit/webkitdefines.h \
+	WebKit/gtk/webkit/webkitnetworkrequest.h \
+	WebKit/gtk/webkit/webkitwebbackforwardlist.h \
+	WebKit/gtk/webkit/webkitwebframe.h \
+	WebKit/gtk/webkit/webkitwebhistoryitem.h \
+	WebKit/gtk/webkit/webkitwebsettings.h \
+	WebKit/gtk/webkit/webkitwebview.h 
 
 webkitgtk_built_sources += \
-	WebKit/gtk/WebView/webkit-marshal.h \
-	WebKit/gtk/WebView/webkit-marshal.cpp
+	WebKit/gtk/webkit/webkit-marshal.h \
+	WebKit/gtk/webkit/webkit-marshal.cpp
 
 webkitgtk_headers += \
-	WebKit/gtk/WebView/webkitprivate.h \
+	WebKit/gtk/webkit/webkitprivate.h \
 	WebKit/gtk/WebCoreSupport/ChromeClientGtk.h \
 	WebKit/gtk/WebCoreSupport/ContextMenuClientGtk.h \
 	WebKit/gtk/WebCoreSupport/DragClientGtk.h \
@@ -258,13 +258,13 @@ webkitgtk_headers += \
 	WebKit/gtk/WebCoreSupport/PasteboardHelperGtk.h
 
 webkitgtk_sources += \
-	WebKit/gtk/WebView/webkitnetworkrequest.cpp \
-	WebKit/gtk/WebView/webkitprivate.cpp \
-	WebKit/gtk/WebView/webkitwebbackforwardlist.cpp \
-	WebKit/gtk/WebView/webkitwebframe.cpp \
-	WebKit/gtk/WebView/webkitwebhistoryitem.cpp \
-	WebKit/gtk/WebView/webkitwebsettings.cpp \
-	WebKit/gtk/WebView/webkitwebview.cpp \
+	WebKit/gtk/webkit/webkitnetworkrequest.cpp \
+	WebKit/gtk/webkit/webkitprivate.cpp \
+	WebKit/gtk/webkit/webkitwebbackforwardlist.cpp \
+	WebKit/gtk/webkit/webkitwebframe.cpp \
+	WebKit/gtk/webkit/webkitwebhistoryitem.cpp \
+	WebKit/gtk/webkit/webkitwebsettings.cpp \
+	WebKit/gtk/webkit/webkitwebview.cpp \
 	WebKit/gtk/WebCoreSupport/ChromeClientGtk.cpp \
 	WebKit/gtk/WebCoreSupport/ContextMenuClientGtk.cpp \
 	WebKit/gtk/WebCoreSupport/DragClientGtk.cpp \
@@ -280,17 +280,17 @@ webkitgtk_cleanfiles += \
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = WebKit/gtk/WebKitGtk.pc
 
-WEBKIT_MARSHAL = $(CURDIR)/WebKit/gtk/WebView/webkit-marshal
-WEBKIT_MARSHAL_LIST = $(srcdir)/WebKit/gtk/WebView/webkit-marshal.list
+WEBKIT_MARSHAL = $(CURDIR)/WebKit/gtk/webkit/webkit-marshal
+WEBKIT_MARSHAL_LIST = $(srcdir)/WebKit/gtk/webkit/webkit-marshal.list
 
 stamp_files := \
 	stamp-webkit-marshal.cpp \
 	stamp-webkit-marshal.h
 
-WebKit/gtk/WebView/webkit-marshal.cpp: stamp-webkit-marshal.cpp
+WebKit/gtk/webkit/webkit-marshal.cpp: stamp-webkit-marshal.cpp
 	@true
 
-WebKit/gtk/WebView/webkit-marshal.h: stamp-webkit-marshal.h
+WebKit/gtk/webkit/webkit-marshal.h: stamp-webkit-marshal.h
 	@true
 
 stamp-webkit-marshal.cpp: $(WEBKIT_MARSHAL_LIST)

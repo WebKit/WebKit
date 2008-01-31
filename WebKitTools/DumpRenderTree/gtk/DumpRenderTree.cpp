@@ -31,7 +31,7 @@
 #include "WorkQueueItem.h"
 
 #include <gtk/gtk.h>
-#include <webkit.h>
+#include <webkit/webkit.h>
 
 #include <JavaScriptCore/JSBase.h>
 #include <JavaScriptCore/JSContextRef.h>

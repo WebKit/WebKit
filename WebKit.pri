@@ -17,7 +17,7 @@ qt-port:!building-libs {
 gtk-port:!building-libs {
     QMAKE_LIBDIR = $$OUTPUT_DIR/lib $$QMAKE_LIBDIR
     LIBS += -lWebKitGtk
-    DEPENDPATH += $$PWD/WebKit/gtk/WebView $$PWD/WebKit/gtk/WebCoreSupport
+    DEPENDPATH += $$PWD/WebKit/gtk $$PWD/WebKit/gtk/WebCoreSupport $$PWD/WebKit/gtk/webkit
 }
 
 gtk-port {
@@ -73,8 +73,9 @@ gtk-port:INCLUDEPATH += \
     $$BASE_DIR/WebCore/platform/graphics/cairo \
     $$BASE_DIR/WebCore/loader/gtk \
     $$BASE_DIR/WebCore/page/gtk \
-    $$BASE_DIR/WebKit/gtk/WebView \
-    $$BASE_DIR/WebKit/gtk/WebCoreSupport
+    $$BASE_DIR/WebKit/gtk \
+    $$BASE_DIR/WebKit/gtk/WebCoreSupport \
+    $$BASE_DIR/WebKit/gtk/webkit
 INCLUDEPATH += \
     $$BASE_DIR/JavaScriptCore/ \
     $$BASE_DIR/JavaScriptCore/kjs \

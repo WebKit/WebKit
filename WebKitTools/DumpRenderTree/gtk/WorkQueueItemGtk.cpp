@@ -18,13 +18,10 @@
  */
 
 #include "WorkQueueItem.h"
-
-#include "webkitnetworkrequest.h"
-#include "webkitwebframe.h"
-#include "webkitwebview.h"
-
 #include "DumpRenderTree.h"
+
 #include <JavaScriptCore/JSStringRef.h>
+#include <webkit/webkit.h>
 
 // Returns a newly allocated UTF-8 character buffer which must be freed with g_free()
 static gchar* JSStringCopyUTF8CString(JSStringRef jsString)

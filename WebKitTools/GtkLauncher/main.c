@@ -25,7 +25,7 @@
  */
 
 #include <gtk/gtk.h>
-#include <webkit.h>
+#include <webkit/webkit.h>
 
 static GtkWidget* main_window;
 static GtkWidget* uri_entry;

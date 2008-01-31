@@ -24,7 +24,7 @@
 #include <glib-object.h>
 #include <JavaScriptCore/JSBase.h>
 
-#include "webkitdefines.h"
+#include <webkit/webkitdefines.h>
 
 G_BEGIN_DECLS
 

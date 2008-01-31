@@ -154,8 +154,9 @@ gtk-port {
     $$PWD/platform/image-decoders/xbm \
     $$PWD/loader/gtk \
     $$PWD/page/gtk \
+    $$PWD/../WebKit/gtk \
     $$PWD/../WebKit/gtk/WebCoreSupport \
-    $$PWD/../WebKit/gtk/WebView
+    $$PWD/../WebKit/gtk/webkit
 
     DEPENDPATH += \
     platform/gtk \
@@ -172,8 +173,9 @@ gtk-port {
     platform/image-decoders/xbm \
     loader/gtk \
     page/gtk \
+    ../WebKit/gtk \
     ../WebKit/gtk/WebCoreSupport \
-    ../WebKit/gtk/WebView
+    ../WebKit/gtk/webkit
 }
 
 INCLUDEPATH +=  $$PWD \
@@ -986,15 +988,15 @@ gtk-port {
     HEADERS += \
         ../WebCore/platform/gtk/ClipboardGtk.h \
         ../WebCore/platform/gtk/PasteboardHelper.h \
-        ../WebKit/gtk/WebView/webkit.h \
-        ../WebKit/gtk/WebView/webkitdefines.h \
-        ../WebKit/gtk/WebView/webkitnetworkrequest.h \
-        ../WebKit/gtk/WebView/webkitprivate.h \
-        ../WebKit/gtk/WebView/webkitwebbackforwardlist.h \
-        ../WebKit/gtk/WebView/webkitwebframe.h \
-        ../WebKit/gtk/WebView/webkitwebhistoryitem.h \
-        ../WebKit/gtk/WebView/webkitwebsettings.h \
-        ../WebKit/gtk/WebView/webkitwebview.h \
+        ../WebKit/gtk/webkit/webkit.h \
+        ../WebKit/gtk/webkit/webkitdefines.h \
+        ../WebKit/gtk/webkit/webkitnetworkrequest.h \
+        ../WebKit/gtk/webkit/webkitprivate.h \
+        ../WebKit/gtk/webkit/webkitwebbackforwardlist.h \
+        ../WebKit/gtk/webkit/webkitwebframe.h \
+        ../WebKit/gtk/webkit/webkitwebhistoryitem.h \
+        ../WebKit/gtk/webkit/webkitwebsettings.h \
+        ../WebKit/gtk/webkit/webkitwebview.h \
         ../WebKit/gtk/WebCoreSupport/ChromeClientGtk.h \
         ../WebKit/gtk/WebCoreSupport/ContextMenuClientGtk.h \
         ../WebKit/gtk/WebCoreSupport/DragClientGtk.h \
@@ -1067,13 +1069,13 @@ gtk-port {
         platform/image-decoders/bmp/BMPImageDecoder.cpp \
         platform/image-decoders/ico/ICOImageDecoder.cpp \
         platform/image-decoders/xbm/XBMImageDecoder.cpp \
-        ../WebKit/gtk/WebView/webkitnetworkrequest.cpp \
-        ../WebKit/gtk/WebView/webkitprivate.cpp \
-        ../WebKit/gtk/WebView/webkitwebbackforwardlist.cpp \
-        ../WebKit/gtk/WebView/webkitwebframe.cpp \
-        ../WebKit/gtk/WebView/webkitwebhistoryitem.cpp \
-        ../WebKit/gtk/WebView/webkitwebsettings.cpp \
-        ../WebKit/gtk/WebView/webkitwebview.cpp \
+        ../WebKit/gtk/webkit/webkitnetworkrequest.cpp \
+        ../WebKit/gtk/webkit/webkitprivate.cpp \
+        ../WebKit/gtk/webkit/webkitwebbackforwardlist.cpp \
+        ../WebKit/gtk/webkit/webkitwebframe.cpp \
+        ../WebKit/gtk/webkit/webkitwebhistoryitem.cpp \
+        ../WebKit/gtk/webkit/webkitwebsettings.cpp \
+        ../WebKit/gtk/webkit/webkitwebview.cpp \
         ../WebKit/gtk/WebCoreSupport/ChromeClientGtk.cpp \
         ../WebKit/gtk/WebCoreSupport/ContextMenuClientGtk.cpp \
         ../WebKit/gtk/WebCoreSupport/DragClientGtk.cpp \
@@ -1794,7 +1796,7 @@ gtk-port {
     target.path = $$WEBKIT_LIB_DIR
     INSTALLS += target
 
-    include($$PWD/../WebKit/gtk/WebView/headers.pri)
+    include($$PWD/../WebKit/gtk/webkit/headers.pri)
     headers.files = $$WEBKIT_API_HEADERS
     headers.path = $$WEBKIT_INC_DIR
     INSTALLS += headers
@@ -1814,7 +1816,7 @@ gtk-port {
         QMAKE_PKGCONFIG_INSTALL_REPLACE += lib_replace
     }
 
-    GENMARSHALS = ../WebKit/gtk/WebView/webkit-marshal.list
+    GENMARSHALS = ../WebKit/gtk/webkit/webkit-marshal.list
     GENMARSHALS_PREFIX = webkit_marshal
 
     #

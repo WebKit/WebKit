@@ -23,10 +23,10 @@
 #include <gtk/gtk.h>
 #include <JavaScriptCore/JSBase.h>
 
-#include "webkitdefines.h"
-#include "webkitwebbackforwardlist.h"
-#include "webkitwebhistoryitem.h"
-#include "webkitwebsettings.h"
+#include <webkit/webkitdefines.h>
+#include <webkit/webkitwebbackforwardlist.h>
+#include <webkit/webkitwebhistoryitem.h>
+#include <webkit/webkitwebsettings.h>
 
 G_BEGIN_DECLS
 

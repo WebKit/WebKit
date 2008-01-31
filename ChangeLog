@@ -1,3 +1,15 @@
+2008-01-31  Alp Toker  <alp@atoker.com>
+
+        Reviewed by Adam Roben.
+
+        http://bugs.webkit.org/show_bug.cgi?id=17006
+        [GTK] Header path should be webkit/webkit.h
+
+        Move the GTK+ API sources as needed and update the build systems.
+
+        * GNUmakefile.am:
+        * WebKit.pri:
+
 2008-01-27  Jan Michael Alonzo  <jmalonzo@unpluggable.com>
 
         Reviewed by Alp Toker.

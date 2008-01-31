@@ -1,3 +1,18 @@
+2008-01-31  Alp Toker  <alp@atoker.com>
+
+        Reviewed by Adam Roben.
+
+        http://bugs.webkit.org/show_bug.cgi?id=17006
+        [GTK] Header path should be webkit/webkit.h
+
+        Move the GTK+ API sources as needed and update the build systems.
+
+        * DumpRenderTree/gtk/DumpRenderTree.cpp:
+        * DumpRenderTree/gtk/DumpRenderTreeGtk.h:
+        * DumpRenderTree/gtk/WorkQueueItemGtk.cpp:
+        * GNUmakefile.am:
+        * GtkLauncher/main.c:
+
 2008-01-30  Stephanie  <slewis@apple.com>
 
         Reviewed by Geoff.

@@ -23,8 +23,8 @@
 #include <glib.h>
 #include <glib-object.h>
 
-#include "webkitdefines.h"
-#include "webkitwebhistoryitem.h"
+#include <webkit/webkitdefines.h>
+#include <webkit/webkitwebhistoryitem.h>
 
 G_BEGIN_DECLS
 

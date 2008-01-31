@@ -27,12 +27,12 @@
  * They are using WebCore which musn't be exposed to the outer world.
  */
 
-#include "webkitdefines.h"
-#include "webkitwebview.h"
-#include "webkitwebframe.h"
-#include "webkitwebsettings.h"
-#include "webkitnetworkrequest.h"
-#include "webkitwebbackforwardlist.h"
+#include <webkit/webkitdefines.h>
+#include <webkit/webkitwebview.h>
+#include <webkit/webkitwebframe.h>
+#include <webkit/webkitwebsettings.h>
+#include <webkit/webkitnetworkrequest.h>
+#include <webkit/webkitwebbackforwardlist.h>
 
 #include "BackForwardList.h"
 #include "HistoryItem.h"

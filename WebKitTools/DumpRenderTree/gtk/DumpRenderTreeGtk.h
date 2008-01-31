@@ -29,7 +29,7 @@
 #ifndef DumpRenderTreeGtk_h
 #define DumpRenderTreeGtk_h
 
-#include "webkitdefines.h"
+#include <webkit/webkitdefines.h>
 
 extern WebKitWebFrame* mainFrame;
 extern WebKitWebFrame* topLoadingFrame;
