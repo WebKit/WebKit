@@ -7640,6 +7640,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\bindings\js\JSHistoryCustom.cpp"
+					>
+				</File>
+				<File
 					RelativePath="..\bindings\js\JSHTMLAllCollection.h"
 					>
 				</File>

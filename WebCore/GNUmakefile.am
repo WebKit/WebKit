@@ -461,6 +461,7 @@ webcore_sources += \
 	WebCore/bindings/js/JSElementCustom.cpp \
 	WebCore/bindings/js/JSEventCustom.cpp \
 	WebCore/bindings/js/JSEventTargetBase.cpp \
+	WebCore/bindings/js/JSHistoryCustom.cpp \
 	WebCore/bindings/js/JSLocation.cpp \
 	WebCore/bindings/js/JSEventTargetNode.cpp \
 	WebCore/bindings/js/JSHTMLAppletElementCustom.cpp \
