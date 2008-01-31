@@ -30,18 +30,19 @@
 #define WebNodeHighlight_h
 
 #pragma warning(push, 0)
-#include <WebCore/IntRect.h>
 #include <WebCore/WindowMessageListener.h>
 #pragma warning(pop)
 
 #include <windows.h>
 
+class WebView;
+
 class WebNodeHighlight : WebCore::WindowMessageListener {
 public:
-    WebNodeHighlight(HWND webView);
+    WebNodeHighlight(WebView*);
     ~WebNodeHighlight();
 
-    void highlight(const WebCore::IntRect&);
+    void show();
     void hide();
 
     void updateWindow();
@@ -50,11 +51,10 @@ public:
 private:
     virtual void windowReceivedMessage(HWND, UINT message, WPARAM, LPARAM);
 
-    HWND m_webView;
+    WebView* m_inspectedWebView;
+    HWND m_inspectedWebViewWindow;
     HWND m_overlay;
     HWND m_observedWindow;
-
-    WebCore::IntRect m_rect;
 
     friend static LRESULT CALLBACK OverlayWndProc(HWND, UINT, WPARAM, LPARAM);
 };

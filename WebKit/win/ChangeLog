@@ -1,5 +1,26 @@
 2008-01-31  Adam Roben  <aroben@apple.com>
 
+        Let WebCore take care of the highlight drawing entirely
+
+        Reviewed by Darin.
+
+        * WebInspectorClient.cpp:
+        (WebInspectorClient::highlight): We now just show our highlight
+        window and let WebCore figure out what/where to paint. Once all ports
+        follow suit the Node* parameter to this method should be removed
+        entirely, and the name should probably change to
+        updateAndShowHighlight or something similar.
+        * WebNodeHighlight.cpp: Renamed m_webView to m_inspectedWebViewWindow.
+        (WebNodeHighlight::WebNodeHighlight): Now takes a WebView* parameter.
+        (WebNodeHighlight::show): Renamed from highlight(). Now gets the
+        WebView's HWND. Updated for member rename/removal.
+        (WebNodeHighlight::updateWindow): Updated for member rename and for
+        InspectorController changes.
+        * WebNodeHighlight.h: Added m_inspectedWebView member, removed m_rect
+        member, renamed highlight(Node*) -> show().
+
+2008-01-31  Adam Roben  <aroben@apple.com>
+
         Move node highlight drawing code to WebCore
 
         Reviewed by Darin.

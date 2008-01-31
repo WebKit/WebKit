@@ -29,10 +29,12 @@
 #include "config.h"
 #include "WebNodeHighlight.h"
 
+#include "WebView.h"
 #pragma warning(push, 0)
 #include <WebCore/Color.h>
 #include <WebCore/GraphicsContext.h>
 #include <WebCore/InspectorController.h>
+#include <WebCore/Page.h>
 #include <WebCore/WindowMessageBroadcaster.h>
 #pragma warning(pop)
 #include <wtf/OwnPtr.h>
@@ -44,8 +46,9 @@ static LPCTSTR kOverlayWindowClassName = TEXT("WebNodeHighlightWindowClass");
 static ATOM registerOverlayClass();
 static LPCTSTR kWebNodeHighlightPointerProp = TEXT("WebNodeHighlightPointer");
 
-WebNodeHighlight::WebNodeHighlight(HWND webView)
-    : m_webView(webView)
+WebNodeHighlight::WebNodeHighlight(WebView* webView)
+    : m_inspectedWebView(webView)
+    , m_inspectedWebViewWindow(0)
     , m_overlay(0)
     , m_observedWindow(0)
 {
@@ -60,25 +63,27 @@ WebNodeHighlight::~WebNodeHighlight()
         ::DestroyWindow(m_overlay);
 }
 
-void WebNodeHighlight::highlight(const IntRect& rect)
+void WebNodeHighlight::show()
 {
     if (!m_overlay) {
+        if (FAILED(m_inspectedWebView->viewWindow(reinterpret_cast<OLE_HANDLE*>(&m_inspectedWebViewWindow))) || !IsWindow(m_inspectedWebViewWindow))
+            return;
+
         registerOverlayClass();
 
         m_overlay = ::CreateWindowEx(WS_EX_LAYERED | WS_EX_TOOLWINDOW, kOverlayWindowClassName, 0, WS_POPUP | WS_VISIBLE,
                                      0, 0, 0, 0,
-                                     m_webView, 0, 0, 0);
+                                     m_inspectedWebViewWindow, 0, 0, 0);
         if (!m_overlay)
             return;
 
         ::SetProp(m_overlay, kWebNodeHighlightPointerProp, reinterpret_cast<HANDLE>(this));
-        ::SetWindowPos(m_overlay, m_webView, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
+        ::SetWindowPos(m_overlay, m_inspectedWebViewWindow, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
 
-        m_observedWindow = GetAncestor(m_webView, GA_ROOT);
+        m_observedWindow = GetAncestor(m_inspectedWebViewWindow, GA_ROOT);
         WindowMessageBroadcaster::addListener(m_observedWindow, this);
     }
 
-    m_rect = rect;
     updateWindow();
     ::ShowWindow(m_overlay, SW_SHOW);
 }
@@ -103,7 +108,7 @@ void WebNodeHighlight::updateWindow()
         return;
 
     RECT webViewRect;
-    ::GetWindowRect(m_webView, &webViewRect);
+    ::GetWindowRect(m_inspectedWebViewWindow, &webViewRect);
 
     SIZE size;
     size.cx = webViewRect.right - webViewRect.left;
@@ -129,10 +134,7 @@ void WebNodeHighlight::updateWindow()
 
     GraphicsContext context(hdc);
 
-    IntRect overlayRect(webViewRect);
-    overlayRect.setLocation(IntPoint(0, 0));
-
-    InspectorController::drawNodeHighlight(context, overlayRect, m_rect);
+    m_inspectedWebView->page()->inspectorController()->drawNodeHighlight(context);
 
     BLENDFUNCTION bf;
     bf.BlendOp = AC_SRC_OVER;

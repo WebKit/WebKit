@@ -1,5 +1,34 @@
 2008-01-31  Adam Roben  <aroben@apple.com>
 
+        Put more knowledge about the node highlight in WebCore
+
+        InspectorController now calculates the overlay rect and node rect when
+        drawing the node highlight instead of having them be passed in.
+        InspectorController now holds onto the highlighted node so that it can
+        determine these rects.
+
+        Once all platforms are calling down to drawNodeHighlight instead of
+        drawing the highlight themselves, we can change
+        InspectorClient::highlight(Node*) to something like
+        InspectorClient::updateAndShowHighlight().
+
+        This also fixes Bug 14264: Node highlight makes it impossible to
+        scroll the page
+        <http://bugs.webkit.org/show_bug.cgi?id=14264>
+        <rdar://5712788>
+
+        Reviewed by Darin.
+
+        * page/InspectorController.cpp:
+        (WebCore::InspectorController::highlight): Store the node for use in
+        drawNodeHighlight.
+        (WebCore::InspectorController::drawNodeHighlight): Changed to be a
+        const instance method. Now calculates the overlay rect and node rect
+        instead of having them passed in.
+        * page/InspectorController.h:
+
+2008-01-31  Adam Roben  <aroben@apple.com>
+
         Add node highlight drawing code to InspectorController
 
         The code came from WebKit/win/WebNodeHighlight.cpp. It's not quite as

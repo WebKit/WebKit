@@ -40,6 +40,7 @@
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "FrameTree.h"
+#include "FrameView.h"
 #include "GraphicsContext.h"
 #include "HTMLFrameOwnerElement.h"
 #include "InspectorClient.h"
@@ -668,6 +669,7 @@ void InspectorController::highlight(Node* node)
     if (!enabled())
         return;
     ASSERT_ARG(node, node);
+    m_highlightedNode = node;
     m_client->highlight(node);
 }
 
@@ -1578,16 +1580,37 @@ void InspectorController::moveWindowBy(float x, float y) const
     m_page->chrome()->setWindowRect(frameRect);
 }
 
-void InspectorController::drawNodeHighlight(GraphicsContext& context, const IntRect& overlayRect, const IntRect& highlightedNodeRect)
+void InspectorController::drawNodeHighlight(GraphicsContext& context) const
 {
     static const Color overlayFillColor(0, 0, 0, 128);
     static const int outlineThickness = 1;
 
-    context.clipOut(highlightedNodeRect);
+    if (!m_highlightedNode)
+        return;
+
+    FrameView* view = m_inspectedPage->mainFrame()->view();
+    FloatRect overlayRect = static_cast<ScrollView*>(view)->visibleContentRect();
+    context.translate(-overlayRect.x(), -overlayRect.y());
+
+    RenderObject* renderer = m_highlightedNode->renderer();
+    if (!renderer)
+        return;
+    IntRect nodeRect(renderer->absoluteBoundingBoxRect());
+
+    if (!overlayRect.contains(nodeRect) && !nodeRect.contains(enclosingIntRect(overlayRect))) {
+        Element* element;
+        if (m_highlightedNode->isElementNode())
+            element = static_cast<Element*>(m_highlightedNode.get());
+        else
+            element = static_cast<Element*>(m_highlightedNode->parent());
+        element->scrollIntoViewIfNeeded();
+    }
+
+    context.clipOut(nodeRect);
 
     context.fillRect(overlayRect, overlayFillColor);
 
-    IntRect outlineRect(highlightedNodeRect);
+    IntRect outlineRect(nodeRect);
     outlineRect.inflate(outlineThickness);
     context.fillRect(outlineRect, Color::white);
 }

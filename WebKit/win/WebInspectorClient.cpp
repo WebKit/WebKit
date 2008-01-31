@@ -270,38 +270,12 @@ void WebInspectorClient::detachWindow()
         m_highlight->updateWindow();
 }
 
-void WebInspectorClient::highlight(Node* node)
+void WebInspectorClient::highlight(Node*)
 {
-    ASSERT_ARG(node, node);
-
-    HWND hwnd;
-    if (FAILED(m_inspectedWebView->viewWindow((OLE_HANDLE*)&hwnd)))
-        return;
-    RECT rect;
-    ::GetClientRect(hwnd, &rect);
-    IntRect webViewRect(rect);
-
-    RenderObject* renderer = node->renderer();
-    if (!renderer)
-        return;
-    IntRect nodeRect(renderer->absoluteBoundingBoxRect());
-
-    if (!webViewRect.contains(nodeRect) && !nodeRect.contains(webViewRect)) {
-        Element* element;
-        if (node->isElementNode())
-            element = static_cast<Element*>(node);
-        else
-            element = static_cast<Element*>(node->parent());
-        element->scrollIntoViewIfNeeded();
-    }
-
-    IntSize offset = m_inspectedWebView->page()->mainFrame()->view()->scrollOffset();
-    nodeRect.move(-offset);
-
     if (!m_highlight)
-        m_highlight.set(new WebNodeHighlight(hwnd));
+        m_highlight.set(new WebNodeHighlight(m_inspectedWebView));
 
-    m_highlight->highlight(nodeRect);
+    m_highlight->show();
 }
 
 void WebInspectorClient::hideHighlight()

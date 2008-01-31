@@ -120,7 +120,7 @@ public:
 
     void moveWindowBy(float x, float y) const;
 
-    static void drawNodeHighlight(GraphicsContext&, const IntRect& overlayRect, const IntRect& highlightedNodeRect);
+    void drawNodeHighlight(GraphicsContext&) const;
 
 private:
     void focusNode();
@@ -169,6 +169,7 @@ private:
     bool m_windowVisible;
     SpecialPanels m_showAfterVisible;
     long long m_nextIdentifier;
+    RefPtr<Node> m_highlightedNode;
 };
 
 } // namespace WebCore
