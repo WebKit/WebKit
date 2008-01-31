@@ -65,6 +65,9 @@ void CSSFontFaceSource::pruneTable()
 {
     if (m_fontDataTable.isEmpty())
         return;
+    HashMap<int, SimpleFontData*>::iterator end = m_fontDataTable.end();
+    for (HashMap<int, SimpleFontData*>::iterator it = m_fontDataTable.begin(); it != end; ++it)
+        GlyphPageTreeNode::pruneTreeCustomFontData(it->second);
     deleteAllValues(m_fontDataTable);
     m_fontDataTable.clear();
 }

@@ -1,3 +1,13 @@
+2008-01-30  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        - prune references to custom fonts' SimpleFontData from the glyph page
+          tree when they are destroyed
+
+        * css/CSSFontFaceSource.cpp:
+        (WebCore::CSSFontFaceSource::pruneTable):
+
 2008-01-30  Darin Adler  <darin@apple.com>
 
         Reviewed by Tim Hatcher.
