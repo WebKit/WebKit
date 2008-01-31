@@ -1,0 +1,34 @@
+<html>
+<head>
+    <script>
+        if (window.layoutTestController) {
+            layoutTestController.dumpAsText();
+            layoutTestController.dumpChildFramesAsText();
+            layoutTestController.waitUntilDone();
+        }
+
+        receiver = function(e)
+        {
+            if (e.data == "storedOldValuesComplete")
+                setTest();
+        }
+        document.addEventListener('message', receiver, false);
+
+        setTest = function()
+        {
+            window.targetWindow = frames[0];
+
+            targetWindow.history.back = "FAIL!! CUSTOM back";
+            targetWindow.history.forward = "FAIL!! CUSTOM forward";
+            targetWindow.history.go = "FAIL!! CUSTOM go";
+            targetWindow.history.toString = "FAIL!! CUSTOM toString";
+            targetWindow.history.length = "FAIL!! CUSTOM length";
+
+            targetWindow.postMessage("settingValuesComplete");
+        }
+    </script>
+</head>
+<body>
+<iframe src="http://localhost:8000/security/resources/cross-frame-iframe-for-history-put-test.html"></iframe>
+</body>
+</html>

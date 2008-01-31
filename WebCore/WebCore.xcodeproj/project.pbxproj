@@ -3615,6 +3615,7 @@
 		BCE0139B0C0BEF180043860A /* JSStyleSheet.h in Headers */ = {isa = PBXBuildFile; fileRef = BCE013990C0BEF180043860A /* JSStyleSheet.h */; };
 		BCE3BEC20D222B1D007E06E4 /* TagNodeList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCE3BEC00D222B1D007E06E4 /* TagNodeList.cpp */; };
 		BCE3BEC30D222B1D007E06E4 /* TagNodeList.h in Headers */ = {isa = PBXBuildFile; fileRef = BCE3BEC10D222B1D007E06E4 /* TagNodeList.h */; };
+		BCE7B1930D4E86960075A539 /* JSHistoryCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCE7B1920D4E86960075A539 /* JSHistoryCustom.cpp */; };
 		BCEA478F097CAAC80094C9E4 /* CSSComputedStyleDeclaration.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCEA477C097CAAC80094C9E4 /* CSSComputedStyleDeclaration.cpp */; };
 		BCEA4790097CAAC80094C9E4 /* CSSComputedStyleDeclaration.h in Headers */ = {isa = PBXBuildFile; fileRef = BCEA477D097CAAC80094C9E4 /* CSSComputedStyleDeclaration.h */; };
 		BCEA4852097D93020094C9E4 /* bidi.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCEA4813097D93020094C9E4 /* bidi.cpp */; };
@@ -7699,6 +7700,7 @@
 		BCE013990C0BEF180043860A /* JSStyleSheet.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSStyleSheet.h; sourceTree = "<group>"; };
 		BCE3BEC00D222B1D007E06E4 /* TagNodeList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TagNodeList.cpp; sourceTree = "<group>"; };
 		BCE3BEC10D222B1D007E06E4 /* TagNodeList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TagNodeList.h; sourceTree = "<group>"; };
+		BCE7B1920D4E86960075A539 /* JSHistoryCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSHistoryCustom.cpp; sourceTree = "<group>"; };
 		BCEA477C097CAAC80094C9E4 /* CSSComputedStyleDeclaration.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = CSSComputedStyleDeclaration.cpp; sourceTree = "<group>"; };
 		BCEA477D097CAAC80094C9E4 /* CSSComputedStyleDeclaration.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CSSComputedStyleDeclaration.h; sourceTree = "<group>"; };
 		BCEA477E097CAAC80094C9E4 /* CSSGrammar.y */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.yacc; path = CSSGrammar.y; sourceTree = "<group>"; };
@@ -11506,6 +11508,7 @@
 				BCD9C25E0C17AA67005C90A2 /* JSDOMWindowCustom.cpp */,
 				BC2ED5540C6B9BD300920BFF /* JSElementCustom.cpp */,
 				BCEFAF4D0C317E6900FA81F6 /* JSEventCustom.cpp */,
+				BCE7B1920D4E86960075A539 /* JSHistoryCustom.cpp */,
 				BC4EDEF30C08F3FB007EDD49 /* JSHTMLAppletElementCustom.cpp */,
 				BCCBAD3A0C18BFF800CE890F /* JSHTMLCollectionCustom.cpp */,
 				BC51580A0C03D404008BB0EE /* JSHTMLDocumentCustom.cpp */,
@@ -15784,6 +15787,7 @@
 				ABFE7E120D32FAF60066F4D2 /* MediaControlElements.cpp in Sources */,
 				B237C8A70D344D110013F707 /* SVGFontData.cpp in Sources */,
 				E4EEFFC80D34550C00469A58 /* JSAudioConstructor.cpp in Sources */,
+				BCE7B1930D4E86960075A539 /* JSHistoryCustom.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -1,8 +1,7 @@
-// -*- c-basic-offset: 4 -*-
 /*
  *  Copyright (C) 2000 Harri Porten (porten@kde.org)
  *  Copyright (C) 2006 Jon Shier (jshier@iastate.edu)
- *  Copyright (C) 2003, 2004, 2005, 2006, 2007 Apple Inc. All rights reseved.
+ *  Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008 Apple Inc. All rights reseved.
  *  Copyright (C) 2006 Alexey Proskuryakov (ap@webkit.org)
  *
  *  This library is free software; you can redistribute it and/or
@@ -874,13 +873,6 @@ bool Window::shouldInterruptScript() const
         return true;
 
     return page->chrome()->shouldInterruptJavaScript();
-}
-
-void Window::getPropertyNames(ExecState* exec, PropertyNameArray& propertyNames)
-{
-    if (!allowsAccessFrom(exec))
-        return;
-    Base::getPropertyNames(exec, propertyNames);
 }
 
 void Window::setListener(ExecState* exec, const AtomicString& eventType, JSValue* func)

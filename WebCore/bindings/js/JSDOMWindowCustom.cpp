@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple, Inc.
+ * Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -29,27 +29,29 @@
 #include "kjs/object.h"
 #include "kjs/value.h"
 
+using namespace KJS;
+
 namespace WebCore {
 
-bool JSDOMWindow::customGetOwnPropertySlot(KJS::ExecState* exec, const KJS::Identifier& propertyName, KJS::PropertySlot& slot)
+bool JSDOMWindow::customGetOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
 {
     // we don't want any properties other than "closed" on a closed window
     if (!impl()->frame()) {
         if (propertyName == "closed") {
-            const KJS::HashEntry* entry = KJS::Lookup::findEntry(classInfo()->propHashTable, propertyName);
+            const HashEntry* entry = Lookup::findEntry(classInfo()->propHashTable, propertyName);
             ASSERT(entry);
             if (entry) {
-                slot.setStaticEntry(this, entry, KJS::staticValueGetter<JSDOMWindow>);
+                slot.setStaticEntry(this, entry, staticValueGetter<JSDOMWindow>);
                 return true;
             }
         }
         if (propertyName == "close") {
-            KJS::JSValue* proto = prototype();
+            JSValue* proto = prototype();
             if (proto->isObject()) {
-                const KJS::HashEntry* entry = KJS::Lookup::findEntry(static_cast<KJS::JSObject*>(proto)->classInfo()->propHashTable, propertyName);
+                const HashEntry* entry = Lookup::findEntry(static_cast<JSObject*>(proto)->classInfo()->propHashTable, propertyName);
                 ASSERT(entry);
                 if (entry) {
-                    slot.setStaticEntry(this, entry, KJS::staticFunctionGetter);
+                    slot.setStaticEntry(this, entry, staticFunctionGetter);
                     return true;
                 }
             }
@@ -69,21 +71,21 @@ bool JSDOMWindow::customGetOwnPropertySlot(KJS::ExecState* exec, const KJS::Iden
 
     // FIXME: We need this to work around the blanket same origin (allowsAccessFrom) check in KJS::Window.  Once we remove that, we
     // can move this to JSDOMWindowPrototype.
-    KJS::JSValue* proto = prototype();
+    JSValue* proto = prototype();
     if (proto->isObject()) {
-        const KJS::HashEntry* entry = KJS::Lookup::findEntry(static_cast<KJS::JSObject*>(proto)->classInfo()->propHashTable, propertyName);
+        const HashEntry* entry = Lookup::findEntry(static_cast<JSObject*>(proto)->classInfo()->propHashTable, propertyName);
         if (entry) {
-            if (entry->attr & KJS::Function) {
+            if (entry->attr & Function) {
                 if (entry->value.functionValue == jsDOMWindowPrototypeFunctionFocus
                     || entry->value.functionValue == jsDOMWindowPrototypeFunctionBlur
                     || entry->value.functionValue == jsDOMWindowPrototypeFunctionClose
                     || entry->value.functionValue == jsDOMWindowPrototypeFunctionPostMessage)
-                        slot.setStaticEntry(this, entry, KJS::staticFunctionGetter);
+                        slot.setStaticEntry(this, entry, staticFunctionGetter);
                 else {
                     if (!allowsAccessFrom(exec))
                         slot.setUndefined(this);
                     else
-                        slot.setStaticEntry(this, entry, KJS::staticFunctionGetter);
+                        slot.setStaticEntry(this, entry, staticFunctionGetter);
                 }
                 return true;
             }
@@ -93,29 +95,37 @@ bool JSDOMWindow::customGetOwnPropertySlot(KJS::ExecState* exec, const KJS::Iden
     return false;
 }
 
-bool JSDOMWindow::customPut(KJS::ExecState* exec, const KJS::Identifier& propertyName, KJS::JSValue* value, int attr)
+bool JSDOMWindow::customPut(ExecState* exec, const Identifier& propertyName, JSValue* value, int attr)
 {
     if (!impl()->frame())
         return true;
 
     // Called by an internal KJS, save time and jump directly to JSGlobalObject.
-    if (attr != KJS::None && attr != KJS::DontDelete) {
-        KJS::JSGlobalObject::put(exec, propertyName, value, attr);
+    if (attr != None && attr != DontDelete) {
+        JSGlobalObject::put(exec, propertyName, value, attr);
         return true;
     }
 
     // We have a local override (e.g. "var location"), save time and jump directly to JSGlobalObject.
-    KJS::PropertySlot slot;
-    if (KJS::JSGlobalObject::getOwnPropertySlot(exec, propertyName, slot)) {
+    PropertySlot slot;
+    if (JSGlobalObject::getOwnPropertySlot(exec, propertyName, slot)) {
         if (allowsAccessFrom(exec))
-            KJS::JSGlobalObject::put(exec, propertyName, value, attr);
+            JSGlobalObject::put(exec, propertyName, value, attr);
         return true;
     }
 
     return false;
 }
 
-KJS::JSValue* JSDOMWindow::postMessage(KJS::ExecState* exec, const KJS::List& args)
+void JSDOMWindow::getPropertyNames(ExecState* exec, PropertyNameArray& propertyNames)
+{
+    // Only allow the window to enumerated by frames in the same origin.
+    if (!allowsAccessFrom(exec))
+        return;
+    Base::getPropertyNames(exec, propertyNames);
+}
+
+JSValue* JSDOMWindow::postMessage(ExecState* exec, const List& args)
 {
     DOMWindow* window = impl();
     
@@ -125,11 +135,11 @@ KJS::JSValue* JSDOMWindow::postMessage(KJS::ExecState* exec, const KJS::List& ar
     String message = args[0]->toString(exec);
     
     if (exec->hadException())
-        return KJS::jsUndefined();
+        return jsUndefined();
     
     window->postMessage(message, domain, uri, source);
     
-    return KJS::jsUndefined();
+    return jsUndefined();
 }
 
 } // namespace WebCore

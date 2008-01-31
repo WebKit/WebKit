@@ -1,0 +1,47 @@
+<html>
+<head>
+    <script src="cross-frame-access.js"></script>
+    <script>
+        var backOld;
+        var forwardOld;
+        var goOld;
+        var toStringOld;
+        var lengthOld;
+
+        receiver = function(e)
+        {
+            if (e.data == "settingValuesComplete")
+                setCheck();
+        }
+        document.addEventListener('message', receiver, false);
+
+        window.onload = function()
+        {
+            backOld = window.history.back;
+            forwardOld = window.history.forward;
+            goOld = window.history.go;
+            toStringOld = window.history.toString;
+            lengthOld = window.history.length;
+
+            window.parent.postMessage("storedOldValuesComplete");
+        }
+
+        setCheck = function()
+        {
+            log("\n----- tests for putting window.history and its properties -----\n");
+
+            shouldBe("window.history.back", "backOld");
+            shouldBe("window.history.forward", "forwardOld");
+            shouldBe("window.history.go", "goOld");
+            shouldBe("window.history.toString", "toStringOld");
+            shouldBe("window.history.length", "lengthOld", true);
+
+            if (window.layoutTestController)
+                layoutTestController.notifyDone();
+        }
+    </script>
+</head>
+<body>
+    <pre id="console"></pre>
+</body>
+</html>

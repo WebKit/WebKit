@@ -3,7 +3,7 @@ function log(s)
     document.getElementById("console").appendChild(document.createTextNode(s + "\n"));
 }
 
-function shouldBe(a, b)
+function shouldBe(a, b, shouldNotPrintValues)
 {
     var evalA, evalB;
     try {
@@ -13,9 +13,19 @@ function shouldBe(a, b)
         evalA = e;
     }
 
-    var message = (evalA === evalB)
-                    ? "PASS: " + a + " should be '" + evalB + "' and is."
-                    : "*** FAIL: " + a + " should be '" + evalB + "' but instead is " + evalA + ". ***";
+    var message;
+    if (evalA === evalB) {
+        message = "PASS";
+        if (!shouldNotPrintValues) {
+            message += ": " + a + " should be '" + evalB + "' and is.";
+        } else {
+            message += ": " + a + " matched the expected value.";
+        }
+    } else {
+       message = "*** FAIL: " + a + " should be '" + evalB + "' but instead is " + evalA + ". ***";
+    }
+
+    message = String(message).replace(/\n/g, "");
     log(message);
 }
 

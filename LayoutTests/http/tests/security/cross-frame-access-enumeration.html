@@ -32,10 +32,11 @@
 
         runTest = function()
         {
+            // Test enumerating the Window object
             var b_win = document.getElementsByTagName("iframe")[0].contentWindow;
             try {
                 for (var k in b_win) {
-                    if (k == "customProperty") {
+                    if (k == "customWindowProperty") {
                         log("FAIL: Cross frame access by enumerating the window object was allowed.");
                         return;
                     }
@@ -43,6 +44,32 @@
             } catch (e) {
             }
             log("PASS: Cross frame access by enumerating the window object was denied.");
+
+            // Test enumerating the History object
+            var b_win_history = b_win.history;
+            try {
+                for (var k in b_win_history) {
+                    if (k == "customHistoryProperty") {
+                        log("FAIL: Cross frame access by enumerating the History object was allowed.");
+                        return;
+                    }
+                }
+            } catch (e) {
+            }
+            log("PASS: Cross frame access by enumerating the History object was denied.");
+
+            // Test enumerating the Location object
+            var b_win_location = b_win.location;
+            try {
+                for (var k in b_win_location) {
+                    if (k == "customLocationProperty") {
+                        log("FAIL: Cross frame access by enumerating the Location object was allowed.");
+                        return;
+                    }
+                }
+            } catch (e) {
+            }
+            log("PASS: Cross frame access by enumerating the Location object was denied.");
         }
     </script>
 </head>

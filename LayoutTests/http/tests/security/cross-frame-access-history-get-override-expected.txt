@@ -1,0 +1,10 @@
+
+----- tests for getting custorm overrides of window.history's functions  -----
+
+PASS: canGet('targetWindow.history.back') should be 'true' and is.
+PASS: toString('targetWindow.history.back') should be 'function () {  return "new back";}' and is.
+PASS: canGet('targetWindow.history.forward') should be 'true' and is.
+PASS: toString('targetWindow.history.forward') should be 'function () {  return "new forward";}' and is.
+PASS: canGet('targetWindow.history.go') should be 'true' and is.
+PASS: toString('targetWindow.history.go') should be 'new go' and is.
+

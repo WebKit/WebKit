@@ -1,8 +1,7 @@
-// -*- c-basic-offset: 4 -*-
 /*
  *  Copyright (C) 2000 Harri Porten (porten@kde.org)
  *  Copyright (C) 2006 Jon Shier (jshier@iastate.edu)
- *  Copyright (C) 2003, 2004, 2005, 2006, 2007 Apple Inc. All rights reseved.
+ *  Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008 Apple Inc. All rights reseved.
  *  Copyright (C) 2006 Alexey Proskuryakov (ap@webkit.org)
  *
  *  This library is free software; you can redistribute it and/or
@@ -36,6 +35,14 @@
 using namespace KJS;
 
 namespace WebCore {
+
+static bool allowsAccessFromFrame(ExecState* exec, Frame* frame)
+{
+    if (!frame)
+        return false;
+    Window* win = Window::retrieveWindow(frame);
+    return win && win->allowsAccessFrom(exec);
+}
 
 const ClassInfo JSLocation::info = { "Location", 0, &JSLocationTable };
 
@@ -189,6 +196,14 @@ void JSLocation::put(ExecState* exec, const Identifier& propertyName, JSValue* v
     bool userGesture = activeFrame->scriptProxy()->processingUserGesture();
     m_frame->loader()->scheduleLocationChange(url.string(), activeFrame->loader()->outgoingReferrer(), false, userGesture);
   }
+}
+
+void JSLocation::getPropertyNames(ExecState* exec, PropertyNameArray& propertyNames)
+{
+    // Only allow the location object to enumerated by frames in the same origin.
+    if (!allowsAccessFromFrame(exec, frame()))
+        return;
+    Base::getPropertyNames(exec, propertyNames);
 }
 
 JSValue* jsLocationProtoFuncReplace(ExecState* exec, JSObject* thisObj, const List& args)
