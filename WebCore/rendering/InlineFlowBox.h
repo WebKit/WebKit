@@ -40,7 +40,12 @@ public:
         , m_hasBadChildList(false)
 #endif
     {
-        m_hasTextChildren = false;
+        // Internet Explorer and Firefox always create a marker for list items, even when the list-style-type is none.  We do not make a marker
+        // in the list-style-type: none case, since it is wasteful to do so.  However, in order to match other browsers we have to pretend like
+        // an invisible marker exists.  The side effect of having an invisible marker is that the quirks mode behavior of shrinking lines with no
+        // text children must not apply.  This change also means that gaps will exist between image bullet list items.  Even when the list bullet
+        // is an image, the line is still considered to be immune from the quirk.
+        m_hasTextChildren = obj->style()->display() == LIST_ITEM;
     }
 
 #ifndef NDEBUG
