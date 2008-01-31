@@ -1,3 +1,22 @@
+2008-01-30  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Darin.
+
+        Fix for <rdar://problem/5598609> CrashTracer: [USER] 626 crashes in 
+        Safari at com.apple.WebCore: WebCore::FrameView::needsFullRepaint 
+        const + 6
+
+        The real problem here is tracked by rdar://5598072, which is that 
+        frames can lose sync between their view and their document when a 
+        non-HTML view is loaded (such as bookmarks view or a PDF). That can 
+        cause this crash if the layout timer fires before things have fixed 
+        themselves. This fix turns an ASSERT in FrameView::layout() into an 
+        early return to cause graceful failure until the root of the 
+        problem is addressed. 
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::layout):
+
 2008-01-30  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Darin Adler.
