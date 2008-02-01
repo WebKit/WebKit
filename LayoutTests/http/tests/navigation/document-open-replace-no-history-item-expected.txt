@@ -1,6 +1,0 @@
-This generated document and its contents should be in the back/forward list. This page should have replaced the originating page as well.
-
-============== Back Forward List ==============
-curr->  http://127.0.0.1:8000/navigation/document-open-replace-no-history-item.html  **nav target**
-        http://127.0.0.1:8000/navigation/resources/document-open-page-2.html  **nav target**
-===============================================

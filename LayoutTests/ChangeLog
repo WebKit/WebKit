@@ -1,3 +1,21 @@
+2008-01-31  Kevin McCullough  <kmccullough@apple.com>
+
+        <rdar://problem/5716912> REGRESSION (r29816): Can't navigate back to    
+        Gmail Inbox from Gmail Compose page
+        Rolling out the change that caused the regression.
+
+
+        * http/tests/navigation/document-open-adds-history-item-expected.txt: Removed.
+        * http/tests/navigation/document-open-adds-history-item.html: Removed.
+        * http/tests/navigation/document-open-delayed-adds-history-item-expected.txt: Removed.
+        * http/tests/navigation/document-open-delayed-adds-history-item.html: Removed.
+        * http/tests/navigation/document-open-new-window-adds-history-item-expected.txt: Removed.
+        * http/tests/navigation/document-open-new-window-adds-history-item.html: Removed.
+        * http/tests/navigation/document-open-replace-no-history-item-expected.txt: Removed.
+        * http/tests/navigation/document-open-replace-no-history-item.html: Removed.
+        * http/tests/navigation/resources/document-open-page-2.html: Removed.
+        * http/tests/navigation/resources/document-open.js: Removed.
+
 2008-01-31  Dan Bernstein  <mitz@apple.com>
 
         - re-categorize three skipped tests

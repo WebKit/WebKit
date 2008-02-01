@@ -1,3 +1,42 @@
+2008-01-31  Kevin McCullough  <kmccullough@apple.com>
+
+        <rdar://problem/5716912> REGRESSION (r29816): Can't navigate back to
+        Gmail Inbox from Gmail Compose page
+        Rolling out the change that caused the regression.
+
+        * WebCore.base.exp:
+        * bindings/js/JSHTMLDocumentCustom.cpp:
+        (WebCore::JSHTMLDocument::open):
+        * dom/DOMImplementation.cpp:
+        (WebCore::DOMImplementation::createHTMLDocument):
+        * dom/Document.cpp:
+        (WebCore::Document::recalcStyle):
+        (WebCore::Document::open):
+        (WebCore::Document::write):
+        (WebCore::Document::clear):
+        * dom/Document.h:
+        * history/HistoryItem.cpp:
+        (WebCore::HistoryItem::HistoryItem):
+        * history/HistoryItem.h:
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::didExplicitOpen):
+        (WebCore::FrameLoader::load):
+        (WebCore::FrameLoader::reloadAllowingStaleData):
+        (WebCore::FrameLoader::reload):
+        (WebCore::FrameLoader::tokenizerProcessedData):
+        (WebCore::FrameLoader::post):
+        (WebCore::FrameLoader::continueLoadAfterNewWindowPolicy):
+        (WebCore::FrameLoader::shouldTreatURLAsSameAsCurrent):
+        (WebCore::FrameLoader::loadItem):
+        * loader/FrameLoader.h:
+        * platform/text/CharacterNames.h:
+        * xml/DOMParser.cpp:
+        (WebCore::DOMParser::parseFromString):
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::getResponseXML):
+        * xml/XSLTProcessor.cpp:
+        (WebCore::XSLTProcessor::createDocumentFromSource):
+
 2008-01-31  Matt Lilek  <webkit@mattlilek.com>
 
         Reviewed by Tim Hatcher.
