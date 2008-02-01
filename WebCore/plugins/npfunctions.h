@@ -172,12 +172,19 @@ typedef struct _NPPluginFuncs {
     NPP_SetValueProcPtr setvalue;
 } NPPluginFuncs;
 
+#if defined(XP_WIN)
 typedef EXPORTED_CALLBACK(NPError, NP_InitializeFuncPtr)(NPNetscapeFuncs*);
 typedef EXPORTED_CALLBACK(NPError, NP_GetEntryPointsFuncPtr)(NPPluginFuncs*);
+#endif
 
 #if defined(XP_MACOSX)
 typedef void    (*BP_CreatePluginMIMETypesPreferencesFuncPtr)(void);
 typedef NPError (*MainFuncPtr)(NPNetscapeFuncs*, NPPluginFuncs*, NPP_ShutdownProcPtr*);
+#endif
+
+#if defined(XP_UNIX)
+typedef EXPORTED_CALLBACK(NPError, NP_InitializeFuncPtr)(NPNetscapeFuncs*, NPPluginFuncs*);
+typedef EXPORTED_CALLBACK(char*, NP_GetMIMEDescriptionFuncPtr)(void);
 #endif
 
 #ifdef __cplusplus

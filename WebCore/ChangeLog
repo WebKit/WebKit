@@ -1,3 +1,12 @@
+2008-02-01  Rodney Dawes  <dobey@wayofthemonkey.com>
+
+        Reviewed by Darin.
+
+        Update npfunctions.h to export the proper function signatures for UNIX and add
+        the appropriate #if around the Windows versions
+
+        * plugins/npfunctions.h:
+
 2008-02-01  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Oliver.
