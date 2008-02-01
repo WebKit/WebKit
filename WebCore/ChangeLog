@@ -1,6 +1,6 @@
 2008-01-31  Alp Toker  <alp@atoker.com>
 
-        Reviewed by Adam Roben.
+        Rubber-stamped Adam Roben.
 
         http://bugs.webkit.org/show_bug.cgi?id=17006
         [GTK] Header path should be webkit/webkit.h
