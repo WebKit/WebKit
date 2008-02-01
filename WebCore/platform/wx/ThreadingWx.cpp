@@ -31,7 +31,8 @@
 
 namespace WebCore {
 
-void callOnMainThread(void (*function)()) {
+void callOnMainThread(MainThreadFunction*, void*)
+{
     notImplemented();
 }
 

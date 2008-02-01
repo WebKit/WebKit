@@ -108,7 +108,7 @@ private:
 #endif
 
     static void scheduleForNotification();
-    static void notifyDatabasesChanged();
+    static void notifyDatabasesChanged(void*);
 };
 
 } // namespace WebCore

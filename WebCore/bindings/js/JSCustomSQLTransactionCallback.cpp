@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -41,7 +41,8 @@ namespace WebCore {
 using namespace KJS;
     
 #ifndef NDEBUG
-WTFLogChannel LogWebCoreSQLLeaks =  { 0x00000000, "", WTFLogChannelOn };
+
+WTFLogChannel LogWebCoreSQLLeaks = { 0x00000000, "", WTFLogChannelOn };
 
 struct JSCustomSQLTransactionCallbackCounter { 
     static int count; 
@@ -51,21 +52,34 @@ struct JSCustomSQLTransactionCallbackCounter {
             LOG(WebCoreSQLLeaks, "LEAK: %d JSCustomSQLTransactionCallback\n", count);
     }
 };
+
 int JSCustomSQLTransactionCallbackCounter::count = 0;
 static JSCustomSQLTransactionCallbackCounter counter;
+
 #endif
 
 JSCustomSQLTransactionCallback::JSCustomSQLTransactionCallback(JSObject* callback, Frame* frame)
     : m_callback(callback)
     , m_frame(frame)
 {
+    gcProtect(callback);
+
 #ifndef NDEBUG
     ++JSCustomSQLTransactionCallbackCounter::count;
 #endif
 }
-    
+
+static void unprotectOnMainThread(void* context)
+{
+    gcUnprotect(static_cast<KJS::JSObject*>(context));
+}
+
 JSCustomSQLTransactionCallback::~JSCustomSQLTransactionCallback()
 {
+    // Avoid putting JavaScript into multi-thread mode unnecessarily by doing the gcUnprotect
+    // on the main thread.
+    callOnMainThread(unprotectOnMainThread, m_callback);
+
 #ifndef NDEBUG
     --JSCustomSQLTransactionCallbackCounter::count;
 #endif

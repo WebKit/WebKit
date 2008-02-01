@@ -1,3 +1,13 @@
+2008-02-01  Darin Adler  <darin@apple.com>
+
+        - fix <rdar://problem/5680469> Each database worker thread takes a JSLock,
+          which slows down all JavaScript execution until the thread terminates
+
+        * WebIconDatabase.cpp:
+        (WebIconDatabase::scheduleNotificationDelivery): Updated for new callOnMainThread.
+        (WebIconDatabase::deliverNotifications): Ditto.
+        * WebIconDatabase.h: Ditto.
+
 2008-01-31  Adam Roben  <aroben@apple.com>
 
         Fix <rdar://5713172> Focus lost from Gmail message body after toggling

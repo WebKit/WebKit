@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
  * Copyright (C) 2007 Justin Haygood (jhaygood@reaktix.com)
  *
  * Redistribution and use in source and binary forms, with or without
@@ -231,7 +231,9 @@ private:
 #endif
 };
 
-void callOnMainThread(void (*)());
+typedef void MainThreadFunction(void*);
+
+void callOnMainThread(MainThreadFunction*, void* context);
 
 void initializeThreading();
 

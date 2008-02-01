@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
  * Copyright (C) 2007 Justin Haygood (jhaygood@reaktix.com)
  *
  * Redistribution and use in source and binary forms, with or without
@@ -37,17 +37,26 @@
 
 namespace WebCore {
 
+struct FunctionWithContext {
+    MainThreadFunction* function;
+    void* context;
+};
+
 static gboolean callFunctionOnMainThread(gpointer data)
 {
-    void (*function)() = (void(*)())data;
-    function();
+    FunctionWithContext* functionWithContext = static_cast<FunctionWithContext*>(data);
+    functionWithContext->function(functionWithContext->context);
+    delete functionWithContext;
     return FALSE;
 }
 
-void callOnMainThread(void (*function)())
+void callOnMainThread(MainThreadFunction* function, void* context)
 {
     ASSERT(function);
-    g_timeout_add(0, callFunctionOnMainThread, (gpointer)function);
+    FunctionWithContext* functionWithContext = new FunctionWithContext;
+    functionWithContext->function = function;
+    functionWithContext->context = context;
+    g_timeout_add(0, callFunctionOnMainThread, functionWithContext);
 }
 
 void initializeThreading()

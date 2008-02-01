@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,38 +30,37 @@
 #import "Threading.h"
 
 @interface WebCoreFunctionWrapper : NSObject {
-void (*_function)();
+    WebCore::MainThreadFunction* m_function;
+    void* m_context;
 }
-- (id)initWithFunction:(void(*)())function;
-- (void)_call;
+- (id)initWithFunction:(WebCore::MainThreadFunction*)function context:(void*)context;
+- (void)invoke;
 @end
 
 @implementation WebCoreFunctionWrapper
 
-- (id)initWithFunction:(void(*)())function
+- (id)initWithFunction:(WebCore::MainThreadFunction*)function context:(void*)context;
 {
     [super init];
-    _function = function;
+    m_function = function;
+    m_context = context;
     return self;
 }
 
-- (void)_call
+- (void)invoke
 {
-    _function();
+    m_function(m_context);
 }
 
 @end // implementation WebCoreFunctionWrapper
 
 namespace WebCore {
 
-void callOnMainThread(void (*functionToPerform)())
+void callOnMainThread(MainThreadFunction* function, void* context)
 {
-    if (!functionToPerform)
-        return;
-        
-    WebCoreFunctionWrapper *functionWrapper = [[WebCoreFunctionWrapper alloc] initWithFunction:functionToPerform];
-    [functionWrapper performSelectorOnMainThread:@selector(_call) withObject:nil waitUntilDone:NO];
-    [functionWrapper release];
+    WebCoreFunctionWrapper *wrapper = [[WebCoreFunctionWrapper alloc] initWithFunction:function context:context];
+    [wrapper performSelectorOnMainThread:@selector(invoke) withObject:nil waitUntilDone:NO];
+    [wrapper release];
 }
 
 } // namespace WebCore

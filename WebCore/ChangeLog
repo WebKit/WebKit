@@ -1,3 +1,65 @@
+2008-02-01  Darin Adler  <darin@apple.com>
+
+        Reviewed by Geoff and Brady.
+
+        - fix <rdar://problem/5680469> Each database worker thread takes a JSLock,
+          which slows down all JavaScript execution until the thread terminates
+
+        * bindings/js/JSCustomSQLTransactionCallback.cpp:
+        (WebCore::JSCustomSQLTransactionCallback::JSCustomSQLTransactionCallback):
+        Explicitly gcProtect, since we aren't using ProtectedPtr any more.
+        (WebCore::unprotectOnMainThread): Added.
+        (WebCore::JSCustomSQLTransactionCallback::~JSCustomSQLTransactionCallback):
+        Use unprotectOnMainThread rather than doing a gcUnprotect here.
+        * bindings/js/JSCustomSQLTransactionCallback.h: Changed m_callback from
+        a ProtectedPtr to a plain old JSObject*; we gcProtect by hand now.
+
+        * loader/icon/IconDatabase.cpp:
+        (WebCore::IconDatabase::notifyPendingLoadDecisionsOnMainThread):
+        Renamed. Changed to takea a void* with the icon database pointer.
+        (WebCore::IconDatabase::notifyPendingLoadDecisions): Renamed.
+        (WebCore::IconDatabase::performURLImport): Updated name, and pass the
+        icon database pointer in.
+        * loader/icon/IconDatabase.h: Renamed and added void* parameter.
+
+        * platform/Threading.h: Changed callOnMainThread to take a function with a
+        single parameter rather than a function with no parameters. Added a typedef.
+
+        * platform/gtk/ThreadingGtk.cpp:
+        (WebCore::callFunctionOnMainThread): Changed to use a structure with both
+        a function pointer and a context pointer, and delete it after calling.
+        (WebCore::callOnMainThread): Changed to create the structure with both
+        the function and context pointer.
+
+        * platform/mac/Threading.mm:
+        (-[WebCoreFunctionWrapper initWithFunction:context:]): Added context.
+        (-[WebCoreFunctionWrapper invoke]): Updated to do both function and context.
+        Renamed from _call.
+        (WebCore::callOnMainThread): Updated to take both function and context.
+
+        * platform/qt/ThreadingQt.cpp:
+        (WebCore::PerformFunctionEvent::PerformFunctionEvent): Added context.
+        (WebCore::PerformFunctionEvent::invoke): Added. Calls function with context pointer.
+        (WebCore::MainThreadInvoker::event): Changed to call invoke.
+        (WebCore::callOnMainThread): Updated to take both function and context.
+
+        * platform/win/ThreadingWin.cpp: Added FunctionWithContext.
+        (WebCore::callFunctionsOnMainThread): Changed to pass call function with context.
+        (WebCore::callOnMainThread): Updated to queue both function and context.
+
+        * platform/wx/ThreadingWx.cpp:
+        (WebCore::callOnMainThread): Updated to take both function and context.
+
+        * storage/Database.cpp:
+        (WebCore::Database::scheduleTransactionCallback): Pass 0 for context.
+        (WebCore::Database::deliverAllPendingCallbacks): Changed to take ignored context pointer.
+        * storage/Database.h: Added void* parameter to deliverAllPendingCallbacks.
+
+        * storage/DatabaseTracker.cpp:
+        (WebCore::DatabaseTracker::scheduleForNotification): Pass 0 for context.
+        (WebCore::DatabaseTracker::notifyDatabasesChanged): Changed to take ignored context pointer.
+        * storage/DatabaseTracker.h: Added void* parameter to notifyDatabasesChanged.
+
 2008-02-01  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Rubber-stamped by Ollie.

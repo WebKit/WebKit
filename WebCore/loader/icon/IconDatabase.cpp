@@ -767,12 +767,12 @@ IconDatabase::~IconDatabase()
     ASSERT_NOT_REACHED();
 }
 
-void IconDatabase::notifyPendingLoadDecisions()
-{    
-    iconDatabase()->notifyPendingLoadDecisionsInternal();
+void IconDatabase::notifyPendingLoadDecisionsOnMainThread(void* context)
+{
+    static_cast<IconDatabase*>(context)->notifyPendingLoadDecisions();
 }
 
-void IconDatabase::notifyPendingLoadDecisionsInternal()
+void IconDatabase::notifyPendingLoadDecisions()
 {
     ASSERT_NOT_SYNC_THREAD();
     
@@ -1299,7 +1299,7 @@ void IconDatabase::performURLImport()
     }
     
     // Notify all DocumentLoaders that were waiting for an icon load decision on the main thread
-    callOnMainThread(notifyPendingLoadDecisions);
+    callOnMainThread(notifyPendingLoadDecisionsOnMainThread, this);
 }
 
 void* IconDatabase::syncThreadMainLoop()

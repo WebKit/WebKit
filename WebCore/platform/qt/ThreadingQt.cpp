@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2007 Staikos Computing Services Inc.
  * Copyright (C) 2007 Trolltech ASA
+ * Copyright (C) 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -37,8 +38,13 @@ class PerformFunctionEvent : public QEvent {
 public:
     static const int EventType = 723;
 
-    PerformFunctionEvent(void (*_function)());
-    void (*function)();
+    PerformFunctionEvent(MainThreadFunction*, void* context);
+
+    void invoke();
+
+private:
+    MainThreadFunction* m_function;
+    void* m_context;
 };
 
 class MainThreadInvoker : public QObject {
@@ -50,10 +56,17 @@ protected:
     bool event(QEvent*);
 };
 
-PerformFunctionEvent::PerformFunctionEvent(void (*_function)())
+PerformFunctionEvent::PerformFunctionEvent(MainThreadFunction* function, void* context)
     : QEvent(static_cast<QEvent::Type>(EventType))
-    , function(_function)
-{}
+    , m_function(function)
+    , m_context(context)
+{
+}
+
+void PerformFunctionEvent::invoke()
+{
+    m_function(m_context);
+}
 
 MainThreadInvoker::MainThreadInvoker()
 {
@@ -63,7 +76,7 @@ MainThreadInvoker::MainThreadInvoker()
 bool MainThreadInvoker::event(QEvent* event)
 {
     if (event->type() == PerformFunctionEvent::EventType)
-        static_cast<PerformFunctionEvent*>(event)->function();
+        static_cast<PerformFunctionEvent*>(event)->invoke();
 
     return QObject::event(event);
 }
@@ -71,11 +84,9 @@ bool MainThreadInvoker::event(QEvent* event)
 Q_GLOBAL_STATIC(MainThreadInvoker, webkit_main_thread_invoker)
 
 
-void callOnMainThread(void (*functionToPerform)()) {
-    if (!functionToPerform)
-        return;
-
-    QCoreApplication::postEvent(webkit_main_thread_invoker(), new PerformFunctionEvent(functionToPerform));
+void callOnMainThread(MainThreadFunction* function, void* contexxt)
+{
+    QCoreApplication::postEvent(webkit_main_thread_invoker(), new PerformFunctionEvent(function, context));
 }
 
 }

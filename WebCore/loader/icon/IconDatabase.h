@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006, 2007, 2008 Apple Inc. All rights reserved.
  * Copyright (C) 2007 Justin Haygood (jhaygood@reaktix.com)
  *
  * Redistribution and use in source and binary forms, with or without
@@ -110,11 +110,8 @@ private:
     friend IconDatabase* iconDatabase();
 
 #if ENABLE(ICONDATABASE)
-    // This is called on the main thread via the callOnMainThread() function which currently
-    // doesn't have any way to allow it to be an instance method, which it should be
-    static void notifyPendingLoadDecisions();
-    
-    void notifyPendingLoadDecisionsInternal();
+    static void notifyPendingLoadDecisionsOnMainThread(void*);
+    void notifyPendingLoadDecisions();
 
     void wakeSyncThread();
     void scheduleOrDeferSyncTimer();

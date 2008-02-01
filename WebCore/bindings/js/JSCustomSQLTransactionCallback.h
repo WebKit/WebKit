@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,10 +30,7 @@
 #define JSCustomSQLTransactionCallback_h
 
 #include "SQLTransactionCallback.h"
-
-#include <kjs/object.h>
-#include <kjs/protect.h>
-#include <wtf/Forward.h>
+#include <wtf/RefPtr.h>
 
 namespace KJS {
     class JSObject;
@@ -42,7 +39,6 @@ namespace KJS {
 namespace WebCore {
 
 class Frame;
-class SQLResultSet;
 
 class JSCustomSQLTransactionCallback : public SQLTransactionCallback {
 public:
@@ -50,8 +46,9 @@ public:
     virtual ~JSCustomSQLTransactionCallback();
     
     virtual void handleEvent(SQLTransaction*, bool& raisedException);
+
 private:
-    KJS::ProtectedPtr<KJS::JSObject> m_callback;
+    KJS::JSObject* m_callback;
     RefPtr<Frame> m_frame;
 };
 
