@@ -1,5 +1,14 @@
 2008-01-31  Matt Lilek  <webkit@mattlilek.com>
 
+        Reviewed by Tim Hatcher.
+
+        Bug 14960: Cannot copy text in Web Inspector Network panel
+        http://bugs.webkit.org/show_bug.cgi?id=14960
+
+        * page/inspector/inspector.css:
+
+2008-01-31  Matt Lilek  <webkit@mattlilek.com>
+
         Reviewed by Adam Roben.
 
         Bug 14514: Add full URL view on mouseOver in the network page

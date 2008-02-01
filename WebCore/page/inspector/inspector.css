@@ -1929,6 +1929,7 @@ body.attached .database-table-reload {
     white-space: nowrap;
     text-overflow: ellipsis;
     line-height: 18px;
+    -webkit-user-select: text;
 }
 
 .network-file a {
