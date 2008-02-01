@@ -66,6 +66,7 @@ void HTMLScriptElement::childrenChanged()
     // we evaluate the script.
     if (!m_createdByParser && inDocument() && firstChild())
         evaluateScript(document()->url(), text());
+    HTMLElement::childrenChanged();
 }
 
 void HTMLScriptElement::parseMappedAttribute(MappedAttribute *attr)

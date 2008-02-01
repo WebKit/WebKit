@@ -785,6 +785,21 @@ bool Element::childTypeAllowed(NodeType type)
     }
 }
 
+void Element::childrenChanged()
+{
+    ContainerNode::childrenChanged();
+    
+    if (changed())
+        return;
+
+    RenderStyle* style  = renderStyle();
+    if (!style)
+        return;
+
+    if (style->affectedByEmpty() && (!style->emptyState() || hasChildNodes()))
+        setChanged(); // Need to resolve style again, since our :empty state has potentially changed.
+}
+
 void Element::dispatchAttrRemovalEvent(Attribute*)
 {
     ASSERT(!eventDispatchForbidden());

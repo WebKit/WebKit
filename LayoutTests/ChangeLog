@@ -1,3 +1,14 @@
+2008-02-01  David Hyatt  <hyatt@apple.com>
+
+        Add a new layout test for dynamic :empty selectors.
+
+        Reviewed by olliej
+
+        * fast/css/empty-pseudo-class.html: Added.
+        * platform/mac/fast/css/empty-pseudo-class-expected.checksum: Added.
+        * platform/mac/fast/css/empty-pseudo-class-expected.png: Added.
+        * platform/mac/fast/css/empty-pseudo-class-expected.txt: Added.
+
 2008-02-01  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Oliver.

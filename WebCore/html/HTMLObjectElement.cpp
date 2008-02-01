@@ -256,6 +256,7 @@ void HTMLObjectElement::childrenChanged()
         m_needWidgetUpdate = true;
         setChanged();
     }
+    HTMLPlugInElement::childrenChanged();
 }
 
 bool HTMLObjectElement::isURLAttribute(Attribute *attr) const

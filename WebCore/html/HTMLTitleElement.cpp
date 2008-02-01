@@ -63,6 +63,7 @@ void HTMLTitleElement::childrenChanged()
             m_title += c->nodeValue();
     if (inDocument())
         document()->setTitle(m_title, this);
+    HTMLElement::childrenChanged();
 }
 
 String HTMLTitleElement::text() const

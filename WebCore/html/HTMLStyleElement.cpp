@@ -74,6 +74,7 @@ void HTMLStyleElement::removedFromDocument()
 void HTMLStyleElement::childrenChanged()
 {
     StyleElement::process(this);
+    HTMLElement::childrenChanged();
 }
 
 StyleSheet* HTMLStyleElement::sheet()

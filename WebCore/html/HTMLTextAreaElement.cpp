@@ -122,6 +122,7 @@ void HTMLTextAreaElement::setSelectionRange(int start, int end)
 void HTMLTextAreaElement::childrenChanged()
 {
     setValue(defaultValue());
+    HTMLElement::childrenChanged();
 }
     
 void HTMLTextAreaElement::parseMappedAttribute(MappedAttribute *attr)

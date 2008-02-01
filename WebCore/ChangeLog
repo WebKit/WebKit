@@ -1,3 +1,24 @@
+2008-02-01  David Hyatt  <hyatt@apple.com>
+
+        Fix for bug 11387, CSS3 :empty selector is not dynamic.
+
+        Add support for dynamically updating elements whose style is affected by :empty when the child count changes.
+
+        Reviewed by olliej, mitzpettel
+
+        fast/css/empty-pseudo-class.html
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::locateSharedStyle):
+        (WebCore::CSSStyleSelector::checkOneSelector):
+        * dom/Element.cpp:
+        (WebCore::Element::childrenChanged):
+        * dom/Element.h:
+        * rendering/RenderStyle.h:
+        (WebCore::RenderStyle::affectedByEmpty):
+        (WebCore::RenderStyle::emptyState):
+        (WebCore::RenderStyle::setEmptyState):
+
 2008-02-01  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.
