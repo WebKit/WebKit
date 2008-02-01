@@ -1,5 +1,11 @@
 2008-01-31  Brady Eidson  <beidson@apple.com>
 
+        Build fix
+
+        * WebCore.xcodeproj/project.pbxproj: Header -> WebKit
+
+2008-01-31  Brady Eidson  <beidson@apple.com>
+
         Reviewed by Maciej
 
         Abstracted the concept of a "Locker" as upcoming work will rely on it.

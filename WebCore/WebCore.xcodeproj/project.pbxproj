@@ -394,7 +394,7 @@
 		514C767D0CE923A1007EF3CD /* ResourceRequestBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 514C76680CE923A1007EF3CD /* ResourceRequestBase.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		514C767E0CE923A1007EF3CD /* ResourceResponseBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 514C76690CE923A1007EF3CD /* ResourceResponseBase.cpp */; };
 		514C767F0CE923A1007EF3CD /* ResourceResponseBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 514C766A0CE923A1007EF3CD /* ResourceResponseBase.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		515378030D52D0630063A78B /* Locker.h in Headers */ = {isa = PBXBuildFile; fileRef = 515378020D52D0630063A78B /* Locker.h */; };
+		515378030D52D0630063A78B /* Locker.h in Headers */ = {isa = PBXBuildFile; fileRef = 515378020D52D0630063A78B /* Locker.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		515B03990CD1642A00B7EA9C /* SQLStatement.h in Headers */ = {isa = PBXBuildFile; fileRef = 515B03970CD1642A00B7EA9C /* SQLStatement.h */; };
 		515B039A0CD1642A00B7EA9C /* SQLStatement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 515B03980CD1642A00B7EA9C /* SQLStatement.cpp */; };
 		5160300B0CC4251200C8AC25 /* FileSystemPOSIX.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5160300A0CC4251200C8AC25 /* FileSystemPOSIX.cpp */; };
