@@ -88,9 +88,9 @@ function addXMLResult(name, result)
 	addStringResult(name, str);
 }
 
-var xml = getXMLDocument("xslt-text.xml");
+var xml = getXMLDocument("resources/xslt-text.xml");
 addXMLResult("original xml", xml);
-var xsl1 = getXMLDocument("xslt-text.xsl");
+var xsl1 = getXMLDocument("resources/xslt-text.xsl");
 addXMLResult("xsl1", xsl1);
 var xsl2 = getXMLDocument("resources/xslt-enc.xsl");
 addXMLResult("xsl2", xsl2);
