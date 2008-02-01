@@ -2,6 +2,13 @@
 
         Reviewed by Adam.
 
+        * platform/network/mac/ResourceHandleMac.mm:
+        (WebCore::ResourceHandle::loadsBlocked): Fix grammar and word typo.
+
+2008-02-01  Darin Adler  <darin@apple.com>
+
+        Reviewed by Adam.
+
         - fix <rdar://problem/4527931> showModalDialog calls from onload functions fail (Aspect)
 
         No automated regression test because showModalDialog doesn't work in DumpRenderTree.

@@ -229,9 +229,9 @@ bool ResourceHandle::loadsBlocked()
 #ifndef BUILDING_ON_TIGER
     return false;
 #else
-    // On Tiger, if we're in a NSURLConnection callback, that blocks all other NSURLConnection callbacks.
+    // On Tiger, if we're in an NSURLConnection callback, that blocks all other NSURLConnection callbacks.
     // On Leopard and newer, it blocks only callbacks on that same NSURLConnection object, which is not
-    // a problem and practice.
+    // a problem in practice.
     return inNSURLConnectionCallback != 0;
 #endif
 }
