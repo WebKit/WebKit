@@ -394,6 +394,7 @@
 		514C767D0CE923A1007EF3CD /* ResourceRequestBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 514C76680CE923A1007EF3CD /* ResourceRequestBase.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		514C767E0CE923A1007EF3CD /* ResourceResponseBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 514C76690CE923A1007EF3CD /* ResourceResponseBase.cpp */; };
 		514C767F0CE923A1007EF3CD /* ResourceResponseBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 514C766A0CE923A1007EF3CD /* ResourceResponseBase.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		515378030D52D0630063A78B /* Locker.h in Headers */ = {isa = PBXBuildFile; fileRef = 515378020D52D0630063A78B /* Locker.h */; };
 		515B03990CD1642A00B7EA9C /* SQLStatement.h in Headers */ = {isa = PBXBuildFile; fileRef = 515B03970CD1642A00B7EA9C /* SQLStatement.h */; };
 		515B039A0CD1642A00B7EA9C /* SQLStatement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 515B03980CD1642A00B7EA9C /* SQLStatement.cpp */; };
 		5160300B0CC4251200C8AC25 /* FileSystemPOSIX.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5160300A0CC4251200C8AC25 /* FileSystemPOSIX.cpp */; };
@@ -4646,6 +4647,7 @@
 		514C766A0CE923A1007EF3CD /* ResourceResponseBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResourceResponseBase.h; sourceTree = "<group>"; };
 		5150C2A10702629000AF642C /* WebDashboardRegion.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebDashboardRegion.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		5150C2A50702629800AF642C /* WebDashboardRegion.m */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = WebDashboardRegion.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
+		515378020D52D0630063A78B /* Locker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Locker.h; sourceTree = "<group>"; };
 		515B03970CD1642A00B7EA9C /* SQLStatement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SQLStatement.h; sourceTree = "<group>"; };
 		515B03980CD1642A00B7EA9C /* SQLStatement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SQLStatement.cpp; sourceTree = "<group>"; };
 		5160300A0CC4251200C8AC25 /* FileSystemPOSIX.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FileSystemPOSIX.cpp; sourceTree = "<group>"; };
@@ -11703,6 +11705,7 @@
 				6593923609AE4346002C531F /* KURL.h */,
 				85EC9AF90A71A2C600EEEAED /* Language.h */,
 				935207BD09BD410A00F2038D /* LocalizedStrings.h */,
+				515378020D52D0630063A78B /* Locker.h */,
 				A8239DFE09B3CF8A00B60641 /* Logging.cpp */,
 				A8239DFF09B3CF8A00B60641 /* Logging.h */,
 				BC772C4C0C4EB3040083285F /* MIMETypeRegistry.cpp */,
@@ -14197,6 +14200,7 @@
 				B237C8A80D344D110013F707 /* SVGFontData.h in Headers */,
 				E4EEFFC90D34550C00469A58 /* JSAudioConstructor.h in Headers */,
 				939B3E4E0D3C1E8400B4A92B /* StringBuffer.h in Headers */,
+				515378030D52D0630063A78B /* Locker.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -59,6 +59,8 @@
 #ifndef Threading_h
 #define Threading_h
 
+#include "Locker.h"
+
 #include <wtf/Assertions.h>
 #include <wtf/Noncopyable.h>
 
@@ -143,14 +145,7 @@ private:
     PlatformMutex m_mutex;
 };
 
-class MutexLocker : Noncopyable {
-public:
-    MutexLocker(Mutex& mutex) : m_mutex(mutex) { m_mutex.lock(); }
-    ~MutexLocker() { m_mutex.unlock(); }
-
-private:
-    Mutex& m_mutex;
-};
+typedef Locker<Mutex> MutexLocker;
 
 class ThreadCondition : Noncopyable {
 public:
