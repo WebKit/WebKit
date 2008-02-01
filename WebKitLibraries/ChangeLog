@@ -2,7 +2,7 @@
 
         <rdar://problem/5717523> Don't set DEP opt-in flag (data execution prevention) since it is incompaible with the video plugin used on CNN.com
         
-        Rubber-stamped by John Honeycutt.
+        Rubber-stamped by Jon Honeycutt.
 
         * win/tools/vsprops/common.vsprops:
 
