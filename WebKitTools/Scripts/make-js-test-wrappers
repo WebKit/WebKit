@@ -40,7 +40,7 @@ use strict;
 
 chdirWebKit();
 
-my @templates = `find LayoutTests/fast -name "TEMPLATE.html"`;
+my @templates = `find LayoutTests/fast LayoutTests/svg -name "TEMPLATE.html"`;
 
 for my $tfile (@templates) {
 

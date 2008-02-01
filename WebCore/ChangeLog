@@ -1,3 +1,21 @@
+2008-02-01  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Oliver.
+
+        Add getSVGDocument to frame and iframe.
+
+        Test: svg/custom/frame-getSVGDocument.html
+
+        * html/HTMLEmbedElement.cpp:
+        * html/HTMLEmbedElement.h:
+        * html/HTMLFrameElement.idl:
+        * html/HTMLFrameOwnerElement.cpp:
+        (WebCore::HTMLFrameOwnerElement::getSVGDocument):
+        * html/HTMLFrameOwnerElement.h:
+        * html/HTMLIFrameElement.idl:
+        * html/HTMLObjectElement.cpp:
+        * html/HTMLObjectElement.h:
+
 2008-01-30  Eric Seidel  <eric@webkit.org>
 
         Reviewed by darin.

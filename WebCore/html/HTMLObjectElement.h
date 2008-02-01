@@ -30,10 +30,6 @@ namespace WebCore {
 
 class HTMLImageLoader;
 
-#if ENABLE(SVG)
-class SVGDocument;
-#endif
-
 class HTMLObjectElement : public HTMLPlugInElement {
 public:
     HTMLObjectElement(Document*);
@@ -112,10 +108,6 @@ public:
     bool isDocNamedItem() const { return m_docNamedItem; }
 
     bool containsJavaApplet() const;
-
-#if ENABLE(SVG)
-    SVGDocument* getSVGDocument(ExceptionCode&) const;
-#endif
 
     String m_serviceType;
     String m_url;

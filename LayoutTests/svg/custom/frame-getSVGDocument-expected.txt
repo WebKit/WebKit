@@ -1,0 +1,17 @@
+Tests that HTMLFrameElement and HTMLIFrameElement expose a getSVGDocument accessor
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS !!frame.getSVGDocument is true
+PASS frame.getSVGDocument().toString() is "[object SVGDocument]"
+PASS !!iframe.getSVGDocument is true
+PASS iframe.getSVGDocument().toString() is "[object SVGDocument]"
+PASS !!embed.getSVGDocument is true
+PASS embed.getSVGDocument().toString() is "[object SVGDocument]"
+PASS !!object.getSVGDocument is true
+PASS object.getSVGDocument().toString() is "[object SVGDocument]"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

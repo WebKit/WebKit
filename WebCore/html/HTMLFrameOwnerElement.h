@@ -29,6 +29,10 @@ class DOMWindow;
 class Frame;
 class KeyboardEvent;
 
+#if ENABLE(SVG)
+class SVGDocument;
+#endif
+
 class HTMLFrameOwnerElement : public HTMLElement {
 protected:
     HTMLFrameOwnerElement(const QualifiedName& tagName, Document*);
@@ -49,6 +53,10 @@ public:
     void setCreatedByParser(bool createdByParser) { m_createdByParser = createdByParser; }
 
     virtual ScrollbarMode scrollingMode() const { return ScrollbarAuto; }
+
+#if ENABLE(SVG)
+    SVGDocument* getSVGDocument(ExceptionCode&) const;
+#endif
 
 private:
     friend class Frame;

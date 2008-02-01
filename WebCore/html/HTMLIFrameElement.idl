@@ -43,6 +43,11 @@ module html {
 #if !defined(LANGUAGE_COM)
         // Extensions
         readonly attribute DOMWindow contentWindow;
+
+#if ENABLE_SVG
+        [SVGCheckSecurityDocument] SVGDocument getSVGDocument()
+            raises(DOMException);
+#endif
 #endif
 
     };

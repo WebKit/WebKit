@@ -1,3 +1,13 @@
+2008-02-01  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Oliver.
+
+        Add test for getSVGDocument() on object, embed, frame and iframe.
+
+        * svg/custom/frame-getSVGDocument.html: Added.
+        * svg/custom/frame-getSVGDocument-expected.txt: Added.
+        * svg/custom/resources/TEMPLATE.html: Added.
+
 2008-01-31  Kevin McCullough  <kmccullough@apple.com>
 
         <rdar://problem/5716912> REGRESSION (r29816): Can't navigate back to    
