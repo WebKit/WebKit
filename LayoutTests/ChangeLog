@@ -1,5 +1,17 @@
 2008-01-31  Dan Bernstein  <mitz@apple.com>
 
+        Reviewed by Geoffrey Garen.
+
+        - change the font used in fast/text/monospace-width-cache.html again to
+          a font that contains the U+2500 character in Tiger too
+
+        * fast/text/monospace-width-cache.html:
+        * platform/mac/fast/text/monospace-width-cache-expected.checksum:
+        * platform/mac/fast/text/monospace-width-cache-expected.png:
+        * platform/mac/fast/text/monospace-width-cache-expected.txt:
+
+2008-01-31  Dan Bernstein  <mitz@apple.com>
+
         Reviewed by Adam Roben.
 
         - change several tests that use Mac-only fonts to use fonts that are
