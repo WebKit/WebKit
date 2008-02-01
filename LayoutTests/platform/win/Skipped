@@ -61,9 +61,6 @@ svg/W3C-SVG-1.1/text-intro-05-t.svg
 svg/W3C-SVG-1.1/text-tselect-02-f.svg
 svg/batik/text/smallFonts.svg
 svg/batik/text/textBiDi.svg
-svg/hixie/text/003.html
-svg/hixie/text/003a.xml
-svg/hixie/viewbox/preserveAspectRatio/002.xml
 svg/text/text-fonts-01-t.svg
 svg/text/text-intro-05-t.svg
 svg/text/text-tselect-02-f.svg
@@ -80,6 +77,11 @@ fast/text/international/bidi-CS-after-AN.html
 fast/text/international/bidi-fallback-font-weight.html
 fast/text/international/bidi-neutral-directionality-paragraph-start.html
 fast/text/international/thai-line-breaks.html
+
+# <rdar://problem/5718773> Support a minimum antialiased font size
+svg/hixie/text/003.html
+svg/hixie/text/003a.xml
+svg/hixie/viewbox/preserveAspectRatio/002.xml
 
 # ASSERT in ClipboardWin::setData <rdar://problem/5015941>
 editing/execCommand/copy-without-selection.html

@@ -1,5 +1,11 @@
 2008-01-31  Dan Bernstein  <mitz@apple.com>
 
+        - re-categorize three skipped tests
+
+        * platform/win/Skipped:
+
+2008-01-31  Dan Bernstein  <mitz@apple.com>
+
         Reviewed by Geoffrey Garen.
 
         - change the font used in fast/text/monospace-width-cache.html again to
