@@ -1,3 +1,13 @@
+2008-02-01  Darin Adler  <darin@apple.com>
+
+        Reviewed by Tim.
+
+        - fixed mistake in the JSLock fix that caused an assertion every time
+
+        * bindings/js/JSCustomSQLTransactionCallback.cpp:
+        (WebCore::JSCustomSQLTransactionCallback::JSCustomSQLTransactionCallback): Added JSLock.
+        (WebCore::unprotectOnMainThread): Ditto.
+
 2008-02-01  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Antti and Darin.
