@@ -1,5 +1,10 @@
 2008-02-01  Darin Adler  <darin@apple.com>
 
+        * platform/network/mac/ResourceHandleMac.mm:
+        (WebCore::ResourceHandle::loadsBlocked): Roll out accidentally checked in file.
+
+2008-02-01  Darin Adler  <darin@apple.com>
+
         Reviewed by Geoff and Brady.
 
         - fix <rdar://problem/5680469> Each database worker thread takes a JSLock,

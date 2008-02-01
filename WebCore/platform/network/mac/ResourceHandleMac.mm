@@ -213,11 +213,7 @@ NSURLConnection *ResourceHandle::connection() const
 
 bool ResourceHandle::loadsBlocked()
 {
-#ifdef BUILDING_ON_TIGER
     return inNSURLConnectionCallback != 0;
-#else
-    return false;
-#endif
 }
 
 bool ResourceHandle::willLoadFromCache(ResourceRequest& request)
