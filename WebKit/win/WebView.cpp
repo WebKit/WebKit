@@ -1686,8 +1686,8 @@ static LRESULT CALLBACK WebViewWndProc(HWND hWnd, UINT message, WPARAM wParam, L
 
             FocusController* focusController = webView->page()->focusController();
             if (Frame* frame = focusController->focusedFrame()) {
-                // If the previously focused window is a child of ours (for example a plugin), don't send any
-                // focus events.
+                // Send focus events unless the previously focused window is a
+                // child of ours (for example a plugin).
                 if (!IsChild(hWnd, reinterpret_cast<HWND>(wParam)))
                     frame->selectionController()->setFocused(true);
             } else
@@ -1702,20 +1702,12 @@ static LRESULT CALLBACK WebViewWndProc(HWND hWnd, UINT message, WPARAM wParam, L
                 SUCCEEDED(uiDelegate->QueryInterface(IID_IWebUIDelegatePrivate, (void**) &uiDelegatePrivate)) && uiDelegatePrivate)
                 uiDelegatePrivate->webViewLostFocus(webView, (OLE_HANDLE)(ULONG64)newFocusWnd);
 
-            // However here we have to be careful.  If we are losing focus because of a deactivate,
-            // then we need to remember our focused target for restoration later.  
-            // If we are losing focus to another part of our window, then we are no longer focused for real
-            // and we need to clear out the focused target.
             FocusController* focusController = webView->page()->focusController();
-            webView->resetIME(focusController->focusedOrMainFrame());
-            if (webView->topLevelParent() != findTopLevelParent(newFocusWnd)) {
-                if (Frame* frame = focusController->focusedOrMainFrame()) {
-                    // If we're losing focus to a child of ours, don't send blur events.
-                    if (!IsChild(hWnd, newFocusWnd))
-                        frame->selectionController()->setFocused(false);
-                }
-            } else
-                focusController->setFocusedFrame(0);
+            Frame* frame = focusController->focusedOrMainFrame();
+            webView->resetIME(frame);
+            // Send blur events unless we're losing focus to a child of ours.
+            if (!IsChild(hWnd, newFocusWnd))
+                frame->selectionController()->setFocused(false);
             break;
         }
         case WM_WINDOWPOSCHANGED:

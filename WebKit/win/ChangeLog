@@ -1,5 +1,32 @@
 2008-01-31  Adam Roben  <aroben@apple.com>
 
+        Fix <rdar://5713172> Focus lost from Gmail message body after toggling
+        tabs
+
+        This regressed in r29583. Prior to r29583, the code path that resulted
+        in calling focusController->setFocusedFrame(0) was never getting hit.
+        r29583 changed the code to adhere to the comment above the code and
+        actually call setFocusedFrame(0) when losing focus to another part of
+        the window. It turns out this is wrong behavior (and not what
+        WebKit/mac does). The only time we should clear the focused frame is
+        when we tab out of the WebView, and that's already taken care of by
+        FocusController::advanceFocus. The code to clear the focused frame in
+        WebView was written before FocusController::advanceFocus, so it was
+        correct at one point but no longer is.
+
+        We now never call setFocusedFrame(0) when the WebView receives a
+        WM_KILLFOCUS message. Instead we just call setFocused(false) on the
+        focused frame so that blur events will be sent. This matches what
+        WebKit/mac does.
+
+        Reviewed by Darin and Adele.
+
+        * WebView.cpp:
+        (WebViewWndProc): Also reworded a couple of comments to make them
+        clearer.
+
+2008-01-31  Adam Roben  <aroben@apple.com>
+
         Let WebCore take care of the highlight drawing entirely
 
         Reviewed by Darin.
