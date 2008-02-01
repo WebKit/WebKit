@@ -683,8 +683,17 @@ void Window::put(ExecState* exec, const Identifier& propertyName, JSValue* value
 
     switch (entry->value.intValue) {
     case Location_: {
-      Frame* p = Window::retrieveActive(exec)->impl()->frame();
-      if (p) {
+      if (Frame* p = Window::retrieveActive(exec)->impl()->frame()) {
+        // To avoid breaking old widgets, make "var location =" in a top-level frame create
+        // a property named "location" instead of performing a navigation (<rdar://problem/5688039>).
+        if (Settings* settings = p->settings()) {
+          if (settings->usesDashboardBackwardCompatibilityMode() && !p->tree()->parent()) {
+            if (allowsAccessFrom(exec))
+              putDirect(propertyName, value, attr);
+            return;
+          }
+        }
+
         if (!p->loader()->shouldAllowNavigation(impl()->frame()))
           return;
         String dstUrl = p->loader()->completeURL(value->toString(exec)).string();

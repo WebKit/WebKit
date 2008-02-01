@@ -1,3 +1,18 @@
+2008-02-01  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by John Sullivan, Oliver Hunt.
+
+        Fixed <rdar://problem/5688039> REGRESSION (r29428): Weather widget
+        fails to load due to reliance on "var location" quirk
+        
+        Added a Dashboard quirk.
+
+        * bindings/js/kjs_window.cpp:
+        (KJS::Window::put): In DB backwards compatibility mode, make assignment
+        to window.location in top-level windows shadow the DOM location API
+        instead of performing a navigation. This makes a reasonable amount of
+        sense, because widgets can't navigate their top-level frames, anyway.
+
 2008-02-01  David Hyatt  <hyatt@apple.com>
 
         Fix for bug 11387, CSS3 :empty selector is not dynamic.
