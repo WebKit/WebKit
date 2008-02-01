@@ -75,14 +75,32 @@ static NSString *WebCoreSynchronousLoaderRunLoopMode = @"WebCoreSynchronousLoade
 #endif
 
 namespace WebCore {
-   
+
+#ifdef BUILDING_ON_TIGER
 static unsigned inNSURLConnectionCallback;
-static bool NSURLConnectionSupportsBufferedData;
-    
+#endif
+
 #ifndef NDEBUG
 static bool isInitializingConnection;
 #endif
     
+class CallbackGuard {
+public:
+    CallbackGuard()
+    {
+#ifdef BUILDING_ON_TIGER
+        ++inNSURLConnectionCallback;
+#endif
+    }
+    ~CallbackGuard()
+    {
+#ifdef BUILDING_ON_TIGER
+        ASSERT(inNSURLConnectionCallback > 0);
+        --inNSURLConnectionCallback;
+#endif
+    }
+};
+
 ResourceHandleInternal::~ResourceHandleInternal()
 {
 }
@@ -181,13 +199,8 @@ void ResourceHandle::releaseDelegate()
 
 bool ResourceHandle::supportsBufferedData()
 {
-    static bool initialized = false;
-    if (!initialized) {
-        NSURLConnectionSupportsBufferedData = [NSURLConnection instancesRespondToSelector:@selector(_bufferedData)];
-        initialized = true;
-    }
-
-    return NSURLConnectionSupportsBufferedData;
+    static bool supportsBufferedData = [NSURLConnection instancesRespondToSelector:@selector(_bufferedData)];
+    return supportsBufferedData;
 }
 
 PassRefPtr<SharedBuffer> ResourceHandle::bufferedData()
@@ -213,7 +226,14 @@ NSURLConnection *ResourceHandle::connection() const
 
 bool ResourceHandle::loadsBlocked()
 {
+#ifndef BUILDING_ON_TIGER
+    return false;
+#else
+    // On Tiger, if we're in a NSURLConnection callback, that blocks all other NSURLConnection callbacks.
+    // On Leopard and newer, it blocks only callbacks on that same NSURLConnection object, which is not
+    // a problem and practice.
     return inNSURLConnectionCallback != 0;
+#endif
 }
 
 bool ResourceHandle::willLoadFromCache(ResourceRequest& request)
@@ -367,10 +387,9 @@ void ResourceHandle::receivedCancellation(const AuthenticationChallenge& challen
     if (!redirectResponse)
         return newRequest;
     
-    ++inNSURLConnectionCallback;
+    CallbackGuard guard;
     ResourceRequest request = newRequest;
     m_handle->client()->willSendRequest(m_handle, request, redirectResponse);
-    --inNSURLConnectionCallback;
 #ifndef BUILDING_ON_TIGER
     NSURL *copy = [[request.nsURLRequest() URL] copy];
     [m_url release];
@@ -400,27 +419,24 @@ void ResourceHandle::receivedCancellation(const AuthenticationChallenge& challen
     
     if (!m_handle)
         return;
-    ++inNSURLConnectionCallback;
+    CallbackGuard guard;
     m_handle->didReceiveAuthenticationChallenge(core(challenge));
-    --inNSURLConnectionCallback;
 }
 
 - (void)connection:(NSURLConnection *)con didCancelAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
 {
     if (!m_handle)
         return;
-    ++inNSURLConnectionCallback;
+    CallbackGuard guard;
     m_handle->didCancelAuthenticationChallenge(core(challenge));
-    --inNSURLConnectionCallback;
 }
 
 - (void)connection:(NSURLConnection *)con didReceiveResponse:(NSURLResponse *)r
 {
     if (!m_handle || !m_handle->client())
         return;
-    ++inNSURLConnectionCallback;
+    CallbackGuard guard;
     m_handle->client()->didReceiveResponse(m_handle, r);
-    --inNSURLConnectionCallback;
 }
 
 - (void)connection:(NSURLConnection *)con didReceiveData:(NSData *)data lengthReceived:(long long)lengthReceived
@@ -430,9 +446,8 @@ void ResourceHandle::receivedCancellation(const AuthenticationChallenge& challen
     // FIXME: If we get more than 2B bytes in a single chunk, this code won't do the right thing.
     // However, with today's computers and networking speeds, this won't happen in practice.
     // Could be an issue with a giant local file.
-    ++inNSURLConnectionCallback;
+    CallbackGuard guard;
     m_handle->client()->didReceiveData(m_handle, (const char*)[data bytes], [data length], static_cast<int>(lengthReceived));
-    --inNSURLConnectionCallback;
 }
 
 - (void)connection:(NSURLConnection *)con willStopBufferingData:(NSData *)data
@@ -442,27 +457,24 @@ void ResourceHandle::receivedCancellation(const AuthenticationChallenge& challen
     // FIXME: If we get a resource with more than 2B bytes, this code won't do the right thing.
     // However, with today's computers and networking speeds, this won't happen in practice.
     // Could be an issue with a giant local file.
-    ++inNSURLConnectionCallback;
+    CallbackGuard guard;
     m_handle->client()->willStopBufferingData(m_handle, (const char*)[data bytes], static_cast<int>([data length]));
-    --inNSURLConnectionCallback;
 }
 
 - (void)connectionDidFinishLoading:(NSURLConnection *)con
 {
     if (!m_handle || !m_handle->client())
         return;
-    ++inNSURLConnectionCallback;
+    CallbackGuard guard;
     m_handle->client()->didFinishLoading(m_handle);
-    --inNSURLConnectionCallback;
 }
 
 - (void)connection:(NSURLConnection *)con didFailWithError:(NSError *)error
 {
     if (!m_handle || !m_handle->client())
         return;
-    ++inNSURLConnectionCallback;
+    CallbackGuard guard;
     m_handle->client()->didFail(m_handle, error);
-    --inNSURLConnectionCallback;
 }
 
 #ifdef BUILDING_ON_TIGER
@@ -507,9 +519,10 @@ void ResourceHandle::receivedCancellation(const AuthenticationChallenge& challen
 #endif
     if (!m_handle || !m_handle->client())
         return nil;
-    ++inNSURLConnectionCallback;
+
+    CallbackGuard guard;
     
-    NSCachedURLResponse * newResponse = m_handle->client()->willCacheResponse(m_handle, cachedResponse);
+    NSCachedURLResponse *newResponse = m_handle->client()->willCacheResponse(m_handle, cachedResponse);
     if (newResponse != cachedResponse)
         return newResponse;
     
@@ -519,11 +532,10 @@ void ResourceHandle::receivedCancellation(const AuthenticationChallenge& challen
 
     if (static_cast<NSURLCacheStoragePolicy>(policy) != [newResponse storagePolicy])
         newResponse = [[[NSCachedURLResponse alloc] initWithResponse:[newResponse response]
-                                                                   data:[newResponse data]
-                                                               userInfo:[newResponse userInfo]
-                                                          storagePolicy:static_cast<NSURLCacheStoragePolicy>(policy)] autorelease];
+                                                                data:[newResponse data]
+                                                            userInfo:[newResponse userInfo]
+                                                       storagePolicy:static_cast<NSURLCacheStoragePolicy>(policy)] autorelease];
 
-    --inNSURLConnectionCallback;
     return newResponse;
 }
 

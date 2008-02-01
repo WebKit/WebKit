@@ -1,5 +1,43 @@
 2008-02-01  Darin Adler  <darin@apple.com>
 
+        Reviewed by Adam.
+
+        - fix <rdar://problem/4527931> showModalDialog calls from onload functions fail (Aspect)
+
+        No automated regression test because showModalDialog doesn't work in DumpRenderTree.
+
+        * platform/network/mac/ResourceHandleMac.mm:
+        (WebCore::CallbackGuard::CallbackGuard): Added.
+        (WebCore::CallbackGuard::~CallbackGuard): Added.
+        (WebCore::ResourceHandle::supportsBufferedData): Simplified to take advantage of how
+        static initialization works in C++.
+        (WebCore::ResourceHandle::loadsBlocked): Always return false on Leopard. The problem in
+        NSURLConnection that created the need to block loads is fixed in Leoaprd. This is the
+        bug fix.
+        (-[WebCoreResourceHandleAsDelegate connection:willSendRequest:redirectResponse:]):
+        Use CallbackGuard instead of directly incrementing the count; allows us to omit the code
+        entirely on Leopard.
+        (-[WebCoreResourceHandleAsDelegate connection:didReceiveAuthenticationChallenge:]):
+        Ditto.
+        (-[WebCoreResourceHandleAsDelegate connection:didCancelAuthenticationChallenge:]):
+        Ditto.
+        (-[WebCoreResourceHandleAsDelegate connection:didReceiveResponse:]):
+        Ditto.
+        (-[WebCoreResourceHandleAsDelegate connection:didReceiveData:lengthReceived:]):
+        Ditto.
+        (-[WebCoreResourceHandleAsDelegate connection:willStopBufferingData:]):
+        Ditto.
+        (-[WebCoreResourceHandleAsDelegate connectionDidFinishLoading:]):
+        Ditto.
+        (-[WebCoreResourceHandleAsDelegate connection:didFailWithError:]):
+        Ditto.
+        (-[WebCoreResourceHandleAsDelegate connection:willCacheResponse:]):
+        Ditto. Fixes a problem where this could leave inNSURLConnectionCallback set
+        permanently in one of the code paths; this would break showModalDialog from that
+        point on. This problem doesn't affect Safari.
+
+2008-02-01  Darin Adler  <darin@apple.com>
+
         * platform/network/mac/ResourceHandleMac.mm:
         (WebCore::ResourceHandle::loadsBlocked): Roll out accidentally checked in file.
 
