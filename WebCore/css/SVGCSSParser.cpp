@@ -47,7 +47,7 @@ bool CSSParser::parseSVGValue(int propId, bool important)
     int id = value->id;
 
     bool valid_primitive = false;
-    CSSValue* parsedValue = 0;
+    RefPtr<CSSValue> parsedValue;
 
     switch (propId) {
     /* The comment to the right defines all valid value of these
@@ -303,17 +303,14 @@ bool CSSParser::parseSVGValue(int propId, bool important)
             parsedValue = new CSSQuirkPrimitiveValue(value->fValue, CSSPrimitiveValue::CSS_EMS);
         valueList->next();
     }
-    if (parsedValue) {
-        if (!valueList->current() || inShorthand()) {
-            addProperty(propId, parsedValue, important);
-            return true;
-        }
-        delete parsedValue;
-    }
-    return false;
+    if (!parsedValue || (valueList->current() && !inShorthand()))
+        return false;
+
+    addProperty(propId, parsedValue.release(), important);
+    return true;
 }
 
-CSSValue* CSSParser::parseSVGStrokeDasharray()
+PassRefPtr<CSSValue> CSSParser::parseSVGStrokeDasharray()
 {
     CSSValueList* ret = new CSSValueList;
     Value* value = valueList->current();
@@ -338,7 +335,7 @@ CSSValue* CSSParser::parseSVGStrokeDasharray()
     return ret;
 }
 
-CSSValue* CSSParser::parseSVGPaint()
+PassRefPtr<CSSValue> CSSParser::parseSVGPaint()
 {
     RGBA32 c = Color::transparent;
     if (!parseColorFromValue(valueList->current(), c, true))
@@ -346,7 +343,7 @@ CSSValue* CSSParser::parseSVGPaint()
     return new SVGPaint(Color(c));
 }
 
-CSSValue* CSSParser::parseSVGColor()
+PassRefPtr<CSSValue> CSSParser::parseSVGColor()
 {
     RGBA32 c = Color::transparent;
     if (!parseColorFromValue(valueList->current(), c, true))

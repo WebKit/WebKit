@@ -135,24 +135,24 @@ namespace WebCore {
         bool parse4Values(int propId, const int* properties, bool important);
         bool parseContent(int propId, bool important);
 
-        CSSValue* parseBackgroundColor();
-        bool parseBackgroundImage(CSSValue*&);
-        CSSValue* parseBackgroundPositionXY(bool& xFound, bool& yFound);
-        void parseBackgroundPosition(CSSValue*&, CSSValue*&);
-        CSSValue* parseBackgroundSize();
+        PassRefPtr<CSSValue> parseBackgroundColor();
+        bool parseBackgroundImage(RefPtr<CSSValue>&);
+        PassRefPtr<CSSValue> parseBackgroundPositionXY(bool& xFound, bool& yFound);
+        void parseBackgroundPosition(RefPtr<CSSValue>&, RefPtr<CSSValue>&);
+        PassRefPtr<CSSValue> parseBackgroundSize();
         
-        bool parseBackgroundProperty(int propId, int& propId1, int& propId2, CSSValue*&, CSSValue*&);
+        bool parseBackgroundProperty(int propId, int& propId1, int& propId2, RefPtr<CSSValue>&, RefPtr<CSSValue>&);
         bool parseBackgroundShorthand(bool important);
 
-        void addBackgroundValue(CSSValue*& lval, CSSValue* rval);
+        void addBackgroundValue(RefPtr<CSSValue>& lval, PassRefPtr<CSSValue> rval);
 
-        void addTransitionValue(CSSValue*& lval, CSSValue* rval);
-        CSSValue* parseTransitionDuration();
-        CSSValue* parseTransitionRepeatCount();
-        CSSValue* parseTransitionTimingFunction();
+        void addTransitionValue(RefPtr<CSSValue>& lval, PassRefPtr<CSSValue> rval);
+        PassRefPtr<CSSValue> parseTransitionDuration();
+        PassRefPtr<CSSValue> parseTransitionRepeatCount();
+        PassRefPtr<CSSValue> parseTransitionTimingFunction();
         bool parseTimingFunctionValue(ValueList*& args, double& result);
-        CSSValue* parseTransitionProperty();
-        bool parseTransitionProperty(int propId, CSSValue*&);
+        PassRefPtr<CSSValue> parseTransitionProperty();
+        bool parseTransitionProperty(int propId, RefPtr<CSSValue>&);
         bool parseTransitionShorthand(bool important);
         
         bool parseDashboardRegions(int propId, bool important);
@@ -160,14 +160,14 @@ namespace WebCore {
         bool parseShape(int propId, bool important);
 
         bool parseFont(bool important);
-        CSSValueList* parseFontFamily();
+        PassRefPtr<CSSValueList> parseFontFamily();
 
         bool parseCounter(int propId, int defaultValue, bool important);
         PassRefPtr<CSSValue> parseCounterContent(ValueList* args, bool counters);
 
         bool parseColorParameters(Value*, int* colorValues, bool parseAlpha);
         bool parseHSLParameters(Value*, double* colorValues, bool parseAlpha);
-        CSSPrimitiveValue* parseColor(Value* = 0);
+        PassRefPtr<CSSPrimitiveValue> parseColor(Value* = 0);
         bool parseColorFromValue(Value*, RGBA32&, bool = false);
 
         static bool parseColor(const String&, RGBA32& rgb, bool strict);
@@ -177,9 +177,9 @@ namespace WebCore {
 
 #if ENABLE(SVG)
         bool parseSVGValue(int propId, bool important);
-        CSSValue* parseSVGPaint();
-        CSSValue* parseSVGColor();
-        CSSValue* parseSVGStrokeDasharray();
+        PassRefPtr<CSSValue> parseSVGPaint();
+        PassRefPtr<CSSValue> parseSVGColor();
+        PassRefPtr<CSSValue> parseSVGStrokeDasharray();
 #endif
 
         // CSS3 Parsing Routines (for properties specific to CSS3)
@@ -187,7 +187,7 @@ namespace WebCore {
         bool parseBorderImage(int propId, bool important);
         
         PassRefPtr<CSSValue> parseTransform();
-        bool parseTransformOrigin(int propId, int& propId1, int& propId2, CSSValue*&, CSSValue*&);
+        bool parseTransformOrigin(int propId, int& propId1, int& propId2, RefPtr<CSSValue>&, RefPtr<CSSValue>&);
         
         int yyparse();
 

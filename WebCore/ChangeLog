@@ -1,3 +1,32 @@
+2008-01-30  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by darin.
+
+        Beat CSSParser with the RefPtr stick.  Hopefully squashing any leaks in the process.
+        (Deploy RefPtr and PassRefPtr throughout CSSParser)
+        http://bugs.webkit.org/show_bug.cgi?id=17108
+
+        No functional changes, thus no tests.
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseColor):
+        (WebCore::CSSParser::parseValue):
+        (WebCore::CSSParser::addBackgroundValue):
+        (WebCore::CSSParser::parseBackgroundShorthand):
+        (WebCore::CSSParser::addTransitionValue):
+        (WebCore::CSSParser::parseTransitionShorthand):
+        (WebCore::CSSParser::parseBackgroundPosition):
+        (WebCore::CSSParser::parseBackgroundProperty):
+        (WebCore::CSSParser::parseTransitionProperty):
+        (WebCore::CSSParser::parseFontFaceSrc):
+        (WebCore::ShadowParseContext::ShadowParseContext):
+        (WebCore::CSSParser::parseShadow):
+        (WebCore::BorderImageParseContext::BorderImageParseContext):
+        (WebCore::BorderImageParseContext::commitBorderImage):
+        * css/CSSParser.h:
+        * css/SVGCSSParser.cpp:
+        (WebCore::CSSParser::parseSVGValue):
+
 2008-01-31  Oliver Hunt  <oliver@apple.com>
 
         RS=Brady.
