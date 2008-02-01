@@ -1,3 +1,16 @@
+2008-02-01  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        - switch line breaking from using Carbon Unicode Utilities to using ICU
+          on Leopard
+          <http://bugs.webkit.org/show_bug.cgi?id=4628>
+
+        fast/text/international/thai-line-breaks.html results do not change.
+
+        * rendering/break_lines.cpp:
+        (WebCore::nextBreakablePosition): Changed to use Carbon only on Tiger.
+
 2008-02-01  Rodney Dawes  <dobey@wayofthemonkey.com>
 
         Reviewed by Darin.
