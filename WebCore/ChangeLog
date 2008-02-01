@@ -1,3 +1,18 @@
+2008-02-01  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Antti and Darin.
+
+        Change Text::createWithLengthLimit to take a UChar pointer instead of a string. This
+        lets us avoid making a copy of the buffer in TextDocument.cpp.
+        
+        * dom/Text.cpp:
+        (WebCore::Text::createWithLengthLimit):
+        * dom/Text.h:
+        * html/HTMLParser.cpp:
+        (WebCore::HTMLParser::parseToken):
+        * loader/TextDocument.cpp:
+        (WebCore::TextTokenizer::write):
+
 2008-02-01  Darin Adler  <darin@apple.com>
 
         Reviewed by Adam.

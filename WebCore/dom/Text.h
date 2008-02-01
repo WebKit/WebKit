@@ -57,7 +57,7 @@ public:
 
     virtual String toString() const;
     
-    static PassRefPtr<Text> createWithLengthLimit(Document*, const String&, unsigned& charsLeft, unsigned maxChars = cTextNodeLengthLimit);
+    static PassRefPtr<Text> createWithLengthLimit(Document*, const UChar*&, unsigned& charsLeft, unsigned maxChars = cTextNodeLengthLimit);
 
 #ifndef NDEBUG
     virtual void formatForDebugger(char* buffer, unsigned length) const;
