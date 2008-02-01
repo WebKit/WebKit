@@ -275,10 +275,10 @@ webkitgtk_sources += \
 
 webkitgtk_cleanfiles += \
 	$(top_builddir)/Programs/GtkLauncher \
-	$(top_builddir)/WebKit/gtk/WebKitGtk.pc
+	$(top_builddir)/WebKit/gtk/webkit-1.0.pc
 
 pkgconfigdir = $(libdir)/pkgconfig
-pkgconfig_DATA = WebKit/gtk/WebKitGtk.pc
+pkgconfig_DATA = WebKit/gtk/webkit-1.0.pc
 
 WEBKIT_MARSHAL = $(CURDIR)/WebKit/gtk/webkit/webkit-marshal
 WEBKIT_MARSHAL_LIST = $(srcdir)/WebKit/gtk/webkit/webkit-marshal.list

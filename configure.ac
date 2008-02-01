@@ -435,7 +435,7 @@ AM_CONDITIONAL([SVG_FLAGS],[test "$svg_flags" = "yes"])
 
 AC_CONFIG_FILES([
 GNUmakefile
-WebKit/gtk/WebKitGtk.pc:WebKit/gtk/WebKitGtk.pc.in
+WebKit/gtk/webkit-1.0.pc:WebKit/gtk/webkit.pc.in
 ]
 )
 

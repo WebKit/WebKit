@@ -1,5 +1,17 @@
 2008-01-31  Alp Toker  <alp@atoker.com>
 
+        Reviewed by Mark Rowe.
+
+        Fix the pkg-config file to follow GTK+ package naming and versioning
+        conventions.
+
+        Remove unneeded dependency listings.
+
+        * WebKitGtk.pc.in: Removed.
+        * webkit.pc.in: Copied from WebKit/gtk/WebKitGtk.pc.in.
+
+2008-01-31  Alp Toker  <alp@atoker.com>
+
         Rubber-stamped by Adam Roben.
 
         http://bugs.webkit.org/show_bug.cgi?id=17006
