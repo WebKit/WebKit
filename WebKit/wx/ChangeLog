@@ -1,3 +1,16 @@
+2008-01-31  Kevin Ollivier  <kevino@theolliviers.com>
+
+        Reviewed by Adam Roben.
+
+        On MSW, the wx port internally uses callbacks for wxTimer, so the
+        wx port suffers from the same crash problem that was fixed
+        in r28500 for the Windows port. For now, use the SharedTimerWin.cpp
+        impl. for wx too on MSW, until a version of wx is released that
+        fixes the issue by reworking wxTimer.
+
+        * WebView.cpp:
+        (wxWebView::wxWebView):
+
 2008-01-21  Darin Adler  <darin@apple.com>
 
         Reviewed by John Sullivan.

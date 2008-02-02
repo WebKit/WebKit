@@ -85,7 +85,6 @@ wxWebCore port Bakefile project file.
             platform/wx/RenderThemeWx.cpp
             platform/wx/ScreenWx.cpp
             platform/wx/ScrollViewWx.cpp
-            platform/wx/SharedTimerWx.cpp
             platform/wx/SoundWx.cpp
             platform/text/wx/StringWx.cpp
             platform/wx/SystemTimeWx.cpp
@@ -98,16 +97,21 @@ wxWebCore port Bakefile project file.
                       
         </sources>
         
-        <!-- extensions that hopefully will make it to wx -->
+        <!-- platform-dependent source files -->
         <set var="EXT_SOURCES">
             <if cond="WX_PORT=='gtk2'">
                 platform/wx/wxcode/gtk/fontprops.cpp
+                platform/wx/SharedTimerWx.cpp
             </if>
             <if cond="WX_PORT=='mac'">
                 platform/wx/wxcode/mac/carbon/fontprops.cpp
+                platform/wx/SharedTimerWx.cpp
             </if>
             <if cond="WX_PORT=='msw'">
                 platform/wx/wxcode/win/fontprops.cpp
+                <!-- grab the windows port's SharedTimer implementation -->
+                platform/win/SharedTimerWin.cpp
+                bridge/win/PageWin.cpp
             </if>
         </set>
         

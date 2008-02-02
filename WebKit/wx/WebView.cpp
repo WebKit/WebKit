@@ -178,7 +178,14 @@ wxWebView::wxWebView(wxWindow* parent, int id, const wxPoint& position,
 {
     if (!wxScrolledWindow::Create(parent, id, position, size))
         return;
-    
+
+// This is necessary because we are using SharedTimerWin.cpp on Windows,
+// due to a problem with exceptions getting eaten when using the callback
+// approach to timers (which wx itself uses).
+#if __WXMSW__
+    WebCore::Page::setInstanceHandle(wxGetInstance());
+#endif
+
     // this helps reduce flicker on platforms like MSW
     SetBackgroundStyle(wxBG_STYLE_CUSTOM);
 

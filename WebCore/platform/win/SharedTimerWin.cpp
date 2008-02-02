@@ -27,11 +27,22 @@
 #include "SharedTimer.h"
 
 #include "Page.h"
-#include "PluginViewWin.h"
 #include "SystemTime.h"
 #include "Widget.h"
 #include <wtf/Assertions.h>
+
+// Note: wx headers set defines that affect the configuration of windows.h
+// so we must include the wx header first to get unicode versions of functions,
+// etc.
+#if PLATFORM(WX)
+#include <wx/wx.h>
+#endif
+
 #include <windows.h>
+
+#if PLATFORM(WIN)
+#include "PluginViewWin.h"
+#endif
 
 namespace WebCore {
 
@@ -46,6 +57,7 @@ const int sharedTimerID = 1000;
 
 LRESULT CALLBACK TimerWindowWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
+#if PLATFORM(WIN)
     // Windows Media Player has a modal message loop that will deliver messages
     // to us at inappropriate times and we will crash if we handle them when
     // they are delivered. We repost all messages so that we will get to handle
@@ -54,6 +66,7 @@ LRESULT CALLBACK TimerWindowWndProc(HWND hWnd, UINT message, WPARAM wParam, LPAR
         PostMessage(hWnd, message, wParam, lParam);
         return 0;
     }
+#endif
 
     if (message == timerFiredMessage) {
         processingCustomTimerMessage = true;
