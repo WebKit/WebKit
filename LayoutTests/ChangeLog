@@ -1,5 +1,12 @@
 2008-02-02  Dan Bernstein  <mitz@apple.com>
 
+        - added Tiger-only results for a test
+
+        * platform/mac-leopard/fast/text/cg-fallback-bolding-expected.txt: Copied from LayoutTests/platform/mac/fast/text/cg-fallback-bolding-expected.txt.
+        * platform/mac/fast/text/cg-fallback-bolding-expected.txt:
+
+2008-02-02  Dan Bernstein  <mitz@apple.com>
+
         Reviewed by Oliver Hunt.
 
         - changed a test to use the same fonts on Windows as on Mac OS X
