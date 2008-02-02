@@ -1,3 +1,9 @@
+2008-02-02  Mark Rowe  <mrowe@apple.com>
+
+        Add WordPress plugin to give more control over blog comment settings.
+
+        * blog/wp-content/plugins/commentcontrol.php: Added.
+
 2008-01-30  Jessica Kahn  <jess@apple.com>
 
         Reviewed by Tim Hatcher.
