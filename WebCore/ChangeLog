@@ -1,3 +1,33 @@
+2008-02-02  Kevin Watters  <kevin@dotsyntax.com>
+
+        Reviewed by Kevin Ollivier.
+
+        wxFont is reference counted and meant to be used as as a value
+        object; when using wxFont*, ref-counting was not happening properly
+        and the font object would be destroyed while still in use.
+
+        Also, fix memory leak in wx's FrameData::clear() method.
+
+        * platform/graphics/SimpleFontData.h:
+        (WebCore::SimpleFontData::getWxFont):
+        * platform/graphics/wx/FontPlatformData.h:
+        (WebCore::FontPlatformData::):
+        (WebCore::FontPlatformData::FontPlatformData):
+        (WebCore::FontPlatformData::font):
+        (WebCore::FontPlatformData::hash):
+        (WebCore::FontPlatformData::operator==):
+        (WebCore::FontPlatformData::computeHash):
+        * platform/graphics/wx/FontPlatformDataWx.cpp:
+        (WebCore::fontFamilyToWxFontFamily):
+        (WebCore::FontPlatformData::FontPlatformData):
+        (WebCore::FontPlatformData::~FontPlatformData):
+        * platform/graphics/wx/FontWx.cpp:
+        (WebCore::Font::drawGlyphs):
+        * platform/graphics/wx/SimpleFontDataWx.cpp:
+        (WebCore::SimpleFontData::platformInit):
+        (WebCore::SimpleFontData::determinePitch):
+        (WebCore::SimpleFontData::platformWidthForGlyph):
+
 2008-02-02  Kevin Ollivier  <kevino@theolliviers.com>
 
         Reviewed by Adam Roben.

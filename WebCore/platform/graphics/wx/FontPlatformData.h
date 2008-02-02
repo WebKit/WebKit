@@ -30,6 +30,7 @@
 #define FontPlatformData_H
 
 #include "FontDescription.h"
+#include "CString.h"
 #include "AtomicString.h"
 #include "StringImpl.h"
 
@@ -42,39 +43,61 @@ class FontPlatformData {
 public:
     class Deleted {};
 
+    enum FontState { UNINITIALIZED, DELETED, VALID };
+
     FontPlatformData(Deleted)
-    : m_font(reinterpret_cast<wxFont*>(-1))
+    : m_fontState(DELETED)
     { }
 
     ~FontPlatformData();
 
-    FontPlatformData(wxFont* f) 
+    FontPlatformData(wxFont f) 
     : m_font(f)
+    , m_fontState(VALID)
     {
+        m_fontHash = computeHash();        
     }
     
     FontPlatformData(const FontDescription&, const AtomicString&);
     
     FontPlatformData() 
-    : m_font(NULL)
+    : m_fontState(UNINITIALIZED)
     {
     }
     
-    wxFont* font() const { return m_font; }
+    wxFont font() const {
+        return m_font;
+    }
     
-    unsigned hash() const
-    {
-        uintptr_t hashCodes[1] = { reinterpret_cast<uintptr_t>(m_font) };
-        return StringImpl::computeHash(reinterpret_cast<UChar*>(hashCodes), sizeof(hashCodes) / sizeof(UChar));
+    unsigned hash() const {
+        switch (m_fontState) {
+        case DELETED:
+            return -1;
+        case UNINITIALIZED:
+            return 0;
+        case VALID:
+            return m_fontHash;              
+        }
     }
 
     bool operator==(const FontPlatformData& other) const
     { 
-        return m_font == other.m_font;
+        if (m_fontState == VALID)
+            return other.m_fontState == VALID && m_font.Ok() && other.m_font.Ok() && m_font.IsSameAs(other.m_font);
+        else
+            return m_fontState == other.m_fontState;
+    }
+    
+    unsigned computeHash() const {
+        wxCharBuffer charBuffer(m_font.GetNativeFontInfoDesc().mb_str(wxConvUTF8));
+        const char* contents = charBuffer;        
+        return StringImpl::computeHash( (UChar*)contents, strlen(contents));
     }
 
 private:
-    wxFont* m_font;
+    wxFont m_font;
+    FontState m_fontState;    
+    unsigned m_fontHash;
 };
 
 }

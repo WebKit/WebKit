@@ -130,4 +130,6 @@ void GetTextExtent( const wxFont& font, const wxString& str, wxCoord *width, wxC
     {
         ::SelectObject(dc, hfontOld);
     }
+    
+    ReleaseDC(0, dc);
 }

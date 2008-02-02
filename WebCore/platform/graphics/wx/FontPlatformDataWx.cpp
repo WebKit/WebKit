@@ -36,7 +36,7 @@ namespace WebCore {
 
 static wxFontFamily fontFamilyToWxFontFamily(const int family)
 {
-    switch (family){
+    switch (family) {
         case FontDescription::StandardFamily:
             return wxFONTFAMILY_DEFAULT;
         case FontDescription::SerifFamily:
@@ -78,7 +78,7 @@ FontPlatformData::FontPlatformData(const FontDescription& desc, const AtomicStri
 // this is a moot issue on Linux and Mac as they only accept the point argument. So,
 // we use the pixel size constructor on Windows, but we use point size on Linux and Mac.
 #if __WXMSW__
-    m_font = new wxFont(   wxSize(0, desc.computedPixelSize()), 
+    m_font = wxFont(   wxSize(0, -desc.computedPixelSize()), 
                                 fontFamilyToWxFontFamily(desc.genericFamily()), 
                                 italicToWxFontStyle(desc.italic()),
                                 fontWeightToWxFontWeight(desc.bold()),
@@ -86,7 +86,7 @@ FontPlatformData::FontPlatformData(const FontDescription& desc, const AtomicStri
                                 family.domString()
                             ); 
 #else
-    m_font = new wxFont(   desc.computedPixelSize(), 
+    m_font = wxFont(   desc.computedPixelSize(), 
                                 fontFamilyToWxFontFamily(desc.genericFamily()), 
                                 italicToWxFontStyle(desc.italic()),
                                 fontWeightToWxFontWeight(desc.bold()),
@@ -94,12 +94,14 @@ FontPlatformData::FontPlatformData(const FontDescription& desc, const AtomicStri
                                 family.domString()
                             ); 
 #endif
+    m_fontState = VALID;
+    m_fontHash = computeHash();
+     
 }
     
 FontPlatformData::~FontPlatformData()
 {
-    if (m_font && m_font != reinterpret_cast<wxFont*>(-1))
-        delete m_font;
+    m_fontState = UNINITIALIZED;
 }
 
 }
