@@ -1,3 +1,35 @@
+2008-02-02  Darin Adler  <darin@apple.com>
+
+        - updated some more last-child and last-of-type tests to expect success
+          (failures seen on buildbot)
+
+        The tests were now succeeding, but the results and placement reflected failure.
+        I'm not sure why we have such a tiny set of tests in the css3 directory.
+        The expected results are updated as well as moved.
+
+        * css3/css3-modsel-33.html: Copied from css3/expected_failures/css3-modsel-33.html.
+        * css3/css3-modsel-35.html: Copied from css3/expected_failures/css3-modsel-35.html.
+        * css3/expected_failures/css3-modsel-33.html: Removed.
+        * css3/expected_failures/css3-modsel-35.html: Removed.
+
+        * platform/mac/css3/css3-modsel-33-expected.checksum: Copied from platform/mac/css3/expected_failures/css3-modsel-33-expected.checksum.
+        * platform/mac/css3/css3-modsel-33-expected.png: Copied from platform/mac/css3/expected_failures/css3-modsel-33-expected.png.
+        * platform/mac/css3/css3-modsel-33-expected.txt: Copied from platform/mac/css3/expected_failures/css3-modsel-33-expected.txt.
+        * platform/mac/css3/css3-modsel-35-expected.checksum: Copied from platform/mac/css3/expected_failures/css3-modsel-35-expected.checksum.
+        * platform/mac/css3/css3-modsel-35-expected.png: Copied from platform/mac/css3/expected_failures/css3-modsel-35-expected.png.
+        * platform/mac/css3/css3-modsel-35-expected.txt: Copied from platform/mac/css3/expected_failures/css3-modsel-35-expected.txt.
+        * platform/mac/css3/expected_failures/css3-modsel-33-expected.checksum: Removed.
+        * platform/mac/css3/expected_failures/css3-modsel-33-expected.png: Removed.
+        * platform/mac/css3/expected_failures/css3-modsel-33-expected.txt: Removed.
+        * platform/mac/css3/expected_failures/css3-modsel-35-expected.checksum: Removed.
+        * platform/mac/css3/expected_failures/css3-modsel-35-expected.png: Removed.
+        * platform/mac/css3/expected_failures/css3-modsel-35-expected.txt: Removed.
+
+        * platform/qt/css3/css3-modsel-33-expected.txt: Copied from platform/qt/css3/expected_failures/css3-modsel-33-expected.txt.
+        * platform/qt/css3/css3-modsel-35-expected.txt: Copied from platform/qt/css3/expected_failures/css3-modsel-35-expected.txt.
+        * platform/qt/css3/expected_failures/css3-modsel-33-expected.txt: Removed.
+        * platform/qt/css3/expected_failures/css3-modsel-35-expected.txt: Removed.
+
 2008-02-02  David Hyatt  <hyatt@apple.com>
 
         Fix for bug 4812.  Support last-child and last-of-type (and make sure they are properly dynamic).
