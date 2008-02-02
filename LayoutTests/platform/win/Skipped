@@ -45,37 +45,39 @@ http/tests/security/cross-frame-access-protocol.html
 # Fails <rdar://problem/5674289>
 media/video-seek-past-end-paused.html
 
-# Layout tests that depend on certain fonts don't match Mac results <rdar://problem/5075790>
-css2.1/t1202-counter-09-b.html
-css2.1/t1202-counters-09-b.html
-fast/encoding/denormalised-voiced-japanese-chars.html
-fast/lists/w3-list-styles.html
-fast/text/international/002.html
-fast/text/international/bidi-neutral-run.html
-fast/text/international/wrap-CJK-001.html
-svg/W3C-SVG-1.1/fonts-glyph-02-t.svg
-svg/W3C-SVG-1.1/interact-cursor-01-f.svg
-svg/W3C-SVG-1.1/text-fonts-01-t.svg
-svg/W3C-SVG-1.1/text-intro-05-t.svg
-svg/W3C-SVG-1.1/text-tselect-02-f.svg
-svg/batik/text/smallFonts.svg
-svg/batik/text/textBiDi.svg
-svg/text/text-fonts-01-t.svg
-svg/text/text-intro-05-t.svg
-svg/text/text-tselect-02-f.svg
-
-# No advanced text <rdar://problems/4516194>
-fast/text/atsui-multiple-renderers.html
-fast/text/atsui-pointtooffset-calls-cg.html
-fast/text/atsui-spacing-features.html
-fast/text/cg-fallback-bolding.html
-fast/text/cg-vs-atsui.html
-fast/text/international/003.html
+# <rdar://problem/5075790> Layout tests that depend on certain fonts don't match Mac results:
+#                          - Mac OS X and Windows do not have an Arabic font in common
 fast/text/international/bidi-AN-after-L.html
 fast/text/international/bidi-CS-after-AN.html
-fast/text/international/bidi-fallback-font-weight.html
+fast/text/international/bidi-neutral-run.html
 fast/text/international/bidi-neutral-directionality-paragraph-start.html
+svg/W3C-SVG-1.1/fonts-glyph-02-t.svg
+svg/W3C-SVG-1.1/text-intro-05-t.svg
+svg/batik/text/textBiDi.svg
+svg/text/text-intro-05-t.svg
+#                           - Mac OS X and Windows do not have a CJK font in common
+fast/encoding/denormalised-voiced-japanese-chars.html
+fast/text/international/002.html
+fast/text/international/003.html
+fast/text/international/wrap-CJK-001.html
+svg/W3C-SVG-1.1/text-fonts-01-t.svg
+svg/text/text-fonts-01-t.svg
+#                           - Windows does not have Geneva
+svg/W3C-SVG-1.1/interact-cursor-01-f.svg
+#                           - Mac OS X and Windows do not have a Thai font in common
+fast/text/atsui-multiple-renderers.html
 fast/text/international/thai-line-breaks.html
+#                           - Mac OS X and Windows do not have a Georgian font in common
+css2.1/t1202-counter-09-b.html
+css2.1/t1202-counters-09-b.html
+fast/lists/w3-list-styles.html
+
+# <rdar://problem/5720592> Width of certain complex text using Times is off by one
+fast/text/atsui-pointtooffset-calls-cg.html
+fast/text/cg-vs-atsui.html
+
+# <rdar://problem/5720637> Missing characters in complex text where different fonts are used in the same run
+fast/text/atsui-spacing-features.html
 
 # <rdar://problem/5718773> Support a minimum antialiased font size
 svg/hixie/text/003.html
@@ -290,6 +292,9 @@ fast/frames/frame-name-reset.html
 # <rdar://5313536> Intermittently fails
 fast/dom/frame-loading-via-document-write.html
 
+# <rdar://5646437> REGRESSION (r28015): svg/batik/text/smallFonts fails
+svg/batik/text/smallFonts.svg
+
 # <rdar://5686552> Intermittently fails
 svg/css/glyph-orientation-rounding-test.xhtml
 
@@ -308,6 +313,9 @@ http/tests/security/cross-frame-access-port.html
 
 # <rdar://problem/5713127>
 media/video-display-toggle.html
+
+# <rdar://problem/5720767>
+svg/W3C-SVG-1.1/text-tselect-02-f.svg
 
 ################################################################################
 ####################### No bugs filed about the below yet#######################

@@ -1,5 +1,28 @@
 2008-02-01  Dan Bernstein  <mitz@apple.com>
 
+        Reviewed by Dave Hyatt.
+
+        - address the remaining tests listed under <rdar://problem/5075790> Layout tests that depend on certain fonts don't match Mac results
+
+        * fast/text/cg-fallback-bolding.html: Changed to use Ahem instead of
+        Geneva.
+        * fast/text/international/bidi-fallback-font-weight.html: Made Mac-only.
+        * platform/mac/fast/text/cg-fallback-bolding-expected.checksum: Updated.
+        * platform/mac/fast/text/cg-fallback-bolding-expected.png: Updated
+        * platform/mac/fast/text/cg-fallback-bolding-expected.txt: Updated.
+        * platform/mac/fast/text/international/bidi-fallback-font-weight.html: Copied from LayoutTests/fast/text/international/bidi-fallback-font-weight.html.
+        * platform/win/Skipped: Removed passing tests and categorized remaining
+        failures.
+        * platform/win/svg/W3C-SVG-1.1: Added.
+        * platform/win/svg/W3C-SVG-1.1/resources: Added.
+        * platform/win/svg/W3C-SVG-1.1/resources/Mac-compatible-font-fallback.css: Added.
+        * platform/win/svg/W3C-SVG-1.1/resources/run-webkit-tests-epilogue.html: Added.
+        * platform/win/svg/W3C-SVG-1.1/resources/run-webkit-tests-prologue.html: Added.
+        * svg/text/text-tselect-02-f.svg: Added @font-face rule to use Lucida
+        Grande for Hebrew.
+
+2008-02-01  Dan Bernstein  <mitz@apple.com>
+
         Reviewed by Alexey Proskuryakov.
 
         - change fast/xsl/xslt-text to dump as text

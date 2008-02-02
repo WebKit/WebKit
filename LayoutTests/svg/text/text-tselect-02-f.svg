@@ -122,6 +122,15 @@
   </g>
   <text id="revision" x="10" y="340" font-size="40" stroke="none" fill="black">$Revision: 1.2 $</text>
   <rect id="test-frame" x="1" y="1" width="478" height="358" fill="none" stroke="#000"/>
+  <style>
+    /* Hebrew */
+
+    @font-face {
+        font-family: 'times';
+        src: local('Lucida Grande');
+        unicode-range: U+0590-05FF;
+    }
+  </style>
 <script>
 if (window.layoutTestController)
     window.layoutTestController.dumpSelectionRect();

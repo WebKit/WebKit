@@ -1,0 +1,7 @@
+/* Hebrew */
+
+@font-face {
+    font-family: 'times';
+    src: local('Lucida Grande');
+    unicode-range: U+0590-05FF;
+}
