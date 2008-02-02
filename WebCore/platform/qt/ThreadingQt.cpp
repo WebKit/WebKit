@@ -87,7 +87,7 @@ bool MainThreadInvoker::event(QEvent* event)
 Q_GLOBAL_STATIC(MainThreadInvoker, webkit_main_thread_invoker)
 
 
-void callOnMainThread(MainThreadFunction* function, void* contexxt)
+void callOnMainThread(MainThreadFunction* function, void* context)
 {
     QCoreApplication::postEvent(webkit_main_thread_invoker(), new PerformFunctionEvent(function, context));
 }
