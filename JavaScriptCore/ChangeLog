@@ -1,3 +1,13 @@
+2008-02-02  Tony Chang  <idealisms@gmail.com>
+
+        Reviewed by darin.  Landed by eseidel.
+
+        Add #define guards for WIN32_LEAN_AND_MEAN and _CRT_RAND_S.
+
+        * kjs/config.h:
+        * wtf/FastMalloc.cpp:
+        * wtf/TCSpinLock.h:
+
 2008-01-28  Sam Weinig  <sam@webkit.org>
 
         Rubber-stamped by Darin Adler.

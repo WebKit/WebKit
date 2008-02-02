@@ -226,7 +226,9 @@ extern "C" const int jscore_fastmalloc_introspection = 0;
 #include <stddef.h>
 #include <stdio.h>
 #if COMPILER(MSVC)
+#ifndef WIN32_LEAN_AND_MEAN
 #define WIN32_LEAN_AND_MEAN
+#endif
 #include <windows.h>
 #endif
 
