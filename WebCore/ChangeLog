@@ -1,5 +1,11 @@
 2008-02-02  Kevin Ollivier  <kevino@theolliviers.com>
 
+        Blind build fix for Qt port. Add Threading.h include.
+
+        * platform/qt/ThreadingQt.cpp:
+
+2008-02-02  Kevin Ollivier  <kevino@theolliviers.com>
+
         wx build fix - add missing include file.
 
         * platform/wx/ThreadingWx.cpp:

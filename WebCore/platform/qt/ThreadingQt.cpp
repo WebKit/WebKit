@@ -28,6 +28,9 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "config.h"
+#include "Threading.h"
+
 #include <QtCore/QObject>
 #include <QtCore/QCoreApplication>
 
