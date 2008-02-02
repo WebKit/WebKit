@@ -856,7 +856,9 @@ pseudo:
             $$ = 0;
         else if (type == CSSSelector::PseudoEmpty ||
                  type == CSSSelector::PseudoFirstChild ||
-                 type == CSSSelector::PseudoFirstOfType) {
+                 type == CSSSelector::PseudoFirstOfType ||
+                 type == CSSSelector::PseudoLastChild ||
+                 type == CSSSelector::PseudoLastOfType) {
             CSSParser* p = static_cast<CSSParser*>(parser);
             Document* doc = p->document();
             if (doc)

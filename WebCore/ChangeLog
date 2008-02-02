@@ -1,3 +1,19 @@
+2008-02-02  David Hyatt  <hyatt@apple.com>
+
+        Fix for bug 4812. Support last-child and last-of-type CSS3 selectors.  Brings Acid3 score up to 68/100.
+
+        Reviewed by olliej
+
+        Added fast/css/last-child-pseudo-class.html, fast/css/last-of-type-pseudo-class.html
+
+        * css/CSSGrammar.y:
+        * css/CSSSelector.cpp:
+        (WebCore::CSSSelector::extractPseudoType):
+        * css/CSSSelector.h:
+        (WebCore::CSSSelector::):
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::checkOneSelector):
+
 2008-02-01  David Hyatt  <hyatt@apple.com>
 
         Make :first-child and :first-of-type properly dynamic when the DOM changes.  Brings the Acid3 score up

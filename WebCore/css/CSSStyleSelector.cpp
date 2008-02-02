@@ -1644,6 +1644,49 @@ bool CSSStyleSelector::checkOneSelector(CSSSelector* sel, Element* e, bool isAnc
                 }
                 break;
             }
+            case CSSSelector::PseudoLastChild: {
+                // first-child matches the first child that is an element
+                if (e->parentNode() && e->parentNode()->isElementNode()) {
+                    bool result = false;
+                    Node* n = e->nextSibling();
+                    while (n && !n->isElementNode())
+                        n = n->nextSibling();
+                    if (!n)
+                        result = true;
+                    if (!m_collectRulesOnly) {
+                        RenderStyle* childStyle = (m_element == e) ? m_style : e->renderStyle();
+                        RenderStyle* parentStyle = (m_element == e) ? m_parentStyle : e->parentNode()->renderStyle();
+                        if (parentStyle)
+                            parentStyle->setChildrenAffectedByLastChildRules();
+                        if (result && childStyle)
+                            childStyle->setLastChildState();
+                    }
+                    return result;
+                }
+                break;
+            }
+            case CSSSelector::PseudoLastOfType: {
+                // first-of-type matches the first element of its type
+                if (e->parentNode() && e->parentNode()->isElementNode()) {
+                    bool result = false;
+                    const QualifiedName& type = e->tagQName();
+                    Node* n = e->nextSibling();
+                    while (n) {
+                        if (n->isElementNode() && static_cast<Element*>(n)->hasTagName(type))
+                            break;
+                        n = n->nextSibling();
+                    }
+                    if (!n)
+                        result = true;
+                    if (!m_collectRulesOnly) {
+                        RenderStyle* parentStyle = (m_element == e) ? m_parentStyle : e->parentNode()->renderStyle();
+                        if (parentStyle)
+                            parentStyle->setChildrenAffectedByPositionalRules();
+                    }
+                    return result;
+                }
+                break;
+            }
             case CSSSelector::PseudoTarget:
                 if (e == e->document()->getCSSTarget())
                     return true;

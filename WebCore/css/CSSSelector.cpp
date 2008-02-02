@@ -87,6 +87,8 @@ void CSSSelector::extractPseudoType() const
     static AtomicString focus("focus");
     static AtomicString hover("hover");
     static AtomicString indeterminate("indeterminate");
+    static AtomicString lastChild("last-child");
+    static AtomicString lastOfType("last-of-type");
     static AtomicString link("link");
     static AtomicString lang("lang(");
     static AtomicString mediaControlsPanel("-webkit-media-controls-panel");
@@ -141,6 +143,10 @@ void CSSSelector::extractPseudoType() const
         m_pseudoType = PseudoEmpty;
     else if (m_value == firstChild)
         m_pseudoType = PseudoFirstChild;
+    else if (m_value == lastChild)
+        m_pseudoType = PseudoLastChild;
+    else if (m_value == lastOfType)
+        m_pseudoType = PseudoLastOfType;
     else if (m_value == firstLetter) {
         m_pseudoType = PseudoFirstLetter;
         element = true;

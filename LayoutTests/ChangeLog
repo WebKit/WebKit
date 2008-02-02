@@ -1,3 +1,18 @@
+2008-02-02  David Hyatt  <hyatt@apple.com>
+
+        Fix for bug 4812.  Support last-child and last-of-type (and make sure they are properly dynamic).
+
+        Reviewed by olliej
+
+        * fast/css/last-child-pseudo-class.html: Added.
+        * fast/css/last-of-type-pseudo-class.html: Added.
+        * platform/mac/fast/css/last-child-pseudo-class-expected.checksum: Added.
+        * platform/mac/fast/css/last-child-pseudo-class-expected.png: Added.
+        * platform/mac/fast/css/last-child-pseudo-class-expected.txt: Added.
+        * platform/mac/fast/css/last-of-type-pseudo-class-expected.checksum: Added.
+        * platform/mac/fast/css/last-of-type-pseudo-class-expected.png: Added.
+        * platform/mac/fast/css/last-of-type-pseudo-class-expected.txt: Added.
+
 2008-02-01  David Hyatt  <hyatt@apple.com>
 
         Added tests for dynamic :first-child support (Acid3).
