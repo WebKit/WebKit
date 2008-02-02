@@ -698,9 +698,10 @@ void Element::detach()
 
 void Element::recalcStyle(StyleChange change)
 {
-    // ### should go away and be done in renderobject
     RenderStyle* currentStyle = renderStyle();
     bool hasParentStyle = parentNode() ? parentNode()->renderStyle() : false;
+    bool hasPositionalChildren = currentStyle && (currentStyle->childrenAffectedByFirstChildRules() || currentStyle->childrenAffectedByLastChildRules() ||
+                                                  currentStyle->childrenAffectedByPositionalRules());
 
 #if ENABLE(SVG)
     if (!hasParentStyle && isShadowNode() && isSVGElement())
@@ -727,13 +728,20 @@ void Element::recalcStyle(StyleChange change)
         }
 
         if (currentStyle && newStyle) {
-            // Preserve "affected by" bits that were propagated to us from descendants
+            // Preserve "affected by" bits that were propagated to us from descendants in the case where we didn't do a full
+            // style change (e.g., only inline style changed).
             if (currentStyle->affectedByHoverRules())
                 newStyle->setAffectedByHoverRules(true);
             if (currentStyle->affectedByActiveRules())
                 newStyle->setAffectedByActiveRules(true);
             if (currentStyle->affectedByDragRules())
                 newStyle->setAffectedByDragRules(true);
+            if (currentStyle->childrenAffectedByPositionalRules())
+                newStyle->setChildrenAffectedByPositionalRules();
+            if (currentStyle->childrenAffectedByFirstChildRules())
+                newStyle->setChildrenAffectedByFirstChildRules();
+            if (currentStyle->childrenAffectedByLastChildRules())
+                newStyle->setChildrenAffectedByLastChildRules();
         }
 
         if (ch != NoChange) {
@@ -753,7 +761,7 @@ void Element::recalcStyle(StyleChange change)
         newStyle->deref(document()->renderArena());
 
         if (change != Force) {
-            if (document()->usesDescendantRules() && styleChangeType() == FullStyleChange)
+            if ((document()->usesDescendantRules() || hasPositionalChildren) && styleChangeType() == FullStyleChange)
                 change = Force;
             else
                 change = ch;
@@ -785,6 +793,55 @@ bool Element::childTypeAllowed(NodeType type)
     }
 }
 
+static bool checkFirstChildRules(Element* e, RenderStyle* style)
+{
+    if (style->childrenAffectedByFirstChildRules()) {
+        // Check our first two children.  They need to be true and false respectively.
+        bool checkingFirstChild = true;
+        for (Node* n = e->firstChild(); n; n = n->nextSibling()) {
+            if (n->isElementNode()) {
+                if (checkingFirstChild) {
+                    if (n->attached() && n->renderStyle() && !n->renderStyle()->firstChildState())
+                        return true;
+                    checkingFirstChild = false;
+                } else {
+                    if (n->attached() && n->renderStyle() && n->renderStyle()->firstChildState())
+                        return true;
+                    break;
+                }
+            }
+        }
+    } 
+    return false;
+}
+
+static bool checkLastChildRules(Element* e, RenderStyle* style)
+{
+    if (style->childrenAffectedByLastChildRules()) {
+        // Check our last two children.  They need to be true and false respectively.
+        bool checkingLastChild = true;
+        for (Node* n = e->lastChild(); n; n = n->previousSibling()) {
+            if (n->isElementNode()) {
+                if (checkingLastChild) {
+                    if (n->attached() && n->renderStyle() && !n->renderStyle()->lastChildState())
+                        return true;
+                    checkingLastChild = false;
+                } else {
+                    if (n->attached() && n->renderStyle() && n->renderStyle()->lastChildState())
+                        return true;
+                    break;
+                }
+            }
+        }
+    }
+    return false;
+}
+
+static bool checkEmptyRules(Element* e, RenderStyle* style)
+{
+    return (style->affectedByEmpty() && (!style->emptyState() || e->hasChildNodes()));
+}
+
 void Element::childrenChanged()
 {
     ContainerNode::childrenChanged();
@@ -796,8 +853,15 @@ void Element::childrenChanged()
     if (!style)
         return;
 
-    if (style->affectedByEmpty() && (!style->emptyState() || hasChildNodes()))
-        setChanged(); // Need to resolve style again, since our :empty state has potentially changed.
+    if (style->childrenAffectedByPositionalRules()) {
+        setChanged();
+        return;
+    }
+
+    if (checkFirstChildRules(this, style) || checkLastChildRules(this, style) || checkEmptyRules(this, style)) {
+        setChanged();
+        return;
+    }
 }
 
 void Element::dispatchAttrRemovalEvent(Attribute*)

@@ -1593,35 +1593,54 @@ bool CSSStyleSelector::checkOneSelector(CSSSelector* sel, Element* e, bool isAnc
                         }
                     }
                 }
-                if (m_element == e)
-                    m_style->setEmptyState(result);
-                else if (e && e->renderStyle() && (e->document()->usesSiblingRules() || e->renderStyle()->unique()))
-                    e->renderStyle()->setEmptyState(result);
+                if (!m_collectRulesOnly) {
+                    if (m_element == e)
+                        m_style->setEmptyState(result);
+                    else if (e->renderStyle() && (e->document()->usesSiblingRules() || e->renderStyle()->unique()))
+                        e->renderStyle()->setEmptyState(result);
+                }
                 return result;
             }
             case CSSSelector::PseudoFirstChild: {
-                // first-child matches the first child that is an element!
+                // first-child matches the first child that is an element
                 if (e->parentNode() && e->parentNode()->isElementNode()) {
-                    Node *n = e->previousSibling();
+                    bool result = false;
+                    Node* n = e->previousSibling();
                     while (n && !n->isElementNode())
                         n = n->previousSibling();
                     if (!n)
-                        return true;
+                        result = true;
+                    if (!m_collectRulesOnly) {
+                        RenderStyle* childStyle = (m_element == e) ? m_style : e->renderStyle();
+                        RenderStyle* parentStyle = (m_element == e) ? m_parentStyle : e->parentNode()->renderStyle();
+                        if (parentStyle)
+                            parentStyle->setChildrenAffectedByFirstChildRules();
+                        if (result && childStyle)
+                            childStyle->setFirstChildState();
+                    }
+                    return result;
                 }
                 break;
             }
             case CSSSelector::PseudoFirstOfType: {
-                // first-of-type matches the first element of its type!
+                // first-of-type matches the first element of its type
                 if (e->parentNode() && e->parentNode()->isElementNode()) {
+                    bool result = false;
                     const QualifiedName& type = e->tagQName();
-                    Node *n = e->previousSibling();
+                    Node* n = e->previousSibling();
                     while (n) {
                         if (n->isElementNode() && static_cast<Element*>(n)->hasTagName(type))
                             break;
                         n = n->previousSibling();
                     }
                     if (!n)
-                        return true;
+                        result = true;
+                    if (!m_collectRulesOnly) {
+                        RenderStyle* parentStyle = (m_element == e) ? m_parentStyle : e->parentNode()->renderStyle();
+                        if (parentStyle)
+                            parentStyle->setChildrenAffectedByPositionalRules();
+                    }
+                    return result;
                 }
                 break;
             }

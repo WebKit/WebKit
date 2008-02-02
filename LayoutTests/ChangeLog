@@ -1,3 +1,22 @@
+2008-02-01  David Hyatt  <hyatt@apple.com>
+
+        Added tests for dynamic :first-child support (Acid3).
+
+        Reviewed by olliej
+
+        * fast/css/empty-body-test.html: Added.
+        * fast/css/first-child-pseudo-class.html: Added.
+        * fast/css/first-of-type-pseudo-class.html: Added.
+        * platform/mac/fast/css/empty-body-test-expected.checksum: Added.
+        * platform/mac/fast/css/empty-body-test-expected.png: Added.
+        * platform/mac/fast/css/empty-body-test-expected.txt: Added.
+        * platform/mac/fast/css/first-child-pseudo-class-expected.checksum: Added.
+        * platform/mac/fast/css/first-child-pseudo-class-expected.png: Added.
+        * platform/mac/fast/css/first-child-pseudo-class-expected.txt: Added.
+        * platform/mac/fast/css/first-of-type-pseudo-class-expected.checksum: Added.
+        * platform/mac/fast/css/first-of-type-pseudo-class-expected.png: Added.
+        * platform/mac/fast/css/first-of-type-pseudo-class-expected.txt: Added.
+
 2008-02-02  Dan Bernstein  <mitz@apple.com>
 
         - added Tiger-only results for a test

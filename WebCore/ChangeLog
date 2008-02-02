@@ -1,3 +1,32 @@
+2008-02-01  David Hyatt  <hyatt@apple.com>
+
+        Make :first-child and :first-of-type properly dynamic when the DOM changes.  Brings the Acid3 score up
+        to 66/100.
+
+        Reviewed by olliej
+
+        Added fast/css/first-child-pseudo-class.html, fast/css/first-of-type-pseudo-class.html, fast/css/empty-body-test.html
+
+        * css/CSSGrammar.y:
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::checkOneSelector):
+        * dom/Element.cpp:
+        (WebCore::Element::recalcStyle):
+        (WebCore::Element::childrenChanged):
+        * rendering/RenderStyle.cpp:
+        (WebCore::RenderStyle::RenderStyle):
+        * rendering/RenderStyle.h:
+        (WebCore::RenderStyle::childrenAffectedByFirstChildRules):
+        (WebCore::RenderStyle::setChildrenAffectedByFirstChildRules):
+        (WebCore::RenderStyle::childrenAffectedByLastChildRules):
+        (WebCore::RenderStyle::setChildrenAffectedByLastChildRules):
+        (WebCore::RenderStyle::childrenAffectedByPositionalRules):
+        (WebCore::RenderStyle::setChildrenAffectedByPositionalRules):
+        (WebCore::RenderStyle::firstChildState):
+        (WebCore::RenderStyle::setFirstChildState):
+        (WebCore::RenderStyle::lastChildState):
+        (WebCore::RenderStyle::setLastChildState):
+
 2008-02-02  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Oliver Hunt.
