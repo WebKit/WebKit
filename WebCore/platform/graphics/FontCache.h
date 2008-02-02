@@ -32,6 +32,7 @@
 #include <wtf/unicode/Unicode.h>
 
 #if PLATFORM(WIN)
+#include <objidl.h>
 #include <mlang.h>
 #endif
 

@@ -1,3 +1,11 @@
+2008-02-02  Tony Chang  <idealisms@gmail.com>
+
+        Reviewed by eseidel.
+
+        Add an include for for <objidl.h> which isn't included
+        by default with WIN32_LEAN_AND_MEAN.
+        * platform/graphics/FontCache.h:
+
 2008-02-02  Kevin Watters  <kevin@dotsyntax.com>
 
         Reviewed by Kevin Ollivier.
