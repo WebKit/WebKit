@@ -357,6 +357,7 @@
 		5126E6BC0A2E3B12005C29FA /* IconDatabase.h in Headers */ = {isa = PBXBuildFile; fileRef = 5126E6BA0A2E3B12005C29FA /* IconDatabase.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		513F14530AB634C400094DDF /* IconLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 513F14510AB634C400094DDF /* IconLoader.cpp */; };
 		513F14540AB634C400094DDF /* IconLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = 513F14520AB634C400094DDF /* IconLoader.h */; };
+		514075C60D53ECFE00BC2D85 /* SecurityOriginHash.h in Headers */ = {isa = PBXBuildFile; fileRef = 514075C50D53ECFE00BC2D85 /* SecurityOriginHash.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		514185EE0CD65F0400763C99 /* ChangeVersionWrapper.h in Headers */ = {isa = PBXBuildFile; fileRef = 514185EC0CD65F0400763C99 /* ChangeVersionWrapper.h */; };
 		514185EF0CD65F0400763C99 /* ChangeVersionWrapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 514185ED0CD65F0400763C99 /* ChangeVersionWrapper.cpp */; };
 		514B3F730C722047000530DF /* FileSystem.h in Headers */ = {isa = PBXBuildFile; fileRef = 514B3F720C722047000530DF /* FileSystem.h */; };
@@ -4608,6 +4609,7 @@
 		5126E6BA0A2E3B12005C29FA /* IconDatabase.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = IconDatabase.h; sourceTree = "<group>"; };
 		513F14510AB634C400094DDF /* IconLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = IconLoader.cpp; sourceTree = "<group>"; };
 		513F14520AB634C400094DDF /* IconLoader.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = IconLoader.h; sourceTree = "<group>"; };
+		514075C50D53ECFE00BC2D85 /* SecurityOriginHash.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SecurityOriginHash.h; sourceTree = "<group>"; };
 		514185EC0CD65F0400763C99 /* ChangeVersionWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChangeVersionWrapper.h; sourceTree = "<group>"; };
 		514185ED0CD65F0400763C99 /* ChangeVersionWrapper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ChangeVersionWrapper.cpp; sourceTree = "<group>"; };
 		514B3F720C722047000530DF /* FileSystem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileSystem.h; sourceTree = "<group>"; };
@@ -11725,6 +11727,7 @@
 				AB7170880B3118080017123E /* SearchPopupMenu.h */,
 				BC014C720CC5579D009C4B20 /* SecurityOrigin.cpp */,
 				BC014C730CC5579D009C4B20 /* SecurityOrigin.h */,
+				514075C50D53ECFE00BC2D85 /* SecurityOriginHash.h */,
 				1A4A954B0B4EDCCB002D8C3C /* SharedBuffer.cpp */,
 				1A4A954C0B4EDCCB002D8C3C /* SharedBuffer.h */,
 				93309EA0099EB78C0056E581 /* SharedTimer.h */,
@@ -14201,6 +14204,7 @@
 				E4EEFFC90D34550C00469A58 /* JSAudioConstructor.h in Headers */,
 				939B3E4E0D3C1E8400B4A92B /* StringBuffer.h in Headers */,
 				515378030D52D0630063A78B /* Locker.h in Headers */,
+				514075C60D53ECFE00BC2D85 /* SecurityOriginHash.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

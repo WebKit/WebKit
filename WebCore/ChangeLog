@@ -1,3 +1,17 @@
+2008-02-01  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Darin's rubberstamp
+
+        Move the SecurityOriginHash out into a separate header as it will soon be used in different places
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/SecurityOriginHash.h: Added.
+        (WebCore::SecurityOriginHash::hash):
+        (WebCore::SecurityOriginHash::equal):
+        (WebCore::SecurityOriginTraits::deletedValue):
+        (WebCore::SecurityOriginTraits::emptyValue):
+        * storage/DatabaseTracker.cpp:
+
 2008-02-01  Darin Adler  <darin@apple.com>
 
         Reviewed by Tim.

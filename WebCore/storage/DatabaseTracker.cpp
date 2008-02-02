@@ -36,48 +36,12 @@
 #include "FileSystem.h"
 #include "Page.h"
 #include "SecurityOrigin.h"
+#include "SecurityOriginHash.h"
 #include "SQLiteStatement.h"
 
 using namespace std;
 
 namespace WebCore {
-
-struct SecurityOriginHash {
-    static unsigned hash(RefPtr<SecurityOrigin> origin)
-    {
-        unsigned hashCodes[3] = {
-            origin->protocol().impl() ? origin->protocol().impl()->hash() : 0,
-            origin->host().impl() ? origin->host().impl()->hash() : 0,
-            origin->port()
-        };
-        return StringImpl::computeHash(reinterpret_cast<UChar*>(hashCodes), 3 * sizeof(unsigned) / sizeof(UChar));
-    }
-         
-    static bool equal(RefPtr<SecurityOrigin> a, RefPtr<SecurityOrigin> b)
-    {
-        if (a == 0 || b == 0)
-            return a == b;
-        return a->equal(b.get());
-    }
-
-    static const bool safeToCompareToEmptyOrDeleted = true;
-};
-
-
-struct SecurityOriginTraits : WTF::GenericHashTraits<RefPtr<SecurityOrigin> > {
-    static const bool emptyValueIsZero = true;
-    static const RefPtr<SecurityOrigin>& deletedValue() 
-    { 
-        // Okay deleted value because file: protocols should always have port 0
-        static const RefPtr<SecurityOrigin> securityOriginDeletedValue = SecurityOrigin::create("file", "", 1, 0);    
-        return securityOriginDeletedValue; 
-    }
-
-    static SecurityOrigin* emptyValue() 
-    { 
-        return 0;
-    }
-};
 
 DatabaseTracker& DatabaseTracker::tracker()
 {
