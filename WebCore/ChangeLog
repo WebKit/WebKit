@@ -1,3 +1,18 @@
+2008-02-02  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        - fix <rdar://problem/5720637> Missing characters in right-to-left complex text where different fonts are used in the same run
+
+        * platform/graphics/win/UniscribeController.cpp:
+        (WebCore::UniscribeController::advance): Fixed an off-by-1 error in the
+        start offset of sub-runs of RTL runs. Changed to update
+        m_currentCharacter to the first character of the sub-run before calling
+        itemizeShapeAndPlace. In RTL runs, m_currentCharacter decreases as
+        sub-runs are processed from left to right.
+        (WebCore::UniscribeController::itemizeShapeAndPlace): Removed the
+        updating of m_currentCharacter because advance() does it now.
+
 2008-02-01  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Darin's rubberstamp

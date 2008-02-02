@@ -1,3 +1,14 @@
+2008-02-02  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        - changed a test to use the same fonts on Windows as on Mac OS X
+
+        * fast/text/atsui-spacing-features.html: Changed to use Lucida Grande
+        for Hebrew.
+        * platform/win/Skipped: Re-categorized the above test. It is still
+        failing on Windows, but due to a different bug.
+
 2008-02-01  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Dave Hyatt.

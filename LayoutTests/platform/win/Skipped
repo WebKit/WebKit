@@ -72,11 +72,9 @@ css2.1/t1202-counter-09-b.html
 css2.1/t1202-counters-09-b.html
 fast/lists/w3-list-styles.html
 
-# <rdar://problem/5720592> Width of certain complex text using Times is off by one
+# <rdar://problem/5720592> Width of certain complex text is off by one
 fast/text/atsui-pointtooffset-calls-cg.html
 fast/text/cg-vs-atsui.html
-
-# <rdar://problem/5720637> Missing characters in complex text where different fonts are used in the same run
 fast/text/atsui-spacing-features.html
 
 # <rdar://problem/5718773> Support a minimum antialiased font size

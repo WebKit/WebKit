@@ -101,6 +101,8 @@ void UniscribeController::advance(unsigned offset, GlyphBuffer* glyphBuffer)
     if (length <= 0)
         return;
 
+    unsigned baseCharacter = m_currentCharacter;
+
     // We break up itemization of the string by fontData and (if needed) the use of small caps.
 
     // FIXME: It's inconsistent that we use logical order when itemizing, since this
@@ -146,8 +148,9 @@ void UniscribeController::advance(unsigned offset, GlyphBuffer* glyphBuffer)
         }
 
         if (nextFontData != fontData || nextIsSmallCaps != isSmallCaps) {
-            int itemStart = m_run.rtl() ? index : indexOfFontTransition;
+            int itemStart = m_run.rtl() ? index + 1 : indexOfFontTransition;
             int itemLength = m_run.rtl() ? indexOfFontTransition - index : index - indexOfFontTransition;
+            m_currentCharacter = baseCharacter + itemStart;
             itemizeShapeAndPlace((isSmallCaps ? smallCapsBuffer.data() : cp) + itemStart, itemLength, fontData, glyphBuffer);
             indexOfFontTransition = index;
         }
@@ -156,8 +159,11 @@ void UniscribeController::advance(unsigned offset, GlyphBuffer* glyphBuffer)
     int itemLength = m_run.rtl() ? indexOfFontTransition + 1 : length - indexOfFontTransition;
     if (itemLength) {
         int itemStart = m_run.rtl() ? 0 : indexOfFontTransition;
+        m_currentCharacter = baseCharacter + itemStart;
         itemizeShapeAndPlace((nextIsSmallCaps ? smallCapsBuffer.data() : cp) + itemStart, itemLength, nextFontData, glyphBuffer);
     }
+
+    m_currentCharacter = baseCharacter + length;
 }
 
 void UniscribeController::itemizeShapeAndPlace(const UChar* cp, unsigned length, const SimpleFontData* fontData, GlyphBuffer* glyphBuffer)
@@ -183,8 +189,6 @@ void UniscribeController::itemizeShapeAndPlace(const UChar* cp, unsigned length,
                 return;
         }
     }
-
-    m_currentCharacter += length;
 }
 
 void UniscribeController::resetControlAndState()
