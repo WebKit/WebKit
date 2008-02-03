@@ -1,3 +1,28 @@
+2008-02-03  Darin Adler  <darin@apple.com>
+
+        - updated some more only-child and only-of-type tests to expect success
+          (failures seen on buildbot)
+
+        The tests were now succeeding, but the results and placement reflected failure.
+        I'm not sure why we have such a tiny set of tests in the css3 directory.
+        The expected results are updated as well as moved.
+
+        * css3/css3-modsel-36.html: Copied from css3/expected_failures/css3-modsel-36.html.
+        * css3/css3-modsel-37.html: Copied from css3/expected_failures/css3-modsel-37.html.
+
+        * platform/mac/css3/css3-modsel-36-expected.checksum: Copied from platform/mac/css3/expected_failures/css3-modsel-36-expected.checksum.
+        * platform/mac/css3/css3-modsel-36-expected.png: Copied from platform/mac/css3/expected_failures/css3-modsel-36-expected.png.
+        * platform/mac/css3/css3-modsel-36-expected.txt: Copied from platform/mac/css3/expected_failures/css3-modsel-36-expected.txt.
+        * platform/mac/css3/css3-modsel-37-expected.checksum: Copied from platform/mac/css3/expected_failures/css3-modsel-37-expected.checksum.
+        * platform/mac/css3/css3-modsel-37-expected.png: Copied from platform/mac/css3/expected_failures/css3-modsel-37-expected.png.
+        * platform/mac/css3/css3-modsel-37-expected.txt: Copied from platform/mac/css3/expected_failures/css3-modsel-37-expected.txt.
+        * platform/qt/css3/css3-modsel-36-expected.txt: Copied from platform/qt/css3/expected_failures/css3-modsel-36-expected.txt.
+        * platform/qt/css3/css3-modsel-37-expected.txt: Copied from platform/qt/css3/expected_failures/css3-modsel-37-expected.txt.
+
+        * css3/expected_failures: Removed.
+        * platform/mac/css3/expected_failures: Removed.
+        * platform/qt/css3/expected_failures: Removed.
+
 2008-02-02  David Hyatt  <hyatt@apple.com>
 
         Add test for bug 5468, supporting :only-child and :only-of-type in CSS3.

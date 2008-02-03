@@ -10,6 +10,6 @@ layer at (0,0) size 800x113
         RenderBlock (anonymous) at (0,0) size 784x19
           RenderText {#text} at (0,0) size 234x19
             text run at (0,0) width 234: "This div contains only one paragraph"
-        RenderBlock {P} at (0,33) size 784x19 [bgcolor=#FF0000]
+        RenderBlock {P} at (0,33) size 784x19 [bgcolor=#00FF00]
           RenderText {#text} at (0,0) size 298x19
             text run at (0,0) width 298: "This paragraph should have green background"
