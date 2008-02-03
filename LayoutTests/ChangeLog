@@ -1,3 +1,16 @@
+2008-02-02  David Hyatt  <hyatt@apple.com>
+
+        Add test for bug 5468, supporting :only-child and :only-of-type in CSS3.
+
+        Reviewed by olliej
+
+        * platform/mac/fast/css/only-child-pseudo-class-expected.checksum: Added.
+        * platform/mac/fast/css/only-child-pseudo-class-expected.png: Added.
+        * platform/mac/fast/css/only-child-pseudo-class-expected.txt: Added.
+        * platform/mac/fast/css/only-of-type-pseudo-class-expected.checksum: Added.
+        * platform/mac/fast/css/only-of-type-pseudo-class-expected.png: Added.
+        * platform/mac/fast/css/only-of-type-pseudo-class-expected.txt: Added.
+
 2008-02-02  Darin Adler  <darin@apple.com>
 
         - updated some more last-child and last-of-type tests to expect success

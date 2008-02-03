@@ -1645,7 +1645,7 @@ bool CSSStyleSelector::checkOneSelector(CSSSelector* sel, Element* e, bool isAnc
                 break;
             }
             case CSSSelector::PseudoLastChild: {
-                // first-child matches the first child that is an element
+                // last-child matches the last child that is an element
                 if (e->parentNode() && e->parentNode()->isElementNode()) {
                     bool result = false;
                     Node* n = e->nextSibling();
@@ -1666,7 +1666,7 @@ bool CSSStyleSelector::checkOneSelector(CSSSelector* sel, Element* e, bool isAnc
                 break;
             }
             case CSSSelector::PseudoLastOfType: {
-                // first-of-type matches the first element of its type
+                // last-of-type matches the last element of its type
                 if (e->parentNode() && e->parentNode()->isElementNode()) {
                     bool result = false;
                     const QualifiedName& type = e->tagQName();
@@ -1684,6 +1684,71 @@ bool CSSStyleSelector::checkOneSelector(CSSSelector* sel, Element* e, bool isAnc
                             parentStyle->setChildrenAffectedByPositionalRules();
                     }
                     return result;
+                }
+                break;
+            }
+            case CSSSelector::PseudoOnlyChild: {
+                if (e->parentNode() && e->parentNode()->isElementNode()) {
+                    bool firstChild = false;
+                    bool lastChild = false;
+                    
+                    Node* n = e->previousSibling();
+                    while (n && !n->isElementNode())
+                        n = n->previousSibling();
+                    if (!n)
+                        firstChild = true;
+                    if (firstChild) {
+                        n = e->nextSibling();
+                        while (n && !n->isElementNode())
+                            n = n->nextSibling();
+                        if (!n)
+                            lastChild = true;
+                    }
+                    if (!m_collectRulesOnly) {
+                        RenderStyle* childStyle = (m_element == e) ? m_style : e->renderStyle();
+                        RenderStyle* parentStyle = (m_element == e) ? m_parentStyle : e->parentNode()->renderStyle();
+                        if (parentStyle) {
+                            parentStyle->setChildrenAffectedByFirstChildRules();
+                            parentStyle->setChildrenAffectedByLastChildRules();
+                        }
+                        if (firstChild && childStyle)
+                            childStyle->setFirstChildState();
+                        if (lastChild && childStyle)
+                            childStyle->setLastChildState();
+                    }
+                    return firstChild && lastChild;
+                }
+                break;
+            }
+            case CSSSelector::PseudoOnlyOfType: {
+                if (e->parentNode() && e->parentNode()->isElementNode()) {
+                    bool firstChild = false;
+                    bool lastChild = false;
+                    const QualifiedName& type = e->tagQName();
+                    Node* n = e->previousSibling();
+                    while (n) {
+                        if (n->isElementNode() && static_cast<Element*>(n)->hasTagName(type))
+                            break;
+                        n = n->previousSibling();
+                    }
+                    if (!n)
+                        firstChild = true;
+                    if (firstChild) {
+                        n = e->nextSibling();
+                        while (n) {
+                            if (n->isElementNode() && static_cast<Element*>(n)->hasTagName(type))
+                                break;
+                            n = n->nextSibling();
+                        }
+                        if (!n)
+                            lastChild = true;
+                    }
+                    if (!m_collectRulesOnly) {
+                        RenderStyle* parentStyle = (m_element == e) ? m_parentStyle : e->parentNode()->renderStyle();
+                        if (parentStyle)
+                            parentStyle->setChildrenAffectedByPositionalRules();
+                    }
+                    return firstChild && lastChild;
                 }
                 break;
             }

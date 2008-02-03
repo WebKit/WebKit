@@ -1,3 +1,18 @@
+2008-02-02  David Hyatt  <hyatt@apple.com>
+
+        Fix for bug 5468, support CSS3 :only-child and :only-of-type selectors.
+
+        Reviewed by olliej
+
+        Added fast/css/only-child-pseudo-class.html, fast/css/only-of-type-pseudo-class.html
+
+        * css/CSSSelector.cpp:
+        (WebCore::CSSSelector::extractPseudoType):
+        * css/CSSSelector.h:
+        (WebCore::CSSSelector::):
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::checkOneSelector):
+
 2008-02-02  Darin Adler  <darin@apple.com>
 
         Reviewed by Geoff Garen.

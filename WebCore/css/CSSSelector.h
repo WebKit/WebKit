@@ -123,6 +123,8 @@ namespace WebCore {
             PseudoFirstOfType,
             PseudoLastChild,
             PseudoLastOfType,
+            PseudoOnlyChild,
+            PseudoOnlyOfType,
             PseudoFirstLine,
             PseudoFirstLetter,
             PseudoLink,

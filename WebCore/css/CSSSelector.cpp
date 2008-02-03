@@ -100,6 +100,8 @@ void CSSSelector::extractPseudoType() const
     static AtomicString mediaControlsSeekForwardButton("-webkit-media-controls-seek-forward-button");
     static AtomicString mediaControlsFullscreenButton("-webkit-media-controls-fullscreen-button");
     static AtomicString notStr("not(");
+    static AtomicString onlyChild("only-child");
+    static AtomicString onlyOfType("only-of-type");
     static AtomicString root("root");
     static AtomicString searchCancelButton("-webkit-search-cancel-button");
     static AtomicString searchDecoration("-webkit-search-decoration");
@@ -147,6 +149,10 @@ void CSSSelector::extractPseudoType() const
         m_pseudoType = PseudoLastChild;
     else if (m_value == lastOfType)
         m_pseudoType = PseudoLastOfType;
+    else if (m_value == onlyChild)
+        m_pseudoType = PseudoOnlyChild;
+    else if (m_value == onlyOfType)
+        m_pseudoType = PseudoOnlyOfType;
     else if (m_value == firstLetter) {
         m_pseudoType = PseudoFirstLetter;
         element = true;
