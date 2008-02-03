@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2006, 2007, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,6 +29,7 @@
 #include "AnimationController.h"
 #include "CachedPagePlatformData.h"
 #include "Document.h"
+#include "DocumentLoader.h"
 #include "Element.h"
 #include "EventHandler.h"
 #include "FocusController.h"
@@ -102,7 +103,6 @@ CachedPage::CachedPage(Page* page)
     if (window) {
         window->saveBuiltins(*m_windowBuiltins.get());
         window->saveProperties(*m_windowProperties.get());
-        window->saveSymbolTable(m_windowSymbolTable);
         window->saveLocalStorage(*m_windowLocalStorage.get());
         window->location()->saveProperties(*m_locationProperties.get());
         m_pausedTimeouts.set(window->pauseTimeouts());
@@ -137,7 +137,6 @@ void CachedPage::restore(Page* page)
     if (window) {
         window->restoreBuiltins(*m_windowBuiltins.get());
         window->restoreProperties(*m_windowProperties.get());
-        window->restoreSymbolTable(m_windowSymbolTable);
         window->restoreLocalStorage(*m_windowLocalStorage.get());
         window->location()->restoreProperties(*m_locationProperties.get());
         window->resumeTimeouts(m_pausedTimeouts.get());
@@ -198,7 +197,6 @@ void CachedPage::clear()
     m_pausedTimeouts.clear();
     m_cachedPagePlatformData.clear();
     m_windowLocalStorage.clear();
-    m_windowSymbolTable.clear();
 
     gcController().garbageCollectSoon();
 }

@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2004, 2005, 2006, 2007 Apple Inc. All rights reserved.
+ *  Copyright (C) 2004, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -126,7 +126,7 @@ static const unsigned emptyEntryIndex = 0;
 static const unsigned deletedSentinelIndex = 1;
 
 SavedProperties::SavedProperties()
-    : m_count(0)
+    : count(0)
 {
 }
 
@@ -716,7 +716,7 @@ void PropertyMap::getEnumerablePropertyNames(PropertyNameArray& propertyNames) c
         propertyNames.add(Identifier(q[0]->key));
 }
 
-void PropertyMap::save(SavedProperties &p) const
+void PropertyMap::save(SavedProperties& s) const
 {
     unsigned count = 0;
 
@@ -732,58 +732,52 @@ void PropertyMap::save(SavedProperties &p) const
                 ++count;
     }
 
-    p.m_properties.clear();
-    p.m_count = count;
+    s.properties.clear();
+    s.count = count;
 
     if (count == 0)
         return;
     
-    p.m_properties.set(new SavedProperty [count]);
+    s.properties.set(new SavedProperty[count]);
     
-    SavedProperty* prop = p.m_properties.get();
+    SavedProperty* prop = s.properties.get();
     
-    if (!m_usingTable) {
 #if USE_SINGLE_ENTRY
-        if (m_singleEntryKey && !(m_singleEntryAttributes & (ReadOnly | Function))) {
-            prop->key = Identifier(m_singleEntryKey);
-            prop->value = m_u.singleEntryValue;
-            prop->attributes = m_singleEntryAttributes;
-            ++prop;
-        }
+    if (!m_usingTable) {
+        prop->init(m_singleEntryKey, m_u.singleEntryValue, m_singleEntryAttributes);
+        return;
+    }
 #endif
-    } else {
-        // Save in the right order so we don't lose the order.
-        // Another possibility would be to save the indices.
 
-        // Allocate a buffer to use to sort the keys.
-        Vector<Entry*, smallMapThreshold> sortedEntries(count);
+    // Save in the right order so we don't lose the order.
+    // Another possibility would be to save the indices.
 
-        // Get pointers to the entries in the buffer.
-        Entry** p = sortedEntries.data();
-        unsigned entryCount = m_u.table->keyCount + m_u.table->deletedSentinelCount;
-        for (unsigned i = 1; i <= entryCount; ++i) {
-            if (m_u.table->entries()[i].key && !(m_u.table->entries()[i].attributes & (ReadOnly | Function)))
-                *p++ = &m_u.table->entries()[i];
-        }
-        ASSERT(p == sortedEntries.data() + count);
+    // Allocate a buffer to use to sort the keys.
+    Vector<Entry*, smallMapThreshold> sortedEntries(count);
 
-        // Sort the entries by index.
-        qsort(sortedEntries.data(), p - sortedEntries.data(), sizeof(Entry*), comparePropertyMapEntryIndices);
+    // Get pointers to the entries in the buffer.
+    Entry** p = sortedEntries.data();
+    unsigned entryCount = m_u.table->keyCount + m_u.table->deletedSentinelCount;
+    for (unsigned i = 1; i <= entryCount; ++i) {
+        if (m_u.table->entries()[i].key && !(m_u.table->entries()[i].attributes & (ReadOnly | Function)))
+            *p++ = &m_u.table->entries()[i];
+    }
+    ASSERT(p == sortedEntries.data() + count);
 
-        // Put the sorted entries into the saved properties list.
-        for (Entry** q = sortedEntries.data(); q != p; ++q, ++prop) {
-            Entry* e = *q;
-            prop->key = Identifier(e->key);
-            prop->value = e->value;
-            prop->attributes = e->attributes;
-        }
+    // Sort the entries by index.
+    qsort(sortedEntries.data(), p - sortedEntries.data(), sizeof(Entry*), comparePropertyMapEntryIndices);
+
+    // Put the sorted entries into the saved properties list.
+    for (Entry** q = sortedEntries.data(); q != p; ++q, ++prop) {
+        Entry* e = *q;
+        prop->init(e->key, e->value, e->attributes);
     }
 }
 
-void PropertyMap::restore(const SavedProperties &p)
+void PropertyMap::restore(const SavedProperties& p)
 {
-    for (unsigned i = 0; i != p.m_count; ++i)
-        put(p.m_properties[i].key, p.m_properties[i].value, p.m_properties[i].attributes);
+    for (unsigned i = 0; i != p.count; ++i)
+        put(Identifier(p.properties[i].name()), p.properties[i].value(), p.properties[i].attributes());
 }
 
 #if DO_PROPERTYMAP_CONSTENCY_CHECK

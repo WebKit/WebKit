@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2006, 2007, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,20 +26,10 @@
 #ifndef CachedPage_h
 #define CachedPage_h
 
-#include "DocumentLoader.h"
-#include <kjs/SymbolTable.h>
-#include <wtf/RefCounted.h>
-#include <wtf/Forward.h>
-#include <wtf/RefPtr.h>
+#include "KURL.h"
 #include <wtf/OwnPtr.h>
 
-#if PLATFORM(MAC)
-#include <wtf/RetainPtr.h>
-typedef struct objc_object* id;
-#endif
-
-namespace KJS {
-    
+namespace KJS {    
     class SavedBuiltins;
     struct SavedProperties;
 }
@@ -48,6 +38,7 @@ namespace WebCore {
     
     class CachedPagePlatformData;
     class Document;
+    class DocumentLoader;
     class FrameView;
     class Node;
     class Page;
@@ -73,6 +64,7 @@ public:
 
     void setCachedPagePlatformData(CachedPagePlatformData*);
     CachedPagePlatformData* cachedPagePlatformData();
+
 private:
     CachedPage(Page*);
     RefPtr<DocumentLoader> m_documentLoader;
@@ -85,7 +77,6 @@ private:
     OwnPtr<KJS::SavedProperties> m_windowProperties;
     OwnPtr<KJS::SavedProperties> m_locationProperties;
     OwnPtr<KJS::SavedProperties> m_windowLocalStorage;
-    KJS::SymbolTable m_windowSymbolTable;
     OwnPtr<KJS::SavedBuiltins> m_windowBuiltins;
     OwnPtr<PausedTimeouts> m_pausedTimeouts;
     OwnPtr<CachedPagePlatformData> m_cachedPagePlatformData;

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,43 +36,42 @@ namespace KJS {
 
 UString::Rep* IdentifierRepHashTraits::nullRepPtr = &UString::Rep::null; // Didn't want to make a whole source file for just this.
 
-void JSVariableObject::saveSymbolTable(SymbolTable& s) const
-{
-    s = *d->symbolTable;
-}
-
-void JSVariableObject::restoreSymbolTable(SymbolTable& s) const
-{
-    *d->symbolTable = s;
-}
-
 void JSVariableObject::saveLocalStorage(SavedProperties& p) const
 {
-    unsigned count = d->localStorage.size();
+    ASSERT(d->symbolTable);
+    ASSERT(static_cast<size_t>(d->symbolTable->size()) == d->localStorage.size());
 
-    p.m_properties.clear();
-    p.m_count = count;
+    unsigned count = d->symbolTable->size();
+
+    p.properties.clear();
+    p.count = count;
 
     if (!count)
         return;
 
-    p.m_properties.set(new SavedProperty[count]);
-    
-    SavedProperty* prop = p.m_properties.get();
-    for (size_t i = 0; i < count; ++i, ++prop) {
-        LocalStorageEntry& entry = d->localStorage[i];
-        prop->value = entry.value;
-        prop->attributes = entry.attributes;
+    p.properties.set(new SavedProperty[count]);
+
+    SymbolTable::const_iterator end = d->symbolTable->end();
+    for (SymbolTable::const_iterator it = d->symbolTable->begin(); it != end; ++it) {
+        size_t i = it->second;
+        const LocalStorageEntry& entry = d->localStorage[i];
+        p.properties[i].init(it->first.get(), entry.value, entry.attributes);
     }
 }
 
-void JSVariableObject::restoreLocalStorage(SavedProperties& p) const
+void JSVariableObject::restoreLocalStorage(const SavedProperties& p)
 {
-    unsigned count = p.m_count;
+    unsigned count = p.count;
+    d->symbolTable->clear();
     d->localStorage.resize(count);
-    SavedProperty* prop = p.m_properties.get();
-    for (size_t i = 0; i < count; ++i, ++prop)
-        d->localStorage[i] = LocalStorageEntry(prop->value, prop->attributes);
+    SavedProperty* property = p.properties.get();
+    for (size_t i = 0; i < count; ++i, ++property) {
+        ASSERT(!d->symbolTable->contains(property->name()));
+        LocalStorageEntry& entry = d->localStorage[i];
+        d->symbolTable->set(property->name(), i);
+        entry.value = property->value();
+        entry.attributes = property->attributes();
+    }
 }
 
 bool JSVariableObject::deleteProperty(ExecState* exec, const Identifier& propertyName)

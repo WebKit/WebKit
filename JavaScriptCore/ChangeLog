@@ -1,3 +1,48 @@
+2008-02-02  Darin Adler  <darin@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        PLT speedup related to <rdar://problem/5659272> REGRESSION: PLT .4%
+        slower due to r28884 (global variable symbol table optimization)
+
+        Geoff's theory is that the slowdown was due to copying hash tables when
+        putting things into the back/forward cache. If that's true, then this
+        should fix the problem.
+        
+        (According to Geoff's measurements, in a PLT that exaggerates the
+        importance of symbol table saving during cached page creation, this
+        patch is a ~3X speedup in cached page creation, and a 9% speedup overall.)
+
+        * JavaScriptCore.exp: Updated.
+
+        * kjs/JSVariableObject.cpp:
+        (KJS::JSVariableObject::saveLocalStorage): Updated for changes to SavedProperty,
+        which has been revised to avoid initializing each SavedProperty twice when building
+        the array. Store the property names too, so we don't have to store the symbol table
+        separately. Do this by iterating the symbol table instead of the local storage vector.
+        (KJS::JSVariableObject::restoreLocalStorage): Ditto. Restore the symbol table as
+        well as the local storage vector.
+
+        * kjs/JSVariableObject.h: Removed save/restoreSymbolTable and do that work inside
+        save/restoreLocalStorage instead. Made restoreLocalStorage a non-const member function
+        that takes a const reference to a SavedProperties object.
+
+        * kjs/LocalStorage.h: Changed attributes to be unsigned instead of int to match
+        other declarations of attributes elsewhere.
+
+        * kjs/property_map.cpp:
+        (KJS::SavedProperties::SavedProperties): Updated for data member name change.
+        (KJS::PropertyMap::save): Updated for data member name change and to use the new
+        inline init function instead of setting the fields directly. This allows us to
+        skip initializing the SavedProperty objects when first allocating the array, and
+        just do it when we're actually setting up the individual elements.
+        (KJS::PropertyMap::restore): Updated for SavedProperty changes.
+
+        * kjs/property_map.h: Changed SavedProperty from a struct to a class. Set it up so
+        it does not get initialized at construction time to avoid initializing twice when
+        creating an array of SavedProperty. Removed the m_ prefixes from the members of
+        the SavedProperties struct. Generally we use m_ for class members and not struct.
+
 2008-02-02  Tony Chang  <idealisms@gmail.com>
 
         Reviewed by darin.  Landed by eseidel.

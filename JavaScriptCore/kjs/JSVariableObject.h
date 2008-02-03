@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -40,11 +40,8 @@ namespace KJS {
         SymbolTable& symbolTable() { return *d->symbolTable; }
         LocalStorage& localStorage() { return d->localStorage; }
         
-        void saveSymbolTable(SymbolTable& s) const;
-        void restoreSymbolTable(SymbolTable& s) const;
-
-        void saveLocalStorage(SavedProperties& s) const;
-        void restoreLocalStorage(SavedProperties& s) const;
+        void saveLocalStorage(SavedProperties&) const;
+        void restoreLocalStorage(const SavedProperties&);
         
         virtual bool deleteProperty(ExecState*, const Identifier&);
         virtual void getPropertyNames(ExecState*, PropertyNameArray&);
@@ -57,7 +54,6 @@ namespace KJS {
         // size of a JSCell).
         struct JSVariableObjectData {
             JSVariableObjectData() { }
-
             JSVariableObjectData(SymbolTable* s)
                 : symbolTable(s) // Subclass owns this pointer.
             {
@@ -65,7 +61,6 @@ namespace KJS {
 
             LocalStorage localStorage; // Storage for variables in the symbol table.
             SymbolTable* symbolTable; // Maps name -> index in localStorage.
-
         };
 
         JSVariableObject() { }
@@ -106,7 +101,6 @@ namespace KJS {
             slot.setValueSlot(this, &d->localStorage[index].value);
             return true;
         }
-
         return false;
     }
 

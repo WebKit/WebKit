@@ -1,3 +1,18 @@
+2008-02-02  Darin Adler  <darin@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        PLT speedup related to <rdar://problem/5659272> REGRESSION: PLT .4%
+        slower due to r28884 (global variable symbol table optimization)
+
+        * history/CachedPage.cpp:
+        (WebCore::CachedPage::CachedPage): Removed saveSymbolTable call.
+        (WebCore::CachedPage::restore): Removed restoreSymbolTable call.
+        (WebCore::CachedPage::clear): Removed clear of m_windowSymbolTable.
+
+        * history/CachedPage.h: Removed m_windowSymbolTable, since save/restoreLocalStorage
+        now takes care of the symbol table. Also removed many unnecessary includes.
+
 2008-02-02  Tony Chang  <idealisms@gmail.com>
 
         Reviewed by eseidel.
