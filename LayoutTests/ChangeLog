@@ -1,3 +1,26 @@
+2008-02-03  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by darin.
+
+        Make createElementNS and createAttributeNS follow the (vague) DOM Core 2 spec
+        by throwing exceptions for more types of invalid qualified names.
+        http://bugs.webkit.org/show_bug.cgi?id=16833
+        
+        These tests were originally from Hixie's Acid3, then I added some, then Josh 
+        from mozilla added more. We pass all of mine and Hixie's.  Some of Josh's
+        still fail (extreme edge cases, such as *which* exception to throw when
+        a QName is a valid XML name but invalid QName, etc.)
+        The "failure" results are still being checked in, perhaps some day we'll "fix" them.
+
+        * dom/xhtml/level3/core/documentsetstricterrorchecking02-expected.txt:
+        * fast/dom/Document/createAttributeNS-namespace-err-expected.txt: Added.
+        * fast/dom/Document/createAttributeNS-namespace-err.html: Added.
+        * fast/dom/Document/createElementNS-namespace-err-expected.txt: Added.
+        * fast/dom/Document/createElementNS-namespace-err.html: Added.
+        * fast/dom/Document/resources/TEMPLATE.html: Added.
+        * fast/dom/Document/resources/createAttributeNS-namespace-err.js: Added.
+        * fast/dom/Document/resources/createElementNS-namespace-err.js: Added.
+
 2008-02-03  Darin Adler  <darin@apple.com>
 
         - updated some more only-child and only-of-type tests to expect success
