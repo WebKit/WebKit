@@ -1,3 +1,45 @@
+2008-02-03  Kevin Watters  <kevinwatters@gmail.com>
+
+        Reviewed by Kevin Ollivier.
+
+        * platform/wx/RenderThemeWx.cpp:
+        (WebCore::RenderThemeWx::paintButton):
+        * platform/wx/ScrollViewWx.cpp:
+        (WebCore::ScrollView::ScrollViewPrivate::ScrollViewPrivate):
+        (WebCore::ScrollView::ScrollViewPrivate::bindEvents):
+        (WebCore::ScrollView::ScrollViewPrivate::OnMouseWheelEvents):
+        (WebCore::ScrollView::ScrollViewPrivate::OnScrollWinEvents):
+        (WebCore::ScrollView::ScrollView):
+        (WebCore::ScrollView::setNativeWindow):
+        (WebCore::ScrollView::updateContents):
+        (WebCore::ScrollView::update):
+        (WebCore::ScrollView::visibleWidth):
+        (WebCore::ScrollView::visibleHeight):
+        (WebCore::ScrollView::setContentsPos):
+        (WebCore::ScrollView::scrollBy):
+        (WebCore::ScrollView::resizeContents):
+        (WebCore::ScrollView::contentsX):
+        (WebCore::ScrollView::contentsY):
+        (WebCore::ScrollView::contentsWidth):
+        (WebCore::ScrollView::contentsHeight):
+        (WebCore::ScrollView::AdjustScrollbars):
+        (WebCore::ScrollView::setScrollbarsMode):
+        (WebCore::ScrollView::setHScrollbarMode):
+        (WebCore::ScrollView::setVScrollbarMode):
+        (WebCore::ScrollView::suppressScrollbars):
+        (WebCore::ScrollView::inWindow):
+        (WebCore::ScrollView::wheelEvent):
+        (WebCore::ScrollView::addChild):
+        (WebCore::ScrollView::removeChild):
+        (WebCore::ScrollView::children):
+        (WebCore::ScrollView::scrollRectIntoViewRecursively):
+        (WebCore::ScrollView::scrollbarUnderMouse):
+        * platform/wx/WidgetWx.cpp:
+        (WebCore::Widget::Widget):
+        (WebCore::Widget::~Widget):
+        (WebCore::Widget::nativeWindow):
+        (WebCore::Widget::setNativeWindow):
+
 2008-02-02  David Hyatt  <hyatt@apple.com>
 
         Fix for bug 5468, support CSS3 :only-child and :only-of-type selectors.
