@@ -1,3 +1,20 @@
+2008-02-03  Kevin Ollivier  <kevino@theolliviers.com>
+
+        Clean up overlooked coding guideline issues from last commit.
+
+        * platform/wx/ScrollViewWx.cpp:
+        (WebCore::ScrollView::ScrollViewPrivate::OnScrollWinEvents):
+        (WebCore::ScrollView::update):
+        (WebCore::ScrollView::scrollBy):
+        (WebCore::ScrollView::resizeContents):
+        (WebCore::ScrollView::adjustScrollbars):
+        (WebCore::ScrollView::setScrollbarsMode):
+        (WebCore::ScrollView::setHScrollbarMode):
+        (WebCore::ScrollView::setVScrollbarMode):
+        (WebCore::ScrollView::suppressScrollbars):
+        * platform/wx/WidgetWx.cpp:
+        (WebCore::Widget::setCursor):
+
 2008-02-03  Kevin Watters  <kevinwatters@gmail.com>
 
         Reviewed by Kevin Ollivier.

@@ -97,9 +97,8 @@ void Widget::setFocus()
 
 void Widget::setCursor(const Cursor& cursor)
 {
-    if (data->nativeWindow && cursor.impl()) {
+    if (data->nativeWindow && cursor.impl())
         data->nativeWindow->SetCursor(*cursor.impl());
-    }
 }
 
 void Widget::show()
