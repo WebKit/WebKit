@@ -38,6 +38,7 @@ class WebViewFrameData;
 
 namespace WebCore {
     class ChromeClientWx;
+    class FrameLoaderClientWx;
 }
 
 #ifndef SWIG
@@ -54,20 +55,21 @@ namespace WebCore {
 #define WXDLLIMPEXP_WEBKIT
 #endif // SWIG
 
-class WXDLLIMPEXP_WEBKIT wxWebView : public wxScrolledWindow
+class WXDLLIMPEXP_WEBKIT wxWebView : public wxWindow
 {
     // ChromeClientWx needs to get the Page* stored by the wxWebView
     // for the createWindow function. 
     friend class WebCore::ChromeClientWx;
-
+    friend class WebCore::FrameLoaderClientWx;
+    
 public:
     // ctor(s)
 #if SWIG
     %pythonAppend wxWebView "self._setOORInfo(self)"
 #endif
-    wxWebView(wxWindow* parent, int id = wxID_ANY, 
-                const wxPoint& point = wxDefaultPosition, 
-                const wxSize& size = wxDefaultSize, 
+    wxWebView(wxWindow* parent, int id = wxID_ANY,
+                const wxPoint& point = wxDefaultPosition,
+                const wxSize& size = wxDefaultSize,
                 WebViewFrameData* data = NULL); // For wxWebView internal data passing
 
 #ifndef SWIG

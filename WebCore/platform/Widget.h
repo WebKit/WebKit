@@ -52,7 +52,7 @@ class QWebFrame;
 #endif
 
 #if PLATFORM(WX)
-class wxScrolledWindow;
+class wxWindow;
 #endif
 
 namespace WebCore {
@@ -207,9 +207,9 @@ protected:
 #endif
 
 #if PLATFORM(WX)
-        Widget(wxScrolledWindow*);
-        wxScrolledWindow* nativeWindow() const;
-        void setNativeWindow(wxScrolledWindow*);
+        Widget(wxWindow*);
+        wxWindow* nativeWindow() const;
+        virtual void setNativeWindow(wxWindow*);
 #endif
 
     private:

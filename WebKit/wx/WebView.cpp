@@ -24,6 +24,7 @@
  */
 
 #include "config.h"
+#include "CString.h"
 #include "DeprecatedString.h"
 #include "Document.h"
 #include "Element.h"
@@ -46,6 +47,7 @@
 #include "RenderTreeAsText.h"
 #include "SelectionController.h"
 #include "Settings.h"
+#include "SubstituteData.h"
 
 #include "ChromeClientWx.h"
 #include "ContextMenuClientWx.h"
@@ -156,7 +158,7 @@ wxWebViewDOMElementInfo::wxWebViewDOMElementInfo() :
 {
 }
 
-BEGIN_EVENT_TABLE(wxWebView, wxScrolledWindow)
+BEGIN_EVENT_TABLE(wxWebView, wxWindow)
     EVT_PAINT(wxWebView::OnPaint)
     EVT_SIZE(wxWebView::OnSize)
     EVT_MOUSE_EVENTS(wxWebView::OnMouseEvents)
@@ -176,7 +178,7 @@ wxWebView::wxWebView(wxWindow* parent, int id, const wxPoint& position,
     m_beingDestroyed(false),
     m_title(wxEmptyString)
 {
-    if (!wxScrolledWindow::Create(parent, id, position, size))
+    if (!wxWindow::Create(parent, id, position, size, wxBORDER_NONE | wxHSCROLL | wxVSCROLL))
         return;
 
 // This is necessary because we are using SharedTimerWin.cpp on Windows,
@@ -414,20 +416,14 @@ void wxWebView::OnPaint(wxPaintEvent& event)
     if (IsShown() && m_impl->frame && m_impl->frame->document()) {
 #if USE(WXGC)
         wxGCDC gcdc(dc);
-        DoPrepareDC(gcdc);
-#else
-        DoPrepareDC(dc);
 #endif
 
         if (dc.IsOk()) {
-            wxRect paintRect = GetUpdateRegion().GetBox();        
-            int x = 0;
-            int y = 0;
-            GetViewStart(&x, &y);
-            int unitX = 1;
-            int unitY = 1;
-            GetScrollPixelsPerUnit(&unitX, &unitY);
-            paintRect.Offset(x * unitX, y * unitY);
+            wxRect paintRect = GetUpdateRegion().GetBox();
+
+            WebCore::IntSize offset = m_impl->frameView->scrollOffset();
+            dc.SetDeviceOrigin(-offset.width(), -offset.height());
+            paintRect.Offset(offset.width(), offset.height());
 
 #if USE(WXGC)
             WebCore::GraphicsContext* gc = new WebCore::GraphicsContext(&gcdc);
@@ -435,7 +431,6 @@ void wxWebView::OnPaint(wxPaintEvent& event)
             WebCore::GraphicsContext* gc = new WebCore::GraphicsContext((wxWindowDC*)&dc);
 #endif
             if (gc && m_impl->frame->renderer()) {
-                // FIXME: Replace this with layoutIfNeededRecursive
                 if (m_impl->frameView->needsLayout())
                     m_impl->frameView->layout();
 
@@ -447,10 +442,8 @@ void wxWebView::OnPaint(wxPaintEvent& event)
 
 void wxWebView::OnSize(wxSizeEvent& event)
 { 
-    // NOTE: this call can be expensive on heavy pages, particularly on Mac,
-    // so we probably should set a timer not put x ms between layouts.
-    
     if (m_isInitialized && m_impl->frame && m_impl->frameView) {
+        m_impl->frame->sendResizeEvent();
         m_impl->frameView->layout();
     }
     
@@ -490,47 +483,45 @@ void wxWebView::OnMouseEvents(wxMouseEvent& event)
 
 bool wxWebView::CanCopy()
 {
-    if (m_impl->frame && m_impl->frameView) {
+    if (m_impl->frame && m_impl->frameView)
         return (m_impl->frame->editor()->canCopy() || m_impl->frame->editor()->canDHTMLCopy());
-    }
+
     return false;
 }
 
 void wxWebView::Copy()
 {
-    if (CanCopy()) {
+    if (CanCopy())
         m_impl->frame->editor()->copy();
-    }
 }
 
 bool wxWebView::CanCut()
 {
-    if (m_impl->frame && m_impl->frameView) {
+    if (m_impl->frame && m_impl->frameView)
         return (m_impl->frame->editor()->canCut() || m_impl->frame->editor()->canDHTMLCut());
-    }
+
     return false;
 }
 
 void wxWebView::Cut()
 {
-    if (CanCut()) {
+    if (CanCut())
         m_impl->frame->editor()->cut();
-    }
 }
 
 bool wxWebView::CanPaste()
 {
-    if (m_impl->frame && m_impl->frameView) {
+    if (m_impl->frame && m_impl->frameView)
         return (m_impl->frame->editor()->canPaste() || m_impl->frame->editor()->canDHTMLPaste());
-    }
+
     return false;
 }
 
 void wxWebView::Paste()
 {
-    if (CanPaste()) {
+    if (CanPaste())
         m_impl->frame->editor()->paste();
-    }
+
 }
 
 void wxWebView::OnKeyEvents(wxKeyEvent& event)
@@ -539,16 +530,13 @@ void wxWebView::OnKeyEvents(wxKeyEvent& event)
         // WebCore doesn't handle these events itself, so we need to do
         // it and not send the event down or else CTRL+C will erase the text
         // and replace it with c.
-        if (event.CmdDown() && event.GetKeyCode() == static_cast<int>('C')) {
+        if (event.CmdDown() && event.GetKeyCode() == static_cast<int>('C'))
             Copy();
-        }
-        else if (event.CmdDown() && event.GetKeyCode() == static_cast<int>('X')) {
+        else if (event.CmdDown() && event.GetKeyCode() == static_cast<int>('X'))
             Cut();
-        }
-        else if (event.CmdDown() && event.GetKeyCode() == static_cast<int>('V')) {
+        else if (event.CmdDown() && event.GetKeyCode() == static_cast<int>('V'))
             Paste();
-        }
-        else {   
+        else {    
             WebCore::PlatformKeyboardEvent wkEvent(event);
             if (wkEvent.type() == WebCore::PlatformKeyboardEvent::Char && wkEvent.altKey())
                 m_impl->frame->eventHandler()->handleAccessKey(wkEvent);
@@ -564,24 +552,24 @@ void wxWebView::OnKeyEvents(wxKeyEvent& event)
 
 void wxWebView::OnSetFocus(wxFocusEvent& event)
 {
-    if (m_impl->frame) {
+    if (m_impl->frame)
         m_impl->frame->selectionController()->setFocused(true);
-    }
+
     event.Skip();
 }
 
 void wxWebView::OnKillFocus(wxFocusEvent& event)
 {
-    if (m_impl->frame) {
+    if (m_impl->frame)
         m_impl->frame->selectionController()->setFocused(false);
-    }
+
     event.Skip();
 }
 
 void wxWebView::OnActivate(wxActivateEvent& event)
 {
-    if (m_impl->page) {
+    if (m_impl->page)
         m_impl->page->focusController()->setActive(event.GetActive());
-    }
+
     event.Skip();
 }

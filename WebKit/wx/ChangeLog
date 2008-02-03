@@ -1,3 +1,24 @@
+2008-02-03  Kevin Ollivier  <kevino@theolliviers.com>
+
+        Build fix for last wx commit (a couple things were not committed). 
+        Also fix some style issues.
+
+        * WebView.cpp:
+        (wxWebView::wxWebView):
+        (wxWebView::OnPaint):
+        (wxWebView::OnSize):
+        (wxWebView::CanCopy):
+        (wxWebView::Copy):
+        (wxWebView::CanCut):
+        (wxWebView::Cut):
+        (wxWebView::CanPaste):
+        (wxWebView::Paste):
+        (wxWebView::OnKeyEvents):
+        (wxWebView::OnSetFocus):
+        (wxWebView::OnKillFocus):
+        (wxWebView::OnActivate):
+        * WebView.h:
+
 2008-01-31  Kevin Ollivier  <kevino@theolliviers.com>
 
         Reviewed by Adam Roben.

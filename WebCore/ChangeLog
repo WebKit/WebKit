@@ -1,5 +1,12 @@
 2008-02-03  Kevin Ollivier  <kevino@theolliviers.com>
 
+        Build fix for last wx commit (a couple things were not committed).
+
+        * platform/ScrollView.h:
+        * platform/Widget.h:
+
+2008-02-03  Kevin Ollivier  <kevino@theolliviers.com>
+
         Clean up overlooked coding guideline issues from last commit.
 
         * platform/wx/ScrollViewWx.cpp:
