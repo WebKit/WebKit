@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
+    Copyright (C) 2004, 2005, 2008 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005 Rob Buis <buis@kde.org>
                   2007 Eric Seidel <eric@webkit.org>
 
@@ -23,8 +23,8 @@
 
 #ifndef SVGAElement_h
 #define SVGAElement_h
-#if ENABLE(SVG)
 
+#if ENABLE(SVG)
 #include "SVGExternalResourcesRequired.h"
 #include "SVGLangSpace.h"
 #include "SVGStyledTransformableElement.h"
@@ -75,5 +75,3 @@ namespace WebCore {
 
 #endif // ENABLE(SVG)
 #endif // SVGAElement_h
-
-// vim:ts=4:noet

@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
+    Copyright (C) 2004, 2005, 2006, 2007, 2008 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
@@ -24,11 +24,13 @@
 #define SVGAnimatedTemplate_h
 
 #if ENABLE(SVG)
-
 #include <wtf/RefCounted.h>
 #include "AtomicString.h"
+#include "Attribute.h"
 
 namespace WebCore {
+
+    class FloatRect;
     class SVGAngle;
     class SVGElement;
     class SVGLength;
@@ -37,7 +39,7 @@ namespace WebCore {
     class SVGPreserveAspectRatio;
     class SVGTransformList;
     class String;
-    class FloatRect;
+    class QualifiedName;
 
     struct SVGAnimatedTypeWrapperKey {            
         // Empty value
@@ -103,7 +105,12 @@ namespace WebCore {
     template<typename BareType>
     class SVGAnimatedTemplate : public RefCounted<SVGAnimatedTemplate<BareType> >
     {
-    public:        
+    public:
+        SVGAnimatedTemplate(const QualifiedName& attributeName)
+            : m_associatedAttributeName(attributeName)
+        {
+        }
+
         virtual ~SVGAnimatedTemplate() { forgetWrapper(this); }
 
         virtual BareType baseVal() const = 0;
@@ -111,13 +118,14 @@ namespace WebCore {
 
         virtual BareType animVal() const = 0;
         virtual void setAnimVal(BareType newAnimVal) = 0;
-        
+
         typedef HashMap<SVGAnimatedTypeWrapperKey, SVGAnimatedTemplate<BareType>*, SVGAnimatedTypeWrapperKeyHash, SVGAnimatedTypeWrapperKeyHashTraits > ElementToWrapperMap;
         typedef typename ElementToWrapperMap::const_iterator ElementToWrapperMapIterator;
-        
-        static ElementToWrapperMap* wrapperCache() {
-            static ElementToWrapperMap* sWrapperCache = new ElementToWrapperMap;                
-            return sWrapperCache;
+
+        static ElementToWrapperMap* wrapperCache()
+        {
+            static ElementToWrapperMap* s_wrapperCache = new ElementToWrapperMap;                
+            return s_wrapperCache;
         }
         
         static void forgetWrapper(SVGAnimatedTemplate<BareType>* wrapper)
@@ -132,14 +140,19 @@ namespace WebCore {
                 }
             }
         }
+
+       const QualifiedName& associatedAttributeName() const { return m_associatedAttributeName; }
+
+    private:
+       const QualifiedName& m_associatedAttributeName;
     };
-    
+
     template <class Type, class SVGElementSubClass>
-    Type* lookupOrCreateWrapper(const SVGElementSubClass* element, const AtomicString& attrName) {
-        SVGAnimatedTypeWrapperKey key(element, attrName);
+    Type* lookupOrCreateWrapper(const SVGElementSubClass* element, const QualifiedName& domAttrName, const AtomicString& attrIdentifier) {
+        SVGAnimatedTypeWrapperKey key(element, attrIdentifier);
         Type* wrapper = static_cast<Type*>(Type::wrapperCache()->get(key));
         if (!wrapper) {
-            wrapper = new Type(element);
+            wrapper = new Type(element, domAttrName);
             Type::wrapperCache()->set(key, wrapper);
         }
         return wrapper;
@@ -162,5 +175,3 @@ namespace WebCore {
 
 #endif // ENABLE(SVG)
 #endif // SVGAnimatedTemplate_h
-
-// vim:ts=4:noet

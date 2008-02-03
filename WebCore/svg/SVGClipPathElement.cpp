@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2004, 2005, 2007 Nikolas Zimmermann <zimmermann@kde.org>
+    Copyright (C) 2004, 2005, 2007, 2008 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005, 2006, 2007 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
@@ -46,7 +46,7 @@ SVGClipPathElement::~SVGClipPathElement()
 {
 }
 
-ANIMATED_PROPERTY_DEFINITIONS(SVGClipPathElement, int, Enumeration, enumeration, ClipPathUnits, clipPathUnits, SVGNames::clipPathUnitsAttr.localName(), m_clipPathUnits)
+ANIMATED_PROPERTY_DEFINITIONS(SVGClipPathElement, int, Enumeration, enumeration, ClipPathUnits, clipPathUnits, SVGNames::clipPathUnitsAttr, m_clipPathUnits)
 
 void SVGClipPathElement::parseMappedAttribute(MappedAttribute* attr)
 {
@@ -64,6 +64,31 @@ void SVGClipPathElement::parseMappedAttribute(MappedAttribute* attr)
             return;
         SVGStyledTransformableElement::parseMappedAttribute(attr);
     }
+}
+
+void SVGClipPathElement::svgAttributeChanged(const QualifiedName& attrName)
+{
+    SVGStyledTransformableElement::svgAttributeChanged(attrName);
+
+    if (!m_clipper)
+        return;
+
+    if (attrName == SVGNames::clipPathUnitsAttr ||
+        SVGTests::isKnownAttribute(attrName) || 
+        SVGLangSpace::isKnownAttribute(attrName) ||
+        SVGExternalResourcesRequired::isKnownAttribute(attrName) ||
+        SVGStyledTransformableElement::isKnownAttribute(attrName))
+        m_clipper->invalidate();
+}
+
+void SVGClipPathElement::childrenChanged()
+{
+    SVGStyledTransformableElement::childrenChanged();
+
+    if (!m_clipper)
+        return;
+
+    m_clipper->invalidate();
 }
 
 SVGResource* SVGClipPathElement::canvasResource()
@@ -88,7 +113,7 @@ SVGResource* SVGClipPathElement::canvasResource()
             pathStyle->deref(document()->renderArena());
         }
     }
-    if (m_clipper->clipData().isEmpty() ) {
+    if (m_clipper->clipData().isEmpty()) {
         Path pathData;
         pathData.addRect(FloatRect());
         m_clipper->addClipData(pathData, RULE_EVENODD, bbox);
@@ -97,17 +122,6 @@ SVGResource* SVGClipPathElement::canvasResource()
     return m_clipper.get();
 }
 
-void SVGClipPathElement::notifyAttributeChange() const
-{
-    if (!m_clipper || !attached() || document()->parsing())
-        return;
-
-    m_clipper->invalidate();
-    m_clipper->repaintClients();
-}
-
 }
 
 #endif // ENABLE(SVG)
-
-// vim:ts=4:noet

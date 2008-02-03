@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2004, 2005, 2007 Nikolas Zimmermann <zimmermann@kde.org>
+    Copyright (C) 2004, 2005, 2007, 2008 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005, 2006 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
@@ -24,19 +24,18 @@
 #define SVGLangSpace_h
 
 #if ENABLE(SVG)
-
 #include "AtomicString.h"
 
 namespace WebCore {
 
     class MappedAttribute;
+    class QualifiedName;
 
     class SVGLangSpace {
     public:
         SVGLangSpace();
         virtual ~SVGLangSpace();
 
-        // 'SVGLangSpace' functions
         const AtomicString& xmllang() const;
         void setXmllang(const AtomicString& xmlLang);
 
@@ -44,6 +43,7 @@ namespace WebCore {
         void setXmlspace(const AtomicString& xmlSpace);
 
         bool parseMappedAttribute(MappedAttribute*);
+        bool isKnownAttribute(const QualifiedName&);
 
     private:
         AtomicString m_lang;
@@ -54,5 +54,3 @@ namespace WebCore {
 
 #endif // ENABLE(SVG)
 #endif // SVGLangSpace_h
-
-// vim:ts=4:noet

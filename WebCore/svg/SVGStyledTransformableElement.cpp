@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
+    Copyright (C) 2004, 2005, 2008 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005, 2006 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
@@ -23,7 +23,6 @@
 #include "config.h"
 
 #if ENABLE(SVG)
-
 #include "SVGStyledTransformableElement.h"
 
 #include "Attr.h"
@@ -39,7 +38,7 @@ namespace WebCore {
 SVGStyledTransformableElement::SVGStyledTransformableElement(const QualifiedName& tagName, Document* doc)
     : SVGStyledLocatableElement(tagName, doc)
     , SVGTransformable()
-    , m_transform(new SVGTransformList())
+    , m_transform(new SVGTransformList(SVGNames::transformAttr))
 {
 }
 
@@ -47,7 +46,7 @@ SVGStyledTransformableElement::~SVGStyledTransformableElement()
 {
 }
 
-ANIMATED_PROPERTY_DEFINITIONS(SVGStyledTransformableElement, SVGTransformList*, TransformList, transformList, Transform, transform, SVGNames::transformAttr.localName(), m_transform.get())
+ANIMATED_PROPERTY_DEFINITIONS(SVGStyledTransformableElement, SVGTransformList*, TransformList, transformList, Transform, transform, SVGNames::transformAttr, m_transform.get())
 
 AffineTransform SVGStyledTransformableElement::getCTM() const
 {
@@ -74,13 +73,16 @@ void SVGStyledTransformableElement::parseMappedAttribute(MappedAttribute* attr)
  
         if (!SVGTransformable::parseTransformAttribute(localTransforms, attr->value()))
             localTransforms->clear(ec);
-        else {
+        else
             setTransformBaseValue(localTransforms);
-            if (renderer())
-                renderer()->setNeedsLayout(true); // should really be in setTransform
-        }
     } else
         SVGStyledLocatableElement::parseMappedAttribute(attr);
+}
+
+bool SVGStyledTransformableElement::isKnownAttribute(const QualifiedName& attrName)
+{
+    return SVGTransformable::isKnownAttribute(attrName) ||
+           SVGStyledLocatableElement::isKnownAttribute(attrName);
 }
 
 SVGElement* SVGStyledTransformableElement::nearestViewportElement() const
@@ -98,13 +100,6 @@ FloatRect SVGStyledTransformableElement::getBBox() const
     return SVGTransformable::getBBox(this);
 }
 
-void SVGStyledTransformableElement::notifyAttributeChange() const
-{
-    if (renderer())
-        renderer()->setNeedsLayout(true);
-    SVGStyledLocatableElement::notifyAttributeChange();
-}
-
 RenderObject* SVGStyledTransformableElement::createRenderer(RenderArena* arena, RenderStyle* style)
 {
     // By default, any subclass is expected to do path-based drawing
@@ -114,5 +109,3 @@ RenderObject* SVGStyledTransformableElement::createRenderer(RenderArena* arena, 
 }
 
 #endif // ENABLE(SVG)
-
-// vim:ts=4:noet

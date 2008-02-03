@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2004, 2005, 2006 Nikolas Zimmermann <wildfox@kde.org>
+    Copyright (C) 2004, 2005, 2006, 2008 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005, 2006, 2007 Rob Buis <buis@kde.org>
                   2006 Alexander Kellett <lypanov@kde.org>
 
@@ -56,11 +56,11 @@ SVGImageElement::~SVGImageElement()
 {
 }
 
-ANIMATED_PROPERTY_DEFINITIONS(SVGImageElement, SVGLength, Length, length, X, x, SVGNames::xAttr.localName(), m_x)
-ANIMATED_PROPERTY_DEFINITIONS(SVGImageElement, SVGLength, Length, length, Y, y, SVGNames::yAttr.localName(), m_y)
-ANIMATED_PROPERTY_DEFINITIONS(SVGImageElement, SVGLength, Length, length, Width, width, SVGNames::widthAttr.localName(), m_width)
-ANIMATED_PROPERTY_DEFINITIONS(SVGImageElement, SVGLength, Length, length, Height, height, SVGNames::heightAttr.localName(), m_height)
-ANIMATED_PROPERTY_DEFINITIONS(SVGImageElement, SVGPreserveAspectRatio*, PreserveAspectRatio, preserveAspectRatio, PreserveAspectRatio, preserveAspectRatio, SVGNames::preserveAspectRatioAttr.localName(), m_preserveAspectRatio.get())
+ANIMATED_PROPERTY_DEFINITIONS(SVGImageElement, SVGLength, Length, length, X, x, SVGNames::xAttr, m_x)
+ANIMATED_PROPERTY_DEFINITIONS(SVGImageElement, SVGLength, Length, length, Y, y, SVGNames::yAttr, m_y)
+ANIMATED_PROPERTY_DEFINITIONS(SVGImageElement, SVGLength, Length, length, Width, width, SVGNames::widthAttr, m_width)
+ANIMATED_PROPERTY_DEFINITIONS(SVGImageElement, SVGLength, Length, length, Height, height, SVGNames::heightAttr, m_height)
+ANIMATED_PROPERTY_DEFINITIONS(SVGImageElement, SVGPreserveAspectRatio*, PreserveAspectRatio, preserveAspectRatio, PreserveAspectRatio, preserveAspectRatio, SVGNames::preserveAspectRatioAttr, m_preserveAspectRatio.get())
 
 void SVGImageElement::parseMappedAttribute(MappedAttribute *attr)
 {
@@ -89,21 +89,33 @@ void SVGImageElement::parseMappedAttribute(MappedAttribute *attr)
             return;
         if (SVGExternalResourcesRequired::parseMappedAttribute(attr))
             return;
-        if (SVGURIReference::parseMappedAttribute(attr)) {
-            if (attr->name().matches(XLinkNames::hrefAttr) && attached())
-                m_imageLoader.updateFromElement();
+        if (SVGURIReference::parseMappedAttribute(attr))
             return;
-        }
         SVGStyledTransformableElement::parseMappedAttribute(attr);
     }
 }
 
-void SVGImageElement::notifyAttributeChange() const
+void SVGImageElement::svgAttributeChanged(const QualifiedName& attrName)
 {
-    if (!document()->parsing() && renderer())
+    SVGStyledTransformableElement::svgAttributeChanged(attrName);
+
+    if (!renderer())
+        return;
+
+    bool isURIAttribute = SVGURIReference::isKnownAttribute(attrName);
+
+    if (attrName == SVGNames::x1Attr || attrName == SVGNames::y1Attr ||
+        attrName == SVGNames::x2Attr || attrName == SVGNames::y2Attr ||
+        SVGTests::isKnownAttribute(attrName) ||
+        SVGLangSpace::isKnownAttribute(attrName) ||
+        SVGExternalResourcesRequired::isKnownAttribute(attrName) ||
+        isURIAttribute ||
+        SVGStyledTransformableElement::isKnownAttribute(attrName)) {
         renderer()->setNeedsLayout(true);
 
-    SVGStyledTransformableElement::notifyAttributeChange();
+        if (isURIAttribute)
+            m_imageLoader.updateFromElement();
+    }
 }
 
 bool SVGImageElement::hasRelativeValues() const
@@ -133,5 +145,3 @@ void SVGImageElement::attach()
 }
 
 #endif // ENABLE(SVG)
-
-// vim:ts=4:noet

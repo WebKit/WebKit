@@ -35,7 +35,7 @@ namespace WebCore {
 SVGViewSpec::SVGViewSpec(const SVGSVGElement* contextElement)
     : SVGFitToViewBox()
     , SVGZoomAndPan()
-    , m_transform(new SVGTransformList())
+    , m_transform(new SVGTransformList(SVGNames::transformAttr))
     , m_contextElement(contextElement)
 {
 }
@@ -176,4 +176,3 @@ bool SVGViewSpec::parseViewSpec(const String& viewSpec)
 }
 
 #endif // ENABLE(SVG)
-

@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2004, 2005, 2006 Nikolas Zimmermann <zimmermann@kde.org>
+    Copyright (C) 2004, 2005, 2006, 2008 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005, 2006 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
@@ -24,22 +24,20 @@
 #define SVGLinearGradientElement_h
 
 #if ENABLE(SVG)
-
 #include "SVGGradientElement.h"
 
-namespace WebCore
-{
+namespace WebCore {
+
     struct LinearGradientAttributes;
     class SVGLength;
 
-    class SVGLinearGradientElement : public SVGGradientElement
-    {
+    class SVGLinearGradientElement : public SVGGradientElement {
     public:
         SVGLinearGradientElement(const QualifiedName&, Document*);
         virtual ~SVGLinearGradientElement();
 
-        // 'SVGLinearGradientElement' functions
         virtual void parseMappedAttribute(MappedAttribute*);
+        virtual void svgAttributeChanged(const QualifiedName&);
 
     protected:
         virtual void buildGradient() const;
@@ -61,5 +59,3 @@ namespace WebCore
 
 #endif // ENABLE(SVG)
 #endif
-
-// vim:ts=4:noet

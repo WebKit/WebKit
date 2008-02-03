@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2006, 2007 Nikolas Zimmermann <zimmermann@kde.org>
+    Copyright (C) 2006, 2007, 2008 Nikolas Zimmermann <zimmermann@kde.org>
 
     This file is part of the KDE project
 
@@ -327,6 +327,8 @@ bool SVGPaintServerGradient::setup(GraphicsContext*& context, const RenderObject
 
 void SVGPaintServerGradient::invalidate()
 {
+    SVGPaintServer::invalidate();
+
     // Invalidate caches
     CGShadingRelease(m_shadingCache);
 
@@ -337,5 +339,3 @@ void SVGPaintServerGradient::invalidate()
 } // namespace WebCore
 
 #endif
-
-// vim:ts=4:noet

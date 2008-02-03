@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2004, 2005, 2006 Nikolas Zimmermann <zimmermann@kde.org>
+    Copyright (C) 2004, 2005, 2006, 2008 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005, 2006, 2007 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
@@ -28,6 +28,7 @@
 #include "FloatConversion.h"
 #include "FloatPoint.h"
 #include "RadialGradientAttributes.h"
+#include "RenderObject.h"
 #include "SVGLength.h"
 #include "SVGNames.h"
 #include "SVGPaintServerRadialGradient.h"
@@ -56,11 +57,11 @@ SVGRadialGradientElement::~SVGRadialGradientElement()
 {
 }
 
-ANIMATED_PROPERTY_DEFINITIONS(SVGRadialGradientElement, SVGLength, Length, length, Cx, cx, SVGNames::cxAttr.localName(), m_cx)
-ANIMATED_PROPERTY_DEFINITIONS(SVGRadialGradientElement, SVGLength, Length, length, Cy, cy, SVGNames::cyAttr.localName(), m_cy)
-ANIMATED_PROPERTY_DEFINITIONS(SVGRadialGradientElement, SVGLength, Length, length, Fx, fx, SVGNames::fxAttr.localName(), m_fx)
-ANIMATED_PROPERTY_DEFINITIONS(SVGRadialGradientElement, SVGLength, Length, length, Fy, fy, SVGNames::fyAttr.localName(), m_fy)
-ANIMATED_PROPERTY_DEFINITIONS(SVGRadialGradientElement, SVGLength, Length, length, R, r, SVGNames::rAttr.localName(), m_r)
+ANIMATED_PROPERTY_DEFINITIONS(SVGRadialGradientElement, SVGLength, Length, length, Cx, cx, SVGNames::cxAttr, m_cx)
+ANIMATED_PROPERTY_DEFINITIONS(SVGRadialGradientElement, SVGLength, Length, length, Cy, cy, SVGNames::cyAttr, m_cy)
+ANIMATED_PROPERTY_DEFINITIONS(SVGRadialGradientElement, SVGLength, Length, length, Fx, fx, SVGNames::fxAttr, m_fx)
+ANIMATED_PROPERTY_DEFINITIONS(SVGRadialGradientElement, SVGLength, Length, length, Fy, fy, SVGNames::fyAttr, m_fy)
+ANIMATED_PROPERTY_DEFINITIONS(SVGRadialGradientElement, SVGLength, Length, length, R, r, SVGNames::rAttr, m_r)
 
 void SVGRadialGradientElement::parseMappedAttribute(MappedAttribute* attr)
 {
@@ -80,6 +81,18 @@ void SVGRadialGradientElement::parseMappedAttribute(MappedAttribute* attr)
         SVGGradientElement::parseMappedAttribute(attr);
 }
 
+void SVGRadialGradientElement::svgAttributeChanged(const QualifiedName& attrName)
+{
+    SVGGradientElement::svgAttributeChanged(attrName);
+
+    if (!m_resource)
+        return;
+
+    if (attrName == SVGNames::cxAttr || attrName == SVGNames::cyAttr ||
+        attrName == SVGNames::fyAttr || attrName == SVGNames::fyAttr ||
+        attrName == SVGNames::rAttr)
+        m_resource->invalidate();
+}
 
 void SVGRadialGradientElement::buildGradient() const
 {
@@ -171,5 +184,3 @@ RadialGradientAttributes SVGRadialGradientElement::collectGradientProperties() c
 }
 
 #endif // ENABLE(SVG)
-
-// vim:ts=4:noet

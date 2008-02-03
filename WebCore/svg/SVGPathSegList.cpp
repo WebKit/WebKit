@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2004, 2005, 2006, 2007 Nikolas Zimmermann <zimmermann@kde.org>
+    Copyright (C) 2004, 2005, 2006, 2007, 2008 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005 Rob Buis <buis@kde.org>
     Copyright (C) 2007 Eric Seidel <eric@webkit.org>
  
@@ -35,8 +35,8 @@
 
 namespace WebCore {
 
-SVGPathSegList::SVGPathSegList()
-    : SVGList<RefPtr<SVGPathSeg> >()
+SVGPathSegList::SVGPathSegList(const QualifiedName& attributeName)
+    : SVGList<RefPtr<SVGPathSeg> >(attributeName)
 {
 }
 
@@ -138,5 +138,3 @@ Path SVGPathSegList::toPathData()
 }
 
 #endif // ENABLE(SVG)
-
-// vim:ts=4:noet

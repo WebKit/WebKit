@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2004, 2005, 2006 Nikolas Zimmermann <zimmermann@kde.org>
+    Copyright (C) 2004, 2005, 2006, 2008 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005, 2006 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
@@ -24,8 +24,9 @@
 #define SVGPathSeg_h
 
 #if ENABLE(SVG)
-
 #include "PlatformString.h"
+#include "SVGNames.h"
+
 #include <wtf/RefCounted.h>
 
 namespace WebCore
@@ -65,11 +66,11 @@ namespace WebCore
         virtual unsigned short pathSegType() const { return PATHSEG_UNKNOWN; }
         virtual String pathSegTypeAsLetter() const { return ""; }
         virtual String toString() const { return ""; }
+
+        const QualifiedName& associatedAttributeName() const { return SVGNames::dAttr; }
     };
 
 } // namespace WebCore
 
 #endif // ENABLE(SVG)
 #endif
-
-// vim:ts=4:noet

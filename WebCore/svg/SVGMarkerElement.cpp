@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2004, 2005, 2006, 2007 Nikolas Zimmermann <zimmermann@kde.org>
+    Copyright (C) 2004, 2005, 2006, 2007, 2008 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005, 2006, 2007 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
@@ -58,13 +58,13 @@ SVGMarkerElement::~SVGMarkerElement()
 {
 }
 
-ANIMATED_PROPERTY_DEFINITIONS(SVGMarkerElement, SVGLength, Length, length, RefX, refX, SVGNames::refXAttr.localName(), m_refX)
-ANIMATED_PROPERTY_DEFINITIONS(SVGMarkerElement, SVGLength, Length, length, RefY, refY, SVGNames::refYAttr.localName(), m_refY)
-ANIMATED_PROPERTY_DEFINITIONS(SVGMarkerElement, int, Enumeration, enumeration, MarkerUnits, markerUnits, SVGNames::markerUnitsAttr.localName(), m_markerUnits)
-ANIMATED_PROPERTY_DEFINITIONS(SVGMarkerElement, SVGLength, Length, length, MarkerWidth, markerWidth, SVGNames::markerWidthAttr.localName(), m_markerWidth)
-ANIMATED_PROPERTY_DEFINITIONS(SVGMarkerElement, SVGLength, Length, length, MarkerHeight, markerHeight, SVGNames::markerHeightAttr.localName(), m_markerHeight)
-ANIMATED_PROPERTY_DEFINITIONS(SVGMarkerElement, int, Enumeration, enumeration, OrientType, orientType, "orientType", m_orientType)
-ANIMATED_PROPERTY_DEFINITIONS(SVGMarkerElement, SVGAngle*, Angle, angle, OrientAngle, orientAngle, "orientAngle", m_orientAngle.get())
+ANIMATED_PROPERTY_DEFINITIONS(SVGMarkerElement, SVGLength, Length, length, RefX, refX, SVGNames::refXAttr, m_refX)
+ANIMATED_PROPERTY_DEFINITIONS(SVGMarkerElement, SVGLength, Length, length, RefY, refY, SVGNames::refYAttr, m_refY)
+ANIMATED_PROPERTY_DEFINITIONS(SVGMarkerElement, int, Enumeration, enumeration, MarkerUnits, markerUnits, SVGNames::markerUnitsAttr, m_markerUnits)
+ANIMATED_PROPERTY_DEFINITIONS(SVGMarkerElement, SVGLength, Length, length, MarkerWidth, markerWidth, SVGNames::markerWidthAttr, m_markerWidth)
+ANIMATED_PROPERTY_DEFINITIONS(SVGMarkerElement, SVGLength, Length, length, MarkerHeight, markerHeight, SVGNames::markerHeightAttr, m_markerHeight)
+ANIMATED_PROPERTY_DEFINITIONS_WITH_CUSTOM_IDENTIFIER(SVGMarkerElement, int, Enumeration, enumeration, OrientType, orientType, SVGNames::orientAttr, "orientType", m_orientType)
+ANIMATED_PROPERTY_DEFINITIONS_WITH_CUSTOM_IDENTIFIER(SVGMarkerElement, SVGAngle*, Angle, angle, OrientAngle, orientAngle, SVGNames::orientAttr, "orientAngle", m_orientAngle.get())
 
 void SVGMarkerElement::parseMappedAttribute(MappedAttribute* attr)
 {
@@ -97,6 +97,38 @@ void SVGMarkerElement::parseMappedAttribute(MappedAttribute* attr)
 
         SVGStyledElement::parseMappedAttribute(attr);
     }
+}
+
+void SVGMarkerElement::svgAttributeChanged(const QualifiedName& attrName)
+{
+    SVGStyledElement::svgAttributeChanged(attrName);
+
+    if (!m_marker)
+        return;
+
+    if (attrName == SVGNames::markerUnitsAttr || attrName == SVGNames::refXAttr ||
+        attrName == SVGNames::refYAttr || attrName == SVGNames::markerWidthAttr ||
+        attrName == SVGNames::markerHeightAttr || attrName == SVGNames::orientAttr ||
+        SVGLangSpace::isKnownAttribute(attrName) ||
+        SVGExternalResourcesRequired::isKnownAttribute(attrName) ||
+        SVGFitToViewBox::isKnownAttribute(attrName) ||
+        SVGStyledElement::isKnownAttribute(attrName)) {
+        if (renderer())
+            renderer()->setNeedsLayout(true);
+        
+        m_marker->invalidate();
+    }
+}
+
+void SVGMarkerElement::childrenChanged()
+{
+    SVGStyledElement::childrenChanged();
+
+    if (renderer())
+        renderer()->setNeedsLayout(true);
+
+    if (m_marker)
+        m_marker->invalidate();
 }
 
 void SVGMarkerElement::setOrientToAuto()
@@ -140,23 +172,6 @@ RenderObject* SVGMarkerElement::createRenderer(RenderArena* arena, RenderStyle* 
     return markerContainer;
 }
 
-void SVGMarkerElement::notifyAttributeChange() const
-{
-    if (!m_marker || !attached() || document()->parsing())
-        return;
-
-    RenderSVGViewportContainer* markerContainer = static_cast<RenderSVGViewportContainer*>(renderer());
-
-    // NOTE: This is a typical case, where proper "attributeChanged" usage would reduce the number of updates needed.
-    if (markerContainer)
-        markerContainer->setNeedsLayout(true);
-
-    m_marker->invalidate();
-    m_marker->repaintClients();
-}
-
 }
 
 #endif // ENABLE(SVG)
-
-// vim:ts=4:noet

@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2004, 2005, 2006 Nikolas Zimmermann <wildfox@kde.org>
+    Copyright (C) 2004, 2005, 2006, 2008 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005, 2006, 2007 Rob Buis <buis@kde.org>
                   2005 Alexander Kellett <lypanov@kde.org>
 
@@ -68,13 +68,12 @@ SVGMaskElement::~SVGMaskElement()
 {
 }
 
-ANIMATED_PROPERTY_DEFINITIONS(SVGMaskElement, int, Enumeration, enumeration, MaskUnits, maskUnits, SVGNames::maskUnitsAttr.localName(), m_maskUnits)
-ANIMATED_PROPERTY_DEFINITIONS(SVGMaskElement, int, Enumeration, enumeration, MaskContentUnits, maskContentUnits, SVGNames::maskContentUnitsAttr.localName(), m_maskContentUnits)
-
-ANIMATED_PROPERTY_DEFINITIONS(SVGMaskElement, SVGLength, Length, length, X, x, SVGNames::xAttr.localName(), m_x)
-ANIMATED_PROPERTY_DEFINITIONS(SVGMaskElement, SVGLength, Length, length, Y, y, SVGNames::yAttr.localName(), m_y)
-ANIMATED_PROPERTY_DEFINITIONS(SVGMaskElement, SVGLength, Length, length, Width, width, SVGNames::widthAttr.localName(), m_width)
-ANIMATED_PROPERTY_DEFINITIONS(SVGMaskElement, SVGLength, Length, length, Height, height, SVGNames::heightAttr.localName(), m_height)
+ANIMATED_PROPERTY_DEFINITIONS(SVGMaskElement, int, Enumeration, enumeration, MaskUnits, maskUnits, SVGNames::maskUnitsAttr, m_maskUnits)
+ANIMATED_PROPERTY_DEFINITIONS(SVGMaskElement, int, Enumeration, enumeration, MaskContentUnits, maskContentUnits, SVGNames::maskContentUnitsAttr, m_maskContentUnits)
+ANIMATED_PROPERTY_DEFINITIONS(SVGMaskElement, SVGLength, Length, length, X, x, SVGNames::xAttr, m_x)
+ANIMATED_PROPERTY_DEFINITIONS(SVGMaskElement, SVGLength, Length, length, Y, y, SVGNames::yAttr, m_y)
+ANIMATED_PROPERTY_DEFINITIONS(SVGMaskElement, SVGLength, Length, length, Width, width, SVGNames::widthAttr, m_width)
+ANIMATED_PROPERTY_DEFINITIONS(SVGMaskElement, SVGLength, Length, length, Height, height, SVGNames::heightAttr, m_height)
 
 void SVGMaskElement::parseMappedAttribute(MappedAttribute* attr)
 {
@@ -107,6 +106,34 @@ void SVGMaskElement::parseMappedAttribute(MappedAttribute* attr)
             return;
         SVGStyledElement::parseMappedAttribute(attr);
     }
+}
+
+void SVGMaskElement::svgAttributeChanged(const QualifiedName& attrName)
+{
+    SVGStyledElement::svgAttributeChanged(attrName);
+
+    if (!m_masker)
+        return;
+
+    if (attrName == SVGNames::maskUnitsAttr || attrName == SVGNames::maskContentUnitsAttr ||
+        attrName == SVGNames::xAttr || attrName == SVGNames::yAttr ||
+        attrName == SVGNames::widthAttr || attrName == SVGNames::heightAttr ||
+        SVGURIReference::isKnownAttribute(attrName) ||
+        SVGTests::isKnownAttribute(attrName) ||
+        SVGLangSpace::isKnownAttribute(attrName) ||
+        SVGExternalResourcesRequired::isKnownAttribute(attrName) ||
+        SVGStyledElement::isKnownAttribute(attrName))
+        m_masker->invalidate();
+}
+
+void SVGMaskElement::childrenChanged()
+{
+    SVGStyledElement::childrenChanged();
+
+    if (!m_masker)
+        return;
+
+    m_masker->invalidate();
 }
 
 auto_ptr<ImageBuffer> SVGMaskElement::drawMaskerContent(const FloatRect& targetRect, FloatRect& maskDestRect) const
@@ -194,19 +221,6 @@ SVGResource* SVGMaskElement::canvasResource()
     return m_masker.get();
 }
 
-void SVGMaskElement::notifyAttributeChange() const
-{
-    if (!attached() || document()->parsing())
-        return;
-    
-    if (m_masker) {
-        m_masker->invalidate();
-        m_masker->repaintClients();
-    }
-}
-
 }
 
 #endif // ENABLE(SVG)
-
-// vim:ts=4:noet

@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2004, 2005, 2006 Nikolas Zimmermann <zimmermann@kde.org>
+    Copyright (C) 2004, 2005, 2006, 2008 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005, 2006, 2007 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
@@ -24,33 +24,30 @@
 #define SVGPolyElement_h
 
 #if ENABLE(SVG)
-
 #include "SVGAnimatedPoints.h"
 #include "SVGExternalResourcesRequired.h"
 #include "SVGLangSpace.h"
 #include "SVGStyledTransformableElement.h"
 #include "SVGTests.h"
 
-namespace WebCore
-{
+namespace WebCore {
+
     class SVGPolyElement :  public SVGStyledTransformableElement,
                             public SVGTests,
                             public SVGLangSpace,
                             public SVGExternalResourcesRequired,
-                            public SVGAnimatedPoints
-    {
+                            public SVGAnimatedPoints {
     public:
         SVGPolyElement(const QualifiedName&, Document*);
         virtual ~SVGPolyElement();
         
         virtual bool isValid() const { return SVGTests::isValid(); }
 
-        // Derived from: 'SVGAnimatedPoints'
         virtual SVGPointList* points() const;
         virtual SVGPointList* animatedPoints() const;
 
-        virtual void parseMappedAttribute(MappedAttribute* attr); 
-        virtual void notifyAttributeChange() const;
+        virtual void parseMappedAttribute(MappedAttribute*); 
+        virtual void svgAttributeChanged(const QualifiedName&);
 
         virtual bool rendererIsNeeded(RenderStyle* style) { return StyledElement::rendererIsNeeded(style); }
         virtual bool supportsMarkers() const { return true; }
@@ -59,7 +56,7 @@ namespace WebCore
         virtual const SVGElement* contextElement() const { return this; }
 
     private:
-        mutable bool m_ignoreAttributeChanges;
+        bool m_ignoreAttributeChanges : 1;
         mutable RefPtr<SVGPointList> m_points;
 
         ANIMATED_PROPERTY_FORWARD_DECLARATIONS(SVGExternalResourcesRequired, bool, ExternalResourcesRequired, externalResourcesRequired)
@@ -69,5 +66,3 @@ namespace WebCore
 
 #endif // ENABLE(SVG)
 #endif
-
-// vim:ts=4:noet

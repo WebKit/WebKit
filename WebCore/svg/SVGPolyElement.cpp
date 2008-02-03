@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2004, 2005, 2006 Nikolas Zimmermann <zimmermann@kde.org>
+    Copyright (C) 2004, 2005, 2006, 2008 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005, 2006, 2007 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
@@ -40,8 +40,8 @@ SVGPolyElement::SVGPolyElement(const QualifiedName& tagName, Document* doc)
     , SVGLangSpace()
     , SVGExternalResourcesRequired()
     , SVGAnimatedPoints()
+    , m_ignoreAttributeChanges(false)
 {
-    m_ignoreAttributeChanges = false;
 }
 
 SVGPolyElement::~SVGPolyElement()
@@ -51,7 +51,7 @@ SVGPolyElement::~SVGPolyElement()
 SVGPointList* SVGPolyElement::points() const
 {
     if (!m_points)
-        m_points = new SVGPointList();
+        m_points = new SVGPointList(SVGNames::pointsAttr);
 
     return m_points.get();
 }
@@ -68,7 +68,8 @@ void SVGPolyElement::parseMappedAttribute(MappedAttribute* attr)
     if (attr->name() == SVGNames::pointsAttr) {
         ExceptionCode ec = 0;
         points()->clear(ec);
-        if (!pointsListFromSVGData(points(), value) && !m_ignoreAttributeChanges) {
+
+        if (!pointsListFromSVGData(points(), value)) {
             points()->clear(ec);
             document()->accessSVGExtensions()->reportError("Problem parsing points=\"" + value + "\"");
         }
@@ -83,40 +84,48 @@ void SVGPolyElement::parseMappedAttribute(MappedAttribute* attr)
     }
 }
 
-void SVGPolyElement::notifyAttributeChange() const
+void SVGPolyElement::svgAttributeChanged(const QualifiedName& attrName)
 {
-    if (m_ignoreAttributeChanges || document()->parsing())
+    if (m_ignoreAttributeChanges)
         return;
 
-    m_ignoreAttributeChanges = true;
-    if (renderer())
+    SVGStyledTransformableElement::svgAttributeChanged(attrName);
+
+    if (!renderer())
+        return;
+
+    if (attrName == SVGNames::pointsAttr) {
+        m_ignoreAttributeChanges = true;
         renderer()->setNeedsLayout(true);
-    
-    ExceptionCode ec = 0;
 
-    // Spec: Additionally, the 'points' attribute on the original element
-    // accessed via the XML DOM (e.g., using the getAttribute() method call)
-    // will reflect any changes made to points.
-    String _points;
-    int len = points()->numberOfItems();
-    for (int i = 0; i < len; ++i) {
-        FloatPoint p = points()->getItem(i, ec);
-        _points += String::format("%.6lg %.6lg ", p.x(), p.y());
-    }
-    
-    RefPtr<Attr> attr = const_cast<SVGPolyElement*>(this)->getAttributeNode(SVGNames::pointsAttr.localName());
-    if (attr) {
         ExceptionCode ec = 0;
-        attr->setValue(_points, ec);
+
+        // Spec: Additionally, the 'points' attribute on the original element
+        // accessed via the XML DOM (e.g., using the getAttribute() method call)
+        // will reflect any changes made to points.
+        String _points;
+        int len = points()->numberOfItems();
+        for (int i = 0; i < len; ++i) {
+            FloatPoint p = points()->getItem(i, ec);
+            _points += String::format("%.6lg %.6lg ", p.x(), p.y());
+        }
+
+        if (RefPtr<Attr> attr = const_cast<SVGPolyElement*>(this)->getAttributeNode(SVGNames::pointsAttr.localName())) {
+            ExceptionCode ec = 0;
+            attr->setValue(_points, ec);
+        }
+
+        m_ignoreAttributeChanges = false;
+        return;
     }
 
-    m_ignoreAttributeChanges = false;
-
-    SVGStyledTransformableElement::notifyAttributeChange();
+    if (SVGTests::isKnownAttribute(attrName) ||
+        SVGLangSpace::isKnownAttribute(attrName) ||
+        SVGExternalResourcesRequired::isKnownAttribute(attrName) ||
+        SVGStyledTransformableElement::isKnownAttribute(attrName))
+        renderer()->setNeedsLayout(true);
 }
 
 }
 
 #endif // ENABLE(SVG)
-
-// vim:ts=4:noet

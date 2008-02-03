@@ -41,11 +41,11 @@ SVGFEDisplacementMapElement::~SVGFEDisplacementMapElement()
     delete m_filterEffect;
 }
 
-ANIMATED_PROPERTY_DEFINITIONS(SVGFEDisplacementMapElement, String, String, string, In1, in1, SVGNames::inAttr.localName(), m_in1)
-ANIMATED_PROPERTY_DEFINITIONS(SVGFEDisplacementMapElement, String, String, string, In2, in2, SVGNames::in2Attr.localName(), m_in2)
-ANIMATED_PROPERTY_DEFINITIONS(SVGFEDisplacementMapElement, int, Enumeration, enumeration, XChannelSelector, xChannelSelector, SVGNames::xChannelSelectorAttr.localName(), m_xChannelSelector)
-ANIMATED_PROPERTY_DEFINITIONS(SVGFEDisplacementMapElement, int, Enumeration, enumeration, YChannelSelector, yChannelSelector, SVGNames::yChannelSelectorAttr.localName(), m_yChannelSelector)
-ANIMATED_PROPERTY_DEFINITIONS(SVGFEDisplacementMapElement, float, Number, number, Scale, scale, SVGNames::scaleAttr.localName(), m_scale)
+ANIMATED_PROPERTY_DEFINITIONS(SVGFEDisplacementMapElement, String, String, string, In1, in1, SVGNames::inAttr, m_in1)
+ANIMATED_PROPERTY_DEFINITIONS(SVGFEDisplacementMapElement, String, String, string, In2, in2, SVGNames::in2Attr, m_in2)
+ANIMATED_PROPERTY_DEFINITIONS(SVGFEDisplacementMapElement, int, Enumeration, enumeration, XChannelSelector, xChannelSelector, SVGNames::xChannelSelectorAttr, m_xChannelSelector)
+ANIMATED_PROPERTY_DEFINITIONS(SVGFEDisplacementMapElement, int, Enumeration, enumeration, YChannelSelector, yChannelSelector, SVGNames::yChannelSelectorAttr, m_yChannelSelector)
+ANIMATED_PROPERTY_DEFINITIONS(SVGFEDisplacementMapElement, float, Number, number, Scale, scale, SVGNames::scaleAttr, m_scale)
 
 SVGChannelSelectorType SVGFEDisplacementMapElement::stringToChannel(const String& key)
 {

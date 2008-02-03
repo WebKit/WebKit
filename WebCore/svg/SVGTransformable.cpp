@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
+    Copyright (C) 2004, 2005, 2008 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005, 2006, 2007 Rob Buis <buis@kde.org>
                   2007 Eric Seidel <eric@webkit.org>
 
@@ -22,6 +22,7 @@
 */
 
 #include "config.h"
+
 #if ENABLE(SVG)
 #include "SVGTransformable.h"
 
@@ -222,8 +223,11 @@ bool SVGTransformable::parseTransformAttribute(SVGTransformList* list, const UCh
     return !delimParsed;
 }
 
+bool SVGTransformable::isKnownAttribute(const QualifiedName& attrName)
+{
+    return attrName == SVGNames::transformAttr;
 }
 
-// vim:ts=4:noet
-#endif // ENABLE(SVG)
+}
 
+#endif // ENABLE(SVG)

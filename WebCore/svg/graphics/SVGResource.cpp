@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Nikolas Zimmermann <zimmermann@kde.org>
+ * Copyright (C) 2006, 2008 Nikolas Zimmermann <zimmermann@kde.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -86,6 +86,32 @@ SVGResource::~SVGResource()
 
 void SVGResource::invalidate()
 {
+    HashSet<SVGStyledElement*>::const_iterator it = m_clients.begin();
+    const HashSet<SVGStyledElement*>::const_iterator end = m_clients.end();
+
+    for (; it != end; ++it) {
+        SVGStyledElement* cur = *it;
+
+        if (cur->renderer())
+            cur->renderer()->setNeedsLayout(true);
+
+        cur->invalidateResourcesInAncestorChain();
+    }
+}
+
+void SVGResource::invalidateClients(HashSet<SVGStyledElement*> clients)
+{
+    HashSet<SVGStyledElement*>::const_iterator it = clients.begin();
+    const HashSet<SVGStyledElement*>::const_iterator end = clients.end();
+
+    for (; it != end; ++it) {
+        SVGStyledElement* cur = *it;
+
+        if (cur->renderer())
+            cur->renderer()->setNeedsLayout(true);
+
+        cur->invalidateResourcesInAncestorChain();
+    }
 }
 
 void SVGResource::removeClient(SVGStyledElement* item) 
@@ -110,41 +136,19 @@ void SVGResource::addClient(SVGStyledElement* item)
 {
     if (m_clients.contains(item))
         return;
-        
+
     m_clients.add(item);
 
     ResourceSet* target = clientMap().get(item);
     if (!target) 
         target = new ResourceSet;
-    
-    
+
     SVGResourceType type = resourceType();
     if (SVGResource* oldResource = target->resources[type])
         oldResource->m_clients.remove(item);
-    
+
     target->resources[type] = this;
     clientMap().set(item, target);
-}
-
-void SVGResource::repaintClients() const
-{
-    SVGResource::repaintClients(m_clients);
-}
-
-void SVGResource::repaintClients(HashSet<SVGStyledElement*> clients)
-{
-    HashSet<SVGStyledElement*>::const_iterator it = clients.begin();
-    const HashSet<SVGStyledElement*>::const_iterator end = clients.end();
-
-    for (; it != end; ++it) {
-        SVGStyledElement* cur = *it;
-        cur->setChanged();
-
-        if (cur->renderer())
-            cur->renderer()->repaint();
-
-        cur->notifyResourceParentIfExistant();
-    }
 }
 
 TextStream& SVGResource::externalRepresentation(TextStream& ts) const
@@ -173,6 +177,6 @@ TextStream& operator<<(TextStream& ts, const SVGResource& r)
     return r.externalRepresentation(ts);
 }
 
-} // namespace WebCore
+}
 
 #endif

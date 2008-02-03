@@ -49,10 +49,10 @@ SVGFESpecularLightingElement::~SVGFESpecularLightingElement()
     delete m_filterEffect;
 }
 
-ANIMATED_PROPERTY_DEFINITIONS(SVGFESpecularLightingElement, String, String, string, In1, in1, SVGNames::inAttr.localName(), m_in1)
-ANIMATED_PROPERTY_DEFINITIONS(SVGFESpecularLightingElement, float, Number, number, SpecularConstant, specularConstant, SVGNames::specularConstantAttr.localName(), m_specularConstant)
-ANIMATED_PROPERTY_DEFINITIONS(SVGFESpecularLightingElement, float, Number, number, SpecularExponent, specularExponent, SVGNames::specularExponentAttr.localName(), m_specularExponent)
-ANIMATED_PROPERTY_DEFINITIONS(SVGFESpecularLightingElement, float, Number, number, SurfaceScale, surfaceScale, SVGNames::surfaceScaleAttr.localName(), m_surfaceScale)
+ANIMATED_PROPERTY_DEFINITIONS(SVGFESpecularLightingElement, String, String, string, In1, in1, SVGNames::inAttr, m_in1)
+ANIMATED_PROPERTY_DEFINITIONS(SVGFESpecularLightingElement, float, Number, number, SpecularConstant, specularConstant, SVGNames::specularConstantAttr, m_specularConstant)
+ANIMATED_PROPERTY_DEFINITIONS(SVGFESpecularLightingElement, float, Number, number, SpecularExponent, specularExponent, SVGNames::specularExponentAttr, m_specularExponent)
+ANIMATED_PROPERTY_DEFINITIONS(SVGFESpecularLightingElement, float, Number, number, SurfaceScale, surfaceScale, SVGNames::surfaceScaleAttr, m_surfaceScale)
 ANIMATED_PROPERTY_DEFINITIONS(SVGFESpecularLightingElement, float, Number, number, KernelUnitLengthX, kernelUnitLengthX, "kernelUnitLengthX", m_kernelUnitLengthX)
 ANIMATED_PROPERTY_DEFINITIONS(SVGFESpecularLightingElement, float, Number, number, KernelUnitLengthY, kernelUnitLengthY, "kernelUnitLengthY", m_kernelUnitLengthY)
 

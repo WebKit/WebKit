@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2004, 2005, 2007 Nikolas Zimmermann <zimmermann@kde.org>
+    Copyright (C) 2004, 2005, 2007, 2008 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005, 2006, 2007 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
@@ -27,6 +27,7 @@
 
 #include "Document.h"
 #include "RenderSVGGradientStop.h"
+#include "SVGGradientElement.h"
 #include "SVGNames.h"
 
 namespace WebCore {
@@ -41,7 +42,7 @@ SVGStopElement::~SVGStopElement()
 {
 }
 
-ANIMATED_PROPERTY_DEFINITIONS(SVGStopElement, float, Number, number, Offset, offset, SVGNames::offsetAttr.localName(), m_offset)
+ANIMATED_PROPERTY_DEFINITIONS(SVGStopElement, float, Number, number, Offset, offset, SVGNames::offsetAttr, m_offset)
 
 void SVGStopElement::parseMappedAttribute(MappedAttribute* attr)
 {
@@ -51,26 +52,17 @@ void SVGStopElement::parseMappedAttribute(MappedAttribute* attr)
             setOffsetBaseValue(value.left(value.length() - 1).toFloat() / 100.0f);
         else
             setOffsetBaseValue(value.toFloat());
+
+        setChanged();
     } else
         SVGStyledElement::parseMappedAttribute(attr);
 }
 
-RenderObject* SVGStopElement::createRenderer(RenderArena* arena, RenderStyle* style)
+RenderObject* SVGStopElement::createRenderer(RenderArena* arena, RenderStyle*)
 {
     return new (arena) RenderSVGGradientStop(this);
-}
-
-void SVGStopElement::notifyAttributeChange() const
-{
-    if (!attached() || document()->parsing())
-        return;
-
-    const_cast<SVGStopElement*>(this)->recalcStyle(Force);
-    SVGStyledElement::notifyAttributeChange();
 }
 
 }
 
 #endif // ENABLE(SVG)
-
-// vim:ts=4:noet

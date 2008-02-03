@@ -34,7 +34,7 @@ namespace WebCore {
 SVGFEColorMatrixElement::SVGFEColorMatrixElement(const QualifiedName& tagName, Document* doc)
     : SVGFilterPrimitiveStandardAttributes(tagName, doc)
     , m_type(SVG_FECOLORMATRIX_TYPE_UNKNOWN)
-    , m_values(new SVGNumberList)
+    , m_values(new SVGNumberList(SVGNames::valuesAttr))
     , m_filterEffect(0)
 {
 }
@@ -44,9 +44,9 @@ SVGFEColorMatrixElement::~SVGFEColorMatrixElement()
     delete m_filterEffect;
 }
 
-ANIMATED_PROPERTY_DEFINITIONS(SVGFEColorMatrixElement, String, String, string, In1, in1, SVGNames::inAttr.localName(), m_in1)
-ANIMATED_PROPERTY_DEFINITIONS(SVGFEColorMatrixElement, int, Enumeration, enumeration, Type, type, SVGNames::typeAttr.localName(), m_type)
-ANIMATED_PROPERTY_DEFINITIONS(SVGFEColorMatrixElement, SVGNumberList*, NumberList, numberList, Values, values, SVGNames::valuesAttr.localName(), m_values.get())
+ANIMATED_PROPERTY_DEFINITIONS(SVGFEColorMatrixElement, String, String, string, In1, in1, SVGNames::inAttr, m_in1)
+ANIMATED_PROPERTY_DEFINITIONS(SVGFEColorMatrixElement, int, Enumeration, enumeration, Type, type, SVGNames::typeAttr, m_type)
+ANIMATED_PROPERTY_DEFINITIONS(SVGFEColorMatrixElement, SVGNumberList*, NumberList, numberList, Values, values, SVGNames::valuesAttr, m_values.get())
 
 void SVGFEColorMatrixElement::parseMappedAttribute(MappedAttribute* attr)
 {

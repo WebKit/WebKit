@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
+    Copyright (C) 2004, 2005, 2008 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005, 2006, 2007 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
@@ -21,6 +21,7 @@
 */
 
 #include "config.h"
+
 #if ENABLE(SVG)
 #include "SVGTests.h"
 
@@ -43,7 +44,7 @@ SVGTests::~SVGTests()
 SVGStringList* SVGTests::requiredFeatures() const
 {
     if (!m_features)
-        m_features = new SVGStringList();
+        m_features = new SVGStringList(SVGNames::requiredFeaturesAttr);
 
     return m_features.get();
 }
@@ -51,7 +52,7 @@ SVGStringList* SVGTests::requiredFeatures() const
 SVGStringList* SVGTests::requiredExtensions() const
 {
     if (!m_extensions)
-        m_extensions = new SVGStringList();
+        m_extensions = new SVGStringList(SVGNames::requiredExtensionsAttr);
 
     return m_extensions.get();
 }
@@ -59,7 +60,7 @@ SVGStringList* SVGTests::requiredExtensions() const
 SVGStringList* SVGTests::systemLanguage() const
 {
     if (!m_systemLanguage)
-        m_systemLanguage = new SVGStringList();
+        m_systemLanguage = new SVGStringList(SVGNames::systemLanguageAttr);
 
     return m_systemLanguage.get();
 }
@@ -109,7 +110,13 @@ bool SVGTests::parseMappedAttribute(MappedAttribute* attr)
     return false;
 }
 
+bool SVGTests::isKnownAttribute(const QualifiedName& attrName)
+{
+    return (attrName == SVGNames::requiredFeaturesAttr ||
+            attrName == SVGNames::requiredExtensionsAttr ||
+            attrName == SVGNames::systemLanguageAttr);
 }
 
-// vim:ts=4:noet
+}
+
 #endif // ENABLE(SVG)

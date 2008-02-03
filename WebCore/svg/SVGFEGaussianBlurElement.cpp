@@ -44,7 +44,7 @@ SVGFEGaussianBlurElement::~SVGFEGaussianBlurElement()
     delete m_filterEffect;
 }
 
-ANIMATED_PROPERTY_DEFINITIONS(SVGFEGaussianBlurElement, String, String, string, In1, in1, SVGNames::inAttr.localName(), m_in1)
+ANIMATED_PROPERTY_DEFINITIONS(SVGFEGaussianBlurElement, String, String, string, In1, in1, SVGNames::inAttr, m_in1)
 ANIMATED_PROPERTY_DEFINITIONS(SVGFEGaussianBlurElement, float, Number, number, StdDeviationX, stdDeviationX, "stdDeviationX", m_stdDeviationX)
 ANIMATED_PROPERTY_DEFINITIONS(SVGFEGaussianBlurElement, float, Number, number, StdDeviationY, stdDeviationY, "stdDeviationY", m_stdDeviationY)
 

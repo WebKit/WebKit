@@ -128,7 +128,7 @@ namespace WebCore
         virtual void insertedIntoDocument();
         virtual void removedFromDocument();
 
-        virtual void attributeChanged(Attribute*, bool preserveDecls = false);
+        virtual void svgAttributeChanged(const QualifiedName&);
 
         virtual AffineTransform viewBoxToViewTransform(float viewWidth, float viewHeight) const;
 

@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2004, 2005, 2006 Nikolas Zimmermann <zimmermann@kde.org>
+    Copyright (C) 2004, 2005, 2006, 2008 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005, 2006 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
@@ -24,7 +24,6 @@
 #define SVGElement_h
 
 #if ENABLE(SVG)
-
 #include "Document.h"
 #include "FloatRect.h"
 #include "StyledElement.h"
@@ -55,21 +54,21 @@ class SVGAnimatedTemplate##UpperProperty \
 : public SVGAnimatedTemplate<BareType> \
 { \
 public: \
-    SVGAnimatedTemplate##UpperProperty(const ClassType* element); \
+    SVGAnimatedTemplate##UpperProperty(const ClassType*, const QualifiedName&); \
     virtual ~SVGAnimatedTemplate##UpperProperty() { } \
     virtual BareType baseVal() const; \
-    virtual void setBaseVal(BareType newBaseVal); \
+    virtual void setBaseVal(BareType); \
     virtual BareType animVal() const; \
-    virtual void setAnimVal(BareType newAnimVal); \
+    virtual void setAnimVal(BareType); \
     \
 protected: \
     ClassStorageType m_element; \
 }; \
 public: \
     BareType LowerProperty() const; \
-    void set##UpperProperty(BareType newValue); \
+    void set##UpperProperty(BareType); \
     BareType LowerProperty##BaseValue() const; \
-    void set##UpperProperty##BaseValue(BareType newValue); \
+    void set##UpperProperty##BaseValue(BareType); \
     PassRefPtr<SVGAnimatedTemplate##UpperProperty> LowerProperty##Animated() const; \
     void start##UpperProperty() const; \
     void stop##UpperProperty(); \
@@ -78,8 +77,9 @@ private: \
     StorageType m_##LowerProperty;
 
 #define ANIMATED_PROPERTY_DEFINITIONS_INTERNAL(ClassName, ClassType, BareType, UpperClassName, LowerClassName, UpperProperty, LowerProperty, AttrName, StorageGetter, ContextElement) \
-ClassName::SVGAnimatedTemplate##UpperProperty::SVGAnimatedTemplate##UpperProperty(const ClassType* element) \
-: m_element(const_cast<ClassType*>(element)) { } \
+ClassName::SVGAnimatedTemplate##UpperProperty::SVGAnimatedTemplate##UpperProperty(const ClassType* element, const QualifiedName& attributeName) \
+: SVGAnimatedTemplate<BareType>(attributeName), m_element(const_cast<ClassType*>(element)) { } \
+\
 BareType ClassName::SVGAnimatedTemplate##UpperProperty::baseVal() const \
 { \
     return m_element->LowerProperty##BaseValue(); \
@@ -157,26 +157,27 @@ ANIMATED_PROPERTY_DECLARATIONS_INTERNAL(SVGElement, RefPtr<SVGElement>, BareType
 ANIMATED_PROPERTY_DECLARATIONS_INTERNAL(ClassName, RefPtr<ClassName>, BareType, StorageType, UpperProperty, LowerProperty)
 
 #define ANIMATED_PROPERTY_DEFINITIONS_WITH_CONTEXT(ClassName, BareType, UpperClassName, LowerClassName, UpperProperty, LowerProperty, AttrName, StorageGetter) \
-ANIMATED_PROPERTY_DEFINITIONS_INTERNAL(ClassName, SVGElement, BareType, UpperClassName, LowerClassName, UpperProperty, LowerProperty, AttrName, StorageGetter, contextElement()) \
+ANIMATED_PROPERTY_DEFINITIONS_INTERNAL(ClassName, SVGElement, BareType, UpperClassName, LowerClassName, UpperProperty, LowerProperty, AttrName.localName(), StorageGetter, contextElement()) \
 PassRefPtr<ClassName::SVGAnimatedTemplate##UpperProperty> ClassName::LowerProperty##Animated() const \
 { \
     const SVGElement* context = contextElement(); \
     ASSERT(context); \
-    return lookupOrCreateWrapper<ClassName::SVGAnimatedTemplate##UpperProperty, SVGElement>(context, AttrName); \
+    return lookupOrCreateWrapper<ClassName::SVGAnimatedTemplate##UpperProperty, SVGElement>(context, AttrName, AttrName.localName()); \
+}
+
+#define ANIMATED_PROPERTY_DEFINITIONS_WITH_CUSTOM_IDENTIFIER(ClassName, BareType, UpperClassName, LowerClassName, UpperProperty, LowerProperty, AttrName, AttrIdentifier, StorageGetter) \
+ANIMATED_PROPERTY_DEFINITIONS_INTERNAL(ClassName, ClassName, BareType, UpperClassName, LowerClassName, UpperProperty, LowerProperty, AttrName.localName(), StorageGetter, this) \
+PassRefPtr<ClassName::SVGAnimatedTemplate##UpperProperty> ClassName::LowerProperty##Animated() const \
+{ \
+    return lookupOrCreateWrapper<ClassName::SVGAnimatedTemplate##UpperProperty, ClassName>(this, AttrName, AttrIdentifier); \
 }
 
 #define ANIMATED_PROPERTY_DEFINITIONS(ClassName, BareType, UpperClassName, LowerClassName, UpperProperty, LowerProperty, AttrName, StorageGetter) \
-ANIMATED_PROPERTY_DEFINITIONS_INTERNAL(ClassName, ClassName, BareType, UpperClassName, LowerClassName, UpperProperty, LowerProperty, AttrName, StorageGetter, this) \
-PassRefPtr<ClassName::SVGAnimatedTemplate##UpperProperty> ClassName::LowerProperty##Animated() const \
-{ \
-    return lookupOrCreateWrapper<ClassName::SVGAnimatedTemplate##UpperProperty, ClassName>(this, AttrName); \
-}
+ANIMATED_PROPERTY_DEFINITIONS_WITH_CUSTOM_IDENTIFIER(ClassName, BareType, UpperClassName, LowerClassName, UpperProperty, LowerProperty, AttrName, AttrName.localName(), StorageGetter)
 
 namespace WebCore {
-    class Ecma;
+
     class SVGPreserveAspectRatio;
-    class SVGMatrix;
-    class SVGStyledElement;
     class SVGSVGElement;
 
     class SVGElement : public StyledElement {
@@ -194,9 +195,8 @@ namespace WebCore {
         SVGSVGElement* ownerSVGElement() const;
         SVGElement* viewportElement() const;
 
-        // Internal
         virtual void parseMappedAttribute(MappedAttribute*);
-        
+
         virtual bool isStyled() const { return false; }
         virtual bool isStyledTransformable() const { return false; }
         virtual bool isStyledLocatable() const { return false; }
@@ -220,7 +220,9 @@ namespace WebCore {
         virtual void insertedIntoDocument();
         virtual void buildPendingResource() { }
 
-        virtual void notifyAttributeChange() const { }
+        virtual void svgAttributeChanged(const QualifiedName&) { }
+        virtual void attributeChanged(Attribute*, bool preserveDecls = false);
+
         void sendSVGLoadEventIfPossible(bool sendParentLoadEvents = false);
 
         // Forwarded properties (declared/defined anywhere else in the inheritance structure)
@@ -248,5 +250,3 @@ namespace WebCore {
 
 #endif // ENABLE(SVG)
 #endif // SVGElement_h
-
-// vim:ts=4:noet

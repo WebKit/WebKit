@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2004, 2005, 2007 Nikolas Zimmermann <zimmermann@kde.org>
+    Copyright (C) 2004, 2005, 2007, 2008 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005, 2006 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
@@ -24,15 +24,14 @@
 #define SVGClipPathElement_h
 
 #if ENABLE(SVG)
-
 #include "SVGResourceClipper.h"
 #include "SVGExternalResourcesRequired.h"
 #include "SVGLangSpace.h"
 #include "SVGStyledTransformableElement.h"
 #include "SVGTests.h"
 
-namespace WebCore
-{
+namespace WebCore {
+
     class SVGClipPathElement : public SVGStyledTransformableElement,
                                public SVGTests,
                                public SVGLangSpace,
@@ -41,16 +40,15 @@ namespace WebCore
     public:
         SVGClipPathElement(const QualifiedName&, Document*);
         virtual ~SVGClipPathElement();
-        
+
         virtual bool isValid() const { return SVGTests::isValid(); }
+        virtual bool rendererIsNeeded(RenderStyle*) { return false; }
+
+        virtual void parseMappedAttribute(MappedAttribute*);
+        virtual void svgAttributeChanged(const QualifiedName&);
+        virtual void childrenChanged();
 
         virtual SVGResource* canvasResource();
-
-        // 'SVGClipPathElement' functions
-        virtual void parseMappedAttribute(MappedAttribute*);
-        virtual void notifyAttributeChange() const;
-
-        virtual bool rendererIsNeeded(RenderStyle*) { return false; }
 
     protected:
         virtual const SVGElement* contextElement() const { return this; }
@@ -67,5 +65,3 @@ namespace WebCore
 
 #endif // ENABLE(SVG)
 #endif
-
-// vim:ts=4:noet

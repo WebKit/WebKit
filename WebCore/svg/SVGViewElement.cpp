@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
+    Copyright (C) 2004, 2005, 2008 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005, 2007 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
@@ -21,6 +21,7 @@
 */
 
 #include "config.h"
+
 #if ENABLE(SVG)
 #include "SVGViewElement.h"
 
@@ -33,7 +34,7 @@
 
 namespace WebCore {
 
-SVGViewElement::SVGViewElement(const QualifiedName& tagName, Document *doc)
+SVGViewElement::SVGViewElement(const QualifiedName& tagName, Document* doc)
     : SVGStyledElement(tagName, doc)
     , SVGExternalResourcesRequired()
     , SVGFitToViewBox()
@@ -48,12 +49,12 @@ SVGViewElement::~SVGViewElement()
 SVGStringList* SVGViewElement::viewTarget() const
 {
     if (!m_viewTarget)
-        m_viewTarget = new SVGStringList();
+        m_viewTarget = new SVGStringList(SVGNames::viewTargetAttr);
 
     return m_viewTarget.get();
 }
 
-void SVGViewElement::parseMappedAttribute(MappedAttribute *attr)
+void SVGViewElement::parseMappedAttribute(MappedAttribute* attr)
 {
     if (attr->name() == SVGNames::viewTargetAttr)
         viewTarget()->reset(attr->value());
@@ -70,4 +71,3 @@ void SVGViewElement::parseMappedAttribute(MappedAttribute *attr)
 }
 
 #endif // ENABLE(SVG)
-

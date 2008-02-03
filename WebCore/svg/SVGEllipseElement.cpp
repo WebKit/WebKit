@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2004, 2005, 2006 Nikolas Zimmermann <wildfox@kde.org>
+    Copyright (C) 2004, 2005, 2006, 2008 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005, 2006, 2007 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
@@ -48,10 +48,10 @@ SVGEllipseElement::~SVGEllipseElement()
 {
 }
 
-ANIMATED_PROPERTY_DEFINITIONS(SVGEllipseElement, SVGLength, Length, length, Cx, cx, SVGNames::cxAttr.localName(), m_cx)
-ANIMATED_PROPERTY_DEFINITIONS(SVGEllipseElement, SVGLength, Length, length, Cy, cy, SVGNames::cyAttr.localName(), m_cy)
-ANIMATED_PROPERTY_DEFINITIONS(SVGEllipseElement, SVGLength, Length, length, Rx, rx, SVGNames::rxAttr.localName(), m_rx)
-ANIMATED_PROPERTY_DEFINITIONS(SVGEllipseElement, SVGLength, Length, length, Ry, ry, SVGNames::ryAttr.localName(), m_ry)
+ANIMATED_PROPERTY_DEFINITIONS(SVGEllipseElement, SVGLength, Length, length, Cx, cx, SVGNames::cxAttr, m_cx)
+ANIMATED_PROPERTY_DEFINITIONS(SVGEllipseElement, SVGLength, Length, length, Cy, cy, SVGNames::cyAttr, m_cy)
+ANIMATED_PROPERTY_DEFINITIONS(SVGEllipseElement, SVGLength, Length, length, Rx, rx, SVGNames::rxAttr, m_rx)
+ANIMATED_PROPERTY_DEFINITIONS(SVGEllipseElement, SVGLength, Length, length, Ry, ry, SVGNames::ryAttr, m_ry)
 
 void SVGEllipseElement::parseMappedAttribute(MappedAttribute* attr)
 {
@@ -78,12 +78,20 @@ void SVGEllipseElement::parseMappedAttribute(MappedAttribute* attr)
     }
 }
 
-void SVGEllipseElement::notifyAttributeChange() const
+void SVGEllipseElement::svgAttributeChanged(const QualifiedName& attrName)
 {
-    if (!document()->parsing() && renderer())
-        renderer()->setNeedsLayout(true);
+    SVGStyledTransformableElement::svgAttributeChanged(attrName);
 
-    SVGStyledTransformableElement::notifyAttributeChange();
+    if (!renderer())
+        return;
+
+    if (attrName == SVGNames::cxAttr || attrName == SVGNames::cyAttr ||
+        attrName == SVGNames::rxAttr || attrName == SVGNames::ryAttr ||
+        SVGTests::isKnownAttribute(attrName) ||
+        SVGLangSpace::isKnownAttribute(attrName) ||
+        SVGExternalResourcesRequired::isKnownAttribute(attrName) ||
+        SVGStyledTransformableElement::isKnownAttribute(attrName))
+        renderer()->setNeedsLayout(true);
 }
 
 Path SVGEllipseElement::toPathData() const
@@ -101,5 +109,3 @@ bool SVGEllipseElement::hasRelativeValues() const
 }
 
 #endif // ENABLE(SVG)
-
-// vim:ts=4:noet

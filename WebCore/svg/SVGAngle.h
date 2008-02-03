@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2004, 2005, 2007 Nikolas Zimmermann <zimmermann@kde.org>
+    Copyright (C) 2004, 2005, 2007, 2008 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005, 2006 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
@@ -24,8 +24,8 @@
 #define SVGAngle_h
 
 #if ENABLE(SVG)
-
 #include "PlatformString.h"
+#include "SVGNames.h"
 
 namespace WebCore {
 
@@ -65,6 +65,9 @@ namespace WebCore {
         // Returns the angle that divides the shortest arc between the two angles.
         static double shortestArcBisector(double angle1, double angle2);
 
+        // Throughout SVG 1.1 'SVGAngle' is only used for 'SVGMarkerElement' (orient-angle)
+        const QualifiedName& associatedAttributeName() const { return SVGNames::orientAttr; }
+
     private:
         SVGAngleType m_unitType;
         float m_value;
@@ -78,5 +81,3 @@ namespace WebCore {
 
 #endif // ENABLE(SVG)
 #endif // SVGAngle_h
-
-// vim:ts=4:noet

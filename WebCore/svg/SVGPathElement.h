@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2004, 2005, 2006 Nikolas Zimmermann <zimmermann@kde.org>
+    Copyright (C) 2004, 2005, 2006, 2008 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005, 2006, 2007 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
@@ -24,7 +24,6 @@
 #define SVGPathElement_h
 
 #if ENABLE(SVG)
-
 #include "SVGAnimatedPathData.h"
 #include "SVGExternalResourcesRequired.h"
 #include "SVGLangSpace.h"
@@ -94,8 +93,8 @@ namespace WebCore {
         virtual SVGPathSegList* animatedPathSegList() const;
         virtual SVGPathSegList* animatedNormalizedPathSegList() const;
 
-        virtual void parseMappedAttribute(MappedAttribute* attr);
-        virtual void notifyAttributeChange() const;
+        virtual void parseMappedAttribute(MappedAttribute*);
+        virtual void svgAttributeChanged(const QualifiedName&);
 
         virtual Path toPathData() const;
 
@@ -116,5 +115,3 @@ namespace WebCore {
 
 #endif // ENABLE(SVG)
 #endif
-
-// vim:ts=4:noet

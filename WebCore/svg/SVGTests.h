@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
+    Copyright (C) 2004, 2005, 2008 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005, 2006 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
@@ -22,8 +22,8 @@
 
 #ifndef SVGTests_h
 #define SVGTests_h
-#if ENABLE(SVG)
 
+#if ENABLE(SVG)
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
@@ -31,13 +31,13 @@ namespace WebCore {
     class MappedAttribute;
     class String;
     class SVGStringList;
+    class QualifiedName;
 
     class SVGTests {
     public:
         SVGTests();
         virtual ~SVGTests();
 
-        // 'SVGTests' functions
         SVGStringList* requiredFeatures() const;
         SVGStringList* requiredExtensions() const;
         SVGStringList* systemLanguage() const;
@@ -47,6 +47,7 @@ namespace WebCore {
         bool isValid() const;
         
         bool parseMappedAttribute(MappedAttribute*);
+        bool isKnownAttribute(const QualifiedName&);
 
     private:
         mutable RefPtr<SVGStringList> m_features;
@@ -58,5 +59,3 @@ namespace WebCore {
 
 #endif // ENABLE(SVG)
 #endif // SVGTests_h
-
-// vim:ts=4:noet

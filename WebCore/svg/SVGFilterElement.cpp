@@ -62,12 +62,12 @@ SVGFilterElement::~SVGFilterElement()
 {
 }
 
-ANIMATED_PROPERTY_DEFINITIONS(SVGFilterElement, int, Enumeration, enumeration, FilterUnits, filterUnits, SVGNames::filterUnitsAttr.localName(), m_filterUnits)
-ANIMATED_PROPERTY_DEFINITIONS(SVGFilterElement, int, Enumeration, enumeration, PrimitiveUnits, primitiveUnits, SVGNames::primitiveUnitsAttr.localName(), m_primitiveUnits)
-ANIMATED_PROPERTY_DEFINITIONS(SVGFilterElement, SVGLength, Length, length, X, x, SVGNames::xAttr.localName(), m_x)
-ANIMATED_PROPERTY_DEFINITIONS(SVGFilterElement, SVGLength, Length, length, Y, y, SVGNames::yAttr.localName(), m_y)
-ANIMATED_PROPERTY_DEFINITIONS(SVGFilterElement, SVGLength, Length, length, Width, width, SVGNames::widthAttr.localName(), m_width)
-ANIMATED_PROPERTY_DEFINITIONS(SVGFilterElement, SVGLength, Length, length, Height, height, SVGNames::heightAttr.localName(), m_height)
+ANIMATED_PROPERTY_DEFINITIONS(SVGFilterElement, int, Enumeration, enumeration, FilterUnits, filterUnits, SVGNames::filterUnitsAttr, m_filterUnits)
+ANIMATED_PROPERTY_DEFINITIONS(SVGFilterElement, int, Enumeration, enumeration, PrimitiveUnits, primitiveUnits, SVGNames::primitiveUnitsAttr, m_primitiveUnits)
+ANIMATED_PROPERTY_DEFINITIONS(SVGFilterElement, SVGLength, Length, length, X, x, SVGNames::xAttr, m_x)
+ANIMATED_PROPERTY_DEFINITIONS(SVGFilterElement, SVGLength, Length, length, Y, y, SVGNames::yAttr, m_y)
+ANIMATED_PROPERTY_DEFINITIONS(SVGFilterElement, SVGLength, Length, length, Width, width, SVGNames::widthAttr, m_width)
+ANIMATED_PROPERTY_DEFINITIONS(SVGFilterElement, SVGLength, Length, length, Height, height, SVGNames::heightAttr, m_height)
 ANIMATED_PROPERTY_DEFINITIONS(SVGFilterElement, long, Integer, integer, FilterResX, filterResX, "filterResX", m_filterResX)
 ANIMATED_PROPERTY_DEFINITIONS(SVGFilterElement, long, Integer, integer, FilterResY, filterResY, "filterResY", m_filterResY)
 

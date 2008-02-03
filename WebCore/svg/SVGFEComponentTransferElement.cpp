@@ -47,7 +47,7 @@ SVGFEComponentTransferElement::~SVGFEComponentTransferElement()
     delete m_filterEffect;
 }
 
-ANIMATED_PROPERTY_DEFINITIONS(SVGFEComponentTransferElement, String, String, string, In1, in1, SVGNames::inAttr.localName(), m_in1)
+ANIMATED_PROPERTY_DEFINITIONS(SVGFEComponentTransferElement, String, String, string, In1, in1, SVGNames::inAttr, m_in1)
 
 void SVGFEComponentTransferElement::parseMappedAttribute(MappedAttribute* attr)
 {

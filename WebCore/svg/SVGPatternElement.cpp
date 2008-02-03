@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2004, 2005, 2006, 2007 Nikolas Zimmermann <zimmermann@kde.org>
+    Copyright (C) 2004, 2005, 2006, 2007, 2008 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005, 2006, 2007 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
@@ -63,7 +63,7 @@ SVGPatternElement::SVGPatternElement(const QualifiedName& tagName, Document* doc
     , m_height(this, LengthModeHeight)
     , m_patternUnits(SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX)
     , m_patternContentUnits(SVGUnitTypes::SVG_UNIT_TYPE_USERSPACEONUSE)
-    , m_patternTransform(new SVGTransformList())
+    , m_patternTransform(new SVGTransformList(SVGNames::patternTransformAttr))
 {
 }
 
@@ -71,13 +71,13 @@ SVGPatternElement::~SVGPatternElement()
 {
 }
 
-ANIMATED_PROPERTY_DEFINITIONS(SVGPatternElement, int, Enumeration, enumeration, PatternUnits, patternUnits, SVGNames::patternUnitsAttr.localName(), m_patternUnits)
-ANIMATED_PROPERTY_DEFINITIONS(SVGPatternElement, int, Enumeration, enumeration, PatternContentUnits, patternContentUnits, SVGNames::patternContentUnitsAttr.localName(), m_patternContentUnits)
-ANIMATED_PROPERTY_DEFINITIONS(SVGPatternElement, SVGLength, Length, length, X, x, SVGNames::xAttr.localName(), m_x)
-ANIMATED_PROPERTY_DEFINITIONS(SVGPatternElement, SVGLength, Length, length, Y, y, SVGNames::yAttr.localName(), m_y)
-ANIMATED_PROPERTY_DEFINITIONS(SVGPatternElement, SVGLength, Length, length, Width, width, SVGNames::widthAttr.localName(), m_width)
-ANIMATED_PROPERTY_DEFINITIONS(SVGPatternElement, SVGLength, Length, length, Height, height, SVGNames::heightAttr.localName(), m_height)
-ANIMATED_PROPERTY_DEFINITIONS(SVGPatternElement, SVGTransformList*, TransformList, transformList, PatternTransform, patternTransform, SVGNames::patternTransformAttr.localName(), m_patternTransform.get())
+ANIMATED_PROPERTY_DEFINITIONS(SVGPatternElement, int, Enumeration, enumeration, PatternUnits, patternUnits, SVGNames::patternUnitsAttr, m_patternUnits)
+ANIMATED_PROPERTY_DEFINITIONS(SVGPatternElement, int, Enumeration, enumeration, PatternContentUnits, patternContentUnits, SVGNames::patternContentUnitsAttr, m_patternContentUnits)
+ANIMATED_PROPERTY_DEFINITIONS(SVGPatternElement, SVGLength, Length, length, X, x, SVGNames::xAttr, m_x)
+ANIMATED_PROPERTY_DEFINITIONS(SVGPatternElement, SVGLength, Length, length, Y, y, SVGNames::yAttr, m_y)
+ANIMATED_PROPERTY_DEFINITIONS(SVGPatternElement, SVGLength, Length, length, Width, width, SVGNames::widthAttr, m_width)
+ANIMATED_PROPERTY_DEFINITIONS(SVGPatternElement, SVGLength, Length, length, Height, height, SVGNames::heightAttr, m_height)
+ANIMATED_PROPERTY_DEFINITIONS(SVGPatternElement, SVGTransformList*, TransformList, transformList, PatternTransform, patternTransform, SVGNames::patternTransformAttr, m_patternTransform.get())
 
 void SVGPatternElement::parseMappedAttribute(MappedAttribute* attr)
 {
@@ -123,6 +123,35 @@ void SVGPatternElement::parseMappedAttribute(MappedAttribute* attr)
 
         SVGStyledElement::parseMappedAttribute(attr);
     }
+}
+
+void SVGPatternElement::svgAttributeChanged(const QualifiedName& attrName)
+{
+    SVGStyledElement::svgAttributeChanged(attrName);
+
+    if (!m_resource)
+        return;
+
+    if (attrName == SVGNames::patternUnitsAttr || attrName == SVGNames::patternContentUnitsAttr ||
+        attrName == SVGNames::patternTransformAttr || attrName == SVGNames::xAttr || attrName == SVGNames::yAttr ||
+        attrName == SVGNames::widthAttr || attrName == SVGNames::heightAttr ||
+        SVGURIReference::isKnownAttribute(attrName) ||
+        SVGTests::isKnownAttribute(attrName) || 
+        SVGLangSpace::isKnownAttribute(attrName) ||
+        SVGExternalResourcesRequired::isKnownAttribute(attrName) ||
+        SVGFitToViewBox::isKnownAttribute(attrName) ||
+        SVGStyledElement::isKnownAttribute(attrName))
+        m_resource->invalidate();
+}
+
+void SVGPatternElement::childrenChanged()
+{
+    SVGStyledElement::childrenChanged();
+
+    if (!m_resource)
+        return;
+
+    m_resource->invalidate();
 }
 
 void SVGPatternElement::buildPattern(const FloatRect& targetRect) const
@@ -233,15 +262,6 @@ void SVGPatternElement::buildPattern(const FloatRect& targetRect) const
     m_resource->setTile(patternImage);
 }
 
-void SVGPatternElement::notifyAttributeChange() const
-{
-    if (!m_resource || !attached() || document()->parsing())
-        return;
-
-    m_resource->invalidate();
-    m_resource->repaintClients();
-}
-
 RenderObject* SVGPatternElement::createRenderer(RenderArena* arena, RenderStyle*)
 {
     RenderSVGContainer* patternContainer = new (arena) RenderSVGContainer(this);
@@ -308,5 +328,3 @@ PatternAttributes SVGPatternElement::collectPatternProperties() const
 }
 
 #endif // ENABLE(SVG)
-
-// vim:ts=4:noet

@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
+    Copyright (C) 2004, 2005, 2008 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005, 2007 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
@@ -21,6 +21,7 @@
 */
 
 #include "config.h"
+
 #if ENABLE(SVG)
 #include "SVGExternalResourcesRequired.h"
 
@@ -39,7 +40,7 @@ SVGExternalResourcesRequired::~SVGExternalResourcesRequired()
 {
 }
 
-ANIMATED_PROPERTY_DEFINITIONS_WITH_CONTEXT(SVGExternalResourcesRequired, bool, Boolean, boolean, ExternalResourcesRequired, externalResourcesRequired, SVGNames::externalResourcesRequiredAttr.localName(), m_externalResourcesRequired)
+ANIMATED_PROPERTY_DEFINITIONS_WITH_CONTEXT(SVGExternalResourcesRequired, bool, Boolean, boolean, ExternalResourcesRequired, externalResourcesRequired, SVGNames::externalResourcesRequiredAttr, m_externalResourcesRequired)
 
 bool SVGExternalResourcesRequired::parseMappedAttribute(MappedAttribute* attr)
 {
@@ -51,7 +52,11 @@ bool SVGExternalResourcesRequired::parseMappedAttribute(MappedAttribute* attr)
     return false;
 }
 
+bool SVGExternalResourcesRequired::isKnownAttribute(const QualifiedName& attrName)
+{
+    return attrName == SVGNames::externalResourcesRequiredAttr;
 }
 
-// vim:ts=4:noet
+}
+
 #endif // ENABLE(SVG)

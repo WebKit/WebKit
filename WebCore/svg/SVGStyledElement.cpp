@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2004, 2005, 2006, 2007 Nikolas Zimmermann <zimmermann@kde.org>
+    Copyright (C) 2004, 2005, 2006, 2007, 2008 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005, 2007 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
@@ -54,7 +54,7 @@ SVGStyledElement::~SVGStyledElement()
     SVGResource::removeClient(this);
 }
 
-ANIMATED_PROPERTY_DEFINITIONS(SVGStyledElement, String, String, string, ClassName, className, HTMLNames::classAttr.localName(), m_className)
+ANIMATED_PROPERTY_DEFINITIONS(SVGStyledElement, String, String, string, ClassName, className, HTMLNames::classAttr, m_className)
 
 bool SVGStyledElement::rendererIsNeeded(RenderStyle* style)
 {
@@ -178,20 +178,50 @@ void SVGStyledElement::parseMappedAttribute(MappedAttribute* attr)
     SVGElement::parseMappedAttribute(attr);
 }
 
-void SVGStyledElement::notifyAttributeChange() const
+bool SVGStyledElement::isKnownAttribute(const QualifiedName& attrName)
 {
+    // Recognize all style related SVG CSS properties
+    int propId = SVGStyledElement::cssPropertyIdForSVGAttributeName(attrName);
+    if (propId > 0)
+        return true;
+
+    return (attrName == HTMLNames::idAttr || attrName == HTMLNames::styleAttr); 
+}
+
+void SVGStyledElement::svgAttributeChanged(const QualifiedName& attrName)
+{
+    SVGElement::svgAttributeChanged(attrName);
+
+    // If we're the child of a resource element, be sure to invalidate it.
+    invalidateResourcesInAncestorChain();
+
     SVGDocumentExtensions* extensions = document()->accessSVGExtensions();
     if (!extensions)
         return;
+
+    // TODO: Fix bug http://bugs.webkit.org/show_bug.cgi?id=15430 (SVGElementInstances should rebuild themselves lazily)
 
     // In case we're referenced by a <use> element, we have element instances registered
     // to us in the SVGDocumentExtensions. If notifyAttributeChange() is called, we need
     // to recursively update all children including ourselves.
     updateElementInstance(extensions);
+}
 
-    // If we're a child of an element creating a "resource" (ie. <pattern> child)
-    // then we have to notify our parent resource that we changed.
-    notifyResourceParentIfExistant();
+void SVGStyledElement::invalidateResourcesInAncestorChain() const
+{
+    Node* node = parentNode();
+    while (node) {
+        if (!node->isSVGElement())
+            break;
+
+        SVGElement* element = static_cast<SVGElement*>(node);
+        if (SVGStyledElement* styledElement = static_cast<SVGStyledElement*>(element->isStyled() ? element : 0)) {
+            if (SVGResource* resource = styledElement->canvasResource())
+                resource->invalidate();
+        }
+
+        node = node->parentNode();
+    }
 }
 
 void SVGStyledElement::childrenChanged()
@@ -204,24 +234,12 @@ void SVGStyledElement::childrenChanged()
     if (!extensions)
         return;
 
+    // TODO: Fix bug http://bugs.webkit.org/show_bug.cgi?id=15430 (SVGElementInstances should rebuild themselves lazily)
+
     // In case we're referenced by a <use> element, we have element instances registered
     // to us in the SVGDocumentExtensions. If childrenChanged() is called, we need
     // to recursively update all children including ourselves.
     updateElementInstance(extensions);
-}
-
-void SVGStyledElement::notifyResourceParentIfExistant() const
-{
-    Node* node = parentNode();
-    while (node) {
-        if (node->hasTagName(SVGNames::linearGradientTag) || node->hasTagName(SVGNames::radialGradientTag) ||
-            node->hasTagName(SVGNames::patternTag) || node->hasTagName(SVGNames::clipPathTag) ||
-            node->hasTagName(SVGNames::markerTag) || node->hasTagName(SVGNames::maskTag)) {
-            static_cast<SVGElement*>(node)->notifyAttributeChange();
-        }
-
-        node = node->parentNode();
-    }
 }
 
 void SVGStyledElement::updateElementInstance(SVGDocumentExtensions* extensions) const
@@ -248,16 +266,6 @@ void SVGStyledElement::updateElementInstance(SVGDocumentExtensions* extensions) 
 
     for (; it2 != end2; ++it2)
         (*it2)->updateInstance(nonConstThis);
-}
-
-void SVGStyledElement::attributeChanged(Attribute* attr, bool preserveDecls)
-{
-    // FIXME: Eventually subclasses from SVGElement should implement
-    // attributeChanged() instead of notifyAttributeChange()
-    // This is a quick fix to allow dynamic updates of SVG elements
-    // but will result in slower dynamic-update performance than necessary.
-    SVGElement::attributeChanged(attr, preserveDecls);
-    notifyAttributeChange();
 }
 
 RenderStyle* SVGStyledElement::resolveStyle(RenderStyle* parentStyle)
@@ -288,5 +296,3 @@ void SVGStyledElement::detach()
 }
 
 #endif // ENABLE(SVG)
-
-// vim:ts=4:noet

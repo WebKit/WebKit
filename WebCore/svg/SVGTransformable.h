@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
+    Copyright (C) 2004, 2005, 2008 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005, 2006, 2007 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
@@ -22,17 +22,18 @@
 
 #ifndef SVGTransformable_h
 #define SVGTransformable_h
-#if ENABLE(SVG)
 
+#if ENABLE(SVG)
+#include "PlatformString.h"
 #include "SVGLocatable.h"
-#include <PlatformString.h>
 
 namespace WebCore {
     
-    class AtomicString;
     class AffineTransform;
+    class AtomicString;
     class SVGTransform;
     class SVGTransformList;
+    class QualifiedName;
 
     class SVGTransformable : virtual public SVGLocatable {
     public:
@@ -47,11 +48,11 @@ namespace WebCore {
         AffineTransform getScreenCTM(const SVGElement*) const;
         
         virtual AffineTransform animatedLocalTransform() const = 0;
+
+        bool isKnownAttribute(const QualifiedName&);
     };
 
 } // namespace WebCore
 
 #endif // ENABLE(SVG)
 #endif // SVGTransformable_h
-
-// vim:ts=4:noet

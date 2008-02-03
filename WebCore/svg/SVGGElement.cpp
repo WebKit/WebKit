@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2004, 2005, 2007 Nikolas Zimmermann <zimmermann@kde.org>
+    Copyright (C) 2004, 2005, 2007, 2008 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005, 2006 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
@@ -52,6 +52,29 @@ void SVGGElement::parseMappedAttribute(MappedAttribute* attr)
     SVGStyledTransformableElement::parseMappedAttribute(attr);
 }
 
+void SVGGElement::svgAttributeChanged(const QualifiedName& attrName)
+{
+    SVGStyledTransformableElement::svgAttributeChanged(attrName);
+
+    if (!renderer())
+        return;
+
+    if (attrName == SVGNames::clipPathUnitsAttr ||
+        SVGTests::isKnownAttribute(attrName) || 
+        SVGLangSpace::isKnownAttribute(attrName) ||
+        SVGExternalResourcesRequired::isKnownAttribute(attrName) ||
+        SVGStyledTransformableElement::isKnownAttribute(attrName))
+        renderer()->setNeedsLayout(true);
+}
+
+void SVGGElement::childrenChanged()
+{
+    SVGStyledTransformableElement::childrenChanged();
+
+    if (renderer())
+        renderer()->setNeedsLayout(true);
+}
+
 RenderObject* SVGGElement::createRenderer(RenderArena* arena, RenderStyle* style)
 {
     return new (arena) RenderSVGTransformableContainer(this);
@@ -60,5 +83,3 @@ RenderObject* SVGGElement::createRenderer(RenderArena* arena, RenderStyle* style
 }
 
 #endif // ENABLE(SVG)
-
-// vim:ts=4:noet

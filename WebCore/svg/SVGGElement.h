@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2004, 2005, 2007 Nikolas Zimmermann <zimmermann@kde.org>
+    Copyright (C) 2004, 2005, 2007, 2008 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005, 2006 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
@@ -24,19 +24,17 @@
 #define SVGGElement_h
 
 #if ENABLE(SVG)
-
 #include "SVGExternalResourcesRequired.h"
 #include "SVGLangSpace.h"
 #include "SVGStyledTransformableElement.h"
 #include "SVGTests.h"
 
-namespace WebCore
-{
+namespace WebCore {
+
     class SVGGElement : public SVGStyledTransformableElement,
                         public SVGTests,
                         public SVGLangSpace,
-                        public SVGExternalResourcesRequired
-    {
+                        public SVGExternalResourcesRequired {
     public:
         SVGGElement(const QualifiedName&, Document*);
         virtual ~SVGGElement();
@@ -44,6 +42,8 @@ namespace WebCore
         virtual bool isValid() const { return SVGTests::isValid(); }
 
         virtual void parseMappedAttribute(MappedAttribute*);
+        virtual void svgAttributeChanged(const QualifiedName&);
+        virtual void childrenChanged();
 
         virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
 
@@ -62,5 +62,3 @@ namespace WebCore
 
 #endif // ENABLE(SVG)
 #endif
-
-// vim:ts=4:noet

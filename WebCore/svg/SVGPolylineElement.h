@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2004, 2005, 2006 Nikolas Zimmermann <zimmermann@kde.org>
+    Copyright (C) 2004, 2005, 2006, 2008 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005, 2006 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
@@ -24,13 +24,11 @@
 #define SVGPolylineElement_h
 
 #if ENABLE(SVG)
-
 #include "SVGPolyElement.h"
 
-namespace WebCore
-{
-    class SVGPolylineElement :  public SVGPolyElement
-    {
+namespace WebCore {
+
+    class SVGPolylineElement : public SVGPolyElement {
     public:
         SVGPolylineElement(const QualifiedName&, Document*);
         virtual ~SVGPolylineElement();
@@ -42,5 +40,3 @@ namespace WebCore
 
 #endif // ENABLE(SVG)
 #endif
-
-// vim:ts=4:noet

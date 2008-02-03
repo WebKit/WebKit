@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
+    Copyright (C) 2004, 2005, 2008 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005, 2006, 2007 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
@@ -22,13 +22,14 @@
 
 #ifndef SVGZoomAndPan_h
 #define SVGZoomAndPan_h
-#if ENABLE(SVG)
 
+#if ENABLE(SVG)
 #include "PlatformString.h"
 
 namespace WebCore {
 
     class MappedAttribute;
+    class QualifiedName;
 
     class SVGZoomAndPan {
     public:
@@ -41,11 +42,11 @@ namespace WebCore {
         SVGZoomAndPan();
         virtual ~SVGZoomAndPan();
 
-        // 'SVGZoomAndPan' functions
         unsigned short zoomAndPan() const;
         virtual void setZoomAndPan(unsigned short zoomAndPan);
 
         bool parseMappedAttribute(MappedAttribute*);
+        bool isKnownAttribute(const QualifiedName&);
 
         bool parseZoomAndPan(const UChar*& start, const UChar* end);
 
@@ -57,5 +58,3 @@ namespace WebCore {
 
 #endif // ENABLE(SVG)
 #endif // SVGZoomAndPan_h
-
-// vim:ts=4:noet

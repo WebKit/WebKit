@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Nikolas Zimmermann <zimmermann@kde.org>
+ * Copyright (C) 2006, 2008 Nikolas Zimmermann <zimmermann@kde.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -47,7 +47,7 @@ public:
     virtual operator PODType() = 0;
 
     // Setter wrapper
-    virtual void commitChange(KJS::ExecState*, PODType) = 0;
+    virtual void commitChange(PODType, SVGElement*) = 0;
 };
 
 template<typename PODType, typename PODTypeCreator>
@@ -73,12 +73,15 @@ public:
     virtual operator PODType() { return (m_creator.get()->*m_getter)(); }
 
     // Setter wrapper
-    virtual void commitChange(KJS::ExecState* exec, PODType type)
+    virtual void commitChange(PODType type, SVGElement* context)
     {
         if (!m_setter)
             return;
 
         (m_creator.get()->*m_setter)(type);
+
+        if (context)
+            context->svgAttributeChanged(m_creator->associatedAttributeName());
     }
 
 private:
@@ -102,7 +105,7 @@ public:
     virtual operator PODType() { return m_podType; }
 
     // Setter wrapper
-    virtual void commitChange(KJS::ExecState*, PODType type)
+    virtual void commitChange(PODType type, SVGElement*)
     {
         m_podType = type;
     }
@@ -115,16 +118,46 @@ template<typename PODType>
 class SVGPODListItem;
 
 template<typename PODType>
-class JSSVGPODTypeWrapperCreatorForList : public JSSVGPODTypeWrapperCreatorReadWrite<PODType, SVGPODListItem<PODType> >
+class JSSVGPODTypeWrapperCreatorForList : public JSSVGPODTypeWrapper<PODType>
 {
 public:
-    JSSVGPODTypeWrapperCreatorForList(SVGPODListItem<PODType>* creator)
-        : JSSVGPODTypeWrapperCreatorReadWrite<PODType, SVGPODListItem<PODType> >(creator,
-                                                                                 &SVGPODListItem<PODType>::value,
-                                                                                 &SVGPODListItem<PODType>::setValue)
-    { }
+    typedef PODType (SVGPODListItem<PODType>::*GetterMethod)() const; 
+    typedef void (SVGPODListItem<PODType>::*SetterMethod)(PODType);
+
+    JSSVGPODTypeWrapperCreatorForList(SVGPODListItem<PODType>* creator, const QualifiedName& attributeName)
+        : m_creator(creator)
+        , m_getter(&SVGPODListItem<PODType>::value)
+        , m_setter(&SVGPODListItem<PODType>::setValue)
+        , m_associatedAttributeName(attributeName)
+    {
+        ASSERT(m_creator);
+        ASSERT(m_getter);
+        ASSERT(m_setter);
+    }
 
     virtual ~JSSVGPODTypeWrapperCreatorForList() { }
+
+    // Getter wrapper
+    virtual operator PODType() { return (m_creator.get()->*m_getter)(); }
+
+    // Setter wrapper
+    virtual void commitChange(PODType type, SVGElement* context)
+    {
+        if (!m_setter)
+            return;
+
+        (m_creator.get()->*m_setter)(type);
+
+        if (context)
+            context->svgAttributeChanged(m_associatedAttributeName);
+    }
+
+private:
+    // Update callbacks
+    RefPtr<SVGPODListItem<PODType> > m_creator;
+    GetterMethod m_getter;
+    SetterMethod m_setter;
+    const QualifiedName& m_associatedAttributeName;
 };
 
 // Caching facilities

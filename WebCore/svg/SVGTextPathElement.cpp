@@ -48,9 +48,9 @@ SVGTextPathElement::~SVGTextPathElement()
 {
 }
 
-ANIMATED_PROPERTY_DEFINITIONS(SVGTextPathElement, SVGLength, Length, length, StartOffset, startOffset, SVGNames::startOffsetAttr.localName(), m_startOffset)
-ANIMATED_PROPERTY_DEFINITIONS(SVGTextPathElement, int, Enumeration, enumeration, Method, method, SVGNames::methodAttr.localName(), m_method)
-ANIMATED_PROPERTY_DEFINITIONS(SVGTextPathElement, int, Enumeration, enumeration, Spacing, spacing, SVGNames::spacingAttr.localName(), m_spacing)
+ANIMATED_PROPERTY_DEFINITIONS(SVGTextPathElement, SVGLength, Length, length, StartOffset, startOffset, SVGNames::startOffsetAttr, m_startOffset)
+ANIMATED_PROPERTY_DEFINITIONS(SVGTextPathElement, int, Enumeration, enumeration, Method, method, SVGNames::methodAttr, m_method)
+ANIMATED_PROPERTY_DEFINITIONS(SVGTextPathElement, int, Enumeration, enumeration, Spacing, spacing, SVGNames::spacingAttr, m_spacing)
 
 void SVGTextPathElement::parseMappedAttribute(MappedAttribute* attr)
 {

@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
+    Copyright (C) 2004, 2005, 2008 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005, 2006 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
@@ -29,8 +29,8 @@
 
 namespace WebCore {
 
-SVGLengthList::SVGLengthList()
-    : SVGPODList<SVGLength>()
+SVGLengthList::SVGLengthList(const QualifiedName& attributeName)
+    : SVGPODList<SVGLength>(attributeName)
 {
 }
 
@@ -62,5 +62,3 @@ void SVGLengthList::parse(const String& value, const SVGStyledElement* context, 
 }
 
 #endif // ENABLE(SVG)
-
-// vim:ts=4:noet

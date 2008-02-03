@@ -41,9 +41,9 @@ SVGFEBlendElement::~SVGFEBlendElement()
     delete m_filterEffect;
 }
 
-ANIMATED_PROPERTY_DEFINITIONS(SVGFEBlendElement, String, String, string, In1, in1, SVGNames::inAttr.localName(), m_in1)
-ANIMATED_PROPERTY_DEFINITIONS(SVGFEBlendElement, String, String, string, In2, in2, SVGNames::in2Attr.localName(), m_in2)
-ANIMATED_PROPERTY_DEFINITIONS(SVGFEBlendElement, int, Enumeration, enumeration, Mode, mode, SVGNames::modeAttr.localName(), m_mode)
+ANIMATED_PROPERTY_DEFINITIONS(SVGFEBlendElement, String, String, string, In1, in1, SVGNames::inAttr, m_in1)
+ANIMATED_PROPERTY_DEFINITIONS(SVGFEBlendElement, String, String, string, In2, in2, SVGNames::in2Attr, m_in2)
+ANIMATED_PROPERTY_DEFINITIONS(SVGFEBlendElement, int, Enumeration, enumeration, Mode, mode, SVGNames::modeAttr, m_mode)
 
 void SVGFEBlendElement::parseMappedAttribute(MappedAttribute* attr)
 {

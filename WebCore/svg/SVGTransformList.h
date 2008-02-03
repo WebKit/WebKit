@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
+    Copyright (C) 2004, 2005, 2008 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
@@ -24,16 +24,14 @@
 #define SVGTransformList_h
 
 #if ENABLE(SVG)
-
 #include "SVGList.h"
 #include "SVGTransform.h"
 
 namespace WebCore {
 
-    class SVGTransformList : public SVGPODList<SVGTransform>
-    {
+    class SVGTransformList : public SVGPODList<SVGTransform> {
     public:
-        SVGTransformList();
+        SVGTransformList(const QualifiedName&);
         virtual ~SVGTransformList();
 
         SVGTransform createSVGTransformFromMatrix(const AffineTransform&) const;
@@ -48,5 +46,3 @@ namespace WebCore {
 
 #endif // ENABLE(SVG)
 #endif // SVGTransformList_h
-
-// vim:ts=4:noet

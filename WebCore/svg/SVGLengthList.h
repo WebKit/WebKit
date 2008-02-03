@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2004, 2005, 2006 Nikolas Zimmermann <zimmermann@kde.org>
+    Copyright (C) 2004, 2005, 2006, 2008 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005, 2006 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
@@ -24,16 +24,14 @@
 #define SVGLengthList_h
 
 #if ENABLE(SVG)
-
 #include "SVGLength.h"
 #include "SVGList.h"
 
-namespace WebCore
-{
-    class SVGLengthList : public SVGPODList<SVGLength>
-    {
+namespace WebCore {
+
+    class SVGLengthList : public SVGPODList<SVGLength> {
     public:
-        SVGLengthList();
+        SVGLengthList(const QualifiedName&);
         virtual ~SVGLengthList();
 
         void parse(const String& value, const SVGStyledElement* context, SVGLengthMode mode);
@@ -43,5 +41,3 @@ namespace WebCore
 
 #endif // ENABLE(SVG)
 #endif
-
-// vim:ts=4:noet

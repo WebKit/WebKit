@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2004, 2005, 2006 Nikolas Zimmermann <zimmermann@kde.org>
+    Copyright (C) 2004, 2005, 2006, 2008 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
@@ -24,18 +24,18 @@
 #define SVGList_h
 
 #if ENABLE(SVG)
-
-#include <wtf/Vector.h>
+#include "ExceptionCode.h"
+#include "SVGListTraits.h"
 
 #include <wtf/RefCounted.h>
-#include "SVGListTraits.h"
-#include "ExceptionCode.h"
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
+    class QualifiedName;
+
     template<typename Item>
-    struct SVGListTypeOperations
-    {
+    struct SVGListTypeOperations {
         static Item nullItem()
         {
             return SVGListTraits<UsesDefaultInitializer<Item>::value, Item>::nullItem();
@@ -43,14 +43,19 @@ namespace WebCore {
     };
 
     template<typename Item>
-    class SVGList : public RefCounted<SVGList<Item> >
-    {
+    class SVGList : public RefCounted<SVGList<Item> > {
     private:
         typedef SVGListTypeOperations<Item> TypeOperations;
 
     public:
-        SVGList() { }
+        SVGList(const QualifiedName& attributeName) 
+            : m_associatedAttributeName(attributeName)
+        {
+        }
+
         virtual ~SVGList() { m_vector.clear(); }
+
+        const QualifiedName& associatedAttributeName() const { return m_associatedAttributeName; }
 
         unsigned int numberOfItems() const { return m_vector.size(); }
         void clear(ExceptionCode &) { m_vector.clear(); }
@@ -130,11 +135,11 @@ namespace WebCore {
 
     private:
         Vector<Item> m_vector;
+        const QualifiedName& m_associatedAttributeName;
     };
 
     template<typename Item>
-    class SVGPODListItem : public RefCounted<SVGPODListItem<Item> >
-    {
+    class SVGPODListItem : public RefCounted<SVGPODListItem<Item> > {
     public:
         SVGPODListItem() : m_item() { }
         SVGPODListItem(const Item& item) : m_item(item) { }
@@ -154,7 +159,7 @@ namespace WebCore {
     class SVGPODList : public SVGList<RefPtr<SVGPODListItem<Item> > >
     {
     public:
-        SVGPODList() : SVGList<RefPtr<SVGPODListItem<Item> > >() { }
+        SVGPODList(const QualifiedName& attributeName) : SVGList<RefPtr<SVGPODListItem<Item> > >(attributeName) { }
 
         Item initialize(Item newItem, ExceptionCode& ec)
         {
@@ -242,5 +247,3 @@ namespace WebCore {
 
 #endif // ENABLE(SVG)
 #endif // SVGList_h
-
-// vim:ts=4:noet

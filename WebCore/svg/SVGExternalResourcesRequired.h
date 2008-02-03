@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
+    Copyright (C) 2004, 2005, 2008 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
@@ -22,12 +22,13 @@
 
 #ifndef SVGExternalResourcesRequired_h
 #define SVGExternalResourcesRequired_h
-#if ENABLE(SVG)
 
+#if ENABLE(SVG)
 #include <wtf/RefPtr.h>
 #include "SVGElement.h"
 
 namespace WebCore {
+
     class MappedAttribute;
 
     // FIXME: This is wrong for several reasons:
@@ -45,8 +46,8 @@ namespace WebCore {
         SVGExternalResourcesRequired();
         virtual ~SVGExternalResourcesRequired();
 
-        // 'SVGExternalResourcesRequired' functions
         bool parseMappedAttribute(MappedAttribute*);
+        bool isKnownAttribute(const QualifiedName&);
 
     protected:
         virtual const SVGElement* contextElement() const = 0;
@@ -59,5 +60,3 @@ namespace WebCore {
 
 #endif // ENABLE(SVG)
 #endif
-
-// vim:ts=4:noet

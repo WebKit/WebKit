@@ -1027,7 +1027,7 @@ sub GenerateImplementation
                                 } else {
                                     push(@implContent, "        imp.set$setterFunctionName(" . JSValueToNative($attribute->signature, "value") . ");\n");
                                 }
-                                push(@implContent, "        m_impl->commitChange(exec, imp);\n");
+                                push(@implContent, "        m_impl->commitChange(imp, context());\n");
                             } else {
                                 push(@implContent, "        $implClassName* imp = static_cast<$implClassName*>(impl());\n");
                                 push(@implContent, "        ExceptionCode ec = 0;\n") if @{$attribute->setterExceptions};
@@ -1035,6 +1035,11 @@ sub GenerateImplementation
                                 push(@implContent, ", ec") if @{$attribute->setterExceptions};
                                 push(@implContent, ");\n");
                                 push(@implContent, "        setDOMException(exec, ec);\n") if @{$attribute->setterExceptions};
+
+                                if (IsSVGTypeNeedingContextParameter($implClassName)) {
+                                    push(@implContent, "        if (context())\n");
+                                    push(@implContent, "            context()->svgAttributeChanged(impl()->associatedAttributeName());\n");
+                                }
                             }
                         }
                         push(@implContent, "        break;\n");
@@ -1042,12 +1047,6 @@ sub GenerateImplementation
                     }
                 }
                 push(@implContent, "    }\n"); # end switch
-
-                if (IsSVGTypeNeedingContextParameter($implClassName)) {
-                    push(@implContent, "    if (context())\n");
-                    push(@implContent, "        context()->notifyAttributeChange();\n");
-                }
-
                 push(@implContent, "}\n\n"); # end function
             }
         }
@@ -1247,9 +1246,7 @@ sub GenerateImplementationFunctionCall()
         push(@implContent, $indent . "setDOMException(exec, ec);\n") if @{$function->raisesExceptions};
 
         if ($podType) {
-            push(@implContent, $indent . "wrapper->commitChange(exec, imp);\n");
-            push(@implContent, $indent . "if (castedThisObj->context())\n");
-            push(@implContent, $indent . "    castedThisObj->context()->notifyAttributeChange();\n");
+            push(@implContent, $indent . "wrapper->commitChange(imp, castedThisObj->context());\n");
         }
 
         push(@implContent, $indent . "return jsUndefined();\n");
@@ -1258,9 +1255,7 @@ sub GenerateImplementationFunctionCall()
         push(@implContent, $indent . "setDOMException(exec, ec);\n") if @{$function->raisesExceptions};
 
         if ($podType) {
-            push(@implContent, $indent . "wrapper->commitChange(exec, imp);\n");
-            push(@implContent, $indent . "if (castedThisObj->context())\n");
-            push(@implContent, $indent . "    castedThisObj->context()->notifyAttributeChange();\n");
+            push(@implContent, $indent . "wrapper->commitChange(imp, castedThisObj->context());\n");
         }
 
         push(@implContent, $indent . "return result;\n");

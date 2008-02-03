@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2004, 2005, 2007 Nikolas Zimmermann <zimmermann@kde.org>
+    Copyright (C) 2004, 2005, 2007, 2008 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005, 2006 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
@@ -76,8 +76,12 @@ bool SVGLangSpace::parseMappedAttribute(MappedAttribute* attr)
     return false;
 }
 
+bool SVGLangSpace::isKnownAttribute(const QualifiedName& attrName)
+{
+    return (attrName.matches(XMLNames::langAttr) ||
+            attrName.matches(XMLNames::spaceAttr));
+}
+
 }
 
 #endif // ENABLE(SVG)
-
-// vim:ts=4:noet

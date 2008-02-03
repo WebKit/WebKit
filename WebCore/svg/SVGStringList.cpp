@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
+    Copyright (C) 2004, 2005, 2008 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005, 2006 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
@@ -21,6 +21,7 @@
 */
 
 #include "config.h"
+
 #if ENABLE(SVG)
 #include "SVGStringList.h"
 
@@ -28,8 +29,8 @@
 
 namespace WebCore {
 
-SVGStringList::SVGStringList()
-    : SVGList<String>()
+SVGStringList::SVGStringList(const QualifiedName& attributeName)
+    : SVGList<String>(attributeName)
 {
 }
 
@@ -68,5 +69,3 @@ void SVGStringList::parse(const String& data, UChar delimiter)
 }
 
 #endif // ENABLE(SVG)
-
-// vim:ts=4:noet

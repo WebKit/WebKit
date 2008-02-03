@@ -52,8 +52,8 @@ SVGCursorElement::~SVGCursorElement()
         m_cachedImage->deref(this);
 }
 
-ANIMATED_PROPERTY_DEFINITIONS(SVGCursorElement, SVGLength, Length, length, X, x, SVGNames::xAttr.localName(), m_x)
-ANIMATED_PROPERTY_DEFINITIONS(SVGCursorElement, SVGLength, Length, length, Y, y, SVGNames::yAttr.localName(), m_y)
+ANIMATED_PROPERTY_DEFINITIONS(SVGCursorElement, SVGLength, Length, length, X, x, SVGNames::xAttr, m_x)
+ANIMATED_PROPERTY_DEFINITIONS(SVGCursorElement, SVGLength, Length, length, Y, y, SVGNames::yAttr, m_y)
 
 void SVGCursorElement::parseMappedAttribute(MappedAttribute *attr)
 {
@@ -82,5 +82,3 @@ void SVGCursorElement::parseMappedAttribute(MappedAttribute *attr)
 }
 
 #endif // ENABLE(SVG)
-
-// vim:ts=4:noet

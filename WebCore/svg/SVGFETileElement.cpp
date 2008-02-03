@@ -42,7 +42,7 @@ SVGFETileElement::~SVGFETileElement()
     delete m_filterEffect;
 }
 
-ANIMATED_PROPERTY_DEFINITIONS(SVGFETileElement, String, String, string, In1, in1, SVGNames::inAttr.localName(), m_in1)
+ANIMATED_PROPERTY_DEFINITIONS(SVGFETileElement, String, String, string, In1, in1, SVGNames::inAttr, m_in1)
 
 void SVGFETileElement::parseMappedAttribute(MappedAttribute* attr)
 {

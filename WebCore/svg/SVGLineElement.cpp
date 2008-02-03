@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2004, 2005, 2006 Nikolas Zimmermann <wildfox@kde.org>
+    Copyright (C) 2004, 2005, 2006, 2008 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005, 2006, 2007 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
@@ -48,10 +48,10 @@ SVGLineElement::~SVGLineElement()
 {
 }
 
-ANIMATED_PROPERTY_DEFINITIONS(SVGLineElement, SVGLength, Length, length, X1, x1, SVGNames::x1Attr.localName(), m_x1)
-ANIMATED_PROPERTY_DEFINITIONS(SVGLineElement, SVGLength, Length, length, Y1, y1, SVGNames::y1Attr.localName(), m_y1)
-ANIMATED_PROPERTY_DEFINITIONS(SVGLineElement, SVGLength, Length, length, X2, x2, SVGNames::x2Attr.localName(), m_x2)
-ANIMATED_PROPERTY_DEFINITIONS(SVGLineElement, SVGLength, Length, length, Y2, y2, SVGNames::y2Attr.localName(), m_y2)
+ANIMATED_PROPERTY_DEFINITIONS(SVGLineElement, SVGLength, Length, length, X1, x1, SVGNames::x1Attr, m_x1)
+ANIMATED_PROPERTY_DEFINITIONS(SVGLineElement, SVGLength, Length, length, Y1, y1, SVGNames::y1Attr, m_y1)
+ANIMATED_PROPERTY_DEFINITIONS(SVGLineElement, SVGLength, Length, length, X2, x2, SVGNames::x2Attr, m_x2)
+ANIMATED_PROPERTY_DEFINITIONS(SVGLineElement, SVGLength, Length, length, Y2, y2, SVGNames::y2Attr, m_y2)
 
 void SVGLineElement::parseMappedAttribute(MappedAttribute* attr)
 {
@@ -75,12 +75,20 @@ void SVGLineElement::parseMappedAttribute(MappedAttribute* attr)
     }
 }
 
-void SVGLineElement::notifyAttributeChange() const
+void SVGLineElement::svgAttributeChanged(const QualifiedName& attrName)
 {
-    if (!document()->parsing() && renderer())
-        renderer()->setNeedsLayout(true);
+    SVGStyledTransformableElement::svgAttributeChanged(attrName);
 
-    SVGStyledTransformableElement::notifyAttributeChange();
+    if (!renderer())
+        return;
+
+    if (attrName == SVGNames::x1Attr || attrName == SVGNames::y1Attr ||
+        attrName == SVGNames::x2Attr || attrName == SVGNames::y2Attr ||
+        SVGTests::isKnownAttribute(attrName) ||
+        SVGLangSpace::isKnownAttribute(attrName) ||
+        SVGExternalResourcesRequired::isKnownAttribute(attrName) ||
+        SVGStyledTransformableElement::isKnownAttribute(attrName))
+        renderer()->setNeedsLayout(true);
 }
 
 Path SVGLineElement::toPathData() const
@@ -98,5 +106,3 @@ bool SVGLineElement::hasRelativeValues() const
 }
 
 #endif // ENABLE(SVG)
-
-// vim:ts=4:noet

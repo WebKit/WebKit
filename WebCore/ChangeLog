@@ -1,3 +1,293 @@
+2008-02-03  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Eric.
+
+        Fixes: http://bugs.webkit.org/show_bug.cgi?id=15394
+
+        Dramatically improve dynamic update performance in DOM / SVG DOM.
+
+        The notifyAttributeChange() sledgehammer is gone now. It was implemented on quite a lot of
+        SVG*Element classes and blindly reacted on any property change caused by DOM / SVG DOM
+        by rebuilding style/renderer etc. without actually checking what changed. SVG used a hack
+        for years that attributeChanged() called notifyAttributeChange() - which results in poor
+        scripting performance and/or dynamic creation/modification of elements using SVG DOM.
+
+        Properly implement childrenChanged / attributeChanged in SVG with some derivation from the HTML code.
+        Our SVG* element classes implement "svgAttributeChanged(const QualifiedName&)" instead of
+        "attributeChanged(Attribute*...)" to be able to unify DOM / SVG DOM updates. SVG DOM classes
+        are aware of the attribute name they belong to. So when using "rectElement.transform.baseVal.getItem(0).setRotate(45)"
+        SVG DOM updates the <rect> element by calling svgAttributeChanged(SVGNames::transformAttr) on the corresponding
+        SVGRectElement. So we're now able to handle fast dynamic updates in a unified way - leading to less bugs.
+
+        HTML dynamic updates vs. SVG dynamic updates:
+
+        HTML:
+            1) setAttribute("foo", "bar") -> attributeChanged -> parseMappedAttribute -> setChanged/setNeedsLayout
+            2) someObject.foo = "bar" -> HTML code maps to setAttribute calls, ends up taking the same route as 1)
+            3) someObject.style.foo = "bar" -> setChanged -> recalcStyle (possible relayout)
+
+        SVG:
+            1) setAttribute("foo", "bar") -> attributeChanged -> svgAttributeChanged -> parseMappedAttribute -> setChanged/setNeedsLayout
+            2) same, currently most functions are not yet converted to this new system! (most noticeable in SVGMarkerElement::setOrientToAngle)    
+            3) same
+            4) someRectElement.x.baseVal.value = 100 -> svgAttributeChanged -> setChanged/setNeedsLayout (special SVG DOM updating)
+        
+        The new SVG DOM updating concept 4) uses the same updating logic as 1) and 2), so we're actually modelling the HTML way.
+        SVG handles calling setChanged/setNeedsLayout in svgAttributeChanged, unlike HTML which uses parseMappedAttribute for that.
+
+        Only updated all elements necessary to let us pass layout tests w/o regressions. Need to crawl through
+        all SVG*Element classes and implement svgAttributeChanged / childrenChanged anywhere needed in a follow-up patch.
+
+        * bindings/js/JSSVGPODTypeWrapper.h:
+        (WebCore::JSSVGPODTypeWrapperCreatorReadWrite::commitChange):
+        (WebCore::JSSVGPODTypeWrapperCreatorReadOnly::commitChange):
+        (WebCore::JSSVGPODTypeWrapperCreatorForList::JSSVGPODTypeWrapperCreatorForList):
+        (WebCore::JSSVGPODTypeWrapperCreatorForList::operator PODType):
+        (WebCore::JSSVGPODTypeWrapperCreatorForList::commitChange):
+        * bindings/js/JSSVGPathSegListCustom.cpp:
+        (WebCore::JSSVGPathSegList::clear):
+        (WebCore::JSSVGPathSegList::initialize):
+        (WebCore::JSSVGPathSegList::insertItemBefore):
+        (WebCore::JSSVGPathSegList::replaceItem):
+        (WebCore::JSSVGPathSegList::removeItem):
+        (WebCore::JSSVGPathSegList::appendItem):
+        * bindings/js/JSSVGPointListCustom.cpp:
+        (WebCore::JSSVGPointList::clear):
+        (WebCore::JSSVGPointList::initialize):
+        (WebCore::JSSVGPointList::getItem):
+        (WebCore::JSSVGPointList::insertItemBefore):
+        (WebCore::JSSVGPointList::replaceItem):
+        (WebCore::JSSVGPointList::removeItem):
+        (WebCore::JSSVGPointList::appendItem):
+        * bindings/js/JSSVGTransformListCustom.cpp:
+        (WebCore::JSSVGTransformList::clear):
+        (WebCore::JSSVGTransformList::initialize):
+        (WebCore::JSSVGTransformList::getItem):
+        (WebCore::JSSVGTransformList::insertItemBefore):
+        (WebCore::JSSVGTransformList::replaceItem):
+        (WebCore::JSSVGTransformList::removeItem):
+        (WebCore::JSSVGTransformList::appendItem):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * rendering/RenderSVGGradientStop.cpp:
+        (WebCore::RenderSVGGradientStop::setStyle):
+        * rendering/RenderSVGGradientStop.h:
+        * svg/SVGAElement.cpp:
+        (WebCore::SVGAElement::defaultEventHandler):
+        * svg/SVGAElement.h:
+        * svg/SVGAngle.cpp:
+        * svg/SVGAngle.h:
+        (WebCore::SVGAngle::associatedAttributeName):
+        * svg/SVGAnimatedTemplate.h:
+        (WebCore::SVGAnimatedTemplate::SVGAnimatedTemplate):
+        (WebCore::SVGAnimatedTemplate::wrapperCache):
+        (WebCore::SVGAnimatedTemplate::associatedAttributeName):
+        (WebCore::lookupOrCreateWrapper):
+        * svg/SVGAnimationElement.cpp:
+        (WebCore::SVGAnimationElement::parseBeginOrEndValue):
+        * svg/SVGAnimationElement.h:
+        * svg/SVGCircleElement.cpp:
+        (WebCore::SVGCircleElement::svgAttributeChanged):
+        * svg/SVGCircleElement.h:
+        * svg/SVGClipPathElement.cpp:
+        (WebCore::SVGClipPathElement::svgAttributeChanged):
+        (WebCore::SVGClipPathElement::childrenChanged):
+        (WebCore::SVGClipPathElement::canvasResource):
+        * svg/SVGClipPathElement.h:
+        (WebCore::SVGClipPathElement::isValid):
+        (WebCore::SVGClipPathElement::rendererIsNeeded):
+        * svg/SVGComponentTransferFunctionElement.cpp:
+        (WebCore::SVGComponentTransferFunctionElement::SVGComponentTransferFunctionElement):
+        * svg/SVGComponentTransferFunctionElement.h:
+        * svg/SVGCursorElement.cpp:
+        * svg/SVGElement.cpp:
+        (WebCore::SVGElement::insertedIntoDocument):
+        (WebCore::SVGElement::attributeChanged):
+        * svg/SVGElement.h:
+        (WebCore::SVGElement::svgAttributeChanged):
+        * svg/SVGEllipseElement.cpp:
+        (WebCore::SVGEllipseElement::svgAttributeChanged):
+        * svg/SVGEllipseElement.h:
+        * svg/SVGExternalResourcesRequired.cpp:
+        (WebCore::SVGExternalResourcesRequired::isKnownAttribute):
+        * svg/SVGExternalResourcesRequired.h:
+        * svg/SVGFEBlendElement.cpp:
+        * svg/SVGFEColorMatrixElement.cpp:
+        (WebCore::SVGFEColorMatrixElement::SVGFEColorMatrixElement):
+        * svg/SVGFEComponentTransferElement.cpp:
+        * svg/SVGFECompositeElement.cpp:
+        * svg/SVGFEDiffuseLightingElement.cpp:
+        * svg/SVGFEDisplacementMapElement.cpp:
+        * svg/SVGFEFloodElement.cpp:
+        * svg/SVGFEGaussianBlurElement.cpp:
+        * svg/SVGFEImageElement.cpp:
+        * svg/SVGFELightElement.cpp:
+        * svg/SVGFEMergeNodeElement.cpp:
+        * svg/SVGFEOffsetElement.cpp:
+        * svg/SVGFESpecularLightingElement.cpp:
+        * svg/SVGFETileElement.cpp:
+        * svg/SVGFETurbulenceElement.cpp:
+        * svg/SVGFilterElement.cpp:
+        * svg/SVGFilterPrimitiveStandardAttributes.cpp:
+        * svg/SVGFitToViewBox.cpp:
+        (WebCore::SVGFitToViewBox::isKnownAttribute):
+        * svg/SVGFitToViewBox.h:
+        * svg/SVGForeignObjectElement.cpp:
+        * svg/SVGGElement.cpp:
+        (WebCore::SVGGElement::svgAttributeChanged):
+        (WebCore::SVGGElement::childrenChanged):
+        * svg/SVGGElement.h:
+        * svg/SVGGradientElement.cpp:
+        (WebCore::SVGGradientElement::SVGGradientElement):
+        (WebCore::SVGGradientElement::svgAttributeChanged):
+        (WebCore::SVGGradientElement::childrenChanged):
+        (WebCore::SVGGradientElement::buildStops):
+        * svg/SVGGradientElement.h:
+        * svg/SVGImageElement.cpp:
+        (WebCore::SVGImageElement::parseMappedAttribute):
+        (WebCore::SVGImageElement::svgAttributeChanged):
+        * svg/SVGImageElement.h:
+        * svg/SVGLangSpace.cpp:
+        (WebCore::SVGLangSpace::isKnownAttribute):
+        * svg/SVGLangSpace.h:
+        * svg/SVGLengthList.cpp:
+        (WebCore::SVGLengthList::SVGLengthList):
+        * svg/SVGLengthList.h:
+        * svg/SVGLineElement.cpp:
+        (WebCore::SVGLineElement::svgAttributeChanged):
+        * svg/SVGLineElement.h:
+        * svg/SVGLinearGradientElement.cpp:
+        (WebCore::SVGLinearGradientElement::svgAttributeChanged):
+        * svg/SVGLinearGradientElement.h:
+        * svg/SVGList.h:
+        (WebCore::SVGList::SVGList):
+        (WebCore::SVGList::associatedAttributeName):
+        (WebCore::SVGPODList::SVGPODList):
+        * svg/SVGMarkerElement.cpp:
+        (WebCore::SVGMarkerElement::svgAttributeChanged):
+        (WebCore::SVGMarkerElement::childrenChanged):
+        * svg/SVGMarkerElement.h:
+        * svg/SVGMaskElement.cpp:
+        (WebCore::SVGMaskElement::svgAttributeChanged):
+        (WebCore::SVGMaskElement::childrenChanged):
+        * svg/SVGMaskElement.h:
+        * svg/SVGNumberList.cpp:
+        (WebCore::SVGNumberList::SVGNumberList):
+        * svg/SVGNumberList.h:
+        * svg/SVGPathElement.cpp:
+        (WebCore::SVGPathElement::svgAttributeChanged):
+        (WebCore::SVGPathElement::pathSegList):
+        * svg/SVGPathElement.h:
+        * svg/SVGPathSeg.h:
+        (WebCore::SVGPathSeg::associatedAttributeName):
+        * svg/SVGPathSegList.cpp:
+        (WebCore::SVGPathSegList::SVGPathSegList):
+        * svg/SVGPathSegList.h:
+        * svg/SVGPatternElement.cpp:
+        (WebCore::SVGPatternElement::SVGPatternElement):
+        (WebCore::SVGPatternElement::svgAttributeChanged):
+        (WebCore::SVGPatternElement::childrenChanged):
+        * svg/SVGPatternElement.h:
+        * svg/SVGPointList.cpp:
+        (WebCore::SVGPointList::SVGPointList):
+        * svg/SVGPointList.h:
+        * svg/SVGPolyElement.cpp:
+        (WebCore::SVGPolyElement::SVGPolyElement):
+        (WebCore::SVGPolyElement::points):
+        (WebCore::SVGPolyElement::parseMappedAttribute):
+        (WebCore::SVGPolyElement::svgAttributeChanged):
+        * svg/SVGPolyElement.h:
+        * svg/SVGPolygonElement.cpp:
+        * svg/SVGPolygonElement.h:
+        * svg/SVGPolylineElement.cpp:
+        * svg/SVGPolylineElement.h:
+        * svg/SVGPreserveAspectRatio.cpp:
+        * svg/SVGPreserveAspectRatio.h:
+        (WebCore::SVGPreserveAspectRatio::associatedAttributeName):
+        * svg/SVGRadialGradientElement.cpp:
+        (WebCore::SVGRadialGradientElement::svgAttributeChanged):
+        * svg/SVGRadialGradientElement.h:
+        * svg/SVGRectElement.cpp:
+        (WebCore::SVGRectElement::svgAttributeChanged):
+        * svg/SVGRectElement.h:
+        * svg/SVGSVGElement.cpp:
+        (WebCore::SVGSVGElement::parseMappedAttribute):
+        (WebCore::SVGSVGElement::svgAttributeChanged):
+        * svg/SVGSVGElement.h:
+        * svg/SVGStopElement.cpp:
+        (WebCore::SVGStopElement::parseMappedAttribute):
+        (WebCore::SVGStopElement::createRenderer):
+        * svg/SVGStopElement.h:
+        * svg/SVGStringList.cpp:
+        (WebCore::SVGStringList::SVGStringList):
+        * svg/SVGStringList.h:
+        * svg/SVGStylable.cpp:
+        * svg/SVGStylable.h:
+        * svg/SVGStyledElement.cpp:
+        (WebCore::SVGStyledElement::isKnownAttribute):
+        (WebCore::SVGStyledElement::svgAttributeChanged):
+        (WebCore::SVGStyledElement::invalidateResourcesInAncestorChain):
+        (WebCore::SVGStyledElement::childrenChanged):
+        * svg/SVGStyledElement.h:
+        * svg/SVGStyledLocatableElement.cpp:
+        * svg/SVGStyledLocatableElement.h:
+        * svg/SVGStyledTransformableElement.cpp:
+        (WebCore::SVGStyledTransformableElement::SVGStyledTransformableElement):
+        (WebCore::SVGStyledTransformableElement::parseMappedAttribute):
+        (WebCore::SVGStyledTransformableElement::isKnownAttribute):
+        * svg/SVGStyledTransformableElement.h:
+        * svg/SVGTests.cpp:
+        (WebCore::SVGTests::requiredFeatures):
+        (WebCore::SVGTests::requiredExtensions):
+        (WebCore::SVGTests::systemLanguage):
+        (WebCore::SVGTests::isKnownAttribute):
+        * svg/SVGTests.h:
+        * svg/SVGTextContentElement.cpp:
+        * svg/SVGTextElement.cpp:
+        (WebCore::SVGTextElement::SVGTextElement):
+        * svg/SVGTextElement.h:
+        * svg/SVGTextPathElement.cpp:
+        * svg/SVGTextPathElement.h:
+        * svg/SVGTextPositioningElement.cpp:
+        (WebCore::SVGTextPositioningElement::SVGTextPositioningElement):
+        * svg/SVGTextPositioningElement.h:
+        * svg/SVGTransformList.cpp:
+        (SVGTransformList::SVGTransformList):
+        * svg/SVGTransformList.h:
+        * svg/SVGTransformable.cpp:
+        (WebCore::SVGTransformable::isKnownAttribute):
+        * svg/SVGTransformable.h:
+        * svg/SVGURIReference.cpp:
+        (WebCore::SVGURIReference::isKnownAttribute):
+        * svg/SVGURIReference.h:
+        * svg/SVGUseElement.cpp:
+        (WebCore::SVGUseElement::insertedIntoDocument):
+        (WebCore::SVGUseElement::svgAttributeChanged):
+        (WebCore::SVGUseElement::childrenChanged):
+        (WebCore::SVGUseElement::buildPendingResource):
+        * svg/SVGUseElement.h:
+        * svg/SVGViewElement.cpp:
+        (WebCore::SVGViewElement::SVGViewElement):
+        (WebCore::SVGViewElement::viewTarget):
+        (WebCore::SVGViewElement::parseMappedAttribute):
+        * svg/SVGViewElement.h:
+        * svg/SVGViewSpec.cpp:
+        (WebCore::SVGViewSpec::SVGViewSpec):
+        * svg/SVGViewSpec.h:
+        * svg/SVGZoomAndPan.cpp:
+        (WebCore::SVGZoomAndPan::isKnownAttribute):
+        * svg/SVGZoomAndPan.h:
+        * svg/graphics/SVGResource.cpp:
+        (WebCore::SVGResource::invalidate):
+        (WebCore::SVGResource::invalidateClients):
+        (WebCore::SVGResource::addClient):
+        * svg/graphics/SVGResource.h:
+        * svg/graphics/SVGResourceMasker.cpp:
+        (WebCore::SVGResourceMasker::invalidate):
+        * svg/graphics/cg/SVGPaintServerGradientCg.cpp:
+        (WebCore::SVGPaintServerGradient::invalidate):
+        * svg/graphics/filters/SVGFEImage.cpp:
+        (WebCore::SVGFEImage::imageChanged):
+
 2008-02-03  Kevin Ollivier  <kevino@theolliviers.com>
 
         Build fix for last wx commit (a couple things were not committed).

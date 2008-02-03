@@ -23,7 +23,6 @@
 #define SVGPathSegList_h
 
 #if ENABLE(SVG)
-
 #include "SVGList.h"
 #include "SVGPathSeg.h"
 
@@ -34,7 +33,7 @@ namespace WebCore {
  
     class SVGPathSegList : public SVGList<RefPtr<SVGPathSeg> > {
     public:
-        SVGPathSegList();
+        SVGPathSegList(const QualifiedName&);
         virtual ~SVGPathSegList();
 
         unsigned getPathSegAtLength(double);
@@ -45,5 +44,3 @@ namespace WebCore {
 
 #endif // ENABLE(SVG)
 #endif
-
-// vim:ts=4:noet

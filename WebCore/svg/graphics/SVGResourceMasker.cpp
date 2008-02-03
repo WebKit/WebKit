@@ -47,6 +47,7 @@ SVGResourceMasker::~SVGResourceMasker()
 
 void SVGResourceMasker::invalidate()
 {
+    SVGResource::invalidate();
     m_mask.clear();
 }
 

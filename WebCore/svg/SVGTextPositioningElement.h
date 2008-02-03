@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
+    Copyright (C) 2004, 2005, 2008 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005, 2006 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
@@ -22,22 +22,20 @@
 
 #ifndef SVGTextPositioningElement_h
 #define SVGTextPositioningElement_h
-#if ENABLE(SVG)
 
+#if ENABLE(SVG)
 #include "SVGTextContentElement.h"
 
-namespace WebCore
-{
+namespace WebCore {
+
     class SVGLengthList;
     class SVGNumberList;
 
-    class SVGTextPositioningElement : public SVGTextContentElement
-    {
+    class SVGTextPositioningElement : public SVGTextContentElement {
     public:
         SVGTextPositioningElement(const QualifiedName&, Document*);
         virtual ~SVGTextPositioningElement();
 
-        // 'SVGTextPositioningElement' functions
         virtual void parseMappedAttribute(MappedAttribute*);
 
     private:
@@ -52,5 +50,3 @@ namespace WebCore
 
 #endif // ENABLE(SVG)
 #endif
-
-// vim:ts=4:noet

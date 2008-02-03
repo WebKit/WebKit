@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
+    Copyright (C) 2004, 2005, 2008 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005, 2007 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
@@ -22,29 +22,27 @@
 
 #ifndef SVGViewElement_h
 #define SVGViewElement_h
-#if ENABLE(SVG)
 
+#if ENABLE(SVG)
 #include "SVGStyledElement.h"
 #include "SVGExternalResourcesRequired.h"
 #include "SVGFitToViewBox.h"
 #include "SVGZoomAndPan.h"
 
-namespace WebCore
-{
+namespace WebCore {
+
     class SVGStringList;
     class SVGViewElement : public SVGStyledElement,
                            public SVGExternalResourcesRequired,
                            public SVGFitToViewBox,
-                           public SVGZoomAndPan
-    {
+                           public SVGZoomAndPan {
     public:
         SVGViewElement(const QualifiedName&, Document*);
         virtual ~SVGViewElement();
 
-        virtual void parseMappedAttribute(MappedAttribute *attr);
+        virtual void parseMappedAttribute(MappedAttribute*);
 
-        // 'SVGViewElement' functions
-        SVGStringList *viewTarget() const;
+        SVGStringList* viewTarget() const;
 
         virtual bool rendererIsNeeded(RenderStyle*) { return false; }
 
@@ -63,5 +61,3 @@ namespace WebCore
 
 #endif // ENABLE(SVG)
 #endif
-
-// vim:ts=4:noet

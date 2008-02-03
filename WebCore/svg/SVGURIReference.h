@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
+    Copyright (C) 2004, 2005, 2008 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
@@ -22,8 +22,8 @@
 
 #ifndef SVGURIReference_h
 #define SVGURIReference_h
-#if ENABLE(SVG)
 
+#if ENABLE(SVG)
 #include "SVGElement.h"
 
 namespace WebCore {
@@ -35,10 +35,9 @@ namespace WebCore {
         SVGURIReference();
         virtual ~SVGURIReference();
 
-        // 'SVGURIReference' functions
         bool parseMappedAttribute(MappedAttribute*);
+        bool isKnownAttribute(const QualifiedName&);
 
-        // Helpers
         static String getTarget(const String& url);
 
     protected:
@@ -52,5 +51,3 @@ namespace WebCore {
 
 #endif // ENABLE(SVG)
 #endif // SVGURIReference_h
-
-// vim:ts=4:noet
