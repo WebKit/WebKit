@@ -2,6 +2,21 @@
 
         Reviewed by darin.
 
+        Acid3 expects textNode.localName === null
+        http://bugs.webkit.org/show_bug.cgi?id=17060
+
+        Test: fast/dom/Node/initial-values.html
+
+        * dom/Comment.cpp: remove localName implementation
+        * dom/Comment.h:
+        * dom/Node.cpp: return nullAtom instead of emptyAtom
+        * dom/Text.cpp: remove localName implementation
+        * dom/Text.h:
+
+2008-02-03  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by darin.
+
         Make createElementNS and createAttributeNS follow the (vague) DOM Core 2 spec
         by throwing exceptions for more types of invalid qualified names.
         http://bugs.webkit.org/show_bug.cgi?id=16833

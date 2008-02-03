@@ -87,11 +87,6 @@ PassRefPtr<Text> Text::splitText(unsigned offset, ExceptionCode& ec)
     return newText.release();
 }
 
-const AtomicString& Text::localName() const
-{
-    return textAtom;
-}
-
 String Text::nodeName() const
 {
     return textAtom.domString();

@@ -41,7 +41,6 @@ public:
 
     // DOM methods overridden from parent classes
 
-    virtual const AtomicString& localName() const;
     virtual String nodeName() const;
     virtual NodeType nodeType() const;
     virtual PassRefPtr<Node> cloneNode(bool deep);
