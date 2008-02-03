@@ -1,5 +1,7 @@
 *
+div:only-child
 div:first-child
+div:last-child
 div > div
 div + div
 div ~ div

@@ -1,3 +1,13 @@
+2008-02-02  David Smith  <catfish.man@gmail.com>
+
+        Reviewed by Oliver.
+        
+        Update the selector benchmark/test now that WebKit supports :only-child and :last-child; 
+        Unfortunately, the javascript libraries don't appear to implement :*-of-type correctly, so that one remains disabled for now.
+
+        * perf/slickspeed/header.html: Typo fix, and updated the note to clarify that WebKit is no longer the only implementation causing us to leave some selectors disabled.
+        * perf/slickspeed/selectors.list: Added the new selectors
+
 2008-02-02  Mark Rowe  <mrowe@apple.com>
 
         Add WordPress plugin to give more control over blog comment settings.
