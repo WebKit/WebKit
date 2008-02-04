@@ -58,41 +58,52 @@ static JSCustomSQLTransactionCallbackCounter counter;
 
 #endif
 
-JSCustomSQLTransactionCallback::JSCustomSQLTransactionCallback(JSObject* callback, Frame* frame)
-    : m_callback(callback)
-    , m_frame(frame)
-{
-    JSLock lock;
-    gcProtect(callback);
+// We have to clean up the data on the main thread for two reasons:
+//
+//     1) Can't deref a Frame on a non-main thread.
+//     2) Unprotecting the JSObject on a non-main thread would put JavaScript into
+//        its slower multi-thread mode and we don't want to do that unnecessarily.
 
+class JSCustomSQLTransactionCallback::Data {
+public:
+    Data(JSObject* callback, Frame* frame) : m_callback(callback), m_frame(frame) { }
+    JSObject* callback() { return m_callback; }
+    Frame* frame() { return m_frame.get(); }
+
+private:
+    ProtectedPtr<JSObject> m_callback;
+    RefPtr<Frame> m_frame;
+};
+
+JSCustomSQLTransactionCallback::JSCustomSQLTransactionCallback(JSObject* callback, Frame* frame)
+    : m_data(new Data(callback, frame))
+{
 #ifndef NDEBUG
     ++JSCustomSQLTransactionCallbackCounter::count;
 #endif
 }
 
-static void unprotectOnMainThread(void* context)
+void JSCustomSQLTransactionCallback::deleteData(void* context)
 {
-    JSLock lock;
-    gcUnprotect(static_cast<KJS::JSObject*>(context));
+    delete static_cast<Data*>(context);
 }
 
 JSCustomSQLTransactionCallback::~JSCustomSQLTransactionCallback()
 {
-    // Avoid putting JavaScript into multi-thread mode unnecessarily by doing the gcUnprotect
-    // on the main thread.
-    callOnMainThread(unprotectOnMainThread, m_callback);
-
+    callOnMainThread(deleteData, m_data);
 #ifndef NDEBUG
+    m_data = 0;
     --JSCustomSQLTransactionCallbackCounter::count;
 #endif
 }
 
 void JSCustomSQLTransactionCallback::handleEvent(SQLTransaction* transaction, bool& raisedException)
 {
-    ASSERT(m_callback);
-    ASSERT(m_frame);
-        
-    KJSProxy* proxy = m_frame->scriptProxy();
+    ASSERT(m_data);
+    ASSERT(m_data->callback());
+    ASSERT(m_data->frame());
+
+    KJSProxy* proxy = m_data->frame()->scriptProxy();
     if (!proxy)
         return;
         
@@ -101,7 +112,7 @@ void JSCustomSQLTransactionCallback::handleEvent(SQLTransaction* transaction, bo
         
     KJS::JSLock lock;
         
-    JSValue* handleEventFuncValue = m_callback->get(exec, "handleEvent");
+    JSValue* handleEventFuncValue = m_data->callback()->get(exec, "handleEvent");
     JSObject* handleEventFunc = 0;
     if (handleEventFuncValue->isObject()) {
         handleEventFunc = static_cast<JSObject*>(handleEventFuncValue);
@@ -109,7 +120,7 @@ void JSCustomSQLTransactionCallback::handleEvent(SQLTransaction* transaction, bo
             handleEventFunc = 0;
     }
         
-    if (!handleEventFunc && !m_callback->implementsCall()) {
+    if (!handleEventFunc && !m_data->callback()->implementsCall()) {
         // FIXME: Should an exception be thrown here?
         return;
     }
@@ -121,9 +132,9 @@ void JSCustomSQLTransactionCallback::handleEvent(SQLTransaction* transaction, bo
 
     globalObject->startTimeoutCheck();
     if (handleEventFunc)
-        handleEventFunc->call(exec, m_callback, args);
+        handleEventFunc->call(exec, m_data->callback(), args);
     else
-        m_callback->call(exec, m_callback, args);
+        m_data->callback()->call(exec, m_data->callback(), args);
     globalObject->stopTimeoutCheck();
         
     if (exec->hadException()) {
@@ -133,7 +144,7 @@ void JSCustomSQLTransactionCallback::handleEvent(SQLTransaction* transaction, bo
         String sourceURL = exception->get(exec, "sourceURL")->toString(exec);
         if (Interpreter::shouldPrintExceptions())
             printf("SQLTransactionCallback: %s\n", message.utf8().data());
-        if (Page* page = m_frame->page())
+        if (Page* page = m_data->frame()->page())
             page->chrome()->addMessageToConsole(JSMessageSource, ErrorMessageLevel, message, lineNumber, sourceURL);
         exec->clearException();
         

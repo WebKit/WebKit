@@ -16,6 +16,30 @@
 
 2008-02-04  Darin Adler  <darin@apple.com>
 
+        Reviewed by Geoff.
+
+        - fix <rdar://problem/5713621> Threading issue when destroying database transaction callback
+
+        Do main-thread-only stuff on the main thread.
+
+        Not clear how to make a regression test for this.
+
+        * bindings/js/JSCustomSQLTransactionCallback.cpp:
+        (WebCore::JSCustomSQLTransactionCallback::Data::Data): Added.
+        (WebCore::JSCustomSQLTransactionCallback::Data::callback): Added.
+        (WebCore::JSCustomSQLTransactionCallback::Data::frame): Added.
+        (WebCore::JSCustomSQLTransactionCallback::JSCustomSQLTransactionCallback): Put data into a
+        separate Data object; we'll destroy it on the main thread.
+        (WebCore::JSCustomSQLTransactionCallback::deleteData): Added.
+        (WebCore::JSCustomSQLTransactionCallback::~JSCustomSQLTransactionCallback): Call the
+        deleteData function on the main thread.
+        (WebCore::JSCustomSQLTransactionCallback::handleEvent): Updated to get at fields through the
+        m_data object.
+        * bindings/js/JSCustomSQLTransactionCallback.h: Declare deleteData, Data, and m_data rather
+        than m_callback and m_frame.
+
+2008-02-04  Darin Adler  <darin@apple.com>
+
         Reviewed by Tim Hatcher.
 
         - possible fix for <rdar://problem/5714030> Crash in Database::deliverAllPendingCallbacks()
