@@ -176,6 +176,7 @@ module core {
         readonly attribute HTMLCollection links;
         readonly attribute HTMLCollection forms;
         readonly attribute HTMLCollection anchors;
+        readonly attribute DOMString lastModified;
 
         NodeList getElementsByName(in DOMString elementName);
 
