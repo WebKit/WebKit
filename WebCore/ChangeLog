@@ -1,3 +1,13 @@
+2008-02-04  David Hyatt  <hyatt@apple.com>
+
+        Fix for bug 16751, misparsing of html*.test in CSS.
+
+        Reviewed by darin
+
+        Added fast/css/simple-selector-chain-parsing.html
+
+        * css/CSSGrammar.y:
+
 2008-02-04  Darin Adler  <darin@apple.com>
 
         Suggested by Geoff and Maciej.

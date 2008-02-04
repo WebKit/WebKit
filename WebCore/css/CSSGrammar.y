@@ -262,6 +262,7 @@ static int cssyylex(YYSTYPE* yylval) { return CSSParser::current()->lex(yylval);
 %type <selector> simple_selector
 %type <selector> selector
 %type <selector> selector_list
+%type <selector> selector_with_trailing_whitespace
 %type <selector> class
 %type <selector> attrib
 %type <selector> pseudo
@@ -575,7 +576,6 @@ combinator:
     '+' maybe_space { $$ = CSSSelector::DirectAdjacent; }
   | '~' maybe_space { $$ = CSSSelector::IndirectAdjacent; }
   | '>' maybe_space { $$ = CSSSelector::Child; }
-  | /* empty */ { $$ = CSSSelector::Descendant; }
   ;
 
 unary_operator:
@@ -606,9 +606,35 @@ selector_list:
     }
    ;
 
+selector_with_trailing_whitespace:
+    selector WHITESPACE {
+        $$ = $1;
+    }
+    ;
+
 selector:
     simple_selector {
         $$ = $1;
+    }
+    | selector_with_trailing_whitespace
+    {
+        $$ = $1;
+    }
+    | selector_with_trailing_whitespace simple_selector
+    {
+        $$ = $2;
+        if (!$1)
+            $$ = 0;
+        else if ($$) {
+            CSSParser* p = static_cast<CSSParser*>(parser);
+            CSSSelector* end = $$;
+            while (end->m_tagHistory)
+                end = end->m_tagHistory;
+            end->m_relation = CSSSelector::Descendant;
+            end->m_tagHistory = p->sinkFloatingSelector($1);
+            if (Document* doc = p->document())
+                doc->setUsesDescendantRules(true);
+        }
     }
     | selector combinator simple_selector {
         $$ = $3;
@@ -621,7 +647,7 @@ selector:
                 end = end->m_tagHistory;
             end->m_relation = $2;
             end->m_tagHistory = p->sinkFloatingSelector($1);
-            if ($2 == CSSSelector::Descendant || $2 == CSSSelector::Child) {
+            if ($2 == CSSSelector::Child) {
                 if (Document* doc = p->document())
                     doc->setUsesDescendantRules(true);
             } else if ($2 == CSSSelector::DirectAdjacent || $2 == CSSSelector::IndirectAdjacent) {
@@ -640,27 +666,27 @@ namespace_selector:
     | '*' '|' { static UChar star = '*'; $$.characters = &star; $$.length = 1; }
     | IDENT '|' { $$ = $1; }
 ;
-
+    
 simple_selector:
-    element_name maybe_space {
+    element_name {
         CSSParser* p = static_cast<CSSParser*>(parser);
         $$ = p->createFloatingSelector();
         $$->m_tag = QualifiedName(nullAtom, atomicString($1), p->defaultNamespace);
     }
-    | element_name specifier_list maybe_space {
+    | element_name specifier_list {
         $$ = $2;
         if ($$) {
             CSSParser* p = static_cast<CSSParser*>(parser);
             $$->m_tag = QualifiedName(nullAtom, atomicString($1), p->defaultNamespace);
         }
     }
-    | specifier_list maybe_space {
+    | specifier_list {
         $$ = $1;
         CSSParser* p = static_cast<CSSParser*>(parser);
         if ($$ && p->defaultNamespace != starAtom)
             $$->m_tag = QualifiedName(nullAtom, starAtom, p->defaultNamespace);
     }
-    | namespace_selector element_name maybe_space {
+    | namespace_selector element_name {
         AtomicString namespacePrefix = atomicString($1);
         CSSParser* p = static_cast<CSSParser*>(parser);
         $$ = p->createFloatingSelector();
@@ -671,7 +697,7 @@ simple_selector:
         else // FIXME: Shouldn't this case be an error?
             $$->m_tag = QualifiedName(nullAtom, atomicString($2), p->defaultNamespace);
     }
-    | namespace_selector element_name specifier_list maybe_space {
+    | namespace_selector element_name specifier_list {
         $$ = $3;
         if ($$) {
             AtomicString namespacePrefix = atomicString($1);
@@ -684,7 +710,7 @@ simple_selector:
                 $$->m_tag = QualifiedName(nullAtom, atomicString($2), p->defaultNamespace);
         }
     }
-    | namespace_selector specifier_list maybe_space {
+    | namespace_selector specifier_list {
         $$ = $2;
         if ($$) {
             AtomicString namespacePrefix = atomicString($1);
@@ -856,9 +882,7 @@ pseudo:
             $$ = 0;
         else if (type == CSSSelector::PseudoEmpty ||
                  type == CSSSelector::PseudoFirstChild ||
-                 type == CSSSelector::PseudoFirstOfType ||
-                 type == CSSSelector::PseudoLastChild ||
-                 type == CSSSelector::PseudoLastOfType) {
+                 type == CSSSelector::PseudoFirstOfType) {
             CSSParser* p = static_cast<CSSParser*>(parser);
             Document* doc = p->document();
             if (doc)
@@ -894,7 +918,7 @@ pseudo:
             $$ = 0;
     }
     // used by :not
-    | ':' NOTFUNCTION maybe_space simple_selector ')' {
+    | ':' NOTFUNCTION maybe_space simple_selector maybe_space ')' {
         if (!$4)
             $$ = 0;
         else {
