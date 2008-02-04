@@ -1,3 +1,10 @@
+2008-02-04  Timothy Hatcher  <timothy@apple.com>
+
+        <rdar://problem/5722735> Merge fix for SQLITE_FULL error
+        is given even if the max_page_count is increased (2920)
+
+        * libWebCoreSQLite3.a:
+
 2008-02-01  Steve Falkenburg  <sfalken@apple.com>
 
         <rdar://problem/5717523> Don't set DEP opt-in flag (data execution prevention) since it is incompaible with the video plugin used on CNN.com
