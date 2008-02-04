@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2005, 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
  * Copyright (C) 2007 Trolltech ASA
  * Copyright (C) 2007 Alp Toker <alp@atoker.com>
  *
@@ -317,6 +317,21 @@ void CanvasRenderingContext2D::translate(float tx, float ty)
         return;
     c->translate(tx, ty);
     state().m_path.transform(AffineTransform().translate(-tx, -ty));
+}
+
+void CanvasRenderingContext2D::transform(float m11, float m12, float m21, float m22, float dx, float dy)
+{
+    GraphicsContext* c = drawingContext();
+    if (!c)
+        return;
+    
+    // HTML5 3.14.11.1 -- ignore any calls that pass non-finite numbers
+    if (!isfinite(m11) || !isfinite(m21) || !isfinite(dx) || 
+        !isfinite(m12) || !isfinite(m22) || !isfinite(dy))
+        return;
+    AffineTransform transform(m11, m12, m21, m22, dx, dy);
+    c->concatCTM(transform);
+    state().m_path.transform(transform.inverse());
 }
 
 void CanvasRenderingContext2D::setStrokeColor(const String& color)

@@ -1,3 +1,33 @@
+2008-02-03  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Maciej.
+
+        Bug 17169: Support transform on Canvas
+
+        Test cases for Canvas.transform -- the output for these tests is 
+        a single green square, so should be entirely cross-platform.
+
+        * fast/canvas/canvas-transform-identity-expected.checksum: Added.
+        * fast/canvas/canvas-transform-identity-expected.png: Added.
+        * fast/canvas/canvas-transform-identity-expected.txt: Added.
+        * fast/canvas/canvas-transform-identity.html: Added.
+        * fast/canvas/canvas-transform-infinity-expected.checksum: Added.
+        * fast/canvas/canvas-transform-infinity-expected.png: Added.
+        * fast/canvas/canvas-transform-infinity-expected.txt: Added.
+        * fast/canvas/canvas-transform-infinity.html: Added.
+        * fast/canvas/canvas-transform-multiply-expected.checksum: Added.
+        * fast/canvas/canvas-transform-multiply-expected.png: Added.
+        * fast/canvas/canvas-transform-multiply-expected.txt: Added.
+        * fast/canvas/canvas-transform-multiply.html: Added.
+        * fast/canvas/canvas-transform-nan-expected.checksum: Added.
+        * fast/canvas/canvas-transform-nan-expected.png: Added.
+        * fast/canvas/canvas-transform-nan-expected.txt: Added.
+        * fast/canvas/canvas-transform-nan.html: Added.
+        * fast/canvas/canvas-transform-skewed-expected.checksum: Added.
+        * fast/canvas/canvas-transform-skewed-expected.png: Added.
+        * fast/canvas/canvas-transform-skewed-expected.txt: Added.
+        * fast/canvas/canvas-transform-skewed.html: Added.
+
 2008-02-03  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Rubber stamped by Eric.

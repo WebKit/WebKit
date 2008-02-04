@@ -1,3 +1,23 @@
+2008-02-03  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Maciej.
+
+        Bug 17169: Support transform on Canvas
+
+        Nice and simple patch as the cross-platform code to apply
+        a transform was already there.
+
+        Tests: fast/canvas/canvas-transform-identity.html
+               fast/canvas/canvas-transform-infinity.html
+               fast/canvas/canvas-transform-multiply.html
+               fast/canvas/canvas-transform-nan.html
+               fast/canvas/canvas-transform-skewed.html
+
+        * html/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::transform):
+        * html/CanvasRenderingContext2D.h:
+        * html/CanvasRenderingContext2D.idl:
+
 2008-02-03  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Oliver.
