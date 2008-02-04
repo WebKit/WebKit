@@ -1,3 +1,14 @@
+2008-02-03  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Oliver.
+
+        Add testcase js-update-image.svg to check that <image> reacts on dynamic property changes.
+
+        * platform/mac/svg/custom/js-update-image-expected.checksum: Added.
+        * platform/mac/svg/custom/js-update-image-expected.png: Added.
+        * platform/mac/svg/custom/js-update-image-expected.txt: Added.
+        * svg/custom/js-update-image.svg: Added.
+
 2008-02-03  Eric Seidel  <eric@webkit.org>
 
         Reviewed by darin.

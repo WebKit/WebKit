@@ -104,8 +104,8 @@ void SVGImageElement::svgAttributeChanged(const QualifiedName& attrName)
 
     bool isURIAttribute = SVGURIReference::isKnownAttribute(attrName);
 
-    if (attrName == SVGNames::x1Attr || attrName == SVGNames::y1Attr ||
-        attrName == SVGNames::x2Attr || attrName == SVGNames::y2Attr ||
+    if (attrName == SVGNames::xAttr || attrName == SVGNames::yAttr ||
+        attrName == SVGNames::widthAttr || attrName == SVGNames::heightAttr ||
         SVGTests::isKnownAttribute(attrName) ||
         SVGLangSpace::isKnownAttribute(attrName) ||
         SVGExternalResourcesRequired::isKnownAttribute(attrName) ||

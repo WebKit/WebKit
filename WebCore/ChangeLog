@@ -1,3 +1,15 @@
+2008-02-03  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Oliver.
+
+        Fix mistake in SVGImageElement, breaking "Dock" example of carto.net
+        It was comparing against the wrong attribute names in svgAttributeChanged().
+
+        Added testcase: svg/custom/js-update-image.svg
+
+        * svg/SVGImageElement.cpp:
+        (WebCore::SVGImageElement::svgAttributeChanged):
+
 2008-02-03  Eric Seidel  <eric@webkit.org>
 
         Reviewed by darin.

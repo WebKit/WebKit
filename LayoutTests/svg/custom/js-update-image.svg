@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<image id="image" xlink:href="resources/green-checker.png" x="-100" width="75" height="75" />
+<script>
+if (window.layoutTestController)
+    layoutTestController.waitUntilDone();
+
+function test() {
+    document.getElementById("image").setAttribute("x", "0");
+
+    if (window.layoutTestController)
+        layoutTestController.notifyDone();
+}
+
+// We do this asynchronously to prevent the test update to xAttr 
+// from occuring prior to RenderObject construction
+setTimeout(test, 0);
+</script>
+</svg>
