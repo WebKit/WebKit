@@ -1,5 +1,16 @@
 2008-02-03  Oliver Hunt  <oliver@apple.com>
 
+        RS=Eric.
+
+        Add an additional test for Canvas.transform with non-invertible matrix.
+
+        * fast/canvas/canvas-transform-non-invertible-expected.checksum: Added.
+        * fast/canvas/canvas-transform-non-invertible-expected.png: Added.
+        * fast/canvas/canvas-transform-non-invertible-expected.txt: Added.
+        * fast/canvas/canvas-transform-non-invertible.html: Added.
+
+2008-02-03  Oliver Hunt  <oliver@apple.com>
+
         Reviewed by Maciej.
 
         Bug 17169: Support transform on Canvas
