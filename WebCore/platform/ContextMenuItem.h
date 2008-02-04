@@ -70,6 +70,12 @@ namespace WebCore {
         ContextMenuItemTagReload,
         ContextMenuItemTagCut,
         ContextMenuItemTagPaste,
+#if PLATFORM(GTK)
+        ContextMenuItemTagDelete,
+        ContextMenuItemTagSelectAll,
+        ContextMenuItemTagInputMethods,
+        ContextMenuItemTagUnicode,
+#endif
         ContextMenuItemTagSpellingGuess,
         ContextMenuItemTagNoGuessesFound,
         ContextMenuItemTagIgnoreSpelling,

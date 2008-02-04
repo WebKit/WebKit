@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 2007 Holger Hans Peter Freyther
- *  Copyright (C) 2007 Christian Dywan <christian@twotoasts.de>
+ *  Copyright (C) 2007, 2008 Christian Dywan <christian@imendio.com>
  *  Copyright (C) 2007 Xan Lopez <xan@gnome.org>
  *  Copyright (C) 2007 Alp Toker <alp@atoker.com>
  *  Copyright (C) 2008 Jan Alonzo <jmalonzo@unpluggable.com>
@@ -71,6 +71,7 @@ enum {
     LOAD_FINISHED,
     TITLE_CHANGED,
     HOVERING_OVER_LINK,
+    POPULATE_POPUP,
     STATUS_BAR_TEXT_CHANGED,
     ICOND_LOADED,
     SELECTION_CHANGED,
@@ -119,16 +120,24 @@ static gboolean webkit_web_view_forward_context_menu_event(WebKitWebView* webVie
     if (!coreMenu)
         return FALSE;
 
-    if (!coreMenu->platformDescription())
+    GtkMenu* menu = GTK_MENU(coreMenu->platformDescription());
+    if (!menu)
         return FALSE;
 
+    g_signal_emit(webView, webkit_web_view_signals[POPULATE_POPUP], 0, menu);
 
-    WebKitWebViewPrivate* pageData = WEBKIT_WEB_VIEW_GET_PRIVATE(webView);
-    pageData->lastPopupXPosition = event.globalX();
-    pageData->lastPopupYPosition = event.globalY();
-    gtk_menu_popup(GTK_MENU(coreMenu->platformDescription()), NULL, NULL,
-                   reinterpret_cast<GtkMenuPositionFunc>(webkit_web_view_context_menu_position_func), pageData,
-                   event.button() + 1, gtk_get_current_event_time());
+    GList* items = gtk_container_get_children(GTK_CONTAINER(menu));
+    bool empty = !g_list_nth(items, 0);
+    g_list_free(items);
+    if (empty)
+        return FALSE;
+
+    WebKitWebViewPrivate* priv = WEBKIT_WEB_VIEW_GET_PRIVATE(webView);
+    priv->lastPopupXPosition = event.globalX();
+    priv->lastPopupYPosition = event.globalY();
+    gtk_menu_popup(menu, NULL, NULL,
+                   reinterpret_cast<GtkMenuPositionFunc>(webkit_web_view_context_menu_position_func),
+                   priv, event.button() + 1, gtk_get_current_event_time());
     return TRUE;
 }
 
@@ -749,6 +758,25 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
             G_TYPE_NONE, 2,
             G_TYPE_STRING,
             G_TYPE_STRING);
+
+    /**
+     * WebKitWebView::populate-popup:
+     * @web_view: the object on which the signal is emitted
+     * @menu: the context menu
+     *
+     * When a context menu is about to be displayed this signal is emitted.
+     *
+     * Add menu items to #menu to extend the context menu.
+     */
+    webkit_web_view_signals[POPULATE_POPUP] = g_signal_new("populate-popup",
+            G_TYPE_FROM_CLASS(webViewClass),
+            (GSignalFlags)(G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION),
+            0,
+            NULL,
+            NULL,
+            g_cclosure_marshal_VOID__OBJECT,
+            G_TYPE_NONE, 1,
+            GTK_TYPE_MENU);
 
     webkit_web_view_signals[STATUS_BAR_TEXT_CHANGED] = g_signal_new("status-bar-text-changed",
             G_TYPE_FROM_CLASS(webViewClass),

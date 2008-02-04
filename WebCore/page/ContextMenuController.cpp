@@ -181,6 +181,14 @@ void ContextMenuController::contextMenuItemSelected(ContextMenuItem* item)
         case ContextMenuItemTagPaste:
             frame->editor()->paste();
             break;
+#if PLATFORM(GTK)
+        case ContextMenuItemTagDelete:
+            frame->editor()->performDelete();
+            break;
+        case ContextMenuItemTagSelectAll:
+            frame->editor()->command("SelectAll").execute();
+            break;
+#endif
         case ContextMenuItemTagSpellingGuess:
             ASSERT(frame->selectedText().length());
             if (frame->editor()->shouldInsertText(item->title(), frame->selectionController()->toRange().get(),

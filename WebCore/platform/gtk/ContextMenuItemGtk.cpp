@@ -54,6 +54,12 @@ static const char* gtkStockIDFromContextMenuAction(const ContextMenuAction& acti
         return GTK_STOCK_CUT;
     case ContextMenuItemTagPaste:
         return GTK_STOCK_PASTE;
+    case ContextMenuItemTagDelete:
+        return GTK_STOCK_DELETE;
+#if GTK_CHECK_VERSION(2, 10, 0)
+    case ContextMenuItemTagSelectAll:
+        return GTK_STOCK_SELECT_ALL;
+#endif
     case ContextMenuItemTagSpellingGuess:
         return GTK_STOCK_INFO;
     case ContextMenuItemTagIgnoreSpelling:
@@ -63,6 +69,8 @@ static const char* gtkStockIDFromContextMenuAction(const ContextMenuAction& acti
     case ContextMenuItemTagOther:
         return GTK_STOCK_MISSING_IMAGE;
     case ContextMenuItemTagSearchInSpotlight:
+        return GTK_STOCK_FIND;
+    case ContextMenuItemTagSearchWeb:
         return GTK_STOCK_FIND;
     case ContextMenuItemTagOpenWithDefaultApplication:
         return GTK_STOCK_OPEN;

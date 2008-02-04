@@ -1,3 +1,46 @@
+2008-02-03  Christian Dywan  <christian@imendio.com>
+
+        Reviewed by Alp Toker.
+
+        http://bugs.webkit.org/show_bug.cgi?id=17046
+        [GTK] Context menu fixes and customisation suport
+
+        Provide standard GTK+ context menu items where appropriate.
+
+        Note that this change makes direct use of WebKit from WebCore which is
+        against WebKit/GTK+ guidelines. The ContextMenu abstraction should be
+        fixed at some point.
+
+        * page/ContextMenuController.cpp:
+        (WebCore::ContextMenuController::contextMenuItemSelected):
+        * platform/ContextMenu.cpp:
+        (WebCore::createAndAppendInputMethodsSubMenu):
+        (WebCore::):
+        (WebCore::insertControlCharacter):
+        (WebCore::createAndAppendUnicodeSubMenu):
+        (WebCore::ContextMenu::populate):
+        (ContextMenu::checkOrEnableIfNeeded):
+        * platform/ContextMenuItem.h:
+        (WebCore::):
+        * platform/LocalizedStrings.h:
+        * platform/gtk/ContextMenuItemGtk.cpp:
+        (WebCore::gtkStockIDFromContextMenuAction):
+        * platform/gtk/LocalizedStringsGtk.cpp:
+        (WebCore::gtkStockLabel):
+        (WebCore::contextMenuItemTagCopy):
+        (WebCore::contextMenuItemTagDelete):
+        (WebCore::contextMenuItemTagSelectAll):
+        (WebCore::contextMenuItemTagUnicode):
+        (WebCore::contextMenuItemTagInputMethods):
+        (WebCore::contextMenuItemTagGoBack):
+        (WebCore::contextMenuItemTagGoForward):
+        (WebCore::contextMenuItemTagStop):
+        (WebCore::contextMenuItemTagCut):
+        (WebCore::contextMenuItemTagPaste):
+        (WebCore::contextMenuItemTagBold):
+        (WebCore::contextMenuItemTagItalic):
+        (WebCore::contextMenuItemTagUnderline):
+
 2008-02-03  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Maciej.

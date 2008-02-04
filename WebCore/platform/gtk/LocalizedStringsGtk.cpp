@@ -2,6 +2,7 @@
  * Copyright (C) 2006, 2007 Apple Inc.  All rights reserved.
  * Copyright (C) 2006 Michael Emmel mike.emmel@gmail.com 
  * Copyright (C) 2007 Holger Hans Peter Freyther
+ * Copyright (C) 2008 Christian Dywan <christian@imendio.com>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -31,10 +32,18 @@
 #include "LocalizedStrings.h"
 #include "PlatformString.h"
 
+#include <gtk/gtk.h>
 #include <glib/gi18n.h>
 
-
 namespace WebCore {
+
+static const char* gtkStockLabel(const char* stockID)
+{
+    GtkStockItem item;
+    if (!gtk_stock_lookup(stockID, &item))
+        return stockID;
+    return item.label;
+}
 
 String submitButtonDefaultLabel()
 {
@@ -103,22 +112,52 @@ String contextMenuItemTagOpenFrameInNewWindow()
 
 String contextMenuItemTagCopy()
 {
-    return String::fromUTF8(_("_Copy"));
+    static String stockLabel = String::fromUTF8(gtkStockLabel(GTK_STOCK_COPY));
+    return stockLabel;
+}
+
+String contextMenuItemTagDelete()
+{
+    static String stockLabel = String::fromUTF8(gtkStockLabel(GTK_STOCK_DELETE));
+    return stockLabel;
+}
+
+String contextMenuItemTagSelectAll()
+{
+#if GLIB_CHECK_VERSION(2,10,0)
+    static String stockLabel = String::fromUTF8(gtkStockLabel(GTK_STOCK_SELECT_ALL));
+#else
+    static String stockLabel = String::fromUTF8(_("Select _All"));
+#endif
+    return stockLabel;
+}
+
+String contextMenuItemTagUnicode()
+{
+    return String::fromUTF8(_("_Insert Unicode Control Character"));
+}
+
+String contextMenuItemTagInputMethods()
+{
+    return String::fromUTF8(_("Input _Methods"));
 }
 
 String contextMenuItemTagGoBack()
 {
-    return String::fromUTF8(_("_Back"));
+    static String stockLabel = String::fromUTF8(gtkStockLabel(GTK_STOCK_GO_BACK));
+    return stockLabel;
 }
 
 String contextMenuItemTagGoForward()
 {
-    return String::fromUTF8(_("_Forward"));
+    static String stockLabel = String::fromUTF8(gtkStockLabel(GTK_STOCK_GO_FORWARD));
+    return stockLabel;
 }
 
 String contextMenuItemTagStop()
 {
-    return String::fromUTF8(_("_Stop"));
+    static String stockLabel = String::fromUTF8(gtkStockLabel(GTK_STOCK_STOP));
+    return stockLabel;
 }
 
 String contextMenuItemTagReload()
@@ -128,12 +167,14 @@ String contextMenuItemTagReload()
 
 String contextMenuItemTagCut()
 {
-    return String::fromUTF8(_("Cu_t"));
+    static String stockLabel = String::fromUTF8(gtkStockLabel(GTK_STOCK_CUT));
+    return stockLabel;
 }
 
 String contextMenuItemTagPaste()
 {
-    return String::fromUTF8(_("_Paste"));
+    static String stockLabel = String::fromUTF8(gtkStockLabel(GTK_STOCK_PASTE));
+    return stockLabel;
 }
 
 String contextMenuItemTagNoGuessesFound()
@@ -203,42 +244,25 @@ String contextMenuItemTagFontMenu()
 
 String contextMenuItemTagBold()
 {
-    return String::fromUTF8(_("_Bold"));
+    static String stockLabel = String::fromUTF8(gtkStockLabel(GTK_STOCK_BOLD));
+    return stockLabel;
 }
 
 String contextMenuItemTagItalic()
 {
-    return String::fromUTF8(_("_Italic"));
+    static String stockLabel = String::fromUTF8(gtkStockLabel(GTK_STOCK_ITALIC));
+    return stockLabel;
 }
 
 String contextMenuItemTagUnderline()
 {
-    return String::fromUTF8(_("_Underline"));
+    static String stockLabel = String::fromUTF8(gtkStockLabel(GTK_STOCK_UNDERLINE));
+    return stockLabel;
 }
 
 String contextMenuItemTagOutline()
 {
     return String::fromUTF8(_("_Outline"));
-}
-
-String contextMenuItemTagWritingDirectionMenu()
-{
-    return String::fromUTF8(_("_Writing Direction"));
-}
-
-String contextMenuItemTagDefaultDirection()
-{
-    return String::fromUTF8(_("_Default"));
-}
-
-String contextMenuItemTagLeftToRight()
-{
-    return String::fromUTF8(_("_Left to Right"));
-}
-
-String contextMenuItemTagRightToLeft()
-{
-    return String::fromUTF8(_("_Right to Left"));
 }
 
 String contextMenuItemTagInspectElement()
