@@ -37,13 +37,6 @@ module events {
                                               in boolean       lengthComputableArg,
                                               in unsigned long loadedArg,
                                               in unsigned long totalArg);
-         void               initProgressEventNS(in DOMString namespaceURI,
-                                                in DOMString typeArg,
-                                                in boolean       canBubbleArg,
-                                                in boolean       cancelableArg,
-                                                in boolean       lengthComputableArg,
-                                                in unsigned long loadedArg,
-                                                in unsigned long totalArg);
     };
 
 }

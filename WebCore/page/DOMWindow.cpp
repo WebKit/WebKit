@@ -69,11 +69,17 @@ namespace WebCore {
 //    the screen rect.
 void DOMWindow::adjustWindowRect(const FloatRect& screen, FloatRect& window, const FloatRect& pendingChanges)
 {
-    // Make sure we're in a valid state before adjusting dimensions
-    ASSERT(!isnan(screen.x()) && !isnan(screen.y()) && !isnan(screen.width()) && !isnan(screen.height()) &&
-           !isnan(window.x()) && !isnan(window.y()) && !isnan(window.width()) && !isnan(window.height()));
+    // Make sure we're in a valid state before adjusting dimensions.
+    ASSERT(isfinite(screen.x()));
+    ASSERT(isfinite(screen.y()));
+    ASSERT(isfinite(screen.width()));
+    ASSERT(isfinite(screen.height()));
+    ASSERT(isfinite(window.x()));
+    ASSERT(isfinite(window.y()));
+    ASSERT(isfinite(window.width()));
+    ASSERT(isfinite(window.height()));
     
-    // Update window values if they are not NaN
+    // Update window values if new requested values are not NaN.
     if (!isnan(pendingChanges.x()))
         window.setX(pendingChanges.x());
     if (!isnan(pendingChanges.y()))
@@ -83,20 +89,13 @@ void DOMWindow::adjustWindowRect(const FloatRect& screen, FloatRect& window, con
     if (!isnan(pendingChanges.height()))
         window.setHeight(pendingChanges.height());
     
-    // Resize the window to between 100 and the screen width and height if it's
-    // outside of those ranges.
+    // Resize the window to between 100 and the screen width and height.
     window.setWidth(min(max(100.0f, window.width()), screen.width()));
     window.setHeight(min(max(100.0f, window.height()), screen.height()));
     
-    // Constrain the window to the top and left of the screen if it's left or
-    // above it.
-    window.setX(max(window.x(), screen.x()));
-    window.setY(max(window.y(), screen.y()));
-
-    // Constrain the window to the bottom and right of the screen if it's past
-    // the right or below it.
-    window.setX(window.x() - max(0.0f, window.right() - screen.width() - screen.x()));
-    window.setY(window.y() - max(0.0f, window.bottom() - screen.height() - screen.y()));
+    // Constrain the window position to the screen.
+    window.setX(max(screen.x(), min(window.x(), screen.right() - window.width())));
+    window.setY(max(screen.y(), min(window.y(), screen.bottom() - window.height())));
 }
 
 DOMWindow::DOMWindow(Frame* frame)

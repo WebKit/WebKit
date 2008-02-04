@@ -5,5 +5,4 @@ Success: s.extend(span2.firstChild, -1) raised Error: INDEX_SIZE_ERR: DOM Except
 Success: window.getSelection() is b.
 Success: window.getSelection() is arbaz.
 Success: s.extend() raised Error: TYPE_MISMATCH_ERR: DOM Exception 17.
-Success: s.extend(span3) raised Error: TYPE_MISMATCH_ERR: DOM Exception 17.
 Success: s.extend(null, 0) raised Error: TYPE_MISMATCH_ERR: DOM Exception 17.

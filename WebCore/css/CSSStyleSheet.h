@@ -1,6 +1,6 @@
 /*
  * (C) 1999-2003 Lars Knoll (knoll@kde.org)
- * Copyright (C) 2004, 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2006, 2007, 2008 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -56,7 +56,6 @@ public:
     int addRule(const String& selector, const String& style, int index, ExceptionCode&);
     int addRule(const String& selector, const String& style, ExceptionCode&);
     void removeRule(unsigned index, ExceptionCode& ec) { deleteRule(index, ec); }
-    void removeRule(ExceptionCode& ec) { deleteRule(0, ec); }
 
     void addNamespace(CSSParser*, const AtomicString& prefix, const AtomicString& uri);
     const AtomicString& determineNamespace(const AtomicString& prefix);

@@ -32,7 +32,7 @@ module html {
                  attribute [Custom] unsigned long length
                         setter raises (DOMException);
 
-        void add(in HTMLOptionElement option, in [Optional] unsigned long index)
+        [Custom] void add(in HTMLOptionElement option, in [Optional] unsigned long index)
              raises (DOMException);
         [Custom] void remove(in unsigned long index);
 

@@ -59,7 +59,6 @@ namespace WebCore {
         String type() const;
         void setBaseAndExtent(Node* baseNode, int baseOffset, Node* extentNode, int extentOffset, ExceptionCode&);
         void setPosition(Node*, int offset, ExceptionCode&);
-        void setPosition(Node*, ExceptionCode&);
         void modify(const String& alter, const String& direction, const String& granularity);
 
         // Mozilla Selection Object API

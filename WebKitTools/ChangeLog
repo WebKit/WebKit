@@ -1,3 +1,11 @@
+2008-02-04  Darin Adler  <darin@apple.com>
+
+        Reviewed by Geoff.
+
+        * Scripts/make-js-test-wrappers: Look at the whole LayoutTests tree, not just the fast
+        and svg subdirectories. Added some more exceptions for the benefit of the fast/dom
+        subdirectory.
+
 2008-02-04  Adam Roben  <aroben@apple.com>
 
         Windows Apple-only build fix

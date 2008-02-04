@@ -1,3 +1,20 @@
+2008-02-04  Darin Adler  <darin@apple.com>
+
+        Reviewed by Geoff.
+
+        - test for <rdar://problem/5715692> REGRESSION (r28570): JavaScript window.scrollTo() calls
+          no longer accept 'undefined' values
+
+        * fast/dom/non-numeric-values-numeric-parameters-expected.txt: Added.
+        * fast/dom/non-numeric-values-numeric-parameters.html: Added.
+        * fast/dom/resources/TEMPLATE.html: Copied from fast/dom/Element/resources/TEMPLATE.html.
+        * fast/dom/resources/non-numeric-values-numeric-parameters.js: Added.
+
+        * editing/selection/extend-expected.txt: Updated.
+        * editing/selection/extend.html: Removed test that extend throws if passed only one parameter.
+        There's no reason for us to be strict about this -- we generally treat missing parameters the
+        same as if "undefined" had been passed with few exceptions.
+
 2008-02-03  Oliver Hunt  <oliver@apple.com>
 
         RS=Eric.

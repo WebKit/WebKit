@@ -219,13 +219,6 @@ void DOMSelection::setPosition(Node* node, int offset, ExceptionCode& ec)
     m_frame->selectionController()->moveTo(VisiblePosition(node, offset, DOWNSTREAM));
 }
 
-void DOMSelection::setPosition(Node* node, ExceptionCode& ec)
-{
-    if (!m_frame)
-        return;
-    m_frame->selectionController()->moveTo(VisiblePosition(node, 0, DOWNSTREAM));
-}
-
 void DOMSelection::modify(const String& alterString, const String& directionString, const String& granularityString)
 {
     if (!m_frame)

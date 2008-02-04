@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,11 +26,7 @@
 #include "config.h"
 #include "ProgressEvent.h"
 
-#include "EventNames.h"
-
 namespace WebCore {
-    
-using namespace EventNames;
     
 ProgressEvent::ProgressEvent()
     : m_lengthComputable(false)
@@ -48,30 +44,20 @@ ProgressEvent::ProgressEvent(const AtomicString& type, bool lengthComputable, un
 }
     
 void ProgressEvent::initProgressEvent(const AtomicString& typeArg, 
-                                      bool /*canBubbleArg*/,
-                                      bool /*cancelableArg*/,
+                                      bool canBubbleArg,
+                                      bool cancelableArg,
                                       bool lengthComputableArg,
                                       unsigned loadedArg,
                                       unsigned totalArg)
 {    
-    initEvent(typeArg, false, true);
+    if (dispatched())
+        return;
+
+    initEvent(typeArg, canBubbleArg, cancelableArg);
+
     m_lengthComputable = lengthComputableArg;
     m_loaded = loadedArg;
     m_total = totalArg;
-}
-
-void ProgressEvent::initProgressEventNS(const AtomicString& /*namespaceURI*/,
-                                        const AtomicString& typeArg, 
-                                        bool /*canBubbleArg*/,
-                                        bool /*cancelableArg*/,
-                                        bool lengthComputableArg,
-                                        unsigned loadedArg,
-                                        unsigned totalArg)
-{
-    initEvent(typeArg, false, true);
-    m_lengthComputable = lengthComputableArg;
-    m_loaded = loadedArg;
-    m_total = lengthComputableArg ? totalArg : 0;
 }
 
 }

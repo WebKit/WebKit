@@ -1275,28 +1275,74 @@ sub GetNativeTypeFromSignature
     return GetNativeType($type);
 }
 
+my %nativeType = (
+    "AtomicString" => "AtomicString",
+    "CompareHow" => "Range::CompareHow",
+    "DOMString" => "String",
+    "EventTarget" => "EventTargetNode*",
+    "SVGLength" => "SVGLength",
+    "SVGMatrix" => "AffineTransform",
+    "SVGNumber" => "float",
+    "SVGPaintType" => "SVGPaint::SVGPaintType",
+    "SVGPoint" => "FloatPoint",
+    "SVGRect" => "FloatRect",
+    "SVGTransform" => "SVGTransform",
+    "boolean" => "bool",
+    "double" => "double",
+    "float" => "float",
+    "long" => "int",
+    "unsigned long" => "unsigned",
+    "unsigned short" => "unsigned short",
+);
+
 sub GetNativeType
 {
     my $type = shift;
 
-    return "unsigned" if $type eq "unsigned long";
-    return $type if $type eq "unsigned short" or $type eq "float" or $type eq "double" or $type eq "AtomicString";
-    return "bool" if $type eq "boolean";
-    return "int" if $type eq "long";
-    return "String" if $type eq "DOMString";
-    return "Range::CompareHow" if $type eq "CompareHow";
-    return "EventTargetNode*" if $type eq "EventTarget";
-    return "FloatRect" if $type eq "SVGRect";
-    return "FloatPoint" if $type eq "SVGPoint";
-    return "AffineTransform" if $type eq "SVGMatrix";
-    return "SVGTransform" if $type eq "SVGTransform";
-    return "SVGLength" if $type eq "SVGLength";
-    return "float" if $type eq "SVGNumber";
-    return "SVGPaint::SVGPaintType" if $type eq "SVGPaintType";
+    return $nativeType{$type} if exists $nativeType{$type};
 
-    # Default, assume native type is a pointer with same type name as idl type
+    # For all other types, the native type is a pointer with same type name as the IDL type.
     return "${type}*";
 }
+
+my %typeCanFailConversion = (
+    "AtomicString" => 0,
+    "Attr" => 1,
+    "CompareHow" => 0,
+    "DOMString" => 0,
+    "DOMWindow" => 0,
+    "DocumentType" => 0,
+    "Element" => 0,
+    "Event" => 0,
+    "EventListener" => 0,
+    "EventTarget" => 0,
+    "HTMLElement" => 0,
+    "HTMLOptionElement" => 0,
+    "Node" => 0,
+    "NodeFilter" => 0,
+    "Range" => 0,
+    "SQLResultSet" => 0,
+    "SVGAngle" => 0,
+    "SVGElement" => 0,
+    "SVGLength" => 0,
+    "SVGMatrix" => 0,
+    "SVGNumber" => 0,
+    "SVGPaintType" => 0,
+    "SVGPathSeg" => 0,
+    "SVGPoint" => 0,
+    "SVGRect" => 0,
+    "SVGTransform" => 0,
+    "VoidCallback" => 1,
+    "XPathEvaluator" => 0,
+    "XPathNSResolver" => 0,
+    "XPathResult" => 0,
+    "boolean" => 0,
+    "double" => 0,
+    "float" => 0,
+    "long" => 0,
+    "unsigned long" => 0,
+    "unsigned short" => 0,
+);
 
 sub TypeCanFailConversion
 {
@@ -1304,49 +1350,11 @@ sub TypeCanFailConversion
 
     my $type = $codeGenerator->StripModule($signature->type);
 
-    # FIXME: convert to use a hash
+    $implIncludes{"ExceptionCode.h"} = 1 if $type eq "Attr";
 
-    return 0 if $type eq "boolean" or
-                $type eq "float" or
-                $type eq "double" or
-                $type eq "AtomicString" or
-                $type eq "DOMString" or
-                $type eq "Node" or
-                $type eq "Element" or
-                $type eq "DocumentType" or
-                $type eq "Event" or
-                $type eq "EventListener" or
-                $type eq "EventTarget" or
-                $type eq "Range" or
-                $type eq "NodeFilter" or
-                $type eq "DOMWindow" or
-                $type eq "SQLResultSet" or
-                $type eq "XPathEvaluator" or
-                $type eq "XPathNSResolver" or
-                $type eq "XPathResult" or
-                $type eq "SVGAngle" or
-                $type eq "SVGLength" or
-                $type eq "SVGNumber" or
-                $type eq "SVGPoint" or
-                $type eq "SVGTransform" or
-                $type eq "SVGPathSeg" or
-                $type eq "SVGMatrix" or
-                $type eq "SVGRect" or
-                $type eq "SVGElement" or
-                $type eq "HTMLElement" or
-                $type eq "HTMLOptionElement" or
-                $type eq "unsigned short" or # or can it?
-                $type eq "CompareHow" or # or can it?
-                $type eq "SVGPaintType"; # or can it?
+    return $typeCanFailConversion{$type} if exists $typeCanFailConversion{$type};
 
-    return 1 if $type eq "VoidCallback";
-
-    if ($type eq "unsigned long" or $type eq "long" or $type eq "Attr") {
-        $implIncludes{"ExceptionCode.h"} = 1;
-        return 1;
-    }
-
-    die "Don't know whether a JS value can fail conversion to type $type."
+    die "Don't know whether a JS value can fail conversion to type $type.";
 }
 
 sub JSValueToNative

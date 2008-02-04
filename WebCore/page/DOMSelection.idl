@@ -52,7 +52,7 @@ module window {
         void empty();
         void setBaseAndExtent(in Node baseNode, in long baseOffset, in Node extentNode, in long extentOffset)
             raises(DOMException);
-        void setPosition(in Node node, in [Optional] long offset)
+        void setPosition(in Node node, in long offset)
             raises(DOMException);
         void modify(in DOMString alter, in DOMString direction, in DOMString granularity);
         void extend(in Node node, in long offset)

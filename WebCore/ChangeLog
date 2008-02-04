@@ -1,3 +1,63 @@
+2008-02-04  Darin Adler  <darin@apple.com>
+
+        Reviewed by Geoff.
+
+        - fix <rdar://problem/5715692> REGRESSION (r28570): JavaScript window.scrollTo()
+          calls no longer accept 'undefined' values
+
+        By default, we should accept non-numeric parameters and non-integral numbers for
+        parameters that expect integers, without throwing exceptions.
+
+        While creating the test for this, I ran into a couple minor bugs with the
+        functions involved, and this patch fixes those too.
+
+        Test: fast/dom/non-numeric-values-numeric-parameters.html
+
+        * bindings/js/JSHTMLOptionsCollectionCustom.cpp:
+        (WebCore::JSHTMLOptionsCollection::add): Added. This function has unusual behavior
+        when passed non-integral values for its second parameter, so it needs to be written
+        by hand. I think that [Custom] is better here than inventing a new keyword.
+
+        * bindings/scripts/CodeGeneratorJS.pm: Changed default for "long" and "unsigned long"
+        to ignore errors rather than failing due to type differences. Also changed a couple
+        functions to use hashes.
+
+        * css/CSSStyleSheet.h:
+        (WebCore::CSSStyleSheet::removeRule): Remove overload of removeRule without a second
+        parameters. While we do allow this from JavaScript, it's not a true optional parameter,
+        but rather just a case of "you can omit parameters and they are treated as undefined"
+        combined with "undefined turns into 0 when passed to a function that takes an integer".
+        * css/CSSStyleSheet.idl: Removed [Optional] on the index parameter for removeRule.
+        This is not truly an optional parameter.
+
+        * dom/ProgressEvent.cpp:
+        (WebCore::ProgressEvent::initProgressEvent): Updated this function to match other
+        DOM event init functions -- important to do nothing if this is called on the an
+        already-dispatched event and we need to respect the bubble and cancelable arguments.
+        Also removed initProgressEventNS. We don't support namespaced events, and if we add
+        support, it should be across all event classes, not just ProgressEvent.
+        * dom/ProgressEvent.h: Removed initProgressEventNS.
+        * dom/ProgressEvent.idl: Ditto.
+
+        * dom/Range.cpp:
+        (WebCore::Range::createContextualFragment): Added a check for 0. This can happen
+        if the passed-in start container is a node that's not an HTML element and also
+        does not have a parent.
+
+        * html/HTMLOptionsCollection.idl: Added the [Custom] attribute to add, since the
+        rules for processing its parameters are unusual.
+
+        * page/DOMSelection.cpp: Removed the version of setPosition that has only
+        one parameter. The offset is not really optional.
+        * page/DOMSelection.h: Ditto.
+        * page/DOMSelection.idl: Removed the [Optional] keyword for the second parameter of
+        setPosition. It's not a true optional parameter (see discussion of removeRule above).
+
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::adjustWindowRect): Simplified logic for constraining the X
+        and Y coordinates, in a way that makes them work even when the window coordinates
+        are infinite. Also strengthened the assertion.
+
 2008-02-04  Alp Toker  <alp@atoker.com>
 
         Rubber-stamped by Mark Rowe.

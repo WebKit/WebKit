@@ -40,7 +40,7 @@ use strict;
 
 chdirWebKit();
 
-my @templates = `find LayoutTests/fast LayoutTests/svg -name "TEMPLATE.html"`;
+my @templates = `find LayoutTests -name "TEMPLATE.html"`;
 
 for my $tfile (@templates) {
 
@@ -70,8 +70,16 @@ for my $tfile (@templates) {
     for my $file (@files) {
         chomp $file;
         next if $file =~ /js-test-.*\.js$/;
+        next if $file =~ m:resources/attr-case-sensitivity\.js$:;
+        next if $file =~ m:resources/frame-loading-via-document-write\.js$:;
         next if $file =~ m:resources/intersectsNode\.js$:;
+        next if $file =~ m:resources/script-element-gc\.js$:;
+        next if $file =~ m:resources/script-element-gc\.js$:;
+        next if $file =~ m:resources/script3\.js$:;
+        next if $file =~ m:resources/script4\.js$:;
+        next if $file =~ m:resources/script5\.js$:;
         next if $file =~ m:resources/select-options-remove\.js$:;
+        next if $file =~ m:resources/wrapper-identity-base\.js$:;
 
         my $html = $file;
         $html =~ s:resources/(.*)\.js:$1.html:;
