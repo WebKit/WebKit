@@ -59,7 +59,7 @@ my $TEMP_PREFIX = "GEN_";
 
 # Hashes
 
-my %includeCorrector = map {($_, 1)} qw{UIEvent KeyboardEvent MouseEvent 
+my %includeCorrector = map {($_, 1)} qw{UIEvent KeyboardEvent MouseEvent
                                         MutationEvent OverflowEvent WheelEvent};
 
 my %conflictMethod = (
