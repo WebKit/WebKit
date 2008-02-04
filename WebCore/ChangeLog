@@ -1,3 +1,10 @@
+2008-02-04  Darin Adler  <darin@apple.com>
+
+        Suggested by Geoff and Maciej.
+
+        * bindings/js/JSCustomSQLTransactionCallback.cpp: Reworded a misleading
+        comment to be correct.
+
 2008-02-04  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Reviewed by Steve, Anders.

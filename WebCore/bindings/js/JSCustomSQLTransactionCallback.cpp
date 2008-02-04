@@ -61,8 +61,8 @@ static JSCustomSQLTransactionCallbackCounter counter;
 // We have to clean up the data on the main thread for two reasons:
 //
 //     1) Can't deref a Frame on a non-main thread.
-//     2) Unprotecting the JSObject on a non-main thread would put JavaScript into
-//        its slower multi-thread mode and we don't want to do that unnecessarily.
+//     2) Unprotecting the JSObject on a non-main thread would register that thread
+//        for JavaScript garbage collection, which could unnecessarily slow things down.
 
 class JSCustomSQLTransactionCallback::Data {
 public:
