@@ -13,10 +13,4 @@ HEADER_SEARCH_PATHS = ForwardingHeaders icu /usr/include/libxslt /usr/include/li
 INFOPLIST_FILE = Info.plist;
 INSTALL_PATH = $(SYSTEM_LIBRARY_DIR)/Frameworks/WebKit.framework/Versions/A/Frameworks;
 PRODUCT_NAME = WebCore;
-
-SQLITE3_LIBRARY = $(SQLITE3_LIBRARY_$(MAC_OS_X_VERSION_MAJOR));
-SQLITE3_LIBRARY_ = WebCoreSQLite3;
-SQLITE3_LIBRARY_1040 = WebCoreSQLite3;
-SQLITE3_LIBRARY_1050 = sqlite3;
-
-OTHER_LDFLAGS = -l$(SQLITE3_LIBRARY) -lobjc -sub_library libobjc -umbrella WebKit;
+OTHER_LDFLAGS = -lWebCoreSQLite3 -lobjc -sub_library libobjc -umbrella WebKit;

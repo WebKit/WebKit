@@ -1,3 +1,13 @@
+2008-02-04  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        <rdar://problem/5722972> Leopard needs to statically link SQLite
+
+        * Configurations/Base.xcconfig: Always have a header search path for WebCoreSQLite3.
+        * Configurations/DebugRelease.xcconfig: Ditto.
+        * Configurations/WebCore.xcconfig: Always link against WebCoreSQLite3.
+
 2008-02-04  Adam Roben  <aroben@apple.com>
 
         Windows build fix
