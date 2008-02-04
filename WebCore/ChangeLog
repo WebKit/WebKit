@@ -1,3 +1,12 @@
+2008-02-04  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Reviewed by Darin.
+
+        Blacklist Silverlight versions older than min required, not newer. 
+
+        * plugins/win/PluginPackageWin.cpp:
+        (WebCore::PluginPackageWin::isPluginBlacklisted):
+
 2008-02-04  David Hyatt  <hyatt@apple.com>
 
         Fix for bug 16751, misparsing of html*.test in CSS.

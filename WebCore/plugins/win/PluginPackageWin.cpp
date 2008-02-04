@@ -145,7 +145,7 @@ bool PluginPackageWin::isPluginBlacklisted()
         // workaround for <rdar://5557379> Crash in Silverlight when opening microsoft.com.
         // the latest 1.0 version of Silverlight does not reproduce this crash, so allow it
         // and any newer versions
-        if (compareFileVersion(silverlightPluginMinRequiredVersionMS, silverlightPluginMinRequiredVersionLS) >= 0)
+        if (compareFileVersion(silverlightPluginMinRequiredVersionMS, silverlightPluginMinRequiredVersionLS) < 0)
             return true;
     } else if (fileName() == "npmozax.dll")
         // Bug 15217: Mozilla ActiveX control complains about missing xpcom_core.dll
