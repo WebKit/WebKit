@@ -1,5 +1,9 @@
 2008-02-04  Adam Roben  <aroben@apple.com>
 
+        * platform/win/Skipped: Added one more failure.
+
+2008-02-04  Adam Roben  <aroben@apple.com>
+
         * platform/win/Skipped: Added some new failures.
 
 2008-02-03   David Harrison  <harrison@apple.com>

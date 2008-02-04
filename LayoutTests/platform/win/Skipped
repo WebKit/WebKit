@@ -321,6 +321,9 @@ http/tests/xmlhttprequest/cookies.html
 # <rdar://5723142>
 svg/custom/frame-getSVGDocument.html
 
+# <rdar://5723191>
+http/tests/navigation/javascriptlink-frames.html
+
 ################################################################################
 ####################### No bugs filed about the below yet#######################
 ################################################################################
