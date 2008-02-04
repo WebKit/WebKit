@@ -115,6 +115,8 @@ void SQLTransaction::performPendingCallback()
 
 void SQLTransaction::openTransactionAndPreflight()
 {
+    ASSERT(!m_database->m_sqliteDatabase.transactionInProgress());
+
     LOG(StorageAPI, "Opening and preflighting transaction %p", this);
     
     // FIXME: This is a glaring bug that gives each database in an origin the full quota of that origin
@@ -132,6 +134,7 @@ void SQLTransaction::openTransactionAndPreflight()
     
     // Transaction Steps 1+2 - Open a transaction to the database, jumping to the error callback if that fails
     if (!m_sqliteTransaction->inProgress()) {
+        ASSERT(!m_database->m_sqliteDatabase.transactionInProgress());
         m_sqliteTransaction.clear();
         m_transactionError = new SQLError(0, "unable to open a transaction to the database");
         handleTransactionError(false);
@@ -140,6 +143,7 @@ void SQLTransaction::openTransactionAndPreflight()
     
     // Transaction Steps 3 - Peform preflight steps, jumping to the error callback if they fail
     if (m_wrapper && !m_wrapper->performPreflight(this)) {
+        ASSERT(!m_database->m_sqliteDatabase.transactionInProgress());
         m_sqliteTransaction.clear();
         m_transactionError = m_wrapper->sqlError();
         if (!m_transactionError)
@@ -340,6 +344,7 @@ void SQLTransaction::postflightAndCommit()
     
     // Transaction Step 10 - End transaction steps
     // There is no next step
+    ASSERT(!m_database->m_sqliteDatabase.transactionInProgress());
     m_nextStep = 0;
 
     // Now release our callbacks, to break reference cycles.
@@ -400,6 +405,7 @@ void SQLTransaction::cleanupAfterTransactionErrorCallback()
             DatabaseTracker::tracker().scheduleNotifyDatabaseChanged(m_database->m_securityOrigin.get(), m_database->m_name);
         }
         
+        ASSERT(!m_database->m_sqliteDatabase.transactionInProgress());
         m_sqliteTransaction.clear();
     }
     m_database->m_databaseAuthorizer->enable();
@@ -411,6 +417,7 @@ void SQLTransaction::cleanupAfterTransactionErrorCallback()
     }
     
     // Transaction is complete!  There is no next step
+    ASSERT(!m_database->m_sqliteDatabase.transactionInProgress());
     m_nextStep = 0;
 
     // Now release our callbacks, to break reference cycles.

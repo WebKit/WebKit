@@ -1,5 +1,29 @@
 2008-02-04  Darin Adler  <darin@apple.com>
 
+        Reviewed by Tim Hatcher.
+
+        - possible fix for <rdar://problem/5714030> Crash in Database::deliverAllPendingCallbacks()
+          reloading a page quickly
+
+        I don't fully understand the cause of the crash, but I think this might
+        be a helpful change.
+
+        * platform/sql/SQLiteTransaction.cpp:
+        (WebCore::SQLiteTransaction::commit): If the commit fails, don't leave this
+        transaction and database both marked as "still in progress". As far as I can
+        tell this does no good, and also seems to do harm.
+        (WebCore::SQLiteTransaction::rollback): Ditto.
+
+        * storage/Database.cpp:
+        (WebCore::Database::performTransactionStep): Add some assertions to
+        detect databases stuck in the "transaction in progress" state.
+        * storage/SQLTransaction.cpp:
+        (WebCore::SQLTransaction::openTransactionAndPreflight): Ditto.
+        (WebCore::SQLTransaction::postflightAndCommit): Ditto.
+        (WebCore::SQLTransaction::cleanupAfterTransactionErrorCallback): Ditto.
+
+2008-02-04  Darin Adler  <darin@apple.com>
+
         Reviewed by Geoff.
 
         - fix <rdar://problem/5715692> REGRESSION (r28570): JavaScript window.scrollTo()

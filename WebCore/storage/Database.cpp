@@ -453,6 +453,7 @@ void Database::performTransactionStep()
 
     {
         MutexLocker locker(m_transactionMutex);
+        ASSERT(!m_sqliteDatabase.transactionInProgress());
         m_currentTransaction = 0;
 
         if (m_transactionQueue.size())

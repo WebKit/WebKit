@@ -55,10 +55,9 @@ void SQLiteTransaction::commit()
 {
     if (m_inProgress) {
         ASSERT(m_db.m_transactionInProgress);
-        if (m_db.executeCommand("COMMIT;")) {
-            m_inProgress = false;
-            m_db.m_transactionInProgress = false;
-        }
+        m_db.executeCommand("COMMIT;");
+        m_inProgress = false;
+        m_db.m_transactionInProgress = false;
     }
 }
 
@@ -66,10 +65,9 @@ void SQLiteTransaction::rollback()
 {
     if (m_inProgress) {
         ASSERT(m_db.m_transactionInProgress);
-        if (m_db.executeCommand("ROLLBACK;")) {
-            m_inProgress = false;
-            m_db.m_transactionInProgress = false;
-        }
+        m_db.executeCommand("ROLLBACK;");
+        m_inProgress = false;
+        m_db.m_transactionInProgress = false;
     }
 }
     
