@@ -1,5 +1,16 @@
 2008-02-03  Nikolas Zimmermann  <zimmermann@kde.org>
 
+        Rubber stamped by Eric.
+
+        Add missing layout test results.
+
+        * platform/mac/svg/custom/frame-getSVGDocument-expected.checksum: Added.
+        * platform/mac/svg/custom/frame-getSVGDocument-expected.png: Added.
+        * platform/mac/svg/custom/textPath-assert-expected.checksum: Added.
+        * platform/mac/svg/custom/textPath-assert-expected.png: Added.
+
+2008-02-03  Nikolas Zimmermann  <zimmermann@kde.org>
+
         Reviewed by Oliver.
 
         Add testcase js-update-image.svg to check that <image> reacts on dynamic property changes.
