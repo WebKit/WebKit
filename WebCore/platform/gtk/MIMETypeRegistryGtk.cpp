@@ -39,7 +39,7 @@ static const ExtensionMap extensionMap [] = {
     { "bmp", "image/bmp" },
     { "gif", "image/gif" },
     { "html", "text/html" },
-    { "ico", "image/x-icon" },   
+    { "ico", "image/x-icon" },
     { "jpeg", "image/jpeg" },
     { "jpg", "image/jpeg" },
     { "js", "application/x-javascript" },
@@ -55,7 +55,7 @@ static const ExtensionMap extensionMap [] = {
     { "xhtml", "application/xhtml+xml" },
     { 0, 0 }
 };
-    
+
 String MIMETypeRegistry::getMIMETypeForExtension(const String &ext)
 {
     String s = ext.lower();

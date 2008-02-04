@@ -7,13 +7,13 @@
  * are met:
  *
  * 1.  Redistributions of source code must retain the above copyright
- *     notice, this list of conditions and the following disclaimer. 
+ *     notice, this list of conditions and the following disclaimer.
  * 2.  Redistributions in binary form must reproduce the above copyright
  *     notice, this list of conditions and the following disclaimer in the
- *     documentation and/or other materials provided with the distribution. 
+ *     documentation and/or other materials provided with the distribution.
  * 3.  Neither the name of Apple Inc. ("Apple") nor the names of
  *     its contributors may be used to endorse or promote products derived
- *     from this software without specific prior written permission. 
+ *     from this software without specific prior written permission.
  *
  * THIS SOFTWARE IS PROVIDED BY APPLE AND ITS CONTRIBUTORS "AS IS" AND ANY
  * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -85,7 +85,7 @@ static ThreadIdentifier establishIdentifierForThread(GThread*& thread)
     static ThreadIdentifier identifierCount = 1;
 
     threadMap().add(identifierCount, thread);
-    
+
     return identifierCount++;
 }
 
@@ -105,7 +105,7 @@ static ThreadIdentifier identifierByGthreadHandle(GThread*& thread)
 static GThread* threadForIdentifier(ThreadIdentifier id)
 {
     MutexLocker locker(threadMapMutex());
-    
+
     return threadMap().get(id);
 }
 
@@ -114,7 +114,7 @@ static void clearThreadForIdentifier(ThreadIdentifier id)
     MutexLocker locker(threadMapMutex());
 
     ASSERT(threadMap().contains(id));
-    
+
     threadMap().remove(id);
 }
 
@@ -169,7 +169,7 @@ void Mutex::lock()
 {
     g_mutex_lock(m_mutex);
 }
-    
+
 bool Mutex::tryLock()
 {
     return g_mutex_trylock(m_mutex);
@@ -182,7 +182,7 @@ void Mutex::unlock()
 
 ThreadCondition::ThreadCondition()
     : m_condition(g_cond_new())
-{ 
+{
 }
 
 ThreadCondition::~ThreadCondition()

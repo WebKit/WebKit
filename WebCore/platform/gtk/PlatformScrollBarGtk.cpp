@@ -41,7 +41,7 @@ PlatformScrollbar::PlatformScrollbar(ScrollbarClient* client, ScrollbarOrientati
                                      ScrollbarControlSize controlSize)
     : Scrollbar(client, orientation, controlSize)
     , m_adjustment(GTK_ADJUSTMENT(gtk_adjustment_new(0.0, 0.0, 0.0, 0.0, 0.0, 0.0)))
-{ 
+{
     GtkScrollbar* scrollBar = orientation == HorizontalScrollbar ?
                               GTK_SCROLLBAR(::gtk_hscrollbar_new(m_adjustment)) :
                               GTK_SCROLLBAR(::gtk_vscrollbar_new(m_adjustment));
@@ -57,7 +57,7 @@ PlatformScrollbar::PlatformScrollbar(ScrollbarClient* client, ScrollbarOrientati
      * we will end up with a 0 width scrollbar.
      */
     resize(PlatformScrollbar::horizontalScrollbarHeight(),
-           PlatformScrollbar::verticalScrollbarWidth());    
+           PlatformScrollbar::verticalScrollbarWidth());
 }
 
 PlatformScrollbar::~PlatformScrollbar()
@@ -91,7 +91,7 @@ void PlatformScrollbar::paint(GraphicsContext* graphicsContext, const IntRect& d
 }
 
 void PlatformScrollbar::updateThumbPosition()
-{ 
+{
     if (m_adjustment->value != m_currentPos) {
         m_adjustment->value = m_currentPos;
         gtk_adjustment_value_changed(m_adjustment);

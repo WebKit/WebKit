@@ -1167,7 +1167,7 @@ static void webkit_web_view_settings_notify(WebKitWebSettings* webSettings, GPar
     else if (name == g_intern_string("sans-serif-font-family"))
         settings->setSansSerifFontFamily(g_value_get_string(&value));
     else if (name == g_intern_string("serif-font-family"))
-        settings->setSerifFontFamily(g_value_get_string(&value)); 
+        settings->setSerifFontFamily(g_value_get_string(&value));
     else if (name == g_intern_string("default-font-size"))
         settings->setDefaultFontSize(g_value_get_int(&value));
     else if (name == g_intern_string("default-monospace-font-size"))
@@ -1279,7 +1279,7 @@ void webkit_web_view_set_maintains_back_forward_list(WebKitWebView* webView, gbo
  * @webView: a #WebKitWebView
  *
  * Returns a #WebKitWebBackForwardList
- * 
+ *
  * Return value: the #WebKitWebBackForwardList
  */
 WebKitWebBackForwardList* webkit_web_view_get_back_forward_list(WebKitWebView* webView)

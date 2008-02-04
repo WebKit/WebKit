@@ -22,7 +22,7 @@
 #ifndef PasteboardHelper_h
 #define PasteboardHelper_h
 
-/* 
+/*
  * FIXME: this is for WebCore support and must be removed once
  * a better solution is found
  */

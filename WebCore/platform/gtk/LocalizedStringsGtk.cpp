@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2006, 2007 Apple Inc.  All rights reserved.
- * Copyright (C) 2006 Michael Emmel mike.emmel@gmail.com 
+ * Copyright (C) 2006 Michael Emmel mike.emmel@gmail.com
  * Copyright (C) 2007 Holger Hans Peter Freyther
  * Copyright (C) 2008 Christian Dywan <christian@imendio.com>
  * All rights reserved.
@@ -24,7 +24,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #include "config.h"
@@ -51,12 +51,12 @@ String submitButtonDefaultLabel()
 }
 
 String inputElementAltText()
-{ 
+{
     return String::fromUTF8(_("Submit"));
 }
 
 String resetButtonDefaultLabel()
-{ 
+{
     return String::fromUTF8(_("Reset"));
 }
 
@@ -66,12 +66,12 @@ String searchableIndexIntroduction()
 }
 
 String fileButtonChooseFileLabel()
-{ 
+{
     return String::fromUTF8(_("Choose File"));
 }
 
 String fileButtonNoFileSelectedLabel()
-{ 
+{
     return String::fromUTF8(_("(None)"));
 }
 
@@ -91,7 +91,7 @@ String contextMenuItemTagCopyLinkToClipboard()
 }
 
 String contextMenuItemTagOpenImageInNewWindow()
-{ 
+{
     return String::fromUTF8(_("Open _Image in New Window"));
 }
 

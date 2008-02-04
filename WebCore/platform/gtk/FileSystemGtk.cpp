@@ -40,7 +40,7 @@ bool fileExists(const String& path)
         result = g_file_test(filename, G_FILE_TEST_EXISTS);
         g_free(filename);
     }
-    
+
     return result;
 }
 
@@ -53,7 +53,7 @@ bool deleteFile(const String& path)
         result = g_remove(filename) == 0;
         g_free(filename);
     }
-    
+
     return result;
 }
 
@@ -66,7 +66,7 @@ bool deleteEmptyDirectory(const String& path)
         result = g_rmdir(filename) == 0;
         g_free(filename);
     }
-    
+
     return result;
 }
 

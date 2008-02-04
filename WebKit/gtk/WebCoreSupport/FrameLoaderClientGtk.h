@@ -173,7 +173,7 @@ namespace WebKit {
         virtual void savePlatformDataToCachedPage(WebCore::CachedPage*);
         virtual void transitionToCommittedFromCachedPage(WebCore::CachedPage*);
         virtual void transitionToCommittedForNewPage();
-        
+
         virtual bool canCachePage() const;
         virtual void download(WebCore::ResourceHandle*, const WebCore::ResourceRequest&, const WebCore::ResourceRequest&, const WebCore::ResourceResponse&);
     private:

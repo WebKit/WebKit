@@ -22,7 +22,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #ifndef ResourceRequest_h
@@ -34,27 +34,27 @@ namespace WebCore {
 
     struct ResourceRequest : ResourceRequestBase {
 
-        ResourceRequest(const String& url) 
+        ResourceRequest(const String& url)
             : ResourceRequestBase(KURL(url.deprecatedString()), UseProtocolCachePolicy)
         {
         }
 
-        ResourceRequest(const KURL& url) 
+        ResourceRequest(const KURL& url)
             : ResourceRequestBase(url, UseProtocolCachePolicy)
         {
         }
 
-        ResourceRequest(const KURL& url, const String& referrer, ResourceRequestCachePolicy policy = UseProtocolCachePolicy) 
+        ResourceRequest(const KURL& url, const String& referrer, ResourceRequestCachePolicy policy = UseProtocolCachePolicy)
             : ResourceRequestBase(url, policy)
         {
             setHTTPReferrer(referrer);
         }
-        
+
         ResourceRequest()
             : ResourceRequestBase(KURL(), UseProtocolCachePolicy)
         {
         }
-        
+
     private:
         friend class ResourceRequestBase;
 

@@ -35,7 +35,7 @@ extern "C" {
 
 struct _WebKitWebHistoryItemPrivate {
     WebCore::HistoryItem* historyItem;
-    
+
     gchar* title;
     gchar* alternateTitle;
     gchar* uri;
@@ -49,14 +49,14 @@ G_DEFINE_TYPE(WebKitWebHistoryItem, webkit_web_history_item, G_TYPE_OBJECT);
 
 static GHashTable* webkit_history_items()
 {
-    static GHashTable* historyItems = g_hash_table_new(g_direct_hash, g_direct_equal);   
+    static GHashTable* historyItems = g_hash_table_new(g_direct_hash, g_direct_equal);
     return historyItems;
 }
 
-static void webkit_history_item_add(WebKitWebHistoryItem* webHistoryItem, WebCore::HistoryItem* historyItem) 
+static void webkit_history_item_add(WebKitWebHistoryItem* webHistoryItem, WebCore::HistoryItem* historyItem)
 {
     g_return_if_fail(WEBKIT_IS_WEB_HISTORY_ITEM(webHistoryItem));
-    
+
     GHashTable* table = webkit_history_items();
 
     historyItem->ref();
@@ -69,28 +69,28 @@ static void webkit_history_item_remove(WebCore::HistoryItem* historyItem)
     WebKitWebHistoryItem* webHistoryItem = (WebKitWebHistoryItem*) g_hash_table_lookup(table, historyItem);
 
     g_return_if_fail(webHistoryItem != NULL);
-    
+
     g_hash_table_remove(table, historyItem);
     historyItem->deref();
     g_object_unref(webHistoryItem);
 }
-    
+
 static void webkit_web_history_item_dispose(GObject* object)
 {
     WebKitWebHistoryItem* item = WEBKIT_WEB_HISTORY_ITEM(object);
 
     webkit_history_item_remove(item->priv->historyItem);
-    
+
     delete item->priv->historyItem;
 
     /* destroy table if empty */
     GHashTable* table = webkit_history_items();
     if (!g_hash_table_size(table))
         g_hash_table_destroy(table);
-    
+
     G_OBJECT_CLASS(webkit_web_history_item_parent_class)->dispose(object);
 }
-    
+
 
 static void webkit_web_history_item_finalize(GObject* object)
 {
@@ -172,7 +172,7 @@ WebKitWebHistoryItem* webkit_web_history_item_new_with_data(const gchar* uri, co
     webHistoryItem->priv->historyItem = new WebCore::HistoryItem(historyUri, historyTitle);
 
     webkit_history_item_add(webHistoryItem, webHistoryItem->priv->historyItem);
-        
+
     return webHistoryItem;
 }
 
@@ -189,13 +189,13 @@ const gchar* webkit_web_history_item_get_title(WebKitWebHistoryItem* webHistoryI
     WebCore::HistoryItem* item = core(WEBKIT_WEB_HISTORY_ITEM(webHistoryItem));
 
     g_return_val_if_fail(item != NULL, NULL);
-    
+
     WebCore::String title = item->title();
 
     g_free(webHistoryItem->priv->title);
 
     webHistoryItem->priv->title = g_strdup(title.utf8().data());
-      
+
     return webHistoryItem->priv->title;
 }
 
@@ -214,7 +214,7 @@ const gchar* webkit_web_history_item_get_alternate_title(WebKitWebHistoryItem* w
     WebCore::HistoryItem* item = core(WEBKIT_WEB_HISTORY_ITEM(webHistoryItem));
 
     g_return_val_if_fail(item != NULL, NULL);
-    
+
     WebCore::String alternateTitle = item->alternateTitle();
 
     g_free(webHistoryItem->priv->alternateTitle);
@@ -231,7 +231,7 @@ const gchar* webkit_web_history_item_get_alternate_title(WebKitWebHistoryItem* w
  *
  * Sets an alternate title for @webHistoryItem
  */
-void webkit_web_history_item_set_alternate_title(WebKitWebHistoryItem* webHistoryItem, const gchar* title) 
+void webkit_web_history_item_set_alternate_title(WebKitWebHistoryItem* webHistoryItem, const gchar* title)
 {
     g_return_if_fail(WEBKIT_IS_WEB_HISTORY_ITEM(webHistoryItem));
 
@@ -240,7 +240,7 @@ void webkit_web_history_item_set_alternate_title(WebKitWebHistoryItem* webHistor
     const WebCore::String alternateTitle = title;
     item->setAlternateTitle(alternateTitle);
 }
-    
+
 /**
  * webkit_web_history_item_get_uri:
  * @webHistoryItem: a #WebKitWebHistoryItem
@@ -287,7 +287,7 @@ const gchar* webkit_web_history_item_get_original_uri(WebKitWebHistoryItem* webH
     g_free(webHistoryItem->priv->originalUri);
 
     webHistoryItem->priv->originalUri = g_strdup(originalUri.utf8().data());
-    
+
     return webHistoryItem->priv->originalUri;
 }
 
@@ -299,7 +299,7 @@ const gchar* webkit_web_history_item_get_original_uri(WebKitWebHistoryItem* webH
  *
  * Return value: the time in seconds this @webHistoryItem was last visited
  */
-gdouble webkit_web_history_item_get_last_visited_time(WebKitWebHistoryItem* webHistoryItem) 
+gdouble webkit_web_history_item_get_last_visited_time(WebKitWebHistoryItem* webHistoryItem)
 {
     g_return_val_if_fail(WEBKIT_IS_WEB_HISTORY_ITEM(webHistoryItem), NULL);
 
@@ -324,7 +324,7 @@ WebCore::HistoryItem* WebKit::core(WebKitWebHistoryItem* webHistoryItem)
 WebKitWebHistoryItem* WebKit::kit(WebCore::HistoryItem* historyItem)
 {
     g_return_val_if_fail(historyItem != NULL, NULL);
-    
+
     WebKitWebHistoryItem* webHistoryItem;
     GHashTable* table = webkit_history_items();
 

@@ -26,7 +26,7 @@ SearchPopupMenu::SearchPopupMenu(PopupMenuClient* client)
 {
     notImplemented();
 }
-    
+
 void SearchPopupMenu::saveRecentSearches(const AtomicString&, const Vector<String>&)
 {
     notImplemented();

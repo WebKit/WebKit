@@ -47,7 +47,7 @@ EXTRA_DIST :=
 
 #
 # Global flags to CPP
-global_cppflags := 
+global_cppflags :=
 
 global_cppflags += \
 	-I$(srcdir)/JavaScriptCore \
@@ -82,7 +82,7 @@ noinst_LTLIBRARIES = \
 javascriptcore_h_api :=
 javascriptcore_cppflags:=
 javascriptcore_sources :=
-javascriptcore_built_sources := 
+javascriptcore_built_sources :=
 javascriptcore_built_nosources :=
 
 # The variables above are already included below so no need to touch
@@ -195,7 +195,7 @@ endif
 
 if !ENABLE_DEBUG
 global_cppflags += -DNDEBUG
-else 
+else
 webkitgtk_cppflags += \
 	-DG_DISABLE_DEPRECATED \
 	-DGDK_PIXBUF_DISABLE_DEPRECATED \
@@ -241,7 +241,7 @@ webkitgtk_h_api += \
 	WebKit/gtk/webkit/webkitwebframe.h \
 	WebKit/gtk/webkit/webkitwebhistoryitem.h \
 	WebKit/gtk/webkit/webkitwebsettings.h \
-	WebKit/gtk/webkit/webkitwebview.h 
+	WebKit/gtk/webkit/webkitwebview.h
 
 webkitgtk_built_sources += \
 	WebKit/gtk/webkit/webkit-marshal.h \
@@ -271,7 +271,7 @@ webkitgtk_sources += \
 	WebKit/gtk/WebCoreSupport/EditorClientGtk.cpp \
 	WebKit/gtk/WebCoreSupport/FrameLoaderClientGtk.cpp \
 	WebKit/gtk/WebCoreSupport/InspectorClientGtk.cpp \
-	WebKit/gtk/WebCoreSupport/PasteboardHelperGtk.cpp 
+	WebKit/gtk/WebCoreSupport/PasteboardHelperGtk.cpp
 
 webkitgtk_cleanfiles += \
 	$(top_builddir)/Programs/GtkLauncher \

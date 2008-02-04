@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Michael Emmel mike.emmel@gmail.com 
+ * Copyright (C) 2006 Michael Emmel mike.emmel@gmail.com
  * Copyright (C) 2007 Holger Hans Peter Freyther
  * All rights reserved.
  *
@@ -22,7 +22,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #include "config.h"
@@ -122,7 +122,7 @@ ScrollView* Widget::parent() const
 {
     return data->parent;
 }
- 
+
 void Widget::setFocus()
 {
     gtk_widget_grab_focus(gtkWidget() ? gtkWidget() : GTK_WIDGET(containingWindow()));
@@ -288,7 +288,7 @@ IntPoint Widget::convertChildToSelf(const Widget* child, const IntPoint& point) 
 {
     return IntPoint(point.x() + child->x(), point.y() + child->y());
 }
- 
+
 IntPoint Widget::convertSelfToChild(const Widget* child, const IntPoint& point) const
 {
     return IntPoint(point.x() - child->x(), point.y() - child->y());

@@ -1,3 +1,105 @@
+2008-02-04  Alp Toker  <alp@atoker.com>
+
+        Rubber-stamped by Mark Rowe.
+
+        Remove all trailing whitespace in the GTK+ port and related
+        components.
+
+        * GNUmakefile.am:
+        * page/gtk/DragControllerGtk.cpp:
+        (WebCore::DragController::dragOperation):
+        (WebCore::DragController::maxDragImageSize):
+        * page/gtk/EventHandlerGtk.cpp:
+        (WebCore::EventHandler::passWidgetMouseDownEventToWidget):
+        (WebCore::EventHandler::createDraggingClipboard):
+        * page/gtk/FrameGtk.cpp:
+        (WebCore::Frame::dragImageForSelection):
+        * platform/graphics/cairo/AffineTransformCairo.cpp:
+        (WebCore::AffineTransform::mapRect):
+        (WebCore::AffineTransform::isIdentity):
+        (WebCore::AffineTransform::operator== ):
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        (WebCore::GraphicsContext::drawLine):
+        * platform/graphics/cairo/ImageBufferCairo.cpp:
+        * platform/graphics/cairo/ImageCairo.cpp:
+        * platform/graphics/cairo/ImageSourceCairo.cpp:
+        (WebCore::createDecoder):
+        * platform/graphics/gtk/FontCacheGtk.cpp:
+        * platform/graphics/gtk/FontGtk.cpp:
+        * platform/graphics/gtk/FontPlatformData.h:
+        * platform/graphics/gtk/FontPlatformDataGtk.cpp:
+        * platform/graphics/gtk/GlyphPageTreeNodeGtk.cpp:
+        * platform/graphics/gtk/IconGtk.cpp:
+        * platform/graphics/gtk/ImageGtk.cpp:
+        * platform/graphics/gtk/SimpleFontDataGtk.cpp:
+        * platform/gtk/ClipboardGtk.h:
+        * platform/gtk/ContextMenuItemGtk.cpp:
+        (WebCore::ContextMenuItem::createNativeMenuItem):
+        * platform/gtk/CursorGtk.cpp:
+        * platform/gtk/DragDataGtk.cpp:
+        * platform/gtk/DragImageGtk.cpp:
+        (WebCore::createDragImageIconForCachedImage):
+        * platform/gtk/FileChooserGtk.cpp:
+        (WebCore::stringByAdoptingFileSystemRepresentation):
+        * platform/gtk/FileSystemGtk.cpp:
+        (WebCore::fileExists):
+        (WebCore::deleteFile):
+        (WebCore::deleteEmptyDirectory):
+        * platform/gtk/KeyEventGtk.cpp:
+        * platform/gtk/KeyboardCodes.h:
+        * platform/gtk/LocalizedStringsGtk.cpp:
+        (WebCore::inputElementAltText):
+        (WebCore::resetButtonDefaultLabel):
+        (WebCore::fileButtonChooseFileLabel):
+        (WebCore::fileButtonNoFileSelectedLabel):
+        (WebCore::contextMenuItemTagOpenImageInNewWindow):
+        * platform/gtk/MIMETypeRegistryGtk.cpp:
+        (WebCore::):
+        * platform/gtk/MouseEventGtk.cpp:
+        * platform/gtk/PasteboardGtk.cpp:
+        (WebCore::PasteboardSelectionData::markup):
+        (WebCore::Pasteboard::writeSelection):
+        * platform/gtk/PasteboardHelper.h:
+        * platform/gtk/PlatformScreenGtk.cpp:
+        (WebCore::screenDepth):
+        (WebCore::screenIsMonochrome):
+        (WebCore::screenRect):
+        (WebCore::screenAvailableRect):
+        * platform/gtk/PlatformScrollBar.h:
+        * platform/gtk/PlatformScrollBarGtk.cpp:
+        (PlatformScrollbar::PlatformScrollbar):
+        (PlatformScrollbar::updateThumbPosition):
+        * platform/gtk/PopupMenuGtk.cpp:
+        (WebCore::PopupMenu::updateFromElement):
+        * platform/gtk/RenderThemeGtk.h:
+        * platform/gtk/ScrollViewGtk.cpp:
+        (WebCore::ScrollView::scrollBy):
+        (WebCore::ScrollView::addChild):
+        (WebCore::ScrollView::updateScrollbars):
+        (WebCore::ScrollView::windowToContents):
+        (WebCore::ScrollView::contentsToWindow):
+        (WebCore::ScrollView::scrollbarUnderMouse):
+        * platform/gtk/SearchPopupMenuGtk.cpp:
+        * platform/gtk/SharedTimerGtk.cpp:
+        * platform/gtk/SystemTimeLinux.cpp:
+        (WebCore::currentTime):
+        * platform/gtk/TemporaryLinkStubs.cpp:
+        (PlugInInfoStore::pluginNameForMIMEType):
+        * platform/gtk/ThreadingGtk.cpp:
+        (WebCore::establishIdentifierForThread):
+        (WebCore::threadForIdentifier):
+        (WebCore::clearThreadForIdentifier):
+        (WebCore::ThreadCondition::ThreadCondition):
+        * platform/gtk/WheelEventGtk.cpp:
+        * platform/gtk/WidgetGtk.cpp:
+        * platform/network/curl/ResourceHandleCurl.cpp:
+        * platform/network/curl/ResourceHandleManager.cpp:
+        (WebCore::ResourceHandleManager::setupPOST):
+        * platform/network/curl/ResourceHandleManager.h:
+        * platform/network/curl/ResourceRequest.h:
+        (WebCore::ResourceRequest::ResourceRequest):
+        * platform/network/curl/ResourceResponse.h:
+
 2008-02-03  Christian Dywan  <christian@imendio.com>
 
         Reviewed by Alp Toker.

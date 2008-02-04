@@ -172,7 +172,7 @@ GtkMenuItem* ContextMenuItem::createNativeMenuItem(const PlatformMenuItemDescrip
         gtk_widget_set_sensitive(GTK_WIDGET(item), menu.enabled);
 
         if (menu.subMenu)
-            gtk_menu_item_set_submenu(item, GTK_WIDGET(menu.subMenu)); 
+            gtk_menu_item_set_submenu(item, GTK_WIDGET(menu.subMenu));
     }
 
     return item;

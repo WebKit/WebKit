@@ -1,3 +1,13 @@
+2008-02-04  Alp Toker  <alp@atoker.com>
+
+        Rubber-stamped by Mark Rowe.
+
+        Remove all trailing whitespace in the GTK+ port and related
+        components.
+
+        * GNUmakefile.am:
+        * configure.ac:
+
 2008-01-31  Alp Toker  <alp@atoker.com>
 
         Reviewed by Mark Rowe.

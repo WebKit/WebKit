@@ -19,7 +19,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #include "config.h"
@@ -79,46 +79,46 @@ FloatRect AffineTransform::mapRect(const FloatRect &rect) const
     double px = rectMinX;
     double py = rectMinY;
     cairo_matrix_transform_point(&m_transform, &px, &py);
-    
+
     double enclosingRectMinX = px;
     double enclosingRectMinY = py;
     double enclosingRectMaxX = px;
     double enclosingRectMaxY = py;
-    
+
     px = rectMaxX;
     py = rectMinY;
     cairo_matrix_transform_point(&m_transform, &px, &py);
-    if (px < enclosingRectMinX) 
+    if (px < enclosingRectMinX)
         enclosingRectMinX = px;
-    else if (px > enclosingRectMaxX) 
+    else if (px > enclosingRectMaxX)
         enclosingRectMaxX = px;
-    if (py < enclosingRectMinY) 
+    if (py < enclosingRectMinY)
         enclosingRectMinY = py;
-    else if (py > enclosingRectMaxY) 
+    else if (py > enclosingRectMaxY)
         enclosingRectMaxY = py;
 
     px = rectMaxX;
     py = rectMaxY;
     cairo_matrix_transform_point(&m_transform, &px, &py);
-    if (px < enclosingRectMinX) 
+    if (px < enclosingRectMinX)
         enclosingRectMinX = px;
     else if (px > enclosingRectMaxX)
         enclosingRectMaxX = px;
-    if (py < enclosingRectMinY) 
+    if (py < enclosingRectMinY)
         enclosingRectMinY = py;
-    else if (py > enclosingRectMaxY) 
+    else if (py > enclosingRectMaxY)
         enclosingRectMaxY = py;
 
     px = rectMinX;
     py = rectMaxY;
     cairo_matrix_transform_point(&m_transform, &px, &py);
-    if (px < enclosingRectMinX) 
+    if (px < enclosingRectMinX)
         enclosingRectMinX = px;
-    else if (px > enclosingRectMaxX) 
+    else if (px > enclosingRectMaxX)
         enclosingRectMaxX = px;
-    if (py < enclosingRectMinY) 
+    if (py < enclosingRectMinY)
         enclosingRectMinY = py;
-    else if (py > enclosingRectMaxY) 
+    else if (py > enclosingRectMaxY)
         enclosingRectMaxY = py;
 
 
@@ -130,8 +130,8 @@ FloatRect AffineTransform::mapRect(const FloatRect &rect) const
 
 bool AffineTransform::isIdentity() const
 {
-    return ((m_transform.xx == 1) && (m_transform.yy == 1) 
-         && (m_transform.xy == 0) && (m_transform.yx == 0) 
+    return ((m_transform.xx == 1) && (m_transform.yy == 1)
+         && (m_transform.xy == 0) && (m_transform.yx == 0)
          && (m_transform.x0 == 0) && (m_transform.y0 == 0));
 }
 
@@ -251,10 +251,10 @@ AffineTransform::operator cairo_matrix_t() const
 
 bool AffineTransform::operator== (const AffineTransform &m2) const
 {
-    return ((m_transform.xx == m2.m_transform.xx) 
-         && (m_transform.yy == m2.m_transform.yy) 
+    return ((m_transform.xx == m2.m_transform.xx)
+         && (m_transform.yy == m2.m_transform.yy)
          && (m_transform.xy == m2.m_transform.xy)
-         && (m_transform.yx == m2.m_transform.yx) 
+         && (m_transform.yx == m2.m_transform.yx)
          && (m_transform.x0 == m2.m_transform.x0)
          && (m_transform.y0 == m2.m_transform.y0));
 

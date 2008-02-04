@@ -51,9 +51,9 @@ public:
         g_free(m_text);
         g_free(m_markup);
     }
-    
+
     const gchar* text() const { return m_text; }
-    const gchar* markup() const { return m_markup; }    
+    const gchar* markup() const { return m_markup; }
 
 private:
     gchar* m_text;
@@ -105,7 +105,7 @@ void Pasteboard::writeSelection(Range* selectedRange, bool canSmartCopyOrDelete,
     gchar* text = g_strdup(frame->selectedText().utf8().data());
     gchar* markup = g_strdup(createMarkup(selectedRange, 0, AnnotateForInterchange).utf8().data());
     PasteboardSelectionData* data = new PasteboardSelectionData(text, markup);
- 
+
     gint n_targets;
     GtkTargetEntry* targets = gtk_target_table_new_from_list(m_helper->getCopyTargetList(frame), &n_targets);
     GtkClipboard* clipboard = m_helper->getClipboard(frame);

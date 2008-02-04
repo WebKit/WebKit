@@ -111,13 +111,13 @@ javascriptcore_sources += \
 	JavaScriptCore/wtf/FastMalloc.cpp \
 	JavaScriptCore/wtf/TCSystemAlloc.cpp
 
-else 
+else
 javascriptcore_built_nosources += \
 	DerivedSources/grammar.h \
 	DerivedSources/grammar.cpp
 
 javascriptcore_sources += \
-	JavaScriptCore/kjs/AllInOneFile.cpp 
+	JavaScriptCore/kjs/AllInOneFile.cpp
 endif # END ENABLE_DEBUG
 
 DerivedSources/grammar.h: DerivedSources/grammar.cpp;

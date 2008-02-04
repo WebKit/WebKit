@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2006, 2007 Apple Computer, Inc.  All rights reserved.
- * Copyright (C) 2006 Michael Emmel mike.emmel@gmail.com 
+ * Copyright (C) 2006 Michael Emmel mike.emmel@gmail.com
  * Copyright (C) 2007 Holger Hans Peter Freyther
  *
  * All rights reserved.
@@ -24,7 +24,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #include "config.h"
@@ -88,7 +88,7 @@ public:
     }
 
     void scrollBackingStore(const IntSize& scrollDelta);
- 
+
     void setHasHorizontalScrollbar(bool hasBar);
     void setHasVerticalScrollbar(bool hasBar);
 
@@ -258,10 +258,10 @@ ScrollView::~ScrollView()
     delete m_data;
 }
 
-/*  
+/*
  * The following is assumed:
  *   (hadj && vadj) || (!hadj && !vadj)
- */ 
+ */
 void ScrollView::setGtkAdjustments(GtkAdjustment* hadj, GtkAdjustment* vadj)
 {
     ASSERT(!hadj == !vadj);
@@ -406,7 +406,7 @@ void ScrollView::scrollBy(int dx, int dy)
     IntSize scrollOffset = m_data->scrollOffset;
     IntSize newScrollOffset = scrollOffset + IntSize(dx, dy).shrunkTo(maximumScroll());
     newScrollOffset.clampNegativeToZero();
- 
+
     if (newScrollOffset == scrollOffset)
         return;
 
@@ -474,7 +474,7 @@ void ScrollView::setFrameGeometry(const IntRect& newGeometry)
 }
 
 void ScrollView::addChild(Widget* child)
-{ 
+{
     child->setParent(this);
     child->setContainingWindow(containingWindow());
     m_data->children.add(child);
@@ -553,7 +553,7 @@ void ScrollView::updateScrollbars(const IntSize& desiredOffset)
             // Do a layout if pending before checking if scrollbars are needed.
             if (hasVerticalScrollbar != oldHasVertical || hasHorizontalScrollbar != oldHasHorizontal)
                 static_cast<FrameView*>(this)->layout();
-             
+
             scrollsVertically = (vScroll == ScrollbarAlwaysOn) || (vScroll == ScrollbarAuto && contentsHeight() > height());
             if (scrollsVertically)
                 scrollsHorizontally = (hScroll == ScrollbarAlwaysOn) || (hScroll == ScrollbarAuto && contentsWidth() + cVerticalWidth > width());
@@ -567,7 +567,7 @@ void ScrollView::updateScrollbars(const IntSize& desiredOffset)
             scrollsHorizontally = (hScroll == ScrollbarAuto) ? hasHorizontalScrollbar : (hScroll == ScrollbarAlwaysOn);
             scrollsVertically = (vScroll == ScrollbarAuto) ? hasVerticalScrollbar : (vScroll == ScrollbarAlwaysOn);
         }
-        
+
         if (hasVerticalScrollbar != scrollsVertically) {
             m_data->setHasVerticalScrollbar(scrollsVertically);
             hasVerticalScrollbar = scrollsVertically;
@@ -595,7 +595,7 @@ void ScrollView::updateScrollbars(const IntSize& desiredOffset)
         if (m_data->scrollOffset.width() != scroll.width()) {
             m_data->horizontalAdjustment->value = scroll.width();
             gtk_adjustment_value_changed(m_data->horizontalAdjustment);
-        } 
+        }
     } else if (m_data->hBar) {
         int clientWidth = visibleWidth();
         m_data->hBar->setEnabled(contentsWidth() > clientWidth);
@@ -616,8 +616,8 @@ void ScrollView::updateScrollbars(const IntSize& desiredOffset)
         m_data->hBar->setProportion(clientWidth, contentsWidth());
         m_data->hBar->setValue(scroll.width());
         if (m_data->scrollbarsSuppressed)
-            m_data->hBar->setSuppressInvalidation(false); 
-    } 
+            m_data->hBar->setSuppressInvalidation(false);
+    }
 
     if (m_data->verticalAdjustment) {
         m_data->verticalAdjustment->page_size = visibleHeight();
@@ -637,7 +637,7 @@ void ScrollView::updateScrollbars(const IntSize& desiredOffset)
         int pageStep = (clientHeight - PAGE_KEEP);
         if (pageStep < 0) pageStep = clientHeight;
         IntRect oldRect(m_data->vBar->frameGeometry());
-        IntRect vBarRect = IntRect(width() - m_data->vBar->width(), 
+        IntRect vBarRect = IntRect(width() - m_data->vBar->width(),
                                    0,
                                    m_data->vBar->width(),
                                    height() - (m_data->hBar ? m_data->hBar->height() : 0));
@@ -666,12 +666,12 @@ void ScrollView::updateScrollbars(const IntSize& desiredOffset)
        m_data->scrollOffset = scroll;
        m_data->scrollBackingStore(scrollDelta);
     }
- 
+
     m_data->inUpdateScrollbars = false;
 }
 
 IntPoint ScrollView::windowToContents(const IntPoint& windowPoint) const
-{ 
+{
     IntPoint viewPoint = convertFromContainingWindow(windowPoint);
     return viewPoint + scrollOffset();
 }
@@ -679,11 +679,11 @@ IntPoint ScrollView::windowToContents(const IntPoint& windowPoint) const
 IntPoint ScrollView::contentsToWindow(const IntPoint& contentsPoint) const
 {
     IntPoint viewPoint = contentsPoint - scrollOffset();
-    return convertToContainingWindow(viewPoint);  
+    return convertToContainingWindow(viewPoint);
 }
 
 PlatformScrollbar* ScrollView::scrollbarUnderMouse(const PlatformMouseEvent& mouseEvent)
-{ 
+{
     IntPoint viewPoint = convertFromContainingWindow(mouseEvent.pos());
     if (m_data->hBar && m_data->hBar->frameGeometry().contains(viewPoint))
         return m_data->hBar.get();

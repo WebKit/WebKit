@@ -39,7 +39,7 @@ G_BEGIN_DECLS
 typedef struct _WebKitWebHistoryItemPrivate WebKitWebHistoryItemPrivate;
 typedef struct _WebKitWebHistoryItem WebKitWebHistoryItem;
 typedef struct _WebKitWebHistoryItemClass WebKitWebHistoryItemClass;
- 
+
 
 struct _WebKitWebHistoryItem {
     GObject parent;

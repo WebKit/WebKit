@@ -376,7 +376,7 @@ void ResourceHandleManager::setupPOST(ResourceHandle* job, struct curl_slist** h
         if (d->m_postBytes.size() != 0) {
             curl_easy_setopt(d->m_handle, CURLOPT_POST, TRUE);
             curl_easy_setopt(d->m_handle, CURLOPT_POSTFIELDSIZE, d->m_postBytes.size());
-            curl_easy_setopt(d->m_handle, CURLOPT_POSTFIELDS, d->m_postBytes.data()); 
+            curl_easy_setopt(d->m_handle, CURLOPT_POSTFIELDS, d->m_postBytes.data());
         }
         return;
     }

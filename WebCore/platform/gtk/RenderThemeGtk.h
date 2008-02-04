@@ -2,7 +2,7 @@
  * This file is part of the WebKit project.
  *
  * Copyright (C) 2006 Apple Computer, Inc.
- * Copyright (C) 2006 Michael Emmel mike.emmel@gmail.com 
+ * Copyright (C) 2006 Michael Emmel mike.emmel@gmail.com
  * Copyright (C) 2007 Holger Hans Peter Freyther
  * Copyright (C) 2007 Alp Toker <alp@atoker.com>
  * All rights reserved.
@@ -54,7 +54,7 @@ public:
     // position cannot be determined by examining child content. Checkboxes and radio buttons are examples of
     // controls that need to do this.
     virtual short baselinePosition(const RenderObject*) const;
-    
+
     // The platform selection color.
     virtual Color platformActiveSelectionBackgroundColor() const;
     virtual Color platformInactiveSelectionBackgroundColor() const;

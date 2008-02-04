@@ -53,7 +53,7 @@ AM_PROG_CC_STDC
 AC_PROG_CXX
 AM_PROG_CC_C_O
 
-# check for -fvisibility=hidden compiler support (GCC >= 4)	
+# check for -fvisibility=hidden compiler support (GCC >= 4)
 saved_CFLAGS="$CFLAGS"
 CFLAGS="$CFLAGS -fvisibility=hidden -fvisibility-inlines-hidden"
 AC_MSG_CHECKING([if ${CXX} supports -fvisibility=hidden -fvisibility-inlines-hidden])
@@ -359,7 +359,7 @@ if test "$enable_icon_database" = "yes" || test "$enable_database" = "yes"; then
    AC_SUBST([SQLITE3_CFLAGS])
    AC_SUBST([SQLITE3_LIBS])
 fi
-  
+
 # check if libxslt is available
 if test "$enable_xslt" = "yes"; then
    PKG_CHECK_MODULES([LIBXSLT],[libxslt >= $LIBXSLT_REQUIRED_VERSION])

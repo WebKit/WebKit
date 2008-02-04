@@ -1,3 +1,15 @@
+2008-02-04  Alp Toker  <alp@atoker.com>
+
+        Rubber-stamped by Mark Rowe.
+
+        Remove all trailing whitespace in the GTK+ port and related
+        components.
+
+        * DumpRenderTree/gtk/DumpRenderTreeGtk.h:
+        * DumpRenderTree/gtk/GCControllerGtk.cpp:
+        * DumpRenderTree/gtk/LayoutTestControllerGtk.cpp:
+        * GNUmakefile.am:
+
 2008-02-01  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Oliver.

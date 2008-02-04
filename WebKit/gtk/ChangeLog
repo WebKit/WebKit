@@ -1,3 +1,36 @@
+2008-02-04  Alp Toker  <alp@atoker.com>
+
+        Rubber-stamped by Mark Rowe.
+
+        Remove all trailing whitespace in the GTK+ port and related
+        components.
+
+        * WebCoreSupport/DragClientGtk.h:
+        * WebCoreSupport/FrameLoaderClientGtk.h:
+        * WebCoreSupport/InspectorClientGtk.h:
+        * WebCoreSupport/PasteboardHelperGtk.h:
+        * webkit/webkitprivate.h:
+        * webkit/webkitwebbackforwardlist.cpp:
+        (_WebKitWebBackForwardListPrivate::webkit_web_back_forward_list_contains_item):
+        (_WebKitWebBackForwardListPrivate::webkit_web_back_forward_list_get_forward_list_with_limit):
+        (_WebKitWebBackForwardListPrivate::webkit_web_back_forward_list_get_back_item):
+        (_WebKitWebBackForwardListPrivate::webkit_web_back_forward_list_get_forward_length):
+        * webkit/webkitwebhistoryitem.cpp:
+        (_WebKitWebHistoryItemPrivate::webkit_history_items):
+        (_WebKitWebHistoryItemPrivate::webkit_history_item_add):
+        (_WebKitWebHistoryItemPrivate::webkit_history_item_remove):
+        (_WebKitWebHistoryItemPrivate::webkit_web_history_item_dispose):
+        (_WebKitWebHistoryItemPrivate::webkit_web_history_item_new_with_data):
+        (_WebKitWebHistoryItemPrivate::webkit_web_history_item_get_title):
+        (_WebKitWebHistoryItemPrivate::webkit_web_history_item_get_alternate_title):
+        (_WebKitWebHistoryItemPrivate::webkit_web_history_item_set_alternate_title):
+        (_WebKitWebHistoryItemPrivate::webkit_web_history_item_get_original_uri):
+        (_WebKitWebHistoryItemPrivate::webkit_web_history_item_get_last_visited_time):
+        (WebKit::kit):
+        * webkit/webkitwebhistoryitem.h:
+        * webkit/webkitwebview.cpp:
+        * webkit/webkitwebview.h:
+
 2008-02-03  Christian Dywan  <christian@imendio.com>
 
         Reviewed by Alp Toker.

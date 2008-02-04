@@ -54,7 +54,7 @@ static void webkit_web_back_forward_list_init(WebKitWebBackForwardList* webBackF
 /**
  * webkit_web_back_forward_list_new_with_web_view:
  * @webView: the back forward list's #WebKitWebView
- * 
+ *
  * Creates an instance of the back forward list with a controlling #WebKitWebView
  *
  * Return value: a #WebKitWebBackForwardList
@@ -116,11 +116,11 @@ gboolean webkit_web_back_forward_list_contains_item(WebKitWebBackForwardList* we
 {
     g_return_val_if_fail(WEBKIT_IS_WEB_BACK_FORWARD_LIST(webBackForwardList), NULL);
     g_return_val_if_fail(WEBKIT_IS_WEB_HISTORY_ITEM(webHistoryItem), NULL);
-    
+
     WebCore::HistoryItem* historyItem = core(webHistoryItem);
 
     g_return_val_if_fail(historyItem != NULL, FALSE);
-    
+
     WebCore::BackForwardList* backForwardList = core(webBackForwardList);
 
     return (backForwardList->enabled() ? backForwardList->containsItem(historyItem) : FALSE);
@@ -164,9 +164,9 @@ GList* webkit_web_back_forward_list_get_forward_list_with_limit(WebKitWebBackFor
 
     WebCore::HistoryItemVector items(limit);
     GList* forwardItems = { 0 };
-    
+
     backForwardList->forwardListWithLimit(limit, items);
-   
+
     for (unsigned i = 0; i < items.size(); i++) {
         WebKitWebHistoryItem* webHistoryItem = webkit_web_history_item_new_with_core_item(items[i].get());
         forwardItems = g_list_prepend(forwardItems, g_object_ref(webHistoryItem));
@@ -219,7 +219,7 @@ WebKitWebHistoryItem* webkit_web_back_forward_list_get_back_item(WebKitWebBackFo
     WebCore::BackForwardList* backForwardList = core(webBackForwardList);
     if (!backForwardList || !backForwardList->enabled())
         return NULL;
-    
+
     WebCore::HistoryItem* historyItem = backForwardList->backItem();
 
     return (historyItem ? kit(historyItem) : NULL);
@@ -257,7 +257,7 @@ WebKitWebHistoryItem* webkit_web_back_forward_list_get_current_item(WebKitWebBac
  * Returns a NULL value if there nothing that succeeds the current item
  *
  * Return value: a #WebKitWebHistoryItem
- */    
+ */
 WebKitWebHistoryItem* webkit_web_back_forward_list_get_forward_item(WebKitWebBackForwardList* webBackForwardList)
 {
     g_return_val_if_fail(WEBKIT_IS_WEB_BACK_FORWARD_LIST(webBackForwardList), NULL);
@@ -311,7 +311,7 @@ gint webkit_web_back_forward_list_get_back_length(WebKitWebBackForwardList* webB
 
     return backForwardList->backListCount();
 }
-    
+
 /**
  * webkit_web_back_forward_list_get_forward_length:
  * @webBackForwardList: a #WebKitWebBackForwardList
@@ -327,7 +327,7 @@ gint webkit_web_back_forward_list_get_forward_length(WebKitWebBackForwardList* w
     WebCore::BackForwardList* backForwardList = core(webBackForwardList);
     if (!backForwardList || !backForwardList->enabled())
         return 0;
-    
+
     return backForwardList->forwardListCount();
 }
 
@@ -349,7 +349,7 @@ gint webkit_web_back_forward_list_get_limit(WebKitWebBackForwardList* webBackFor
 
     return backForwardList->capacity();
 }
-    
+
 /**
  * webkit_web_back_forward_list_set_limit:
  * @webBackForwardList: a #WebKitWebBackForwardList
@@ -367,7 +367,7 @@ void webkit_web_back_forward_list_set_limit(WebKitWebBackForwardList* webBackFor
     if (backForwardList)
         backForwardList->setCapacity(limit);
 }
-    
+
 } /* end extern "C" */
 
 WebCore::BackForwardList* WebKit::core(WebKitWebBackForwardList* webBackForwardList)

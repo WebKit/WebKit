@@ -20,7 +20,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #include "config.h"
@@ -33,7 +33,7 @@
 
 namespace WebCore {
 
-// FIXME: These values are straight out of DragControllerMac, so probably have 
+// FIXME: These values are straight out of DragControllerMac, so probably have
 // little correlation with Gdk standards...
 const int DragController::LinkDragBorderInset = 2;
 const int DragController::MaxOriginalImageArea = 1500 * 1500;
@@ -46,10 +46,10 @@ bool DragController::isCopyKeyDown()
 {
     return false;
 }
-    
+
 DragOperation DragController::dragOperation(DragData* dragData)
 {
-    //FIXME: This logic is incomplete        
+    //FIXME: This logic is incomplete
      if (dragData->containsURL())
         return DragOperationCopy;
 
@@ -59,7 +59,7 @@ DragOperation DragController::dragOperation(DragData* dragData)
 const IntSize& DragController::maxDragImageSize()
 {
     static const IntSize maxDragImageSize(400, 400);
-    
+
     return maxDragImageSize;
 }
 

@@ -94,7 +94,7 @@ WEBKIT_API GtkWidget*
 webkit_web_view_new (void);
 
 WEBKIT_API void
-webkit_web_view_set_maintains_back_forward_list (WebKitWebView* web_view, gboolean flag); 
+webkit_web_view_set_maintains_back_forward_list (WebKitWebView* web_view, gboolean flag);
 
 WEBKIT_API WebKitWebBackForwardList*
 webkit_web_view_get_back_forward_list (WebKitWebView* web_view);

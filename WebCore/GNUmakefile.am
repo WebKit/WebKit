@@ -981,7 +981,7 @@ webkitgtk_sources += \
 	WebCore/platform/image-decoders/jpeg/JPEGImageDecoder.cpp \
 	WebCore/platform/image-decoders/bmp/BMPImageDecoder.cpp \
 	WebCore/platform/image-decoders/ico/ICOImageDecoder.cpp \
-	WebCore/platform/image-decoders/xbm/XBMImageDecoder.cpp 
+	WebCore/platform/image-decoders/xbm/XBMImageDecoder.cpp
 
 # ----
 # curl http backend
@@ -1106,7 +1106,7 @@ IDL_BINDINGS += \
 	WebCore/html/HTMLVideoElement.idl \
 	WebCore/html/MediaError.idl \
 	WebCore/html/TimeRanges.idl \
-	WebCore/html/VoidCallback.idl 
+	WebCore/html/VoidCallback.idl
 
 webcore_sources += \
 	WebCore/html/HTMLAudioElement.cpp \
@@ -1616,7 +1616,7 @@ IDL_BINDINGS += \
 	WebCore/svg/SVGTSpanElement.idl \
 	WebCore/svg/SVGUnitTypes.idl \
 	WebCore/svg/SVGUseElement.idl \
-	WebCore/svg/SVGViewElement.idl 
+	WebCore/svg/SVGViewElement.idl
 
 webcore_cppflags += \
 	-DENABLE_SVG=1 \
@@ -1950,7 +1950,7 @@ $(GENSOURCES)/CSSGrammar.cpp: $(WebCore)/css/CSSGrammar.y
 	rm -f $(GENSOURCES)/CSSGrammar.cpp.h $(GENSOURCES)/CSSGrammar.hpp
 
 # user agent style sheets
-USER_AGENT_STYLE_SHEETS = $(WebCore)/css/html4.css $(WebCore)/css/quirks.css $(WebCore)/css/view-source.css $(WebCore)/css/svg.css 
+USER_AGENT_STYLE_SHEETS = $(WebCore)/css/html4.css $(WebCore)/css/quirks.css $(WebCore)/css/view-source.css $(WebCore)/css/svg.css
 
 DerivedSources/UserAgentStyleSheetsData.cpp: DerivedSources/UserAgentStyleSheets.h;
 

@@ -75,7 +75,7 @@ extern "C" {
         WebCore::String* userAgent;
 
         WebKitWebBackForwardList* backForwardList;
-        
+
         gint lastPopupXPosition;
         gint lastPopupYPosition;
 
@@ -110,7 +110,7 @@ extern "C" {
 
     /* WebKitWebHistoryItem private function */
     WebKitWebHistoryItem* webkit_web_history_item_new_with_core_item(WebCore::HistoryItem*);
-    
+
 
     // TODO: Move these to webkitwebframe.h once these functions are fully
     // implemented and their API has been discussed.

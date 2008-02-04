@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
- * Copyright (C) 2006 Michael Emmel mike.emmel@gmail.com 
+ * Copyright (C) 2006 Michael Emmel mike.emmel@gmail.com
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -36,7 +36,7 @@ double currentTime()
 {
   struct timeval aTimeval;
   struct timezone aTimezone;
- 
+
   gettimeofday( &aTimeval, &aTimezone );
   return (double)aTimeval.tv_sec + (double)(aTimeval.tv_usec / 1000000.0 );
 }

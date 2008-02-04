@@ -46,4 +46,4 @@ Programs_DumpRenderTree_LDADD = \
 	libJavaScriptCore.la \
 	libWebKitGtk.la
 
-Programs_DumpRenderTree_LDFLAGS = -rpath $(CURDIR)/.libs 
+Programs_DumpRenderTree_LDFLAGS = -rpath $(CURDIR)/.libs
