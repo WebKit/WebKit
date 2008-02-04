@@ -353,24 +353,29 @@ void PluginViewWin::updateWindow() const
     if (m_window && (m_windowRect != oldWindowRect || m_clipRect != oldClipRect)) {
         HRGN rgn;
 
+        setCallingPlugin(true);
+
         // To prevent flashes while scrolling, we disable drawing during the window
         // update process by clipping the window to the zero rect.
 
-        // FIXME: Setting the window region to an empty region causes bad scrolling 
-        // repaint problems with at least the WMP and Java plugins.
-        // <rdar://problem/5211187> Come up with a better way of handling plug-in scrolling
-        // is the bug that tracks the work of fixing this.
-        //rgn = ::CreateRectRgn(0, 0, 0, 0);
-        //::SetWindowRgn(m_window, rgn, false);
+        bool clipToZeroRect = !m_quirks.contains(PluginQuirkDontClipToZeroRectWhenScrolling);
 
-        setCallingPlugin(true);
+        if (clipToZeroRect) {
+            rgn = ::CreateRectRgn(0, 0, 0, 0);
+            ::SetWindowRgn(m_window, rgn, FALSE);
+        } else {
+            rgn = ::CreateRectRgn(m_clipRect.x(), m_clipRect.y(), m_clipRect.right(), m_clipRect.bottom());
+            ::SetWindowRgn(m_window, rgn, TRUE);
+        }
+
         if (m_windowRect != oldWindowRect)
-            ::MoveWindow(m_window, m_windowRect.x(), m_windowRect.y(), m_windowRect.width(), m_windowRect.height(), true);
+            ::MoveWindow(m_window, m_windowRect.x(), m_windowRect.y(), m_windowRect.width(), m_windowRect.height(), TRUE);
 
-        // Re-enable drawing. (This serves the double purpose of updating the clip rect if it has changed.)
-        rgn = ::CreateRectRgn(m_clipRect.x(), m_clipRect.y(), m_clipRect.right(), m_clipRect.bottom());
-        ::SetWindowRgn(m_window, rgn, true);
-        ::UpdateWindow(m_window);
+        if (clipToZeroRect) {
+            rgn = ::CreateRectRgn(m_clipRect.x(), m_clipRect.y(), m_clipRect.right(), m_clipRect.bottom());
+            ::SetWindowRgn(m_window, rgn, TRUE);
+        }
+
         setCallingPlugin(false);
     }
 }
@@ -1504,10 +1509,15 @@ void PluginViewWin::determineQuirks(const String& mimeType)
     if (mimeType == "application/x-silverlight")
         m_quirks.add(PluginQuirkDontUnloadPlugin);
 
-    // Because a single process cannot create multiple VMs, and we cannot reliably unload a
-    // Java VM, we cannot unload the Java plugin, or we'll lose reference to our only VM
-    if (MIMETypeRegistry::isJavaAppletMIMEType(mimeType))
+    if (MIMETypeRegistry::isJavaAppletMIMEType(mimeType)) {
+        // Because a single process cannot create multiple VMs, and we cannot reliably unload a
+        // Java VM, we cannot unload the Java plugin, or we'll lose reference to our only VM
         m_quirks.add(PluginQuirkDontUnloadPlugin);
+
+        // Setting the window region to an empty region causes bad scrolling repaint problems
+        // with the Java plug-in.
+        m_quirks.add(PluginQuirkDontClipToZeroRectWhenScrolling);
+    }
 
     if (mimeType == "audio/x-pn-realaudio-plugin") {
         // Prevent the Real plugin from calling the Window Proc recursively, causing the stack to overflow.

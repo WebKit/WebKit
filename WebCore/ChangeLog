@@ -1,3 +1,26 @@
+2008-02-04  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Reviewed by Steve, Anders.
+
+        <rdar://problem/5211187> QuickTime and Flash plug-ins draw outside of
+        content area when inside an iframe or div with overflow when playing a
+        movie and scrolling the iframe/div area
+
+        Clip the update region to the zero rect when scrolling. Don't do this
+        for Java, because it results in repaint problems. 
+
+        * plugins/PluginQuirkSet.h: Added the DontClipToZeroRectWhenScrolling
+        quirk
+        (WebCore::):
+        * plugins/win/PluginViewWin.cpp:
+        (WebCore::PluginViewWin::updateWindow): Readded the old behavior of
+        clipping to the zero rect when updating the window during a scroll.
+        Added plug-in quirk to ignore this behavior for Java. Swapped order of
+        the SetWindowRgn() and MoveWindow() calls to prevent Java from painting
+        outside of its container during a scroll.
+        (WebCore::PluginViewWin::determineQuirks): If this is Java, add the
+        DontClipToZeroRectWhenScrolling quirk.
+
 2008-02-04  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Mark Rowe.
