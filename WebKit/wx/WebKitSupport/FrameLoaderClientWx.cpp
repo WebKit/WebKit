@@ -252,7 +252,7 @@ void FrameLoaderClientWx::dispatchDidHandleOnloadEvents()
     if (target) {
         wxWebViewLoadEvent wkEvent(target);
         wkEvent.SetState(wxWEBVIEW_LOAD_ONLOAD_HANDLED);
-        wkEvent.SetURL(m_frame->loader()->provisionalDocumentLoader()->request().url().string());
+        wkEvent.SetURL(m_frame->loader()->documentLoader()->request().url().string());
         target->GetEventHandler()->ProcessEvent(wkEvent);
     }
 }

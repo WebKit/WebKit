@@ -1,5 +1,15 @@
 2008-02-03  Kevin Ollivier  <kevino@theolliviers.com>
 
+        Reviewed by Darin Adler.
+
+        Typo fix. Don't use the provisionalDocumentLoader() after the
+        whole page has already been loaded.
+
+        * WebKitSupport/FrameLoaderClientWx.cpp:
+        (WebCore::FrameLoaderClientWx::dispatchDidHandleOnloadEvents):
+
+2008-02-03  Kevin Ollivier  <kevino@theolliviers.com>
+
         Build fix for last wx commit (a couple things were not committed). 
         Also fix some style issues.
 
