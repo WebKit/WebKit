@@ -1,3 +1,19 @@
+2008-02-04  Adam Roben  <aroben@apple.com>
+
+        Fix the search field if the inpsected Document has overridden
+        Document.evaluate or Document.querySelectorAll
+
+        Reviewed by Darin.
+
+        * manual-tests/inspector-document-methods-override.html: Added.
+        * page/InspectorController.cpp:
+        (WebCore::InspectorController::didCommitLoad): Reworded a comment to
+        force WebCore.vcproj to build.
+        * page/inspector/inspector.js: Call
+        Document.prototype.{evaluate,querySelectorAll}.call instead of calling
+        the functions directly on the inspected Document. This ensures we are
+        calling the version of these functions we intended to.
+
 2008-02-04  Darin Adler  <darin@apple.com>
 
         Reviewed by Tim Hatcher.

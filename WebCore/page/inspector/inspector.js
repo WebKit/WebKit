@@ -890,13 +890,13 @@ WebInspector.performSearch = function(query)
         if (resource.category === this.resourceCategories.documents) {
             var doc = resource.documentNode;
             try {
-                var result = doc.evaluate(xpathQuery, doc, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE);
+                var result = Document.prototype.evaluate.call(doc, xpathQuery, doc, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE);
                 addNodesToDOMResults(result, result.snapshotLength, function(l, i) { return l.snapshotItem(i); });
             } catch(err) {
                 // ignore any exceptions. the query might be malformed, but we allow that.
             }
 
-            var result = doc.querySelectorAll(query);
+            var result = Document.prototype.querySelectorAll.call(doc, query);
             addNodesToDOMResults(result, result.length, function(l, i) { return l.item(i); });
 
             cleanUpDOMResultsNodes();

@@ -1350,8 +1350,10 @@ void InspectorController::didCommitLoad(DocumentLoader* loader)
                 // list of resources for the page they are navigating away from.
                 addAndUpdateScriptResource(m_mainResource.get());
             } else {
-                // Pages loaded from the page cache are commited before m_mainResource is the right
-                // resource for this load. Clear it and it will be assigned in identifierForInitialRequest.
+                // Pages loaded from the page cache are committed before
+                // m_mainResource is the right resource for this load, so we
+                // clear it here. It will be re-assigned in
+                // identifierForInitialRequest.
                 m_mainResource = 0;
             }
         }
