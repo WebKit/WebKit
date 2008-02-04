@@ -315,6 +315,12 @@ media/video-display-toggle.html
 # <rdar://problem/5720767>
 svg/W3C-SVG-1.1/text-tselect-02-f.svg
 
+# <rdar://5723121>
+http/tests/xhmlhttprequest/cookies.html
+
+# <rdar://5723142>
+svg/custom/frame-getSVGDocument.html
+
 ################################################################################
 ####################### No bugs filed about the below yet#######################
 ################################################################################
