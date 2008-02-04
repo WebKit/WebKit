@@ -1,3 +1,8 @@
+2008-02-04  Darin Adler  <darin@apple.com>
+
+        * dom/Document.cpp:
+        (WebCore::Document::completeURL): Fixed misleading comment.
+
 2008-02-04  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Reviewed by Darin.
