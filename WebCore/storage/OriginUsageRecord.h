@@ -47,7 +47,7 @@ public:
 
 private:
     struct DatabaseEntry {
-        DatabaseEntry() : size(OriginUsageRecord::UnknownDiskUsage) { }
+        DatabaseEntry() : size(OriginUsageRecord::unknownDiskUsage()) { }
         DatabaseEntry(const String& theFilename, unsigned long long theSize) : filename(theFilename), size(theSize) { }
         String filename;
         unsigned long long size;
@@ -57,7 +57,7 @@ private:
     
     unsigned long long m_diskUsage;
 
-    static const unsigned long long UnknownDiskUsage;
+    static unsigned long long unknownDiskUsage();
 };
 
 } // namespace WebCore

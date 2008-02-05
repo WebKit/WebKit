@@ -29,14 +29,17 @@
 #include "OriginUsageRecord.h"
 
 #include "FileSystem.h"
-#include <limits.h>
+#include <limits>
 
 namespace WebCore {
 
-const unsigned long long OriginUsageRecord::UnknownDiskUsage = ULLONG_MAX;
+unsigned long long OriginUsageRecord::unknownDiskUsage()
+{
+    return std::numeric_limits<unsigned long long>::max();
+}
 
 OriginUsageRecord::OriginUsageRecord()
-    : m_diskUsage(UnknownDiskUsage)
+    : m_diskUsage(unknownDiskUsage())
 {
 }
 
@@ -44,17 +47,17 @@ void OriginUsageRecord::addDatabase(const String& identifier, const String& full
 {
     ASSERT(!m_databaseMap.contains(identifier));
     
-    m_databaseMap.set(identifier, DatabaseEntry(fullPath, UnknownDiskUsage));
+    m_databaseMap.set(identifier, DatabaseEntry(fullPath, unknownDiskUsage()));
     m_unknownSet.add(identifier);
      
-    m_diskUsage = UnknownDiskUsage;
+    m_diskUsage = unknownDiskUsage();
 }
 
 void OriginUsageRecord::removeDatabase(const String& identifier)
 {
     ASSERT(m_databaseMap.contains(identifier));
 
-    m_diskUsage = UnknownDiskUsage;
+    m_diskUsage = unknownDiskUsage();
     m_databaseMap.remove(identifier);
     m_unknownSet.remove(identifier);
 }
@@ -62,13 +65,13 @@ void OriginUsageRecord::removeDatabase(const String& identifier)
 void OriginUsageRecord::markDatabase(const String& identifier)
 {
     m_unknownSet.add(identifier);
-    m_diskUsage = UnknownDiskUsage;
+    m_diskUsage = unknownDiskUsage();
 }
 
 unsigned long long OriginUsageRecord::diskUsage()
 {
     // Use the last cached usage value if we have it
-    if (m_diskUsage != UnknownDiskUsage)
+    if (m_diskUsage != unknownDiskUsage())
         return m_diskUsage;
     
     // stat() for the sizes known to be dirty

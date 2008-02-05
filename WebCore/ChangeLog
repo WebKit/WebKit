@@ -1,5 +1,23 @@
 2008-02-04  Mark Rowe  <mrowe@apple.com>
 
+        Reviewed by Tim Hatcher.
+
+        Gtk build fix.  Use std::numeric_limits in place of ULLONG_MAX as
+        some Linux machines do not have ULLONG_MAX.
+
+        OriginUsageRecord::unknownDiskUsage becomes a static function to avoid
+        the global initialiser which would otherwise be generated.
+
+        * storage/OriginUsageRecord.cpp:
+        (WebCore::OriginUsageRecord::unknownDiskUsage):
+        (WebCore::OriginUsageRecord::addDatabase):
+        (WebCore::OriginUsageRecord::removeDatabase):
+        (WebCore::OriginUsageRecord::markDatabase):
+        (WebCore::OriginUsageRecord::diskUsage):
+        * storage/OriginUsageRecord.h:
+
+2008-02-04  Mark Rowe  <mrowe@apple.com>
+
         Speculative Gtk build fix.
 
         * storage/OriginUsageRecord.cpp:
