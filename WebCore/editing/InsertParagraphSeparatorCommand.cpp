@@ -149,9 +149,9 @@ void InsertParagraphSeparatorCommand::doApply()
     // including when the block is empty. 
     if (isLastInBlock) {
         if (nestNewBlock) {
-            if (isFirstInBlock) {
-                // block is empty: create an empty paragraph to
-                // represent the content before the new one.
+            if (isFirstInBlock && !lineBreakExistsAtPosition(visiblePos)) {
+                // The block is empty.  Create an empty block to
+                // represent the paragraph that we're leaving.
                 RefPtr<Node> extraBlock = createDefaultParagraphElement(document());
                 appendNode(extraBlock.get(), startBlock);
                 appendBlockPlaceholder(extraBlock.get());

@@ -1,3 +1,16 @@
+2008-02-05  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Alexey Proskuryakov.
+        
+        <rdar://problem/5685601> webkit-block-placeholder class on placeholders seems unnecessary (12317)
+
+        * editing/inserting/5685601-1-expected.txt: Added.
+        * editing/inserting/5685601-1.html: Added.
+        * editing/inserting/5685601-2-expected.txt: Added.
+        * editing/inserting/5685601-2.html: Added.
+        * editing/inserting/5685601-3-expected.txt: Added.
+        * editing/inserting/5685601-3.html: Added.
+
 2008-02-05  Holger Freyther  <zecke@selfish.org>
 
         Reviewed by Darin.

@@ -932,8 +932,6 @@ PassRefPtr<Element> createBlockPlaceholderElement(Document* document)
     ExceptionCode ec = 0;
     RefPtr<Element> breakNode = document->createElementNS(xhtmlNamespaceURI, "br", ec);
     ASSERT(ec == 0);
-    static String classString = "webkit-block-placeholder";
-    breakNode->setAttribute(classAttr, classString);
     return breakNode.release();
 }
 

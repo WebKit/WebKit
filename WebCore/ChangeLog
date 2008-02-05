@@ -1,3 +1,19 @@
+2008-02-05  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        <rdar://problem/5685601> webkit-block-placeholder class on placeholders seems unnecessary (12317)
+
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::createBlockPlaceholderElement): The khtml-block-placeholder class was needed
+        when the editing code actively looked for <br>s of that type in order to handle them
+        specially.  That is no longer the case.
+        * editing/InsertParagraphSeparatorCommand.cpp:
+        (WebCore::InsertParagraphSeparatorCommand::doApply): Fixed a bug where an extra block
+        would be inserted when hitting return inside an editable root held open by a placeholder
+        <br> or '\n'.  Added test cases for the bug and for the special case code that was incorrectly
+        triggered to cause the bug. 
+
 2008-02-05  Rodney Dawes  <dobey@wayofthemonkey.com>
 
         Reviewed by Anders Carlsson.
