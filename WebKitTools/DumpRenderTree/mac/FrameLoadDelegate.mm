@@ -228,11 +228,6 @@
 
 - (void)webView:(WebView *)sender didClearWindowObject:(WebScriptObject *)obj forFrame:(WebFrame *)frame
 {
-    if (!done && layoutTestController->dumpFrameLoadCallbacks()) {
-        NSString *string = [NSString stringWithFormat:@"%@ - didClearWindowObjectForFrame", [frame _drt_descriptionSuitableForTestResult]];
-        printf ("%s\n", [string UTF8String]);
-    }
-        
     ASSERT(obj == [frame windowObject]);
     ASSERT([obj JSObject] == JSContextGetGlobalObject([frame globalContext]));
 
@@ -315,14 +310,6 @@
 {
     if (!done && layoutTestController->dumpFrameLoadCallbacks()) {
         NSString *string = [NSString stringWithFormat:@"%@ - didCancelClientRedirectForFrame", [frame _drt_descriptionSuitableForTestResult]];
-        printf ("%s\n", [string UTF8String]);
-    }
-}
-
-- (void)webView:(WebView *)sender willCloseFrame:(WebFrame *)frame;
-{
-    if (!done && layoutTestController->dumpFrameLoadCallbacks()) {
-        NSString *string = [NSString stringWithFormat:@"%@ - willCloseFrame", [frame _drt_descriptionSuitableForTestResult]];
         printf ("%s\n", [string UTF8String]);
     }
 }

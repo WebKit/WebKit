@@ -1,3 +1,21 @@
+2008-02-05  Holger Freyther  <zecke@selfish.org>
+
+        Reviewed by Darin.
+
+        In http://bugs.webkit.org/show_bug.cgi?id=16853 it was identified that the
+        the output of the willCloseFrame and didClearWindowObject FrameLoadDelegate
+        depends on the order the tests are executed.
+        
+        Propose to remove willCloseFrame and didlCearWindowObject output from the
+        FrameLoadDelegate and update the test results. The output of didClearWindowObject
+        is not interesting for any of the current tests and we have other ways to find
+        out if a frame was closed or not.
+
+        * DumpRenderTree/mac/FrameLoadDelegate.mm:
+        * DumpRenderTree/win/FrameLoadDelegate.cpp:
+        (FrameLoadDelegate::didClearWindowObject):
+        * DumpRenderTree/win/FrameLoadDelegate.h:
+
 2008-02-04  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Oliver Hunt.

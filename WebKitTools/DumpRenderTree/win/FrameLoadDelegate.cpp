@@ -244,27 +244,12 @@ HRESULT STDMETHODCALLTYPE FrameLoadDelegate::didFailLoadWithError(
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE FrameLoadDelegate::willCloseFrame( 
-        /* [in] */ IWebView *webView,
-        /* [in] */ IWebFrame *frame)
-{
-    if (!done && layoutTestController->dumpFrameLoadCallbacks())
-        printf("%s - willCloseFrame\n",
-                descriptionSuitableForTestResult(frame).c_str());
-
-    return S_OK;
-}
-
 HRESULT STDMETHODCALLTYPE FrameLoadDelegate::didClearWindowObject( 
         /* [in] */ IWebView*webView,
         /* [in] */ JSContextRef context,
         /* [in] */ JSObjectRef windowObject,
         /* [in] */ IWebFrame* frame)
 {
-    if (!done && layoutTestController->dumpFrameLoadCallbacks())
-        printf("%s - didClearWindowObjectForFrame\n",
-                descriptionSuitableForTestResult(frame).c_str());
-
     JSValueRef exception = 0;
 
     ::layoutTestController->makeWindowObject(context, windowObject, &exception);

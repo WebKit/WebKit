@@ -1,3 +1,26 @@
+2008-02-05  Holger Freyther  <zecke@selfish.org>
+
+        Reviewed by Darin.
+
+        In http://bugs.webkit.org/show_bug.cgi?id=16853 it was identified that the
+        the output of the willCloseFrame and didClearWindowObject FrameLoadDelegate
+        depends on the order the tests are executed.
+        
+        Propose to remove willCloseFrame and didlCearWindowObject output from the
+        FrameLoadDelegate and update the test results. The output of didClearWindowObject
+        is not interesting for any of the current tests and we have other ways to find
+        out if a frame was closed or not.
+
+        * http/tests/loading/bad-scheme-subframe-expected.txt:
+        * http/tests/loading/bad-server-subframe-expected.txt:
+        * http/tests/loading/basic-expected.txt:
+        * http/tests/loading/empty-subframe-expected.txt:
+        * http/tests/loading/gmail-assert-on-load-expected.txt:
+        * http/tests/loading/onload-vs-immediate-refresh-expected.txt:
+        * http/tests/loading/slow-parsing-subframe-expected.txt:
+        * platform/mac/http/tests/loading/simple-subframe-expected.txt:
+        * webarchive/loading/test-loading-archive-expected.txt:
+
 2008-02-05  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin.
