@@ -6,45 +6,6 @@
 
         * ChangeLog: Point out revision 30,000.
 
-2008-02-04  Matt Perry  <mpComplete@gmail.com>
-
-        Reviewed by Darin Adler.
-
-        Fix for http://bugs.webkit.org/show_bug.cgi?id=14959
-        No back forward entry added for pages created in javascript
-
-        A new HistoryItem is created for calls to Document::open.  Calls to
-        Document::write save the written data to a SharedBuffer that is also
-        stored on the HistoryItem.  When the user navigates back to a
-        HistoryItem that has a valid buffer, that data is used for the page
-        content.
-
-        Tests: http/tests/navigation/document-open-adds-history-item.html
-               http/tests/navigation/document-open-delayed-adds-history-item.html
-               http/tests/navigation/document-open-new-window-adds-history-item.html
-               http/tests/navigation/document-open-replace-no-history-item.html
-
-        * bindings/js/JSHTMLDocumentCustom.cpp:
-        (WebCore::JSHTMLDocument::open):
-        * dom/Document.cpp:
-        (WebCore::Document::open):
-        (WebCore::Document::write):
-        (WebCore::Document::clear):
-        * dom/Document.h:
-        * history/HistoryItem.cpp:
-        (WebCore::HistoryItem::HistoryItem):
-        (WebCore::HistoryItem::substituteData):
-        (WebCore::HistoryItem::setSubstituteData):
-        * history/HistoryItem.h:
-        * loader/FrameLoader.cpp:
-        (WebCore::FrameLoader::didExplicitOpen):
-        (WebCore::FrameLoader::load):
-        (WebCore::FrameLoader::reloadAllowingStaleData):
-        (WebCore::FrameLoader::reload):
-        (WebCore::FrameLoader::shouldTreatURLAsSameAsCurrent):
-        (WebCore::FrameLoader::loadItem):
-        * loader/FrameLoader.h:
-
 2008-02-04  Mark Rowe  <mrowe@apple.com>
 
         Unreviewed Gtk build fix.

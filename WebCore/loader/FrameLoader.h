@@ -154,7 +154,6 @@ namespace WebCore {
         void load(const ResourceRequest&, const SubstituteData&);
         void load(const ResourceRequest&, const String& frameName);
         void load(const ResourceRequest&, const NavigationAction&, FrameLoadType, PassRefPtr<FormState>);
-        void load(const ResourceRequest&, const NavigationAction&, FrameLoadType, PassRefPtr<FormState>, const SubstituteData&);
         
         void load(DocumentLoader*);
         void load(DocumentLoader*, FrameLoadType, PassRefPtr<FormState>);
@@ -289,7 +288,7 @@ namespace WebCore {
         void stopLoading(bool sendUnload);
         bool closeURL();
 
-        void didExplicitOpen(const String& mimeType, bool replace, SharedBuffer*);
+        void didExplicitOpen();
 
         KURL iconURL();
         void commitIconURLToIconDatabase(const KURL&);
