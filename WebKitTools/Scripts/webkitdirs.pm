@@ -859,8 +859,7 @@ sub buildGtkProject($$@)
     if ($ENV{WEBKITAUTOTOOLS}) {
         return buildAutotoolsProject($clean, @buildArgs);
     } else {
-        my @buildArgs = {"CONFIG+=gtk-port"};
-        push @buildArgs, "CONFIG-=qt";
+        my @buildArgs = ("CONFIG+=gtk-port", "CONFIG-=qt");
         return buildQMakeProject($clean, @buildArgs);
     }
 }
