@@ -1,5 +1,14 @@
 2008-02-04  Brady Eidson  <beidson@apple.com>
 
+        Attempt to fix build of all non-Mac platforms
+
+        * GNUmakefile.am:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCoreSources.bkl:
+
+2008-02-04  Brady Eidson  <beidson@apple.com>
+
         Reviewed by Darin
 
         Fix for <rdar://problem/5628468> - Quotas need to be implemented per-origin, and not per-database

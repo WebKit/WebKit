@@ -9681,6 +9681,22 @@
 				>
 			</File>
 			<File
+				RelativePath="..\storage\OriginQuotaManager.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\storage\OriginQuotaManager.h"
+				>
+			</File>
+			<File
+				RelativePath="..\storage\OriginUsageRecord.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\storage\OriginUsageRecord.h"
+				>
+			</File>
+			<File
 				RelativePath="..\storage\SQLCallback.h"
 				>
 			</File>

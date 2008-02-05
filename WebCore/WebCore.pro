@@ -1115,6 +1115,8 @@ contains(DEFINES, ENABLE_DATABASE=1) {
         storage/DatabaseTask.cpp \
         storage/DatabaseThread.cpp \
         storage/DatabaseTracker.cpp \
+        storage/OriginQuotaManager.cpp \
+        storage/OriginUsageRecord.cpp \
         storage/SQLResultSet.cpp \
         storage/SQLResultSetRowList.cpp \
         storage/SQLStatement.cpp \

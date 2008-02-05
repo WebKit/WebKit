@@ -1040,6 +1040,8 @@ webcore_sources += \
 	WebCore/storage/DatabaseTask.cpp \
 	WebCore/storage/DatabaseThread.cpp \
 	WebCore/storage/DatabaseTracker.cpp \
+	WebCore/storage/OriginQuotaManager.cpp \
+	WebCore/storage/OriginUsageRecord.cpp \
 	WebCore/storage/SQLResultSet.cpp \
 	WebCore/storage/SQLResultSetRowList.cpp \
 	WebCore/storage/SQLStatement.cpp \
