@@ -1,3 +1,19 @@
+2008-02-04  Cameron McCormack <cam@mcc.id.au>
+
+        Reviewed by Geoff Garen.
+
+        Remove some unneccesary UNUSED_PARAMs.  Clarify ownership rule of return value of JSObjectCopyPropertyNames.
+
+        * API/JSNode.c:
+        (JSNode_appendChild):
+        (JSNode_removeChild):
+        (JSNode_replaceChild):
+        (JSNode_getNodeType):
+        (JSNode_getFirstChild):
+        * API/JSNodeList.c:
+        (JSNodeList_length):
+        * API/JSObjectRef.h:
+
 2008-02-04  Rodney Dawes  <dobey@wayofthemonkey.com>
 
         Reviewed by Alp Toker and Mark Rowe.

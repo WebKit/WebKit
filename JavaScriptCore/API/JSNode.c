@@ -36,7 +36,6 @@
 
 static JSValueRef JSNode_appendChild(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
-    UNUSED_PARAM(context);
     UNUSED_PARAM(function);
 
     // Example of throwing a type error for invalid values
@@ -60,7 +59,6 @@ static JSValueRef JSNode_appendChild(JSContextRef context, JSObjectRef function,
 
 static JSValueRef JSNode_removeChild(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
-    UNUSED_PARAM(context);
     UNUSED_PARAM(function);
     
     // Example of ignoring invalid values
@@ -80,7 +78,6 @@ static JSValueRef JSNode_removeChild(JSContextRef context, JSObjectRef function,
 
 static JSValueRef JSNode_replaceChild(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
-    UNUSED_PARAM(context);
     UNUSED_PARAM(function);
     
     if (argumentCount > 1) {
@@ -109,7 +106,6 @@ static JSStaticFunction JSNode_staticFunctions[] = {
 
 static JSValueRef JSNode_getNodeType(JSContextRef context, JSObjectRef object, JSStringRef propertyName, JSValueRef* exception)
 {
-    UNUSED_PARAM(context);
     UNUSED_PARAM(propertyName);
     UNUSED_PARAM(exception);
 
@@ -136,9 +132,8 @@ static JSValueRef JSNode_getChildNodes(JSContextRef context, JSObjectRef thisObj
 
 static JSValueRef JSNode_getFirstChild(JSContextRef context, JSObjectRef object, JSStringRef propertyName, JSValueRef* exception)
 {
-    UNUSED_PARAM(context);
-    UNUSED_PARAM(propertyName);
     UNUSED_PARAM(object);
+    UNUSED_PARAM(propertyName);
     UNUSED_PARAM(exception);
     
     return JSValueMakeUndefined(context);

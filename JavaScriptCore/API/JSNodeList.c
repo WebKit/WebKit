@@ -53,7 +53,6 @@ static JSStaticFunction JSNodeList_staticFunctions[] = {
 
 static JSValueRef JSNodeList_length(JSContextRef context, JSObjectRef thisObject, JSStringRef propertyName, JSValueRef* exception)
 {
-    UNUSED_PARAM(context);
     UNUSED_PARAM(propertyName);
     UNUSED_PARAM(exception);
     
