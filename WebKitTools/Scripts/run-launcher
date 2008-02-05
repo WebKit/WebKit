@@ -38,28 +38,38 @@ use webkitdirs;
 
 setConfiguration();
 my $productDir = productDir();
-my $libDir = catdir(productDir(), 'lib');
 my $launcherPath = productDir();
 my @args = @ARGV;
 
 # Check to see that all the frameworks are built.
 checkFrameworks();
 
-if (isGtk()) {
-  $launcherPath = catdir($launcherPath, "WebKitTools", "GtkLauncher", "GtkLauncher");
-  # Strip --gtk from the arg-list, since otherwise GtkLauncher will try to
-  # interpret it as a URL.
-  @args = grep(!/^(--gtk)$/, @args);
-} elsif (isQt()) {
-  $launcherPath = catdir($launcherPath, "bin", "QtLauncher");
+# Set paths according to the build system used
+if (!$ENV{WEBKITAUTOTOOLS}) {
+    my $libDir = catdir(productDir(), 'lib');
+
+    if (isGtk()) {
+        $launcherPath = catdir($launcherPath, "WebKitTools", "GtkLauncher", "GtkLauncher");
+        # Strip --gtk from the arg-list, since otherwise GtkLauncher will try to
+        # interpret it as a URL.
+        @args = grep(!/^(--gtk)$/, @args);
+    } elsif (isQt()) {
+        $launcherPath = catdir($launcherPath, "bin", "QtLauncher");
+    }
+
+    # Set up LD_LIBRARY_PATH to point to the product directory.
+    print "Starting webkit launcher with LD_LIBRARY_PATH set to point to built WebKit in $libDir.\n";
+    
+    $ENV{LD_LIBRARY_PATH} = $ENV{LD_LIBRARY_PATH} ? "$libDir:$ENV{LD_LIBRARY_PATH}" : $libDir;
 } else {
-  die;
+
+    if (isGtk()) {
+        $launcherPath = catdir($launcherPath, "Programs", "GtkLauncher");
+        @args = grep(!/^(--gtk)$/, @args);
+    }
+
+    print "Starting webkit launcher.\n";
 }
-
-# Set up LD_LIBRARY_PATH to point to the product directory.
-print "Starting webkit launcher with LD_LIBRARY_PATH set to point to built WebKit in $libDir.\n";
-
-$ENV{LD_LIBRARY_PATH} = $ENV{LD_LIBRARY_PATH} ? "$libDir:$ENV{LD_LIBRARY_PATH}" : $libDir;
 
 exec $launcherPath, @args or die;
 

@@ -1,3 +1,13 @@
+2008-02-04  Jan Michael Alonzo  <jmalonzo@unpluggable.com>
+
+        Reviewed by Mark Rowe.
+
+        http://bugs.webkit.org/show_bug.cgi?id=16618
+        [GTK] build-webkit and run-webkit-tests autootools support
+
+        * configure.ac: make the option name of icon database consistent
+          with the rest of webkit (from -icon-database to icondatabase)
+
 2008-02-04  Rodney Dawes  <dobey@wayofthemonkey.com>
 
         Reviewed by Alp Toker and Mark Rowe.

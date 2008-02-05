@@ -218,11 +218,11 @@ AC_MSG_RESULT([$enable_database])
 
 # check whether to build with icon database support
 AC_MSG_CHECKING([whether to enable icon database support])
-AC_ARG_ENABLE(icon_database,
-              AC_HELP_STRING([--enable-icon-database],
+AC_ARG_ENABLE(icondatabase,
+              AC_HELP_STRING([--enable-icondatabase],
                              [enable icon database [default=no]]),
-              [],[enable_icon_database="no"])
-AC_MSG_RESULT([$enable_icon_database])
+              [],[enable_icondatabase="no"])
+AC_MSG_RESULT([$enable_icondatabase])
 
 # check whether to enable HTML5 audio/video support
 AC_MSG_CHECKING([whether to enable HTML5 video support])
@@ -354,7 +354,7 @@ if test "$http_backend" = "curl"; then
 fi
 
 # check if sqlite 3 is available
-if test "$enable_icon_database" = "yes" || test "$enable_database" = "yes"; then
+if test "$enable_icondatabase" = "yes" || test "$enable_database" = "yes"; then
    PKG_CHECK_MODULES([SQLITE3], [sqlite3 >= $SQLITE_REQUIRED_VERSION])
    AC_SUBST([SQLITE3_CFLAGS])
    AC_SUBST([SQLITE3_LIBS])
@@ -418,7 +418,7 @@ AM_CONDITIONAL([USE_CURL], [test "$http_backend" = "curl"])
 # WebKit feature conditionals
 AM_CONDITIONAL([ENABLE_DEBUG],[test "$enable_debug" = "yes"])
 AM_CONDITIONAL([ENABLE_DATABASE],[test "$enable_database" = "yes"])
-AM_CONDITIONAL([ENABLE_ICONDATABASE],[test "$enable_icon_database" = "yes"])
+AM_CONDITIONAL([ENABLE_ICONDATABASE],[test "$enable_icondatabase" = "yes"])
 AM_CONDITIONAL([ENABLE_XPATH],[test "$enable_xpath" = "yes"])
 AM_CONDITIONAL([ENABLE_XSLT],[test "$enable_xslt" = "yes"])
 AM_CONDITIONAL([ENABLE_VIDEO],[test "$enable_video" = "yes"])
@@ -451,7 +451,7 @@ WebKit was configured with the following options:
  Optimized memory allocator        : $enable_fast_malloc
  HTML5 client-side storage support : $enable_database
  HTML5 video element support       : $enable_video
- Icon database support             : $enable_icon_database
+ Icon database support             : $enable_icondatabase
  SVG support                       : $enable_svg
  SVG animation support             : $enable_svg_animation
  SVG filters support               : $enable_svg_filters

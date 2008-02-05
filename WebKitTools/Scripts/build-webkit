@@ -39,6 +39,8 @@ use POSIX;
 
 my $originalWorkingDirectory = getcwd();
 
+my $databaseSupport = 1;
+my $icondatabaseSupport = 1;
 my $svgSupport = 1;
 my $svgExperimentalSupport = 0;
 my $svgAnimationSupport = $svgExperimentalSupport;
@@ -58,6 +60,8 @@ my $programName = basename($0);
 my $usage = <<EOF;
 Usage: $programName [options] [options to pass to build system]
   --help                        Show this help message
+  --[no-]database               Toggle Database Support (default: $databaseSupport)
+  --[no-]icondatabase           Toggle Icon database support (default: $icondatabaseSupport)
   --[no-]svg                    Toggle SVG support (default: $svgSupport)
   --[no-]svg-experimental       Toggle SVG experimental features support (default: $svgExperimentalSupport, 
                                 implies SVG Support)
@@ -73,7 +77,9 @@ Usage: $programName [options] [options to pass to build system]
   --[no-]coverage               Toggle code coverage support (default: $coverageSupport)
 EOF
 
-GetOptions('svg!' => \$svgSupport,
+GetOptions('database!' => \$databaseSupport,
+           'icondatabase!' => \$icondatabaseSupport,
+           'svg!' => \$svgSupport,
            'svg-experimental!' => \$svgExperimentalSupport,
            'svg-animation!' => \$svgAnimationSupport,
            'svg-filters!' => \$svgFiltersSupport,
@@ -132,16 +138,10 @@ if (isWx()) {
 
 
 my $productDir = productDir();
-my @options = XcodeOptions();
 my @overrideFeatureDefinesOption = ();
 
-if ($clean) {
-    push(@options, "-alltargets");
-    push(@options, "clean");
-}
-
-push @overrideFeatureDefinesOption, "ENABLE_DATABASE";
-push @overrideFeatureDefinesOption, "ENABLE_ICONDATABASE";
+push @overrideFeatureDefinesOption, "ENABLE_DATABASE" if $databaseSupport;
+push @overrideFeatureDefinesOption, "ENABLE_ICONDATABASE" if $icondatabaseSupport;
 push @overrideFeatureDefinesOption, "ENABLE_SVG" if $svgSupport;
 push @overrideFeatureDefinesOption, "ENABLE_SVG_ANIMATION" if $svgAnimationSupport;
 push @overrideFeatureDefinesOption, "ENABLE_SVG_FILTERS" if $svgFiltersSupport;
@@ -172,7 +172,34 @@ for my $dir (@projects, @otherDirs) {
     }
 }
 
+my @options = ();
+
+if ($clean && isOSX()) {
+    push(@options, "-alltargets");
+    push(@options, "clean");
+}
+
+# enable autotool options accordingly
+if ($ENV{WEBKITAUTOTOOLS}) {
+    push @options, autotoolsFlag($databaseSupport, "database");
+    push @options, autotoolsFlag($icondatabaseSupport, "icondatabase");
+    push @options, autotoolsFlag($svgSupport, "svg");
+    push @options, autotoolsFlag($svgAnimationSupport, "svg-animation");
+    push @options, autotoolsFlag($svgFiltersSupport, "svg-filters");
+    push @options, autotoolsFlag($svgForeignObjectSupport, "svg-foreign-object");
+    push @options, autotoolsFlag($svgFontsSupport, "svg-fonts");
+    push @options, autotoolsFlag($svgAsImageSupport, "svg-as-image");
+    push @options, autotoolsFlag($svgUseSupport, "svg-use-element");
+    push @options, autotoolsFlag($xpathSupport, "xpath");
+    push @options, autotoolsFlag($xsltSupport, "xslt");
+    push @options, autotoolsFlag($videoSupport, "video");
+    push @options, autotoolsFlag($coverageSupport, "coverage");
+}
+
 if (isOSX()) {
+
+    push(@options, XcodeOptions());
+
     # Copy library and header from WebKitLibraries to a findable place in the product directory.
     my $srcLib = "WebKitLibraries/libWebKitSystemInterfaceTiger.a";
     my $lib = "$productDir/libWebKitSystemInterfaceTiger.a";
@@ -214,7 +241,7 @@ if (isOSX()) {
     }
 }
 
-if (isGtk() && isDarwin() && !$ENV{QMAKESPEC}) {
+if (isGtk() && isDarwin() && !$ENV{WEBKITAUTOTOOLS} && !$ENV{QMAKESPEC}) {
     # The qmake from Trolltech's binary "QT for Mac" distribution tries to
     # create xcode projects, not Makefiles
     $ENV{QMAKESPEC} = "macx-g++";
@@ -233,13 +260,14 @@ removeLibraryDependingOnSVG("WebCore", $svgSupport);
 for my $dir (@projects) {
     chdir $dir or die;
     my $result = 0;
+
     if (isGtk()) {
         if ($dir ne "WebKit") {
             chdir ".." or die;
             next;
         }
-
-        $result = buildQMakeGtkProject($dir, $clean);
+        
+        $result = buildGtkProject($dir, $clean,  @options);
     } elsif (isQt()) {
         if ($dir ne "WebKit") {
             chdir ".." or die;

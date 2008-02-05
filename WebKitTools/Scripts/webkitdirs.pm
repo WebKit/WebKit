@@ -394,15 +394,18 @@ sub hasSVGSupport
     }
 
     if (isGtk() and $path =~ /WebCore/) {
-        $path .= "/../lib/libWebKitGtk.so";
+        $path .= "/../lib/libWebKitGtk.so" if !$ENV{WEBKITAUTOTOOLS};
+        $path .= "/../.libs/libWebKitGtk.so" if $ENV{WEBKITAUTOTOOLS};
     }
 
-    open NM, "-|", "nm", $path or die;
     my $hasSVGSupport = 0;
-    while (<NM>) {
-        $hasSVGSupport = 1 if /SVGElement/;
+    if (-e $path) {
+        open NM, "-|", "nm", $path or die;
+        while (<NM>) {
+            $hasSVGSupport = 1 if /SVGElement/;
+        }
+        close NM;
     }
-    close NM;
     return $hasSVGSupport;
 }
 
@@ -716,6 +719,62 @@ sub qtMakeCommand($)
     return "make";
 }
 
+sub autotoolsFlag($$)
+{
+    my ($flag, $feature) = @_;
+    my $prefix = $flag ? "--enable" : "--disable";
+
+    return $prefix . '-' . $feature;
+}
+
+sub buildAutotoolsProject($@)
+{
+    my ($clean, @buildArgs) = @_;
+
+    my $make = 'make';
+    my $dir = productDir();
+    my $config = passedConfiguration() || configuration();
+    my $prefix = $ENV{"WebKitInstallationPrefix"};
+
+    # check if configuration is Debug
+    if ($config =~ m/debug/i) {
+        push @buildArgs, "--enable-debug";
+    } else {
+        push @buildArgs, "--disable-debug";
+    }
+
+    if (! -d $dir) {
+        system "mkdir", "-p", "$dir";
+        if (! -d $dir) {
+            die "Failed to create build directory " . $dir;
+        }
+    }
+
+    chdir $dir or die "Failed to cd into " . $dir . "\n";
+
+    my $result;
+    if ($clean) {
+        $result = system $make, "distclean";
+        return $result;
+    }
+
+    print "Calling configure in " . $dir . "\n\n";
+    print "Installation directory: $prefix\n" if(defined($prefix));
+     
+    $result = system "$sourceDir/autogen.sh", @buildArgs;
+    if ($result ne 0) {
+        die "Failed to setup build environment using 'autotools'!\n";
+    }
+
+    $result = system $make;
+    if ($result ne 0) {
+        die "\nFailed to build WebKit using '$make'!\n";
+    }
+
+    chdir ".." or die;
+    return $result;
+}
+
 sub buildQMakeProject($@)
 {
     my ($clean, @buildArgs) = @_;
@@ -789,18 +848,21 @@ sub buildQMakeQtProject($$)
     return buildQMakeProject($clean, @buildArgs);
 }
 
-sub buildQMakeGtkProject($$)
+sub buildGtkProject($$@)
 {
-    my ($project, $clean) = @_;
+    my ($project, $clean, @buildArgs) = @_;
 
     if ($project ne "WebKit") {
-        die "The Gtk portbuilds JavaScriptCore/WebCore/WebKitQt in one shot! Only call it for 'WebKit'.\n";
+        die "The Gtk port builds JavaScriptCore, WebCore and WebKit in one shot! Only call it for 'WebKit'.\n";
     }
 
-    my @buildArgs = ("CONFIG+=gtk-port");
-    push @buildArgs, "CONFIG-=qt";
-
-    return buildQMakeProject($clean, @buildArgs);
+    if ($ENV{WEBKITAUTOTOOLS}) {
+        return buildAutotoolsProject($clean, @buildArgs);
+    } else {
+        my @buildArgs = {"CONFIG+=gtk-port"};
+        push @buildArgs, "CONFIG-=qt";
+        return buildQMakeProject($clean, @buildArgs);
+    }
 }
 
 sub setPathForRunningWebKitApp
