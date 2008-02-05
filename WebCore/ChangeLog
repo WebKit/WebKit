@@ -1,3 +1,13 @@
+2008-02-04  Mark Rowe  <mrowe@apple.com>
+
+        Unreviewed Gtk build fix.
+
+        wchar_t is only convertible to UChar on Windows.  Use WebCore's String class
+        to get the UChars out of a C string in a portable fashion.
+
+        * editing/SmartReplaceICU.cpp:
+        (WebCore::getSmartSet):
+
 2008-02-04  Tony Chang  <idealisms@gmail.com>
 
         Reviewed by Darin Adler.
