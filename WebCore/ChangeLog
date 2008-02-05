@@ -1,3 +1,9 @@
+2008-02-04  Mark Rowe  <mrowe@apple.com>
+
+        Speculative Gtk build fix.
+
+        * storage/OriginUsageRecord.cpp:
+
 2008-02-04  Brady Eidson  <beidson@apple.com>
 
         Attempt to fix build of all non-Mac platforms

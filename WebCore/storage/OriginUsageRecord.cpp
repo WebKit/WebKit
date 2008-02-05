@@ -29,6 +29,7 @@
 #include "OriginUsageRecord.h"
 
 #include "FileSystem.h"
+#include <limits.h>
 
 namespace WebCore {
 
