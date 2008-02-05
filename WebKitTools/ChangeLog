@@ -1,6 +1,23 @@
 2008-02-04  Mark Rowe  <mrowe@apple.com>
 
-       Gtk qmake build fix.  
+        Reviewed by Oliver Hunt.
+
+        Workaround for http://bugs.webkit.org/show_bug.cgi?id=16842
+        Bug 16842: Hang in DRT in leaks mode due to signal handler doing unsafe things
+
+        Don't install the signal handler unless we are running the pixel tests.
+        It is currently only used to restore the color profile, but by catching
+        signals we can trigger a deadlock in DRT while running leak tests.
+        The deadlock is tracked by http://bugs.webkit.org/show_bug.cgi?id=16842,
+        and a more complete fix will need to be developed to address this for
+        pixel tests as well.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (dumpRenderTree):
+
+2008-02-04  Mark Rowe  <mrowe@apple.com>
+
+       Gtk qmake build fix.
 
         * Scripts/webkitdirs.pm:  Fix perl's complaint about an odd number of elements in anonymous hash.
 

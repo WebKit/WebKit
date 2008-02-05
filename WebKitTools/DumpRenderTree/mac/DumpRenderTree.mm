@@ -394,7 +394,8 @@ void dumpRenderTree(int argc, const char *argv[])
     initializeGlobalsFromCommandLineOptions(argc, argv);
     prepareConsistentTestingEnvironment();
     addTestPluginsToPluginSearchPath(argv[0]);
-    installSignalHandlers();
+    if (dumpPixels)
+        installSignalHandlers();
     
     WebView *webView = createWebViewAndOffscreenWindow();
     mainFrame = [webView mainFrame];
