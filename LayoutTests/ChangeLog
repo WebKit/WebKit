@@ -1,3 +1,13 @@
+2008-02-04  Robert Sesek  <rsesek@bluestatic.org>
+
+        Reviewed by Darin Adler.
+
+        Test for Fix http://bugs.webkit.org/show_bug.cgi?id=17042
+        forms without action attributes submit to the <base> href instead of the originating page
+
+        * fast/forms/missing-action-expected.txt: Added.
+        * fast/forms/missing-action.html: Added.
+
 2008-02-04  Adam Roben  <aroben@apple.com>
 
         * platform/win/Skipped: Added one more failure.

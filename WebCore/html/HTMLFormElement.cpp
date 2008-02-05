@@ -480,6 +480,9 @@ void HTMLFormElement::submit(Event* event, bool activateSubmitButton)
 
     if (needButtonActivation && firstSuccessfulSubmitButton)
         firstSuccessfulSubmitButton->setActivatedSubmit(true);
+    
+    if (!m_url)
+        m_url = document()->url();
 
     if (m_post) {
         if (m_multipart && isMailtoForm()) {

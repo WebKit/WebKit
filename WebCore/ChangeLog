@@ -1,3 +1,15 @@
+2008-02-04  Robert Sesek  <rsesek@bluestatic.org>
+
+        Reviewed by Darin Adler.
+
+        Fix http://bugs.webkit.org/show_bug.cgi?id=17042
+        forms without action attributes submit to the <base> href instead of the originating page
+
+        Test: fast/forms/missing-action.html
+
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::submit): Submit to origin if there is no action
+
 2008-02-04  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Tim Hatcher.
