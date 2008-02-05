@@ -1,3 +1,15 @@
+2008-02-05  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Oliver.
+
+        Fix dynamic updates of <circle> element's properties.
+
+        Added tests: svg/dynamic-updates/SVGCircleElement*
+
+        * svg/SVGCircleElement.cpp:
+        (WebCore::SVGCircleElement::svgAttributeChanged): Mixed up cxAttr/xAttr etc.
+        * svg/SVGCircleElement.h:
+
 2008-02-05  Rodney Dawes  <dobey@wayofthemonkey.com>
 
         Wx build fix.  Add WebCore/plugins to the include path.

@@ -31,7 +31,7 @@ function triggerUpdate() {
     window.setTimeout("sendMouseEvent()", 0);
 }
 
-function testFinished() {
+function waitForClickEvent(obj) {
     if (window.layoutTestController)
-        layoutTestController.notifyDone();
+        obj.setAttribute("onclick", "layoutTestController.notifyDone()");
 }

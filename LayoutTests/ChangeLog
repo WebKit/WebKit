@@ -1,5 +1,43 @@
 2008-02-05  Nikolas Zimmermann  <zimmermann@kde.org>
 
+        Reviewed by Oliver.
+
+        Next round of dynamic update tests, for SVGCircleElement.
+
+        * svg/dynamic-updates/SVGCircleElement-dom-cx-attr-expected.checksum: Added.
+        * svg/dynamic-updates/SVGCircleElement-dom-cx-attr-expected.png: Added.
+        * svg/dynamic-updates/SVGCircleElement-dom-cx-attr-expected.txt: Added.
+        * svg/dynamic-updates/SVGCircleElement-dom-cx-attr.html: Added.
+        * svg/dynamic-updates/SVGCircleElement-dom-cy-attr-expected.checksum: Added.
+        * svg/dynamic-updates/SVGCircleElement-dom-cy-attr-expected.png: Added.
+        * svg/dynamic-updates/SVGCircleElement-dom-cy-attr-expected.txt: Added.
+        * svg/dynamic-updates/SVGCircleElement-dom-cy-attr.html: Added.
+        * svg/dynamic-updates/SVGCircleElement-dom-r-attr-expected.checksum: Added.
+        * svg/dynamic-updates/SVGCircleElement-dom-r-attr-expected.png: Added.
+        * svg/dynamic-updates/SVGCircleElement-dom-r-attr-expected.txt: Added.
+        * svg/dynamic-updates/SVGCircleElement-dom-r-attr.html: Added.
+        * svg/dynamic-updates/SVGCircleElement-svgdom-cx-prop-expected.checksum: Added.
+        * svg/dynamic-updates/SVGCircleElement-svgdom-cx-prop-expected.png: Added.
+        * svg/dynamic-updates/SVGCircleElement-svgdom-cx-prop-expected.txt: Added.
+        * svg/dynamic-updates/SVGCircleElement-svgdom-cx-prop.html: Added.
+        * svg/dynamic-updates/SVGCircleElement-svgdom-cy-prop-expected.checksum: Added.
+        * svg/dynamic-updates/SVGCircleElement-svgdom-cy-prop-expected.png: Added.
+        * svg/dynamic-updates/SVGCircleElement-svgdom-cy-prop-expected.txt: Added.
+        * svg/dynamic-updates/SVGCircleElement-svgdom-cy-prop.html: Added.
+        * svg/dynamic-updates/SVGCircleElement-svgdom-r-prop-expected.checksum: Added.
+        * svg/dynamic-updates/SVGCircleElement-svgdom-r-prop-expected.png: Added.
+        * svg/dynamic-updates/SVGCircleElement-svgdom-r-prop-expected.txt: Added.
+        * svg/dynamic-updates/SVGCircleElement-svgdom-r-prop.html: Added.
+        * svg/dynamic-updates/resources/SVGCircleElement-dom-cx-attr.js: Added.
+        * svg/dynamic-updates/resources/SVGCircleElement-dom-cy-attr.js: Added.
+        * svg/dynamic-updates/resources/SVGCircleElement-dom-r-attr.js: Added.
+        * svg/dynamic-updates/resources/SVGCircleElement-svgdom-cx-prop.js: Added.
+        * svg/dynamic-updates/resources/SVGCircleElement-svgdom-cy-prop.js: Added.
+        * svg/dynamic-updates/resources/SVGCircleElement-svgdom-r-prop.js: Added.
+        * svg/dynamic-updates/resources/SVGTestCase.js:
+
+2008-02-05  Nikolas Zimmermann  <zimmermann@kde.org>
+
         Reviewed by Holger.
 
         Add first files of my new SVG 1.1 dynamic updates testsuite.

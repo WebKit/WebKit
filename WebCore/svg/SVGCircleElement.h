@@ -29,13 +29,12 @@
 #include "SVGStyledTransformableElement.h"
 #include "SVGTests.h"
 
-namespace WebCore
-{
+namespace WebCore {
+
     class SVGCircleElement : public SVGStyledTransformableElement,
                              public SVGTests,
                              public SVGLangSpace,
-                             public SVGExternalResourcesRequired
-    {
+                             public SVGExternalResourcesRequired {
     public:
         SVGCircleElement(const QualifiedName&, Document*);
         virtual ~SVGCircleElement();

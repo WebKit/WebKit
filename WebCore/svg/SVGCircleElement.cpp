@@ -78,8 +78,8 @@ void SVGCircleElement::svgAttributeChanged(const QualifiedName& attrName)
     if (!renderer())
         return;
 
-    if (attrName == SVGNames::xAttr || attrName == SVGNames::yAttr ||
-        attrName == SVGNames::widthAttr || attrName == SVGNames::heightAttr ||
+    if (attrName == SVGNames::cxAttr || attrName == SVGNames::cyAttr ||
+        attrName == SVGNames::rAttr ||
         SVGTests::isKnownAttribute(attrName) ||
         SVGLangSpace::isKnownAttribute(attrName) ||
         SVGExternalResourcesRequired::isKnownAttribute(attrName) ||
