@@ -1,3 +1,13 @@
+2008-02-05  Mark Rowe  <mrowe@apple.com>
+
+        Update WordPress to 2.3.3 which includes security fixes.
+
+        * blog/wp-admin/install-helper.php:
+        * blog/wp-includes/gettext.php:
+        * blog/wp-includes/pluggable.php:
+        * blog/wp-includes/version.php:
+        * blog/xmlrpc.php:
+
 2008-02-02  David Smith  <catfish.man@gmail.com>
 
         Reviewed by Oliver.
