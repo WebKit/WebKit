@@ -1,3 +1,21 @@
+2008-02-04   David Harrison  <harrison@apple.com>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/5607381> CrashTracer: [REGRESSION] 1748 crashes in Safari at com.apple.WebCore: WebCore::Image::width const + 24
+
+        Use an empty image when the local image file could not be loaded.
+
+        No test case because it would require forcing tiff load failure.
+        
+        * editing/DeleteButtonController.cpp:
+        (WebCore::DeleteButtonController::createDeletionUI):
+        Do not present the deletion UI in the (odd) event that the delete button could not be loaded.
+        
+        * platform/graphics/mac/ImageMac.mm:
+        (WebCore::Image::loadPlatformResource):
+        Return an empty image instead of 0 if the load fails.
+
 2008-02-04  Darin Adler  <darin@apple.com>
 
         * dom/Document.cpp:
