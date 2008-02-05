@@ -2220,10 +2220,7 @@ void Document::recalcStyleSelector()
 
     // Create a new style selector
     delete m_styleSelector;
-    String usersheet = m_usersheet;
-    if (view() && view()->mediaType() == "print")
-        usersheet += m_printSheet;
-    m_styleSelector = new CSSStyleSelector(this, usersheet, m_styleSheets.get(), m_mappedElementSheet.get(), !inCompatMode(), matchAuthorAndUserStyles);
+    m_styleSelector = new CSSStyleSelector(this, m_usersheet, m_styleSheets.get(), m_mappedElementSheet.get(), !inCompatMode(), matchAuthorAndUserStyles);
     m_styleSelector->setEncodedURL(m_url);
     m_didCalculateStyleSelector = true;
 }

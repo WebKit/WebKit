@@ -1,3 +1,15 @@
+2008-02-05  Adam Roben  <aroben@apple.com>
+
+        Remove an unused member from Document
+
+        Reviewed by Mitz.
+
+        * dom/Document.cpp:
+        (WebCore::Document::recalcStyleSelector): There's no need to take
+        m_printSheet into account anymore as it's never anything but the null
+        string.
+        * dom/Document.h: Removed m_printSheet and methods relating to it.
+
 2008-02-05  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.

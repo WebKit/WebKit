@@ -377,8 +377,6 @@ public:
     virtual void setCSSStyleSheet(const String& url, const String& charset, const String& sheetStr);
     void setUserStyleSheet(const String& sheet);
     const String& userStyleSheet() const { return m_usersheet; }
-    void setPrintStyleSheet(const String& sheet) { m_printSheet = sheet; }
-    const String& printStyleSheet() const { return m_printSheet; }
 
     CSSStyleSheet* elementSheet();
     CSSStyleSheet* mappedElementSheet();
@@ -697,7 +695,6 @@ private:
 
     RefPtr<StyleSheet> m_sheet;
     String m_usersheet;
-    String m_printSheet;
 
     // Track the number of currently loading top-level stylesheets.  Sheets
     // loaded using the @import directive are not included in this count.
