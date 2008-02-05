@@ -2,6 +2,7 @@
 
         Reviewed by Holger.
 
+        Fixes: http://bugs.webkit.org/show_bug.cgi?id=17185
         Fix dynamic SVG DOM updates of <a> element's href property.
 
         This commit also introduces a new SVG Tests framework: LayoutTests/svg/dynamic-updates
