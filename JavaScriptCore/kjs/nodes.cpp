@@ -1289,8 +1289,11 @@ JSValue* PostIncResolveNode::evaluate(ExecState* exec)
     PropertySlot slot;
     do {
         if ((*iter)->getPropertySlot(exec, m_ident, slot)) {
-            // See the comment in PostIncResolveNode::evaluate().
-
+            // If m_ident is 'arguments', the base->getPropertySlot() may cause 
+            // base (which must be an ActivationImp in such this case) to be torn
+            // off from the activation stack, in which case we need to get it again
+            // from the ScopeChainIterator.
+            
             JSObject* base = *iter;
             JSValue* v = slot.getValue(exec, base, m_ident)->toJSNumber(exec);
             base->put(exec, m_ident, jsNumber(v->toNumber(exec) + 1));
@@ -3256,13 +3259,17 @@ void AssignResolveNode::optimizeVariableAccess(const SymbolTable& symbolTable, c
 JSValue* ReadModifyLocalVarNode::evaluate(ExecState* exec)
 {
     ASSERT(exec->variableObject() == exec->scopeChain().top());
-    JSValue** slot = &exec->localStorage()[m_index].value;
 
     ASSERT(m_operator != OpEqual);
-    JSValue* v = valueForReadModifyAssignment(exec, *slot, m_right.get(), m_operator);
+    JSValue* v = valueForReadModifyAssignment(exec, exec->localStorage()[m_index].value, m_right.get(), m_operator);
 
     KJS_CHECKEXCEPTIONVALUE
-    *slot = v;
+    
+    // We can't store a pointer into localStorage() and use it throughout the function
+    // body, because valueForReadModifyAssignment() might cause an ActivationImp tear-off,
+    // changing the value of localStorage().
+    
+    exec->localStorage()[m_index].value = v;
     return v;
 }
 
@@ -3334,8 +3341,11 @@ found:
     v = valueForReadModifyAssignment(exec, v1, m_right.get(), m_operator);
 
     KJS_CHECKEXCEPTIONVALUE
-
-    base->put(exec, m_ident, v);
+    
+    // Since valueForReadModifyAssignment() might cause an ActivationImp tear-off,
+    // we need to get the base from the ScopeChainIterator again.
+    
+    (*iter)->put(exec, m_ident, v);
     return v;
 }
 

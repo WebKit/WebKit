@@ -1,3 +1,29 @@
+2008-02-04  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
+
+        Reviewed by Oliver Hunt.
+
+        Fixes Bug 16889: REGRESSION (r29425): Canvas-based graphing calculator fails to run
+              Bug 17015: REGRESSION (r29414-29428): www.fox.com "shows" menu fails to render
+              Bug 17164: REGRESSION: JavaScript pop-up menu appears at wrong location when hovering image at http://news.chinatimes.com/
+
+        <http://bugs.webkit.org/show_bug.cgi?id=16889>
+        <rdar://problem/5696255>
+
+        <http://bugs.webkit.org/show_bug.cgi?id=17015>
+
+        <http://bugs.webkit.org/show_bug.cgi?id=17164>
+        <rdar://problem/5720947>
+
+        The ActivationImp tear-off (r29425) introduced a problem with ReadModify
+        nodes that first resolve a slot, call valueForReadModifyNode(), and then
+        store a value in the previously resolved slot. Since valueForReadModifyNode()
+        may cause a tear-off, the slot needs to be resolved again, but this was
+        not happening with the existing code.
+
+        * kjs/nodes.cpp:
+        (KJS::ReadModifyLocalVarNode::evaluate):
+        (KJS::ReadModifyResolveNode::evaluate):
+
 2008-02-04  Cameron McCormack <cam@mcc.id.au>
 
         Reviewed by Geoff Garen.

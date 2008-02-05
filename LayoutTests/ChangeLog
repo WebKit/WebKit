@@ -1,3 +1,25 @@
+2008-02-04  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
+
+        Reviewed by Oliver Hunt.
+
+        Adds layout tests for the collective fix for the following bugs:
+
+        Bug 16889: REGRESSION (r29425): Canvas-based graphing calculator fails to run
+        Bug 17015: REGRESSION (r29414-29428): www.fox.com "shows" menu fails to render
+        Bug 17164: REGRESSION: JavaScript pop-up menu appears at wrong location when hovering image at http://news.chinatimes.com/
+
+        <http://bugs.webkit.org/show_bug.cgi?id=16889>
+        <rdar://problem/5696255>
+
+        <http://bugs.webkit.org/show_bug.cgi?id=17015>
+
+        <http://bugs.webkit.org/show_bug.cgi?id=17164>
+        <rdar://problem/5720947>
+
+        * fast/js/read-modify-eval-expected.txt: Added.
+        * fast/js/read-modify-eval.html: Added.
+        * fast/js/resources/read-modify-eval.js: Added.
+
 2008-02-04  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Steve F.
