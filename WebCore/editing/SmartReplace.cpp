@@ -29,7 +29,7 @@
 #include "config.h"
 #include "SmartReplace.h"
 
-#if !PLATFORM(CF)
+#if !PLATFORM(CF) && !USE(ICU_UNICODE)
 
 namespace WebCore {
 

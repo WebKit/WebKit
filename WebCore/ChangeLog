@@ -1,3 +1,18 @@
+2008-02-04  Tony Chang  <idealisms@gmail.com>
+
+        Reviewed by Darin Adler.
+
+        Port the CoreFoundation version of WebCore::isCharacterSmartReplaceExempt
+        for other platforms by using ICU directly.
+
+        * GNUmakefile.am: Add SmartReplaceICU.cpp.
+        * WebCore.pro: Ditto.
+        * WebCoreSources.bkl: Ditto.
+        * editing/SmartReplace.cpp: Don't use this empty implementation when ICU is available.
+        * editing/SmartReplaceICU.cpp:
+        (getSmartSet):
+        (WebCore::isCharacterSmartReplaceExempt):
+
 2008-02-04  Robert Sesek  <rsesek@bluestatic.org>
 
         Reviewed by Darin Adler.

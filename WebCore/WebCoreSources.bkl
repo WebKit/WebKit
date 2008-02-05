@@ -391,6 +391,7 @@ This file contains the list of files needed to build WebCore.
         editing/Selection.cpp
         editing/SelectionController.cpp
         editing/SmartReplace.cpp
+        editing/SmartReplaceICU.cpp
         editing/SetNodeAttributeCommand.cpp
         editing/SplitElementCommand.cpp
         editing/SplitTextNodeCommand.cpp

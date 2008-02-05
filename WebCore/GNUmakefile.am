@@ -647,6 +647,7 @@ webcore_sources += \
 	WebCore/editing/Selection.cpp \
 	WebCore/editing/SetNodeAttributeCommand.cpp \
 	WebCore/editing/SmartReplace.cpp \
+	WebCore/editing/SmartReplaceICU.cpp \
 	WebCore/editing/SplitElementCommand.cpp \
 	WebCore/editing/SplitTextNodeCommand.cpp \
 	WebCore/editing/SplitTextNodeContainingElementCommand.cpp \

@@ -579,6 +579,7 @@ SOURCES += \
     editing/Selection.cpp \
     editing/SetNodeAttributeCommand.cpp \
     editing/SmartReplace.cpp \
+    editing/SmartReplaceICU.cpp \
     editing/SplitElementCommand.cpp \
     editing/SplitTextNodeCommand.cpp \
     editing/SplitTextNodeContainingElementCommand.cpp \
