@@ -126,6 +126,7 @@
 #import <WebKit/WebDashboardRegion.h>
 #import <WebKitSystemInterface.h>
 #import <mach-o/dyld.h>
+#import <objc/objc-auto.h>
 #import <objc/objc-runtime.h>
 #import <wtf/RefPtr.h>
 #import <wtf/HashTraits.h>
