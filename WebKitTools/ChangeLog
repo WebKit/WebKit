@@ -1,3 +1,11 @@
+2008-02-05  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Holger.
+
+        Don't build wrapper for SVGTestCase.js (special file for svg/dynamic-updates)
+
+        * Scripts/make-js-test-wrappers:
+
 2008-02-05  Holger Freyther  <zecke@selfish.org>
 
         Reviewed by Darin.

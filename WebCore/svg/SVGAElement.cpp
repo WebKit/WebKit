@@ -24,7 +24,6 @@
 #include "config.h"
 
 #if ENABLE(SVG)
-
 #include "SVGAElement.h"
 
 #include "Attr.h"
@@ -72,13 +71,8 @@ void SVGAElement::parseMappedAttribute(MappedAttribute* attr)
     if (attr->name() == SVGNames::targetAttr)
         setTargetBaseValue(attr->value());
     else {
-        if (SVGURIReference::parseMappedAttribute(attr)) {
-            bool wasLink = m_isLink;
-            m_isLink = !attr->isNull();
-            if (wasLink != m_isLink)
-                setChanged();
+        if (SVGURIReference::parseMappedAttribute(attr))
             return;
-        }
         if (SVGTests::parseMappedAttribute(attr))
             return;
         if (SVGLangSpace::parseMappedAttribute(attr))
@@ -86,6 +80,21 @@ void SVGAElement::parseMappedAttribute(MappedAttribute* attr)
         if (SVGExternalResourcesRequired::parseMappedAttribute(attr))
             return;
         SVGStyledTransformableElement::parseMappedAttribute(attr);
+    }
+}
+
+void SVGAElement::svgAttributeChanged(const QualifiedName& attrName)
+{
+    SVGStyledTransformableElement::svgAttributeChanged(attrName);
+
+    // Unlike other SVG*Element classes, SVGAElement only listens to SVGURIReference changes
+    // as none of the other properties changes the linking behaviour for our <a> element.
+    if (SVGURIReference::isKnownAttribute(attrName)) {
+        bool wasLink = m_isLink;
+        m_isLink = !href().isNull();
+
+        if (wasLink != m_isLink)
+            setChanged();
     }
 }
 
@@ -123,7 +132,7 @@ void SVGAElement::defaultEventHandler(Event* evt)
             return;
         }
         
-        String target = getAttribute(SVGNames::targetAttr);
+        String target = this->target();
         if (e && e->button() == MiddleButton)
             target = "_blank";
         else if (target.isEmpty()) // if target is empty, default to "_self" or use xlink:target if set
@@ -183,7 +192,6 @@ bool SVGAElement::childShouldCreateRenderer(Node* child) const
 
     return SVGElement::childShouldCreateRenderer(child);
 }
-
 
 } // namespace WebCore
 

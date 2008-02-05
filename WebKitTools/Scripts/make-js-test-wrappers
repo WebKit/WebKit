@@ -70,6 +70,7 @@ for my $tfile (@templates) {
     for my $file (@files) {
         chomp $file;
         next if $file =~ /js-test-.*\.js$/;
+        next if $file =~ /SVGTestCase\.js/;
         next if $file =~ m:resources/attr-case-sensitivity\.js$:;
         next if $file =~ m:resources/frame-loading-via-document-write\.js$:;
         next if $file =~ m:resources/intersectsNode\.js$:;

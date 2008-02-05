@@ -1,3 +1,35 @@
+2008-02-05  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Holger.
+
+        Add first files of my new SVG 1.1 dynamic updates testsuite.
+
+        * svg/dynamic-updates: Added.
+        * svg/dynamic-updates/SVGAElement-dom-href-attr-expected.checksum: Added.
+        * svg/dynamic-updates/SVGAElement-dom-href-attr-expected.png: Added.
+        * svg/dynamic-updates/SVGAElement-dom-href-attr-expected.txt: Added.
+        * svg/dynamic-updates/SVGAElement-dom-href-attr.html: Added.
+        * svg/dynamic-updates/SVGAElement-dom-target-attr-expected.checksum: Added.
+        * svg/dynamic-updates/SVGAElement-dom-target-attr-expected.png: Added.
+        * svg/dynamic-updates/SVGAElement-dom-target-attr-expected.txt: Added.
+        * svg/dynamic-updates/SVGAElement-dom-target-attr.html: Added.
+        * svg/dynamic-updates/SVGAElement-svgdom-href-prop-expected.checksum: Added.
+        * svg/dynamic-updates/SVGAElement-svgdom-href-prop-expected.png: Added.
+        * svg/dynamic-updates/SVGAElement-svgdom-href-prop-expected.txt: Added.
+        * svg/dynamic-updates/SVGAElement-svgdom-href-prop.html: Added.
+        * svg/dynamic-updates/SVGAElement-svgdom-target-prop-expected.checksum: Added.
+        * svg/dynamic-updates/SVGAElement-svgdom-target-prop-expected.png: Added.
+        * svg/dynamic-updates/SVGAElement-svgdom-target-prop-expected.txt: Added.
+        * svg/dynamic-updates/SVGAElement-svgdom-target-prop.html: Added.
+        * svg/dynamic-updates/resources: Added.
+        * svg/dynamic-updates/resources/SVGAElement-dom-href-attr.js: Added.
+        * svg/dynamic-updates/resources/SVGAElement-dom-target-attr.js: Added.
+        * svg/dynamic-updates/resources/SVGAElement-svgdom-href-prop.js: Added.
+        * svg/dynamic-updates/resources/SVGAElement-svgdom-target-prop.js: Added.
+        * svg/dynamic-updates/resources/SVGTestCase.js: Added.
+        * svg/dynamic-updates/resources/TEMPLATE.html: Added.
+        * svg/dynamic-updates/resources/linkTarget.svg: Added.
+
 2008-02-05  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Alexey Proskuryakov.

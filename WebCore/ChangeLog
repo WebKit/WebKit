@@ -1,3 +1,33 @@
+2008-02-05  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Holger.
+
+        Fix dynamic SVG DOM updates of <a> element's href property.
+
+        This commit also introduces a new SVG Tests framework: LayoutTests/svg/dynamic-updates
+        Its purpose is to provide dynamic updating tests for each SVG class & property, aka.
+        one test per property per class. As a first pass it's sufficient to add testcases for all
+        SVG*Element classes, and their properties - and only common-used base-class properties.
+
+        For SVGAElement - for example - it makes most sense to test scripting its parent
+        SVGURIReference object ('href' property) and its own property 'target'.
+
+        Adding tests to see - for example - if SVGAElement reacts on changes on ie. its parent
+        SVGExternalResourcesRequired interface, should really be done in a second pass.
+
+        All tests within the new framework are supposed to be created using make-js-tests-wrappers.
+
+        Added test: svg/dynamic-updates/SVGAElement-dom-href-attr.js
+        Added test: svg/dynamic-updates/SVGAElement-dom-target-attr.js
+        Added test: svg/dynamic-updates/SVGAElement-svgdom-href-prop.js
+        Added test: svg/dynamic-updates/SVGAElement-svgdom-target-prop.js
+
+        * svg/SVGAElement.cpp:
+        (WebCore::SVGAElement::parseMappedAttribute): Move any setChanged() handling in svgAttributeChanged.
+        (WebCore::SVGAElement::svgAttributeChanged):
+        (WebCore::SVGAElement::defaultEventHandler): Use href() not getAttribute(hrefAttr) - otherwhise SVG DOM updates fail!
+        * svg/SVGAElement.h:
+
 2008-02-05  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Alexey Proskuryakov.

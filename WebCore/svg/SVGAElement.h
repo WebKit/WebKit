@@ -34,11 +34,10 @@
 namespace WebCore {
 
     class SVGAElement : public SVGStyledTransformableElement,
-                            public SVGURIReference,
-                            public SVGTests,
-                            public SVGLangSpace,
-                            public SVGExternalResourcesRequired
-    {
+                        public SVGURIReference,
+                        public SVGTests,
+                        public SVGLangSpace,
+                        public SVGExternalResourcesRequired {
     public:
         SVGAElement(const QualifiedName&, Document*);
         virtual ~SVGAElement();
@@ -48,8 +47,8 @@ namespace WebCore {
         virtual String title() const;
 
         virtual void parseMappedAttribute(MappedAttribute*);
+        virtual void svgAttributeChanged(const QualifiedName&);
 
-        // Derived from: 'SVGStyledElement'
         virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
 
         virtual void defaultEventHandler(Event*);
