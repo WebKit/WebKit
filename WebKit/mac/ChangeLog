@@ -1,3 +1,26 @@
+2008-02-05  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        - WebKit part of <rdar://problem/5724303> Should implement writing direction shortcuts
+
+        The key bindings are Command-Control-left arrow and
+        Command-Control-right arrow. To match AppKit, the bindings are enabled
+        only when certain user defaults are set.
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView validateUserInterfaceItemWithoutDelegate:]):
+        (-[WebHTMLView toggleBaseWritingDirection:]): Changed to call
+        Frame::baseWritingDirectionForSelectionStart() and
+        Editor::setBaseWritingDirection() directly.
+        (-[WebHTMLView changeBaseWritingDirection:]): Ditto.
+        (writingDirectionKeyBindingsEnabled): Added.
+        (-[WebHTMLView _changeBaseWritingDirectionTo:]): Added this helper
+        method.
+        (-[WebHTMLView changeBaseWritingDirectionToLTR:]): Added.
+        (-[WebHTMLView changeBaseWritingDirectionToRTL:]): Added.
+        * WebView/WebView.mm:
+
 2008-02-05  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Oliver Hunt.

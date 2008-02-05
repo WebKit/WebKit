@@ -2265,7 +2265,7 @@ WEBCORE_COMMAND(yankAndSelect)
             || action == @selector(complete:)
             || action == @selector(pasteFont:))
         return [self _canEdit];
-    
+
     if (action == @selector(showGuessPanel:)) {
 #ifndef BUILDING_ON_TIGER
         // Match OS X AppKit behavior for post-Tiger. Don't change Tiger behavior.
@@ -4217,12 +4217,16 @@ NSStrokeColorAttributeName        /* NSColor, default nil: same as foreground co
     if (![self _canEdit])
         return;
     
-    NSString *direction = @"RTL";
-    switch ([[self _bridge] baseWritingDirectionForSelectionStart]) {
+    Frame* coreFrame = core([self _frame]);
+    if (!coreFrame)
+        return;
+
+    const char* direction = "rtl";
+    switch (coreFrame->baseWritingDirectionForSelectionStart()) {
         case NSWritingDirectionLeftToRight:
             break;
         case NSWritingDirectionRightToLeft:
-            direction = @"LTR";
+            direction = "ltr";
             break;
         // The writingDirectionForSelectionStart method will never return "natural". It
         // will always return a concrete direction. So, keep the compiler happy, and assert not reached.
@@ -4231,9 +4235,8 @@ NSStrokeColorAttributeName        /* NSColor, default nil: same as foreground co
             break;
     }
 
-    DOMCSSStyleDeclaration *style = [self _emptyStyle];
-    [style setDirection:direction];
-    [self _applyParagraphStyleToSelection:style withUndoAction:EditActionSetWritingDirection];
+    if (Frame* coreFrame = core([self _frame]))
+        coreFrame->editor()->setBaseWritingDirection(direction);
 }
 
 - (void)changeBaseWritingDirection:(id)sender
@@ -4249,9 +4252,44 @@ NSStrokeColorAttributeName        /* NSColor, default nil: same as foreground co
     // NSWritingDirectionNatural's behavior using CSS.
     ASSERT(writingDirection != NSWritingDirectionNatural);
 
-    DOMCSSStyleDeclaration *style = [self _emptyStyle];
-    [style setDirection:writingDirection == NSWritingDirectionLeftToRight ? @"LTR" : @"RTL"];
-    [self _applyParagraphStyleToSelection:style withUndoAction:EditActionSetWritingDirection];
+    if (Frame* coreFrame = core([self _frame]))
+        coreFrame->editor()->setBaseWritingDirection(writingDirection == NSWritingDirectionLeftToRight ? "ltr" : "rtl");
+}
+
+static BOOL writingDirectionKeyBindingsEnabled()
+{
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    return [defaults boolForKey:@"NSAllowsBaseWritingDirectionKeyBindings"] || [defaults boolForKey:@"AppleTextDirection"];
+}
+
+- (void)_changeBaseWritingDirectionTo:(NSWritingDirection)direction
+{
+    if (![self _canEdit])
+        return;
+
+    static BOOL bindingsEnabled = writingDirectionKeyBindingsEnabled();
+
+    if (!bindingsEnabled) {
+        NSBeep();
+        return;
+    }
+
+    if (Frame* coreFrame = core([self _frame]))
+        coreFrame->editor()->setBaseWritingDirection(direction == NSWritingDirectionLeftToRight ? "ltr" : "rtl");
+}
+
+- (void)changeBaseWritingDirectionToLTR:(id)sender
+{
+    COMMAND_PROLOGUE
+
+    [self _changeBaseWritingDirectionTo:NSWritingDirectionLeftToRight];
+}
+
+- (void)changeBaseWritingDirectionToRTL:(id)sender
+{
+    COMMAND_PROLOGUE
+
+    [self _changeBaseWritingDirectionTo:NSWritingDirectionRightToLeft];
 }
 
 #if 0

@@ -1130,11 +1130,6 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
     return font;
 }
 
-- (NSWritingDirection)baseWritingDirectionForSelectionStart
-{
-    return m_frame ? m_frame->baseWritingDirectionForSelectionStart() : (NSWritingDirection)NSWritingDirectionLeftToRight;
-}
-
 - (void)dragSourceMovedTo:(NSPoint)windowLoc
 {
     if (m_frame) {

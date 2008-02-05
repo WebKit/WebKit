@@ -1,3 +1,15 @@
+2008-02-05  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        - WebCore part of <rdar://problem/5724303> Should implement writing direction shortcuts
+
+        * WebCore.base.exp: Added Editor::setBaseWritingDirection() and
+        Frame::baseWritingDirectionForSelectionStart().
+        * page/mac/WebCoreFrameBridge.h: Removed
+        -baseWritingDirectionForSelectionStart.
+        * page/mac/WebCoreFrameBridge.mm: Ditto.
+
 2008-02-05  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Oliver Hunt.

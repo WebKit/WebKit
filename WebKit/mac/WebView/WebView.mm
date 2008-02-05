@@ -149,6 +149,8 @@ macro(capitalizeWord) \
 macro(centerSelectionInVisibleArea) \
 macro(changeAttributes) \
 macro(changeBaseWritingDirection) \
+macro(changeBaseWritingDirectionToLTR) \
+macro(changeBaseWritingDirectionToRTL) \
 macro(changeColor) \
 macro(changeDocumentBackgroundColor) \
 macro(changeFont) \
