@@ -90,6 +90,9 @@ public:
     void setExpectedVersion(const String&);
     bool versionMatchesExpected() const;
     
+    unsigned long long databaseSize() const;
+    unsigned long long maximumSize() const;
+
 // Called from DatabaseThread, must be prepared to work on the background thread
     void resetAuthorizer();
     void performPolicyChecks();
@@ -112,12 +115,6 @@ private:
     Mutex m_transactionMutex;
     Deque<RefPtr<SQLTransaction> > m_transactionQueue;
     RefPtr<SQLTransaction> m_currentTransaction;
-    
-    static void scheduleFileSizeTimerOnMainThread(Database*);
-    static void performScheduleFileSizeTimers();
-    void scheduleFileSizeTimer();
-    void sizeTimerFired(Timer<Database>*);
-    OwnPtr<Timer<Database> > m_sizeTimer;
 
     static void deliverAllPendingCallbacks(void*);
     void deliverPendingCallback();

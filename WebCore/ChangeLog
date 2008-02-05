@@ -1,3 +1,80 @@
+2008-02-04  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Darin
+
+        Fix for <rdar://problem/5628468> - Quotas need to be implemented per-origin, and not per-database
+
+        To accomplish this, we need to track the sizes of all databases in an origin to constantly keep an up to date
+        count of the origin's total disk usage.  I've introduced the OriginQuotaManager and OriginUsageRecord classes
+        to accomplish this.
+
+        Whenever a transaction is known to mutate the size of a database (tracked by the DatabaseAuthorizer), it marks
+        that database as unknown in the OriginQuotaManager.  When a transaction later comes along to ask the 
+        OriginQuotaManager the usage for that origin, it stat's all of the unknown databases in the origin and returns
+        the result.
+
+        Since the OriginQuotaManager is interesting from both the main thread and a DatabaseThread, all accessors it 
+        provides require it to be locked first.  ASSERTs help guarantee this is always the case.
+
+        Layout test will involve adding functionality to DRT on multiple platforms and will be coming up shortly
+
+        * WebCore.xcodeproj/project.pbxproj:
+
+        * platform/SecurityOrigin.h: Changed to be ThreadSafeShared instead of RefCounted
+
+        * storage/Database.cpp:
+        (WebCore::Database::databaseSize): Return the current filesize of this database on disk
+        (WebCore::Database::maximumSize): Added - calculates maximum size of this database based on quota and usage
+        * storage/Database.h: Add databaseSize() accessor, and get rid of unused declared methods that *were* going 
+          to be the solution for this bug.
+
+        * storage/DatabaseTracker.cpp:
+        (WebCore::DatabaseTracker::originQuotaManager): Accessor to the OriginQuotaManager which is lazily created
+        (WebCore::DatabaseTracker::canEstablishDatabase): Fetch the usage for this database slightly earlier, which
+          will ensure that the OriginQuotaManager is primed to track this origin
+        (WebCore::DatabaseTracker::fullPathForDatabase): Ditto
+        (WebCore::DatabaseTracker::populateOrigins): Create the OriginQuotaManager here.
+        (WebCore::DatabaseTracker::usageForOrigin): Use the OriginQuotaManager instead of looping through each database
+          in the origin
+        (WebCore::DatabaseTracker::deleteOrigin): Remove this origin from the OriginQuotaManager as it is no longer 
+          interesting
+        (WebCore::DatabaseTracker::deleteDatabase): Remove this database from the OriginQuotaManager as it is no longer
+          interesting
+        * storage/DatabaseTracker.h:
+
+        * storage/OriginQuotaManager.cpp: Added.
+        (WebCore::OriginQuotaManager::OriginQuotaManager):
+        (WebCore::OriginQuotaManager::lock):
+        (WebCore::OriginQuotaManager::unlock):
+        (WebCore::OriginQuotaManager::trackOrigin): Add an origin to be tracked.  Useful for when the very first database 
+          in a new origin is still in the process of being created
+        (WebCore::OriginQuotaManager::tracksOrigin):
+        (WebCore::OriginQuotaManager::addDatabase):
+        (WebCore::OriginQuotaManager::removeDatabase):
+        (WebCore::OriginQuotaManager::removeOrigin): Removes all records in a certain origin from being tracked
+        (WebCore::OriginQuotaManager::markDatabase): Mark a specific database as having an unknown size - called when the
+          DatabaseAuthorizer in a SQLTransaction knows the file size might change.
+        (WebCore::OriginQuotaManager::diskUsage): Returns the disk usage for the given origin
+        * storage/OriginQuotaManager.h: Added.
+
+        * storage/OriginUsageRecord.cpp: Added.
+        (WebCore::OriginUsageRecord::OriginUsageRecord):
+        (WebCore::OriginUsageRecord::addDatabase): Adds an entry for the database in this origin's record
+        (WebCore::OriginUsageRecord::removeDatabase): Removes that entry
+        (WebCore::OriginUsageRecord::markDatabase): Marks the database as of unknown size
+        (WebCore::OriginUsageRecord::diskUsage): Returns the cached disk usage value, or recalculates it if any databases
+          are marked
+        * storage/OriginUsageRecord.h: Added.
+
+        * storage/SQLTransaction.cpp:
+        (WebCore::SQLTransaction::openTransactionAndPreflight): Use Database::maximumSize() instead of attributing the
+          entire quota to each database.
+        (WebCore::SQLTransaction::runStatements): Use Database::maximumSize() instead of attributing the entire quota
+          to each database.
+        (WebCore::SQLTransaction::runCurrentStatement): Mark this databases's size as unknown in the 
+          OriginQuotaManager if this statement will change the size of the database
+        * storage/SQLTransaction.h:
+
 2008-02-04   David Harrison  <harrison@apple.com>
 
         Reviewed by Darin Adler.

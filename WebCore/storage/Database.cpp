@@ -43,6 +43,7 @@
 #include "Logging.h"
 #include "NotImplemented.h"
 #include "Page.h"
+#include "OriginQuotaManager.h"
 #include "SQLiteDatabase.h"
 #include "SQLiteStatement.h"
 #include "SQLResultSet.h"
@@ -290,6 +291,25 @@ bool Database::versionMatchesExpected() const
     }
     
     return true;
+}
+
+unsigned long long Database::databaseSize() const
+{
+    long long size;
+    if (!fileSize(m_filename, size))
+        size = 0;
+    return size;
+}
+
+unsigned long long Database::maximumSize() const
+{
+    // The maximum size for this database is the full quota for this origin, minus the current usage within this origin,
+    // except for the current usage of this database
+    
+    OriginQuotaManager& manager(DatabaseTracker::tracker().originQuotaManager());
+    Locker<OriginQuotaManager> locker(manager);
+    
+    return DatabaseTracker::tracker().quotaForOrigin(m_securityOrigin.get()) - manager.diskUsage(m_securityOrigin.get()) + databaseSize();
 }
 
 void Database::databaseThreadGoingAway()

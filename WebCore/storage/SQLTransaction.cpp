@@ -37,6 +37,7 @@
 #include "Document.h"
 #include "ExceptionCode.h"
 #include "Logging.h"
+#include "OriginQuotaManager.h"
 #include "Page.h"
 #include "PlatformString.h"
 #include "SecurityOrigin.h"
@@ -119,11 +120,8 @@ void SQLTransaction::openTransactionAndPreflight()
 
     LOG(StorageAPI, "Opening and preflighting transaction %p", this);
     
-    // FIXME: This is a glaring bug that gives each database in an origin the full quota of that origin
-    // An efficient way to track the size of individual databases in an origin will need to be developed
-    // before we can know
-    // <rdar://problem/5628468> tracks this task
-    m_database->m_sqliteDatabase.setMaximumSize(DatabaseTracker::tracker().quotaForOrigin(m_database->securityOriginCopy().get()));
+    // Set the maximum usage for this transaction
+    m_database->m_sqliteDatabase.setMaximumSize(m_database->maximumSize());
     
     ASSERT(!m_sqliteTransaction);
     m_sqliteTransaction.set(new SQLiteTransaction(m_database->m_sqliteDatabase));
@@ -195,7 +193,7 @@ void SQLTransaction::runStatements()
             // See ::openTransactionAndPreflight() for discussion
             
             // Reset the maximum size here, as it was increased to allow us to retry this statement
-            m_database->m_sqliteDatabase.setMaximumSize(DatabaseTracker::tracker().quotaForOrigin(m_database->securityOriginCopy().get()));
+            m_database->m_sqliteDatabase.setMaximumSize(m_database->maximumSize());
         } else {
             // If the current statement has already been run, failed due to quota constraints, and we're not retrying it,
             // that means it ended in an error.  Handle it now
@@ -235,9 +233,15 @@ bool SQLTransaction::runCurrentStatement()
     m_database->m_databaseAuthorizer->reset();
     
     if (m_currentStatement->execute(m_database)) {
-        // Flag this transaction as having changed the database for later delegate notification
-        if (m_database->m_databaseAuthorizer->lastActionChangedDatabase())
+        if (m_database->m_databaseAuthorizer->lastActionChangedDatabase()) {
+            // Flag this transaction as having changed the database for later delegate notification
             m_modifiedDatabase = true;
+            // Also dirty the size of this database file for calculating quota usage
+            OriginQuotaManager& manager(DatabaseTracker::tracker().originQuotaManager());
+            Locker<OriginQuotaManager> locker(manager);
+            
+            manager.markDatabase(m_database);
+        }
             
         if (m_currentStatement->hasStatementCallback()) {
             m_nextStep = &SQLTransaction::deliverStatementCallback;

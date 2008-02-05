@@ -33,13 +33,14 @@
 #include <wtf/PassRefPtr.h>
 
 #include "PlatformString.h"
+#include "Threading.h"
 
 namespace WebCore {
 
     class Frame;
     class KURL;
     
-    class SecurityOrigin : public RefCounted<SecurityOrigin> {
+    class SecurityOrigin : public ThreadSafeShared<SecurityOrigin> {
     public:
         static PassRefPtr<SecurityOrigin> createForFrame(Frame*);
         static PassRefPtr<SecurityOrigin> createFromIdentifier(const String&);
