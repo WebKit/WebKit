@@ -1,5 +1,13 @@
 2008-02-05  Mark Rowe  <mrowe@apple.com>
 
+        Fix the wxWidget Mac build by avoiding using ICU functions that were added after ICU 3.2.
+
+        * editing/SmartReplaceICU.cpp:
+        (WebCore::addAllCodePoints): Implement a replacement for uset_addAllCodePoints.
+        (WebCore::getSmartSet): Use addAllCodePoints instead of uset_addAllCodePoints.
+
+2008-02-05  Mark Rowe  <mrowe@apple.com>
+
         Rubber-stamped by Oliver Hunt.
 
         30,000!

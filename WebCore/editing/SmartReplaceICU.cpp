@@ -37,6 +37,12 @@
 
 namespace WebCore {
 
+static void addAllCodePoints(USet* smartSet, const String& string) {
+    const UChar* characters = string.characters();
+    for (size_t i = 0; i < string.length(); i++)
+        uset_add(smartSet, characters[i]);
+}
+
 // This is mostly a port of the code in WebCore/editing/SmartReplaceCF.cpp
 // except we use icu in place of CoreFoundations character classes.
 static USet* getSmartSet(bool isPreviousCharacter)
@@ -64,13 +70,10 @@ static USet* getSmartSet(bool isPreviousCharacter)
         uset_addRange(smartSet, 0x2F800, 0x2F800 + 0x021E); // CJK Compatibility Ideographs (0x2F800 - 0x2FA1D)
 
         if (isPreviousCharacter) {
-            String punctuation = "([\"\'#$/-`{";
-            uset_addAllCodePoints(smartSet, punctuation.characters(), punctuation.length());
-
+            addAllCodePoints(smartSet, "([\"\'#$/-`{");
             preSmartSet = smartSet;
         } else {
-            String punctuation = ")].,;:?\'!\"%*-/}";
-            uset_addAllCodePoints(smartSet, punctuation.characters(), punctuation.length());
+            addAllCodePoints(smartSet, ")].,;:?\'!\"%*-/}");
 
             // Punctuation (kCFCharacterSetPunctuation)
             UErrorCode ec = U_ZERO_ERROR;
