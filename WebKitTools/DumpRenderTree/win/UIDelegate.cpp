@@ -354,7 +354,7 @@ HRESULT STDMETHODCALLTYPE UIDelegate::doDragDrop(
     *performedEffect = 0;
 
     draggingInfo = new DraggingInfo(object, source);
-
+    replaySavedEvents();
     return S_OK;
 }
 

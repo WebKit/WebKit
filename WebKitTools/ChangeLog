@@ -1,3 +1,33 @@
+2008-02-04  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Steve F.
+
+        Partial fix for <rdar://5621244> Drag & Drop doesn't work correctly in DRT
+
+        Implement required DRT functionality to allow majority of Drag and Drop testcases to work.
+        Issues include:
+          * Uses Sleep() to implement leapForward reliably.
+          * 3 DND tests still fail for reasons that i have not yet determined
+          * Has to explicitly ignore an extraneous WM_MOUSELEAVE that i am at a loss to explain 
+
+        * DumpRenderTree/win/EventSender.cpp:
+        (leapForwardCallback):
+        (mouseDownCallback):
+        (doMouseUp):
+        (mouseUpCallback):
+        (doMouseMove):
+        (mouseMoveToCallback):
+          Minor updates to these functions to handle the different message queue structure.
+
+        (replaySavedEvents):
+          More complicated now.  Where possible we just use the old while-loop model of execution,
+          but when leapForward has been used we have to jump through some hoops and set up an 
+          inner event loop so that we can ensure messages get the correct time stamp.
+
+        * DumpRenderTree/win/UIDelegate.cpp:
+        (UIDelegate::doDragDrop):
+          Call replaySavedEvents directly to force synchronous handling of drag and drop.
+
 2008-02-04  Rodney Dawes  <dobey@wayofthemonkey.com>
 
         Reviewed by Alp Toker and Mark Rowe.

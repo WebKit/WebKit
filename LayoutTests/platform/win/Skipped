@@ -86,29 +86,9 @@ svg/hixie/viewbox/preserveAspectRatio/002.xml
 editing/execCommand/copy-without-selection.html
 
 # Drag & Drop doesn't work correctly in DRT <rdar://5621244>
-editing/pasteboard/4861080.html
-editing/pasteboard/4947130.html
-editing/pasteboard/drag-drop-dead-frame.html
-editing/pasteboard/drag-drop-modifies-page.html
 editing/pasteboard/drag-image-in-about-blank-frame.html
-editing/pasteboard/drag-image-to-contenteditable-in-iframe.html
-editing/pasteboard/drag-selected-image-to-contenteditable.html
-editing/pasteboard/drop-link.html
-editing/pasteboard/drop-text-without-selection.html
-editing/pasteboard/subframe-dragndrop-1.html
-editing/selection/4895428-1.html
-editing/selection/4895428-4.html
-editing/selection/drag-select-1.html
-editing/selection/drag-to-contenteditable-iframe.html
-editing/selection/selection-background.html
-fast/events/5056619.html
 fast/events/drag-in-frames.html
-fast/events/ondragenter.html
 fast/events/standalone-image-drag-to-editable.html
-fast/forms/drag-into-textarea.html
-fast/forms/drag-out-of-textarea.html
-fast/forms/textfield-drag-into-disabled.html
-fast/lists/drag-into-marker.html
 
 # <rdar://problem/5643675> window.scrollTo scrolls a window with no scrollbars
 fast/events/attempt-scroll-with-no-scrollbars.html

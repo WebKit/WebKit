@@ -1,3 +1,14 @@
+2008-02-04  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Steve F.
+        
+        Update the windows platform skip list to remove the majority of DND tests.
+        Minor change to select-from-textfield-outwards.html, as the use of leapForward
+        appears to be unnecessary but breaks in windows with the new leapForward logic.
+
+        * editing/selection/select-from-textfield-outwards.html:
+        * platform/win/Skipped:
+
 2008-02-04  Robert Sesek  <rsesek@bluestatic.org>
 
         Reviewed by Darin Adler.
