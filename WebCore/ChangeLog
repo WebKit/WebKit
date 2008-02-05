@@ -1,3 +1,159 @@
+2008-02-05  Rodney Dawes  <dobey@wayofthemonkey.com>
+
+        Reviewed by Anders Carlsson.
+
+        Part one of http://bugs.webkit.org/show_bug.cgi?id=16924.
+        Shared PluginDatabase, PluginInfoStore and PluginPackage implementations.
+
+        Remove the Win suffix on several plugin-related classes that will
+        soon be refactored to be more portable.
+
+        * WebCore.vcproj/WebCore.vcproj:
+        * bindings/js/kjs_navigator.cpp:
+        (KJS::PluginBase::cachePluginDataIfNecessary):
+        * bindings/js/kjs_window.cpp:
+        * bridge/win/FrameWin.cpp:
+        (WebCore::Frame::createScriptInstanceForWidget):
+        * dom/Clipboard.cpp:
+        * dom/DOMImplementation.cpp:
+        (WebCore::DOMImplementation::createDocument):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::shouldUsePlugin):
+        * page/DragController.cpp:
+        * platform/PlugInInfoStore.h: Removed.
+        * platform/gtk/TemporaryLinkStubs.cpp:
+        (PluginInfoStore::createPluginInfoForPluginAtIndex):
+        (PluginInfoStore::pluginCount):
+        (PluginInfoStore::pluginNameForMIMEType):
+        (WebCore::PluginInfoStore::supportsMIMEType):
+        * platform/qt/PlugInInfoStoreQt.cpp:
+        (WebCore::PluginInfoStore::createPluginInfoForPluginAtIndex):
+        (WebCore::PluginInfoStore::pluginCount):
+        (WebCore::PluginInfoStore::pluginNameForMIMEType):
+        (WebCore::PluginInfoStore::supportsMIMEType):
+        * platform/qt/TemporaryLinkStubs.cpp:
+        * platform/win/SharedTimerWin.cpp:
+        (WebCore::TimerWindowWndProc):
+        * platform/wx/TemporaryLinkStubs.cpp:
+        (PluginInfoStore::createPluginInfoForPluginAtIndex):
+        (PluginInfoStore::pluginCount):
+        (WebCore::PluginInfoStore::supportsMIMEType):
+        (PluginInfoStore::pluginNameForMIMEType):
+        * plugins/PluginDatabase.h: Copied from WebCore/plugins/win/PluginDatabaseWin.h.
+        * plugins/PluginInfoStore.cpp: Copied from WebCore/plugins/win/PlugInInfoStoreWin.cpp.
+        (WebCore::PluginInfoStore::createPluginInfoForPluginAtIndex):
+        (WebCore::PluginInfoStore::pluginCount):
+        (WebCore::PluginInfoStore::pluginNameForMIMEType):
+        (WebCore::PluginInfoStore::supportsMIMEType):
+        (WebCore::refreshPlugins):
+        * plugins/PluginInfoStore.h: Copied from WebCore/platform/PlugInInfoStore.h.
+        * plugins/PluginPackage.h: Copied from WebCore/plugins/win/PluginPackageWin.h.
+        (WebCore::PluginPackageHash::hash):
+        (WebCore::PluginPackageHash::equal):
+        (WTF::):
+        * plugins/PluginView.h: Copied from WebCore/plugins/win/PluginViewWin.h.
+        (WebCore::PluginView::plugin):
+        * plugins/npapi.cpp: Copied from WebCore/plugins/win/npapi.cpp.
+        (pluginViewForInstance):
+        (NPN_UserAgent):
+        * plugins/win/PlugInInfoStoreWin.cpp: Removed.
+        * plugins/win/PluginDatabaseWin.cpp:
+        (WebCore::PluginDatabase::installedPlugins):
+        (WebCore::PluginDatabase::addExtraPluginPath):
+        (WebCore::PluginDatabase::refresh):
+        (WebCore::PluginDatabase::plugins):
+        (WebCore::addPluginsFromRegistry):
+        (WebCore::PluginDatabase::getPluginsInPaths):
+        (WebCore::PluginDatabase::defaultPluginPaths):
+        (WebCore::PluginDatabase::isMIMETypeRegistered):
+        (WebCore::PluginDatabase::pluginForMIMEType):
+        (WebCore::PluginDatabase::MIMETypeForExtension):
+        (WebCore::PluginDatabase::findPlugin):
+        (WebCore::PluginDatabase::createPluginView):
+        * plugins/win/PluginDatabaseWin.h: Removed.
+        * plugins/win/PluginPackageWin.cpp:
+        (WebCore::PluginPackage::~PluginPackage):
+        (WebCore::PluginPackage::freeLibrarySoon):
+        (WebCore::PluginPackage::freeLibraryTimerFired):
+        (WebCore::PluginPackage::PluginPackage):
+        (WebCore::PluginPackage::compareFileVersion):
+        (WebCore::PluginPackage::storeFileVersion):
+        (WebCore::PluginPackage::isPluginBlacklisted):
+        (WebCore::PluginPackage::fetchInfo):
+        (WebCore::PluginPackage::load):
+        (WebCore::PluginPackage::unload):
+        (WebCore::PluginPackage::unloadWithoutShutdown):
+        (WebCore::PluginPackage::createPackage):
+        (WebCore::PluginPackage::hash):
+        (WebCore::PluginPackage::equal):
+        * plugins/win/PluginPackageWin.h: Removed.
+        * plugins/win/PluginViewWin.cpp:
+        (WebCore::PluginRequest::PluginRequest):
+        (WebCore::PluginMessageThrottlerWin::PluginMessageThrottlerWin):
+        (WebCore::registerPluginView):
+        (WebCore::PluginViewWndProc):
+        (WebCore::PluginView::popPopupsStateTimerFired):
+        (WebCore::PluginView::wndProc):
+        (WebCore::PluginView::updateWindow):
+        (WebCore::PluginView::windowClipRect):
+        (WebCore::PluginView::setFrameGeometry):
+        (WebCore::PluginView::geometryChanged):
+        (WebCore::PluginView::setFocus):
+        (WebCore::PluginView::show):
+        (WebCore::PluginView::hide):
+        (WebCore::PluginView::paintMissingPluginIcon):
+        (WebCore::PluginView::dispatchNPEvent):
+        (WebCore::PluginView::paint):
+        (WebCore::PluginView::handleKeyboardEvent):
+        (WebCore::PluginView::handleMouseEvent):
+        (WebCore::PluginView::handleEvent):
+        (WebCore::PluginView::setParent):
+        (WebCore::PluginView::attachToWindow):
+        (WebCore::PluginView::detachFromWindow):
+        (WebCore::PluginView::setNPWindowRect):
+        (WebCore::PluginView::start):
+        (WebCore::PluginView::stop):
+        (WebCore::PluginView::setCurrentPluginView):
+        (WebCore::PluginView::currentPluginView):
+        (WebCore::PluginView::performRequest):
+        (WebCore::PluginView::requestTimerFired):
+        (WebCore::PluginView::scheduleRequest):
+        (WebCore::PluginView::load):
+        (WebCore::PluginView::getURLNotify):
+        (WebCore::PluginView::getURL):
+        (WebCore::PluginView::handlePost):
+        (WebCore::PluginView::postURLNotify):
+        (WebCore::PluginView::postURL):
+        (WebCore::PluginView::newStream):
+        (WebCore::PluginView::write):
+        (WebCore::PluginView::destroyStream):
+        (WebCore::PluginView::userAgent):
+        (WebCore::PluginView::status):
+        (WebCore::PluginView::getValue):
+        (WebCore::PluginView::setValue):
+        (WebCore::PluginView::invalidateTimerFired):
+        (WebCore::PluginView::invalidateRect):
+        (WebCore::PluginView::invalidateRegion):
+        (WebCore::PluginView::forceRedraw):
+        (WebCore::PluginView::pushPopupsEnabledState):
+        (WebCore::PluginView::popPopupsEnabledState):
+        (WebCore::PluginView::arePopupsAllowed):
+        (WebCore::PluginView::bindingInstance):
+        (WebCore::PluginView::~PluginView):
+        (WebCore::PluginView::disconnectStream):
+        (WebCore::PluginView::determineQuirks):
+        (WebCore::PluginView::setParameters):
+        (WebCore::PluginView::PluginView):
+        (WebCore::PluginView::init):
+        (WebCore::PluginView::didReceiveResponse):
+        (WebCore::PluginView::didReceiveData):
+        (WebCore::PluginView::didFinishLoading):
+        (WebCore::PluginView::didFail):
+        (WebCore::PluginView::setCallingPlugin):
+        (WebCore::PluginView::isCallingPlugin):
+        * plugins/win/PluginViewWin.h: Removed.
+        * plugins/win/npapi.cpp: Removed.
+
 2008-02-05  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin.

@@ -50,7 +50,7 @@
 #include "Page.h"
 #include "PausedTimeouts.h"
 #include "PlatformScreen.h"
-#include "PlugInInfoStore.h"
+#include "PluginInfoStore.h"
 #include "RenderView.h"
 #include "ScheduledAction.h"
 #include "SecurityOrigin.h"

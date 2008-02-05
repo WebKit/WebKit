@@ -1,3 +1,22 @@
+2008-02-05  Rodney Dawes  <dobey@wayofthemonkey.com>
+
+        Reviewed by Anders Carlsson.
+
+        Part one of http://bugs.webkit.org/show_bug.cgi?id=16924.
+        Shared PluginDatabase, PluginInfoStore and PluginPackage implementations.
+
+        Track WebCore renames.
+
+        * WebFrame.cpp:
+        (WebFrame::createPlugin):
+        (WebFrame::redirectDataToPlugin):
+        (WebFrame::createJavaAppletWidget):
+        (WebFrame::objectContentType):
+        * WebView.cpp:
+        (WebViewWndProc):
+        (WebView::canShowMIMEType):
+        (WebView::addAdditionalPluginPath):
+
 2008-02-05  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin.

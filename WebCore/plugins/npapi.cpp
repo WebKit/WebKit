@@ -25,21 +25,21 @@
 
 #include "config.h"
 
-#include "PlugInInfoStore.h"
-#include "PluginViewWin.h"
+#include "PluginInfoStore.h"
+#include "PluginView.h"
 #include "npapi.h" // #includes <windows.h>
 
 using namespace WebCore;
 
 // The plugin view is always the ndata of the instance,. Sometimes, plug-ins will call an instance-specific function
 // with a NULL instance. To workaround this, call the last plug-in view that made a call to a plug-in.
-// Currently, the current plug-in view is only set before NPP_New in PluginViewWin::start.
+// Currently, the current plug-in view is only set before NPP_New in PluginView::start.
 // This specifically works around Flash and Shockwave. When we call NPP_New, they call NPN_Useragent with a NULL instance.
-static PluginViewWin* pluginViewForInstance(NPP instance)
+static PluginView* pluginViewForInstance(NPP instance)
 {
     if (instance && instance->ndata)
-        return static_cast<PluginViewWin*>(instance->ndata);
-    return PluginViewWin::currentPluginView();
+        return static_cast<PluginView*>(instance->ndata);
+    return PluginView::currentPluginView();
 }
 
 void* NPN_MemAlloc(uint32 size)
@@ -105,7 +105,7 @@ NPError NPN_DestroyStream(NPP instance, NPStream* stream, NPReason reason)
 
 const char* NPN_UserAgent(NPP instance)
 {
-    PluginViewWin* view = pluginViewForInstance(instance);
+    PluginView* view = pluginViewForInstance(instance);
 
      // FIXME: Some plug-ins call NPN_UserAgent with a null instance in their NP_initialize function!
      // We'd need a way to get a user agent without having a frame around.

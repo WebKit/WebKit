@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef PluginPackageWin_H
-#define PluginPackageWin_H
+#ifndef PluginPackage_H
+#define PluginPackage_H
 
 #include <winsock2.h>
 #include <windows.h>
@@ -40,10 +40,10 @@ namespace WebCore {
     typedef HashMap<String, String> MIMEToDescriptionsMap;
     typedef HashMap<String, Vector<String> > MIMEToExtensionsMap;
 
-    class PluginPackageWin : public RefCounted<PluginPackageWin> {
+    class PluginPackage : public RefCounted<PluginPackage> {
     public:
-        ~PluginPackageWin();
-        static PluginPackageWin* createPackage(const String& path, const FILETIME& lastModified);
+        ~PluginPackage();
+        static PluginPackage* createPackage(const String& path, const FILETIME& lastModified);
         
         String name() const { return m_name; }
         String description() const { return m_description; }
@@ -53,8 +53,8 @@ namespace WebCore {
         const MIMEToDescriptionsMap& mimeToDescriptions() const { return m_mimeToDescriptions; }
         const MIMEToExtensionsMap& mimeToExtensions() const { return m_mimeToExtensions; }
 
-        unsigned PluginPackageWin::hash() const;
-        static bool equal(const PluginPackageWin& a, const PluginPackageWin& b);
+        unsigned PluginPackage::hash() const;
+        static bool equal(const PluginPackage& a, const PluginPackage& b);
 
         bool load();
         void unload();
@@ -64,7 +64,7 @@ namespace WebCore {
 
         int compareFileVersion(unsigned compareVersionMS, unsigned compareVersionLS) const;
     private:
-        PluginPackageWin(const String& path, const FILETIME& lastModified);
+        PluginPackage(const String& path, const FILETIME& lastModified);
         bool fetchInfo();
         void storeFileVersion(LPVOID versionInfoData);
         bool isPluginBlacklisted();
@@ -92,16 +92,16 @@ namespace WebCore {
         NPNetscapeFuncs m_browserFuncs;
 
         void freeLibrarySoon();
-        void freeLibraryTimerFired(Timer<PluginPackageWin>*);
-        Timer<PluginPackageWin> m_freeLibraryTimer;
+        void freeLibraryTimerFired(Timer<PluginPackage>*);
+        Timer<PluginPackage> m_freeLibraryTimer;
     };
 
-    struct PluginPackageWinHash {
-        static unsigned hash(const int key) { return reinterpret_cast<PluginPackageWin*>(key)->hash(); }
-        static unsigned hash(const RefPtr<PluginPackageWin>& key) { return key->hash(); }
+    struct PluginPackageHash {
+        static unsigned hash(const int key) { return reinterpret_cast<PluginPackage*>(key)->hash(); }
+        static unsigned hash(const RefPtr<PluginPackage>& key) { return key->hash(); }
 
-        static bool equal(const int a, const int b) { return equal(reinterpret_cast<PluginPackageWin*>(a), reinterpret_cast<PluginPackageWin*>(b)); }
-        static bool equal(const RefPtr<PluginPackageWin>& a, const RefPtr<PluginPackageWin>& b) { return PluginPackageWin::equal(*a.get(), *b.get()); }
+        static bool equal(const int a, const int b) { return equal(reinterpret_cast<PluginPackage*>(a), reinterpret_cast<PluginPackage*>(b)); }
+        static bool equal(const RefPtr<PluginPackage>& a, const RefPtr<PluginPackage>& b) { return PluginPackage::equal(*a.get(), *b.get()); }
         static const bool safeToCompareToEmptyOrDeleted = false;
     };
 
@@ -110,9 +110,9 @@ namespace WebCore {
 // FIXME: This is a workaround for a bug in WTF, where it's impossible to use a custom Hash function but with default traits.
 // It should be possible to do this without a StorageTraits specialization.
 namespace WTF {
-    template<> struct HashKeyStorageTraits<WebCore::PluginPackageWinHash, HashTraits<RefPtr<WebCore::PluginPackageWin> > > {
-        typedef IntTypes<sizeof(RefPtr<WebCore::PluginPackageWin>)>::SignedType IntType;
-        typedef WebCore::PluginPackageWinHash Hash;
+    template<> struct HashKeyStorageTraits<WebCore::PluginPackageHash, HashTraits<RefPtr<WebCore::PluginPackage> > > {
+        typedef IntTypes<sizeof(RefPtr<WebCore::PluginPackage>)>::SignedType IntType;
+        typedef WebCore::PluginPackageHash Hash;
         typedef HashTraits<IntType> Traits;
     };
 }

@@ -45,8 +45,8 @@
 #include "NotImplemented.h"
 #include "Page.h"
 #include "Plugin.h"
-#include "PluginDatabaseWin.h"
-#include "PluginViewWin.h"
+#include "PluginDatabase.h"
+#include "PluginView.h"
 #include "RegularExpression.h"
 #include "RenderFrame.h"
 #include "RenderTableCell.h"
@@ -81,7 +81,7 @@ KJS::Bindings::Instance* Frame::createScriptInstanceForWidget(Widget* widget)
     if (widget->isFrameView())
         return 0;
 
-    return static_cast<PluginViewWin*>(widget)->bindingInstance();
+    return static_cast<PluginView*>(widget)->bindingInstance();
 }
 
 

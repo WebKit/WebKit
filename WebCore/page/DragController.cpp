@@ -51,7 +51,7 @@
 #include "MoveSelectionCommand.h"
 #include "Node.h"
 #include "Page.h"
-#include "PlugInInfoStore.h"
+#include "PluginInfoStore.h"
 #include "RenderFileUploadControl.h"
 #include "RenderImage.h"
 #include "ReplaceSelectionCommand.h"

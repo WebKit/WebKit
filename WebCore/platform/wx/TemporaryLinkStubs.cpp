@@ -63,7 +63,7 @@
 #include "PlatformMenuDescription.h"
 #include "PlatformMouseEvent.h"
 #include "PlatformScrollBar.h"
-#include "PlugInInfoStore.h"
+#include "PluginInfoStore.h"
 #include "PopupMenu.h"
 #include "RenderTheme.h"
 #include "ResourceHandle.h"
@@ -116,10 +116,10 @@ namespace WebCore {
 
 void WebCore::findWordBoundary(UChar const* str,int len,int position,int* start, int* end) { notImplemented(); *start=position; *end=position; }
 
-PluginInfo*PlugInInfoStore::createPluginInfoForPluginAtIndex(unsigned) { notImplemented(); return 0;}
-unsigned PlugInInfoStore::pluginCount() const { notImplemented(); return 0; }
-bool WebCore::PlugInInfoStore::supportsMIMEType(const WebCore::String&) { notImplemented(); return false; }
-String PlugInInfoStore::pluginNameForMIMEType(const String& mimeType) { notImplemented(); return String(); }
+PluginInfo*PluginInfoStore::createPluginInfoForPluginAtIndex(unsigned) { notImplemented(); return 0;}
+unsigned PluginInfoStore::pluginCount() const { notImplemented(); return 0; }
+bool WebCore::PluginInfoStore::supportsMIMEType(const WebCore::String&) { notImplemented(); return false; }
+String PluginInfoStore::pluginNameForMIMEType(const String& mimeType) { notImplemented(); return String(); }
 void WebCore::refreshPlugins(bool) { notImplemented(); }
 
 void Widget::setIsSelected(bool) { notImplemented(); }

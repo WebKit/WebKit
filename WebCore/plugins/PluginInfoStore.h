@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef PlugInInfoStore_h
-#define PlugInInfoStore_h
+#ifndef PluginInfoStore_h
+#define PluginInfoStore_h
 
 #include "PlatformString.h"
 #include <wtf/Vector.h>
@@ -47,7 +47,7 @@ struct PluginInfo {
     Vector<MimeClassInfo*> mimes;
 };
 
-class PlugInInfoStore {
+class PluginInfoStore {
 public:
     PluginInfo *createPluginInfoForPluginAtIndex(unsigned);
     unsigned pluginCount() const;

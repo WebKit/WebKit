@@ -31,7 +31,7 @@
 #include "FrameLoader.h"
 #include "Language.h"
 #include "Page.h"
-#include "PlugInInfoStore.h"
+#include "PluginInfoStore.h"
 #include "Settings.h"
 #include "kjs_window.h"
 #include <kjs/object_object.h>
@@ -231,7 +231,7 @@ void PluginBase::cachePluginDataIfNecessary()
         mimes = new Vector<MimeClassInfo*>;
         
         // read configuration
-        PlugInInfoStore c;
+        PluginInfoStore c;
         unsigned pluginCount = c.pluginCount();
         for (unsigned n = 0; n < pluginCount; n++) {
             PluginInfo* plugin = c.createPluginInfoForPluginAtIndex(n);

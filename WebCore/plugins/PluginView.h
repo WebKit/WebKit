@@ -24,8 +24,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef PluginViewWin_H
-#define PluginViewWin_H
+#ifndef PluginView_H
+#define PluginView_H
 
 #include <winsock2.h>
 #include <windows.h>
@@ -60,8 +60,8 @@ namespace WebCore {
     class MouseEvent;
     class KURL;
     class PluginMessageThrottlerWin;
-    class PluginPackageWin;
-    class PluginRequestWin;
+    class PluginPackage;
+    class PluginRequest;
     class PluginStream;
     class ResourceError;
     class ResourceResponse;
@@ -72,18 +72,18 @@ namespace WebCore {
         PluginStatusLoadedSuccessfully
     };
 
-    class PluginViewWin : public Widget, private PluginStreamClient {
+    class PluginView : public Widget, private PluginStreamClient {
     friend static LRESULT CALLBACK PluginViewWndProc(HWND, UINT, WPARAM, LPARAM);
 
     public:
-        PluginViewWin(Frame* parentFrame, const IntSize&, PluginPackageWin* plugin, Element*, const KURL&, const Vector<String>& paramNames, const Vector<String>& paramValues, const String& mimeType, bool loadManually);
-        virtual ~PluginViewWin();
+        PluginView(Frame* parentFrame, const IntSize&, PluginPackage* plugin, Element*, const KURL&, const Vector<String>& paramNames, const Vector<String>& paramValues, const String& mimeType, bool loadManually);
+        virtual ~PluginView();
 
-        PluginPackageWin* plugin() const { return m_plugin.get(); }
+        PluginPackage* plugin() const { return m_plugin.get(); }
         NPP instance() const { return m_instance; }
 
         void setNPWindowRect(const IntRect&);
-        static PluginViewWin* currentPluginView();
+        static PluginView* currentPluginView();
 
         KJS::Bindings::Instance* bindingInstance();
 
@@ -142,11 +142,11 @@ namespace WebCore {
         void init();
         bool start();
         void stop();
-        static void setCurrentPluginView(PluginViewWin*);
+        static void setCurrentPluginView(PluginView*);
         NPError load(const FrameLoadRequest&, bool sendNotification, void* notifyData);
         NPError handlePost(const char* url, const char* target, uint32 len, const char* buf, bool file, void* notifyData, bool sendNotification, bool allowHeaders);
         void setCallingPlugin(bool) const;
-        RefPtr<PluginPackageWin> m_plugin;
+        RefPtr<PluginPackage> m_plugin;
         Element* m_element;
         Frame* m_parentFrame;
         bool m_isStarted;
@@ -155,15 +155,15 @@ namespace WebCore {
         PluginStatus m_status;
         Vector<IntRect> m_invalidRects;
 
-        void performRequest(PluginRequestWin*);
-        void scheduleRequest(PluginRequestWin*);
-        void requestTimerFired(Timer<PluginViewWin>*);
-        void invalidateTimerFired(Timer<PluginViewWin>*);
-        Timer<PluginViewWin> m_requestTimer;
-        Timer<PluginViewWin> m_invalidateTimer;
+        void performRequest(PluginRequest*);
+        void scheduleRequest(PluginRequest*);
+        void requestTimerFired(Timer<PluginView>*);
+        void invalidateTimerFired(Timer<PluginView>*);
+        Timer<PluginView> m_requestTimer;
+        Timer<PluginView> m_invalidateTimer;
 
-        void popPopupsStateTimerFired(Timer<PluginViewWin>*);
-        Timer<PluginViewWin> m_popPopupsStateTimer;
+        void popPopupsStateTimerFired(Timer<PluginView>*);
+        Timer<PluginView> m_popPopupsStateTimer;
 
         bool dispatchNPEvent(NPEvent&);
         OwnPtr<PluginMessageThrottlerWin> m_messageThrottler;
@@ -190,7 +190,7 @@ namespace WebCore {
         Vector<bool, 4> m_popupStateStack;
 
         HashSet<RefPtr<PluginStream> > m_streams;
-        Vector<PluginRequestWin*> m_requests;
+        Vector<PluginRequest*> m_requests;
 
         PluginQuirkSet m_quirks;
         bool m_isWindowed;
@@ -210,7 +210,7 @@ namespace WebCore {
         bool m_loadManually;
         RefPtr<PluginStream> m_manualStream;
 
-        static PluginViewWin* s_currentPluginView;
+        static PluginView* s_currentPluginView;
     };
 
 } // namespace WebCore

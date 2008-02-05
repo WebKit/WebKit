@@ -59,7 +59,7 @@
 #include "NotImplemented.h"
 #include "Path.h"
 #include "PlatformMouseEvent.h"
-#include "PlugInInfoStore.h"
+#include "PluginInfoStore.h"
 #include "RenderTheme.h"
 #include "SystemTime.h"
 #include "TextBoundaries.h"

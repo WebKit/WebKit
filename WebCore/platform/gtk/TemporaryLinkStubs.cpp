@@ -33,7 +33,7 @@
 #include "FTPDirectoryDocument.h"
 #include "GlobalHistory.h"
 #include "NotImplemented.h"
-#include "PlugInInfoStore.h"
+#include "PluginInfoStore.h"
 
 using namespace WebCore;
 
@@ -57,10 +57,10 @@ Vector<char> loadResourceIntoArray(const char* resourceName)
 
 bool WebCore::historyContains(const UChar*, unsigned) { return false; }
 
-PluginInfo* PlugInInfoStore::createPluginInfoForPluginAtIndex(unsigned) { notImplemented(); return 0;}
-unsigned PlugInInfoStore::pluginCount() const { notImplemented(); return 0; }
-String PlugInInfoStore::pluginNameForMIMEType(const String& mimeType) { notImplemented(); return String(); }
-bool WebCore::PlugInInfoStore::supportsMIMEType(const WebCore::String&) { notImplemented(); return false; }
+PluginInfo* PluginInfoStore::createPluginInfoForPluginAtIndex(unsigned) { notImplemented(); return 0;}
+unsigned PluginInfoStore::pluginCount() const { notImplemented(); return 0; }
+String PluginInfoStore::pluginNameForMIMEType(const String& mimeType) { notImplemented(); return String(); }
+bool WebCore::PluginInfoStore::supportsMIMEType(const WebCore::String&) { notImplemented(); return false; }
 void WebCore::refreshPlugins(bool) { notImplemented(); }
 
 

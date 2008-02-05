@@ -24,17 +24,17 @@
  */
 
 #include "config.h"
-#include "PlugInInfoStore.h"
-#include "PluginDatabaseWin.h"
-#include "PluginPackageWin.h"
+#include "PluginInfoStore.h"
+#include "PluginDatabase.h"
+#include "PluginPackage.h"
 
 namespace WebCore {
 
-PluginInfo* PlugInInfoStore::createPluginInfoForPluginAtIndex(unsigned i) 
+PluginInfo* PluginInfoStore::createPluginInfoForPluginAtIndex(unsigned i) 
 { 
-    PluginDatabaseWin *db = PluginDatabaseWin::installedPlugins();
+    PluginDatabase *db = PluginDatabase::installedPlugins();
     PluginInfo* info = new PluginInfo;
-    PluginPackageWin* package = db->plugins()[i];
+    PluginPackage* package = db->plugins()[i];
 
     info->name = package->name();
     info->file = package->fileName();
@@ -63,27 +63,27 @@ PluginInfo* PlugInInfoStore::createPluginInfoForPluginAtIndex(unsigned i)
     return info;
 }
 
-unsigned PlugInInfoStore::pluginCount() const
+unsigned PluginInfoStore::pluginCount() const
 {
-    return PluginDatabaseWin::installedPlugins()->plugins().size();
+    return PluginDatabase::installedPlugins()->plugins().size();
 }
 
 
-String PlugInInfoStore::pluginNameForMIMEType(const String& mimeType)
+String PluginInfoStore::pluginNameForMIMEType(const String& mimeType)
 {
     // FIXME 5629139: Implement this method on Windows.
     return String();
 }
 
     
-bool PlugInInfoStore::supportsMIMEType(const WebCore::String& mimeType) 
+bool PluginInfoStore::supportsMIMEType(const WebCore::String& mimeType) 
 {
-    return PluginDatabaseWin::installedPlugins()->isMIMETypeRegistered(mimeType);
+    return PluginDatabase::installedPlugins()->isMIMETypeRegistered(mimeType);
 }
 
 void refreshPlugins(bool reloadOpenPages)
 {
-    PluginDatabaseWin::installedPlugins()->refresh();
+    PluginDatabase::installedPlugins()->refresh();
 
     if (reloadOpenPages) {
         // FIXME: reload open pages

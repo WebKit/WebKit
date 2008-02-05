@@ -3275,10 +3275,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\platform\PlugInInfoStore.h"
-				>
-			</File>
-			<File
 				RelativePath="..\platform\PopupMenu.h"
 				>
 			</File>
@@ -7933,11 +7929,31 @@
 			Name="plugins"
 			>
 			<File
+				RelativePath="..\plugins\npapi.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\plugins\npfunctions.h"
 				>
 			</File>
 			<File
+				RelativePath="..\plugins\PluginDatabase.h"
+				>
+			</File>
+			<File
 				RelativePath="..\plugins\PluginDebug.h"
+				>
+			</File>
+			<File
+				RelativePath="..\plugins\PluginInfoStore.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\plugins\PluginInfoStore.h"
+				>
+			</File>
+			<File
+				RelativePath="..\plugins\PluginPackage.h"
 				>
 			</File>
 			<File
@@ -7952,23 +7968,15 @@
 				RelativePath="..\plugins\PluginStream.h"
 				>
 			</File>
+			<File
+				RelativePath="..\plugins\PluginView.h"
+				>
+			</File>
 			<Filter
 				Name="win"
 				>
 				<File
-					RelativePath="..\plugins\win\npapi.cpp"
-					>
-				</File>
-				<File
 					RelativePath="..\plugins\win\PluginDatabaseWin.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\plugins\win\PluginDatabaseWin.h"
-					>
-				</File>
-				<File
-					RelativePath="..\plugins\win\PlugInInfoStoreWin.cpp"
 					>
 				</File>
 				<File
@@ -7976,15 +7984,7 @@
 					>
 				</File>
 				<File
-					RelativePath="..\plugins\win\PluginPackageWin.h"
-					>
-				</File>
-				<File
 					RelativePath="..\plugins\win\PluginViewWin.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\plugins\win\PluginViewWin.h"
 					>
 				</File>
 			</Filter>

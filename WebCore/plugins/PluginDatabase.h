@@ -23,14 +23,14 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef PluginDatabaseWin_H
-#define PluginDatabaseWin_H
+#ifndef PluginDatabase_H
+#define PluginDatabase_H
 
 #include <wtf/Vector.h>
 #include <wtf/HashSet.h>
 
 #include "PlatformString.h"
-#include "PluginPackageWin.h"
+#include "PluginPackage.h"
 #include "StringHash.h"
 
 namespace WebCore {
@@ -38,26 +38,26 @@ namespace WebCore {
     class Frame;
     class IntSize;
     class KURL;
-    class PluginPackageWin;
-    class PluginViewWin;
+    class PluginPackage;
+    class PluginView;
 
-    typedef HashSet<RefPtr<PluginPackageWin>, PluginPackageWinHash> PluginSet;
+    typedef HashSet<RefPtr<PluginPackage>, PluginPackageHash> PluginSet;
   
-    class PluginDatabaseWin {
+    class PluginDatabase {
     public:
-        static PluginDatabaseWin* installedPlugins();
-        PluginViewWin* createPluginView(Frame* parentFrame, const IntSize&, Element* element, const KURL& url, const Vector<String>& paramNames, const Vector<String>& paramValues, const String& mimeType, bool loadManually);
+        static PluginDatabase* installedPlugins();
+        PluginView* createPluginView(Frame* parentFrame, const IntSize&, Element* element, const KURL& url, const Vector<String>& paramNames, const Vector<String>& paramValues, const String& mimeType, bool loadManually);
 
         bool refresh();
-        Vector<PluginPackageWin*> plugins() const;
+        Vector<PluginPackage*> plugins() const;
         bool isMIMETypeRegistered(const String& mimeType);
         void addExtraPluginPath(const String&);
     private:
         void setPluginPaths(const Vector<String>& paths) { m_pluginPaths = paths; }
         PluginSet getPluginsInPaths() const;
 
-        PluginPackageWin* findPlugin(const KURL& url, String& mimeType);
-        PluginPackageWin* pluginForMIMEType(const String& mimeType);
+        PluginPackage* findPlugin(const KURL& url, String& mimeType);
+        PluginPackage* pluginForMIMEType(const String& mimeType);
         String MIMETypeForExtension(const String& extension) const;
 
         static Vector<String> defaultPluginPaths();

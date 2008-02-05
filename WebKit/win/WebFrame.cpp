@@ -87,9 +87,9 @@
 #include <WebCore/NotImplemented.h>
 #include <WebCore/Page.h>
 #include <WebCore/PlatformKeyboardEvent.h>
-#include <WebCore/PlugInInfoStore.h>
-#include <WebCore/PluginDatabaseWin.h>
-#include <WebCore/PluginViewWin.h>
+#include <WebCore/PluginInfoStore.h>
+#include <WebCore/PluginDatabase.h>
+#include <WebCore/PluginView.h>
 #include <WebCore/ResourceHandle.h>
 #include <WebCore/ResourceHandleWin.h>
 #include <WebCore/ResourceRequest.h>
@@ -435,7 +435,7 @@ public:
     COMPtr<WebFramePolicyListener> m_policyListener;
     
     // Points to the plugin view that data should be redirected to.
-    PluginViewWin* m_pluginView;
+    PluginView* m_pluginView;
     bool m_hasSentResponseToPlugin;
 };
 
@@ -2340,7 +2340,7 @@ PassRefPtr<Frame> WebFrame::createFrame(const KURL& url, const String& name, HTM
 
 Widget* WebFrame::createPlugin(const IntSize& pluginSize, Element* element, const KURL& url, const Vector<String>& paramNames, const Vector<String>& paramValues, const String& mimeType, bool loadManually)
 {
-    PluginViewWin* pluginView = PluginDatabaseWin::installedPlugins()->createPluginView(core(this), pluginSize, element, url, paramNames, paramValues, mimeType, loadManually);
+    PluginView* pluginView = PluginDatabase::installedPlugins()->createPluginView(core(this), pluginSize, element, url, paramNames, paramValues, mimeType, loadManually);
 
     if (pluginView->status() == PluginStatusLoadedSuccessfully)
         return pluginView;
@@ -2405,12 +2405,12 @@ void WebFrame::redirectDataToPlugin(Widget* pluginWidget)
 {
     // Ideally, this function shouldn't be necessary, see <rdar://problem/4852889>
 
-    d->m_pluginView = static_cast<PluginViewWin*>(pluginWidget);
+    d->m_pluginView = static_cast<PluginView*>(pluginWidget);
 }
 
 Widget* WebFrame::createJavaAppletWidget(const IntSize& pluginSize, Element* element, const KURL& /*baseURL*/, const Vector<String>& paramNames, const Vector<String>& paramValues)
 {
-    PluginViewWin* pluginView = PluginDatabaseWin::installedPlugins()->
+    PluginView* pluginView = PluginDatabase::installedPlugins()->
         createPluginView(core(this), pluginSize, element, KURL(), paramNames, paramValues, "application/x-java-applet", false);
 
     // Check if the plugin can be loaded successfully
@@ -2443,7 +2443,7 @@ ObjectContentType WebFrame::objectContentType(const KURL& url, const String& mim
     if (MIMETypeRegistry::isSupportedImageMIMEType(mimeType))
         return WebCore::ObjectContentImage;
 
-    if (PluginDatabaseWin::installedPlugins()->isMIMETypeRegistered(mimeType))
+    if (PluginDatabase::installedPlugins()->isMIMETypeRegistered(mimeType))
         return WebCore::ObjectContentNetscapePlugin;
 
     if (MIMETypeRegistry::isSupportedNonImageMIMEType(mimeType))

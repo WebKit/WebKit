@@ -41,7 +41,7 @@
 #include <windows.h>
 
 #if PLATFORM(WIN)
-#include "PluginViewWin.h"
+#include "PluginView.h"
 #endif
 
 namespace WebCore {
@@ -62,7 +62,7 @@ LRESULT CALLBACK TimerWindowWndProc(HWND hWnd, UINT message, WPARAM wParam, LPAR
     // to us at inappropriate times and we will crash if we handle them when
     // they are delivered. We repost all messages so that we will get to handle
     // them once the modal loop exits.
-    if (PluginViewWin::isCallingPlugin()) {
+    if (PluginView::isCallingPlugin()) {
         PostMessage(hWnd, message, wParam, lParam);
         return 0;
     }

@@ -26,7 +26,7 @@
 #include <shlwapi.h>
 
 #include "config.h"
-#include "PluginPackageWin.h"
+#include "PluginPackage.h"
 
 #include "Timer.h"
 #include "DeprecatedString.h"
@@ -35,7 +35,7 @@
 
 namespace WebCore {
 
-PluginPackageWin::~PluginPackageWin()
+PluginPackage::~PluginPackage()
 {
     ASSERT(!m_isLoaded);
 }
@@ -83,7 +83,7 @@ static Vector<String> splitString(const String& str, char delimiter, int padTo)
     return result;
 }
 
-void PluginPackageWin::freeLibrarySoon()
+void PluginPackage::freeLibrarySoon()
 {
     ASSERT(!m_freeLibraryTimer.isActive());
     ASSERT(m_module);
@@ -92,7 +92,7 @@ void PluginPackageWin::freeLibrarySoon()
     m_freeLibraryTimer.startOneShot(0);
 }
 
-void PluginPackageWin::freeLibraryTimerFired(Timer<PluginPackageWin>* /*timer*/)
+void PluginPackage::freeLibraryTimerFired(Timer<PluginPackage>* /*timer*/)
 {
     ASSERT(m_module);
     ASSERT(m_loadCount == 0);
@@ -101,13 +101,13 @@ void PluginPackageWin::freeLibraryTimerFired(Timer<PluginPackageWin>* /*timer*/)
     m_module = 0;
 }
 
-PluginPackageWin::PluginPackageWin(const String& path, const FILETIME& lastModified)
+PluginPackage::PluginPackage(const String& path, const FILETIME& lastModified)
     : m_path(path)
     , m_module(0)
     , m_lastModified(lastModified)
     , m_isLoaded(false)
     , m_loadCount(0)
-    , m_freeLibraryTimer(this, &PluginPackageWin::freeLibraryTimerFired)
+    , m_freeLibraryTimer(this, &PluginPackage::freeLibraryTimerFired)
     , m_fileVersionLS(0)
     , m_fileVersionMS(0)
 {
@@ -115,7 +115,7 @@ PluginPackageWin::PluginPackageWin(const String& path, const FILETIME& lastModif
     m_parentDirectory = m_path.left(m_path.length() - m_fileName.length() - 1);
 }
 
-int PluginPackageWin::compareFileVersion(unsigned compareVersionMS, unsigned compareVersionLS) const
+int PluginPackage::compareFileVersion(unsigned compareVersionMS, unsigned compareVersionLS) const
 {
     // return -1, 0, or 1 if plug-in version is less than, equal to, or greater than
     // the passed version
@@ -126,7 +126,7 @@ int PluginPackageWin::compareFileVersion(unsigned compareVersionMS, unsigned com
     return 0;
 }
 
-void PluginPackageWin::storeFileVersion(LPVOID versionInfoData)
+void PluginPackage::storeFileVersion(LPVOID versionInfoData)
 {
     VS_FIXEDFILEINFO* info;
     UINT infoSize;
@@ -136,7 +136,7 @@ void PluginPackageWin::storeFileVersion(LPVOID versionInfoData)
     m_fileVersionMS = info->dwFileVersionMS;
 }
 
-bool PluginPackageWin::isPluginBlacklisted()
+bool PluginPackage::isPluginBlacklisted()
 {
     static const unsigned silverlightPluginMinRequiredVersionMS = 0x00010000;
     static const unsigned silverlightPluginMinRequiredVersionLS = 0x51BE0000;
@@ -154,7 +154,7 @@ bool PluginPackageWin::isPluginBlacklisted()
     return false;
 }
 
-bool PluginPackageWin::fetchInfo()
+bool PluginPackage::fetchInfo()
 {
     DWORD versionInfoSize, zeroHandle;
     versionInfoSize = GetFileVersionInfoSizeW(m_path.charactersWithNullTermination(), &zeroHandle); 
@@ -211,7 +211,7 @@ bool PluginPackageWin::fetchInfo()
     return true;
 }
 
-bool PluginPackageWin::load()
+bool PluginPackage::load()
 {
     if (m_freeLibraryTimer.isActive()) {
         ASSERT(m_module);
@@ -325,7 +325,7 @@ abort:
     return false;
 }
 
-void PluginPackageWin::unload()
+void PluginPackage::unload()
 {
     if (!m_isLoaded)
         return;
@@ -338,7 +338,7 @@ void PluginPackageWin::unload()
     unloadWithoutShutdown();
 }
 
-void PluginPackageWin::unloadWithoutShutdown()
+void PluginPackage::unloadWithoutShutdown()
 {
     if (!m_isLoaded)
         return;
@@ -357,9 +357,9 @@ void PluginPackageWin::unloadWithoutShutdown()
     m_isLoaded = false;
 }
 
-PluginPackageWin* PluginPackageWin::createPackage(const String& path, const FILETIME& lastModified)
+PluginPackage* PluginPackage::createPackage(const String& path, const FILETIME& lastModified)
 {
-    PluginPackageWin* package = new PluginPackageWin(path, lastModified);
+    PluginPackage* package = new PluginPackage(path, lastModified);
 
     if (!package->fetchInfo()) {
         delete package;
@@ -369,7 +369,7 @@ PluginPackageWin* PluginPackageWin::createPackage(const String& path, const FILE
     return package;
 }
 
-unsigned PluginPackageWin::hash() const
+unsigned PluginPackage::hash() const
 { 
     unsigned hashCodes[3] = {
         m_description.impl()->hash(),
@@ -380,7 +380,7 @@ unsigned PluginPackageWin::hash() const
     return StringImpl::computeHash(reinterpret_cast<UChar*>(hashCodes), 3 * sizeof(unsigned) / sizeof(UChar));
 }
 
-bool PluginPackageWin::equal(const PluginPackageWin& a, const PluginPackageWin& b)
+bool PluginPackage::equal(const PluginPackage& a, const PluginPackage& b)
 {
     return a.m_description == b.m_description && (CompareFileTime(&a.m_lastModified, &b.m_lastModified) == 0);
 }
