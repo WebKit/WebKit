@@ -35,19 +35,28 @@
 #endif
 
 #ifndef WEBKIT_API
-#define WEBKIT_API
+    #define WEBKIT_API
 #endif
 
 G_BEGIN_DECLS
 
+typedef struct _WebKitNetworkRequest WebKitNetworkRequest;
+typedef struct _WebKitNetworkRequestClass WebKitNetworkRequestClass;
+
+typedef struct _WebKitWebBackForwardList WebKitWebBackForwardList;
+typedef struct _WebKitWebBackForwardListClass WebKitWebBackForwardListClass;
+
+typedef struct _WebKitWebHistoryItem WebKitWebHistoryItem;
+typedef struct _WebKitWebHistoryItemClass WebKitWebHistoryItemClass;
+
 typedef struct _WebKitWebFrame WebKitWebFrame;
 typedef struct _WebKitWebFrameClass WebKitWebFrameClass;
 
+typedef struct _WebKitWebSettings WebKitWebSettings;
+typedef struct _WebKitWebSettingsClass WebKitWebSettingsClass;
+
 typedef struct _WebKitWebView WebKitWebView;
 typedef struct _WebKitWebViewClass WebKitWebViewClass;
-
-typedef struct _WebKitNetworkRequest WebKitNetworkRequest;
-typedef struct _WebKitNetworkRequestClass WebKitNetworkRequestClass;
 
 G_END_DECLS
 

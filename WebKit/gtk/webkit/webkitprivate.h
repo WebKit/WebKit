@@ -22,8 +22,7 @@
 #define WEBKIT_PRIVATE_H
 
 /*
- * Internal class. This class knows the shared secret of WebKitWebFrame,
- * WebKitNetworkRequest and WebKitWebView.
+ * This file knows the shared secret of WebKitWebView and WebKitWebFrame.
  * They are using WebCore which musn't be exposed to the outer world.
  */
 
@@ -90,7 +89,7 @@ extern "C" {
     #define WEBKIT_WEB_FRAME_GET_PRIVATE(obj)    (G_TYPE_INSTANCE_GET_PRIVATE((obj), WEBKIT_TYPE_WEB_FRAME, WebKitWebFramePrivate))
     typedef struct _WebKitWebFramePrivate WebKitWebFramePrivate;
     struct _WebKitWebFramePrivate {
-        WebCore::Frame* frame;
+        WebCore::Frame* coreFrame;
         WebCore::FrameLoaderClient* client;
         WebKitWebView* webView;
 
@@ -105,15 +104,13 @@ extern "C" {
         gchar* uri;
     };
 
-    /* WebKitWebFrame private function */
-    WebKitWebFrame* webkit_web_frame_init_with_web_view(WebKitWebView*, WebCore::HTMLFrameOwnerElement*);
+    WebKitWebFrame*
+    webkit_web_frame_init_with_web_view(WebKitWebView*, WebCore::HTMLFrameOwnerElement*);
 
-    /* WebKitWebHistoryItem private function */
-    WebKitWebHistoryItem* webkit_web_history_item_new_with_core_item(WebCore::HistoryItem*);
+    WebKitWebHistoryItem*
+    webkit_web_history_item_new_with_core_item(WebCore::HistoryItem*);
 
-
-    // TODO: Move these to webkitwebframe.h once these functions are fully
-    // implemented and their API has been discussed.
+    // FIXME: Move these to webkitwebframe.h once their API has been discussed.
 
     WEBKIT_API GSList*
     webkit_web_frame_get_children (WebKitWebFrame* frame);

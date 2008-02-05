@@ -63,12 +63,13 @@ WebKitWebBackForwardList* webkit_web_back_forward_list_new_with_web_view(WebKitW
 {
     g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), NULL);
 
-    WebKitWebViewPrivate* webViewData = WEBKIT_WEB_VIEW_GET_PRIVATE(webView);
     WebKitWebBackForwardList* webBackForwardList;
 
     webBackForwardList = WEBKIT_WEB_BACK_FORWARD_LIST(g_object_new(WEBKIT_TYPE_WEB_BACK_FORWARD_LIST, NULL));
-    webBackForwardList->priv->backForwardList = webViewData->corePage->backForwardList();
-    webBackForwardList->priv->backForwardList->setEnabled(TRUE);
+    WebKitWebBackForwardListPrivate* priv = webBackForwardList->priv;
+
+    priv->backForwardList = core(webView)->backForwardList();
+    priv->backForwardList->setEnabled(TRUE);
 
     return webBackForwardList;
 }

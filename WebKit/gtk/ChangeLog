@@ -1,3 +1,50 @@
+2008-02-04  Christian Dywan  <christian@imendio.com>
+
+        Reviewed by Alp Toker.
+
+        http://bugs.webkit.org/show_bug.cgi?id=17065
+        [GTK] Use a consistent coding style
+
+        * WebCoreSupport/EditorClientGtk.cpp:
+        (WebKit::imContextCommitted):
+        (WebKit::EditorClient::EditorClient):
+        (WebKit::EditorClient::~EditorClient):
+        (WebKit::EditorClient::textFieldDidEndEditing):
+        * webkit/webkitdefines.h:
+        * webkit/webkitnetworkrequest.cpp:
+        (_WebKitNetworkRequestPrivate::webkit_network_request_finalize):
+        (_WebKitNetworkRequestPrivate::webkit_network_request_class_init):
+        (_WebKitNetworkRequestPrivate::webkit_network_request_init):
+        (_WebKitNetworkRequestPrivate::webkit_network_request_new):
+        (_WebKitNetworkRequestPrivate::webkit_network_request_set_uri):
+        (_WebKitNetworkRequestPrivate::webkit_network_request_get_uri):
+        * webkit/webkitnetworkrequest.h:
+        * webkit/webkitprivate.cpp:
+        (WebKit::getViewFromFrame):
+        (WebKit::core):
+        * webkit/webkitprivate.h:
+        * webkit/webkitwebbackforwardlist.cpp:
+        (_WebKitWebBackForwardListPrivate::webkit_web_back_forward_list_new_with_web_view):
+        * webkit/webkitwebbackforwardlist.h:
+        * webkit/webkitwebframe.cpp:
+        * webkit/webkitwebframe.h:
+        * webkit/webkitwebhistoryitem.cpp:
+        (_WebKitWebHistoryItemPrivate::webkit_web_history_item_dispose):
+        (_WebKitWebHistoryItemPrivate::webkit_web_history_item_finalize):
+        (_WebKitWebHistoryItemPrivate::webkit_web_history_item_new_with_core_item):
+        (_WebKitWebHistoryItemPrivate::webkit_web_history_item_new):
+        (_WebKitWebHistoryItemPrivate::webkit_web_history_item_new_with_data):
+        (_WebKitWebHistoryItemPrivate::webkit_web_history_item_get_title):
+        (_WebKitWebHistoryItemPrivate::webkit_web_history_item_get_alternate_title):
+        (_WebKitWebHistoryItemPrivate::webkit_web_history_item_set_alternate_title):
+        (_WebKitWebHistoryItemPrivate::webkit_web_history_item_get_uri):
+        (_WebKitWebHistoryItemPrivate::webkit_web_history_item_get_original_uri):
+        (WebKit::core):
+        * webkit/webkitwebhistoryitem.h:
+        * webkit/webkitwebsettings.h:
+        * webkit/webkitwebview.cpp:
+        * webkit/webkitwebview.h:
+
 2008-02-04  Alp Toker  <alp@atoker.com>
 
         Rubber-stamped by Mark Rowe.

@@ -35,21 +35,16 @@ G_BEGIN_DECLS
 #define WEBKIT_IS_WEB_BACK_FORWARD_LIST_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE((klass),  WEBKIT_TYPE_WEB_BACK_FORWARD_LIST))
 #define WEBKIT_WEB_BACK_FORWARD_LIST_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS((obj),  WEBKIT_TYPE_WEB_BACK_FORWARD_LIST, WebKitWebBackForwardListClass))
 
-
 typedef struct _WebKitWebBackForwardListPrivate WebKitWebBackForwardListPrivate;
-typedef struct _WebKitWebBackForwardList WebKitWebBackForwardList;
-typedef struct _WebKitWebBackForwardListClass WebKitWebBackForwardListClass;
-
 
 struct _WebKitWebBackForwardList {
-    GObject parent;
+    GObject parent_instance;
 
-    /*< private >*/
-    WebKitWebBackForwardListPrivate *priv;
+    WebKitWebBackForwardListPrivate* priv;
 };
 
 struct _WebKitWebBackForwardListClass {
-    GObjectClass parent;
+    GObjectClass parent_class;
 };
 
 WEBKIT_API GType

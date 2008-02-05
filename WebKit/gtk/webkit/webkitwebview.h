@@ -37,6 +37,7 @@ G_BEGIN_DECLS
 #define WEBKIT_IS_WEB_VIEW_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE((klass),  WEBKIT_TYPE_WEB_VIEW))
 #define WEBKIT_WEB_VIEW_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS((obj),  WEBKIT_TYPE_WEB_VIEW, WebKitWebViewClass))
 
+typedef struct _WebKitWebViewPrivate WebKitWebViewPrivate;
 
 typedef enum {
     WEBKIT_NAVIGATION_RESPONSE_ACCEPT,
@@ -51,11 +52,13 @@ typedef enum
 } WebKitWebViewTargetInfo;
 
 struct _WebKitWebView {
-    GtkContainer parent;
+    GtkContainer parent_instance;
+
+    WebKitWebViewPrivate* priv;
 };
 
 struct _WebKitWebViewClass {
-    GtkContainerClass parent;
+    GtkContainerClass parent_class;
 
     /*
      * default handler/virtual methods

@@ -25,6 +25,7 @@
 #include <JavaScriptCore/JSBase.h>
 
 #include <webkit/webkitdefines.h>
+#include <webkit/webkitnetworkrequest.h>
 
 G_BEGIN_DECLS
 
@@ -35,13 +36,16 @@ G_BEGIN_DECLS
 #define WEBKIT_IS_WEB_FRAME_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE((klass),  WEBKIT_TYPE_WEB_FRAME))
 #define WEBKIT_WEB_FRAME_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS((obj),  WEBKIT_TYPE_WEB_FRAME, WebKitWebFrameClass))
 
+typedef struct _WebKitWebFramePrivate WebKitWebFramePrivate;
 
 struct _WebKitWebFrame {
-    GObject parent;
+    GObject parent_instance;
+
+    WebKitWebFramePrivate* priv;
 };
 
 struct _WebKitWebFrameClass {
-    GObjectClass parent;
+    GObjectClass parent_class;
 
     void (*_webkit_reserved1) (void);
     void (*_webkit_reserved2) (void);

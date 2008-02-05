@@ -35,21 +35,16 @@ G_BEGIN_DECLS
 #define WEBKIT_IS_WEB_HISTORY_ITEM_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE((klass),  WEBKIT_TYPE_WEB_HISTORY_ITEM))
 #define WEBKIT_WEB_HISTORY_ITEM_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS((obj),  WEBKIT_TYPE_WEB_HISTORY_ITEM, WebKitWebHistoryItemClass))
 
-
 typedef struct _WebKitWebHistoryItemPrivate WebKitWebHistoryItemPrivate;
-typedef struct _WebKitWebHistoryItem WebKitWebHistoryItem;
-typedef struct _WebKitWebHistoryItemClass WebKitWebHistoryItemClass;
-
 
 struct _WebKitWebHistoryItem {
-    GObject parent;
+    GObject parent_instance;
 
-    /*< private >*/
     WebKitWebHistoryItemPrivate* priv;
 };
 
 struct _WebKitWebHistoryItemClass {
-    GObjectClass parent;
+    GObjectClass parent_class;
 };
 
 WEBKIT_API GType

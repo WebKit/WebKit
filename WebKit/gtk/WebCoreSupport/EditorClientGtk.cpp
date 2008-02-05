@@ -36,8 +36,7 @@ namespace WebKit {
 
 static void imContextCommitted(GtkIMContext* context, const char* str, EditorClient* client)
 {
-    WebKitWebViewPrivate* webViewData = WEBKIT_WEB_VIEW_GET_PRIVATE(client->m_webView);
-    Frame* frame = webViewData->corePage->focusController()->focusedOrMainFrame();
+    Frame* frame = core(client->m_webView)->focusController()->focusedOrMainFrame();
     frame->editor()->insertTextWithoutSendingTextEvent(str, false);
 }
 
@@ -353,14 +352,14 @@ void EditorClient::handleInputMethodKeydown(KeyboardEvent*)
 EditorClient::EditorClient(WebKitWebView* webView)
     : m_webView(webView)
 {
-    WebKitWebViewPrivate* webViewData = WEBKIT_WEB_VIEW_GET_PRIVATE(m_webView);
-    g_signal_connect(webViewData->imContext, "commit", G_CALLBACK(imContextCommitted), this);
+    WebKitWebViewPrivate* priv = m_webView->priv;
+    g_signal_connect(priv->imContext, "commit", G_CALLBACK(imContextCommitted), this);
 }
 
 EditorClient::~EditorClient()
 {
-    WebKitWebViewPrivate* webViewData = WEBKIT_WEB_VIEW_GET_PRIVATE(m_webView);
-    g_signal_handlers_disconnect_by_func(webViewData->imContext, (gpointer)imContextCommitted, this);
+    WebKitWebViewPrivate* priv = m_webView->priv;
+    g_signal_handlers_disconnect_by_func(priv->imContext, (gpointer)imContextCommitted, this);
 }
 
 void EditorClient::textFieldDidBeginEditing(Element*)
@@ -370,11 +369,11 @@ void EditorClient::textFieldDidBeginEditing(Element*)
 
 void EditorClient::textFieldDidEndEditing(Element*)
 {
-    WebKitWebViewPrivate* webViewData = WEBKIT_WEB_VIEW_GET_PRIVATE(m_webView);
+    WebKitWebViewPrivate* priv = m_webView->priv;
 
-    gtk_im_context_focus_out(webViewData->imContext);
+    gtk_im_context_focus_out(priv->imContext);
 #ifdef MAEMO_CHANGES
-    hildon_gtk_im_context_hide(webViewData->imContext);
+    hildon_gtk_im_context_hide(priv->imContext);
 #endif
 }
 
