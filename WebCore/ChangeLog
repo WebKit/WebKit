@@ -1,3 +1,14 @@
+2008-02-05  Mark Rowe  <mrowe@apple.com>
+
+        Mac build fix.  Update the Xcode project to follow a moved file,
+        and track a rename in two files that were missed earlier.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * page/mac/WebCoreFrameBridge.mm:
+        (-[WebCoreFrameBridge canProvideDocumentSource]):
+        * platform/mac/PlugInInfoStoreMac.mm:
+        (WebCore::PluginInfoStore::pluginNameForMIMEType):
+
 2008-02-05  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Holger.

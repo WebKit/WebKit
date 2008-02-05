@@ -24,7 +24,7 @@
  */
 
 #import "config.h"
-#import "PlugInInfoStore.h"
+#import "PluginInfoStore.h"
 
 #import "BlockExceptions.h"
 #import "Logging.h"
@@ -32,12 +32,12 @@
 
 namespace WebCore {
 
-String PlugInInfoStore::pluginNameForMIMEType(const String& mimeType)
+String PluginInfoStore::pluginNameForMIMEType(const String& mimeType)
 {
     return [[WebCoreViewFactory sharedFactory] pluginNameForMIMEType:mimeType];
 }
 
-PluginInfo *PlugInInfoStore::createPluginInfoForPluginAtIndex(unsigned index)
+PluginInfo *PluginInfoStore::createPluginInfoForPluginAtIndex(unsigned index)
 {
     PluginInfo *pluginInfo = new PluginInfo;
     
@@ -70,7 +70,7 @@ PluginInfo *PlugInInfoStore::createPluginInfoForPluginAtIndex(unsigned index)
     return 0;
 }
 
-unsigned PlugInInfoStore::pluginCount() const
+unsigned PluginInfoStore::pluginCount() const
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
     return [[[WebCoreViewFactory sharedFactory] pluginsInfo] count];
@@ -79,7 +79,7 @@ unsigned PlugInInfoStore::pluginCount() const
     return 0;
 }
 
-bool PlugInInfoStore::supportsMIMEType(const String& mimeType)
+bool PluginInfoStore::supportsMIMEType(const String& mimeType)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
     return [[WebCoreViewFactory sharedFactory] pluginSupportsMIMEType:mimeType];
