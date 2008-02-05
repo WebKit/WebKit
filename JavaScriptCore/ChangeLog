@@ -1,3 +1,12 @@
+2008-02-04  Rodney Dawes  <dobey@wayofthemonkey.com>
+
+        Reviewed by Alp Toker and Mark Rowe.
+
+        Fix http://bugs.webkit.org/show_bug.cgi?id=17175.
+        Bug 17175: Use of C++ compiler flags in CFLAGS
+
+        * GNUmakefile.am: Use global_cxxflags as well as global_cflags in CXXFLAGS.
+
 2008-02-04  Alp Toker  <alp@atoker.com>
 
         Rubber-stamped by Mark Rowe.
@@ -17,7 +26,7 @@
         Geoff's theory is that the slowdown was due to copying hash tables when
         putting things into the back/forward cache. If that's true, then this
         should fix the problem.
-        
+
         (According to Geoff's measurements, in a PLT that exaggerates the
         importance of symbol table saving during cached page creation, this
         patch is a ~3X speedup in cached page creation, and a 9% speedup overall.)

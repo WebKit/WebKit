@@ -21,8 +21,10 @@
 #
 # global_cppflags   = CPPFLAGS that apply to JSC, WebCore, and to any
 #                     specific port
-# global_cflags     = CFLAGS and CXXFLAGS that apply to JSC, WebCore, and to
+# global_cflags     = CFLAGS that apply to JSC, WebCore, and to
 #                     any specific port
+# global_cxxflags   = CXXFLAGS that apply to JSC, WebCore, and to any
+#                     specific port
 
 srcdir = @srcdir@
 VPATH = @srcdir@
@@ -61,12 +63,18 @@ global_cflags := \
 	-Wall -W -Wcast-align -Wchar-subscripts -Wreturn-type \
 	-Wformat -Wformat-security -Wno-format-y2k -Wundef \
 	-Wmissing-format-attribute -Wpointer-arith -Wwrite-strings \
-	-Wno-unused-parameter $(SYMBOL_VISIBILITY_INLINES)
+	-Wno-unused-parameter
+
+global_cxxflags := \
+	$(SYMBOL_VISIBILITY_INLINES)
 
 if !ENABLE_DEBUG
 global_cflags += \
-	-fno-rtti -fno-exceptions \
+	-fno-exceptions \
 	$(SYMBOL_VISIBILITY)
+
+global_cxxflags += \
+	-fno-rtti
 endif
 
 # Shared libraries
@@ -96,7 +104,7 @@ libJavaScriptCore_la_SOURCES = \
 
 libJavaScriptCore_la_LDFLAGS = $(ICU_LIBS) -lpthread
 
-libJavaScriptCore_la_CXXFLAGS = $(global_cflags) -fstrict-aliasing
+libJavaScriptCore_la_CXXFLAGS = $(global_cxxflags) $(global_cflags) -fstrict-aliasing
 
 libJavaScriptCore_la_CFLAGS = $(global_cflags) -fstrict-aliasing
 
@@ -139,6 +147,7 @@ libWebKitGtk_la_SOURCES = \
 
 libWebKitGtk_la_CXXFLAGS = \
 	-fno-strict-aliasing \
+	$(global_cxxflags) \
 	$(global_cflags) \
 	$(DEPENDENCIES_CFLAGS) \
 	$(LIBCURL_CFLAGS) \

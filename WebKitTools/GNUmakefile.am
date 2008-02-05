@@ -39,6 +39,7 @@ Programs_DumpRenderTree_SOURCES = \
 
 Programs_DumpRenderTree_CXXFLAGS = \
 	$(DEPENDENCIES_CFLAGS) \
+	$(global_cxxflags) \
 	$(global_cflags)
 
 Programs_DumpRenderTree_LDADD = \

@@ -1,3 +1,15 @@
+2008-02-04  Rodney Dawes  <dobey@wayofthemonkey.com>
+
+        Reviewed by Alp Toker and Mark Rowe.
+
+        Fix http://bugs.webkit.org/show_bug.cgi?id=17175.
+        Bug 17175: Use of C++ compiler flags in CFLAGS
+
+        Add global_cxxflags definition for inclusion in CXXFLAGS variables.
+        Only use -fno-rtti and $(SYMBOL_VISIBILITY_INLINES) with global_cxxflags as gcc complains they aren't valid for C.
+
+        * GNUmakefile.am:
+
 2008-02-04  Alp Toker  <alp@atoker.com>
 
         Rubber-stamped by Mark Rowe.
