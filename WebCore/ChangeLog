@@ -1,3 +1,15 @@
+2008-02-05  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        http://bugs.webkit.org/show_bug.cgi?id=17158
+        Setting innerHTML in a detached XHTML element doesn't use the right namespace
+
+        Test: fast/dom/innerHTML-detached-element.xhtml
+
+        * dom/XMLTokenizer.cpp: (WebCore::XMLTokenizer::XMLTokenizer): Take parent element namespace
+        into account.
+
 2008-02-05  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Geoff.

@@ -566,6 +566,10 @@ XMLTokenizer::XMLTokenizer(DocumentFragment* fragment, Element* parentElement)
     m_stream.addExtraNamespaceDeclarations(namespaces);
     m_stream.setEntityResolver(new EntityResolver);
 #endif
+
+    // If the parent element is not in document tree, there may be no xmlns attribute; just default to the parent's namespace.
+    if (m_defaultNamespaceURI.isNull() && !parentElement->inDocument())
+        m_defaultNamespaceURI = parentElement->namespaceURI();
 }
 
 XMLTokenizer::~XMLTokenizer()
