@@ -40,7 +40,7 @@ use POSIX;
 my $originalWorkingDirectory = getcwd();
 
 my $databaseSupport = 1;
-my $icondatabaseSupport = 1;
+my $iconDatabaseSupport = 1;
 my $svgSupport = 1;
 my $svgExperimentalSupport = 0;
 my $svgAnimationSupport = $svgExperimentalSupport;
@@ -61,7 +61,7 @@ my $usage = <<EOF;
 Usage: $programName [options] [options to pass to build system]
   --help                        Show this help message
   --[no-]database               Toggle Database Support (default: $databaseSupport)
-  --[no-]icondatabase           Toggle Icon database support (default: $icondatabaseSupport)
+  --[no-]icon-database          Toggle Icon database support (default: $iconDatabaseSupport)
   --[no-]svg                    Toggle SVG support (default: $svgSupport)
   --[no-]svg-experimental       Toggle SVG experimental features support (default: $svgExperimentalSupport, 
                                 implies SVG Support)
@@ -78,7 +78,7 @@ Usage: $programName [options] [options to pass to build system]
 EOF
 
 GetOptions('database!' => \$databaseSupport,
-           'icondatabase!' => \$icondatabaseSupport,
+           'icon-database!' => \$iconDatabaseSupport,
            'svg!' => \$svgSupport,
            'svg-experimental!' => \$svgExperimentalSupport,
            'svg-animation!' => \$svgAnimationSupport,
@@ -141,7 +141,7 @@ my $productDir = productDir();
 my @overrideFeatureDefinesOption = ();
 
 push @overrideFeatureDefinesOption, "ENABLE_DATABASE" if $databaseSupport;
-push @overrideFeatureDefinesOption, "ENABLE_ICONDATABASE" if $icondatabaseSupport;
+push @overrideFeatureDefinesOption, "ENABLE_ICONDATABASE" if $iconDatabaseSupport;
 push @overrideFeatureDefinesOption, "ENABLE_SVG" if $svgSupport;
 push @overrideFeatureDefinesOption, "ENABLE_SVG_ANIMATION" if $svgAnimationSupport;
 push @overrideFeatureDefinesOption, "ENABLE_SVG_FILTERS" if $svgFiltersSupport;
@@ -182,7 +182,7 @@ if ($clean && isOSX()) {
 # enable autotool options accordingly
 if ($ENV{WEBKITAUTOTOOLS}) {
     push @options, autotoolsFlag($databaseSupport, "database");
-    push @options, autotoolsFlag($icondatabaseSupport, "icondatabase");
+    push @options, autotoolsFlag($iconDatabaseSupport, "icon-database");
     push @options, autotoolsFlag($svgSupport, "svg");
     push @options, autotoolsFlag($svgAnimationSupport, "svg-animation");
     push @options, autotoolsFlag($svgFiltersSupport, "svg-filters");

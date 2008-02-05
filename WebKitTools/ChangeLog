@@ -1,11 +1,11 @@
 2008-02-04  Jan Michael Alonzo  <jmalonzo@unpluggable.com>
 
-        Reviewed by Mark Rowe.
+        Reviewed by Alp Toker and Mark Rowe.
 
         http://bugs.webkit.org/show_bug.cgi?id=16618
         [GTK] build-webkit and run-webkit-tests autootools support
 
-        * Scripts/build-webkit: added --database and --icondatabase options
+        * Scripts/build-webkit: added --database and --icon-database options
         * Scripts/run-launcher:
         * Scripts/run-webkit-tests:
         * Scripts/webkitdirs.pm:
