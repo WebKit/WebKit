@@ -53,7 +53,11 @@ namespace WebCore {
         String protocol() const { return m_protocol; }
         unsigned short port() const { return m_port; }
         
-        bool canAccess(const SecurityOrigin*) const;
+        enum Reason  {
+            GenericMismatch,
+            DomainSetInDOMMismatch
+        };
+        bool canAccess(const SecurityOrigin*, Reason&) const;
         bool isSecureTransitionTo(const KURL&) const;
 
         bool isEmpty() const;

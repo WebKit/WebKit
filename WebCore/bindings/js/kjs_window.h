@@ -23,6 +23,7 @@
 #include "PlatformString.h"
 #include "kjs_binding.h"
 #include <kjs/protect.h>
+#include "SecurityOrigin.h"
 #include <wtf/HashMap.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/OwnPtr.h>
@@ -121,8 +122,10 @@ namespace KJS {
 
     virtual bool shouldInterruptScript() const;
 
+    bool allowsAccessFrom(ExecState*) const;
+
+    // Don't call this version of allowsAccessFrom -- it's a slightly incorrect implementation used only by WebScriptObject
     virtual bool allowsAccessFrom(const JSGlobalObject*) const;
-    bool allowsAccessFrom(ExecState* exec) const { return allowsAccessFrom(exec->dynamicGlobalObject()); }
 
     enum {
         // Attributes
@@ -155,6 +158,9 @@ namespace KJS {
     void clearHelperObjectProperties();
     void clearAllTimeouts();
     int installTimeout(WebCore::ScheduledAction*, int interval, bool singleShot);
+      
+    bool allowsAccessFrom(const JSGlobalObject*, WebCore::SecurityOrigin::Reason&, WebCore::String& message) const;
+    void printErrorMessage(const WebCore::String&) const;
 
     RefPtr<WebCore::DOMWindow> m_impl;
     OwnPtr<WindowPrivate> d;

@@ -1,3 +1,17 @@
+2008-02-05  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Geoff.
+        
+        Test for <rdar://problem/5698200>
+        eBay photo uploading hangs and causes slow script warning to pop up
+
+        * http/tests/security/cross-frame-access-callback-explicit-domain-ALLOW-expected.txt: Added.
+        * http/tests/security/cross-frame-access-callback-explicit-domain-ALLOW.html: Added.
+        * http/tests/security/cross-frame-access-callback-explicit-domain-DENY-expected.txt: Added.
+        * http/tests/security/cross-frame-access-callback-explicit-domain-DENY.html: Added.
+        * http/tests/security/resources/cross-frame-iframe-callback-explicit-domain-ALLOW.html: Added.
+        * http/tests/security/resources/cross-frame-iframe-callback-explicit-domain-DENY.html: Added.
+
 2008-02-04  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
 
         Reviewed by Oliver Hunt.

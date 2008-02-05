@@ -1,3 +1,36 @@
+2008-02-05  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Geoff.
+        
+        Fix <rdar://problem/5698200>
+        eBay photo uploading hangs and causes slow script warning to pop up
+        
+        In a case like this
+        
+            var f = window.parent.parentFunction;
+            document.domain = document.domain; // this makes window.parent inaccessible
+            f();
+        
+        Firefox allows parentFunction to access parents properties. Match this behavior.
+        
+        In a domain security check against the dynamic global object fails for the specific reason that one of 
+        the frames has written to the document.domain property and another has not (but they match otherwise), 
+        then recheck against the lexical global object.
+
+        Test: http/tests/security/cross-frame-access-callback-explicit-domain-ALLOW.html
+              http/tests/security/cross-frame-access-callback-explicit-domain-DENY.html
+
+        * bindings/js/kjs_window.cpp:
+        (KJS::Window::allowsAccessFrom):
+        (KJS::Window::printErrorMessage):
+        * bindings/js/kjs_window.h:
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::shouldAllowNavigation):
+        * platform/SecurityOrigin.cpp:
+        (WebCore::SecurityOrigin::canAccess):
+        * platform/SecurityOrigin.h:
+        (WebCore::SecurityOrigin::):
+
 2008-02-05  Adam Roben  <aroben@apple.com>
 
         Remove an unused member from Document

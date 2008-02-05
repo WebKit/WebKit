@@ -2343,8 +2343,9 @@ bool FrameLoader::shouldAllowNavigation(Frame* targetFrame) const
         if (!ancestorDocument)
             return true;
 
+        SecurityOrigin::Reason reason;
         const SecurityOrigin* ancestorSecurityOrigin = ancestorDocument->securityOrigin();
-        if (activeSecurityOrigin->canAccess(ancestorSecurityOrigin))
+        if (activeSecurityOrigin->canAccess(ancestorSecurityOrigin, reason))
             return true;
     }
 

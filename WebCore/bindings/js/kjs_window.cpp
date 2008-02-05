@@ -815,13 +815,43 @@ void Window::put(ExecState* exec, const Identifier& propertyName, JSValue* value
 
 bool Window::allowsAccessFrom(const JSGlobalObject* other) const
 {
+    SecurityOrigin::Reason reason;
+    String message;
+    if (allowsAccessFrom(other, reason, message))
+        return true;
+    printErrorMessage(message);
+    return false;
+}
+    
+bool Window::allowsAccessFrom(ExecState* exec) const
+{ 
+    SecurityOrigin::Reason reason;
+    String message;
+    if (allowsAccessFrom(exec->dynamicGlobalObject(), reason, message))
+        return true;
+    if (reason == SecurityOrigin::DomainSetInDOMMismatch) {
+        // If the only reason the access failed was a domainSetInDOM bit mismatch, try again against 
+        // lexical global object <rdar://problem/5698200>
+        if (allowsAccessFrom(exec->lexicalGlobalObject(), reason, message))
+            return true;
+    }
+    printErrorMessage(message);
+    return false;
+}
+    
+bool Window::allowsAccessFrom(const JSGlobalObject* other, SecurityOrigin::Reason& reason, String& message) const
+{
     const Frame* originFrame = static_cast<const Window*>(other)->impl()->frame();
-    if (!originFrame)
+    if (!originFrame) {
+        reason = SecurityOrigin::GenericMismatch;
         return false;
+    }
 
     const Frame* targetFrame = impl()->frame();
-    if (!targetFrame)
+    if (!targetFrame) {
+        reason = SecurityOrigin::GenericMismatch;
         return false;
+    }
 
     if (originFrame == targetFrame)
         return true;
@@ -839,22 +869,32 @@ bool Window::allowsAccessFrom(const JSGlobalObject* other) const
     const SecurityOrigin* originSecurityOrigin = originDocument->securityOrigin();
     const SecurityOrigin* targetSecurityOrigin = targetDocument->securityOrigin();
 
-    if (originSecurityOrigin->canAccess(targetSecurityOrigin))
+    if (originSecurityOrigin->canAccess(targetSecurityOrigin, reason))
         return true;
 
-    if (!targetFrame->settings()->privateBrowsingEnabled()) {
-        // FIXME: this error message should contain more specifics of why the same origin check has failed.
-        String message = String::format("Unsafe JavaScript attempt to access frame with URL %s from frame with URL %s. Domains, protocols and ports must match.\n",
-                                        targetDocument->url().utf8().data(), originDocument->url().utf8().data());
-
-        if (Interpreter::shouldPrintExceptions())
-            printf("%s", message.utf8().data());
-
-        if (Page* page = targetFrame->page())
-            page->chrome()->addMessageToConsole(JSMessageSource, ErrorMessageLevel, message, 1, String()); // FIXME: provide a real line number and source URL.
-    }
-
+    // FIXME: this error message should contain more specifics of why the same origin check has failed.
+    message = String::format("Unsafe JavaScript attempt to access frame with URL %s from frame with URL %s. Domains, protocols and ports must match.\n",
+                                    targetDocument->url().utf8().data(), originDocument->url().utf8().data());
     return false;
+}
+ 
+void Window::printErrorMessage(const String& message) const
+{
+    if (!message.length())
+        return;
+
+    Frame* frame = impl()->frame();
+    if (!frame)
+        return;
+
+    if (frame->settings()->privateBrowsingEnabled())
+        return;
+
+    if (Interpreter::shouldPrintExceptions())
+        printf("%s", message.utf8().data());
+
+    if (Page* page = frame->page())
+        page->chrome()->addMessageToConsole(JSMessageSource, ErrorMessageLevel, message, 1, String()); // FIXME: provide a real line number and source URL.
 }
 
 ExecState* Window::globalExec()
