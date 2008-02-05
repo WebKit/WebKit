@@ -1,3 +1,11 @@
+2008-02-05  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Update versioning to support the mysterious future.
+
+        * Configurations/Version.xcconfig: Add SYSTEM_VERSION_PREFIX_1060.
+
 2008-01-30  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Darin Adler.
