@@ -2,6 +2,36 @@
 
         Reviewed by Sam.
 
+        - fix http://bugs.webkit.org/show_bug.cgi?id=17094
+          Array.prototype functions create length properties with DontEnum/DontDelete
+
+        Test results match Gecko with very few obscure exceptions that seem to be
+        bugs in Gecko.
+
+        Test: fast/js/array-functions-non-arrays.html
+
+        * kjs/array_object.cpp:
+        (KJS::arrayProtoFuncConcat):  Removed DontEnum and DontDelete from the call
+        to set length.
+        (KJS::arrayProtoFuncPop): Ditto. Also added missing call to deleteProperty,
+        which is not needed for real arrays, but is needed for non-arrays.
+        (KJS::arrayProtoFuncPush): Ditto.
+        (KJS::arrayProtoFuncShift): Ditto.
+        (KJS::arrayProtoFuncSlice): Ditto.
+        (KJS::arrayProtoFuncSort): Removed incorrect call to set length when
+        the array has no elements.
+        (KJS::arrayProtoFuncSplice): Removed DontEnum and DontDelete from the call
+        to set length.
+        (KJS::arrayProtoFuncUnShift): Ditto. Also added a check for 0 arguments to
+        make behavior match the specification in that case.
+        * kjs/nodes.cpp:
+        (KJS::ArrayNode::evaluate): Removed DontEnum and DontDelete from the call
+        to set length.
+
+2008-02-06  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam.
+
         - replace calls to put to set up properties with calls to putDirect, to
           prepare for a future change where put won't take attributes any more,
           and for a slight performance boost

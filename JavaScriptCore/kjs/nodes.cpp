@@ -676,7 +676,7 @@ JSValue* ArrayNode::evaluate(ExecState* exec)
     }
 
     if (m_optional)
-        array->put(exec, exec->propertyNames().length, jsNumber(m_elision + length), DontEnum | DontDelete);
+        array->put(exec, exec->propertyNames().length, jsNumber(m_elision + length));
 
     return array;
 }

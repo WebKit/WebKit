@@ -1,3 +1,14 @@
+2008-02-06  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam.
+
+        - tests for http://bugs.webkit.org/show_bug.cgi?id=17094
+          Array.prototype functions create length attributes with DontEnum/DontDelete
+
+        * fast/js/array-functions-non-arrays-expected.txt: Added.
+        * fast/js/array-functions-non-arrays.html: Added.
+        * fast/js/resources/array-functions-non-arrays.js: Added.
+
 2008-02-06  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.
