@@ -45,6 +45,7 @@ public:
     void deref()
     {
         ASSERT(!m_deletionHasBegun);
+        ASSERT(m_refCount > 0);
         if (m_refCount == 1) {
 #ifndef NDEBUG
             m_deletionHasBegun = true;

@@ -1,5 +1,15 @@
 2008-02-06  Geoffrey Garen  <ggaren@apple.com>
 
+        Reviewed by Oliver Hunt.
+        
+        Added an ASSERT to catch refCount underflow, since it caused a leak in
+        my last check-in.
+
+        * wtf/RefCounted.h:
+        (WTF::RefCounted::deref):
+
+2008-02-06  Geoffrey Garen  <ggaren@apple.com>
+
         Reviewed by Darin Adler.
 
         PLT speedup related to <rdar://problem/5659272> REGRESSION: PLT .4%
