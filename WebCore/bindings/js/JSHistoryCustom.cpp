@@ -76,6 +76,14 @@ bool JSHistory::customPut(ExecState* exec, const Identifier& propertyName, JSVal
     return false;
 }
 
+bool JSHistory::deleteProperty(ExecState* exec, const Identifier& propertyName)
+{
+    // Only allow deleting by frames in the same origin.
+    if (!allowsAccessFromFrame(exec, impl()->frame()))
+        return false;
+    return Base::deleteProperty(exec, propertyName);
+}
+
 void JSHistory::getPropertyNames(ExecState* exec, PropertyNameArray& propertyNames)
 {
     // Only allow the history object to enumerated by frames in the same origin.

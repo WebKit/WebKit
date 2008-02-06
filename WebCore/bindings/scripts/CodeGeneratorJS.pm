@@ -365,6 +365,9 @@ sub GenerateHeader
         push(@headerContent, "    virtual bool implementsCall() const;\n\n");
     }
 
+    # Custom deleteProperty function
+    push(@headerContent, "    virtual bool deleteProperty(KJS::ExecState*, const KJS::Identifier&);\n") if $dataNode->extendedAttributes->{"CustomDeleteProperty"};
+
     # Custom getPropertyNames function
     push(@headerContent, "    virtual void getPropertyNames(KJS::ExecState*, KJS::PropertyNameArray&);\n") if $dataNode->extendedAttributes->{"CustomGetPropertyNames"};
 

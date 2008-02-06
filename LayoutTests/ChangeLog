@@ -1,3 +1,14 @@
+2008-02-05  Samuel Weinig  <sam@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Test for <rdar://problem/5726604>
+        dom-checker: deleting properties of the window object cross-domain should not be allowed
+
+        * http/tests/security/cross-frame-access-delete-expected.txt: Added.
+        * http/tests/security/cross-frame-access-delete.html: Added.
+        * http/tests/security/resources/cross-frame-iframe-for-delete-test.html: Added.
+
 2008-02-05  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Oliver.

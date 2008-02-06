@@ -117,6 +117,14 @@ bool JSDOMWindow::customPut(ExecState* exec, const Identifier& propertyName, JSV
     return false;
 }
 
+bool JSDOMWindow::deleteProperty(ExecState* exec, const Identifier& propertyName)
+{
+    // Only allow deleting properties by frames in the same origin.
+    if (!allowsAccessFrom(exec))
+        return false;
+    return Base::deleteProperty(exec, propertyName);
+}
+
 void JSDOMWindow::getPropertyNames(ExecState* exec, PropertyNameArray& propertyNames)
 {
     // Only allow the window to enumerated by frames in the same origin.

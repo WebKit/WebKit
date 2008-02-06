@@ -25,7 +25,12 @@
 
 module window {
 
-    interface [CustomGetOwnPropertySlot, CustomPutFunction, CustomGetPropertyNames] History {
+    interface [
+        CustomGetOwnPropertySlot,
+        CustomPutFunction,
+        CustomDeleteProperty,
+        CustomGetPropertyNames
+    ] History {
         readonly attribute unsigned long length;
 
         void back();

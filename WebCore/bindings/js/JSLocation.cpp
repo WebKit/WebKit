@@ -198,6 +198,14 @@ void JSLocation::put(ExecState* exec, const Identifier& propertyName, JSValue* v
   }
 }
 
+bool JSLocation::deleteProperty(ExecState* exec, const Identifier& propertyName)
+{
+    // Only allow deleting by frames in the same origin.
+    if (!allowsAccessFromFrame(exec, frame()))
+        return false;
+    return Base::deleteProperty(exec, propertyName);
+}
+
 void JSLocation::getPropertyNames(ExecState* exec, PropertyNameArray& propertyNames)
 {
     // Only allow the location object to enumerated by frames in the same origin.

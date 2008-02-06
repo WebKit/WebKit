@@ -1,3 +1,26 @@
+2008-02-05  Samuel Weinig  <sam@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Fix for <rdar://problem/5726604> 
+        dom-checker: deleting properties of the window object cross-domain should not be allowed
+
+        Fix flaw found while testing with dom-checker testing tool (http://code.google.com/p/dom-checker/).
+
+        Test: http/tests/security/cross-frame-access-delete.html
+
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::deleteProperty): Override deleteProperty to not delete cross-domain.
+        * bindings/js/JSHistoryCustom.cpp:
+        (WebCore::JSHistory::deleteProperty): ditto.
+        * bindings/js/JSLocation.cpp:
+        (WebCore::JSLocation::deleteProperty): ditto.
+        * bindings/js/JSLocation.h:
+
+        * bindings/scripts/CodeGeneratorJS.pm: Add deleteProperty declaration when CustomDeleteProperty is used.
+        * page/DOMWindow.idl: Add CustomDeleteProperty extended attribute.
+        * page/History.idl: ditto.
+
 2008-02-05  Alp Toker  <alp@atoker.com>
 
         Rubber-stamped by Mark Rowe.
