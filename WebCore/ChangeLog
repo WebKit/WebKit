@@ -1,5 +1,11 @@
 2008-02-05  Oliver Hunt  <oliver@apple.com>
 
+        Build fix -- touch generate-bindings to trigger regeneration of bindings
+
+        * bindings/scripts/generate-bindings.pl:
+
+2008-02-05  Oliver Hunt  <oliver@apple.com>
+
         RS=Eric.
 
         Re-enable foreignObject by default as it is needed for a number of 
