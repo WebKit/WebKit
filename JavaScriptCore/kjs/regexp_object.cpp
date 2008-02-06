@@ -102,7 +102,7 @@ JSValue* regExpProtoFuncCompile(ExecState* exec, JSObject* thisObj, const List& 
         return throwError(exec, SyntaxError, UString("Invalid regular expression: ").append(regExp->errorMessage()));
 
     static_cast<RegExpImp*>(thisObj)->setRegExp(regExp.release());
-    static_cast<RegExpImp*>(thisObj)->put(exec, exec->propertyNames().lastIndex, jsNumber(0), DontDelete|DontEnum);
+    static_cast<RegExpImp*>(thisObj)->setLastIndex(0);
     return jsUndefined();
 }
 
@@ -203,12 +203,11 @@ bool RegExpImp::match(ExecState* exec, const List& args)
     bool global = get(exec, exec->propertyNames().global)->toBoolean(exec);
     int lastIndex = 0;
     if (global) {
-        double lastIndexDouble = get(exec, exec->propertyNames().lastIndex)->toInteger(exec);
-        if (lastIndexDouble < 0 || lastIndexDouble > input.size()) {
-            put(exec, exec->propertyNames().lastIndex, jsNumber(0), DontDelete | DontEnum);
+        if (m_lastIndex < 0 || m_lastIndex > input.size()) {
+            m_lastIndex = 0;
             return false;
         }
-        lastIndex = static_cast<int>(lastIndexDouble);
+        lastIndex = static_cast<int>(m_lastIndex);
     }
 
     int foundIndex;
@@ -217,7 +216,7 @@ bool RegExpImp::match(ExecState* exec, const List& args)
 
     if (global) {
         lastIndex = foundIndex < 0 ? 0 : foundIndex + foundLength;
-        put(exec, exec->propertyNames().lastIndex, jsNumber(lastIndex), DontDelete | DontEnum);
+        m_lastIndex = lastIndex;
     }
 
     return foundIndex >= 0;

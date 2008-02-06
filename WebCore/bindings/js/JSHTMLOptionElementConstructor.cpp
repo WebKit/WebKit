@@ -33,7 +33,7 @@ JSHTMLOptionElementConstructor::JSHTMLOptionElementConstructor(ExecState* exec, 
     : KJS::DOMObject(exec->lexicalGlobalObject()->objectPrototype())
     , m_doc(d)
 {
-    put(exec, exec->propertyNames().length, jsNumber(4), ReadOnly|DontDelete|DontEnum);
+    putDirect(exec->propertyNames().length, jsNumber(4), ReadOnly|DontDelete|DontEnum);
 }
 
 bool JSHTMLOptionElementConstructor::implementsConstruct() const

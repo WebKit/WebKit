@@ -568,7 +568,7 @@ JSValue* stringProtoFuncMatch(ExecState* exec, JSObject* thisObj, const List& ar
         regExpObj->performMatch(reg, u, pos, pos, matchLength);
       }
       if (imp)
-        imp->put(exec, exec->propertyNames().lastIndex, jsNumber(lastIndex), DontDelete|DontEnum);
+        imp->setLastIndex(lastIndex);
       if (list.isEmpty()) {
         // if there are no matches at all, it's important to return
         // Null instead of an empty array, because this matches

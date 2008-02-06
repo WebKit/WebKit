@@ -41,7 +41,7 @@ JSAudioConstructor::JSAudioConstructor(ExecState* exec, Document* d)
     : DOMObject(exec->lexicalGlobalObject()->objectPrototype())
     , m_doc(d)
 {
-    put(exec, exec->propertyNames().length, jsNumber(1), ReadOnly|DontDelete|DontEnum);
+    putDirect(exec->propertyNames().length, jsNumber(1), ReadOnly|DontDelete|DontEnum);
 }
 
 bool JSAudioConstructor::implementsConstruct() const

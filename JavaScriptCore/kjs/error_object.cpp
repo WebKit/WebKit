@@ -46,8 +46,8 @@ ErrorPrototype::ErrorPrototype(ExecState* exec, ObjectPrototype* objectPrototype
 {
     // The constructor will be added later in ErrorObjectImp's constructor
 
-    put(exec, exec->propertyNames().name, jsString("Error"), DontEnum);
-    put(exec, exec->propertyNames().message, jsString("Unknown error"), DontEnum);
+    putDirect(exec->propertyNames().name, jsString("Error"), DontEnum);
+    putDirect(exec->propertyNames().message, jsString("Unknown error"), DontEnum);
 
     putDirectFunction(new PrototypeFunction(exec, functionPrototype, 0, exec->propertyNames().toString, errorProtoFuncToString), DontEnum);
 }

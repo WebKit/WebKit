@@ -1,3 +1,38 @@
+2008-02-06  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam.
+
+        - replace calls to put to set up properties with calls to putDirect, to
+          prepare for a future change where put won't take attributes any more,
+          and for a slight performance boost
+
+        * API/JSObjectRef.cpp:
+        (JSObjectMakeConstructor): Use putDirect instead of put.
+        * kjs/CommonIdentifiers.h: Removed lastIndex.
+        * kjs/JSGlobalObject.cpp:
+        (KJS::JSGlobalObject::reset): Use putDirect instead of put.
+        * kjs/array_object.cpp:
+        (KJS::arrayProtoFuncConcat): Took out extra call to get length (unused).
+        (KJS::ArrayObjectImp::ArrayObjectImp): Use putDirect instead of put.
+        * kjs/error_object.cpp:
+        (KJS::ErrorPrototype::ErrorPrototype): Use putDirect instead of put.
+        * kjs/function.cpp:
+        (KJS::Arguments::Arguments): Use putDirect instead of put.
+        (KJS::PrototypeFunction::PrototypeFunction): Use putDirect instead of put.
+        * kjs/function_object.cpp:
+        (KJS::FunctionObjectImp::construct): Use putDirect instead of put.
+        * kjs/nodes.cpp:
+        (KJS::FuncDeclNode::makeFunction): Use putDirect instead of put.
+        (KJS::FuncExprNode::evaluate): Use putDirect instead of put.
+        * kjs/regexp_object.cpp:
+        (KJS::regExpProtoFuncCompile): Use setLastIndex instead of put(lastIndex).
+        (KJS::RegExpImp::match): Get and set lastIndex by using m_lastIndex instead of
+        calling get and put.
+        * kjs/regexp_object.h:
+        (KJS::RegExpImp::setLastIndex): Added.
+        * kjs/string_object.cpp:
+        (KJS::stringProtoFuncMatch): Use setLastIndex instead of put(lastIndex).
+
 2008-02-05  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.

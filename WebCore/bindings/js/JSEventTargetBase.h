@@ -134,7 +134,7 @@ namespace WebCore {
             }
 
             KJS::JSObject* newObject = new JSEventTargetPrototype<JSEventTargetPrototypeParent, JSEventTargetPrototypeInformation>(exec);
-            globalObject->put(exec, *prototypeName, newObject, KJS::Internal | KJS::DontEnum);
+            globalObject->putDirect(*prototypeName, newObject, KJS::Internal | KJS::DontEnum);
             return newObject;
         }
 

@@ -1,3 +1,20 @@
+2008-02-06  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam.
+
+        - replace calls to put to set up properties with calls to putDirect, to
+          prepare for a future change where put won't take attributes any more,
+          and for a slight performance boost
+
+        * bindings/js/JSAudioConstructor.cpp:
+        (WebCore::JSAudioConstructor::JSAudioConstructor): Use putDirect instead of put.
+        * bindings/js/JSEventTargetBase.h:
+        (WebCore::JSEventTargetPrototype::self): Ditto.
+        * bindings/js/JSHTMLOptionElementConstructor.cpp:
+        (WebCore::JSHTMLOptionElementConstructor::JSHTMLOptionElementConstructor): Ditto.
+        * bindings/js/JSSQLResultSetRowListCustom.cpp:
+        (WebCore::JSSQLResultSetRowList::item): Ditto.
+
 2008-02-06  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.

@@ -281,20 +281,20 @@ const ClassInfo Arguments::info = { "Arguments", 0, 0 };
 
 // ECMA 10.1.8
 Arguments::Arguments(ExecState* exec, FunctionImp* func, const List& args, ActivationImp* act)
-: JSObject(exec->lexicalGlobalObject()->objectPrototype()), 
-_activationObject(act),
-indexToNameMap(func, args)
+    : JSObject(exec->lexicalGlobalObject()->objectPrototype())
+    , _activationObject(act)
+    , indexToNameMap(func, args)
 {
-  putDirect(exec->propertyNames().callee, func, DontEnum);
-  putDirect(exec->propertyNames().length, args.size(), DontEnum);
+    putDirect(exec->propertyNames().callee, func, DontEnum);
+    putDirect(exec->propertyNames().length, args.size(), DontEnum);
   
-  int i = 0;
-  List::const_iterator end = args.end();
-  for (List::const_iterator it = args.begin(); it != end; ++it, ++i) {
-    if (!indexToNameMap.isMapped(Identifier::from(i))) {
-      JSObject::put(exec, Identifier::from(i), *it, DontEnum);
+    int i = 0;
+    List::const_iterator end = args.end();
+    for (List::const_iterator it = args.begin(); it != end; ++it, ++i) {
+        Identifier name = Identifier::from(i);
+        if (!indexToNameMap.isMapped(name))
+            putDirect(name, *it, DontEnum);
     }
-  }
 }
 
 void Arguments::mark() 
@@ -866,7 +866,7 @@ PrototypeFunction::PrototypeFunction(ExecState* exec, int len, const Identifier&
     , m_function(function)
 {
     ASSERT_ARG(function, function);
-    put(exec, exec->propertyNames().length, jsNumber(len), DontDelete | ReadOnly | DontEnum);
+    putDirect(exec->propertyNames().length, jsNumber(len), DontDelete | ReadOnly | DontEnum);
 }
 
 PrototypeFunction::PrototypeFunction(ExecState* exec, FunctionPrototype* functionPrototype, int len, const Identifier& name, JSMemberFunction function)
@@ -874,7 +874,7 @@ PrototypeFunction::PrototypeFunction(ExecState* exec, FunctionPrototype* functio
     , m_function(function)
 {
     ASSERT_ARG(function, function);
-    put(exec, exec->propertyNames().length, jsNumber(len), DontDelete | ReadOnly | DontEnum);
+    putDirect(exec->propertyNames().length, jsNumber(len), DontDelete | ReadOnly | DontEnum);
 }
 
 JSValue* PrototypeFunction::callAsFunction(ExecState* exec, JSObject* thisObj, const List& args)

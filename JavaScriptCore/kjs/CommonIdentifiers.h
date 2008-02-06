@@ -36,7 +36,6 @@
     macro(ignoreCase) \
     macro(index) \
     macro(input) \
-    macro(lastIndex) \
     macro(length) \
     macro(message) \
     macro(multiline) \
