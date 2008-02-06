@@ -1,3 +1,19 @@
+2008-02-06  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Darin Adler.
+
+        PLT speedup related to <rdar://problem/5659272> REGRESSION: PLT .4%
+        slower due to r28884 (global variable symbol table optimization)
+        
+        Tweaked RefCounted::deref() to be a little more efficient.
+
+        1% - 1.5% speedup on my machine. .7% speedup on Stephanie's machine.
+        
+        * wtf/RefCounted.h:
+        (WTF::RefCounted::deref): Don't modify m_refCount if we're just going
+        to delete the object anyway. Also, use a simple == test, which might be
+        faster than <= on some hardware.
+
 2008-02-06  Darin Adler  <darin@apple.com>
 
         Reviewed by Sam.

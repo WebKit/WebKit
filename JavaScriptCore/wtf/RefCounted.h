@@ -45,12 +45,13 @@ public:
     void deref()
     {
         ASSERT(!m_deletionHasBegun);
-        if (--m_refCount <= 0) {
+        if (m_refCount == 1) {
 #ifndef NDEBUG
             m_deletionHasBegun = true;
 #endif
             delete static_cast<T*>(this);
-        }
+        } else 
+            --m_refCount;
     }
 
     bool hasOneRef()
