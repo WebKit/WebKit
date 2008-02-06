@@ -1,3 +1,14 @@
+2008-02-05  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Alp Toker.
+
+        Fix warnings seen on the Gtk port by declaring variables and using constants of the correct types.
+
+        * webkit/webkitwebbackforwardlist.cpp:
+        (_WebKitWebBackForwardListPrivate::webkit_web_back_forward_list_contains_item):
+        * webkit/webkitwebhistoryitem.cpp:
+        * webkit/webkitwebview.cpp:
+
 2008-02-04  Christian Dywan  <christian@imendio.com>
 
         Reviewed by Alp Toker.

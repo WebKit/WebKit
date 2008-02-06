@@ -115,8 +115,8 @@ void webkit_web_back_forward_list_go_back(WebKitWebBackForwardList* webBackForwa
  */
 gboolean webkit_web_back_forward_list_contains_item(WebKitWebBackForwardList* webBackForwardList, WebKitWebHistoryItem* webHistoryItem)
 {
-    g_return_val_if_fail(WEBKIT_IS_WEB_BACK_FORWARD_LIST(webBackForwardList), NULL);
-    g_return_val_if_fail(WEBKIT_IS_WEB_HISTORY_ITEM(webHistoryItem), NULL);
+    g_return_val_if_fail(WEBKIT_IS_WEB_BACK_FORWARD_LIST(webBackForwardList), FALSE);
+    g_return_val_if_fail(WEBKIT_IS_WEB_HISTORY_ITEM(webHistoryItem), FALSE);
 
     WebCore::HistoryItem* historyItem = core(webHistoryItem);
 
@@ -304,7 +304,7 @@ WebKitWebHistoryItem* webkit_web_back_forward_list_get_nth_item(WebKitWebBackFor
  */
 gint webkit_web_back_forward_list_get_back_length(WebKitWebBackForwardList* webBackForwardList)
 {
-    g_return_val_if_fail(WEBKIT_IS_WEB_BACK_FORWARD_LIST(webBackForwardList), NULL);
+    g_return_val_if_fail(WEBKIT_IS_WEB_BACK_FORWARD_LIST(webBackForwardList), 0);
 
     WebCore::BackForwardList* backForwardList = core(webBackForwardList);
     if (!backForwardList || !backForwardList->enabled())
@@ -323,7 +323,7 @@ gint webkit_web_back_forward_list_get_back_length(WebKitWebBackForwardList* webB
  */
 gint webkit_web_back_forward_list_get_forward_length(WebKitWebBackForwardList* webBackForwardList)
 {
-    g_return_val_if_fail(WEBKIT_IS_WEB_BACK_FORWARD_LIST(webBackForwardList), NULL);
+    g_return_val_if_fail(WEBKIT_IS_WEB_BACK_FORWARD_LIST(webBackForwardList), 0);
 
     WebCore::BackForwardList* backForwardList = core(webBackForwardList);
     if (!backForwardList || !backForwardList->enabled())
@@ -342,7 +342,7 @@ gint webkit_web_back_forward_list_get_forward_length(WebKitWebBackForwardList* w
  */
 gint webkit_web_back_forward_list_get_limit(WebKitWebBackForwardList* webBackForwardList)
 {
-    g_return_val_if_fail(WEBKIT_IS_WEB_BACK_FORWARD_LIST(webBackForwardList), NULL);
+    g_return_val_if_fail(WEBKIT_IS_WEB_BACK_FORWARD_LIST(webBackForwardList), 0);
 
     WebCore::BackForwardList* backForwardList = core(webBackForwardList);
     if (!backForwardList || !backForwardList->enabled())
