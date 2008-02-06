@@ -1,3 +1,13 @@
+2008-02-05  Alp Toker  <alp@atoker.com>
+
+        Rubber-stamped by Mark Rowe.
+
+        Fix a "missing sentinel in function call" warning by using NULL
+        instead of 0.
+
+        * platform/gtk/RenderThemeGtk.cpp:
+        (WebCore::RenderThemeGtk::caretBlinkFrequency):
+
 2008-02-05  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Oliver.
