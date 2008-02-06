@@ -330,10 +330,7 @@ void HTMLAnchorElement::setCoords(const String &value)
 
 String HTMLAnchorElement::href() const
 {
-    String href = getAttribute(hrefAttr);
-    if (href.isNull())
-        return href;
-    return document()->completeURL(href);
+    return document()->completeURL(getAttribute(hrefAttr));
 }
 
 void HTMLAnchorElement::setHref(const String &value)

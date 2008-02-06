@@ -2816,6 +2816,7 @@ DeprecatedString Document::completeURL(const DeprecatedString& url)
 String Document::completeURL(const String& url)
 {
     // FIXME: This always returns null when passed a null URL, unlike the DeprecatedString function above.
+    // Code relies on this behavior, namely the href property of <a> and the data property of <object>.
     if (url.isNull())
         return url;
     return completeURL(url.deprecatedString());

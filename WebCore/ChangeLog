@@ -1,3 +1,16 @@
+2008-02-06  David Hyatt  <hyatt@apple.com>
+
+        Fix for bug 16799, object elements should return absolute URLs from .data.
+
+        Reviewed by Mark Rowe
+
+        * dom/Document.cpp:
+        (WebCore::Document::completeURL):
+        * html/HTMLAnchorElement.cpp:
+        (WebCore::HTMLAnchorElement::href):
+        * html/HTMLObjectElement.cpp:
+        (WebCore::HTMLObjectElement::data):
+
 2008-02-05  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Darin.
