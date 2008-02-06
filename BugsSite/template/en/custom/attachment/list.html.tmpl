@@ -1,0 +1,103 @@
+[%# 1.0@bugzilla.org %]
+[%# The contents of this file are subject to the Mozilla Public
+  # License Version 1.1 (the "License"); you may not use this file
+  # except in compliance with the License. You may obtain a copy of
+  # the License at http://www.mozilla.org/MPL/
+  #
+  # Software distributed under the License is distributed on an "AS
+  # IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
+  # implied. See the License for the specific language governing
+  # rights and limitations under the License.
+  #
+  # The Original Code is the Bugzilla Bug Tracking System.
+  #
+  # The Initial Developer of the Original Code is Netscape Communications
+  # Corporation. Portions created by Netscape are
+  # Copyright (C) 1998 Netscape Communications Corporation. All
+  # Rights Reserved.
+  #
+  # Contributor(s): Myk Melez <myk@mozilla.org>
+  #%]
+
+<br>
+<table cellspacing="0" cellpadding="4" border="1">
+  <tr>
+    <th bgcolor="#cccccc" align="left">Attachment</th>
+    <th bgcolor="#cccccc" align="left">Type</th>
+    <th bgcolor="#cccccc" align="left">Created</th>
+    <th bgcolor="#cccccc" align="left">Size</th>
+    [% IF show_attachment_flags %]
+      <th bgcolor="#cccccc" align="left">Flags</th>
+    [% END %]
+    <th bgcolor="#cccccc" align="left">Actions</th>
+  </tr>
+  [% canseeprivate = !Param("insidergroup") || UserInGroup(Param("insidergroup")) %]
+  [% FOREACH attachment = attachments %]
+    [% IF !attachment.isprivate || canseeprivate %]
+      <tr [% "class=\"bz_private\"" IF attachment.isprivate %]
+	  [% IF attachment.ispatch && !attachment.isobsolete %] style="background-color: rgb(255,255,200);" [% END %]
+	  [% IF attachment.isobsolete %] class="bz_obsolete" [% END %]
+>
+        <td valign="top">
+          <a href="attachment.cgi?id=[% attachment.attachid %]">[% attachment.description FILTER html FILTER obsolete(attachment.isobsolete) %]</a>
+        </td>
+
+        <td valign="top">
+          [% IF attachment.ispatch %]
+            <i>patch</i>
+          [% ELSE %]
+            [% attachment.contenttype FILTER html %]
+          [% END %]
+        </td>
+
+        <td valign="top">[% attachment.date FILTER time %]</td>
+        <td valign="top">[% attachment.datasize FILTER unitconvert %]</td>
+
+        [% IF show_attachment_flags %]
+          <td valign="top">
+            [% IF attachment.flags.size == 0 %]
+              <i>none</i>
+            [% ELSE %]
+              [% FOREACH flag = attachment.flags %]
+                [% IF flag.setter %]
+                  [% flag.setter.nick FILTER html %]:
+                [% END %]
+                [%+ flag.type.name FILTER html FILTER no_break %][% flag.status %]
+                [%+ IF flag.status == "?" && flag.requestee %]
+                  ([% flag.requestee.nick FILTER html %])
+                [% END %]<br>
+              [% END %]
+            [% END %]
+          </td>
+        [% END %]
+
+        <td valign="top">
+          <a href="attachment.cgi?id=[% attachment.attachid %]&amp;action=edit">Edit</a>
+          [% IF attachment.ispatch %]
+          <a href="attachment.cgi?id=[% attachment.attachid %]&amp;action=prettypatch">Formatted Diff</a>
+          [% END %]
+          [% IF attachment.ispatch && patchviewerinstalled %]
+            | <a href="attachment.cgi?id=[% attachment.attachid %]&amp;action=diff">Diff</a>
+          [% END %]
+          [% Hook.process("action") %]
+        </td>
+      </tr>
+    [% END %]
+  [% END %]
+
+  <tr>
+    <td colspan="[% show_attachment_flags ? 5 : 4 %]">
+      <a href="attachment.cgi?bugid=[% bugid %]&amp;action=enter">Create a New Attachment</a> (proposed patch, testcase, etc.)
+    </td>
+    [% IF attachments.size %]
+      <td>
+        <a href="attachment.cgi?bugid=[% bugid %]&amp;action=viewall">View All</a>
+      </td>
+    [% ELSE %]
+      <td class="bz_disabled">
+        View All
+      </td>
+    [% END %]
+  </tr>
+</table>
+<br>

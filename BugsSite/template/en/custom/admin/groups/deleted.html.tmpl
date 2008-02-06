@@ -1,0 +1,54 @@
+[%# 1.0@bugzilla.org %]
+[%# The contents of this file are subject to the Mozilla Public
+  # License Version 1.1 (the "License"); you may not use this file
+  # except in compliance with the License. You may obtain a copy of
+  # the License at http://www.mozilla.org/MPL/
+  #
+  # Software distributed under the License is distributed on an "AS
+  # IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
+  # implied. See the License for the specific language governing
+  # rights and limitations under the License.
+  #
+  # The Original Code is the Bugzilla Bug Tracking System.
+  #
+  # The Initial Developer of the Original Code is Netscape Communications
+  # Corporation. Portions created by Netscape are
+  # Copyright (C) 1998 Netscape Communications Corporation. All
+  # Rights Reserved.
+  #
+  # Contributor(s): Dave Miller <justdave@syndicomm.com>
+  #                 Joel Peshkin <bugreport@peshkin.net>
+  #                 Jacob Steenhagen <jake@bugzilla.org>
+  #                 Vlad Dascalu <jocuri@softhome.net>
+  #%]
+
+[%# INTERFACE:
+  # gid: number. The group ID.
+  # name: string. The name of the group.
+  # cantdelete: boolean int. Is 1 if the group couldn't have been deleted.
+  #%]
+
+
+[% PROCESS global/header.html.tmpl
+  title = "Deleting group"
+%]
+
+[% IF cantdelete %]
+  <p>
+    This group cannot be deleted because there are records
+    in the database which refer to it.  All such records
+    must be removed or altered to remove the reference to this
+    group before the group can be deleted.
+  </p>
+
+  <p>
+    <a href="editgroups.cgi?action=del&amp;group=[% gid FILTER html %]">View</a>
+    the list of which records are affected.
+  </p>
+[% ELSE %]
+  <p><b>The group [% name FILTER html %] has been deleted.</b></p>
+[% END %]
+
+<p>Go back to the <a href="editgroups.cgi">group list</a>.
+
+[% PROCESS global/footer.html.tmpl %] 

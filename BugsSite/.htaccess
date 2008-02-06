@@ -1,0 +1,7 @@
+# don't allow people to retrieve non-cgi executable files or our private data
+<FilesMatch ^(.*\.pm|.*\.pl|.*localconfig.*)$>
+  deny from all
+</FilesMatch>
+<FilesMatch ^(localconfig.js|localconfig.rdf)$>
+  allow from all
+</FilesMatch>

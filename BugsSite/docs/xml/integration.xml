@@ -1,0 +1,120 @@
+<!-- <!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook V4.1//EN" > -->
+<!-- Keep these tools listings in alphabetical order please. -MPB -->
+<section id="integration">
+  <title>Integrating Bugzilla with Third-Party Tools</title>
+
+  <section id="bonsai"
+  xreflabel="Bonsai, the Mozilla automated CVS management system">
+    <title>Bonsai</title>
+
+    <para>Bonsai is a web-based tool for managing 
+    <xref linkend="cvs" />
+
+    . Using Bonsai, administrators can control open/closed status of trees,
+    query a fast relational database back-end for change, branch, and comment
+    information, and view changes made since the last time the tree was
+    closed. Bonsai
+    also integrates with  
+    <xref linkend="tinderbox" />.
+    </para>
+  </section>
+
+  <section id="cvs" xreflabel="CVS, the Concurrent Versioning System">
+    <title>CVS</title>
+
+    <para>CVS integration is best accomplished, at this point, using the
+    Bugzilla Email Gateway.</para>
+
+    <para>Follow the instructions in this Guide for enabling Bugzilla e-mail
+    integration. Ensure that your check-in script sends an email to your
+    Bugzilla e-mail gateway with the subject of 
+    <quote>[Bug XXXX]</quote>, 
+    and you can have CVS check-in comments append to your Bugzilla bug. If
+    you  want to have the bug be closed automatically, you'll have to modify
+    the <filename>contrib/bugzilla_email_append.pl</filename> script.
+    </para>
+
+    <para>There is also a CVSZilla project, based upon somewhat dated 
+    Bugzilla code, to integrate CVS and Bugzilla through CVS' ability to 
+    email. Check it out at: <ulink url="http://homepages.kcbbs.gen.nz/~tonyg/"/>.
+    </para>
+
+    <para>Another system capable of CVS integration with Bugzilla is
+    Scmbug. This system provides generic integration of Source code
+    Configuration Management with Bugtracking. Check it out at: <ulink
+    url="http://freshmeat.net/projects/scmbug/"/>.
+    </para>
+
+  </section>
+
+  <section id="scm"
+  xreflabel="Perforce SCM (Fast Software Configuration Management System, a powerful commercial alternative to CVS">
+
+    <title>Perforce SCM</title>
+
+    <para>You can find the project page for Bugzilla and Teamtrack Perforce
+    integration (p4dti) at: 
+    <ulink url="http://www.ravenbrook.com/project/p4dti/"/>
+
+    . 
+    <quote>p4dti</quote>
+
+    is now an officially supported product from Perforce, and you can find
+    the "Perforce Public Depot" p4dti page at 
+    <ulink url="http://public.perforce.com/public/perforce/p4dti/index.html"/>
+
+    .</para>
+
+    <para>Integration of Perforce with Bugzilla, once patches are applied, is
+    seamless. Perforce replication information will appear below the comments
+    of each bug. Be certain you have a matching set of patches for the
+    Bugzilla version you are installing. p4dti is designed to support
+    multiple defect trackers, and maintains its own documentation for it.
+    Please consult the pages linked above for further information.</para>
+  </section>
+
+  <section id="svn"
+  xreflabel="Subversion, a compelling replacement for CVS">
+     <title>Subversion</title>
+     <para>Subversion is a free/open-source version control system,
+     designed to overcome various limitations of CVS. Integration of
+     Subversion with Bugzilla is possible using Scmbug, a system
+     providing generic integration of Source Code Configuration
+     Management with Bugtracking. Scmbug is available at <ulink
+     url="http://freshmeat.net/projects/scmbug/"/>.</para>
+  </section>
+
+  <section id="tinderbox"
+  xreflabel="Tinderbox, the Mozilla automated build management system">
+    <title>Tinderbox/Tinderbox2</title>
+
+    <para>Tinderbox is a continuous-build system which can integrate with
+    Bugzilla - see
+    <ulink url="http://www.mozilla.org/projects/tinderbox"/> for details
+    of Tinderbox, and 
+    <ulink url="http://tinderbox.mozilla.org/showbuilds.cgi"/> to see it
+    in action.</para>
+  </section>
+</section>
+
+<!-- Keep this comment at the end of the file
+Local variables:
+mode: sgml
+sgml-always-quote-attributes:t
+sgml-auto-insert-required-elements:t
+sgml-balanced-tag-edit:t
+sgml-exposed-tags:nil
+sgml-general-insert-case:lower
+sgml-indent-data:t
+sgml-indent-step:2
+sgml-local-catalogs:nil
+sgml-local-ecat-files:nil
+sgml-minimize-attributes:nil
+sgml-namecase-general:t
+sgml-omittag:t
+sgml-parent-document:("Bugzilla-Guide.xml" "book" "chapter")
+sgml-shorttag:t
+sgml-tag-region-if-active:t
+End:
+-->
+

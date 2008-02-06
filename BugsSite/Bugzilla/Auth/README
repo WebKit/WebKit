@@ -1,0 +1,132 @@
+How Auth Works
+==============
+Christian Reis <kiko@async.com.br>
+
+Overview
+--------
+
+Authentication in Bugzilla is handled by a collection of modules that live in
+the Bugzilla::Auth package.  These modules are organized hierarchically based
+upon their responsibility.
+
+The authentication scheme is divided in two tasks: Login and Verify.  Login
+involves gathering credentials from a user, while Verify validates them
+against an authentication service.
+
+The Bugzilla parameters user_info_class and user_verify_class contain a
+list of Login and Verify modules, respectively.
+
+Task: Login
+-----------
+
+This task obtains user credentials based on a request. Examples of requests
+include CGI access from the Bugzilla web interface, email submissions and
+credentials supplied by standalone scripts.
+
+Each type of Bugzilla front-end should have its own package.  For instance,
+access via the Bugzilla web pages should go through Bugzilla::Auth::WWW.
+These packages would contain modules of their own to perform whatever extra
+functions are needed, like the CGI and Cookie modules in the case of WWW.
+
+Task: Verify
+------------
+
+This task validates user credentials against a user authentication service.
+
+The default service in Bugzilla has been the database, which stores the
+login_name and cryptpasswd fields in the profiles table.  An alternative means
+of validation, LDAP, is already supported, and other contributions would be
+appreciated.
+
+The module layout is similar to the Login package, but there is no need for a
+sub-level as there is with Login request types.
+
+Params
+------
+
+There are two params that define behaviour for each authentication task.  Each
+of them defines a comma-separated list of modules to be tried in order.
+
+    - user_info_class determines the module(s) used to obtain user
+      credentials. This param is specific to the requests from Bugzilla web
+      pages, so all of the listed modules live under
+      Bugzilla::Auth::Login::WWW
+
+    - user_verify_class determines the module(s) used to verify credentials.
+      This param is general and concerns the whole Bugzilla instance, since
+      the same back end should be used regardless of what front end is used.
+
+Responsibilities
+----------------
+
+Bugzilla::Auth
+
+    This module is responsible for abstracting away as much as possible the
+    login and logout tasks in Bugzilla.
+
+    It offers  login() and logout() methods that are proxied to the selected
+    login and verify packages.
+
+Bugzilla::Auth::Login
+
+    This is a container to hold the various modules for each request type.
+
+Bugzilla::Auth::Login::WWW
+
+    This module is responsible for abstracting away details of which web-based
+    login modules exist and are in use. It offers login() and logout() methods
+    that proxy through to whatever specific modules
+
+Bugzilla::Auth::Verify
+
+    This module is responsible for abstracting away details of which
+    credential verification modules exist, and should proxy calls through to
+    them. There is a method that is particularly important, and which should
+    be proxied through to the specific:
+
+        can_edit($type)
+
+            This method takes an argument that specifies what sort of change
+            is being requested; the specific module should return 1 or 0 based
+            on the fact that it implements or not the required change.
+
+            Current values for $type are "new" for new accounts, and "userid",
+            "login_name", "realname" for their respective fields.
+
+Specific Login Modules
+----------------------
+
+    WWW
+
+        The main authentication frontend; regular pages (CGIs) should use only
+        this module. It offers a convenient frontend to the main functionality
+        that CGIs need, using form parameters and cookies.
+
+        - Cookie
+
+            Implements part of the backend code that deals with browser
+            cookies. It's actually tied in to DB.pm, so Cookie logins that use
+            LDAP won't work at all.
+
+    LDAP
+
+        The other authentication module is LDAP-based; it is *only* used for
+        password authentication and not for any other login-related task (it
+        actually relies on the database to handle the profile information).
+
+Legacy
+------
+
+Bugzilla.pm
+
+    There is glue code that currently lives in the top-level module
+    Bugzilla.pm; this module handles backwards-compatibility data that is used
+    in a number of CGIs. This data has been slowly removed from the Bugzilla
+    pages and eventually should go away completely, at which point Bugzilla.pm
+    will be just a wrapper to conveniently offer template, cgi, dbh and user
+    variables.
+
+    This module is meant to be used only by Bugzilla pages, and in the case of
+    a reorganization which moves CGI-specific code to a subdirectory,
+    Bugzilla.pm should go with it.
+

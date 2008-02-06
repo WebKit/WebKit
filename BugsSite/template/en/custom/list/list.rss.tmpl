@@ -1,0 +1,97 @@
+[%# 1.0@bugzilla.org %]
+[%# The contents of this file are subject to the Mozilla Public
+  # License Version 1.1 (the "License"); you may not use this file
+  # except in compliance with the License. You may obtain a copy of
+  # the License at http://www.mozilla.org/MPL/
+  #
+  # Software distributed under the License is distributed on an "AS
+  # IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
+  # implied. See the License for the specific language governing
+  # rights and limitations under the License.
+  #
+  # The Original Code is the Bugzilla Bug Tracking System.
+  #
+  # The Initial Developer of the Original Code is Netscape Communications
+  # Corporation. Portions created by Netscape are
+  # Copyright (C) 1998 Netscape Communications Corporation. All
+  # Rights Reserved.
+  #
+  # Contributor(s): Walter Hoehn <wassa@columbia.edu>
+  #                 John Belmonte <john@neggie.net>
+  #                 Jason Remillard <jremillardshop@letterboxes.org>
+  #
+  # This is a template for generating an RSS 1.0 representation of a buglist. 
+  #%]
+
+[% PROCESS global/variables.none.tmpl %]
+[% USE date %]
+
+[% DEFAULT title = "$terms.Bugzilla $terms.Bugs" %]
+
+<?xml version="1.0"?>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" 
+         xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+         xmlns:dc="http://purl.org/dc/elements/1.1/"
+         xmlns="http://purl.org/rss/1.0/">
+  <channel rdf:about="[% Param('urlbase') %]buglist.cgi?
+         [%- urlquerypart.replace('ctype=rss[&]?','') FILTER xml %]" >
+       
+    <title>[% title FILTER xml %]</title>
+    <description>[% "$terms.Bugzilla $terms.bug list" FILTER xml %]</description>
+    
+    <link>[% Param('urlbase') %]buglist.cgi?
+          [%- urlquerypart.replace('ctype=rss[&]?','') FILTER xml -%]
+    </link>
+    
+    <sy:updatePeriod>hourly</sy:updatePeriod>
+    <sy:updateFrequency>2</sy:updateFrequency>
+    
+    <items>
+      <rdf:Seq>
+      [% FOREACH bug = bugs %]
+        <rdf:li rdf:resource="[% Param('urlbase') FILTER xml %]show_bug.cgi?id=[% bug.bug_id FILTER xml %]" />
+      [% END %]
+      </rdf:Seq>
+    </items>
+    
+  </channel>
+ 
+  [% FOREACH bug = bugs %]
+  <item rdf:about="[% Param('urlbase') FILTER xml %]show_bug.cgi?id=[% bug.bug_id FILTER xml %]">
+    <title>
+      [% "@" IF bug.secure_mode %] [[% terms.Bug %] [%+ bug.bug_id FILTER xml %]] [% bug.short_desc FILTER xml %]
+    </title>
+    <link>[% Param('urlbase') FILTER xml %]show_bug.cgi?id=[% bug.bug_id FILTER xml %]</link>
+    <dc:creator>[% bug.reporter_realname FILTER xml %]</dc:creator>
+    <dc:date>[% date.format( format=>"%Y-%m-%dT%H:%MZ",time=>bug.opentime) FILTER xml %]</dc:date> 
+    <description>
+      [%# Filter out the entire block, so that we don't need to escape the html code out %]
+      [% FILTER xml %]
+      <table>
+      <tr>
+        <th>Field</th><th>Value</th>
+      </tr><tr>
+        <td>[% columns.opendate.title FILTER none %]</td>
+        <td>[% bug.opendate FILTER none %]</td>
+      </tr><tr>
+        <td>[% columns.assigned_to_realname.title FILTER none %]</td>
+        <td>[% bug.assigned_to_realname FILTER none %]</td>
+      </tr><tr>
+        <td>[% columns.priority.title FILTER none %]</td>
+        <td>[% bug.priority FILTER none %]</td>
+      </tr><tr>
+        <td>[% columns.bug_severity.title FILTER none %] </td>
+        <td>[% bug.bug_severity FILTER none %]</td>
+      </tr><tr>
+        <td>[% columns.bug_status.title FILTER none %]</td>
+        <td>[% bug.bug_status FILTER none %]</td>
+      </tr><tr>
+        <td>[% columns.changeddate.title FILTER none %]</td>
+        <td>[% bug.changeddate FILTER none -%]</td>
+      </tr>
+      </table>
+      [% END %]
+    </description>
+  </item>
+  [% END %]
+</rdf:RDF>

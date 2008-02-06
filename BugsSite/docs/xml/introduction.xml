@@ -1,0 +1,121 @@
+<chapter id="introduction">
+  <title>Introduction</title>
+
+  <section id="what-is-bugzilla">
+    <title>What is Bugzilla?</title>
+
+    <para>
+    Bugzilla is a bug- or issue-tracking system. Bug-tracking
+    systems allow individual or groups of developers effectively to keep track
+    of outstanding problems with their products. 
+    </para>
+    
+    <para><emphasis>Do we need more here?</emphasis></para>
+    
+  </section>
+
+  <section id="why-tracking">
+    <title>Why use a bug-tracking system?</title>
+    
+    <para>Those who do not use a bug-tracking system tend to rely on
+    shared lists, email, spreadsheets and/or Post-It notes to monitor the 
+    status of defects. This procedure
+    is usually error-prone and tends to cause those bugs judged least 
+    significant by developers to be dropped or ignored.</para>
+
+    <para>Integrated defect-tracking systems make sure that nothing gets
+    swept under the carpet; they provide a method of creating, storing,
+    arranging and processing defect reports and enhancement requests.</para>
+    
+  </section>
+    
+  <section id="why-bugzilla">
+    <title>Why use Bugzilla?</title>
+
+    <para>Bugzilla is the leading open-source/free software bug tracking 
+    system. It boasts many advanced features, including: 
+    <itemizedlist>
+      <listitem>
+        <para>Powerful searching</para>
+      </listitem>
+
+      <listitem>
+        <para>User-configurable email notifications of bug changes</para>
+      </listitem>
+
+      <listitem>
+        <para>Full change history</para>
+      </listitem>
+
+      <listitem>
+        <para>Inter-bug dependency tracking and graphing</para>
+      </listitem>
+
+      <listitem>
+        <para>Excellent attachment management</para>
+      </listitem>
+
+      <listitem>
+        <para>Integrated, product-based, granular security schema</para>
+      </listitem>
+
+      <listitem>
+        <para>Fully security-audited, and runs under Perl's taint mode</para>
+      </listitem>
+
+      <listitem>
+        <para>A robust, stable RDBMS back-end</para>
+      </listitem>
+
+      <listitem>
+        <para>Completely customisable and/or localisable web user
+        interface</para>
+      </listitem>
+
+      <listitem>
+        <para>Additional XML, email and console interfaces</para>
+      </listitem>
+
+      <listitem>
+        <para>Extensive configurability</para>
+      </listitem>
+
+      <listitem>
+        <para>Smooth upgrade pathway between versions</para>
+      </listitem>
+    </itemizedlist>
+    </para>
+    
+    <para>Bugzilla is very adaptable to various situations. Known uses
+    currently include IT support queues, Systems Administration deployment
+    management, chip design and development problem tracking (both
+    pre-and-post fabrication), and software and hardware bug tracking for
+    luminaries such as Redhat, NASA, Linux-Mandrake, and VA Systems.
+    Combined with systems such as 
+    <ulink url="http://www.cvshome.org">CVS</ulink>, 
+    <ulink url="http://www.mozilla.org/bonsai.html">Bonsai</ulink>, or 
+    <ulink url="http://www.perforce.com">Perforce SCM</ulink>, Bugzilla
+    provides a powerful, easy-to-use configuration management solution.</para>
+  </section>
+</chapter>
+
+<!-- Keep this comment at the end of the file
+Local variables:
+mode: sgml
+sgml-always-quote-attributes:t
+sgml-auto-insert-required-elements:t
+sgml-balanced-tag-edit:t
+sgml-exposed-tags:nil
+sgml-general-insert-case:lower
+sgml-indent-data:t
+sgml-indent-step:2
+sgml-local-catalogs:nil
+sgml-local-ecat-files:nil
+sgml-minimize-attributes:nil
+sgml-namecase-general:t
+sgml-omittag:t
+sgml-parent-document:("Bugzilla-Guide.xml" "book" "chapter")
+sgml-shorttag:t
+sgml-tag-region-if-active:t
+End:
+-->

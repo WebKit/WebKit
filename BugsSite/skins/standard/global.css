@@ -1,0 +1,336 @@
+/* The contents of this file are subject to the Mozilla Public
+  * License Version 1.1 (the "License"); you may not use this file
+  * except in compliance with the License. You may obtain a copy of
+  * the License at http://www.mozilla.org/MPL/
+  *
+  * Software distributed under the License is distributed on an "AS
+  * IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
+  * implied. See the License for the specific language governing
+  * rights and limitations under the License.
+  *
+  * The Original Code is the Bugzilla Bug Tracking System.
+  *
+  * The Initial Developer of the Original Code is Netscape Communications
+  * Corporation. Portions created by Netscape are
+  * Copyright (C) 1998 Netscape Communications Corporation. All
+  * Rights Reserved.
+  *
+  * Contributor(s): Byron Jones <bugzilla@glob.com.au>
+  *                 Christian Reis <kiko@async.com.br>
+  *                 Vitaly Harisov <vitaly@rathedg.com>
+  *                 Svetlana Harisova <light@rathedg.com>
+  */
+
+body
+{
+    color: #000;
+    background-color: #fff;
+}
+
+/* banner (begin) */
+    #banner
+    {
+        text-align: center;        
+
+        width: 100%;
+        background: #fff;
+    }
+
+    #banner p
+    {
+        margin: 0;
+        margin-bottom: 1px;
+        padding: 0;
+    }
+
+    #banner-name
+    {
+        font-size: 0px;
+        height: 48px;
+        background: transparent no-repeat url(global/header.png);
+    }
+
+    #banner-version
+    {
+        font-family: sans-serif;
+        font-size: 75%;
+        background: #fff;
+    }
+
+    /* hide from NN4 */
+    p#banner-version
+    {
+        font-size: 85%;
+    }
+/* banner (end) */
+
+/* header (begin) */
+    #header
+    {
+        width: 100%;
+    }
+
+    #header *
+    {
+        margin: 0;
+        padding: 0;
+    }
+
+    /* hide from MSIE and NN4 */
+    [id]#header
+    {
+        display: table;
+    }
+
+    /* IE hack for float content*/
+    * html #header
+    {
+        height: 1%;
+    }
+
+    /* hide from NN4 */
+    div#header h1
+    {
+        float: left;
+    }
+
+    #header h1
+    {
+        font-family: serif;
+        font-weight: bold;
+        font-size: 110%;
+
+        white-space: nowrap;
+        padding: 0.2em 1em 0.1em 0.2em;
+    }
+
+    /* hide from MSIE and NN4 */
+    [id]#header h1
+    {
+        float: none;
+        display: table-cell;
+
+        vertical-align: top;
+    }
+
+    /* hide from NN4 */
+    div#header h2
+    {
+        float: left;
+        width: 70%;
+
+        text-align: center;
+        padding: 0.2em 1em 0.1em 0.1em;
+    }
+
+    #header h2
+    {
+        font-family: serif;
+        font-weight: normal;
+        font-size: 100%;
+    }
+
+    /* hide from MSIE and NN4 */
+    [id]#header h2
+    {
+        float: none;
+        width: auto;
+
+        text-align: left;
+        vertical-align: top;
+    }
+
+    #header h3
+    {
+        font-family: serif;
+        font-weight: normal;
+        font-size: 100%;
+
+        padding: 0.2em 0.2em 0.1em 0.1em;
+        float: right;
+    }
+
+    /* hide from MSIE and NN4 */
+    [id]#header h3
+    {
+        display: table-cell;
+        float: none;
+
+        text-align: right;
+        vertical-align: top;
+    }
+
+    #message
+    {
+    	border: 1px solid red;
+
+    	padding: 0.3em;
+    	color: green;
+    }
+/* header (end)   */
+
+/* footer (begin) */
+    #footer
+    {
+        float: left;
+        margin-top: 5px;
+        width: 100%;
+        font-family: sans-serif;
+    }
+
+    #footer form
+    {
+        background: #edf2f2;
+        border-top: 1px solid #ddd;
+        border-bottom: 1px solid #ddd;
+    }
+
+    #footer span
+    {
+        display: block;
+    }
+
+    #footer .btn, #footer .txt
+    {
+        font-size: 0.8em;
+    }
+
+    #footer #useful-links
+    {
+        padding: 0.3em;
+    }
+
+    /* hide from MSIE and NN4 */
+    [id]#footer #useful-links
+    {
+        margin: 0.3em;
+        display: table;
+    }
+
+    #footer #links-actions,
+    #footer #links-edit,
+    #footer #links-saved
+    {
+        display: table-row;
+    }
+
+    #footer .label
+    {
+        width: 7.2em;
+        display: block;
+        float: left;
+
+        vertical-align: baseline;
+
+        padding: 0.1em 0.2em;
+    }
+
+    #footer #links-actions .label
+    {
+        padding-top: 0.45em;
+    }
+
+    /* hide from MSIE and NN4 */
+    [id]#footer .label
+    {
+        display: table-cell;
+        float: none;
+        width: auto;
+
+        padding-top: 0;
+    }
+
+    #footer .links
+    {
+        display: block;
+
+        padding: 0.1em 0.2em;
+    }
+
+    /* hide from MSIE and NN4 */
+    [id]#footer .links
+    {
+        display: table-cell;
+
+        padding-top: 0;
+        
+        vertical-align: baseline;
+    }
+
+    /* hide from MSIE and NN4 */
+    #footer+*
+    {
+        clear: both;
+    }
+/* footer (end) */
+
+/* generic (begin) */
+    body
+    {
+        background: #fff url("global/body-back.gif") repeat-x;
+    }
+
+    :link {
+        color: #039;
+    }
+
+    :visited {
+        color: #636;
+    }
+
+    :link:hover, :visited:hover {
+        color: #333;
+    }
+
+    :link:active, :link:active {
+        color: #000;
+    }
+/* generic (end) */
+
+.bz_obsolete { text-decoration: line-through; }
+.bz_inactive { text-decoration: line-through; }
+.bz_closed,
+.bz_CLOSED td {
+    text-decoration: line-through;
+}
+.bz_private { color: darkred ; background : #f3eeee ; }
+.bz_disabled { color: #a0a0a0 ; }
+
+.bz_row_odd
+{
+    background-color: #F7F7F7;
+    color: #000000;
+}
+
+.bz_row_even
+{
+    background-color: #FFFFFF;
+    color: #000000;
+}
+
+.bz_comment { background-color: #e0e0e0; }
+.bz_comment_hilite pre
+{
+    background-color: lightgreen;
+    margin: 0;
+    padding: 1em 0;
+}
+
+.selected_tab
+{
+    background: #fff;
+    border: 1px solid black;
+}
+
+.unselected_tab
+{
+    background: #eee;
+    border: 1px solid black;
+}
+
+.spacer
+{
+    border: 1px solid black;
+}
+
+table#flags th, table#flags td { vertical-align: baseline; text-align: left; }

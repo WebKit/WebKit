@@ -1,0 +1,81 @@
+<!-- <!DOCTYPE appendix PUBLIC "-//OASIS//DTD DocBook V4.1//EN"> -->
+<appendix id="downloadlinks">
+  <title>Software Download Links</title>
+
+  <para>All of these sites are current as of April, 2001. Hopefully they'll
+  stay current for a while.</para>
+
+  <para>Apache Web Server: 
+  <ulink url="http://www.apache.org/"/>
+
+  Optional web server for Bugzilla, but recommended because of broad user
+  base and support.</para>
+
+  <para>Bugzilla: 
+  <ulink url="http://www.bugzilla.org/"/>
+  </para>
+
+  <para>MySQL: 
+  <ulink url="http://www.mysql.com/"/>
+  </para>
+
+  <para>Perl: 
+  <ulink url="http://www.perl.org/"/>
+  </para>
+
+  <para>CPAN: 
+  <ulink url="http://www.cpan.org/"/>
+  </para>
+
+  <para>DBI Perl module: 
+  <ulink url="http://www.cpan.org/modules/by-module/DBI/"/>
+  </para>
+
+  <para>Data::Dumper module: 
+  <ulink url="http://www.cpan.org/modules/by-module/Data/"/>
+  </para>
+
+  <para>MySQL related Perl modules: 
+  <ulink url="http://www.cpan.org/modules/by-module/Mysql/"/>
+  </para>
+
+  <para>TimeDate Perl module collection: 
+  <ulink url="http://www.cpan.org/modules/by-module/Date/"/>
+  </para>
+
+  <para>GD Perl module: 
+  <ulink url="http://www.cpan.org/modules/by-module/GD/"/>
+
+  Alternately, you should be able to find the latest version of GD at 
+  <ulink url="http://www.boutell.com/gd/"/>
+  </para>
+
+  <para>Chart::Base module: 
+  <ulink url="http://www.cpan.org/modules/by-module/Chart/"/>
+  </para>
+
+  <para>(But remember, Bundle::Bugzilla will install all the modules for you.)
+  </para>
+</appendix>
+
+<!-- Keep this comment at the end of the file
+Local variables:
+mode: sgml
+sgml-always-quote-attributes:t
+sgml-auto-insert-required-elements:t
+sgml-balanced-tag-edit:t
+sgml-exposed-tags:nil
+sgml-general-insert-case:lower
+sgml-indent-data:t
+sgml-indent-step:2
+sgml-local-catalogs:nil
+sgml-local-ecat-files:nil
+sgml-minimize-attributes:nil
+sgml-namecase-general:t
+sgml-omittag:t
+sgml-parent-document:("Bugzilla-Guide.xml" "book" "chapter")
+sgml-shorttag:t
+sgml-tag-region-if-active:t
+End:
+-->
+

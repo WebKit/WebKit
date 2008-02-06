@@ -1,0 +1,54 @@
+This directory contains contributed software related to Bugzilla.
+Things in here have not necessarily been tested or tried by anyone
+except the original contributor, so tred carefully.  But it may still
+be useful to you.
+
+This file is encoded in UTF8 for purposes of contributor names.
+
+This directory includes:
+
+    bugzilla-submit/ --  A standalone bug submission program.
+
+   mysqld-watcher.pl --  This script can be installed as a frequent cron 
+                         job to clean up stalled/dead queries.
+
+       sendbugmail.pl -- This script is a drop-in replacement for the
+                         'processmail' script which used to be shipped
+                         with Bugzilla, but was replaced by the
+                         Bugzilla/BugMail.pm Perl module.  You can use
+                         this script if you were previously calling
+                         processmail from other scripts external to
+                         Bugzilla.  See the comments at the top of
+                         the file for usage information.  Contributed
+                         by Nick Barnes of Ravenbrook Limited.
+
+         gnatsparse/ --  A Python script used to import a GNATS database
+                         into Bugzilla.
+
+         gnats2bz.pl --  A perl script to help import bugs from a GNATS 
+                         database into a Bugzilla database.  Contributed by
+                         Tom Schutter <tom@platte.com>
+ 
+        bug_email.pl --  A perl script that can receive email containing
+                         bug reports (email-interface). Contributed by
+                         Klaas Freitag <freitag@SuSE.de>
+ 	
+       README.Mailif --  Readme describing the mail interface.
+   bugmail_help.html --  User help page for the mail interface.
+ 
+        yp_nomail.sh --  Script you can run via cron that regularly updates
+                         the nomail file for terminated employees 
+
+bugzilla_ldapsync.rb --  Script you can run via cron that queries an LDAP
+                         server for e-mail addresses to add Bugzilla users
+                         for. Will optionally disable Bugzilla users with
+                         no matching LDAP record. Contributed by Thomas
+                         Stromberg <thomas+bugzilla@stromberg.org>
+
+         syncLDAP.pl --  Script you can run via cron that queries an LDAP
+                         server for users and e-mail addresses and adds
+                         missing users to Bugzilla. Can disable/update 
+                         non-existing/changed information. Contributed by
+                         Andreas Höfler <andreas.hoefler@bearingpoint.com>
+
+

@@ -1,0 +1,18 @@
+--- File/Temp.pm.orig   Thu Feb  6 16:26:00 2003
++++ File/Temp.pm        Thu Feb  6 16:26:23 2003
+@@ -205,6 +205,7 @@
+     # eg CGI::Carp
+     local $SIG{__DIE__} = sub {};
+     local $SIG{__WARN__} = sub {};
++    local *CORE::GLOBAL::die = sub {};
+     $bit = &$func();
+     1;
+   };
+@@ -226,6 +227,7 @@
+     # eg CGI::Carp
+     local $SIG{__DIE__} = sub {};
+     local $SIG{__WARN__} = sub {};
++    local *CORE::GLOBAL::die = sub {};
+     $bit = &$func();
+     1;
+   };

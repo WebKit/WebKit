@@ -1,0 +1,144 @@
+[%# 1.0@bugzilla.org %]
+[%# The contents of this file are subject to the Mozilla Public
+  # License Version 1.1 (the "License"); you may not use this file
+  # except in compliance with the License. You may obtain a copy of
+  # the License at http://www.mozilla.org/MPL/
+  #
+  # Software distributed under the License is distributed on an "AS
+  # IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
+  # implied. See the License for the specific language governing
+  # rights and limitations under the License.
+  #
+  # The Original Code is the Bugzilla Bug Tracking System.
+  #
+  # The Initial Developer of the Original Code is Netscape Communications
+  # Corporation. Portions created by Netscape are
+  # Copyright (C) 1998 Netscape Communications Corporation. All
+  # Rights Reserved.
+  #
+  # Contributor(s): Gervase Markham <gerv@gerv.net>
+  #                 Vaskin Kissoyan <vkissoyan@yahoo.com>
+  #                 Vitaly Harisov <vitaly@rathedg.com>
+  #                 Svetlana Harisova <light@rathedg.com>
+  #%]
+
+[%# INTERFACE:
+  # (All the below interface elements are optional.)
+  # title: string. Page title.
+  # h1: string. Main page header.
+  # h2: string. Page subheader.
+  # h3: string. Right-aligned subheader.
+  # bodyclasses: array of extra CSS classes for the <body>
+  # onload: string. JavaScript code to run when the page finishes loading.
+  # javascript: string. Javascript to go in the header.
+  # javascript_urls: list. List of URLs to Javascript.
+  # style: string. CSS style.
+  # style_urls: list. List of URLs to CSS style sheets.
+  # message: string. A message to display to the user. May contain HTML.
+  # rsslink: rss link url, May contain HTML
+  #%]
+
+[% IF message %]
+  [% PROCESS global/messages.html.tmpl %]
+[% END %]
+
+[% DEFAULT
+  h2 = ""
+  h3 = ""
+  onload = ""
+%]
+
+[%# We should be able to set the default value of the h1 variable
+  # to the value of the title variable using the DEFAULT directive,
+  # but that doesn't work if a caller sets h1 to the empty string
+  # to avoid h1 inheriting the value of title, since DEFAULT
+  # mistakenly treats empty strings as undefined and gives h1 the
+  # value of title anyway.  To get around that problem we explicitly
+  # set h1's default value here only if it is undefined. %]
+[% IF !h1.defined %][% h1 = title %][% END %]
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                      "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+  <head>
+    <title>[% title FILTER html %]</title>
+
+[%# Migration note: contents of the old Param 'headerhtml' would go here %]
+
+    [% PROCESS "global/site-navigation.html.tmpl" %]
+
+    [% IF javascript %]
+      <script type="text/javascript">
+        [% javascript %]
+      </script>
+    [% END %]
+    
+    [% IF javascript_urls %]
+      [% FOREACH javascript_url = javascript_urls %]
+        <script src="[% javascript_url FILTER html %]" type="text/javascript"></script>
+      [% END %]
+    [% END %]
+
+    [%+ INCLUDE "global/help-header.html.tmpl" %]
+
+    <link href="skins/standard/global.css" rel="stylesheet" type="text/css">
+    <link href="skins/custom/global.css" rel="stylesheet" type="text/css">
+
+    [% IF style %]
+      <style type="text/css">
+        [% style %]
+      </style>
+    [% END %]
+
+    [% IF style_urls %]
+      [% FOREACH style_url = style_urls %]
+        <link href="[% style_url FILTER html %]" rel="stylesheet" type="text/css">
+        [% IF style_url.match('^skins/standard/') %]
+          <link href="[% style_url.replace('^skins/standard/', 'skins/custom/')
+                         FILTER html %]" rel="stylesheet" type="text/css">
+        [% END %]
+      [% END %]
+    [% END %]
+
+    [%# this puts the live bookmark up on firefox for the RSS feed %]
+    [% IF rsslink %]
+       <link rel="alternate" 
+             type="application/rss+xml" title="RSS 1.0" 
+             href="[% rsslink FILTER html %]" />
+    [% END %]
+
+  </head>
+
+[%# Migration note: contents of the old Param 'bodyhtml' go in the body tag,
+  # but set the onload attribute in the DEFAULT directive above.
+  #%]
+
+  <body onload="[% onload %]"
+        class="[% Param('urlbase').replace('^https?://','').replace('/$','').replace('[-~@:/.]+','-') %]
+               [% FOREACH class = bodyclasses %]
+                 [% ' ' %][% class FILTER css_class_quote %]
+               [% END %]">
+
+[%# Migration note: the following file corresponds to the old Param
+  # 'bannerhtml'
+  #%]
+
+[% INCLUDE global/banner.html.tmpl %]
+
+<div id="header">
+  [% IF h2 %]
+    <h2>[% h2 %]</h2>
+  [% END %]
+
+  [% IF h1 %]
+    <h1>[% h1 %]</h1>
+  [% END %]
+
+  [% IF h3 %]
+    <h3>[% h3 %]</h3>
+  [% END %]
+</div>
+
+[% IF message %]
+<div id="message">[% message %]</div>
+[% END %]
