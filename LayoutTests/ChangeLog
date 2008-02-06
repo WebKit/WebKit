@@ -1,3 +1,71 @@
+2008-02-05  Oliver Hunt  <oliver@apple.com>
+
+        RS=Eric.
+
+        Update layout test results for foreignObject being enabled again.
+
+        * platform/mac-leopard/svg/batik/text/textBiDi-expected.txt:
+        * platform/mac/svg/custom/baseval-animval-equality-expected.checksum:
+        * platform/mac/svg/custom/baseval-animval-equality-expected.png:
+        * platform/mac/svg/custom/baseval-animval-equality-expected.txt:
+        * platform/mac/svg/custom/dominant-baseline-hanging-expected.checksum:
+        * platform/mac/svg/custom/dominant-baseline-hanging-expected.png:
+        * platform/mac/svg/custom/dominant-baseline-hanging-expected.txt:
+        * platform/mac/svg/custom/dynamic-svg-document-creation-expected.checksum:
+        * platform/mac/svg/custom/dynamic-svg-document-creation-expected.png:
+        * platform/mac/svg/custom/dynamic-svg-document-creation-expected.txt:
+        * platform/mac/svg/custom/fill-SVGPaint-interface-expected.checksum:
+        * platform/mac/svg/custom/fill-SVGPaint-interface-expected.png:
+        * platform/mac/svg/custom/fill-SVGPaint-interface-expected.txt:
+        * platform/mac/svg/custom/foreign-object-skew-expected.checksum:
+        * platform/mac/svg/custom/foreign-object-skew-expected.png:
+        * platform/mac/svg/custom/foreign-object-skew-expected.txt:
+        * platform/mac/svg/custom/foreignObject-crash-on-hover-expected.txt:
+        * platform/mac/svg/custom/getPresentationAttribute-expected.checksum:
+        * platform/mac/svg/custom/getPresentationAttribute-expected.png:
+        * platform/mac/svg/custom/getPresentationAttribute-expected.txt:
+        * platform/mac/svg/custom/image-with-prefix-in-webarchive-expected.checksum:
+        * platform/mac/svg/custom/image-with-prefix-in-webarchive-expected.png:
+        * platform/mac/svg/custom/stroke-width-click-expected.checksum:
+        * platform/mac/svg/custom/stroke-width-click-expected.png:
+        * platform/mac/svg/custom/use-on-disallowed-foreign-object-1-expected.checksum:
+        * platform/mac/svg/custom/use-on-disallowed-foreign-object-1-expected.png:
+        * platform/mac/svg/custom/use-on-disallowed-foreign-object-1-expected.txt:
+        * platform/mac/svg/custom/use-on-disallowed-foreign-object-2-expected.checksum:
+        * platform/mac/svg/custom/use-on-disallowed-foreign-object-2-expected.png:
+        * platform/mac/svg/custom/use-on-disallowed-foreign-object-2-expected.txt:
+        * platform/mac/svg/custom/use-on-disallowed-foreign-object-3-expected.checksum:
+        * platform/mac/svg/custom/use-on-disallowed-foreign-object-3-expected.png:
+        * platform/mac/svg/custom/use-on-disallowed-foreign-object-3-expected.txt:
+        * platform/mac/svg/custom/use-on-disallowed-foreign-object-4-expected.checksum:
+        * platform/mac/svg/custom/use-on-disallowed-foreign-object-4-expected.png:
+        * platform/mac/svg/custom/use-on-disallowed-foreign-object-4-expected.txt:
+        * platform/mac/svg/custom/use-on-disallowed-foreign-object-5-expected.checksum:
+        * platform/mac/svg/custom/use-on-disallowed-foreign-object-5-expected.png:
+        * platform/mac/svg/custom/use-on-disallowed-foreign-object-5-expected.txt:
+        * platform/mac/svg/custom/use-on-disallowed-foreign-object-6-expected.checksum:
+        * platform/mac/svg/custom/use-on-disallowed-foreign-object-6-expected.png:
+        * platform/mac/svg/custom/use-on-disallowed-foreign-object-6-expected.txt:
+        * platform/mac/svg/custom/use-on-g-containing-foreignObject-and-image-expected.checksum:
+        * platform/mac/svg/custom/use-on-g-containing-foreignObject-and-image-expected.png:
+        * platform/mac/svg/custom/use-on-g-containing-foreignObject-and-image-expected.txt:
+        * platform/mac/svg/custom/use-on-non-svg-namespaced-element-expected.checksum:
+        * platform/mac/svg/custom/use-on-non-svg-namespaced-element-expected.png:
+        * platform/mac/svg/custom/use-on-non-svg-namespaced-element-expected.txt:
+        * platform/mac/svg/custom/use-on-symbol-inside-pattern-expected.checksum:
+        * platform/mac/svg/custom/use-on-symbol-inside-pattern-expected.png:
+        * platform/mac/svg/custom/use-on-symbol-inside-pattern-expected.txt:
+        * platform/mac/svg/hixie/mixed/006-expected.txt:
+        * platform/mac/svg/hixie/mixed/007-expected.txt:
+        * platform/mac/svg/hixie/mixed/008-expected.txt:
+        * platform/mac/svg/hixie/mixed/009-expected.txt:
+        * platform/mac/svg/hixie/mixed/011-expected.txt:
+        * platform/mac/svg/webarchive/svg-cursor-subresources-expected.checksum:
+        * platform/mac/svg/webarchive/svg-cursor-subresources-expected.png:
+        * svg/custom/image-with-prefix-in-webarchive-expected.txt:
+        * svg/custom/stroke-width-click-expected.txt:
+        * svg/custom/svg-features-expected.txt:
+
 2008-02-05  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.

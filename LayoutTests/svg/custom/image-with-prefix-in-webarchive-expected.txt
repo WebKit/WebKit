@@ -21,7 +21,7 @@
 		<key>WebResourceTextEncodingName</key>
 		<string>UTF-8</string>
 		<key>WebResourceURL</key>
-		<string>file:///LayoutTests/svg/custom/image-with-prefix-in-webarchive.svg</string>
+		<string>file:///Users/oliver/WebKit/OpenSource/LayoutTests/svg/custom/image-with-prefix-in-webarchive.svg</string>
 	</dict>
 	<key>WebSubresources</key>
 	<array>
@@ -179,12 +179,12 @@
 				<key>MIMEType</key>
 				<string>image/png</string>
 				<key>URL</key>
-				<string>file:///LayoutTests/svg/custom/resources/green-checker.png</string>
+				<string>file:///Users/oliver/WebKit/OpenSource/LayoutTests/svg/custom/resources/green-checker.png</string>
 				<key>expectedContentLength</key>
 				<integer>5552</integer>
 			</dict>
 			<key>WebResourceURL</key>
-			<string>file:///LayoutTests/svg/custom/resources/green-checker.png</string>
+			<string>file:///Users/oliver/WebKit/OpenSource/LayoutTests/svg/custom/resources/green-checker.png</string>
 		</dict>
 	</array>
 </dict>

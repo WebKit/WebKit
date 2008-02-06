@@ -54,4 +54,4 @@
 "http://www.w3.org/TR/SVG11/feature#Animation", "1.1": false, false
 "http://www.w3.org/TR/SVG11/feature#Font", "1.1": true, true
 "http://www.w3.org/TR/SVG11/feature#BasicFont", "1.1": true, true
-"http://www.w3.org/TR/SVG11/feature#Extensibility", "1.1": false, false
+"http://www.w3.org/TR/SVG11/feature#Extensibility", "1.1": true, true
