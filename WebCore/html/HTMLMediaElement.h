@@ -53,7 +53,7 @@ public:
     virtual void removedFromDocument();
     virtual void attach();
     
-    MediaPlayer* player() const { return m_player; }
+    MediaPlayer* player() const { return m_player.get(); }
     
     virtual bool isVideo() const { return false; }
     
@@ -199,19 +199,8 @@ protected:
     
     bool m_pausedInternal;
     bool m_inPageCache;
-    
-    struct CallbackEntry {
-        CallbackEntry() : m_voidCallback(0), m_pause(false) { }
-        CallbackEntry(VoidCallback* voidCallback, bool pause) {    
-            m_voidCallback = voidCallback;
-            m_pause = pause;
-        }
-        RefPtr<VoidCallback> m_voidCallback;
-        bool m_pause;
-    };
-    typedef Vector<CallbackEntry> CallbackVector;
-    
-    MediaPlayer* m_player;
+
+    OwnPtr<MediaPlayer> m_player;
 };
 
 } //namespace

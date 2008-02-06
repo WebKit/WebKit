@@ -1,3 +1,22 @@
+2008-02-05  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Darin.
+
+        <rdar://problem/5726340>
+        <video autoplay controls> left in unplayable state if navigated away, then back to, before video finished loading
+        
+        When moving document in and out from the page cache:
+        - Cancel incomplete load by deleting the media player. This guarantees everything is in consistent state.
+        - Restart the load if it was aborted in the middle.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::~HTMLMediaElement):
+        (WebCore::HTMLMediaElement::load):
+        (WebCore::HTMLMediaElement::willSaveToCache):
+        (WebCore::HTMLMediaElement::didRestoreFromCache):
+        * html/HTMLMediaElement.h:
+        (WebCore::HTMLMediaElement::player):
+
 2008-02-06  Darin Adler  <darin@apple.com>
 
         Reviewed by Sam.

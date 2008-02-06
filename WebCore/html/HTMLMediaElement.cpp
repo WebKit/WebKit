@@ -89,7 +89,6 @@ HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document* doc)
 HTMLMediaElement::~HTMLMediaElement()
 {
     document()->unregisterForCacheCallbacks(this);
-    delete m_player;
 }
 
 bool HTMLMediaElement::checkDTD(const Node* newChild)
@@ -324,8 +323,8 @@ void HTMLMediaElement::load(ExceptionCode& ec)
         goto end;
     
     // 10, 11, 12, 13
-    delete m_player;
-    m_player = new MediaPlayer(this);
+    m_player.clear();
+    m_player.set(new MediaPlayer(this));
     updateVolume();
     m_player->load(m_currentSrc);
     if (m_loadNestingLevel < m_terminateLoadBelowNestingLevel)
@@ -995,8 +994,10 @@ void HTMLMediaElement::willSaveToCache()
     // 3.14.9.4. Loading the media resource
     // 14
     if (m_begun) {
-        if (m_player)
-            m_player->cancelLoad();
+        // For simplicity cancel the incomplete load by deleting the player
+        m_player.clear();
+        m_progressEventTimer.stop();
+
         m_error = new MediaError(MediaError::MEDIA_ERR_ABORTED);
         m_begun = false;
         initAndDispatchProgressEvent(abortEvent);
@@ -1018,6 +1019,14 @@ void HTMLMediaElement::didRestoreFromCache()
 {
     m_inPageCache = false;
     setPausedInternal(false);
+
+    if (m_error && m_error->code() == MediaError::MEDIA_ERR_ABORTED) {
+        // Restart the load if it was aborted in the middle by moving the document to the page cache.
+        // This behavior is not specified but it seems like a sensible thing to do.
+        ExceptionCode ec;
+        load(ec);
+    }
+        
     if (renderer())
         renderer()->updateFromElement();
 }
