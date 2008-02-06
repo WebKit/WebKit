@@ -264,31 +264,24 @@ NamedAttrMap& NamedAttrMap::operator=(const NamedAttrMap& other)
     return *this;
 }
 
-void NamedAttrMap::addAttribute(Attribute *attribute)
+void NamedAttrMap::addAttribute(PassRefPtr<Attribute> prpAttribute)
 {
-    // Add the attribute to the list
-    Attribute **newAttrs = static_cast<Attribute **>(fastMalloc((len + 1) * sizeof(Attribute *)));
-    if (attrs) {
-      for (unsigned i = 0; i < len; i++)
-        newAttrs[i] = attrs[i];
-      fastFree(attrs);
-    }
-    attrs = newAttrs;
-    attrs[len++] = attribute;
-    attribute->ref();
+    Attribute* attribute = prpAttribute.releaseRef(); // The attrs array will own this pointer.
 
-    Attr * const attr = attribute->attr();
-    if (attr)
+    // Add the attribute to the list
+    attrs = static_cast<Attribute**>(fastRealloc(attrs, (len + 1) * sizeof(Attribute*)));
+    attrs[len++] = attribute;
+
+    if (Attr* attr = attribute->attr())
         attr->m_element = element;
 
     // Notify the element that the attribute has been added, and dispatch appropriate mutation events
     // Note that element may be null here if we are called from insertAttr() during parsing
     if (element) {
-        RefPtr<Attribute> a = attribute;
-        element->attributeChanged(a.get());
+        element->attributeChanged(attribute);
         // Because of our updateStyleAttributeIfNeeded() style modification events are never sent at the right time, so don't bother sending them.
-        if (a->name() != styleAttr) {
-            element->dispatchAttrAdditionEvent(a.get());
+        if (attribute->name() != styleAttr) {
+            element->dispatchAttrAdditionEvent(attribute);
             element->dispatchSubtreeModifiedEvent(false);
         }
     }

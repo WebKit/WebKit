@@ -1,3 +1,27 @@
+2008-02-06  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Oliver Hunt.
+        
+        Fixed <rdar://problem/5728081> REGRESSION: Many leaks on buildbot
+
+        The problem was refCount underflow in NamedAttrMap.
+        
+        Neither our regression tests nor the stress test have yet discovered
+        another instance of this problem.
+
+        * dom/NamedAttrMap.cpp:
+        (WebCore::NamedAttrMap::addAttribute): Changed to use PassRefPtr,
+        for fast and correct refCount management. Also, change a rediculously
+        slow malloc to a slightly less rediculously slow realloc.
+
+        * dom/NamedAttrMap.h:
+        (WebCore::NamedAttrMap::insertAttribute): Changed to use PassRefPtr,
+        for fast and correct refCount management.
+
+        * html/HTMLTokenizer.cpp:
+        (WebCore::Token::addAttribute): Use a RefPtr, to guarantee that the
+        object starts with a refCount of 1.
+
 2008-02-06  Darin Adler  <darin@apple.com>
 
         Reviewed by Tim Hatcher.

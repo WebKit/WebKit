@@ -68,12 +68,10 @@ public:
 
     // used during parsing: only inserts if not already there
     // no error checking!
-    void insertAttribute(Attribute* newAttribute, bool allowDuplicates) {
+    void insertAttribute(PassRefPtr<Attribute> newAttribute, bool allowDuplicates) {
         ASSERT(!element);
         if (allowDuplicates || !getAttributeItem(newAttribute->name()))
             addAttribute(newAttribute);
-        else
-            newAttribute->deref();
     }
 
     virtual bool isMappedAttributeMap() const;
@@ -85,7 +83,7 @@ public:
 
 protected:
     // this method is internal, does no error checking at all
-    void addAttribute(Attribute* newAttribute);
+    void addAttribute(PassRefPtr<Attribute> newAttribute);
     // this method is internal, does no error checking at all
     void removeAttribute(const QualifiedName& name);
     virtual void clearAttributes();
