@@ -620,7 +620,7 @@ String InspectorController::localizedStringsURL()
 }
 
 // Trying to inspect something in a frame with JavaScript disabled would later lead to
-// crashes trying to create JavaScript wrappers. Some day we could fix this issuee, but
+// crashes trying to create JavaScript wrappers. Some day we could fix this issue, but
 // for now prevent crashes here by never targeting a node in such a frame.
 static bool canPassNodeToJavaScript(Node* node)
 {
