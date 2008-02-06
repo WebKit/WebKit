@@ -1,3 +1,28 @@
+2008-02-05  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Fix for http://bugs.webkit.org/show_bug.cgi?id=8080
+        NodeList (and other DOM lists) items are not enumeratable using for..in
+
+        - Match Firefox when enumerating DOM interfaces with indexGetters (support for 
+          the array bracket, nodeList[0], notation) by including all the items in the
+          list before the attributes and methods of the interface.
+
+        Test: fast/dom/domListEnumeration.html
+
+        * ForwardingHeaders/kjs/PropertyNameArray.h: Added.
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::customGetPropertyNames): Use the new custom method model. 
+        * bindings/js/JSHistoryCustom.cpp:
+        (WebCore::JSHistory::customGetPropertyNames): ditto.
+        * bindings/scripts/CodeGeneratorJS.pm: Instead of just adding a declaration of
+        getProperyNames and implementing the method in the Custom.cpp, move to a the 
+        model used by generated getOwnPropertySlot() and put() where the custom code
+        is written in a separate customGetPropertyNames which returns a bool indicating
+        whether to call up to the base class.  This enables adding the list indexes
+        to the PropertyNameArray for interfaces with indexGetters automatically.
+
 2008-02-05  Samuel Weinig  <sam@webkit.org>
 
         Reviewed by Darin Adler.

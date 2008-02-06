@@ -369,7 +369,8 @@ sub GenerateHeader
     push(@headerContent, "    virtual bool deleteProperty(KJS::ExecState*, const KJS::Identifier&);\n") if $dataNode->extendedAttributes->{"CustomDeleteProperty"};
 
     # Custom getPropertyNames function
-    push(@headerContent, "    virtual void getPropertyNames(KJS::ExecState*, KJS::PropertyNameArray&);\n") if $dataNode->extendedAttributes->{"CustomGetPropertyNames"};
+    push(@headerContent, "    virtual void getPropertyNames(KJS::ExecState*, KJS::PropertyNameArray&);\n") if ($dataNode->extendedAttributes->{"CustomGetPropertyNames"} || $dataNode->extendedAttributes->{"HasIndexGetter"});
+    push(@headerContent, "    bool customGetPropertyNames(KJS::ExecState*, KJS::PropertyNameArray&);\n") if $dataNode->extendedAttributes->{"CustomGetPropertyNames"};
 
     # Constructor object getter
     push(@headerContent, "    static KJS::JSValue* getConstructor(KJS::ExecState*);\n") if $dataNode->extendedAttributes->{"GenerateConstructor"};
@@ -586,6 +587,8 @@ sub GenerateImplementation
 
     push(@implContentHeader, "#include \"$className.h\"\n\n");
     push(@implContentHeader, "#include <wtf/GetPtr.h>\n\n");
+
+    push(@implContentHeader, "#include <kjs/PropertyNameArray.h>\n") if $dataNode->extendedAttributes->{"HasIndexGetter"};
 
     AddIncludesForType($interfaceName);
 
@@ -1055,10 +1058,25 @@ sub GenerateImplementation
         }
     }
 
+    if ($dataNode->extendedAttributes->{"CustomGetPropertyNames"} || $dataNode->extendedAttributes->{"HasIndexGetter"}) {
+        push(@implContent, "void ${className}::getPropertyNames(ExecState* exec, PropertyNameArray& propertyNames)\n");
+        push(@implContent, "{\n");
+        if ($dataNode->extendedAttributes->{"CustomGetPropertyNames"}) {
+            push(@implContent, "    if (customGetPropertyNames(exec, propertyNames))\n");
+            push(@implContent, "        return;\n");
+        }
+        if ($dataNode->extendedAttributes->{"HasIndexGetter"}) {
+            push(@implContent, "    for (unsigned i = 0; i < static_cast<${implClassName}*>(impl())->length(); ++i)\n");
+            push(@implContent, "        propertyNames.add(Identifier::from(i));\n");
+        }
+        push(@implContent, "     Base::getPropertyNames(exec, propertyNames);\n");
+        push(@implContent, "}\n\n");
+    }
+
     if ($dataNode->extendedAttributes->{"GenerateConstructor"}) {
         push(@implContent, "JSValue* ${className}::getConstructor(ExecState* exec)\n{\n");
         push(@implContent, "    return KJS::cacheGlobalObject<${className}Constructor>(exec, \"[[${interfaceName}.constructor]]\");\n");
-        push(@implContent, "}\n");
+        push(@implContent, "}\n\n");
     }
 
     # Functions

@@ -1,3 +1,12 @@
+2008-02-05  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Fix for http://bugs.webkit.org/show_bug.cgi?id=8080
+        NodeList (and other DOM lists) items are not enumeratable using for..in
+
+        * JavaScriptCore.exp:
+
 2008-02-05  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Oliver Hunt.

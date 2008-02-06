@@ -1,0 +1,188 @@
+This tests enumerating the elements of DOM lists.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+[object NodeList]
+PASS resultArray.length is 5
+PASS resultArray[0].i is '0'
+PASS resultArray[0].item is nodeList.item(0)
+PASS resultArray[1].i is '1'
+PASS resultArray[1].item is nodeList.item(1)
+PASS resultArray[2].i is '2'
+PASS resultArray[2].item is nodeList.item(2)
+PASS resultArray[3].i is 'length'
+PASS resultArray[3].item is nodeList.length
+PASS resultArray[4].i is 'item'
+PASS resultArray[4].item is nodeList.item
+
+[object HTMLCollection]
+PASS resultArray.length is 7
+PASS resultArray[0].i is '0'
+PASS resultArray[0].item is htmlCollection.item(0)
+PASS resultArray[1].i is '1'
+PASS resultArray[1].item is htmlCollection.item(1)
+PASS resultArray[2].i is '2'
+PASS resultArray[2].item is htmlCollection.item(2)
+PASS resultArray[3].i is 'length'
+PASS resultArray[3].item is htmlCollection.length
+PASS resultArray[4].i is 'namedItem'
+PASS resultArray[4].item is htmlCollection.namedItem
+PASS resultArray[5].i is 'tags'
+PASS resultArray[5].item is htmlCollection.tags
+PASS resultArray[6].i is 'item'
+PASS resultArray[6].item is htmlCollection.item
+
+[object NamedNodeMap]
+PASS resultArray.length is 11
+PASS resultArray[0].i is '0'
+PASS resultArray[0].item is namedNodeMap.item(0)
+PASS resultArray[1].i is '1'
+PASS resultArray[1].item is namedNodeMap.item(1)
+PASS resultArray[2].i is '2'
+PASS resultArray[2].item is namedNodeMap.item(2)
+PASS resultArray[3].i is 'length'
+PASS resultArray[3].item is namedNodeMap.length
+PASS resultArray[4].i is 'removeNamedItemNS'
+PASS resultArray[4].item is namedNodeMap.removeNamedItemNS
+PASS resultArray[5].i is 'getNamedItem'
+PASS resultArray[5].item is namedNodeMap.getNamedItem
+PASS resultArray[6].i is 'removeNamedItem'
+PASS resultArray[6].item is namedNodeMap.removeNamedItem
+PASS resultArray[7].i is 'getNamedItemNS'
+PASS resultArray[7].item is namedNodeMap.getNamedItemNS
+PASS resultArray[8].i is 'setNamedItemNS'
+PASS resultArray[8].item is namedNodeMap.setNamedItemNS
+PASS resultArray[9].i is 'setNamedItem'
+PASS resultArray[9].item is namedNodeMap.setNamedItem
+PASS resultArray[10].i is 'item'
+PASS resultArray[10].item is namedNodeMap.item
+
+[object HTMLFormElement]
+PASS resultArray.length is 113
+PASS resultArray[0].i is '0'
+PASS resultArray[0].item is document.getElementsByTagName('select')[0]
+PASS resultArray[1].i is '1'
+PASS resultArray[1].item is document.getElementsByTagName('select')[1]
+PASS resultArray[2].i is '2'
+PASS resultArray[2].item is document.getElementsByTagName('select')[2]
+PASS resultArray[3].i is 'method'
+PASS resultArray[3].item is htmlFormElement.method
+...ellided the remaining 109
+
+[object HTMLSelectElement]
+PASS resultArray.length is 117
+PASS resultArray[0].i is '0'
+PASS resultArray[0].item is document.getElementsByTagName('option')[0]
+PASS resultArray[1].i is '1'
+PASS resultArray[1].item is document.getElementsByTagName('option')[1]
+PASS resultArray[2].i is '2'
+PASS resultArray[2].item is document.getElementsByTagName('option')[2]
+PASS resultArray[3].i is 'disabled'
+PASS resultArray[3].item is htmlSelectElement.disabled
+...ellided the remaining 113
+
+[object StyleSheetList]
+PASS resultArray.length is 5
+PASS resultArray[0].i is '0'
+PASS resultArray[0].item is styleSheetList.item(0)
+PASS resultArray[1].i is '1'
+PASS resultArray[1].item is styleSheetList.item(1)
+PASS resultArray[2].i is '2'
+PASS resultArray[2].item is styleSheetList.item(2)
+PASS resultArray[3].i is 'length'
+PASS resultArray[3].item is styleSheetList.length
+PASS resultArray[4].i is 'item'
+PASS resultArray[4].item is styleSheetList.item
+
+[object CSSRuleList]
+PASS resultArray.length is 5
+PASS resultArray[0].i is '0'
+PASS resultArray[0].item is cssRuleList.item(0)
+PASS resultArray[1].i is '1'
+PASS resultArray[1].item is cssRuleList.item(1)
+PASS resultArray[2].i is '2'
+PASS resultArray[2].item is cssRuleList.item(2)
+PASS resultArray[3].i is 'length'
+PASS resultArray[3].item is cssRuleList.length
+PASS resultArray[4].i is 'item'
+PASS resultArray[4].item is cssRuleList.item
+
+[object CSSStyleDeclaration]
+PASS resultArray.length is 14
+PASS resultArray[0].i is '0'
+PASS resultArray[0].item is cssStyleDeclaration.item(0)
+PASS resultArray[1].i is '1'
+PASS resultArray[1].item is cssStyleDeclaration.item(1)
+PASS resultArray[2].i is '2'
+PASS resultArray[2].item is cssStyleDeclaration.item(2)
+PASS resultArray[3].i is 'length'
+PASS resultArray[3].item is cssStyleDeclaration.length
+PASS resultArray[4].i is 'cssText'
+PASS resultArray[4].item is cssStyleDeclaration.cssText
+PASS resultArray[5].i is 'parentRule'
+PASS resultArray[5].item is cssStyleDeclaration.parentRule
+PASS resultArray[6].i is 'removeProperty'
+PASS resultArray[6].item is cssStyleDeclaration.removeProperty
+PASS resultArray[7].i is 'getPropertyPriority'
+PASS resultArray[7].item is cssStyleDeclaration.getPropertyPriority
+PASS resultArray[8].i is 'getPropertyValue'
+PASS resultArray[8].item is cssStyleDeclaration.getPropertyValue
+PASS resultArray[9].i is 'getPropertyShorthand'
+PASS resultArray[9].item is cssStyleDeclaration.getPropertyShorthand
+PASS resultArray[10].i is 'getPropertyCSSValue'
+PASS resultArray[10].item is cssStyleDeclaration.getPropertyCSSValue
+PASS resultArray[11].i is 'isPropertyImplicit'
+PASS resultArray[11].item is cssStyleDeclaration.isPropertyImplicit
+PASS resultArray[12].i is 'item'
+PASS resultArray[12].item is cssStyleDeclaration.item
+PASS resultArray[13].i is 'setProperty'
+PASS resultArray[13].item is cssStyleDeclaration.setProperty
+
+[object CSSValueList]
+PASS resultArray.length is 10
+PASS resultArray[0].i is '0'
+PASS resultArray[0].item is cssValueList.item(0)
+PASS resultArray[1].i is '1'
+PASS resultArray[1].item is cssValueList.item(1)
+PASS resultArray[2].i is 'length'
+PASS resultArray[2].item is cssValueList.length
+PASS resultArray[3].i is 'cssText'
+PASS resultArray[3].item is cssValueList.cssText
+PASS resultArray[4].i is 'cssValueType'
+PASS resultArray[4].item is cssValueList.cssValueType
+PASS resultArray[5].i is 'item'
+PASS resultArray[5].item is cssValueList.item
+PASS resultArray[6].i is 'CSS_CUSTOM'
+PASS resultArray[6].item is cssValueList.CSS_CUSTOM
+PASS resultArray[7].i is 'CSS_PRIMITIVE_VALUE'
+PASS resultArray[7].item is cssValueList.CSS_PRIMITIVE_VALUE
+PASS resultArray[8].i is 'CSS_INHERIT'
+PASS resultArray[8].item is cssValueList.CSS_INHERIT
+PASS resultArray[9].i is 'CSS_VALUE_LIST'
+PASS resultArray[9].item is cssValueList.CSS_VALUE_LIST
+
+[object MediaList]
+PASS resultArray.length is 8
+PASS resultArray[0].i is '0'
+PASS resultArray[0].item is mediaList.item(0)
+PASS resultArray[1].i is '1'
+PASS resultArray[1].item is mediaList.item(1)
+PASS resultArray[2].i is '2'
+PASS resultArray[2].item is mediaList.item(2)
+PASS resultArray[3].i is 'length'
+PASS resultArray[3].item is mediaList.length
+PASS resultArray[4].i is 'mediaText'
+PASS resultArray[4].item is mediaList.mediaText
+PASS resultArray[5].i is 'appendMedium'
+PASS resultArray[5].item is mediaList.appendMedium
+PASS resultArray[6].i is 'deleteMedium'
+PASS resultArray[6].item is mediaList.deleteMedium
+PASS resultArray[7].i is 'item'
+PASS resultArray[7].item is mediaList.item
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -180,6 +180,7 @@ __ZN3KJS6parserEv
 __ZN3KJS7CStringD1Ev
 __ZN3KJS7UString3Rep4nullE
 __ZN3KJS7UString3Rep7destroyEv
+__ZN3KJS7UString4fromEj
 __ZN3KJS7UString6appendERKS0_
 __ZN3KJS7UStringC1EPKNS_5UCharEi
 __ZN3KJS7UStringC1EPKc

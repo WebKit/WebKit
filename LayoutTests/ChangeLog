@@ -1,3 +1,14 @@
+2008-02-05  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Test for http://bugs.webkit.org/show_bug.cgi?id=8080
+        NodeList (and other DOM lists) items are not enumeratable using for..in
+
+        * fast/dom/domListEnumeration-expected.txt: Added.
+        * fast/dom/domListEnumeration.html: Added.
+        * fast/dom/resources/domListEnumeration.js: Added.
+
 2008-02-05  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Oliver.
