@@ -1,3 +1,9 @@
+2008-02-06  Dan Bernstein  <mitz@apple.com>
+
+        Build fix.
+
+        * svg/svgtags.in:
+
 2008-02-05  Oliver Hunt  <oliver@apple.com>
 
         Build fix -- touch generate-bindings to trigger regeneration of bindings
