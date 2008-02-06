@@ -1,3 +1,19 @@
+2008-02-06  Kevin McCullough  <kmccullough@apple.com>
+
+        Rubberstamped by Darin.
+
+        <rdar://problem/5727708> REGRESSION (r29952): Can't send message from Yahoo Mail beta
+        - Reverted the change that caused the regression.
+
+        * dom/xhtml/level3/core/documentsetstricterrorchecking02-expected.txt:
+        * fast/dom/Document/createAttributeNS-namespace-err-expected.txt: Removed.
+        * fast/dom/Document/createAttributeNS-namespace-err.html: Removed.
+        * fast/dom/Document/createElementNS-namespace-err-expected.txt: Removed.
+        * fast/dom/Document/createElementNS-namespace-err.html: Removed.
+        * fast/dom/Document/resources/TEMPLATE.html: Removed.
+        * fast/dom/Document/resources/createAttributeNS-namespace-err.js: Removed.
+        * fast/dom/Document/resources/createElementNS-namespace-err.js: Removed.
+
 2008-02-06  Darin Adler  <darin@apple.com>
 
         Reviewed by Sam.

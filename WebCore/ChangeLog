@@ -1,3 +1,18 @@
+2008-02-06  Kevin McCullough  <kmccullough@apple.com>
+
+        Rubberstamped by Darin.
+
+        <rdar://problem/5727708> REGRESSION (r29952): Can't send message from Yahoo Mail beta
+        - Reverted the change that caused the regression.
+
+        * dom/Document.cpp:
+        (WebCore::Document::createElement):
+        (WebCore::Document::createElementNS):
+        (WebCore::Document::getElementById):
+        (WebCore::Document::parseQualifiedName):
+        (WebCore::Document::createAttributeNS):
+        * dom/Document.idl:
+
 2008-02-06  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Oliver Hunt.

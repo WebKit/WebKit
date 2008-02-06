@@ -55,10 +55,10 @@ module core {
                                        in boolean deep)
             raises (DOMException);
         [OldStyleObjC] Element createElementNS(in [ConvertNullToNullString] DOMString namespaceURI,
-                                               in [ConvertNullToNullString] DOMString qualifiedName)
+                                               in DOMString qualifiedName)
             raises (DOMException);
         [OldStyleObjC] Attr createAttributeNS(in [ConvertNullToNullString] DOMString namespaceURI,
-                                              in [ConvertNullToNullString] DOMString qualifiedName)
+                                              in DOMString qualifiedName)
             raises (DOMException);
         [OldStyleObjC] NodeList getElementsByTagNameNS(in [ConvertNullToNullString] DOMString namespaceURI,
                                                        in DOMString localName);
