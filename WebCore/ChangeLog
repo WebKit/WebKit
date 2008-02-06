@@ -1,5 +1,20 @@
 2008-02-06  Dan Bernstein  <mitz@apple.com>
 
+        Reviewed by Darin Adler.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?17093
+        'border-color' does not animate to the value of 'color' when unspecified
+
+        Test: fast/css/transition-color-unspecified.html
+
+        * page/AnimationController.cpp:
+        (WebCore::ImplicitAnimation::animate): Changed to use the value of the
+        'color' property in the source or destination style as the source or
+        destination value of properties whose inital value is defined to be the
+        computed value of 'color'.
+
+2008-02-06  Dan Bernstein  <mitz@apple.com>
+
         Build fix.
 
         * svg/svgtags.in:

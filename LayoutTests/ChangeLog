@@ -1,3 +1,15 @@
+2008-02-06  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        - test for http://bugs.webkit.org/show_bug.cgi?17093
+        'border-color' does not animate to the value of 'color' when unspecified
+
+        * fast/css/transition-color-unspecified.html: Added.
+        * platform/mac/fast/css/transition-color-unspecified-expected.checksum: Added.
+        * platform/mac/fast/css/transition-color-unspecified-expected.png: Added.
+        * platform/mac/fast/css/transition-color-unspecified-expected.txt: Added.
+
 2008-02-05  Oliver Hunt  <oliver@apple.com>
 
         RS=Eric.

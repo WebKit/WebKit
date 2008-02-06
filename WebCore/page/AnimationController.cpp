@@ -326,6 +326,27 @@ static inline EVisibility blendFunc(EVisibility from, EVisibility to, double pro
         }\
     }\
 
+#define BLEND_MAYBE_INVALID_COLOR(prop, getter, setter) \
+    if (m_property == prop && m_toStyle->getter() != targetStyle->getter()) \
+        reset(renderer, currentStyle, targetStyle); \
+    \
+    if ((m_property == cAnimateAll && !animation->hasAnimationForProperty(prop)) || m_property == prop) { \
+        Color fromColor = m_fromStyle->getter(); \
+        Color toColor = m_toStyle->getter(); \
+        if (!fromColor.isValid()) \
+            fromColor = m_fromStyle->color(); \
+        if (!toColor.isValid()) \
+            toColor = m_toStyle->color(); \
+        if (fromColor != toColor) {\
+            m_finished = false; \
+            if (!animatedStyle) \
+                animatedStyle = new (renderer->renderArena()) RenderStyle(*targetStyle); \
+            animatedStyle->setter(blendFunc(fromColor, toColor, progress()));\
+            if (m_property == prop) \
+                return; \
+        }\
+    }\
+
 #define BLEND_SHADOW(prop, getter, setter) \
     if (m_property == prop && (!m_toStyle->getter() || !targetStyle->getter() || *m_toStyle->getter() != *targetStyle->getter())) \
         reset(renderer, currentStyle, targetStyle); \
@@ -372,22 +393,22 @@ void ImplicitAnimation::animate(CompositeImplicitAnimation* animation, RenderObj
     BLEND(CSS_PROP_OPACITY, opacity, setOpacity);
     BLEND(CSS_PROP_COLOR, color, setColor);
     BLEND(CSS_PROP_BACKGROUND_COLOR, backgroundColor, setBackgroundColor);
-    BLEND(CSS_PROP__WEBKIT_COLUMN_RULE_COLOR, columnRuleColor, setColumnRuleColor);
+    BLEND_MAYBE_INVALID_COLOR(CSS_PROP__WEBKIT_COLUMN_RULE_COLOR, columnRuleColor, setColumnRuleColor);
     BLEND(CSS_PROP__WEBKIT_COLUMN_RULE_WIDTH, columnRuleWidth, setColumnRuleWidth);
     BLEND(CSS_PROP__WEBKIT_COLUMN_GAP, columnGap, setColumnGap);
     BLEND(CSS_PROP__WEBKIT_COLUMN_COUNT, columnCount, setColumnCount);
     BLEND(CSS_PROP__WEBKIT_COLUMN_WIDTH, columnWidth, setColumnWidth);
-    BLEND(CSS_PROP__WEBKIT_TEXT_STROKE_COLOR, textStrokeColor, setTextStrokeColor);
-    BLEND(CSS_PROP__WEBKIT_TEXT_FILL_COLOR, textFillColor, setTextFillColor);
+    BLEND_MAYBE_INVALID_COLOR(CSS_PROP__WEBKIT_TEXT_STROKE_COLOR, textStrokeColor, setTextStrokeColor);
+    BLEND_MAYBE_INVALID_COLOR(CSS_PROP__WEBKIT_TEXT_FILL_COLOR, textFillColor, setTextFillColor);
     BLEND(CSS_PROP__WEBKIT_BORDER_HORIZONTAL_SPACING, horizontalBorderSpacing, setHorizontalBorderSpacing);
     BLEND(CSS_PROP__WEBKIT_BORDER_VERTICAL_SPACING, verticalBorderSpacing, setVerticalBorderSpacing);
-    BLEND(CSS_PROP_BORDER_LEFT_COLOR, borderLeftColor, setBorderLeftColor);
-    BLEND(CSS_PROP_BORDER_RIGHT_COLOR, borderRightColor, setBorderRightColor);
-    BLEND(CSS_PROP_BORDER_TOP_COLOR, borderTopColor, setBorderTopColor);
-    BLEND(CSS_PROP_BORDER_BOTTOM_COLOR, borderBottomColor, setBorderBottomColor);
+    BLEND_MAYBE_INVALID_COLOR(CSS_PROP_BORDER_LEFT_COLOR, borderLeftColor, setBorderLeftColor);
+    BLEND_MAYBE_INVALID_COLOR(CSS_PROP_BORDER_RIGHT_COLOR, borderRightColor, setBorderRightColor);
+    BLEND_MAYBE_INVALID_COLOR(CSS_PROP_BORDER_TOP_COLOR, borderTopColor, setBorderTopColor);
+    BLEND_MAYBE_INVALID_COLOR(CSS_PROP_BORDER_BOTTOM_COLOR, borderBottomColor, setBorderBottomColor);
     BLEND(CSS_PROP_Z_INDEX, zIndex, setZIndex);
     BLEND(CSS_PROP_LINE_HEIGHT, lineHeight, setLineHeight);
-    BLEND(CSS_PROP_OUTLINE_COLOR, outlineColor, setOutlineColor);
+    BLEND_MAYBE_INVALID_COLOR(CSS_PROP_OUTLINE_COLOR, outlineColor, setOutlineColor);
     BLEND(CSS_PROP_OUTLINE_OFFSET, outlineOffset, setOutlineOffset);
     BLEND(CSS_PROP_OUTLINE_WIDTH, outlineWidth, setOutlineWidth);
     BLEND(CSS_PROP_LETTER_SPACING, letterSpacing, setLetterSpacing);
