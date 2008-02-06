@@ -1,3 +1,20 @@
+2008-02-05  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Oliver.
+
+        Add new dynamic update tests, for SVGClipPathElement.
+
+        * svg/dynamic-updates/SVGClipPathElement-dom-clipPathUnits-attr-expected.checksum: Added.
+        * svg/dynamic-updates/SVGClipPathElement-dom-clipPathUnits-attr-expected.png: Added.
+        * svg/dynamic-updates/SVGClipPathElement-dom-clipPathUnits-attr-expected.txt: Added.
+        * svg/dynamic-updates/SVGClipPathElement-dom-clipPathUnits-attr.html: Added.
+        * svg/dynamic-updates/SVGClipPathElement-svgdom-clipPathUnits-prop-expected.checksum: Added.
+        * svg/dynamic-updates/SVGClipPathElement-svgdom-clipPathUnits-prop-expected.png: Added.
+        * svg/dynamic-updates/SVGClipPathElement-svgdom-clipPathUnits-prop-expected.txt: Added.
+        * svg/dynamic-updates/SVGClipPathElement-svgdom-clipPathUnits-prop.html: Added.
+        * svg/dynamic-updates/resources/SVGClipPathElement-dom-clipPathUnits-attr.js: Added.
+        * svg/dynamic-updates/resources/SVGClipPathElement-svgdom-clipPathUnits-prop.js: Added.
+
 2008-02-05  Samuel Weinig  <sam@webkit.org>
 
         Reviewed by Darin Adler.
