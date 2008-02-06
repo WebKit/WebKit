@@ -619,9 +619,20 @@ String InspectorController::localizedStringsURL()
     return m_client->localizedStringsURL();
 }
 
+// Trying to inspect something in a frame with JavaScript disabled would later lead to
+// crashes trying to create JavaScript wrappers. Some day we could fix this issuee, but
+// for now prevent crashes here by never targeting a node in such a frame.
+static bool canPassNodeToJavaScript(Node* node)
+{
+    if (!node)
+        return false;
+    Frame* frame = node->document()->frame();
+    return frame && frame->scriptProxy();
+}
+
 void InspectorController::inspect(Node* node)
 {
-    if (!node || !enabled())
+    if (!canPassNodeToJavaScript(node) || !enabled())
         return;
 
     show();

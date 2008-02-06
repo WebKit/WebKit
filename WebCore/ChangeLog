@@ -1,3 +1,16 @@
+2008-02-06  Darin Adler  <darin@apple.com>
+
+        Reviewed by Tim Hatcher.
+
+        - fix <rdar://problem/5723293> NULL-deref crash in PropertyMap::put opening web inspector
+          with View Source window as target
+
+        * page/InspectorController.cpp:
+        (WebCore::canPassNodeToJavaScript): Added. Returns false if the node is in a document with
+        JavaScript disabled.
+        (WebCore::InspectorController::inspect): Check canPassNodeToJavaScript and do nothing if
+        it returns false.
+
 2008-02-06  David Hyatt  <hyatt@apple.com>
 
         Fix for bug 16799, object elements should return absolute URLs from .data.
