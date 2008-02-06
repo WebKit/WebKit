@@ -1,3 +1,9 @@
+2008-02-05  Steve Falkenburg  <sfalken@apple.com>
+
+        Build fix.  Don't override intermediate directory.
+
+        * Drosera/win/Drosera.vcproj/Drosera.vcproj:
+
 2008-02-05  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Build fix for Windows. willCloseFrame is a pure virtual and we are
