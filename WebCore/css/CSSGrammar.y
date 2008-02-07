@@ -165,8 +165,8 @@ static int cssyylex(YYSTYPE* yylval) { return CSSParser::current()->lex(yylval);
 %token CONTAINS
 
 %token <string> STRING
-
 %right <string> IDENT
+%token <string> NTH
 
 %nonassoc <string> HEX
 %nonassoc <string> IDSEL
@@ -907,15 +907,51 @@ pseudo:
                 doc->setUsesFirstLineRules(true);
         }
     }
-    // used by :lang
+    // used by :nth-*(ax+b)
+    | ':' FUNCTION NTH ')' {
+        CSSParser *p = static_cast<CSSParser*>(parser);
+        $$ = p->createFloatingSelector();
+        $$->m_match = CSSSelector::PseudoClass;
+        $$->m_argument = atomicString($3);
+        $$->m_value = atomicString($2);
+        CSSSelector::PseudoType type = $$->pseudoType();
+        if (type == CSSSelector::PseudoUnknown)
+            $$ = 0;
+        else if (type == CSSSelector::PseudoNthChild || type == CSSSelector::PseudoNthOfType) {
+            if (p->document())
+                p->document()->setUsesSiblingRules(true);
+        }
+    }
+    // used by :nth-*
+    | ':' FUNCTION INTEGER ')' {
+        CSSParser *p = static_cast<CSSParser*>(parser);
+        $$ = p->createFloatingSelector();
+        $$->m_match = CSSSelector::PseudoClass;
+        $$->m_argument = String::number($3);
+        $$->m_value = atomicString($2);
+        CSSSelector::PseudoType type = $$->pseudoType();
+        if (type == CSSSelector::PseudoUnknown)
+            $$ = 0;
+        else if (type == CSSSelector::PseudoNthChild || type == CSSSelector::PseudoNthOfType) {
+            if (p->document())
+                p->document()->setUsesSiblingRules(true);
+        }
+    }
+    // used by :nth-*(odd/even) and :lang
     | ':' FUNCTION IDENT ')' {
-        $$ = static_cast<CSSParser*>(parser)->createFloatingSelector();
+        CSSParser *p = static_cast<CSSParser*>(parser);
+        $$ = p->createFloatingSelector();
         $$->m_match = CSSSelector::PseudoClass;
         $$->m_argument = atomicString($3);
         $2.lower();
         $$->m_value = atomicString($2);
-        if ($$->pseudoType() == CSSSelector::PseudoUnknown)
+        CSSSelector::PseudoType type = $$->pseudoType();
+        if (type == CSSSelector::PseudoUnknown)
             $$ = 0;
+        else if (type == CSSSelector::PseudoNthChild || type == CSSSelector::PseudoNthOfType) {
+            if (p->document())
+                p->document()->setUsesSiblingRules(true);
+        }
     }
     // used by :not
     | ':' NOTFUNCTION maybe_space simple_selector maybe_space ')' {

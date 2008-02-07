@@ -713,6 +713,62 @@ static void checkPseudoState(Element *e, bool checkVisited = true)
         ? PseudoVisited : PseudoLink;
 }
 
+// a helper function for parsing nth-arguments
+static bool parseNth(const String& nth, int &a, int &b)
+{
+    if (nth.isEmpty())
+        return false;
+    a = 0;
+    b = 0;
+    if (nth == "odd") {
+        a = 2;
+        b = 1;
+    } else if (nth == "even") {
+        a = 2;
+        b = 0;
+    } else {
+        int n = nth.find('n');
+        if (n != -1) {
+            if (nth[0] == '-') {
+                if (n == 1)
+                    a = -1; // -n == -1n
+                else
+                    a = nth.substring(1, n - 1).toInt();
+            } else if (!n)
+                a = 1; // n == 1n
+            else
+                a = nth.substring(0, n).toInt();
+
+            int p = nth.find('+', n);
+            if (p != -1)
+                b = nth.substring(p + 1, nth.length() - p - 1).toInt();
+            else {
+                p = nth.find('-', n);
+                b = -nth.substring(p + 1, nth.length() - p - 1).toInt();
+            }
+        } else
+            b = nth.toInt();
+    }
+    return true;
+}
+
+// a helper function for checking nth-arguments
+static bool matchNth(int count, int a, int b)
+{
+    if (!a)
+        return count == b;
+    else if (a > 0) {
+        if (count < b)
+            return false;
+        return (count - b) % a == 0;
+    } else {
+        if (count > b)
+            return false;
+        return (b - count) % (-a) == 0;
+    }
+}
+
+
 #ifdef STYLE_SHARING_STATS
 static int fraction = 0;
 static int total = 0;
@@ -1721,6 +1777,7 @@ bool CSSStyleSelector::checkOneSelector(CSSSelector* sel, Element* e, bool isAnc
                 break;
             }
             case CSSSelector::PseudoOnlyOfType: {
+                // FIXME: This selector is very slow.
                 if (e->parentNode() && e->parentNode()->isElementNode()) {
                     bool firstChild = false;
                     bool lastChild = false;
@@ -1749,6 +1806,124 @@ bool CSSStyleSelector::checkOneSelector(CSSSelector* sel, Element* e, bool isAnc
                             parentStyle->setChildrenAffectedByPositionalRules();
                     }
                     return firstChild && lastChild;
+                }
+                break;
+            }
+            case CSSSelector::PseudoNthChild: {
+                int a, b;
+                // calculate a and b every time we run through checkOneSelector
+                // this should probably be saved after we calculate it once, but currently
+                // would require increasing the size of CSSSelector
+                if (!parseNth(sel->m_argument, a, b))
+                    break;
+                if (e->parentNode() && e->parentNode()->isElementNode()) {
+                    int count = 1;
+                    Node* n = e->previousSibling();
+                    while (n) {
+                        if (n->isElementNode()) {
+                            RenderStyle* s = n->renderStyle();
+                            unsigned index = s ? s->childIndex() : 0;
+                            if (index) {
+                                count += index;
+                                break;
+                            }
+                            count++;
+                        }
+                        n = n->previousSibling();
+                    }
+                    
+                    if (!m_collectRulesOnly) {
+                        RenderStyle* childStyle = (m_element == e) ? m_style : e->renderStyle();
+                        RenderStyle* parentStyle = (m_element == e) ? m_parentStyle : e->parentNode()->renderStyle();
+                        if (childStyle)
+                            childStyle->setChildIndex(count);
+                        if (parentStyle)
+                            parentStyle->setChildrenAffectedByPositionalRules();
+                    }
+                    
+                    if (matchNth(count, a, b))
+                        return true;
+                }
+                break;
+            }
+            case CSSSelector::PseudoNthOfType: {
+                // FIXME: This selector is very slow.
+                int a, b;
+                // calculate a and b every time we run through checkOneSelector (see above)
+                if (!parseNth(sel->m_argument, a, b))
+                    break;
+                if (e->parentNode() && e->parentNode()->isElementNode()) {
+                    int count = 1;
+                    const QualifiedName& type = e->tagQName();
+                    Node* n = e->previousSibling();
+                    while (n) {
+                        if (n->isElementNode() && static_cast<Element*>(n)->hasTagName(type))
+                            count++;
+                        n = n->previousSibling();
+                    }
+                    
+                    if (!m_collectRulesOnly) {
+                        RenderStyle* parentStyle = (m_element == e) ? m_parentStyle : e->parentNode()->renderStyle();
+                        if (parentStyle)
+                            parentStyle->setChildrenAffectedByPositionalRules();
+                    }
+
+                    if (matchNth(count, a, b))
+                        return true;
+                }
+                break;
+            }
+            case CSSSelector::PseudoNthLastChild: {
+                int a, b;
+                // calculate a and b every time we run through checkOneSelector
+                // this should probably be saved after we calculate it once, but currently
+                // would require increasing the size of CSSSelector
+                if (!parseNth(sel->m_argument, a, b))
+                    break;
+                if (e->parentNode() && e->parentNode()->isElementNode()) {
+                    int count = 1;
+                    Node* n = e->nextSibling();
+                    while (n) {
+                        if (n->isElementNode())
+                            count++;
+                        n = n->nextSibling();
+                    }
+                    
+                    if (!m_collectRulesOnly) {
+                        RenderStyle* parentStyle = (m_element == e) ? m_parentStyle : e->parentNode()->renderStyle();
+                        if (parentStyle)
+                            parentStyle->setChildrenAffectedByPositionalRules();
+                    }
+                    
+                    if (matchNth(count, a, b))
+                        return true;
+                }
+                break;
+            }
+            case CSSSelector::PseudoNthLastOfType: {
+                // FIXME: This selector is very slow.
+                int a, b;
+                // calculate a and b every time we run through checkOneSelector (see above)
+                if (!parseNth(sel->m_argument, a, b))
+                    break;
+                if (e->parentNode() && e->parentNode()->isElementNode()) {
+                    int count = 1;
+                    const QualifiedName& type = e->tagQName();
+                    Node* n = e->nextSibling();
+                    while (n) {
+                        if (n->isElementNode() && static_cast<Element*>(n)->hasTagName(type))
+                            count++;
+                        n = n->nextSibling();
+                    }
+                    
+                    if (!m_collectRulesOnly) {
+                        RenderStyle* parentStyle = (m_element == e) ? m_parentStyle : e->parentNode()->renderStyle();
+                        if (parentStyle)
+                            parentStyle->setChildrenAffectedByPositionalRules();
+                    }
+
+                    if (matchNth(count, a, b))
+                        return true;
                 }
                 break;
             }

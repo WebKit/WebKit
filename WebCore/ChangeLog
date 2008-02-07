@@ -1,3 +1,28 @@
+2008-02-07  David Hyatt  <hyatt@apple.com>
+
+        Fix for bug 6248, implement the nth-* CSS3 selectors.  Patch based on original KHTML work from Allan Jensen
+        and improved upon by Nick Shanks.
+
+        Reviewed by Eric
+
+        * css/CSSGrammar.y:
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::lex):
+        * css/CSSSelector.cpp:
+        (WebCore::CSSSelector::extractPseudoType):
+        * css/CSSSelector.h:
+        (WebCore::CSSSelector::):
+        * css/CSSStyleSelector.cpp:
+        (WebCore::parseNth):
+        (WebCore::matchNth):
+        (WebCore::CSSStyleSelector::checkOneSelector):
+        * css/tokenizer.flex:
+        * rendering/RenderStyle.cpp:
+        (WebCore::RenderStyle::RenderStyle):
+        * rendering/RenderStyle.h:
+        (WebCore::RenderStyle::childIndex):
+        (WebCore::RenderStyle::setChildIndex):
+
 2008-02-07  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Dave Hyatt.

@@ -1461,7 +1461,7 @@ protected:
     
 // list of associated pseudo styles
     RenderStyle* pseudoStyle;
-    
+
     unsigned m_pseudoState : 3; // PseudoState
     bool m_affectedByAttributeSelectors : 1;
     bool m_unique : 1;
@@ -1477,6 +1477,7 @@ protected:
     bool m_childrenAffectedByPositionalRules : 1;
     bool m_firstChildState : 1;
     bool m_lastChildState : 1;
+    unsigned m_childIndex : 20; // Plenty of bits to cache an index.
 
     int m_ref;
     
@@ -2134,6 +2135,8 @@ public:
     void setFirstChildState() { m_firstChildState = true; }
     bool lastChildState() const { return m_lastChildState; }
     void setLastChildState() { m_lastChildState = true; }
+    unsigned childIndex() const { return m_childIndex; }
+    void setChildIndex(unsigned index) { m_childIndex = index; }
 
     // Initial values for all the properties
     static bool initialBackgroundAttachment() { return true; }

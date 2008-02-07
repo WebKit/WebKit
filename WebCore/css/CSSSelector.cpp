@@ -84,6 +84,10 @@ void CSSSelector::extractPseudoType() const
     static AtomicString firstLetter("first-letter");
     static AtomicString firstLine("first-line");
     static AtomicString firstOfType("first-of-type");
+    static AtomicString nthChild("nth-child(");
+    static AtomicString nthOfType("nth-of-type(");
+    static AtomicString nthLastChild("nth-last-child(");
+    static AtomicString nthLastOfType("nth-last-of-type(");
     static AtomicString focus("focus");
     static AtomicString hover("hover");
     static AtomicString indeterminate("indeterminate");
@@ -199,6 +203,14 @@ void CSSSelector::extractPseudoType() const
         element = true;
     } else if (m_value == notStr)
         m_pseudoType = PseudoNot;
+    else if (m_value == nthChild)
+        m_pseudoType = PseudoNthChild;
+    else if (m_value == nthOfType)
+        m_pseudoType = PseudoNthOfType;
+    else if (m_value == nthLastChild)
+        m_pseudoType = PseudoNthLastChild;
+    else if (m_value == nthLastOfType)
+        m_pseudoType = PseudoNthLastOfType;
     else if (m_value == root)
         m_pseudoType = PseudoRoot;
     else if (m_value == searchCancelButton) {
