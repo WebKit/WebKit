@@ -1,3 +1,13 @@
+2008-02-06  Oliver Hunt  <oliver@apple.com>
+
+        RS=Stephanie
+
+        Fix expected output for layout tests to match tiger expected (and so work on the build bots)
+
+        * platform/mac/svg/custom/use-on-symbol-inside-pattern-expected.txt:
+        * svg/custom/image-with-prefix-in-webarchive-expected.txt:
+        * svg/custom/stroke-width-click-expected.txt:
+
 2008-02-06  Kevin McCullough  <kmccullough@apple.com>
 
         Rubberstamped by Darin.
