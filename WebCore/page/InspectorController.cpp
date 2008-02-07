@@ -1601,10 +1601,6 @@ void InspectorController::drawNodeHighlight(GraphicsContext& context) const
     if (!m_highlightedNode)
         return;
 
-    FrameView* view = m_inspectedPage->mainFrame()->view();
-    FloatRect overlayRect = static_cast<ScrollView*>(view)->visibleContentRect();
-    context.translate(-overlayRect.x(), -overlayRect.y());
-
     RenderObject* renderer = m_highlightedNode->renderer();
     if (!renderer)
         return;
@@ -1616,6 +1612,9 @@ void InspectorController::drawNodeHighlight(GraphicsContext& context) const
     if (rects.isEmpty())
         rects.append(nodeRect);
 
+    FrameView* view = m_inspectedPage->mainFrame()->view();
+    FloatRect overlayRect = static_cast<ScrollView*>(view)->visibleContentRect();
+
     if (!overlayRect.contains(nodeRect) && !nodeRect.contains(enclosingIntRect(overlayRect))) {
         Element* element;
         if (m_highlightedNode->isElementNode())
@@ -1623,7 +1622,10 @@ void InspectorController::drawNodeHighlight(GraphicsContext& context) const
         else
             element = static_cast<Element*>(m_highlightedNode->parent());
         element->scrollIntoViewIfNeeded();
+        overlayRect = static_cast<ScrollView*>(view)->visibleContentRect();
     }
+
+    context.translate(-overlayRect.x(), -overlayRect.y());
 
     // Draw translucent gray fill, out of which we will cut holes.
     context.fillRect(overlayRect, overlayFillColor);

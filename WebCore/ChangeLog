@@ -1,5 +1,21 @@
 2008-02-07  Adam Roben  <aroben@apple.com>
 
+        Fix Bug 17138: REGRESSION: Node highlight not updated properly
+
+        <http://bugs.webkit.org/show_bug.cgi?id=17138>
+        <rdar://problem/5719869>
+
+        Reviewed by Darin.
+
+        No test possible.
+
+        * page/InspectorController.cpp:
+        (WebCore::InspectorController::drawNodeHighlight): Update the
+        overlayRect after scrolling to make sure that we translate the context
+        by the correct amount.
+
+2008-02-07  Adam Roben  <aroben@apple.com>
+
         Qt and GTK+ build fixes
 
         * platform/gtk/FileSystemGtk.cpp: Added a missing #include.
