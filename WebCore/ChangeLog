@@ -1,5 +1,12 @@
 2008-02-07  Adam Roben  <aroben@apple.com>
 
+        Qt and GTK+ build fixes
+
+        * platform/gtk/FileSystemGtk.cpp: Added a missing #include.
+        * platform/qt/FileSystemQt.cpp: Ditto.
+
+2008-02-07  Adam Roben  <aroben@apple.com>
+
         Some cleanup of Mac-only user stylesheet code
 
         I moved UserStyleSheetLoader out of Frame.cpp into its own files, and

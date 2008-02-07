@@ -28,7 +28,8 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <PlatformString.h>
+#include "NotImplemented.h"
+#include "PlatformString.h"
 #include <QFile>
 #include <QFileInfo>
 #include <QDir>

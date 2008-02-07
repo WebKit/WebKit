@@ -20,8 +20,9 @@
  */
 
 #include "config.h"
-
 #include "FileSystem.h"
+
+#include "NotImplemented.h"
 #include "PlatformString.h"
 #include "CString.h"
 
