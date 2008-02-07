@@ -58,7 +58,7 @@ Usage: $programName [options] [options to pass to build system]
   --shark-cache     Like --shark, but performs a L2 cache-miss sample instead of time sample
 EOF
 
-GetOptions('root=s' => sub { my ($argName, $value); setConfigurationProductDir(Cwd::abs_path($value)); },
+GetOptions('root=s' => sub { my ($value) = @_; $root = $value; setConfigurationProductDir(Cwd::abs_path($root)); },
            'runs=i' => \$testRuns,
            'set-baseline' => \$setBaseline,
            'shark' => \$runShark,

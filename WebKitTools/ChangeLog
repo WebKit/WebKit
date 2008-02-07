@@ -1,3 +1,13 @@
+2008-02-07  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Fixed two minor typos in the --root option, to get it working.
+
+        * Scripts/run-sunspider:
+            1. Actually assign the function argument to our local variable.
+            2. Actually set the $root variable, so we don't try to build later.
+
 2008-02-05  Oliver Hunt  <oliver@apple.com>
 
         RS=Eric.
