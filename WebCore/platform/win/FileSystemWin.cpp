@@ -56,6 +56,15 @@ bool getFileSize(const String& path, long long& result)
     return true;
 }
 
+bool getFileModificationTime(const String& path, time_t& result)
+{
+    struct _stat64 st;
+    if (!statFile(path, st))
+        return false;
+    result = st.st_mtime;
+    return true;
+}
+
 bool fileExists(const String& path) 
 {
     struct _stat64 st;

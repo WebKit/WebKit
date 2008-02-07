@@ -32,8 +32,10 @@
 #include "FrameView.h"
 #include "FTPDirectoryDocument.h"
 #include "GlobalHistory.h"
+#include "KURL.h"
 #include "NotImplemented.h"
 #include "PluginInfoStore.h"
+#include "SharedBuffer.h"
 
 using namespace WebCore;
 
@@ -71,5 +73,9 @@ namespace WebCore {
 Vector<String> supportedKeySizes() { notImplemented(); return Vector<String>(); }
 String signedPublicKeyAndChallengeString(unsigned keySizeIndex, const String &challengeString, const KURL &url) { return String(); }
 float userIdleTime() { notImplemented(); return 0.0; }
+
+String KURL::fileSystemPath() const { notImplemented(); return String(); }
+
+PassRefPtr<SharedBuffer> SharedBuffer::createWithContentsOfFile(const String&) { notImplemented(); return 0; }
 }
 

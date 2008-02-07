@@ -72,6 +72,7 @@
 #include "Screen.h"
 #include "SearchPopupMenu.h"
 #include "ScrollBar.h"
+#include "SharedBuffer.h"
 #include "SharedTimer.h"
 #include "TextBoundaries.h"
 #include "Widget.h"
@@ -209,4 +210,8 @@ float userIdleTime() { notImplemented(); return 0; }
 Vector<String> supportedKeySizes() { notImplemented(); return Vector<String>(); }
 String signedPublicKeyAndChallengeString(unsigned keySizeIndex, const String &challengeString, const KURL &url) { return String(); }
 const char* currentTextBreakLocaleID() { notImplemented(); return "en_us"; }
+
+String KURL::fileSystemPath() const { notImplemented(); return String(); }
+
+PassRefPtr<SharedBuffer> SharedBuffer::createWithContentsOfFile(const String&) { notImplemented(); return 0; }
 }

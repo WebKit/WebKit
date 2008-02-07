@@ -19,6 +19,8 @@
  */
 #include "config.h"
 #include "KURL.h"
+
+#include "NotImplemented.h"
 #include "qurl.h"
 
 namespace WebCore {
@@ -63,6 +65,12 @@ KURL::operator QUrl() const
 
     QUrl url = QUrl::fromEncoded(ba);
     return url;
+}
+
+String KURL::fileSystemPath() const
+{
+    notImplemented();
+    return String();
 }
 
 }

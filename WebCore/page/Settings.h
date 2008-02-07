@@ -100,7 +100,7 @@ namespace WebCore {
         const String& defaultTextEncodingName() const { return m_defaultTextEncodingName; }
 
         void setUserStyleSheetLocation(const KURL&);
-        KURL userStyleSheetLocation() const { return m_userStyleSheetLocation; }
+        const KURL& userStyleSheetLocation() const { return m_userStyleSheetLocation; }
 
         void setShouldPrintBackgrounds(bool);
         bool shouldPrintBackgrounds() const { return m_shouldPrintBackgrounds; }

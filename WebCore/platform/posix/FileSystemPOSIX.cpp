@@ -91,6 +91,22 @@ bool getFileSize(const String& path, long long& result)
     return true;
 }
 
+bool getFileModificationTime(const String& path, time_t& result)
+{
+    CString fsRep = fileSystemRepresentation(path);
+
+    if (!fsRep.data() || fsRep.data()[0] == '\0')
+        return false;
+
+    struct stat fileInfo;
+
+    if (stat(fsRep.data(), &fileInfo))
+        return false;
+
+    result = fileInfo.st_mtime;
+    return true;
+}
+
 String pathByAppendingComponent(const String& path, const String& component)
 {
     if (path.endsWith("/"))

@@ -57,6 +57,12 @@ bool getFileSize(const String& path, long long& resultSize)
     return false;
 }
 
+bool getFileModificationTime(const String&, time_t&)
+{
+    notImplemented();
+    return false;
+}
+
 bool makeAllDirectories(const String& path)
 {
     notImplemented();

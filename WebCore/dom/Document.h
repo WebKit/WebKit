@@ -37,6 +37,15 @@
 #include <wtf/HashCountedSet.h>
 #include <wtf/ListHashSet.h>
 
+// FIXME: We should move Mac off of the old Frame-based user stylesheet loading
+// code and onto the new code in Page. We can't do that until the code in Page
+// supports non-file: URLs, however.
+#if PLATFORM(MAC)
+#define FRAME_LOADS_USER_STYLESHEET 1
+#else
+#define FRAME_LOADS_USER_STYLESHEET 0
+#endif
+
 namespace WebCore {
 
     class AXObjectCache;
@@ -375,8 +384,12 @@ public:
 
     // from cachedObjectClient
     virtual void setCSSStyleSheet(const String& url, const String& charset, const String& sheetStr);
+
+#if FRAME_LOADS_USER_STYLESHEET
     void setUserStyleSheet(const String& sheet);
-    const String& userStyleSheet() const { return m_usersheet; }
+#endif
+
+    String userStyleSheet() const;
 
     CSSStyleSheet* elementSheet();
     CSSStyleSheet* mappedElementSheet();
@@ -694,7 +707,9 @@ private:
     RefPtr<DOMImplementation> m_implementation;
 
     RefPtr<StyleSheet> m_sheet;
+#if FRAME_LOADS_USER_STYLESHEET
     String m_usersheet;
+#endif
 
     // Track the number of currently loading top-level stylesheets.  Sheets
     // loaded using the @import directive are not included in this count.

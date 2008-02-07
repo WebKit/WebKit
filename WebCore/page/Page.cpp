@@ -26,6 +26,7 @@
 #include "ContextMenuController.h"
 #include "EditorClient.h"
 #include "DragController.h"
+#include "FileSystem.h"
 #include "FocusController.h"
 #include "Frame.h"
 #include "FrameLoader.h"
@@ -39,6 +40,7 @@
 #include "SelectionController.h"
 #include "Settings.h"
 #include "StringHash.h"
+#include "TextResourceDecoder.h"
 #include "Widget.h"
 #include <kjs/collector.h>
 #include <kjs/JSLock.h>
@@ -82,6 +84,8 @@ Page::Page(ChromeClient* chromeClient, ContextMenuClient* contextMenuClient, Edi
     , m_defersLoading(false)
     , m_inLowQualityInterpolationMode(false)
     , m_parentInspectorController(0)
+    , m_didLoadUserStyleSheet(false)
+    , m_userStyleSheetModificationTime(0)
 {
     if (!allPages) {
         allPages = new HashSet<Page*>;
@@ -297,6 +301,63 @@ bool Page::inLowQualityImageInterpolationMode() const
 void Page::setInLowQualityImageInterpolationMode(bool mode)
 {
     m_inLowQualityInterpolationMode = mode;
+}
+
+void Page::userStyleSheetLocationChanged()
+{
+#if !FRAME_LOADS_USER_STYLESHEET
+    // FIXME: We should provide a way to load other types of URLs than just
+    // file: (e.g., http:, data:).
+    if (m_settings->userStyleSheetLocation().isLocalFile())
+        m_userStyleSheetPath = m_settings->userStyleSheetLocation().fileSystemPath();
+    else
+        m_userStyleSheetPath = String();
+
+    m_didLoadUserStyleSheet = false;
+    m_userStyleSheet = String();
+    m_userStyleSheetModificationTime = 0;
+#endif
+}
+
+const String& Page::userStyleSheet() const
+{
+    if (m_userStyleSheetPath.isEmpty()) {
+        ASSERT(m_userStyleSheet.isEmpty());
+        return m_userStyleSheet;
+    }
+
+    time_t modTime;
+    if (!getFileModificationTime(m_userStyleSheetPath, modTime)) {
+        // The stylesheet either doesn't exist, was just deleted, or is
+        // otherwise unreadable. If we've read the stylesheet before, we should
+        // throw away that data now as it no longer represents what's on disk.
+        m_userStyleSheet = String();
+        return m_userStyleSheet;
+    }
+
+    // If the stylesheet hasn't changed since the last time we read it, we can
+    // just return the old data.
+    if (m_didLoadUserStyleSheet && modTime <= m_userStyleSheetModificationTime)
+        return m_userStyleSheet;
+
+    m_didLoadUserStyleSheet = true;
+    m_userStyleSheet = String();
+    m_userStyleSheetModificationTime = modTime;
+
+    // FIXME: It would be better to load this asynchronously to avoid blocking
+    // the process, but we will first need to create an asynchronous loading
+    // mechanism that is not tied to a particular Frame. We will also have to
+    // determine what our behavior should be before the stylesheet is loaded
+    // and what should happen when it finishes loading, especially with respect
+    // to when the load event fires, when Document::close is called, and when
+    // layout/paint are allowed to happen.
+    RefPtr<SharedBuffer> data = SharedBuffer::createWithContentsOfFile(m_userStyleSheetPath);
+    if (!data)
+        return m_userStyleSheet;
+
+    m_userStyleSheet = TextResourceDecoder("text/css").decode(data->data(), data->size());
+
+    return m_userStyleSheet;
 }
 
 } // namespace WebCore

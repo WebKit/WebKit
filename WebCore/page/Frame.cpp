@@ -92,6 +92,7 @@ using namespace HTMLNames;
 
 double Frame::s_currentPaintTimeStamp = 0.0;
 
+#if FRAME_LOADS_USER_STYLESHEET
 class UserStyleSheetLoader : public CachedResourceClient {
 public:
     UserStyleSheetLoader(PassRefPtr<Document> document, const String& url)
@@ -121,6 +122,7 @@ private:
     RefPtr<Document> m_document;
     CachedCSSStyleSheet* m_cachedSheet;
 };
+#endif
 
 #ifndef NDEBUG
 WTFLogChannel LogWebCoreFrameLeaks =  { 0x00000000, "", WTFLogChannelOn };
@@ -209,7 +211,10 @@ Frame::~Frame()
   
     ASSERT(!d->m_lifeSupportTimer.isActive());
 
+#if FRAME_LOADS_USER_STYLESHEET
     delete d->m_userStyleSheetLoader;
+#endif
+
     delete d;
     d = 0;
 }
@@ -291,6 +296,7 @@ Settings* Frame::settings() const
     return d->m_page ? d->m_page->settings() : 0;
 }
 
+#if FRAME_LOADS_USER_STYLESHEET
 void Frame::setUserStyleSheetLocation(const KURL& url)
 {
     delete d->m_userStyleSheetLoader;
@@ -306,6 +312,7 @@ void Frame::setUserStyleSheet(const String& styleSheet)
     if (d->m_doc)
         d->m_doc->setUserStyleSheet(styleSheet);
 }
+#endif
 
 String Frame::selectedText() const
 {
@@ -783,11 +790,13 @@ void Frame::reapplyStyles()
     if (d->m_doc)
         d->m_doc->docLoader()->setAutoLoadImages(d->m_page && d->m_page->settings()->loadsImagesAutomatically());
         
+#if FRAME_LOADS_USER_STYLESHEET
     const KURL userStyleSheetLocation = d->m_page ? d->m_page->settings()->userStyleSheetLocation() : KURL();
     if (!userStyleSheetLocation.isEmpty())
         setUserStyleSheetLocation(userStyleSheetLocation);
     else
         setUserStyleSheet(String());
+#endif
 
     // FIXME: It's not entirely clear why the following is needed.
     // The document automatically does this as required when you set the style sheet.
@@ -1903,7 +1912,6 @@ FramePrivate::FramePrivate(Page* page, Frame* parent, Frame* thisFrame, HTMLFram
     , m_isPainting(false)
     , m_lifeSupportTimer(thisFrame, &Frame::lifeSupportTimerFired)
     , m_loader(new FrameLoader(thisFrame, frameLoaderClient))
-    , m_userStyleSheetLoader(0)
     , m_paintRestriction(PaintRestrictionNone)
     , m_highlightTextMatches(false)
     , m_inViewSourceMode(false)
@@ -1911,6 +1919,9 @@ FramePrivate::FramePrivate(Page* page, Frame* parent, Frame* thisFrame, HTMLFram
     , m_prohibitsScrolling(false)
     , m_needsReapplyStyles(false)
     , m_windowScriptNPObject(0)
+#if FRAME_LOADS_USER_STYLESHEET
+    , m_userStyleSheetLoader(0)
+#endif
 #if PLATFORM(MAC)
     , m_windowScriptObject(nil)
     , m_bridge(nil)

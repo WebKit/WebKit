@@ -206,6 +206,8 @@ void Settings::setUserStyleSheetLocation(const KURL& userStyleSheetLocation)
         return;
 
     m_userStyleSheetLocation = userStyleSheetLocation;
+
+    m_page->userStyleSheetLocationChanged();
     setNeedsReapplyStylesInAllFrames(m_page);
 }
 

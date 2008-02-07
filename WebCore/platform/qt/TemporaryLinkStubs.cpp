@@ -61,6 +61,7 @@
 #include "PlatformMouseEvent.h"
 #include "PluginInfoStore.h"
 #include "RenderTheme.h"
+#include "SharedBuffer.h"
 #include "SystemTime.h"
 #include "TextBoundaries.h"
 #include "Widget.h"
@@ -82,6 +83,8 @@ int writeToFile(PlatformFileHandle, const char* data, int length) { return -1; }
 // defined in win/SystemTimeWin.cpp, which is compiled for the Qt/Windows port
 float userIdleTime() { notImplemented(); return 0.0; }
 #endif
+
+PassRefPtr<SharedBuffer> SharedBuffer::createWithContentsOfFile(const String&) { notImplemented(); return 0; }
 
 }
 

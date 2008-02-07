@@ -328,7 +328,7 @@ Document::Document(DOMImplementation* impl, Frame* frame, bool isXHTML)
     bool matchAuthorAndUserStyles = true;
     if (Settings* settings = this->settings())
         matchAuthorAndUserStyles = settings->authorAndUserStylesEnabled();
-    m_styleSelector = new CSSStyleSelector(this, m_usersheet, m_styleSheets.get(), m_mappedElementSheet.get(), !inCompatMode(), matchAuthorAndUserStyles);
+    m_styleSelector = new CSSStyleSelector(this, userStyleSheet(), m_styleSheets.get(), m_mappedElementSheet.get(), !inCompatMode(), matchAuthorAndUserStyles);
 
     m_didCalculateStyleSelector = false;
     m_pendingStylesheets = 0;
@@ -1655,12 +1655,26 @@ void Document::setCSSStyleSheet(const String &url, const String& charset, const 
     updateStyleSelector();
 }
 
+#if FRAME_LOADS_USER_STYLESHEET
 void Document::setUserStyleSheet(const String& sheet)
 {
     if (m_usersheet != sheet) {
         m_usersheet = sheet;
         updateStyleSelector();
     }
+}
+#endif
+
+String Document::userStyleSheet() const
+{
+#if FRAME_LOADS_USER_STYLESHEET
+    return m_usersheet;
+#else
+    Page* page = m_frame->page();
+    if (!page)
+        return String();
+    return page->userStyleSheet();
+#endif
 }
 
 CSSStyleSheet* Document::elementSheet()
@@ -2185,7 +2199,7 @@ void Document::recalcStyleSelector()
 
     // Create a new style selector
     delete m_styleSelector;
-    m_styleSelector = new CSSStyleSelector(this, m_usersheet, m_styleSheets.get(), m_mappedElementSheet.get(), !inCompatMode(), matchAuthorAndUserStyles);
+    m_styleSelector = new CSSStyleSelector(this, userStyleSheet(), m_styleSheets.get(), m_mappedElementSheet.get(), !inCompatMode(), matchAuthorAndUserStyles);
     m_styleSelector->setEncodedURL(m_url);
     m_didCalculateStyleSelector = true;
 }

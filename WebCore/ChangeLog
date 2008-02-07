@@ -1,5 +1,91 @@
 2008-02-07  Adam Roben  <aroben@apple.com>
 
+        Fix <rdar://5555260> GMail never loads when a user stylesheet is
+        specified
+
+        The fix in r29841 did not guarantee that the user stylesheet would not
+        still be loading by the time GMail called document.write, and so was
+        not a complete fix.
+
+        This change reworks the user stylesheet loading mechanism on non-Mac
+        platforms to load the stylesheet synchronously from disk, and then
+        keeps it in memory. This obsoletes the issue of what our behavior
+        should be before the user stylesheet has loaded and what should happen
+        when it finishes loading, as the user stylesheet will always be
+        available when the Document first asks for it. Note, however, that
+        this removes the ability to specify a non-file: URL for the user
+        stylesheet. This change was not made for the Mac platform because it's
+        possible that WebKit clients are relying on non-file: URLs for user
+        stylesheets. It would also be nice to move back to an asynchronous
+        loading model someday, but that is not currently possible since we
+        don't have an asynchronous loading mechanism that is not tied to a
+        particular Frame.
+
+        The responsibility of loading and storing the user stylesheet has
+        moved from Frame to Page, since the user stylesheet URL is set on the
+        Page-level Settings object.
+
+        Reviewed by Darin.
+
+        * dom/Document.cpp:
+        (WebCore::Document::Document): Changed to call userStyleSheet().
+        (WebCore::Document::setUserStyleSheet): Made Mac-only.
+        (WebCore::Document::userStyleSheet): Changed to call up to Page on
+        non-Mac platforms.
+        (WebCore::Document::recalcStyleSelector): Changed to call
+        userStyleSheet().
+        * dom/Document.h:
+            - Made setUserStyleSheet and the m_usersheet member Mac-only
+            - Changed userStyleSheet to return a String instance instead of a
+              String reference, since we now might return a new null String.
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::begin): Made the call to
+        Frame::setUserStyleSheetLocation Mac-only.
+        * page/Frame.cpp: Made UserStyleSheetLoader and related code Mac-only.
+        (WebCore::Frame::~Frame): Ditto.
+        (WebCore::Frame::reapplyStyles): Made the call to
+        setUserStyleSheet[Location] Mac-only. On non-Mac platforms the
+        Document will pick up the new stylesheet in Document::reapplyStyles.
+        (WebCore::FramePrivate::FramePrivate): Made m_userStyleSheetLoader
+        Mac-only.
+        * page/Frame.h: Made setUserStyleSheet[Location] Mac-only.
+        * page/FramePrivate.h: Made m_userStyleSheetLoader Mac-only.
+        * page/Page.cpp:
+        (WebCore::Page::Page): Initialize new members.
+        (WebCore::Page::userStyleSheetLocationChanged): Added. Does nothing on
+        Mac. On non-Mac, resets all members relating to the user stylesheet so
+        we'll know to load it again the next time it's asked for.
+        (WebCore::Page::userStyleSheet): Added. Loads the user stylesheet if
+        the user stylesheet location has changed since the last time we loaded
+        it, or if the file has been modified since we last loaded it, then
+        returns the contents of the user stylesheet as a String.
+        * page/Page.h: Added new methods/members.
+        * page/Settings.cpp:
+        (WebCore::Settings::setUserStyleSheetLocation): Changed to call
+        Page::userStyleSheetLocationChanged.
+        * page/Settings.h: Changed userStyleSheetLocation to return the KURL
+        by reference instead of making a copy.
+        * platform/FileSystem.h: Added declaration for getFileModificationTime.
+        * platform/KURL.h: Added declaration for fileSystemPath method.
+        * platform/cf/KURLCFNet.cpp:
+        (WebCore::KURL::fileSystemPath): Added.
+        * platform/posix/FileSystemPOSIX.cpp:
+        (WebCore::getFileModificationTime): Added.
+        * platform/qt/KURLQt.cpp:
+        (WebCore::KURL::fileSystemPath): Stubbed out.
+        * platform/win/FileSystemWin.cpp:
+        (WebCore::getFileModificationTime): Added.
+        * platform/qt/FileSystemQt.cpp: Stubbed out getFileModificationTime.
+        * platform/gtk/FileSystemGtk.cpp: Ditto.
+        * platform/wx/FileSystemWx.cpp: Ditto.
+        * platform/qt/TemporaryLinkStubs.cpp: Stubbed out
+        SharedBuffer::createWithContentsOfFile.
+        * platform/gtk/TemporaryLinkStubs.cpp: Ditto, along with
+        KURL::fileSystemPath.
+        * platform/wx/TemporaryLinkStubs.cpp: Ditto.
+
+2008-02-07  Adam Roben  <aroben@apple.com>
+
         Clean up FileSystemWin.cpp
 
         This cleanup also makes us call _wstat64 instead of _wstat32i64. The
