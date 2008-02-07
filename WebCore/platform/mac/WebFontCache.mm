@@ -117,9 +117,10 @@ static BOOL betterChoice(NSFontTraitMask desiredTraits, int desiredWeight,
     // Look for an exact match first.
     NSEnumerator *availableFonts = [[fontManager availableFonts] objectEnumerator];
     NSString *availableFont;
+    NSFont *nameMatchedFont = nil;
     while ((availableFont = [availableFonts nextObject])) {
         if ([desiredFamily caseInsensitiveCompare:availableFont] == NSOrderedSame) {
-            NSFont *nameMatchedFont = [NSFont fontWithName:availableFont size:size];
+            nameMatchedFont = [NSFont fontWithName:availableFont size:size];
 
             // Special case Osaka-Mono.  According to <rdar://problem/3999467>, we need to 
             // treat Osaka-Mono as fixed pitch.
@@ -142,6 +143,9 @@ static BOOL betterChoice(NSFontTraitMask desiredTraits, int desiredWeight,
         if ([desiredFamily caseInsensitiveCompare:availableFamily] == NSOrderedSame)
             break;
     }
+
+    if (!availableFamily)
+        availableFamily = [nameMatchedFont familyName];
 
     // Found a family, now figure out what weight and traits to use.
     BOOL choseFont = false;

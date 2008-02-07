@@ -1,3 +1,17 @@
+2008-02-07  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=17194
+          Changing text to bold changes font family
+
+        Test: platform/mac/fast/text/family-for-font-matched-by-name.html
+
+        * platform/mac/WebFontCache.mm:
+        (+[WebFontCache internalFontWithFamily:traits:size:]): Changed to use
+        the family of the font whose name matches the desired family if there
+        is no exact family match.
+
 2008-02-07  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Geoff.
