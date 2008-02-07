@@ -1,3 +1,13 @@
+2008-02-07  Adam Roben  <aroben@apple.com>
+
+        Fix error in bisect-builds when responding "broken" for the first
+        build
+
+        Reviewed by Dave Kilzer.
+
+        * Scripts/bisect-builds: Only try to test the build if the nightly
+        info for the current index has not been deleted.
+
 2008-02-07  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Alexey Proskuryakov.

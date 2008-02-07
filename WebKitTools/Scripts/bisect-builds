@@ -169,10 +169,12 @@ while (abs($endIndex - $startIndex) > 1) {
 
     my $didReproduceBug;
     do {
-        printf "\nChecking revision (r%s)...\n", $nightlies[$index]->{rev};
-        downloadNightly($nightlies[$index]->{file}, $nightlyFilesURLBase, $nightlyDownloadDirectory);
-        mountAndRunNightly($nightlies[$index]->{file}, $nightlyDownloadDirectory, $safariPath, $tempFile);
-        $didReproduceBug = promptForTest($nightlies[$index]->{rev});
+        if (exists $nightlies[$index]) {
+            printf "\nChecking revision (r%s)...\n", $nightlies[$index]->{rev};
+            downloadNightly($nightlies[$index]->{file}, $nightlyFilesURLBase, $nightlyDownloadDirectory);
+            mountAndRunNightly($nightlies[$index]->{file}, $nightlyDownloadDirectory, $safariPath, $tempFile);
+            $didReproduceBug = promptForTest($nightlies[$index]->{rev});
+        }
         if ($didReproduceBug < 0) {
             $brokenRevisions{$nightlies[$index]->{rev}} = $nightlies[$index]->{file};
             delete $nightlies[$index];
