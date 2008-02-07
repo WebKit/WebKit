@@ -1,3 +1,19 @@
+2008-02-06  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Darin Adler.
+        
+        <rdar://problem/5195056> Huge plain text pastes are slow
+        
+        The changes made for this fix exposed several more cases of:
+        <rdar://problem/5729315> Some shouldChangeSelectedDOMRange contain Ranges for selections that are no longer valid
+
+        * platform/mac/editing/deleting/collapse-whitespace-3587601-fix-expected.txt:
+        * platform/mac/editing/deleting/delete-3608462-fix-expected.txt:
+        * platform/mac/editing/deleting/delete-4083333-fix-expected.txt:
+        * platform/mac/editing/execCommand/find-after-replace-expected.txt:
+        * platform/mac/editing/selection/move-between-blocks-no-001-expected.txt:
+        * platform/mac/editing/selection/replace-selection-1-expected.txt:
+
 2008-02-06  Alexey Proskuryakov  <ap@webkit.org>
 
         Landing updated (improved) results for this test. The results changed in r30013,

@@ -167,6 +167,11 @@ void SelectionController::nodeWillBeRemoved(Node *node)
 {
     if (isNone())
         return;
+        
+    // There can't be a selection inside a fragment, so if a fragment's node is being removed,
+    // the selection in the document that created the fragment needs no adjustment.
+    if (node && highestAncestor(node)->nodeType() == Node::DOCUMENT_FRAGMENT_NODE)
+        return;
     
     bool baseRemoved = !m_sel.base().isCandidate() || removingNodeRemovesPosition(node, m_sel.base());
     bool extentRemoved = !m_sel.extent().isCandidate() || removingNodeRemovesPosition(node, m_sel.extent());

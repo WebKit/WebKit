@@ -1,3 +1,28 @@
+2008-02-06  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/5195056> Huge plain text pastes are slow
+        
+        This was fixed in r27369 and then r29367 and r29667 caused performance to
+        regress.
+
+        * editing/EditCommand.cpp:
+        (WebCore::EditCommand::apply): Only updateLayout() for high level commands.
+        (WebCore::EditCommand::unapply): Ditto.
+        (WebCore::EditCommand::reapply): Ditto.
+        * editing/Editor.cpp:
+        (WebCore::Editor::appliedEditing): Added a note about shouldChangeSelection calls 
+        that shouldn't be made, a bug I filed as <rdar://problem/5729315>.
+        (WebCore::Editor::unappliedEditing): Ditto.
+        (WebCore::Editor::reappliedEditing): Ditto.
+        * editing/SelectionController.cpp:
+        (WebCore::SelectionController::nodeWillBeRemoved): Don't try to test the selection
+        base and extent with the expensive isCandidate operation if the node that will
+        be removed is in a fragment, since such a removal is guaranteed to have no effect
+        on a selection.  This is to speed up the paste operation, which does many removes from
+        a fragment.
+
 2008-02-06  Kevin Ollivier  <kevino@theolliviers.com>
 
         Reviewed by Darin Adler.
