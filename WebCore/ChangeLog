@@ -1,3 +1,13 @@
+2008-02-06  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Darin.
+
+        - Added manual tests for <rdar://problem/5556374> REGRESSION: cross-domain error when
+        one URL uses an explicit port number and another doesn't
+
+        * manual-tests/Default-port-frame.html: Added.
+        * manual-tests/resources/Default-port-frame-contents.html: Added.
+
 2008-02-06  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by NOBODY (Build fix).
