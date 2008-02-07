@@ -3417,6 +3417,9 @@
 					RelativePath="..\platform\win\DragDataWin.cpp"
 					>
 				</File>
+					RelativePath="..\platform\win\DragImageCGWin.cpp"
+					>
+				</File>
 				<File
 					RelativePath="..\platform\win\DragImageWin.cpp"
 					>
@@ -3876,6 +3879,10 @@
 						>
 					</File>
 					<File
+						RelativePath="..\platform\graphics\win\FontCGWin.cpp"
+						>
+					</File>
+					<File
 						RelativePath="..\platform\graphics\win\FontCustomPlatformData.cpp"
 						>
 					</File>
@@ -3932,11 +3939,19 @@
 						>
 					</File>
 					<File
+						RelativePath="..\platform\graphics\win\GraphicsContextCGWin.cpp"
+						>
+					</File>
+					<File
 						RelativePath="..\platform\graphics\win\GraphicsContextWin.cpp"
 						>
 					</File>
 					<File
 						RelativePath="..\platform\graphics\win\IconWin.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\platform\graphics\win\ImageCGWin.cpp"
 						>
 					</File>
 					<File
@@ -3961,6 +3976,10 @@
 					</File>
 					<File
 						RelativePath="..\platform\graphics\win\MediaPlayerPrivateQuickTimeWin.h"
+						>
+					</File>
+					<File
+						RelativePath="..\platform\graphics\win\SimpleFontDataCGWin.cpp"
 						>
 					</File>
 					<File
@@ -6407,6 +6426,10 @@
 			<Filter
 				Name="win"
 				>
+				<File
+					RelativePath="..\bridge\win\FrameCGWin.cpp"
+					>
+				</File>
 				<File
 					RelativePath="..\bridge\win\FrameWin.cpp"
 					>

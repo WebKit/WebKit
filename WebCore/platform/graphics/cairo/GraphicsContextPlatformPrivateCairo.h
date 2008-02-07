@@ -1,5 +1,7 @@
 /*
- * Copyright (C) 2007, 2008 Apple Inc.  All rights reserved.
+ * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2007 Alp Toker <alp@atoker.com>
+ * Copyright (C) 2008 Brent Fulgham <bfulgham@gmail.com>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,43 +25,57 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
-#include "DragImage.h"
-
-#include "CachedImage.h"
 #include "GraphicsContext.h"
-#include "Image.h"
-#include "RetainPtr.h"
 
-#include <windows.h>
+#include <cairo.h>
+#include <math.h>
+#include <stdio.h>
+#include <wtf/MathExtras.h>
+
+#if PLATFORM(GTK)
+#include <gdk/gdk.h>
+#include <pango/pango.h>
+#elif PLATFORM(WIN)
+#include <cairo-win32.h>
+#endif
 
 namespace WebCore {
 
-IntSize dragImageSize(DragImageRef image)
-{
-    if (!image)
-        return IntSize();
-    BITMAP b;
-    GetObject(image, sizeof(BITMAP), &b);
-    return IntSize(b.bmWidth, b.bmHeight);
-}
+class GraphicsContextPlatformPrivate {
+public:
+    GraphicsContextPlatformPrivate()
+        :  cr(0)
+#if PLATFORM(GTK)
+        , expose(0)
+#elif PLATFORM(WIN)
+        // NOTE:  These may note be needed: review and remove once Cairo implementation is complete
+        , m_hdc(0)
+        , m_transparencyCount(0)
+#endif
+    {
+    }
 
-void deleteDragImage(DragImageRef image)
-{
-    if (image)
-        ::DeleteObject(image);
-}
+    ~GraphicsContextPlatformPrivate()
+    {
+        cairo_destroy(cr);
+    }
 
-DragImageRef dissolveDragImageToFraction(DragImageRef image, float)
-{
-    //We don't do this on windows as the dragimage is blended by the OS
-    return image;
-}
-        
-DragImageRef createDragImageIconForCachedImage(CachedImage*)
-{
-    //FIXME: Provide icon for image type <rdar://problem/5015949>
-    return 0;     
-}
-    
-}
+#if PLATFORM(WIN)
+    // On Windows, we need to update the HDC for form controls to draw in the right place.
+    void beginTransparencyLayer() { m_transparencyCount++; }
+    void endTransparencyLayer() { m_transparencyCount--; }
+#endif
+
+    cairo_t* cr;
+    Vector<float> layers;
+
+#if PLATFORM(GTK)
+    GdkEventExpose* expose;
+#elif PLATFORM(WIN)
+    HDC m_hdc;
+    unsigned m_transparencyCount;
+#endif
+};
+
+} // namespace WebCore
+

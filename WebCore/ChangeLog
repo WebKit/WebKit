@@ -1,3 +1,78 @@
+2008-02-06  Brent Fulgham  <bfulgham@gmail.com>
+
+        Reviewed by Adam Roben.
+
+        http://bugs.webkit.org/show_bug.cgi?id=16979
+        Conditionalize CoreGraphics vs Cairo support in Windows port.
+
+        * WebCore.vcproj/WebCore.vcproj:
+        * bridge/win/FrameCGWin.cpp: Copied from WebCore/bridge/win/FrameWin.cpp.
+        (WebCore::imageFromSelection):
+        * bridge/win/FrameCairoWin.cpp: Added.
+        (WebCore::imageFromSelection):
+        * bridge/win/FrameWin.cpp:
+        (WebCore::computePageRectsForFrame):
+        * platform/graphics/SimpleFontData.h:
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        * platform/graphics/cairo/GraphicsContextPlatformPrivateCairo.h: Copied from WebCore/platform/graphics/cairo/GraphicsContextCairo.cpp.
+        (WebCore::GraphicsContextPlatformPrivate::GraphicsContextPlatformPrivate):
+        (WebCore::GraphicsContextPlatformPrivate::~GraphicsContextPlatformPrivate):
+        (WebCore::GraphicsContextPlatformPrivate::beginTransparencyLayer):
+        (WebCore::GraphicsContextPlatformPrivate::endTransparencyLayer):
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::GraphicsContext::savePlatformState):
+        (WebCore::GraphicsContext::restorePlatformState):
+        * platform/graphics/cg/GraphicsContextPlatformPrivate.h: Removed.
+        * platform/graphics/cg/GraphicsContextPlatformPrivateCG.h: Copied from WebCore/platform/graphics/cg/GraphicsContextPlatformPrivate.h.
+        * platform/graphics/win/FontCGWin.cpp: Copied from WebCore/platform/graphics/win/FontWin.cpp.
+        (WebCore::Font::drawGlyphs):
+        * platform/graphics/win/FontCairoWin.cpp: Added.
+        (WebCore::Font::drawGlyphs):
+        * platform/graphics/win/FontWin.cpp:
+        * platform/graphics/win/GraphicsContextCGWin.cpp: Copied from WebCore/platform/graphics/win/GraphicsContextWin.cpp.
+        (WebCore::CGContextWithHDC):
+        (WebCore::GraphicsContext::inTransparencyLayer):
+        (WebCore::GraphicsContext::getWindowsContext):
+        (WebCore::GraphicsContext::releaseWindowsContext):
+        (WebCore::GraphicsContextPlatformPrivate::scale):
+        (WebCore::GraphicsContextPlatformPrivate::rotate):
+        (WebCore::GraphicsContextPlatformPrivate::translate):
+        (WebCore::GraphicsContextPlatformPrivate::concatCTM):
+        (WebCore::setCGStrokeColor):
+        (WebCore::GraphicsContext::drawLineForMisspellingOrBadGrammar):
+        * platform/graphics/win/GraphicsContextCairoWin.cpp: Added.
+        (WebCore::GraphicsContext::GraphicsContext):
+        (WebCore::GraphicsContext::getWindowsContext):
+        (WebCore::GraphicsContext::inTransparencyLayer):
+        (WebCore::GraphicsContext::releaseWindowsContext):
+        (WebCore::GraphicsContext::concatCTM):
+        * platform/graphics/win/GraphicsContextWin.cpp:
+        * platform/graphics/win/ImageCGWin.cpp: Copied from WebCore/platform/graphics/win/ImageWin.cpp.
+        (WebCore::BitmapImage::getHBITMAPOfSize):
+        (WebCore::BitmapImage::drawFrameMatchingSourceSize):
+        * platform/graphics/win/ImageCairoWin.cpp: Added.
+        (WebCore::BitmapImage::getHBITMAPOfSize):
+        (WebCore::BitmapImage::drawFrameMatchingSourceSize):
+        * platform/graphics/win/ImageWin.cpp:
+        * platform/graphics/win/SimpleFontDataCGWin.cpp: Copied from WebCore/platform/graphics/win/SimpleFontDataWin.cpp.
+        (WebCore::scaleEmToUnits):
+        (WebCore::SimpleFontData::platformInit):
+        (WebCore::SimpleFontData::platformWidthForGlyph):
+        * platform/graphics/win/SimpleFontDataCairoWin.cpp: Added.
+        (WebCore::SimpleFontData::platformInit):
+        (WebCore::SimpleFontData::platformDestroy):
+        (WebCore::SimpleFontData::platformWidthForGlyph):
+        * platform/graphics/win/SimpleFontDataWin.cpp:
+        (WebCore::SimpleFontData::setShouldApplyMacAscentHack):
+        (WebCore::SimpleFontData::shouldApplyMacAscentHack):
+        * platform/win/DragImageCGWin.cpp: Copied from WebCore/platform/win/DragImageWin.cpp.
+        (WebCore::scaleDragImage):
+        (WebCore::createDragImageFromImage):
+        * platform/win/DragImageCairoWin.cpp: Added.
+        (WebCore::scaleDragImage):
+        (WebCore::createDragImageFromImage):
+        * platform/win/DragImageWin.cpp:
+
 2008-02-06  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Darin.

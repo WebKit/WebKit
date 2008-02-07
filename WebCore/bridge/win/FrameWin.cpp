@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2007, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -60,10 +60,6 @@
 #include "GraphicsContext.h"
 #include "Settings.h"
 
-#if PLATFORM(CG)
-#include <CoreGraphics/CoreGraphics.h>
-#endif
-
 using std::min;
 using namespace KJS::Bindings;
 
@@ -83,7 +79,6 @@ KJS::Bindings::Instance* Frame::createScriptInstanceForWidget(Widget* widget)
 
     return static_cast<PluginView*>(widget)->bindingInstance();
 }
-
 
 void computePageRectsForFrame(Frame* frame, const IntRect& printRect, float headerHeight, float footerHeight, float userScaleFactor,Vector<IntRect>& pages, int& outPageHeight)
 {
@@ -107,11 +102,11 @@ void computePageRectsForFrame(Frame* frame, const IntRect& printRect, float head
         return;
     }
     
-    float ratio = (float)printRect.height() / (float)printRect.width();
+    float ratio = static_cast<float>(printRect.height()) / static_cast<float>(printRect.width());
  
-    float pageWidth  = (float) root->docWidth();
+    float pageWidth  = static_cast<float>(root->docWidth());
     float pageHeight = pageWidth * ratio;
-    outPageHeight = (int) pageHeight;   // this is the height of the page adjusted by margins
+    outPageHeight = static_cast<int>(pageHeight);   // this is the height of the page adjusted by margins
     pageHeight -= (headerHeight + footerHeight);
 
     if (pageHeight <= 0) {
@@ -126,60 +121,15 @@ void computePageRectsForFrame(Frame* frame, const IntRect& printRect, float head
 
     
     // always return at least one page, since empty files should print a blank page
-    float printedPagesHeight = 0.0;
+    float printedPagesHeight = 0.0f;
     do {
         float proposedBottom = min(docHeight, printedPagesHeight + pageHeight);
         frame->adjustPageHeight(&proposedBottom, printedPagesHeight, proposedBottom, printedPagesHeight);
         currPageHeight = max(1.0f, proposedBottom - printedPagesHeight);
        
-        pages.append(IntRect(0,printedPagesHeight,currPageWidth,currPageHeight));
+        pages.append(IntRect(0, printedPagesHeight, currPageWidth, currPageHeight));
         printedPagesHeight += currPageHeight;
     } while (printedPagesHeight < docHeight);
-}
-
-static void drawRectIntoContext(IntRect rect, FrameView* view, GraphicsContext* gc)
-{
-    IntSize offset = view->scrollOffset();
-    rect.move(-offset.width(), -offset.height());
-    rect = view->convertToContainingWindow(rect);
-
-    gc->concatCTM(AffineTransform().translate(-rect.x(), -rect.y()));
-
-    view->paint(gc, rect);
-}
-
-HBITMAP imageFromSelection(Frame* frame, bool forceBlackText)
-{
-    frame->setPaintRestriction(forceBlackText ? PaintRestrictionSelectionOnlyBlackText : PaintRestrictionSelectionOnly);
-    FloatRect fr = frame->selectionRect();
-    IntRect ir((int)fr.x(), (int)fr.y(),(int)fr.width(),(int)fr.height());
-
-    void* bits;
-    HDC hdc = CreateCompatibleDC(0);
-    int w = ir.width();
-    int h = ir.height();
-    BITMAPINFO bmp = { { sizeof(BITMAPINFOHEADER), w, h, 1, 32 } };
-
-    HBITMAP hbmp = CreateDIBSection(0, &bmp, DIB_RGB_COLORS, (void**)&bits, 0, 0);
-    HBITMAP hbmpOld = (HBITMAP)SelectObject(hdc, hbmp);
-    CGColorSpaceRef deviceRGB = CGColorSpaceCreateDeviceRGB();
-    CGContextRef context = CGBitmapContextCreate((void*)bits, w, h,
-        8, w * sizeof(RGBQUAD), deviceRGB, kCGBitmapByteOrder32Little | kCGImageAlphaPremultipliedFirst);
-    CGColorSpaceRelease(deviceRGB);
-    CGContextSaveGState(context);
-
-    GraphicsContext gc(context);
-
-    frame->document()->updateLayout();
-    drawRectIntoContext(ir, frame->view(), &gc);
-
-    CGContextRelease(context);
-    SelectObject(hdc, hbmpOld);
-    DeleteDC(hdc);
-
-    frame->setPaintRestriction(PaintRestrictionNone);
-
-    return hbmp;
 }
 
 DragImageRef Frame::dragImageForSelection()

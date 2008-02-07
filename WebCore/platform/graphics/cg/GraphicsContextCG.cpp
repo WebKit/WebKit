@@ -27,11 +27,9 @@
 #include "config.h"
 #include "GraphicsContext.h"
 
-#if PLATFORM(CG)
-
 #include "AffineTransform.h"
 #include "FloatConversion.h"
-#include "GraphicsContextPlatformPrivate.h"
+#include "GraphicsContextPlatformPrivateCG.h"
 #include "KURL.h"
 #include "Path.h"
 #include <CoreGraphics/CGPDFContext.h>
@@ -83,7 +81,7 @@ CGContextRef GraphicsContext::platformContext() const
 void GraphicsContext::savePlatformState()
 {
     // Note: Do not use this function within this class implementation, since we want to avoid the extra
-    // save of the secondary context (in GraphicsContextPlatformPrivate.h).
+    // save of the secondary context (in GraphicsContextPlatformPrivateCG.h).
     CGContextSaveGState(platformContext());
     m_data->save();
 }
@@ -91,7 +89,7 @@ void GraphicsContext::savePlatformState()
 void GraphicsContext::restorePlatformState()
 {
     // Note: Do not use this function within this class implementation, since we want to avoid the extra
-    // restore of the secondary context (in GraphicsContextPlatformPrivate.h).
+    // restore of the secondary context (in GraphicsContextPlatformPrivateCG.h).
     CGContextRestoreGState(platformContext());
     m_data->restore();
     m_data->m_userToDeviceTransformKnownToBeIdentity = false;
@@ -930,4 +928,3 @@ void GraphicsContext::setCompositeOperation(CompositeOperator mode)
     
 }
 
-#endif // PLATFORM(CG)

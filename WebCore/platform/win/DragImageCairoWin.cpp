@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008 Apple Inc.  All rights reserved.
+ * Copyright (C) 2008 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,39 +20,35 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
 #include "config.h"
+#include "DragImage.h"
+
+#include "CachedImage.h"
+#include "GraphicsContext.h"
 #include "Image.h"
-#include "BitmapImage.h"
+#include "NotImplemented.h"
+#include "RetainPtr.h"
 
-#include "SharedBuffer.h"
-
-// This function loads resources from WebKit
-PassRefPtr<WebCore::SharedBuffer> loadResourceIntoBuffer(const char*);
+#include <windows.h>
 
 namespace WebCore {
 
-void BitmapImage::initPlatformData()
+DragImageRef scaleDragImage(DragImageRef image, FloatSize scale)
 {
-}
+    notImplemented();
 
-void BitmapImage::invalidatePlatformData()
+    return image;
+}
+    
+DragImageRef createDragImageFromImage(Image* img)
 {
-}
+    notImplemented();
 
-Image* Image::loadPlatformResource(const char *name)
-{
-    RefPtr<SharedBuffer> buffer = loadResourceIntoBuffer(name);
-    BitmapImage* img = new BitmapImage;
-    img->setData(buffer.release(), true);
-    return img;
+    DragImageRef temp;
+    return temp;
 }
-
-bool BitmapImage::getHBITMAP(HBITMAP bmp)
-{
-    return getHBITMAPOfSize(bmp, 0);
+    
 }
-
-} // namespace WebCore

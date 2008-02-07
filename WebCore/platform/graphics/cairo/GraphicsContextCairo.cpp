@@ -42,34 +42,19 @@
 #include <stdio.h>
 #include <wtf/MathExtras.h>
 
-#if PLATFORM(WIN)
-#include <cairo-win32.h>
-#endif
-
 #if PLATFORM(GTK)
 #include <gdk/gdk.h>
 #include <pango/pango.h>
+#elif PLATFORM(WIN)
+#include <cairo-win32.h>
 #endif
-
+#include "GraphicsContextPlatformPrivateCairo.h"
 
 #ifndef M_PI
 #define M_PI 3.14159265358979323846
 #endif
 
 namespace WebCore {
-
-class GraphicsContextPlatformPrivate {
-public:
-    GraphicsContextPlatformPrivate();
-    ~GraphicsContextPlatformPrivate();
-
-    cairo_t* cr;
-    Vector<float> layers;
-
-#if PLATFORM(GTK)
-    GdkEventExpose* expose;
-#endif
-};
 
 static inline void setColor(cairo_t* cr, const Color& col)
 {
@@ -86,34 +71,6 @@ static inline void fillRectSourceOver(cairo_t* cr, const FloatRect& rect, const 
     cairo_set_operator(cr, CAIRO_OPERATOR_OVER);
     cairo_fill(cr);
 }
-
-GraphicsContextPlatformPrivate::GraphicsContextPlatformPrivate()
-    :  cr(0)
-#if PLATFORM(GTK)
-    , expose(0)
-#endif
-{
-}
-
-GraphicsContextPlatformPrivate::~GraphicsContextPlatformPrivate()
-{
-    cairo_destroy(cr);
-}
-
-#if PLATFORM(WIN)
-GraphicsContext::GraphicsContext(HDC dc)
-    : m_common(createGraphicsContextPrivate())
-    , m_data(new GraphicsContextPlatformPrivate)
-{
-    if (dc) {
-        cairo_surface_t* surface = cairo_win32_surface_create(dc);
-        m_data->cr = cairo_create(surface);
-    } else {
-        setPaintingDisabled(true);
-        m_data->cr = 0;
-    }
-}
-#endif
 
 GraphicsContext::GraphicsContext(PlatformGraphicsContext* cr)
     : m_common(createGraphicsContextPrivate())
@@ -586,6 +543,9 @@ void GraphicsContext::setURLForRect(const KURL& link, const IntRect& destRect)
     notImplemented();
 }
 
+#if PLATFORM(GTK)
+// FIXME:  This should be moved to something like GraphicsContextCairoGTK.cpp,
+// as there is a Windows implementation in platform/graphics/win/GraphicsContextCairoWin.cpp
 void GraphicsContext::concatCTM(const AffineTransform& transform)
 {
     if (paintingDisabled())
@@ -595,6 +555,7 @@ void GraphicsContext::concatCTM(const AffineTransform& transform)
     const cairo_matrix_t* matrix = reinterpret_cast<const cairo_matrix_t*>(&transform);
     cairo_transform(cr, matrix);
 }
+#endif
 
 void GraphicsContext::addInnerRoundedRectClip(const IntRect& rect, int thickness)
 {
