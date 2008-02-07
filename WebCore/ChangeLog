@@ -1,3 +1,26 @@
+2008-02-07  Adam Roben  <aroben@apple.com>
+
+        Rename fileSize to getFileSize
+
+        Rubberstamped by Darin.
+
+        * platform/FileSystem.h:
+        * platform/gtk/FileSystemGtk.cpp:
+        * platform/network/cf/FormDataStreamCFNet.cpp:
+        (WebCore::setHTTPBody):
+        * platform/network/curl/ResourceHandleManager.cpp:
+        (WebCore::ResourceHandleManager::setupPOST):
+        * platform/posix/FileSystemPOSIX.cpp:
+        * platform/qt/FileSystemQt.cpp:
+        * platform/win/FileSystemWin.cpp:
+        * platform/wx/FileSystemWx.cpp:
+        * storage/Database.cpp:
+        (WebCore::Database::databaseSize):
+        * storage/DatabaseTracker.cpp:
+        (WebCore::DatabaseTracker::usageForDatabase):
+        * storage/OriginUsageRecord.cpp:
+        (WebCore::OriginUsageRecord::diskUsage):
+
 2008-02-06  Adam Roben  <aroben@apple.com>
 
         Make KURL::isLocalFile treat the URL's protocol case-insensitively

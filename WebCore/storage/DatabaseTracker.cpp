@@ -417,7 +417,7 @@ unsigned long long DatabaseTracker::usageForDatabase(const String& name, Securit
         return 0;
         
     long long size;
-    return fileSize(path, size) ? size : 0;
+    return getFileSize(path, size) ? size : 0;
 }
 
 unsigned long long DatabaseTracker::usageForOrigin(SecurityOrigin* origin)

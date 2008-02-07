@@ -75,7 +75,7 @@ bool deleteEmptyDirectory(const String& path)
     return !rmdir(fsRep.data());
 }
 
-bool fileSize(const String& path, long long& result)
+bool getFileSize(const String& path, long long& result)
 {
     CString fsRep = fileSystemRepresentation(path);
 

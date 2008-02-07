@@ -82,7 +82,7 @@ unsigned long long OriginUsageRecord::diskUsage()
         ASSERT(!path.isEmpty());
                 
         long long size;
-        if (fileSize(path, size))
+        if (getFileSize(path, size))
             m_databaseMap.set(*iUnknown, DatabaseEntry(path, size));
         else {
             // When we can't determine the file size, we'll just have to assume the file is missing/inaccessible

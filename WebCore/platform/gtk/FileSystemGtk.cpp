@@ -70,7 +70,7 @@ bool deleteEmptyDirectory(const String& path)
     return result;
 }
 
-bool fileSize(const String& path, long long& resultSize)
+bool getFileSize(const String& path, long long& resultSize)
 {
     gchar* filename = g_filename_from_utf8(path.utf8().data(), -1, 0, 0, 0);
     if (!filename)

@@ -296,7 +296,7 @@ bool Database::versionMatchesExpected() const
 unsigned long long Database::databaseSize() const
 {
     long long size;
-    if (!fileSize(m_filename, size))
+    if (!getFileSize(m_filename, size))
         size = 0;
     return size;
 }

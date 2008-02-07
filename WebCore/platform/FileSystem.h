@@ -50,7 +50,7 @@ const PlatformFileHandle invalidPlatformFileHandle = -1;
 bool fileExists(const String&);
 bool deleteFile(const String&);
 bool deleteEmptyDirectory(const String&);
-bool fileSize(const String&, long long& result);
+bool getFileSize(const String&, long long& result);
 String pathByAppendingComponent(const String& path, const String& component);
 bool makeAllDirectories(const String& path);
 String homeDirectoryPath();
