@@ -1,5 +1,12 @@
 2008-02-07  David Smith  <catfish.man@gmail.com>
 
+        Rubber stamped by Mark Rowe
+        Fix a duplicate selector in the test.
+
+        * perf/slickspeed/selectors.list:
+
+2008-02-07  David Smith  <catfish.man@gmail.com>
+
         Reviewed by Adam Roben.
         Added :nth-child and :last-child to the list of selectors to test.
 
