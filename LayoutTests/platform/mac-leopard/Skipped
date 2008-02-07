@@ -1,15 +1,3 @@
-# <rdar://problem/5228259> Leopard regression test failures: svg/W3C-SVG-1.1/animate-elem...
-svg/W3C-SVG-1.1/animate-elem-06-t.svg
-svg/W3C-SVG-1.1/animate-elem-07-t.svg
-
-# <rdar://problem/5228278> Leopard SVG regression test failures due to different path dimensions
-svg/W3C-SVG-1.1/metadata-example-01-b.svg
-svg/W3C-SVG-1.1/paths-data-01-t.svg
-svg/W3C-SVG-1.1/text-path-01-b.svg
-svg/custom/control-points-for-S-and-T.svg
-svg/hixie/perf/001.xml
-svg/hixie/perf/002.xml
-
 # <rdar://problem/5313536> frame-loading-via-document-write.html sometimes fails on Leopard
 fast/dom/frame-loading-via-document-write.html
 http/tests/security/frame-loading-via-document-write.html
