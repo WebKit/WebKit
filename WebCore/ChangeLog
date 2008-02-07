@@ -1,5 +1,11 @@
 2008-02-06  Mark Rowe  <mrowe@apple.com>
 
+        Fix Windows builds.
+
+        * WebCore.vcproj/WebCore.vcproj: Unbreak the XML of the project file.
+
+2008-02-06  Mark Rowe  <mrowe@apple.com>
+
         Mac build fix.  Track rename that happened in r30056.
 
         * platform/graphics/mac/GraphicsContextMac.mm:
