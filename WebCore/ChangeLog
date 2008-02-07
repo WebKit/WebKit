@@ -1,5 +1,12 @@
 2008-02-07  Adam Roben  <aroben@apple.com>
 
+        Qt build fix
+
+        * platform/SharedBuffer.cpp: Removed a stub implementation of
+        createWithContentsOfFile, now that each platform has its own stub.
+
+2008-02-07  Adam Roben  <aroben@apple.com>
+
         Fix Bug 17138: REGRESSION: Node highlight not updated properly
 
         <http://bugs.webkit.org/show_bug.cgi?id=17138>

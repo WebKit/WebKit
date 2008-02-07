@@ -109,13 +109,4 @@ inline unsigned SharedBuffer::platformDataSize() const
 
 #endif
 
-#if !PLATFORM(MAC) && !PLATFORM(WIN)
-
-PassRefPtr<SharedBuffer> SharedBuffer::createWithContentsOfFile(const String& filePath)
-{
-    return 0;
-}
-
-#endif
-
 }
