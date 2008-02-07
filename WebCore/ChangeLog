@@ -1,5 +1,19 @@
 2008-02-07  Dan Bernstein  <mitz@apple.com>
 
+        Reviewed by Dave Hyatt.
+
+        - fix <rdar://problem/5729411> REGRESSION (r29834): Float contained in relative-positioned block is painted twice
+
+        Test: fast/block/float/relative-painted-twice.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::addOverhangingFloats): Added another case where
+        the child should not take over painting the float: when they do not have
+        the same enclosing layer. In that case, the float is already being
+        painted by one of its closer ancestors.
+
+2008-02-07  Dan Bernstein  <mitz@apple.com>
+
         Reviewed by Darin Adler.
 
         - fix http://bugs.webkit.org/show_bug.cgi?id=17194

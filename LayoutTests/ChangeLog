@@ -1,5 +1,16 @@
 2008-02-07  Dan Bernstein  <mitz@apple.com>
 
+        Reviewed by Dave Hyatt.
+
+        - test for <rdar://problem/5729411> REGRESSION (r29834): Float contained in relative-positioned block is painted twice
+
+        * fast/block/float/relative-painted-twice.html: Added.
+        * platform/mac-leopard/fast/block/float/relative-painted-twice-expected.checksum: Added.
+        * platform/mac-leopard/fast/block/float/relative-painted-twice-expected.png: Added.
+        * platform/mac/fast/block/float/relative-painted-twice-expected.txt: Added.
+
+2008-02-07  Dan Bernstein  <mitz@apple.com>
+
         Reviewed by Darin Adler.
 
         - test for http://bugs.webkit.org/show_bug.cgi?id=17194
