@@ -1,3 +1,9 @@
+2008-02-07  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Sam.
+
+        * sunspider: add an error message when ./tests/LIST is not found
+
 2007-12-29  Alp Toker  <alp@atoker.com>
 
         Fix typo.

@@ -105,7 +105,7 @@ my %uniqueCategories = ();
 
 sub loadTestsList()
 {
-    open TESTLIST, "<", "tests/LIST" or die;
+    open TESTLIST, "<", "tests/LIST" or die "Can't find ./tests/LIST";
     while (<TESTLIST>) {
         chomp;
         next unless !$testsPattern || /$testsPattern/;
