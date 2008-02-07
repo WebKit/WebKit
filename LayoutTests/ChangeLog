@@ -1,3 +1,13 @@
+2008-02-07  Beth Dakin  <bdakin@apple.com>
+
+        Test written by Geoff, reviewed by me.
+
+        Test for <rdar://problem/5697882> Traffic or Street View button on 
+        Google Maps is sometimes not positioned correctly (17000)
+
+        * fast/dom/simultaneouslyRegsiteredTimerFireOrder-expected.txt: Added.
+        * fast/dom/simultaneouslyRegsiteredTimerFireOrder.html: Added.
+
 2008-02-07  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Rubber stamped by Eric.

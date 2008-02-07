@@ -80,6 +80,7 @@ private:
     double m_nextFireTime; // 0 if inactive
     double m_repeatInterval; // 0 if not repeating
     int m_heapIndex; // -1 if not in heap
+    unsigned m_heapInsertionOrder; // Used to keep order among equal-fire-time timers
 
     friend void updateSharedTimer();
     friend void setDeferringTimers(bool);

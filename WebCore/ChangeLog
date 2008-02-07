@@ -1,3 +1,29 @@
+2008-02-07  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Geoff.
+
+        Fix for <rdar://problem/5697882> Traffic or Street View button on 
+        Google Maps is sometimes not positioned correctly (17000)
+
+        On the Mac, timers fire in the order that they are registered. 
+        Geoff and I discovered that this is not necessarily true on 
+        Windows, and that turned out to be the cause of this intermittent 
+        layout problem at Google Maps. This patch adds a new member 
+        variable to Timer to remember the timer's insertion point into the 
+        heap. Now when comparing timers, if two timers were registered at 
+        the same time, their insertion orders are compared to determine 
+        which should fire first. This code actually never runs on Debug 
+        builds on the Mac; the system clock on the Mac is accurate enough 
+        that it knows that the two timers were not registered at *exactly* 
+        the same time. This is not the case on Windows. In theory, if we 
+        sped up Javascript enough on the Mac, this code would run and would 
+        prevent misrenderings such as the one found on Google Maps.
+
+        * platform/Timer.cpp:
+        (WebCore::operator<):
+        (WebCore::TimerBase::setNextFireTime):
+        * platform/Timer.h:
+
 2008-02-06  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Darin Adler.
