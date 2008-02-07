@@ -1,3 +1,15 @@
+2008-02-06  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Darin.
+
+        Change httpBodyFromStream to take the request instead of the stream.
+        
+        * platform/network/cf/FormDataStreamCFNet.cpp:
+        (WebCore::httpBodyFromRequest):
+        * platform/network/cf/FormDataStreamCFNet.h:
+        * platform/network/cf/ResourceRequestCFNet.cpp:
+        (WebCore::ResourceRequest::doUpdateResourceRequest):
+
 2008-02-06  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Darin.

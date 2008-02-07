@@ -39,6 +39,7 @@
 #include <sys/types.h>
 #include <wtf/Assertions.h>
 #include <wtf/HashMap.h>
+#include <wtf/RetainPtr.h>
 
 #define USE_V1_CFSTREAM_CALLBACKS
 #ifdef USE_V1_CFSTREAM_CALLBACKS
@@ -362,10 +363,16 @@ void setHTTPBody(CFMutableURLRequestRef request, PassRefPtr<FormData> formData)
     CFRelease(stream);
 }
 
-
-FormData* httpBodyFromStream(CFReadStreamRef stream)
+PassRefPtr<FormData> httpBodyFromRequest(CFURLRequestRef request)
 {
-    return getStreamFormDatas().get(stream).get();
+    if (RetainPtr<CFDataRef> bodyData = CFURLRequestCopyHTTPRequestBody(request))
+        return new FormData(CFDataGetBytePtr(bodyData.get()), CFDataGetLength(bodyData.get()));
+
+    if (RetainPtr<CFReadStreamRef> bodyStream = CFURLRequestCopyHTTPRequestBodyStream(request))
+        return getStreamFormDatas().get(bodyStream.get());
+
+    // FIXME: what to do about arbitrary body streams?
+    return 0;
 }
 
 }

@@ -33,11 +33,12 @@
 #include <wtf/Forward.h>
 
 typedef struct _CFURLRequest* CFMutableURLRequestRef;
+typedef const struct _CFURLRequest* CFURLRequestRef;
 
 namespace WebCore {
     class FormData;
     void setHTTPBody(CFMutableURLRequestRef, PassRefPtr<FormData>);
-    FormData* httpBodyFromStream(CFReadStreamRef);
+    PassRefPtr<FormData> httpBodyFromRequest(CFURLRequestRef);
 }
 
 #endif FormDataStreamCFNet_h_

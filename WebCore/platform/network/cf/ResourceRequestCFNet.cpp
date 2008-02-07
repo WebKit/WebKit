@@ -107,15 +107,7 @@ void ResourceRequest::doUpdateResourceRequest()
         CFRelease(headers);
     }
 
-    if (CFDataRef bodyData = CFURLRequestCopyHTTPRequestBody(m_cfRequest.get())) {
-        m_httpBody = new FormData(CFDataGetBytePtr(bodyData), CFDataGetLength(bodyData));
-        CFRelease(bodyData);
-    } else if (CFReadStreamRef bodyStream = CFURLRequestCopyHTTPRequestBodyStream(m_cfRequest.get())) {
-        if (FormData* formData = httpBodyFromStream(bodyStream))
-            m_httpBody = formData;
-        CFRelease(bodyStream);
-    }
-    // FIXME: what to do about arbitrary body streams?
+    m_httpBody = httpBodyFromRequest(m_cfRequest.get());
 }
 
 }
