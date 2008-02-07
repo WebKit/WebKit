@@ -74,6 +74,10 @@
 #include "kjs_window.h"
 #include "visible_units.h"
 
+#if FRAME_LOADS_USER_STYLESHEET
+#include "UserStyleSheetLoader.h"
+#endif
+
 #if ENABLE(SVG)
 #include "SVGDocument.h"
 #include "SVGDocumentExtensions.h"
@@ -91,38 +95,6 @@ using namespace EventNames;
 using namespace HTMLNames;
 
 double Frame::s_currentPaintTimeStamp = 0.0;
-
-#if FRAME_LOADS_USER_STYLESHEET
-class UserStyleSheetLoader : public CachedResourceClient {
-public:
-    UserStyleSheetLoader(PassRefPtr<Document> document, const String& url)
-        : m_document(document)
-        , m_cachedSheet(m_document->docLoader()->requestUserCSSStyleSheet(url, ""))
-    {
-        if (m_cachedSheet) {
-            m_document->addPendingSheet();
-            m_cachedSheet->ref(this);
-        }
-    }
-    ~UserStyleSheetLoader()
-    {
-        if (m_cachedSheet) {
-            if (!m_cachedSheet->isLoaded())
-                m_document->removePendingSheet();        
-            m_cachedSheet->deref(this);
-        }
-    }
-private:
-    virtual void setCSSStyleSheet(const String& /*URL*/, const String& /*charset*/, const String& sheet)
-    {
-        m_document->removePendingSheet();
-        if (Frame* frame = m_document->frame())
-            frame->setUserStyleSheet(sheet);
-    }
-    RefPtr<Document> m_document;
-    CachedCSSStyleSheet* m_cachedSheet;
-};
-#endif
 
 #ifndef NDEBUG
 WTFLogChannel LogWebCoreFrameLeaks =  { 0x00000000, "", WTFLogChannelOn };
@@ -295,24 +267,6 @@ Settings* Frame::settings() const
 {
     return d->m_page ? d->m_page->settings() : 0;
 }
-
-#if FRAME_LOADS_USER_STYLESHEET
-void Frame::setUserStyleSheetLocation(const KURL& url)
-{
-    delete d->m_userStyleSheetLoader;
-    d->m_userStyleSheetLoader = 0;
-    if (d->m_doc && d->m_doc->docLoader())
-        d->m_userStyleSheetLoader = new UserStyleSheetLoader(d->m_doc, url.string());
-}
-
-void Frame::setUserStyleSheet(const String& styleSheet)
-{
-    delete d->m_userStyleSheetLoader;
-    d->m_userStyleSheetLoader = 0;
-    if (d->m_doc)
-        d->m_doc->setUserStyleSheet(styleSheet);
-}
-#endif
 
 String Frame::selectedText() const
 {

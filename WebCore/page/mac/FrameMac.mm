@@ -81,6 +81,7 @@
 #import "SimpleFontData.h"
 #import "SystemTime.h"
 #import "TextResourceDecoder.h"
+#import "UserStyleSheetLoader.h"
 #import "WebCoreFrameBridge.h"
 #import "WebCoreSystemInterface.h"
 #import "WebCoreViewFactory.h"
@@ -657,6 +658,22 @@ void Frame::clearPlatformScriptObjects()
         KJS::Bindings::RootObject* root = bindingRootObject();
         [d->m_windowScriptObject.get() _setOriginRootObject:root andRootObject:root];
     }
+}
+
+void Frame::setUserStyleSheetLocation(const KURL& url)
+{
+    delete d->m_userStyleSheetLoader;
+    d->m_userStyleSheetLoader = 0;
+    if (d->m_doc && d->m_doc->docLoader())
+        d->m_userStyleSheetLoader = new UserStyleSheetLoader(d->m_doc, url.string());
+}
+
+void Frame::setUserStyleSheet(const String& styleSheet)
+{
+    delete d->m_userStyleSheetLoader;
+    d->m_userStyleSheetLoader = 0;
+    if (d->m_doc)
+        d->m_doc->setUserStyleSheet(styleSheet);
 }
 
 } // namespace WebCore

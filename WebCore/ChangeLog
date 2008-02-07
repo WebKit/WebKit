@@ -1,5 +1,25 @@
 2008-02-07  Adam Roben  <aroben@apple.com>
 
+        Some cleanup of Mac-only user stylesheet code
+
+        I moved UserStyleSheetLoader out of Frame.cpp into its own files, and
+        moved some Mac-only Frame methods to FrameMac.mm.
+
+        Reviewed by Darin.
+
+        * WebCore.xcodeproj/project.pbxproj: Added new files to project.
+        * loader/mac/UserStyleSheetLoader.cpp: Added.
+        (UserStyleSheetLoader::UserStyleSheetLoader):
+        (UserStyleSheetLoader::~UserStyleSheetLoader):
+        * loader/mac/UserStyleSheetLoader.h: Added.
+        * page/Frame.cpp: Removed setUserStyleSheet[Location]
+        * page/mac/FrameMac.mm:
+        (WebCore::Frame::setUserStyleSheetLocation): Moved here from
+        Frame.cpp.
+        (WebCore::Frame::setUserStyleSheet): Ditto.
+
+2008-02-07  Adam Roben  <aroben@apple.com>
+
         Fix <rdar://5555260> GMail never loads when a user stylesheet is
         specified
 
