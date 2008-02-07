@@ -1,5 +1,22 @@
 2008-02-07  Adam Roben  <aroben@apple.com>
 
+        Clean up FileSystemWin.cpp
+
+        This cleanup also makes us call _wstat64 instead of _wstat32i64. The
+        only difference between these two functions is that _wstat64 gives
+        64-bit time values, while _wstat32i64 only gives 32-bit time values.
+
+        Reviewed by Darin.
+
+        All tests pass.
+
+        * platform/win/FileSystemWin.cpp:
+        (WebCore::statFile): New static helper that wraps _wstat64.
+        (WebCore::getFileSize): Changed to call statFile.
+        (WebCore::fileExists): Ditto.
+
+2008-02-07  Adam Roben  <aroben@apple.com>
+
         Rename fileSize to getFileSize
 
         Rubberstamped by Darin.

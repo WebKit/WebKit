@@ -41,12 +41,16 @@
 
 namespace WebCore {
 
+static bool statFile(String path, struct _stat64& st)
+{
+    ASSERT_ARG(path, !path.isNull());
+    return !_wstat64(path.charactersWithNullTermination(), &st) && (st.st_mode & _S_IFMT) == _S_IFREG;
+}
+
 bool getFileSize(const String& path, long long& result)
 {
-    struct _stat32i64 sb;
-    String filename = path;
-    int statResult = _wstat32i64(filename.charactersWithNullTermination(), &sb);
-    if (statResult != 0 || (sb.st_mode & S_IFMT) != S_IFREG)
+    struct _stat64 sb;
+    if (!statFile(path, sb))
         return false;
     result = sb.st_size;
     return true;
@@ -54,9 +58,8 @@ bool getFileSize(const String& path, long long& result)
 
 bool fileExists(const String& path) 
 {
-    struct _stat32i64 sb;
-    String filename = path;
-    return !_wstat32i64(filename.charactersWithNullTermination(), &sb);
+    struct _stat64 st;
+    return statFile(path, st);
 }
 
 bool deleteFile(const String& path)
