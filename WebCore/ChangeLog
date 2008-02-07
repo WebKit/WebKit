@@ -1,3 +1,21 @@
+2008-02-06  Kevin Ollivier  <kevino@theolliviers.com>
+
+        Reviewed by Darin Adler.
+
+        Rather than directly handing scroll wheel events, use
+        PlatformWheelEvent to send them to WebCore first, so that
+        mouse wheel scrolling info can be retrieved via JavaScript.
+
+        http://bugs.webkit.org/show_bug.cgi?id=17179
+
+        * platform/ScrollView.h:
+        * platform/wx/MouseWheelEventWx.cpp:
+        (WebCore::PlatformWheelEvent::PlatformWheelEvent):
+        * platform/wx/ScrollViewWx.cpp:
+        (WebCore::ScrollView::ScrollViewPrivate::bindEvents):
+        (WebCore::ScrollView::wheelEvent):
+        (WebCore::ScrollView::maximumScroll):
+
 2008-02-06  Mark Rowe  <mrowe@apple.com>
 
         Fix Windows builds.

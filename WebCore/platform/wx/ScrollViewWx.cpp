@@ -29,6 +29,7 @@
 #include "FloatRect.h"
 #include "IntRect.h"
 #include "NotImplemented.h"
+#include "PlatformWheelEvent.h"
 #include "ScrollBar.h"
 
 #include <algorithm>
@@ -68,15 +69,8 @@ public:
         win->Connect(wxEVT_SCROLLWIN_THUMBTRACK,   wxScrollWinEventHandler(ScrollViewPrivate::OnScrollWinEvents), NULL, this);
         win->Connect(wxEVT_SCROLLWIN_THUMBRELEASE, wxScrollWinEventHandler(ScrollViewPrivate::OnScrollWinEvents), NULL, this);
         win->Connect(wxEVT_SCROLLWIN_TOP,          wxScrollWinEventHandler(ScrollViewPrivate::OnScrollWinEvents), NULL, this);
-        win->Connect(wxEVT_MOUSEWHEEL,             wxMouseEventHandler(ScrollViewPrivate::OnMouseWheelEvents), NULL, this);
     }
     
-    void OnMouseWheelEvents(wxMouseEvent& event)
-    {
-        // TODO: Get wx to report X and Y rotation so we can support mighty mouse, etc.
-        m_scrollView->scrollBy(0, -event.GetWheelRotation() * LINE_STEP);
-    }
-
     void OnScrollWinEvents(wxScrollWinEvent& e)
     {
         wxEventType scrollType(e.GetEventType());
@@ -111,8 +105,6 @@ public:
 
     ScrollView* m_scrollView;
 
-    IntSize scrollOffset;
-    IntSize contentsSize;
     HashSet<Widget*> m_children;
     bool hasStaticBackground;
     bool suppressScrollbars;
@@ -164,6 +156,7 @@ int ScrollView::visibleWidth() const
     if (win)
         win->GetClientSize(&width, NULL);
     
+    ASSERT(width >= 0);
     return width;
 }
 
@@ -174,6 +167,7 @@ int ScrollView::visibleHeight() const
     if (win)
         win->GetClientSize(NULL, &height);
     
+    ASSERT(height >= 0);
     return height;
 }
 
@@ -239,11 +233,13 @@ void ScrollView::resizeContents(int w,int h)
 
 int ScrollView::contentsX() const
 {
+    ASSERT(m_data->viewStart.x >= 0);
     return m_data->viewStart.x;
 }
 
 int ScrollView::contentsY() const
 {
+    ASSERT(m_data->viewStart.y >= 0);
     return m_data->viewStart.y;
 }
 
@@ -253,6 +249,7 @@ int ScrollView::contentsWidth() const
     wxWindow* win = nativeWindow();
     if (win)
         win->GetVirtualSize(&width, NULL);
+    ASSERT(width >= 0);
     return width;
 }
 
@@ -262,6 +259,7 @@ int ScrollView::contentsHeight() const
     wxWindow* win = nativeWindow();
     if (win)
         win->GetVirtualSize(NULL, &height);
+    ASSERT(height >= 0);
     return height;
 }
 
@@ -404,10 +402,17 @@ bool ScrollView::inWindow() const
     return nativeWindow() != NULL;
 }
 
-void ScrollView::wheelEvent(PlatformWheelEvent&)
+void ScrollView::wheelEvent(PlatformWheelEvent& e)
 {
-    // do nothing,
-    // FIXME: not sure if any ports need to handle this, actually...
+    // Determine how much we want to scroll.  If we can move at all, we will accept the event.
+    IntSize maxScrollDelta = maximumScroll();
+    if ((e.deltaX() < 0 && maxScrollDelta.width() > 0) ||
+        (e.deltaX() > 0 && scrollOffset().width() > 0) ||
+        (e.deltaY() < 0 && maxScrollDelta.height() > 0) ||
+        (e.deltaY() > 0 && scrollOffset().height() > 0)) {
+        e.accept();
+        scrollBy(-e.deltaX() * LINE_STEP, -e.deltaY() * LINE_STEP);
+    }
 }
 
 // used for subframes support
@@ -444,7 +449,6 @@ void ScrollView::scrollRectIntoViewRecursively(const IntRect& rect)
     setContentsPos(rect.x(), rect.y());
 }
 
-
 PlatformScrollbar* ScrollView::scrollbarUnderMouse(const PlatformMouseEvent& mouseEvent)
 {
     // AFAICT this is only used for platforms that provide
@@ -452,5 +456,11 @@ PlatformScrollbar* ScrollView::scrollbarUnderMouse(const PlatformMouseEvent& mou
     return 0;
 }
 
+IntSize ScrollView::maximumScroll() const
+{
+    IntSize delta = (IntSize(contentsWidth(), contentsHeight()) - IntSize(visibleWidth(), visibleHeight())) - scrollOffset();
+    delta.clampNegativeToZero();
+    return delta;
+}
 
 }
