@@ -1,3 +1,14 @@
+2008-02-06  Alexey Proskuryakov  <ap@webkit.org>
+
+        Landing updated (improved) results for this test. The results changed in r30013,
+        but this wasn't immediately noticed because of the test being on Leopard skipped list.
+
+        Interestingly, js-test-pre.js has a workaround for the issue fixed in this revision in
+        its debug() function, but not in description(). Keeping the workaround for now to let tests
+        keep running in shipping Safari/WebKit.
+
+        * svg/css/glyph-orientation-rounding-test-expected.txt:
+
 2008-02-06  Oliver Hunt  <oliver@apple.com>
 
         RS=Stephanie

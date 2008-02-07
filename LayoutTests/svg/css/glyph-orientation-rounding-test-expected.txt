@@ -1,4 +1,7 @@
-Stress test glyph-orientation SVG CSS propertiesOn success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+Stress test glyph-orientation SVG CSS properties
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
 
 
 Strings that fail to parse, and hence parse as "0" for horziontal and "auto" as vertical.
