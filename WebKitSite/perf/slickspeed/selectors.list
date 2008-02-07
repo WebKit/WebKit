@@ -2,6 +2,12 @@
 div:only-child
 div:first-child
 div:last-child
+div:nth-child(even)
+div:nth-child(2n)
+div:nth-child(odd)
+div:nth-child(2n+1)
+div:nth-child(n)
+div:last-child
 div > div
 div + div
 div ~ div
