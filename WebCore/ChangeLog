@@ -1,3 +1,9 @@
+2008-02-06  Mark Rowe  <mrowe@apple.com>
+
+        Mac build fix.  Track rename that happened in r30056.
+
+        * platform/graphics/mac/GraphicsContextMac.mm:
+
 2008-02-06  Brent Fulgham  <bfulgham@gmail.com>
 
         Reviewed by Adam Roben.
