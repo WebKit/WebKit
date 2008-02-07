@@ -819,7 +819,7 @@ bool KURL::isLocalFile() const
     // and including feed would allow feeds to potentially let someone's blog
     // read the contents of the clipboard on a drag, even without a drop.
     // Likewise with using the FrameLoader::shouldTreatURLAsLocal() function.
-    return protocol() == "file";
+    return equalIgnoringCase(protocol(), "file");
 }
 
 static void appendEscapingBadChars(char*& buffer, const char *strStart, size_t length)
