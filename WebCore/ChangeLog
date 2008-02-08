@@ -1,3 +1,21 @@
+2008-02-08  Pierre-Luc Beaudoin  <pierre-luc.beaudoin@collabora.co.uk>
+
+        Reviewed by Alp Toker.
+
+        http://bugs.webkit.org/show_bug.cgi?id=17009
+        [Gtk] Webkit strips accents from some dead-key combinations
+
+        KeyEvents have to go through the gtk input method.
+
+        Also implement the isKeypad check and make disambiguateKeyDownEvent
+        behave more like other ports.
+
+        * platform/PlatformKeyboardEvent.h:
+        * platform/gtk/KeyEventGtk.cpp:
+        (WebCore::PlatformKeyboardEvent::PlatformKeyboardEvent):
+        (WebCore::PlatformKeyboardEvent::disambiguateKeyDownEvent):
+        (WebCore::PlatformKeyboardEvent::gdkEventKey):
+
 2008-02-08  Darin Adler  <darin@apple.com>
 
         Reviewed by Eric.

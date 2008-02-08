@@ -2,6 +2,7 @@
  * Copyright (C) 2006, 2007 Apple Inc.  All rights reserved.
  * Copyright (C) 2006 Michael Emmel mike.emmel@gmail.com
  * Copyright (C) 2007 Holger Hans Peter Freyther
+ * Copyright (C) 2008 Collabora, Ltd.  All rights reserved.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -484,6 +485,7 @@ static String singleCharacterString(guint val)
     return retVal;
 }
 
+// TODO: m_gdkEventKey should be refcounted
 PlatformKeyboardEvent::PlatformKeyboardEvent(GdkEventKey* event)
     : m_type((event->type == GDK_KEY_RELEASE) ? KeyUp : KeyDown)
     , m_text(singleCharacterString(event->keyval))
@@ -491,19 +493,23 @@ PlatformKeyboardEvent::PlatformKeyboardEvent(GdkEventKey* event)
     , m_keyIdentifier(keyIdentifierForGdkKeyCode(event->keyval))
     , m_autoRepeat(false)
     , m_windowsVirtualKeyCode(windowsKeyCodeForKeyEvent(event->keyval))
-    , m_isKeypad(false)
+    , m_isKeypad(event->keyval >= GDK_KP_Space && event->keyval <= GDK_KP_9)
     , m_shiftKey((event->state & GDK_SHIFT_MASK) || (event->keyval == GDK_3270_BackTab))
     , m_ctrlKey(event->state & GDK_CONTROL_MASK)
     , m_altKey(event->state & GDK_MOD1_MASK)
     , m_metaKey(event->state & GDK_MOD2_MASK)
+    , m_gdkEventKey(event)
 {
 }
 
-void PlatformKeyboardEvent::disambiguateKeyDownEvent(Type type, bool)
+void PlatformKeyboardEvent::disambiguateKeyDownEvent(Type type, bool backwardCompatibilityMode)
 {
     // Can only change type from KeyDown to RawKeyDown or Char, as we lack information for other conversions.
     ASSERT(m_type == KeyDown);
     m_type = type;
+
+    if (backwardCompatibilityMode)
+        return;
 
     if (type == RawKeyDown) {
         m_text = String();
@@ -518,6 +524,11 @@ bool PlatformKeyboardEvent::currentCapsLockState()
 {
     notImplemented();
     return false;
+}
+
+GdkEventKey* PlatformKeyboardEvent::gdkEventKey() const
+{
+    return m_gdkEventKey;
 }
 
 }
