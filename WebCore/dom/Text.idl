@@ -30,6 +30,10 @@ module core {
         Text splitText(in [IsIndex] unsigned long offset)
             raises (DOMException);
 
+        // Introduced in DOM Level 3:
+        readonly attribute DOMString       wholeText;
+        Text               replaceWholeText(in DOMString content)
+                                            raises(DOMException);
     };
 
 }

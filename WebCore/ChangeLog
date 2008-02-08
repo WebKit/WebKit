@@ -1,3 +1,26 @@
+2008-02-08  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by darin.
+
+        Add support for Text.wholeText and Text.replaceWholeText
+        http://bugs.webkit.org/show_bug.cgi?id=17125
+
+        Test EntityReferences to make sure they're always treated as read-only
+        In doing so I discovered a bug in document.adoptNode(readonlyNode) (and fixed it)
+
+        * dom/Document.cpp:
+        (WebCore::Document::adoptNode): throw NO_MODIFICATION_ALLOWED_ERR when passed a readonly node
+        * dom/Node.cpp:
+        * dom/Node.cpp:
+        (WebCore::Node::textContent):
+        * dom/Text.cpp:
+        (WebCore::earliestLogicallyAdjacentTextNode):
+        (WebCore::latestLogicallyAdjacentTextNode):
+        (WebCore::Text::wholeText):
+        (WebCore::Text::replaceWholeText):
+        * dom/Text.h:
+        * dom/Text.idl:
+
 2008-02-06  Kimmo Kinnunen  <kimmok@iki.fi>
 
         Reviewed by Tim Hatcher.

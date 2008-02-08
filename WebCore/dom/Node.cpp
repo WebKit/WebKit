@@ -1536,7 +1536,7 @@ String Node::textContent(bool convertBRsToNewlines) const
         case DOCUMENT_TYPE_NODE:
         case NOTATION_NODE:
         default:
-            return String();            
+            return String();
     }
 }
 

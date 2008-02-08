@@ -1,0 +1,23 @@
+Test to make sure EntityReference nodes are always treated readonly
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS xmlDoc2.adoptNode(entityReference) threw exception Error: NO_MODIFICATION_ALLOWED_ERR: DOM Exception 7.
+PASS entityReference.ownerDocument is xmlDoc
+PASS entityReference.nodeValue = 'foo' threw exception Error: NO_MODIFICATION_ALLOWED_ERR: DOM Exception 7.
+PASS entityReference.nodeValue is null
+PASS entityReference.prefix = 'foo' threw exception Error: NAMESPACE_ERR: DOM Exception 14.
+PASS entityReference.prefix is null
+PASS entityReference.textContent = 'foo' threw exception Error: NO_MODIFICATION_ALLOWED_ERR: DOM Exception 7.
+FAIL entityReference.textContent should be >. Was .
+FAIL childrenBeforeFailedAppend should be 1. Was 0.
+PASS entityReference.appendChild(text) threw exception Error: NO_MODIFICATION_ALLOWED_ERR: DOM Exception 7.
+PASS entityReference.childNodes.length is childrenBeforeFailedAppend
+FAIL childrenBeforeFailedAppend should be 1. Was 0.
+PASS entityReference.insertBefore(text, entityReference.firstChild) threw exception Error: NO_MODIFICATION_ALLOWED_ERR: DOM Exception 7.
+PASS entityReference.childNodes.length is childrenBeforeFailedAppend
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

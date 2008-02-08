@@ -1,3 +1,36 @@
+2008-02-08  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by darin.
+
+        Add support for Text.wholeText and Text.replaceWholeText from DOM Level 3 Core.
+        http://bugs.webkit.org/show_bug.cgi?id=17125
+        
+        Test to make sure EntityReference nodes are always treated as read-only.
+
+        Added fast/dom/Text/replaceWholeText.html to catch a case the W3C missed.
+
+        All of these tests now pass.
+
+        * dom/xhtml/level3/core/textreplacewholetext01-expected.txt:
+        * dom/xhtml/level3/core/textreplacewholetext02-expected.txt:
+        * dom/xhtml/level3/core/textreplacewholetext03-expected.txt:
+        * dom/xhtml/level3/core/textreplacewholetext04-expected.txt:
+        * dom/xhtml/level3/core/textreplacewholetext05-expected.txt:
+        * dom/xhtml/level3/core/textreplacewholetext06-expected.txt:
+        * dom/xhtml/level3/core/textreplacewholetext07-expected.txt:
+        * dom/xhtml/level3/core/textwholetext01-expected.txt:
+        * dom/xhtml/level3/core/textwholetext02-expected.txt:
+        * dom/xhtml/level3/core/textwholetext03-expected.txt:
+        * fast/dom/EntityReference/readonly-exceptions-expected.txt: Added.
+        * fast/dom/EntityReference/readonly-exceptions.html: Added.
+        * fast/dom/EntityReference/resources/TEMPLATE.html: Added.
+        * fast/dom/EntityReference/resources/readonly-exceptions.js: Added.
+        * fast/dom/Text/replaceWholeText-expected.txt: Added.
+        * fast/dom/Text/replaceWholeText.html: Added.
+        * fast/dom/Text/resources/TEMPLATE.html: Added.
+        * fast/dom/Text/resources/replaceWholeText.js: Added.
+        * fast/dom/Window/window-properties-expected.txt: updated to reflect addition of replaceWholeText
+
 2008-02-06  Kimmo Kinnunen  <kimmok@iki.fi>
 
         Reviewed by Tim Hatcher.

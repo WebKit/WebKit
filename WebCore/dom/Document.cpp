@@ -672,7 +672,12 @@ PassRefPtr<Node> Document::adoptNode(PassRefPtr<Node> source, ExceptionCode& ec)
         ec = NOT_SUPPORTED_ERR;
         return 0;
     }
-    
+
+    if (source->isReadOnlyNode()) {
+        ec = NO_MODIFICATION_ALLOWED_ERR;
+        return 0;
+    }
+
     switch (source->nodeType()) {
         case ENTITY_NODE:
         case NOTATION_NODE:
