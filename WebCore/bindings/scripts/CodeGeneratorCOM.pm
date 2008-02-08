@@ -469,7 +469,7 @@ sub GenerateInterfaceHeader
 
     # - Default Interface Creator -
     push(@CPPInterfaceHeader, "${interfaceName}* to${interfaceName}(${implementationClass}*) { return 0; }\n\n");
- 
+
     push(@CPPInterfaceHeader, "#endif // " . $className . "_h\n");
 }
 
