@@ -1,3 +1,15 @@
+2008-02-08  Alp Toker  <alp@atoker.com>
+
+        Reviewed by Adam Roben.
+
+        Avoid null-dereference crasher noticed in the GTK+ port and also
+        affecting the Win release build.
+
+        Covered by existing tests.
+
+        * dom/Document.cpp:
+        (WebCore::Document::userStyleSheet):
+
 2008-02-08  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Adam.

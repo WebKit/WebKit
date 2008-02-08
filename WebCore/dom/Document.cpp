@@ -1675,7 +1675,7 @@ String Document::userStyleSheet() const
 #if FRAME_LOADS_USER_STYLESHEET
     return m_usersheet;
 #else
-    Page* page = m_frame->page();
+    Page* page = this->page();
     if (!page)
         return String();
     return page->userStyleSheet();
