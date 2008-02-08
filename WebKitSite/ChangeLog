@@ -1,5 +1,9 @@
 2008-02-08  Adam Roben  <aroben@apple.com>
 
+        * perf/slickspeed/config.ini: Fixed version number.
+
+2008-02-08  Adam Roben  <aroben@apple.com>
+
         Update jQuery to v1.2.3
 
         Rubberstamped by Mitz.
