@@ -82,6 +82,7 @@ enum
     WebURLErrorServerCertificateHasUnknownRoot = -1203,
     WebURLErrorServerCertificateNotYetValid =    -1204,
     WebURLErrorClientCertificateRejected =       -1205,
+    WebURLErrorClientCertificateRequired =       -1206,
     WebURLErrorCannotLoadFromNetwork =           -2000,
 
     // Download and file I/O errors

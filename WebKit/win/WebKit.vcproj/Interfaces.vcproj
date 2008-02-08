@@ -710,6 +710,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\Interfaces\IWebMutableURLRequestPrivate.idl"
+			>
+		</File>
+		<File
 			RelativePath="..\Interfaces\IWebNotification.idl"
 			>
 		</File>

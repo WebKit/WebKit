@@ -102,6 +102,8 @@ HRESULT STDMETHODCALLTYPE WebMutableURLRequest::QueryInterface(REFIID riid, void
         *ppvObject = static_cast<IWebURLRequest*>(this);
     else if (IsEqualGUID(riid, IID_IWebMutableURLRequest) && m_isMutable)
         *ppvObject = static_cast<IWebMutableURLRequest*>(this);
+    else if (IsEqualGUID(riid, __uuidof(IWebMutableURLRequestPrivate)) && m_isMutable)
+        *ppvObject = static_cast<IWebMutableURLRequestPrivate*>(this);
     else if (IsEqualGUID(riid, IID_IWebURLRequest))
         *ppvObject = static_cast<IWebURLRequest*>(this);
     else
@@ -317,6 +319,38 @@ HRESULT STDMETHODCALLTYPE WebMutableURLRequest::setAllowsAnyHTTPSCertificate(voi
 {
     ResourceHandle::setHostAllowsAnyHTTPSCertificate(m_request.url().host());
 
+    return S_OK;
+}
+
+static void deallocCertContext(void* ptr, void* info)
+{
+    if (ptr)
+        CertFreeCertificateContext(reinterpret_cast<PCCERT_CONTEXT>(ptr));
+}
+
+static CFDataRef copyCert(PCCERT_CONTEXT cert)
+{
+    static CFAllocatorRef certDealloc;
+    PCCERT_CONTEXT certCopy = 0;
+    if (!certDealloc) {
+        CFAllocatorContext allocContext = {
+            0, 0, 0, 0, 0, 0, 0, deallocCertContext, 0
+        };
+        certDealloc = CFAllocatorCreate(kCFAllocatorDefault, &allocContext);
+    }
+    certCopy = CertDuplicateCertificateContext(cert);
+    return CFDataCreateWithBytesNoCopy(kCFAllocatorDefault, reinterpret_cast<const UInt8*>(certCopy), sizeof(*certCopy), certDealloc);
+}
+
+HRESULT STDMETHODCALLTYPE WebMutableURLRequest::setClientCertificate(
+    /* [in] */ OLE_HANDLE cert)
+{
+    if (!cert)
+        return E_POINTER;
+
+    PCCERT_CONTEXT certContext = reinterpret_cast<PCCERT_CONTEXT>((ULONG64)cert);
+    RetainPtr<CFDataRef> certData(AdoptCF, copyCert(certContext));
+    ResourceHandle::setClientCertificate(m_request.url().host(), certData.get());
     return S_OK;
 }
 

@@ -1,3 +1,23 @@
+2008-02-07  Ada Chan  <adachan@apple.com>
+
+        <rdar://problem/5292433> certificate authentication support broken in Safari 3.0
+        Added mechanism to communicate client certificate info back to CFNetwork.
+
+        Reviewed by Adam.
+
+        * Interfaces/IWebError.idl: Added new WebURLErrorClientCertificateRequired error.
+        * Interfaces/IWebMutableURLRequestPrivate.idl: Added. Added method to set client 
+        certificate info on the request.
+        * WebKit.vcproj/Interfaces.vcproj: Added new idl.
+        * WebKit.vcproj/WebKit.vcproj: Link crypt32.lib
+        * WebKit.vcproj/WebKitGUID.vcproj:
+        * WebMutableURLRequest.cpp:
+        (WebMutableURLRequest::QueryInterface): Implements IWebMutableURLRequestPrivate.
+        (deallocCertContext): Free certificate context.
+        (copyCert): Duplicate the certificate context and returns it in a CFDataRef.
+        (WebMutableURLRequest::setClientCertificate):
+        * WebMutableURLRequest.h:
+
 2008-02-05  Rodney Dawes  <dobey@wayofthemonkey.com>
 
         Reviewed by Anders Carlsson.
