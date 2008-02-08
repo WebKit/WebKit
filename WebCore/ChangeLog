@@ -1,3 +1,17 @@
+2008-02-07  Ada Chan  <adachan@apple.com>
+
+        <rdar://problem/5292433> certificate authentication support broken in Safari 3.0
+        Added mechanism to communicate client certificate info back to CFNetwork.
+
+        Reviewed by Adam.
+
+        * platform/network/ResourceHandle.h:
+        * platform/network/cf/ResourceHandleCFNet.cpp:
+        (WebCore::clientCerts): Keep a mapping of hosts to client certificates.
+        (WebCore::makeFinalRequest): If we have a client certificate for the host, pass it
+        to CFNetwork by setting it in the SSL properties.
+        (WebCore::ResourceHandle::setClientCertificate): Map client certificate to the host.
+
 2008-02-07  Adam Roben  <aroben@apple.com>
 
         Qt build fix

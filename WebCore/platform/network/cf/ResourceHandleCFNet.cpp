@@ -58,6 +58,12 @@ static HashSet<String>& allowsAnyHTTPSCertificateHosts()
     return hosts;
 }
 
+static HashMap<String, RetainPtr<CFDataRef> >& clientCerts()
+{
+    static HashMap<String, RetainPtr<CFDataRef> > certs;
+    return certs;
+}
+
 CFURLRequestRef willSendRequest(CFURLConnectionRef conn, CFURLRequestRef cfRequest, CFURLResponseRef cfRedirectResponse, const void* clientInfo)
 {
     ResourceHandle* handle = (ResourceHandle*)clientInfo;
@@ -234,12 +240,23 @@ static CFURLRequestRef makeFinalRequest(const ResourceRequest& request, bool sho
     if (!shouldContentSniff)
         wkSetCFURLRequestShouldContentSniff(newRequest, false);
 
+    RetainPtr<CFMutableDictionaryRef> sslProps;
+
     if (allowsAnyHTTPSCertificateHosts().contains(request.url().host().lower())) {
-        CFTypeRef keys[] = { kCFStreamSSLAllowsAnyRoot, kCFStreamSSLAllowsExpiredRoots };  
-        CFTypeRef values[] = { kCFBooleanTrue, kCFBooleanTrue };
-        static CFDictionaryRef sslProps = CFDictionaryCreate(kCFAllocatorDefault, keys, values, sizeof(keys) / sizeof(keys[0]), &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
-        CFURLRequestSetSSLProperties(newRequest, sslProps);
+        sslProps.adoptCF(CFDictionaryCreateMutable(kCFAllocatorDefault, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
+        CFDictionaryAddValue(sslProps.get(), kCFStreamSSLAllowsAnyRoot, kCFBooleanTrue);
+        CFDictionaryAddValue(sslProps.get(), kCFStreamSSLAllowsExpiredRoots, kCFBooleanTrue);
     }
+
+    HashMap<String, RetainPtr<CFDataRef> >::iterator clientCert = clientCerts().find(request.url().host().lower());
+    if (clientCert != clientCerts().end()) {
+        if (!sslProps)
+            sslProps.adoptCF(CFDictionaryCreateMutable(kCFAllocatorDefault, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
+        wkSetClientCertificateInSSLProperties(sslProps.get(), (clientCert->second).get());
+    }
+
+    if (sslProps)
+        CFURLRequestSetSSLProperties(newRequest, sslProps.get());
 
     if (CFHTTPCookieStorageRef defaultCookieStorage = wkGetDefaultHTTPCookieStorage())
         CFURLRequestSetHTTPCookieStorageAcceptPolicy(newRequest, CFHTTPCookieStorageGetCookieAcceptPolicy(defaultCookieStorage));
@@ -382,6 +399,11 @@ void ResourceHandle::loadResourceSynchronously(const ResourceRequest& request, R
 void ResourceHandle::setHostAllowsAnyHTTPSCertificate(const String& host)
 {
     allowsAnyHTTPSCertificateHosts().add(host.lower());
+}
+
+void ResourceHandle::setClientCertificate(const String& host, CFDataRef cert)
+{
+    clientCerts().set(host.lower(), cert);
 }
 
 void ResourceHandle::setDefersLoading(bool defers)
