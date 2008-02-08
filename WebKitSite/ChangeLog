@@ -1,3 +1,12 @@
+2008-02-08  Adam Roben  <aroben@apple.com>
+
+        Update jQuery to v1.2.3
+
+        Rubberstamped by Mitz.
+
+        * perf/slickspeed/config.ini:
+        * perf/slickspeed/frameworks/jquery-1.2.3.js: Renamed from WebKitSite/perf/slickspeed/frameworks/jquery-1.2.1.js.
+
 2008-02-07  David Smith  <catfish.man@gmail.com>
 
         Rubber stamped by weinig and bdash.
