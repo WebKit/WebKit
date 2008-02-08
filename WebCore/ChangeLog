@@ -1,3 +1,9 @@
+2008-02-08  Kevin Ollivier  <kevino@theolliviers.com>
+
+        wx port build fix. Add time.h to define time_t.
+
+        * platform/FileSystem.h:
+
 2008-02-08  Alp Toker  <alp@atoker.com>
 
         Reviewed by Adam Roben.

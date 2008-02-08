@@ -34,6 +34,8 @@
 #include <gmodule.h>
 #endif
 
+#include <time.h>
+
 #include <wtf/Platform.h>
 
 typedef const struct __CFData* CFDataRef;
