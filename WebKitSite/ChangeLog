@@ -1,5 +1,12 @@
 2008-02-07  David Smith  <catfish.man@gmail.com>
 
+        Rubber stamped by weinig and bdash.
+        Update prototype.js to 1.6.0.2 to be a bit less unfair in comparative benchmarking.
+
+        * perf/slickspeed/frameworks/prototype.js:
+
+2008-02-07  David Smith  <catfish.man@gmail.com>
+
         Rubber stamped by Mark Rowe
         Fix a duplicate selector in the test.
 
