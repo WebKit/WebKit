@@ -41,6 +41,7 @@ typedef wchar_t UChar;
 typedef struct _CFURLResponse* CFURLResponseRef;
 typedef struct OpaqueCFHTTPCookieStorage*  CFHTTPCookieStorageRef;
 typedef struct _CFURLRequest* CFMutableURLRequestRef;
+typedef const struct _CFURLRequest* CFURLRequestRef;
 
 void wkSetFontSmoothingLevel(int type);
 int wkGetFontSmoothingLevel();
@@ -64,5 +65,10 @@ void* wkGetSSLPeerCertificateData(CFDictionaryRef);
 CFHTTPCookieStorageRef wkGetDefaultHTTPCookieStorage();
 void wkSetCFURLRequestShouldContentSniff(CFMutableURLRequestRef, bool);
 CFStringRef wkCopyFoundationCacheDirectory();
+void wkSetClientCertificateInSSLProperties(CFMutableDictionaryRef, CFDataRef);
+
+bool wkCanAccessCFURLRequestHTTPBodyParts();
+CFArrayRef wkCFURLRequestCopyHTTPRequestBodyParts(CFURLRequestRef);
+void wkCFURLRequestSetHTTPRequestBodyParts(CFMutableURLRequestRef, CFArrayRef bodyParts);
 
 #endif // WebKitSystemInterface_h
