@@ -1,11 +1,9 @@
 /*
- * This file is part of the DOM implementation for KDE.
- *
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  * Copyright (C) 2000 Frederik Holljen (frederik.holljen@hig.no)
  * Copyright (C) 2001 Peter Kelly (pmk@post.com)
  * Copyright (C) 2006 Samuel Weinig (sam.weinig@gmail.com)
- * Copyright (C) 2004 Apple Computer, Inc.
+ * Copyright (C) 2004, 2008 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -28,45 +26,47 @@
 #define NodeIterator_h
 
 #include "Traversal.h"
+#include <wtf/PassRefPtr.h>
 
 namespace WebCore {
-
-    class Document;
 
     typedef int ExceptionCode;
 
     class NodeIterator : public Traversal {
     public:
-        NodeIterator(Node*, unsigned whatToShow, PassRefPtr<NodeFilter>, bool expandEntityReferences);
-        ~NodeIterator();
+        NodeIterator(PassRefPtr<Node>, unsigned whatToShow, PassRefPtr<NodeFilter>, bool expandEntityReferences);
+        virtual ~NodeIterator();
 
-        Node* nextNode(ExceptionCode&);
-        Node* previousNode(ExceptionCode&);
+        Node* nextNode(ExceptionCode&, KJS::JSValue*& exception);
+        Node* previousNode(ExceptionCode&, KJS::JSValue*& exception);
         void detach();
 
-        Node* referenceNode() const { return m_referenceNode.get(); }
-        bool pointerBeforeReferenceNode() const { return m_beforeReferenceNode; }
+        Node* referenceNode() const { return m_referenceNode.node.get(); }
+        bool pointerBeforeReferenceNode() const { return m_referenceNode.isPointerBeforeNode; }
 
-        /**
-         * This function has to be called if you delete a node from the
-         * document tree and you want the Iterator to react if there
-         * are any changes concerning it.
-         */
-        void notifyBeforeNodeRemoval(Node* removed);
+        // This function is called before any node is removed from the document tree.
+        void notifyBeforeNodeRemoval(Node* nodeToBeRemoved);
+
+        // For non-JS bindings. Silently ignores the JavaScript exception if any.
+        Node* nextNode(ExceptionCode& ec) { KJS::JSValue* exception; return nextNode(ec, exception); }
+        Node* previousNode(ExceptionCode& ec) { KJS::JSValue* exception; return previousNode(ec, exception); }
 
     private:
-        void setReferenceNode(Node*);
-        void setPointerBeforeReferenceNode(bool flag = true) { m_beforeReferenceNode = flag; }
-        bool detached() const { return m_detached; }
-        void setDetached(bool flag = true) { m_detached = flag; }
-        Document* document() const { return m_doc.get(); }
-        Node* findNextNode(Node*) const;
-        Node* findPreviousNode(Node*) const;
+        struct NodePointer {
+            RefPtr<Node> node;
+            bool isPointerBeforeNode;
+            NodePointer();
+            NodePointer(PassRefPtr<Node>, bool);
+            void clear();
+            bool moveToNext(Node* root);
+            bool moveToPrevious(Node* root);
+        };
 
-        RefPtr<Node> m_referenceNode;
-        bool m_beforeReferenceNode;
+        void updateForNodeRemoval(Node* nodeToBeRemoved, NodePointer&) const;
+
+        NodePointer m_referenceNode;
+        NodePointer m_candidateNode;
         bool m_detached;
-        RefPtr<Document> m_doc;
     };
 
 } // namespace WebCore

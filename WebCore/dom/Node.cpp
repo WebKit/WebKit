@@ -478,23 +478,17 @@ Node *Node::childNode(unsigned /*index*/) const
 
 Node *Node::traverseNextNode(const Node *stayWithin) const
 {
-    if (firstChild()) {
-        ASSERT(!stayWithin || firstChild()->isDescendantOf(stayWithin));
+    if (firstChild())
         return firstChild();
-    }
     if (this == stayWithin)
         return 0;
-    if (nextSibling()) {
-        ASSERT(!stayWithin || nextSibling()->isDescendantOf(stayWithin));
+    if (nextSibling())
         return nextSibling();
-    }
     const Node *n = this;
     while (n && !n->nextSibling() && (!stayWithin || n->parentNode() != stayWithin))
         n = n->parentNode();
-    if (n) {
-        ASSERT(!stayWithin || !n->nextSibling() || n->nextSibling()->isDescendantOf(stayWithin));
+    if (n)
         return n->nextSibling();
-    }
     return 0;
 }
 
@@ -502,17 +496,13 @@ Node *Node::traverseNextSibling(const Node *stayWithin) const
 {
     if (this == stayWithin)
         return 0;
-    if (nextSibling()) {
-        ASSERT(!stayWithin || nextSibling()->isDescendantOf(stayWithin));
+    if (nextSibling())
         return nextSibling();
-    }
     const Node *n = this;
     while (n && !n->nextSibling() && (!stayWithin || n->parentNode() != stayWithin))
         n = n->parentNode();
-    if (n) {
-        ASSERT(!stayWithin || !n->nextSibling() || n->nextSibling()->isDescendantOf(stayWithin));
+    if (n)
         return n->nextSibling();
-    }
     return 0;
 }
 
@@ -531,23 +521,31 @@ Node *Node::traversePreviousNode(const Node *stayWithin) const
 
 Node *Node::traversePreviousNodePostOrder(const Node *stayWithin) const
 {
-    if (lastChild()) {
-        ASSERT(!stayWithin || lastChild()->isDescendantOf(stayWithin));
+    if (lastChild())
         return lastChild();
-    }
     if (this == stayWithin)
         return 0;
-    if (previousSibling()) {
-        ASSERT(!stayWithin || previousSibling()->isDescendantOf(stayWithin));
+    if (previousSibling())
         return previousSibling();
-    }
     const Node *n = this;
     while (n && !n->previousSibling() && (!stayWithin || n->parentNode() != stayWithin))
         n = n->parentNode();
-    if (n) {
-        ASSERT(!stayWithin || !n->previousSibling() || n->previousSibling()->isDescendantOf(stayWithin));
+    if (n)
         return n->previousSibling();
-    }
+    return 0;
+}
+
+Node* Node::traversePreviousSiblingPostOrder(const Node* stayWithin) const
+{
+    if (this == stayWithin)
+        return 0;
+    if (previousSibling())
+        return previousSibling();
+    const Node *n = this;
+    while (n && !n->previousSibling() && (!stayWithin || n->parentNode() != stayWithin))
+        n = n->parentNode();
+    if (n)
+        return n->previousSibling();
     return 0;
 }
 

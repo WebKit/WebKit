@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2007 Apple Inc. All rights reserved.
+ *  Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -29,7 +29,17 @@
 
 namespace WebCore {
 
-JSNodeFilterCondition::JSNodeFilterCondition(KJS::JSObject* filter)
+using namespace KJS;
+
+// FIXME: Add takeException as a member of ExecState?
+static JSValue* takeException(ExecState* exec)
+{
+    JSValue* exception = exec->exception();
+    exec->clearException();
+    return exception;
+}
+
+JSNodeFilterCondition::JSNodeFilterCondition(JSObject* filter)
     : m_filter(filter)
 {
 }
@@ -39,22 +49,36 @@ void JSNodeFilterCondition::mark()
     m_filter->mark();
 }
 
-short JSNodeFilterCondition::acceptNode(Node* filterNode) const
+short JSNodeFilterCondition::acceptNode(Node* filterNode, JSValue*& exception) const
 {
-    Node* node = filterNode;
-    Frame* frame = node->document()->frame();
-    KJSProxy* proxy = frame->scriptProxy();
-    if (proxy && m_filter->implementsCall()) {
-        KJS::JSLock lock;
-        KJS::ExecState* exec = proxy->globalObject()->globalExec();
-        KJS::List args;
-        args.append(toJS(exec, node));
-        KJS::JSObject* obj = m_filter;
-        KJS::JSValue* result = obj->call(exec, obj, args);
-        return result->toInt32(exec);
-    }
+    // FIXME: It makes no sense for this to depend on the document being in a frame!
+    Frame* frame = filterNode->document()->frame();
+    if (!frame)
+        return NodeFilter::FILTER_REJECT;
 
-    return NodeFilter::FILTER_REJECT;
+    JSLock lock;
+
+    if (!m_filter->implementsCall())
+        return NodeFilter::FILTER_REJECT;
+
+    ExecState* exec = frame->scriptProxy()->globalObject()->globalExec();
+    List args;
+    args.append(toJS(exec, filterNode));
+    if (exec->hadException()) {
+        exception = takeException(exec);
+        return NodeFilter::FILTER_REJECT;
+    }
+    JSValue* result = m_filter->call(exec, m_filter, args);
+    if (exec->hadException()) {
+        exception = takeException(exec);
+        return NodeFilter::FILTER_REJECT;
+    }
+    int intResult = result->toInt32(exec);
+    if (exec->hadException()) {
+        exception = takeException(exec);
+        return NodeFilter::FILTER_REJECT;
+    }
+    return intResult;
 }
 
 } // namespace WebCore

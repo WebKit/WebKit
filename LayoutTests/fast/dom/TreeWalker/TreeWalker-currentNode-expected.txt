@@ -13,14 +13,14 @@ Test that we handle setting the currentNode to arbitrary nodes not under the roo
 
 PASS w.parentNode() is null
 PASS w.currentNode is document.documentElement
-PASS w.nextNode() is null
-PASS w.currentNode is document.documentElement
+PASS w.nextNode() is document.documentElement.firstChild
+PASS w.currentNode is document.documentElement.firstChild
 PASS w.previousNode() is null
 PASS w.currentNode is document.documentElement
-PASS w.firstChild() is null
-PASS w.currentNode is document.documentElement
-PASS w.lastChild() is null
-PASS w.currentNode is document.documentElement
+PASS w.firstChild() is document.documentElement.firstChild
+PASS w.currentNode is document.documentElement.firstChild
+PASS w.lastChild() is document.documentElement.lastChild
+PASS w.currentNode is document.documentElement.lastChild
 PASS w.nextSibling() is null
 PASS w.currentNode is document.documentElement
 PASS w.previousSibling() is null

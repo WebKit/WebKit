@@ -1,3 +1,61 @@
+2008-02-08  Darin Adler  <darin@apple.com>
+
+        Reviewed by Eric.
+
+        - test for http://bugs.webkit.org/show_bug.cgi?id=4714
+          NodeIterator does not handle exceptions from the filter function (affects Acid3)
+
+        - grabbed NodeIterator and TreeWalker tests from Hixie's site and KHTML
+
+        * traversal/exception-forwarding-expected.txt: Added.
+        * traversal/exception-forwarding.html: Added.
+        * traversal/resources: Added.
+        * traversal/resources/TEMPLATE.html: Copied from LayoutTests/fast/js/resources/TEMPLATE.html.
+        * traversal/resources/exception-forwarding.js: Added.
+
+        * traversal/node-iterator-001-expected.txt: Updated to reflect correct results.
+        The old results reflected a bug in our NodeIterator.
+        * traversal/node-iterator-001.html: Ditto.
+
+        * traversal/node-iterator-006.html: Changed test so there's no whitespace node after
+        the <span> elements inside the test root element (a <div>). The old test results were
+        incorrect; the new NodeIterator implementation correctly returned the whitespace node
+        for this test.
+
+        * traversal/node-iterator-006a.html: Copied from traversal/node-iterator-006.html.
+        Preserve the original test, which now has a strange result. But the result is correct,
+        so it's worth keeping around.
+        * traversal/node-iterator-006a-expected.txt: Added.
+
+        * fast/dom/TreeWalker/TreeWalker-currentNode-expected.txt: Regenerated.
+        * fast/dom/TreeWalker/resources/TreeWalker-currentNode.js: Updated test to expect results
+        that match the DOM specification.
+
+        * traversal/hixie-node-iterator/001-expected.txt: Added.
+        * traversal/hixie-node-iterator/001.xml: Added.
+        * traversal/hixie-node-iterator/002-expected.txt: Added.
+        * traversal/hixie-node-iterator/002.xml: Added.
+        * traversal/hixie-node-iterator/003-expected.txt: Added.
+        * traversal/hixie-node-iterator/003.xml: Added.
+        * traversal/hixie-node-iterator/004-expected.txt: Added.
+        * traversal/hixie-node-iterator/004.xml: Added.
+        * traversal/hixie-node-iterator/005-expected.txt: Added.
+        * traversal/hixie-node-iterator/005.xml: Added.
+        * traversal/hixie-node-iterator/006-expected.txt: Added.
+        * traversal/hixie-node-iterator/006.xml: Added.
+        * traversal/hixie-node-iterator/007-expected.txt: Added.
+        * traversal/hixie-node-iterator/007.xml: Added.
+        * traversal/hixie-node-iterator/008-expected.txt: Added.
+        * traversal/hixie-node-iterator/008.xml: Added.
+        * traversal/hixie-node-iterator/009-expected.txt: Added.
+        * traversal/hixie-node-iterator/009.xml: Added.
+        * traversal/hixie-node-iterator/010-expected.txt: Added.
+        * traversal/hixie-node-iterator/010.xml: Added.
+        * traversal/hixie-node-iterator/origin.txt: Added.
+
+        * traversal/tree-walker-filter-1-expected.txt: Added.
+        * traversal/tree-walker-filter-1.html: Added.
+
 2008-02-08  Eric Seidel  <eric@webkit.org>
 
         Reviewed by darin.

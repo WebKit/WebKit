@@ -21,16 +21,22 @@ debug("");
 w.currentNode = document.documentElement;
 shouldBeNull("w.parentNode()");
 shouldBe("w.currentNode", "document.documentElement");
-shouldBeNull("w.nextNode()");
-shouldBe("w.currentNode", "document.documentElement");
+w.currentNode = document.documentElement;
+shouldBe("w.nextNode()", "document.documentElement.firstChild");
+shouldBe("w.currentNode", "document.documentElement.firstChild");
+w.currentNode = document.documentElement;
 shouldBeNull("w.previousNode()");
 shouldBe("w.currentNode", "document.documentElement");
-shouldBeNull("w.firstChild()");
-shouldBe("w.currentNode", "document.documentElement");
-shouldBeNull("w.lastChild()");
-shouldBe("w.currentNode", "document.documentElement");
+w.currentNode = document.documentElement;
+shouldBe("w.firstChild()", "document.documentElement.firstChild");
+shouldBe("w.currentNode", "document.documentElement.firstChild");
+w.currentNode = document.documentElement;
+shouldBe("w.lastChild()", "document.documentElement.lastChild");
+shouldBe("w.currentNode", "document.documentElement.lastChild");
+w.currentNode = document.documentElement;
 shouldBeNull("w.nextSibling()");
 shouldBe("w.currentNode", "document.documentElement");
+w.currentNode = document.documentElement;
 shouldBeNull("w.previousSibling()");
 shouldBe("w.currentNode", "document.documentElement");
 
@@ -40,7 +46,7 @@ debug("");
 
 w.currentNode = subTree.previousSibling;
 shouldBe("w.nextNode()", "subTree");
-w.currentNode = document.body
+w.currentNode = document.body;
 shouldBe("w.lastChild()", "subTree");
 
 // Cleanup

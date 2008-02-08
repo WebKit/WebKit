@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,6 +29,9 @@
 #include "JSNodeFilterCondition.h"
 #include "NodeFilter.h"
 #include "kjs_binding.h"
+#include "kjs_dom.h"
+
+using namespace KJS;
 
 namespace WebCore {
 
@@ -36,6 +39,15 @@ void JSNodeFilter::mark()
 {
     impl()->mark();
     DOMObject::mark();
+}
+
+JSValue* JSNodeFilter::acceptNode(ExecState* exec, const List& args)
+{
+    JSValue* exception = 0;
+    short result = impl()->acceptNode(toNode(args[0]), exception);
+    if (exception)
+        exec->setException(exception);
+    return jsNumber(result);
 }
 
 NodeFilter* toNodeFilter(KJS::JSValue* val)

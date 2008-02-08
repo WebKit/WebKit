@@ -207,6 +207,10 @@ sub AddIncludesForType
     if ($type eq "CanvasGradient" or $type eq "XPathNSResolver") {
         $implIncludes{"PlatformString.h"} = 1;
     }
+
+    if ($type eq "Document") {
+        $implIncludes{"NodeFilter.h"} = 1;
+    }
 }
 
 sub AddIncludesForSVGAnimatedType

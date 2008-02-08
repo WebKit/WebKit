@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Computer, Inc.
+ * Copyright (C) 2006, 2008 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -16,11 +16,16 @@
  * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
  * Boston, MA 02110-1301, USA.
  */
+
 #include "config.h"
 #include "JSNodeIterator.h"
 
+#include "JSNode.h"
+#include "Node.h"
 #include "NodeFilter.h"
 #include "NodeIterator.h"
+
+using namespace KJS;
 
 namespace WebCore {
 
@@ -30,6 +35,38 @@ void JSNodeIterator::mark()
         filter->mark();
     
     DOMObject::mark();
+}
+
+JSValue* JSNodeIterator::nextNode(ExecState* exec, const List& args)
+{
+    ExceptionCode ec = 0;
+    JSValue* exception = 0;
+    Node* node = impl()->nextNode(ec, exception);
+    if (ec) {
+        setDOMException(exec, ec);
+        return jsUndefined();
+    }
+    if (exception) {
+        exec->setException(exception);
+        return jsUndefined();
+    }
+    return toJS(exec, node);
+}
+
+JSValue* JSNodeIterator::previousNode(ExecState* exec, const List& args)
+{
+    ExceptionCode ec = 0;
+    JSValue* exception = 0;
+    Node* node = impl()->previousNode(ec, exception);
+    if (ec) {
+        setDOMException(exec, ec);
+        return jsUndefined();
+    }
+    if (exception) {
+        exec->setException(exception);
+        return jsUndefined();
+    }
+    return toJS(exec, node);
 }
 
 }

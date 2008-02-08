@@ -1,11 +1,9 @@
-/**
- * This file is part of the DOM implementation for KDE.
- *
+/*
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  * Copyright (C) 2000 Frederik Holljen (frederik.holljen@hig.no)
  * Copyright (C) 2001 Peter Kelly (pmk@post.com)
  * Copyright (C) 2006 Samuel Weinig (sam.weinig@gmail.com)
- * Copyright (C) 2004 Apple Computer, Inc.
+ * Copyright (C) 2004, 2008 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -31,148 +29,197 @@
 #include "ExceptionCode.h"
 #include "NodeFilter.h"
 
+using namespace KJS;
+
 namespace WebCore {
 
-NodeIterator::NodeIterator(Node* rootNode, unsigned whatToShow, PassRefPtr<NodeFilter> filter, bool expandEntityReferences)
-    : Traversal(rootNode, whatToShow, filter, expandEntityReferences)
-    , m_beforeReferenceNode(true)
-    , m_detached(false)
-    , m_doc(rootNode ? rootNode->document() : 0)
+NodeIterator::NodePointer::NodePointer()
 {
-    if (document())
-        document()->attachNodeIterator(this);
+}
+
+NodeIterator::NodePointer::NodePointer(PassRefPtr<Node> n, bool b)
+    : node(n)
+    , isPointerBeforeNode(b)
+{
+}
+
+void NodeIterator::NodePointer::clear()
+{
+    node.clear();
+}
+
+bool NodeIterator::NodePointer::moveToNext(Node* root)
+{
+    if (!node)
+        return false;
+    if (isPointerBeforeNode) {
+        isPointerBeforeNode = false;
+        return true;
+    }
+    node = node->traverseNextNode(root);
+    return node;
+}
+
+bool NodeIterator::NodePointer::moveToPrevious(Node* root)
+{
+    if (!node)
+        return false;
+    if (!isPointerBeforeNode) {
+        isPointerBeforeNode = true;
+        return true;
+    }
+    node = node->traversePreviousNode(root);
+    return node;
+}
+
+NodeIterator::NodeIterator(PassRefPtr<Node> rootNode, unsigned whatToShow, PassRefPtr<NodeFilter> filter, bool expandEntityReferences)
+    : Traversal(rootNode, whatToShow, filter, expandEntityReferences)
+    , m_referenceNode(root(), true)
+    , m_detached(false)
+{
+    root()->document()->attachNodeIterator(this);
 }
 
 NodeIterator::~NodeIterator()
 {
-    if (document())
-        document()->detachNodeIterator(this);
+    root()->document()->detachNodeIterator(this);
 }
 
-Node* NodeIterator::findNextNode(Node* node) const
+Node* NodeIterator::nextNode(ExceptionCode& ec, JSValue*& exception)
 {
-    while ((node = node->traverseNextNode(root()))) {
-        // NodeIterators treat the DOM tree as a flat list of nodes.
-        // In other words, FILTER_REJECT does not pass over descendants
-        // of the rejected node. Hence, FILTER_REJECT is the same as FILTER_SKIP.
-        if (acceptNode(node) == NodeFilter::FILTER_ACCEPT)
-            break;
-    }
-    return node;
-}
-
-Node* NodeIterator::nextNode(ExceptionCode& ec)
-{
-    if (detached()) {
+    if (m_detached) {
         ec = INVALID_STATE_ERR;
         return 0;
     }
 
-    Node* node = referenceNode() ? referenceNode() : root();
-    if (!pointerBeforeReferenceNode() || acceptNode(node) != NodeFilter::FILTER_ACCEPT)
-        node = findNextNode(node);
-    if (node)
-        setReferenceNode(node);
-    setPointerBeforeReferenceNode(false);
-    return node;
-}
+    Node* result = 0;
 
-Node* NodeIterator::findPreviousNode(Node* node) const
-{
-    while ((node = node->traversePreviousNode(root()))) {
+    m_candidateNode = m_referenceNode;
+    while (m_candidateNode.moveToNext(root())) {
         // NodeIterators treat the DOM tree as a flat list of nodes.
         // In other words, FILTER_REJECT does not pass over descendants
         // of the rejected node. Hence, FILTER_REJECT is the same as FILTER_SKIP.
-        if (acceptNode(node) == NodeFilter::FILTER_ACCEPT)
+        exception = 0;
+        bool nodeWasAccepted = acceptNode(m_candidateNode.node.get(), exception) == NodeFilter::FILTER_ACCEPT;
+        if (exception)
             break;
+        if (nodeWasAccepted) {
+            m_referenceNode = m_candidateNode;
+            result = m_referenceNode.node.get();
+            break;
+        }
     }
-    return node;
+
+    m_candidateNode.clear();
+    return result;
 }
 
-Node* NodeIterator::previousNode(ExceptionCode&)
+Node* NodeIterator::previousNode(ExceptionCode& ec, JSValue*& exception)
 {
-    Node* node = referenceNode() ? referenceNode() : root();
-    if (pointerBeforeReferenceNode() || acceptNode(node) != NodeFilter::FILTER_ACCEPT)
-        node = findPreviousNode(node);
-    if (node)
-        setReferenceNode(node);
-    setPointerBeforeReferenceNode();
-    return node;
+    if (m_detached) {
+        ec = INVALID_STATE_ERR;
+        return 0;
+    }
+
+    Node* result = 0;
+
+    m_candidateNode = m_referenceNode;
+    while (m_candidateNode.moveToPrevious(root())) {
+        // NodeIterators treat the DOM tree as a flat list of nodes.
+        // In other words, FILTER_REJECT does not pass over descendants
+        // of the rejected node. Hence, FILTER_REJECT is the same as FILTER_SKIP.
+        exception = 0;
+        bool nodeWasAccepted = acceptNode(m_candidateNode.node.get(), exception) == NodeFilter::FILTER_ACCEPT;
+        if (exception)
+            break;
+        if (nodeWasAccepted) {
+            m_referenceNode = m_candidateNode;
+            result = m_referenceNode.node.get();
+            break;
+        }
+    }
+
+    m_candidateNode.clear();
+    return result;
 }
 
 void NodeIterator::detach()
 {
-    if (!detached() && document())
-        document()->detachNodeIterator(this);
-    setDetached();
-}
-
-void NodeIterator::setReferenceNode(Node* node)
-{
-    m_referenceNode = node;
+    root()->document()->detachNodeIterator(this);
+    m_detached = true;
+    m_referenceNode.node.clear();
 }
 
 void NodeIterator::notifyBeforeNodeRemoval(Node* removedNode)
 {
+    updateForNodeRemoval(removedNode, m_referenceNode);
+}
+
+void NodeIterator::updateForNodeRemoval(Node* removedNode, NodePointer& referenceNode) const
+{
+    ASSERT(!m_detached);
+    ASSERT(removedNode);
+    ASSERT(root()->document() == removedNode->document());
+
     // Iterator is not affected if the removed node is the reference node and is the root.
     // or if removed node is not the reference node, or the ancestor of the reference node.
-    if (!removedNode || removedNode == root() || !removedNode->isDescendantOf(root()))
+    if (!removedNode->isDescendantOf(root()))
         return;
-    bool willRemoveReferenceNode = removedNode == referenceNode();
-    bool willRemoveReferenceNodeAncestor = referenceNode() && referenceNode()->isDescendantOf(removedNode);
+    bool willRemoveReferenceNode = removedNode == referenceNode.node;
+    bool willRemoveReferenceNodeAncestor = referenceNode.node && referenceNode.node->isDescendantOf(removedNode);
     if (!willRemoveReferenceNode && !willRemoveReferenceNodeAncestor)
         return;
 
-    if (pointerBeforeReferenceNode()) {
-        Node* node = findNextNode(removedNode);
+    if (referenceNode.isPointerBeforeNode) {
+        Node* node = removedNode->traverseNextNode(root());
         if (node) {
             // Move out from under the node being removed if the reference node is
             // a descendant of the node being removed.
             if (willRemoveReferenceNodeAncestor) {
                 while (node && node->isDescendantOf(removedNode))
-                    node = findNextNode(node);
+                    node = node->traverseNextNode(root());
             }
             if (node)
-                setReferenceNode(node);
+                referenceNode.node = node;
         } else {
-            node = findPreviousNode(removedNode);
+            node = removedNode->traversePreviousNode(root());
             if (node) {
                 // Move out from under the node being removed if the reference node is
                 // a descendant of the node being removed.
                 if (willRemoveReferenceNodeAncestor) {
                     while (node && node->isDescendantOf(removedNode))
-                        node = findPreviousNode(node);
+                        node = node->traversePreviousNode(root());
                 }
                 if (node) {
                     // Removing last node.
                     // Need to move the pointer after the node preceding the 
                     // new reference node.
-                    setReferenceNode(node);
-                    setPointerBeforeReferenceNode(false);
+                    referenceNode.node = node;
+                    referenceNode.isPointerBeforeNode = false;
                 }
             }
         }
     } else {
-        Node* node = findPreviousNode(removedNode);
+        Node* node = removedNode->traversePreviousNode(root());
         if (node) {
             // Move out from under the node being removed if the reference node is
             // a descendant of the node being removed.
             if (willRemoveReferenceNodeAncestor) {
                 while (node && node->isDescendantOf(removedNode))
-                    node = findPreviousNode(node);
+                    node = node->traversePreviousNode(root());
             }
             if (node)
-                setReferenceNode(node);
+                referenceNode.node = node;
         } else {
-            node = findNextNode(removedNode);
+            node = removedNode->traverseNextNode(root());
             // Move out from under the node being removed if the reference node is
             // a descendant of the node being removed.
             if (willRemoveReferenceNodeAncestor) {
                 while (node && node->isDescendantOf(removedNode))
-                    node = findPreviousNode(node);
+                    node = node->traversePreviousNode(root());
             }
             if (node)
-                setReferenceNode(node);
+                referenceNode.node = node;
         }
     }
 }

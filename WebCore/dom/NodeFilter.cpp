@@ -1,11 +1,9 @@
-/**
- * This file is part of the DOM implementation for KDE.
- *
+/*
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  * Copyright (C) 2000 Frederik Holljen (frederik.holljen@hig.no)
  * Copyright (C) 2001 Peter Kelly (pmk@post.com)
  * Copyright (C) 2006 Samuel Weinig (sam.weinig@gmail.com)
- * Copyright (C) 2004 Apple Computer, Inc.
+ * Copyright (C) 2004, 2008 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -27,17 +25,14 @@
 #include "config.h"
 #include "NodeFilter.h"
 
+using namespace KJS;
+
 namespace WebCore {
 
-NodeFilter::NodeFilter(NodeFilterCondition* condition)
-    : m_condition(condition)
-{
-}
-
-short NodeFilter::acceptNode(Node* node) const
+short NodeFilter::acceptNode(Node* node, JSValue*& exception) const
 {
     // cast to short silences "enumeral and non-enumeral types in return" warning
-    return m_condition ? m_condition->acceptNode(node) : static_cast<short>(FILTER_ACCEPT);
+    return m_condition ? m_condition->acceptNode(node, exception) : static_cast<short>(FILTER_ACCEPT);
 }
 
 } // namespace WebCore

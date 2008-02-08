@@ -1,3 +1,130 @@
+2008-02-08  Darin Adler  <darin@apple.com>
+
+        Reviewed by Eric.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=3492
+          TreeWalker implementation needs to be fixed (affects Acid3)
+        - fix http://bugs.webkit.org/show_bug.cgi?id=4714
+          NodeIterator does not handle exceptions from the filter function (affects Acid3)
+        - fix http://bugs.webkit.org/show_bug.cgi?id=4716
+          NodeIterator will crash if the filter function removes the current node from the document
+
+        Test: traversal/exception-forwarding.html
+
+        This turned into a near-rewrite of NodeIterator and TreeWalker.
+
+        * bindings/js/JSNodeFilterCondition.h:
+        * bindings/js/JSNodeFilterCondition.cpp:
+        (WebCore::takeException): Added.
+        (WebCore::JSNodeFilterCondition::acceptNode): Added an out parameter to return
+        a JavaScript exception.
+
+        * bindings/js/JSNodeFilterCustom.cpp:
+        (WebCore::JSNodeFilter::acceptNode): Wrote a custom binding for this that raises
+        a JavaScript exception if the out parameter is set.
+
+        * bindings/js/JSNodeIteratorCustom.cpp:
+        (WebCore::JSNodeIterator::nextNode): Wrote a custom binding for this that raises
+        a JavaScript exception if the out parameter is set.
+        (WebCore::JSNodeIterator::previousNode): Ditto.
+
+        * bindings/js/JSTreeWalkerCustom.cpp:
+        (WebCore::JSTreeWalker::parentNode): Wrote a custom binding for this that raises
+        a JavaScript exception if the out parameter is set.
+        (WebCore::JSTreeWalker::firstChild): Ditto.
+        (WebCore::JSTreeWalker::lastChild): Ditto.
+        (WebCore::JSTreeWalker::nextSibling): Ditto.
+        (WebCore::JSTreeWalker::previousSibling): Ditto.
+        (WebCore::JSTreeWalker::previousNode): Ditto.
+        (WebCore::JSTreeWalker::nextNode): Ditto.
+
+        * bindings/objc/DOM.mm:
+        (WebCore::ObjCNodeFilterCondition::acceptNode): Updated to include new exception
+        out parameter.
+        (-[DOMDocument createNodeIterator:whatToShow:filter:expandEntityReferences:]):
+        Use RefPtr to make object lifetimes clearer.
+        (-[DOMDocument createTreeWalker:whatToShow:filter:expandEntityReferences:]):
+        Ditto.
+
+        * bindings/scripts/CodeGeneratorJS.pm: Added include of NodeFilter.h for
+        JSDocument.cpp.
+
+        * dom/Document.h:
+        * dom/Document.cpp:
+        (WebCore::Document::createNodeIterator): Changed to use PassRefPtr.
+        (WebCore::Document::createTreeWalker): Ditto.
+
+        * dom/NodeFilter.h:
+        * dom/NodeFilter.cpp:
+        (WebCore::NodeFilter::NodeFilter): Changed to use PassRefPtr.
+        (WebCore::NodeFilter::acceptNode): Added an out parameter to return
+        a JavaScript exception.
+        * dom/NodeFilter.idl: Custom binding for acceptNode.
+
+        * dom/NodeFilterCondition.h:
+        * dom/NodeFilterCondition.cpp:
+        (WebCore::NodeFilterCondition::acceptNode): Added an out parameter to return
+        a JavaScript exception.
+
+        * dom/NodeIterator.cpp:
+        (WebCore::NodeIterator::NodeIterator): Changed to use PassRefPtr more.
+        Eliminated m_doc, using the root node instead, and unnecessary check for
+        null -- rootNode must be non-null and all nodes have a non-null document.
+        (WebCore::NodeIterator::~NodeIterator): Changed to get document from root.
+        (WebCore::NodeIterator::nextNode): Rewrote to use a RefPtr since the
+        acceptNode function could do anything, including removing the last
+        reference to the current node. Also folded findNextNode into this function
+        since it's the only one that needs to call it.
+        (WebCore::NodeIterator::previousNode): Same thing, but the other direction.
+        (WebCore::NodeIterator::detach): Changed to use the root node as the indication
+        that we're detached rather than a separate boolean.
+        (WebCore::NodeIterator::notifyBeforeNodeRemoval): Removed some unnneeded
+        checks. Removed incorrect use of findNextNode/findPreviousNode -- those
+        functions call acceptNode and the DOM standard is quite clear that these
+        functions do not take that into account, allowing the current node to become
+        one that's not accepted.
+
+        * dom/NodeIterator.h: Changed constructor to use PassRefPtr more. Changed
+        nextNode and previousNode to have an out parameter with a JavaScript exception.
+        Removed helper functions setReferenceNode, setPointerBeforeReferenceNode,
+        detached, setDetached, document, findNextNode, and findPreviousNode. All were
+        unnecessary. Removed data member m_doc which was just rootNode()->document().
+
+        * dom/NodeIterator.idl: Custom binding for nextNode and previousNode.
+
+        * dom/Traversal.cpp:
+        (WebCore::Traversal::Traversal): Use PassRefPtr more.
+        (WebCore::Traversal::acceptNode): Added out parameter for JavaScript exception.
+        Also rearranged the function a little bit for clarity.
+
+        * dom/Traversal.h: Changed acceptNode to have an out parameter with a JavaScript
+        exception and made it protected, since it's only for use by the derived classes.
+
+        * dom/TreeWalker.cpp:
+        (WebCore::TreeWalker::TreeWalker): Updated to use PassRefPtr.
+        (WebCore::TreeWalker::setCurrentNode): Updated to use PassRefPtr and deleted
+        the overloaded version since it's not needed.
+        (WebCore::TreeWalker::parentNode): Rewrote to propagate the exception and also
+        to implement rules about when to check things like whether we're in the tree.
+        The previous fix where we called isDescendantOf was not entirely correct, because
+        the specification allows you to walk outside the tree if you get there somehow.
+        What it doesn't allow is walking outside the tree from inside. The new
+        implementation handles this correctly.
+        (WebCore::TreeWalker::firstChild): Ditto.
+        (WebCore::TreeWalker::lastChild): Ditto.
+        (WebCore::TreeWalker::previousSibling): Ditto.
+        (WebCore::TreeWalker::nextSibling): Ditto.
+        (WebCore::TreeWalker::previousNode): Ditto. Because of the need to check the
+        acceptNode function on parents, this can't use traversePreviousNode (more's the
+        pity, because it's a bit complicated).
+        (WebCore::TreeWalker::nextNode): Ditto.
+
+        * dom/TreeWalker.h: Changed constructor and setCurrentNode to use PassRefPtr
+        more. Changed the navigation functions to have an out parameter with a JavaScript
+        exception. Removed helper functions setCurrentNode and ancestorRejected.
+
+        * dom/TreeWalker.idl: Custom binding for navigation functions.
+
 2008-02-08  Eric Seidel  <eric@webkit.org>
 
         Reviewed by darin.

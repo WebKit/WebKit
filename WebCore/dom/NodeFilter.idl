@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2007, 2008 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
  *
  * This library is free software; you can redistribute it and/or
@@ -43,7 +43,7 @@ module traversal {
         const unsigned long       SHOW_DOCUMENT_FRAGMENT         = 0x00000400;
         const unsigned long       SHOW_NOTATION                  = 0x00000800;
 
-        short acceptNode(in Node n);
+        [Custom] short acceptNode(in Node n);
 
     };
 

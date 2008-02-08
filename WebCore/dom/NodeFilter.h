@@ -1,11 +1,9 @@
 /*
- * This file is part of the DOM implementation for KDE.
- *
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  * Copyright (C) 2000 Frederik Holljen (frederik.holljen@hig.no)
  * Copyright (C) 2001 Peter Kelly (pmk@post.com)
  * Copyright (C) 2006 Samuel Weinig (sam.weinig@gmail.com)
- * Copyright (C) 2004 Apple Computer, Inc.
+ * Copyright (C) 2004, 2008 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -28,6 +26,7 @@
 #define NodeFilter_h
 
 #include "NodeFilterCondition.h"
+#include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
@@ -66,9 +65,12 @@ namespace WebCore {
             SHOW_NOTATION                  = 0x00000800
         };
 
-        NodeFilter(NodeFilterCondition*);
-        short acceptNode(Node*) const;
+        NodeFilter(PassRefPtr<NodeFilterCondition> condition) : m_condition(condition) { }
+        short acceptNode(Node*, KJS::JSValue*& exception) const;
         void mark() { m_condition->mark(); };
+
+        // For non-JS bindings. Silently ignores the JavaScript exception if any.
+        short acceptNode(Node* node) const { KJS::JSValue* exception; return acceptNode(node, exception); }
 
     private:
         RefPtr<NodeFilterCondition> m_condition;
