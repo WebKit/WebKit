@@ -56,18 +56,34 @@ RenderObject* HTMLButtonElement::createRenderer(RenderArena* arena, RenderStyle*
 
 const AtomicString& HTMLButtonElement::type() const
 {
-    return getAttribute(typeAttr);
+    switch (m_type) {
+        case SUBMIT: {
+            static const AtomicString submit("submit");
+            return submit;
+        }
+        case BUTTON: {
+            static const AtomicString button("button");
+            return button;
+        }
+        case RESET: {
+            static const AtomicString reset("reset");
+            return reset;
+        }
+    }
+
+    ASSERT_NOT_REACHED();
+    return emptyAtom;
 }
 
 void HTMLButtonElement::parseMappedAttribute(MappedAttribute* attr)
 {
     if (attr->name() == typeAttr) {
-        if (equalIgnoringCase(attr->value(), "submit"))
-            m_type = SUBMIT;
-        else if (equalIgnoringCase(attr->value(), "reset"))
+        if (equalIgnoringCase(attr->value(), "reset"))
             m_type = RESET;
         else if (equalIgnoringCase(attr->value(), "button"))
             m_type = BUTTON;
+        else
+            m_type = SUBMIT;
     } else if (attr->name() == alignAttr) {
         // Don't map 'align' attribute.  This matches what Firefox and IE do, but not Opera.
         // See http://bugs.webkit.org/show_bug.cgi?id=12071
