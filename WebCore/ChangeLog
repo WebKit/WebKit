@@ -1,3 +1,18 @@
+2008-02-08  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Hyatt.
+
+        Fix for <rdar://problem/5732491>
+        http://bugs.webkit.org/show_bug.cgi?id=17213
+        The querySelectorAll method on an element node does not search only the element's descendants
+
+        Test: fast/dom/SelectorAPI/elementRoot.html
+
+        * dom/Node.cpp:
+        (WebCore::Node::querySelector): Make sure to stay within the root node when traversing the tree.
+        * dom/SelectorNodeList.cpp:
+        (WebCore::SelectorNodeList::SelectorNodeList): ditto.
+
 2008-02-08  David Hyatt  <hyatt@apple.com>
 
         Fix for bug 16798, button should default to type=submit.

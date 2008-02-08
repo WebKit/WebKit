@@ -1226,7 +1226,7 @@ PassRefPtr<Element> Node::querySelector(const String& selectors, ExceptionCode& 
     CSSSelector* querySelector = static_cast<CSSStyleRule*>(rule.get())->selector();
     
     // FIXME: We can speed this up by implementing caching similar to the one use by getElementById
-    for (Node *n = traverseNextNode(); n; n = n->traverseNextNode()) {
+    for (Node* n = firstChild(); n; n = n->traverseNextNode(this)) {
         if (n->isElementNode()) {
             Element* element = static_cast<Element*>(n);
             styleSelector->initElementAndPseudoState(element);

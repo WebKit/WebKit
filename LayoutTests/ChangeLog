@@ -1,3 +1,17 @@
+2008-02-08  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Hyatt.
+
+        Test for <rdar://problem/5732491>
+        http://bugs.webkit.org/show_bug.cgi?id=17213
+        The querySelectorAll method on an element node does not search only the element's descendants
+
+        * fast/dom/SelectorAPI/elementRoot-expected.txt: Added.
+        * fast/dom/SelectorAPI/elementRoot.html: Added.
+        * fast/dom/SelectorAPI/resources: Added.
+        * fast/dom/SelectorAPI/resources/TEMPLATE.html: Copied from LayoutTests/fast/js/resources/TEMPLATE.html.
+        * fast/dom/SelectorAPI/resources/elementRoot.js: Added.
+
 2008-02-08  Darin Adler  <darin@apple.com>
 
         Reviewed by Eric.
