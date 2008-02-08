@@ -278,28 +278,27 @@ String Text::toString() const
     return nodeValue();
 }
 
-PassRefPtr<Text> Text::createWithLengthLimit(Document* doc, const UChar*& text, unsigned& charsLeft, unsigned maxChars)
+PassRefPtr<Text> Text::createWithLengthLimit(Document* doc, const String& text, unsigned& charsLeft, unsigned maxChars)
 {
-    if (charsLeft <= maxChars) {
-        String string = String(text, charsLeft);
+    if (charsLeft == text.length() && charsLeft <= maxChars) {
         charsLeft = 0;
-        return new Text(doc, string);
+        return new Text(doc, text);
     }
     
-    unsigned end = std::min(charsLeft, maxChars);
+    unsigned start = text.length() - charsLeft;
+    unsigned end = start + std::min(charsLeft, maxChars);
     
     // check we are not on an unbreakable boundary
-    TextBreakIterator* it = characterBreakIterator(text, charsLeft);
-    if (end < charsLeft && !isTextBreak(it, end))
+    TextBreakIterator* it = characterBreakIterator(text.characters(), text.length());
+    if (end < text.length() && !isTextBreak(it, end))
         end = textBreakPreceding(it, end);
         
     // maxChars of unbreakable characters could lead to infinite loop
-    if (end == 0)
-        end = charsLeft;
+    if (end <= start)
+        end = text.length();
     
-    String nodeText = String(text, end);
-    charsLeft -= end;
-    text += end;
+    String nodeText = text.substring(start, end - start);
+    charsLeft = text.length() - end;
         
     return new Text(doc, nodeText);
 }

@@ -216,10 +216,9 @@ PassRefPtr<Node> HTMLParser::parseToken(Token* t)
         RefPtr<Node> n;
         String text = t->text.get();
         unsigned charsLeft = text.length();
-        const UChar* chars = text.characters();
         while (charsLeft) {
             // split large blocks of text to nodes of manageable size
-            n = Text::createWithLengthLimit(document, chars, charsLeft);
+            n = Text::createWithLengthLimit(document, text, charsLeft);
             if (!insertNode(n.get(), t->flat))
                 return 0;
         }

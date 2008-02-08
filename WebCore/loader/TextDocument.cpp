@@ -107,18 +107,16 @@ bool TextTokenizer::write(const SegmentedString& s, bool appendData)
         m_preElement = preElement.get();
     } 
     
-
+    String string = String(m_buffer, m_dest - m_buffer);
     if (inViewSourceMode()) {
-        String string = String(m_buffer, m_dest - m_buffer);
         static_cast<HTMLViewSourceDocument*>(m_doc)->addViewSourceText(string);
         return false;
     }
 
-    unsigned charsLeft = m_dest - m_buffer;
-    const UChar* chars = m_buffer;
+    unsigned charsLeft = string.length();
     while (charsLeft) {
         // split large text to nodes of manageable size
-        RefPtr<Text> text = Text::createWithLengthLimit(m_doc, chars, charsLeft);
+        RefPtr<Text> text = Text::createWithLengthLimit(m_doc, string, charsLeft);
         m_preElement->appendChild(text, ec);
     }
 

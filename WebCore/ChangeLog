@@ -1,3 +1,20 @@
+2008-02-08  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Adam.
+
+        <rdar://problem/5724188> 
+        REGRESSION: PLT 0.7% slower due to 29926 (change Text::createWithLengthLimit to take a UChar pointer)
+        
+        Revert r29926 which caused the regression.
+        
+        * dom/Text.cpp:
+        (WebCore::Text::createWithLengthLimit):
+        * dom/Text.h:
+        * html/HTMLParser.cpp:
+        (WebCore::HTMLParser::parseToken):
+        * loader/TextDocument.cpp:
+        (WebCore::TextTokenizer::write):
+
 2008-02-08  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Hyatt.
