@@ -1,3 +1,20 @@
+2008-02-08  Rodney Dawes  <dobey@wayofthemonkey.com>
+
+        Reviewed by Jon Honeycutt.
+
+        Redefine some platform-specific types as cross-platform types
+        Add pathGetFileName method to get the filename from a path string
+        Add unloadModule method to unload a loadable module from the process
+        Implement new methods for GTK+ and Windows
+        Implement missing homeDirectoryPath method for GTK+
+        Add stub methods for new and missing methods for Wx and Qt
+
+        * platform/FileSystem.h:
+        * platform/gtk/FileSystemGtk.cpp:
+        * platform/qt/FileSystemQt.cpp:
+        * platform/win/FileSystemWin.cpp:
+        * platform/wx/FileSystemWx.cpp:
+
 2008-02-08  Adam Roben  <aroben@apple.com>
 
         Windows build fix after r30088

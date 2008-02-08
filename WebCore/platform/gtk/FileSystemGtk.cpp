@@ -113,6 +113,20 @@ bool makeAllDirectories(const String& path)
     return result == 0;
 }
 
+String homeDirectoryPath()
+{
+    return String::fromUTF8(g_get_home_dir());
+}
+
+String pathGetFileName(const String& pathName)
+{
+    char* baseName = g_path_get_basename(pathName.utf8().data());
+    String fileName = String::fromUTF8(baseName);
+    g_free(baseName);
+
+    return fileName;
+}
+
 CString openTemporaryFile(const char* prefix, PlatformFileHandle& handle)
 {
     gchar* filename = g_strdup_printf("%sXXXXXX", prefix);
@@ -151,5 +165,10 @@ int writeToFile(PlatformFileHandle handle, const char* data, int length)
     }
 
     return totalBytesWritten;
+}
+
+bool unloadModule(PlatformModule module)
+{
+    return g_module_close(module);
 }
 }

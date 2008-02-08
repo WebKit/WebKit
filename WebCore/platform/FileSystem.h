@@ -30,6 +30,10 @@
 #ifndef FileSystem_h
 #define FileSystem_h
 
+#if PLATFORM(GTK)
+#include <gmodule.h>
+#endif
+
 #include <wtf/Platform.h>
 
 typedef const struct __CFData* CFDataRef;
@@ -41,9 +45,17 @@ class String;
 
 #if PLATFORM(WIN)
 typedef HANDLE PlatformFileHandle;
+typedef FILETIME PlatformFileTime;
+typedef HMODULE PlatformModule;
 const PlatformFileHandle invalidPlatformFileHandle = INVALID_HANDLE_VALUE;
 #else
 typedef int PlatformFileHandle;
+typedef time_t PlatformFileTime;
+#if PLATFORM(GTK)
+typedef GModule* PlatformModule;
+#else
+typedef void* PlatformModule;
+#endif
 const PlatformFileHandle invalidPlatformFileHandle = -1;
 #endif
 
@@ -55,6 +67,7 @@ bool getFileModificationTime(const String&, time_t& result);
 String pathByAppendingComponent(const String& path, const String& component);
 bool makeAllDirectories(const String& path);
 String homeDirectoryPath();
+String pathGetFileName(const String&);
 
 CString fileSystemRepresentation(const String&);
 
@@ -64,6 +77,9 @@ inline bool isHandleValid(const PlatformFileHandle& handle) { return handle != i
 CString openTemporaryFile(const char* prefix, PlatformFileHandle&);
 void closeFile(PlatformFileHandle&);
 int writeToFile(PlatformFileHandle, const char* data, int length);
+
+// Methods for dealing with loadable modules
+bool unloadModule(PlatformModule);
 
 #if PLATFORM(WIN)
 String localUserSpecificStorageDirectory();
