@@ -1,3 +1,19 @@
+2008-02-06  Kimmo Kinnunen  <kimmok@iki.fi>
+
+        Reviewed by Tim Hatcher.
+
+        Fixes: http://bugs.webkit.org/show_bug.cgi?id=17191
+        HTML5: Client-side database queries should return values of type number
+        Test: storage/sql-data-types.html
+
+        Make the DB queries return a value as a number if it was inserted
+        as a number to the database.
+        * platform/sql/SQLiteStatement.cpp:
+        (WebCore::SQLiteStatement::getColumnValue): new member function to return SQLValues
+        * platform/sql/SQLiteStatement.h:
+        * storage/SQLStatement.cpp:
+        (WebCore::SQLStatement::execute): use getColumnValue instead of getColumnText
+
 2008-02-07  Ada Chan  <adachan@apple.com>
 
         <rdar://problem/5292433> certificate authentication support broken in Safari 3.0

@@ -71,6 +71,7 @@ public:
     int columnCount();
     
     String getColumnName(int col);
+    SQLValue getColumnValue(int col);
     String getColumnText(int col);
     double getColumnDouble(int col);
     int getColumnInt(int col);

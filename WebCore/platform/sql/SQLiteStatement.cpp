@@ -236,7 +236,35 @@ String SQLiteStatement::getColumnName(int col)
         return String();
     return String(reinterpret_cast<const UChar*>(sqlite3_column_name16(m_statement, col)));
 }
-    
+
+SQLValue SQLiteStatement::getColumnValue(int col)
+{
+    ASSERT(col >= 0);
+    if (!m_statement)
+        if (prepareAndStep() != SQLITE_ROW)
+            return SQLValue();
+    if (columnCount() <= col)
+        return SQLValue();
+
+    // SQLite is typed per value. optional column types are
+    // "(mostly) ignored"
+    sqlite3_value* value = sqlite3_column_value(m_statement, col);
+    switch (sqlite3_value_type(value)) {
+        case SQLITE_INTEGER:    // SQLValue and JS don't represent integers, so use FLOAT -case
+        case SQLITE_FLOAT:
+            return SQLValue(sqlite3_value_double(value));
+        case SQLITE_BLOB:       // SQLValue and JS don't represent blobs, so use TEXT -case
+        case SQLITE_TEXT:
+            return SQLValue(String(reinterpret_cast<const UChar*>(sqlite3_value_text16(value))));
+        case SQLITE_NULL:
+            return SQLValue();
+        default:
+            break;
+    }
+    ASSERT_NOT_REACHED();
+    return SQLValue();
+}
+
 String SQLiteStatement::getColumnText(int col)
 {
     ASSERT(col >= 0);

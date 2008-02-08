@@ -107,10 +107,8 @@ bool SQLStatement::execute(Database* db)
             rows->addColumn(statement.getColumnName(i));
 
         do {
-            for (int i = 0; i < columnCount; i++) {
-                // FIXME: Look at the column type?
-                rows->addResult(statement.getColumnText(i));
-            }
+            for (int i = 0; i < columnCount; i++)
+                rows->addResult(statement.getColumnValue(i));
 
             result = statement.step();
         } while (result == SQLResultRow);
