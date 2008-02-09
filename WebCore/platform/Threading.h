@@ -160,7 +160,7 @@ private:
     PlatformCondition m_condition;
 };
 
-#if PLATFORM(WIN_OS)
+#if PLATFORM(WIN_OS) && !COMPILER(MSVC7)
 #define WTF_USE_LOCKFREE_THREADSAFESHARED 1
 
 inline void atomicIncrement(int volatile* addend) { InterlockedIncrement(reinterpret_cast<long volatile*>(addend)); }

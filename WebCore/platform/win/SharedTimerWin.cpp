@@ -40,6 +40,16 @@
 
 #include <windows.h>
 
+// These aren't in winuser.h with the MSVS 2003 Platform SDK, 
+// so use default values in that case.
+#ifndef USER_TIMER_MINIMUM
+#define USER_TIMER_MINIMUM 0x0000000A
+#endif
+
+#ifndef USER_TIMER_MAXIMUM
+#define USER_TIMER_MAXIMUM 0x7FFFFFFF
+#endif
+
 #if PLATFORM(WIN)
 #include "PluginView.h"
 #endif

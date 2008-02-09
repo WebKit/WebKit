@@ -1,3 +1,17 @@
+2008-02-07  Kevin Ollivier <kevino@theolliviers.com>
+
+        Reviewed by Eric Seidel, Adam Roben.
+
+        MSVC7 fixes.
+        http://bugs.webkit.org/show_bug.cgi?id=17211
+
+        * platform/Threading.h:
+        - On MSVC7, when the Interlocked* functions are used, the ref count gets out of sync.
+          (MSVC8 seems not to have this problem.) Use the old implementation which works correctly.
+        * platform/win/SharedTimerWin.cpp:
+        - USER_TIMER_MINIMUM/MAXIMUM aren't defined in winuser.h for the MSVC 2003 Platform SDK
+          so define them if they are not already defined.
+
 2008-02-08  Brent Fulgham  <bfulgham@gmail.com>
 
         Reviewed by Adam Roben.
