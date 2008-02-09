@@ -64,6 +64,8 @@ public:
 
     virtual int minimumMenuListSize(RenderStyle*) const;
 
+    virtual void adjustSliderThumbSize(RenderObject*) const;
+
 protected:
     virtual bool paintCheckbox(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r);
     virtual void setCheckboxSize(RenderStyle*) const;

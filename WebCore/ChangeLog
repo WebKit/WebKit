@@ -1,5 +1,14 @@
 2008-02-09  Holger Hans Peter Freyther  <holger.freyther@trolltech.com>
 
+        Unreviewed build fix
+
+        Somehow the removal of adjustSliderThumbSize(RenderObject*) sneaked
+        into the patch.
+
+        * platform/qt/RenderThemeQt.h:
+
+2008-02-09  Holger Hans Peter Freyther  <holger.freyther@trolltech.com>
+
         Reviewed by Adele.
 
         paintResizeControl is dead, remove the code. This painting
