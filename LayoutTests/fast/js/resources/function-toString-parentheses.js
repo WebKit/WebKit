@@ -198,4 +198,11 @@ shouldBe("compileAndSerializeLeftmostTest('x = { }')", "'x = { }'");
 shouldBe("compileAndSerializeLeftmostTest('(function () { })()')", "'(function () { })()'");
 shouldBe("compileAndSerializeLeftmostTest('x = function () { }')", "'x = function () { }'");
 
+shouldBe("compileAndSerializeLeftmostTest('var a')", "'var a'");
+shouldBe("compileAndSerializeLeftmostTest('var a = 1')", "'var a = 1'");
+shouldBe("compileAndSerializeLeftmostTest('var a, b')", "'var a, b'");
+shouldBe("compileAndSerializeLeftmostTest('var a = 1, b = 2')", "'var a = 1, b = 2'");
+shouldBe("compileAndSerializeLeftmostTest('var a, b, c')", "'var a, b, c'");
+shouldBe("compileAndSerializeLeftmostTest('var a = 1, b = 2, c = 3')", "'var a = 1, b = 2, c = 3'");
+
 var successfullyParsed = true;

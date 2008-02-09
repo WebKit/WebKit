@@ -1246,7 +1246,7 @@ static ExpressionNode* combineVarInitializers(ExpressionNode* list, AssignResolv
 {
     if (!list)
         return init;
-    return new CommaNode(list, init);
+    return new VarDeclCommaNode(list, init);
 }
 
 // We turn variable declarations into either assignments or empty

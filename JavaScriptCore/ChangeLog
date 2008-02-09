@@ -1,3 +1,17 @@
+2008-02-08  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Maciej.
+
+        <rdar://problem/5731773> REGRESSION (r28973): Extraneous parentheses in function.toString()
+        https://bugs.webkit.org/show_bug.cgi?id=17214
+
+        Make a subclass of CommaNode to provide the correct precedence for each expression in
+        a variable declaration list.
+
+        * kjs/grammar.y:
+        * kjs/nodes.h:
+        (KJS::VarDeclCommaNode::):
+
 2008-02-08  Darin Adler  <darin@apple.com>
 
         Reviewed by Oliver.

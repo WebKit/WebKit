@@ -481,6 +481,12 @@ PASS compileAndSerializeLeftmostTest('({ }).x') is '({ }).x'
 PASS compileAndSerializeLeftmostTest('x = { }') is 'x = { }'
 PASS compileAndSerializeLeftmostTest('(function () { })()') is '(function () { })()'
 PASS compileAndSerializeLeftmostTest('x = function () { }') is 'x = function () { }'
+PASS compileAndSerializeLeftmostTest('var a') is 'var a'
+PASS compileAndSerializeLeftmostTest('var a = 1') is 'var a = 1'
+PASS compileAndSerializeLeftmostTest('var a, b') is 'var a, b'
+PASS compileAndSerializeLeftmostTest('var a = 1, b = 2') is 'var a = 1, b = 2'
+PASS compileAndSerializeLeftmostTest('var a, b, c') is 'var a, b, c'
+PASS compileAndSerializeLeftmostTest('var a = 1, b = 2, c = 3') is 'var a = 1, b = 2, c = 3'
 PASS successfullyParsed is true
 
 TEST COMPLETE
