@@ -34,6 +34,7 @@
 #include "DatabaseTrackerClient.h"
 #include "Document.h"
 #include "FileSystem.h"
+#include "Logging.h"
 #include "OriginQuotaManager.h"
 #include "Page.h"
 #include "SecurityOrigin.h"
@@ -420,6 +421,80 @@ unsigned long long DatabaseTracker::usageForDatabase(const String& name, Securit
     return getFileSize(path, size) ? size : 0;
 }
 
+void DatabaseTracker::addOpenDatabase(Database* database)
+{
+    if (!database)
+        return;
+
+    MutexLocker openDatabaseMapLock(m_openDatabaseMapGuard);
+
+    if (!m_openDatabaseMap)
+        m_openDatabaseMap.set(new DatabaseOriginMap);
+
+    RefPtr<SecurityOrigin> origin(database->securityOriginCopy());
+    String name(database->stringIdentifier());
+
+    DatabaseNameMap* nameMap = m_openDatabaseMap->get(origin);
+    if (!nameMap) {
+        nameMap = new DatabaseNameMap;
+        m_openDatabaseMap->set(origin, nameMap);
+    }
+
+    DatabaseSet* databaseSet = nameMap->get(name);
+    if (!databaseSet) {
+        databaseSet = new DatabaseSet;
+        nameMap->set(name, databaseSet);
+    }
+
+    databaseSet->add(database);
+
+    LOG(StorageAPI, "Added open Database %s (%p)\n", database->stringIdentifier().ascii().data(), database);
+}
+
+void DatabaseTracker::removeOpenDatabase(Database* database)
+{
+    if (!database)
+        return;
+
+    MutexLocker openDatabaseMapLock(m_openDatabaseMapGuard);
+
+    if (!m_openDatabaseMap) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    RefPtr<SecurityOrigin> origin(database->securityOriginCopy());
+    String name(database->stringIdentifier());
+
+    DatabaseNameMap* nameMap = m_openDatabaseMap->get(origin);
+    if (!nameMap) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    DatabaseSet* databaseSet = nameMap->get(name);
+    if (!databaseSet) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    databaseSet->remove(database);
+
+    LOG(StorageAPI, "Removed open Database %s (%p)\n", database->stringIdentifier().ascii().data(), database);
+
+    if (!databaseSet->isEmpty())
+        return;
+
+    nameMap->remove(name);
+    delete databaseSet;
+
+    if (!nameMap->isEmpty())
+        return;
+
+    m_openDatabaseMap->remove(origin);
+    delete nameMap;
+}
+
 unsigned long long DatabaseTracker::usageForOrigin(SecurityOrigin* origin)
 {
     ASSERT(currentThread() == m_thread);
@@ -649,7 +724,26 @@ bool DatabaseTracker::deleteDatabaseFile(SecurityOrigin* origin, const String& n
     String fullPath = fullPathForDatabase(origin, name, false);
     if (fullPath.isEmpty())
         return true;
-        
+
+    {
+        MutexLocker openDatabaseMapLock(m_openDatabaseMapGuard);
+        if (m_openDatabaseMap) {
+            // There are some open databases, lets check if they are for this origin.
+            DatabaseNameMap* nameMap = m_openDatabaseMap->get(origin);
+            if (nameMap && nameMap->size()) {
+                // There are some open databases for this origin, lets check
+                // if they are this database by name.
+                DatabaseSet* databaseSet = nameMap->get(name);
+                if (databaseSet && databaseSet->size()) {
+                    // We have some database open with this name. Mark them as deleted.
+                    DatabaseSet::const_iterator end = databaseSet->end();
+                    for (DatabaseSet::const_iterator it = databaseSet->begin(); it != end; ++it)
+                        (*it)->markAsDeleted();
+                }
+            }
+        }
+    }
+
     return deleteFile(fullPath);
 }
 

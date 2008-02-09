@@ -139,6 +139,12 @@ bool SQLStatement::execute(Database* db)
     return true;
 }
 
+void SQLStatement::setDatabaseDeletedError()
+{
+    ASSERT(!m_error && !m_resultSet);
+    m_error = new SQLError(0, "unable to execute statement, because the user deleted the database");
+}
+
 void SQLStatement::setVersionMismatchedError()
 {
     ASSERT(!m_error && !m_resultSet);

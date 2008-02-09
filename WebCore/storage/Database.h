@@ -89,7 +89,10 @@ public:
     bool setVersionInDatabase(const String&);
     void setExpectedVersion(const String&);
     bool versionMatchesExpected() const;
-    
+
+    void markAsDeleted();
+    bool deleted() const { return m_deleted; }
+
     unsigned long long databaseSize() const;
     unsigned long long maximumSize() const;
 
@@ -125,6 +128,8 @@ private:
     int m_guid;
     String m_expectedVersion;
     String m_filename;
+
+    bool m_deleted;
 
     SQLiteDatabase m_sqliteDatabase;
     RefPtr<DatabaseAuthorizer> m_databaseAuthorizer;

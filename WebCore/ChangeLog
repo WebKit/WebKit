@@ -1,3 +1,35 @@
+2008-02-08  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Brady Eidson.
+
+        <rdar://problem/5640896> Removing database then trying
+        to recreate it causes trouble
+
+        Added open Database support to DatabaseTracker. So any Database that 
+        is deleted will be marked as deleted and will fail to open any transaction
+        or execute any new SQL queries.
+
+        * storage/Database.cpp:
+        (WebCore::Database::Database): Call DatabaseTracker::addOpenDatabase.
+        (WebCore::Database::~Database): Call DatabaseTracker::removeOpenDatabase.
+        (WebCore::Database::markAsDeleted): Set the m_deleted flag.
+        (WebCore::Database::version): Return a null String if m_deleted is true.
+        * storage/Database.h:
+        (WebCore::Database::deleted): Return m_deleted.
+        * storage/DatabaseTracker.cpp:
+        (WebCore::DatabaseTracker::addOpenDatabase): Add the Database to a map of origins and names.
+        (WebCore::DatabaseTracker::removeOpenDatabase): Remove the Database from the map.
+        (WebCore::DatabaseTracker::deleteDatabaseFile): Call markAsDeleted on all the open Databases
+          matching the origin/name.
+        * storage/DatabaseTracker.h:
+        * storage/SQLStatement.cpp:
+        (WebCore::SQLStatement::setDatabaseDeletedError): Set the error about the user deleting the database.
+        * storage/SQLStatement.h:
+        * storage/SQLTransaction.cpp:
+        (WebCore::SQLTransaction::executeSQL): If the Database is deleted, call setDatabaseDeletedError.
+        (WebCore::SQLTransaction::openTransactionAndPreflight): Set the error about the user deleting the database
+          if the Database was marked as deleted.
+
 2008-02-08  Darin Adler  <darin@apple.com>
 
         Reviewed by Eric.

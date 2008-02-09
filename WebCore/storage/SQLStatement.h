@@ -56,6 +56,8 @@ public:
     
     bool hasStatementCallback() const { return m_statementCallback; }
     bool hasStatementErrorCallback() const { return m_statementErrorCallback; }
+
+    void setDatabaseDeletedError();
     void setVersionMismatchedError();
 
     bool performCallback(SQLTransaction*);

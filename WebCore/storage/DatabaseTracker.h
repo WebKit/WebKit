@@ -38,6 +38,7 @@
 
 namespace WebCore {
 
+class Database;
 class DatabaseTrackerClient;
 class Document;
 class OriginQuotaManager;
@@ -59,7 +60,10 @@ public:
     bool databaseNamesForOrigin(SecurityOrigin*, Vector<String>& result);
 
     DatabaseDetails detailsForNameAndOrigin(const String&, SecurityOrigin*);
-    
+
+    void addOpenDatabase(Database*);
+    void removeOpenDatabase(Database*);
+
     unsigned long long usageForDatabase(const String&, SecurityOrigin*);
     unsigned long long usageForOrigin(SecurityOrigin*);
     unsigned long long quotaForOrigin(SecurityOrigin*);
@@ -99,7 +103,14 @@ private:
     typedef HashMap<RefPtr<SecurityOrigin>, unsigned long long, SecurityOriginHash, SecurityOriginTraits> QuotaMap;
     Mutex m_quotaMapGuard;
     mutable OwnPtr<QuotaMap> m_quotaMap;
-    
+
+    typedef HashSet<Database*> DatabaseSet;
+    typedef HashMap<String, DatabaseSet*> DatabaseNameMap;
+    typedef HashMap<RefPtr<SecurityOrigin>, DatabaseNameMap*, SecurityOriginHash, SecurityOriginTraits> DatabaseOriginMap;
+
+    Mutex m_openDatabaseMapGuard;
+    mutable OwnPtr<DatabaseOriginMap> m_openDatabaseMap;
+
     OwnPtr<OriginQuotaManager> m_quotaManager;
 
     String m_databaseDirectoryPath;

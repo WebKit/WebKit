@@ -145,6 +145,7 @@ Database::Database(Document* document, const String& name, const String& expecte
     , m_name(name.copy())
     , m_guid(0)
     , m_expectedVersion(expectedVersion)
+    , m_deleted(0)
     , m_databaseThread(0)
 #ifndef NDEBUG
     , m_transactionStepThread(0)
@@ -176,6 +177,8 @@ Database::Database(Document* document, const String& name, const String& expecte
     ASSERT(m_databaseThread);
 
     m_filename = DatabaseTracker::tracker().fullPathForDatabase(m_securityOrigin.get(), m_name);
+
+    DatabaseTracker::tracker().addOpenDatabase(this);
 }
 
 Database::~Database()
@@ -191,6 +194,8 @@ Database::~Database()
         delete hashSet;
         guidToVersionMap().remove(m_guid);
     }
+
+    DatabaseTracker::tracker().removeOpenDatabase(this);
 }
 
 bool Database::openAndVerifyVersion(ExceptionCode& e)
@@ -291,6 +296,14 @@ bool Database::versionMatchesExpected() const
     }
     
     return true;
+}
+
+void Database::markAsDeleted()
+{
+    if (m_deleted)
+        return;
+    LOG(StorageAPI, "Marking %s (%p) as deleted", stringIdentifier().ascii().data(), this);
+    m_deleted = true;
 }
 
 unsigned long long Database::databaseSize() const
@@ -556,6 +569,8 @@ Vector<String> Database::performGetTableNames()
 
 String Database::version() const
 {
+    if (m_deleted)
+        return String();
     MutexLocker locker(guidMutex());
     return guidToVersionMap().get(m_guid).copy();
 }
