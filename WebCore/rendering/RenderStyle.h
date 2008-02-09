@@ -1474,10 +1474,11 @@ protected:
     // *-child-of-type, we will just give up and re-evaluate whenever children change at all.
     bool m_childrenAffectedByFirstChildRules : 1;
     bool m_childrenAffectedByLastChildRules  : 1;
-    bool m_childrenAffectedByPositionalRules : 1;
+    bool m_childrenAffectedByForwardPositionalRules : 1;
+    bool m_childrenAffectedByBackwardPositionalRules : 1;
     bool m_firstChildState : 1;
     bool m_lastChildState : 1;
-    unsigned m_childIndex : 20; // Plenty of bits to cache an index.
+    unsigned m_childIndex : 19; // Plenty of bits to cache an index.
 
     int m_ref;
     
@@ -2129,8 +2130,10 @@ public:
     void setChildrenAffectedByFirstChildRules() { m_childrenAffectedByFirstChildRules = true; }
     bool childrenAffectedByLastChildRules() const { return m_childrenAffectedByLastChildRules; }
     void setChildrenAffectedByLastChildRules() { m_childrenAffectedByLastChildRules = true; }
-    bool childrenAffectedByPositionalRules() const { return m_childrenAffectedByPositionalRules; }
-    void setChildrenAffectedByPositionalRules() { m_childrenAffectedByPositionalRules = true; }
+    bool childrenAffectedByForwardPositionalRules() const { return m_childrenAffectedByForwardPositionalRules; }
+    void setChildrenAffectedByForwardPositionalRules() { m_childrenAffectedByForwardPositionalRules = true; }
+    bool childrenAffectedByBackwardPositionalRules() const { return m_childrenAffectedByBackwardPositionalRules; }
+    void setChildrenAffectedByBackwardPositionalRules() { m_childrenAffectedByBackwardPositionalRules = true; }
     bool firstChildState() const { return m_firstChildState; }
     void setFirstChildState() { m_firstChildState = true; }
     bool lastChildState() const { return m_lastChildState; }

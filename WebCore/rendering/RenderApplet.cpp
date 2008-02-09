@@ -59,9 +59,7 @@ IntSize RenderApplet::intrinsicSize() const
 void RenderApplet::createWidgetIfNecessary()
 {
     HTMLAppletElement* element = static_cast<HTMLAppletElement*>(node());
-    if (m_widget)
-        return;
-    if (!element->allParamsAvailable())
+    if (m_widget || !element->isFinishedParsingChildren())
         return;
 
     // FIXME: Java applets can't be resized (this is a bug in Apple's Java implementation).

@@ -121,7 +121,7 @@ void RenderPartObject::updateWidget(bool onlyCreateNonNetscapePlugins)
       HTMLObjectElement* o = static_cast<HTMLObjectElement*>(element());
 
       o->setNeedWidgetUpdate(false);
-      if (!o->isComplete())
+      if (!o->isFinishedParsingChildren())
         return;
       // Check for a child EMBED tag.
       HTMLEmbedElement* embed = 0;
