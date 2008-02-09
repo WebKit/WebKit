@@ -1,5 +1,13 @@
 2008-02-08  Darin Adler  <darin@apple.com>
 
+        - test for http://bugs.webkit.org/show_bug.cgi?id=17247
+          Labelled continue/break can fail in some cases
+
+        * fast/js/continue-break-multiple-labels-expected.txt: Added.
+        * fast/js/continue-break-multiple-labels.html: Added.
+
+2008-02-08  Darin Adler  <darin@apple.com>
+
         Reviewed by Eric.
 
         - test for http://bugs.webkit.org/show_bug.cgi?id=15003

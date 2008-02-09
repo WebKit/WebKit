@@ -1,5 +1,18 @@
 2008-02-08  Darin Adler  <darin@apple.com>
 
+        Reviewed by Oliver.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=17247
+          Labelled continue/break can fail in some cases
+
+        Test: fast/js/continue-break-multiple-labels.html
+
+        * kjs/nodes.h:
+        (KJS::StatementNode::pushLabel): Made this virtual.
+        (KJS::LabelNode::pushLabel): Forward pushLabel calls to the statement inside.
+
+2008-02-08  Darin Adler  <darin@apple.com>
+
         Reviewed by Eric.
 
         - fix http://bugs.webkit.org/show_bug.cgi?id=15003
