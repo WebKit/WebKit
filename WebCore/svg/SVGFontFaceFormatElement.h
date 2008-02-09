@@ -29,7 +29,7 @@ class SVGFontFaceFormatElement : public SVGElement {
 public:
     SVGFontFaceFormatElement(const QualifiedName&, Document*);
 
-    virtual void childrenChanged();
+    virtual void childrenChanged(bool changedByParser = false);
 };
 
 } // namespace WebCore

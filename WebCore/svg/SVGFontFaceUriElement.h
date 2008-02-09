@@ -31,7 +31,7 @@ namespace WebCore {
         
         PassRefPtr<CSSFontFaceSrcValue> srcValue() const;
         
-        virtual void childrenChanged();
+        virtual void childrenChanged(bool changedByParser = false);
     };
 
 } // namespace WebCore

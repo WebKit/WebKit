@@ -81,9 +81,9 @@ void SVGClipPathElement::svgAttributeChanged(const QualifiedName& attrName)
         m_clipper->invalidate();
 }
 
-void SVGClipPathElement::childrenChanged()
+void SVGClipPathElement::childrenChanged(bool changedByParser)
 {
-    SVGStyledTransformableElement::childrenChanged();
+    SVGStyledTransformableElement::childrenChanged(changedByParser);
 
     if (!m_clipper)
         return;

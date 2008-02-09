@@ -98,6 +98,9 @@ void ElementRareData::resetComputedStyle(Element* element)
 Element::Element(const QualifiedName& qName, Document *doc)
     : ContainerNode(doc)
     , m_tagName(qName)
+    , m_isStyleAttributeValid(true)
+    , m_synchronizingStyleAttribute(false)
+    , m_parsingChildrenFinished(true)
 {
 }
 
@@ -701,7 +704,7 @@ void Element::recalcStyle(StyleChange change)
     RenderStyle* currentStyle = renderStyle();
     bool hasParentStyle = parentNode() ? parentNode()->renderStyle() : false;
     bool hasPositionalChildren = currentStyle && (currentStyle->childrenAffectedByFirstChildRules() || currentStyle->childrenAffectedByLastChildRules() ||
-                                                  currentStyle->childrenAffectedByPositionalRules());
+                                                  currentStyle->childrenAffectedByForwardPositionalRules() || currentStyle->childrenAffectedByBackwardPositionalRules());
 
 #if ENABLE(SVG)
     if (!hasParentStyle && isShadowNode() && isSVGElement())
@@ -736,8 +739,10 @@ void Element::recalcStyle(StyleChange change)
                 newStyle->setAffectedByActiveRules(true);
             if (currentStyle->affectedByDragRules())
                 newStyle->setAffectedByDragRules(true);
-            if (currentStyle->childrenAffectedByPositionalRules())
-                newStyle->setChildrenAffectedByPositionalRules();
+            if (currentStyle->childrenAffectedByForwardPositionalRules())
+                newStyle->setChildrenAffectedByForwardPositionalRules();
+            if (currentStyle->childrenAffectedByBackwardPositionalRules())
+                newStyle->setChildrenAffectedByBackwardPositionalRules();
             if (currentStyle->childrenAffectedByFirstChildRules())
                 newStyle->setChildrenAffectedByFirstChildRules();
             if (currentStyle->childrenAffectedByLastChildRules())
@@ -793,7 +798,7 @@ bool Element::childTypeAllowed(NodeType type)
     }
 }
 
-static bool checkFirstChildRules(Element* e, RenderStyle* style)
+static void checkFirstChildRules(Element* e, RenderStyle* style)
 {
     if (style->childrenAffectedByFirstChildRules()) {
         // Check our first two children.  They need to be true and false respectively.
@@ -802,20 +807,19 @@ static bool checkFirstChildRules(Element* e, RenderStyle* style)
             if (n->isElementNode()) {
                 if (checkingFirstChild) {
                     if (n->attached() && n->renderStyle() && !n->renderStyle()->firstChildState())
-                        return true;
+                        n->setChanged();
                     checkingFirstChild = false;
                 } else {
                     if (n->attached() && n->renderStyle() && n->renderStyle()->firstChildState())
-                        return true;
+                        n->setChanged();
                     break;
                 }
             }
         }
     } 
-    return false;
 }
 
-static bool checkLastChildRules(Element* e, RenderStyle* style)
+static void checkLastChildRules(Element* e, RenderStyle* style)
 {
     if (style->childrenAffectedByLastChildRules()) {
         // Check our last two children.  They need to be true and false respectively.
@@ -824,44 +828,51 @@ static bool checkLastChildRules(Element* e, RenderStyle* style)
             if (n->isElementNode()) {
                 if (checkingLastChild) {
                     if (n->attached() && n->renderStyle() && !n->renderStyle()->lastChildState())
-                        return true;
+                        n->setChanged();
                     checkingLastChild = false;
                 } else {
                     if (n->attached() && n->renderStyle() && n->renderStyle()->lastChildState())
-                        return true;
+                        n->setChanged();
                     break;
                 }
             }
         }
     }
-    return false;
 }
 
 static bool checkEmptyRules(Element* e, RenderStyle* style)
 {
-    return (style->affectedByEmpty() && (!style->emptyState() || e->hasChildNodes()));
+    return style->affectedByEmpty() && (!style->emptyState() || e->hasChildNodes());
 }
 
-void Element::childrenChanged()
+static void checkStyleRules(Element* e, RenderStyle* style, bool changedByParser)
 {
-    ContainerNode::childrenChanged();
-    
-    if (changed())
+    if (e->changed() || !style)
         return;
 
-    RenderStyle* style  = renderStyle();
-    if (!style)
-        return;
-
-    if (style->childrenAffectedByPositionalRules()) {
-        setChanged();
+    if (style->childrenAffectedByBackwardPositionalRules() || 
+        (!changedByParser && style->childrenAffectedByForwardPositionalRules()) ||
+        checkEmptyRules(e, style)) {
+        e->setChanged();
         return;
     }
 
-    if (checkFirstChildRules(this, style) || checkLastChildRules(this, style) || checkEmptyRules(this, style)) {
-        setChanged();
-        return;
-    }
+    checkFirstChildRules(e, style);
+    checkLastChildRules(e, style);
+}
+
+void Element::childrenChanged(bool changedByParser)
+{
+    ContainerNode::childrenChanged(changedByParser);
+    if (!changedByParser)
+        checkStyleRules(this, renderStyle(), false);
+}
+
+void Element::finishParsingChildren()
+{
+    ContainerNode::finishParsingChildren();
+    m_parsingChildrenFinished = true;
+    checkStyleRules(this, renderStyle(), true);
 }
 
 void Element::dispatchAttrRemovalEvent(Attribute*)

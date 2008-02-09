@@ -214,7 +214,8 @@ public:
     // until they know all of their nested <param>s. [Radar 3603191, 4040848].
     // Also used for script elements and some SVG elements for similar purposes,
     // but making parsing a special case in this respect should be avoided if possible.
-    virtual void finishedParsing() { }
+    virtual void finishParsingChildren() { }
+    virtual void beginParsingChildren() { }
 
     // Called by the frame right before dispatching an unloadEvent. [Radar 4532113]
     // This is needed for HTMLInputElements to tell the frame that it is done editing 
@@ -435,7 +436,7 @@ public:
      * Notifies the node that it's list of children have changed (either by adding or removing child nodes), or a child
      * node that is of the type CDATA_SECTION_NODE, TEXT_NODE or COMMENT_NODE has changed its value.
      */
-    virtual void childrenChanged();
+    virtual void childrenChanged(bool changedByParser = false) {};
 
     virtual String toString() const = 0;
 

@@ -32,7 +32,7 @@ class HTMLImageLoader;
 
 class HTMLObjectElement : public HTMLPlugInElement {
 public:
-    HTMLObjectElement(Document*);
+    HTMLObjectElement(Document*, bool createdByParser);
     ~HTMLObjectElement();
 
     virtual int tagPriority() const { return 5; }
@@ -42,13 +42,13 @@ public:
     virtual void attach();
     virtual bool rendererIsNeeded(RenderStyle*);
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
-    virtual void finishedParsing();
+    virtual void finishParsingChildren();
     virtual void detach();
     virtual void insertedIntoDocument();
     virtual void removedFromDocument();
     
     virtual void recalcStyle(StyleChange);
-    virtual void childrenChanged();
+    virtual void childrenChanged(bool changedByParser = false);
 
     virtual bool isURLAttribute(Attribute*) const;
     virtual const QualifiedName& imageSourceAttributeName() const;
@@ -102,9 +102,6 @@ public:
     int vspace() const;
     void setVspace(int);
 
-    bool isComplete() const { return m_complete; }
-    void setComplete(bool complete);
-    
     bool isDocNamedItem() const { return m_docNamedItem; }
 
     bool containsJavaApplet() const;
@@ -119,7 +116,6 @@ public:
 private:
     void updateDocNamedItem();
     String oldIdAttr;
-    bool m_complete;
     bool m_docNamedItem;
 };
 

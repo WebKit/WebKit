@@ -1,3 +1,169 @@
+2008-02-09  David Hyatt  <hyatt@apple.com>
+
+        Fix for bug 17203, high CPU usage loading HTML5 spec.  This patch significantly improves the performance
+        of CSS3 selectors.
+
+        (1) Split the notion of being affected by positional rules into "forward" and "backward."  The "forward"
+        selectors do not need to re-resolve during parsing, since children are appended on the end.  Only the
+        "backward" selectors like last-child or nth-last-child have to re-resolve when a close tag is encountered.
+
+        (2) Extend childrenChanged to specify whether the children were changed by the parser or not.  This allows
+        Element::childrenChanged to know when the parser is adding children so that it can ignore those adds when
+        possible.
+
+        (3) Make sure all Elements now know whether or not their children are currently parsing.  Backwards selectors
+        like last-child will always return false when children are still being parsed.  When an Element finishes
+        parsing its children, finishParsingChildren() gets called and will make sure the children re-resolve properly.
+
+        (4) Added a beginParsingChildren method and renamed finishParsing to finishedParsingChildren.
+
+        (5) Eliminated one-off hacks that did the same thing in HTMLObjectElement and HTMLAppletElement.
+
+        (6) Patched many incorrect implementations of finishedParsingChildren that did not properly call into their
+        base class (mostly new SVG elements that got added for SVG fonts around the time this became a requirement).
+
+        Reviewed by Eric
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::checkSelector):
+        (WebCore::CSSStyleSelector::checkOneSelector):
+        * dom/Attr.cpp:
+        (WebCore::Attr::childrenChanged):
+        * dom/Attr.h:
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::addChild):
+        * dom/Document.cpp:
+        (WebCore::Document::childrenChanged):
+        * dom/Document.h:
+        * dom/Element.cpp:
+        (WebCore::Element::Element):
+        (WebCore::Element::recalcStyle):
+        (WebCore::checkFirstChildRules):
+        (WebCore::checkLastChildRules):
+        (WebCore::checkEmptyRules):
+        (WebCore::checkStyleRules):
+        (WebCore::Element::childrenChanged):
+        (WebCore::Element::finishParsingChildren):
+        * dom/Element.h:
+        (WebCore::Element::finishedParsingChildren):
+        (WebCore::Element::beginParsingChildren):
+        * dom/Node.cpp:
+        * dom/Node.h:
+        (WebCore::Node::finishParsingChildren):
+        (WebCore::Node::beginParsingChildren):
+        (WebCore::Node::childrenChanged):
+        * dom/StyledElement.cpp:
+        (WebCore::StyledElement::StyledElement):
+        * dom/StyledElement.h:
+        * dom/XMLTokenizer.cpp:
+        (WebCore::XMLTokenizer::startElementNs):
+        (WebCore::XMLTokenizer::endElementNs):
+        (WebCore::):
+        * html/HTMLAppletElement.cpp:
+        (WebCore::HTMLAppletElement::HTMLAppletElement):
+        (WebCore::HTMLAppletElement::finishParsingChildren):
+        * html/HTMLAppletElement.h:
+        * html/HTMLElementFactory.cpp:
+        (WebCore::objectConstructor):
+        * html/HTMLGenericFormElement.cpp:
+        (WebCore::HTMLFormControlElementWithState::finishParsingChildren):
+        * html/HTMLGenericFormElement.h:
+        * html/HTMLObjectElement.cpp:
+        (WebCore::HTMLObjectElement::HTMLObjectElement):
+        (WebCore::HTMLObjectElement::finishParsingChildren):
+        (WebCore::HTMLObjectElement::childrenChanged):
+        * html/HTMLObjectElement.h:
+        * html/HTMLOptGroupElement.cpp:
+        (WebCore::HTMLOptGroupElement::childrenChanged):
+        * html/HTMLOptGroupElement.h:
+        * html/HTMLOptionElement.cpp:
+        (WebCore::HTMLOptionElement::childrenChanged):
+        * html/HTMLOptionElement.h:
+        * html/HTMLParser.cpp:
+        (WebCore::HTMLParser::insertNode):
+        (WebCore::HTMLParser::pushBlock):
+        (WebCore::HTMLParser::popOneBlockCommon):
+        * html/HTMLScriptElement.cpp:
+        (WebCore::HTMLScriptElement::childrenChanged):
+        (WebCore::HTMLScriptElement::finishParsingChildren):
+        * html/HTMLScriptElement.h:
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::childrenChanged):
+        * html/HTMLSelectElement.h:
+        * html/HTMLStyleElement.cpp:
+        (WebCore::HTMLStyleElement::finishParsingChildren):
+        (WebCore::HTMLStyleElement::childrenChanged):
+        * html/HTMLStyleElement.h:
+        * html/HTMLTextAreaElement.cpp:
+        (WebCore::HTMLTextAreaElement::childrenChanged):
+        * html/HTMLTextAreaElement.h:
+        * html/HTMLTitleElement.cpp:
+        (WebCore::HTMLTitleElement::childrenChanged):
+        * html/HTMLTitleElement.h:
+         * rendering/RenderApplet.cpp:
+        (WebCore::RenderApplet::createWidgetIfNecessary):
+        * rendering/RenderPartObject.cpp:
+        (WebCore::RenderPartObject::updateWidget):
+        * rendering/RenderStyle.cpp:
+        (WebCore::RenderStyle::RenderStyle):
+        * rendering/RenderStyle.h:
+        (WebCore::RenderStyle::childrenAffectedByForwardPositionalRules):
+        (WebCore::RenderStyle::setChildrenAffectedByForwardPositionalRules):
+        (WebCore::RenderStyle::childrenAffectedByBackwardPositionalRules):
+        (WebCore::RenderStyle::setChildrenAffectedByBackwardPositionalRules):
+        * svg/SVGAnimationElement.cpp:
+        (WebCore::SVGAnimationElement::finishParsingChildren):
+        * svg/SVGAnimationElement.h:
+        * svg/SVGClipPathElement.cpp:
+        (WebCore::SVGClipPathElement::childrenChanged):
+        * svg/SVGClipPathElement.h:
+        * svg/SVGDefinitionSrcElement.cpp:
+        (WebCore::SVGDefinitionSrcElement::childrenChanged):
+        * svg/SVGDefinitionSrcElement.h:
+        * svg/SVGElement.cpp:
+        (WebCore::SVGElement::finishParsingChildren):
+        * svg/SVGElement.h:
+        * svg/SVGFontFaceElement.cpp:
+        (WebCore::SVGFontFaceElement::childrenChanged):
+        * svg/SVGFontFaceElement.h:
+        * svg/SVGFontFaceFormatElement.cpp:
+        (WebCore::SVGFontFaceFormatElement::childrenChanged):
+        * svg/SVGFontFaceFormatElement.h:
+        * svg/SVGFontFaceSrcElement.cpp:
+        (WebCore::SVGFontFaceSrcElement::childrenChanged):
+        * svg/SVGFontFaceSrcElement.h:
+        * svg/SVGFontFaceUriElement.cpp:
+        (WebCore::SVGFontFaceUriElement::childrenChanged):
+        * svg/SVGFontFaceUriElement.h:
+        * svg/SVGGElement.cpp:
+        (WebCore::SVGGElement::childrenChanged):
+        * svg/SVGGElement.h:
+        * svg/SVGGradientElement.cpp:
+        (WebCore::SVGGradientElement::childrenChanged):
+        * svg/SVGGradientElement.h:
+        * svg/SVGMarkerElement.cpp:
+        (WebCore::SVGMarkerElement::childrenChanged):
+        * svg/SVGMarkerElement.h:
+        * svg/SVGMaskElement.cpp:
+        (WebCore::SVGMaskElement::childrenChanged):
+        * svg/SVGMaskElement.h:
+        * svg/SVGPatternElement.cpp:
+        (WebCore::SVGPatternElement::childrenChanged):
+        * svg/SVGPatternElement.h:
+        * svg/SVGStyleElement.cpp:
+        (WebCore::SVGStyleElement::finishParsingChildren):
+        (WebCore::SVGStyleElement::childrenChanged):
+        * svg/SVGStyleElement.h:
+        * svg/SVGStyledElement.cpp:
+        (WebCore::SVGStyledElement::childrenChanged):
+        * svg/SVGStyledElement.h:
+        * svg/SVGTitleElement.cpp:
+        (WebCore::SVGTitleElement::childrenChanged):
+        * svg/SVGTitleElement.h:
+        * svg/SVGUseElement.cpp:
+        (WebCore::SVGUseElement::childrenChanged):
+        * svg/SVGUseElement.h:
+        
 2008-02-09  Holger Hans Peter Freyther  <holger.freyther@trolltech.com>
 
         Unreviewed build fix
@@ -149,6 +315,8 @@
         (WebCore::Node::querySelector): Make sure to stay within the root node when traversing the tree.
         * dom/SelectorNodeList.cpp:
         (WebCore::SelectorNodeList::SelectorNodeList): ditto.
+
+
 
 2008-02-08  David Hyatt  <hyatt@apple.com>
 

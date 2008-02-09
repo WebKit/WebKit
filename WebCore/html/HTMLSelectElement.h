@@ -87,7 +87,7 @@ public:
     virtual bool removeChild(Node* child, ExceptionCode&);
     virtual bool appendChild(PassRefPtr<Node> newChild, ExceptionCode&);
     virtual bool removeChildren();
-    virtual void childrenChanged();
+    virtual void childrenChanged(bool changedByParser = false);
 
     virtual void parseMappedAttribute(MappedAttribute*);
 

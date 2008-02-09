@@ -37,7 +37,7 @@ namespace WebCore
 
         virtual void insertedIntoDocument();
         virtual void removedFromDocument();
-        virtual void childrenChanged();
+        virtual void childrenChanged(bool changedByParser = false);
 
         virtual bool rendererIsNeeded(RenderStyle*) { return false; }
     };

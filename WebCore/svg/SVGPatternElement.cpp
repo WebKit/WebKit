@@ -144,9 +144,9 @@ void SVGPatternElement::svgAttributeChanged(const QualifiedName& attrName)
         m_resource->invalidate();
 }
 
-void SVGPatternElement::childrenChanged()
+void SVGPatternElement::childrenChanged(bool changedByParser)
 {
-    SVGStyledElement::childrenChanged();
+    SVGStyledElement::childrenChanged(changedByParser);
 
     if (!m_resource)
         return;

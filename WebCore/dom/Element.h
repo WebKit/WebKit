@@ -118,7 +118,7 @@ public:
     virtual bool isElementNode() const { return true; }
     virtual void insertedIntoDocument();
     virtual void removedFromDocument();
-    virtual void childrenChanged();
+    virtual void childrenChanged(bool changedByParser = false);
 
     virtual bool isInputTypeHidden() const { return false; }
 
@@ -190,6 +190,10 @@ public:
     virtual void willSaveToCache() { }
     virtual void didRestoreFromCache() { }
     
+    bool isFinishedParsingChildren() const { return m_parsingChildrenFinished; }
+    virtual void finishParsingChildren();
+    virtual void beginParsingChildren() { m_parsingChildrenFinished = false; }
+
 private:
     ElementRareData* rareData();
     const ElementRareData* rareData() const;
@@ -204,11 +208,19 @@ private:
 
     virtual bool virtualHasTagName(const QualifiedName&) const;
 
+private:
+    QualifiedName m_tagName;
+
 protected:
     mutable RefPtr<NamedAttrMap> namedAttrMap;
 
+    // These two bits are really used by the StyledElement subclass, but they are pulled up here in order to be shared with other
+    // Element bits.
+    mutable bool m_isStyleAttributeValid : 1;
+    mutable bool m_synchronizingStyleAttribute : 1;
+    
 private:
-    QualifiedName m_tagName;
+    bool m_parsingChildrenFinished : 1;
 };
 
 } //namespace

@@ -92,10 +92,10 @@ bool HTMLOptGroupElement::removeChildren()
     return result;
 }
 
-void HTMLOptGroupElement::childrenChanged()
+void HTMLOptGroupElement::childrenChanged(bool changedByParser)
 {
     recalcSelectOptions();
-    HTMLGenericFormElement::childrenChanged();
+    HTMLGenericFormElement::childrenChanged(changedByParser);
 }
 
 void HTMLOptGroupElement::parseMappedAttribute(MappedAttribute* attr)

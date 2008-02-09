@@ -482,7 +482,7 @@ DOMImplementation* Document::implementation() const
     return m_implementation.get();
 }
 
-void Document::childrenChanged()
+void Document::childrenChanged(bool changedByParser)
 {
     // invalidate the document element we have cached in case it was replaced
     m_documentElement = 0;

@@ -857,10 +857,6 @@ void Node::removedFromDocument()
     removedFromTree(false);
 }
 
-void Node::childrenChanged()
-{
-}
-
 bool Node::isReadOnlyNode()
 {
     // Entity & Entity Reference nodes and their descendants are read-only

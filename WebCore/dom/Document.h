@@ -180,7 +180,7 @@ public:
     DocumentType* realDocType() const { return m_docType.get(); }
 
     DOMImplementation* implementation() const;
-    virtual void childrenChanged();
+    virtual void childrenChanged(bool changedByParser = false);
     Element* documentElement() const;
     virtual PassRefPtr<Element> createElement(const String& tagName, ExceptionCode&);
     PassRefPtr<DocumentFragment> createDocumentFragment ();

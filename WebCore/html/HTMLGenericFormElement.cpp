@@ -247,8 +247,9 @@ void HTMLFormControlElementWithState::didMoveToNewOwnerDocument()
     HTMLGenericFormElement::didMoveToNewOwnerDocument();
 }
 
-void HTMLFormControlElementWithState::finishedParsing()
+void HTMLFormControlElementWithState::finishParsingChildren()
 {
+    HTMLGenericFormElement::finishParsingChildren();
     Document* doc = document();
     if (doc->hasStateForNewFormElements()) {
         String state;

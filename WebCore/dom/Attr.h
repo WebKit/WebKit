@@ -77,7 +77,7 @@ public:
     virtual bool isAttributeNode() const { return true; }
     virtual bool childTypeAllowed(NodeType);
 
-    virtual void childrenChanged();
+    virtual void childrenChanged(bool changedByParser = false);
     virtual String toString() const;
 
     Attribute* attr() const { return m_attribute.get(); }

@@ -28,7 +28,7 @@ namespace WebCore {
     public:
         SVGDefinitionSrcElement(const QualifiedName&, Document*);
     
-        virtual void childrenChanged();
+        virtual void childrenChanged(bool changedByParser = false);
     };
 
 } // namespace WebCore

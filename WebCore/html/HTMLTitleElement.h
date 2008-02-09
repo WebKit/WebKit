@@ -38,7 +38,7 @@ public:
 
     virtual void insertedIntoDocument();
     virtual void removedFromDocument();
-    virtual void childrenChanged();
+    virtual void childrenChanged(bool changedByParser = false);
 
     String text() const;
     void setText(const String&);

@@ -68,7 +68,7 @@ public:
 
     HTMLSelectElement* getSelect() const;
 
-    virtual void childrenChanged();
+    virtual void childrenChanged(bool changedByParser = false);
 
     bool defaultSelected() const;
     void setDefaultSelected(bool);

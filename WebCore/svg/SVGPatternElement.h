@@ -54,7 +54,7 @@ namespace WebCore {
 
         virtual void parseMappedAttribute(MappedAttribute*);
         virtual void svgAttributeChanged(const QualifiedName&);
-        virtual void childrenChanged();
+        virtual void childrenChanged(bool changedByParser = false);
 
         virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
         virtual SVGResource* canvasResource();

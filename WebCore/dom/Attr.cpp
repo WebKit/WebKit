@@ -149,9 +149,9 @@ bool Attr::childTypeAllowed(NodeType type)
     }
 }
 
-void Attr::childrenChanged()
+void Attr::childrenChanged(bool changedByParser)
 {
-    Node::childrenChanged();
+    Node::childrenChanged(changedByParser);
     
     if (m_ignoreChildrenChanged > 0)
         return;

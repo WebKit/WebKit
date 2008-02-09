@@ -109,7 +109,7 @@ public:
     HTMLFormControlElementWithState(const QualifiedName& tagName, Document*, HTMLFormElement*);
     virtual ~HTMLFormControlElementWithState();
 
-    virtual void finishedParsing();
+    virtual void finishParsingChildren();
 
     virtual bool saveState(String& value) const = 0;
 

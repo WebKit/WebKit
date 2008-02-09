@@ -50,7 +50,7 @@ public:
     
     virtual bool rendererIsNeeded(RenderStyle*);
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
-    virtual void finishedParsing();
+    virtual void finishParsingChildren();
     virtual void detach();
     
 #if USE(JAVASCRIPTCORE_BINDINGS)
@@ -78,7 +78,6 @@ public:
     String vspace() const;
     void setVspace(const String&);
 
-    virtual bool allParamsAvailable();
     void setupApplet() const;
 
     virtual void insertedIntoDocument();
@@ -86,7 +85,6 @@ public:
 
 private:
     String oldIdAttr;
-    bool m_allParamsAvailable;
 };
 
 }

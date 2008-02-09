@@ -54,16 +54,15 @@ void HTMLTitleElement::removedFromDocument()
     document()->removeTitle(this);
 }
 
-void HTMLTitleElement::childrenChanged()
+void HTMLTitleElement::childrenChanged(bool changedByParser)
 {
-    HTMLElement::childrenChanged();
     m_title = "";
     for (Node* c = firstChild(); c != 0; c = c->nextSibling())
         if (c->nodeType() == TEXT_NODE || c->nodeType() == CDATA_SECTION_NODE)
             m_title += c->nodeValue();
     if (inDocument())
         document()->setTitle(m_title, this);
-    HTMLElement::childrenChanged();
+    HTMLElement::childrenChanged(changedByParser);
 }
 
 String HTMLTitleElement::text() const

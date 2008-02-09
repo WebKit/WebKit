@@ -44,12 +44,12 @@ public:
     virtual void removedFromDocument();
     virtual void notifyFinished(CachedResource*);
 
-    virtual void childrenChanged();
+    virtual void childrenChanged(bool changedByParser = false);
 
     virtual bool isURLAttribute(Attribute*) const;
 
     void setCreatedByParser(bool createdByParser) { m_createdByParser = createdByParser; }
-    virtual void finishedParsing();
+    virtual void finishParsingChildren();
 
     bool shouldExecuteAsJavaScript();
     void evaluateScript(const String& url, const String& script);

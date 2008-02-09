@@ -59,14 +59,14 @@ bool HTMLScriptElement::isURLAttribute(Attribute *attr) const
     return attr->name() == srcAttr;
 }
 
-void HTMLScriptElement::childrenChanged()
+void HTMLScriptElement::childrenChanged(bool changedByParser)
 {
     // If a node is inserted as a child of the script element
     // and the script element has been inserted in the document
     // we evaluate the script.
     if (!m_createdByParser && inDocument() && firstChild())
         evaluateScript(document()->url(), text());
-    HTMLElement::childrenChanged();
+    HTMLElement::childrenChanged(changedByParser);
 }
 
 void HTMLScriptElement::parseMappedAttribute(MappedAttribute *attr)
@@ -95,13 +95,13 @@ void HTMLScriptElement::parseMappedAttribute(MappedAttribute *attr)
         HTMLElement::parseMappedAttribute(attr);
 }
 
-void HTMLScriptElement::finishedParsing()
+void HTMLScriptElement::finishParsingChildren()
 {
     // The parser just reached </script>. If we have no src and no text,
     // allow dynamic loading later.
     if (getAttribute(srcAttr).isEmpty() && text().isEmpty())
         setCreatedByParser(false);
-    HTMLElement::finishedParsing();
+    HTMLElement::finishParsingChildren();
 }
 
 void HTMLScriptElement::insertedIntoDocument()

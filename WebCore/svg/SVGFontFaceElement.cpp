@@ -359,8 +359,9 @@ void SVGFontFaceElement::insertedIntoDocument()
     rebuildFontFace();
 }
 
-void SVGFontFaceElement::childrenChanged()
+void SVGFontFaceElement::childrenChanged(bool changedByParser)
 {
+    SVGElement::childrenChanged(changedByParser);
     rebuildFontFace();
 }
 

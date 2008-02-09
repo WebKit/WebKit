@@ -119,10 +119,10 @@ void HTMLTextAreaElement::setSelectionRange(int start, int end)
         static_cast<RenderTextControl*>(renderer())->setSelectionRange(start, end);
 }
 
-void HTMLTextAreaElement::childrenChanged()
+void HTMLTextAreaElement::childrenChanged(bool changedByParser)
 {
     setValue(defaultValue());
-    HTMLElement::childrenChanged();
+    HTMLElement::childrenChanged(changedByParser);
 }
     
 void HTMLTextAreaElement::parseMappedAttribute(MappedAttribute *attr)

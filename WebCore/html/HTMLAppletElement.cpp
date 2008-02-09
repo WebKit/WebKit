@@ -38,7 +38,6 @@ using namespace HTMLNames;
 
 HTMLAppletElement::HTMLAppletElement(Document *doc)
 : HTMLPlugInElement(appletTag, doc)
-, m_allParamsAvailable(false)
 {
 }
 
@@ -159,13 +158,12 @@ KJS::Bindings::Instance *HTMLAppletElement::getInstance() const
 }
 #endif
 
-void HTMLAppletElement::finishedParsing()
+void HTMLAppletElement::finishParsingChildren()
 {
     // The parser just reached </applet>, so all the params are available now.
-    m_allParamsAvailable = true;
+    HTMLPlugInElement::finishParsingChildren();
     if (renderer())
         renderer()->setNeedsLayout(true); // This will cause it to create its widget & the Java applet
-    HTMLPlugInElement::finishedParsing();
 }
 
 void HTMLAppletElement::detach()
@@ -174,11 +172,6 @@ void HTMLAppletElement::detach()
     m_instance = 0;
 #endif
     HTMLPlugInElement::detach();
-}
-
-bool HTMLAppletElement::allParamsAvailable()
-{
-    return m_allParamsAvailable;
 }
 
 String HTMLAppletElement::alt() const
