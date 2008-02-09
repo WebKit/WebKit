@@ -1,3 +1,11 @@
+2008-02-08  Alp Toker  <alp@atoker.com>
+
+        Rubber-stamped by Maciej.
+
+        Bump autoconf CAIRO_REQUIRED_VERSION up to 1.4.
+
+        * configure.ac:
+
 2008-02-06  Timothy Hatcher  <timothy@apple.com>
 
         Rubber-stamped by Mark Rowe.
