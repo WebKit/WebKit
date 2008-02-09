@@ -733,7 +733,7 @@ static bool parseNth(const String& nth, int &a, int &b)
                 if (n == 1)
                     a = -1; // -n == -1n
                 else
-                    a = nth.substring(1, n-1).toInt();
+                    a = nth.substring(0, n).toInt();
             } else if (!n)
                 a = 1; // n == 1n
             else

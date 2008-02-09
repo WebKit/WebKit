@@ -1,5 +1,16 @@
 2008-02-09  David Hyatt  <hyatt@apple.com>
 
+        Fix for bug 17254, nth-* selectors do not work with negative coefficients.
+
+        Reviewed by Mitz.
+
+        fast/css/negative-nth-child.html
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::parseNth):
+
+2008-02-09  David Hyatt  <hyatt@apple.com>
+
         Fix for bug 17203, high CPU usage loading HTML5 spec.  This patch significantly improves the performance
         of CSS3 selectors.
 
