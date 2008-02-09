@@ -1,3 +1,14 @@
+2008-02-08  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Mitz.
+
+        <rdar://problem/5650446>
+        http://bugs.webkit.org/show_bug.cgi?id=16102
+        Crash in FrameLoader::stopLoadingSubframes() on IMDB page
+
+        * http/tests/navigation/changing-frame-hierarchy-in-onload-expected.txt: Added.
+        * http/tests/navigation/changing-frame-hierarchy-in-onload.html: Added.
+
 2008-02-08  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Hyatt.
