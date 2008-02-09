@@ -35,6 +35,7 @@
  * version of this file under any of the LGPL, the MPL or the GPL.
  */
 
+#include "config.h"
 #include "PNGImageDecoder.h"
 #include "png.h"
 #include "assert.h"
