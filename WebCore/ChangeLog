@@ -1,3 +1,14 @@
+2008-02-08  Darin Adler  <darin@apple.com>
+
+        Reviewed by Eric.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=15003
+          Function.prototype.constructor should not be DontDelete/ReadOnly (Acid3 bug)
+
+        Test: fast/js/constructor-attributes.html
+
+        * bindings/scripts/CodeGeneratorJS.pm: Remove unwanted attributes from "constructor".
+
 2008-02-08  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Mitz.

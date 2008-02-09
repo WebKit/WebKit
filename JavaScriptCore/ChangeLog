@@ -1,3 +1,20 @@
+2008-02-08  Darin Adler  <darin@apple.com>
+
+        Reviewed by Eric.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=15003
+          Function.prototype.constructor should not be DontDelete/ReadOnly (Acid3 bug)
+
+        Test: fast/js/constructor-attributes.html
+
+        * kjs/JSGlobalObject.cpp:
+        (KJS::JSGlobalObject::reset): Remove unwanted attributes from "constructor".
+        * kjs/function_object.cpp:
+        (KJS::FunctionObjectImp::construct): Ditto.
+        * kjs/nodes.cpp:
+        (KJS::FuncDeclNode::makeFunction): Ditto.
+        (KJS::FuncExprNode::evaluate): Ditto.
+
 2008-02-06  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Oliver Hunt.

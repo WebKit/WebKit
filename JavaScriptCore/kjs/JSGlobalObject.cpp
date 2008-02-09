@@ -261,21 +261,21 @@ void JSGlobalObject::reset(JSValue* prototype)
     
     d()->functionPrototype->putDirect(exec->propertyNames().constructor, d()->functionConstructor, DontEnum);
 
-    d()->objectPrototype->putDirect(exec->propertyNames().constructor, d()->objectConstructor, DontEnum | DontDelete | ReadOnly);
-    d()->functionPrototype->putDirect(exec->propertyNames().constructor, d()->functionConstructor, DontEnum | DontDelete | ReadOnly);
-    d()->arrayPrototype->putDirect(exec->propertyNames().constructor, d()->arrayConstructor, DontEnum | DontDelete | ReadOnly);
-    d()->booleanPrototype->putDirect(exec->propertyNames().constructor, d()->booleanConstructor, DontEnum | DontDelete | ReadOnly);
-    d()->stringPrototype->putDirect(exec->propertyNames().constructor, d()->stringConstructor, DontEnum | DontDelete | ReadOnly);
-    d()->numberPrototype->putDirect(exec->propertyNames().constructor, d()->numberConstructor, DontEnum | DontDelete | ReadOnly);
-    d()->datePrototype->putDirect(exec->propertyNames().constructor, d()->dateConstructor, DontEnum | DontDelete | ReadOnly);
-    d()->regExpPrototype->putDirect(exec->propertyNames().constructor, d()->regExpConstructor, DontEnum | DontDelete | ReadOnly);
-    d()->errorPrototype->putDirect(exec->propertyNames().constructor, d()->errorConstructor, DontEnum | DontDelete | ReadOnly);
-    d()->evalErrorPrototype->putDirect(exec->propertyNames().constructor, d()->evalErrorConstructor, DontEnum | DontDelete | ReadOnly);
-    d()->rangeErrorPrototype->putDirect(exec->propertyNames().constructor, d()->rangeErrorConstructor, DontEnum | DontDelete | ReadOnly);
-    d()->referenceErrorPrototype->putDirect(exec->propertyNames().constructor, d()->referenceErrorConstructor, DontEnum | DontDelete | ReadOnly);
-    d()->syntaxErrorPrototype->putDirect(exec->propertyNames().constructor, d()->syntaxErrorConstructor, DontEnum | DontDelete | ReadOnly);
-    d()->typeErrorPrototype->putDirect(exec->propertyNames().constructor, d()->typeErrorConstructor, DontEnum | DontDelete | ReadOnly);
-    d()->URIErrorPrototype->putDirect(exec->propertyNames().constructor, d()->URIErrorConstructor, DontEnum | DontDelete | ReadOnly);
+    d()->objectPrototype->putDirect(exec->propertyNames().constructor, d()->objectConstructor, DontEnum);
+    d()->functionPrototype->putDirect(exec->propertyNames().constructor, d()->functionConstructor, DontEnum);
+    d()->arrayPrototype->putDirect(exec->propertyNames().constructor, d()->arrayConstructor, DontEnum);
+    d()->booleanPrototype->putDirect(exec->propertyNames().constructor, d()->booleanConstructor, DontEnum);
+    d()->stringPrototype->putDirect(exec->propertyNames().constructor, d()->stringConstructor, DontEnum);
+    d()->numberPrototype->putDirect(exec->propertyNames().constructor, d()->numberConstructor, DontEnum);
+    d()->datePrototype->putDirect(exec->propertyNames().constructor, d()->dateConstructor, DontEnum);
+    d()->regExpPrototype->putDirect(exec->propertyNames().constructor, d()->regExpConstructor, DontEnum);
+    d()->errorPrototype->putDirect(exec->propertyNames().constructor, d()->errorConstructor, DontEnum);
+    d()->evalErrorPrototype->putDirect(exec->propertyNames().constructor, d()->evalErrorConstructor, DontEnum);
+    d()->rangeErrorPrototype->putDirect(exec->propertyNames().constructor, d()->rangeErrorConstructor, DontEnum);
+    d()->referenceErrorPrototype->putDirect(exec->propertyNames().constructor, d()->referenceErrorConstructor, DontEnum);
+    d()->syntaxErrorPrototype->putDirect(exec->propertyNames().constructor, d()->syntaxErrorConstructor, DontEnum);
+    d()->typeErrorPrototype->putDirect(exec->propertyNames().constructor, d()->typeErrorConstructor, DontEnum);
+    d()->URIErrorPrototype->putDirect(exec->propertyNames().constructor, d()->URIErrorConstructor, DontEnum);
 
     // Set global constructors
 

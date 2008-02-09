@@ -637,7 +637,7 @@ sub GenerateImplementation
         if ($dataNode->extendedAttributes->{"GenerateConstructor"}) {
             push(@hashKeys, "constructor");
             push(@hashValues, $className . "::ConstructorAttrNum");
-            push(@hashSpecials, "DontDelete|DontEnum|ReadOnly");
+            push(@hashSpecials, "DontEnum");
             push(@hashParameters, "0");
         }
 
