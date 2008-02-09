@@ -1,3 +1,15 @@
+2008-02-09  Holger Hans Peter Freyther  <holger.freyther@trolltech.com>
+
+        Reviewed by Adele.
+
+        paintResizeControl is dead, remove the code. This painting
+        is done by the RenderLayer.
+
+        * platform/qt/RenderThemeQt.cpp:
+        * platform/qt/RenderThemeQt.h:
+        * rendering/RenderThemeMac.h:
+        * rendering/RenderThemeMac.mm:
+
 2008-02-07  Kevin Ollivier <kevino@theolliviers.com>
 
         Reviewed by Eric Seidel, Adam Roben.

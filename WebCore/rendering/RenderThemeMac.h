@@ -58,8 +58,6 @@ public:
     virtual bool isControlStyled(const RenderStyle*, const BorderData&,
                                  const BackgroundLayer&, const Color& backgroundColor) const;
 
-    virtual void paintResizeControl(GraphicsContext*, const IntRect&);
-
     virtual Color platformActiveSelectionBackgroundColor() const;
     virtual Color platformInactiveSelectionBackgroundColor() const;
     virtual Color activeListBoxSelectionBackgroundColor() const;
@@ -187,7 +185,6 @@ private:
     NSMenu* searchMenuTemplate() const;
     NSSliderCell* sliderThumbHorizontal() const;
     NSSliderCell* sliderThumbVertical() const;
-    Image* resizeCornerImage() const;
 
 private:
     mutable RetainPtr<NSButtonCell> m_checkbox;
@@ -198,7 +195,6 @@ private:
     mutable RetainPtr<NSMenu> m_searchMenuTemplate;
     mutable RetainPtr<NSSliderCell> m_sliderThumbHorizontal;
     mutable RetainPtr<NSSliderCell> m_sliderThumbVertical;
-    mutable Image* m_resizeCornerImage;
 
     bool m_isSliderThumbHorizontalPressed;
     bool m_isSliderThumbVerticalPressed;

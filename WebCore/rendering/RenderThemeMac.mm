@@ -105,8 +105,7 @@ RenderTheme* theme()
 }
 
 RenderThemeMac::RenderThemeMac()
-    : m_resizeCornerImage(0)
-    , m_isSliderThumbHorizontalPressed(false)
+    : m_isSliderThumbHorizontalPressed(false)
     , m_isSliderThumbVerticalPressed(false)
     , m_notificationObserver(AdoptNS, [[WebCoreRenderThemeNotificationObserver alloc] initWithTheme:this])
 {
@@ -119,7 +118,6 @@ RenderThemeMac::RenderThemeMac()
 RenderThemeMac::~RenderThemeMac()
 {
     [[NSNotificationCenter defaultCenter] removeObserver:m_notificationObserver.get()];
-    delete m_resizeCornerImage;
 }
 
 Color RenderThemeMac::platformActiveSelectionBackgroundColor() const
@@ -391,13 +389,6 @@ bool RenderThemeMac::isControlStyled(const RenderStyle* style, const BorderData&
     if (style->appearance() == TextFieldAppearance || style->appearance() == TextAreaAppearance || style->appearance() == ListboxAppearance)
         return style->border() != border;
     return RenderTheme::isControlStyled(style, border, background, backgroundColor);
-}
-
-void RenderThemeMac::paintResizeControl(GraphicsContext* c, const IntRect& r)
-{
-    Image* resizeCornerImage = this->resizeCornerImage();
-    IntPoint imagePoint(r.right() - resizeCornerImage->width(), r.bottom() - resizeCornerImage->height());
-    c->drawImage(resizeCornerImage, imagePoint);
 }
 
 void RenderThemeMac::adjustRepaintRect(const RenderObject* o, IntRect& r)
@@ -1711,13 +1702,6 @@ NSSliderCell* RenderThemeMac::sliderThumbVertical() const
     }
     
     return m_sliderThumbVertical.get();
-}
-
-Image* RenderThemeMac::resizeCornerImage() const
-{
-    if (!m_resizeCornerImage)
-        m_resizeCornerImage = Image::loadPlatformResource("textAreaResizeCorner");
-    return m_resizeCornerImage;
 }
 
 } // namespace WebCore

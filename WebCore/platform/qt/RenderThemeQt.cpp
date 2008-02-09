@@ -126,11 +126,6 @@ bool RenderThemeQt::isControlStyled(const RenderStyle* style, const BorderData& 
     return RenderTheme::isControlStyled(style, border, background, backgroundColor);
 }
 
-void RenderThemeQt::paintResizeControl(GraphicsContext*, const IntRect&)
-{
-}
-
-
 Color RenderThemeQt::platformActiveSelectionBackgroundColor() const
 {
     QPalette pal = QApplication::palette();
