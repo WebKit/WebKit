@@ -533,8 +533,7 @@ JSValue* stringProtoFuncMatch(ExecState* exec, JSObject* thisObj, const List& ar
     JSValue* a0 = args[0];
 
     UString u = s;
-    RegExp* reg;
-    RegExp* tmpReg = 0;
+    RefPtr<RegExp> reg;
     RegExpImp* imp = 0;
     if (a0->isObject() && static_cast<JSObject *>(a0)->inherits(&RegExpImp::info)) {
       reg = static_cast<RegExpImp *>(a0)->regExp();
@@ -544,12 +543,12 @@ JSValue* stringProtoFuncMatch(ExecState* exec, JSObject* thisObj, const List& ar
        *  If regexp is not an object whose [[Class]] property is "RegExp", it is
        *  replaced with the result of the expression new RegExp(regexp).
        */
-      reg = tmpReg = new RegExp(a0->toString(exec));
+      reg = RegExp::create(a0->toString(exec));
     }
     RegExpObjectImp* regExpObj = static_cast<RegExpObjectImp*>(exec->lexicalGlobalObject()->regExpConstructor());
     int pos;
     int matchLength;
-    regExpObj->performMatch(reg, u, 0, pos, matchLength);
+    regExpObj->performMatch(reg.get(), u, 0, pos, matchLength);
     JSValue* result;
     if (!(reg->global())) {
       // case without 'g' flag is handled like RegExp.prototype.exec
@@ -565,7 +564,7 @@ JSValue* stringProtoFuncMatch(ExecState* exec, JSObject* thisObj, const List& ar
         list.append(jsString(u.substr(pos, matchLength)));
         lastIndex = pos;
         pos += matchLength == 0 ? 1 : matchLength;
-        regExpObj->performMatch(reg, u, pos, pos, matchLength);
+        regExpObj->performMatch(reg.get(), u, pos, pos, matchLength);
       }
       if (imp)
         imp->setLastIndex(lastIndex);
@@ -578,7 +577,6 @@ JSValue* stringProtoFuncMatch(ExecState* exec, JSObject* thisObj, const List& ar
         result = exec->lexicalGlobalObject()->arrayConstructor()->construct(exec, list);
       }
     }
-    delete tmpReg;
     return result;
 }
 
@@ -590,23 +588,21 @@ JSValue* stringProtoFuncSearch(ExecState* exec, JSObject* thisObj, const List& a
     JSValue* a0 = args[0];
 
     UString u = s;
-    RegExp* reg;
-    RegExp* tmpReg = 0;
-    if (a0->isObject() && static_cast<JSObject *>(a0)->inherits(&RegExpImp::info)) {
-      reg = static_cast<RegExpImp *>(a0)->regExp();
+    RefPtr<RegExp> reg;
+    if (a0->isObject() && static_cast<JSObject*>(a0)->inherits(&RegExpImp::info)) {
+      reg = static_cast<RegExpImp*>(a0)->regExp();
     } else { 
       /*
        *  ECMA 15.5.4.12 String.prototype.search (regexp)
        *  If regexp is not an object whose [[Class]] property is "RegExp", it is
        *  replaced with the result of the expression new RegExp(regexp).
        */
-      reg = tmpReg = new RegExp(a0->toString(exec));
+      reg = RegExp::create(a0->toString(exec));
     }
     RegExpObjectImp* regExpObj = static_cast<RegExpObjectImp*>(exec->lexicalGlobalObject()->regExpConstructor());
     int pos;
     int matchLength;
-    regExpObj->performMatch(reg, u, 0, pos, matchLength);
-    delete tmpReg;
+    regExpObj->performMatch(reg.get(), u, 0, pos, matchLength);
     return jsNumber(pos);
 }
 

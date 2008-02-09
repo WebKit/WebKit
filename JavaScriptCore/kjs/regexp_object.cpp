@@ -95,7 +95,7 @@ JSValue* regExpProtoFuncCompile(ExecState* exec, JSObject* thisObj, const List& 
     } else {
         UString pattern = args.isEmpty() ? UString("") : arg0->toString(exec);
         UString flags = arg1->isUndefined() ? UString("") : arg1->toString(exec);
-        regExp = new RegExp(pattern, flags);
+        regExp = RegExp::create(pattern, flags);
     }
 
     if (!regExp->isValid())
@@ -449,7 +449,7 @@ JSObject *RegExpObjectImp::construct(ExecState *exec, const List &args)
   UString pattern = arg0->isUndefined() ? UString("") : arg0->toString(exec);
   UString flags = arg1->isUndefined() ? UString("") : arg1->toString(exec);
   
-  return createRegExpImp(exec, new RegExp(pattern, flags));
+  return createRegExpImp(exec, RegExp::create(pattern, flags));
 }
 
 JSObject* RegExpObjectImp::createRegExpImp(ExecState* exec, PassRefPtr<RegExp> regExp)

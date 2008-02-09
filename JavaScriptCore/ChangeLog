@@ -1,3 +1,26 @@
+2008-02-09  Darin Adler  <darin@apple.com>
+
+        Reviewed by Mitz.
+
+        - http://bugs.webkit.org/show_bug.cgi?id=17256
+          Change RegExp to start its ref count at 1, not 0
+
+        We'll want to do this to every RefCounted class, one at a time.
+
+        * kjs/nodes.h:
+        (KJS::RegExpNode::RegExpNode): Use RegExp::create instead of new RegExp.
+        * kjs/regexp.cpp:
+        (KJS::RegExp::RegExp): Marked inline, set initial ref count to 1.
+        (KJS::RegExp::create): Added. Calls new RegExp then adopts the initial ref.
+        * kjs/regexp.h: Reformatted. Made the constructors private. Added static
+        create functions that return objects already wrapped in PassRefPtr.
+        * kjs/regexp_object.cpp:
+        (KJS::regExpProtoFuncCompile): Use RegExp::create instead of new RegExp.
+        (KJS::RegExpObjectImp::construct): Ditto.
+        * kjs/string_object.cpp:
+        (KJS::stringProtoFuncMatch): Ditto.
+        (KJS::stringProtoFuncSearch): Ditto.
+
 2008-02-08  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Maciej.
