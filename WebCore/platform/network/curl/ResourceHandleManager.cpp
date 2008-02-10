@@ -271,13 +271,17 @@ void ResourceHandleManager::downloadTimerCallback(Timer<ResourceHandleManager>* 
 
     // Temporarily disable timers since signals may interrupt select(), raising EINTR errors on some platforms
     setDeferringTimers(true);
-    int rc;
+    int rc = 0;
     do {
         FD_ZERO(&fdread);
         FD_ZERO(&fdwrite);
         FD_ZERO(&fdexcep);
         curl_multi_fdset(m_curlMultiHandle, &fdread, &fdwrite, &fdexcep, &maxfd);
-        rc = ::select(maxfd + 1, &fdread, &fdwrite, &fdexcep, &timeout);
+        // When the 3 file descriptors are empty, winsock will return -1
+        // and bail out, stopping the file download. So make sure we
+        // have valid file descriptors before calling select.
+        if (maxfd >= 0)
+            rc = ::select(maxfd + 1, &fdread, &fdwrite, &fdexcep, &timeout);
     } while (rc == -1 && errno == EINTR);
     setDeferringTimers(false);
 

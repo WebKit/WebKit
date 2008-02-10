@@ -1,3 +1,16 @@
+2008-02-09  Kevin Ollivier  <kevino@theolliviers.com>
+
+        Reviewed by Eric Seidel.
+
+        Calling select() when all the file descriptors are NULL
+        stops the file download on Windows. As a result, do not
+        call select() when there are no valid descriptors.
+
+        http://bugs.webkit.org/show_bug.cgi?id=17178
+
+        * platform/network/curl/ResourceHandleManager.cpp:
+        (WebCore::ResourceHandleManager::downloadTimerCallback):
+
 2008-02-09  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Sam Weinig.
