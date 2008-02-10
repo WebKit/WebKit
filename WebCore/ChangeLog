@@ -1,3 +1,24 @@
+2008-02-10  David Hyatt  <hyatt@apple.com>
+
+        Fix for bug 17253.  <iframe> contents need to be reflected into the DOM as a single text node.
+
+        Reviewed by olliej
+
+        fast/frames/iframe-text-contents.html
+
+        * html/HTMLParser.cpp:
+        (WebCore::HTMLParser::getNode):
+        * html/HTMLTokenizer.cpp:
+        (WebCore::HTMLTokenizer::parseSpecial):
+        (WebCore::HTMLTokenizer::parseComment):
+        (WebCore::HTMLTokenizer::parseTag):
+        * html/HTMLTokenizer.h:
+        (WebCore::HTMLTokenizer::State::inIFrame):
+        (WebCore::HTMLTokenizer::State::setInIFrame):
+        (WebCore::HTMLTokenizer::State::inAnySpecial):
+        (WebCore::HTMLTokenizer::State::needsSpecialWriteHandling):
+        (WebCore::HTMLTokenizer::State::):
+
 2008-02-10  Andrew Wellington  <proton@wiretapped.net>
 
         Reviewed and tweaked by Darin.

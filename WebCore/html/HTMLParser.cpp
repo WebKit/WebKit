@@ -677,13 +677,6 @@ bool HTMLParser::framesetCreateErrorCheck(Token* t, RefPtr<Node>& result)
     return true;
 }
 
-bool HTMLParser::iframeCreateErrorCheck(Token* t, RefPtr<Node>& result)
-{
-    // a bit of a special case, since the frame is inlined
-    setSkipMode(iframeTag);
-    return true;
-}
-
 bool HTMLParser::formCreateErrorCheck(Token* t, RefPtr<Node>& result)
 {
     // Only create a new form if we're not already inside one.
@@ -798,7 +791,6 @@ PassRefPtr<Node> HTMLParser::getNode(Token* t)
         gFunctionMap.set(framesetTag.localName().impl(), &HTMLParser::framesetCreateErrorCheck);
         gFunctionMap.set(headTag.localName().impl(), &HTMLParser::headCreateErrorCheck);
         gFunctionMap.set(iTag.localName().impl(), &HTMLParser::nestedStyleCreateErrorCheck);
-        gFunctionMap.set(iframeTag.localName().impl(), &HTMLParser::iframeCreateErrorCheck);
         gFunctionMap.set(isindexTag.localName().impl(), &HTMLParser::isindexCreateErrorCheck);
         gFunctionMap.set(liTag.localName().impl(), &HTMLParser::nestedCreateErrorCheck);
         gFunctionMap.set(mapTag.localName().impl(), &HTMLParser::mapCreateErrorCheck);
