@@ -1,3 +1,14 @@
+2008-02-09  Darin Adler  <darin@apple.com>
+
+        Reviewed by Tim Hatcher.
+
+        - fix <rdar://problem/5725996> crash every time you open the Xcode documentation window
+
+        * WebView/WebView.mm:
+        (-[WebView _userAgentWithApplicationName:andWebKitVersion:]): Work around a bug in the
+        garbage collector's Objective C++ support by not initializing a static to an object
+        that needs to be marked when running under GC.
+
 2008-02-05  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.
