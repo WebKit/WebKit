@@ -1,3 +1,15 @@
+2008-02-10  Darin Adler  <darin@apple.com>
+
+        - fix a couple of directories that were using our JavaScript template/wrapper
+          system incorrectly
+
+        * fast/dom/SelectorAPI/resources/TEMPLATE.html: Fixed relative paths.
+        * fast/events/event-instanceof.html: Regenerating this file revealed that the path
+        to the stylesheet was wrong. Fixed by running the make-js-test-wrappers script.
+        Didn't affect the text-only results, but the test looked wrong in the browser.
+        * fast/events/resources/TEMPLATE.html: Copied from fast/js/resources/TEMPLATE.html.
+        * traversal/resources/TEMPLATE.html: Fixed relative paths.
+
 2008-02-10  Andrew Wellington  <proton@wiretapped.net>
 
         Reviewed and tweaked a bit by Darin.
