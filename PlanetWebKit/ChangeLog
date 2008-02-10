@@ -1,3 +1,9 @@
+2008-02-09  Alp Toker  <alp@atoker.com>
+
+        Only syndicate Jan's WebKit posts, not his entire blog.
+
+        * config.ini:
+
 2007-12-27  Mark Rowe  <mrowe@apple.com>
 
         Add another feed.
