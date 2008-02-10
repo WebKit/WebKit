@@ -1,3 +1,14 @@
+2008-02-09  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=17259
+          Element::recalcStyle() needlessly null-checks the result of styleForElement()
+
+        * dom/Element.cpp:
+        (WebCore::Element::recalcStyle): Removed unneeded null checks.
+        styleForElement() can never return null.
+
 2008-02-09  David Hyatt  <hyatt@apple.com>
 
         Fix for bug 17254, nth-* selectors do not work with negative coefficients.
