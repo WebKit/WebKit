@@ -1,3 +1,16 @@
+2008-02-10  Andrew Wellington  <proton@wiretapped.net>
+
+        Reviewed and tweaked by Darin.
+        
+        DOMRange.surroundContents throws wrong exception (Acid3 bug)
+        http://bugs.webkit.org/show_bug.cgi?id=16749
+        
+        Throw BAD_BOUNDARYPOINTS_ERR if attempting to split a non-text node that
+        has offsets in characters.
+
+        * dom/Range.cpp:
+        (WebCore::Range::surroundContents):
+
 2008-02-10  Darin Adler  <darin@apple.com>
 
         Reviewed by Eric.
