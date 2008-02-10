@@ -37,11 +37,13 @@ CSSRuleList::CSSRuleList()
 CSSRuleList::CSSRuleList(StyleList* list, bool omitCharsetRules)
     : RefCounted<CSSRuleList>(0)
 {
-    if (list) {
+    m_list = list;
+    if (list && omitCharsetRules) {
+        m_list = 0;
         unsigned len = list->length();
         for (unsigned i = 0; i < len; ++i) {
             StyleBase* style = list->item(i);
-            if (style->isRule() && !(omitCharsetRules && style->isCharsetRule()))
+            if (style->isRule() && !style->isCharsetRule())
                 append(static_cast<CSSRule*>(style));
         }
     }
@@ -54,8 +56,24 @@ CSSRuleList::~CSSRuleList()
         rule->deref();
 }
 
+unsigned CSSRuleList::length() const
+{
+    return m_list ? m_list->length() : m_lstCSSRules.count();
+}
+
+CSSRule* CSSRuleList::item(unsigned index)
+{
+    if (m_list) {
+        StyleBase* rule = m_list->item(index);
+        ASSERT(!rule || rule->isRule());
+        return static_cast<CSSRule*>(rule);
+    }
+    return m_lstCSSRules.at(index);
+}
+
 void CSSRuleList::deleteRule(unsigned index)
 {
+    ASSERT(!m_list);
     CSSRule* rule = m_lstCSSRules.take(index);
     if (rule)
         rule->deref();
@@ -69,6 +87,7 @@ void CSSRuleList::append(CSSRule* rule)
 
 unsigned CSSRuleList::insertRule(CSSRule* rule, unsigned index)
 {
+    ASSERT(!m_list);
     if (rule && m_lstCSSRules.insert(index, rule)) {
         rule->ref();
         return index;

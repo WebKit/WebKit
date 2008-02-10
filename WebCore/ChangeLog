@@ -1,5 +1,21 @@
 2008-02-10  David Hyatt  <hyatt@apple.com>
 
+        Fix for bug 17082, cssRules should be live.
+
+        Reviewed by olliej
+
+        Added fast/css/live-cssrules.html
+
+        * css/CSSRuleList.cpp:
+        (WebCore::CSSRuleList::CSSRuleList):
+        (WebCore::CSSRuleList::length):
+        (WebCore::CSSRuleList::item):
+        (WebCore::CSSRuleList::deleteRule):
+        (WebCore::CSSRuleList::insertRule):
+        * css/CSSRuleList.h:
+
+2008-02-10  David Hyatt  <hyatt@apple.com>
+
         Fix for bug 17253.  <iframe> contents need to be reflected into the DOM as a single text node.
 
         Reviewed by olliej
