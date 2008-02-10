@@ -4107,7 +4107,7 @@ static NSString *createMacOSXVersionString()
     // Garbage collection won't correctly mark the global variable in that case <rdar://problem/5733674>.
     static NSString *osVersion;
     if (!osVersion)
-        version = createMacOSXVersionString();
+        osVersion = createMacOSXVersionString();
     NSString *language = [NSUserDefaults _webkit_preferredLanguageCode];
     if ([applicationName length])
         return [NSString stringWithFormat:@"Mozilla/5.0 (Macintosh; U; " PROCESSOR " Mac OS X %@; %@) AppleWebKit/%@ (KHTML, like Gecko) %@",
