@@ -34,7 +34,8 @@ namespace WebCore {
 using namespace HTMLNames;
 
 StyleSheetList::StyleSheetList(Document* doc)
-    : m_doc(doc)
+    : RefCounted<StyleSheetList>(0)
+    , m_doc(doc)
 {
 }
 

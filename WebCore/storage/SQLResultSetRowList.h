@@ -35,6 +35,8 @@ namespace WebCore {
 
 class SQLResultSetRowList : public RefCounted<SQLResultSetRowList> {
 public:
+    SQLResultSetRowList() : RefCounted<SQLResultSetRowList>(0) { }
+
     const Vector<String>& columnNames() const { return m_columns; }
     const Vector<SQLValue>& values() const { return m_result; }
 

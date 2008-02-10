@@ -46,7 +46,7 @@ class Attr : public ContainerNode {
     friend class NamedAttrMap;
 
 public:
-    Attr(Element*, Document*, Attribute*);
+    Attr(Element*, Document*, PassRefPtr<Attribute>);
     ~Attr();
 
     // Call this after calling the constructor so the

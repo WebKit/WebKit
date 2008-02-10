@@ -35,7 +35,8 @@
 namespace WebCore {
 
 CSSSegmentedFontFace::CSSSegmentedFontFace(CSSFontSelector* fontSelector)
-    : m_fontSelector(fontSelector)
+    : RefCounted<CSSSegmentedFontFace>(0)
+    , m_fontSelector(fontSelector)
 {
 }
 

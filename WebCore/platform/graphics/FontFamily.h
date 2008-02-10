@@ -34,7 +34,7 @@ namespace WebCore {
 
 class FontFamily : public RefCounted<FontFamily> {
 public:
-    FontFamily() { }
+    FontFamily() : RefCounted<FontFamily>(0) { }
     
     FontFamily(const FontFamily&);    
     FontFamily& operator=(const FontFamily&);

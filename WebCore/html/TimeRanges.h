@@ -34,7 +34,7 @@ namespace WebCore {
 
 class TimeRanges : public RefCounted<TimeRanges> {
 public:
-    TimeRanges() { }
+    TimeRanges() : RefCounted<TimeRanges>(0) { }
     TimeRanges(float start, float end);
     
     unsigned length() const { return m_ranges.size(); }

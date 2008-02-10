@@ -54,7 +54,8 @@ PassRefPtr<SharedBuffer> ResourceLoader::resourceData()
 }
 
 ResourceLoader::ResourceLoader(Frame* frame, bool sendResourceLoadCallbacks, bool shouldContentSniff)
-    : m_reachedTerminalState(false)
+    : RefCounted<ResourceLoader>(0)
+    , m_reachedTerminalState(false)
     , m_cancelled(false)
     , m_calledDidFinishLoad(false)
     , m_sendResourceLoadCallbacks(sendResourceLoadCallbacks)

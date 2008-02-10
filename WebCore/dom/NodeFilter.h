@@ -65,7 +65,7 @@ namespace WebCore {
             SHOW_NOTATION                  = 0x00000800
         };
 
-        NodeFilter(PassRefPtr<NodeFilterCondition> condition) : m_condition(condition) { }
+        NodeFilter(PassRefPtr<NodeFilterCondition> condition) : RefCounted<NodeFilter>(0), m_condition(condition) { }
         short acceptNode(Node*, KJS::JSValue*& exception) const;
         void mark() { m_condition->mark(); };
 

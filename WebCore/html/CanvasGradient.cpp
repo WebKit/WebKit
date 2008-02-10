@@ -40,24 +40,18 @@
 namespace WebCore {
 
 CanvasGradient::CanvasGradient(const FloatPoint& p0, const FloatPoint& p1)
-    : m_radial(false), m_p0(p0), m_p1(p1), m_stopsSorted(false), m_lastStop(0)
-#if PLATFORM(CG)
-    , m_shading(0)
-#elif PLATFORM(QT)
-    , m_shading(0)
-#elif PLATFORM(CAIRO)
+    : RefCounted<CanvasGradient>(0)
+    , m_radial(false), m_p0(p0), m_p1(p1), m_stopsSorted(false), m_lastStop(0)
+#if PLATFORM(CG) || PLATFORM(QT) || PLATFORM(CAIRO)
     , m_shading(0)
 #endif
 {
 }
 
 CanvasGradient::CanvasGradient(const FloatPoint& p0, float r0, const FloatPoint& p1, float r1)
-    : m_radial(true), m_p0(p0), m_p1(p1), m_r0(r0), m_r1(r1), m_stopsSorted(false), m_lastStop(0)
-#if PLATFORM(CG)
-    , m_shading(0)
-#elif PLATFORM(QT)
-    , m_shading(0)
-#elif PLATFORM(CAIRO)
+    : RefCounted<CanvasGradient>(0)
+    , m_radial(true), m_p0(p0), m_p1(p1), m_r0(r0), m_r1(r1), m_stopsSorted(false), m_lastStop(0)
+#if PLATFORM(CG) || PLATFORM(QT) || PLATFORM(CAIRO)
     , m_shading(0)
 #endif
 {

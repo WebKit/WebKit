@@ -36,10 +36,11 @@
 namespace WebCore {
 
 FontFallbackList::FontFallbackList()
-: m_familyIndex(0)
-, m_pitch(UnknownPitch)
-, m_loadingCustomFonts(false)
-, m_fontSelector(0)
+    : RefCounted<FontFallbackList>(0)
+    , m_familyIndex(0)
+    , m_pitch(UnknownPitch)
+    , m_loadingCustomFonts(false)
+    , m_fontSelector(0)
 {
 }
 

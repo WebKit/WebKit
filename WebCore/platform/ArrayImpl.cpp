@@ -33,10 +33,11 @@
 
 namespace WebCore {
 
-ArrayImpl::ArrayPrivate::ArrayPrivate(size_t pItemSize, size_t pNumItems) : 
-    numItems(pNumItems), 
-    itemSize(pItemSize), 
-    data(pNumItems > 0 ? static_cast<char *>(fastMalloc(itemSize * numItems)) : NULL)
+ArrayImpl::ArrayPrivate::ArrayPrivate(size_t pItemSize, size_t pNumItems)
+    : RefCounted<ArrayPrivate>(0)
+    , numItems(pNumItems)
+    , itemSize(pItemSize)
+    , data(pNumItems > 0 ? static_cast<char *>(fastMalloc(itemSize * numItems)) : NULL)
 {
 }
 

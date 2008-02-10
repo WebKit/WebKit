@@ -30,7 +30,8 @@
 namespace WebCore {
 
 RegisteredEventListener::RegisteredEventListener(const AtomicString& eventType, PassRefPtr<EventListener> listener, bool useCapture)
-    : m_eventType(eventType)
+    : RefCounted<RegisteredEventListener>(0)
+    , m_eventType(eventType)
     , m_listener(listener)
     , m_useCapture(useCapture)
     , m_removed(false)

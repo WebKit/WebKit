@@ -29,7 +29,7 @@ namespace WebCore {
 
     class Plugin : public RefCounted<Plugin> {
     public:
-        Plugin(Widget* view) : m_view(view) { }
+        Plugin(Widget* view) : RefCounted<Plugin>(0), m_view(view) { }
         Widget* view() const { return m_view; }
         
     private:

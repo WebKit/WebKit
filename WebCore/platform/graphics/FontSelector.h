@@ -36,8 +36,9 @@ class FontDescription;
 
 class FontSelector : public RefCounted<FontSelector> {
 public:
-    virtual ~FontSelector() {};
-    virtual FontData* getFontData(const FontDescription& fontDescription, const AtomicString& familyName) = 0;
+    FontSelector() : RefCounted<FontSelector>(0) { }
+    virtual ~FontSelector() { }
+    virtual FontData* getFontData(const FontDescription&, const AtomicString& familyName) = 0;
 };
 
 } // namespace WebCore

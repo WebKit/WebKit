@@ -59,7 +59,7 @@ inline bool operator!=(const FormDataElement& a, const FormDataElement& b)
  
 class FormData : public RefCounted<FormData> {
 public:
-    FormData() { } 
+    FormData() : RefCounted<FormData>(0) { } 
     FormData(const void* data, size_t);
     FormData(const CString&);
     PassRefPtr<FormData> copy() const;

@@ -35,7 +35,8 @@
 namespace WebCore {
 
 Clipboard::Clipboard(ClipboardAccessPolicy policy, bool isForDragging) 
-    : m_policy(policy) 
+    : RefCounted<Clipboard>(0)
+    , m_policy(policy) 
     , m_dragStarted(false)
     , m_forDragging(isForDragging)
     , m_dragImage(0)

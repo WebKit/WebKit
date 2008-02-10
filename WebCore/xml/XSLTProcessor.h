@@ -38,9 +38,10 @@ class Node;
 class Document;
 class DocumentFragment;
 
-class XSLTProcessor : public RefCounted<XSLTProcessor>
-{
+class XSLTProcessor : public RefCounted<XSLTProcessor> {
 public:
+    XSLTProcessor() : RefCounted<XSLTProcessor>(0) { }
+
     void setXSLStylesheet(XSLStyleSheet* styleSheet) { m_stylesheet = styleSheet; }
     bool transformToString(Node* source, String& resultMIMEType, String& resultString, String& resultEncoding);
     RefPtr<Document> createDocumentFromSource(const String& source, const String& sourceEncoding, const String& sourceMIMEType, Node* sourceNode, Frame* frame);

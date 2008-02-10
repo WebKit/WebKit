@@ -41,6 +41,7 @@ namespace WebCore {
 SVGRenderStyle *SVGRenderStyle::s_defaultStyle = 0;
 
 SVGRenderStyle::SVGRenderStyle()
+    : RefCounted<SVGRenderStyle>(0)
 {
     if (!s_defaultStyle)    
         s_defaultStyle = new SVGRenderStyle(true);
@@ -58,6 +59,7 @@ SVGRenderStyle::SVGRenderStyle()
 }
 
 SVGRenderStyle::SVGRenderStyle(bool)
+    : RefCounted<SVGRenderStyle>(0)
 {
     setBitDefaults();
 
@@ -71,7 +73,8 @@ SVGRenderStyle::SVGRenderStyle(bool)
     markers.init();
 }
 
-SVGRenderStyle::SVGRenderStyle(const SVGRenderStyle &other) : RefCounted<SVGRenderStyle>()
+SVGRenderStyle::SVGRenderStyle(const SVGRenderStyle& other)
+    : RefCounted<SVGRenderStyle>(0)
 {
     fill = other.fill;
     stroke = other.stroke;

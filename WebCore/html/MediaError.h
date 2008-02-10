@@ -36,7 +36,8 @@ class MediaError : public RefCounted<MediaError> {
 public:
     enum Code { MEDIA_ERR_ABORTED = 1, MEDIA_ERR_NETWORK, MEDIA_ERR_DECODE };
 
-    MediaError(Code code) { m_code = code; }
+    MediaError(Code code) : RefCounted<MediaError>(0), m_code(code) { }
+
     Code code() const { return m_code; }
 
 private:

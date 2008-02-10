@@ -37,7 +37,7 @@ namespace WebCore {
     
     class CStringBuffer : public RefCounted<CStringBuffer> {
     public:
-        CStringBuffer(unsigned length) : m_vector(length) { }
+        CStringBuffer(unsigned length) : RefCounted<CStringBuffer>(0), m_vector(length) { }
 
         char* data() { return m_vector.data(); }
         unsigned length() const { return m_vector.size(); }

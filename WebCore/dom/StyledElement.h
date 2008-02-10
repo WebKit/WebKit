@@ -68,8 +68,8 @@ public:
     virtual void updateStyleAttributeIfNeeded() const;
     
     virtual const ClassNames* getClassNames() const;
-    virtual void attributeChanged(Attribute* attr, bool preserveDecls = false);
-    virtual void parseMappedAttribute(MappedAttribute* attr);
+    virtual void attributeChanged(Attribute*, bool preserveDecls = false);
+    virtual void parseMappedAttribute(MappedAttribute*);
     virtual bool mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const;
     virtual void createAttributeMap() const;
     virtual Attribute* createAttribute(const QualifiedName& name, StringImpl* value);

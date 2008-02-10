@@ -35,9 +35,9 @@ namespace WebCore {
 // it (eliminating some extra -webkit- internal properties).
 class Pair : public RefCounted<Pair> {
 public:
-    Pair() : m_first(0), m_second(0) { }
+    Pair() : RefCounted<Pair>(0), m_first(0), m_second(0) { }
     Pair(PassRefPtr<CSSPrimitiveValue> first, PassRefPtr<CSSPrimitiveValue> second)
-        : m_first(first), m_second(second) { }
+        : RefCounted<Pair>(0), m_first(first), m_second(second) { }
     virtual ~Pair() { }
 
     CSSPrimitiveValue* first() const { return m_first.get(); }

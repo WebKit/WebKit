@@ -30,7 +30,7 @@
 
 namespace WebCore {
 
-Attr::Attr(Element* element, Document* docPtr, Attribute* a)
+Attr::Attr(Element* element, Document* docPtr, PassRefPtr<Attribute> a)
     : ContainerNode(docPtr),
       m_element(element),
       m_attribute(a),

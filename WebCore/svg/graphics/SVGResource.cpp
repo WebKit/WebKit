@@ -35,6 +35,7 @@
 namespace WebCore {
 
 SVGResource::SVGResource()
+    : RefCounted<SVGResource>(0)
 {
 }
 

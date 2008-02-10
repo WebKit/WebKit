@@ -48,11 +48,11 @@ class Attribute : public RefCounted<Attribute> {
 public:
     // null value is forbidden !
     Attribute(const QualifiedName& name, const AtomicString& value)
-        : m_name(name), m_value(value), m_impl(0)
+        : RefCounted<Attribute>(0), m_name(name), m_value(value), m_impl(0)
     {}
     
     Attribute(const AtomicString& name, const AtomicString& value)
-        : m_name(nullAtom, name, nullAtom), m_value(value), m_impl(0)
+        : RefCounted<Attribute>(0), m_name(nullAtom, name, nullAtom), m_value(value), m_impl(0)
     {}
 
     virtual ~Attribute() { }
@@ -70,7 +70,7 @@ public:
     bool isNull() const { return m_value.isNull(); }
     bool isEmpty() const { return m_value.isEmpty(); }
     
-    virtual Attribute* clone(bool preserveDecl=true) const;
+    virtual Attribute* clone(bool preserveDecl = true) const;
 
     // An extension to get the style information for presentational attributes.
     virtual CSSStyleDeclaration* style() const { return 0; }

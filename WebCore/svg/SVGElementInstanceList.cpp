@@ -27,7 +27,8 @@
 namespace WebCore {
 
 SVGElementInstanceList::SVGElementInstanceList(PassRefPtr<SVGElementInstance> rootInstance)
-    : m_rootInstance(rootInstance)
+    : RefCounted<SVGElementInstanceList>(0)
+    , m_rootInstance(rootInstance)
 {
 }
 

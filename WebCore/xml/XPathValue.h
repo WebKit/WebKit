@@ -38,9 +38,9 @@ namespace WebCore {
     
         class ValueData : public RefCounted<ValueData> {
         public:
-            ValueData() {}
-            ValueData(const NodeSet& nodeSet) : m_nodeSet(nodeSet) {}
-            ValueData(const String& string) : m_string(string) {}
+            ValueData() : RefCounted<ValueData>(0) { }
+            ValueData(const NodeSet& nodeSet) : RefCounted<ValueData>(0), m_nodeSet(nodeSet) { }
+            ValueData(const String& string) : RefCounted<ValueData>(0), m_string(string) { }
 
             NodeSet m_nodeSet;
             String m_string;

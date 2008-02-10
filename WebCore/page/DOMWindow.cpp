@@ -99,7 +99,8 @@ void DOMWindow::adjustWindowRect(const FloatRect& screen, FloatRect& window, con
 }
 
 DOMWindow::DOMWindow(Frame* frame)
-    : m_frame(frame)
+    : RefCounted<DOMWindow>(0)
+    , m_frame(frame)
 {
 }
 

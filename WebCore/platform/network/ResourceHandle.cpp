@@ -36,7 +36,8 @@ namespace WebCore {
 
 ResourceHandle::ResourceHandle(const ResourceRequest& request, ResourceHandleClient* client, bool defersLoading,
          bool shouldContentSniff, bool mightDownloadFromHandle)
-    : d(new ResourceHandleInternal(this, request, client, defersLoading, shouldContentSniff, mightDownloadFromHandle))
+    : RefCounted<ResourceHandle>(0)
+    , d(new ResourceHandleInternal(this, request, client, defersLoading, shouldContentSniff, mightDownloadFromHandle))
 {
 }
 

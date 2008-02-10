@@ -57,7 +57,8 @@ static RangeCounter rangeCounter;
 #endif
 
 Range::Range(Document* ownerDocument)
-    : m_ownerDocument(ownerDocument)
+    : RefCounted<Range>(0)
+    , m_ownerDocument(ownerDocument)
     , m_startContainer(ownerDocument)
     , m_startOffset(0)
     , m_endContainer(ownerDocument)
@@ -72,7 +73,8 @@ Range::Range(Document* ownerDocument)
 Range::Range(Document* ownerDocument,
               Node* startContainer, int startOffset,
               Node* endContainer, int endOffset)
-    : m_ownerDocument(ownerDocument)
+    : RefCounted<Range>(0)
+    , m_ownerDocument(ownerDocument)
     , m_startContainer(ownerDocument)
     , m_startOffset(0)
     , m_endContainer(ownerDocument)
@@ -92,7 +94,8 @@ Range::Range(Document* ownerDocument,
 }
 
 Range::Range(Document* ownerDocument, const Position& start, const Position& end)
-    : m_ownerDocument(ownerDocument)
+    : RefCounted<Range>(0)
+    , m_ownerDocument(ownerDocument)
     , m_startContainer(ownerDocument)
     , m_startOffset(0)
     , m_endContainer(ownerDocument)

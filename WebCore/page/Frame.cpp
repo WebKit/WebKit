@@ -119,7 +119,8 @@ static inline Frame* parentFromOwnerElement(HTMLFrameOwnerElement* ownerElement)
 }
 
 Frame::Frame(Page* page, HTMLFrameOwnerElement* ownerElement, FrameLoaderClient* frameLoaderClient) 
-    : d(new FramePrivate(page, parentFromOwnerElement(ownerElement), this, ownerElement, frameLoaderClient))
+    : RefCounted<Frame>(0)
+    , d(new FramePrivate(page, parentFromOwnerElement(ownerElement), this, ownerElement, frameLoaderClient))
 {
     AtomicString::init();
     EventNames::init();
@@ -137,8 +138,8 @@ Frame::Frame(Page* page, HTMLFrameOwnerElement* ownerElement, FrameLoaderClient*
     if (!ownerElement)
         page->setMainFrame(this);
     else {
-        // FIXME: Frames were originally created with a refcount of 1.
-        // Leave this ref call here until we can straighten that out.
+        // FIXME: It's bad to have a ref() here but not in the !ownerElement case.
+        // We need to straighten this out.
         ref();
         page->incrementFrameCount();
         ownerElement->m_contentFrame = this;

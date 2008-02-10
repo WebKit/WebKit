@@ -37,6 +37,7 @@ namespace WebCore {
 
     class NodeFilterCondition : public RefCounted<NodeFilterCondition> {
     public:
+        NodeFilterCondition() : RefCounted<NodeFilterCondition>(0) { }
         virtual ~NodeFilterCondition() { }
         virtual short acceptNode(Node*, KJS::JSValue*& exception) const;
         virtual void mark() { }

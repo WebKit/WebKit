@@ -29,11 +29,13 @@
 namespace WebCore {
 
 Icon::Icon()
+    : RefCounted<Icon>(0)
 {
 }
 
 Icon::Icon(NSImage *image)
-    : m_nsImage(image)
+    : RefCounted<Icon>(0)
+    , m_nsImage(image)
 {
     // Need this because WebCore uses AppKit's flipped coordinate system exclusively.
     [image setFlipped:YES];

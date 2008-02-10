@@ -1,3 +1,227 @@
+2008-02-10  Darin Adler  <darin@apple.com>
+
+        Reviewed by Eric.
+
+        - http://bugs.webkit.org/show_bug.cgi?id=17256
+          Make clients of RefCounted explicitly set the count to 0.
+
+        * bindings/js/JSSVGPODTypeWrapper.h:
+        (WebCore::JSSVGPODTypeWrapper::JSSVGPODTypeWrapper):
+        * css/CSSFontFace.h:
+        (WebCore::CSSFontFace::CSSFontFace):
+        * css/CSSRuleList.cpp:
+        (WebCore::CSSRuleList::CSSRuleList):
+        * css/CSSSegmentedFontFace.cpp:
+        (WebCore::CSSSegmentedFontFace::CSSSegmentedFontFace):
+        * css/Counter.h:
+        (WebCore::Counter::Counter):
+        * css/Pair.h:
+        (WebCore::Pair::Pair):
+        * css/Rect.h:
+        (WebCore::Rect::Rect):
+        * css/StyleBase.h:
+        (WebCore::StyleBase::StyleBase):
+        * css/StyleSheetList.cpp:
+        (WebCore::StyleSheetList::StyleSheetList):
+        * dom/Attr.cpp:
+        (WebCore::Attr::Attr):
+        * dom/Attr.h:
+        * dom/Attribute.h:
+        (WebCore::Attribute::Attribute):
+        * dom/Clipboard.cpp:
+        (WebCore::Clipboard::Clipboard):
+        * dom/DOMImplementation.h:
+        (WebCore::DOMImplementation::DOMImplementation):
+        * dom/Event.cpp:
+        (WebCore::Event::Event):
+        * dom/EventListener.h:
+        (WebCore::EventListener::EventListener):
+        * dom/ExceptionBase.cpp:
+        (WebCore::ExceptionBase::ExceptionBase):
+        * dom/NamedAttrMap.h:
+        (WebCore::NamedAttrMap::insertAttribute):
+        * dom/NamedNodeMap.h:
+        (WebCore::NamedNodeMap::NamedNodeMap):
+        * dom/NodeFilter.h:
+        (WebCore::NodeFilter::NodeFilter):
+        * dom/NodeFilterCondition.h:
+        (WebCore::NodeFilterCondition::NodeFilterCondition):
+        * dom/NodeList.h:
+        (WebCore::NodeList::NodeList):
+        * dom/QualifiedName.h:
+        (WebCore::QualifiedName::QualifiedNameImpl::QualifiedNameImpl):
+        (WebCore::QualifiedName::ref):
+        * dom/Range.cpp:
+        (WebCore::Range::Range):
+        * dom/RegisteredEventListener.cpp:
+        (WebCore::RegisteredEventListener::RegisteredEventListener):
+        * dom/StyledElement.h:
+        * dom/Traversal.cpp:
+        (WebCore::Traversal::Traversal):
+        * editing/EditCommand.cpp:
+        (WebCore::EditCommand::EditCommand):
+        * history/BackForwardList.cpp:
+        (WebCore::BackForwardList::BackForwardList):
+        * history/CachedPage.cpp:
+        (WebCore::CachedPage::CachedPage):
+        * history/HistoryItem.cpp:
+        (WebCore::HistoryItem::HistoryItem):
+        * html/CanvasGradient.cpp:
+        (WebCore::CanvasGradient::CanvasGradient):
+        * html/CanvasPattern.cpp:
+        (WebCore::CanvasPattern::CanvasPattern):
+        * html/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::CanvasRenderingContext2D):
+        * html/CanvasStyle.cpp:
+        (WebCore::CanvasStyle::CanvasStyle):
+        * html/HTMLCollection.cpp:
+        (WebCore::HTMLCollection::HTMLCollection):
+        * html/MediaError.h:
+        (WebCore::MediaError::MediaError):
+        * html/TimeRanges.cpp:
+        (TimeRanges::TimeRanges):
+        * html/TimeRanges.h:
+        (WebCore::TimeRanges::TimeRanges):
+        * html/VoidCallback.h:
+        (WebCore::VoidCallback::VoidCallback):
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::DocumentLoader):
+        * loader/FormState.cpp:
+        (WebCore::FormState::FormState):
+        * loader/ResourceLoader.cpp:
+        (WebCore::ResourceLoader::ResourceLoader):
+        * loader/TextResourceDecoder.cpp:
+        (WebCore::TextResourceDecoder::TextResourceDecoder):
+        * loader/icon/IconRecord.cpp:
+        (WebCore::IconRecord::IconRecord):
+        * page/BarInfo.cpp:
+        (WebCore::BarInfo::BarInfo):
+        * page/Console.cpp:
+        (WebCore::Console::Console):
+        * page/DOMSelection.cpp:
+        (WebCore::DOMSelection::DOMSelection):
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::DOMWindow):
+        * page/Frame.cpp:
+        (WebCore::Frame::Frame):
+        * page/History.cpp:
+        (WebCore::History::History):
+        * page/InspectorController.cpp:
+        (WebCore::InspectorResource::InspectorResource):
+        (WebCore::InspectorDatabaseResource::InspectorDatabaseResource):
+        * page/Plugin.h:
+        (WebCore::Plugin::Plugin):
+        * page/Screen.cpp:
+        (WebCore::Screen::Screen):
+        * platform/ArrayImpl.cpp:
+        (WebCore::ArrayImpl::ArrayPrivate::ArrayPrivate):
+        * platform/DeprecatedValueListImpl.cpp:
+        (WebCore::DeprecatedValueListImpl::Private::Private):
+        * platform/ScrollBar.cpp:
+        (WebCore::Scrollbar::Scrollbar):
+        * platform/SharedBuffer.cpp:
+        (WebCore::SharedBuffer::SharedBuffer):
+        * platform/graphics/FontFallbackList.cpp:
+        (WebCore::FontFallbackList::FontFallbackList):
+        * platform/graphics/FontFamily.cpp:
+        (WebCore::FontFamily::FontFamily):
+        * platform/graphics/FontFamily.h:
+        (WebCore::FontFamily::FontFamily):
+        * platform/graphics/FontSelector.h:
+        (WebCore::FontSelector::FontSelector):
+        (WebCore::FontSelector::~FontSelector):
+        * platform/graphics/GlyphPageTreeNode.h:
+        (WebCore::GlyphPage::GlyphPage):
+        * platform/graphics/mac/IconMac.mm:
+        (WebCore::Icon::Icon):
+        * platform/mac/FileChooserMac.mm:
+        (WebCore::FileChooser::FileChooser):
+        * platform/mac/PopupMenuMac.mm:
+        (WebCore::PopupMenu::PopupMenu):
+        * platform/mac/SharedBufferMac.mm:
+        (WebCore::SharedBuffer::SharedBuffer):
+        * platform/network/FormData.cpp:
+        (WebCore::FormData::FormData):
+        * platform/network/FormData.h:
+        (WebCore::FormData::FormData):
+        * platform/network/ResourceHandle.cpp:
+        (WebCore::ResourceHandle::ResourceHandle):
+        * platform/text/CString.h:
+        (WebCore::CStringBuffer::CStringBuffer):
+        * platform/text/RegularExpression.cpp:
+        (WebCore::RegularExpression::Private::Private):
+        * rendering/RenderStyle.cpp:
+        (WebCore::StyleSurroundData::StyleSurroundData):
+        (WebCore::StyleBoxData::StyleBoxData):
+        (WebCore::StyleVisualData::StyleVisualData):
+        (WebCore::StyleBackgroundData::StyleBackgroundData):
+        (WebCore::StyleMarqueeData::StyleMarqueeData):
+        (WebCore::StyleFlexibleBoxData::StyleFlexibleBoxData):
+        (WebCore::StyleMultiColData::StyleMultiColData):
+        (WebCore::StyleTransformData::StyleTransformData):
+        (WebCore::StyleRareNonInheritedData::StyleRareNonInheritedData):
+        (WebCore::StyleRareInheritedData::StyleRareInheritedData):
+        (WebCore::StyleInheritedData::StyleInheritedData):
+        * rendering/RenderStyle.h:
+        (WebCore::TransformOperation::TransformOperation):
+        (WebCore::CursorList::CursorList):
+        * rendering/SVGCharacterLayoutInfo.h:
+        (WebCore::SVGCharOnPath::SVGCharOnPath):
+        * rendering/SVGRenderStyle.cpp:
+        (WebCore::SVGRenderStyle::SVGRenderStyle):
+        * rendering/SVGRenderStyle.h:
+        (WebCore::SVGRenderStyle::SVGRenderStyle):
+        * rendering/SVGRenderStyleDefs.cpp:
+        (StyleFillData::StyleFillData):
+        (StyleStrokeData::StyleStrokeData):
+        (StyleStopData::StyleStopData):
+        (StyleTextData::StyleTextData):
+        (StyleClipData::StyleClipData):
+        (StyleMaskData::StyleMaskData):
+        (StyleMarkerData::StyleMarkerData):
+        (StyleMiscData::StyleMiscData):
+        * storage/SQLResultSetRowList.h:
+        (WebCore::SQLResultSetRowList::SQLResultSetRowList):
+        * svg/SVGAngle.cpp:
+        (WebCore::SVGAngle::SVGAngle):
+        * svg/SVGAnimatedTemplate.h:
+        (WebCore::SVGAnimatedTemplate::SVGAnimatedTemplate):
+        * svg/SVGElementInstanceList.cpp:
+        (WebCore::SVGElementInstanceList::SVGElementInstanceList):
+        * svg/SVGList.h:
+        (WebCore::SVGList::SVGList):
+        (WebCore::SVGPODListItem::SVGPODListItem):
+        * svg/SVGPathSeg.h:
+        (WebCore::SVGPathSeg::SVGPathSeg):
+        * svg/SVGPreserveAspectRatio.cpp:
+        (WebCore::SVGPreserveAspectRatio::SVGPreserveAspectRatio):
+        * svg/SVGRenderingIntent.h:
+        (WebCore::SVGRenderingIntent::SVGRenderingIntent):
+        * svg/SVGUnitTypes.h:
+        (WebCore::SVGUnitTypes::SVGUnitTypes):
+        * svg/graphics/SVGPaintServerGradient.h:
+        (WebCore::SVGPaintServerGradient::SharedStopCache::SharedStopCache):
+        * svg/graphics/SVGResource.cpp:
+        (WebCore::SVGResource::SVGResource):
+        * xml/DOMParser.h:
+        (WebCore::DOMParser::DOMParser):
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::XMLHttpRequest):
+        * xml/XMLSerializer.h:
+        (WebCore::XMLSerializer::XMLSerializer):
+        * xml/XPathEvaluator.h:
+        (WebCore::XPathEvaluator::XPathEvaluator):
+        * xml/XPathExpression.h:
+        (WebCore::XPathExpression::XPathExpression):
+        * xml/XPathNSResolver.h:
+        (WebCore::XPathNSResolver::XPathNSResolver):
+        * xml/XPathResult.cpp:
+        (WebCore::XPathResult::XPathResult):
+        * xml/XPathValue.h:
+        (WebCore::XPath::ValueData::ValueData):
+        * xml/XSLTProcessor.h:
+        (WebCore::XSLTProcessor::XSLTProcessor):
+
 2008-02-09  Kevin Ollivier  <kevino@theolliviers.com>
 
         Reviewed by Eric Seidel.

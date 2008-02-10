@@ -95,7 +95,8 @@ PassRefPtr<SharedBuffer> SharedBuffer::wrapNSData(NSData *nsData)
 }
 
 SharedBuffer::SharedBuffer(NSData *nsData)
-    : m_nsData(nsData)
+    : RefCounted<SharedBuffer>(0)
+    , m_nsData(nsData)
 {
 }
 

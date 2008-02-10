@@ -52,6 +52,8 @@ namespace WebCore {
         PassRefPtr<XPathResult> evaluate(Node* contextNode, unsigned short type, XPathResult*, ExceptionCode&);
             
     private:
+        XPathExpression() : RefCounted<XPathExpression>(0) { }
+
         XPath::Expression* m_topExpression;
     };
 

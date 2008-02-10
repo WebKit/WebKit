@@ -36,9 +36,11 @@ namespace WebCore {
     class StyleBase : public RefCounted<StyleBase> {
     public:
         StyleBase(StyleBase* parent)
-            : m_parent(parent)
+            : RefCounted<StyleBase>(0)
+            , m_parent(parent)
             , m_strictParsing(!parent || parent->useStrictParsing())
-        { }
+        {
+        }
         virtual ~StyleBase() { }
 
         StyleBase* parent() const { return m_parent; }

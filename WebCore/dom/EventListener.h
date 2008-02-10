@@ -29,6 +29,7 @@ namespace WebCore {
 
     class EventListener : public RefCounted<EventListener> {
     public:
+        EventListener() : RefCounted<EventListener>(0) { }
         virtual ~EventListener() { }
         virtual void handleEvent(Event*, bool isWindowEvent = false) = 0;
         virtual bool isHTMLEventListener() const { return false; }

@@ -58,12 +58,14 @@ struct GlyphData {
 // to be overriding the parent's node, but provide no additional information.
 struct GlyphPage : public RefCounted<GlyphPage> {
     GlyphPage()
-        : m_owner(0)
+        : RefCounted<GlyphPage>(0)
+        , m_owner(0)
     {
     }
 
     GlyphPage(GlyphPageTreeNode* owner)
-        : m_owner(owner)
+        : RefCounted<GlyphPage>(0)
+        , m_owner(owner)
     {
     }
 

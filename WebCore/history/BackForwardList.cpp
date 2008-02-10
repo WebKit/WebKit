@@ -38,7 +38,8 @@ static const unsigned DefaultCapacity = 100;
 static const unsigned NoCurrentItemIndex = UINT_MAX;
 
 BackForwardList::BackForwardList(Page* page)
-    : m_page(page)
+    : RefCounted<BackForwardList>(0)
+    , m_page(page)
     , m_current(NoCurrentItemIndex)
     , m_capacity(DefaultCapacity)
     , m_closed(true)

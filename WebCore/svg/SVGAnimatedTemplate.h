@@ -103,11 +103,11 @@ namespace WebCore {
     };
     
     template<typename BareType>
-    class SVGAnimatedTemplate : public RefCounted<SVGAnimatedTemplate<BareType> >
-    {
+    class SVGAnimatedTemplate : public RefCounted<SVGAnimatedTemplate<BareType> > {
     public:
         SVGAnimatedTemplate(const QualifiedName& attributeName)
-            : m_associatedAttributeName(attributeName)
+            : RefCounted<SVGAnimatedTemplate<BareType> >(0)
+            , m_associatedAttributeName(attributeName)
         {
         }
 

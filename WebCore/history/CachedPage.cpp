@@ -77,7 +77,8 @@ PassRefPtr<CachedPage> CachedPage::create(Page* page)
 }
 
 CachedPage::CachedPage(Page* page)
-    : m_timeStamp(0)
+    : RefCounted<CachedPage>(0)
+    , m_timeStamp(0)
     , m_document(page->mainFrame()->document())
     , m_view(page->mainFrame()->view())
     , m_mousePressNode(page->mainFrame()->eventHandler()->mousePressNode())

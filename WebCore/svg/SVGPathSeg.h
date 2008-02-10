@@ -29,15 +29,13 @@
 
 #include <wtf/RefCounted.h>
 
-namespace WebCore
-{
+namespace WebCore {
     class SVGPathElement;
     class SVGStyledElement;
 
-    class SVGPathSeg : public RefCounted<SVGPathSeg>
-    {
+    class SVGPathSeg : public RefCounted<SVGPathSeg> {
     public:
-        SVGPathSeg() { }
+        SVGPathSeg() : RefCounted<SVGPathSeg>(0) { }
         virtual ~SVGPathSeg() { }
 
         enum SVGPathSegType {

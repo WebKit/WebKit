@@ -93,7 +93,8 @@ using namespace WebCore;
 namespace WebCore {
     
 FileChooser::FileChooser(FileChooserClient* client, const String& filename)
-    : m_client(client)
+    : RefCounted<FileChooser>(0)
+    , m_client(client)
     , m_filename(filename)
     , m_icon(chooseIcon(filename))
     , m_controller(AdoptNS, [[WebCoreOpenPanelController alloc] initWithFileChooser:this])

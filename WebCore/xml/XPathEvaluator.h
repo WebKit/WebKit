@@ -44,6 +44,7 @@ namespace WebCore {
 
     class XPathEvaluator : public RefCounted<XPathEvaluator> {
     public:
+        XPathEvaluator() : RefCounted<XPathEvaluator>(0) { }
         PassRefPtr<XPathExpression> createExpression(const String& expression, XPathNSResolver*, ExceptionCode&);
         PassRefPtr<XPathNSResolver> createNSResolver(Node* nodeResolver);
         PassRefPtr<XPathResult> evaluate(const String& expression, Node* contextNode,

@@ -49,7 +49,8 @@ namespace WebCore {
 
     public:
         SVGList(const QualifiedName& attributeName) 
-            : m_associatedAttributeName(attributeName)
+            : RefCounted<SVGList<Item> >(0)
+            , m_associatedAttributeName(attributeName)
         {
         }
 
@@ -141,8 +142,8 @@ namespace WebCore {
     template<typename Item>
     class SVGPODListItem : public RefCounted<SVGPODListItem<Item> > {
     public:
-        SVGPODListItem() : m_item() { }
-        SVGPODListItem(const Item& item) : m_item(item) { }
+        SVGPODListItem() : RefCounted<SVGPODListItem<Item> >(0), m_item() { }
+        SVGPODListItem(const Item& item) : RefCounted<SVGPODListItem<Item> >(0), m_item(item) { }
 
         operator Item&() { return m_item; }
         operator const Item&() const { return m_item; }

@@ -268,7 +268,8 @@ const TextEncoding& TextResourceDecoder::defaultEncoding(ContentType contentType
 }
 
 TextResourceDecoder::TextResourceDecoder(const String& mimeType, const TextEncoding& specifiedDefaultEncoding)
-    : m_contentType(determineContentType(mimeType))
+    : RefCounted<TextResourceDecoder>(0)
+    , m_contentType(determineContentType(mimeType))
     , m_decoder(defaultEncoding(m_contentType, specifiedDefaultEncoding))
     , m_source(DefaultEncoding)
     , m_checkedForBOM(false)

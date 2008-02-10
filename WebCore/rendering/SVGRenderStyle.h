@@ -184,7 +184,7 @@ namespace WebCore {
         static SVGRenderStyle *s_defaultStyle;
 
     private:
-        SVGRenderStyle(const SVGRenderStyle*) { }
+        SVGRenderStyle(const SVGRenderStyle*) : RefCounted<SVGRenderStyle>(0) { }
 
         void setBitDefaults()
         {

@@ -31,7 +31,7 @@
 namespace WebCore {
 
 SVGAngle::SVGAngle()
-    : RefCounted<SVGAngle>()
+    : RefCounted<SVGAngle>(0)
     , m_unitType(SVG_ANGLETYPE_UNKNOWN)
     , m_value(0)
     , m_valueInSpecifiedUnits(0)
