@@ -79,8 +79,9 @@ static RetainPtr<CGContextRef> getDifferenceBitmap(CGImageRef testBitmap, CGImag
         return 0;
 
     RetainPtr<CGColorSpaceRef> colorSpace(AdoptCF, CGColorSpaceCreateDeviceRGB());
-    unsigned char* data = new unsigned char[CGImageGetHeight(testBitmap) * CGImageGetBytesPerRow(testBitmap)];
-    RetainPtr<CGContextRef> context(AdoptCF, CGBitmapContextCreate(data, CGImageGetWidth(testBitmap), CGImageGetHeight(testBitmap),
+    static CFMutableDataRef data = CFDataCreateMutable(kCFAllocatorDefault, 0);
+    CFDataSetLength(data, CGImageGetHeight(testBitmap) * CGImageGetBytesPerRow(testBitmap));
+    RetainPtr<CGContextRef> context(AdoptCF, CGBitmapContextCreate(CFDataGetMutableBytePtr(data), CGImageGetWidth(testBitmap), CGImageGetHeight(testBitmap),
         CGImageGetBitsPerComponent(testBitmap), CGImageGetBytesPerRow(testBitmap), colorSpace.get(), kCGBitmapByteOrder32Little | kCGImageAlphaPremultipliedFirst));
 
     CGContextSetBlendMode(context.get(), kCGBlendModeNormal);

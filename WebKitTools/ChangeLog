@@ -1,3 +1,13 @@
+2008-02-10  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        - fix a memory leak
+
+        * DumpRenderTree/cg/ImageDiffCG.cpp:
+        (getDifferenceBitmap): Use a static CFMutableData instead of allocating
+        and leaking the buffer each time.
+
 2008-02-07  Adam Roben  <aroben@apple.com>
 
         Fix error in bisect-builds when responding "broken" for the first
