@@ -1,3 +1,22 @@
+2008-02-10  Darin Adler  <darin@apple.com>
+
+        - try to fix Win, Qt, GTK, and WX builds
+
+        * platform/Cursor.h:
+        (WebCore::SharedCursor::SharedCursor): Added explicit RefCounted constructor.
+        * platform/graphics/win/IconWin.cpp:
+        (WebCore::Icon::Icon): Ditto.
+        * platform/win/FileChooserWin.cpp:
+        (WebCore::FileChooser::FileChooser): Ditto.
+        * platform/win/PopupMenuWin.cpp:
+        (WebCore::PopupMenu::PopupMenu): Ditto.
+        * platform/wx/TemporaryLinkStubs.cpp:
+        (FileChooser::FileChooser): Ditto.
+        (PopupMenu::PopupMenu): Ditto.
+        (Icon::Icon): Ditto.
+        * plugins/PluginStream.cpp:
+        (WebCore::PluginStream::PluginStream): Ditto.
+
 2008-02-10  David Hyatt  <hyatt@apple.com>
 
         Fix for bug 17082, cssRules should be live.

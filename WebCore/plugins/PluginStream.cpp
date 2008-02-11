@@ -52,7 +52,8 @@ static StreamMap& streams()
 }
 
 PluginStream::PluginStream(PluginStreamClient* client, Frame* frame, const ResourceRequest& resourceRequest, bool sendNotification, void* notifyData, const NPPluginFuncs* pluginFuncs, NPP instance, const PluginQuirkSet& quirks)
-    : m_resourceRequest(resourceRequest)
+    : RefCounted<PluginStream>(0)
+    , m_resourceRequest(resourceRequest)
     , m_client(client)
     , m_frame(frame)
     , m_notifyData(notifyData)

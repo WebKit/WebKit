@@ -151,13 +151,13 @@ void PlatformScrollbar::updateThumbPosition() { notImplemented(); }
 void PlatformScrollbar::updateThumbProportion() { notImplemented(); }
 void PlatformScrollbar::setRect(const IntRect&) { notImplemented(); }
 
-FileChooser::FileChooser(FileChooserClient*, const String& initialFilename) { notImplemented(); }
+FileChooser::FileChooser(FileChooserClient*, const String& initialFilename) : RefCounted<FileChooser>(0) { notImplemented(); }
 //PassRefPtr<FileChooser> FileChooser::create(FileChooserClient*, const String& initialFilename) { notImplemented(); return PassRefPtr<FileChooser>(); }
 FileChooser::~FileChooser() { notImplemented(); }
 void FileChooser::openFileChooser(Document*) { notImplemented(); }
 String FileChooser::basenameForWidth(const Font&, int width) const { notImplemented(); return String(); }
 
-PopupMenu::PopupMenu(PopupMenuClient*) { notImplemented(); }
+PopupMenu::PopupMenu(PopupMenuClient*) : RefCounted<PopupMenu>(0) { notImplemented(); }
 
 PopupMenu::~PopupMenu() { notImplemented(); }
 void PopupMenu::show(const IntRect&, FrameView*, int index) { notImplemented(); }
@@ -165,7 +165,7 @@ void PopupMenu::hide() { notImplemented(); }
 void PopupMenu::updateFromElement() { notImplemented(); }
 bool PopupMenu::itemWritingDirectionIsNatural() { notImplemented(); return false; }
 
-Icon::Icon() { notImplemented(); }
+Icon::Icon() : RefCounted<Icon>(0) { notImplemented(); }
 Icon::~Icon() { notImplemented(); }
 PassRefPtr<Icon> Icon::newIconForFile(const String& filename) { notImplemented(); return PassRefPtr<Icon>(new Icon()); }
 void Icon::paint(GraphicsContext*, const IntRect&) { notImplemented(); }
