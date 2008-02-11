@@ -26,6 +26,7 @@
 
 #include "AXObjectCache.h"
 #include "CDATASection.h"
+#include "CachedCSSStyleSheet.h"
 #include "CSSHelper.h"
 #include "CSSStyleSelector.h"
 #include "CSSStyleSheet.h"
@@ -1652,10 +1653,10 @@ void Document::setBaseURL(const DeprecatedString& baseURL)
         m_elemSheet->setHref(m_baseURL);
 }
 
-void Document::setCSSStyleSheet(const String &url, const String& charset, const String &sheet)
+void Document::setCSSStyleSheet(const String &url, const String& charset, const CachedCSSStyleSheet* sheet)
 {
     m_sheet = new CSSStyleSheet(this, url, charset);
-    m_sheet->parseString(sheet);
+    m_sheet->parseString(sheet->sheetText());
 
     updateStyleSelector();
 }

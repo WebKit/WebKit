@@ -57,7 +57,7 @@ public:
     String localHref() const { return m_localHref; }
     StyleSheet* sheet() const { return m_sheet.get(); }
     bool checkStyleSheet();
-    virtual void setCSSStyleSheet(const String& url, const String& charset, const String& sheet);
+    virtual void setCSSStyleSheet(const String& url, const String& charset, const CachedCSSStyleSheet*);
 #if ENABLE(XSLT)
     virtual void setXSLStyleSheet(const String& url, const String& sheet);
 #endif

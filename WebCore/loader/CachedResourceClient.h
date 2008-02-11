@@ -35,6 +35,7 @@ namespace XBL {
 
 namespace WebCore {
 
+    class CachedCSSStyleSheet;
     class CachedFont;
     class CachedResource;
     class CachedImage;
@@ -64,7 +65,7 @@ namespace WebCore {
         // e.g., in the b/f cache or in a background tab).
         virtual bool willRenderImage(CachedImage*) { return false; }
 
-        virtual void setCSSStyleSheet(const String& /*URL*/, const String& /*charset*/, const String& /*sheet*/) { }
+        virtual void setCSSStyleSheet(const String& /*URL*/, const String& /*charset*/, const CachedCSSStyleSheet*) { }
         virtual void setXSLStyleSheet(const String& /*URL*/, const String& /*sheet*/) { }
 
         virtual void fontLoaded(CachedFont*) {};

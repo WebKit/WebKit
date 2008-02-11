@@ -54,9 +54,9 @@ UserStyleSheetLoader::~UserStyleSheetLoader()
     }
 }
 
-void UserStyleSheetLoader::setCSSStyleSheet(const String& /*URL*/, const String& /*charset*/, const String& sheet)
+void UserStyleSheetLoader::setCSSStyleSheet(const String& /*URL*/, const String& /*charset*/, const CachedCSSStyleSheet* sheet)
 {
     m_document->removePendingSheet();
     if (Frame* frame = m_document->frame())
-        frame->setUserStyleSheet(sheet);
+        frame->setUserStyleSheet(sheet->sheetText());
 }

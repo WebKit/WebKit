@@ -197,13 +197,13 @@ bool ProcessingInstruction::sheetLoaded()
     return false;
 }
 
-void ProcessingInstruction::setCSSStyleSheet(const String& url, const String& charset, const String& sheet)
+void ProcessingInstruction::setCSSStyleSheet(const String& url, const String& charset, const CachedCSSStyleSheet* sheet)
 {
 #if ENABLE(XSLT)
     ASSERT(!m_isXSL);
 #endif
     m_sheet = new CSSStyleSheet(this, url, charset);
-    parseStyleSheet(sheet);
+    parseStyleSheet(sheet->sheetText());
 }
 
 #if ENABLE(XSLT)

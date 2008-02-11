@@ -53,7 +53,7 @@ public:
     bool isLoading() const;
 
     // from CachedResourceClient
-    virtual void setCSSStyleSheet(const String& url, const String& charset, const String& sheet);
+    virtual void setCSSStyleSheet(const String& url, const String& charset, const CachedCSSStyleSheet*);
 
     virtual void insertedIntoParent();
 

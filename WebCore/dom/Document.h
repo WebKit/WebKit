@@ -52,6 +52,7 @@ namespace WebCore {
     class Attr;
     class Attribute;
     class CDATASection;
+    class CachedCSSStyleSheet;
     class CSSStyleDeclaration;
     class CSSStyleSelector;
     class CSSStyleSheet;
@@ -383,7 +384,7 @@ public:
     String completeURL(const String&);
 
     // from cachedObjectClient
-    virtual void setCSSStyleSheet(const String& url, const String& charset, const String& sheetStr);
+    virtual void setCSSStyleSheet(const String& url, const String& charset, const CachedCSSStyleSheet*);
 
 #if FRAME_LOADS_USER_STYLESHEET
     void setUserStyleSheet(const String& sheet);

@@ -217,10 +217,11 @@ void HTMLLinkElement::removedFromDocument()
     process();
 }
 
-void HTMLLinkElement::setCSSStyleSheet(const String& url, const String& charset, const String& sheetStr)
+void HTMLLinkElement::setCSSStyleSheet(const String& url, const String& charset, const CachedCSSStyleSheet* sheet)
 {
+    bool strict = !document()->inCompatMode();
     m_sheet = new CSSStyleSheet(this, url, charset);
-    m_sheet->parseString(sheetStr, !document()->inCompatMode());
+    m_sheet->parseString(sheet->sheetText(strict), strict);
     m_sheet->setTitle(title());
 
     RefPtr<MediaList> media = new MediaList((CSSStyleSheet*)0, m_media, true);

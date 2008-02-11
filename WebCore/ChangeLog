@@ -1,3 +1,38 @@
+2008-02-11  David Hyatt  <hyatt@apple.com>
+
+        Fix for bug 17298, Acid3 text should be black and not red.  Make sure stylesheets with the wrong MIME type
+        are not accepted in strict mode.
+
+        Reviewed by darin
+
+        Added http/tests/misc/css-reject-in-strict-mode.html
+
+        * css/CSSImportRule.cpp:
+        (WebCore::CSSImportRule::setCSSStyleSheet):
+        * css/CSSImportRule.h:
+        * dom/Document.cpp:
+        (WebCore::Document::setCSSStyleSheet):
+        * dom/Document.h:
+        * dom/ProcessingInstruction.cpp:
+        (WebCore::ProcessingInstruction::setCSSStyleSheet):
+        * dom/ProcessingInstruction.h:
+        * html/HTMLLinkElement.cpp:
+        (WebCore::HTMLLinkElement::setCSSStyleSheet):
+        * html/HTMLLinkElement.h:
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::pickMedia):
+        * loader/CachedCSSStyleSheet.cpp:
+        (WebCore::CachedCSSStyleSheet::ref):
+        (WebCore::CachedCSSStyleSheet::checkNotify):
+        (WebCore::CachedCSSStyleSheet::canUseSheet):
+        * loader/CachedCSSStyleSheet.h:
+        (WebCore::CachedCSSStyleSheet::sheetText):
+        * loader/CachedResourceClient.h:
+        (WebCore::CachedResourceClient::setCSSStyleSheet):
+        * loader/mac/UserStyleSheetLoader.cpp:
+        (UserStyleSheetLoader::setCSSStyleSheet):
+        * loader/mac/UserStyleSheetLoader.h:
+
 2008-02-11  Adam Roben  <aroben@apple.com>
 
         Fix Bug 14316: Inspector's Console truncates long strings

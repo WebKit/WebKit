@@ -809,7 +809,7 @@ String HTMLMediaElement::pickMedia()
                 if (!source->hasAttribute(srcAttr))
                     continue; 
                 if (source->hasAttribute(mediaAttr)) {
-                    MediaQueryEvaluator screenEval("screen", document()->page(), renderer() ? renderer()->style() : 0);
+                    MediaQueryEvaluator screenEval("screen", document()->frame(), renderer() ? renderer()->style() : 0);
                     RefPtr<MediaList> media = new MediaList((CSSStyleSheet*)0, source->media(), true);
                     if (!screenEval.eval(media.get()))
                         continue;
