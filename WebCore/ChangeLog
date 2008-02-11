@@ -1,3 +1,17 @@
+2008-02-10  Alp Toker  <alp@atoker.com>
+
+        Build fix GTK+ and prospective build fix for Win breakage introduced
+        in r30133.
+
+        * platform/Cursor.h:
+        (WebCore::SharedCursor::SharedCursor):
+        * platform/graphics/gtk/IconGtk.cpp:
+        (WebCore::Icon::Icon):
+        * platform/gtk/FileChooserGtk.cpp:
+        (WebCore::FileChooser::FileChooser):
+        * platform/gtk/PopupMenuGtk.cpp:
+        (WebCore::PopupMenu::PopupMenu):
+
 2008-02-10  Darin Adler  <darin@apple.com>
 
         - try to fix Win, Qt, GTK, and WX builds
