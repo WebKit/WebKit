@@ -1,3 +1,15 @@
+2008-02-11  Alp Toker  <alp@atoker.com>
+
+        Reviewed by Alexey.
+
+        Acid3 data URL parsing fix for the GTK+ port.
+
+        Avoid WebCore's base64Decode() when possible since it's not a
+        general-purpose Base64 decoder and fails on newlines.
+
+        * platform/network/curl/ResourceHandleManager.cpp:
+        (WebCore::parseDataUrl):
+
 2008-02-11  Darin Adler  <darin@apple.com>
 
         - another Qt build fix

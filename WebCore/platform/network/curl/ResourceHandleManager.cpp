@@ -478,12 +478,21 @@ static void parseDataUrl(ResourceHandle* handle)
 
     data = KURL::decode_string(data);
 
-    if (base64) {
+    if (base64 && !data.isEmpty()) {
+        // Use the GLib Base64 if available, since WebCore's decoder isn't
+        // general-purpose and fails on Acid3 test 97 (whitespace).
+#if PLATFORM(GTK) && GLIB_CHECK_VERSION(2,12,0)
+        gsize outLength;
+        guchar* out = g_base64_decode(data.ascii(), &outLength);
+        data = DeprecatedString(reinterpret_cast<char*>(out), outLength);
+        g_free(out);
+#else
         Vector<char> out;
         if (base64Decode(data.ascii(), data.length(), out))
             data = DeprecatedString(out.data(), out.size());
         else
             data = DeprecatedString();
+#endif
     }
 
     if (header.isEmpty())
