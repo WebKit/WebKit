@@ -58,11 +58,12 @@ namespace KJS  {
         // Global object that was in scope when the current body of code was defined.
         JSGlobalObject* lexicalGlobalObject() const;
                 
-        void setException(JSValue* e) { m_exception = e; }
+        void setException(JSValue* exception) { m_exception = exception; }
         void clearException() { m_exception = 0; }
         JSValue* exception() const { return m_exception; }
         JSValue** exceptionSlot() { return &m_exception; }
         bool hadException() const { return !!m_exception; }
+        JSValue* takeException() { JSValue* exception = m_exception; m_exception = 0; return exception; }
         
         const ScopeChain& scopeChain() const { return m_scopeChain; }
         void pushScope(JSObject* s) { m_scopeChain.push(s); }
