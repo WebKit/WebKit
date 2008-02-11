@@ -1,3 +1,14 @@
+2008-02-11  David Hyatt  <hyatt@apple.com>
+
+        Fix for bug 17286, crash accessing a null RenderStyle.  Add a simple null check.
+
+        Reviewed by aroben
+
+        Added fast/css/empty-generated-content.html
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::checkOneSelector):
+
 2008-02-11  Rob Buis  <buis@kde.org>
 
         Reviewed by David Kilzer.
