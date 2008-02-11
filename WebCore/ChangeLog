@@ -1,3 +1,20 @@
+2008-02-11  Brent Fulgham  <bfulgham@gmail.com>
+
+        Reviewed and tweaked by Darin
+
+        - http://bugs.webkit.org/show_bug.cgi?id=17299
+          a couple compilation fixes for Cairo/Win32 configuration
+
+        * platform/graphics/cairo/ImageSourceCairo.cpp:
+        (WebCore::createDecoder): Turn off XBMImageDecoder for PLATFORM(WIN) configuration.
+        * rendering/RenderThemeWin.cpp:
+        (WebCore::prepareForDrawing): Added IntRect parameter.
+        (WebCore::doneDrawing): Ditto.
+        (WebCore::RenderThemeWin::paintButton): Ditto.
+        (WebCore::RenderThemeWin::paintTextField): Ditto.
+        (WebCore::RenderThemeWin::paintMenuListButton): Ditto.
+        (WebCore::RenderThemeWin::systemFont): Added.
+
 2008-02-11  Alp Toker  <alp@atoker.com>
 
         Reviewed by Alexey.
