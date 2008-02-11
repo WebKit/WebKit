@@ -1,6 +1,13 @@
 2008-02-10  Darin Adler  <darin@apple.com>
 
-        - another Qt fix
+        - another Qt build fix (wish the Qt bot wouldn't stop on the first error)
+
+        * platform/qt/FileChooserQt.cpp:
+        (WebCore::FileChooser::FileChooser): Added explicit RefCounted constructor.
+
+2008-02-10  Darin Adler  <darin@apple.com>
+
+        - another Qt build fix
 
         * platform/graphics/qt/IconQt.cpp:
         (WebCore::Icon::Icon): Added explicit RefCounted constructor.
