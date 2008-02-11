@@ -1,3 +1,11 @@
+2008-02-11  Adam Roben  <aroben@apple.com>
+
+        Add Brent Fulgham's blog
+
+        Rubberstamped by Alp.
+
+        * config.ini:
+
 2008-02-09  Alp Toker  <alp@atoker.com>
 
         Only syndicate Jan's WebKit posts, not his entire blog.
