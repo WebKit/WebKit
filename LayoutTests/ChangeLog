@@ -1,3 +1,15 @@
+2008-02-10  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Sam Weinig and Anders Carlsson.
+
+        - change a test to simply use 'font-family' instead of unnecessary
+          @font-face hackery
+
+        * fast/text/atsui-spacing-features.html:
+        * platform/mac/fast/text/atsui-spacing-features-expected.checksum:
+        * platform/mac/fast/text/atsui-spacing-features-expected.png:
+        * platform/mac/fast/text/atsui-spacing-features-expected.txt:
+
 2008-02-10  Darin Adler  <darin@apple.com>
 
         - fix a couple of directories that were using our JavaScript template/wrapper
