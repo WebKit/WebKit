@@ -1,3 +1,17 @@
+2008-02-11  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Brady Eidson.
+
+        <rdar://problem/5733069> Many m_quotaMap uses do not hold the m_quotaMapGuard
+
+        * storage/DatabaseTracker.cpp:
+        (WebCore::DatabaseTracker::hasEntryForOrigin): Hold m_quotaMapGuard when using m_quotaMap.
+        (WebCore::DatabaseTracker::origins): Ditto.
+        (WebCore::DatabaseTracker::setQuota): Ditto.
+        (WebCore::DatabaseTracker::deleteAllDatabases): Call origins() and itterate over the
+        origins to call deleteOrigin().
+        (WebCore::DatabaseTracker::deleteOrigin): Hold m_quotaMapGuard when using m_quotaMap.
+
 2008-02-11  David Hyatt  <hyatt@apple.com>
 
         Fix for bug 17286, crash accessing a null RenderStyle.  Add a simple null check.

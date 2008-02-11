@@ -162,6 +162,7 @@ bool DatabaseTracker::hasEntryForOrigin(SecurityOrigin* origin)
 {
     ASSERT(currentThread() == m_thread);
     populateOrigins();
+    MutexLocker lockQuotaMap(m_quotaMapGuard);
     return m_quotaMap->contains(origin);
 }
 
@@ -298,6 +299,7 @@ void DatabaseTracker::origins(Vector<RefPtr<SecurityOrigin> >& result)
 {
     ASSERT(currentThread() == m_thread);
     populateOrigins();
+    MutexLocker lockQuotaMap(m_quotaMapGuard);
     copyKeysToVector(*m_quotaMap, result);
 }
 
@@ -535,40 +537,43 @@ void DatabaseTracker::setQuota(SecurityOrigin* origin, unsigned long long quota)
     openTrackerDatabase(true);
     if (!m_database.isOpen())
         return;
-    if (!m_quotaMap->contains(origin)) {
-        SQLiteStatement statement(m_database, "INSERT INTO Origins VALUES (?, ?)");
-        if (statement.prepare() != SQLResultOk) {
-            LOG_ERROR("Unable to establish origin %s in the tracker", origin->stringIdentifier().ascii().data());
-        } else {
-            statement.bindText(1, origin->stringIdentifier());
-            statement.bindInt64(2, quota);
-
-            if (statement.step() != SQLResultDone)
-                LOG_ERROR("Unable to establish origin %s in the tracker", origin->stringIdentifier().ascii().data());
-        }
-    } else {
-        SQLiteStatement statement(m_database, "UPDATE Origins SET quota=? WHERE origin=?");        
-        bool error = statement.prepare() != SQLResultOk;
-        if (!error) {
-            statement.bindInt64(1, quota);
-            statement.bindText(2, origin->stringIdentifier());
-
-            error = !statement.executeCommand();
-        }
-        if (error)
-            LOG_ERROR("Failed to set quota %llu in tracker database for origin %s", quota, origin->stringIdentifier().ascii().data());
-    }
-    // FIXME: Is it really OK to update the quota in memory if we failed to update it on disk?
 
     {
         MutexLocker lockQuotaMap(m_quotaMapGuard);
+
+        if (!m_quotaMap->contains(origin)) {
+            SQLiteStatement statement(m_database, "INSERT INTO Origins VALUES (?, ?)");
+            if (statement.prepare() != SQLResultOk) {
+                LOG_ERROR("Unable to establish origin %s in the tracker", origin->stringIdentifier().ascii().data());
+            } else {
+                statement.bindText(1, origin->stringIdentifier());
+                statement.bindInt64(2, quota);
+
+                if (statement.step() != SQLResultDone)
+                    LOG_ERROR("Unable to establish origin %s in the tracker", origin->stringIdentifier().ascii().data());
+            }
+        } else {
+            SQLiteStatement statement(m_database, "UPDATE Origins SET quota=? WHERE origin=?");        
+            bool error = statement.prepare() != SQLResultOk;
+            if (!error) {
+                statement.bindInt64(1, quota);
+                statement.bindText(2, origin->stringIdentifier());
+
+                error = !statement.executeCommand();
+            }
+
+            if (error)
+                LOG_ERROR("Failed to set quota %llu in tracker database for origin %s", quota, origin->stringIdentifier().ascii().data());
+        }
+
+        // FIXME: Is it really OK to update the quota in memory if we failed to update it on disk?
         m_quotaMap->set(origin, quota);
     }
-    
+
     if (m_client)
         m_client->dispatchDidModifyOrigin(origin);
 }
-    
+
 bool DatabaseTracker::addDatabase(SecurityOrigin* origin, const String& name, const String& path)
 {
     ASSERT(currentThread() == m_thread);
@@ -602,12 +607,12 @@ bool DatabaseTracker::addDatabase(SecurityOrigin* origin, const String& name, co
 void DatabaseTracker::deleteAllDatabases()
 {
     ASSERT(currentThread() == m_thread);
-    populateOrigins();
-    
-    QuotaMap quotaMapCopy = *m_quotaMap;
-    QuotaMap::const_iterator end = quotaMapCopy.end();
-    for (QuotaMap::const_iterator iter = quotaMapCopy.begin(); iter != end; ++iter)
-        deleteOrigin(iter->first.get());
+
+    Vector<RefPtr<SecurityOrigin> > originsCopy;
+    origins(originsCopy);
+
+    for (unsigned i = 0; i < originsCopy.size(); ++i)
+        deleteOrigin(originsCopy[i].get());
 }
 
 void DatabaseTracker::deleteOrigin(SecurityOrigin* origin)
@@ -662,16 +667,17 @@ void DatabaseTracker::deleteOrigin(SecurityOrigin* origin)
     {
         MutexLocker lockQuotaMap(m_quotaMapGuard);
         m_quotaMap->remove(origin);
+
         Locker<OriginQuotaManager> quotaManagerLocker(originQuotaManager());
         originQuotaManager().removeOrigin(origin);
-    }
 
-    // If we removed the last origin, do some additional deletion.
-    if (m_quotaMap->isEmpty()) {
-        if (m_database.isOpen())
-            m_database.close();
-        deleteFile(trackerDatabasePath());
-        deleteEmptyDirectory(m_databaseDirectoryPath);
+        // If we removed the last origin, do some additional deletion.
+        if (m_quotaMap->isEmpty()) {
+            if (m_database.isOpen())
+                m_database.close();
+            deleteFile(trackerDatabasePath());
+            deleteEmptyDirectory(m_databaseDirectoryPath);
+        }
     }
 
     if (m_client) {
