@@ -1,3 +1,11 @@
+2008-02-11  Pierre-Luc Beaudoin  <pierre-luc.beaudoin@collabora.co.uk>
+
+        Reviewed by Alp Toker.
+
+        Add my blog's WebKit category, English only posts.
+
+        * config.ini:
+
 2008-02-11  Adam Roben  <aroben@apple.com>
 
         Add Brent Fulgham's blog
