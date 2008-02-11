@@ -42,6 +42,12 @@
 #include <errno.h>
 #include <wtf/Vector.h>
 
+#if PLATFORM(GTK)
+    #if GLIB_CHECK_VERSION(2,12,0)
+        #define USE_GLIB_BASE64
+    #endif
+#endif
+
 namespace WebCore {
 
 const int selectTimeoutMS = 5;
@@ -481,7 +487,7 @@ static void parseDataUrl(ResourceHandle* handle)
     if (base64 && !data.isEmpty()) {
         // Use the GLib Base64 if available, since WebCore's decoder isn't
         // general-purpose and fails on Acid3 test 97 (whitespace).
-#if PLATFORM(GTK) && GLIB_CHECK_VERSION(2,12,0)
+#ifdef USE_GLIB_BASE64
         gsize outLength;
         guchar* out = g_base64_decode(data.ascii(), &outLength);
         data = DeprecatedString(reinterpret_cast<char*>(out), outLength);

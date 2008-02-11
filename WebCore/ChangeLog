@@ -1,3 +1,10 @@
+2008-02-11  Alp Toker  <alp@atoker.com>
+
+        Wx build fix for breakage introduced in r30142. Spotted by Darin.
+
+        * platform/network/curl/ResourceHandleManager.cpp:
+        (WebCore::parseDataUrl):
+
 2008-02-11  Brent Fulgham  <bfulgham@gmail.com>
 
         Reviewed and tweaked by Darin
