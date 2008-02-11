@@ -1,3 +1,42 @@
+2008-02-11  Adam Roben  <aroben@apple.com>
+
+        Fix Bug 14316: Inspector's Console truncates long strings
+
+        <http://bugs.webkit.org/show_bug.cgi?id=14316>
+        <rdar://5357695>
+
+        We no longer call Object.describe to format all the output of commands
+        enetered into the Console. The ConsolePanel object now has a set of
+        formatting functions that append a formatted representation of the
+        passed-in object to the passed-in container node.
+
+        Reviewed by Sam.
+
+        * page/inspector/ConsolePanel.js:
+        (WebInspector.ConsolePanel._onEnterPressed): Updated for rename of
+        _outputToNode to _format.
+        (WebInspector.ConsolePanel._format): Renamed from _outputToNode. Use
+        Object.type to get the type of the object, then call the appropriate
+        formatting function.
+        (WebInspector.ConsolePanel._formatvalue): Added.
+        (WebInspector.ConsolePanel._formatstring): Added. This function
+        contains the actual fix for the bug, since it doesn't truncate the
+        string no matter how long it is.
+        (WebInspector.ConsolePanel._formatregexp): Added.
+        (WebInspector.ConsolePanel._formatarray): Added. This is a bit more
+        functional than Object.describe for arrays, since it recursively
+        formats each item in the array. One advantage of this is that Nodes in
+        arrays will be linkified instead of just turning into "[Object
+        HTMLBodyElement]" or similar.
+        (WebInspector.ConsolePanel._formatnode): Added.
+        (WebInspector.ConsolePanel._formatobject): Added.
+        (WebInspector.ConsolePanel.
+        * page/inspector/utilities.js:
+        (Object.type): Added. Code was pulled out of Object.describe and
+        reorganized slightly.
+        (Object.describe): Call Object.type. There should be no change in
+        behavior of this function.
+
 2008-02-11  Alp Toker  <alp@atoker.com>
 
         Wx build fix for breakage introduced in r30142. Spotted by Darin.

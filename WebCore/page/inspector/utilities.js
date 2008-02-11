@@ -26,36 +26,37 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-Object.describe = function(obj, abbreviated)
+Object.type = function(obj)
 {
-    if (obj === undefined)
-        return "undefined";
     if (obj === null)
         return "null";
 
-    var type1 = typeof obj;
-    var type2 = "";
-    if (type1 == "object" || type1 == "function") {
-        if (obj instanceof String)
-            type1 = "string";
-        else if (obj instanceof Array)
-            type1 = "array";
-        else if (obj instanceof Boolean)
-            type1 = "boolean";
-        else if (obj instanceof Number)
-            type1 = "number";
-        else if (obj instanceof Date)
-            type1 = "date";
-        else if (obj instanceof RegExp)
-            type1 = "regexp";
-        else if (obj instanceof Error)
-            type1 = "error";
-        type2 = Object.prototype.toString.call(obj).replace(/^\[object (.*)\]$/i, "$1");
-    }
+    var type = typeof obj;
+    if (type !== "object" && type !== "function")
+        return type;
 
-    switch (type1) {
+    if (obj instanceof String)
+        return "string";
+    if (obj instanceof Array)
+        return "array";
+    if (obj instanceof Boolean)
+        return "boolean";
+    if (obj instanceof Number)
+        return "number";
+    if (obj instanceof Date)
+        return "date";
+    if (obj instanceof RegExp)
+        return "regexp";
+    if (obj instanceof Error)
+        return "error";
+    return type;
+}
+
+Object.describe = function(obj, abbreviated)
+{
+    switch (Object.type(obj)) {
     case "object":
-        return type2;
+        return Object.prototype.toString.call(obj).replace(/^\[object (.*)\]$/i, "$1");
     case "array":
         return "[" + obj.toString() + "]";
     case "string":

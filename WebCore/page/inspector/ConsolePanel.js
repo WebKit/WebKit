@@ -183,7 +183,7 @@ WebInspector.ConsolePanel.prototype = {
 
         var level = exception ? WebInspector.ConsoleMessage.MessageLevel.Error : WebInspector.ConsoleMessage.MessageLevel.Log;
 
-        this.addMessage(new WebInspector.ConsoleCommand(str, this._outputToNode(result)));
+        this.addMessage(new WebInspector.ConsoleCommand(str, this._format(result)));
     },
 
     _onUpPressed: function(event)
@@ -223,16 +223,81 @@ WebInspector.ConsolePanel.prototype = {
         this.consolePrompt.moveCursorToEnd();
     },
 
-    _outputToNode: function(output)
+    _format: function(output)
     {
-        if (output instanceof Node) {
-            var anchor = document.createElement("a");
-            anchor.innerHTML = output.titleInfo().title;
-            anchor.representedNode = output;
-            return anchor;
+        var type = Object.type(output);
+        if (type === "object") {
+            if (output instanceof Node)
+                type = "node";
         }
-        return document.createTextNode(Object.describe(output));
-    }
+
+        // We don't perform any special formatting on these types, so we just
+        // pass them through the simple _formatvalue function.
+        var undecoratedTypes = {
+            "undefined": 1,
+            "null": 1,
+            "boolean": 1,
+            "number": 1,
+            "date": 1,
+            "function": 1,
+        };
+
+        var formatter;
+        if (type in undecoratedTypes)
+            formatter = "_formatvalue";
+        else {
+            formatter = "_format" + type;
+            if (!(formatter in this)) {
+                formatter = "_formatobject";
+                type = "object";
+            }
+        }
+
+        var span = document.createElement("span");
+        span.addStyleClass("console-formatted-" + type);
+        this[formatter](output, span);
+        return span;
+    },
+
+    _formatvalue: function(val, elem)
+    {
+        elem.appendChild(document.createTextNode(val));
+    },
+
+    _formatstring: function(str, elem)
+    {
+        elem.appendChild(document.createTextNode("\"" + str + "\""));
+    },
+
+    _formatregexp: function(re, elem)
+    {
+        var formatted = String(re).replace(/([\\\/])/g, "\\$1").replace(/\\(\/[gim]*)$/, "$1").substring(1);
+        elem.appendChild(document.createTextNode(formatted));
+    },
+
+    _formatarray: function(arr, elem)
+    {
+        elem.appendChild(document.createTextNode("["));
+        for (var i = 0; i < arr.length; ++i) {
+            elem.appendChild(this._format(arr[i]));
+            if (i < arr.length - 1)
+                elem.appendChild(document.createTextNode(", "));
+        }
+        elem.appendChild(document.createTextNode("]"));
+    },
+
+    _formatnode: function(node, elem)
+    {
+        var anchor = document.createElement("a");
+        anchor.innerHTML = node.titleInfo().title;
+        anchor.representedNode = node;
+        elem.appendChild(anchor);
+    },
+
+    _formatobject: function(obj, elem)
+    {
+        elem.appendChild(document.createTextNode(Object.describe(obj)));
+    },
 }
 
 WebInspector.ConsolePanel.prototype.__proto__ = WebInspector.Panel.prototype;
