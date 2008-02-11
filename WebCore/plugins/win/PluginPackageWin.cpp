@@ -102,7 +102,8 @@ void PluginPackage::freeLibraryTimerFired(Timer<PluginPackage>* /*timer*/)
 }
 
 PluginPackage::PluginPackage(const String& path, const FILETIME& lastModified)
-    : m_path(path)
+    : RefCounted<PluginPackage>(0)
+    , m_path(path)
     , m_module(0)
     , m_lastModified(lastModified)
     , m_isLoaded(false)

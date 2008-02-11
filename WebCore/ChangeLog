@@ -1,5 +1,12 @@
 2008-02-10  Alp Toker  <alp@atoker.com>
 
+        Another Win build fix for r30133 breakage.
+
+        * plugins/win/PluginPackageWin.cpp:
+        (WebCore::PluginPackage::PluginPackage):
+
+2008-02-10  Alp Toker  <alp@atoker.com>
+
         Build fix GTK+ and prospective build fix for Win breakage introduced
         in r30133.
 
