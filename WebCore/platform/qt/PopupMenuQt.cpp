@@ -43,7 +43,8 @@
 namespace WebCore {
 
 PopupMenu::PopupMenu(PopupMenuClient* client)
-    : m_popupClient(client)
+    : RefCounted<PopupMenu>(0)
+    , m_popupClient(client)
 {
     m_popup = new QWebPopup(client);
 }

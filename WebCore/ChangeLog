@@ -1,3 +1,10 @@
+2008-02-11  Darin Adler  <darin@apple.com>
+
+        - another Qt build fix
+
+        * platform/qt/PopupMenuQt.cpp:
+        (WebCore::PopupMenu::PopupMenu): Added explicit RefCounted constructor.
+
 2008-02-10  Darin Adler  <darin@apple.com>
 
         - another Qt build fix (wish the Qt bot wouldn't stop on the first error)
