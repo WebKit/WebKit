@@ -3,6 +3,16 @@
         Reviewed by Eric.
 
         - http://bugs.webkit.org/show_bug.cgi?id=17256
+          eliminate default ref. count of 0 in RefCounted class
+
+        * wtf/RefCounted.h:
+        (WTF::RefCounted::RefCounted): Remove default of 0.
+
+2008-02-10  Darin Adler  <darin@apple.com>
+
+        Reviewed by Eric.
+
+        - http://bugs.webkit.org/show_bug.cgi?id=17256
           Make clients of RefCounted explicitly set the count to 0.
 
         * API/JSClassRef.cpp:

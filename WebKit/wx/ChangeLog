@@ -1,3 +1,14 @@
+2008-02-10  Darin Adler  <darin@apple.com>
+
+        Reviewed by Eric.
+
+        - http://bugs.webkit.org/show_bug.cgi?id=17256
+          eliminate default ref. count of 0 in RefCounted class
+
+        * WebKitSupport/FrameLoaderClientWx.cpp:
+        (WebCore::FrameLoaderClientWx::FrameLoaderClientWx):
+        Set the count to 0 explicitly (one stray client I missed in my last pass).
+
 2008-02-03  Kevin Ollivier  <kevino@theolliviers.com>
 
         Reviewed by Darin Adler.

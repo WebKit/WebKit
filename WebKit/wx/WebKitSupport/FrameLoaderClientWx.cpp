@@ -68,7 +68,8 @@ inline int wxNavTypeFromWebNavType(NavigationType type){
 }
 
 FrameLoaderClientWx::FrameLoaderClientWx()
-    : m_frame(0)
+    : RefCounted<FrameLoaderClientWx>(0)
+    , m_frame(0)
 {
 }
 
