@@ -1,3 +1,10 @@
+2008-02-10  Darin Adler  <darin@apple.com>
+
+        - another Qt fix
+
+        * platform/graphics/qt/IconQt.cpp:
+        (WebCore::Icon::Icon): Added explicit RefCounted constructor.
+
 2008-02-10  Alp Toker  <alp@atoker.com>
 
         Another Win build fix for r30133 breakage.
