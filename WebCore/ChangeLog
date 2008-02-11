@@ -1,3 +1,15 @@
+2008-02-11  Rob Buis  <buis@kde.org>
+
+        Reviewed by David Kilzer.
+
+        http://bugs.webkit.org/show_bug.cgi?id=17201
+        Bug 17201: Use RefPtr in CSSParser::parseFont() to get rid of goto silliness
+
+        Gets rid of goto usage in parseFont.
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseFont):
+
 2008-02-11  David Hyatt  <hyatt@apple.com>
 
         Fix for bug 17298, Acid3 text should be black and not red.  Make sure stylesheets with the wrong MIME type
