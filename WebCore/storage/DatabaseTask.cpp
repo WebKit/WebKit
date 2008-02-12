@@ -98,10 +98,12 @@ void DatabaseOpenTask::doPerformTask()
     m_success = database()->performOpenAndVerify(m_code);
 }
 
+#ifndef NDEBUG
 const char* DatabaseOpenTask::debugTaskName() const
 {
     return "DatabaseOpenTask";
 }
+#endif
 
 // *** DatabaseTransactionTask ***
 // Starts a transaction that will report its results via a callback.
@@ -125,10 +127,12 @@ void DatabaseTransactionTask::doPerformTask()
     }
 }
 
+#ifndef NDEBUG
 const char* DatabaseTransactionTask::debugTaskName() const
 {
     return "DatabaseTransactionTask";
 }
+#endif
 
 // *** DatabaseTableNamesTask ***
 // Retrieves a list of all tables in the database - for WebInspector support.
@@ -143,10 +147,11 @@ void DatabaseTableNamesTask::doPerformTask()
     m_tableNames = database()->performGetTableNames();
 }
 
+#ifndef NDEBUG
 const char* DatabaseTableNamesTask::debugTaskName() const
 {
     return "DatabaseTableNamesTask";
 }
-
+#endif
 
 } // namespace WebCore
