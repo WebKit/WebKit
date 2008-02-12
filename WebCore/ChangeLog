@@ -1,3 +1,38 @@
+2008-02-12  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Mitz.
+
+        Make the code that sets the image title cross platform.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        Remove ImageDocumentMac.
+        
+        * loader/ImageDocument.cpp:
+        (WebCore::ImageTokenizer::finish):
+
+        * loader/mac/ImageDocumentMac.h: Removed.
+        * loader/mac/ImageDocumentMac.mm: Removed.
+        
+        * page/mac/WebCoreFrameBridge.h:
+        * page/mac/WebCoreViewFactory.h:
+        Move imageTitleForFilename:size from the bridge to
+        the view factory.
+        
+        * platform/LocalizedStrings.h:
+        Add imageTitle.
+        
+        * platform/mac/LocalizedStringsMac.mm:
+        (WebCore::imageTitle):
+        Have imageTitle call the view factory.
+        
+        * platform/qt/Localizations.cpp:
+        (WebCore::imageTitle):
+        * platform/wx/LocalizedStringsWx.cpp:
+        (WebCore::imageTitle):
+        * platform/gtk/LocalizedStringsGtk.cpp:
+        (WebCore::imageTitle):
+        Add stubs.
+        
 2008-02-12  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by NOBODY (Build fix).

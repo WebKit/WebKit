@@ -297,5 +297,10 @@ String unknownFileSizeText()
     return QCoreApplication::translate("QWebPage", "Unknown", "Unknown filesize FTP directory listing item");
 }
 
+String imageTitle(const String& filename, const IntSize& size)
+{
+    return String();
+}
+
 }
 // vim: ts=4 sw=4 et

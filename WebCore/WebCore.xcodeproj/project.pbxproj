@@ -1578,8 +1578,6 @@
 		939885C308B7E3D100E707C4 /* EventNames.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 939885C108B7E3D100E707C4 /* EventNames.cpp */; };
 		939885C408B7E3D100E707C4 /* EventNames.h in Headers */ = {isa = PBXBuildFile; fileRef = 939885C208B7E3D100E707C4 /* EventNames.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		939B3E4E0D3C1E8400B4A92B /* StringBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 939B3E4D0D3C1E8400B4A92B /* StringBuffer.h */; };
-		93A1EAA00A5634C9006960A0 /* ImageDocumentMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 93A1EA9F0A5634C9006960A0 /* ImageDocumentMac.mm */; };
-		93A1EAA80A563508006960A0 /* ImageDocumentMac.h in Headers */ = {isa = PBXBuildFile; fileRef = 93A1EAA70A563508006960A0 /* ImageDocumentMac.h */; };
 		93A38B4B0D0E5808006872C2 /* EditorCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93A38B4A0D0E5808006872C2 /* EditorCommand.cpp */; };
 		93B6A0E60B0BCA5C00F5027A /* ContextMenu.h in Headers */ = {isa = PBXBuildFile; fileRef = 93B6A0E50B0BCA5C00F5027A /* ContextMenu.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		93B6A0E80B0BCA6700F5027A /* ContextMenu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93B6A0E70B0BCA6700F5027A /* ContextMenu.cpp */; };
@@ -5807,8 +5805,6 @@
 		939885C108B7E3D100E707C4 /* EventNames.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EventNames.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		939885C208B7E3D100E707C4 /* EventNames.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = EventNames.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		939B3E4D0D3C1E8400B4A92B /* StringBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StringBuffer.h; sourceTree = "<group>"; };
-		93A1EA9F0A5634C9006960A0 /* ImageDocumentMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ImageDocumentMac.mm; sourceTree = "<group>"; };
-		93A1EAA70A563508006960A0 /* ImageDocumentMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImageDocumentMac.h; sourceTree = "<group>"; };
 		93A38B4A0D0E5808006872C2 /* EditorCommand.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EditorCommand.cpp; sourceTree = "<group>"; };
 		93B6A0E50B0BCA5C00F5027A /* ContextMenu.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = ContextMenu.h; sourceTree = "<group>"; };
 		93B6A0E70B0BCA6700F5027A /* ContextMenu.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = ContextMenu.cpp; sourceTree = "<group>"; };
@@ -9732,8 +9728,6 @@
 		93A1EAA20A5634D8006960A0 /* mac */ = {
 			isa = PBXGroup;
 			children = (
-				93A1EAA70A563508006960A0 /* ImageDocumentMac.h */,
-				93A1EA9F0A5634C9006960A0 /* ImageDocumentMac.mm */,
 				656D371A0ADBA5DE00A4554D /* LoaderNSURLExtras.h */,
 				656D371B0ADBA5DE00A4554D /* LoaderNSURLExtras.m */,
 				51AA3F6E0BD5AA9E00892971 /* ResourceLoaderMac.mm */,
@@ -13373,7 +13367,6 @@
 				B27535700B053814002CE64F /* Image.h in Headers */,
 				B2A10B920B3818BD00099AA4 /* ImageBuffer.h in Headers */,
 				1A820D920A13EBA600AF843C /* ImageDocument.h in Headers */,
-				93A1EAA80A563508006960A0 /* ImageDocumentMac.h in Headers */,
 				BC7F44A80B9E324E00A9D081 /* ImageObserver.h in Headers */,
 				B27535710B053814002CE64F /* ImageSource.h in Headers */,
 				DB23C2CC0A508D29002489EB /* IndentOutdentCommand.h in Headers */,
@@ -14960,7 +14953,6 @@
 				B2A10B940B3818D700099AA4 /* ImageBufferCG.cpp in Sources */,
 				B275355E0B053814002CE64F /* ImageCG.cpp in Sources */,
 				1A820D910A13EBA600AF843C /* ImageDocument.cpp in Sources */,
-				93A1EAA00A5634C9006960A0 /* ImageDocumentMac.mm in Sources */,
 				B275357B0B053814002CE64F /* ImageMac.mm in Sources */,
 				B275355F0B053814002CE64F /* ImageSourceCG.cpp in Sources */,
 				DB23C2CB0A508D29002489EB /* IndentOutdentCommand.cpp in Sources */,

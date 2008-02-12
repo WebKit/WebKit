@@ -290,4 +290,9 @@ String unknownFileSizeText()
     return String::fromUTF8(_("Unknown"));
 }
 
+String imageTitle(const String& filename, const IntSize& size)
+{
+    return String();
+}
+
 }

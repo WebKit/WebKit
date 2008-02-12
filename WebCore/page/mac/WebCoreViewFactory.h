@@ -98,6 +98,8 @@
 
 - (NSString *)defaultLanguageCode;
 
+- (NSString *)imageTitleForFilename:(NSString *)filename size:(NSSize)size;
+
 - (BOOL)objectIsTextMarker:(id)object;
 - (BOOL)objectIsTextMarkerRange:(id)object;
 

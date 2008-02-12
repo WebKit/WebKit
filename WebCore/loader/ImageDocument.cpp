@@ -35,6 +35,7 @@
 #include "FrameView.h"
 #include "HTMLImageElement.h"
 #include "HTMLNames.h"
+#include "LocalizedStrings.h"
 #include "MouseEvent.h"
 #include "Page.h"
 #include "SegmentedString.h"
@@ -120,11 +121,11 @@ void ImageTokenizer::finish()
         cachedImage->finish();
 
         cachedImage->setResponse(m_doc->frame()->loader()->documentLoader()->response());
-        
-        // FIXME: Need code to set the title for platforms other than Mac OS X.
-#if PLATFORM(MAC)
-        finishImageLoad(m_doc, cachedImage);
-#endif
+
+        IntSize size = cachedImage->imageSize();
+        if (size.width())
+            m_doc->setTitle(imageTitle(cachedImage->response().suggestedFilename(), size));
+
         m_doc->imageChanged();
     }
 
