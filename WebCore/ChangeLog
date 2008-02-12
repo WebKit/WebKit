@@ -1,3 +1,26 @@
+2008-02-11  Darin Adler  <darin@apple.com>
+
+        Reviewed by Mitz.
+
+        - fix <rdar://problem/5726016> REGRESSION: Xcode News window renders
+          incorrectly due to visibility fix
+
+        Added an Xcode-specific quirk.
+
+        * WebCore.base.exp: Added export for new Settings function.
+        * css/CSSMutableStyleDeclaration.cpp:
+        (WebCore::CSSMutableStyleDeclaration::setProperty): Here's the crazy quirk.
+        If you try to change the visibilty on a node with the class name tab_content,
+        instead it will use display:none.
+        * page/Settings.cpp:
+        (WebCore::Settings::Settings): Initialize m_needsXcodeVisibilityQuirk. Also
+        initialize m_fontRenderingMode! This seems like it was a bug before, but we
+        probably were getting lucky and always getting 0 on Windows, which is the
+        only place the setting matters.
+        (WebCore::Settings::setNeedsXcodeVisibilityQuirk): Added.
+        * page/Settings.h:
+        (WebCore::Settings::needsXcodeVisibilityQuirk): Added.
+
 2008-02-11  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Brady Eidson.

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006, 2007, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,13 +26,15 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/* Version numbers are based on the 'current library version' specified in the WebKit build rules.
-   All of these methods return or take version numbers with each part shifted to the left 2 bytes.
-   For example the version 1.2.3 is returned as 0x00010203 and version 200.3.5 is returned as 0x00C80305
-   A version of -1 is returned if the main executable did not link against WebKit (should never happen). */
+/*
+    Version numbers are based on the 'current library version' specified in the WebKit build rules.
+    All of these methods return or take version numbers with each part shifted to the left 2 bytes.
+    For example the version 1.2.3 is returned as 0x00010203 and version 200.3.5 is returned as 0x00C80305
+    A version of -1 is returned if the main executable did not link against WebKit (should never happen).
 
-/* Please use the current WebKit version number, available in WebKit/Configurations/Version.xcconfig,
-   when adding a new version constant. */
+    Please use the current WebKit version number, available in WebKit/Configurations/Version.xcconfig,
+    when adding a new version constant.
+*/
 
 #define WEBKIT_FIRST_VERSION_WITH_3_0_CONTEXT_MENU_TAGS 0x020A0000 // 522.0.0
 #define WEBKIT_FIRST_VERSION_WITH_LOCAL_RESOURCE_SECURITY_RESTRICTION 0x020A0000 // 522.0.0
@@ -44,6 +46,7 @@
 #define WEBKIT_FIRST_VERSION_WITH_CACHE_MODEL_API 0x020B0500 // 523.5.0
 #define WEBKIT_FIRST_VERSION_WITHOUT_JAVASCRIPT_RETURN_QUIRK 0x020D0100 // 525.1.0
 #define WEBKIT_FIRST_VERSION_WITH_IE_COMPATIBLE_KEYBOARD_EVENT_DISPATCH 0x020D0100 // 525.1.0
+#define WEBKIT_FIRST_VERSION_WITHOUT_XCODE_QUIRK 0x020D0700 // 525.7.0
 
 #ifdef __cplusplus
 extern "C" {

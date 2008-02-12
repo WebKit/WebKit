@@ -1,3 +1,20 @@
+2008-02-11  Darin Adler  <darin@apple.com>
+
+        Reviewed by Mitz.
+
+        - fix <rdar://problem/5726016> REGRESSION: Xcode News window renders
+          incorrectly due to visibility fix
+
+        Added an Xcode-specific quirk.
+
+        * Misc/WebKitVersionChecks.h: Added a constant for the "linked on or after"
+        part of the check.
+
+        * WebView/WebView.mm:
+        (-[WebView _needsXcodeVisibilityQuirk]): Added.
+        (-[WebView _preferencesChangedNotification:]): Added a call to
+        setNeedsXcodeVisibilityQuirk based on _needsXcodeVisibilityQuirk.
+
 2008-02-10  Darin Adler  <darin@apple.com>
 
         - fix http://bugs.webkit.org/show_bug.cgi?id=17274

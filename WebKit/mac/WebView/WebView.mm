@@ -921,10 +921,25 @@ static bool debugWidget = true;
         return needsQuirks;
 
     needsQuirks = !WebKitLinkedOnOrAfter(WEBKIT_FIRST_VERSION_WITH_IE_COMPATIBLE_KEYBOARD_EVENT_DISPATCH)
-               && ![[[NSBundle mainBundle] bundleIdentifier] isEqualToString:@"com.apple.Safari"];
+        && ![[[NSBundle mainBundle] bundleIdentifier] isEqualToString:@"com.apple.Safari"];
     checked = YES;
 
     return needsQuirks;
+}
+
+- (BOOL)_needsXcodeVisibilityQuirk
+{
+    static BOOL checked = NO;
+    static BOOL needsQuirk = NO;
+
+    if (checked)
+        return needsQuirk;
+
+    needsQuirk = !WebKitLinkedOnOrAfter(WEBKIT_FIRST_VERSION_WITHOUT_XCODE_QUIRK)
+        && [[[NSBundle mainBundle] bundleIdentifier] isEqualToString:@"com.apple.Xcode"];
+    checked = YES;
+
+    return needsQuirk;
 }
 
 - (void)_preferencesChangedNotification:(NSNotification *)notification
@@ -979,6 +994,7 @@ static bool debugWidget = true;
         settings->setUserStyleSheetLocation([NSURL URLWithString:@""]);
     settings->setNeedsAdobeFrameReloadingQuirk([self _needsAdobeFrameReloadingQuirk]);
     settings->setNeedsKeyboardEventDisambiguationQuirks([self _needsKeyboardEventDisambiguationQuirks]);
+    settings->setNeedsXcodeVisibilityQuirk([self _needsXcodeVisibilityQuirk]);
 }
 
 static inline IMP getMethod(id o, SEL s)

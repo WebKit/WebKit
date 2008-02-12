@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003, 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2003, 2006, 2007, 2008 Apple Inc. All rights reserved.
  *           (C) 2006 Graham Dennis (graham.dennis@gmail.com)
  *
  * Redistribution and use in source and binary forms, with or without
@@ -28,8 +28,8 @@
 #define Settings_h
 
 #include "AtomicString.h"
-#include "KURL.h"
 #include "FontDescription.h"
+#include "KURL.h"
 
 namespace WebCore {
 
@@ -43,8 +43,7 @@ namespace WebCore {
         EditableLinkNeverLive
     };
 
-    class Settings
-    {
+    class Settings {
     public:
         Settings(Page*);
 
@@ -147,6 +146,9 @@ namespace WebCore {
         void setFontRenderingMode(FontRenderingMode mode);
         FontRenderingMode fontRenderingMode() const;
 
+        void setNeedsXcodeVisibilityQuirk(bool);
+        bool needsXcodeVisibilityQuirk() const { return m_needsXcodeVisibilityQuirk; }
+
     private:
         Page* m_page;
         
@@ -183,6 +185,7 @@ namespace WebCore {
         bool m_developerExtrasEnabled : 1;
         bool m_authorAndUserStylesEnabled : 1;
         unsigned m_fontRenderingMode : 1;
+        bool m_needsXcodeVisibilityQuirk : 1;
     };
 
 } // namespace WebCore
