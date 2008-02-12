@@ -32,6 +32,7 @@
 #include "Font.h"
 #include "SimpleFontData.h"
 #include "StringHash.h"
+#include "UnicodeRange.h"
 #include <windows.h>
 #include <mlang.h>
 #include <ApplicationServices/ApplicationServices.h>
@@ -114,29 +115,112 @@ static const Vector<String>* getLinkedFonts(String& family)
     return result;
 }
 
+static const Vector<DWORD, 4>& getCJKCodePageMasks()
+{
+    // The default order in which we look for a font for a CJK character. If the user's default code page is
+    // one of these, we will use it first.
+    static const UINT CJKCodePages[] = { 
+        932, /* Japanese */
+        936, /* Simplified Chinese */
+        950, /* Traditional Chinese */
+        949  /* Korean */
+    };
+
+    static Vector<DWORD, 4> codePageMasks;
+    static bool initialized;
+    if (!initialized) {
+        initialized = true;
+        IMLangFontLink2* langFontLink = FontCache::getFontLinkInterface();
+        if (!langFontLink)
+            return codePageMasks;
+
+        UINT defaultCodePage;
+        DWORD defaultCodePageMask = 0;
+        if (GetLocaleInfo(LOCALE_USER_DEFAULT, LOCALE_RETURN_NUMBER | LOCALE_IDEFAULTANSICODEPAGE, reinterpret_cast<LPWSTR>(&defaultCodePage), sizeof(defaultCodePage)))
+            langFontLink->CodePageToCodePages(defaultCodePage, &defaultCodePageMask);
+
+        if (defaultCodePage == CJKCodePages[0] || defaultCodePage == CJKCodePages[1] || defaultCodePage == CJKCodePages[2] || defaultCodePage == CJKCodePages[3])
+            codePageMasks.append(defaultCodePageMask);
+        for (unsigned i = 0; i < 4; ++i) {
+            if (defaultCodePage != CJKCodePages[i]) {
+                DWORD codePageMask;
+                langFontLink->CodePageToCodePages(CJKCodePages[i], &codePageMask);
+                codePageMasks.append(codePageMask);
+            }
+        }
+    }
+    return codePageMasks;
+}
+
+static bool currentFontContainsCharacter(HDC hdc, UChar character)
+{
+    static Vector<char, 512> glyphsetBuffer;
+    glyphsetBuffer.resize(GetFontUnicodeRanges(hdc, 0));
+    GLYPHSET* glyphset = reinterpret_cast<GLYPHSET*>(glyphsetBuffer.data());
+    GetFontUnicodeRanges(hdc, glyphset);
+
+    // FIXME: Change this to a binary search.
+    unsigned i = 0;
+    while (i < glyphset->cRanges && glyphset->ranges[i].wcLow <= character)
+        i++;
+
+    return i && glyphset->ranges[i - 1].wcLow + glyphset->ranges[i - 1].cGlyphs > character;
+}
+
+static HFONT createMLangFont(IMLangFontLink2* langFontLink, HDC hdc, DWORD codePageMask, UChar character = 0)
+{
+    HFONT MLangFont;
+    HFONT hfont = 0;
+    if (SUCCEEDED(langFontLink->MapFont(hdc, codePageMask, character, &MLangFont)) && MLangFont) {
+        LOGFONT lf;
+        GetObject(MLangFont, sizeof(LOGFONT), &lf);
+        langFontLink->ReleaseFont(MLangFont);
+        hfont = CreateFontIndirect(&lf);
+    }
+    return hfont;
+}
+
 const SimpleFontData* FontCache::getFontDataForCharacters(const Font& font, const UChar* characters, int length)
 {
+    UChar character = characters[0];
     SimpleFontData* fontData = 0;
     HDC hdc = GetDC(0);
-    HFONT primaryFont = font.primaryFont()->fontDataForCharacter(characters[0])->m_font.hfont();
+    HFONT primaryFont = font.primaryFont()->fontDataForCharacter(character)->platformData().hfont();
     HGDIOBJ oldFont = SelectObject(hdc, primaryFont);
     HFONT hfont = 0;
 
-    // Special-case characters in the range U+2000..U+200F (spaces, zero width joiner and non-joiner,
-    // right to left and left to right marks). Uniscribe does not tell us what font it will use for these
-    // (presumably because it never renders their glyphs), so we use MapFont to find a font that contains
-    // them.
-    if (characters[0] >= 0x2000 && characters[0] <= 0x200F) {
-        IMLangFontLink2* langFontLink = getFontLinkInterface();
-        if (langFontLink) {
-            HFONT mLangFont;
-            langFontLink->MapFont(hdc, 0, characters[0], &mLangFont);
-            LOGFONT lf;
-            GetObject(mLangFont, sizeof(LOGFONT), &lf);
-            langFontLink->ReleaseFont(mLangFont);
-            hfont = CreateFontIndirect(&lf);
-        }
-    } else {
+    if (IMLangFontLink2* langFontLink = getFontLinkInterface()) {
+        // Try MLang font linking first.
+        DWORD codePages = 0;
+        langFontLink->GetCharCodePages(character, &codePages);
+
+        if (codePages && findCharUnicodeRange(character) == cRangeSetCJK) {
+            // The CJK character may belong to multiple code pages. We want to
+            // do font linking against a single one of them, preferring the default
+            // code page for the user's locale.
+            const Vector<DWORD, 4>& CJKCodePageMasks = getCJKCodePageMasks();
+            unsigned numCodePages = CJKCodePageMasks.size();
+            for (unsigned i = 0; i < numCodePages && !hfont; ++i) {
+                hfont = createMLangFont(langFontLink, hdc, CJKCodePageMasks[i]);
+                if (hfont && !(codePages & CJKCodePageMasks[i])) {
+                    // We asked about a code page that is not one of the code pages
+                    // returned by MLang, so the font might not contain the character.
+                    SelectObject(hdc, hfont);
+                    if (!currentFontContainsCharacter(hdc, character)) {
+                        DeleteObject(hfont);
+                        hfont = 0;
+                    }
+                    SelectObject(hdc, primaryFont);
+                }
+            }
+        } else
+            hfont = createMLangFont(langFontLink, hdc, codePages, character);
+    }
+
+    // A font returned from MLang is trusted to contain the character.
+    bool containsCharacter = hfont;
+
+    if (!hfont) {
         // To find out what font Uniscribe would use, we make it draw into a metafile and intercept
         // calls to CreateFontIndirect().
         HDC metaFileDc = CreateEnhMetaFile(hdc, NULL, NULL, NULL);
@@ -171,16 +255,8 @@ const SimpleFontData* FontCache::getFontDataForCharacters(const Font& font, cons
         WCHAR name[LF_FACESIZE];
         GetTextFace(hdc, LF_FACESIZE, name);
         familyName = name;
-        // Check if the font contains the desired character.
-        static Vector<char, 512> glyphsetBuffer;
-        glyphsetBuffer.resize(GetFontUnicodeRanges(hdc, NULL));
-        GLYPHSET* glyphset = reinterpret_cast<GLYPHSET*>(glyphsetBuffer.data());
-        GetFontUnicodeRanges(hdc, glyphset);
-        // FIXME: Change this to a binary search.
-        unsigned i = 0;
-        while (i < glyphset->cRanges && glyphset->ranges[i].wcLow <= characters[0])
-            i++;
-        if (i && glyphset->ranges[i - 1].wcLow + glyphset->ranges[i - 1].cGlyphs > characters[0])
+
+        if (containsCharacter || currentFontContainsCharacter(hdc, character))
             break;
 
         if (!linkedFonts)
@@ -199,7 +275,7 @@ const SimpleFontData* FontCache::getFontDataForCharacters(const Font& font, cons
         EnumFontFamiliesEx(hdc, &logFont, linkedFontEnumProc, reinterpret_cast<LPARAM>(&hfont), 0);
         linkedFontIndex++;
     }
-    
+
     if (hfont) {
         if (!familyName.isEmpty()) {
             FontPlatformData* result = getCachedFontPlatformData(font.fontDescription(), familyName);

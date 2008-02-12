@@ -1,3 +1,25 @@
+2008-02-12  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Adam Roben.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=17041
+          <rdar://problem/5709660> Eastern Asian fonts do not display without specific box in Control Panel
+
+        Revised the system fallback font lookup logic to use MLang font linking
+        again. To avoid reintroducing bug 16548 and <rdar://problem/5280188>,
+        for CJK characters, try linking based on a single code page at a time,
+        starting with the user's default code page (if it is one of the CJK
+        code pages) followed by the other CJK code pages in a prescribed order
+        that matches what Firefox does.
+
+        * platform/graphics/win/FontCacheWin.cpp:
+        (WebCore::getCJKCodePageMasks): Added. Returns the search order for CJK
+        code pages, with the user's default code page first.
+        (WebCore::currentFontContainsCharacter): Factored out of
+        getFontDataForCharacters().
+        (WebCore::createMLangFont): Ditto.
+        (WebCore::FontCache::getFontDataForCharacters):
+
 2008-02-12  Rodney Dawes  <dobey@wayofthemonkey.com>
 
         Reviewed by Alp Toker.
