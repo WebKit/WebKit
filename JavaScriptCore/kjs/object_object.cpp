@@ -39,7 +39,6 @@ static JSValue* objectProtoFuncLookupGetter(ExecState*, JSObject*, const List&);
 static JSValue* objectProtoFuncLookupSetter(ExecState*, JSObject*, const List&);
 static JSValue* objectProtoFuncPropertyIsEnumerable(ExecState*, JSObject*, const List&);
 static JSValue* objectProtoFuncToLocaleString(ExecState*, JSObject*, const List&);
-static JSValue* objectProtoFuncToString(ExecState*, JSObject*, const List&);
 
 ObjectPrototype::ObjectPrototype(ExecState* exec, FunctionPrototype* functionPrototype)
     : JSObject() // [[Prototype]] is null

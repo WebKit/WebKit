@@ -1,3 +1,18 @@
+2008-02-11  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Fixes for:
+        <rdar://problem/5735497> Match Firefox's cross-domain model more accurately by return the built-in version of functions even if they have been overridden
+        <rdar://problem/5735443> Crash when setting the Window objects prototype to a custom Object and then calling a method on it
+
+        - Expose the native Object.prototype.toString implementation so that it can be used for cross-domain
+          toString calling.
+
+        * JavaScriptCore.exp:
+        * kjs/object_object.cpp:
+        * kjs/object_object.h:
+
 2008-02-10  Darin Adler  <darin@apple.com>
 
         Rubber stamped by Eric.

@@ -36,6 +36,8 @@ namespace KJS {
         ObjectPrototype(ExecState*, FunctionPrototype*);
     };
 
+    JSValue* objectProtoFuncToString(ExecState*, JSObject*, const List&);
+
     /**
      * @internal
      *
