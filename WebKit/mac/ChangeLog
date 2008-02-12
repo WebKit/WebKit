@@ -5,7 +5,7 @@
         * WebCoreSupport/WebFrameBridge.mm:
         * WebCoreSupport/WebViewFactory.mm:
         (-[WebViewFactory imageTitleForFilename:size:]):
-        Move implementatino from WebFrameBridge to WebViewFactory.
+        Move implementation from WebFrameBridge to WebViewFactory.
 
 2008-02-11  Darin Adler  <darin@apple.com>
 
