@@ -1,3 +1,18 @@
+2008-02-12  Adam Roben  <aroben@apple.com>
+
+        Fix Bug 17328: REGRESSION (r30147): Inspector is unstyled on Windows
+
+        <http://bugs.webkit.org/show_bug.cgi?id=17328>
+        <rdar://5737946>
+
+        Reviewed by Mitz.
+
+        Test: fast/loader/local-css-allowed-in-strict-mode.html
+
+        * platform/network/cf/ResourceResponseCFNet.cpp:
+        (WebCore::ResourceResponse::doUpdateResourceResponse): Add a case for
+        .css files.
+
 2008-02-12  Anders Carlsson  <andersca@apple.com>
 
         Build fix.

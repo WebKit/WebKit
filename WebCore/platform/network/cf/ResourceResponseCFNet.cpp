@@ -109,6 +109,7 @@ void ResourceResponse::doUpdateResourceResponse()
         static const String xmlExt(".xml");
         static const String svgExt(".svg");
         static const String jsExt(".js");
+        static const String cssExt(".css");
         if (path.endsWith(xhtmlExt, false))
             m_mimeType = "application/xhtml+xml";
         else if (path.endsWith(htmlExt, false))
@@ -119,6 +120,8 @@ void ResourceResponse::doUpdateResourceResponse()
             m_mimeType = "text/javascript";
         else if (path.endsWith(svgExt, false))
             m_mimeType = "image/svg+xml";
+        else if (path.endsWith(cssExt, false))
+            m_mimeType = "text/css";
     }
 }
 

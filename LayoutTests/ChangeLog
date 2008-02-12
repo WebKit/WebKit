@@ -1,3 +1,17 @@
+2008-02-12  Adam Roben  <aroben@apple.com>
+
+        Add a test for Bug 17328: REGRESSION (r30147): Inspector is unstyled
+        on Windows
+
+        <http://bugs.webkit.org/show_bug.cgi?id=17328>
+        <rdar://5737946>
+
+        Reviewed by Mitz.
+
+        * fast/loader/local-css-allowed-in-strict-mode-expected.txt: Added.
+        * fast/loader/local-css-allowed-in-strict-mode.html: Added.
+        * fast/loader/resources/stylesheet.css: Added.
+
 2008-02-12  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Not reviewed, adding missing layout test results (that have been r+ already, but not commited)
