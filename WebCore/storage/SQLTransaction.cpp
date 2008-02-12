@@ -70,6 +70,11 @@ SQLTransaction::SQLTransaction(Database* db, PassRefPtr<SQLTransactionCallback> 
     ASSERT(m_database);
 }
 
+SQLTransaction::~SQLTransaction()
+{
+    LOG(StorageAPI, "Transaction %p destructor\n", this);
+}
+
 void SQLTransaction::executeSQL(const String& sqlStatement, const Vector<SQLValue>& arguments, PassRefPtr<SQLStatementCallback> callback, PassRefPtr<SQLStatementErrorCallback> callbackError, ExceptionCode& e)
 {
     if (!m_executeSqlAllowed) {
@@ -94,8 +99,34 @@ void SQLTransaction::enqueueStatement(PassRefPtr<SQLStatement> statement)
     m_statementQueue.append(statement);
 }
 
+#ifndef NDEBUG
+const char* SQLTransaction::debugStepName(SQLTransaction::TransactionStepMethod step)
+{
+    if (step == &SQLTransaction::openTransactionAndPreflight)
+        return "openTransactionAndPreflight";
+    else if (step == &SQLTransaction::runStatements)
+        return "runStatements";
+    else if (step == &SQLTransaction::postflightAndCommit)
+        return "postflightAndCommit";
+    else if (step == &SQLTransaction::cleanupAfterTransactionErrorCallback)
+        return "cleanupAfterTransactionErrorCallback";
+    else if (step == &SQLTransaction::deliverTransactionCallback)
+        return "deliverTransactionCallback";
+    else if (step == &SQLTransaction::deliverTransactionErrorCallback)
+        return "deliverTransactionErrorCallback";
+    else if (step == &SQLTransaction::deliverStatementCallback)
+        return "deliverStatementCallback";
+    else if (step == &SQLTransaction::deliverQuotaIncreaseCallback)
+        return "deliverQuotaIncreaseCallback";
+    else
+        return "UNKNOWN";
+}
+#endif
+
 bool SQLTransaction::performNextStep()
 {
+    LOG(StorageAPI, "Step %s\n", debugStepName(m_nextStep));
+
     ASSERT(m_nextStep == &SQLTransaction::openTransactionAndPreflight ||
            m_nextStep == &SQLTransaction::runStatements ||
            m_nextStep == &SQLTransaction::postflightAndCommit ||
@@ -109,6 +140,8 @@ bool SQLTransaction::performNextStep()
 
 void SQLTransaction::performPendingCallback()
 {
+    LOG(StorageAPI, "Callback %s\n", debugStepName(m_nextStep));
+
     ASSERT(m_nextStep == &SQLTransaction::deliverTransactionCallback ||
            m_nextStep == &SQLTransaction::deliverTransactionErrorCallback ||
            m_nextStep == &SQLTransaction::deliverStatementCallback ||
@@ -163,6 +196,7 @@ void SQLTransaction::openTransactionAndPreflight()
     
     // Transaction Step 4 - Invoke the transaction callback with the new SQLTransaction object
     m_nextStep = &SQLTransaction::deliverTransactionCallback;
+    LOG(StorageAPI, "Scheduling deliverTransactionCallback for transaction %p\n", this);
     m_database->scheduleTransactionCallback(this);
 }
 
@@ -187,9 +221,9 @@ void SQLTransaction::deliverTransactionCallback()
 
 void SQLTransaction::scheduleToRunStatements()
 {
-    m_currentStatement = 0;
     m_nextStep = &SQLTransaction::runStatements;
-    m_database->scheduleTransactionStep();
+    LOG(StorageAPI, "Scheduling runStatements for transaction %p\n", this);
+    m_database->scheduleTransactionStep(this);
 }
 
 void SQLTransaction::runStatements()
@@ -255,6 +289,7 @@ bool SQLTransaction::runCurrentStatement()
             
         if (m_currentStatement->hasStatementCallback()) {
             m_nextStep = &SQLTransaction::deliverStatementCallback;
+            LOG(StorageAPI, "Scheduling deliverStatementCallback for transaction %p\n", this);
             m_database->scheduleTransactionCallback(this);
             return false;
         }
@@ -263,6 +298,7 @@ bool SQLTransaction::runCurrentStatement()
     
     if (m_currentStatement->lastExecutionFailedDueToQuota()) {
         m_nextStep = &SQLTransaction::deliverQuotaIncreaseCallback;
+        LOG(StorageAPI, "Scheduling deliverQuotaIncreaseCallback for transaction %p\n", this);
         m_database->scheduleTransactionCallback(this);
         return false;
     }
@@ -278,6 +314,7 @@ void SQLTransaction::handleCurrentStatementError()
     // jump to the transaction error callback
     if (m_currentStatement->hasStatementErrorCallback()) {
         m_nextStep = &SQLTransaction::deliverStatementCallback;
+        LOG(StorageAPI, "Scheduling deliverStatementCallback for transaction %p\n", this);
         m_database->scheduleTransactionCallback(this);
     } else {
         m_transactionError = m_currentStatement->sqlError();
@@ -323,7 +360,8 @@ void SQLTransaction::deliverQuotaIncreaseCallback()
         m_shouldRetryCurrentStatement = true;
         
     m_nextStep = &SQLTransaction::runStatements;
-    m_database->scheduleTransactionStep();
+    LOG(StorageAPI, "Scheduling runStatements for transaction %p\n", this);
+    m_database->scheduleTransactionStep(this);
 }
 
 void SQLTransaction::postflightAndCommit()
@@ -342,8 +380,8 @@ void SQLTransaction::postflightAndCommit()
     
     m_database->m_databaseAuthorizer->disable();
     m_sqliteTransaction->commit();
-    m_database->m_databaseAuthorizer->enable();    
-        
+    m_database->m_databaseAuthorizer->enable();
+
     // If the commit failed, the transaction will still be marked as "in progress"
     if (m_sqliteTransaction->inProgress()) {
         m_shouldCommitAfterErrorCallback = false;
@@ -358,6 +396,7 @@ void SQLTransaction::postflightAndCommit()
     
     // Transaction Step 10 - End transaction steps
     // There is no next step
+    LOG(StorageAPI, "Transaction %p is complete\n", this);
     ASSERT(!m_database->m_sqliteDatabase.transactionInProgress());
     m_nextStep = 0;
 
@@ -373,6 +412,7 @@ void SQLTransaction::handleTransactionError(bool inCallback)
             deliverTransactionErrorCallback();
         else {
             m_nextStep = &SQLTransaction::deliverTransactionErrorCallback;
+            LOG(StorageAPI, "Scheduling deliverTransactionErrorCallback for transaction %p\n", this);
             m_database->scheduleTransactionCallback(this);
         }
         return;
@@ -382,7 +422,8 @@ void SQLTransaction::handleTransactionError(bool inCallback)
     m_shouldCommitAfterErrorCallback = false;
     if (inCallback) {
         m_nextStep = &SQLTransaction::cleanupAfterTransactionErrorCallback;
-        m_database->scheduleTransactionStep();
+        LOG(StorageAPI, "Scheduling cleanupAfterTransactionErrorCallback for transaction %p\n", this);
+        m_database->scheduleTransactionStep(this);
     } else {
         cleanupAfterTransactionErrorCallback();
     }
@@ -398,7 +439,8 @@ void SQLTransaction::deliverTransactionErrorCallback()
         m_shouldCommitAfterErrorCallback = false;
 
     m_nextStep = &SQLTransaction::cleanupAfterTransactionErrorCallback;
-    m_database->scheduleTransactionStep();
+    LOG(StorageAPI, "Scheduling cleanupAfterTransactionErrorCallback for transaction %p\n", this);
+    m_database->scheduleTransactionStep(this);
 }
 
 void SQLTransaction::cleanupAfterTransactionErrorCallback()
@@ -431,6 +473,7 @@ void SQLTransaction::cleanupAfterTransactionErrorCallback()
     }
     
     // Transaction is complete!  There is no next step
+    LOG(StorageAPI, "Transaction %p is complete with an error\n", this);
     ASSERT(!m_database->m_sqliteDatabase.transactionInProgress());
     m_nextStep = 0;
 

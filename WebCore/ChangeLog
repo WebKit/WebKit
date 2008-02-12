@@ -1,3 +1,94 @@
+2008-02-12  Alexey Proskuryakov <ap@webkit.org> and Brady Eidson <beidson@apple.com>
+
+        Reviewed by Brady.
+
+        http://bugs.webkit.org/show_bug.cgi?id=17177
+        <rdar://problem/5729619> Storage tasks are getting lost
+
+        <rdar://problem/5729445> REGRESSION: Cannot schedule more than one transaction at a time
+
+        <rdar://problem/5729446> Major thread safety issue in Database code
+
+        * platform/MessageQueue.h: Added a thread-safe queue abstraction.
+
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        Added MessageQueue.h.
+
+        * dom/Document.cpp:
+        (WebCore::Document::~Document): Fixed a race condition resulting in a hanging reference.
+
+        * storage/Database.idl: Fixed parameter declarations to actually match implementation
+        (which is custom, so it got out of sync).
+
+        * storage/DatabaseTask.h:
+        (WebCore::DatabaseTask::database):
+        (WebCore::DatabaseTransactionTask::transaction):
+        Changed tasks to hold more information internally. Added helpers for better debug logging.
+
+        * storage/DatabaseTask.cpp:
+        (WebCore::DatabaseTask::DatabaseTask):
+        (WebCore::DatabaseTask::performTask):
+        (WebCore::DatabaseOpenTask::DatabaseOpenTask):
+        (WebCore::DatabaseOpenTask::doPerformTask):
+        (WebCore::DatabaseOpenTask::debugTaskName):
+        (WebCore::DatabaseTransactionTask::DatabaseTransactionTask):
+        (WebCore::DatabaseTransactionTask::~DatabaseTransactionTask):
+        (WebCore::DatabaseTransactionTask::doPerformTask):
+        (WebCore::DatabaseTransactionTask::debugTaskName):
+        (WebCore::DatabaseTableNamesTask::DatabaseTableNamesTask):
+        (WebCore::DatabaseTableNamesTask::doPerformTask):
+        (WebCore::DatabaseTableNamesTask::debugTaskName):
+        Implementation for the above.
+
+        (WebCore::DatabaseTask::lockForSynchronousScheduling):
+        (WebCore::DatabaseTask::waitForSynchronousCompletion):
+        Fixed a potential race condition: if the task completed before we entered a wait, we'd never
+        wake up. There was an assertion guarding against this, but no actual guarantee that I could see.
+
+        * storage/DatabaseThread.cpp:
+        (WebCore::DatabaseThread::DatabaseThread):
+        (WebCore::DatabaseThread::requestTermination):
+        (WebCore::DatabaseThread::databaseThread):
+        (WebCore::DatabaseThread::scheduleTask):
+        (WebCore::DatabaseThread::scheduleImmediateTask):
+        (WebCore::DatabaseThread::unscheduleDatabaseTasks):
+        * storage/DatabaseThread.h:
+        Changed to use MessageQueue.
+
+        * storage/Database.cpp:
+        (WebCore::guidMutex):
+        (WebCore::guidToVersionMap):
+        (WebCore::guidToDatabaseMap):
+        (WebCore::Database::openDatabase):
+        (WebCore::Database::Database):
+        (WebCore::Database::~Database):
+        (WebCore::Database::openAndVerifyVersion):
+        (WebCore::guidForOriginAndName):
+        (WebCore::Database::changeVersion):
+        (WebCore::Database::transaction):
+        (WebCore::Database::scheduleTransaction):
+        (WebCore::Database::scheduleTransactionStep):
+        (WebCore::Database::scheduleTransactionCallback):
+        (WebCore::Database::version):
+        (WebCore::Database::deliverPendingCallback):
+        (WebCore::Database::tableNames):
+        * storage/Database.h:
+        Changed m_transactionQueue to a MessageQueue.
+        Got rid of callback tracking - these can take care of themselves.
+        Got rid of a DatabaseThread member, as the Document can be asked for it.
+        Moved private static members and helpers out of the header.
+        Lost CurrentThreadSetter debug helper on the way. We may need to re-add something like that later.
+
+        * storage/SQLTransaction.h:
+        * storage/SQLTransaction.cpp: Added a lot of debug logging.
+        (WebCore::SQLTransaction::scheduleToRunStatements): Removed "m_currentStatement = 0" assignment,
+        as it created a race condition. Everything seems to work better without it, although a real fix
+        would be to get rid of this variable - it's evil shared data that isn't even protected in any way.
+
+        * manual-tests/database-threading-stress-test-2.html: Added.
+        * manual-tests/database-threading-stress-test.html: Added.
+
 2008-02-12  Adam Roben  <aroben@apple.com>
 
         Fix Bug 17328: REGRESSION (r30147): Inspector is unstyled on Windows

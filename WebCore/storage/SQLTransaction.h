@@ -64,6 +64,7 @@ public:
 class SQLTransaction : public ThreadSafeShared<SQLTransaction> {
 public:
     SQLTransaction(Database*, PassRefPtr<SQLTransactionCallback>, PassRefPtr<SQLTransactionErrorCallback>, PassRefPtr<SQLTransactionWrapper>);
+    ~SQLTransaction();
     
     void executeSQL(const String& sqlStatement, const Vector<SQLValue>& arguments, 
                     PassRefPtr<SQLStatementCallback> callback, PassRefPtr<SQLStatementErrorCallback> callbackError, ExceptionCode& e);
@@ -72,7 +73,7 @@ public:
     void performPendingCallback();
     
     Database* database() { return m_database; }
-    
+
 private:
     typedef void (SQLTransaction::*TransactionStepMethod)();
     TransactionStepMethod m_nextStep;
@@ -92,6 +93,10 @@ private:
     void handleTransactionError(bool inCallback);
     void deliverTransactionErrorCallback();
     void cleanupAfterTransactionErrorCallback();
+
+#ifndef NDEBUG
+    static const char* debugStepName(TransactionStepMethod);
+#endif
 
     RefPtr<SQLStatement> m_currentStatement;
     

@@ -49,55 +49,21 @@
 #include "SQLResultSet.h"
 
 namespace WebCore {
-        
-#ifndef NDEBUG
-class CurrentThreadSetter {
-public:
-    CurrentThreadSetter(ThreadIdentifier& thread)
-        : threadIdentifierStorage(thread)
-    {
-        ASSERT(!thread);
-        thread = currentThread();
-    }
 
-    ~CurrentThreadSetter()
-    {
-        ASSERT(threadIdentifierStorage == currentThread());
-        threadIdentifierStorage = 0;
-    }
-
-private:
-    ThreadIdentifier& threadIdentifierStorage;
-};
-#endif
-
-Mutex& Database::globalCallbackMutex()
+static Mutex& guidMutex()
 {
+    // FIXME: this is not a thread-safe way to initialize a shared global.
     static Mutex mutex;
     return mutex;
 }
 
-HashSet<RefPtr<Database> >& Database::globalCallbackSet()
-{
-    static HashSet<RefPtr<Database> > set;
-    return set;
-}
-
-bool Database::s_globalCallbackScheduled = false;
-
-Mutex& Database::guidMutex()
-{
-    static Mutex mutex;
-    return mutex;
-}
-
-HashMap<int, String>& Database::guidToVersionMap()
+static HashMap<int, String>& guidToVersionMap()
 {
     static HashMap<int, String> map;
     return map;
 }
 
-HashMap<int, HashSet<Database*>*>& Database::guidToDatabaseMap()
+static HashMap<int, HashSet<Database*>*>& guidToDatabaseMap()
 {
     static HashMap<int, HashSet<Database*>*> map;
     return map;
@@ -115,10 +81,12 @@ static const String& databaseVersionKey()
     return key;
 }
 
+static int guidForOriginAndName(const String& origin, const String& name);
+
 PassRefPtr<Database> Database::openDatabase(Document* document, const String& name, const String& expectedVersion, const String& displayName, unsigned long estimatedSize, ExceptionCode& e)
 {
     if (!DatabaseTracker::tracker().canEstablishDatabase(document, name, displayName, estimatedSize)) {
-        // There should be an exception raised here in addition to returning a null Database object.  The question has been raised with the WHATWG
+        // FIXME: There should be an exception raised here in addition to returning a null Database object.  The question has been raised with the WHATWG.
         LOG(StorageAPI, "Database %s for origin %s not allowed to be established", name.ascii().data(), document->securityOrigin()->toString().ascii().data());
         return 0;
     }
@@ -141,15 +109,12 @@ PassRefPtr<Database> Database::openDatabase(Document* document, const String& na
 }
 
 Database::Database(Document* document, const String& name, const String& expectedVersion)
-    : m_document(document)
+    : m_transactionInProgress(false)
+    , m_document(document)
     , m_name(name.copy())
     , m_guid(0)
     , m_expectedVersion(expectedVersion)
     , m_deleted(0)
-    , m_databaseThread(0)
-#ifndef NDEBUG
-    , m_transactionStepThread(0)
-#endif
 {
     ASSERT(document);
     m_securityOrigin = document->securityOrigin();
@@ -173,8 +138,7 @@ Database::Database(Document* document, const String& name, const String& expecte
         hashSet->add(this);
     }
 
-    m_databaseThread = document->databaseThread();
-    ASSERT(m_databaseThread);
+    ASSERT(m_document->databaseThread());
 
     m_filename = DatabaseTracker::tracker().fullPathForDatabase(m_securityOrigin.get(), m_name);
 
@@ -183,17 +147,22 @@ Database::Database(Document* document, const String& name, const String& expecte
 
 Database::~Database()
 {
-    MutexLocker locker(guidMutex());
+    {
+        MutexLocker locker(guidMutex());
 
-    HashSet<Database*>* hashSet = guidToDatabaseMap().get(m_guid);
-    ASSERT(hashSet);
-    ASSERT(hashSet->contains(this));
-    hashSet->remove(this);
-    if (hashSet->isEmpty()) {
-        guidToDatabaseMap().remove(m_guid);
-        delete hashSet;
-        guidToVersionMap().remove(m_guid);
+        HashSet<Database*>* hashSet = guidToDatabaseMap().get(m_guid);
+        ASSERT(hashSet);
+        ASSERT(hashSet->contains(this));
+        hashSet->remove(this);
+        if (hashSet->isEmpty()) {
+            guidToDatabaseMap().remove(m_guid);
+            delete hashSet;
+            guidToVersionMap().remove(m_guid);
+        }
     }
+
+    if (m_document->databaseThread())
+        m_document->databaseThread()->unscheduleDatabaseTasks(this);
 
     DatabaseTracker::tracker().removeOpenDatabase(this);
 }
@@ -202,10 +171,10 @@ bool Database::openAndVerifyVersion(ExceptionCode& e)
 {
     m_databaseAuthorizer = new DatabaseAuthorizer();
 
-    RefPtr<DatabaseOpenTask> task = new DatabaseOpenTask();
+    RefPtr<DatabaseOpenTask> task = new DatabaseOpenTask(this);
 
     task->lockForSynchronousScheduling();
-    m_databaseThread->scheduleImmediateTask(this, task.get());
+    m_document->databaseThread()->scheduleImmediateTask(task.get());
     task->waitForSynchronousCompletion();
 
     ASSERT(task->isComplete());
@@ -325,13 +294,6 @@ unsigned long long Database::maximumSize() const
     return DatabaseTracker::tracker().quotaForOrigin(m_securityOrigin.get()) - manager.diskUsage(m_securityOrigin.get()) + databaseSize();
 }
 
-void Database::databaseThreadGoingAway()
-{
-    // FIXME: We might not need this anymore
-
-    LOG(StorageAPI, "Database thread is going away for database %p\n", this);
-}
-
 void Database::disableAuthorizer()
 {
     ASSERT(m_databaseAuthorizer);
@@ -344,7 +306,7 @@ void Database::enableAuthorizer()
     m_databaseAuthorizer->enable();
 }
 
-int Database::guidForOriginAndName(const String& origin, const String& name)
+static int guidForOriginAndName(const String& origin, const String& name)
 {
     static int currentNewGUID = 1;
     static Mutex stringIdentifierMutex;
@@ -458,84 +420,53 @@ bool Database::performOpenAndVerify(ExceptionCode& e)
     return true;
 }
 
-void Database::performTransactionStep()
-{
-#ifndef NDEBUG
-    CurrentThreadSetter threadSetter(m_transactionStepThread);
-#endif
-
-    // Do not perform a transaction if a global callback is scheduled.
-    MutexLocker locker(globalCallbackMutex());
-    if (s_globalCallbackScheduled)
-        return;
-
-    {
-        MutexLocker locker(m_transactionMutex);
-
-        if (!m_currentTransaction) {
-            ASSERT(m_transactionQueue.size());
-            m_currentTransaction = m_transactionQueue.first();
-            m_transactionQueue.removeFirst();
-        }
-    }
-
-    // If this step completes the entire transaction, clear the working transaction
-    // and schedule the next one if necessary
-    if (!m_currentTransaction->performNextStep())
-        return;
-
-    {
-        MutexLocker locker(m_transactionMutex);
-        ASSERT(!m_sqliteDatabase.transactionInProgress());
-        m_currentTransaction = 0;
-
-        if (m_transactionQueue.size())
-            m_databaseThread->scheduleTask(this, new DatabaseTransactionTask);
-    }
-}
-
 void Database::changeVersion(const String& oldVersion, const String& newVersion, 
                              PassRefPtr<SQLTransactionCallback> callback, PassRefPtr<SQLTransactionErrorCallback> errorCallback,
                              PassRefPtr<VoidCallback> successCallback)
 {
-    scheduleTransaction(new SQLTransaction(this, callback, errorCallback, new ChangeVersionWrapper(oldVersion, newVersion)));
+    // FIXME: pass successCallback, too.
+    m_transactionQueue.append(new SQLTransaction(this, callback, errorCallback, new ChangeVersionWrapper(oldVersion, newVersion)));
+    MutexLocker locker(m_transactionInProgressMutex);
+    if (!m_transactionInProgress)
+        scheduleTransaction();
 }
 
 void Database::transaction(PassRefPtr<SQLTransactionCallback> callback, PassRefPtr<SQLTransactionErrorCallback> errorCallback,
                            PassRefPtr<VoidCallback> successCallback)
 {
-    scheduleTransaction(new SQLTransaction(this, callback, errorCallback, 0));
+    // FIXME: pass successCallback, too.
+    m_transactionQueue.append(new SQLTransaction(this, callback, errorCallback, 0));
+    MutexLocker locker(m_transactionInProgressMutex);
+    if (!m_transactionInProgress)
+        scheduleTransaction();
 }
 
-void Database::scheduleTransaction(PassRefPtr<SQLTransaction> transaction)
-{   
-    MutexLocker locker(m_transactionMutex);
-    m_transactionQueue.append(transaction);
-    if (!m_currentTransaction)
-        m_databaseThread->scheduleTask(this, new DatabaseTransactionTask);
-}
-
-void Database::scheduleTransactionStep()
+void Database::scheduleTransaction()
 {
-    MutexLocker locker(m_transactionMutex);
-    m_databaseThread->scheduleTask(this, new DatabaseTransactionTask);
+    ASSERT(!m_transactionInProgressMutex.tryLock()); // Locked by caller.
+    RefPtr<SQLTransaction> transaction;
+    if (m_transactionQueue.tryGetMessage(transaction) && m_document->databaseThread()) {
+        DatabaseTransactionTask* task = new DatabaseTransactionTask(transaction);
+        LOG(StorageAPI, "Scheduling DatabaseTransactionTask %p for transaction %p\n", task, task->transaction());
+        m_transactionInProgress = true;
+        m_document->databaseThread()->scheduleTask(task);
+    } else
+        m_transactionInProgress = false;
+}
+
+void Database::scheduleTransactionStep(SQLTransaction* transaction)
+{
+    if (m_document->databaseThread()) {
+        DatabaseTransactionTask* task = new DatabaseTransactionTask(transaction);
+        LOG(StorageAPI, "Scheduling DatabaseTransactionTask %p for the transaction step\n", task);
+        m_document->databaseThread()->scheduleTask(task);
+    }
 }
 
 void Database::scheduleTransactionCallback(SQLTransaction* transaction)
 {
-    ASSERT(m_transactionStepThread == currentThread());
-
-    MutexLocker locker(m_callbackMutex);
-
-    ASSERT(!m_transactionPendingCallback);
-    m_transactionPendingCallback = transaction;
-
-    globalCallbackSet().add(this);
-
-    if (!s_globalCallbackScheduled) {
-        callOnMainThread(deliverAllPendingCallbacks, 0);
-        s_globalCallbackScheduled = true;
-    }
+    transaction->ref();
+    callOnMainThread(deliverPendingCallback, transaction);
 }
 
 Vector<String> Database::performGetTableNames()
@@ -574,41 +505,20 @@ String Database::version() const
     MutexLocker locker(guidMutex());
     return guidToVersionMap().get(m_guid).copy();
 }
-    
-void Database::deliverAllPendingCallbacks(void*)
+
+void Database::deliverPendingCallback(void* context)
 {
-    Vector<RefPtr<Database> > databases;
-    {
-        MutexLocker locker(globalCallbackMutex());
-        copyToVector(globalCallbackSet(), databases);
-        globalCallbackSet().clear();
-        s_globalCallbackScheduled = false;
-    }
-
-    LOG(StorageAPI, "Having %zu databases deliver their pending callbacks", databases.size());
-    for (unsigned i = 0; i < databases.size(); ++i)
-        databases[i]->deliverPendingCallback();
-}
-
-void Database::deliverPendingCallback()
-{
-    RefPtr<SQLTransaction> transaction;
-    {
-        MutexLocker locker(m_callbackMutex);
-        
-        ASSERT(m_transactionPendingCallback);
-        transaction = m_transactionPendingCallback.release();
-    }
-
+    SQLTransaction* transaction = static_cast<SQLTransaction*>(context);
     transaction->performPendingCallback();
+    transaction->deref(); // Was ref'd in scheduleTransactionCallback().
 }
 
 Vector<String> Database::tableNames()
 {
-    RefPtr<DatabaseTableNamesTask> task = new DatabaseTableNamesTask();
+    RefPtr<DatabaseTableNamesTask> task = new DatabaseTableNamesTask(this);
 
     task->lockForSynchronousScheduling();
-    m_databaseThread->scheduleImmediateTask(this, task.get());
+    m_document->databaseThread()->scheduleImmediateTask(task.get());
     task->waitForSynchronousCompletion();
 
     return task->tableNames();

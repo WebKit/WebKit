@@ -29,12 +29,12 @@
 #ifndef Database_h
 #define Database_h
 
+#include "MessageQueue.h"
 #include "PlatformString.h"
 #include "SecurityOrigin.h"
 #include "SQLiteDatabase.h"
 #include "SQLTransaction.h"
 #include "StringHash.h"
-#include "Threading.h"
 #include "Timer.h"
 #include "VoidCallback.h"
 
@@ -58,6 +58,7 @@ class SQLValue;
 typedef int ExceptionCode;
 
 class Database : public ThreadSafeShared<Database> {
+    friend class DatabaseTransactionTask;
     friend class SQLStatement;
     friend class SQLTransaction;
 public:
@@ -73,7 +74,6 @@ public:
                      PassRefPtr<VoidCallback> successCallback);
     
 // Internal engine support
-    void databaseThreadGoingAway();
     static const String& databaseInfoTableName();
 
     void disableAuthorizer();
@@ -102,8 +102,6 @@ public:
 
     bool performOpenAndVerify(ExceptionCode&);
 
-    void performTransactionStep();
-
     Vector<String> performGetTableNames();
 
 private:
@@ -111,16 +109,15 @@ private:
 
     bool openAndVerifyVersion(ExceptionCode&);
 
-    void scheduleTransaction(PassRefPtr<SQLTransaction>);
+    void scheduleTransaction();
     void scheduleTransactionCallback(SQLTransaction*);
-    void scheduleTransactionStep();
+    void scheduleTransactionStep(SQLTransaction* transaction);
     
-    Mutex m_transactionMutex;
-    Deque<RefPtr<SQLTransaction> > m_transactionQueue;
-    RefPtr<SQLTransaction> m_currentTransaction;
+    MessageQueue<RefPtr<SQLTransaction> > m_transactionQueue;
+    Mutex m_transactionInProgressMutex;
+    bool m_transactionInProgress;
 
-    static void deliverAllPendingCallbacks(void*);
-    void deliverPendingCallback();
+    static void deliverPendingCallback(void*);
 
     Document* m_document;
     RefPtr<SecurityOrigin> m_securityOrigin;
@@ -134,26 +131,9 @@ private:
     SQLiteDatabase m_sqliteDatabase;
     RefPtr<DatabaseAuthorizer> m_databaseAuthorizer;
 
-    DatabaseThread* m_databaseThread;
-
-    Mutex m_callbackMutex;
-    RefPtr<SQLTransaction> m_transactionPendingCallback;
-
 #ifndef NDEBUG
-    ThreadIdentifier m_transactionStepThread;
-
     String databaseDebugName() const { return m_securityOrigin->toString() + "::" + m_name; }
 #endif
-
-    static Mutex& globalCallbackMutex();
-    static HashSet<RefPtr<Database> >& globalCallbackSet();
-    static bool s_globalCallbackScheduled;
-
-    static int guidForOriginAndName(const String&, const String&);
-
-    static Mutex& guidMutex();
-    static HashMap<int, String>& guidToVersionMap();
-    static HashMap<int, HashSet<Database*>*>& guidToDatabaseMap();
 };
 
 } // namespace WebCore

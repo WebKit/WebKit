@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -37,7 +37,6 @@ namespace WebCore {
 
 DatabaseThread::DatabaseThread(Document* document)
     : m_threadID(0)
-    , m_terminationRequested(false)
 {
     m_selfRef = this;
 }
@@ -57,56 +56,10 @@ bool DatabaseThread::start()
     return m_threadID;
 }
 
-void DatabaseThread::documentGoingAway()
+void DatabaseThread::requestTermination()
 {
-    // This document is going away, so this thread is going away.
-    // -Clear records of all Databases out
-    // -Leave the thread main loop
-    // -Detach the thread so the thread itself runs out and releases all thread resources
-    // -Clear the RefPtr<> self so if noone else is hanging on the thread, the object itself is deleted.
-
     LOG(StorageAPI, "Document owning DatabaseThread %p is going away - starting thread shutdown", this);
-
-    // Clear all database records out, and let Databases know that this DatabaseThread is going away
-    {
-        MutexLocker locker(m_databaseWorkMutex);
-
-        // FIXME - The policy we're enforcing right here is that when a document goes away, any pending
-        // sql queries that were queued up also go away.  Is this appropriate?
-
-        HashSet<RefPtr<Database> >::iterator i = m_activeDatabases.begin();
-        HashSet<RefPtr<Database> >::iterator end = m_activeDatabases.end();
-
-        for (; i != end; ++i) {
-            (*i)->databaseThreadGoingAway();
-            Deque<RefPtr<DatabaseTask> >* databaseQueue = m_databaseTaskQueues.get((*i).get());
-            ASSERT(databaseQueue);
-            m_databaseTaskQueues.remove((*i).get());
-            delete databaseQueue;
-        }
-        ASSERT(m_databaseTaskQueues.isEmpty());
-        m_activeDatabases.clear();
-    }
-
-    // Request the thread to cleanup and shutdown
-    m_terminationRequested = true;
-    wakeWorkThread();
-}
-
-void DatabaseThread::databaseGoingAway(Database* database)
-{
-    MutexLocker locker(m_databaseWorkMutex);
-    if (!m_activeDatabases.contains(database))
-        return;
-
-    // FIXME - The policy we're enforcing right here is that when a document goes away, any pending
-    // sql queries that were queued up also go away.  Is this appropriate?
-    Deque<RefPtr<DatabaseTask> >* databaseQueue = m_databaseTaskQueues.get(database);
-    ASSERT(databaseQueue);
-    m_databaseTaskQueues.remove(database);
-    delete databaseQueue;
-
-    m_activeDatabases.remove(database);
+    m_queue.kill();
 }
 
 void* DatabaseThread::databaseThreadStart(void* vDatabaseThread)
@@ -119,28 +72,16 @@ void* DatabaseThread::databaseThread()
 {
     LOG(StorageAPI, "Starting DatabaseThread %p", this);
 
-    m_threadMutex.lock();
-    while (!m_terminationRequested) {
-        m_threadMutex.unlock();
-        AutodrainedPool pool;
-
-        LOG(StorageAPI, "Iteration of main loop for DatabaseThread %p", this);
-
-        bool result;
-        do {
-            result = dispatchNextTaskIdentifier();
-            if (m_terminationRequested)
-                break;
-        } while(result);
-
-        if (m_terminationRequested)
+    AutodrainedPool pool;
+    while (true) {
+        RefPtr<DatabaseTask> task;
+        if (!m_queue.waitForMessage(task))
             break;
 
+        task->performTask();
+
         pool.cycle();
-        m_threadMutex.lock();
-        m_threadCondition.wait(m_threadMutex);
     }
-    m_threadMutex.unlock();
 
     LOG(StorageAPI, "About to detach thread %i and clear the ref to DatabaseThread %p, which currently has %i ref(s)", m_threadID, this, refCount());
 
@@ -153,98 +94,32 @@ void* DatabaseThread::databaseThread()
     return 0;
 }
 
-bool DatabaseThread::dispatchNextTaskIdentifier()
+void DatabaseThread::scheduleTask(DatabaseTask* task)
 {
-    RefPtr<Database> workDatabase;
+    m_queue.append(task);
+}
+
+void DatabaseThread::scheduleImmediateTask(DatabaseTask* task)
+{
+    m_queue.prepend(task);
+}
+
+void DatabaseThread::unscheduleDatabaseTasks(Database* database)
+{
+    // Note that the thread loop is running, so some tasks for the database
+    // may still be executed. This is unavoidable.
+
+    Deque<RefPtr<DatabaseTask> > filteredReverseQueue;
     RefPtr<DatabaseTask> task;
-
-    {
-        MutexLocker locker(m_databaseWorkMutex);
-        while (!task && m_globalQueue.size()) {
-            Database* database = m_globalQueue.first();
-            m_globalQueue.removeFirst();
-
-            Deque<RefPtr<DatabaseTask> >* databaseQueue = m_databaseTaskQueues.get(database);
-            ASSERT(databaseQueue || !m_activeDatabases.contains(database));
-            if (!databaseQueue)
-                continue;
-
-            ASSERT(databaseQueue->size());
-            task = databaseQueue->first();
-            workDatabase = database;
-            databaseQueue->removeFirst();
-        }
+    while (m_queue.tryGetMessage(task)) {
+        if (task->database() != database)
+            filteredReverseQueue.append(task);
     }
 
-    if (task) {
-        ASSERT(workDatabase);
-        workDatabase->resetAuthorizer();
-        task->performTask(workDatabase.get());
-        return true;
+    while (!filteredReverseQueue.isEmpty()) {
+        m_queue.append(filteredReverseQueue.first());
+        filteredReverseQueue.removeFirst();
     }
-
-    return false;
-}
-
-void DatabaseThread::scheduleTask(Database* database, DatabaseTask* task)
-{
-    if (m_terminationRequested) {
-        LOG(StorageAPI, "Attempted to schedule task %p from database %p on DatabaseThread %p after it was requested to terminate", task, database, this);
-        return;
-    }
-
-    MutexLocker locker(m_databaseWorkMutex);
-
-    Deque<RefPtr<DatabaseTask> >* databaseQueue = 0;
-
-    if (!m_activeDatabases.contains(database)) {
-        m_activeDatabases.add(database);
-        databaseQueue = new Deque<RefPtr<DatabaseTask> >;
-        m_databaseTaskQueues.set(database, databaseQueue);
-    }
-
-    if (!databaseQueue)
-        databaseQueue = m_databaseTaskQueues.get(database);
-
-    ASSERT(databaseQueue);
-
-    databaseQueue->append(task);
-    m_globalQueue.append(database);
-
-    wakeWorkThread();
-}
-
-void DatabaseThread::scheduleImmediateTask(Database* database, DatabaseTask* task)
-{
-    if (m_terminationRequested) {
-        LOG_ERROR("Attempted to schedule immediate task %p from database %p on DatabaseThread %p after it was requested to terminate", task, database, this);
-        return;
-    }
-    MutexLocker locker(m_databaseWorkMutex);
-
-    Deque<RefPtr<DatabaseTask> >* databaseQueue = 0;
-
-    if (!m_activeDatabases.contains(database)) {
-        m_activeDatabases.add(database);
-        databaseQueue = new Deque<RefPtr<DatabaseTask> >;
-        m_databaseTaskQueues.set(database, databaseQueue);
-    }
-
-    if (!databaseQueue)
-        databaseQueue = m_databaseTaskQueues.get(database);
-
-    ASSERT(databaseQueue);
-
-    databaseQueue->prepend(task);
-    m_globalQueue.prepend(database);
-
-    wakeWorkThread();
-}
-
-void DatabaseThread::wakeWorkThread()
-{
-    MutexLocker locker(m_threadMutex);
-    m_threadCondition.signal();
 }
 
 } // namespace WebCore

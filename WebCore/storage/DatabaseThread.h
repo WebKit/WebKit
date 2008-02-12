@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,7 +28,7 @@
 #ifndef DatabaseThread_h
 #define DatabaseThread_h
 
-#include "Threading.h"
+#include "MessageQueue.h"
 
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
@@ -48,32 +48,20 @@ public:
     ~DatabaseThread();
 
     bool start();
-    void documentGoingAway();
-    void databaseGoingAway(Database*);
+    void requestTermination();
 
-    void scheduleTask(Database*, DatabaseTask*);
-    void scheduleImmediateTask(Database*, DatabaseTask*);
+    void scheduleTask(DatabaseTask*);
+    void scheduleImmediateTask(DatabaseTask*); // This just adds the task to the front of the queue - the caller needs to be extremely careful not to create deadlocks when waiting for completion.
+    void unscheduleDatabaseTasks(Database*);
+
 private:
     static void* databaseThreadStart(void*);
     void* databaseThread();
-    void wakeWorkThread();
-    bool dispatchNextTaskIdentifier();
 
     ThreadIdentifier m_threadID;
     RefPtr<DatabaseThread> m_selfRef;
 
-    // For waking/sleeping the work thread
-    ThreadCondition m_threadCondition;
-    Mutex m_threadMutex;
-    bool m_terminationRequested;
-
-    // FIXME: Need a much better queue structure than the linked-list based queue being used
-
-    // Work unit and Database management
-    Mutex m_databaseWorkMutex;
-    HashMap<Database*, Deque<RefPtr<DatabaseTask> >*> m_databaseTaskQueues;
-    HashSet<RefPtr<Database> > m_activeDatabases;
-    Deque<Database*> m_globalQueue;
+    MessageQueue<RefPtr<DatabaseTask> > m_queue;
 };
 
 } // namespace WebCore

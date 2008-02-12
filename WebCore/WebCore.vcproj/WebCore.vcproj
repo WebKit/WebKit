@@ -3239,6 +3239,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\platform\MessageQueue.h"
+				>
+			</File>
+			<File
 				RelativePath="..\platform\MIMETypeRegistry.cpp"
 				>
 			</File>

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,12 +30,12 @@
 
 #include "Database.h"
 #include "Logging.h"
-#include "SQLValue.h"
 
 namespace WebCore {
 
-DatabaseTask::DatabaseTask()
-    : m_complete(false)
+DatabaseTask::DatabaseTask(Database* database)
+    : m_database(database)
+    , m_complete(false)
 {
 }
 
@@ -43,85 +43,109 @@ DatabaseTask::~DatabaseTask()
 {
 }
 
-void DatabaseTask::performTask(Database* db)
+void DatabaseTask::performTask()
 {
-    // Database tasks are meant to be used only once, so make sure this one hasn't been performed before
+    // Database tasks are meant to be used only once, so make sure this one hasn't been performed before.
     ASSERT(!m_complete);
 
-    LOG(StorageAPI, "Performing DatabaseTask %p\n", this);
+    LOG(StorageAPI, "Performing %s %p\n", debugTaskName(), this);
+
+    m_database->resetAuthorizer();
+    doPerformTask();
+    m_database->performPolicyChecks();
 
     if (m_synchronousMutex)
         m_synchronousMutex->lock();
-        
-
-    db->resetAuthorizer();
-    doPerformTask(db);
-    db->performPolicyChecks();
 
     m_complete = true;
 
     if (m_synchronousMutex) {
-        ASSERT(m_synchronousCondition);
         m_synchronousCondition->signal();
         m_synchronousMutex->unlock();
     }
-
 }
 
 void DatabaseTask::lockForSynchronousScheduling()
 {
+    // Called from main thread.
     ASSERT(!m_synchronousMutex);
+    ASSERT(!m_synchronousCondition);
     m_synchronousMutex.set(new Mutex);
-    m_synchronousMutex->lock();
+    m_synchronousCondition.set(new ThreadCondition);
 }
 
 void DatabaseTask::waitForSynchronousCompletion()
 {
-    // Caller of this method must lock this object beforehand
-    ASSERT(m_synchronousMutex && m_synchronousMutex->tryLock() == false);
-    m_synchronousCondition.set(new ThreadCondition);
-    m_synchronousCondition->wait(*m_synchronousMutex.get());
+    // Called from main thread.
+    m_synchronousMutex->lock();
+    if (!m_complete)
+        m_synchronousCondition->wait(*m_synchronousMutex);
     m_synchronousMutex->unlock();
 }
 
 // *** DatabaseOpenTask ***
-// Opens the database file and verifies the version matches the expected version
+// Opens the database file and verifies the version matches the expected version.
 
-DatabaseOpenTask::DatabaseOpenTask()
-    : DatabaseTask()
+DatabaseOpenTask::DatabaseOpenTask(Database* database)
+    : DatabaseTask(database)
     , m_code(0)
     , m_success(false)
 {
 }
 
-void DatabaseOpenTask::doPerformTask(Database* db)
+void DatabaseOpenTask::doPerformTask()
 {
-    m_success = db->performOpenAndVerify(m_code);
+    m_success = database()->performOpenAndVerify(m_code);
 }
 
-// *** DatabaseExecuteSqlTask ***
-// Runs the passed in sql query along with the arguments, and calls the callback with the results
+const char* DatabaseOpenTask::debugTaskName() const
+{
+    return "DatabaseOpenTask";
+}
 
-DatabaseTransactionTask::DatabaseTransactionTask()
-    : DatabaseTask()
+// *** DatabaseTransactionTask ***
+// Starts a transaction that will report its results via a callback.
+
+DatabaseTransactionTask::DatabaseTransactionTask(PassRefPtr<SQLTransaction> transaction)
+    : DatabaseTask(transaction->database())
+    , m_transaction(transaction)
 {
 }
 
-void DatabaseTransactionTask::doPerformTask(Database* db)
+DatabaseTransactionTask::~DatabaseTransactionTask()
 {
-    db->performTransactionStep();
+}
+
+void DatabaseTransactionTask::doPerformTask()
+{
+    if (m_transaction->performNextStep()) {
+        // The transaction is complete, we can move on to the next one.
+        MutexLocker locker(m_transaction->database()->m_transactionInProgressMutex);
+        m_transaction->database()->scheduleTransaction();
+    }
+}
+
+const char* DatabaseTransactionTask::debugTaskName() const
+{
+    return "DatabaseTransactionTask";
 }
 
 // *** DatabaseTableNamesTask ***
-// Retrieves a list of all tables in the database - for WebInspector support
+// Retrieves a list of all tables in the database - for WebInspector support.
 
-DatabaseTableNamesTask::DatabaseTableNamesTask()
+DatabaseTableNamesTask::DatabaseTableNamesTask(Database* database)
+    : DatabaseTask(database)
 {
 }
 
-void DatabaseTableNamesTask::doPerformTask(Database* db)
+void DatabaseTableNamesTask::doPerformTask()
 {
-    m_tableNames = db->performGetTableNames();
+    m_tableNames = database()->performGetTableNames();
+}
+
+const char* DatabaseTableNamesTask::debugTaskName() const
+{
+    return "DatabaseTableNamesTask";
 }
 
 

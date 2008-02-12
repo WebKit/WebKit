@@ -444,8 +444,9 @@ Document::~Document()
 
 #if ENABLE(DATABASE)
     if (m_databaseThread) {
-        m_databaseThread->documentGoingAway();
+        RefPtr<DatabaseThread> databaseThread = m_databaseThread;
         m_databaseThread = 0;
+        databaseThread->requestTermination();
     }
 #endif
 

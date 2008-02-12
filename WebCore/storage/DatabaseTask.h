@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -50,16 +50,24 @@ class DatabaseTask : public ThreadSafeShared<DatabaseTask>
 public:
     virtual ~DatabaseTask();
 
-    void performTask(Database*);
+    void performTask();
 
+    Database* database() const { return m_database; }
     bool isComplete() const { return m_complete; }
+
 protected:
-    DatabaseTask();
-    virtual void doPerformTask(Database* db) = 0;
+    DatabaseTask(Database*);
 
 private:
+    virtual void doPerformTask() = 0;
+#ifndef NDEBUG
+    virtual const char* debugTaskName() const = 0;
+#endif
+
     void lockForSynchronousScheduling();
     void waitForSynchronousCompletion();
+
+    Database* m_database;
 
     bool m_complete;
 
@@ -70,15 +78,17 @@ private:
 class DatabaseOpenTask : public DatabaseTask
 {
 public:
-    DatabaseOpenTask();
+    DatabaseOpenTask(Database*);
 
     ExceptionCode exceptionCode() const { return m_code; }
     bool openSuccessful() const { return m_success; }
 
-protected:
-    virtual void doPerformTask(Database* db);
-
 private:
+    virtual void doPerformTask();
+#ifndef NDEBUG
+    virtual const char* debugTaskName() const;
+#endif
+
     ExceptionCode m_code;
     bool m_success;
 };
@@ -86,21 +96,32 @@ private:
 class DatabaseTransactionTask : public DatabaseTask
 {
 public:
-    DatabaseTransactionTask();
+    DatabaseTransactionTask(PassRefPtr<SQLTransaction>);
+    SQLTransaction* transaction() const { return m_transaction.get(); }
 
-protected:
-    virtual void doPerformTask(Database* db);
+    virtual ~DatabaseTransactionTask();
+private:
+    virtual void doPerformTask();
+#ifndef NDEBUG
+    virtual const char* debugTaskName() const;
+#endif
+
+    RefPtr<SQLTransaction> m_transaction;
 };
 
 class DatabaseTableNamesTask : public DatabaseTask
 {
 public:
-    DatabaseTableNamesTask();
+    DatabaseTableNamesTask(Database*);
 
     Vector<String>& tableNames() { return m_tableNames; }
-protected:
-    virtual void doPerformTask(Database* db);
+
 private:
+    virtual void doPerformTask();
+#ifndef NDEBUG
+    virtual const char* debugTaskName() const;
+#endif
+
     Vector<String> m_tableNames;
 };
 
