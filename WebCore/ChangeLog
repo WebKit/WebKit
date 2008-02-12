@@ -2,6 +2,15 @@
 
         Reviewed by NOBODY (Build fix).
 
+        And another attempt to fixerate Qt
+
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::paint):
+
+2008-02-12  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by NOBODY (Build fix).
+
         Attempt to fix Qt build
 
         * html/HTMLCanvasElement.h:

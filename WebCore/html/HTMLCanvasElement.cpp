@@ -192,7 +192,7 @@ void HTMLCanvasElement::paint(GraphicsContext* p, const IntRect& r)
 #elif PLATFORM(QT)
     QPixmap pixmap = createPlatformImage();
     if (!pixmap.isNull()) {
-        QPainter painter = p->platformContext();
+        QPainter* painter = p->platformContext();
         QPen currentPen = painter->pen();
         qreal currentOpacity = painter->opacity();
         QBrush currentBrush = painter->brush();
