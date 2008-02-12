@@ -1,3 +1,18 @@
+2008-02-12  Rodney Dawes  <dobey@wayofthemonkey.com>
+
+        Reviewed by Alp Toker.
+
+        Add a --with-hildon argument to configure.ac for adding MAEMO_CHANGES
+        to the CPPFLAGS for WebCore and WebKit
+        Add a pkgconfig check for hildon-1 when --with-hildon specified
+        Output the use of Hildon support in the summary
+        Add HILDON_CPPFLAGS to webkitgtk_cppflags
+        Add HILDON_CFLAGS to libWebKitGtk_la_CFLAGS
+        Add HILDON_LIBS to libWebKitGtk_la_LDFLAGS
+
+        * configure.ac:
+        * GNUmakefile.am:
+
 2008-02-08  Alp Toker  <alp@atoker.com>
 
         Rubber-stamped by Maciej.

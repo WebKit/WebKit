@@ -152,6 +152,20 @@ esac
 
 AC_MSG_RESULT([$with_webkit_target])
 
+AC_MSG_CHECKING([for Hildon UI extensions])
+AC_ARG_WITH(hildon,
+            AC_HELP_STRING([--with-hildon],
+                           [Use Hildon UI extensions [default=no]]),
+            [],[with_hildon="no"])
+AC_MSG_RESULT([$with_hildon])
+
+if test "$with_hildon" = "yes"; then
+    HILDON_CPPFLAGS="-DMAEMO_CHANGES"
+    PKG_CHECK_MODULES([HILDON], [hildon-1])
+    AC_SUBST([HILDON_CPPFLAGS])
+    AC_SUBST([HILDON_CFLAGS])
+    AC_SUBST([HILDON_LIBS])
+fi
 
 # determine the http backend
 AC_MSG_CHECKING([the HTTP backend to use])
@@ -445,6 +459,7 @@ echo "
 WebKit was configured with the following options:
 
  Target                            : $with_webkit_target
+ Hildon UI extensions              : $with_hildon
  HTTP backend                      : $http_backend
  Enable debug                      : $enable_debug
  Code coverage support             : $enable_coverage

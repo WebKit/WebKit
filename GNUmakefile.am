@@ -131,6 +131,8 @@ webkitgtk_built_sources :=
 webkitgtk_built_nosources :=
 webkitgtk_cleanfiles :=
 
+webkitgtk_cppflags += $(HILDON_CPPFLAGS)
+
 # No need to touch the following variables unless you have to. If you need to change the values
 # for the following variables, use the "webkitgtk_" variables above
 libWebKitGtk_ladir := $(prefix)/include/WebKit/webkit
@@ -154,7 +156,8 @@ libWebKitGtk_la_CXXFLAGS = \
 	$(SQLITE3_CFLAGS) \
 	$(GSTREAMER_CFLAGS) \
 	$(LIBXSLT_CFLAGS) \
-	$(COVERAGE_CFLAGS)
+	$(COVERAGE_CFLAGS) \
+	$(HILDON_CFLAGS)
 
 libWebKitGtk_la_CFLAGS = \
 	-fno-strict-aliasing \
@@ -164,7 +167,8 @@ libWebKitGtk_la_CFLAGS = \
 	$(SQLITE3_CFLAGS) \
 	$(GSTREAMER_CFLAGS) \
 	$(LIBXSLT_CFLAGS) \
-	$(COVERAGE_CFLAGS)
+	$(COVERAGE_CFLAGS) \
+	$(HILDON_CFLAGS)
 
 libWebKitGtk_la_CPPFLAGS = \
 	$(global_cppflags) \
@@ -183,6 +187,7 @@ libWebKitGtk_la_LDFLAGS = \
 	$(GSTREAMER_LIBS) \
 	$(LIBXSLT_LIBS) \
 	$(COVERAGE_LDFLAGS) \
+	$(HILDON_LIBS) \
 	-lpthread \
 	-ljpeg \
 	-version-info @LIBWEBKITGTK_VERSION@

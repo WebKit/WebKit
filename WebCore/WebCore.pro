@@ -135,6 +135,10 @@ DEPENDPATH += editing/qt history/qt loader/qt page/qt \
 }
 
 gtk-port {
+    hildon {
+        DEFINES += MAEMO_CHANGES
+        PKGCONFIG += hildon-1
+    }
     x11:plugins {
         DEFINES += XP_UNIX
     }
