@@ -36,14 +36,6 @@ using namespace KJS;
 
 namespace WebCore {
 
-static bool allowsAccessFromFrame(ExecState* exec, Frame* frame)
-{
-    if (!frame)
-        return false;
-    Window* win = Window::retrieveWindow(frame);
-    return win && win->allowsAccessFrom(exec);
-}
-
 const ClassInfo JSLocation::info = { "Location", 0, &JSLocationTable };
 
 /*
@@ -106,22 +98,38 @@ JSValue* JSLocation::getValueProperty(ExecState* exec, int token) const
 
 bool JSLocation::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
 {
-  if (!m_frame)
-    return false;
+    if (customGetOwnPropertySlot(exec, propertyName, slot))
+        return true;
+    return getStaticPropertySlot<JSLocation, JSObject>(exec, &JSLocationTable, this, propertyName, slot);
+}
 
-  const Window* window = Window::retrieveWindow(m_frame);
+bool JSLocation::customGetOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
+{
+    // When accessing Location cross-domain, functions are always the native built-in ones.
+    // See JSDOMWindow::customGetOwnPropertySlot for additional details.
 
-  const HashEntry* entry = Lookup::findEntry(&JSLocationTable, propertyName);
-  if (!entry || !(entry->attr & KJS::Function) || (entry->value.functionValue != &jsLocationProtoFuncReplace
-                                                   && entry->value.functionValue != &jsLocationProtoFuncReload
-                                                   && entry->value.functionValue != &jsLocationProtoFuncAssign))  {
-    if (!window || !window->allowsAccessFrom(exec)) {
-      slot.setUndefined(this);
-      return true;
+    // Our custom code is only needed to implement the Window cross-domain scheme, so if access is
+    // allowed, return false so the normal lookup will take place.
+    String message;
+    if (allowsAccessFromFrame(exec, m_frame, message))
+        return false;
+
+    // Check for the few functions that we allow, even when called cross-domain.
+    const HashEntry* entry = Lookup::findEntry(&JSLocationTable, propertyName);
+    if (entry && (entry->attr & Function)
+            && (entry->value.functionValue == jsLocationProtoFuncReplace
+                || entry->value.functionValue == jsLocationProtoFuncReload
+                || entry->value.functionValue == jsLocationProtoFuncAssign)) {
+        slot.setStaticEntry(this, entry, nonCachingStaticFunctionGetter);
+        return true;
     }
-  }
+    // FIXME: Other implementers of the Window cross-domain scheme (Window, History) allow toString,
+    // but for now we have decided not to, partly because it seems silly to return "[Object Location]" in
+    // such cases when normally the string form of Location would be the URL.
 
-  return getStaticPropertySlot<JSLocation, JSObject>(exec, &JSLocationTable, this, propertyName, slot);
+    printErrorMessageForFrame(m_frame, message);
+    slot.setUndefined(this);
+    return true;
 }
 
 void JSLocation::put(ExecState* exec, const Identifier& propertyName, JSValue* value, int attr)
@@ -131,8 +139,7 @@ void JSLocation::put(ExecState* exec, const Identifier& propertyName, JSValue* v
 
   DeprecatedString str = value->toString(exec);
   KURL url = m_frame->loader()->url();
-  const Window* window = Window::retrieveWindow(m_frame);
-  bool sameDomainAccess = window && window->allowsAccessFrom(exec);
+  bool sameDomainAccess = allowsAccessFromFrame(exec, m_frame);
 
   const HashEntry* entry = Lookup::findEntry(&JSLocationTable, propertyName);
 
@@ -201,7 +208,7 @@ void JSLocation::put(ExecState* exec, const Identifier& propertyName, JSValue* v
 bool JSLocation::deleteProperty(ExecState* exec, const Identifier& propertyName)
 {
     // Only allow deleting by frames in the same origin.
-    if (!allowsAccessFromFrame(exec, frame()))
+    if (!allowsAccessFromFrame(exec, m_frame))
         return false;
     return Base::deleteProperty(exec, propertyName);
 }
@@ -209,7 +216,7 @@ bool JSLocation::deleteProperty(ExecState* exec, const Identifier& propertyName)
 void JSLocation::getPropertyNames(ExecState* exec, PropertyNameArray& propertyNames)
 {
     // Only allow the location object to enumerated by frames in the same origin.
-    if (!allowsAccessFromFrame(exec, frame()))
+    if (!allowsAccessFromFrame(exec, m_frame))
         return;
     Base::getPropertyNames(exec, propertyNames);
 }

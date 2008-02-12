@@ -37,35 +37,39 @@ using namespace KJS;
 
 namespace WebCore {
 
-static bool allowsAccessFromFrame(ExecState* exec, Frame* frame)
-{
-    if (!frame)
-        return false;
-    Window* win = Window::retrieveWindow(frame);
-    return win && win->allowsAccessFrom(exec);
-}
-
 bool JSHistory::customGetOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
 {
-    // Allow access to back(), forward() and go() from any frame.
-    const HashEntry* entry = Lookup::findEntry(JSHistoryPrototype::info.propHashTable, propertyName);
-    if (entry && entry->attr & Function) {
-        if (entry->value.functionValue == jsHistoryPrototypeFunctionBack
-                || entry->value.functionValue == jsHistoryPrototypeFunctionForward
-                || entry->value.functionValue == jsHistoryPrototypeFunctionGo)
-            return false;
-    }
+    // When accessing History cross-domain, functions are always the native built-in ones.
+    // See JSDOMWindow::customGetOwnPropertySlot for additional details.
 
-    // Allow access to toString() from any frame as well.
-    if (propertyName == exec->propertyNames().toString)
+    // Our custom code is only needed to implement the Window cross-domain scheme, so if access is
+    // allowed, return false so the normal lookup will take place.
+    String message;
+    if (allowsAccessFromFrame(exec, impl()->frame(), message))
         return false;
 
-    if (!allowsAccessFromFrame(exec, impl()->frame())) {
-        slot.setUndefined(this);
-        return true;
+    // Check for the few functions that we allow, even when called cross-domain.
+    const HashEntry* entry = Lookup::findEntry(JSHistoryPrototype::info.propHashTable, propertyName);
+    if (entry) {
+        // Allow access to back(), forward() and go() from any frame.
+        if ((entry->attr & Function)
+                && (entry->value.functionValue == jsHistoryPrototypeFunctionBack
+                    || entry->value.functionValue == jsHistoryPrototypeFunctionForward
+                    || entry->value.functionValue == jsHistoryPrototypeFunctionGo)) {
+            slot.setStaticEntry(this, entry, nonCachingStaticFunctionGetter);
+            return true;
+        }
+    } else {
+        // Allow access to toString() cross-domain, but always Object.toString.
+        if (propertyName == exec->propertyNames().toString) {
+            slot.setCustom(this, objectToStringFunctionGetter);
+            return true;
+        }
     }
 
-    return false;
+    printErrorMessageForFrame(impl()->frame(), message);
+    slot.setUndefined(this);
+    return true;
 }
 
 bool JSHistory::customPut(ExecState* exec, const Identifier& propertyName, JSValue* value, int attr)

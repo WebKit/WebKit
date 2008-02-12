@@ -1,8 +1,6 @@
-// -*- c-basic-offset: 4 -*-
 /*
- *  This file is part of the KDE libraries
  *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
- *  Copyright (C) 2003, 2004, 2005, 2006 Apple Computer, Inc.
+ *  Copyright (C) 2003, 2004, 2005, 2006, 2008 Apple Inc. All rights reserved.
  *  Copyright (C) 2007 Samuel Weinig <sam@webkit.org>
  *
  *  This library is free software; you can redistribute it and/or
@@ -142,6 +140,20 @@ namespace KJS {
 
     template <typename T> inline JSValue* toJS(ExecState* exec, PassRefPtr<T> ptr) { return toJS(exec, ptr.get()); }
 
-} // namespace
+} // namespace KJS
 
-#endif
+namespace WebCore {
+
+    // Helpers for Window, History, and Location classes to implement cross-domain policy.
+    // Besides the cross-domain check, they need non-caching versions of staticFunctionGetter for
+    // because we do not want current property values involved at all.
+    bool allowsAccessFromFrame(KJS::ExecState*, Frame*);
+    bool allowsAccessFromFrame(KJS::ExecState*, Frame*, String& message);
+    void printErrorMessageForFrame(Frame*, const String& message);
+
+    KJS::JSValue* nonCachingStaticFunctionGetter(KJS::ExecState*, KJS::JSObject*, const KJS::Identifier& propertyName, const KJS::PropertySlot&);
+    KJS::JSValue* objectToStringFunctionGetter(KJS::ExecState*, KJS::JSObject*, const KJS::Identifier& propertyName, const KJS::PropertySlot&);
+
+} // namespace WebCore
+
+#endif // kjs_binding_h

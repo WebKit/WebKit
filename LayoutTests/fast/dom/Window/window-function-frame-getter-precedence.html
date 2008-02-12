@@ -32,13 +32,14 @@
 
         function testFunction(functionName)
         {
-            var element = document.createElement('div');
-            element.id = functionName;
-            document.body.appendChild(element);
+            var iframe = document.createElement('iframe');
+            iframe.src = "about:blank";
+            iframe.name = functionName;
+            document.body.appendChild(iframe);
 
-            shouldBe("typeof window." + functionName, "function");
+            shouldBe("typeof window." + functionName, "object");
 
-            document.body.removeChild(element);
+            document.body.removeChild(iframe);
         }
 
         function runTests()
@@ -55,7 +56,7 @@
     </script>
 </head>
 <body onload="runTests();">
-    <p>This tests that functions of the window object and it's prototype have precedence in lookup over elements with id's of the same name.</p>
+    <p>This tests that a frame with a the same name as function on the window object, has precedence in the lookup.</p>
     <pre id="console"></pre>
 </body>
 </html>

@@ -32,14 +32,15 @@ window.onload = function()
     shouldBeFalse("canSet('targetWindow.hasOwnProperty')");
 
     // custom prototype property
-    shouldBeFalse("canGet('targetWindow.prototypeCustomProperty')");
-    shouldBeFalse("canSet('targetWindow.prototypeCustomProperty')");
+    shouldBeFalse("canGet('targetWindow.windowPrototypeCustomProperty')");
+    shouldBeFalse("canSet('targetWindow.windowPrototypeCustomProperty')");
+    shouldBeFalse("canGet('targetWindow.objectPrototypeCustomProperty')");
+    shouldBeFalse("canSet('targetWindow.objectPrototypeCustomProperty')");
 
     // window object itself
-    shouldBeFalse("canGet('targetWindow.toString')");
+    shouldBeTrue("canGet('targetWindow.toString')");
     shouldBeFalse("canSet('targetWindow.toString')");
-    log("FIXME: Firefox allows converting a window to string -- maybe WebKit should, too.");
-    shouldBe("toString('targetWindow', '')", "''");
+    shouldBe("toString('targetWindow', '')", "'[object DOMWindow]'");
 
     // Work around DRT bug that causes subsequent tests to fail.
     window.stop();

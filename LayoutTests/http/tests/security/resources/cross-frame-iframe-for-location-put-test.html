@@ -2,11 +2,10 @@
 <head>
     <script src="cross-frame-access.js"></script>
     <script>
-        var backOld;
-        var forwardOld;
-        var goOld;
+        var assignOld;
+        var replaceOld;
+        var reloadOld;
         var toStringOld;
-        var lengthOld;
         var customAttributeOld;
 
         receiver = function(e)
@@ -26,14 +25,13 @@
                 document.body.appendChild(button);
             }
 
-            window.history.customAttribute = "customAttribute";
+            window.location.customAttribute = "customAttribute";
 
-            backOld = window.history.back;
-            forwardOld = window.history.forward;
-            goOld = window.history.go;
-            toStringOld = window.history.toString;
-            lengthOld = window.history.length;
-            customAttributeOld = window.history.customAttribute;
+            assignOld = window.location.assign;
+            replaceOld = window.location.replace;
+            reloadOld = window.location.reload;
+            toStringOld = window.location.toString;
+            customAttributeOld = window.location.customAttribute;
 
             if (window.postMessage)
                 window.parent.postMessage("storedOldValuesComplete");
@@ -41,14 +39,13 @@
 
         setCheck = function()
         {
-            log("\n----- tests for putting window.history's properties -----\n");
+            log("\n----- tests for putting window.history and its properties -----\n");
 
-            shouldBe("window.history.back", "backOld");
-            shouldBe("window.history.forward", "forwardOld");
-            shouldBe("window.history.go", "goOld");
-            shouldBe("window.history.toString", "toStringOld");
-            shouldBe("window.history.length", "lengthOld", true);
-            shouldBe("window.history.customAttribute", "customAttributeOld");
+            shouldBe("window.location.assign", "assignOld");
+            shouldBe("window.location.replace", "replaceOld");
+            shouldBe("window.location.reload", "reloadOld");
+            shouldBe("window.location.toString", "toStringOld");
+            shouldBe("window.location.customAttribute", "customAttributeOld");
 
             if (window.layoutTestController)
                 layoutTestController.notifyDone();

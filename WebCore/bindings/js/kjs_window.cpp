@@ -594,79 +594,86 @@ JSValue* Window::indexGetter(ExecState*, JSObject*, const Identifier&, const Pro
     return retrieve(static_cast<Window*>(slot.slotBase())->impl()->frame()->tree()->child(slot.index()));
 }
 
-JSValue *Window::namedItemGetter(ExecState *exec, JSObject *originalObject, const Identifier& propertyName, const PropertySlot& slot)
+JSValue* Window::namedItemGetter(ExecState* exec, JSObject* originalObject, const Identifier& propertyName, const PropertySlot& slot)
 {
-  Window *thisObj = static_cast<Window *>(slot.slotBase());
-  Document *doc = thisObj->impl()->frame()->document();
-  ASSERT(thisObj->allowsAccessFrom(exec) && doc && doc->isHTMLDocument());
+    Window* thisObj = static_cast<Window*>(slot.slotBase());
+    Document* doc = thisObj->impl()->frame()->document();
+    ASSERT(thisObj->allowsAccessFrom(exec));
+    ASSERT(doc);
+    ASSERT(doc->isHTMLDocument());
 
-  String name = propertyName;
-  RefPtr<WebCore::HTMLCollection> collection = doc->windowNamedItems(name);
-  if (collection->length() == 1)
-    return toJS(exec, collection->firstItem());
-  return toJS(exec, collection.get());
+    RefPtr<WebCore::HTMLCollection> collection = doc->windowNamedItems(propertyName);
+    if (collection->length() == 1)
+        return toJS(exec, collection->firstItem());
+    return toJS(exec, collection.get());
 }
 
-bool Window::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName, PropertySlot& slot)
+bool Window::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
 {
-  // Check for child frames by name before built-in properties to
-  // match Mozilla. This does not match IE, but some sites end up
-  // naming frames things that conflict with window properties that
-  // are in Moz but not IE. Since we have some of these, we have to do
-  // it the Moz way.
-  if (impl()->frame()->tree()->child(propertyName)) {
-    slot.setCustom(this, childFrameGetter);
-    return true;
-  }
+    // Check for child frames by name before built-in properties to
+    // match Mozilla. This does not match IE, but some sites end up
+    // naming frames things that conflict with window properties that
+    // are in Moz but not IE. Since we have some of these, we have to do
+    // it the Moz way.
+    if (impl()->frame()->tree()->child(propertyName)) {
+        slot.setCustom(this, childFrameGetter);
+        return true;
+    }
 
-  const HashEntry* entry = Lookup::findEntry(&WindowTable, propertyName);
-  if (entry) {
-    if (entry->attr & Function) {
-      if (entry->value.functionValue == &windowProtoFuncShowModalDialog) {
-        if (!canShowModalDialog(impl()->frame()))
-          return false;
-      }
-      if (allowsAccessFrom(exec))
-        slot.setStaticEntry(this, entry, staticFunctionGetter);
-      else
-        slot.setUndefined(this);
-    } else
-      slot.setStaticEntry(this, entry, staticValueGetter<Window>);
-    return true;
-  }
+    const HashEntry* entry = Lookup::findEntry(&WindowTable, propertyName);
+    if (entry) {
+        if (entry->attr & Function) {
+            if (entry->value.functionValue == windowProtoFuncShowModalDialog) {
+                if (!canShowModalDialog(impl()->frame()))
+                    return false;
+            }
+            if (allowsAccessFrom(exec))
+                slot.setStaticEntry(this, entry, staticFunctionGetter);
+            else
+                slot.setUndefined(this);
+        } else
+            slot.setStaticEntry(this, entry, staticValueGetter<Window>);
+        return true;
+    }
 
-  // FIXME: Search the whole frame hierachy somewhere around here.
-  // We need to test the correct priority order.
+    // Do prototype lookup early so that functions and attributes in the prototype can have
+    // precedence over the index and name getters.  
+    JSValue* proto = prototype();
+    if (proto->isObject()) {
+        if (static_cast<JSObject*>(proto)->getOwnPropertySlot(exec, propertyName, slot)) {
+            if (!allowsAccessFrom(exec))
+                slot.setUndefined(this);
+            return true;
+        }
+    }
 
-  // allow window[1] or parent[1] etc. (#56983)
-  bool ok;
-  unsigned i = propertyName.toArrayIndex(&ok);
-  if (ok && i < impl()->frame()->tree()->childCount()) {
-    slot.setCustomIndex(this, i, indexGetter);
-    return true;
-  }
+    // FIXME: Search the whole frame hierachy somewhere around here.
+    // We need to test the correct priority order.
 
-  // allow shortcuts like 'Image1' instead of document.images.Image1
-  Document* doc = impl()->frame()->document();
-  if (doc && doc->isHTMLDocument()) {
+    // allow window[1] or parent[1] etc. (#56983)
+    bool ok;
+    unsigned i = propertyName.toArrayIndex(&ok);
+    if (ok && i < impl()->frame()->tree()->childCount()) {
+        slot.setCustomIndex(this, i, indexGetter);
+        return true;
+    }
+
     if (!allowsAccessFrom(exec)) {
-      slot.setUndefined(this);
-      return true;
+        slot.setUndefined(this);
+        return true;
     }
 
-    AtomicString atomicPropertyName = propertyName;
-    if (static_cast<HTMLDocument*>(doc)->hasNamedItem(atomicPropertyName) || doc->getElementById(atomicPropertyName)) {
-      slot.setCustom(this, namedItemGetter);
-      return true;
+    // Allow shortcuts like 'Image1' instead of document.images.Image1
+    Document* doc = impl()->frame()->document();
+    if (doc && doc->isHTMLDocument()) {
+        AtomicString atomicPropertyName = propertyName;
+        if (static_cast<HTMLDocument*>(doc)->hasNamedItem(atomicPropertyName) || doc->getElementById(atomicPropertyName)) {
+            slot.setCustom(this, namedItemGetter);
+            return true;
+        }
     }
-  }
 
-  if (!allowsAccessFrom(exec)) {
-    slot.setUndefined(this);
-    return true;
-  }
-
-  return Base::getOwnPropertySlot(exec, propertyName, slot);
+    return Base::getOwnPropertySlot(exec, propertyName, slot);
 }
 
 void Window::put(ExecState* exec, const Identifier& propertyName, JSValue* value, int attr)
@@ -822,11 +829,19 @@ bool Window::allowsAccessFrom(const JSGlobalObject* other) const
     printErrorMessage(message);
     return false;
 }
-    
+
 bool Window::allowsAccessFrom(ExecState* exec) const
-{ 
-    SecurityOrigin::Reason reason;
+{
     String message;
+    if (allowsAccessFrom(exec, message))
+        return true;
+    printErrorMessage(message);
+    return false;
+}
+
+bool Window::allowsAccessFrom(ExecState* exec, String& message) const
+{
+    SecurityOrigin::Reason reason;
     if (allowsAccessFrom(exec->dynamicGlobalObject(), reason, message))
         return true;
     if (reason == SecurityOrigin::DomainSetInDOMMismatch) {
@@ -835,10 +850,9 @@ bool Window::allowsAccessFrom(ExecState* exec) const
         if (allowsAccessFrom(exec->lexicalGlobalObject(), reason, message))
             return true;
     }
-    printErrorMessage(message);
     return false;
 }
-    
+
 bool Window::allowsAccessFrom(const JSGlobalObject* other, SecurityOrigin::Reason& reason, String& message) const
 {
     const Frame* originFrame = static_cast<const Window*>(other)->impl()->frame();
@@ -874,13 +888,13 @@ bool Window::allowsAccessFrom(const JSGlobalObject* other, SecurityOrigin::Reaso
 
     // FIXME: this error message should contain more specifics of why the same origin check has failed.
     message = String::format("Unsafe JavaScript attempt to access frame with URL %s from frame with URL %s. Domains, protocols and ports must match.\n",
-                                    targetDocument->url().utf8().data(), originDocument->url().utf8().data());
+                             targetDocument->url().utf8().data(), originDocument->url().utf8().data());
     return false;
 }
- 
+
 void Window::printErrorMessage(const String& message) const
 {
-    if (!message.length())
+    if (message.isEmpty())
         return;
 
     Frame* frame = impl()->frame();

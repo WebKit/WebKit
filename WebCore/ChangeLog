@@ -1,3 +1,84 @@
+2008-02-11  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Make the cross-domain security model more closely match Firefox by always returning the
+        native built-in functions when accessing functions cross-domain.
+
+        Fixes for:
+        <rdar://problem/5735497> Match Firefox's cross-domain model more accurately by return the built-in version of functions even if they have been overridden
+        <rdar://problem/5735443> Crash when setting the Window objects prototype to a custom Object and then calling a method on it
+
+        Tests: fast/dom/Window/window-custom-prototype-crash.html
+               fast/dom/Window/window-function-frame-getter-precedence.html
+               http/tests/security/cross-frame-access-get-override.html
+               http/tests/security/cross-frame-access-location-get-override.html
+               http/tests/security/cross-frame-access-location-get.html
+               http/tests/security/cross-frame-access-location-put.html
+
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::customGetOwnPropertySlot):
+        - Return the native-built in version of an cross-domain allowed function (eg. window.focus) whether or
+          not it has been overridden, instead of undefined.
+        - When doing findEntry lookup, use the the tables directly (JSDOMWindowPrototype::info.propHashTable) 
+          instead of calling the virtual classInfo() method to avoid the unnecessary overhead.
+        - Allow access to the native toString function cross-domain.  It always returns "[object Window]".
+        - Use the new nonCachingStaticFunctionGetter when return allowed functions cross-frame so that
+          the function an overridden function is not inadvertantly returned from the PropertyMap.\
+
+        * bindings/js/JSHistoryCustom.cpp:
+        (WebCore::JSHistory::customGetOwnPropertySlot):
+        - Implement the same model as described above for the History object, always returning the
+          native built-in function cross-domain.
+        - Allow access to the native toString function cross-domain.
+        - Clean up the code to make it clear that the custom functionality is only there for cross-domain
+          access.
+
+        * bindings/js/JSLocation.cpp:
+        (WebCore::JSLocation::getOwnPropertySlot):
+        - Match the generated classes by moving all the custom logic into a separate customGetOwnPropertySlot
+          function.  This will help moving to a generated class in the future.
+        (WebCore::JSLocation::customGetOwnPropertySlot):
+        - Implement the same model as described above for the Location object, always returning the
+          native built-in function cross-domain.
+        - Clean up the code to make it clear that the custom functionality is only there for cross-domain
+          access.
+        (WebCore::JSLocation::put):
+        (WebCore::JSLocation::deleteProperty):
+        (WebCore::JSLocation::getPropertyNames):
+        * bindings/js/JSLocation.h:
+        - Clean up to match the rest of the file a little better.
+
+        * bindings/js/kjs_binding.cpp:
+        (WebCore::allowsAccessFromFrame):
+        (WebCore::printErrorMessageForFrame):
+        (WebCore::nonCachingStaticFunctionGetter):
+        (WebCore::objectToStringFunctionGetter):
+        * bindings/js/kjs_binding.h:
+        - Put common functionality related to cross-domain access here to serve as a central shared point.
+          This includes moving and augmenting the allowsAccessFromFrame method that was in both JSHistoryCustom.cpp
+          and JSLocation.cpp.
+
+        * bindings/js/kjs_dom.cpp:
+        (WebCore::checkNodeSecurity):
+        - Use the new allowsAccessFromFrame method.
+
+        * bindings/js/kjs_window.cpp:
+        (KJS::Window::childFrameGetter): Cleanup.
+        (KJS::Window::namedItemGetter): Cleanup.
+        (KJS::Window::getOwnPropertySlot):
+        - Do the prototype lookup early to match Firefox in having function lookup have a higher precedence
+          than the index or shortcut name getters.
+        - Cleanup function to make it more understandable and slightly more efficient.
+        (KJS::Window::allowsAccessFrom):
+        - Add a new variant of this method that takes a reference to a String, which, on failure, will
+          contain the error message to print out.  The caller can then pass this to printErrorMessage.
+          This allows for code to check allowsAccessFrom and act on the result without printing out the
+          error message. For convenience, a version with out the String parameter has been left which 
+          prints out the message automatically.
+        (KJS::Window::printErrorMessage):
+        * bindings/js/kjs_window.h:
+
 2008-02-11  Darin Adler  <darin@apple.com>
 
         Reviewed by Mitz.

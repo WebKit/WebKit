@@ -34,13 +34,14 @@
         {
             window.targetWindow = frames[0];
 
-            try { targetWindow.history.back = "FAIL!! CUSTOM back";  } catch(e) { log(e); }
-            try { targetWindow.history.forward = "FAIL!! CUSTOM forward";  } catch(e) { log(e); }
-            try { targetWindow.history.go = "FAIL!! CUSTOM go";  } catch(e) { log(e); }
-            try { targetWindow.history.toString = "FAIL!! CUSTOM toString";  } catch(e) { log(e); }
-            try { targetWindow.history.length = "FAIL!! CUSTOM length";  } catch(e) { log(e); }
+            // Put testing for the many og standard attibutes of the location object is handeled in stand alone test
+            // cases because they may produce side effects.
+            try { targetWindow.location.assign = "FAIL!! CUSTOM assign"; } catch(e) { log(e); }
+            try { targetWindow.location.replace = "FAIL!! CUSTOM replace"; } catch(e) { log(e); }
+            try { targetWindow.location.reload = "FAIL!! CUSTOM reload"; } catch(e) { log(e); }
+            try { targetWindow.location.toString = "FAIL!! CUSTOM toString"; } catch(e) { log(e); }
 
-            try { targetWindow.history.customAttribute = "FAIL!! CUSTOM customAttribute"; } catch(e) { log(e); }
+            try { targetWindow.location.customAttribute = "FAIL!! CUSTOM customAttribute"; } catch(e) { log(e); }
 
             if (window.postMessage)
                 targetWindow.postMessage("settingValuesComplete");
@@ -50,7 +51,7 @@
     </script>
 </head>
 <body>
-    <iframe src="http://localhost:8000/security/resources/cross-frame-iframe-for-history-put-test.html"></iframe>
+    <iframe src="http://localhost:8000/security/resources/cross-frame-iframe-for-location-put-test.html"></iframe>
     <pre id="console"></pre>
 </body>
 </html>

@@ -1,3 +1,41 @@
+2008-02-11  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Tests for:
+        <rdar://problem/5735497> Match Firefox's cross-domain model more accurately by return the built-in version of functions even if they have been overridden
+        <rdar://problem/5735443> Crash when setting the Window objects prototype to a custom Object and then calling a method on it
+
+        * fast/dom/Window/resources/WindowProperties.js: Added.
+        * fast/dom/Window/window-custom-prototype-crash-expected.txt: Added.
+        * fast/dom/Window/window-custom-prototype-crash.html: Added.
+        * fast/dom/Window/window-function-frame-getter-precedence-expected.txt: Added.
+        * fast/dom/Window/window-function-frame-getter-precedence.html: Added.
+        * fast/dom/Window/window-function-name-getter-precedence-expected.txt:
+        * fast/dom/Window/window-function-name-getter-precedence.html:
+        * http/tests/security/cross-frame-access-custom-expected.txt:
+        * http/tests/security/cross-frame-access-custom.html:
+        * http/tests/security/cross-frame-access-get-override-expected.txt: Added.
+        * http/tests/security/cross-frame-access-get-override.html: Added.
+        * http/tests/security/cross-frame-access-history-get-override-expected.txt:
+        * http/tests/security/cross-frame-access-history-get-override.html:
+        * http/tests/security/cross-frame-access-history-put-expected.txt:
+        * http/tests/security/cross-frame-access-history-put.html:
+        * http/tests/security/cross-frame-access-location-expected.txt: Removed.
+        * http/tests/security/cross-frame-access-location-get-expected.txt: Added.
+        * http/tests/security/cross-frame-access-location-get-override-expected.txt: Added.
+        * http/tests/security/cross-frame-access-location-get-override.html: Added.
+        * http/tests/security/cross-frame-access-location-get.html: Copied from http/tests/security/cross-frame-access-location.html.
+        * http/tests/security/cross-frame-access-location-put-expected.txt: Added.
+        * http/tests/security/cross-frame-access-location-put.html: Added.
+        * http/tests/security/cross-frame-access-location.html: Removed.
+        * http/tests/security/resources/cross-frame-iframe-for-get-override-test.html: Added.
+        * http/tests/security/resources/cross-frame-iframe-for-get-test.html:
+        * http/tests/security/resources/cross-frame-iframe-for-history-put-test.html:
+        * http/tests/security/resources/cross-frame-iframe-for-location-get-override-test.html: Added.
+        * http/tests/security/resources/cross-frame-iframe-for-location-get-test.html: Added.
+        * http/tests/security/resources/cross-frame-iframe-for-location-put-test.html: Added.
+
 2008-02-10  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Sam Weinig and Anders Carlsson.

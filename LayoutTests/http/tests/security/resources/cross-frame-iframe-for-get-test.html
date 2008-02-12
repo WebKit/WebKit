@@ -2,7 +2,8 @@
 <head>
     <script>
         window.existingCustomProperty = 1; 
-        window.Object.prototype.prototypeCustomProperty = 1;
+        window.__proto__.windowPrototypeCustomProperty = 1; 
+        window.Object.prototype.objectPrototypeCustomProperty = 1;
 
         window.onload = function()
         {
