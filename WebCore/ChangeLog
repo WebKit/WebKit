@@ -1,3 +1,11 @@
+2008-02-12  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by NOBODY (Build fix).
+
+        Attempt to fix Qt build
+
+        * html/HTMLCanvasElement.h:
+
 2008-02-11  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Alp Toker.
