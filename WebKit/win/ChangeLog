@@ -1,5 +1,14 @@
 2008-02-12  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Adam.
+
+        Implement imageTitle.
+        
+        * WebCoreLocalizedStrings.cpp:
+        (WebCore::imageTitle):
+
+2008-02-12  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Mitz.
 
         * WebCoreLocalizedStrings.cpp:
