@@ -200,7 +200,7 @@ void HTMLCanvasElement::paint(GraphicsContext* p, const IntRect& r)
         if (painter->isActive())
             painter->end();
         static_cast<QPainter*>(p->platformContext())->drawPixmap(r, pixmap);
-        painter->begin(m_data);
+        painter->begin(&pixmap);
         painter->setPen(currentPen);
         painter->setBrush(currentBrush);
         painter->setOpacity(currentOpacity);
