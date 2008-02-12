@@ -1,5 +1,11 @@
 2008-02-12  Anders Carlsson  <andersca@apple.com>
 
+        Build fix.
+        
+        * loader/ImageDocument.cpp:
+
+2008-02-12  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Mitz.
 
         Make the code that sets the image title cross platform.

@@ -43,10 +43,6 @@
 #include "Text.h"
 #include "XMLTokenizer.h"
 
-#if PLATFORM(MAC)
-#include "ImageDocumentMac.h"
-#endif 
-
 using std::min;
 
 namespace WebCore {
