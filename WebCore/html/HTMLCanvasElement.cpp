@@ -35,6 +35,7 @@
 #include "Document.h"
 #include "Frame.h"
 #include "GraphicsContext.h"
+#include "ImageBuffer.h"
 #include "HTMLNames.h"
 #include "Page.h"
 #include "RenderHTMLCanvas.h"
@@ -65,12 +66,7 @@ HTMLCanvasElement::HTMLCanvasElement(Document* doc)
     : HTMLElement(canvasTag, doc)
     , m_size(defaultWidth, defaultHeight)
     , m_createdDrawingContext(false)
-    , m_data(0)
-#if PLATFORM(QT)
-    , m_painter(0)
-#elif PLATFORM(CAIRO)
-    , m_surface(0)
-#endif
+    , m_data()
     , m_drawingContext(0)
 {
 }
@@ -79,16 +75,6 @@ HTMLCanvasElement::~HTMLCanvasElement()
 {
     if (m_2DContext)
         m_2DContext->detachCanvas();
-#if PLATFORM(CG)
-    fastFree(m_data);
-#elif PLATFORM(QT)
-    delete m_painter;
-    delete m_data;
-#elif PLATFORM(CAIRO)
-    if (m_surface)
-        cairo_surface_destroy(m_surface);
-#endif
-    delete m_drawingContext;
 }
 
 HTMLTagStatus HTMLCanvasElement::endTagRequirement() const 
@@ -179,18 +165,7 @@ void HTMLCanvasElement::reset()
 
     bool hadDrawingContext = m_createdDrawingContext;
     m_createdDrawingContext = false;
-#if PLATFORM(CG)
-    fastFree(m_data);
-#elif PLATFORM(QT)
-    delete m_painter;
-    m_painter = 0;
-    delete m_data;
-#elif PLATFORM(CAIRO)
-    if (m_surface)
-        cairo_surface_destroy(m_surface);
-    m_surface = 0;
-#endif
-    m_data = 0;
+    m_data.set(0);
     delete m_drawingContext;
     m_drawingContext = 0;
     if (m_2DContext)
@@ -215,19 +190,21 @@ void HTMLCanvasElement::paint(GraphicsContext* p, const IntRect& r)
         CGImageRelease(image);
     }
 #elif PLATFORM(QT)
-    if (m_data) {
-        QPen currentPen = m_painter->pen();
-        qreal currentOpacity = m_painter->opacity();
-        QBrush currentBrush = m_painter->brush();
-        QBrush currentBackground = m_painter->background();
-        if (m_painter->isActive())
-            m_painter->end();
-        static_cast<QPainter*>(p->platformContext())->drawImage(r, *m_data);
-        m_painter->begin(m_data);
-        m_painter->setPen(currentPen);
-        m_painter->setBrush(currentBrush);
-        m_painter->setOpacity(currentOpacity);
-        m_painter->setBackground(currentBackground);
+    QPixmap pixmap = createPlatformImage();
+    if (!pixmap.isNull()) {
+        QPainter painter = p->platformContext();
+        QPen currentPen = painter->pen();
+        qreal currentOpacity = painter->opacity();
+        QBrush currentBrush = painter->brush();
+        QBrush currentBackground = painter->background();
+        if (painter->isActive())
+            painter->end();
+        static_cast<QPainter*>(p->platformContext())->drawPixmap(r, pixmap);
+        painter->begin(m_data);
+        painter->setPen(currentPen);
+        painter->setBrush(currentBrush);
+        painter->setOpacity(currentOpacity);
+        painter->setBackground(currentBackground);
     }
 #elif PLATFORM(CAIRO)
     if (cairo_surface_t* image = createPlatformImage()) {
@@ -259,46 +236,16 @@ void HTMLCanvasElement::createDrawingContext() const
     if (!(wf >= 1 && hf >= 1 && wf * hf <= maxCanvasArea))
         return;
 
-    unsigned w = static_cast<unsigned>(wf);
-    unsigned h = static_cast<unsigned>(hf);
+    IntSize size(static_cast<unsigned>(wf), static_cast<unsigned>(hf));
 
-#if PLATFORM(CG)
-    size_t bytesPerRow = w * 4;
-    if (bytesPerRow / 4 != w) // check for overflow
-        return;
-    m_data = fastCalloc(h, bytesPerRow);
-    if (!m_data)
-        return;
-    CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
-    CGContextRef bitmapContext = CGBitmapContextCreate(m_data, w, h, 8, bytesPerRow, colorSpace, kCGImageAlphaPremultipliedLast);
-    CGContextScaleCTM(bitmapContext, w / unscaledWidth, h / unscaledHeight);
-    CGColorSpaceRelease(colorSpace);
-    m_drawingContext = new GraphicsContext(bitmapContext);
-    CGContextRelease(bitmapContext);
-#elif PLATFORM(QT)
-    m_data = new QImage(w, h, QImage::Format_ARGB32_Premultiplied);
-    if (!m_data)
-        return;
-    m_painter = new QPainter(m_data);
-    m_painter->setBackground(QBrush(Qt::transparent));
-    m_painter->fillRect(0, 0, w, h, QColor(Qt::transparent));
-    m_drawingContext = new GraphicsContext(m_painter);
-#elif PLATFORM(CAIRO)
-    m_surface = cairo_image_surface_create(CAIRO_FORMAT_ARGB32, w, h);
-    // m_data is owned by m_surface
-    m_data = cairo_image_surface_get_data(m_surface);
-    cairo_t* cr = cairo_create(m_surface);
-    cairo_scale(cr, w / unscaledWidth, h / unscaledHeight);
-    m_drawingContext = new GraphicsContext(cr);
-    cairo_destroy(cr);
-#endif
+    m_data.set(ImageBuffer::create(size, false).release());
 }
 
 GraphicsContext* HTMLCanvasElement::drawingContext() const
 {
     if (!m_createdDrawingContext)
         createDrawingContext();
-    return m_drawingContext;
+    return m_data->context();
 }
 
 #if PLATFORM(CG)
@@ -320,27 +267,27 @@ CGImageRef HTMLCanvasElement::createPlatformImage() const
 
 #elif PLATFORM(QT)
 
-QImage HTMLCanvasElement::createPlatformImage() const
+QPixmap HTMLCanvasElement::createPlatformImage() const
 {
-    if (m_data)
-        return *m_data;
-    return QImage();
+    if (!m_data)
+        return QPixmap();
+    return *m_data->pixmap();
 }
 
 #elif PLATFORM(CAIRO)
 
 cairo_surface_t* HTMLCanvasElement::createPlatformImage() const
 {
-    if (!m_surface)
+    if (!m_data)
         return 0;
 
     // Note that unlike CG, our returned image is not a copy or
     // copy-on-write, but the original. This is fine, since it is only
     // ever used as a source.
 
-    cairo_surface_flush(m_surface);
-    cairo_surface_reference(m_surface);
-    return m_surface;
+    cairo_surface_flush(m_data->surface());
+    cairo_surface_reference(m_data->surface());
+    return m_data->surface();
 }
 
 #endif

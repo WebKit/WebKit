@@ -47,6 +47,7 @@ class CanvasRenderingContext2D;
 typedef CanvasRenderingContext2D CanvasRenderingContext;
 class FloatRect;
 class GraphicsContext;
+class ImageBuffer;
 
 class HTMLCanvasElement : public HTMLElement {
 public:
@@ -77,7 +78,7 @@ public:
 #if PLATFORM(CG)
     CGImageRef createPlatformImage() const;
 #elif PLATFORM(QT)
-    QImage createPlatformImage() const;
+    QPixmap createPlatformImage() const;
 #elif PLATFORM(CAIRO)
     cairo_surface_t* createPlatformImage() const;
 #endif
@@ -95,17 +96,7 @@ private:
     // if we ever drew any images outside the domain, so we can disable toDataURL.
 
     mutable bool m_createdDrawingContext;
-#if PLATFORM(CG)
-    mutable void* m_data;
-#elif PLATFORM(QT)
-    mutable QImage* m_data;
-    mutable QPainter* m_painter;
-#elif PLATFORM(CAIRO)
-    mutable void* m_data;
-    mutable cairo_surface_t* m_surface;
-#else
-    mutable void* m_data;
-#endif
+    mutable OwnPtr<ImageBuffer> m_data;
     mutable GraphicsContext* m_drawingContext;
 };
 

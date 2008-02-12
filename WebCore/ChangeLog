@@ -1,3 +1,29 @@
+2008-02-11  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Alp Toker.
+
+        Make canvas use an ImageBuffer for its backing store
+
+        In order to make the canvas implementation less platform dependent
+        (and thus reduce the current quagmire of ifdefs) we now use an 
+        ImageBuffer to provide the backing buffer, an immediate consequence
+        of this is to remove multiple ifdefs in the construction of the
+        buffer.  This patch allows us to further reduce the platform
+        dependencies in later patches.
+
+
+        * html/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::drawImage):
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::HTMLCanvasElement):
+        (WebCore::HTMLCanvasElement::~HTMLCanvasElement):
+        (WebCore::HTMLCanvasElement::reset):
+        (WebCore::HTMLCanvasElement::paint):
+        (WebCore::HTMLCanvasElement::createDrawingContext):
+        (WebCore::HTMLCanvasElement::drawingContext):
+        (WebCore::HTMLCanvasElement::createPlatformImage):
+        * html/HTMLCanvasElement.h:
+
 2008-02-11  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Dave Hyatt.

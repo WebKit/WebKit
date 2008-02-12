@@ -997,12 +997,12 @@ void CanvasRenderingContext2D::drawImage(HTMLCanvasElement* canvas, const FloatR
 
     CGImageRelease(platformImage);
 #elif PLATFORM(QT)
-    QImage px = canvas->createPlatformImage();
+    QPixmap px = canvas->createPlatformImage();
     if (px.isNull())
         return;
     willDraw(dstRect);
     QPainter* painter = static_cast<QPainter*>(c->platformContext());
-    painter->drawImage(dstRect, px, srcRect);
+    painter->drawPixmap(dstRect, px, srcRect);
 #elif PLATFORM(CAIRO)
     cairo_surface_t* image = canvas->createPlatformImage();
     if (!image)
