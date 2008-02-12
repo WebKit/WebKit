@@ -1,3 +1,17 @@
+2008-02-08  Samuel Weinig  <sam@webkit.org>
+
+        Reviewed by Brady Eidson.
+
+        <rdar://problem/5659216> REGRESSION: PLT 0.3% slower due to r28868 (caching ClassNodeList and NamedNodeList)
+
+        - Tweak the statements in isASCIISpace to account for the statistical distribution of
+          usage in the PLT.
+
+        .4% speedup on my machine.  Stephanie's machine shows this as .3% speedup.
+
+        * wtf/ASCIICType.h:
+        (WTF::isASCIISpace): 
+
 2008-02-11  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.
