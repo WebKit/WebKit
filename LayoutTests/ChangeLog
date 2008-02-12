@@ -1,3 +1,39 @@
+2008-02-12  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Not reviewed, adding missing layout test results (that have been r+ already, but not commited)
+
+        * platform/mac-leopard/svg/dynamic-updates: Added.
+        * platform/mac-leopard/svg/dynamic-updates/SVGAElement-dom-href-attr-expected.checksum: Added.
+        * platform/mac-leopard/svg/dynamic-updates/SVGAElement-dom-href-attr-expected.png: Added.
+        * platform/mac-leopard/svg/dynamic-updates/SVGAElement-dom-target-attr-expected.checksum: Added.
+        * platform/mac-leopard/svg/dynamic-updates/SVGAElement-dom-target-attr-expected.png: Added.
+        * platform/mac-leopard/svg/dynamic-updates/SVGAElement-svgdom-href-prop-expected.checksum: Added.
+        * platform/mac-leopard/svg/dynamic-updates/SVGAElement-svgdom-href-prop-expected.png: Added.
+        * platform/mac-leopard/svg/dynamic-updates/SVGAElement-svgdom-target-prop-expected.checksum: Added.
+        * platform/mac-leopard/svg/dynamic-updates/SVGAElement-svgdom-target-prop-expected.png: Added.
+        * platform/mac-leopard/svg/dynamic-updates/SVGCircleElement-dom-cx-attr-expected.checksum: Added.
+        * platform/mac-leopard/svg/dynamic-updates/SVGCircleElement-dom-cx-attr-expected.png: Added.
+        * platform/mac-leopard/svg/dynamic-updates/SVGCircleElement-dom-cy-attr-expected.checksum: Added.
+        * platform/mac-leopard/svg/dynamic-updates/SVGCircleElement-dom-cy-attr-expected.png: Added.
+        * platform/mac-leopard/svg/dynamic-updates/SVGCircleElement-dom-r-attr-expected.checksum: Added.
+        * platform/mac-leopard/svg/dynamic-updates/SVGCircleElement-dom-r-attr-expected.png: Added.
+        * platform/mac-leopard/svg/dynamic-updates/SVGCircleElement-svgdom-cx-prop-expected.checksum: Added.
+        * platform/mac-leopard/svg/dynamic-updates/SVGCircleElement-svgdom-cx-prop-expected.png: Added.
+        * platform/mac-leopard/svg/dynamic-updates/SVGCircleElement-svgdom-cy-prop-expected.checksum: Added.
+        * platform/mac-leopard/svg/dynamic-updates/SVGCircleElement-svgdom-cy-prop-expected.png: Added.
+        * platform/mac-leopard/svg/dynamic-updates/SVGCircleElement-svgdom-r-prop-expected.checksum: Added.
+        * platform/mac-leopard/svg/dynamic-updates/SVGCircleElement-svgdom-r-prop-expected.png: Added.
+        * platform/mac-leopard/svg/dynamic-updates/SVGClipPathElement-dom-clipPathUnits-attr-expected.checksum: Added.
+        * platform/mac-leopard/svg/dynamic-updates/SVGClipPathElement-dom-clipPathUnits-attr-expected.png: Added.
+        * platform/mac-leopard/svg/dynamic-updates/SVGClipPathElement-svgdom-clipPathUnits-prop-expected.checksum: Added.
+        * platform/mac-leopard/svg/dynamic-updates/SVGClipPathElement-svgdom-clipPathUnits-prop-expected.png: Added.
+        * platform/mac-leopard/svg/hixie/perf/001-expected.checksum: Added.
+        * platform/mac-leopard/svg/hixie/perf/001-expected.png: Added.
+        * platform/mac-leopard/svg/hixie/perf/001-expected.txt: Added.
+        * platform/mac-leopard/svg/hixie/perf/002-expected.checksum: Added.
+        * platform/mac-leopard/svg/hixie/perf/002-expected.png: Added.
+        * platform/mac-leopard/svg/hixie/perf/002-expected.txt: Added.
+
 2008-02-11  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Dave Hyatt.
