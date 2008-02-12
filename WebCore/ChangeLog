@@ -1,3 +1,15 @@
+2008-02-11  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=17320
+          <rdar://problem/5736953> :last-child does not set the "uses sibling rules" flag
+
+        Test: fast/css/last-child-style-sharing.html
+
+        * css/CSSGrammar.y: Changed to call setUsesSiblingRules(true) for all
+        CSS3 selectors that require it.
+
 2008-02-11  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Darin Adler.

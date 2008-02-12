@@ -882,7 +882,11 @@ pseudo:
             $$ = 0;
         else if (type == CSSSelector::PseudoEmpty ||
                  type == CSSSelector::PseudoFirstChild ||
-                 type == CSSSelector::PseudoFirstOfType) {
+                 type == CSSSelector::PseudoFirstOfType ||
+                 type == CSSSelector::PseudoLastChild ||
+                 type == CSSSelector::PseudoLastOfType ||
+                 type == CSSSelector::PseudoOnlyChild ||
+                 type == CSSSelector::PseudoOnlyOfType) {
             CSSParser* p = static_cast<CSSParser*>(parser);
             Document* doc = p->document();
             if (doc)
@@ -917,7 +921,10 @@ pseudo:
         CSSSelector::PseudoType type = $$->pseudoType();
         if (type == CSSSelector::PseudoUnknown)
             $$ = 0;
-        else if (type == CSSSelector::PseudoNthChild || type == CSSSelector::PseudoNthOfType) {
+        else if (type == CSSSelector::PseudoNthChild ||
+                 type == CSSSelector::PseudoNthOfType ||
+                 type == CSSSelector::PseudoNthLastChild ||
+                 type == CSSSelector::PseudoNthLastOfType) {
             if (p->document())
                 p->document()->setUsesSiblingRules(true);
         }
@@ -932,7 +939,10 @@ pseudo:
         CSSSelector::PseudoType type = $$->pseudoType();
         if (type == CSSSelector::PseudoUnknown)
             $$ = 0;
-        else if (type == CSSSelector::PseudoNthChild || type == CSSSelector::PseudoNthOfType) {
+        else if (type == CSSSelector::PseudoNthChild ||
+                 type == CSSSelector::PseudoNthOfType ||
+                 type == CSSSelector::PseudoNthLastChild ||
+                 type == CSSSelector::PseudoNthLastOfType) {
             if (p->document())
                 p->document()->setUsesSiblingRules(true);
         }
@@ -948,7 +958,10 @@ pseudo:
         CSSSelector::PseudoType type = $$->pseudoType();
         if (type == CSSSelector::PseudoUnknown)
             $$ = 0;
-        else if (type == CSSSelector::PseudoNthChild || type == CSSSelector::PseudoNthOfType) {
+        else if (type == CSSSelector::PseudoNthChild ||
+                 type == CSSSelector::PseudoNthOfType ||
+                 type == CSSSelector::PseudoNthLastChild ||
+                 type == CSSSelector::PseudoNthLastOfType) {
             if (p->document())
                 p->document()->setUsesSiblingRules(true);
         }
