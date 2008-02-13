@@ -83,7 +83,8 @@ bool SQLiteDatabase::open(const String& filename)
 void SQLiteDatabase::close()
 {
     if (m_db) {
-        ASSERT(currentThread() == m_openingThread);
+        // FIXME: This is being called on themain thread during JS GC. <rdar://problem/5739818>
+        // ASSERT(currentThread() == m_openingThread);
         sqlite3_close(m_db);
         m_db = 0;
     }
