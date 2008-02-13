@@ -36,6 +36,7 @@
 #include "Path.h"
 #include "Color.h"
 #include "GraphicsContext.h"
+#include "ImageBuffer.h"
 #include "Font.h"
 #include "Pen.h"
 #include "NotImplemented.h"

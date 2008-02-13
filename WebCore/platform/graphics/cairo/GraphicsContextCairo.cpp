@@ -33,6 +33,7 @@
 #include "CairoPath.h"
 #include "FloatRect.h"
 #include "Font.h"
+#include "ImageBuffer.h"
 #include "IntRect.h"
 #include "NotImplemented.h"
 #include "Path.h"

@@ -1,5 +1,14 @@
 2008-02-12  Oliver Hunt  <oliver@apple.com>
 
+        Reviewed by NOBODY (Build fix).
+
+        Endeavour to fix qt and gtk builds
+
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        * platform/graphics/qt/GraphicsContextQt.cpp:
+
+2008-02-12  Oliver Hunt  <oliver@apple.com>
+
         Reviewed by Eric S.
 
         Bug 17269: Deobfuscate CanvasRenderingContext2D.cpp
