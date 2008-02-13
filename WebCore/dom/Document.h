@@ -874,7 +874,7 @@ public:
     bool processingLoadEvent() const { return m_processingLoadEvent; }
 
 #if ENABLE(DATABASE)
-    DatabaseThread* databaseThread();
+    DatabaseThread* databaseThread();   // Creates the thread as needed, but not if it has been already terminated.
     void setHasOpenDatabases() { m_hasOpenDatabases = true; }
     bool hasOpenDatabases() { return m_hasOpenDatabases; }
 #endif
@@ -943,7 +943,7 @@ private:
 
 #if ENABLE(DATABASE)
     RefPtr<DatabaseThread> m_databaseThread;
-    bool m_hasOpenDatabases;
+    bool m_hasOpenDatabases;    // This never changes back to false, even as the database thread is closed.
 #endif
 #if USE(LOW_BANDWIDTH_DISPLAY)
     bool m_inLowBandwidthDisplay;

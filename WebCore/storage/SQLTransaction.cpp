@@ -74,7 +74,6 @@ SQLTransaction::SQLTransaction(Database* db, PassRefPtr<SQLTransactionCallback> 
 
 SQLTransaction::~SQLTransaction()
 {
-    LOG(StorageAPI, "Transaction %p destructor\n", this);
 }
 
 void SQLTransaction::executeSQL(const String& sqlStatement, const Vector<SQLValue>& arguments, PassRefPtr<SQLStatementCallback> callback, PassRefPtr<SQLStatementErrorCallback> callbackError, ExceptionCode& e)

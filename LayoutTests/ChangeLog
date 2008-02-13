@@ -1,3 +1,14 @@
+2008-02-13  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        <rdar://problem/5740042> Database termination issues
+
+        * storage/close-during-stress-test-expected.txt: Added.
+        * storage/close-during-stress-test.html: Added.
+        * storage/resources: Added.
+        * storage/resources/stress-frame.html: Added.
+
 2008-02-13  Darin Adler  <darin@apple.com>
 
         - check in results for these tests

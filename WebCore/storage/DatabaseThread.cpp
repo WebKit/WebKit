@@ -58,7 +58,7 @@ bool DatabaseThread::start()
 
 void DatabaseThread::requestTermination()
 {
-    LOG(StorageAPI, "Document owning DatabaseThread %p is going away - starting thread shutdown", this);
+    LOG(StorageAPI, "DatabaseThread %p was asked to terminate\n", this);
     m_queue.kill();
 }
 

@@ -1,3 +1,25 @@
+2008-02-13  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        <rdar://problem/5740042> Database termination issues
+
+        Test: storage/close-during-stress-test.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::databaseThread):
+        * dom/Document.h:
+        Don't re-create the database thread if it has been already terminated.
+
+        * storage/Database.h: (WebCore::Database::document): Changed m_database to a RefPtr to avoid
+        having a hanging reference.
+
+        * storage/DatabaseThread.cpp:
+        (WebCore::DatabaseThread::requestTermination):
+
+        * storage/SQLTransaction.cpp: (WebCore::SQLTransaction::~SQLTransaction): Removed logging.
+        Transactions are deleted during GC, so it's usually not importatnt to know when it happens.
+
 2008-02-12  Bernhard Rosenkraenzer  <bero@arklinux.org>
 
         Reviewed by Darin.
