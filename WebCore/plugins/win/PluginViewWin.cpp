@@ -51,6 +51,7 @@
 #include "kjs_binding.h"
 #include "kjs_proxy.h"
 #include "kjs_window.h"
+#include "PluginDatabase.h"
 #include "PluginDebug.h"
 #include "PluginPackage.h"
 #include "npruntime_impl.h"
@@ -1698,6 +1699,22 @@ void PluginView::setCallingPlugin(bool b) const
 bool PluginView::isCallingPlugin()
 {
     return s_callingPlugin > 0;
+}
+
+PluginView* PluginView::create(Frame* parentFrame, const IntSize& size, Element* element, const KURL& url, const Vector<String>& paramNames, const Vector<String>& paramValues, const String& mimeType, bool loadManually)
+{
+    // if we fail to find a plugin for this MIME type, findPlugin will search for
+    // a plugin by the file extension and update the MIME type, so pass a mutable String
+    String mimeTypeCopy = mimeType;
+    PluginPackage* plugin = PluginDatabase::installedPlugins()->findPlugin(url, mimeTypeCopy);
+
+    // No plugin was found, try refreshing the database and searching again
+    if (!plugin && PluginDatabase::installedPlugins()->refresh()) {
+        mimeTypeCopy = mimeType;
+        plugin = PluginDatabase::installedPlugins()->findPlugin(url, mimeTypeCopy);
+    }
+
+    return new PluginView(parentFrame, size, plugin, element, url, paramNames, paramValues, mimeTypeCopy, loadManually);
 }
 
 } // namespace WebCore

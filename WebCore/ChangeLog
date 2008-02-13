@@ -1,3 +1,22 @@
+2008-02-13  Rodney Dawes  <dobey@wayofthemonkey.com>
+
+        Fix Bug 17220: Illogical dependency between PluginView and
+        PluginDatabase
+        
+        <http://bugs.webkit.org/show_bug.cgi?id=17220>
+
+        Reviewed by Adam and Darin.
+
+        Rename PluginDatabase::createPluginView to PluginView::create, to make
+        the illogical dependency between the two, logical
+        Make PluginDatabase::findPlugin a public method
+        Update the includes in PluginView and PluginDatabase for the change
+
+        * plugins/PluginDatabase.h:
+        * plugins/PluginView.h:
+        * plugins/win/PluginDatabaseWin.cpp:
+        * plugins/win/PluginViewWin.cpp:
+
 2008-02-13  Adam Roben  <aroben@apple.com>
 
         Build fix

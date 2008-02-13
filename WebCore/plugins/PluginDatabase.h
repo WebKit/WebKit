@@ -46,17 +46,17 @@ namespace WebCore {
     class PluginDatabase {
     public:
         static PluginDatabase* installedPlugins();
-        PluginView* createPluginView(Frame* parentFrame, const IntSize&, Element* element, const KURL& url, const Vector<String>& paramNames, const Vector<String>& paramValues, const String& mimeType, bool loadManually);
 
         bool refresh();
         Vector<PluginPackage*> plugins() const;
         bool isMIMETypeRegistered(const String& mimeType);
         void addExtraPluginPath(const String&);
+
+        PluginPackage* findPlugin(const KURL&, String& mimeType);
     private:
         void setPluginPaths(const Vector<String>& paths) { m_pluginPaths = paths; }
         PluginSet getPluginsInPaths() const;
 
-        PluginPackage* findPlugin(const KURL& url, String& mimeType);
         PluginPackage* pluginForMIMEType(const String& mimeType);
         String MIMETypeForExtension(const String& extension) const;
 

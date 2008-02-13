@@ -26,9 +26,9 @@
 #include "config.h"
 #include "PluginDatabase.h"
 
-#include "PluginPackage.h"
-#include "PluginView.h"
+#include "KURL.h"
 #include "Frame.h"
+#include "PluginPackage.h"
 #include <windows.h>
 #include <shlwapi.h>
 
@@ -519,22 +519,6 @@ PluginPackage* PluginDatabase::findPlugin(const KURL& url, String& mimeType)
     // corresponding to the extension.
 
     return plugin;
-}
-
-PluginView* PluginDatabase::createPluginView(Frame* parentFrame, const IntSize& size, Element* element, const KURL& url, const Vector<String>& paramNames, const Vector<String>& paramValues, const String& mimeType, bool loadManually)
-{
-    // if we fail to find a plugin for this MIME type, findPlugin will search for
-    // a plugin by the file extension and update the MIME type, so pass a mutable String
-    String mimeTypeCopy = mimeType;
-    PluginPackage* plugin = findPlugin(url, mimeTypeCopy);
-    
-    // No plugin was found, try refreshing the database and searching again
-    if (!plugin && refresh()) {
-        mimeTypeCopy = mimeType;
-        plugin = findPlugin(url, mimeTypeCopy);
-    }
-        
-    return new PluginView(parentFrame, size, plugin, element, url, paramNames, paramValues, mimeTypeCopy, loadManually);
 }
 
 }

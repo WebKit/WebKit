@@ -1,3 +1,17 @@
+2008-02-13  Rodney Dawes  <dobey@wayofthemonkey.com>
+
+        Fix Bug 17220: Illogical dependency between PluginView and
+        PluginDatabase
+        
+        <http://bugs.webkit.org/show_bug.cgi?id=17220>
+
+        Reviewed by Adam and Darin.
+
+        Update for the rename of PluginDatabase::createPluginView
+        to PluginView::create
+
+        * WebFrame.cpp:
+
 2008-02-13  Adam Roben  <aroben@apple.com>
 
         Windows build fix
@@ -161,6 +175,7 @@
         (WebCore::imageTitle):
         Add stub.
         
+
 2008-02-07  Ada Chan  <adachan@apple.com>
 
         <rdar://problem/5292433> certificate authentication support broken in Safari 3.0
