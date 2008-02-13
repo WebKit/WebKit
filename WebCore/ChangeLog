@@ -1,3 +1,9 @@
+2008-02-13  Adam Roben  <aroben@apple.com>
+
+        Build fix
+
+        * platform/graphics/cg/GraphicsContextCG.cpp: Added missing #include.
+
 2008-02-13  Matt Lilek  <webkit@mattlilek.com>
 
         Not reviewed, build fix.

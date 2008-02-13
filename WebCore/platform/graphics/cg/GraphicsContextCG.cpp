@@ -36,6 +36,7 @@
 #include <CoreGraphics/CGBitmapContext.h>
 #include <CoreGraphics/CGPDFContext.h>
 #include <wtf/MathExtras.h>
+#include <wtf/RetainPtr.h>
 
 using namespace std;
 

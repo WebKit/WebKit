@@ -1,3 +1,9 @@
+2008-02-13  Adam Roben  <aroben@apple.com>
+
+        Windows build fix
+
+        * Interfaces/WebKit.idl: Create the typelib version symbol ourselves.
+
 2008-02-12  Steve Falkenburg  <sfalken@apple.com>
 
         Use a precompiled header to build WebKit.

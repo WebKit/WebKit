@@ -219,6 +219,8 @@ import "ocidl.idl";
 #include "IGEN_DOMStyleSheet.idl"
 #include "IGEN_DOMStyleSheetList.idl"
 
+#define __TYPELIB_VERSION__ __BUILD_NUMBER_MAJOR__##.##__BUILD_NUMBER_MINOR__
+
 [
 #if __PRODUCTION__
     uuid(2a748656-625d-4207-b29f-40c95bfeb3a9),
@@ -227,7 +229,7 @@ import "ocidl.idl";
     uuid(76E5F7F0-18FD-48a2-B549-1159435B513B),
     helpstring("OpenSourceWebKit " __BUILD_NUMBER_SHORT__ " Type Library"),
 #endif
-    version(__BUILD_NUMBER_MAJOR_MINOR__)
+    version(__TYPELIB_VERSION__)
 ]
 #if __PRODUCTION__
 library WebKit
