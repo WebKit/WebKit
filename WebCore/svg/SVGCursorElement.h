@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2004, 2005, 2006 Nikolas Zimmermann <wildfox@kde.org>
+    Copyright (C) 2004, 2005, 2006, 2008 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005, 2006 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
@@ -24,34 +24,29 @@
 #define SVGCursorElement_h
 
 #if ENABLE(SVG)
-
-#include "Image.h"
-
 #include "SVGLength.h"
 #include "SVGElement.h"
 #include "SVGTests.h"
 #include "SVGURIReference.h"
 #include "SVGExternalResourcesRequired.h"
-#include "CachedResourceClient.h"
 
-namespace WebCore
-{
+namespace WebCore {
+
     class SVGCursorElement : public SVGElement,
-                                 public SVGTests,
-                                 public SVGExternalResourcesRequired,
-                                 public SVGURIReference,
-                                 public CachedResourceClient
-    {
+                             public SVGTests,
+                             public SVGExternalResourcesRequired,
+                             public SVGURIReference {
     public:
         SVGCursorElement(const QualifiedName&, Document*);
         virtual ~SVGCursorElement();
-        
+
+        void addClient(SVGElement*);
+        void removeClient(SVGElement*);
+
         virtual bool isValid() const { return SVGTests::isValid(); }
 
-        // 'SVGCursorElement' functions
-        virtual void parseMappedAttribute(MappedAttribute *attr);
-
-        CachedImage* cachedImage() const { return m_cachedImage; }
+        virtual void parseMappedAttribute(MappedAttribute*);
+        virtual void svgAttributeChanged(const QualifiedName&);
 
     protected:
         virtual const SVGElement* contextElement() const { return this; }
@@ -63,12 +58,10 @@ namespace WebCore
         ANIMATED_PROPERTY_DECLARATIONS(SVGCursorElement, SVGLength, SVGLength, X, x)
         ANIMATED_PROPERTY_DECLARATIONS(SVGCursorElement, SVGLength, SVGLength, Y, y)
 
-        CachedImage *m_cachedImage;
+        HashSet<SVGElement*> m_clients;
     };
 
 } // namespace WebCore
 
 #endif // ENABLE(SVG)
 #endif
-
-// vim:ts=4:noet

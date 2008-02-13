@@ -815,11 +815,6 @@ bool CSSParser::parseValue(int propId, bool important)
             } else if(strict && nrcoords == 2)
                 hotspot = IntPoint(coords[0], coords[1]);
             if (strict || coords.size() == 0) {
-#if ENABLE(SVG)
-                if (uri.startsWith("#"))
-                    list->append(new CSSPrimitiveValue(uri, CSSPrimitiveValue::CSS_URI));
-                else
-#endif
                 if (!uri.isEmpty()) {
                     list->append(new CSSCursorImageValue(
                                  KURL(styleElement->baseURL().deprecatedString(), uri.deprecatedString()).string(),

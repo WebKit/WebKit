@@ -2773,15 +2773,10 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
                 primitiveValue = static_cast<CSSPrimitiveValue*>(item);
                 int type = primitiveValue->primitiveType();
                 if (type == CSSPrimitiveValue::CSS_URI) {
-#if ENABLE(SVG)
-                    if (primitiveValue->getStringValue().find("#") == 0)
-                        m_style->addSVGCursor(primitiveValue->getStringValue().substring(1));
-                    else
-#endif
-                    {
-                        CSSCursorImageValue* image = static_cast<CSSCursorImageValue*>(primitiveValue);
-                        m_style->addCursor(image->image(m_element->document()->docLoader()), image->hotspot());
-                    }
+                    CSSCursorImageValue* image = static_cast<CSSCursorImageValue*>(primitiveValue);
+                    if (image->updateIfSVGCursorIsUsed(m_element)) // Elements with SVG cursors are not allowed to share style.
+                        m_style->setUnique();
+                    m_style->addCursor(image->image(m_element->document()->docLoader()), image->hotspot());
                 } else if (type == CSSPrimitiveValue::CSS_IDENT)
                     m_style->setCursor(*primitiveValue);
             }

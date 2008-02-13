@@ -1,3 +1,58 @@
+2008-02-13  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Darin & Eric.
+
+        Fixes: http://bugs.webkit.org/show_bug.cgi?id=17258 (SVG uses erroneous cursor implementation)
+
+        SVG cursors are not well-integrated within the CSS(3) cursor support in WebCore.
+        SVGCursorElement duplicates CSSCursorImageValue functionality and inherits from
+        CachedResourceClient itself, handling remote-image acquisation on its own.
+
+        RenderStyle's CursorData class holds "IntPoint hotSpot", "CachedImage* image"
+        and just for SVG a 'String cursorFragmentId' (a reference to a SVG <cursor> element, by id).
+
+        SVG stores a reference to a SVGCursorElement, which holds a CachedImage pointer itself -
+        instead of storing the CachedImage in the CursorData class, as it's supposed to be.
+        Because of that several places in WebCore contain special SVG cursor handling - which
+        is unneeded.
+
+        Fix all issues by integrating within CSSCursorImageValue, remove 'String cursorFragmentId'
+        from RenderStyle, kill any special SVG cursor handling in WebCore and fix dynamic attribute
+        changes through DOM / SVG DOM (scripting of 'x' / 'y' / 'xlink:href' attribute). Now you
+        can script the mouse cursor location using SVG - the feature anyone has waited for.
+
+        Added manual test case: manual-tests/svg-cursor-changes.svg (no support for cursors in DRT)
+
+        * css/CSSCursorImageValue.cpp:
+        (WebCore::isSVGCursorIdentifier):
+        (WebCore::resourceReferencedByCursorElement):
+        (WebCore::CSSCursorImageValue::~CSSCursorImageValue):
+        (WebCore::CSSCursorImageValue::updateIfNeeded):
+        (WebCore::CSSCursorImageValue::image):
+        * css/CSSCursorImageValue.h:
+        * css/CSSImageValue.cpp:
+        (WebCore::CSSImageValue::image):
+        * css/CSSImageValue.h:
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue):
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty):
+        * manual-tests/svg-cursor-changes.svg: Added.
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::selectCursor):
+        * rendering/RenderStyle.cpp:
+        * rendering/RenderStyle.h:
+        (WebCore::CursorData::operator==):
+        * svg/SVGCursorElement.cpp:
+        (WebCore::SVGCursorElement::SVGCursorElement):
+        (WebCore::SVGCursorElement::~SVGCursorElement):
+        (WebCore::SVGCursorElement::parseMappedAttribute):
+        (WebCore::SVGCursorElement::addClient):
+        (WebCore::SVGCursorElement::removeClient):
+        (WebCore::SVGCursorElement::svgAttributeChanged):
+        * svg/SVGCursorElement.h:
+        (WebCore::SVGCursorElement::isValid):
+
 2008-02-13  Alp Toker  <alp@atoker.com>
 
         Reviewed by Adam Roben.

@@ -1,7 +1,7 @@
 /*
  * This file is part of the DOM implementation for KDE.
  *
- * Copyright (C) 2006, Rob Buis <buis@kde.org>
+ * Copyright (C) 2006 Rob Buis <buis@kde.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -27,6 +27,9 @@
 
 namespace WebCore {
 
+class Element;
+class SVGElement;
+
 class CSSCursorImageValue : public CSSImageValue {
 public:
     CSSCursorImageValue(const String& url, const IntPoint& hotspot, StyleBase*);
@@ -34,8 +37,15 @@ public:
 
     IntPoint hotspot() const { return m_hotspot; }
 
-protected:
+    bool updateIfSVGCursorIsUsed(Element*);
+    virtual CachedImage* image(DocLoader*);
+
+private:
     IntPoint m_hotspot;
+
+#if ENABLE(SVG)
+    SVGElement* m_referencedElement;
+#endif
 };
 
 } // namespace WebCore

@@ -1354,15 +1354,6 @@ void RenderStyle::addCursor(CachedImage* image, const IntPoint& hotSpot)
     inherited.access()->cursorData->append(data);
 }
 
-void RenderStyle::addSVGCursor(const String& fragmentId)
-{
-    CursorData data;
-    data.cursorFragmentId = fragmentId;
-    if (!inherited.access()->cursorData)
-        inherited.access()->cursorData = new CursorList;
-    inherited.access()->cursorData->append(data);
-}
-
 void RenderStyle::setCursorList(PassRefPtr<CursorList> other)
 {
     inherited.access()->cursorData = other;

@@ -1284,13 +1284,12 @@ struct CursorData {
     {}
     
     bool operator==(const CursorData& o) const {
-        return hotSpot == o.hotSpot && cursorImage == o.cursorImage && cursorFragmentId == o.cursorFragmentId;
+        return hotSpot == o.hotSpot && cursorImage == o.cursorImage;
     }
     bool operator!=(const CursorData& o) const { return !(*this == o); }
 
     IntPoint hotSpot; // for CSS3 support
     CachedImage* cursorImage; // weak pointer, the CSSValueImage takes care of deleting cursorImage
-    String cursorFragmentId; // only used for SVGCursorElement, a direct pointer would get stale
 };
 
 class CursorList : public RefCounted<CursorList> {
@@ -1983,7 +1982,6 @@ public:
 
     void setCursor( ECursor c ) { inherited_flags._cursor_style = c; }
     void addCursor(CachedImage*, const IntPoint& = IntPoint());
-    void addSVGCursor(const String&);
     void setCursorList(PassRefPtr<CursorList>);
     void clearCursorList();
 
