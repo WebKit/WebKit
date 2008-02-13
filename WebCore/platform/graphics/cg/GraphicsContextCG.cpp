@@ -932,7 +932,7 @@ void GraphicsContext::paintBuffer(ImageBuffer* buffer, const IntRect& r)
     if (paintingDisabled())
         return;
 
-    RetainPtr<CGImageRef> image(AdoptCF, CGBitmapContextCreateImage(buffer->context()->platformContext());
+    RetainPtr<CGImageRef> image(AdoptCF, CGBitmapContextCreateImage(buffer->context()->platformContext()));
     if (!image)
         return;
     CGContextDrawImage(platformContext(), roundToDevicePixels(r), image.get());

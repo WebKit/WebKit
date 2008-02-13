@@ -1,3 +1,10 @@
+2008-02-13  Matt Lilek  <webkit@mattlilek.com>
+
+        Not reviewed, build fix.
+
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::GraphicsContext::paintBuffer):
+
 2008-02-13  Darin Adler  <darin@apple.com>
 
         - try to fix Wx build
