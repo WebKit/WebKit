@@ -1,3 +1,13 @@
+2008-02-13  Ada Chan  <adachan@apple.com>
+
+        <rdar://problem/5740656> Leak in postDidAddIconNotification in WebIconDatabase
+
+        Reviewed by Darin.
+
+        * WebIconDatabase.cpp:
+        (postDidAddIconNotification): Need to adopt the newly created instance of CFDictionaryPropertyBag, 
+        which already has a ref count of 1.
+
 2008-02-13  Rodney Dawes  <dobey@wayofthemonkey.com>
 
         Fix Bug 17220: Illogical dependency between PluginView and
