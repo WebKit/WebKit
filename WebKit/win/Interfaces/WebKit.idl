@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2006, 2007, 2008 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,7 +24,7 @@
  */
 
 cpp_quote("/*")
-cpp_quote(" * Copyright (C) 2006, 2007 Apple Inc.  All rights reserved.")
+cpp_quote(" * Copyright (C) 2006, 2007, 2008 Apple Inc.  All rights reserved.")
 cpp_quote(" *")
 cpp_quote(" * Redistribution and use in source and binary forms, with or without")
 cpp_quote(" * modification, are permitted provided that the following conditions")
@@ -48,53 +48,186 @@ cpp_quote(" * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE 
 cpp_quote(" * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. ")
 cpp_quote(" */")
 
+#include "autoversion.h"
+
+#define DO_NO_IMPORTS
+
 import "oaidl.idl";
 import "ocidl.idl";
 
-import "IWebTextRenderer.idl";
-import "IWebView.idl";
-import "IWebViewPrivate.idl";
-import "IWebUIDelegate.idl";
-import "IWebResourceLoadDelegate.idl";
-import "IWebDatabaseManager.idl";
-import "IWebDownload.idl";
-import "IWebFrameLoadDelegate.idl";
-import "IWebPolicyDelegate.idl";
-import "IWebFrame.idl";
-import "IWebBackForwardList.idl";
-import "IWebHistoryItem.idl";
-import "IWebScriptObject.idl";
-import "IWebPreferences.idl";
-import "IWebDocument.idl";
-import "IWebURLRequest.idl";
-import "IWebDataSource.idl";
-import "IWebURLResponse.idl";
-import "IWebURLAuthenticationChallenge.idl";
-import "IWebError.idl";
-import "IWebMutableURLRequest.idl";
-import "IWebArchive.idl";
-import "IWebResource.idl";
-import "IWebFrameView.idl";
-import "DOMHTML.idl";
-import "IWebIconDatabase.idl";
-import "IWebNotificationCenter.idl";
-import "IWebNotificationObserver.idl";
-import "IWebHistory.idl";
-import "IWebCache.idl";
-import "IWebJavaScriptCollector.idl";
-import "IWebKitStatistics.idl";
-import "IWebScrollBarPrivate.idl";
-import "IWebScriptDebugServer.idl";
+#include "IWebScriptObject.idl"
+#include "DOMCSS.idl"
+#include "DOMCore.idl"
+#include "DOMEvents.idl"
+#include "DOMExtensions.idl"
+#include "DOMHTML.idl"
+#include "DOMPrivate.idl"
+#include "DOMRange.idl"
+#include "DOMWindow.idl"
+#include "IWebArchive.idl"
+#include "IWebBackForwardList.idl"
+#include "IWebBackForwardListPrivate.idl"
+#include "IWebCache.idl"
+#include "IWebDataSource.idl"
+#include "IWebDatabaseManager.idl"
+#include "IWebDocument.idl"
+#include "IWebDownload.idl"
+#include "IWebEditingDelegate.idl"
+#include "IWebError.idl"
+#include "IWebErrorPrivate.idl"
+#include "IWebFormDelegate.idl"
+#include "IWebFrame.idl"
+#include "IWebFrameLoadDelegate.idl"
+#include "IWebFrameLoadDelegatePrivate.idl"
+#include "IWebFramePrivate.idl"
+#include "IWebFrameView.idl"
+#include "IWebHTMLRepresentation.idl"
+#include "IWebHTTPURLResponse.idl"
+#include "IWebHistory.idl"
+#include "IWebHistoryItem.idl"
+#include "IWebHistoryItemPrivate.idl"
+#include "IWebIconDatabase.idl"
+#include "IWebInspector.idl"
+#include "IWebJavaScriptCollector.idl"
+#include "IWebKitStatistics.idl"
+#include "IWebMutableURLRequestPrivate.idl"
+#include "IWebNotification.idl"
+#include "IWebNotificationCenter.idl"
+#include "IWebNotificationObserver.idl"
+#include "IWebPolicyDelegate.idl"
+#include "IWebPreferences.idl"
+#include "IWebPreferencesPrivate.idl"
+#include "IWebResource.idl"
+#include "IWebResourceLoadDelegate.idl"
+#include "IWebResourceLoadDelegatePrivate.idl"
+#include "IWebScriptCallFrame.idl"
+#include "IWebScriptDebugListener.idl"
+#include "IWebScriptDebugServer.idl"
+#include "IWebScrollBarDelegatePrivate.idl"
+#include "IWebScrollBarPrivate.idl"
+#include "IWebSecurityOrigin.idl"
+#include "IWebTextRenderer.idl"
+#include "IWebUIDelegate.idl"
+#include "IWebUIDelegatePrivate.idl"
+#include "IWebURLAuthenticationChallenge.idl"
+#include "IWebURLRequest.idl"
+#include "IWebMutableURLRequest.idl"
+#include "IWebURLResponse.idl"
+#include "IWebURLResponsePrivate.idl"
+#include "IWebUndoManager.idl"
+#include "IWebUndoTarget.idl"
+#include "IWebView.idl"
+#include "IWebViewPrivate.idl"
+
+#include "IGEN_DOMObject.idl"
+#include "IGEN_DOMCharacterData.idl"
+#include "IGEN_DOMText.idl"
+#include "IGEN_DOMAttr.idl"
+#include "IGEN_DOMCDATASection.idl"
+#include "IGEN_DOMCSSCharsetRule.idl"
+#include "IGEN_DOMCSSFontFaceRule.idl"
+#include "IGEN_DOMCSSImportRule.idl"
+#include "IGEN_DOMCSSMediaRule.idl"
+#include "IGEN_DOMCSSPageRule.idl"
+#include "IGEN_DOMCSSPrimitiveValue.idl"
+#include "IGEN_DOMCSSRule.idl"
+#include "IGEN_DOMCSSRuleList.idl"
+#include "IGEN_DOMCSSStyleDeclaration.idl"
+#include "IGEN_DOMCSSStyleRule.idl"
+#include "IGEN_DOMCSSStyleSheet.idl"
+#include "IGEN_DOMCSSUnknownRule.idl"
+#include "IGEN_DOMCSSValue.idl"
+#include "IGEN_DOMCSSValueList.idl"
+#include "IGEN_DOMComment.idl"
+#include "IGEN_DOMCounter.idl"
+#include "IGEN_DOMDOMImplementation.idl"
+#include "IGEN_DOMDocument.idl"
+#include "IGEN_DOMDocumentFragment.idl"
+#include "IGEN_DOMDocumentType.idl"
+#include "IGEN_DOMElement.idl"
+#include "IGEN_DOMEntity.idl"
+#include "IGEN_DOMEntityReference.idl"
+#include "IGEN_DOMEvent.idl"
+#include "IGEN_DOMEventListener.idl"
+#include "IGEN_DOMEventTarget.idl"
+#include "IGEN_DOMHTMLAnchorElement.idl"
+#include "IGEN_DOMHTMLAppletElement.idl"
+#include "IGEN_DOMHTMLAreaElement.idl"
+#include "IGEN_DOMHTMLBRElement.idl"
+#include "IGEN_DOMHTMLBaseElement.idl"
+#include "IGEN_DOMHTMLBaseFontElement.idl"
+#include "IGEN_DOMHTMLBlockquoteElement.idl"
+#include "IGEN_DOMHTMLBodyElement.idl"
+#include "IGEN_DOMHTMLButtonElement.idl"
+#include "IGEN_DOMHTMLCollection.idl"
+#include "IGEN_DOMHTMLDListElement.idl"
+#include "IGEN_DOMHTMLDirectoryElement.idl"
+#include "IGEN_DOMHTMLDivElement.idl"
+#include "IGEN_DOMHTMLDocument.idl"
+#include "IGEN_DOMHTMLElement.idl"
+#include "IGEN_DOMHTMLEmbedElement.idl"
+#include "IGEN_DOMHTMLFieldSetElement.idl"
+#include "IGEN_DOMHTMLFontElement.idl"
+#include "IGEN_DOMHTMLFormElement.idl"
+#include "IGEN_DOMHTMLFrameElement.idl"
+#include "IGEN_DOMHTMLFrameSetElement.idl"
+#include "IGEN_DOMHTMLHRElement.idl"
+#include "IGEN_DOMHTMLHeadElement.idl"
+#include "IGEN_DOMHTMLHeadingElement.idl"
+#include "IGEN_DOMHTMLHtmlElement.idl"
+#include "IGEN_DOMHTMLIFrameElement.idl"
+#include "IGEN_DOMHTMLImageElement.idl"
+#include "IGEN_DOMHTMLInputElement.idl"
+#include "IGEN_DOMHTMLIsIndexElement.idl"
+#include "IGEN_DOMHTMLLIElement.idl"
+#include "IGEN_DOMHTMLLabelElement.idl"
+#include "IGEN_DOMHTMLLegendElement.idl"
+#include "IGEN_DOMHTMLLinkElement.idl"
+#include "IGEN_DOMHTMLMapElement.idl"
+#include "IGEN_DOMHTMLMarqueeElement.idl"
+#include "IGEN_DOMHTMLMenuElement.idl"
+#include "IGEN_DOMHTMLMetaElement.idl"
+#include "IGEN_DOMHTMLModElement.idl"
+#include "IGEN_DOMHTMLOListElement.idl"
+#include "IGEN_DOMHTMLObjectElement.idl"
+#include "IGEN_DOMHTMLOptGroupElement.idl"
+#include "IGEN_DOMHTMLOptionElement.idl"
+#include "IGEN_DOMHTMLOptionsCollection.idl"
+#include "IGEN_DOMHTMLParagraphElement.idl"
+#include "IGEN_DOMHTMLParamElement.idl"
+#include "IGEN_DOMHTMLPreElement.idl"
+#include "IGEN_DOMHTMLQuoteElement.idl"
+#include "IGEN_DOMHTMLScriptElement.idl"
+#include "IGEN_DOMHTMLSelectElement.idl"
+#include "IGEN_DOMHTMLStyleElement.idl"
+#include "IGEN_DOMHTMLTableCaptionElement.idl"
+#include "IGEN_DOMHTMLTableCellElement.idl"
+#include "IGEN_DOMHTMLTableColElement.idl"
+#include "IGEN_DOMHTMLTableElement.idl"
+#include "IGEN_DOMHTMLTableRowElement.idl"
+#include "IGEN_DOMHTMLTableSectionElement.idl"
+#include "IGEN_DOMHTMLTextAreaElement.idl"
+#include "IGEN_DOMHTMLTitleElement.idl"
+#include "IGEN_DOMHTMLUListElement.idl"
+#include "IGEN_DOMMediaList.idl"
+#include "IGEN_DOMNamedNodeMap.idl"
+#include "IGEN_DOMNode.idl"
+#include "IGEN_DOMNodeList.idl"
+#include "IGEN_DOMNotation.idl"
+#include "IGEN_DOMProcessingInstruction.idl"
+#include "IGEN_DOMRect.idl"
+#include "IGEN_DOMStyleSheet.idl"
+#include "IGEN_DOMStyleSheetList.idl"
 
 [
 #if __PRODUCTION__
     uuid(2a748656-625d-4207-b29f-40c95bfeb3a9),
-    helpstring("WebKit 525.2 Type Library"),
+    helpstring("WebKit " __BUILD_NUMBER_SHORT__ " Type Library"),
 #else
     uuid(76E5F7F0-18FD-48a2-B549-1159435B513B),
-    helpstring("OpenSourceWebKit 525.2 Type Library"),
+    helpstring("OpenSourceWebKit " __BUILD_NUMBER_SHORT__ " Type Library"),
 #endif
-    version(525.2)
+    version(__BUILD_NUMBER_MAJOR_MINOR__)
 ]
 #if __PRODUCTION__
 library WebKit

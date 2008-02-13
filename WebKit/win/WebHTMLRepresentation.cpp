@@ -27,7 +27,7 @@
 #include "WebKitDLL.h"
 #include "WebHTMLRepresentation.h"
 
-#include "DOMCore.h"
+#include "WebKit.h"
 #include "WebFrame.h"
 #include "WebKitStatisticsPrivate.h"
 #pragma warning(push, 0)

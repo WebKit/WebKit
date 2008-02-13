@@ -29,7 +29,7 @@
 #ifndef WebSecurityOrigin_h
 #define WebSecurityOrigin_h
 
-#include "IWebSecurityOrigin.h"
+#include "WebKit.h"
 #include <WebCore/SecurityOrigin.h>
 
 class DECLSPEC_UUID("6EB8D98F-2723-4472-88D3-5936F9D6E631") WebSecurityOrigin : public IWebSecurityOrigin {

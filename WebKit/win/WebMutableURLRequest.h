@@ -26,8 +26,7 @@
 #ifndef WebMutableURLRequest_H
 #define WebMutableURLRequest_H
 
-#include "IWebMutableURLRequest.h"
-#include "IWebMutableURLRequestPrivate.h"
+#include "WebKit.h"
 #pragma warning(push, 0)
 #include <WebCore/ResourceRequest.h>
 #pragma warning(pop)

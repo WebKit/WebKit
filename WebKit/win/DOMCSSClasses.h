@@ -26,7 +26,7 @@
 #ifndef DOMCSSClasses_H
 #define DOMCSSClasses_H
 
-#include "DOMCSS.h"
+#include "WebKit.h"
 #include "DOMCoreClasses.h"
 
 #include <WebCore/CSSStyleDeclaration.h>

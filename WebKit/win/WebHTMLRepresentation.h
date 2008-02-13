@@ -26,8 +26,7 @@
 #ifndef WebHTMLRepresentation_H
 #define WebHTMLRepresentation_H
 
-#include "IWebHTMLRepresentation.h"
-#include "IWebDocument.h"
+#include "WebKit.h"
 
 class WebFrame;
 

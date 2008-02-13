@@ -27,7 +27,7 @@
 #include "WebKitDLL.h"
 #include "DefaultPolicyDelegate.h"
 
-#include "IWebViewPrivate.h"
+#include "WebKit.h"
 
 #pragma warning(push, 0)
 #include <WebCore/PlatformString.h>

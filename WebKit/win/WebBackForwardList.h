@@ -26,8 +26,7 @@
 #ifndef WebBackForwardList_H
 #define WebBackForwardList_H
 
-#include "IWebBackForwardList.h"
-#include "IWebBackForwardListPrivate.h"
+#include "WebKit.h"
 
 #include "WebHistoryItem.h"
 

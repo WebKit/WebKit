@@ -26,7 +26,7 @@
 #ifndef WebScriptObject_H
 #define WebScriptObject_H
 
-#include "IWebScriptObject.h"
+#include "WebKit.h"
 
 class WebScriptObject : public IWebScriptObject
 {

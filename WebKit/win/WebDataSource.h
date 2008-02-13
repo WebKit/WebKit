@@ -26,7 +26,7 @@
 #ifndef WebDataSource_H
 #define WebDataSource_H
 
-#include "IWebDataSource.h"
+#include "WebKit.h"
 #include "COMPtr.h"
 #include <WTF/RefPtr.h>
 

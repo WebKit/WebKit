@@ -29,7 +29,6 @@
 
 #include "CFDictionaryPropertyBag.h"
 #include "DOMCoreClasses.h"
-#include "IWebNotification.h"
 #include "WebDatabaseManager.h"
 #include "WebDocumentLoader.h"
 #include "WebEditorClient.h"

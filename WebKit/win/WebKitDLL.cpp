@@ -27,7 +27,7 @@
 #include "WebKitDLL.h"
 
 #include "ForEachCoClass.h"
-#include "IWebURLResponse.h"
+#include "WebKit.h"
 #include "ProgIDMacros.h"
 #include "WebKit.h"
 #include "WebKitClassFactory.h"

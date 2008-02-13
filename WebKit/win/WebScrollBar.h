@@ -26,8 +26,7 @@
 #ifndef WebScrollBar_h
 #define WebScrollBar_h
 
-#include "IWebScrollBarDelegatePrivate.h"
-#include "IWebScrollBarPrivate.h"
+#include "WebKit.h"
 
 #include <wtf/RefPtr.h>
 #include <wtf/OwnPtr.h>

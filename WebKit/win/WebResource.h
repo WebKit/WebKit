@@ -26,7 +26,7 @@
 #ifndef WebResource_h
 #define WebResource_h
 
-#include "IWebResource.h"
+#include "WebKit.h"
 #include "COMPtr.h"
 
 #pragma warning(push, 0)

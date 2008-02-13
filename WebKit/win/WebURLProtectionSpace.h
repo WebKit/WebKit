@@ -26,7 +26,7 @@
 #ifndef WebURLProtectionSpace_h
 #define WebURLProtectionSpace_h
 
-#include "IWebURLAuthenticationChallenge.h"
+#include "WebKit.h"
 
 #pragma warning(push, 0)
 #include <WebCore/ProtectionSpace.h>

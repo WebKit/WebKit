@@ -26,8 +26,7 @@
 #include "config.h"
 #include "WebKitDLL.h"
 
-#include "IWebView.h"
-#include "IWebPolicyDelegate.h"
+#include "WebKit.h"
 #include "WebActionPropertyBag.h"
 #include "WebElementPropertyBag.h"
 #include "COMPtr.h"

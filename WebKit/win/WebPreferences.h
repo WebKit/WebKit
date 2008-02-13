@@ -26,8 +26,7 @@
 #ifndef WebPreferences_H
 #define WebPreferences_H
 
-#include "IWebPreferences.h"
-#include "IWebPreferencesPrivate.h"
+#include "WebKit.h"
 #include <CoreFoundation/CoreFoundation.h>
 #include <WebCore/BString.h>
 #include <wtf/RetainPtr.h>

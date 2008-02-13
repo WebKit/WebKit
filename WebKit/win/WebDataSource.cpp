@@ -27,7 +27,7 @@
 #include "WebKitDLL.h"
 #include "WebDataSource.h"
 
-#include "IWebMutableURLRequest.h"
+#include "WebKit.h"
 #include "MemoryStream.h"
 #include "WebDocumentLoader.h"
 #include "WebError.h"

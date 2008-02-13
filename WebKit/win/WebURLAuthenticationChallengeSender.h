@@ -26,7 +26,7 @@
 #ifndef WebURLAuthenticationChallengeSender_h
 #define WebURLAuthenticationChallengeSender_h
 
-#include "IWebURLAuthenticationChallenge.h"
+#include "WebKit.h"
 
 #include <wtf/Forward.h>
 #include <wtf/RefPtr.h>

@@ -31,7 +31,7 @@
 
 #include <WebCore/DatabaseTrackerClient.h>
 
-#include "IWebDatabaseManager.h"
+#include "WebKit.h"
 
 class WebDatabaseManager : public IWebDatabaseManager, private WebCore::DatabaseTrackerClient {
 public:

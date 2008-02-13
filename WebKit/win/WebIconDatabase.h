@@ -26,7 +26,7 @@
 #ifndef WebIconDatabase_H
 #define WebIconDatabase_H
 
-#include "IWebIconDatabase.h"
+#include "WebKit.h"
 
 #pragma warning(push, 0)
 #include <WebCore/IconDatabaseClient.h>

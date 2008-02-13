@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "IWebScriptDebugListener.h"
+#include "WebKit.h"
 #include "WebKitDLL.h"
 #include "WebScriptDebugServer.h"
 

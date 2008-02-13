@@ -27,8 +27,7 @@
 #define WebDownload_h
 
 #include "COMPtr.h"
-#include "IWebDownload.h"
-#include "IWebURLAuthenticationChallenge.h"
+#include "WebKit.h"
 
 #include <CFNetwork/CFURLDownloadPriv.h>
 #include <WebCore/PlatformString.h>

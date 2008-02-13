@@ -26,7 +26,7 @@
 #ifndef WebEditorClient_H
 #define WebEditorClient_H
 
-#include "IWebEditingDelegate.h"
+#include "WebKit.h"
 #pragma warning(push, 0)
 #include <WebCore/EditorClient.h>
 #include <wtf/OwnPtr.h>

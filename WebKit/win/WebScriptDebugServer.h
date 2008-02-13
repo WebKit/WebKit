@@ -26,9 +26,8 @@
 #ifndef WebScriptDebugServer_H
 #define WebScriptDebugServer_H
 
-#include "IWebScriptDebugServer.h"
+#include "WebKit.h"
 
-#include "IWebScriptDebugListener.h"
 #include <wtf/HashSet.h>
 #pragma warning(push, 0)
 #include <WebCore/COMPtr.h>

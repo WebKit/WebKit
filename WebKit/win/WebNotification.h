@@ -26,7 +26,7 @@
 #ifndef WebNotification_H
 #define WebNotification_H
 
-#include "IWebNotification.h"
+#include "WebKit.h"
 
 class WebNotification : public IWebNotification
 {

@@ -26,10 +26,7 @@
 #ifndef WebFrame_H
 #define WebFrame_H
 
-#include "DOMCore.h"
-#include "IWebFormDelegate.h"
-#include "IWebFrame.h"
-#include "IWebFramePrivate.h"
+#include "WebKit.h"
 #include "WebDataSource.h"
 
 #pragma warning(push, 0)

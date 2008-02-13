@@ -29,7 +29,7 @@
 #ifndef WebTextRenderer_h
 #define WebTextRenderer_h
 
-#include "IWebTextRenderer.h"
+#include "WebKit.h"
 
 class WebTextRenderer : public IWebTextRenderer {
 public:

@@ -27,9 +27,7 @@
 #include "WebKitDLL.h"
 #include "WebEditorClient.h"
 
-#include "IWebEditingDelegate.h"
-#include "IWebUndoTarget.h"
-#include "IWebURLResponse.h"
+#include "WebKit.h"
 #include "WebLocalizableStrings.h"
 #include "WebView.h"
 #include "DOMCoreClasses.h"
