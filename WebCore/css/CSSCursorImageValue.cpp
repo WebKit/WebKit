@@ -23,6 +23,8 @@
 #include "config.h"
 #include "CSSCursorImageValue.h"
 
+#include <wtf/MathExtras.h>
+
 #if ENABLE(SVG)
 #include "CachedImage.h"
 #include "DocLoader.h"

@@ -32,6 +32,7 @@
 #include <JavaScriptCore/JSObjectRef.h>
 #include <JavaScriptCore/JSRetainPtr.h>
 #include <wtf/Assertions.h>
+#include <wtf/MathExtras.h>
 
 LayoutTestController::LayoutTestController(bool testRepaintDefault, bool testRepaintSweepHorizontallyDefault)
     : m_dumpAsText(false)
