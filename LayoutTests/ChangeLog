@@ -1,3 +1,8 @@
+2008-02-13  Darin Adler  <darin@apple.com>
+
+        * platform/mac/svg/hixie/perf/001-expected.txt: Removed.
+        * platform/mac/svg/hixie/perf/002-expected.txt: Removed.
+
 2008-02-13  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin.
