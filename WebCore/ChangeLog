@@ -1,3 +1,20 @@
+2008-02-11  Darin Adler  <darin@apple.com>
+
+        - roll out fix for <rdar://problem/5726016> REGRESSION: Xcode News window renders
+          incorrectly due to visibility fix
+
+        Removed the Xcode-specific quirk at the request of some folks on the Xcode team.
+
+        * WebCore.base.exp: Rolled out change.
+        * css/CSSMutableStyleDeclaration.cpp:
+        (WebCore::CSSMutableStyleDeclaration::setProperty): Ditto.
+        * page/Settings.cpp:
+        (WebCore::Settings::Settings): Ditto. But keep the initialization of
+        m_fontRenderingMode.
+        (WebCore::Settings::setNeedsXcodeVisibilityQuirk): Removed.
+        * page/Settings.h:
+        (WebCore::Settings::needsXcodeVisibilityQuirk): Removed.
+
 2008-02-13  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin.

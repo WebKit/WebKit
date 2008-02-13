@@ -26,11 +26,9 @@
 #include "CSSProperty.h"
 #include "CSSPropertyNames.h"
 #include "CSSStyleSheet.h"
-#include "CSSValueKeywords.h"
 #include "CSSValueList.h"
 #include "Document.h"
 #include "ExceptionCode.h"
-#include "Settings.h"
 #include "StyledElement.h"
 
 using namespace std;
@@ -523,21 +521,6 @@ bool CSSMutableStyleDeclaration::setProperty(int propertyID, const String& value
     if (value.isEmpty()) {
         removeProperty(propertyID, notifyChanged, false, ec);
         return ec == 0;
-    }
-
-    // Quirk for Xcode 3.0 initial help content. It relied on our incorrect handling of visibility
-    // of elements nested inside visibility: hiddent content.
-    if (propertyID == CSS_PROP_VISIBILITY && m_node && m_node->isHTMLElement() && static_cast<HTMLElement*>(m_node)->className() == "tab_content") {
-        if (Settings* settings = m_node->document()->settings()) {
-            if (settings->needsXcodeVisibilityQuirk()) {
-                setProperty(CSS_PROP_VISIBILITY, CSS_VAL_VISIBLE, false, notifyChanged);
-                if (value == "hidden")
-                    setProperty(CSS_PROP_DISPLAY, CSS_VAL_NONE, false, notifyChanged);
-                else
-                    removeProperty(CSS_PROP_DISPLAY, ec);
-                return true;
-            }
-        }
     }
 
     // When replacing an existing property value, this moves the property to the end of the list.

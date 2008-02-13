@@ -146,9 +146,6 @@ namespace WebCore {
         void setFontRenderingMode(FontRenderingMode mode);
         FontRenderingMode fontRenderingMode() const;
 
-        void setNeedsXcodeVisibilityQuirk(bool);
-        bool needsXcodeVisibilityQuirk() const { return m_needsXcodeVisibilityQuirk; }
-
     private:
         Page* m_page;
         
@@ -185,7 +182,6 @@ namespace WebCore {
         bool m_developerExtrasEnabled : 1;
         bool m_authorAndUserStylesEnabled : 1;
         unsigned m_fontRenderingMode : 1;
-        bool m_needsXcodeVisibilityQuirk : 1;
     };
 
 } // namespace WebCore

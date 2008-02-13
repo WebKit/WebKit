@@ -927,21 +927,6 @@ static bool debugWidget = true;
     return needsQuirks;
 }
 
-- (BOOL)_needsXcodeVisibilityQuirk
-{
-    static BOOL checked = NO;
-    static BOOL needsQuirk = NO;
-
-    if (checked)
-        return needsQuirk;
-
-    needsQuirk = !WebKitLinkedOnOrAfter(WEBKIT_FIRST_VERSION_WITHOUT_XCODE_QUIRK)
-        && [[[NSBundle mainBundle] bundleIdentifier] isEqualToString:@"com.apple.Xcode"];
-    checked = YES;
-
-    return needsQuirk;
-}
-
 - (void)_preferencesChangedNotification:(NSNotification *)notification
 {
     WebPreferences *preferences = (WebPreferences *)[notification object];
@@ -994,7 +979,6 @@ static bool debugWidget = true;
         settings->setUserStyleSheetLocation([NSURL URLWithString:@""]);
     settings->setNeedsAdobeFrameReloadingQuirk([self _needsAdobeFrameReloadingQuirk]);
     settings->setNeedsKeyboardEventDisambiguationQuirks([self _needsKeyboardEventDisambiguationQuirks]);
-    settings->setNeedsXcodeVisibilityQuirk([self _needsXcodeVisibilityQuirk]);
 }
 
 static inline IMP getMethod(id o, SEL s)
