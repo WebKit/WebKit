@@ -1,3 +1,17 @@
+2008-02-13  Alp Toker  <alp@atoker.com>
+
+        Reviewed by Adam Roben.
+
+        Split out pure-cairo Font code to FontCairo.cpp.
+
+        Part of the ongoing work to share code with the Win port.
+
+        * GNUmakefile.am:
+        * WebCore.pro:
+        * platform/graphics/cairo/FontCairo.cpp: Added.
+        (WebCore::Font::drawGlyphs):
+        * platform/graphics/gtk/FontGtk.cpp:
+
 2008-02-13  Kevin Ollivier <kevino@theolliviers.com>
 
         Reviewed by Darin Adler.

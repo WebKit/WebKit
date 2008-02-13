@@ -971,6 +971,7 @@ webkitgtk_sources += \
 	WebCore/platform/graphics/gtk/IntPointGtk.cpp \
 	WebCore/platform/graphics/gtk/IntRectGtk.cpp \
 	WebCore/platform/graphics/cairo/AffineTransformCairo.cpp \
+	WebCore/platform/graphics/cairo/FontCairo.cpp \
 	WebCore/platform/graphics/cairo/GraphicsContextCairo.cpp \
 	WebCore/platform/graphics/cairo/ImageBufferCairo.cpp \
 	WebCore/platform/graphics/cairo/ImageCairo.cpp \

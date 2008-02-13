@@ -159,34 +159,6 @@ static void setPangoAttributes(const Font* font, const TextRun& run, PangoLayout
     pango_context_set_base_dir(pangoContext, direction);
 }
 
-void Font::drawGlyphs(GraphicsContext* graphicsContext, const SimpleFontData* font, const GlyphBuffer& glyphBuffer,
-                      int from, int numGlyphs, const FloatPoint& point) const
-{
-    cairo_t* cr = graphicsContext->platformContext();
-    cairo_save(cr);
-
-    // Set the text color to use for drawing.
-    float red, green, blue, alpha;
-    Color penColor = graphicsContext->fillColor();
-    penColor.getRGBA(red, green, blue, alpha);
-    cairo_set_source_rgba(cr, red, green, blue, alpha);
-
-    font->setFont(cr);
-
-    GlyphBufferGlyph* glyphs = (GlyphBufferGlyph*)glyphBuffer.glyphs(from);
-
-    float offset = point.x();
-
-    for (int i = 0; i < numGlyphs; i++) {
-        glyphs[i].x = offset;
-        glyphs[i].y = point.y();
-        offset += glyphBuffer.advanceAt(from + i);
-    }
-    cairo_show_glyphs(cr, glyphs, numGlyphs);
-
-    cairo_restore(cr);
-}
-
 void Font::drawComplexText(GraphicsContext* context, const TextRun& run, const FloatPoint& point, int from, int to) const
 {
     cairo_t* cr = context->platformContext();

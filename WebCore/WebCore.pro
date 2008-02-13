@@ -1062,6 +1062,7 @@ gtk-port {
         platform/network/curl/ResourceHandleCurl.cpp \
         platform/network/curl/ResourceHandleManager.cpp \
         platform/graphics/cairo/AffineTransformCairo.cpp \
+        platform/graphics/cairo/FontCairo.cpp \
         platform/graphics/cairo/GraphicsContextCairo.cpp \
         platform/graphics/cairo/ImageBufferCairo.cpp \
         platform/graphics/cairo/ImageCairo.cpp \
