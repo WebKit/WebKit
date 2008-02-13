@@ -267,6 +267,11 @@ sub AddIncludesForTypeInCPPHeader
     return if $codeGenerator->IsNonPointerType($type);
 
     # Add special Cases HERE
+    
+    if ($type =~ m/^I/) {
+        $type = "WebKit";
+    }
+    
     if ($useAngleBrackets) {
         $CPPHeaderIncludesAngle{"$type.h"} = 1;
         return;
@@ -349,11 +354,15 @@ sub GenerateIDL
     push(@IDLHeader, "\n");
 
     # - INCLUDES -
+    push(@IDLHeader, "#ifndef DO_NO_IMPORTS\n");
     push(@IDLHeader, "import \"oaidl.idl\";\n");
-    push(@IDLHeader, "import \"ocidl.idl\";\n\n");
+    push(@IDLHeader, "import \"ocidl.idl\";\n");
+    push(@IDLHeader, "#endif\n\n");
 
     unless ($pureInterface) {
-        push(@IDLHeader, "import \"${parentInterfaceName}.idl\";\n\n");
+        push(@IDLHeader, "#ifndef DO_NO_IMPORTS\n");
+        push(@IDLHeader, "import \"${parentInterfaceName}.idl\";\n");
+        push(@IDLHeader, "#endif\n\n");
 
         $IDLDontForwardDeclare{$outInterfaceName} = 1;
         $IDLDontImport{$outInterfaceName} = 1;
@@ -1215,7 +1224,9 @@ sub WriteData
 
     print OUTPUTIDL map { "interface $_;\n" } sort keys(%IDLForwardDeclarations);
     print OUTPUTIDL "\n";
+    print OUTPUTIDL "#ifndef DO_NO_IMPORTS\n";
     print OUTPUTIDL map { ($_ eq "IGEN_DOMImplementation") ? "import \"IGEN_DOMDOMImplementation.idl\";\n" : "import \"$_.idl\";\n" } sort keys(%IDLImports);
+    print OUTPUTIDL "#endif\n";
     print OUTPUTIDL "\n";
 
     # Add content

@@ -1,3 +1,13 @@
+2008-02-12  Steve Falkenburg  <sfalken@apple.com>
+
+        Changes to support merged MIDL output.
+        
+        All COM interfaces are now generated to WebKit.h.
+        
+        Reviewed by Sam, Ada.
+
+        * bindings/scripts/CodeGeneratorCOM.pm:
+
 2008-02-12  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Adam Roben.
