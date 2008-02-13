@@ -1,3 +1,12 @@
+2008-02-12  Bernhard Rosenkraenzer  <bero@arklinux.org>
+
+        Reviewed by Darin.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=17340
+          WebCore/platform/Timer.cpp fails to build with gcc 4.3
+
+        * platform/Timer.cpp: Add include of <limits.h> since this file uses UINT_MAX.
+
 2008-02-12  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Brady Eidson.
