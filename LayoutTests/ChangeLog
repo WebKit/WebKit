@@ -1,3 +1,13 @@
+2008-02-13  Darin Adler  <darin@apple.com>
+
+        - check in results for these tests
+
+        No idea if these are right or not; just what was generated on my computer.
+        If someone has a better version, feel free to replace these results with correct ones.
+
+        * platform/mac/svg/hixie/perf/001-expected.txt: Added.
+        * platform/mac/svg/hixie/perf/002-expected.txt: Added.
+
 2008-02-13  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Alexey P.
