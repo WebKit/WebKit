@@ -1,0 +1,83 @@
+<html>
+<head>
+<script>
+var database1;
+var database2;
+
+function log(message)
+{
+    document.getElementById("console").innerHTML += message + "<br>";
+}
+
+function finishTest()
+{
+    log("Test Complete");
+    if (window.layoutTestController)
+        layoutTestController.notifyDone();
+}
+
+function errorFunction(tx, error)
+{
+    log("Test failed - " + error.message);
+    finishTest();
+}
+
+function checkCompletion(db)
+{
+    log("Done adding data");
+
+    db.complete = true;
+    if (database1.complete && database2.complete)
+        finishTest();
+    else
+        testDatabase(database2);
+}
+
+function addData(db)
+{
+    db.transaction(function(tx) { 
+        log("Inserting some data");
+        tx.executeSql("INSERT INTO DataTest (randomData) VALUES (randomblob(17408))", [], function(tx, result) { }, errorFunction); 
+    }, errorFunction, function() { 
+        checkCompletion(db); 
+    });
+}
+
+function testDatabase(db)
+{
+    db.transaction(function(tx) {
+        log("Adding a table");
+        tx.executeSql("CREATE TABLE DataTest (randomData)", [], function(tx, result) { }, errorFunction); 
+    }, errorFunction, function() { 
+        addData(db); 
+    });
+}
+
+function runTest() {
+    if (window.layoutTestController) {
+        layoutTestController.clearAllDatabases();
+        layoutTestController.dumpDatabaseCallbacks();
+        layoutTestController.setDatabaseQuota(32768);
+        layoutTestController.dumpAsText();
+        layoutTestController.waitUntilDone();
+    }
+    
+    database1 = openDatabase("QuotaManagementDatabase1", "1.0", "Test for quota management <rdar://5628468>", 1);
+    database2 = openDatabase("QuotaManagementDatabase2", "1.0", "Test for quota management <rdar://5628468>", 1);
+    database1.complete = false;
+    database2.complete = false;
+    
+    testDatabase(database1);
+}
+
+</script>
+</head>
+
+<body onload="runTest()">
+This test checks to make sure that quotas are enforced per-origin instead of per-database, as they were prior to http://trac.webkit.org/projects/webkit/changeset/29983.<br>
+The test clears all databases, sets the quota for the origin to 32k, then tries to insert 17k of data into two databases.  If things go as planned, the UI Delegate will be informed of the exceeded quota.
+<pre id="console">
+</pre>
+</body>
+
+</html>

@@ -362,3 +362,7 @@ http/tests/xmlhttprequest/failed-auth.html
 http/tests/xmlhttprequest/connection-error-sync.html
 plugins/netscape-plugin-setwindow-size.html
 svg/custom/gradient-stop-style-change.svg
+
+# Missing LayoutTestController implementations and database related delegate callback
+storage/quota-tracking.html
+storage/success-callback.html

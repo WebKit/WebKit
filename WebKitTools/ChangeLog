@@ -1,3 +1,37 @@
+2008-02-13  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Darin Adler
+
+        Add some much needed Database support to DRT
+
+        * DumpRenderTree/LayoutTestController.cpp:
+        (LayoutTestController::LayoutTestController):
+        (dumpDatabaseCallbacksCallback): Flag to control if the UIDelegate methods related to
+          databases are called
+        (clearAllDatabasesCallback): Allow a test to delete all databases
+        (setDatabaseQuotaCallback): Allow a test to set the quota new origins will get
+        (LayoutTestController::staticFunctions):
+
+        * DumpRenderTree/LayoutTestController.h:
+        (LayoutTestController::dumpDatabaseCallbacks):
+        (LayoutTestController::setDumpDatabaseCallbacks):
+
+        * DumpRenderTree/mac/LayoutTestControllerMac.mm:
+        (LayoutTestController::clearAllDatabases):
+        (LayoutTestController::setDatabaseQuota):
+
+        * DumpRenderTree/gtk/LayoutTestControllerGtk.cpp:
+        (LayoutTestController::clearAllDatabases): Stubbed out
+        (LayoutTestController::setDatabaseQuota): Ditto
+        * DumpRenderTree/win/LayoutTestControllerWin.cpp:
+        (LayoutTestController::clearAllDatabases): Stubbed out with error message
+        (LayoutTestController::setDatabaseQuota): Ditto
+
+        * DumpRenderTree/mac/UIDelegate.mm:
+        (-[UIDelegate webView:frame:exceededDatabaseQuotaForSecurityOrigin:database:]): Print a
+          message with details about the event then return a 5mb quota like before
+
+
 2008-02-12  Steve Falkenburg  <sfalken@apple.com>
 
         Changes to support merged MIDL output.

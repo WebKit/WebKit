@@ -1,3 +1,20 @@
+2008-02-13  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Darin Adler
+
+        Added layout tests to cover
+        http://trac.webkit.org/projects/webkit/changeset/29983
+        and
+        http://trac.webkit.org/projects/webkit/changeset/30184
+
+        * platform/gtk/Skipped:
+        * platform/qt/Skipped:
+        * platform/win/Skipped:
+        * storage/quota-tracking-expected.txt: Added.
+        * storage/quota-tracking.html: Added.
+        * storage/success-callback-expected.txt: Added.
+        * storage/success-callback.html: Added.
+
 2008-02-13  Darin Adler  <darin@apple.com>
 
         * platform/mac/svg/hixie/perf/001-expected.txt: Removed.

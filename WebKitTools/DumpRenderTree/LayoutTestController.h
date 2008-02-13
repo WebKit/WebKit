@@ -40,6 +40,7 @@ public:
 
     // Controller Methods - platfrom independant implementations
     void addDisallowedURL(JSStringRef url);
+    void clearAllDatabases();
     void clearBackForwardList();
     JSStringRef copyDecodedHostName(JSStringRef name);
     JSStringRef copyEncodedHostName(JSStringRef name);
@@ -56,6 +57,7 @@ public:
     void setAcceptsEditing(bool acceptsEditing);
     void setAuthorAndUserStylesEnabled(bool);
     void setCustomPolicyDelegate(bool setDelegate);
+    void setDatabaseQuota(unsigned long long quota);
     void setMainFrameIsFirstResponder(bool flag);
     void setPrivateBrowsingEnabled(bool flag);
     void setPopupBlockingEnabled(bool flag);
@@ -78,6 +80,9 @@ public:
 
     bool dumpChildFramesAsText() const { return m_dumpChildFramesAsText; }
     void setDumpChildFramesAsText(bool dumpChildFramesAsText) { m_dumpChildFramesAsText = dumpChildFramesAsText; }
+
+    bool dumpDatabaseCallbacks() const { return m_dumpDatabaseCallbacks; }
+    void setDumpDatabaseCallbacks(bool dumpDatabaseCallbacks) { m_dumpDatabaseCallbacks = dumpDatabaseCallbacks; }
 
     bool dumpDOMAsWebArchive() const { return m_dumpDOMAsWebArchive; }
     void setDumpDOMAsWebArchive(bool dumpDOMAsWebArchive) { m_dumpDOMAsWebArchive = dumpDOMAsWebArchive; }
@@ -132,6 +137,7 @@ private:
     bool m_dumpBackForwardList;
     bool m_dumpChildFrameScrollPositions;
     bool m_dumpChildFramesAsText;
+    bool m_dumpDatabaseCallbacks;
     bool m_dumpDOMAsWebArchive;
     bool m_dumpSelectionRect;
     bool m_dumpSourceAsWebArchive;

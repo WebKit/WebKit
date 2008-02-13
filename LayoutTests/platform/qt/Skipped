@@ -881,3 +881,8 @@ webarchive/loading/test-loading-archive.html
 
 # ------- <video> support
 media
+
+# ------- storage support
+# Missing LayoutTestController implementations and database related delegate callback
+storage/quota-tracking.html
+storage/success-callback.html

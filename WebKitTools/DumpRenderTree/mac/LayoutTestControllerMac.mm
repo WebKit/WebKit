@@ -37,12 +37,14 @@
 #import <JavaScriptCore/JSStringRef.h>
 #import <JavaScriptCore/JSStringRefCF.h>
 #import <WebKit/WebBackForwardList.h>
+#import <WebKit/WebDatabaseManagerPrivate.h>
 #import <WebKit/WebFrame.h>
 #import <WebKit/WebHTMLViewPrivate.h>
 #import <WebKit/WebHistory.h>
 #import <WebKit/WebNSURLExtras.h>
 #import <WebKit/WebPreferences.h>
 #import <WebKit/WebPreferencesPrivate.h>
+#import <WebKit/WebSecurityOriginPrivate.h>
 #import <WebKit/WebView.h>
 #import <WebKit/WebViewPrivate.h>
 #import <wtf/RetainPtr.h>
@@ -63,6 +65,11 @@ void LayoutTestController::addDisallowedURL(JSStringRef url)
     request = [NSURLProtocol canonicalRequestForRequest:request];
 
     CFSetAddValue(disallowedURLs, [request URL]);
+}
+
+void LayoutTestController::clearAllDatabases()
+{
+    [[WebDatabaseManager sharedWebDatabaseManager] deleteAllDatabases];
 }
 
 void LayoutTestController::clearBackForwardList()
@@ -168,6 +175,13 @@ void LayoutTestController::setCustomPolicyDelegate(bool setDelegate)
         [[mainFrame webView] setPolicyDelegate:policyDelegate];
     else
         [[mainFrame webView] setPolicyDelegate:nil];
+}
+
+void LayoutTestController::setDatabaseQuota(unsigned long long quota)
+{    
+    WebSecurityOrigin *origin = [[WebSecurityOrigin alloc] initWithProtocol:@"file" domain:nil];
+    [origin setQuota:quota];
+    [origin release];
 }
 
 void LayoutTestController::setMainFrameIsFirstResponder(bool flag)

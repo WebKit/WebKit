@@ -1,2 +1,5 @@
 # print dialog hangs DRT
 editing/execCommand/print.html
+# Missing LayoutTestController implementations and database related delegate callback
+storage/quota-tracking.html
+storage/success-callback.html

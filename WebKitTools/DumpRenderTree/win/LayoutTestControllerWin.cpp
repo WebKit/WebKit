@@ -551,3 +551,13 @@ void LayoutTestController::execCommand(JSStringRef name, JSStringRef value)
     SysFreeString(nameBSTR);
     SysFreeString(valueBSTR);
 }
+
+void LayoutTestController::clearAllDatabases()
+{
+    printf("ERROR: LayoutTestController::clearAllDatabases() not implemented\n");
+}
+ 
+void LayoutTestController::setDatabaseQuota(unsigned long long quota)
+{    
+    printf("ERROR: LayoutTestController::setDatabaseQuota() not implemented\n");
+}
