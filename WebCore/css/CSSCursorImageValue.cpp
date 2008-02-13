@@ -23,15 +23,16 @@
 #include "config.h"
 #include "CSSCursorImageValue.h"
 
-#include <wtf/MathExtras.h>
-
-#if ENABLE(SVG)
 #include "CachedImage.h"
 #include "DocLoader.h"
 #include "PlatformString.h"
+
+#if ENABLE(SVG)
 #include "SVGCursorElement.h"
 #include "SVGURIReference.h"
 #endif
+
+#include <wtf/MathExtras.h>
 
 namespace WebCore {
 

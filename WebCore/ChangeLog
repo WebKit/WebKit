@@ -1,3 +1,11 @@
+2008-02-13  Rodney Dawes  <dobey@wayofthemonkey.com>
+
+        Reviewed by Alp Toker.
+
+        Fix non-SVG builds.
+
+        * css/CSSCursorImageValue.cpp:
+
 2008-02-13  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Adam Roben.
