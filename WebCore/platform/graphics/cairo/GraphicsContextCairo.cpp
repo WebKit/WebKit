@@ -892,6 +892,8 @@ void GraphicsContext::setUseAntialiasing(bool enable)
 
 void GraphicsContext::paintBuffer(ImageBuffer* buffer, const IntRect& r)
 {
+    if (paintingDisabled())
+        return;
     cairo_surface_t* image = buffer->surface();
     if (!image)
         return;

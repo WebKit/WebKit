@@ -2,6 +2,20 @@
 
         - try to fix Wx build
 
+        * platform/graphics/wx/GraphicsContextWx.cpp:
+        (WebCore::GraphicsContext::paintBuffer): Added.
+
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        (WebCore::GraphicsContext::paintBuffer): Added missing paintingDisabled() check.
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::GraphicsContext::paintBuffer): Ditto.
+        * platform/graphics/qt/GraphicsContextQt.cpp:
+        (WebCore::GraphicsContext::paintBuffer): Ditto.
+
+2008-02-13  Darin Adler  <darin@apple.com>
+
+        - try to fix Wx build
+
         * platform/wx/LocalizedStringsWx.cpp: Add missing include.
 
 2008-02-11  Darin Adler  <darin@apple.com>
