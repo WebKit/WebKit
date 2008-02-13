@@ -1,3 +1,17 @@
+2008-02-13  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Oliver.
+
+        Actually fix the manual-tests/svg-cursor-changes.svg testcase.
+        I only reran layout tests when fixing the last issues with the patch,
+        instead of trying the manual-test :( Fixed.
+
+        * css/CSSCursorImageValue.cpp:
+        (WebCore::CSSCursorImageValue::CSSCursorImageValue):
+        (WebCore::CSSCursorImageValue::~CSSCursorImageValue):
+        (WebCore::CSSCursorImageValue::updateIfSVGCursorIsUsed):
+        * css/CSSCursorImageValue.h:
+
 2008-02-13  Adam Roben  <aroben@apple.com>
 
         Windows build fix

@@ -55,7 +55,6 @@ inline SVGCursorElement* resourceReferencedByCursorElement(const String& fragmen
 CSSCursorImageValue::CSSCursorImageValue(const String& url, const IntPoint& hotspot, StyleBase* style)
     : CSSImageValue(url, style)
     , m_hotspot(hotspot)
-    , m_referencedElement(0)
 {
 }
 
@@ -63,9 +62,16 @@ CSSCursorImageValue::~CSSCursorImageValue()
 {
 #if ENABLE(SVG)
     const String& url = getStringValue();
-    if (m_referencedElement && m_referencedElement->document() && isSVGCursorIdentifier(url)) {
-        if (SVGCursorElement* cursorElement = resourceReferencedByCursorElement(url, m_referencedElement->document()))
-            cursorElement->removeClient(m_referencedElement);
+    if (!isSVGCursorIdentifier(url))
+        return;
+
+    HashSet<SVGElement*>::const_iterator it = m_referencedElements.begin();
+    HashSet<SVGElement*>::const_iterator end = m_referencedElements.end();
+
+    for (; it != end; ++it) {
+        SVGElement* referencedElement = *it;
+        if (SVGCursorElement* cursorElement = resourceReferencedByCursorElement(url, referencedElement->document()))
+            cursorElement->removeClient(referencedElement);
     }
 #endif
 }
@@ -96,11 +102,9 @@ bool CSSCursorImageValue::updateIfSVGCursorIsUsed(Element* element)
             m_accessedImage = false;
         }
 
-        if (m_referencedElement != element)
-            cursorElement->removeClient(m_referencedElement);
-
-        m_referencedElement = static_cast<SVGElement*>(element);
-        cursorElement->addClient(m_referencedElement);
+        SVGElement* svgElement = static_cast<SVGElement*>(element);
+        m_referencedElements.add(svgElement);
+        cursorElement->addClient(svgElement);
         return true;
     }
 #endif

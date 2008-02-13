@@ -25,6 +25,8 @@
 #include "CSSImageValue.h"
 #include "IntPoint.h"
 
+#include <wtf/HashSet.h>
+
 namespace WebCore {
 
 class Element;
@@ -44,7 +46,7 @@ private:
     IntPoint m_hotspot;
 
 #if ENABLE(SVG)
-    SVGElement* m_referencedElement;
+    HashSet<SVGElement*> m_referencedElements;
 #endif
 };
 
