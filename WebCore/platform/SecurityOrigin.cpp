@@ -54,8 +54,8 @@ static bool isDefaultPortForProtocol(unsigned short port, String protocol)
 }
 
 SecurityOrigin::SecurityOrigin(const String& protocol, const String& host, unsigned short port)
-    : m_protocol(protocol.lower())
-    , m_host(host.lower())
+    : m_protocol(protocol.isNull() ? "" : protocol.lower())
+    , m_host(host.isNull() ? "" : host.lower())
     , m_port(port)
     , m_portSet(port)
     , m_noAccess(false)
@@ -63,7 +63,7 @@ SecurityOrigin::SecurityOrigin(const String& protocol, const String& host, unsig
 {
     // These protocols do not create security origins; the owner frame provides the origin
     if (m_protocol == "about" || m_protocol == "javascript")
-        m_protocol = String();
+        m_protocol = "";
 
     // data: URLs are not allowed access to anything other than themselves.
     if (m_protocol == "data")

@@ -56,12 +56,14 @@ static const int DefaultQuotaSizeIncrease = 1048576;
 
 namespace WebCore {
 
-SQLTransaction::SQLTransaction(Database* db, PassRefPtr<SQLTransactionCallback> callback, PassRefPtr<SQLTransactionErrorCallback> errorCallback, PassRefPtr<SQLTransactionWrapper> wrapper)
+SQLTransaction::SQLTransaction(Database* db, PassRefPtr<SQLTransactionCallback> callback, PassRefPtr<SQLTransactionErrorCallback> errorCallback, PassRefPtr<VoidCallback> successCallback, 
+                               PassRefPtr<SQLTransactionWrapper> wrapper)
     : m_nextStep(&SQLTransaction::openTransactionAndPreflight)
     , m_executeSqlAllowed(false)
     , m_database(db)
     , m_wrapper(wrapper)
     , m_callback(callback)
+    , m_successCallback(successCallback)
     , m_errorCallback(errorCallback)
     , m_shouldRetryCurrentStatement(false)
     , m_shouldCommitAfterErrorCallback(true)
@@ -118,6 +120,10 @@ const char* SQLTransaction::debugStepName(SQLTransaction::TransactionStepMethod 
         return "deliverStatementCallback";
     else if (step == &SQLTransaction::deliverQuotaIncreaseCallback)
         return "deliverQuotaIncreaseCallback";
+    else if (step == &SQLTransaction::deliverSuccessCallback)
+        return "deliverSuccessCallback";
+    else if (step == &SQLTransaction::cleanupAfterSuccessCallback)
+        return "cleanupAfterSuccessCallback";
     else
         return "UNKNOWN";
 }
@@ -130,6 +136,7 @@ bool SQLTransaction::performNextStep()
     ASSERT(m_nextStep == &SQLTransaction::openTransactionAndPreflight ||
            m_nextStep == &SQLTransaction::runStatements ||
            m_nextStep == &SQLTransaction::postflightAndCommit ||
+           m_nextStep == &SQLTransaction::cleanupAfterSuccessCallback ||
            m_nextStep == &SQLTransaction::cleanupAfterTransactionErrorCallback);
                
     (this->*m_nextStep)();
@@ -145,7 +152,8 @@ void SQLTransaction::performPendingCallback()
     ASSERT(m_nextStep == &SQLTransaction::deliverTransactionCallback ||
            m_nextStep == &SQLTransaction::deliverTransactionErrorCallback ||
            m_nextStep == &SQLTransaction::deliverStatementCallback ||
-           m_nextStep == &SQLTransaction::deliverQuotaIncreaseCallback);
+           m_nextStep == &SQLTransaction::deliverQuotaIncreaseCallback ||
+           m_nextStep == &SQLTransaction::deliverSuccessCallback);
            
     (this->*m_nextStep)();
 }
@@ -394,15 +402,42 @@ void SQLTransaction::postflightAndCommit()
     if (m_modifiedDatabase)
         DatabaseTracker::tracker().scheduleNotifyDatabaseChanged(m_database->m_securityOrigin.get(), m_database->m_name);
     
-    // Transaction Step 10 - End transaction steps
+    // Now release our unneeded callbacks, to break reference cycles.
+    m_callback = 0;
+    m_errorCallback = 0;
+    
+    // Transaction Step 10 - Deliver success callback, if there is one
+    if (m_successCallback) {
+        m_nextStep = &SQLTransaction::deliverSuccessCallback;
+        LOG(StorageAPI, "Scheduling deliverSuccessCallback for transaction %p\n", this);
+        m_database->scheduleTransactionCallback(this);
+    } else 
+        cleanupAfterSuccessCallback();
+}
+
+void SQLTransaction::deliverSuccessCallback()
+{
+    // Transaction Step 10 - Deliver success callback
+    ASSERT(m_successCallback);
+    m_successCallback->handleEvent();
+    
+    // Release the last callback to break reference cycle
+    m_successCallback = 0;
+
+    // Schedule a "post-success callback" step to return control to the database thread in case there
+    // are further transactions queued up for this Database
+    m_nextStep = &SQLTransaction::cleanupAfterSuccessCallback;
+    LOG(StorageAPI, "Scheduling cleanupAfterSuccessCallback for transaction %p\n", this);
+    m_database->scheduleTransactionStep(this);
+}
+
+void SQLTransaction::cleanupAfterSuccessCallback()
+{
+    // Transaction Step 11 - End transaction steps
     // There is no next step
     LOG(StorageAPI, "Transaction %p is complete\n", this);
     ASSERT(!m_database->m_sqliteDatabase.transactionInProgress());
     m_nextStep = 0;
-
-    // Now release our callbacks, to break reference cycles.
-    m_callback = 0;
-    m_errorCallback = 0;
 }
 
 void SQLTransaction::handleTransactionError(bool inCallback)
@@ -418,7 +453,7 @@ void SQLTransaction::handleTransactionError(bool inCallback)
         return;
     }
     
-    // Transaction Step 11 - If the callback couldn't be called, then rollback the transaction.
+    // Transaction Step 12 - If the callback couldn't be called, then rollback the transaction.
     m_shouldCommitAfterErrorCallback = false;
     if (inCallback) {
         m_nextStep = &SQLTransaction::cleanupAfterTransactionErrorCallback;
@@ -433,7 +468,7 @@ void SQLTransaction::deliverTransactionErrorCallback()
 {
     ASSERT(m_transactionError);
     
-    // Transaction Step 11 - If the callback didn't return false, then rollback the transaction.
+    // Transaction Step 12 - If the callback didn't return false, then rollback the transaction.
     // This includes the callback not existing, returning true, or throwing an exception
     if (!m_errorCallback || m_errorCallback->handleEvent(m_transactionError.get()))
         m_shouldCommitAfterErrorCallback = false;
@@ -447,13 +482,13 @@ void SQLTransaction::cleanupAfterTransactionErrorCallback()
 {
     m_database->m_databaseAuthorizer->disable();
     if (m_sqliteTransaction) {
-        // Transaction Step 11 -If the error callback returned false, and the last error wasn't itself a 
+        // Transaction Step 12 -If the error callback returned false, and the last error wasn't itself a 
         // failure when committing the transaction, then try to commit the transaction
         if (m_shouldCommitAfterErrorCallback)
             m_sqliteTransaction->commit();
         
         if (m_sqliteTransaction->inProgress()) {
-            // Transaction Step 11 - If that fails, or if the callback couldn't be called 
+            // Transaction Step 12 - If that fails, or if the callback couldn't be called 
             // or if it didn't return false, then rollback the transaction.
             m_sqliteTransaction->rollback();
         } else if (m_modifiedDatabase) {
@@ -466,7 +501,7 @@ void SQLTransaction::cleanupAfterTransactionErrorCallback()
     }
     m_database->m_databaseAuthorizer->enable();
     
-    // Transaction Step 11 - Any still-pending statements in the transaction are discarded.
+    // Transaction Step 12 - Any still-pending statements in the transaction are discarded.
     {
         MutexLocker locker(m_statementMutex);
         m_statementQueue.clear();

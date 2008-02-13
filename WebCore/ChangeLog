@@ -1,3 +1,35 @@
+2008-02-12  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Darin Adler
+
+        Fix for <rdar://problem/5737692> - Database API needs to support SuccessCallback
+
+        Layout tests will come shortly with a mess of DRT changes
+
+        * platform/SecurityOrigin.cpp:
+        (WebCore::SecurityOrigin::SecurityOrigin): Standardize on "empty string" instead of null string
+          as different paths of constructing a SecurityOrigin were causing different hashes for the "same"
+          SecurityOrigin
+
+        * storage/Database.cpp:
+        (WebCore::Database::changeVersion): Pass in the successCallback
+        (WebCore::Database::transaction): Ditto
+
+        * storage/SQLTransaction.cpp:
+        (WebCore::SQLTransaction::SQLTransaction):
+        (WebCore::SQLTransaction::debugStepName):
+        (WebCore::SQLTransaction::performNextStep): Update ASSERTs for the new valid steps
+        (WebCore::SQLTransaction::performPendingCallback): Ditto
+        (WebCore::SQLTransaction::postflightAndCommit): Schedule the success callback if it exists - otherwise
+          skip straight to cleanupAfterSuccessCallback()
+        (WebCore::SQLTransaction::deliverSuccessCallback): Deliver success callback on the main thread, then
+          schedule cleanupAfterSuccessCallback()
+        (WebCore::SQLTransaction::cleanupAfterSuccessCallback): Cleanup and end the transaction
+        (WebCore::SQLTransaction::handleTransactionError):
+        (WebCore::SQLTransaction::deliverTransactionErrorCallback):
+        (WebCore::SQLTransaction::cleanupAfterTransactionErrorCallback):
+        * storage/SQLTransaction.h:
+
 2008-02-12  Steve Falkenburg  <sfalken@apple.com>
 
         Changes to support merged MIDL output.

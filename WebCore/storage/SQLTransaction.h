@@ -51,6 +51,7 @@ class SQLStatementErrorCallback;
 class SQLTransaction;
 class SQLValue;
 class String;
+class VoidCallback;
 
 class SQLTransactionWrapper : public ThreadSafeShared<SQLTransactionWrapper> {
 public:
@@ -63,7 +64,7 @@ public:
 
 class SQLTransaction : public ThreadSafeShared<SQLTransaction> {
 public:
-    SQLTransaction(Database*, PassRefPtr<SQLTransactionCallback>, PassRefPtr<SQLTransactionErrorCallback>, PassRefPtr<SQLTransactionWrapper>);
+    SQLTransaction(Database*, PassRefPtr<SQLTransactionCallback>, PassRefPtr<SQLTransactionErrorCallback>, PassRefPtr<VoidCallback>, PassRefPtr<SQLTransactionWrapper>);
     ~SQLTransaction();
     
     void executeSQL(const String& sqlStatement, const Vector<SQLValue>& arguments, 
@@ -90,6 +91,8 @@ private:
     void deliverStatementCallback();
     void deliverQuotaIncreaseCallback();
     void postflightAndCommit();
+    void deliverSuccessCallback();
+    void cleanupAfterSuccessCallback();
     void handleTransactionError(bool inCallback);
     void deliverTransactionErrorCallback();
     void cleanupAfterTransactionErrorCallback();
@@ -105,6 +108,7 @@ private:
     Database* m_database;
     RefPtr<SQLTransactionWrapper> m_wrapper;
     RefPtr<SQLTransactionCallback> m_callback;
+    RefPtr<VoidCallback> m_successCallback;
     RefPtr<SQLTransactionErrorCallback> m_errorCallback;
     RefPtr<SQLError> m_transactionError;
     bool m_shouldRetryCurrentStatement;
