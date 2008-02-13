@@ -1,5 +1,11 @@
 2008-02-13  Adam Roben  <aroben@apple.com>
 
+        Windows build fix
+
+        * DumpRenderTree/ForwardingHeaders/wtf/MathExtras.h: Added.
+
+2008-02-13  Adam Roben  <aroben@apple.com>
+
         Windows/GTK+ build fix
 
         * DumpRenderTree/LayoutTestController.cpp: #include MathExtras.h to
