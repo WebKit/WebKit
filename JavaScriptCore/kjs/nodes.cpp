@@ -2135,7 +2135,8 @@ double MultNode::evaluateToNumber(ExecState* exec)
 
 bool MultNode::evaluateToBoolean(ExecState* exec)
 {
-    return inlineEvaluateToNumber(exec);
+    double result = inlineEvaluateToNumber(exec);
+    return  result > 0.0 || 0.0 > result; // NaN produces false as well
 }
 
 int32_t MultNode::evaluateToInt32(ExecState* exec)
@@ -2210,7 +2211,8 @@ double ModNode::evaluateToNumber(ExecState* exec)
 
 bool ModNode::evaluateToBoolean(ExecState* exec)
 {
-    return inlineEvaluateToNumber(exec);
+    double result = inlineEvaluateToNumber(exec);
+    return  result > 0.0 || 0.0 > result; // NaN produces false as well
 }
 
 int32_t ModNode::evaluateToInt32(ExecState* exec)

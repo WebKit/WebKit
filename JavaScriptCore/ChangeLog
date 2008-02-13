@@ -1,3 +1,15 @@
+2008-02-13  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Alexey P.
+
+        <rdar://problem/5737003> REGRESSION (r27747): can't browse pictures on fastcupid.com
+
+        When converting numeric values to booleans we need to account for NaN
+
+        * kjs/nodes.cpp:
+        (KJS::MultNode::evaluateToBoolean):
+        (KJS::ModNode::evaluateToBoolean):
+
 2008-02-08  Samuel Weinig  <sam@webkit.org>
 
         Reviewed by Brady Eidson.
