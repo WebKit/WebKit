@@ -1,6 +1,4 @@
-// -*- c-basic-offset: 2 -*-
 /*
- *  This file is part of the KDE libraries
  *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
  *  Copyright (C) 2003, 2007 Apple Inc.
@@ -52,6 +50,10 @@
 #include <signal.h>
 #include <stdio.h>
 #include <wtf/Assertions.h>
+
+#if !PLATFORM(WIN_OS)
+#include <unistd.h>
+#endif
 
 namespace KJS {
 
@@ -146,12 +148,12 @@ static bool printExceptions = false;
 
 bool Interpreter::shouldPrintExceptions()
 {
-  return printExceptions;
+    return printExceptions;
 }
 
 void Interpreter::setShouldPrintExceptions(bool print)
 {
-  printExceptions = print;
+    printExceptions = print;
 }
 
 } // namespace KJS

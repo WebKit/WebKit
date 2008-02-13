@@ -1,3 +1,13 @@
+2008-02-13  Bernhard Rosenkraenzer  <bero@arklinux.org>
+
+        Reviewed by Darin.
+
+        - http://bugs.webkit.org/show_bug.cgi?id=17339
+          JavaScriptCore does not build with gcc 4.3
+
+        * kjs/interpreter.cpp: Add include of <unistd.h>, since that's where
+        getpid() comes from.
+
 2008-02-13  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Alexey P.
