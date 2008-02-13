@@ -90,8 +90,10 @@ public:
     void setExpectedVersion(const String&);
     bool versionMatchesExpected() const;
 
-    void markAsDeleted();
+    void markAsDeletedAndClose();
     bool deleted() const { return m_deleted; }
+
+    void close();
 
     unsigned long long databaseSize() const;
     unsigned long long maximumSize() const;

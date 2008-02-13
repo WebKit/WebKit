@@ -83,6 +83,7 @@ bool SQLiteDatabase::open(const String& filename)
 void SQLiteDatabase::close()
 {
     if (m_db) {
+        ASSERT(currentThread() == m_openingThread);
         sqlite3_close(m_db);
         m_db = 0;
     }

@@ -744,7 +744,7 @@ bool DatabaseTracker::deleteDatabaseFile(SecurityOrigin* origin, const String& n
                     // We have some database open with this name. Mark them as deleted.
                     DatabaseSet::const_iterator end = databaseSet->end();
                     for (DatabaseSet::const_iterator it = databaseSet->begin(); it != end; ++it)
-                        (*it)->markAsDeleted();
+                        (*it)->markAsDeletedAndClose();
                 }
             }
         }

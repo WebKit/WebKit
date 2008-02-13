@@ -105,6 +105,26 @@ const char* DatabaseOpenTask::debugTaskName() const
 }
 #endif
 
+// *** DatabaseCloseTask ***
+// Closes the database.
+
+DatabaseCloseTask::DatabaseCloseTask(Database* database)
+    : DatabaseTask(database)
+{
+}
+
+void DatabaseCloseTask::doPerformTask()
+{
+    database()->close();
+}
+
+#ifndef NDEBUG
+const char* DatabaseCloseTask::debugTaskName() const
+{
+    return "DatabaseCloseTask";
+}
+#endif
+
 // *** DatabaseTransactionTask ***
 // Starts a transaction that will report its results via a callback.
 

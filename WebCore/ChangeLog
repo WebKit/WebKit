@@ -1,3 +1,29 @@
+2008-02-12  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Brady Eidson.
+
+        <rdar://problem/5652560> Can't delete database if the website that
+        uses it has been opened in this session
+
+        Close the Database on the database thread before deleting the file.
+        Tested and works on Windows and Mac.
+
+        * platform/sql/SQLiteDatabase.cpp:
+        (WebCore::SQLiteDatabase::close): Assert we are on the opening thread.
+        * storage/Database.cpp:
+        (WebCore::Database::markAsDeletedAndClose): Unschedule any pending
+        Database tasks, and start and imediate DatabaseCloseTask.
+        (WebCore::Database::close): Close the SQLDatabase.
+        * storage/Database.h: Renamed markAsDeleted to markAsDeletedAndClose.
+        * storage/DatabaseTask.cpp:
+        (WebCore::DatabaseCloseTask::DatabaseCloseTask): New task.
+        (WebCore::DatabaseCloseTask::doPerformTask): Call close on the Database.
+        (WebCore::DatabaseCloseTask::debugTaskName): Return "DatabaseCloseTask".
+        * storage/DatabaseTask.h: Add DatabaseCloseTask.
+        * storage/DatabaseTracker.cpp:
+        (WebCore::DatabaseTracker::deleteDatabaseFile): Call the renamed
+          markAsDeletedAndClose.
+
 2008-02-12  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by NOBODY (Build fix).

@@ -267,12 +267,26 @@ bool Database::versionMatchesExpected() const
     return true;
 }
 
-void Database::markAsDeleted()
+void Database::markAsDeletedAndClose()
 {
     if (m_deleted)
         return;
+
     LOG(StorageAPI, "Marking %s (%p) as deleted", stringIdentifier().ascii().data(), this);
     m_deleted = true;
+
+    document()->databaseThread()->unscheduleDatabaseTasks(this);
+
+    RefPtr<DatabaseCloseTask> task = new DatabaseCloseTask(this);
+
+    task->lockForSynchronousScheduling();
+    m_document->databaseThread()->scheduleImmediateTask(task.get());
+    task->waitForSynchronousCompletion();
+}
+
+void Database::close()
+{
+    m_sqliteDatabase.close();
 }
 
 unsigned long long Database::databaseSize() const
