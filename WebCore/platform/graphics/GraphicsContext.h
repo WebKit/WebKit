@@ -83,6 +83,7 @@ namespace WebCore {
     class Font;
     class GraphicsContextPrivate;
     class GraphicsContextPlatformPrivate;
+    class ImageBuffer;
     class KURL;
     class Path;
     class TextRun;
@@ -149,6 +150,7 @@ namespace WebCore {
         void drawTiledImage(Image*, const IntRect& destRect, const IntRect& srcRect, 
                             Image::TileRule hRule = Image::StretchTile, Image::TileRule vRule = Image::StretchTile,
                             CompositeOperator = CompositeSourceOver);
+        void paintBuffer(ImageBuffer*, const IntRect&);
 #if PLATFORM(CG)
         void setUseLowQualityImageInterpolation(bool = true);
         bool useLowQualityImageInterpolation() const;

@@ -184,40 +184,9 @@ void HTMLCanvasElement::paint(GraphicsContext* p, const IntRect& r)
 {
     if (p->paintingDisabled())
         return;
-#if PLATFORM(CG)
-    if (CGImageRef image = createPlatformImage()) {
-        CGContextDrawImage(p->platformContext(), p->roundToDevicePixels(r), image);
-        CGImageRelease(image);
-    }
-#elif PLATFORM(QT)
-    QPixmap pixmap = createPlatformImage();
-    if (!pixmap.isNull()) {
-        QPainter* painter = p->platformContext();
-        QPen currentPen = painter->pen();
-        qreal currentOpacity = painter->opacity();
-        QBrush currentBrush = painter->brush();
-        QBrush currentBackground = painter->background();
-        if (painter->isActive())
-            painter->end();
-        static_cast<QPainter*>(p->platformContext())->drawPixmap(r, pixmap);
-        painter->begin(&pixmap);
-        painter->setPen(currentPen);
-        painter->setBrush(currentBrush);
-        painter->setOpacity(currentOpacity);
-        painter->setBackground(currentBackground);
-    }
-#elif PLATFORM(CAIRO)
-    if (cairo_surface_t* image = createPlatformImage()) {
-        cairo_t* cr = p->platformContext();
-        cairo_save(cr);
-        cairo_translate(cr, r.x(), r.y());
-        cairo_set_source_surface(cr, image, 0, 0);
-        cairo_surface_destroy(image);
-        cairo_rectangle(cr, 0, 0, r.width(), r.height());
-        cairo_fill(cr);
-        cairo_restore(cr);
-    }
-#endif
+    
+    if (m_data)
+        p->paintBuffer(m_data.get(), r);
 }
 
 void HTMLCanvasElement::createDrawingContext() const

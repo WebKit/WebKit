@@ -45,6 +45,7 @@
 #include <QPolygonF>
 #include <QPainterPath>
 #include <QPaintDevice>
+#include <QPixmap>
 #include <QDebug>
 
 #ifndef M_PI
@@ -903,6 +904,26 @@ void GraphicsContext::setUseAntialiasing(bool enable)
     if (paintingDisabled())
         return;
     m_data->p()->setRenderHint(QPainter::Antialiasing, enable);
+}
+
+void GraphicsContext::paintBuffer(ImageBuffer* buffer, const IntRect& r)
+{
+    QPixmap pixmap = *buffer->pixmap();
+    if (!pixmap.isNull()) {
+        QPainter* painter = platformContext();
+        QPen currentPen = painter->pen();
+        qreal currentOpacity = painter->opacity();
+        QBrush currentBrush = painter->brush();
+        QBrush currentBackground = painter->background();
+        if (painter->isActive())
+            painter->end();
+        static_cast<QPainter*>(painter)->drawPixmap(r, pixmap);
+        painter->begin(&pixmap);
+        painter->setPen(currentPen);
+        painter->setBrush(currentBrush);
+        painter->setOpacity(currentOpacity);
+        painter->setBackground(currentBackground);
+    }
 }
 
 }

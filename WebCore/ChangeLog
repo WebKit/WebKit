@@ -1,3 +1,24 @@
+2008-02-12  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Eric S.
+
+        Bug 17269: Deobfuscate CanvasRenderingContext2D.cpp
+        Remove ifdef's from canvas paint code
+
+        By making GraphicsContext aware of the crossplatform ImageBuffer
+        type we can migrate the ifdef-ified paint code in HTMLCanvasElement
+        into platform implementations of GraphicsContext.
+
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::paint):
+        * platform/graphics/GraphicsContext.h:
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        (WebCore::GraphicsContext::paintBuffer):
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::GraphicsContext::paintBuffer):
+        * platform/graphics/qt/GraphicsContextQt.cpp:
+        (WebCore::GraphicsContext::paintBuffer):
+
 2008-02-12  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Darin Adler

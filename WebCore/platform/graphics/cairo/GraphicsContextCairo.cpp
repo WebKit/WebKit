@@ -889,6 +889,23 @@ void GraphicsContext::setUseAntialiasing(bool enable)
     cairo_set_antialias(m_data->cr, enable ? CAIRO_ANTIALIAS_DEFAULT : CAIRO_ANTIALIAS_NONE);
 }
 
+void GraphicsContext::paintBuffer(ImageBuffer* buffer, const IntRect& r)
+{
+    cairo_surface_t* image = buffer->surface();
+    if (!image)
+        return;
+    cairo_surface_flush(image);
+    cairo_surface_reference(image);
+    cairo_t* cr = platformContext();
+    cairo_save(cr);
+    cairo_translate(cr, r.x(), r.y());
+    cairo_set_source_surface(cr, image, 0, 0);
+    cairo_surface_destroy(image);
+    cairo_rectangle(cr, 0, 0, r.width(), r.height());
+    cairo_fill(cr);
+    cairo_restore(cr);
+}
+
 } // namespace WebCore
 
 #endif // PLATFORM(CAIRO)

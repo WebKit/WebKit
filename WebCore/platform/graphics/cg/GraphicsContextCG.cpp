@@ -30,8 +30,10 @@
 #include "AffineTransform.h"
 #include "FloatConversion.h"
 #include "GraphicsContextPlatformPrivateCG.h"
+#include "ImageBuffer.h"
 #include "KURL.h"
 #include "Path.h"
+#include <CoreGraphics/CGBitmapContext.h>
 #include <CoreGraphics/CGPDFContext.h>
 #include <wtf/MathExtras.h>
 
@@ -924,6 +926,14 @@ void GraphicsContext::setCompositeOperation(CompositeOperator mode)
     CGContextSetBlendMode(platformContext(), target);
 }
 #endif
+
+void GraphicsContext::paintBuffer(ImageBuffer* buffer, const IntRect& r)
+{
+    if (CGImageRef image = CGBitmapContextCreateImage(buffer->context()->platformContext())) {
+        CGContextDrawImage(platformContext(), roundToDevicePixels(r), image);
+        CGImageRelease(image);
+    }
+}
     
 }
 
