@@ -1,3 +1,46 @@
+2008-02-13  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Adam.
+
+        Make svg/dynamic-updates/* tests deterministic. s/setTimeout('executTest()', 0)/executeTest/ -- as discussed with Adam.
+
+        * platform/mac-leopard/svg/dynamic-updates/SVGCircleElement-dom-cx-attr-expected.checksum:
+        * platform/mac-leopard/svg/dynamic-updates/SVGCircleElement-dom-cx-attr-expected.png:
+        * platform/mac-leopard/svg/dynamic-updates/SVGCircleElement-dom-cy-attr-expected.checksum:
+        * platform/mac-leopard/svg/dynamic-updates/SVGCircleElement-dom-cy-attr-expected.png:
+        * platform/mac-leopard/svg/dynamic-updates/SVGCircleElement-dom-r-attr-expected.checksum:
+        * platform/mac-leopard/svg/dynamic-updates/SVGCircleElement-dom-r-attr-expected.png:
+        * platform/mac-leopard/svg/dynamic-updates/SVGCircleElement-svgdom-cx-prop-expected.checksum:
+        * platform/mac-leopard/svg/dynamic-updates/SVGCircleElement-svgdom-cx-prop-expected.png:
+        * platform/mac-leopard/svg/dynamic-updates/SVGCircleElement-svgdom-cy-prop-expected.checksum:
+        * platform/mac-leopard/svg/dynamic-updates/SVGCircleElement-svgdom-cy-prop-expected.png:
+        * platform/mac-leopard/svg/dynamic-updates/SVGCircleElement-svgdom-r-prop-expected.checksum:
+        * platform/mac-leopard/svg/dynamic-updates/SVGCircleElement-svgdom-r-prop-expected.png:
+        * platform/mac-leopard/svg/dynamic-updates/SVGClipPathElement-dom-clipPathUnits-attr-expected.checksum:
+        * platform/mac-leopard/svg/dynamic-updates/SVGClipPathElement-dom-clipPathUnits-attr-expected.png:
+        * platform/mac-leopard/svg/dynamic-updates/SVGClipPathElement-svgdom-clipPathUnits-prop-expected.checksum:
+        * platform/mac-leopard/svg/dynamic-updates/SVGClipPathElement-svgdom-clipPathUnits-prop-expected.png:
+        * svg/dynamic-updates/SVGCircleElement-dom-cx-attr-expected.txt:
+        * svg/dynamic-updates/SVGCircleElement-dom-cy-attr-expected.txt:
+        * svg/dynamic-updates/SVGCircleElement-dom-r-attr-expected.txt:
+        * svg/dynamic-updates/SVGCircleElement-svgdom-cx-prop-expected.txt:
+        * svg/dynamic-updates/SVGCircleElement-svgdom-cy-prop-expected.txt:
+        * svg/dynamic-updates/SVGCircleElement-svgdom-r-prop-expected.txt:
+        * svg/dynamic-updates/SVGClipPathElement-dom-clipPathUnits-attr-expected.txt:
+        * svg/dynamic-updates/SVGClipPathElement-svgdom-clipPathUnits-prop-expected.txt:
+        * svg/dynamic-updates/resources/SVGAElement-dom-href-attr.js:
+        * svg/dynamic-updates/resources/SVGAElement-dom-target-attr.js:
+        * svg/dynamic-updates/resources/SVGAElement-svgdom-href-prop.js:
+        * svg/dynamic-updates/resources/SVGAElement-svgdom-target-prop.js:
+        * svg/dynamic-updates/resources/SVGCircleElement-dom-cx-attr.js:
+        * svg/dynamic-updates/resources/SVGCircleElement-dom-cy-attr.js:
+        * svg/dynamic-updates/resources/SVGCircleElement-dom-r-attr.js:
+        * svg/dynamic-updates/resources/SVGCircleElement-svgdom-cx-prop.js:
+        * svg/dynamic-updates/resources/SVGCircleElement-svgdom-cy-prop.js:
+        * svg/dynamic-updates/resources/SVGCircleElement-svgdom-r-prop.js:
+        * svg/dynamic-updates/resources/SVGClipPathElement-dom-clipPathUnits-attr.js:
+        * svg/dynamic-updates/resources/SVGClipPathElement-svgdom-clipPathUnits-prop.js:
+
 2008-02-13  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Darin Adler

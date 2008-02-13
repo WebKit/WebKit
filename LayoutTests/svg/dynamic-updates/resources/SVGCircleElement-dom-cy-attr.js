@@ -21,5 +21,5 @@ function executeTest() {
     triggerUpdate();
 }
 
-window.setTimeout("executeTest()", 0);
+executeTest();
 var successfullyParsed = true;
