@@ -47,13 +47,6 @@
 #include <pthread.h>
 #include <string>
 #include <tchar.h>
-#include <WebKit/DOMPrivate.h>
-#include <WebKit/IWebFramePrivate.h>
-#include <WebKit/IWebHistoryItem.h>
-#include <WebKit/IWebHistoryItemPrivate.h>
-#include <WebKit/IWebPreferencesPrivate.h>
-#include <WebKit/IWebURLResponse.h>
-#include <WebKit/IWebViewPrivate.h>
 #include <WebKit/WebKit.h>
 #include <fcntl.h>
 #include <io.h>

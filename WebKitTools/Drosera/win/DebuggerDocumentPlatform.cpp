@@ -33,7 +33,7 @@
 #include <JavaScriptCore/JSRetainPtr.h>
 #include <JavaScriptCore/JSStringRef.h>
 #include <JavaScriptCore/JSStringRefBSTR.h>
-#include <WebKit/IWebScriptCallFrame.h>
+#include <WebKit/WebKit.h>
 
 JSValueRef JSValueRefCreateWithBSTR(JSContextRef context, BSTR string)
 {

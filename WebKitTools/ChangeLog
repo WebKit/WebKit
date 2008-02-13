@@ -1,3 +1,30 @@
+2008-02-12  Steve Falkenburg  <sfalken@apple.com>
+
+        Changes to support merged MIDL output.
+
+        All COM interfaces are now generated to WebKit.h.
+
+        Reviewed by Sam, Ada.
+
+        * Drosera/win/BaseDelegate.h:
+        * Drosera/win/DebuggerClient.cpp:
+        * Drosera/win/DebuggerDocumentPlatform.cpp:
+        * Drosera/win/Drosera.cpp:
+        * Drosera/win/ServerConnection.cpp:
+        * Drosera/win/ServerConnection.h:
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        * DumpRenderTree/win/EditingDelegate.h:
+        * DumpRenderTree/win/EventSender.cpp:
+        * DumpRenderTree/win/FrameLoadDelegate.cpp:
+        * DumpRenderTree/win/FrameLoadDelegate.h:
+        * DumpRenderTree/win/GCControllerWin.cpp:
+        * DumpRenderTree/win/LayoutTestControllerWin.cpp:
+        * DumpRenderTree/win/PolicyDelegate.h:
+        * DumpRenderTree/win/ResourceLoadDelegate.h:
+        * DumpRenderTree/win/UIDelegate.cpp:
+        * DumpRenderTree/win/UIDelegate.h:
+        * DumpRenderTree/win/WorkQueueItemWin.cpp:
+
 2008-02-10  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Oliver Hunt.

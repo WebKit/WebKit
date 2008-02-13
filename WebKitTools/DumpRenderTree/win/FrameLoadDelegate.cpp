@@ -37,8 +37,7 @@
 #include <WebCore/COMPtr.h>
 #include <JavaScriptCore/Assertions.h>
 #include <JavaScriptCore/JavaScriptCore.h>
-#include <WebKit/IWebFramePrivate.h>
-#include <WebKit/IWebViewPrivate.h>
+#include <WebKit/WebKit.h>
 #include <wtf/Vector.h>
 #include <stdio.h>
 #include <string>

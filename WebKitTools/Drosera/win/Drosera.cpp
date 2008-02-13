@@ -36,8 +36,6 @@
 
 #include <JavaScriptCore/JSStringRef.h>
 #include <WebKit/ForEachCoClass.h>
-#include <WebKit/IWebMutableURLRequest.h>
-#include <WebKit/IWebView.h>
 #include <WebKit/WebKit.h>
 #include <wtf/RetainPtr.h>
 

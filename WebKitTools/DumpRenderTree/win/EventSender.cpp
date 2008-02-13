@@ -36,8 +36,7 @@
 #include <wtf/Platform.h>
 #include <JavaScriptCore/JavaScriptCore.h>
 #include <JavaScriptCore/Assertions.h>
-#include <WebKit/IWebFrame.h>
-#include <WebKit/IWebFramePrivate.h>
+#include <WebKit/WebKit.h>
 #include <windows.h>
 
 #define WM_DRT_SEND_QUEUED_EVENT (WM_APP+1)

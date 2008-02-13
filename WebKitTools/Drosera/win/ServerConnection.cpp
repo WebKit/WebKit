@@ -37,8 +37,6 @@
 #include <JavaScriptCore/JSStringRefBSTR.h>
 #include <JavaScriptCore/RetainPtr.h>
 #include <WebKit/ForEachCoClass.h>
-#include <WebKit/IWebScriptCallFrame.h>
-#include <WebKit/IWebScriptDebugServer.h>
 #include <WebKit/WebKit.h>
 
 #include <iostream>

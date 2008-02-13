@@ -38,8 +38,7 @@
 #include <wtf/Vector.h>
 #include <JavaScriptCore/Assertions.h>
 #include <JavaScriptCore/JavaScriptCore.h>
-#include <WebKit/IWebFramePrivate.h>
-#include <WebKit/IWebViewPrivate.h>
+#include <WebKit/WebKit.h>
 #include <stdio.h>
 
 using std::wstring;

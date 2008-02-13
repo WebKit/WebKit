@@ -29,8 +29,7 @@
 #ifndef UIDelegate_h
 #define UIDelegate_h
 
-#include <WebKit/IWebUIDelegate.h>
-#include <WebKit/IWebUIDelegatePrivate.h>
+#include <WebKit/WebKit.h>
 #include <wtf/OwnPtr.h>
 #include <windef.h>
 

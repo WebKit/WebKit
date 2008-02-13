@@ -32,7 +32,7 @@
 
 #include <string>
 #include <WebCore/COMPtr.h>
-#include <WebKit/IWebScriptDebugListener.h>
+#include <WebKit/WebKit.h>
 
 class DebuggerClient;
 interface IWebScriptCallFrame;

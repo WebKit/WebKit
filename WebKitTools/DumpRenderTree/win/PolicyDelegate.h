@@ -29,7 +29,7 @@
 #ifndef PolicyDelegate_h
 #define PolicyDelegate_h
 
-#include <WebKit/IWebPolicyDelegate.h>
+#include <WebKit/WebKit.h>
 
 class PolicyDelegate : public IWebPolicyDelegate {
 public:
