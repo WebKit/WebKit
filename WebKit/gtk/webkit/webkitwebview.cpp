@@ -56,6 +56,8 @@
 
 #include <gdk/gdkkeysyms.h>
 
+static const double defaultDPI = 96.0;
+
 using namespace WebKit;
 using namespace WebCore;
 
@@ -1094,13 +1096,17 @@ static void webkit_web_view_screen_changed(WebKitWebView* webView, GdkScreen* pr
                  "minimum-logical-font-size", &minimumLogicalFontSize,
                  NULL);
 
-#if GTK_CHECK_VERSION(2, 10, 0)
+    gdouble DPI = defaultDPI;
+#if GTK_CHECK_VERSION(2,10,0)
     GdkScreen* screen = gtk_widget_has_screen(GTK_WIDGET(webView)) ? gtk_widget_get_screen(GTK_WIDGET(webView)) : gdk_screen_get_default();
-    gdouble DPI = gdk_screen_get_resolution(screen);
-#else
-    gdouble DPI = 96;
-    g_warning("Cannot retrieve resolution, falling back to 96 DPI");
+    if (screen) {
+        DPI = gdk_screen_get_resolution(screen);
+        // gdk_screen_get_resolution() returns -1 when no DPI is set.
+        if (DPI == -1)
+            DPI = defaultDPI;
+    }
 #endif
+    ASSERT(DPI > 0);
     settings->setDefaultFontSize(defaultFontSize / 72.0 * DPI);
     settings->setDefaultFixedFontSize(defaultMonospaceFontSize / 72.0 * DPI);
     settings->setMinimumFontSize(minimumFontSize / 72.0 * DPI);

@@ -1,3 +1,18 @@
+2008-02-13  Alp Toker  <alp@atoker.com>
+
+        Reviewed by Adam Roben.
+
+        Fix very small, upside down, inside out text on GTK+/DirectFB.
+
+        Based on an initial patch by Sriram Neelakandan <sriram.neelakandan@gmail.com>
+
+        Test the result of gdk_screen_get_resolution() and use a default
+        fallback in case of failure.
+
+        Also remove an unhelpful runtime warning.
+
+        * webkit/webkitwebview.cpp:
+
 2008-02-08  Pierre-Luc Beaudoin  <pierre-luc.beaudoin@collabora.co.uk>
 
         Reviewed by Alp Toker.
