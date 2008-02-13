@@ -422,6 +422,9 @@ void wxWebView::OnPaint(wxPaintEvent& event)
             wxRect paintRect = GetUpdateRegion().GetBox();
 
             WebCore::IntSize offset = m_impl->frameView->scrollOffset();
+#if USE(WXGC)
+            gcdc.SetDeviceOrigin(-offset.width(), -offset.height());
+#endif
             dc.SetDeviceOrigin(-offset.width(), -offset.height());
             paintRect.Offset(offset.width(), offset.height());
 

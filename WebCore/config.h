@@ -54,6 +54,12 @@
 
 #endif /* PLATFORM(WIN_OS) */
 
+// On MSW, wx headers need to be included before windows.h is. 
+// The only way we can always ensure this is if we include wx here. 
+#if PLATFORM(WX)
+#include <wx/defs.h>
+#endif
+
 #if !PLATFORM(SYMBIAN)
 #define IMPORT_C
 #define EXPORT_C

@@ -1,3 +1,18 @@
+2008-02-11  Kevin Ollivier <kevino@theolliviers.com>
+
+        Reviewed by Darin Adler.
+
+        A couple quick wx fixes.
+        
+        http://bugs.webkit.org/show_bug.cgi?id=17321
+
+        * WebView.cpp:
+        (wxWebView::OnPaint):
+        Make sure wxGCDC has its paint origin set properly after
+        the move to wxWindow for scrolling.
+        * bindings/python/webview.i:
+        Update the wxPython bindings after event rename.
+
 2008-02-10  Darin Adler  <darin@apple.com>
 
         Reviewed by Eric.

@@ -1,3 +1,19 @@
+2008-02-13  Kevin Ollivier <kevino@theolliviers.com>
+
+        Reviewed by Darin Adler.
+
+        Import wx/defs.h to keep windows.h from using ANSI functions
+        (see note in file for more info) and use the 8-bit string friendly
+        version of StringImpl::computeHash since we're passing it un UTF8
+        string. Also, don't cache the hash result.
+        
+        http://bugs.webkit.org/show_bug.cgi?id=17321
+
+        * config.h:
+        * platform/graphics/wx/FontPlatformData.h:
+        (WebCore::FontPlatformData::hash):
+        (WebCore::FontPlatformData::computeHash):
+
 2008-02-13  Rodney Dawes  <dobey@wayofthemonkey.com>
 
         Fix Bug 17220: Illogical dependency between PluginView and
