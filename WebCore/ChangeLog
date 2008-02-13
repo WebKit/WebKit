@@ -1,3 +1,12 @@
+2008-02-13  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Adam Roben.
+
+        <rdar://problem/5729680> REGRESSION (r27873): Removing the last character of a word in Mail or Safari also removes the following space
+        
+        * editing/Editor.cpp:
+        (WebCore::Editor::deleteWithDirection): Fixed a typo.
+
 2008-02-13  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Oliver.

@@ -226,7 +226,7 @@ bool Editor::deleteWithDirection(SelectionController::EDirection direction, Text
             addToKillRing(selectedRange().get(), false);
         if (isTypingAction) {
             if (m_frame->document()) {
-                TypingCommand::deleteKeyPressed(m_frame->document(), true, granularity);
+                TypingCommand::deleteKeyPressed(m_frame->document(), canSmartCopyOrDelete(), granularity);
                 revealSelectionAfterEditingOperation();
             }
         } else {
