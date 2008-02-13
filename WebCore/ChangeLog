@@ -1,3 +1,9 @@
+2008-02-13  Darin Adler  <darin@apple.com>
+
+        - try to fix Wx build
+
+        * platform/wx/LocalizedStringsWx.cpp: Add missing include.
+
 2008-02-11  Darin Adler  <darin@apple.com>
 
         - roll out fix for <rdar://problem/5726016> REGRESSION: Xcode News window renders

@@ -25,6 +25,8 @@
  */
 
 #include "config.h"
+#include "LocalizedStrings.h"
+
 #include "PlatformString.h"
 
 namespace WebCore {
