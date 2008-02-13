@@ -30,29 +30,30 @@ VERSIONFILE=$VERSIONPATH/autoversion.h
 mkdir -p "$VERSIONPATH"
 
 PRODUCTVERSION=`cat "$SRCPATH/PRODUCTVERSION"`
-MAJORVERSION=`sed 's/\([^\.]*\)\.\([^.]*\)\(\.\([^.]*\)\)\?/\1/' "$SRCPATH/PRODUCTVERSION"`
-MINORVERSION=`sed 's/\([^\.]*\)\.\([^.]*\)\(\.\([^.]*\)\)\?/\2/' "$SRCPATH/PRODUCTVERSION"`
-TINYVERSION=`sed 's/\([^\.]*\)\.\([^.]*\)\(\.\([^.]*\)\)\?/\4/' "$SRCPATH/PRODUCTVERSION"`
+MAJORVERSION=`echo "$PRODUCTVERSION" | sed 's/\([^\.]*\)\.\([^.]*\)\(\.\([^.]*\)\)\?/\1/'`
+MINORVERSION=`echo "$PRODUCTVERSION" | sed 's/\([^\.]*\)\.\([^.]*\)\(\.\([^.]*\)\)\?/\2/'`
+TINYVERSION=`echo "$PRODUCTVERSION" | sed 's/\([^\.]*\)\.\([^.]*\)\(\.\([^.]*\)\)\?/\4/'`
 if [ "$TINYVERSION" == "" ]; then
     TINYVERSION=0
 fi
 
 if [ "$RC_PROJECTSOURCEVERSION" == "" ]; then
-    echo -n `cat "$SRCPATH/VERSION"` > "$VERSIONFILE"
+    PROPOSEDVERSION=$(cat "$SRCPATH/VERSION")
 else
-    echo -n $RC_PROJECTSOURCEVERSION > "$VERSIONFILE"
+    PROPOSEDVERSION="$RC_PROJECTSOURCEVERSION"
 fi
 
-if [ `grep -c -E "4\.|4$" "$VERSIONFILE"` -ne 0 ]; then
-    echo "Can't set WebKit's version to something that ends in a 4!"
-    echo "If we do, someone's going to think it's Netscape 4."
-    echo "Radar bug 3787996 has some details."
+if [ `echo "$PROPOSEDVERSION" | grep -c -E "4\.|4$"` -ne 0 ]; then
+    echo "
+    Can't set WebKit's version to something that ends in a 4!
+    If we do, someone's going to think it's Netscape 4.
+    Radar bug 3787996 has some details."
     exit 1
 fi
 
-BLDMAJORVERSION=`sed 's/\([^\.]*\)\(\.\([^.]*\)\(\.\([^.]*\)\)\?\)\?/\1/' "$VERSIONFILE"`
-BLDMINORVERSION=`sed 's/\([^\.]*\)\(\.\([^.]*\)\(\.\([^.]*\)\)\?\)\?/\3/' "$VERSIONFILE"`
-BLDVARIANTVERSION=`sed 's/\([^\.]*\)\(\.\([^.]*\)\(\.\([^.]*\)\)\?\)\?/\5/' "$VERSIONFILE"`
+BLDMAJORVERSION=`echo "$PROPOSEDVERSION" | sed 's/\([^\.]*\)\(\.\([^.]*\)\(\.\([^.]*\)\)\?\)\?/\1/'`
+BLDMINORVERSION=`echo "$PROPOSEDVERSION" | sed 's/\([^\.]*\)\(\.\([^.]*\)\(\.\([^.]*\)\)\?\)\?/\3/'`
+BLDVARIANTVERSION=`echo "$PROPOSEDVERSION" | sed 's/\([^\.]*\)\(\.\([^.]*\)\(\.\([^.]*\)\)\?\)\?/\5/'`
 if [ "$BLDMINORVERSION" == "" ]; then
     BLDMINORVERSION=0
 fi
@@ -61,47 +62,23 @@ if [ "$BLDVARIANTVERSION" == "" ]; then
 fi
 SVNOPENSOURCEREVISION=`svn info | grep '^Revision' | sed 's/^Revision: \(.*\)/\1/'`
 
-BLDNMBR=`cat "$VERSIONFILE"`
-BLDNMBRSHORT=`cat "$VERSIONFILE"`
-BUILDER=""
+BLDNMBR="$PROPOSEDVERSION"
+BLDNMBRSHORT="$BLDNMBR"
 
 if [ "$RC_PROJECTSOURCEVERSION" == "" ]; then
-    echo -n "+" >> "$VERSIONFILE"
-    BLDNMBRSHORT=`cat "$VERSIONFILE"`
-    echo -n " " >> "$VERSIONFILE"
-    echo -n `whoami` >> "$VERSIONFILE"
-    echo -n " - " >> "$VERSIONFILE"
-    echo -n `date` >> "$VERSIONFILE"
-    echo -n " - r$SVNOPENSOURCEREVISION" >> "$VERSIONFILE"
-    BLDNMBR=`cat "$VERSIONFILE"`
+    BLDNMBRSHORT="$BLDNMBRSHORT+"
+    BLDNMBR="$BLDNMBRSHORT $(whoami) - $(date) - r$SVNOPENSOURCEREVISION"
 fi
 
-echo -n '#define __VERSION_TEXT__ "' > "$VERSIONFILE"
-echo -n $PRODUCTVERSION >> "$VERSIONFILE"
-echo -n " (" >> "$VERSIONFILE"
-echo -n $BLDNMBR >> "$VERSIONFILE"
-echo ')"' >> "$VERSIONFILE"
-echo -n '#define __BUILD_NUMBER_SHORT__ "' >> "$VERSIONFILE"
-echo -n $BLDNMBRSHORT >> "$VERSIONFILE"
-echo '"' >> "$VERSIONFILE"
-
-echo -n '#define __VERSION_MAJOR__ ' >> "$VERSIONFILE"
-echo $MAJORVERSION >> "$VERSIONFILE"
-echo -n '#define __VERSION_MINOR__ ' >> "$VERSIONFILE"
-echo $MINORVERSION >> "$VERSIONFILE"
-echo -n '#define __VERSION_TINY__ ' >> "$VERSIONFILE"
-echo $TINYVERSION >> "$VERSIONFILE"
-
-echo -n '#define __BUILD_NUMBER_MAJOR__ ' >> "$VERSIONFILE"
-echo $BLDMAJORVERSION >> "$VERSIONFILE"
-echo -n '#define __BUILD_NUMBER_MINOR__ ' >> "$VERSIONFILE"
-echo $BLDMINORVERSION >> "$VERSIONFILE"
-echo -n '#define __BUILD_NUMBER_VARIANT__ ' >> "$VERSIONFILE"
-echo $BLDVARIANTVERSION >> "$VERSIONFILE"
-echo -n '#define __BUILD_NUMBER_MAJOR_MINOR__ ' >> "$VERSIONFILE"
-echo -n $BLDMAJORVERSION >> "$VERSIONFILE"
-echo -n '.' >> "$VERSIONFILE"
-echo $BLDMINORVERSION >> "$VERSIONFILE"
-
-echo -n '#define __SVN_REVISION__ ' >> "$VERSIONFILE"
-echo $SVNREVISION >> "$VERSIONFILE"
+cat > "$VERSIONFILE" <<EOF
+#define __VERSION_TEXT__ "$PRODUCTVERSION ($BLDNMBR)"
+#define __BUILD_NUMBER_SHORT__ "$BLDNMBRSHORT"
+#define __VERSION_MAJOR__ $MAJORVERSION
+#define __VERSION_MINOR__ $MINORVERSION
+#define __VERSION_TINY__ $TINYVERSION
+#define __BUILD_NUMBER_MAJOR__ $BLDMAJORVERSION
+#define __BUILD_NUMBER_MINOR__ $BLDMINORVERSION
+#define __BUILD_NUMBER_VARIANT__ $BLDVARIANTVERSION
+#define __BUILD_NUMBER_MAJOR_MINOR__ $BLDMAJORVERSION.$BLDMINORVERSION
+#define __SVN_REVISION__ $SVNREVISION
+EOF

@@ -1,3 +1,14 @@
+2008-02-12  Adam Roben  <aroben@apple.com>
+
+        Clean up auto-version.sh a bit
+
+        It now does quite a bit less file I/O and many fewer fork/exec pairs.
+        It's also quite a bit easier to read.
+
+        Reviewed by Steve.
+
+        * win/tools/scripts/auto-version.sh:
+
 2008-02-12  Steve Falkenburg  <sfalken@apple.com>
 
         Versioning script change.
