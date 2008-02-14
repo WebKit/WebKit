@@ -472,7 +472,10 @@ void WebChromeClient::exceededDatabaseQuota(Frame* frame, const String& database
         else {
             // FIXME: remove this workaround once shipping Safari has the necessary delegate implemented.
             TCHAR path[MAX_PATH];
-            GetModuleFileName(GetModuleHandle(TEXT("Safari.exe")), path, ARRAYSIZE(path));
+            HMODULE safariHandle = GetModuleHandle(TEXT("Safari.exe"));
+            if (!safariHandle)
+                return;
+            GetModuleFileName(safariHandle, path, ARRAYSIZE(path));
             DWORD handle;
             DWORD versionSize = GetFileVersionInfoSize(path, &handle);
             if (!versionSize)
@@ -486,7 +489,6 @@ void WebChromeClient::exceededDatabaseQuota(Frame* frame, const String& database
             if (!VerQueryValue(data.data(), TEXT("\\StringFileInfo\\040904b0\\ProductVersion"), (void**)&productVersion, &productVersionLength))
                 return;
             if (_tcsncmp(TEXT("3.1"), productVersion, productVersionLength) > 0) {
-                ::MessageBox(0, TEXT("workaround"), 0, 0);
                 const unsigned long long defaultQuota = 5 * 1024 * 1024; // 5 megabytes should hopefully be enough to test storage support.
                 origin->setQuota(defaultQuota);
             }

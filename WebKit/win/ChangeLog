@@ -1,5 +1,10 @@
 2008-02-14  Alexey Proskuryakov  <ap@webkit.org>
 
+        * WebChromeClient.cpp: (WebChromeClient::exceededDatabaseQuota): Forgot to re-apply review comments to
+        the previous check-in, fixing.
+
+2008-02-14  Alexey Proskuryakov  <ap@webkit.org>
+
         Reviewed by Adam Roben.
 
         http://bugs.webkit.org/show_bug.cgi?id=17207
