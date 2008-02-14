@@ -222,6 +222,7 @@ WebKitWebFrame* webkit_web_frame_new(WebKitWebView* webView)
     frameView->setGtkAdjustments(GTK_ADJUSTMENT(gtk_adjustment_new(0.0, 0.0, 0.0, 0.0, 0.0, 0.0)),
                                  GTK_ADJUSTMENT(gtk_adjustment_new(0.0, 0.0, 0.0, 0.0, 0.0, 0.0)));
     priv->coreFrame->setView(frameView);
+    frameView->deref();
     priv->coreFrame->init();
     priv->webView = webView;
 
