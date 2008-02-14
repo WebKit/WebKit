@@ -35,7 +35,7 @@
 namespace WebCore {
 
 struct SecurityOriginHash {
-    static unsigned hash(RefPtr<SecurityOrigin> origin)
+    static unsigned hash(const RefPtr<SecurityOrigin>& origin)
     {
         unsigned hashCodes[3] = {
             origin->protocol().impl() ? origin->protocol().impl()->hash() : 0,
@@ -45,7 +45,7 @@ struct SecurityOriginHash {
         return StringImpl::computeHash(reinterpret_cast<UChar*>(hashCodes), 3 * sizeof(unsigned) / sizeof(UChar));
     }
          
-    static bool equal(RefPtr<SecurityOrigin> a, RefPtr<SecurityOrigin> b)
+    static bool equal(const RefPtr<SecurityOrigin>& a, const RefPtr<SecurityOrigin>& b)
     {
         if (a == 0 || b == 0)
             return a == b;

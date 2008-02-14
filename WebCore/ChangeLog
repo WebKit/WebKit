@@ -1,3 +1,14 @@
+2008-02-14  Adam Roben  <aroben@apple.com>
+
+        Improve the efficiency of SecurityOriginHash
+
+        Reviewed by Alexey.
+
+        * platform/SecurityOriginHash.h:
+        (WebCore::SecurityOriginHash::hash): Now takes a const
+        RefPtr<SecurityOrigin>& to reduce ref-count churn.
+        (WebCore::SecurityOriginHash::equal): Ditto.
+
 2008-02-13  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Oliver Hunt.
