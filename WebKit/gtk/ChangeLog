@@ -2,6 +2,14 @@
 
         Reviewed by Alp.
 
+        WebCore::Frame is RefCounted, do not manually delete it!
+
+        * webkit/webkitwebframe.cpp:
+
+2008-02-14  Holger Hans Peter Freyther  <holger.freyther@trolltech.com>
+
+        Reviewed by Alp.
+
         * Plug a leak
 
         * webkit/webkitwebframe.cpp:
