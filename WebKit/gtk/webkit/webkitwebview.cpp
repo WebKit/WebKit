@@ -612,6 +612,7 @@ static void webkit_web_view_finalize(GObject* object)
 
     webkit_web_view_stop_loading(WEBKIT_WEB_VIEW(object));
 
+    core(priv->mainFrame)->loader()->detachChildren();
     delete priv->corePage;
 
     g_object_unref(priv->backForwardList);

@@ -93,6 +93,8 @@ static void webkit_web_frame_finalize(GObject* object)
     WebKitWebFramePrivate* priv = frame->priv;
 
     priv->coreFrame->loader()->cancelAndClear();
+    priv->coreFrame = 0;
+
     g_free(priv->name);
     g_free(priv->title);
     g_free(priv->uri);
@@ -216,7 +218,7 @@ WebKitWebFrame* webkit_web_frame_new(WebKitWebView* webView)
     priv->client = new WebKit::FrameLoaderClient(frame);
     priv->coreFrame = new Frame(viewPriv->corePage, 0, priv->client);
 
-    FrameView* frameView = new FrameView(priv->coreFrame);
+    FrameView* frameView = new FrameView(priv->coreFrame.get());
     frameView->setContainingWindow(GTK_CONTAINER(webView));
     frameView->setGtkAdjustments(GTK_ADJUSTMENT(gtk_adjustment_new(0.0, 0.0, 0.0, 0.0, 0.0, 0.0)),
                                  GTK_ADJUSTMENT(gtk_adjustment_new(0.0, 0.0, 0.0, 0.0, 0.0, 0.0)));
@@ -237,7 +239,7 @@ WebKitWebFrame* webkit_web_frame_init_with_web_view(WebKitWebView* webView, HTML
     priv->client = new WebKit::FrameLoaderClient(frame);
     priv->coreFrame = new Frame(viewPriv->corePage, element, priv->client);
 
-    FrameView* frameView = new FrameView(priv->coreFrame);
+    FrameView* frameView = new FrameView(priv->coreFrame.get());
     frameView->setContainingWindow(GTK_CONTAINER(webView));
     priv->coreFrame->setView(frameView);
     frameView->deref();

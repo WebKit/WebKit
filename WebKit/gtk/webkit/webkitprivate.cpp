@@ -49,7 +49,7 @@ WebCore::Frame* core(WebKitWebFrame* frame)
         return 0;
 
     WebKitWebFramePrivate* priv = frame->priv;
-    return priv ? priv->coreFrame : 0;
+    return priv ? priv->coreFrame.get() : 0;
 }
 
 WebKitWebFrame* kit(WebCore::Frame* coreFrame)

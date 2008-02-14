@@ -2,6 +2,28 @@
 
         Reviewed by Alp.
 
+        * Make sure that the WebCore::Frame is living as long as the WebKitWebFrame
+        wrapped around it. All current calls to WebCore::Frame from within the
+        WebKitWebFrame are safe, even in the case where the WebCore::Frame is already
+        detached from the WebCore::Page.
+        * For the mainFrame the WebKitWebView is holding the initial reference and
+        will unref on destruction.
+        * For sub-frames the FramerLoaderClientGtk.cpp will do the unrefing when the
+        frame gets detached from the parent.
+        * Make sure FrameLoader::detachFromParent gets called by calling FrameLoader::detachChildren
+
+        * WebCoreSupport/FrameLoaderClientGtk.cpp:
+        (WebKit::FrameLoaderClient::detachedFromParent4):
+        * webkit/webkitprivate.cpp:
+        (WebKit::core):
+        * webkit/webkitprivate.h:
+        * webkit/webkitwebframe.cpp:
+        * webkit/webkitwebview.cpp:
+
+2008-02-14  Holger Hans Peter Freyther  <holger.freyther@trolltech.com>
+
+        Reviewed by Alp.
+
         WebCore::Frame is RefCounted, do not manually delete it!
 
         * webkit/webkitwebframe.cpp:
