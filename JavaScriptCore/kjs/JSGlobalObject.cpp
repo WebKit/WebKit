@@ -139,8 +139,11 @@ void JSGlobalObject::init()
     d()->recursion = 0;
     d()->debugger = 0;
     
-    d()->activations = 0;
-    
+    ActivationStackNode* newStackNode = new ActivationStackNode;
+    newStackNode->prev = 0;    
+    d()->activations = newStackNode;
+    d()->activationCount = 0;
+
     reset(prototype());
 }
 
@@ -214,12 +217,6 @@ void JSGlobalObject::reset(JSValue* prototype)
     d()->URIErrorConstructor = 0;
 
     ExecState* exec = &d()->globalExec;
-
-    deleteActivationStack();
-    ActivationStackNode* newStackNode = new ActivationStackNode;
-    newStackNode->prev = 0;    
-    d()->activations = newStackNode;
-    d()->activationCount = 0;
 
     // Prototypes
     d()->functionPrototype = new FunctionPrototype(exec);
@@ -530,6 +527,7 @@ inline void JSGlobalObject::checkActivationCount()
 {
     if (!d()->activationCount) {
         ActivationStackNode* prev = d()->activations->prev;
+        ASSERT(prev);
         delete d()->activations;
         d()->activations = prev;
         d()->activationCount = activationStackNodeSize;

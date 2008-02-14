@@ -1,3 +1,22 @@
+2008-02-14  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
+        
+        Fixed <rdar://problem/5737835> nee http://bugs.webkit.org/show_bug.cgi?id=17329
+        Crash in JSGlobalObject::popActivation when inserting hyperlink in Wordpress (17329)
+        
+        Don't reset the "activations" stack in JSGlobalObject::reset, since we
+        might be executing a script during the call to reset, and the script
+        needs to safely run to completion.
+        
+        Instead, initialize the "activations" stack when the global object is
+        created, and subsequently rely on pushing and popping during normal
+        execution to maintain the stack's state.
+        
+        * kjs/JSGlobalObject.cpp:
+        (KJS::JSGlobalObject::init):
+        (KJS::JSGlobalObject::reset):
+
 2008-02-13  Bernhard Rosenkraenzer  <bero@arklinux.org>
 
         Reviewed by Darin.

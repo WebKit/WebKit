@@ -1,0 +1,22 @@
+<script>
+function test()
+{
+    (function ()
+    {
+        (function ()
+        {
+            (function ()
+            {
+                frameElement.src = "javascript:'<pre>PASS: You didn\\'t crash.</pre>'";
+            })()
+        })()
+    })()
+}
+
+setTimeout(function ()
+{
+    test();
+    if (window.layoutTestController)
+        layoutTestController.notifyDone();
+}, 0);
+</script>
