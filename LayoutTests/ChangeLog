@@ -1,3 +1,50 @@
+2008-02-14  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Oliver.
+
+        Add dynamic update tests for SVGEllipseElement.
+
+        * platform/mac-leopard/svg/dynamic-updates/SVGEllipseElement-dom-cx-attr-expected.checksum: Added.
+        * platform/mac-leopard/svg/dynamic-updates/SVGEllipseElement-dom-cx-attr-expected.png: Added.
+        * platform/mac-leopard/svg/dynamic-updates/SVGEllipseElement-dom-cy-attr-expected.checksum: Added.
+        * platform/mac-leopard/svg/dynamic-updates/SVGEllipseElement-dom-cy-attr-expected.png: Added.
+        * platform/mac-leopard/svg/dynamic-updates/SVGEllipseElement-dom-rx-attr-expected.checksum: Added.
+        * platform/mac-leopard/svg/dynamic-updates/SVGEllipseElement-dom-rx-attr-expected.png: Added.
+        * platform/mac-leopard/svg/dynamic-updates/SVGEllipseElement-dom-ry-attr-expected.checksum: Added.
+        * platform/mac-leopard/svg/dynamic-updates/SVGEllipseElement-dom-ry-attr-expected.png: Added.
+        * platform/mac-leopard/svg/dynamic-updates/SVGEllipseElement-svgdom-cx-prop-expected.checksum: Added.
+        * platform/mac-leopard/svg/dynamic-updates/SVGEllipseElement-svgdom-cx-prop-expected.png: Added.
+        * platform/mac-leopard/svg/dynamic-updates/SVGEllipseElement-svgdom-cy-prop-expected.checksum: Added.
+        * platform/mac-leopard/svg/dynamic-updates/SVGEllipseElement-svgdom-cy-prop-expected.png: Added.
+        * platform/mac-leopard/svg/dynamic-updates/SVGEllipseElement-svgdom-rx-prop-expected.checksum: Added.
+        * platform/mac-leopard/svg/dynamic-updates/SVGEllipseElement-svgdom-rx-prop-expected.png: Added.
+        * platform/mac-leopard/svg/dynamic-updates/SVGEllipseElement-svgdom-ry-prop-expected.checksum: Added.
+        * platform/mac-leopard/svg/dynamic-updates/SVGEllipseElement-svgdom-ry-prop-expected.png: Added.
+        * svg/dynamic-updates/SVGEllipseElement-dom-cx-attr-expected.txt: Added.
+        * svg/dynamic-updates/SVGEllipseElement-dom-cx-attr.html: Added.
+        * svg/dynamic-updates/SVGEllipseElement-dom-cy-attr-expected.txt: Added.
+        * svg/dynamic-updates/SVGEllipseElement-dom-cy-attr.html: Added.
+        * svg/dynamic-updates/SVGEllipseElement-dom-rx-attr-expected.txt: Added.
+        * svg/dynamic-updates/SVGEllipseElement-dom-rx-attr.html: Added.
+        * svg/dynamic-updates/SVGEllipseElement-dom-ry-attr-expected.txt: Added.
+        * svg/dynamic-updates/SVGEllipseElement-dom-ry-attr.html: Added.
+        * svg/dynamic-updates/SVGEllipseElement-svgdom-cx-prop-expected.txt: Added.
+        * svg/dynamic-updates/SVGEllipseElement-svgdom-cx-prop.html: Added.
+        * svg/dynamic-updates/SVGEllipseElement-svgdom-cy-prop-expected.txt: Added.
+        * svg/dynamic-updates/SVGEllipseElement-svgdom-cy-prop.html: Added.
+        * svg/dynamic-updates/SVGEllipseElement-svgdom-rx-prop-expected.txt: Added.
+        * svg/dynamic-updates/SVGEllipseElement-svgdom-rx-prop.html: Added.
+        * svg/dynamic-updates/SVGEllipseElement-svgdom-ry-prop-expected.txt: Added.
+        * svg/dynamic-updates/SVGEllipseElement-svgdom-ry-prop.html: Added.
+        * svg/dynamic-updates/resources/SVGEllipseElement-dom-cx-attr.js: Added.
+        * svg/dynamic-updates/resources/SVGEllipseElement-dom-cy-attr.js: Added.
+        * svg/dynamic-updates/resources/SVGEllipseElement-dom-rx-attr.js: Added.
+        * svg/dynamic-updates/resources/SVGEllipseElement-dom-ry-attr.js: Added.
+        * svg/dynamic-updates/resources/SVGEllipseElement-svgdom-cx-prop.js: Added.
+        * svg/dynamic-updates/resources/SVGEllipseElement-svgdom-cy-prop.js: Added.
+        * svg/dynamic-updates/resources/SVGEllipseElement-svgdom-rx-prop.js: Added.
+        * svg/dynamic-updates/resources/SVGEllipseElement-svgdom-ry-prop.js: Added.
+
 2008-02-13  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Oliver Hunt.
