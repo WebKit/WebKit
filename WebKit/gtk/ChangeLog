@@ -1,4 +1,4 @@
-2008-02-14  Holger Hans Peter Freyther  <holger.freyther@trolltech.com>
+2008-02-14  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Reviewed by Alp.
 
@@ -9,7 +9,7 @@
         * webkit/webkitwebframe.cpp:
         (PrintContext::webkit_web_frame_print):
 
-2008-02-14  Holger Hans Peter Freyther  <holger.freyther@trolltech.com>
+2008-02-14  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Reviewed by Alp.
 
@@ -31,7 +31,7 @@
         * webkit/webkitwebframe.cpp:
         * webkit/webkitwebview.cpp:
 
-2008-02-14  Holger Hans Peter Freyther  <holger.freyther@trolltech.com>
+2008-02-14  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Reviewed by Alp.
 
@@ -39,7 +39,7 @@
 
         * webkit/webkitwebframe.cpp:
 
-2008-02-14  Holger Hans Peter Freyther  <holger.freyther@trolltech.com>
+2008-02-14  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Reviewed by Alp.
 
@@ -47,7 +47,7 @@
 
         * webkit/webkitwebframe.cpp:
 
-2008-02-14  Holger Hans Peter Freyther  <holger.freyther@trolltech.com>
+2008-02-14  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Reviewed by Alp.
 
