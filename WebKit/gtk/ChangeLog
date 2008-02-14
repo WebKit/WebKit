@@ -2,6 +2,17 @@
 
         Reviewed by Alp.
 
+        * Make the handling of the coreFrame consistent. We construct the coreFrame
+        at the beginning and it will live until the end. Change the g_return_(val_)if
+        to ASSERTs as having a 0 coreFrame can never happen.
+
+        * webkit/webkitwebframe.cpp:
+        (PrintContext::webkit_web_frame_print):
+
+2008-02-14  Holger Hans Peter Freyther  <holger.freyther@trolltech.com>
+
+        Reviewed by Alp.
+
         * Make sure that the WebCore::Frame is living as long as the WebKitWebFrame
         wrapped around it. All current calls to WebCore::Frame from within the
         WebKitWebFrame are safe, even in the case where the WebCore::Frame is already
