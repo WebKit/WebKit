@@ -1,5 +1,18 @@
 2008-02-13  Justin Garcia  <justin.garcia@apple.com>
 
+        Reviewed by Oliver Hunt.
+
+        * platform/mac/editing/deleting/table-cells-expected.checksum: Fixed.  Before, a space was 
+        incorrectly removed by a delete (this isn't a smart delete).
+        * platform/mac/editing/deleting/table-cells-expected.png:
+        * platform/mac/editing/deleting/table-cells-expected.txt:
+        * platform/mac/editing/pasteboard/input-field-1-expected.checksum: Fixed.  Before a space 
+        was incorrectly added by paste (this isn't a smart paste).
+        * platform/mac/editing/pasteboard/input-field-1-expected.png:
+        * platform/mac/editing/pasteboard/input-field-1-expected.txt:
+
+2008-02-13  Justin Garcia  <justin.garcia@apple.com>
+
         Reviewed by Adam Roben.
         
         <rdar://problem/5729680> REGRESSION (r27873): Removing the last character of a word in Mail or Safari also removes the following space

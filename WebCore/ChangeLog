@@ -1,3 +1,17 @@
+2008-02-13  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Fixes the editing/deleting/5729680.html failure.  It succeeds when run by itself
+        but fails when run with other tests because FramePrivate's m_selectionGranularity
+        isn't reset when a Frame receives a new document.  It was also uninitialized in
+        the constructor.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::clear): Initialize m_selectionGranularity.
+        * page/Frame.cpp:
+        (WebCore::FramePrivate::FramePrivate): Ditto.
+
 2008-02-13  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Reviewed by Anders.

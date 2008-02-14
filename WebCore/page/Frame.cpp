@@ -1857,6 +1857,7 @@ FramePrivate::FramePrivate(Page* page, Frame* parent, Frame* thisFrame, HTMLFram
     , m_ownerElement(ownerElement)
     , m_jscript(0)
     , m_zoomFactor(parent ? parent->d->m_zoomFactor : 100)
+    , m_selectionGranularity(CharacterGranularity)
     , m_selectionController(thisFrame)
     , m_caretBlinkTimer(thisFrame, &Frame::caretBlinkTimerFired)
     , m_editor(thisFrame)
