@@ -785,7 +785,7 @@ void PluginView::stop()
 
     // Clear the window
     m_npWindow.window = 0;
-    if (m_plugin->pluginFuncs()->setwindow) {
+    if (m_plugin->pluginFuncs()->setwindow && !m_quirks.contains(PluginQuirkDontSetNullWindowHandleOnDestroy)) {
         setCallingPlugin(true);
         m_plugin->pluginFuncs()->setwindow(m_instance, &m_npWindow);
         setCallingPlugin(false);
@@ -1473,17 +1473,17 @@ void PluginView::determineQuirks(const String& mimeType)
     static const unsigned lastKnownUnloadableRealPlayerVersionLS = 0x000B0B24;
     static const unsigned lastKnownUnloadableRealPlayerVersionMS = 0x00060000;
 
-    // The flash plugin only requests windowless plugins if we return a mozilla user agent
     if (mimeType == "application/x-shockwave-flash") {
+        // The flash plugin only requests windowless plugins if we return a mozilla user agent
         m_quirks.add(PluginQuirkWantsMozillaUserAgent);
         m_quirks.add(PluginQuirkThrottleInvalidate);
         m_quirks.add(PluginQuirkThrottleWMUserPlusOneMessages);
         m_quirks.add(PluginQuirkFlashURLNotifyBug);
     }
 
-    // The WMP plugin sets its size on the first NPP_SetWindow call and never updates its size, so
-    // call SetWindow when the plugin view has a correct size
     if (m_plugin->name().contains("Microsoft") && m_plugin->name().contains("Windows Media")) {
+        // The WMP plugin sets its size on the first NPP_SetWindow call and never updates its size, so
+        // call SetWindow when the plugin view has a correct size
         m_quirks.add(PluginQuirkDeferFirstSetWindowCall);
 
         // Windowless mode does not work at all with the WMP plugin so just remove that parameter 
@@ -1497,6 +1497,10 @@ void PluginView::determineQuirks(const String& mimeType)
         // can cause crashes.
         m_quirks.add(PluginQuirkHasModalMessageLoop);
     }
+
+    // VLC hangs on NPP_Destroy if we call NPP_SetWindow with a null window handle
+    if (m_plugin->name() == "VLC Multimedia Plugin")
+        m_quirks.add(PluginQuirkDontSetNullWindowHandleOnDestroy);
 
     // The DivX plugin sets its size on the first NPP_SetWindow call and never updates its size, so
     // call SetWindow when the plugin view has a correct size

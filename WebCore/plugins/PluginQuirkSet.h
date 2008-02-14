@@ -43,6 +43,7 @@ namespace WebCore {
         PluginQuirkHasModalMessageLoop = 1 << 7,
         PluginQuirkFlashURLNotifyBug = 1 << 8,
         PluginQuirkDontClipToZeroRectWhenScrolling = 1 << 9,
+        PluginQuirkDontSetNullWindowHandleOnDestroy = 1 << 10,
     };
 
     class PluginQuirkSet {

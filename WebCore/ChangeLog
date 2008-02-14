@@ -1,3 +1,20 @@
+2008-02-13  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Reviewed by Anders.
+
+        <rdar://problem/5739282> Hangs after closing video trailer popup with
+        VLC plugin
+
+        VLC hangs on NPP_Destroy if we call NPP_SetWindow with a null window
+        handle.
+
+        * plugins/PluginQuirkSet.h: Added new quirk
+        PluginQuirkDontSetNullWindowHandleOnDestroy.
+        (WebCore::):
+        * plugins/win/PluginViewWin.cpp:
+        (WebCore::PluginView::stop): Selectively call NPP_SetWindow.
+        (WebCore::PluginView::determineQuirks): Set new quirk for VLC plug-in.
+
 2008-02-13  Rodney Dawes  <dobey@wayofthemonkey.com>
 
         Reviewed by Alp Toker.
