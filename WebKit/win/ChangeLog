@@ -1,3 +1,14 @@
+2008-02-14  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Adam Roben.
+
+        http://bugs.webkit.org/show_bug.cgi?id=17207
+        Database example doesn't work (requires not-yet-released Safari)
+
+        * WebChromeClient.cpp:
+        (WebChromeClient::exceededDatabaseQuota): Check Safari version, and allow 5 megabytes of storage
+        if it's too old.
+
 2008-02-13  Ada Chan  <adachan@apple.com>
 
         <rdar://problem/5740656> Leak in postDidAddIconNotification in WebIconDatabase

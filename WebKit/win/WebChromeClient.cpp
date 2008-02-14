@@ -40,6 +40,8 @@
 #include <WebCore/WindowFeatures.h>
 #pragma warning(pop)
 
+#include <tchar.h>
+
 using namespace WebCore;
 
 WebChromeClient::WebChromeClient(WebView* webView)
@@ -467,6 +469,28 @@ void WebChromeClient::exceededDatabaseQuota(Frame* frame, const String& database
         COMPtr<IWebUIDelegatePrivate3> uiDelegatePrivate3(Query, uiDelegate);
         if (uiDelegatePrivate3)
             uiDelegatePrivate3->exceededDatabaseQuota(m_webView, kit(frame), origin.get(), BString(databaseIdentifier));
+        else {
+            // FIXME: remove this workaround once shipping Safari has the necessary delegate implemented.
+            TCHAR path[MAX_PATH];
+            GetModuleFileName(GetModuleHandle(TEXT("Safari.exe")), path, ARRAYSIZE(path));
+            DWORD handle;
+            DWORD versionSize = GetFileVersionInfoSize(path, &handle);
+            if (!versionSize)
+                return;
+            Vector<char> data(versionSize);
+            if (!GetFileVersionInfo(path, 0, versionSize, data.data()))
+                return;
+
+            LPCTSTR productVersion;
+            UINT productVersionLength;
+            if (!VerQueryValue(data.data(), TEXT("\\StringFileInfo\\040904b0\\ProductVersion"), (void**)&productVersion, &productVersionLength))
+                return;
+            if (_tcsncmp(TEXT("3.1"), productVersion, productVersionLength) > 0) {
+                ::MessageBox(0, TEXT("workaround"), 0, 0);
+                const unsigned long long defaultQuota = 5 * 1024 * 1024; // 5 megabytes should hopefully be enough to test storage support.
+                origin->setQuota(defaultQuota);
+            }
+        }
     }
 }
 

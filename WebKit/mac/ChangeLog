@@ -1,3 +1,14 @@
+2008-02-14  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Adam Roben.
+
+        http://bugs.webkit.org/show_bug.cgi?id=17207
+        Database example doesn't work (requires not-yet-released Safari)
+
+        * WebCoreSupport/WebChromeClient.mm:
+        (WebChromeClient::exceededDatabaseQuota): Check Safari version, and allow 5 megabytes of storage
+        if it's too old.
+
 2008-02-11  Darin Adler  <darin@apple.com>
 
         - roll out fix for <rdar://problem/5726016> REGRESSION: Xcode News window renders
