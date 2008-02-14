@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Holger Hans Peter Freyther
+ * Copyright (C) 2007, 2008 Holger Hans Peter Freyther
  * Copyrifht (C) 2008 Jan Michael C. Alonzo
  *
  * This library is free software; you can redistribute it and/or

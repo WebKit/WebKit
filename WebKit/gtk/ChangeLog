@@ -1,3 +1,13 @@
+2008-02-14  Holger Hans Peter Freyther  <holger.freyther@trolltech.com>
+
+        Reviewed by Alp.
+
+        * Update the Copyright Information
+
+        * WebCoreSupport/FrameLoaderClientGtk.cpp:
+        * webkit/webkitprivate.h:
+        * webkit/webkitwebframe.cpp:
+
 2008-02-13  Alp Toker  <alp@atoker.com>
 
         Reviewed by Adam Roben.

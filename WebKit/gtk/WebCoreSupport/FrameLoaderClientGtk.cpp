@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 2007 Alp Toker <alp@atoker.com>
- *  Copyright (C) 2007 Holger Hans Peter Freyther
+ *  Copyright (C) 2007, 2008 Holger Hans Peter Freyther
  *  Copyright (C) 2007 Christian Dywan <christian@twotoasts.de>
  *
  *  This library is free software; you can redistribute it and/or
