@@ -1,5 +1,14 @@
 2008-02-14  Darin Adler  <darin@apple.com>
 
+        - another round of build fixes
+
+        * platform/KURL.cpp:
+        (WebCore::appendEncodedHostname): Fix spelling (strLen, not strlen).
+        * platform/network/curl/ResourceHandleManager.cpp:
+        (WebCore::parseDataUrl): Fix a ".." typo and call data instead of characters.
+
+2008-02-14  Darin Adler  <darin@apple.com>
+
         - added back accidentally-removed files
 
         * platform/DeprecatedStringList.cpp: Copied from platform/DeprecatedStringList.cpp.

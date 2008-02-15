@@ -494,7 +494,7 @@ static void parseDataUrl(ResourceHandle* handle)
         g_free(out);
 #else
         Vector<char> out;
-        if (base64Decode(data..latin1().data(), data.length(), out))
+        if (base64Decode(data.latin1().data(), data.length(), out))
             data = String(out.data(), out.size());
         else
             data = String();
@@ -516,7 +516,7 @@ static void parseDataUrl(ResourceHandle* handle)
     client->didReceiveResponse(handle, response);
 
     if (!data.isEmpty())
-        client->didReceiveData(handle, data.latin1().characters(), data.length(), 0);
+        client->didReceiveData(handle, data.latin1().data(), data.length(), 0);
 
     client->didFinishLoading(handle);
 }

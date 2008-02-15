@@ -1333,7 +1333,7 @@ static void appendEncodedHostname(UCharBuffer& buffer, const UChar* str, unsigne
     if (error != U_ZERO_ERROR)
         buffer.append(hostnameBuffer, numCharactersConverted);
 #elif USE(QT4_UNICODE)
-    QByteArray result = QUrl::toAce(String(str, strlen));
+    QByteArray result = QUrl::toAce(String(str, strLen));
     buffer.append(result.constData(), result.length());
 #endif
 }
