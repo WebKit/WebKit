@@ -1,3 +1,10 @@
+2008-02-14  Darin Adler  <darin@apple.com>
+
+        - update this test further, so that it succeeds
+
+        * fast/dom/assign-to-window-status-expected.txt: Updated.
+        * fast/dom/assign-to-window-status.html: Updated.
+
 2008-02-14  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Geoff G and Weinig.

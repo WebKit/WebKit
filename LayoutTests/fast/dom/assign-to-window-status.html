@@ -29,8 +29,8 @@ function test()
 {
     shouldBe("window.status = 'set window.status'; window.status", "'set window.status'");
     shouldBe("status = 'set status'", "'set status'");
-    shouldBe("window.status = 1; window.status", "1");
-    shouldBe("status = 2; status", "2");
+    shouldBe("window.status = 1; window.status", "'1'");
+    shouldBe("status = 2; status", "'2'");
     var o = {l:7};
     window.status=o;
     
