@@ -279,7 +279,7 @@ void ChromeClient::mouseDidMoveOverElement(const HitTestResult& hit, unsigned mo
         KURL url = hit.absoluteLinkURL();
         if (!url.isEmpty() && url != m_hoveredLinkURL) {
             CString titleString = hit.title().utf8();
-            DeprecatedCString urlString = url.prettyURL().utf8();
+            CString urlString = url.prettyURL().utf8();
             g_signal_emit_by_name(m_webView, "hovering-over-link", titleString.data(), urlString.data());
             m_hoveredLinkURL = url;
         }
