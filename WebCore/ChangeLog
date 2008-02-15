@@ -1,5 +1,12 @@
 2008-02-14  Darin Adler  <darin@apple.com>
 
+        - next Qt build fix
+
+        * platform/network/qt/ResourceRequest.h:
+        (WebCore::ResourceRequest::ResourceRequest): Removed a stray deprecatedString() call.
+
+2008-02-14  Darin Adler  <darin@apple.com>
+
         - another build fix
 
         * platform/network/curl/ResourceRequest.h:
