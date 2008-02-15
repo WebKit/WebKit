@@ -1,5 +1,12 @@
 2008-02-14  Darin Adler  <darin@apple.com>
 
+        - first Qt build fix
+
+        * dom/XMLTokenizer.cpp:
+        (WebCore::XMLTokenizer::endElementNs): Added a missing string() call.
+
+2008-02-14  Darin Adler  <darin@apple.com>
+
         Reviewed by Eric Seidel.
 
         Based on work by Marvin Decker <marv.decker@gmail.com>
