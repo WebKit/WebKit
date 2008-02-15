@@ -1,3 +1,11 @@
+2008-02-14  Stephanie Lewis  <slewis@apple.com>
+
+        Reviewed by Geoff.
+
+        Update order files.
+
+        * WebCore.order:
+
 2008-02-14  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Geoff G and Weinig.
