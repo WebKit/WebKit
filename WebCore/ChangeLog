@@ -23,7 +23,7 @@
         of whether javascript is disabled.  This will mean that callers who don't check for null won't crash.  
         Second, callers who did check for null now instead check for javascript being disabled.  This means that 
         code paths intended for preventing javascript from being run will be making the correct check.  Another
-        minor addition to this patch is that I added a function on Frame to be a shortcut for checking if javascript
+        minor addition to this patch is that I added a function on KSJProxy to be a shortcut for checking if javascript
         is enabled. 
 
         * bindings/js/JSCustomSQLStatementCallback.cpp:
