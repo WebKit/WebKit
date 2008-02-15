@@ -2,33 +2,33 @@
 <head>
 <title>&lt;SCRIPT&gt; load and error events</title>
 <script type="text/javascript">
-var status = new Array();
+var status_ = new Array();
 
 function loaded(i)
 {
-    status[i] = "L";
+    status_[i] = "L";
 }
 
 function erred(i)
 {
-    status[i] = "E";
+    status_[i] = "E";
 }
 
 function endTest()
 {
     var failures = "";
-    if (status[0] != "E")
+    if (status_[0] != "E")
         failures += "0 ";
-    if (status[1] != "E")
+    if (status_[1] != "E")
         failures += "1 ";
 
-    if (status[2] != "L")
+    if (status_[2] != "L")
         failures += "2 ";
-    if (status[3] != "L")
+    if (status_[3] != "L")
         failures += "3 ";
-    if (status[4] != "L")
+    if (status_[4] != "L")
         failures += "4 ";
-    if (status[5] != "L")
+    if (status_[5] != "L")
         failures += "5 ";
 
     var results = document.getElementById("results");

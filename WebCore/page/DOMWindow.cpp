@@ -506,12 +506,28 @@ String DOMWindow::status() const
     return m_frame->jsStatusBarText();
 }
 
+void DOMWindow::setStatus(const String& string) 
+{ 
+    if (!m_frame) 
+        return; 
+
+    m_frame->setJSStatusBarText(string); 
+} 
+    
 String DOMWindow::defaultStatus() const
 {
     if (!m_frame)
         return String();
 
     return m_frame->jsDefaultStatusBarText();
+} 
+
+void DOMWindow::setDefaultStatus(const String& string) 
+{ 
+    if (!m_frame) 
+        return; 
+
+    m_frame->setJSDefaultStatusBarText(string);
 }
 
 DOMWindow* DOMWindow::self() const

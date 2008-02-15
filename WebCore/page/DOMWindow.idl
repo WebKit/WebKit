@@ -98,11 +98,11 @@ module window {
 
         attribute DOMString name;
 
-        attribute [Replaceable] DOMString status;
-        attribute [Replaceable] DOMString defaultStatus;
+        attribute DOMString status;
+        attribute DOMString defaultStatus;
 #if defined(LANGUAGE_JAVASCRIPT)
         // This attribute is an alias of defaultStatus and is necessary for legacy uses.
-        attribute [Replaceable] DOMString defaultstatus;
+        attribute DOMString defaultstatus;
 #endif
 
         // Self referential attributes

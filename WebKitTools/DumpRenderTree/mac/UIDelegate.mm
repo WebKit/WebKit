@@ -136,6 +136,11 @@ DumpRenderTreeDraggingInfo *draggingInfo = nil;
     [origin setQuota:defaultQuota];
 }
 
+- (void)webView:(WebView *)sender setStatusText:(NSString *)text
+{
+    if (layoutTestController->dumpStatusCallbacks())
+        printf("UI DELEGATE STATUS CALLBACK: setStatusText:%s\n", [text UTF8String]);
+}
 
 - (void)dealloc
 {

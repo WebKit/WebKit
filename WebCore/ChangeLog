@@ -1,3 +1,19 @@
+2008-02-14  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Geoff G and Weinig.
+
+        <rdar://problem/5726608> REGRESSION (r29428): Assigning to window.status does not update status bar
+
+        Revert the portions of r29428 responsible for breaking the ability to
+        set window.status
+
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::setStatus):
+        (WebCore::DOMWindow::defaultStatus):
+        (WebCore::DOMWindow::setDefaultStatus):
+        * page/DOMWindow.h:
+        * page/DOMWindow.idl:
+
 2008-02-14  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Darin.

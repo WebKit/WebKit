@@ -42,7 +42,7 @@ function canGet(keyPath)
     }
 }
 
-window.marker = { "foo": "bar" };
+window.marker = { "foo": "bar", toString: function(){ return "window.marker.toString()"; } };
 
 function canSet(keyPath)
 {
@@ -51,6 +51,18 @@ function canSet(keyPath)
     try {
         eval("window." + keyPath + " = " + valuePath);
         return eval("window." + keyPath) === eval("window." + valuePath);
+    } catch(e) {
+        return false;
+    }
+}
+
+function canSetWithTypeConversion(keyPath)
+{
+    var valuePath = "window.marker";
+
+    try {
+        eval("window." + keyPath + " = " + valuePath);
+        return eval("window." + keyPath) == eval("window." + valuePath);
     } catch(e) {
         return false;
     }
@@ -161,8 +173,6 @@ var windowReadWriteProperties = [
     "clearTimeout",
     "clientInformation", 
     "console", 
-    "defaultStatus", 
-    "defaultstatus", 
     "devicePixelRatio", 
     "event", 
     "frames",
@@ -186,7 +196,6 @@ var windowReadWriteProperties = [
     "scrollY", 
     "scrollbars",
     "self",
-    "status", 
     "statusbar",
     "toolbar",
     "top"
@@ -196,13 +205,17 @@ var windowReadOnlyProperties = [
     "closed",
     "document",
     "history",
-    "name",
-    "pageXOffset", 
-    "pageYOffset", 
-    "screen", 
+    "pageXOffset",
+    "pageYOffset",
     "window"
 ];
 
+var windowReadWriteStringProperties = [
+    "defaultStatus",
+    "defaultstatus",
+    "name",
+    "status"
+];
 
 var windowFunctions = [
     "blur",
@@ -274,6 +287,14 @@ window.onload = function()
         var property = windowReadOnlyProperties[i];
         shouldBeTrue("canGet('" + property + "')");
         shouldBeFalse("canSet('" + property + "')");
+    }
+
+    log("\n----- tests for getting/setting string properties -----\n");
+    for (var i = 0; i < windowReadWriteStringProperties.length; i++) { //>
+        var property = windowReadWriteStringProperties[i];
+        shouldBeTrue("canGet('" + property + "')");
+        shouldBeTrue("canSetWithTypeConversion('" + property + "')");
+        
     }
 
     log("\n----- tests for getting/setting functions -----\n");
