@@ -1,3 +1,9 @@
+2008-02-15  Darin Adler  <darin@apple.com>
+
+        - another try at fixing the build
+
+        * webkit/webkitwebview.cpp: Added some explicit conversions to KURL.
+
 2008-02-14  Darin Adler  <darin@apple.com>
 
         * webkit/webkitwebframe.cpp: Removed DeprecatedString use to try to keep it building.

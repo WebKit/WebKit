@@ -1153,7 +1153,7 @@ static void webkit_web_view_update_settings(WebKitWebView* webView)
     settings->setJavaScriptEnabled(enableScripts);
     settings->setPluginsEnabled(enablePlugins);
     settings->setTextAreasAreResizable(resizableTextAreas);
-    settings->setUserStyleSheetLocation(userStylesheetUri);
+    settings->setUserStyleSheetLocation(KURL(userStylesheetUri));
 
     g_free(defaultEncoding);
     g_free(cursiveFontFamily);
@@ -1211,7 +1211,7 @@ static void webkit_web_view_settings_notify(WebKitWebSettings* webSettings, GPar
     else if (name == g_intern_string("resizable-text-areas"))
         settings->setTextAreasAreResizable(g_value_get_boolean(&value));
     else if (name == g_intern_string("user-stylesheet-uri"))
-        settings->setUserStyleSheetLocation(g_value_get_string(&value));
+        settings->setUserStyleSheetLocation(KURL(g_value_get_string(&value)));
     else
         g_warning("Unexpected setting '%s'", name);
     g_value_unset(&value);
