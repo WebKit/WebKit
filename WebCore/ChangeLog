@@ -2,6 +2,14 @@
 
         - another Qt build fix
 
+        * platform/qt/KURLQt.cpp:
+        (WebCore::KURL::operator QUrl): Use the characters directly, not ascii().
+        Eliminate references to urlString.
+
+2008-02-15  Darin Adler  <darin@apple.com>
+
+        - another Qt build fix
+
         * platform/qt/ClipboardQt.cpp:
         (WebCore::ClipboardQt::declareAndWriteDragImage): Use KURL instead of String.
 
