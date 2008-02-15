@@ -74,13 +74,12 @@ void JSAbstractEventListener::handleEvent(Event* ele, bool isWindowEvent)
     Frame *frame = window->impl()->frame();
     if (!frame)
         return;
-    KJSProxy* proxy = frame->scriptProxy();
-    if (!proxy)
+    if (!frame->scriptProxy()->isEnabled())
         return;
 
     JSLock lock;
 
-    JSGlobalObject* globalObject = proxy->globalObject();
+    JSGlobalObject* globalObject = frame->scriptProxy()->globalObject();
     ExecState* exec = globalObject->globalExec();
 
     JSValue* handleEventFuncValue = listener->get(exec, "handleEvent");
@@ -288,15 +287,11 @@ void JSLazyEventListener::parseCode() const
     m_parsed = true;
 
     Frame* frame = windowObj()->impl()->frame();
-    KJSProxy* proxy = 0;
-    if (frame)
-        proxy = frame->scriptProxy();
-
-    if (proxy) {
-        ExecState* exec = proxy->globalObject()->globalExec();
+    if (frame && frame->scriptProxy()->isEnabled()) {
+        ExecState* exec = frame->scriptProxy()->globalObject()->globalExec();
 
         JSLock lock;
-        JSObject* constr = proxy->globalObject()->functionConstructor();
+        JSObject* constr = frame->scriptProxy()->globalObject()->functionConstructor();
         List args;
 
         UString sourceURL(frame->loader()->url().string());

@@ -242,7 +242,7 @@ Window* Window::retrieveWindow(Frame* frame)
 {
     JSObject* o = retrieve(frame)->getObject();
 
-    ASSERT(o || !frame->settings() || !frame->settings()->isJavaScriptEnabled());
+    ASSERT(o || !frame->scriptProxy()->isEnabled());
     return static_cast<Window*>(o);
 }
 
@@ -256,8 +256,8 @@ Window* Window::retrieveActive(ExecState* exec)
 JSValue* Window::retrieve(Frame* frame)
 {
     ASSERT(frame);
-    if (KJSProxy* proxy = frame->scriptProxy())
-        return proxy->globalObject(); // the Global object is the "window"
+    if (frame->scriptProxy()->isEnabled())
+        return frame->scriptProxy()->globalObject(); // the Global object is the "window"
 
     return jsUndefined(); // This can happen with JS disabled on the domain of that window
 }

@@ -52,10 +52,10 @@ void ScheduledAction::execute(Window* window)
     if (!frame)
         return;
 
-    KJSProxy* scriptProxy = frame->scriptProxy();
-    if (!scriptProxy)
+    if (!frame->scriptProxy()->isEnabled())
         return;
 
+    KJSProxy* scriptProxy = frame->scriptProxy();
     Window* globalObject = scriptProxy->globalObject();
 
     scriptProxy->setProcessingTimerCallback(true);

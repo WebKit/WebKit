@@ -52,11 +52,10 @@ void JSCustomVoidCallback::handleEvent()
     ASSERT(m_callback);
     ASSERT(m_frame);
        
-    KJSProxy* proxy = m_frame->scriptProxy();
-    if (!proxy)
+    if (!m_frame->scriptProxy()->isEnabled())
         return;
         
-    JSGlobalObject* globalObject = proxy->globalObject();
+    JSGlobalObject* globalObject = m_frame->scriptProxy()->globalObject();
     ExecState* exec = globalObject->globalExec();
         
     KJS::JSLock lock;

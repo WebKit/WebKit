@@ -1,3 +1,75 @@
+2008-02-15  Alice Liu  <alice.liu@apple.com>
+
+        Reviewed by Darin.
+
+        Fixed <rdar://problem/5741440> REGRESSION (r28496): After deactivating JavaScript, scripts embedded in the HTML page continue to run
+     
+        Before this patch, Frame::scriptProxy() would only return null in the case that javascript was 
+        disabled and if the script proxy field wasn't set (which would only be the case if the window 
+        hasn't loaded anything yet).  Not all callers of scriptProxy() always check for a non-null return 
+        value.  Those that did check would effectively be checking if javascript was enabled before proceeding.
+        This fix consists of 2 elements: first, make sure that scriptProxy() will never return null, regardless 
+        of whether javascript is disabled.  This will mean that callers who don't check for null won't crash.  
+        Second, callers who did check for null now instead check for javascript being disabled.  This means that 
+        code paths intended for preventing javascript from being run will be making the correct check.  Another
+        minor addition to this patch is that I added a function on Frame to be a shortcut for checking if javascript
+        is enabled. 
+
+        * bindings/js/JSCustomSQLStatementCallback.cpp:
+        (WebCore::JSCustomSQLStatementCallback::handleEvent):
+        * bindings/js/JSCustomSQLStatementErrorCallback.cpp:
+        (WebCore::JSCustomSQLStatementErrorCallback::handleEvent):
+        * bindings/js/JSCustomSQLTransactionCallback.cpp:
+        (WebCore::JSCustomSQLTransactionCallback::handleEvent):
+        * bindings/js/JSCustomSQLTransactionErrorCallback.cpp:
+        (WebCore::JSCustomSQLTransactionErrorCallback::handleEvent):
+        * bindings/js/JSCustomVoidCallback.cpp:
+        (WebCore::JSCustomVoidCallback::handleEvent):
+        * bindings/js/JSCustomXPathNSResolver.cpp:
+        (WebCore::JSCustomXPathNSResolver::lookupNamespaceURI):
+        * bindings/js/ScheduledAction.cpp:
+        (WebCore::ScheduledAction::execute):
+        * bindings/js/kjs_events.cpp:
+        (WebCore::JSAbstractEventListener::handleEvent):
+        (WebCore::JSLazyEventListener::parseCode):
+        * bindings/js/kjs_html.cpp:
+        (WebCore::runtimeObjectImplementsCall):
+        * bindings/js/kjs_proxy.cpp:
+        (WebCore::KJSProxy::isEnabled):
+        * bindings/js/kjs_proxy.h:
+        * bindings/js/kjs_window.cpp:
+        (KJS::Window::retrieveWindow):
+        (KJS::Window::retrieve):
+        * dom/Document.cpp:
+        (WebCore::Document::createHTMLEventListener):
+        * dom/EventTarget.cpp:
+        (WebCore::EventTarget::dispatchGenericEvent):
+        * html/HTMLPlugInElement.cpp:
+        (WebCore::HTMLPlugInElement::createNPObject):
+        * html/HTMLScriptElement.cpp:
+        (WebCore::HTMLScriptElement::evaluateScript):
+        * html/HTMLTokenizer.cpp:
+        (WebCore::HTMLTokenizer::parseTag):
+        (WebCore::HTMLTokenizer::processToken):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::executeScript):
+        (WebCore::FrameLoader::userGestureHint):
+        (WebCore::FrameLoader::open):
+        (WebCore::FrameLoader::dispatchWindowObjectAvailable):
+        (WebCore::FrameLoader::switchOutLowBandwidthDisplayIfReady):
+        * manual-tests/disable-javascript-reload.html: Added.
+        * page/Frame.cpp:
+        (WebCore::Frame::scriptProxy):
+        (WebCore::Frame::bindingRootObject):
+        (WebCore::Frame::windowScriptNPObject):
+        * page/Frame.h:
+        * page/InspectorController.cpp:
+        (WebCore::canPassNodeToJavaScript):
+        * page/mac/FrameMac.mm:
+        (WebCore::Frame::windowScriptObject):
+        * svg/SVGDocumentExtensions.cpp:
+        (WebCore::SVGDocumentExtensions::createSVGEventListener):
+
 2008-02-15  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Alexey Proskuryakov.

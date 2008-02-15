@@ -638,8 +638,7 @@ KJS::Bindings::Instance* Frame::createScriptInstanceForWidget(WebCore::Widget* w
 
 WebScriptObject* Frame::windowScriptObject()
 {
-    Settings* settings = this->settings();
-    if (!settings || !settings->isJavaScriptEnabled())
+    if (!scriptProxy()->isEnabled())
         return 0;
 
     if (!d->m_windowScriptObject) {

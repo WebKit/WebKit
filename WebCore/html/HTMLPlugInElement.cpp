@@ -180,7 +180,7 @@ NPObject* HTMLPlugInElement::createNPObject()
     }
 
     // Can't create NPObjects when JavaScript is disabled
-    if (!settings->isJavaScriptEnabled())
+    if (!frame->scriptProxy()->isEnabled())
         return _NPN_CreateNoScriptObject();
     
     // Create a JSObject bound to this element

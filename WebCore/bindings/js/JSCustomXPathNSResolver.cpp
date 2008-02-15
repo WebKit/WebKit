@@ -73,13 +73,12 @@ String JSCustomXPathNSResolver::lookupNamespaceURI(const String& prefix)
 
     if (!m_frame)
         return String();
-    KJSProxy* proxy = m_frame->scriptProxy();
-    if (!proxy)
+    if (!m_frame->scriptProxy()->isEnabled())
         return String();
 
     JSLock lock;
 
-    JSGlobalObject* globalObject = proxy->globalObject();
+    JSGlobalObject* globalObject = m_frame->scriptProxy()->globalObject();
     ExecState* exec = globalObject->globalExec();
         
     JSValue* lookupNamespaceURIFuncValue = m_customResolver->get(exec, "lookupNamespaceURI");
