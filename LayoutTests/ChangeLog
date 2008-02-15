@@ -1,3 +1,12 @@
+2008-02-15  Samuel Weinig  <sam@webkit.org>
+
+        Reviewed and rubber-stamped by Oliver Hunt.
+
+        Add leopard specific results for stroke-width-click.svg to work around
+        a CG regression.
+
+        * platform/mac-leopard/svg/custom/stroke-width-click-expected.txt: Added.
+
 2008-02-14  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Jon H.
