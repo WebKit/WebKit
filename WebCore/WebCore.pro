@@ -68,6 +68,7 @@ win32-g++ {
 gtk-port: PKGCONFIG += gthread-2.0
 
 # Optional components (look for defs in config.h and included files!)
+!contains(DEFINES, ENABLE_CROSS_DOCUMENT_MESSAGING=.): DEFINES += ENABLE_CROSS_DOCUMENT_MESSAGING=1
 !contains(DEFINES, ENABLE_DATABASE=.): DEFINES += ENABLE_DATABASE=1
 !contains(DEFINES, ENABLE_ICONDATABASE=.): DEFINES += ENABLE_ICONDATABASE=1
 !contains(DEFINES, ENABLE_XPATH=.): DEFINES += ENABLE_XPATH=1
@@ -1089,6 +1090,16 @@ gtk-port {
         ../WebKit/gtk/WebCoreSupport/FrameLoaderClientGtk.cpp \
         ../WebKit/gtk/WebCoreSupport/InspectorClientGtk.cpp \
         ../WebKit/gtk/WebCoreSupport/PasteboardHelperGtk.cpp
+}
+
+contains(DEFINES, ENABLE_CROSS_DOCUMENT_MESSAGING=1) {
+    FEATURE_DEFINES_JAVASCRIPT += ENABLE_CROSS_DOCUMENT_MESSAGING=1
+
+    SOURCES += \
+        dom/MessageEvent.cpp
+
+    IDL_BINDINGS += \
+        dom/MessageEvent.idl
 }
 
 contains(DEFINES, ENABLE_DATABASE=1) {

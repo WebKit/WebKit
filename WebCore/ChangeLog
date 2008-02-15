@@ -735,6 +735,16 @@
 
 2008-02-14  Adam Roben  <aroben@apple.com>
 
+        Turn on cross-document messaging support by default
+
+        Reviewed by Darin.
+
+        * Configurations/WebCore.xcconfig:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+
+2008-02-14  Adam Roben  <aroben@apple.com>
+
         Conditionalize cross-document messaging support
 
         The cross-document messaging parts of HTML 5 are in flux and we want

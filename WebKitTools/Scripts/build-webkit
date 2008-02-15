@@ -39,7 +39,7 @@ use POSIX;
 
 my $originalWorkingDirectory = getcwd();
 
-my $crossDocumentMessagingSupport = 0;
+my $crossDocumentMessagingSupport = 1;
 my $databaseSupport = 1;
 my $iconDatabaseSupport = 1;
 my $svgSupport = 1;
