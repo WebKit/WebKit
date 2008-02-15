@@ -47,6 +47,7 @@
 #include "ResourceHandle.h"
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
+#include "Threading.h"
 #ifndef USE_QXMLSTREAM
 #include <libxml/parser.h>
 #include <libxml/parserInternals.h>
@@ -340,13 +341,15 @@ public:
 // --------------------------------
 
 static int globalDescriptor = 0;
+static DocLoader* globalDocLoader = 0;
+static ThreadIdentifier libxmlLoaderThread = 0;
 
 static int matchFunc(const char* uri)
 {
-    return 1; // Match everything.
+    // Only match loads initiated due to uses of libxml2 from within XMLTokenizer to avoid
+    // interfering with client applications that also use libxml2.  http://bugs.webkit.org/show_bug.cgi?id=17353
+    return globalDocLoader && currentThread() == libxmlLoaderThread;
 }
-
-static DocLoader* globalDocLoader = 0;
 
 class OffsetBuffer {
 public:
@@ -377,15 +380,24 @@ static bool shouldAllowExternalLoad(const char* inURI)
 }
 static void* openFunc(const char* uri)
 {
-    if (!globalDocLoader || !shouldAllowExternalLoad(uri))
+    ASSERT(globalDocLoader);
+    ASSERT(currentThread() == libxmlLoaderThread);
+
+    if (!shouldAllowExternalLoad(uri))
         return &globalDescriptor;
 
     ResourceError error;
     ResourceResponse response;
     Vector<char> data;
     
-    if (globalDocLoader->frame()) 
-        globalDocLoader->frame()->loader()->loadResourceSynchronously(KURL(uri), error, response, data);
+    DocLoader* docLoader = globalDocLoader;
+    globalDocLoader = 0;
+    // FIXME: We should restore the original global error handler as well.
+
+    if (docLoader->frame()) 
+        docLoader->frame()->loader()->loadResourceSynchronously(KURL(uri), error, response, data);
+
+    globalDocLoader = docLoader;
 
     return new OffsetBuffer(data);
 }
@@ -432,6 +444,7 @@ static xmlParserCtxtPtr createStringParser(xmlSAXHandlerPtr handlers, void* user
         xmlInitParser();
         xmlRegisterInputCallbacks(matchFunc, openFunc, readFunc, closeFunc);
         xmlRegisterOutputCallbacks(matchFunc, openFunc, writeFunc, closeFunc);
+        libxmlLoaderThread = currentThread();
         didInit = true;
     }
 

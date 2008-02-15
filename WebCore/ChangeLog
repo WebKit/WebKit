@@ -1,3 +1,27 @@
+2008-02-14  Alp Toker  <alp@atoker.com>
+
+        Reviewed by Darin.
+
+        http://bugs.webkit.org/show_bug.cgi?id=17353
+        XMLTokenizer installs global libxml2 callbacks that can break client applications
+
+        Patch by Mark Rowe (with a few changes).
+
+        The xmlRegisterInputCallbacks/xmlRegisterOutputCallbacks done at
+        init are global so we need to make sure these callbacks only get used
+        by XMLTokenizer and never by libxml2 calls in user applications.
+
+        This patch modifies the match and open functions to only apply when we
+        are certain the caller is XMLTokenizer by checking globalDocLoader and
+        ensuring we're on the correct thread.
+
+        Some possible issues remain. See the bug report for details.
+
+        * dom/XMLTokenizer.cpp:
+        (WebCore::matchFunc):
+        (WebCore::openFunc):
+        (WebCore::createStringParser):
+
 2008-02-14  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Darin Adler.
