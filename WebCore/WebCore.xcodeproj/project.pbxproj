@@ -309,6 +309,8 @@
 		371F53EA0D2704F900ECE0D5 /* CSSUnicodeRangeValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 371F53E80D2704F900ECE0D5 /* CSSUnicodeRangeValue.cpp */; };
 		37919C230B7D188600A56998 /* PositionIterator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37919C210B7D188600A56998 /* PositionIterator.cpp */; };
 		37919C240B7D188600A56998 /* PositionIterator.h in Headers */ = {isa = PBXBuildFile; fileRef = 37919C220B7D188600A56998 /* PositionIterator.h */; settings = {ATTRIBUTES = (); }; };
+		37F818FD0D657606005E1F05 /* WebCoreURLResponse.h in Headers */ = {isa = PBXBuildFile; fileRef = 37F818FB0D657606005E1F05 /* WebCoreURLResponse.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		37F818FE0D657606005E1F05 /* WebCoreURLResponse.mm in Sources */ = {isa = PBXBuildFile; fileRef = 37F818FC0D657606005E1F05 /* WebCoreURLResponse.mm */; };
 		441B05560CD779B6007C1F18 /* DOMCSSStyleSheetPrivate.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 4429AAEA0CB84DC7007647C5 /* DOMCSSStyleSheetPrivate.h */; };
 		441B05580CD779F2007C1F18 /* DOMEventPrivate.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 4429AAF80CB84E5F007647C5 /* DOMEventPrivate.h */; };
 		441B055A0CD77A14007C1F18 /* DOMHTMLCollectionPrivate.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 4429AAF10CB84E35007647C5 /* DOMHTMLCollectionPrivate.h */; };
@@ -4564,6 +4566,8 @@
 		371F53E80D2704F900ECE0D5 /* CSSUnicodeRangeValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CSSUnicodeRangeValue.cpp; sourceTree = "<group>"; };
 		37919C210B7D188600A56998 /* PositionIterator.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = PositionIterator.cpp; sourceTree = "<group>"; };
 		37919C220B7D188600A56998 /* PositionIterator.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = PositionIterator.h; sourceTree = "<group>"; };
+		37F818FB0D657606005E1F05 /* WebCoreURLResponse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebCoreURLResponse.h; sourceTree = "<group>"; };
+		37F818FC0D657606005E1F05 /* WebCoreURLResponse.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebCoreURLResponse.mm; sourceTree = "<group>"; };
 		441244D80CB853ED008F0C79 /* JSHTMLInputElementBaseTable.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 30; path = JSHTMLInputElementBaseTable.cpp; sourceTree = "<group>"; };
 		4429AAEA0CB84DC7007647C5 /* DOMCSSStyleSheetPrivate.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; path = DOMCSSStyleSheetPrivate.h; sourceTree = "<group>"; };
 		4429AAF10CB84E35007647C5 /* DOMHTMLCollectionPrivate.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DOMHTMLCollectionPrivate.h; sourceTree = "<group>"; };
@@ -8297,6 +8301,8 @@
 				514C76490CE9234E007EF3CD /* ResourceRequestMac.mm */,
 				514C764A0CE9234E007EF3CD /* ResourceResponse.h */,
 				514C764B0CE9234E007EF3CD /* ResourceResponseMac.mm */,
+				37F818FB0D657606005E1F05 /* WebCoreURLResponse.h */,
+				37F818FC0D657606005E1F05 /* WebCoreURLResponse.mm */,
 			);
 			path = mac;
 			sourceTree = "<group>";
@@ -14231,6 +14237,7 @@
 				5DCF836D0D59159800953BC6 /* PluginInfoStore.h in Headers */,
 				C0294DF40D5A6FD800CC7D6B /* UserStyleSheetLoader.h in Headers */,
 				E1DE1C080D5CE4CF0034C38F /* MessageQueue.h in Headers */,
+				37F818FD0D657606005E1F05 /* WebCoreURLResponse.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -15824,6 +15831,7 @@
 				51A9267C0D53F0570063ECC2 /* OriginQuotaManager.cpp in Sources */,
 				51A9267E0D53F0570063ECC2 /* OriginUsageRecord.cpp in Sources */,
 				C0294DF30D5A6FD800CC7D6B /* UserStyleSheetLoader.cpp in Sources */,
+				37F818FE0D657606005E1F05 /* WebCoreURLResponse.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

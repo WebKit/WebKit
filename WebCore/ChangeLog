@@ -1,5 +1,30 @@
 2008-02-15  Dan Bernstein  <mitz@apple.com>
 
+        Reviewed by Alexey Proskuryakov.
+
+        - WebCore part of fixing http://bugs.webkit.org/show_bug.cgi?id=17360
+          <rdar://problem/5743131> REGRESSION: mp4 file downloaded from server is downloaded as html
+
+        Test: http/tests/loading/text-content-type-with-binary-extension.html
+
+        Refined the workaround for <rdar://problem/5321972> to exclude files
+        with extensions that are known to be associated with binary MIME types.
+
+        * WebCore.xcodeproj/project.pbxproj: Added WebCoreURLResponse.{h,mm}.
+        * platform/network/mac/ResourceResponseMac.mm:
+        (WebCore::ResourceResponse::doUpdateResourceResponse): Moved the
+        workaround logic into WebCoreURLResponse.
+        * platform/network/mac/WebCoreURLResponse.h: Added.
+        * platform/network/mac/WebCoreURLResponse.mm: Added.
+        (createBinaryExtensionsSet): Returns a set of extensions known to
+        belong to MIME types of binary data.
+        (-[NSURLResponse _webcore_MIMEType]):
+        (-[NSHTTPURLResponse _webcore_MIMEType]): Forces the MIME type from
+        application/octet-stream to text/plain if that is the specified
+        Content-Type, unless the extension is in the binary extensions set.
+
+2008-02-15  Dan Bernstein  <mitz@apple.com>
+
         Reviewed by Dave Hyatt.
 
         - fix http://bugs.webkit.org/show_bug.cgi?id=17306

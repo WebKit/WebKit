@@ -31,6 +31,7 @@
 #import "WebFrameBridge.h"
 #import "WebNSDictionaryExtras.h"
 #import "WebNSURLExtras.h"
+#import <WebCore/WebCoreURLResponse.h>
 
 static NSString * const WebResourceDataKey =              @"WebResourceData";
 static NSString * const WebResourceFrameNameKey =         @"WebResourceFrameName";
@@ -248,13 +249,13 @@ static NSString * const WebResourceResponseKey =          @"WebResourceResponse"
     return self;
 }
 
-- (id)_initWithData:(NSData *)data URL:(NSURL *)URL response:(NSURLResponse *)response MIMEType:(NSString *)MIMEType
+- (id)_initWithData:(NSData *)data URL:(NSURL *)URL response:(NSURLResponse *)response
 {
     // Pass NO for copyData since the data doesn't need to be copied since we know that callers will no longer modify it.
     // Copying it will also cause a performance regression.
     return [self _initWithData:data
                            URL:URL
-                      MIMEType:MIMEType
+                      MIMEType:[response _webcore_MIMEType]
               textEncodingName:[response textEncodingName]
                      frameName:nil
                       response:response

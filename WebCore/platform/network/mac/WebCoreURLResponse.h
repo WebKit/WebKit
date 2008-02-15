@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,31 +26,9 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit/WebResource.h>
+// FIXME: This is a workaround for <rdar://problem/5321972> REGRESSION: Plain text document from HTTP server detected
+// as application/octet-stream
 
-@interface WebResource (WebResourcePrivate)
-
-- (id)_initWithData:(NSData *)data 
-                URL:(NSURL *)URL 
-           MIMEType:(NSString *)MIMEType 
-   textEncodingName:(NSString *)textEncodingName 
-          frameName:(NSString *)frameName 
-           response:(NSURLResponse *)response
-           copyData:(BOOL)copyData;
-
-- (id)_initWithData:(NSData *)data URL:(NSURL *)URL response:(NSURLResponse *)response;
-
-- (BOOL)_shouldIgnoreWhenUnarchiving;
-- (void)_ignoreWhenUnarchiving;
-
-+ (NSArray *)_resourcesFromPropertyLists:(NSArray *)propertyLists;
-+ (NSArray *)_propertyListsFromResources:(NSArray *)resources;
-
-- (id)_initWithPropertyList:(id)propertyList;
-
-- (NSFileWrapper *)_fileWrapperRepresentation;
-- (id)_propertyListRepresentation;
-- (NSURLResponse *)_response;
-- (NSString *)_stringValue;
-
+@interface NSURLResponse (WebCoreURLResponse)
+- (NSString *)_webcore_MIMEType;
 @end

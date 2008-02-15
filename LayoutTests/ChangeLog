@@ -1,3 +1,15 @@
+2008-02-15  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        - test for http://bugs.webkit.org/show_bug.cgi?id=17360
+          <rdar://problem/5743131> REGRESSION: mp4 file downloaded from server is downloaded as html
+
+        * http/tests/loading/resources/.htaccess: Added.
+        * http/tests/loading/resources/binaryData.m4a: Added.
+        * http/tests/loading/text-content-type-with-binary-extension-expected.txt: Added.
+        * http/tests/loading/text-content-type-with-binary-extension.html: Added.
+
 2008-02-15  Samuel Weinig  <sam@webkit.org>
 
         Reviewed and rubber-stamped by Oliver Hunt.
