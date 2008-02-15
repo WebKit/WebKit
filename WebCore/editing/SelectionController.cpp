@@ -174,8 +174,8 @@ void SelectionController::nodeWillBeRemoved(Node *node)
     if (node && highestAncestor(node)->nodeType() == Node::DOCUMENT_FRAGMENT_NODE)
         return;
     
-    bool baseRemoved = !m_sel.base().isCandidate() || removingNodeRemovesPosition(node, m_sel.base());
-    bool extentRemoved = !m_sel.extent().isCandidate() || removingNodeRemovesPosition(node, m_sel.extent());
+    bool baseRemoved = removingNodeRemovesPosition(node, m_sel.base());
+    bool extentRemoved = removingNodeRemovesPosition(node, m_sel.extent());
     bool startRemoved = removingNodeRemovesPosition(node, m_sel.start());
     bool endRemoved = removingNodeRemovesPosition(node, m_sel.end());
     

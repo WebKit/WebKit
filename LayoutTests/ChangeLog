@@ -1,3 +1,49 @@
+2008-02-15  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Dan Bernstein.
+        
+        <rdar://problem/5738768> REGRESSION (r30062): Crash in InlineTextBox::isLineBreak() when Undoing a replace
+        
+        Disabled:
+        * editing/selection/inconsistent-in-removeChildNode.html: Removed.
+        * editing/selection/inconsistent-in-removeChildNode.html-disabled: Added.
+        
+        Demonstrates fix:
+        * editing/undo/5738768-expected.txt: Added.
+        * editing/undo/5738768.html: Added.
+        
+        During a shouldChangeSelection call, the old selection is no longer null because
+        nodeWillBeRemoved doesn't blow it away:
+        * platform/mac/editing/style/remove-underline-across-paragraph-in-bold-expected.txt:
+        * platform/mac/editing/style/remove-underline-after-paragraph-in-bold-expected.txt:
+        * platform/mac/editing/style/remove-underline-in-bold-expected.txt:
+
+        During a shouldChangeSelection call, the old selection is now null because
+        nodeWillBeRemoved blows it away:
+        * platform/mac/editing/style/remove-underline-across-paragraph-expected.txt:
+        
+        More instances of <rdar://problem/5729315>, where, during a shouldChangeSelection 
+        call content that held the old selection is still around but it wouldn't make sense
+        to leave the selection there, so we shouldn't call shouldChangeSelection at all:
+        * platform/mac/editing/style/remove-underline-expected.txt:
+        * platform/mac/editing/style/unbold-in-bold-expected.txt:
+
+        Similar changes, but ones where I've also updated pixel results for old, unrelated fixes:
+        * platform/mac-leopard/editing/pasteboard/paste-RTFD-expected.txt:
+        * platform/mac/editing/deleting/delete-leading-ws-001-expected.checksum:
+        * platform/mac/editing/deleting/delete-leading-ws-001-expected.txt:
+        * platform/mac/editing/deleting/delete-line-011-expected.checksum:
+        * platform/mac/editing/deleting/delete-line-011-expected.txt:
+        * platform/mac/editing/execCommand/paste-1-expected.checksum:
+        * platform/mac/editing/execCommand/paste-1-expected.txt:
+        * platform/mac/editing/execCommand/paste-2-expected.checksum:
+        * platform/mac/editing/execCommand/paste-2-expected.txt:
+        * platform/mac/editing/pasteboard/emacs-ctrl-k-y-001-expected.checksum:
+        * platform/mac/editing/pasteboard/emacs-ctrl-k-y-001-expected.txt:
+        * platform/mac/editing/pasteboard/paste-RTFD-expected.txt:
+        * platform/mac/editing/pasteboard/paste-text-012-expected.checksum:
+        * platform/mac/editing/selection/4960116-expected.checksum:
+
 2008-02-15  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Alexey Proskuryakov.
