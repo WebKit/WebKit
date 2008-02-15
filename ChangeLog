@@ -1,3 +1,16 @@
+2008-02-15  Alp Toker  <alp@atoker.com>
+
+        Reviewed by Holger.
+
+        GTK+ configure script cleanups
+
+        Categorize the configuration summary printout.
+        Bump GTK+ requirement to 2.8.
+        Rename 'webkit_target' to just 'target'.
+        Don't check for pthread on Win32.
+
+        * configure.ac:
+
 2008-02-14  Adam Roben  <aroben@apple.com>
 
         Turn on cross-document messaging support by default

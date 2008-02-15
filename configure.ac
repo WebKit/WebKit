@@ -110,10 +110,12 @@ AC_C_VOLATILE
 AC_HEADER_STDC
 AC_HEADER_STDBOOL
 
-# pthread
+# pthread (not needed on Windows)
+if test "$os_win32" = "no"; then
 AC_CHECK_HEADERS([pthread.h],
                  AC_DEFINE([HAVE_PTHREAD_H],[1],[Define if pthread exist]),
                  AC_MSG_ERROR([pthread support is required to build WebKit]))
+fi
 
 # libjpeg headers
 AC_CHECK_HEADERS([jpeglib.h])
@@ -139,18 +141,18 @@ AC_SUBST([ICU_CPPFLAGS])
 AC_SUBST([ICU_LIBS])
 
 # determine the GDK/GTK+ target
-AC_MSG_CHECKING([the target for WebKit GTK+])
-AC_ARG_WITH(webkit_target,
-            AC_HELP_STRING([--with-webkit-target=@<:@x11/win32/quartz/directfb@:>@],
+AC_MSG_CHECKING([the target windowing system])
+AC_ARG_WITH(target,
+            AC_HELP_STRING([--with-target=@<:@x11/win32/quartz/directfb@:>@],
                            [Select webkit target [default=x11]]),
-            [],[with_webkit_target="x11"])
+            [],[with_target="x11"])
 
-case "$with_webkit_target" in
+case "$with_target" in
      x11|win32|quartz|directfb) ;;
      *) AC_MSG_ERROR([Invalid target: must be x11, quartz, win32, or directfb.]) ;;
 esac
 
-AC_MSG_RESULT([$with_webkit_target])
+AC_MSG_RESULT([$with_target])
 
 AC_MSG_CHECKING([for Hildon UI extensions])
 AC_ARG_WITH(hildon,
@@ -181,19 +183,20 @@ esac
 
 AC_MSG_RESULT([$http_backend])
 
-
 # minimum base dependencies
-GLIB_REQUIRED_VERSION=2.0
-GOBJECT_REQUIRED_VERSION=2.0
-GTHREAD_REQUIRED_VERSION=2.0
-PANGO_REQUIRED_VERSION=1.0
 CAIRO_REQUIRED_VERSION=1.4
 FONTCONFIG_REQUIRED_VERSION=2.4
 FREETYPE2_REQUIRED_VERSION=9.0
 LIBXML_REQUIRED_VERSION=2.6
 
+# minimum GTK+ base dependencies
+GLIB_REQUIRED_VERSION=2.0
+GOBJECT_REQUIRED_VERSION=2.0
+GTHREAD_REQUIRED_VERSION=2.0
+PANGO_REQUIRED_VERSION=1.0
+GTK_REQUIRED_VERSION=2.8
+
 # optional modules
-GTK_REQUIRED_VERSION=2.0
 LIBCURL_REQUIRED_VERSION=7.15
 LIBXSLT_REQUIRED_VERSION=1.1.7
 SQLITE_REQUIRED_VERSION=3.0
@@ -429,10 +432,10 @@ AM_CONDITIONAL([OS_LINUX],[test "$os_linux" = "yes"])
 AM_CONDITIONAL([OS_FREEBSD],[test "$os_freebsd" = "yes"])
 
 # target conditionals
-AM_CONDITIONAL([TARGET_X11], [test "$with_webkit_target" = "x11"])
-AM_CONDITIONAL([TARGET_WIN32], [test "$with_webkit_target" = "win32"])
-AM_CONDITIONAL([TARGET_QUARTZ], [test "$with_webkit_target" = "quartz"])
-AM_CONDITIONAL([TARGET_DIRECTFB], [test "$with_webkit_target" = "directfb"])
+AM_CONDITIONAL([TARGET_X11], [test "$with_target" = "x11"])
+AM_CONDITIONAL([TARGET_WIN32], [test "$with_target" = "win32"])
+AM_CONDITIONAL([TARGET_QUARTZ], [test "$with_target" = "quartz"])
+AM_CONDITIONAL([TARGET_DIRECTFB], [test "$with_target" = "directfb"])
 
 # HTTP backend conditionals
 AM_CONDITIONAL([USE_CURL], [test "$http_backend" = "curl"])
@@ -467,12 +470,12 @@ AC_OUTPUT
 echo "
 WebKit was configured with the following options:
 
- Target                            : $with_webkit_target
- Hildon UI extensions              : $with_hildon
- HTTP backend                      : $http_backend
- Enable debug                      : $enable_debug
+Build configuration:
+ Enable debugging (slow)           : $enable_debug
  Code coverage support             : $enable_coverage
+ HTTP backend                      : $http_backend
  Optimized memory allocator        : $enable_fast_malloc
+Features:
  HTML5 cross-document messaging    : $enable_cross_document_messaging
  HTML5 client-side storage support : $enable_database
  HTML5 video element support       : $enable_video
@@ -486,4 +489,7 @@ WebKit was configured with the following options:
  SVG use element support           : $enable_svg_use_element
  XPATH support                     : $enable_xpath
  XSLT support                      : $enable_xslt
+GTK+ configuration:
+ GDK target                        : $with_target
+ Hildon UI extensions              : $with_hildon
 "
