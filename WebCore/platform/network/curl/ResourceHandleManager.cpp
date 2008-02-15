@@ -516,7 +516,7 @@ static void parseDataUrl(ResourceHandle* handle)
     client->didReceiveResponse(handle, response);
 
     if (!data.isEmpty())
-        client->didReceiveData(handle, data.ascii(), data.length(), 0);
+        client->didReceiveData(handle, data.latin1().characters(), data.length(), 0);
 
     client->didFinishLoading(handle);
 }

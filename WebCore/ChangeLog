@@ -1,5 +1,16 @@
 2008-02-14  Darin Adler  <darin@apple.com>
 
+        - more build fixes
+
+        * platform/KURL.cpp:
+        (WebCore::appendEncodedHostname): Use String to make a QString.
+        * platform/network/cf/ResourceRequest.h:
+        (WebCore::ResourceRequest::ResourceRequest): Removed a stray deprecatedString() call.
+        * platform/network/curl/ResourceHandleManager.cpp:
+        (WebCore::parseDataUrl): Updated to String rather than DeprecatedString functions.
+
+2008-02-14  Darin Adler  <darin@apple.com>
+
         - next Qt build fix
 
         * platform/network/qt/ResourceRequest.h:
