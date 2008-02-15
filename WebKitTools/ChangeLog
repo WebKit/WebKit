@@ -1,3 +1,10 @@
+2008-02-14  Darin Adler  <darin@apple.com>
+
+       - fix Windows build
+
+        * DumpRenderTree/win/UIDelegate.cpp:
+        (UIDelegate::setStatusText): Update parameter types to match declaration.
+
 2008-02-14  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Geoff G and Weinig.

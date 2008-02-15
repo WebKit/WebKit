@@ -407,7 +407,7 @@ HRESULT STDMETHODCALLTYPE UIDelegate::exceededDatabaseQuota(
 }
 
 
-HRESULT STDMETHODCALLTYPE UIDelegate::setStatusText(BSTR text)
+HRESULT STDMETHODCALLTYPE UIDelegate::setStatusText(IWebView*, BSTR text)
 { 
     if (layoutTestController->dumpStatusCallbacks())
         printf("UI DELEGATE STATUS CALLBACK: setStatusText:%S\n", text ? text : L"");
