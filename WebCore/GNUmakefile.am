@@ -1001,6 +1001,25 @@ webcore_sources += \
 endif # END USE_CURL
 
 # ----
+# Cross-document messaging support
+# ----
+
+if ENABLE_CROSS_DOCUMENT_MESSAGING
+FEATURE_DEFINES_JAVASCRIPT += ENABLE_CROSS_DOCUMENT_MESSAGING=1
+
+webcore_built_sources += \
+	DerivedSources/JSMessageEvent.h
+	DerivedSources/JSMessageEvent.cpp
+
+IDL_BINDINGS += \
+	WebCore/dom/MessageEvent.idl
+
+webcore_cppflags += \
+	-DENABLE_CROSS_DOCUMENT_MESSAGING=1
+
+endif # END ENABLE_CROSS_DOCUMENT_MESSAGING
+
+# ----
 # Database Support
 # ----
 if ENABLE_DATABASE

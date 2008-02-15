@@ -220,11 +220,13 @@ Console* DOMWindow::console() const
     return m_console.get();
 }
 
+#if ENABLE(CROSS_DOCUMENT_MESSAGING)
 void DOMWindow::postMessage(const String& message, const String& domain, const String& uri, DOMWindow* source) const
 {
    ExceptionCode ec;
    document()->dispatchEvent(new MessageEvent(message, domain, uri, source), ec, true);
 }
+#endif
 
 DOMSelection* DOMWindow::getSelection()
 {

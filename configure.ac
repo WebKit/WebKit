@@ -222,6 +222,14 @@ AC_ARG_ENABLE(debug,
               [],[enable_debug="no"])
 AC_MSG_RESULT([$enable_debug])
 
+# check whether to build with cross-document messaging support
+AC_MSG_CHECKING([whether to enable HTML5 client-side storage support])
+AC_ARG_ENABLE(cross_document_messaging,
+              AC_HELP_STRING([--enable-cross-document-messaging],
+                             [enable HTML5 cross-document messaging support [default=no]]),
+              [],[enable_cross_document_messaging="no"])
+AC_MSG_RESULT([$enable_cross_document_messaging])
+
 # check whether to build with database support
 AC_MSG_CHECKING([whether to enable HTML5 client-side storage support])
 AC_ARG_ENABLE(database,
@@ -431,6 +439,7 @@ AM_CONDITIONAL([USE_CURL], [test "$http_backend" = "curl"])
 
 # WebKit feature conditionals
 AM_CONDITIONAL([ENABLE_DEBUG],[test "$enable_debug" = "yes"])
+AM_CONDITIONAL([ENABLE_CROSS_DOCUMENT_MESSAGING],[test "$enable_cross_document_messaging" = "yes"])
 AM_CONDITIONAL([ENABLE_DATABASE],[test "$enable_database" = "yes"])
 AM_CONDITIONAL([ENABLE_ICONDATABASE],[test "$enable_icon_database" = "yes"])
 AM_CONDITIONAL([ENABLE_XPATH],[test "$enable_xpath" = "yes"])
@@ -464,6 +473,7 @@ WebKit was configured with the following options:
  Enable debug                      : $enable_debug
  Code coverage support             : $enable_coverage
  Optimized memory allocator        : $enable_fast_malloc
+ HTML5 cross-document messaging    : $enable_cross_document_messaging
  HTML5 client-side storage support : $enable_database
  HTML5 video element support       : $enable_video
  Icon database support             : $enable_icon_database

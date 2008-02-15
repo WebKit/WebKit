@@ -735,6 +735,35 @@
 
 2008-02-14  Adam Roben  <aroben@apple.com>
 
+        Conditionalize cross-document messaging support
+
+        The cross-document messaging parts of HTML 5 are in flux and we want
+        ports to be able to turn off the support as needed.
+
+        Note that the support is turned off by default right now. A subsequent
+        commit will turn it on by default.
+
+        Reviewed by Darin.
+
+        * GNUmakefile.am:
+        * WebCore.vcproj/build-generated-files.sh:
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::customGetOwnPropertySlot):
+        * bindings/js/JSEventCustom.cpp:
+        (WebCore::toJS):
+        * dom/Event.cpp:
+        (WebCore::Event::isMessageEvent):
+        * dom/Event.h:
+        * dom/MessageEvent.cpp:
+        * dom/MessageEvent.h:
+        * dom/MessageEvent.idl:
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::postMessage):
+        * page/DOMWindow.h:
+        * page/DOMWindow.idl:
+
+2008-02-14  Adam Roben  <aroben@apple.com>
+
         Improve the efficiency of SecurityOriginHash
 
         Reviewed by Alexey.

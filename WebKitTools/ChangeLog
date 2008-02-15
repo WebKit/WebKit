@@ -1,3 +1,17 @@
+2008-02-14  Adam Roben  <aroben@apple.com>
+
+        Conditionalize cross-document messaging support
+
+        The cross-document messaging parts of HTML 5 are in flux and we want
+        ports to be able to turn off the support as needed.
+
+        Note that the support is turned off by default right now. A subsequent
+        commit will turn it on by default.
+
+        Reviewed by Darin.
+
+        * Scripts/build-webkit:
+
 2008-02-14  Darin Adler  <darin@apple.com>
 
        - fix Windows build

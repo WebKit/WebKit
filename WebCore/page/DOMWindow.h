@@ -142,7 +142,9 @@ namespace WebCore {
 
         Console* console() const;
         
+#if ENABLE(CROSS_DOCUMENT_MESSAGING)
         void postMessage(const String& message, const String& domain, const String& uri, DOMWindow* source) const;
+#endif
 
         void scrollBy(int x, int y) const;
         void scrollTo(int x, int y) const;

@@ -134,8 +134,10 @@ module window {
 
                  attribute [Replaceable] Console console;
 
+#if defined(ENABLE_CROSS_DOCUMENT_MESSAGING)
         // cross-document messaging
         [DoNotCheckDomainSecurity, Custom] void postMessage(in DOMString message);
+#endif
 
 #if defined(LANGUAGE_JAVASCRIPT)
         // Global constructors
@@ -252,7 +254,6 @@ module window {
         attribute HTMLUListElementConstructor HTMLUListElement;
 
         attribute EventConstructor Event;
-        attribute MessageEventConstructor MessageEvent;
         attribute KeyboardEventConstructor KeyboardEvent;
         attribute MouseEventConstructor MouseEvent;
         attribute MutationEventConstructor MutationEvent;
@@ -275,6 +276,10 @@ module window {
         attribute XMLSerializerConstructor XMLSerializer;
 
         attribute XMLHttpRequestExceptionConstructor XMLHttpRequestException;
+
+#if defined(ENABLE_CROSS_DOCUMENT_MESSAGING)
+        attribute MessageEventConstructor MessageEvent;
+#endif
 
 #if defined(ENABLE_VIDEO)
         attribute HTMLAudioElementConstructor HTMLAudioElement;

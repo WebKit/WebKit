@@ -86,7 +86,10 @@ bool JSDOMWindow::customGetOwnPropertySlot(ExecState* exec, const Identifier& pr
                 && (entry->value.functionValue == jsDOMWindowPrototypeFunctionBlur
                     || entry->value.functionValue == jsDOMWindowPrototypeFunctionClose
                     || entry->value.functionValue == jsDOMWindowPrototypeFunctionFocus
-                    || entry->value.functionValue == jsDOMWindowPrototypeFunctionPostMessage)) {
+#if ENABLE(CROSS_DOCUMENT_MESSAGING)
+                    || entry->value.functionValue == jsDOMWindowPrototypeFunctionPostMessage
+#endif
+                    )) {
             if (!allowsAccess) {
                 slot.setStaticEntry(this, entry, nonCachingStaticFunctionGetter);
                 return true;
@@ -143,6 +146,7 @@ bool JSDOMWindow::customGetPropertyNames(ExecState* exec, PropertyNameArray&)
     return false;
 }
 
+#if ENABLE(CROSS_DOCUMENT_MESSAGING)
 JSValue* JSDOMWindow::postMessage(ExecState* exec, const List& args)
 {
     DOMWindow* window = impl();
@@ -159,5 +163,6 @@ JSValue* JSDOMWindow::postMessage(ExecState* exec, const List& args)
     
     return jsUndefined();
 }
+#endif
 
 } // namespace WebCore

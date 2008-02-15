@@ -39,6 +39,7 @@ use POSIX;
 
 my $originalWorkingDirectory = getcwd();
 
+my $crossDocumentMessagingSupport = 0;
 my $databaseSupport = 1;
 my $iconDatabaseSupport = 1;
 my $svgSupport = 1;
@@ -60,6 +61,7 @@ my $programName = basename($0);
 my $usage = <<EOF;
 Usage: $programName [options] [options to pass to build system]
   --help                        Show this help message
+  --[no-]cross-document-messaging   Toggle cross-document messaging support (default: $crossDocumentMessagingSupport)
   --[no-]database               Toggle Database Support (default: $databaseSupport)
   --[no-]icon-database          Toggle Icon database support (default: $iconDatabaseSupport)
   --[no-]svg                    Toggle SVG support (default: $svgSupport)
@@ -77,7 +79,8 @@ Usage: $programName [options] [options to pass to build system]
   --[no-]coverage               Toggle code coverage support (default: $coverageSupport)
 EOF
 
-GetOptions('database!' => \$databaseSupport,
+GetOptions('cross-document-messaging!' => \$crossDocumentMessagingSupport,
+           'database!' => \$databaseSupport,
            'icon-database!' => \$iconDatabaseSupport,
            'svg!' => \$svgSupport,
            'svg-experimental!' => \$svgExperimentalSupport,
@@ -140,6 +143,7 @@ if (isWx()) {
 my $productDir = productDir();
 my @overrideFeatureDefinesOption = ();
 
+push @overrideFeatureDefinesOption, "ENABLE_CROSS_DOCUMENT_MESSAGIN" if $crossDocumentMessagingSupport;
 push @overrideFeatureDefinesOption, "ENABLE_DATABASE" if $databaseSupport;
 push @overrideFeatureDefinesOption, "ENABLE_ICONDATABASE" if $iconDatabaseSupport;
 push @overrideFeatureDefinesOption, "ENABLE_SVG" if $svgSupport;
@@ -181,6 +185,7 @@ if ($clean && isOSX()) {
 
 # enable autotool options accordingly
 if ($ENV{WEBKITAUTOTOOLS}) {
+    push @options, autotoolsFlag($crossDocumentMessagingSupport, "cross-document-messaging");
     push @options, autotoolsFlag($databaseSupport, "database");
     push @options, autotoolsFlag($iconDatabaseSupport, "icon-database");
     push @options, autotoolsFlag($svgSupport, "svg");

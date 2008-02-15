@@ -26,7 +26,7 @@
 
 module events {
 
-    interface [GenerateConstructor] MessageEvent : Event {
+    interface [Conditional=CROSS_DOCUMENT_MESSAGING,GenerateConstructor] MessageEvent : Event {
 
         readonly attribute DOMString data;
         readonly attribute DOMString domain;

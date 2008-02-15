@@ -86,8 +86,10 @@ JSValue* toJS(ExecState* exec, Event* event)
         ret = new JSMutationEvent(JSMutationEventPrototype::self(exec), static_cast<MutationEvent*>(event));
     else if (event->isOverflowEvent())
         ret = new JSOverflowEvent(JSOverflowEventPrototype::self(exec), static_cast<OverflowEvent*>(event));
+#if ENABLE(CROSS_DOCUMENT_MESSAGING)
     else if (event->isMessageEvent())
         ret = new JSMessageEvent(JSMessageEventPrototype::self(exec), static_cast<MessageEvent*>(event));
+#endif
     else if (event->isProgressEvent())
         ret = new JSProgressEvent(JSProgressEventPrototype::self(exec), static_cast<ProgressEvent*>(event));
     else
