@@ -1,3 +1,17 @@
+2008-02-15  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Anders Carlsson.
+        
+        Fixed <rdar://problem/5725429> REGRESSION (r27898): Greenfield online
+        surveys no longer work due to XMLHttpRequest exceptions
+        
+        Updated layout tests to expect an exception not to be thrown.
+        
+        * http/tests/xmlhttprequest/xmlhttprequest-responseText-exception.html:
+        * http/tests/xmlhttprequest/xmlhttprequest-responseXML-exception.html:
+        * http/tests/xmlhttprequest/zero-length-response-expected.txt:
+        * http/tests/xmlhttprequest/zero-length-response-sync-expected.txt:
+
 2008-02-15  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Dan Bernstein.

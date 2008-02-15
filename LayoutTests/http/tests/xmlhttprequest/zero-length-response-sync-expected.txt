@@ -1,7 +1,7 @@
 Test for bug 5924 - zero-length responses to XMLHTTPRequest mishandled.
 
 after creation: Uninitialized
-Exception getting responseText: INVALID_STATE_ERR: DOM Exception 11
+ResponseText: ""
 after setting onreadystatechange: Uninitialized
 after open(): Open
 after overrideMimeType(): Open

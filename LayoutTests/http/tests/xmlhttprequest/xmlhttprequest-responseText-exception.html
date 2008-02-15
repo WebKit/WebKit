@@ -31,16 +31,9 @@ function test(num)
             try {
                 // force the evaluation for Opera
                 var response = this.responseText;
-                // if readyState is not Receiving or Loader, raise an exception
-                if (this.readyState < 3)
-                    log("FAILED ( response \"" + response + "\" )");
-                else
-                    log("PASS");
+                log("PASS");
             } catch (e) {
-                if (this.readyState < 3)
-                    log("PASS");
-                else
-                    log("FAILED");
+                log("FAILED");
             }
         }
         

@@ -1,3 +1,25 @@
+2008-02-15  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Anders Carlsson.
+        
+        Fixed <rdar://problem/5725429> REGRESSION (r27898): Greenfield online
+        surveys no longer work due to XMLHttpRequest exceptions
+        
+        Reverted some exception throwing code from r12194.
+        
+        To comply with the W3C draft spec, we used to throw an exception when
+        trying to access responseText and responseXML at the wrong time, but
+        that turned out to be a compatibility problem.
+        
+        Now, matching Firefox and previous versions of WebKit, we never throw
+        an exception when accessing responseText or responseXML.
+        
+        See http://www.mail-archive.com/public-webapi@w3.org/msg02756.html.
+
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::getResponseText):
+        (WebCore::XMLHttpRequest::getResponseXML):
+
 2008-02-15  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Dan Bernstein.

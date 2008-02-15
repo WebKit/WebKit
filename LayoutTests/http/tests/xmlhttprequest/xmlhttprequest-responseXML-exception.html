@@ -32,15 +32,9 @@ function test(num)
             try {
                 // Force evaluation for Opera
                 var response = this.responseXML;
-                if (this.readyState < 4)
-                    log("FAILED ( response : \"" + response + "\" )");
-                else
-                    log("PASS");
+                log("PASS");
             } catch (e) {
-                if (this.readyState < 4)
-                    log("PASS");
-                else
-                    log("FAILED");
+                log("FAILED");
             }
         }
         

@@ -141,18 +141,13 @@ XMLHttpRequestState XMLHttpRequest::getReadyState() const
 
 const KJS::UString& XMLHttpRequest::getResponseText(ExceptionCode& ec) const
 {
-    if (m_state < Receiving)
-        ec = INVALID_STATE_ERR;
-
     return m_responseText;
 }
 
 Document* XMLHttpRequest::getResponseXML(ExceptionCode& ec) const
 {
-    if (m_state != Loaded) {
-        ec = INVALID_STATE_ERR;
+    if (m_state != Loaded)
         return 0;
-    }
 
     if (!m_createdDocument) {
         if (m_response.isHTTP() && !responseIsXML()) {
