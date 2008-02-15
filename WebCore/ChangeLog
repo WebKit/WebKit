@@ -1,3 +1,10 @@
+2008-02-15  Adam Roben  <aroben@apple.com>
+
+        Try to fix Qt/GTK+ builds
+
+        * WebCore.pro: Remove MessageEvent.{idl,cpp} from the unconditional
+        parts of this file.
+
 2008-02-15  Darin Adler  <darin@apple.com>
 
         - another Qt build fix
