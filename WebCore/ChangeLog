@@ -1,3 +1,18 @@
+2008-02-14  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Darin.
+
+        <rdar://problem/5721790>
+        Crash in WebCore::DeprecatedString::operator= + 31 at news.google.com
+        
+        Use pointers in the cache map tables. Otherwise when we rehash, 
+        we will end up destroying Cache objects that node lists might point to.
+        
+        * dom/Node.cpp:
+        (WebCore::NodeListsNodeData::~NodeListsNodeData):
+        (WebCore::Node::getElementsByName):
+        (WebCore::Node::getElementsByClassName):
+
 2008-02-14  Alp Toker  <alp@atoker.com>
 
         Reviewed by Darin.

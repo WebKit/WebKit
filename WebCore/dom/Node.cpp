@@ -63,8 +63,16 @@ typedef HashSet<DynamicNodeList*> NodeListSet;
 struct NodeListsNodeData {
     NodeListSet m_listsToNotify;
     DynamicNodeList::Caches m_childNodeListCaches;
-    HashMap<String, DynamicNodeList::Caches> m_classNodeListCaches;
-    HashMap<String, DynamicNodeList::Caches> m_nameNodeListCaches;
+    
+    typedef HashMap<String, DynamicNodeList::Caches*> CacheMap;
+    CacheMap m_classNodeListCaches;
+    CacheMap m_nameNodeListCaches;
+    
+    ~NodeListsNodeData()
+    {
+        deleteAllValues(m_classNodeListCaches);
+        deleteAllValues(m_nameNodeListCaches);
+    }
 };
 
 bool Node::isSupported(const String& feature, const String& version)
@@ -1193,7 +1201,11 @@ PassRefPtr<NodeList> Node::getElementsByName(const String& elementName)
     if (!m_nodeLists)
         m_nodeLists.set(new NodeListsNodeData);
 
-    return new NameNodeList(this, elementName, &m_nodeLists->m_nameNodeListCaches.add(elementName, DynamicNodeList::Caches()).first->second);
+    pair<NodeListsNodeData::CacheMap::iterator, bool> result = m_nodeLists->m_nameNodeListCaches.add(elementName, 0);
+    if (result.second)
+        result.first->second = new DynamicNodeList::Caches;
+    
+    return new NameNodeList(this, elementName, result.first->second);
 }
 
 PassRefPtr<NodeList> Node::getElementsByClassName(const String& classNames)
@@ -1201,7 +1213,11 @@ PassRefPtr<NodeList> Node::getElementsByClassName(const String& classNames)
     if (!m_nodeLists)
         m_nodeLists.set(new NodeListsNodeData);
 
-    return new ClassNodeList(this, classNames, &m_nodeLists->m_classNodeListCaches.add(classNames, DynamicNodeList::Caches()).first->second);
+    pair<NodeListsNodeData::CacheMap::iterator, bool> result = m_nodeLists->m_classNodeListCaches.add(classNames, 0);
+    if (result.second)
+        result.first->second = new DynamicNodeList::Caches;
+    
+    return new ClassNodeList(this, classNames, result.first->second);
 }
 
 PassRefPtr<Element> Node::querySelector(const String& selectors, ExceptionCode& ec)
