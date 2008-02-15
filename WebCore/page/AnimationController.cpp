@@ -427,11 +427,19 @@ void ImplicitAnimation::animate(CompositeImplicitAnimation* animation, RenderObj
 
 RenderStyle* CompositeImplicitAnimation::animate(RenderObject* renderer, RenderStyle* currentStyle, RenderStyle* targetStyle)
 {
+    const Transition* currentTransitions = currentStyle->transitions();
+    const Transition* targetTransitions = targetStyle->transitions();
+    if (currentTransitions != targetTransitions && !(currentTransitions && targetTransitions && *currentTransitions == *targetTransitions)) {
+        reset(renderer);
+        deleteAllValues(m_animations);
+        m_animations.clear();
+    }
+
     // Get the animation layers from the target style.
     // For each one, we need to create a new animation unless one exists already (later occurrences of duplicate
     // triggers in the layer list get ignored).
     if (m_animations.isEmpty()) {
-        for (const Transition* transition = targetStyle->transitions(); transition; transition = transition->next()) {
+        for (const Transition* transition = currentTransitions; transition; transition = transition->next()) {
             int property = transition->transitionProperty();
             int duration = transition->transitionDuration();
             int repeatCount = transition->transitionRepeatCount();
@@ -448,7 +456,7 @@ RenderStyle* CompositeImplicitAnimation::animate(RenderObject* renderer, RenderS
     HashMap<int, ImplicitAnimation*>::iterator end = m_animations.end();
     for (HashMap<int, ImplicitAnimation*>::iterator it = m_animations.begin(); it != end; ++it)
         it->second->animate(this, renderer, currentStyle, targetStyle, result);
-    
+
     if (result)
         return result;
 
@@ -504,7 +512,7 @@ AnimationControllerPrivate::~AnimationControllerPrivate()
 CompositeImplicitAnimation* AnimationControllerPrivate::get(RenderObject* renderer)
 {
     CompositeImplicitAnimation* animation = m_animations.get(renderer);
-    if (!animation) {
+    if (!animation && renderer->style()->transitions()) {
         animation = new CompositeImplicitAnimation();
         m_animations.set(renderer, animation);
     }
@@ -584,8 +592,11 @@ RenderStyle* AnimationController::updateImplicitAnimations(RenderObject* rendere
     // have changed, we reset the animation.  We then do a blend to get new values and we return
     // a new style.
     ASSERT(renderer->element()); // FIXME: We do not animate generated content yet.
-    
+
     CompositeImplicitAnimation* animation = m_data->get(renderer);
+    if (!animation)
+        return newStyle;
+
     RenderStyle* result = animation->animate(renderer, renderer->style(), newStyle);
     m_data->updateTimer();
     return result;

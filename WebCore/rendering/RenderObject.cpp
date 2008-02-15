@@ -2146,12 +2146,9 @@ void RenderObject::handleDynamicFloatPositionChange()
 
 void RenderObject::setAnimatableStyle(RenderStyle* style)
 {
-    if (!isText() && m_style && style) {
-        if (!m_style->transitions())
-            animationController()->cancelImplicitAnimations(this);
-        else
-            style = animationController()->updateImplicitAnimations(this, style);
-    }
+    if (!isText() && m_style && style)
+        style = animationController()->updateImplicitAnimations(this, style);
+
     setStyle(style);
 }
 

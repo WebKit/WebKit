@@ -1,3 +1,23 @@
+2008-02-15  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=17306
+          <rdar://problem/5737923> Transitions between styles that have different transition-* properties behave inconsistently
+
+        * manual-tests/transitions.html: Added.
+        * page/AnimationController.cpp:
+        (WebCore::CompositeImplicitAnimation::animate): Changed to use the
+        transition properties of the current style rather than the target style.
+        (WebCore::AnimationControllerPrivate::get): Changed to not create an
+        animation if the style does not have transitions.
+        (WebCore::AnimationController::updateImplicitAnimations): Added code to
+        return the target style if the current style is not animating.
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::setAnimatableStyle): Changed to call
+        updateImplicitAnimations() even if the current style does not have
+        transitions, because we may be animating out of a style that had them.
+
 2008-02-15  Alexey Proskuryakov  <ap@webkit.org>
 
         Rubber-stamped by Darin.
