@@ -630,7 +630,7 @@ void WebFrame::loadData(PassRefPtr<WebCore::SharedBuffer> data, BSTR mimeType, B
         mimeTypeString = "text/html";
 
     String encodingString(textEncodingName, SysStringLen(textEncodingName));
-    KURL baseKURL(String(baseURL, SysStringLen(baseURL)));
+    KURL baseKURL(String(baseURL ? baseURL : L"", SysStringLen(baseURL)));
     KURL failingKURL(String(failingURL, SysStringLen(failingURL)));
 
     ResourceRequest request(baseKURL);

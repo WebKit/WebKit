@@ -1,3 +1,13 @@
+2008-02-15  Darin Adler  <darin@apple.com>
+
+        Reviewed by Adam.
+
+        - quick fix for a problem causing an assertion on launch
+
+        * WebFrame.cpp:
+        (WebFrame::loadData): Make an empty KURL even if the BSTR is null.
+        Later we might want to rethink this.
+
 2008-02-14  Darin Adler  <darin@apple.com>
 
         - updated for WebCore KURL changes
