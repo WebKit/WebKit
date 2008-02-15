@@ -31,9 +31,7 @@ function test()
     shouldBe("status = 'set status'", "'set status'");
     shouldBe("window.status = 1; window.status", "'1'");
     shouldBe("status = 2; status", "'2'");
-    var o = {l:7};
-    window.status=o;
-    
+    shouldBe("window.status={toString:function(){ return 'object.toString'; }}; window.status", "'object.toString'");
 }
 </script>
 This tests that we can assign strings to the status property.
