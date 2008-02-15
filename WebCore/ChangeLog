@@ -1,5 +1,13 @@
 2008-02-14  Darin Adler  <darin@apple.com>
 
+        - added back accidentally-removed files
+
+        * platform/DeprecatedStringList.cpp: Copied from platform/DeprecatedStringList.cpp.
+        * platform/DeprecatedStringList.h: Copied from platform/DeprecatedStringList.h.
+        * platform/mac/DeprecatedStringListMac.mm: Copied from platform/mac/DeprecatedStringListMac.mm.
+
+2008-02-14  Darin Adler  <darin@apple.com>
+
         - more build fixes
 
         * platform/KURL.cpp:
