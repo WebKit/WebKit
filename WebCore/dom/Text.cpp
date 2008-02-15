@@ -22,6 +22,7 @@
 #include "config.h"
 #include "Text.h"
 
+#include "CString.h"
 #include "Document.h"
 #include "ExceptionCode.h"
 #include "RenderText.h"
@@ -322,7 +323,7 @@ void Text::formatForDebugger(char *buffer, unsigned length) const
         result += s;
     }
           
-    strncpy(buffer, result.deprecatedString().latin1(), length - 1);
+    strncpy(buffer, result.utf8().data(), length - 1);
 }
 #endif
 

@@ -409,11 +409,6 @@ HTMLTokenizer::State HTMLTokenizer::scriptHandler(State state)
                 scriptNode = 0;
             scriptSrc = String();
         } else {
-#ifdef TOKEN_DEBUG
-            kdDebug( 6036 ) << "---START SCRIPT---" << endl;
-            kdDebug( 6036 ) << DeprecatedString(scriptCode, scriptCodeSize) << endl;
-            kdDebug( 6036 ) << "---END SCRIPT---" << endl;
-#endif
             // Parse scriptCode containing <script> info
 #if USE(LOW_BANDWIDTH_DISPLAY)
             if (m_doc->inLowBandwidthDisplay()) {
@@ -1204,9 +1199,6 @@ HTMLTokenizer::State HTMLTokenizer::parseTag(SegmentedString &src, State state)
             }
 
             AtomicString tagName = currToken.tagName;
-#if defined(TOKEN_DEBUG) && TOKEN_DEBUG > 0
-            kdDebug( 6036 ) << "appending Tag: " << tagName.deprecatedString() << endl;
-#endif
 
             // Handle <script src="foo"/> like Mozilla/Opera. We have to do this now for Dashboard
             // compatibility.
@@ -1614,13 +1606,6 @@ PassRefPtr<Node> HTMLTokenizer::processToken()
     if (jsProxy)
         jsProxy->setEventHandlerLineno(tagStartLineno);
     if (dest > buffer) {
-#ifdef TOKEN_DEBUG
-        if (currToken.tagName.length()) {
-            qDebug( "unexpected token: %s, str: *%s*", currToken.tagName.latin1().data(), DeprecatedConstString(buffer, dest-buffer).deprecatedString().latin1());
-            ASSERT(0);
-        }
-
-#endif
         currToken.text = StringImpl::createStrippingNullCharacters(buffer, dest - buffer);
         if (currToken.tagName != commentAtom)
             currToken.tagName = textAtom;
@@ -1632,29 +1617,6 @@ PassRefPtr<Node> HTMLTokenizer::processToken()
     }
 
     dest = buffer;
-
-#ifdef TOKEN_DEBUG
-    DeprecatedString name = currToken.tagName.deprecatedString();
-    DeprecatedString text;
-    if (currToken.text)
-        text = DeprecatedConstString(currToken.text->unicode(), currToken.text->length()).deprecatedString();
-
-    kdDebug( 6036 ) << "Token --> " << name << endl;
-    if (currToken.flat)
-        kdDebug( 6036 ) << "Token is FLAT!" << endl;
-    if(!text.isNull())
-        kdDebug( 6036 ) << "text: \"" << text << "\"" << endl;
-    unsigned l = currToken.attrs ? currToken.attrs->length() : 0;
-    if(l) {
-        kdDebug( 6036 ) << "Attributes: " << l << endl;
-        for (unsigned i = 0; i < l; ++i) {
-            Attribute* c = currToken.attrs->attributeItem(i);
-            kdDebug( 6036 ) << "    " << c->localName().deprecatedString()
-                            << "=\"" << c->value().deprecatedString() << "\"" << endl;
-        }
-    }
-    kdDebug( 6036 ) << endl;
-#endif
 
     RefPtr<Node> n;
     
@@ -1723,16 +1685,10 @@ void HTMLTokenizer::notifyFinished(CachedResource*)
 
     bool finished = false;
     while (!finished && pendingScripts.head()->isLoaded()) {
-#ifdef TOKEN_DEBUG
-        kdDebug( 6036 ) << "Finished loading an external script" << endl;
-#endif
         CachedScript* cs = pendingScripts.dequeue();
         ASSERT(cache()->disabled() || cs->accessCount() > 0);
 
         String scriptSource = cs->script();
-#ifdef TOKEN_DEBUG
-        kdDebug( 6036 ) << "External script is:" << endl << scriptSource.deprecatedString() << endl;
-#endif
         setSrc(SegmentedString());
 
         // make sure we forget about the script before we execute the new one

@@ -26,6 +26,7 @@
 #include "config.h"
 #include "VisiblePosition.h"
 
+#include "CString.h"
 #include "Document.h"
 #include "Element.h"
 #include "HTMLNames.h"
@@ -246,12 +247,12 @@ IntRect VisiblePosition::caretRect() const
     return m_deepPosition.node()->renderer()->caretRect(m_deepPosition.offset(), m_affinity);
 }
 
-void VisiblePosition::debugPosition(const char *msg) const
+void VisiblePosition::debugPosition(const char* msg) const
 {
     if (isNull())
         fprintf(stderr, "Position [%s]: null\n", msg);
     else
-        fprintf(stderr, "Position [%s]: %s [%p] at %d\n", msg, m_deepPosition.node()->nodeName().deprecatedString().latin1(), m_deepPosition.node(), m_deepPosition.offset());
+        fprintf(stderr, "Position [%s]: %s [%p] at %d\n", msg, m_deepPosition.node()->nodeName().utf8().data(), m_deepPosition.node(), m_deepPosition.offset());
 }
 
 #ifndef NDEBUG

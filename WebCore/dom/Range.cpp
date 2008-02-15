@@ -24,6 +24,7 @@
 #include "config.h"
 #include "Range.h"
 
+#include "CString.h"
 #include "Document.h"
 #include "DocumentFragment.h"
 #include "ExceptionCode.h"
@@ -1663,7 +1664,7 @@ void Range::formatForDebugger(char *buffer, unsigned length) const
         result += s;
     }
           
-    strncpy(buffer, result.deprecatedString().latin1(), length - 1);
+    strncpy(buffer, result.utf8().data(), length - 1);
 }
 #undef FormatBufferSize
 #endif

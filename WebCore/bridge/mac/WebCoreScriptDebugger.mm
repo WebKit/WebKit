@@ -29,7 +29,6 @@
 #import "config.h"
 #import "WebCoreScriptDebugger.h"
 
-#import "DeprecatedString.h"
 #import "KURL.h"
 #import "PlatformString.h"
 #import "WebCoreObjCExtras.h"

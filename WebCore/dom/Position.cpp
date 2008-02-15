@@ -26,17 +26,18 @@
 #include "config.h"
 #include "Position.h"
 
+#include "CSSComputedStyleDeclaration.h"
+#include "CString.h"
 #include "CharacterNames.h"
 #include "Document.h"
 #include "Element.h"
-#include "Logging.h"
-#include "RenderBlock.h"
-#include "CSSComputedStyleDeclaration.h"
-#include "htmlediting.h"
 #include "HTMLNames.h"
+#include "Logging.h"
 #include "PositionIterator.h"
+#include "RenderBlock.h"
 #include "Text.h"
 #include "TextIterator.h"
+#include "htmlediting.h"
 #include "visible_units.h"
   
 namespace WebCore {
@@ -660,17 +661,17 @@ Position Position::trailingWhitespacePosition(EAffinity affinity, bool considerN
     return Position();
 }
 
-void Position::debugPosition(const char *msg) const
+void Position::debugPosition(const char* msg) const
 {
     if (isNull())
         fprintf(stderr, "Position [%s]: null\n", msg);
     else
-        fprintf(stderr, "Position [%s]: %s [%p] at %d\n", msg, node()->nodeName().deprecatedString().latin1(), node(), offset());
+        fprintf(stderr, "Position [%s]: %s [%p] at %d\n", msg, node()->nodeName().utf8().data(), node(), offset());
 }
 
 #ifndef NDEBUG
 
-void Position::formatForDebugger(char *buffer, unsigned length) const
+void Position::formatForDebugger(char* buffer, unsigned length) const
 {
     String result;
     
@@ -685,7 +686,7 @@ void Position::formatForDebugger(char *buffer, unsigned length) const
         result += s;
     }
           
-    strncpy(buffer, result.deprecatedString().latin1(), length - 1);
+    strncpy(buffer, result.utf8().data(), length - 1);
 }
 
 void Position::showTreeForThis() const

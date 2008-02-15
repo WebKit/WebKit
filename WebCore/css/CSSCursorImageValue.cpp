@@ -39,7 +39,7 @@ namespace WebCore {
 #if ENABLE(SVG)
 inline bool isSVGCursorIdentifier(const String& url)
 {
-    KURL kurl(url.deprecatedString());
+    KURL kurl(url);
     return kurl.hasRef();
 }
 
@@ -96,7 +96,7 @@ bool CSSCursorImageValue::updateIfSVGCursorIsUsed(Element* element)
         if (y != m_hotspot.y())
             m_hotspot.setY(y);
 
-        if (m_image && m_image->url() != element->document()->completeURL(cursorElement->href().deprecatedString())) {
+        if (m_image && m_image->url() != element->document()->completeURL(cursorElement->href())) {
             m_image->deref(this);
             m_image = 0;
 

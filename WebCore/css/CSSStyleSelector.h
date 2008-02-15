@@ -23,7 +23,6 @@
 #define CSSStyleSelector_h
 
 #include "CSSFontSelector.h"
-#include "DeprecatedString.h"
 #include "RenderStyle.h"
 #include <wtf/HashSet.h>
 #include <wtf/Vector.h>

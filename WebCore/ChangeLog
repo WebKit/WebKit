@@ -1,3 +1,39 @@
+2008-02-15  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Remove more uses of DeprecatedString in preparation of getting rid of it.
+
+        * bridge/mac/WebCoreScriptDebugger.mm:
+        * css/CSSCursorImageValue.cpp:
+        (WebCore::isSVGCursorIdentifier):
+        (WebCore::CSSCursorImageValue::updateIfSVGCursorIsUsed):
+        * css/CSSStyleSelector.h:
+        * dom/Element.cpp:
+        (WebCore::Element::dump):
+        (WebCore::Element::formatForDebugger):
+        * dom/Position.cpp:
+        (WebCore::Position::debugPosition):
+        (WebCore::Position::formatForDebugger):
+        * dom/Range.cpp:
+        (WebCore::Range::formatForDebugger):
+        * dom/Text.cpp:
+        (WebCore::Text::formatForDebugger):
+        * editing/Selection.cpp:
+        (WebCore::Selection::debugPosition):
+        (WebCore::Selection::formatForDebugger):
+        * editing/SelectionController.cpp:
+        (WebCore::SelectionController::debugRenderer):
+        * editing/VisiblePosition.cpp:
+        (WebCore::VisiblePosition::debugPosition):
+        * html/HTMLTokenizer.cpp:
+        (WebCore::HTMLTokenizer::scriptHandler):
+        (WebCore::HTMLTokenizer::parseTag):
+        (WebCore::HTMLTokenizer::processToken):
+        (WebCore::HTMLTokenizer::notifyFinished):
+        * svg/SVGFontFaceElement.cpp:
+        (WebCore::mapAttributeToCSSProperty):
+
 2008-02-15  Adam Roben  <aroben@apple.com>
 
         * bindings/scripts/CodeGenerator.pm: Touch this to force bindings to
