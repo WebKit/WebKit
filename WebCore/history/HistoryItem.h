@@ -29,7 +29,6 @@
 #include "CachedPage.h"
 #include "FormData.h"
 #include "IntPoint.h"
-#include "KURL.h"
 #include "PlatformString.h"
 #include <wtf/RefCounted.h>
 #include "StringHash.h"

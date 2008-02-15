@@ -51,7 +51,7 @@ NSURLResponse *ResourceResponse::nsURLResponse() const
             expectedContentLength = -1;
         else
             expectedContentLength = static_cast<NSInteger>(m_expectedContentLength);
-        const_cast<ResourceResponse*>(this)->m_nsResponse.adoptNS([[NSURLResponse alloc] initWithURL:m_url.getNSURL() MIMEType:m_mimeType expectedContentLength:expectedContentLength textEncodingName:m_textEncodingName]);
+        const_cast<ResourceResponse*>(this)->m_nsResponse.adoptNS([[NSURLResponse alloc] initWithURL:m_url MIMEType:m_mimeType expectedContentLength:expectedContentLength textEncodingName:m_textEncodingName]);
     }
     return m_nsResponse.get();
 }

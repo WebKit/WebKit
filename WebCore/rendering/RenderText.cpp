@@ -42,14 +42,10 @@ using namespace Unicode;
 
 namespace WebCore {
 
+// FIXME: Move to StringImpl.h eventually.
 static inline bool charactersAreAllASCII(StringImpl* text)
 {
-    const UChar* chars = text->characters();
-    unsigned length = text->length();
-    UChar ored = 0;
-    for (unsigned i = 0; i < length; ++i)
-        ored |= chars[i];
-    return !(ored & 0xFF80);
+    return charactersAreAllASCII(text->characters(), text->length());
 }
 
 RenderText::RenderText(Node* node, PassRefPtr<StringImpl> str)

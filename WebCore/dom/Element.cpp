@@ -4,7 +4,7 @@
  *           (C) 2001 Peter Kelly (pmk@post.com)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
  *           (C) 2007 David Smith (catfish.man@gmail.com)
- * Copyright (C) 2004, 2005, 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
  *           (C) 2007 Eric Seidel (eric@webkit.org)
  *
  * This library is free software; you can redistribute it and/or
@@ -37,7 +37,6 @@
 #include "FrameView.h"
 #include "HTMLElement.h"
 #include "HTMLNames.h"
-#include "KURL.h"
 #include "NamedAttrMap.h"
 #include "NodeList.h"
 #include "Page.h"
@@ -562,18 +561,21 @@ void Element::setPrefix(const AtomicString &_prefix, ExceptionCode& ec)
     m_tagName.setPrefix(_prefix);
 }
 
-String Element::baseURI() const
+KURL Element::baseURI() const
 {
-    KURL xmlbase(getAttribute(baseAttr).deprecatedString());
-
-    if (!xmlbase.protocol().isEmpty())
-        return xmlbase.string();
+    KURL base(getAttribute(baseAttr));
+    if (!base.protocol().isEmpty())
+        return base;
 
     Node* parent = parentNode();
-    if (parent)
-        return KURL(parent->baseURI().deprecatedString(), xmlbase.deprecatedString()).string();
+    if (!parent)
+        return base;
 
-    return xmlbase.string();
+    KURL parentBase = parent->baseURI();
+    if (parentBase.isNull())
+        return base;
+
+    return KURL(parentBase, base.string());
 }
 
 Node* Element::insertAdjacentElement(const String& where, Node* newChild, int& exception)

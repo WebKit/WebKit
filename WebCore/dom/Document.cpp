@@ -407,7 +407,7 @@ Document::~Document()
     XMLHttpRequest::detachRequests(this);
     {
         KJS::JSLock lock;
-        KJS::ScriptInterpreter::forgetAllDOMNodesForDocument(this);
+        ScriptInterpreter::forgetAllDOMNodesForDocument(this);
     }
 
     if (m_docChanged && changedDocuments)
@@ -828,19 +828,19 @@ void Document::setXMLStandalone(bool standalone, ExceptionCode& ec)
     m_xmlStandalone = standalone;
 }
 
-String Document::documentURI() const
+KURL Document::documentURI() const
 {
     return m_baseURL;
 }
 
-void Document::setDocumentURI(const String &uri)
+void Document::setDocumentURI(const String& uri)
 {
-    m_baseURL = uri.deprecatedString();
+    m_baseURL = KURL(uri);
 }
 
-String Document::baseURI() const
+KURL Document::baseURI() const
 {
-    return documentURI();
+    return m_baseURL;
 }
 
 Element* Document::elementFromPoint(int x, int y) const
@@ -1323,10 +1323,10 @@ void Document::open()
 {
     // This is work that we should probably do in clear(), but we can't have it
     // happen when implicitOpen() is called unless we reorganize Frame code.
-    if (Document *parent = parentDocument()) {
-        if (m_url.isEmpty() || m_url == "about:blank")
+    if (Document* parent = parentDocument()) {
+        if (m_url.isEmpty() || m_url == blankURL())
             setURL(parent->baseURL());
-        if (m_baseURL.isEmpty() || m_baseURL == "about:blank")
+        if (m_baseURL.isEmpty() || m_baseURL == blankURL())
             setBaseURL(parent->baseURL());
     }
 
@@ -1616,21 +1616,21 @@ void Document::clear()
     m_windowEventListeners.clear();
 }
 
-void Document::setURL(const DeprecatedString& url)
+void Document::setURL(const KURL& url)
 {
     if (url == m_url)
         return;
 
     m_url = url;
     if (m_styleSelector)
-        m_styleSelector->setEncodedURL(m_url);
+        m_styleSelector->setEncodedURL(url);
 
     m_isAllowedToLoadLocalResources = shouldBeAllowedToLoadLocalResources();
  }
  
 bool Document::shouldBeAllowedToLoadLocalResources() const
 {
-    if (FrameLoader::shouldTreatURLAsLocal(m_url))
+    if (FrameLoader::shouldTreatURLAsLocal(m_url.string()))
         return true;
 
     Frame* frame = this->frame();
@@ -1641,17 +1641,17 @@ bool Document::shouldBeAllowedToLoadLocalResources() const
     if (!documentLoader)
         return false;
 
-    if (m_url == "about:blank" && frame->loader()->opener() && frame->loader()->opener()->document()->isAllowedToLoadLocalResources())
+    if (m_url == blankURL() && frame->loader()->opener() && frame->loader()->opener()->document()->isAllowedToLoadLocalResources())
         return true;
     
     return documentLoader->substituteData().isValid();
 }
 
-void Document::setBaseURL(const DeprecatedString& baseURL) 
+void Document::setBaseURL(const KURL& baseURL) 
 { 
-    m_baseURL = baseURL; 
+    m_baseURL = baseURL;
     if (m_elemSheet)
-        m_elemSheet->setHref(m_baseURL);
+        m_elemSheet->setHref(baseURL.string());
 }
 
 void Document::setCSSStyleSheet(const String &url, const String& charset, const CachedCSSStyleSheet* sheet)
@@ -1687,14 +1687,14 @@ String Document::userStyleSheet() const
 CSSStyleSheet* Document::elementSheet()
 {
     if (!m_elemSheet)
-        m_elemSheet = new CSSStyleSheet(this, baseURL());
+        m_elemSheet = new CSSStyleSheet(this, baseURL().string());
     return m_elemSheet.get();
 }
 
 CSSStyleSheet* Document::mappedElementSheet()
 {
     if (!m_mappedElementSheet)
-        m_mappedElementSheet = new CSSStyleSheet(this, baseURL());
+        m_mappedElementSheet = new CSSStyleSheet(this, baseURL().string());
     return m_mappedElementSheet.get();
 }
 
@@ -1847,7 +1847,7 @@ void Document::processHttpEquiv(const String &equiv, const String &content)
             if (url.isEmpty())
                 url = frame->loader()->url().string();
             else
-                url = completeURL(url);
+                url = completeURL(url).string();
             frame->loader()->scheduleHTTPRedirection(delay, url);
         }
     } else if (equalIgnoringCase(equiv, "set-cookie")) {
@@ -2180,11 +2180,6 @@ void Document::recalcStyleSelector()
 
                 if (title != m_preferredStylesheetSet)
                     sheet = 0;
-
-#if ENABLE(SVG)
-                if (!n->isHTMLElement())
-                    title = title.deprecatedString().replace('&', "&&");
-#endif
             }
         }
 
@@ -2607,7 +2602,7 @@ String Document::cookie() const
 
 void Document::setCookie(const String& value)
 {
-    setCookies(this, url(), policyBaseURL().deprecatedString(), value);
+    setCookies(this, url(), policyBaseURL(), value);
 }
 
 String Document::referrer() const
@@ -2785,27 +2780,18 @@ UChar Document::backslashAsCurrencySymbol() const
     return m_decoder->encoding().backslashAsCurrencySymbol();
 }
 
-DeprecatedString Document::completeURL(const DeprecatedString& url)
+KURL Document::completeURL(const String& url)
 {
-    // FIXME: This treats null URLs the same as empty URLs, unlike the String function below.
-
-    // If both the URL and base URL are empty, like they are for documents
-    // created using DOMImplementation::createDocument, just return the passed in URL.
-    // (We do this because url() returns "about:blank" for empty URLs.
-    if (m_url.isEmpty() && m_baseURL.isEmpty())
-        return url;
-    if (!m_decoder)
-        return KURL(baseURL(), url).deprecatedString();
-    return KURL(baseURL(), url, m_decoder->encoding()).deprecatedString();
-}
-
-String Document::completeURL(const String& url)
-{
-    // FIXME: This always returns null when passed a null URL, unlike the DeprecatedString function above.
-    // Code relies on this behavior, namely the href property of <a> and the data property of <object>.
+    // Always return a null URL when passed a null string.
+    // FIXME: Should we change the KURL constructor to have this behavior?
     if (url.isNull())
-        return url;
-    return completeURL(url.deprecatedString());
+        return KURL();
+    KURL base = m_baseURL;
+    if (base.isEmpty())
+        base = m_url;
+    if (!m_decoder)
+        return KURL(base, url);
+    return KURL(base, url, m_decoder->encoding());
 }
 
 bool Document::inPageCache()

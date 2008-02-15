@@ -1,3 +1,587 @@
+2008-02-14  Darin Adler  <darin@apple.com>
+
+        Reviewed by Eric Seidel.
+
+        Based on work by Marvin Decker <marv.decker@gmail.com>
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=16538
+          KURL should use String instead of DeprecatedString
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=16485
+          DocLoader::checkForReload will crash if the URL isNull
+          and a similar problem in IconDatabase
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=16487
+          KURL doesn't preserve isNull when constructed with a DeprecatedString
+
+        - changed completeURL and various DOM getters to return KURL, to avoid
+          conversion back and forth from KURL to String
+
+        - changed the conversion of KURL to NSURL or NSString to be automatic,
+          to ease the use of KURL in Objective C DOM bindings, and eliminated
+          the getNSURL function
+
+        - because I had to visit the DOM bindings anyway, eliminated almost all
+          the use of the KJS namespace for things in WebCore
+
+        - fixed HTMLOptionElement constructor to check for undefined rather
+          than size of the arguments array
+
+        - eliminated some other unnecessary uses of DeprecatedString
+
+        - changed String::split to take a Vector parameter instead of returning
+          a Vector, for better performance
+
+        - added a couple of missing calls to do layout in SVG image handling;
+          I was able to reproduce these only because I had broken URLs for a
+          while -- not sure how to reproduce them now but the changes are
+          clearly needed
+
+        Performance testing shows this to be at least a 1% speedup.
+
+        Added a new function protocolIs to efficiently compare protocols
+        without case errors and a blankURL function so we don't have to
+        code "about:blank" in multiple places in the code and don't have to
+        construct a frash KURL each time. Moved decode_string and encode_string
+        out of KURL and gave them clearer names.
+
+        Made KURL constructors explicit to highlight potentially-expensive
+        operations and the poor semantics of KURL's constructor that takes
+        a String.
+
+        * WebCore.base.exp: Updated.
+
+        * bindings/js/JSAttrCustom.cpp:
+        (WebCore::JSAttr::setValue): Use protocolIs.
+        * bindings/js/JSAudioConstructor.h: KJS namespace change.
+        * bindings/js/JSCSSRuleCustom.cpp:
+        (WebCore::toJS): Ditto.
+        * bindings/js/JSCSSValueCustom.cpp:
+        (WebCore::toJS): Ditto.
+        * bindings/js/JSDocumentCustom.cpp:
+        (WebCore::JSDocument::location): Ditto.
+        (WebCore::JSDocument::setLocation): Updated for KURL change.
+        (WebCore::toJS): KJS namespace change.
+        * bindings/js/JSElementCustom.cpp:
+        (WebCore::allowSettingSrcToJavascriptURL): Use protocolIs.
+        (WebCore::JSElement::setAttribute): KJS namespace change.
+        (WebCore::JSElement::setAttributeNode): Ditto.
+        (WebCore::JSElement::setAttributeNS): Ditto.
+        (WebCore::JSElement::setAttributeNodeNS): Ditto.
+        * bindings/js/JSHTMLFrameElementCustom.cpp:
+        (WebCore::allowSettingJavascriptURL): Use protocolIs.
+        (WebCore::JSHTMLFrameElement::setSrc): KJS namespace change.
+        (WebCore::JSHTMLFrameElement::setLocation): Ditto.
+        * bindings/js/JSHTMLIFrameElementCustom.cpp:
+        (WebCore::JSHTMLIFrameElement::setSrc): Use protocolIs.
+        * bindings/js/JSHTMLOptionElementConstructor.cpp:
+        (WebCore::JSHTMLOptionElementConstructor::JSHTMLOptionElementConstructor):
+        (WebCore::JSHTMLOptionElementConstructor::construct): Cleaned up the
+        structure a bit and changed checking to check for undefined rather than
+        number of arguments.
+        * bindings/js/JSHTMLOptionElementConstructor.h: KJS namespace change.
+        * bindings/js/JSLocation.cpp:
+        (WebCore::JSLocation::put): Eliminated some DeprecatedString use,
+        and use protocolIs.
+        (WebCore::jsLocationProtoFuncReplace): Ditto.
+        (WebCore::jsLocationProtoFuncReload): Ditto.
+        (WebCore::jsLocationProtoFuncAssign): Ditto.
+        * bindings/js/JSLocation.h: KJS namespace change.
+        * bindings/js/JSNamedNodeMapCustom.cpp:
+        (WebCore::JSNamedNodeMap::canGetItemsForName): Ditto.
+        (WebCore::JSNamedNodeMap::nameGetter): Ditto.
+        * bindings/js/JSNamedNodesCollection.cpp:
+        (WebCore::JSNamedNodesCollection::JSNamedNodesCollection): Ditto.
+        * bindings/js/JSNamedNodesCollection.h: Ditto.
+        * bindings/js/JSXMLHttpRequest.cpp:
+        (WebCore::jsXMLHttpRequestPrototypeFunctionOpen): Removed
+        DeprecatedString use.
+        (WebCore::jsXMLHttpRequestPrototypeFunctionSend): Ditto.
+        * bindings/js/JSXMLHttpRequest.h: Moved this class into the WebCore
+        namespace.
+        * bindings/js/JSXSLTProcessor.cpp: Namespace change.
+        * bindings/js/JSXSLTProcessor.h: Ditto.
+
+        * bindings/js/kjs_binding.cpp: Updated for namespace change.
+        (WebCore::jsStringOrNull): Added an overload for KURL to allow DOM
+        classes to return KURL even if the DOM expects a string.
+        (WebCore::jsStringOrUndefined): Ditto.
+        (WebCore::jsStringOrFalse): Ditto.
+        * bindings/js/kjs_binding.h: Moved everything into the WebCore
+        namespace.
+
+        * bindings/js/kjs_css.h: Namespace change.
+        * bindings/js/kjs_events.cpp: Removed an include.
+        * bindings/js/kjs_events.h: Namespace change.
+        * bindings/js/kjs_html.h: Namespace change.
+
+        * bindings/js/kjs_navigator.cpp: Moved everything into the
+        WebCore namespace.
+        * bindings/js/kjs_navigator.h: Ditto.
+
+        * bindings/js/kjs_window.cpp:
+        (KJS::parseModalDialogFeatures): Updated for String::split change.
+        (KJS::createWindow): Use protocolIs and removed some DeprecatedString.
+        (KJS::Window::put): Ditto.
+        (KJS::Window::allowsAccessFrom): Ditto.
+        (KJS::windowProtoFuncOpen): Ditto.
+
+        * bindings/objc/DOM.mm:
+        (-[DOMElement _getURLAttribute:]): Removed getNSURL call.
+        * bindings/objc/DOMHTML.mm:
+        (-[DOMHTMLDocument _createDocumentFragmentWithMarkupString:baseURLString:]): Ditto.
+
+        * bindings/scripts/CodeGeneratorCOM.pm: Updated includes so conversions from
+        KURL will work.
+        * bindings/scripts/CodeGeneratorJS.pm: Updated for namespace changes, and also
+        updated includes so conversions from KURL will work.
+        * bindings/scripts/CodeGeneratorObjC.pm: Updated includes so conversions from
+        KURL will work.
+
+        * bridge/mac/WebCoreAXObject.mm:
+        (-[WebCoreAXObject accessibilityAttributeValue:]): Removed getNSURL call.
+        Also streamlined the logic.
+        (AXAttributedStringAppendText): Ditto.
+
+        * bridge/mac/WebCoreScriptDebugger.mm:
+        (toNSString): Tweaked.
+        (toNSURL): Removed getNSURL call.
+
+        * css/CSSImageValue.cpp:
+        (WebCore::CSSImageValue::image): Removed DeprecatedString use.
+        * css/CSSImportRule.cpp:
+        (WebCore::CSSImportRule::insertedIntoParent): Ditto.
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue): Ditto.
+        (WebCore::CSSParser::parseContent): Ditto.
+        (WebCore::CSSParser::parseBackgroundImage): Ditto.
+        (WebCore::CSSParser::parseFontFaceSrc): Ditto.
+        (WebCore::CSSParser::parseBorderImage): Ditto.
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::setEncodedURL): Ditto.
+        (WebCore::checkPseudoState): Ditto.
+        * css/CSSStyleSelector.h: Ditto.
+
+        * css/MediaList.cpp:
+        (WebCore::MediaList::setMediaText): Updated for String::split change.
+
+        * css/StyleBase.cpp:
+        (WebCore::StyleBase::baseURL): Return KURL.
+        * css/StyleBase.h: DItto.
+
+        * dom/Document.cpp:
+        (WebCore::Document::~Document): Updated for namespace change.
+        (WebCore::Document::documentURI): Return KURL.
+        (WebCore::Document::setDocumentURI): Removed DeprecatedString use.
+        (WebCore::Document::baseURI): Return KURL.
+        (WebCore::Document::open): Updated to use blankURL.
+        (WebCore::Document::setURL): Take KURL.
+        (WebCore::Document::shouldBeAllowedToLoadLocalResources): Updated for
+        change to use KURL
+        (WebCore::Document::setBaseURL): Take KURL.
+        (WebCore::Document::elementSheet): Updated for KURL change.
+        (WebCore::Document::mappedElementSheet): Ditto.
+        (WebCore::Document::processHttpEquiv): Ditto.
+        (WebCore::Document::recalcStyleSelector): Removed use of
+        DeprecatedString -- also noticed some dead code here!
+        (WebCore::Document::setCookie): Ditto.
+        (WebCore::Document::completeURL): Return KURL.
+        * dom/Document.h: Use KURL instead of String in a few places.
+
+        * dom/DocumentType.cpp:
+        (WebCore::DocumentType::baseURI): Return KURL.
+        * dom/DocumentType.h: Ditto.
+
+        * dom/Element.cpp:
+        (WebCore::Element::baseURI): Return KURL.
+        * dom/Element.h: Ditto.
+
+        * dom/Node.cpp:
+        (WebCore::Node::setDocument): Namespace change.
+        (WebCore::Node::baseURI): Return KURL.
+        * dom/Node.h: Ditto.
+
+        * dom/ProcessingInstruction.cpp:
+        (WebCore::ProcessingInstruction::checkStyleSheet): Updated for KURL change.
+        * dom/StyleElement.cpp:
+        (WebCore::StyleElement::process): Changed to use Vector<UChar> instead of
+        String for better performance.
+        (WebCore::StyleElement::createSheet): Removed use of DeprecateString.
+        * dom/XMLTokenizer.cpp:
+        (WebCore::XMLTokenizer::endElementNs): Updated for KURL change.
+        (WebCore::XMLTokenizer::end): Ditto.
+        (WebCore::xmlDocPtrForString): Removed use of DeprecateString.
+        * dom/XMLTokenizer.h: Ditto.
+
+        * editing/markup.cpp: Moved appendString to PlatformString.h.
+        (WebCore::appendQuotedURLAttributeValue): Use protocolIs.
+        (WebCore::completeURLs): Removed DeprecatedString use.
+        (WebCore::createFragmentFromMarkup): Use blankURL.
+        (WebCore::fillContainerFromString): Removed DeprecatedString use.
+        (WebCore::createFragmentFromText): Ditto.
+
+        * history/HistoryItem.cpp:
+        (WebCore::HistoryItem::url): Removed DeprecatedString use.
+        (WebCore::HistoryItem::originalURL): Ditto.
+        * history/HistoryItem.h: Removed include.
+
+        * html/HTMLAnchorElement.cpp:
+        (WebCore::HTMLAnchorElement::defaultEventHandler): Removed use of
+        DeprecatedString.
+        (WebCore::HTMLAnchorElement::href): Return KURL.
+        (WebCore::HTMLAnchorElement::hash): Removed DeprecatedString use.
+        (WebCore::HTMLAnchorElement::host): Ditto.
+        (WebCore::HTMLAnchorElement::hostname): Ditto.
+        (WebCore::HTMLAnchorElement::pathname): Ditto.
+        (WebCore::HTMLAnchorElement::port): Ditto.
+        (WebCore::HTMLAnchorElement::protocol): Ditto.
+        (WebCore::HTMLAnchorElement::search): Ditto.
+        (WebCore::HTMLAnchorElement::toString): Ditto.
+        * html/HTMLAnchorElement.h: Ditto.
+        * html/HTMLAppletElement.cpp:
+        (WebCore::HTMLAppletElement::createRenderer): Updated for KURL change.
+        * html/HTMLAreaElement.cpp:
+        (WebCore::HTMLAreaElement::href): Return KURL.
+        * html/HTMLAreaElement.h: Ditto.
+        * html/HTMLBaseElement.cpp:
+        (WebCore::HTMLBaseElement::removedFromDocument): Updated for KURL change.
+        (WebCore::HTMLBaseElement::process): Removed DeprecatedString use.
+        * html/HTMLBodyElement.cpp:
+        (WebCore::HTMLBodyElement::parseMappedAttribute): Updated for KURL change.
+        * html/HTMLEmbedElement.cpp:
+        (WebCore::HTMLEmbedElement::parseMappedAttribute): Removed use of
+        DeprecatedString.
+        * html/HTMLEmbedElement.h: Removed DeprecatedString use.
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::formWouldHaveSecureSubmission): Use protocolIs.
+        (WebCore::encodeCString): Updated for change to String::split.
+        (WebCore::HTMLFormElement::dataEncoding): Ditto.
+        (WebCore::HTMLFormElement::formData): Removed DeprecatedString use.
+        (WebCore::HTMLFormElement::isMailtoForm): Use protocolIs.
+        (WebCore::HTMLFormElement::submit): Updated for KURL change.
+        (WebCore::HTMLFormElement::reset): Ditto.
+        * html/HTMLFrameElementBase.cpp:
+        (WebCore::HTMLFrameElementBase::isURLAllowed): Updated for KURL change
+        and use equalIgnoringRef instead of doing a setRef to get the same effect.
+        (WebCore::HTMLFrameElementBase::openURL): Use blankURL.
+        (WebCore::HTMLFrameElementBase::location): Return KURL.
+        (WebCore::HTMLFrameElementBase::src): Return KURL.
+        * html/HTMLFrameElementBase.h: Ditto.
+        * html/HTMLImageElement.cpp:
+        (WebCore::HTMLImageElement::parseMappedAttribute): Updated for KURL change.
+        (WebCore::HTMLImageElement::longDesc): Return KURL.
+        (WebCore::HTMLImageElement::lowsrc): Return KURL.
+        (WebCore::HTMLImageElement::src): Return KURL.
+        * html/HTMLImageElement.h: Ditto. Also removed imageMap() function.
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::src): Return KURL.
+        * html/HTMLInputElement.h: Ditto.
+        * html/HTMLLinkElement.cpp:
+        (WebCore::HTMLLinkElement::parseMappedAttribute): Updated for KURL change.
+        (WebCore::HTMLLinkElement::tokenizeRelAttribute): Updated for String::split change.
+        (WebCore::HTMLLinkElement::href): Return KURL.
+        * html/HTMLLinkElement.h: Ditto.
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::src): Return KURL.
+        (WebCore::HTMLMediaElement::pickMedia): Updated for KURL change.
+        * html/HTMLMediaElement.h: Ditto.
+        * html/HTMLObjectElement.cpp:
+        (WebCore::HTMLObjectElement::isImageType): Use protocolIs.
+        (WebCore::HTMLObjectElement::data): Return KURL.
+        * html/HTMLObjectElement.h: Ditto.
+        * html/HTMLOptGroupElement.cpp:
+        (WebCore::HTMLOptGroupElement::groupLabelText): Removed DeprecatedString use.
+        * html/HTMLParser.cpp:
+        (WebCore::HTMLParser::reportErrorToConsole): Updated for KURL change.
+        * html/HTMLScriptElement.cpp:
+        (WebCore::HTMLScriptElement::insertedIntoDocument): Ditto.
+        (WebCore::HTMLScriptElement::text): Changed to use Vector<UChar> instead of
+        String for better performance.
+        (WebCore::HTMLScriptElement::src): Return KURL.
+        * html/HTMLScriptElement.h: Ditto.
+        * html/HTMLSourceElement.cpp:
+        (WebCore::HTMLSourceElement::src): Return KURL.
+        * html/HTMLSourceElement.h: Ditto.
+        * html/HTMLTableElement.cpp:
+        (WebCore::HTMLTableElement::parseMappedAttribute): Updated for KURL change.
+        * html/HTMLTablePartElement.cpp:
+        (WebCore::HTMLTablePartElement::parseMappedAttribute): Updated for KURL change.
+        * html/HTMLTextAreaElement.cpp:
+        (WebCore::HTMLTextAreaElement::setValue): Removed DeprecatedString use.
+        * html/HTMLTokenizer.cpp:
+        (WebCore::HTMLTokenizer::scriptExecution): Ditto.
+        (WebCore::HTMLTokenizer::notifyFinished): Use protocolIs.
+        * html/HTMLVideoElement.cpp:
+        (WebCore::HTMLVideoElement::poster): Return KURL.
+        * html/HTMLVideoElement.h: Ditto.
+        * html/HTMLViewSourceDocument.cpp:
+        (WebCore::HTMLViewSourceDocument::addText): Updated for String::split change.
+
+        * loader/DocLoader.cpp:
+        (WebCore::DocLoader::checkForReload): Add an explicit check for an empty URL
+        here to avoid problems using its string as a hash table key later.
+        (WebCore::DocLoader::requestResource): Removed DeprecatedString use.
+
+        * loader/FTPDirectoryDocument.cpp:
+        (WebCore::FTPDirectoryTokenizer::createTDForFilename): Updated for KURL change.
+        (WebCore::FTPDirectoryTokenizer::parseAndAppendOneLine): Removed use of
+        DeprecatedString.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::requestFrame): Use protocolIs.
+        (WebCore::FrameLoader::loadSubframe): Use blankURL.
+        (WebCore::FrameLoader::submitForm): Use protocolIs and removed use of
+        DeprecatedString.
+        (WebCore::FrameLoader::iconURL): Return KURL. Use protcolIs.
+        (WebCore::FrameLoader::didOpenURL): Use protocolIs.
+        (WebCore::FrameLoader::didExplicitOpen): Use blankURL.
+        (WebCore::FrameLoader::executeIfJavaScriptURL): Use protocolIs.
+        Update for name change to decodeURLEscapeSequences.
+        (WebCore::FrameLoader::receivedFirstData): Updated for KURL changes.
+        (WebCore::FrameLoader::begin): Removed DeprecatedString use.
+        Renamed baseurl to baseURL. Updated to use KURL more.
+        (WebCore::FrameLoader::gotoAnchor): Removed use of encodedHtmlRef
+        function, which is no different from ref.
+        (WebCore::FrameLoader::completeURL): Updated for KURL change.
+        (WebCore::FrameLoader::scheduleLocationChange): Ditto.
+        (WebCore::FrameLoader::canCachePage): Use protocolIs.
+        (WebCore::FrameLoader::updatePolicyBaseURL): Update for KURL change.
+        (WebCore::FrameLoader::setPolicyBaseURL): Take KURL.
+        (WebCore::FrameLoader::startRedirectionTimer): Removed use of
+        DeprecatedString.
+        (WebCore::FrameLoader::load): Use protocolIs.
+        (WebCore::FrameLoader::shouldHideReferrer): Use protocolIs.
+        (WebCore::FrameLoader::shouldAllowNavigation): Updated for KURL change.
+        (WebCore::FrameLoader::commitProvisionalLoad): Use blankURL.
+        (WebCore::FrameLoader::open): Use protcolIs.
+        (WebCore::FrameLoader::createHistoryItem): Use blankURL.
+        (WebCore::FrameLoader::createJavaAppletWidget): Updated for KURL change.
+        (WebCore::FrameLoader::switchOutLowBandwidthDisplayIfReady): Removed
+        DeprecatedString use.
+        * loader/FrameLoader.h: Ditto.
+
+        * loader/ImageDocument.cpp:
+        (WebCore::ImageDocument::createDocumentStructure): Updated for KURL change.
+        * loader/PluginDocument.cpp:
+        (WebCore::PluginTokenizer::createDocumentStructure): Ditto.
+
+        * loader/icon/IconDatabase.cpp:
+        (WebCore::IconDatabase::iconForPageURL): Added a check for an empty URL
+        before trying to use it as a hash table key.
+
+        * loader/icon/IconLoader.h: Tweaked includes.
+
+        * loader/loader.cpp:
+        (WebCore::Loader::servePendingRequests): Use protcolIs. Also removed some
+        code to set up a local variable that is never used (and a DeprecatedString
+        on to boot!).
+
+        * loader/mac/LoaderNSURLExtras.m:
+        (suggestedFilenameWithMIMEType): Removed unnecessary typecast.
+
+        * page/ContextMenuController.cpp: Removed include.
+
+        * page/mac/EventHandlerMac.mm:
+        (WebCore::EventHandler::needsKeyboardEventDisambiguationQuirks):
+        Use protocolIs.
+
+        * page/mac/WebCoreFrameBridge.mm:
+        (-[WebCoreFrameBridge URLWithAttributeString:]): Removed getNSURL call.
+        (-[WebCoreFrameBridge baseURL]): Ditto.
+
+        * platform/KURL.cpp:
+        (WebCore::isSchemeFirstChar): Fixed bug in handling of values >= 0x80.
+        (WebCore::isSchemeChar): Ditto.
+        (WebCore::isPathSegmentEndChar): Ditto.
+        (WebCore::hexDigitValue): Changed parameter type to UChar.
+        (WebCore::copyASCII): Added.
+        (WebCore::findFirstOf): Added.
+        (WebCore::KURL::protocolIs): Added.
+        (WebCore::KURL::KURL): Tightened logic up quite a bit. Changed parameter
+        types from DeprecatedString to String.
+        (WebCore::KURL::init): Changed parameter type to String. Preserved the
+        passed-in string even if the base is invalid. Cleaned up logic to determine
+        if the originalString should be pased in to the parse function. Simplified
+        by calling the new parse overload that takes String in many cases.
+        (WebCore::KURL::lastPathComponent): Return String.
+        (WebCore::KURL::protocol): Ditto.
+        (WebCore::KURL::host): Ditto.
+        (WebCore::KURL::port): Changed logic to use early return for clarity.
+        (WebCore::KURL::pass): Return String.
+        (WebCore::KURL::user): Ditto.
+        (WebCore::KURL::ref): Ditto.
+        (WebCore::assertProtocolIsGood): Added.
+        (WebCore::KURL::protocolIs): Added.
+        (WebCore::KURL::query): Return String.
+        (WebCore::KURL::path): Ditto.
+        (WebCore::KURL::setProtocol): Take String.
+        (WebCore::KURL::setHost): Ditto.
+        (WebCore::KURL::setPort): Use String.
+        (WebCore::KURL::setHostAndPort): Take String.
+        (WebCore::KURL::setUser): Ditto.
+        (WebCore::KURL::setPass): Ditto.
+        (WebCore::KURL::setRef): Ditto.
+        (WebCore::KURL::setQuery): Ditto.
+        (WebCore::KURL::setPath): Ditto.
+        (WebCore::KURL::prettyURL): Return String. Use Vector<UChar> to build it.
+        (WebCore::decodeURLEscapeSequences): Renamed from KURL::decode_string.
+        Return String. Use Vector<UChar> to build it.
+        (WebCore::KURL::isLocalFile): Use protocolIs.
+        (WebCore::KURL::parse): Added an overload that takes a String to replace
+        the use of DeprecatedString::ascii at various call sites. Updated for
+        name change (urlString -> m_string).
+        (WebCore::equalIgnoringRef): Wrote a new implementation that doesn't
+        do any allocation.
+        (WebCore::encodeWithURLEscapeSequences): Renamed from KURL::encode_string.
+        Return String.
+        (WebCore::appendEncodedHostname): Added. Replaces encodeHostname and
+        avoids the need to allocate a string.
+        (WebCore::findHostnamesInMailToURL): Update to use findFirstOf instead of
+        regular expressions.
+        (WebCore::findHostnameInHierarchicalURL): Ditto.
+        (WebCore::encodeHostnames): Use protocolIs and the other helpers above.
+        (WebCore::encodeRelativeString): Changed to put result into a CharBuffer.
+        (WebCore::substituteBackslashes): Updated to use String.
+        (WebCore::KURL::copyToBuffer): Added.
+        (WebCore::protocolIs): Added.
+        (WebCore::blankURL): Added.
+        (WebCore::KURL::print): Updated.
+        * platform/KURL.h: Added a number of comments. Reorganized the header a bit.
+        Made the string constructors explicit. Changed to use String instead of
+        DeprecatedString. Removed encodedHTMLRef. Renamed and added a few functions.
+
+        * platform/cf/KURLCFNet.cpp:
+        (WebCore::KURL::KURL): Streamlined the logic a bit.
+        (WebCore::KURL::createCFURL): Changed to use copyToBuffer.
+
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.mm:
+        (WebCore::MediaPlayerPrivate::createQTMovie): Removed getNSURL call.
+        Use protocolIs.
+        * platform/mac/ClipboardMac.mm:
+        (WebCore::ClipboardMac::declareAndWriteDragImage): Removed getNSURL call.
+        * platform/mac/CookieJar.mm:
+        (WebCore::cookies): Removed getNSURL call.
+        (WebCore::setCookies): Removed getNSURL call.
+        * platform/mac/KURLMac.mm:
+        (WebCore::KURL::KURL): Streamlined the logic a bit.
+        * platform/mac/PasteboardMac.mm:
+        (WebCore::Pasteboard::writeURL): Removed getNSURL call.
+        (WebCore::Pasteboard::writeImage): Ditto.
+        * platform/mac/SSLKeyGeneratorMac.mm:
+        (WebCore::signedPublicKeyAndChallengeString): Ditto.
+
+        * platform/network/HTTPParsers.cpp:
+        (WebCore::filenameFromHTTPContentDisposition): Updated for String::split.
+        * platform/network/ResourceHandle.cpp:
+        (WebCore::ResourceHandle::portAllowed): Use protocolIs.
+
+        * platform/network/cf/ResourceErrorCF.cpp:
+        (WebCore::ResourceError::operator CFErrorRef): Removed deprecatedString call.
+        * platform/network/curl/ResourceHandleManager.cpp:
+        (WebCore::headerCallback): Ditto.
+        (WebCore::parseDataUrl): Use String instead of DeprecatedString.
+        (WebCore::ResourceHandleManager::startJob): Updated for KURL changes.
+        * platform/network/mac/ResourceErrorMac.mm:
+        (WebCore::ResourceError::operator NSError*): Removed getNSURL call.
+        * platform/network/mac/ResourceRequest.h:
+        (WebCore::ResourceRequest::ResourceRequest): Removed DeprecatedString use.
+        * platform/network/mac/ResourceRequestMac.mm:
+        (WebCore::ResourceRequest::doUpdatePlatformRequest): Removed getNSURL call.
+        * platform/network/mac/ResourceResponseMac.mm:
+        (WebCore::ResourceResponse::nsURLResponse): Removed getNSURL call.
+
+        * platform/qt/ClipboardQt.cpp:
+        (WebCore::ClipboardQt::writeURL): Removed deprecatedString call.
+
+        * platform/text/CString.h:
+        (WebCore::CStringBuffer::length): Fixed size_t/unsigned mismatch to make it
+        possible to compile this on Windows with higher warning level
+
+        * platform/text/PlatformString.h: Updated split to modify a result parameter
+        rather than returning a Vector. Added charactersAreAllASCII and an append
+        function that appends a String to a Vector<UChar>.
+        * platform/text/String.cpp:
+        (WebCore::String::split): Updated.
+
+        * platform/win/BString.cpp:
+        (WebCore::BString::BString): Added conversion from KURL.
+        * platform/win/BString.h: Ditto.
+
+        * platform/win/ClipboardUtilitiesWin.cpp:
+        (WebCore::markupToCF_HTML): Removed use of deprecatedString.
+        * platform/win/ClipboardWin.cpp:
+        (WebCore::filesystemPathFromUrlOrTitle): Ditto.
+        (WebCore::createGlobalHDropContent): Ditto.
+        (WebCore::ClipboardWin::setData): Ditto.
+        (WebCore::ClipboardWin::writeRange): Ditto.
+        * platform/win/PasteboardWin.cpp:
+        (WebCore::Pasteboard::writeSelection): Ditto.
+        * plugins/PluginStream.cpp:
+        (WebCore::PluginStream::startStream): Ditto.
+        (WebCore::PluginStream::destroyStream): Ditto.
+        * plugins/win/PluginViewWin.cpp:
+        (WebCore::scriptStringIfJavaScriptURL): Ditto.
+        (WebCore::PluginView::performRequest): Ditto.
+        (WebCore::PluginView::PluginView): Ditto.
+
+        * rendering/HitTestResult.cpp:
+        (WebCore::HitTestResult::absoluteImageURL): Removed DeprecatedString use.
+        (WebCore::HitTestResult::absoluteLinkURL): Ditto.
+
+        * rendering/RenderFrameSet.cpp:
+        (WebCore::RenderFrameSet::layOutAxis): Fixed comment wording.
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::paintReplaced): Removed use of DeperecatedString,
+        (WebCore::RenderImage::imageMap): Changed to call useMap instead of imageMap;
+        both do the same thing, and the first is standard DOM.
+
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::addPDFURLRect): Rewrote and streamlined to remove
+        DeprecatedString use.
+        * rendering/RenderObject.h: Changed addPDFURLRect to take const IntRect&.
+
+        * rendering/RenderPartObject.cpp:
+        (WebCore::isURLAllowed): Updated for KURL change and use equalIgnoringRef
+        instead of doing a setRef to get the same effect.
+        (WebCore::RenderPartObject::updateWidget): Updated for KURL change.
+
+        * rendering/RenderText.cpp:
+        (WebCore::charactersAreAllASCII): Moved the guts to PlatformString.h.
+
+        * rendering/SVGRenderSupport.cpp:
+        (WebCore::renderSubtreeToImage): Added missing call to do layout. I ran
+        into this while doing some layout tests while URL processing was broken.
+
+        * rendering/SVGRenderTreeAsText.h: Removed include.
+
+        * svg/SVGImageLoader.cpp:
+        (WebCore::SVGImageLoader::updateFromElement): Removed DeprecatedString use.
+
+        * svg/graphics/SVGImage.cpp:
+        (WebCore::SVGImage::draw): Added missing call to do layout. I ran
+        into this while doing some layout tests while URL processing was broken.
+        (WebCore::SVGImage::dataChanged): Use a null URL rather than an arbitrary
+        string for the document.
+
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::getResponseXML): Removed DeprecatedString use.
+        (WebCore::XMLHttpRequest::urlMatchesDocumentDomain): Ditto.
+        (WebCore::XMLHttpRequest::open): Ditto.
+        (WebCore::XMLHttpRequest::send):  Namespace change.
+        (WebCore::XMLHttpRequest::dropProtection): Ditto.
+        * xml/XMLHttpRequest.h: Removed DeprecatedString use.
+
+        * xml/XSLImportRule.cpp:
+        (WebCore::XSLImportRule::loadSheet): Removed DeprecatedString use.
+        * xml/XSLStyleSheet.cpp:
+        (WebCore::XSLStyleSheet::loadChildSheets): Ditto.
+        (WebCore::XSLStyleSheet::loadChildSheet): Ditto.
+        * xml/XSLStyleSheet.h: Ditto.
+        * xml/XSLTProcessor.cpp:
+        (WebCore::docLoaderFunc): Ditto.
+        (WebCore::xsltStylesheetPointer): Ditto.
+        (WebCore::xmlDocPtrFromNode): Ditto.
+
 2008-02-14  Ada Chan  <adachan@apple.com>
 
         <rdar://problem/5744728> Fix leaks of RegularExpression objects in Frame.cpp.

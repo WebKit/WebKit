@@ -1,9 +1,8 @@
-// -*- c-basic-offset: 2 -*-
 /*
  *  Copyright (C) 2000 Harri Porten (porten@kde.org)
  *  Copyright (c) 2000 Daniel Molkentin (molkentin@kde.org)
  *  Copyright (c) 2000 Stefan Schimanski (schimmi@kde.org)
- *  Copyright (C) 2003, 2004, 2005, 2006, 2007 Apple Inc. All Rights Reserved.
+ *  Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008 Apple Inc. All Rights Reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -64,21 +63,22 @@
 #define WEBCORE_NAVIGATOR_VENDOR_SUB ""
 #endif // ifndef WEBCORE_NAVIGATOR_VENDOR_SUB
 
+using namespace KJS;
 using namespace WebCore;
 
-namespace KJS {
+namespace WebCore {
 
     class PluginBase : public DOMObject {
     public:
-        PluginBase(ExecState *exec);
+        PluginBase(ExecState*);
         virtual ~PluginBase();
         
         static void refresh(bool reload);
 
     protected:
         static void cachePluginDataIfNecessary();
-        static Vector<PluginInfo*> *plugins;
-        static Vector<MimeClassInfo*> *mimes;
+        static Vector<PluginInfo*>* plugins;
+        static Vector<MimeClassInfo*>* mimes;
 
     private:
         static int m_plugInCacheRefCount;
@@ -87,73 +87,73 @@ namespace KJS {
 
     class Plugins : public PluginBase {
     public:
-        Plugins(ExecState *exec) : PluginBase(exec) {};
-        virtual bool getOwnPropertySlot(ExecState *, const Identifier&, PropertySlot&);
-        JSValue *getValueProperty(ExecState *, int token) const;
+        Plugins(ExecState* exec) : PluginBase(exec) { }
+        virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
+        JSValue* getValueProperty(ExecState*, int token) const;
         virtual const ClassInfo* classInfo() const { return &info; }
         static const ClassInfo info;
         enum { Length };
     private:
-        static JSValue *indexGetter(ExecState *, JSObject *, const Identifier&, const PropertySlot&);
-        static JSValue *nameGetter(ExecState *, JSObject *, const Identifier&, const PropertySlot&);
+        static JSValue* indexGetter(ExecState*, JSObject*, const Identifier&, const PropertySlot&);
+        static JSValue* nameGetter(ExecState*, JSObject*, const Identifier&, const PropertySlot&);
     };
 
     JSValue* pluginsFunctionRefresh(ExecState*, JSObject*, const List&);
 
     class MimeTypes : public PluginBase {
     public:
-        MimeTypes(ExecState *exec) : PluginBase(exec) { };
-        virtual bool getOwnPropertySlot(ExecState *, const Identifier&, PropertySlot&);
-        JSValue *getValueProperty(ExecState *, int token) const;
+        MimeTypes(ExecState* exec) : PluginBase(exec) { };
+        virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
+        JSValue* getValueProperty(ExecState*, int token) const;
         virtual const ClassInfo* classInfo() const { return &info; }
         static const ClassInfo info;
         enum { Length };
     private:
-        static JSValue *indexGetter(ExecState *, JSObject *, const Identifier&, const PropertySlot&);
-        static JSValue *nameGetter(ExecState *, JSObject *, const Identifier&, const PropertySlot&);
+        static JSValue* indexGetter(ExecState*, JSObject*, const Identifier&, const PropertySlot&);
+        static JSValue* nameGetter(ExecState*, JSObject*, const Identifier&, const PropertySlot&);
     };
 
     class Plugin : public PluginBase {
     public:
-        Plugin(ExecState *exec, PluginInfo *info) : PluginBase(exec), m_info(info) { }
-        virtual bool getOwnPropertySlot(ExecState *, const Identifier&, PropertySlot&);
-        JSValue *getValueProperty(ExecState *, int token) const;
+        Plugin(ExecState* exec, PluginInfo* info) : PluginBase(exec), m_info(info) { }
+        virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
+        JSValue* getValueProperty(ExecState*, int token) const;
         virtual const ClassInfo* classInfo() const { return &info; }
         static const ClassInfo info;
         enum { Name, Filename, Description, Length };
     private:
-        static JSValue *indexGetter(ExecState *, JSObject *, const Identifier&, const PropertySlot&);
-        static JSValue *nameGetter(ExecState *, JSObject *, const Identifier&, const PropertySlot&);
+        static JSValue* indexGetter(ExecState*, JSObject*, const Identifier&, const PropertySlot&);
+        static JSValue* nameGetter(ExecState*, JSObject*, const Identifier&, const PropertySlot&);
 
-        PluginInfo *m_info;
+        PluginInfo* m_info;
     };
 
     class MimeType : public PluginBase {
     public:
-        MimeType( ExecState *exec, MimeClassInfo *info ) : PluginBase(exec), m_info(info) { }
-        virtual bool getOwnPropertySlot(ExecState *, const Identifier&, PropertySlot&);
-        JSValue *getValueProperty(ExecState *, int token) const;
+        MimeType(ExecState* exec, MimeClassInfo* info) : PluginBase(exec), m_info(info) { }
+        virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
+        JSValue* getValueProperty(ExecState*, int token) const;
         virtual const ClassInfo* classInfo() const { return &info; }
         static const ClassInfo info;
         enum { Type, Suffixes, Description, EnabledPlugin };
     private:
-        MimeClassInfo *m_info;
+        MimeClassInfo* m_info;
     };
 
-} // namespace
+}
 
 #include "kjs_navigator.lut.h"
 
-namespace KJS {
+namespace WebCore {
 
 const ClassInfo Plugins::info = { "PluginArray", 0, &PluginsTable };
 const ClassInfo MimeTypes::info = { "MimeTypeArray", 0, &MimeTypesTable };
 const ClassInfo Plugin::info = { "Plugin", 0, &PluginTable };
 const ClassInfo MimeType::info = { "MimeType", 0, &MimeTypeTable };
 
-Vector<PluginInfo*> *KJS::PluginBase::plugins = 0;
-Vector<MimeClassInfo*> *KJS::PluginBase::mimes = 0;
-int KJS::PluginBase::m_plugInCacheRefCount = 0;
+Vector<PluginInfo*>* PluginBase::plugins = 0;
+Vector<MimeClassInfo*>* PluginBase::mimes = 0;
+int PluginBase::m_plugInCacheRefCount = 0;
 
 const ClassInfo Navigator::info = { "Navigator", 0, &NavigatorTable };
 /*
@@ -181,7 +181,7 @@ Navigator::Navigator(JSObject* prototype, Frame* frame)
 {
 }
 
-bool Navigator::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName, PropertySlot& slot)
+bool Navigator::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
 {
   return getStaticPropertySlot<Navigator, JSObject>(exec, &NavigatorTable, this, propertyName, slot);
 }
@@ -300,30 +300,30 @@ void PluginBase::refresh(bool reload)
 @end
 */
 
-JSValue *Plugins::getValueProperty(ExecState *exec, int token) const
+JSValue* Plugins::getValueProperty(ExecState* exec, int token) const
 {
   ASSERT(token == Length);
   return jsNumber(plugins->size());
 }
 
-JSValue *Plugins::indexGetter(ExecState *exec, JSObject *originalObject, const Identifier& propertyName, const PropertySlot& slot)
+JSValue* Plugins::indexGetter(ExecState* exec, JSObject* originalObject, const Identifier& propertyName, const PropertySlot& slot)
 {
     return new Plugin(exec, plugins->at(slot.index()));
 }
 
-JSValue *Plugins::nameGetter(ExecState *exec, JSObject *originalObject, const Identifier& propertyName, const PropertySlot& slot)
+JSValue* Plugins::nameGetter(ExecState* exec, JSObject* originalObject, const Identifier& propertyName, const PropertySlot& slot)
 {
     AtomicString atomicPropertyName = propertyName;
     Vector<PluginInfo*>::iterator end = plugins->end();
     for (Vector<PluginInfo*>::iterator itr = plugins->begin(); itr != end; itr++) {
-        PluginInfo *pl = *itr;
+        PluginInfo* pl = *itr;
         if (pl->name == atomicPropertyName)
             return new Plugin(exec, pl);
     }
     return jsUndefined();
 }
 
-bool Plugins::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName, PropertySlot& slot)
+bool Plugins::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
 {
     const HashEntry* entry = Lookup::findEntry(&PluginsTable, propertyName);
     if (entry) {
@@ -363,30 +363,30 @@ bool Plugins::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName
 @end
 */
 
-JSValue *MimeTypes::getValueProperty(ExecState *exec, int token) const
+JSValue* MimeTypes::getValueProperty(ExecState* exec, int token) const
 {
   ASSERT(token == Length);
   return jsNumber(mimes->size());
 }
 
-JSValue *MimeTypes::indexGetter(ExecState *exec, JSObject *originalObject, const Identifier& propertyName, const PropertySlot& slot)
+JSValue* MimeTypes::indexGetter(ExecState* exec, JSObject* originalObject, const Identifier& propertyName, const PropertySlot& slot)
 {
     return new MimeType(exec, mimes->at(slot.index()));
 }
 
-JSValue *MimeTypes::nameGetter(ExecState *exec, JSObject *originalObject, const Identifier& propertyName, const PropertySlot& slot)
+JSValue* MimeTypes::nameGetter(ExecState* exec, JSObject* originalObject, const Identifier& propertyName, const PropertySlot& slot)
 {
     AtomicString atomicPropertyName = propertyName;
     Vector<MimeClassInfo*>::iterator end = mimes->end();
     for (Vector<MimeClassInfo*>::iterator itr = mimes->begin(); itr != end; itr++) {
-        MimeClassInfo *m = (*itr);
+        MimeClassInfo* m = (*itr);
         if (m->type == atomicPropertyName)
             return new MimeType(exec, m);
     }
     return jsUndefined();
 }
 
-bool MimeTypes::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName, PropertySlot& slot)
+bool MimeTypes::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
 {
     const HashEntry* entry = Lookup::findEntry(&MimeTypesTable, propertyName);
     if (entry) {
@@ -427,7 +427,7 @@ bool MimeTypes::getOwnPropertySlot(ExecState *exec, const Identifier& propertyNa
 @end
 */
 
-JSValue *Plugin::getValueProperty(ExecState *exec, int token) const
+JSValue* Plugin::getValueProperty(ExecState* exec, int token) const
 {
     switch (token) {
     case Name:
@@ -444,19 +444,19 @@ JSValue *Plugin::getValueProperty(ExecState *exec, int token) const
     }
 }
 
-JSValue *Plugin::indexGetter(ExecState *exec, JSObject *originalObject, const Identifier& propertyName, const PropertySlot& slot)
+JSValue* Plugin::indexGetter(ExecState* exec, JSObject* originalObject, const Identifier& propertyName, const PropertySlot& slot)
 {
-    Plugin *thisObj = static_cast<Plugin *>(slot.slotBase());
+    Plugin* thisObj = static_cast<Plugin*>(slot.slotBase());
     return new MimeType(exec, thisObj->m_info->mimes.at(slot.index()));
 }
 
-JSValue *Plugin::nameGetter(ExecState *exec, JSObject *originalObject, const Identifier& propertyName, const PropertySlot& slot)
+JSValue* Plugin::nameGetter(ExecState* exec, JSObject* originalObject, const Identifier& propertyName, const PropertySlot& slot)
 {
-    Plugin *thisObj = static_cast<Plugin *>(slot.slotBase());
+    Plugin* thisObj = static_cast<Plugin*>(slot.slotBase());
     AtomicString atomicPropertyName = propertyName;
     Vector<MimeClassInfo*>::iterator end = thisObj->m_info->mimes.end();
     for (Vector<MimeClassInfo*>::iterator itr = thisObj->m_info->mimes.begin(); itr != end; itr++) {
-        MimeClassInfo *m = (*itr);
+        MimeClassInfo* m = (*itr);
         if (m->type == atomicPropertyName)
             return new MimeType(exec, m);
     }
@@ -464,7 +464,7 @@ JSValue *Plugin::nameGetter(ExecState *exec, JSObject *originalObject, const Ide
 }
 
 
-bool Plugin::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName, PropertySlot& slot)
+bool Plugin::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
 {
     const HashEntry* entry = Lookup::findEntry(&PluginTable, propertyName);
     if (entry) {
@@ -504,7 +504,7 @@ bool Plugin::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName,
 @end
 */
 
-JSValue *MimeType::getValueProperty(ExecState *exec, int token) const
+JSValue* MimeType::getValueProperty(ExecState* exec, int token) const
 {
     switch (token) {
     case Type:
@@ -527,7 +527,7 @@ JSValue *MimeType::getValueProperty(ExecState *exec, int token) const
     }
 }
 
-bool MimeType::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName, PropertySlot& slot)
+bool MimeType::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
 {
     return getStaticValueSlot<MimeType, PluginBase>(exec, &MimeTypeTable, this, propertyName, slot);
 }
@@ -540,12 +540,11 @@ JSValue* pluginsFunctionRefresh(ExecState* exec, JSObject*, const List& args)
 
 JSValue* navigatorProtoFuncJavaEnabled(ExecState* exec, JSObject* thisObj, const List&)
 {
-  if (!thisObj->inherits(&KJS::Navigator::info))
-    return throwError(exec, TypeError);
-  Navigator *nav = static_cast<Navigator *>(thisObj);
-  // javaEnabled()
-  Settings* settings = nav->frame() ? nav->frame()->settings() : 0;
-  return jsBoolean(settings && settings->isJavaEnabled());
+    if (!thisObj->inherits(&Navigator::info))
+        return throwError(exec, TypeError);
+    Navigator* nav = static_cast<Navigator*>(thisObj);
+    Settings* settings = nav->frame() ? nav->frame()->settings() : 0;
+    return jsBoolean(settings && settings->isJavaEnabled());
 }
 
 } // namespace

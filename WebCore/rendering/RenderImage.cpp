@@ -1,12 +1,10 @@
-/**
- * This file is part of the DOM implementation for KDE.
- *
+/*
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2000 Dirk Mueller (mueller@kde.org)
  *           (C) 2006 Allan Sandfeld Jensen (kde@carewolf.com)
  *           (C) 2006 Samuel Weinig (sam.weinig@gmail.com)
- * Copyright (C) 2003, 2004, 2005, 2006 Apple Computer, Inc.
+ * Copyright (C) 2003, 2004, 2005, 2006, 2008 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -225,7 +223,7 @@ void RenderImage::paintReplaced(PaintInfo& paintInfo, int tx, int ty)
             }
 
             if (!m_altText.isEmpty()) {
-                DeprecatedString text = m_altText.deprecatedString();
+                String text = m_altText;
                 text.replace('\\', backslashAsCurrencySymbol());
                 context->setFont(style()->font());
                 context->setFillColor(style()->color());
@@ -236,7 +234,7 @@ void RenderImage::paintReplaced(PaintInfo& paintInfo, int tx, int ty)
 
                 // Only draw the alt text if it'll fit within the content box,
                 // and only if it fits above the error image.
-                TextRun textRun(reinterpret_cast<const UChar*>(text.unicode()), text.length());
+                TextRun textRun(text.characters(), text.length());
                 int textWidth = font.width(textRun);
                 if (errorPictureDrawn) {
                     if (usableWidth >= textWidth && font.height() <= imageY)
@@ -267,7 +265,7 @@ int RenderImage::minimumReplacedHeight() const
 HTMLMapElement* RenderImage::imageMap()
 {
     HTMLImageElement* i = element() && element()->hasTagName(imgTag) ? static_cast<HTMLImageElement*>(element()) : 0;
-    return i ? i->document()->getImageMap(i->imageMap()) : 0;
+    return i ? i->document()->getImageMap(i->useMap()) : 0;
 }
 
 bool RenderImage::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, int _x, int _y, int _tx, int _ty, HitTestAction hitTestAction)

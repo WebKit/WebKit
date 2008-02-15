@@ -35,7 +35,7 @@ namespace WebCore {
 
     // Internal class, used for the collection return by e.g. document.forms.myinput
     // when multiple nodes have the same name.
-    class JSNamedNodesCollection : public KJS::DOMObject {
+    class JSNamedNodesCollection : public DOMObject {
     public:
         JSNamedNodesCollection(KJS::JSObject* prototype, const Vector<RefPtr<Node> >&);
 

@@ -210,7 +210,7 @@ void Pasteboard::writeURL(NSPasteboard* pasteboard, NSArray* types, const KURL& 
     
     ASSERT(!url.isEmpty());
     
-    NSURL *cocoaURL = url.getNSURL();
+    NSURL *cocoaURL = url;
     NSString *userVisibleString = frame->editor()->client()->userVisibleString(cocoaURL);
     
     NSString *title = (NSString*)titleStr;
@@ -270,7 +270,7 @@ void Pasteboard::writeImage(Node* node, const KURL& url, const String& title)
     ASSERT(node);
     Frame* frame = node->document()->frame();
 
-    NSURL *cocoaURL = url.getNSURL();
+    NSURL *cocoaURL = url;
     ASSERT(cocoaURL);
 
     NSArray* types = writableTypesForImage();

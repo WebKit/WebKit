@@ -258,7 +258,7 @@ void ClipboardQt::writeURL(const KURL& url, const String&, Frame* frame)
     ASSERT(frame);
     
     QList<QUrl> urls;
-    urls.append(QUrl(frame->document()->completeURL(url.deprecatedString())));
+    urls.append(frame->document()->completeURL(url.string()));
     if (!m_writableData)
         m_writableData = new QMimeData;
     m_writableData->setUrls(urls);

@@ -1,10 +1,8 @@
-/**
- * This file is part of the DOM implementation for KDE.
- *
+/*
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.
+ * Copyright (C) 2004, 2005, 2006, 2008 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -31,19 +29,30 @@
 
 namespace WebCore {
 
-DocumentType::DocumentType(DOMImplementation *i, Document *doc, const String &n, const String &p, const String &s)
-    : Node(doc), m_implementation(i), m_name(n), m_publicId(p), m_systemId(s)
+DocumentType::DocumentType(DOMImplementation* i, Document* document, const String& n, const String& p, const String& s)
+    : Node(document)
+    , m_implementation(i)
+    , m_name(n)
+    , m_publicId(p)
+    , m_systemId(s)
 {
 }
 
-DocumentType::DocumentType(Document *doc, const String &n, const String &p, const String &s)
-    : Node(doc), m_name(n), m_publicId(p), m_systemId(s)
+DocumentType::DocumentType(Document* document, const String& n, const String& p, const String& s)
+    : Node(document)
+    , m_name(n)
+    , m_publicId(p)
+    , m_systemId(s)
 {
 }
 
-DocumentType::DocumentType(Document *doc, const DocumentType &t)
-    : Node(doc), m_implementation(t.m_implementation)
-    , m_name(t.m_name), m_publicId(t.m_publicId), m_systemId(t.m_systemId), m_subset(t.m_subset)
+DocumentType::DocumentType(Document* document, const DocumentType &t)
+    : Node(document)
+    , m_implementation(t.m_implementation)
+    , m_name(t.m_name)
+    , m_publicId(t.m_publicId)
+    , m_systemId(t.m_systemId)
+    , m_subset(t.m_subset)
 {
 }
 
@@ -74,9 +83,9 @@ String DocumentType::toString() const
     return result;
 }
 
-String DocumentType::baseURI() const
+KURL DocumentType::baseURI() const
 {
-    return String();
+    return KURL();
 }
 
 String DocumentType::nodeName() const
@@ -91,7 +100,8 @@ Node::NodeType DocumentType::nodeType() const
 
 PassRefPtr<Node> DocumentType::cloneNode(bool /*deep*/)
 {
-    // The DOM Level 2 specification says cloning DocumentType nodes is "implementation dependent" so for now we do not support it.
+    // The DOM Level 2 specification says cloning DocumentType nodes is "implementation dependent".
+    // For now, we do not support it.
     return 0;
 }
 

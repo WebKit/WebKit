@@ -187,7 +187,8 @@ void MediaList::setMediaText(const String& value, ExceptionCode& ec)
     MediaList tempMediaList;
     CSSParser p(true);
 
-    Vector<String> list = value.split(',');
+    Vector<String> list;
+    value.split(',', list);
     Vector<String>::const_iterator end = list.end();
     for (Vector<String>::const_iterator it = list.begin(); it != end; ++it) {
         String medium = (*it).stripWhiteSpace();

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,34 +29,31 @@
 #include "config.h"
 #include "JSAttr.h"
 
-#include "Attr.h"
-#include "Document.h"
-#include "ExceptionCode.h"
 #include "HTMLFrameElementBase.h"
 #include "HTMLNames.h"
-#include "PlatformString.h"
-#include "kjs_binding.h"
-#include "kjs_dom.h"
+
+using namespace KJS;
 
 namespace WebCore {
 
 using namespace HTMLNames;
 
-void JSAttr::setValue(KJS::ExecState* exec, KJS::JSValue* value)
+void JSAttr::setValue(ExecState* exec, JSValue* value)
 {
     Attr* imp = static_cast<Attr*>(impl());
     String attrValue = valueToStringWithNullCheck(exec, value);
 
     Element* ownerElement = imp->ownerElement();
-    if (ownerElement && (ownerElement->hasTagName(iframeTag) || ownerElement->hasTagName(frameTag)) && equalIgnoringCase(imp->name(), "src") && attrValue.startsWith("javascript:", false)) {
-        HTMLFrameElementBase* frame = static_cast<HTMLFrameElementBase*>(ownerElement);
-        if (!checkNodeSecurity(exec, frame->contentDocument()))
-            return;
+    if (ownerElement && (ownerElement->hasTagName(iframeTag) || ownerElement->hasTagName(frameTag))) {
+        if (equalIgnoringCase(imp->name(), "src") && protocolIs(attrValue, "javascript")) {
+            if (!checkNodeSecurity(exec, static_cast<HTMLFrameElementBase*>(ownerElement)->contentDocument()))
+                return;
+        }
     }
 
     ExceptionCode ec = 0;
     imp->setValue(attrValue, ec);
-    KJS::setDOMException(exec, ec);
+    setDOMException(exec, ec);
 }
 
 } // namespace WebCore

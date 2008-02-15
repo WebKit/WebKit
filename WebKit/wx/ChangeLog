@@ -1,3 +1,7 @@
+2008-02-14  Darin Adler  <darin@apple.com>
+
+        * WebView.cpp: Removed use of DeprecatedString to keep this compiling.
+
 2008-02-11  Kevin Ollivier <kevino@theolliviers.com>
 
         Reviewed by Darin Adler.

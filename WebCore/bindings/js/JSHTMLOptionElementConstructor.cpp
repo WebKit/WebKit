@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2007, 2008 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -25,13 +25,13 @@
 #include "JSHTMLOptionElement.h"
 #include "Text.h"
 
-namespace WebCore {
-
 using namespace KJS;
 
-JSHTMLOptionElementConstructor::JSHTMLOptionElementConstructor(ExecState* exec, Document* d)
-    : KJS::DOMObject(exec->lexicalGlobalObject()->objectPrototype())
-    , m_doc(d)
+namespace WebCore {
+
+JSHTMLOptionElementConstructor::JSHTMLOptionElementConstructor(ExecState* exec, Document* document)
+    : DOMObject(exec->lexicalGlobalObject()->objectPrototype())
+    , m_document(document)
 {
     putDirect(exec->propertyNames().length, jsNumber(4), ReadOnly|DontDelete|DontEnum);
 }
@@ -43,26 +43,28 @@ bool JSHTMLOptionElementConstructor::implementsConstruct() const
 
 JSObject* JSHTMLOptionElementConstructor::construct(ExecState* exec, const List& args)
 {
-    int exception = 0;
-    RefPtr<Element> el(m_doc->createElement("option", exception));
-    HTMLOptionElement* opt = 0;
-    if (el) {
-        opt = static_cast<HTMLOptionElement*>(el.get());
-        int sz = args.size();
-        RefPtr<Text> text = m_doc->createTextNode("");
-        opt->appendChild(text, exception);
-        if (exception == 0 && sz > 0)
-            text->setData(args[0]->toString(exec), exception);
-        if (exception == 0 && sz > 1)
-            opt->setValue(args[1]->toString(exec));
-        if (exception == 0 && sz > 2)
-            opt->setDefaultSelected(args[2]->toBoolean(exec));
-        if (exception == 0 && sz > 3)
-            opt->setSelected(args[3]->toBoolean(exec));
+    ExceptionCode ec = 0;
+
+    RefPtr<HTMLOptionElement> element = static_pointer_cast<HTMLOptionElement>(m_document->createElement("option", ec));
+    if (element) {
+        RefPtr<Text> text = m_document->createTextNode("");
+        if (!args[0]->isUndefined())
+            text->setData(args[0]->toString(exec), ec);
+        if (ec == 0)
+            element->appendChild(text.release(), ec);
+        if (ec == 0 && !args[1]->isUndefined())
+            element->setValue(args[1]->toString(exec));
+        if (ec == 0)
+            element->setDefaultSelected(args[2]->toBoolean(exec));
+        if (ec == 0)
+            element->setSelected(args[3]->toBoolean(exec));
     }
 
-    setDOMException(exec, exception);
-    return static_cast<JSObject*>(toJS(exec, opt));
+    setDOMException(exec, ec);
+    if (ec || !element)
+        return 0;
+
+    return static_cast<JSObject*>(toJS(exec, element.release()));
 }
 
 } // namespace WebCore

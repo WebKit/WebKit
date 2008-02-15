@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2005, 2007, 2008 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Alexey Proskuryakov (ap@nypop.com)
  *
  * Redistribution and use in source and binary forms, with or without
@@ -802,8 +802,7 @@ typedef struct {
 
 - (NSString *)_webkit_stringByReplacingValidPercentEscapes
 {
-    DeprecatedString s = KURL::decode_string(DeprecatedString::fromNSString(self));
-    return s.getNSString();
+    return decodeURLEscapeSequences(self);
 }
 
 - (NSString *)_webkit_scriptIfJavaScriptURL

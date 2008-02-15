@@ -1,8 +1,6 @@
 /*
- * This file is part of the DOM implementation for KDE.
- *
  * Copyright (C) 2000 Peter Kelly (pmk@post.com)
- * Copyright (C) 2005, 2006 Apple Computer, Inc.
+ * Copyright (C) 2005, 2006, 2007 Apple Inc. All rights reserved.
  * Copyright (C) 2007 Samuel Weinig (sam@webkit.org)
  * Copyright (C) 2007 Trolltech ASA
  *
@@ -170,7 +168,7 @@ namespace WebCore {
     };
 
 #if ENABLE(XSLT)
-void* xmlDocPtrForString(DocLoader*, const String& source, const DeprecatedString& url);
+void* xmlDocPtrForString(DocLoader*, const String& source, const String& url);
 void setLoaderForLibXMLCallbacks(DocLoader*);
 #endif
 

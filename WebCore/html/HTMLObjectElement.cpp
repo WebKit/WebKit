@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2000 Stefan Schimanski (1Stein@gmx.de)
- * Copyright (C) 2004, 2005, 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
  * Copyright (C) 2007 Trolltech ASA
  *
  * This library is free software; you can redistribute it and/or
@@ -260,7 +260,7 @@ const QualifiedName& HTMLObjectElement::imageSourceAttributeName() const
 
 bool HTMLObjectElement::isImageType()
 {
-    if (m_serviceType.isEmpty() && m_url.startsWith("data:")) {
+    if (m_serviceType.isEmpty() && protocolIs(m_url, "data")) {
         // Extract the MIME type from the data URL.
         int index = m_url.find(';');
         if (index == -1)
@@ -378,7 +378,7 @@ void HTMLObjectElement::setCodeType(const String& value)
     setAttribute(codetypeAttr, value);
 }
 
-String HTMLObjectElement::data() const
+KURL HTMLObjectElement::data() const
 {
     return document()->completeURL(getAttribute(dataAttr));
 }

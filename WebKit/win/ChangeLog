@@ -1,3 +1,31 @@
+2008-02-14  Darin Adler  <darin@apple.com>
+
+        - updated for WebCore KURL changes
+
+        * MarshallingHelpers.cpp:
+        (MarshallingHelpers::BSTRToKURL): Removed deprecatedString call.
+        (MarshallingHelpers::KURLToBSTR): Tweaked for efficiency.
+        * WebContextMenuClient.cpp:
+        (WebContextMenuClient::searchWithGoogle): Updated for KURL changes.
+        * WebDataSource.cpp:
+        (WebDataSource::unreachableURL): Ditto.
+        * WebDownload.cpp:
+        (WebDownload::init): Ditto.
+        (WebDownload::initWithRequest): Ditto.
+        * WebFrame.cpp:
+        (WebFrame::loadData): Ditto.
+        (WebFrame::loadURLIntoChild): Ditto.
+        (WebFrame::objectContentType): Ditto.
+        * WebResource.cpp:
+        (WebResource::initWithData): Ditto.
+        * WebURLResponse.cpp:
+        (WebURLResponse::createInstance): Ditto.
+        (WebURLResponse::initWithURL): Ditto.
+        * WebView.cpp:
+        (WebView::userAgentForURL): Ditto.
+        (WebView::copyURL): Ditto.
+        (WebView::notifyPreferencesChanged): Ditto.
+
 2008-02-14  Alexey Proskuryakov  <ap@webkit.org>
 
         * WebChromeClient.cpp: (WebChromeClient::exceededDatabaseQuota): Forgot to re-apply review comments to

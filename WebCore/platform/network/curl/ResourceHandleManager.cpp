@@ -172,7 +172,7 @@ static size_t headerCallback(char* ptr, size_t size, size_t nmemb, void* data)
         if (httpCode >= 300 && httpCode < 400) {
             String location = d->m_response.httpHeaderField("location");
             if (!location.isEmpty()) {
-                KURL newURL = KURL(job->request().url(), location.deprecatedString());
+                KURL newURL = KURL(job->request().url(), location);
 
                 ResourceRequest redirectedRequest = job->request();
                 redirectedRequest.setURL(newURL);
@@ -463,41 +463,41 @@ bool ResourceHandleManager::startScheduledJobs()
 
 static void parseDataUrl(ResourceHandle* handle)
 {
-    DeprecatedString data = handle->request().url().deprecatedString();
+    String data = handle->request().url().string();
 
     ASSERT(data.startsWith("data:", false));
 
-    DeprecatedString header;
+    String header;
     bool base64 = false;
 
     int index = data.find(',');
     if (index != -1) {
-        header = data.mid(5, index - 5).lower();
-        data = data.mid(index + 1);
+        header = data.substring(5, index - 5).lower();
+        data = data.substring(index + 1);
 
         if (header.endsWith(";base64")) {
             base64 = true;
             header = header.left(header.length() - 7);
         }
     } else
-        data = DeprecatedString();
+        data = String();
 
-    data = KURL::decode_string(data);
+    data = decodeURLEscapeSequences(data);
 
     if (base64 && !data.isEmpty()) {
         // Use the GLib Base64 if available, since WebCore's decoder isn't
         // general-purpose and fails on Acid3 test 97 (whitespace).
 #ifdef USE_GLIB_BASE64
         gsize outLength;
-        guchar* out = g_base64_decode(data.ascii(), &outLength);
-        data = DeprecatedString(reinterpret_cast<char*>(out), outLength);
+        guchar* out = g_base64_decode(data.latin1().data(), &outLength);
+        data = String(reinterpret_cast<char*>(out), outLength);
         g_free(out);
 #else
         Vector<char> out;
-        if (base64Decode(data.ascii(), data.length(), out))
-            data = DeprecatedString(out.data(), out.size());
+        if (base64Decode(data..latin1().data(), data.length(), out))
+            data = String(out.data(), out.size());
         else
-            data = DeprecatedString();
+            data = String();
 #endif
     }
 
@@ -524,9 +524,8 @@ static void parseDataUrl(ResourceHandle* handle)
 void ResourceHandleManager::startJob(ResourceHandle* job)
 {
     KURL kurl = job->request().url();
-    String protocol = kurl.protocol();
 
-    if (equalIgnoringCase(protocol, "data")) {
+    if (kurl.protocolIs("data")) {
         parseDataUrl(job);
         return;
     }
@@ -535,15 +534,15 @@ void ResourceHandleManager::startJob(ResourceHandle* job)
     kurl.setRef("");
 
     ResourceHandleInternal* d = job->getInternal();
-    DeprecatedString url = kurl.deprecatedString();
+    String url = kurl.string();
 
     if (kurl.isLocalFile()) {
-        DeprecatedString query = kurl.query();
+        String query = kurl.query();
         // Remove any query part sent to a local file.
         if (!query.isEmpty())
             url = url.left(url.find(query));
         // Determine the MIME type based on the path.
-        d->m_response.setMimeType(MIMETypeRegistry::getMIMETypeForPath(String(url)));
+        d->m_response.setMimeType(MIMETypeRegistry::getMIMETypeForPath(url));
     }
 
     d->m_handle = curl_easy_init();
@@ -568,7 +567,7 @@ void ResourceHandleManager::startJob(ResourceHandle* job)
 
     // url must remain valid through the request
     ASSERT(!d->m_url);
-    d->m_url = strdup(url.ascii());
+    d->m_url = strdup(url.latin1().data());
     curl_easy_setopt(d->m_handle, CURLOPT_URL, d->m_url);
 
     if (m_cookieJarFileName) {
@@ -611,7 +610,7 @@ void ResourceHandleManager::startJob(ResourceHandle* job)
     // timeout will occur and do curl_multi_perform
     if (ret && ret != CURLM_CALL_MULTI_PERFORM) {
 #ifndef NDEBUG
-        printf("Error %d starting job %s\n", ret, job->request().url().deprecatedString().ascii());
+        printf("Error %d starting job %s\n", ret, job->request().url().string().latin1().data());
 #endif
         job->cancel();
         return;

@@ -1,10 +1,8 @@
-/**
- * This file is part of the KDE project.
- *
+/*
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 2000 Simon Hausmann <hausmann@kde.org>
  *           (C) 2000 Stefan Schimanski (1Stein@gmx.de)
- * Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.
+ * Copyright (C) 2004, 2005, 2006, 2008 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -22,11 +20,10 @@
  * Boston, MA 02110-1301, USA.
  *
  */
+
 #include "config.h"
 #include "RenderPartObject.h"
 
-#include "Document.h"
-#include "EventHandler.h"
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "FrameLoaderClient.h"
@@ -37,10 +34,8 @@
 #include "HTMLNames.h"
 #include "HTMLObjectElement.h"
 #include "HTMLParamElement.h"
-#include "KURL.h"
 #include "MIMETypeRegistry.h"
 #include "Page.h"
-#include "RenderView.h"
 #include "Text.h"
 
 namespace WebCore {
@@ -61,21 +56,17 @@ RenderPartObject::~RenderPartObject()
         m_view->removeWidgetToUpdate(this);
 }
 
-static bool isURLAllowed(Document *doc, const String &url)
+static bool isURLAllowed(Document* doc, const String& url)
 {
-    KURL newURL(doc->completeURL(url.deprecatedString()));
-    newURL.setRef(DeprecatedString::null);
-    
     if (doc->frame()->page()->frameCount() >= 200)
         return false;
 
     // We allow one level of self-reference because some sites depend on that.
     // But we don't allow more than one.
+    KURL completeURL = doc->completeURL(url);
     bool foundSelfReference = false;
-    for (Frame *frame = doc->frame(); frame; frame = frame->tree()->parent()) {
-        KURL frameURL = frame->loader()->url();
-        frameURL.setRef(DeprecatedString::null);
-        if (frameURL == newURL) {
+    for (Frame* frame = doc->frame(); frame; frame = frame->tree()->parent()) {
+        if (equalIgnoringRef(frame->loader()->url(), completeURL)) {
             if (foundSelfReference)
                 return false;
             foundSelfReference = true;
@@ -102,10 +93,10 @@ static inline void mapClassIdToServiceType(const String& classId, String& servic
         serviceType = "application/x-director";
     else if (classId.contains("6BF52A52-394A-11d3-B153-00C04F79FAA6"))
         serviceType = "application/x-mplayer2";
-    else if (!classId.isEmpty())
-        // We have a clsid, means this is activex (Niko)
+    else if (!classId.isEmpty()) {
+        // We have a clsid, means this is Active X (Niko)
         serviceType = "application/x-activex-handler";
-    // TODO: add more plugins here
+    }
 }
 
 void RenderPartObject::updateWidget(bool onlyCreateNonNetscapePlugins)
@@ -139,8 +130,8 @@ void RenderPartObject::updateWidget(bool onlyCreateNonNetscapePlugins)
       HTMLElement *embedOrObject;
       if (embed) {
           embedOrObject = (HTMLElement *)embed;
-          url = embed->url;
-          serviceType = embed->m_serviceType;
+          url = embed->url();
+          serviceType = embed->serviceType();
       } else
           embedOrObject = (HTMLElement *)o;
       
@@ -231,8 +222,8 @@ void RenderPartObject::updateWidget(bool onlyCreateNonNetscapePlugins)
   } else if (element()->hasTagName(embedTag)) {
       HTMLEmbedElement *o = static_cast<HTMLEmbedElement*>(element());
       o->setNeedWidgetUpdate(false);
-      url = o->url;
-      serviceType = o->m_serviceType;
+      url = o->url();
+      serviceType = o->serviceType();
 
       if (url.isEmpty() && serviceType.isEmpty())
           return;

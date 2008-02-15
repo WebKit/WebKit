@@ -472,10 +472,10 @@ Length* String::toLengthArray(int& len) const
     return m_impl ? m_impl->toLengthArray(len) : 0;
 }
 
-Vector<String> String::split(const String& separator, bool allowEmptyEntries) const
+void String::split(const String& separator, bool allowEmptyEntries, Vector<String>& result) const
 {
-    Vector<String> result;
-    
+    result.clear();
+
     int startPos = 0;
     int endPos;
     while ((endPos = find(separator, startPos)) != -1) {
@@ -483,17 +483,33 @@ Vector<String> String::split(const String& separator, bool allowEmptyEntries) co
             result.append(substring(startPos, endPos - startPos));
         startPos = endPos + separator.length();
     }
-    if (allowEmptyEntries || startPos != (int)length())
+    if (allowEmptyEntries || startPos != static_cast<int>(length()))
         result.append(substring(startPos));
-    
-    return result;
 }
 
-Vector<String> String::split(UChar separator, bool allowEmptyEntries) const
+void String::split(const String& separator, Vector<String>& result) const
 {
-    Vector<String> result;
-  
-    return split(String(&separator, 1), allowEmptyEntries);
+    return split(separator, false, result);
+}
+
+void String::split(UChar separator, bool allowEmptyEntries, Vector<String>& result) const
+{
+    result.clear();
+
+    int startPos = 0;
+    int endPos;
+    while ((endPos = find(separator, startPos)) != -1) {
+        if (allowEmptyEntries || startPos != endPos)
+            result.append(substring(startPos, endPos - startPos));
+        startPos = endPos + 1;
+    }
+    if (allowEmptyEntries || startPos != static_cast<int>(length()))
+        result.append(substring(startPos));
+}
+
+void String::split(UChar separator, Vector<String>& result) const
+{
+    return split(String(&separator, 1), false, result);
 }
 
 #ifndef NDEBUG

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,42 +23,45 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
+#import "config.h"
 #import "KURL.h"
 
 #import "FoundationExtras.h"
-#import <wtf/Assertions.h>
-#import <wtf/Vector.h>
 
 namespace WebCore {
 
 KURL::KURL(NSURL *url)
 {
-    if (url) {
-        CFIndex bytesLength = CFURLGetBytes((CFURLRef)url, 0, 0);
-        Vector<char, 2048> buffer(bytesLength + 6);  // 5 for "file:", 1 for NUL terminator
-        char *bytes = &buffer[5];
-        CFURLGetBytes((CFURLRef)url, (UInt8 *)bytes, bytesLength);
-        bytes[bytesLength] = '\0';
-        if (bytes[0] == '/') {
-            buffer[0] = 'f';
-            buffer[1] = 'i';
-            buffer[2] = 'l';
-            buffer[3] = 'e';
-            buffer[4] = ':';
-            parse(buffer.data(), 0);
-        } else
-            parse(bytes, 0);
-    } else
+    if (!url) {
         parse(0, 0);
+        return;
+    }
+
+    CFIndex bytesLength = CFURLGetBytes(reinterpret_cast<CFURLRef>(url), 0, 0);
+    Vector<char, 512> buffer(bytesLength + 6); // 5 for "file:", 1 for null character to end C string
+    char* bytes = &buffer[5];
+    CFURLGetBytes(reinterpret_cast<CFURLRef>(url), reinterpret_cast<UInt8*>(bytes), bytesLength);
+    bytes[bytesLength] = '\0';
+    if (bytes[0] != '/') {
+        parse(bytes, 0);
+        return;
+    }
+
+    buffer[0] = 'f';
+    buffer[1] = 'i';
+    buffer[2] = 'l';
+    buffer[3] = 'e';
+    buffer[4] = ':';
+
+    parse(buffer.data(), 0);
 }
 
-NSURL *KURL::getNSURL() const
+KURL::operator NSURL *() const
 {
-    if (urlString.isNull())
+    if (isNull())
         return nil;
 
-    // CFURL can't hold an empty URL, unlike NSURL
+    // CFURL can't hold an empty URL, unlike NSURL.
     if (isEmpty())
         return [NSURL URLWithString:@""];
 

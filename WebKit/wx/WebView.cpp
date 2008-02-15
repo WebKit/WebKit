@@ -25,7 +25,6 @@
 
 #include "config.h"
 #include "CString.h"
-#include "DeprecatedString.h"
 #include "Document.h"
 #include "Element.h"
 #include "Editor.h"

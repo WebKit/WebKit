@@ -116,7 +116,7 @@ void HTMLImageElement::parseMappedAttribute(MappedAttribute* attr)
         if (attr->value().domString()[0] == '#')
             usemap = attr->value();
         else
-            usemap = document()->completeURL(parseURL(attr->value()));
+            usemap = document()->completeURL(parseURL(attr->value())).string();
         m_isLink = !attr->isNull();
     } else if (attrName == ismapAttr)
         ismap = true;
@@ -342,7 +342,7 @@ void HTMLImageElement::setIsMap(bool isMap)
     setAttribute(ismapAttr, isMap ? "" : 0);
 }
 
-String HTMLImageElement::longDesc() const
+KURL HTMLImageElement::longDesc() const
 {
     return document()->completeURL(getAttribute(longdescAttr));
 }
@@ -352,7 +352,7 @@ void HTMLImageElement::setLongDesc(const String& value)
     setAttribute(longdescAttr, value);
 }
 
-String HTMLImageElement::lowsrc() const
+KURL HTMLImageElement::lowsrc() const
 {
     return document()->completeURL(getAttribute(lowsrcAttr));
 }
@@ -362,7 +362,7 @@ void HTMLImageElement::setLowsrc(const String& value)
     setAttribute(lowsrcAttr, value);
 }
 
-String HTMLImageElement::src() const
+KURL HTMLImageElement::src() const
 {
     return document()->completeURL(getAttribute(srcAttr));
 }

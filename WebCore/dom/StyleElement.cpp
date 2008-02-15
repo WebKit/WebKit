@@ -1,7 +1,6 @@
-/**
- * This file is part of the DOM implementation for KDE.
- *
+/*
  * Copyright (C) 2006, 2007 Rob Buis
+ * Copyright (C) 2008 Apple, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -18,6 +17,7 @@
  * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
  * Boston, MA 02110-1301, USA.
  */
+
 #include "config.h"
 #include "StyleElement.h"
 
@@ -56,13 +56,13 @@ void StyleElement::process(Element* e)
     if (!e || !e->inDocument())
         return;
 
-    String text = "";
+    Vector<UChar> text;
 
     for (Node* c = e->firstChild(); c; c = c->nextSibling())
         if (c->nodeType() == Node::TEXT_NODE || c->nodeType() == Node::CDATA_SECTION_NODE || c->nodeType() == Node::COMMENT_NODE)
-            text += c->nodeValue();
+            append(text, c->nodeValue());
 
-    createSheet(e, text);
+    createSheet(e, String::adopt(text));
 }
 
 void StyleElement::createSheet(Element* e, const String& text)
@@ -74,8 +74,9 @@ void StyleElement::createSheet(Element* e, const String& text)
         m_sheet = 0;
     }
 
-    String typeValue = e->isHTMLElement() ? type().deprecatedString().lower() : type();
-    if (typeValue.isEmpty() || typeValue == "text/css") { // Type must be empty or CSS
+    // If type is empty or CSS, this is a CSS style sheet.
+    const AtomicString& type = this->type();
+    if (type.isEmpty() || (e->isHTMLElement() ? equalIgnoringCase(type, "text/css") : (type == "text/css"))) {
         RefPtr<MediaList> mediaList = new MediaList((CSSStyleSheet*)0, media(), e->isHTMLElement());
         MediaQueryEvaluator screenEval("screen", true);
         MediaQueryEvaluator printEval("print", true);

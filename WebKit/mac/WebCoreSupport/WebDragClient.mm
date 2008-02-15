@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -121,11 +121,12 @@ DragImageRef WebDragClient::createDragImageForLink(KURL& url, const String& titl
 {
     if (!frame)
         return nil;
-    WebHTMLView* htmlView = (WebHTMLView*)[[kit(frame) frameView] documentView];
+    WebHTMLView *htmlView = (WebHTMLView *)[[kit(frame) frameView] documentView];
     NSString *label = 0;
     if (!title.isEmpty())
-        label = (NSString*)title;
-    return [htmlView _dragImageForURL:[url.getNSURL() _web_userVisibleString] withLabel:label];
+        label = title;
+    NSURL *cocoaURL = url;
+    return [htmlView _dragImageForURL:[cocoaURL _web_userVisibleString] withLabel:label];
 }
 
 

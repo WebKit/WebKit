@@ -1,6 +1,4 @@
-/**
- * This file is part of the DOM implementation for KDE.
- *
+/*
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  * Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.
@@ -20,12 +18,13 @@
  * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
  * Boston, MA 02110-1301, USA.
  */
+
 #include "config.h"
 #include "HTMLAreaElement.h"
 
 #include "Document.h"
-#include "HTMLNames.h"
 #include "FloatRect.h"
+#include "HTMLNames.h"
 #include "HitTestResult.h"
 #include "RenderObject.h"
 
@@ -179,7 +178,7 @@ void HTMLAreaElement::setCoords(const String& value)
     setAttribute(coordsAttr, value);
 }
 
-String HTMLAreaElement::href() const
+KURL HTMLAreaElement::href() const
 {
     return document()->completeURL(getAttribute(hrefAttr));
 }

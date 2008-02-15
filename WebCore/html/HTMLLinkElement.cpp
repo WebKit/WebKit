@@ -1,10 +1,8 @@
-/**
- * This file is part of the DOM implementation for KDE.
- *
+/*
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2003 Apple Computer, Inc.
+ * Copyright (C) 2003, 2008 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -21,6 +19,7 @@
  * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
  * Boston, MA 02110-1301, USA.
  */
+
 #include "config.h"
 #include "HTMLLinkElement.h"
 
@@ -108,7 +107,7 @@ void HTMLLinkElement::parseMappedAttribute(MappedAttribute *attr)
         tokenizeRelAttribute(attr->value());
         process();
     } else if (attr->name() == hrefAttr) {
-        m_url = document()->completeURL(parseURL(attr->value()));
+        m_url = document()->completeURL(parseURL(attr->value())).string();
         process();
     } else if (attr->name() == typeAttr) {
         m_type = attr->value();
@@ -138,7 +137,8 @@ void HTMLLinkElement::tokenizeRelAttribute(const AtomicString& relStr)
     else {
         // Tokenize the rel attribute and set bits based on specific keywords that we find.
         rel.replace('\n', ' ');
-        Vector<String> list = rel.split(' ');
+        Vector<String> list;
+        rel.split(' ', list);
         Vector<String>::const_iterator end = list.end();
         for (Vector<String>::const_iterator it = list.begin(); it != end; ++it) {
             if (*it == "stylesheet")
@@ -274,7 +274,7 @@ void HTMLLinkElement::setCharset(const String& value)
     setAttribute(charsetAttr, value);
 }
 
-String HTMLLinkElement::href() const
+KURL HTMLLinkElement::href() const
 {
     return document()->completeURL(getAttribute(hrefAttr));
 }

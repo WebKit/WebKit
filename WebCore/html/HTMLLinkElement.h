@@ -1,9 +1,7 @@
 /*
- * This file is part of the DOM implementation for KDE.
- *
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
- * Copyright (C) 2003 Apple Computer, Inc.
+ * Copyright (C) 2003, 2008 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -21,19 +19,20 @@
  * Boston, MA 02110-1301, USA.
  *
  */
+
 #ifndef HTMLLinkElement_h
 #define HTMLLinkElement_h
 
-#include "HTMLElement.h"
-#include "CachedResourceClient.h"
 #include "CSSStyleSheet.h"
+#include "CachedResourceClient.h"
+#include "HTMLElement.h"
 
 namespace WebCore {
 
 class CachedCSSStyleSheet;
+class KURL;
 
-class HTMLLinkElement : public HTMLElement, public CachedResourceClient
-{
+class HTMLLinkElement : public HTMLElement, public CachedResourceClient {
 public:
     HTMLLinkElement(Document*);
     ~HTMLLinkElement();
@@ -47,7 +46,7 @@ public:
     String charset() const;
     void setCharset(const String&);
 
-    String href() const;
+    KURL href() const;
     void setHref(const String&);
 
     String hreflang() const;

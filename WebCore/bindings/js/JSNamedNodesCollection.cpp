@@ -41,7 +41,7 @@ const ClassInfo JSNamedNodesCollection::info = { "Collection", 0, 0 };
 // for constructs like document.forms.<name>[1],
 // so it shouldn't be a problem that it's storing all the nodes (with the same name). (David)
 JSNamedNodesCollection::JSNamedNodesCollection(KJS::JSObject* prototype, const Vector<RefPtr<Node> >& nodes)
-    : KJS::DOMObject(prototype)
+    : DOMObject(prototype)
     , m_nodes(nodes)
 {
 }

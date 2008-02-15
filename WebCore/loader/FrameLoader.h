@@ -478,7 +478,7 @@ namespace WebCore {
         void receivedFirstData();
 
         void updatePolicyBaseURL();
-        void setPolicyBaseURL(const String&);
+        void setPolicyBaseURL(const KURL&);
 
         // Also not cool.
         void stopLoadingSubframes();

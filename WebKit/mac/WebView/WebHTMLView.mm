@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
  *           (C) 2006, 2007 Graham Dennis (graham.dennis@gmail.com)
  *
  * Redistribution and use in source and binary forms, with or without
@@ -3110,7 +3110,7 @@ noPromisedData:
         
         KURL imageURL = page->dragController()->draggingImageURL();
         ASSERT(!imageURL.isEmpty());
-        draggingImageURL = imageURL.getNSURL();
+        draggingImageURL = imageURL;
 
         wrapper = [[self _dataSource] _fileWrapperForURL:draggingImageURL];
     }

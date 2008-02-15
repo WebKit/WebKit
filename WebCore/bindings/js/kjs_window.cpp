@@ -291,7 +291,8 @@ static HashMap<String, String> parseModalDialogFeatures(const String& featuresAr
 {
     HashMap<String, String> map;
 
-    Vector<String> features = featuresArg.split(';');
+    Vector<String> features;
+    featuresArg.split(';', features);
     Vector<String>::const_iterator end = features.end();
     for (Vector<String>::const_iterator it = features.begin(); it != end; ++it) {
         String s = *it;
@@ -359,16 +360,16 @@ static Frame* createWindow(ExecState* exec, Frame* openerFrame, const String& ur
     if (dialogArgs)
         newWindow->putDirect("dialogArguments", dialogArgs);
 
-    if (!url.startsWith("javascript:", false) || newWindow->allowsAccessFrom(exec)) {
-        String completedURL = url.isEmpty() ? url : activeFrame->document()->completeURL(url);
+    if (!protocolIs(url, "javascript") || newWindow->allowsAccessFrom(exec)) {
+        KURL completedURL = url.isEmpty() ? KURL("") : activeFrame->document()->completeURL(url);
         bool userGesture = activeFrame->scriptProxy()->processingUserGesture();
 
         if (created) {
-            newFrame->loader()->changeLocation(KURL(completedURL.deprecatedString()), activeFrame->loader()->outgoingReferrer(), false, userGesture);
+            newFrame->loader()->changeLocation(completedURL, activeFrame->loader()->outgoingReferrer(), false, userGesture);
             if (Document* oldDoc = openerFrame->document())
                 newFrame->document()->setBaseURL(oldDoc->baseURL());
         } else if (!url.isEmpty())
-            newFrame->loader()->scheduleLocationChange(completedURL, activeFrame->loader()->outgoingReferrer(), false, userGesture);
+            newFrame->loader()->scheduleLocationChange(completedURL.string(), activeFrame->loader()->outgoingReferrer(), false, userGesture);
     }
 
     return newFrame;
@@ -704,7 +705,7 @@ void Window::put(ExecState* exec, const Identifier& propertyName, JSValue* value
         if (!p->loader()->shouldAllowNavigation(impl()->frame()))
           return;
         String dstUrl = p->loader()->completeURL(value->toString(exec)).string();
-        if (!dstUrl.startsWith("javascript:", false) || allowsAccessFrom(exec)) {
+        if (!protocolIs(dstUrl, "javascript") || allowsAccessFrom(exec)) {
           bool userGesture = p->scriptProxy()->processingUserGesture();
           // We want a new history item if this JS was called via a user gesture
           impl()->frame()->loader()->scheduleLocationChange(dstUrl, p->loader()->outgoingReferrer(), false, userGesture);
@@ -888,7 +889,7 @@ bool Window::allowsAccessFrom(const JSGlobalObject* other, SecurityOrigin::Reaso
 
     // FIXME: this error message should contain more specifics of why the same origin check has failed.
     message = String::format("Unsafe JavaScript attempt to access frame with URL %s from frame with URL %s. Domains, protocols and ports must match.\n",
-                             targetDocument->url().utf8().data(), originDocument->url().utf8().data());
+        targetDocument->url().string().utf8().data(), originDocument->url().string().utf8().data());
     return false;
 }
 
@@ -1137,10 +1138,10 @@ JSValue* windowProtoFuncOpen(ExecState* exec, JSObject* thisObj, const List& arg
 
         String completedURL;
         if (!urlString.isEmpty())
-            completedURL = activeFrame->document()->completeURL(urlString);
+            completedURL = activeFrame->document()->completeURL(urlString).string();
 
         const Window* targetedWindow = Window::retrieveWindow(frame);
-        if (!completedURL.isEmpty() && (!completedURL.startsWith("javascript:", false) || (targetedWindow && targetedWindow->allowsAccessFrom(exec)))) {
+        if (!completedURL.isEmpty() && (!protocolIs(completedURL, "javascript") || (targetedWindow && targetedWindow->allowsAccessFrom(exec)))) {
             bool userGesture = activeFrame->scriptProxy()->processingUserGesture();
             frame->loader()->scheduleLocationChange(completedURL, activeFrame->loader()->outgoingReferrer(), false, userGesture);
         }

@@ -1,7 +1,7 @@
-/**
+/*
  * This file is part of the XSL implementation.
  *
- * Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.
+ * Copyright (C) 2004, 2005, 2006, 2008 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -190,7 +190,7 @@ void XSLStyleSheet::loadChildSheets()
             }
             if (IS_XSLT_ELEM(curr) && IS_XSLT_NAME(curr, "import")) {
                 xmlChar* uriRef = xsltGetNsProp(curr, (const xmlChar*)"href", XSLT_NAMESPACE);                
-                loadChildSheet(DeprecatedString::fromUtf8((const char*)uriRef));
+                loadChildSheet(String::fromUTF8((const char*)uriRef));
                 xmlFree(uriRef);
             } else
                 break;
@@ -201,7 +201,7 @@ void XSLStyleSheet::loadChildSheets()
         while (curr) {
             if (curr->type == XML_ELEMENT_NODE && IS_XSLT_ELEM(curr) && IS_XSLT_NAME(curr, "include")) {
                 xmlChar* uriRef = xsltGetNsProp(curr, (const xmlChar*)"href", XSLT_NAMESPACE);
-                loadChildSheet(DeprecatedString::fromUtf8((const char*)uriRef));
+                loadChildSheet(String::fromUTF8((const char*)uriRef));
                 xmlFree(uriRef);
             }
             curr = curr->next;
@@ -209,7 +209,7 @@ void XSLStyleSheet::loadChildSheets()
     }
 }
 
-void XSLStyleSheet::loadChildSheet(const DeprecatedString& href)
+void XSLStyleSheet::loadChildSheet(const String& href)
 {
     RefPtr<XSLImportRule> childRule = new XSLImportRule(this, href);
     append(childRule);

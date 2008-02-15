@@ -1,8 +1,6 @@
-/**
- * This file is part of the DOM implementation for KDE.
- *
+/*
  * (C) 1999-2003 Lars Knoll (knoll@kde.org)
- * Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.
+ * Copyright (C) 2004, 2005, 2006, 2008 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -62,9 +60,10 @@ CachedImage* CSSImageValue::image(DocLoader* loader, const String& url)
 
         if (loader)
             m_image = loader->requestImage(url);
-        else
+        else {
             // FIXME: Should find a way to make these images sit in their own memory partition, since they are user agent images.
-            m_image = static_cast<CachedImage*>(cache()->requestResource(0, CachedResource::ImageResource, KURL(url.deprecatedString()), 0, 0));
+            m_image = static_cast<CachedImage*>(cache()->requestResource(0, CachedResource::ImageResource, KURL(url), 0, 0));
+        }
 
         if (m_image)
             m_image->ref(this);

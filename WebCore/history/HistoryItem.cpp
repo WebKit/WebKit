@@ -176,12 +176,12 @@ double HistoryItem::lastVisitedTime() const
 
 KURL HistoryItem::url() const
 {
-    return KURL(m_urlString.deprecatedString());
+    return KURL(m_urlString);
 }
 
 KURL HistoryItem::originalURL() const
 {
-    return KURL(m_originalURLString.deprecatedString());
+    return KURL(m_originalURLString);
 }
 
 const String& HistoryItem::target() const

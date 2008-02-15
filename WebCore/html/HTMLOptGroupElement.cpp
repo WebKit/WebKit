@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004, 2005, 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
  *           (C) 2006 Alexey Proskuryakov (ap@nypop.com)
  *
  * This library is free software; you can redistribute it and/or
@@ -160,7 +160,7 @@ void HTMLOptGroupElement::setRenderStyle(RenderStyle* newStyle)
 
 String HTMLOptGroupElement::groupLabelText() const
 {
-    DeprecatedString itemText = getAttribute(labelAttr).deprecatedString();
+    String itemText = getAttribute(labelAttr);
     
     itemText.replace('\\', document()->backslashAsCurrencySymbol());
     // In WinIE, leading and trailing whitespace is ignored in options and optgroups. We match this behavior.

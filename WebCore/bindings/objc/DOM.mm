@@ -579,7 +579,7 @@ static NSArray *kit(const Vector<IntRect>& rects)
     ASSERT(name);
     WebCore::Element* element = [self _element];
     ASSERT(element);
-    return WebCore::KURL(element->document()->completeURL(parseURL(element->getAttribute(name)).deprecatedString())).getNSURL();
+    return element->document()->completeURL(parseURL(element->getAttribute(name)));
 }
 
 // FIXME: this should be implemented in the implementation

@@ -309,9 +309,9 @@ sub AddIncludesForTypeInCPPImplementation
     return if $codeGenerator->IsNonPointerType($type);
 
     if ($codeGenerator->IsStringType($type)) {
-        $CPPImplementationWebCoreIncludes{"PlatformString.h"} = 1;
-        $CPPImplementationWebCoreIncludes{"BString.h"} = 1;
         $CPPImplementationWebCoreIncludes{"AtomicString.h"} = 1;
+        $CPPImplementationWebCoreIncludes{"BString.h"} = 1;
+        $CPPImplementationWebCoreIncludes{"KURL.h"} = 1;
         return;
     }
 

@@ -30,8 +30,8 @@ namespace WebCore {
 
     class Frame;
 
-    class JSLocation : public KJS::DOMObject {
-        typedef KJS::DOMObject Base;
+    class JSLocation : public DOMObject {
+        typedef DOMObject Base;
 
         friend class KJS::Window;
     public:

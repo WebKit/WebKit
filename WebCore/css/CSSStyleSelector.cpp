@@ -231,7 +231,7 @@ CSSStyleSheet* CSSStyleSelector::m_viewSourceSheet = 0;
 CSSStyleSheet *CSSStyleSelector::m_svgSheet = 0;
 #endif
 
-static CSSStyleSelector::Encodedurl *currentEncodedURL = 0;
+static CSSStyleSelector::EncodedURL* currentEncodedURL = 0;
 static PseudoState pseudoState;
 
 static const MediaQueryEvaluator& screenEval()
@@ -319,17 +319,17 @@ void CSSStyleSelector::setEncodedURL(const KURL& url)
 {
     KURL u = url;
 
-    u.setQuery(DeprecatedString::null);
-    u.setRef(DeprecatedString::null);
-    m_encodedURL.file = u.deprecatedString();
-    int pos = m_encodedURL.file.findRev('/');
+    u.setQuery(String());
+    u.setRef(String());
+    m_encodedURL.file = u.string();
+    int pos = m_encodedURL.file.reverseFind('/');
     m_encodedURL.path = m_encodedURL.file;
     if (pos > 0) {
         m_encodedURL.path.truncate(pos);
-        m_encodedURL.path += '/';
+        m_encodedURL.path.append('/');
     }
-    u.setPath(DeprecatedString::null);
-    m_encodedURL.host = u.deprecatedString();
+    u.setPath(String());
+    m_encodedURL.prefix = u.string();
 }
 
 CSSStyleSelector::~CSSStyleSelector()
@@ -703,11 +703,11 @@ static void checkPseudoState(Element *e, bool checkVisited = true)
     DeprecatedConstString cu(reinterpret_cast<const DeprecatedChar*>(characters), length);
     DeprecatedString u = cu.string();
     if (length && characters[0] == '/')
-        u.prepend(currentEncodedURL->host);
+        u.prepend(reinterpret_cast<const DeprecatedChar*>(currentEncodedURL->prefix.characters()), currentEncodedURL->prefix.length());
     else if (length && characters[0] == '#')
-        u.prepend(currentEncodedURL->file);
+        u.prepend(reinterpret_cast<const DeprecatedChar*>(currentEncodedURL->file.characters()), currentEncodedURL->file.length());
     else
-        u.prepend(currentEncodedURL->path);
+        u.prepend(reinterpret_cast<const DeprecatedChar*>(currentEncodedURL->path.characters()), currentEncodedURL->path.length());
     cleanpath(u);
     pseudoState = historyContains(reinterpret_cast<const UChar*>(u.unicode()), u.length())
         ? PseudoVisited : PseudoLink;

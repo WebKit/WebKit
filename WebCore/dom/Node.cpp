@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004, 2005, 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
  * Copyright (C) 2007 Trolltech ASA
  *
  * This library is free software; you can redistribute it and/or
@@ -42,7 +42,6 @@
 #include "Frame.h"
 #include "HTMLNames.h"
 #include "HTMLNames.h"
-#include "KURL.h"
 #include "Logging.h"
 #include "NameNodeList.h"
 #include "NamedAttrMap.h"
@@ -152,7 +151,7 @@ void Node::setDocument(Document* doc)
 
     {
         KJS::JSLock lock;
-        KJS::ScriptInterpreter::updateDOMNodeDocument(this, m_document.get(), doc);
+        ScriptInterpreter::updateDOMNodeDocument(this, m_document.get(), doc);
     }    
     m_document = doc;
 
@@ -1282,18 +1281,14 @@ bool Node::hasAttributes() const
     return false;
 }
 
-NamedAttrMap *Node::attributes() const
+NamedAttrMap* Node::attributes() const
 {
     return 0;
 }
 
-String Node::baseURI() const
+KURL Node::baseURI() const
 {
-    Node* parent = parentNode();
-    if (parent)
-        return parent->baseURI();
-
-    return String();
+    return parentNode() ? parentNode()->baseURI() : KURL();
 }
 
 bool Node::isEqualNode(Node *other) const

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,12 +28,9 @@
 
 #include "CharacterNames.h"
 #include "CString.h"
-#include "Element.h"
 #include "HTMLNames.h"
 #include "HTMLTableElement.h"
-#include "HTMLTableSectionElement.h"
 #include "HTMLTokenizer.h"
-#include "KURL.h"
 #include "LocalizedStrings.h"
 #include "Logging.h"
 #include "FTPDirectoryParser.h"
@@ -41,12 +38,6 @@
 #include "Settings.h"
 #include "SharedBuffer.h"
 #include "Text.h"
-#include "XMLTokenizer.h"
-
-// On Win, the threadsafe *_r functions need to be gotten from pthreads. 
-#if COMPILER(MSVC) && USE(PTHREADS)
-#include <pthread.h>
-#endif
 
 #if PLATFORM(QT)
 #include <QDateTime>
@@ -60,7 +51,7 @@ using namespace HTMLNames;
     
 class FTPDirectoryTokenizer : public HTMLTokenizer {
 public:
-    FTPDirectoryTokenizer(HTMLDocument* doc);
+    FTPDirectoryTokenizer(HTMLDocument*);
 
     virtual bool write(const SegmentedString&, bool appendData);
     virtual void finish();
@@ -149,7 +140,7 @@ PassRefPtr<Element> FTPDirectoryTokenizer::createTDForFilename(const String& fil
 {
     ExceptionCode ec;
     
-    String fullURL = m_doc->baseURL();
+    String fullURL = m_doc->baseURL().string();
     if (fullURL[fullURL.length() - 1] == '/')
         fullURL.append(filename);
     else
@@ -307,10 +298,7 @@ void FTPDirectoryTokenizer::parseAndAppendOneLine(const String& inputLine)
 {
     ListResult result;
 
-    DeprecatedString depString = inputLine.deprecatedString();
-    const char* line = depString.ascii();
-    
-    FTPEntryType typeResult = parseOneFTPLine(line, m_listState, result);
+    FTPEntryType typeResult = parseOneFTPLine(inputLine.latin1().data(), m_listState, result);
     
     // FTPMiscEntry is a comment or usage statistic which we don't care about, and junk is invalid data - bail in these 2 cases
     if (typeResult == FTPMiscEntry || typeResult == FTPJunkEntry)

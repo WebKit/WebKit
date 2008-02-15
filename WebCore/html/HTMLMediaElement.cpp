@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008 Apple Inc.  All rights reserved.
+ * Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -226,7 +226,7 @@ PassRefPtr<MediaError> HTMLMediaElement::error() const
     return m_error;
 }
 
-String HTMLMediaElement::src() const
+KURL HTMLMediaElement::src() const
 {
     return document()->completeURL(getAttribute(srcAttr));
 }
@@ -819,13 +819,13 @@ String HTMLMediaElement::pickMedia()
                     if (!MIMETypeRegistry::isSupportedMediaMIMEType(type))
                         continue;
                 }
-                mediaSrc = source->src();
+                mediaSrc = source->src().string();
                 break;
             }
         }
     }
     if (!mediaSrc.isEmpty())
-        mediaSrc = document()->completeURL(mediaSrc);
+        mediaSrc = document()->completeURL(mediaSrc).string();
     return mediaSrc;
 }
 

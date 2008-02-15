@@ -132,8 +132,10 @@ public:
     
     static String format(const char *, ...) WTF_ATTRIBUTE_PRINTF(1, 2);
 
-    Vector<String> split(const String& separator, bool allowEmptyEntries = false) const;
-    Vector<String> split(UChar separator, bool allowEmptyEntries = false) const;
+    void split(const String& separator, Vector<String>& result) const;
+    void split(const String& separator, bool allowEmptyEntries, Vector<String>& result) const;
+    void split(UChar separator, Vector<String>& result) const;
+    void split(UChar separator, bool allowEmptyEntries, Vector<String>& result) const;
 
     int toInt(bool* ok = 0) const;
     int64_t toInt64(bool* ok = 0) const;
@@ -229,12 +231,29 @@ inline bool operator!=(const DeprecatedString& b, const String& a ) { return !(a
 
 inline bool operator!(const String& str) { return str.isNull(); }
 
+bool charactersAreAllASCII(const UChar*, size_t);
+
+void append(Vector<UChar>&, const String&);
+
 #ifdef __OBJC__
 // This is for situations in WebKit where the long standing behavior has been
 // "nil if empty", so we try to maintain longstanding behavior for the sake of
 // entrenched clients
 inline NSString* nsStringNilIfEmpty(const String& str) {  return str.isEmpty() ? nil : (NSString*)str; }
 #endif
+
+inline bool charactersAreAllASCII(const UChar* characters, size_t length)
+{
+    UChar ored = 0;
+    for (size_t i = 0; i < length; ++i)
+        ored |= characters[i];
+    return !(ored & 0xFF80);
+}
+
+inline void append(Vector<UChar>& vector, const String& string)
+{
+    vector.append(string.characters(), string.length());
+}
 
 }
 

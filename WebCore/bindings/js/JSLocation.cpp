@@ -26,7 +26,6 @@
 #include "DOMWindow.h"
 #include "Frame.h"
 #include "FrameLoader.h"
-#include "PlatformString.h"
 #include "kjs_proxy.h"
 #include "kjs_window.h"
 
@@ -137,7 +136,7 @@ void JSLocation::put(ExecState* exec, const Identifier& propertyName, JSValue* v
   if (!m_frame)
     return;
 
-  DeprecatedString str = value->toString(exec);
+  String str = value->toString(exec);
   KURL url = m_frame->loader()->url();
   bool sameDomainAccess = allowsAccessFromFrame(exec, m_frame);
 
@@ -152,6 +151,7 @@ void JSLocation::put(ExecState* exec, const Identifier& propertyName, JSValue* v
 
       switch (entry->value.intValue) {
       case Href: {
+          // FIXME: Why isn't this security check needed for the other properties, like Host, below?
           Frame* frame = Window::retrieveActive(exec)->impl()->frame();
           if (!frame)
               return;
@@ -160,27 +160,30 @@ void JSLocation::put(ExecState* exec, const Identifier& propertyName, JSValue* v
           url = frame->loader()->completeURL(str);
           break;
       }
-      case Hash: {
+      case Hash:
           if (str.startsWith("#"))
-              str = str.mid(1);
+              str = str.substring(1);
           if (url.ref() == str)
               return;
           url.setRef(str);
           break;
-      }
-      case Host: {
+      case Host:
           url.setHostAndPort(str);
           break;
-      }
       case Hostname:
           url.setHost(str);
           break;
       case Pathname:
           url.setPath(str);
           break;
-      case Port:
-          url.setPort(str.toUInt());
+      case Port: {
+          // FIXME: Could make this a little less ugly if String provided a toUnsignedShort function.
+          int port = str.toInt();
+          if (port < 0 || port > 0xFFFF)
+              port = 0;
+          url.setPort(port);
           break;
+      }
       case Protocol:
           url.setProtocol(str);
           break;
@@ -199,7 +202,7 @@ void JSLocation::put(ExecState* exec, const Identifier& propertyName, JSValue* v
   }
 
   Frame* activeFrame = Window::retrieveActive(exec)->impl()->frame();
-  if (!url.deprecatedString().startsWith("javascript:", false) || sameDomainAccess) {
+  if (!url.protocolIs("javascript") || sameDomainAccess) {
     bool userGesture = activeFrame->scriptProxy()->processingUserGesture();
     m_frame->loader()->scheduleLocationChange(url.string(), activeFrame->loader()->outgoingReferrer(), false, userGesture);
   }
@@ -234,9 +237,9 @@ JSValue* jsLocationProtoFuncReplace(ExecState* exec, JSObject* thisObj, const Li
     if (activeFrame) {
         if (!activeFrame->loader()->shouldAllowNavigation(frame))
             return jsUndefined();
-        DeprecatedString str = args[0]->toString(exec);
+        String str = args[0]->toString(exec);
         const Window* window = Window::retrieveWindow(frame);
-        if (!str.startsWith("javascript:", false) || (window && window->allowsAccessFrom(exec))) {
+        if (!protocolIs(str, "javascript") || (window && window->allowsAccessFrom(exec))) {
             bool userGesture = activeFrame->scriptProxy()->processingUserGesture();
             frame->loader()->scheduleLocationChange(activeFrame->loader()->completeURL(str).string(), activeFrame->loader()->outgoingReferrer(), true, userGesture);
         }
@@ -258,7 +261,7 @@ JSValue* jsLocationProtoFuncReload(ExecState* exec, JSObject* thisObj, const Lis
     if (!window->allowsAccessFrom(exec))
         return jsUndefined();
 
-    if (!frame->loader()->url().deprecatedString().startsWith("javascript:", false) || (window && window->allowsAccessFrom(exec))) {
+    if (!frame->loader()->url().protocolIs("javascript") || (window && window->allowsAccessFrom(exec))) {
         bool userGesture = Window::retrieveActive(exec)->impl()->frame()->scriptProxy()->processingUserGesture();
         frame->loader()->scheduleRefresh(userGesture);
     }
@@ -280,7 +283,7 @@ JSValue* jsLocationProtoFuncAssign(ExecState* exec, JSObject* thisObj, const Lis
             return jsUndefined();
         const Window* window = Window::retrieveWindow(frame);
         String dstUrl = activeFrame->loader()->completeURL(args[0]->toString(exec)).string();
-        if (!dstUrl.startsWith("javascript:", false) || (window && window->allowsAccessFrom(exec))) {
+        if (!protocolIs(dstUrl, "javascript") || (window && window->allowsAccessFrom(exec))) {
             bool userGesture = activeFrame->scriptProxy()->processingUserGesture();
             // We want a new history item if this JS was called via a user gesture
             frame->loader()->scheduleLocationChange(dstUrl, activeFrame->loader()->outgoingReferrer(), false, userGesture);

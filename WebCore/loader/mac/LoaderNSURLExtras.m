@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2005, 2008 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Alexey Proskuryakov (ap@nypop.com)
  *
  * Redistribution and use in source and binary forms, with or without
@@ -214,7 +214,7 @@ NSString *suggestedFilenameWithMIMEType(NSURL *url, NSString *MIMEType)
 
     if ([filename length] == 0 || [lastPathComponent isEqualToString:@"/"]) {
         // lastPathComponent is no good, try the host.
-        NSString *host = (NSString *)(KURL(url).host());
+        NSString *host = KURL(url).host();
         filename = filenameByFixingIllegalCharacters(host);
         if ([filename length] == 0) {
             // Can't make a filename using this URL, use "unknown".

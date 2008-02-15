@@ -3,7 +3,7 @@
     Copyright (C) 2001 Dirk Mueller (mueller@kde.org)
     Copyright (C) 2002 Waldo Bastian (bastian@kde.org)
     Copyright (C) 2006 Samuel Weinig (sam.weinig@gmail.com)
-    Copyright (C) 2004, 2005, 2006, 2007 Apple Inc. All rights reserved.
+    Copyright (C) 2004, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -74,13 +74,10 @@ void Loader::servePendingRequests()
             request.setHTTPAccept(req->cachedResource()->accept());
 
         KURL r = dl->doc()->url();
-        if (r.protocol().startsWith("http") && r.path().isEmpty())
+        if ((r.protocolIs("http") || r.protocolIs("https")) && r.path().isEmpty())
             r.setPath("/");
         request.setHTTPReferrer(r.string());
-        DeprecatedString domain = r.host();
-        if (dl->doc()->isHTMLDocument())
-            domain = static_cast<HTMLDocument*>(dl->doc())->domain().deprecatedString();
-        
+
         RefPtr<SubresourceLoader> loader = SubresourceLoader::create(dl->doc()->frame(),
             this, request, req->shouldSkipCanLoadCheck(), req->sendResourceLoadCallbacks());
 

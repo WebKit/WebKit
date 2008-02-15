@@ -1449,7 +1449,7 @@ void HTMLInputElement::setSize(unsigned _size)
     setAttribute(sizeAttr, String::number(_size));
 }
 
-String HTMLInputElement::src() const
+KURL HTMLInputElement::src() const
 {
     return document()->completeURL(getAttribute(srcAttr));
 }

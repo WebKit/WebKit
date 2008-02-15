@@ -116,7 +116,7 @@ sub GetParentClassName
     my $dataNode = shift;
 
     return $dataNode->extendedAttributes->{"LegacyParent"} if $dataNode->extendedAttributes->{"LegacyParent"};
-    return "KJS::DOMObject" if @{$dataNode->parents} eq 0;
+    return "DOMObject" if @{$dataNode->parents} eq 0;
     return "JS" . $codeGenerator->StripModule($dataNode->parents(0));
 }
 
@@ -1190,7 +1190,7 @@ sub GenerateImplementation
         push(@implContent, "{\n");
         push(@implContent, "    ${className}* thisObj = static_cast<$className*>(slot.slotBase());\n");
         if (IndexGetterReturnsStrings($implClassName)) {
-            $implIncludes{"PlatformString.h"} = 1;
+            $implIncludes{"KURL.h"} = 1;
             push(@implContent, "    return jsStringOrNull(thisObj->impl()->item(slot.index()));\n");
         } else {
             push(@implContent, "    return toJS(exec, static_cast<$implClassName*>(thisObj->impl())->item(slot.index()));\n");
@@ -1213,11 +1213,11 @@ sub GenerateImplementation
 
         push(@implContent, "{\n");
         if ($podType) {
-            push(@implContent, "    return KJS::cacheSVGDOMObject<JSSVGPODTypeWrapper<$podType>, $className, ${className}Prototype>(exec, obj, context);\n");
+            push(@implContent, "    return cacheSVGDOMObject<JSSVGPODTypeWrapper<$podType>, $className, ${className}Prototype>(exec, obj, context);\n");
         } elsif (IsSVGTypeNeedingContextParameter($implClassName)) {
-            push(@implContent, "    return KJS::cacheSVGDOMObject<$implClassName, $className, ${className}Prototype>(exec, obj, context);\n");
+            push(@implContent, "    return cacheSVGDOMObject<$implClassName, $className, ${className}Prototype>(exec, obj, context);\n");
         } else {
-            push(@implContent, "    return KJS::cacheDOMObject<$implClassName, $className, ${className}Prototype>(exec, obj);\n");
+            push(@implContent, "    return cacheDOMObject<$implClassName, $className, ${className}Prototype>(exec, obj);\n");
         }
         push(@implContent, "}\n");
     }
@@ -1444,7 +1444,7 @@ sub NativeToJSValue
     return "jsNumber($value)" if $codeGenerator->IsPrimitiveType($type) or $type eq "SVGPaintType" or $type eq "DOMTimeStamp";
 
     if ($codeGenerator->IsStringType($type)) {
-        $implIncludes{"PlatformString.h"} = 1;
+        $implIncludes{"KURL.h"} = 1;
         my $conv = $signature->extendedAttributes->{"ConvertNullStringTo"};
         if (defined $conv) {
             return "jsStringOrNull($value)" if $conv eq "Null";

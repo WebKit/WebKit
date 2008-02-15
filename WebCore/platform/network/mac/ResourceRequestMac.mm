@@ -75,15 +75,15 @@ void ResourceRequest::doUpdatePlatformRequest()
     NSMutableURLRequest* nsRequest = [m_nsRequest.get() mutableCopy];
 
     if (nsRequest)
-        [nsRequest setURL:url().getNSURL()];
+        [nsRequest setURL:url()];
     else
-        nsRequest = [[NSMutableURLRequest alloc] initWithURL:url().getNSURL()];
+        nsRequest = [[NSMutableURLRequest alloc] initWithURL:url()];
     
     wkSupportsMultipartXMixedReplace(nsRequest);
 
     [nsRequest setCachePolicy:(NSURLRequestCachePolicy)cachePolicy()];
     [nsRequest setTimeoutInterval:timeoutInterval()];
-    [nsRequest setMainDocumentURL:mainDocumentURL().getNSURL()];
+    [nsRequest setMainDocumentURL:mainDocumentURL()];
     if (!httpMethod().isEmpty())
         [nsRequest setHTTPMethod:httpMethod()];
     [nsRequest setHTTPShouldHandleCookies:allowHTTPCookies()];

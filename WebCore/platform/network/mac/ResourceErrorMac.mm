@@ -1,6 +1,6 @@
 // -*- mode: c++; c-basic-offset: 4 -*-
 /*
- * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,8 +25,9 @@
  */
 
 #import "config.h"
-#import "KURL.h"
 #import "ResourceError.h"
+
+#import "KURL.h"
 #import <Foundation/Foundation.h>
 
 @interface NSError (WebExtras)
@@ -63,8 +64,9 @@ ResourceError::operator NSError*() const
             [userInfo.get() setValue:m_localizedDescription forKey:NSLocalizedDescriptionKey];
 
         if (!m_failingURL.isEmpty()) {
+            NSURL *cocoaURL = KURL(m_failingURL);
             [userInfo.get() setValue:m_failingURL forKey:@"NSErrorFailingURLStringKey"];
-            [userInfo.get() setValue:KURL(m_failingURL.deprecatedString()).getNSURL() forKey:@"NSErrorFailingURLKey"];
+            [userInfo.get() setValue:cocoaURL forKey:@"NSErrorFailingURLKey"];
         }
 
         m_platformError.adoptNS([[NSError alloc] initWithDomain:m_domain code:m_errorCode userInfo:userInfo.get()]);
@@ -74,4 +76,3 @@ ResourceError::operator NSError*() const
 }
 
 } // namespace WebCore
-

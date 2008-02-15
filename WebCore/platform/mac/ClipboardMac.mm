@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004, 2005, 2006, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,26 +26,16 @@
 #import "config.h"
 #import "ClipboardMac.h"
 
-#import "CachedImage.h"
-#import "Document.h"
 #import "DOMElementInternal.h"
 #import "DragClient.h"
 #import "DragController.h"
 #import "Editor.h"
-#import "EventHandler.h"
-#import "FloatRect.h"
 #import "FoundationExtras.h"
-#import "Frame.h"
-#import "HTMLImageElement.h"
 #import "Image.h"
 #import "Page.h"
 #import "Pasteboard.h"
-#import "Range.h"
 #import "RenderImage.h"
-#import "WebCoreFrameBridge.h"
 #import "WebCoreSystemInterface.h"
-
-@class WebArchive;
 
 namespace WebCore {
 
@@ -332,7 +322,7 @@ void ClipboardMac::declareAndWriteDragImage(Element* element, const KURL& url, c
 {
     ASSERT(frame);
     if (Page* page = frame->page())
-        page->dragController()->client()->declareAndWriteDragImage(m_pasteboard.get(), [DOMElement _wrapElement:element], url.getNSURL(), title, frame);
+        page->dragController()->client()->declareAndWriteDragImage(m_pasteboard.get(), [DOMElement _wrapElement:element], url, title, frame);
 }
     
 DragImageRef ClipboardMac::createDragImage(IntPoint& loc) const

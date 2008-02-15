@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2005, 2007, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -464,7 +464,9 @@ static WebWindowWatcher *_windowWatcher = nil;
 {
     ASSERT_MAIN_THREAD();
     KURL url = core(_private)->url();
-    return url.isEmpty() ? nil : url.getNSURL();
+    if (url.isEmpty())
+        return nil;
+    return url;
 }
 
 // This should not be called directly for WebHistoryItems that are already included

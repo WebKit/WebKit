@@ -109,7 +109,7 @@ public:
     virtual void setPrefix(const AtomicString &_prefix, ExceptionCode&);
     virtual const AtomicString& namespaceURI() const { return m_tagName.namespaceURI(); }
 
-    virtual String baseURI() const;
+    virtual KURL baseURI() const;
 
     // DOM methods overridden from  parent classes
     virtual NodeType nodeType() const;

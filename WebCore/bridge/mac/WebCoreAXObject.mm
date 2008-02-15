@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2005, 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -1099,19 +1099,13 @@ static IntRect boundingBoxRect(RenderObject* obj)
     
     if ([attributeName isEqualToString: NSAccessibilityURLAttribute]) {
         if ([self isAnchor]) {
-            HTMLAnchorElement* anchor = [self anchorElement];
-            if (anchor) {
-                DeprecatedString s = anchor->getAttribute(hrefAttr).deprecatedString();
-                if (!s.isNull()) {
-                    s = anchor->document()->completeURL(s);
-                    return KURL(s).getNSURL();
-                }
+            if (HTMLAnchorElement* anchor = [self anchorElement]) {
+                NSURL *href = anchor->href();
+                return href;
             }
-        }
-        else if (m_renderer->isImage() && m_renderer->element() && m_renderer->element()->hasTagName(imgTag)) {
-            DeprecatedString src = static_cast<HTMLImageElement*>(m_renderer->element())->src().deprecatedString();
-            if (!src.isNull()) 
-                return KURL(src).getNSURL();
+        } else if (m_renderer->isImage() && m_renderer->element() && m_renderer->element()->hasTagName(imgTag)) {
+            NSURL *src = static_cast<HTMLImageElement*>(m_renderer->element())->src();
+            return src;
         }
         return nil;
     }
@@ -1672,7 +1666,7 @@ static void AXAttributedStringAppendText(NSMutableAttributedString* attrString, 
     // add new attributes and remove irrelevant inherited ones
     // NOTE: color attributes are handled specially because -[NSMutableAttributedString addAttribute: value: range:] does not merge
     // identical colors.  Workaround is to not replace an existing color attribute if it matches what we are adding.  This also means
-    // we can not just pre-remove all inherited attributes on the appended string, so we have to remove the irrelevant ones individually.
+    // we cannot just pre-remove all inherited attributes on the appended string, so we have to remove the irrelevant ones individually.
 
     // remove inherited attachment from prior AXAttributedStringAppendReplaced
     [attrString removeAttribute:NSAccessibilityAttachmentTextAttribute range:attrStringRange];

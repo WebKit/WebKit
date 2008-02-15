@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2005, 2007, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -94,7 +94,7 @@ static NSFileWrapper *fileWrapperForElement(Element* e)
     
     const AtomicString& attr = e->getAttribute(srcAttr);
     if (!attr.isEmpty()) {
-        NSURL *URL = KURL(e->document()->completeURL(attr.deprecatedString())).getNSURL();
+        NSURL *URL = e->document()->completeURL(attr);
         wrapper = [[kit(e->document()->frame()) _dataSource] _fileWrapperForURL:URL];
     }
     if (!wrapper) {
@@ -422,10 +422,7 @@ static NSFileWrapper *fileWrapperForElement(Element* e)
                 // for the range of the link.  Note that we create the attributed string from the DOM, which
                 // will have corrected any illegally nested <a> elements.
                 if (linkStartNode && currentNode == linkStartNode) {
-                    String href = parseURL(linkStartNode->getAttribute(hrefAttr));
-                    KURL kURL = linkStartNode->document()->frame()->loader()->completeURL(href.deprecatedString());
-                    
-                    NSURL *URL = kURL.getNSURL();
+                    NSURL *URL = linkStartNode->document()->frame()->loader()->completeURL(parseURL(linkStartNode->getAttribute(hrefAttr)));
                     NSRange tempRange = { linkStartLocation, [result length]-linkStartLocation }; // workaround for 4213314
                     [result addAttribute:NSLinkAttributeName value:URL range:tempRange];
                     linkStartNode = 0;

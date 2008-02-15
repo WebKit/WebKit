@@ -1,7 +1,7 @@
-/**
+/*
  * This file is part of the XSL implementation.
  *
- * Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.
+ * Copyright (C) 2004, 2005, 2006, 2008 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -88,7 +88,7 @@ void XSLImportRule::loadSheet()
     XSLStyleSheet* parentSheet = parentStyleSheet();
     if (!parentSheet->href().isNull())
         // use parent styleheet's URL as the base URL
-        absHref = KURL(parentSheet->href().deprecatedString(), m_strHref.deprecatedString()).string();
+        absHref = KURL(KURL(parentSheet->href()), m_strHref).string();
     
     // Check for a cycle in our import chain.  If we encounter a stylesheet
     // in our parent chain with the same URL, then just bail.

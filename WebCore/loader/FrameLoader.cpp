@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2007, 2008 Apple Inc. All rights reserved.
  * Copyright (C) 2007 Trolltech ASA
  *
  * Redistribution and use in source and binary forms, with or without
@@ -412,9 +412,9 @@ bool FrameLoader::requestFrame(HTMLFrameOwnerElement* ownerElement, const String
     // Support for <frame src="javascript:string">
     KURL scriptURL;
     KURL url;
-    if (urlString.startsWith("javascript:", false)) {
-        scriptURL = urlString.deprecatedString();
-        url = "about:blank";
+    if (protocolIs(urlString, "javascript")) {
+        scriptURL = KURL(urlString);
+        url = blankURL();
     } else
         url = completeURL(urlString);
 
@@ -472,7 +472,7 @@ Frame* FrameLoader::loadSubframe(HTMLFrameOwnerElement* ownerElement, const KURL
     // FIXME: In this case the Frame will have finished loading before 
     // it's being added to the child list. It would be a good idea to
     // create the child first, then invoke the loader separately.
-    if (url.isEmpty() || url == "about:blank") {
+    if (url.isEmpty() || url == blankURL()) {
         frame->loader()->completed();
         frame->loader()->checkCompleted();
     }
@@ -501,8 +501,7 @@ void FrameLoader::submitForm(const char* action, const String& url, PassRefPtr<F
     if (u.isEmpty())
         return;
 
-    DeprecatedString urlString = u.deprecatedString();
-    if (urlString.startsWith("javascript:", false)) {
+    if (u.protocolIs("javascript")) {
         m_isExecutingJavaScriptFormAction = true;
         executeIfJavaScriptURL(u, false, false);
         m_isExecutingJavaScriptFormAction = false;
@@ -532,11 +531,11 @@ void FrameLoader::submitForm(const char* action, const String& url, PassRefPtr<F
         String query = u.query();
         if (!query.isEmpty())
             query.append('&');
-        u.setQuery((query + body).deprecatedString());
+        u.setQuery(query + body);
     }
 
     if (strcmp(action, "GET") == 0) {
-        u.setQuery(formData->flattenToString().deprecatedString());
+        u.setQuery(formData->flattenToString());
     } else {
         if (!isMailtoForm)
             frameRequest.resourceRequest().setHTTPBody(formData.get());
@@ -649,16 +648,16 @@ KURL FrameLoader::iconURL()
 {
     // If this isn't a top level frame, return nothing
     if (m_frame->tree() && m_frame->tree()->parent())
-        return "";
-        
+        return KURL();
+
     // If we have an iconURL from a Link element, return that
     if (m_frame->document() && !m_frame->document()->iconURL().isEmpty())
-        return m_frame->document()->iconURL().deprecatedString();
-        
+        return KURL(m_frame->document()->iconURL());
+
     // Don't return a favicon iconURL unless we're http or https
-    if (m_URL.protocol() != "http" && m_URL.protocol() != "https")
-        return "";
-        
+    if (!m_URL.protocolIs("http") && !m_URL.protocolIs("https"))
+        return KURL();
+
     KURL url;
     url.setProtocol(m_URL.protocol());
     url.setHost(m_URL.host());
@@ -687,7 +686,7 @@ bool FrameLoader::didOpenURL(const KURL& url)
     m_frame->setJSDefaultStatusBarText(String());
 
     m_URL = url;
-    if (m_URL.protocol().startsWith("http") && !m_URL.host().isEmpty() && m_URL.path().isEmpty())
+    if ((m_URL.protocolIs("http") || m_URL.protocolIs("https")) && !m_URL.host().isEmpty() && m_URL.path().isEmpty())
         m_URL.setPath("/");
     m_workingURL = m_URL;
 
@@ -709,16 +708,16 @@ void FrameLoader::didExplicitOpen()
     // Cancelling redirection here works for all cases because document.open 
     // implicitly precedes document.write.
     cancelRedirection(); 
-    if (m_frame->document()->url() != "about:blank")
+    if (m_frame->document()->url() != blankURL())
         m_URL = m_frame->document()->url();
 }
 
 bool FrameLoader::executeIfJavaScriptURL(const KURL& url, bool userGesture, bool replaceDocument)
 {
-    if (!url.deprecatedString().startsWith("javascript:", false))
+    if (!url.protocolIs("javascript"))
         return false;
 
-    String script = KURL::decode_string(url.deprecatedString().mid(strlen("javascript:")));
+    String script = decodeURLEscapeSequences(url.string().substring(strlen("javascript:")));
     JSValue* result = executeScript(script, userGesture);
 
     String scriptResult;
@@ -859,7 +858,7 @@ void FrameLoader::receivedFirstData()
     if (url.isEmpty())
         url = m_URL.string();
     else
-        url = m_frame->document()->completeURL(url);
+        url = m_frame->document()->completeURL(url).string();
 
     scheduleHTTPRedirection(delay, url);
 }
@@ -897,23 +896,22 @@ void FrameLoader::begin(const KURL& url, bool dispatch, SecurityOrigin* origin)
     m_isDisplayingInitialEmptyDocument = m_creatingInitialEmptyDocument;
 
     KURL ref(url);
-    ref.setUser(DeprecatedString());
-    ref.setPass(DeprecatedString());
-    ref.setRef(DeprecatedString());
+    ref.setUser(String());
+    ref.setPass(String());
+    ref.setRef(String());
     m_outgoingReferrer = ref.string();
     m_URL = url;
-    KURL baseurl;
-
+    KURL baseURL;
     if (!m_URL.isEmpty())
-        baseurl = m_URL;
+        baseURL = m_URL;
 
     RefPtr<Document> document = DOMImplementation::instance()->createDocument(m_responseMIMEType, m_frame, m_frame->inViewSourceMode());
     m_frame->setDocument(document);
 
-    document->setURL(m_URL.deprecatedString());
+    document->setURL(m_URL);
     // We prefer m_baseURL over m_URL because m_URL changes when we are
     // about to load a new page.
-    document->setBaseURL(baseurl.deprecatedString());
+    document->setBaseURL(baseURL);
     if (m_decoder)
         document->setDecoder(m_decoder.get());
     if (forcedSecurityOrigin)
@@ -1185,21 +1183,19 @@ void FrameLoader::restoreDocumentState()
 void FrameLoader::gotoAnchor()
 {
     // If our URL has no ref, then we have no place we need to jump to.
-    // OTOH if css target was set previously, we want to set it to 0, recalc
+    // OTOH If CSS target was set previously, we want to set it to 0, recalc
     // and possibly repaint because :target pseudo class may have been
-    // set(See bug 11321)
-    if (!m_URL.hasRef() &&
-        !(m_frame->document() && m_frame->document()->getCSSTarget()))
+    // set (see bug 11321).
+    if (!m_URL.hasRef() && !(m_frame->document() && m_frame->document()->getCSSTarget()))
         return;
 
-    DeprecatedString ref = m_URL.encodedHtmlRef();
-    if (!gotoAnchor(ref)) {
-        // Can't use htmlRef() here because it doesn't know which encoding to use to decode.
-        // Decoding here has to match encoding in completeURL, which means it has to use the
-        // page's encoding rather than UTF-8.
-        if (m_decoder)
-            gotoAnchor(KURL::decode_string(ref, m_decoder->encoding()));
-    }
+    String ref = m_URL.ref();
+    if (gotoAnchor(ref))
+        return;
+
+    // Try again after decoding the ref, based on the document's encoding.
+    if (m_decoder)
+        gotoAnchor(decodeURLEscapeSequences(ref, m_decoder->encoding()));
 }
 
 void FrameLoader::finishedParsing()
@@ -1326,7 +1322,7 @@ String FrameLoader::baseTarget() const
 KURL FrameLoader::completeURL(const String& url)
 {
     ASSERT(m_frame->document());
-    return m_frame->document()->completeURL(url).deprecatedString();
+    return m_frame->document()->completeURL(url);
 }
 
 void FrameLoader::scheduleHTTPRedirection(double delay, const String& url)
@@ -1343,8 +1339,8 @@ void FrameLoader::scheduleLocationChange(const String& url, const String& referr
 {    
     // If the URL we're going to navigate to is the same as the current one, except for the
     // fragment part, we don't need to schedule the location change.
-    KURL u(url.deprecatedString());
-    if (u.hasRef() && equalIgnoringRef(m_URL, u)) {
+    KURL parsedURL(url);
+    if (parsedURL.hasRef() && equalIgnoringRef(m_URL, parsedURL)) {
         changeLocation(url, referrer, lockHistory, wasUserGesture);
         return;
     }
@@ -1770,7 +1766,7 @@ bool FrameLoader::canCachePage()
         // they would need to be destroyed and then recreated, and there is no way that we can recreate
         // the right NPObjects. See <rdar://problem/5197041> for more information.
         && !m_containsPlugIns
-        && !m_URL.protocol().startsWith("https")
+        && !m_URL.protocolIs("https")
         && m_frame->document()
         && !m_frame->document()->applets()->length()
         && !m_frame->document()->hasWindowEventListener(unloadEvent)
@@ -1795,15 +1791,15 @@ void FrameLoader::updatePolicyBaseURL()
     if (m_frame->tree()->parent() && m_frame->tree()->parent()->document())
         setPolicyBaseURL(m_frame->tree()->parent()->document()->policyBaseURL());
     else
-        setPolicyBaseURL(m_URL.string());
+        setPolicyBaseURL(m_URL);
 }
 
-void FrameLoader::setPolicyBaseURL(const String& s)
+void FrameLoader::setPolicyBaseURL(const KURL& url)
 {
     if (m_frame->document())
-        m_frame->document()->setPolicyBaseURL(s);
+        m_frame->document()->setPolicyBaseURL(url);
     for (Frame* child = m_frame->tree()->firstChild(); child; child = child->tree()->nextSibling())
-        child->loader()->setPolicyBaseURL(s);
+        child->loader()->setPolicyBaseURL(url);
 }
 
 // This does the same kind of work that FrameLoader::openURL does, except it relies on the fact
@@ -1847,7 +1843,7 @@ void FrameLoader::startRedirectionTimer()
         case ScheduledRedirection::redirection:
         case ScheduledRedirection::locationChange:
         case ScheduledRedirection::locationChangeDuringLoad:
-            clientRedirected(m_scheduledRedirection->url.deprecatedString(),
+            clientRedirected(KURL(m_scheduledRedirection->url),
                 m_scheduledRedirection->delay,
                 currentTime() + m_redirectionTimer.nextFireInterval(),
                 m_scheduledRedirection->lockHistory,
@@ -1946,7 +1942,7 @@ void FrameLoader::load(const FrameLoadRequest& request, bool lockHistory, bool u
         referrer = m_outgoingReferrer;
  
     ASSERT(frame()->document());
-    if (url.deprecatedString().startsWith("file:", false)) {
+    if (url.protocolIs("file")) {
         if (!canLoad(url, frame()->document()) && !canLoad(url, referrer)) {
             FrameLoader::reportLocalLoadFailed(m_frame->page(), url.string());
             return;
@@ -2172,8 +2168,8 @@ void FrameLoader::reportLocalLoadFailed(const Page* page, const String& url)
 
 bool FrameLoader::shouldHideReferrer(const KURL& url, const String& referrer)
 {
-    bool referrerIsSecureURL = referrer.startsWith("https:", false);
-    bool referrerIsWebURL = referrerIsSecureURL || referrer.startsWith("http:", false);
+    bool referrerIsSecureURL = protocolIs(referrer, "https");
+    bool referrerIsWebURL = referrerIsSecureURL || protocolIs(referrer, "http");
 
     if (!referrerIsWebURL)
         return true;
@@ -2181,7 +2177,7 @@ bool FrameLoader::shouldHideReferrer(const KURL& url, const String& referrer)
     if (!referrerIsSecureURL)
         return false;
 
-    bool URLIsSecureURL = url.deprecatedString().startsWith("https:", false);
+    bool URLIsSecureURL = url.protocolIs("https");
 
     return !URLIsSecureURL;
 }
@@ -2358,7 +2354,7 @@ bool FrameLoader::shouldAllowNavigation(Frame* targetFrame) const
         Document* targetDocument = targetFrame->document();
         // FIXME: this error message should contain more specifics of why the navigation change is not allowed.
         String message = String::format("Unsafe JavaScript attempt to initiate a navigation change for frame with URL %s from frame with URL %s.\n",
-                                        targetDocument->url().utf8().data(), activeDocument->url().utf8().data());
+            targetDocument->url().string().utf8().data(), activeDocument->url().string().utf8().data());
 
         if (KJS::Interpreter::shouldPrintExceptions())
             printf("%s", message.utf8().data());
@@ -2558,7 +2554,7 @@ void FrameLoader::commitProvisionalLoad(PassRefPtr<CachedPage> prpCachedPage)
         if (url.isEmpty())
             url = pdl->responseURL();
         if (url.isEmpty())
-            url = "about:blank";
+            url = blankURL();
 
         didOpenURL(url);
     }
@@ -2748,7 +2744,7 @@ void FrameLoader::open(CachedPage& cachedPage)
 
     KURL url = cachedPage.url();
 
-    if (url.protocol().startsWith("http") && !url.host().isEmpty() && url.path().isEmpty())
+    if ((url.protocolIs("http") || url.protocolIs("https")) && !url.host().isEmpty() && url.path().isEmpty())
         url.setPath("/");
     
     m_URL = url;
@@ -3826,9 +3822,9 @@ PassRefPtr<HistoryItem> FrameLoader::createHistoryItem(bool useOriginal)
     // Later we may want to learn to live with nil for URL.
     // See bug 3368236 and related bugs for more information.
     if (url.isEmpty()) 
-        url = KURL("about:blank");
+        url = blankURL();
     if (originalURL.isEmpty())
-        originalURL = KURL("about:blank");
+        originalURL = blankURL();
     
     RefPtr<HistoryItem> item = new HistoryItem(url, m_frame->tree()->name(), m_frame->tree()->parent() ? m_frame->tree()->parent()->tree()->name() : "", docLoader ? docLoader->title() : "");
     item->setOriginalURLString(originalURL.string());
@@ -4575,7 +4571,7 @@ Widget* FrameLoader::createJavaAppletWidget(const IntSize& size, Element* elemen
     }
     
     if (baseURLString.isEmpty())
-        baseURLString = m_frame->document()->baseURL();
+        baseURLString = m_frame->document()->baseURL().string();
     KURL baseURL = completeURL(baseURLString);
 
     return m_client->createJavaAppletWidget(size, element, baseURL, paramNames, paramValues);
@@ -4792,8 +4788,8 @@ void FrameLoader::switchOutLowBandwidthDisplayIfReady()
             RefPtr<Document> newDoc = DOMImplementation::instance()->
                 createDocument(m_responseMIMEType, m_frame, m_frame->inViewSourceMode());
             m_frame->setDocument(newDoc);
-            newDoc->setURL(m_URL.deprecatedString());
-            newDoc->setBaseURL(m_URL.deprecatedString());
+            newDoc->setURL(m_URL);
+            newDoc->setBaseURL(m_URL);
             if (m_decoder)
                 newDoc->setDecoder(m_decoder.get());
             restoreDocumentState();

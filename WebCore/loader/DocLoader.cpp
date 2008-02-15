@@ -1,10 +1,8 @@
 /*
-    This file is part of the KDE libraries
-
     Copyright (C) 1998 Lars Knoll (knoll@mpi-hd.mpg.de)
     Copyright (C) 2001 Dirk Mueller (mueller@kde.org)
     Copyright (C) 2002 Waldo Bastian (bastian@kde.org)
-    Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.
+    Copyright (C) 2004, 2005, 2006, 2008 Apple Inc. All rights reserved.
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -65,7 +63,11 @@ DocLoader::~DocLoader()
 void DocLoader::checkForReload(const KURL& fullURL)
 {
     if (m_allowStaleResources)
-        return; //Don't reload resources while pasting
+        return; // Don't reload resources while pasting
+
+    if (fullURL.isEmpty())
+        return;
+
     if (m_cachePolicy == CachePolicyVerify) {
        if (!m_reloadedURLs.contains(fullURL.string())) {
           CachedResource* existing = cache()->resourceForURL(fullURL.string());
@@ -141,7 +143,7 @@ CachedXBLDocument* DocLoader::requestXBLDocument(const String& url)
 
 CachedResource* DocLoader::requestResource(CachedResource::Type type, const String& url, const String* charset, bool skipCanLoadCheck, bool sendResourceLoadCallbacks)
 {
-    KURL fullURL = m_doc->completeURL(url.deprecatedString());
+    KURL fullURL = m_doc->completeURL(url);
     
     if (cache()->disabled()) {
         HashMap<String, CachedResource*>::iterator it = m_docResources.find(fullURL.string());

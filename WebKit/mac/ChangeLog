@@ -1,3 +1,49 @@
+2008-02-14  Darin Adler  <darin@apple.com>
+
+        Reviewed by Eric Seidel.
+
+        - updated for WebCore KURL changes
+
+        * History/WebHistoryItem.mm:
+        (-[WebHistoryItem URL]): Removed getNSURL call.
+        * Misc/WebElementDictionary.mm:
+        (-[WebElementDictionary _absoluteImageURL]): Ditto.
+        (-[WebElementDictionary _absoluteLinkURL]): Ditto.
+        * Misc/WebNSAttributedStringExtras.mm:
+        (fileWrapperForElement): Ditto.
+        (+[NSAttributedString _web_attributedStringFromRange:]): Ditto.
+        * Misc/WebNSURLExtras.mm:
+        (-[NSString _webkit_stringByReplacingValidPercentEscapes]): Updated
+        for function name change.
+        * WebCoreSupport/WebContextMenuClient.mm:
+        (WebContextMenuClient::downloadURL): Removed getNSURL call.
+        * WebCoreSupport/WebDragClient.mm:
+        (WebDragClient::createDragImageForLink): Ditto.
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::dispatchWillPerformClientRedirect): Ditto.
+        (WebFrameLoaderClient::startDownload): Ditto.
+        (WebFrameLoaderClient::updateGlobalHistoryForStandardLoad): Ditto.
+        (WebFrameLoaderClient::updateGlobalHistoryForReload): Ditto.
+        (WebFrameLoaderClient::cancelledError): Ditto.
+        (WebFrameLoaderClient::blockedError): Ditto.
+        (WebFrameLoaderClient::cannotShowURLError): Ditto.
+        (WebFrameLoaderClient::interruptForPolicyChangeError): Ditto.
+        (WebFrameLoaderClient::cannotShowMIMETypeError): Ditto.
+        (WebFrameLoaderClient::fileDoesNotExistError): Ditto.
+        (WebFrameLoaderClient::willUseArchive): Ditto.
+        (WebFrameLoaderClient::setTitle): Ditto.
+        (WebFrameLoaderClient::actionDictionary): Ditto.
+        (WebFrameLoaderClient::createFrame): Ditto.
+        (WebFrameLoaderClient::objectContentType): Ditto.
+        (WebFrameLoaderClient::createPlugin): Ditto.
+        (WebFrameLoaderClient::createJavaAppletWidget): Ditto.
+        * WebView/WebDataSource.mm:
+        (-[WebDataSource _URL]): Ditto.
+        (-[WebDataSource _initWithDocumentLoader:]): Ditto.
+        (-[WebDataSource unreachableURL]): Ditto.
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView namesOfPromisedFilesDroppedAtDestination:]): Ditto.
+
 2008-02-14  Stephanie Lewis  <slewis@apple.com>
 
         Reviewed by Geoff.

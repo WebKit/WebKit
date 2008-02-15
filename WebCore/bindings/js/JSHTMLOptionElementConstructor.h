@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Computer, Inc.
+ * Copyright (C) 2006, 2008 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -25,13 +25,13 @@
 
 namespace WebCore {
 
-    class JSHTMLOptionElementConstructor : public KJS::DOMObject {
+    class JSHTMLOptionElementConstructor : public DOMObject {
     public:
         JSHTMLOptionElementConstructor(KJS::ExecState*, Document*);
         virtual bool implementsConstruct() const;
-        virtual KJS::JSObject *construct(KJS::ExecState*, const KJS::List& args);
+        virtual KJS::JSObject* construct(KJS::ExecState*, const KJS::List& args);
     private:
-        RefPtr<Document> m_doc;
+        RefPtr<Document> m_document;
     };
 
 }

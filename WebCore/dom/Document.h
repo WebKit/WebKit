@@ -32,6 +32,7 @@
 #include "DocumentMarker.h"
 #include "HTMLCollection.h"
 #include "HTMLFormElement.h"
+#include "KURL.h"
 #include "StringHash.h"
 #include "Timer.h"
 #include <wtf/HashCountedSet.h>
@@ -218,10 +219,10 @@ public:
     void setXMLVersion(const String&, ExceptionCode&);
     void setXMLStandalone(bool, ExceptionCode&);
 
-    String documentURI() const;
+    KURL documentURI() const;
     void setDocumentURI(const String&);
 
-    virtual String baseURI() const;
+    virtual KURL baseURI() const;
 
     PassRefPtr<Node> adoptNode(PassRefPtr<Node> source, ExceptionCode&);
 
@@ -371,17 +372,16 @@ public:
 
     bool wellFormed() const { return m_wellFormed; }
 
-    DeprecatedString url() const { return m_url.isEmpty() ? "about:blank" : m_url; }
-    void setURL(const DeprecatedString& url);
+    const KURL& url() const { return m_url.isEmpty() ? blankURL() : m_url; }
+    void setURL(const KURL&);
 
-    DeprecatedString baseURL() const { return m_baseURL.isEmpty() ? url() : m_baseURL; }
-    void setBaseURL(const DeprecatedString& baseURL);
+    const KURL& baseURL() const { return m_baseURL.isEmpty() ? url() : m_baseURL; }
+    void setBaseURL(const KURL&);
 
-    String baseTarget() const { return m_baseTarget; }
+    const String& baseTarget() const { return m_baseTarget; }
     void setBaseTarget(const String& baseTarget) { m_baseTarget = baseTarget; }
 
-    DeprecatedString completeURL(const DeprecatedString &);
-    String completeURL(const String&);
+    KURL completeURL(const String&);
 
     // from cachedObjectClient
     virtual void setCSSStyleSheet(const String& url, const String& charset, const CachedCSSStyleSheet*);
@@ -570,8 +570,8 @@ public:
 
     String lastModified() const;
 
-    String policyBaseURL() const { return m_policyBaseURL; }
-    void setPolicyBaseURL(const String& s) { m_policyBaseURL = s; }
+    const KURL& policyBaseURL() const { return m_policyBaseURL; }
+    void setPolicyBaseURL(const KURL& url) { m_policyBaseURL = url; }
     
     // The following implements the rule from HTML 4 for what valid names are.
     // To get this right for all the XML cases, we probably have to improve this or move it
@@ -700,8 +700,8 @@ private:
     DocLoader* m_docLoader;
     Tokenizer* m_tokenizer;
     bool m_wellFormed;
-    DeprecatedString m_url;
-    DeprecatedString m_baseURL;
+    KURL m_url;
+    KURL m_baseURL;
     String m_baseTarget;
 
     RefPtr<DocumentType> m_docType;
@@ -813,7 +813,7 @@ private:
     typedef HashMap<AtomicStringImpl*, HTMLMapElement*> ImageMapsByName;
     ImageMapsByName m_imageMapsByName;
 
-    String m_policyBaseURL;
+    KURL m_policyBaseURL;
 
     HashSet<Node*> m_disconnectedNodesWithEventListeners;
 

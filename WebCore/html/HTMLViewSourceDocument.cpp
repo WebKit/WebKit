@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,8 +23,9 @@
  */
 
 #include "config.h"
-#include "DOMImplementation.h"
 #include "HTMLViewSourceDocument.h"
+
+#include "DOMImplementation.h"
 #include "HTMLTokenizer.h"
 #include "HTMLHtmlElement.h"
 #include "HTMLAnchorElement.h"
@@ -38,8 +39,7 @@
 #include "TextDocument.h"
 #include "HTMLNames.h"
 
-namespace WebCore
-{
+namespace WebCore {
 
 using namespace HTMLNames;
 
@@ -248,7 +248,8 @@ void HTMLViewSourceDocument::addText(const String& text, const String& className
         return;
 
     // Add in the content, splitting on newlines.
-    Vector<String> lines = text.split('\n', true);
+    Vector<String> lines;
+    text.split('\n', true, lines);
     unsigned size = lines.size();
     for (unsigned i = 0; i < size; i++) {
         String substring = lines[i];

@@ -1474,8 +1474,7 @@ void webkit_web_view_open(WebKitWebView* webView, const gchar* uri)
     g_return_if_fail(uri);
 
     Frame* frame = core(webView)->mainFrame();
-    DeprecatedString string = DeprecatedString::fromUtf8(uri);
-    frame->loader()->load(ResourceRequest(KURL(string)));
+    frame->loader()->load(ResourceRequest(KURL(String::fromUTF8(uri))));
 }
 
 void webkit_web_view_reload(WebKitWebView* webView)
@@ -1492,7 +1491,7 @@ void webkit_web_view_load_string(WebKitWebView* webView, const gchar* content, c
 
     Frame* frame = core(webView)->mainFrame();
 
-    KURL url(baseUri ? DeprecatedString::fromUtf8(baseUri) : "");
+    KURL url(baseUri ? String::fromUTF8(baseUri) : "");
     RefPtr<SharedBuffer> sharedBuffer = new SharedBuffer(strdup(content), strlen(content));
     SubstituteData substituteData(sharedBuffer.release(), contentMimeType ? String(contentMimeType) : "text/html", contentEncoding ? String(contentEncoding) : "UTF-8", KURL("about:blank"), url);
 

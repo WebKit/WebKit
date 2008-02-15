@@ -863,7 +863,7 @@ void XMLTokenizer::endElementNs()
                 if (child->isTextNode() || child->nodeType() == Node::CDATA_SECTION_NODE)
                     scriptCode += static_cast<CharacterData*>(child)->data();
             }
-            m_view->frame()->loader()->executeScript(m_doc->url(), m_scriptStartLine - 1, scriptCode);
+            m_view->frame()->loader()->executeScript(m_doc->url().string(), m_scriptStartLine - 1, scriptCode);
         }
         
         m_requestingScript = false;
@@ -1292,7 +1292,7 @@ void XMLTokenizer::end()
 {
 #if ENABLE(XSLT)
     if (m_sawXSLTransform) {
-        m_doc->setTransformSource(xmlDocPtrForString(m_doc->docLoader(), m_originalSourceForTransform, m_doc->url()));
+        m_doc->setTransformSource(xmlDocPtrForString(m_doc->docLoader(), m_originalSourceForTransform, m_doc->url().string()));
         
         m_doc->setParsing(false); // Make the doc think it's done, so it will apply xsl sheets.
         m_doc->updateStyleSelector();
@@ -1441,7 +1441,7 @@ bool XMLTokenizer::isWaitingForScripts() const
 }
 
 #if ENABLE(XSLT)
-void* xmlDocPtrForString(DocLoader* docLoader, const String& source, const DeprecatedString& url)
+void* xmlDocPtrForString(DocLoader* docLoader, const String& source, const String& url)
 {
     if (source.isEmpty())
         return 0;
@@ -1460,7 +1460,7 @@ void* xmlDocPtrForString(DocLoader* docLoader, const String& source, const Depre
     
     xmlDocPtr sourceDoc = xmlReadMemory(reinterpret_cast<const char*>(source.characters()),
                                         source.length() * sizeof(UChar),
-                                        url.ascii(),
+                                        url.latin1().data(),
                                         BOMHighByte == 0xFF ? "UTF-16LE" : "UTF-16BE", 
                                         XSLT_PARSE_OPTIONS);
     

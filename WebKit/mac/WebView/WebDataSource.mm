@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -319,8 +319,10 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
 // May return nil if not initialized with a URL.
 - (NSURL *)_URL
 {
-    KURL URL = _private->loader->url();
-    return URL.isEmpty() ? nil : URL.getNSURL();
+    KURL url = _private->loader->url();
+    if (url.isEmpty())
+        return nil;
+    return url;
 }
 
 - (WebArchive *)_popSubframeArchiveWithName:(NSString *)frameName
@@ -382,7 +384,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
     _private->loader = loader;
     loader->ref();
         
-    LOG(Loading, "creating datasource for %@", _private->loader->request().url().getNSURL());
+    LOG(Loading, "creating datasource for %@", static_cast<NSURL *>(_private->loader->request().url()));
     
     ++WebDataSourceCount;
     
@@ -476,8 +478,10 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
 
 - (NSURL *)unreachableURL
 {
-    KURL URL = _private->loader->unreachableURL();
-    return URL.isEmpty() ? nil : URL.getNSURL();
+    KURL unreachableURL = _private->loader->unreachableURL();
+    if (unreachableURL.isEmpty())
+        return nil;
+    return unreachableURL;
 }
 
 - (WebArchive *)webArchive

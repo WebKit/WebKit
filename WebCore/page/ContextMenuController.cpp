@@ -43,7 +43,6 @@
 #include "HitTestRequest.h"
 #include "HitTestResult.h"
 #include "InspectorController.h"
-#include "KURL.h"
 #include "MouseEvent.h"
 #include "Node.h"
 #include "Page.h"

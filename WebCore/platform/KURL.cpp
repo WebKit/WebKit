@@ -28,9 +28,8 @@
 
 #include "CString.h"
 #include "PlatformString.h"
-#include "RegularExpression.h"
 #include "TextEncoding.h"
-#include <wtf/Vector.h>
+
 #if USE(ICU_UNICODE)
 #include <unicode/uidna.h>
 #elif USE(QT4_UNICODE)
@@ -41,6 +40,13 @@ using namespace std;
 using namespace WTF;
 
 namespace WebCore {
+
+typedef Vector<char, 512> CharBuffer;
+typedef Vector<UChar, 512> UCharBuffer;
+
+// FIXME: This file makes too much use of the + operator on String.
+// We either have to optimize that operator so it doesn't involve
+// so many allocations, or change this to use Vector<UChar> instead.
 
 enum URLCharacterClasses {
     // alpha 
@@ -66,56 +72,52 @@ enum URLCharacterClasses {
     // "#" | "?" | "/" | nul
     PathSegmentEndChar = 1 << 5,
 
-    // digit | "A" | "B" | "C" | "D" | "E" | "F" | "a" | "b" | "c" | "d" | "e" | "f"
-    HexDigitChar = 1 << 6,
-
     // not allowed in path
-    BadChar = 1 << 7
-
+    BadChar = 1 << 6
 };
 
 static const char hexDigits[17] = "0123456789ABCDEF";
 
 static const unsigned char characterClassTable[256] = {
     /* 0 nul */ PathSegmentEndChar,    /* 1 soh */ BadChar,
-    /* 2 stx */ BadChar,    /* 3 etx */ BadChar,    
+    /* 2 stx */ BadChar,    /* 3 etx */ BadChar,
     /* 4 eot */ BadChar,    /* 5 enq */ BadChar,    /* 6 ack */ BadChar,    /* 7 bel */ BadChar,
-    /* 8 bs */ BadChar,     /* 9 ht */ BadChar,    /* 10 nl */ BadChar,    /* 11 vt */ BadChar,
+    /* 8 bs */ BadChar,     /* 9 ht */ BadChar,     /* 10 nl */ BadChar,    /* 11 vt */ BadChar,
     /* 12 np */ BadChar,    /* 13 cr */ BadChar,    /* 14 so */ BadChar,    /* 15 si */ BadChar,
     /* 16 dle */ BadChar,   /* 17 dc1 */ BadChar,   /* 18 dc2 */ BadChar,   /* 19 dc3 */ BadChar,
     /* 20 dc4 */ BadChar,   /* 21 nak */ BadChar,   /* 22 syn */ BadChar,   /* 23 etb */ BadChar,
     /* 24 can */ BadChar,   /* 25 em */ BadChar,    /* 26 sub */ BadChar,   /* 27 esc */ BadChar,
     /* 28 fs */ BadChar,    /* 29 gs */ BadChar,    /* 30 rs */ BadChar,    /* 31 us */ BadChar,
     /* 32 sp */ BadChar,    /* 33  ! */ UserInfoChar,
-    /* 34  " */ BadChar,    /* 35  # */ PathSegmentEndChar | BadChar,    
+    /* 34  " */ BadChar,    /* 35  # */ PathSegmentEndChar | BadChar,
     /* 36  $ */ UserInfoChar,    /* 37  % */ UserInfoChar | HostnameChar | IPv6Char | BadChar,
     /* 38  & */ UserInfoChar,    /* 39  ' */ UserInfoChar,
-    /* 40  ( */ UserInfoChar,    /* 41  ) */ UserInfoChar,    
+    /* 40  ( */ UserInfoChar,    /* 41  ) */ UserInfoChar,
     /* 42  * */ UserInfoChar,    /* 43  + */ SchemeChar | UserInfoChar,
-    /* 44  , */ UserInfoChar,    
-    /* 45  - */ SchemeChar | UserInfoChar | HostnameChar, 
-    /* 46  . */ SchemeChar | UserInfoChar | HostnameChar,   
+    /* 44  , */ UserInfoChar,
+    /* 45  - */ SchemeChar | UserInfoChar | HostnameChar,
+    /* 46  . */ SchemeChar | UserInfoChar | HostnameChar,
     /* 47  / */ PathSegmentEndChar,
-    /* 48  0 */ SchemeChar | UserInfoChar | HostnameChar | HexDigitChar | IPv6Char, 
-    /* 49  1 */ SchemeChar | UserInfoChar | HostnameChar | HexDigitChar | IPv6Char,    
-    /* 50  2 */ SchemeChar | UserInfoChar | HostnameChar | HexDigitChar | IPv6Char, 
-    /* 51  3 */ SchemeChar | UserInfoChar | HostnameChar | HexDigitChar | IPv6Char,
-    /* 52  4 */ SchemeChar | UserInfoChar | HostnameChar | HexDigitChar | IPv6Char, 
-    /* 53  5 */ SchemeChar | UserInfoChar | HostnameChar | HexDigitChar | IPv6Char,
-    /* 54  6 */ SchemeChar | UserInfoChar | HostnameChar | HexDigitChar | IPv6Char, 
-    /* 55  7 */ SchemeChar | UserInfoChar | HostnameChar | HexDigitChar | IPv6Char,
-    /* 56  8 */ SchemeChar | UserInfoChar | HostnameChar | HexDigitChar | IPv6Char, 
-    /* 57  9 */ SchemeChar | UserInfoChar | HostnameChar | HexDigitChar | IPv6Char,
+    /* 48  0 */ SchemeChar | UserInfoChar | HostnameChar | IPv6Char, 
+    /* 49  1 */ SchemeChar | UserInfoChar | HostnameChar | IPv6Char,    
+    /* 50  2 */ SchemeChar | UserInfoChar | HostnameChar | IPv6Char, 
+    /* 51  3 */ SchemeChar | UserInfoChar | HostnameChar | IPv6Char,
+    /* 52  4 */ SchemeChar | UserInfoChar | HostnameChar | IPv6Char, 
+    /* 53  5 */ SchemeChar | UserInfoChar | HostnameChar | IPv6Char,
+    /* 54  6 */ SchemeChar | UserInfoChar | HostnameChar | IPv6Char, 
+    /* 55  7 */ SchemeChar | UserInfoChar | HostnameChar | IPv6Char,
+    /* 56  8 */ SchemeChar | UserInfoChar | HostnameChar | IPv6Char, 
+    /* 57  9 */ SchemeChar | UserInfoChar | HostnameChar | IPv6Char,
     /* 58  : */ UserInfoChar | IPv6Char,    /* 59  ; */ UserInfoChar,
     /* 60  < */ BadChar,    /* 61  = */ UserInfoChar,
     /* 62  > */ BadChar,    /* 63  ? */ PathSegmentEndChar | BadChar,
     /* 64  @ */ 0,
-    /* 65  A */ SchemeFirstChar | SchemeChar | UserInfoChar | HostnameChar | HexDigitChar | IPv6Char,    
-    /* 66  B */ SchemeFirstChar | SchemeChar | UserInfoChar | HostnameChar | HexDigitChar | IPv6Char,
-    /* 67  C */ SchemeFirstChar | SchemeChar | UserInfoChar | HostnameChar | HexDigitChar | IPv6Char,
-    /* 68  D */ SchemeFirstChar | SchemeChar | UserInfoChar | HostnameChar | HexDigitChar | IPv6Char,
-    /* 69  E */ SchemeFirstChar | SchemeChar | UserInfoChar | HostnameChar | HexDigitChar | IPv6Char,
-    /* 70  F */ SchemeFirstChar | SchemeChar | UserInfoChar | HostnameChar | HexDigitChar | IPv6Char,
+    /* 65  A */ SchemeFirstChar | SchemeChar | UserInfoChar | HostnameChar | IPv6Char,    
+    /* 66  B */ SchemeFirstChar | SchemeChar | UserInfoChar | HostnameChar | IPv6Char,
+    /* 67  C */ SchemeFirstChar | SchemeChar | UserInfoChar | HostnameChar | IPv6Char,
+    /* 68  D */ SchemeFirstChar | SchemeChar | UserInfoChar | HostnameChar | IPv6Char,
+    /* 69  E */ SchemeFirstChar | SchemeChar | UserInfoChar | HostnameChar | IPv6Char,
+    /* 70  F */ SchemeFirstChar | SchemeChar | UserInfoChar | HostnameChar | IPv6Char,
     /* 71  G */ SchemeFirstChar | SchemeChar | UserInfoChar | HostnameChar,
     /* 72  H */ SchemeFirstChar | SchemeChar | UserInfoChar | HostnameChar,
     /* 73  I */ SchemeFirstChar | SchemeChar | UserInfoChar | HostnameChar,
@@ -141,12 +143,12 @@ static const unsigned char characterClassTable[256] = {
     /* 94  ^ */ 0,
     /* 95  _ */ UserInfoChar | HostnameChar,
     /* 96  ` */ 0,
-    /* 97  a */ SchemeFirstChar | SchemeChar | UserInfoChar | HostnameChar | HexDigitChar | IPv6Char,
-    /* 98  b */ SchemeFirstChar | SchemeChar | UserInfoChar | HostnameChar | HexDigitChar | IPv6Char, 
-    /* 99  c */ SchemeFirstChar | SchemeChar | UserInfoChar | HostnameChar | HexDigitChar | IPv6Char,
-    /* 100  d */ SchemeFirstChar | SchemeChar | UserInfoChar | HostnameChar | HexDigitChar | IPv6Char, 
-    /* 101  e */ SchemeFirstChar | SchemeChar | UserInfoChar | HostnameChar | HexDigitChar | IPv6Char,
-    /* 102  f */ SchemeFirstChar | SchemeChar | UserInfoChar | HostnameChar | HexDigitChar | IPv6Char, 
+    /* 97  a */ SchemeFirstChar | SchemeChar | UserInfoChar | HostnameChar | IPv6Char,
+    /* 98  b */ SchemeFirstChar | SchemeChar | UserInfoChar | HostnameChar | IPv6Char, 
+    /* 99  c */ SchemeFirstChar | SchemeChar | UserInfoChar | HostnameChar | IPv6Char,
+    /* 100  d */ SchemeFirstChar | SchemeChar | UserInfoChar | HostnameChar | IPv6Char, 
+    /* 101  e */ SchemeFirstChar | SchemeChar | UserInfoChar | HostnameChar | IPv6Char,
+    /* 102  f */ SchemeFirstChar | SchemeChar | UserInfoChar | HostnameChar | IPv6Char, 
     /* 103  g */ SchemeFirstChar | SchemeChar | UserInfoChar | HostnameChar,
     /* 104  h */ SchemeFirstChar | SchemeChar | UserInfoChar | HostnameChar, 
     /* 105  i */ SchemeFirstChar | SchemeChar | UserInfoChar | HostnameChar,
@@ -204,126 +206,157 @@ static const unsigned char characterClassTable[256] = {
 };
 
 static int copyPathRemovingDots(char* dst, const char* src, int srcStart, int srcEnd);
-static char* encodeRelativeString(const KURL &base, const DeprecatedString& rel, const TextEncoding&);
-static DeprecatedString substituteBackslashes(const DeprecatedString &string);
+static void encodeRelativeString(const String& rel, const TextEncoding&, CharBuffer& ouput);
+static String substituteBackslashes(const String&);
 
-static inline bool isSchemeFirstChar(unsigned char c) { return characterClassTable[c] & SchemeFirstChar; }
-static inline bool isSchemeChar(unsigned char c) { return characterClassTable[c] & SchemeChar; }
+static inline bool isSchemeFirstChar(char c) { return characterClassTable[static_cast<unsigned char>(c)] & SchemeFirstChar; }
+static inline bool isSchemeFirstChar(UChar c) { return c <= 0xff && (characterClassTable[c] & SchemeFirstChar); }
+static inline bool isSchemeChar(char c) { return characterClassTable[static_cast<unsigned char>(c)] & SchemeChar; }
+static inline bool isSchemeChar(UChar c) { return c <= 0xff && (characterClassTable[c] & SchemeChar); }
 static inline bool isUserInfoChar(unsigned char c) { return characterClassTable[c] & UserInfoChar; }
 static inline bool isHostnameChar(unsigned char c) { return characterClassTable[c] & HostnameChar; }
 static inline bool isIPv6Char(unsigned char c) { return characterClassTable[c] & IPv6Char; }
-static inline bool isPathSegmentEndChar(unsigned char c) { return characterClassTable[c] & PathSegmentEndChar; }
+static inline bool isPathSegmentEndChar(char c) { return characterClassTable[static_cast<unsigned char>(c)] & PathSegmentEndChar; }
+static inline bool isPathSegmentEndChar(UChar c) { return c <= 0xff && (characterClassTable[c] & PathSegmentEndChar); }
 static inline bool isBadChar(unsigned char c) { return characterClassTable[c] & BadChar; }
-static inline bool isHexDigit(unsigned char c) { return characterClassTable[c] & HexDigitChar; }
 
-static inline int hexDigitValue(unsigned char c)
+static inline int hexDigitValue(UChar c)
 {
-    ASSERT(isHexDigit(c));
+    ASSERT(isASCIIHexDigit(c));
     if (c < 'A')
         return c - '0';
     return (c - 'A' + 10) & 0xF; // handle both upper and lower case without a branch
 }
 
+// Copies the source to the destination, assuming all the source characters are
+// ASCII. The destination buffer must be large enough. Null characters are allowed
+// in the source string, and no attempt is made to null-terminate the result.
+static void copyASCII(const UChar* src, int length, char* dest)
+{
+    for (int i = 0; i < length; i++)
+        dest[i] = static_cast<char>(src[i]);
+}
+
+// FIXME: Move to PlatformString.h eventually.
+// Returns the index of the first index in string |s| of any of the characters
+// in |toFind|. |toFind| should be a null-terminated string, all characters up
+// to the null will be searched. Returns int if not found.
+static int findFirstOf(const UChar* s, int sLen, int startPos, const char* toFind)
+{
+    for (int i = startPos; i < sLen; i++) {
+        const char* cur = toFind;
+        while (*cur) {
+            if (s[i] == *(cur++))
+                return i;
+        }
+    }
+    return -1;
+}
+
 // KURL
 
-KURL::KURL() : m_isValid(false)
+inline bool KURL::protocolIs(const String& string, const char* protocol)
+{
+    return WebCore::protocolIs(string, protocol);
+}
+
+KURL::KURL()
+    : m_isValid(false)
 {
 }
 
-KURL::KURL(const char *url)
+KURL::KURL(const char* url)
 {
-    if (url && url[0] == '/') {
-         // 5 for "file:", 1 for terminator
-        size_t urlLength = strlen(url) + 1;
-        Vector<char, 2048> buffer(urlLength + 5);
-        buffer[0] = 'f';
-        buffer[1] = 'i';
-        buffer[2] = 'l';
-        buffer[3] = 'e';
-        buffer[4] = ':';
-        memcpy(&buffer[5], url, urlLength);
-        parse(buffer.data(), 0);
-    } else
+    if (!url || url[0] != '/') {
         parse(url, 0);
+        return;
+    }
+
+    size_t urlLength = strlen(url) + 1;
+    CharBuffer buffer(urlLength + 5); // 5 for "file:".
+    buffer[0] = 'f';
+    buffer[1] = 'i';
+    buffer[2] = 'l';
+    buffer[3] = 'e';
+    buffer[4] = ':';
+    memcpy(&buffer[5], url, urlLength);
+    parse(buffer.data(), 0);
 }
 
-KURL::KURL(const DeprecatedString &url)
+KURL::KURL(const String& url)
 {
-    if (!url.isEmpty() && url[0] == '/') {
-        // 5 for "file:", 1 for terminator
-        Vector<char, 2048> buffer(url.length() + 6);
-        buffer[0] = 'f';
-        buffer[1] = 'i';
-        buffer[2] = 'l';
-        buffer[3] = 'e';
-        buffer[4] = ':';
-        url.copyLatin1(&buffer[5]);
-        parse(buffer.data(), 0);
-    } else
-        parse(url.ascii(), &url);
+    if (url[0] != '/') {
+        parse(url);
+        return;
+    }
+
+    CharBuffer buffer(url.length() + 6); // 5 for "file:", 1 for terminator.
+    buffer[0] = 'f';
+    buffer[1] = 'i';
+    buffer[2] = 'l';
+    buffer[3] = 'e';
+    buffer[4] = ':';
+    copyASCII(url.characters(), url.length(), &buffer[5]);
+    buffer[url.length() + 4] = '\0'; // Need null terminator.
+
+    parse(buffer.data(), 0);
 }
 
-KURL::KURL(const KURL& base, const DeprecatedString& relative)
+KURL::KURL(const KURL& base, const String& relative)
 {
     init(base, relative, UTF8Encoding());
 }
 
-KURL::KURL(const KURL& base, const DeprecatedString& relative, const TextEncoding& encoding)
+KURL::KURL(const KURL& base, const String& relative, const TextEncoding& encoding)
 {
     init(base, relative, encoding);
 }
 
-void KURL::init(const KURL &base, const DeprecatedString &relative, const TextEncoding& encoding)
+void KURL::init(const KURL& base, const String& relative, const TextEncoding& encoding)
 {
     // Allow at least absolute URLs to resolve against an empty URL.
     if (!base.m_isValid && !base.isEmpty()) {
+        m_string = relative;
         m_isValid = false;
         return;
     }
-    
-    bool absolute = false;
 
-    // for compatibility with Win IE, we must treat backslashes as if they were slashes, as long as we're not dealing with the javascript: schema
-    DeprecatedString substitutedRelative;
-    bool shouldSubstituteBackslashes = relative.contains('\\') && !(relative.startsWith("javascript:", false) || relative.startsWith("data:", false));
-    if (shouldSubstituteBackslashes)
-        substitutedRelative = substituteBackslashes(relative);
+    // For compatibility with Win IE, treat backslashes as if they were slashes,
+    // as long as we're not dealing with javascript: or data: URLs.
+    String rel = relative;
+    if (rel.contains('\\') && !(protocolIs(rel, "javascript") || protocolIs(rel, "data")))
+        rel = substituteBackslashes(rel);
 
-    const DeprecatedString &rel = shouldSubstituteBackslashes ? substitutedRelative : relative;
-    
-    bool allASCII = rel.isAllASCII();
-    char *strBuffer;
-    const char *str;
+    String* originalString = &rel;
+
+    bool allASCII = charactersAreAllASCII(rel.characters(), rel.length());
+    CharBuffer strBuffer;
+    char* str;
+    size_t len;
     if (allASCII) {
-        strBuffer = 0;
-        str = rel.ascii();
+        len = rel.length();
+        strBuffer.resize(len + 1);
+        copyASCII(rel.characters(), len, strBuffer.data());
+        strBuffer[len] = 0;
+        str = strBuffer.data();
     } else {
-        strBuffer = encodeRelativeString(base, rel, encoding);
-        str = strBuffer;
-    }
-    
-    // workaround for sites that put leading whitespace whitespace on
-    // URL references
-    bool strippedStart = false;
-    while (*str == ' ') {
-        str++;
-        strippedStart = true;
+        originalString = 0;
+        encodeRelativeString(rel, encoding, strBuffer);
+        str = strBuffer.data();
+        len = strlen(str);
     }
 
-    // workaround for trailing whitespace - a bit more complicated cause we have to copy
-    // it would be even better to replace null-termination with a length parameter
-    int len = strlen(str);
-    int charsToChopOffEnd = 0;
-    for (int pos = len - 1; pos >= 0 && str[pos] == ' '; pos--) {
-        charsToChopOffEnd++;
+    // Get rid of leading whitespace.
+    while (*str == ' ') {
+        originalString = 0;
+        str++;
+        --len;
     }
-    if (charsToChopOffEnd > 0) {
-        char *newStrBuffer = (char *)fastMalloc((len + 1) - charsToChopOffEnd);
-        strncpy(newStrBuffer, str, len - charsToChopOffEnd);
-        newStrBuffer[len - charsToChopOffEnd] = '\0';
-        fastFree(strBuffer);
-        strBuffer = newStrBuffer;
-        str = strBuffer;
+
+    // Get rid of trailing whitespace.
+    while (len && str[len - 1] == ' ') {
+        originalString = 0;
+        str[--len] = '\0';
     }
 
     // According to the RFC, the reference should be interpreted as an
@@ -331,119 +364,108 @@ void KURL::init(const KURL &base, const DeprecatedString &relative, const TextEn
     // algorithm. If the URI reference is absolute it will have a
     // scheme, meaning that it will have a colon before the first
     // non-scheme element.
-    const char *p = str;
+    bool absolute = false;
+    char* p = str;
     if (isSchemeFirstChar(*p)) {
         ++p;
         while (isSchemeChar(*p)) {
             ++p;
         }
         if (*p == ':') {
-            if (p[1] != '/' && base.protocol().lower() == DeprecatedString(str, p - str).lower() && base.isHierarchical())
+            if (p[1] != '/' && equalIgnoringCase(base.protocol(), String(str, p - str)) && base.isHierarchical()) {
                 str = p + 1;
-            else
+                originalString = 0;
+            } else
                 absolute = true;
         }
     }
 
     if (absolute) {
-        parse(str, (allASCII && !strippedStart && (charsToChopOffEnd == 0)) ? &rel : 0);
+        parse(str, originalString);
     } else {
         // If the base is empty or opaque (e.g. data: or javascript:), then the URL is invalid
         // unless the relative URL is a single fragment.
         if (!base.isHierarchical()) {
-            if (str[0] == '#') {
-                DeprecatedString newURL = base.urlString.left(base.queryEndPos) + str;
-                parse(newURL.ascii(), &newURL);
-            } else
+            if (str[0] == '#')
+                parse(base.m_string.left(base.queryEndPos) + str);
+            else {
+                m_string = relative;
                 m_isValid = false;
-            
-            if (strBuffer)
-                fastFree(strBuffer);
+            }
             return;
         }
 
-        switch(str[0]) {
+        switch (str[0]) {
         case '\0':
             // the reference must be empty - the RFC says this is a
             // reference to the same document
-            {
-                *this = base;
-                break;
-            }
+            *this = base;
+            break;
         case '#':
             // must be fragment-only reference
-            {
-                DeprecatedString newURL = base.urlString.left(base.queryEndPos) + str;
-                parse(newURL.ascii(), &newURL);
-                break;
-            }
+            parse(base.m_string.left(base.queryEndPos) + str);
+            break;
         case '?':
             // query-only reference, special case needed for non-URL results
-            {
-                DeprecatedString newURL = base.urlString.left(base.pathEndPos) + str;
-                parse(newURL.ascii(), &newURL);
-                break;
-            }
+            parse(base.m_string.left(base.pathEndPos) + str);
+            break;
         case '/':
             // must be net-path or absolute-path reference
-            {
-                if (str[1] == '/') {
-                    // net-path
-                    DeprecatedString newURL = base.urlString.left(base.schemeEndPos + 1) + str;
-                    parse(newURL.ascii(), &newURL);
-                } else {
-                    // abs-path
-                    DeprecatedString newURL = base.urlString.left(base.portEndPos) + str;
-                    parse(newURL.ascii(), &newURL);
-                }
-                break;
+            if (str[1] == '/') {
+                // net-path
+                parse(base.m_string.left(base.schemeEndPos + 1) + str);
+            } else {
+                // abs-path
+                parse(base.m_string.left(base.portEndPos) + str);
             }
+            break;
         default:
             {
                 // must be relative-path reference
 
                 // Base part plus relative part plus one possible slash added in between plus terminating \0 byte.
-                Vector<char, 2048> buffer(base.pathEndPos + 1 + strlen(str) + 1);
+                CharBuffer buffer(base.pathEndPos + 1 + len + 1);
 
-                char *bufferPos = buffer.data();
-                
+                char* bufferPos = buffer.data();
+
                 // first copy everything before the path from the base
-                const char *baseString = base.urlString.ascii();
-                const char *baseStringStart = baseString;
-                const char *pathStart = baseStringStart + base.portEndPos;
-                while (baseStringStart < pathStart) {
+                unsigned baseLength = base.m_string.length();
+                const UChar* baseCharacters = base.m_string.characters();
+                CharBuffer baseStringBuffer(baseLength);
+                for (unsigned i = 0; i < baseLength; ++i)
+                    baseStringBuffer[i] = static_cast<char>(baseCharacters[i]);
+                const char* baseString = baseStringBuffer.data();
+                const char* baseStringStart = baseString;
+                const char* pathStart = baseStringStart + base.portEndPos;
+                while (baseStringStart < pathStart)
                     *bufferPos++ = *baseStringStart++;
-                }
-                char *bufferPathStart = bufferPos;
+                char* bufferPathStart = bufferPos;
 
-                // now copy the base path 
-                const char *baseStringEnd = baseString + base.pathEndPos;
-                
+                // now copy the base path
+                const char* baseStringEnd = baseString + base.pathEndPos;
+
                 // go back to the last slash
-                while (baseStringEnd > baseStringStart && baseStringEnd[-1] != '/') {
+                while (baseStringEnd > baseStringStart && baseStringEnd[-1] != '/')
                     baseStringEnd--;
-                }
-                
+
                 if (baseStringEnd == baseStringStart) {
                     // no path in base, add a path separator if necessary
-                    if (base.schemeEndPos + 1 != base.pathEndPos && *str != '\0' && *str != '?' && *str != '#') {
+                    if (base.schemeEndPos + 1 != base.pathEndPos && *str != '\0' && *str != '?' && *str != '#')
                         *bufferPos++ = '/';
-                    }
                 } else {
                     bufferPos += copyPathRemovingDots(bufferPos, baseStringStart, 0, baseStringEnd - baseStringStart);
                 }
 
-                const char *relStringStart = str;
-                const char *relStringPos = relStringStart;
-                
+                const char* relStringStart = str;
+                const char* relStringPos = relStringStart;
+
                 while (*relStringPos != '\0' && *relStringPos != '?' && *relStringPos != '#') {
                     if (relStringPos[0] == '.' && bufferPos[-1] == '/') {
                         if (isPathSegmentEndChar(relStringPos[1])) {
                             // skip over "." segment
                             relStringPos += 1;
-                            if (relStringPos[0] == '/') {
+                            if (relStringPos[0] == '/')
                                 relStringPos++;
-                            }
                             continue;
                         } else if (relStringPos[1] == '.' && isPathSegmentEndChar(relStringPos[2])) {
                             // skip over ".." segment and rewind the last segment
@@ -451,19 +473,16 @@ void KURL::init(const KURL &base, const DeprecatedString &relative, const TextEn
                             // ".." segments - we choose to drop them since some web content
                             // relies on this.
                             relStringPos += 2;
-                            if (relStringPos[0] == '/') {
+                            if (relStringPos[0] == '/')
                                 relStringPos++;
-                            }
-                            if (bufferPos > bufferPathStart + 1) {
+                            if (bufferPos > bufferPathStart + 1)
                                 bufferPos--;
-                            }
-                            while (bufferPos > bufferPathStart + 1  && bufferPos[-1] != '/') {
+                            while (bufferPos > bufferPathStart + 1  && bufferPos[-1] != '/')
                                 bufferPos--;
-                            }
                             continue;
                         }
                     }
-                    
+
                     *bufferPos = *relStringPos;
                     relStringPos++;
                     bufferPos++;
@@ -474,15 +493,11 @@ void KURL::init(const KURL &base, const DeprecatedString &relative, const TextEn
                 strcpy(bufferPos, relStringPos);
 
                 parse(buffer.data(), 0);
-                
+
                 ASSERT(strlen(buffer.data()) + 1 <= buffer.size());
                 break;
             }
         }
-    }
-    
-    if (strBuffer) {
-        fastFree(strBuffer);
     }
 }
 
@@ -491,89 +506,79 @@ bool KURL::hasPath() const
     return m_isValid && pathEndPos != portEndPos;
 }
 
-DeprecatedString KURL::lastPathComponent() const
+String KURL::lastPathComponent() const
 {
     if (!hasPath())
-        return DeprecatedString();
+        return String();
 
     int end = pathEndPos - 1;
-    if (urlString[end] == '/')
+    if (m_string[end] == '/')
         --end;
 
-    int start = urlString.findRev('/', end);
+    int start = m_string.reverseFind('/', end);
     if (start < portEndPos)
-        return DeprecatedString();
+        return String();
     ++start;
 
-    return urlString.mid(start, end - start + 1);
+    return m_string.substring(start, end - start + 1);
 }
 
-DeprecatedString KURL::protocol() const
+String KURL::protocol() const
 {
-    if (!m_isValid) {
-        return DeprecatedString();
-    }
+    if (!m_isValid)
+        return String();
 
-    return urlString.left(schemeEndPos);
+    return m_string.left(schemeEndPos);
 }
 
-DeprecatedString KURL::host() const
+String KURL::host() const
 {
-    if (!m_isValid) {
-        return DeprecatedString();
-    }
+    if (!m_isValid)
+        return String();
 
     int start = (passwordEndPos == userStartPos) ? passwordEndPos : passwordEndPos + 1;
-    return decode_string(urlString.mid(start, hostEndPos - start));
+    return decodeURLEscapeSequences(m_string.substring(start, hostEndPos - start));
 }
 
-unsigned short int KURL::port() const
+unsigned short KURL::port() const
 {
-    if (!m_isValid) {
+    if (!m_isValid)
         return 0;
-    }
 
-    if (hostEndPos != portEndPos) {
-        bool ok;
-        unsigned short result = urlString.mid(hostEndPos + 1, portEndPos - hostEndPos - 1).toUShort(&ok);
-        if (!ok) {
-            result = 0;
-        }
-        return result;
-    }
+    if (hostEndPos == portEndPos)
+        return 0;
 
-    return 0;
+    int number = m_string.substring(hostEndPos + 1, portEndPos - hostEndPos - 1).toInt();
+    if (number < 0 || number > 0xFFFF)
+        return 0;
+    return number;
 }
 
-DeprecatedString KURL::pass() const
+String KURL::pass() const
 {
-    if (!m_isValid) {
-        return DeprecatedString();
-    }
+    if (!m_isValid)
+        return String();
 
-    if (passwordEndPos == userEndPos) {
-        return DeprecatedString();
-    }
+    if (passwordEndPos == userEndPos)
+        return String();
 
-    return decode_string(urlString.mid(userEndPos + 1, passwordEndPos - userEndPos - 1)); 
+    return decodeURLEscapeSequences(m_string.substring(userEndPos + 1, passwordEndPos - userEndPos - 1)); 
 }
 
-DeprecatedString KURL::user() const
+String KURL::user() const
 {
-    if (!m_isValid) {
-        return DeprecatedString();
-    }
+    if (!m_isValid)
+        return String();
 
-    return decode_string(urlString.mid(userStartPos, userEndPos - userStartPos));
+    return decodeURLEscapeSequences(m_string.substring(userStartPos, userEndPos - userStartPos));
 }
 
-DeprecatedString KURL::ref() const
+String KURL::ref() const
 {
-    if (!m_isValid || fragmentEndPos == queryEndPos) {
-        return DeprecatedString();
-    }
+    if (!m_isValid || fragmentEndPos == queryEndPos)
+        return String();
 
-    return urlString.mid(queryEndPos + 1, fragmentEndPos - (queryEndPos + 1));
+    return m_string.substring(queryEndPos + 1, fragmentEndPos - (queryEndPos + 1));
 }
 
 bool KURL::hasRef() const
@@ -581,202 +586,226 @@ bool KURL::hasRef() const
     return m_isValid && fragmentEndPos != queryEndPos;
 }
 
-DeprecatedString KURL::query() const
+static inline void assertProtocolIsGood(const char* protocol)
 {
-    if (!m_isValid) {
-        return DeprecatedString();
+#ifndef NDEBUG
+    const char* p = protocol;
+    while (*p) {
+        ASSERT(*p > ' ' && *p < 0x7F && !(*p >= 'A' && *p <= 'Z'));
+        ++p;
     }
-
-    return urlString.mid(pathEndPos, queryEndPos - pathEndPos); 
+#endif
 }
 
-DeprecatedString KURL::path() const
+bool KURL::protocolIs(const char* protocol) const
 {
-    if (!m_isValid) {
-        return DeprecatedString();
+    // Do the comparison without making a new string object.
+    assertProtocolIsGood(protocol);
+    if (!m_isValid)
+        return false;
+    for (int i = 0; i < schemeEndPos; ++i) {
+        if (!protocol[i] || toASCIILower(m_string[i]) != protocol[i])
+            return false;
     }
-
-    return decode_string(urlString.mid(portEndPos, pathEndPos - portEndPos)); 
+    return !protocol[schemeEndPos]; // We should have consumed all characters in the argument.
 }
 
-void KURL::setProtocol(const DeprecatedString &s)
+String KURL::query() const
+{
+    if (!m_isValid)
+        return String();
+
+    return m_string.substring(pathEndPos, queryEndPos - pathEndPos); 
+}
+
+String KURL::path() const
+{
+    if (!m_isValid)
+        return String();
+
+    return decodeURLEscapeSequences(m_string.substring(portEndPos, pathEndPos - portEndPos)); 
+}
+
+void KURL::setProtocol(const String& s)
 {
     if (!m_isValid) {
-        DeprecatedString newURL = s + ":" + urlString;
-        parse(newURL.ascii(), &newURL);
+        parse(s + ":" + m_string);
         return;
     }
 
-    DeprecatedString newURL = s + urlString.mid(schemeEndPos);
-    parse(newURL.ascii(), &newURL);
+    parse(s + m_string.substring(schemeEndPos));
 }
 
-void KURL::setHost(const DeprecatedString &s)
+void KURL::setHost(const String& s)
 {
-    if (m_isValid) {
-        bool slashSlashNeeded = userStartPos == schemeEndPos + 1;
-        int hostStart = (passwordEndPos == userStartPos) ? passwordEndPos : passwordEndPos + 1;
-        
-        DeprecatedString newURL = urlString.left(hostStart) + (slashSlashNeeded ? "//" : DeprecatedString()) + s + urlString.mid(hostEndPos);
-        parse(newURL.ascii(), &newURL);
-    }
+    if (!m_isValid)
+        return;
+
+    bool slashSlashNeeded = userStartPos == schemeEndPos + 1;
+    int hostStart = (passwordEndPos == userStartPos) ? passwordEndPos : passwordEndPos + 1;
+
+    parse(m_string.left(hostStart) + (slashSlashNeeded ? "//" : "") + s + m_string.substring(hostEndPos));
 }
 
 void KURL::setPort(unsigned short i)
 {
-    if (m_isValid) {
-        bool colonNeeded = portEndPos == hostEndPos;
-        int portStart = (colonNeeded ? hostEndPos : hostEndPos + 1);
-        DeprecatedString newURL = urlString.left(portStart) + (colonNeeded ? ":" : DeprecatedString()) + DeprecatedString::number(i) + urlString.mid(portEndPos);
-        parse(newURL.ascii(), &newURL);
-    }
+    if (!m_isValid)
+        return;
+
+    bool colonNeeded = portEndPos == hostEndPos;
+    int portStart = (colonNeeded ? hostEndPos : hostEndPos + 1);
+
+    parse(m_string.left(portStart) + (colonNeeded ? ":" : "") + String::number(i) + m_string.substring(portEndPos));
 }
 
-void KURL::setHostAndPort(const DeprecatedString& hostAndPort)
+void KURL::setHostAndPort(const String& hostAndPort)
 {
-    if (m_isValid) {
-        bool slashSlashNeeded = userStartPos == schemeEndPos + 1;
-        int hostStart = (passwordEndPos == userStartPos) ? passwordEndPos : passwordEndPos + 1;
-        
-        DeprecatedString newURL = urlString.left(hostStart) + (slashSlashNeeded ? "//" : DeprecatedString()) + hostAndPort + urlString.mid(portEndPos);
-        parse(newURL.ascii(), &newURL);
-    }
+    if (!m_isValid)
+        return;
+
+    bool slashSlashNeeded = userStartPos == schemeEndPos + 1;
+    int hostStart = (passwordEndPos == userStartPos) ? passwordEndPos : passwordEndPos + 1;
+
+    parse(m_string.left(hostStart) + (slashSlashNeeded ? "//" : "") + hostAndPort + m_string.substring(portEndPos));
 }
 
-void KURL::setUser(const DeprecatedString &user)
+void KURL::setUser(const String& user)
 {
-    if (m_isValid) {
-        DeprecatedString u;
-        int end = userEndPos;
-        if (!user.isEmpty()) {
-            u = user;
-            if (userStartPos == schemeEndPos + 1)
-                u = "//" + u;
-            // Add '@' if we didn't have one before.
-            if (end == hostEndPos || (end == passwordEndPos && urlString[end] != '@'))
-                u += '@';
-        } else {
-            // Remove '@' if we now have neither user nor password.
-            if (userEndPos == passwordEndPos && end != hostEndPos && urlString[end] == '@')
-                end += 1;
-        }
-        const DeprecatedString newURL = urlString.left(userStartPos) + u + urlString.mid(end);
-        parse(newURL.ascii(), &newURL);
+    if (!m_isValid)
+        return;
+
+    String u;
+    int end = userEndPos;
+    if (!user.isEmpty()) {
+        u = user;
+        if (userStartPos == schemeEndPos + 1)
+            u = "//" + u;
+        // Add '@' if we didn't have one before.
+        if (end == hostEndPos || (end == passwordEndPos && m_string[end] != '@'))
+            u.append('@');
+    } else {
+        // Remove '@' if we now have neither user nor password.
+        if (userEndPos == passwordEndPos && end != hostEndPos && m_string[end] == '@')
+            end += 1;
     }
+    parse(m_string.left(userStartPos) + u + m_string.substring(end));
 }
 
-void KURL::setPass(const DeprecatedString &password)
+void KURL::setPass(const String& password)
 {
-    if (m_isValid) {
-        DeprecatedString p;
-        int end = passwordEndPos;
-        if (!password.isEmpty()) {
-            p = ':' + password + '@';
-            if (userEndPos == schemeEndPos + 1)
-                p = "//" + p;
-            // Eat the existing '@' since we are going to add our own.
-            if (end != hostEndPos && urlString[end] == '@')
-                end += 1;
-        } else {
-            // Remove '@' if we now have neither user nor password.
-            if (userStartPos == userEndPos && end != hostEndPos && urlString[end] == '@')
-                end += 1;
-        }
-        const DeprecatedString newURL = urlString.left(userEndPos) + p + urlString.mid(end);
-        parse(newURL.ascii(), &newURL);
+    if (!m_isValid)
+        return;
+
+    String p;
+    int end = passwordEndPos;
+    if (!password.isEmpty()) {
+        p = ":" + password + "@";
+        if (userEndPos == schemeEndPos + 1)
+            p = "//" + p;
+        // Eat the existing '@' since we are going to add our own.
+        if (end != hostEndPos && m_string[end] == '@')
+            end += 1;
+    } else {
+        // Remove '@' if we now have neither user nor password.
+        if (userStartPos == userEndPos && end != hostEndPos && m_string[end] == '@')
+            end += 1;
     }
+    parse(m_string.left(userEndPos) + p + m_string.substring(end));
 }
 
-void KURL::setRef(const DeprecatedString &s)
+void KURL::setRef(const String& s)
 {
-    if (m_isValid) {
-        DeprecatedString newURL = urlString.left(queryEndPos) + (s.isEmpty() ? DeprecatedString() : "#" + s);
-        parse(newURL.ascii(), &newURL);
-    }
+    if (!m_isValid)
+        return;
+    parse(m_string.left(queryEndPos) + (s.isEmpty() ? "" : "#" + s));
 }
 
-void KURL::setQuery(const DeprecatedString &query)
+void KURL::setQuery(const String& query)
 {
-    if (m_isValid) {
-        DeprecatedString q;
-        if (!query.isNull() && (query.isEmpty() || query[0] != '?')) {
-            q = "?" + query;
-        } else {
-            q = query;
-        }
+    if (!m_isValid)
+        return;
 
-        DeprecatedString newURL = urlString.left(pathEndPos) + q + urlString.mid(queryEndPos);
-        parse(newURL.ascii(), &newURL);
-    }
+    if ((query.isEmpty() || query[0] != '?') && !query.isNull())
+        parse(m_string.left(pathEndPos) + "?" + query + m_string.substring(queryEndPos));
+    else
+        parse(m_string.left(pathEndPos) + query + m_string.substring(queryEndPos));
+
 }
 
-void KURL::setPath(const DeprecatedString &s)
+void KURL::setPath(const String& s)
 {
-    if (m_isValid) {
-        DeprecatedString newURL = urlString.left(portEndPos) + encode_string(s) + urlString.mid(pathEndPos);
-        parse(newURL.ascii(), &newURL);
-    }
+    if (!m_isValid)
+        return;
+
+    parse(m_string.left(portEndPos) + encodeWithURLEscapeSequences(s) + m_string.substring(pathEndPos));
 }
 
-DeprecatedString KURL::prettyURL() const
+String KURL::prettyURL() const
 {
-    if (!m_isValid) {
-        return urlString;
-    }
+    if (!m_isValid)
+        return m_string;
 
-    DeprecatedString result = protocol() + ":";
+    Vector<UChar> result;
 
-    DeprecatedString authority;
+    append(result, protocol());
+    result.append(':');
+
+    Vector<UChar> authority;
 
     if (hostEndPos != passwordEndPos) {
         if (userEndPos != userStartPos) {
-            authority += user();
-            authority += "@";
+            append(authority, user());
+            authority.append('@');
         }
-        authority += host();
+        append(authority, host());
         if (port() != 0) {
-            authority += ":";
-            authority += DeprecatedString::number(port());
+            authority.append(':');
+            append(authority, String::number(port()));
         }
     }
 
-    if (!authority.isEmpty())
-        result += "//" + authority;
-    else if (protocol() == "file")
-        result += "//";
+    if (!authority.isEmpty()) {
+        result.append('/');
+        result.append('/');
+        result.append(authority);
+    } else if (protocolIs("file")) {
+        result.append('/');
+        result.append('/');
+    }
 
-    result += path();
-    result += query();
+    append(result, path());
+    append(result, query());
 
     if (fragmentEndPos != queryEndPos) {
-        result += "#" + ref();
+        result.append('#');
+        append(result, ref());
     }
 
-    return result;
+    return String::adopt(result);
 }
 
-DeprecatedString KURL::decode_string(const DeprecatedString& urlString)
+String decodeURLEscapeSequences(const String& str)
 {
-    return decode_string(urlString, UTF8Encoding());
+    return decodeURLEscapeSequences(str, UTF8Encoding());
 }
 
-DeprecatedString KURL::decode_string(const DeprecatedString& urlString, const TextEncoding& encoding)
+String decodeURLEscapeSequences(const String& str, const TextEncoding& encoding)
 {
-    DeprecatedString result("");
+    Vector<UChar> result;
 
-    Vector<char, 2048> buffer(0);
+    CharBuffer buffer;
 
-    int length = urlString.length();
+    int length = str.length();
     int decodedPosition = 0;
     int searchPosition = 0;
     int encodedRunPosition;
-    while ((encodedRunPosition = urlString.find('%', searchPosition)) >= 0) {
+    while ((encodedRunPosition = str.find('%', searchPosition)) >= 0) {
         // Find the sequence of %-escape codes.
         int encodedRunEnd = encodedRunPosition;
         while (length - encodedRunEnd >= 3
-                && urlString[encodedRunEnd] == '%'
-                && isHexDigit(urlString[encodedRunEnd + 1].latin1())
-                && isHexDigit(urlString[encodedRunEnd + 2].latin1()))
+                && str[encodedRunEnd] == '%'
+                && isASCIIHexDigit(str[encodedRunEnd + 1])
+                && isASCIIHexDigit(str[encodedRunEnd + 2]))
             encodedRunEnd += 3;
         if (encodedRunEnd == encodedRunPosition) {
             ++searchPosition;
@@ -784,16 +813,12 @@ DeprecatedString KURL::decode_string(const DeprecatedString& urlString, const Te
         }
         searchPosition = encodedRunEnd;
 
-        // Copy the entire %-escape sequence into an 8-bit buffer.
-        int encodedRunLength = encodedRunEnd - encodedRunPosition;
-        buffer.clear();
-        buffer.grow(encodedRunLength + 1);
-        urlString.copyLatin1(buffer.data(), encodedRunPosition, encodedRunLength);
-
         // Decode the %-escapes into bytes.
-        char *p = buffer.data();
-        const char *q = buffer.data();
-        while (*q) {
+        unsigned runLength = (encodedRunEnd - encodedRunPosition) / 3;
+        buffer.resize(runLength);
+        char* p = buffer.data();
+        const UChar* q = str.characters() + encodedRunPosition;
+        for (unsigned i = 0; i < runLength; ++i) {
             *p++ = (hexDigitValue(q[1]) << 4) | hexDigitValue(q[2]);
             q += 3;
         }
@@ -804,13 +829,14 @@ DeprecatedString KURL::decode_string(const DeprecatedString& urlString, const Te
             continue;
 
         // Build up the string with what we just skipped and what we just decoded.
-        result.append(urlString.mid(decodedPosition, encodedRunPosition - decodedPosition));
-        result.append(reinterpret_cast<const DeprecatedChar*>(decoded.characters()), decoded.length());
+        result.append(str.characters() + decodedPosition, encodedRunPosition - decodedPosition);
+        result.append(decoded.characters(), decoded.length());
         decodedPosition = encodedRunEnd;
     }
 
-    result.append(urlString.mid(decodedPosition, length - decodedPosition));
-    return result;
+    result.append(str.characters() + decodedPosition, length - decodedPosition);
+
+    return String::adopt(result);
 }
 
 bool KURL::isLocalFile() const
@@ -819,15 +845,15 @@ bool KURL::isLocalFile() const
     // and including feed would allow feeds to potentially let someone's blog
     // read the contents of the clipboard on a drag, even without a drop.
     // Likewise with using the FrameLoader::shouldTreatURLAsLocal() function.
-    return equalIgnoringCase(protocol(), "file");
+    return protocolIs("file");
 }
 
-static void appendEscapingBadChars(char*& buffer, const char *strStart, size_t length)
+static void appendEscapingBadChars(char*& buffer, const char* strStart, size_t length)
 {
-    char *p = buffer;
+    char* p = buffer;
 
-    const char *str = strStart;
-    const char *strEnd = strStart + length;
+    const char* str = strStart;
+    const char* strEnd = strStart + length;
     while (str < strEnd) {
         unsigned char c = *str++;
         if (isBadChar(c)) {
@@ -842,20 +868,20 @@ static void appendEscapingBadChars(char*& buffer, const char *strStart, size_t l
             *p++ = c;
         }
     }
-    
+
     buffer = p;
 }
 
 // copy a path, accounting for "." and ".." segments
-static int copyPathRemovingDots(char *dst, const char *src, int srcStart, int srcEnd)
+static int copyPathRemovingDots(char* dst, const char* src, int srcStart, int srcEnd)
 {
-    char *bufferPathStart = dst;
+    char* bufferPathStart = dst;
 
     // empty path is a special case, and need not have a leading slash
     if (srcStart != srcEnd) {
-        const char *baseStringStart = src + srcStart;
-        const char *baseStringEnd = src + srcEnd;
-        const char *baseStringPos = baseStringStart;
+        const char* baseStringStart = src + srcStart;
+        const char* baseStringEnd = src + srcEnd;
+        const char* baseStringPos = baseStringStart;
 
         // this code is unprepared for paths that do not begin with a
         // slash and we should always have one in the source string
@@ -904,9 +930,9 @@ static int copyPathRemovingDots(char *dst, const char *src, int srcStart, int sr
     return dst - bufferPathStart;
 }
 
-static inline bool hasSlashDotOrDotDot(const char *str)
+static inline bool hasSlashDotOrDotDot(const char* str)
 {
-    const unsigned char *p = reinterpret_cast<const unsigned char *>(str);
+    const unsigned char* p = reinterpret_cast<const unsigned char*>(str);
     if (!*p)
         return false;
     unsigned char pc = *p;
@@ -923,21 +949,30 @@ static inline bool matchLetter(char c, char lowercaseLetter)
     return (c | 0x20) == lowercaseLetter;
 }
 
-void KURL::parse(const char *url, const DeprecatedString *originalString)
+void KURL::parse(const String& string)
+{
+    // FIXME: This throws away the high bytes of all the characters in the string!
+    CharBuffer buffer(string.length() + 1);
+    copyASCII(string.characters(), string.length(), buffer.data());
+    buffer[string.length()] = '\0';
+    parse(buffer.data(), &string);
+}
+
+void KURL::parse(const char* url, const String* originalString)
 {
     m_isValid = true;
 
     if (!url || url[0] == '\0') {
         // valid URL must be non-empty
+        m_string = originalString ? *originalString : url;
         m_isValid = false;
-        urlString = url;
         return;
     }
 
     if (!isSchemeFirstChar(url[0])) {
         // scheme must start with an alphabetic character
+        m_string = originalString ? *originalString : url;
         m_isValid = false;
-        urlString = url;
         return;
     }
 
@@ -948,8 +983,8 @@ void KURL::parse(const char *url, const DeprecatedString *originalString)
     }
 
     if (url[schemeEnd] != ':') {
+        m_string = originalString ? *originalString : url;
         m_isValid = false;
-        urlString = url;
         return;
     }
 
@@ -967,7 +1002,7 @@ void KURL::parse(const char *url, const DeprecatedString *originalString)
     if (hierarchical && url[schemeEnd + 2] == '/') {
         // part after the scheme must be a net_path, parse the authority section
 
-        // FIXME: authority characters may be scanned twice
+        // FIXME: Authority characters may be scanned twice.
         userStart += 2;
         userEnd = userStart;
 
@@ -978,7 +1013,7 @@ void KURL::parse(const char *url, const DeprecatedString *originalString)
             }
             userEnd++;
         }
-        
+
         if (url[userEnd] == '@') {
             // actual end of the userinfo, start on the host
             if (colonPos != 0) {
@@ -998,8 +1033,8 @@ void KURL::parse(const char *url, const DeprecatedString *originalString)
             hostStart = userStart;
         } else {
             // invalid character
+            m_string = originalString ? *originalString : url;
             m_isValid = false;
-            urlString = url;
             return;
         }
 
@@ -1015,8 +1050,8 @@ void KURL::parse(const char *url, const DeprecatedString *originalString)
                 hostEnd++;
             } else {
                 // invalid character
+                m_string = originalString ? *originalString : url;
                 m_isValid = false;
-                urlString = url;
                 return;
             }
         } else {
@@ -1039,8 +1074,8 @@ void KURL::parse(const char *url, const DeprecatedString *originalString)
 
         if (!isPathSegmentEndChar(url[portEnd])) {
             // invalid character
+            m_string = originalString ? *originalString : url;
             m_isValid = false;
-            urlString = url;
             return;
         }
     } else {
@@ -1050,7 +1085,7 @@ void KURL::parse(const char *url, const DeprecatedString *originalString)
         hostStart = hostEnd = passwordEnd;
         portStart = portEnd = hostEnd;
     }
-        
+
     int pathStart = portEnd;
     int pathEnd = pathStart;
     int queryStart;
@@ -1061,14 +1096,14 @@ void KURL::parse(const char *url, const DeprecatedString *originalString)
     if (!hierarchical) {
         while (url[pathEnd] != '\0' && url[pathEnd] != '?' && url[pathEnd] != '#')
             pathEnd++;
-        
+
         queryStart = pathEnd;
         queryEnd = queryStart;
         if (url[queryStart] == '?') {
             while (url[queryEnd] != '\0' && url[queryEnd] != '#')
                 queryEnd++;
         }
-        
+
         fragmentStart = queryEnd;
         fragmentEnd = fragmentStart;
         if (url[fragmentStart] == '#') {
@@ -1076,13 +1111,13 @@ void KURL::parse(const char *url, const DeprecatedString *originalString)
             fragmentEnd = fragmentStart;
             while (url[fragmentEnd] != '\0')
                 fragmentEnd++;
-        }        
+        }
     }
     else {
         while (url[pathEnd] != '\0' && url[pathEnd] != '?' && url[pathEnd] != '#') {
             pathEnd++;
         }
-    
+
         queryStart = pathEnd;
         queryEnd = queryStart;
         if (url[queryStart] == '?') {
@@ -1090,7 +1125,7 @@ void KURL::parse(const char *url, const DeprecatedString *originalString)
                 queryEnd++;
             }
         }
-        
+
         fragmentStart = queryEnd;
         fragmentEnd = fragmentStart;
         if (url[fragmentStart] == '#') {
@@ -1111,9 +1146,8 @@ void KURL::parse(const char *url, const DeprecatedString *originalString)
 
     // copy in the scheme
     const char *schemeEndPtr = url + schemeEnd;
-    while (strPtr < schemeEndPtr) {
+    while (strPtr < schemeEndPtr)
         *p++ = *strPtr++;
-    }
     schemeEndPos = p - buffer.data();
 
     // Check if we're http or https.
@@ -1140,12 +1174,12 @@ void KURL::parse(const char *url, const DeprecatedString *originalString)
         && matchLetter(url[2], 'l')
         && matchLetter(url[3], 'e')
         && url[4] == ':';
-        
+
     // File URLs need a host part unless it is just file:// or file://localhost
     bool degenFilePath = pathStart == pathEnd
         && (hostStart == hostEnd
             || hostIsLocalHost);
-    
+
     bool haveNonHostAuthorityPart = userStart != userEnd || passwordStart != passwordEnd || portStart != portEnd;
 
     // add ":" after scheme
@@ -1168,46 +1202,41 @@ void KURL::parse(const char *url, const DeprecatedString *originalString)
 
         // copy in the user
         strPtr = url + userStart;
-        const char *userEndPtr = url + userEnd;
-        while (strPtr < userEndPtr) {
+        const char* userEndPtr = url + userEnd;
+        while (strPtr < userEndPtr)
             *p++ = *strPtr++;
-        }
         userEndPos = p - buffer.data();
-        
+
         // copy in the password
         if (passwordEnd != passwordStart) {
             *p++ = ':';
             strPtr = url + passwordStart;
-            const char *passwordEndPtr = url + passwordEnd;
-            while (strPtr < passwordEndPtr) {
+            const char* passwordEndPtr = url + passwordEnd;
+            while (strPtr < passwordEndPtr)
                 *p++ = *strPtr++;
-            }
         }
         passwordEndPos = p - buffer.data();
-        
+
         // If we had any user info, add "@"
-        if (p - buffer.data() != userStartPos) {
+        if (p - buffer.data() != userStartPos)
             *p++ = '@';
-        }
-        
+
         // copy in the host, except in the case of a file URL with authority="localhost"
         if (!(isFile && hostIsLocalHost && !haveNonHostAuthorityPart)) {
             strPtr = url + hostStart;
-            const char *hostEndPtr = url + hostEnd;
-            while (strPtr < hostEndPtr) {
+            const char* hostEndPtr = url + hostEnd;
+            while (strPtr < hostEndPtr)
                 *p++ = *strPtr++;
-            }
         }
         hostEndPos = p - buffer.data();
-        
+
         // copy in the port
         if (hostEnd != portStart) {
             *p++ = ':';
             strPtr = url + portStart;
             const char *portEndPtr = url + portEnd;
-            while (strPtr < portEndPtr) {
+            while (strPtr < portEndPtr)
                 *p++ = *strPtr++;
-            }
         }
         portEndPos = p - buffer.data();
     } else {
@@ -1216,26 +1245,23 @@ void KURL::parse(const char *url, const DeprecatedString *originalString)
 
     // For canonicalization, ensure we have a '/' for no path.
     // Only do this for http and https.
-    if (isHTTPorHTTPS && pathEnd - pathStart == 0) {
+    if (isHTTPorHTTPS && pathEnd - pathStart == 0)
         *p++ = '/';
-    }
-       
+
     // add path, escaping bad characters
-    
     if (hierarchical && hasSlashDotOrDotDot(url)) {
-        Vector<char, 4096> path_buffer(pathEnd - pathStart + 1);
+        CharBuffer path_buffer(pathEnd - pathStart + 1);
         copyPathRemovingDots(path_buffer.data(), url, pathStart, pathEnd);
         appendEscapingBadChars(p, path_buffer.data(), strlen(path_buffer.data()));
     } else
         appendEscapingBadChars(p, url + pathStart, pathEnd - pathStart);
 
     pathEndPos = p - buffer.data();
-    
-    
+
     // add query, escaping bad characters
     appendEscapingBadChars(p, url + queryStart, queryEnd - queryStart);
     queryEndPos = p - buffer.data();
-    
+
     // add fragment, escaping bad characters
     if (fragmentEnd != queryEnd) {
         *p++ = '#';
@@ -1243,36 +1269,36 @@ void KURL::parse(const char *url, const DeprecatedString *originalString)
     }
     fragmentEndPos = p - buffer.data();
 
-    // If we didn't end up actually changing the original string and
-    // it started as a DeprecatedString, just reuse it, to avoid extra
-    // allocation.
-    if (originalString && strncmp(buffer.data(), url, fragmentEndPos) == 0) {
-        urlString = *originalString;
-    } else
-        urlString = DeprecatedString(buffer.data(), fragmentEndPos);
-
     ASSERT(p - buffer.data() <= (int)buffer.size());
-}
 
-bool operator==(const KURL &a, const KURL &b)
-{
-    return a.urlString == b.urlString;
+    // If we didn't end up actually changing the original string and
+    // it was already in a String, reuse it to avoid extra allocation.
+    if (originalString && strncmp(buffer.data(), url, fragmentEndPos) == 0)
+        m_string = *originalString;
+    else
+        m_string = String(buffer.data(), fragmentEndPos);
 }
 
 bool equalIgnoringRef(const KURL& a, const KURL& b)
 {
-    return a.urlString.left(a.queryEndPos) == b.urlString.left(b.queryEndPos);
+    if (a.queryEndPos != b.queryEndPos)
+        return false;
+    unsigned queryLength = a.queryEndPos;
+    for (unsigned i = 0; i < queryLength; ++i)
+        if (a.string()[i] != b.string()[i])
+            return false;
+    return true;
 }
 
-DeprecatedString KURL::encode_string(const DeprecatedString& notEncodedString)
+String encodeWithURLEscapeSequences(const String& notEncodedString)
 {
-    DeprecatedCString asUTF8 = notEncodedString.utf8();
-    
-    Vector<char, 4096> buffer(asUTF8.length() * 3 + 1);
-    char *p = buffer.data();
+    CString asUTF8 = notEncodedString.utf8();
 
-    const char *str = asUTF8;
-    const char *strEnd = str + asUTF8.length();
+    CharBuffer buffer(asUTF8.length() * 3 + 1);
+    char* p = buffer.data();
+
+    const char* str = asUTF8.data();
+    const char* strEnd = str + asUTF8.length();
     while (str < strEnd) {
         unsigned char c = *str++;
         if (isBadChar(c)) {
@@ -1282,96 +1308,92 @@ DeprecatedString KURL::encode_string(const DeprecatedString& notEncodedString)
         } else
             *p++ = c;
     }
-    
-    DeprecatedString result(buffer.data(), p - buffer.data());
-    
-    ASSERT(p - buffer.data() <= (int)buffer.size());
 
-    return result;
+    ASSERT(p - buffer.data() <= static_cast<int>(buffer.size()));
+
+    return String(buffer.data(), p - buffer.data());
 }
 
-static DeprecatedString encodeHostname(const DeprecatedString &s)
+// Appends the punycoded hostname identified by the given string and length to
+// the output buffer. The result will not be null terminated.
+static void appendEncodedHostname(UCharBuffer& buffer, const UChar* str, unsigned strLen)
 {
     // Needs to be big enough to hold an IDN-encoded name.
     // For host names bigger than this, we won't do IDN encoding, which is almost certainly OK.
     const unsigned hostnameBufferLength = 2048;
 
-    if (s.isAllASCII() || s.length() > hostnameBufferLength)
-        return s;
+    if (strLen > hostnameBufferLength || charactersAreAllASCII(str, strLen))
+        buffer.append(str, strLen);
 
 #if USE(ICU_UNICODE)
-    UChar buffer[hostnameBufferLength];    
+    UChar hostnameBuffer[hostnameBufferLength];
     UErrorCode error = U_ZERO_ERROR;
-    int32_t numCharactersConverted = uidna_IDNToASCII
-        (reinterpret_cast<const UChar *>(s.unicode()), s.length(), buffer, hostnameBufferLength, UIDNA_ALLOW_UNASSIGNED, 0, &error);
-    if (error != U_ZERO_ERROR) {
-        return s;
-    }
-    return DeprecatedString(reinterpret_cast<DeprecatedChar *>(buffer), numCharactersConverted);
+    int32_t numCharactersConverted = uidna_IDNToASCII(str, strLen, hostnameBuffer,
+        hostnameBufferLength, UIDNA_ALLOW_UNASSIGNED, 0, &error);
+    if (error != U_ZERO_ERROR)
+        buffer.append(hostnameBuffer, numCharactersConverted);
 #elif USE(QT4_UNICODE)
-    QByteArray result = QUrl::toAce(s);
-    return DeprecatedString(result.constData(), result.length());
+    QByteArray result = QUrl::toAce(s); // FIXME: This is wrong, but I don't know what it should be.
+    buffer.append(result.constData, result.length());
 #endif
 }
 
-static Vector<pair<int, int> > findHostnamesInMailToURL(const DeprecatedString &s)
+static void findHostnamesInMailToURL(const UChar* str, int strLen, Vector<pair<int, int> >& nameRanges)
 {
     // In a mailto: URL, host names come after a '@' character and end with a '>' or ',' or '?' or end of string character.
     // Skip quoted strings so that characters in them don't confuse us.
     // When we find a '?' character, we are past the part of the URL that contains host names.
 
-    Vector<pair<int, int> > a;
+    nameRanges.clear();
 
     int p = 0;
     while (1) {
         // Find start of host name or of quoted string.
-        int hostnameOrStringStart = s.find(RegularExpression("[\"@?]"), p);
-        if (hostnameOrStringStart == -1) {
-            return a;
-        }
-        DeprecatedChar c = s[hostnameOrStringStart];
+        int hostnameOrStringStart = findFirstOf(str, strLen, p, "\"@?");
+        if (hostnameOrStringStart == -1)
+            return;
+        UChar c = str[hostnameOrStringStart];
         p = hostnameOrStringStart + 1;
 
-        if (c == '?') {
-            return a;
-        }
-        
+        if (c == '?')
+            return;
+
         if (c == '@') {
             // Find end of host name.
             int hostnameStart = p;
-            int hostnameEnd = s.find(RegularExpression("[>,?]"), p);
+            int hostnameEnd = findFirstOf(str, strLen, p, ">,?");
             bool done;
             if (hostnameEnd == -1) {
-                hostnameEnd = s.length();
+                hostnameEnd = strLen;
                 done = true;
             } else {
                 p = hostnameEnd;
                 done = false;
             }
 
-            a.append(make_pair(hostnameStart, hostnameEnd));
+            nameRanges.append(make_pair(hostnameStart, hostnameEnd));
 
             if (done)
-                return a;
+                return;
         } else {
             // Skip quoted string.
             ASSERT(c == '"');
             while (1) {
-                int escapedCharacterOrStringEnd = s.find(RegularExpression("[\"\\]"), p);
+                int escapedCharacterOrStringEnd = findFirstOf(str, strLen, p, "\"\\");
                 if (escapedCharacterOrStringEnd == -1)
-                    return a;
+                    return;
 
-                c = s[escapedCharacterOrStringEnd];
+                c = str[escapedCharacterOrStringEnd];
                 p = escapedCharacterOrStringEnd + 1;
-                
+
                 // If we are the end of the string, then break from the string loop back to the host name loop.
                 if (c == '"')
                     break;
-                
+
                 // Skip escaped character.
                 ASSERT(c == '\\');
-                if (p == static_cast<int>(s.length()))
-                    return a;
+                if (p == strLen)
+                    return;
 
                 ++p;
             }
@@ -1379,144 +1401,168 @@ static Vector<pair<int, int> > findHostnamesInMailToURL(const DeprecatedString &
     }
 }
 
-static bool findHostnameInHierarchicalURL(const DeprecatedString &s, int &startOffset, int &endOffset)
+static bool findHostnameInHierarchicalURL(const UChar* str, int strLen, int& startOffset, int& endOffset)
 {
     // Find the host name in a hierarchical URL.
-    // It comes after a "://" sequence, with scheme characters preceding.
-    // If ends with the end of the string or a ":" or a path segment ending character.
+    // It comes after a "://" sequence, with scheme characters preceding, and
+    // this should be the first colon in the string.
+    // It ends with the end of the string or a ":" or a path segment ending character.
     // If there is a "@" character, the host part is just the part after the "@".
-    int separator = s.find("://");
-    if (separator <= 0) {
+    int separator = findFirstOf(str, strLen, 0, ":");
+    if (separator == -1 || separator + 2 >= strLen ||
+        str[separator + 1] != '/' || str[separator + 2] != '/')
         return false;
-    }
 
     // Check that all characters before the :// are valid scheme characters.
-    if (!isSchemeFirstChar(s[0].latin1())) {
+    if (!isSchemeFirstChar(str[0]))
         return false;
-    }
     for (int i = 1; i < separator; ++i) {
-        if (!isSchemeChar(s[i].latin1())) {
+        if (!isSchemeChar(str[i]))
             return false;
-        }
     }
 
     // Start after the separator.
     int authorityStart = separator + 3;
 
     // Find terminating character.
-    int length = s.length();
-    int hostnameEnd = length;
-    for (int i = authorityStart; i < length; ++i) {
-        char c = s[i].latin1();
-        if (c == ':' || (isPathSegmentEndChar(c) && c != '\0')) {
+    int hostnameEnd = strLen;
+    for (int i = authorityStart; i < strLen; ++i) {
+        UChar c = str[i];
+        if (c == ':' || (isPathSegmentEndChar(c) && c != 0)) {
             hostnameEnd = i;
             break;
         }
     }
 
     // Find "@" for the start of the host name.
-    int userInfoTerminator = s.find('@', authorityStart);
+    int userInfoTerminator = findFirstOf(str, strLen, authorityStart, "@");
     int hostnameStart;
-    if (userInfoTerminator == -1 || userInfoTerminator > hostnameEnd) {
+    if (userInfoTerminator == -1 || userInfoTerminator > hostnameEnd)
         hostnameStart = authorityStart;
-    } else {
+    else
         hostnameStart = userInfoTerminator + 1;
-    }
 
     startOffset = hostnameStart;
     endOffset = hostnameEnd;
     return true;
 }
 
-static DeprecatedString encodeHostnames(const DeprecatedString &s)
+// Converts all hostnames found in the given input to punycode, preserving the
+// rest of the URL unchanged. The output will NOT be null-terminated.
+static void encodeHostnames(const String& str, UCharBuffer& output)
 {
-    if (s.startsWith("mailto:", false)) {
-        const Vector<pair<int, int> > hostnameRanges = findHostnamesInMailToURL(s);
+    output.clear();
+
+    if (protocolIs(str, "mailto")) {
+        Vector<pair<int, int> > hostnameRanges;
+        findHostnamesInMailToURL(str.characters(), str.length(), hostnameRanges);
         int n = hostnameRanges.size();
-        if (n != 0) {
-            DeprecatedString result;
-            unsigned p = 0;
-            for (int i = 0; i < n; ++i) {
-                const pair<int, int> &r = hostnameRanges[i];
-                result += s.mid(p, r.first);
-                result += encodeHostname(s.mid(r.first, r.second - r.first));
-                p = r.second;
-            }
-            result += s.mid(p);
-            return result;
+        int p = 0;
+        for (int i = 0; i < n; ++i) {
+            const pair<int, int>& r = hostnameRanges[i];
+            output.append(&str.characters()[p], r.first - p);
+            appendEncodedHostname(output, &str.characters()[r.first], r.second - r.first);
+            p = r.second;
         }
+        // This will copy either everything after the last hostname, or the
+        // whole thing if there is no hostname.
+        output.append(&str.characters()[p], str.length() - p);
     } else {
         int hostStart, hostEnd;
-        if (findHostnameInHierarchicalURL(s, hostStart, hostEnd)) {
-            return s.left(hostStart) + encodeHostname(s.mid(hostStart, hostEnd - hostStart)) + s.mid(hostEnd); 
+        if (findHostnameInHierarchicalURL(str.characters(), str.length(), hostStart, hostEnd)) {
+            output.append(str.characters(), hostStart); // Before hostname.
+            appendEncodedHostname(output, &str.characters()[hostStart], hostEnd - hostStart);
+            output.append(&str.characters()[hostEnd], str.length() - hostEnd); // After hostname.
+        } else {
+            // No hostname to encode, return the input.
+            output.append(str.characters(), str.length());
         }
     }
-    return s;
 }
 
-static char *encodeRelativeString(const KURL &base, const DeprecatedString &rel, const TextEncoding& encoding)
+static void encodeRelativeString(const String& rel, const TextEncoding& encoding, CharBuffer& output)
 {
-    DeprecatedString s = encodeHostnames(rel);
-
-    char *strBuffer;
+    UCharBuffer s;
+    encodeHostnames(rel, s);
 
     TextEncoding pathEncoding(UTF8Encoding());
-    TextEncoding otherEncoding = (encoding.isValid() && !rel.startsWith("mailto:", false)) ? encoding : UTF8Encoding();
-    
+    TextEncoding otherEncoding = (encoding.isValid() && !protocolIs(rel, "mailto")) ? encoding : UTF8Encoding();
+
     int pathEnd = -1;
     if (pathEncoding != otherEncoding) {
-        pathEnd = s.find(RegularExpression("[?#]"));
-    }
-    if (pathEnd == -1) {
-        CString decoded = pathEncoding.encode(reinterpret_cast<const UChar*>(s.unicode()), s.length());
-        int decodedLength = decoded.length();
-        strBuffer = static_cast<char *>(fastMalloc(decodedLength + 1));
-        memcpy(strBuffer, decoded.data(), decodedLength);
-        strBuffer[decodedLength] = 0;
-    } else {
-        int length = s.length();
-        CString pathDecoded = pathEncoding.encode(reinterpret_cast<const UChar*>(s.unicode()), pathEnd);
-        CString otherDecoded = otherEncoding.encode(reinterpret_cast<const UChar*>(s.unicode()) + pathEnd, length - pathEnd);
-        int pathDecodedLength = pathDecoded.length();
-        int otherDecodedLength = otherDecoded.length();
-        strBuffer = static_cast<char *>(fastMalloc(pathDecodedLength + otherDecodedLength + 1));
-        memcpy(strBuffer, pathDecoded.data(), pathDecodedLength);
-        memcpy(strBuffer + pathDecodedLength, otherDecoded.data(), otherDecodedLength);
-        strBuffer[pathDecodedLength + otherDecodedLength] = 0;
+        // Find the first instance of either # or ?, keep pathEnd at -1 otherwise.
+        pathEnd = findFirstOf(s.data(), s.size(), 0, "#?");
     }
 
-    return strBuffer;
+    if (pathEnd == -1) {
+        CString decoded = pathEncoding.encode(s.data(), s.size());
+        output.resize(decoded.length());
+        memcpy(output.data(), decoded.data(), decoded.length());
+    } else {
+        CString pathDecoded = pathEncoding.encode(s.data(), pathEnd);
+        CString otherDecoded = otherEncoding.encode(s.data() + pathEnd, s.size() - pathEnd);
+
+        output.resize(pathDecoded.length() + otherDecoded.length());
+        memcpy(output.data(), pathDecoded.data(), pathDecoded.length());
+        memcpy(output.data() + pathDecoded.length(), otherDecoded.data(), otherDecoded.length());
+    }
+    output.append('\0'); // null-terminate the output.
 }
 
-static DeprecatedString substituteBackslashes(const DeprecatedString &string)
+static String substituteBackslashes(const String& string)
 {
     int questionPos = string.find('?');
     int hashPos = string.find('#');
-    unsigned pathEnd;
-    
-    if (hashPos >= 0 && (questionPos < 0 || questionPos > hashPos)) {
-        pathEnd = hashPos;
-    } else if (questionPos >= 0) {
-        pathEnd = questionPos;
-    } else {
-        pathEnd = string.length();
-    }
+    int pathEnd;
 
-    return string.left(pathEnd).replace('\\','/') + string.mid(pathEnd);
+    if (hashPos >= 0 && (questionPos < 0 || questionPos > hashPos))
+        pathEnd = hashPos;
+    else if (questionPos >= 0)
+        pathEnd = questionPos;
+    else
+        pathEnd = string.length();
+
+    return string.left(pathEnd).replace('\\','/') + string.substring(pathEnd);
 }
 
 bool KURL::isHierarchical() const
 {
     if (!m_isValid)
         return false;
-    ASSERT(urlString[schemeEndPos] == ':');
-    return urlString[schemeEndPos + 1] == '/';
+    ASSERT(m_string[schemeEndPos] == ':');
+    return m_string[schemeEndPos + 1] == '/';
+}
+
+void KURL::copyToBuffer(CharBuffer& buffer) const
+{
+    // FIXME: This throws away the high bytes of all the characters in the string!
+    // That's fine for a valid URL, which is all ASCII, but not for invalid URLs.
+    buffer.resize(m_string.length());
+    copyASCII(m_string.characters(), m_string.length(), buffer.data());
+}
+
+bool protocolIs(const String& url, const char* protocol)
+{
+    // Do the comparison without making a new string object.
+    assertProtocolIsGood(protocol);
+    for (int i = 0; ; ++i) {
+        if (!protocol[i])
+            return url[i] == ':';
+        if (toASCIILower(url[i]) != protocol[i])
+            return false;
+    }
+}
+
+const KURL& blankURL()
+{
+    static KURL staticBlankURL("about:blank");
+    return staticBlankURL;
 }
 
 #ifndef NDEBUG
 void KURL::print() const
 {
-    printf("%s\n", urlString.ascii());
+    printf("%s\n", m_string.utf8().data());
 }
 #endif
 

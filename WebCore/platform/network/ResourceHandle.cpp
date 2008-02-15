@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2006, 2007, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -173,11 +173,11 @@ bool ResourceHandle::portAllowed(const ResourceRequest& request)
         return true;
 
     // Allow ports 21 and 22 for FTP URLs, as Mozilla does.
-    if ((port == 21 || port == 22) && request.url().deprecatedString().startsWith("ftp:", false))
+    if ((port == 21 || port == 22) && request.url().protocolIs("ftp"))
         return true;
 
     // Allow any port number in a file URL, since the port number is ignored.
-    if (request.url().deprecatedString().startsWith("file:", false))
+    if (request.url().protocolIs("file"))
         return true;
 
     return false;

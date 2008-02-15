@@ -351,7 +351,7 @@ void HTMLTableElement::parseMappedAttribute(MappedAttribute* attr)
     } else if (attr->name() == backgroundAttr) {
         String url = parseURL(attr->value());
         if (!url.isEmpty())
-            addCSSImageProperty(attr, CSS_PROP_BACKGROUND_IMAGE, document()->completeURL(url));
+            addCSSImageProperty(attr, CSS_PROP_BACKGROUND_IMAGE, document()->completeURL(url).string());
     } else if (attr->name() == frameAttr) {
         // Cache the value of "frame" so that the table can examine it later.
         m_frameAttr = false;

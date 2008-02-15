@@ -174,10 +174,10 @@ DeprecatedCString markupToCF_HTML(const String& markup, const String& srcURL)
     unsigned endHTMLOffset = endFragmentOffset + endMarkup.length();
 
     // fill in needed data
-    startHTML.append(String::format("%010u", startHTMLOffset).deprecatedString().utf8());
-    endHTML.append(String::format("%010u", endHTMLOffset).deprecatedString().utf8());
-    startFragment.append(String::format("%010u", startFragmentOffset).deprecatedString().utf8());
-    endFragment.append(String::format("%010u", endFragmentOffset).deprecatedString().utf8());
+    startHTML.append(String::format("%010u", startHTMLOffset).utf8().data());
+    endHTML.append(String::format("%010u", endHTMLOffset).utf8().data());
+    startFragment.append(String::format("%010u", startFragmentOffset).utf8().data());
+    endFragment.append(String::format("%010u", endFragmentOffset).utf8().data());
     startMarkup.append(markupUTF8.data());
 
     // create full cf_html string from the fragments

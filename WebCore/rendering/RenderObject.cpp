@@ -1668,24 +1668,17 @@ IntRect RenderObject::paintingRootRect(IntRect& topLevelRect)
     return result;
 }
 
-void RenderObject::addPDFURLRect(GraphicsContext* graphicsContext, IntRect rect)
+void RenderObject::addPDFURLRect(GraphicsContext* context, const IntRect& rect)
 {
+    if (rect.isEmpty())
+        return;
     Node* node = element();
-    if (node) {
-        if (graphicsContext) {
-            if (rect.width() > 0 && rect.height() > 0) {
-                Element* element = static_cast<Element*>(node);
-                String href;
-                if (element->isLink())
-                    href = element->getAttribute(hrefAttr);
-
-                if (!href.isNull()) {
-                    KURL link = element->document()->completeURL(href.deprecatedString());
-                    graphicsContext->setURLForRect(link, rect);
-                }
-            }
-        }
-    }
+    if (!node || !node->isLink() || !node->isElementNode())
+        return;
+    const AtomicString& href = static_cast<Element*>(node)->getAttribute(hrefAttr);
+    if (href.isNull())
+        return;
+    context->setURLForRect(node->document()->completeURL(href), rect);
 }
 
 

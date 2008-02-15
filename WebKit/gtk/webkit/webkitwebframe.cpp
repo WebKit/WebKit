@@ -363,7 +363,7 @@ void webkit_web_frame_load_request(WebKitWebFrame* frame, WebKitNetworkRequest* 
     ASSERT(coreFrame);
 
     // TODO: Use the ResourceRequest carried by WebKitNetworkRequest when it is implemented.
-    DeprecatedString string = DeprecatedString::fromUtf8(webkit_network_request_get_uri(request));
+    String string = String::fromUTF8(webkit_network_request_get_uri(request));
     coreFrame->loader()->load(ResourceRequest(KURL(string)));
 }
 

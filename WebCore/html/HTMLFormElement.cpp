@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004, 2005, 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
  *           (C) 2006 Alexey Proskuryakov (ap@nypop.com)
  *
  * This library is free software; you can redistribute it and/or
@@ -86,12 +86,9 @@ HTMLFormElement::~HTMLFormElement()
         imgElements[i]->m_form = 0;
 }
 
-bool HTMLFormElement::formWouldHaveSecureSubmission(const String &url)
+bool HTMLFormElement::formWouldHaveSecureSubmission(const String& url)
 {
-    if (url.isNull()) {
-        return false;
-    }
-    return document()->completeURL(url.deprecatedString()).startsWith("https:", false);
+    return document()->completeURL(url).protocolIs("https");
 }
 
 void HTMLFormElement::attach()
@@ -102,7 +99,7 @@ void HTMLFormElement::attach()
 void HTMLFormElement::insertedIntoDocument()
 {
     if (document()->isHTMLDocument()) {
-        HTMLDocument *doc = static_cast<HTMLDocument *>(document());
+        HTMLDocument* doc = static_cast<HTMLDocument*>(document());
         doc->addNamedItem(oldNameAttr);
     }
 
@@ -112,7 +109,7 @@ void HTMLFormElement::insertedIntoDocument()
 void HTMLFormElement::removedFromDocument()
 {
     if (document()->isHTMLDocument()) {
-        HTMLDocument *doc = static_cast<HTMLDocument *>(document());
+        HTMLDocument* doc = static_cast<HTMLDocument*>(document());
         doc->removeNamedItem(oldNameAttr);
     }
    
@@ -149,7 +146,7 @@ void HTMLFormElement::submitClick(Event* event)
     bool submitFound = false;
     for (unsigned i = 0; i < formElements.size(); ++i) {
         if (formElements[i]->hasLocalName(inputTag)) {
-            HTMLInputElement *element = static_cast<HTMLInputElement *>(formElements[i]);
+            HTMLInputElement* element = static_cast<HTMLInputElement*>(formElements[i]);
             if (element->isSuccessfulSubmitButton() && element->renderer()) {
                 submitFound = true;
                 element->dispatchSimulatedClick(event);
@@ -167,7 +164,7 @@ static DeprecatedCString encodeCString(const CString& cstr)
 
     // http://www.w3.org/TR/html4/interact/forms.html#h-17.13.4.1
     // same safe characters as Netscape for compatibility
-    static const char *safe = "-._*";
+    static const char* safe = "-._*";
     int elen = e.length();
     DeprecatedCString encoded((elen + e.contains('\n')) * 3 + 1);
     int enclen = 0;
@@ -246,7 +243,8 @@ TextEncoding HTMLFormElement::dataEncoding() const
     TextEncoding encoding;
     String str = m_acceptcharset;
     str.replace(',', ' ');
-    Vector<String> charsets = str.split(' ');
+    Vector<String> charsets;
+    str.split(' ', charsets);
     Vector<String>::const_iterator end = charsets.end();
     for (Vector<String>::const_iterator it = charsets.begin(); it != end; ++it)
         if ((encoding = TextEncoding(*it)).isValid())
@@ -312,10 +310,10 @@ PassRefPtr<FormData> HTMLFormElement::formData(const char* boundary) const
                         hstr += "\"";
 
                         if (!static_cast<HTMLInputElement*>(current)->value().isEmpty()) {
-                            DeprecatedString mimeType = MIMETypeRegistry::getMIMETypeForPath(path).deprecatedString();
+                            String mimeType = MIMETypeRegistry::getMIMETypeForPath(path);
                             if (!mimeType.isEmpty()) {
                                 hstr += "\r\nContent-Type: ";
-                                hstr += mimeType.ascii();
+                                hstr += mimeType.latin1().deprecatedCString();
                             }
                         }
                     }
@@ -364,7 +362,7 @@ void HTMLFormElement::parseEnctype(const String& type)
 
 bool HTMLFormElement::isMailtoForm() const
 {
-    return m_url.startsWith("mailto:", false);
+    return protocolIs(m_url, "mailto");
 }
 
 bool HTMLFormElement::prepareSubmit(Event* event)
@@ -444,8 +442,8 @@ static void getUniqueBoundaryString(Vector<char>& boundary)
 
 void HTMLFormElement::submit(Event* event, bool activateSubmitButton)
 {
-    FrameView *view = document()->view();
-    Frame *frame = document()->frame();
+    FrameView* view = document()->view();
+    Frame* frame = document()->frame();
     if (!view || !frame)
         return;
 
@@ -482,7 +480,7 @@ void HTMLFormElement::submit(Event* event, bool activateSubmitButton)
         firstSuccessfulSubmitButton->setActivatedSubmit(true);
     
     if (!m_url)
-        m_url = document()->url();
+        m_url = document()->url().string();
 
     if (m_post) {
         if (m_multipart && isMailtoForm()) {
@@ -496,7 +494,7 @@ void HTMLFormElement::submit(Event* event, bool activateSubmitButton)
                 String body = data->flattenToString();
                 if (equalIgnoringCase(enctype(), "text/plain")) {
                     // Convention seems to be to decode, and s/&/\r\n/. Also, spaces are encoded as %20.
-                    body = KURL::decode_string(body.replace('&', "\r\n").replace('+', ' ').deprecatedString() + "\r\n");
+                    body = decodeURLEscapeSequences(body.replace('&', "\r\n").replace('+', ' ') + "\r\n");
                 }
                 data = new FormData((String("body=") + encodeCString(body.utf8())).replace('+', "%20").latin1());
             }
@@ -519,7 +517,7 @@ void HTMLFormElement::submit(Event* event, bool activateSubmitButton)
 
 void HTMLFormElement::reset()
 {
-    Frame *frame = document()->frame();
+    Frame* frame = document()->frame();
     if (m_inreset || !frame)
         return;
 
@@ -538,7 +536,7 @@ void HTMLFormElement::reset()
     m_inreset = false;
 }
 
-void HTMLFormElement::parseMappedAttribute(MappedAttribute *attr)
+void HTMLFormElement::parseMappedAttribute(MappedAttribute* attr)
 {
     if (attr->name() == actionAttr)
         m_url = parseURL(attr->value());
@@ -566,7 +564,7 @@ void HTMLFormElement::parseMappedAttribute(MappedAttribute *attr)
     else if (attr->name() == nameAttr) {
         String newNameAttr = attr->value();
         if (inDocument() && document()->isHTMLDocument()) {
-            HTMLDocument *doc = static_cast<HTMLDocument *>(document());
+            HTMLDocument* doc = static_cast<HTMLDocument*>(document());
             doc->removeNamedItem(oldNameAttr);
             doc->addNamedItem(newNameAttr);
         }
@@ -585,7 +583,7 @@ template<class T, size_t n> static void removeFromVector(Vector<T*, n> & vec, T*
         }
 }
 
-unsigned HTMLFormElement::formElementIndex(HTMLGenericFormElement *e)
+unsigned HTMLFormElement::formElementIndex(HTMLGenericFormElement* e)
 {
     // Check for the special case where this element is the very last thing in
     // the form's tree of children; we don't want to walk the entire tree in that
@@ -593,12 +591,12 @@ unsigned HTMLFormElement::formElementIndex(HTMLGenericFormElement *e)
     // that says "add this form element to the end of the array".
     if (e->traverseNextNode(this)) {
         unsigned i = 0;
-        for (Node *node = this; node; node = node->traverseNextNode(this)) {
+        for (Node* node = this; node; node = node->traverseNextNode(this)) {
             if (node == e)
                 return i;
             if (node->isHTMLElement()
-                    && static_cast<HTMLElement *>(node)->isGenericFormElement()
-                    && static_cast<HTMLGenericFormElement *>(node)->form() == this)
+                    && static_cast<HTMLElement*>(node)->isGenericFormElement()
+                    && static_cast<HTMLGenericFormElement*>(node)->form() == this)
                 ++i;
         }
     }
@@ -618,17 +616,17 @@ void HTMLFormElement::removeFormElement(HTMLGenericFormElement* e)
     removeFromVector(formElements, e);
 }
 
-bool HTMLFormElement::isURLAttribute(Attribute *attr) const
+bool HTMLFormElement::isURLAttribute(Attribute* attr) const
 {
     return attr->name() == actionAttr;
 }
 
-void HTMLFormElement::registerImgElement(HTMLImageElement *e)
+void HTMLFormElement::registerImgElement(HTMLImageElement* e)
 {
     imgElements.append(e);
 }
 
-void HTMLFormElement::removeImgElement(HTMLImageElement *e)
+void HTMLFormElement::removeImgElement(HTMLImageElement* e)
 {
     removeFromVector(imgElements, e);
 }

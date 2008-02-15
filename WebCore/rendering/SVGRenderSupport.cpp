@@ -1,6 +1,4 @@
-/**
- * This file is part of the DOM implementation for WebKit.
- *
+/*
  * Copyright (C) 2007 Rob Buis <buis@kde.org>
  *           (C) 2007 Nikolas Zimmermann <zimmermann@kde.org>
  *           (C) 2007 Eric Seidel <eric@webkit.org>
@@ -138,6 +136,7 @@ void renderSubtreeToImage(ImageBuffer* image, RenderObject* item)
     if (svgContainer && !drawsContents)
         svgContainer->setDrawsContents(true);
 
+    item->layoutIfNeeded();
     item->paint(info, 0, 0);
 
     if (svgContainer && !drawsContents)

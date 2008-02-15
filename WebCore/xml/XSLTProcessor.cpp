@@ -1,7 +1,7 @@
-/**
+/*
  * This file is part of the XSL implementation.
  *
- * Copyright (C) 2004, 2005, 2006, 2007 Apple, Inc.
+ * Copyright (C) 2004, 2005, 2006, 2007, 2008 Apple, Inc. All rights reserved.
  * Copyright (C) 2005, 2006 Alexey Proskuryakov <ap@webkit.org>
  *
  * This library is free software; you can redistribute it and/or
@@ -112,7 +112,7 @@ static xmlDocPtr docLoaderFunc(const xmlChar* uri,
         case XSLT_LOAD_DOCUMENT: {
             xsltTransformContextPtr context = (xsltTransformContextPtr)ctxt;
             xmlChar* base = xmlNodeGetBase(context->document->doc, context->node);
-            KURL url((const char*)base, (const char*)uri);
+            KURL url(KURL(reinterpret_cast<const char*>(base)), reinterpret_cast<const char*>(uri));
             xmlFree(base);
             ResourceError error;
             ResourceResponse response;
@@ -293,7 +293,8 @@ static inline RefPtr<DocumentFragment> createFragmentFromSource(String sourceStr
 static xsltStylesheetPtr xsltStylesheetPointer(RefPtr<XSLStyleSheet>& cachedStylesheet, Node* stylesheetRootNode)
 {
     if (!cachedStylesheet && stylesheetRootNode) {
-        cachedStylesheet = new XSLStyleSheet(stylesheetRootNode->parent() ? stylesheetRootNode->parent() : stylesheetRootNode, stylesheetRootNode->document()->url());
+        cachedStylesheet = new XSLStyleSheet(stylesheetRootNode->parent() ? stylesheetRootNode->parent() : stylesheetRootNode,
+            stylesheetRootNode->document()->url().string());
         cachedStylesheet->parseString(createMarkup(stylesheetRootNode));
     }
     
@@ -312,7 +313,8 @@ static inline xmlDocPtr xmlDocPtrFromNode(Node* sourceNode, bool& shouldDelete)
     if (sourceIsDocument)
         sourceDoc = (xmlDocPtr)ownerDocument->transformSource();
     if (!sourceDoc) {
-        sourceDoc = (xmlDocPtr)xmlDocPtrForString(ownerDocument->docLoader(), createMarkup(sourceNode), sourceIsDocument ? ownerDocument->url() : DeprecatedString());
+        sourceDoc = (xmlDocPtr)xmlDocPtrForString(ownerDocument->docLoader(), createMarkup(sourceNode),
+            sourceIsDocument ? ownerDocument->url().string() : String());
         shouldDelete = (sourceDoc != 0);
     }
     return sourceDoc;

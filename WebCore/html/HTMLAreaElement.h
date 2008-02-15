@@ -1,9 +1,7 @@
 /*
- * This file is part of the DOM implementation for KDE.
- *
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
- * Copyright (C) 2004 Apple Computer, Inc.
+ * Copyright (C) 2004, 2008 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -35,8 +33,6 @@ class HitTestResult;
 
 class HTMLAreaElement : public HTMLAnchorElement {
 public:
-    enum Shape { Default, Poly, Rect, Circle, Unknown };
-
     HTMLAreaElement(Document*);
     ~HTMLAreaElement();
 
@@ -60,7 +56,7 @@ public:
     String coords() const;
     void setCoords(const String&);
 
-    String href() const;
+    KURL href() const;
     void setHref(const String&);
 
     bool noHref() const;
@@ -74,7 +70,8 @@ public:
     virtual String target() const;
     void setTarget(const String&);
 
-protected:
+private:
+    enum Shape { Default, Poly, Rect, Circle, Unknown };
     Path getRegion(const IntSize&) const;
     Path region;
     Length* m_coords;

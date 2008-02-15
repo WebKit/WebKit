@@ -510,7 +510,7 @@ HTMLTokenizer::State HTMLTokenizer::scriptExecution(const String& str, State sta
     if (m_fragment || !m_doc->frame())
         return state;
     m_executingScript++;
-    DeprecatedString url = scriptURL.isNull() ? m_doc->frame()->document()->url() : scriptURL.deprecatedString();
+    String url = scriptURL.isNull() ? m_doc->frame()->document()->url().string() : scriptURL;
 
     SegmentedString *savedPrependingSrc = currentPrependingSrc;
     SegmentedString prependingSrc;
@@ -1220,7 +1220,7 @@ HTMLTokenizer::State HTMLTokenizer::parseTag(SegmentedString &src, State state)
                     Settings* settings = m_doc->settings();
                     if (settings && settings->isJavaScriptEnabled()) {
                         if ((a = currToken.attrs->getAttributeItem(srcAttr)))
-                            scriptSrc = m_doc->completeURL(parseURL(a->value()));
+                            scriptSrc = m_doc->completeURL(parseURL(a->value())).string();
                         if ((a = currToken.attrs->getAttributeItem(charsetAttr)))
                             scriptSrcCharset = a->value().domString().stripWhiteSpace();
                         if (scriptSrcCharset.isEmpty())
@@ -1615,8 +1615,8 @@ PassRefPtr<Node> HTMLTokenizer::processToken()
         jsProxy->setEventHandlerLineno(tagStartLineno);
     if (dest > buffer) {
 #ifdef TOKEN_DEBUG
-        if(currToken.tagName.length()) {
-            qDebug( "unexpected token: %s, str: *%s*", currToken.tagName.deprecatedString().latin1(),DeprecatedConstString( buffer,dest-buffer ).deprecatedString().latin1() );
+        if (currToken.tagName.length()) {
+            qDebug( "unexpected token: %s, str: *%s*", currToken.tagName.latin1().data(), DeprecatedConstString(buffer, dest-buffer).deprecatedString().latin1());
             ASSERT(0);
         }
 
@@ -1636,7 +1636,7 @@ PassRefPtr<Node> HTMLTokenizer::processToken()
 #ifdef TOKEN_DEBUG
     DeprecatedString name = currToken.tagName.deprecatedString();
     DeprecatedString text;
-    if(currToken.text)
+    if (currToken.text)
         text = DeprecatedConstString(currToken.text->unicode(), currToken.text->length()).deprecatedString();
 
     kdDebug( 6036 ) << "Token --> " << name << endl;
@@ -1717,7 +1717,7 @@ void HTMLTokenizer::notifyFinished(CachedResource*)
     // file loads were serialized in lower level.
     // FIXME: this should really be done for all script loads or the same effect should be achieved by other
     // means, like javascript suspend/resume
-    m_hasScriptsWaitingForStylesheets = !m_doc->haveStylesheetsLoaded() && pendingScripts.head()->url().startsWith("file:", false);
+    m_hasScriptsWaitingForStylesheets = !m_doc->haveStylesheetsLoaded() && protocolIs(pendingScripts.head()->url(), "file");
     if (m_hasScriptsWaitingForStylesheets)
         return;
 

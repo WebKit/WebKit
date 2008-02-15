@@ -54,7 +54,6 @@
 #include "FloatConversion.h"
 #include "FontFamilyValue.h"
 #include "FontValue.h"
-#include "KURL.h"
 #include "MediaList.h"
 #include "MediaQueryExp.h"
 #include "Pair.h"
@@ -816,9 +815,8 @@ bool CSSParser::parseValue(int propId, bool important)
                 hotspot = IntPoint(coords[0], coords[1]);
             if (strict || coords.size() == 0) {
                 if (!uri.isEmpty()) {
-                    list->append(new CSSCursorImageValue(
-                                 KURL(styleElement->baseURL().deprecatedString(), uri.deprecatedString()).string(),
-                                 hotspot, styleElement));
+                    list->append(new CSSCursorImageValue(KURL(styleElement->baseURL(), uri).string(),
+                        hotspot, styleElement));
                 }
             }
             if ((strict && !value) || (value && !(value->unit == Value::Operator && value->iValue == ',')))
@@ -876,9 +874,7 @@ bool CSSParser::parseValue(int propId, bool important)
             // ### allow string in non strict mode?
             String uri = parseURL(domString(value->string));
             if (!uri.isEmpty()) {
-                parsedValue = new CSSImageValue(
-                    KURL(styleElement->baseURL().deprecatedString(), uri.deprecatedString()).string(),
-                    styleElement);
+                parsedValue = new CSSImageValue(KURL(styleElement->baseURL(), uri).string(), styleElement);
                 valueList->next();
             }
         }
@@ -1083,9 +1079,8 @@ bool CSSParser::parseValue(int propId, bool important)
             while ((val = valueList->current())) {
                 if (val->unit == CSSPrimitiveValue::CSS_URI) {
                     String value = parseURL(domString(val->string));
-                    parsedValue = new CSSPrimitiveValue(
-                                    KURL(styleElement->baseURL().deprecatedString(), value.deprecatedString()).string(), 
-                                    CSSPrimitiveValue::CSS_URI);
+                    parsedValue = new CSSPrimitiveValue(KURL(styleElement->baseURL(), value).string(),
+                        CSSPrimitiveValue::CSS_URI);
                 }
                 if (!parsedValue)
                     break;
@@ -1834,8 +1829,7 @@ bool CSSParser::parseContent(int propId, bool important)
         if (val->unit == CSSPrimitiveValue::CSS_URI) {
             // url
             String value = parseURL(domString(val->string));
-            parsedValue = new CSSImageValue(
-                KURL(styleElement->baseURL().deprecatedString(), value.deprecatedString()).string(), styleElement);
+            parsedValue = new CSSImageValue(KURL(styleElement->baseURL(), value).string(), styleElement);
         } else if (val->unit == Value::Function) {
             // attr(X) | counter(X [,Y]) | counters(X, Y, [,Z])
             ValueList *args = val->function->args;
@@ -1901,8 +1895,7 @@ bool CSSParser::parseBackgroundImage(RefPtr<CSSValue>& value)
     if (valueList->current()->unit == CSSPrimitiveValue::CSS_URI) {
         String uri = parseURL(domString(valueList->current()->string));
         if (!uri.isEmpty())
-            value = new CSSImageValue(KURL(styleElement->baseURL().deprecatedString(), uri.deprecatedString()).string(),
-                                         styleElement);
+            value = new CSSImageValue(KURL(styleElement->baseURL(), uri).string(), styleElement);
         return true;
     }
     return false;
@@ -2731,7 +2724,7 @@ bool CSSParser::parseFontFaceSrc()
         RefPtr<CSSFontFaceSrcValue> parsedValue;
         if (val->unit == CSSPrimitiveValue::CSS_URI && !expectComma) {
             String value = parseURL(domString(val->string));
-            parsedValue = new CSSFontFaceSrcValue(KURL(styleElement->baseURL().deprecatedString(), value.deprecatedString()).string(), false);
+            parsedValue = new CSSFontFaceSrcValue(KURL(styleElement->baseURL(), value).string(), false);
             uriValue = parsedValue;
             allowFormat = true;
             expectComma = true;
@@ -3286,8 +3279,7 @@ bool CSSParser::parseBorderImage(int propId, bool important)
     if (uri.isEmpty())
         return false;
     
-    context.commitImage(new CSSImageValue(KURL(styleElement->baseURL().deprecatedString(), uri.deprecatedString()).string(),
-                                                             styleElement));
+    context.commitImage(new CSSImageValue(KURL(styleElement->baseURL(), uri).string(), styleElement));
     while ((val = valueList->next())) {
         if (context.allowNumber() && validUnit(val, FInteger|FNonNeg|FPercent, true)) {
             context.commitNumber(val);
@@ -3925,7 +3917,7 @@ DeprecatedString deprecatedString(const ParseString& ps)
 #define yyconst const
 typedef int yy_state_type;
 typedef unsigned YY_CHAR;
-// this line makes sure we treat all Unicode chars correctly.
+// The following line makes sure we treat non-Latin-1 Unicode characters correctly.
 #define YY_SC_TO_UI(c) (c > 0xff ? 0xff : c)
 #define YY_DO_BEFORE_ACTION \
         yytext = yy_bp; \
@@ -3940,12 +3932,12 @@ typedef unsigned YY_CHAR;
 #define YY_STATE_EOF(state) (YY_END_OF_BUFFER + state + 1)
 #define yyterminate() yyTok = END_TOKEN; return yyTok
 #define YY_FATAL_ERROR(a)
-// The line below is needed to build the tokenizer with conditon stack.
+// The following line is needed to build the tokenizer with a condition stack.
 // The macro is used in the tokenizer grammar with lines containing
 // BEGIN(mediaqueries) and BEGIN(initial). yy_start acts as index to
 // tokenizer transition table, and 'mediaqueries' and 'initial' are
 // offset multipliers that specify which transitions are active
-// in the tokenizer during in each condition (tokenizer state)
+// in the tokenizer during in each condition (tokenizer state).
 #define BEGIN yy_start = 1 + 2 *
 
 #include "tokenizer.cpp"

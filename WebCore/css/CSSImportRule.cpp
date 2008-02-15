@@ -28,7 +28,6 @@
 #include "CSSStyleSheet.h"
 #include "DocLoader.h"
 #include "Document.h"
-#include "KURL.h"
 #include "MediaList.h"
 
 namespace WebCore {
@@ -91,7 +90,7 @@ void CSSImportRule::insertedIntoParent()
     CSSStyleSheet* parentSheet = parentStyleSheet();
     if (!parentSheet->href().isNull())
         // use parent styleheet's URL as the base URL
-        absHref = KURL(parentSheet->href().deprecatedString(), m_strHref.deprecatedString()).string();
+        absHref = KURL(KURL(parentSheet->href()), m_strHref).string();
 
     // Check for a cycle in our import chain.  If we encounter a stylesheet
     // in our parent chain with the same URL, then just bail.

@@ -42,13 +42,12 @@ CFDictionaryValueCallBacks MarshallingHelpers::kIUnknownDictionaryValueCallBacks
 
 KURL MarshallingHelpers::BSTRToKURL(BSTR urlStr)
 {
-    return KURL(String(urlStr, SysStringLen(urlStr)).deprecatedString());
+    return KURL(String(urlStr, SysStringLen(urlStr)));
 }
 
 BSTR MarshallingHelpers::KURLToBSTR(const KURL& url)
 {
-    String urlString(url.string());
-    return SysAllocStringLen(urlString.characters(), urlString.length());
+    return SysAllocStringLen(url.string().characters(), url.string().length());
 }
 
 CFURLRef MarshallingHelpers::PathStringToFileCFURLRef(const String& string)

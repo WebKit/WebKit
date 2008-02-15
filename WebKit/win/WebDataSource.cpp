@@ -245,7 +245,7 @@ HRESULT STDMETHODCALLTYPE WebDataSource::unreachableURL(
     /* [retval][out] */ BSTR* url)
 {
     KURL unreachableURL = m_loader->unreachableURL();
-    BString urlString((LPOLESTR)unreachableURL.deprecatedString().unicode(), unreachableURL.deprecatedString().length());
+    BString urlString((LPOLESTR)unreachableURL.string().characters(), unreachableURL.string().length());
 
     *url = urlString.release();
     return S_OK;

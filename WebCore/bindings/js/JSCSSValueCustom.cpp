@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,11 +27,9 @@
 #include "JSCSSValue.h"
 
 #include "CSSPrimitiveValue.h"
-#include "CSSValue.h"
 #include "CSSValueList.h"
 #include "JSCSSPrimitiveValue.h"
 #include "JSCSSValueList.h"
-#include "kjs_binding.h"
 
 #if ENABLE(SVG)
 #include "JSSVGColor.h"
@@ -40,14 +38,16 @@
 #include "SVGPaint.h"
 #endif
 
+using namespace KJS;
+
 namespace WebCore {
 
-KJS::JSValue* toJS(KJS::ExecState* exec, CSSValue* value)
+JSValue* toJS(ExecState* exec, CSSValue* value)
 {
     if (!value)
-        return KJS::jsNull();
+        return jsNull();
 
-    KJS::DOMObject* ret = KJS::ScriptInterpreter::getDOMObject(value);
+    DOMObject* ret = ScriptInterpreter::getDOMObject(value);
 
     if (ret)
         return ret;
@@ -65,7 +65,7 @@ KJS::JSValue* toJS(KJS::ExecState* exec, CSSValue* value)
     else
         ret = new JSCSSValue(JSCSSValuePrototype::self(exec), value);
 
-    KJS::ScriptInterpreter::putDOMObject(value, ret);
+    ScriptInterpreter::putDOMObject(value, ret);
     return ret;
 }
 

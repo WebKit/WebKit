@@ -2433,7 +2433,7 @@ HRESULT STDMETHODCALLTYPE WebView::userAgentForURL(
     /* [in] */ BSTR url,
     /* [retval][out] */ BSTR* userAgent)
 {
-    DeprecatedString urlStr((DeprecatedChar*)url, SysStringLen(url));
+    String urlStr(url, SysStringLen(url));
     String userAgentString = this->userAgentForKURL(KURL(urlStr));
     *userAgent = SysAllocStringLen(userAgentString.characters(), userAgentString.length());
     if (!*userAgent && userAgentString.length())
@@ -3557,7 +3557,7 @@ HRESULT STDMETHODCALLTYPE WebView::copyURL(
         /* [in] */ BSTR url)
 {
     String temp(url, SysStringLen(url));
-    m_page->focusController()->focusedOrMainFrame()->editor()->copyURL(KURL(temp.deprecatedString()), "");
+    m_page->focusController()->focusedOrMainFrame()->editor()->copyURL(KURL(temp), "");
     return S_OK;
 }
 
@@ -3869,7 +3869,7 @@ HRESULT WebView::notifyPreferencesChanged(IWebNotification* notification)
         settings->setUserStyleSheetLocation(url.get());
         SysFreeString(str);
     } else {
-        settings->setUserStyleSheetLocation(KURL(DeprecatedString("")));
+        settings->setUserStyleSheetLocation(KURL());
     }
 
     hr = preferences->shouldPrintBackgrounds(&enabled);

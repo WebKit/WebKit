@@ -1,9 +1,7 @@
 /*
- * This file is part of the DOM implementation for KDE.
- *
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
- * Copyright (C) 2004, 2006 Apple Computer, Inc.
+ * Copyright (C) 2004, 2006, 2008 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -67,7 +65,11 @@ public:
     String type() const;
     void setType(const String&);
 
-    DeprecatedString url;
+    const String& url() const { return m_url; }
+    const String& serviceType() const { return m_serviceType; }
+
+private:
+    String m_url;
     String m_pluginPage;
     String m_serviceType;
     bool m_needWidgetUpdate;

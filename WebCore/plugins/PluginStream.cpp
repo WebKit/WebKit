@@ -130,10 +130,10 @@ void PluginStream::startStream()
 
     // Some plugins (Flash) expect that javascript URLs are passed back decoded as this is the
     // format used when requesting the URL.
-    if (responseURL.string().startsWith("javascript:", false))
-        m_stream.url = strdup(responseURL.decode_string(responseURL.deprecatedString()).utf8());
+    if (responseURL.protocolIs("javascript"))
+        m_stream.url = strdup(decodeURLEscapeSequences(responseURL.string()).utf8().data());
     else
-        m_stream.url = strdup(responseURL.deprecatedString().utf8());
+        m_stream.url = strdup(responseURL.string().utf8().data());
     
     CString mimeTypeStr = m_resourceResponse.mimeType().utf8();
     
@@ -267,7 +267,7 @@ void PluginStream::destroyStream()
             // destructor, so reset it to 0
             m_stream.url = 0;
         }
-        m_pluginFuncs->urlnotify(m_instance, m_resourceRequest.url().deprecatedString().utf8(), m_reason, m_notifyData);
+        m_pluginFuncs->urlnotify(m_instance, m_resourceRequest.url().string().utf8().data(), m_reason, m_notifyData);
     }
 
     m_streamState = StreamStopped;

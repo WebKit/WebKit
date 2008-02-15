@@ -37,6 +37,7 @@ namespace WebCore {
 
 class MediaError;
 class TimeRanges;
+class KURL;
     
 class HTMLMediaElement : public HTMLElement, public MediaPlayerClient {
 public:
@@ -71,7 +72,7 @@ public:
     PassRefPtr<MediaError> error() const;
 
 // network state
-    String src() const;
+    KURL src() const;
     void setSrc(const String&);
     String currentSrc() const;
     

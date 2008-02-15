@@ -256,7 +256,7 @@ void HTMLTextAreaElement::setValue(const String& value)
 {
     // Code elsewhere normalizes line endings added by the user via the keyboard or pasting.
     // We must normalize line endings coming from JS.
-    DeprecatedString valueWithNormalizedLineEndings = value.deprecatedString();
+    String valueWithNormalizedLineEndings = value;
     valueWithNormalizedLineEndings.replace("\r\n", "\n");
     valueWithNormalizedLineEndings.replace("\r", "\n");
     

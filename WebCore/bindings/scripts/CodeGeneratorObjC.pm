@@ -3,7 +3,7 @@
 # Copyright (C) 2006 Anders Carlsson <andersca@mac.com> 
 # Copyright (C) 2006, 2007 Samuel Weinig <sam@webkit.org>
 # Copyright (C) 2006 Alexey Proskuryakov <ap@webkit.org>
-# Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
+# Copyright (C) 2006, 2007, 2008 Apple Inc. All rights reserved.
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Library General Public
@@ -536,7 +536,7 @@ sub AddIncludesForType
     return if $codeGenerator->IsNonPointerType($type) or IsNativeObjCType($type);
 
     if ($codeGenerator->IsStringType($type)) {
-        $implIncludes{"PlatformString.h"} = 1;
+        $implIncludes{"KURL.h"} = 1;
         return;
     }
 

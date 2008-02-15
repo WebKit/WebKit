@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,15 +26,16 @@
 #ifndef IconLoader_h
 #define IconLoader_h
 
-#include "KURL.h"
 #include "SubresourceLoaderClient.h"
 #include <memory>
+#include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
-#include <wtf/PassRefPtr.h>
+#include <wtf/RefPtr.h>
 
 namespace WebCore {
 
 class Frame;
+class KURL;
 class SharedBuffer;
 
 class IconLoader : private SubresourceLoaderClient, Noncopyable {

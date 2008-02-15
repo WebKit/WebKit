@@ -1,6 +1,6 @@
 // -*- mode: c++; c-basic-offset: 4 -*-
 /*
- * Copyright (C) 2003, 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2003, 2006, 2008 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -42,7 +42,7 @@ namespace WebCore {
     class ResourceRequest : public ResourceRequestBase {
     public:
         ResourceRequest(const String& url) 
-            : ResourceRequestBase(KURL(url.deprecatedString()), UseProtocolCachePolicy)
+            : ResourceRequestBase(KURL(url), UseProtocolCachePolicy)
         {
         }
 

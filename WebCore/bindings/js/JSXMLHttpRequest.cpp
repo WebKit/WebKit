@@ -31,13 +31,12 @@
 #include "kjs_events.h"
 #include "kjs_window.h"
 
-#include "JSXMLHttpRequest.lut.h"
-
-namespace KJS {
-
+using namespace KJS;
 using namespace WebCore;
 
-////////////////////// JSXMLHttpRequest Object ////////////////////////
+#include "JSXMLHttpRequest.lut.h"
+
+namespace WebCore {
 
 /* Source for JSXMLHttpRequestPrototypeTable.
 @begin JSXMLHttpRequestPrototypeTable 7
@@ -250,7 +249,6 @@ JSValue* jsXMLHttpRequestPrototypeFunctionGetResponseHeader(ExecState* exec, JSO
     return header;
 }
 
-
 JSValue* jsXMLHttpRequestPrototypeFunctionOpen(ExecState* exec, JSObject* thisObj, const List& args)
 {
     if (!thisObj->inherits(&JSXMLHttpRequest::info))
@@ -266,7 +264,7 @@ JSValue* jsXMLHttpRequestPrototypeFunctionOpen(ExecState* exec, JSObject* thisOb
     Frame* frame = Window::retrieveActive(exec)->impl()->frame();
     if (!frame)
         return jsUndefined();
-    KURL url = frame->loader()->completeURL(DeprecatedString(args[1]->toString(exec)));
+    KURL url = frame->loader()->completeURL(args[1]->toString(exec));
 
     bool async = true;
     if (args.size() >= 3)
@@ -298,10 +296,9 @@ JSValue* jsXMLHttpRequestPrototypeFunctionSend(ExecState* exec, JSObject* thisOb
     String body;
 
     if (args.size() >= 1) {
-        if (args[0]->toObject(exec)->inherits(&JSDocument::info)) {
-            Document* doc = static_cast<Document*>(static_cast<JSDocument*>(args[0]->toObject(exec))->impl());
-            body = doc->toString().deprecatedString();
-        } else {
+        if (args[0]->toObject(exec)->inherits(&JSDocument::info))
+            body = static_cast<Document*>(static_cast<JSDocument*>(args[0]->toObject(exec))->impl())->toString();
+        else {
             // converting certain values (like null) to object can set an exception
             if (exec->hadException())
                 exec->clearException();

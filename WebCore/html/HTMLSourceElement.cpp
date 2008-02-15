@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,6 +30,7 @@
 
 #include "HTMLDocument.h"
 #include "HTMLMediaElement.h"
+#include "HTMLNames.h"
 
 using namespace std;
 
@@ -56,7 +57,7 @@ void HTMLSourceElement::insertedIntoDocument()
     }
 }
 
-String HTMLSourceElement::src() const
+KURL HTMLSourceElement::src() const
 {
     return document()->completeURL(getAttribute(srcAttr));
 }

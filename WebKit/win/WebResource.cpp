@@ -103,7 +103,7 @@ HRESULT STDMETHODCALLTYPE WebResource::initWithData(
     /* [in] */ BSTR frameName)
 {
     m_data = data;
-    m_url = KURL(String(url).deprecatedString());
+    m_url = KURL(String(url));
     m_mimeType = String(mimeType);
     m_textEncodingName = String(textEncodingName);
     m_frameName = String(frameName);

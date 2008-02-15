@@ -1,7 +1,5 @@
-// -*- c-basic-offset: 2 -*-
 /*
- *  This file is part of the KDE libraries
- *  Copyright (C) 2003, 2006 Apple Computer, Inc.
+ *  Copyright (C) 2003, 2006, 2008 Apple Inc. All rights reserved.
  *  Copyright (C) 2005, 2006 Alexey Proskuryakov <ap@nypop.com>
  *
  *  This library is free software; you can redistribute it and/or
@@ -23,26 +21,13 @@
 #define XMLHttpRequest_h
 
 #include "EventTarget.h"
-#include "HTTPHeaderMap.h"
-#include "KURL.h"
-#include "PlatformString.h"
 #include "ResourceResponse.h"
-#include "StringHash.h"
 #include "SubresourceLoaderClient.h"
-#include <kjs/ustring.h>
-
-#include <wtf/HashMap.h>
-#include <wtf/Vector.h>
 
 namespace WebCore {
 
-class TextResourceDecoder;
 class Document;
-class Event;
-class EventListener;
-class String;
-
-typedef int ExceptionCode;
+class TextResourceDecoder;
 
 // these exact numeric values are important because JS expects them
 enum XMLHttpRequestState {
@@ -128,7 +113,7 @@ private:
     EventListenersMap m_eventListeners;
 
     KURL m_url;
-    DeprecatedString m_method;
+    String m_method;
     HTTPHeaderMap m_requestHeaders;
     String m_mimeTypeOverride;
     bool m_async;

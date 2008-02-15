@@ -116,7 +116,8 @@ void Pasteboard::writeSelection(Range* selectedRange, bool canSmartCopyOrDelete,
     // Put CF_HTML format on the pasteboard 
     if (::OpenClipboard(m_owner)) {
         ExceptionCode ec = 0;
-        HGLOBAL cbData = createGlobalData(markupToCF_HTML(createMarkup(selectedRange, 0, AnnotateForInterchange), selectedRange->startContainer(ec)->document()->url()));
+        HGLOBAL cbData = createGlobalData(markupToCF_HTML(createMarkup(selectedRange, 0, AnnotateForInterchange),
+            selectedRange->startContainer(ec)->document()->url().string()));
         if (!::SetClipboardData(HTMLClipboardFormat, cbData))
             ::GlobalFree(cbData);
         ::CloseClipboard();

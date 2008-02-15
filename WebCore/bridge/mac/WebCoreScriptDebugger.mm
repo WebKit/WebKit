@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2005, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -59,17 +59,19 @@ using namespace WebCore;
 @end
 
 // convert UString to NSString
-static NSString *toNSString(const UString &s)
+static NSString *toNSString(const UString& s)
 {
-    if (s.isEmpty()) return nil;
-    return [NSString stringWithCharacters:(const unichar *)s.data() length:s.size()];
+    if (s.isEmpty())
+        return nil;
+    return [NSString stringWithCharacters:reinterpret_cast<const unichar*>(s.data()) length:s.size()];
 }
 
 // convert UString to NSURL
-static NSURL *toNSURL(const UString &s)
+static NSURL *toNSURL(const UString& s)
 {
-    if (s.isEmpty()) return nil;
-    return KURL(DeprecatedString(s)).getNSURL();
+    if (s.isEmpty())
+        return nil;
+    return KURL(s);
 }
 
 // C++ interface to KJS debugger callbacks
@@ -137,8 +139,6 @@ class WebCoreScriptDebuggerImp : public KJS::Debugger {
 
 };
 
-
-
 // WebCoreScriptDebugger
 //
 // This is the main (behind-the-scenes) debugger class in WebCore.
@@ -159,7 +159,7 @@ class WebCoreScriptDebuggerImp : public KJS::Debugger {
 - (WebCoreScriptDebugger *)initWithDelegate:(id<WebScriptDebugger>)delegate
 {
     if ((self = [super init])) {
-        _delegate   = delegate;
+        _delegate  = delegate;
         _globalObj = [_delegate globalObject];
         _debugger  = new WebCoreScriptDebuggerImp(self, [_globalObj _rootObject]->globalObject());
     }
@@ -186,8 +186,6 @@ class WebCoreScriptDebuggerImp : public KJS::Debugger {
 
 @end
 
-
-
 @implementation WebCoreScriptDebugger (WebCoreScriptDebuggerInternal)
 
 - (WebCoreScriptCallFrame *)_enterFrame:(ExecState *)state;
@@ -205,8 +203,6 @@ class WebCoreScriptDebuggerImp : public KJS::Debugger {
 }
 
 @end
-
-
 
 // WebCoreScriptCallFrame
 //
@@ -255,8 +251,6 @@ class WebCoreScriptDebuggerImp : public KJS::Debugger {
 
 @end
 
-
-
 @implementation WebCoreScriptCallFrame
 
 - (void)dealloc
@@ -275,7 +269,6 @@ class WebCoreScriptDebuggerImp : public KJS::Debugger {
 {
     return _caller;
 }
-
 
 // Returns an array of scope objects (most local first).
 // The properties of each scope object are the variables for that scope.
@@ -301,14 +294,13 @@ class WebCoreScriptDebuggerImp : public KJS::Debugger {
     return result;
 }
 
-
 // Returns the name of the function for this frame, if available.
 // Returns nil for anonymous functions and for the global frame.
 
 - (NSString *)functionName
 {
     if (_state->scopeNode()) {
-        FunctionImp *func = _state->function();
+        FunctionImp* func = _state->function();
         if (func) {
             Identifier fn = func->functionName();
             return toNSString(fn.ustring());
@@ -317,7 +309,6 @@ class WebCoreScriptDebuggerImp : public KJS::Debugger {
     return nil;
 }
 
-
 // Returns the pending exception for this frame (nil if none).
 
 - (id)exception
@@ -325,7 +316,6 @@ class WebCoreScriptDebuggerImp : public KJS::Debugger {
     if (!_state->hadException()) return nil;
     return [self _convertValueToObjcValue:_state->exception()];
 }
-
 
 // Evaluate some JavaScript code in the context of this frame.
 // The code is evaluated as if by "eval", and the result is returned.
