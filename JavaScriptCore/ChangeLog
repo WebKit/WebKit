@@ -1,3 +1,11 @@
+2008-02-15  Adam Roben  <aroben@apple.com>
+
+        Make JavaScriptCore's FEATURE_DEFINES match WebCore's
+
+        Reviewed by Mark.
+
+        * Configurations/JavaScriptCore.xcconfig:
+
 2008-02-14  Stephanie Lewis <slewis@apple.com>
 
         Reviewed by Geoff.

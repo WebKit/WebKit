@@ -1,3 +1,11 @@
+2008-02-15  Adam Roben  <aroben@apple.com>
+
+        Make WebKit's FEATURE_DEFINES match WebCore's
+
+        Reviewed by Mark.
+
+        * Configurations/WebKit.xcconfig:
+
 2008-02-14  Darin Adler  <darin@apple.com>
 
         Reviewed by Eric Seidel.

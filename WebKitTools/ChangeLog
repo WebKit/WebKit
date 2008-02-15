@@ -1,3 +1,11 @@
+2008-02-15  Adam Roben  <aroben@apple.com>
+
+        Fix a typo that broke the Mac build
+
+        Reviewed by Mark.
+
+        * Scripts/build-webkit:
+
 2008-02-14  Adam Roben  <aroben@apple.com>
 
         Turn on cross-document messaging support by default
