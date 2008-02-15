@@ -1,4 +1,4 @@
-# 
+#
 # WebKit IDL parser
 #
 # Copyright (C) 2005 Nikolas Zimmermann <wildfox@kde.org>

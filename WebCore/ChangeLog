@@ -1,5 +1,10 @@
 2008-02-15  Adam Roben  <aroben@apple.com>
 
+        * bindings/scripts/CodeGenerator.pm: Touch this to force bindings to
+        regenerate.
+
+2008-02-15  Adam Roben  <aroben@apple.com>
+
         Try to fix Qt/GTK+ builds
 
         * WebCore.pro: Remove MessageEvent.{idl,cpp} from the unconditional
