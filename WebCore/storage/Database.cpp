@@ -114,7 +114,8 @@ Database::Database(Document* document, const String& name, const String& expecte
     , m_name(name.copy())
     , m_guid(0)
     , m_expectedVersion(expectedVersion)
-    , m_deleted(0)
+    , m_deleted(false)
+    , m_stopped(false)
 {
     ASSERT(document);
     m_securityOrigin = document->securityOrigin();
@@ -143,6 +144,7 @@ Database::Database(Document* document, const String& name, const String& expecte
     m_filename = DatabaseTracker::tracker().fullPathForDatabase(m_securityOrigin.get(), m_name);
 
     DatabaseTracker::tracker().addOpenDatabase(this);
+    m_document->addOpenDatabase(this);
 }
 
 Database::~Database()
@@ -165,6 +167,7 @@ Database::~Database()
         m_document->databaseThread()->unscheduleDatabaseTasks(this);
 
     DatabaseTracker::tracker().removeOpenDatabase(this);
+    m_document->removeOpenDatabase(this);
 }
 
 bool Database::openAndVerifyVersion(ExceptionCode& e)
@@ -275,6 +278,11 @@ void Database::markAsDeletedAndClose()
     LOG(StorageAPI, "Marking %s (%p) as deleted", stringIdentifier().ascii().data(), this);
     m_deleted = true;
 
+    if (m_document->databaseThread()->terminationRequested()) {
+        LOG(StorageAPI, "Database handle %p is on a terminated DatabaseThread, cannot be marked for normal closure\n", this);
+        return;
+    }
+
     document()->databaseThread()->unscheduleDatabaseTasks(this);
 
     RefPtr<DatabaseCloseTask> task = new DatabaseCloseTask(this);
@@ -287,6 +295,23 @@ void Database::markAsDeletedAndClose()
 void Database::close()
 {
     m_sqliteDatabase.close();
+}
+
+void Database::stop()
+{
+    // FIXME: The net effect of the following code is to remove all pending transactions and statements, but allow the current statement
+    // to run to completion.  In the future we can use the sqlite3_progress_handler or sqlite3_interrupt interfaces to cancel the current
+    // statement in response to close(), as well.
+    
+    // This method is meant to be used as an analog to cancelling a loader, and is used when a document is shut down as the result of 
+    // a page load or closing the page
+    m_stopped = true;
+
+    {
+        MutexLocker locker(m_transactionInProgressMutex);
+        m_transactionQueue.kill();
+        m_transactionInProgress = false;
+    }
 }
 
 unsigned long long Database::databaseSize() const

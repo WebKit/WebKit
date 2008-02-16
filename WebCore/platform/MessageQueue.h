@@ -46,6 +46,7 @@ namespace WebCore {
         bool waitForMessage(DataType&);
         bool tryGetMessage(DataType&);
         void kill();
+        bool killed() const { return m_killed; }
 
     private:
         Mutex m_mutex;

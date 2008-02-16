@@ -49,6 +49,7 @@ public:
 
     bool start();
     void requestTermination();
+    bool terminationRequested() const;
 
     void scheduleTask(DatabaseTask*);
     void scheduleImmediateTask(DatabaseTask*); // This just adds the task to the front of the queue - the caller needs to be extremely careful not to create deadlocks when waiting for completion.

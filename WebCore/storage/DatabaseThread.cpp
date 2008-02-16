@@ -62,6 +62,11 @@ void DatabaseThread::requestTermination()
     m_queue.kill();
 }
 
+bool DatabaseThread::terminationRequested() const
+{
+    return m_queue.killed();
+}
+
 void* DatabaseThread::databaseThreadStart(void* vDatabaseThread)
 {
     DatabaseThread* dbThread = static_cast<DatabaseThread*>(vDatabaseThread);

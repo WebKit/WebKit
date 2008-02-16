@@ -1,3 +1,58 @@
+2008-02-15  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Darin
+
+        Fix for <rdar://problem/5727175> and <rdar://problem/5740495> - Database threads and callback scripts can run after
+        a page has closed or loaded a new document
+
+        Deciding to make the Database I/O semantic the same as loaders/XHR when a document is shut down, this patch implements
+        a policy of shutting down the databases in a document at the same time.  This includes removing all pending transactions 
+        in a database, cutting off an queued statements in the current transaction, and preventing further callbacks from being
+        made.
+
+        No new layout tests with this patch as the current layout tests were catching this issue in a plethora of ways already
+        (crashing, unexpected exceptions and output, etc)
+
+        * dom/Document.cpp:
+        (WebCore::Document::~Document): Don't actually stop the database thread here - it better have been stopped already.
+          Add an assertion to that effect.
+        (WebCore::Document::addOpenDatabase): Add a new database handle to this Document's open database set
+        (WebCore::Document::removeOpenDatabase): Remove such a handle
+        (WebCore::Document:: stopDatabases): Call "close" on all open Database handles for this document
+        * dom/Document.h:
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::stopLoading): In addition to canceling all resource loads and XHRs, stop all database I/O
+
+        * platform/MessageQueue.h:
+        (WebCore::MessageQueue::killed): 
+
+        * platform/sql/SQLiteTransaction.cpp:
+        (WebCore::SQLiteTransaction::stop): Added.  Explicit stop to cut off a transaction so it won't try anymore SQL activity
+        * platform/sql/SQLiteTransaction.h:
+
+        * storage/Database.cpp:
+        (WebCore::Database::Database):
+        (WebCore::Database::~Database):
+        (WebCore::Database::markAsDeletedAndClose): Check if the thread has terminated before committing to waiting on the
+          thread.
+        (WebCore::Database::stop):  Stop this database, including all queued transactions and callbacks
+        * storage/Database.h:
+        (WebCore::Database::stopped):
+
+        * storage/DatabaseThread.cpp:
+        (WebCore::DatabaseThread::terminationRequested):
+        * storage/DatabaseThread.h:
+
+        * storage/SQLTransaction.cpp:
+        (WebCore::SQLTransaction::executeSQL): Throw an exception if a new executeSQL comes in after a database is closed
+        (WebCore::SQLTransaction::checkAndHandleClosedDatabase): Added.  Clears queued statements and clear the next step
+          when the database has been closed since the last step/callback was run.  Also stops the current SQLite transaction,
+          if any
+        (WebCore::SQLTransaction::performNextStep):
+        (WebCore::SQLTransaction::performPendingCallback):
+        * storage/SQLTransaction.h:
+
 2008-02-15  Adele Peterson  <adele@apple.com>
 
         Reviewed by Darin.

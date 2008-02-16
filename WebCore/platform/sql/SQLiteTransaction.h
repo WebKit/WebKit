@@ -41,6 +41,7 @@ public:
     void begin();
     void commit();
     void rollback();
+    void stop();
     
     bool inProgress() const { return m_inProgress; }
 private:

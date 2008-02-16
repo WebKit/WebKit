@@ -94,6 +94,9 @@ public:
     bool deleted() const { return m_deleted; }
 
     void close();
+    
+    void stop();
+    bool stopped() const { return m_stopped; }
 
     unsigned long long databaseSize() const;
     unsigned long long maximumSize() const;
@@ -129,6 +132,8 @@ private:
     String m_filename;
 
     bool m_deleted;
+    
+    bool m_stopped;
 
     SQLiteDatabase m_sqliteDatabase;
     RefPtr<DatabaseAuthorizer> m_databaseAuthorizer;

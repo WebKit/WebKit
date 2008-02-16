@@ -1,3 +1,13 @@
+2008-02-15  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Darin
+
+        Fix for <rdar://problem/5727175> and <rdar://problem/5740495> - Database threads and callback scripts can run after
+        a page has closed or loaded a new document
+
+        * storage/close-during-stress-test-expected.txt: Update results - this test contained output from a javascript callback
+          that never should have taken place
+
 2008-02-15  Adele Peterson  <adele@apple.com>
 
         Reviewed by Darin.

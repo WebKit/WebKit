@@ -58,6 +58,7 @@ namespace WebCore {
     class CSSStyleSelector;
     class CSSStyleSheet;
     class Comment;
+    class Database;
     class DOMImplementation;
     class DOMWindow;
     class DatabaseThread;
@@ -874,9 +875,12 @@ public:
     bool processingLoadEvent() const { return m_processingLoadEvent; }
 
 #if ENABLE(DATABASE)
+    void addOpenDatabase(Database*);
+    void removeOpenDatabase(Database*);
     DatabaseThread* databaseThread();   // Creates the thread as needed, but not if it has been already terminated.
     void setHasOpenDatabases() { m_hasOpenDatabases = true; }
     bool hasOpenDatabases() { return m_hasOpenDatabases; }
+    void stopDatabases();
 #endif
 protected:
     void clearXMLVersion() { m_xmlVersion = String(); }
@@ -944,6 +948,8 @@ private:
 #if ENABLE(DATABASE)
     RefPtr<DatabaseThread> m_databaseThread;
     bool m_hasOpenDatabases;    // This never changes back to false, even as the database thread is closed.
+    typedef HashSet<Database*> DatabaseSet;
+    OwnPtr<DatabaseSet> m_openDatabaseSet;
 #endif
 #if USE(LOW_BANDWIDTH_DISPLAY)
     bool m_inLowBandwidthDisplay;
