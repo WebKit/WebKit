@@ -1,3 +1,13 @@
+2008-02-15  Ada Chan  <adachan@apple.com>
+
+        When parsing url we get from a CFURLRef, we need to null terminate 
+        the string for the case when url ends with a '/'.
+
+        Reviewed by Darin.
+
+        * platform/cf/KURLCFNet.cpp:
+        (WebCore::KURL::KURL):
+
 2008-02-15  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Darin

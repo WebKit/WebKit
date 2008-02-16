@@ -44,11 +44,11 @@ KURL::KURL(CFURLRef url)
     Vector<char, 512> buffer(bytesLength + 6); // 5 for "file:", 1 for null character to end C string
     char* bytes = &buffer[5];
     CFURLGetBytes(url, reinterpret_cast<UInt8*>(bytes), bytesLength);
+    bytes[bytesLength] = '\0';
     if (bytes[0] != '/') {
         parse(bytes, 0);
         return;
     }
-    bytes[bytesLength] = '\0';
 
     buffer[0] = 'f';
     buffer[1] = 'i';
