@@ -90,8 +90,7 @@ public:
     
     unsigned computeHash() const {
         ASSERT(m_font.Ok());
-        wxCharBuffer charBuffer(m_font.GetNativeFontInfoDesc().mb_str(wxConvUTF8));
-        return StringImpl::computeHash(charBuffer.data());
+        return reinterpret_cast<unsigned>(&m_font);
     }
 
 private:

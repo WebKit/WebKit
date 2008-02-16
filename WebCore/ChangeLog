@@ -1,3 +1,16 @@
+2008-02-15  Kevin Ollivier  <kevino@theolliviers.com>
+
+        Reviewed by David Hyatt.
+
+        Using GetNativeFontInfoDesc() to generate the hash value was
+        leading to duplicate entries in the HashMap. Use the font object's
+        pointer instead.
+
+        http://bugs.webkit.org/show_bug.cgi?id=17371
+
+        * platform/graphics/wx/FontPlatformData.h:
+        (WebCore::FontPlatformData::computeHash):
+
 2008-02-15  Ada Chan  <adachan@apple.com>
 
         When parsing url we get from a CFURLRef, we need to null terminate 
