@@ -1,5 +1,11 @@
 2008-02-15  Brady Eidson  <beidson@apple.com>
 
+        Added 2 skipped tests
+
+        * platform/mac-tiger/Skipped:
+
+2008-02-15  Brady Eidson  <beidson@apple.com>
+
         Reviewed by Darin
 
         Fix for <rdar://problem/5727175> and <rdar://problem/5740495> - Database threads and callback scripts can run after
