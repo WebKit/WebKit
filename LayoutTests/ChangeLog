@@ -1,3 +1,23 @@
+2008-02-16  Darin Adler  <darin@apple.com>
+
+        - disable some failing tests; someone can re-enable after fixing the problems causing
+          them to fail or generating new expected results
+
+        http://bugs.webkit.org/show_bug.cgi?id=17391
+
+        * fast/frames/iframe-scroll-page-up-down.html: Removed.
+        * fast/frames/iframe-scroll-page-up-down.html-disabled: Copied from fast/frames/iframe-scroll-page-up-down.html.
+
+        http://bugs.webkit.org/show_bug.cgi?id=17392
+
+        * svg/batik/text/textBiDi.svg: Removed.
+        * svg/batik/text/textBiDi.svg-disabled: Copied from svg/batik/text/textBiDi.svg.
+
+        http://bugs.webkit.org/show_bug.cgi?id=17393
+
+        * svg/custom/use-on-symbol-inside-pattern.svg: Removed.
+        * svg/custom/use-on-symbol-inside-pattern.svg-disabled: Copied from svg/custom/use-on-symbol-inside-pattern.svg.
+
 2008-02-15  Dan Bernstein  <mitz@apple.com>
 
         Rubber-stamped by Oliver Hunt.
