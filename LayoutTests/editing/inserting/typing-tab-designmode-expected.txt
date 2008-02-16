@@ -1,2 +1,2 @@
-	 try if tabs work in designMode
+		 Test to see if tabs work in designMode. There should be two tabs inserted. One for the tab key, and one for shift-tab.
 

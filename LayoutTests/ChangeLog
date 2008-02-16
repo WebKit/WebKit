@@ -1,3 +1,12 @@
+2008-02-15  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Darin.
+
+        Updated test for <rdar://problem/5745072> REGRESSION (r29348): Shift + Tab does not change indent level on Google Docs
+
+        * editing/inserting/typing-tab-designmode-expected.txt:
+        * editing/inserting/typing-tab-designmode.html:
+
 2008-02-15  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Anders Carlsson.

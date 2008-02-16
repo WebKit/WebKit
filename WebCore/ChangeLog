@@ -1,3 +1,19 @@
+2008-02-15  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Darin.
+
+        Fix for <rdar://problem/5745072> REGRESSION (r29348): Shift + Tab does not change indent level on Google Docs
+
+        The immediate cause of this bug was that we stopped sending keypress events for the tab key when it is used to advance focus.
+        We had a special case for forward-tab in designMode, where the default behavior was to insert a tab key (or respect the keypress handler behavior).
+        This change makes the shift-tab behavior match the forward-tab behavior.
+
+        If the site had put their event handler (which does the indenting) on the keydown event, then this problem would have been avoided.
+        This is something we should look into and maybe advise the site on in the future.  However, it's a low-risk change to just make tab and shift-tab uniform 
+        in this respect, so I think this is the way to go for right now.
+
+        * page/EventHandler.cpp: (WebCore::EventHandler::defaultTabEventHandler):
+
 2008-02-15  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Alice.

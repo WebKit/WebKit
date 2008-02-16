@@ -1847,8 +1847,8 @@ void EventHandler::defaultTabEventHandler(KeyboardEvent* event)
 
     FocusDirection focusDirection = event->shiftKey() ? FocusDirectionBackward : FocusDirectionForward;
 
-    // Tabs can be used in design mode editing. You can still move out with back tab.
-    if (m_frame->document()->inDesignMode() && focusDirection == FocusDirectionForward)
+    // Tabs can be used in design mode editing.
+    if (m_frame->document()->inDesignMode())
         return;
 
     if (page->focusController()->advanceFocus(focusDirection, event))
