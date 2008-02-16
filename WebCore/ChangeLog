@@ -8,8 +8,6 @@
 
 2008-02-15  Oliver Hunt  <oliver@apple.com>
 
-        Reviewed by NOBODY (Build fix).
-
         Build fix for Qt and Cairo builds
 
         * platform/graphics/cairo/GraphicsContextCairo.cpp:
@@ -1419,8 +1417,6 @@
 
 2008-02-12  Oliver Hunt  <oliver@apple.com>
 
-        Reviewed by NOBODY (Build fix).
-
         Endeavour to fix qt and gtk builds
 
         * platform/graphics/cairo/GraphicsContextCairo.cpp:
@@ -1684,8 +1680,6 @@
         
 2008-02-12  Oliver Hunt  <oliver@apple.com>
 
-        Reviewed by NOBODY (Build fix).
-
         more Qt fixes
 
         * html/HTMLCanvasElement.cpp:
@@ -1693,16 +1687,12 @@
 
 2008-02-12  Oliver Hunt  <oliver@apple.com>
 
-        Reviewed by NOBODY (Build fix).
-
         And another attempt to fixerate Qt
 
         * html/HTMLCanvasElement.cpp:
         (WebCore::HTMLCanvasElement::paint):
 
 2008-02-12  Oliver Hunt  <oliver@apple.com>
-
-        Reviewed by NOBODY (Build fix).
 
         Attempt to fix Qt build
 
@@ -3336,8 +3326,6 @@
         * manual-tests/resources/Default-port-frame-contents.html: Added.
 
 2008-02-06  Oliver Hunt  <oliver@apple.com>
-
-        Reviewed by NOBODY (Build fix).
 
         Fix windows build
 
