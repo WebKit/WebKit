@@ -929,6 +929,15 @@ void GraphicsContext::paintBuffer(ImageBuffer* buffer, const IntRect& r)
     painter->setBackground(currentBackground);
 }
 
+void GraphicsContext::drawImage(ImageBuffer* buffer, const FloatRect& srcRect, const FloatRect& destRect)
+{
+    QPainter* painter = static_cast<QPainter*>(platformContext());
+    QPixmap px = *buffer->pixmap();
+    if (px.isNull())
+        return;
+    painter->drawPixmap(dstRect, px, srcRect);
+}
+
 }
 
 // vim: ts=4 sw=4 et

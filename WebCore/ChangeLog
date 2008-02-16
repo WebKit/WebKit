@@ -1,3 +1,27 @@
+2008-02-15  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Dan B.
+
+        Bug 17269: Deobfuscate CanvasRenderingContext2D.cpp
+        Refactor CanvasRenderingContext2D::drawImage(HTMLCanvasElement) to remove evil ifdefs
+
+        Add logic draw(ImageBuffer*) method to GraphicsContext to handle
+        painting the source canvas content.
+
+        * html/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::drawImage):
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::buffer):
+        * html/HTMLCanvasElement.h:
+        * platform/graphics/GraphicsContext.h:
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        (WebCore::GraphicsContext::drawImage):
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::GraphicsContext::paintBuffer):
+        (WebCore::GraphicsContext::drawImage):
+        * platform/graphics/qt/GraphicsContextQt.cpp:
+        (WebCore::GraphicsContext::drawImage):
+
 2008-02-15  Kevin Ollivier  <kevino@theolliviers.com>
 
         Reviewed by David Hyatt.

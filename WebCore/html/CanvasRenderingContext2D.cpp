@@ -957,65 +957,12 @@ void CanvasRenderingContext2D::drawImage(HTMLCanvasElement* canvas, const FloatR
     FloatRect destRect = c->roundToDevicePixels(dstRect);
         
     // FIXME: Do this through platform-independent GraphicsContext API.
-#if PLATFORM(CG)
-    CGImageRef platformImage = canvas->createPlatformImage();
-    if (!platformImage)
+    ImageBuffer* buffer = canvas->buffer();
+    if (!buffer)
         return;
-
+    
     willDraw(destRect);
-
-    float iw = CGImageGetWidth(platformImage);
-    float ih = CGImageGetHeight(platformImage);
-    if (sourceRect.x() == 0 && sourceRect.y() == 0 && iw == sourceRect.width() && ih == sourceRect.height()) {
-        // Fast path, yay!
-        CGContextDrawImage(c->platformContext(), destRect, platformImage);
-    } else {
-        // Slow path, boo!
-        // Create a new bitmap of the appropriate size and then draw that into our context.
-
-        size_t csw = static_cast<size_t>(ceilf(sourceRect.width()));
-        size_t csh = static_cast<size_t>(ceilf(sourceRect.height()));
-
-        CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
-        size_t bytesPerRow = csw * 4;
-        void* buffer = fastMalloc(csh * bytesPerRow);
-
-        CGContextRef clippedSourceContext = CGBitmapContextCreate(buffer, csw, csh,
-            8, bytesPerRow, colorSpace, kCGImageAlphaPremultipliedLast);
-        CGColorSpaceRelease(colorSpace);
-        CGContextTranslateCTM(clippedSourceContext, -sourceRect.x(), -sourceRect.y());
-        CGContextDrawImage(clippedSourceContext, CGRectMake(0, 0, iw, ih), platformImage);
-
-        CGImageRef clippedSourceImage = CGBitmapContextCreateImage(clippedSourceContext);
-        CGContextRelease(clippedSourceContext);
-
-        CGContextDrawImage(c->platformContext(), destRect, clippedSourceImage);
-        CGImageRelease(clippedSourceImage);
-        
-        fastFree(buffer);
-    }
-
-    CGImageRelease(platformImage);
-#elif PLATFORM(QT)
-    QPixmap px = canvas->createPlatformImage();
-    if (px.isNull())
-        return;
-    willDraw(dstRect);
-    QPainter* painter = static_cast<QPainter*>(c->platformContext());
-    painter->drawPixmap(dstRect, px, srcRect);
-#elif PLATFORM(CAIRO)
-    cairo_surface_t* image = canvas->createPlatformImage();
-    if (!image)
-        return;
-    willDraw(dstRect);
-    cairo_t* cr = c->platformContext();
-    cairo_save(cr);
-    cairo_set_source_surface(cr, image, srcRect.x(), srcRect.y());
-    cairo_surface_destroy(image);
-    cairo_rectangle(cr, dstRect.x(), dstRect.y(), dstRect.width(), dstRect.height());
-    cairo_fill(cr);
-    cairo_restore(cr);
-#endif
+    c->drawImage(buffer, sourceRect, destRect);
 }
 
 // FIXME: Why isn't this just another overload of drawImage? Why have a different name?

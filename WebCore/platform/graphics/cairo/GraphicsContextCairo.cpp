@@ -909,6 +909,16 @@ void GraphicsContext::paintBuffer(ImageBuffer* buffer, const IntRect& r)
     cairo_restore(cr);
 }
 
+void GraphicsContext::drawImage(ImageBuffer* buffer, const FloatRect& srcRect, const FloatRect& destRect)
+{
+    cairo_surface_flush(m_data->surface());    
+    cairo_save(platformContext());
+    cairo_set_source_surface(platformContext(), m_data->surface(), srcRect.x(), srcRect.y());
+    cairo_rectangle(platformContext(), dstRect.x(), dstRect.y(), dstRect.width(), dstRect.height());
+    cairo_fill(platformContext());
+    cairo_restore(platformContext());
+}
+
 } // namespace WebCore
 
 #endif // PLATFORM(CAIRO)
