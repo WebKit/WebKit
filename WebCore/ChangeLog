@@ -1,3 +1,11 @@
+2008-02-16  Jan Michael Alonzo  <jmalonzo@unpluggable.com>
+
+        Reviewed by Alp Toker.
+
+        Cross document messaging GTK+/autotools build fix.
+
+        * GNUmakefile.am:
+
 2008-02-15  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by NOBODY (Build fix).

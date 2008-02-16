@@ -169,7 +169,6 @@ webcore_built_sources += \
 	DerivedSources/JSHistory.h \
 	DerivedSources/JSKeyboardEvent.h \
 	DerivedSources/JSMediaList.h \
-	DerivedSources/JSMessageEvent.h \
 	DerivedSources/JSMouseEvent.h \
 	DerivedSources/JSMutationEvent.h \
 	DerivedSources/JSNamedNodeMap.h \
@@ -293,7 +292,6 @@ webcore_built_sources += \
 	DerivedSources/JSHistory.cpp \
 	DerivedSources/JSKeyboardEvent.cpp \
 	DerivedSources/JSMediaList.cpp \
-	DerivedSources/JSMessageEvent.cpp \
 	DerivedSources/JSMouseEvent.cpp \
 	DerivedSources/JSMutationEvent.cpp \
 	DerivedSources/JSNamedNodeMap.cpp \
@@ -353,7 +351,6 @@ IDL_BINDINGS +=  \
 	WebCore/dom/Event.idl \
 	WebCore/dom/EventException.idl \
 	WebCore/dom/KeyboardEvent.idl \
-	WebCore/dom/MessageEvent.idl \
 	WebCore/dom/MouseEvent.idl \
 	WebCore/dom/MutationEvent.idl \
 	WebCore/dom/NamedNodeMap.idl \
@@ -577,7 +574,6 @@ webcore_sources += \
 	WebCore/dom/ExceptionCode.cpp \
 	WebCore/dom/KeyboardEvent.cpp \
 	WebCore/dom/MappedAttribute.cpp \
-	WebCore/dom/MessageEvent.cpp \
 	WebCore/dom/MouseEvent.cpp \
 	WebCore/dom/MouseRelatedEvent.cpp \
 	WebCore/dom/MutationEvent.cpp \
@@ -1003,20 +999,21 @@ endif # END USE_CURL
 # ----
 # Cross-document messaging support
 # ----
-
 if ENABLE_CROSS_DOCUMENT_MESSAGING
 FEATURE_DEFINES_JAVASCRIPT += ENABLE_CROSS_DOCUMENT_MESSAGING=1
-
-webcore_built_sources += \
-	DerivedSources/JSMessageEvent.h
-	DerivedSources/JSMessageEvent.cpp
-
-IDL_BINDINGS += \
-	WebCore/dom/MessageEvent.idl
 
 webcore_cppflags += \
 	-DENABLE_CROSS_DOCUMENT_MESSAGING=1
 
+webcore_sources += \
+	WebCore/dom/MessageEvent.cpp
+
+webcore_built_sources += \
+	DerivedSources/JSMessageEvent.h \
+	DerivedSources/JSMessageEvent.cpp
+
+IDL_BINDINGS += \
+	WebCore/dom/MessageEvent.idl
 endif # END ENABLE_CROSS_DOCUMENT_MESSAGING
 
 # ----
