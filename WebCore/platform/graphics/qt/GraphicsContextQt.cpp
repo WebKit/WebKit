@@ -929,7 +929,7 @@ void GraphicsContext::paintBuffer(ImageBuffer* buffer, const IntRect& r)
     painter->setBackground(currentBackground);
 }
 
-void GraphicsContext::drawImage(ImageBuffer* buffer, const FloatRect& srcRect, const FloatRect& destRect)
+void GraphicsContext::drawImage(ImageBuffer* buffer, const FloatRect& srcRect, const FloatRect& dstRect)
 {
     QPainter* painter = static_cast<QPainter*>(platformContext());
     QPixmap px = *buffer->pixmap();
