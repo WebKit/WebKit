@@ -227,6 +227,11 @@ void GraphicsContext::drawEllipse(const IntRect& rect)
     m_data->context->DrawEllipse(rect.x(), rect.y(), rect.width(), rect.height());
 }
 
+void GraphicsContext::drawImage(WebCore::ImageBuffer*, WebCore::FloatRect const&, WebCore::FloatRect const&)
+{
+    notImplemented();
+}
+
 void GraphicsContext::strokeArc(const IntRect& rect, int startAngle, int angleSpan)
 {
     if (paintingDisabled())

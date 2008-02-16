@@ -1,3 +1,10 @@
+2008-02-16  Kevin Ollivier  <kevino@theolliviers.com>
+
+        wx build fix.
+
+        * platform/graphics/wx/GraphicsContextWx.cpp:
+        (WebCore::GraphicsContext::drawImage):
+
 2008-02-16  Jan Michael Alonzo  <jmalonzo@unpluggable.com>
 
         Reviewed by Alp Toker.
