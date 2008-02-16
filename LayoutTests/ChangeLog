@@ -1,3 +1,11 @@
+2008-02-15  Dan Bernstein  <mitz@apple.com>
+
+        Rubber-stamped by Oliver Hunt.
+
+        - skip a test for a Leopard-only NSHTTPURLResponse bug workaround
+
+        * platform/mac-tiger/Skipped:
+
 2008-02-15  Brady Eidson  <beidson@apple.com>
 
         Added 2 skipped tests

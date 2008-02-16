@@ -8,4 +8,5 @@ http/tests/xmlhttprequest/small-chunks-response-text.html
 storage/quota-tracking.html
 storage/success-callback.html
 
-
+# On Tiger, WebKit does not override the MIME type returned by NSHTTPURLResponse
+http/tests/loading/text-content-type-with-binary-extension.html
