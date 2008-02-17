@@ -1,3 +1,20 @@
+2008-02-16  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Eric S.
+
+        Bug 17269: Deobfuscate CanvasRenderingContext2D.cpp
+
+        Use cross-platform code to determine the dirty rects for
+        fill and stroke operations
+
+        * html/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::fill):
+        (WebCore::CanvasRenderingContext2D::stroke):
+          Added a FIXME as code inspection shows a trivial under-painting
+          bug, although we currently ignore dirty rect tracking on canvas
+          and repaint the whole thing anyway.
+        (WebCore::CanvasRenderingContext2D::fillRect):
+
 2008-02-16  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Darin Adler.

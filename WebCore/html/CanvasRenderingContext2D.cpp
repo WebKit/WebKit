@@ -468,14 +468,13 @@ void CanvasRenderingContext2D::fill()
     GraphicsContext* c = drawingContext();
     if (!c)
         return;
-    // FIXME: Do this through platform-independent GraphicsContext API.
-#if PLATFORM(CG)
-    CGContextBeginPath(c->platformContext());
-    CGContextAddPath(c->platformContext(), state().m_path.platformPath());
 
+    c->beginPath();
+    c->addPath(state().m_path);
     if (!state().m_path.isEmpty())
-        willDraw(CGContextGetPathBoundingBox(c->platformContext()));
+        willDraw(state().m_path.boundingRect());
 
+#if PLATFORM(CG)
     if (state().m_fillStyle->gradient()) {
         // Shading works on the entire clip region, so convert the current path to a clip.
         c->save();
@@ -490,7 +489,6 @@ void CanvasRenderingContext2D::fill()
 #elif PLATFORM(QT)
     QPainterPath* path = state().m_path.platformPath();
     QPainter* p = static_cast<QPainter*>(c->platformContext());
-    willDraw(path->controlPointRect());
     if (state().m_fillStyle->gradient()) {
         p->fillPath(*path, QBrush(*(state().m_fillStyle->gradient()->platformShading())));
     } else {
@@ -501,15 +499,13 @@ void CanvasRenderingContext2D::fill()
 #elif PLATFORM(CAIRO)
     cairo_t* cr = c->platformContext();
     cairo_save(cr);
-    willDraw(state().m_path.boundingRect());
+
     if (state().m_fillStyle->gradient()) {
         cairo_set_source(cr, state().m_fillStyle->gradient()->platformShading());
-        c->addPath(state().m_path);
         cairo_fill(cr);
     } else {
         if (state().m_fillStyle->pattern())
             applyFillPattern();
-        c->addPath(state().m_path);
         cairo_fill(cr);
     }
     cairo_restore(cr);
@@ -523,18 +519,20 @@ void CanvasRenderingContext2D::stroke()
     GraphicsContext* c = drawingContext();
     if (!c)
         return;
-    // FIXME: Do this through platform-independent GraphicsContext API.
-#if PLATFORM(CG)
-    CGContextBeginPath(c->platformContext());
-    CGContextAddPath(c->platformContext(), state().m_path.platformPath());
+    c->beginPath();
+    c->addPath(state().m_path);
 
     if (!state().m_path.isEmpty()) {
+        // FIXME: This is insufficient, need to use CGContextReplacePathWithStrokedPath to expand to required bounds
         float lineWidth = state().m_lineWidth;
-        float inset = -lineWidth / 2;
-        CGRect boundingRect = CGRectInset(CGContextGetPathBoundingBox(c->platformContext()), inset, inset);
+        float inset = lineWidth / 2;
+        FloatRect boundingRect = state().m_path.boundingRect();
+        boundingRect.inflate(inset);
         willDraw(boundingRect);
     }
-
+    
+    // FIXME: Do this through platform-independent GraphicsContext API.
+#if PLATFORM(CG)
     if (state().m_strokeStyle->gradient()) {
         // Shading works on the entire clip region, so convert the current path to a clip.
         c->save();
@@ -550,7 +548,6 @@ void CanvasRenderingContext2D::stroke()
 #elif PLATFORM(QT)
     QPainterPath* path = state().m_path.platformPath();
     QPainter* p = static_cast<QPainter*>(c->platformContext());
-    willDraw(path->controlPointRect());
     if (state().m_strokeStyle->gradient()) {
         p->save();
         p->setBrush(*(state().m_strokeStyle->gradient()->platformShading()));
@@ -564,8 +561,6 @@ void CanvasRenderingContext2D::stroke()
 #elif PLATFORM(CAIRO)
     cairo_t* cr = c->platformContext();
     cairo_save(cr);
-    // FIXME: consider inset, as in CG
-    willDraw(state().m_path.boundingRect());
     if (state().m_strokeStyle->gradient()) {
         cairo_set_source(cr, state().m_strokeStyle->gradient()->platformShading());
         c->addPath(state().m_path);
@@ -633,12 +628,12 @@ void CanvasRenderingContext2D::fillRect(float x, float y, float width, float hei
     GraphicsContext* c = drawingContext();
     if (!c)
         return;
-    // FIXME: Do this through platform-independent GraphicsContext API.
-#if PLATFORM(CG)
-    CGRect rect = CGRectMake(x, y, width, height);
 
+    FloatRect rect(x, y, width, height);
     willDraw(rect);
 
+    // FIXME: Do this through platform-independent GraphicsContext API.
+#if PLATFORM(CG)
     if (state().m_fillStyle->gradient()) {
         // Shading works on the entire clip region, so convert the rect to a clip.
         c->save();
@@ -651,8 +646,6 @@ void CanvasRenderingContext2D::fillRect(float x, float y, float width, float hei
         CGContextFillRect(c->platformContext(), rect);
     }
 #elif PLATFORM(QT)
-    QRectF rect(x, y, width, height);
-    willDraw(rect);
     QPainter* p = static_cast<QPainter*>(c->platformContext());
     if (state().m_fillStyle->gradient()) {
         p->fillRect(rect, QBrush(*(state().m_fillStyle->gradient()->platformShading())));
@@ -662,8 +655,6 @@ void CanvasRenderingContext2D::fillRect(float x, float y, float width, float hei
         p->fillRect(rect, p->brush());
     }
 #elif PLATFORM(CAIRO)
-    FloatRect rect(x, y, width, height);
-    willDraw(rect);
     cairo_t* cr = c->platformContext();
     cairo_save(cr);
     if (state().m_fillStyle->gradient()) {
