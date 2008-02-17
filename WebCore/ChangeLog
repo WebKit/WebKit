@@ -1,3 +1,16 @@
+2008-02-17  Bin Chen  <binary.chen@gmail.com>
+
+        Reviewed by Alp Toker.
+
+        http://bugs.webkit.org/show_bug.cgi?id=17404
+        Bug 17404: curl certification problem
+
+        Disable SSL cert verification until we have a way of distributing
+        certs and/or reporting SSL errors to the user.
+
+        * platform/network/curl/ResourceHandleManager.cpp:
+        (WebCore::ResourceHandleManager::startJob):
+
 2008-02-17  Alp Toker  <alp@atoker.com>
 
         Reviewed by Mark Rowe.

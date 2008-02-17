@@ -562,6 +562,9 @@ void ResourceHandleManager::startJob(ResourceHandle* job)
     curl_easy_setopt(d->m_handle, CURLOPT_HTTPAUTH, CURLAUTH_ANY);
     curl_easy_setopt(d->m_handle, CURLOPT_SHARE, m_curlShareHandle);
     curl_easy_setopt(d->m_handle, CURLOPT_DNS_CACHE_TIMEOUT, 60 * 5); // 5 minutes
+    // FIXME: Enable SSL verification when we have a way of shipping certs
+    // and/or reporting SSL errors to the user.
+    curl_easy_setopt(d->m_handle, CURLOPT_SSL_VERIFYPEER, false);
     // enable gzip and deflate through Accept-Encoding:
     curl_easy_setopt(d->m_handle, CURLOPT_ENCODING, "");
 
