@@ -1,5 +1,18 @@
 2008-02-17  Dan Bernstein  <mitz@apple.com>
 
+        Reviewed by Mark Rowe.
+
+        - disable the non-ASCII parts of a test case for the ASCII code path
+          because it is failing on the (Tiger) buildbots for an unrelated
+          reason.
+
+        * fast/text/fixed-pitch-control-characters.html:
+        * platform/mac/fast/text/fixed-pitch-control-characters-expected.checksum:
+        * platform/mac/fast/text/fixed-pitch-control-characters-expected.png:
+        * platform/mac/fast/text/fixed-pitch-control-characters-expected.txt:
+
+2008-02-17  Dan Bernstein  <mitz@apple.com>
+
         Reviewed by Darin Adler.
 
         - test for http://bugs.webkit.org/show_bug.cgi?id=17033
