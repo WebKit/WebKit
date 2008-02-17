@@ -297,7 +297,7 @@ KURL::KURL(const String& url)
     buffer[3] = 'e';
     buffer[4] = ':';
     copyASCII(url.characters(), url.length(), &buffer[5]);
-    buffer[url.length() + 4] = '\0'; // Need null terminator.
+    buffer[url.length() + 5] = '\0'; // Need null terminator.
 
     parse(buffer.data(), 0);
 }

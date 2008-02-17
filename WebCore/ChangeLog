@@ -1,3 +1,14 @@
+2008-02-17  Alp Toker  <alp@atoker.com>
+
+        Reviewed by Mark Rowe.
+
+        DevHelp fails to load local files; URL truncated by one character.
+
+        Fix a file:// URL regression introduced in KURL.cpp r30243.
+
+        * platform/KURL.cpp:
+        (WebCore::KURL::KURL):
+
 2008-02-17  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.
