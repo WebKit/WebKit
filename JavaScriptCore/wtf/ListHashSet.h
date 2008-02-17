@@ -1,6 +1,6 @@
 // -*- mode: c++; c-basic-offset: 4 -*-
 /*
- * Copyright (C) 2005, 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -381,7 +381,6 @@ namespace WTF {
         std::swap(m_head, other.m_head);
         std::swap(m_tail, other.m_tail);
         m_allocator.swap(other.m_allocator);
-        return *this;
     }
 
     template<typename T, typename U>

@@ -1,3 +1,7 @@
+2008-02-17  Darin Adler  <darin@apple.com>
+
+        * wtf/ListHashSet.h: (WTF::swap): Removed stray return statement.
+
 2008-02-15  Adam Roben  <aroben@apple.com>
 
         Make JavaScriptCore's FEATURE_DEFINES match WebCore's
