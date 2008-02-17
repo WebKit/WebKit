@@ -1,3 +1,12 @@
+2008-02-16  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        http://bugs.webkit.org/show_bug.cgi?id=17397
+        <rdar://problem/5748245> REGRESSION (r30236-30336): Cannot backspace/enter in forms on Windows
+
+        * WebKit.vcproj/WebKit.vcproj: Add ENABLE_CROSS_DOCUMENT_MESSAGING definitions.
+
 2008-02-15  Darin Adler  <darin@apple.com>
 
         Reviewed by Adam.
