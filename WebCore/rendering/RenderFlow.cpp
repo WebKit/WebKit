@@ -550,7 +550,7 @@ IntRect RenderFlow::absoluteClippedOverflowRect()
 int RenderFlow::lowestPosition(bool includeOverflowInterior, bool includeSelf) const
 {
     ASSERT(!isInlineFlow());
-    if (!includeOverflowInterior && hasOverflowClip())
+    if (!includeOverflowInterior && (hasOverflowClip() || hasControlClip()))
         return includeSelf && m_width > 0 ? overflowHeight(false) : 0;
 
     int bottom = includeSelf && m_width > 0 ? m_height : 0;
@@ -574,7 +574,7 @@ int RenderFlow::lowestPosition(bool includeOverflowInterior, bool includeSelf) c
 int RenderFlow::rightmostPosition(bool includeOverflowInterior, bool includeSelf) const
 {
     ASSERT(!isInlineFlow());
-    if (!includeOverflowInterior && hasOverflowClip())
+    if (!includeOverflowInterior && (hasOverflowClip() || hasControlClip()))
         return includeSelf && m_height > 0 ? overflowWidth(false) : 0;
 
     int right = includeSelf && m_height > 0 ? m_width : 0;
@@ -598,7 +598,7 @@ int RenderFlow::rightmostPosition(bool includeOverflowInterior, bool includeSelf
 int RenderFlow::leftmostPosition(bool includeOverflowInterior, bool includeSelf) const
 {
     ASSERT(!isInlineFlow());
-    if (!includeOverflowInterior && hasOverflowClip())
+    if (!includeOverflowInterior && (hasOverflowClip() || hasControlClip()))
         return includeSelf && m_height > 0 ? overflowLeft(false) : m_width;
 
     int left = includeSelf && m_height > 0 ? 0 : m_width;

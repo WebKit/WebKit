@@ -1,3 +1,17 @@
+2008-02-17  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=17033
+          <rdar://problem/5709315> REGRESSION: Really long <option> causes unnecessary page scroll bars to accommodate content
+
+        Test: fast/forms/control-clip-overflow.html
+
+        * rendering/RenderFlow.cpp:
+        (WebCore::RenderFlow::lowestPosition): Account for control clipping.
+        (WebCore::RenderFlow::rightmostPosition): Ditto.
+        (WebCore::RenderFlow::leftmostPosition): Ditto.
+
 2008-02-16  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Eric S.

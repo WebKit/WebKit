@@ -1,3 +1,15 @@
+2008-02-17  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        - test for http://bugs.webkit.org/show_bug.cgi?id=17033
+          <rdar://problem/5709315> REGRESSION: Really long <option> causes unnecessary page scroll bars to accommodate content
+
+        * fast/forms/control-clip-overflow.html: Added.
+        * platform/mac/fast/forms/control-clip-overflow-expected.checksum: Added.
+        * platform/mac/fast/forms/control-clip-overflow-expected.png: Added.
+        * platform/mac/fast/forms/control-clip-overflow-expected.txt: Added.
+
 2008-02-16  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Sam Weinig.
