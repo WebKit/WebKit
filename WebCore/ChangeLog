@@ -1,3 +1,15 @@
+2008-02-17  Alp Toker  <alp@atoker.com>
+
+        Reviewed by Sam Weinig.
+
+        Fix for change made in r30355. Issue noticed by İsmail Dönmez.
+
+        Verify SSL certs by default, but allow checks to be disabled with an
+        environment variable (WEBKIT_IGNORE_SSL_ERRORS) for now.
+
+        * platform/network/curl/ResourceHandleManager.cpp:
+        (WebCore::ResourceHandleManager::startJob):
+
 2008-02-17  Bin Chen  <binary.chen@gmail.com>
 
         Reviewed by Alp Toker.

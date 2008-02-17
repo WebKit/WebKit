@@ -54,6 +54,8 @@ const int selectTimeoutMS = 5;
 const double pollTimeSeconds = 0.05;
 const int maxRunningJobs = 5;
 
+static const bool ignoreSSLErrors = getenv("WEBKIT_IGNORE_SSL_ERRORS");
+
 ResourceHandleManager::ResourceHandleManager()
     : m_downloadTimer(this, &ResourceHandleManager::downloadTimerCallback)
     , m_cookieJarFileName(0)
@@ -564,7 +566,8 @@ void ResourceHandleManager::startJob(ResourceHandle* job)
     curl_easy_setopt(d->m_handle, CURLOPT_DNS_CACHE_TIMEOUT, 60 * 5); // 5 minutes
     // FIXME: Enable SSL verification when we have a way of shipping certs
     // and/or reporting SSL errors to the user.
-    curl_easy_setopt(d->m_handle, CURLOPT_SSL_VERIFYPEER, false);
+    if (ignoreSSLErrors)
+        curl_easy_setopt(d->m_handle, CURLOPT_SSL_VERIFYPEER, false);
     // enable gzip and deflate through Accept-Encoding:
     curl_easy_setopt(d->m_handle, CURLOPT_ENCODING, "");
 
