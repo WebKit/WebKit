@@ -313,9 +313,9 @@ void SVGAnimationElement::parseMappedAttribute(MappedAttribute* attr)
 
 double SVGAnimationElement::parseClockValue(const String& data)
 {
-    DeprecatedString parse = data.deprecatedString().stripWhiteSpace();
-    
-    if (parse == "indefinite") // Saves some time...
+    String parse = data.stripWhiteSpace();
+
+    if (parse == "indefinite")
         return DBL_MAX;
 
     double result;
@@ -324,28 +324,28 @@ double SVGAnimationElement::parseClockValue(const String& data)
     int doublePointTwo = parse.find(':', doublePointOne + 1);
 
     if (doublePointOne != -1 && doublePointTwo != -1) { // Spec: "Full clock values"
-        unsigned int hours = parse.mid(0, 2).toUInt();
-        unsigned int minutes = parse.mid(3, 2).toUInt();
-        unsigned int seconds = parse.mid(6, 2).toUInt();
-        unsigned int milliseconds = 0;
+        unsigned hours = parse.substring(0, 2).toUIntStrict();
+        unsigned minutes = parse.substring(3, 2).toUIntStrict();
+        unsigned seconds = parse.substring(6, 2).toUIntStrict();
+        unsigned milliseconds = 0;
 
         result = (3600 * hours) + (60 * minutes) + seconds;
 
         if (parse.find('.') != -1) {
-            DeprecatedString temp = parse.mid(9, 2);
-            milliseconds = temp.toUInt();
+            String temp = parse.substring(9, 2);
+            milliseconds = temp.toUIntStrict();
             result += (milliseconds * (1 / pow(10.0, int(temp.length()))));
         }
     } else if (doublePointOne != -1 && doublePointTwo == -1) { // Spec: "Partial clock values"
-        unsigned int minutes = parse.mid(0, 2).toUInt();
-        unsigned int seconds = parse.mid(3, 2).toUInt();
-        unsigned int milliseconds = 0;
+        unsigned minutes = parse.substring(0, 2).toUIntStrict();
+        unsigned seconds = parse.substring(3, 2).toUIntStrict();
+        unsigned milliseconds = 0;
 
         result = (60 * minutes) + seconds;
 
         if (parse.find('.') != -1) {
-            DeprecatedString temp = parse.mid(6, 2);
-            milliseconds = temp.toUInt();
+            String temp = parse.substring(6, 2);
+            milliseconds = temp.toUIntStrict();
             result += (milliseconds * (1 / pow(10.0, int(temp.length()))));
         }
     } else { // Spec: "Timecount values"
@@ -353,35 +353,35 @@ double SVGAnimationElement::parseClockValue(const String& data)
 
         if (parse.endsWith("h")) {
             if (dotPosition == -1)
-                result = parse.mid(0, parse.length() - 1).toUInt() * 3600;
+                result = parse.substring(0, parse.length() - 1).toUIntStrict() * 3600;
             else {
-                result = parse.mid(0, dotPosition).toUInt() * 3600;
-                DeprecatedString temp = parse.mid(dotPosition + 1, parse.length() - dotPosition - 2);
-                result += (3600.0 * temp.toUInt()) * (1 / pow(10.0, int(temp.length())));
+                result = parse.substring(0, dotPosition).toUIntStrict() * 3600;
+                String temp = parse.substring(dotPosition + 1, parse.length() - dotPosition - 2);
+                result += (3600.0 * temp.toUIntStrict()) * (1 / pow(10.0, int(temp.length())));
             }
         } else if (parse.endsWith("min")) {
             if (dotPosition == -1)
-                result = parse.mid(0, parse.length() - 3).toUInt() * 60;
+                result = parse.substring(0, parse.length() - 3).toUIntStrict() * 60;
             else {
-                result = parse.mid(0, dotPosition).toUInt() * 60;
-                DeprecatedString temp = parse.mid(dotPosition + 1, parse.length() - dotPosition - 4);
-                result += (60.0 * temp.toUInt()) * (1 / pow(10.0, int(temp.length())));
+                result = parse.substring(0, dotPosition).toUIntStrict() * 60;
+                String temp = parse.substring(dotPosition + 1, parse.length() - dotPosition - 4);
+                result += (60.0 * temp.toUIntStrict()) * (1 / pow(10.0, int(temp.length())));
             }
         } else if (parse.endsWith("ms")) {
             if (dotPosition == -1)
-                result = parse.mid(0, parse.length() - 2).toUInt() / 1000.0;
+                result = parse.substring(0, parse.length() - 2).toUIntStrict() / 1000.0;
             else {
-                result = parse.mid(0, dotPosition).toUInt() / 1000.0;
-                DeprecatedString temp = parse.mid(dotPosition + 1, parse.length() - dotPosition - 3);
-                result += (temp.toUInt() / 1000.0) * (1 / pow(10.0, int(temp.length())));
+                result = parse.substring(0, dotPosition).toUIntStrict() / 1000.0;
+                String temp = parse.substring(dotPosition + 1, parse.length() - dotPosition - 3);
+                result += (temp.toUIntStrict() / 1000.0) * (1 / pow(10.0, int(temp.length())));
             }
         } else if (parse.endsWith("s")) {
             if (dotPosition == -1)
-                result = parse.mid(0, parse.length() - 1).toUInt();
+                result = parse.substring(0, parse.length() - 1).toUIntStrict();
             else {
-                result = parse.mid(0, dotPosition).toUInt();
-                DeprecatedString temp = parse.mid(dotPosition + 1, parse.length() - dotPosition - 2);
-                result += temp.toUInt() * (1 / pow(10.0, int(temp.length())));
+                result = parse.substring(0, dotPosition).toUIntStrict();
+                String temp = parse.substring(dotPosition + 1, parse.length() - dotPosition - 2);
+                result += temp.toUIntStrict() * (1 / pow(10.0, int(temp.length())));
             }
         } else
             result = parse.toDouble();

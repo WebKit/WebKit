@@ -225,7 +225,7 @@ static Length parseLength(const UChar* data, unsigned length)
         ++i;
 
     bool ok;
-    int r = DeprecatedConstString(reinterpret_cast<const DeprecatedChar*>(data), i).string().toInt(&ok);
+    int r = charactersToIntStrict(data, i, &ok);
 
     /* Skip over any remaining digits, we are not that accurate (5.5% => 5%) */
     while (i < length && (Unicode::isDigit(data[i]) || data[i] == '.'))
@@ -513,84 +513,54 @@ PassRefPtr<StringImpl> StringImpl::capitalize(UChar previous)
     return adopt(data);
 }
 
+int StringImpl::toIntStrict(bool* ok, int base)
+{
+    return charactersToIntStrict(m_data, m_length, ok, base);
+}
+
+unsigned StringImpl::toUIntStrict(bool* ok, int base)
+{
+    return charactersToUIntStrict(m_data, m_length, ok, base);
+}
+
+int64_t StringImpl::toInt64Strict(bool* ok, int base)
+{
+    return charactersToInt64Strict(m_data, m_length, ok, base);
+}
+
+uint64_t StringImpl::toUInt64Strict(bool* ok, int base)
+{
+    return charactersToUInt64Strict(m_data, m_length, ok, base);
+}
+
 int StringImpl::toInt(bool* ok)
 {
-    unsigned i = 0;
+    return charactersToInt(m_data, m_length, ok);
+}
 
-    // Allow leading spaces.
-    for (; i != m_length; ++i)
-        if (!isSpaceOrNewline(m_data[i]))
-            break;
-    
-    // Allow sign.
-    if (i != m_length && (m_data[i] == '+' || m_data[i] == '-'))
-        ++i;
-    
-    // Allow digits.
-    for (; i != m_length; ++i)
-        if (!Unicode::isDigit(m_data[i]))
-            break;
-    
-    return DeprecatedConstString(reinterpret_cast<const DeprecatedChar*>(m_data), i).string().toInt(ok);
+unsigned StringImpl::toUInt(bool* ok)
+{
+    return charactersToUInt(m_data, m_length, ok);
 }
 
 int64_t StringImpl::toInt64(bool* ok)
 {
-    unsigned i = 0;
-
-    // Allow leading spaces.
-    for (; i != m_length; ++i)
-        if (!isSpaceOrNewline(m_data[i]))
-            break;
-    
-    // Allow sign.
-    if (i != m_length && (m_data[i] == '+' || m_data[i] == '-'))
-        ++i;
-    
-    // Allow digits.
-    for (; i != m_length; ++i)
-        if (!Unicode::isDigit(m_data[i]))
-            break;
-    
-    return DeprecatedConstString(reinterpret_cast<const DeprecatedChar*>(m_data), i).string().toInt64(ok);
+    return charactersToInt64(m_data, m_length, ok);
 }
 
 uint64_t StringImpl::toUInt64(bool* ok)
 {
-    unsigned i = 0;
-
-    // Allow leading spaces.
-    for (; i != m_length; ++i)
-        if (!isSpaceOrNewline(m_data[i]))
-            break;
-
-    // Allow digits.
-    for (; i != m_length; ++i)
-        if (!Unicode::isDigit(m_data[i]))
-            break;
-    
-    return DeprecatedConstString(reinterpret_cast<const DeprecatedChar*>(m_data), i).string().toUInt64(ok);
+    return charactersToUInt64(m_data, m_length, ok);
 }
 
 double StringImpl::toDouble(bool* ok)
 {
-    if (!m_length) {
-        if (ok)
-            *ok = false;
-        return 0;
-    }
-    char *end;
-    CString latin1String = Latin1Encoding().encode(characters(), length());
-    double val = kjs_strtod(latin1String.data(), &end);
-    if (ok)
-        *ok = end == 0 || *end == '\0';
-    return val;
+    return charactersToDouble(m_data, m_length, ok);
 }
 
 float StringImpl::toFloat(bool* ok)
 {
-    // FIXME: This will return ok even when the string fits into a double but not a float.
-    return narrowPrecisionToFloat(toDouble(ok));
+    return charactersToFloat(m_data, m_length, ok);
 }
 
 static bool equal(const UChar* a, const char* b, int length)

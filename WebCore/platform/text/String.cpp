@@ -23,15 +23,22 @@
 
 #include "CString.h"
 #include "DeprecatedString.h"
+#include "FloatConversion.h"
 #include "StringBuffer.h"
 #include "TextEncoding.h"
+#include <kjs/dtoa.h>
 #include <kjs/identifier.h>
+#include <limits>
+#include <stdarg.h>
+#include <wtf/ASCIICType.h>
 #include <wtf/StringExtras.h>
 #include <wtf/Vector.h>
-#include <stdarg.h>
+#include <wtf/unicode/Unicode.h>
 
 using KJS::Identifier;
 using KJS::UString;
+
+using namespace WTF;
 
 namespace WebCore {
 
@@ -289,7 +296,7 @@ bool String::percentage(int& result) const
     if ((*m_impl)[m_impl->length() - 1] != '%')
        return false;
 
-    result = DeprecatedConstString(reinterpret_cast<const DeprecatedChar*>(m_impl->characters()), m_impl->length() - 1).string().toInt();
+    result = charactersToIntStrict(m_impl->characters(), m_impl->length() - 1);
     return true;
 }
 
@@ -400,6 +407,46 @@ String String::number(double n)
     return String::format("%.6lg", n);
 }
 
+int String::toIntStrict(bool* ok, int base) const
+{
+    if (!m_impl) {
+        if (ok)
+            *ok = false;
+        return 0;
+    }
+    return m_impl->toIntStrict(ok, base);
+}
+
+unsigned String::toUIntStrict(bool* ok, int base) const
+{
+    if (!m_impl) {
+        if (ok)
+            *ok = false;
+        return 0;
+    }
+    return m_impl->toUIntStrict(ok, base);
+}
+
+int64_t String::toInt64Strict(bool* ok, int base) const
+{
+    if (!m_impl) {
+        if (ok)
+            *ok = false;
+        return 0;
+    }
+    return m_impl->toInt64Strict(ok, base);
+}
+
+uint64_t String::toUInt64Strict(bool* ok, int base) const
+{
+    if (!m_impl) {
+        if (ok)
+            *ok = false;
+        return 0;
+    }
+    return m_impl->toUInt64Strict(ok, base);
+}
+
 int String::toInt(bool* ok) const
 {
     if (!m_impl) {
@@ -408,6 +455,16 @@ int String::toInt(bool* ok) const
         return 0;
     }
     return m_impl->toInt(ok);
+}
+
+unsigned String::toUInt(bool* ok) const
+{
+    if (!m_impl) {
+        if (ok)
+            *ok = false;
+        return 0;
+    }
+    return m_impl->toUInt(ok);
 }
 
 int64_t String::toInt64(bool* ok) const
@@ -435,7 +492,7 @@ double String::toDouble(bool* ok) const
     if (!m_impl) {
         if (ok)
             *ok = false;
-        return 0;
+        return 0.0;
     }
     return m_impl->toDouble(ok);
 }
@@ -585,6 +642,177 @@ String::operator UString() const
     if (!m_impl)
         return UString();
     return UString(reinterpret_cast<const KJS::UChar*>(m_impl->characters()), m_impl->length());
+}
+
+// String Operations
+
+static bool isCharacterAllowedInBase(UChar c, int base)
+{
+    if (c > 0x7F)
+        return false;
+    if (isASCIIDigit(c))
+        return c - '0' < base;
+    if (isASCIIAlpha(c)) {
+        if (base > 36)
+            base = 36;
+        return (c >= 'a' && c < 'a' + base - 10)
+            || (c >= 'A' && c < 'A' + base - 10);
+    }
+    return false;
+}
+
+template <typename IntegralType>
+static inline IntegralType toIntegralType(const UChar* data, size_t length, bool* ok, int base)
+{
+    static const IntegralType integralMax = std::numeric_limits<IntegralType>::max();
+    static const bool isSigned = std::numeric_limits<IntegralType>::is_signed;
+    const IntegralType maxMultiplier = integralMax / base;
+
+    IntegralType value = 0;
+    bool isOk = false;
+    bool isNegative = false;
+
+    if (!data)
+        goto bye;
+
+    // skip leading whitespace
+    while (length && isSpaceOrNewline(*data)) {
+        length--;
+        data++;
+    }
+
+    if (isSigned && length && *data == '-') {
+        length--;
+        data++;
+        isNegative = true;
+    } else if (length && *data == '+') {
+        length--;
+        data++;
+    }
+
+    if (!length || !isCharacterAllowedInBase(*data, base))
+        goto bye;
+
+    while (length && isCharacterAllowedInBase(*data, base)) {
+        length--;
+        IntegralType digitValue;
+        UChar c = *data;
+        if (isASCIIDigit(c))
+            digitValue = c - '0';
+        else if (c >= 'a')
+            digitValue = c - 'a' + 10;
+        else
+            digitValue = c - 'A' + 10;
+
+        if (value > maxMultiplier || (value == maxMultiplier && digitValue > (integralMax % base) + isNegative))
+            goto bye;
+
+        value = base * value + digitValue;
+        data++;
+    }
+
+    if (isNegative)
+        value = -value;
+
+    // skip trailing space
+    while (length && isSpaceOrNewline(*data)) {
+        length--;
+        data++;
+    }
+
+    if (!length)
+        isOk = true;
+bye:
+    if (ok)
+        *ok = isOk;
+    return isOk ? value : 0;
+}
+
+static unsigned lengthOfCharactersAsInteger(const UChar* data, size_t length)
+{
+    size_t i = 0;
+
+    // Allow leading spaces.
+    for (; i != length; ++i) {
+        if (!isSpaceOrNewline(data[i]))
+            break;
+    }
+    
+    // Allow sign.
+    if (i != length && (data[i] == '+' || data[i] == '-'))
+        ++i;
+    
+    // Allow digits.
+    for (; i != length; ++i) {
+        if (!Unicode::isDigit(data[i]))
+            break;
+    }
+
+    return i;
+}
+
+int charactersToIntStrict(const UChar* data, size_t length, bool* ok, int base)
+{
+    return toIntegralType<int>(data, length, ok, base);
+}
+
+unsigned charactersToUIntStrict(const UChar* data, size_t length, bool* ok, int base)
+{
+    return toIntegralType<unsigned>(data, length, ok, base);
+}
+
+int64_t charactersToInt64Strict(const UChar* data, size_t length, bool* ok, int base)
+{
+    return toIntegralType<int64_t>(data, length, ok, base);
+}
+
+uint64_t charactersToUInt64Strict(const UChar* data, size_t length, bool* ok, int base)
+{
+    return toIntegralType<uint64_t>(data, length, ok, base);
+}
+
+int charactersToInt(const UChar* data, size_t length, bool* ok)
+{
+    return toIntegralType<int>(data, lengthOfCharactersAsInteger(data, length), ok, 10);
+}
+
+unsigned charactersToUInt(const UChar* data, size_t length, bool* ok)
+{
+    return toIntegralType<unsigned>(data, lengthOfCharactersAsInteger(data, length), ok, 10);
+}
+
+int64_t charactersToInt64(const UChar* data, size_t length, bool* ok)
+{
+    return toIntegralType<int64_t>(data, lengthOfCharactersAsInteger(data, length), ok, 10);
+}
+
+uint64_t charactersToUInt64(const UChar* data, size_t length, bool* ok)
+{
+    return toIntegralType<uint64_t>(data, lengthOfCharactersAsInteger(data, length), ok, 10);
+}
+
+double charactersToDouble(const UChar* data, size_t length, bool* ok)
+{
+    if (!length) {
+        if (ok)
+            *ok = false;
+        return 0.0;
+    }
+
+    // FIXME: This should be made more efficient by using a fixed-sized stack buffer
+    // to avoid the allocation. 
+    char* end;
+    CString latin1String = Latin1Encoding().encode(data, length);
+    double val = kjs_strtod(latin1String.data(), &end);
+    if (ok)
+        *ok = (end == 0 || *end == '\0');
+    return val;
+}
+
+float charactersToFloat(const UChar* data, size_t length, bool* ok)
+{
+    // FIXME: This will return ok even when the string fits into a double but not a float.
+    return narrowPrecisionToFloat(charactersToDouble(data, length, ok));
 }
 
 } // namespace WebCore

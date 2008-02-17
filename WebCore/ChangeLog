@@ -1,3 +1,60 @@
+2008-02-16  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Take another step in the direction of getting rid of DeprecatedString
+        by moving all the to{NumericType} off of it.
+
+        - Create free functions that take a UChar* buffer and length to do
+          the string-to-number conversions.  This allows us to avoid two allocations
+          if we don't already have a String and is consistent with the design we would
+          like going forward.
+        - Since the toInt (and family) functions on DeprecatedString were slightly
+          different than the ones on String (they didn't allow trailing garbage),
+          an extra set of 'Strict' toInt functions were added that have this behavior.
+
+        * platform/graphics/Color.cpp:
+        (WebCore::Color::parseHexColor):
+        * platform/text/PlatformString.h:
+        * platform/text/String.cpp:
+        (WebCore::String::percentage):
+        (WebCore::String::toIntStrict):
+        (WebCore::String::toUIntStrict):
+        (WebCore::String::toInt64Strict):
+        (WebCore::String::toUInt64Strict):
+        (WebCore::String::toUInt):
+        (WebCore::String::toDouble):
+        (WebCore::isCharacterAllowedInBase):
+        (WebCore::toIntegralType):
+        (WebCore::lengthOfCharactersAsInteger):
+        (WebCore::charactersToIntStrict):
+        (WebCore::charactersToUIntStrict):
+        (WebCore::charactersToInt64Strict):
+        (WebCore::charactersToUInt64Strict):
+        (WebCore::charactersToInt):
+        (WebCore::charactersToUInt):
+        (WebCore::charactersToInt64):
+        (WebCore::charactersToUInt64):
+        (WebCore::charactersToDouble):
+        (WebCore::charactersToFloat):
+        * platform/text/StringImpl.cpp:
+        (WebCore::parseLength):
+        (WebCore::StringImpl::toIntStrict):
+        (WebCore::StringImpl::toUIntStrict):
+        (WebCore::StringImpl::toInt64Strict):
+        (WebCore::StringImpl::toUInt64Strict):
+        (WebCore::StringImpl::toInt):
+        (WebCore::StringImpl::toUInt):
+        (WebCore::StringImpl::toInt64):
+        (WebCore::StringImpl::toUInt64):
+        (WebCore::StringImpl::toDouble):
+        (WebCore::StringImpl::toFloat):
+        * platform/text/StringImpl.h:
+        * svg/SVGAnimationElement.cpp:
+        (WebCore::SVGAnimationElement::parseClockValue):
+        * svg/SVGFETurbulenceElement.cpp:
+        (WebCore::SVGFETurbulenceElement::parseMappedAttribute):
+
 2008-02-16  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Sam Weinig.

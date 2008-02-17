@@ -137,14 +137,20 @@ public:
     void split(UChar separator, Vector<String>& result) const;
     void split(UChar separator, bool allowEmptyEntries, Vector<String>& result) const;
 
+    int toIntStrict(bool* ok = 0, int base = 10) const;
+    unsigned toUIntStrict(bool* ok = 0, int base = 10) const;
+    int64_t toInt64Strict(bool* ok = 0, int base = 10) const;
+    uint64_t toUInt64Strict(bool* ok = 0, int base = 10) const;
+
     int toInt(bool* ok = 0) const;
+    unsigned toUInt(bool* ok = 0) const;
     int64_t toInt64(bool* ok = 0) const;
     uint64_t toUInt64(bool* ok = 0) const;
     double toDouble(bool* ok = 0) const;
     float toFloat(bool* ok = 0) const;
     Length* toLengthArray(int& len) const;
     Length* toCoordsArray(int& len) const;
-    bool percentage(int &_percentage) const;
+    bool percentage(int& percentage) const;
 
     // Makes a deep copy. Helpful only if you need to use a String on another thread.
     // Since the underlying StringImpl objects are immutable, there's no other reason
@@ -231,7 +237,23 @@ inline bool operator!=(const DeprecatedString& b, const String& a ) { return !(a
 
 inline bool operator!(const String& str) { return str.isNull(); }
 
+
+// String Operations
+
 bool charactersAreAllASCII(const UChar*, size_t);
+
+int charactersToIntStrict(const UChar*, size_t, bool* ok = 0, int base = 10);
+unsigned charactersToUIntStrict(const UChar*, size_t, bool* ok = 0, int base = 10);
+int64_t charactersToInt64Strict(const UChar*, size_t, bool* ok = 0, int base = 10);
+uint64_t charactersToUInt64Strict(const UChar*, size_t, bool* ok = 0, int base = 10);
+
+int charactersToInt(const UChar*, size_t, bool* ok = 0); // ignores trailing garbage
+unsigned charactersToUInt(const UChar*, size_t, bool* ok = 0); // ignores trailing garbage
+int64_t charactersToInt64(const UChar*, size_t, bool* ok = 0); // ignores trailing garbage
+uint64_t charactersToUInt64(const UChar*, size_t, bool* ok = 0); // ignores trailing garbage
+
+double charactersToDouble(const UChar*, size_t, bool* ok = 0);
+float charactersToFloat(const UChar*, size_t, bool* ok = 0);
 
 void append(Vector<UChar>&, const String&);
 
