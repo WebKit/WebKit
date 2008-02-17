@@ -1,3 +1,15 @@
+2008-02-16  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        - test fixed-pitch font measurement of control characters that render
+          as zero-width space
+
+        * fast/text/fixed-pitch-control-characters.html: Added.
+        * platform/mac/fast/text/fixed-pitch-control-characters-expected.checksum: Added.
+        * platform/mac/fast/text/fixed-pitch-control-characters-expected.png: Added.
+        * platform/mac/fast/text/fixed-pitch-control-characters-expected.txt: Added.
+
 2008-02-16  Darin Adler  <darin@apple.com>
 
         - disable some failing tests; someone can re-enable after fixing the problems causing

@@ -402,24 +402,29 @@ IntRect RenderText::caretRect(int offset, EAffinity affinity, int* extraWidthToE
 ALWAYS_INLINE int RenderText::widthFromCache(const Font& f, int start, int len, int xPos) const
 {
     if (f.isFixedPitch() && !f.isSmallCaps() && m_isAllASCII) {
-        // FIXME: This code should be simplfied; it's only run when m_text is known to be all 0000-007F,
-        // but is uses the general purpose Unicode direction function.
         int monospaceCharacterWidth = f.spaceWidth();
         int tabWidth = allowTabs() ? monospaceCharacterWidth * 8 : 0;
         int w = 0;
-        char previousChar = ' '; // FIXME: Preserves historical behavior, but seems wrong for start > 0.
+        bool isSpace;
+        bool previousCharWasSpace = true; // FIXME: Preserves historical behavior, but seems wrong for start > 0.
         for (int i = start; i < start + len; i++) {
             char c = (*m_text)[i];
-            Direction dir = direction(c);
-            if (dir != NonSpacingMark && dir != BoundaryNeutral) {
-                if (c == '\t' && tabWidth)
-                    w += tabWidth - ((xPos + w) % tabWidth);
-                else
+            if (c <= ' ') {
+                if (c == ' ' || c == '\n') {
                     w += monospaceCharacterWidth;
-                if (isASCIISpace(c) && !isASCIISpace(previousChar))
-                    w += f.wordSpacing();
+                    isSpace = true;
+                } else if (c == '\t') {
+                    w += tabWidth ? tabWidth - ((xPos + w) % tabWidth) : monospaceCharacterWidth;
+                    isSpace = true;
+                } else
+                    isSpace = false;
+            } else {
+                w += monospaceCharacterWidth;
+                isSpace = false;
             }
-            previousChar = c;
+            if (isSpace && !previousCharWasSpace)
+                w += f.wordSpacing();
+            previousCharWasSpace = isSpace;
         }
         return w;
     }

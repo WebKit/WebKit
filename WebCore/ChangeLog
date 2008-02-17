@@ -1,3 +1,15 @@
+2008-02-16  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        - fix fixed-pitch font measurement of control characters that render
+          as zero-width space
+
+        Test: fast/text/fixed-pitch-control-characters.html
+
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::widthFromCache):
+
 2008-02-16  Kevin Ollivier  <kevino@theolliviers.com>
 
         wx build fix.
