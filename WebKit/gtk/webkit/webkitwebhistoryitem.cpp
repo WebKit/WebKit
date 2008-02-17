@@ -123,10 +123,10 @@ static void webkit_web_history_item_init(WebKitWebHistoryItem* webHistoryItem)
 WebKitWebHistoryItem* webkit_web_history_item_new_with_core_item(WebCore::HistoryItem* item)
 {
     WebKitWebHistoryItem* webHistoryItem = kit(item);
-    WebKitWebHistoryItemPrivate* priv = webHistoryItem->priv;
 
     if (!webHistoryItem) {
         webHistoryItem = WEBKIT_WEB_HISTORY_ITEM(g_object_new(WEBKIT_TYPE_WEB_HISTORY_ITEM, NULL));
+        WebKitWebHistoryItemPrivate* priv = webHistoryItem->priv;
         priv->historyItem = item;
         webkit_history_item_add(webHistoryItem, priv->historyItem);
     }

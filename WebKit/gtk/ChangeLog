@@ -1,3 +1,13 @@
+2008-02-17  Jan Michael Alonzo  <jmalonzo@unpluggable.com>
+
+        Reviewed by Mark Rowe.
+
+        Fix a crash introduced in changeset #29985 by moving the dereference to after
+        the null check.
+
+        * webkit/webkitwebhistoryitem.cpp:
+        (_WebKitWebHistoryItemPrivate::webkit_web_history_item_new_with_core_item):
+
 2008-02-15  Alp Toker  <alp@atoker.com>
 
         Fix the GTK+ build following breakage introduced in r30243.
