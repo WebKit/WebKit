@@ -1,3 +1,10 @@
+2008-02-18  Alexey Proskuryakov  <ap@webkit.org>
+
+        Suggested by Darin.
+
+        * platform/KURL.h: (WebCore::KURL::operator const String&): Added, to avoid unexpected
+        conversion via UString (as in bug 17418).
+
 2008-02-18  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Reviewed by Darin.

@@ -137,6 +137,7 @@ public:
 
     friend bool equalIgnoringRef(const KURL&, const KURL&);
 
+    operator const String&() const { return m_string; }
     operator KJS::UString() const { return m_string; }
 
 #if PLATFORM(CF)
