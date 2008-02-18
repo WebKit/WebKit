@@ -1,3 +1,11 @@
+2008-02-18  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam.
+
+        * css/CSSPrimitiveValueMappings.h: Add default cases to all the switch statements.
+        This will ease the way some day if we decide to use an enum instead of int; otherwise
+        we'll have a ton of "unhandled enum value" warnings here.
+
 2008-02-18  Alp Toker  <alp@atoker.com>
 
         Build fix for GTK+ < 2.10. Fall back to simple text clipboard copy
