@@ -1,3 +1,12 @@
+2008-02-18  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam.
+
+        * DerivedSources.make: Added the scripts to the ENABLE_SVG versions of the rules
+        for CSSPropertyNames.h and CSSValueKeywords.h. Somehow that got left out, so the
+        files would not be regenerated if the scripts were changed (but would if SVG was
+        disabled).
+
 2008-02-18  Alexey Proskuryakov  <ap@webkit.org>
 
         Suggested by Darin.

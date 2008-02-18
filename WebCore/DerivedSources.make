@@ -608,12 +608,12 @@ all : \
 
 ifeq ($(findstring ENABLE_SVG,$(FEATURE_DEFINES)), ENABLE_SVG)
 
-CSSPropertyNames.h : css/CSSPropertyNames.in css/SVGCSSPropertyNames.in
+CSSPropertyNames.h : css/CSSPropertyNames.in css/SVGCSSPropertyNames.in css/makeprop.pl
 	if sort $< $(WebCore)/css/SVGCSSPropertyNames.in | uniq -d | grep -E '^[^#]'; then echo 'Duplicate value!'; exit 1; fi
 	cat $< $(WebCore)/css/SVGCSSPropertyNames.in > CSSPropertyNames.in
 	perl "$(WebCore)/css/makeprop.pl"
 
-CSSValueKeywords.h : css/CSSValueKeywords.in css/SVGCSSValueKeywords.in
+CSSValueKeywords.h : css/CSSValueKeywords.in css/SVGCSSValueKeywords.in css/makevalues.pl
 	# Lower case all the values, as CSS values are case-insensitive
 	perl -ne 'print lc' $(WebCore)/css/SVGCSSValueKeywords.in > SVGCSSValueKeywords.in
 	if sort $< SVGCSSValueKeywords.in | uniq -d | grep -E '^[^#]'; then echo 'Duplicate value!'; exit 1; fi
