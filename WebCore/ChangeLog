@@ -1,3 +1,15 @@
+2008-02-17  Alp Toker  <alp@atoker.com>
+
+        Attempt to fix the Wx build (has been broken all weekend).
+
+        Stub out some graphics functions.
+
+        * platform/graphics/wx/GraphicsContextWx.cpp:
+        (WebCore::GraphicsContext::beginPath):
+        (WebCore::GraphicsContext::addPath):
+        * platform/graphics/wx/PathWx.cpp:
+        (WebCore::Path::isEmpty):
+
 2008-02-17  Julien Chaffraix  <julien.chaffraix@gmail.com>
 
         Reviewed by Alexey Proskuryakov.

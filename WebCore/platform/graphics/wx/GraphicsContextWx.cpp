@@ -427,6 +427,16 @@ void GraphicsContext::setCompositeOperation(CompositeOperator op)
         m_data->context->SetLogicalFunction(getWxCompositingOperation(op, false));
 }
 
+void GraphicsContext::beginPath()
+{
+    notImplemented();
+}
+
+void GraphicsContext::addPath(const Path& path)
+{
+    notImplemented();
+}
+
 void GraphicsContext::setPlatformStrokeColor(const Color& color)
 {
     if (paintingDisabled())
