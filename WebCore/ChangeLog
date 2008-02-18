@@ -1,3 +1,9 @@
+2008-02-17  Sam Weinig  <sam@webkit.org>
+
+        Mac build fix.
+
+        * WebCore.xcodeproj/project.pbxproj:
+
 2008-02-17  Alp Toker  <alp@atoker.com>
 
         Attempt to fix the Wx build (has been broken all weekend).
