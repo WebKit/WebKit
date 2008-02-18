@@ -1595,6 +1595,22 @@ WebKitWebFrame* webkit_web_view_get_main_frame(WebKitWebView* webView)
     return priv->mainFrame;
 }
 
+/**
+ * webkit_web_view_get_focused_frame:
+ * @web_view: a #WebKitWebView
+ *
+ * Returns the frame that has focus or an active text selection.
+ *
+ * Return value: The focused #WebKitWebFrame or %NULL if no frame is focused
+ */
+WebKitWebFrame* webkit_web_view_get_focused_frame(WebKitWebView* webView)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), NULL);
+
+    Frame* focusedFrame = core(webView)->focusController()->focusedFrame();
+    return kit(focusedFrame);
+}
+
 void webkit_web_view_execute_script(WebKitWebView* webView, const gchar* script)
 {
     g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));

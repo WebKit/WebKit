@@ -1,3 +1,14 @@
+2008-02-18  Alp Toker  <alp@atoker.com>
+
+        Reviewed by Mark Rowe.
+
+        Implement webkit_web_view_get_focused_frame()
+
+        Equivalent to selectedFrame in the Mac API.
+
+        * webkit/webkitwebview.cpp:
+        * webkit/webkitwebview.h:
+
 2008-02-17  Jan Michael Alonzo  <jmalonzo@unpluggable.com>
 
         Reviewed by Mark Rowe.

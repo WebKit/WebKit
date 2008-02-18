@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2007 Holger Hans Peter Freyther
+ * Copyright (C) 2007, 2008 Alp Toker <alp@atoker.com>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -152,6 +153,9 @@ webkit_web_view_unmark_text_matches (WebKitWebView* web_view);
 
 WEBKIT_API WebKitWebFrame*
 webkit_web_view_get_main_frame (WebKitWebView* web_view);
+
+WEBKIT_API WebKitWebFrame*
+webkit_web_view_get_focused_frame (WebKitWebView* web_view);
 
 WEBKIT_API void
 webkit_web_view_execute_script (WebKitWebView* web_view, const gchar* script);
