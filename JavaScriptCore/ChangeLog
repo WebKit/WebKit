@@ -1,3 +1,10 @@
+2008-02-18  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam.
+
+        * wtf/ASCIICType.h:
+        (WTF::toASCIIHexValue): Added.
+
 2008-02-17  Darin Adler  <darin@apple.com>
 
         * wtf/ListHashSet.h: (WTF::swap): Removed stray return statement.
