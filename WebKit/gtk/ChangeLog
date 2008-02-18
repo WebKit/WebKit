@@ -2,6 +2,19 @@
 
         Reviewed by Mark Rowe.
 
+        http://bugs.webkit.org/show_bug.cgi?id=17312
+        [GTK] Webview Transparent Background
+
+        Add support for WebView background transparency.
+
+        * webkit/webkitprivate.h:
+        * webkit/webkitwebview.cpp:
+        * webkit/webkitwebview.h:
+
+2008-02-18  Alp Toker  <alp@atoker.com>
+
+        Reviewed by Mark Rowe.
+
         Implement webkit_web_view_get_focused_frame()
 
         Equivalent to selectedFrame in the Mac API.

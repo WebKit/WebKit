@@ -94,7 +94,8 @@ enum {
     PROP_COPY_TARGET_LIST,
     PROP_PASTE_TARGET_LIST,
     PROP_EDITABLE,
-    PROP_SETTINGS
+    PROP_SETTINGS,
+    PROP_TRANSPARENT
 };
 
 static guint webkit_web_view_signals[LAST_SIGNAL] = { 0, };
@@ -212,6 +213,9 @@ static void webkit_web_view_get_property(GObject* object, guint prop_id, GValue*
     case PROP_SETTINGS:
         g_value_set_object(value, webkit_web_view_get_settings(webView));
         break;
+    case PROP_TRANSPARENT:
+        g_value_set_boolean(value, webkit_web_view_get_transparent(webView));
+        break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
     }
@@ -228,6 +232,9 @@ static void webkit_web_view_set_property(GObject* object, guint prop_id, const G
     case PROP_SETTINGS:
         webkit_web_view_set_settings(webView, WEBKIT_WEB_SETTINGS(g_value_get_object(value)));
         break;
+    case PROP_TRANSPARENT:
+        webkit_web_view_set_transparent(webView, g_value_get_boolean(value));
+        break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
     }
@@ -236,6 +243,7 @@ static void webkit_web_view_set_property(GObject* object, guint prop_id, const G
 static gboolean webkit_web_view_expose_event(GtkWidget* widget, GdkEventExpose* event)
 {
     WebKitWebView* webView = WEBKIT_WEB_VIEW(widget);
+    WebKitWebViewPrivate* priv = webView->priv;
 
     Frame* frame = core(webView)->mainFrame();
     GdkRectangle clip;
@@ -245,6 +253,14 @@ static gboolean webkit_web_view_expose_event(GtkWidget* widget, GdkEventExpose* 
     ctx.setGdkExposeEvent(event);
     if (frame->renderer()) {
         frame->view()->layoutIfNeededRecursive();
+
+        if (priv->transparent) {
+            cairo_save(cr);
+            cairo_set_operator(cr, CAIRO_OPERATOR_CLEAR);
+            cairo_paint(cr);
+            cairo_restore(cr);
+        }
+
         frame->view()->paint(&ctx, clip);
     }
     cairo_destroy(cr);
@@ -1079,6 +1095,13 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
                                                          FALSE,
                                                          WEBKIT_PARAM_READWRITE));
 
+    g_object_class_install_property(objectClass, PROP_TRANSPARENT,
+                                    g_param_spec_boolean("transparent",
+                                                         "Transparent",
+                                                         "Whether content has a transparent background",
+                                                         FALSE,
+                                                         WEBKIT_PARAM_READWRITE));
+
     g_type_class_add_private(webViewClass, sizeof(WebKitWebViewPrivate));
 }
 
@@ -1870,6 +1893,46 @@ GtkTargetList* webkit_web_view_get_paste_target_list(WebKitWebView* webView)
 
     WebKitWebViewPrivate* priv = webView->priv;
     return priv->paste_target_list;
+}
+
+/**
+ * webkit_web_view_get_transparent:
+ * @web_view: a #WebKitWebView
+ *
+ * Returns whether the #WebKitWebView has a transparent background.
+ *
+ * Return value: %FALSE when the #WebKitWebView draws a solid background
+ * (the default), otherwise %TRUE.
+ */
+gboolean webkit_web_view_get_transparent(WebKitWebView* webView)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), NULL);
+
+    WebKitWebViewPrivate* priv = webView->priv;
+    return priv->transparent;
+}
+
+/**
+ * webkit_web_view_set_transparent:
+ * @web_view: a #WebKitWebView
+ *
+ * Sets whether the #WebKitWebView has a transparent background.
+ *
+ * Pass %FALSE to have the #WebKitWebView draw a solid background
+ * (the default), otherwise %TRUE.
+ */
+void webkit_web_view_set_transparent(WebKitWebView* webView, gboolean flag)
+{
+    g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
+
+    WebKitWebViewPrivate* priv = webView->priv;
+    priv->transparent = flag;
+
+    // TODO: This needs to be made persistent or it could become a problem when
+    // the main frame is replaced.
+    Frame* frame = core(webView)->mainFrame();
+    g_return_if_fail(frame);
+    frame->view()->setTransparent(flag);
 }
 
 }

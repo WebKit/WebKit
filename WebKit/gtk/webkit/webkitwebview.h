@@ -211,6 +211,12 @@ webkit_web_view_can_go_backward (WebKitWebView* web_view);
 WEBKIT_OBSOLETE_API void
 webkit_web_view_go_backward (WebKitWebView* web_view);
 
+WEBKIT_API gboolean
+webkit_web_view_get_transparent (WebKitWebView* web_view);
+
+WEBKIT_API void
+webkit_web_view_set_transparent (WebKitWebView* web_view, gboolean flag);
+
 G_END_DECLS
 
 #endif
