@@ -795,7 +795,6 @@ webcore_sources += \
 	WebCore/platform/DeprecatedCString.cpp \
 	WebCore/platform/DeprecatedPtrListImpl.cpp \
 	WebCore/platform/DeprecatedString.cpp \
-	WebCore/platform/DeprecatedStringList.cpp \
 	WebCore/platform/DeprecatedValueListImpl.cpp \
 	WebCore/platform/DragData.cpp \
 	WebCore/platform/DragImage.cpp \

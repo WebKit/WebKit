@@ -36,7 +36,6 @@
 #include "CSSValueKeywords.h"
 #include "Comment.h"
 #include "DeleteButtonController.h"
-#include "DeprecatedStringList.h"
 #include "Document.h"
 #include "DocumentFragment.h"
 #include "DocumentType.h"

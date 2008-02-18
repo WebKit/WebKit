@@ -1,5 +1,21 @@
 2008-02-18  Darin Adler  <darin@apple.com>
 
+        Reviewed and landed by Sam.
+
+        Remove DeprecatedStringList.
+
+        * GNUmakefile.am:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * WebCoreSources.bkl:
+        * editing/markup.cpp:
+        * platform/DeprecatedStringList.cpp: Removed.
+        * platform/DeprecatedStringList.h: Removed.
+        * platform/mac/DeprecatedStringListMac.mm: Removed.
+
+2008-02-18  Darin Adler  <darin@apple.com>
+
         Reviewed by Sam.
 
         * css/CSSPrimitiveValueMappings.h: Add default cases to all the switch statements.
