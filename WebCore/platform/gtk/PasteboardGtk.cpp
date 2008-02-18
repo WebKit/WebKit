@@ -102,16 +102,20 @@ void Pasteboard::setHelper(PasteboardHelper* helper)
 
 void Pasteboard::writeSelection(Range* selectedRange, bool canSmartCopyOrDelete, Frame* frame)
 {
+    GtkClipboard* clipboard = m_helper->getClipboard(frame);
+#if GTK_CHECK_VERSION(2,10,0)
     gchar* text = g_strdup(frame->selectedText().utf8().data());
     gchar* markup = g_strdup(createMarkup(selectedRange, 0, AnnotateForInterchange).utf8().data());
     PasteboardSelectionData* data = new PasteboardSelectionData(text, markup);
 
     gint n_targets;
     GtkTargetEntry* targets = gtk_target_table_new_from_list(m_helper->getCopyTargetList(frame), &n_targets);
-    GtkClipboard* clipboard = m_helper->getClipboard(frame);
     gtk_clipboard_set_with_data(clipboard, targets, n_targets,
                                 clipboard_get_contents_cb, clipboard_clear_contents_cb, data);
     gtk_target_table_free(targets, n_targets);
+#else
+    gtk_clipboard_set_text(clipboard, frame->selectedText().utf8().data(), frame->selectedText().utf8().length());
+#endif
 }
 
 void Pasteboard::writeURL(const KURL& url, const String&, Frame* frame)
