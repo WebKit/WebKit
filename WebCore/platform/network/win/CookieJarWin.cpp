@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2006, 2007, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,9 +24,10 @@
  */
 
 #include "config.h"
+#include "CookieJar.h"
+
 #include "KURL.h"
 #include "PlatformString.h"
-#include "DeprecatedString.h"
 #include "Document.h"
 #include "ResourceHandle.h"
 #include <windows.h>
@@ -38,8 +39,9 @@
 #include <Wininet.h>
 #endif
 
-namespace WebCore
-{
+// FIXME: This should be broken up into CookieJarCFNet.cpp and CookieJarWin.cpp or CookieJarWinINet.cpp.
+
+namespace WebCore {
 
 #if USE(CFNETWORK)
     static const CFStringRef s_setCookieKeyCF = CFSTR("Set-Cookie");
@@ -75,11 +77,9 @@ void setCookies(Document* /*document*/, const KURL& url, const KURL& policyURL, 
     CFHTTPCookieStorageSetCookies(defaultCookieStorage, cookiesCF.get(), urlCF.get(), policyURLCF.get());
 #else
     // FIXME: Deal with the policy URL.
-    DeprecatedString str = url.deprecatedString();
-    str.append((UChar)'\0');
-    DeprecatedString val = value.deprecatedString();
-    val.append((UChar)'\0');
-    InternetSetCookie((UChar*)str.unicode(), 0, (UChar*)val.unicode());
+    String str = url.string();
+    String val = value;
+    InternetSetCookie(str.charactersWithNullTermination(), 0, val.charactersWithNullTermination());
 #endif
 }
 
@@ -110,19 +110,17 @@ String cookies(const Document* /*document*/, const KURL& url)
 
     return (CFStringRef)CFDictionaryGetValue(headerCF.get(), s_cookieCF);
 #else
-    DeprecatedString str = url.deprecatedString();
-    str.append((UChar)'\0');
+    String str = url.deprecatedString();
 
-    DWORD count = str.length();
-    InternetGetCookie((UChar*)str.unicode(), 0, 0, &count);
+    DWORD count = str.length() + 1;
+    InternetGetCookie(str.charactersWithNullTermination(), 0, 0, &count);
     if (count <= 1) // Null terminator counts as 1.
         return String();
 
-    UChar* buffer = new UChar[count];
-    InternetGetCookie((UChar*)str.unicode(), 0, buffer, &count);
-    String& result = String(buffer, count-1); // Ignore the null terminator.
-    delete[] buffer;
-    return result;
+    Vector<UChar> buffer(count);
+    InternetGetCookie(buffer.data(), 0, buffer, &count);
+    buffer.shrink(count - 1); // Ignore the null terminator.
+    return String::adopt(buffer);
 #endif
 }
 

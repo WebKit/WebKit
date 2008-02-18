@@ -2,6 +2,14 @@
 
         Reviewed by Sam.
 
+        * platform/network/win/CookieJarWin.cpp:
+        (WebCore::setCookies): Use String instead of DeprecatedString.
+        (WebCore::cookies): Ditto.
+
+2008-02-18  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam.
+
         - removed use of DeprecatedString in the Color class
 
         * platform/graphics/Color.cpp:
