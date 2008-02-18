@@ -1,3 +1,14 @@
+2008-02-18  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        http://bugs.webkit.org/show_bug.cgi?id=17418
+        REGRESSION: Assertion failure dragging image (JSLock::lockCount() > 0)
+
+        * platform/win/ClipboardWin.cpp:
+        (WebCore::ClipboardWin::declareAndWriteDragImage): Explicitly convert from KURL to String,
+        as an implicit conversion uses UString and thus needs a JSLock.
+
 2008-02-17  Sam Weinig  <sam@webkit.org>
 
         Roll out r30360.
