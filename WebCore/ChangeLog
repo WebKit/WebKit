@@ -1,3 +1,32 @@
+2008-02-17  Julien Chaffraix  <julien.chaffraix@gmail.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        http://bugs.webkit.org/show_bug.cgi?id=16989
+        bug 16989 : Add send() flag checks in XmlHttpRequest
+
+        Splitted XmlHttpRequest::abort into abort (called from JavaScript) and internalAbort that
+        perform the cancellation and is called mainly from internal methods.
+
+        Tests: http/tests/xmlhttprequest/xmlhttprequest-abort-readyState-shouldDispatchEvent.html
+               http/tests/xmlhttprequest/xmlhttprequest-abort-readyState-shouldNotDispatchEvent.html
+               http/tests/xmlhttprequest/xmlhttprequest-test-send-flag.html
+
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::open): Now call internalAbort() and moved readyState change into method
+        (WebCore::XMLHttpRequest::send): Added m_loader check
+        (WebCore::XMLHttpRequest::abort): Now update readyState and clear the request headers as specified
+        in the spec
+
+        (WebCore::XMLHttpRequest::internalAbort): Perform cancellation internal operations (no readyState update)
+        (WebCore::XMLHttpRequest::setRequestHeader): Added m_loader check
+
+        (WebCore::XMLHttpRequest::processSyncLoadResults): Now call internalAbort() instead of abort()
+        (WebCore::XMLHttpRequest::willSendRequest): Ditto
+        (WebCore::XMLHttpRequest::cancelRequests): Ditto
+        (WebCore::XMLHttpRequest::detachRequests): Ditto
+        * xml/XMLHttpRequest.h: Added the private internalAbort method
+
 2008-02-17  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Dan Bernstein.

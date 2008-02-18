@@ -3,7 +3,8 @@
 <body>
 
 <p>Test bug 13141 : XMLHttpRequest should set readyState to 0 after abort() </p>
-<p>Should see "PASS" four times:</p>
+<p>Updated for bug 16989: Add send() flag checks in XmlHttpRequest </p>
+<p>Should see "PASS" two times:</p>
 <div id="ans"></div>
 
 <script type="text/javascript">
@@ -17,7 +18,7 @@ function catchReadystateEventAbort() {
     log("FAILED (readystate event send)");
 }
 
-function test(num)
+function testAbortDoNotDispatchEvent(num)
 {
     var xhr;
 
@@ -42,11 +43,14 @@ function test(num)
                 log("FAILED");
         }
         
-        if (finishedTests == 4 && window.layoutTestController)
+        if (finishedTests == abortToDo.length && window.layoutTestController)
             layoutTestController.notifyDone();
     }
 
     xhr.open("GET", "resources/1251.html", true);
+
+    // We want to be able to test in the OPENED state with the send() flag to false
+    // so do not call send in that case
     if (num != 1)
         xhr.send(null);
 }
@@ -58,9 +62,10 @@ if (window.layoutTestController) {
 
 var finishedTests = 0;
 
-for (i = 1; i < 5; i++) {
-    test(i);
-}
+var abortToDo = ['1', '4'];
+
+for (i = 0; i < abortToDo.length; i++)
+    testAbortDoNotDispatchEvent(abortToDo[i]);
 
 </script>
 </body>

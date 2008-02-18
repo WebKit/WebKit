@@ -1,3 +1,23 @@
+2008-02-17  Julien Chaffraix  <julien.chaffraix@gmail.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        http://bugs.webkit.org/show_bug.cgi?id=16989
+        bug 16989 : Add send() flag checks in XmlHttpRequest
+
+        - Splitted xmlhttprequest-abort-readystate in 2 test cases (xmlhttprequest-abort-readystate-shouldDispatchEvent and xmlhttprequest-abort-readystate-shouldNotDispatchEvent)
+
+        - Added test case for the 2 send() flag checks in XmlHttpRequest::send and XmlHttpRequest::setRequestHeader
+
+        * http/tests/xmlhttprequest/xmlhttprequest-abort-readyState-expected.txt: Removed.
+        * http/tests/xmlhttprequest/xmlhttprequest-abort-readyState-shouldDispatchEvent-expected.txt: Copied from LayoutTests/http/tests/xmlhttprequest/xmlhttprequest-abort-readyState-expected.txt.
+        * http/tests/xmlhttprequest/xmlhttprequest-abort-readyState-shouldDispatchEvent.html: Copied from LayoutTests/http/tests/xmlhttprequest/xmlhttprequest-abort-readyState.html.
+        * http/tests/xmlhttprequest/xmlhttprequest-abort-readyState-shouldNotDispatchEvent-expected.txt: Copied from LayoutTests/http/tests/xmlhttprequest/xmlhttprequest-abort-readyState-expected.txt.
+        * http/tests/xmlhttprequest/xmlhttprequest-abort-readyState-shouldNotDispatchEvent.html: Copied from LayoutTests/http/tests/xmlhttprequest/xmlhttprequest-abort-readyState.html.
+        * http/tests/xmlhttprequest/xmlhttprequest-abort-readyState.html: Removed.
+        * http/tests/xmlhttprequest/xmlhttprequest-test-send-flag-expected.txt: Added.
+        * http/tests/xmlhttprequest/xmlhttprequest-test-send-flag.html: Added.
+
 2008-02-17  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Dan Bernstein.
