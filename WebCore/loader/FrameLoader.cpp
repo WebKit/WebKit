@@ -372,7 +372,7 @@ void FrameLoader::changeLocation(const String& url, const String& referrer, bool
 
 void FrameLoader::changeLocation(const KURL& url, const String& referrer, bool lockHistory, bool userGesture)
 {
-    ResourceRequestCachePolicy policy = !canCachePage() || (m_cachePolicy == CachePolicyReload) || (m_cachePolicy == CachePolicyRefresh)
+    ResourceRequestCachePolicy policy = (m_cachePolicy == CachePolicyReload) || (m_cachePolicy == CachePolicyRefresh)
         ? ReloadIgnoringCacheData : UseProtocolCachePolicy;
     ResourceRequest request(url, referrer, policy);
     

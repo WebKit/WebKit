@@ -1,5 +1,12 @@
 2008-02-17  Sam Weinig  <sam@webkit.org>
 
+        Roll out r30360.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::changeLocation):
+
+2008-02-17  Sam Weinig  <sam@webkit.org>
+
         Mac build fix.
 
         * WebCore.xcodeproj/project.pbxproj:
