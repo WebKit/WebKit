@@ -175,7 +175,12 @@ void PluginStream::startStream()
     // Protect the stream if destroystream is called from within the newstream handler
     RefPtr<PluginStream> protect(this);
 
+    // calling into a plug-in could result in re-entrance if the plug-in yields
+    // control to the system (rdar://5744899). prevent this by deferring further
+    // loading while calling into the plug-in.
+    m_loader->setDefersLoading(true);
     NPError npErr = m_pluginFuncs->newstream(m_instance, (NPMIMEType)mimeTypeStr.data(), &m_stream, false, &m_transferMode);
+    m_loader->setDefersLoading(false);
     
     // If the stream was destroyed in the call to newstream we return
     if (m_reason != WebReasonNone)
@@ -239,10 +244,14 @@ void PluginStream::destroyStream()
         if (m_reason == NPRES_DONE && (m_transferMode == NP_ASFILE || m_transferMode == NP_ASFILEONLY)) {
             ASSERT(!m_path.isNull());
 
+            m_loader->setDefersLoading(true);
             m_pluginFuncs->asfile(m_instance, &m_stream, m_path.data());
+            m_loader->setDefersLoading(false);
         }
 
+        m_loader->setDefersLoading(true);
         NPError npErr = m_pluginFuncs->destroystream(m_instance, &m_stream, m_reason);
+        m_loader->setDefersLoading(false);
         LOG_NPERROR(npErr);
 
         m_stream.ndata = 0;
@@ -251,6 +260,7 @@ void PluginStream::destroyStream()
     if (m_sendNotification) {
         // Flash 9 can dereference null if we call NPP_URLNotify without first calling NPP_NewStream
         // for requests made with NPN_PostURLNotify; see <rdar://5588807>
+        m_loader->setDefersLoading(true);
         if (!newStreamCalled && m_quirks.contains(PluginQuirkFlashURLNotifyBug) &&
             equalIgnoringCase(m_resourceRequest.httpMethod(), "POST")) {
             // Protect the stream if NPN_DestroyStream is called from NPP_NewStream
@@ -268,6 +278,7 @@ void PluginStream::destroyStream()
             m_stream.url = 0;
         }
         m_pluginFuncs->urlnotify(m_instance, m_resourceRequest.url().string().utf8().data(), m_reason, m_notifyData);
+        m_loader->setDefersLoading(false);
     }
 
     m_streamState = StreamStopped;
@@ -306,6 +317,7 @@ void PluginStream::deliverData()
     int32 totalBytes = m_deliveryData->size();
     int32 totalBytesDelivered = 0;
 
+    m_loader->setDefersLoading(true);
     while (totalBytesDelivered < totalBytes) {
         int32 deliveryBytes = m_pluginFuncs->writeready(m_instance, &m_stream);
 
@@ -329,6 +341,7 @@ void PluginStream::deliverData()
             totalBytesDelivered += deliveryBytes;
         }
     }
+    m_loader->setDefersLoading(false);
 
     if (totalBytesDelivered > 0) {
         if (totalBytesDelivered < totalBytes) {
@@ -403,10 +416,14 @@ void PluginStream::didFail(NetscapePlugInStreamLoader* loader, const ResourceErr
 {
     ASSERT(loader == m_loader);
 
-    m_loader = 0;
-
     LOG_PLUGIN_NET_ERROR();
+
+    // destroyStream can result in our being deleted
+    RefPtr<PluginStream> protect(this);
+
     destroyStream(NPRES_NETWORK_ERR);
+
+    m_loader = 0;
 }
 
 void PluginStream::didFinishLoading(NetscapePlugInStreamLoader* loader)
@@ -414,9 +431,12 @@ void PluginStream::didFinishLoading(NetscapePlugInStreamLoader* loader)
     ASSERT(loader == m_loader);
     ASSERT(m_streamState == StreamStarted);
 
-    m_loader = 0;
+    // destroyStream can result in our being deleted
+    RefPtr<PluginStream> protect(this);
 
     destroyStream(NPRES_DONE);
+
+    m_loader = 0;
 }
 
 }

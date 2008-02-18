@@ -1,3 +1,31 @@
+2008-02-18  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Reviewed by Darin.
+
+        <rdar://problem/5744899> Crash in Flash when clicking "Yes" to abort
+        slow script Flash 9 dialog at http://www.kidzui.com
+
+        When navigating to a new page, we stop all outstanding PluginStreams.
+        Flash hangs in the call to NPP_URLNotify. It eventually displays the
+        "slow script" dialog, which relinquishes control to the system. While
+        this dialog is running, the request we are in the process of cancelling
+        completes, and we re-enter Flash to deliver the data. When the dialog
+        is dismissed, the internal state of Flash has changed, and Flash
+        crashes with a null dereference.
+
+        To work around this, we can defer loading before entering plug-in code,
+        so that even if a plug-in yields to the system, we won't get callbacks
+        while we're handling a callback.
+
+        * plugins/PluginStream.cpp:
+        (WebCore::PluginStream::startStream): Defers loads while calling into
+        plug-in.
+        (WebCore::PluginStream::destroyStream): Same.
+        (WebCore::PluginStream::deliverData): Same.
+        (WebCore::PluginStream::didFail): Protect 'this' from deletion by
+        destroyStream. Null out m_loader only after destroyStream returns.
+        (WebCore::PluginStream::didFinishLoading): Same.
+
 2008-02-18  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin.
@@ -703,7 +731,7 @@
 
         Performance testing shows this to be at least a 1% speedup.
 
-        Added a new function protocolIs to efficiently compare protocols
+        Added a new function protocols to efficiently compare protocols
         without case errors and a blankURL function so we don't have to
         code "about:blank" in multiple places in the code and don't have to
         construct a frash KURL each time. Moved decode_string and encode_string
