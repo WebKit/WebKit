@@ -2,6 +2,14 @@
 
         Reviewed by Sam.
 
+        * platform/network/win/ResourceHandleWin.cpp:
+        (WebCore::ResourceHandle::onHandleCreated): Use String instead of DeprecatedString.
+        (WebCore::ResourceHandle::start): Ditto.
+
+2008-02-18  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam.
+
         * platform/network/win/CookieJarWin.cpp:
         (WebCore::setCookies): Use String instead of DeprecatedString.
         (WebCore::cookies): Ditto.
