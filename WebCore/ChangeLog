@@ -1,5 +1,13 @@
 2008-02-18  Darin Adler  <darin@apple.com>
 
+        Reviewed by Sam.
+
+        * editing/SelectionController.cpp:
+        (WebCore::SelectionController::debugRenderer): Changed to use String instead of
+        DeprecatedString.
+
+2008-02-18  Darin Adler  <darin@apple.com>
+
         Reviewed and landed by Sam.
 
         Remove DeprecatedStringList.

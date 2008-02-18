@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -802,7 +802,7 @@ void SelectionController::debugRenderer(RenderObject *r, bool selected) const
         }
         
         static const int max = 36;
-        DeprecatedString text = String(textRenderer->text()).deprecatedString();
+        String text = textRenderer->text();
         int textLength = text.length();
         if (selected) {
             int offset = 0;
@@ -813,9 +813,9 @@ void SelectionController::debugRenderer(RenderObject *r, bool selected) const
                 
             int pos;
             InlineTextBox *box = textRenderer->findNextInlineTextBox(offset, pos);
-            text = text.mid(box->m_start, box->m_len);
+            text = text.substring(box->m_start, box->m_len);
             
-            DeprecatedString show;
+            String show;
             int mid = max / 2;
             int caret = 0;
             
@@ -833,7 +833,7 @@ void SelectionController::debugRenderer(RenderObject *r, bool selected) const
             
             // enough characters on each side
             else if (pos - mid >= 0 && pos + mid <= textLength) {
-                show = "..." + text.mid(pos - mid + 3, max - 6) + "...";
+                show = "..." + text.substring(pos - mid + 3, max - 6) + "...";
                 caret = mid;
             }
             
@@ -845,7 +845,7 @@ void SelectionController::debugRenderer(RenderObject *r, bool selected) const
             
             show.replace('\n', ' ');
             show.replace('\r', ' ');
-            fprintf(stderr, "==> #text : \"%s\" at offset %d\n", show.latin1(), pos);
+            fprintf(stderr, "==> #text : \"%s\" at offset %d\n", show.utf8().data(), pos);
             fprintf(stderr, "           ");
             for (int i = 0; i < caret; i++)
                 fprintf(stderr, " ");
@@ -856,7 +856,7 @@ void SelectionController::debugRenderer(RenderObject *r, bool selected) const
                 text = text.left(max - 3) + "...";
             else
                 text = text.left(max);
-            fprintf(stderr, "    #text : \"%s\"\n", text.latin1());
+            fprintf(stderr, "    #text : \"%s\"\n", text.utf8().data());
         }
     }
 }
