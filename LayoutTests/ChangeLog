@@ -1,3 +1,13 @@
+2008-02-17  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Dan Bernstein.
+
+        Update test for http://bugs.webkit.org/show_bug.cgi?id=17365
+        document.createEvent("MessageEvent") throws NOT_SUPPORTED_ERR
+
+        * fast/events/event-instanceof-expected.txt:
+        * fast/events/resources/event-instanceof.js: Test MessageEvent as well.
+
 2008-02-17  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Mark Rowe.

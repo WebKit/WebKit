@@ -1864,7 +1864,6 @@
 		A80F3B5A0CCDCE24002DD990 /* DOMSVGPathElementInternal.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = A8E5443B0CA9D1C10097D09B /* DOMSVGPathElementInternal.h */; };
 		A80F3B5B0CCDCE24002DD990 /* DOMSVGRectElementInternal.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = A8E543F50CA9D1C10097D09B /* DOMSVGRectElementInternal.h */; };
 		A80F3B5C0CCDCE24002DD990 /* DOMSVGStopElementInternal.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = A8E543E90CA9D1C10097D09B /* DOMSVGStopElementInternal.h */; };
-		A80F3B5D0CCDCE24002DD990 /* DOMSVGTextElementInternal.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = A8E543DE0CA9D1C10097D09B /* DOMSVGTextElementInternal.h */; };
 		A80F3B5E0CCDCE24002DD990 /* DOMSVGTRefElementInternal.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = A8E543E80CA9D1C10097D09B /* DOMSVGTRefElementInternal.h */; };
 		A80F3B5F0CCDCE24002DD990 /* DOMSVGViewElementInternal.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = A8E543C90CA9D1C10097D09B /* DOMSVGViewElementInternal.h */; };
 		A80F3B600CCDCE24002DD990 /* DOMSVGPathSegCurvetoCubicAbs.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 85CE1A1D0ADAC473003BBDEA /* DOMSVGPathSegCurvetoCubicAbs.h */; };
@@ -2208,12 +2207,7 @@
 		A8E544D50CA9D1C20097D09B /* DOMSVGTransform.h in Headers */ = {isa = PBXBuildFile; fileRef = A8E543D70CA9D1C10097D09B /* DOMSVGTransform.h */; };
 		A8E544D60CA9D1C20097D09B /* DOMSVGTitleElementInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = A8E543D80CA9D1C10097D09B /* DOMSVGTitleElementInternal.h */; };
 		A8E544D70CA9D1C20097D09B /* DOMSVGTitleElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A8E543D90CA9D1C10097D09B /* DOMSVGTitleElement.h */; };
-		A8E544D80CA9D1C20097D09B /* DOMSVGTextPositioningElementInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = A8E543DA0CA9D1C10097D09B /* DOMSVGTextPositioningElementInternal.h */; };
-		A8E544D90CA9D1C20097D09B /* DOMSVGTextPositioningElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A8E543DB0CA9D1C10097D09B /* DOMSVGTextPositioningElement.h */; };
-		A8E544DA0CA9D1C20097D09B /* DOMSVGTextPathElementInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = A8E543DC0CA9D1C10097D09B /* DOMSVGTextPathElementInternal.h */; };
 		A8E544DB0CA9D1C20097D09B /* DOMSVGTextPathElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A8E543DD0CA9D1C10097D09B /* DOMSVGTextPathElement.h */; };
-		A8E544DC0CA9D1C20097D09B /* DOMSVGTextElementInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = A8E543DE0CA9D1C10097D09B /* DOMSVGTextElementInternal.h */; };
-		A8E544DD0CA9D1C20097D09B /* DOMSVGTextContentElementInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = A8E543DF0CA9D1C10097D09B /* DOMSVGTextContentElementInternal.h */; };
 		A8E544DF0CA9D1C20097D09B /* DOMSVGSVGElementInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = A8E543E10CA9D1C10097D09B /* DOMSVGSVGElementInternal.h */; };
 		A8E544E10CA9D1C20097D09B /* DOMSVGStyleElementInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = A8E543E30CA9D1C10097D09B /* DOMSVGStyleElementInternal.h */; };
 		A8E544E30CA9D1C20097D09B /* DOMSVGStylable.h in Headers */ = {isa = PBXBuildFile; fileRef = A8E543E50CA9D1C10097D09B /* DOMSVGStylable.h */; };
@@ -2350,7 +2344,6 @@
 		A8E545BB0CA9D1C20097D09B /* DOMSVGAnimatedBooleanInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = A8E544BD0CA9D1C20097D09B /* DOMSVGAnimatedBooleanInternal.h */; };
 		A8E545BC0CA9D1C20097D09B /* DOMSVGAnimatedBoolean.h in Headers */ = {isa = PBXBuildFile; fileRef = A8E544BE0CA9D1C20097D09B /* DOMSVGAnimatedBoolean.h */; };
 		A8E545BD0CA9D1C20097D09B /* DOMSVGAnimatedAngleInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = A8E544BF0CA9D1C20097D09B /* DOMSVGAnimatedAngleInternal.h */; };
-		A8E545BF0CA9D1C20097D09B /* DOMSVGTextElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A8E544C10CA9D1C20097D09B /* DOMSVGTextElement.h */; };
 		A8E545C10CA9D1C20097D09B /* DOMSVGDescElementInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = A8E544C30CA9D1C20097D09B /* DOMSVGDescElementInternal.h */; };
 		A8EA73C30A1900E300A8EF5F /* RenderFieldset.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8EA73AF0A1900E300A8EF5F /* RenderFieldset.cpp */; };
 		A8EA73C40A1900E300A8EF5F /* RenderFieldset.h in Headers */ = {isa = PBXBuildFile; fileRef = A8EA73B00A1900E300A8EF5F /* RenderFieldset.h */; };
@@ -2985,7 +2978,6 @@
 		B27535590B053814002CE64F /* FloatPointCG.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B275352B0B053814002CE64F /* FloatPointCG.cpp */; };
 		B275355A0B053814002CE64F /* FloatRectCG.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B275352C0B053814002CE64F /* FloatRectCG.cpp */; };
 		B275355B0B053814002CE64F /* FloatSizeCG.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B275352D0B053814002CE64F /* FloatSizeCG.cpp */; };
-		B275355D0B053814002CE64F /* GraphicsContextPlatformPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = B275352F0B053814002CE64F /* GraphicsContextPlatformPrivate.h */; };
 		B275355E0B053814002CE64F /* ImageCG.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B27535300B053814002CE64F /* ImageCG.cpp */; };
 		B275355F0B053814002CE64F /* ImageSourceCG.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B27535310B053814002CE64F /* ImageSourceCG.cpp */; };
 		B27535600B053814002CE64F /* IntPointCG.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B27535320B053814002CE64F /* IntPointCG.cpp */; };
@@ -3396,6 +3388,13 @@
 		B2FA3E190AB75A6F000E5AC4 /* JSSVGZoomEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = B2FA3D310AB75A6F000E5AC4 /* JSSVGZoomEvent.h */; };
 		BC014C740CC5579D009C4B20 /* SecurityOrigin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC014C720CC5579D009C4B20 /* SecurityOrigin.cpp */; };
 		BC014C750CC5579D009C4B20 /* SecurityOrigin.h in Headers */ = {isa = PBXBuildFile; fileRef = BC014C730CC5579D009C4B20 /* SecurityOrigin.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		BC04688B0D68E471009A4502 /* DOMProgressEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = BC0468890D68E471009A4502 /* DOMProgressEvent.h */; };
+		BC04688C0D68E471009A4502 /* DOMProgressEvent.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC04688A0D68E471009A4502 /* DOMProgressEvent.mm */; };
+		BC04688E0D68E485009A4502 /* DOMProgressEventInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = BC04688D0D68E485009A4502 /* DOMProgressEventInternal.h */; };
+		BC0468920D68E4A3009A4502 /* DOMTextPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = BC0468910D68E4A3009A4502 /* DOMTextPrivate.h */; };
+		BC0468930D68E4C3009A4502 /* DOMProgressEvent.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = BC0468890D68E471009A4502 /* DOMProgressEvent.h */; };
+		BC0468940D68E4C3009A4502 /* DOMProgressEventInternal.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = BC04688D0D68E485009A4502 /* DOMProgressEventInternal.h */; };
+		BC0468950D68E4C3009A4502 /* DOMTextPrivate.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = BC0468910D68E4A3009A4502 /* DOMTextPrivate.h */; };
 		BC066F6F09FEB2FA00C589A7 /* WebCoreTextRenderer.h in Headers */ = {isa = PBXBuildFile; fileRef = BC066F6C09FEB2FA00C589A7 /* WebCoreTextRenderer.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC06ED060BFD5BAE00856E9D /* JSHTMLTableSectionElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC06ED040BFD5BAE00856E9D /* JSHTMLTableSectionElement.cpp */; };
 		BC06ED070BFD5BAE00856E9D /* JSHTMLTableSectionElement.h in Headers */ = {isa = PBXBuildFile; fileRef = BC06ED050BFD5BAE00856E9D /* JSHTMLTableSectionElement.h */; };
@@ -3616,7 +3615,6 @@
 		BCD9C2C10C17B69E005C90A2 /* JSNamedNodeMap.h in Headers */ = {isa = PBXBuildFile; fileRef = BCD9C2BD0C17B69E005C90A2 /* JSNamedNodeMap.h */; };
 		BCD9C2C20C17B69E005C90A2 /* JSNodeList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCD9C2BE0C17B69E005C90A2 /* JSNodeList.cpp */; };
 		BCD9C2C30C17B69E005C90A2 /* JSNodeList.h in Headers */ = {isa = PBXBuildFile; fileRef = BCD9C2BF0C17B69E005C90A2 /* JSNodeList.h */; };
-		BCD9C2C60C17B6EC005C90A2 /* JSDOMExceptionConstructor.lut.h in Headers */ = {isa = PBXBuildFile; fileRef = BCD9C2C40C17B6EC005C90A2 /* JSDOMExceptionConstructor.lut.h */; };
 		BCE0139A0C0BEF180043860A /* JSStyleSheet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCE013980C0BEF180043860A /* JSStyleSheet.cpp */; };
 		BCE0139B0C0BEF180043860A /* JSStyleSheet.h in Headers */ = {isa = PBXBuildFile; fileRef = BCE013990C0BEF180043860A /* JSStyleSheet.h */; };
 		BCE3BEC20D222B1D007E06E4 /* TagNodeList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCE3BEC00D222B1D007E06E4 /* TagNodeList.cpp */; };
@@ -3809,6 +3807,9 @@
 			dstPath = Versions/A/PrivateHeaders;
 			dstSubfolderSpec = 1;
 			files = (
+				BC0468930D68E4C3009A4502 /* DOMProgressEvent.h in Copy Generated Headers */,
+				BC0468940D68E4C3009A4502 /* DOMProgressEventInternal.h in Copy Generated Headers */,
+				BC0468950D68E4C3009A4502 /* DOMTextPrivate.h in Copy Generated Headers */,
 				B27B285C0CEF0D7200D39D54 /* DOMSVGFontElement.h in Copy Generated Headers */,
 				B27B285D0CEF0D7200D39D54 /* DOMSVGGlyphElement.h in Copy Generated Headers */,
 				B27B285E0CEF0D7200D39D54 /* DOMSVGMissingGlyphElement.h in Copy Generated Headers */,
@@ -4193,7 +4194,6 @@
 				A8F46AEB0CB20A9D003A9670 /* DOMSVGTextContentElement.h in Copy Generated Headers */,
 				A80F3B340CCDCE24002DD990 /* DOMSVGTextContentElementInternal.h in Copy Generated Headers */,
 				A8F46B170CB20A9D003A9670 /* DOMSVGTextElement.h in Copy Generated Headers */,
-				A80F3B5D0CCDCE24002DD990 /* DOMSVGTextElementInternal.h in Copy Generated Headers */,
 				A8F46B6A0CB20A9D003A9670 /* DOMSVGTextPathElement.h in Copy Generated Headers */,
 				A8F46B3F0CB20A9D003A9670 /* DOMSVGTextPositioningElement.h in Copy Generated Headers */,
 				A80F3B770CCDCE24002DD990 /* DOMSVGTextPositioningElementInternal.h in Copy Generated Headers */,
@@ -7474,6 +7474,10 @@
 		B2FA3D310AB75A6F000E5AC4 /* JSSVGZoomEvent.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSSVGZoomEvent.h; sourceTree = "<group>"; };
 		BC014C720CC5579D009C4B20 /* SecurityOrigin.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = SecurityOrigin.cpp; sourceTree = "<group>"; };
 		BC014C730CC5579D009C4B20 /* SecurityOrigin.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SecurityOrigin.h; sourceTree = "<group>"; };
+		BC0468890D68E471009A4502 /* DOMProgressEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMProgressEvent.h; sourceTree = "<group>"; };
+		BC04688A0D68E471009A4502 /* DOMProgressEvent.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMProgressEvent.mm; sourceTree = "<group>"; };
+		BC04688D0D68E485009A4502 /* DOMProgressEventInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMProgressEventInternal.h; sourceTree = "<group>"; };
+		BC0468910D68E4A3009A4502 /* DOMTextPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMTextPrivate.h; sourceTree = "<group>"; };
 		BC066F6C09FEB2FA00C589A7 /* WebCoreTextRenderer.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WebCoreTextRenderer.h; sourceTree = "<group>"; };
 		BC06ED040BFD5BAE00856E9D /* JSHTMLTableSectionElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLTableSectionElement.cpp; sourceTree = "<group>"; };
 		BC06ED050BFD5BAE00856E9D /* JSHTMLTableSectionElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSHTMLTableSectionElement.h; sourceTree = "<group>"; };
@@ -8564,36 +8568,37 @@
 				85ACA9850A9B520300671E90 /* DOMCharacterData.mm */,
 				85089CD10A98C42700A275AA /* DOMComment.h */,
 				85089CD20A98C42700A275AA /* DOMComment.mm */,
-				1CFCEEB20AACC4A200348750 /* DOMDocumentPrivate.h */,
 				85ACABAE0A9CAF8000671E90 /* DOMDocument.h */,
 				85ACABAF0A9CAF8000671E90 /* DOMDocument.mm */,
 				85089CD30A98C42800A275AA /* DOMDocumentFragment.h */,
 				85089CD40A98C42800A275AA /* DOMDocumentFragment.mm */,
+				1CFCEEB20AACC4A200348750 /* DOMDocumentPrivate.h */,
 				85CA975A0A962E5400690CCF /* DOMDocumentType.h */,
 				85CA975B0A962E5400690CCF /* DOMDocumentType.mm */,
 				8518DCE70A9CC80C0091B7A6 /* DOMDOMImplementation.h */,
 				8518DCE80A9CC80D0091B7A6 /* DOMDOMImplementation.mm */,
-				1CFCEEB30AACC4A200348750 /* DOMElementPrivate.h */,
 				85ACA9BE0A9B5FA500671E90 /* DOMElement.h */,
 				85ACA9BF0A9B5FA500671E90 /* DOMElement.mm */,
+				1CFCEEB30AACC4A200348750 /* DOMElementPrivate.h */,
 				85CA96B60A9621A600690CCF /* DOMEntity.h */,
 				85CA96B70A9621A600690CCF /* DOMEntity.mm */,
 				85089CD50A98C42800A275AA /* DOMEntityReference.h */,
 				85089CD60A98C42800A275AA /* DOMEntityReference.mm */,
 				8518DD760A9CF31B0091B7A6 /* DOMNamedNodeMap.h */,
 				8518DD770A9CF31B0091B7A6 /* DOMNamedNodeMap.mm */,
-				853BF4EA0ABB6E97008647BB /* DOMNodePrivate.h */,
 				853BF4D90ABB6B55008647BB /* DOMNode.h */,
 				853BF4DA0ABB6B55008647BB /* DOMNode.mm */,
 				85ACAA890A9B759C00671E90 /* DOMNodeList.h */,
 				85ACAA8A0A9B759C00671E90 /* DOMNodeList.mm */,
+				853BF4EA0ABB6E97008647BB /* DOMNodePrivate.h */,
 				85CA96E80A9624E900690CCF /* DOMNotation.h */,
 				85CA96E90A9624E900690CCF /* DOMNotation.mm */,
-				1CFCEECA0AACC5F400348750 /* DOMProcessingInstructionPrivate.h */,
 				85F56A780A98CE3700ADB60A /* DOMProcessingInstruction.h */,
 				85F56A790A98CE3700ADB60A /* DOMProcessingInstruction.mm */,
+				1CFCEECA0AACC5F400348750 /* DOMProcessingInstructionPrivate.h */,
 				85ACA99A0A9B575900671E90 /* DOMText.h */,
 				85ACA99B0A9B575900671E90 /* DOMText.mm */,
+				BC0468910D68E4A3009A4502 /* DOMTextPrivate.h */,
 			);
 			name = Core;
 			sourceTree = "<group>";
@@ -9185,32 +9190,34 @@
 		85AFA7AB0AAF3BB000E84305 /* Events */ = {
 			isa = PBXGroup;
 			children = (
-				85D2AD670AB1A40A00C313EA /* DOMEventListener.h */,
-				8540751F0AD6C5FB00620C57 /* DOMEventTarget.h */,
 				85AFA8200AAF528A00E84305 /* DOMEvent.h */,
 				85AFA8210AAF528A00E84305 /* DOMEvent.mm */,
+				85D2AD670AB1A40A00C313EA /* DOMEventListener.h */,
 				4429AAF80CB84E5F007647C5 /* DOMEventPrivate.h */,
-				85DF343F0AAFC0ED00E59AE3 /* DOMKeyboardEventPrivate.h */,
+				8540751F0AD6C5FB00620C57 /* DOMEventTarget.h */,
 				85FF31580AAFBFCB00374F38 /* DOMKeyboardEvent.h */,
 				85FF31590AAFBFCB00374F38 /* DOMKeyboardEvent.mm */,
+				85DF343F0AAFC0ED00E59AE3 /* DOMKeyboardEventPrivate.h */,
 				75793ED00D0CE85B007FC0AC /* DOMMessageEvent.h */,
 				75793ED10D0CE85B007FC0AC /* DOMMessageEvent.mm */,
 				75793ED20D0CE85B007FC0AC /* DOMMessageEventInternal.h */,
-				857E0B2B0AB043FC0036E447 /* DOMMouseEventPrivate.h */,
 				857E0B230AB043460036E447 /* DOMMouseEvent.h */,
 				857E0B240AB043460036E447 /* DOMMouseEvent.mm */,
+				857E0B2B0AB043FC0036E447 /* DOMMouseEventPrivate.h */,
 				85C7F5BC0AAFB7CC004014DD /* DOMMutationEvent.h */,
 				85C7F5BD0AAFB7CC004014DD /* DOMMutationEvent.mm */,
 				85C7F5CE0AAFB8D9004014DD /* DOMOverflowEvent.h */,
 				85C7F5CF0AAFB8D9004014DD /* DOMOverflowEvent.mm */,
+				BC0468890D68E471009A4502 /* DOMProgressEvent.h */,
+				BC04688A0D68E471009A4502 /* DOMProgressEvent.mm */,
 				933A14750B7D1BAF00A53FFD /* DOMTextEvent.h */,
 				933A14A90B7D1D0900A53FFD /* DOMTextEvent.mm */,
-				85C7F4C20AAF8081004014DD /* DOMUIEventPrivate.h */,
 				85C7F48F0AAF79DC004014DD /* DOMUIEvent.h */,
 				85C7F4900AAF79DC004014DD /* DOMUIEvent.mm */,
-				85FF313B0AAFBD7200374F38 /* DOMWheelEventPrivate.h */,
+				85C7F4C20AAF8081004014DD /* DOMUIEventPrivate.h */,
 				85C7F5E50AAFBAFB004014DD /* DOMWheelEvent.h */,
 				85C7F5E60AAFBAFB004014DD /* DOMWheelEvent.mm */,
+				85FF313B0AAFBD7200374F38 /* DOMWheelEventPrivate.h */,
 			);
 			name = Events;
 			sourceTree = "<group>";
@@ -9385,7 +9392,6 @@
 		85E7113D0AC5D4A10053270F /* Internal */ = {
 			isa = PBXGroup;
 			children = (
-				BCA85A0F0C3AEAF4006F8308 /* DOMSVGNumberInternal.h */,
 				8538F0180AD718D8006A81D1 /* DOMAbstractViewInternal.h */,
 				85E7113E0AC5D5340053270F /* DOMAttrInternal.h */,
 				85E7113F0AC5D5340053270F /* DOMCDATASectionInternal.h */,
@@ -9482,6 +9488,7 @@
 				85E711850AC5D5350053270F /* DOMNotationInternal.h */,
 				85989DC80ACC8BBD00A0BC51 /* DOMOverflowEventInternal.h */,
 				85E711860AC5D5350053270F /* DOMProcessingInstructionInternal.h */,
+				BC04688D0D68E485009A4502 /* DOMProgressEventInternal.h */,
 				8538F05A0AD722F1006A81D1 /* DOMRangeInternal.h */,
 				85E711870AC5D5350053270F /* DOMRectInternal.h */,
 				85B498FE0ADB348100925CBB /* DOMStyleSheetInternal.h */,
@@ -9551,6 +9558,7 @@
 				85C9A3170AD7E9A400FBFF1E /* DOMSVGMaskElementInternal.h */,
 				854163930AC718680001E01B /* DOMSVGMatrixInternal.h */,
 				8559F11E0AC9BF4100A3439C /* DOMSVGMetadataElementInternal.h */,
+				BCA85A0F0C3AEAF4006F8308 /* DOMSVGNumberInternal.h */,
 				85C239830AD59098003533E7 /* DOMSVGNumberListInternal.h */,
 				85C9A3180AD7E9A400FBFF1E /* DOMSVGPaintInternal.h */,
 				85B499770ADB425E00925CBB /* DOMSVGPathElementInternal.h */,
@@ -13113,18 +13121,12 @@
 				A8E544F20CA9D1C20097D09B /* DOMSVGTests.h in Headers */,
 				859D62B20AD888EF00012995 /* DOMSVGTextContentElement.h in Headers */,
 				859D62E70AD8892700012995 /* DOMSVGTextContentElementInternal.h in Headers */,
-				A8E544DD0CA9D1C20097D09B /* DOMSVGTextContentElementInternal.h in Headers */,
 				859D62B40AD888EF00012995 /* DOMSVGTextElement.h in Headers */,
-				A8E545BF0CA9D1C20097D09B /* DOMSVGTextElement.h in Headers */,
 				859D62E80AD8892700012995 /* DOMSVGTextElementInternal.h in Headers */,
-				A8E544DC0CA9D1C20097D09B /* DOMSVGTextElementInternal.h in Headers */,
 				A8E544DB0CA9D1C20097D09B /* DOMSVGTextPathElement.h in Headers */,
 				B223622F0C3AF0710008CA9B /* DOMSVGTextPathElementInternal.h in Headers */,
-				A8E544DA0CA9D1C20097D09B /* DOMSVGTextPathElementInternal.h in Headers */,
 				859D62B60AD888EF00012995 /* DOMSVGTextPositioningElement.h in Headers */,
-				A8E544D90CA9D1C20097D09B /* DOMSVGTextPositioningElement.h in Headers */,
 				859D62E90AD8892700012995 /* DOMSVGTextPositioningElementInternal.h in Headers */,
-				A8E544D80CA9D1C20097D09B /* DOMSVGTextPositioningElementInternal.h in Headers */,
 				859D62B80AD888EF00012995 /* DOMSVGTitleElement.h in Headers */,
 				A8E544D70CA9D1C20097D09B /* DOMSVGTitleElement.h in Headers */,
 				859D62EA0AD8892700012995 /* DOMSVGTitleElementInternal.h in Headers */,
@@ -13280,7 +13282,6 @@
 				B2C3DA700D006CD600EF6F26 /* GlyphWidthMap.h in Headers */,
 				B22279640D00BF220071B782 /* GradientAttributes.h in Headers */,
 				B2A015A90AF6CD53006BCE0E /* GraphicsContext.h in Headers */,
-				B275355D0B053814002CE64F /* GraphicsContextPlatformPrivate.h in Headers */,
 				B2A015AB0AF6CD53006BCE0E /* GraphicsTypes.h in Headers */,
 				A8CFF7AB0A156978000A4234 /* HTMLAnchorElement.h in Headers */,
 				A871D45D0A127CBC00B12A68 /* HTMLAppletElement.h in Headers */,
@@ -13424,7 +13425,6 @@
 				51EC926A0CE90DD400F90308 /* JSCustomSQLTransactionErrorCallback.h in Headers */,
 				1A3417C90CECFF250049CBDE /* JSCustomVoidCallback.h in Headers */,
 				E10B937C0B73C00A003ED890 /* JSCustomXPathNSResolver.h in Headers */,
-				BCD9C2C60C17B6EC005C90A2 /* JSDOMExceptionConstructor.lut.h in Headers */,
 				65DF31F809D1CC60000BE325 /* JSDOMImplementation.h in Headers */,
 				1ACE53E00A8D18810022947D /* JSDOMParser.h in Headers */,
 				BC5A86B60C3367E800EEA649 /* JSDOMSelection.h in Headers */,
@@ -14238,6 +14238,9 @@
 				C0294DF40D5A6FD800CC7D6B /* UserStyleSheetLoader.h in Headers */,
 				E1DE1C080D5CE4CF0034C38F /* MessageQueue.h in Headers */,
 				37F818FD0D657606005E1F05 /* WebCoreURLResponse.h in Headers */,
+				BC04688B0D68E471009A4502 /* DOMProgressEvent.h in Headers */,
+				BC04688E0D68E485009A4502 /* DOMProgressEventInternal.h in Headers */,
+				BC0468920D68E4A3009A4502 /* DOMTextPrivate.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -15832,6 +15835,7 @@
 				51A9267E0D53F0570063ECC2 /* OriginUsageRecord.cpp in Sources */,
 				C0294DF30D5A6FD800CC7D6B /* UserStyleSheetLoader.cpp in Sources */,
 				37F818FE0D657606005E1F05 /* WebCoreURLResponse.mm in Sources */,
+				BC04688C0D68E471009A4502 /* DOMProgressEvent.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

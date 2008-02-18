@@ -1,3 +1,30 @@
+2008-02-17  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Dan Bernstein.
+
+        Fix for http://bugs.webkit.org/show_bug.cgi?id=17365
+        document.createEvent("MessageEvent") throws NOT_SUPPORTED_ERR
+
+        - Updated fast/events/event-instanceof.html to test document.createEvent("MessageEvent").
+
+        * DerivedSources.make:
+        Generate Objective-C binding for DOMProgressEvent which was missing.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        Add missing DOMProgressEvent files to the project.
+
+        * bindings/js/JSEventCustom.cpp:
+        (WebCore::toJS):
+        Clean up and add case for SVGZoomEvent that was missing.
+
+        * bindings/objc/DOMEvents.mm:
+        (+[DOMEvent _wrapEvent:WebCore::]):
+        Clean up and add cases for ProgressEvent and MessageEvent that were missing.
+
+        * dom/Document.cpp:
+        (WebCore::Document::createEvent):
+        Add case for MessageEvent.
+
 2008-02-17  Adam Treat  <treat@kde.org>
 
         Reviewed by Eric Seidel.

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,7 +32,6 @@
 #include "Clipboard.h"
 #include "Event.h"
 #include "JSKeyboardEvent.h"
-#include "JSMessageEvent.h"
 #include "JSMouseEvent.h"
 #include "JSMutationEvent.h"
 #include "JSOverflowEvent.h"
@@ -41,7 +40,6 @@
 #include "JSUIEvent.h"
 #include "JSWheelEvent.h"
 #include "KeyboardEvent.h"
-#include "MessageEvent.h"
 #include "MouseEvent.h"
 #include "MutationEvent.h"
 #include "OverflowEvent.h"
@@ -50,6 +48,16 @@
 #include "UIEvent.h"
 #include "WheelEvent.h"
 #include "kjs_events.h"
+
+#if ENABLE(CROSS_DOCUMENT_MESSAGING)
+#include "JSMessageEvent.h"
+#include "MessageEvent.h"
+#endif
+
+#if ENABLE(SVG)
+#include "JSSVGZoomEvent.h"
+#include "SVGZoomEvent.h"
+#endif
 
 using namespace KJS;
 
@@ -67,22 +75,26 @@ JSValue* toJS(ExecState* exec, Event* event)
     if (!event)
         return jsNull();
 
-
     DOMObject* ret = ScriptInterpreter::getDOMObject(event);
     if (ret)
         return ret;
 
-    if (event->isKeyboardEvent())
-        ret = new JSKeyboardEvent(JSKeyboardEventPrototype::self(exec), static_cast<KeyboardEvent*>(event));
-    else if (event->isTextEvent())
-        ret = new JSTextEvent(JSTextEventPrototype::self(exec), static_cast<TextEvent*>(event));
-    else if (event->isMouseEvent())
-        ret = new JSMouseEvent(JSMouseEventPrototype::self(exec), static_cast<MouseEvent*>(event));
-    else if (event->isWheelEvent())
-        ret = new JSWheelEvent(JSWheelEventPrototype::self(exec), static_cast<WheelEvent*>(event));
-    else if (event->isUIEvent())
-        ret = new JSUIEvent(JSUIEventPrototype::self(exec), static_cast<UIEvent*>(event));
-    else if (event->isMutationEvent())
+    if (event->isUIEvent()) {
+        if (event->isKeyboardEvent())
+            ret = new JSKeyboardEvent(JSKeyboardEventPrototype::self(exec), static_cast<KeyboardEvent*>(event));
+        else if (event->isTextEvent())
+            ret = new JSTextEvent(JSTextEventPrototype::self(exec), static_cast<TextEvent*>(event));
+        else if (event->isMouseEvent())
+            ret = new JSMouseEvent(JSMouseEventPrototype::self(exec), static_cast<MouseEvent*>(event));
+        else if (event->isWheelEvent())
+            ret = new JSWheelEvent(JSWheelEventPrototype::self(exec), static_cast<WheelEvent*>(event));
+#if ENABLE(SVG)
+        else if (event->isSVGZoomEvent())
+            ret = new JSSVGZoomEvent(JSSVGZoomEventPrototype::self(exec), static_cast<SVGZoomEvent*>(event), 0);
+#endif
+        else
+            ret = new JSUIEvent(JSUIEventPrototype::self(exec), static_cast<UIEvent*>(event));
+    } else if (event->isMutationEvent())
         ret = new JSMutationEvent(JSMutationEventPrototype::self(exec), static_cast<MutationEvent*>(event));
     else if (event->isOverflowEvent())
         ret = new JSOverflowEvent(JSOverflowEventPrototype::self(exec), static_cast<OverflowEvent*>(event));

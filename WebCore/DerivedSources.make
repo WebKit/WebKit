@@ -145,6 +145,7 @@ all : \
     DOMNotation.h \
     DOMOverflowEvent.h \
     DOMProcessingInstruction.h \
+    DOMProgressEvent.h \
     DOMRGBColor.h \
     DOMRange.h \
     DOMRect.h \

@@ -112,6 +112,10 @@
 #include "DatabaseThread.h"
 #endif
 
+#if ENABLE(CROSS_DOCUMENT_MESSAGING)
+#include "MessageEvent.h"
+#endif
+
 #if ENABLE(XPATH)
 #include "XPathEvaluator.h"
 #include "XPathExpression.h"
@@ -2422,7 +2426,7 @@ DOMWindow* Document::defaultView() const
     return frame()->domWindow();
 }
 
-PassRefPtr<Event> Document::createEvent(const String &eventType, ExceptionCode& ec)
+PassRefPtr<Event> Document::createEvent(const String& eventType, ExceptionCode& ec)
 {
     if (eventType == "UIEvents" || eventType == "UIEvent")
         return new UIEvent;
@@ -2447,6 +2451,10 @@ PassRefPtr<Event> Document::createEvent(const String &eventType, ExceptionCode& 
         return new Event;
     if (eventType == "SVGZoomEvents")
         return new SVGZoomEvent;
+#endif
+#if ENABLE(CROSS_DOCUMENT_MESSAGING)
+    if (eventType == "MessageEvent")
+        return new MessageEvent;
 #endif
     ec = NOT_SUPPORTED_ERR;
     return 0;

@@ -1,3 +1,13 @@
+2008-02-17  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Dan Bernstein.
+
+        Fix for http://bugs.webkit.org/show_bug.cgi?id=17365
+        document.createEvent("MessageEvent") throws NOT_SUPPORTED_ERR
+
+        * MigrateHeaders.make: Migrate DOMProgressEvent.h and DOMTextPrivate.h which were
+        mistakenly not migrated.
+
 2008-02-15  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Alexey Proskuryakov.

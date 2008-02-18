@@ -47,4 +47,9 @@ shouldBeTrue("textEvent instanceof window.TextEvent");
 shouldBeTrue("textEvent instanceof window.Event");
 shouldBeTrue("textEvent.constructor === window.TextEvent");
 
+var messageEvent = document.createEvent("MessageEvent");
+shouldBeTrue("messageEvent instanceof window.MessageEvent");
+shouldBeTrue("messageEvent instanceof window.Event");
+shouldBeTrue("messageEvent.constructor === window.MessageEvent");
+
 var successfullyParsed = true;

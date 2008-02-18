@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004, 2008 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Jonas Witt <jonas.witt@gmail.com>
  * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
  *
@@ -30,12 +30,19 @@
 
 #import "DOMInternal.h"
 #import "DOMPrivate.h"
+#import "DOMProgressEvent.h"
 #import "Event.h"
 #import "KeyboardEvent.h"
 #import "MouseEvent.h"
 #import "MutationEvent.h"
 #import "OverflowEvent.h"
+#import "ProgressEvent.h"
 #import "UIEvent.h"
+
+#if ENABLE(CROSS_DOCUMENT_MESSAGING)
+#import "DOMMessageEvent.h"
+#import "MessageEvent.h"
+#endif
 
 #if ENABLE(SVG)
 #import "DOMSVGZoomEvent.h"
@@ -72,26 +79,33 @@
     cachedInstance = WebCore::getDOMWrapper(impl);
     if (cachedInstance)
         return [[cachedInstance retain] autorelease];
-    
+
     Class wrapperClass = nil;
-    if (impl->isWheelEvent())
-        wrapperClass = [DOMWheelEvent class];        
-    else if (impl->isMouseEvent())
-        wrapperClass = [DOMMouseEvent class];
-    else if (impl->isMutationEvent())
-        wrapperClass = [DOMMutationEvent class];
-    else if (impl->isKeyboardEvent())
-        wrapperClass = [DOMKeyboardEvent class];
-    else if (impl->isTextEvent())
-        wrapperClass = [DOMTextEvent class];
+    if (impl->isUIEvent()) {
+        if (impl->isKeyboardEvent())
+            wrapperClass = [DOMKeyboardEvent class];
+        else if (impl->isTextEvent())
+            wrapperClass = [DOMTextEvent class];
+        else if (impl->isMouseEvent())
+            wrapperClass = [DOMMouseEvent class];
+        else if (impl->isWheelEvent())
+            wrapperClass = [DOMWheelEvent class];        
 #if ENABLE(SVG)
-    else if (impl->isSVGZoomEvent())
-        wrapperClass = [DOMSVGZoomEvent class];
+        else if (impl->isSVGZoomEvent())
+            wrapperClass = [DOMSVGZoomEvent class];
 #endif
-    else if (impl->isUIEvent())
-        wrapperClass = [DOMUIEvent class];
+        else
+            wrapperClass = [DOMUIEvent class];
+    } else if (impl->isMutationEvent())
+        wrapperClass = [DOMMutationEvent class];
     else if (impl->isOverflowEvent())
         wrapperClass = [DOMOverflowEvent class];
+#if ENABLE(CROSS_DOCUMENT_MESSAGING)
+    else if (impl->isMessageEvent())
+        wrapperClass = [DOMMessageEvent class];
+#endif
+    else if (impl->isProgressEvent())
+        wrapperClass = [DOMProgressEvent class];
     else
         wrapperClass = [DOMEvent class];
 
