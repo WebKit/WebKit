@@ -1,3 +1,15 @@
+2008-02-18  Alp Toker  <alp@atoker.com>
+
+        Reviewed by Mark Rowe.
+
+        http://bugs.webkit.org/show_bug.cgi?id=17381
+        [CURL] Regression: data URL parsing broken after DeprecatedString removal (Acid2)
+
+        This patch resolves the regression for the GTK+ port.
+
+        * platform/network/curl/ResourceHandleManager.cpp:
+        (WebCore::parseDataUrl):
+
 2008-02-18  Darin Adler  <darin@apple.com>
 
         Reviewed by Sam.

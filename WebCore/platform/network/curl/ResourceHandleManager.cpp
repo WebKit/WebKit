@@ -463,6 +463,7 @@ bool ResourceHandleManager::startScheduledJobs()
     return started;
 }
 
+// FIXME: This function does not deal properly with text encodings.
 static void parseDataUrl(ResourceHandle* handle)
 {
     String data = handle->request().url().string();
@@ -486,14 +487,13 @@ static void parseDataUrl(ResourceHandle* handle)
 
     data = decodeURLEscapeSequences(data);
 
+    size_t outLength = 0;
+    char* outData = 0;
     if (base64 && !data.isEmpty()) {
         // Use the GLib Base64 if available, since WebCore's decoder isn't
         // general-purpose and fails on Acid3 test 97 (whitespace).
 #ifdef USE_GLIB_BASE64
-        gsize outLength;
-        guchar* out = g_base64_decode(data.latin1().data(), &outLength);
-        data = String(reinterpret_cast<char*>(out), outLength);
-        g_free(out);
+        outData = reinterpret_cast<char*>(g_base64_decode(data.utf8().data(), &outLength));
 #else
         Vector<char> out;
         if (base64Decode(data.latin1().data(), data.length(), out))
@@ -512,13 +512,22 @@ static void parseDataUrl(ResourceHandle* handle)
 
     response.setMimeType(extractMIMETypeFromMediaType(header));
     response.setTextEncodingName(extractCharsetFromMediaType(header));
-    response.setExpectedContentLength(data.length());
+    if (outData)
+        response.setExpectedContentLength(outLength);
+    else
+        response.setExpectedContentLength(data.length());
     response.setHTTPStatusCode(200);
 
     client->didReceiveResponse(handle, response);
 
-    if (!data.isEmpty())
+    if (outData)
+        client->didReceiveData(handle, outData, outLength, 0);
+    else
         client->didReceiveData(handle, data.latin1().data(), data.length(), 0);
+
+#ifdef USE_GLIB_BASE64
+    g_free(outData);
+#endif
 
     client->didFinishLoading(handle);
 }
