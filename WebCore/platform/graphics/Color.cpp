@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003, 2004, 2005, 2006 Apple Computer, Inc. All rights reserved.
+ * Copyright (C) 2003, 2004, 2005, 2006, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,7 +26,6 @@
 #include "config.h"
 #include "Color.h"
 
-#include "DeprecatedString.h"
 #include "PlatformString.h"
 #include <math.h>
 #include <wtf/Assertions.h>
@@ -35,6 +34,7 @@
 #include "ColorData.c"
 
 using namespace std;
+using namespace WTF;
 
 namespace WebCore {
 
@@ -92,24 +92,26 @@ RGBA32 makeRGBAFromHSLA(double hue, double saturation, double lightness, double 
 // originally moved here from the CSS parser
 bool Color::parseHexColor(const String& name, RGBA32& rgb)
 {
-    int len = name.length();
-    if (len == 3 || len == 6) {
-        bool ok;
-        int val = name.toIntStrict(&ok, 16);
-        if (ok) {
-            if (len == 6) {
-                rgb = 0xFF000000 | val;
-                return true;
-            }
-            // #abc converts to #aabbcc according to the specs
-            rgb = 0xFF000000
-                | (val & 0xF00) << 12 | (val & 0xF00) << 8
-                | (val & 0xF0) << 8 | (val & 0xF0) << 4
-                | (val & 0xF) << 4 | (val & 0xF);
-            return true;
-        }
+    unsigned length = name.length();
+    if (length != 3 && length != 6)
+        return false;
+    unsigned value = 0;
+    for (unsigned i = 0; i < length; ++i) {
+        if (!isASCIIHexDigit(name[i]))
+            return false;
+        value <<= 4;
+        value |= toASCIIHexValue(name[i]);
     }
-    return false;
+    if (length == 6) {
+        rgb = 0xFF000000 | value;
+        return true;
+    }
+    // #abc converts to #aabbcc
+    rgb = 0xFF000000
+        | (value & 0xF00) << 12 | (value & 0xF00) << 8
+        | (value & 0xF0) << 8 | (value & 0xF0) << 4
+        | (value & 0xF) << 4 | (value & 0xF);
+    return true;
 }
 
 int differenceSquared(const Color& c1, const Color& c2)
@@ -147,10 +149,25 @@ String Color::name() const
     return String::format("#%02X%02X%02X", red(), green(), blue());
 }
 
+static inline const NamedColor* findNamedColor(const String& name)
+{
+    char buffer[64]; // easily big enough for the longest color name
+    unsigned length = name.length();
+    if (length > sizeof(buffer) - 1)
+        return 0;
+    for (unsigned i = 0; i < length; ++i) {
+        UChar c = name[i];
+        if (!c || c > 0x7F)
+            return 0;
+        buffer[i] = static_cast<char>(c);
+    }
+    buffer[length] = '\0';
+    return findColor(buffer, length);
+}
+
 void Color::setNamedColor(const String& name)
 {
-    DeprecatedString dname = name.deprecatedString();
-    const NamedColor* foundColor = dname.isAllASCII() ? findColor(dname.latin1(), dname.length()) : 0;
+    const NamedColor* foundColor = findNamedColor(name);
     m_color = foundColor ? foundColor->RGBValue : 0;
     m_color |= 0xFF000000;
     m_valid = foundColor;

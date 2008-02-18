@@ -2,6 +2,21 @@
 
         Reviewed by Sam.
 
+        - removed use of DeprecatedString in the Color class
+
+        * platform/graphics/Color.cpp:
+        (WebCore::Color::parseHexColor): Streamlined logic a bit with early returns.
+        Used toASCIIHexValue a character at a time rather than using toIntStrict
+        in base 16 mode.
+        (WebCore::findNamedColor): Added. Uses a fixed-size char buffer to look up
+        a color using the gperf-generated findColor function. Saves a memory allocation
+        vs. the old version that called DeprecatedString::latin1().
+        (WebCore::Color::setNamedColor): Changed to use findNamedColor.
+
+2008-02-18  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam.
+
         * editing/htmlediting.cpp:
         (WebCore::stringWithRebalancedWhitespace): Changed to use String instead of
         DeprecatedString.
