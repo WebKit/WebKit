@@ -71,7 +71,33 @@ extern int cssyyparse(void* parser);
 using namespace std;
 using namespace WTF;
 
+#include "CSSPropertyNames.c"
+#include "CSSValueKeywords.c"
+
 namespace WebCore {
+
+static bool equalIgnoringCase(const ParseString& a, const char* b)
+{
+    for (int i = 0; i < a.length; ++i) {
+        if (!b[i])
+            return false;
+        ASSERT(isASCIILower(b[i]));
+        if (toASCIILower(a.characters[i]) != b[i])
+            return false;
+    }
+    return !b[a.length];
+}
+
+static bool hasPrefix(const char* string, unsigned length, const char* prefix)
+{
+    for (unsigned i = 0; i < length; ++i) {
+        if (!prefix[i])
+            return true;
+        if (string[i] != prefix[i])
+            return false;
+    }
+    return false;
+}
 
 ValueList::~ValueList()
 {
@@ -2209,18 +2235,15 @@ PassRefPtr<CSSValue> CSSParser::parseTransitionTimingFunction()
 PassRefPtr<CSSValue> CSSParser::parseTransitionProperty()
 {
     Value* value = valueList->current();
-    if (value->unit == CSSPrimitiveValue::CSS_IDENT) {
-        String str = domString(value->string);
-        str.lower();
-        if (str == "all")
-            return new CSSPrimitiveValue(cAnimateAll);
-        if (str == "none")
-            return new CSSPrimitiveValue(cAnimateNone);
-        CString propertyName = str.utf8();
-        int result = getPropertyID(propertyName.data(), propertyName.length());
-        if (result)
-            return new CSSPrimitiveValue(result);
-    }
+    if (value->unit != CSSPrimitiveValue::CSS_IDENT)
+        return 0;
+    int result = cssPropertyID(value->string);
+    if (result)
+        return new CSSPrimitiveValue(result);
+    if (equalIgnoringCase(value->string, "all"))
+        return new CSSPrimitiveValue(cAnimateAll);
+    if (equalIgnoringCase(value->string, "none"))
+        return new CSSPrimitiveValue(cAnimateNone);
     return 0;
 }
 
@@ -2649,6 +2672,11 @@ bool CSSParser::parseFont(bool important)
 
     addProperty(CSS_PROP_FONT, font.release(), important);
     return true;
+}
+
+static DeprecatedString deprecatedString(const ParseString& ps)
+{
+    return DeprecatedString(reinterpret_cast<const DeprecatedChar*>(ps.characters), ps.length);
 }
 
 PassRefPtr<CSSValueList> CSSParser::parseFontFamily()
@@ -3517,16 +3545,6 @@ static inline int yyerror(const char*) { return 1; }
 
 #include "CSSGrammar.h"
 
-static inline float convertASCIIToFloat(const UChar* characters, unsigned length)
-{
-    Vector<char, 256> bytes(length + 1);
-    for (unsigned i = 0; i < length; ++i)
-        bytes[i] = characters[i];
-    bytes[length] = 0;
-    char* end;
-    return narrowPrecisionToFloat(kjs_strtod(bytes.data(), &end));
-}
-
 int CSSParser::lex(void* yylvalWithoutType)
 {
     YYSTYPE* yylval = static_cast<YYSTYPE*>(yylvalWithoutType);
@@ -3589,7 +3607,7 @@ int CSSParser::lex(void* yylvalWithoutType)
         length--;
     case FLOATTOKEN:
     case INTEGER:
-        yylval->val = convertASCIIToFloat(t, length);
+        yylval->number = charactersToDouble(t, length);
         break;
 
     default:
@@ -3908,9 +3926,86 @@ CSSRule* CSSParser::createFontFaceRule()
     return rule;
 }
 
-DeprecatedString deprecatedString(const ParseString& ps)
+static int cssPropertyID(const UChar* propertyName, unsigned length)
 {
-    return DeprecatedString(reinterpret_cast<const DeprecatedChar*>(ps.characters), ps.length);
+    if (!length)
+        return 0;
+    if (length > maxCSSPropertyNameLength)
+        return 0;
+
+    char buffer[maxCSSPropertyNameLength + 1 + 1]; // 1 to turn "apple"/"khtml" into "webkit", 1 for null character
+
+    for (unsigned i = 0; i != length; ++i) {
+        UChar c = propertyName[i];
+        if (c == 0 || c >= 0x7F)
+            return 0; // illegal character
+        buffer[i] = toASCIILower(c);
+    }
+    buffer[length] = '\0';
+
+    const char* name = buffer;
+    if (buffer[0] == '-') {
+        // If the prefix is -apple- or -khtml-, change it to -webkit-.
+        // This makes the string one character longer.
+        if (hasPrefix(buffer, length, "-apple-") || hasPrefix(buffer, length, "-khtml-")) {
+            memmove(buffer + 7, buffer + 6, length + 1 - 6);
+            memcpy(buffer, "-webkit", 7);
+            ++length;
+        }
+
+        // Honor -webkit-opacity as a synonym for opacity.
+        // This was the only syntax that worked in Safari 1.1, and may be in use on some websites and widgets.
+        if (strcmp(buffer, "-webkit-opacity") == 0) {
+            const char * const opacity = "opacity";
+            name = opacity;
+            length = strlen(opacity);
+        }
+    }
+
+    const props* hashTableEntry = findProp(name, length);
+    return hashTableEntry ? hashTableEntry->id : 0;
+}
+
+int cssPropertyID(const String& string)
+{
+    return cssPropertyID(string.characters(), string.length());
+}
+
+int cssPropertyID(const ParseString& string)
+{
+    return cssPropertyID(string.characters, string.length);
+}
+
+int cssValueKeywordID(const ParseString& string)
+{
+    unsigned length = string.length;
+    if (!length)
+        return 0;
+    if (length > maxCSSValueKeywordLength)
+        return 0;
+
+    char buffer[maxCSSValueKeywordLength + 1 + 1]; // 1 to turn "apple"/"khtml" into "webkit", 1 for null character
+
+    for (unsigned i = 0; i != length; ++i) {
+        UChar c = string.characters[i];
+        if (c == 0 || c >= 0x7F)
+            return 0; // illegal character
+        buffer[i] = WTF::toASCIILower(c);
+    }
+    buffer[length] = '\0';
+
+    if (buffer[0] == '-') {
+        // If the prefix is -apple- or -khtml-, change it to -webkit-.
+        // This makes the string one character longer.
+        if (hasPrefix(buffer, length, "-apple-") || hasPrefix(buffer, length, "-khtml-")) {
+            memmove(buffer + 7, buffer + 6, length + 1 - 6);
+            memcpy(buffer, "-webkit", 7);
+            ++length;
+        }
+    }
+
+    const css_value* hashTableEntry = findValue(buffer, length);
+    return hashTableEntry ? hashTableEntry->id : 0;
 }
 
 #define YY_DECL int CSSParser::lex()

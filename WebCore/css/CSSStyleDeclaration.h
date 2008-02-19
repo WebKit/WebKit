@@ -1,8 +1,6 @@
 /*
- * This file is part of the DOM implementation for KDE.
- *
  * (C) 1999-2003 Lars Knoll (knoll@kde.org)
- * Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.
+ * Copyright (C) 2004, 2005, 2006, 2008 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -24,7 +22,7 @@
 #define CSSStyleDeclaration_h
 
 #include "StyleBase.h"
-#include <wtf/PassRefPtr.h>
+#include <wtf/Forward.h>
 
 namespace WebCore {
 
@@ -75,15 +73,7 @@ public:
 
 protected:
     CSSStyleDeclaration(CSSRule* parentRule = 0);
-
-private:
-    CSSStyleDeclaration(const CSSStyleDeclaration&);
-    CSSStyleDeclaration& operator=(const CSSStyleDeclaration&);
 };
-
-// Defined in CSSGrammar.y, but not in any header.
-// We have poor control over CSSGrammar.h generation, so just define it here for others to use.
-int getPropertyID(const char* str, int len);
 
 } // namespace WebCore
 

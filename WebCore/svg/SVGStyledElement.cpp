@@ -2,8 +2,6 @@
     Copyright (C) 2004, 2005, 2006, 2007, 2008 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005, 2007 Rob Buis <buis@kde.org>
 
-    This file is part of the KDE project
-
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
     License as published by the Free Software Foundation; either
@@ -21,11 +19,11 @@
 */
 
 #include "config.h"
-
 #if ENABLE(SVG)
 #include "SVGStyledElement.h"
 
 #include "Attr.h"
+#include "CSSParser.h"
 #include "CSSStyleSelector.h"
 #include "CString.h"
 #include "Document.h"
@@ -69,15 +67,9 @@ bool SVGStyledElement::rendererIsNeeded(RenderStyle* style)
     return false;
 }
 
-static inline void mapAttributeToCSSProperty(HashMap<AtomicStringImpl*, int>* propertyNameToIdMap, const QualifiedName& attrName, const char* cssPropertyName = 0)
+static void mapAttributeToCSSProperty(HashMap<AtomicStringImpl*, int>* propertyNameToIdMap, const QualifiedName& attrName)
 {
-    int propertyId = 0;
-    if (cssPropertyName)
-        propertyId = getPropertyID(cssPropertyName, strlen(cssPropertyName));
-    else {
-        CString propertyName = attrName.localName().domString().utf8();
-        propertyId = getPropertyID(propertyName.data(), propertyName.length());
-    }
+    int propertyId = cssPropertyID(attrName.localName());
     ASSERT(propertyId > 0);
     propertyNameToIdMap->set(attrName.localName().impl(), propertyId);
 }

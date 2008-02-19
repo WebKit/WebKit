@@ -799,11 +799,12 @@ double charactersToDouble(const UChar* data, size_t length, bool* ok)
         return 0.0;
     }
 
-    // FIXME: This should be made more efficient by using a fixed-sized stack buffer
-    // to avoid the allocation. 
+    Vector<char, 256> bytes(length + 1);
+    for (unsigned i = 0; i < length; ++i)
+        bytes[i] = data[i] < 0x7F ? data[i] : '?';
+    bytes[length] = '\0';
     char* end;
-    CString latin1String = Latin1Encoding().encode(data, length);
-    double val = kjs_strtod(latin1String.data(), &end);
+    double val = kjs_strtod(bytes.data(), &end);
     if (ok)
         *ok = (end == 0 || *end == '\0');
     return val;

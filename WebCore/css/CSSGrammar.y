@@ -1,9 +1,8 @@
 %{
 
 /*
- *  This file is part of the KDE libraries
  *  Copyright (C) 2002-2003 Lars Knoll (knoll@kde.org)
- *  Copyright (C) 2004, 2005, 2006, 2007 Apple Inc.
+ *  Copyright (C) 2004, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
  *  Copyright (C) 2006 Alexey Proskuryakov (ap@nypop.com)
  *
  *  This library is free software; you can redistribute it and/or
@@ -26,94 +25,23 @@
 
 #include "CSSMediaRule.h"
 #include "CSSParser.h"
-#include "CSSPrimitiveValue.h"
-#include "CSSRule.h"
 #include "CSSRuleList.h"
 #include "CSSSelector.h"
 #include "CSSStyleSheet.h"
 #include "Document.h"
 #include "HTMLNames.h"
 #include "MediaList.h"
-#include "MediaQuery.h"
-#include "MediaQueryExp.h"
-#include "PlatformString.h"
 #include <stdlib.h>
 #include <string.h>
 
 using namespace WebCore;
 using namespace HTMLNames;
 
-// The following file defines the function
-//     const struct props *findProp(const char *word, int len)
-//
-// with 'props->id' a CSS property in the range from CSS_PROP_MIN to
-// (and including) CSS_PROP_TOTAL-1
-
-#include "CSSPropertyNames.c"
-#include "CSSValueKeywords.c"
-
-namespace WebCore {
-
-int getPropertyID(const char* tagStr, int len)
-{
-    DeprecatedString prop;
-
-    if (len && tagStr[0] == '-') {
-        prop = DeprecatedString(tagStr, len);
-        if (prop.startsWith("-apple-")) {
-            prop = "-webkit-" + prop.mid(7);
-            tagStr = prop.ascii();
-            len++;
-        } else if (prop.startsWith("-khtml-")) {
-            prop = "-webkit-" + prop.mid(7);
-            len++;
-            tagStr = prop.ascii();
-        }
-
-        // Honor the use of old-style opacity (for Safari 1.1).
-        if (prop == "-webkit-opacity") {
-            const char * const opacity = "opacity";
-            tagStr = opacity;
-            len = strlen(opacity);
-        }
-    }
-
-    const struct props* propsPtr = findProp(tagStr, len);
-    if (!propsPtr)
-        return 0;
-
-    return propsPtr->id;
-}
-
-} // namespace WebCore
-
-static inline int getValueID(const char* tagStr, int len)
-{
-    DeprecatedString prop;
-    if (len && tagStr[0] == '-') {
-        prop = DeprecatedString(tagStr, len);
-        if (prop.startsWith("-apple-")) {
-            prop = "-webkit-" + prop.mid(7);
-            tagStr = prop.ascii();
-            len++;
-        } else if (prop.startsWith("-khtml-")) {
-            prop = "-webkit-" + prop.mid(7);
-            len++;
-            tagStr = prop.ascii();
-        }
-    }
-
-    const struct css_value* val = findValue(tagStr, len);
-    if (!val)
-        return 0;
-
-    return val->id;
-}
-
 #define YYENABLE_NLS 0
 #define YYLTYPE_IS_TRIVIAL 1
 #define YYMAXDEPTH 10000
 #define YYDEBUG 0
+
 // FIXME: Replace with %parse-param { CSSParser* parser } once we can depend on bison 2.x
 #define YYPARSE_PARAM parser
 
@@ -122,27 +50,23 @@ static inline int getValueID(const char* tagStr, int len)
 %pure_parser
 
 %union {
-    CSSRule* rule;
-    CSSSelector* selector;
-    bool ok;
-    MediaList *mediaList;
-    CSSMediaRule* mediaRule;
-    CSSRuleList* ruleList;
+    bool boolean;
+    char character;
+    int integer;
+    double number;
     ParseString string;
-    float val;
-    int prop_id;
-    int attribute;
+
+    CSSRule* rule;
+    CSSRuleList* ruleList;
+    CSSSelector* selector;
     CSSSelector::Relation relation;
-    bool b;
-    int i;
-    char tok;
+    MediaList* mediaList;
+    MediaQuery* mediaQuery;
+    MediaQuery::Restrictor mediaQueryRestrictor;
+    MediaQueryExp* mediaQueryExp;
     Value value;
     ValueList* valueList;
-
-    MediaQuery* mediaQuery;
-    MediaQueryExp* mediaQueryExp;
     Vector<MediaQueryExp*>* mediaQueryExpList;
-    MediaQuery::Restrictor mediaQueryRestrictor;
 }
 
 %{
@@ -152,7 +76,7 @@ static int cssyylex(YYSTYPE* yylval) { return CSSParser::current()->lex(yylval);
 
 %}
 
-//%expect 37
+%expect 41
 
 %left UNIMPORTANT_TOK
 
@@ -193,26 +117,26 @@ static int cssyylex(YYSTYPE* yylval) { return CSSParser::current()->lex(yylval);
 %token MEDIA_NOT
 %token MEDIA_AND
 
-%token <val> QEMS
-%token <val> EMS
-%token <val> EXS
-%token <val> PXS
-%token <val> CMS
-%token <val> MMS
-%token <val> INS
-%token <val> PTS
-%token <val> PCS
-%token <val> DEGS
-%token <val> RADS
-%token <val> GRADS
-%token <val> MSECS
-%token <val> SECS
-%token <val> HERZ
-%token <val> KHERZ
+%token <number> QEMS
+%token <number> EMS
+%token <number> EXS
+%token <number> PXS
+%token <number> CMS
+%token <number> MMS
+%token <number> INS
+%token <number> PTS
+%token <number> PCS
+%token <number> DEGS
+%token <number> RADS
+%token <number> GRADS
+%token <number> MSECS
+%token <number> SECS
+%token <number> HERZ
+%token <number> KHERZ
 %token <string> DIMEN
-%token <val> PERCENTAGE
-%token <val> FLOATTOKEN
-%token <val> INTEGER
+%token <number> PERCENTAGE
+%token <number> FLOATTOKEN
+%token <number> INTEGER
 
 %token <string> URI
 %token <string> FUNCTION
@@ -255,7 +179,7 @@ static int cssyylex(YYSTYPE* yylval) { return CSSParser::current()->lex(yylval);
 
 %type <ruleList> ruleset_list
 
-%type <prop_id> property
+%type <integer> property
 
 %type <selector> specifier
 %type <selector> specifier_list
@@ -267,15 +191,15 @@ static int cssyylex(YYSTYPE* yylval) { return CSSParser::current()->lex(yylval);
 %type <selector> attrib
 %type <selector> pseudo
 
-%type <ok> declaration_list
-%type <ok> decl_list
-%type <ok> declaration
+%type <boolean> declaration_list
+%type <boolean> decl_list
+%type <boolean> declaration
 
-%type <b> prio
+%type <boolean> prio
 
-%type <i> match
-%type <i> unary_operator
-%type <tok> operator
+%type <integer> match
+%type <integer> unary_operator
+%type <character> operator
 
 %type <valueList> expr
 %type <value> term
@@ -452,13 +376,13 @@ media_query_exp:
 
 media_query_exp_list:
     media_query_exp {
-      CSSParser* p = static_cast<CSSParser*>(parser);
-      $$ = p->createFloatingMediaQueryExpList();
-      $$->append(p->sinkFloatingMediaQueryExp($1));
+        CSSParser* p = static_cast<CSSParser*>(parser);
+        $$ = p->createFloatingMediaQueryExpList();
+        $$->append(p->sinkFloatingMediaQueryExp($1));
     }
     | media_query_exp_list media_query_exp {
-      $$ = $1;
-      $$->append(static_cast<CSSParser*>(parser)->sinkFloatingMediaQueryExp($2));
+        $$ = $1;
+        $$->append(static_cast<CSSParser*>(parser)->sinkFloatingMediaQueryExp($2));
     }
     ;
 
@@ -1069,11 +993,7 @@ declaration:
 
 property:
     IDENT maybe_space {
-        $1.lower();
-        DeprecatedString str = deprecatedString($1);
-        const char* s = str.ascii();
-        int l = str.length();
-        $$ = getPropertyID(s, l);
+        $$ = cssPropertyID($1);
     }
   ;
 
@@ -1124,8 +1044,7 @@ term:
   | unary_operator unary_term { $$ = $2; $$.fValue *= $1; }
   | STRING maybe_space { $$.id = 0; $$.string = $1; $$.unit = CSSPrimitiveValue::CSS_STRING; }
   | IDENT maybe_space {
-      DeprecatedString str = deprecatedString($1);
-      $$.id = getValueID(str.lower().latin1(), str.length());
+      $$.id = cssValueKeywordID($1);
       $$.unit = CSSPrimitiveValue::CSS_IDENT;
       $$.string = $1;
   }
@@ -1136,7 +1055,7 @@ term:
   | UNICODERANGE maybe_space { $$.id = 0; $$.string = $1; $$.unit = CSSPrimitiveValue::CSS_UNICODE_RANGE }
   | hexcolor { $$.id = 0; $$.string = $1; $$.unit = CSSPrimitiveValue::CSS_RGBCOLOR; }
   | '#' maybe_space { $$.id = 0; $$.string = ParseString(); $$.unit = CSSPrimitiveValue::CSS_RGBCOLOR; } /* Handle error case: "color: #;" */
-/* FIXME: according to the specs a function can have a unary_operator in front. I know no case where this makes sense */
+  /* FIXME: according to the specs a function can have a unary_operator in front. I know no case where this makes sense */
   | function {
       $$ = $1;
   }

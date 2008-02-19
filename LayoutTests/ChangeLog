@@ -1,3 +1,24 @@
+2008-02-18  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam.
+
+        - generate new results for the one test that was altered by the
+          double -> float -> double trip taken by numeric values in the
+          CSS parser
+
+        This test appears under three different names in three different
+        parts of our test suite.
+
+        * platform/mac/css1/box_properties/acid_test-expected.checksum: Updated.
+        * platform/mac/css1/box_properties/acid_test-expected.png: Ditto.
+        * platform/mac/css1/box_properties/acid_test-expected.txt: Ditto.
+        * platform/mac/css2.1/t09-c5526c-display-00-e-expected.checksum: Ditto.
+        * platform/mac/css2.1/t09-c5526c-display-00-e-expected.png: Ditto.
+        * platform/mac/css2.1/t09-c5526c-display-00-e-expected.txt: Ditto.
+        * platform/mac/fast/block/basic/011-expected.checksum: Ditto.
+        * platform/mac/fast/block/basic/011-expected.png: Ditto.
+        * platform/mac/fast/block/basic/011-expected.txt: Ditto.
+
 2008-02-18  Dan Bernstein  <mitz@apple.com>
 
         - test for <rdar://problem/5736225> crash in svgFontAndFaceElementForFontData on digitalstrom.org/cms

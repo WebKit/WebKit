@@ -1,3 +1,52 @@
+2008-02-18  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam.
+
+        - reduce use of DeprecatedString and memory allocations in processing of CSS
+        - remove unnecessary double -> float -> double trip in the CSS parser
+        - cleaned up names and structure in CSS grammar
+
+        * css/CSSGrammar.y: Remove getPropertyID and getValueID. Both are now in CSSParser.cpp
+        instead, and they now work on ParseString and String objects and don't require the caller
+        to put the string into a char*. Gave members of the %union more sensible names, removed
+        duplicates, and sorted into a logical order. Put the %expect back in, rather than leaving
+        it commented out.
+        * css/CSSParser.cpp:
+        (WebCore::equalIgnoringCase): Added.
+        (WebCore::hasPrefix): Added.
+        (WebCore::CSSParser::parseTransitionProperty): Changed to call the new cssPropertyID,
+        which obviates the need to call lower() and utf8() or to allocate memory at all. Also
+        used equalIgnoringCase rather than putting the value into a String just to compare it.
+        (WebCore::CSSParser::lex): Replaced convertASCIIToFloat with charactersToDouble. This change
+        along with the CSSGrammar.y change, removes the double -> float -> double round trip, and
+        affects the result of one layout test.
+        (WebCore::cssPropertyID): Added. Gets the property ID from the gperf hash table, but
+        without allocating any memory.
+        (WebCore::cssValueKeywordID): Ditto.
+        * css/CSSParser.h: Removed declaration for deprecatedString function (now used only in
+        CSSParser.cpp; soon to be deleted). Added cssPropertyID and cssValueKeywordID functions.
+
+        * css/CSSStyleDeclaration.cpp:
+        (WebCore::CSSStyleDeclaration::getPropertyCSSValue): Call cssPropertyID instead of propertyID.
+        (WebCore::CSSStyleDeclaration::getPropertyValue): Ditto.
+        (WebCore::CSSStyleDeclaration::getPropertyPriority): Ditto.
+        (WebCore::CSSStyleDeclaration::getPropertyShorthand): Ditto.
+        (WebCore::CSSStyleDeclaration::isPropertyImplicit): Ditto.
+        (WebCore::CSSStyleDeclaration::setProperty): Ditto.
+        (WebCore::CSSStyleDeclaration::removeProperty): Ditto.
+        (WebCore::CSSStyleDeclaration::isPropertyName): Ditto.
+        * css/CSSStyleDeclaration.h: Removed unnecessary includes, unnecessary Noncopyable boilerplate,
+        and the getPropertyID function declaration along with its associated apology comment.
+
+        * css/makevalues.pl: Generate constants instead of macros for CSS value numbers (but not an
+        enumeration, like properties, since you rarely have any reason to handle all values, but
+        often have a reason to handle all properties). Renamed the constant for the number of CSS
+        value keywords from CSS_VAL_TOTAL to numCSSValueKeywords, and added maxCSSValueKeywordLength.
+
+        * platform/text/String.cpp:
+        (WebCore::charactersToDouble): Made this function more efficient by using a stack buffer
+        rather than a CString.
+
 2008-02-18  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Dave Hyatt.
