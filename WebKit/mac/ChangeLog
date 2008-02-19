@@ -1,3 +1,26 @@
+2008-02-19  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Darin.
+
+        Move back WebKit methods that were unused in WebCore.
+        
+        * Misc/WebNSURLExtras.mm:
+        (+[NSURL _web_URLWithData:]):
+        (+[NSURL _web_URLWithData:relativeToURL:]):
+        (-[NSURL _web_originalData]):
+        (-[NSURL _web_originalDataAsString]):
+        (-[NSURL _web_isEmpty]):
+        (-[NSURL _webkit_canonicalize]):
+        (-[NSURL _webkit_URLByRemovingComponent:]):
+        (-[NSURL _webkit_URLByRemovingFragment]):
+        (-[NSURL _webkit_URLByRemovingResourceSpecifier]):
+        (-[NSURL _webkit_isFileURL]):
+        (-[NSString _webkit_isFileURL]):
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::setTitle):
+        * WebCoreSupport/WebSystemInterface.m:
+        (InitWebCoreSystemInterface):
+
 2008-02-18  Darin Adler  <darin@apple.com>
 
         Reviewed by Sam.

@@ -32,17 +32,6 @@
 extern "C" {
 #endif
 
-NSURL *urlByRemovingComponent(NSURL *url, CFURLComponentType component);
-NSURL *urlByRemovingFragment(NSURL *url);
-NSString *urlOriginalDataAsString(NSURL *url);
-NSData *urlOriginalData(NSURL *url);
-NSURL *urlWithData(NSData *data);
-NSURL *urlWithDataRelativeToURL(NSData *data, NSURL *baseURL);
-NSURL *urlByRemovingResourceSpecifier(NSURL *url);
-BOOL urlIsFileURL(NSURL *url);
-BOOL stringIsFileURL(NSString *urlString);
-BOOL urlIsEmpty(NSURL *url);
-NSURL *canonicalURL(NSURL *url);
 NSString *suggestedFilenameWithMIMEType(NSURL *url, NSString *MIMEType);
 
 #ifdef __cplusplus

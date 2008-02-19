@@ -77,7 +77,6 @@ void InitWebCoreSystemInterface(void)
     INIT(GetPreferredExtensionForMIMEType);
     INIT(GetWheelEventDeltas);
     INIT(InitializeGlyphVector);
-    INIT(NSURLProtocolClassForReqest);
     INIT(PathFromFont);
     INIT(PopupMenu);
     INIT(ReleaseStyleGroup);

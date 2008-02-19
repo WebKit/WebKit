@@ -91,5 +91,4 @@ void (*wkSetNSURLConnectionDefersCallbacks)(NSURLConnection *, BOOL);
 void (*wkSetNSURLRequestShouldContentSniff)(NSMutableURLRequest *, BOOL);
 id (*wkCreateNSURLConnectionDelegateProxy)(void);
 BOOL (*wkSupportsMultipartXMixedReplace)(NSMutableURLRequest *);
-Class (*wkNSURLProtocolClassForReqest)(NSURLRequest *);
 float (*wkSecondsSinceLastInputEvent)(void);

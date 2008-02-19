@@ -1,3 +1,22 @@
+2008-02-19  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Darin.
+
+        WARNING: NO TEST CASES ADDED OR CHANGED
+
+        * ChangeLog:
+        * WebCore.base.exp:
+        * loader/mac/LoaderNSURLExtras.h:
+        * loader/mac/LoaderNSURLExtras.m:
+        Move unused functions to WebKit (where they are used)
+        
+        (vectorContainsString):
+        Use const references.
+        
+        * platform/mac/WebCoreSystemInterface.h:
+        * platform/mac/WebCoreSystemInterface.mm:
+        Remove wkNSURLProtocolClassForReqest.
+        
 2008-02-19  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Darin Adler.

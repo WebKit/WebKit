@@ -944,7 +944,8 @@ PassRefPtr<DocumentLoader> WebFrameLoaderClient::createDocumentLoader(const Reso
 // Once that task is complete, this will go away
 void WebFrameLoaderClient::setTitle(const String& title, const KURL& URL)
 {
-    NSURL* nsURL = canonicalURL(URL);
+    NSURL* nsURL = URL;
+    nsURL = [nsURL _webkit_canonicalize];
     if(!nsURL)
         return;
     NSString *titleNSString = title;
