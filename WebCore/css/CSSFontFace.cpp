@@ -68,8 +68,7 @@ void CSSFontFace::addSource(CSSFontFaceSource* source)
 
 void CSSFontFace::fontLoaded(CSSFontFaceSource*)
 {
-    if (isLoaded())
-        return m_segmentedFontFace->fontLoaded(this);
+    m_segmentedFontFace->fontLoaded(this);
 }
 
 SimpleFontData* CSSFontFace::getFontData(const FontDescription& fontDescription, bool syntheticBold, bool syntheticItalic)

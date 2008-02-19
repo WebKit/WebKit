@@ -1,3 +1,16 @@
+2008-02-18  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        - fix <rdar://problem/5736225> crash in svgFontAndFaceElementForFontData on digitalstrom.org/cms
+
+        Test: fast/css/font-face-multiple-remote-sources.html
+
+        * css/CSSFontFace.cpp:
+        (WebCore::CSSFontFace::fontLoaded):
+        * css/CSSSegmentedFontFace.cpp:
+        (WebCore::CSSSegmentedFontFace::fontLoaded):
+
 2008-02-18  Darin Adler  <darin@apple.com>
 
         Reviewed by Sam.

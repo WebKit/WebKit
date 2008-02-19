@@ -80,8 +80,7 @@ bool CSSSegmentedFontFace::isValid() const
 void CSSSegmentedFontFace::fontLoaded(CSSFontFace*)
 {
     pruneTable();
-    if (isLoaded())
-        return m_fontSelector->fontLoaded(this);
+    m_fontSelector->fontLoaded(this);
 }
 
 void CSSSegmentedFontFace::overlayRange(UChar32 from, UChar32 to, PassRefPtr<CSSFontFace> fontFace)
