@@ -1,3 +1,15 @@
+2008-02-19  Darin Adler  <darin@apple.com>
+
+        Reviewed by Anders.
+
+        - next step for http://bugs.webkit.org/show_bug.cgi?id=17257
+          start ref counts at 1 instead of 0 for speed
+
+        * wtf/RefCounted.h:
+        (WTF::RefCounted::RefCounted): Have refcounts default to 1. This allows us to start
+        removing the explicit initialization of RefCounted from classes and eventually we
+        can remove the ability to have the initial count of 0 entirely.
+
 2008-02-18  Samuel Weinig  <sam@webkit.org>
 
         Reviewed by Geoff Garen.

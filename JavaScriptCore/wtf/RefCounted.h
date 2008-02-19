@@ -28,7 +28,7 @@ namespace WTF {
 
 template<class T> class RefCounted : Noncopyable {
 public:
-    RefCounted(int initialRefCount)
+    RefCounted(int initialRefCount = 1)
         : m_refCount(initialRefCount)
 #ifndef NDEBUG
         , m_deletionHasBegun(false)
