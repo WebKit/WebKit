@@ -33,8 +33,7 @@
 namespace KJS {
 
 inline RegExp::RegExp(const UString& pattern)
-  : RefCounted<RegExp>(1)
-  , m_pattern(pattern)
+  : m_pattern(pattern)
   , m_flagBits(0)
   , m_constructionError(0)
   , m_numSubpatterns(0)
@@ -49,8 +48,7 @@ PassRefPtr<RegExp> RegExp::create(const UString& pattern)
 }
 
 inline RegExp::RegExp(const UString& pattern, const UString& flags)
-  : RefCounted<RegExp>(1)
-  , m_pattern(pattern)
+  : m_pattern(pattern)
   , m_flags(flags)
   , m_flagBits(0)
   , m_constructionError(0)

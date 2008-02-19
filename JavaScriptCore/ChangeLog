@@ -1,5 +1,14 @@
 2008-02-19  Darin Adler  <darin@apple.com>
 
+        Rubber stamped by Anders.
+
+        - removed explicit initialization to 1 for RefCounted; that's now the default
+
+        * kjs/regexp.cpp:
+        (KJS::RegExp::RegExp): Removed RefCounted initializer.
+
+2008-02-19  Darin Adler  <darin@apple.com>
+
         Reviewed by Anders.
 
         - next step for http://bugs.webkit.org/show_bug.cgi?id=17257

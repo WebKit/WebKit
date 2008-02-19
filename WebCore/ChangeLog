@@ -1,3 +1,16 @@
+2008-02-19  Darin Adler  <darin@apple.com>
+
+        Rubber stamped by Anders.
+
+        - removed explicit initialization to 1 for RefCounted; that's now the default
+
+        * loader/ResourceLoader.cpp:
+        (WebCore::ResourceLoader::ResourceLoader): Removed RefCounted initializer.
+        * platform/network/ResourceHandle.cpp:
+        (WebCore::ResourceHandle::ResourceHandle): Ditto.
+        * platform/text/StringImpl.cpp:
+        (WebCore::StringImpl::StringImpl): Ditto.
+
 2008-02-18  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Darin.
