@@ -1,3 +1,17 @@
+2008-02-18  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Darin
+
+        Fix for <rdar://5747529> - ObjC Exception can cause JSLock to never be released
+
+        Test: platform/mac/plugins/webScriptObject-exception-deadlock.html
+
+        * bindings/objc/WebScriptObject.mm:
+        (-[WebScriptObject valueForKey:]): The line `resultObj = [super valueForKey:key];    // defaults to throwing an exception` 
+          says it all - it throws an exception.  This method also happens to hold the JSLock.  Problematically, when the exeception
+          is thrown and the method exited, the JSLock is never released.  Fix that without otherwise changing behavior by holding the 
+          JSLock in two individual scopes - Right before the exception and right after.  
+
 2008-02-18  Darin Adler  <darin@apple.com>
 
         Reviewed by Sam.

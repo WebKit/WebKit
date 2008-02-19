@@ -1,3 +1,13 @@
+2008-02-18  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Darin
+
+        Fix for <rdar://5747529> - ObjC Exception can cause JSLock to never be released
+
+        * platform/mac-tiger/Skipped: Removed 2 hanging tests that now don't hang
+        * platform/mac/plugins/webScriptObject-exception-deadlock-expected.txt: Added.
+        * platform/mac/plugins/webScriptObject-exception-deadlock.html: Added.
+
 2008-02-18  Darin Adler  <darin@apple.com>
 
         Reviewed by Sam.

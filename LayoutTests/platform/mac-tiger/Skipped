@@ -4,9 +4,5 @@ fast/cookies/local-file-can-set-cookies.html
 # For this test to work on Tiger we'd need a new Foundation
 http/tests/xmlhttprequest/small-chunks-response-text.html
 
-# Storage tests failing only on Tiger - <rdar://problem/5747529>
-storage/quota-tracking.html
-storage/success-callback.html
-
 # On Tiger, WebKit does not override the MIME type returned by NSHTTPURLResponse
 http/tests/loading/text-content-type-with-binary-extension.html

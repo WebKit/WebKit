@@ -382,19 +382,28 @@ static void getListFromNSArray(ExecState *exec, NSArray *array, RootObject* root
     ExecState* exec = [self _rootObject]->globalObject()->globalExec();
     ASSERT(!exec->hadException());
 
-    JSLock lock;
-    JSValue *result = [self _imp]->get(exec, String(key));
-    
-    if (exec->hadException()) {
-        LOG_EXCEPTION(exec);
-        result = jsUndefined();
-        exec->clearException();
-    }
+    id resultObj;
+    {
+        // Need to scope this lock to ensure that we release the lock before calling
+        // [super valueForKey:key] which might throw an exception and bypass the JSLock destructor,
+        // leaving the lock permanently held
+        JSLock lock;
+        
+        JSValue *result = [self _imp]->get(exec, String(key));
+        
+        if (exec->hadException()) {
+            LOG_EXCEPTION(exec);
+            result = jsUndefined();
+            exec->clearException();
+        }
 
-    id resultObj = [WebScriptObject _convertValueToObjcValue:result originRootObject:[self _originRootObject] rootObject:[self _rootObject]];
+        resultObj = [WebScriptObject _convertValueToObjcValue:result originRootObject:[self _originRootObject] rootObject:[self _rootObject]];
+    }
+    
     if ([resultObj isKindOfClass:[WebUndefined class]])
         resultObj = [super valueForKey:key];    // defaults to throwing an exception
 
+    JSLock lock;
     _didExecute(self);
     
     return resultObj;
