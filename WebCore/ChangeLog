@@ -1,3 +1,20 @@
+2008-02-19  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/5694920> Typing (esp. deleting) is slower due to TOT WebCore 
+        
+        These changes bring deleting performance back to old levels on the phone
+        except for deleting the first space to the right of a word, which we are
+        still working on.
+
+        * dom/Position.cpp:
+        (WebCore::Position::upstream): Avoid the use of enclosingBlock when determining
+        if we have left the original enclosing block or entered a new one, and avoid
+        rootEditableElement for determining if we have changed editability.  These
+        operations are expensive.
+        (WebCore::Position::downstream): Ditto.
+
 2008-02-19  Darin Adler  <darin@apple.com>
 
         Rubber stamped by Anders.

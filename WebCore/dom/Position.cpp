@@ -303,19 +303,20 @@ Position Position::upstream() const
         return Position();
     
     // iterate backward from there, looking for a qualified position
-    Node* block = enclosingBlock(startNode);
+    Node* originalBlock = enclosingBlock(startNode);
     PositionIterator lastVisible = *this;
     PositionIterator currentPos = lastVisible;
-    Node* originalRoot = node()->rootEditableElement();
+    bool startEditable = startNode->isContentEditable();
     for (; !currentPos.atStart(); currentPos.decrement()) {
         Node* currentNode = currentPos.node();
         
-        if (currentNode->rootEditableElement() != originalRoot)
+        bool currentEditable = currentNode->isContentEditable();
+        if (startEditable && !currentEditable || !startEditable && currentEditable)
             break;
 
         // Don't enter a new enclosing block flow or table element.  There is code below that
-        // terminates early if we're about to leave an enclosing block flow or table element.
-        if (block != enclosingBlock(currentNode))
+        // terminates early if we're about to leave a block.
+        if (isBlock(currentNode) && currentNode != originalBlock)
             return lastVisible;
 
         // skip position in unrendered or invisible node
@@ -328,8 +329,8 @@ Position Position::upstream() const
             lastVisible = currentPos;
         
         // Don't leave a block flow or table element.  We could rely on code above to terminate and 
-        // return lastVisible on the next iteration, but we terminate early.
-        if (currentNode == enclosingBlock(currentNode) && currentPos.atStartOfNode())
+        // return lastVisible on the next iteration, but we terminate early to avoid doing a nodeIndex() call.
+        if (isBlock(currentNode) && currentPos.atStartOfNode())
             return lastVisible;
 
         // Return position after tables and nodes which have content that can be ignored.
@@ -375,14 +376,15 @@ Position Position::downstream() const
         return Position();
 
     // iterate forward from there, looking for a qualified position
-    Node* block = enclosingBlock(startNode);
+    Node* originalBlock = enclosingBlock(startNode);
     PositionIterator lastVisible = *this;
     PositionIterator currentPos = lastVisible;
-    Node* originalRoot = node()->rootEditableElement();
+    bool startEditable = startNode->isContentEditable();
     for (; !currentPos.atEnd(); currentPos.increment()) {   
         Node* currentNode = currentPos.node();
         
-        if (currentNode->rootEditableElement() != originalRoot)
+        bool currentEditable = currentNode->isContentEditable();
+        if (startEditable && !currentEditable || !startEditable && currentEditable)
             break;
 
         // stop before going above the body, up into the head
@@ -390,8 +392,13 @@ Position Position::downstream() const
         if (currentNode->hasTagName(bodyTag) && currentPos.atEndOfNode())
             break;
             
-        // Do not enter a new enclosing block flow or table element, and don't leave the original one.
-        if (block != enclosingBlock(currentNode))
+        // Do not enter a new enclosing block.
+        if (isBlock(currentNode) && currentNode != originalBlock)
+            return lastVisible;
+        // Do not leave the original enclosing block.
+        // Note: The first position after the last one in the original block 
+        // will be [originalBlock->parentNode(), originalBlock->nodeIndex() + 1].
+        if (originalBlock && originalBlock->parentNode() == currentNode)
             return lastVisible;
 
         // skip position in unrendered or invisible node
