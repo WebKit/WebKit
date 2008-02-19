@@ -2,9 +2,6 @@
 
         Reviewed by Darin.
 
-        WARNING: NO TEST CASES ADDED OR CHANGED
-
-        * ChangeLog:
         * WebCore.base.exp:
         * loader/mac/LoaderNSURLExtras.h:
         * loader/mac/LoaderNSURLExtras.m:
