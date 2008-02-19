@@ -1,3 +1,12 @@
+2008-02-18  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Adam Roben in California.
+
+        - remove unnecessary and erroneous layoutTestController calls from a test
+
+        * fast/css/font-face-multiple-remote-sources.html:
+        * platform/mac/fast/css/font-face-multiple-remote-sources-expected.txt:
+
 2008-02-18  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Darin
