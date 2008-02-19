@@ -1,3 +1,27 @@
+2008-02-19  Alp Toker  <alp@atoker.com>
+
+        Reviewed by Mark Rowe.
+
+        http://bugs.webkit.org/show_bug.cgi?id=16863
+        [GTK] tab focusing doesn't work
+
+        GDK_MOD2_MASK doesn't always mean meta so we can't use it to identify
+        the meta key state.
+
+        Use GDK_META_MASK where available, otherwise do not support the meta
+        key. This matches the behaviour of other applications.
+
+        Also add a comment noting that the platform event constructors need to
+        be kept in sync (it's not obvious that there are multiple places that
+        check the key state).
+
+        * platform/gtk/KeyEventGtk.cpp:
+        (WebCore::PlatformKeyboardEvent::PlatformKeyboardEvent):
+        * platform/gtk/MouseEventGtk.cpp:
+        (WebCore::PlatformMouseEvent::PlatformMouseEvent):
+        * platform/gtk/WheelEventGtk.cpp:
+        (WebCore::PlatformWheelEvent::PlatformWheelEvent):
+
 2008-02-18  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Sam Weinig's white rhino tusk stamp

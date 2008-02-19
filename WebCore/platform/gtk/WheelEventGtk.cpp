@@ -29,9 +29,11 @@
 #include "PlatformWheelEvent.h"
 
 #include <gdk/gdk.h>
+#include <gtk/gtkversion.h>
 
 namespace WebCore {
 
+// Keep this in sync with the other platform event constructors
 PlatformWheelEvent::PlatformWheelEvent(GdkEventScroll* event)
 {
     static const float delta = 1;
@@ -61,7 +63,12 @@ PlatformWheelEvent::PlatformWheelEvent(GdkEventScroll* event)
     m_shiftKey = event->state & GDK_SHIFT_MASK;
     m_ctrlKey = event->state & GDK_CONTROL_MASK;
     m_altKey = event->state & GDK_MOD1_MASK;
-    m_metaKey = event->state & GDK_MOD2_MASK;
+#if GTK_CHECK_VERSION(2,10,0)
+    m_metaKey = event->state & GDK_META_MASK;
+#else
+    // GDK_MOD2_MASK doesn't always mean meta so we can't use it
+    m_metaKey = false;
+#endif
     m_isContinuous = false;
 }
 

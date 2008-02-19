@@ -37,6 +37,7 @@
 
 #include <gdk/gdk.h>
 #include <gdk/gdkkeysyms.h>
+#include <gtk/gtkversion.h>
 
 namespace WebCore {
 
@@ -485,6 +486,7 @@ static String singleCharacterString(guint val)
     return retVal;
 }
 
+// Keep this in sync with the other platform event constructors
 // TODO: m_gdkEventKey should be refcounted
 PlatformKeyboardEvent::PlatformKeyboardEvent(GdkEventKey* event)
     : m_type((event->type == GDK_KEY_RELEASE) ? KeyUp : KeyDown)
@@ -497,7 +499,12 @@ PlatformKeyboardEvent::PlatformKeyboardEvent(GdkEventKey* event)
     , m_shiftKey((event->state & GDK_SHIFT_MASK) || (event->keyval == GDK_3270_BackTab))
     , m_ctrlKey(event->state & GDK_CONTROL_MASK)
     , m_altKey(event->state & GDK_MOD1_MASK)
-    , m_metaKey(event->state & GDK_MOD2_MASK)
+#if GTK_CHECK_VERSION(2,10,0)
+    , m_metaKey(event->state & GDK_META_MASK)
+#else
+    // GDK_MOD2_MASK doesn't always mean meta so we can't use it
+    , m_metaKey(false)
+#endif
     , m_gdkEventKey(event)
 {
 }
