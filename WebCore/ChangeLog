@@ -1,6 +1,6 @@
 2008-02-18  Brady Eidson  <beidson@apple.com>
 
-        Reviewed by Sam Weinig's rubberstamp
+        Reviewed by Sam Weinig's white rhino tusk stamp
 
         SQLiteTransaction::stop() should also reset the transaction-in-progress flag in its parent SQLiteDatabase
 
