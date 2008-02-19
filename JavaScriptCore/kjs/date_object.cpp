@@ -1606,9 +1606,7 @@ JSValue* dateProtoFuncGetYear(ExecState* exec, JSObject* thisObj, const List&)
     GregorianDateTime t;
     msToGregorianDateTime(milli, utc, t);
 
-    // IE returns the full year even in getYear.
-    if (exec->dynamicGlobalObject()->compatMode() == IECompat)
-        return jsNumber(1900 + t.year);
+    // NOTE: IE returns the full year even in getYear.
     return jsNumber(t.year);
 }
 

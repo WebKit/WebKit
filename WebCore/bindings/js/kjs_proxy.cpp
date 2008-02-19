@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
+ *  Copyright (C) 2006, 2007, 2008 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -146,16 +146,6 @@ void KJSProxy::initScript()
     JSLock lock;
 
     m_globalObject = new JSDOMWindow(m_frame->domWindow());
-
-    // FIXME: We can get rid of this (and eliminate compatMode entirely).
-    String userAgent = m_frame->loader()->userAgent(m_frame->document() ? m_frame->document()->url() : KURL());
-    if (userAgent.find("Microsoft") >= 0 || userAgent.find("MSIE") >= 0)
-        m_globalObject->setCompatMode(IECompat);
-    else {
-        // If we find "Mozilla" but not "(compatible, ...)" we are a real Netscape
-        if (userAgent.find("Mozilla") >= 0 && userAgent.find("compatible") == -1)
-            m_globalObject->setCompatMode(NetscapeCompat);
-    }
 
     m_frame->loader()->dispatchWindowObjectAvailable();
 }

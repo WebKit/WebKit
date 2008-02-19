@@ -130,8 +130,6 @@ void JSGlobalObject::init()
     } else
         s_head = d()->next = d()->prev = this;
 
-    d()->compatMode = NativeMode;
-
     resetTimeoutCheck();
     d()->timeoutTime = 0;
     d()->timeoutCheckCount = 0;
