@@ -1,3 +1,15 @@
+2008-02-19  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Sam.
+
+        Fix for <rdar://problem/5729674> Seed: Crash in 
+        RenderButton::setStyle at http://www.dinorpg.com
+
+        Inputs should not honor first-letter.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::updateFirstLetter):
+
 2008-02-19  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.

@@ -4064,7 +4064,10 @@ void RenderBlock::updateFirstLetter()
     RenderObject* firstLetterBlock = this;
     bool hasPseudoStyle = false;
     while (true) {
-        hasPseudoStyle = firstLetterBlock->style()->hasPseudoStyle(RenderStyle::FIRST_LETTER);
+        // We only honor first-letter if the firstLetterBlock can have children in the DOM. This correctly 
+        // prevents form controls from honoring first-letter.
+        hasPseudoStyle = firstLetterBlock->style()->hasPseudoStyle(RenderStyle::FIRST_LETTER) 
+            && firstLetterBlock->canHaveChildren();
         if (hasPseudoStyle)
             break;
         RenderObject* parentBlock = firstLetterBlock->parent();
