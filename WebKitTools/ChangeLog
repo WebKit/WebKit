@@ -1,3 +1,13 @@
+2008-02-19  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Geoff
+
+        Fixed a bug in DRT --threaded mode
+
+        * DumpRenderTree/pthreads/JavaScriptThreadingPthreads.cpp:
+        (startJavaScriptThreads): Don't detach the newly created thread.  The later call to stopJavaScriptThreads() tries
+          to pthread_join() each thread that had been created, but you can't join a detached thread!
+
 2008-02-18  Brady Eidson  <beidson@apple.com>
 
         Changes by Geoff Garen, Reviewed by Darin

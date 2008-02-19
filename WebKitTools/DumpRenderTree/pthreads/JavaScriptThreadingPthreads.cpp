@@ -105,7 +105,6 @@ void startJavaScriptThreads()
     for (int i = 0; i < javaScriptThreadsCount; i++) {
         pthread_t pthread;
         pthread_create(&pthread, 0, &runJavaScriptThread, 0);
-        pthread_detach(pthread);
         javaScriptThreads()->add(pthread);
     }
 
