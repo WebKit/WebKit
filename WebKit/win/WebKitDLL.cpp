@@ -26,13 +26,13 @@
 #include "config.h"
 #include "WebKitDLL.h"
 
+#include "autoversion.h"
 #include "ForEachCoClass.h"
-#include "WebKit.h"
 #include "ProgIDMacros.h"
+#include "resource.h"
 #include "WebKit.h"
 #include "WebKitClassFactory.h"
 #include "WebScriptDebugServer.h"
-#include "resource.h"
 #pragma warning( push, 0 )
 #include <WebCore/COMPtr.h>
 #include <WebCore/IconDatabase.h>
@@ -172,10 +172,16 @@ STDAPI DllUnregisterServer(void)
     HKEY userClasses;
 
 #if __PRODUCTION__
-    UnRegisterTypeLib(LIBID_WebKit, 3, 0, 0, SYS_WIN32);
+    const GUID libID = LIBID_WebKit;
 #else
-    UnRegisterTypeLib(LIBID_OpenSourceWebKit, 3, 0, 0, SYS_WIN32);
+    const GUID libID = LIBID_OpenSourceWebKit;
 #endif
+
+    typedef HRESULT (WINAPI *UnRegisterTypeLibForUserPtr)(REFGUID, unsigned short, unsigned short, LCID, SYSKIND);
+    if (UnRegisterTypeLibForUserPtr unRegisterTypeLibForUser = reinterpret_cast<UnRegisterTypeLibForUserPtr>(GetProcAddress(GetModuleHandle(TEXT("oleaut32.dll")), "UnRegisterTypeLibForUser")))
+        unRegisterTypeLibForUser(libID, __BUILD_NUMBER_MAJOR__, __BUILD_NUMBER_MINOR__, 0, SYS_WIN32);
+    else
+        UnRegisterTypeLib(libID, __BUILD_NUMBER_MAJOR__, __BUILD_NUMBER_MINOR__, 0, SYS_WIN32);
 
     if (RegOpenKeyEx(HKEY_CURRENT_USER, TEXT("SOFTWARE\\CLASSES"), 0, KEY_WRITE, &userClasses) != ERROR_SUCCESS)
         userClasses = 0;
@@ -206,8 +212,13 @@ STDAPI DllRegisterServer(void)
     TCHAR szFileName[MAX_PATH];
     GetModuleFileName(gInstance, szFileName, MAX_PATH);
 
+    typedef HRESULT (WINAPI *RegisterTypeLibForUserPtr)(ITypeLib*, OLECHAR*, OLECHAR*);
     COMPtr<ITypeLib> typeLib;
-    LoadTypeLibEx(szFileName, REGKIND_REGISTER, &typeLib);
+    LoadTypeLibEx(szFileName, REGKIND_NONE, &typeLib);
+    if (RegisterTypeLibForUserPtr registerTypeLibForUser = reinterpret_cast<RegisterTypeLibForUserPtr>(GetProcAddress(GetModuleHandle(TEXT("oleaut32.dll")), "RegisterTypeLibForUser")))
+        registerTypeLibForUser(typeLib.get(), szFileName, 0);
+    else
+        RegisterTypeLib(typeLib.get(), szFileName, 0);
 
     HKEY userClasses;
     if (RegOpenKeyEx(HKEY_CURRENT_USER, TEXT("SOFTWARE\\CLASSES"), 0, KEY_WRITE, &userClasses) != ERROR_SUCCESS)

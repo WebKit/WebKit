@@ -1,3 +1,17 @@
+2008-02-18  Steve Falkenburg  <sfalken@apple.com>
+
+        Make Drosera work on Vista.
+        
+        Runtime type library registration on Vista requires use of two new call:
+        RegisterTypeLibraryForUser and UnRegisterTypeLibraryForUser, which write to
+        HKCU.  LoadTypeLib[Ex] registers under HKLM, which fails under vista due to UAC.
+        
+        Reviewed by Adam.
+
+        * WebKitDLL.cpp:
+        (DllUnregisterServer): Call UnRegisterTypeLibraryForUser if available. Fix version number.
+        (DllRegisterServer): Call RegisterTypeLibraryForUser if available.
+
 2008-02-18  Matt Lilek  <webkit@mattlilek.com>
 
         Reviewed by Adam.
