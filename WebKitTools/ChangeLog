@@ -1,3 +1,11 @@
+2008-02-18  Matt Lilek  <webkit@mattlilek.com>
+
+        Reviewed by Adam.
+
+        Remove FindSafari's Release configuration.
+
+        * FindSafari/FindSafari.vcproj:
+
 2008-02-15  Adam Roben  <aroben@apple.com>
 
         Fix a typo that broke the Mac build

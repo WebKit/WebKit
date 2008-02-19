@@ -1,3 +1,11 @@
+2008-02-18  Matt Lilek  <webkit@mattlilek.com>
+
+        Reviewed by Adam.
+
+        Remove FindSafari's Release configuration.
+
+        * WebKit.vcproj/WebKit.sln:
+
 2008-02-16  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin.
