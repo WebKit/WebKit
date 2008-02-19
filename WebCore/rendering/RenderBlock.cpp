@@ -3652,14 +3652,7 @@ void RenderBlock::calcInlinePrefWidths()
                     inlineMax += childMax;
                     
                     child->setPrefWidthsDirty(false);
-
-                    if (static_cast<RenderFlow*>(child)->isWordBreak()) {
-                        // End a line and start a new line.
-                        m_minPrefWidth = max(inlineMin, m_minPrefWidth);
-                        inlineMin = 0;
-                    }
-                }
-                else {
+                } else {
                     // Inline replaced elts add in their margins to their min/max values.
                     int margins = 0;
                     Length leftMargin = cstyle->marginLeft();
@@ -3688,7 +3681,7 @@ void RenderBlock::calcInlinePrefWidths()
                     prevFloat = child;
                 } else
                     clearPreviousFloat = false;
-                
+
                 bool canBreakReplacedElement = !child->isImage() || allowImagesToBreak;
                 if (canBreakReplacedElement && (autoWrap || oldAutoWrap) || clearPreviousFloat) {
                     m_minPrefWidth = max(inlineMin, m_minPrefWidth);
@@ -3700,7 +3693,7 @@ void RenderBlock::calcInlinePrefWidths()
                     m_maxPrefWidth = max(inlineMax, m_maxPrefWidth);
                     inlineMax = 0;
                 }
-                
+
                 // Add in text-indent.  This is added in only once.
                 int ti = 0;
                 if (!addedTextIndent) {
@@ -3709,7 +3702,7 @@ void RenderBlock::calcInlinePrefWidths()
                     childMin+=ti;
                     childMax+=ti;
                 }
-                
+
                 // Add our width to the max.
                 inlineMax += childMax;
 
@@ -3732,11 +3725,15 @@ void RenderBlock::calcInlinePrefWidths()
                     stripFrontSpaces = false;
                     trailingSpaceChild = 0;
                 }
-            }
-            else if (child->isText())
-            {
+            } else if (child->isText()) {
                 // Case (3). Text.
                 RenderText* t = static_cast<RenderText *>(child);
+
+                if (t->isWordBreak()) {
+                    m_minPrefWidth = max(inlineMin, m_minPrefWidth);
+                    inlineMin = 0;
+                    continue;
+                }
 
                 // Determine if we have a breakable character.  Pass in
                 // whether or not we should ignore any spaces at the front
@@ -3779,8 +3776,7 @@ void RenderBlock::calcInlinePrefWidths()
                 // min and max and continue.
                 if (!hasBreakableChar) {
                     inlineMin += childMin;
-                }
-                else {
+                } else {
                     // We have a breakable character.  Now we need to know if
                     // we start and end with whitespace.
                     if (beginWS)
@@ -3810,8 +3806,7 @@ void RenderBlock::calcInlinePrefWidths()
                     m_maxPrefWidth = max(inlineMax, m_maxPrefWidth);
                     m_maxPrefWidth = max(childMax, m_maxPrefWidth);
                     inlineMax = endMax;
-                }
-                else
+                } else
                     inlineMax += childMax;
             }
         } else {
@@ -3829,7 +3824,7 @@ void RenderBlock::calcInlinePrefWidths()
 
     if (style()->collapseWhiteSpace())
         stripTrailingSpace(inlineMax, inlineMin, trailingSpaceChild);
-    
+
     m_minPrefWidth = max(inlineMin, m_minPrefWidth);
     m_maxPrefWidth = max(inlineMax, m_maxPrefWidth);
 }

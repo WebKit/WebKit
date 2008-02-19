@@ -1506,12 +1506,6 @@ BidiIterator RenderBlock::findNextLineBreak(BidiIterator &start, BidiState &bidi
                 }
             }
 
-            if (static_cast<RenderFlow*>(o)->isWordBreak()) {
-                w += tmpW;
-                tmpW = 0;
-                lBreak.obj = o;
-                lBreak.pos = 0;
-            }
             tmpW += o->marginLeft() + o->borderLeft() + o->paddingLeft() +
                     o->marginRight() + o->borderRight() + o->paddingRight();
         } else if (o->isReplaced()) {
@@ -1547,6 +1541,7 @@ BidiIterator RenderBlock::findNextLineBreak(BidiIterator &start, BidiState &bidi
                 tmpW += o->width() + o->marginLeft() + o->marginRight() + inlineWidth(o);
         } else if (o->isText()) {
             RenderText* t = static_cast<RenderText*>(o);
+
             int strlen = t->textLength();
             int len = strlen - pos;
             const UChar* str = t->characters();
@@ -1568,6 +1563,14 @@ BidiIterator RenderBlock::findNextLineBreak(BidiIterator &start, BidiState &bidi
             bool breakWords = o->style()->breakWords() && ((autoWrap && !w) || currWS == PRE);
             bool midWordBreak = false;
             bool breakAll = o->style()->wordBreak() == BreakAllWordBreak && autoWrap;
+
+            if (t->isWordBreak()) {
+                w += tmpW;
+                tmpW = 0;
+                lBreak.obj = o;
+                lBreak.pos = 0;
+                ASSERT(!len);
+            }
 
             while (len) {
                 bool previousCharacterIsSpace = currentCharacterIsSpace;
@@ -1799,7 +1802,7 @@ BidiIterator RenderBlock::findNextLineBreak(BidiIterator &start, BidiState &bidi
                 len--;
                 atStart = false;
             }
-            
+
             // IMPORTANT: pos is > length here!
             if (!ignoringSpaces)
                 tmpW += t->width(lastSpace, pos - lastSpace, f, w+tmpW) + lastSpaceWordSpacing;
@@ -1818,14 +1821,15 @@ BidiIterator RenderBlock::findNextLineBreak(BidiIterator &start, BidiState &bidi
                 else {
                     checkForBreak = false;
                     RenderText* nextText = static_cast<RenderText*>(next);
-                    if (nextText->textLength() != 0) {
+                    if (nextText->textLength()) {
                         UChar c = nextText->characters()[0];
                         if (c == ' ' || c == '\t' || (c == '\n' && !shouldPreserveNewline(next)))
                             // If the next item on the line is text, and if we did not end with
                             // a space, then the next text run continues our word (and so it needs to
                             // keep adding to |tmpW|.  Just update and continue.
                             checkForBreak = true;
-                    }
+                    } else if (nextText->isWordBreak())
+                        checkForBreak = true;
                     bool willFitOnLine = (w + tmpW <= width);
                     bool canPlaceOnLine = willFitOnLine || !autoWrapWasEverTrueOnLine;
                     if (canPlaceOnLine && checkForBreak) {

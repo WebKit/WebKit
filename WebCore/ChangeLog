@@ -1,3 +1,28 @@
+2008-02-19  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        - fix <rdar://problem/5637569> CrashTracer: [REGRESSION] 620 crashes in Safari at com.apple.WebCore: WebCore::RenderBox::setStaticY + 15
+
+        Test: fast/text/wbr-styled.html
+
+        Changed RenderWordBreak to inherit from RenderText instead of
+        RenderInline.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::calcInlinePrefWidths):
+        * rendering/RenderFlow.h:
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::renderName):
+        (WebCore::RenderText::isTextFragment):
+        (WebCore::RenderText::isWordBreak):
+        * rendering/RenderText.h:
+        * rendering/RenderWordBreak.cpp:
+        (WebCore::RenderWordBreak::RenderWordBreak):
+        * rendering/RenderWordBreak.h:
+        * rendering/bidi.cpp:
+        (WebCore::RenderBlock::findNextLineBreak):
+
 2008-02-19  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Darin.

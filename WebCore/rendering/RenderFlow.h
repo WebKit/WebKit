@@ -102,8 +102,6 @@ public:
 
     virtual bool hasColumns() const { return m_hasColumns; }
 
-    virtual bool isWordBreak() const { ASSERT(isInlineFlow()); return false; }
-
     void checkConsistency() const;
 
 private:

@@ -6,7 +6,7 @@ layer at (0,0) size 800x600
       RenderBlock {PRE} at (0,0) size 784x45
         RenderText {#text} at (0,0) size 184x15
           text run at (0,0) width 184: "[ONE] This is the first"
-        RenderWordBreak {WBR} at (0,0) size 0x15
+        RenderWordBreak {WBR} at (0,0) size 0x0
         RenderText {#text} at (184,0) size 568x45
           text run at (184,0) width 48: " line."
           text run at (232,0) width 0: " "

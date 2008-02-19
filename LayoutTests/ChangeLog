@@ -1,3 +1,16 @@
+2008-02-19  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        - test for <rdar://problem/5637569> CrashTracer: [REGRESSION] 620 crashes in Safari at com.apple.WebCore: WebCore::RenderBox::setStaticY + 15
+
+        * fast/text/wbr-styled.html: Added.
+        * platform/mac-leopard/fast/text/wbr-styled-expected.checksum: Added.
+        * platform/mac-leopard/fast/text/wbr-styled-expected.png: Added.
+        * platform/mac/fast/css-generated-content/wbr-with-before-content-expected.txt:
+        * platform/mac/fast/text/wbr-pre-expected.txt:
+        * platform/mac/fast/text/wbr-styled-expected.txt: Added.
+
 2008-02-18  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Adam Roben in California.

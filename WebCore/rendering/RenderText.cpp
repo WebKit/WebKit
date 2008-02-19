@@ -76,6 +76,21 @@ RenderText::~RenderText()
 
 #endif
 
+const char* RenderText::renderName() const
+{
+    return "RenderText";
+}
+
+bool RenderText::isTextFragment() const
+{
+    return false;
+}
+
+bool RenderText::isWordBreak() const
+{
+    return false;
+}
+
 void RenderText::setStyle(RenderStyle* newStyle)
 {
     RenderStyle* oldStyle = style();
