@@ -1,3 +1,10 @@
+2008-02-18  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam.
+
+        * Api/qwebnetworkinterface.cpp:
+        (QWebNetworkRequestPrivate::init): Removed use of DeprecatedString.
+
 2008-01-24  David Boddie  <dboddie@trolltech.com>
 
         Reviewed by Simon.
