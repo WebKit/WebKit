@@ -204,8 +204,8 @@ static NSFileWrapper *fileWrapperForElement(Element* e)
                     pendingStyledSpace = nil;
                     hasNewLine = false;
                 }
-                DeprecatedString text;
-                DeprecatedString str = currentNode->nodeValue().deprecatedString();
+                String text;
+                String str = currentNode->nodeValue();
                 int start = (currentNode == firstNode) ? startOffset : -1;
                 int end = (currentNode == endNode) ? endOffset : -1;
                 if (renderer->isText()) {
@@ -217,17 +217,17 @@ static NSFileWrapper *fileWrapperForElement(Element* e)
                         }
                         int runStart = (start == -1) ? 0 : start;
                         int runEnd = (end == -1) ? str.length() : end;
-                        text += str.mid(runStart, runEnd-runStart);
+                        text += str.substring(runStart, runEnd-runStart);
                         [pendingStyledSpace release];
                         pendingStyledSpace = nil;
-                        addedSpace = u_charDirection(str[runEnd - 1].unicode()) == U_WHITE_SPACE_NEUTRAL;
+                        addedSpace = u_charDirection(str.characters()[runEnd - 1]) == U_WHITE_SPACE_NEUTRAL;
                     }
                     else {
                         RenderText* textObj = static_cast<RenderText*>(renderer);
                         if (!textObj->firstTextBox() && str.length() > 0 && !addedSpace) {
                             // We have no runs, but we do have a length.  This means we must be
                             // whitespace that collapsed away at the end of a line.
-                            text += ' ';
+                            text.append(' ');
                             addedSpace = true;
                         }
                         else {
@@ -247,16 +247,16 @@ static NSFileWrapper *fileWrapperForElement(Element* e)
                                                 ++linkStartLocation;
                                             [result appendAttributedString:pendingStyledSpace];
                                         } else
-                                            text += ' ';
+                                            text.append(' ');
                                     }
-                                    DeprecatedString runText = str.mid(runStart, runEnd - runStart);
+                                    String runText = str.substring(runStart, runEnd - runStart);
                                     runText.replace('\n', ' ');
                                     text += runText;
                                     int nextRunStart = box->nextTextBox() ? box->nextTextBox()->m_start : str.length(); // collapsed space between runs or at the end
                                     needSpace = nextRunStart > runEnd;
                                     [pendingStyledSpace release];
                                     pendingStyledSpace = nil;
-                                    addedSpace = u_charDirection(str[runEnd - 1].unicode()) == U_WHITE_SPACE_NEUTRAL;
+                                    addedSpace = u_charDirection(str.characters()[runEnd - 1]) == U_WHITE_SPACE_NEUTRAL;
                                     start = -1;
                                 }
                                 if (end != -1 && runEnd >= end)
@@ -278,7 +278,7 @@ static NSFileWrapper *fileWrapperForElement(Element* e)
 
                     if (text.length() > 0) {
                         hasParagraphBreak = false;
-                        NSAttributedString *partialString = [[NSAttributedString alloc] initWithString:text.getNSString() attributes:attrs];
+                        NSAttributedString *partialString = [[NSAttributedString alloc] initWithString:text attributes:attrs];
                         [result appendAttributedString: partialString];                
                         [partialString release];
                     }
@@ -292,7 +292,7 @@ static NSFileWrapper *fileWrapperForElement(Element* e)
                 }
             } else {
                 // This is our simple HTML -> ASCII transformation:
-                DeprecatedString text;
+                String text;
                 if (currentNode->hasTagName(aTag)) {
                     // Note the start of the <a> element.  We will add the NSLinkAttributeName
                     // attribute to the attributed string when navigating to the next sibling 
@@ -300,14 +300,14 @@ static NSFileWrapper *fileWrapperForElement(Element* e)
                     linkStartLocation = [result length];
                     linkStartNode = static_cast<Element*>(currentNode);
                 } else if (currentNode->hasTagName(brTag)) {
-                    text += "\n";
+                    text.append('\n');
                     hasNewLine = true;
                 } else if (currentNode->hasTagName(liTag)) {
-                    DeprecatedString listText;
+                    String listText;
                     Element *itemParent = listParent(static_cast<Element*>(currentNode));
                     
                     if (!hasNewLine)
-                        listText += '\n';
+                        listText.append('\n');
                     hasNewLine = true;
 
                     listItems.append(static_cast<Element*>(currentNode));
@@ -315,7 +315,7 @@ static NSFileWrapper *fileWrapperForElement(Element* e)
                     info.end = 0;
                     listItemLocations.append (info);
                     
-                    listText += '\t';
+                    listText.append('\t');
                     if (itemParent && renderer->isListItem()) {
                         RenderListItem* listRenderer = static_cast<RenderListItem*>(renderer);
 
@@ -323,15 +323,15 @@ static NSFileWrapper *fileWrapperForElement(Element* e)
 
                         String marker = listRenderer->markerText();
                         if (!marker.isEmpty()) {
-                            listText += marker.deprecatedString();
+                            listText.append(marker);
                             // Use AppKit metrics, since this will be rendered by AppKit.
                             NSString *markerNSString = marker;
                             float markerWidth = [markerNSString sizeWithAttributes:[NSDictionary dictionaryWithObject:font forKey:NSFontAttributeName]].width;
                             maxMarkerWidth = MAX(markerWidth, maxMarkerWidth);
                         }
 
-                        listText += ' ';
-                        listText += '\t';
+                        listText.append(' ');
+                        listText.append('\t');
 
                         NSMutableDictionary *attrs = [[NSMutableDictionary alloc] init];
                         [attrs setObject:font forKey:NSFontAttributeName];
@@ -340,14 +340,14 @@ static NSFileWrapper *fileWrapperForElement(Element* e)
                         if (style && style->backgroundColor().isValid())
                             [attrs setObject:nsColor(style->backgroundColor()) forKey:NSBackgroundColorAttributeName];
 
-                        NSAttributedString *partialString = [[NSAttributedString alloc] initWithString:listText.getNSString() attributes:attrs];
+                        NSAttributedString *partialString = [[NSAttributedString alloc] initWithString:listText attributes:attrs];
                         [attrs release];
                         [result appendAttributedString: partialString];                
                         [partialString release];
                     }
                 } else if (currentNode->hasTagName(olTag) || currentNode->hasTagName(ulTag)) {
                     if (!hasNewLine)
-                        text += "\n";
+                        text.append('\n');
                     hasNewLine = true;
                 } else if (currentNode->hasTagName(blockquoteTag)
                         || currentNode->hasTagName(ddTag)
@@ -360,7 +360,7 @@ static NSFileWrapper *fileWrapperForElement(Element* e)
                         || currentNode->hasTagName(tdTag)
                         || currentNode->hasTagName(thTag)) {
                     if (!hasNewLine)
-                        text += '\n';
+                        text.append('\n');
                     hasNewLine = true;
                 } else if (currentNode->hasTagName(h1Tag)
                         || currentNode->hasTagName(h2Tag)
@@ -371,21 +371,20 @@ static NSFileWrapper *fileWrapperForElement(Element* e)
                         || currentNode->hasTagName(pTag)
                         || currentNode->hasTagName(trTag)) {
                     if (!hasNewLine)
-                        text += '\n';
+                        text.append('\n');
                     
                     // In certain cases, emit a paragraph break.
                     int bottomMargin = renderer->collapsedMarginBottom();
                     int fontSize = style->fontDescription().computedPixelSize();
                     if (bottomMargin * 2 >= fontSize) {
                         if (!hasParagraphBreak) {
-                            text += '\n';
+                            text.append('\n');
                             hasParagraphBreak = true;
                         }
                     }
                     
                     hasNewLine = true;
-                }
-                else if (currentNode->hasTagName(imgTag)) {
+                } else if (currentNode->hasTagName(imgTag)) {
                     if (pendingStyledSpace != nil) {
                         if (linkStartLocation == [result length])
                             ++linkStartLocation;
@@ -400,18 +399,18 @@ static NSFileWrapper *fileWrapperForElement(Element* e)
                     [attachment release];
                 }
 
-                NSAttributedString *partialString = [[NSAttributedString alloc] initWithString:text.getNSString()];
+                NSAttributedString *partialString = [[NSAttributedString alloc] initWithString:text];
                 [result appendAttributedString: partialString];
                 [partialString release];
             }
         }
 
-        Node *nextNode = currentNode->firstChild();
+        Node* nextNode = currentNode->firstChild();
         if (!nextNode)
             nextNode = currentNode->nextSibling();
 
         while (!nextNode && currentNode->parentNode()) {
-            DeprecatedString text;
+            String text;
             currentNode = currentNode->parentNode();
             if (currentNode == pastEndNode)
                 break;
@@ -427,10 +426,9 @@ static NSFileWrapper *fileWrapperForElement(Element* e)
                     [result addAttribute:NSLinkAttributeName value:URL range:tempRange];
                     linkStartNode = 0;
                 }
-            }
-            else if (currentNode->hasTagName(olTag) || currentNode->hasTagName(ulTag)) {
+            } else if (currentNode->hasTagName(olTag) || currentNode->hasTagName(ulTag)) {
                 if (!hasNewLine)
-                    text += '\n';
+                    text.append('\n');
                 hasNewLine = true;
             } else if (currentNode->hasTagName(liTag)) {
                 
@@ -442,7 +440,7 @@ static NSFileWrapper *fileWrapperForElement(Element* e)
                     }
                 }
                 if (!hasNewLine)
-                    text += '\n';
+                    text.append('\n');
                 hasNewLine = true;
             } else if (currentNode->hasTagName(blockquoteTag) ||
                        currentNode->hasTagName(ddTag) ||
@@ -455,7 +453,7 @@ static NSFileWrapper *fileWrapperForElement(Element* e)
                        currentNode->hasTagName(tdTag) ||
                        currentNode->hasTagName(thTag)) {
                 if (!hasNewLine)
-                    text += '\n';
+                    text.append('\n');
                 hasNewLine = true;
             } else if (currentNode->hasTagName(pTag) ||
                        currentNode->hasTagName(trTag) ||
@@ -466,13 +464,13 @@ static NSFileWrapper *fileWrapperForElement(Element* e)
                        currentNode->hasTagName(h5Tag) ||
                        currentNode->hasTagName(h6Tag)) {
                 if (!hasNewLine)
-                    text += '\n';
+                    text.append('\n');
                 // An extra newline is needed at the start, not the end, of these types of tags,
                 // so don't add another here.
                 hasNewLine = true;
             }
             
-            NSAttributedString *partialString = [[NSAttributedString alloc] initWithString:text.getNSString()];
+            NSAttributedString *partialString = [[NSAttributedString alloc] initWithString:text];
             [result appendAttributedString:partialString];
             [partialString release];
         }

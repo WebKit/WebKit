@@ -1,3 +1,11 @@
+2008-02-18  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam.
+
+        * Misc/WebNSAttributedStringExtras.mm:
+        (+[NSAttributedString _web_attributedStringFromRange:]): Eliminate use of
+        DeprecatedString.
+
 2008-02-17  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Dan Bernstein.
