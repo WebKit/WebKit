@@ -57,8 +57,8 @@ struct StaticFunctionEntry {
 };
 
 struct OpaqueJSClass : public RefCounted<OpaqueJSClass> {
-    static OpaqueJSClass* create(const JSClassDefinition*);
-    static OpaqueJSClass* createNoAutomaticPrototype(const JSClassDefinition*);
+    static PassRefPtr<OpaqueJSClass> create(const JSClassDefinition*);
+    static PassRefPtr<OpaqueJSClass> createNoAutomaticPrototype(const JSClassDefinition*);
     ~OpaqueJSClass();
     
     KJS::JSObject* prototype(JSContextRef ctx);

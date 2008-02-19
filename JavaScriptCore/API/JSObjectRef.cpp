@@ -49,11 +49,11 @@ using namespace KJS;
 JSClassRef JSClassCreate(const JSClassDefinition* definition)
 {
     JSLock lock;
-    JSClassRef jsClass = (definition->attributes & kJSClassAttributeNoAutomaticPrototype)
+    RefPtr<OpaqueJSClass> jsClass = (definition->attributes & kJSClassAttributeNoAutomaticPrototype)
         ? OpaqueJSClass::createNoAutomaticPrototype(definition)
         : OpaqueJSClass::create(definition);
     
-    return JSClassRetain(jsClass);
+    return jsClass.release().releaseRef();
 }
 
 JSClassRef JSClassRetain(JSClassRef jsClass)

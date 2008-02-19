@@ -1,3 +1,20 @@
+2008-02-19  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Darin.
+
+        Change OpaqueJSClass and RootObject to start with a ref count of 1.
+        
+        * API/JSClassRef.cpp:
+        (OpaqueJSClass::OpaqueJSClass):
+        (OpaqueJSClass::createNoAutomaticPrototype):
+        (OpaqueJSClass::create):
+        * API/JSClassRef.h:
+        * API/JSObjectRef.cpp:
+        (JSClassCreate):
+        * bindings/runtime_root.cpp:
+        (KJS::Bindings::RootObject::create):
+        (KJS::Bindings::RootObject::RootObject):
+
 2008-02-19  Darin Adler  <darin@apple.com>
 
         Rubber stamped by Anders.
