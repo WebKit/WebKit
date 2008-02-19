@@ -1,5 +1,14 @@
 2008-02-18  Brady Eidson  <beidson@apple.com>
 
+        Reviewed by Sam Weinig's rubberstamp
+
+        SQLiteTransaction::stop() should also reset the transaction-in-progress flag in its parent SQLiteDatabase
+
+        * platform/sql/SQLiteTransaction.cpp:
+        (WebCore::SQLiteTransaction::stop):
+
+2008-02-18  Brady Eidson  <beidson@apple.com>
+
         Reviewed by Darin
 
         Fix for <rdar://5747529> - ObjC Exception can cause JSLock to never be released
