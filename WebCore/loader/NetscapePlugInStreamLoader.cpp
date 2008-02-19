@@ -46,7 +46,7 @@ NetscapePlugInStreamLoader::~NetscapePlugInStreamLoader()
 
 PassRefPtr<NetscapePlugInStreamLoader> NetscapePlugInStreamLoader::create(Frame* frame, NetscapePlugInStreamLoaderClient* client)
 {
-    return new NetscapePlugInStreamLoader(frame, client);
+    return adoptRef(new NetscapePlugInStreamLoader(frame, client));
 }
 
 bool NetscapePlugInStreamLoader::isDone() const

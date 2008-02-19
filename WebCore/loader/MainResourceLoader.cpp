@@ -55,7 +55,7 @@ MainResourceLoader::~MainResourceLoader()
 
 PassRefPtr<MainResourceLoader> MainResourceLoader::create(Frame* frame)
 {
-    return new MainResourceLoader(frame);
+    return adoptRef(new MainResourceLoader(frame));
 }
 
 void MainResourceLoader::receivedError(const ResourceError& error)

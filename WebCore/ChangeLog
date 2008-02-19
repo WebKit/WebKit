@@ -1,3 +1,21 @@
+2008-02-18  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Darin.
+
+        Make ResourceLoader and ResourceHandle start out with a refcount of 1.
+
+        * loader/MainResourceLoader.cpp:
+        (WebCore::MainResourceLoader::create):
+        * loader/NetscapePlugInStreamLoader.cpp:
+        (WebCore::NetscapePlugInStreamLoader::create):
+        * loader/ResourceLoader.cpp:
+        (WebCore::ResourceLoader::ResourceLoader):
+        * loader/SubresourceLoader.cpp:
+        (WebCore::SubresourceLoader::create):
+        * platform/network/ResourceHandle.cpp:
+        (WebCore::ResourceHandle::ResourceHandle):
+        (WebCore::ResourceHandle::create):
+
 2008-02-19  Alp Toker  <alp@atoker.com>
 
         Reviewed by Mark Rowe.
