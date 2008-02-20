@@ -295,6 +295,16 @@ static bool isStreamer(const PositionIterator& pos)
     return pos.atStartOfNode();
 }
 
+// enclosingBlock does some expensive editability checks, upstream and downstream
+// can avoid those because they do their own editability checking.
+static Node* enclosingBlockIgnoringEditability(Node* node)
+{
+    while (node && !isBlock(node))
+        node = node->parentNode();
+        
+    return node;
+}
+
 // p.upstream() returns the start of the range of positions that map to the same VisiblePosition as P.
 Position Position::upstream() const
 {
@@ -303,7 +313,7 @@ Position Position::upstream() const
         return Position();
     
     // iterate backward from there, looking for a qualified position
-    Node* originalBlock = enclosingBlock(startNode);
+    Node* originalBlock = enclosingBlockIgnoringEditability(startNode);
     PositionIterator lastVisible = *this;
     PositionIterator currentPos = lastVisible;
     bool startEditable = startNode->isContentEditable();
@@ -376,7 +386,7 @@ Position Position::downstream() const
         return Position();
 
     // iterate forward from there, looking for a qualified position
-    Node* originalBlock = enclosingBlock(startNode);
+    Node* originalBlock = enclosingBlockIgnoringEditability(startNode);
     PositionIterator lastVisible = *this;
     PositionIterator currentPos = lastVisible;
     bool startEditable = startNode->isContentEditable();
