@@ -1,5 +1,28 @@
 2008-02-19  Darin Adler  <darin@apple.com>
 
+        Reviewed by Sam.
+
+        - removed use of DeprecatedString for font family names
+
+        * css/CSSFontSelector.cpp:
+        (WebCore::CSSFontSelector::addFontFaceRule): Update for name change.
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseFontFamily): Update to use new appendSpaceSeparated
+        function and String rather than DeprecatedString.
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty): Updated for name change.
+        * css/FontFamilyValue.cpp:
+        (WebCore::FontFamilyValue::FontFamilyValue): Replaced code using a regular
+        expression with code that does the same thing more efficiently.
+        (WebCore::FontFamilyValue::appendSpaceSeparated): Added.
+        (WebCore::FontFamilyValue::cssText): Updated for name change.
+        * css/FontFamilyValue.h: Changed DeprecatedString to String. Renamed fontName
+        to familyName and parsedFontName to m_familyName. Removed unused genericFamilyType
+        and m_genericFamilyType. Added appendSpaceSeparated so that m_familyName can
+        be private instead of public.
+
+2008-02-19  Darin Adler  <darin@apple.com>
+
         - fix build when SVG is not enabled
 
         * rendering/RenderTreeAsText.cpp: Added include of "TextStream.h".

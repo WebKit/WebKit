@@ -2674,11 +2674,6 @@ bool CSSParser::parseFont(bool important)
     return true;
 }
 
-static DeprecatedString deprecatedString(const ParseString& ps)
-{
-    return DeprecatedString(reinterpret_cast<const DeprecatedChar*>(ps.characters), ps.length);
-}
-
 PassRefPtr<CSSValueList> CSSParser::parseFontFamily()
 {
     CSSValueList* list = new CSSValueList;
@@ -2693,29 +2688,25 @@ PassRefPtr<CSSValueList> CSSParser::parseFontFamily()
             (nextValue->unit == CSSPrimitiveValue::CSS_STRING || nextValue->unit == CSSPrimitiveValue::CSS_IDENT));
 
         if (value->id >= CSS_VAL_SERIF && value->id <= CSS_VAL__WEBKIT_BODY) {
-            if (currFamily) {
-                currFamily->parsedFontName += ' ';
-                currFamily->parsedFontName += deprecatedString(value->string);
-            }
+            if (currFamily)
+                currFamily->appendSpaceSeparated(value->string.characters, value->string.length);
             else if (nextValBreaksFont || !nextValIsFontName)
                 list->append(new CSSPrimitiveValue(value->id));
             else
-                list->append(currFamily = new FontFamilyValue(deprecatedString(value->string)));
+                list->append(currFamily = new FontFamilyValue(domString(value->string)));
         }
         else if (value->unit == CSSPrimitiveValue::CSS_STRING) {
             // Strings never share in a family name.
             currFamily = 0;
-            list->append(new FontFamilyValue(deprecatedString(value->string)));
+            list->append(new FontFamilyValue(domString(value->string)));
         }
         else if (value->unit == CSSPrimitiveValue::CSS_IDENT) {
-            if (currFamily) {
-                currFamily->parsedFontName += ' ';
-                currFamily->parsedFontName += deprecatedString(value->string);
-            }
+            if (currFamily)
+                currFamily->appendSpaceSeparated(value->string.characters, value->string.length);
             else if (nextValBreaksFont || !nextValIsFontName)
-                list->append(new FontFamilyValue(deprecatedString(value->string)));
+                list->append(new FontFamilyValue(domString(value->string)));
             else
-                list->append(currFamily = new FontFamilyValue(deprecatedString(value->string)));
+                list->append(currFamily = new FontFamilyValue(domString(value->string)));
         }
         else {
             break;

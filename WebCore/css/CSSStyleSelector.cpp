@@ -45,6 +45,7 @@
 #include "CachedImage.h"
 #include "Counter.h"
 #include "DashboardRegion.h"
+#include "DeprecatedString.h"
 #include "FontFamilyValue.h"
 #include "FontValue.h"
 #include "Frame.h"
@@ -3582,7 +3583,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
             AtomicString face;
             Settings* settings = m_document->settings();
             if (val->primitiveType() == CSSPrimitiveValue::CSS_STRING)
-                face = static_cast<FontFamilyValue*>(val)->fontName();
+                face = static_cast<FontFamilyValue*>(val)->familyName();
             else if (val->primitiveType() == CSSPrimitiveValue::CSS_IDENT && settings) {
                 switch (val->getIdent()) {
                     case CSS_VAL__WEBKIT_BODY:

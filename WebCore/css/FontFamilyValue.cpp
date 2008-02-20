@@ -1,6 +1,6 @@
-/**
+/*
  * (C) 1999-2003 Lars Knoll (knoll@kde.org)
- * Copyright (C) 2004, 2005, 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -17,11 +17,9 @@
  * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
  * Boston, MA 02110-1301, USA.
  */
+
 #include "config.h"
 #include "FontFamilyValue.h"
-
-#include "PlatformString.h"
-#include "RegularExpression.h"
 
 namespace WebCore {
 
@@ -61,22 +59,48 @@ static String quoteStringIfNeeded(const String& string)
     return "'" + quotedString + "'";
 }
 
-FontFamilyValue::FontFamilyValue(const DeprecatedString& string)
+FontFamilyValue::FontFamilyValue(const String& familyName)
     : CSSPrimitiveValue(String(), CSS_STRING)
+    , m_familyName(familyName)
 {
-    static const RegularExpression parenReg(" \\(.*\\)$");
-    static const RegularExpression braceReg(" \\[.*\\]$");
+    // If there is anything in parentheses or square brackets at the end, delete it.
+    // FIXME: Do we really need this? The original code mentioned "a language tag in
+    // braces at the end" and "[Xft] qualifiers", but it's not clear either of those
+    // is in active use on the web.
+    unsigned length = m_familyName.length();
+    while (length >= 3) {
+        UChar startCharacter = 0;
+        switch (m_familyName[length - 1]) {
+            case ']':
+                startCharacter = '[';
+                break;
+            case ')':
+                startCharacter = '(';
+                break;
+        }
+        if (!startCharacter)
+            break;
+        unsigned first = 0;
+        for (unsigned i = length - 2; i > 0; --i) {
+            if (m_familyName[i - 1] == ' ' && m_familyName[i] == startCharacter)
+                first = i - 1;
+        }
+        if (!first)
+            break;
+        length = first;
+    }
+    m_familyName.truncate(length);
+}
 
-    parsedFontName = string;
-    // a language tag is often added in braces at the end. Remove it.
-    parsedFontName.replace(parenReg, "");
-    // remove [Xft] qualifiers
-    parsedFontName.replace(braceReg, "");
+void FontFamilyValue::appendSpaceSeparated(const UChar* characters, unsigned length)
+{
+    m_familyName.append(' ');
+    m_familyName.append(characters, length);
 }
 
 String FontFamilyValue::cssText() const
 {
-    return quoteStringIfNeeded(parsedFontName);
+    return quoteStringIfNeeded(m_familyName);
 }
 
 }
