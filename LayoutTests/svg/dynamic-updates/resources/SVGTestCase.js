@@ -15,7 +15,7 @@ function createSVGTestCase() {
     rootSVGElement.setAttribute("width", "300");
     rootSVGElement.setAttribute("height", "300");
 
-    var bodyElement = document.firstChild.lastChild;
+    var bodyElement = document.documentElement.lastChild;
     bodyElement.insertBefore(rootSVGElement, document.getElementById("description"));
 }
 
