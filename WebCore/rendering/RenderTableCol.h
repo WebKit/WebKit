@@ -49,10 +49,6 @@ public:
     virtual IntRect absoluteClippedOverflowRect();
     virtual void imageChanged(CachedImage*);
 
-#ifndef NDEBUG
-    virtual void dump(TextStream*, DeprecatedString) const;
-#endif
-
     int span() const { return m_span; }
     void setSpan(int s) { m_span = s; }
     

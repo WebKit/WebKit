@@ -1,3 +1,54 @@
+2008-02-19  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam.
+
+        - Removed old debugging aids, Node::dump, RenderObject::dump, and
+          RenderObject::information, that used DeprecatedString.
+
+        * dom/CharacterData.cpp: Removed override of Node::dump.
+        * dom/CharacterData.h: Ditto.
+        * dom/Element.cpp: Ditto.
+        * dom/Element.h: Ditto.
+        * dom/EventTargetNode.cpp: Ditto.
+        * dom/EventTargetNode.h: Ditto.
+        * dom/Node.cpp: Removed Node::dump.
+        * dom/Node.h: Ditto.
+
+        * rendering/RenderBlock.cpp: Removed override of RenderObject::dump.
+        * rendering/RenderBlock.h: Ditto.
+        * rendering/RenderFrameSet.cpp: Ditto.
+        * rendering/RenderFrameSet.h: Ditto.
+        * rendering/RenderObject.cpp: Removed RenderObject::dump and
+        RenderObject::information.
+        * rendering/RenderObject.h: Ditto.
+        * rendering/RenderTable.cpp: Removed override of RenderObject::dump.
+        * rendering/RenderTable.h: Ditto.
+        * rendering/RenderTableCell.cpp: Ditto.
+        * rendering/RenderTableCell.h: Ditto.
+        * rendering/RenderTableCol.cpp: Ditto.
+        * rendering/RenderTableCol.h: Ditto.
+        * rendering/RenderTableSection.cpp: Ditto.
+        * rendering/RenderTableSection.h: Ditto.
+
+        * rendering/RenderTreeAsText.h: Removed unneeded include of TextStream.h
+        and added forward declarations as appropriate.
+
+        * svg/SVGSVGElement.cpp: Removed unneeded include of TextStream.h.
+        * svg/graphics/SVGResourceClipper.cpp: And here.
+        * svg/graphics/SVGResourceFilter.cpp: Ditto.
+        * svg/graphics/filters/SVGFEBlend.cpp: Ditto.
+        * svg/graphics/filters/SVGFEComponentTransfer.cpp: Ditto.
+        * svg/graphics/filters/SVGFEComposite.cpp: Ditto.
+        * svg/graphics/filters/SVGFEDiffuseLighting.cpp: Ditto.
+        * svg/graphics/filters/SVGFEGaussianBlur.cpp: Ditto.
+        * svg/graphics/filters/SVGFEImage.cpp: Ditto.
+        * svg/graphics/filters/SVGFEMerge.cpp: Ditto.
+        * svg/graphics/filters/SVGFEMorphology.cpp: Ditto.
+        * svg/graphics/filters/SVGFEOffset.cpp: Ditto.
+        * svg/graphics/filters/SVGFESpecularLighting.cpp: Ditto.
+        * svg/graphics/filters/SVGFETurbulence.cpp: Ditto.
+        * svg/graphics/filters/SVGFilterEffect.cpp: Ditto.
+
 2008-02-19  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Sam.

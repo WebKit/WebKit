@@ -49,7 +49,6 @@
 #include "SelectorNodeList.h"
 #include "TagNodeList.h"
 #include "Text.h"
-#include "TextStream.h"
 #include "XMLNames.h"
 #include "htmlediting.h"
 #include "kjs_binding.h"
@@ -784,24 +783,6 @@ Node::StyleChange Node::diff( RenderStyle *s1, RenderStyle *s2 ) const
     
     return ch;
 }
-
-#ifndef NDEBUG
-void Node::dump(TextStream* stream, DeprecatedString ind) const
-{
-    if (m_hasId) { *stream << " hasId"; }
-    if (m_hasClass) { *stream << " hasClass"; }
-    if (m_focused) { *stream << " focused"; }
-    if (m_active) { *stream << " active"; }
-
-    *stream << " tabIndex=" << m_tabIndex;
-    *stream << endl;
-
-    for (Node* child = firstChild(); child; child = child->nextSibling()) {
-        *stream << ind << child->nodeName() << ": ";
-        child->dump(stream, ind + "  ");
-    }
-}
-#endif
 
 void Node::attach()
 {

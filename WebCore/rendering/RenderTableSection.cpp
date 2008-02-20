@@ -33,7 +33,6 @@
 #include "RenderTableCol.h"
 #include "RenderTableRow.h"
 #include "RenderView.h"
-#include "TextStream.h"
 #include <limits>
 #include <wtf/Vector.h>
 
@@ -1075,23 +1074,5 @@ bool RenderTableSection::nodeAtPoint(const HitTestRequest& request, HitTestResul
     
     return false;
 }
-
-#ifndef NDEBUG
-void RenderTableSection::dump(TextStream* stream, DeprecatedString ind) const
-{
-    *stream << endl << ind << "grid=(" << m_gridRows << "," << table()->numEffCols() << ")" << endl << ind;
-    for (int r = 0; r < m_gridRows; r++) {
-        for (int c = 0; c < table()->numEffCols(); c++) {
-            if (cellAt(r, c).cell && !cellAt(r, c).inColSpan)
-                *stream << "(" << cellAt(r, c).cell->row() << "," << cellAt(r, c).cell->col() << ","
-                        << cellAt(r, c).cell->rowSpan() << "," << cellAt(r, c).cell->colSpan() << ") ";
-            else
-                *stream << cellAt(r, c).cell << "null cell ";
-        }
-        *stream << endl << ind;
-    }
-    RenderContainer::dump(stream,ind);
-}
-#endif
 
 } // namespace WebCore

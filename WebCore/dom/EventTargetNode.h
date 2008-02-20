@@ -82,10 +82,6 @@ public:
      * to event listeners, and prevents DOMActivate events from being sent at all.
      */
     virtual bool disabled() const;
-    
-#ifndef NDEBUG
-    virtual void dump(TextStream*, DeprecatedString indent = "") const;
-#endif
 
     RegisteredEventListenerList* localEventListeners() const { return m_regdListeners; }
 

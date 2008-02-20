@@ -111,11 +111,7 @@ public:
     virtual int borderTopExtra() const { return m_topExtra; }
     virtual int borderBottomExtra() const { return m_bottomExtra; }
 
-#ifndef NDEBUG
-    virtual void dump(TextStream*, DeprecatedString ind = "") const;
-#endif
-
-protected:
+private:
     int m_row;
     int m_column;
     int m_rowSpan;

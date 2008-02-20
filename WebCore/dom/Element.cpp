@@ -45,7 +45,6 @@
 #include "RenderBlock.h"
 #include "SelectionController.h"
 #include "TextIterator.h"
-#include "TextStream.h"
 #include "XMLNames.h"
 
 namespace WebCore {
@@ -962,22 +961,6 @@ void Element::updateId(const AtomicString& oldId, const AtomicString& newId)
     if (!newId.isEmpty())
         doc->addElementById(newId, this);
 }
-
-#ifndef NDEBUG
-void Element::dump(TextStream* stream, DeprecatedString ind) const
-{
-    updateStyleAttributeIfNeeded();
-    if (namedAttrMap) {
-        for (unsigned i = 0; i < namedAttrMap->length(); i++) {
-            Attribute* attr = namedAttrMap->attributeItem(i);
-            *stream << " " << attr->name().localName().domString().utf8().data()
-                    << "=\"" << attr->value().domString().utf8().data() << "\"";
-        }
-    }
-
-    ContainerNode::dump(stream,ind);
-}
-#endif
 
 #ifndef NDEBUG
 void Element::formatForDebugger(char* buffer, unsigned length) const

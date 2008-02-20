@@ -31,7 +31,6 @@
 #include "CachedImage.h"
 #include "HTMLNames.h"
 #include "HTMLTableColElement.h"
-#include "TextStream.h"
 
 namespace WebCore {
 
@@ -92,13 +91,5 @@ void RenderTableCol::imageChanged(CachedImage* image)
     // FIXME: Repaint only the rect the image paints in.
     repaint();
 }
-
-#ifndef NDEBUG
-void RenderTableCol::dump(TextStream* stream, DeprecatedString ind) const
-{
-    *stream << " span=" << m_span;
-    RenderContainer::dump(stream, ind);
-}
-#endif
 
 }

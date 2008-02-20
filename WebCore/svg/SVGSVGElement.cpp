@@ -48,7 +48,6 @@
 #include "SVGViewSpec.h"
 #include "SVGZoomEvent.h"
 #include "SelectionController.h"
-#include "TextStream.h"
 #include "TimeScheduler.h"
 
 namespace WebCore {

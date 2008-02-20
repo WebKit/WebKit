@@ -277,10 +277,6 @@ public:
     int leftSelectionOffset(RenderBlock* rootBlock, int y);
     int rightSelectionOffset(RenderBlock* rootBlock, int y);
 
-#ifndef NDEBUG
-    virtual void dump(TextStream*, DeprecatedString ind = "") const;
-#endif
-
     // Helper methods for computing line counts and heights for line counts.
     RootInlineBox* lineAtIndex(int);
     int lineCount();

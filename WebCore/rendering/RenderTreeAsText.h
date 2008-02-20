@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003, 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2003, 2006, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,11 +26,12 @@
 #ifndef RenderTreeAsText_h
 #define RenderTreeAsText_h
 
-#include "TextStream.h"
-
 namespace WebCore {
 
+    class DeprecatedString;
     class RenderObject;
+    class String;
+    class TextStream;
 
     DeprecatedString externalRepresentation(RenderObject*);
     void write(TextStream&, const RenderObject&, int indent = 0);

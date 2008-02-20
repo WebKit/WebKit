@@ -26,7 +26,6 @@
 #include "Document.h"
 #include "EventNames.h"
 #include "ExceptionCode.h"
-#include "TextStream.h"
 #include "MutationEvent.h"
 #include "RenderText.h"
 
@@ -258,14 +257,5 @@ bool CharacterData::offsetInCharacters() const
 {
     return true;
 }
-
-#ifndef NDEBUG
-void CharacterData::dump(TextStream *stream, DeprecatedString ind) const
-{
-    *stream << " m_data=\"" << String(m_data).utf8().data() << "\"";
-
-    EventTargetNode::dump(stream, ind);
-}
-#endif
 
 } // namespace WebCore

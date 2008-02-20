@@ -25,7 +25,6 @@
 #include "SVGFEImage.h"
 
 #include "SVGResourceFilter.h"
-#include "TextStream.h"
 
 namespace WebCore {
 

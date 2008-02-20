@@ -227,8 +227,6 @@ private:
 
 public:
 #ifndef NDEBUG
-    DeprecatedString information() const;
-    virtual void dump(TextStream*, DeprecatedString ind = "") const;
     void showTreeForThis() const;
 #endif
 

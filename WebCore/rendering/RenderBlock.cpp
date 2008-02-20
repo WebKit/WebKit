@@ -37,7 +37,6 @@
 #include "RenderTheme.h"
 #include "RenderView.h"
 #include "SelectionController.h"
-#include "TextStream.h"
 
 using namespace std;
 using namespace WTF;
@@ -4393,35 +4392,5 @@ const char* RenderBlock::renderName() const
         return "RenderBlock (run-in)";
     return "RenderBlock";
 }
-
-#ifndef NDEBUG
-
-void RenderBlock::dump(TextStream *stream, DeprecatedString ind) const
-{
-    if (m_childrenInline) { *stream << " childrenInline"; }
-    if (m_firstLine) { *stream << " firstLine"; }
-
-    if (m_floatingObjects && !m_floatingObjects->isEmpty())
-    {
-        *stream << " special(";
-        DeprecatedPtrListIterator<FloatingObject> it(*m_floatingObjects);
-        FloatingObject *r;
-        bool first = true;
-        for ( ; (r = it.current()); ++it )
-        {
-            if (!first)
-                *stream << ",";
-            *stream << r->node->renderName();
-            first = false;
-        }
-        *stream << ")";
-    }
-
-    // ### EClear m_clearStatus
-
-    RenderFlow::dump(stream,ind);
-}
-
-#endif
 
 } // namespace WebCore

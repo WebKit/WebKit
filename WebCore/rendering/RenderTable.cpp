@@ -37,7 +37,6 @@
 #include "RenderTableCol.h"
 #include "RenderTableSection.h"
 #include "RenderView.h"
-#include "TextStream.h"
 
 using namespace std;
 
@@ -1102,24 +1101,5 @@ IntRect RenderTable::getOverflowClipRect(int tx, int ty)
 
     return rect;
 }
-
-#ifndef NDEBUG
-void RenderTable::dump(TextStream* stream, DeprecatedString ind) const
-{
-    if (m_caption)
-        *stream << " tCaption";
-    if (m_head)
-        *stream << " head";
-    if (m_foot)
-        *stream << " foot";
-
-    *stream << endl << ind << "cspans:";
-    for (unsigned i = 0; i < m_columns.size(); i++)
-        *stream << " " << m_columns[i].span;
-    *stream << endl << ind;
-
-    RenderBlock::dump(stream, ind);
-}
-#endif
 
 }

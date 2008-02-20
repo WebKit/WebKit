@@ -42,7 +42,6 @@
 #include "ProgressEvent.h"
 #include "RegisteredEventListener.h"
 #include "TextEvent.h"
-#include "TextStream.h"
 #include "WheelEvent.h"
 
 namespace WebCore {
@@ -420,17 +419,5 @@ void EventTargetNode::defaultEventHandler(Event* event)
                 frame->eventHandler()->defaultTextInputEventHandler(static_cast<TextEvent*>(event));
     }
 }
-
-#ifndef NDEBUG
-
-void EventTargetNode::dump(TextStream* stream, DeprecatedString ind) const
-{
-    if (m_regdListeners)
-        *stream << " #regdListeners=" << m_regdListeners->count(); // ### more detail
-    
-    Node::dump(stream,ind);
-}
-
-#endif
 
 } // namespace WebCore

@@ -38,7 +38,6 @@
 #include "MouseEvent.h"
 #include "RenderFrame.h"
 #include "RenderView.h"
-#include "TextStream.h"
 
 namespace WebCore {
 
@@ -669,21 +668,5 @@ bool RenderFrameSet::isChildAllowed(RenderObject* child, RenderStyle* style) con
 {
     return child->isFrame() || child->isFrameSet();
 }
-
-#ifndef NDEBUG
-void RenderFrameSet::dump(TextStream* stream, DeprecatedString ind) const
-{
-    *stream << " totalrows=" << frameSet()->totalRows();
-    *stream << " totalcols=" << frameSet()->totalCols();
-
-    for (int i = 1; i <= frameSet()->totalRows(); i++)
-        *stream << " hSplitvar(" << i << ")=" << m_rows.m_preventResize[i];
-
-    for (int i = 1; i < frameSet()->totalCols(); i++)
-        *stream << " vSplitvar(" << i << ")=" << m_cols.m_preventResize[i];
-
-    RenderContainer::dump(stream,ind);
-}
-#endif
 
 } // namespace WebCore
