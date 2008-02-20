@@ -1,0 +1,22 @@
+<head>
+<meta charset="gbk">
+<script>
+
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
+
+function test() {
+    var req = new XMLHttpRequest;
+    req.open("GET", "?ж", false);
+    req.send();
+
+    req = new XMLHttpRequest;
+    req.open("GET", "/ж", false);
+    req.send();
+}
+</script>
+</head>
+<body onload="test()">
+<p>This tests performs a sequence of actions that result in a GBK converter with substitution enabled being destroyed.</p>
+<p>PASS if there is no assertion failure.</p>
+</body>

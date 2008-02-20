@@ -1,3 +1,13 @@
+2008-02-20  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        http://bugs.webkit.org/show_bug.cgi?id=17106
+        <rdar://problem/5750722> Debug build ASSERTs on page load
+
+        * fast/encoding/GBK/close-gbk-converter-expected.txt: Added.
+        * fast/encoding/GBK/close-gbk-converter.html: Added.
+
 2008-02-19  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Sam.

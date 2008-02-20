@@ -1,5 +1,23 @@
 2008-02-20  Alexey Proskuryakov  <ap@webkit.org>
 
+        Incorporates some improvements made by Dan Bernstein.
+
+        Reviewed by Darin.
+
+        http://bugs.webkit.org/show_bug.cgi?id=17106
+        <rdar://problem/5750722> Debug build ASSERTs on page load
+
+        Test: fast/encoding/GBK/close-gbk-converter.html
+
+        * platform/text/TextCodecICU.cpp:
+        (WebCore::getGbkEscape): Changed to use a switch instead of a HashMap, as there
+        are only four values.
+        (WebCore::gbkCallbackEscape): Check the reason why the function is called, and do not attempt
+        getting an escape character if it's not UCNV_UNASSIGNED.
+        (WebCore::gbkCallbackSubstitute): Ditto.
+
+2008-02-20  Alexey Proskuryakov  <ap@webkit.org>
+
         Build fix.
 
         * xml/XMLHttpRequest.cpp:
