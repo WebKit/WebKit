@@ -1,3 +1,26 @@
+2008-02-20  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/5694920> Typing (esp. deleting) is slower due to TOT WebCore changes
+
+        * editing/DeleteSelectionCommand.cpp:
+        (WebCore::DeleteSelectionCommand::initializeStartEnd): The common case here
+        is where there are no special elements.  Avoid creating VisiblePositions in
+        that case.  Additionally, this change postpones the more expensive creation
+        of an upstream VisiblePosition until the last possible moment.
+        (WebCore::DeleteSelectionCommand::saveTypingStyleState):
+        (WebCore::DeleteSelectionCommand::calculateTypingStyleAfterDelete): Add an 
+        early return for a common case: deleting characters that are all inside the 
+        same text node. In that case the style at the start of the selection will 
+        not change during the delete, so there is no need to save/recompute it.
+        (WebCore::DeleteSelectionCommand::saveFullySelectedAnchor): Early return
+        before VisiblePosition creation if the ends of the selection aren't enclosed
+        by an anchor.
+        * editing/TypingCommand.cpp:
+        (WebCore::TypingCommand::markMisspellingsAfterTyping): Early return if spell
+        checking isn't enabled.
+
 2008-02-20  Alexey Proskuryakov  <ap@webkit.org>
 
         Incorporates some improvements made by Dan Bernstein.

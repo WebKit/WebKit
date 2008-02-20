@@ -120,7 +120,7 @@ void DeleteSelectionCommand::initializeStartEnd(Position& start, Position& end)
     if (!m_expandForSpecialElements)
         return;
     
-    while (VisiblePosition(start) == m_selectionToDelete.visibleStart() && VisiblePosition(end) == m_selectionToDelete.visibleEnd()) {
+    while (1) {
         startSpecialContainer = 0;
         endSpecialContainer = 0;
     
@@ -128,6 +128,9 @@ void DeleteSelectionCommand::initializeStartEnd(Position& start, Position& end)
         Position e = positionAfterContainingSpecialElement(end, &endSpecialContainer);
         
         if (!startSpecialContainer && !endSpecialContainer)
+            break;
+            
+        if (VisiblePosition(start) != m_selectionToDelete.visibleStart() || VisiblePosition(end) != m_selectionToDelete.visibleEnd())
             break;
         
         // If we're going to expand to include the startSpecialContainer, it must be fully selected.
@@ -230,6 +233,16 @@ void DeleteSelectionCommand::initializePositionData()
 
 void DeleteSelectionCommand::saveTypingStyleState()
 {
+    // A common case is deleting characters that are all from the same text node. In 
+    // that case, the style at the start of the selection before deletion will be the 
+    // same as the style at the start of the selection after deletion (since those
+    // two positions will be identical). Therefore there is no need to save the
+    // typing style at the start of the selection, nor is there a reason to 
+    // compute the style at the start of the selection after deletion (see the 
+    // early return in calculateTypingStyleAfterDelete).
+    if (m_upstreamStart.node() == m_downstreamEnd.node() && m_upstreamStart.node()->isTextNode())
+        return;
+        
     // Figure out the typing style in effect before the delete is done.
     // FIXME: Improve typing style.
     // See this bug: <rdar://problem/3769899> Implementation of typing style needs improvement
@@ -600,6 +613,9 @@ void DeleteSelectionCommand::removePreviouslySelectedEmptyTableRows()
 
 void DeleteSelectionCommand::calculateTypingStyleAfterDelete(Node *insertedPlaceholder)
 {
+    if (!m_typingStyle)
+        return;
+        
     // Compute the difference between the style before the delete and the style now
     // after the delete has been done. Set this style on the frame, so other editing
     // commands being composed with this one will work, and also cache it on the command,
@@ -648,12 +664,21 @@ void DeleteSelectionCommand::clearTransientState()
 
 void DeleteSelectionCommand::saveFullySelectedAnchor()
 {
-    // If we're deleting an entire anchor element, save it away so that it can be restored
+    // If deleting an anchor element, save it away so that it can be restored
     // when the user begins entering text.
-    VisiblePosition visibleStart = m_selectionToDelete.visibleStart();
-    VisiblePosition visibleEnd = m_selectionToDelete.visibleEnd();
-    Node* startAnchor = enclosingNodeWithTag(visibleStart.deepEquivalent().downstream(), aTag);
-    Node* endAnchor = enclosingNodeWithTag(visibleEnd.deepEquivalent().upstream(), aTag);
+    
+    Position start = m_selectionToDelete.start();
+    Node* startAnchor = enclosingNodeWithTag(start.downstream(), aTag);
+    if (!startAnchor)
+        return;
+        
+    Position end = m_selectionToDelete.end();
+    Node* endAnchor = enclosingNodeWithTag(end.upstream(), aTag);
+    if (startAnchor != endAnchor)
+        return;
+
+    VisiblePosition visibleStart(m_selectionToDelete.visibleStart());
+    VisiblePosition visibleEnd(m_selectionToDelete.visibleEnd());
 
     Node* beforeStartAnchor = enclosingNodeWithTag(visibleStart.previous().deepEquivalent().downstream(), aTag);
     Node* afterEndAnchor = enclosingNodeWithTag(visibleEnd.next().deepEquivalent().upstream(), aTag);

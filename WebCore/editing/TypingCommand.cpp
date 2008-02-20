@@ -280,6 +280,8 @@ EditAction TypingCommand::editingAction() const
 
 void TypingCommand::markMisspellingsAfterTyping()
 {
+    if (!document()->frame()->editor()->isContinuousSpellCheckingEnabled())
+        return;
     // Take a look at the selection that results after typing and determine whether we need to spellcheck. 
     // Since the word containing the current selection is never marked, this does a check to
     // see if typing made a new word that is not in the current selection. Basically, you
