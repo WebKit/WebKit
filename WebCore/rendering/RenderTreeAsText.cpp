@@ -39,6 +39,7 @@
 #include "RenderView.h"
 #include "RenderWidget.h"
 #include "SelectionController.h"
+#include "TextStream.h"
 #include <wtf/Vector.h>
 
 #if ENABLE(SVG)
