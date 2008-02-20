@@ -45,7 +45,7 @@ MediaQueryExp::MediaQueryExp(const AtomicString& mediaFeature, ValueList* valueL
             if (value->id != 0)
                 m_value = new CSSPrimitiveValue(value->id);
             else if (value->unit == CSSPrimitiveValue::CSS_STRING)
-                m_value = new CSSPrimitiveValue(domString(value->string), (CSSPrimitiveValue::UnitTypes) value->unit);
+                m_value = new CSSPrimitiveValue(value->string, (CSSPrimitiveValue::UnitTypes) value->unit);
             else if (value->unit >= CSSPrimitiveValue::CSS_NUMBER &&
                       value->unit <= CSSPrimitiveValue::CSS_KHZ)
                 m_value = new CSSPrimitiveValue(value->fValue, (CSSPrimitiveValue::UnitTypes) value->unit);

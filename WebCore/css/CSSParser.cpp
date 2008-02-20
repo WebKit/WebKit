@@ -76,12 +76,23 @@ using namespace WTF;
 
 namespace WebCore {
 
+static bool equal(const ParseString& a, const char* b)
+{
+    for (int i = 0; i < a.length; ++i) {
+        if (!b[i])
+            return false;
+        if (a.characters[i] != b[i])
+            return false;
+    }
+    return !b[a.length];
+}
+
 static bool equalIgnoringCase(const ParseString& a, const char* b)
 {
     for (int i = 0; i < a.length; ++i) {
         if (!b[i])
             return false;
-        ASSERT(isASCIILower(b[i]));
+        ASSERT(!isASCIIUpper(b[i]));
         if (toASCIILower(a.characters[i]) != b[i])
             return false;
     }
@@ -181,16 +192,19 @@ CSSParser::~CSSParser()
 
 void ParseString::lower()
 {
-    // Fast case for all-ASCII.
-    UChar ored = 0;
-    for (int i = 0; i < length; i++)
-        ored |= characters[i];
-    if (ored & ~0x7F)
-        for (int i = 0; i < length; i++)
-            characters[i] = Unicode::toLower(characters[i]);
-    else
+    // FIXME: If we need Unicode lowercasing here, then we probably want the real kind
+    // that can potentially change the length of the string rather than the character
+    // by character kind. If we don't need Unicode lowercasing, it would be good to
+    // simplify this function.
+
+    if (charactersAreAllASCII(characters, length)) {
+        // Fast case for all-ASCII.
         for (int i = 0; i < length; i++)
             characters[i] = toASCIILower(characters[i]);
+    } else {
+        for (int i = 0; i < length; i++)
+            characters[i] = Unicode::toLower(characters[i]);
+    }
 }
 
 void CSSParser::setupParser(const char* prefix, const String& string, const char* suffix)
@@ -461,36 +475,35 @@ static int unitFromString(Value* value)
     if (value->unit != CSSPrimitiveValue::CSS_IDENT || value->id)
         return 0;
 
-    String str = domString(value->string);
-    if (str == "em")
+    if (equal(value->string, "em"))
         return CSSPrimitiveValue::CSS_EMS;
-    if (str == "ex")
+    if (equal(value->string, "ex"))
         return CSSPrimitiveValue::CSS_EXS;
-    if (str == "px")
+    if (equal(value->string, "px"))
         return CSSPrimitiveValue::CSS_PX;
-    if (str == "cm")
+    if (equal(value->string, "cm"))
         return CSSPrimitiveValue::CSS_CM;
-    if (str == "mm")
+    if (equal(value->string, "mm"))
         return CSSPrimitiveValue::CSS_MM;
-    if (str == "in")
+    if (equal(value->string, "in"))
         return CSSPrimitiveValue::CSS_IN;
-    if (str == "pt")
+    if (equal(value->string, "pt"))
         return CSSPrimitiveValue::CSS_PT;
-    if (str == "pc")
+    if (equal(value->string, "pc"))
         return CSSPrimitiveValue::CSS_PC;
-    if (str == "deg")
+    if (equal(value->string, "deg"))
         return CSSPrimitiveValue::CSS_DEG;
-    if (str == "rad")
+    if (equal(value->string, "rad"))
         return CSSPrimitiveValue::CSS_RAD;
-    if (str == "grad")
+    if (equal(value->string, "grad"))
         return CSSPrimitiveValue::CSS_GRAD;
-    if (str == "ms")
+    if (equal(value->string, "ms"))
         return CSSPrimitiveValue::CSS_MS;
-    if (str == "s")
+    if (equal(value->string, "s"))
         return CSSPrimitiveValue::CSS_S;
-    if (str == "Hz")
+    if (equal(value->string, "Hz"))
         return CSSPrimitiveValue::CSS_HZ;
-    if (str == "kHz")
+    if (equal(value->string, "kHz"))
         return CSSPrimitiveValue::CSS_KHZ;
     
     return 0;
@@ -825,7 +838,7 @@ bool CSSParser::parseValue(int propId, bool important)
         while (value && value->unit == CSSPrimitiveValue::CSS_URI) {
             if (!list)
                 list = new CSSValueList; 
-            String uri = parseURL(domString(value->string));
+            String uri = parseURL(value->string);
             Vector<int> coords;
             value = valueList->next();
             while (value && value->unit == CSSPrimitiveValue::CSS_NUMBER) {
@@ -898,7 +911,7 @@ bool CSSParser::parseValue(int propId, bool important)
         }
         else if (value->unit == CSSPrimitiveValue::CSS_URI) {
             // ### allow string in non strict mode?
-            String uri = parseURL(domString(value->string));
+            String uri = parseURL(value->string);
             if (!uri.isEmpty()) {
                 parsedValue = new CSSImageValue(KURL(styleElement->baseURL(), uri).string(), styleElement);
                 valueList->next();
@@ -1104,7 +1117,7 @@ bool CSSParser::parseValue(int propId, bool important)
             RefPtr<CSSValue> parsedValue;
             while ((val = valueList->current())) {
                 if (val->unit == CSSPrimitiveValue::CSS_URI) {
-                    String value = parseURL(domString(val->string));
+                    String value = parseURL(val->string);
                     parsedValue = new CSSPrimitiveValue(KURL(styleElement->baseURL(), value).string(),
                         CSSPrimitiveValue::CSS_URI);
                 }
@@ -1556,7 +1569,7 @@ bool CSSParser::parseValue(int propId, bool important)
         if (id != 0)
             parsedValue = new CSSPrimitiveValue(id);
         else if (value->unit == CSSPrimitiveValue::CSS_STRING)
-            parsedValue = new CSSPrimitiveValue(domString(value->string), (CSSPrimitiveValue::UnitTypes) value->unit);
+            parsedValue = new CSSPrimitiveValue(value->string, (CSSPrimitiveValue::UnitTypes) value->unit);
         else if (value->unit >= CSSPrimitiveValue::CSS_NUMBER && value->unit <= CSSPrimitiveValue::CSS_KHZ)
             parsedValue = new CSSPrimitiveValue(value->fValue, (CSSPrimitiveValue::UnitTypes) value->unit);
         else if (value->unit >= Value::Q_EMS)
@@ -1854,26 +1867,25 @@ bool CSSParser::parseContent(int propId, bool important)
         RefPtr<CSSValue> parsedValue;
         if (val->unit == CSSPrimitiveValue::CSS_URI) {
             // url
-            String value = parseURL(domString(val->string));
+            String value = parseURL(val->string);
             parsedValue = new CSSImageValue(KURL(styleElement->baseURL(), value).string(), styleElement);
         } else if (val->unit == Value::Function) {
             // attr(X) | counter(X [,Y]) | counters(X, Y, [,Z])
-            ValueList *args = val->function->args;
-            String fname = domString(val->function->name).lower();
+            ValueList* args = val->function->args;
             if (!args)
                 return false;
-            if (fname == "attr(") {
+            if (equalIgnoringCase(val->function->name, "attr(")) {
                 if (args->size() != 1)
                     return false;
                 Value* a = args->current();
-                String attrName = domString(a->string);
+                String attrName = a->string;
                 if (document()->isHTMLDocument())
                     attrName = attrName.lower();
                 parsedValue = new CSSPrimitiveValue(attrName, CSSPrimitiveValue::CSS_ATTR);
-            } else if (fname == "counter(") {
+            } else if (equalIgnoringCase(val->function->name, "counter(")) {
                 parsedValue = parseCounterContent(args, false);
                 if (!parsedValue) return false;
-            } else if (fname == "counters(") {
+            } else if (equalIgnoringCase(val->function->name, "counters(")) {
                 parsedValue = parseCounterContent(args, true);
                 if (!parsedValue)
                     return false;
@@ -1886,7 +1898,7 @@ bool CSSParser::parseContent(int propId, bool important)
             // no-close-quote
             // FIXME: These are not yet implemented (http://bugs.webkit.org/show_bug.cgi?id=6503).
         } else if (val->unit == CSSPrimitiveValue::CSS_STRING) {
-            parsedValue = new CSSPrimitiveValue(domString(val->string), CSSPrimitiveValue::CSS_STRING);
+            parsedValue = new CSSPrimitiveValue(val->string, CSSPrimitiveValue::CSS_STRING);
         }
         if (!parsedValue)
             break;
@@ -1919,7 +1931,7 @@ bool CSSParser::parseBackgroundImage(RefPtr<CSSValue>& value)
         return true;
     }
     if (valueList->current()->unit == CSSPrimitiveValue::CSS_URI) {
-        String uri = parseURL(domString(valueList->current()->string));
+        String uri = parseURL(valueList->current()->string);
         if (!uri.isEmpty())
             value = new CSSImageValue(KURL(styleElement->baseURL(), uri).string(), styleElement);
         return true;
@@ -2213,8 +2225,7 @@ PassRefPtr<CSSValue> CSSParser::parseTransitionTimingFunction()
     
     // The only timing function we accept for now is a cubic bezier function.  4 points must be specified.
     ValueList* args = value->function->args;
-    String fname = domString(value->function->name).lower();
-    if (fname != "cubic-bezier(" || !args || args->size() != 7)
+    if (!equalIgnoringCase(value->function->name, "cubic-bezier(") || !args || args->size() != 7)
         return 0;
 
     // There are two points specified.  The values must be between 0 and 1.
@@ -2372,8 +2383,7 @@ bool CSSParser::parseDashboardRegions(int propId, bool important)
         // dashboard-region(label, type) or dashboard-region(label type)
         // dashboard-region(label, type) or dashboard-region(label type)
         ValueList* args = value->function->args;
-        String fname = domString(value->function->name).lower();
-        if (fname != "dashboard-region(" || !args) {
+        if (!equalIgnoringCase(value->function->name, "dashboard-region(") || !args) {
             valid = false;
             break;
         }
@@ -2392,7 +2402,7 @@ bool CSSParser::parseDashboardRegions(int propId, bool important)
             break;
         }
             
-        region->m_label = domString(arg->string);
+        region->m_label = arg->string;
 
         // Second arg is a type.
         arg = args->next();
@@ -2402,17 +2412,16 @@ bool CSSParser::parseDashboardRegions(int propId, bool important)
             break;
         }
 
-        String geometryType = domString(arg->string).lower();
-        if (geometryType == "circle")
+        if (equalIgnoringCase(arg->string, "circle"))
             region->m_isCircle = true;
-        else if (geometryType == "rectangle")
+        else if (equalIgnoringCase(arg->string, "rectangle"))
             region->m_isRectangle = true;
         else {
             valid = false;
             break;
         }
             
-        region->m_geometryType = domString(arg->string);
+        region->m_geometryType = arg->string;
 
         if (numArgs == DASHBOARD_REGION_SHORT_NUM_PARAMETERS || numArgs == (DASHBOARD_REGION_SHORT_NUM_PARAMETERS*2-1)) {
             // This originally used CSS_VAL_INVALID by accident. It might be more logical to use something else.
@@ -2470,8 +2479,7 @@ PassRefPtr<CSSValue> CSSParser::parseCounterContent(ValueList* args, bool counte
         return 0;
     
     Value* i = args->current();
-    RefPtr<CSSPrimitiveValue> identifier = new CSSPrimitiveValue(domString(i->string),
-        CSSPrimitiveValue::CSS_STRING);
+    RefPtr<CSSPrimitiveValue> identifier = new CSSPrimitiveValue(i->string, CSSPrimitiveValue::CSS_STRING);
 
     RefPtr<CSSPrimitiveValue> separator;
     if (!counters)
@@ -2485,7 +2493,7 @@ PassRefPtr<CSSValue> CSSParser::parseCounterContent(ValueList* args, bool counte
         if (i->unit != CSSPrimitiveValue::CSS_STRING)
             return 0;
         
-        separator = new CSSPrimitiveValue(domString(i->string), (CSSPrimitiveValue::UnitTypes) i->unit);
+        separator = new CSSPrimitiveValue(i->string, (CSSPrimitiveValue::UnitTypes) i->unit);
     }
 
     RefPtr<CSSPrimitiveValue> listStyle;
@@ -2516,10 +2524,9 @@ PassRefPtr<CSSValue> CSSParser::parseCounterContent(ValueList* args, bool counte
 
 bool CSSParser::parseShape(int propId, bool important)
 {
-    Value *value = valueList->current();
-    ValueList *args = value->function->args;
-    String fname = domString(value->function->name).lower();
-    if (fname != "rect(" || !args)
+    Value* value = valueList->current();
+    ValueList* args = value->function->args;
+    if (!equalIgnoringCase(value->function->name, "rect(") || !args)
         return false;
 
     // rect(t, r, b, l) || rect(t r b l)
@@ -2693,20 +2700,20 @@ PassRefPtr<CSSValueList> CSSParser::parseFontFamily()
             else if (nextValBreaksFont || !nextValIsFontName)
                 list->append(new CSSPrimitiveValue(value->id));
             else
-                list->append(currFamily = new FontFamilyValue(domString(value->string)));
+                list->append(currFamily = new FontFamilyValue(value->string));
         }
         else if (value->unit == CSSPrimitiveValue::CSS_STRING) {
             // Strings never share in a family name.
             currFamily = 0;
-            list->append(new FontFamilyValue(domString(value->string)));
+            list->append(new FontFamilyValue(value->string));
         }
         else if (value->unit == CSSPrimitiveValue::CSS_IDENT) {
             if (currFamily)
                 currFamily->appendSpaceSeparated(value->string.characters, value->string.length);
             else if (nextValBreaksFont || !nextValIsFontName)
-                list->append(new FontFamilyValue(domString(value->string)));
+                list->append(new FontFamilyValue(value->string));
             else
-                list->append(currFamily = new FontFamilyValue(domString(value->string)));
+                list->append(currFamily = new FontFamilyValue(value->string));
         }
         else {
             break;
@@ -2742,26 +2749,25 @@ bool CSSParser::parseFontFaceSrc()
     while ((val = valueList->current())) {
         RefPtr<CSSFontFaceSrcValue> parsedValue;
         if (val->unit == CSSPrimitiveValue::CSS_URI && !expectComma) {
-            String value = parseURL(domString(val->string));
+            String value = parseURL(val->string);
             parsedValue = new CSSFontFaceSrcValue(KURL(styleElement->baseURL(), value).string(), false);
             uriValue = parsedValue;
             allowFormat = true;
             expectComma = true;
         } else if (val->unit == Value::Function) {
             // There are two allowed functions: local() and format().             
-            String fname = domString(val->function->name).lower();
             ValueList* args = val->function->args;
             if (args && args->size() == 1) {
-                if (fname == "local(" && !expectComma) {
+                if (equalIgnoringCase(val->function->name, "local(") && !expectComma) {
                     expectComma = true;
                     allowFormat = false;
                     Value* a = args->current();
                     uriValue.clear();
-                    parsedValue = new CSSFontFaceSrcValue(domString(a->string), true);
-                } else if (fname == "format(" && allowFormat && uriValue) {
+                    parsedValue = new CSSFontFaceSrcValue(a->string, true);
+                } else if (equalIgnoringCase(val->function->name, "format(") && allowFormat && uriValue) {
                     expectComma = true;
                     allowFormat = false;
-                    uriValue->setFormat(domString(args->current()->string));
+                    uriValue->setFormat(args->current()->string);
                     uriValue.clear();
                     valueList->next();
                     continue;
@@ -2804,7 +2810,7 @@ bool CSSParser::parseFontFaceUnicodeRange()
             break;
         }
 
-        String rangeString = domString(valueList->current()->string);
+        String rangeString = valueList->current()->string;
         UChar32 from = 0;
         UChar32 to = 0;
         unsigned length = rangeString.length();
@@ -2889,7 +2895,7 @@ bool CSSParser::parseColor(const String &name, RGBA32& rgb, bool strict)
 
     // try a little harder
     Color tc;
-    tc.setNamedColor(name.lower());
+    tc.setNamedColor(name);
     if (tc.isValid()) {
         rgb = tc.rgb();
         return true;
@@ -2980,12 +2986,12 @@ bool CSSParser::parseColorFromValue(Value* value, RGBA32& c, bool svg)
     } else if (value->unit == CSSPrimitiveValue::CSS_RGBCOLOR ||
                 value->unit == CSSPrimitiveValue::CSS_IDENT ||
                 (!strict && value->unit == CSSPrimitiveValue::CSS_DIMENSION)) {
-        if (!CSSParser::parseColor(domString(value->string), c, strict && value->unit == CSSPrimitiveValue::CSS_IDENT))
+        if (!CSSParser::parseColor(value->string, c, strict && value->unit == CSSPrimitiveValue::CSS_IDENT))
             return false;
     } else if (value->unit == Value::Function &&
                 value->function->args != 0 &&
                 value->function->args->size() == 5 /* rgb + two commas */ &&
-                domString(value->function->name).lower() == "rgb(") {
+                equalIgnoringCase(value->function->name, "rgb(")) {
         int colorValues[3];
         if (!parseColorParameters(value, colorValues, false))
             return false;
@@ -2994,7 +3000,7 @@ bool CSSParser::parseColorFromValue(Value* value, RGBA32& c, bool svg)
         if (value->unit == Value::Function &&
                 value->function->args != 0 &&
                 value->function->args->size() == 7 /* rgba + three commas */ &&
-                domString(value->function->name).lower() == "rgba(") {
+                equalIgnoringCase(value->function->name, "rgba(")) {
             int colorValues[4];
             if (!parseColorParameters(value, colorValues, true))
                 return false;
@@ -3002,7 +3008,7 @@ bool CSSParser::parseColorFromValue(Value* value, RGBA32& c, bool svg)
         } else if (value->unit == Value::Function &&
                     value->function->args != 0 &&
                     value->function->args->size() == 5 /* hsl + two commas */ &&
-                    domString(value->function->name).lower() == "hsl(") {
+                    equalIgnoringCase(value->function->name, "hsl(")) {
             double colorValues[3];
             if (!parseHSLParameters(value, colorValues, false))
                 return false;
@@ -3010,7 +3016,7 @@ bool CSSParser::parseColorFromValue(Value* value, RGBA32& c, bool svg)
         } else if (value->unit == Value::Function &&
                     value->function->args != 0 &&
                     value->function->args->size() == 7 /* hsla + three commas */ &&
-                    domString(value->function->name).lower() == "hsla(") {
+                    equalIgnoringCase(value->function->name, "hsla(")) {
             double colorValues[4];
             if (!parseHSLParameters(value, colorValues, true))
                 return false;
@@ -3294,7 +3300,7 @@ bool CSSParser::parseBorderImage(int propId, bool important)
     if (val->unit != CSSPrimitiveValue::CSS_URI)
         return false;
         
-    String uri = parseURL(domString(val->string));
+    String uri = parseURL(val->string);
     if (uri.isEmpty())
         return false;
     
@@ -3337,7 +3343,7 @@ bool CSSParser::parseCounter(int propId, int defaultValue, bool important)
         switch (state) {
             case ID:
                 if (val && val->unit == CSSPrimitiveValue::CSS_IDENT) {
-                    counterName = new CSSPrimitiveValue(domString(val->string), CSSPrimitiveValue::CSS_STRING);
+                    counterName = new CSSPrimitiveValue(val->string, CSSPrimitiveValue::CSS_STRING);
                     state = VAL;
                     valueList->next();
                     continue;
@@ -3367,49 +3373,48 @@ bool CSSParser::parseCounter(int propId, int defaultValue, bool important)
     return false;
 }
 
-class TransformOperationInfo
-{
+class TransformOperationInfo {
 public:
-    TransformOperationInfo(const String& fname)
+    TransformOperationInfo(const ParseString& name)
     : m_type(CSSTransformValue::UnknownTransformOperation)
     , m_argCount(1)
     , m_allowSingleArgument(false)
     , m_unit(CSSParser::FUnknown)
     {
-        if (fname == "scale(" || fname == "scaleX(" || fname == "scaleY(") {
+        if (equalIgnoringCase(name, "scale(") || equalIgnoringCase(name, "scaleX(") || equalIgnoringCase(name, "scaleY(")) {
             m_unit = CSSParser::FNumber;
-            if (fname == "scale(")
+            if (equalIgnoringCase(name, "scale("))
                 m_type = CSSTransformValue::ScaleTransformOperation;
-            else if (fname == "scaleX(")
+            else if (equalIgnoringCase(name, "scaleX("))
                 m_type = CSSTransformValue::ScaleXTransformOperation;
             else
                 m_type = CSSTransformValue::ScaleYTransformOperation;
-        } else if (fname == "rotate(") {
+        } else if (equalIgnoringCase(name, "rotate(")) {
             m_type = CSSTransformValue::RotateTransformOperation;
             m_unit = CSSParser::FAngle;
-        } else if (fname == "skew(" || fname == "skewX(" || fname == "skewY(") {
+        } else if (equalIgnoringCase(name, "skew(") || equalIgnoringCase(name, "skewX(") || equalIgnoringCase(name, "skewY(")) {
             m_unit = CSSParser::FAngle;
-            if (fname == "skew(")
+            if (equalIgnoringCase(name, "skew("))
                 m_type = CSSTransformValue::SkewTransformOperation;
-            else if (fname == "skewX(")
+            else if (equalIgnoringCase(name, "skewX("))
                 m_type = CSSTransformValue::SkewXTransformOperation;
             else
                 m_type = CSSTransformValue::SkewYTransformOperation;
-        } else if (fname == "translate(" || fname == "translateX(" || fname == "translateY(") {
+        } else if (equalIgnoringCase(name, "translate(") || equalIgnoringCase(name, "translateX(") || equalIgnoringCase(name, "translateY(")) {
             m_unit = CSSParser::FLength | CSSParser::FPercent;
-            if (fname == "translate(")
+            if (equalIgnoringCase(name, "translate("))
                 m_type = CSSTransformValue::TranslateTransformOperation;
-            else if (fname == "translateX(")
+            else if (equalIgnoringCase(name, "translateX("))
                 m_type = CSSTransformValue::TranslateXTransformOperation;
             else
                 m_type = CSSTransformValue::TranslateYTransformOperation;
-        } else if (fname == "matrix(") {
+        } else if (equalIgnoringCase(name, "matrix(")) {
             m_type = CSSTransformValue::MatrixTransformOperation;
             m_argCount = 11;
             m_unit = CSSParser::FNumber;
         }
         
-        if (fname == "scale(" || fname == "skew(" || fname == "translate(") {
+        if (equalIgnoringCase(name, "scale(") || equalIgnoringCase(name, "skew(") || equalIgnoringCase(name, "translate(")) {
             m_allowSingleArgument = true;
             m_argCount = 3;
         }
@@ -3440,7 +3445,6 @@ PassRefPtr<CSSValue> CSSParser::parseTransform()
     for (Value* value = valueList->current(); value; value = valueList->next()) {
         if (value->unit != Value::Function || !value->function)
             return 0;
-        String fname = domString(value->function->name).lower();
         
         // Every primitive requires at least one argument.
         ValueList* args = value->function->args;
@@ -3448,7 +3452,7 @@ PassRefPtr<CSSValue> CSSParser::parseTransform()
             return 0;
         
         // See if the specified primitive is one we understand.
-        TransformOperationInfo info(fname);
+        TransformOperationInfo info(value->function->name);
         if (info.unknown())
             return 0;
        
@@ -3855,7 +3859,7 @@ CSSRule* CSSParser::createCharsetRule(const ParseString& charset)
         return 0;
     if (!styleElement->isCSSStyleSheet())
         return 0;
-    CSSCharsetRule* rule = new CSSCharsetRule(styleElement, domString(charset));
+    CSSCharsetRule* rule = new CSSCharsetRule(styleElement, charset);
     m_parsedStyleObjects.append(rule);
     return rule;
 }
@@ -3868,7 +3872,7 @@ CSSRule* CSSParser::createImportRule(const ParseString& url, MediaList* media)
         return 0;
     if (!styleElement->isCSSStyleSheet())
         return 0;
-    CSSImportRule* rule = new CSSImportRule(styleElement, domString(url), media);
+    CSSImportRule* rule = new CSSImportRule(styleElement, url, media);
     m_parsedStyleObjects.append(rule);
     return rule;
 }

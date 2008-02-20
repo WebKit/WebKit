@@ -93,7 +93,7 @@ bool CSSParser::parseSVGValue(int propId, bool important)
         if (id == CSS_VAL_NONE)
             valid_primitive = true;
         else if (value->unit == CSSPrimitiveValue::CSS_URI) {
-            parsedValue = new CSSPrimitiveValue(domString(value->string), CSSPrimitiveValue::CSS_URI);
+            parsedValue = new CSSPrimitiveValue(value->string, CSSPrimitiveValue::CSS_URI);
             if (parsedValue)
                 valueList->next();
         }
@@ -199,9 +199,9 @@ bool CSSParser::parseSVGValue(int propId, bool important)
             else if (value->unit == CSSPrimitiveValue::CSS_URI) {
                 RGBA32 c = Color::transparent;
                 if (valueList->next() && parseColorFromValue(valueList->current(), c, true)) {
-                    parsedValue = new SVGPaint(domString(value->string), c);
+                    parsedValue = new SVGPaint(value->string, c);
                 } else
-                    parsedValue = new SVGPaint(SVGPaint::SVG_PAINTTYPE_URI, domString(value->string));
+                    parsedValue = new SVGPaint(SVGPaint::SVG_PAINTTYPE_URI, value->string);
             } else
                 parsedValue = parseSVGPaint();
 
@@ -213,7 +213,7 @@ bool CSSParser::parseSVGValue(int propId, bool important)
     case CSS_PROP_COLOR:                // <color> | inherit
         if ((id >= CSS_VAL_AQUA && id <= CSS_VAL_WINDOWTEXT) ||
            (id >= CSS_VAL_ALICEBLUE && id <= CSS_VAL_YELLOWGREEN))
-            parsedValue = new SVGColor(domString(value->string));
+            parsedValue = new SVGColor(value->string);
         else
             parsedValue = parseSVGColor();
 
@@ -226,7 +226,7 @@ bool CSSParser::parseSVGValue(int propId, bool important)
     case CSS_PROP_LIGHTING_COLOR:
         if ((id >= CSS_VAL_AQUA && id <= CSS_VAL_WINDOWTEXT) ||
            (id >= CSS_VAL_ALICEBLUE && id <= CSS_VAL_YELLOWGREEN))
-            parsedValue = new SVGColor(domString(value->string));
+            parsedValue = new SVGColor(value->string);
         else if (id == CSS_VAL_CURRENTCOLOR)
             parsedValue = new SVGColor(SVGColor::SVG_COLORTYPE_CURRENTCOLOR);
         else // TODO : svgcolor (iccColor)
@@ -267,7 +267,7 @@ bool CSSParser::parseSVGValue(int propId, bool important)
         if (id == CSS_VAL_NONE)
             valid_primitive = true;
         else if (value->unit == CSSPrimitiveValue::CSS_URI) {
-            parsedValue = new CSSPrimitiveValue(domString(value->string), (CSSPrimitiveValue::UnitTypes) value->unit);
+            parsedValue = new CSSPrimitiveValue(value->string, (CSSPrimitiveValue::UnitTypes) value->unit);
             if (parsedValue)
                 valueList->next();
         }
@@ -296,7 +296,7 @@ bool CSSParser::parseSVGValue(int propId, bool important)
         if (id != 0)
             parsedValue = new CSSPrimitiveValue(id);
         else if (value->unit == CSSPrimitiveValue::CSS_STRING)
-            parsedValue = new CSSPrimitiveValue(domString(value->string), (CSSPrimitiveValue::UnitTypes) value->unit);
+            parsedValue = new CSSPrimitiveValue(value->string, (CSSPrimitiveValue::UnitTypes) value->unit);
         else if (value->unit >= CSSPrimitiveValue::CSS_NUMBER && value->unit <= CSSPrimitiveValue::CSS_KHZ)
             parsedValue = new CSSPrimitiveValue(value->fValue, (CSSPrimitiveValue::UnitTypes) value->unit);
         else if (value->unit >= Value::Q_EMS)

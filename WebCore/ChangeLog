@@ -1,3 +1,55 @@
+2008-02-20  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam.
+
+        - make conversion from CSS ParseString to String and AtomicString
+          automatic and remove all the explicit calls to do the conversion
+
+        - fix CSS parsing to do fewer allocations, mostly by using the
+          equalIgnoringCase function in CSSParser
+
+        * css/CSSGrammar.y: Take out all the explicit atomicString and
+        domString calls now that ParseString knows how to convert itself.
+
+        * css/CSSParser.cpp:
+        (WebCore::equal): Added.
+        (WebCore::equalIgnoringCase): Allow non-lettters.
+        (WebCore::ParseString::lower): Used charactersAreAllASCII.
+        (WebCore::unitFromString): Use equal.
+        (WebCore::CSSParser::parseValue): Removed unneeded call to domString.
+        (WebCore::CSSParser::parseContent): Use equalIgnoringCase.
+        (WebCore::CSSParser::parseBackgroundImage): Removed unneeded call to domString.
+        (WebCore::CSSParser::parseTransitionTimingFunction): Use equalIgnoringCase.
+        (WebCore::CSSParser::parseDashboardRegions): More of the same.
+        (WebCore::CSSParser::parseCounterContent): Ditto.
+        (WebCore::CSSParser::parseShape): Use equalIgnoringCase.
+        (WebCore::CSSParser::parseFontFamily): Removed unneeded calls to domString.
+        (WebCore::CSSParser::parseFontFaceSrc): More.
+        (WebCore::CSSParser::parseFontFaceUnicodeRange): More.
+        (WebCore::CSSParser::parseColor): Don't lowercase here -- setNamedColor now
+        handles the case folding.
+        (WebCore::CSSParser::parseColorFromValue): More.
+        (WebCore::CSSParser::parseBorderImage): More.
+        (WebCore::CSSParser::parseCounter): More.
+        (WebCore::TransformOperationInfo::TransformOperationInfo): More.
+        (WebCore::CSSParser::parseTransform): More.
+        (WebCore::CSSParser::createCharsetRule): More.
+        (WebCore::CSSParser::createImportRule): More.
+
+        * css/CSSParser.h: Removed domString and atomicString functions.
+        (WebCore::ParseString::operator String): Added. Allows conversion to String
+        without an explicit function call.
+        (WebCore::ParseString::operator AtomicString): Ditto.
+
+        * css/MediaQueryExp.cpp:
+        (WebCore::MediaQueryExp::MediaQueryExp): Removed a call to domString.
+        * css/SVGCSSParser.cpp:
+        (WebCore::CSSParser::parseSVGValue): Removed calls to domString.
+
+        * platform/graphics/Color.cpp:
+        (WebCore::findNamedColor): Call toASCIILower on each character as we copy
+        it into the 8-bit character buffer to make the operation fold case.
+
 2008-02-20  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Darin Adler.

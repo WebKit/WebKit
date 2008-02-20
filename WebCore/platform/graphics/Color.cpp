@@ -159,7 +159,7 @@ static inline const NamedColor* findNamedColor(const String& name)
         UChar c = name[i];
         if (!c || c > 0x7F)
             return 0;
-        buffer[i] = static_cast<char>(c);
+        buffer[i] = toASCIILower(static_cast<char>(c));
     }
     buffer[length] = '\0';
     return findColor(buffer, length);
