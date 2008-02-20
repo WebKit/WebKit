@@ -49,8 +49,7 @@ private:
 };
 
 XPathResult::XPathResult(EventTargetNode* eventTarget, const Value& value)
-    : RefCounted<XPathResult>(0)
-    , m_value(value)
+    : m_value(value)
     , m_eventTarget(eventTarget)
 {
     m_eventListener = new InvalidatingEventListener(this);

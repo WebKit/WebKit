@@ -44,17 +44,17 @@ namespace WebCore {
 
     class JSCustomXPathNSResolver : public XPathNSResolver {
     public:
-        
         static PassRefPtr<JSCustomXPathNSResolver> create(KJS::ExecState*, KJS::JSValue*);
         
-        JSCustomXPathNSResolver(KJS::JSObject*, Frame*);
         virtual ~JSCustomXPathNSResolver();
 
         virtual String lookupNamespaceURI(const String& prefix);
 
     private:
-         KJS::JSObject* m_customResolver; // JSCustomXPathNSResolvers are always temporary, thus no need to GC protect the object.
-         RefPtr<Frame> m_frame;
+        JSCustomXPathNSResolver(KJS::JSObject*, Frame*);
+
+        KJS::JSObject* m_customResolver; // JSCustomXPathNSResolvers are always temporary, thus no need to GC protect the object.
+        RefPtr<Frame> m_frame;
     };
 
 } // namespace WebCore

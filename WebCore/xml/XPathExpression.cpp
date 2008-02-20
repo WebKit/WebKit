@@ -45,7 +45,7 @@ using namespace XPath;
     
 PassRefPtr<XPathExpression> XPathExpression::createExpression(const String& expression, XPathNSResolver* resolver, ExceptionCode& ec)
 {
-    RefPtr<XPathExpression> expr = new XPathExpression;
+    RefPtr<XPathExpression> expr = XPathExpression::create();
     Parser parser;
 
     expr->m_topExpression = parser.parseStatement(expression, resolver, ec);
@@ -75,7 +75,7 @@ PassRefPtr<XPathResult> XPathExpression::evaluate(Node* contextNode, unsigned sh
     evaluationContext.node = contextNode;
     evaluationContext.size = 1;
     evaluationContext.position = 1;
-    RefPtr<XPathResult> result = new XPathResult(eventTarget, m_topExpression->evaluate());
+    RefPtr<XPathResult> result = XPathResult::create(eventTarget, m_topExpression->evaluate());
     evaluationContext.node = 0; // Do not hold a reference to the context node, as this may prevent the whole document from being destroyed in time.
 
     if (type != XPathResult::ANY_TYPE) {

@@ -56,7 +56,7 @@ namespace WebCore {
             FIRST_ORDERED_NODE_TYPE = 9
         };
         
-        XPathResult(EventTargetNode*, const XPath::Value&);
+        static PassRefPtr<XPathResult> create(EventTargetNode* eventTarget, const XPath::Value& value) { return adoptRef(new XPathResult(eventTarget, value)); }
         ~XPathResult();
         
         void convertTo(unsigned short type, ExceptionCode&);
@@ -76,6 +76,8 @@ namespace WebCore {
         void invalidateIteratorState();
 
     private:
+        XPathResult(EventTargetNode*, const XPath::Value&);
+        
         XPath::Value m_value;
         unsigned m_nodeSetPosition;
         XPath::NodeSet m_nodeSet; // FIXME: why duplicate the node set stored in m_value?

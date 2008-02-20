@@ -196,7 +196,7 @@ void JSXMLHttpRequest::mark()
 
 JSXMLHttpRequest::JSXMLHttpRequest(JSObject* prototype, Document* d)
     : DOMObject(prototype)
-    , m_impl(new XMLHttpRequest(d))
+    , m_impl(XMLHttpRequest::create(d))
 {
     ScriptInterpreter::putDOMObject(m_impl.get(), this);
 }

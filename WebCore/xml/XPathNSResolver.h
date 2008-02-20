@@ -37,9 +37,11 @@ namespace WebCore {
 
     class XPathNSResolver : public RefCounted<XPathNSResolver> {
     public:
-        XPathNSResolver() : RefCounted<XPathNSResolver>(0) { }
         virtual ~XPathNSResolver();
         virtual String lookupNamespaceURI(const String& prefix) = 0;
+        
+    protected:
+        XPathNSResolver() { }
     };
 
 }

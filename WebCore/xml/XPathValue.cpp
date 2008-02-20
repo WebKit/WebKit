@@ -55,7 +55,7 @@ const NodeSet& Value::toNodeSet() const
 NodeSet& Value::modifiableNodeSet()
 {
     if (!m_data)
-        m_data = new ValueData;
+        m_data = ValueData::create();
     
     m_type = NodeSetValue;
     return m_data->m_nodeSet;

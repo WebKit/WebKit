@@ -40,7 +40,7 @@ enum XMLHttpRequestState {
 
 class XMLHttpRequest : public RefCounted<XMLHttpRequest>, public EventTarget, private SubresourceLoaderClient {
 public:
-    XMLHttpRequest(Document*);
+    static PassRefPtr<XMLHttpRequest> create(Document *document) { return adoptRef(new XMLHttpRequest(document)); }
     ~XMLHttpRequest();
 
     virtual XMLHttpRequest* toXMLHttpRequest() { return this; }
@@ -83,6 +83,8 @@ public:
     using RefCounted<XMLHttpRequest>::deref;
 
 private:
+    XMLHttpRequest(Document*);
+    
     virtual void refEventTarget() { ref(); }
     virtual void derefEventTarget() { deref(); }
 

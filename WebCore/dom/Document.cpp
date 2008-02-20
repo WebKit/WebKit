@@ -3340,7 +3340,7 @@ void Document::shiftMarkers(Node *node, unsigned startOffset, int delta, Documen
 
 void Document::applyXSLTransform(ProcessingInstruction* pi)
 {
-    RefPtr<XSLTProcessor> processor = new XSLTProcessor;
+    RefPtr<XSLTProcessor> processor = XSLTProcessor::create();
     processor->setXSLStylesheet(static_cast<XSLStyleSheet*>(pi->sheet()));
     
     String resultMIMEType;
@@ -3552,14 +3552,14 @@ PassRefPtr<XPathExpression> Document::createExpression(const String& expression,
                                                        ExceptionCode& ec)
 {
     if (!m_xpathEvaluator)
-        m_xpathEvaluator = new XPathEvaluator;
+        m_xpathEvaluator = XPathEvaluator::create();
     return m_xpathEvaluator->createExpression(expression, resolver, ec);
 }
 
 PassRefPtr<XPathNSResolver> Document::createNSResolver(Node* nodeResolver)
 {
     if (!m_xpathEvaluator)
-        m_xpathEvaluator = new XPathEvaluator;
+        m_xpathEvaluator = XPathEvaluator::create();
     return m_xpathEvaluator->createNSResolver(nodeResolver);
 }
 
@@ -3571,7 +3571,7 @@ PassRefPtr<XPathResult> Document::evaluate(const String& expression,
                                            ExceptionCode& ec)
 {
     if (!m_xpathEvaluator)
-        m_xpathEvaluator = new XPathEvaluator;
+        m_xpathEvaluator = XPathEvaluator::create();
     return m_xpathEvaluator->evaluate(expression, contextNode, resolver, type, result, ec);
 }
 

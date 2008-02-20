@@ -1256,7 +1256,7 @@ sub GenerateImplementation
                 push(@functionContent, "        if ([$paramName isMemberOfClass:[DOMNativeXPathNSResolver class]])\n");
                 push(@functionContent, "            nativeResolver = [(DOMNativeXPathNSResolver *)$paramName _xpathNSResolver];\n");
                 push(@functionContent, "        else {\n");
-                push(@functionContent, "            customResolver = new WebCore::DOMCustomXPathNSResolver($paramName);\n");
+                push(@functionContent, "            customResolver = WebCore::DOMCustomXPathNSResolver::create($paramName);\n");
                 push(@functionContent, "            nativeResolver = customResolver.get();\n");
                 push(@functionContent, "        }\n");
                 push(@functionContent, "    }\n");

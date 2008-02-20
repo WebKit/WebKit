@@ -1,3 +1,61 @@
+2008-02-19  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Darin.
+
+        Change all classes in xml/ to start out with a ref count of 1.
+        
+        * bindings/js/JSCustomXPathNSResolver.h:
+        * bindings/js/JSXMLHttpRequest.cpp:
+        (WebCore::JSXMLHttpRequest::JSXMLHttpRequest):
+        * bindings/js/JSXSLTProcessor.cpp:
+        (WebCore::JSXSLTProcessor::JSXSLTProcessor):
+        * bindings/objc/DOMCustomXPathNSResolver.h:
+        (WebCore::DOMCustomXPathNSResolver::create):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * bindings/scripts/CodeGeneratorObjC.pm:
+        * dom/Document.cpp:
+        (WebCore::Document::applyXSLTransform):
+        (WebCore::Document::createExpression):
+        (WebCore::Document::createNSResolver):
+        (WebCore::Document::evaluate):
+        * xml/DOMParser.h:
+        (WebCore::DOMParser::create):
+        (WebCore::DOMParser::DOMParser):
+        * xml/NativeXPathNSResolver.h:
+        (WebCore::NativeXPathNSResolver::create):
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::XMLHttpRequest):
+        * xml/XMLHttpRequest.h:
+        (WebCore::XMLHttpRequest::create):
+        * xml/XMLSerializer.h:
+        (WebCore::XMLSerializer::create):
+        (WebCore::XMLSerializer::XMLSerializer):
+        * xml/XPathEvaluator.cpp:
+        (WebCore::XPathEvaluator::createNSResolver):
+        * xml/XPathEvaluator.h:
+        (WebCore::XPathEvaluator::create):
+        (WebCore::XPathEvaluator::XPathEvaluator):
+        * xml/XPathExpression.cpp:
+        (WebCore::XPathExpression::createExpression):
+        (WebCore::XPathExpression::evaluate):
+        * xml/XPathExpression.h:
+        (WebCore::XPathExpression::create):
+        (WebCore::XPathExpression::XPathExpression):
+        * xml/XPathNSResolver.h:
+        * xml/XPathResult.cpp:
+        (WebCore::XPathResult::XPathResult):
+        * xml/XPathResult.h:
+        (WebCore::XPathResult::create):
+        * xml/XPathValue.cpp:
+        (WebCore::XPath::Value::modifiableNodeSet):
+        * xml/XPathValue.h:
+        (WebCore::XPath::ValueData::create):
+        (WebCore::XPath::ValueData::ValueData):
+        (WebCore::XPath::Value::Value):
+        * xml/XSLTProcessor.h:
+        (WebCore::XSLTProcessor::create):
+        (WebCore::XSLTProcessor::XSLTProcessor):
+
 2008-02-19  Darin Adler  <darin@apple.com>
 
         Reviewed by Sam.
