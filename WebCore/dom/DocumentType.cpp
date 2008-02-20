@@ -66,9 +66,12 @@ String DocumentType::toString() const
     if (!m_publicId.isEmpty()) {
         result += " PUBLIC \"";
         result += m_publicId;
-        result += "\" \"";
-        result += m_systemId;
         result += "\"";
+        if (!m_systemId.isEmpty()) {
+            result += " \"";
+            result += m_systemId;
+            result += "\"";
+        }
     } else if (!m_systemId.isEmpty()) {
         result += " SYSTEM \"";
         result += m_systemId;
