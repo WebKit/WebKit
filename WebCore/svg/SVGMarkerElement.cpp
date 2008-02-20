@@ -145,7 +145,7 @@ void SVGMarkerElement::setOrientToAngle(SVGAngle* angle)
 SVGResource* SVGMarkerElement::canvasResource()
 {
     if (!m_marker)
-        m_marker = new SVGResourceMarker();
+        m_marker = SVGResourceMarker::create();
 
     m_marker->setMarker(static_cast<RenderSVGViewportContainer*>(renderer()));
 

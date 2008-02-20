@@ -94,7 +94,7 @@ void SVGClipPathElement::childrenChanged(bool changedByParser)
 SVGResource* SVGClipPathElement::canvasResource()
 {
     if (!m_clipper)
-        m_clipper = new SVGResourceClipper();
+        m_clipper = SVGResourceClipper::create();
     else
         m_clipper->resetClipData();
 

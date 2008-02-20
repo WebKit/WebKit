@@ -35,7 +35,6 @@ namespace WebCore {
 
     class SVGPathSeg : public RefCounted<SVGPathSeg> {
     public:
-        SVGPathSeg() : RefCounted<SVGPathSeg>(0) { }
         virtual ~SVGPathSeg() { }
 
         enum SVGPathSegType {
@@ -66,6 +65,9 @@ namespace WebCore {
         virtual String toString() const { return ""; }
 
         const QualifiedName& associatedAttributeName() const { return SVGNames::dAttr; }
+        
+    protected:
+        SVGPathSeg() { }
     };
 
 } // namespace WebCore

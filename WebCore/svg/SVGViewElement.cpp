@@ -49,7 +49,7 @@ SVGViewElement::~SVGViewElement()
 SVGStringList* SVGViewElement::viewTarget() const
 {
     if (!m_viewTarget)
-        m_viewTarget = new SVGStringList(SVGNames::viewTargetAttr);
+        m_viewTarget = SVGStringList::create(SVGNames::viewTargetAttr);
 
     return m_viewTarget.get();
 }

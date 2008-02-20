@@ -171,7 +171,7 @@ void SVGAnimationElement::parseBeginOrEndValue(double& number, const String& val
 {
     // TODO: Don't use SVGStringList for parsing.
     AtomicString dummy;
-    RefPtr<SVGStringList> valueList = new SVGStringList(QualifiedName(dummy, dummy, dummy));
+    RefPtr<SVGStringList> valueList = SVGStringList::create(QualifiedName(dummy, dummy, dummy));
     valueList->parse(value, ';');
     
     ExceptionCode ec = 0;

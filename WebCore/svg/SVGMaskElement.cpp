@@ -217,7 +217,7 @@ RenderObject* SVGMaskElement::createRenderer(RenderArena* arena, RenderStyle*)
 SVGResource* SVGMaskElement::canvasResource()
 {
     if (!m_masker)
-        m_masker = new SVGResourceMasker(this);
+        m_masker = SVGResourceMasker::create(this);
     return m_masker.get();
 }
 

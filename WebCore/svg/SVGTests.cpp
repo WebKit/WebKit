@@ -44,7 +44,7 @@ SVGTests::~SVGTests()
 SVGStringList* SVGTests::requiredFeatures() const
 {
     if (!m_features)
-        m_features = new SVGStringList(SVGNames::requiredFeaturesAttr);
+        m_features = SVGStringList::create(SVGNames::requiredFeaturesAttr);
 
     return m_features.get();
 }
@@ -52,7 +52,7 @@ SVGStringList* SVGTests::requiredFeatures() const
 SVGStringList* SVGTests::requiredExtensions() const
 {
     if (!m_extensions)
-        m_extensions = new SVGStringList(SVGNames::requiredExtensionsAttr);
+        m_extensions = SVGStringList::create(SVGNames::requiredExtensionsAttr);
 
     return m_extensions.get();
 }
@@ -60,7 +60,7 @@ SVGStringList* SVGTests::requiredExtensions() const
 SVGStringList* SVGTests::systemLanguage() const
 {
     if (!m_systemLanguage)
-        m_systemLanguage = new SVGStringList(SVGNames::systemLanguageAttr);
+        m_systemLanguage = SVGStringList::create(SVGNames::systemLanguageAttr);
 
     return m_systemLanguage.get();
 }

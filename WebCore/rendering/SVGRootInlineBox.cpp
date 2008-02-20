@@ -1114,7 +1114,7 @@ void SVGRootInlineBox::buildLayoutInformationForTextBox(SVGCharacterLayoutInfo& 
         SVGChar svgChar;
 
         if (info.inPathLayout())
-            svgChar.pathData = new SVGCharOnPath();
+            svgChar.pathData = SVGCharOnPath::create();
 
         float glyphWidth = 0.0f;
         float glyphHeight = 0.0f;

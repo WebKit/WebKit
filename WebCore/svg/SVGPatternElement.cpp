@@ -63,7 +63,7 @@ SVGPatternElement::SVGPatternElement(const QualifiedName& tagName, Document* doc
     , m_height(this, LengthModeHeight)
     , m_patternUnits(SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX)
     , m_patternContentUnits(SVGUnitTypes::SVG_UNIT_TYPE_USERSPACEONUSE)
-    , m_patternTransform(new SVGTransformList(SVGNames::patternTransformAttr))
+    , m_patternTransform(SVGTransformList::create(SVGNames::patternTransformAttr))
 {
 }
 
@@ -272,7 +272,7 @@ RenderObject* SVGPatternElement::createRenderer(RenderArena* arena, RenderStyle*
 SVGResource* SVGPatternElement::canvasResource()
 {
     if (!m_resource)
-        m_resource = new SVGPaintServerPattern(this);
+        m_resource = SVGPaintServerPattern::create(this);
 
     return m_resource.get();
 }

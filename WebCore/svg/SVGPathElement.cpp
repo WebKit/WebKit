@@ -76,99 +76,99 @@ unsigned long SVGPathElement::getPathSegAtLength(float length)
     return pathSegList()->getPathSegAtLength(length);
 }
 
-SVGPathSegClosePath* SVGPathElement::createSVGPathSegClosePath()
+PassRefPtr<SVGPathSegClosePath> SVGPathElement::createSVGPathSegClosePath()
 {
-    return new SVGPathSegClosePath();
+    return SVGPathSegClosePath::create();
 }
 
-SVGPathSegMovetoAbs* SVGPathElement::createSVGPathSegMovetoAbs(float x, float y)
+PassRefPtr<SVGPathSegMovetoAbs> SVGPathElement::createSVGPathSegMovetoAbs(float x, float y)
 {
-    return new SVGPathSegMovetoAbs(x, y);
+    return SVGPathSegMovetoAbs::create(x, y);
 }
 
-SVGPathSegMovetoRel* SVGPathElement::createSVGPathSegMovetoRel(float x, float y)
+PassRefPtr<SVGPathSegMovetoRel> SVGPathElement::createSVGPathSegMovetoRel(float x, float y)
 {
-    return new SVGPathSegMovetoRel(x, y);
+    return SVGPathSegMovetoRel::create(x, y);
 }
 
-SVGPathSegLinetoAbs* SVGPathElement::createSVGPathSegLinetoAbs(float x, float y)
+PassRefPtr<SVGPathSegLinetoAbs> SVGPathElement::createSVGPathSegLinetoAbs(float x, float y)
 {
-    return new SVGPathSegLinetoAbs(x, y);
+    return SVGPathSegLinetoAbs::create(x, y);
 }
 
-SVGPathSegLinetoRel* SVGPathElement::createSVGPathSegLinetoRel(float x, float y)
+PassRefPtr<SVGPathSegLinetoRel> SVGPathElement::createSVGPathSegLinetoRel(float x, float y)
 {
-    return new SVGPathSegLinetoRel(x, y);
+    return SVGPathSegLinetoRel::create(x, y);
 }
 
-SVGPathSegCurvetoCubicAbs* SVGPathElement::createSVGPathSegCurvetoCubicAbs(float x, float y, float x1, float y1, float x2, float y2)
+PassRefPtr<SVGPathSegCurvetoCubicAbs> SVGPathElement::createSVGPathSegCurvetoCubicAbs(float x, float y, float x1, float y1, float x2, float y2)
 {
-    return new SVGPathSegCurvetoCubicAbs(x, y, x1, y1, x2, y2);
+    return SVGPathSegCurvetoCubicAbs::create(x, y, x1, y1, x2, y2);
 }
 
-SVGPathSegCurvetoCubicRel* SVGPathElement::createSVGPathSegCurvetoCubicRel(float x, float y, float x1, float y1, float x2, float y2)
+PassRefPtr<SVGPathSegCurvetoCubicRel> SVGPathElement::createSVGPathSegCurvetoCubicRel(float x, float y, float x1, float y1, float x2, float y2)
 {
-    return new SVGPathSegCurvetoCubicRel(x, y, x1, y1, x2, y2);
+    return SVGPathSegCurvetoCubicRel::create(x, y, x1, y1, x2, y2);
 }
 
-SVGPathSegCurvetoQuadraticAbs* SVGPathElement::createSVGPathSegCurvetoQuadraticAbs(float x, float y, float x1, float y1)
+PassRefPtr<SVGPathSegCurvetoQuadraticAbs> SVGPathElement::createSVGPathSegCurvetoQuadraticAbs(float x, float y, float x1, float y1)
 {
-    return new SVGPathSegCurvetoQuadraticAbs(x, y, x1, y1);
+    return SVGPathSegCurvetoQuadraticAbs::create(x, y, x1, y1);
 }
 
-SVGPathSegCurvetoQuadraticRel* SVGPathElement::createSVGPathSegCurvetoQuadraticRel(float x, float y, float x1, float y1)
+PassRefPtr<SVGPathSegCurvetoQuadraticRel> SVGPathElement::createSVGPathSegCurvetoQuadraticRel(float x, float y, float x1, float y1)
 {
-    return new SVGPathSegCurvetoQuadraticRel(x, y, x1, y1);
+    return SVGPathSegCurvetoQuadraticRel::create(x, y, x1, y1);
 }
 
-SVGPathSegArcAbs* SVGPathElement::createSVGPathSegArcAbs(float x, float y, float r1, float r2, float angle, bool largeArcFlag, bool sweepFlag)
+PassRefPtr<SVGPathSegArcAbs> SVGPathElement::createSVGPathSegArcAbs(float x, float y, float r1, float r2, float angle, bool largeArcFlag, bool sweepFlag)
 {
-    return new SVGPathSegArcAbs(x, y, r1, r2, angle, largeArcFlag, sweepFlag);
+    return SVGPathSegArcAbs::create(x, y, r1, r2, angle, largeArcFlag, sweepFlag);
 }
 
-SVGPathSegArcRel* SVGPathElement::createSVGPathSegArcRel(float x, float y, float r1, float r2, float angle, bool largeArcFlag, bool sweepFlag)
+PassRefPtr<SVGPathSegArcRel> SVGPathElement::createSVGPathSegArcRel(float x, float y, float r1, float r2, float angle, bool largeArcFlag, bool sweepFlag)
 {
-    return new SVGPathSegArcRel(x, y, r1, r2, angle, largeArcFlag, sweepFlag);
+    return SVGPathSegArcRel::create(x, y, r1, r2, angle, largeArcFlag, sweepFlag);
 }
 
-SVGPathSegLinetoHorizontalAbs* SVGPathElement::createSVGPathSegLinetoHorizontalAbs(float x)
+PassRefPtr<SVGPathSegLinetoHorizontalAbs> SVGPathElement::createSVGPathSegLinetoHorizontalAbs(float x)
 {
-    return new SVGPathSegLinetoHorizontalAbs(x);
+    return SVGPathSegLinetoHorizontalAbs::create(x);
 }
 
-SVGPathSegLinetoHorizontalRel* SVGPathElement::createSVGPathSegLinetoHorizontalRel(float x)
+PassRefPtr<SVGPathSegLinetoHorizontalRel> SVGPathElement::createSVGPathSegLinetoHorizontalRel(float x)
 {
-    return new SVGPathSegLinetoHorizontalRel(x);
+    return SVGPathSegLinetoHorizontalRel::create(x);
 }
 
-SVGPathSegLinetoVerticalAbs* SVGPathElement::createSVGPathSegLinetoVerticalAbs(float y)
+PassRefPtr<SVGPathSegLinetoVerticalAbs> SVGPathElement::createSVGPathSegLinetoVerticalAbs(float y)
 {
-    return new SVGPathSegLinetoVerticalAbs(y);
+    return SVGPathSegLinetoVerticalAbs::create(y);
 }
 
-SVGPathSegLinetoVerticalRel* SVGPathElement::createSVGPathSegLinetoVerticalRel(float y)
+PassRefPtr<SVGPathSegLinetoVerticalRel> SVGPathElement::createSVGPathSegLinetoVerticalRel(float y)
 {
-    return new SVGPathSegLinetoVerticalRel(y);
+    return SVGPathSegLinetoVerticalRel::create(y);
 }
 
-SVGPathSegCurvetoCubicSmoothAbs* SVGPathElement::createSVGPathSegCurvetoCubicSmoothAbs(float x, float y, float x2, float y2)
+PassRefPtr<SVGPathSegCurvetoCubicSmoothAbs> SVGPathElement::createSVGPathSegCurvetoCubicSmoothAbs(float x, float y, float x2, float y2)
 {
-    return new SVGPathSegCurvetoCubicSmoothAbs(x, y, x2, y2);
+    return SVGPathSegCurvetoCubicSmoothAbs::create(x, y, x2, y2);
 }
 
-SVGPathSegCurvetoCubicSmoothRel* SVGPathElement::createSVGPathSegCurvetoCubicSmoothRel(float x, float y, float x2, float y2)
+PassRefPtr<SVGPathSegCurvetoCubicSmoothRel> SVGPathElement::createSVGPathSegCurvetoCubicSmoothRel(float x, float y, float x2, float y2)
 {
-    return new SVGPathSegCurvetoCubicSmoothRel(x, y, x2, y2);
+    return SVGPathSegCurvetoCubicSmoothRel::create(x, y, x2, y2);
 }
 
-SVGPathSegCurvetoQuadraticSmoothAbs* SVGPathElement::createSVGPathSegCurvetoQuadraticSmoothAbs(float x, float y)
+PassRefPtr<SVGPathSegCurvetoQuadraticSmoothAbs> SVGPathElement::createSVGPathSegCurvetoQuadraticSmoothAbs(float x, float y)
 {
-    return new SVGPathSegCurvetoQuadraticSmoothAbs(x, y);
+    return SVGPathSegCurvetoQuadraticSmoothAbs::create(x, y);
 }
 
-SVGPathSegCurvetoQuadraticSmoothRel* SVGPathElement::createSVGPathSegCurvetoQuadraticSmoothRel(float x, float y)
+PassRefPtr<SVGPathSegCurvetoQuadraticSmoothRel> SVGPathElement::createSVGPathSegCurvetoQuadraticSmoothRel(float x, float y)
 {
-    return new SVGPathSegCurvetoQuadraticSmoothRel(x, y);
+    return SVGPathSegCurvetoQuadraticSmoothRel::create(x, y);
 }
 
 void SVGPathElement::parseMappedAttribute(MappedAttribute* attr)
@@ -211,7 +211,7 @@ void SVGPathElement::svgAttributeChanged(const QualifiedName& attrName)
 SVGPathSegList* SVGPathElement::pathSegList() const
 {
     if (!m_pathSegList)
-        m_pathSegList = new SVGPathSegList(SVGNames::dAttr);
+        m_pathSegList = SVGPathSegList::create(SVGNames::dAttr);
 
     return m_pathSegList.get();
 }

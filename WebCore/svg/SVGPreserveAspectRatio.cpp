@@ -31,8 +31,7 @@
 namespace WebCore {
 
 SVGPreserveAspectRatio::SVGPreserveAspectRatio()
-    : RefCounted<SVGPreserveAspectRatio>(0)
-    , m_align(SVG_PRESERVEASPECTRATIO_XMIDYMID)
+    : m_align(SVG_PRESERVEASPECTRATIO_XMIDYMID)
     , m_meetOrSlice(SVG_MEETORSLICE_MEET)
 {
     // FIXME: Should the two values default to UNKNOWN instead?

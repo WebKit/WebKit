@@ -1,3 +1,173 @@
+2008-02-20  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Darin.
+
+        Change most SVG related classes to start out with a ref count of 1.
+        
+        * bindings/js/JSSVGPointListCustom.cpp:
+        (WebCore::JSSVGPointList::initialize):
+        (WebCore::JSSVGPointList::insertItemBefore):
+        (WebCore::JSSVGPointList::replaceItem):
+        (WebCore::JSSVGPointList::appendItem):
+        * bindings/js/JSSVGTransformListCustom.cpp:
+        (WebCore::JSSVGTransformList::initialize):
+        (WebCore::JSSVGTransformList::insertItemBefore):
+        (WebCore::JSSVGTransformList::replaceItem):
+        (WebCore::JSSVGTransformList::appendItem):
+        * rendering/SVGCharacterLayoutInfo.h:
+        (WebCore::SVGCharOnPath::create):
+        (WebCore::SVGCharOnPath::SVGCharOnPath):
+        * rendering/SVGRootInlineBox.cpp:
+        (WebCore::SVGRootInlineBox::buildLayoutInformationForTextBox):
+        * svg/SVGAnimationElement.cpp:
+        (WebCore::SVGAnimationElement::parseBeginOrEndValue):
+        * svg/SVGClipPathElement.cpp:
+        (WebCore::SVGClipPathElement::canvasResource):
+        * svg/SVGElementInstance.cpp:
+        (WebCore::SVGElementInstance::childNodes):
+        * svg/SVGElementInstanceList.cpp:
+        (WebCore::SVGElementInstanceList::SVGElementInstanceList):
+        * svg/SVGElementInstanceList.h:
+        (WebCore::SVGElementInstanceList::create):
+        * svg/SVGFitToViewBox.cpp:
+        (WebCore::SVGFitToViewBox::SVGFitToViewBox):
+        * svg/SVGGradientElement.cpp:
+        (WebCore::SVGGradientElement::SVGGradientElement):
+        (WebCore::SVGGradientElement::canvasResource):
+        * svg/SVGImageElement.cpp:
+        (WebCore::SVGImageElement::SVGImageElement):
+        * svg/SVGLengthList.h:
+        (WebCore::SVGLengthList::create):
+        * svg/SVGList.h:
+        (WebCore::SVGList::SVGList):
+        (WebCore::SVGPODListItem::create):
+        (WebCore::SVGPODListItem::copy):
+        (WebCore::SVGPODListItem::SVGPODListItem):
+        (WebCore::SVGPODList::initialize):
+        (WebCore::SVGPODList::insertItemBefore):
+        (WebCore::SVGPODList::replaceItem):
+        (WebCore::SVGPODList::appendItem):
+        (WebCore::SVGPODList::SVGPODList):
+        * svg/SVGMarkerElement.cpp:
+        (WebCore::SVGMarkerElement::canvasResource):
+        * svg/SVGMaskElement.cpp:
+        (WebCore::SVGMaskElement::canvasResource):
+        * svg/SVGNumberList.h:
+        (WebCore::SVGNumberList::create):
+        * svg/SVGPathElement.cpp:
+        (WebCore::SVGPathElement::createSVGPathSegClosePath):
+        (WebCore::SVGPathElement::createSVGPathSegMovetoAbs):
+        (WebCore::SVGPathElement::createSVGPathSegMovetoRel):
+        (WebCore::SVGPathElement::createSVGPathSegLinetoAbs):
+        (WebCore::SVGPathElement::createSVGPathSegLinetoRel):
+        (WebCore::SVGPathElement::createSVGPathSegCurvetoCubicAbs):
+        (WebCore::SVGPathElement::createSVGPathSegCurvetoCubicRel):
+        (WebCore::SVGPathElement::createSVGPathSegCurvetoQuadraticAbs):
+        (WebCore::SVGPathElement::createSVGPathSegCurvetoQuadraticRel):
+        (WebCore::SVGPathElement::createSVGPathSegArcAbs):
+        (WebCore::SVGPathElement::createSVGPathSegArcRel):
+        (WebCore::SVGPathElement::createSVGPathSegLinetoHorizontalAbs):
+        (WebCore::SVGPathElement::createSVGPathSegLinetoHorizontalRel):
+        (WebCore::SVGPathElement::createSVGPathSegLinetoVerticalAbs):
+        (WebCore::SVGPathElement::createSVGPathSegLinetoVerticalRel):
+        (WebCore::SVGPathElement::createSVGPathSegCurvetoCubicSmoothAbs):
+        (WebCore::SVGPathElement::createSVGPathSegCurvetoCubicSmoothRel):
+        (WebCore::SVGPathElement::createSVGPathSegCurvetoQuadraticSmoothAbs):
+        (WebCore::SVGPathElement::createSVGPathSegCurvetoQuadraticSmoothRel):
+        (WebCore::SVGPathElement::pathSegList):
+        * svg/SVGPathElement.h:
+        * svg/SVGPathSeg.h:
+        (WebCore::SVGPathSeg::SVGPathSeg):
+        * svg/SVGPathSegArc.h:
+        (WebCore::SVGPathSegArcAbs::create):
+        (WebCore::SVGPathSegArcRel::create):
+        * svg/SVGPathSegClosePath.h:
+        (WebCore::SVGPathSegClosePath::create):
+        * svg/SVGPathSegCurvetoCubic.h:
+        (WebCore::SVGPathSegCurvetoCubicAbs::create):
+        (WebCore::SVGPathSegCurvetoCubicRel::create):
+        * svg/SVGPathSegCurvetoCubicSmooth.h:
+        (WebCore::SVGPathSegCurvetoCubicSmoothAbs::create):
+        (WebCore::SVGPathSegCurvetoCubicSmoothRel::create):
+        * svg/SVGPathSegCurvetoQuadratic.h:
+        (WebCore::SVGPathSegCurvetoQuadraticAbs::create):
+        (WebCore::SVGPathSegCurvetoQuadraticRel::create):
+        * svg/SVGPathSegCurvetoQuadraticSmooth.h:
+        (WebCore::SVGPathSegCurvetoQuadraticSmoothAbs::create):
+        (WebCore::SVGPathSegCurvetoQuadraticSmoothRel::create):
+        * svg/SVGPathSegLineto.h:
+        (WebCore::SVGPathSegLinetoAbs::create):
+        (WebCore::SVGPathSegLinetoRel::create):
+        * svg/SVGPathSegLinetoHorizontal.h:
+        (WebCore::SVGPathSegLinetoHorizontalAbs::create):
+        (WebCore::SVGPathSegLinetoHorizontalRel::create):
+        * svg/SVGPathSegLinetoVertical.h:
+        (WebCore::SVGPathSegLinetoVerticalAbs::create):
+        (WebCore::SVGPathSegLinetoVerticalRel::create):
+        * svg/SVGPathSegList.h:
+        (WebCore::SVGPathSegList::create):
+        * svg/SVGPathSegMoveto.h:
+        (WebCore::SVGPathSegMovetoAbs::create):
+        (WebCore::SVGPathSegMovetoRel::create):
+        * svg/SVGPatternElement.cpp:
+        (WebCore::SVGPatternElement::SVGPatternElement):
+        (WebCore::SVGPatternElement::canvasResource):
+        * svg/SVGPointList.h:
+        (WebCore::SVGPointList::create):
+        * svg/SVGPolyElement.cpp:
+        (WebCore::SVGPolyElement::points):
+        * svg/SVGPreserveAspectRatio.cpp:
+        (WebCore::SVGPreserveAspectRatio::SVGPreserveAspectRatio):
+        * svg/SVGPreserveAspectRatio.h:
+        (WebCore::SVGPreserveAspectRatio::create):
+        * svg/SVGRenderingIntent.h:
+        (WebCore::SVGRenderingIntent::SVGRenderingIntent):
+        * svg/SVGStringList.h:
+        (WebCore::SVGStringList::create):
+        * svg/SVGStyledTransformableElement.cpp:
+        (WebCore::SVGStyledTransformableElement::SVGStyledTransformableElement):
+        * svg/SVGTests.cpp:
+        (WebCore::SVGTests::requiredFeatures):
+        (WebCore::SVGTests::requiredExtensions):
+        (WebCore::SVGTests::systemLanguage):
+        * svg/SVGTextElement.cpp:
+        (WebCore::SVGTextElement::SVGTextElement):
+        * svg/SVGTextPositioningElement.cpp:
+        (WebCore::SVGTextPositioningElement::SVGTextPositioningElement):
+        * svg/SVGTransformList.h:
+        (WebCore::SVGTransformList::create):
+        * svg/SVGUnitTypes.h:
+        (WebCore::SVGUnitTypes::SVGUnitTypes):
+        * svg/SVGViewElement.cpp:
+        (WebCore::SVGViewElement::viewTarget):
+        * svg/SVGViewSpec.cpp:
+        (WebCore::SVGViewSpec::SVGViewSpec):
+        * svg/graphics/SVGPaintServer.cpp:
+        (WebCore::SVGPaintServer::sharedSolidPaintServer):
+        * svg/graphics/SVGPaintServer.h:
+        * svg/graphics/SVGPaintServerGradient.h:
+        (WebCore::SVGPaintServerGradient::SharedStopCache::create):
+        (WebCore::SVGPaintServerGradient::SharedStopCache::SharedStopCache):
+        * svg/graphics/SVGPaintServerLinearGradient.h:
+        (WebCore::SVGPaintServerLinearGradient::create):
+        * svg/graphics/SVGPaintServerPattern.h:
+        (WebCore::SVGPaintServerPattern::create):
+        * svg/graphics/SVGPaintServerRadialGradient.h:
+        (WebCore::SVGPaintServerRadialGradient::create):
+        * svg/graphics/SVGPaintServerSolid.h:
+        (WebCore::SVGPaintServerSolid::create):
+        * svg/graphics/SVGResource.cpp:
+        (WebCore::SVGResource::SVGResource):
+        * svg/graphics/SVGResource.h:
+        * svg/graphics/SVGResourceClipper.h:
+        (WebCore::SVGResourceClipper::create):
+        * svg/graphics/SVGResourceMarker.h:
+        (WebCore::SVGResourceMarker::create):
+        * svg/graphics/SVGResourceMasker.h:
+        (WebCore::SVGResourceMasker::create):
+        * svg/graphics/cg/SVGPaintServerGradientCg.cpp:
+        (WebCore::SVGPaintServerGradient::updateQuartzGradientStopsCache):
+
 2008-02-20  Darin Adler  <darin@apple.com>
 
         Reviewed by Sam.

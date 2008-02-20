@@ -38,7 +38,7 @@ namespace WebCore {
 
     class SVGResourceMarker : public SVGResource {
     public:
-        SVGResourceMarker();
+        static PassRefPtr<SVGResourceMarker> create() { return adoptRef(new SVGResourceMarker); }
         virtual ~SVGResourceMarker();
 
         void setMarker(RenderSVGViewportContainer*);
@@ -61,6 +61,7 @@ namespace WebCore {
         virtual TextStream& externalRepresentation(TextStream&) const;
 
     private:
+        SVGResourceMarker();
         double m_refX, m_refY;
         FloatRect m_cachedBounds;
         float m_angle;

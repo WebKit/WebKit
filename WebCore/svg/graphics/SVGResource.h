@@ -66,7 +66,6 @@ namespace WebCore {
 
     class SVGResource : public RefCounted<SVGResource> {
     public:
-        SVGResource();
         virtual ~SVGResource();
       
         virtual void invalidate();
@@ -84,6 +83,9 @@ namespace WebCore {
 
         static void invalidateClients(HashSet<SVGStyledElement*>);
         static void removeClient(SVGStyledElement*);
+
+    protected:
+        SVGResource();
 
     private:
         HashSet<SVGStyledElement*> m_clients;

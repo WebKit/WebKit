@@ -39,7 +39,8 @@ public:
         RENDERING_INTENT_ABSOLUTE_COLORIMETRIC    = 5
     };
 
-    SVGRenderingIntent() : RefCounted<SVGRenderingIntent>(0) { }
+private:
+    SVGRenderingIntent() { }
 };
 
 } // namespace WebCore

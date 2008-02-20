@@ -177,16 +177,7 @@ private:
 
 // Holds extra data, when the character is laid out on a path
 struct SVGCharOnPath : RefCounted<SVGCharOnPath> {
-    SVGCharOnPath()
-        : RefCounted<SVGCharOnPath>(0)
-        , xScale(1.0f)
-        , yScale(1.0f)
-        , xShift(0.0f)
-        , yShift(0.0f)
-        , orientationAngle(0.0f)
-        , hidden(false)
-    {
-    }
+    static PassRefPtr<SVGCharOnPath> create() { return adoptRef(new SVGCharOnPath); }
 
     float xScale;
     float yScale;
@@ -197,6 +188,17 @@ struct SVGCharOnPath : RefCounted<SVGCharOnPath> {
     float orientationAngle;
 
     bool hidden : 1;
+    
+private:
+    SVGCharOnPath()
+        : xScale(1.0f)
+        , yScale(1.0f)
+        , xShift(0.0f)
+        , yShift(0.0f)
+        , orientationAngle(0.0f)
+        , hidden(false)
+    {
+    }
 };
 
 struct SVGChar {

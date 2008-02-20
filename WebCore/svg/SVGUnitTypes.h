@@ -36,7 +36,8 @@ public:
         SVG_UNIT_TYPE_OBJECTBOUNDINGBOX     = 2
     };
 
-    SVGUnitTypes() : RefCounted<SVGUnitTypes>(0) { }
+private:
+    SVGUnitTypes() { }
 };
 
 } // namespace WebCore

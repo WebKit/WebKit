@@ -63,7 +63,7 @@ namespace WebCore {
 
     class SVGResourceClipper : public SVGResource {
     public:
-        SVGResourceClipper();
+        static PassRefPtr<SVGResourceClipper> create() { return adoptRef(new SVGResourceClipper); }
         virtual ~SVGResourceClipper();
       
         void resetClipData();
@@ -77,6 +77,7 @@ namespace WebCore {
         // To be implemented by the specific rendering devices
         void applyClip(GraphicsContext*, const FloatRect& boundingBox) const;
     private:
+        SVGResourceClipper();
         ClipDataList m_clipData;
     };
 

@@ -56,7 +56,7 @@ JSValue* JSSVGTransformList::initialize(ExecState* exec, const List& args)
     SVGTransformList* imp = static_cast<SVGTransformList*>(impl());
     SVGList<RefPtr<SVGPODListItem<SVGTransform> > >* listImp = imp;
 
-    SVGPODListItem<SVGTransform>* listItem = listImp->initialize(new SVGPODListItem<SVGTransform>(newItem), ec).get(); 
+    SVGPODListItem<SVGTransform>* listItem = listImp->initialize(SVGPODListItem<SVGTransform>::copy(newItem), ec).get(); 
     JSSVGPODTypeWrapperCreatorForList<SVGTransform>* obj = new JSSVGPODTypeWrapperCreatorForList<SVGTransform>(listItem, imp->associatedAttributeName());
 
     KJS::JSValue* result = toJS(exec, obj, m_context.get());
@@ -104,7 +104,7 @@ JSValue* JSSVGTransformList::insertItemBefore(ExecState* exec, const List& args)
     SVGTransformList* imp = static_cast<SVGTransformList*>(impl());
     SVGList<RefPtr<SVGPODListItem<SVGTransform> > >* listImp = imp;
 
-    SVGPODListItem<SVGTransform>* listItem = listImp->insertItemBefore(new SVGPODListItem<SVGTransform>(newItem), index, ec).get();
+    SVGPODListItem<SVGTransform>* listItem = listImp->insertItemBefore(SVGPODListItem<SVGTransform>::copy(newItem), index, ec).get();
     JSSVGPODTypeWrapperCreatorForList<SVGTransform>* obj = new JSSVGPODTypeWrapperCreatorForList<SVGTransform>(listItem, imp->associatedAttributeName());
 
     KJS::JSValue* result = toJS(exec, obj, m_context.get());
@@ -130,7 +130,7 @@ JSValue* JSSVGTransformList::replaceItem(ExecState* exec, const List& args)
     SVGTransformList* imp = static_cast<SVGTransformList*>(impl());
     SVGList<RefPtr<SVGPODListItem<SVGTransform> > >* listImp = imp;
 
-    SVGPODListItem<SVGTransform>* listItem = listImp->replaceItem(new SVGPODListItem<SVGTransform>(newItem), index, ec).get(); 
+    SVGPODListItem<SVGTransform>* listItem = listImp->replaceItem(SVGPODListItem<SVGTransform>::copy(newItem), index, ec).get(); 
     JSSVGPODTypeWrapperCreatorForList<SVGTransform>* obj = new JSSVGPODTypeWrapperCreatorForList<SVGTransform>(listItem, imp->associatedAttributeName());
 
     KJS::JSValue* result = toJS(exec, obj, m_context.get());
@@ -174,7 +174,7 @@ JSValue* JSSVGTransformList::appendItem(ExecState* exec, const List& args)
     SVGTransformList* imp = static_cast<SVGTransformList*>(impl());
     SVGList<RefPtr<SVGPODListItem<SVGTransform> > >* listImp = imp;
 
-    SVGPODListItem<SVGTransform>* listItem = listImp->appendItem(new SVGPODListItem<SVGTransform>(newItem), ec).get(); 
+    SVGPODListItem<SVGTransform>* listItem = listImp->appendItem(SVGPODListItem<SVGTransform>::copy(newItem), ec).get(); 
     JSSVGPODTypeWrapperCreatorForList<SVGTransform>* obj = new JSSVGPODTypeWrapperCreatorForList<SVGTransform>(listItem, imp->associatedAttributeName());
 
     KJS::JSValue* result = toJS(exec, obj, m_context.get());

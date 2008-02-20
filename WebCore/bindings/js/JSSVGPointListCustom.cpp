@@ -56,7 +56,7 @@ JSValue* JSSVGPointList::initialize(ExecState* exec, const List& args)
     SVGPointList* imp = static_cast<SVGPointList*>(impl());
     SVGList<RefPtr<SVGPODListItem<FloatPoint> > >* listImp = imp;
 
-    SVGPODListItem<FloatPoint>* listItem = listImp->initialize(new SVGPODListItem<FloatPoint>(newItem), ec).get(); 
+    SVGPODListItem<FloatPoint>* listItem = listImp->initialize(SVGPODListItem<FloatPoint>::copy(newItem), ec).get(); 
     JSSVGPODTypeWrapperCreatorForList<FloatPoint>* obj = new JSSVGPODTypeWrapperCreatorForList<FloatPoint>(listItem, imp->associatedAttributeName());
 
     KJS::JSValue* result = toJS(exec, obj, m_context.get());
@@ -104,7 +104,7 @@ JSValue* JSSVGPointList::insertItemBefore(ExecState* exec, const List& args)
     SVGPointList* imp = static_cast<SVGPointList*>(impl());
     SVGList<RefPtr<SVGPODListItem<FloatPoint> > >* listImp = imp;
 
-    SVGPODListItem<FloatPoint>* listItem = listImp->insertItemBefore(new SVGPODListItem<FloatPoint>(newItem), index, ec).get();
+    SVGPODListItem<FloatPoint>* listItem = listImp->insertItemBefore(SVGPODListItem<FloatPoint>::copy(newItem), index, ec).get();
     JSSVGPODTypeWrapperCreatorForList<FloatPoint>* obj = new JSSVGPODTypeWrapperCreatorForList<FloatPoint>(listItem, imp->associatedAttributeName());
 
     KJS::JSValue* result = toJS(exec, obj, m_context.get());
@@ -130,7 +130,7 @@ JSValue* JSSVGPointList::replaceItem(ExecState* exec, const List& args)
     SVGPointList* imp = static_cast<SVGPointList*>(impl());
     SVGList<RefPtr<SVGPODListItem<FloatPoint> > >* listImp = imp;
 
-    SVGPODListItem<FloatPoint>* listItem = listImp->replaceItem(new SVGPODListItem<FloatPoint>(newItem), index, ec).get(); 
+    SVGPODListItem<FloatPoint>* listItem = listImp->replaceItem(SVGPODListItem<FloatPoint>::copy(newItem), index, ec).get(); 
     JSSVGPODTypeWrapperCreatorForList<FloatPoint>* obj = new JSSVGPODTypeWrapperCreatorForList<FloatPoint>(listItem, imp->associatedAttributeName());
 
     KJS::JSValue* result = toJS(exec, obj, m_context.get());
@@ -174,7 +174,7 @@ JSValue* JSSVGPointList::appendItem(ExecState* exec, const List& args)
     SVGPointList* imp = static_cast<SVGPointList*>(impl());
     SVGList<RefPtr<SVGPODListItem<FloatPoint> > >* listImp = imp;
 
-    SVGPODListItem<FloatPoint>* listItem = listImp->appendItem(new SVGPODListItem<FloatPoint>(newItem), ec).get(); 
+    SVGPODListItem<FloatPoint>* listItem = listImp->appendItem(SVGPODListItem<FloatPoint>::copy(newItem), ec).get(); 
     JSSVGPODTypeWrapperCreatorForList<FloatPoint>* obj = new JSSVGPODTypeWrapperCreatorForList<FloatPoint>(listItem, imp->associatedAttributeName());
 
     KJS::JSValue* result = toJS(exec, obj, m_context.get());

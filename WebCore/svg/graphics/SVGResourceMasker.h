@@ -34,6 +34,7 @@
 #include <memory>
 
 #include <wtf/OwnPtr.h>
+#include <wtf/PassRefPtr.h>
 
 namespace WebCore {
 
@@ -43,7 +44,7 @@ namespace WebCore {
 
     class SVGResourceMasker : public SVGResource {
     public:
-        SVGResourceMasker(const SVGMaskElement*);
+        static PassRefPtr<SVGResourceMasker> create(const SVGMaskElement* ownerElement) { return adoptRef(new SVGResourceMasker(ownerElement)); }
         virtual ~SVGResourceMasker();
         
         virtual void invalidate();
@@ -55,6 +56,8 @@ namespace WebCore {
         void applyMask(GraphicsContext*, const FloatRect& boundingBox);
 
     private:
+        SVGResourceMasker(const SVGMaskElement*);
+
         const SVGMaskElement* m_ownerElement;
         
         OwnPtr<ImageBuffer> m_mask;
