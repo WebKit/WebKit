@@ -925,21 +925,14 @@ HRESULT STDMETHODCALLTYPE WebFrame::childFrames(
 HRESULT STDMETHODCALLTYPE WebFrame::renderTreeAsExternalRepresentation(
     /* [retval][out] */ BSTR *result)
 {
-    if (!result) {
-        ASSERT_NOT_REACHED();
+    if (!result)
         return E_POINTER;
-    }
-
-    *result = 0;
 
     Frame* coreFrame = core(this);
     if (!coreFrame)
         return E_FAIL;
 
-    DeprecatedString representation = externalRepresentation(coreFrame->renderer());
-
-    *result = SysAllocStringLen((LPCOLESTR)representation.unicode(), representation.length());
-
+    *result = BString(externalRepresentation(coreFrame->renderer())).release();
     return S_OK;
 }
 

@@ -28,12 +28,11 @@
 
 namespace WebCore {
 
-    class DeprecatedString;
     class RenderObject;
     class String;
     class TextStream;
 
-    DeprecatedString externalRepresentation(RenderObject*);
+    String externalRepresentation(RenderObject*);
     void write(TextStream&, const RenderObject&, int indent = 0);
 
     // Helper function shared with SVGRenderTreeAsText

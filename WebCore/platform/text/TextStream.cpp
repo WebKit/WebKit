@@ -26,145 +26,74 @@
 #include "config.h"
 #include "TextStream.h"
 
-#include "DeprecatedString.h"
-#include "Logging.h"
 #include "PlatformString.h"
-#include <wtf/Vector.h>
+#include <wtf/StringExtras.h>
 
 namespace WebCore {
 
-const size_t integerOrPointerAsStringBufferSize = 100; // large enough for any integer or pointer in string format, including trailing null character
-const char* const precisionFormats[7] = { "%.0f", "%.1f", "%.2f", "%.3f", "%.4f", "%.5f", "%.6f"}; 
-const int maxPrecision = 6; // must match size of precisionFormats
-const int defaultPrecision = 6; // matches qt and sprintf(.., "%f", ...) behaviour
-
-TextStream::TextStream(DeprecatedString* s)
-    : m_hasByteArray(false), m_string(s), m_precision(defaultPrecision)
-{
-}
-
-TextStream& TextStream::operator<<(char c)
-{
-    if (m_hasByteArray)
-        m_byteArray.append(c);
-
-    if (m_string)
-        m_string->append(DeprecatedChar(c));
-    return *this;
-}
-
-TextStream& TextStream::operator<<(short i)
-{
-    char buffer[integerOrPointerAsStringBufferSize];
-    sprintf(buffer, "%d", i);
-    return *this << buffer;
-}
-
-TextStream& TextStream::operator<<(unsigned short i)
-{
-    char buffer[integerOrPointerAsStringBufferSize];
-    sprintf(buffer, "%u", i);
-    return *this << buffer;
-}
+static const size_t printBufferSize = 100; // large enough for any integer or floating point value in string format, including trailing null character
 
 TextStream& TextStream::operator<<(int i)
 {
-    char buffer[integerOrPointerAsStringBufferSize];
-    sprintf(buffer, "%d", i);
+    char buffer[printBufferSize];
+    snprintf(buffer, sizeof(buffer) - 1, "%d", i);
     return *this << buffer;
 }
 
 TextStream& TextStream::operator<<(unsigned i)
 {
-    char buffer[integerOrPointerAsStringBufferSize];
-    sprintf(buffer, "%u", i);
+    char buffer[printBufferSize];
+    snprintf(buffer, sizeof(buffer) - 1, "%u", i);
     return *this << buffer;
 }
 
 TextStream& TextStream::operator<<(long i)
 {
-    char buffer[integerOrPointerAsStringBufferSize];
-    sprintf(buffer, "%ld", i);
+    char buffer[printBufferSize];
+    snprintf(buffer, sizeof(buffer) - 1, "%ld", i);
     return *this << buffer;
 }
 
 TextStream& TextStream::operator<<(unsigned long i)
 {
-    char buffer[integerOrPointerAsStringBufferSize];
-    sprintf(buffer, "%lu", i);
+    char buffer[printBufferSize];
+    snprintf(buffer, sizeof(buffer) - 1, "%lu", i);
     return *this << buffer;
 }
 
 TextStream& TextStream::operator<<(float f)
 {
-    char buffer[integerOrPointerAsStringBufferSize];
-    sprintf(buffer, precisionFormats[m_precision], f);
+    char buffer[printBufferSize];
+    snprintf(buffer, sizeof(buffer) - 1, "%.2f", f);
     return *this << buffer;
 }
 
 TextStream& TextStream::operator<<(double d)
 {
-    char buffer[integerOrPointerAsStringBufferSize];
-    sprintf(buffer, precisionFormats[m_precision], d);
+    char buffer[printBufferSize];
+    snprintf(buffer, sizeof(buffer) - 1, "%.2f", d);
     return *this << buffer;
 }
 
-TextStream& TextStream::operator<<(const char* s)
+TextStream& TextStream::operator<<(const char* string)
 {
-    if (m_hasByteArray) {
-        unsigned length = strlen(s);
-        unsigned oldSize = m_byteArray.size();
-        m_byteArray.grow(oldSize + length);
-        memcpy(m_byteArray.data() + oldSize, s, length);
-    }
-    if (m_string)
-        m_string->append(s);
+    size_t stringLength = strlen(string);
+    size_t textLength = m_text.size();
+    m_text.grow(textLength + stringLength);
+    for (size_t i = 0; i < stringLength; ++i)
+        m_text[textLength + i] = string[i];
     return *this;
 }
 
-TextStream& TextStream::operator<<(const DeprecatedString& s)
+TextStream& TextStream::operator<<(const String& string)
 {
-    if (m_hasByteArray) {
-        unsigned length = s.length();
-        unsigned oldSize = m_byteArray.size();
-        m_byteArray.grow(oldSize + length);
-        memcpy(m_byteArray.data() + oldSize, s.latin1(), length);
-    }
-    if (m_string)
-        m_string->append(s);
+    append(m_text, string);
     return *this;
 }
 
-TextStream& TextStream::operator<<(const String& s)
+String TextStream::release()
 {
-    return (*this) << s.deprecatedString();
-}
-
-TextStream& TextStream::operator<<(void* p)
-{
-    char buffer[integerOrPointerAsStringBufferSize];
-    sprintf(buffer, "%p", p);
-    return *this << buffer;
-}
-
-TextStream& TextStream::operator<<(const TextStreamManipulator& m) 
-{
-    return m(*this);
-}
-
-int TextStream::precision(int p) 
-{
-    int oldPrecision = m_precision;
-    
-    if (p >= 0 && p <= maxPrecision)
-        m_precision = p;
-
-    return oldPrecision;
-}
-
-TextStream &endl(TextStream& stream)
-{
-    return stream << '\n';
+    return String::adopt(m_text);
 }
 
 }

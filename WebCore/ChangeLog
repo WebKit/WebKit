@@ -1,3 +1,28 @@
+2008-02-19  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam.
+
+        - Trimmed down TextStream and weaned it from DeprecatedString.
+
+        * page/mac/WebCoreFrameBridge.mm:
+        (-[WebCoreFrameBridge renderTreeAsExternalRepresentation]):
+        Removed now-unneeded call to getNSString.
+
+        * platform/text/TextStream.cpp: Removed unused functions.
+        Use snprintf instead of sprintf, for better security.
+        (WebCore::TextStream::release): Added.
+        * platform/text/TextStream.h: Removed lots of unneeded stuff.
+
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::externalRepresentation): Changed to use String instead
+        of DeprecatedString.
+        * rendering/RenderTreeAsText.h: Ditto.
+
+        * rendering/SVGRenderTreeAsText.cpp:
+        (WebCore::writeSVGInlineTextBox): Use "\n" instead of endl.
+        (WebCore::write): Ditto.
+        (WebCore::writeRenderResources): Ditto.
+
 2008-02-19  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Darin Adler.

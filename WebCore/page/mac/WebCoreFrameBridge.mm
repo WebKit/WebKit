@@ -775,7 +775,7 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
 
 - (NSString *)renderTreeAsExternalRepresentation
 {
-    return externalRepresentation(m_frame->renderer()).getNSString();
+    return externalRepresentation(m_frame->renderer());
 }
 
 - (void)setShouldCreateRenderers:(BOOL)f

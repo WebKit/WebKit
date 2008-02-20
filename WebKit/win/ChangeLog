@@ -1,3 +1,11 @@
+2008-02-19  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam.
+
+        * WebFrame.cpp:
+        (WebFrame::renderTreeAsExternalRepresentation): Changed to use String instead
+        of DeprecatedString.
+
 2008-02-18  Steve Falkenburg  <sfalken@apple.com>
 
         Make Drosera work on Vista.

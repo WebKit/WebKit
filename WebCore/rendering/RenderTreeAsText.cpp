@@ -489,24 +489,23 @@ static void writeSelection(TextStream& ts, const RenderObject* o)
            << "selection end:   position " << selection.end().offset() << " of " << nodePosition(selection.end().node()) << "\n";
 }
 
-DeprecatedString externalRepresentation(RenderObject* o)
+String externalRepresentation(RenderObject* o)
 {
-    DeprecatedString s;
-    if (o) {
-        TextStream ts(&s);
-        ts.precision(2);
+    if (!o)
+        return String();
+
+    TextStream ts;
 #if ENABLE(SVG)
-        writeRenderResources(ts, o->document());
+    writeRenderResources(ts, o->document());
 #endif
-        if (o->view()->frameView())
-            o->view()->frameView()->layout();
-        RenderLayer* l = o->layer();
-        if (l) {
-            writeLayers(ts, l, l, IntRect(l->xPos(), l->yPos(), l->width(), l->height()));
-            writeSelection(ts, o);
-        }
+    if (o->view()->frameView())
+        o->view()->frameView()->layout();
+    RenderLayer* l = o->layer();
+    if (l) {
+        writeLayers(ts, l, l, IntRect(l->xPos(), l->yPos(), l->width(), l->height()));
+        writeSelection(ts, o);
     }
-    return s;
+    return ts.release();
 }
 
 } // namespace WebCore

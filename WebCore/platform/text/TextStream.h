@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,26 +27,14 @@
 #define TextStream_h
 
 #include <wtf/Vector.h>
+#include <wtf/unicode/Unicode.h>
 
 namespace WebCore {
 
-class DeprecatedChar;
-class DeprecatedString;
 class String;
-class TextStream;
-
-typedef TextStream& (*TextStreamManipulator)(TextStream&);
-
-TextStream& endl(TextStream&);
 
 class TextStream {
 public:
-    TextStream(DeprecatedString*);
-
-    TextStream& operator<<(char);
-    TextStream& operator<<(const DeprecatedChar&);
-    TextStream& operator<<(short);
-    TextStream& operator<<(unsigned short);
     TextStream& operator<<(int);
     TextStream& operator<<(unsigned);
     TextStream& operator<<(long);
@@ -55,21 +43,11 @@ public:
     TextStream& operator<<(double);
     TextStream& operator<<(const char*);
     TextStream& operator<<(const String&);
-    TextStream& operator<<(const DeprecatedString&);
-    TextStream& operator<<(void*);
 
-    TextStream& operator<<(const TextStreamManipulator&);
-
-    int precision(int);
+    String release();
 
 private:
-    TextStream(const TextStream&);
-    TextStream& operator=(const TextStream&);
-
-    bool m_hasByteArray;
-    Vector<char> m_byteArray;
-    DeprecatedString* m_string;
-    int m_precision;
+    Vector<UChar> m_text;
 };
 
 }
