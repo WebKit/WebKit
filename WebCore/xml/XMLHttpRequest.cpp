@@ -81,6 +81,10 @@ static void removeFromRequestsByDocument(Document* doc, XMLHttpRequest* req)
 
 static bool canSetRequestHeader(const String& name)
 {
+    // A privileged script (e.g. a Dashboard widget) can set any headers.
+    if (m_doc->isAllowedToLoadLocalResources())
+        return true;
+
     static HashSet<String, CaseFoldingHash> forbiddenHeaders;
     static String proxyString("proxy-");
     

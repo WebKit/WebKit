@@ -1,3 +1,14 @@
+2008-02-20  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        <rdar://problem/5749455> Unable to set the Referer header in Dashboard using XMLHttpRequest
+
+        Cannot be tested in DRT.
+
+        * xml/XMLHttpRequest.cpp: (WebCore::canSetRequestHeader): Assume that a request that can load
+        local files can also set any headers.
+
 2008-02-19  Darin Adler  <darin@apple.com>
 
         Reviewed by Sam.
