@@ -1,5 +1,13 @@
 2008-02-20  Alexey Proskuryakov  <ap@webkit.org>
 
+        Build fix.
+
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::isSafeRequestHeader):
+        (WebCore::XMLHttpRequest::setRequestHeader):
+
+2008-02-20  Alexey Proskuryakov  <ap@webkit.org>
+
         Reviewed by Darin.
 
         <rdar://problem/5749455> Unable to set the Referer header in Dashboard using XMLHttpRequest

@@ -79,12 +79,8 @@ static void removeFromRequestsByDocument(Document* doc, XMLHttpRequest* req)
     }
 }
 
-static bool canSetRequestHeader(const String& name)
+static bool isSafeRequestHeader(const String& name)
 {
-    // A privileged script (e.g. a Dashboard widget) can set any headers.
-    if (m_doc->isAllowedToLoadLocalResources())
-        return true;
-
     static HashSet<String, CaseFoldingHash> forbiddenHeaders;
     static String proxyString("proxy-");
     
@@ -545,7 +541,8 @@ void XMLHttpRequest::setRequestHeader(const String& name, const String& value, E
         return;
     }
         
-    if (!canSetRequestHeader(name)) {
+    // A privileged script (e.g. a Dashboard widget) can set any headers.
+    if (!m_doc->isAllowedToLoadLocalResources() && !isSafeRequestHeader(name)) {
         if (m_doc && m_doc->frame() && m_doc->frame()->page())
             m_doc->frame()->page()->chrome()->addMessageToConsole(JSMessageSource, ErrorMessageLevel, "Refused to set unsafe header " + name, 1, String());
         return;
