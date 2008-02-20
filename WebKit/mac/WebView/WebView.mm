@@ -979,6 +979,7 @@ static bool debugWidget = true;
         settings->setUserStyleSheetLocation([NSURL URLWithString:@""]);
     settings->setNeedsAdobeFrameReloadingQuirk([self _needsAdobeFrameReloadingQuirk]);
     settings->setNeedsKeyboardEventDisambiguationQuirks([self _needsKeyboardEventDisambiguationQuirks]);
+    settings->setNeedsSiteSpecificQuirks(_private->useSiteSpecificSpoofing);
 }
 
 static inline IMP getMethod(id o, SEL s)

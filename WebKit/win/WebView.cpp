@@ -3901,6 +3901,7 @@ HRESULT WebView::notifyPreferencesChanged(IWebNotification* notification)
     settings->setShowsURLsInToolTips(false);
     settings->setForceFTPDirectoryListings(true);
     settings->setDeveloperExtrasEnabled(developerExtrasEnabled());
+    settings->setNeedsSiteSpecificQuirks(s_allowSiteSpecificHacks);
 
     FontSmoothingType smoothingType;
     hr = preferences->fontSmoothing(&smoothingType);
@@ -4198,6 +4199,8 @@ HRESULT STDMETHODCALLTYPE WebView::setAllowSiteSpecificHacks(
     /* [in] */ BOOL allow)
 {
     s_allowSiteSpecificHacks = !!allow;
+    // FIXME: This sets a global so it needs to call notifyPreferencesChanged
+    // on all WebView objects (not just itself).
     return S_OK;
 }
 

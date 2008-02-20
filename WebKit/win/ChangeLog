@@ -1,3 +1,15 @@
+2008-02-20  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Darin and Geoff.
+
+        - WebKit part of <rdar://problem/5754378> work around missing video on YouTube front page with a site-specific hack
+
+        * WebView.cpp:
+        (WebView::notifyPreferencesChanged): Added a call to Settings::setNeedsSiteSpecificQuirks.
+        (WebView::setAllowSiteSpecificHacks): Added a comment about the problem Darin noticed, where
+        after you disable the site-specific hacks they persist until you open a new window or tweak
+        some other preference.
+
 2008-02-19  Darin Adler  <darin@apple.com>
 
         Reviewed by Sam.

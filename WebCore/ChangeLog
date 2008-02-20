@@ -1,3 +1,22 @@
+2008-02-20  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Darin and Geoff.
+
+        - <rdar://problem/5754378> work around missing video on YouTube front page with a site-specific hack
+
+        * WebCore.base.exp: Updated.
+
+        * bindings/js/kjs_navigator.cpp:
+        (WebCore::needsYouTubeQuirk): Added. Return true on Windows only when the quirk is needed.
+        (WebCore::Navigator::getValueProperty): For the appVersion property, if needsYouTubeQuirk
+        return true, then return the empty string.
+
+        * page/Settings.cpp:
+        (WebCore::Settings::Settings): Set m_needsSiteSpecificQuirks to false.
+        (WebCore::Settings::setNeedsSiteSpecificQuirks): Added.
+        * page/Settings.h: Added m_needsSiteSpecificQuirks.
+        (WebCore::Settings::needsSiteSpecificQuirks): Added.
+
 2008-02-20  David Hyatt  <hyatt@apple.com>
 
         Fix for bug 12751, doctype nodes aren't part of the Document (Acid3).

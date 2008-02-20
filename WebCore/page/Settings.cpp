@@ -69,6 +69,7 @@ Settings::Settings(Page* page)
     , m_forceFTPDirectoryListings(false)
     , m_developerExtrasEnabled(false)
     , m_authorAndUserStylesEnabled(true)
+    , m_needsSiteSpecificQuirks(false)
     , m_fontRenderingMode(0)
 {
     // A Frame may not have been created yet, so we initialize the AtomicString 
@@ -315,6 +316,11 @@ void Settings::setFontRenderingMode(FontRenderingMode mode)
 FontRenderingMode Settings::fontRenderingMode() const
 {
     return static_cast<FontRenderingMode>(m_fontRenderingMode);
+}
+
+void Settings::setNeedsSiteSpecificQuirks(bool needsQuirks)
+{
+    m_needsSiteSpecificQuirks = needsQuirks;
 }
 
 } // namespace WebCore

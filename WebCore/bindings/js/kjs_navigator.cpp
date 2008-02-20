@@ -186,6 +186,74 @@ bool Navigator::getOwnPropertySlot(ExecState* exec, const Identifier& propertyNa
   return getStaticPropertySlot<Navigator, JSObject>(exec, &NavigatorTable, this, propertyName, slot);
 }
 
+static bool needsYouTubeQuirk(ExecState*, Frame*);
+
+#if !PLATFORM(WIN)
+
+static inline bool needsYouTubeQuirk(ExecState*, Frame*)
+{
+    return false;
+}
+
+#else
+
+static bool needsYouTubeQuirk(ExecState* exec, Frame* frame)
+{
+    // This quirk works around a mistaken check in an ad at youtube.com.
+    // There's a function called isSafari that returns false if the function
+    // called isWindows returns true; thus the site malfunctions with Windows Safari.
+
+    // Do the quirk only if the function's name is "isWindows".
+    FunctionImp* function = exec->function();
+    if (!function)
+        return false;
+    static const Identifier& isWindowsFunctionName = *new Identifier("isWindows");
+    if (function->functionName() != isWindowsFunctionName)
+        return false;
+
+    // Do the quirk only if the function is called by an "isSafari" function.
+    // However, that function is not itself named -- it is stored in the isSafari
+    // property, though, so that's how recognize it.
+    ExecState* callingExec = exec->callingExecState();
+    if (!callingExec)
+        return false;
+    FunctionImp* callingFunction = callingExec->function();
+    if (!callingFunction)
+        return false;
+    JSObject* thisObject = callingExec->thisValue();
+    if (!thisObject)
+        return false;
+    static const Identifier& isSafariFunctionName = *new Identifier("isSafari");
+    JSValue* isSafariFunction = thisObject->getDirect(isSafariFunctionName);
+    if (isSafariFunction != callingFunction)
+        return false;
+
+    // FIXME: The document is never null, so we should remove this check along with the
+    // other similar ones in this file when we are absolutely sure it's safe.
+    Document* document = frame->document(); 
+    if (!document)
+        return false;
+
+    // Do the quirk only on the front page of the global version of YouTube.
+    const KURL& url = document->url();
+    if (url.host() != "youtube.com" && url.host() != "www.youtube.com")
+        return false;
+    if (url.path() != "/")
+        return false;
+
+    // As with other site-specific quirks, allow website developers to turn this off.
+    // In theory, this allows website developers to check if their fixes are effective.
+    Settings* settings = frame->settings(); 
+    if (!settings)
+        return false;
+    if (!settings->needsSiteSpecificQuirks())
+        return false;
+
+    return true;
+}
+
+#endif
+
 JSValue* Navigator::getValueProperty(ExecState* exec, int token) const
 {
   switch (token) {
@@ -194,6 +262,8 @@ JSValue* Navigator::getValueProperty(ExecState* exec, int token) const
   case AppName:
     return jsString("Netscape");
   case AppVersion: {
+    if (needsYouTubeQuirk(exec, m_frame))
+        return jsString("");
     // Version is everything in the user agent string past the "Mozilla/" prefix.
     const String userAgent = m_frame->loader()->userAgent(m_frame->document() ? m_frame->document()->url() : KURL());
     return jsString(userAgent.substring(userAgent.find('/') + 1));
