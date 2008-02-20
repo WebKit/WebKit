@@ -1690,7 +1690,7 @@ void Frame::disconnectOwnerElement()
 String Frame::documentTypeString() const
 {
     if (Document *doc = document())
-        if (DocumentType *doctype = doc->realDocType())
+        if (DocumentType *doctype = doc->doctype())
             return doctype->toString();
 
     return String();

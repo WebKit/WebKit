@@ -172,7 +172,7 @@ void StyledElement::attributeChanged(Attribute* attr, bool preserveDecls)
     if (needToParse)
         parseMappedAttribute(mappedAttr);
 
-    if (entry == eNone && ownerDocument()->styleSelector()->hasSelectorForAttribute(attr->name().localName()))
+    if (entry == eNone && ownerDocument()->attached() && ownerDocument()->styleSelector()->hasSelectorForAttribute(attr->name().localName()))
         setChanged();
 
     if (checkDecl && mappedAttr->decl()) {

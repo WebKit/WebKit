@@ -100,9 +100,26 @@ Node::NodeType DocumentType::nodeType() const
 
 PassRefPtr<Node> DocumentType::cloneNode(bool /*deep*/)
 {
-    // The DOM Level 2 specification says cloning DocumentType nodes is "implementation dependent".
-    // For now, we do not support it.
-    return 0;
+    return new DocumentType(document(), m_name, m_publicId, m_systemId);
+}
+
+void DocumentType::insertedIntoDocument()
+{
+    // Our document node can be null if we were created by a DOMImplementation.  We use the parent() instead.
+    ASSERT(parent() && parent()->isDocumentNode());
+    if (parent() && parent()->isDocumentNode()) {
+        Document* doc = static_cast<Document*>(parent());
+        if (!doc->doctype())
+            doc->setDocType(this);
+    }
+    Node::insertedIntoDocument();
+}
+
+void DocumentType::removedFromDocument()
+{
+    if (document() && document()->doctype() == this)
+        document()->setDocType(0);
+    Node::removedFromDocument();
 }
 
 }

@@ -1008,11 +1008,8 @@ void XMLTokenizer::internalSubset(const xmlChar* name, const xmlChar* externalID
         return;
     }
     
-    Document* doc = m_doc;
-    if (!doc)
-        return;
-
-    doc->setDocType(new DocumentType(doc, toString(name), toString(externalID), toString(systemID)));
+    if (m_doc)
+        m_doc->addChild(new DocumentType(m_doc, toString(name), toString(externalID), toString(systemID)));
 }
 
 static inline XMLTokenizer* getTokenizer(void* closure)
@@ -2098,7 +2095,7 @@ void XMLTokenizer::parseDtd()
         setIsXHTMLDocument(true); // controls if we replace entities or not.
     }
     if (!m_parsingFragment)
-        m_doc->setDocType(new DocumentType(m_doc, name, publicId, systemId));
+        m_doc->addChild(new DocumentType(m_doc, name, publicId, systemId));
     
 }
 #endif

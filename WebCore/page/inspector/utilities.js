@@ -425,6 +425,18 @@ function nodeDisplayName()
 
         case Node.COMMENT_NODE:
             return "<!--" + this.nodeValue + "-->";
+            
+        case Node.DOCUMENT_TYPE_NODE:
+            var docType = "<!DOCTYPE " + this.nodeName;
+            if (this.publicId) {
+                docType += " PUBLIC \"" + this.publicId + "\"";
+                if (this.systemId)
+                    docType += " \"" + this.systemId + "\"";
+            } else if (this.systemId)
+                docType += " SYSTEM \"" + this.systemId + "\"";
+            if (this.internalSubset)
+                docType += " [" + this.internalSubset + "]";
+            return docType + ">";
     }
 
     return this.nodeName.toLowerCase().collapseWhitespace();
@@ -643,6 +655,18 @@ function nodeTitleInfo(hasChildren, linkify)
             info.title = "<span class=\"webkit-html-comment\">&lt;!--" + this.nodeValue.escapeHTML() + "--&gt;</span>";
             break;
 
+        case Node.DOCUMENT_TYPE_NODE:
+            info.title = "<span class=\"webkit-html-tag\">&lt;!DOCTYPE " + this.nodeName;
+            if (this.publicId) {
+                info.title += " PUBLIC \"" + this.publicId + "\"";
+                if (this.systemId)
+                    info.title += " \"" + this.systemId + "\"";
+            } else if (this.systemId)
+                info.title += " SYSTEM \"" + this.systemId + "\"";
+            if (this.internalSubset)
+                info.title += " [" + this.internalSubset + "]";
+            info.title += "&gt;</span>";
+            break;
         default:
             info.title = this.nodeName.toLowerCase().collapseWhitespace().escapeHTML();
     }

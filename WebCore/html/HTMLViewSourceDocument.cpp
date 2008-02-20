@@ -108,9 +108,7 @@ void HTMLViewSourceDocument::addViewSourceToken(Token* token)
         }
     } else {
         // Handle the tag.
-        bool doctype = token->tagName.startsWith("!DOCTYPE", false);
-        
-        String classNameStr = doctype ? "webkit-html-doctype" : "webkit-html-tag";
+        String classNameStr = "webkit-html-tag";
         m_current = addSpanWithClassName(classNameStr);
 
         String text = "<";
@@ -145,28 +143,21 @@ void HTMLViewSourceDocument::addViewSourceToken(Token* token)
                     if (attr) {
                         if (guide->at(i) == 'a') {
                             String name = attr->name().toString();
-                            if (doctype)
-                                addText(name, "webkit-html-doctype");
-                            else {
-                                m_current = addSpanWithClassName("webkit-html-attribute-name");
-                                addText(name, "webkit-html-attribute-name");
-                                if (m_current != m_tbody)
-                                    m_current = static_cast<Element*>(m_current->parent());
-                            }
+                            
+                            m_current = addSpanWithClassName("webkit-html-attribute-name");
+                            addText(name, "webkit-html-attribute-name");
+                            if (m_current != m_tbody)
+                                m_current = static_cast<Element*>(m_current->parent());
                         } else {
                             String value = attr->value().domString();
-                            if (doctype)
-                                addText(value, "webkit-html-doctype");
-                            else {
-                                // FIXME: XML could use namespace prefixes and confuse us.
-                                if (equalIgnoringCase(attr->name().localName(), "src") || equalIgnoringCase(attr->name().localName(), "href"))
-                                    m_current = addLink(value, equalIgnoringCase(token->tagName, "a"));
-                                else
-                                    m_current = addSpanWithClassName("webkit-html-attribute-value");
-                                addText(value, "webkit-html-attribute-value");
-                                if (m_current != m_tbody)
-                                    m_current = static_cast<Element*>(m_current->parent());
-                            }
+                            // FIXME: XML could use namespace prefixes and confuse us.
+                            if (equalIgnoringCase(attr->name().localName(), "src") || equalIgnoringCase(attr->name().localName(), "href"))
+                                m_current = addLink(value, equalIgnoringCase(token->tagName, "a"));
+                            else
+                                m_current = addSpanWithClassName("webkit-html-attribute-value");
+                            addText(value, "webkit-html-attribute-value");
+                            if (m_current != m_tbody)
+                                m_current = static_cast<Element*>(m_current->parent());
                         }
                     }
                 }
@@ -182,6 +173,17 @@ void HTMLViewSourceDocument::addViewSourceToken(Token* token)
         
         m_current = m_td;
     }
+}
+
+void HTMLViewSourceDocument::addViewSourceDoctypeToken(DoctypeToken* doctypeToken)
+{
+    if (!m_current)
+        createContainingTable();
+    m_current = addSpanWithClassName("webkit-html-doctype");
+    String text = "<";
+    text += String::adopt(doctypeToken->m_source);
+    text += ">";
+    addText(text, "webkit-html-doctype");
 }
 
 Element* HTMLViewSourceDocument::addSpanWithClassName(const String& className)

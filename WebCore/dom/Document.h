@@ -179,8 +179,7 @@ public:
 
     // DOM methods & attributes for Document
 
-    virtual DocumentType* doctype() const; // May return 0 for HTML documents
-    DocumentType* realDocType() const { return m_docType.get(); }
+    DocumentType* doctype() const { return m_docType.get(); }
 
     DOMImplementation* implementation() const;
     virtual void childrenChanged(bool changedByParser = false);
@@ -402,20 +401,18 @@ public:
     void setPrinting(bool p) { m_printing = p; }
 
     enum ParseMode { Compat, AlmostStrict, Strict };
+
+private:
+    virtual void determineParseMode() {}
     
-    virtual void determineParseMode(const String&);
-    void setParseMode(ParseMode m) { pMode = m; }
-    ParseMode parseMode() const { return pMode; }
+public:
+    void setParseMode(ParseMode m) { m_parseMode = m; }
+    ParseMode parseMode() const { return m_parseMode; }
 
-    bool inCompatMode() const { return pMode == Compat; }
-    bool inAlmostStrictMode() const { return pMode == AlmostStrict; }
-    bool inStrictMode() const { return pMode == Strict; }
+    bool inCompatMode() const { return m_parseMode == Compat; }
+    bool inAlmostStrictMode() const { return m_parseMode == AlmostStrict; }
+    bool inStrictMode() const { return m_parseMode == Strict; }
     
-    enum HTMLMode { Html3, Html4, XHtml };
-
-    void setHTMLMode(HTMLMode m) { hMode = m; }
-    HTMLMode htmlMode() const { return hMode; }
-
     void setParsing(bool);
     bool parsing() const { return m_bParsing; }
     int minimumLayoutDelay();
@@ -735,8 +732,7 @@ private:
 
     bool m_printing;
 
-    ParseMode pMode;
-    HTMLMode hMode;
+    ParseMode m_parseMode;
 
     Color m_textColor;
 

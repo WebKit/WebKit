@@ -117,7 +117,7 @@ RenderObject* HTMLAppletElement::createRenderer(RenderArena* arena, RenderStyle*
         const AtomicString& codeBase = getAttribute(codebaseAttr);
         if(!codeBase.isNull())
             args.set("codeBase", codeBase);
-        const AtomicString& name = getAttribute(document()->htmlMode() != Document::XHtml ? nameAttr : idAttr);
+        const AtomicString& name = getAttribute(document()->isHTMLDocument() ? nameAttr : idAttr);
         if (!name.isNull())
             args.set("name", name);
         const AtomicString& archive = getAttribute(archiveAttr);

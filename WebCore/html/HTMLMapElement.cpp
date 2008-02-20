@@ -80,14 +80,14 @@ void HTMLMapElement::parseMappedAttribute(MappedAttribute* attr)
         if (attrName == idAttr) {
             // Call base class so that hasID bit gets set.
             HTMLElement::parseMappedAttribute(attr);
-            if (doc->htmlMode() != Document::XHtml)
+            if (doc->isHTMLDocument())
                 return;
         }
         doc->removeImageMap(this);
         String mapName = attr->value();
         if (mapName[0] == '#')
             mapName = mapName.substring(1);
-        m_name = doc->htmlMode() == Document::XHtml ? mapName : mapName.lower();
+        m_name = doc->isHTMLDocument() ? mapName.lower() : mapName;
         doc->addImageMap(this);
     } else
         HTMLElement::parseMappedAttribute(attr);

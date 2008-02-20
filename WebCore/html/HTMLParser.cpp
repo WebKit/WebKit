@@ -29,6 +29,7 @@
 #include "CSSValueKeywords.h"
 #include "Comment.h"
 #include "DocumentFragment.h"
+#include "DocumentType.h"
 #include "Frame.h"
 #include "HTMLBodyElement.h"
 #include "HTMLDocument.h"
@@ -269,6 +270,16 @@ PassRefPtr<Node> HTMLParser::parseToken(Token* t)
         return 0;
     }
     return n;
+}
+
+void HTMLParser::parseDoctypeToken(DoctypeToken* t)
+{
+    // Ignore any doctype after the first.  Ignore doctypes in fragments.
+    if (document->doctype() || m_isParsingFragment || current != document)
+        return;
+        
+    // Make a new doctype node and set it as our doctype.
+    document->addChild(new DocumentType(document, String::adopt(t->m_name), String::adopt(t->m_publicID), String::adopt(t->m_systemID)));
 }
 
 static bool isTableSection(Node* n)

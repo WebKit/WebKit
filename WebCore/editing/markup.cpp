@@ -368,14 +368,7 @@ static void appendStartMarkup(Vector<UChar>& result, const Node *node, const Ran
         case Node::COMMENT_NODE:
             append(result, static_cast<const Comment*>(node)->toString());
             break;
-        case Node::DOCUMENT_NODE: {
-            // FIXME: I think the comment below (and therefore this code) is wrong now
-            // Documents do not normally contain a docType as a child node, force it to print here instead.
-            const DocumentType* docType = static_cast<const Document*>(node)->doctype();
-            if (docType)
-                append(result, docType->toString());
-            break;
-        }
+        case Node::DOCUMENT_NODE:
         case Node::DOCUMENT_FRAGMENT_NODE:
             break;
         case Node::DOCUMENT_TYPE_NODE:

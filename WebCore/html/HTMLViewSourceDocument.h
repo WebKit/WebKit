@@ -28,6 +28,7 @@
 
 namespace WebCore {
 
+class DoctypeToken;
 class Token;
 
 class HTMLViewSourceDocument : public HTMLDocument
@@ -39,7 +40,8 @@ public:
     
     void addViewSourceToken(Token*); // Used by the HTML tokenizer.
     void addViewSourceText(const String&); // Used by the plaintext tokenizer.
-    
+    void addViewSourceDoctypeToken(DoctypeToken*);
+
 private:
     void createContainingTable();
     Element* addSpanWithClassName(const String&);

@@ -58,6 +58,9 @@ public:
     virtual PassRefPtr<Node> cloneNode(bool deep);
     virtual String toString() const;
 
+    virtual void insertedIntoDocument();
+    virtual void removedFromDocument();
+
 private:
     RefPtr<DOMImplementation> m_implementation;
     RefPtr<NamedNodeMap> m_entities;

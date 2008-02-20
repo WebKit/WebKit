@@ -31,6 +31,7 @@
 
 namespace WebCore {
 
+class DoctypeToken;
 class Document;
 class DocumentFragment;
 class HTMLDocument;
@@ -57,6 +58,9 @@ public:
      */
     PassRefPtr<Node> parseToken(Token*);
     
+    // Parses a doctype token.
+    void parseDoctypeToken(DoctypeToken*);
+
     /**
      * tokenizer says it's not going to be sending us any more tokens
      */

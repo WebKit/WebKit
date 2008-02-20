@@ -735,7 +735,7 @@ bool Node::isDescendantOf(const Node *other) const
     return false;
 }
 
-bool Node::childAllowed( Node *newChild )
+bool Node::childAllowed(Node* newChild)
 {
     return childTypeAllowed(newChild->nodeType());
 }

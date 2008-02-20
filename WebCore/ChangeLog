@@ -1,3 +1,86 @@
+2008-02-20  David Hyatt  <hyatt@apple.com>
+
+        Fix for bug 12751, doctype nodes aren't part of the Document (Acid3).
+
+        Reviewed by Sam Weinig
+
+        Many tests added in fast/doctypes.
+
+        * dom/DOMImplementation.cpp:
+        (WebCore::DOMImplementation::createDocument):
+        (WebCore::DOMImplementation::createHTMLDocument):
+        * dom/Document.cpp:
+        (WebCore::Document::Document):
+        (WebCore::Document::setDocType):
+        (WebCore::Document::attach):
+        (WebCore::Document::getImageMap):
+        * dom/Document.h:
+        (WebCore::Document::doctype):
+        (WebCore::Document::):
+        (WebCore::Document::determineParseMode):
+        (WebCore::Document::setParseMode):
+        (WebCore::Document::parseMode):
+        (WebCore::Document::inCompatMode):
+        (WebCore::Document::inAlmostStrictMode):
+        (WebCore::Document::inStrictMode):
+        * dom/DocumentType.cpp:
+        (WebCore::DocumentType::cloneNode):
+        (WebCore::DocumentType::insertedIntoDocument):
+        (WebCore::DocumentType::removedFromDocument):
+        * dom/DocumentType.h:
+        * dom/Node.cpp:
+        (WebCore::Node::childAllowed):
+        * dom/StyledElement.cpp:
+        (WebCore::StyledElement::attributeChanged):
+        * dom/XMLTokenizer.cpp:
+        (WebCore::XMLTokenizer::internalSubset):
+        (WebCore::):
+        * editing/markup.cpp:
+        (WebCore::appendStartMarkup):
+        * html/HTMLAppletElement.cpp:
+        (WebCore::HTMLAppletElement::createRenderer):
+        * html/HTMLDocument.cpp:
+        (WebCore::HTMLDocument::HTMLDocument):
+        (WebCore::HTMLDocument::childAllowed):
+        (WebCore::HTMLDocument::determineParseMode):
+        * html/HTMLDocument.h:
+        * html/HTMLMapElement.cpp:
+        (WebCore::HTMLMapElement::parseMappedAttribute):
+        * html/HTMLParamElement.cpp:
+        (WebCore::HTMLParamElement::parseMappedAttribute):
+        * html/HTMLParser.cpp:
+        (WebCore::HTMLParser::parseDoctypeToken):
+        * html/HTMLParser.h:
+        * html/HTMLTokenizer.cpp:
+        (WebCore::HTMLTokenizer::reset):
+        (WebCore::HTMLTokenizer::parseDoctype):
+        (WebCore::HTMLTokenizer::parseTag):
+        (WebCore::HTMLTokenizer::write):
+        (WebCore::HTMLTokenizer::finish):
+        (WebCore::HTMLTokenizer::processDoctypeToken):
+        * html/HTMLTokenizer.h:
+        (WebCore::):
+        (WebCore::DoctypeToken::DoctypeToken):
+        (WebCore::DoctypeToken::reset):
+        (WebCore::DoctypeToken::state):
+        (WebCore::DoctypeToken::setState):
+        (WebCore::HTMLTokenizer::State::inDoctype):
+        (WebCore::HTMLTokenizer::State::setInDoctype):
+        (WebCore::HTMLTokenizer::State::needsSpecialWriteHandling):
+        (WebCore::HTMLTokenizer::State::):
+        * html/HTMLViewSourceDocument.cpp:
+        (WebCore::HTMLViewSourceDocument::addViewSourceToken):
+        (WebCore::HTMLViewSourceDocument::addViewSourceDoctypeToken):
+        * html/HTMLViewSourceDocument.h:
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::write):
+        (WebCore::FrameLoader::switchOutLowBandwidthDisplayIfReady):
+        * page/Frame.cpp:
+        (WebCore::Frame::documentTypeString):
+        * page/inspector/utilities.js:
+        * xml/XSLTProcessor.cpp:
+        (WebCore::XSLTProcessor::createDocumentFromSource):
+
 2008-02-20  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Darin.

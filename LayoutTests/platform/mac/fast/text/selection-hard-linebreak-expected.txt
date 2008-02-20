@@ -23,9 +23,9 @@ layer at (0,0) size 800x600
         RenderPartObject {IFRAME} at (4,4) size 62x72 [border: (1px solid #0000FF)]
           layer at (0,0) size 60x70
             RenderView at (0,0) size 60x70
-          layer at (0,0) size 60x61
-            RenderBlock {HTML} at (0,0) size 60x61
-              RenderBody {BODY} at (8,8) size 44x45
+          layer at (0,0) size 60x70
+            RenderBlock {HTML} at (0,0) size 60x70
+              RenderBody {BODY} at (8,8) size 44x54
                 RenderBlock {PRE} at (0,0) size 44x45
                   RenderText {#text} at (0,0) size 24x45
                     text run at (0,0) width 24: "foo"
@@ -35,9 +35,9 @@ layer at (0,0) size 800x600
         RenderPartObject {IFRAME} at (74,4) size 62x72 [border: (1px solid #0000FF)]
           layer at (0,0) size 60x70
             RenderView at (0,0) size 60x70
-          layer at (0,0) size 60x61
-            RenderBlock {HTML} at (0,0) size 60x61
-              RenderBody {BODY} at (8,8) size 44x45
+          layer at (0,0) size 60x70
+            RenderBlock {HTML} at (0,0) size 60x70
+              RenderBody {BODY} at (8,8) size 44x54
                 RenderBlock {PRE} at (0,0) size 44x45
                   RenderText {#text} at (0,0) size 24x45
                     text run at (0,0) width 24: "foo"
@@ -47,9 +47,9 @@ layer at (0,0) size 800x600
         RenderPartObject {IFRAME} at (144,4) size 62x72 [border: (1px solid #0000FF)]
           layer at (0,0) size 60x70
             RenderView at (0,0) size 60x70
-          layer at (0,0) size 60x61
-            RenderBlock {HTML} at (0,0) size 60x61
-              RenderBody {BODY} at (8,8) size 44x45
+          layer at (0,0) size 60x70
+            RenderBlock {HTML} at (0,0) size 60x70
+              RenderBody {BODY} at (8,8) size 44x54
                 RenderBlock {PRE} at (0,0) size 44x45
                   RenderText {#text} at (0,0) size 24x45
                     text run at (0,0) width 24: "foo"
@@ -59,9 +59,9 @@ layer at (0,0) size 800x600
         RenderPartObject {IFRAME} at (214,4) size 62x72 [border: (1px solid #0000FF)]
           layer at (0,0) size 60x70
             RenderView at (0,0) size 60x70
-          layer at (0,0) size 60x61
-            RenderBlock {HTML} at (0,0) size 60x61
-              RenderBody {BODY} at (8,8) size 44x45
+          layer at (0,0) size 60x70
+            RenderBlock {HTML} at (0,0) size 60x70
+              RenderBody {BODY} at (8,8) size 44x54
                 RenderBlock {PRE} at (0,0) size 44x45
                   RenderText {#text} at (0,0) size 24x45
                     text run at (0,0) width 24: "foo"
@@ -71,9 +71,9 @@ layer at (0,0) size 800x600
         RenderPartObject {IFRAME} at (284,4) size 62x72 [border: (1px solid #0000FF)]
           layer at (0,0) size 60x70
             RenderView at (0,0) size 60x70
-          layer at (0,0) size 60x61
-            RenderBlock {HTML} at (0,0) size 60x61
-              RenderBody {BODY} at (8,8) size 44x45
+          layer at (0,0) size 60x70
+            RenderBlock {HTML} at (0,0) size 60x70
+              RenderBody {BODY} at (8,8) size 44x54
                 RenderBlock {PRE} at (0,0) size 44x45
                   RenderText {#text} at (0,0) size 24x45
                     text run at (0,0) width 24: "foo"
@@ -83,9 +83,9 @@ layer at (0,0) size 800x600
         RenderPartObject {IFRAME} at (354,4) size 62x72 [border: (1px solid #0000FF)]
           layer at (0,0) size 60x70
             RenderView at (0,0) size 60x70
-          layer at (0,0) size 60x61
-            RenderBlock {HTML} at (0,0) size 60x61
-              RenderBody {BODY} at (8,8) size 44x45
+          layer at (0,0) size 60x70
+            RenderBlock {HTML} at (0,0) size 60x70
+              RenderBody {BODY} at (8,8) size 44x54
                 RenderBlock {PRE} at (0,0) size 44x45
                   RenderText {#text} at (0,0) size 24x45
                     text run at (0,0) width 24: "foo"
@@ -95,9 +95,9 @@ layer at (0,0) size 800x600
         RenderPartObject {IFRAME} at (424,4) size 62x72 [border: (1px solid #0000FF)]
           layer at (0,0) size 60x70
             RenderView at (0,0) size 60x70
-          layer at (0,0) size 60x61
-            RenderBlock {HTML} at (0,0) size 60x61
-              RenderBody {BODY} at (8,8) size 44x45
+          layer at (0,0) size 60x70
+            RenderBlock {HTML} at (0,0) size 60x70
+              RenderBody {BODY} at (8,8) size 44x54
                 RenderBlock {PRE} at (0,0) size 44x45
                   RenderText {#text} at (0,0) size 24x45
                     text run at (0,0) width 24: "foo"
@@ -107,9 +107,9 @@ layer at (0,0) size 800x600
         RenderPartObject {IFRAME} at (494,4) size 62x72 [border: (1px solid #0000FF)]
           layer at (0,0) size 60x70
             RenderView at (0,0) size 60x70
-          layer at (0,0) size 60x61
-            RenderBlock {HTML} at (0,0) size 60x61
-              RenderBody {BODY} at (8,8) size 44x45
+          layer at (0,0) size 60x70
+            RenderBlock {HTML} at (0,0) size 60x70
+              RenderBody {BODY} at (8,8) size 44x54
                 RenderBlock {PRE} at (0,0) size 44x45
                   RenderText {#text} at (0,0) size 24x45
                     text run at (0,0) width 24: "foo"
@@ -119,9 +119,9 @@ layer at (0,0) size 800x600
         RenderPartObject {IFRAME} at (564,4) size 62x72 [border: (1px solid #0000FF)]
           layer at (0,0) size 60x70
             RenderView at (0,0) size 60x70
-          layer at (0,0) size 60x61
-            RenderBlock {HTML} at (0,0) size 60x61
-              RenderBody {BODY} at (8,8) size 44x45
+          layer at (0,0) size 60x70
+            RenderBlock {HTML} at (0,0) size 60x70
+              RenderBody {BODY} at (8,8) size 44x54
                 RenderBlock {PRE} at (0,0) size 44x45
                   RenderText {#text} at (0,0) size 24x45
                     text run at (0,0) width 24: "foo"
@@ -131,9 +131,9 @@ layer at (0,0) size 800x600
         RenderPartObject {IFRAME} at (634,4) size 62x72 [border: (1px solid #0000FF)]
           layer at (0,0) size 60x70
             RenderView at (0,0) size 60x70
-          layer at (0,0) size 60x61
-            RenderBlock {HTML} at (0,0) size 60x61
-              RenderBody {BODY} at (8,8) size 44x45
+          layer at (0,0) size 60x70
+            RenderBlock {HTML} at (0,0) size 60x70
+              RenderBody {BODY} at (8,8) size 44x54
                 RenderBlock {PRE} at (0,0) size 44x45
                   RenderText {#text} at (0,0) size 24x45
                     text run at (0,0) width 24: "foo"

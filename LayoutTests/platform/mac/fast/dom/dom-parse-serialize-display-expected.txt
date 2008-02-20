@@ -53,7 +53,7 @@ layer at (0,0) size 800x600
           RenderText {#text} at (0,0) size 0x0
         RenderBlock {PRE} at (27,32) size 756x60
           RenderText {#text} at (0,0) size 576x60
-            text run at (0,0) width 576: "<!DOCTYPE doc><?xml-stylesheet href=\"display.css\" type=\"text/css\"?><doc>"
+            text run at (0,0) width 576: "<?xml-stylesheet href=\"display.css\" type=\"text/css\"?><!DOCTYPE doc><doc>"
             text run at (576,0) width 0: " "
             text run at (0,15) width 536: "  <foo xmlns=\"foobar\">One</foo> <x:bar xmlns:x=\"barfoo\">Two</x:bar>"
             text run at (536,15) width 0: " "
