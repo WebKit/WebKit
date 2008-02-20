@@ -39,8 +39,7 @@
 namespace WebCore {
 
 Screen::Screen(Frame* frame)
-    : RefCounted<Screen>(0)
-    , m_frame(frame)
+    : m_frame(frame)
 {
 }
 

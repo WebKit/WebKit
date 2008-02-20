@@ -36,8 +36,7 @@
 namespace WebCore {
 
 BarInfo::BarInfo(Frame* frame, Type type)
-    : RefCounted<BarInfo>(0)
-    , m_frame(frame)
+    : m_frame(frame)
     , m_type(type)
 {
 }

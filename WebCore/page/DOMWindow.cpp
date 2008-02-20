@@ -99,8 +99,7 @@ void DOMWindow::adjustWindowRect(const FloatRect& screen, FloatRect& window, con
 }
 
 DOMWindow::DOMWindow(Frame* frame)
-    : RefCounted<DOMWindow>(0)
-    , m_frame(frame)
+    : m_frame(frame)
 {
 }
 
@@ -160,63 +159,63 @@ void DOMWindow::clear()
 Screen* DOMWindow::screen() const
 {
     if (!m_screen)
-        m_screen = new Screen(m_frame);
+        m_screen = Screen::create(m_frame);
     return m_screen.get();
 }
 
 History* DOMWindow::history() const
 {
     if (!m_history)
-        m_history = new History(m_frame);
+        m_history = History::create(m_frame);
     return m_history.get();
 }
 
 BarInfo* DOMWindow::locationbar() const
 {
     if (!m_locationbar)
-        m_locationbar = new BarInfo(m_frame, BarInfo::Locationbar);
+        m_locationbar = BarInfo::create(m_frame, BarInfo::Locationbar);
     return m_locationbar.get();
 }
 
 BarInfo* DOMWindow::menubar() const
 {
     if (!m_menubar)
-        m_menubar = new BarInfo(m_frame, BarInfo::Menubar);
+        m_menubar = BarInfo::create(m_frame, BarInfo::Menubar);
     return m_menubar.get();
 }
 
 BarInfo* DOMWindow::personalbar() const
 {
     if (!m_personalbar)
-        m_personalbar = new BarInfo(m_frame, BarInfo::Personalbar);
+        m_personalbar = BarInfo::create(m_frame, BarInfo::Personalbar);
     return m_personalbar.get();
 }
 
 BarInfo* DOMWindow::scrollbars() const
 {
     if (!m_scrollbars)
-        m_scrollbars = new BarInfo(m_frame, BarInfo::Scrollbars);
+        m_scrollbars = BarInfo::create(m_frame, BarInfo::Scrollbars);
     return m_scrollbars.get();
 }
 
 BarInfo* DOMWindow::statusbar() const
 {
     if (!m_statusbar)
-        m_statusbar = new BarInfo(m_frame, BarInfo::Statusbar);
+        m_statusbar = BarInfo::create(m_frame, BarInfo::Statusbar);
     return m_statusbar.get();
 }
 
 BarInfo* DOMWindow::toolbar() const
 {
     if (!m_toolbar)
-        m_toolbar = new BarInfo(m_frame, BarInfo::Toolbar);
+        m_toolbar = BarInfo::create(m_frame, BarInfo::Toolbar);
     return m_toolbar.get();
 }
 
 Console* DOMWindow::console() const
 {
     if (!m_console)
-        m_console = new Console(m_frame);
+        m_console = Console::create(m_frame);
     return m_console.get();
 }
 
@@ -231,7 +230,7 @@ void DOMWindow::postMessage(const String& message, const String& domain, const S
 DOMSelection* DOMWindow::getSelection()
 {
     if (!m_selection)
-        m_selection = new DOMSelection(m_frame);
+        m_selection = DOMSelection::create(m_frame);
     return m_selection.get();
 }
 

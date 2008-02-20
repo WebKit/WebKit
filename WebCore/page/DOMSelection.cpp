@@ -42,8 +42,7 @@
 namespace WebCore {
 
 DOMSelection::DOMSelection(Frame* frame)
-    : RefCounted<DOMSelection>(0)
-    , m_frame(frame)
+    : m_frame(frame)
 {
 }
 

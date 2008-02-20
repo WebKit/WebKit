@@ -115,25 +115,11 @@ struct InspectorResource : public RefCounted<InspectorResource> {
         Other
     };
 
-    InspectorResource(long long identifier, DocumentLoader* documentLoader, Frame* frame)
-        : RefCounted<InspectorResource>(0)
-        , identifier(identifier)
-        , loader(documentLoader)
-        , frame(frame)
-        , scriptContext(0)
-        , scriptObject(0)
-        , expectedContentLength(0)
-        , cached(false)
-        , finished(false)
-        , failed(false)
-        , length(0)
-        , responseStatusCode(0)
-        , startTime(-1.0)
-        , responseReceivedTime(-1.0)
-        , endTime(-1.0)
+    static PassRefPtr<InspectorResource> create(long long identifier, DocumentLoader* documentLoader, Frame* frame)
     {
+        return adoptRef(new InspectorResource(identifier, documentLoader, frame));
     }
-
+    
     ~InspectorResource()
     {
         setScriptObject(0, 0);
@@ -200,6 +186,25 @@ struct InspectorResource : public RefCounted<InspectorResource> {
     double startTime;
     double responseReceivedTime;
     double endTime;
+    
+private:
+    InspectorResource(long long identifier, DocumentLoader* documentLoader, Frame* frame)
+        : identifier(identifier)
+        , loader(documentLoader)
+        , frame(frame)
+        , scriptContext(0)
+        , scriptObject(0)
+        , expectedContentLength(0)
+        , cached(false)
+        , finished(false)
+        , failed(false)
+        , length(0)
+        , responseStatusCode(0)
+        , startTime(-1.0)
+        , responseReceivedTime(-1.0)
+        , endTime(-1.0)
+    {
+    }
 };
 
 #pragma mark -
@@ -207,21 +212,9 @@ struct InspectorResource : public RefCounted<InspectorResource> {
 
 #if ENABLE(DATABASE)
 struct InspectorDatabaseResource : public RefCounted<InspectorDatabaseResource> {
-    InspectorDatabaseResource(Database* database, String domain, String name, String version)
-        : RefCounted<InspectorDatabaseResource>(0)
-        , database(database)
-        , domain(domain)
-        , name(name)
-        , version(version)
-        , scriptContext(0)
-        , scriptObject(0)
+    static PassRefPtr<InspectorDatabaseResource> create(Database* database, const String& domain, const String& name, const String& version)
     {
-    }
-
-    InspectorDatabaseResource()
-        : RefCounted<InspectorDatabaseResource>(0)
-    {
-        setScriptObject(0, 0);
+        return adoptRef(new InspectorDatabaseResource(database, domain, name, version));
     }
 
     void setScriptObject(JSContextRef context, JSObjectRef newScriptObject)
@@ -243,6 +236,17 @@ struct InspectorDatabaseResource : public RefCounted<InspectorDatabaseResource> 
     String version;
     JSContextRef scriptContext;
     JSObjectRef scriptObject;
+    
+private:
+    InspectorDatabaseResource(Database* database, const String& domain, const String& name, const String& version)
+        : database(database)
+        , domain(domain)
+        , name(name)
+        , version(version)
+        , scriptContext(0)
+        , scriptObject(0)
+    {
+    }
 };
 #endif
 
@@ -1424,11 +1428,11 @@ void InspectorController::didLoadResourceFromMemoryCache(DocumentLoader* loader,
     if (!enabled())
         return;
 
-    InspectorResource* resource = new InspectorResource(m_nextIdentifier--, loader, loader->frame());
+    RefPtr<InspectorResource> resource = InspectorResource::create(m_nextIdentifier--, loader, loader->frame());
     resource->finished = true;
 
-    updateResourceRequest(resource, request);
-    updateResourceResponse(resource, response);
+    updateResourceRequest(resource.get(), request);
+    updateResourceResponse(resource.get(), response);
 
     resource->length = length;
     resource->cached = true;
@@ -1439,10 +1443,10 @@ void InspectorController::didLoadResourceFromMemoryCache(DocumentLoader* loader,
     if (loader->frame() == m_inspectedPage->mainFrame() && request.url() == loader->requestURL())
         m_mainResource = resource;
 
-    addResource(resource);
+    addResource(resource.get());
 
     if (windowVisible())
-        addAndUpdateScriptResource(resource);
+        addAndUpdateScriptResource(resource.get());
 }
 
 void InspectorController::identifierForInitialRequest(unsigned long identifier, DocumentLoader* loader, const ResourceRequest& request)
@@ -1450,17 +1454,17 @@ void InspectorController::identifierForInitialRequest(unsigned long identifier, 
     if (!enabled())
         return;
 
-    InspectorResource* resource = new InspectorResource(identifier, loader, loader->frame());
+    RefPtr<InspectorResource> resource = InspectorResource::create(identifier, loader, loader->frame());
 
-    updateResourceRequest(resource, request);
+    updateResourceRequest(resource.get(), request);
 
     if (loader->frame() == m_inspectedPage->mainFrame() && request.url() == loader->requestURL())
         m_mainResource = resource;
 
-    addResource(resource);
+    addResource(resource.get());
 
     if (windowVisible() && loader->isLoadingFromCachedPage() && resource == m_mainResource)
-        addAndUpdateScriptResource(resource);
+        addAndUpdateScriptResource(resource.get());
 }
 
 void InspectorController::willSendRequest(DocumentLoader* loader, unsigned long identifier, ResourceRequest& request, const ResourceResponse& redirectResponse)
@@ -1577,12 +1581,12 @@ void InspectorController::didOpenDatabase(Database* database, const String& doma
     if (!enabled())
         return;
 
-    InspectorDatabaseResource* resource = new InspectorDatabaseResource(database, domain, name, version);
+    RefPtr<InspectorDatabaseResource> resource = InspectorDatabaseResource::create(database, domain, name, version);
 
     m_databaseResources.add(resource);
 
     if (windowVisible())
-        addDatabaseScriptResource(resource);
+        addDatabaseScriptResource(resource.get());
 }
 #endif
 

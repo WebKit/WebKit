@@ -29,10 +29,11 @@ namespace WebCore {
 
     class Plugin : public RefCounted<Plugin> {
     public:
-        Plugin(Widget* view) : RefCounted<Plugin>(0), m_view(view) { }
+        static PassRefPtr<Plugin> create(Widget* view) { return adoptRef(new Plugin(view)); }
         Widget* view() const { return m_view; }
         
     private:
+        Plugin(Widget* view) : m_view(view) { }
         Widget* m_view;
     };
     

@@ -38,8 +38,7 @@
 namespace WebCore {
 
 Console::Console(Frame* frame)
-    : RefCounted<Console>(0)
-    , m_frame(frame)
+    : m_frame(frame)
 {
 }
 

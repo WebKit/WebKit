@@ -50,7 +50,7 @@ namespace WebCore {
 
     class DOMWindow : public RefCounted<DOMWindow> {
     public:
-        DOMWindow(Frame*);
+        static PassRefPtr<DOMWindow> create(Frame* frame) { return adoptRef(new DOMWindow(frame)); }
         virtual ~DOMWindow();
 
         Frame* frame() { return m_frame; }
@@ -157,6 +157,8 @@ namespace WebCore {
         void resizeTo(float width, float height) const;
 
     private:
+        DOMWindow(Frame*);
+        
         Frame* m_frame;
         mutable RefPtr<Screen> m_screen;
         mutable RefPtr<DOMSelection> m_selection;

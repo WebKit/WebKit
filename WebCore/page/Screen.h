@@ -30,6 +30,7 @@
 #ifndef Screen_h
 #define Screen_h
 
+#include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
@@ -38,7 +39,7 @@ namespace WebCore {
 
     class Screen : public RefCounted<Screen> {
     public:
-        Screen(Frame*);
+        static PassRefPtr<Screen> create(Frame *frame) { return adoptRef(new Screen(frame)); }
         void disconnectFrame();
 
         unsigned height() const;
@@ -51,6 +52,8 @@ namespace WebCore {
         unsigned availWidth() const;
 
     private:
+        Screen(Frame*);
+        
         Frame* m_frame;
     };
 

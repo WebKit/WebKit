@@ -1,3 +1,57 @@
+2008-02-20  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Darin.
+
+        Change all refcounted classes in page/ to start with a refcount of 1.
+
+        * page/BarInfo.cpp:
+        (WebCore::BarInfo::BarInfo):
+        * page/BarInfo.h:
+        (WebCore::BarInfo::create):
+        * page/Console.cpp:
+        (WebCore::Console::Console):
+        * page/Console.h:
+        (WebCore::Console::create):
+        * page/DOMSelection.cpp:
+        (WebCore::DOMSelection::DOMSelection):
+        * page/DOMSelection.h:
+        (WebCore::DOMSelection::create):
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::DOMWindow):
+        (WebCore::DOMWindow::screen):
+        (WebCore::DOMWindow::history):
+        (WebCore::DOMWindow::locationbar):
+        (WebCore::DOMWindow::menubar):
+        (WebCore::DOMWindow::personalbar):
+        (WebCore::DOMWindow::scrollbars):
+        (WebCore::DOMWindow::statusbar):
+        (WebCore::DOMWindow::toolbar):
+        (WebCore::DOMWindow::console):
+        (WebCore::DOMWindow::getSelection):
+        * page/DOMWindow.h:
+        (WebCore::DOMWindow::create):
+        * page/Frame.cpp:
+        (WebCore::Frame::domWindow):
+        * page/History.cpp:
+        (WebCore::History::History):
+        * page/History.h:
+        (WebCore::History::create):
+        * page/InspectorController.cpp:
+        (WebCore::InspectorResource::create):
+        (WebCore::InspectorResource::InspectorResource):
+        (WebCore::InspectorDatabaseResource::create):
+        (WebCore::InspectorDatabaseResource::InspectorDatabaseResource):
+        (WebCore::InspectorController::didLoadResourceFromMemoryCache):
+        (WebCore::InspectorController::identifierForInitialRequest):
+        (WebCore::InspectorController::didOpenDatabase):
+        * page/Plugin.h:
+        (WebCore::Plugin::create):
+        (WebCore::Plugin::Plugin):
+        * page/Screen.cpp:
+        (WebCore::Screen::Screen):
+        * page/Screen.h:
+        (WebCore::Screen::create):
+
 2008-02-20  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Darin and Geoff.

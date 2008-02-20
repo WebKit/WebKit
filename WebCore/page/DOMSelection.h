@@ -45,7 +45,7 @@ namespace WebCore {
 
     class DOMSelection : public RefCounted<DOMSelection> {
     public:
-        DOMSelection(Frame*);
+        static PassRefPtr<DOMSelection> create(Frame* frame) { return adoptRef(new DOMSelection(frame)); }
 
         Frame* frame() const;
         void disconnectFrame();
@@ -92,6 +92,8 @@ namespace WebCore {
         //TextRange *createRange();
 
     private:
+        DOMSelection(Frame*);
+        
         Frame* m_frame;
     };
 

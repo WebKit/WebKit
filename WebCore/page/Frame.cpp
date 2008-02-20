@@ -1644,7 +1644,7 @@ FrameTree* Frame::tree() const
 DOMWindow* Frame::domWindow() const
 {
     if (!d->m_domWindow)
-        d->m_domWindow = new DOMWindow(const_cast<Frame*>(this));
+        d->m_domWindow = DOMWindow::create(const_cast<Frame*>(this));
 
     return d->m_domWindow.get();
 }
