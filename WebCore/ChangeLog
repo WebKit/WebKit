@@ -1,3 +1,17 @@
+2008-02-19  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Darin.
+
+        <rdar://problem/3663560> AXLink for a "name" (anchor) on same page should include an AXLinkedUIElementAttribute
+
+        * bridge/mac/WebCoreAXObject.mm:
+        (-[WebCoreAXObject linkedUIElement]):
+        Returns the linked-to AX object (if the specified one is ignored by accessibility, returns the next un-ignored one by traversing the DOM).
+        
+        (-[WebCoreAXObject accessibilityAttributeNames]):
+        (-[WebCoreAXObject accessibilityAttributeValue:]):
+        Support NSAccessibilityLinkedUIElementsAttribute.
+
 2008-02-19  Darin Adler  <darin@apple.com>
 
         Reviewed by Sam.

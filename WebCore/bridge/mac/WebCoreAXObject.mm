@@ -760,6 +760,45 @@ static IntRect boundingBoxRect(RenderObject* obj)
     return [NSValue valueWithSize: NSMakeSize(rect.width(), rect.height())];
 }
 
+// the closest object for an internal anchor
+-(id)linkedUIElement
+{
+    if (![self isAnchor])
+        return nil;
+    
+    HTMLAnchorElement* anchor = [self anchorElement];
+    if (!anchor) 
+        return nil;
+    
+    KURL linkURL = anchor->href();
+    String ref = linkURL.ref();
+    if (ref.isEmpty())
+        return nil;
+    
+    // check if URL is the same as current URL
+    linkURL.setRef("");
+    if (m_renderer->document()->url() != linkURL)
+        return nil;
+    
+    Node* linkedNode = m_renderer->document()->getElementById(ref);
+    if (!linkedNode) {
+        linkedNode = m_renderer->document()->anchors()->namedItem(ref, !m_renderer->document()->inCompatMode());
+        if (!linkedNode)
+            return nil;
+    }
+    
+    // the element we find may not be accessible, keep searching until we find a good one
+    WebCoreAXObject* linkedAXElement = m_renderer->document()->axObjectCache()->get(linkedNode->renderer());
+    while (linkedAXElement && [linkedAXElement accessibilityIsIgnored]) {
+        linkedNode = linkedNode->traverseNextNode(NULL);
+        if (!linkedNode)
+            return nil;
+        linkedAXElement = m_renderer->document()->axObjectCache()->get(linkedNode->renderer());
+    }
+    
+    return linkedAXElement;    
+}
+
 // accessibilityShouldUseUniqueId is an AppKit method we override so that
 // objects will be given a unique ID, and therefore allow AppKit to know when they
 // become obsolete (e.g. when the user navigates to a new web page, making this one
@@ -868,6 +907,7 @@ static IntRect boundingBoxRect(RenderObject* obj)
             @"AXStartTextMarker",
             @"AXEndTextMarker",
             @"AXVisited",
+            NSAccessibilityLinkedUIElementsAttribute,
             nil];
     }
     if (anchorAttrs == nil) {
@@ -1159,6 +1199,9 @@ static IntRect boundingBoxRect(RenderObject* obj)
     if ([attributeName isEqualToString: @"AXEndTextMarker"])
         return (id) [self textMarkerForVisiblePosition: endOfDocument(m_renderer->document())];
 
+    if ([attributeName isEqualToString: NSAccessibilityLinkedUIElementsAttribute])
+        return (id) [self linkedUIElement];
+    
     return nil;
 }
 
