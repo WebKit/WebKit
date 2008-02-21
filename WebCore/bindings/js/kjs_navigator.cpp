@@ -213,7 +213,7 @@ static bool needsYouTubeQuirk(ExecState* exec, Frame* frame)
 
     // Do the quirk only if the function is called by an "isSafari" function.
     // However, that function is not itself named -- it is stored in the isSafari
-    // property, though, so that's how recognize it.
+    // property, though, so that's how we recognize it.
     ExecState* callingExec = exec->callingExecState();
     if (!callingExec)
         return false;
@@ -228,9 +228,9 @@ static bool needsYouTubeQuirk(ExecState* exec, Frame* frame)
     if (isSafariFunction != callingFunction)
         return false;
 
+    Document* document = frame->document(); 
     // FIXME: The document is never null, so we should remove this check along with the
     // other similar ones in this file when we are absolutely sure it's safe.
-    Document* document = frame->document(); 
     if (!document)
         return false;
 
