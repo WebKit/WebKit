@@ -1,3 +1,18 @@
+2008-02-20  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Oliver.
+
+        Remove m_drawingContext and change m_data to m_imageBuffer
+
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::HTMLCanvasElement):
+        (WebCore::HTMLCanvasElement::reset):
+        (WebCore::HTMLCanvasElement::paint):
+        (WebCore::HTMLCanvasElement::createImageBuffer):
+        (WebCore::HTMLCanvasElement::buffer):
+        (WebCore::HTMLCanvasElement::createPlatformImage):
+        * html/HTMLCanvasElement.h:
+
 2008-02-20  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam.
