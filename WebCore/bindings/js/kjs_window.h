@@ -161,7 +161,8 @@ namespace KJS {
     void clearAllTimeouts();
     int installTimeout(WebCore::ScheduledAction*, int interval, bool singleShot);
 
-    bool allowsAccessFrom(const JSGlobalObject*, WebCore::SecurityOrigin::Reason&, WebCore::String& message) const;
+    bool allowsAccessFromPrivate(const JSGlobalObject*, WebCore::SecurityOrigin::Reason&, WebCore::String& message) const;
+    bool allowsAccessFromPrivate(ExecState*, WebCore::String& message) const;
 
     RefPtr<WebCore::DOMWindow> m_impl;
     OwnPtr<WindowPrivate> d;

@@ -1,3 +1,18 @@
+2008-02-21  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        <rdar://problem/5753789>
+        REGRESSION: 1.5% -2% Sunspider regression from r30009 (ebay photo upload hang)
+        
+        Ensure all versions of allowsAccessFrom are inlined to single functions. 
+        This is a 2% win in browser hosted Sunspider. 
+
+        * bindings/js/kjs_window.cpp:
+        (KJS::Window::allowsAccessFrom):
+        (KJS::Window::allowsAccessFromPrivate):
+        * bindings/js/kjs_window.h:
+
 2008-02-21  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Sam Weinig.
