@@ -1,3 +1,15 @@
+2008-02-20  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=17464
+          REGRESSION: Crash in RenderBlock::findNextLineBreak reading r30444 commit email in GMail
+
+        Test: fast/text/wbr-in-pre-crash.html
+
+        * rendering/bidi.cpp:
+        (WebCore::RenderBlock::findNextLineBreak):
+
 2008-02-20  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Hyatt.
