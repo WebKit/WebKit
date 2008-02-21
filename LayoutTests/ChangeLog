@@ -1,3 +1,12 @@
+2008-02-20  Sam Weinig  <sam@webkit.org>
+
+        Rubber-stamped by Dan Bernstein.
+
+        Gratuitous change to this test to use the instanceof operator
+        instead of the isPrototypeOf method.
+
+        * fast/tokenizer/doctype-search-reset.html:
+
 2008-02-20  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Dave Hyatt.

@@ -5,7 +5,7 @@
         layoutTestController.dumpAsText();
     var target = document.getElementById("target");
     var result = document.getElementById("result");
-    if (HTMLDivElement.prototype.isPrototypeOf(target))
+    if (target instanceof HTMLDivElement)
         result.innerText = "PASS";
     else
         result.innerText = "FAIL";
