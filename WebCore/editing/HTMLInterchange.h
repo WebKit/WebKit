@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,7 +28,7 @@
 
 namespace WebCore {
 
-class DeprecatedString;
+class String;
 class Text;
 
 #define AppleInterchangeNewline   "Apple-interchange-newline"
@@ -39,7 +39,7 @@ class Text;
 
 enum EAnnotateForInterchange { DoNotAnnotateForInterchange, AnnotateForInterchange };
 
-DeprecatedString convertHTMLTextToInterchangeFormat(const DeprecatedString&, const Text*);
+String convertHTMLTextToInterchangeFormat(const String&, const Text*);
 
 }
 
