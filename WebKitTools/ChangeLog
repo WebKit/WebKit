@@ -1,3 +1,24 @@
+2008-02-21  Mike Auty  <mike.auty@gmail.com>
+
+        Reviewed by Alp Toker.
+
+        http://bugs.webkit.org/show_bug.cgi?id=17445
+        [GTK] WebKit doesn't compile with LDFLAGS="-Wl,--as-needed"
+
+        GTK+/autotools build system improvements
+
+        The GNUmakefile.am files make use of the LDFLAGS variable to include library
+        additions such as -ljpeg etc.  Unfortunately, if these inclusions aren't made
+        in LIBADD/LDADD variables, then they are mis-ordered during the linking.
+
+        The as-needed flag discards libraries whose functions have not been needed by
+        earlier libraries, which therefore makes the ordering important.
+
+        This moves all -l library inclusion statements from LDFLAGS variables to
+        LIBADD/LDADD variables.
+
+        * GNUmakefile.am:
+
 2008-02-20  Brent Fulgham  <bfulgham@gmail.com>
 
         Reviewed by Alp.

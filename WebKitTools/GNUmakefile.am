@@ -19,7 +19,7 @@ Programs_GtkLauncher_LDADD = \
 	libJavaScriptCore.la \
 	libWebKitGtk.la
 
-Programs_GtkLauncher_LDFLAGS = -ljpeg -rpath $(CURDIR)/.libs
+Programs_GtkLauncher_LDFLAGS = -rpath $(CURDIR)/.libs
 
 # DumpRenderTree
 Programs_DumpRenderTree_CPPFLAGS = \

@@ -102,7 +102,7 @@ libJavaScriptCore_la_SOURCES = \
 	$(javascriptcore_built_sources) \
 	$(javascriptcore_sources)
 
-libJavaScriptCore_la_LDFLAGS = $(ICU_LIBS) -lpthread
+libJavaScriptCore_la_LIBADD = $(ICU_LIBS) -lpthread
 
 libJavaScriptCore_la_CXXFLAGS = $(global_cxxflags) $(global_cflags) -fstrict-aliasing
 
@@ -126,7 +126,7 @@ webkitgtk_h_api :=
 webkitgtk_headers :=
 webkitgtk_sources :=
 webkitgtk_cppflags :=
-webkitgtk_ldflags :=
+webkitgtk_libadd :=
 webkitgtk_built_sources :=
 webkitgtk_built_nosources :=
 webkitgtk_cleanfiles :=
@@ -176,20 +176,20 @@ libWebKitGtk_la_CPPFLAGS = \
 	$(webkitgtk_cppflags) \
 	$(ICU_CPPFLAGS)
 
-libWebKitGtk_la_LIBADD = libJavaScriptCore.la
-
-libWebKitGtk_la_LDFLAGS = \
-	$(webkitgtk_ldflags) \
+libWebKitGtk_la_LIBADD = libJavaScriptCore.la \
+	$(webkitgtk_libadd) \
 	$(DEPENDENCIES_LIBS) \
 	$(LIBCURL_LIBS) \
 	$(ICU_LIBS) \
 	$(SQLITE3_LIBS) \
 	$(GSTREAMER_LIBS) \
 	$(LIBXSLT_LIBS) \
-	$(COVERAGE_LDFLAGS) \
 	$(HILDON_LIBS) \
 	-lpthread \
-	-ljpeg \
+	-ljpeg
+
+libWebKitGtk_la_LDFLAGS = \
+	$(COVERAGE_LDFLAGS) \
 	-version-info @LIBWEBKITGTK_VERSION@
 
 #
@@ -237,7 +237,7 @@ global_cppflags += \
 endif
 
 if ENABLE_VIDEO
-webkitgtk_ldflags += -lgstinterfaces-0.10 -lgstvideo-0.10
+webkitgtk_libadd += -lgstinterfaces-0.10 -lgstvideo-0.10
 endif
 
 #
