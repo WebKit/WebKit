@@ -1,3 +1,17 @@
+2008-02-20  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Hyatt.
+
+        Bug 17303: Canvas crash in ImageBuffer
+
+        We handle a null GraphicsContext everywhere, but we weren't checking for 
+        a null ImageBuffer, which is what will result in a null GraphicsContext in
+        the first place.
+
+        Test: fast/canvas/access-zero-sized-canvas.html
+
+        * html/HTMLCanvasElement.cpp:
+
 2008-02-20  David Hyatt  <hyatt@apple.com>
 
         Fix the layout test failure that never should have passed in the first

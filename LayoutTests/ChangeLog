@@ -1,3 +1,12 @@
+2008-02-20  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Hyatt.
+
+        Test to ensure we do not crash on a zero sized canvas.
+
+        * fast/canvas/access-zero-sized-canvas-expected.txt: Added.
+        * fast/canvas/access-zero-sized-canvas.html: Added.
+
 2008-02-20  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin.

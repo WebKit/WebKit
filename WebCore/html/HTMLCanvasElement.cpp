@@ -208,7 +208,7 @@ void HTMLCanvasElement::createImageBuffer() const
 
 GraphicsContext* HTMLCanvasElement::drawingContext() const
 {
-    return buffer()->context();
+    return buffer() ? m_imageBuffer->context() : 0;
 }
 
 ImageBuffer* HTMLCanvasElement::buffer() const
