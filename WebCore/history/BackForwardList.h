@@ -27,7 +27,7 @@
 #define BackForwardList_h
 
 #include <wtf/RefCounted.h>
-#include <wtf/Forward.h>
+#include <wtf/PassRefPtr.h>
 #include <wtf/HashSet.h>
 #include <wtf/Vector.h>
 
@@ -41,7 +41,7 @@ typedef HashSet<RefPtr<HistoryItem> > HistoryItemHashSet;
 
 class BackForwardList : public RefCounted<BackForwardList> {
 public: 
-    BackForwardList(Page*);
+    static PassRefPtr<BackForwardList> create(Page* page) { return adoptRef(new BackForwardList(page)); }
     ~BackForwardList();
     
     Page* page() { return m_page; }
@@ -74,6 +74,8 @@ public:
     HistoryItemVector& entries();
     
 private:
+    BackForwardList(Page*);
+
     Page* m_page;
     HistoryItemVector m_entries;
     HistoryItemHashSet m_entryHash;

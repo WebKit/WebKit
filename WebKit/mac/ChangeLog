@@ -1,3 +1,12 @@
+2008-02-21  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam.
+
+        Use BackForwardList::create instead.
+        
+        * History/WebBackForwardList.mm:
+        (-[WebBackForwardList init]):
+
 2008-02-21  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Jessica Kahn

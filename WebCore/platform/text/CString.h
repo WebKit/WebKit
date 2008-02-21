@@ -26,6 +26,7 @@
 #ifndef CString_h
 #define CString_h
 
+#include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
 
@@ -37,12 +38,14 @@ namespace WebCore {
     
     class CStringBuffer : public RefCounted<CStringBuffer> {
     public:
-        CStringBuffer(unsigned length) : RefCounted<CStringBuffer>(0), m_vector(length) { }
+        static PassRefPtr<CStringBuffer> create(unsigned length) { return adoptRef(new CStringBuffer(length)); }
 
         char* data() { return m_vector.data(); }
         size_t length() const { return m_vector.size(); }
 
     private:
+        CStringBuffer(unsigned length) : m_vector(length) { }
+
         Vector<char> m_vector;
     };
 

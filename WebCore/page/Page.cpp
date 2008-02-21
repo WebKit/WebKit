@@ -77,7 +77,7 @@ Page::Page(ChromeClient* chromeClient, ContextMenuClient* contextMenuClient, Edi
     , m_inspectorController(new InspectorController(this, inspectorClient))
     , m_settings(new Settings(this))
     , m_progress(new ProgressTracker)
-    , m_backForwardList(new BackForwardList(this))
+    , m_backForwardList(BackForwardList::create(this))
     , m_editorClient(editorClient)
     , m_frameCount(0)
     , m_tabKeyCyclesThroughElements(true)

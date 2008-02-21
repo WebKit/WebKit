@@ -1,3 +1,29 @@
+2008-02-21  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam.
+
+        Make more classes start out with a refcount of 1.
+
+        * dom/QualifiedName.cpp:
+        (WebCore::QNameComponentsTranslator::translate):
+        (WebCore::QualifiedName::QualifiedName):
+        * dom/QualifiedName.h:
+        (WebCore::QualifiedName::QualifiedNameImpl::create):
+        (WebCore::QualifiedName::QualifiedNameImpl::QualifiedNameImpl):
+        * history/BackForwardList.cpp:
+        (WebCore::BackForwardList::BackForwardList):
+        * history/BackForwardList.h:
+        (WebCore::BackForwardList::create):
+        * page/Page.cpp:
+        (WebCore::Page::Page):
+        * platform/text/CString.cpp:
+        (WebCore::CString::init):
+        (WebCore::CString::newUninitialized):
+        (WebCore::CString::copyBufferIfNeeded):
+        * platform/text/CString.h:
+        (WebCore::CStringBuffer::create):
+        (WebCore::CStringBuffer::CStringBuffer):
+
 2008-02-21  Kevin Ollivier  <kevino@theolliviers.com>
 
         wx build fix for the domString() -> string() rename in r30443.

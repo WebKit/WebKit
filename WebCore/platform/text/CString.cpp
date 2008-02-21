@@ -50,7 +50,7 @@ void CString::init(const char* str, unsigned length)
     if (!str)
         return;
     
-    m_buffer = new CStringBuffer(length + 1);
+    m_buffer = CStringBuffer::create(length + 1);
     memcpy(m_buffer->data(), str, length); 
     m_buffer->data()[length] = '\0';
 }
@@ -81,7 +81,7 @@ DeprecatedCString CString::deprecatedCString() const
 CString CString::newUninitialized(size_t length, char*& characterBuffer)
 {
     CString result;
-    result.m_buffer = new CStringBuffer(length + 1);
+    result.m_buffer = CStringBuffer::create(length + 1);
     char* bytes = result.m_buffer->data();
     bytes[length] = '\0';
     characterBuffer = bytes;
@@ -95,7 +95,7 @@ void CString::copyBufferIfNeeded()
         
     int len = m_buffer->length();
     RefPtr<CStringBuffer> m_temp = m_buffer;
-    m_buffer = new CStringBuffer(len);
+    m_buffer = CStringBuffer::create(len);
     memcpy(m_buffer->data(), m_temp->data(), len);
 }
 
