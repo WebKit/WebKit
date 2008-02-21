@@ -962,17 +962,17 @@ void CharacterIterator::advance(int count)
     m_runOffset = 0;
 }
 
-DeprecatedString CharacterIterator::string(int numChars)
+String CharacterIterator::string(int numChars)
 {
-    DeprecatedString result;
-    result.reserve(numChars);
+    Vector<UChar> result;
+    result.reserveCapacity(numChars);
     while (numChars > 0 && !atEnd()) {
         int runSize = min(numChars, length());
-        result.append(reinterpret_cast<const DeprecatedChar*>(characters()), runSize);
+        result.append(characters(), runSize);
         numChars -= runSize;
         advance(runSize);
     }
-    return result;
+    return String::adopt(result);
 }
 
 // --------
@@ -1001,7 +1001,7 @@ WordAwareIterator::WordAwareIterator(const Range *r)
 void WordAwareIterator::advance()
 {
     m_previousText = 0;
-    m_buffer = "";      // toss any old buffer we built up
+    m_buffer.clear();      // toss any old buffer we built up
 
     // If last time we did a look-ahead, start with that looked-ahead chunk now
     if (!m_didLookAhead) {
@@ -1038,10 +1038,10 @@ void WordAwareIterator::advance()
 
         if (m_buffer.isEmpty()) {
             // Start gobbling chunks until we get to a suitable stopping point
-            m_buffer.append(reinterpret_cast<const DeprecatedChar*>(m_previousText), m_previousLength);
+            m_buffer.append(m_previousText, m_previousLength);
             m_previousText = 0;
         }
-        m_buffer.append(reinterpret_cast<const DeprecatedChar*>(m_textIterator.characters()), m_textIterator.length());
+        m_buffer.append(m_textIterator.characters(), m_textIterator.length());
         int exception = 0;
         m_range->setEnd(m_textIterator.range()->endContainer(exception), m_textIterator.range()->endOffset(exception), exception);
     }
@@ -1050,7 +1050,7 @@ void WordAwareIterator::advance()
 int WordAwareIterator::length() const
 {
     if (!m_buffer.isEmpty())
-        return m_buffer.length();
+        return m_buffer.size();
     if (m_previousText)
         return m_previousLength;
     return m_textIterator.length();
@@ -1059,7 +1059,7 @@ int WordAwareIterator::length() const
 const UChar* WordAwareIterator::characters() const
 {
     if (!m_buffer.isEmpty())
-        return reinterpret_cast<const UChar*>(m_buffer.unicode());
+        return m_buffer.data();
     if (m_previousText)
         return m_previousText;
     return m_textIterator.characters();

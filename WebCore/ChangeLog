@@ -4,6 +4,21 @@
 
         - make HTMLInterchange return a String instead of a DeprecatedString
 
+        * editing/TextIterator.cpp:
+        (WebCore::CharacterIterator::string): Build up the String using a
+        Vector.
+        (WebCore::WordAwareIterator::advance): Switch to using Vector functions.
+        (WebCore::WordAwareIterator::length): Ditto.
+        (WebCore::WordAwareIterator::characters): Ditto.
+        * editing/TextIterator.h: Use a Vector<UChar> for the buffer instead
+        of DeprecatedString.
+
+2008-02-20  Darin Adler  <darin@apple.com>
+
+        Reviewed, tweaked and landed by Sam.
+
+        - make HTMLInterchange return a String instead of a DeprecatedString
+
         * editing/HTMLInterchange.cpp:
         (WebCore::): Return a String from convertedSpaceString.
         (WebCore::convertHTMLTextToInterchangeFormat): Use a Vector instead of
