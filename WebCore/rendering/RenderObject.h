@@ -57,7 +57,7 @@ class RenderTable;
 class RenderText;
 class RenderView;
 class String;
-class TextStream;
+
 struct HitTestRequest;
 
 /*

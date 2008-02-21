@@ -1,3 +1,9 @@
+2008-02-20  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam.
+
+        * rendering/RenderObject.h: Took out unneeded forward declaration of TextStream.
+
 2008-02-20  David Hyatt  <hyatt@apple.com>
 
         Fix for bug 16760, incorrect <object> MIME type handling and fallback
