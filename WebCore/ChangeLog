@@ -2,7 +2,7 @@
 
         Reviewed, tweaked and landed by Sam.
 
-        - make HTMLInterchange return a String instead of a DeprecatedString
+        - make TextIterator use a Vector instead of a DeprecatedString.
 
         * editing/TextIterator.cpp:
         (WebCore::CharacterIterator::string): Build up the String using a
