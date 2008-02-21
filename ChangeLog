@@ -1,3 +1,14 @@
+2008-02-21  Alp Toker  <alp@atoker.com>
+
+        GTK+/autotools SVG experimental build fix
+
+        Don't enable SVG filters in --enable-svg-experimental.
+
+        This feature isn't supported at all yet. Developers can enable it
+        explicitly by passing --enable-svg-filters if needed.
+
+        * configure.ac:
+
 2008-02-21  Mike Auty  <mike.auty@gmail.com>
 
         Reviewed by Alp Toker.

@@ -285,7 +285,7 @@ AC_MSG_RESULT([$enable_svg_experimental])
 if test "$enable_svg_experimental" = "yes"; then
    enable_svg=yes
    enable_svg_animation=yes
-   enable_svg_filters=yes
+#   enable_svg_filters=yes
    enable_svg_fonts=yes
    enable_svg_foreign_object=yes
    enable_svg_as_image=yes
