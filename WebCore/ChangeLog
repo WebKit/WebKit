@@ -1,3 +1,10 @@
+2008-02-21  Kevin Ollivier  <kevino@theolliviers.com>
+
+        wx build fix for the domString() -> string() rename in r30443.
+
+        * platform/graphics/wx/FontPlatformDataWx.cpp:
+        (WebCore::FontPlatformData::FontPlatformData):
+
 2008-02-21  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Sam Weinig.
