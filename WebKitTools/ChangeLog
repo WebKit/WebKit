@@ -1,3 +1,50 @@
+2008-02-20  Brent Fulgham  <bfulgham@gmail.com>
+
+        Reviewed by Alp.
+
+        - http://bugs.webkit.org/show_bug.cgi?id=17428
+          Reenable a Windows-based launcher
+
+        This patch reenables the venerable Spinneret application,
+        changing its name to match the other lanch applications.
+
+        * WinLauncher: Added.
+        * WinLauncher/WinLauncher.cpp: Added.
+        (WinLauncherWebHost::updateAddressBar):
+        (WinLauncherWebHost::QueryInterface):
+        (WinLauncherWebHost::AddRef):
+        (WinLauncherWebHost::Release):
+        (resizeSubViews):
+        (_tWinMain):
+        (MyRegisterClass):
+        (InitInstance):
+        (WndProc):
+        (MyEditProc):
+        (About):
+        (loadURL):
+        * WinLauncher/WinLauncher.h: Added.
+        (WinLauncherWebHost::WinLauncherWebHost):
+        (WinLauncherWebHost::didStartProvisionalLoadForFrame):
+        (WinLauncherWebHost::didReceiveServerRedirectForProvisionalLoadForFrame):
+        (WinLauncherWebHost::didFailProvisionalLoadWithError):
+        (WinLauncherWebHost::didCommitLoadForFrame):
+        (WinLauncherWebHost::didReceiveTitle):
+        (WinLauncherWebHost::didReceiveIcon):
+        (WinLauncherWebHost::didFinishLoadForFrame):
+        (WinLauncherWebHost::didFailLoadWithError):
+        (WinLauncherWebHost::didChangeLocationWithinPageForFrame):
+        (WinLauncherWebHost::willPerformClientRedirectToURL):
+        (WinLauncherWebHost::didCancelClientRedirectForFrame):
+        (WinLauncherWebHost::willCloseFrame):
+        (WinLauncherWebHost::windowScriptObjectAvailable):
+        * WinLauncher/WinLauncher.ico: Added.
+        * WinLauncher/WinLauncher.rc: Added.
+        * WinLauncher/WinLauncher.vcproj: Added.
+        * WinLauncher/resource.h: Added.
+        * WinLauncher/small.ico: Added.
+        * WinLauncher/stdafx.cpp: Added.
+        * WinLauncher/stdafx.h: Added.
+
 2008-02-19  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Geoff
