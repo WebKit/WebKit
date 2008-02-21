@@ -194,6 +194,14 @@ void Loader::didReceiveData(SubresourceLoader* loader, const char* data, int siz
         return;
 
     CachedResource* object = request->cachedResource();    
+    if (object->errorOccurred())
+        return;
+    
+    if (object->response().httpStatusCode() / 100 == 4) {
+        // Make sure the 4xx error codes result in an error.
+        object->error();
+        return;
+    }
 
     // Set the data.
     if (request->isMultipart()) {

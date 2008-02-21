@@ -286,6 +286,16 @@ void HTMLObjectElement::renderFallbackContent()
     if (m_useFallbackContent)
         return;
 
+    // Before we give up and use fallback content, check to see if this is a MIME type issue.
+    if (m_imageLoader && m_imageLoader->image()) {
+        m_serviceType = m_imageLoader->image()->response().mimeType();
+        if (!isImageType()) {
+            detach();
+            attach();
+            return;
+        }
+    }
+
     // Mark ourselves as using the fallback content.
     m_useFallbackContent = true;
 

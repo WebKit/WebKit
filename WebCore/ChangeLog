@@ -1,3 +1,24 @@
+2008-02-20  David Hyatt  <hyatt@apple.com>
+
+        Fix for bug 16760, incorrect <object> MIME type handling and fallback
+        handling.
+
+        Reviewed by darin
+
+        * html/HTMLImageLoader.cpp:
+        (WebCore::HTMLImageLoader::notifyFinished):
+        If the image had an error, make sure to do <object> fallback.
+
+        * html/HTMLObjectElement.cpp:
+        (WebCore::HTMLObjectElement::renderFallbackContent):
+        Before doing fallback check if there is a MIME type mismatch between
+        an image type and a non-image type.  If so, detach and re-attach after
+        storing the correct MIME type.
+
+        * loader/loader.cpp:
+        (WebCore::Loader::didReceiveData):
+        Consider it an error when a 404 is encountered on a CachedResource load.
+
 2008-02-20  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam.

@@ -29,6 +29,7 @@
 #include "Element.h"
 #include "EventNames.h"
 #include "HTMLNames.h"
+#include "HTMLObjectElement.h"
 #include "RenderImage.h"
 
 using namespace std;
@@ -142,6 +143,9 @@ void HTMLImageLoader::notifyFinished(CachedResource *image)
     if (RenderObject* renderer = elem->renderer())
         if (renderer->isImage())
             static_cast<RenderImage*>(renderer)->setCachedImage(m_image);
+            
+    if (image->errorOccurred() && elem->hasTagName(objectTag))
+        static_cast<HTMLObjectElement*>(elem)->renderFallbackContent();
 }
 
 }
