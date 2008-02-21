@@ -122,15 +122,9 @@ inline StringImpl::StringImpl(UChar* characters, unsigned length, AdoptBuffer)
     ASSERT(length);
 }
 
-// FIXME: These AtomicString constructors return objects with a refCount of 0,
-// even though the others return objects with a refCount of 1. That preserves
-// the historical behavior for the hash map translator call sites inside the
-// AtomicString code, but is it correct?
-
 // This constructor is only for use by AtomicString.
 StringImpl::StringImpl(const UChar* characters, unsigned length, unsigned hash)
-    : RefCounted<StringImpl>(0)
-    , m_length(length)
+    : m_length(length)
     , m_hash(hash)
     , m_inTable(true)
     , m_hasTerminatingNullCharacter(false)
@@ -146,8 +140,7 @@ StringImpl::StringImpl(const UChar* characters, unsigned length, unsigned hash)
 
 // This constructor is only for use by AtomicString.
 StringImpl::StringImpl(const char* characters, unsigned length, unsigned hash)
-    : RefCounted<StringImpl>(0)
-    , m_length(length)
+    : m_length(length)
     , m_hash(hash)
     , m_inTable(true)
     , m_hasTerminatingNullCharacter(false)

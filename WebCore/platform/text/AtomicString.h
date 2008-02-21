@@ -99,12 +99,12 @@ public:
 private:
     String m_string;
     
-    static StringImpl* add(const char*);
-    static StringImpl* add(const UChar*, int length);
-    static StringImpl* add(const UChar*);
-    static StringImpl* add(StringImpl*);
-    static StringImpl* add(const KJS::UString&);
-    static StringImpl* add(const KJS::Identifier&);
+    static PassRefPtr<StringImpl> add(const char*);
+    static PassRefPtr<StringImpl> add(const UChar*, int length);
+    static PassRefPtr<StringImpl> add(const UChar*);
+    static PassRefPtr<StringImpl> add(StringImpl*);
+    static PassRefPtr<StringImpl> add(const KJS::UString&);
+    static PassRefPtr<StringImpl> add(const KJS::Identifier&);
 };
 
 inline bool operator==(const AtomicString& a, const AtomicString& b) { return a.impl() == b.impl(); }

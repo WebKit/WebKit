@@ -1,3 +1,15 @@
+2008-02-20  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam.
+
+        StringImpl constructors used by AtomicString should start with a refcount of 1.
+        
+        * platform/text/AtomicString.cpp:
+        (WebCore::AtomicString::add):
+        * platform/text/AtomicString.h:
+        * platform/text/StringImpl.cpp:
+        (WebCore::StringImpl::StringImpl):
+
 2008-02-20  Darin Adler  <darin@apple.com>
 
         * bindings/js/kjs_navigator.cpp:
