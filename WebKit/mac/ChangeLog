@@ -1,3 +1,29 @@
+2008-02-21  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Jessica Kahn
+        
+        support for pasteAndMatchStyle: command (see <rdar://problem/5723952>)
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView _pasteWithPasteboard:allowPlainText:matchStyle:]):
+        added matchStyle parameter, passed along to bridge (formerly always passed NO to bridge)
+        (-[WebHTMLView readSelectionFromPasteboard:]):
+        pass NO for new matchStyle parameter to match old behavior
+        (-[WebHTMLView validateUserInterfaceItemWithoutDelegate:]):
+        validate pasteAndMatchStyle the same way as pasteAsRichText
+        (-[WebHTMLView pasteAndMatchStyle:]):
+        just like pasteAsRichText but passes YES for matchStyle
+        (-[WebHTMLView pasteAsRichText:]):
+        pass NO for new matchStyle parameter to match old behavior
+        (-[WebHTMLView paste:]):
+        ditto
+        
+        * WebView/WebView.mm:
+        added macro(pasteAndMatchStyle)
+        
+        * WebView/WebViewPrivate.h:
+        added pasteAndMatchStyle: to WebViewEditingActionsPendingPublic category
+
 2008-02-20  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Darin and Geoff.
