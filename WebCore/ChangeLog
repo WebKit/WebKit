@@ -1,3 +1,16 @@
+2008-02-21  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by David Harrison.
+        
+        Fixed <rdar://problem/5756125> REGRESSION: A crash occurs at 
+        WebCore::Frame::scriptProxy() when completing a search with Package Tracker widget
+
+        Test: fast/dom/script-element-without-frame-crash.html
+
+        * html/HTMLTokenizer.cpp:
+        (WebCore::HTMLTokenizer::parseTag): Added back a NULL check that was
+        accidentally removed in r30325.
+
 2008-02-21  Rodney Dawes  <dobey@wayofthemonkey.com>
 
         GTK+ build fix. s/domString()/string()/

@@ -1,0 +1,14 @@
+<p>
+This page tests for a crash in the HTML tokenizer when adding a &lt;script&gt;
+element to a document without a frame.
+</p>
+
+<pre>PASS: You didn't crash.</pre>
+
+<script>
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
+    
+var doc = document.implementation.createHTMLDocument("");
+doc.write("<\script src=''>;<\/script>");
+</script>

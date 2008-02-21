@@ -1445,7 +1445,7 @@ HTMLTokenizer::State HTMLTokenizer::parseTag(SegmentedString &src, State state)
                 scriptSrc = String();
                 scriptSrcCharset = String();
                 if (currToken.attrs && !m_fragment) {
-                    if (m_doc->frame()->scriptProxy()->isEnabled()) {
+                    if (m_doc->frame() && m_doc->frame()->scriptProxy()->isEnabled()) {
                         if ((a = currToken.attrs->getAttributeItem(srcAttr)))
                             scriptSrc = m_doc->completeURL(parseURL(a->value())).string();
                         if ((a = currToken.attrs->getAttributeItem(charsetAttr)))
