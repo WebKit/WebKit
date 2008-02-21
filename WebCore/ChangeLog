@@ -2,6 +2,18 @@
 
         Reviewed by Dave Hyatt.
 
+        - fix http://bugs.webkit.org/show_bug.cgi?id=17465
+          REGRESSION: <DIV> tokenized into Div if still searching for DOCTYPE
+
+        Test: fast/tokenizer/doctype-search-reset.html
+
+        * html/HTMLTokenizer.cpp:
+        (WebCore::HTMLTokenizer::parseTag):
+
+2008-02-20  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Dave Hyatt.
+
         - fix http://bugs.webkit.org/show_bug.cgi?id=17464
           REGRESSION: Crash in RenderBlock::findNextLineBreak reading r30444 commit email in GMail
 

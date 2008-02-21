@@ -1089,6 +1089,8 @@ HTMLTokenizer::State HTMLTokenizer::parseTag(SegmentedString &src, State state)
                     searchCount++;
                     if (searchCount == 2)
                         m_doctypeSearchCount++; // A '!' is also part of a doctype, so we are moving through that still as well.
+                    else
+                        m_doctypeSearchCount = 0;
                     if (searchCount == 4) {
                         // Found '<!--' sequence
                         src.advancePastNonNewline();
@@ -1134,8 +1136,7 @@ HTMLTokenizer::State HTMLTokenizer::parseTag(SegmentedString &src, State state)
                         return state;
                     }
                     break;
-                }
-                else
+                } else
                     m_doctypeSearchCount = 0; // Stop looking for '<!DOCTYPE' sequence
             }
 
