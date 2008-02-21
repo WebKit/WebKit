@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2007, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,7 +30,6 @@
 #include "GlyphPageTreeNode.h"
 
 #include "SimpleFontData.h"
-#include <WebKitSystemInterface/WebKitSystemInterface.h>
 
 namespace WebCore {
 
@@ -42,17 +41,31 @@ bool GlyphPage::fill(unsigned offset, unsigned length, UChar* buffer, unsigned b
         return false;
 
     bool haveGlyphs = false;
-    CGGlyph localGlyphBuffer[GlyphPage::size];
-    wkGetGlyphs(fontData->platformData().cgFont(), buffer, localGlyphBuffer, bufferLength);
-    for (unsigned i = 0; i < length; i++) {
-        Glyph glyph = localGlyphBuffer[i];
-        if (!glyph)
-            setGlyphDataForIndex(offset + i, 0, 0);
-        else {
-            setGlyphDataForIndex(offset + i, glyph, fontData);
-            haveGlyphs = true;
+
+    HDC dc = GetDC((HWND)0);
+    SaveDC(dc);
+    SelectObject(dc, fontData->platformData().hfont());
+
+    TEXTMETRIC tm;
+    GetTextMetrics(dc, &tm);
+
+    WORD localGlyphBuffer[GlyphPage::size * 2];
+    DWORD result = GetGlyphIndices(dc, buffer, bufferLength, localGlyphBuffer, 0);
+    bool success = result != GDI_ERROR && static_cast<unsigned>(result) == bufferLength;
+    if (success) {
+        for (unsigned i = 0; i < length; i++) {
+            Glyph glyph = localGlyphBuffer[i];
+            if (!glyph)
+                setGlyphDataForIndex(offset + i, 0, 0);
+            else {
+                setGlyphDataForIndex(offset + i, glyph, fontData);
+                haveGlyphs = true;
+            }
         }
     }
+    RestoreDC(dc, -1);
+    ReleaseDC(0, dc);
+
     return haveGlyphs;
 }
 

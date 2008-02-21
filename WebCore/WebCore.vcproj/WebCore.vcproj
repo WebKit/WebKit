@@ -3900,6 +3900,10 @@
 						>
 					</File>
 					<File
+						RelativePath="..\platform\graphics\win\FontPlatformDataCGWin.cpp"
+						>
+					</File>
+					<File
 						RelativePath="..\platform\graphics\win\FontPlatformDataWin.cpp"
 						>
 					</File>
@@ -3932,7 +3936,7 @@
 						</FileConfiguration>
 					</File>
 					<File
-						RelativePath="..\platform\graphics\win\GlyphPageTreeNodeWin.cpp"
+						RelativePath="..\platform\graphics\win\GlyphPageTreeNodeCGWin.cpp"
 						>
 					</File>
 					<File

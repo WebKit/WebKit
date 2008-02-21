@@ -34,7 +34,10 @@
 #include "Font.h"
 #include "FontCache.h"
 #include "FontDescription.h"
+#include "MathExtras.h"
 #include "NotImplemented.h"
+#include <cairo.h>
+#include <cairo-win32.h>
 #include <mlang.h>
 #include <tchar.h>
 
@@ -45,58 +48,83 @@ void SimpleFontData::platformInit()
     m_scriptCache = 0;
     m_scriptFontProperties = 0;
     m_isSystemFont = false;
-    
-    if (m_font.useGDI()) {
-        HDC hdc = GetDC(0);
-        HGDIOBJ oldFont = SelectObject(hdc, m_font.hfont());
-        OUTLINETEXTMETRIC metrics;
-        GetOutlineTextMetrics(hdc, sizeof(metrics), &metrics);
-        TEXTMETRIC& textMetrics = metrics.otmTextMetrics;
-        m_ascent = textMetrics.tmAscent;
-        m_descent = textMetrics.tmDescent;
-        m_lineGap = textMetrics.tmExternalLeading;
-        m_lineSpacing = m_ascent + m_descent + m_lineGap;
-        m_xHeight = m_ascent * 0.56f; // Best guess for xHeight if no x glyph is present.
 
+    if (m_font.useGDI())
+       return initGDIFont();
+
+    HDC hdc = GetDC(0);
+    SaveDC(hdc);
+
+    cairo_scaled_font_t* scaledFont = m_font.scaledFont();
+    const double metricsMultiplier = cairo_win32_scaled_font_get_metrics_factor(scaledFont) * m_font.size();
+
+    cairo_win32_scaled_font_select_font(scaledFont, hdc);
+
+    TEXTMETRIC textMetrics;
+    GetTextMetrics(hdc, &textMetrics);
+    m_ascent = lroundf(textMetrics.tmAscent * metricsMultiplier);
+    m_descent = lroundf(textMetrics.tmDescent * metricsMultiplier);
+    m_xHeight = m_ascent * 0.56f; // Best guess for xHeight for non-Truetype fonts.
+    m_lineGap = lroundf(textMetrics.tmExternalLeading * metricsMultiplier);
+    m_lineSpacing = m_ascent + m_descent + m_lineGap;
+
+    OUTLINETEXTMETRIC metrics;
+    if (GetOutlineTextMetrics(hdc, sizeof(metrics), &metrics) > 0) {
+        // This is a TrueType font.  We might be able to get an accurate xHeight
         GLYPHMETRICS gm;
         MAT2 mat = { 1, 0, 0, 1 };
         DWORD len = GetGlyphOutline(hdc, 'x', GGO_METRICS, &gm, 0, 0, &mat);
         if (len != GDI_ERROR && gm.gmptGlyphOrigin.y > 0)
-            m_xHeight = gm.gmptGlyphOrigin.y;
-
-        m_unitsPerEm = metrics.otmEMSquare;
-
-        SelectObject(hdc, oldFont);
-        ReleaseDC(0, hdc);
-
-        return;
+            m_xHeight = gm.gmptGlyphOrigin.y * metricsMultiplier;
     }
 
-    // FIXME: This section should determine font dimensions (see CG implementation).
-    notImplemented();
+    cairo_win32_scaled_font_done_font(scaledFont);
+
+    m_isSystemFont = false;
+    m_scriptCache = 0;
+    m_scriptFontProperties = 0;
+
+    RestoreDC(hdc, -1);
+    ReleaseDC(0, hdc);
 }
 
 void SimpleFontData::platformDestroy()
 {
-    notImplemented();
+    cairo_font_face_destroy(m_font.fontFace());
+    cairo_scaled_font_destroy(m_font.scaledFont());
+
+    DeleteObject(m_font.hfont());
+
+    platformCommonDestroy();
 }
 
 float SimpleFontData::platformWidthForGlyph(Glyph glyph) const
 {
-    if (m_font.useGDI()) {
-        HDC hdc = GetDC(0);
-        HGDIOBJ oldFont = SelectObject(hdc, m_font.hfont());
-        int width;
-        GetCharWidthI(hdc, glyph, 1, 0, &width);
-        SelectObject(hdc, oldFont);
-        ReleaseDC(0, hdc);
-        return width;
-    }
+    if (m_font.useGDI())
+       return widthForGDIGlyph(glyph);
 
-    // FIXME: Flesh out with Cairo/win32 font implementation
-    notImplemented();
+    HDC hdc = GetDC(0);
+    SaveDC(hdc);
 
-    return 0;
+    cairo_scaled_font_t* scaledFont = m_font.scaledFont();
+    cairo_win32_scaled_font_select_font(scaledFont, hdc);
+
+    int width;
+    GetCharWidthI(hdc, glyph, 1, 0, &width);
+
+    cairo_win32_scaled_font_done_font(scaledFont);
+
+    RestoreDC(hdc, -1);
+    ReleaseDC(0, hdc);
+
+    const double metricsMultiplier = cairo_win32_scaled_font_get_metrics_factor(scaledFont) * m_font.size();
+    return width * metricsMultiplier;
+}
+
+void SimpleFontData::setFont(cairo_t* cr) const
+{
+    ASSERT(cr);
+    m_font.setFont(cr);
 }
 
 }

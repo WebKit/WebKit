@@ -18,31 +18,31 @@
  *
  */
 
-#ifndef FontCustomPlatformData_h
-#define FontCustomPlatformData_h
+#ifndef FontCustomPlatformDataCairo_h
+#define FontCustomPlatformDataCairo_h
 
 #include <wtf/Noncopyable.h>
 
-typedef struct CGFont* CGFontRef;
+#include <cairo.h>
 
 namespace WebCore {
 
 class FontPlatformData;
 class SharedBuffer;
 
-struct FontCustomPlatformData : Noncopyable {
-    FontCustomPlatformData(CGFontRef cgFont)
-        : m_cgFont(cgFont)
+struct FontCustomPlatformDataCairo : Noncopyable {
+    FontCustomPlatformDataCairo(cairo_font_face_t* fontFace)
+        : m_fontFace(fontFace)
     {
     }
-    ~FontCustomPlatformData();
+    ~FontCustomPlatformDataCairo();
 
     FontPlatformData fontPlatformData(int size, bool bold, bool italic);
 
-    CGFontRef m_cgFont;
+    cairo_font_face_t* m_fontFace;
 };
 
-FontCustomPlatformData* createFontCustomPlatformData(SharedBuffer*);
+FontCustomPlatformDataCairo* createFontCustomPlatformData(SharedBuffer*);
 
 }
 

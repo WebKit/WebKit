@@ -54,32 +54,9 @@ void SimpleFontData::platformInit()
     m_scriptCache = 0;
     m_scriptFontProperties = 0;
     m_isSystemFont = false;
-    
-    if (m_font.useGDI()) {
-        HDC hdc = GetDC(0);
-        HGDIOBJ oldFont = SelectObject(hdc, m_font.hfont());
-        OUTLINETEXTMETRIC metrics;
-        GetOutlineTextMetrics(hdc, sizeof(metrics), &metrics);
-        TEXTMETRIC& textMetrics = metrics.otmTextMetrics;
-        m_ascent = textMetrics.tmAscent;
-        m_descent = textMetrics.tmDescent;
-        m_lineGap = textMetrics.tmExternalLeading;
-        m_lineSpacing = m_ascent + m_descent + m_lineGap;
-        m_xHeight = m_ascent * 0.56f; // Best guess for xHeight if no x glyph is present.
 
-        GLYPHMETRICS gm;
-        MAT2 mat = { 1, 0, 0, 1 };
-        DWORD len = GetGlyphOutline(hdc, 'x', GGO_METRICS, &gm, 0, 0, &mat);
-        if (len != GDI_ERROR && gm.gmptGlyphOrigin.y > 0)
-            m_xHeight = gm.gmptGlyphOrigin.y;
-
-        m_unitsPerEm = metrics.otmEMSquare;
-
-        SelectObject(hdc, oldFont);
-        ReleaseDC(0, hdc);
-
-        return;
-    }
+    if (m_font.useGDI())
+       return initGDIFont();
 
     CGFontRef font = m_font.cgFont();
     int iAscent = CGFontGetAscent(font);
@@ -144,24 +121,13 @@ void SimpleFontData::platformDestroy()
         CGFontRelease(m_font.cgFont());
     }
 
-    // We don't hash this on Win32, so it's effectively owned by us.
-    delete m_smallCapsFontData;
-
-    ScriptFreeCache(&m_scriptCache);
-    delete m_scriptFontProperties;
+    platformCommonDestroy();
 }
 
 float SimpleFontData::platformWidthForGlyph(Glyph glyph) const
 {
-    if (m_font.useGDI()) {
-        HDC hdc = GetDC(0);
-        HGDIOBJ oldFont = SelectObject(hdc, m_font.hfont());
-        int width;
-        GetCharWidthI(hdc, glyph, 1, 0, &width);
-        SelectObject(hdc, oldFont);
-        ReleaseDC(0, hdc);
-        return width;
-    }
+    if (m_font.useGDI())
+       return widthForGDIGlyph(glyph);
 
     CGFontRef font = m_font.cgFont();
     float pointSize = m_font.size();

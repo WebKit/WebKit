@@ -1,3 +1,61 @@
+2008-02-20  Brent Fulgham  <bfulgham@gmail.com>
+
+        Reviewed by Dan.
+
+        http://bugs.webkit.org/show_bug.cgi?id=17336
+        Provide implementations for Windows (Cairo) build of WebKit that
+        handles font formatting.
+        - Split font implementation files to allow maximal code sharing
+          between CG and Cairo back-ends. 
+
+        * WebCore.vcproj/WebCore.vcproj:
+        * platform/graphics/SimpleFontData.h:   Add signatures for private win
+          initialization functions.
+        * platform/graphics/win/FontCacheWin.cpp:
+        (WebCore::FontCache::platformInit):
+        (WebCore::FontCache::createFontPlatformData):
+        * platform/graphics/win/FontCairoWin.cpp: Removed.  Universal version
+          is now part of platform/graphics/cairo.
+        * platform/graphics/win/FontCustomPlatformDataCairo.cpp: Added.
+        (WebCore::FontCustomPlatformDataCairo::~FontCustomPlatformDataCairo):
+        (WebCore::FontCustomPlatformDataCairo::fontPlatformData):
+        (WebCore::releaseData):
+        (WebCore::createFontCustomPlatformData):
+        * platform/graphics/win/FontCustomPlatformDataCairo.h: Added.
+        (WebCore::FontCustomPlatformDataCairo::FontCustomPlatformDataCairo):
+        * platform/graphics/win/FontPlatformData.h:
+        (WebCore::FontPlatformData::FontPlatformData):
+        (WebCore::FontPlatformData::fontFace):
+        (WebCore::FontPlatformData::scaledFont):
+        (WebCore::FontPlatformData::operator==):
+        * platform/graphics/win/FontPlatformDataCGWin.cpp: Copied from WebCore/platform/graphics/win/FontPlatformDataWin.cpp.
+        (WebCore::FontPlatformData::platformDataInit):
+        * platform/graphics/win/FontPlatformDataCairoWin.cpp: Added.
+        (WebCore::FontPlatformData::platformDataInit):
+        (WebCore::FontPlatformData::FontPlatformData):
+        (WebCore::FontPlatformData::setFont):
+        * platform/graphics/win/FontPlatformDataWin.cpp:  Moved CG-specific
+          code to FontPlatformDataCG.cpp.
+        (WebCore::FontPlatformData::FontPlatformData):
+        * platform/graphics/win/GlyphPageTreeNodeCGWin.cpp: Copied from WebCore/platform/graphics/win/GlyphPageTreeNodeWin.cpp.
+        * platform/graphics/win/GlyphPageTreeNodeCairoWin.cpp: Copied from WebCore/platform/graphics/win/GlyphPageTreeNodeWin.cpp.
+        (WebCore::GlyphPage::fill):
+        * platform/graphics/win/GlyphPageTreeNodeWin.cpp: Removed.  Replaced
+          with CG- and Cairo-specific versions.
+        * platform/graphics/win/SimpleFontDataCGWin.cpp:
+        (WebCore::SimpleFontData::platformInit):
+        (WebCore::SimpleFontData::platformDestroy):
+        (WebCore::SimpleFontData::platformWidthForGlyph):
+        * platform/graphics/win/SimpleFontDataCairoWin.cpp:
+        (WebCore::SimpleFontData::platformInit):
+        (WebCore::SimpleFontData::platformDestroy):
+        (WebCore::SimpleFontData::platformWidthForGlyph):
+        (WebCore::SimpleFontData::setFont):
+        * platform/graphics/win/SimpleFontDataWin.cpp:
+        (WebCore::SimpleFontData::initGDIFont):
+        (WebCore::SimpleFontData::platformCommonDestroy):
+        (WebCore::SimpleFontData::widthForGDIGlyph):
+
 2008-02-20  Darin Adler  <darin@apple.com>
 
         Reviewed by Sam.
@@ -31,6 +89,7 @@
         (WebCore::Loader::didReceiveData):
         Consider it an error when a 404 is encountered on a CachedResource load.
 
+>>>>>>> .r30440
 2008-02-20  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam.
