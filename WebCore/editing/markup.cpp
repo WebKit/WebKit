@@ -116,34 +116,43 @@ static void appendAttributeValue(Vector<UChar>& result, const String& attr)
     
     result.append(uchars + lastCopiedFrom, len - lastCopiedFrom);
 }
-    
-static DeprecatedString escapeContentText(const String& in)
+
+static void append(Vector<UChar>& vector, const char* string)
 {
-    DeprecatedString s = "";
+    const char* p = string;
+    while (*p) {
+        UChar c = *p++;
+        vector.append(c);
+    }
+}
+    
+static String escapeContentText(const String& in)
+{
+    Vector<UChar> s;
 
     unsigned len = in.length();
     unsigned lastCopiedFrom = 0;
 
-    const UChar* uchars = in.characters();
-    const DeprecatedChar* dchars = reinterpret_cast<const DeprecatedChar*>(uchars);
+    s.reserveCapacity(len);
+
+    const UChar* characters = in.characters();
 
     for (unsigned i = 0; i < len; ++i) {
-        UChar c = uchars[i];
+        UChar c = characters[i];
         if ((c == '&') | (c == '<')) {
-            s.append(dchars + lastCopiedFrom, i - lastCopiedFrom);
+            s.append(characters + lastCopiedFrom, i - lastCopiedFrom);
             if (c == '&')
-                s += "&amp;";
+                append(s, "&amp;");
             else 
-                s += "&lt;";
+                append(s, "&lt;");
             lastCopiedFrom = i + 1;
         }
     }
 
-    s.append(dchars + lastCopiedFrom, len - lastCopiedFrom);
+    s.append(characters + lastCopiedFrom, len - lastCopiedFrom);
 
-    return s;
+    return String::adopt(s);
 }
-
     
 static void appendEscapedContent(Vector<UChar>& result, pair<const UChar*, size_t> range)
 {
@@ -169,11 +178,6 @@ static void appendEscapedContent(Vector<UChar>& result, pair<const UChar*, size_
     result.append(uchars + lastCopiedFrom, len - lastCopiedFrom);
 }    
 
-static inline void appendDeprecatedString(Vector<UChar>& result, const DeprecatedString& str)
-{
-    result.append(reinterpret_cast<const UChar*>(str.unicode()), str.length());
-}    
-    
 static void appendQuotedURLAttributeValue(Vector<UChar>& result, const String& urlString)
 {
     UChar quoteChar = '\"';
@@ -359,10 +363,10 @@ static void appendStartMarkup(Vector<UChar>& result, const Node *node, const Ran
             }
             
             bool useRenderedText = !enclosingNodeWithTag(Position(const_cast<Node*>(node), 0), selectTag);
-            DeprecatedString markup = escapeContentText(useRenderedText ? renderedText(node, range) : stringValueForRange(node, range));
+            String markup = escapeContentText(useRenderedText ? renderedText(node, range) : stringValueForRange(node, range));
             if (annotate)
                 markup = convertHTMLTextToInterchangeFormat(markup, static_cast<const Text*>(node));
-            appendDeprecatedString(result, markup);
+            append(result, markup);
             break;
         }
         case Node::COMMENT_NODE:

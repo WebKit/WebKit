@@ -2,6 +2,17 @@
 
         Reviewed, tweaked and landed by Sam.
 
+        - make markup functions not use DeprecatedString.
+
+        * editing/markup.cpp:
+        (WebCore::append): Added.
+        (WebCore::escapeContentText): Build up string using a Vector.
+        (WebCore::appendStartMarkup): Use String instead of DeprecatedString.
+
+2008-02-20  Darin Adler  <darin@apple.com>
+
+        Reviewed, tweaked and landed by Sam.
+
         - make TextIterator use a Vector instead of a DeprecatedString.
 
         * editing/TextIterator.cpp:
