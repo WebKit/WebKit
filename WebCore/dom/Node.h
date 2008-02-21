@@ -55,7 +55,7 @@ class RegisteredEventListener;
 class RenderArena;
 class RenderObject;
 class RenderStyle;
-class TextStream;
+
 struct NodeListsNodeData;
 
 typedef int ExceptionCode;
