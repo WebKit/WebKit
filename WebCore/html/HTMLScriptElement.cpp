@@ -120,7 +120,7 @@ void HTMLScriptElement::insertedIntoDocument()
     
     const AtomicString& url = getAttribute(srcAttr);
     if (!url.isEmpty()) {
-        String scriptSrcCharset = getAttribute(charsetAttr).domString().stripWhiteSpace();
+        String scriptSrcCharset = getAttribute(charsetAttr).string().stripWhiteSpace();
         if (scriptSrcCharset.isEmpty()) {
             if (Frame* frame = document()->frame())
                 scriptSrcCharset = frame->loader()->encoding();
@@ -202,7 +202,7 @@ bool HTMLScriptElement::shouldExecuteAsJavaScript()
 
     const AtomicString& type = getAttribute(typeAttr);
     if (!type.isEmpty()) {
-        String lowerType = type.domString().stripWhiteSpace().lower();
+        String lowerType = type.string().stripWhiteSpace().lower();
         if (MIMETypeRegistry::isSupportedJavaScriptMIMEType(lowerType))
             return true;
 
@@ -211,7 +211,7 @@ bool HTMLScriptElement::shouldExecuteAsJavaScript()
 
     const AtomicString& language = getAttribute(languageAttr);
     if (!language.isEmpty()) {
-        String lowerLanguage = language.domString().lower();
+        String lowerLanguage = language.string().lower();
         for (unsigned i = 0; i < validLanguagesCount; ++i)
             if (lowerLanguage == validLanguages[i])
                 return true;

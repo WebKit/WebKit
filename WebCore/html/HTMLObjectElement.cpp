@@ -250,7 +250,7 @@ void HTMLObjectElement::childrenChanged(bool changedByParser)
 
 bool HTMLObjectElement::isURLAttribute(Attribute *attr) const
 {
-    return (attr->name() == dataAttr || (attr->name() == usemapAttr && attr->value().domString()[0] != '#'));
+    return (attr->name() == dataAttr || (attr->name() == usemapAttr && attr->value().string()[0] != '#'));
 }
 
 const QualifiedName& HTMLObjectElement::imageSourceAttributeName() const
@@ -473,8 +473,8 @@ bool HTMLObjectElement::containsJavaApplet() const
         if (child->isElementNode()) {
             Element* e = static_cast<Element*>(child);
             if (e->hasTagName(paramTag) &&
-                e->getAttribute(nameAttr).domString().lower() == "type" &&
-                MIMETypeRegistry::isJavaAppletMIMEType(e->getAttribute(valueAttr).domString()))
+                e->getAttribute(nameAttr).string().lower() == "type" &&
+                MIMETypeRegistry::isJavaAppletMIMEType(e->getAttribute(valueAttr).string()))
                 return true;
             else if (e->hasTagName(objectTag) && static_cast<HTMLObjectElement*>(e)->containsJavaApplet())
                 return true;

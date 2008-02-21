@@ -1405,7 +1405,7 @@ PassRefPtr<Node> HTMLParser::handleIsindex(Token* t)
     String text = searchableIndexIntroduction();
     if (attrs) {
         if (Attribute* a = attrs->getAttributeItem(promptAttr))
-            text = a->value().domString() + " ";
+            text = a->value().string() + " ";
         t->attrs = 0;
     }
 

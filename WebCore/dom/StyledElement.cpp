@@ -203,7 +203,7 @@ void StyledElement::parseMappedAttribute(MappedAttribute *attr)
             if (attr->isNull())
                 namedAttrMap->setID(nullAtom);
             else if (document()->inCompatMode() && !attr->value().impl()->isLower())
-                namedAttrMap->setID(AtomicString(attr->value().domString().lower()));
+                namedAttrMap->setID(AtomicString(attr->value().string().lower()));
             else
                 namedAttrMap->setID(attr->value());
         }

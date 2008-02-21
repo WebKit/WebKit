@@ -113,7 +113,7 @@ void HTMLLinkElement::parseMappedAttribute(MappedAttribute *attr)
         m_type = attr->value();
         process();
     } else if (attr->name() == mediaAttr) {
-        m_media = attr->value().domString().lower();
+        m_media = attr->value().string().lower();
         process();
     } else if (attr->name() == disabledAttr) {
         setDisabledState(!attr->isNull());
@@ -127,7 +127,7 @@ void HTMLLinkElement::parseMappedAttribute(MappedAttribute *attr)
 void HTMLLinkElement::tokenizeRelAttribute(const AtomicString& relStr)
 {
     m_isStyleSheet = m_isIcon = m_alternate = false;
-    String rel = relStr.domString().lower();
+    String rel = relStr.string().lower();
     if (rel == "stylesheet")
         m_isStyleSheet = true;
     else if (rel == "icon" || rel == "shortcut icon")

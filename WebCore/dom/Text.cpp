@@ -181,7 +181,7 @@ PassRefPtr<Text> Text::replaceWholeText(const String& newText, ExceptionCode&)
 
 String Text::nodeName() const
 {
-    return textAtom.domString();
+    return textAtom.string();
 }
 
 Node::NodeType Text::nodeType() const

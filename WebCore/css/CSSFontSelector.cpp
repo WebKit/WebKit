@@ -287,7 +287,7 @@ FontData* CSSFontSelector::getFontData(const FontDescription& fontDescription, c
     bool syntheticBold = false;
     bool syntheticItalic = false;
 
-    String family = familyName.domString().lower();
+    String family = familyName.string().lower();
 
 #if ENABLE(SVG_FONTS)
     RefPtr<CSSSegmentedFontFace> face;

@@ -118,7 +118,7 @@ AtomicString FrameTree::uniqueChildName(const AtomicString& requestedName) const
     String name;
     name += framePathPrefix;
     if (frame)
-        name += frame->tree()->name().domString().substring(framePathPrefixLength,
+        name += frame->tree()->name().string().substring(framePathPrefixLength,
             frame->tree()->name().length() - framePathPrefixLength - framePathSuffixLength);
     for (int i = chain.size() - 1; i >= 0; --i) {
         frame = chain[i];

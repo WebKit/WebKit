@@ -61,7 +61,7 @@ bool HTMLParamElement::isURLAttribute(Attribute *attr) const
     if (attr->name() == valueAttr) {
         Attribute *attr = attributes()->getAttributeItem(nameAttr);
         if (attr) {
-            String value = attr->value().domString().lower();
+            String value = attr->value().string().lower();
             if (value == "src" || value == "movie" || value == "data")
                 return true;
         }

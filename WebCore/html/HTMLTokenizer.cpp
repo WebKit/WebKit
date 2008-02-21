@@ -1448,7 +1448,7 @@ HTMLTokenizer::State HTMLTokenizer::parseTag(SegmentedString &src, State state)
                         if ((a = currToken.attrs->getAttributeItem(srcAttr)))
                             scriptSrc = m_doc->completeURL(parseURL(a->value())).string();
                         if ((a = currToken.attrs->getAttributeItem(charsetAttr)))
-                            scriptSrcCharset = a->value().domString().stripWhiteSpace();
+                            scriptSrcCharset = a->value().string().stripWhiteSpace();
                         if (scriptSrcCharset.isEmpty())
                             scriptSrcCharset = m_doc->frame()->loader()->encoding();
                     }

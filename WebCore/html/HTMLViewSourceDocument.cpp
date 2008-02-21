@@ -149,7 +149,7 @@ void HTMLViewSourceDocument::addViewSourceToken(Token* token)
                             if (m_current != m_tbody)
                                 m_current = static_cast<Element*>(m_current->parent());
                         } else {
-                            String value = attr->value().domString();
+                            String value = attr->value().string();
                             // FIXME: XML could use namespace prefixes and confuse us.
                             if (equalIgnoringCase(attr->name().localName(), "src") || equalIgnoringCase(attr->name().localName(), "href"))
                                 m_current = addLink(value, equalIgnoringCase(token->tagName, "a"));

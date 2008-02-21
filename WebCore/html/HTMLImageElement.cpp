@@ -113,7 +113,7 @@ void HTMLImageElement::parseMappedAttribute(MappedAttribute* attr)
     else if (attrName == valignAttr)
         addCSSProperty(attr, CSS_PROP_VERTICAL_ALIGN, attr->value());
     else if (attrName == usemapAttr) {
-        if (attr->value().domString()[0] == '#')
+        if (attr->value().string()[0] == '#')
             usemap = attr->value();
         else
             usemap = document()->completeURL(parseURL(attr->value())).string();
@@ -273,7 +273,7 @@ bool HTMLImageElement::isURLAttribute(Attribute* attr) const
     return attr->name() == srcAttr
         || attr->name() == lowsrcAttr
         || attr->name() == longdescAttr
-        || (attr->name() == usemapAttr && attr->value().domString()[0] != '#');
+        || (attr->name() == usemapAttr && attr->value().string()[0] != '#');
 }
 
 String HTMLImageElement::name() const

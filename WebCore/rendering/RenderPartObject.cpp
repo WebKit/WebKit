@@ -186,8 +186,8 @@ void RenderPartObject::updateWidget(bool onlyCreateNonNetscapePlugins)
               Attribute* it = attributes->attributeItem(i);
               const AtomicString& name = it->name().localName();
               if (embed || !uniqueParamNames.contains(name.impl())) {
-                  paramNames.append(name.domString());
-                  paramValues.append(it->value().domString());
+                  paramNames.append(name.string());
+                  paramValues.append(it->value().string());
               }
           }
       }
@@ -235,8 +235,8 @@ void RenderPartObject::updateWidget(bool onlyCreateNonNetscapePlugins)
       if (a) {
           for (unsigned i = 0; i < a->length(); ++i) {
               Attribute* it = a->attributeItem(i);
-              paramNames.append(it->name().localName().domString());
-              paramValues.append(it->value().domString());
+              paramNames.append(it->name().localName().string());
+              paramValues.append(it->value().string());
           }
       }
       

@@ -1,3 +1,77 @@
+2008-02-20  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam.
+
+        Rename AtomicString::domString() to AtomicString::string().
+        
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+        * css/CSSFontSelector.cpp:
+        (WebCore::CSSFontSelector::getFontData):
+        * dom/Attr.cpp:
+        (WebCore::Attr::createTextChild):
+        * dom/Comment.cpp:
+        (WebCore::Comment::nodeName):
+        * dom/Document.cpp:
+        (WebCore::Document::recalcStyleSelector):
+        (WebCore::Document::setHTMLWindowEventListener):
+        (WebCore::Document::formElementsState):
+        * dom/StyledElement.cpp:
+        (WebCore::StyledElement::parseMappedAttribute):
+        * dom/Text.cpp:
+        (WebCore::Text::nodeName):
+        * editing/SelectionController.cpp:
+        (WebCore::SelectionController::debugRenderer):
+        * html/HTMLCollection.cpp:
+        (WebCore::HTMLCollection::checkForNameMatch):
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::nodeName):
+        (WebCore::HTMLElement::setHTMLEventListener):
+        * html/HTMLFormCollection.cpp:
+        (WebCore::HTMLFormCollection::getNamedFormItem):
+        * html/HTMLImageElement.cpp:
+        (WebCore::HTMLImageElement::parseMappedAttribute):
+        (WebCore::HTMLImageElement::isURLAttribute):
+        * html/HTMLLinkElement.cpp:
+        (WebCore::HTMLLinkElement::parseMappedAttribute):
+        (WebCore::HTMLLinkElement::tokenizeRelAttribute):
+        * html/HTMLObjectElement.cpp:
+        (WebCore::HTMLObjectElement::isURLAttribute):
+        (WebCore::HTMLObjectElement::containsJavaApplet):
+        * html/HTMLParamElement.cpp:
+        (WebCore::HTMLParamElement::isURLAttribute):
+        * html/HTMLParser.cpp:
+        (WebCore::HTMLParser::handleIsindex):
+        * html/HTMLScriptElement.cpp:
+        (WebCore::HTMLScriptElement::insertedIntoDocument):
+        (WebCore::HTMLScriptElement::shouldExecuteAsJavaScript):
+        * html/HTMLStyleElement.cpp:
+        (WebCore::HTMLStyleElement::parseMappedAttribute):
+        * html/HTMLTokenizer.cpp:
+        (WebCore::HTMLTokenizer::parseTag):
+        * html/HTMLViewSourceDocument.cpp:
+        (WebCore::HTMLViewSourceDocument::addViewSourceToken):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::saveDocumentState):
+        * page/FrameTree.cpp:
+        (WebCore::FrameTree::uniqueChildName):
+        * platform/text/AtomicString.h:
+        (WebCore::AtomicString::string):
+        (WebCore::AtomicString::contains):
+        (WebCore::AtomicString::find):
+        (WebCore::AtomicString::startsWith):
+        (WebCore::AtomicString::endsWith):
+        * rendering/RenderPartObject.cpp:
+        (WebCore::RenderPartObject::updateWidget):
+        * svg/SVGElement.cpp:
+        (WebCore::SVGElement::addSVGEventListener):
+        * svg/SVGSVGElement.cpp:
+        (WebCore::SVGSVGElement::addSVGWindowEventListener):
+        * xml/XPathFunctions.cpp:
+        (WebCore::XPath::FunLocalName::evaluate):
+        (WebCore::XPath::FunNamespaceURI::evaluate):
+        (WebCore::XPath::FunName::evaluate):
+
 2008-02-20  Brent Fulgham  <bfulgham@gmail.com>
 
         Reviewed by Dan.

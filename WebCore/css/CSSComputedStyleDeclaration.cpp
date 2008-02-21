@@ -504,7 +504,7 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
             return new CSSPrimitiveValue(style->floating());
         case CSS_PROP_FONT_FAMILY:
             // FIXME: This only returns the first family.
-            return new CSSPrimitiveValue(style->fontDescription().family().family().domString(), CSSPrimitiveValue::CSS_STRING);
+            return new CSSPrimitiveValue(style->fontDescription().family().family().string(), CSSPrimitiveValue::CSS_STRING);
         case CSS_PROP_FONT_SIZE:
             return new CSSPrimitiveValue(style->fontDescription().computedPixelSize(), CSSPrimitiveValue::CSS_PX);
         case CSS_PROP__WEBKIT_BINDING:

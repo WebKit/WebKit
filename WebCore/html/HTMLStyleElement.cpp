@@ -43,7 +43,7 @@ HTMLStyleElement::HTMLStyleElement(Document* doc)
 void HTMLStyleElement::parseMappedAttribute(MappedAttribute *attr)
 {
     if (attr->name() == mediaAttr)
-        m_media = attr->value().domString().lower();
+        m_media = attr->value().string().lower();
     else if (attr->name() == titleAttr && m_sheet)
         m_sheet->setTitle(attr->value());
      else

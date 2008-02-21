@@ -43,7 +43,7 @@ public:
     AtomicString(const String& s) : m_string(add(s.impl())) { }
 
     operator const String&() const { return m_string; }
-    const String& domString() const { return m_string; };
+    const String& string() const { return m_string; };
 
     operator KJS::Identifier() const;
     operator KJS::UString() const;
@@ -57,16 +57,16 @@ public:
     
     bool contains(UChar c) const { return m_string.contains(c); }
     bool contains(const AtomicString& s, bool caseSensitive = true) const
-        { return m_string.contains(s.domString(), caseSensitive); }
+        { return m_string.contains(s.string(), caseSensitive); }
 
     int find(UChar c, int start = 0) const { return m_string.find(c, start); }
     int find(const AtomicString& s, int start = 0, bool caseSentitive = true) const
-        { return m_string.find(s.domString(), start, caseSentitive); }
+        { return m_string.find(s.string(), start, caseSentitive); }
     
     bool startsWith(const AtomicString& s, bool caseSensitive = true) const
-        { return m_string.startsWith(s.domString(), caseSensitive); }
+        { return m_string.startsWith(s.string(), caseSensitive); }
     bool endsWith(const AtomicString& s, bool caseSensitive = true) const
-        { return m_string.endsWith(s.domString(), caseSensitive); }
+        { return m_string.endsWith(s.string(), caseSensitive); }
     
     int toInt(bool* ok = 0) const { return m_string.toInt(ok); }
     double toDouble(bool* ok = 0) const { return m_string.toDouble(ok); }
