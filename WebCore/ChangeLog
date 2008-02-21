@@ -1,3 +1,21 @@
+2008-02-20  David Hyatt  <hyatt@apple.com>
+
+        Fix the layout test failure that never should have passed in the first
+        place by making changes to media lists actually result in the recomputation
+        of the style selector.  Now it passes for the right reasons and not because
+        of dumb luck.
+
+        Reviewed by Sam Weinig
+
+        * css/MediaList.cpp:
+        (WebCore::MediaList::deleteMedium):
+        (WebCore::MediaList::setMediaText):
+        (WebCore::MediaList::appendMedium):
+        (WebCore::MediaList::notifyChanged):
+        * css/MediaList.h:
+        * dom/Document.cpp:
+        (WebCore::Document::attach):
+
 2008-02-20  Darin Adler  <darin@apple.com>
 
         Reviewed, tweaked and landed by Sam.

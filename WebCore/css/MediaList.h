@@ -57,6 +57,9 @@ public:
     void appendMediaQuery(MediaQuery* mediaQuery);
     const Vector<MediaQuery*>* mediaQueries() const { return &m_queries; }
 
+private:
+    void notifyChanged();
+
 protected:
     Vector<MediaQuery*> m_queries;
     bool m_fallback; // true if failed media query parsing should fallback to media description parsing

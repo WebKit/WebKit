@@ -1213,7 +1213,6 @@ void Document::attach()
             matchAuthorAndUserStyles = docSettings->authorAndUserStylesEnabled();
         m_styleSelector = new CSSStyleSelector(this, userStyleSheet(), m_styleSheets.get(), m_mappedElementSheet.get(), !inCompatMode(), matchAuthorAndUserStyles);
         m_styleSelector->setEncodedURL(m_url);
-        m_didCalculateStyleSelector = true;
     }
 
     recalcStyle(Force);
