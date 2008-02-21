@@ -89,7 +89,6 @@
         (WebCore::Loader::didReceiveData):
         Consider it an error when a 404 is encountered on a CachedResource load.
 
->>>>>>> .r30440
 2008-02-20  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam.
