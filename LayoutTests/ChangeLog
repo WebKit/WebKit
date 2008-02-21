@@ -1,3 +1,13 @@
+2008-02-20  Michael Knaup  <michael.knaup@mac.com>
+
+        Reviewed by Darin.
+
+        - test for Bug 16753: date set methods with no args should result in NaN (Acid3 bug)
+
+        * fast/js/date-set-to-nan-expected.txt: Added.
+        * fast/js/date-set-to-nan.html: Added.
+        * fast/js/resources/date-set-to-nan.js: Added.
+
 2008-02-20  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Hyatt.

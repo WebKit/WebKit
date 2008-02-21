@@ -1,3 +1,19 @@
+2008-02-20  Michael Knaup  <michael.knaup@mac.com>
+
+        Reviewed by Darin.
+
+        Fix for Bug 16753: date set methods with no args should result in NaN (Acid3 bug)
+        The set values result in NaN now when called with no args, NaN or +/- inf values.
+        The setYear, setFullYear and setUTCFullYear methods used on NaN dates work as 
+        descripted in the standard.
+
+        * kjs/date_object.cpp:
+        (KJS::fillStructuresUsingTimeArgs):
+        (KJS::fillStructuresUsingDateArgs):
+        (KJS::setNewValueFromTimeArgs):
+        (KJS::setNewValueFromDateArgs):
+        (KJS::dateProtoFuncSetYear):
+
 2008-02-19  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Darin.
