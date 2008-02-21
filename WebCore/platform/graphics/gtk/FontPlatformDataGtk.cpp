@@ -42,7 +42,7 @@ FontPlatformData::FontPlatformData(const FontDescription& fontDescription, const
 {
     FontPlatformData::init();
 
-    CString familyNameString = familyName.domString().utf8();
+    CString familyNameString = familyName.string().utf8();
     const char* fcfamily = familyNameString.data();
     int fcslant = FC_SLANT_ROMAN;
     int fcweight = FC_WEIGHT_NORMAL;

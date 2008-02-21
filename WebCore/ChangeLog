@@ -1,3 +1,10 @@
+2008-02-21  Rodney Dawes  <dobey@wayofthemonkey.com>
+
+        GTK+ build fix. s/domString()/string()/
+
+        * platform/graphics/gtk/FontPlatformDataGtk.cpp:
+        (FontPlatformData::FontPlatformData):
+
 2008-02-20  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Dave Hyatt.
