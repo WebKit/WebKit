@@ -1,5 +1,11 @@
 2008-02-21  Alp Toker  <alp@atoker.com>
 
+        Fix a configure script typo.
+
+        * configure.ac:
+
+2008-02-21  Alp Toker  <alp@atoker.com>
+
         GTK+/autotools SVG experimental build fix
 
         Don't enable SVG filters in --enable-svg-experimental.

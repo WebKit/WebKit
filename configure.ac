@@ -226,7 +226,7 @@ AC_ARG_ENABLE(debug,
 AC_MSG_RESULT([$enable_debug])
 
 # check whether to build with cross-document messaging support
-AC_MSG_CHECKING([whether to enable HTML5 client-side storage support])
+AC_MSG_CHECKING([whether to enable HTML5 cross-document messaging support])
 AC_ARG_ENABLE(cross_document_messaging,
               AC_HELP_STRING([--enable-cross-document-messaging],
                              [enable HTML5 cross-document messaging support [default=yes]]),
