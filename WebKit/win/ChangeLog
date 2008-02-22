@@ -1,3 +1,22 @@
+2008-02-21  Adam Roben  <aroben@apple.com>
+
+        Move Client implementations into a WebCoreSupport directory
+
+        Reviewed by Anders.
+
+        * WebKit.vcproj/WebKit.vcproj: Updated file paths, and added
+        WebCoreSupport directory to the include path.
+        * WebCoreSupport/WebChromeClient.cpp: Renamed from WebKit/win/WebChromeClient.cpp.
+        * WebCoreSupport/WebChromeClient.h: Renamed from WebKit/win/WebChromeClient.h.
+        * WebCoreSupport/WebContextMenuClient.cpp: Renamed from WebKit/win/WebContextMenuClient.cpp.
+        * WebCoreSupport/WebContextMenuClient.h: Renamed from WebKit/win/WebContextMenuClient.h.
+        * WebCoreSupport/WebDragClient.cpp: Renamed from WebKit/win/WebDragClient.cpp.
+        * WebCoreSupport/WebDragClient.h: Renamed from WebKit/win/WebDragClient.h.
+        * WebCoreSupport/WebEditorClient.cpp: Renamed from WebKit/win/WebEditorClient.cpp.
+        * WebCoreSupport/WebEditorClient.h: Renamed from WebKit/win/WebEditorClient.h.
+        * WebCoreSupport/WebInspectorClient.cpp: Renamed from WebKit/win/WebInspectorClient.cpp.
+        * WebCoreSupport/WebInspectorClient.h: Renamed from WebKit/win/WebInspectorClient.h.
+
 2008-02-20  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Darin and Geoff.

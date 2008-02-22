@@ -1,7 +1,7 @@
-<?xml version="1.0" encoding="windows-1251"?>
+<?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="8,00"
+	Version="8.00"
 	Name="WebKit"
 	ProjectGUID="{0662A8A9-82A3-4638-97D8-EC425D8D87C9}"
 	RootNamespace="WebKit"
@@ -39,7 +39,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="&quot;$(WebKitOutputDir)\include\WebKit&quot;;&quot;$(WebKitOutputDir)\Include&quot;;&quot;$(WebKitLibrariesDir)\Include&quot;;&quot;$(WebKitOutputDir)\Include\WebCore&quot;;&quot;$(WebKitLibrariesDir)\Include\WebCore&quot;;&quot;$(WebKitOutputDir)\Include\WebCore\ForwardingHeaders&quot;;&quot;$(WebKitLibrariesDir)\Include\WebCore\ForwardingHeaders&quot;;&quot;$(WebKitOutputDir)\Include\JavaScriptCore&quot;;&quot;$(WebKitLibrariesDir)\Include\JavaScriptCore&quot;;&quot;$(WebKitOutputDir)\Include\icu&quot;;&quot;$(WebKitLibrariesDir)\Include\icu&quot;;&quot;$(WebKitLibrariesDir)\include\pthreads&quot;;&quot;$(WebKitOutputDir)\Include\CoreFoundation\OSXCompatibilityHeaders&quot;;&quot;$(WebKitLibrariesDir)\Include\CoreFoundation\OSXCompatibilityHeaders&quot;;&quot;$(WebKitOutputDir)\Include\CoreFoundation\OSXCompatibilityHeaders\GNUCompatibility&quot;;&quot;$(WebKitLibrariesDir)\Include\CoreFoundation\OSXCompatibilityHeaders\GNUCompatibility&quot;;&quot;$(ProjectDir)\..&quot;;&quot;$(ProjectDir)&quot;;&quot;$(IntDir)\include&quot;;&quot;$(WebKitOutputDir)\obj\WebKit\DerivedSources&quot;"
+				AdditionalIncludeDirectories="&quot;$(WebKitOutputDir)\include\WebKit&quot;;&quot;$(WebKitOutputDir)\Include&quot;;&quot;$(WebKitLibrariesDir)\Include&quot;;&quot;$(WebKitOutputDir)\Include\WebCore&quot;;&quot;$(WebKitLibrariesDir)\Include\WebCore&quot;;&quot;$(WebKitOutputDir)\Include\WebCore\ForwardingHeaders&quot;;&quot;$(WebKitLibrariesDir)\Include\WebCore\ForwardingHeaders&quot;;&quot;$(WebKitOutputDir)\Include\JavaScriptCore&quot;;&quot;$(WebKitLibrariesDir)\Include\JavaScriptCore&quot;;&quot;$(WebKitOutputDir)\Include\icu&quot;;&quot;$(WebKitLibrariesDir)\Include\icu&quot;;&quot;$(WebKitLibrariesDir)\include\pthreads&quot;;&quot;$(WebKitOutputDir)\Include\CoreFoundation\OSXCompatibilityHeaders&quot;;&quot;$(WebKitLibrariesDir)\Include\CoreFoundation\OSXCompatibilityHeaders&quot;;&quot;$(WebKitOutputDir)\Include\CoreFoundation\OSXCompatibilityHeaders\GNUCompatibility&quot;;&quot;$(WebKitLibrariesDir)\Include\CoreFoundation\OSXCompatibilityHeaders\GNUCompatibility&quot;;&quot;$(ProjectDir)\..&quot;;&quot;$(ProjectDir)&quot;;&quot;$(ProjectDir)\..\WebCoreSupport&quot;;&quot;$(IntDir)\include&quot;;&quot;$(WebKitOutputDir)\obj\WebKit\DerivedSources&quot;"
 				PreprocessorDefinitions="_USRDLL;WEBKIT_EXPORTS;ENABLE_CROSS_DOCUMENT_MESSAGING;ENABLE_XSLT;ENABLE_XPATH;ENABLE_SVG;FRAMEWORK_NAME=WebKit"
 				UsePrecompiledHeader="2"
 				PrecompiledHeaderThrough="WebKitPrefix.h"
@@ -115,7 +115,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="&quot;$(WebKitOutputDir)\include\WebKit&quot;;&quot;$(WebKitOutputDir)\Include&quot;;&quot;$(WebKitLibrariesDir)\Include&quot;;&quot;$(WebKitOutputDir)\Include\WebCore&quot;;&quot;$(WebKitLibrariesDir)\Include\WebCore&quot;;&quot;$(WebKitOutputDir)\Include\WebCore\ForwardingHeaders&quot;;&quot;$(WebKitLibrariesDir)\Include\WebCore\ForwardingHeaders&quot;;&quot;$(WebKitOutputDir)\Include\JavaScriptCore&quot;;&quot;$(WebKitLibrariesDir)\Include\JavaScriptCore&quot;;&quot;$(WebKitOutputDir)\Include\icu&quot;;&quot;$(WebKitLibrariesDir)\Include\icu&quot;;&quot;$(WebKitLibrariesDir)\include\pthreads&quot;;&quot;$(WebKitOutputDir)\Include\CoreFoundation\OSXCompatibilityHeaders&quot;;&quot;$(WebKitLibrariesDir)\Include\CoreFoundation\OSXCompatibilityHeaders&quot;;&quot;$(WebKitOutputDir)\Include\CoreFoundation\OSXCompatibilityHeaders\GNUCompatibility&quot;;&quot;$(WebKitLibrariesDir)\Include\CoreFoundation\OSXCompatibilityHeaders\GNUCompatibility&quot;;&quot;$(ProjectDir)\..&quot;;&quot;$(ProjectDir)&quot;;&quot;$(IntDir)\include&quot;;&quot;$(WebKitOutputDir)\obj\WebKit\DerivedSources&quot;"
+				AdditionalIncludeDirectories="&quot;$(WebKitOutputDir)\include\WebKit&quot;;&quot;$(WebKitOutputDir)\Include&quot;;&quot;$(WebKitLibrariesDir)\Include&quot;;&quot;$(WebKitOutputDir)\Include\WebCore&quot;;&quot;$(WebKitLibrariesDir)\Include\WebCore&quot;;&quot;$(WebKitOutputDir)\Include\WebCore\ForwardingHeaders&quot;;&quot;$(WebKitLibrariesDir)\Include\WebCore\ForwardingHeaders&quot;;&quot;$(WebKitOutputDir)\Include\JavaScriptCore&quot;;&quot;$(WebKitLibrariesDir)\Include\JavaScriptCore&quot;;&quot;$(WebKitOutputDir)\Include\icu&quot;;&quot;$(WebKitLibrariesDir)\Include\icu&quot;;&quot;$(WebKitLibrariesDir)\include\pthreads&quot;;&quot;$(WebKitOutputDir)\Include\CoreFoundation\OSXCompatibilityHeaders&quot;;&quot;$(WebKitLibrariesDir)\Include\CoreFoundation\OSXCompatibilityHeaders&quot;;&quot;$(WebKitOutputDir)\Include\CoreFoundation\OSXCompatibilityHeaders\GNUCompatibility&quot;;&quot;$(WebKitLibrariesDir)\Include\CoreFoundation\OSXCompatibilityHeaders\GNUCompatibility&quot;;&quot;$(ProjectDir)\..&quot;;&quot;$(ProjectDir)&quot;;&quot;$(ProjectDir)\..\WebCoreSupport&quot;;&quot;$(IntDir)\include&quot;;&quot;$(WebKitOutputDir)\obj\WebKit\DerivedSources&quot;"
 				PreprocessorDefinitions="_USRDLL;WEBKIT_EXPORTS;ENABLE_CROSS_DOCUMENT_MESSAGING;ENABLE_XSLT;ENABLE_XPATH;ENABLE_SVG;FRAMEWORK_NAME=WebKit"
 				UsePrecompiledHeader="2"
 				PrecompiledHeaderThrough="WebKitPrefix.h"
@@ -190,7 +190,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="&quot;$(WebKitOutputDir)\include\WebKit&quot;;&quot;$(WebKitOutputDir)\Include&quot;;&quot;$(WebKitLibrariesDir)\Include&quot;;&quot;$(WebKitOutputDir)\Include\WebCore&quot;;&quot;$(WebKitLibrariesDir)\Include\WebCore&quot;;&quot;$(WebKitOutputDir)\Include\WebCore\ForwardingHeaders&quot;;&quot;$(WebKitLibrariesDir)\Include\WebCore\ForwardingHeaders&quot;;&quot;$(WebKitOutputDir)\Include\JavaScriptCore&quot;;&quot;$(WebKitLibrariesDir)\Include\JavaScriptCore&quot;;&quot;$(WebKitOutputDir)\Include\icu&quot;;&quot;$(WebKitLibrariesDir)\Include\icu&quot;;&quot;$(WebKitLibrariesDir)\include\pthreads&quot;;&quot;$(WebKitOutputDir)\Include\CoreFoundation\OSXCompatibilityHeaders&quot;;&quot;$(WebKitLibrariesDir)\Include\CoreFoundation\OSXCompatibilityHeaders&quot;;&quot;$(WebKitOutputDir)\Include\CoreFoundation\OSXCompatibilityHeaders\GNUCompatibility&quot;;&quot;$(WebKitLibrariesDir)\Include\CoreFoundation\OSXCompatibilityHeaders\GNUCompatibility&quot;;&quot;$(ProjectDir)\..&quot;;&quot;$(ProjectDir)&quot;;&quot;$(IntDir)\include&quot;;&quot;$(WebKitOutputDir)\obj\WebKit\DerivedSources&quot;"
+				AdditionalIncludeDirectories="&quot;$(WebKitOutputDir)\include\WebKit&quot;;&quot;$(WebKitOutputDir)\Include&quot;;&quot;$(WebKitLibrariesDir)\Include&quot;;&quot;$(WebKitOutputDir)\Include\WebCore&quot;;&quot;$(WebKitLibrariesDir)\Include\WebCore&quot;;&quot;$(WebKitOutputDir)\Include\WebCore\ForwardingHeaders&quot;;&quot;$(WebKitLibrariesDir)\Include\WebCore\ForwardingHeaders&quot;;&quot;$(WebKitOutputDir)\Include\JavaScriptCore&quot;;&quot;$(WebKitLibrariesDir)\Include\JavaScriptCore&quot;;&quot;$(WebKitOutputDir)\Include\icu&quot;;&quot;$(WebKitLibrariesDir)\Include\icu&quot;;&quot;$(WebKitLibrariesDir)\include\pthreads&quot;;&quot;$(WebKitOutputDir)\Include\CoreFoundation\OSXCompatibilityHeaders&quot;;&quot;$(WebKitLibrariesDir)\Include\CoreFoundation\OSXCompatibilityHeaders&quot;;&quot;$(WebKitOutputDir)\Include\CoreFoundation\OSXCompatibilityHeaders\GNUCompatibility&quot;;&quot;$(WebKitLibrariesDir)\Include\CoreFoundation\OSXCompatibilityHeaders\GNUCompatibility&quot;;&quot;$(ProjectDir)\..&quot;;&quot;$(ProjectDir)&quot;;&quot;$(ProjectDir)\..\WebCoreSupport&quot;;&quot;$(IntDir)\include&quot;;&quot;$(WebKitOutputDir)\obj\WebKit\DerivedSources&quot;"
 				PreprocessorDefinitions="_USRDLL;WEBKIT_EXPORTS;ENABLE_CROSS_DOCUMENT_MESSAGING;ENABLE_XSLT;ENABLE_XPATH;ENABLE_SVG;FRAMEWORK_NAME=WebKit"
 				UsePrecompiledHeader="2"
 				PrecompiledHeaderThrough="WebKitPrefix.h"
@@ -257,10 +257,6 @@
 			</File>
 			<File
 				RelativePath="..\WebCoreLocalizedStrings.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\WebInspectorClient.cpp"
 				>
 			</File>
 			<File
@@ -366,14 +362,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\WebChromeClient.h"
-				>
-			</File>
-			<File
-				RelativePath="..\WebContextMenuClient.h"
-				>
-			</File>
-			<File
 				RelativePath="..\WebDatabaseManager.h"
 				>
 			</File>
@@ -390,15 +378,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\WebDragClient.h"
-				>
-			</File>
-			<File
 				RelativePath="..\WebDropSource.h"
-				>
-			</File>
-			<File
-				RelativePath="..\WebEditorClient.h"
 				>
 			</File>
 			<File
@@ -435,10 +415,6 @@
 			</File>
 			<File
 				RelativePath="..\WebInspector.h"
-				>
-			</File>
-			<File
-				RelativePath="..\WebInspectorClient.h"
 				>
 			</File>
 			<File
@@ -614,14 +590,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\WebChromeClient.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\WebContextMenuClient.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\WebDatabaseManager.cpp"
 				>
 			</File>
@@ -638,15 +606,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\WebDragClient.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\WebDropSource.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\WebEditorClient.cpp"
 				>
 			</File>
 			<File
@@ -1637,6 +1597,50 @@
 					>
 				</File>
 			</Filter>
+		</Filter>
+		<Filter
+			Name="WebCoreSupport"
+			>
+			<File
+				RelativePath="..\WebCoreSupport\WebChromeClient.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\WebCoreSupport\WebChromeClient.h"
+				>
+			</File>
+			<File
+				RelativePath="..\WebCoreSupport\WebContextMenuClient.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\WebCoreSupport\WebContextMenuClient.h"
+				>
+			</File>
+			<File
+				RelativePath="..\WebCoreSupport\WebDragClient.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\WebCoreSupport\WebDragClient.h"
+				>
+			</File>
+			<File
+				RelativePath="..\WebCoreSupport\WebEditorClient.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\WebCoreSupport\WebEditorClient.h"
+				>
+			</File>
+			<File
+				RelativePath="..\WebCoreSupport\WebInspectorClient.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\WebCoreSupport\WebInspectorClient.h"
+				>
+			</File>
 		</Filter>
 		<File
 			RelativePath="..\WebKitPrefix.cpp"
