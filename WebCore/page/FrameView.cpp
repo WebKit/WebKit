@@ -27,6 +27,7 @@
 #include "FrameView.h"
 
 #include "AXObjectCache.h"
+#include "CSSStyleSelector.h"
 #include "EventHandler.h"
 #include "FloatRect.h"
 #include "Frame.h"
@@ -363,6 +364,11 @@ void FrameView::layout(bool allowSubtree)
         d->postLayoutTasksTimer.stop();
         performPostLayoutTasks();
     }
+
+    // Viewport-dependent media queries may cause us to need completely different style information.
+    // Check that here.
+    if (document->styleSelector()->affectedByViewportChange())
+        document->updateStyleSelector();
 
     // Always ensure our style info is up-to-date.  This can happen in situations where
     // the layout beats any sort of style recalc update that needs to occur.

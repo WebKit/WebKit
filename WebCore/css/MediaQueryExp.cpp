@@ -80,7 +80,6 @@ MediaQueryExp::MediaQueryExp(const AtomicString& mediaFeature, ValueList* valueL
 
 MediaQueryExp::~MediaQueryExp()
 {
-    delete m_value;
 }
 
 } // namespace

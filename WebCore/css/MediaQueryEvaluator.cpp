@@ -30,6 +30,7 @@
 
 #include "Chrome.h"
 #include "CSSPrimitiveValue.h"
+#include "CSSStyleSelector.h"
 #include "CSSValueList.h"
 #include "FloatRect.h"
 #include "Frame.h"
@@ -50,7 +51,7 @@ using namespace MediaFeatureNames;
 
 enum MediaFeaturePrefix { MinPrefix, MaxPrefix, NoPrefix };
 
-typedef bool (*EvalFunc)(CSSValue*, RenderStyle*, Page*,  MediaFeaturePrefix);
+typedef bool (*EvalFunc)(CSSValue*, RenderStyle*, Frame*,  MediaFeaturePrefix);
 typedef HashMap<AtomicStringImpl*, EvalFunc> FunctionMap;
 static FunctionMap* gFunctionMap;
 
@@ -67,7 +68,7 @@ static FunctionMap* gFunctionMap;
  */
 
 MediaQueryEvaluator::MediaQueryEvaluator(bool mediaFeatureResult)
-    : m_page(0)
+    : m_frame(0)
     , m_style(0)
     , m_expResult(mediaFeatureResult)
 {
@@ -75,7 +76,7 @@ MediaQueryEvaluator::MediaQueryEvaluator(bool mediaFeatureResult)
 
 MediaQueryEvaluator:: MediaQueryEvaluator(const String& acceptedMediaType, bool mediaFeatureResult)
     : m_mediaType(acceptedMediaType)
-    , m_page(0)
+    , m_frame(0)
     , m_style(0)
     , m_expResult(mediaFeatureResult)
 {
@@ -83,17 +84,17 @@ MediaQueryEvaluator:: MediaQueryEvaluator(const String& acceptedMediaType, bool 
 
 MediaQueryEvaluator:: MediaQueryEvaluator(const char* acceptedMediaType, bool mediaFeatureResult)
     : m_mediaType(acceptedMediaType)
-    , m_page(0)
+    , m_frame(0)
     , m_style(0)
     , m_expResult(mediaFeatureResult)
 {
 }
 
-MediaQueryEvaluator:: MediaQueryEvaluator(const String& acceptedMediaType, Page* page, RenderStyle* style)
+MediaQueryEvaluator:: MediaQueryEvaluator(const String& acceptedMediaType, Frame* frame, RenderStyle* style)
     : m_mediaType(acceptedMediaType.lower())
-    , m_page(page)
+    , m_frame(frame)
     , m_style(style)
-    , m_expResult(false) // doesn't matter when we have m_page and m_style
+    , m_expResult(false) // doesn't matter when we have m_frame and m_style
 {
 }
 
@@ -141,7 +142,13 @@ bool MediaQueryEvaluator::eval(const MediaList* mediaList) const
             // iterate through expressions, stop if any of them eval to false
             // (AND semantics)
             size_t j = 0;
-            for (; j < exps->size() && eval(exps->at(j)); ++j) /* empty*/;
+            for (; j < exps->size(); ++j) {
+                bool exprResult = eval(exps->at(j));
+                if (exps->at(j)->isViewportDependent())
+                    m_frame->document()->styleSelector()->addViewportDependentMediaQueryResult(exps->at(j), exprResult);
+                if (!exprResult)
+                    break;
+            }
 
             // assume true if we are at the end of the list,
             // otherwise assume false
@@ -200,9 +207,9 @@ static bool numberValue(CSSValue* value, float& result)
     return false;
 }
 
-static bool colorMediaFeatureEval(CSSValue* value, RenderStyle* style, Page* page,  MediaFeaturePrefix op)
+static bool colorMediaFeatureEval(CSSValue* value, RenderStyle* style, Frame* frame,  MediaFeaturePrefix op)
 {
-    int bitsPerComponent = screenDepthPerComponent(page->mainFrame()->view());
+    int bitsPerComponent = screenDepthPerComponent(frame->page()->mainFrame()->view());
     float number;
     if (value)
         return numberValue(value, number) && compareValue(bitsPerComponent, static_cast<int>(number), op);
@@ -210,18 +217,18 @@ static bool colorMediaFeatureEval(CSSValue* value, RenderStyle* style, Page* pag
     return bitsPerComponent != 0;
 }
 
-static bool monochromeMediaFeatureEval(CSSValue* value, RenderStyle* style, Page* page,  MediaFeaturePrefix op)
+static bool monochromeMediaFeatureEval(CSSValue* value, RenderStyle* style, Frame* frame,  MediaFeaturePrefix op)
 {
-    if (!screenIsMonochrome(page->mainFrame()->view()))
+    if (!screenIsMonochrome(frame->page()->mainFrame()->view()))
         return false;
 
-    return colorMediaFeatureEval(value, style, page, op);
+    return colorMediaFeatureEval(value, style, frame, op);
 }
 
-static bool device_aspect_ratioMediaFeatureEval(CSSValue* value, RenderStyle* style, Page* page,  MediaFeaturePrefix op)
+static bool device_aspect_ratioMediaFeatureEval(CSSValue* value, RenderStyle* style, Frame* frame,  MediaFeaturePrefix op)
 {
     if (value) {
-        FloatRect sg = screenRect(page->mainFrame()->view());
+        FloatRect sg = screenRect(frame->page()->mainFrame()->view());
         int h = 0;
         int v = 0;
         if (parseAspectRatio(value, h, v))
@@ -234,15 +241,15 @@ static bool device_aspect_ratioMediaFeatureEval(CSSValue* value, RenderStyle* st
     return true;
 }
 
-static bool device_pixel_ratioMediaFeatureEval(CSSValue *value, RenderStyle* style, Page* page, MediaFeaturePrefix op)
+static bool device_pixel_ratioMediaFeatureEval(CSSValue *value, RenderStyle* style, Frame* frame, MediaFeaturePrefix op)
 {
     if (value)
-        return value->isPrimitiveValue() && compareValue(page->chrome()->scaleFactor(), static_cast<CSSPrimitiveValue*>(value)->getFloatValue(), op);
+        return value->isPrimitiveValue() && compareValue(frame->page()->chrome()->scaleFactor(), static_cast<CSSPrimitiveValue*>(value)->getFloatValue(), op);
 
-    return page->chrome()->scaleFactor() != 0;
+    return frame->page()->chrome()->scaleFactor() != 0;
 }
 
-static bool gridMediaFeatureEval(CSSValue* value, RenderStyle* style, Page* page,  MediaFeaturePrefix op)
+static bool gridMediaFeatureEval(CSSValue* value, RenderStyle* style, Frame* frame,  MediaFeaturePrefix op)
 {
     // if output device is bitmap, grid: 0 == true
     // assume we have bitmap device
@@ -252,10 +259,10 @@ static bool gridMediaFeatureEval(CSSValue* value, RenderStyle* style, Page* page
     return false;
 }
 
-static bool device_heightMediaFeatureEval(CSSValue* value, RenderStyle* style, Page* page,  MediaFeaturePrefix op)
+static bool device_heightMediaFeatureEval(CSSValue* value, RenderStyle* style, Frame* frame,  MediaFeaturePrefix op)
 {
     if (value) {
-        FloatRect sg = screenRect(page->mainFrame()->view());
+        FloatRect sg = screenRect(frame->page()->mainFrame()->view());
         return value->isPrimitiveValue() && compareValue(static_cast<int>(sg.height()), static_cast<CSSPrimitiveValue*>(value)->computeLengthInt(style), op);
     }
     // ({,min-,max-}device-height)
@@ -263,10 +270,10 @@ static bool device_heightMediaFeatureEval(CSSValue* value, RenderStyle* style, P
     return true;
 }
 
-static bool device_widthMediaFeatureEval(CSSValue* value, RenderStyle* style, Page* page,  MediaFeaturePrefix op)
+static bool device_widthMediaFeatureEval(CSSValue* value, RenderStyle* style, Frame* frame,  MediaFeaturePrefix op)
 {
     if (value) {
-        FloatRect sg = screenRect(page->mainFrame()->view());
+        FloatRect sg = screenRect(frame->page()->mainFrame()->view());
         return value->isPrimitiveValue() && compareValue(static_cast<int>(sg.width()), static_cast<CSSPrimitiveValue*>(value)->computeLengthInt(style), op);
     }
     // ({,min-,max-}device-width)
@@ -274,9 +281,9 @@ static bool device_widthMediaFeatureEval(CSSValue* value, RenderStyle* style, Pa
     return true;
 }
 
-static bool heightMediaFeatureEval(CSSValue* value, RenderStyle* style, Page* page,  MediaFeaturePrefix op)
+static bool heightMediaFeatureEval(CSSValue* value, RenderStyle* style, Frame* frame,  MediaFeaturePrefix op)
 {
-    FrameView* view = page->mainFrame()->view();
+    FrameView* view = frame->view();
     
     if (value)
         return value->isPrimitiveValue() && compareValue(view->visibleHeight(), static_cast<CSSPrimitiveValue*>(value)->computeLengthInt(style), op);
@@ -284,9 +291,9 @@ static bool heightMediaFeatureEval(CSSValue* value, RenderStyle* style, Page* pa
     return view->visibleHeight() != 0;
 }
 
-static bool widthMediaFeatureEval(CSSValue* value, RenderStyle* style, Page* page,  MediaFeaturePrefix op)
+static bool widthMediaFeatureEval(CSSValue* value, RenderStyle* style, Frame* frame,  MediaFeaturePrefix op)
 {
-    FrameView* view = page->mainFrame()->view();
+    FrameView* view = frame->view();
     
     if (value)
         return value->isPrimitiveValue() && compareValue(view->visibleWidth(), static_cast<CSSPrimitiveValue*>(value)->computeLengthInt(style), op);
@@ -296,84 +303,84 @@ static bool widthMediaFeatureEval(CSSValue* value, RenderStyle* style, Page* pag
 
 // rest of the functions are trampolines which set the prefix according to the media feature expression used
 
-static bool min_colorMediaFeatureEval(CSSValue* value, RenderStyle* style, Page* page,  MediaFeaturePrefix /*op*/)
+static bool min_colorMediaFeatureEval(CSSValue* value, RenderStyle* style, Frame* frame,  MediaFeaturePrefix /*op*/)
 {
-    return colorMediaFeatureEval(value, style, page, MinPrefix);
+    return colorMediaFeatureEval(value, style, frame, MinPrefix);
 }
 
-static bool max_colorMediaFeatureEval(CSSValue* value, RenderStyle* style, Page* page,  MediaFeaturePrefix /*op*/)
+static bool max_colorMediaFeatureEval(CSSValue* value, RenderStyle* style, Frame* frame,  MediaFeaturePrefix /*op*/)
 {
-    return colorMediaFeatureEval(value, style, page, MaxPrefix);
+    return colorMediaFeatureEval(value, style, frame, MaxPrefix);
 }
 
-static bool min_monochromeMediaFeatureEval(CSSValue* value, RenderStyle* style, Page* page,  MediaFeaturePrefix /*op*/)
+static bool min_monochromeMediaFeatureEval(CSSValue* value, RenderStyle* style, Frame* frame,  MediaFeaturePrefix /*op*/)
 {
-    return monochromeMediaFeatureEval(value, style, page, MinPrefix);
+    return monochromeMediaFeatureEval(value, style, frame, MinPrefix);
 }
 
-static bool max_monochromeMediaFeatureEval(CSSValue* value, RenderStyle* style, Page* page,  MediaFeaturePrefix /*op*/)
+static bool max_monochromeMediaFeatureEval(CSSValue* value, RenderStyle* style, Frame* frame,  MediaFeaturePrefix /*op*/)
 {
-    return monochromeMediaFeatureEval(value, style, page, MaxPrefix);
+    return monochromeMediaFeatureEval(value, style, frame, MaxPrefix);
 }
 
-static bool min_device_aspect_ratioMediaFeatureEval(CSSValue* value, RenderStyle* style, Page* page,  MediaFeaturePrefix /*op*/)
+static bool min_device_aspect_ratioMediaFeatureEval(CSSValue* value, RenderStyle* style, Frame* frame,  MediaFeaturePrefix /*op*/)
 {
-    return device_aspect_ratioMediaFeatureEval(value, style, page, MinPrefix);
+    return device_aspect_ratioMediaFeatureEval(value, style, frame, MinPrefix);
 }
 
-static bool max_device_aspect_ratioMediaFeatureEval(CSSValue* value, RenderStyle* style, Page* page,  MediaFeaturePrefix /*op*/)
+static bool max_device_aspect_ratioMediaFeatureEval(CSSValue* value, RenderStyle* style, Frame* frame,  MediaFeaturePrefix /*op*/)
 {
-    return device_aspect_ratioMediaFeatureEval(value, style, page, MaxPrefix);
+    return device_aspect_ratioMediaFeatureEval(value, style, frame, MaxPrefix);
 }
 
-static bool min_device_pixel_ratioMediaFeatureEval(CSSValue* value, RenderStyle* style, Page* page,  MediaFeaturePrefix /*op*/)
+static bool min_device_pixel_ratioMediaFeatureEval(CSSValue* value, RenderStyle* style, Frame* frame,  MediaFeaturePrefix /*op*/)
 {
-    return device_pixel_ratioMediaFeatureEval(value, style, page, MinPrefix);
+    return device_pixel_ratioMediaFeatureEval(value, style, frame, MinPrefix);
 }
 
-static bool max_device_pixel_ratioMediaFeatureEval(CSSValue* value, RenderStyle* style, Page* page,  MediaFeaturePrefix /*op*/)
+static bool max_device_pixel_ratioMediaFeatureEval(CSSValue* value, RenderStyle* style, Frame* frame,  MediaFeaturePrefix /*op*/)
 {
-    return device_pixel_ratioMediaFeatureEval(value, style, page, MaxPrefix);
+    return device_pixel_ratioMediaFeatureEval(value, style, frame, MaxPrefix);
 }
 
-static bool min_heightMediaFeatureEval(CSSValue* value, RenderStyle* style, Page* page,  MediaFeaturePrefix /*op*/)
+static bool min_heightMediaFeatureEval(CSSValue* value, RenderStyle* style, Frame* frame,  MediaFeaturePrefix /*op*/)
 {
-    return heightMediaFeatureEval(value, style, page, MinPrefix);
+    return heightMediaFeatureEval(value, style, frame, MinPrefix);
 }
 
-static bool max_heightMediaFeatureEval(CSSValue* value, RenderStyle* style, Page* page,  MediaFeaturePrefix /*op*/)
+static bool max_heightMediaFeatureEval(CSSValue* value, RenderStyle* style, Frame* frame,  MediaFeaturePrefix /*op*/)
 {
-    return heightMediaFeatureEval(value, style, page, MaxPrefix);
+    return heightMediaFeatureEval(value, style, frame, MaxPrefix);
 }
 
-static bool min_widthMediaFeatureEval(CSSValue* value, RenderStyle* style, Page* page,  MediaFeaturePrefix /*op*/)
+static bool min_widthMediaFeatureEval(CSSValue* value, RenderStyle* style, Frame* frame,  MediaFeaturePrefix /*op*/)
 {
-    return widthMediaFeatureEval(value, style, page, MinPrefix);
+    return widthMediaFeatureEval(value, style, frame, MinPrefix);
 }
 
-static bool max_widthMediaFeatureEval(CSSValue* value, RenderStyle* style, Page* page,  MediaFeaturePrefix /*op*/)
+static bool max_widthMediaFeatureEval(CSSValue* value, RenderStyle* style, Frame* frame,  MediaFeaturePrefix /*op*/)
 {
-    return widthMediaFeatureEval(value, style, page, MaxPrefix);
+    return widthMediaFeatureEval(value, style, frame, MaxPrefix);
 }
 
-static bool min_device_heightMediaFeatureEval(CSSValue* value, RenderStyle* style, Page* page,  MediaFeaturePrefix /*op*/)
+static bool min_device_heightMediaFeatureEval(CSSValue* value, RenderStyle* style, Frame* frame,  MediaFeaturePrefix /*op*/)
 {
-    return device_heightMediaFeatureEval(value, style, page, MinPrefix);
+    return device_heightMediaFeatureEval(value, style, frame, MinPrefix);
 }
 
-static bool max_device_heightMediaFeatureEval(CSSValue* value, RenderStyle* style, Page* page,  MediaFeaturePrefix /*op*/)
+static bool max_device_heightMediaFeatureEval(CSSValue* value, RenderStyle* style, Frame* frame,  MediaFeaturePrefix /*op*/)
 {
-    return device_heightMediaFeatureEval(value, style, page, MaxPrefix);
+    return device_heightMediaFeatureEval(value, style, frame, MaxPrefix);
 }
 
-static bool min_device_widthMediaFeatureEval(CSSValue* value, RenderStyle* style, Page* page,  MediaFeaturePrefix /*op*/)
+static bool min_device_widthMediaFeatureEval(CSSValue* value, RenderStyle* style, Frame* frame,  MediaFeaturePrefix /*op*/)
 {
-    return device_widthMediaFeatureEval(value, style, page, MinPrefix);
+    return device_widthMediaFeatureEval(value, style, frame, MinPrefix);
 }
 
-static bool max_device_widthMediaFeatureEval(CSSValue* value, RenderStyle* style, Page* page,  MediaFeaturePrefix /*op*/)
+static bool max_device_widthMediaFeatureEval(CSSValue* value, RenderStyle* style, Frame* frame,  MediaFeaturePrefix /*op*/)
 {
-    return device_widthMediaFeatureEval(value, style, page, MaxPrefix);
+    return device_widthMediaFeatureEval(value, style, frame, MaxPrefix);
 }
 
 static void createFunctionMap()
@@ -388,7 +395,7 @@ static void createFunctionMap()
 
 bool MediaQueryEvaluator::eval(const MediaQueryExp* expr) const
 {
-    if (!m_page || !m_style)
+    if (!m_frame || !m_style)
         return m_expResult;
 
     if (!gFunctionMap)
@@ -399,7 +406,7 @@ bool MediaQueryEvaluator::eval(const MediaQueryExp* expr) const
     // used
     EvalFunc func = gFunctionMap->get(expr->mediaFeature().impl());
     if (func)
-        return func(expr->value(), m_style, m_page, NoPrefix);
+        return func(expr->value(), m_style, m_frame, NoPrefix);
 
     return false;
 }

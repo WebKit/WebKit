@@ -30,6 +30,8 @@
 
 #include "AtomicString.h"
 #include "CSSValue.h"
+#include "MediaFeatureNames.h"
+#include <wtf/RefPtr.h>
 
 namespace WebCore {
 class ValueList;
@@ -42,7 +44,7 @@ public:
 
     AtomicString mediaFeature() const { return m_mediaFeature; }
 
-    CSSValue* value() const { return m_value; }
+    CSSValue* value() const { return m_value.get(); }
 
     bool operator==(const MediaQueryExp& other) const  {
         return (other.m_mediaFeature == m_mediaFeature)
@@ -50,9 +52,15 @@ public:
                 || (other.m_value && m_value && other.m_value->cssText() == m_value->cssText()));
     }
 
+    bool isViewportDependent() const { return m_mediaFeature == MediaFeatureNames::widthMediaFeature || 
+                                              m_mediaFeature == MediaFeatureNames::heightMediaFeature ||
+                                              m_mediaFeature == MediaFeatureNames::min_widthMediaFeature ||
+                                              m_mediaFeature == MediaFeatureNames::min_heightMediaFeature ||
+                                              m_mediaFeature == MediaFeatureNames::max_widthMediaFeature ||
+                                              m_mediaFeature == MediaFeatureNames::max_heightMediaFeature; }
 private:
     AtomicString m_mediaFeature;
-    CSSValue* m_value;
+    RefPtr<CSSValue> m_value;
 };
 
 } // namespace

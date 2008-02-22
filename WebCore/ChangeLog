@@ -1,3 +1,63 @@
+2008-02-21  David Hyatt  <hyatt@apple.com>
+
+        Fix for bug 17301.  CSS media queries need to use the correct viewport
+        when contained in documents inside iframes (rather than always using the
+        top-level document's viewport).  CSS media queries based on the viewport
+        also needed to be dynamic and update as you resize the window (this is
+        a HOT feature). :)
+
+        This patch gets Acid3 up to 86/100 with 3 colored boxes filled in.
+
+        Reviewed by olliej
+
+        Added fast/media/viewport-media-query.html
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::CSSStyleSelector):
+        (WebCore::CSSStyleSelector::addViewportDependentMediaQueryResult):
+        (WebCore::CSSStyleSelector::affectedByViewportChange):
+        * css/CSSStyleSelector.h:
+        (WebCore::MediaQueryResult::MediaQueryResult):
+        * css/MediaQueryEvaluator.cpp:
+        (WebCore::MediaQueryEvaluator::MediaQueryEvaluator):
+        (WebCore::MediaQueryEvaluator):
+        (WebCore::MediaQueryEvaluator::eval):
+        (WebCore::colorMediaFeatureEval):
+        (WebCore::monochromeMediaFeatureEval):
+        (WebCore::device_aspect_ratioMediaFeatureEval):
+        (WebCore::device_pixel_ratioMediaFeatureEval):
+        (WebCore::gridMediaFeatureEval):
+        (WebCore::device_heightMediaFeatureEval):
+        (WebCore::device_widthMediaFeatureEval):
+        (WebCore::heightMediaFeatureEval):
+        (WebCore::widthMediaFeatureEval):
+        (WebCore::min_colorMediaFeatureEval):
+        (WebCore::max_colorMediaFeatureEval):
+        (WebCore::min_monochromeMediaFeatureEval):
+        (WebCore::max_monochromeMediaFeatureEval):
+        (WebCore::min_device_aspect_ratioMediaFeatureEval):
+        (WebCore::max_device_aspect_ratioMediaFeatureEval):
+        (WebCore::min_device_pixel_ratioMediaFeatureEval):
+        (WebCore::max_device_pixel_ratioMediaFeatureEval):
+        (WebCore::min_heightMediaFeatureEval):
+        (WebCore::max_heightMediaFeatureEval):
+        (WebCore::min_widthMediaFeatureEval):
+        (WebCore::max_widthMediaFeatureEval):
+        (WebCore::min_device_heightMediaFeatureEval):
+        (WebCore::max_device_heightMediaFeatureEval):
+        (WebCore::min_device_widthMediaFeatureEval):
+        (WebCore::max_device_widthMediaFeatureEval):
+        * css/MediaQueryEvaluator.h:
+        * css/MediaQueryExp.cpp:
+        (WebCore::MediaQueryExp::~MediaQueryExp):
+        * css/MediaQueryExp.h:
+        (WebCore::MediaQueryExp::value):
+        (WebCore::MediaQueryExp::isViewportDependent):
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::pickMedia):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::layout):
+
 2008-02-21  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam.

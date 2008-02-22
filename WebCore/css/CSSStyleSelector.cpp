@@ -281,7 +281,7 @@ CSSStyleSelector::CSSStyleSelector(Document* doc, const String& userStyleSheet, 
 
     if (m_rootDefaultStyle && view) {
         delete m_medium;
-        m_medium = new MediaQueryEvaluator(view->mediaType(), view->frame()->page(), m_rootDefaultStyle);
+        m_medium = new MediaQueryEvaluator(view->mediaType(), view->frame(), m_rootDefaultStyle);
     }
 
     // FIXME: This sucks! The user sheet is reparsed every time!
@@ -5178,6 +5178,21 @@ Color CSSStyleSelector::getColorFromPrimitiveValue(CSSPrimitiveValue* primitiveV
 bool CSSStyleSelector::hasSelectorForAttribute(const AtomicString &attrname)
 {
     return m_selectorAttrs.contains(attrname.impl());
+}
+
+void CSSStyleSelector::addViewportDependentMediaQueryResult(const MediaQueryExp* expr, bool result)
+{
+    m_viewportDependentMediaQueryResults.append(new MediaQueryResult(*expr, result));
+}
+
+bool CSSStyleSelector::affectedByViewportChange() const
+{
+    unsigned s = m_viewportDependentMediaQueryResults.size();
+    for (unsigned i = 0; i < s; i++) {
+        if (m_medium->eval(&m_viewportDependentMediaQueryResults[i]->m_expression) != m_viewportDependentMediaQueryResults[i]->m_result)
+            return true;
+    }
+    return false;
 }
 
 } // namespace WebCore

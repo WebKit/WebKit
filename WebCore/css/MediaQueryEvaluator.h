@@ -31,7 +31,7 @@
 #include "PlatformString.h"
 
 namespace WebCore {
-class Page;
+class Frame;
 class RenderStyle;
 class MediaList;
 class MediaQueryExp;
@@ -66,7 +66,7 @@ public:
 
     /** Creates evaluator which evaluates full media queries
      */
-    MediaQueryEvaluator(const String& acceptedMediaType, Page* page, RenderStyle* style);
+    MediaQueryEvaluator(const String& acceptedMediaType, Frame*, RenderStyle*);
 
     ~MediaQueryEvaluator();
 
@@ -81,7 +81,7 @@ public:
 
 private:
     String m_mediaType;
-    Page* m_page; // not owned
+    Frame* m_frame; // not owned
     RenderStyle* m_style; // not owned
     bool m_expResult;
 };

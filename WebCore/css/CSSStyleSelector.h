@@ -23,6 +23,7 @@
 #define CSSStyleSelector_h
 
 #include "CSSFontSelector.h"
+#include "MediaQueryExp.h"
 #include "RenderStyle.h"
 #include <wtf/HashSet.h>
 #include <wtf/Vector.h>
@@ -54,6 +55,18 @@ class Settings;
 class StyleSheet;
 class StyleSheetList;
 class StyledElement;
+
+class MediaQueryResult
+{
+public:
+    MediaQueryResult(const MediaQueryExp& expr, bool result)
+    : m_expression(expr)
+    , m_result(result)
+    {}
+
+    MediaQueryExp m_expression;
+    bool m_result;
+};
 
     /**
      * this class selects a RenderStyle for a given Element based on the
@@ -129,6 +142,9 @@ class StyledElement;
            matches the given Element */
         bool checkSelector(CSSSelector*);
 
+        void addViewportDependentMediaQueryResult(const MediaQueryExp*, bool result);
+        bool affectedByViewportChange() const;
+        
     protected:
         enum SelectorMatch {
             SelectorMatches = 0,
@@ -239,6 +255,8 @@ class StyledElement;
         
         Vector<CSSMutableStyleDeclaration*> m_additionalAttributeStyleDecls;
         
+        Vector<MediaQueryResult*> m_viewportDependentMediaQueryResults;
+
         void applyProperty(int id, CSSValue*);
 
 #if ENABLE(SVG)
