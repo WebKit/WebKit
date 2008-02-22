@@ -60,6 +60,14 @@ PASS NaN && true ? true : false is false
 PASS NaN && false ? true : false is false
 PASS NaN || true ? true : false is true
 PASS NaN || false ? true : false is false
+PASS (function(){var nan = NaN; return nan-- ? true : false})() is false
+PASS (function(){var nan = NaN; return nan++ ? true : false})() is false
+PASS (function(){var nan = NaN; return --nan ? true : false})() is false
+PASS (function(){var nan = NaN; return ++nan ? true : false})() is false
+PASS (function(){var Undefined = undefined; return Undefined-- ? true : false})() is false
+PASS (function(){var Undefined = undefined; return Undefined++ ? true : false})() is false
+PASS (function(){var Undefined = undefined; return --Undefined ? true : false})() is false
+PASS (function(){var Undefined = undefined; return ++Undefined ? true : false})() is false
 PASS successfullyParsed is true
 
 TEST COMPLETE

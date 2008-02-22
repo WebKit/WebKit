@@ -1,3 +1,15 @@
+2008-02-22  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Alexey P.
+
+        <rdar://problem/5759327> REGRESSION: while(NaN) acts like while(true)
+
+        Fix yet another case where we incorrectly relied on implicit double
+        to bool coercion.
+
+        * kjs/nodes.cpp:
+        (KJS::PostDecLocalVarNode::evaluateToBoolean):
+
 2008-02-20  Michael Knaup  <michael.knaup@mac.com>
 
         Reviewed by Darin.

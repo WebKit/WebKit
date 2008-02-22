@@ -1,3 +1,14 @@
+2008-02-22  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Alexey P.
+
+        <rdar://problem/5759327> REGRESSION: while(NaN) acts like while(true)
+
+        Add test cases for pre/post-increment of NaN
+
+        * fast/js/convert-nan-to-bool-expected.txt:
+        * fast/js/resources/convert-nan-to-bool.js:
+
 2008-02-21  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.

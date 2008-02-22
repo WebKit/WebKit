@@ -1399,7 +1399,8 @@ double PostDecLocalVarNode::evaluateToNumber(ExecState* exec)
 
 bool PostDecLocalVarNode::evaluateToBoolean(ExecState* exec)
 {
-    return inlineEvaluateToNumber(exec);
+    double result = inlineEvaluateToNumber(exec);
+    return  result > 0.0 || 0.0 > result; // NaN produces false as well
 }
 
 int32_t PostDecLocalVarNode::evaluateToInt32(ExecState* exec)

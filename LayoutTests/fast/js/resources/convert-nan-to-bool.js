@@ -57,5 +57,13 @@ shouldBe("NaN && true ? true : false", "false");
 shouldBe("NaN && false ? true : false", "false");
 shouldBe("NaN || true ? true : false", "true");
 shouldBe("NaN || false ? true : false", "false");
+shouldBe("(function(){var nan = NaN; return nan-- ? true : false})()", "false");
+shouldBe("(function(){var nan = NaN; return nan++ ? true : false})()", "false");
+shouldBe("(function(){var nan = NaN; return --nan ? true : false})()", "false");
+shouldBe("(function(){var nan = NaN; return ++nan ? true : false})()", "false");
+shouldBe("(function(){var Undefined = undefined; return Undefined-- ? true : false})()", "false");
+shouldBe("(function(){var Undefined = undefined; return Undefined++ ? true : false})()", "false");
+shouldBe("(function(){var Undefined = undefined; return --Undefined ? true : false})()", "false");
+shouldBe("(function(){var Undefined = undefined; return ++Undefined ? true : false})()", "false");
 
 var successfullyParsed = true;
