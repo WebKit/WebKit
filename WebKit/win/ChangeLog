@@ -1,3 +1,16 @@
+2008-02-22  Adam Roben  <aroben@apple.com>
+
+        Remove some unused WebFrame methods
+
+        FrameWinClient was deleted back in r22965, but these methods were
+        never deleted.
+
+        Reviewed by Sam.
+
+        * WebFrame.cpp:
+        * WebFrame.h: Made one createFrame overload protected, since it's only
+        called internally by WebFrame.
+
 2008-02-21  Adam Roben  <aroben@apple.com>
 
         Move Client implementations into a WebCoreSupport directory

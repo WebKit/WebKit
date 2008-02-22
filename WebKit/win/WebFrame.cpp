@@ -1288,18 +1288,6 @@ HRESULT WebFrame::canProvideDocumentSource(bool* result)
     return hr;
 }
 
-// FrameWinClient
-
-void WebFrame::ref()
-{
-    this->AddRef();
-}
-
-void WebFrame::deref()
-{
-    this->Release();
-}
-
 void WebFrame::frameLoaderDestroyed()
 {
     // The FrameLoader going away is equivalent to the Frame going away,
@@ -1379,71 +1367,12 @@ void WebFrame::loadURLIntoChild(const KURL& originalURL, const String& referrer,
     core(childFrame)->loader()->load(url, referrer, childLoadType, String(), 0, 0);
 }
 
-void WebFrame::openURL(const String& URL, const Event* triggeringEvent, bool newWindow, bool lockHistory)
-{
-    bool ctrlPressed = false;
-    bool shiftPressed = false;
-    if (triggeringEvent) {
-        if (triggeringEvent->isMouseEvent()) {
-            const MouseRelatedEvent* mouseEvent = static_cast<const MouseRelatedEvent*>(triggeringEvent);
-            ctrlPressed = mouseEvent->ctrlKey();
-            shiftPressed = mouseEvent->shiftKey();
-        } else if (triggeringEvent->isKeyboardEvent()) {
-            const KeyboardEvent* keyEvent = static_cast<const KeyboardEvent*>(triggeringEvent);
-            ctrlPressed = keyEvent->ctrlKey();
-            shiftPressed = keyEvent->shiftKey();
-        }
-    }
-
-    if (ctrlPressed)
-        newWindow = true;
-
-    BString urlBStr = URL;
-
-    IWebMutableURLRequest* request = WebMutableURLRequest::createInstance();
-    if (FAILED(request->initWithURL(urlBStr, WebURLRequestUseProtocolCachePolicy, 0)))
-        goto exit;
-
-    if (newWindow) {
-        // new tab/window
-        IWebUIDelegate* ui;
-        IWebView* newWebView;
-        if (SUCCEEDED(d->webView->uiDelegate(&ui)) && ui) {
-            if (SUCCEEDED(ui->createWebViewWithRequest(d->webView, request, &newWebView))) {
-                if (shiftPressed) {
-                    // Ctrl-Option-Shift-click:  Opens a link in a new window and selects it.
-                    // Ctrl-Shift-click:  Opens a link in a new tab and selects it.
-                    ui->webViewShow(d->webView);
-                }
-                newWebView->Release();
-                newWebView = 0;
-            }
-            ui->Release();
-        }
-    } else {
-        m_quickRedirectComing = lockHistory;
-        loadRequest(request);
-    }
-
-exit:
-    request->Release();
-}
-
 void WebFrame::dispatchDidHandleOnloadEvents()
 {
     IWebFrameLoadDelegatePrivate* frameLoadDelegatePriv;
     if (SUCCEEDED(d->webView->frameLoadDelegatePrivate(&frameLoadDelegatePriv))  && frameLoadDelegatePriv) {
         frameLoadDelegatePriv->didHandleOnloadEventsForFrame(d->webView, this);
         frameLoadDelegatePriv->Release();
-    }
-}
-
-void WebFrame::windowScriptObjectAvailable(JSContextRef context, JSObjectRef windowObject)
-{
-    IWebFrameLoadDelegate* frameLoadDelegate;
-    if (SUCCEEDED(d->webView->frameLoadDelegate(&frameLoadDelegate)) && frameLoadDelegate) {
-        frameLoadDelegate->windowScriptObjectAvailable(d->webView, context, windowObject);
-        frameLoadDelegate->Release();
     }
 }
 
