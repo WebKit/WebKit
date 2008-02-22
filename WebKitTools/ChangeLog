@@ -2,6 +2,19 @@
 
         Reviewed by Adam.
 
+        <rdar://problem/5748781> 
+        https://bugs.webkit.org/show_bug.cgi?id=17413
+        REGRESSION: Latest Nightly doesn't load Java plugin w/Safari 3.1b
+        
+        Copy the Java plug-in over to the new location.
+        
+        * FindSafari/FindSafari.cpp:
+        (_tmain):
+
+2008-02-22  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Adam.
+
         <rdar://problem/5747325> REGRESSION: HTTP layout tests hang
         
         * DumpRenderTree/win/DumpRenderTree.cpp:

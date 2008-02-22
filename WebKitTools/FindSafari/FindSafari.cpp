@@ -163,6 +163,7 @@ int _tmain(int argc, TCHAR* argv[])
         TEXT("mkdir 2>NUL \"%%TMP%%\\WebKitNightly\\Safari.resources\""),
         TEXT("xcopy /y /i /d \"%sSafari.exe\" \"%%TMP%%\\WebKitNightly\""),
         TEXT("xcopy /y /i /d /e \"%sSafari.resources\" \"%%TMP%%\\WebKitNightly\\Safari.resources\""),
+        TEXT("xcopy /y /i /d /e \"%splugins\" \"%%TMP%%\\WebKitNightly\\plugins\""),
         TEXT("set PATH=%%CD%%;%s;%%PATH%%"),
     };
 
