@@ -255,6 +255,8 @@ uint64_t charactersToUInt64(const UChar*, size_t, bool* ok = 0); // ignores trai
 double charactersToDouble(const UChar*, size_t, bool* ok = 0);
 float charactersToFloat(const UChar*, size_t, bool* ok = 0);
 
+int find(const UChar*, size_t, UChar);
+
 void append(Vector<UChar>&, const String&);
 
 #ifdef __OBJC__
@@ -272,12 +274,21 @@ inline bool charactersAreAllASCII(const UChar* characters, size_t length)
     return !(ored & 0xFF80);
 }
 
+inline int find(const UChar* characters, size_t length, UChar character)
+{
+    for (size_t i = 0; i < length; ++i) {
+        if (characters[i] == character)
+            return static_cast<int>(i);
+    }
+    return -1;
+}
+
 inline void append(Vector<UChar>& vector, const String& string)
 {
     vector.append(string.characters(), string.length());
 }
 
-}
+} // namespace WebCore
 
 namespace WTF {
 

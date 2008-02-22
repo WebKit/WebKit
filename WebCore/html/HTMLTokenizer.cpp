@@ -1817,9 +1817,9 @@ void HTMLTokenizer::finish()
             food = String(scriptCode, scriptCodeSize);
         else if (m_state.inServer()) {
             food = "<";
-            food.append(String(scriptCode, scriptCodeSize));
+            food.append(scriptCode, scriptCodeSize);
         } else {
-            pos = DeprecatedConstString(reinterpret_cast<DeprecatedChar*>(scriptCode), scriptCodeSize).string().find('>');
+            pos = find(scriptCode, scriptCodeSize, '>');
             food = String(scriptCode + pos + 1, scriptCodeSize - pos - 1);
         }
         fastFree(scriptCode);

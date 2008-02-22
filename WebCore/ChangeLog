@@ -1,3 +1,14 @@
+2008-02-22  Darin Adler  <darin@apple.com>
+
+        Reviewed, tweaked and landed by Sam.
+
+        - Don't use DeprecatedString in HTMLTokenizer.
+
+        * html/HTMLTokenizer.cpp:
+        (WebCore::HTMLTokenizer::finish):
+        * platform/text/PlatformString.h:
+        (WebCore::find):
+
 2008-02-21  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.
