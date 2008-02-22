@@ -244,7 +244,6 @@ bool XMLHttpRequest::dispatchEvent(PassRefPtr<Event> evt, ExceptionCode& ec, boo
 XMLHttpRequest::XMLHttpRequest(Document* d)
     : m_doc(d)
     , m_async(true)
-    , m_loader(0)
     , m_state(Uninitialized)
     , m_responseText("")
     , m_createdDocument(false)
@@ -446,15 +445,6 @@ void XMLHttpRequest::send(const String& body, ExceptionCode& ec)
         return;
     }
 
-    // Neither this object nor the JavaScript wrapper should be deleted while
-    // a request is in progress because we need to keep the listeners alive,
-    // and they are referenced by the JavaScript wrapper.
-    ref();
-    {
-        KJS::JSLock lock;
-        gcProtectNullTolerant(ScriptInterpreter::getDOMObject(this));
-    }
-  
     // SubresourceLoader::create can return null here, for example if we're no longer attached to a page.
     // This is true while running onunload handlers.
     // FIXME: We need to be able to send XMLHttpRequests from onunload, <http://bugs.webkit.org/show_bug.cgi?id=10904>.
@@ -462,6 +452,16 @@ void XMLHttpRequest::send(const String& body, ExceptionCode& ec)
     // We need to keep content sniffing enabled for local files due to CFNetwork not providing a MIME type
     // for local files otherwise, <rdar://problem/5671813>.
     m_loader = SubresourceLoader::create(m_doc->frame(), this, request, false, true, request.url().isLocalFile());
+
+    if (m_loader) {
+        // Neither this object nor the JavaScript wrapper should be deleted while
+        // a request is in progress because we need to keep the listeners alive,
+        // and they are referenced by the JavaScript wrapper.
+        ref();
+
+        KJS::JSLock lock;
+        gcProtectNullTolerant(ScriptInterpreter::getDOMObject(this));
+    }
 }
 
 void XMLHttpRequest::abort()

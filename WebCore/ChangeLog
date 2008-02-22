@@ -1,3 +1,28 @@
+2008-02-22  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
+        
+        Fixed <rdar://problem/5057509> Repro leak of JSXMLHttpRequest and
+        associated objects @ www.viamichelin.it, which was probably an underlying
+        cause of <rdar://problem/5744037> Gmail out of memory (17455)
+        
+        If SubresourceLoader::create returned NULL, we would ref() / gcProtect()
+        the XMLHttpRequest but think we hadn't, therefore never
+        calling deref() / gcUnprotect().
+        
+        This could happen at gmail.com, since gmail.com attempts to send
+        XMLHttpRequests from unload handlers in order to gather usage statistics.
+        (According to comments in the code, SubresourceLoader::create returns
+        NULL when called from an unload handler.)
+
+        The solution is to ref() / gcProtect() only if SubresourceLoader::create
+        doesn't return NULL. This make sense, since we only need to protect the
+        request as long as it has an outstanding network transaction.
+        
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::XMLHttpRequest):
+        (WebCore::XMLHttpRequest::send):
+
 2008-02-22  Darin Adler  <darin@apple.com>
 
         Reviewed, tweaked and landed by Sam.
