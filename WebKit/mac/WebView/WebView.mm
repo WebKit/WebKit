@@ -226,7 +226,6 @@ macro(pageDownAndModifySelection) \
 macro(pageUp) \
 macro(pageUpAndModifySelection) \
 macro(paste) \
-macro(pasteAndMatchStyle) \
 macro(pasteAsPlainText) \
 macro(pasteAsRichText) \
 macro(pasteFont) \

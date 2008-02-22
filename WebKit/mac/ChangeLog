@@ -1,3 +1,19 @@
+2008-02-22  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Adam Roben
+        
+        Reverted the changed from yesterday to add pasteAndMatchStyle:, as the existing
+        pasteAsPlainText: has the same behavior.
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView _pasteWithPasteboard:allowPlainText:]):
+        (-[WebHTMLView readSelectionFromPasteboard:]):
+        (-[WebHTMLView validateUserInterfaceItemWithoutDelegate:]):
+        (-[WebHTMLView pasteAsRichText:]):
+        (-[WebHTMLView paste:]):
+        * WebView/WebView.mm:
+        * WebView/WebViewPrivate.h:
+
 2008-02-21  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam.
