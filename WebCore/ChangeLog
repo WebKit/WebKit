@@ -1,3 +1,19 @@
+2008-02-22  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Reviewed by Anders.
+
+        <rdar://problem/5760360> REGRESSION(r30376): Crash loading plugin page
+        during stress test (after only 5 min) - null dereference
+
+        Full-frame plug-ins create PluginStream objects without loaders, as the
+        PluginView receives the loading callbacks. We were trying to call
+        setDefersLoading on these null pointers.
+
+        * plugins/PluginStream.cpp:
+        (WebCore::PluginStream::startStream): Add null check.
+        (WebCore::PluginStream::destroyStream): Same.
+        (WebCore::PluginStream::deliverData): Same.
+
 2008-02-22  Darin Adler  <darin@apple.com>
 
         Reviewed and tweaked by Jon Honeycutt. Reviewed and landed by Sam.
