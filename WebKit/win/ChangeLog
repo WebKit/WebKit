@@ -1,5 +1,25 @@
 2008-02-22  Adam Roben  <aroben@apple.com>
 
+        Move FormValuesPropertyBag into its own files
+
+        Reviewed by Sam.
+
+        * WebCoreSupport/FormValuesPropertyBag.cpp: Added.
+        (FormValuesPropertyBag::QueryInterface):
+        (FormValuesPropertyBag::AddRef):
+        (FormValuesPropertyBag::Release):
+        (FormValuesPropertyBag::Read):
+        (FormValuesPropertyBag::Write):
+        (FormValuesPropertyBag::CountProperties):
+        (FormValuesPropertyBag::GetPropertyInfo):
+        (FormValuesPropertyBag::LoadObject):
+        * WebCoreSupport/FormValuesPropertyBag.h: Added.
+        (FormValuesPropertyBag::FormValuesPropertyBag):
+        * WebFrame.cpp: Deleted FormValuesPropertyBag code.
+        * WebKit.vcproj/WebKit.vcproj: Added new files to the project.
+
+2008-02-22  Adam Roben  <aroben@apple.com>
+
         Remove some unused WebFrame methods
 
         FrameWinClient was deleted back in r22965, but these methods were
