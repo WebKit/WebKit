@@ -1,3 +1,12 @@
+2008-02-21  Ada Chan  <adachan@apple.com>
+
+        Test for <rdar://problem/5757873> Buffer overrun in DeprecatedCString::find() in WebCore
+
+        Reviewed by Dan Bernstein.
+
+        * fast/loader/charset-parse-expected.txt: Added.
+        * fast/loader/charset-parse.html: Added.
+
 2008-02-21  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by David Harrison.

@@ -182,16 +182,17 @@ int DeprecatedCString::find(const char *sub, int index, bool cs) const
             
             // compare until we reach the end or a mismatch
             pos = 0;
+            int posInStr = index;
             if( cs )
-                while( (a=sub[pos]) && (b=str[index]) && a==b )
-                    pos++, index++;
+                while ((a = sub[pos]) && (b = str[posInStr]) && a == b)
+                    pos++, posInStr++;
             else
-                while( (a=sub[pos]) && (b=str[index]) && toASCIILower(a)==toASCIILower(b) )
-                    pos++, index++;
-            
+                while ((a = sub[pos]) && (b = str[posInStr]) && toASCIILower(a) == toASCIILower(b))
+                    pos++, posInStr++;
+
             // reached the end of our compare string without a mismatch?
             if( sub[pos] == 0 )
-                return index - pos;
+                return index;
             
             index ++;
         }

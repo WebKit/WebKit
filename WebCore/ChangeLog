@@ -1,3 +1,21 @@
+2008-02-21  Ada Chan  <adachan@apple.com>
+
+        <rdar://problem/5757873> Buffer overrun in DeprecatedCString::find() in WebCore
+        We could get a buffer overrun in DeprecatedCString::find() if the end of the
+        string matches a beginning portion of the substring, for example, if string is
+        "a" but the substring is "ab".
+        The code as is also will not match things correctly under certain situations
+        since the inner while loop increments the index. For example, we wouldn't find
+        a match if the string is "aab..." and the substring is "ab".  Changed the 
+        inner while loop to increment a temporary index into str.
+        
+        Test: fast/loader/charset-parse.html
+
+        Reviewed by Dan Berstein.
+
+        * platform/DeprecatedCString.cpp:
+        (WebCore::DeprecatedCString::find):
+
 2008-02-21  David Hyatt  <hyatt@apple.com>
 
         Fix for bug 17301.  CSS media queries need to use the correct viewport
