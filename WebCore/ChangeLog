@@ -1,3 +1,38 @@
+2008-02-22  Darin Adler  <darin@apple.com>
+
+        Reviewed, tweaked and landed by Sam.
+
+        - Make RegularExpression operate on Strings instead of DeprecatedStrings.
+
+        * dom/DOMImplementation.cpp:
+        (WebCore::DOMImplementation::isXMLMIMEType): Use string instead of DeprecatedString
+        to build up the RegularExpression.
+        * page/Frame.cpp:
+        (WebCore::createRegExpForLabels): Use String instead of DeprecatedString.
+        (WebCore::Frame::searchForLabelsAboveCell): Ditto.
+        (WebCore::Frame::searchForLabelsBeforeElement): Ditto.
+        (WebCore::Frame::matchLabelsAgainstElement): Ditto.
+        * page/Frame.h:
+        * page/mac/FrameMac.mm:
+        (WebCore::regExpForLabels): Ditto.
+        (WebCore::Frame::searchForNSLabelsAboveCell): Ditto.
+        (WebCore::Frame::searchForLabelsBeforeElement): Ditto.
+        (WebCore::Frame::matchLabelsAgainstElement): Ditto.
+
+        * platform/text/RegularExpression.cpp:
+        (WebCore::RegularExpression::Private::Private):
+        (WebCore::RegularExpression::Private::compile):
+        (WebCore::RegularExpression::RegularExpression):
+        (WebCore::RegularExpression::operator=):
+        (WebCore::RegularExpression::pattern):
+        (WebCore::RegularExpression::match):
+        (WebCore::RegularExpression::search):
+        (WebCore::RegularExpression::searchRev):
+        (WebCore::replace): Added.
+        * platform/text/RegularExpression.h:
+        Change functions to take Strings as input instead of DeprecatedStrings and
+        reduce the complexity of the class by removing unneeded globbing support.
+
 2008-02-22  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Reviewed by Anders.

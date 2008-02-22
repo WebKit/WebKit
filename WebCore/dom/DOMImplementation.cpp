@@ -325,10 +325,8 @@ bool DOMImplementation::isXMLMIMEType(const String& mimeType)
     if (mimeType == "text/xml" || mimeType == "application/xml" || mimeType == "text/xsl")
         return true;
     static const char* validChars = "[0-9a-zA-Z_\\-+~!$\\^{}|.%'`#&*]"; // per RFCs: 3023, 2045
-    static RegularExpression xmlTypeRegExp(DeprecatedString("^") + validChars + "+/" + validChars + "+\\+xml$");
-    if (xmlTypeRegExp.match(mimeType.deprecatedString()) > -1)
-        return true;
-    return false;
+    static RegularExpression xmlTypeRegExp(String("^") + validChars + "+/" + validChars + "+\\+xml$");
+    return xmlTypeRegExp.match(mimeType) > -1;
 }
 
 bool DOMImplementation::isTextMIMEType(const String& mimeType)

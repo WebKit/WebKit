@@ -100,6 +100,7 @@ class KURL;
 class Node;
 class Page;
 class Range;
+class RegularExpression;
 class RenderPart;
 class Selection;
 class SelectionController;
