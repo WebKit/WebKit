@@ -962,9 +962,9 @@ NPError PluginView::load(const FrameLoadRequest& frameLoadRequest, bool sendNoti
 
 static KURL makeURL(const KURL& baseURL, const char* relativeURLString)
 {
-    DeprecatedString urlString = DeprecatedString::fromLatin1(relativeURLString);
+    String urlString = relativeURLString;
 
-    // Strip return characters
+    // Strip return characters.
     urlString.replace('\n', "");
     urlString.replace('\r', "");
 
@@ -1108,7 +1108,7 @@ static inline HTTPHeaderMap parseRFC822HeaderFields(const Vector<char>& buffer, 
             } else {
                 // Merge the continuation of the previous header
                 String currentValue = headerFields.get(lastKey);
-                String newValue = DeprecatedString::fromLatin1(line, lineLength);
+                String newValue(line, lineLength);
 
                 headerFields.set(lastKey, currentValue + newValue);
             }
@@ -1122,7 +1122,7 @@ static inline HTTPHeaderMap parseRFC822HeaderFields(const Vector<char>& buffer, 
                 // malformed header; ignore it and continue
                 continue;
             else {
-                lastKey = capitalizeRFC822HeaderFieldName(DeprecatedString::fromLatin1(line, colon - line));
+                lastKey = capitalizeRFC822HeaderFieldName(String(line, colon - line));
                 String value;
 
                 for (colon++; colon != eol; colon++) {
@@ -1132,7 +1132,7 @@ static inline HTTPHeaderMap parseRFC822HeaderFields(const Vector<char>& buffer, 
                 if (colon == eol)
                     value = "";
                 else
-                    value = DeprecatedString::fromLatin1(colon, eol - colon);
+                    value = String(colon, eol - colon);
 
                 String oldValue = headerFields.get(lastKey);
                 if (!oldValue.isNull()) {
@@ -1161,7 +1161,7 @@ NPError PluginView::handlePost(const char* url, const char* target, uint32 len, 
     Vector<char> buffer;
     
     if (file) {
-        String filename = DeprecatedString::fromLatin1(buf, len);
+        String filename(buf, len);
 
         if (filename.startsWith("file:///"))
             filename = filename.substring(8);
@@ -1279,10 +1279,8 @@ const char* PluginView::userAgent()
 
 void PluginView::status(const char* message)
 {
-    String s = DeprecatedString::fromLatin1(message);
-
     if (Page* page = m_parentFrame->page())
-        page->chrome()->setStatusbarText(m_parentFrame, s);
+        page->chrome()->setStatusbarText(m_parentFrame, String(message));
 }
 
 NPError PluginView::getValue(NPNVariable variable, void* value)

@@ -1,5 +1,25 @@
 2008-02-22  Darin Adler  <darin@apple.com>
 
+        Reviewed and tweaked by Jon Honeycutt. Reviewed and landed by Sam.
+
+        - Remove uses of DeprecatedString in Windows plugin code.
+
+        * plugins/win/PluginPackageWin.cpp:
+        (WebCore::getVersionInfo): Cleanup formatting.
+        (WebCore::PluginPackage::freeLibraryTimerFired): Remove un-needed variable name.
+        (WebCore::PluginPackage::storeFileVersion): Move casts.
+        (WebCore::PluginPackage::fetchInfo): Use OwnArrayPtr and switch to more efficient
+        use of Vectors.
+        (WebCore::PluginPackage::load): Fix whitespace.
+        (WebCore::PluginPackage::hash): Make the hashCodes const
+        * plugins/win/PluginViewWin.cpp:
+        (WebCore::makeURL): Use String instead of DeprecatedString.
+        (WebCore::parseRFC822HeaderFields): Ditto.
+        (WebCore::PluginView::handlePost): Ditto.
+        (WebCore::PluginView::status): Ditto.
+
+2008-02-22  Darin Adler  <darin@apple.com>
+
         Reviewed, tweaked and landed by Sam.
 
         - Don't use DeprecatedString in HTMLTokenizer.
