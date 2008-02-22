@@ -144,7 +144,7 @@ bool MediaQueryEvaluator::eval(const MediaList* mediaList) const
             size_t j = 0;
             for (; j < exps->size(); ++j) {
                 bool exprResult = eval(exps->at(j));
-                if (exps->at(j)->isViewportDependent())
+                if (exps->at(j)->isViewportDependent() && m_frame)
                     m_frame->document()->styleSelector()->addViewportDependentMediaQueryResult(exps->at(j), exprResult);
                 if (!exprResult)
                     break;
