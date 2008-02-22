@@ -1,3 +1,13 @@
+2008-02-22  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Adam.
+
+        <rdar://problem/5747325> REGRESSION: HTTP layout tests hang
+        
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (runTest):
+        Init the URL request with the correct timeout.
+
 2008-02-21  Mike Auty  <mike.auty@gmail.com>
 
         Reviewed by Alp Toker.
