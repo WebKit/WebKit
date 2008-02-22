@@ -1,2 +1,0 @@
-CONSOLE MESSAGE: line 10: Error: Out of memory
-This page should throw an out of memory exception.

@@ -4301,9 +4301,6 @@ JSValue* TryNode::execute(ExecState* exec)
 {
     JSValue* result = m_tryBlock->execute(exec);
 
-    if (Collector::isOutOfMemory())
-        return result; // don't try to catch an out of memory exception thrown by the collector
-
     if (m_catchBlock && exec->completionType() == Throw) {
         JSObject* obj = new JSObject;
         obj->put(exec, m_exceptionIdent, result, DontDelete);

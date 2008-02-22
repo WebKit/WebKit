@@ -106,8 +106,6 @@ static CollectorHeap numberHeap = { 0, 0, 0, 0, 0, 0, 0, NoOperation };
 // Just a private global like "heap" above would be fine.
 size_t Collector::mainThreadOnlyObjectCount = 0;
 
-bool Collector::memoryFull = false;
-
 static CollectorBlock* allocateBlock()
 {
 #if PLATFORM(DARWIN)    
@@ -970,11 +968,6 @@ bool Collector::collect()
   primaryHeap.operationInProgress = NoOperation;
   numberHeap.operationInProgress = NoOperation;
   
-  bool newMemoryFull = (numLiveObjects >= KJS_MEM_LIMIT);
-  if (newMemoryFull && newMemoryFull != memoryFull)
-      reportOutOfMemoryToAllExecStates();
-  memoryFull = newMemoryFull;
-
   return numLiveObjects < originalLiveObjects;
 }
 

@@ -1,3 +1,12 @@
+2008-02-22  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
+        
+        Removing the test for KJS_MEM_LIMIT, since I removed KJS_MEM_LIMIT.
+
+        * fast/js/out-of-memory-expected.txt: Removed.
+        * fast/js/out-of-memory.html: Removed.
+
 2008-02-22  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Alexey P.

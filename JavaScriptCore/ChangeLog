@@ -1,3 +1,40 @@
+2008-02-22  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
+        
+        Partial fix for <rdar://problem/5744037> Gmail out of memory (17455)
+        
+        I'm removing KJS_MEM_LIMIT for the following reasons:
+        
+        - We have a few reports of KJS_MEM_LIMIT breaking important web
+        applications, like GMail and Google Reader. (For example, if you
+        simply open 12 GMail tabs, tab #12 will hit the limit.)
+
+        - Firefox has no discernable JS object count limit, so any limit, even
+        a large one, is a potential compatibility problem.
+        
+        - KJS_MEM_LIMIT does not protect against malicious memory allocation,
+        since there are many ways to maliciously allocate memory without
+        increasing the JS object count.
+        
+        - KJS_MEM_LIMIT is already mostly broken, since it only aborts the
+        script that breaches the limit, not any subsequent scripts.
+        
+        - We've never gotten bug reports about websites that would have
+        benefited from an unbroken KJS_MEM_LIMIT. The initial check-in of
+        KJS_MEM_LIMIT (KJS revision 80061) doesn't mention a website that
+        needed it.
+        
+        - Any website that brings you anywhere close to crashing due to the
+        number of live JS objects will almost certainly put up the "slow
+        script" dialog at least 20 times beforehand.
+
+        * kjs/collector.cpp:
+        (KJS::Collector::collect):
+        * kjs/collector.h:
+        * kjs/nodes.cpp:
+        (KJS::TryNode::execute):
+
 2008-02-22  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Alexey P.

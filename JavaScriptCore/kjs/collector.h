@@ -27,8 +27,6 @@
 #include <string.h>
 #include <wtf/HashCountedSet.h>
 
-#define KJS_MEM_LIMIT 500000
-
 namespace KJS {
 
   class JSCell;
@@ -47,7 +45,6 @@ namespace KJS {
     static void reportExtraMemoryCost(size_t cost);
 
     static size_t size();
-    static bool isOutOfMemory() { return memoryFull; }
 
     static void protect(JSValue*);
     static void unprotect(JSValue*);
