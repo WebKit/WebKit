@@ -33,7 +33,12 @@
 
         runTest = function()
         {
-            document.getElementById('aFrame').setAttributeNS(null, "src", 'javascript:"FAIL: this should not have been loaded."');
+            var frame = document.getElementById('aFrame');
+            frame.setAttributeNS(null, "src", 'javascript:"FAIL: this should not have been loaded."');
+            frame.setAttributeNS(null, "src", ' javascript:"FAIL: this should not have been loaded."');
+            frame.setAttributeNS(null, "src", 'java\0script:"FAIL: this should not have been loaded."');
+            frame.setAttributeNS(null, "src", 'javascript\t:"FAIL: this should not have been loaded."');
+            frame.setAttributeNS(null, "src", 'javascript\1:"FAIL: this should not have been loaded."');
         }
     </script>
 </head>

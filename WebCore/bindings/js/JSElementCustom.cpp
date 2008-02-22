@@ -30,6 +30,7 @@
 #include "config.h"
 #include "JSElement.h"
 
+#include "CSSHelper.h"
 #include "ExceptionCode.h"
 #include "HTMLFrameElementBase.h"
 #include "HTMLNames.h"
@@ -42,7 +43,7 @@ using namespace HTMLNames;
 
 static inline bool allowSettingSrcToJavascriptURL(ExecState* exec, Element* element, const String& name, const String& value)
 {
-    if ((element->hasTagName(iframeTag) || element->hasTagName(frameTag)) && equalIgnoringCase(name, "src") && protocolIs(value, "javascript")) {
+    if ((element->hasTagName(iframeTag) || element->hasTagName(frameTag)) && equalIgnoringCase(name, "src") && protocolIs(parseURL(value), "javascript")) {
         HTMLFrameElementBase* frame = static_cast<HTMLFrameElementBase*>(element);
         if (!checkNodeSecurity(exec, frame->contentDocument()))
             return false;

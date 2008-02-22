@@ -1,3 +1,21 @@
+2008-02-21  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Fix for <rdar://problem/5757946>
+
+        - Parse URLs before checking whether they are javascript: urls
+          (which require security checks).
+
+        * bindings/js/JSAttrCustom.cpp:
+        (WebCore::JSAttr::setValue):
+        * bindings/js/JSElementCustom.cpp:
+        (WebCore::allowSettingSrcToJavascriptURL):
+        * bindings/js/JSHTMLFrameElementCustom.cpp:
+        (WebCore::allowSettingJavascriptURL):
+        * bindings/js/JSHTMLIFrameElementCustom.cpp:
+        (WebCore::JSHTMLIFrameElement::setSrc):
+
 2008-02-21  Ada Chan  <adachan@apple.com>
 
         <rdar://problem/5757873> Buffer overrun in DeprecatedCString::find() in WebCore

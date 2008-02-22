@@ -29,6 +29,7 @@
 #include "config.h"
 #include "JSHTMLIFrameElement.h"
 
+#include "CSSHelper.h"
 #include "HTMLIFrameElement.h"
 
 using namespace KJS;
@@ -41,7 +42,7 @@ void JSHTMLIFrameElement::setSrc(ExecState* exec, JSValue* value)
 
     String srcValue = valueToStringWithNullCheck(exec, value);
 
-    if (protocolIs(srcValue, "javascript")) {
+    if (protocolIs(parseURL(srcValue), "javascript")) {
         if (!checkNodeSecurity(exec, imp->contentDocument()))
             return;
     }

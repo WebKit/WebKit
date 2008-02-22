@@ -28,7 +28,12 @@
 
         runTest = function()
         {
-            document.getElementById('aFrame').location = 'javascript:"FAIL: this should not have been loaded."';
+            var frame = document.getElementById('aFrame');
+            frame.location = 'javascript:"FAIL: this should not have been loaded."';
+            frame.location = ' javascript:"FAIL: this should not have been loaded."';
+            frame.location = 'java\0script:"FAIL: this should not have been loaded."';
+            frame.location = 'javascript\t:"FAIL: this should not have been loaded."';
+            frame.location = 'javascript\1:"FAIL: this should not have been loaded."';
         }
     </script>
 </head>

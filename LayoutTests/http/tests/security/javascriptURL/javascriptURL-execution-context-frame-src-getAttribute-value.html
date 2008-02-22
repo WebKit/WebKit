@@ -31,6 +31,11 @@
             // Get old Attribute node and use Attribute.value.
             var oldSrc = document.getElementById('aFrame').getAttributeNode('src');
             oldSrc.value = 'javascript:"FAIL: this should not have been loaded."';
+            oldSrc.value = ' javascript:"FAIL: this should not have been loaded."';
+            oldSrc.value = 'java\0script:"FAIL: this should not have been loaded."';
+            oldSrc.value = 'javascript\t:"FAIL: this should not have been loaded."';
+            oldSrc.value = 'javascript\1:"FAIL: this should not have been loaded."';
+
         }
     </script>
 </head>
