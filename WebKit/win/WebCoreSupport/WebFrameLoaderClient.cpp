@@ -30,18 +30,26 @@
 #include "WebFrameLoaderClient.h"
 
 #include "WebDocumentLoader.h"
+#include "WebFrame.h"
 #pragma warning(push, 0)
 #include <WebCore/DocumentLoader.h>
 #pragma warning(pop)
 
 using namespace WebCore;
 
-WebFrameLoaderClient::WebFrameLoaderClient()
+WebFrameLoaderClient::WebFrameLoaderClient(WebFrame* webFrame)
+    : m_webFrame(webFrame)
 {
+    ASSERT_ARG(webFrame, webFrame);
 }
 
 WebFrameLoaderClient::~WebFrameLoaderClient()
 {
+}
+
+bool WebFrameLoaderClient::hasWebView() const
+{
+    return m_webFrame->webView();
 }
 
 PassRefPtr<DocumentLoader> WebFrameLoaderClient::createDocumentLoader(const ResourceRequest& request, const SubstituteData& substituteData)

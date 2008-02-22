@@ -37,11 +37,14 @@ class WebFrame;
 
 class WebFrameLoaderClient : public WebCore::FrameLoaderClient {
 public:
+    virtual bool hasWebView() const;
     virtual PassRefPtr<WebCore::DocumentLoader> createDocumentLoader(const WebCore::ResourceRequest&, const WebCore::SubstituteData&);
 
 protected:
-    WebFrameLoaderClient();
+    WebFrameLoaderClient(WebFrame*);
     ~WebFrameLoaderClient();
+
+    WebFrame* m_webFrame;
 };
 
 #endif // WebFrameLoaderClient_h

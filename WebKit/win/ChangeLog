@@ -1,5 +1,27 @@
 2008-02-22  Adam Roben  <aroben@apple.com>
 
+        Move hasWebView to WebFrameLoaderClient
+
+        I added an m_webFrame member to WebFrameLoaderClient. This is slightly
+        strange because WebFrame inherits from WebFrameLoaderClient, but this
+        member will be needed once we remove the inheritance, so we might as
+        well prepare for that now.
+
+        Reviewed by Anders.
+
+        * WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebFrameLoaderClient::WebFrameLoaderClient): Changed to take a
+        WebFrame* parameter.
+        (WebFrameLoaderClient::hasWebView): Moved here from WebFrame.cpp.
+        * WebCoreSupport/WebFrameLoaderClient.h: Added an m_webFrame
+        parameter.
+        * WebFrame.cpp: Removed hasWebView.
+        (WebFrame::WebFrame): Updated for WebFrameLoaderClient constructor
+        change.
+        * WebFrame.h:
+
+2008-02-22  Adam Roben  <aroben@apple.com>
+
         Start to move FrameLoaderClient methods off WebFrame onto a separate class
 
         WebFrame now inherits from a new WebFrameLoaderClient class, which

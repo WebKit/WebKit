@@ -217,7 +217,6 @@ public:
     
     // FrameLoaderClient
     virtual void frameLoaderDestroyed();
-    virtual bool hasWebView() const;
     virtual bool hasFrameView() const;
     virtual void makeRepresentation(WebCore::DocumentLoader*);
     virtual void forceLayout();
@@ -354,6 +353,8 @@ public:
 
     virtual void attachScriptDebugger();
     virtual void detachScriptDebugger();
+
+    WebView* webView() const;
 
 protected:
     PassRefPtr<WebCore::Frame> createFrame(const WebCore::KURL&, const WebCore::String& name, WebCore::HTMLFrameOwnerElement*, const WebCore::String& referrer);
