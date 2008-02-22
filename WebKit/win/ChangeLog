@@ -1,5 +1,29 @@
 2008-02-22  Adam Roben  <aroben@apple.com>
 
+        Start to move FrameLoaderClient methods off WebFrame onto a separate class
+
+        WebFrame now inherits from a new WebFrameLoaderClient class, which
+        will gradually assume all FrameLoaderClient responsibilities. Once
+        that process is complete, WebFrame will no longer inherit from
+        WebFrameLoaderClient.
+
+        In this first patch, I've only moved createDocumentLoader up to the
+        WebFrameLoaderClient class.
+
+        Reviewed by Anders.
+
+        * WebCoreSupport/WebFrameLoaderClient.cpp: Added.
+        (WebFrameLoaderClient::WebFrameLoaderClient):
+        (WebFrameLoaderClient::~WebFrameLoaderClient):
+        (WebFrameLoaderClient::createDocumentLoader): Moved here from
+        WebFrame.cpp.
+        * WebCoreSupport/WebFrameLoaderClient.h: Added.
+        * WebFrame.cpp: Removed createDocumentLoader implementation.
+        * WebFrame.h: Changed to inherit from WebFrameLoaderClient.
+        * WebKit.vcproj/WebKit.vcproj: Added new files to the project.
+
+2008-02-22  Adam Roben  <aroben@apple.com>
+
         Move FormValuesPropertyBag into its own files
 
         Reviewed by Sam.

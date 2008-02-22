@@ -1648,17 +1648,6 @@ bool WebFrame::canCachePage() const
     return true;
 }
 
-PassRefPtr<DocumentLoader> WebFrame::createDocumentLoader(const ResourceRequest& request, const SubstituteData& substituteData)
-{
-    RefPtr<WebDocumentLoader> loader = new WebDocumentLoader(request, substituteData);
- 
-    COMPtr<WebDataSource> dataSource;
-    dataSource.adoptRef(WebDataSource::createInstance(loader.get()));
-
-    loader->setDataSource(dataSource.get());
-    return loader.release();
-}
-
 void WebFrame::setMainDocumentError(DocumentLoader*, const ResourceError& error)
 {
     if (d->m_pluginView) {

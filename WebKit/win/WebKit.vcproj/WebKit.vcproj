@@ -1642,6 +1642,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\WebCoreSupport\WebFrameLoaderClient.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\WebCoreSupport\WebFrameLoaderClient.h"
+				>
+			</File>
+			<File
 				RelativePath="..\WebCoreSupport\WebInspectorClient.cpp"
 				>
 			</File>

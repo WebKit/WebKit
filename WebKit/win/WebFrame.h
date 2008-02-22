@@ -26,11 +26,12 @@
 #ifndef WebFrame_H
 #define WebFrame_H
 
+#include "WebFrameLoaderClient.h"
+
 #include "WebKit.h"
 #include "WebDataSource.h"
 
 #pragma warning(push, 0)
-#include <WebCore/FrameLoaderClient.h>
 #include <WebCore/FrameWin.h>
 #include <WebCore/KURL.h>
 #include <WebCore/PlatformString.h>
@@ -70,7 +71,7 @@ WebCore::Frame* core(WebFrame*);
 extern const GUID IID_WebFrame;
 
 class WebFrame : public IWebFrame, IWebFramePrivate, IWebDocumentText
-    , public WebCore::FrameLoaderClient
+    , public WebFrameLoaderClient
 {
 public:
     static WebFrame* createInstance();
@@ -275,7 +276,6 @@ public:
     virtual bool shouldGoToHistoryItem(WebCore::HistoryItem *) const;
     virtual void saveViewStateToItem(WebCore::HistoryItem *);
     virtual bool canCachePage(void) const;
-    virtual PassRefPtr<WebCore::DocumentLoader> createDocumentLoader(const WebCore::ResourceRequest&, const WebCore::SubstituteData&);
     virtual void setMainDocumentError(WebCore::DocumentLoader*, const WebCore::ResourceError&);
     virtual WebCore::ResourceError cancelledError(const WebCore::ResourceRequest&);
     virtual WebCore::ResourceError blockedError(const WebCore::ResourceRequest&);
