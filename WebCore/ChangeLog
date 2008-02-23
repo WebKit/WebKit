@@ -1,5 +1,12 @@
 2008-02-23  Alexey Proskuryakov  <ap@webkit.org>
 
+        Windows build fix - move ThreadCondition implementation from WebCore to WTF.
+
+        * WebCore.vcproj/WebCore.vcproj:
+        * platform/win/ThreadConditionWin.cpp: Removed.
+
+2008-02-23  Alexey Proskuryakov  <ap@webkit.org>
+
         Reviewed by Darin.
 
         Move basic threading support from WebCore to WTF.

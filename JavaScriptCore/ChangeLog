@@ -1,5 +1,16 @@
 2008-02-23  Alexey Proskuryakov  <ap@webkit.org>
 
+        Windows build fix - move ThreadCondition implementation from WebCore to WTF.
+
+        * wtf/ThreadingWin.cpp:
+        (WTF::ThreadCondition::ThreadCondition):
+        (WTF::ThreadCondition::~ThreadCondition):
+        (WTF::ThreadCondition::wait):
+        (WTF::ThreadCondition::signal):
+        (WTF::ThreadCondition::broadcast):
+
+2008-02-23  Alexey Proskuryakov  <ap@webkit.org>
+
         Touch some files, hoping that Windows build bot will create JSC headers.
 
         * kjs/AllInOneFile.cpp:
