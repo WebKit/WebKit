@@ -1,3 +1,11 @@
+2008-02-23  Dan Bernstein  <mitz@apple.com>
+
+        Rubber-stamped by Sam Weinig and Anders Carlsson.
+
+        - updated results for <rdar://problem/5714333> Add document.getSelection()
+
+        * fast/dom/Window/window-properties-expected.txt:
+
 2008-02-22  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin.
