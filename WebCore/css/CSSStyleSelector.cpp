@@ -45,7 +45,6 @@
 #include "CachedImage.h"
 #include "Counter.h"
 #include "DashboardRegion.h"
-#include "DeprecatedString.h"
 #include "FontFamilyValue.h"
 #include "FontValue.h"
 #include "Frame.h"
@@ -68,6 +67,7 @@
 #include "UserAgentStyleSheets.h"
 #include "XMLNames.h"
 #include "loader.h"
+#include <wtf/Vector.h>
 
 #if ENABLE(SVG)
 #include "XLinkNames.h"
@@ -568,63 +568,55 @@ void CSSStyleSelector::initForStyleResolve(Element* e, RenderStyle* defaultParen
     m_fontDirty = false;
 }
 
-static int findHash(const DeprecatedString& string)
+static inline int findSlashDotDotSlash(const UChar* characters, size_t length)
 {
-    const ::UChar* ptr = reinterpret_cast<const ::UChar*>(string.unicode());
-    unsigned length = string.length();
-    for (unsigned i = 0; i < length; ++i) {
-        if (ptr[i] == '#')
-            return i;
-    }
-    return -1;
-}
-
-static inline int findSlashDotDotSlash(const DeprecatedString& string)
-{
-    const ::UChar* ptr = reinterpret_cast<const ::UChar*>(string.unicode());
-    unsigned length = string.length();
     unsigned loopLimit = length < 4 ? 0 : length - 3;
     for (unsigned i = 0; i < loopLimit; ++i) {
-        if (ptr[i] == '/' && ptr[i + 1] == '.' && ptr[i + 2] == '.' && ptr[i + 3] == '/')
+        if (characters[i] == '/' && characters[i + 1] == '.' && characters[i + 2] == '.' && characters[i + 3] == '/')
             return i;
     }
     return -1;
 }
 
-static inline int findSlashSlash(const DeprecatedString& string, int position)
+static inline int findSlashSlash(const UChar* characters, size_t length, int position)
 {
-    const ::UChar* ptr = reinterpret_cast<const ::UChar*>(string.unicode());
-    unsigned length = string.length();
     unsigned loopLimit = length < 2 ? 0 : length - 1;
     for (unsigned i = position; i < loopLimit; ++i) {
-        if (ptr[i] == '/' && ptr[i + 1] == '/')
+        if (characters[i] == '/' && characters[i + 1] == '/')
             return i;
     }
     return -1;
 }
 
-static inline int findSlashDotSlash(const DeprecatedString& string)
+static inline int findSlashDotSlash(const UChar* characters, size_t length)
 {
-    const ::UChar* ptr = reinterpret_cast<const ::UChar*>(string.unicode());
-    unsigned length = string.length();
     unsigned loopLimit = length < 3 ? 0 : length - 2;
     for (unsigned i = 0; i < loopLimit; ++i) {
-        if (ptr[i] == '/' && ptr[i + 1] == '.' && ptr[i + 2] == '/')
+        if (characters[i] == '/' && characters[i + 1] == '.' && characters[i + 2] == '/')
             return i;
     }
     return -1;
 }
 
-static void cleanpath(DeprecatedString& path)
+static inline bool containsColonSlashSlash(const UChar* characters, unsigned length)
+{
+    unsigned loopLimit = length < 3 ? 0 : length - 2;
+    for (unsigned i = 0; i < loopLimit; ++i)
+        if (characters[i] == ':' && characters[i + 1] == '/' && characters[i + 2] == '/')
+            return true;
+    return false;
+}
+
+static void cleanPath(String& path)
 {
     int pos;
 
-    while ((pos = findSlashDotDotSlash(path)) != -1) {
+    while ((pos = findSlashDotDotSlash(path.characters(), path.length())) != -1) {
         int prev = 0;
         if (pos > 0)
-            prev = path.findRev("/", pos - 1);
+            prev = path.reverseFind("/", pos - 1);
         // don't remove the host, i.e. http://foo.org/../foo.html
-        if (prev < 0 || (prev > 3 && path.findRev("://", prev - 1) == prev - 2))
+        if (prev < 0 || (prev > 3 && path.reverseFind("://", prev - 1) == prev - 2))
             path.remove(pos, 3);
         else
             // matching directory found ?
@@ -637,9 +629,9 @@ static void cleanpath(DeprecatedString& path)
     // in the vast majority of cases where there is no "//" in the path.
     pos = 0;
     int refPos = -2;
-    while ((pos = findSlashSlash(path, pos)) != -1) {
+    while ((pos = findSlashSlash(path.characters(), path.length(), pos)) != -1) {
         if (refPos == -2)
-            refPos = findHash(path);
+            refPos = find(path.characters(), path.length(), '#');
         if (refPos > 0 && pos >= refPos)
             break;
         
@@ -650,17 +642,8 @@ static void cleanpath(DeprecatedString& path)
     }
 
     // FIXME: We don't want to remove "/./" from an anchor identifier either.
-    while ((pos = findSlashDotSlash(path)) != -1)
+    while ((pos = findSlashDotSlash(path.characters(), path.length())) != -1)
         path.remove(pos, 2);
-}
-
-static inline bool containsColonSlashSlash(const UChar* characters, unsigned length)
-{
-    unsigned loopLimit = length < 3 ? 0 : length - 2;
-    for (unsigned i = 0; i < loopLimit; ++i)
-        if (characters[i] == ':' && characters[i + 1] == '/' && characters[i + 2] == '/')
-            return true;
-    return false;
 }
 
 static void checkPseudoState(Element *e, bool checkVisited = true)
@@ -701,17 +684,22 @@ static void checkPseudoState(Element *e, bool checkVisited = true)
         return;
     }
 
-    DeprecatedConstString cu(reinterpret_cast<const DeprecatedChar*>(characters), length);
-    DeprecatedString u = cu.string();
-    if (length && characters[0] == '/')
-        u.prepend(reinterpret_cast<const DeprecatedChar*>(currentEncodedURL->prefix.characters()), currentEncodedURL->prefix.length());
-    else if (length && characters[0] == '#')
-        u.prepend(reinterpret_cast<const DeprecatedChar*>(currentEncodedURL->file.characters()), currentEncodedURL->file.length());
-    else
-        u.prepend(reinterpret_cast<const DeprecatedChar*>(currentEncodedURL->path.characters()), currentEncodedURL->path.length());
-    cleanpath(u);
-    pseudoState = historyContains(reinterpret_cast<const UChar*>(u.unicode()), u.length())
-        ? PseudoVisited : PseudoLink;
+    Vector<UChar> buffer;
+    if (length && characters[0] == '/') {
+        buffer.reserveCapacity(length + currentEncodedURL->prefix.length());
+        buffer.append(currentEncodedURL->prefix.characters(), currentEncodedURL->prefix.length());
+    } else if (length && characters[0] == '#') {
+        buffer.reserveCapacity(length + currentEncodedURL->file.length());
+        buffer.append(currentEncodedURL->file.characters(), currentEncodedURL->file.length());
+    } else {
+        buffer.reserveCapacity(length + currentEncodedURL->path.length());
+        buffer.append(currentEncodedURL->path.characters(), currentEncodedURL->path.length());
+    }
+    buffer.append(characters, length);
+
+    String path = String::adopt(buffer);
+    cleanPath(path);
+    pseudoState = historyContains(path.characters(), path.length()) ? PseudoVisited : PseudoLink;
 }
 
 // a helper function for parsing nth-arguments

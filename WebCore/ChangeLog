@@ -1,3 +1,18 @@
+2008-02-22  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Geoff Garen.
+
+        - Remove use of DeprecatedString in CSSStyleSelector.
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::findHash): Removed.  Use find instead.
+        (WebCore::findSlashDotDotSlash): Changed to take a UChar* and a length.
+        (WebCore::findSlashSlash): Ditto.
+        (WebCore::findSlashDotSlash): Ditto.
+        (WebCore::containsColonSlashSlash): Ditto.
+        (WebCore::cleanPath): Change to operate on a String.
+        (WebCore::checkPseudoState): Changed to use a Vector as a buffer.
+
 2008-02-22  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Sam Weinig.
