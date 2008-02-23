@@ -27,6 +27,7 @@
 #include "ImageBuffer.h"
 
 #include "GraphicsContext.h"
+#include "ImageData.h"
 #include "NotImplemented.h"
 
 #include <QPainter>

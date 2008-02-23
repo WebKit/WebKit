@@ -28,8 +28,10 @@
 #include "ImageBuffer.h"
 
 #include "GraphicsContext.h"
-#include <cairo.h>
+#include "ImageData.h"
 #include "NotImplemented.h"
+
+#include <cairo.h>
 
 using namespace std;
 
