@@ -34,7 +34,7 @@
 
 #include <glib.h>
 
-namespace WebCore {
+namespace WTF {
 
 void initializeThreading()
 {
