@@ -23,6 +23,7 @@
 
 #include <QCoreApplication>
 
+#include "PlatformString.h"
 #include <wtf/Platform.h>
 
 // FIXME: It's not correct to just implement a WebCore function in WebKit!

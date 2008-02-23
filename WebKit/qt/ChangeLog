@@ -1,5 +1,11 @@
 2008-02-22  Sam Weinig  <sam@webkit.org>
 
+        Fix Qt build.
+
+        * Api/qwebhistoryinterface.cpp:
+
+2008-02-22  Sam Weinig  <sam@webkit.org>
+
         Rubber-stamped by Adam Roben.
 
         Rid the project of the Devil known as DeprecatedString!
