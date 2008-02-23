@@ -29,7 +29,7 @@
 #include "config.h"
 #include "Threading.h"
 
-namespace WebCore {
+namespace WTF {
 
 ThreadIdentifier createThread(ThreadFunction, void*) { return 0; }
 int waitForThreadCompletion(ThreadIdentifier, void**) { return 0; }

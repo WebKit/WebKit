@@ -1,5 +1,11 @@
 2008-02-23  Alexey Proskuryakov  <ap@webkit.org>
 
+        Qt/Wx build fix - this file was still in a wrong namespace, too.
+
+        * wtf/ThreadingNone.cpp:
+
+2008-02-23  Alexey Proskuryakov  <ap@webkit.org>
+
         More build fixing - fix mismatched braces.
 
         * JavaScriptCore.pri:
