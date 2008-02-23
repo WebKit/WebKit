@@ -41,6 +41,7 @@
 #include "DocumentFragment.h"
 #include "DocumentLoader.h"
 #include "DocumentType.h"
+#include "DOMWindow.h"
 #include "EditingText.h"
 #include "Editor.h"
 #include "EditorClient.h"
@@ -3765,6 +3766,12 @@ void Document::updateFocusAppearanceTimerFired(Timer<Document>*)
     Element* element = static_cast<Element*>(node);
     if (element->isFocusable())
         element->updateFocusAppearance(false);
+}
+
+// FF method for accessing the selection added for compatability.
+DOMSelection* Document::getSelection() const
+{
+    return frame() ? frame()->domWindow()->getSelection() : 0;
 }
 
 #if ENABLE(DATABASE)

@@ -60,6 +60,7 @@ namespace WebCore {
     class Comment;
     class Database;
     class DOMImplementation;
+    class DOMSelection;
     class DOMWindow;
     class DatabaseThread;
     class DocLoader;
@@ -689,6 +690,9 @@ public:
 
     void updateFocusAppearanceSoon();
     void cancelFocusAppearanceUpdate();
+    
+    // FF method for accessing the selection added for compatability.
+    DOMSelection* getSelection() const;
     
 private:
     CSSStyleSelector* m_styleSelector;

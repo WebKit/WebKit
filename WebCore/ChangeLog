@@ -1,3 +1,20 @@
+2008-02-22  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        <rdar://problem/5714333> Add document.getSelection()
+        
+        Add a synonym for window.getSelection() that FF supports.  There were requests in
+        this bugs dupes to also support the IE only document.selection, but IE's Selection
+        object is too different than ours currently for that to be safe (specifically, we
+        don't support enough of IE's TextRange methods on our DOM Range object yet). I
+        filed <rdar://problem/5761233> to cover that.
+
+        * dom/Document.cpp:
+        (WebCore::Document::getSelection): Added.
+        * dom/Document.h:
+        * dom/Document.idl: Ditto.  JS only since this is about web compatibility.
+
 2008-02-22  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by NOBODY (build fix).
