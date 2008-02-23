@@ -1,3 +1,37 @@
+2008-02-22  Dan Bernstein  <mitz@apple.com>
+
+        - update Tiger expected results following r30431
+
+        * platform/mac-tiger/svg/W3C-SVG-1.1/text-tselect-02-f-expected.txt:
+        * platform/mac-tiger/svg/custom/foreignObject-crash-on-hover-expected.txt:
+        * platform/mac-tiger/svg/custom/text-dom-01-f-expected.txt:
+        * platform/mac-tiger/svg/custom/text-hit-test-expected.txt:
+        * platform/mac-tiger/svg/text/text-align-01-b-expected.txt:
+        * platform/mac-tiger/svg/text/text-align-02-b-expected.txt:
+        * platform/mac-tiger/svg/text/text-align-03-b-expected.txt:
+        * platform/mac-tiger/svg/text/text-align-04-b-expected.txt:
+        * platform/mac-tiger/svg/text/text-align-05-b-expected.txt:
+        * platform/mac-tiger/svg/text/text-align-06-b-expected.txt:
+        * platform/mac-tiger/svg/text/text-altglyph-01-b-expected.txt:
+        * platform/mac-tiger/svg/text/text-deco-01-b-expected.txt:
+        * platform/mac-tiger/svg/text/text-fonts-01-t-expected.txt:
+        * platform/mac-tiger/svg/text/text-fonts-02-t-expected.txt:
+        * platform/mac-tiger/svg/text/text-path-01-b-expected.txt:
+        * platform/mac-tiger/svg/text/text-spacing-01-b-expected.txt:
+        * platform/mac-tiger/svg/text/text-text-01-b-expected.txt:
+        * platform/mac-tiger/svg/text/text-text-03-b-expected.txt:
+        * platform/mac-tiger/svg/text/text-text-04-t-expected.txt:
+        * platform/mac-tiger/svg/text/text-text-05-t-expected.txt:
+        * platform/mac-tiger/svg/text/text-text-06-t-expected.txt:
+        * platform/mac-tiger/svg/text/text-text-07-t-expected.txt:
+        * platform/mac-tiger/svg/text/text-text-08-b-expected.txt:
+        * platform/mac-tiger/svg/text/text-tref-01-b-expected.txt:
+        * platform/mac-tiger/svg/text/text-tselect-01-b-expected.txt:
+        * platform/mac-tiger/svg/text/text-tselect-02-f-expected.txt:
+        * platform/mac-tiger/svg/text/text-tspan-01-b-expected.txt:
+        * platform/mac-tiger/svg/text/text-ws-01-t-expected.txt:
+        * platform/mac-tiger/svg/text/text-ws-02-t-expected.txt:
+
 2008-02-22  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Anders.
