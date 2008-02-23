@@ -119,11 +119,9 @@ qt-port:SOURCES += \
 
 gtk-port:SOURCES += \
     wtf/ThreadingGtk.cpp
-}
 
 !gtk-port:SOURCES += \
     wtf/ThreadingNone.cpp
-}
 
 !CONFIG(QTDIR_build) {
     defineTest(addExtraCompiler) {

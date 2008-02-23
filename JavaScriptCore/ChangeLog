@@ -1,5 +1,11 @@
 2008-02-23  Alexey Proskuryakov  <ap@webkit.org>
 
+        More build fixing - fix mismatched braces.
+
+        * JavaScriptCore.pri:
+
+2008-02-23  Alexey Proskuryakov  <ap@webkit.org>
+
         Wx and Gtk build fixes.
 
         * JavaScriptCore.pri: Don't try to compile ThreadingPthreads.
