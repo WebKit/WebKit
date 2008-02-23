@@ -1,5 +1,11 @@
 2008-02-23  Dan Bernstein  <mitz@apple.com>
 
+        - undo an accidental change to a test's expected results from r30431.
+
+        * fast/js/date-DST-time-cusps-expected.txt:
+
+2008-02-23  Dan Bernstein  <mitz@apple.com>
+
         Rubber-stamped by Sam Weinig and Anders Carlsson.
 
         - updated results for <rdar://problem/5714333> Add document.getSelection()
