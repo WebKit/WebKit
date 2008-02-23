@@ -1,3 +1,20 @@
+2008-02-22  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        A few tweaks to PCRE-based regex test suite.
+
+        * fast/regex/pcre-test-runner.js: Added support for global regexes. Emulate PCRE test runner
+        more precisely by trimming trailing whitespace from some lines.
+
+        * fast/regex/test1-expected.txt:
+        * fast/regex/test4-expected.txt:
+        * fast/regex/testinput1:
+        * fast/regex/testinput4:
+        * fast/regex/testoutput1:
+        * fast/regex/testoutput4:
+        Updated to PCRE 7.6.
+
 2008-02-22  Dan Bernstein  <mitz@apple.com>
 
         - update Tiger expected results following r30431

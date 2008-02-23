@@ -3234,4 +3234,15 @@
 /(  (?(1)0|)*   )/x
     abcd
 
+/[[:abcd:xyz]]/
+    a]
+    :] 
+    
+/[abc[:x\]pqr]/
+    a
+    [
+    :
+    ]
+    p    
+
 / End of testinput1 /

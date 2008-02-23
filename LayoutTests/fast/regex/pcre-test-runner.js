@@ -57,6 +57,10 @@ function replaceEscapes(str) {
     return str;
 }
 
+function removeTrailingSpaces(str) {
+    return str.replace(/ *$/, '');
+}
+
 function runPCRETest(number, name) {
     log(name + "\n");
 
@@ -85,10 +89,11 @@ function runPCRETest(number, name) {
 
         regexpText = replaceEscapes(regexpText);
         for (n = linesInRegexp; n < testLines.length; ++n) {
-           testLines[n] = replaceEscapes(testLines[n]);
+            // Some tests have trailing whitespace that needs to be ignored - but not if it is encoded.
+            testLines[n] = replaceEscapes(removeTrailingSpaces(testLines[n]));
         }
         for (n = linesInRegexp; n < resultLines.length; ++n) {
-           resultLines[n] = replaceEscapes(resultLines[n]);
+            resultLines[n] = replaceEscapes(resultLines[n]);
         }
 
         var regexp = null;
@@ -108,31 +113,40 @@ function runPCRETest(number, name) {
             log("FAILED TO COMPILE\n");
             continue;
         }
-        if (regexp.global) {
-            log("Global regex, cannot test matching via JS\n");
-            continue;
-        }
 
         var resultsRow = linesInRegexp;
         for (j = linesInRegexp; j < testLines.length; ++j) {
             var testLine = testLines[j];
             var failersLine = (/\*\*\* Failers/.test(testLine));
-            var actualResults = regexp.exec(testLine.replace(/^    /, ""));
-            if (resultLines[resultsRow] != testLine)
+
+            // There is a slight discrepancy in the ways input and output strings are decoded, so the test below has
+            // to be less specific than it could be. No big deal, as it's just a sanity check for debugging.
+            if (removeTrailingSpaces(resultLines[resultsRow]) != removeTrailingSpaces(testLine))
                 log('Test results out of sync, "' + resultLines[resultsRow] + '" vs. "' + testLine + '".');
+
             ++resultsRow;
-            var expectedResults = null;
-            while (/ *[0-9]+: .*/.test(resultLines[resultsRow])) {
-                if (!expectedResults)
-                    expectedResults = [];
-                expectedResults[expectedResults.length] = resultLines[resultsRow++].replace(/ *[0-9]*: /, "");
+            while (/^ {0,1}[0-9]+: .*/.test(resultLines[resultsRow]) || /^No match$/.test(resultLines[resultsRow])) {
+
+                var actualResults = regexp.exec(testLine.replace(/^    /, ""));
+                var expectedResults = null;
+                while (/^ {0,1}[0-9]+: .*/.test(resultLines[resultsRow])) {
+                    var startOfNewResultArray = /^ {0,1}0: .*/.test(resultLines[resultsRow]);
+                    if (!expectedResults)
+                        expectedResults = [];
+                    else if (startOfNewResultArray)
+                        break;
+                    var resultLineWithoutNumber = resultLines[resultsRow++].replace(/^ {0,1}[0-9]*: /, "");
+                    if (resultLineWithoutNumber == "<unset>")
+                        resultLineWithoutNumber = undefined;
+                    expectedResults[expectedResults.length] = resultLineWithoutNumber;
+                }
+                if (/^No match$/.test(resultLines[resultsRow]))
+                    ++resultsRow;
+                if ((actualResults === null && expectedResults === null) || (actualResults && expectedResults && actualResults.toString() == expectedResults.toString()))
+                    log(testLine + (failersLine ? "" : ": PASS"));
+                else
+                    log(testLine + ': FAIL. Actual results: "' + actualResults /*+ '"; expected: "' + expectedResults*/ + '"');
             }
-            if (/^No match$/.test(resultLines[resultsRow]))
-                ++resultsRow;
-            if ((actualResults === null && expectedResults === null) || (actualResults && expectedResults && actualResults.toString() == expectedResults.toString()))
-                log(testLine + (failersLine ? "" : ": PASS"));
-            else
-                log(testLine + ': FAIL. Actual results: "' + actualResults + '"');
         }
         log("");
     }

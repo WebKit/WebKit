@@ -267,7 +267,7 @@ Test 1: main functionality.
     abde: PASS
 
 /^(?!(ab)de|x)(abd)(f)/
-    abdf: FAIL. Actual results: "abdf,,abd,f"
+    abdf: PASS
 
 /^(?=(ab(cd)))(ab)/
     abcd: PASS
@@ -377,7 +377,7 @@ FAILED TO COMPILE
 /(cat(a(ract|tonic)|erpillar)) \1()2(3)/
     cataract cataract23: PASS
     catatonic catatonic23: PASS
-    caterpillar caterpillar23: FAIL. Actual results: "caterpillar caterpillar23,caterpillar,erpillar,,,3"
+    caterpillar caterpillar23: PASS
 
 
 FAILED TO COMPILE
@@ -576,7 +576,7 @@ FAILED TO COMPILE
 
 /\Aabc\Z/m
     abc: FAIL. Actual results: "null"
-    abc\n : FAIL. Actual results: "null"
+    abc\n: FAIL. Actual results: "null"
     *** Failers
     qqq\nabc: PASS
     abc\nzzz: PASS
@@ -715,20 +715,20 @@ FAILED TO COMPILE
     bacccd: PASS
     *** Failers
     anything: PASS
-    b\bc   : FAIL. Actual results: "b\bc   ,b,\,b,c   "
+    b\bc: PASS
     baccd: PASS
 
 /[^a]/
     Abc: PASS
 
 /[^a]/i
-    Abc : PASS
+    Abc: PASS
 
 /[^a]+/
     AAAaAbc: PASS
 
 /[^a]+/i
-    AAAaAbc : FAIL. Actual results: "bc "
+    AAAaAbc: PASS
 
 /[^a]+/
     bbb\nccc: FAIL. Actual results: "bbb\nccc"
@@ -736,45 +736,45 @@ FAILED TO COMPILE
 /[^k]$/
     abc: PASS
     *** Failers
-    abk   : FAIL. Actual results: " "
+    abk: PASS
 
 /[^k]{2,3}$/
     abc: PASS
     kbc: PASS
-    kabc : FAIL. Actual results: "bc "
+    kabc: PASS
     *** Failers
     abk: PASS
     akb: PASS
-    akk : PASS
+    akk: PASS
 
 /^\d{8,}\@.+[^k]$/
     12345678\@a.b.c.d: FAIL. Actual results: "null"
     123456789\@x.y.z: FAIL. Actual results: "null"
     *** Failers
     12345678\@x.y.uk: PASS
-    1234567\@a.b.c.d       : PASS
+    1234567\@a.b.c.d: PASS
 
 /(a)\1{8,}/
     aaaaaaaaa: PASS
     aaaaaaaaaa: PASS
     *** Failers
-    aaaaaaa   : PASS
+    aaaaaaa: PASS
 
 /[^a]/
     aaaabcd: PASS
-    aaAabcd : PASS
+    aaAabcd: PASS
 
 /[^a]/i
     aaaabcd: PASS
-    aaAabcd : PASS
+    aaAabcd: PASS
 
 /[^az]/
     aaaabcd: PASS
-    aaAabcd : PASS
+    aaAabcd: PASS
 
 /[^az]/i
     aaaabcd: PASS
-    aaAabcd : PASS
+    aaAabcd: PASS
 
 /\000\001\002\003\004\005\006\007\010\011\012\013\014\015\016\017\020\021\022\023\024\025\026\027\030\031\032\033\034\035\036\037\040\041\042\043\044\045\046\047\050\051\052\053\054\055\056\057\060\061\062\063\064\065\066\067\070\071\072\073\074\075\076\077\100\101\102\103\104\105\106\107\110\111\112\113\114\115\116\117\120\121\122\123\124\125\126\127\130\131\132\133\134\135\136\137\140\141\142\143\144\145\146\147\150\151\152\153\154\155\156\157\160\161\162\163\164\165\166\167\170\171\172\173\174\175\176\177\200\201\202\203\204\205\206\207\210\211\212\213\214\215\216\217\220\221\222\223\224\225\226\227\230\231\232\233\234\235\236\237\240\241\242\243\244\245\246\247\250\251\252\253\254\255\256\257\260\261\262\263\264\265\266\267\270\271\272\273\274\275\276\277\300\301\302\303\304\305\306\307\310\311\312\313\314\315\316\317\320\321\322\323\324\325\326\327\330\331\332\333\334\335\336\337\340\341\342\343\344\345\346\347\350\351\352\353\354\355\356\357\360\361\362\363\364\365\366\367\370\371\372\373\374\375\376\377/
 FAILED TO COMPILE
@@ -787,14 +787,14 @@ FAILED TO COMPILE
 
 /(\.\d\d[1-9]?)\d+/
     1.230003938: PASS
-    1.875000282   : PASS
-    1.235  : PASS
+    1.875000282: PASS
+    1.235: PASS
 
 /(\.\d\d((?=0)|\d(?=\d)))/
-    1.230003938      : PASS
+    1.230003938: PASS
     1.875000282: PASS
-    *** Failers 
-    1.235 : PASS
+    *** Failers
+    1.235: PASS
 
 /a(?)b/
 FAILED TO COMPILE
@@ -841,24 +841,24 @@ FAILED TO COMPILE
     ABC123: PASS
 
 /^[W-]46]/
-    W46]789 : PASS
+    W46]789: PASS
     -46]789: PASS
     *** Failers
     Wall: PASS
     Zebra: PASS
     42: PASS
-    [abcd] : PASS
+    [abcd]: PASS
     ]abcd[: PASS
 
 /^[W-\]46]/
-    W46]789 : PASS
+    W46]789: PASS
     Wall: PASS
     Zebra: PASS
-    Xylophone  : PASS
+    Xylophone: PASS
     42: PASS
-    [abcd] : PASS
+    [abcd]: PASS
     ]abcd[: PASS
-    \\backslash : PASS
+    \\backslash: PASS
     *** Failers
     -46]789: PASS
     well: PASS
@@ -876,53 +876,53 @@ FAILED TO COMPILE
 /^(a){0,0}/
     bcd: FAIL. Actual results: ","
     abc: FAIL. Actual results: ","
-    aab     : FAIL. Actual results: ","
+    aab: FAIL. Actual results: ","
 
 /^(a){0,1}/
     bcd: FAIL. Actual results: ","
     abc: PASS
-    aab  : PASS
+    aab: PASS
 
 /^(a){0,2}/
     bcd: FAIL. Actual results: ","
     abc: PASS
-    aab  : PASS
+    aab: PASS
 
 /^(a){0,3}/
     bcd: FAIL. Actual results: ","
     abc: PASS
     aab: PASS
-    aaa   : PASS
+    aaa: PASS
 
 /^(a){0,}/
     bcd: FAIL. Actual results: ","
     abc: PASS
     aab: PASS
     aaa: PASS
-    aaaaaaaa    : PASS
+    aaaaaaaa: PASS
 
 /^(a){1,1}/
     bcd: PASS
     abc: PASS
-    aab  : PASS
+    aab: PASS
 
 /^(a){1,2}/
     bcd: PASS
     abc: PASS
-    aab  : PASS
+    aab: PASS
 
 /^(a){1,3}/
     bcd: PASS
     abc: PASS
     aab: PASS
-    aaa   : PASS
+    aaa: PASS
 
 /^(a){1,}/
     bcd: PASS
     abc: PASS
     aab: PASS
     aaa: PASS
-    aaaaaaaa    : PASS
+    aaaaaaaa: PASS
 
 /.*\.gif/
     borfle\nbib.gif\nno: FAIL. Actual results: "borfle\nbib.gif"
@@ -965,25 +965,25 @@ FAILED TO COMPILE
 
 /(.*X|^B)/
     abcde\n1234Xyz: FAIL. Actual results: "abcde\n1234X,abcde\n1234X"
-    BarFoo : PASS
+    BarFoo: PASS
     *** Failers
-    abcde\nBar  : PASS
+    abcde\nBar: PASS
 
 /(.*X|^B)/m
     abcde\n1234Xyz: FAIL. Actual results: "abcde\n1234X,abcde\n1234X"
-    BarFoo : PASS
-    abcde\nBar  : FAIL. Actual results: "null"
+    BarFoo: PASS
+    abcde\nBar: FAIL. Actual results: "null"
 
 /(.*X|^B)/s
     abcde\n1234Xyz: FAIL. Actual results: "abcde\n1234X,abcde\n1234X"
-    BarFoo : PASS
+    BarFoo: PASS
     *** Failers
-    abcde\nBar  : PASS
+    abcde\nBar: PASS
 
 /(.*X|^B)/ms
     abcde\n1234Xyz: FAIL. Actual results: "abcde\n1234X,abcde\n1234X"
-    BarFoo : PASS
-    abcde\nBar  : FAIL. Actual results: "null"
+    BarFoo: PASS
+    abcde\nBar: FAIL. Actual results: "null"
 
 /(?s)(.*X|^B)/
 FAILED TO COMPILE
@@ -1014,7 +1014,7 @@ FAILED TO COMPILE
     123456654321: PASS
 
 /^\d\d\d\d\d\d\d\d\d\d\d\d/
-    123456654321 : PASS
+    123456654321: PASS
 
 /^[\d][\d][\d][\d][\d][\d][\d][\d][\d][\d][\d][\d]/
     123456654321: PASS
@@ -1026,43 +1026,43 @@ FAILED TO COMPILE
     abcabcabcabc: PASS
 
 /^(a|b|c){12}/
-    abcabcabcabc : PASS
+    abcabcabcabc: PASS
 
 /^[abcdefghijklmnopqrstuvwxy0123456789]/
     n: PASS
-    *** Failers 
-    z : PASS
+    *** Failers
+    z: PASS
 
 /abcde{0,0}/
     abcd: PASS
     *** Failers
-    abce  : PASS
+    abce: PASS
 
 /ab[cd]{0,0}e/
     abe: PASS
     *** Failers
-    abcde : PASS
+    abcde: PASS
 
 /ab(c){0,0}d/
     abd: FAIL. Actual results: "abd,"
     *** Failers
-    abcd   : PASS
+    abcd: PASS
 
 /a(b*)/
     a: PASS
     ab: PASS
     abbbb: PASS
     *** Failers
-    bbbbb    : PASS
+    bbbbb: PASS
 
 /ab\d{0}e/
     abe: PASS
     *** Failers
-    ab1e   : PASS
+    ab1e: PASS
 
 /"([^\\"]+|\\.)*"/
     the \"quick\" brown fox: FAIL. Actual results: "null"
-    \"the \\\"quick\\\" brown fox\" : FAIL. Actual results: "null"
+    \"the \\\"quick\\\" brown fox\": FAIL. Actual results: "null"
 
 /.*?/g+
 Unsupported modifiers: g+
@@ -1074,10 +1074,13 @@ Unsupported modifiers: g+
 Unsupported modifiers: +g
 
 //g
-Global regex, cannot test matching via JS
+    abc: PASS
+    abc: PASS
+    abc: PASS
+    abc: PASS
 
 /<tr([\w\W\s\d][^<>]{0,})><TD([\w\W\s\d][^<>]{0,})>([\d]{0,}\.)(.*)((<BR>([\w\W\s\d][^<>]{0,})|[\s]{0,}))<\/a><\/TD><TD([\w\W\s\d][^<>]{0,})>([\w\W\s\d][^<>]{0,})<\/TD><TD([\w\W\s\d][^<>]{0,})>([\w\W\s\d][^<>]{0,})<\/TD><\/TR>/is
-  <TR BGCOLOR='#DBE9E9'><TD align=left valign=top>43.<a href='joblist.cfm?JobID=94 6735&Keyword='>Word Processor<BR>(N-1286)</a></TD><TD align=left valign=top>Lega lstaff.com</TD><TD align=left valign=top>CA - Statewide</TD></TR>: FAIL. Actual results: "<TR BGCOLOR='#DBE9E9'><TD align=left valign=top>43.<a href='joblist.cfm?JobID=94 6735&Keyword='>Word Processor<BR>(N-1286)</a></TD><TD align=left valign=top>Lega lstaff.com</TD><TD align=left valign=top>CA - Statewide</TD></TR>, BGCOLOR='#DBE9E9', align=left valign=top,43.,<a href='joblist.cfm?JobID=94 6735&Keyword='>Word Processor<BR>(N-1286),,,, align=left valign=top,Lega lstaff.com, align=left valign=top,CA - Statewide"
+  <TR BGCOLOR='#DBE9E9'><TD align=left valign=top>43.<a href='joblist.cfm?JobID=94 6735&Keyword='>Word Processor<BR>(N-1286)</a></TD><TD align=left valign=top>Lega lstaff.com</TD><TD align=left valign=top>CA - Statewide</TD></TR>: PASS
 
 /a[^a]b/
     acb: PASS
@@ -1085,43 +1088,43 @@ Global regex, cannot test matching via JS
 
 /a.b/
     acb: PASS
-    *** Failers 
-    a\nb   : PASS
+    *** Failers
+    a\nb: PASS
 
 /a[^a]b/s
     acb: PASS
-    a\nb  : FAIL. Actual results: "null"
+    a\nb: FAIL. Actual results: "null"
 
 /a.b/s
     acb: PASS
-    a\nb  : FAIL. Actual results: "null"
+    a\nb: FAIL. Actual results: "null"
 
 /^(b+?|a){1,2}?c/
     bac: PASS
     bbac: PASS
     bbbac: PASS
     bbbbac: PASS
-    bbbbbac : PASS
+    bbbbbac: PASS
 
 /^(b+|a){1,2}?c/
     bac: PASS
     bbac: PASS
     bbbac: PASS
     bbbbac: PASS
-    bbbbbac : PASS
+    bbbbbac: PASS
 
 /(?!\A)x/m
     x\nb\n: FAIL. Actual results: "x"
-    a\bx\n  : PASS
+    a\bx\n: PASS
 
 /\x0{ab}/
-     b} : FAIL. Actual results: "null"
+     b}: FAIL. Actual results: "null"
 
 /(A|B)*?CD/
-    CD : FAIL. Actual results: "CD,"
+    CD: FAIL. Actual results: "CD,"
 
 /(A|B)*CD/
-    CD : FAIL. Actual results: "CD,"
+    CD: FAIL. Actual results: "CD,"
 
 /(AB)*?\1/
     ABABAB: FAIL. Actual results: ","
@@ -1141,7 +1144,7 @@ FAILED TO COMPILE
 /\Aabc\z/m
     abc: FAIL. Actual results: "null"
     *** Failers
-    abc\n   : PASS
+    abc\n: PASS
     qqq\nabc: PASS
     abc\nzzz: PASS
     qqq\nabc\nzzz: PASS
@@ -1160,7 +1163,7 @@ FAILED TO COMPILE
 
 /(\d+)(\w)/
     12345a: PASS
-    12345+ : PASS
+    12345+: PASS
 
 /((?>\d+))(\w)/
 FAILED TO COMPILE
@@ -1262,47 +1265,47 @@ FAILED TO COMPILE
     abc: PASS
     abcabc: PASS
     abcabcabc: PASS
-    xyz      : PASS
+    xyz: PASS
 
 /([a]*)*/
     a: PASS
-    aaaaa : PASS
+    aaaaa: PASS
 
 /([ab]*)*/
     a: PASS
     b: PASS
     ababab: PASS
     aaaabcde: PASS
-    bbbb    : PASS
+    bbbb: PASS
 
 /([^a]*)*/
     b: PASS
     bbbb: PASS
-    aaa   : PASS
+    aaa: PASS
 
 /([^ab]*)*/
     cccc: PASS
-    abab  : PASS
+    abab: PASS
 
 /([a]*?)*/
     a: PASS
-    aaaa : PASS
+    aaaa: PASS
 
 /([ab]*?)*/
     a: PASS
     b: PASS
     abab: PASS
-    baba   : PASS
+    baba: PASS
 
 /([^a]*?)*/
     b: PASS
     bbbb: PASS
-    aaa   : PASS
+    aaa: PASS
 
 /([^ab]*?)*/
     c: PASS
     cccc: PASS
-    baba   : PASS
+    baba: PASS
 
 /(?>a*)*/
 FAILED TO COMPILE
@@ -1356,7 +1359,7 @@ FAILED TO COMPILE
     aaaaaaaaaaaaa: PASS
     aaaaaaaaaaaaaa: PASS
     aaaaaaaaaaaaaaa: PASS
-    aaaaaaaaaaaaaaaa               : PASS
+    aaaaaaaaaaaaaaaa: PASS
 
 /^(a\1?)(a\1?)(a\2?)(a\3?)$/
     a: PASS
@@ -1374,7 +1377,7 @@ FAILED TO COMPILE
     aaaaaaaaaaaaa: PASS
     aaaaaaaaaaaaaa: PASS
     aaaaaaaaaaaaaaa: PASS
-    aaaaaaaaaaaaaaaa               : PASS
+    aaaaaaaaaaaaaaaa: PASS
 
 /The following tests are taken from the Perl 5.005 test suite; some of them/
 /are compatible with 5.004, but I'd rather not have to sort them out./: PASS
@@ -2368,11 +2371,11 @@ FAILED TO COMPILE
     \: FAIL. Actual results: "null"
     a: PASS
     ab: PASS
-    aaa   : FAIL. Actual results: "null"
+    aaa: PASS
     *** Failers
     dbcb: PASS
     a--: PASS
-    aa-- : PASS
+    aa--: PASS
 
 /((?s)^a(.))((?m)^b$)/
 FAILED TO COMPILE
@@ -2467,7 +2470,7 @@ FAILED TO COMPILE
     aaab: PASS
 
 /([\w:]+::)?(\w+)$/
-    abcd: FAIL. Actual results: "abcd,,abcd"
+    abcd: PASS
     xy:z:::abcd: PASS
 
 /^[^bcd]*(c+)/
@@ -2477,9 +2480,9 @@ FAILED TO COMPILE
     caab: PASS
 
 /([\w:]+::)?(\w+)$/
-    abcd: FAIL. Actual results: "abcd,,abcd"
+    abcd: PASS
     xy:z:::abcd: PASS
-    *** Failers: FAIL. Actual results: "Failers,,Failers"
+    *** Failers
     abcd:: PASS
     abcd:: PASS
 
@@ -2587,21 +2590,26 @@ FAILED TO COMPILE
 FAILED TO COMPILE
 
 /a*/g
-Global regex, cannot test matching via JS
+    abbab: PASS
+    abbab: PASS
+    abbab: PASS
+    abbab: FAIL. Actual results: ""
+    abbab: PASS
+    abbab: PASS
 
 /^[a-\d]/
     abcde: PASS
     -things: PASS
     0digit: PASS
     *** Failers
-    bcdef    : PASS
+    bcdef: PASS
 
 /^[\d-a]/
     abcde: PASS
     -things: PASS
     0digit: PASS
     *** Failers
-    bcdef    : PASS
+    bcdef: PASS
 
 /[[:space:]]+/
     > 	
@@ -2669,13 +2677,16 @@ FAILED TO COMPILE
 /\Gabc/
     abc: FAIL. Actual results: "null"
     *** Failers
-    xyzabc  : PASS
+    xyzabc: PASS
 
 /\Gabc./g
-Global regex, cannot test matching via JS
+    abc1abc2xyzabc3: FAIL. Actual results: "null"
+    abc1abc2xyzabc3: FAIL. Actual results: "null"
 
 /abc./g
-Global regex, cannot test matching via JS
+    abc1abc2xyzabc3: PASS
+    abc1abc2xyzabc3: PASS
+    abc1abc2xyzabc3: PASS
 
 /a(?x: b c )d/
 FAILED TO COMPILE
@@ -2691,15 +2702,15 @@ FAILED TO COMPILE
 
 /(.*)\d+\1/
     abc123abc: PASS
-    abc123bc : PASS
+    abc123bc: PASS
 
 /(.*)\d+\1/s
     abc123abc: PASS
-    abc123bc : PASS
+    abc123bc: PASS
 
 /((.*))\d+\1/
     abc123abc: PASS
-    abc123bc  : PASS
+    abc123bc: PASS
 
 /-- This tests for an IPv6 address in the form where it can have up to --/
 /-- eight components, one and only one of which is empty. This must be --/: PASS
@@ -2721,19 +2732,19 @@ FAILED TO COMPILE
     a: FAIL. Actual results: "null"
     -: FAIL. Actual results: "null"
     d: FAIL. Actual results: "null"
-    ] : FAIL. Actual results: "null"
+    ]: FAIL. Actual results: "null"
     *** Failers: FAIL. Actual results: "null"
-    b     : PASS
+    b: PASS
 
 /[\z\C]/
     z: PASS
-    C : PASS
+    C: PASS
 
 /\M/
-    M : PASS
+    M: PASS
 
 /(a+)*b/
-    aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa : PASS
+    aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa: PASS
 
 /(?i)reg(?:ul(?:[aä]|ae)r|ex)/
 FAILED TO COMPILE
@@ -2763,7 +2774,10 @@ FAILED TO COMPILE
 FAILED TO COMPILE
 
 /^/mg
-Global regex, cannot test matching via JS
+    a\nb\nc\n: PASS
+    a\nb\nc\n: PASS
+    a\nb\nc\n: PASS
+    \: PASS
 
 /(?<=C\n)^/mg
 FAILED TO COMPILE
@@ -2780,7 +2794,7 @@ FAILED TO COMPILE
 /[[,abc,]+]/
     abc]: PASS
     a,b]: PASS
-    [a,b,c]  : PASS
+    [a,b,c]: PASS
 
 /(?-x: )/x
 Unsupported modifiers: x
@@ -2813,7 +2827,7 @@ FAILED TO COMPILE
 
 /a*\d*\w/
     0a: PASS
-    a : PASS
+    a: PASS
 
 /a*b *\w/x
 Unsupported modifiers: x
@@ -2839,8 +2853,8 @@ Unsupported modifiers: x
 
 /^[\Eabc]/
     a: PASS
-    ** Failers : PASS
-    E : FAIL. Actual results: "E"
+    ** Failers: PASS
+    E: FAIL. Actual results: "E"
 
 /^[a-\Ec]/
 FAILED TO COMPILE
@@ -2849,12 +2863,12 @@ FAILED TO COMPILE
     b: FAIL. Actual results: "null"
     ** Failers: PASS
     -: PASS
-    E    : FAIL. Actual results: "E"
+    E: FAIL. Actual results: "E"
 
 /^[\E\Qa\E-\Qz\E]+/
     b: FAIL. Actual results: "null"
     ** Failers: PASS
-    -  : PASS
+    -: PASS
 
 /^[a\Q]bc\E]/
     a: FAIL. Actual results: "null"
@@ -2891,14 +2905,15 @@ FAILED TO COMPILE
   aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa4: PASS
 
 /\Z/g
-Global regex, cannot test matching via JS
+  abc\n: FAIL. Actual results: "null"
+  abc\n: FAIL. Actual results: "null"
 
 /^(?s)(?>.*)(?<!\n)/
 FAILED TO COMPILE
 
 /^(?![^\n]*\n\z)/
   abc: PASS
-  abc\n : FAIL. Actual results: ""
+  abc\n: FAIL. Actual results: ""
 
 /\z(?<!\n)/
 FAILED TO COMPILE
@@ -2914,6 +2929,17 @@ Unsupported modifiers: x
 
 /(  (?(1)0|)*   )/x
 Unsupported modifiers: x
+
+/[[:abcd:xyz]]/
+    a]: PASS
+    :]: PASS
+
+/[abc[:x\]pqr]/
+    a: PASS
+    [: PASS
+    :: PASS
+    ]: PASS
+    p: PASS
 
 DONE
 
