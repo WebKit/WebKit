@@ -29,6 +29,7 @@
 #ifndef CanvasPixelArray_h
 #define CanvasPixelArray_h
 
+#include <wtf/MathExtras.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
@@ -46,7 +47,7 @@ namespace WebCore {
                 value = 0;
             else if (value > 255)
                 value = 255;
-            m_data[index] = static_cast<unsigned char>(round(value));
+            m_data[index] = lround(value);
         }
 
         bool get(unsigned index, unsigned char& result) const
