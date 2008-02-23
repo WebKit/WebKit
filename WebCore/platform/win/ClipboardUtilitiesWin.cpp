@@ -26,12 +26,13 @@
 #include "config.h"
 #include "ClipboardUtilitiesWin.h"
 
-#include "KURL.h"
 #include "CString.h"
+#include "DeprecatedCString.h"
 #include "DocumentFragment.h"
-#include "markup.h"
+#include "KURL.h"
 #include "PlatformString.h"
 #include "TextEncoding.h"
+#include "markup.h"
 #include <CoreFoundation/CoreFoundation.h>
 #include <wtf/RetainPtr.h>
 #include <shlwapi.h>

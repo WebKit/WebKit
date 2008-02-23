@@ -26,10 +26,10 @@
 #include "config.h"
 #include "ClipboardWin.h"
 
+#include "CString.h"
 #include "CachedImage.h"
 #include "ClipboardUtilitiesWin.h"
-#include "csshelper.h"
-#include "CString.h"
+#include "DeprecatedCString.h"
 #include "Document.h"
 #include "DragData.h"
 #include "Editor.h"
@@ -41,7 +41,6 @@
 #include "HTMLNames.h"
 #include "Image.h"
 #include "MIMETypeRegistry.h"
-#include "markup.h"
 #include "Page.h"
 #include "Pasteboard.h"
 #include "PlatformMouseEvent.h"
@@ -51,6 +50,8 @@
 #include "ResourceResponse.h"
 #include "StringHash.h"
 #include "WCDataObject.h"
+#include "csshelper.h"
+#include "markup.h"
 
 #include <shlwapi.h>
 #include <wininet.h>
