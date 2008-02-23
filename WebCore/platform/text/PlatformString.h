@@ -43,7 +43,6 @@ class wxString;
 namespace WebCore {
 
 class CString;
-class DeprecatedString;
 struct StringHash;
 
 class String {
@@ -204,10 +203,7 @@ public:
 
     // Determines the writing direction using the Unicode Bidi Algorithm rules P2 and P3.
     WTF::Unicode::Direction defaultWritingDirection() const { return m_impl ? m_impl->defaultWritingDirection() : WTF::Unicode::LeftToRight; }
-    
-    String(const DeprecatedString&);
-    DeprecatedString deprecatedString() const;
-    
+
 private:
     RefPtr<StringImpl> m_impl;
 };
@@ -229,11 +225,6 @@ inline bool operator!=(const char* a, const String& b) { return !equal(a, b.impl
 inline bool equalIgnoringCase(const String& a, const String& b) { return equalIgnoringCase(a.impl(), b.impl()); }
 inline bool equalIgnoringCase(const String& a, const char* b) { return equalIgnoringCase(a.impl(), b); }
 inline bool equalIgnoringCase(const char* a, const String& b) { return equalIgnoringCase(a, b.impl()); }
-
-bool operator==(const String& a, const DeprecatedString& b);
-inline bool operator==(const DeprecatedString& b, const String& a) { return a == b; }
-inline bool operator!=(const String& a, const DeprecatedString& b) { return !(a == b); }
-inline bool operator!=(const DeprecatedString& b, const String& a ) { return !(a == b); }
 
 inline bool operator!(const String& str) { return str.isNull(); }
 

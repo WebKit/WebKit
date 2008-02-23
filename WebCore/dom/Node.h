@@ -24,7 +24,6 @@
 #ifndef Node_h
 #define Node_h
 
-#include "DeprecatedString.h"
 #include "DocPtr.h"
 #include "PlatformString.h"
 #include "TreeShared.h"

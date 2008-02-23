@@ -28,6 +28,7 @@
 #include "Base64.h"
 #include "CSSHelper.h"
 #include "CString.h"
+#include "DeprecatedCString.h"
 #include "Event.h"
 #include "EventNames.h"
 #include "FormData.h"

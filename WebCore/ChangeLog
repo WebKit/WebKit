@@ -1,3 +1,44 @@
+2008-02-22  Sam Weinig  <sam@webkit.org>
+
+        Rubber-stamped by Adam Roben.
+
+        Rid the project of the Devil known as DeprecatedString!
+
+        * GNUmakefile.am:
+        * WebCore.base.exp:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * WebCoreSources.bkl:
+        * dom/Node.h:
+        * html/HTMLFormElement.cpp:
+        * platform/DeprecatedString.cpp: Removed.
+        * platform/DeprecatedString.h: Removed.
+        * platform/graphics/qt/IconQt.cpp:
+        * platform/graphics/win/MediaPlayerPrivateQuickTimeWin.cpp:
+        * platform/gtk/CookieJarGtk.cpp:
+        * platform/gtk/CursorGtk.cpp:
+        * platform/gtk/KeyEventGtk.cpp:
+        * platform/mac/DeprecatedStringMac.mm: Removed.
+        * platform/network/qt/ResourceHandleQt.cpp:
+        * platform/network/win/CookieJarWin.cpp:
+        (WebCore::cookies):
+        * platform/qt/ClipboardQt.cpp:
+        * platform/qt/CookieJarQt.cpp:
+        * platform/qt/CursorQt.cpp:
+        * platform/symbian/DeprecatedStringSymbian.cpp: Removed.
+        * platform/text/AtomicString.cpp:
+        * platform/text/AtomicString.h:
+        * platform/text/PlatformString.h:
+        * platform/text/String.cpp:
+        * platform/text/StringImpl.cpp:
+        * platform/text/qt/StringQt.cpp:
+        (WebCore::String::String):
+        * platform/text/wx/StringWx.cpp:
+        * platform/win/BString.cpp:
+        * platform/win/BString.h:
+        * platform/win/PasteboardWin.cpp:
+
 2008-02-22  Brent Fulgham  <bfulgham@gmail.com>
 
         Reviewed by Adam Roben.

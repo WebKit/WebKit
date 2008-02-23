@@ -35,7 +35,6 @@ typedef wchar_t* BSTR;
 namespace WebCore {
 
     class AtomicString;
-    class DeprecatedString;
     class KURL;
     class String;
 
@@ -45,7 +44,6 @@ namespace WebCore {
         BString(const wchar_t*);
         BString(const wchar_t*, size_t length);
         BString(const String&);
-        BString(const DeprecatedString&);
         BString(const AtomicString&);
         BString(const KURL&);
 #if PLATFORM(CF)

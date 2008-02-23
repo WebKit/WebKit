@@ -30,7 +30,6 @@
 
 #include "CachedImage.h"
 #include "CSSHelper.h"
-#include "DeprecatedString.h"
 #include "Document.h"
 #include "Element.h"
 #include "Frame.h"

@@ -3151,14 +3151,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\platform\DeprecatedString.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\platform\DeprecatedString.h"
-				>
-			</File>
-			<File
 				RelativePath="..\platform\DeprecatedValueList.h"
 				>
 			</File>

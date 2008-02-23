@@ -93,9 +93,6 @@ public:
     operator QString() const { return m_string; }
 #endif
 
-    AtomicString(const DeprecatedString&);
-    DeprecatedString deprecatedString() const;
-
 private:
     String m_string;
     

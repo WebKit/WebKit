@@ -27,7 +27,6 @@
 #include "BString.h"
 
 #include "AtomicString.h"
-#include "DeprecatedString.h"
 #include "KURL.h"
 #include "PlatformString.h"
 #include <tchar.h>
@@ -74,14 +73,6 @@ BString::BString(const KURL& url)
         m_bstr = 0;
     else
         m_bstr = SysAllocStringLen(url.string().characters(), url.string().length());
-}
-
-BString::BString(const DeprecatedString& s)
-{
-    if (s.isNull())
-        m_bstr = 0;
-    else
-        m_bstr = SysAllocStringLen(String(s).characters(), s.length());
 }
 
 BString::BString(const AtomicString& s)

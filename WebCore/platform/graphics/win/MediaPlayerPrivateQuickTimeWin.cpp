@@ -28,7 +28,6 @@
 #if ENABLE(VIDEO)
 #include "MediaPlayerPrivateQuickTimeWin.h"
 
-#include "DeprecatedString.h"
 #include "GraphicsContext.h"
 #include "KURL.h"
 #include "QTMovieWin.h"

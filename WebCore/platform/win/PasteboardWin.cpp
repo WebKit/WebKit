@@ -28,7 +28,6 @@
 
 #include "ClipboardUtilitiesWin.h"
 #include "CString.h"
-#include "DeprecatedString.h"
 #include "DocumentFragment.h"
 #include "Document.h"
 #include "Element.h"

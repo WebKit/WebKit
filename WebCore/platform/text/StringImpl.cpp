@@ -28,7 +28,6 @@
 #include "AtomicString.h"
 #include "CString.h"
 #include "CharacterNames.h"
-#include "DeprecatedString.h"
 #include "FloatConversion.h"
 #include "Length.h"
 #include "StringBuffer.h"

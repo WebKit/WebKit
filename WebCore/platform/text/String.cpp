@@ -22,7 +22,6 @@
 #include "PlatformString.h"
 
 #include "CString.h"
-#include "DeprecatedString.h"
 #include "FloatConversion.h"
 #include "StringBuffer.h"
 #include "TextEncoding.h"
@@ -59,13 +58,6 @@ String::String(const UChar* str)
         len++;
     
     m_impl = StringImpl::create(str, len);
-}
-
-String::String(const DeprecatedString& str)
-{
-    if (str.isNull())
-        return;
-    m_impl = StringImpl::create(reinterpret_cast<const UChar*>(str.unicode()), str.length());
 }
 
 String::String(const char* str)
@@ -315,15 +307,6 @@ const UChar* String::charactersWithNullTermination()
         return m_impl->characters();
     m_impl = StringImpl::createWithTerminatingNullCharacter(*m_impl);
     return m_impl->characters();
-}
-
-DeprecatedString String::deprecatedString() const
-{
-    if (!m_impl)
-        return DeprecatedString::null;
-    if (!m_impl->characters())
-        return DeprecatedString("", 0);
-    return DeprecatedString(reinterpret_cast<const DeprecatedChar*>(m_impl->characters()), m_impl->length());
 }
 
 String String::format(const char *format, ...)
@@ -603,17 +586,6 @@ String String::fromUTF8(const char* string, size_t size)
 String String::fromUTF8(const char* string)
 {
     return UTF8Encoding().decode(string, strlen(string));
-}
-
-
-bool operator==(const String& a, const DeprecatedString& b)
-{
-    unsigned l = a.length();
-    if (l != b.length())
-        return false;
-    if (!memcmp(a.characters(), b.unicode(), l * sizeof(UChar)))
-        return true;
-    return false;
 }
 
 String::String(const Identifier& str)

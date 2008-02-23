@@ -30,7 +30,6 @@
 #include "config.h"
 #include "PlatformKeyboardEvent.h"
 
-#include "DeprecatedString.h"
 #include "KeyboardCodes.h"
 #include "NotImplemented.h"
 #include "TextEncoding.h"

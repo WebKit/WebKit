@@ -110,7 +110,7 @@ String cookies(const Document* /*document*/, const KURL& url)
 
     return (CFStringRef)CFDictionaryGetValue(headerCF.get(), s_cookieCF);
 #else
-    String str = url.deprecatedString();
+    String str = url.string();
 
     DWORD count = str.length() + 1;
     InternetGetCookie(str.charactersWithNullTermination(), 0, 0, &count);

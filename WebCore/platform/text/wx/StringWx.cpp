@@ -27,7 +27,6 @@
 #include "PlatformString.h"
 
 #include "CString.h"
-#include "DeprecatedString.h"
 #include "unicode/ustring.h"
 
 #include <wx/defs.h>
@@ -84,12 +83,6 @@ String::String(const wxString& wxstr)
 }
 
 String::operator wxString() const
-{
-    return wxString(utf8().data(), wxConvUTF8);
-}
-
-// DeprecatedString conversions
-DeprecatedString::operator wxString() const
 {
     return wxString(utf8().data(), wxConvUTF8);
 }

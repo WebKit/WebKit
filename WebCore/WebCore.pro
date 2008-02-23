@@ -733,7 +733,6 @@ SOURCES += \
     platform/text/CString.cpp \
     platform/DeprecatedCString.cpp \
     platform/DeprecatedPtrListImpl.cpp \
-    platform/DeprecatedString.cpp \
     platform/DeprecatedValueListImpl.cpp \
     platform/DragData.cpp \
     platform/DragImage.cpp \

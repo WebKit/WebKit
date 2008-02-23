@@ -33,7 +33,6 @@
 #include "Image.h"
 #include "IntPoint.h"
 
-#include "DeprecatedString.h"
 #include "NotImplemented.h"
 
 #include <stdio.h>
