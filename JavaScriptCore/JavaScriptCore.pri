@@ -113,9 +113,18 @@ SOURCES += \
 }
 
 qt-port:SOURCES += \
+    wtf/ThreadingPthreads.cpp \
     bindings/qt/qt_class.cpp \
     bindings/qt/qt_instance.cpp \
     bindings/qt/qt_runtime.cpp
+
+gtk-port:SOURCES += \
+    wtf/ThreadingGtk.cpp
+}
+
+!gtk-port:SOURCES += \
+    wtf/ThreadingNone.cpp
+}
 
 !CONFIG(QTDIR_build) {
     defineTest(addExtraCompiler) {

@@ -45,7 +45,6 @@
 #include "ResourceHandle.h"
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
-#include "Threading.h"
 #ifndef USE_QXMLSTREAM
 #include <libxml/parser.h>
 #include <libxml/parserInternals.h>
@@ -54,6 +53,7 @@
 #endif
 #include <wtf/Platform.h>
 #include <wtf/StringExtras.h>
+#include <wtf/Threading.h>
 #include <wtf/Vector.h>
 
 #if ENABLE(XSLT)

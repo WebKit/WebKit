@@ -113,6 +113,7 @@ Source files for JSCore.
         wtf/FastMalloc.cpp
         wtf/HashTable.cpp
         wtf/TCSystemAlloc.cpp
+        wtf/ThreadingNone.cpp
         wtf/unicode/UTF8.cpp
     </set>
 

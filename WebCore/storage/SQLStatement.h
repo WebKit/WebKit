@@ -25,11 +25,10 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef SQLStatment_h
-#define SQLStatment_h
+#ifndef SQLStatement_h
+#define SQLStatement_h
 
 #include "PlatformString.h"
-#include "Threading.h"
 
 #include "SQLError.h"
 #include "SQLResultSet.h"
@@ -39,6 +38,7 @@
 
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
+#include <wtf/Threading.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -78,4 +78,4 @@ private:
 
 } // namespace WebCore
 
-#endif // SQLStatment_h
+#endif // SQLStatement_h

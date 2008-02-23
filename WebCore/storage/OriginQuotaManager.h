@@ -31,8 +31,8 @@
 #include "PlatformString.h"
 #include "StringHash.h"
 #include "SecurityOriginHash.h"
-#include "Threading.h"
 #include <wtf/HashMap.h>
+#include <wtf/Threading.h>
 
 namespace WebCore {
 

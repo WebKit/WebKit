@@ -237,6 +237,10 @@
 		E11D51760B2E798D0056C188 /* StringExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = E11D51750B2E798D0056C188 /* StringExtras.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E195679609E7CF1200B89D13 /* UnicodeIcu.h in Headers */ = {isa = PBXBuildFile; fileRef = E195678F09E7CF1200B89D13 /* UnicodeIcu.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E195679809E7CF1200B89D13 /* Unicode.h in Headers */ = {isa = PBXBuildFile; fileRef = E195679409E7CF1200B89D13 /* Unicode.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		E1EE79230D6C95CD00FEA3BA /* Threading.h in Headers */ = {isa = PBXBuildFile; fileRef = E1EE79220D6C95CD00FEA3BA /* Threading.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		E1EE79280D6C964500FEA3BA /* Locker.h in Headers */ = {isa = PBXBuildFile; fileRef = E1EE79270D6C964500FEA3BA /* Locker.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		E1EE793D0D6C9B9200FEA3BA /* ThreadingPthreads.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1EE793C0D6C9B9200FEA3BA /* ThreadingPthreads.cpp */; };
+		E1EE798C0D6CA53D00FEA3BA /* MessageQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = E1EE798B0D6CA53D00FEA3BA /* MessageQueue.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E1EF79AA0CE97BA60088D500 /* UTF8.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1EF79A80CE97BA60088D500 /* UTF8.cpp */; };
 		E1EF79AB0CE97BA60088D500 /* UTF8.h in Headers */ = {isa = PBXBuildFile; fileRef = E1EF79A90CE97BA60088D500 /* UTF8.h */; };
 /* End PBXBuildFile section */
@@ -576,6 +580,10 @@
 		E11D51750B2E798D0056C188 /* StringExtras.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StringExtras.h; sourceTree = "<group>"; };
 		E195678F09E7CF1200B89D13 /* UnicodeIcu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UnicodeIcu.h; sourceTree = "<group>"; };
 		E195679409E7CF1200B89D13 /* Unicode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Unicode.h; sourceTree = "<group>"; };
+		E1EE79220D6C95CD00FEA3BA /* Threading.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Threading.h; sourceTree = "<group>"; };
+		E1EE79270D6C964500FEA3BA /* Locker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Locker.h; sourceTree = "<group>"; };
+		E1EE793C0D6C9B9200FEA3BA /* ThreadingPthreads.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ThreadingPthreads.cpp; sourceTree = "<group>"; };
+		E1EE798B0D6CA53D00FEA3BA /* MessageQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MessageQueue.h; sourceTree = "<group>"; };
 		E1EF79A80CE97BA60088D500 /* UTF8.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UTF8.cpp; sourceTree = "<group>"; };
 		E1EF79A90CE97BA60088D500 /* UTF8.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UTF8.h; sourceTree = "<group>"; };
 		F5BB2BC5030F772101FCFE1D /* completion.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = completion.h; sourceTree = "<group>"; tabWidth = 8; };
@@ -899,8 +907,10 @@
 				65DFC92F08EA173A00F7300B /* HashTraits.h */,
 				657EB7450B708F540063461B /* ListHashSet.h */,
 				148A1626095D16BB00666D0D /* ListRefPtr.h */,
+				E1EE79270D6C964500FEA3BA /* Locker.h */,
 				5DBD18AF0C5401A700C15EAE /* MallocZoneSupport.h */,
 				BCF6553B0A2048DE0038A194 /* MathExtras.h */,
+				E1EE798B0D6CA53D00FEA3BA /* MessageQueue.h */,
 				9303F5690991190000AD71B8 /* Noncopyable.h */,
 				9303F5A409911A5800AD71B8 /* OwnArrayPtr.h */,
 				9303F567099118FA00AD71B8 /* OwnPtr.h */,
@@ -916,6 +926,8 @@
 				6541BD6F08E80A17002CBEE7 /* TCSpinLock.h */,
 				6541BD7008E80A17002CBEE7 /* TCSystemAlloc.cpp */,
 				6541BD7108E80A17002CBEE7 /* TCSystemAlloc.h */,
+				E1EE79220D6C95CD00FEA3BA /* Threading.h */,
+				E1EE793C0D6C9B9200FEA3BA /* ThreadingPthreads.cpp */,
 				E195678D09E7CF1200B89D13 /* unicode */,
 				935AF46B09E9D9DB00ACD1D8 /* UnusedParam.h */,
 				6592C316098B7DE10003D4F6 /* Vector.h */,
@@ -1145,6 +1157,7 @@
 				65F340940CD6C1C000C0CA8B /* LocalStorage.h in Headers */,
 				5DBD18B00C5401A700C15EAE /* MallocZoneSupport.h in Headers */,
 				BCF655590A2049710038A194 /* MathExtras.h in Headers */,
+				E1EE798C0D6CA53D00FEA3BA /* MessageQueue.h in Headers */,
 				932F5B840822A1C700736975 /* NP_jsobject.h in Headers */,
 				9303F56A0991190000AD71B8 /* Noncopyable.h in Headers */,
 				9303F5A509911A5800AD71B8 /* OwnArrayPtr.h in Headers */,
@@ -1164,6 +1177,7 @@
 				6541BD7208E80A17002CBEE7 /* TCPageMap.h in Headers */,
 				6541BD7308E80A17002CBEE7 /* TCSpinLock.h in Headers */,
 				6541BD7508E80A17002CBEE7 /* TCSystemAlloc.h in Headers */,
+				E1EE79230D6C95CD00FEA3BA /* Threading.h in Headers */,
 				E1EF79AB0CE97BA60088D500 /* UTF8.h in Headers */,
 				E195679809E7CF1200B89D13 /* Unicode.h in Headers */,
 				E195679609E7CF1200B89D13 /* UnicodeIcu.h in Headers */,
@@ -1241,6 +1255,7 @@
 				93E26BFE08B151D400F85226 /* ucpinternal.h in Headers */,
 				932F5B5C0822A1C700736975 /* ustring.h in Headers */,
 				14ABB36F099C076400E2A24F /* value.h in Headers */,
+				E1EE79280D6C964500FEA3BA /* Locker.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1511,6 +1526,7 @@
 				932F5BBD0822A1C700736975 /* runtime_method.cpp in Sources */,
 				932F5BBA0822A1C700736975 /* runtime_object.cpp in Sources */,
 				932F5BC50822A1C700736975 /* runtime_root.cpp in Sources */,
+				E1EE793D0D6C9B9200FEA3BA /* ThreadingPthreads.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

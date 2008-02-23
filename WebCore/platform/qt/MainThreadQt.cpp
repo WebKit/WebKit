@@ -29,7 +29,7 @@
  */
 
 #include "config.h"
-#include "Threading.h"
+#include "MainThread.h"
 
 #include <QtCore/QObject>
 #include <QtCore/QCoreApplication>
@@ -94,4 +94,4 @@ void callOnMainThread(MainThreadFunction* function, void* context)
 
 }
 
-#include "ThreadingQt.moc"
+#include "MainThreadQt.moc"

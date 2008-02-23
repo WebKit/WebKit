@@ -31,33 +31,10 @@
 #include "Threading.h"
 
 #include "HashMap.h"
-#include "Logging.h"
 
 #include <glib.h>
 
 namespace WebCore {
-
-struct FunctionWithContext {
-    MainThreadFunction* function;
-    void* context;
-};
-
-static gboolean callFunctionOnMainThread(gpointer data)
-{
-    FunctionWithContext* functionWithContext = static_cast<FunctionWithContext*>(data);
-    functionWithContext->function(functionWithContext->context);
-    delete functionWithContext;
-    return FALSE;
-}
-
-void callOnMainThread(MainThreadFunction* function, void* context)
-{
-    ASSERT(function);
-    FunctionWithContext* functionWithContext = new FunctionWithContext;
-    functionWithContext->function = function;
-    functionWithContext->context = context;
-    g_timeout_add(0, callFunctionOnMainThread, functionWithContext);
-}
 
 void initializeThreading()
 {
@@ -127,7 +104,6 @@ ThreadIdentifier createThread(ThreadFunction entryPoint, void* data)
     }
 
     ThreadIdentifier threadID = establishIdentifierForThread(thread);
-    LOG(Threading, "Created thread with thread id %u", threadID);
     return threadID;
 }
 

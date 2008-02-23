@@ -31,9 +31,9 @@
 
 #include <wtf/RefCounted.h>
 #include <wtf/PassRefPtr.h>
+#include <wtf/Threading.h>
 
 #include "PlatformString.h"
-#include "Threading.h"
 
 namespace WebCore {
 

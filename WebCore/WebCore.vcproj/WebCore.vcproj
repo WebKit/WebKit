@@ -3239,7 +3239,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\platform\MessageQueue.h"
+				RelativePath="..\platform\MainThread.h"
 				>
 			</File>
 			<File
@@ -3344,10 +3344,6 @@
 			</File>
 			<File
 				RelativePath="..\platform\text\TextStyle.h"
-				>
-			</File>
-			<File
-				RelativePath="..\platform\Threading.h"
 				>
 			</File>
 			<File
@@ -3458,6 +3454,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\platform\win\MainThreadWin.cpp"
+					>
+				</File>
+				<File
 					RelativePath="..\platform\win\MIMETypeRegistryWin.cpp"
 					>
 				</File>
@@ -3523,10 +3523,6 @@
 				</File>
 				<File
 					RelativePath="..\platform\win\ThreadConditionWin.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\platform\win\ThreadingWin.cpp"
 					>
 				</File>
 				<File

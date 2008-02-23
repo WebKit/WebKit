@@ -27,7 +27,7 @@
  */
  
 #import "config.h"
-#import "Threading.h"
+#import "MainThread.h"
 
 @interface WebCoreFunctionWrapper : NSObject {
     WebCore::MainThreadFunction* m_function;

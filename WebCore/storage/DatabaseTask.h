@@ -30,9 +30,9 @@
 
 #include "ExceptionCode.h"
 #include "PlatformString.h"
-#include "Threading.h"
 #include <wtf/OwnPtr.h>
 #include <wtf/PassRefPtr.h>
+#include <wtf/Threading.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {

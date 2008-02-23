@@ -30,7 +30,7 @@
 #define SQLError_h
 
 #include "PlatformString.h"
-#include "Threading.h"
+#include <wtf/Threading.h>
 
 namespace WebCore {
 

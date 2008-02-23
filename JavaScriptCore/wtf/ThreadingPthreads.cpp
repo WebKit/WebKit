@@ -29,12 +29,11 @@
 #include "config.h"
 #include "Threading.h"
 
-#include "Logging.h"
 #include <wtf/HashMap.h>
 
 #include <errno.h>
 
-namespace WebCore {
+namespace WTF {
 
 static Mutex& threadMapMutex()
 {
@@ -97,7 +96,6 @@ ThreadIdentifier createThread(ThreadFunction entryPoint, void* data)
     }
 
     ThreadIdentifier threadID = establishIdentifierForPthreadHandle(threadHandle);
-    LOG(Threading, "Created thread with thread id %u", threadID);
     return threadID;
 }
 
@@ -197,4 +195,4 @@ void ThreadCondition::broadcast()
         ASSERT(false);
 }
     
-} // namespace WebCore
+} // namespace WTF

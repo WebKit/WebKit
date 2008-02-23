@@ -1,3 +1,34 @@
+2008-02-23  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        Move basic threading support from WebCore to WTF.
+
+        Added mutex protection to MessageQueue::killed() for paranoia sake.
+
+        * GNUmakefile.am:
+        * JavaScriptCore.exp:
+        * JavaScriptCore.pri:
+        * JavaScriptCore.vcproj/WTF/WTF.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * JavaScriptCoreSources.bkl:
+        * wtf/Locker.h: Copied from WebCore/platform/Locker.h.
+        * wtf/MessageQueue.h: Copied from WebCore/platform/MessageQueue.h.
+        (WTF::::killed):
+        * wtf/Threading.h: Copied from WebCore/platform/Threading.h.
+        * wtf/ThreadingGtk.cpp: Copied from WebCore/platform/gtk/ThreadingGtk.cpp.
+        (WebCore::createThread):
+        * wtf/ThreadingNone.cpp: Copied from WebCore/platform/ThreadingNone.cpp.
+        * wtf/ThreadingPthreads.cpp: Copied from WebCore/platform/pthreads/ThreadingPthreads.cpp.
+        (WTF::createThread):
+        * wtf/ThreadingWin.cpp: Copied from WebCore/platform/win/ThreadingWin.cpp.
+        (WTF::createThread):
+        (WTF::Mutex::Mutex):
+        (WTF::Mutex::~Mutex):
+        (WTF::Mutex::lock):
+        (WTF::Mutex::tryLock):
+        (WTF::Mutex::unlock):
+
 2008-02-22  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Sam Weinig.

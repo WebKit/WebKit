@@ -602,7 +602,6 @@ This file contains the list of files needed to build WebCore.
         platform/text/TextEncoding.cpp
         platform/text/TextEncodingRegistry.cpp
         platform/text/TextStream.cpp
-        platform/ThreadingNone.cpp
         platform/Timer.cpp
         platform/Widget.cpp
         platform/graphics/AffineTransform.cpp

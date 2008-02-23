@@ -37,6 +37,7 @@
 #include "IntSize.h"
 #include "KURL.h"
 #include "Logging.h"
+#include "MainThread.h"
 #include "PageURLRecord.h"
 #include "SQLiteStatement.h"
 #include "SQLiteTransaction.h"
@@ -101,7 +102,7 @@ static IconDatabaseClient* defaultClient()
 IconDatabase* iconDatabase()
 {
     if (!sharedIconDatabase) {
-        initializeThreading();
+        initializeThreadingAndMainThread();
         sharedIconDatabase = new IconDatabase;
     }
     return sharedIconDatabase;

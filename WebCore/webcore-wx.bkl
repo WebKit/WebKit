@@ -79,6 +79,7 @@ wxWebCore port Bakefile project file.
             platform/wx/LocalizedStringsWx.cpp
             platform/wx/LoggingWx.cpp
             platform/wx/MimeTypeRegistryWx.cpp
+            platform/wx/MainThreadWx.cpp
             platform/wx/MouseEventWx.cpp
             platform/wx/MouseWheelEventWx.cpp
             platform/wx/PasteboardWx.cpp
@@ -88,7 +89,6 @@ wxWebCore port Bakefile project file.
             platform/wx/SoundWx.cpp
             platform/text/wx/StringWx.cpp
             platform/wx/SystemTimeWx.cpp
-            platform/wx/ThreadingWx.cpp
             platform/wx/WidgetWx.cpp
            
             <!-- files from other ports we currently rely on -->

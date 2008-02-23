@@ -28,7 +28,7 @@
 
 #include "config.h"
 #include "NotImplemented.h"
-#include "Threading.h"
+#include "MainThread.h"
 
 namespace WebCore {
 

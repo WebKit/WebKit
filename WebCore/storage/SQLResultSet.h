@@ -30,7 +30,7 @@
 #define SQLResultSet_h
 
 #include "SQLResultSetRowList.h"
-#include "Threading.h"
+#include <wtf/Threading.h>
 
 namespace WebCore {
 

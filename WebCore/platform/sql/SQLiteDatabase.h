@@ -28,7 +28,7 @@
 #define SQLDatabase_h
 
 #include "PlatformString.h"
-#include "Threading.h"
+#include <wtf/Threading.h>
 
 #if COMPILER(MSVC)
 #pragma warning(disable: 4800)

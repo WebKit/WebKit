@@ -29,12 +29,12 @@
 #ifndef MessageQueue_h
 #define MessageQueue_h
 
-#include "Threading.h"
 #include <wtf/Assertions.h>
 #include <wtf/Deque.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/Threading.h>
 
-namespace WebCore {
+namespace WTF {
 
     template<typename DataType>
     class MessageQueue : Noncopyable {
@@ -46,10 +46,10 @@ namespace WebCore {
         bool waitForMessage(DataType&);
         bool tryGetMessage(DataType&);
         void kill();
-        bool killed() const { return m_killed; }
+        bool killed() const;
 
     private:
-        Mutex m_mutex;
+        mutable Mutex m_mutex;
         ThreadCondition m_condition;
         Deque<DataType> m_queue;
         bool m_killed;
@@ -110,6 +110,15 @@ namespace WebCore {
         m_killed = true;
         m_condition.broadcast();
     }
+
+    template<typename DataType>
+    inline bool MessageQueue<DataType>::killed() const
+    {
+        MutexLocker lock(m_mutex);
+        return m_killed;
+    }
 }
+
+using WTF::MessageQueue;
 
 #endif // MessageQueue_h

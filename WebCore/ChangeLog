@@ -1,3 +1,65 @@
+2008-02-23  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        Move basic threading support from WebCore to WTF.
+
+        One call that remains in WebCore is callOnMainThread(), and it has its own header now.
+
+        * ForwardingHeaders/wtf/Locker.h: Added.
+        * ForwardingHeaders/wtf/MessageQueue.h: Added.
+        * ForwardingHeaders/wtf/Threading.h: Added.
+        * GNUmakefile.am:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * WebCoreSources.bkl:
+        * bindings/js/JSCustomSQLTransactionCallback.cpp:
+        * dom/XMLTokenizer.cpp:
+        * loader/icon/IconDatabase.cpp:
+        (WebCore::iconDatabase):
+        * loader/icon/IconDatabase.h:
+        * platform/Locker.h: Removed.
+        * platform/MainThread.h: Copied from WebCore/platform/Threading.h.
+        (WebCore::initializeThreadingAndMainThread):
+        * platform/MessageQueue.h: Removed.
+        * platform/SecurityOrigin.h:
+        * platform/Threading.h: Removed.
+        * platform/ThreadingNone.cpp: Removed.
+        * platform/gtk/MainThreadGtk.cpp: Copied from WebCore/platform/gtk/ThreadingGtk.cpp.
+        * platform/gtk/ThreadingGtk.cpp: Removed.
+        * platform/mac/MainThreadMac.mm: Copied from WebCore/platform/mac/Threading.mm.
+        * platform/mac/Threading.mm: Removed.
+        * platform/pthreads: Removed.
+        * platform/pthreads/ThreadingPthreads.cpp: Removed.
+        * platform/qt/MainThreadQt.cpp: Copied from WebCore/platform/qt/ThreadingQt.cpp.
+        * platform/qt/ThreadingQt.cpp: Removed.
+        * platform/sql/SQLValue.h:
+        * platform/sql/SQLiteAuthorizer.h:
+        * platform/sql/SQLiteDatabase.h:
+        * platform/win/MainThreadWin.cpp: Copied from WebCore/platform/win/ThreadingWin.cpp.
+        (WebCore::initializeThreadingAndMainThread):
+        * platform/win/MutexWin.cpp: Removed.
+        * platform/win/ThreadingWin.cpp: Removed.
+        * platform/wx/MainThreadWx.cpp: Copied from WebCore/platform/wx/ThreadingWx.cpp.
+        * platform/wx/ThreadingWx.cpp: Removed.
+        * storage/Database.cpp:
+        (WebCore::Database::Database):
+        * storage/Database.h:
+        * storage/DatabaseTask.h:
+        * storage/DatabaseThread.h:
+        * storage/DatabaseTracker.cpp:
+        * storage/OriginQuotaManager.h:
+        * storage/SQLError.h:
+        * storage/SQLResultSet.h:
+        * storage/SQLStatement.h:
+        * storage/SQLStatementCallback.h:
+        * storage/SQLStatementErrorCallback.h:
+        * storage/SQLTransaction.h:
+        * storage/SQLTransactionCallback.h:
+        * storage/SQLTransactionErrorCallback.h:
+        * webcore-wx.bkl:
+
 2008-02-23  David Kilzer  <ddkilzer@apple.com>
 
         Please clarify licensing for some files

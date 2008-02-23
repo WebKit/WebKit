@@ -59,9 +59,8 @@
 #ifndef Threading_h
 #define Threading_h
 
-#include "Locker.h"
-
 #include <wtf/Assertions.h>
+#include <wtf/Locker.h>
 #include <wtf/Noncopyable.h>
 
 #if PLATFORM(WIN_OS)
@@ -92,7 +91,7 @@ class QWaitCondition;
 
 #include <stdint.h>
 
-namespace WebCore {
+namespace WTF {
 
 typedef uint32_t ThreadIdentifier;
 typedef void* (*ThreadFunction)(void* argument);
@@ -231,18 +230,26 @@ private:
 #endif
 };
 
-typedef void MainThreadFunction(void*);
-
-void callOnMainThread(MainThreadFunction*, void* context);
-
 void initializeThreading();
 
-#if !PLATFORM(WIN) && !PLATFORM(GTK)
+#if !PLATFORM(GTK)
 inline void initializeThreading()
 {
 }
 #endif
 
-} // namespace WebCore
+} // namespace WTF
+
+using WTF::Mutex;
+using WTF::MutexLocker;
+using WTF::ThreadCondition;
+using WTF::ThreadIdentifier;
+using WTF::ThreadSafeShared;
+
+using WTF::createThread;
+using WTF::currentThread;
+using WTF::detachThread;
+using WTF::initializeThreading;
+using WTF::waitForThreadCompletion;
 
 #endif // Threading_h

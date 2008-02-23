@@ -948,6 +948,7 @@ webkitgtk_sources += \
 	WebCore/platform/gtk/Language.cpp \
 	WebCore/platform/gtk/LocalizedStringsGtk.cpp \
 	WebCore/platform/gtk/LoggingGtk.cpp \
+	WebCore/platform/gtk/MainThreadGtk.cpp \
 	WebCore/platform/gtk/MIMETypeRegistryGtk.cpp \
 	WebCore/platform/gtk/MouseEventGtk.cpp \
 	WebCore/platform/gtk/PasteboardGtk.cpp \
@@ -962,7 +963,6 @@ webkitgtk_sources += \
 	WebCore/platform/gtk/SystemTimeGtk.cpp \
 	WebCore/platform/gtk/TemporaryLinkStubs.cpp \
 	WebCore/platform/text/gtk/TextBreakIteratorInternalICUGtk.cpp \
-	WebCore/platform/gtk/ThreadingGtk.cpp \
 	WebCore/platform/gtk/WheelEventGtk.cpp \
 	WebCore/platform/gtk/WidgetGtk.cpp \
 	WebCore/platform/gtk/gtk2drawing.c \

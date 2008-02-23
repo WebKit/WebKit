@@ -30,7 +30,7 @@
 
 #include <wtf/Noncopyable.h>
 
-namespace WebCore {
+namespace WTF {
 
 template <typename T> class Locker : Noncopyable {
 public:
@@ -41,5 +41,7 @@ private:
 };
 
 }
+
+using WTF::Locker;
 
 #endif

@@ -27,27 +27,12 @@
  */
 
 #include "config.h"
-#include "Logging.h"
-#include "Page.h"
 #include "Threading.h"
-#include <errno.h>
+
 #include <windows.h>
 #include <wtf/HashMap.h>
 
-namespace WebCore {
-
-struct FunctionWithContext {
-    MainThreadFunction* function;
-    void* context;
-    FunctionWithContext(MainThreadFunction* f = 0, void* c = 0) : function(f), context(c) { }
-};
-
-typedef Vector<FunctionWithContext> FunctionQueue;
-
-static HWND threadingWindowHandle = 0;
-static UINT threadingFiredMessage = 0;
-const LPCWSTR kThreadingWindowClassName = L"ThreadingWindowClass";
-static bool processingCustomThreadingMessage = false;
+namespace WTF {
 
 static Mutex& threadMapMutex()
 {
@@ -94,7 +79,6 @@ ThreadIdentifier createThread(ThreadFunction entryPoint, void* data)
     threadID = static_cast<ThreadIdentifier>(threadIdentifier);
     storeThreadHandleByIdentifier(threadIdentifier, threadHandle);
 
-    LOG(Threading, "Created thread with thread id %u", threadID);
     return threadID;
 }
 
@@ -131,74 +115,53 @@ ThreadIdentifier currentThread()
     return static_cast<ThreadIdentifier>(::GetCurrentThreadId());
 }
 
-static Mutex& functionQueueMutex()
+Mutex::Mutex()
 {
-    static Mutex staticFunctionQueueMutex;
-    return staticFunctionQueueMutex;
+    m_mutex.m_recursionCount = 0;
+    ::InitializeCriticalSection(&m_mutex.m_internalMutex);
 }
 
-static FunctionQueue& functionQueue()
+Mutex::~Mutex()
 {
-    static FunctionQueue staticFunctionQueue;
-    return staticFunctionQueue;
+    ::DeleteCriticalSection(&m_mutex.m_internalMutex);
 }
 
-static void callFunctionsOnMainThread()
+void Mutex::lock()
 {
-    FunctionQueue queueCopy;
-    {
-        MutexLocker locker(functionQueueMutex());
-        queueCopy.swap(functionQueue());
-    }
-
-    LOG(Threading, "Calling %u functions on the main thread", queueCopy.size());
-    for (unsigned i = 0; i < queueCopy.size(); ++i)
-        queueCopy[i].function(queueCopy[i].context);
-}
-
-LRESULT CALLBACK ThreadingWindowWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
-{
-    if (message == threadingFiredMessage) {
-        processingCustomThreadingMessage = true;
-        callFunctionsOnMainThread();
-        processingCustomThreadingMessage = false;
-    } else
-        return DefWindowProc(hWnd, message, wParam, lParam);
-    return 0;
-}
-
-void initializeThreading()
-{
-    if (threadingWindowHandle)
-        return;
-    
-    WNDCLASSEX wcex;
-    memset(&wcex, 0, sizeof(WNDCLASSEX));
-    wcex.cbSize = sizeof(WNDCLASSEX);
-    wcex.lpfnWndProc    = ThreadingWindowWndProc;
-    wcex.hInstance      = Page::instanceHandle();
-    wcex.lpszClassName  = kThreadingWindowClassName;
-    RegisterClassEx(&wcex);
-
-    threadingWindowHandle = CreateWindow(kThreadingWindowClassName, 0, 0,
-       CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, HWND_MESSAGE, 0, Page::instanceHandle(), 0);
-    threadingFiredMessage = RegisterWindowMessage(L"com.apple.WebKit.MainThreadFired");
+    ::EnterCriticalSection(&m_mutex.m_internalMutex);
+    ++m_mutex.m_recursionCount;
 }
     
-void callOnMainThread(MainThreadFunction* function, void* context)
+bool Mutex::tryLock()
 {
-    ASSERT(function);
-    ASSERT(threadingWindowHandle);
+    // This method is modeled after the behavior of pthread_mutex_trylock,
+    // which will return an error if the lock is already owned by the
+    // current thread.  Since the primitive Win32 'TryEnterCriticalSection'
+    // treats this as a successful case, it changes the behavior of several
+    // tests in WebKit that check to see if the current thread already
+    // owned this mutex (see e.g., IconDatabase::getOrCreateIconRecord)
+    DWORD result = ::TryEnterCriticalSection(&m_mutex.m_internalMutex);
+    
+    if (result != 0) {       // We got the lock
+        // If this thread already had the lock, we must unlock and
+        // return false so that we mimic the behavior of POSIX's
+        // pthread_mutex_trylock:
+        if (m_mutex.m_recursionCount > 0) {
+            ::LeaveCriticalSection(&m_mutex.m_internalMutex);
+            return false;
+        }
 
-    if (processingCustomThreadingMessage)
-        LOG(Threading, "callOnMainThread() called recursively.  Beware of nested PostMessage()s");
-
-    {
-        MutexLocker locker(functionQueueMutex());
-        functionQueue().append(FunctionWithContext(function, context));
+        ++m_mutex.m_recursionCount;
+        return true;
     }
 
-    PostMessage(threadingWindowHandle, threadingFiredMessage, 0, 0);
+    return false;
 }
 
-} // namespace WebCore
+void Mutex::unlock()
+{
+    --m_mutex.m_recursionCount;
+    ::LeaveCriticalSection(&m_mutex.m_internalMutex);
+}
+
+} // namespace WTF

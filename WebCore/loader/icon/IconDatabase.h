@@ -32,13 +32,13 @@
 #endif
 
 #include "StringHash.h"
-#if ENABLE(ICONDATABASE)
-#include "Threading.h"
-#endif
 #include "Timer.h"
 #include <wtf/HashSet.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/OwnPtr.h>
+#if ENABLE(ICONDATABASE)
+#include <wtf/Threading.h>
+#endif
 
 namespace WebCore { 
 

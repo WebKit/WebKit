@@ -28,7 +28,7 @@
 #ifndef DatabaseThread_h
 #define DatabaseThread_h
 
-#include "MessageQueue.h"
+#include <wtf/MessageQueue.h>
 
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>

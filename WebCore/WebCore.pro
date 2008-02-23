@@ -932,6 +932,7 @@ qt-port {
     platform/graphics/qt/SimpleFontDataQt.cpp \
     platform/qt/KURLQt.cpp \
     platform/qt/Localizations.cpp \
+    platform/qt/MainThreadQt.cpp \
     platform/qt/MIMETypeRegistryQt.cpp \
     platform/qt/PasteboardQt.cpp \
     platform/qt/PlatformKeyboardEventQt.cpp \
@@ -951,7 +952,6 @@ qt-port {
     platform/text/qt/TextBoundaries.cpp \
     platform/text/qt/TextBreakIteratorQt.cpp \
     platform/text/qt/TextCodecQt.cpp \
-    platform/qt/ThreadingQt.cpp \
     platform/qt/WheelEventQt.cpp \
     platform/qt/WidgetQt.cpp \
     ../WebKit/qt/WebCoreSupport/ChromeClientQt.cpp \
@@ -967,7 +967,6 @@ qt-port {
     ../WebKit/qt/Api/qwebhistory.cpp \
     ../WebKit/qt/Api/qwebsettings.cpp \
     ../WebKit/qt/Api/qwebhistoryinterface.cpp \
-    platform/ThreadingNone.cpp
 
     unix: SOURCES += platform/qt/SystemTimeQt.cpp
     else: SOURCES += platform/win/SystemTimeWin.cpp
@@ -1038,6 +1037,7 @@ gtk-port {
         platform/gtk/Language.cpp \
         platform/gtk/LocalizedStringsGtk.cpp \
         platform/gtk/LoggingGtk.cpp \
+        platform/gtk/MainThreadGtk.cpp \
         platform/gtk/MIMETypeRegistryGtk.cpp \
         platform/gtk/MouseEventGtk.cpp \
         platform/gtk/PasteboardGtk.cpp \
@@ -1052,7 +1052,6 @@ gtk-port {
         platform/gtk/SystemTimeGtk.cpp \
         platform/gtk/TemporaryLinkStubs.cpp \
         platform/text/gtk/TextBreakIteratorInternalICUGtk.cpp \
-        platform/gtk/ThreadingGtk.cpp \
         platform/gtk/WheelEventGtk.cpp \
         platform/gtk/WidgetGtk.cpp \
         platform/gtk/gtk2drawing.c \
