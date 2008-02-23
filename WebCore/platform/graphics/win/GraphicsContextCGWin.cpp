@@ -168,6 +168,77 @@ void GraphicsContext::releaseWindowsContext(HDC hdc, const IntRect& dstRect, boo
     m_data->restore();
 }
 
+void GraphicsContextPlatformPrivate::save()
+{
+    if (!m_hdc)
+        return;
+    SaveDC(m_hdc);
+}
+
+void GraphicsContextPlatformPrivate::restore()
+{
+    if (!m_hdc)
+        return;
+    RestoreDC(m_hdc, -1);
+}
+
+void GraphicsContextPlatformPrivate::clip(const IntRect& clipRect)
+{
+    if (!m_hdc)
+        return;
+    IntersectClipRect(m_hdc, clipRect.x(), clipRect.y(), clipRect.right(), clipRect.bottom());
+}
+
+void GraphicsContextPlatformPrivate::clip(const Path&)
+{
+    notImplemented();
+}
+
+void GraphicsContextPlatformPrivate::scale(const FloatSize& size)
+{
+    if (!m_hdc)
+        return;
+    XFORM xform;
+    xform.eM11 = size.width();
+    xform.eM12 = 0.0f;
+    xform.eM21 = 0.0f;
+    xform.eM22 = size.height();
+    xform.eDx = 0.0f;
+    xform.eDy = 0.0f;
+    ModifyWorldTransform(m_hdc, &xform, MWT_LEFTMULTIPLY);
+}
+
+static const double deg2rad = 0.017453292519943295769; // pi/180
+
+void GraphicsContextPlatformPrivate::rotate(float degreesAngle)
+{
+    float radiansAngle = degreesAngle * deg2rad;
+    float cosAngle = cosf(radiansAngle);
+    float sinAngle = sinf(radiansAngle);
+    XFORM xform;
+    xform.eM11 = cosAngle;
+    xform.eM12 = -sinAngle;
+    xform.eM21 = sinAngle;
+    xform.eM22 = cosAngle;
+    xform.eDx = 0.0f;
+    xform.eDy = 0.0f;
+    ModifyWorldTransform(m_hdc, &xform, MWT_LEFTMULTIPLY);
+}
+
+void GraphicsContextPlatformPrivate::translate(float x , float y)
+{
+    if (!m_hdc)
+        return;
+    XFORM xform;
+    xform.eM11 = 1.0f;
+    xform.eM12 = 0.0f;
+    xform.eM21 = 0.0f;
+    xform.eM22 = 1.0f;
+    xform.eDx = x;
+    xform.eDy = y;
+    ModifyWorldTransform(m_hdc, &xform, MWT_LEFTMULTIPLY);
+}
+
 void GraphicsContextPlatformPrivate::concatCTM(const AffineTransform& transform)
 {
     if (!m_hdc)

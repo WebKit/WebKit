@@ -47,7 +47,8 @@ DragImageRef createDragImageFromImage(Image* img)
 {
     notImplemented();
 
-    return 0;
+    DragImageRef temp;
+    return temp;
 }
     
 }
