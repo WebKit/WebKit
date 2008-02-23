@@ -1,5 +1,13 @@
 2008-02-22  Oliver Hunt  <oliver@apple.com>
 
+        Reviewed by NOBODY (build fix).
+
+        Unbreak windows vcproj
+
+        * WebCore.vcproj/WebCore.vcproj:
+
+2008-02-22  Oliver Hunt  <oliver@apple.com>
+
         Reviewed by Sam W.
 
         Support Canvas.getImageData and Canvas.createImageData

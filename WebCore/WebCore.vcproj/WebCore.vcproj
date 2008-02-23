@@ -343,9 +343,11 @@
 			<File
 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSCanvasPixelArray.cpp"
 				>
+			</File>
 			<File
 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSCanvasPixelArray.h"
 				>
+			</File>
 			<File
 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSCanvasRenderingContext2D.cpp"
 				>
@@ -1133,6 +1135,7 @@
 			<File
 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSImageData.cpp"
 				>
+			</File>
 			<File
 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSImageData.h"
 				>
@@ -6860,9 +6863,11 @@
 			<File
 				RelativePath="..\html\CanvasPattern.h"
 				>
+			</File>
 			<File
 				RelativePath="..\html\CanvasPixelArray.cpp"
 				>
+			</File>
 			<File
 				RelativePath="..\html\CanvasPixelArray.h"
 				>
@@ -7769,6 +7774,7 @@
 				<File
 					RelativePath="..\bindings\js\JSCanvasPixelArrayCustom.cpp"
 					>
+				</File>
 				<File
 					RelativePath="..\bindings\js\JSLocation.cpp"
 					>
