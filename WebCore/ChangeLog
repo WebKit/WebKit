@@ -2,6 +2,14 @@
 
         Reviewed by NOBODY (build fix).
 
+        WX build fixes
+
+        * WebCoreSources.bkl:
+
+2008-02-22  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by NOBODY (build fix).
+
         Once more with the cairo/qt/wx build fixing
 
         * platform/graphics/cairo/ImageBufferCairo.cpp:

@@ -37,6 +37,7 @@ This file contains the list of files needed to build WebCore.
         bindings/js/GCController.cpp
         bindings/js/JSAttrCustom.cpp
         bindings/js/JSAudioConstructor.cpp
+        bindings/js/JSCanvasPixelArrayCustom.cpp
         bindings/js/JSCanvasRenderingContext2DCustom.cpp
         bindings/js/JSCSSRuleCustom.cpp
         bindings/js/JSCSSStyleDeclarationCustom.cpp
@@ -167,6 +168,7 @@ This file contains the list of files needed to build WebCore.
         DerivedSources/WebCore/JSCSSValueList.cpp
         DerivedSources/WebCore/JSCanvasGradient.cpp
         DerivedSources/WebCore/JSCanvasPattern.cpp
+        DerivedSources/WebCore/JSCanvasPixelArray.cpp
         DerivedSources/WebCore/JSCanvasRenderingContext2D.cpp
         DerivedSources/WebCore/JSCharacterData.cpp
         DerivedSources/WebCore/JSComment.cpp
@@ -416,6 +418,7 @@ This file contains the list of files needed to build WebCore.
     <set append="1" var="WEBCORE_SOURCES_HTML">
         html/CanvasGradient.cpp
         html/CanvasPattern.cpp
+        html/CanvasPixelArray.cpp
         html/CanvasRenderingContext2D.cpp
         html/CanvasStyle.cpp
         html/FormDataList.cpp
@@ -495,6 +498,7 @@ This file contains the list of files needed to build WebCore.
         html/HTMLTokenizer.cpp
         html/HTMLUListElement.cpp
         html/HTMLViewSourceDocument.cpp
+        html/ImageData.cpp
     </set>
     
     <set append="1" var="WEBCORE_SOURCES_LOADER">
