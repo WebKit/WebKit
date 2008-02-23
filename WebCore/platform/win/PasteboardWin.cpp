@@ -26,10 +26,11 @@
 #include "config.h"
 #include "Pasteboard.h"
 
-#include "ClipboardUtilitiesWin.h"
 #include "CString.h"
-#include "DocumentFragment.h"
+#include "ClipboardUtilitiesWin.h"
+#include "DeprecatedCString.h"
 #include "Document.h"
+#include "DocumentFragment.h"
 #include "Element.h"
 #include "Frame.h"
 #include "HitTestResult.h"
