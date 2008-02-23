@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2006 Nikolas Zimmermann <zimmermann@kde.org>
+ * Copyright (C) 2008 Apple, Inc
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,6 +28,7 @@
 #include "ImageBuffer.h"
 
 #include "GraphicsContext.h"
+#include "ImageData.h"
 
 #include <ApplicationServices/ApplicationServices.h>
 #include <wtf/Assertions.h>
@@ -96,6 +98,62 @@ CGImageRef ImageBuffer::cgImage() const
     }
 
     return m_cgImage;
+}
+
+PassRefPtr<ImageData> ImageBuffer::getImageData(const IntRect& rect) const
+{
+    if (!m_data)
+        return 0;
+    
+    PassRefPtr<ImageData> result = ImageData::create(rect.width(), rect.height());
+    unsigned char* data = result->data()->data().data();
+    
+    if (rect.x() < 0 || rect.y() < 0 || (rect.x() + rect.width()) > m_size.width() || (rect.y() + rect.height()) > m_size.height())
+        memset(data, 0, result->data()->length());
+
+    int originx = rect.x();
+    int destx = 0;
+    if (originx < 0) {
+        destx = -originx;
+        originx = 0;
+    }
+    int endx = rect.x() + rect.width();
+    if (endx > m_size.width())
+        endx = m_size.width();
+    int numColumns = endx - originx;
+    
+    int originy = rect.y();
+    int desty = 0;
+    if (originy < 0) {
+        desty = -originy;
+        originy = 0;
+    }
+    int endy = rect.y() + rect.height();
+    if (endy > m_size.height())
+        endy = m_size.height();
+    int numRows = endy - originy;
+    
+    unsigned srcBytesPerRow = 4 * m_size.width();
+    unsigned destBytesPerRow = 4 * rect.width();
+    
+    // -originy to handle the accursed flipped y axis
+    unsigned char* srcRows = reinterpret_cast<unsigned char*>(m_data) + (m_size.height() - originy - 1) * srcBytesPerRow + originx * 4;
+    unsigned char* destRows = data + desty * destBytesPerRow + destx * 4;
+    for (int y = 0; y < numRows; ++y) {
+        for (int x = 0; x < numColumns; x++) {
+            if (unsigned char alpha = srcRows[3]) {
+                destRows[0] = (srcRows[0] * 255) / alpha;
+                destRows[1] = (srcRows[1] * 255) / alpha;
+                destRows[2] = (srcRows[2] * 255) / alpha;
+                destRows[3] = alpha;
+            } else {
+                reinterpret_cast<uint32_t*>(destRows)[0] = reinterpret_cast<uint32_t*>(srcRows)[0];
+            }
+            destRows += 4;
+        }
+        srcRows -= srcBytesPerRow;
+    }
+    return result;
 }
 
 }

@@ -1,3 +1,18 @@
+2008-02-22  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Sam W.
+
+        Bug 17486: Support HTML5 Canvas.getImageData API
+        Support Canvas.getImageData and Canvas.createImageData
+
+        Test cases for ImageData behaviour and getImageData correctness
+
+        * fast/canvas/canvas-ImageData-behaviour-expected.txt: Added.
+        * fast/canvas/canvas-ImageData-behaviour.html: Added.
+        * fast/canvas/canvas-ImageData-behaviour.js: Added.
+        * fast/canvas/canvas-getImageData-expected.txt: Added.
+        * fast/canvas/canvas-getImageData.html: Added.
+
 2008-02-22  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Sam Weinig.

@@ -312,6 +312,7 @@ IDL_BINDINGS += \
     dom/WheelEvent.idl \
     html/CanvasGradient.idl \
     html/CanvasPattern.idl \
+    html/CanvasPixelArray.idl \
     html/CanvasRenderingContext2D.idl \
     html/HTMLAnchorElement.idl \
     html/HTMLAppletElement.idl \
@@ -373,6 +374,7 @@ IDL_BINDINGS += \
     html/HTMLTextAreaElement.idl \
     html/HTMLTitleElement.idl \
     html/HTMLUListElement.idl \
+    html/ImageData.idl \
     page/BarInfo.idl \
     page/Console.idl \
     page/DOMSelection.idl \
@@ -387,6 +389,7 @@ IDL_BINDINGS += \
 SOURCES += \
     bindings/js/GCController.cpp \
     bindings/js/JSAttrCustom.cpp \
+    bindings/js/JSCanvasPixelArrayCustom.cpp \
     bindings/js/JSCanvasRenderingContext2DCustom.cpp \
     bindings/js/JSCSSRuleCustom.cpp \
     bindings/js/JSCSSStyleDeclarationCustom.cpp \
@@ -598,6 +601,7 @@ SOURCES += \
     history/PageCache.cpp \
     html/CanvasGradient.cpp \
     html/CanvasPattern.cpp \
+    html/CanvasPixelArray.cpp \
     html/CanvasRenderingContext2D.cpp \
     html/CanvasStyle.cpp \
     html/FormDataList.cpp \
@@ -677,6 +681,7 @@ SOURCES += \
     html/HTMLTokenizer.cpp \
     html/HTMLUListElement.cpp \
     html/HTMLViewSourceDocument.cpp \
+    html/ImageData.cpp \
     loader/Cache.cpp \
     loader/CachedCSSStyleSheet.cpp \
     loader/CachedFont.cpp \

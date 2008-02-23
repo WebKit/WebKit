@@ -327,6 +327,7 @@ all : \
     JSCSSValueList.h \
     JSCanvasGradient.h \
     JSCanvasPattern.h \
+    JSCanvasPixelArray.h \
     JSCanvasRenderingContext2D.h \
     JSCharacterData.h \
     JSComment.h \
@@ -414,6 +415,7 @@ all : \
     JSHTMLUListElement.h \
     JSHTMLVideoElement.h \
     JSHistory.h \
+    JSImageData.h \
     JSKeyboardEvent.h \
     JSLocation.lut.h \
     JSMediaError.h \

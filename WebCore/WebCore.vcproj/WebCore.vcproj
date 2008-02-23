@@ -341,6 +341,12 @@
 				>
 			</File>
 			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSCanvasPixelArray.cpp"
+				>
+			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSCanvasPixelArray.h"
+				>
+			<File
 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSCanvasRenderingContext2D.cpp"
 				>
 			</File>
@@ -1122,6 +1128,13 @@
 			</File>
 			<File
 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSHTMLVideoElement.h"
+				>
+			</File>
+			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSImageData.cpp"
+				>
+			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSImageData.h"
 				>
 			</File>
 			<File
@@ -6847,6 +6860,12 @@
 			<File
 				RelativePath="..\html\CanvasPattern.h"
 				>
+			<File
+				RelativePath="..\html\CanvasPixelArray.cpp"
+				>
+			<File
+				RelativePath="..\html\CanvasPixelArray.h"
+				>
 			</File>
 			<File
 				RelativePath="..\html\CanvasRenderingContext2D.cpp"
@@ -7513,6 +7532,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\html\ImageData.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\html\ImageData.h"
+				>
+			</File>
+			<File
 				RelativePath="..\html\MediaError.h"
 				>
 			</File>
@@ -7739,6 +7766,9 @@
 					RelativePath="..\bindings\js\JSHTMLSelectElementCustom.h"
 					>
 				</File>
+				<File
+					RelativePath="..\bindings\js\JSCanvasPixelArrayCustom.cpp"
+					>
 				<File
 					RelativePath="..\bindings\js\JSLocation.cpp"
 					>

@@ -26,6 +26,7 @@
 #include "config.h"
 #include "ImageBuffer.h"
 #include "GraphicsContext.h"
+#include "NotImplemented.h"
 
 namespace WebCore {
 
@@ -40,6 +41,12 @@ ImageBuffer::~ImageBuffer()
 
 GraphicsContext* ImageBuffer::context() const
 {
+    return 0;
+}
+
+PassRefPtr<ImageData> ImageBuffer::getImageData(const IntRect&) const
+{
+    notImplemented();
     return 0;
 }
 

@@ -1707,6 +1707,17 @@
 		A71878900B2D04AC00A16ECE /* DragControllerMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = A718788F0B2D04AC00A16ECE /* DragControllerMac.mm */; };
 		A7352C190B1BB89D00A986D0 /* RenderSVGBlock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A7352C170B1BB89D00A986D0 /* RenderSVGBlock.cpp */; };
 		A7352C1A0B1BB89D00A986D0 /* RenderSVGBlock.h in Headers */ = {isa = PBXBuildFile; fileRef = A7352C180B1BB89D00A986D0 /* RenderSVGBlock.h */; };
+		A766F3530D6BDE3500ABDDB3 /* JSCanvasPixelArrayCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A766F3520D6BDE3500ABDDB3 /* JSCanvasPixelArrayCustom.cpp */; };
+		A77979160D6B9D0C003851B9 /* CanvasPixelArray.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A77979100D6B9D0C003851B9 /* CanvasPixelArray.cpp */; };
+		A77979170D6B9D0C003851B9 /* CanvasPixelArray.h in Headers */ = {isa = PBXBuildFile; fileRef = A77979110D6B9D0C003851B9 /* CanvasPixelArray.h */; };
+		A77979180D6B9D0C003851B9 /* CanvasPixelArray.idl in Resources */ = {isa = PBXBuildFile; fileRef = A77979120D6B9D0C003851B9 /* CanvasPixelArray.idl */; };
+		A77979190D6B9D0C003851B9 /* ImageData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A77979130D6B9D0C003851B9 /* ImageData.cpp */; };
+		A779791A0D6B9D0C003851B9 /* ImageData.h in Headers */ = {isa = PBXBuildFile; fileRef = A77979140D6B9D0C003851B9 /* ImageData.h */; };
+		A779791B0D6B9D0C003851B9 /* ImageData.idl in Resources */ = {isa = PBXBuildFile; fileRef = A77979150D6B9D0C003851B9 /* ImageData.idl */; };
+		A77979260D6B9E64003851B9 /* JSCanvasPixelArray.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A77979220D6B9E64003851B9 /* JSCanvasPixelArray.cpp */; };
+		A77979270D6B9E64003851B9 /* JSCanvasPixelArray.h in Headers */ = {isa = PBXBuildFile; fileRef = A77979230D6B9E64003851B9 /* JSCanvasPixelArray.h */; };
+		A77979280D6B9E64003851B9 /* JSImageData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A77979240D6B9E64003851B9 /* JSImageData.cpp */; };
+		A77979290D6B9E64003851B9 /* JSImageData.h in Headers */ = {isa = PBXBuildFile; fileRef = A77979250D6B9E64003851B9 /* JSImageData.h */; };
 		A784941B0B5FE507001E237A /* Clipboard.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A784941A0B5FE507001E237A /* Clipboard.cpp */; };
 		A795463E0B5C4C80007B438F /* DragDataMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = A795463D0B5C4C80007B438F /* DragDataMac.mm */; };
 		A79546430B5C4CB4007B438F /* DragData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A79546420B5C4CB4007B438F /* DragData.cpp */; };
@@ -5902,6 +5913,17 @@
 		A718788F0B2D04AC00A16ECE /* DragControllerMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DragControllerMac.mm; sourceTree = "<group>"; };
 		A7352C170B1BB89D00A986D0 /* RenderSVGBlock.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = RenderSVGBlock.cpp; sourceTree = "<group>"; };
 		A7352C180B1BB89D00A986D0 /* RenderSVGBlock.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = RenderSVGBlock.h; sourceTree = "<group>"; };
+		A766F3520D6BDE3500ABDDB3 /* JSCanvasPixelArrayCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCanvasPixelArrayCustom.cpp; sourceTree = "<group>"; };
+		A77979100D6B9D0C003851B9 /* CanvasPixelArray.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CanvasPixelArray.cpp; sourceTree = "<group>"; };
+		A77979110D6B9D0C003851B9 /* CanvasPixelArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CanvasPixelArray.h; sourceTree = "<group>"; };
+		A77979120D6B9D0C003851B9 /* CanvasPixelArray.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CanvasPixelArray.idl; sourceTree = "<group>"; };
+		A77979130D6B9D0C003851B9 /* ImageData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ImageData.cpp; sourceTree = "<group>"; };
+		A77979140D6B9D0C003851B9 /* ImageData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImageData.h; sourceTree = "<group>"; };
+		A77979150D6B9D0C003851B9 /* ImageData.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ImageData.idl; sourceTree = "<group>"; };
+		A77979220D6B9E64003851B9 /* JSCanvasPixelArray.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCanvasPixelArray.cpp; sourceTree = "<group>"; };
+		A77979230D6B9E64003851B9 /* JSCanvasPixelArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCanvasPixelArray.h; sourceTree = "<group>"; };
+		A77979240D6B9E64003851B9 /* JSImageData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSImageData.cpp; sourceTree = "<group>"; };
+		A77979250D6B9E64003851B9 /* JSImageData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSImageData.h; sourceTree = "<group>"; };
 		A784941A0B5FE507001E237A /* Clipboard.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = Clipboard.cpp; sourceTree = "<group>"; };
 		A795463D0B5C4C80007B438F /* DragDataMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = DragDataMac.mm; sourceTree = "<group>"; };
 		A79546420B5C4CB4007B438F /* DragData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DragData.cpp; sourceTree = "<group>"; };
@@ -9771,6 +9793,12 @@
 		93EEC1EC09C2877700C515D1 /* html */ = {
 			isa = PBXGroup;
 			children = (
+				A77979100D6B9D0C003851B9 /* CanvasPixelArray.cpp */,
+				A77979110D6B9D0C003851B9 /* CanvasPixelArray.h */,
+				A77979120D6B9D0C003851B9 /* CanvasPixelArray.idl */,
+				A77979130D6B9D0C003851B9 /* ImageData.cpp */,
+				A77979140D6B9D0C003851B9 /* ImageData.h */,
+				A77979150D6B9D0C003851B9 /* ImageData.idl */,
 				93EEC1F009C2877700C515D1 /* CanvasGradient.cpp */,
 				93EEC1F109C2877700C515D1 /* CanvasGradient.h */,
 				930CAB8809C49EFA00229C04 /* CanvasGradient.idl */,
@@ -10024,6 +10052,10 @@
 		A83B79080CCAFF2B000B0825 /* HTML */ = {
 			isa = PBXGroup;
 			children = (
+				A77979220D6B9E64003851B9 /* JSCanvasPixelArray.cpp */,
+				A77979230D6B9E64003851B9 /* JSCanvasPixelArray.h */,
+				A77979240D6B9E64003851B9 /* JSImageData.cpp */,
+				A77979250D6B9E64003851B9 /* JSImageData.h */,
 				65DF323309D1DE65000BE325 /* JSCanvasGradient.cpp */,
 				65DF323409D1DE65000BE325 /* JSCanvasGradient.h */,
 				65DF323509D1DE65000BE325 /* JSCanvasPattern.cpp */,
@@ -11525,6 +11557,7 @@
 		BC4EDEF70C08F414007EDD49 /* Custom */ = {
 			isa = PBXGroup;
 			children = (
+				A766F3520D6BDE3500ABDDB3 /* JSCanvasPixelArrayCustom.cpp */,
 				BC2ED6BB0C6BD2F000920BFF /* JSAttrCustom.cpp */,
 				1A9EF4560A1B957D00332B63 /* JSCanvasRenderingContext2DCustom.cpp */,
 				BC46C1ED0C0DDBDF0020CFC3 /* JSCSSRuleCustom.cpp */,
@@ -14239,6 +14272,10 @@
 				BCC573350D695BBE006EF517 /* DOMProgressEvent.h in Headers */,
 				BCC573380D695BD7006EF517 /* DOMProgressEventInternal.h in Headers */,
 				BCC5733A0D695BF1006EF517 /* DOMTextPrivate.h in Headers */,
+				A77979170D6B9D0C003851B9 /* CanvasPixelArray.h in Headers */,
+				A779791A0D6B9D0C003851B9 /* ImageData.h in Headers */,
+				A77979270D6B9E64003851B9 /* JSCanvasPixelArray.h in Headers */,
+				A77979290D6B9E64003851B9 /* JSImageData.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -14351,6 +14388,8 @@
 				85136CA80AED665900F90A3D /* westResizeCursor.png in Resources */,
 				1AB1AE7A0C051FDE00139F4F /* zoomInCursor.png in Resources */,
 				1AB1AE7B0C051FDE00139F4F /* zoomOutCursor.png in Resources */,
+				A77979180D6B9D0C003851B9 /* CanvasPixelArray.idl in Resources */,
+				A779791B0D6B9D0C003851B9 /* ImageData.idl in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -15830,6 +15869,11 @@
 				C0294DF30D5A6FD800CC7D6B /* UserStyleSheetLoader.cpp in Sources */,
 				37F818FE0D657606005E1F05 /* WebCoreURLResponse.mm in Sources */,
 				BCC573360D695BBE006EF517 /* DOMProgressEvent.mm in Sources */,
+				A77979160D6B9D0C003851B9 /* CanvasPixelArray.cpp in Sources */,
+				A77979190D6B9D0C003851B9 /* ImageData.cpp in Sources */,
+				A77979260D6B9E64003851B9 /* JSCanvasPixelArray.cpp in Sources */,
+				A77979280D6B9E64003851B9 /* JSImageData.cpp in Sources */,
+				A766F3530D6BDE3500ABDDB3 /* JSCanvasPixelArrayCustom.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

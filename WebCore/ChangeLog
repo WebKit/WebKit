@@ -1,3 +1,70 @@
+2008-02-22  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Sam W.
+
+        Support Canvas.getImageData and Canvas.createImageData
+        
+        This patch adds support for all the pixel reading portions
+        of the HTML5 Canvas spec.  There are two new types ImageData
+        and CanvasPixelArray which are used to provide the HTML5
+        ImageData object, and the required semantics for assignment
+        to the ImageData data array.
+        
+        We only implement the CG version of ImageBuffer::getImageData,
+        but the logic is null safe, so this will not introduce any
+        crashes into other platforms, unfortunately it will result in
+        JS Object detection "lying" on non-CG platforms.
+
+        Tests: fast/canvas/canvas-ImageData-behaviour.html
+               fast/canvas/canvas-getImageData.html
+
+        * DerivedSources.make:
+        * GNUmakefile.am:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSCanvasPixelArrayCustom.cpp: Added.
+        (WebCore::JSCanvasPixelArray::indexGetter):
+        (WebCore::JSCanvasPixelArray::indexSetter):
+        (WebCore::toJS):
+        * bindings/js/JSCanvasRenderingContext2DCustom.cpp:
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * html/CanvasPixelArray.cpp: Added.
+        (WebCore::CanvasPixelArray::create):
+        * html/CanvasPixelArray.h: Added.
+        (WebCore::CanvasPixelArray::data):
+        (WebCore::CanvasPixelArray::length):
+        (WebCore::CanvasPixelArray::set):
+        (WebCore::CanvasPixelArray::get):
+        * html/CanvasPixelArray.idl: Added.
+        * html/CanvasRenderingContext2D.cpp:
+        (WebCore::createEmptyImageData):
+        (WebCore::CanvasRenderingContext2D::createImageData):
+        (WebCore::CanvasRenderingContext2D::getImageData):
+        * html/CanvasRenderingContext2D.h:
+        * html/CanvasRenderingContext2D.idl:
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::convertLogicalToDevice):
+        (WebCore::HTMLCanvasElement::createImageBuffer):
+        * html/HTMLCanvasElement.h:
+        * html/ImageData.cpp: Added.
+        (WebCore::ImageData::create):
+        (WebCore::ImageData::ImageData):
+        * html/ImageData.h: Added.
+        (WebCore::ImageData::width):
+        (WebCore::ImageData::height):
+        (WebCore::ImageData::data):
+        * html/ImageData.idl: Added.
+        * platform/graphics/ImageBuffer.h:
+        * platform/graphics/cairo/ImageBufferCairo.cpp:
+        (WebCore::ImageBuffer::getImageData):
+        * platform/graphics/cg/ImageBufferCG.cpp:
+        (WebCore::ImageBuffer::getImageData):
+        * platform/graphics/qt/ImageBufferQt.cpp:
+        (WebCore::ImageBuffer::getImageData):
+        * platform/graphics/wx/ImageBufferWx.cpp:
+        (WebCore::ImageBuffer::getImageData):
+
 2008-02-22  Sam Weinig  <sam@webkit.org>
 
         Rubber-stamped by Adam Roben.

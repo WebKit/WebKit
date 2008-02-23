@@ -33,6 +33,7 @@
 #include "CachedImage.h"
 #include "CanvasGradient.h"
 #include "CanvasPattern.h"
+#include "CanvasPixelArray.h"
 #include "CanvasStyle.h"
 #include "Document.h"
 #include "ExceptionCode.h"
@@ -41,6 +42,8 @@
 #include "HTMLCanvasElement.h"
 #include "HTMLImageElement.h"
 #include "HTMLNames.h"
+#include "ImageBuffer.h"
+#include "ImageData.h"
 #include "NotImplemented.h"
 #include "RenderHTMLCanvas.h"
 #include "Settings.h"
@@ -1160,6 +1163,43 @@ void CanvasRenderingContext2D::applyFillPattern()
     cairo_pattern_destroy(platformPattern);
 #endif
     state().m_appliedFillPattern = true;
+}
+
+static PassRefPtr<ImageData> createEmptyImageData(const IntSize& size)
+{
+    PassRefPtr<ImageData> data = ImageData::create(size.width(), size.height());
+    memset(data->data()->data().data(), 0, data->data()->length());
+    return data;
+}
+
+PassRefPtr<ImageData> CanvasRenderingContext2D::createImageData(float sw, float sh) const
+{
+    FloatSize unscaledSize(sw, sh);
+    IntSize scaledSize;
+    if (m_canvas)
+        scaledSize = m_canvas->convertLogicalToDevice(unscaledSize);
+    else
+        scaledSize = IntSize(ceilf(sw), ceilf(sh));
+    if (scaledSize.width() < 1)
+        scaledSize.setWidth(1);
+    if (scaledSize.height() < 1)
+        scaledSize.setHeight(1);
+    
+    return createEmptyImageData(scaledSize);
+}
+
+PassRefPtr<ImageData> CanvasRenderingContext2D::getImageData(float sx, float sy, float sw, float sh) const
+{
+    FloatRect unscaledRect(sx, sy, sw, sh);
+    IntRect scaledRect = m_canvas ? m_canvas->convertLogicalToDevice(unscaledRect) : enclosingIntRect(unscaledRect);
+    if (scaledRect.width() < 1)
+        scaledRect.setWidth(1);
+    if (scaledRect.height() < 1)
+        scaledRect.setHeight(1);
+    ImageBuffer* buffer = m_canvas ? m_canvas->buffer() : 0;
+    if (!buffer)
+        return createEmptyImageData(scaledRect.size());
+    return buffer->getImageData(scaledRect);
 }
 
 } // namespace WebCore

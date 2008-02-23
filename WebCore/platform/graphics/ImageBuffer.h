@@ -29,6 +29,7 @@
 
 #include "IntSize.h"
 #include <wtf/OwnPtr.h>
+#include <wtf/PassRefPtr.h>
 #include <memory>
 
 #if PLATFORM(CG)
@@ -47,6 +48,8 @@ typedef struct _cairo_surface cairo_surface_t;
 namespace WebCore {
 
     class GraphicsContext;
+    class ImageData;
+    class IntRect;
     class RenderObject;
 
     class ImageBuffer : Noncopyable {
@@ -65,6 +68,7 @@ namespace WebCore {
         cairo_surface_t* surface() const;
 #endif
 
+        PassRefPtr<ImageData> getImageData(const IntRect& rect) const;
     private:
         void* m_data;
         IntSize m_size;

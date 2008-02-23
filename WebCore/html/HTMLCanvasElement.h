@@ -45,9 +45,14 @@ namespace WebCore {
 
 class CanvasRenderingContext2D;
 typedef CanvasRenderingContext2D CanvasRenderingContext;
+class FloatPoint;
 class FloatRect;
+class FloatSize;
 class GraphicsContext;
 class ImageBuffer;
+class IntPoint;
+class InttRect;
+class IntSize;
 
 class HTMLCanvasElement : public HTMLElement {
 public:
@@ -83,7 +88,11 @@ public:
 #elif PLATFORM(CAIRO)
     cairo_surface_t* createPlatformImage() const;
 #endif
-
+    
+    IntRect convertLogicalToDevice(const FloatRect&) const;
+    IntSize convertLogicalToDevice(const FloatSize&) const;
+    IntPoint convertLogicalToDevice(const FloatPoint&) const;
+    static const float MaxCanvasArea;
 private:
     void createImageBuffer() const;
     void reset();

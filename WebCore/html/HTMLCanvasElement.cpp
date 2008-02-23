@@ -60,7 +60,7 @@ static const int defaultHeight = 150;
 // Firefox limits width/height to 32767 pixels, but slows down dramatically before it 
 // reaches that limit. We limit by area instead, giving us larger maximum dimensions,
 // in exchange for a smaller maximum canvas size.
-static const float maxCanvasArea = 32768 * 8192; // Maximum canvas area in CSS pixels
+const float HTMLCanvasElement::MaxCanvasArea = 32768 * 8192; // Maximum canvas area in CSS pixels
 
 HTMLCanvasElement::HTMLCanvasElement(Document* doc)
     : HTMLElement(canvasTag, doc)
@@ -185,24 +185,42 @@ void HTMLCanvasElement::paint(GraphicsContext* p, const IntRect& r)
         p->paintBuffer(m_imageBuffer.get(), r);
 }
 
+IntRect HTMLCanvasElement::convertLogicalToDevice(const FloatRect& logicalRect) const
+{
+    return IntRect(convertLogicalToDevice(logicalRect.location()), convertLogicalToDevice(logicalRect.size()));
+}
+
+IntSize HTMLCanvasElement::convertLogicalToDevice(const FloatSize& logicalSize) const
+{
+    float pageScaleFactor = document()->frame() ? document()->frame()->page()->chrome()->scaleFactor() : 1.0f;
+    float wf = ceilf(logicalSize.width() * pageScaleFactor);
+    float hf = ceilf(logicalSize.height() * pageScaleFactor);
+    
+    if (!(wf >= 1 && hf >= 1 && wf * hf <= MaxCanvasArea))
+        return IntSize();
+
+    return IntSize(static_cast<unsigned>(wf), static_cast<unsigned>(hf));
+}
+
+IntPoint HTMLCanvasElement::convertLogicalToDevice(const FloatPoint& logicalPos) const
+{
+    float pageScaleFactor = document()->frame() ? document()->frame()->page()->chrome()->scaleFactor() : 1.0f;
+    float xf = logicalPos.x() * pageScaleFactor;
+    float yf = logicalPos.y() * pageScaleFactor;
+    
+    return IntPoint(static_cast<unsigned>(xf), static_cast<unsigned>(yf));
+}
+
 void HTMLCanvasElement::createImageBuffer() const
 {
-    ASSERT(!m_createdImageBuffer);
     ASSERT(!m_imageBuffer);
 
     m_createdImageBuffer = true;
-
-    float unscaledWidth = width();
-    float unscaledHeight = height();
-    float pageScaleFactor = document()->frame() ? document()->frame()->page()->chrome()->scaleFactor() : 1.0f;
-    float wf = ceilf(unscaledWidth * pageScaleFactor);
-    float hf = ceilf(unscaledHeight * pageScaleFactor);
-
-    if (!(wf >= 1 && hf >= 1 && wf * hf <= maxCanvasArea))
+    
+    FloatSize unscaledSize(width(), height());
+    IntSize size = convertLogicalToDevice(unscaledSize);
+    if (!size.width() || !size.height())
         return;
-
-    IntSize size(static_cast<unsigned>(wf), static_cast<unsigned>(hf));
-
     m_imageBuffer.set(ImageBuffer::create(size, false).release());
 }
 

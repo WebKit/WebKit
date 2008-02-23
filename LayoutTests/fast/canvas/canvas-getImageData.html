@@ -1,0 +1,95 @@
+This test ensures that getImageData works correctly.
+<div id="log"></div>
+<script>
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
+
+var canvas = document.createElement("canvas");
+canvas.width = 200;
+canvas.height = 200;
+var context = canvas.getContext("2d");
+
+function log(msg){
+    document.getElementById("log").innerHTML += msg + "<br/>";
+}
+
+function dataToArray(data) {
+    var result = new Array(data.length)
+    for (var i = 0; i < data.length; i++)
+        result[i] = data[i];
+    return result;
+}
+
+function getPixel(ctx, x, y) {
+    var data = ctx.getImageData(x,y,1,1);
+    if (!data) // getImageData failed, which should never happen
+        return [-1,-1,-1,-1];
+    return dataToArray(data.data);
+}
+
+function pixelShouldBe(ctx, x, y, colour) {
+    var ctxColour = getPixel(ctx, x, y);
+    var correct = true;
+    for (var i = 0; i < 4; i++)
+        if (colour[i] != ctxColour[i]) {
+            correct = false;
+            break;
+        }
+    if (correct)
+        log("PASS: pixel at ("+[x,y]+") was ["+colour+"]");
+    else
+        log("FAIL: pixel at ("+[x,y]+") was ["+ctxColour+"], expected ["+colour+"]");
+}
+
+if (!context.setFillColor)
+    context.setFillColor = function(r,g,b,a) {
+        this.fillStyle = "rgba("+[Math.round(r*255),Math.round(g*255),Math.round(b*255),Math.round(a*255)]+")"
+    }
+
+// Check that getImageData is return the data for the right portion of the image
+for(var x = 0; x < 100; x+=4) {
+    context.setFillColor(0, x/96, 0, 1);
+    context.fillRect(x,0,1,1);
+    pixelShouldBe(context, x, 0, [0, Math.round(255*x/96), 0, 255]);
+}
+
+// Check rgba ordering
+context.clearRect(0,0,100,100);
+context.setFillColor(0.25, 0.5, 0.75, 1);
+context.fillRect(5,5,1,1);
+pixelShouldBe(context, 5, 5, [Math.round(0.25*255), Math.round(0.5*255), Math.round(0.75*255), 255]);
+
+// Check that we return transparent black for regions outside the canvas proper
+context.fillStyle = "rgba(255,255,255,255)";
+context.fillRect(198, 5, 4, 1); // final 2 pixels horizontally should be clipped
+var content = dataToArray(context.getImageData(198, 5, 4, 1).data);
+var expected = [255,255,255,255,255,255,255,255,
+                0,0,0,0,0,0,0,0];
+var matched = true;
+for (var i = 0; i < 16; i++)
+    if (content[i] != expected[i]) {
+        matched = false;
+        break;
+    }
+if (matched)
+    log("PASS: Correct data for content outside canvas bounds");
+else
+    log("FAIL: Did not get correct data for content outside canvas bounds: "+content);
+
+// Ensure returned values are not premultiplied
+var values = [0,1,2,16,32,64,96,128,192,254,255];
+
+// this function simply accounts for truncation due to premultiplication in the canvas implementation
+function premult(value, alpha) {
+    return alpha ? Math.floor(Math.round(value*alpha/255)*255/alpha) : 0;
+}
+
+for (var i = 0; i < values.length; i++) {
+    for (var a = 0; a < values.length; a++) {
+        context.fillStyle = "rgba(" + [values[i], 0, 0, values[a]/255] +")";
+        context.fillRect(50+i*4,50+a*4,2,2);
+        pixelShouldBe(context, 50+i*4, 50+a*4, [premult(values[i], values[a]), 0, 0, values[a]]);
+    }
+}
+
+</script>

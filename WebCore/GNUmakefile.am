@@ -88,6 +88,7 @@ webcore_built_sources += \
 	DerivedSources/JSCSSValueList.h \
 	DerivedSources/JSCanvasGradient.h \
 	DerivedSources/JSCanvasPattern.h \
+	DerivedSources/JSCanvasPixelArray.h \
 	DerivedSources/JSCanvasRenderingContext2D.h \
 	DerivedSources/JSCharacterData.h \
 	DerivedSources/JSComment.h \
@@ -167,6 +168,7 @@ webcore_built_sources += \
 	DerivedSources/JSHTMLTitleElement.h \
 	DerivedSources/JSHTMLUListElement.h \
 	DerivedSources/JSHistory.h \
+	DerivedSources/JSImageData.h \
 	DerivedSources/JSKeyboardEvent.h \
 	DerivedSources/JSMediaList.h \
 	DerivedSources/JSMouseEvent.h \
@@ -211,6 +213,7 @@ webcore_built_sources += \
 	DerivedSources/JSCSSValueList.cpp \
 	DerivedSources/JSCanvasGradient.cpp \
 	DerivedSources/JSCanvasPattern.cpp \
+	DerivedSources/JSCanvasPixelArray.cpp \
 	DerivedSources/JSCanvasRenderingContext2D.cpp \
 	DerivedSources/JSCharacterData.cpp \
 	DerivedSources/JSComment.cpp \
@@ -290,6 +293,7 @@ webcore_built_sources += \
 	DerivedSources/JSHTMLTitleElement.cpp \
 	DerivedSources/JSHTMLUListElement.cpp \
 	DerivedSources/JSHistory.cpp \
+	DerivedSources/JSImageData.cpp \
 	DerivedSources/JSKeyboardEvent.cpp \
 	DerivedSources/JSMediaList.cpp \
 	DerivedSources/JSMouseEvent.cpp \
@@ -448,6 +452,7 @@ webcore_headers += \
 webcore_sources += \
 	WebCore/bindings/js/GCController.cpp \
 	WebCore/bindings/js/JSAttrCustom.cpp \
+	WebCore/bindings/js/JSCanvasPixelArrayCustom.cpp \
 	WebCore/bindings/js/JSCanvasRenderingContext2DCustom.cpp \
 	WebCore/bindings/js/JSCSSRuleCustom.cpp \
 	WebCore/bindings/js/JSCSSStyleDeclarationCustom.cpp \
@@ -659,6 +664,7 @@ webcore_sources += \
 	WebCore/history/PageCache.cpp \
 	WebCore/html/CanvasGradient.cpp \
 	WebCore/html/CanvasPattern.cpp \
+	WebCore/html/CanvasPixelArray.cpp \
 	WebCore/html/CanvasRenderingContext2D.cpp \
 	WebCore/html/CanvasStyle.cpp \
 	WebCore/html/FormDataList.cpp \
@@ -738,6 +744,7 @@ webcore_sources += \
 	WebCore/html/HTMLTokenizer.cpp \
 	WebCore/html/HTMLUListElement.cpp \
 	WebCore/html/HTMLViewSourceDocument.cpp \
+	WebCore/html/ImageData.cpp \
 	WebCore/loader/Cache.cpp \
 	WebCore/loader/CachedCSSStyleSheet.cpp \
 	WebCore/loader/CachedFont.cpp \
