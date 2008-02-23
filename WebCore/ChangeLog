@@ -1,3 +1,14 @@
+2008-02-23  David Kilzer  <ddkilzer@apple.com>
+
+        Please clarify licensing for some files
+        <http://bugs.webkit.org/show_bug.cgi?id=14970>
+
+        Reviewed by Darin.
+
+        * bindings/objc/WebScriptObject.h: Added Apple BSD-style license.
+        * bindings/objc/WebScriptObjectPrivate.h: Ditto.
+        * platform/text/mac/ShapeArabic.c: Added ICU license from WebCore/icu/LICENSE.
+
 2008-02-22  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Anders Carlsson.

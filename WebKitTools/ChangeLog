@@ -1,3 +1,19 @@
+2008-02-23  David Kilzer  <ddkilzer@apple.com>
+
+        Please clarify licensing for some files
+        <http://bugs.webkit.org/show_bug.cgi?id=14970>
+
+        Reviewed by Darin.
+
+        * DumpRenderTree/TestNetscapePlugIn.subproj/PluginObject.cpp: Added
+        copyright statement.  Replaced license with newer Apple BSD-style license.
+        * DumpRenderTree/TestNetscapePlugIn.subproj/PluginObject.h: Ditto.
+        * DumpRenderTree/TestNetscapePlugIn.subproj/TestObject.cpp: Ditto.
+        * DumpRenderTree/TestNetscapePlugIn.subproj/TestObject.h: Ditto.
+        * DumpRenderTree/TestNetscapePlugIn.subproj/main.cpp: Ditto.
+        * DumpRenderTree/win/TestNetscapePlugin/main.c: Ditto.
+        * mangleme/LICENSE: Added (LGPL).
+
 2008-02-22  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Adam.

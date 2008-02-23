@@ -1,3 +1,14 @@
+2008-02-23  David Kilzer  <ddkilzer@apple.com>
+
+        Please clarify licensing for some files
+        <http://bugs.webkit.org/show_bug.cgi?id=14970>
+
+        Reviewed by Darin.
+
+        * Plugins/WebNetscapeDeprecatedFunctions.c: Updated copyright statement
+        and added Apple BSD-style license.
+        * Plugins/WebNetscapeDeprecatedFunctions.h: Ditto.
+
 2008-02-22  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Adam Roben
