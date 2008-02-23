@@ -92,21 +92,21 @@ void GraphicsContext::releaseWindowsContext(HDC hdc, const IntRect& dstRect, boo
     cairo_surface_mark_dirty(surface);
 }
 
-void GraphicsContext::concatCTM(const AffineTransform& transform)
+void GraphicsContextPlatformPrivate::concatCTM(const AffineTransform& transform)
 {
-    cairo_surface_t* surface = cairo_get_target(platformContext());
+    cairo_surface_t* surface = cairo_get_target(cr);
     HDC hdc = cairo_win32_surface_get_dc(surface);   
     SaveDC(hdc);
 
-    cairo_matrix_t mat;
-    cairo_get_matrix(platformContext(), &mat);
+    const cairo_matrix_t* matrix = reinterpret_cast<const cairo_matrix_t*>(&transform);
+
     XFORM xform;
-    xform.eM11 = mat.xx;
-    xform.eM12 = mat.xy;
-    xform.eM21 = mat.yx;
-    xform.eM22 = mat.yy;
-    xform.eDx = mat.x0;
-    xform.eDy = mat.y0;
+    xform.eM11 = matrix->xx;
+    xform.eM12 = matrix->xy;
+    xform.eM21 = matrix->yx;
+    xform.eM22 = matrix->yy;
+    xform.eDx = matrix->x0;
+    xform.eDy = matrix->y0;
 
     ModifyWorldTransform(hdc, &xform, MWT_LEFTMULTIPLY);
 }

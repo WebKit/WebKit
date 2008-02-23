@@ -62,6 +62,14 @@ public:
 
 #if PLATFORM(WIN)
     // On Windows, we need to update the HDC for form controls to draw in the right place.
+    void save();
+    void restore();
+    void clip(const IntRect&);
+    void clip(const Path&);
+    void scale(const FloatSize&);
+    void rotate(float);
+    void translate(float, float);
+    void concatCTM(const AffineTransform&);
     void beginTransparencyLayer() { m_transparencyCount++; }
     void endTransparencyLayer() { m_transparencyCount--; }
 #endif
