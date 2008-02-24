@@ -1,3 +1,13 @@
+2008-02-24  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam.
+
+        - remove separate client calls for "standard" and "reload' history
+
+        * WebFrame.cpp:
+        (WebFrame::updateGlobalHistory):
+        * WebFrame.h:
+
 2008-02-23  Brent Fulgham  <bfulgham@gmail.com>
 
         Not reviewed, build fix.

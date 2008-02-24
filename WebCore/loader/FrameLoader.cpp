@@ -2351,7 +2351,8 @@ bool FrameLoader::shouldAllowNavigation(Frame* targetFrame) const
             return true;
     }
 
-    if (!targetFrame->settings()->privateBrowsingEnabled()) {
+    Settings* settings = targetFrame->settings();
+    if (settings && !settings->privateBrowsingEnabled()) {
         Document* targetDocument = targetFrame->document();
         // FIXME: this error message should contain more specifics of why the navigation change is not allowed.
         String message = String::format("Unsafe JavaScript attempt to initiate a navigation change for frame with URL %s from frame with URL %s.\n",
@@ -4223,40 +4224,41 @@ bool FrameLoader::childFramesMatchItem(HistoryItem* item) const
     return true;
 }
 
-void FrameLoader::addHistoryForCurrentLocation()
+void FrameLoader::updateGlobalHistory()
 {
-    if (!m_frame->settings()->privateBrowsingEnabled()) {
-        // FIXME: <rdar://problem/4880065> - This will be a hook into the WebCore global history, and this loader/client call will be removed
-        m_client->updateGlobalHistoryForStandardLoad(documentLoader()->urlForHistory());
-    }
-    addBackForwardItemClippedAtTarget(true);
+    Settings* settings = m_frame->settings();
+    if (!settings)
+        return;
+    if (settings->privateBrowsingEnabled())
+        return;
+    const KURL& url = documentLoader()->urlForHistory();
+    if (url.isEmpty())
+        return;
+    m_client->updateGlobalHistory(url);
 }
 
 void FrameLoader::updateHistoryForStandardLoad()
 {
     LOG(History, "WebCoreHistory: Updating History for Standard Load in frame %s", documentLoader()->url().string().ascii().data());
     
-    bool frameNavigationOnLoad = false;
-    
-    // if the navigation occured during on load and this is a subframe
-    // update the current history item rather than adding a new one
-    // <rdar://problem/5333496>
+    // If the navigation occured during load and this is a subframe, update the current
+    // history item rather than adding a new one. <rdar://problem/5333496>
+    bool frameNavigationDuringLoad = false;
     if (m_navigationDuringLoad) {
         HTMLFrameOwnerElement* owner = m_frame->ownerElement();
-        frameNavigationOnLoad = owner && !owner->createdByParser();
+        frameNavigationDuringLoad = owner && !owner->createdByParser();
+        m_navigationDuringLoad = false;
     }
-    
-    if (!frameNavigationOnLoad && !documentLoader()->isClientRedirect()) {
+
+    if (!frameNavigationDuringLoad && !documentLoader()->isClientRedirect()) {
         if (!documentLoader()->urlForHistory().isEmpty())
-            addHistoryForCurrentLocation();
+            addBackForwardItemClippedAtTarget(true);
     } else if (documentLoader()->unreachableURL().isEmpty() && m_currentHistoryItem) {
         m_currentHistoryItem->setURL(documentLoader()->url());
         m_currentHistoryItem->setFormInfoFromRequest(documentLoader()->request());
     }
-    
-    // reset navigation during on load since we no longer
-    // need it past thsi point
-    m_navigationDuringLoad = false;
+
+    updateGlobalHistory();
 }
 
 void FrameLoader::updateHistoryForClientRedirect()
@@ -4272,6 +4274,8 @@ void FrameLoader::updateHistoryForClientRedirect()
         m_currentHistoryItem->clearDocumentState();
         m_currentHistoryItem->clearScrollPoint();
     }
+
+    // FIXME: Should we call updateGlobalHistory here?
 }
 
 void FrameLoader::updateHistoryForBackForwardNavigation()
@@ -4283,6 +4287,8 @@ void FrameLoader::updateHistoryForBackForwardNavigation()
 
     // Must grab the current scroll position before disturbing it
     saveScrollPositionAndViewStateToItem(m_previousHistoryItem.get());
+
+    // FIXME: Should we call updateGlobalHistory here?
 }
 
 void FrameLoader::updateHistoryForReload()
@@ -4303,9 +4309,7 @@ void FrameLoader::updateHistoryForReload()
             m_currentHistoryItem->setURL(documentLoader()->requestURL());
     }
     
-    // FIXME: <rdar://problem/4880065> - This will be a hook into the WebCore global history, and this loader/client call will be removed
-    // Update the last visited time. Mostly interesting for URL autocompletion statistics.
-    m_client->updateGlobalHistoryForReload(documentLoader()->originalURL());
+    updateGlobalHistory();
 }
 
 void FrameLoader::updateHistoryForRedirectWithLockedHistory()
@@ -4317,7 +4321,7 @@ void FrameLoader::updateHistoryForRedirectWithLockedHistory()
     
     if (documentLoader()->isClientRedirect()) {
         if (!m_currentHistoryItem && !m_frame->tree()->parent())
-            addHistoryForCurrentLocation();
+            addBackForwardItemClippedAtTarget(true);
         if (m_currentHistoryItem) {
             m_currentHistoryItem->setURL(documentLoader()->url());
             m_currentHistoryItem->setFormInfoFromRequest(documentLoader()->request());
@@ -4327,6 +4331,8 @@ void FrameLoader::updateHistoryForRedirectWithLockedHistory()
         if (parentFrame && parentFrame->loader()->m_currentHistoryItem)
             parentFrame->loader()->m_currentHistoryItem->addChildItem(createHistoryItem(true));
     }
+
+    updateGlobalHistory();
 }
 
 void FrameLoader::updateHistoryForCommit()

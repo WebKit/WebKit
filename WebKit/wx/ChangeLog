@@ -1,3 +1,13 @@
+2008-02-24  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam.
+
+        - remove separate client calls for "standard" and "reload' history
+
+        * WebKitSupport/FrameLoaderClientWx.cpp:
+        (WebCore::FrameLoaderClientWx::updateGlobalHistory):
+        * WebKitSupport/FrameLoaderClientWx.h:
+
 2008-02-23  Kevin Ollivier  <kevino@theolliviers.com>
 
         Reviewed by Darin Adler.

@@ -132,8 +132,7 @@ namespace WebKit {
         virtual void finishedLoading(WebCore::DocumentLoader*);
         virtual void finalSetupForReplace(WebCore::DocumentLoader*);
 
-        virtual void updateGlobalHistoryForStandardLoad(const WebCore::KURL&);
-        virtual void updateGlobalHistoryForReload(const WebCore::KURL&);
+        virtual void updateGlobalHistory(const WebCore::KURL&);
         virtual bool shouldGoToHistoryItem(WebCore::HistoryItem*) const;
 
         virtual WebCore::ResourceError cancelledError(const WebCore::ResourceRequest&);

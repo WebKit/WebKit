@@ -1,5 +1,15 @@
 2008-02-24  Darin Adler  <darin@apple.com>
 
+        Reviewed by Sam.
+
+        - remove separate client calls for "standard" and "reload' history
+
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::updateGlobalHistory):
+        * WebCoreSupport/FrameLoaderClientQt.h:
+
+2008-02-24  Darin Adler  <darin@apple.com>
+
         - another try at fixing the build
 
         * Api/qwebframe.cpp:

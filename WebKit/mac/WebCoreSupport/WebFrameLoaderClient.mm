@@ -713,27 +713,15 @@ void WebFrameLoaderClient::finalSetupForReplace(DocumentLoader* loader)
     [dataSource(loader) _clearUnarchivingState];
 }
 
-// FIXME: <rdar://problem/4880065> - Push Global History into WebCore
-// Once that task is complete, this will go away
-void WebFrameLoaderClient::updateGlobalHistoryForStandardLoad(const KURL& url)
+void WebFrameLoaderClient::updateGlobalHistory(const KURL& url)
 {
     NSURL *cocoaURL = url;
     WebHistoryItem *entry = [[WebHistory optionalSharedHistory] addItemForURL:cocoaURL];
-    String pageTitle = core(m_webFrame.get())->loader()->documentLoader()->title();
-    if (pageTitle.length())
+    const String& pageTitle = core(m_webFrame.get())->loader()->documentLoader()->title();
+    if (!pageTitle.isEmpty())
         [entry setTitle:pageTitle];
 }
  
-// FIXME: <rdar://problem/4880065> - Push Global History into WebCore
-// Once that task is complete, this will go away
-void WebFrameLoaderClient::updateGlobalHistoryForReload(const KURL& url)
-{
-    WebHistory *sharedHistory = [WebHistory optionalSharedHistory];
-    WebHistoryItem *item = [sharedHistory itemForURL:url];
-    if (item)
-        [sharedHistory setLastVisitedTimeInterval:[NSDate timeIntervalSinceReferenceDate] forItem:item];
-}
-
 bool WebFrameLoaderClient::shouldGoToHistoryItem(HistoryItem* item) const
 {
     WebView* view = getWebView(m_webFrame.get());

@@ -1594,40 +1594,13 @@ void WebFrame::transitionToCommittedForNewPage()
         frame->view()->setScrollbarsMode(owner->scrollingMode());
 }
 
-void WebFrame::updateGlobalHistoryForStandardLoad(const KURL& url)
+void WebFrame::updateGlobalHistory(const KURL& url)
 {
     COMPtr<WebHistory> history;
     history.adoptRef(webHistory());
-
     if (!history)
         return;
-
     history->addItemForURL(BString(url.string()), 0);                 
-}
-
-void WebFrame::updateGlobalHistoryForReload(const KURL& url)
-{
-    BString urlBStr(url.string());
-
-    COMPtr<WebHistory> history;
-    history.adoptRef(webHistory());
-
-    if (!history)
-        return;
-
-    COMPtr<IWebHistoryItem> item;
-    if (SUCCEEDED(history->itemForURL(urlBStr, &item))) {
-        COMPtr<IWebHistoryItemPrivate> itemPrivate;
-        if (SUCCEEDED(item->QueryInterface(IID_IWebHistoryItemPrivate, (void**)&itemPrivate))) {
-            SYSTEMTIME currentTime;
-            GetSystemTime(&currentTime);
-            DATE visitedTime = 0;
-            SystemTimeToVariantTime(&currentTime, &visitedTime);
-
-            // FIXME - bumping the last visited time doesn't mark the history as changed
-            itemPrivate->setLastVisitedTimeInterval(visitedTime);
-        }
-    }
 }
 
 bool WebFrame::shouldGoToHistoryItem(HistoryItem*) const

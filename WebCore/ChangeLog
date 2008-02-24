@@ -1,3 +1,40 @@
+2008-02-24  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=16770
+          Acid3 expects :visited styled links to restyle on iframe load
+
+        Disentangle global history updating from the back/forward history.
+        There are many cases where we don't want to create a new back/forward
+        item, but we do still want to add to the global history (used for visited
+        link coloring) in those cases.
+
+        Test: fast/history/subframe-is-visited.html
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::updateGlobalHistory): Renamed from
+        addHistoryForCurrentLocation and removed the back/forward handling.
+        (WebCore::FrameLoader::updateHistoryForStandardLoad): Streamlined logic a
+        bit. Replaced call to addHistoryForCurrentLocation with a call to
+        addBackForwardItemClippedAtTarget. Added an unconditional call to
+        updateGlobalHistory.
+        (WebCore::FrameLoader::updateHistoryForClientRedirect): Added a FIXME;
+        why doesn't this function update global history?
+        (WebCore::FrameLoader::updateHistoryForBackForwardNavigation): Ditto.
+        (WebCore::FrameLoader::updateHistoryForReload): Replaced the direct call
+        the client with a call to the new updateGlobalHistory function.
+        (WebCore::FrameLoader::updateHistoryForRedirectWithLockedHistory): Did
+        the same changes as for updateHistoryForStandardLoad.
+        * loader/FrameLoader.h: More of the same.
+
+        * loader/FrameLoaderClient.h: Removed updateGlobalHistoryForReload and
+        renamed updateGlobalHistoryForStandardLoad to updateGlobalHistory.
+
+        * svg/graphics/SVGImageEmptyClients.h:
+        (WebCore::SVGEmptyFrameLoaderClient::updateGlobalHistory): Updated to
+        match the above.
+
 2008-02-23  Darin Adler  <darin@apple.com>
 
         Reviewed by Sam.

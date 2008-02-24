@@ -581,12 +581,7 @@ void FrameLoaderClientWx::partClearedInBegin()
     notImplemented();
 }
 
-void FrameLoaderClientWx::updateGlobalHistoryForStandardLoad(const WebCore::KURL&)
-{
-    notImplemented();
-}
-
-void FrameLoaderClientWx::updateGlobalHistoryForReload(const WebCore::KURL&)
+void FrameLoaderClientWx::updateGlobalHistory(const WebCore::KURL&)
 {
     notImplemented();
 }

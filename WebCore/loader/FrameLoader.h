@@ -449,7 +449,6 @@ namespace WebCore {
         void recursiveGoToItem(HistoryItem*, HistoryItem*, FrameLoadType);
         bool childFramesMatchItem(HistoryItem*) const;
 
-        void addHistoryForCurrentLocation();
         void updateHistoryForBackForwardNavigation();
         void updateHistoryForReload();
         void updateHistoryForStandardLoad();
@@ -457,6 +456,8 @@ namespace WebCore {
         void updateHistoryForClientRedirect();
         void updateHistoryForCommit();
     
+        void updateGlobalHistory();
+
         void redirectionTimerFired(Timer<FrameLoader>*);
         void checkCompletedTimerFired(Timer<FrameLoader>*);
         void checkLoadCompleteTimerFired(Timer<FrameLoader>*);

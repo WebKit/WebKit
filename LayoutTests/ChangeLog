@@ -1,3 +1,14 @@
+2008-02-24  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam.
+
+        - test for http://bugs.webkit.org/show_bug.cgi?id=16770
+          Acid3 expects :visited styled links to restyle on iframe load
+
+        * fast/history/resources/subframe.html: Added.
+        * fast/history/subframe-is-visited-expected.txt: Added.
+        * fast/history/subframe-is-visited.html: Added.
+
 2008-02-23  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Dave Hyatt.

@@ -766,12 +766,7 @@ void FrameLoaderClient::startDownload(const ResourceRequest&)
     notImplemented();
 }
 
-void FrameLoaderClient::updateGlobalHistoryForStandardLoad(const KURL&)
-{
-    notImplemented();
-}
-
-void FrameLoaderClient::updateGlobalHistoryForReload(const KURL&)
+void FrameLoaderClient::updateGlobalHistory(const KURL&)
 {
     notImplemented();
 }
