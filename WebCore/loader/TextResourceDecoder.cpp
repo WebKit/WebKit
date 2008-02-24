@@ -23,9 +23,7 @@
 #include "config.h"
 #include "TextResourceDecoder.h"
 
-#include "CString.h"
 #include "DOMImplementation.h"
-#include "DeprecatedCString.h"
 #include "HTMLNames.h"
 #include "TextCodec.h"
 #include <wtf/ASCIICType.h>
@@ -35,6 +33,60 @@ using namespace WTF;
 namespace WebCore {
 
 using namespace HTMLNames;
+
+// You might think we should put these find functions elsewhere, perhaps with the
+// similar functions that operate on UChar, but arguably only the decoder has
+// a reason to process strings of char rather than UChar.
+
+static int find(const char* subject, size_t subjectLength, const char* target)
+{
+    size_t targetLength = strlen(target);
+    if (targetLength == subjectLength)
+        return -1;
+    for (size_t i = 0; i <= subjectLength - targetLength; ++i) {
+        bool match = true;
+        for (size_t j = 0; j < targetLength; ++j) {
+            if (subject[i + j] != target[j]) {
+                match = false;
+                break;
+            }
+        }
+        if (match)
+            return i;
+    }
+    return -1;
+}
+
+static int findIgnoringCase(const char* subject, size_t subjectLength, const char* target)
+{
+    size_t targetLength = strlen(target);
+    if (targetLength == subjectLength)
+        return -1;
+#ifndef NDEBUG
+    for (size_t i = 0; i < targetLength; ++i)
+        ASSERT(isASCIILower(target[i]));
+#endif
+    for (size_t i = 0; i <= subjectLength - targetLength; ++i) {
+        bool match = true;
+        for (size_t j = 0; j < targetLength; ++j) {
+            if (toASCIILower(subject[i + j]) != target[j]) {
+                match = false;
+                break;
+            }
+        }
+        if (match)
+            return i;
+    }
+    return -1;
+}
+
+static TextEncoding findTextEncoding(const char* encodingName, int length)
+{
+    Vector<char, 64> buffer(length + 1);
+    memcpy(buffer.data(), encodingName, length);
+    buffer[length + 1] = '\0';
+    return buffer.data();
+}
 
 class KanjiCode {
 public:
@@ -297,29 +349,29 @@ void TextResourceDecoder::setEncoding(const TextEncoding& encoding, EncodingSour
 }
 
 // Returns the position of the encoding string.
-static int findXMLEncoding(const DeprecatedCString &str, int &encodingLength)
+static int findXMLEncoding(const char* str, int len, int& encodingLength)
 {
-    int len = str.length();
-
-    int pos = str.find("encoding");
+    int pos = find(str, len, "encoding");
     if (pos == -1)
         return -1;
     pos += 8;
     
     // Skip spaces and stray control characters.
-    while (str[pos] <= ' ' && pos != len)
+    while (pos < len && str[pos] <= ' ')
         ++pos;
 
     // Skip equals sign.
-    if (str[pos] != '=')
+    if (pos >= len || str[pos] != '=')
         return -1;
     ++pos;
 
     // Skip spaces and stray control characters.
-    while (str[pos] <= ' ' && pos != len)
+    while (pos < len && str[pos] <= ' ')
         ++pos;
 
     // Skip quotation mark.
+    if (pos >= len)
+        return - 1;
     char quoteMark = str[pos];
     if (quoteMark != '"' && quoteMark != '\'')
         return -1;
@@ -327,12 +379,11 @@ static int findXMLEncoding(const DeprecatedCString &str, int &encodingLength)
 
     // Find the trailing quotation mark.
     int end = pos;
-    while (str[end] != quoteMark)
+    while (end < len && str[end] != quoteMark)
         ++end;
-
-    if (end == len)
+    if (end >= len)
         return -1;
-    
+
     encodingLength = end - pos;
     return pos;
 }
@@ -422,14 +473,14 @@ bool TextResourceDecoder::checkForCSSCharset(const char* data, size_t len, bool&
                 if (pos == dataEnd)
                     return false;
 
-                CString encodingName(dataStart, pos - dataStart + 1);
+                int encodingNameLength = pos - dataStart + 1;
                 
                 ++pos;
                 if (!skipWhitespace(pos, dataEnd))
                     return false;
 
                 if (*pos == ';')
-                    setEncoding(TextEncoding(encodingName.data()), EncodingFromCSSCharset);
+                    setEncoding(findTextEncoding(dataStart, encodingNameLength), EncodingFromCSSCharset);
             }
         }
         m_checkedForCSSCharset = true;
@@ -497,11 +548,11 @@ bool TextResourceDecoder::checkForHeadCharset(const char* data, size_t len, bool
             ++xmlDeclarationEnd;
         if (xmlDeclarationEnd == pEnd)
             return false;
-        DeprecatedCString str(ptr, xmlDeclarationEnd - ptr); // No need for +1, because we have an extra "?" to lose at the end of XML declaration.
-        int len = 0;
-        int pos = findXMLEncoding(str, len);
+        // No need for +1, because we have an extra "?" to lose at the end of XML declaration.
+        int len;
+        int pos = findXMLEncoding(ptr, xmlDeclarationEnd - ptr, len);
         if (pos != -1)
-            setEncoding(TextEncoding(str.mid(pos, len)), EncodingFromXMLHeader);
+            setEncoding(findTextEncoding(ptr + pos, len), EncodingFromXMLHeader);
         // continue looking for a charset - it may be specified in an HTTP-Equiv meta
     } else if (ptr[0] == '<' && ptr[1] == 0 && ptr[2] == '?' && ptr[3] == 0 && ptr[4] == 'x' && ptr[5] == 0) {
         setEncoding(UTF16LittleEndianEncoding(), AutoDetectedEncoding);
@@ -614,40 +665,41 @@ bool TextResourceDecoder::checkForHeadCharset(const char* data, size_t len, bool
             }
             
             if (!end && tag == metaTag && !sawNamespace) {
-                DeprecatedCString str(tagContentStart, ptr - tagContentStart);
-                str = str.lower();
+                const char* str = tagContentStart;
+                int length = ptr - tagContentStart;
                 int pos = 0;
-                while (pos < (int)str.length()) {
-                    if ((pos = str.find("charset", pos, false)) == -1)
+                while (pos < length) {
+                    int charsetPos = findIgnoringCase(str + pos, length, "charset");
+                    if (charsetPos == -1)
                         break;
-                    pos += 7;
+                    pos += charsetPos + 7;
                     // skip whitespace
-                    while (pos < (int)str.length() && str[pos] <= ' ')
+                    while (pos < length && str[pos] <= ' ')
                         pos++;
-                    if (pos == (int)str.length())
+                    if (pos == length)
                         break;
                     if (str[pos++] != '=')
                         continue;
-                    while (pos < (int)str.length() &&
+                    while (pos < length &&
                             (str[pos] <= ' ') || str[pos] == '=' || str[pos] == '"' || str[pos] == '\'')
                         pos++;
 
                     // end ?
-                    if (pos == (int)str.length())
+                    if (pos == length)
                         break;
-                    unsigned endpos = pos;
-                    while (endpos < str.length() &&
-                           str[endpos] != ' ' && str[endpos] != '"' && str[endpos] != '\'' &&
-                           str[endpos] != ';' && str[endpos] != '>')
-                        endpos++;
-                    setEncoding(TextEncoding(str.mid(pos, endpos - pos)), EncodingFromMetaTag);
+                    int end = pos;
+                    while (end < length &&
+                           str[end] != ' ' && str[end] != '"' && str[end] != '\'' &&
+                           str[end] != ';' && str[end] != '>')
+                        end++;
+                    setEncoding(findTextEncoding(str + pos, end - pos), EncodingFromMetaTag);
                     if (m_source == EncodingFromMetaTag)
                         return true;
 
-                    if (endpos >= str.length() || str[endpos] == '/' || str[endpos] == '>')
+                    if (end >= length || str[end] == '/' || str[end] == '>')
                         break;
 
-                    pos = endpos + 1;
+                    pos = end + 1;
                 }
             } else if (ptr - m_buffer.data() >= 512 && tag != scriptTag && tag != noscriptTag && tag != styleTag &&
                        tag != linkTag && tag != metaTag && tag != objectTag &&

@@ -1,5 +1,45 @@
 2008-02-23  Darin Adler  <darin@apple.com>
 
+        Reviewed by Sam.
+
+        - remove all but 1 remaining use of DeprecatedCString
+        - change FormData to start refcount at 1
+
+        * html/HTMLFormElement.cpp:
+        (WebCore::appendString): Added. Helpers for Vector<char>.
+        (WebCore::appendEncodedString): Renamed from encodeCString and changed to
+        append to an existing Vector<char> to cut down a bit on memory allocation.
+        (WebCore::HTMLFormElement::formData): Replace the DeprecatedCString called
+        enc_string with a Vector<char> called encodedData. Change to use the new
+        FormData::create function.
+        (WebCore::HTMLFormElement::submit): Same thing, for the mailto form code.
+
+        * loader/TextResourceDecoder.cpp:
+        (WebCore::find): Added. Helper for searching in char* with length.
+        (WebCore::findIgnoringCase): Ditto.
+        (WebCore::findTextEncoding): Added. Helper for looking up a text encoding
+        when we have a char* with length rather than a null-terminated char*.
+        (WebCore::findXMLEncoding): Changed to use char* and length rather than
+        DeprecatedCString. Also fixed some things that would be one-character
+        buffer overruns in a string that's not null-terminated.
+        (WebCore::TextResourceDecoder::checkForCSSCharset): Change to use
+        findTextEncoding rather than constructing a CString to pass to the
+        TextEncodingconstructor.
+        (WebCore::TextResourceDecoder::checkForHeadCharset): Ditto.
+
+        * platform/network/FormData.cpp:
+        (WebCore::FormData::FormData): Changed to start refcount at 1.
+        (WebCore::FormData::create): Added.
+        (WebCore::FormData::copy): Call adoptRef since refcount starts at 1.
+        * platform/network/FormData.h: Made constructor private. Added create functions.
+
+        * platform/network/mac/ResourceRequestMac.mm:
+        (WebCore::ResourceRequest::doUpdateResourceRequest): Call FormData::create.
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::send): Ditto.
+
+2008-02-23  Darin Adler  <darin@apple.com>
+
         Reviewed by Anders.
 
         - http://bugs.webkit.org/show_bug.cgi?id=17067
@@ -268,15 +308,11 @@
 
 2008-02-22  Oliver Hunt  <oliver@apple.com>
 
-        Reviewed by NOBODY (build fix).
-
         WX build fixes
 
         * WebCoreSources.bkl:
 
 2008-02-22  Oliver Hunt  <oliver@apple.com>
-
-        Reviewed by NOBODY (build fix).
 
         Once more with the cairo/qt/wx build fixing
 
@@ -299,16 +335,12 @@
 
 2008-02-22  Oliver Hunt  <oliver@apple.com>
 
-        Reviewed by NOBODY (build fix).
-
         Build fix for windows, wx and qt
 
         * html/CanvasPixelArray.h:
         (WebCore::CanvasPixelArray::set):
 
 2008-02-22  Oliver Hunt  <oliver@apple.com>
-
-        Reviewed by NOBODY (build fix).
 
         Unbreak windows vcproj
 

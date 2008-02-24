@@ -59,7 +59,7 @@ void ResourceRequest::doUpdateResourceRequest()
         m_httpHeaderFields.set(name, [headers objectForKey:name]);
     
     if (NSData* bodyData = [m_nsRequest.get() HTTPBody])
-        m_httpBody = new FormData([bodyData bytes], [bodyData length]);
+        m_httpBody = FormData::create([bodyData bytes], [bodyData length]);
     else if (NSInputStream* bodyStream = [m_nsRequest.get() HTTPBodyStream])
         if (FormData* formData = httpBodyFromStream(bodyStream))
             m_httpBody = formData;    
