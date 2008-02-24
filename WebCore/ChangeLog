@@ -1,5 +1,14 @@
 2008-02-23  Dan Bernstein  <mitz@apple.com>
 
+        - fix a typo
+
+        * platform/graphics/win/GlyphPageTreeNodeCGWin.cpp:
+        (WebCore::GlyphPage::fill):
+        * platform/graphics/win/GlyphPageTreeNodeCairoWin.cpp:
+        (WebCore::GlyphPage::fill):
+
+2008-02-23  Dan Bernstein  <mitz@apple.com>
+
         Reviewed by Anders Carlsson.
 
         - fix GlyphPage::fill() logic for partial page fills
