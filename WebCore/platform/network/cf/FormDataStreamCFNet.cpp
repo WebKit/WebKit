@@ -389,11 +389,11 @@ void setHTTPBody(CFMutableURLRequestRef request, PassRefPtr<FormData> formData)
 PassRefPtr<FormData> httpBodyFromRequest(CFURLRequestRef request)
 {
     if (RetainPtr<CFDataRef> bodyData = CFURLRequestCopyHTTPRequestBody(request))
-        return new FormData(CFDataGetBytePtr(bodyData.get()), CFDataGetLength(bodyData.get()));
+        return FormData::create(CFDataGetBytePtr(bodyData.get()), CFDataGetLength(bodyData.get()));
 
     if (wkCanAccessCFURLRequestHTTPBodyParts()) {
         if (RetainPtr<CFArrayRef> bodyParts = wkCFURLRequestCopyHTTPRequestBodyParts(request)) {
-            RefPtr<FormData> formData = new FormData();
+            RefPtr<FormData> formData = FormData::create();
 
             CFIndex count = CFArrayGetCount(bodyParts.get());
             for (CFIndex i = 0; i < count; i++) {
@@ -405,9 +405,8 @@ PassRefPtr<FormData> httpBodyFromRequest(CFURLRequestRef request)
                 } else if (typeID == CFDataGetTypeID()) {
                     CFDataRef data = (CFDataRef)bodyPart;
                     formData->appendData(CFDataGetBytePtr(data), CFDataGetLength(data));
-                } else {
+                } else
                     ASSERT_NOT_REACHED();
-                }
             }
             return formData.release();
         }
