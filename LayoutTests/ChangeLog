@@ -1,5 +1,13 @@
 2008-02-24  Dan Bernstein  <mitz@apple.com>
 
+        Rubber-stamped by Oliver Hunt.
+
+        - replace expected results in platform/mac-tiger and
+          platform/mac-leopard which were identical with a single copy in
+          platform/mac
+
+2008-02-24  Dan Bernstein  <mitz@apple.com>
+
         Reviewed by Darin Adler.
 
         - test float positioning when a float that does not fit on the line is
