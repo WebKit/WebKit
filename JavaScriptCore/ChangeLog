@@ -1,3 +1,15 @@
+2008-02-24  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=17511
+          REGRESSION: Reproducible crash in SegmentedSubstring::SegmentedSubstring(SegmentedSubstring const&)
+
+        * wtf/Deque.h:
+        (WTF::::expandCapacityIfNeeded): Fixed the case where m_start and m_end
+        are both zero but the buffer capacity is non-zero.
+        (WTF::::prepend): Added validity checks.
+
 2008-02-23  Jan Michael Alonzo  <jmalonzo@unpluggable.com>
 
         Rubber stamped by Darin.
