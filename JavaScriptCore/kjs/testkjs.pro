@@ -8,6 +8,10 @@ INCLUDEPATH += $$PWD/.. $$PWD $$PWD/../bindings $$PWD/../bindings/c $$PWD/../wtf
 CONFIG -= app_bundle
 qt-port:DEFINES += BUILDING_QT__
 #qt-port:LIBS += -L$$OUTPUT_DIR/lib -lQtWebKit
+
+CONFIG += link_pkgconfig
+gtk-port:PKGCONFIG += glib-2.0 gobject-2.0 gthread-2.0
+
 gtk-port {
     QMAKE_CXXFLAGS += $$system(icu-config --cppflags)
     LIBS += $$system(icu-config --ldflags)
