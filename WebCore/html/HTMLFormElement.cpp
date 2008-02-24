@@ -487,8 +487,8 @@ void HTMLFormElement::submit(Event* event, bool activateSubmitButton)
                 }
                 Vector<char> bodyData;
                 appendString(bodyData, "body=");
-                appendEncodedString(bodyData, body.replace('+', ' ').utf8());
-                data = FormData::create(bodyData);
+                appendEncodedString(bodyData, body.utf8());
+                data = FormData::create(String(bodyData.data(), bodyData.size()).replace('+', "%20").latin1());
             }
             frame->loader()->submitForm("POST", m_url, data, m_target, enctype(), String(), event);
         } else {

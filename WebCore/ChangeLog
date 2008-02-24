@@ -2,6 +2,19 @@
 
         Reviewed by Sam.
 
+        - fix http://bugs.webkit.org/show_bug.cgi?id=17508
+          REGRESSION (r30535): mailto regression tests failing
+
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::submit): Restore the old logic, with its unpleasant
+        trip through String do to the replace operation. It's inefficient, but there's
+        no real reason to worry about the efficiency of mailto forms, since that feature
+        is nearly obsolete.
+
+2008-02-23  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam.
+
         - replace SegmentedString's use of DeprecatedValueList with Deque
 
         Testing indicates this is a slight speed-up for page loading.
