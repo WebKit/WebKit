@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2004, 2005, 2006, 2007 Apple Inc. All rights reserved.
+    Copyright (C) 2004, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -59,10 +59,10 @@ unsigned SegmentedString::length() const
             ++length;
     }
     if (m_composite) {
-        DeprecatedValueListConstIterator<SegmentedSubstring> i = m_substrings.begin();
-        DeprecatedValueListConstIterator<SegmentedSubstring> e = m_substrings.end();
-        for (; i != e; ++i)
-            length += (*i).m_length;
+        Deque<SegmentedSubstring>::const_iterator it = m_substrings.begin();
+        Deque<SegmentedSubstring>::const_iterator e = m_substrings.end();
+        for (; it != e; ++it)
+            length += it->m_length;
     }
     return length;
 }
@@ -70,10 +70,10 @@ unsigned SegmentedString::length() const
 void SegmentedString::setExcludeLineNumbers()
 {
     if (m_composite) {
-        DeprecatedValueListIterator<SegmentedSubstring> i = m_substrings.begin();
-        DeprecatedValueListIterator<SegmentedSubstring> e = m_substrings.end();
-        for (; i != e; ++i)
-            (*i).setExcludeLineNumbers();
+        Deque<SegmentedSubstring>::iterator it = m_substrings.begin();
+        Deque<SegmentedSubstring>::iterator e = m_substrings.end();
+        for (; it != e; ++it)
+            it->setExcludeLineNumbers();
     } else
         m_currentString.setExcludeLineNumbers();
 }
@@ -120,10 +120,10 @@ void SegmentedString::append(const SegmentedString &s)
     ASSERT(!s.escaped());
     append(s.m_currentString);
     if (s.m_composite) {
-        DeprecatedValueListConstIterator<SegmentedSubstring> i = s.m_substrings.begin();
-        DeprecatedValueListConstIterator<SegmentedSubstring> e = s.m_substrings.end();
-        for (; i != e; ++i)
-            append(*i);
+        Deque<SegmentedSubstring>::const_iterator it = s.m_substrings.begin();
+        Deque<SegmentedSubstring>::const_iterator e = s.m_substrings.end();
+        for (; it != e; ++it)
+            append(*it);
     }
     m_currentChar = m_pushedChar1 ? &m_pushedChar1 : m_currentString.m_current;
 }
@@ -133,10 +133,10 @@ void SegmentedString::prepend(const SegmentedString &s)
     ASSERT(!escaped());
     ASSERT(!s.escaped());
     if (s.m_composite) {
-        DeprecatedValueListConstIterator<SegmentedSubstring> i = s.m_substrings.fromLast();
-        DeprecatedValueListConstIterator<SegmentedSubstring> e = s.m_substrings.end();
-        for (; i != e; --i)
-            prepend(*i);
+        Deque<SegmentedSubstring>::const_reverse_iterator it = s.m_substrings.rbegin();
+        Deque<SegmentedSubstring>::const_reverse_iterator e = s.m_substrings.rend();
+        for (; it != e; ++it)
+            prepend(*it);
     }
     prepend(s.m_currentString);
     m_currentChar = m_pushedChar1 ? &m_pushedChar1 : m_currentString.m_current;
@@ -146,7 +146,7 @@ void SegmentedString::advanceSubstring()
 {
     if (m_composite) {
         m_currentString = m_substrings.first();
-        m_substrings.remove(m_substrings.begin());
+        m_substrings.removeFirst();
         if (m_substrings.isEmpty())
             m_composite = false;
     } else {
@@ -164,10 +164,10 @@ String SegmentedString::toString() const
     }
     m_currentString.appendTo(result);
     if (m_composite) {
-        DeprecatedValueListConstIterator<SegmentedSubstring> i = m_substrings.begin();
-        DeprecatedValueListConstIterator<SegmentedSubstring> e = m_substrings.end();
-        for (; i != e; ++i)
-            (*i).appendTo(result);
+        Deque<SegmentedSubstring>::const_iterator it = m_substrings.begin();
+        Deque<SegmentedSubstring>::const_iterator e = m_substrings.end();
+        for (; it != e; ++it)
+            it->appendTo(result);
     }
     return result;
 }

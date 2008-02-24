@@ -1,5 +1,24 @@
 2008-02-23  Darin Adler  <darin@apple.com>
 
+        Reviewed by Sam.
+
+        - replace SegmentedString's use of DeprecatedValueList with Deque
+
+        Testing indicates this is a slight speed-up for page loading.
+
+        * platform/text/SegmentedString.cpp:
+        (WebCore::SegmentedString::length): Update to use Deque.
+        (WebCore::SegmentedString::setExcludeLineNumbers): Ditto.
+        (WebCore::SegmentedString::append): Ditto.
+        (WebCore::SegmentedString::prepend): Ditto.
+        (WebCore::SegmentedString::advanceSubstring): Ditto.
+        (WebCore::SegmentedString::toString): Ditto.
+        * platform/text/SegmentedString.h: Tweak formatting. Don't bother making an entire
+        class private with a single friend. Change m_sbstrings from a DeprecatedValueList
+        to a Deque.
+
+2008-02-23  Darin Adler  <darin@apple.com>
+
         Reviewed by Anders.
 
         - fix http://bugs.webkit.org/show_bug.cgi?id=17506
