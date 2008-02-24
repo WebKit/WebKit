@@ -1,3 +1,10 @@
+2008-02-23  Brent Fulgham  <bfulgham@gmail.com>
+
+        Not reviewed, build fix.
+
+        * WebIconDatabase.cpp:
+        * WebIconDatabase.h:
+
 2008-02-22  Adam Roben  <aroben@apple.com>
 
         Move hasWebView to WebFrameLoaderClient

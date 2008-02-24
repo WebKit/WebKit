@@ -32,10 +32,10 @@
 #include <WebCore/IconDatabaseClient.h>
 #include <WebCore/IntSize.h>
 #include <WebCore/IntSizeHash.h>
-#include <WebCore/Threading.h>
 #pragma warning(pop)
 
-#include <WTF/Vector.h>
+#include <wtf/Vector.h>
+#include <wtf/Threading.h>
 
 #include <windows.h>
 
