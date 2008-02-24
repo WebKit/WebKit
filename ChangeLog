@@ -1,3 +1,10 @@
+2008-02-23  Jan Michael Alonzo  <jmalonzo@unpluggable.com>
+
+        Rubber-stamped by Darin.
+
+        * GNUmakefile.am: Add both GLOBALDEPS and WEBKITDEPS instead of DEPENDENCIES.
+        * configure.ac: Break dependent modules into GLOBALDEPS and WEBKITDEPS.
+
 2008-02-21  Alp Toker  <alp@atoker.com>
 
         Fix a configure script typo.

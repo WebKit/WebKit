@@ -102,11 +102,21 @@ libJavaScriptCore_la_SOURCES = \
 	$(javascriptcore_built_sources) \
 	$(javascriptcore_sources)
 
-libJavaScriptCore_la_LIBADD = $(ICU_LIBS) -lpthread
+libJavaScriptCore_la_LIBADD = 
+        $(ICU_LIBS) \
+        $(GLOBALDEPS_LIBS) \
+        -lpthread
 
-libJavaScriptCore_la_CXXFLAGS = $(global_cxxflags) $(global_cflags) -fstrict-aliasing
+libJavaScriptCore_la_CXXFLAGS = \
+        $(global_cxxflags) \
+        $(global_cflags) \
+        $(GLOBALDEPS_CFLAGS) \
+        -fstrict-aliasing
 
-libJavaScriptCore_la_CFLAGS = $(global_cflags) -fstrict-aliasing
+libJavaScriptCore_la_CFLAGS = \
+        $(global_cflags) \
+        $(GLOBALDEPS_CFLAGS) \
+        -fstrict-aliasing
 
 libJavaScriptCore_la_CPPFLAGS = \
 	$(global_cppflags) \
@@ -151,7 +161,8 @@ libWebKitGtk_la_CXXFLAGS = \
 	-fno-strict-aliasing \
 	$(global_cxxflags) \
 	$(global_cflags) \
-	$(DEPENDENCIES_CFLAGS) \
+	$(GLOBALDEPS_CFLAGS) \
+	$(WEBKITDEPS_CFLAGS) \
 	$(LIBCURL_CFLAGS) \
 	$(SQLITE3_CFLAGS) \
 	$(GSTREAMER_CFLAGS) \
@@ -162,7 +173,8 @@ libWebKitGtk_la_CXXFLAGS = \
 libWebKitGtk_la_CFLAGS = \
 	-fno-strict-aliasing \
 	$(global_cflags) \
-	$(DEPENDENCIES_CFLAGS) \
+	$(GLOBALDEPS_CFLAGS) \
+	$(WEBKITDEPS_CFLAGS) \
 	$(LIBCURL_CFLAGS) \
 	$(SQLITE3_CFLAGS) \
 	$(GSTREAMER_CFLAGS) \
@@ -178,7 +190,8 @@ libWebKitGtk_la_CPPFLAGS = \
 
 libWebKitGtk_la_LIBADD = libJavaScriptCore.la \
 	$(webkitgtk_libadd) \
-	$(DEPENDENCIES_LIBS) \
+	$(GLOBALDEPS_LIBS) \
+	$(WEBKITDEPS_LIBS) \
 	$(LIBCURL_LIBS) \
 	$(ICU_LIBS) \
 	$(SQLITE3_LIBS) \

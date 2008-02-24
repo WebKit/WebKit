@@ -1,3 +1,9 @@
+2008-02-23  Jan Michael Alonzo  <jmalonzo@unpluggable.com>
+
+        Rubber-stamped by Darin.
+
+        * GNUmakefile.am: Add both GLOBALDEPS and WEBKITDEPS instead of DEPENDENCIES.
+
 2008-02-23  David Kilzer  <ddkilzer@apple.com>
 
         Please clarify licensing for some files

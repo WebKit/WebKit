@@ -203,19 +203,23 @@ SQLITE_REQUIRED_VERSION=3.0
 GSTREAMER_REQUIRED_VERSION=0.10
 GNOME_VFS_REQUIRED_VERSION=2.0
 
-PKG_CHECK_MODULES([DEPENDENCIES],
+PKG_CHECK_MODULES([GLOBALDEPS],
                   [glib-2.0 >= $GLIB_REQUIRED_VERSION
                   gobject-2.0 >= $GOBJECT_REQUIRED_VERSION
-                  gthread-2.0 >= $GTHREAD_REQUIRED_VERSION
-                  gtk+-2.0 >= $GTK_REQUIRED_VERSION
+                  gthread-2.0 >= $GTHREAD_REQUIRED_VERSION])
+AC_SUBST([GLOBALDEPS_CFLAGS])
+AC_SUBST([GLOBALDEPS_LIBS])
+
+PKG_CHECK_MODULES([WEBKITDEPS],
+                  [gtk+-2.0 >= $GTK_REQUIRED_VERSION
                   pango >= $PANGO_REQUIRED_VERSION
                   cairo >= $CAIRO_REQUIRED_VERSION
                   cairo-ft,
                   fontconfig >= $FONTCONFIG_REQUIRED_VERSION
                   freetype2 >= $FREETYPE2_REQUIRED_VERSION
                   libxml-2.0 >= $LIBXML_REQUIRED_VERSION])
-AC_SUBST([DEPENDENCIES_CFLAGS])
-AC_SUBST([DEPENDENCIES_LIBS])
+AC_SUBST([WEBKITDEPS_CFLAGS])
+AC_SUBST([WEBKITDEPS_LIBS])
 
 # check whether to build with debugging enabled
 AC_MSG_CHECKING([whether to do a debug build])
