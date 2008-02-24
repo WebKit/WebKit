@@ -2,6 +2,21 @@
 
         Reviewed by Anders.
 
+        - http://bugs.webkit.org/show_bug.cgi?id=17496
+          make Deque use a circular array; add iterators
+
+        * wtf/Deque.h: Wrote an all-new version of this class that uses a circular
+        buffer. Growth policy is identical to vector. Added iterators.
+
+        * wtf/Vector.h: Made two small refinements while using this to implement
+        Deque: Made VectorBufferBase derive from Noncopyable, which would have
+        saved me some debugging time if it had been there. Renamed Impl and
+        m_impl to Buffer and m_buffer.
+
+2008-02-23  Darin Adler  <darin@apple.com>
+
+        Reviewed by Anders.
+
         - http://bugs.webkit.org/show_bug.cgi?id=17067
           eliminate attributes parameter from JSObject::put for speed/clarity
 
