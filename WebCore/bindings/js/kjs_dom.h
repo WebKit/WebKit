@@ -32,7 +32,7 @@ namespace WebCore {
     Attr* toAttr(KJS::JSValue*, bool& ok);
 
     bool checkNodeSecurity(KJS::ExecState*, Node*);
-    KJS::JSValue* getRuntimeObject(KJS::ExecState*, Node*);
+    KJS::JSObject* getRuntimeObject(KJS::ExecState*, Node*);
     KJS::JSValue* toJS(KJS::ExecState*, EventTarget*);
     KJS::JSObject* getNodeConstructor(KJS::ExecState*);
 

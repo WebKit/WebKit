@@ -1,3 +1,87 @@
+2008-02-23  Darin Adler  <darin@apple.com>
+
+        Reviewed by Anders.
+
+        - http://bugs.webkit.org/show_bug.cgi?id=17067
+          eliminate attributes parameter from JSObject::put for speed/clarity
+
+        * bindings/js/JSCSSStyleDeclarationCustom.cpp:
+        (WebCore::JSCSSStyleDeclaration::customPut): Remove attributes argument.
+
+        * bindings/js/JSCanvasPixelArrayCustom.cpp:
+        (WebCore::JSCanvasPixelArray::indexGetter): Use early exit idiom.
+        (WebCore::JSCanvasPixelArray::indexSetter): Moved length check into the
+        CanvasPixelArray object, for consistency with the getter. Removed attributes
+        argument.
+
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::customPut): Removed special case for variable
+        initialization, which is not needed since that does use put any more.
+        Removed attributes argument.
+
+        * bindings/js/JSEventTargetBase.h:
+        (WebCore::JSEventTargetBase::putValueProperty): Removed attributes argument.
+        (WebCore::JSEventTargetBase::put): Ditto.
+        (WebCore::JSEventTargetPrototype::self): Removed Internal flag.
+        * bindings/js/JSEventTargetNode.cpp:
+        (WebCore::JSEventTargetNode::put): Removed attributes argument.
+        (WebCore::JSEventTargetNode::putValueProperty): Ditto.
+        * bindings/js/JSEventTargetNode.h: Ditto.
+        * bindings/js/JSHTMLAppletElementCustom.cpp:
+        (WebCore::JSHTMLAppletElement::customPut): Ditto.
+        * bindings/js/JSHTMLEmbedElementCustom.cpp:
+        (WebCore::JSHTMLEmbedElement::customPut): Ditto.
+        * bindings/js/JSHTMLInputElementBase.cpp:
+        (WebCore::JSHTMLInputElementBase::put): Ditto.
+        (WebCore::JSHTMLInputElementBase::putValueProperty): Ditto.
+        * bindings/js/JSHTMLInputElementBase.h: Ditto.
+        * bindings/js/JSHTMLObjectElementCustom.cpp:
+        (WebCore::JSHTMLObjectElement::customPut): Ditto.
+        * bindings/js/JSHTMLOptionsCollectionCustom.cpp:
+        (WebCore::JSHTMLOptionsCollection::indexSetter): Ditto.
+        * bindings/js/JSHTMLSelectElementCustom.cpp:
+        (WebCore::JSHTMLSelectElement::indexSetter): Ditto.
+        * bindings/js/JSHistoryCustom.cpp:
+        (WebCore::JSHistory::customPut): Ditto.
+        * bindings/js/JSLocation.cpp:
+        (WebCore::JSLocation::put): Ditto.
+        * bindings/js/JSLocation.h: Ditto.
+        * bindings/js/JSXMLHttpRequest.cpp:
+        (WebCore::JSXMLHttpRequest::put): Ditto.
+        (WebCore::JSXMLHttpRequest::putValueProperty): Ditto.
+        * bindings/js/JSXMLHttpRequest.h: Ditto.
+
+        * bindings/js/kjs_dom.cpp:
+        (WebCore::getRuntimeObject): Changed return type to JSObject*.
+        * bindings/js/kjs_dom.h: Ditto.
+
+        * bindings/js/kjs_events.cpp:
+        (WebCore::JSClipboard::put): Removed attributes argument.
+        (WebCore::JSClipboard::putValueProperty): Ditto.
+        * bindings/js/kjs_events.h: Ditto.
+
+        * bindings/js/kjs_html.cpp:
+        (WebCore::runtimeObjectGetter): Updated for change to getRuntimeObject to
+        return a JSObject. Used early exit idiom.
+        (WebCore::runtimeObjectPropertyGetter): Ditto.
+        (WebCore::runtimeObjectCustomGetOwnPropertySlot): Ditto.
+        (WebCore::runtimeObjectCustomPut): Use hasProperty to check for properties
+        that we should put with the property syntax instead of canPut.
+        (WebCore::runtimeObjectImplementsCall): Ditto.
+        (WebCore::runtimeObjectCallAsFunction): Ditto.
+        * bindings/js/kjs_html.h: Removed attributes argument to runtimeObjectCustomPut.
+
+        * bindings/js/kjs_window.cpp:
+        (KJS::Window::put): Removed attributes argument.
+        * bindings/js/kjs_window.h: Ditto.
+
+        * bindings/scripts/CodeGeneratorJS.pm: Removed attributes argument from put,
+        putValueProperty, customPut, and indexSetter.
+
+        * html/CanvasPixelArray.h:
+        (WebCore::CanvasPixelArray::set): Added index checking here, as in the get
+        function. Before, the checking was done in the JavaScript bindings for set.
+
 2008-02-23  Brent Fulgham  <bfulgham@gmail.com>
 
         Reviewed by Adam and Darin.

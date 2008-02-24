@@ -45,8 +45,8 @@ namespace WebCore {
 
         bool getOwnPropertySlot(KJS::ExecState*, const KJS::Identifier&, KJS::PropertySlot&);
         KJS::JSValue* getValueProperty(KJS::ExecState*, int token) const;
-        virtual void put(KJS::ExecState*, const KJS::Identifier&, KJS::JSValue* value, int attr);
-        void putValueProperty(KJS::ExecState*, int token, KJS::JSValue* value, int attr);
+        virtual void put(KJS::ExecState*, const KJS::Identifier&, KJS::JSValue*);
+        void putValueProperty(KJS::ExecState*, int token, KJS::JSValue*);
 
     private:
         JSEventTargetBase<JSEventTargetNode> m_base;

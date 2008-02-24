@@ -1,3 +1,94 @@
+2008-02-23  Darin Adler  <darin@apple.com>
+
+        Reviewed by Anders.
+
+        - http://bugs.webkit.org/show_bug.cgi?id=17067
+          eliminate attributes parameter from JSObject::put for speed/clarity
+
+        * API/JSCallbackObject.h: Removed attribute arguments.
+        * API/JSCallbackObjectFunctions.h:
+        (KJS::JSCallbackObject<Base>::put): Ditto.
+        * API/JSObjectRef.cpp:
+        (JSObjectSetProperty): Use initializeVariable or putDirect when necessary
+        to set attribute values.
+        * JavaScriptCore.exp: Updated.
+        * bindings/objc/objc_runtime.h: Removed attribute arguments.
+        * bindings/objc/objc_runtime.mm:
+        (ObjcFallbackObjectImp::put): Ditto.
+        * bindings/runtime_array.cpp:
+        (RuntimeArray::put): Ditto.
+        * bindings/runtime_array.h: Ditto.
+        * bindings/runtime_object.cpp:
+        (RuntimeObjectImp::put): Ditto.
+        * bindings/runtime_object.h: Ditto. Also removed canPut which was only
+        called from one place in WebCore that can use hasProperty instead.
+
+        * kjs/Activation.h: Removed attribute argument from put and added the new
+        initializeVariable function that's used to put variables in variable objects.
+        Also made isActivationObject a const member.
+
+        * kjs/JSGlobalObject.cpp:
+        (KJS::JSGlobalObject::put): Removed attribute argument.
+        (KJS::JSGlobalObject::initializeVariable): Added. Used to give variables
+        their initial values, which can include the read-only property.
+        (KJS::JSGlobalObject::reset): Removed obsolete comments about flags.
+        Removed Internal flag, which is no longer needed.
+        * kjs/JSGlobalObject.h: More of the same.
+
+        * kjs/JSVariableObject.h: Added pure virtual initializeVariable function.
+        (KJS::JSVariableObject::symbolTablePut): Removed checkReadOnly flag; we always
+        check read-only.
+        (KJS::JSVariableObject::symbolTableInitializeVariable): Added.
+
+        * kjs/array_instance.cpp:
+        (KJS::ArrayInstance::put): Removed attribute argument.
+        * kjs/array_instance.h: Ditto.
+
+        * kjs/function.cpp:
+        (KJS::FunctionImp::put): Ditto.
+        (KJS::Arguments::put): Ditto.
+        (KJS::ActivationImp::put): Ditto.
+        (KJS::ActivationImp::initializeVariable): Added.
+        * kjs/function.h: Removed attribute arguments.
+
+        * kjs/function_object.cpp:
+        (KJS::FunctionObjectImp::construct): Removed Internal flag.
+
+        * kjs/lookup.h:
+        (KJS::lookupPut): Removed attributes argument. Also changed to use putDirect
+        instead of calling JSObject::put.
+        (KJS::cacheGlobalObject): Ditto.
+
+        * kjs/nodes.cpp:
+        (KJS::ConstDeclNode::handleSlowCase): Call initializeVariable to initialize
+        the constant.
+        (KJS::ConstDeclNode::evaluateSingle): Ditto.
+        (KJS::TryNode::execute): Use putDirect to set up the new object.
+        (KJS::FunctionBodyNode::processDeclarations): Removed Internal.
+        (KJS::ProgramNode::processDeclarations): Ditto.
+        (KJS::EvalNode::processDeclarations): Call initializeVariable to initialize
+        the variables and functions.
+        (KJS::FuncDeclNode::makeFunction): Removed Internal.
+        (KJS::FuncExprNode::evaluate): Ditto.
+
+        * kjs/object.cpp: Removed canPut, which was only being used in one code path,
+        not the normal high speed one.
+        (KJS::JSObject::put): Removed attribute argument. Moved the logic from
+        canPut here, in the one code ath that was still using it.
+        * kjs/object.h: Removed Internal attribute, ad canPut function. Removed the
+        attributes argument to the put function. Made isActivationObject const.
+
+        * kjs/regexp_object.cpp:
+        (KJS::RegExpImp::put): Removed attributes argument.
+        (KJS::RegExpImp::putValueProperty): Ditto.
+        (KJS::RegExpObjectImp::put): Ditto.
+        (KJS::RegExpObjectImp::putValueProperty): Ditto.
+        * kjs/regexp_object.h: Ditto.
+
+        * kjs/string_object.cpp:
+        (KJS::StringInstance::put): Removed attributes argument.
+        * kjs/string_object.h: Ditto.
+
 2008-02-23  Jan Michael Alonzo  <jmalonzo@unpluggable.com>
 
         Not reviewed, Gtk build fix.

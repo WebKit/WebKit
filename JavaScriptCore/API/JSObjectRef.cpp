@@ -1,6 +1,6 @@
 // -*- mode: c++; c-basic-offset: 4 -*-
 /*
- * Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2007, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,15 +27,13 @@
 #include "config.h"
 #include "JSObjectRef.h"
 
-#include <wtf/Platform.h>
 #include "APICast.h"
-#include "JSValueRef.h"
 #include "JSCallbackConstructor.h"
 #include "JSCallbackFunction.h"
 #include "JSCallbackObject.h"
 #include "JSClassRef.h"
 #include "JSGlobalObject.h"
-
+#include "JSValueRef.h"
 #include "PropertyNameArray.h"
 #include "function.h"
 #include "function_object.h"
@@ -43,6 +41,7 @@
 #include "internal.h"
 #include "object.h"
 #include "object_object.h"
+#include <wtf/Platform.h>
 
 using namespace KJS;
 
@@ -177,10 +176,21 @@ void JSObjectSetProperty(JSContextRef ctx, JSObjectRef object, JSStringRef prope
     JSLock lock;
     ExecState* exec = toJS(ctx);
     JSObject* jsObject = toJS(object);
-    UString::Rep* nameRep = toJS(propertyName);
+    Identifier name(toJS(propertyName));
     JSValue* jsValue = toJS(value);
-    
-    jsObject->put(exec, Identifier(nameRep), jsValue, attributes);
+
+    // If non-0 attributes were passed, we may need to use a lower-level call than
+    // the normal JSObject::put. If there is no existing property, then use either
+    // initializeVariable or putDirect instead, since those have the power to set attributes.
+    if (attributes && !jsObject->hasProperty(exec, name)) {
+        if (jsObject->isGlobalObject())
+            static_cast<JSGlobalObject*>(jsObject)->initializeVariable(exec, name, jsValue, attributes);
+        else
+            jsObject->putDirect(name, jsValue, attributes);
+        return;
+    }
+
+    jsObject->put(exec, name, jsValue);
     if (exec->hadException()) {
         if (exception)
             *exception = toRef(exec->exception());

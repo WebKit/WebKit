@@ -3568,15 +3568,12 @@ void ConstDeclNode::handleSlowCase(ExecState* exec, const ScopeChain& chain, JSV
         base = *iter;
         if (base->getPropertySlot(exec, m_ident, slot))
             break;
-
         ++iter;
     } while (iter != end);
 
-    unsigned flags = 0;
-    base->getPropertyAttributes(m_ident, flags);
-    flags |= ReadOnly;
+    ASSERT(base->isActivationObject() || base->isGlobalObject());
 
-    base->put(exec, m_ident, val, flags);
+    static_cast<JSVariableObject*>(base)->initializeVariable(exec, m_ident, val, ReadOnly);
 }
 
 // ECMA 12.2
@@ -3584,7 +3581,7 @@ inline void ConstDeclNode::evaluateSingle(ExecState* exec)
 {
     ASSERT(exec->variableObject()->hasOwnProperty(exec, m_ident) || exec->codeType() == EvalCode); // Guaranteed by processDeclarations.
     const ScopeChain& chain = exec->scopeChain();
-    JSObject* variableObject = exec->variableObject();
+    JSVariableObject* variableObject = exec->variableObject();
 
     ASSERT(!chain.isEmpty());
 
@@ -3593,11 +3590,10 @@ inline void ConstDeclNode::evaluateSingle(ExecState* exec)
     if (m_init) {
         if (inGlobalScope) {
             JSValue* val = m_init->evaluate(exec);
-            int flags = Internal;
+            unsigned attributes = ReadOnly;
             if (exec->codeType() != EvalCode)
-                flags |= DontDelete;
-            flags |= ReadOnly;
-            variableObject->put(exec, m_ident, val, flags);
+                attributes |= DontDelete;
+            variableObject->initializeVariable(exec, m_ident, val, attributes);
         } else {
             JSValue* val = m_init->evaluate(exec);
             KJS_CHECKEXCEPTIONVOID
@@ -3608,11 +3604,7 @@ inline void ConstDeclNode::evaluateSingle(ExecState* exec)
             if (chain.top() != variableObject)
                 return handleSlowCase(exec, chain, val);
 
-            unsigned flags = 0;
-            variableObject->getPropertyAttributes(m_ident, flags);
-            flags |= ReadOnly;
-
-            variableObject->put(exec, m_ident, val, flags);
+            variableObject->initializeVariable(exec, m_ident, val, ReadOnly);
         }
     }
 }
@@ -4303,7 +4295,7 @@ JSValue* TryNode::execute(ExecState* exec)
 
     if (m_catchBlock && exec->completionType() == Throw) {
         JSObject* obj = new JSObject;
-        obj->put(exec, m_exceptionIdent, result, DontDelete);
+        obj->putDirect(m_exceptionIdent, result, DontDelete);
         exec->dynamicGlobalObject()->tearOffActivation(exec);
         exec->pushScope(obj);
         result = m_catchBlock->execute(exec);
@@ -4485,7 +4477,7 @@ void FunctionBodyNode::processDeclarations(ExecState* exec)
     if (totalSize > localStorage.capacity()) // Doing this check inline avoids function call overhead.
         localStorage.reserveCapacity(totalSize);
 
-    int minAttributes = Internal | DontDelete;
+    int minAttributes = DontDelete;
 
     // In order for our localStorage indexes to be correct, we must match the
     // order of addition in initializeSymbolTable().
@@ -4532,7 +4524,7 @@ void ProgramNode::processDeclarations(ExecState* exec)
     // leave uninitialized entries, which would crash GC during the mark phase.
     localStorage.reserveCapacity(localStorage.size() + m_varStack.size() + m_functionStack.size());
 
-    int minAttributes = Internal | DontDelete;
+    int minAttributes = DontDelete;
 
     // In order for our localStorage indexes to be correct, we must match the
     // order of addition in initializeSymbolTable().
@@ -4577,21 +4569,19 @@ void EvalNode::processDeclarations(ExecState* exec)
 
     JSVariableObject* variableObject = exec->variableObject();
 
-    int minAttributes = Internal;
-
     for (i = 0, size = m_varStack.size(); i < size; ++i) {
         Identifier& ident = m_varStack[i].first;
         if (variableObject->hasProperty(exec, ident))
             continue;
-        int attributes = minAttributes;
+        int attributes = 0;
         if (m_varStack[i].second & DeclarationStacks::IsConstant)
-            attributes |= ReadOnly;
-        variableObject->put(exec, ident, jsUndefined(), attributes);
+            attributes = ReadOnly;
+        variableObject->initializeVariable(exec, ident, jsUndefined(), attributes);
     }
 
     for (i = 0, size = m_functionStack.size(); i < size; ++i) {
-        FuncDeclNode* node = m_functionStack[i];
-        variableObject->put(exec, node->m_ident, node->makeFunction(exec), minAttributes);
+        FuncDeclNode* funcDecl = m_functionStack[i];
+        variableObject->initializeVariable(exec, funcDecl->m_ident, funcDecl->makeFunction(exec), 0);
     }
 }
 
@@ -4670,7 +4660,7 @@ FunctionImp* FuncDeclNode::makeFunction(ExecState* exec)
 
     JSObject* proto = exec->lexicalGlobalObject()->objectConstructor()->construct(exec, exec->emptyList());
     proto->putDirect(exec->propertyNames().constructor, func, DontEnum);
-    func->putDirect(exec->propertyNames().prototype, proto, Internal | DontDelete);
+    func->putDirect(exec->propertyNames().prototype, proto, DontDelete);
     func->putDirect(exec->propertyNames().length, jsNumber(m_body->parameters().size()), ReadOnly | DontDelete | DontEnum);
     return func;
 }
@@ -4707,10 +4697,10 @@ JSValue* FuncExprNode::evaluate(ExecState* exec)
     FunctionImp* func = new FunctionImp(exec, m_ident, m_body.get(), exec->scopeChain());
     JSObject* proto = exec->lexicalGlobalObject()->objectConstructor()->construct(exec, exec->emptyList());
     proto->putDirect(exec->propertyNames().constructor, func, DontEnum);
-    func->putDirect(exec->propertyNames().prototype, proto, Internal | DontDelete);
+    func->putDirect(exec->propertyNames().prototype, proto, DontDelete);
 
     if (named) {
-        functionScopeObject->putDirect(m_ident, func, Internal | ReadOnly | (exec->codeType() == EvalCode ? 0 : DontDelete));
+        functionScopeObject->putDirect(m_ident, func, ReadOnly | (exec->codeType() == EvalCode ? 0 : DontDelete));
         exec->popScope();
     }
 

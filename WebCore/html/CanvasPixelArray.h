@@ -39,10 +39,14 @@ namespace WebCore {
     class CanvasPixelArray : public RefCounted<CanvasPixelArray> {
     public:
         static PassRefPtr<CanvasPixelArray> create(unsigned size);
+
         Vector<unsigned char>& data() { return m_data; }
         unsigned length() const { return m_data.size(); }
+
         void set(unsigned index, double value)
         {
+            if (index >= m_data.size())
+                return;
             if (!(value > 0)) // Clamp NaN to 0
                 value = 0;
             else if (value > 255)

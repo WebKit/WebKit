@@ -404,12 +404,12 @@ JSValue* JSClipboard::getValueProperty(ExecState* exec, int token) const
     }
 }
 
-void JSClipboard::put(ExecState* exec, const Identifier& propertyName, JSValue* value, int attr)
+void JSClipboard::put(ExecState* exec, const Identifier& propertyName, JSValue* value)
 {
-    lookupPut<JSClipboard, DOMObject>(exec, propertyName, value, attr, &JSClipboardTable, this );
+    lookupPut<JSClipboard, DOMObject>(exec, propertyName, value, &JSClipboardTable, this);
 }
 
-void JSClipboard::putValueProperty(ExecState* exec, int token, JSValue* value, int /*attr*/)
+void JSClipboard::putValueProperty(ExecState* exec, int token, JSValue* value)
 {
     Clipboard* clipboard = impl();
     switch (token) {

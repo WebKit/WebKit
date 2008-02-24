@@ -364,10 +364,10 @@ sub GenerateHeader
 
     # Getters
     if ($hasSetter) {
-        push(@headerContent, "    virtual void put(KJS::ExecState*, const KJS::Identifier& propertyName, KJS::JSValue*, int attr = KJS::None);\n");
-        push(@headerContent, "    virtual void put(KJS::ExecState*, unsigned propertyName, KJS::JSValue*, int attr = KJS::None);\n") if $dataNode->extendedAttributes->{"HasCustomIndexSetter"};
-        push(@headerContent, "    void putValueProperty(KJS::ExecState*, int, KJS::JSValue*, int attr);\n") if $hasReadWriteProperties;
-        push(@headerContent, "    bool customPut(KJS::ExecState*, const KJS::Identifier&, KJS::JSValue*, int attr);\n") if $dataNode->extendedAttributes->{"CustomPutFunction"};
+        push(@headerContent, "    virtual void put(KJS::ExecState*, const KJS::Identifier& propertyName, KJS::JSValue*);\n");
+        push(@headerContent, "    virtual void put(KJS::ExecState*, unsigned propertyName, KJS::JSValue*);\n") if $dataNode->extendedAttributes->{"HasCustomIndexSetter"};
+        push(@headerContent, "    void putValueProperty(KJS::ExecState*, int, KJS::JSValue*);\n") if $hasReadWriteProperties;
+        push(@headerContent, "    bool customPut(KJS::ExecState*, const KJS::Identifier&, KJS::JSValue*);\n") if $dataNode->extendedAttributes->{"CustomPutFunction"};
     }
 
     # Class info
@@ -467,7 +467,6 @@ sub GenerateHeader
         }
     }
 
-
     if (!$hasParent) {
         if ($podType) {
             push(@headerContent, "    JSSVGPODTypeWrapper<$podType>* impl() const { return m_impl.get(); }\n");
@@ -497,7 +496,7 @@ sub GenerateHeader
 
     # Index setter
     if ($dataNode->extendedAttributes->{"HasCustomIndexSetter"}) {
-        push(@headerContent, "    void indexSetter(KJS::ExecState*, unsigned index, KJS::JSValue*, int attr);\n");
+        push(@headerContent, "    void indexSetter(KJS::ExecState*, unsigned index, KJS::JSValue*);\n");
     }
     # Name getter
     if ($dataNode->extendedAttributes->{"HasNameGetter"} || $dataNode->extendedAttributes->{"HasOverridingNameGetter"}) {
@@ -1019,38 +1018,38 @@ sub GenerateImplementation
                      || $dataNode->extendedAttributes->{"HasCustomIndexSetter"};
 
         if ($hasSetter) {
-            push(@implContent, "void ${className}::put(ExecState* exec, const Identifier& propertyName, JSValue* value, int attr)\n");
+            push(@implContent, "void ${className}::put(ExecState* exec, const Identifier& propertyName, JSValue* value)\n");
             push(@implContent, "{\n");
             if ($dataNode->extendedAttributes->{"HasCustomIndexSetter"}) {
                 push(@implContent, "    bool ok;\n");
                 push(@implContent, "    unsigned index = propertyName.toUInt32(&ok, false);\n");
                 push(@implContent, "    if (ok) {\n");
-                push(@implContent, "        indexSetter(exec, index, value, attr);\n");
+                push(@implContent, "        indexSetter(exec, index, value);\n");
                 push(@implContent, "        return;\n");
                 push(@implContent, "    }\n");
             }
             if ($dataNode->extendedAttributes->{"CustomPutFunction"}) {
-                push(@implContent, "    if (customPut(exec, propertyName, value, attr))\n");
+                push(@implContent, "    if (customPut(exec, propertyName, value))\n");
                 push(@implContent, "        return;\n");
             }
 
             if ($hasReadWriteProperties) {
-                push(@implContent, "    lookupPut<$className, Base>(exec, propertyName, value, attr, &${className}Table, this);\n");
+                push(@implContent, "    lookupPut<$className, Base>(exec, propertyName, value, &${className}Table, this);\n");
             } else {
-                push(@implContent, "    Base::put(exec, propertyName, value, attr);\n");
+                push(@implContent, "    Base::put(exec, propertyName, value);\n");
             }
             push(@implContent, "}\n\n");
 
             if ($dataNode->extendedAttributes->{"HasCustomIndexSetter"}) {
-                push(@implContent, "void ${className}::put(ExecState* exec, unsigned propertyName, JSValue* value, int attr)\n");
+                push(@implContent, "void ${className}::put(ExecState* exec, unsigned propertyName, JSValue* value)\n");
                 push(@implContent, "{\n");
-                push(@implContent, "    indexSetter(exec, propertyName, value, attr);\n");
+                push(@implContent, "    indexSetter(exec, propertyName, value);\n");
                 push(@implContent, "    return;\n");
                 push(@implContent, "}\n\n");
             }
 
             if ($hasReadWriteProperties) {
-                push(@implContent, "void ${className}::putValueProperty(ExecState* exec, int token, JSValue* value, int /*attr*/)\n");
+                push(@implContent, "void ${className}::putValueProperty(ExecState* exec, int token, JSValue* value)\n");
                 push(@implContent, "{\n");
 
                 push(@implContent, "    switch (token) {\n");

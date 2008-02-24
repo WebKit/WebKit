@@ -47,8 +47,8 @@ public:
     virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
     virtual bool getOwnPropertySlot(ExecState*, unsigned, PropertySlot&);
     
-    virtual void put(ExecState*, const Identifier&, JSValue*, int attr);
-    virtual void put(ExecState*, unsigned, JSValue*, int attr);
+    virtual void put(ExecState*, const Identifier&, JSValue*);
+    virtual void put(ExecState*, unsigned, JSValue*);
 
     virtual bool deleteProperty(ExecState*, const Identifier&);
     virtual bool deleteProperty(ExecState*, unsigned);

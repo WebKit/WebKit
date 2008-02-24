@@ -90,12 +90,12 @@ JSValue* JSHTMLInputElementBase::getValueProperty(ExecState* exec, int token) co
     return jsUndefined();
 }
 
-void JSHTMLInputElementBase::put(ExecState* exec, const Identifier& propertyName, JSValue* value, int attr)
+void JSHTMLInputElementBase::put(ExecState* exec, const Identifier& propertyName, JSValue* value)
 {
-    lookupPut<JSHTMLInputElementBase, JSHTMLElement>(exec, propertyName, value, attr, &JSHTMLInputElementBaseTable, this);
+    lookupPut<JSHTMLInputElementBase, JSHTMLElement>(exec, propertyName, value, &JSHTMLInputElementBaseTable, this);
 }
 
-void JSHTMLInputElementBase::putValueProperty(ExecState* exec, int token, JSValue* value, int /*attr*/)
+void JSHTMLInputElementBase::putValueProperty(ExecState* exec, int token, JSValue* value)
 {
     HTMLInputElement& input = *static_cast<HTMLInputElement*>(impl());
     ASSERT(input.canHaveSelection());

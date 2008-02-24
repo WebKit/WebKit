@@ -36,8 +36,8 @@ namespace WebCore {
 
         virtual bool getOwnPropertySlot(KJS::ExecState*, const KJS::Identifier&, KJS::PropertySlot&);
         KJS::JSValue* getValueProperty(KJS::ExecState*, int token) const;
-        virtual void put(KJS::ExecState*, const KJS::Identifier& propertyName, JSValue*, int attr);
-        void putValueProperty(KJS::ExecState*, int token, KJS::JSValue*, int attr);
+        virtual void put(KJS::ExecState*, const KJS::Identifier& propertyName, JSValue*);
+        void putValueProperty(KJS::ExecState*, int token, KJS::JSValue*);
         virtual const KJS::ClassInfo* classInfo() const { return &info; }
         static const KJS::ClassInfo info;
         enum { SelectionStart, SelectionEnd };

@@ -84,7 +84,6 @@ JSValue* runtimeObjectGetter(ExecState* exec, JSObject* originalObject, const Id
 {
     JSHTMLElement* thisObj = static_cast<JSHTMLElement*>(slot.slotBase());
     HTMLElement* element = static_cast<HTMLElement*>(thisObj->impl());
-
     return getRuntimeObject(exec, element);
 }
 
@@ -92,37 +91,32 @@ JSValue* runtimeObjectPropertyGetter(ExecState* exec, JSObject* originalObject, 
 {
     JSHTMLElement* thisObj = static_cast<JSHTMLElement*>(slot.slotBase());
     HTMLElement* element = static_cast<HTMLElement*>(thisObj->impl());
-
-    if (JSValue* runtimeObject = getRuntimeObject(exec, element))
-        return static_cast<JSObject*>(runtimeObject)->get(exec, propertyName);
-    return jsUndefined();
+    JSObject* runtimeObject = getRuntimeObject(exec, element);
+    if (!runtimeObject)
+        return jsUndefined();
+    return runtimeObject->get(exec, propertyName);
 }
 
-bool runtimeObjectCustomGetOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot, WebCore::JSHTMLElement* originalObj, HTMLElement* thisImp)
+bool runtimeObjectCustomGetOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot, JSHTMLElement* originalObj, HTMLElement* thisImp)
 {
-    JSValue* runtimeObject = getRuntimeObject(exec, thisImp);
-    if (runtimeObject) {
-        JSObject* imp = static_cast<JSObject*>(runtimeObject);
-        if (imp->hasProperty(exec, propertyName)) {
-            slot.setCustom(originalObj, runtimeObjectPropertyGetter);
-            return true;
-        }
-    }
-
-    return false;
+    JSObject* runtimeObject = getRuntimeObject(exec, thisImp);
+    if (!runtimeObject)
+        return false;
+    if (!runtimeObject->hasProperty(exec, propertyName))
+        return false;
+    slot.setCustom(originalObj, runtimeObjectPropertyGetter);
+    return true;
 }
 
-bool runtimeObjectCustomPut(ExecState* exec, const Identifier& propertyName, JSValue* value, int /*attr*/, HTMLElement* thisImp)
+bool runtimeObjectCustomPut(ExecState* exec, const Identifier& propertyName, JSValue* value, HTMLElement* thisImp)
 {
-    if (JSValue* runtimeObject = getRuntimeObject(exec, thisImp)) {
-        JSObject* imp = static_cast<JSObject*>(runtimeObject);
-        if (imp->canPut(exec, propertyName)) {
-            imp->put(exec, propertyName, value);
-            return true;
-        }
-    }
-
-    return false;
+    JSObject* runtimeObject = getRuntimeObject(exec, thisImp);
+    if (!runtimeObject)
+        return 0;
+    if (!runtimeObject->hasProperty(exec, propertyName))
+        return false;
+    runtimeObject->put(exec, propertyName, value);
+    return true;
 }
 
 bool runtimeObjectImplementsCall(HTMLElement* thisImp)
@@ -131,17 +125,18 @@ bool runtimeObjectImplementsCall(HTMLElement* thisImp)
     if (!frame)
         return false;
     ExecState* exec = frame->scriptProxy()->globalObject()->globalExec();
-    if (JSValue* runtimeObject = getRuntimeObject(exec, thisImp))
-        return static_cast<JSObject*>(runtimeObject)->implementsCall();
-
-    return false;
+    JSObject* runtimeObject = getRuntimeObject(exec, thisImp);
+    if (!runtimeObject)
+        return false;
+    return runtimeObject->implementsCall();
 }
 
 JSValue* runtimeObjectCallAsFunction(ExecState* exec, JSObject* thisObj, const List& args, HTMLElement* thisImp)
 {
-    if (JSValue* runtimeObject = getRuntimeObject(exec, thisImp))
-        return static_cast<JSObject*>(runtimeObject)->call(exec, thisObj, args);
-    return jsUndefined();
+    JSObject* runtimeObject = getRuntimeObject(exec, thisImp);
+    if (!runtimeObject)
+        return jsUndefined();
+    return runtimeObject->call(exec, thisObj, args);
 }
 
 } // namespace WebCore

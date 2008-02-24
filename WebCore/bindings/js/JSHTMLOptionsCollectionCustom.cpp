@@ -60,7 +60,7 @@ void JSHTMLOptionsCollection::setLength(ExecState* exec, JSValue* value)
     setDOMException(exec, ec);
 }
 
-void JSHTMLOptionsCollection::indexSetter(ExecState* exec, unsigned index, JSValue* value, int attr)
+void JSHTMLOptionsCollection::indexSetter(ExecState* exec, unsigned index, JSValue* value)
 {
     HTMLOptionsCollection* imp = static_cast<HTMLOptionsCollection*>(impl());
     HTMLSelectElement* base = static_cast<HTMLSelectElement*>(imp->base());

@@ -154,7 +154,7 @@ JSValue* JSCSSStyleDeclaration::nameGetter(ExecState* exec, JSObject* originalOb
 }
 
 
-bool JSCSSStyleDeclaration::customPut(ExecState* exec, const Identifier& propertyName, JSValue* value, int /*attr*/)
+bool JSCSSStyleDeclaration::customPut(ExecState* exec, const Identifier& propertyName, JSValue* value)
 {
     if (!isCSSPropertyName(propertyName))
         return false;

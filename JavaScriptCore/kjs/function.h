@@ -61,7 +61,7 @@ namespace KJS {
     FunctionImp(ExecState*, const Identifier& name, FunctionBodyNode*, const ScopeChain&);
 
     virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
-    virtual void put(ExecState*, const Identifier& propertyName, JSValue* value, int attr = None);
+    virtual void put(ExecState*, const Identifier& propertyName, JSValue*);
     virtual bool deleteProperty(ExecState*, const Identifier& propertyName);
 
     virtual bool implementsConstruct() const { return true; }
@@ -112,7 +112,7 @@ namespace KJS {
     Arguments(ExecState*, FunctionImp* func, const List& args, ActivationImp* act);
     virtual void mark();
     virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
-    virtual void put(ExecState*, const Identifier& propertyName, JSValue* value, int attr = None);
+    virtual void put(ExecState*, const Identifier& propertyName, JSValue*);
     virtual bool deleteProperty(ExecState*, const Identifier& propertyName);
     virtual const ClassInfo* classInfo() const { return &info; }
     static const ClassInfo info;

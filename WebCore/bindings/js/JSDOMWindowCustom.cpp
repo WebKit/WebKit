@@ -108,22 +108,16 @@ bool JSDOMWindow::customGetOwnPropertySlot(ExecState* exec, const Identifier& pr
     return false;
 }
 
-bool JSDOMWindow::customPut(ExecState* exec, const Identifier& propertyName, JSValue* value, int attr)
+bool JSDOMWindow::customPut(ExecState* exec, const Identifier& propertyName, JSValue* value)
 {
     if (!impl()->frame())
         return true;
-
-    // Called by an internal KJS, save time and jump directly to JSGlobalObject.
-    if (attr != None && attr != DontDelete) {
-        JSGlobalObject::put(exec, propertyName, value, attr);
-        return true;
-    }
 
     // We have a local override (e.g. "var location"), save time and jump directly to JSGlobalObject.
     PropertySlot slot;
     if (JSGlobalObject::getOwnPropertySlot(exec, propertyName, slot)) {
         if (allowsAccessFrom(exec))
-            JSGlobalObject::put(exec, propertyName, value, attr);
+            JSGlobalObject::put(exec, propertyName, value);
         return true;
     }
 

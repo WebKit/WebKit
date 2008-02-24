@@ -138,12 +138,12 @@ JSValue* JSXMLHttpRequest::getValueProperty(ExecState* exec, int token) const
     }
 }
 
-void JSXMLHttpRequest::put(ExecState* exec, const Identifier& propertyName, JSValue* value, int attr)
+void JSXMLHttpRequest::put(ExecState* exec, const Identifier& propertyName, JSValue* value)
 {
-    lookupPut<JSXMLHttpRequest,DOMObject>(exec, propertyName, value, attr, &JSXMLHttpRequestTable, this );
+    lookupPut<JSXMLHttpRequest, DOMObject>(exec, propertyName, value, &JSXMLHttpRequestTable, this);
 }
 
-void JSXMLHttpRequest::putValueProperty(ExecState* exec, int token, JSValue* value, int /*attr*/)
+void JSXMLHttpRequest::putValueProperty(ExecState* exec, int token, JSValue* value)
 {
     switch (token) {
         case Onreadystatechange: {

@@ -47,9 +47,8 @@ namespace KJS {
                    ReadOnly     = 1 << 1, // property can be only read, not written
                    DontEnum     = 1 << 2, // property doesn't appear in (for .. in ..)
                    DontDelete   = 1 << 3, // property can't be deleted
-                   Internal     = 1 << 4, // an internal property, set to bypass checks
-                   Function     = 1 << 5, // property is a function - only used by static hashtables
-                   GetterSetter = 1 << 6 }; // property is a getter or setter
+                   Function     = 1 << 4, // property is a function - only used by static hashtables
+                   GetterSetter = 1 << 5 }; // property is a getter or setter
 
   /**
    * Class Information
@@ -243,24 +242,8 @@ namespace KJS {
      * @param propertyName The name of the property to set
      * @param propertyValue The value to set
      */
-    virtual void put(ExecState* exec, const Identifier &propertyName, JSValue* value, int attr = None);
-    virtual void put(ExecState* exec, unsigned propertyName, JSValue* value, int attr = None);
-
-    /**
-     * Used to check whether or not a particular property is allowed to be set
-     * on an object
-     *
-     * See ECMA 8.6.2.3
-     *
-     * @param exec The current execution state
-     * @param propertyName The name of the property
-     * @return true if the property can be set, otherwise false
-     */
-    /**
-     * Implementation of the [[CanPut]] internal property (implemented by all
-     * Objects)
-     */
-    virtual bool canPut(ExecState *exec, const Identifier &propertyName) const;
+    virtual void put(ExecState*, const Identifier& propertyName, JSValue* value);
+    virtual void put(ExecState*, unsigned propertyName, JSValue* value);
 
     /**
      * Checks if a property is enumerable, that is if it doesn't have the DontEnum
@@ -447,7 +430,7 @@ namespace KJS {
     void saveProperties(SavedProperties &p) const { _prop.save(p); }
     void restoreProperties(const SavedProperties &p) { _prop.restore(p); }
 
-    virtual bool isActivationObject() { return false; }
+    virtual bool isActivationObject() const { return false; }
     virtual bool isGlobalObject() const { return false; }
 
   protected:

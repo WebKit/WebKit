@@ -152,11 +152,24 @@ bool JSGlobalObject::getOwnPropertySlot(ExecState* exec, const Identifier& prope
     return JSVariableObject::getOwnPropertySlot(exec, propertyName, slot);
 }
 
-void JSGlobalObject::put(ExecState* exec, const Identifier& propertyName, JSValue* value, int attr)
+void JSGlobalObject::put(ExecState* exec, const Identifier& propertyName, JSValue* value)
 {
-    if (symbolTablePut(propertyName, value, !(attr & ~DontDelete)))
+    if (symbolTablePut(propertyName, value))
         return;
-    return JSVariableObject::put(exec, propertyName, value, attr);
+    return JSVariableObject::put(exec, propertyName, value);
+}
+
+void JSGlobalObject::initializeVariable(ExecState* exec, const Identifier& propertyName, JSValue* value, unsigned attributes)
+{
+    if (symbolTableInitializeVariable(propertyName, value, attributes))
+        return;
+
+    JSValue* valueBefore = getDirect(propertyName);
+    JSVariableObject::put(exec, propertyName, value);
+    if (!valueBefore) {
+        if (JSValue* valueAfter = getDirect(propertyName))
+            putDirect(propertyName, valueAfter, attributes);
+    }
 }
 
 static inline JSObject* lastInPrototypeChain(JSObject* object)
@@ -274,11 +287,7 @@ void JSGlobalObject::reset(JSValue* prototype)
 
     // Set global constructors
 
-    // FIXME: kjs_window.cpp checks Internal/DontEnum as a performance hack, to
-    // see that these values can be put directly without a check for override
-    // properties.
-
-    // FIXME: These properties should be handled by a static hash table.
+    // FIXME: These properties could be handled by a static hash table.
 
     putDirect("Object", d()->objectConstructor, DontEnum);
     putDirect("Function", d()->functionConstructor, DontEnum);
@@ -289,12 +298,12 @@ void JSGlobalObject::reset(JSValue* prototype)
     putDirect("Date", d()->dateConstructor, DontEnum);
     putDirect("RegExp", d()->regExpConstructor, DontEnum);
     putDirect("Error", d()->errorConstructor, DontEnum);
-    putDirect("EvalError", d()->evalErrorConstructor, Internal);
-    putDirect("RangeError", d()->rangeErrorConstructor, Internal);
-    putDirect("ReferenceError", d()->referenceErrorConstructor, Internal);
-    putDirect("SyntaxError", d()->syntaxErrorConstructor, Internal);
-    putDirect("TypeError", d()->typeErrorConstructor, Internal);
-    putDirect("URIError", d()->URIErrorConstructor, Internal);
+    putDirect("EvalError", d()->evalErrorConstructor);
+    putDirect("RangeError", d()->rangeErrorConstructor);
+    putDirect("ReferenceError", d()->referenceErrorConstructor);
+    putDirect("SyntaxError", d()->syntaxErrorConstructor);
+    putDirect("TypeError", d()->typeErrorConstructor);
+    putDirect("URIError", d()->URIErrorConstructor);
 
     // Set global values.
 

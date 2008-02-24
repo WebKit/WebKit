@@ -39,9 +39,9 @@ bool JSHTMLObjectElement::customGetOwnPropertySlot(ExecState* exec, const Identi
     return runtimeObjectCustomGetOwnPropertySlot(exec, propertyName, slot, this, static_cast<HTMLElement*>(impl()));
 }
 
-bool JSHTMLObjectElement::customPut(ExecState* exec, const Identifier& propertyName, JSValue* value, int attr)
+bool JSHTMLObjectElement::customPut(ExecState* exec, const Identifier& propertyName, JSValue* value)
 {
-    return runtimeObjectCustomPut(exec, propertyName, value, attr, static_cast<HTMLElement*>(impl()));
+    return runtimeObjectCustomPut(exec, propertyName, value, static_cast<HTMLElement*>(impl()));
 }
 
 bool JSHTMLObjectElement::implementsCall() const

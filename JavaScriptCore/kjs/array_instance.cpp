@@ -184,12 +184,12 @@ bool ArrayInstance::getOwnPropertySlot(ExecState* exec, unsigned i, PropertySlot
 }
 
 // ECMA 15.4.5.1
-void ArrayInstance::put(ExecState* exec, const Identifier& propertyName, JSValue* value, int attributes)
+void ArrayInstance::put(ExecState* exec, const Identifier& propertyName, JSValue* value)
 {
     bool isArrayIndex;
     unsigned i = propertyName.toArrayIndex(&isArrayIndex);
     if (isArrayIndex) {
-        put(exec, i, value, attributes);
+        put(exec, i, value);
         return;
     }
 
@@ -203,13 +203,13 @@ void ArrayInstance::put(ExecState* exec, const Identifier& propertyName, JSValue
         return;
     }
 
-    JSObject::put(exec, propertyName, value, attributes);
+    JSObject::put(exec, propertyName, value);
 }
 
-void ArrayInstance::put(ExecState* exec, unsigned i, JSValue* value, int attributes)
+void ArrayInstance::put(ExecState* exec, unsigned i, JSValue* value)
 {
     if (i > maxArrayIndex) {
-        put(exec, Identifier::from(i), value, attributes);
+        put(exec, Identifier::from(i), value);
         return;
     }
 

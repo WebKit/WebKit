@@ -87,7 +87,7 @@ JSValue* toJS(ExecState* exec, EventTarget* target)
     return jsNull();
 }
 
-JSValue* getRuntimeObject(ExecState* exec, Node* n)
+JSObject* getRuntimeObject(ExecState* exec, Node* n)
 {
     if (!n)
         return 0;

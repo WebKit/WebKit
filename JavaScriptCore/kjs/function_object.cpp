@@ -225,7 +225,7 @@ JSObject* FunctionObjectImp::construct(ExecState* exec, const List& args, const 
     JSObject* objCons = exec->lexicalGlobalObject()->objectConstructor();
     JSObject* prototype = objCons->construct(exec, exec->emptyList());
     prototype->putDirect(exec->propertyNames().constructor, fimp, DontEnum);
-    fimp->putDirect(exec->propertyNames().prototype, prototype, Internal | DontDelete);
+    fimp->putDirect(exec->propertyNames().prototype, prototype, DontDelete);
     return fimp;
 }
 

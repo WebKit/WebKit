@@ -211,15 +211,9 @@ bool ObjcFallbackObjectImp::getOwnPropertySlot(ExecState*, const Identifier&, Pr
     return true;
 }
 
-void ObjcFallbackObjectImp::put(ExecState*, const Identifier&, JSValue*, int)
+void ObjcFallbackObjectImp::put(ExecState*, const Identifier&, JSValue*)
 {
 }
-
-bool ObjcFallbackObjectImp::canPut(ExecState*, const Identifier&) const
-{
-    return false;
-}
-
 
 JSType ObjcFallbackObjectImp::type() const
 {

@@ -149,7 +149,8 @@ namespace KJS {
         virtual ~JSGlobalObject();
 
         virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
-        virtual void put(ExecState*, const Identifier&, JSValue*, int attr = None);
+        virtual void put(ExecState*, const Identifier&, JSValue*);
+        virtual void initializeVariable(ExecState*, const Identifier&, JSValue*, unsigned attributes);
 
         // Linked list of all global objects.
         static JSGlobalObject* head() { return s_head; }
