@@ -181,7 +181,7 @@ static void appendEncodedString(Vector<char>& buffer, const CString& string)
             buffer.append(c);
         else if (c == ' ')
             buffer.append('+');
-        else if (c == '\n' || (c == '\r' && string.data()[i + 1] != '\n'))
+        else if (c == '\n' || (c == '\r' && (i + 1 >= length || string.data()[i + 1] != '\n')))
             appendString(buffer, "%0D%0A");
         else if (c != '\r') {
             buffer.append('%');

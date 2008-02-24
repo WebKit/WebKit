@@ -2,6 +2,13 @@
 
         Reviewed by Sam.
 
+        * html/HTMLFormElement.cpp:
+        (WebCore::appendEncodedString): Fix buffer overrun in the code I just landed.
+
+2008-02-23  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam.
+
         - remove all but 1 remaining use of DeprecatedCString
         - change FormData to start refcount at 1
 
