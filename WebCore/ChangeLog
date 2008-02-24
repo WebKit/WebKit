@@ -1,3 +1,17 @@
+2008-02-23  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Oliver Hunt.
+
+        Fix for http://bugs.webkit.org/show_bug.cgi?id=17504
+        Speed up DOM lists array subscription syntax by using the fast 
+        getOwnPropertySlot and set paths
+
+        - 6x speed improvement on Oliver's ImageData put test.
+
+        * bindings/scripts/CodeGeneratorJS.pm: Add fast path for getOwnPropertySlot
+        and put when an indexGetter or indexSetter is used.  We can not use the fast
+        path if an overridingNameGetter is used as there would be no way to override.
+
 2008-02-23  Kevin Ollivier  <kevino@theolliviers.com>
 
         wx build fix after JSImageData.cpp was added.

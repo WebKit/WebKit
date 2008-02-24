@@ -344,7 +344,8 @@ sub GenerateHeader
 
     # Getters
     if ($hasGetter) {
-        push(@headerContent, "    virtual bool getOwnPropertySlot(KJS::ExecState*, const KJS::Identifier&, KJS::PropertySlot&);\n");
+        push(@headerContent, "    virtual bool getOwnPropertySlot(KJS::ExecState*, const KJS::Identifier& propertyName, KJS::PropertySlot&);\n");
+        push(@headerContent, "    virtual bool getOwnPropertySlot(KJS::ExecState*, unsigned propertyName, KJS::PropertySlot&);\n") if ($dataNode->extendedAttributes->{"HasIndexGetter"} || $dataNode->extendedAttributes->{"HasCustomIndexGetter"}) && !$dataNode->extendedAttributes->{"HasOverridingNameGetter"};
         push(@headerContent, "    KJS::JSValue* getValueProperty(KJS::ExecState*, int token) const;\n") if $numAttributes > 0 || $dataNode->extendedAttributes->{"GenerateConstructor"};
         push(@headerContent, "    bool customGetOwnPropertySlot(KJS::ExecState*, const KJS::Identifier&, KJS::PropertySlot&);\n") if $dataNode->extendedAttributes->{"CustomGetOwnPropertySlot"};
     }
@@ -363,7 +364,8 @@ sub GenerateHeader
 
     # Getters
     if ($hasSetter) {
-        push(@headerContent, "    virtual void put(KJS::ExecState*, const KJS::Identifier&, KJS::JSValue*, int attr = KJS::None);\n");
+        push(@headerContent, "    virtual void put(KJS::ExecState*, const KJS::Identifier& propertyName, KJS::JSValue*, int attr = KJS::None);\n");
+        push(@headerContent, "    virtual void put(KJS::ExecState*, unsigned propertyName, KJS::JSValue*, int attr = KJS::None);\n") if $dataNode->extendedAttributes->{"HasCustomIndexSetter"};
         push(@headerContent, "    void putValueProperty(KJS::ExecState*, int, KJS::JSValue*, int attr);\n") if $hasReadWriteProperties;
         push(@headerContent, "    bool customPut(KJS::ExecState*, const KJS::Identifier&, KJS::JSValue*, int attr);\n") if $dataNode->extendedAttributes->{"CustomPutFunction"};
     }
@@ -376,7 +378,7 @@ sub GenerateHeader
     push(@headerContent, "    virtual void mark();\n\n") if $dataNode->extendedAttributes->{"CustomMarkFunction"};
 
     # Custom pushEventHandlerScope function
-    push(@headerContent, "    virtual void pushEventHandlerScope(KJS::ExecState*, KJS::ScopeChain&) const;\n\n")  if $dataNode->extendedAttributes->{"CustomPushEventHandlerScope"};
+    push(@headerContent, "    virtual void pushEventHandlerScope(KJS::ExecState*, KJS::ScopeChain&) const;\n\n") if $dataNode->extendedAttributes->{"CustomPushEventHandlerScope"};
 
     # Custom call functions
     if ($dataNode->extendedAttributes->{"CustomCall"}) {
@@ -908,6 +910,18 @@ sub GenerateImplementation
         }
         push(@implContent, "}\n\n");
 
+        if (($dataNode->extendedAttributes->{"HasIndexGetter"} || $dataNode->extendedAttributes->{"HasCustomIndexGetter"}) 
+                && !$dataNode->extendedAttributes->{"HasOverridingNameGetter"}) {
+            push(@implContent, "bool ${className}::getOwnPropertySlot(ExecState* exec, unsigned propertyName, PropertySlot& slot)\n");
+            push(@implContent, "{\n");
+            push(@implContent, "    if (propertyName < static_cast<$implClassName*>(impl())->length()) {\n");
+            push(@implContent, "        slot.setCustomIndex(this, propertyName, indexGetter);\n");
+            push(@implContent, "        return true;\n");
+            push(@implContent, "    }\n");
+            push(@implContent, "    return getOwnPropertySlot(exec, Identifier::from(propertyName), slot);\n");
+            push(@implContent, "}\n\n");
+        }
+
         if ($numAttributes > 0) {
             push(@implContent, "JSValue* ${className}::getValueProperty(ExecState* exec, int token) const\n");
             push(@implContent, "{\n");
@@ -1025,8 +1039,15 @@ sub GenerateImplementation
             } else {
                 push(@implContent, "    Base::put(exec, propertyName, value, attr);\n");
             }
-
             push(@implContent, "}\n\n");
+
+            if ($dataNode->extendedAttributes->{"HasCustomIndexSetter"}) {
+                push(@implContent, "void ${className}::put(ExecState* exec, unsigned propertyName, JSValue* value, int attr)\n");
+                push(@implContent, "{\n");
+                push(@implContent, "    indexSetter(exec, propertyName, value, attr);\n");
+                push(@implContent, "    return;\n");
+                push(@implContent, "}\n\n");
+            }
 
             if ($hasReadWriteProperties) {
                 push(@implContent, "void ${className}::putValueProperty(ExecState* exec, int token, JSValue* value, int /*attr*/)\n");
