@@ -1,5 +1,13 @@
 2008-02-23  Darin Adler  <darin@apple.com>
 
+        Pointed out by Mitz.
+
+        * loader/TextResourceDecoder.cpp:
+        (WebCore::find): Fix a "==" that was supposed to be ">".
+        (WebCore::findIgnoringCase): Ditto.
+
+2008-02-23  Darin Adler  <darin@apple.com>
+
         Reviewed by Sam.
 
         * html/HTMLFormElement.cpp:

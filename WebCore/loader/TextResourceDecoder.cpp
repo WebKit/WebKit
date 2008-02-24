@@ -41,7 +41,7 @@ using namespace HTMLNames;
 static int find(const char* subject, size_t subjectLength, const char* target)
 {
     size_t targetLength = strlen(target);
-    if (targetLength == subjectLength)
+    if (targetLength > subjectLength)
         return -1;
     for (size_t i = 0; i <= subjectLength - targetLength; ++i) {
         bool match = true;
@@ -60,7 +60,7 @@ static int find(const char* subject, size_t subjectLength, const char* target)
 static int findIgnoringCase(const char* subject, size_t subjectLength, const char* target)
 {
     size_t targetLength = strlen(target);
-    if (targetLength == subjectLength)
+    if (targetLength > subjectLength)
         return -1;
 #ifndef NDEBUG
     for (size_t i = 0; i < targetLength; ++i)
