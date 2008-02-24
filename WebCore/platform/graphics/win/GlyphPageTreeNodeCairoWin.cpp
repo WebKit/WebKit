@@ -35,9 +35,9 @@ namespace WebCore {
 
 bool GlyphPage::fill(unsigned offset, unsigned length, UChar* buffer, unsigned bufferLength, const SimpleFontData* fontData)
 {
-    // The bufferLength will be greater than the glyph page size if the buffer has Unicode supplementary characters.
+    // bufferLength will be greater than requested number of glyphs if the buffer contains surrogate pairs.
     // We won't support this for now.
-    if (bufferLength > GlyphPage::size)
+    if (bufferLength > length)
         return false;
 
     bool haveGlyphs = false;

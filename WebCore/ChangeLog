@@ -1,3 +1,16 @@
+2008-02-23  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        - fix GlyphPage::fill() logic for partial page fills
+
+        * platform/graphics/win/GlyphPageTreeNodeCGWin.cpp:
+        (WebCore::GlyphPage::fill): Changed the test for non-BMP characters to
+        work correctly when the length parameter is less than a full page size.
+        Also updated the comment.
+        * platform/graphics/win/GlyphPageTreeNodeCairoWin.cpp:
+        (WebCore::GlyphPage::fill): Ditto.
+
 2008-02-23  Kevin Ollivier  <kevino@theolliviers.com>
 
         Reviewed by Darin Adler.
