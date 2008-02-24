@@ -1,3 +1,50 @@
+2008-02-23  Brent Fulgham  <bfulgham@gmail.com>
+
+        Reviewed by Adam and Darin.
+
+        http://bugs.webkit.org/show_bug.cgi?id=17442
+        Correct the Windows Cairo implementation of GraphicsContext so
+        that Windows 'WorldTransform' is kept in sync with the Cairo
+        transormations.
+
+        Also corrects an uninitialized variable in the Cairo Windows
+        image drag handler.
+
+        WARNING: NO TEST CASES ADDED OR CHANGED
+
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:  Modify
+          methods to call GraphicsContextPlatformPrivate calls, just
+          as is done for the CoreGraphics version.  These calls are
+          nop's for everything but Windows.
+        (WebCore::GraphicsContext::savePlatformState):
+        (WebCore::GraphicsContext::restorePlatformState):
+        (WebCore::GraphicsContext::clip):
+        (WebCore::GraphicsContext::drawLineForMisspellingOrBadGrammar):
+        (WebCore::GraphicsContext::translate):
+        (WebCore::GraphicsContext::concatCTM): Re-enable for Windows
+        (WebCore::GraphicsContext::beginTransparencyLayer):
+        (WebCore::GraphicsContext::endTransparencyLayer):
+        (WebCore::GraphicsContext::rotate):
+        (WebCore::GraphicsContext::scale):
+        * platform/graphics/cairo/GraphicsContextPlatformPrivateCairo.h:
+        * platform/graphics/win/GraphicsContextCGWin.cpp:  Move common
+          code for handling WorldTransform calls to parent class.
+        * platform/graphics/win/GraphicsContextCairoWin.cpp:  Add common
+          code for handling WorldTransform calls.
+          (WebCore::GraphicsContextPlatformPrivate::concatCTM):  Change
+          implementation so that it only handles WorldTransform.  The
+          Cairo update is done in GraphicsContextCairo.cpp
+        * platform/graphics/win/GraphicsContextWin.cpp:  Call platform-private
+          methods to keep WorldTransform in sync.
+        (WebCore::GraphicsContextPlatformPrivate::save):
+        (WebCore::GraphicsContextPlatformPrivate::restore):
+        (WebCore::GraphicsContextPlatformPrivate::clip):
+        (WebCore::GraphicsContextPlatformPrivate::scale):
+        (WebCore::GraphicsContextPlatformPrivate::rotate):
+        (WebCore::GraphicsContextPlatformPrivate::translate):
+        * platform/win/DragImageCairoWin.cpp:
+        (WebCore::createDragImageFromImage):  Correct uninitialized value
+
 2008-02-23  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Dave Hyatt.
