@@ -1,5 +1,14 @@
 2008-02-23  Jan Michael Alonzo  <jmalonzo@unpluggable.com>
 
+        Rubber stamped by Darin.
+
+        Add separator '\' after libJavaScriptCore_la_LIBADD and cleanup
+        whitespaces introduced in the previous commit.
+
+        * GNUmakefile.am: 
+
+2008-02-23  Jan Michael Alonzo  <jmalonzo@unpluggable.com>
+
         * GNUmakefile.am: Add GLOBALDEPS for testkjs and minidom.
 
 2008-02-23  Darin Adler  <darin@apple.com>
