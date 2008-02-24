@@ -1,3 +1,22 @@
+2008-02-23  Kevin Ollivier  <kevino@theolliviers.com>
+
+        Reviewed by Darin Adler.
+
+        Move text drawing into wxcode, as we need platform-dependent
+        APIs for drawing non-kerned text, which wx doesn't yet have.
+        (But hopefully will, once these APIs are fleshed out on all
+        platforms!)
+
+        http://bugs.webkit.org/show_bug.cgi?id=17396
+
+        * platform/graphics/wx/FontWx.cpp:
+        (WebCore::Font::drawGlyphs):
+        * platform/wx/wxcode/gtk/non-kerned-drawing.cpp: Added.
+        * platform/wx/wxcode/mac/carbon/non-kerned-drawing.cpp: Added.
+        * platform/wx/wxcode/non-kerned-drawing.h: Added.
+        * platform/wx/wxcode/win/non-kerned-drawing.cpp: Added.
+        * webcore-wx.bkl:
+
 2008-02-23  Darin Adler  <darin@apple.com>
 
         Pointed out by Mitz.

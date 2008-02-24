@@ -33,9 +33,9 @@
 #include "NotImplemented.h"
 #include "SimpleFontData.h"
 
-#include "fontprops.h"
-#include <wx/defs.h>
 #include <wx/dcclient.h>
+#include "fontprops.h"
+#include "non-kerned-drawing.h"
 
 namespace WebCore {
 
@@ -45,33 +45,11 @@ void Font::drawGlyphs(GraphicsContext* graphicsContext, const SimpleFontData* fo
     // prepare DC
     Color color = graphicsContext->fillColor();
 
-#if USE(WXGC)
-    wxGCDC* dc = (wxGCDC*)graphicsContext->platformContext();
-    wxFont wxfont = font->getWxFont();
-    if (wxfont.IsOk())
-        dc->SetFont(wxfont);
-    dc->SetTextForeground(color);
-#else
-    wxDC* dc = graphicsContext->platformContext();
-    dc->SetTextBackground(color);
-    dc->SetTextForeground(color);
-    dc->SetFont(font->getWxFont());
-#endif
-
-    // convert glyphs to wxString
-    GlyphBufferGlyph* glyphs = const_cast<GlyphBufferGlyph*>(glyphBuffer.glyphs(from));
-    int offset = point.x();
-    wxString text = wxEmptyString;
-    for (unsigned i = 0; i < numGlyphs; i++) {
-        text = text.Append((wxChar)glyphs[i]);
-        offset += glyphBuffer.advanceAt(from + i);
-    }
-    
-    // the y point is actually the bottom point of the text, turn it into the top
-    float height = font->ascent() - font->descent();
-    wxCoord ypoint = (wxCoord) (point.y() - height);
-     
-    dc->DrawText(text, (wxCoord)point.x(), ypoint);
+    // We can't use wx drawing methods on Win/Linux because they automatically kern text
+    // so we've created a function with platform dependent drawing implementations that
+    // will hopefully be folded into wx once the API has solidified.
+    // see platform/wx/wxcode/<platform> for the implementations.
+    drawTextWithSpacing(graphicsContext, font, color, glyphBuffer, from, numGlyphs, point);
 }
 
 FloatRect Font::selectionRectForComplexText(const TextRun& run, const IntPoint& point, int h, int from, int to) const

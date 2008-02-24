@@ -1,3 +1,18 @@
+2008-02-23  Kevin Ollivier  <kevino@theolliviers.com>
+
+        Reviewed by Darin Adler.
+
+        Move text drawing into wxcode, as we need platform-dependent
+        APIs for drawing non-kerned text, which wx doesn't yet have.
+        (But hopefully will, once these APIs are fleshed out on all 
+        platforms!)
+
+        http://bugs.webkit.org/show_bug.cgi?id=17396
+
+        * wxwebkit.bkl:
+        We need to directly link against GDI+ on Windows since we now
+        directly call GDI+ APIs.
+
 2008-02-14  Darin Adler  <darin@apple.com>
 
         * WebView.cpp: Removed use of DeprecatedString to keep this compiling.

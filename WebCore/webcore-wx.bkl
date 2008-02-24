@@ -101,14 +101,17 @@ wxWebCore port Bakefile project file.
         <set var="EXT_SOURCES">
             <if cond="WX_PORT=='gtk2'">
                 platform/wx/wxcode/gtk/fontprops.cpp
+                platform/wx/wxcode/gtk/non-kerned-drawing.cpp
                 platform/wx/SharedTimerWx.cpp
             </if>
             <if cond="WX_PORT=='mac'">
                 platform/wx/wxcode/mac/carbon/fontprops.cpp
+                platform/wx/wxcode/mac/carbon/non-kerned-drawing.cpp
                 platform/wx/SharedTimerWx.cpp
             </if>
             <if cond="WX_PORT=='msw'">
                 platform/wx/wxcode/win/fontprops.cpp
+                platform/wx/wxcode/win/non-kerned-drawing.cpp
                 <!-- grab the windows port's SharedTimer implementation -->
                 platform/win/SharedTimerWin.cpp
                 bridge/win/PageWin.cpp

@@ -69,6 +69,7 @@ This file builds the wxWebKit library.
         </if>
         <if cond="FORMAT in ['msvc','msvs2005prj']">
             <sys-lib>winmm</sys-lib> <!-- for timeGetTime -->
+            <sys-lib>gdiplus</sys-lib>
             <sys-lib>libpng</sys-lib>
             <sys-lib>libjpeg</sys-lib>
         </if>
