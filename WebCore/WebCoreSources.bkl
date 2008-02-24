@@ -249,6 +249,7 @@ This file contains the list of files needed to build WebCore.
         DerivedSources/WebCore/JSHTMLTitleElement.cpp
         DerivedSources/WebCore/JSHTMLUListElement.cpp
         DerivedSources/WebCore/JSHistory.cpp
+        DerivedSources/WebCore/JSImageData.cpp
         DerivedSources/WebCore/JSKeyboardEvent.cpp
         DerivedSources/WebCore/JSMediaList.cpp
         DerivedSources/WebCore/JSMessageEvent.cpp
