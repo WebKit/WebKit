@@ -1,5 +1,17 @@
 2008-02-23  Dan Bernstein  <mitz@apple.com>
 
+        Reviewed by Dave Hyatt.
+
+        - test that non-autowrapping text clear floats
+
+        * fast/text/whitespace/nowrap-clear-float.html: Added.
+        * platform/mac-leopard/fast/text/whitespace: Added.
+        * platform/mac-leopard/fast/text/whitespace/nowrap-clear-float-expected.checksum: Added.
+        * platform/mac-leopard/fast/text/whitespace/nowrap-clear-float-expected.png: Added.
+        * platform/mac/fast/text/whitespace/nowrap-clear-float-expected.txt: Added.
+
+2008-02-23  Dan Bernstein  <mitz@apple.com>
+
         - undo an accidental change to a test's expected results from r30431.
 
         * fast/js/date-DST-time-cusps-expected.txt:

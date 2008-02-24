@@ -1,3 +1,23 @@
+2008-02-23  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        - make non-autowrapping text clear floats
+
+        Test: fast/text/whitespace/nowrap-clear-float.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::nextFloatBottomBelow): Renamed nearestFloat() to
+        this and changed to avoid comparing bottom to 0 in each iteration.
+        (WebCore::RenderBlock::getClearDelta): Updated comment for the rename.
+        * rendering/RenderBlock.h:
+        * rendering/bidi.cpp:
+        (WebCore::RenderBlock::fitBelowFloats): Added. Factored out of
+        findNextLineBreak() and simplified.
+        (WebCore::RenderBlock::findNextLineBreak): Changed to call
+        fitBelowFloats(). Fixed the bug by trying to fit below floats in the
+        case of non-wrapping text. Removed some redundancy.
+
 2008-02-23  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Oliver Hunt.
