@@ -1,3 +1,14 @@
+2008-02-23  Darin Adler  <darin@apple.com>
+
+        Reviewed by Anders.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=17506
+          REGRESSION (r30535): ASSERTION FAILED: i < size()
+
+        * loader/TextResourceDecoder.cpp:
+        (WebCore::findTextEncoding): Fix off-by-one in code that null-terminates
+        the C string here.
+
 2008-02-23  Matt Lilek  <webkit@mattlilek.com>
 
         Not reviewed, build fix.

@@ -84,7 +84,7 @@ static TextEncoding findTextEncoding(const char* encodingName, int length)
 {
     Vector<char, 64> buffer(length + 1);
     memcpy(buffer.data(), encodingName, length);
-    buffer[length + 1] = '\0';
+    buffer[length] = '\0';
     return buffer.data();
 }
 
