@@ -1,3 +1,15 @@
+2008-02-24  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        - test float positioning when a float that does not fit on the line is
+          followed by a float that does
+
+        * fast/block/float/narrow-after-wide.html: Added.
+        * platform/mac/fast/block/float/narrow-after-wide-expected.checksum: Added.
+        * platform/mac/fast/block/float/narrow-after-wide-expected.png: Added.
+        * platform/mac/fast/block/float/narrow-after-wide-expected.txt: Added.
+
 2008-02-24  Darin Adler  <darin@apple.com>
 
         Reviewed by Sam.

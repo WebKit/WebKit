@@ -1,3 +1,18 @@
+2008-02-24  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        - fix float positioning when a float that does not fit on the line is
+          followed by a float that does
+
+        Test: fast/block/float/narrow-after-wide.html
+
+        * rendering/bidi.cpp:
+        (WebCore::RenderBlock::findNextLineBreak): Changed to not position any
+        more floats on the line once a float that does not fit is encountered.
+        That float should be pushed to the next line, and so should all floats
+        that follow, regardless of whether they can fit on the current line.
+
 2008-02-24  Darin Adler  <darin@apple.com>
 
         Reviewed by Sam.

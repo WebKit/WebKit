@@ -1407,9 +1407,10 @@ BidiIterator RenderBlock::findNextLineBreak(BidiIterator &start, BidiState &bidi
     previousLineBrokeCleanly = false;
 
     bool autoWrapWasEverTrueOnLine = false;
+    bool floatsFitOnLine = true;
     
     // Firefox and Opera will allow a table cell to grow to fit an image inside it under
-    // very specific cirucumstances (in order to match common WinIE renderings). 
+    // very specific circumstances (in order to match common WinIE renderings). 
     // Not supporting the quirk has caused us to mis-render some real sites. (See Bugzilla 10517.) 
     bool allowImagesToBreak = !style()->htmlHacks() || !isTableCell() || !style()->width().isIntrinsicOrAuto();
 
@@ -1463,10 +1464,11 @@ BidiIterator RenderBlock::findNextLineBreak(BidiIterator &start, BidiState &bidi
                 // check if it fits in the current line.
                 // If it does, position it now, otherwise, position
                 // it after moving to next line (in newLine() func)
-                if (o->width() + o->marginLeft() + o->marginRight() + w + tmpW <= width) {
+                if (floatsFitOnLine && o->width() + o->marginLeft() + o->marginRight() + w + tmpW <= width) {
                     positionNewFloats();
                     width = lineWidth(m_height);
-                }
+                } else
+                    floatsFitOnLine = false;
             } else if (o->isPositioned()) {
                 // If our original display wasn't an inline type, then we can
                 // go ahead and determine our static x position now.
