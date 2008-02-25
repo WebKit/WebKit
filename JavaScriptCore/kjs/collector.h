@@ -156,6 +156,21 @@ namespace KJS {
     CollectorBitmap collectOnMainThreadOnly;
   };
 
+  enum OperationInProgress { NoOperation, Allocation, Collection };
+
+  struct CollectorHeap {
+    CollectorBlock** blocks;
+    size_t numBlocks;
+    size_t usedBlocks;
+    size_t firstBlockWithPossibleSpace;
+
+    size_t numLiveObjects;
+    size_t numLiveObjectsAtLastCollect;
+    size_t extraCost;
+
+    OperationInProgress operationInProgress;
+  };
+
   inline const CollectorBlock* Collector::cellBlock(const JSCell* cell)
   {
     return reinterpret_cast<const CollectorBlock*>(reinterpret_cast<uintptr_t>(cell) & BLOCK_MASK);

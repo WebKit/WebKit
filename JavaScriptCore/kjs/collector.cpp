@@ -84,21 +84,6 @@ const size_t GROWTH_FACTOR = 2;
 const size_t LOW_WATER_FACTOR = 4;
 const size_t ALLOCATIONS_PER_COLLECTION = 4000;
 
-enum OperationInProgress { NoOperation, Allocation, Collection };
-
-struct CollectorHeap {
-  CollectorBlock** blocks;
-  size_t numBlocks;
-  size_t usedBlocks;
-  size_t firstBlockWithPossibleSpace;
-  
-  size_t numLiveObjects;
-  size_t numLiveObjectsAtLastCollect;
-  size_t extraCost;
-
-  OperationInProgress operationInProgress;
-};
-
 static CollectorHeap primaryHeap = { 0, 0, 0, 0, 0, 0, 0, NoOperation };
 static CollectorHeap numberHeap = { 0, 0, 0, 0, 0, 0, 0, NoOperation };
 

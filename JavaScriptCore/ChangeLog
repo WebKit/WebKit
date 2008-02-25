@@ -1,3 +1,15 @@
+2008-02-25  Mark Mentovai  <mark@moxienet.com>
+
+        Reviewed by Mark Rowe.
+
+        Enable CollectorHeapIntrospector to build by itself, as well as in an AllInOneFile build.
+        http://bugs.webkit.org/show_bug.cgi?id=17538
+
+        * kjs/CollectorHeapIntrospector.cpp: Provide "using" declaration for
+          WTF::RemoteMemoryReader.
+        * kjs/collector.h: Move CollectorHeap declaration here...
+        * kjs/collector.cpp: ... from here.
+
 2008-02-25  Darin Adler  <darin@apple.com>
 
         Reviewed by Adam.
