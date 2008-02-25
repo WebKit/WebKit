@@ -1,5 +1,16 @@
 2008-02-24  Dan Bernstein  <mitz@apple.com>
 
+        Reviewed by Darin Adler.
+
+        - test for http://bugs.webkit.org/show_bug.cgi?id=17471
+          REGRESSION (r30438): Crash in deleteLineBoxes in cursor-adjusting code browsing Acid3
+
+        * http/tests/misc/object-image-error-expected.txt: Added.
+        * http/tests/misc/object-image-error.html: Added.
+        * http/tests/misc/resources/404image.php: Added.
+
+2008-02-24  Dan Bernstein  <mitz@apple.com>
+
         Rubber-stamped by Oliver Hunt.
 
         - replace expected results in platform/mac-tiger and

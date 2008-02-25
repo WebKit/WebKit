@@ -171,6 +171,10 @@ void HTMLObjectElement::attach()
         if (!m_imageLoader)
             m_imageLoader.set(new HTMLImageLoader(this));
         m_imageLoader->updateFromElement();
+        // updateForElement() may have changed us to use fallback content and called detach() and attach().
+        if (m_useFallbackContent)
+            return;
+
         if (renderer()) {
             RenderImage* imageObj = static_cast<RenderImage*>(renderer());
             imageObj->setCachedImage(m_imageLoader->image());

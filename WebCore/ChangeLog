@@ -2,6 +2,19 @@
 
         Reviewed by Darin Adler.
 
+        - fix http://bugs.webkit.org/show_bug.cgi?id=17471
+          REGRESSION (r30438): Crash in deleteLineBoxes in cursor-adjusting code browsing Acid3
+
+        Test: http/tests/misc/object-image-error.html
+
+        * html/HTMLObjectElement.cpp:
+        (WebCore::HTMLObjectElement::attach): Added an early return in case
+        updateFromElement() has changed the object to use fallback content.
+
+2008-02-24  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
         - fix float positioning when a float that does not fit on the line is
           followed by a float that does
 
