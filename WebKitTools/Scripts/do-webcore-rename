@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
+# Copyright (C) 2006, 2007, 2008 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -43,6 +43,7 @@ my %words;
 
 my @paths;
 find(\&wanted, "JavaScriptCore");
+find(\&wanted, "JavaScriptGlue");
 find(\&wanted, "WebCore");
 find(\&wanted, "WebKit");
 
@@ -67,6 +68,7 @@ sub wanted
 }
 
 my %renames = (
+    "XSLTProcessorPrototypeTable" => "JSXSLTProcessorPrototypeTable",
     "ActivationImp" => "Activation",
     "ActivationImpData" => "ActivationData",
     "ArrayInstance" => "JSArray",
@@ -144,10 +146,10 @@ my %renames = (
     "ErrorProtoFuncToString" => "ErrorFunction",
     "FRAMES_ON_STACK" => "numFramesOnStack",
     "FTPDirectoryTokenizer" => "FTPDirectoryDocumentBuilder",
-    "FunctionImp" => "Function",
+    "FunctionImp" => "JSFunction",
     "FunctionObjectImp" => "FunctionConstructor",
     "FunctionProtoFunc" => "FunctionFunction",
-    "GetterSetterImp" => "GetterSetter",
+    "GetterSetterImp" => "JSGetterSetter",
     "GlobalFuncImp" => "GlobalFunction",
     "GlobalImp" => "TestGlobalObject",
     "HTMLGenericFormElement" => "HTMLFormControlElement",
@@ -161,7 +163,7 @@ my %renames = (
     "KURLCFNet" => "URLCF",
     "KURLMac" => "URLMac",
     "KURL_H_" => "URL_h",
-    "List" => "ArgumentList",
+    "List" => "JSArgumentList",
     "MathObjectImp" => "MathObject",
     "MathProtoFuncACos" => "MathFunctionACos",
     "MathProtoFuncASin" => "MathFunctionASin",

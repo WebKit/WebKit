@@ -1,5 +1,10 @@
 2008-02-24  Darin Adler  <darin@apple.com>
 
+        * Scripts/do-webcore-rename: Make some updates based on a trial run of
+        the renaming script.
+
+2008-02-24  Darin Adler  <darin@apple.com>
+
         * Scripts/do-webcore-rename: More renaming plans.
 
 2008-02-23  Jan Michael Alonzo  <jmalonzo@unpluggable.com>
