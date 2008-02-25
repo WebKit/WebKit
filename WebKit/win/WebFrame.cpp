@@ -1178,15 +1178,6 @@ void WebFrame::loadURLIntoChild(const KURL& originalURL, const String& referrer,
     core(childFrame)->loader()->load(url, referrer, childLoadType, String(), 0, 0);
 }
 
-void WebFrame::dispatchDidHandleOnloadEvents()
-{
-    IWebFrameLoadDelegatePrivate* frameLoadDelegatePriv;
-    if (SUCCEEDED(d->webView->frameLoadDelegatePrivate(&frameLoadDelegatePriv))  && frameLoadDelegatePriv) {
-        frameLoadDelegatePriv->didHandleOnloadEventsForFrame(d->webView, this);
-        frameLoadDelegatePriv->Release();
-    }
-}
-
 WebHistory* WebFrame::webHistory()
 {
     if (this != d->webView->topLevelFrame())
@@ -1236,96 +1227,6 @@ void WebFrame::detachedFromParent3()
 void WebFrame::detachedFromParent4()
 {
     notImplemented();
-}
-
-void WebFrame::dispatchDidReceiveServerRedirectForProvisionalLoad()
-{
-    COMPtr<IWebFrameLoadDelegate> frameLoadDelegate;
-    if (SUCCEEDED(d->webView->frameLoadDelegate(&frameLoadDelegate)))
-        frameLoadDelegate->didReceiveServerRedirectForProvisionalLoadForFrame(d->webView, this);
-}
-
-void WebFrame::dispatchDidCancelClientRedirect()
-{
-    COMPtr<IWebFrameLoadDelegate> frameLoadDelegate;
-    if (SUCCEEDED(d->webView->frameLoadDelegate(&frameLoadDelegate)))
-        frameLoadDelegate->didCancelClientRedirectForFrame(d->webView, this);
-}
-
-void WebFrame::dispatchWillPerformClientRedirect(const KURL& url, double delay, double fireDate)
-{
-    COMPtr<IWebFrameLoadDelegate> frameLoadDelegate;
-    if (SUCCEEDED(d->webView->frameLoadDelegate(&frameLoadDelegate)))
-        frameLoadDelegate->willPerformClientRedirectToURL(d->webView, BString(url.string()), delay, MarshallingHelpers::CFAbsoluteTimeToDATE(fireDate), this);
-}
-
-void WebFrame::dispatchDidChangeLocationWithinPage()
-{
-    COMPtr<IWebFrameLoadDelegate> frameLoadDelegate;
-    if (SUCCEEDED(d->webView->frameLoadDelegate(&frameLoadDelegate)))
-        frameLoadDelegate->didChangeLocationWithinPageForFrame(d->webView, this);
-}
-
-void WebFrame::dispatchWillClose()
-{
-    COMPtr<IWebFrameLoadDelegate> frameLoadDelegate;
-    if (SUCCEEDED(d->webView->frameLoadDelegate(&frameLoadDelegate)))
-        frameLoadDelegate->willCloseFrame(d->webView, this);
-}
-
-void WebFrame::dispatchDidReceiveIcon()
-{
-    d->webView->dispatchDidReceiveIconFromWebFrame(this);
-}
-
-void WebFrame::dispatchDidStartProvisionalLoad()
-{
-    COMPtr<IWebFrameLoadDelegate> frameLoadDelegate;
-    if (SUCCEEDED(d->webView->frameLoadDelegate(&frameLoadDelegate)))
-        frameLoadDelegate->didStartProvisionalLoadForFrame(d->webView, this);
-}
-
-void WebFrame::dispatchDidReceiveTitle(const String& title)
-{
-    COMPtr<IWebFrameLoadDelegate> frameLoadDelegate;
-    if (SUCCEEDED(d->webView->frameLoadDelegate(&frameLoadDelegate)))
-        frameLoadDelegate->didReceiveTitle(d->webView, BString(title), this);
-}
-
-void WebFrame::dispatchDidCommitLoad()
-{
-    COMPtr<IWebFrameLoadDelegate> frameLoadDelegate;
-    if (SUCCEEDED(d->webView->frameLoadDelegate(&frameLoadDelegate))) 
-        frameLoadDelegate->didCommitLoadForFrame(d->webView, this);
-}
-
-void WebFrame::dispatchDidFinishDocumentLoad()
-{
-    COMPtr<IWebFrameLoadDelegatePrivate> frameLoadDelegatePriv;
-    if (SUCCEEDED(d->webView->frameLoadDelegatePrivate(&frameLoadDelegatePriv)) && frameLoadDelegatePriv)
-        frameLoadDelegatePriv->didFinishDocumentLoadForFrame(d->webView, this);
-}
-
-void WebFrame::dispatchDidFinishLoad()
-{
-    COMPtr<IWebFrameLoadDelegate> frameLoadDelegate;
-    if (SUCCEEDED(d->webView->frameLoadDelegate(&frameLoadDelegate))) 
-        frameLoadDelegate->didFinishLoadForFrame(d->webView, this);
-}
-
-void WebFrame::dispatchDidFirstLayout()
-{
-    COMPtr<IWebFrameLoadDelegatePrivate> frameLoadDelegatePriv;
-    if (SUCCEEDED(d->webView->frameLoadDelegatePrivate(&frameLoadDelegatePriv)) && frameLoadDelegatePriv)
-        frameLoadDelegatePriv->didFirstLayoutInFrame(d->webView, this);
-}
-
-void WebFrame::dispatchShow()
-{
-    COMPtr<IWebUIDelegate> ui;
-
-    if (SUCCEEDED(d->webView->uiDelegate(&ui)))
-        ui->webViewShow(d->webView);
 }
 
 void WebFrame::cancelPolicyCheck()

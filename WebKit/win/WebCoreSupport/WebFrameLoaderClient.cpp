@@ -29,8 +29,10 @@
 #include "config.h"
 #include "WebFrameLoaderClient.h"
 
+#include "MarshallingHelpers.h"
 #include "WebDocumentLoader.h"
 #include "WebFrame.h"
+#include "WebView.h"
 #pragma warning(push, 0)
 #include <WebCore/DocumentLoader.h>
 #pragma warning(pop)
@@ -60,6 +62,115 @@ bool WebFrameLoaderClient::hasFrameView() const
 void WebFrameLoaderClient::forceLayout()
 {
     core(m_webFrame)->forceLayout(true);
+}
+
+void WebFrameLoaderClient::dispatchDidHandleOnloadEvents()
+{
+    WebView* webView = m_webFrame->webView();
+    COMPtr<IWebFrameLoadDelegatePrivate> frameLoadDelegatePriv;
+    if (SUCCEEDED(webView->frameLoadDelegatePrivate(&frameLoadDelegatePriv)) && frameLoadDelegatePriv)
+        frameLoadDelegatePriv->didHandleOnloadEventsForFrame(webView, m_webFrame);
+}
+
+void WebFrameLoaderClient::dispatchDidReceiveServerRedirectForProvisionalLoad()
+{
+    WebView* webView = m_webFrame->webView();
+    COMPtr<IWebFrameLoadDelegate> frameLoadDelegate;
+    if (SUCCEEDED(webView->frameLoadDelegate(&frameLoadDelegate)))
+        frameLoadDelegate->didReceiveServerRedirectForProvisionalLoadForFrame(webView, m_webFrame);
+}
+
+void WebFrameLoaderClient::dispatchDidCancelClientRedirect()
+{
+    WebView* webView = m_webFrame->webView();
+    COMPtr<IWebFrameLoadDelegate> frameLoadDelegate;
+    if (SUCCEEDED(webView->frameLoadDelegate(&frameLoadDelegate)))
+        frameLoadDelegate->didCancelClientRedirectForFrame(webView, m_webFrame);
+}
+
+void WebFrameLoaderClient::dispatchWillPerformClientRedirect(const KURL& url, double delay, double fireDate)
+{
+    WebView* webView = m_webFrame->webView();
+    COMPtr<IWebFrameLoadDelegate> frameLoadDelegate;
+    if (SUCCEEDED(webView->frameLoadDelegate(&frameLoadDelegate)))
+        frameLoadDelegate->willPerformClientRedirectToURL(webView, BString(url.string()), delay, MarshallingHelpers::CFAbsoluteTimeToDATE(fireDate), m_webFrame);
+}
+
+void WebFrameLoaderClient::dispatchDidChangeLocationWithinPage()
+{
+    WebView* webView = m_webFrame->webView();
+    COMPtr<IWebFrameLoadDelegate> frameLoadDelegate;
+    if (SUCCEEDED(webView->frameLoadDelegate(&frameLoadDelegate)))
+        frameLoadDelegate->didChangeLocationWithinPageForFrame(webView, m_webFrame);
+}
+
+void WebFrameLoaderClient::dispatchWillClose()
+{
+    WebView* webView = m_webFrame->webView();
+    COMPtr<IWebFrameLoadDelegate> frameLoadDelegate;
+    if (SUCCEEDED(webView->frameLoadDelegate(&frameLoadDelegate)))
+        frameLoadDelegate->willCloseFrame(webView, m_webFrame);
+}
+
+void WebFrameLoaderClient::dispatchDidReceiveIcon()
+{
+    m_webFrame->webView()->dispatchDidReceiveIconFromWebFrame(m_webFrame);
+}
+
+void WebFrameLoaderClient::dispatchDidStartProvisionalLoad()
+{
+    WebView* webView = m_webFrame->webView();
+    COMPtr<IWebFrameLoadDelegate> frameLoadDelegate;
+    if (SUCCEEDED(webView->frameLoadDelegate(&frameLoadDelegate)))
+        frameLoadDelegate->didStartProvisionalLoadForFrame(webView, m_webFrame);
+}
+
+void WebFrameLoaderClient::dispatchDidReceiveTitle(const String& title)
+{
+    WebView* webView = m_webFrame->webView();
+    COMPtr<IWebFrameLoadDelegate> frameLoadDelegate;
+    if (SUCCEEDED(webView->frameLoadDelegate(&frameLoadDelegate)))
+        frameLoadDelegate->didReceiveTitle(webView, BString(title), m_webFrame);
+}
+
+void WebFrameLoaderClient::dispatchDidCommitLoad()
+{
+    WebView* webView = m_webFrame->webView();
+    COMPtr<IWebFrameLoadDelegate> frameLoadDelegate;
+    if (SUCCEEDED(webView->frameLoadDelegate(&frameLoadDelegate)))
+        frameLoadDelegate->didCommitLoadForFrame(webView, m_webFrame);
+}
+
+void WebFrameLoaderClient::dispatchDidFinishDocumentLoad()
+{
+    WebView* webView = m_webFrame->webView();
+    COMPtr<IWebFrameLoadDelegatePrivate> frameLoadDelegatePriv;
+    if (SUCCEEDED(webView->frameLoadDelegatePrivate(&frameLoadDelegatePriv)) && frameLoadDelegatePriv)
+        frameLoadDelegatePriv->didFinishDocumentLoadForFrame(webView, m_webFrame);
+}
+
+void WebFrameLoaderClient::dispatchDidFinishLoad()
+{
+    WebView* webView = m_webFrame->webView();
+    COMPtr<IWebFrameLoadDelegate> frameLoadDelegate;
+    if (SUCCEEDED(webView->frameLoadDelegate(&frameLoadDelegate)))
+        frameLoadDelegate->didFinishLoadForFrame(webView, m_webFrame);
+}
+
+void WebFrameLoaderClient::dispatchDidFirstLayout()
+{
+    WebView* webView = m_webFrame->webView();
+    COMPtr<IWebFrameLoadDelegatePrivate> frameLoadDelegatePriv;
+    if (SUCCEEDED(webView->frameLoadDelegatePrivate(&frameLoadDelegatePriv)) && frameLoadDelegatePriv)
+        frameLoadDelegatePriv->didFirstLayoutInFrame(webView, m_webFrame);
+}
+
+void WebFrameLoaderClient::dispatchShow()
+{
+    WebView* webView = m_webFrame->webView();
+    COMPtr<IWebUIDelegate> ui;
+    if (SUCCEEDED(webView->uiDelegate(&ui)))
+        ui->webViewShow(webView);
 }
 
 PassRefPtr<DocumentLoader> WebFrameLoaderClient::createDocumentLoader(const ResourceRequest& request, const SubstituteData& substituteData)

@@ -40,6 +40,20 @@ public:
     virtual bool hasWebView() const;
     virtual bool hasFrameView() const;
     virtual void forceLayout();
+    virtual void dispatchDidHandleOnloadEvents();
+    virtual void dispatchDidReceiveServerRedirectForProvisionalLoad();
+    virtual void dispatchDidCancelClientRedirect();
+    virtual void dispatchWillPerformClientRedirect(const WebCore::KURL&, double interval, double fireDate);
+    virtual void dispatchDidChangeLocationWithinPage();
+    virtual void dispatchWillClose();
+    virtual void dispatchDidReceiveIcon();
+    virtual void dispatchDidStartProvisionalLoad();
+    virtual void dispatchDidReceiveTitle(const WebCore::String&);
+    virtual void dispatchDidCommitLoad();
+    virtual void dispatchDidFinishDocumentLoad();
+    virtual void dispatchDidFinishLoad();
+    virtual void dispatchDidFirstLayout();
+    virtual void dispatchShow();
     virtual PassRefPtr<WebCore::DocumentLoader> createDocumentLoader(const WebCore::ResourceRequest&, const WebCore::SubstituteData&);
 
 protected:
