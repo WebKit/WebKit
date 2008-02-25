@@ -154,7 +154,19 @@ size_t ImageSource::frameCount() const
 
 CGImageRef ImageSource::createFrameAtIndex(size_t index)
 {
-    return CGImageSourceCreateImageAtIndex(m_decoder, index, imageSourceOptions());
+    CGImageRef image = CGImageSourceCreateImageAtIndex(m_decoder, index, imageSourceOptions());
+    String imageUTI = CGImageSourceGetType(m_decoder);
+    if ("public.xbitmap-image" != imageUTI)
+        return image;
+    
+    // If it is an xbm image, mask out all the white areas to render them transparent.
+    const CGFloat maskingColors[6] = {255, 255,  255, 255, 255, 255};
+    CGImageRef maskedImage = CGImageCreateWithMaskingColors(image, maskingColors);
+    if (!maskedImage)
+        return image;
+        
+    CGImageRelease(image);
+    return maskedImage; 
 }
 
 bool ImageSource::frameIsCompleteAtIndex(size_t index)

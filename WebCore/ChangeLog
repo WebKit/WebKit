@@ -1,3 +1,17 @@
+2008-02-24  Michael Knaup  <michael.knaup@mac.com>
+
+        Reviewed by Darin.
+
+        Bug 8749: XBM rendered incorrectly as black on white
+
+        xbm images are now created and rendered using black on a
+        transparent background (same behavior as in Firefox)
+
+        Test: platform/mac/fast/canvas/canvas-draw-xbm-image.html
+
+        * platform/graphics/cg/ImageSourceCG.cpp:
+        (WebCore::ImageSource::createFrameAtIndex):
+
 2008-02-24  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.
