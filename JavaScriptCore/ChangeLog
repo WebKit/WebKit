@@ -2,6 +2,18 @@
 
         Reviewed by Mark Rowe.
 
+        http://bugs.webkit.org/show_bug.cgi?id=17529
+        Add support for reading from stdin from testkjs
+
+        * kjs/testkjs.cpp:
+        (GlobalObject::GlobalObject): Add readline function to global object.
+        (functionReadline): Added. Reads characters from stdin until a '\n' or
+        EOF is encountered. The input is returned as a String to the caller.
+
+2008-02-24  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Mark Rowe.
+
         http://bugs.webkit.org/show_bug.cgi?id=17528
         Give testkjs a bath
 
