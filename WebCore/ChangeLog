@@ -1,3 +1,46 @@
+2008-02-25  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Darin.
+
+        Move remaining render style objects over to start with a refcount of 1 and get
+        rid of DeprecatedDataRef.
+        
+        * rendering/DataRef.h:
+        (WebCore::DataRef::operator*):
+        (WebCore::DataRef::operator->):
+        * rendering/RenderStyle.h:
+        * rendering/SVGRenderStyle.cpp:
+        (WebCore::SVGRenderStyle::SVGRenderStyle):
+        * rendering/SVGRenderStyle.h:
+        (WebCore::SVGRenderStyle::create):
+        (WebCore::SVGRenderStyle::copy):
+        * rendering/SVGRenderStyleDefs.cpp:
+        (StyleFillData::StyleFillData):
+        (StyleStrokeData::StyleStrokeData):
+        (StyleStopData::StyleStopData):
+        (StyleTextData::StyleTextData):
+        (StyleClipData::StyleClipData):
+        (StyleMaskData::StyleMaskData):
+        (StyleMarkerData::StyleMarkerData):
+        (StyleMiscData::StyleMiscData):
+        * rendering/SVGRenderStyleDefs.h:
+        (WebCore::StyleFillData::create):
+        (WebCore::StyleFillData::copy):
+        (WebCore::StyleStrokeData::create):
+        (WebCore::StyleStrokeData::copy):
+        (WebCore::StyleStopData::create):
+        (WebCore::StyleStopData::copy):
+        (WebCore::StyleTextData::create):
+        (WebCore::StyleTextData::copy):
+        (WebCore::StyleClipData::create):
+        (WebCore::StyleClipData::copy):
+        (WebCore::StyleMaskData::create):
+        (WebCore::StyleMaskData::copy):
+        (WebCore::StyleMarkerData::create):
+        (WebCore::StyleMarkerData::copy):
+        (WebCore::StyleMiscData::create):
+        (WebCore::StyleMiscData::copy):
+
 2008-02-25  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Dave Hyatt.

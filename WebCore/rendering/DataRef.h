@@ -32,8 +32,8 @@ template <typename T> class DataRef {
 public:
     const T* get() const { return m_data.get(); }
 
-    const T& operator*() const { return *m_data; }
-    const T* operator->() const { return m_data.get(); }
+    const T& operator*() const { return *get(); }
+    const T* operator->() const { return get(); }
 
     T* access()
     {
@@ -64,76 +64,6 @@ public:
 
 private:
     RefPtr<T> m_data;
-};
-
-template <typename T> class DeprecatedDataRef {
-public:
-    DeprecatedDataRef()
-        : m_data(0)
-    {
-    }
-
-    DeprecatedDataRef(const DeprecatedDataRef<T>& d)
-    {
-        ASSERT(d.m_data);
-        m_data = d.m_data;
-        m_data->ref();
-    }
-
-    ~DeprecatedDataRef()
-    {
-        if (m_data)
-            m_data->deref();
-    }
-
-    const T* get() const { return m_data; }
-
-    T& operator*() const { return *m_data; }
-    const T* operator->() const { return m_data; }
-
-    T* access()
-    {
-        if (!m_data->hasOneRef()) {
-            m_data->deref();
-            m_data = new T(*m_data);
-            m_data->ref();
-        }
-        return m_data;
-    }
-
-    void init()
-    {
-        ASSERT(!m_data);
-        m_data = new T;
-        m_data->ref();
-    }
-
-    DeprecatedDataRef<T>& operator=(const DeprecatedDataRef<T>& d)
-    {
-        ASSERT(d.m_data);
-        d.m_data->ref();
-        if (m_data)
-            m_data->deref();
-        m_data = d.m_data;
-        return *this;
-    }
-
-    bool operator==(const DeprecatedDataRef<T>& o) const
-    {
-        ASSERT(m_data);
-        ASSERT(o.m_data);
-        return m_data == o.m_data || *m_data == *o.m_data;
-    }
-    
-    bool operator!=(const DeprecatedDataRef<T>& o) const
-    {
-        ASSERT(m_data);
-        ASSERT(o.m_data);
-        return m_data != o.m_data && *m_data != *o.m_data;
-    }
-
-private:
-    T* m_data;
 };
 
 } // namespace WebCore

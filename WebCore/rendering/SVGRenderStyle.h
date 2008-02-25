@@ -40,9 +40,8 @@ namespace WebCore {
 
     class SVGRenderStyle : public RefCounted<SVGRenderStyle> {    
     public:
-        SVGRenderStyle();
-        SVGRenderStyle(bool); // Used to create the default style.
-        SVGRenderStyle(const SVGRenderStyle&);
+        static PassRefPtr<SVGRenderStyle> create() { return adoptRef(new SVGRenderStyle); }
+        PassRefPtr<SVGRenderStyle> copy() const { return adoptRef(new SVGRenderStyle(*this));}
         ~SVGRenderStyle();
 
         bool inheritedNotEqual(const SVGRenderStyle*) const;
@@ -169,22 +168,23 @@ namespace WebCore {
         } svg_noninherited_flags;
 
         // inherited attributes
-        DeprecatedDataRef<StyleFillData> fill;
-        DeprecatedDataRef<StyleStrokeData> stroke;
-        DeprecatedDataRef<StyleMarkerData> markers;
-        DeprecatedDataRef<StyleTextData> text;
+        DataRef<StyleFillData> fill;
+        DataRef<StyleStrokeData> stroke;
+        DataRef<StyleMarkerData> markers;
+        DataRef<StyleTextData> text;
 
         // non-inherited attributes
-        DeprecatedDataRef<StyleStopData> stops;
-        DeprecatedDataRef<StyleClipData> clip;
-        DeprecatedDataRef<StyleMaskData> mask;
-        DeprecatedDataRef<StyleMiscData> misc;
-
-        // static default style
-        static SVGRenderStyle *s_defaultStyle;
+        DataRef<StyleStopData> stops;
+        DataRef<StyleClipData> clip;
+        DataRef<StyleMaskData> mask;
+        DataRef<StyleMiscData> misc;
 
     private:
-        SVGRenderStyle(const SVGRenderStyle*) : RefCounted<SVGRenderStyle>(0) { }
+        enum CreateDefaultType { CreateDefault };
+            
+        SVGRenderStyle();
+        SVGRenderStyle(const SVGRenderStyle&);
+        SVGRenderStyle(CreateDefaultType); // Used to create the default style.
 
         void setBitDefaults()
         {

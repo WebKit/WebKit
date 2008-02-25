@@ -36,14 +36,13 @@
 using namespace WebCore;
 
 StyleFillData::StyleFillData()
-    : RefCounted<StyleFillData>(0)
 {
     paint = SVGRenderStyle::initialFillPaint();
     opacity = SVGRenderStyle::initialFillOpacity();
 }
 
 StyleFillData::StyleFillData(const StyleFillData& other)
-    : RefCounted<StyleFillData>(0)
+    : RefCounted<StyleFillData>()
 {
     paint = other.paint;
     opacity = other.opacity;
@@ -70,7 +69,6 @@ bool StyleFillData::operator==(const StyleFillData &other) const
 }
 
 StyleStrokeData::StyleStrokeData()
-    : RefCounted<StyleStrokeData>(0)
 {
     width = SVGRenderStyle::initialStrokeWidth();
     paint = SVGRenderStyle::initialStrokePaint();
@@ -81,7 +79,7 @@ StyleStrokeData::StyleStrokeData()
 }
 
 StyleStrokeData::StyleStrokeData(const StyleStrokeData& other)
-    : RefCounted<StyleStrokeData>(0)
+    : RefCounted<StyleStrokeData>()
 {
     width = other.width;
     paint = other.paint;
@@ -102,14 +100,13 @@ bool StyleStrokeData::operator==(const StyleStrokeData &other) const
 }
 
 StyleStopData::StyleStopData()
-    : RefCounted<StyleStopData>(0)
 {
     color = SVGRenderStyle::initialStopColor();
     opacity = SVGRenderStyle::initialStopOpacity();
 }
 
 StyleStopData::StyleStopData(const StyleStopData& other)
-    : RefCounted<StyleStopData>(0)
+    : RefCounted<StyleStopData>()
 {
     color = other.color;
     opacity = other.opacity;
@@ -122,13 +119,12 @@ bool StyleStopData::operator==(const StyleStopData &other) const
 }
 
 StyleTextData::StyleTextData()
-    : RefCounted<StyleTextData>(0)
 {
     kerning = SVGRenderStyle::initialKerning();
 }
 
 StyleTextData::StyleTextData(const StyleTextData& other)
-    : RefCounted<StyleTextData>(0)
+    : RefCounted<StyleTextData>()
 {
     kerning = other.kerning;
 }
@@ -139,13 +135,12 @@ bool StyleTextData::operator==(const StyleTextData& other) const
 }
 
 StyleClipData::StyleClipData()
-    : RefCounted<StyleClipData>(0)
 {
     clipPath = SVGRenderStyle::initialClipPath();
 }
 
 StyleClipData::StyleClipData(const StyleClipData& other)
-    : RefCounted<StyleClipData>(0)
+    : RefCounted<StyleClipData>()
 {
     clipPath = other.clipPath;
 }
@@ -156,13 +151,12 @@ bool StyleClipData::operator==(const StyleClipData &other) const
 }
 
 StyleMaskData::StyleMaskData()
-    : RefCounted<StyleMaskData>(0)
 {
     maskElement = SVGRenderStyle::initialMaskElement();
 }
 
 StyleMaskData::StyleMaskData(const StyleMaskData& other)
-    : RefCounted<StyleMaskData>(0)
+    : RefCounted<StyleMaskData>()
 {
     maskElement = other.maskElement;
 }
@@ -173,7 +167,6 @@ bool StyleMaskData::operator==(const StyleMaskData &other) const
 }
 
 StyleMarkerData::StyleMarkerData()
-    : RefCounted<StyleMarkerData>(0)
 {
     startMarker = SVGRenderStyle::initialStartMarker();
     midMarker = SVGRenderStyle::initialMidMarker();
@@ -181,7 +174,7 @@ StyleMarkerData::StyleMarkerData()
 }
 
 StyleMarkerData::StyleMarkerData(const StyleMarkerData& other)
-    : RefCounted<StyleMarkerData>(0)
+    : RefCounted<StyleMarkerData>()
 {
     startMarker = other.startMarker;
     midMarker = other.midMarker;
@@ -194,7 +187,6 @@ bool StyleMarkerData::operator==(const StyleMarkerData &other) const
 }
 
 StyleMiscData::StyleMiscData()
-    : RefCounted<StyleMiscData>(0)
 {
     floodColor = SVGRenderStyle::initialFloodColor();
     floodOpacity = SVGRenderStyle::initialFloodOpacity();
@@ -203,7 +195,7 @@ StyleMiscData::StyleMiscData()
 }
 
 StyleMiscData::StyleMiscData(const StyleMiscData& other)
-    : RefCounted<StyleMiscData>(0)
+    : RefCounted<StyleMiscData>()
 {
     filter = other.filter;
     floodColor = other.floodColor;
