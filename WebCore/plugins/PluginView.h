@@ -35,7 +35,6 @@
 #include "KURL.h"
 #include "PlatformString.h"
 #include "PluginStream.h"
-#include "PluginQuirkSet.h"
 #include "ResourceRequest.h"
 #include "Timer.h"
 #include "Widget.h"
@@ -171,7 +170,6 @@ namespace WebCore {
         OwnPtr<PluginMessageThrottlerWin> m_messageThrottler;
 
         void updateWindow() const;
-        void determineQuirks(const String& mimeType);
         void paintMissingPluginIcon(GraphicsContext*, const IntRect&);
 
         void handleKeyboardEvent(KeyboardEvent*);
@@ -194,7 +192,6 @@ namespace WebCore {
         HashSet<RefPtr<PluginStream> > m_streams;
         Vector<PluginRequest*> m_requests;
 
-        PluginQuirkSet m_quirks;
         bool m_isWindowed;
         bool m_isTransparent;
         bool m_isVisible;

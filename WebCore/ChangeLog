@@ -1,3 +1,47 @@
+2008-02-25  Rodney Dawes  <dobey@wayofthemonkey.com>
+
+        Reviewed by Jon Honeycutt.
+
+        http://bugs.webkit.org/show_bug.cgi?id=16924
+        Bug 16924: Shared PluginDatabase, PluginPackage, and PlugInInfoStore implementations
+
+        Add PluginInfoStore.cpp and new PluginDatabase.cpp to GTK+ and Qt ports.
+        Remove old PlugInInfoStoreQt.cpp as it is obsoleted by shared code.
+        Add PluginInfoStore, PluginDatabase, and PluginStream files to Wx build.
+        Add new PluginDatabase.cpp to Windows build.
+        Add temporary stubs for new PluginDatabase and PluginPackage.
+        shared classes to GTK+, Qt, and Wx ports.
+        Copy PluginDatabaseWin.cpp to PluginDatabase.cpp to preserve history.
+        Remove shared code from PluginDatabaseWin.cpp.
+        Remove Windows-specific code from PluginDatabase.cpp.
+        Use PlatformModule and PlatformFileTime instead of HMODULE and FILETIME.
+        Remove extraneous PluginPackage:: from hash() class method prototype.
+        Subsume storeFileVersion into PluginPackage::fetchInfo.
+        Add cross-platform PlatformModuleVersion type definition.
+        Use PlatformModuleVersion to store the module version.
+        Rename m_fileVersion[ML]S to m_moduleVersion.
+        Change compareFileVersion to use PlatformModuleVersion as the argument.
+        Move PluginView::determineQuirks and m_quirks to PluginPackage.
+        Updated determineQuirks for the PlatformModuleVersion.
+
+        * GNUmakefile.am:
+        * WebCore.pro:
+        * WebCoreSources.bkl:
+        * webcore-base.bkl:
+        * WebCore.vcproj/WebCore.vcproj:
+        * Platform/FileSystem.h:
+        * platform/qt/PlugInInfoStoreQt.cpp:
+        * platform/gtk/TemporaryLinkStubs.cpp:
+        * platform/qt/TemporaryLinkStubs.cpp:
+        * platform/wx/TemporaryLinkStubs.cpp:
+        * plugins/PluginDatabase.cpp:
+        * plugins/PluginDatabase.h:
+        * plugins/win/PluginDatabaseWin.cpp:
+        * plugins/PluginPackage.h:
+        * plugins/win/PluginPackageWin.cpp:
+        * plugins/PluginView.h:
+        * plugins/win/PluginViewWin.cpp:
+
 2008-02-25  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Darin.

@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2006, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2008 Collabora, Ltd.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,6 +29,7 @@
 #include "config.h"
 #include "PluginPackage.h"
 
+#include "MIMETypeRegistry.h"
 #include "PluginDebug.h"
 #include "Timer.h"
 #include "npruntime_impl.h"
@@ -76,55 +78,109 @@ void PluginPackage::freeLibraryTimerFired(Timer<PluginPackage>*)
 PluginPackage::PluginPackage(const String& path, const FILETIME& lastModified)
     : RefCounted<PluginPackage>(0)
     , m_path(path)
+    , m_moduleVersion(0)
     , m_module(0)
     , m_lastModified(lastModified)
     , m_isLoaded(false)
     , m_loadCount(0)
     , m_freeLibraryTimer(this, &PluginPackage::freeLibraryTimerFired)
-    , m_fileVersionLS(0)
-    , m_fileVersionMS(0)
 {
     m_fileName = String(PathFindFileName(m_path.charactersWithNullTermination()));
     m_parentDirectory = m_path.left(m_path.length() - m_fileName.length() - 1);
 }
 
-int PluginPackage::compareFileVersion(unsigned compareVersionMS, unsigned compareVersionLS) const
+int PluginPackage::compareFileVersion(const PlatformModuleVersion& compareVersion) const
 {
     // return -1, 0, or 1 if plug-in version is less than, equal to, or greater than
     // the passed version
-    if (m_fileVersionMS != compareVersionMS)
-        return m_fileVersionMS > compareVersionMS ? 1 : -1;
-    if (m_fileVersionLS != compareVersionLS)
-        return m_fileVersionLS > compareVersionLS ? 1 : -1;
+    if (m_moduleVersion.mostSig != compareVersion.mostSig)
+        return m_moduleVersion.mostSig > compareVersion.mostSig ? 1 : -1;
+    if (m_moduleVersion.leastSig != compareVersion.leastSig)
+        return m_moduleVersion.leastSig > compareVersion.leastSig ? 1 : -1;
     return 0;
-}
-
-void PluginPackage::storeFileVersion(LPVOID versionInfoData)
-{
-    LPVOID info;
-    UINT infoSize;
-    if (!VerQueryValue(versionInfoData, TEXT("\\"), &info, &infoSize) || infoSize < sizeof(VS_FIXEDFILEINFO))
-        return;
-    m_fileVersionLS = static_cast<VS_FIXEDFILEINFO*>(info)->dwFileVersionLS;
-    m_fileVersionMS = static_cast<VS_FIXEDFILEINFO*>(info)->dwFileVersionMS;
 }
 
 bool PluginPackage::isPluginBlacklisted()
 {
-    static const unsigned silverlightPluginMinRequiredVersionMS = 0x00010000;
-    static const unsigned silverlightPluginMinRequiredVersionLS = 0x51BE0000;
+    static const PlatformModuleVersion slPluginMinRequired(0x51BE0000, 0x00010000);
 
     if (name() == "Silverlight Plug-In") {
         // workaround for <rdar://5557379> Crash in Silverlight when opening microsoft.com.
         // the latest 1.0 version of Silverlight does not reproduce this crash, so allow it
         // and any newer versions
-        if (compareFileVersion(silverlightPluginMinRequiredVersionMS, silverlightPluginMinRequiredVersionLS) < 0)
+        if (compareFileVersion(slPluginMinRequired) < 0)
             return true;
     } else if (fileName() == "npmozax.dll")
         // Bug 15217: Mozilla ActiveX control complains about missing xpcom_core.dll
         return true;
 
     return false;
+}
+
+void PluginPackage::determineQuirks(const String& mimeType)
+{
+    static const PlatformModuleVersion lastKnownUnloadableRealPlayerVersion(0x000B0B24, 0x00060000);
+
+    if (mimeType == "application/x-shockwave-flash") {
+        // The flash plugin only requests windowless plugins if we return a mozilla user agent
+        m_quirks.add(PluginQuirkWantsMozillaUserAgent);
+        m_quirks.add(PluginQuirkThrottleInvalidate);
+        m_quirks.add(PluginQuirkThrottleWMUserPlusOneMessages);
+        m_quirks.add(PluginQuirkFlashURLNotifyBug);
+    }
+
+    if (name().contains("Microsoft") && name().contains("Windows Media")) {
+        // The WMP plugin sets its size on the first NPP_SetWindow call and never updates its size, so
+        // call SetWindow when the plugin view has a correct size
+        m_quirks.add(PluginQuirkDeferFirstSetWindowCall);
+
+        // Windowless mode does not work at all with the WMP plugin so just remove that parameter 
+        // and don't pass it to the plug-in.
+        m_quirks.add(PluginQuirkRemoveWindowlessVideoParam);
+
+        // WMP has a modal message loop that it enters whenever we call it or
+        // ask it to paint. This modal loop can deliver messages to other
+        // windows in WebKit at times when they are not expecting them (for
+        // example, delivering a WM_PAINT message during a layout), and these
+        // can cause crashes.
+        m_quirks.add(PluginQuirkHasModalMessageLoop);
+    }
+
+    // VLC hangs on NPP_Destroy if we call NPP_SetWindow with a null window handle
+    if (name() == "VLC Multimedia Plugin")
+        m_quirks.add(PluginQuirkDontSetNullWindowHandleOnDestroy);
+
+    // The DivX plugin sets its size on the first NPP_SetWindow call and never updates its size, so
+    // call SetWindow when the plugin view has a correct size
+    if (mimeType == "video/divx")
+        m_quirks.add(PluginQuirkDeferFirstSetWindowCall);
+
+    // FIXME: This is a workaround for a problem in our NPRuntime bindings; if a plug-in creates an
+    // NPObject and passes it to a function it's not possible to see what root object that NPObject belongs to.
+    // Thus, we don't know that the object should be invalidated when the plug-in instance goes away.
+    // See <rdar://problem/5487742>.
+    if (mimeType == "application/x-silverlight")
+        m_quirks.add(PluginQuirkDontUnloadPlugin);
+
+    if (MIMETypeRegistry::isJavaAppletMIMEType(mimeType)) {
+        // Because a single process cannot create multiple VMs, and we cannot reliably unload a
+        // Java VM, we cannot unload the Java plugin, or we'll lose reference to our only VM
+        m_quirks.add(PluginQuirkDontUnloadPlugin);
+
+        // Setting the window region to an empty region causes bad scrolling repaint problems
+        // with the Java plug-in.
+        m_quirks.add(PluginQuirkDontClipToZeroRectWhenScrolling);
+    }
+
+    if (mimeType == "audio/x-pn-realaudio-plugin") {
+        // Prevent the Real plugin from calling the Window Proc recursively, causing the stack to overflow.
+        m_quirks.add(PluginQuirkDontCallWndProcForSameMessageRecursively);
+
+        // Unloading RealPlayer versions newer than 10.5 can cause a hang; see rdar://5669317.
+        // FIXME: Resume unloading when this bug in the RealPlayer Plug-In is fixed (rdar://5713147)
+        if (compareFileVersion(lastKnownUnloadableRealPlayerVersion) > 0)
+            m_quirks.add(PluginQuirkDontUnloadPlugin);
+    }
 }
 
 bool PluginPackage::fetchInfo()
@@ -144,7 +200,12 @@ bool PluginPackage::fetchInfo()
     if (m_name.isNull() || m_description.isNull())
         return false;
 
-    storeFileVersion(versionInfoData.get());
+    VS_FIXEDFILEINFO* info;
+    UINT infoSize;
+    if (!VerQueryValue(versionInfoData.get(), TEXT("\\"), (LPVOID*) &info, &infoSize) || infoSize < sizeof(VS_FIXEDFILEINFO))
+        return false;
+    m_moduleVersion.leastSig = info->dwFileVersionLS;
+    m_moduleVersion.mostSig = info->dwFileVersionMS;
 
     if (isPluginBlacklisted())
         return false;
@@ -172,6 +233,9 @@ bool PluginPackage::fetchInfo()
                 pos--;
             description = description.left(pos);
         }
+
+        // Determine the quirks for the MIME types this plug-in supports
+        determineQuirks(type);
 
         m_mimeToExtensions.add(type, extensionsVector);
         m_mimeToDescriptions.add(type, description);

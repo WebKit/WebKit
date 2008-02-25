@@ -849,6 +849,8 @@ webcore_sources += \
 	WebCore/platform/Timer.cpp \
 	WebCore/platform/text/UnicodeRange.cpp \
 	WebCore/platform/Widget.cpp \
+	WebCore/plugins/PluginDatabase.cpp \
+	WebCore/plugins/PluginInfoStore.cpp \
 	WebCore/plugins/PluginStream.cpp \
 	WebCore/rendering/AutoTableLayout.cpp \
 	WebCore/rendering/bidi.cpp \

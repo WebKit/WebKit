@@ -789,6 +789,8 @@ SOURCES += \
     platform/Timer.cpp \
     platform/text/UnicodeRange.cpp \
     platform/Widget.cpp \
+    plugins/PluginDatabase.cpp \
+    plugins/PluginInfoStore.cpp \
     plugins/PluginStream.cpp \
     rendering/AutoTableLayout.cpp \
     rendering/bidi.cpp \
@@ -939,7 +941,6 @@ qt-port {
     platform/qt/PlatformMouseEventQt.cpp \
     platform/qt/PlatformScreenQt.cpp \
     platform/qt/PlatformScrollBarQt.cpp \
-    platform/qt/PlugInInfoStoreQt.cpp \
     platform/qt/PopupMenuQt.cpp \
     platform/qt/QWebPopup.cpp \
     platform/qt/RenderThemeQt.cpp \

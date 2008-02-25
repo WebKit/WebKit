@@ -7977,6 +7977,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\plugins\PluginDatabase.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\plugins\PluginDatabase.h"
 				>
 			</File>

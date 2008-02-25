@@ -4,6 +4,7 @@
  * Copyright (C) 2006 George Staikos <staikos@kde.org>
  * Copyright (C) 2006 Dirk Mueller <mueller@kde.org>
  * Copyright (C) 2006 Nikolas Zimmermann <zimmermann@kde.org>
+ * Copyright (C) 2008 Collabora, Ltd.
  *
  * All rights reserved.
  *
@@ -59,7 +60,8 @@
 #include "NotImplemented.h"
 #include "Path.h"
 #include "PlatformMouseEvent.h"
-#include "PluginInfoStore.h"
+#include "PluginDatabase.h"
+#include "PluginPackage.h"
 #include "RenderTheme.h"
 #include "SharedBuffer.h"
 #include "SystemTime.h"
@@ -69,6 +71,15 @@
 #include <stdlib.h>
 
 using namespace WebCore;
+
+PluginSet PluginDatabase::getPluginsInPaths() const { notImplemented(); return PluginSet(); }
+Vector<String> PluginDatabase::defaultPluginPaths() { notImplemented(); return Vector<String>(); }
+bool PluginDatabase::isPreferredPluginPath(const String&) const { notImplemented(); return false; }
+bool PluginPackage::fetchInfo() { notImplemented(); return false; }
+unsigned PluginPackage::hash() const { notImplemented(); return 0; }
+bool PluginPackage::equal(const PluginPackage&, const PluginPackage&) { notImplemented(); return false; }
+bool PluginPackage::load() { notImplemented(); return false; }
+PluginPackage::~PluginPackage() { notImplemented(); }
 
 namespace WebCore {
 

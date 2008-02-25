@@ -633,6 +633,12 @@ This file contains the list of files needed to build WebCore.
         platform/sql/SQLValue.cpp
     </set>
 
+    <set append="1" var="WEBCORE_SOURCES_PLUGINS">
+        plugins/PluginDatabase.cpp
+        plugins/PluginInfoStore.cpp
+        plugins/PluginStream.cpp
+    </set>
+
     <set append="1" var="WEBCORE_SOURCES_GIF">
         platform/image-decoders/gif/GIFImageDecoder.cpp
         platform/image-decoders/gif/GIFImageReader.cpp

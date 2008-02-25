@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2006, 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2008 Collabora, Ltd.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,12 +27,12 @@
 #ifndef PluginDatabase_H
 #define PluginDatabase_H
 
-#include <wtf/Vector.h>
-#include <wtf/HashSet.h>
-
 #include "PlatformString.h"
 #include "PluginPackage.h"
 #include "StringHash.h"
+
+#include <wtf/Vector.h>
+#include <wtf/HashSet.h>
 
 namespace WebCore {
     class Element;
@@ -39,7 +40,6 @@ namespace WebCore {
     class IntSize;
     class KURL;
     class PluginPackage;
-    class PluginView;
 
     typedef HashSet<RefPtr<PluginPackage>, PluginPackageHash> PluginSet;
   
@@ -51,8 +51,10 @@ namespace WebCore {
         Vector<PluginPackage*> plugins() const;
         bool isMIMETypeRegistered(const String& mimeType);
         void addExtraPluginPath(const String&);
+        bool isPreferredPluginPath(const String& path) const;
 
         PluginPackage* findPlugin(const KURL&, String& mimeType);
+
     private:
         void setPluginPaths(const Vector<String>& paths) { m_pluginPaths = paths; }
         PluginSet getPluginsInPaths() const;

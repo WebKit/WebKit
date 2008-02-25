@@ -50,6 +50,24 @@ typedef HANDLE PlatformFileHandle;
 typedef FILETIME PlatformFileTime;
 typedef HMODULE PlatformModule;
 const PlatformFileHandle invalidPlatformFileHandle = INVALID_HANDLE_VALUE;
+
+struct PlatformModuleVersion {
+    unsigned leastSig;
+    unsigned mostSig;
+
+    PlatformModuleVersion(unsigned)
+        : leastSig(0)
+        , mostSig(0)
+    {
+    }
+
+    PlatformModuleVersion(unsigned lsb, unsigned msb)
+        : leastSig(lsb)
+        , mostSig(msb)
+    {
+    }
+
+};
 #else
 typedef int PlatformFileHandle;
 typedef time_t PlatformFileTime;
@@ -59,6 +77,8 @@ typedef GModule* PlatformModule;
 typedef void* PlatformModule;
 #endif
 const PlatformFileHandle invalidPlatformFileHandle = -1;
+
+typedef unsigned PlatformModuleVersion;
 #endif
 
 bool fileExists(const String&);

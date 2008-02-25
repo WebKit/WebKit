@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2006, 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2008 Collabora, Ltd.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,12 +27,11 @@
 #ifndef PluginPackage_H
 #define PluginPackage_H
 
-#include <winsock2.h>
-#include <windows.h>
-
-#include "Timer.h"
-#include "StringHash.h"
+#include "FileSystem.h"
 #include "PlatformString.h"
+#include "PluginQuirkSet.h"
+#include "StringHash.h"
+#include "Timer.h"
 #include "npfunctions.h"
 #include <wtf/HashMap.h>
 #include <wtf/RefCounted.h>
@@ -43,7 +43,7 @@ namespace WebCore {
     class PluginPackage : public RefCounted<PluginPackage> {
     public:
         ~PluginPackage();
-        static PluginPackage* createPackage(const String& path, const FILETIME& lastModified);
+        static PluginPackage* createPackage(const String& path, const PlatformFileTime& lastModified);
         
         String name() const { return m_name; }
         String description() const { return m_description; }
@@ -53,7 +53,7 @@ namespace WebCore {
         const MIMEToDescriptionsMap& mimeToDescriptions() const { return m_mimeToDescriptions; }
         const MIMEToExtensionsMap& mimeToExtensions() const { return m_mimeToExtensions; }
 
-        unsigned PluginPackage::hash() const;
+        unsigned hash() const;
         static bool equal(const PluginPackage& a, const PluginPackage& b);
 
         bool load();
@@ -61,19 +61,17 @@ namespace WebCore {
         void unloadWithoutShutdown();
 
         const NPPluginFuncs* pluginFuncs() const { return &m_pluginFuncs; }
+        int compareFileVersion(const PlatformModuleVersion&) const;
+        PluginQuirkSet quirks() const { return m_quirks; }
 
-        int compareFileVersion(unsigned compareVersionMS, unsigned compareVersionLS) const;
     private:
-        PluginPackage(const String& path, const FILETIME& lastModified);
+        PluginPackage(const String& path, const PlatformFileTime& lastModified);
         bool fetchInfo();
-        void storeFileVersion(LPVOID versionInfoData);
         bool isPluginBlacklisted();
+        void determineQuirks(const String& mimeType);
 
         bool m_isLoaded;
         int m_loadCount;
-
-        DWORD m_fileVersionMS;
-        DWORD m_fileVersionLS;
 
         String m_description;
         String m_path;
@@ -81,11 +79,13 @@ namespace WebCore {
         String m_name;
         String m_parentDirectory;
 
+        PlatformModuleVersion m_moduleVersion;
+
         MIMEToDescriptionsMap m_mimeToDescriptions;
         MIMEToExtensionsMap m_mimeToExtensions;
 
-        HMODULE m_module;
-        FILETIME m_lastModified;
+        PlatformModule m_module;
+        PlatformFileTime m_lastModified;
 
         NPP_ShutdownProcPtr m_NPP_Shutdown;
         NPPluginFuncs m_pluginFuncs;
@@ -94,6 +94,8 @@ namespace WebCore {
         void freeLibrarySoon();
         void freeLibraryTimerFired(Timer<PluginPackage>*);
         Timer<PluginPackage> m_freeLibraryTimer;
+
+        PluginQuirkSet m_quirks;
     };
 
     struct PluginPackageHash {
