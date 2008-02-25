@@ -30,13 +30,13 @@ namespace WebCore {
 static RenderStyle* defaultStyle;
 
 StyleSurroundData::StyleSurroundData()
-    : RefCounted<StyleSurroundData>(0)
-    , margin(Fixed), padding(Fixed)
+    : margin(Fixed)
+    , padding(Fixed)
 {
 }
 
 StyleSurroundData::StyleSurroundData(const StyleSurroundData& o)
-    : RefCounted<StyleSurroundData>(0)
+    : RefCounted<StyleSurroundData>()
     , offset(o.offset)
     , margin(o.margin)
     , padding(o.padding)
@@ -50,8 +50,9 @@ bool StyleSurroundData::operator==(const StyleSurroundData& o) const
 }
 
 StyleBoxData::StyleBoxData()
-    : RefCounted<StyleBoxData>(0)
-    , z_index(0), z_auto(true), boxSizing(CONTENT_BOX)
+    : z_index(0)
+    , z_auto(true)
+    , boxSizing(CONTENT_BOX)
 {
     // Initialize our min/max widths/heights.
     min_width = min_height = RenderStyle::initialMinSize();
@@ -59,7 +60,7 @@ StyleBoxData::StyleBoxData()
 }
 
 StyleBoxData::StyleBoxData(const StyleBoxData& o)
-    : RefCounted<StyleBoxData>(0)
+    : RefCounted<StyleBoxData>()
     , width(o.width)
     , height(o.height)
     , min_width(o.min_width)
@@ -86,8 +87,7 @@ bool StyleBoxData::operator==(const StyleBoxData& o) const
 }
 
 StyleVisualData::StyleVisualData()
-    : RefCounted<StyleVisualData>(0)
-    , hasClip(false)
+    : hasClip(false)
     , textDecoration(RenderStyle::initialTextDecoration())
     , counterIncrement(0)
     , counterReset(0)
@@ -99,7 +99,7 @@ StyleVisualData::~StyleVisualData()
 }
 
 StyleVisualData::StyleVisualData(const StyleVisualData& o)
-    : RefCounted<StyleVisualData>(0)
+    : RefCounted<StyleVisualData>()
     , clip(o.clip)
     , hasClip(o.hasClip)
     , textDecoration(o.textDecoration)
@@ -321,12 +321,13 @@ void BackgroundLayer::cullEmptyLayers()
 }
 
 StyleBackgroundData::StyleBackgroundData()
-    : RefCounted<StyleBackgroundData>(0)
 {
 }
 
 StyleBackgroundData::StyleBackgroundData(const StyleBackgroundData& o)
-    : RefCounted<StyleBackgroundData>(0), m_background(o.m_background), m_outline(o.m_outline)
+    : RefCounted<StyleBackgroundData>()
+    , m_background(o.m_background)
+    , m_outline(o.m_outline)
 {
 }
 
@@ -652,8 +653,7 @@ void Transition::fillUnsetProperties()
 }
 
 StyleRareNonInheritedData::StyleRareNonInheritedData()
-    : RefCounted<StyleRareNonInheritedData>(0)
-    , lineClamp(RenderStyle::initialLineClamp())
+    : lineClamp(RenderStyle::initialLineClamp())
     , opacity(RenderStyle::initialOpacity())
     , m_content(0)
     , m_counterDirectives(0)
@@ -673,7 +673,7 @@ StyleRareNonInheritedData::StyleRareNonInheritedData()
 }
 
 StyleRareNonInheritedData::StyleRareNonInheritedData(const StyleRareNonInheritedData& o)
-    : RefCounted<StyleRareNonInheritedData>(0)
+    : RefCounted<StyleRareNonInheritedData>()
     , lineClamp(o.lineClamp)
     , opacity(o.opacity)
     , flexibleBox(o.flexibleBox)
@@ -765,8 +765,7 @@ bool StyleRareNonInheritedData::transitionDataEquivalent(const StyleRareNonInher
 }
 
 StyleRareInheritedData::StyleRareInheritedData()
-    : RefCounted<StyleRareInheritedData>(0)
-    , textStrokeWidth(RenderStyle::initialTextStrokeWidth())
+    : textStrokeWidth(RenderStyle::initialTextStrokeWidth())
     , textShadow(0)
     , textSecurity(RenderStyle::initialTextSecurity())
     , userModify(READ_ONLY)
@@ -781,7 +780,7 @@ StyleRareInheritedData::StyleRareInheritedData()
 }
 
 StyleRareInheritedData::StyleRareInheritedData(const StyleRareInheritedData& o)
-    : RefCounted<StyleRareInheritedData>(0)
+    : RefCounted<StyleRareInheritedData>()
     , textStrokeColor(o.textStrokeColor)
     , textStrokeWidth(o.textStrokeWidth)
     , textFillColor(o.textFillColor)
@@ -831,8 +830,7 @@ bool StyleRareInheritedData::shadowDataEquivalent(const StyleRareInheritedData& 
 }
 
 StyleInheritedData::StyleInheritedData()
-    : RefCounted<StyleInheritedData>(0)
-    , indent(RenderStyle::initialTextIndent())
+    : indent(RenderStyle::initialTextIndent())
     , line_height(RenderStyle::initialLineHeight())
     , style_image(RenderStyle::initialListStyleImage())
     , color(RenderStyle::initialColor())
@@ -849,15 +847,15 @@ StyleInheritedData::~StyleInheritedData()
 }
 
 StyleInheritedData::StyleInheritedData(const StyleInheritedData& o)
-    : RefCounted<StyleInheritedData>(0)
+    : RefCounted<StyleInheritedData>()
     , indent(o.indent)
     , line_height(o.line_height)
-    , style_image( o.style_image)
+    , style_image(o.style_image)
     , cursorData(o.cursorData)
     , font(o.font)
     , color(o.color)
-    , horizontal_border_spacing( o.horizontal_border_spacing)
-    , vertical_border_spacing( o.vertical_border_spacing)
+    , horizontal_border_spacing(o.horizontal_border_spacing)
+    , vertical_border_spacing(o.vertical_border_spacing)
     , widows(o.widows)
     , orphans(o.orphans)
     , page_break_inside(o.page_break_inside)

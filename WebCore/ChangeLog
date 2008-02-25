@@ -2,6 +2,37 @@
 
         Reviewed by Darin.
 
+        Make more style objects start out with a refcount of 1.
+        
+        * rendering/RenderStyle.cpp:
+        (WebCore::StyleSurroundData::StyleSurroundData):
+        (WebCore::StyleBoxData::StyleBoxData):
+        (WebCore::StyleVisualData::StyleVisualData):
+        (WebCore::StyleBackgroundData::StyleBackgroundData):
+        (WebCore::StyleRareNonInheritedData::StyleRareNonInheritedData):
+        (WebCore::StyleRareInheritedData::StyleRareInheritedData):
+        (WebCore::StyleInheritedData::StyleInheritedData):
+        * rendering/RenderStyle.h:
+        (WebCore::StyleSurroundData::create):
+        (WebCore::StyleSurroundData::copy):
+        (WebCore::StyleBoxData::create):
+        (WebCore::StyleBoxData::copy):
+        (WebCore::StyleVisualData::create):
+        (WebCore::StyleVisualData::copy):
+        (WebCore::StyleBackgroundData::create):
+        (WebCore::StyleBackgroundData::copy):
+        (WebCore::StyleBackgroundData::~StyleBackgroundData):
+        (WebCore::StyleRareNonInheritedData::create):
+        (WebCore::StyleRareNonInheritedData::copy):
+        (WebCore::StyleRareInheritedData::create):
+        (WebCore::StyleRareInheritedData::copy):
+        (WebCore::StyleInheritedData::create):
+        (WebCore::StyleInheritedData::copy):
+
+2008-02-25  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Darin.
+
         Make some of the refcounted style objects start out with a refcount of 1.
 
         * rendering/DataRef.h:
