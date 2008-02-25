@@ -4,7 +4,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2007 David Smith (catfish.man@gmail.com)
- * Copyright (C) 2003, 2004, 2005, 2006 Apple Computer, Inc.
+ * Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008 Apple Computer, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -138,10 +138,10 @@ public:
     int skipWhitespace(BidiIterator&, BidiState&);
     void fitBelowFloats(int widthToFit, int& availableWidth);
     BidiIterator findNextLineBreak(BidiIterator& start, BidiState& info);
-    RootInlineBox* constructLine(const BidiIterator& start, const BidiIterator& end);
+    RootInlineBox* constructLine(unsigned runCount, BidiRun* firstRun, BidiRun* lastRun, bool lastLine, RenderObject* endObject);
     InlineFlowBox* createLineBoxes(RenderObject*);
-    void computeHorizontalPositionsForLine(RootInlineBox*, bool reachedEnd);
-    void computeVerticalPositionsForLine(RootInlineBox*);
+    void computeHorizontalPositionsForLine(RootInlineBox*, BidiRun* firstRun, BidiRun* logicallyLastRun, bool reachedEnd);
+    void computeVerticalPositionsForLine(RootInlineBox*, BidiRun*);
     void checkLinesForOverflow();
     void deleteEllipsisLineBoxes();
     void checkLinesForTextOverflow();
@@ -156,7 +156,7 @@ public:
     void paintEllipsisBoxes(PaintInfo&, int tx, int ty);
     void paintSelection(PaintInfo&, int tx, int ty);
     void paintCaret(PaintInfo&, CaretType);
-    
+
     void insertFloatingObject(RenderObject*);
     void removeFloatingObject(RenderObject*);
 

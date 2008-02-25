@@ -1,3 +1,31 @@
+2008-02-25  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        - remove file-static BidiRun variables from bidi.cpp
+
+        * platform/text/BidiResolver.h:
+        (WebCore::BidiResolver::): Initialize m_logicallyLastRun.
+        (WebCore::BidiResolver::logicallyLastRun): Added.
+        (WebCore::BidiResolver::runCount): Made unsigned.
+        (WebCore::::reverseRuns): Changed ints to unsigned.
+        (WebCore::::createBidiRunsForLine): Made this function set
+        m_logicallyLastRun.
+        * rendering/RenderBlock.h:
+        * rendering/bidi.cpp:
+        (WebCore::BidiState::addRun): Removed setting of sLogicallyLastBidiRun.
+        (WebCore::RenderBlock::constructLine): Removed unused start parameter
+        and added run count and first and last run parameters. Replaced end
+        parameter with lastLine boolean and endObject pointer.
+        (WebCore::RenderBlock::computeHorizontalPositionsForLine): Added first
+        and logically last run parameters.
+        (WebCore::RenderBlock::computeVerticalPositionsForLine): Added firstRun
+        parameter.
+        (WebCore::RenderBlock::bidiReorderLine): Removed setting of static
+        variables.
+        (WebCore::RenderBlock::layoutInlineChildren): Changed to use BidiState
+        accessors instead of file statics.
+
 2008-02-25  Rodney Dawes  <dobey@wayofthemonkey.com>
 
         Reviewed by Jon Honeycutt.

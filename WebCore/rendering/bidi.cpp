@@ -72,12 +72,6 @@ public:
     unsigned int pos;
 };
 
-// Used to track a list of chained bidi runs.
-static BidiRun* sFirstBidiRun;
-static BidiRun* sLastBidiRun;
-static BidiRun* sLogicallyLastBidiRun;
-static int sBidiRunCount;
-
 // Midpoint globals.  The goal is not to do any allocation when dealing with
 // these midpoints, so we just keep an array around and never clear it.  We track
 // the number of items and position using the two other variables.
@@ -367,8 +361,6 @@ inline void BidiState::addRun(BidiRun* bidiRun)
         m_lastRun->m_next = bidiRun;
     m_lastRun = bidiRun;
     m_runCount++;
-
-    sLogicallyLastBidiRun = bidiRun;
 }
 
 static void chopMidpointsAt(RenderObject* obj, unsigned pos)
@@ -562,17 +554,16 @@ InlineFlowBox* RenderBlock::createLineBoxes(RenderObject* obj)
     return result;
 }
 
-RootInlineBox* RenderBlock::constructLine(const BidiIterator& start, const BidiIterator& end)
+RootInlineBox* RenderBlock::constructLine(unsigned runCount, BidiRun* firstRun, BidiRun* lastRun, bool lastLine, RenderObject* endObject)
 {
-    if (!sFirstBidiRun)
-        return 0; // We had no runs. Don't make a root inline box at all. The line is empty.
+    ASSERT(firstRun);
 
     InlineFlowBox* parentBox = 0;
-    for (BidiRun* r = sFirstBidiRun; r; r = r->next()) {
+    for (BidiRun* r = firstRun; r; r = r->next()) {
         // Create a box for our object.
-        bool isOnlyRun = (sBidiRunCount == 1);
-        if (sBidiRunCount == 2 && !r->obj->isListMarker())
-            isOnlyRun = ((style()->direction() == RTL) ? sLastBidiRun : sFirstBidiRun)->obj->isListMarker();
+        bool isOnlyRun = (runCount == 1);
+        if (runCount == 2 && !r->obj->isListMarker())
+            isOnlyRun = ((style()->direction() == RTL) ? lastRun : firstRun)->obj->isListMarker();
         r->box = r->obj->createInlineBox(r->obj->isPositioned(), false, isOnlyRun);
         if (r->box) {
             // If we have no parent box yet, or if the run is not simply a sibling,
@@ -604,10 +595,6 @@ RootInlineBox* RenderBlock::constructLine(const BidiIterator& start, const BidiI
     // paint borders/margins/padding.  This knowledge will ultimately be used when
     // we determine the horizontal positions and widths of all the inline boxes on
     // the line.
-    RenderObject* endObject = 0;
-    bool lastLine = !end.obj;
-    if (end.obj && end.pos == 0)
-        endObject = end.obj;
     lastLineBox()->determineSpacingForFlowBoxes(lastLine, endObject);
 
     // Now mark the line boxes as being constructed.
@@ -617,7 +604,7 @@ RootInlineBox* RenderBlock::constructLine(const BidiIterator& start, const BidiI
     return lastRootBox();
 }
 
-void RenderBlock::computeHorizontalPositionsForLine(RootInlineBox* lineBox, bool reachedEnd)
+void RenderBlock::computeHorizontalPositionsForLine(RootInlineBox* lineBox, BidiRun* firstRun, BidiRun* logicallyLastRun, bool reachedEnd)
 {
     // First determine our total width.
     int availableWidth = lineWidth(m_height);
@@ -627,7 +614,7 @@ void RenderBlock::computeHorizontalPositionsForLine(RootInlineBox* lineBox, bool
     unsigned numSpaces = 0;
     ETextAlign textAlign = style()->textAlign();
 
-    for (r = sFirstBidiRun; r; r = r->next()) {
+    for (r = firstRun; r; r = r->next()) {
         if (!r->box || r->obj->isPositioned() || r->box->isLineBreak())
             continue; // Positioned objects are only participating to figure out their
                       // correct static x position.  They have no effect on the width.
@@ -664,10 +651,9 @@ void RenderBlock::computeHorizontalPositionsForLine(RootInlineBox* lineBox, bool
             totWidth += r->box->width();
     }
 
-    if (totWidth > availableWidth && sLogicallyLastBidiRun->obj->style(m_firstLine)->autoWrap() &&
-        sLogicallyLastBidiRun->obj->style(m_firstLine)->breakOnlyAfterWhiteSpace() &&
-        !sLogicallyLastBidiRun->compact) {
-        sLogicallyLastBidiRun->box->setWidth(sLogicallyLastBidiRun->box->width() - totWidth + availableWidth);
+    if (totWidth > availableWidth && logicallyLastRun->obj->style(m_firstLine)->autoWrap()
+        && logicallyLastRun->obj->style(m_firstLine)->breakOnlyAfterWhiteSpace() && !logicallyLastRun->compact) {
+        logicallyLastRun->box->setWidth(logicallyLastRun->box->width() - totWidth + availableWidth);
         totWidth = availableWidth;
     }
 
@@ -709,7 +695,7 @@ void RenderBlock::computeHorizontalPositionsForLine(RootInlineBox* lineBox, bool
     }
 
     if (numSpaces) {
-        for (r = sFirstBidiRun; r; r = r->next()) {
+        for (r = firstRun; r; r = r->next()) {
             if (!r->box)
                 continue;
 
@@ -745,7 +731,7 @@ void RenderBlock::computeHorizontalPositionsForLine(RootInlineBox* lineBox, bool
     lineBox->setHorizontalOverflowPositions(leftPosition, rightPosition);
 }
 
-void RenderBlock::computeVerticalPositionsForLine(RootInlineBox* lineBox)
+void RenderBlock::computeVerticalPositionsForLine(RootInlineBox* lineBox, BidiRun* firstRun)
 {
     lineBox->verticallyAlignBoxes(m_height);
     lineBox->setBlockHeight(m_height);
@@ -756,7 +742,7 @@ void RenderBlock::computeVerticalPositionsForLine(RootInlineBox* lineBox)
         m_overflowHeight = bottomOfLine;
         
     // Now make sure we place replaced render objects correctly.
-    for (BidiRun* r = sFirstBidiRun; r; r = r->next()) {
+    for (BidiRun* r = firstRun; r; r = r->next()) {
         if (!r->box)
             continue; // Skip runs with no line boxes.
 
@@ -781,10 +767,6 @@ void RenderBlock::bidiReorderLine(const BidiIterator& start, const BidiIterator&
     }
 
     bidi.createBidiRunsForLine(start, end, style()->visuallyOrdered(), previousLineBrokeCleanly);
-
-    sFirstBidiRun = bidi.firstRun();
-    sLastBidiRun = bidi.lastRun();
-    sBidiRunCount = bidi.runCount();
 }
 
 static void buildCompactRuns(RenderObject* compactObj, BidiState& bidi)
@@ -975,16 +957,16 @@ void RenderBlock::layoutInlineChildren(bool relayoutChildren, int& repaintTop, i
                 // inline flow boxes.
 
                 RootInlineBox* lineBox = 0;
-                if (sBidiRunCount) {
-                    lineBox = constructLine(start, end);
+                if (bidi.runCount()) {
+                    lineBox = constructLine(bidi.runCount(), bidi.firstRun(), bidi.lastRun(), !end.obj, end.obj && !end.pos ? end.obj : 0);
                     if (lineBox) {
                         lineBox->setEndsWithBreak(previousLineBrokeCleanly);
 
                         // Now we position all of our text runs horizontally.
-                        computeHorizontalPositionsForLine(lineBox, end.atEnd());
+                        computeHorizontalPositionsForLine(lineBox, bidi.firstRun(), bidi.logicallyLastRun(), end.atEnd());
         
                         // Now position our text runs vertically.
-                        computeVerticalPositionsForLine(lineBox);
+                        computeVerticalPositionsForLine(lineBox, bidi.firstRun());
 
 #if ENABLE(SVG)
                         // Special SVG text layout code

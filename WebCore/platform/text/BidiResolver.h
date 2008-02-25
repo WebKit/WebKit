@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000 Lars Knoll (knoll@kde.org)
- * Copyright (C) 2003, 2004, 2006, 2007 Apple Inc.  All right reserved.
+ * Copyright (C) 2003, 2004, 2006, 2007, 2008 Apple Inc.  All right reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -109,6 +109,7 @@ public :
         , emptyRun(true)
         , m_firstRun(0)
         , m_lastRun(0)
+        , m_logicallyLastRun(0)
         , m_runCount(0)
     {
     }
@@ -134,14 +135,15 @@ public :
 
     Run* firstRun() const { return m_firstRun; }
     Run* lastRun() const { return m_lastRun; }
-    int runCount() const { return m_runCount; }
+    Run* logicallyLastRun() const { return m_logicallyLastRun; }
+    unsigned runCount() const { return m_runCount; }
 
     void addRun(Run*);
     void deleteRuns();
 
 protected:
     void appendRun();
-    void reverseRuns(int start, int end);
+    void reverseRuns(unsigned start, unsigned end);
 
     Iterator current;
     Iterator sor;
@@ -157,7 +159,8 @@ protected:
 
     Run* m_firstRun;
     Run* m_lastRun;
-    int m_runCount;
+    Run* m_logicallyLastRun;
+    unsigned m_runCount;
 };
 
 template <class Iterator, class Run>
@@ -323,18 +326,18 @@ void BidiResolver<Iterator, Run>::deleteRuns()
 }
 
 template <class Iterator, class Run>
-void BidiResolver<Iterator, Run>::reverseRuns(int start, int end)
+void BidiResolver<Iterator, Run>::reverseRuns(unsigned start, unsigned end)
 {
     if (start >= end)
         return;
 
-    ASSERT(start >= 0 && end < m_runCount);
+    ASSERT(end < m_runCount);
     
     // Get the item before the start of the runs to reverse and put it in
     // |beforeStart|.  |curr| should point to the first run to reverse.
     Run* curr = m_firstRun;
     Run* beforeStart = 0;
-    int i = 0;
+    unsigned i = 0;
     while (i < start) {
         i++;
         beforeStart = curr;
@@ -772,6 +775,8 @@ void BidiResolver<Iterator, Run>::createBidiRunsForLine(const Iterator& start, c
         }
     }
 
+    m_logicallyLastRun = m_lastRun;
+
     // reorder line according to run structure...
     // do not reverse for visually ordered web sites
     if (!visualOrder) {
@@ -796,22 +801,22 @@ void BidiResolver<Iterator, Run>::createBidiRunsForLine(const Iterator& start, c
         if (!(levelLow % 2))
             levelLow++;
 
-        int count = runCount() - 1;
+        unsigned count = runCount() - 1;
 
         while (levelHigh >= levelLow) {
-            int i = 0;
+            unsigned i = 0;
             Run* currRun = firstRun();
             while (i < count) {
                 while (i < count && currRun && currRun->m_level < levelHigh) {
                     i++;
                     currRun = currRun->next();
                 }
-                int start = i;
+                unsigned start = i;
                 while (i <= count && currRun && currRun->m_level >= levelHigh) {
                     i++;
                     currRun = currRun->next();
                 }
-                int end = i-1;
+                unsigned end = i - 1;
                 reverseRuns(start, end);
             }
             levelHigh--;
