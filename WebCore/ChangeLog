@@ -1,3 +1,18 @@
+2008-02-25  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        - avoid counting spaces in non-justified text
+
+        * rendering/bidi.cpp:
+        Removed file-static numSpaces.
+        (WebCore::BidiState::addRun): Removed space counting.
+        (WebCore::RenderBlock::computeHorizontalPositionsForLine): Added space
+        counting, conditional on the block having the text-align: justify
+        property value.
+        (WebCore::RenderBlock::bidiReorderLine): Removed initialization of
+        numSpaces.
+
 2008-02-25  Darin Adler  <darin@apple.com>
 
         Requested by Steve.
