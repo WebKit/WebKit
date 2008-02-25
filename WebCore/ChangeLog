@@ -1,3 +1,9 @@
+2008-02-25  Darin Adler  <darin@apple.com>
+
+        Reviewed by Adam.
+
+        * WebCore.base.exp: Export blankURL, and sort the file.
+
 2008-02-25  Simon Hausmann  <hausmann@webkit.org>
 
         Reviewed by Mark Rowe.

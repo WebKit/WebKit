@@ -1,3 +1,18 @@
+2008-02-25  Darin Adler  <darin@apple.com>
+
+        Reviewed by Adam.
+
+        * WebView/WebArchiver.mm:
+        (+[WebArchiver archiveSelectionInFrame:]): Use blankURL.
+        * WebView/WebFrame.mm:
+        (-[WebFrame _loadData:MIMEType:textEncodingName:baseURL:unreachableURL:]): Avoid the
+        variable name URL to avoid clashing with the renamed KURL in the future. Also use
+        blankURL.
+        (-[WebFrame loadData:MIMEType:textEncodingName:baseURL:]): Ditto.
+        (-[WebFrame _loadHTMLString:baseURL:unreachableURL:]): Ditto.
+        (-[WebFrame loadHTMLString:baseURL:]): Ditto.
+        (-[WebFrame loadAlternateHTMLString:baseURL:forUnreachableURL:]): Ditto.
+
 2008-02-24  Darin Adler  <darin@apple.com>
 
         Reviewed by Sam.

@@ -170,7 +170,7 @@ using namespace WebCore;
 
         NSString *iframeMarkup = [[NSString alloc] initWithFormat:@"<iframe frameborder=\"no\" marginwidth=\"0\" marginheight=\"0\" width=\"98%%\" height=\"98%%\" src=\"%@\"></iframe>", [[[frame _dataSource] response] URL]];
         WebResource *iframeResource = [[WebResource alloc] initWithData:[iframeMarkup dataUsingEncoding:NSUTF8StringEncoding]
-                                                                  URL:[NSURL URLWithString:@"about:blank"]
+                                                                  URL:blankURL()
                                                              MIMEType:@"text/html"
                                                      textEncodingName:@"UTF-8"
                                                             frameName:nil];

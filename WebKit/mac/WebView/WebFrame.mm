@@ -123,7 +123,7 @@ NSString *WebPageCacheDataSourceKey = @"WebPageCacheDataSourceKey";
 NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
 
 @interface WebFrame (ForwardDecls)
-- (void)_loadHTMLString:(NSString *)string baseURL:(NSURL *)URL unreachableURL:(NSURL *)unreachableURL;
+- (void)_loadHTMLString:(NSString *)string baseURL:(NSURL *)baseURL unreachableURL:(NSURL *)unreachableURL;
 - (WebHistoryItem *)_createItem:(BOOL)useOriginal;
 - (WebHistoryItem *)_createItemTreeWithTargetFrame:(WebFrame *)targetFrame clippedAtTarget:(BOOL)doClip;
 @end
@@ -766,15 +766,15 @@ static NSURL *createUniqueWebDataURL()
     return URL;
 }
 
-- (void)_loadData:(NSData *)data MIMEType:(NSString *)MIMEType textEncodingName:(NSString *)encodingName baseURL:(NSURL *)URL unreachableURL:(NSURL *)unreachableURL
+- (void)_loadData:(NSData *)data MIMEType:(NSString *)MIMEType textEncodingName:(NSString *)encodingName baseURL:(NSURL *)baseURL unreachableURL:(NSURL *)unreachableURL
 {
     KURL responseURL;
-    if (!URL) {
-        URL = [NSURL URLWithString:@"about:blank"];
+    if (!baseURL) {
+        baseURL = blankURL();
         responseURL = createUniqueWebDataURL();
     }
     
-    ResourceRequest request([URL absoluteURL]);
+    ResourceRequest request([baseURL absoluteURL]);
 
     // hack because Mail checks for this property to detect data / archive loads
     [NSURLProtocol setProperty:@"" forKey:@"WebDataRequest" inRequest:(NSMutableURLRequest *)request.nsURLRequest()];
@@ -785,27 +785,27 @@ static NSURL *createUniqueWebDataURL()
 }
 
 
-- (void)loadData:(NSData *)data MIMEType:(NSString *)MIMEType textEncodingName:(NSString *)encodingName baseURL:(NSURL *)URL
+- (void)loadData:(NSData *)data MIMEType:(NSString *)MIMEType textEncodingName:(NSString *)encodingName baseURL:(NSURL *)baseURL
 {
     if (!MIMEType)
         MIMEType = @"text/html";
-    [self _loadData:data MIMEType:MIMEType textEncodingName:encodingName baseURL:URL unreachableURL:nil];
+    [self _loadData:data MIMEType:MIMEType textEncodingName:encodingName baseURL:baseURL unreachableURL:nil];
 }
 
-- (void)_loadHTMLString:(NSString *)string baseURL:(NSURL *)URL unreachableURL:(NSURL *)unreachableURL
+- (void)_loadHTMLString:(NSString *)string baseURL:(NSURL *)baseURL unreachableURL:(NSURL *)unreachableURL
 {
     NSData *data = [string dataUsingEncoding:NSUTF8StringEncoding];
-    [self _loadData:data MIMEType:@"text/html" textEncodingName:@"UTF-8" baseURL:URL unreachableURL:unreachableURL];
+    [self _loadData:data MIMEType:@"text/html" textEncodingName:@"UTF-8" baseURL:baseURL unreachableURL:unreachableURL];
 }
 
-- (void)loadHTMLString:(NSString *)string baseURL:(NSURL *)URL
+- (void)loadHTMLString:(NSString *)string baseURL:(NSURL *)baseURL
 {
-    [self _loadHTMLString:string baseURL:URL unreachableURL:nil];
+    [self _loadHTMLString:string baseURL:baseURL unreachableURL:nil];
 }
 
-- (void)loadAlternateHTMLString:(NSString *)string baseURL:(NSURL *)URL forUnreachableURL:(NSURL *)unreachableURL
+- (void)loadAlternateHTMLString:(NSString *)string baseURL:(NSURL *)baseURL forUnreachableURL:(NSURL *)unreachableURL
 {
-    [self _loadHTMLString:string baseURL:URL unreachableURL:unreachableURL];
+    [self _loadHTMLString:string baseURL:baseURL unreachableURL:unreachableURL];
 }
 
 - (void)loadArchive:(WebArchive *)archive

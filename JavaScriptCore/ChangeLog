@@ -1,3 +1,9 @@
+2008-02-25  Darin Adler  <darin@apple.com>
+
+        Reviewed by Adam.
+
+        * JavaScriptCore.exp: Sort the contents of this file.
+
 2008-02-25  Adam Roben  <aroben@apple.com>
 
         MSVC build fix
