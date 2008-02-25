@@ -38,6 +38,8 @@ class WebFrame;
 class WebFrameLoaderClient : public WebCore::FrameLoaderClient {
 public:
     virtual bool hasWebView() const;
+    virtual bool hasFrameView() const;
+    virtual void forceLayout();
     virtual PassRefPtr<WebCore::DocumentLoader> createDocumentLoader(const WebCore::ResourceRequest&, const WebCore::SubstituteData&);
 
 protected:

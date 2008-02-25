@@ -1,3 +1,16 @@
+2008-02-23  Adam Roben  <aroben@apple.com>
+
+        Move two more methods to WebFrameLoaderClient
+
+        Reviewed by Sam.
+
+        * WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebFrameLoaderClient::hasFrameView):
+        (WebFrame::forceLayout):
+        * WebCoreSupport/WebFrameLoaderClient.h:
+        * WebFrame.cpp:
+        * WebFrame.h:
+
 2008-02-24  Darin Adler  <darin@apple.com>
 
         Reviewed by Sam.

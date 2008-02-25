@@ -52,6 +52,16 @@ bool WebFrameLoaderClient::hasWebView() const
     return m_webFrame->webView();
 }
 
+bool WebFrameLoaderClient::hasFrameView() const
+{
+    return core(m_webFrame)->view();
+}
+
+void WebFrameLoaderClient::forceLayout()
+{
+    core(m_webFrame)->forceLayout(true);
+}
+
 PassRefPtr<DocumentLoader> WebFrameLoaderClient::createDocumentLoader(const ResourceRequest& request, const SubstituteData& substituteData)
 {
     RefPtr<WebDocumentLoader> loader = new WebDocumentLoader(request, substituteData);
