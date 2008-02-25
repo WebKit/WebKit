@@ -1,3 +1,26 @@
+2008-02-24  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Oliver Hunt and Mark Rowe.
+
+        http://bugs.webkit.org/show_bug.cgi?id=17505
+        Add support for getting command line arguments in testkjs
+
+        - This slightly changes the behavior of parsing arguments by requiring
+          a '-f' before all files. 
+
+        * kjs/testkjs.cpp:
+        (createGlobalObject): Add a global property called 'arguments' which
+        contains an array with the parsed arguments as strings.
+        (runWithScripts): Pass in the arguments vector so that it can be passed
+        to the global object.
+        (parseArguments): Change parsing rules to require a '-f' before any script
+        file. After all '-f' and '-p' arguments have been parsed, the remaining
+        are added to the arguments vector and exposed to the script. If there is a
+        chance of ambiguity (the user wants to pass the string '-f' to the script),
+        the string '--' can be used separate the options from the pass through 
+        arguments.
+        (kjsmain):
+
 2008-02-24  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.
