@@ -1,3 +1,14 @@
+2008-02-25  Darin Adler  <darin@apple.com>
+
+        Reviewed by Anders.
+
+        - test for http://bugs.webkit.org/show_bug.cgi?id=17186
+          Fragment navigation within a page permanently cancels meta refresh
+
+        * fast/loader/meta-refresh-anchor-click-expected.txt: Added.
+        * fast/loader/meta-refresh-anchor-click.html: Added.
+        * fast/loader/resources/meta-refresh-subframe.html: Added.
+
 2008-02-25  Johnny Ding  <johnnyding.webkit@gmail.com>
 
         Reviewed by Darin Adler.

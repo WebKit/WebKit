@@ -1,3 +1,21 @@
+2008-02-25  Darin Adler  <darin@apple.com>
+
+        Reviewed by Anders.
+        Based on a patch by Tim Steele <timsteele41@gmail.com>.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=17186
+          Fragment navigation within a page permanently cancels meta refresh
+
+        Test: fast/loader/meta-refresh-anchor-click.html
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::load): When load type is FrameLoadTypeRedirectWithLockedHistory,
+        always do a real load. This makes sure that meta refresh loads are treated as real loads
+        rather than anchor scrolls. Also tweaked formatting a bit.
+        (WebCore::FrameLoader::continueFragmentScrollAfterNavigationPolicy): This function is
+        an alternate way to complete a load, so it needs to start the redirection timer if
+        redirection has already been scheduled.
+
 2008-02-25  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.
