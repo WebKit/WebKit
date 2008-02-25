@@ -1,3 +1,24 @@
+2008-02-25  Johnny Ding  <johnnyding.webkit@gmail.com>
+
+        Reviewed by Darin Adler.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=17444
+
+        In HTMLTokenizer::write, the code checks 'pendingScripts.isEmpty()' to decide
+        whether to save prependingSrc or not. However, in HTMLTokenizer::scriptHandler
+        and HTMLTokenizer::scriptExecution, the code checks testBit:LoadingExtScript
+        to decide whether to save prependingSrc or not. The later behavior is not right
+        because, in scriptHandler and scriptExecution, even the pendingScripts queue is
+        empty, the testBit:LoadingExtScript might be TRUE.
+
+        Test: fast/tokenizer/nested-multiple-scripts.html
+
+        * html/HTMLTokenizer.cpp:
+        (WebCore::HTMLTokenizer::scriptHandler): check pendingScripts.isEmpty() instead of
+        checking state.loadingExtScript().
+        (WebCore::HTMLTokenizer::scriptExecution): check pendingScripts.isEmpty() instead of
+        checking state.loadingExtScript().
+
 2008-02-24  Darin Adler  <darin@apple.com>
 
         * dom/Document.h: Removed stray duplicate declaration of

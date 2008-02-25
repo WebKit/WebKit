@@ -1,3 +1,15 @@
+2008-02-25  Johnny Ding  <johnnyding.webkit@gmail.com>
+
+        Reviewed by Darin Adler.
+
+        - bug http://bugs.webkit.org/show_bug.cgi?id=17444
+        Test for multiple nested scripts which are in a external script. 
+
+        * fast/tokenizer/nested-multiple-scripts-expected.txt: Added.
+        * fast/tokenizer/nested-multiple-scripts.html: Added.
+        * fast/tokenizer/resources/external-script-1.js: Added.
+        * fast/tokenizer/resources/external-script-2.js: Added.
+
 2008-02-24  Michael Knaup  <michael.knaup@mac.com>
 
         Reviewed by Darin.
