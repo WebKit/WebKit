@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004, 2005, 2006, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,14 +25,16 @@
 
 #include "config.h"
 #include "ImageSource.h"
-#include "SharedBuffer.h"
 
 #if PLATFORM(CG)
 
 #include "IntSize.h"
+#include "SharedBuffer.h"
 #include <ApplicationServices/ApplicationServices.h>
 
 namespace WebCore {
+
+static const CFStringRef kCGImageSourceShouldPreferRGB32 = CFSTR("kCGImageSourceShouldPreferRGB32");
 
 ImageSource::ImageSource()
     : m_decoder(0)
@@ -52,15 +54,13 @@ void ImageSource::clear()
     }
 }
 
-const CFStringRef kCGImageSourceShouldPreferRGB32 = CFSTR("kCGImageSourceShouldPreferRGB32");
-
 CFDictionaryRef imageSourceOptions()
 {
     static CFDictionaryRef options;
     
     if (!options) {
-        const void *keys[2] = { kCGImageSourceShouldCache, kCGImageSourceShouldPreferRGB32 };
-        const void *values[2] = { kCFBooleanTrue, kCFBooleanTrue };
+        const void* keys[2] = { kCGImageSourceShouldCache, kCGImageSourceShouldPreferRGB32 };
+        const void* values[2] = { kCFBooleanTrue, kCFBooleanTrue };
         options = CFDictionaryCreate(NULL, keys, values, 2, 
             &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
     }
@@ -155,8 +155,8 @@ size_t ImageSource::frameCount() const
 CGImageRef ImageSource::createFrameAtIndex(size_t index)
 {
     CGImageRef image = CGImageSourceCreateImageAtIndex(m_decoder, index, imageSourceOptions());
-    String imageUTI = CGImageSourceGetType(m_decoder);
-    if ("public.xbitmap-image" != imageUTI)
+    CFStringRef imageUTI = CGImageSourceGetType(m_decoder);
+    if (!imageUTI || !CFEqual(imageUTI, CFSTR("public.xbitmap-image")))
         return image;
     
     // If it is an xbm image, mask out all the white areas to render them transparent.

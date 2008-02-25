@@ -1,3 +1,11 @@
+2008-02-24  Darin Adler  <darin@apple.com>
+
+        - quick follow-up to that last check-in
+
+        * platform/graphics/cg/ImageSourceCG.cpp:
+        (WebCore::ImageSource::createFrameAtIndex): Use CFEqual instead of
+        WebCore::String's == for speed.
+
 2008-02-24  Michael Knaup  <michael.knaup@mac.com>
 
         Reviewed by Darin.
