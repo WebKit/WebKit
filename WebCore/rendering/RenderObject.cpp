@@ -62,6 +62,7 @@
 #include "SelectionController.h"
 #include "TextResourceDecoder.h"
 #include <algorithm>
+#include <stdio.h>
 
 using namespace std;
 

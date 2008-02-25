@@ -35,6 +35,7 @@
 #include "Image.h"
 #include "ResourceHandle.h"
 #include "SystemTime.h"
+#include <stdio.h>
 
 using namespace std;
 

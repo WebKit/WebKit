@@ -25,6 +25,7 @@
 #include "CounterNode.h"
 
 #include "RenderObject.h"
+#include <stdio.h>
 
 // FIXME: There's currently no strategy for getting the counter tree updated when new
 // elements with counter-reset and counter-increment styles are added to the render tree.

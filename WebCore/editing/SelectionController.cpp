@@ -51,6 +51,7 @@
 #include "TypingCommand.h"
 #include "htmlediting.h"
 #include "visible_units.h"
+#include <stdio.h>
 
 #define EDIT_DEBUG 0
 

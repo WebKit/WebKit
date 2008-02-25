@@ -36,6 +36,8 @@
 #include <QUrl>
 #endif
 
+#include <stdio.h>
+
 using namespace std;
 using namespace WTF;
 

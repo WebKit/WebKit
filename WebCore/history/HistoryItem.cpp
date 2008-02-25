@@ -34,6 +34,7 @@
 #include "Logging.h"
 #include "PageCache.h"
 #include "ResourceRequest.h"
+#include <stdio.h>
 
 namespace WebCore {
 

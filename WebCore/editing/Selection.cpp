@@ -34,6 +34,7 @@
 #include "visible_units.h"
 #include "Range.h"
 #include <wtf/Assertions.h>
+#include <stdio.h>
 
 namespace WebCore {
 

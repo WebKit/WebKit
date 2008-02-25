@@ -38,6 +38,7 @@
 #include "config.h"
 #include "JPEGImageDecoder.h"
 #include <assert.h>
+#include <stdio.h>
 
 #if PLATFORM(CAIRO) || PLATFORM(QT) || PLATFORM(WX)
 

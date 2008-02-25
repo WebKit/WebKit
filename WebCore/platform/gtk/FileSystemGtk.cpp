@@ -30,6 +30,8 @@
 #include <glib/gstdio.h>
 #include <glib/gutils.h>
 
+#include <unistd.h>
+
 namespace WebCore {
 
 bool fileExists(const String& path)

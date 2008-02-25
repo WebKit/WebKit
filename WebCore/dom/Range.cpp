@@ -37,6 +37,7 @@
 #include "TextIterator.h"
 #include "markup.h"
 #include "visible_units.h"
+#include <stdio.h>
 
 namespace WebCore {
 

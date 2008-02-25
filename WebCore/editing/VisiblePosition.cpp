@@ -36,6 +36,7 @@
 #include "Text.h"
 #include "htmlediting.h"
 #include "visible_units.h"
+#include <stdio.h>
 
 namespace WebCore {
 

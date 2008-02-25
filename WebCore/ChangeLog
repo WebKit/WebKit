@@ -1,3 +1,25 @@
+2008-02-25  Simon Hausmann  <hausmann@webkit.org>
+
+        Reviewed by Mark Rowe.
+
+        Fix compilation with gcc 4.3, added stdio.h and unistd.h inclusions.
+
+        * dom/Position.cpp:
+        * dom/Range.cpp:
+        * editing/Selection.cpp:
+        * editing/SelectionController.cpp:
+        * editing/VisiblePosition.cpp:
+        * history/HistoryItem.cpp:
+        * loader/Cache.cpp:
+        * loader/FTPDirectoryParser.cpp:
+        * platform/KURL.cpp:
+        * platform/gtk/FileSystemGtk.cpp:
+        * platform/image-decoders/jpeg/JPEGImageDecoder.cpp:
+        * platform/text/TextCodecLatin1.cpp:
+        * platform/text/TextCodecUserDefined.cpp:
+        * rendering/CounterNode.cpp:
+        * rendering/RenderObject.cpp:
+
 2008-02-25  Johnny Ding  <johnnyding.webkit@gmail.com>
 
         Reviewed by Darin Adler.
