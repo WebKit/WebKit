@@ -1,5 +1,11 @@
 2008-02-24  Darin Adler  <darin@apple.com>
 
+        * dom/Range.cpp:
+        (WebCore::Range::surroundContents): Removed incorrect comment.
+        I added it a while ago, and I was just mixed up.
+
+2008-02-24  Darin Adler  <darin@apple.com>
+
         - quick follow-up to that last check-in
 
         * platform/graphics/cg/ImageSourceCG.cpp:
