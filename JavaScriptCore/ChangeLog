@@ -1,5 +1,36 @@
 2008-02-24  Sam Weinig  <sam@webkit.org>
 
+        Reviewed by Mark Rowe.
+
+        http://bugs.webkit.org/show_bug.cgi?id=17528
+        Give testkjs a bath
+
+        * JavaScriptCore.exp:
+        * JavaScriptCore.xcodeproj/project.pbxproj: Make the testkjs.cpp use 4 space indentation.
+        * kjs/testkjs.cpp:
+        (StopWatch::getElapsedMS):
+        (GlobalObject::className):
+        (GlobalObject::GlobalObject):
+        Rename GlobalImp to GlobalObject and setup the global functions
+        in the GlobalObject's constructor. Also, use static functions for
+        the implementation so we can use the standard PrototypeFunction
+        class and remove TestFunctionImp.
+        (functionPrint): Move print() functionality here.
+        (functionDebug): Move debug() functionality here.
+        (functionGC): Move gc() functionality here.
+        (functionVersion): Move version() functionality here.
+        (functionRun): Move run() functionality here.
+        (functionLoad): Move load() functionality here.
+        (functionQuit): Move quit() functionality here.
+        (prettyPrintScript): Fix indentation.
+        (runWithScripts): Since all the functionality of createGlobalObject is
+        now in the GlobalObject constructor, just call new here.
+        (parseArguments): Fix indentation.
+        (kjsmain): Ditto
+        (fillBufferWithContentsOfFile): Ditto.
+
+2008-02-24  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Oliver Hunt and Mark Rowe.
 
         http://bugs.webkit.org/show_bug.cgi?id=17505
