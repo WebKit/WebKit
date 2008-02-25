@@ -156,7 +156,8 @@ CGImageRef ImageSource::createFrameAtIndex(size_t index)
 {
     CGImageRef image = CGImageSourceCreateImageAtIndex(m_decoder, index, imageSourceOptions());
     CFStringRef imageUTI = CGImageSourceGetType(m_decoder);
-    if (!imageUTI || !CFEqual(imageUTI, CFSTR("public.xbitmap-image")))
+    static const CFStringRef xbmUTI = CFSTR("public.xbitmap-image");
+    if (!imageUTI || !CFEqual(imageUTI, xbmUTI))
         return image;
     
     // If it is an xbm image, mask out all the white areas to render them transparent.

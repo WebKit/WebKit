@@ -1,5 +1,13 @@
 2008-02-25  Darin Adler  <darin@apple.com>
 
+        Requested by Steve.
+
+        * platform/graphics/cg/ImageSourceCG.cpp:
+        (WebCore::ImageSource::createFrameAtIndex): Put the string into a global
+        variable (because CFSTR is inefficient on Windows).
+
+2008-02-25  Darin Adler  <darin@apple.com>
+
         Reviewed by Adam.
 
         * WebCore.base.exp: Export blankURL, and sort the file.
