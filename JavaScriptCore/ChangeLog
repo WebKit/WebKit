@@ -1,3 +1,10 @@
+2008-02-25  Adam Roben  <aroben@apple.com>
+
+        MSVC build fix
+
+        * kjs/testkjs.cpp:
+        (functionQuit): Don't add a return statement after exit(0) for MSVC.
+
 2008-02-24  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Mark Rowe.

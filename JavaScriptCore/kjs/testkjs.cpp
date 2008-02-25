@@ -217,7 +217,10 @@ JSValue* functionReadline(ExecState*, JSObject*, const List&)
 JSValue* functionQuit(ExecState*, JSObject*, const List&)
 {
     exit(0);
+#if !COMPILER(MSVC)
+    // MSVC knows that exit(0) never returns, so it flags this return statement as unreachable.
     return jsUndefined();
+#endif
 }
 
 // Use SEH for Release builds only to get rid of the crash report dialog
