@@ -169,16 +169,16 @@ namespace WebCore {
         } svg_noninherited_flags;
 
         // inherited attributes
-        DataRef<StyleFillData> fill;
-        DataRef<StyleStrokeData> stroke;
-        DataRef<StyleMarkerData> markers;
-        DataRef<StyleTextData> text;
+        DeprecatedDataRef<StyleFillData> fill;
+        DeprecatedDataRef<StyleStrokeData> stroke;
+        DeprecatedDataRef<StyleMarkerData> markers;
+        DeprecatedDataRef<StyleTextData> text;
 
         // non-inherited attributes
-        DataRef<StyleStopData> stops;
-        DataRef<StyleClipData> clip;
-        DataRef<StyleMaskData> mask;
-        DataRef<StyleMiscData> misc;
+        DeprecatedDataRef<StyleStopData> stops;
+        DeprecatedDataRef<StyleClipData> clip;
+        DeprecatedDataRef<StyleMaskData> mask;
+        DeprecatedDataRef<StyleMiscData> misc;
 
         // static default style
         static SVGRenderStyle *s_defaultStyle;

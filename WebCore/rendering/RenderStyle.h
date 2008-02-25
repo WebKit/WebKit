@@ -576,8 +576,8 @@ enum EMarqueeDirection { MAUTO = 0, MLEFT = 1, MRIGHT = -1, MUP = 2, MDOWN = -2,
 
 class StyleMarqueeData : public RefCounted<StyleMarqueeData> {
 public:
-    StyleMarqueeData();
-    StyleMarqueeData(const StyleMarqueeData& o);
+    static PassRefPtr<StyleMarqueeData> create() { return adoptRef(new StyleMarqueeData); }
+    PassRefPtr<StyleMarqueeData> copy() const { return adoptRef(new StyleMarqueeData(*this)); }
     
     bool operator==(const StyleMarqueeData& o) const;
     bool operator!=(const StyleMarqueeData& o) const {
@@ -591,15 +591,19 @@ public:
     
     unsigned behavior : 3; // EMarqueeBehavior 
     EMarqueeDirection direction : 3; // not unsigned because EMarqueeDirection has negative values
+    
+private:
+    StyleMarqueeData();
+    StyleMarqueeData(const StyleMarqueeData& o);
 };
   
 // CSS3 Multi Column Layout
 
 class StyleMultiColData : public RefCounted<StyleMultiColData> {
 public:
-    StyleMultiColData();
-    StyleMultiColData(const StyleMultiColData& o);
-
+    static PassRefPtr<StyleMultiColData> create() { return adoptRef(new StyleMultiColData); }
+    PassRefPtr<StyleMultiColData> copy() const { return adoptRef(new StyleMultiColData(*this)); }
+    
     bool operator==(const StyleMultiColData& o) const;
     bool operator!=(const StyleMultiColData &o) const {
         return !(*this == o);
@@ -622,6 +626,10 @@ public:
     unsigned m_breakBefore : 2; // EPageBreak
     unsigned m_breakAfter : 2; // EPageBreak
     unsigned m_breakInside : 2; // EPageBreak
+    
+private:
+    StyleMultiColData();
+    StyleMultiColData(const StyleMultiColData& o);
 };
 
 // CSS Transforms (may become part of CSS3)
@@ -819,8 +827,8 @@ private:
 
 class StyleTransformData : public RefCounted<StyleTransformData> {
 public:
-    StyleTransformData();
-    StyleTransformData(const StyleTransformData&);
+    static PassRefPtr<StyleTransformData> create() { return adoptRef(new StyleTransformData); }
+    PassRefPtr<StyleTransformData> copy() const { return adoptRef(new StyleTransformData(*this)); }
 
     bool operator==(const StyleTransformData&) const;
     bool operator!=(const StyleTransformData& o) const {
@@ -830,6 +838,10 @@ public:
     TransformOperations m_operations;
     Length m_x;
     Length m_y;
+
+private:
+    StyleTransformData();
+    StyleTransformData(const StyleTransformData&);
 };
 
 //------------------------------------------------
@@ -842,9 +854,9 @@ enum EBoxDirection { BNORMAL, BREVERSE };
 
 class StyleFlexibleBoxData : public RefCounted<StyleFlexibleBoxData> {
 public:
-    StyleFlexibleBoxData();
-    StyleFlexibleBoxData(const StyleFlexibleBoxData& o);
-
+    static PassRefPtr<StyleFlexibleBoxData> create() { return adoptRef(new StyleFlexibleBoxData); }
+    PassRefPtr<StyleFlexibleBoxData> copy() const { return adoptRef(new StyleFlexibleBoxData(*this)); }
+    
     bool operator==(const StyleFlexibleBoxData& o) const;
     bool operator!=(const StyleFlexibleBoxData &o) const {
         return !(*this == o);
@@ -858,6 +870,10 @@ public:
     unsigned pack: 3; // EBoxAlignment
     unsigned orient: 1; // EBoxOrient
     unsigned lines : 1; // EBoxLines
+    
+private:
+    StyleFlexibleBoxData();
+    StyleFlexibleBoxData(const StyleFlexibleBoxData& o);
 };
 
 // This struct holds information about shadows for the text-shadow and box-shadow properties.
@@ -1450,15 +1466,15 @@ protected:
     } noninherited_flags;
 
 // non-inherited attributes
-    DataRef<StyleBoxData> box;
-    DataRef<StyleVisualData> visual;
-    DataRef<StyleBackgroundData> background;
-    DataRef<StyleSurroundData> surround;
-    DataRef<StyleRareNonInheritedData> rareNonInheritedData;
+    DeprecatedDataRef<StyleBoxData> box;
+    DeprecatedDataRef<StyleVisualData> visual;
+    DeprecatedDataRef<StyleBackgroundData> background;
+    DeprecatedDataRef<StyleSurroundData> surround;
+    DeprecatedDataRef<StyleRareNonInheritedData> rareNonInheritedData;
 
 // inherited attributes
-    DataRef<StyleRareInheritedData> rareInheritedData;
-    DataRef<StyleInheritedData> inherited;
+    DeprecatedDataRef<StyleRareInheritedData> rareInheritedData;
+    DeprecatedDataRef<StyleInheritedData> inherited;
     
 // list of associated pseudo styles
     RenderStyle* pseudoStyle;
@@ -1484,7 +1500,7 @@ protected:
     int m_ref;
     
 #if ENABLE(SVG)
-    DataRef<SVGRenderStyle> m_svgStyle;
+    DeprecatedDataRef<SVGRenderStyle> m_svgStyle;
 #endif
     
 // !END SYNC!

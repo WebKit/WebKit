@@ -1,3 +1,25 @@
+2008-02-25  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Darin.
+
+        Make some of the refcounted style objects start out with a refcount of 1.
+
+        * rendering/DataRef.h:
+        Make a DeprecatedDataRef class which is just a copy of the old DataRef class.
+        Change DataRef to use ::create() and ::copy() instead of the constructors.
+        Change DataRef's pointer to be a RefPtr instead.
+
+        * rendering/RenderStyle.cpp:
+        (WebCore::StyleMarqueeData::StyleMarqueeData):
+        (WebCore::StyleFlexibleBoxData::StyleFlexibleBoxData):
+        (WebCore::StyleMultiColData::StyleMultiColData):
+        (WebCore::StyleTransformData::StyleTransformData):
+        Start with a RefCount of 1.
+        
+        * rendering/RenderStyle.h:
+        * rendering/SVGRenderStyle.h:
+        Add ::create() and ::copy() methods. Make not yet converted classes use DeprecatedDataRef.
+
 2008-02-25  Darin Adler  <darin@apple.com>
 
         Reviewed by Anders.

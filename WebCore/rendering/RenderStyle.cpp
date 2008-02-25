@@ -336,8 +336,7 @@ bool StyleBackgroundData::operator==(const StyleBackgroundData& o) const
 }
 
 StyleMarqueeData::StyleMarqueeData()
-    : RefCounted<StyleMarqueeData>(0)
-    , increment(RenderStyle::initialMarqueeIncrement())
+    : increment(RenderStyle::initialMarqueeIncrement())
     , speed(RenderStyle::initialMarqueeSpeed())
     , loops(RenderStyle::initialMarqueeLoopCount())
     , behavior(RenderStyle::initialMarqueeBehavior())
@@ -346,7 +345,7 @@ StyleMarqueeData::StyleMarqueeData()
 }
 
 StyleMarqueeData::StyleMarqueeData(const StyleMarqueeData& o)
-    : RefCounted<StyleMarqueeData>(0)
+    : RefCounted<StyleMarqueeData>()
     , increment(o.increment)
     , speed(o.speed)
     , loops(o.loops)
@@ -362,8 +361,7 @@ bool StyleMarqueeData::operator==(const StyleMarqueeData& o) const
 }
 
 StyleFlexibleBoxData::StyleFlexibleBoxData()
-    : RefCounted<StyleFlexibleBoxData>(0)
-    , flex(RenderStyle::initialBoxFlex())
+    : flex(RenderStyle::initialBoxFlex())
     , flex_group(RenderStyle::initialBoxFlexGroup())
     , ordinal_group(RenderStyle::initialBoxOrdinalGroup())
     , align(RenderStyle::initialBoxAlign())
@@ -374,7 +372,7 @@ StyleFlexibleBoxData::StyleFlexibleBoxData()
 }
 
 StyleFlexibleBoxData::StyleFlexibleBoxData(const StyleFlexibleBoxData& o)
-    : RefCounted<StyleFlexibleBoxData>(0)
+    : RefCounted<StyleFlexibleBoxData>()
     , flex(o.flex)
     , flex_group(o.flex_group)
     , ordinal_group(o.ordinal_group)
@@ -393,8 +391,7 @@ bool StyleFlexibleBoxData::operator==(const StyleFlexibleBoxData& o) const
 }
 
 StyleMultiColData::StyleMultiColData()
-    : RefCounted<StyleMultiColData>(0)
-    , m_width(0)
+    : m_width(0)
     , m_count(RenderStyle::initialColumnCount())
     , m_gap(0)
     , m_autoWidth(true)
@@ -407,7 +404,7 @@ StyleMultiColData::StyleMultiColData()
 }
 
 StyleMultiColData::StyleMultiColData(const StyleMultiColData& o)
-    : RefCounted<StyleMultiColData>(0)
+    : RefCounted<StyleMultiColData>()
     , m_width(o.m_width)
     , m_count(o.m_count)
     , m_gap(o.m_gap)
@@ -430,15 +427,14 @@ bool StyleMultiColData::operator==(const StyleMultiColData& o) const
 }
 
 StyleTransformData::StyleTransformData()
-    : RefCounted<StyleTransformData>(0)
-    , m_operations(RenderStyle::initialTransform())
+    : m_operations(RenderStyle::initialTransform())
     , m_x(RenderStyle::initialTransformOriginX())
     , m_y(RenderStyle::initialTransformOriginY())
 {
 }
 
 StyleTransformData::StyleTransformData(const StyleTransformData& o)
-    : RefCounted<StyleTransformData>(0)
+    : RefCounted<StyleTransformData>()
     , m_operations(o.m_operations)
     , m_x(o.m_x)
     , m_y(o.m_y)
