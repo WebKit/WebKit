@@ -1,3 +1,127 @@
+2008-02-25  MorganL  <morganl.webkit@yahoo.com>
+
+        Reviewed by Darin Adler.
+
+        Eliminate some #ifdefs from headers in platform/network.
+        http://bugs.webkit.org/show_bug.cgi?id=11786
+
+        * WebCore.base.exp:
+        * WebCore.order:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/XMLTokenizer.cpp:
+        * loader/ResourceLoader.h:
+        * platform/network/AuthenticationChallenge.cpp: Removed.
+        * platform/network/AuthenticationChallenge.h: Removed.
+        * platform/network/AuthenticationChallengeBase.cpp: Copied from platform/network/AuthenticationChallenge.cpp.
+        (WebCore::AuthenticationChallengeBase::AuthenticationChallengeBase):
+        (WebCore::AuthenticationChallengeBase::previousFailureCount):
+        (WebCore::AuthenticationChallengeBase::proposedCredential):
+        (WebCore::AuthenticationChallengeBase::protectionSpace):
+        (WebCore::AuthenticationChallengeBase::failureResponse):
+        (WebCore::AuthenticationChallengeBase::error):
+        (WebCore::AuthenticationChallengeBase::isNull):
+        (WebCore::AuthenticationChallengeBase::nullify):
+        (WebCore::AuthenticationChallengeBase::compare):
+        * platform/network/AuthenticationChallengeBase.h: Copied from platform/network/AuthenticationChallenge.h.
+        (WebCore::AuthenticationChallengeBase::platformCompare):
+        (WebCore::operator==):
+        (WebCore::operator!=):
+        * platform/network/ResourceError.cpp: Removed.
+        * platform/network/ResourceError.h: Removed.
+        * platform/network/ResourceErrorBase.cpp: Copied from platform/network/ResourceError.cpp.
+        (WebCore::ResourceErrorBase::lazyInit):
+        (WebCore::ResourceErrorBase::compare):
+        * platform/network/ResourceErrorBase.h: Copied from platform/network/ResourceError.h.
+        (WebCore::ResourceErrorBase::isNull):
+        (WebCore::ResourceErrorBase::domain):
+        (WebCore::ResourceErrorBase::errorCode):
+        (WebCore::ResourceErrorBase::failingURL):
+        (WebCore::ResourceErrorBase::localizedDescription):
+        (WebCore::ResourceErrorBase::ResourceErrorBase):
+        (WebCore::ResourceErrorBase::platformLazyInit):
+        (WebCore::ResourceErrorBase::platformCompare):
+        (WebCore::operator==):
+        * platform/network/ResourceResponseBase.cpp:
+        (WebCore::ResourceResponseBase::isHTTP):
+        (WebCore::ResourceResponseBase::url):
+        (WebCore::ResourceResponseBase::setUrl):
+        (WebCore::ResourceResponseBase::mimeType):
+        (WebCore::ResourceResponseBase::setMimeType):
+        (WebCore::ResourceResponseBase::expectedContentLength):
+        (WebCore::ResourceResponseBase::setExpectedContentLength):
+        (WebCore::ResourceResponseBase::textEncodingName):
+        (WebCore::ResourceResponseBase::setTextEncodingName):
+        (WebCore::ResourceResponseBase::suggestedFilename):
+        (WebCore::ResourceResponseBase::setSuggestedFilename):
+        (WebCore::ResourceResponseBase::httpStatusCode):
+        (WebCore::ResourceResponseBase::setHTTPStatusCode):
+        (WebCore::ResourceResponseBase::httpStatusText):
+        (WebCore::ResourceResponseBase::setHTTPStatusText):
+        (WebCore::ResourceResponseBase::httpHeaderField):
+        (WebCore::ResourceResponseBase::setHTTPHeaderField):
+        (WebCore::ResourceResponseBase::httpHeaderFields):
+        (WebCore::ResourceResponseBase::isAttachment):
+        (WebCore::ResourceResponseBase::setExpirationDate):
+        (WebCore::ResourceResponseBase::expirationDate):
+        (WebCore::ResourceResponseBase::setLastModifiedDate):
+        (WebCore::ResourceResponseBase::lastModifiedDate):
+        (WebCore::ResourceResponseBase::lazyInit):
+        (WebCore::ResourceResponseBase::compare):
+        * platform/network/ResourceResponseBase.h:
+        (WebCore::ResourceResponseBase::ResourceResponseBase):
+        (WebCore::ResourceResponseBase::platformLazyInit):
+        (WebCore::ResourceResponseBase::platformCompare):
+        (WebCore::operator==):
+        * platform/network/cf/AuthenticationCF.cpp:
+        (WebCore::AuthenticationChallenge::AuthenticationChallenge):
+        (WebCore::AuthenticationChallenge::platformCompare):
+        * platform/network/cf/AuthenticationChallenge.h: Added.
+        (WebCore::AuthenticationChallenge::AuthenticationChallenge):
+        (WebCore::AuthenticationChallenge::sourceHandle):
+        (WebCore::AuthenticationChallenge::cfURLAuthChallengeRef):
+        * platform/network/cf/ResourceError.h: Added.
+        (WebCore::ResourceError::ResourceError):
+        * platform/network/cf/ResourceErrorCF.cpp:
+        (WebCore::ResourceError::ResourceError):
+        (WebCore::ResourceError::platformLazyInit):
+        (WebCore::ResourceError::platformCompare):
+        (WebCore::ResourceError::operator CFStreamError):
+        * platform/network/cf/ResourceResponse.h:
+        (WebCore::ResourceResponse::ResourceResponse):
+        * platform/network/cf/ResourceResponseCFNet.cpp:
+        (WebCore::ResourceResponse::platformLazyInit):
+        * platform/network/curl/AuthenticationChallenge.h: Added.
+        (WebCore::AuthenticationChallenge::AuthenticationChallenge):
+        * platform/network/curl/ResourceError.h: Added.
+        (WebCore::ResourceError::ResourceError):
+        * platform/network/curl/ResourceResponse.h:
+        (WebCore::ResourceResponse::ResourceResponse):
+        * platform/network/mac/AuthenticationChallenge.h: Added.
+        (WebCore::AuthenticationChallenge::AuthenticationChallenge):
+        (WebCore::AuthenticationChallenge::sender):
+        (WebCore::AuthenticationChallenge::nsURLAuthenticationChallenge):
+        * platform/network/mac/AuthenticationMac.mm:
+        (WebCore::AuthenticationChallenge::AuthenticationChallenge):
+        (WebCore::AuthenticationChallenge::platformCompare):
+        * platform/network/mac/ResourceError.h: Added.
+        (WebCore::ResourceError::ResourceError):
+        * platform/network/mac/ResourceErrorMac.mm:
+        (WebCore::ResourceError::platformLazyInit):
+        (WebCore::ResourceError::platformCompare):
+        * platform/network/mac/ResourceResponse.h:
+        (WebCore::ResourceResponse::ResourceResponse):
+        * platform/network/mac/ResourceResponseMac.mm:
+        (WebCore::ResourceResponse::platformLazyInit):
+        (WebCore::ResourceResponse::platformCompare):
+        * platform/network/qt/AuthenticationChallenge.h: Added.
+        (WebCore::AuthenticationChallenge::AuthenticationChallenge):
+        * platform/network/qt/ResourceError.h: Added.
+        (WebCore::ResourceError::ResourceError):
+        * platform/network/qt/ResourceResponse.h:
+        (WebCore::ResourceResponse::ResourceResponse):
+        * xml/XSLTProcessor.cpp:
+
 2008-02-25  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Darin.

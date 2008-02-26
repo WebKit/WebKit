@@ -1,6 +1,5 @@
-// -*- mode: c++; c-basic-offset: 4 -*-
 /*
- * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2007 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -21,36 +20,27 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
+#ifndef AuthenticationChallenge_h
+#define AuthenticationChallenge_h
 
-#ifndef ResourceResponse_h
-#define ResourceResponse_h
-
-#include "ResourceResponseBase.h"
+#include "AuthenticationChallengeBase.h"
 
 namespace WebCore {
 
-class ResourceResponse : public ResourceResponseBase {
+class AuthenticationChallenge : public AuthenticationChallengeBase {
 public:
-    ResourceResponse()
-        : m_responseFired(false)
+    AuthenticationChallenge()
     {
     }
 
-    ResourceResponse(const KURL& url, const String& mimeType, long long expectedLength, const String& textEncodingName, const String& filename)
-        : ResourceResponseBase(url, mimeType, expectedLength, textEncodingName, filename),
-          m_responseFired(false)
+    AuthenticationChallenge(const ProtectionSpace& protectionSpace, const Credential& proposedCredential, unsigned previousFailureCount, const ResourceResponse& response, const ResourceError& error)
+        : AuthenticationChallengeBase(protectionSpace, proposedCredential, previousFailureCount, response, error)
     {
     }
-
-    void setResponseFired(bool fired) { m_responseFired = fired; }
-    bool responseFired() { return m_responseFired; }
-
-private:
-    bool m_responseFired;
 };
 
-} // namespace WebCore
+}
 
-#endif // ResourceResponse_h
+#endif

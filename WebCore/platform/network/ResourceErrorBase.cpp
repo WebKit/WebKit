@@ -21,36 +21,40 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef ResourceResponse_h
-#define ResourceResponse_h
-
-#include "ResourceResponseBase.h"
+#include "config.h"
+#include "ResourceError.h"
 
 namespace WebCore {
 
-class ResourceResponse : public ResourceResponseBase {
-public:
-    ResourceResponse()
-        : m_responseFired(false)
-    {
-    }
+void ResourceErrorBase::lazyInit() const
+{
+    const_cast<ResourceError*>(static_cast<const ResourceError*>(this))->platformLazyInit();
+}
 
-    ResourceResponse(const KURL& url, const String& mimeType, long long expectedLength, const String& textEncodingName, const String& filename)
-        : ResourceResponseBase(url, mimeType, expectedLength, textEncodingName, filename),
-          m_responseFired(false)
-    {
-    }
+bool ResourceErrorBase::compare(const ResourceError& a, const ResourceError& b)
+{
+    if (a.isNull() && b.isNull())
+        return true;
 
-    void setResponseFired(bool fired) { m_responseFired = fired; }
-    bool responseFired() { return m_responseFired; }
+    if (a.isNull() || b.isNull())
+        return false;
 
-private:
-    bool m_responseFired;
-};
+    if (a.domain() != b.domain())
+        return false;
 
-} // namespace WebCore
+    if (a.errorCode() != b.errorCode())
+        return false;
 
-#endif // ResourceResponse_h
+    if (a.failingURL() != b.failingURL())
+        return false;
+
+    if (a.localizedDescription() != b.localizedDescription())
+        return false;
+
+    return platformCompare(a, b);
+}
+
+}

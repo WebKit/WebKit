@@ -42,6 +42,7 @@
 #include "HTMLStyleElement.h"
 #include "HTMLTokenizer.h"
 #include "ProcessingInstruction.h"
+#include "ResourceError.h"
 #include "ResourceHandle.h"
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"

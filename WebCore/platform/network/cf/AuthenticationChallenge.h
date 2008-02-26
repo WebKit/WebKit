@@ -25,80 +25,33 @@
 #ifndef AuthenticationChallenge_h
 #define AuthenticationChallenge_h
 
-#include "Credential.h"
-#include "ProtectionSpace.h"
-#include "ResourceResponse.h"
-#include "ResourceError.h"
-
+#include "AuthenticationChallengeBase.h"
+#include "ResourceHandle.h"
 #include <wtf/RefPtr.h>
 
-
-#if PLATFORM(MAC)
-#include <wtf/RetainPtr.h>
-#ifndef __OBJC__
-typedef struct objc_object *id;
-class NSURLAuthenticationChallenge;
-#else
-@class NSURLAuthenticationChallenge;
-#endif
-#endif
-
-#if USE(CFNETWORK)
 typedef struct _CFURLAuthChallenge* CFURLAuthChallengeRef;
-#endif
-
 
 namespace WebCore {
 
 class ResourceHandle;
 
-class AuthenticationChallenge {
-
+class AuthenticationChallenge : public AuthenticationChallengeBase {
 public:
-    AuthenticationChallenge();
+    AuthenticationChallenge() {}
     AuthenticationChallenge(const ProtectionSpace& protectionSpace, const Credential& proposedCredential, unsigned previousFailureCount, const ResourceResponse& response, const ResourceError& error);
-#if PLATFORM(MAC)
-    AuthenticationChallenge(NSURLAuthenticationChallenge *);
-#elif USE(CFNETWORK)
     AuthenticationChallenge(CFURLAuthChallengeRef, ResourceHandle* sourceHandle);
-#endif
 
-    unsigned previousFailureCount() const;
-    const Credential& proposedCredential() const;
-    const ProtectionSpace& protectionSpace() const;
-    const ResourceResponse& failureResponse() const;
-    const ResourceError& error() const;
-    
-    bool isNull() const;
-    void nullify();
-    
-#if PLATFORM(MAC)
-    id sender() const { return m_sender.get(); }
-    NSURLAuthenticationChallenge *nsURLAuthenticationChallenge() const { return m_macChallenge.get(); }
-#elif USE(CFNETWORK)
     ResourceHandle* sourceHandle() const { return m_sourceHandle.get(); }
     CFURLAuthChallengeRef cfURLAuthChallengeRef() const { return m_cfChallenge.get(); }
-#endif
-private:
-    bool m_isNull;
-    ProtectionSpace m_protectionSpace;
-    Credential m_proposedCredential;
-    unsigned m_previousFailureCount;
-    ResourceResponse m_failureResponse;
-    ResourceError m_error;
 
-#if PLATFORM(MAC)
-    RetainPtr<id> m_sender;
-    RetainPtr<NSURLAuthenticationChallenge *> m_macChallenge;
-#elif USE(CFNETWORK)
+private:
+    friend class AuthenticationChallengeBase;
+    static bool platformCompare(const AuthenticationChallenge& a, const AuthenticationChallenge& b);
+
     RefPtr<ResourceHandle> m_sourceHandle;
     RetainPtr<CFURLAuthChallengeRef> m_cfChallenge;
-#endif
-
 };
 
-bool operator==(const AuthenticationChallenge&, const AuthenticationChallenge&);
-bool operator!=(const AuthenticationChallenge&, const AuthenticationChallenge&);
 }
-#endif
 
+#endif

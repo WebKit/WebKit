@@ -37,16 +37,40 @@
 
 namespace WebCore {
 
-AuthenticationChallenge::AuthenticationChallenge(CFURLAuthChallengeRef cfChallenge, ResourceHandle* sourceHandle)
-    : m_isNull(false)
-    , m_protectionSpace(core(CFURLAuthChallengeGetProtectionSpace(cfChallenge)))
-    , m_proposedCredential(core(CFURLAuthChallengeGetProposedCredential(cfChallenge)))
-    , m_previousFailureCount(CFURLAuthChallengeGetPreviousFailureCount(cfChallenge))
-    , m_failureResponse((CFURLResponseRef)CFURLAuthChallengeGetFailureResponse(cfChallenge))
-    , m_error(CFURLAuthChallengeGetError(cfChallenge))
+AuthenticationChallenge::AuthenticationChallenge(const ProtectionSpace& protectionSpace,
+                                                 const Credential& proposedCredential,
+                                                 unsigned previousFailureCount,
+                                                 const ResourceResponse& response,
+                                                 const ResourceError& error)
+    : AuthenticationChallengeBase(protectionSpace,
+                                  proposedCredential,
+                                  previousFailureCount,
+                                  response,
+                                  error)
+{
+}
+
+AuthenticationChallenge::AuthenticationChallenge(CFURLAuthChallengeRef cfChallenge,
+                                                 ResourceHandle* sourceHandle)
+    : AuthenticationChallengeBase(core(CFURLAuthChallengeGetProtectionSpace(cfChallenge)),
+                                  core(CFURLAuthChallengeGetProposedCredential(cfChallenge)),
+                                  CFURLAuthChallengeGetPreviousFailureCount(cfChallenge),
+                                  (CFURLResponseRef)CFURLAuthChallengeGetFailureResponse(cfChallenge),
+                                  CFURLAuthChallengeGetError(cfChallenge))
     , m_sourceHandle(sourceHandle)
     , m_cfChallenge(cfChallenge)
 {
+}
+
+bool AuthenticationChallenge::platformCompare(const AuthenticationChallenge& a, const AuthenticationChallenge& b)
+{
+    if (a.sourceHandle() != b.sourceHandle())
+        return false;
+
+    if (a.cfURLAuthChallengeRef() != b.cfURLAuthChallengeRef())
+        return false;
+        
+    return true;
 }
 
 CFURLAuthChallengeRef createCF(const AuthenticationChallenge& coreChallenge)

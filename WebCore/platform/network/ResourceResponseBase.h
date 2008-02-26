@@ -77,21 +77,16 @@ class ResourceResponseBase {
     void setLastModifiedDate(time_t);
     time_t lastModifiedDate() const;
 
-    inline const ResourceResponse& asResourceResponse() const;
+    static bool compare(const ResourceResponse& a, const ResourceResponse& b);
+
+    const ResourceResponse& asResourceResponse() const;
 
  protected:
-    // Used when response is initialized from a platform representation
-    ResourceResponseBase(bool isNull)
-        : m_isUpToDate(false)
-        , m_isNull(isNull)
-    {
-    }
-
     ResourceResponseBase()  
         : m_expectedContentLength(0)
         , m_httpStatusCode(0)
         , m_expirationDate(0)
-        , m_isUpToDate(true)
+        , m_lastModifiedDate(0)
         , m_isNull(true)
     {
     }
@@ -104,29 +99,34 @@ class ResourceResponseBase {
         , m_suggestedFilename(filename)
         , m_httpStatusCode(0)
         , m_expirationDate(0)
-        , m_isUpToDate(true)
+        , m_lastModifiedDate(0)
         , m_isNull(false)
     {
     }
 
-    void updateResourceResponse() const;
+    void lazyInit() const;
+
+    // The ResourceResponse subclass may "shadow" this method to lazily initialize platform specific fields
+    void platformLazyInit() {}
+
+    // The ResourceResponse subclass may "shadow" this method to compare platform specific fields
+    static bool platformCompare(const ResourceResponse& a, const ResourceResponse& b) { return true; }
 
     KURL m_url;
     String m_mimeType;
     long long m_expectedContentLength;
     String m_textEncodingName;
     String m_suggestedFilename;
-    mutable int m_httpStatusCode;
+    int m_httpStatusCode;
     String m_httpStatusText;
     HTTPHeaderMap m_httpHeaderFields;
     time_t m_expirationDate;
     time_t m_lastModifiedDate;
-    mutable bool m_isUpToDate;
     bool m_isNull;
 
 };
 
-bool operator==(const ResourceResponse& a, const ResourceResponse& b);
+inline bool operator==(const ResourceResponse& a, const ResourceResponse& b) { return ResourceResponseBase::compare(a, b); }
 inline bool operator!=(const ResourceResponse& a, const ResourceResponse& b) { return !(a == b); }
 
 } // namespace WebCore

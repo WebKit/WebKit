@@ -4065,11 +4065,11 @@
 				Name="network"
 				>
 				<File
-					RelativePath="..\platform\network\AuthenticationChallenge.cpp"
+					RelativePath="..\platform\network\AuthenticationChallengeBase.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\platform\network\AuthenticationChallenge.h"
+					RelativePath="..\platform\network\AuthenticationChallengeBase.h"
 					>
 				</File>
 				<File
@@ -4109,7 +4109,11 @@
 					>
 				</File>
 				<File
-					RelativePath="..\platform\network\ResourceError.h"
+					RelativePath="..\platform\network\ResourceErrorBase.h"
+					>
+				</File>
+				<File
+					RelativePath="..\platform\network\ResourceErrorBase.cpp"
 					>
 				</File>
 				<File
@@ -4148,6 +4152,10 @@
 					Name="cf"
 					>
 					<File
+						RelativePath="..\platform\network\cf\AuthenticationChallenge.h"
+						>
+					</File>
+					<File
 						RelativePath="..\platform\network\cf\AuthenticationCF.cpp"
 						>
 					</File>
@@ -4161,6 +4169,10 @@
 					</File>
 					<File
 						RelativePath="..\platform\network\cf\FormDataStreamCFNet.h"
+						>
+					</File>
+					<File
+						RelativePath="..\platform\network\cf\ResourceError.h"
 						>
 					</File>
 					<File

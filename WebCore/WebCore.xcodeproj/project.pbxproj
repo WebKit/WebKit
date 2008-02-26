@@ -375,8 +375,6 @@
 		514C76530CE9234E007EF3CD /* ResourceRequestMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 514C76490CE9234E007EF3CD /* ResourceRequestMac.mm */; };
 		514C76540CE9234E007EF3CD /* ResourceResponse.h in Headers */ = {isa = PBXBuildFile; fileRef = 514C764A0CE9234E007EF3CD /* ResourceResponse.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		514C76550CE9234F007EF3CD /* ResourceResponseMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 514C764B0CE9234E007EF3CD /* ResourceResponseMac.mm */; };
-		514C766B0CE923A1007EF3CD /* AuthenticationChallenge.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 514C76560CE923A1007EF3CD /* AuthenticationChallenge.cpp */; };
-		514C766C0CE923A1007EF3CD /* AuthenticationChallenge.h in Headers */ = {isa = PBXBuildFile; fileRef = 514C76570CE923A1007EF3CD /* AuthenticationChallenge.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		514C766D0CE923A1007EF3CD /* Credential.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 514C76580CE923A1007EF3CD /* Credential.cpp */; };
 		514C766E0CE923A1007EF3CD /* Credential.h in Headers */ = {isa = PBXBuildFile; fileRef = 514C76590CE923A1007EF3CD /* Credential.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		514C766F0CE923A1007EF3CD /* FormData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 514C765A0CE923A1007EF3CD /* FormData.cpp */; };
@@ -386,8 +384,6 @@
 		514C76730CE923A1007EF3CD /* HTTPParsers.h in Headers */ = {isa = PBXBuildFile; fileRef = 514C765E0CE923A1007EF3CD /* HTTPParsers.h */; };
 		514C76740CE923A1007EF3CD /* ProtectionSpace.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 514C765F0CE923A1007EF3CD /* ProtectionSpace.cpp */; };
 		514C76750CE923A1007EF3CD /* ProtectionSpace.h in Headers */ = {isa = PBXBuildFile; fileRef = 514C76600CE923A1007EF3CD /* ProtectionSpace.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		514C76760CE923A1007EF3CD /* ResourceError.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 514C76610CE923A1007EF3CD /* ResourceError.cpp */; };
-		514C76770CE923A1007EF3CD /* ResourceError.h in Headers */ = {isa = PBXBuildFile; fileRef = 514C76620CE923A1007EF3CD /* ResourceError.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		514C76780CE923A1007EF3CD /* ResourceHandle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 514C76630CE923A1007EF3CD /* ResourceHandle.cpp */; };
 		514C76790CE923A1007EF3CD /* ResourceHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 514C76640CE923A1007EF3CD /* ResourceHandle.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		514C767A0CE923A1007EF3CD /* ResourceHandleClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 514C76650CE923A1007EF3CD /* ResourceHandleClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1533,6 +1529,12 @@
 		93442CA00D2B336000338FF9 /* HTMLTableRowsCollection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93442C9F0D2B336000338FF9 /* HTMLTableRowsCollection.cpp */; };
 		934D9BA50B8C116B007B42A9 /* WebCoreNSStringExtras.mm in Sources */ = {isa = PBXBuildFile; fileRef = 934D9BA40B8C116B007B42A9 /* WebCoreNSStringExtras.mm */; };
 		934D9BA70B8C1175007B42A9 /* WebCoreNSStringExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = 934D9BA60B8C1175007B42A9 /* WebCoreNSStringExtras.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		934F71380D5A6EFF00018D69 /* AuthenticationChallengeBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 934F71370D5A6EFF00018D69 /* AuthenticationChallengeBase.cpp */; };
+		934F713A0D5A6F1000018D69 /* AuthenticationChallengeBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 934F71390D5A6F1000018D69 /* AuthenticationChallengeBase.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		934F713C0D5A6F1900018D69 /* ResourceErrorBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 934F713B0D5A6F1900018D69 /* ResourceErrorBase.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		934F713E0D5A6F2800018D69 /* ResourceErrorBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 934F713D0D5A6F2800018D69 /* ResourceErrorBase.cpp */; };
+		934F71420D5A6F4400018D69 /* ResourceError.h in Headers */ = {isa = PBXBuildFile; fileRef = 934F71410D5A6F4400018D69 /* ResourceError.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		934F71440D5A6F5300018D69 /* AuthenticationChallenge.h in Headers */ = {isa = PBXBuildFile; fileRef = 934F71430D5A6F5300018D69 /* AuthenticationChallenge.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		934FE9E50B5CA539003E4A73 /* FileChooser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 934FE9E40B5CA539003E4A73 /* FileChooser.cpp */; };
 		9352071909BD3BA500F2038D /* StaticConstructors.h in Headers */ = {isa = PBXBuildFile; fileRef = 9352071709BD3BA500F2038D /* StaticConstructors.h */; };
 		935207BE09BD410A00F2038D /* LocalizedStrings.h in Headers */ = {isa = PBXBuildFile; fileRef = 935207BD09BD410A00F2038D /* LocalizedStrings.h */; };
@@ -4647,8 +4649,6 @@
 		514C76490CE9234E007EF3CD /* ResourceRequestMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ResourceRequestMac.mm; sourceTree = "<group>"; };
 		514C764A0CE9234E007EF3CD /* ResourceResponse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResourceResponse.h; sourceTree = "<group>"; };
 		514C764B0CE9234E007EF3CD /* ResourceResponseMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ResourceResponseMac.mm; sourceTree = "<group>"; };
-		514C76560CE923A1007EF3CD /* AuthenticationChallenge.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AuthenticationChallenge.cpp; sourceTree = "<group>"; };
-		514C76570CE923A1007EF3CD /* AuthenticationChallenge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AuthenticationChallenge.h; sourceTree = "<group>"; };
 		514C76580CE923A1007EF3CD /* Credential.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Credential.cpp; sourceTree = "<group>"; };
 		514C76590CE923A1007EF3CD /* Credential.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Credential.h; sourceTree = "<group>"; };
 		514C765A0CE923A1007EF3CD /* FormData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FormData.cpp; sourceTree = "<group>"; };
@@ -4658,8 +4658,6 @@
 		514C765E0CE923A1007EF3CD /* HTTPParsers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTTPParsers.h; sourceTree = "<group>"; };
 		514C765F0CE923A1007EF3CD /* ProtectionSpace.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ProtectionSpace.cpp; sourceTree = "<group>"; };
 		514C76600CE923A1007EF3CD /* ProtectionSpace.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProtectionSpace.h; sourceTree = "<group>"; };
-		514C76610CE923A1007EF3CD /* ResourceError.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ResourceError.cpp; sourceTree = "<group>"; };
-		514C76620CE923A1007EF3CD /* ResourceError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResourceError.h; sourceTree = "<group>"; };
 		514C76630CE923A1007EF3CD /* ResourceHandle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ResourceHandle.cpp; sourceTree = "<group>"; };
 		514C76640CE923A1007EF3CD /* ResourceHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResourceHandle.h; sourceTree = "<group>"; };
 		514C76650CE923A1007EF3CD /* ResourceHandleClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResourceHandleClient.h; sourceTree = "<group>"; };
@@ -5772,6 +5770,12 @@
 		93442C9F0D2B336000338FF9 /* HTMLTableRowsCollection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLTableRowsCollection.cpp; sourceTree = "<group>"; };
 		934D9BA40B8C116B007B42A9 /* WebCoreNSStringExtras.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = WebCoreNSStringExtras.mm; sourceTree = "<group>"; };
 		934D9BA60B8C1175007B42A9 /* WebCoreNSStringExtras.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WebCoreNSStringExtras.h; sourceTree = "<group>"; };
+		934F71370D5A6EFF00018D69 /* AuthenticationChallengeBase.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = AuthenticationChallengeBase.cpp; sourceTree = "<group>"; };
+		934F71390D5A6F1000018D69 /* AuthenticationChallengeBase.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = AuthenticationChallengeBase.h; sourceTree = "<group>"; };
+		934F713B0D5A6F1900018D69 /* ResourceErrorBase.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = ResourceErrorBase.h; sourceTree = "<group>"; };
+		934F713D0D5A6F2800018D69 /* ResourceErrorBase.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = ResourceErrorBase.cpp; sourceTree = "<group>"; };
+		934F71410D5A6F4400018D69 /* ResourceError.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = ResourceError.h; sourceTree = "<group>"; };
+		934F71430D5A6F5300018D69 /* AuthenticationChallenge.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = AuthenticationChallenge.h; sourceTree = "<group>"; };
 		934FE9E40B5CA539003E4A73 /* FileChooser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FileChooser.cpp; sourceTree = "<group>"; };
 		9352071709BD3BA500F2038D /* StaticConstructors.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StaticConstructors.h; sourceTree = "<group>"; };
 		935207BD09BD410A00F2038D /* LocalizedStrings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LocalizedStrings.h; sourceTree = "<group>"; };
@@ -8274,9 +8278,11 @@
 		656B84D70AEA1CE900A095B4 /* network */ = {
 			isa = PBXGroup;
 			children = (
+				934F713D0D5A6F2800018D69 /* ResourceErrorBase.cpp */,
+				934F713B0D5A6F1900018D69 /* ResourceErrorBase.h */,
+				934F71390D5A6F1000018D69 /* AuthenticationChallengeBase.h */,
+				934F71370D5A6EFF00018D69 /* AuthenticationChallengeBase.cpp */,
 				656B84E70AEA1DAE00A095B4 /* mac */,
-				514C76560CE923A1007EF3CD /* AuthenticationChallenge.cpp */,
-				514C76570CE923A1007EF3CD /* AuthenticationChallenge.h */,
 				514C76580CE923A1007EF3CD /* Credential.cpp */,
 				514C76590CE923A1007EF3CD /* Credential.h */,
 				514C765A0CE923A1007EF3CD /* FormData.cpp */,
@@ -8286,8 +8292,6 @@
 				514C765E0CE923A1007EF3CD /* HTTPParsers.h */,
 				514C765F0CE923A1007EF3CD /* ProtectionSpace.cpp */,
 				514C76600CE923A1007EF3CD /* ProtectionSpace.h */,
-				514C76610CE923A1007EF3CD /* ResourceError.cpp */,
-				514C76620CE923A1007EF3CD /* ResourceError.h */,
 				514C76630CE923A1007EF3CD /* ResourceHandle.cpp */,
 				514C76640CE923A1007EF3CD /* ResourceHandle.h */,
 				514C76650CE923A1007EF3CD /* ResourceHandleClient.h */,
@@ -8303,6 +8307,8 @@
 		656B84E70AEA1DAE00A095B4 /* mac */ = {
 			isa = PBXGroup;
 			children = (
+				934F71430D5A6F5300018D69 /* AuthenticationChallenge.h */,
+				934F71410D5A6F4400018D69 /* ResourceError.h */,
 				514C76420CE9234E007EF3CD /* AuthenticationMac.h */,
 				514C76430CE9234E007EF3CD /* AuthenticationMac.mm */,
 				514C76440CE9234E007EF3CD /* FormDataStreamMac.h */,
@@ -12401,7 +12407,6 @@
 				B2C3DA200D006C1D00EF6F26 /* AtomicStringImpl.h in Headers */,
 				A8C4A80D09D563270003AC8D /* Attr.h in Headers */,
 				A8C4A80B09D563270003AC8D /* Attribute.h in Headers */,
-				514C766C0CE923A1007EF3CD /* AuthenticationChallenge.h in Headers */,
 				514C764C0CE9234E007EF3CD /* AuthenticationMac.h in Headers */,
 				A8CFF04E0A154F09000A4234 /* AutoTableLayout.h in Headers */,
 				51E1ECB30C91C55600DC255B /* AutodrainedPool.h in Headers */,
@@ -13847,7 +13852,6 @@
 				93799EF90BF2743600D0F230 /* RenderWordBreak.h in Headers */,
 				93309E0A099E64920056E581 /* ReplaceSelectionCommand.h in Headers */,
 				BCB16C2F0979C3BD00467741 /* Request.h in Headers */,
-				514C76770CE923A1007EF3CD /* ResourceError.h in Headers */,
 				514C76790CE923A1007EF3CD /* ResourceHandle.h in Headers */,
 				514C767A0CE923A1007EF3CD /* ResourceHandleClient.h in Headers */,
 				514C767B0CE923A1007EF3CD /* ResourceHandleInternal.h in Headers */,
@@ -14250,6 +14254,10 @@
 				51A9267D0D53F0570063ECC2 /* OriginQuotaManager.h in Headers */,
 				51A9267F0D53F0570063ECC2 /* OriginUsageRecord.h in Headers */,
 				5DCF836D0D59159800953BC6 /* PluginInfoStore.h in Headers */,
+				934F713A0D5A6F1000018D69 /* AuthenticationChallengeBase.h in Headers */,
+				934F713C0D5A6F1900018D69 /* ResourceErrorBase.h in Headers */,
+				934F71420D5A6F4400018D69 /* ResourceError.h in Headers */,
+				934F71440D5A6F5300018D69 /* AuthenticationChallenge.h in Headers */,
 				C0294DF40D5A6FD800CC7D6B /* UserStyleSheetLoader.h in Headers */,
 				E1DE1C080D5CE4CF0034C38F /* MessageQueue.h in Headers */,
 				37F818FD0D657606005E1F05 /* WebCoreURLResponse.h in Headers */,
@@ -14299,7 +14307,6 @@
 		0867D690FE84028FC02AAC07 /* Project object */ = {
 			isa = PBXProject;
 			buildConfigurationList = 149C284308902B11008A9EFC /* Build configuration list for PBXProject "WebCore" */;
-			compatibilityVersion = "Xcode 2.4";
 			hasScannedForEncodings = 1;
 			knownRegions = (
 				English,
@@ -14313,7 +14320,6 @@
 			mainGroup = 0867D691FE84028FC02AAC07 /* WebKit */;
 			productRefGroup = 034768DFFF38A50411DB9C8B /* Products */;
 			projectDirPath = "";
-			projectRoot = "";
 			targets = (
 				93F198A508245E59001E9ABC /* WebCore */,
 				DD041FBE09D9DDBE0010AF2A /* Derived Sources */,
@@ -14460,7 +14466,6 @@
 				B2C3DA1E0D006C1D00EF6F26 /* AtomicString.cpp in Sources */,
 				A8C4A80E09D563270003AC8D /* Attr.cpp in Sources */,
 				A8C4A80C09D563270003AC8D /* Attribute.cpp in Sources */,
-				514C766B0CE923A1007EF3CD /* AuthenticationChallenge.cpp in Sources */,
 				514C764D0CE9234E007EF3CD /* AuthenticationMac.mm in Sources */,
 				A8CFF0500A154F09000A4234 /* AutoTableLayout.cpp in Sources */,
 				51E1ECAF0C91C54600DC255B /* AutodrainedPool.mm in Sources */,
@@ -15462,7 +15467,6 @@
 				93799EF80BF2743600D0F230 /* RenderWordBreak.cpp in Sources */,
 				93309E09099E64920056E581 /* ReplaceSelectionCommand.cpp in Sources */,
 				BCB16C2E0979C3BD00467741 /* Request.cpp in Sources */,
-				514C76760CE923A1007EF3CD /* ResourceError.cpp in Sources */,
 				514C76500CE9234E007EF3CD /* ResourceErrorMac.mm in Sources */,
 				514C76780CE923A1007EF3CD /* ResourceHandle.cpp in Sources */,
 				514C76510CE9234E007EF3CD /* ResourceHandleMac.mm in Sources */,
@@ -15849,6 +15853,8 @@
 				BCE7B1930D4E86960075A539 /* JSHistoryCustom.cpp in Sources */,
 				51A9267C0D53F0570063ECC2 /* OriginQuotaManager.cpp in Sources */,
 				51A9267E0D53F0570063ECC2 /* OriginUsageRecord.cpp in Sources */,
+				934F71380D5A6EFF00018D69 /* AuthenticationChallengeBase.cpp in Sources */,
+				934F713E0D5A6F2800018D69 /* ResourceErrorBase.cpp in Sources */,
 				C0294DF30D5A6FD800CC7D6B /* UserStyleSheetLoader.cpp in Sources */,
 				37F818FE0D657606005E1F05 /* WebCoreURLResponse.mm in Sources */,
 				BCC573360D695BBE006EF517 /* DOMProgressEvent.mm in Sources */,

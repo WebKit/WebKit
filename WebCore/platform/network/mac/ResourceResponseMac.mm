@@ -57,8 +57,12 @@ NSURLResponse *ResourceResponse::nsURLResponse() const
     return m_nsResponse.get();
 }
 
-void ResourceResponse::doUpdateResourceResponse()
+void ResourceResponse::platformLazyInit()
 {
+    if (m_isUpToDate)
+        return;
+    m_isUpToDate = true;
+
     if (m_isNull) {
         ASSERT(!m_nsResponse);
         return;
@@ -102,6 +106,11 @@ void ResourceResponse::doUpdateResourceResponse()
         }
 #endif
     }
+}
+
+bool ResourceResponse::platformCompare(const ResourceResponse& a, const ResourceResponse& b)
+{
+    return a.nsURLResponse() == b.nsURLResponse();
 }
 
 }

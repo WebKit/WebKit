@@ -41,13 +41,16 @@ namespace WebCore {
 class ResourceResponse : public ResourceResponseBase {
 public:
     ResourceResponse()
-        : ResourceResponseBase()
+        : m_isUpToDate(true)
     {
     }
 
     ResourceResponse(NSURLResponse* nsResponse)
-        : ResourceResponseBase(!nsResponse)
-        , m_nsResponse(nsResponse) { }
+        : m_nsResponse(nsResponse)
+        , m_isUpToDate(false)
+    {
+        m_isNull = !nsResponse;
+    }
     
     ResourceResponse(const KURL& url, const String& mimeType, long long expectedLength, const String& textEncodingName, const String& filename)
         : ResourceResponseBase(url, mimeType, expectedLength, textEncodingName, filename)
@@ -59,10 +62,11 @@ public:
 private:
     friend class ResourceResponseBase;
 
-    void doUpdateResourceResponse();
+    void platformLazyInit();
+    static bool platformCompare(const ResourceResponse& a, const ResourceResponse& b);
 
     RetainPtr<NSURLResponse> m_nsResponse;
-
+    bool m_isUpToDate;
 };
 
 } // namespace WebCore

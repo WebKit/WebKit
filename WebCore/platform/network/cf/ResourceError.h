@@ -21,36 +21,54 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef ResourceResponse_h
-#define ResourceResponse_h
+#ifndef ResourceError_h
+#define ResourceError_h
 
-#include "ResourceResponseBase.h"
+#include "ResourceErrorBase.h"
+
+#include <wtf/RetainPtr.h>
+#include <CoreFoundation/CFStream.h>
 
 namespace WebCore {
 
-class ResourceResponse : public ResourceResponseBase {
+class ResourceError : public ResourceErrorBase {
 public:
-    ResourceResponse()
-        : m_responseFired(false)
+    ResourceError()
+        : m_dataIsUpToDate(true)
     {
     }
 
-    ResourceResponse(const KURL& url, const String& mimeType, long long expectedLength, const String& textEncodingName, const String& filename)
-        : ResourceResponseBase(url, mimeType, expectedLength, textEncodingName, filename),
-          m_responseFired(false)
+    ResourceError(const String& domain, int errorCode, const String& failingURL, const String& localizedDescription)
+        : ResourceErrorBase(domain, errorCode, failingURL, localizedDescription)
+        , m_dataIsUpToDate(true)
     {
     }
 
-    void setResponseFired(bool fired) { m_responseFired = fired; }
-    bool responseFired() { return m_responseFired; }
+    ResourceError(CFStreamError error);
+
+    ResourceError(CFErrorRef error)
+        : m_dataIsUpToDate(false)
+        , m_platformError(error)
+    {
+        m_isNull = !error;
+    }
+
+    operator CFErrorRef() const;
+    operator CFStreamError() const;
 
 private:
-    bool m_responseFired;
+    friend class ResourceErrorBase;
+
+    void platformLazyInit();
+    static bool platformCompare(const ResourceError& a, const ResourceError& b);
+
+    bool m_dataIsUpToDate;
+    mutable RetainPtr<CFErrorRef> m_platformError;
 };
 
 } // namespace WebCore
 
-#endif // ResourceResponse_h
+#endif // ResourceError_h_

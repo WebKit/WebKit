@@ -24,6 +24,26 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
-#include "ResourceError.h"
+#ifndef ResourceError_h
+#define ResourceError_h
 
+#include "ResourceErrorBase.h"
+
+namespace WebCore {
+
+class ResourceError : public ResourceErrorBase
+{
+public:
+    ResourceError()
+    {
+    }
+
+    ResourceError(const String& domain, int errorCode, const String& failingURL, const String& localizedDescription)
+        : ResourceErrorBase(domain, errorCode, failingURL, localizedDescription)
+    {
+    }
+};
+
+}
+
+#endif // ResourceError_h_

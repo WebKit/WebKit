@@ -21,36 +21,29 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef ResourceResponse_h
-#define ResourceResponse_h
+#ifndef ResourceError_h
+#define ResourceError_h
 
-#include "ResourceResponseBase.h"
+#include "ResourceErrorBase.h"
 
 namespace WebCore {
 
-class ResourceResponse : public ResourceResponseBase {
+class ResourceError : public ResourceErrorBase
+{
 public:
-    ResourceResponse()
-        : m_responseFired(false)
+    ResourceError()
     {
     }
 
-    ResourceResponse(const KURL& url, const String& mimeType, long long expectedLength, const String& textEncodingName, const String& filename)
-        : ResourceResponseBase(url, mimeType, expectedLength, textEncodingName, filename),
-          m_responseFired(false)
+    ResourceError(const String& domain, int errorCode, const String& failingURL, const String& localizedDescription)
+        : ResourceErrorBase(domain, errorCode, failingURL, localizedDescription)
     {
     }
-
-    void setResponseFired(bool fired) { m_responseFired = fired; }
-    bool responseFired() { return m_responseFired; }
-
-private:
-    bool m_responseFired;
 };
 
-} // namespace WebCore
+}
 
-#endif // ResourceResponse_h
+#endif // ResourceError_h_

@@ -37,18 +37,40 @@
 namespace WebCore {
 
 
+AuthenticationChallenge::AuthenticationChallenge(const ProtectionSpace& protectionSpace,
+                                                 const Credential& proposedCredential,
+                                                 unsigned previousFailureCount,
+                                                 const ResourceResponse& response,
+                                                 const ResourceError& error)
+    : AuthenticationChallengeBase(protectionSpace,
+                                  proposedCredential,
+                                  previousFailureCount,
+                                  response,
+                                  error)
+{
+}
+
 AuthenticationChallenge::AuthenticationChallenge(NSURLAuthenticationChallenge *macChallenge)
-    : m_isNull(false)
-    , m_protectionSpace(core([macChallenge protectionSpace]))
-    , m_proposedCredential(core([macChallenge proposedCredential]))
-    , m_previousFailureCount([macChallenge previousFailureCount])
-    , m_failureResponse([macChallenge failureResponse])
-    , m_error([macChallenge error])
+    : AuthenticationChallengeBase(core([macChallenge protectionSpace]),
+                                  core([macChallenge proposedCredential]),
+                                  [macChallenge previousFailureCount],
+                                  [macChallenge failureResponse],
+                                  [macChallenge error])
     , m_sender([macChallenge sender])
     , m_macChallenge(macChallenge)
 {
 }
 
+bool AuthenticationChallenge::platformCompare(const AuthenticationChallenge& a, const AuthenticationChallenge& b)
+{
+    if (a.sender() != b.sender())
+        return false;
+        
+    if (a.nsURLAuthenticationChallenge() != b.nsURLAuthenticationChallenge())
+        return false;
+
+    return true;
+}
 
 NSURLAuthenticationChallenge *mac(const AuthenticationChallenge& coreChallenge)
 {

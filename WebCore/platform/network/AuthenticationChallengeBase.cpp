@@ -29,14 +29,17 @@
 
 namespace WebCore {
 
-AuthenticationChallenge::AuthenticationChallenge()
+AuthenticationChallengeBase::AuthenticationChallengeBase()
     : m_isNull(true)
     , m_previousFailureCount(0)
 {
 }
 
-AuthenticationChallenge::AuthenticationChallenge(const ProtectionSpace& protectionSpace, const Credential& proposedCredential, 
-                                                       unsigned previousFailureCount, const ResourceResponse& response, const ResourceError& error)
+AuthenticationChallengeBase::AuthenticationChallengeBase(const ProtectionSpace& protectionSpace,
+                                                         const Credential& proposedCredential,
+                                                         unsigned previousFailureCount,
+                                                         const ResourceResponse& response,
+                                                         const ResourceError& error)
     : m_isNull(false)
     , m_protectionSpace(protectionSpace)
     , m_proposedCredential(proposedCredential)
@@ -46,62 +49,49 @@ AuthenticationChallenge::AuthenticationChallenge(const ProtectionSpace& protecti
 {
 }
 
-unsigned AuthenticationChallenge::previousFailureCount() const 
+unsigned AuthenticationChallengeBase::previousFailureCount() const 
 { 
     return m_previousFailureCount; 
 }
 
-const Credential& AuthenticationChallenge::proposedCredential() const 
+const Credential& AuthenticationChallengeBase::proposedCredential() const 
 { 
     return m_proposedCredential; 
 }
 
-const ProtectionSpace& AuthenticationChallenge::protectionSpace() const 
+const ProtectionSpace& AuthenticationChallengeBase::protectionSpace() const 
 { 
     return m_protectionSpace; 
 }
 
-const ResourceResponse& AuthenticationChallenge::failureResponse() const 
+const ResourceResponse& AuthenticationChallengeBase::failureResponse() const 
 { 
     return m_failureResponse; 
 }
 
-const ResourceError& AuthenticationChallenge::error() const 
+const ResourceError& AuthenticationChallengeBase::error() const 
 { 
     return m_error; 
 }
 
-bool AuthenticationChallenge::isNull() const
+bool AuthenticationChallengeBase::isNull() const
 {
     return m_isNull;
 }
 
-void AuthenticationChallenge::nullify()
+void AuthenticationChallengeBase::nullify()
 {
     m_isNull = true;
 }
 
-bool operator==(const AuthenticationChallenge& a, const AuthenticationChallenge& b)
+bool AuthenticationChallengeBase::compare(const AuthenticationChallenge& a, const AuthenticationChallenge& b)
 {
-    if (a.isNull() != b.isNull())
-        return false;
-    if (a.isNull())
+    if (a.isNull() && b.isNull())
         return true;
-        
-#if PLATFORM(MAC)
-    if (a.sender() != b.sender())
-        return false;
-        
-    if (a.nsURLAuthenticationChallenge() != b.nsURLAuthenticationChallenge())
-        return false;
-#elif USE(CFNETWORK)
-    if (a.sourceHandle() != b.sourceHandle())
-        return false;
 
-    if (a.cfURLAuthChallengeRef() != b.cfURLAuthChallengeRef())
+    if (a.isNull() || b.isNull())
         return false;
-#endif
-
+        
     if (a.protectionSpace() != b.protectionSpace())
         return false;
         
@@ -117,14 +107,7 @@ bool operator==(const AuthenticationChallenge& a, const AuthenticationChallenge&
     if (a.error() != b.error())
         return false;
         
-    return true;
-}
-
-bool operator!=(const AuthenticationChallenge& a, const AuthenticationChallenge& b)
-{
-    return !(a == b);
+    return AuthenticationChallenge::platformCompare(a, b);
 }
 
 }
-
-

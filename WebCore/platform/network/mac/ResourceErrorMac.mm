@@ -36,8 +36,11 @@
 
 namespace WebCore {
 
-void ResourceError::unpackPlatformError()
+void ResourceError::platformLazyInit()
 {
+    if (m_dataIsUpToDate)
+        return;
+
     m_domain = [m_platformError.get() domain];
     m_errorCode = [m_platformError.get() code];
 
@@ -48,6 +51,11 @@ void ResourceError::unpackPlatformError()
     m_localizedDescription = [m_platformError.get() _web_localizedDescription];
 
     m_dataIsUpToDate = true;
+}
+
+bool ResourceError::platformCompare(const ResourceError& a, const ResourceError& b)
+{
+    return (NSError*)a == (NSError*)b;
 }
 
 ResourceError::operator NSError*() const

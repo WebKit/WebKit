@@ -62,10 +62,16 @@ static time_t toTimeT(CFAbsoluteTime time)
     return min(max(minTimeAsDouble, time + kCFAbsoluteTimeIntervalSince1970), maxTimeAsDouble);
 }
 
-void ResourceResponse::doUpdateResourceResponse()
+void ResourceResponse::platformLazyInit()
 {
-    if (!m_cfResponse.get())
+    if (m_isUpToDate)
         return;
+    m_isUpToDate = true;
+
+    if (m_isNull) {
+        ASSERT(!m_cfResponse.get());
+        return;
+    }
 
     // FIXME: We may need to do MIME type sniffing here (unless that is done in CFURLResponseGetMIMEType).
 
