@@ -39,6 +39,11 @@
 #include "SharedBuffer.h"
 #include "Text.h"
 
+// On Win, the threadsafe *_r functions need to be gotten from pthreads.  
+#if COMPILER(MSVC) && USE(PTHREADS) 
+#include <pthread.h> 
+#endif 
+
 #if PLATFORM(QT)
 #include <QDateTime>
 #endif
