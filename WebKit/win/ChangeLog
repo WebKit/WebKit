@@ -1,3 +1,15 @@
+2008-02-25  Adam Roben  <aroben@apple.com>
+
+        Remove WebFrame::detachedFromParent1
+
+        This method was removed from FrameLoaderClient in r19042, but was
+        never removed from WebFrame.
+
+        Reviewed by Anders.
+
+        * WebFrame.cpp:
+        * WebFrame.h:
+
 2008-02-23  Adam Roben  <aroben@apple.com>
 
         Move many dispatch methods to WebFrameLoaderClient
