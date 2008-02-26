@@ -861,6 +861,12 @@ void RenderFlow::paintOutlineForLine(GraphicsContext* graphicsContext, int tx, i
                    ow);
 }
 
+void RenderFlow::calcMargins(int containerWidth)
+{
+    m_marginLeft = style()->marginLeft().calcMinValue(containerWidth);
+    m_marginRight = style()->marginRight().calcMinValue(containerWidth);
+}
+
 #ifndef NDEBUG
 
 void RenderFlow::checkConsistency() const

@@ -83,26 +83,12 @@ static bool betweenMidpoints;
 static bool isLineEmpty = true;
 static bool previousLineBrokeCleanly = true;
 
-static int getBPMWidth(int childValue, Length cssUnit)
-{
-    if (!cssUnit.isIntrinsicOrAuto())
-        return (cssUnit.isFixed() ? cssUnit.value() : childValue);
-    return 0;
-}
-
 static int getBorderPaddingMargin(RenderObject* child, bool endOfInline)
 {
-    RenderStyle* cstyle = child->style();
-    int result = 0;
-    bool leftSide = (cstyle->direction() == LTR) ? !endOfInline : endOfInline;
-    result += getBPMWidth((leftSide ? child->marginLeft() : child->marginRight()),
-                          (leftSide ? cstyle->marginLeft() :
-                           cstyle->marginRight()));
-    result += getBPMWidth((leftSide ? child->paddingLeft() : child->paddingRight()),
-                          (leftSide ? cstyle->paddingLeft() :
-                           cstyle->paddingRight()));
-    result += leftSide ? child->borderLeft() : child->borderRight();
-    return result;
+    bool leftSide = (child->style()->direction() == LTR) ? !endOfInline : endOfInline;
+    if (leftSide)
+        return child->marginLeft() + child->paddingLeft() + child->borderLeft();
+    return child->marginRight() + child->paddingRight() + child->borderRight();
 }
 
 static int inlineWidth(RenderObject* child, bool start = true, bool end = true)
@@ -834,6 +820,7 @@ void RenderBlock::layoutInlineChildren(bool relayoutChildren, int& repaintTop, i
         bool endOfInline = false;
         RenderObject* o = bidiFirst(this, bidi, false);
         bool hasFloat = false;
+        int containerWidth = max(0, containingBlockWidth());
         while (o) {
             o->invalidateVerticalPosition();
             if (o->isReplaced() || o->isFloating() || o->isPositioned()) {
@@ -857,6 +844,10 @@ void RenderBlock::layoutInlineChildren(bool relayoutChildren, int& repaintTop, i
             else if (o->isText() || (o->isInlineFlow() && !endOfInline)) {
                 if (fullLayout || o->selfNeedsLayout())
                     o->dirtyLineBoxes(fullLayout);
+                
+                // Calculate margins of inline flows so that they can be used later by line layout.
+                if (o->isInlineFlow())
+                    static_cast<RenderFlow*>(o)->calcMargins(containerWidth);
                 o->setNeedsLayout(false);
             }
             o = bidiNext(this, o, bidi, false, &endOfInline);
@@ -1227,7 +1218,7 @@ static bool inlineFlowRequiresLineBox(RenderObject* flow)
     // FIXME: Right now, we only allow line boxes for inlines that are truly empty.
     // We need to fix this, though, because at the very least, inlines containing only
     // ignorable whitespace should should also have line boxes. 
-    return flow->isInlineFlow() && !flow->firstChild() && flow->hasBordersPaddingOrMargin();
+    return flow->isInlineFlow() && !flow->firstChild() && flow->hasHorizontalBordersPaddingOrMargin();
 }
 
 static inline bool requiresLineBox(BidiIterator& it)

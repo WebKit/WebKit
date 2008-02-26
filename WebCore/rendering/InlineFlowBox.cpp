@@ -456,7 +456,7 @@ void InlineFlowBox::computeLogicalBoxHeights(int& maxPositionTop, int& maxPositi
             if (maxPositionBottom < curr->height())
                 maxPositionBottom = curr->height();
         }
-        else if (curr->hasTextChildren() || curr->object()->hasBordersPaddingOrMargin() || strictMode) {
+        else if (curr->hasTextChildren() || curr->object()->hasHorizontalBordersOrPadding() || strictMode) {
             int ascent = curr->baseline() - curr->yPos();
             int descent = curr->height() - ascent;
             if (maxAscent < ascent)
@@ -491,7 +491,7 @@ void InlineFlowBox::placeBoxesVertically(int y, int maxHeight, int maxAscent, bo
         else if (curr->yPos() == PositionBottom)
             curr->setYPos(y + maxHeight - curr->height());
         else {
-            if (!curr->hasTextChildren() && !curr->object()->hasBordersPaddingOrMargin() && !strictMode)
+            if (!curr->hasTextChildren() && !curr->object()->hasHorizontalBordersOrPadding() && !strictMode)
                 childAffectsTopBottomPos = false;
             curr->setYPos(curr->yPos() + y + maxAscent - curr->baseline());
         }
@@ -565,7 +565,7 @@ void InlineFlowBox::shrinkBoxesWithNoTextChildren(int topPos, int bottomPos)
     }
 
     // See if we have text children. If not, then we need to shrink ourselves to fit on the line.
-    if (!hasTextChildren() && !object()->hasBordersPaddingOrMargin()) {
+    if (!hasTextChildren() && !object()->hasHorizontalBordersOrPadding()) {
         if (yPos() < topPos)
             setYPos(topPos);
         if (yPos() + height() > bottomPos)
