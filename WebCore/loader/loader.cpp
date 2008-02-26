@@ -109,10 +109,14 @@ void Loader::didFinishLoading(SubresourceLoader* loader)
 
     CachedResource* object = req->cachedResource();
 
-    docLoader->setLoadInProgress(true);
-    object->data(loader->resourceData(), true);
-    docLoader->setLoadInProgress(false);
-    object->finish();
+    // If we got a 4xx response, we're pretending to have received a network
+    // error, so we can't send the successful data() and finish() callbacks.
+    if (!object->errorOccurred()) {
+        docLoader->setLoadInProgress(true);
+        object->data(loader->resourceData(), true);
+        docLoader->setLoadInProgress(false);
+        object->finish();
+    }
 
     delete req;
 
@@ -198,7 +202,7 @@ void Loader::didReceiveData(SubresourceLoader* loader, const char* data, int siz
         return;
     
     if (object->response().httpStatusCode() / 100 == 4) {
-        // Make sure the 4xx error codes result in an error.
+        // Treat a 4xx response like a network error.
         object->error();
         return;
     }
