@@ -1,3 +1,16 @@
+2008-02-26  MorganL  <morganl.webkit@yahoo.com>
+
+        Reviewed by eseidel.  Landed by eseidel
+
+        Fix improperly initialized m_isUpToDate member variable.
+        Fixs 50+ layout tests when run on Tiger.
+        http://bugs.webkit.org/show_bug.cgi?id=17549
+
+        * platform/network/cf/ResourceResponse.h:
+        (WebCore::ResourceResponse::ResourceResponse):
+        * platform/network/mac/ResourceResponse.h:
+        (WebCore::ResourceResponse::ResourceResponse):
+
 2008-02-25  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Sam Weinig.
