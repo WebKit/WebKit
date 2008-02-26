@@ -1,0 +1,53 @@
+<html>
+<head>
+<script>
+
+function log(message)
+{
+    document.body.innerHTML += message + "<br>";
+}
+
+var complete = 0;
+
+function checkCompletion()
+{
+    if (++complete == 2 && window.layoutTestController)
+        layoutTestController.notifyDone();
+}
+
+function runTest()
+{
+    if (window.layoutTestController) {
+        layoutTestController.dumpAsText();
+        layoutTestController.waitUntilDone();
+    }
+    
+    var db = openDatabase("MultipleTransactionsTest", "1.0", "Test to make sure multiple transactions can be queued at once for an HTML5 database", 32768);
+
+    db.transaction(function(tx) {
+        log("Transaction 1 Started");
+    }, function(err) {
+        log("Transaction 1 Errored - " + err);
+        checkCompletion();
+    }, function() {
+        log("Transaction 1 Succeeded");
+        checkCompletion();
+    });
+
+    db.transaction(function(tx) {
+        log("Transaction 2 Started");
+    }, function(err) {
+        log("Transaction 2 Errored - " + err);
+        checkCompletion();
+    }, function() {
+        log("Transaction 2 Succeeded");
+        checkCompletion();
+    });
+}
+
+</script>
+<head>
+<body onload="runTest();">
+This is a test to see if the database API allows multiple transactions to be queued on the same database at once:<br>
+</body>
+</html>
