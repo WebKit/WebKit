@@ -472,6 +472,7 @@ namespace WTF {
         template<typename U, size_t c> void prepend(const Vector<U, c>&);
 
         void remove(size_t position);
+        void remove(size_t position, size_t length);
 
         void removeLast() 
         {
@@ -772,6 +773,18 @@ namespace WTF {
         spot->~T();
         TypeOperations::moveOverlapping(spot + 1, end(), spot);
         --m_size;
+    }
+
+    template<typename T, size_t inlineCapacity>
+    inline void Vector<T, inlineCapacity>::remove(size_t position, size_t length)
+    {
+        ASSERT(position < size());
+        ASSERT(position + length < size());
+        T* beginSpot = begin() + position;
+        T* endSpot = beginSpot + length;
+        TypeOperations::destruct(beginSpot, endSpot); 
+        TypeOperations::moveOverlapping(endSpot, end(), beginSpot);
+        m_size -= length;
     }
 
     template<typename T, size_t inlineCapacity>

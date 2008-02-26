@@ -246,7 +246,8 @@ uint64_t charactersToUInt64(const UChar*, size_t, bool* ok = 0); // ignores trai
 double charactersToDouble(const UChar*, size_t, bool* ok = 0);
 float charactersToFloat(const UChar*, size_t, bool* ok = 0);
 
-int find(const UChar*, size_t, UChar);
+int find(const UChar*, size_t, UChar, int startPosition = 0);
+int reverseFind(const UChar*, size_t, UChar, int startPosition = -1);
 
 void append(Vector<UChar>&, const String&);
 
@@ -265,12 +266,31 @@ inline bool charactersAreAllASCII(const UChar* characters, size_t length)
     return !(ored & 0xFF80);
 }
 
-inline int find(const UChar* characters, size_t length, UChar character)
+inline int find(const UChar* characters, size_t length, UChar character, int startPosition)
 {
-    for (size_t i = 0; i < length; ++i) {
+    if (startPosition >= static_cast<int>(length))
+        return -1;
+    for (size_t i = startPosition; i < length; ++i) {
         if (characters[i] == character)
             return static_cast<int>(i);
     }
+    return -1;
+}
+
+inline int reverseFind(const UChar* characters, size_t length, UChar character, int startPosition)
+{
+    if (startPosition >= static_cast<int>(length) || !length)
+        return -1;
+    if (startPosition < 0)
+        startPosition += length;
+    while (true) {
+        if (characters[startPosition] == character)
+            return startPosition;
+        if (!startPosition)
+            return -1;
+        startPosition--;
+    }
+    ASSERT_NOT_REACHED();
     return -1;
 }
 

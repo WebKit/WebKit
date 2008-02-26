@@ -1,3 +1,25 @@
+2008-02-25  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Dan Bernstein.
+
+        Make the cleanPath function in CSSStyleSelector more efficient by using
+        a Vector<UChar>.
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::cleanPath): Make this function work on a Vector<UChar> instead
+        of a String.  Also remove unnecessary reverseFind call that could be acomplished
+        with two compares.
+        (WebCore::checkPseudoState): Remove reserveCapacity calls now that we are using
+        a stack buffer.
+        * platform/text/PlatformString.h:
+        (WebCore::find): Make this find generic enough that it can be used for
+        String::find.
+        (WebCore::reverseFind): Implement reverseFind so that it can be used
+        for with a UChar* and length.
+        * platform/text/StringImpl.cpp:
+        (WebCore::StringImpl::find): Use implementation in PlatformString.cpp
+        (WebCore::StringImpl::reverseFind): Ditto,
+
 2008-02-26  Satoshi Nakagawa  <artension@gmail.com>
 
         Reviewed by Darin. Tweaked and landed by Alexey.

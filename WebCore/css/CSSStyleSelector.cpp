@@ -607,19 +607,15 @@ static inline bool containsColonSlashSlash(const UChar* characters, unsigned len
     return false;
 }
 
-static void cleanPath(String& path)
+static void cleanPath(Vector<UChar, 512>& path)
 {
     int pos;
-
-    while ((pos = findSlashDotDotSlash(path.characters(), path.length())) != -1) {
-        int prev = 0;
-        if (pos > 0)
-            prev = path.reverseFind("/", pos - 1);
+    while ((pos = findSlashDotDotSlash(path.data(), path.size())) != -1) {
+        int prev = reverseFind(path.data(), path.size(), '/', pos - 1);
         // don't remove the host, i.e. http://foo.org/../foo.html
-        if (prev < 0 || (prev > 3 && path.reverseFind("://", prev - 1) == prev - 2))
+        if (prev < 0 || (prev > 3 && path[prev - 2] == ':' && path[prev - 1] == '/'))
             path.remove(pos, 3);
         else
-            // matching directory found ?
             path.remove(prev, pos - prev + 3);
     }
 
@@ -629,20 +625,20 @@ static void cleanPath(String& path)
     // in the vast majority of cases where there is no "//" in the path.
     pos = 0;
     int refPos = -2;
-    while ((pos = findSlashSlash(path.characters(), path.length(), pos)) != -1) {
+    while ((pos = findSlashSlash(path.data(), path.size(), pos)) != -1) {
         if (refPos == -2)
-            refPos = find(path.characters(), path.length(), '#');
+            refPos = find(path.data(), path.size(), '#');
         if (refPos > 0 && pos >= refPos)
             break;
-        
+
         if (pos == 0 || path[pos - 1] != ':')
-            path.remove(pos, 1);
+            path.remove(pos);
         else
             pos += 2;
     }
 
     // FIXME: We don't want to remove "/./" from an anchor identifier either.
-    while ((pos = findSlashDotSlash(path.characters(), path.length())) != -1)
+    while ((pos = findSlashDotSlash(path.data(), path.size())) != -1)
         path.remove(pos, 2);
 }
 
@@ -684,22 +680,17 @@ static void checkPseudoState(Element *e, bool checkVisited = true)
         return;
     }
 
-    Vector<UChar> buffer;
+    Vector<UChar, 512> buffer;
     if (length && characters[0] == '/') {
-        buffer.reserveCapacity(length + currentEncodedURL->prefix.length());
         buffer.append(currentEncodedURL->prefix.characters(), currentEncodedURL->prefix.length());
     } else if (length && characters[0] == '#') {
-        buffer.reserveCapacity(length + currentEncodedURL->file.length());
         buffer.append(currentEncodedURL->file.characters(), currentEncodedURL->file.length());
     } else {
-        buffer.reserveCapacity(length + currentEncodedURL->path.length());
         buffer.append(currentEncodedURL->path.characters(), currentEncodedURL->path.length());
     }
     buffer.append(characters, length);
-
-    String path = String::adopt(buffer);
-    cleanPath(path);
-    pseudoState = historyContains(path.characters(), path.length()) ? PseudoVisited : PseudoLink;
+    cleanPath(buffer);
+    pseudoState = historyContains(buffer.data(), buffer.size()) ? PseudoVisited : PseudoLink;
 }
 
 // a helper function for parsing nth-arguments

@@ -614,15 +614,7 @@ int StringImpl::find(const char* chs, int index, bool caseSensitive)
 
 int StringImpl::find(UChar c, int start)
 {
-    unsigned index = start;
-    if (index >= m_length )
-        return -1;
-    while(index < m_length) {
-        if (m_data[index] == c)
-            return index;
-        index++;
-    }
-    return -1;
+    return WebCore::find(m_data, m_length, c, start);
 }
 
 int StringImpl::find(StringImpl* str, int index, bool caseSensitive)
@@ -683,18 +675,7 @@ int StringImpl::find(StringImpl* str, int index, bool caseSensitive)
 
 int StringImpl::reverseFind(UChar c, int index)
 {
-    if (index >= (int)m_length || m_length == 0)
-        return -1;
-
-    if (index < 0)
-        index += m_length;
-    while (1) {
-        if (m_data[index] == c)
-            return index;
-        if (index == 0)
-            return -1;
-        index--;
-    }
+    return WebCore::reverseFind(m_data, m_length, c, index);
 }
 
 int StringImpl::reverseFind(StringImpl* str, int index, bool caseSensitive)
