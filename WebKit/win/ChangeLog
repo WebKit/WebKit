@@ -1,5 +1,19 @@
 2008-02-25  Adam Roben  <aroben@apple.com>
 
+        Move progress-related methods to WebFrameLoaderClient
+
+        Reviewed by Anders.
+
+        * WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebFrameLoaderClient::postProgressStartedNotification):
+        (WebFrameLoaderClient::postProgressEstimateChangedNotification):
+        (WebFrameLoaderClient::postProgressFinishedNotification):
+        * WebCoreSupport/WebFrameLoaderClient.h:
+        * WebFrame.cpp:
+        * WebFrame.h:
+
+2008-02-25  Adam Roben  <aroben@apple.com>
+
         Remove WebFrame::detachedFromParent1
 
         This method was removed from FrameLoaderClient in r19042, but was

@@ -32,6 +32,7 @@
 #include "MarshallingHelpers.h"
 #include "WebDocumentLoader.h"
 #include "WebFrame.h"
+#include "WebNotificationCenter.h"
 #include "WebView.h"
 #pragma warning(push, 0)
 #include <WebCore/DocumentLoader.h>
@@ -171,6 +172,27 @@ void WebFrameLoaderClient::dispatchShow()
     COMPtr<IWebUIDelegate> ui;
     if (SUCCEEDED(webView->uiDelegate(&ui)))
         ui->webViewShow(webView);
+}
+
+void WebFrameLoaderClient::postProgressStartedNotification()
+{
+    static BSTR progressStartedName = SysAllocString(WebViewProgressStartedNotification);
+    IWebNotificationCenter* notifyCenter = WebNotificationCenter::defaultCenterInternal();
+    notifyCenter->postNotificationName(progressStartedName, static_cast<IWebView*>(m_webFrame->webView()), 0);
+}
+
+void WebFrameLoaderClient::postProgressEstimateChangedNotification()
+{
+    static BSTR progressEstimateChangedName = SysAllocString(WebViewProgressEstimateChangedNotification);
+    IWebNotificationCenter* notifyCenter = WebNotificationCenter::defaultCenterInternal();
+    notifyCenter->postNotificationName(progressEstimateChangedName, static_cast<IWebView*>(m_webFrame->webView()), 0);
+}
+
+void WebFrameLoaderClient::postProgressFinishedNotification()
+{
+    static BSTR progressFinishedName = SysAllocString(WebViewProgressFinishedNotification);
+    IWebNotificationCenter* notifyCenter = WebNotificationCenter::defaultCenterInternal();
+    notifyCenter->postNotificationName(progressFinishedName, static_cast<IWebView*>(m_webFrame->webView()), 0);
 }
 
 PassRefPtr<DocumentLoader> WebFrameLoaderClient::createDocumentLoader(const ResourceRequest& request, const SubstituteData& substituteData)

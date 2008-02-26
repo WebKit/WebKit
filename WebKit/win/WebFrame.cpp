@@ -1830,27 +1830,6 @@ Frame* WebFrame::dispatchCreatePage()
     return 0;
 }
 
-void WebFrame::postProgressStartedNotification()
-{
-    static BSTR progressStartedName = SysAllocString(WebViewProgressStartedNotification);
-    IWebNotificationCenter* notifyCenter = WebNotificationCenter::defaultCenterInternal();
-    notifyCenter->postNotificationName(progressStartedName, static_cast<IWebView*>(d->webView), 0);
-}
-
-void WebFrame::postProgressEstimateChangedNotification()
-{
-    static BSTR progressEstimateChangedName = SysAllocString(WebViewProgressEstimateChangedNotification);
-    IWebNotificationCenter* notifyCenter = WebNotificationCenter::defaultCenterInternal();
-    notifyCenter->postNotificationName(progressEstimateChangedName, static_cast<IWebView*>(d->webView), 0);
-}
-
-void WebFrame::postProgressFinishedNotification()
-{
-    static BSTR progressFinishedName = SysAllocString(WebViewProgressFinishedNotification);
-    IWebNotificationCenter* notifyCenter = WebNotificationCenter::defaultCenterInternal();
-    notifyCenter->postNotificationName(progressFinishedName, static_cast<IWebView*>(d->webView), 0);
-}
-
 void WebFrame::startDownload(const ResourceRequest&)
 {
     notImplemented();
