@@ -1,3 +1,12 @@
+2008-02-25  Mark Rowe  <mrowe@apple.com>
+
+        Fix the Gtk, wx and Qt builds.
+
+        * GNUmakefile.am: Add new files.
+        * WebCore.pro: Ditto.
+        * WebCoreSources.bkl: Ditto.
+        * platform/network/AuthenticationChallengeBase.h: Fix up argument types.
+
 2008-02-25  MorganL  <morganl.webkit@yahoo.com>
 
         Reviewed by Darin Adler.

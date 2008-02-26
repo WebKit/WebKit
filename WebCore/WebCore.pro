@@ -762,11 +762,12 @@ SOURCES += \
     platform/KURL.cpp \
     platform/Logging.cpp \
     platform/MIMETypeRegistry.cpp \
-    platform/network/AuthenticationChallenge.cpp \
+    platform/network/AuthenticationChallengeBase.cpp \
     platform/network/Credential.cpp \
     platform/network/FormData.cpp \
     platform/network/HTTPParsers.cpp \
     platform/network/ProtectionSpace.cpp \
+    platform/network/ResourceErrorBase.cpp \
     platform/network/ResourceHandle.cpp \
     platform/network/ResourceRequestBase.cpp \
     platform/network/ResourceResponseBase.cpp \
