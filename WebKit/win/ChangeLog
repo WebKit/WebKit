@@ -1,5 +1,18 @@
 2008-02-25  Adam Roben  <aroben@apple.com>
 
+        Move createFrame to WebFrameLoaderClient
+
+        Reviewed by Anders.
+
+        * WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebFrameLoaderClient::createFrame):
+        (WebFrameLoaderClient::loadURLIntoChild):
+        * WebCoreSupport/WebFrameLoaderClient.h:
+        * WebFrame.cpp:
+        * WebFrame.h:
+
+2008-02-25  Adam Roben  <aroben@apple.com>
+
         Move progress-related methods to WebFrameLoaderClient
 
         Reviewed by Anders.

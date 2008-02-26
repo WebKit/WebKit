@@ -36,9 +36,17 @@
 #include "WebView.h"
 #pragma warning(push, 0)
 #include <WebCore/DocumentLoader.h>
+#include <WebCore/FrameLoader.h>
+#include <WebCore/FrameTree.h>
+#include <WebCore/FrameView.h>
+#include <WebCore/HTMLFrameElement.h>
+#include <WebCore/HTMLFrameOwnerElement.h>
+#include <WebCore/HTMLNames.h>
+#include <WebCore/HistoryItem.h>
 #pragma warning(pop)
 
 using namespace WebCore;
+using namespace HTMLNames;
 
 WebFrameLoaderClient::WebFrameLoaderClient(WebFrame* webFrame)
     : m_webFrame(webFrame)
@@ -203,4 +211,96 @@ PassRefPtr<DocumentLoader> WebFrameLoaderClient::createDocumentLoader(const Reso
 
     loader->setDataSource(dataSource.get());
     return loader.release();
+}
+
+PassRefPtr<Frame> WebFrameLoaderClient::createFrame(const KURL& url, const String& name, HTMLFrameOwnerElement* ownerElement,
+                            const String& referrer, bool /*allowsScrolling*/, int /*marginWidth*/, int /*marginHeight*/)
+{
+    RefPtr<Frame> result = createFrame(url, name, ownerElement, referrer);
+    if (!result)
+        return 0;
+
+    // Propagate the marginwidth/height and scrolling modes to the view.
+    if (ownerElement->hasTagName(frameTag) || ownerElement->hasTagName(iframeTag)) {
+        HTMLFrameElement* frameElt = static_cast<HTMLFrameElement*>(ownerElement);
+        if (frameElt->scrollingMode() == ScrollbarAlwaysOff)
+            result->view()->setScrollbarsMode(ScrollbarAlwaysOff);
+        int marginWidth = frameElt->getMarginWidth();
+        int marginHeight = frameElt->getMarginHeight();
+        if (marginWidth != -1)
+            result->view()->setMarginWidth(marginWidth);
+        if (marginHeight != -1)
+            result->view()->setMarginHeight(marginHeight);
+    }
+
+    return result.release();
+}
+
+PassRefPtr<Frame> WebFrameLoaderClient::createFrame(const KURL& URL, const String& name, HTMLFrameOwnerElement* ownerElement, const String& referrer)
+{
+    Frame* coreFrame = core(m_webFrame);
+    ASSERT(coreFrame);
+
+    COMPtr<WebFrame> webFrame(AdoptCOM, WebFrame::createInstance());
+
+    webFrame->initWithWebFrameView(0, m_webFrame->webView(), coreFrame->page(), ownerElement);
+
+    RefPtr<Frame> childFrame(adoptRef(core(webFrame.get()))); // We have to adopt, because Frames start out with a refcount of 1.
+    ASSERT(childFrame);
+
+    coreFrame->tree()->appendChild(childFrame);
+    childFrame->tree()->setName(name);
+    childFrame->init();
+
+    loadURLIntoChild(URL, referrer, webFrame.get());
+
+    // The frame's onload handler may have removed it from the document.
+    if (!childFrame->tree()->parent())
+        return 0;
+
+    return childFrame.release();
+}
+
+void WebFrameLoaderClient::loadURLIntoChild(const KURL& originalURL, const String& referrer, WebFrame* childFrame)
+{
+    ASSERT(childFrame);
+    ASSERT(core(childFrame));
+
+    Frame* coreFrame = core(m_webFrame);
+    ASSERT(coreFrame);
+
+    HistoryItem* parentItem = coreFrame->loader()->currentHistoryItem();
+    FrameLoadType loadType = coreFrame->loader()->loadType();
+    FrameLoadType childLoadType = FrameLoadTypeRedirectWithLockedHistory;
+
+    KURL url = originalURL;
+
+    // If we're moving in the backforward list, we might want to replace the content
+    // of this child frame with whatever was there at that point.
+    // Reload will maintain the frame contents, LoadSame will not.
+    if (parentItem && parentItem->children().size() &&
+        (isBackForwardLoadType(loadType)
+         || loadType == FrameLoadTypeReload
+         || loadType == FrameLoadTypeReloadAllowingStaleData))
+    {
+        if (HistoryItem* childItem = parentItem->childItemWithName(core(childFrame)->tree()->name())) {
+            // Use the original URL to ensure we get all the side-effects, such as
+            // onLoad handlers, of any redirects that happened. An example of where
+            // this is needed is Radar 3213556.
+            url = childItem->originalURL();
+            // These behaviors implied by these loadTypes should apply to the child frames
+            childLoadType = loadType;
+
+            if (isBackForwardLoadType(loadType))
+                // For back/forward, remember this item so we can traverse any child items as child frames load
+                core(childFrame)->loader()->setProvisionalHistoryItem(childItem);
+            else
+                // For reload, just reinstall the current item, since a new child frame was created but we won't be creating a new BF item
+                core(childFrame)->loader()->setCurrentHistoryItem(childItem);
+        }
+    }
+
+    // FIXME: Handle loading WebArchives here
+
+    core(childFrame)->loader()->load(url, referrer, childLoadType, String(), 0, 0);
 }
