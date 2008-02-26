@@ -1,3 +1,12 @@
+2008-02-26  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Darin Adler.
+
+        * Scripts/build-webkit: Add --universal and --64-bit flags to make building
+        64-bit architectures easy. Combine the two flags to build 4-way universal.
+        * Makefile: Add "64" and "64u" make rules. Fix the universal rule to return
+        non-zero when the build failes.
+
 2008-02-26  Jessica Kahn  <jess@apple.com>
 
         Reviewed by Darin.

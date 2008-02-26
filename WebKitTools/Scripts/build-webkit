@@ -56,11 +56,16 @@ my $coverageSupport = 0;
 my $videoSupport = isOSX() || isCygwin(); # Enable by default on OSX and Windows
 my $showHelp = 0;
 my $clean = 0;
+my $buildUniversal = 0;
+my $buildSixtyFourBit = 0;
 
 my $programName = basename($0);
 my $usage = <<EOF;
 Usage: $programName [options] [options to pass to build system]
   --help                        Show this help message
+  --clean                       Perform a clean build
+  --universal                   Build 2-way universal (PPC and Intel 32-bit)
+  --64-bit                      Build 64-bit, combine with --universal to build 4-way universal
   --[no-]cross-document-messaging   Toggle cross-document messaging support (default: $crossDocumentMessagingSupport)
   --[no-]database               Toggle Database Support (default: $databaseSupport)
   --[no-]icon-database          Toggle Icon database support (default: $iconDatabaseSupport)
@@ -95,6 +100,8 @@ GetOptions('cross-document-messaging!' => \$crossDocumentMessagingSupport,
            'video!' => \$videoSupport,
            'coverage!' => \$coverageSupport,
            'help' => \$showHelp,
+           'universal' => \$buildUniversal,
+           '64-bit' => \$buildSixtyFourBit,
            'clean' => \$clean);
 
 if ($showHelp) {
@@ -181,6 +188,21 @@ my @options = ();
 if ($clean && isOSX()) {
     push(@options, "-alltargets");
     push(@options, "clean");
+}
+
+if ($buildSixtyFourBit && isOSX()) {
+    my $cpuVendor = `sysctl -n machdep.cpu.vendor`;
+    chomp $cpuVendor;
+
+    if ($buildUniversal) {
+        push(@options, "ARCHS=ppc ppc64 i386 x86_64");
+    } elsif ($cpuVendor eq "GenuineIntel") {
+        push(@options, "ARCHS=i386 x86_64");
+    } else {
+        push(@options, "ARCHS=ppc ppc64");
+    }
+} elsif ($buildUniversal && isOSX()) {
+    push(@options, "ARCHS=ppc i386");
 }
 
 # enable autotool options accordingly

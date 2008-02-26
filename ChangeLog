@@ -1,3 +1,15 @@
+2008-02-26  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Add "64" and "64u" make rules to allow easy building of 64-bit versions.
+
+        make 64: will build Intel-only 64-bit.
+        make 64u: will build 4-way universal for PPC and Intel.
+
+        * Makefile:
+        * Makefile.shared:
+
 2008-02-23  Jan Michael Alonzo  <jmalonzo@unpluggable.com>
 
         Rubber stamped by Darin.
