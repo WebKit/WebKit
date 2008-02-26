@@ -1,3 +1,10 @@
+2008-02-25  Adam Roben  <aroben@apple.com>
+
+        Fix run-webkit-tests after r30394
+
+        * Scripts/webkitdirs.pm: Never append _debug to FindSafari's
+        executable name.
+
 2008-02-24  Darin Adler  <darin@apple.com>
 
         * Scripts/do-webcore-rename: Make some updates based on a trial run of
