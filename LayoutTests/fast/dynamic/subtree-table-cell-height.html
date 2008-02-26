@@ -1,0 +1,15 @@
+<div style="display: table-cell; vertical-align: bottom; width: 100px; height: 100px; overflow: hidden; background-color: red;">
+    <div id="target" style="width: 100px; height: 50px; background-color: green;"></div>
+</div>
+<script>
+    if (window.layoutTestController)
+        layoutTestController.waitUntilDone();
+
+    setTimeout(function()
+        {
+            document.getElementById("target").style.height = "100px";
+            if (window.layoutTestController)
+                layoutTestController.notifyDone();
+        },
+     0);
+</script>

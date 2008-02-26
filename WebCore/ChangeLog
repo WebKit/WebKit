@@ -1,3 +1,17 @@
+2008-02-26  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=17555
+          <rdar://problem/5766016> REGRESSION (r27351): Thumbnails positioned wrong on Getty Images results page
+
+        Test: fast/dynamic/subtree-table-cell-height.html
+
+        * rendering/RenderObject.cpp:
+        (WebCore::objectIsRelayoutBoundary): Exclude table cells, since their
+        height depends on their contents even if the CSS height property is
+        fixed.
+
 2008-02-25  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Dan Bernstein.

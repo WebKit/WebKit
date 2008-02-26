@@ -710,9 +710,11 @@ void RenderObject::setChildNeedsLayout(bool b, bool markParents)
 
 static inline bool objectIsRelayoutBoundary(const RenderObject *obj) 
 {
-    // FIXME: In future it may be possible to broaden this condition in order to improve performance 
+    // FIXME: In future it may be possible to broaden this condition in order to improve performance.
+    // Table cells are excluded because even when their CSS height is fixed, their height()
+    // may depend on their contents.
     return obj->isTextField() || obj->isTextArea()
-        || obj->hasOverflowClip() && !obj->style()->width().isIntrinsicOrAuto() && !obj->style()->height().isIntrinsicOrAuto() && !obj->style()->height().isPercent()
+        || obj->hasOverflowClip() && !obj->style()->width().isIntrinsicOrAuto() && !obj->style()->height().isIntrinsicOrAuto() && !obj->style()->height().isPercent() && !obj->isTableCell()
 #if ENABLE(SVG)
            || obj->isSVGRoot()
 #endif
