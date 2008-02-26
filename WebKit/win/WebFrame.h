@@ -231,7 +231,6 @@ public:
     virtual void setMainFrameDocumentReady(bool);
     virtual void willChangeTitle(WebCore::DocumentLoader*);
     virtual void didChangeTitle(WebCore::DocumentLoader*);
-    virtual void finishedLoading(WebCore::DocumentLoader*);
     virtual void finalSetupForReplace(WebCore::DocumentLoader*);
     virtual void setDefersLoading(bool);
     virtual bool isArchiveLoadPending(WebCore::ResourceLoader*) const;
@@ -257,7 +256,6 @@ public:
     virtual bool shouldGoToHistoryItem(WebCore::HistoryItem *) const;
     virtual void saveViewStateToItem(WebCore::HistoryItem *);
     virtual bool canCachePage(void) const;
-    virtual void setMainDocumentError(WebCore::DocumentLoader*, const WebCore::ResourceError&);
     virtual WebCore::ResourceError cancelledError(const WebCore::ResourceRequest&);
     virtual WebCore::ResourceError blockedError(const WebCore::ResourceRequest&);
     virtual WebCore::ResourceError cannotShowURLError(const WebCore::ResourceRequest&);
@@ -265,7 +263,6 @@ public:
     virtual WebCore::ResourceError cannotShowMIMETypeError(const WebCore::ResourceResponse&);
     virtual WebCore::ResourceError fileDoesNotExistError(const WebCore::ResourceResponse&);
     virtual bool shouldFallBack(const WebCore::ResourceError&);
-    virtual void committedLoad(WebCore::DocumentLoader*, const char*, int);
     virtual void dispatchDecidePolicyForMIMEType(WebCore::FramePolicyFunction, const WebCore::String& MIMEType, const WebCore::ResourceRequest&);
     virtual void dispatchDecidePolicyForNewWindowAction(WebCore::FramePolicyFunction, const WebCore::NavigationAction&, const WebCore::ResourceRequest&, const WebCore::String& frameName);
     virtual void dispatchDecidePolicyForNavigationAction(WebCore::FramePolicyFunction, const WebCore::NavigationAction&, const WebCore::ResourceRequest&);
@@ -286,9 +283,6 @@ public:
     virtual void startDownload(const WebCore::ResourceRequest&);
     virtual void dispatchDidReceiveAuthenticationChallenge(WebCore::DocumentLoader*, unsigned long identifier, const WebCore::AuthenticationChallenge&);
     virtual void dispatchDidCancelAuthenticationChallenge(WebCore::DocumentLoader*, unsigned long identifier, const WebCore::AuthenticationChallenge&);
-
-    virtual WebCore::Widget* createPlugin(const WebCore::IntSize&, WebCore::Element*, const WebCore::KURL&, const Vector<WebCore::String>&, const Vector<WebCore::String>&, const WebCore::String&, bool loadManually);
-    virtual void redirectDataToPlugin(WebCore::Widget* pluginWidget);
         
     virtual WebCore::Widget* createJavaAppletWidget(const WebCore::IntSize&, WebCore::Element*, const WebCore::KURL& baseURL, const Vector<WebCore::String>& paramNames, const Vector<WebCore::String>& paramValues);
 
@@ -304,7 +298,6 @@ public:
     void initWithWebFrameView(IWebFrameView*, IWebView*, WebCore::Page*, WebCore::HTMLFrameOwnerElement*);
     WebCore::Frame* impl();
     void invalidate();
-    void receivedData(const char*, int, const WebCore::String&);
     void unmarkAllMisspellings();
     void unmarkAllBadGrammar();
 

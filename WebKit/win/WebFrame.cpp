@@ -224,8 +224,6 @@ public:
         : frame(0)
         , webView(0)
         , m_policyFunction(0)
-        , m_pluginView(0) 
-        , m_hasSentResponseToPlugin(false) 
     { 
     }
 
@@ -236,10 +234,6 @@ public:
     WebView* webView;
     FramePolicyFunction m_policyFunction;
     COMPtr<WebFramePolicyListener> m_policyListener;
-    
-    // Points to the plugin view that data should be redirected to.
-    PluginView* m_pluginView;
-    bool m_hasSentResponseToPlugin;
 };
 
 // WebFrame ----------------------------------------------------------------
@@ -1227,21 +1221,6 @@ void WebFrame::didChangeTitle(DocumentLoader*)
     notImplemented();
 }
 
-void WebFrame::finishedLoading(DocumentLoader* loader)
-{
-    // Telling the frame we received some data and passing 0 as the data is our
-    // way to get work done that is normally done when the first bit of data is
-    // received, even for the case of a document with no data (like about:blank)
-    if (!d->m_pluginView)
-        committedLoad(loader, 0, 0);
-    else {
-        if (d->m_pluginView->status() == PluginStatusLoadedSuccessfully)
-            d->m_pluginView->didFinishLoading();
-        d->m_pluginView = 0;
-        d->m_hasSentResponseToPlugin = false;
-    }
-}
-
 void WebFrame::finalSetupForReplace(DocumentLoader*)
 {
     notImplemented();
@@ -1433,16 +1412,6 @@ bool WebFrame::canCachePage() const
     return true;
 }
 
-void WebFrame::setMainDocumentError(DocumentLoader*, const ResourceError& error)
-{
-    if (d->m_pluginView) {
-        if (d->m_pluginView->status() == PluginStatusLoadedSuccessfully)
-            d->m_pluginView->didFail(error);
-        d->m_pluginView = 0;
-        d->m_hasSentResponseToPlugin = false;
-    }
-}
-
 ResourceError WebFrame::cancelledError(const ResourceRequest& request)
 {
     // FIXME: Need ChickenCat to include CFNetwork/CFURLError.h to get these values
@@ -1485,22 +1454,6 @@ bool WebFrame::shouldFallBack(const ResourceError& error)
     return error.errorCode() != WebURLErrorCancelled;
 }
 
-void WebFrame::receivedData(const char* data, int length, const String& textEncoding)
-{
-    Frame* coreFrame = core(this);
-    if (!coreFrame)
-        return;
-
-    // Set the encoding. This only needs to be done once, but it's harmless to do it again later.
-    String encoding = coreFrame->loader()->documentLoader()->overrideEncoding();
-    bool userChosen = !encoding.isNull();
-    if (encoding.isNull())
-        encoding = textEncoding;
-    coreFrame->loader()->setEncoding(encoding, userChosen);
-
-    coreFrame->loader()->addData(data, length);
-}
-
 COMPtr<WebFramePolicyListener> WebFrame::setUpPolicyListener(WebCore::FramePolicyFunction function)
 {
     // FIXME: <rdar://5634381> We need to support multiple active policy listeners.
@@ -1531,28 +1484,6 @@ void WebFrame::receivedPolicyDecision(PolicyAction action)
     ASSERT(coreFrame);
 
     (coreFrame->loader()->*function)(action);
-}
-
-void WebFrame::committedLoad(DocumentLoader* loader, const char* data, int length)
-{
-    // FIXME: This should probably go through the data source.
-    const String& textEncoding = loader->response().textEncodingName();
-
-    if (!d->m_pluginView)
-        receivedData(data, length, textEncoding);
-
-    if (d->m_pluginView && d->m_pluginView->status() == PluginStatusLoadedSuccessfully) {
-        if (!d->m_hasSentResponseToPlugin) {
-            d->m_pluginView->didReceiveResponse(d->frame->loader()->documentLoader()->response());
-            // didReceiveResponse sets up a new stream to the plug-in. on a full-page plug-in, a failure in
-            // setting up this stream can cause the main document load to be cancelled, setting m_pluginView
-            // to null
-            if (!d->m_pluginView)
-                return;
-            d->m_hasSentResponseToPlugin = true;
-        }
-        d->m_pluginView->didReceiveData(data, length);
-    }
 }
 
 void WebFrame::dispatchDecidePolicyForMIMEType(FramePolicyFunction function, const String& mimeType, const ResourceRequest& request)
@@ -1791,76 +1722,6 @@ void WebFrame::dispatchDidCancelAuthenticationChallenge(DocumentLoader* loader, 
         if (SUCCEEDED(resourceLoadDelegate->didCancelAuthenticationChallenge(d->webView, identifier, webChallenge.get(), getWebDataSource(loader))))
             return;
     }
-}
-
-Widget* WebFrame::createPlugin(const IntSize& pluginSize, Element* element, const KURL& url, const Vector<String>& paramNames, const Vector<String>& paramValues, const String& mimeType, bool loadManually)
-{
-    PluginView* pluginView = PluginView::create(core(this), pluginSize, element, url, paramNames, paramValues, mimeType, loadManually);
-
-    if (pluginView->status() == PluginStatusLoadedSuccessfully)
-        return pluginView;
-
-    COMPtr<IWebResourceLoadDelegate> resourceLoadDelegate;
-
-    if (FAILED(d->webView->resourceLoadDelegate(&resourceLoadDelegate)))
-        return pluginView;
-
-    RetainPtr<CFMutableDictionaryRef> userInfo(AdoptCF, CFDictionaryCreateMutable(0, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
-
-    unsigned count = (unsigned)paramNames.size();
-    for (unsigned i = 0; i < count; i++) {
-        if (paramNames[i] == "pluginspage") {
-            static CFStringRef key = MarshallingHelpers::LPCOLESTRToCFStringRef(WebKitErrorPlugInPageURLStringKey);
-            RetainPtr<CFStringRef> str(AdoptCF, paramValues[i].createCFString());
-            CFDictionarySetValue(userInfo.get(), key, str.get());
-            break;
-        }
-    }
-
-    if (!mimeType.isNull()) {
-        static CFStringRef key = MarshallingHelpers::LPCOLESTRToCFStringRef(WebKitErrorMIMETypeKey);
-
-        RetainPtr<CFStringRef> str(AdoptCF, mimeType.createCFString());
-        CFDictionarySetValue(userInfo.get(), key, str.get());
-    }
-
-    String pluginName;
-    if (pluginView->plugin())
-        pluginName = pluginView->plugin()->name();
-    if (!pluginName.isNull()) {
-        static CFStringRef key = MarshallingHelpers::LPCOLESTRToCFStringRef(WebKitErrorPlugInNameKey);
-        RetainPtr<CFStringRef> str(AdoptCF, pluginName.createCFString());
-        CFDictionarySetValue(userInfo.get(), key, str.get());
-    }
-
-    COMPtr<CFDictionaryPropertyBag> userInfoBag(AdoptCOM, CFDictionaryPropertyBag::createInstance());
-    userInfoBag->setDictionary(userInfo.get());
- 
-    int errorCode = 0;
-    switch (pluginView->status()) {
-        case PluginStatusCanNotFindPlugin:
-            errorCode = WebKitErrorCannotFindPlugIn;
-            break;
-        case PluginStatusCanNotLoadPlugin:
-            errorCode = WebKitErrorCannotLoadPlugIn;
-            break;
-        default:
-            ASSERT_NOT_REACHED();
-    }
-
-    ResourceError resourceError(String(WebKitErrorDomain), errorCode, url.string(), String());
-    COMPtr<IWebError> error(AdoptCOM, WebError::createInstance(resourceError, userInfoBag.get()));
-     
-    resourceLoadDelegate->plugInFailedWithError(d->webView, error.get(), getWebDataSource(d->frame->loader()->documentLoader()));
-
-    return pluginView;
-}
-
-void WebFrame::redirectDataToPlugin(Widget* pluginWidget)
-{
-    // Ideally, this function shouldn't be necessary, see <rdar://problem/4852889>
-
-    d->m_pluginView = static_cast<PluginView*>(pluginWidget);
 }
 
 Widget* WebFrame::createJavaAppletWidget(const IntSize& pluginSize, Element* element, const KURL& /*baseURL*/, const Vector<String>& paramNames, const Vector<String>& paramValues)

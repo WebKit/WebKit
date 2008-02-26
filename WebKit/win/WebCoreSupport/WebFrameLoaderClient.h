@@ -33,6 +33,10 @@
 #include <WebCore/FrameLoaderClient.h>
 #pragma warning(pop)
 
+namespace WebCore {
+    class PluginView;
+}
+
 class WebFrame;
 
 class WebFrameLoaderClient : public WebCore::FrameLoaderClient {
@@ -55,14 +59,21 @@ public:
     virtual void dispatchDidFirstLayout();
     virtual void dispatchShow();
 
+    virtual void setMainDocumentError(WebCore::DocumentLoader*, const WebCore::ResourceError&);
+
     virtual void postProgressStartedNotification();
     virtual void postProgressEstimateChangedNotification();
     virtual void postProgressFinishedNotification();
+
+    virtual void committedLoad(WebCore::DocumentLoader*, const char*, int);
+    virtual void finishedLoading(WebCore::DocumentLoader*);
 
     virtual PassRefPtr<WebCore::DocumentLoader> createDocumentLoader(const WebCore::ResourceRequest&, const WebCore::SubstituteData&);
 
     virtual PassRefPtr<WebCore::Frame> createFrame(const WebCore::KURL& url, const WebCore::String& name, WebCore::HTMLFrameOwnerElement* ownerElement,
                                const WebCore::String& referrer, bool allowsScrolling, int marginWidth, int marginHeight);
+    virtual WebCore::Widget* createPlugin(const WebCore::IntSize&, WebCore::Element*, const WebCore::KURL&, const Vector<WebCore::String>&, const Vector<WebCore::String>&, const WebCore::String&, bool loadManually);
+    virtual void redirectDataToPlugin(WebCore::Widget* pluginWidget);
 
 protected:
     WebFrameLoaderClient(WebFrame*);
@@ -71,8 +82,14 @@ protected:
 private:
     PassRefPtr<WebCore::Frame> createFrame(const WebCore::KURL&, const WebCore::String& name, WebCore::HTMLFrameOwnerElement*, const WebCore::String& referrer);
     void loadURLIntoChild(const WebCore::KURL&, const WebCore::String& referrer, WebFrame* childFrame);
+    void receivedData(const char*, int, const WebCore::String&);
 
     WebFrame* m_webFrame;
+
+    // Points to the plugin view that data should be redirected to.
+    WebCore::PluginView* m_pluginView;
+
+    bool m_hasSentResponseToPlugin;
 };
 
 #endif // WebFrameLoaderClient_h

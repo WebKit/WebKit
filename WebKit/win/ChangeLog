@@ -1,5 +1,24 @@
 2008-02-25  Adam Roben  <aroben@apple.com>
 
+        Move plugin-related methods to WebFrameLoaderClient
+
+        Reviewed by Anders.
+
+        * WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebFrameLoaderClient::WebFrameLoaderClient):
+        (WebFrameLoaderClient::setMainDocumentError):
+        (WebFrameLoaderClient::committedLoad): Added some early returns.
+        (WebFrameLoaderClient::receivedData):
+        (WebFrameLoaderClient::finishedLoading): Ditto.
+        (getWebDataSource):
+        (WebFrameLoaderClient::createPlugin):
+        * WebCoreSupport/WebFrameLoaderClient.h:
+        * WebFrame.cpp:
+        (WebFrame::WebFramePrivate::WebFramePrivate):
+        * WebFrame.h:
+
+2008-02-25  Adam Roben  <aroben@apple.com>
+
         Move createFrame to WebFrameLoaderClient
 
         Reviewed by Anders.

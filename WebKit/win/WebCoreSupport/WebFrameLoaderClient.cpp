@@ -29,8 +29,10 @@
 #include "config.h"
 #include "WebFrameLoaderClient.h"
 
+#include "CFDictionaryPropertyBag.h"
 #include "MarshallingHelpers.h"
 #include "WebDocumentLoader.h"
+#include "WebError.h"
 #include "WebFrame.h"
 #include "WebNotificationCenter.h"
 #include "WebView.h"
@@ -43,6 +45,8 @@
 #include <WebCore/HTMLFrameOwnerElement.h>
 #include <WebCore/HTMLNames.h>
 #include <WebCore/HistoryItem.h>
+#include <WebCore/PluginPackage.h>
+#include <WebCore/PluginView.h>
 #pragma warning(pop)
 
 using namespace WebCore;
@@ -50,6 +54,8 @@ using namespace HTMLNames;
 
 WebFrameLoaderClient::WebFrameLoaderClient(WebFrame* webFrame)
     : m_webFrame(webFrame)
+    , m_pluginView(0) 
+    , m_hasSentResponseToPlugin(false) 
 {
     ASSERT_ARG(webFrame, webFrame);
 }
@@ -182,6 +188,17 @@ void WebFrameLoaderClient::dispatchShow()
         ui->webViewShow(webView);
 }
 
+void WebFrameLoaderClient::setMainDocumentError(DocumentLoader*, const ResourceError& error)
+{
+    if (!m_pluginView)
+        return;
+
+    if (m_pluginView->status() == PluginStatusLoadedSuccessfully)
+        m_pluginView->didFail(error);
+    m_pluginView = 0;
+    m_hasSentResponseToPlugin = false;
+}
+
 void WebFrameLoaderClient::postProgressStartedNotification()
 {
     static BSTR progressStartedName = SysAllocString(WebViewProgressStartedNotification);
@@ -201,6 +218,61 @@ void WebFrameLoaderClient::postProgressFinishedNotification()
     static BSTR progressFinishedName = SysAllocString(WebViewProgressFinishedNotification);
     IWebNotificationCenter* notifyCenter = WebNotificationCenter::defaultCenterInternal();
     notifyCenter->postNotificationName(progressFinishedName, static_cast<IWebView*>(m_webFrame->webView()), 0);
+}
+
+void WebFrameLoaderClient::committedLoad(DocumentLoader* loader, const char* data, int length)
+{
+    // FIXME: This should probably go through the data source.
+    const String& textEncoding = loader->response().textEncodingName();
+
+    if (!m_pluginView)
+        receivedData(data, length, textEncoding);
+
+    if (!m_pluginView || m_pluginView->status() != PluginStatusLoadedSuccessfully)
+        return;
+
+    if (!m_hasSentResponseToPlugin) {
+        m_pluginView->didReceiveResponse(core(m_webFrame)->loader()->documentLoader()->response());
+        // didReceiveResponse sets up a new stream to the plug-in. on a full-page plug-in, a failure in
+        // setting up this stream can cause the main document load to be cancelled, setting m_pluginView
+        // to null
+        if (!m_pluginView)
+            return;
+        m_hasSentResponseToPlugin = true;
+    }
+    m_pluginView->didReceiveData(data, length);
+}
+
+void WebFrameLoaderClient::receivedData(const char* data, int length, const String& textEncoding)
+{
+    Frame* coreFrame = core(m_webFrame);
+    if (!coreFrame)
+        return;
+
+    // Set the encoding. This only needs to be done once, but it's harmless to do it again later.
+    String encoding = coreFrame->loader()->documentLoader()->overrideEncoding();
+    bool userChosen = !encoding.isNull();
+    if (encoding.isNull())
+        encoding = textEncoding;
+    coreFrame->loader()->setEncoding(encoding, userChosen);
+
+    coreFrame->loader()->addData(data, length);
+}
+
+void WebFrameLoaderClient::finishedLoading(DocumentLoader* loader)
+{
+    // Telling the frame we received some data and passing 0 as the data is our
+    // way to get work done that is normally done when the first bit of data is
+    // received, even for the case of a document with no data (like about:blank)
+    if (!m_pluginView) {
+        committedLoad(loader, 0, 0);
+        return;
+    }
+
+    if (m_pluginView->status() == PluginStatusLoadedSuccessfully)
+        m_pluginView->didFinishLoading();
+    m_pluginView = 0;
+    m_hasSentResponseToPlugin = false;
 }
 
 PassRefPtr<DocumentLoader> WebFrameLoaderClient::createDocumentLoader(const ResourceRequest& request, const SubstituteData& substituteData)
@@ -303,4 +375,81 @@ void WebFrameLoaderClient::loadURLIntoChild(const KURL& originalURL, const Strin
     // FIXME: Handle loading WebArchives here
 
     core(childFrame)->loader()->load(url, referrer, childLoadType, String(), 0, 0);
+}
+
+static WebDataSource* getWebDataSource(DocumentLoader* loader)
+{
+    return loader ? static_cast<WebDocumentLoader*>(loader)->dataSource() : 0;
+}
+
+Widget* WebFrameLoaderClient::createPlugin(const IntSize& pluginSize, Element* element, const KURL& url, const Vector<String>& paramNames, const Vector<String>& paramValues, const String& mimeType, bool loadManually)
+{
+    Frame* frame = core(m_webFrame);
+    PluginView* pluginView = PluginView::create(frame, pluginSize, element, url, paramNames, paramValues, mimeType, loadManually);
+
+    if (pluginView->status() == PluginStatusLoadedSuccessfully)
+        return pluginView;
+
+    COMPtr<IWebResourceLoadDelegate> resourceLoadDelegate;
+
+    WebView* webView = m_webFrame->webView();
+    if (FAILED(webView->resourceLoadDelegate(&resourceLoadDelegate)))
+        return pluginView;
+
+    RetainPtr<CFMutableDictionaryRef> userInfo(AdoptCF, CFDictionaryCreateMutable(0, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
+
+    unsigned count = (unsigned)paramNames.size();
+    for (unsigned i = 0; i < count; i++) {
+        if (paramNames[i] == "pluginspage") {
+            static CFStringRef key = MarshallingHelpers::LPCOLESTRToCFStringRef(WebKitErrorPlugInPageURLStringKey);
+            RetainPtr<CFStringRef> str(AdoptCF, paramValues[i].createCFString());
+            CFDictionarySetValue(userInfo.get(), key, str.get());
+            break;
+        }
+    }
+
+    if (!mimeType.isNull()) {
+        static CFStringRef key = MarshallingHelpers::LPCOLESTRToCFStringRef(WebKitErrorMIMETypeKey);
+
+        RetainPtr<CFStringRef> str(AdoptCF, mimeType.createCFString());
+        CFDictionarySetValue(userInfo.get(), key, str.get());
+    }
+
+    String pluginName;
+    if (pluginView->plugin())
+        pluginName = pluginView->plugin()->name();
+    if (!pluginName.isNull()) {
+        static CFStringRef key = MarshallingHelpers::LPCOLESTRToCFStringRef(WebKitErrorPlugInNameKey);
+        RetainPtr<CFStringRef> str(AdoptCF, pluginName.createCFString());
+        CFDictionarySetValue(userInfo.get(), key, str.get());
+    }
+
+    COMPtr<CFDictionaryPropertyBag> userInfoBag(AdoptCOM, CFDictionaryPropertyBag::createInstance());
+    userInfoBag->setDictionary(userInfo.get());
+ 
+    int errorCode = 0;
+    switch (pluginView->status()) {
+        case PluginStatusCanNotFindPlugin:
+            errorCode = WebKitErrorCannotFindPlugIn;
+            break;
+        case PluginStatusCanNotLoadPlugin:
+            errorCode = WebKitErrorCannotLoadPlugIn;
+            break;
+        default:
+            ASSERT_NOT_REACHED();
+    }
+
+    ResourceError resourceError(String(WebKitErrorDomain), errorCode, url.string(), String());
+    COMPtr<IWebError> error(AdoptCOM, WebError::createInstance(resourceError, userInfoBag.get()));
+     
+    resourceLoadDelegate->plugInFailedWithError(webView, error.get(), getWebDataSource(frame->loader()->documentLoader()));
+
+    return pluginView;
+}
+
+void WebFrameLoaderClient::redirectDataToPlugin(Widget* pluginWidget)
+{
+    // Ideally, this function shouldn't be necessary, see <rdar://problem/4852889>
+
+    m_pluginView = static_cast<PluginView*>(pluginWidget);
 }
