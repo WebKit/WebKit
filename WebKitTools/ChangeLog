@@ -1,3 +1,12 @@
+2008-02-26  Jessica Kahn  <jess@apple.com>
+
+        Reviewed by Darin.
+
+        * Scripts/gdb-safari: Set WEBKIT_UNSET_DYLD_FRAMEWORK_PATH in gdb's environment,
+        so that Safari inherits it when launched. Preexisting code in WebKit checks this
+        environment variable, and if set, unsets DYLD_FRAMEWORK_PATH, so that applications
+        launched by Safari continue to use the standard system WebKit.
+
 2008-02-25  Adam Roben  <aroben@apple.com>
 
         Fix run-webkit-tests after r30394
