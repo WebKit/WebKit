@@ -1,3 +1,12 @@
+2008-02-26  Satoshi Nakagawa  <artension@gmail.com>
+
+        Reviewed by Darin. Tweaked and landed by Alexey.
+
+        - test for http://bugs.webkit.org/show_bug.cgi?id=17411
+
+        * fast/text/line-breaks-after-ideographic-comma-or-full-stop.html: Added.
+        * fast/text/line-breaks-after-ideographic-comma-or-full-stop-expected.txt: Added
+
 2008-02-25  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Sam Weinig.

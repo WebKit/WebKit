@@ -1,3 +1,16 @@
+2008-02-26  Satoshi Nakagawa  <artension@gmail.com>
+
+        Reviewed by Darin. Tweaked and landed by Alexey.
+
+        http://bugs.webkit.org/show_bug.cgi?id=17411
+        Ideographic comma and full stop should be treated as line-breakable characters
+
+        Test: fast/text/line-breaks-after-ideographic-comma-or-full-stop.html
+
+        * platform/text/CharacterNames.h: Added ideographicComma and ideographicFullStop.
+        * rendering/break_lines.cpp: (WebCore::shouldBreakAfter): Added a workaround for an issue in
+        Unicode 5.0 that is causing this.
+
 2008-02-26  MorganL  <morganl.webkit@yahoo.com>
 
         Reviewed by eseidel.  Landed by eseidel

@@ -47,10 +47,16 @@ static inline bool isBreakableSpace(UChar ch, bool treatNoBreakSpaceAsBreak)
 static inline bool shouldBreakAfter(UChar ch)
 {
     // Match WinIE's breaking strategy, which is to always allow breaks after hyphens and question marks.
+    // FIXME: it appears that IE behavior is more complex, see <http://bugs.webkit.org/show_bug.cgi?id=17475>.
     switch (ch) {
         case '-':
         case '?':
         case softHyphen:
+        // FIXME: cases for ideographicComma and ideographicFullStop are a workaround for an issue in Unicode 5.0
+        // which is likely to be resolved in Unicode 5.1 <http://bugs.webkit.org/show_bug.cgi?id=17411>.
+        // We may want to remove or conditionalize this workaround at some point.
+        case ideographicComma:
+        case ideographicFullStop:
             return true;
         default:
             return false;
