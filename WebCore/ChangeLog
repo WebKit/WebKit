@@ -1,3 +1,17 @@
+2008-02-25  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=17152
+          Paragraphs indented with :first-letter and text-align CSS render incorrectly
+
+        Test: fast/text/apply-start-width-after-skipped-text.html
+
+        * rendering/bidi.cpp:
+        (WebCore::RenderBlock::findNextLineBreak): Improved the logic for when
+        to figure in the padding, border and margin before a text node when the
+        line begins inside a text node.
+
 2008-02-25  Kevin Ollivier  <kevino@theolliviers.com>
 
         Windows build fix for wx port.
