@@ -3,7 +3,7 @@
         Reviewed by Darin Adler.
 
         Eliminate some #ifdefs from headers in platform/network.
-        http://bugs.webkit.org/show_bug.cgi?id=11786
+        http://bugs.webkit.org/show_bug.cgi?id=17210
 
         * WebCore.base.exp:
         * WebCore.order:
