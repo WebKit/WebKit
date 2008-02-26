@@ -282,7 +282,7 @@ inline int reverseFind(const UChar* characters, size_t length, UChar character, 
     if (startPosition >= static_cast<int>(length) || !length)
         return -1;
     if (startPosition < 0)
-        startPosition += length;
+        startPosition += static_cast<int>(length);
     while (true) {
         if (characters[startPosition] == character)
             return startPosition;
