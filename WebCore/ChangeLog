@@ -2,6 +2,18 @@
 
         Reviewed by Simon.
 
+        Small style cleanup, and obvious fix: SVGGElement reacted on
+        'clipPathUnits' changes, which is a funny copy&paste error.
+
+        * svg/SVGGElement.cpp:
+        (WebCore::SVGGElement::parseMappedAttribute):
+        (WebCore::SVGGElement::svgAttributeChanged):
+        (WebCore::SVGGElement::createRenderer):
+
+2008-02-27  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Simon.
+
         Cleanup coding style. Still on my way to fix dynamic updates of all SVG elements.
         Currently at SVGF*. SVGDefs/DescElement don't need any dyn update fixes but cleanups.
 

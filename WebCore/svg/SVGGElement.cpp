@@ -49,6 +49,7 @@ void SVGGElement::parseMappedAttribute(MappedAttribute* attr)
         return;
     if (SVGExternalResourcesRequired::parseMappedAttribute(attr))
         return;
+
     SVGStyledTransformableElement::parseMappedAttribute(attr);
 }
 
@@ -59,8 +60,7 @@ void SVGGElement::svgAttributeChanged(const QualifiedName& attrName)
     if (!renderer())
         return;
 
-    if (attrName == SVGNames::clipPathUnitsAttr ||
-        SVGTests::isKnownAttribute(attrName) || 
+    if (SVGTests::isKnownAttribute(attrName) || 
         SVGLangSpace::isKnownAttribute(attrName) ||
         SVGExternalResourcesRequired::isKnownAttribute(attrName) ||
         SVGStyledTransformableElement::isKnownAttribute(attrName))
@@ -75,7 +75,7 @@ void SVGGElement::childrenChanged(bool changedByParser)
         renderer()->setNeedsLayout(true);
 }
 
-RenderObject* SVGGElement::createRenderer(RenderArena* arena, RenderStyle* style)
+RenderObject* SVGGElement::createRenderer(RenderArena* arena, RenderStyle*)
 {
     return new (arena) RenderSVGTransformableContainer(this);
 }
