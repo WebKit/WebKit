@@ -1,3 +1,13 @@
+2008-02-27  Sriram Neelakandan  <sriram.neelakandan@gmail.com>
+
+        Reviewed, tweaked and landed by ap.
+
+        http://bugs.webkit.org/show_bug.cgi?id=17487
+        HTMLInput mysteriously fails to work if ICU dat file is missing
+
+        * platform/text/TextBreakIteratorICU.cpp: (WebCore::setUpIterator): Assert that the iterator
+        has been opened.
+
 2008-02-27  Adam Roben  <aroben@apple.com>
 
         Windows build fix after r30616

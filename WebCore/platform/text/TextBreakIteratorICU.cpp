@@ -25,6 +25,7 @@
 #include "TextBreakIteratorInternalICU.h"
 
 #include <unicode/ubrk.h>
+#include <wtf/Assertions.h>
 
 namespace WebCore {
 
@@ -38,6 +39,7 @@ static TextBreakIterator* setUpIterator(bool& createdIterator, TextBreakIterator
         UErrorCode openStatus = U_ZERO_ERROR;
         iterator = static_cast<TextBreakIterator*>(ubrk_open(type, currentTextBreakLocaleID(), 0, 0, &openStatus));
         createdIterator = true;
+        ASSERT_WITH_MESSAGE(U_SUCCESS(openStatus), "ICU could not open a break iterator: %s (%d)", u_errorName(openStatus), openStatus);
     }
     if (!iterator)
         return 0;
