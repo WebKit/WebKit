@@ -35,6 +35,7 @@
 #include "WebDocumentLoader.h"
 #include "WebError.h"
 #include "WebFrame.h"
+#include "WebHistory.h"
 #include "WebNotificationCenter.h"
 #include "WebView.h"
 #pragma warning(push, 0)
@@ -283,6 +284,19 @@ void WebFrameLoaderClient::finishedLoading(DocumentLoader* loader)
     m_hasSentResponseToPlugin = false;
 }
 
+void WebFrameLoaderClient::updateGlobalHistory(const KURL& url)
+{
+    COMPtr<WebHistory> history = webHistory();
+    if (!history)
+        return;
+    history->addItemForURL(BString(url.string()), 0);                 
+}
+
+bool WebFrameLoaderClient::shouldGoToHistoryItem(HistoryItem*) const
+{
+    return true;
+}
+
 PassRefPtr<DocumentLoader> WebFrameLoaderClient::createDocumentLoader(const ResourceRequest& request, const SubstituteData& substituteData)
 {
     RefPtr<WebDocumentLoader> loader = new WebDocumentLoader(request, substituteData);
@@ -291,6 +305,31 @@ PassRefPtr<DocumentLoader> WebFrameLoaderClient::createDocumentLoader(const Reso
 
     loader->setDataSource(dataSource.get());
     return loader.release();
+}
+
+void WebFrameLoaderClient::setTitle(const String& title, const KURL& url)
+{
+    BOOL privateBrowsingEnabled = FALSE;
+    COMPtr<IWebPreferences> preferences;
+    if (SUCCEEDED(m_webFrame->webView()->preferences(&preferences)))
+        preferences->privateBrowsingEnabled(&privateBrowsingEnabled);
+    if (privateBrowsingEnabled)
+        return;
+
+    // update title in global history
+    COMPtr<WebHistory> history = webHistory();
+    if (!history)
+        return;
+
+    COMPtr<IWebHistoryItem> item;
+    if (FAILED(history->itemForURL(BString(url.string()), &item)))
+        return;
+
+    COMPtr<IWebHistoryItemPrivate> itemPrivate(Query, item);
+    if (!itemPrivate)
+        return;
+
+    itemPrivate->setTitle(BString(title));
 }
 
 void WebFrameLoaderClient::savePlatformDataToCachedPage(CachedPage* cachedPage)
@@ -514,4 +553,16 @@ void WebFrameLoaderClient::redirectDataToPlugin(Widget* pluginWidget)
     // Ideally, this function shouldn't be necessary, see <rdar://problem/4852889>
 
     m_pluginView = static_cast<PluginView*>(pluginWidget);
+}
+
+COMPtr<WebHistory> WebFrameLoaderClient::webHistory() const
+{
+    if (m_webFrame != m_webFrame->webView()->topLevelFrame())
+        return 0;
+
+    IWebHistoryPrivate* historyInternal = WebHistory::optionalSharedHistoryInternal(); // does not add a ref
+    if (!historyInternal)
+        return 0;
+
+    return COMPtr<WebHistory>(Query, historyInternal);
 }

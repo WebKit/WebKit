@@ -1,5 +1,22 @@
 2008-02-26  Adam Roben  <aroben@apple.com>
 
+        Move WebHistory-related methods to WebFrameLoaderClient
+
+        Reviewed by Anders.
+
+        * WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebFrameLoaderClient::updateGlobalHistory):
+        (WebFrameLoaderClient::shouldGoToHistoryItem):
+        (WebFrameLoaderClient::setTitle): Changed some nested ifs into early
+        returns.
+        (WebFrameLoaderClient::webHistory): Changed to return a COMPtr to
+        make the reference management foolproof.
+        * WebCoreSupport/WebFrameLoaderClient.h:
+        * WebFrame.cpp:
+        * WebFrame.h:
+
+2008-02-26  Adam Roben  <aroben@apple.com>
+
         Move cache-related methods to WebFrameLoaderClient
 
         Reviewed by Anders.

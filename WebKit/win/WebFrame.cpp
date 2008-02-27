@@ -1101,22 +1101,6 @@ void WebFrame::frameLoaderDestroyed()
     this->Release();
 }
 
-WebHistory* WebFrame::webHistory()
-{
-    if (this != d->webView->topLevelFrame())
-        return 0;
-
-    IWebHistoryPrivate* historyInternal = WebHistory::optionalSharedHistoryInternal(); // does not add a ref
-    if (!historyInternal)
-        return 0;
-
-    WebHistory* webHistory;
-    if (FAILED(historyInternal->QueryInterface(&webHistory)))
-        return 0;
-
-    return webHistory;
-}
-
 void WebFrame::makeRepresentation(DocumentLoader*)
 {
     notImplemented();
@@ -1306,27 +1290,6 @@ void WebFrame::prepareForDataSourceReplacement()
     notImplemented();
 }
 
-void WebFrame::setTitle(const String& title, const KURL& url)
-{
-    BOOL privateBrowsingEnabled = FALSE;
-    COMPtr<IWebPreferences> preferences;
-    if (SUCCEEDED(d->webView->preferences(&preferences)))
-        preferences->privateBrowsingEnabled(&privateBrowsingEnabled);
-    if (!privateBrowsingEnabled) {
-        // update title in global history
-        COMPtr<WebHistory> history;
-        history.adoptRef(webHistory());
-        if (history) {
-            COMPtr<IWebHistoryItem> item;
-            if (SUCCEEDED(history->itemForURL(BString(url.string()), &item))) {
-                COMPtr<IWebHistoryItemPrivate> itemPrivate;
-                if (SUCCEEDED(item->QueryInterface(IID_IWebHistoryItemPrivate, (void**)&itemPrivate)))
-                    itemPrivate->setTitle(BString(title));
-            }
-        }
-    }
-}
-
 String WebFrame::userAgent(const KURL& url)
 {
     return d->webView->userAgentForKURL(url);
@@ -1334,20 +1297,6 @@ String WebFrame::userAgent(const KURL& url)
 
 void WebFrame::transitionToCommittedFromCachedPage(CachedPage*)
 {
-}
-
-void WebFrame::updateGlobalHistory(const KURL& url)
-{
-    COMPtr<WebHistory> history;
-    history.adoptRef(webHistory());
-    if (!history)
-        return;
-    history->addItemForURL(BString(url.string()), 0);                 
-}
-
-bool WebFrame::shouldGoToHistoryItem(HistoryItem*) const
-{
-    return true;
 }
 
 void WebFrame::saveViewStateToItem(HistoryItem*)
