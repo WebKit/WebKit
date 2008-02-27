@@ -1,3 +1,9 @@
+2008-02-27  Adam Roben  <aroben@apple.com>
+
+        Attempt to fix the GTK+ build
+
+        * webkit/webkitwebframe.cpp:
+
 2008-02-24  Darin Adler  <darin@apple.com>
 
         Reviewed by Sam.
