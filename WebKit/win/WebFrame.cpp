@@ -34,7 +34,6 @@
 #include "FormValuesPropertyBag.h"
 #include "MarshallingHelpers.h"
 #include "WebActionPropertyBag.h"
-#include "WebCachedPagePlatformData.h"
 #include "WebChromeClient.h"
 #include "WebDocumentLoader.h"
 #include "WebDownload.h"
@@ -1333,60 +1332,8 @@ String WebFrame::userAgent(const KURL& url)
     return d->webView->userAgentForKURL(url);
 }
 
-void WebFrame::savePlatformDataToCachedPage(CachedPage* cachedPage)
-{
-    Frame* coreFrame = core(this);
-    if (!coreFrame)
-        return;
-
-    ASSERT(coreFrame->loader()->documentLoader() == cachedPage->documentLoader());
-
-    WebCachedPagePlatformData* webPlatformData = new WebCachedPagePlatformData(static_cast<IWebDataSource*>(getWebDataSource(coreFrame->loader()->documentLoader())));
-    cachedPage->setCachedPagePlatformData(webPlatformData);
-}
-
 void WebFrame::transitionToCommittedFromCachedPage(CachedPage*)
 {
-}
-
-void WebFrame::transitionToCommittedForNewPage()
-{
-    Frame* frame = core(this);
-    ASSERT(frame);
-
-    Page* page = frame->page();
-    ASSERT(page);
-
-    bool isMainFrame = frame == page->mainFrame();
-
-    if (isMainFrame && frame->view())
-        frame->view()->detachFromWindow();
-
-    frame->setView(0);
-
-    FrameView* frameView;
-    if (isMainFrame) {
-        RECT rect;
-        d->webView->frameRect(&rect);
-        frameView = new FrameView(frame, IntRect(rect).size());
-    } else
-        frameView = new FrameView(frame);
-
-    frame->setView(frameView);
-    frameView->deref(); // FrameViews are created with a ref count of 1. Release this ref since we've assigned it to frame.
-
-    HWND viewWindow;
-    if (SUCCEEDED(d->webView->viewWindow(reinterpret_cast<OLE_HANDLE*>(&viewWindow))))
-        frameView->setContainingWindow(viewWindow);
-
-    if (isMainFrame)
-        frameView->attachToWindow();
-
-    if (frame->ownerRenderer())
-        frame->ownerRenderer()->setWidget(frameView);
-
-    if (HTMLFrameOwnerElement* owner = frame->ownerElement())
-        frame->view()->setScrollbarsMode(owner->scrollingMode());
 }
 
 void WebFrame::updateGlobalHistory(const KURL& url)
@@ -1405,11 +1352,6 @@ bool WebFrame::shouldGoToHistoryItem(HistoryItem*) const
 
 void WebFrame::saveViewStateToItem(HistoryItem*)
 {
-}
-
-bool WebFrame::canCachePage() const
-{
-    return true;
 }
 
 ResourceError WebFrame::cancelledError(const ResourceRequest& request)

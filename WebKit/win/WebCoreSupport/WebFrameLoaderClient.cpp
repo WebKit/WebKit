@@ -31,6 +31,7 @@
 
 #include "CFDictionaryPropertyBag.h"
 #include "MarshallingHelpers.h"
+#include "WebCachedPagePlatformData.h"
 #include "WebDocumentLoader.h"
 #include "WebError.h"
 #include "WebFrame.h"
@@ -45,12 +46,19 @@
 #include <WebCore/HTMLFrameOwnerElement.h>
 #include <WebCore/HTMLNames.h>
 #include <WebCore/HistoryItem.h>
+#include <WebCore/Page.h>
 #include <WebCore/PluginPackage.h>
 #include <WebCore/PluginView.h>
+#include <WebCore/RenderPart.h>
 #pragma warning(pop)
 
 using namespace WebCore;
 using namespace HTMLNames;
+
+static WebDataSource* getWebDataSource(DocumentLoader* loader)
+{
+    return loader ? static_cast<WebDocumentLoader*>(loader)->dataSource() : 0;
+}
 
 WebFrameLoaderClient::WebFrameLoaderClient(WebFrame* webFrame)
     : m_webFrame(webFrame)
@@ -285,6 +293,65 @@ PassRefPtr<DocumentLoader> WebFrameLoaderClient::createDocumentLoader(const Reso
     return loader.release();
 }
 
+void WebFrameLoaderClient::savePlatformDataToCachedPage(CachedPage* cachedPage)
+{
+    Frame* coreFrame = core(m_webFrame);
+    if (!coreFrame)
+        return;
+
+    ASSERT(coreFrame->loader()->documentLoader() == cachedPage->documentLoader());
+
+    WebCachedPagePlatformData* webPlatformData = new WebCachedPagePlatformData(static_cast<IWebDataSource*>(getWebDataSource(coreFrame->loader()->documentLoader())));
+    cachedPage->setCachedPagePlatformData(webPlatformData);
+}
+
+void WebFrameLoaderClient::transitionToCommittedForNewPage()
+{
+    Frame* frame = core(m_webFrame);
+    ASSERT(frame);
+
+    Page* page = frame->page();
+    ASSERT(page);
+
+    bool isMainFrame = frame == page->mainFrame();
+
+    if (isMainFrame && frame->view())
+        frame->view()->detachFromWindow();
+
+    frame->setView(0);
+
+    WebView* webView = m_webFrame->webView();
+
+    FrameView* frameView;
+    if (isMainFrame) {
+        RECT rect;
+        webView->frameRect(&rect);
+        frameView = new FrameView(frame, IntRect(rect).size());
+    } else
+        frameView = new FrameView(frame);
+
+    frame->setView(frameView);
+    frameView->deref(); // FrameViews are created with a ref count of 1. Release this ref since we've assigned it to frame.
+
+    HWND viewWindow;
+    if (SUCCEEDED(webView->viewWindow(reinterpret_cast<OLE_HANDLE*>(&viewWindow))))
+        frameView->setContainingWindow(viewWindow);
+
+    if (isMainFrame)
+        frameView->attachToWindow();
+
+    if (frame->ownerRenderer())
+        frame->ownerRenderer()->setWidget(frameView);
+
+    if (HTMLFrameOwnerElement* owner = frame->ownerElement())
+        frame->view()->setScrollbarsMode(owner->scrollingMode());
+}
+
+bool WebFrameLoaderClient::canCachePage() const
+{
+    return true;
+}
+
 PassRefPtr<Frame> WebFrameLoaderClient::createFrame(const KURL& url, const String& name, HTMLFrameOwnerElement* ownerElement,
                             const String& referrer, bool /*allowsScrolling*/, int /*marginWidth*/, int /*marginHeight*/)
 {
@@ -375,11 +442,6 @@ void WebFrameLoaderClient::loadURLIntoChild(const KURL& originalURL, const Strin
     // FIXME: Handle loading WebArchives here
 
     core(childFrame)->loader()->load(url, referrer, childLoadType, String(), 0, 0);
-}
-
-static WebDataSource* getWebDataSource(DocumentLoader* loader)
-{
-    return loader ? static_cast<WebDocumentLoader*>(loader)->dataSource() : 0;
 }
 
 Widget* WebFrameLoaderClient::createPlugin(const IntSize& pluginSize, Element* element, const KURL& url, const Vector<String>& paramNames, const Vector<String>& paramValues, const String& mimeType, bool loadManually)

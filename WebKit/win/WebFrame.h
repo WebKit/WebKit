@@ -249,13 +249,10 @@ public:
     virtual void prepareForDataSourceReplacement();
     virtual void setTitle(const WebCore::String& title, const WebCore::KURL&);
     virtual WebCore::String userAgent(const WebCore::KURL&);
-    virtual void savePlatformDataToCachedPage(WebCore::CachedPage*);
     virtual void transitionToCommittedFromCachedPage(WebCore::CachedPage*);
-    virtual void transitionToCommittedForNewPage();
     virtual void updateGlobalHistory(const WebCore::KURL &);
     virtual bool shouldGoToHistoryItem(WebCore::HistoryItem *) const;
     virtual void saveViewStateToItem(WebCore::HistoryItem *);
-    virtual bool canCachePage(void) const;
     virtual WebCore::ResourceError cancelledError(const WebCore::ResourceRequest&);
     virtual WebCore::ResourceError blockedError(const WebCore::ResourceRequest&);
     virtual WebCore::ResourceError cannotShowURLError(const WebCore::ResourceRequest&);
