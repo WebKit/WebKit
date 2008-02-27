@@ -1,3 +1,23 @@
+2008-02-26  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Dave Hyatt.
+
+        - remove DeprecatedCString, DeprecatedArray, and ArrayImpl.
+
+        * GNUmakefile.am:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * WebCoreSources.bkl:
+        * platform/ArrayImpl.cpp: Removed.
+        * platform/ArrayImpl.h: Removed.
+        * platform/DeprecatedArray.h: Removed.
+        * platform/DeprecatedCString.cpp: Removed.
+        * platform/DeprecatedCString.h: Removed.
+        * platform/text/CString.cpp:
+        (WebCore::CString::length):
+        * platform/text/CString.h:
+
 2008-02-26  David Hyatt  <hyatt@apple.com>
 
         Cleanup of childrenChanged in preparation for fixing the HTML5 spec slowdown.

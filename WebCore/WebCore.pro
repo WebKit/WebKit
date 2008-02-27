@@ -730,13 +730,11 @@ SOURCES += \
     page/Settings.cpp \
     page/WindowFeatures.cpp \
     platform/Arena.cpp \
-    platform/ArrayImpl.cpp \
     platform/text/AtomicString.cpp \
     platform/text/Base64.cpp \
     platform/text/BidiContext.cpp \
     platform/ContextMenu.cpp \
     platform/text/CString.cpp \
-    platform/DeprecatedCString.cpp \
     platform/DeprecatedPtrListImpl.cpp \
     platform/DeprecatedValueListImpl.cpp \
     platform/DragData.cpp \

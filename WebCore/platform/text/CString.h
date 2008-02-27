@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003, 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2003, 2006, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,12 +30,8 @@
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
 
-using std::min;
-
 namespace WebCore {
 
-    class DeprecatedCString;
-    
     class CStringBuffer : public RefCounted<CStringBuffer> {
     public:
         static PassRefPtr<CStringBuffer> create(unsigned length) { return adoptRef(new CStringBuffer(length)); }
@@ -64,9 +60,6 @@ namespace WebCore {
 
         bool isNull() const { return !m_buffer; }
 
-        CString(const DeprecatedCString&);
-        DeprecatedCString deprecatedCString() const;
-
     private:
         void copyBufferIfNeeded();
         void init(const char*, unsigned length);
@@ -76,6 +69,6 @@ namespace WebCore {
     bool operator==(const CString& a, const CString& b);
     inline bool operator!=(const CString& a, const CString& b) { return !(a == b); }
 
-}
+} // namespace WebCore
 
 #endif // CString_h

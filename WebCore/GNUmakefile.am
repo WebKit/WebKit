@@ -793,13 +793,11 @@ webcore_sources += \
 	WebCore/page/Settings.cpp \
 	WebCore/page/WindowFeatures.cpp \
 	WebCore/platform/Arena.cpp \
-	WebCore/platform/ArrayImpl.cpp \
 	WebCore/platform/text/AtomicString.cpp \
 	WebCore/platform/text/Base64.cpp \
 	WebCore/platform/text/BidiContext.cpp \
 	WebCore/platform/ContextMenu.cpp \
 	WebCore/platform/text/CString.cpp \
-	WebCore/platform/DeprecatedCString.cpp \
 	WebCore/platform/DeprecatedPtrListImpl.cpp \
 	WebCore/platform/DeprecatedValueListImpl.cpp \
 	WebCore/platform/DragData.cpp \

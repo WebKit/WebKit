@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003, 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2003, 2006, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,7 +26,8 @@
 
 #include "config.h"
 #include "CString.h"
-#include "DeprecatedCString.h"
+
+using std::min;
 
 namespace WebCore {
 
@@ -38,11 +39,6 @@ CString::CString(const char* str)
 CString::CString(const char* str, unsigned length)
 {
     init(str, length);
-}
-
-CString::CString(const DeprecatedCString& str)
-{
-    init(str.data(), str.length());
 }
 
 void CString::init(const char* str, unsigned length)
@@ -71,11 +67,6 @@ char* CString::mutableData()
 unsigned CString::length() const
 {
     return m_buffer ? m_buffer->length() - 1 : 0;
-}
-
-DeprecatedCString CString::deprecatedCString() const
-{
-    return DeprecatedCString(data(), length() + 1);
 }
     
 CString CString::newUninitialized(size_t length, char*& characterBuffer)

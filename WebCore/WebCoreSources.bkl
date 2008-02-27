@@ -563,13 +563,11 @@ This file contains the list of files needed to build WebCore.
 
     <set append="1" var="WEBCORE_SOURCES_PLATFORM">
         platform/Arena.cpp
-        platform/ArrayImpl.cpp
         platform/text/AtomicString.cpp
         platform/text/Base64.cpp
         platform/text/BidiContext.cpp
         platform/text/CString.cpp
         platform/ContextMenu.cpp
-        platform/DeprecatedCString.cpp
         platform/DeprecatedPtrListImpl.cpp
         platform/DeprecatedValueListImpl.cpp
         platform/DragImage.cpp

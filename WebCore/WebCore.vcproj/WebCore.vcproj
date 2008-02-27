@@ -3107,14 +3107,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\platform\ArrayImpl.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\platform\ArrayImpl.h"
-				>
-			</File>
-			<File
 				RelativePath="..\platform\AutodrainedPool.h"
 				>
 			</File>
@@ -3136,18 +3128,6 @@
 			</File>
 			<File
 				RelativePath="..\platform\Cursor.h"
-				>
-			</File>
-			<File
-				RelativePath="..\platform\DeprecatedArray.h"
-				>
-			</File>
-			<File
-				RelativePath="..\platform\DeprecatedCString.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\platform\DeprecatedCString.h"
 				>
 			</File>
 			<File
