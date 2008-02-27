@@ -1,5 +1,27 @@
 2008-02-26  Adam Roben  <aroben@apple.com>
 
+        Move ResourceLoadDelegate methods to WebFrameLoaderClient
+
+        Changed all methods to use early returns where possible and COMPtr's
+        AdoptCOM/Query constructors.
+
+        Reviewed by Anders.
+
+        * WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebFrameLoaderClient::assignIdentifierToInitialRequest):
+        (WebFrameLoaderClient::dispatchDidReceiveAuthenticationChallenge):
+        (WebFrameLoaderClient::dispatchDidCancelAuthenticationChallenge):
+        (WebFrameLoaderClient::dispatchWillSendRequest):
+        (WebFrameLoaderClient::dispatchDidReceiveResponse):
+        (WebFrameLoaderClient::dispatchDidReceiveContentLength):
+        (WebFrameLoaderClient::dispatchDidFinishLoading):
+        (WebFrameLoaderClient::dispatchDidFailLoading):
+        * WebCoreSupport/WebFrameLoaderClient.h:
+        * WebFrame.cpp:
+        * WebFrame.h:
+
+2008-02-26  Adam Roben  <aroben@apple.com>
+
         Move two more methods to WebFrameLoaderClient
 
         Reviewed by Anders.

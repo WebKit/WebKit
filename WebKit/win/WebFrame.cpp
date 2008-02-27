@@ -50,10 +50,8 @@
 #include "WebHistoryItem.h"
 #include "WebScriptDebugger.h"
 #include "WebScriptDebugServer.h"
-#include "WebURLAuthenticationChallenge.h"
 #include "WebURLResponse.h"
 #pragma warning( push, 0 )
-#include <WebCore/AuthenticationChallenge.h>
 #include <WebCore/BString.h>
 #include <WebCore/Cache.h>
 #include <WebCore/Document.h>
@@ -1441,76 +1439,6 @@ bool WebFrame::willUseArchive(ResourceLoader*, const ResourceRequest&, const KUR
     return false;
 }
 
-void WebFrame::assignIdentifierToInitialRequest(unsigned long identifier, DocumentLoader* loader, const ResourceRequest& request)
-{
-    COMPtr<IWebResourceLoadDelegate> resourceLoadDelegate;
-    if (SUCCEEDED(d->webView->resourceLoadDelegate(&resourceLoadDelegate))) {
-        COMPtr<IWebURLRequest> webURLRequest;
-        webURLRequest.adoptRef(WebMutableURLRequest::createInstance(request));
-
-        resourceLoadDelegate->identifierForInitialRequest(d->webView, webURLRequest.get(), getWebDataSource(loader), identifier);
-    }
-}
-
-void WebFrame::dispatchWillSendRequest(DocumentLoader* loader, unsigned long identifier, ResourceRequest& request, const ResourceResponse& redirectResponse)
-{
-    COMPtr<IWebResourceLoadDelegate> resourceLoadDelegate;
-    if (SUCCEEDED(d->webView->resourceLoadDelegate(&resourceLoadDelegate))) {
-        COMPtr<IWebURLRequest> webURLRequest;
-        webURLRequest.adoptRef(WebMutableURLRequest::createInstance(request));
-        COMPtr<IWebURLResponse> webURLRedirectResponse;
-        webURLRedirectResponse.adoptRef(WebURLResponse::createInstance(redirectResponse));
-        COMPtr<IWebURLRequest> newWebURLRequest;
-
-        if (FAILED(resourceLoadDelegate->willSendRequest(d->webView, identifier, webURLRequest.get(), webURLRedirectResponse.get(), getWebDataSource(loader), &newWebURLRequest)))
-            return;
-
-        if (webURLRequest == newWebURLRequest)
-            return;
-
-        COMPtr<WebMutableURLRequest> newWebURLRequestImpl;
-        if (FAILED(newWebURLRequest->QueryInterface(&newWebURLRequestImpl)))
-            return;
-
-        request = newWebURLRequestImpl->resourceRequest();
-    }
-}
-
-void WebFrame::dispatchDidReceiveResponse(DocumentLoader* loader, unsigned long identifier, const ResourceResponse& response)
-{
-    COMPtr<IWebResourceLoadDelegate> resourceLoadDelegate;
-    if (SUCCEEDED(d->webView->resourceLoadDelegate(&resourceLoadDelegate))) {
-        COMPtr<IWebURLResponse> webURLResponse;
-        webURLResponse.adoptRef(WebURLResponse::createInstance(response));
-
-        resourceLoadDelegate->didReceiveResponse(d->webView, identifier, webURLResponse.get(), getWebDataSource(loader));
-    }
-}
-
-void WebFrame::dispatchDidReceiveContentLength(DocumentLoader* loader, unsigned long identifier, int length)
-{
-    COMPtr<IWebResourceLoadDelegate> resourceLoadDelegate;
-    if (SUCCEEDED(d->webView->resourceLoadDelegate(&resourceLoadDelegate)))
-        resourceLoadDelegate->didReceiveContentLength(d->webView, identifier, length, getWebDataSource(loader));
-}
-
-void WebFrame::dispatchDidFinishLoading(DocumentLoader* loader, unsigned long identifier)
-{
-    COMPtr<IWebResourceLoadDelegate> resourceLoadDelegate;
-    if (SUCCEEDED(d->webView->resourceLoadDelegate(&resourceLoadDelegate)))
-        resourceLoadDelegate->didFinishLoadingFromDataSource(d->webView, identifier, getWebDataSource(loader));
-}
-
-void WebFrame::dispatchDidFailLoading(DocumentLoader* loader, unsigned long identifier, const ResourceError& error)
-{
-    COMPtr<IWebResourceLoadDelegate> resourceLoadDelegate;
-    if (SUCCEEDED(d->webView->resourceLoadDelegate(&resourceLoadDelegate))) {
-        COMPtr<IWebError> webError;
-        webError.adoptRef(WebError::createInstance(error));
-        resourceLoadDelegate->didFailLoadingWithError(d->webView, identifier, webError.get(), getWebDataSource(loader));
-    }
-}
-
 bool WebFrame::dispatchDidLoadResourceFromMemoryCache(DocumentLoader*, const ResourceRequest&, const ResourceResponse&, int /*length*/)
 {
     notImplemented();
@@ -1540,34 +1468,6 @@ void WebFrame::dispatchDidFailLoad(const ResourceError& error)
 void WebFrame::startDownload(const ResourceRequest&)
 {
     notImplemented();
-}
-
-void WebFrame::dispatchDidReceiveAuthenticationChallenge(DocumentLoader* loader, unsigned long identifier, const AuthenticationChallenge& challenge)
-{
-    ASSERT(challenge.sourceHandle());
-
-    COMPtr<IWebResourceLoadDelegate> resourceLoadDelegate;
-    if (SUCCEEDED(d->webView->resourceLoadDelegate(&resourceLoadDelegate))) {
-        COMPtr<IWebURLAuthenticationChallenge> webChallenge(AdoptCOM, WebURLAuthenticationChallenge::createInstance(challenge));
-
-        if (SUCCEEDED(resourceLoadDelegate->didReceiveAuthenticationChallenge(d->webView, identifier, webChallenge.get(), getWebDataSource(loader))))
-            return;
-    }
-
-    // If the ResourceLoadDelegate doesn't exist or fails to handle the call, we tell the ResourceHandle
-    // to continue without credential - this is the best approximation of Mac behavior
-    challenge.sourceHandle()->receivedRequestToContinueWithoutCredential(challenge);
-}
-
-void WebFrame::dispatchDidCancelAuthenticationChallenge(DocumentLoader* loader, unsigned long identifier, const AuthenticationChallenge& challenge)
-{
-    COMPtr<IWebResourceLoadDelegate> resourceLoadDelegate;
-    if (SUCCEEDED(d->webView->resourceLoadDelegate(&resourceLoadDelegate))) {
-        COMPtr<IWebURLAuthenticationChallenge> webChallenge(AdoptCOM, WebURLAuthenticationChallenge::createInstance(challenge));
-
-        if (SUCCEEDED(resourceLoadDelegate->didCancelAuthenticationChallenge(d->webView, identifier, webChallenge.get(), getWebDataSource(loader))))
-            return;
-    }
 }
 
 Widget* WebFrame::createJavaAppletWidget(const IntSize& pluginSize, Element* element, const KURL& /*baseURL*/, const Vector<String>& paramNames, const Vector<String>& paramValues)
