@@ -2,6 +2,7 @@
 
         Reviewed by Alexey.
 
+        http://bugs.webkit.org/show_bug.cgi?id=17481
         Several consecutive calls to XMLHttpRequest::open should dispatch only one readyState event
 
         * http/tests/xmlhttprequest/xmlhttprequest-multiple-open-expected.txt: Added.
