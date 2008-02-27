@@ -1,5 +1,19 @@
 2008-02-26  Adam Roben  <aroben@apple.com>
 
+        Get rid of IID_WebFrame
+
+        Reviewed by Anders.
+
+        * WebFrame.cpp: Removed IID_WebFrame definition.
+        (WebFrame::QueryInterface): Use __uuidof(WebFrame) instead of
+        IID_WebFrame.
+        (WebFrame::isDescendantOfFrame): Use COMPtr's Query constructor
+        instead of a manual QueryInterface.
+        * WebFrame.h: Removed IID_WebFrame declaration, gave WebFrame a
+        DECLSPEC_UUID.
+
+2008-02-26  Adam Roben  <aroben@apple.com>
+
         Move WebHistory-related methods to WebFrameLoaderClient
 
         Reviewed by Anders.

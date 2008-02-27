@@ -124,12 +124,6 @@ const float PrintingMinimumShrinkFactor = 1.25f;
 // behavior matches MacIE and Mozilla, at least)
 const float PrintingMaximumShrinkFactor = 2.0f;
 
-
-// {A3676398-4485-4a9d-87DC-CB5A40E6351D}
-const GUID IID_WebFrame = 
-{ 0xa3676398, 0x4485, 0x4a9d, { 0x87, 0xdc, 0xcb, 0x5a, 0x40, 0xe6, 0x35, 0x1d } };
-
-
 //-----------------------------------------------------------------------------
 // Helpers to convert from WebCore to WebKit type
 WebFrame* kit(Frame* frame)
@@ -291,7 +285,7 @@ HRESULT STDMETHODCALLTYPE WebFrame::allowsScrolling(
 HRESULT STDMETHODCALLTYPE WebFrame::QueryInterface(REFIID riid, void** ppvObject)
 {
     *ppvObject = 0;
-    if (IsEqualGUID(riid, IID_WebFrame))
+    if (IsEqualGUID(riid, __uuidof(WebFrame)))
         *ppvObject = this;
     else if (IsEqualGUID(riid, IID_IUnknown))
         *ppvObject = static_cast<IWebFrame*>(this);
@@ -2076,8 +2070,8 @@ HRESULT STDMETHODCALLTYPE WebFrame::isDescendantOfFrame(
     *result = FALSE;
 
     Frame* coreFrame = core(this);
-    COMPtr<WebFrame> ancestorWebFrame;
-    if (!ancestor || FAILED(ancestor->QueryInterface(IID_WebFrame, (void**)&ancestorWebFrame)))
+    COMPtr<WebFrame> ancestorWebFrame(Query, ancestor);
+    if (!ancestorWebFrame)
         return S_OK;
 
     *result = (coreFrame && coreFrame->tree()->isDescendantOf(core(ancestorWebFrame.get()))) ? TRUE : FALSE;
