@@ -549,7 +549,6 @@ JSValue *DateObjectFuncImp::callAsFunction(ExecState* exec, JSObject*, const Lis
     }
 
     GregorianDateTime t;
-    memset(&t, 0, sizeof(t));
     int year = args[0]->toInt32(exec);
     t.year = (year >= 0 && year <= 99) ? year : year - 1900;
     t.month = args[1]->toInt32(exec);
@@ -916,7 +915,6 @@ static double parseDate(const UString &date)
     // fall back to local timezone
     if (!haveTZ) {
         GregorianDateTime t;
-        memset(&t, 0, sizeof(tm));
         t.monthDay = day;
         t.month = month;
         t.year = year - 1900;

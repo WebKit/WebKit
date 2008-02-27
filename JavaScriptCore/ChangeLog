@@ -1,3 +1,15 @@
+2008-02-27  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Sam Weinig.
+
+        http://bugs.webkit.org/show_bug.cgi?id=17030
+        Small buffer overflow within initialization
+
+        * kjs/date_object.cpp:
+        (KJS::DateObjectFuncImp::callAsFunction):
+        (KJS::parseDate):
+        Remove unnecessary and incorrect memset() calls - GregorianDateTime can initialize itself.
+
 2008-02-25  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Dan Bernstein.
