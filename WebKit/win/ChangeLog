@@ -1,5 +1,21 @@
 2008-02-26  Adam Roben  <aroben@apple.com>
 
+        Move two more methods to WebFrameLoaderClient
+
+        Reviewed by Anders.
+
+        * WebCoreSupport/WebFrameLoaderClient.cpp:
+        (kit):
+        (WebFrameLoaderClient::dispatchCreatePage): Changed nested ifs to
+        early returns, and changed to use the COMPtr Query constructor.
+        (WebFrameLoaderClient::dispatchDidLoadMainResource): Added an early
+        return, and changed to use getWebDataSource.
+        * WebCoreSupport/WebFrameLoaderClient.h:
+        * WebFrame.cpp:
+        * WebFrame.h:
+
+2008-02-26  Adam Roben  <aroben@apple.com>
+
         Get rid of IID_WebFrame
 
         Reviewed by Anders.

@@ -32,11 +32,13 @@
 #include "CFDictionaryPropertyBag.h"
 #include "MarshallingHelpers.h"
 #include "WebCachedPagePlatformData.h"
+#include "WebChromeClient.h"
 #include "WebDocumentLoader.h"
 #include "WebError.h"
 #include "WebFrame.h"
 #include "WebHistory.h"
 #include "WebNotificationCenter.h"
+#include "WebScriptDebugServer.h"
 #include "WebView.h"
 #pragma warning(push, 0)
 #include <WebCore/DocumentLoader.h>
@@ -55,6 +57,11 @@
 
 using namespace WebCore;
 using namespace HTMLNames;
+
+WebView* kit(Page* page)
+{
+    return page ? static_cast<WebChromeClient*>(page->chrome()->client())->webView() : 0;
+}
 
 static WebDataSource* getWebDataSource(DocumentLoader* loader)
 {
@@ -189,12 +196,44 @@ void WebFrameLoaderClient::dispatchDidFirstLayout()
         frameLoadDelegatePriv->didFirstLayoutInFrame(webView, m_webFrame);
 }
 
+Frame* WebFrameLoaderClient::dispatchCreatePage()
+{
+    WebView* webView = m_webFrame->webView();
+
+    COMPtr<IWebUIDelegate> ui;
+    if (FAILED(webView->uiDelegate(&ui)))
+        return 0;
+
+    COMPtr<IWebView> newWebView;
+    if (FAILED(ui->createWebViewWithRequest(webView, 0, &newWebView)))
+        return 0;
+
+    COMPtr<IWebFrame> mainFrame;
+    if (FAILED(newWebView->mainFrame(&mainFrame)))
+        return 0;
+
+    COMPtr<WebFrame> mainFrameImpl(Query, mainFrame);
+    return core(mainFrameImpl.get());
+}
+
 void WebFrameLoaderClient::dispatchShow()
 {
     WebView* webView = m_webFrame->webView();
     COMPtr<IWebUIDelegate> ui;
     if (SUCCEEDED(webView->uiDelegate(&ui)))
         ui->webViewShow(webView);
+}
+
+void WebFrameLoaderClient::dispatchDidLoadMainResource(DocumentLoader* loader)
+{
+    if (WebScriptDebugServer::listenerCount() <= 0)
+        return;
+
+    Frame* coreFrame = core(m_webFrame);
+    if (!coreFrame)
+        return;
+
+    WebScriptDebugServer::sharedWebScriptDebugServer()->didLoadMainResourceForDataSource(kit(coreFrame->page()), getWebDataSource(loader));
 }
 
 void WebFrameLoaderClient::setMainDocumentError(DocumentLoader*, const ResourceError& error)
