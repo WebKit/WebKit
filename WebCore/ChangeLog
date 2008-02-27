@@ -1,3 +1,15 @@
+2008-02-27  Julien Chaffraix <julien.chaffraix@gmail.com>
+
+        Reviewed by Alexey.
+
+        http://bugs.webkit.org/show_bug.cgi?id=17481
+        Several consecutive calls to XMLHttpRequest::open should dispatch only one readyState event
+
+        Test: http/tests/xmlhttprequest/xmlhttprequest-multiple-open.html
+
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::open):
+
 2008-02-27  Sriram Neelakandan  <sriram.neelakandan@gmail.com>
 
         Reviewed, tweaked and landed by ap.

@@ -1,3 +1,12 @@
+2008-02-27  Julien Chaffraix <julien.chaffraix@gmail.com>
+
+        Reviewed by Alexey.
+
+        Several consecutive calls to XMLHttpRequest::open should dispatch only one readyState event
+
+        * http/tests/xmlhttprequest/xmlhttprequest-multiple-open-expected.txt: Added.
+        * http/tests/xmlhttprequest/xmlhttprequest-multiple-open.html: Added.
+
 2008-02-26  Brady Eidson  <beidson@apple.com>
 
         Add a skipped storage test for now
