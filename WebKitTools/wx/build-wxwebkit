@@ -41,7 +41,13 @@ if [ -z $WEBKITOUTPUTDIR ]; then
     WEBKITOUTPUTDIR=`cd $WK_ROOT/WebKitTools/Scripts; perl -e "use webkitdirs; print productDir()"`
 fi
 
-WINDEPS="pthreads/lib/pthreadVC2.dll icu/bin/icuuc34.dll icu/bin/icudt34.dll libcurl/*.dll sqlite3/sqlite3.dll"
+WKWINLIBS=WebKitLibraries/win
+WINDEPS="         $WKWINLIBS/lib/pthreadVC2.dll"
+WINDEPS="$WINDEPS $WKWINLIBS/bin/icuuc34.dll $WKWINLIBS/bin/icudt34.dll $WKWINLIBS/bin/icuin34.dll"
+WINDEPS="$WINDEPS $WKWINLIBS/bin/libcurl.dll $WKWINLIBS/bin/libeay32.dll $WKWINLIBS/bin/ssleay32.dll $WKWINLIBS/bin/zlib1.dll"
+WINDEPS="$WINDEPS $WKWINLIBS/lib/sqlite3.dll"
+WINDEPS="$WINDEPS $WKWINLIBS/bin/libxml2.dll $WKWINLIBS/bin/libxslt.dll" 
+WINDEPS="$WINDEPS $WKWINLIBS/bin/iconv.dll" 
 
 # TODO: check that we are running from the root of the source tree...
 
@@ -56,6 +62,9 @@ if [ $OSTYPE == cygwin ]; then
     if [ -z $WXWIN ]; then
         echo "Error, you must set WXWIN to your wxWidgets root directory."
         exit 1
+    fi
+    if [ -z $WX_PREFIX ]; then
+        WX_PREFIX=$WXWIN
     fi
     if [ -z $BAKEFILE_PATHS ]; then
         export BAKEFILE_PATHS=$WXWIN/build/bakefiles/wxpresets
@@ -157,6 +166,21 @@ function do_make {
     fi
 }
 
+# output the first parameter that is a dir and exists
+function find_existing_dir {
+    for arg in $*; do
+        tester=$arg
+        if [ $OSTYPE == cygwin ]; then
+            tester=`cygpath -u $arg`
+        fi
+        if [ -d $tester ]; then
+            echo $arg
+            return
+        fi
+    done
+}
+
+
 olddir=$PWD
 
 if [ $do_clean == 1 ]; then
@@ -230,8 +254,9 @@ if [ $do_build == 1 -o $do_clean == 1 ]; then
         wxdebug=1
     fi
     
-    PLATFORM_OS="win"
-    if [ "${OSTYPE:0:6}" == "darwin" ]; then
+    if [ "${OSTYPE:0:6}" == "cygwin" ]; then
+        PLATFORM_OS="win"
+    elif [ "${OSTYPE:0:6}" == "darwin" ]; then
         PLATFORM_OS="mac"
     else
         PLATFORM_OS="linux"
@@ -276,12 +301,28 @@ if [ $do_build == 1 -o $do_clean == 1 ]; then
             if [ "${OSTYPE:0:6}" == "cygwin" ]; then
                 WEBKIT_INCLUDE="-I`cygpath -d $WK_ROOT/WebKit/wx`"
             fi
-            $SWIG $SWIG_FLAGS -I$WX_PREFIX/include/wx-2.8/wx/wxPython/i_files $WEBKIT_INCLUDE -o webview.cpp webview.i
-            #$SWIG -I$WX_PREFIX/include/wx-2.8/wx/wxPython/i_files $WEBKIT_INCLUDE -xml -o webview.xml webview.i
-                        
             
-            PY_INCLUDE=`python -c "import distutils.sysconfig; print distutils.sysconfig.get_python_inc()"`
-            PY_VERSION=`python -c "import sys;  print str(sys.version_info[0]) + str(sys.version_info[1])"`
+            # Determine which include path to use for wxPython's *.i files
+            # Options are:
+            #    wxPython installed on a posix system
+            #    the wxPython win32 devel tarball
+            #    a wx source tree from a tarball where wxPython is in the wx dir
+            #    a wx source tree from SVN where wxPython is a sibling of the wx dir
+            WXPY_INCLUDE=`find_existing_dir \
+                $WX_PREFIX/include/wx-2.8/wx/wxPython/i_files \
+                $WX_PREFIX/include/wx/wxPython/i_files \
+                $WX_PREFIX/wxPython/src \
+                $WX_PREFIX/../wxPython/src`
+            if [ -z $WXPY_INCLUDE ]; then
+                echo "ERROR: Unable to find wxPython's *.i files"
+                exit 1
+            fi
+            
+            # Run SWIG
+            $SWIG $SWIG_FLAGS -I$WXPY_INCLUDE $WEBKIT_INCLUDE -o webview.cpp webview.i
+                                   
+            PY_INCLUDE=`python -c "import sys,distutils.sysconfig; sys.stdout.write(distutils.sysconfig.get_python_inc())"`
+            PY_VERSION=`python -c "import sys;  sys.stdout.write(str(sys.version_info[0]) + str(sys.version_info[1]))"`
             PY_LIBDIR=`python -c "import distutils.sysconfig; import sys; sys.stdout.write(distutils.sysconfig.PREFIX)"`
             
             if [ "${OSTYPE:0:6}" == "cygwin" ]; then
@@ -290,8 +331,8 @@ if [ $do_build == 1 -o $do_clean == 1 ]; then
                 PY_LIBDIR="$PY_LIBDIR/lib"
             fi
             
-            do_make $WK_ROOT/WebKit/wx/bindings/python  "-DBUILDING_WX__=1 -DWXUSINGDLL=1 -DWXUSINGDLL_WEBKIT=1 -I$PY_INCLUDE $WXGC_DEFINE" \
-                    WX_DEBUG=$wxdebug WEBKIT_ROOT=$WK_ROOTDIR PLATFORM_OS=$PLATFORM_OS PYTHON_VERSION=$PY_VERSION PYTHON_LIBDIR=$PY_LIBDIR $other_args
+            do_make $WK_ROOT/WebKit/wx/bindings/python "-DBUILDING_WX__=1 -DWXUSINGDLL=1 -DWXUSINGDLL_WEBKIT=1 -I$PY_INCLUDE -I$WX_PREFIX/wxPython/include -I$WX_PREFIX/../wxPython/include $WXGC_DEFINE" \
+                WX_DEBUG=$wxdebug WEBKIT_ROOT=$WK_ROOTDIR PLATFORM_OS=$PLATFORM_OS PYTHON_VERSION=$PY_VERSION PYTHON_LIBDIR=$PY_LIBDIR $other_args
             if [ "${OSTYPE:0:6}" == "cygwin" ]; then
                 if [ -f $WEBKITOUTPUTDIR/_webview.pyd -a -f $WEBKITOUTPUTDIR/_webview.dll ]; then
                     rm $WEBKITOUTPUTDIR/_webview.pyd
@@ -304,7 +345,8 @@ if [ $do_build == 1 -o $do_clean == 1 ]; then
         if [ "$OSTYPE" == "cygwin" ]; then
             echo "Copying necessary DLLs to run test and sample applications..."
             cd $WK_ROOT
-            cp $WINDEPS $WEBKITOUTPUTDIR
+            cp $WINDEPS `cygpath -u $WEBKITOUTPUTDIR`
+            chmod +x `cygpath -u $WEBKITOUTPUTDIR/`*.dll
         fi
         
         BROWSERAPP="wxBrowser"

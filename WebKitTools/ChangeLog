@@ -1,3 +1,16 @@
+2008-02-26  Robin Dunn <robin@alldunn.com>
+
+        Reviewed by Kevin Ollivier.
+
+        Improvements to the wx build script.
+
+        http://bugs.webkit.org/show_bug.cgi?id=17492
+
+        * wx/build-wxwebkit:
+        - Update the Windows dll copying logic to copy dlls inside WebKitLibraries/win
+        - Allow the build script to properly find wxPython includes under different setups
+        - Make sure WX_PREFIX is set to WXWIN (wxWindows dir environment var.) if not defined
+
 2008-02-26  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Darin Adler.
