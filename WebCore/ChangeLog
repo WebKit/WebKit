@@ -1,6 +1,6 @@
 2008-02-27  Adam Roben  <aroben@apple.com>
 
-        Windows build fix after r30613
+        Windows build fix after r30616
 
         * platform/win/ClipboardWin.cpp:
 
