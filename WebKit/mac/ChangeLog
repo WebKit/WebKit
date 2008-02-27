@@ -1,3 +1,15 @@
+2008-02-27  Matt Lilek  <webkit@mattlilek.com>
+
+        Reviewed by Adam Roben.
+
+        Bug 14348: Messing up the inspector by dragging an URL into it
+        http://bugs.webkit.org/show_bug.cgi?id=14348
+        <rdar://problem/5283620> and <rdar://problem/5712808>
+
+        * WebCoreSupport/WebInspectorClient.mm:
+        (-[WebInspectorWindowController init]): Remove duplicate preference setting.
+        (-[WebInspectorWindowController webView:dragDestinationActionMaskForDraggingInfo:]):
+
 2008-02-25  Darin Adler  <darin@apple.com>
 
         Reviewed by Adam.

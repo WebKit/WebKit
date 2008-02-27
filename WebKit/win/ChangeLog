@@ -1,3 +1,72 @@
+2008-02-27  Matt Lilek  <webkit@mattlilek.com>
+
+        Reviewed by Adam Roben.
+
+        Bug 14348: Messing up the inspector by dragging an URL into it
+        http://bugs.webkit.org/show_bug.cgi?id=14348
+        <rdar://problem/5283620> and <rdar://problem/5712808>
+
+        Add a new class to handle the Inspector's delegate calls.
+
+        * WebCoreSupport/WebInspectorClient.cpp:
+        (WebInspectorClient::createPage):
+        * WebCoreSupport/WebInspectorDelegate.cpp: Added.
+        (:m_refCount):
+        (WebInspectorDelegate::createInstance):
+        (WebInspectorDelegate::AddRef):
+        (WebInspectorDelegate::Release):
+        (WebInspectorDelegate::dragDestinationActionMaskForDraggingInfo):
+        * WebCoreSupport/WebInspectorDelegate.h: Added.
+        (WebInspectorDelegate::QueryInterface):
+        (WebInspectorDelegate::createWebViewWithRequest):
+        (WebInspectorDelegate::webViewShow):
+        (WebInspectorDelegate::webViewClose):
+        (WebInspectorDelegate::webViewFocus):
+        (WebInspectorDelegate::webViewUnfocus):
+        (WebInspectorDelegate::webViewFirstResponder):
+        (WebInspectorDelegate::makeFirstResponder):
+        (WebInspectorDelegate::setStatusText):
+        (WebInspectorDelegate::webViewStatusText):
+        (WebInspectorDelegate::webViewAreToolbarsVisible):
+        (WebInspectorDelegate::setToolbarsVisible):
+        (WebInspectorDelegate::webViewIsStatusBarVisible):
+        (WebInspectorDelegate::setStatusBarVisible):
+        (WebInspectorDelegate::webViewIsResizable):
+        (WebInspectorDelegate::setResizable):
+        (WebInspectorDelegate::setFrame):
+        (WebInspectorDelegate::webViewFrame):
+        (WebInspectorDelegate::setContentRect):
+        (WebInspectorDelegate::webViewContentRect):
+        (WebInspectorDelegate::runJavaScriptAlertPanelWithMessage):
+        (WebInspectorDelegate::runJavaScriptConfirmPanelWithMessage):
+        (WebInspectorDelegate::runJavaScriptTextInputPanelWithPrompt):
+        (WebInspectorDelegate::runBeforeUnloadConfirmPanelWithMessage):
+        (WebInspectorDelegate::runOpenPanelForFileButtonWithResultListener):
+        (WebInspectorDelegate::mouseDidMoveOverElement):
+        (WebInspectorDelegate::contextMenuItemsForElement):
+        (WebInspectorDelegate::validateUserInterfaceItem):
+        (WebInspectorDelegate::shouldPerformAction):
+        (WebInspectorDelegate::willPerformDragDestinationAction):
+        (WebInspectorDelegate::dragSourceActionMaskForPoint):
+        (WebInspectorDelegate::willPerformDragSourceAction):
+        (WebInspectorDelegate::contextMenuItemSelected):
+        (WebInspectorDelegate::hasCustomMenuImplementation):
+        (WebInspectorDelegate::trackCustomPopupMenu):
+        (WebInspectorDelegate::measureCustomMenuItem):
+        (WebInspectorDelegate::drawCustomMenuItem):
+        (WebInspectorDelegate::addCustomMenuDrawingData):
+        (WebInspectorDelegate::cleanUpCustomMenuDrawingData):
+        (WebInspectorDelegate::canTakeFocus):
+        (WebInspectorDelegate::takeFocus):
+        (WebInspectorDelegate::registerUndoWithTarget):
+        (WebInspectorDelegate::removeAllActionsWithTarget):
+        (WebInspectorDelegate::setActionTitle):
+        (WebInspectorDelegate::undo):
+        (WebInspectorDelegate::redo):
+        (WebInspectorDelegate::canUndo):
+        (WebInspectorDelegate::canRedo):
+        * WebKit.vcproj/WebKit.vcproj:
+
 2008-02-26  Adam Roben  <aroben@apple.com>
 
         Move ResourceLoadDelegate methods to WebFrameLoaderClient

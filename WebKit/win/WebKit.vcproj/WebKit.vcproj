@@ -1657,6 +1657,14 @@
 				RelativePath="..\WebCoreSupport\WebInspectorClient.h"
 				>
 			</File>
+			<File
+				RelativePath="..\WebCoreSupport\WebInspectorDelegate.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\WebCoreSupport\WebInspectorDelegate.h"
+				>
+			</File>
 		</Filter>
 		<File
 			RelativePath="..\WebKitPrefix.cpp"

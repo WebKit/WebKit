@@ -45,6 +45,7 @@
 
 #import <WebKit/DOMCore.h>
 #import <WebKit/DOMExtensions.h>
+#import <WebKit/WebUIDelegate.h>
 
 #import <WebKitSystemInterface.h>
 
@@ -163,7 +164,6 @@ void WebInspectorClient::updateWindowTitle() const
     [preferences setAuthorAndUserStylesEnabled:YES];
     [preferences setJavaScriptEnabled:YES];
     [preferences setAllowsAnimatedImages:YES];
-    [preferences setLoadsImagesAutomatically:YES];
     [preferences setPlugInsEnabled:NO];
     [preferences setJavaEnabled:NO];
     [preferences setUserStyleSheetEnabled:NO];
@@ -175,6 +175,7 @@ void WebInspectorClient::updateWindowTitle() const
     [_webView setPreferences:preferences];
     [_webView setDrawsBackground:NO];
     [_webView setProhibitsMainFrameScrolling:YES];
+    [_webView setUIDelegate:self];
 
     [preferences release];
 
@@ -489,6 +490,7 @@ void WebInspectorClient::updateWindowTitle() const
 }
 
 #pragma mark -
+#pragma mark Animation delegate
 
 - (void)animationDidEnd:(NSAnimation*)animation
 {
@@ -502,6 +504,13 @@ void WebInspectorClient::updateWindowTitle() const
     }
 }
 
+#pragma mark -
+#pragma mark UI delegate
+
+- (unsigned)webView:(WebView *)sender dragDestinationActionMaskForDraggingInfo:(id <NSDraggingInfo>)draggingInfo
+{
+    return WebDragDestinationActionNone;
+}
 
 #pragma mark -
 

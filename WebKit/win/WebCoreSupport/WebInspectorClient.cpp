@@ -29,7 +29,7 @@
 #include "config.h"
 #include "WebInspectorClient.h"
 
-#include "WebInspectorClient.h"
+#include "WebInspectorDelegate.h"
 #include "WebKit.h"
 #include "WebMutableURLRequest.h"
 #include "WebNodeHighlight.h"
@@ -121,6 +121,10 @@ Page* WebInspectorClient::createPage()
     RECT rect;
     GetClientRect(m_hwnd, &rect);
     if (FAILED(m_webView->initWithFrame(rect, 0, 0)))
+        return 0;
+
+    COMPtr<WebInspectorDelegate> delegate(AdoptCOM, WebInspectorDelegate::createInstance());
+    if (FAILED(m_webView->setUIDelegate(delegate.get())))
         return 0;
 
     // Keep preferences separate from the rest of the client, making sure we are using expected preference values.
