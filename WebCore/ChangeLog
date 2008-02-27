@@ -1,3 +1,20 @@
+2008-02-26  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Adam Roben.
+
+        <rdar://problem/5712777> REGRESSION: Arrow up/down in inspector
+        source list does not scroll when item at edge is reached (16572)
+
+        Use scrollIntoViewIfNeeded() instead of the hand-rolled scrollToElement
+        we were using in utilities.js.
+
+        * page/inspector/DocumentPanel.js: Use scrollIntoViewIfNeeded instead of scrollToElement.
+        * page/inspector/Resource.js: Ditto.
+        * page/inspector/inspector.js: Ditto.
+        * page/inspector/SourcePanel.js: Use scrollIntoViewIfNeeded instead
+        of scrollIntoView, so the source line is centered in the view if needed.
+        * page/inspector/utilities.js: Removed scrollToElement().
+
 2008-02-26  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Dan

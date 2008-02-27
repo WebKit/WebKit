@@ -681,9 +681,8 @@ WebInspector.ResourceTreeElement.prototype = {
 
     onreveal: function()
     {
-        if (!this.listItemElement || !this.treeOutline || !this.treeOutline.childrenListElement)
-            return;
-        this.treeOutline.childrenListElement.scrollToElement(this.listItemElement);
+        if (this.listItemElement)
+            this.listItemElement.scrollIntoViewIfNeeded(false);
     }
 }
 

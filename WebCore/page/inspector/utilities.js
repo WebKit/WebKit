@@ -123,24 +123,6 @@ Element.prototype.hasStyleClass = function(className)
     return regex.test(this.className);
 }
 
-Element.prototype.scrollToElement = function(element)
-{
-    if (!element || !this.isAncestor(element))
-        return;
-
-    var offsetTop = 0;
-    var current = element
-    while (current && current !== this) {
-        offsetTop += current.offsetTop;
-        current = current.offsetParent;
-    }
-
-    if (this.scrollTop > offsetTop)
-        this.scrollTop = offsetTop;
-    else if ((this.scrollTop + this.offsetHeight) < (offsetTop + element.offsetHeight))
-        this.scrollTop = offsetTop - this.offsetHeight + element.offsetHeight;
-}
-
 Node.prototype.firstParentOrSelfWithNodeName = function(nodeName)
 {
     for (var node = this; node && (node !== document); node = node.parentNode)

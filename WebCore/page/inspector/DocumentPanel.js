@@ -805,9 +805,8 @@ WebInspector.DOMNodeTreeElement.prototype = {
 
     onreveal: function()
     {
-        if (!this.listItemElement || !this.treeOutline)
-            return;
-        this.treeOutline.panel.views.dom.treeContentElement.scrollToElement(this.listItemElement);
+        if (this.listItemElement)
+            this.listItemElement.scrollIntoViewIfNeeded(false);
     },
 
     onselect: function()
