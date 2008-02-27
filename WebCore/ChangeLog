@@ -1,3 +1,24 @@
+2008-02-26  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Darin.
+
+        Fix <rdar://problem/5761326>
+        REGRESSION: 1.5% -2% Sunspider regression from r30009 (ebay photo upload hang)
+        
+        Generate better code with VS:
+        - Use ALWAYS_INLINE macro to guarantee versions of allowsAccessFrom() are reduced to single functions
+        - Refactor error reporting so that there is no need to construct/destruct Strings in common cases
+        - Add a separate version of the function for cases where error messages are not wanted
+
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::customGetOwnPropertySlot):
+        * bindings/js/kjs_window.cpp:
+        (KJS::Window::allowsAccessFrom):
+        (KJS::Window::allowsAccessFromNoErrorMessage):
+        (KJS::Window::allowsAccessFromPrivate):
+        (KJS::Window::crossDomainAccessErrorMessage):
+        * bindings/js/kjs_window.h:
+
 2008-02-26  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Dave Hyatt.

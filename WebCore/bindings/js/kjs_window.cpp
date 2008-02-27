@@ -61,6 +61,7 @@
 #include "kjs_events.h"
 #include "kjs_navigator.h"
 #include "kjs_proxy.h"
+#include <wtf/AlwaysInline.h>
 #include <wtf/MathExtras.h>
 
 #if ENABLE(XSLT)
@@ -824,42 +825,50 @@ void Window::put(ExecState* exec, const Identifier& propertyName, JSValue* value
 bool Window::allowsAccessFrom(const JSGlobalObject* other) const
 {
     SecurityOrigin::Reason reason;
-    String message;
-    if (allowsAccessFromPrivate(other, reason, message))
+    if (allowsAccessFromPrivate(other, reason))
         return true;
-    printErrorMessage(message);
+    printErrorMessage(crossDomainAccessErrorMessage(other, reason));
     return false;
 }
 
 bool Window::allowsAccessFrom(ExecState* exec) const
 {
-    String message;
-    if (allowsAccessFromPrivate(exec, message))
+    SecurityOrigin::Reason reason;
+    if (allowsAccessFromPrivate(exec, reason))
         return true;
-    printErrorMessage(message);
+    printErrorMessage(crossDomainAccessErrorMessage(exec->dynamicGlobalObject(), reason));
     return false;
+}
+    
+bool Window::allowsAccessFromNoErrorMessage(ExecState* exec) const
+{
+    SecurityOrigin::Reason reason;
+    return allowsAccessFromPrivate(exec, reason);
 }
 
 bool Window::allowsAccessFrom(ExecState* exec, String& message) const
 {
-    return allowsAccessFromPrivate(exec, message);
+    SecurityOrigin::Reason reason;
+    if (allowsAccessFromPrivate(exec, reason))
+        return true;
+    message = crossDomainAccessErrorMessage(exec->dynamicGlobalObject(), reason);
+    return false;
 }
     
-inline bool Window::allowsAccessFromPrivate(ExecState* exec, String& message) const
+ALWAYS_INLINE bool Window::allowsAccessFromPrivate(const ExecState* exec, SecurityOrigin::Reason& reason) const
 {
-    SecurityOrigin::Reason reason;
-    if (allowsAccessFromPrivate(exec->dynamicGlobalObject(), reason, message))
+    if (allowsAccessFromPrivate(exec->dynamicGlobalObject(), reason))
         return true;
     if (reason == SecurityOrigin::DomainSetInDOMMismatch) {
         // If the only reason the access failed was a domainSetInDOM bit mismatch, try again against 
         // lexical global object <rdar://problem/5698200>
-        if (allowsAccessFromPrivate(exec->lexicalGlobalObject(), reason, message))
+        if (allowsAccessFromPrivate(exec->lexicalGlobalObject(), reason))
             return true;
     }
     return false;
 }
 
-inline bool Window::allowsAccessFromPrivate(const JSGlobalObject* other, SecurityOrigin::Reason& reason, String& message) const
+ALWAYS_INLINE bool Window::allowsAccessFromPrivate(const JSGlobalObject* other, SecurityOrigin::Reason& reason) const
 {
     const Frame* originFrame = static_cast<const Window*>(other)->impl()->frame();
     if (!originFrame) {
@@ -893,10 +902,22 @@ inline bool Window::allowsAccessFromPrivate(const JSGlobalObject* other, Securit
     if (originSecurityOrigin->canAccess(targetSecurityOrigin, reason))
         return true;
 
-    // FIXME: this error message should contain more specifics of why the same origin check has failed.
-    message = String::format("Unsafe JavaScript attempt to access frame with URL %s from frame with URL %s. Domains, protocols and ports must match.\n",
-        targetDocument->url().string().utf8().data(), originDocument->url().string().utf8().data());
     return false;
+}
+
+String Window::crossDomainAccessErrorMessage(const JSGlobalObject* other, SecurityOrigin::Reason) const
+{
+    const Frame* originFrame = static_cast<const Window*>(other)->impl()->frame();
+    const Frame* targetFrame = impl()->frame();
+    if (!originFrame || !targetFrame)
+        return String();
+    WebCore::Document* targetDocument = targetFrame->document();
+    WebCore::Document* originDocument = originFrame->document();
+    if (!originDocument || !targetDocument)
+        return String();
+    // FIXME: this error message should contain more specifics of why the same origin check has failed.
+    return String::format("Unsafe JavaScript attempt to access frame with URL %s from frame with URL %s. Domains, protocols and ports must match.\n",
+        targetDocument->url().string().utf8().data(), originDocument->url().string().utf8().data());
 }
 
 void Window::printErrorMessage(const String& message) const
