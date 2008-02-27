@@ -1,3 +1,99 @@
+2008-02-27  David Hyatt  <hyatt@apple.com>
+
+        More cleanup in preparation for fixing the HTML5 spec performance regression.
+
+        Reviewed by Sam Weinig
+
+        * dom/Attr.cpp:
+        (WebCore::Attr::childrenChanged):
+        * dom/Attr.h:
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::insertBefore):
+        (WebCore::ContainerNode::replaceChild):
+        (WebCore::ContainerNode::removeChild):
+        (WebCore::ContainerNode::removeChildren):
+        (WebCore::ContainerNode::appendChild):
+        (WebCore::ContainerNode::addChild):
+        (WebCore::ContainerNode::childrenChanged):
+        * dom/ContainerNode.h:
+        * dom/Document.cpp:
+        (WebCore::Document::childrenChanged):
+        * dom/Document.h:
+        * dom/Element.cpp:
+        (WebCore::Element::childrenChanged):
+        * dom/Element.h:
+        * dom/Node.h:
+        (WebCore::Node::childrenChanged):
+        * html/HTMLObjectElement.cpp:
+        (WebCore::HTMLObjectElement::childrenChanged):
+        * html/HTMLObjectElement.h:
+        * html/HTMLOptGroupElement.cpp:
+        (WebCore::HTMLOptGroupElement::childrenChanged):
+        * html/HTMLOptGroupElement.h:
+        * html/HTMLOptionElement.cpp:
+        (WebCore::HTMLOptionElement::childrenChanged):
+        * html/HTMLOptionElement.h:
+        * html/HTMLScriptElement.cpp:
+        (WebCore::HTMLScriptElement::childrenChanged):
+        * html/HTMLScriptElement.h:
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::childrenChanged):
+        * html/HTMLSelectElement.h:
+        * html/HTMLStyleElement.cpp:
+        (WebCore::HTMLStyleElement::childrenChanged):
+        * html/HTMLStyleElement.h:
+        * html/HTMLTextAreaElement.cpp:
+        (WebCore::HTMLTextAreaElement::childrenChanged):
+        * html/HTMLTextAreaElement.h:
+        * html/HTMLTitleElement.cpp:
+        (WebCore::HTMLTitleElement::childrenChanged):
+        * html/HTMLTitleElement.h:
+        * svg/SVGClipPathElement.cpp:
+        (WebCore::SVGClipPathElement::childrenChanged):
+        * svg/SVGClipPathElement.h:
+        * svg/SVGDefinitionSrcElement.cpp:
+        (WebCore::SVGDefinitionSrcElement::childrenChanged):
+        * svg/SVGDefinitionSrcElement.h:
+        * svg/SVGFontFaceElement.cpp:
+        (WebCore::SVGFontFaceElement::childrenChanged):
+        * svg/SVGFontFaceElement.h:
+        * svg/SVGFontFaceFormatElement.cpp:
+        (WebCore::SVGFontFaceFormatElement::childrenChanged):
+        * svg/SVGFontFaceFormatElement.h:
+        * svg/SVGFontFaceSrcElement.cpp:
+        (WebCore::SVGFontFaceSrcElement::childrenChanged):
+        * svg/SVGFontFaceSrcElement.h:
+        * svg/SVGFontFaceUriElement.cpp:
+        (WebCore::SVGFontFaceUriElement::childrenChanged):
+        * svg/SVGFontFaceUriElement.h:
+        * svg/SVGGElement.cpp:
+        (WebCore::SVGGElement::childrenChanged):
+        * svg/SVGGElement.h:
+        * svg/SVGGradientElement.cpp:
+        (WebCore::SVGGradientElement::childrenChanged):
+        * svg/SVGGradientElement.h:
+        * svg/SVGMarkerElement.cpp:
+        (WebCore::SVGMarkerElement::childrenChanged):
+        * svg/SVGMarkerElement.h:
+        * svg/SVGMaskElement.cpp:
+        (WebCore::SVGMaskElement::childrenChanged):
+        * svg/SVGMaskElement.h:
+        * svg/SVGPatternElement.cpp:
+        (WebCore::SVGPatternElement::childrenChanged):
+        * svg/SVGPatternElement.h:
+        * svg/SVGStyleElement.cpp:
+        (WebCore::SVGStyleElement::childrenChanged):
+        * svg/SVGStyleElement.h:
+        * svg/SVGStyledElement.cpp:
+        (WebCore::SVGStyledElement::childrenChanged):
+        * svg/SVGStyledElement.h:
+        * svg/SVGTitleElement.cpp:
+        (WebCore::SVGTitleElement::childrenChanged):
+        * svg/SVGTitleElement.h:
+        * svg/SVGUseElement.cpp:
+        (WebCore::SVGUseElement::childrenChanged):
+        * svg/SVGUseElement.h:
+
 2008-02-27  Julien Chaffraix <julien.chaffraix@gmail.com>
 
         Reviewed by Alexey.

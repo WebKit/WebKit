@@ -488,9 +488,11 @@ DOMImplementation* Document::implementation() const
     return m_implementation.get();
 }
 
-void Document::childrenChanged(bool changedByParser)
+void Document::childrenChanged(bool changedByParser, Node* beforeChange, Node* afterChange, int childCountDelta)
 {
-    // invalidate the document element we have cached in case it was replaced
+    ContainerNode::childrenChanged(changedByParser, beforeChange, afterChange, childCountDelta);
+    
+    // Invalidate the document element we have cached in case it was replaced.
     m_documentElement = 0;
 }
 

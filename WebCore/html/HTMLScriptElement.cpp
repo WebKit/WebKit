@@ -58,14 +58,14 @@ bool HTMLScriptElement::isURLAttribute(Attribute* attr) const
     return attr->name() == srcAttr;
 }
 
-void HTMLScriptElement::childrenChanged(bool changedByParser)
+void HTMLScriptElement::childrenChanged(bool changedByParser, Node* beforeChange, Node* afterChange, int childCountDelta)
 {
     // If a node is inserted as a child of the script element
     // and the script element has been inserted in the document
     // we evaluate the script.
     if (!m_createdByParser && inDocument() && firstChild())
         evaluateScript(document()->url().string(), text());
-    HTMLElement::childrenChanged(changedByParser);
+    HTMLElement::childrenChanged(changedByParser, beforeChange, afterChange, childCountDelta);
 }
 
 void HTMLScriptElement::parseMappedAttribute(MappedAttribute* attr)

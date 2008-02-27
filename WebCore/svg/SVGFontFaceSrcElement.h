@@ -31,7 +31,7 @@ namespace WebCore {
         
         PassRefPtr<CSSValueList> srcValue() const;
         
-        virtual void childrenChanged(bool changedByParser = false);
+        virtual void childrenChanged(bool changedByParser = false, Node* beforeChange = 0, Node* afterChange = 0, int childCountDelta = 0);
     };
 
 } // namespace WebCore

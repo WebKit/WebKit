@@ -187,12 +187,12 @@ void HTMLOptionElement::setSelectedState(bool selected)
     setChanged();
 }
 
-void HTMLOptionElement::childrenChanged(bool changedByParser)
+void HTMLOptionElement::childrenChanged(bool changedByParser, Node* beforeChange, Node* afterChange, int childCountDelta)
 {
    HTMLSelectElement *select = getSelect();
    if (select)
        select->childrenChanged(changedByParser);
-   HTMLGenericFormElement::childrenChanged(changedByParser);
+   HTMLGenericFormElement::childrenChanged(changedByParser, beforeChange, afterChange, childCountDelta);
 }
 
 HTMLSelectElement* HTMLOptionElement::getSelect() const

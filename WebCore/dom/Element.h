@@ -118,7 +118,7 @@ public:
     virtual bool isElementNode() const { return true; }
     virtual void insertedIntoDocument();
     virtual void removedFromDocument();
-    virtual void childrenChanged(bool changedByParser = false);
+    virtual void childrenChanged(bool changedByParser = false, Node* beforeChange = 0, Node* afterChange = 0, int childCountDelta = 0);
 
     virtual bool isInputTypeHidden() const { return false; }
 

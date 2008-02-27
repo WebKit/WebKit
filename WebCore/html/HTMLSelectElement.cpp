@@ -529,10 +529,10 @@ void HTMLSelectElement::recalcListItems(bool updateSelectedStates) const
     m_recalcListItems = false;
 }
 
-void HTMLSelectElement::childrenChanged(bool changedByParser)
+void HTMLSelectElement::childrenChanged(bool changedByParser, Node* beforeChange, Node* afterChange, int childCountDelta)
 {
     setRecalcListItems();
-    HTMLFormControlElementWithState::childrenChanged(changedByParser);
+    HTMLFormControlElementWithState::childrenChanged(changedByParser, beforeChange, afterChange, childCountDelta);
 }
 
 void HTMLSelectElement::setRecalcListItems()

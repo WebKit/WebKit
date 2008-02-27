@@ -242,14 +242,14 @@ void HTMLObjectElement::recalcStyle(StyleChange ch)
     HTMLPlugInElement::recalcStyle(ch);
 }
 
-void HTMLObjectElement::childrenChanged(bool changedByParser)
+void HTMLObjectElement::childrenChanged(bool changedByParser, Node* beforeChange, Node* afterChange, int childCountDelta)
 {
     updateDocNamedItem();
     if (inDocument() && !m_useFallbackContent) {
         m_needWidgetUpdate = true;
         setChanged();
     }
-    HTMLPlugInElement::childrenChanged(changedByParser);
+    HTMLPlugInElement::childrenChanged(changedByParser, beforeChange, afterChange, childCountDelta);
 }
 
 bool HTMLObjectElement::isURLAttribute(Attribute *attr) const

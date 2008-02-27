@@ -71,10 +71,10 @@ void HTMLStyleElement::removedFromDocument()
     StyleElement::removedFromDocument(document());
 }
 
-void HTMLStyleElement::childrenChanged(bool changedByParser)
+void HTMLStyleElement::childrenChanged(bool changedByParser, Node* beforeChange, Node* afterChange, int childCountDelta)
 {
     StyleElement::process(this);
-    HTMLElement::childrenChanged(changedByParser);
+    HTMLElement::childrenChanged(changedByParser, beforeChange, afterChange, childCountDelta);
 }
 
 StyleSheet* HTMLStyleElement::sheet()

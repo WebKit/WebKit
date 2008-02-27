@@ -863,9 +863,9 @@ static void checkStyleRules(Element* e, RenderStyle* style, bool changedByParser
     checkLastChildRules(e, style);
 }
 
-void Element::childrenChanged(bool changedByParser)
+void Element::childrenChanged(bool changedByParser, Node* beforeChange, Node* afterChange, int childCountDelta)
 {
-    ContainerNode::childrenChanged(changedByParser);
+    ContainerNode::childrenChanged(changedByParser, beforeChange, afterChange, childCountDelta);
     if (!changedByParser)
         checkStyleRules(this, renderStyle(), false);
 }
