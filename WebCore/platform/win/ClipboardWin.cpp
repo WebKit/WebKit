@@ -57,6 +57,8 @@
 
 #include <wtf/RefPtr.h>
 
+using namespace std;
+
 namespace WebCore {
 
 using namespace HTMLNames;
