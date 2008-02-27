@@ -1073,6 +1073,8 @@ JSValue* windowProtoFuncAToB(ExecState* exec, JSObject* thisObj, const List& arg
 {
     if (!thisObj->inherits(&Window::info))
         return throwError(exec, TypeError);
+    if (!static_cast<Window*>(thisObj)->allowsAccessFrom(exec)) 
+        return jsUndefined();
 
     if (args.size() < 1)
         return throwError(exec, SyntaxError, "Not enough arguments");
@@ -1102,6 +1104,8 @@ JSValue* windowProtoFuncBToA(ExecState* exec, JSObject* thisObj, const List& arg
 {
     if (!thisObj->inherits(&Window::info))
         return throwError(exec, TypeError);
+    if (!static_cast<Window*>(thisObj)->allowsAccessFrom(exec)) 
+        return jsUndefined();
 
     if (args.size() < 1)
         return throwError(exec, SyntaxError, "Not enough arguments");
@@ -1131,6 +1135,9 @@ JSValue* windowProtoFuncOpen(ExecState* exec, JSObject* thisObj, const List& arg
     if (!thisObj->inherits(&Window::info))
         return throwError(exec, TypeError);
     Window* window = static_cast<Window*>(thisObj);
+    if (!window->allowsAccessFrom(exec)) 
+        return jsUndefined();
+
     Frame* frame = window->impl()->frame();
     if (!frame)
         return jsUndefined();
@@ -1220,6 +1227,8 @@ JSValue* windowProtoFuncClearTimeout(ExecState* exec, JSObject* thisObj, const L
     if (!thisObj->inherits(&Window::info))
         return throwError(exec, TypeError);
     Window* window = static_cast<Window*>(thisObj);
+    if (!window->allowsAccessFrom(exec)) 
+        return jsUndefined();
 
     window->clearTimeout(args[0]->toInt32(exec));
     return jsUndefined();

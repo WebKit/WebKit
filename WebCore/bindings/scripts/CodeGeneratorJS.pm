@@ -1149,8 +1149,14 @@ sub GenerateImplementation
 
             push(@implContent, "    $className* castedThisObj = static_cast<$className*>(thisObj);\n");
 
+            if ($dataNode->extendedAttributes->{"CheckDomainSecurity"} && 
+                !$function->signature->extendedAttributes->{"DoNotCheckDomainSecurity"}) {
+                push(@implContent, "    if (!castedThisObj->allowsAccessFrom(exec))\n");
+                push(@implContent, "        return jsUndefined();\n");
+            }
+
             if ($function->signature->extendedAttributes->{"Custom"}) {
-                push(@implContent, "        return castedThisObj->" . $codeGenerator->WK_lcfirst($function->signature->name) . "(exec, args);\n");
+                push(@implContent, "    return castedThisObj->" . $codeGenerator->WK_lcfirst($function->signature->name) . "(exec, args);\n");
             } else {
                 if ($podType) {
                     push(@implContent, "    JSSVGPODTypeWrapper<$podType>* wrapper = castedThisObj->impl();\n");

@@ -301,6 +301,8 @@ JSValue* jsLocationProtoFuncToString(ExecState* exec, JSObject* thisObj, const L
     Frame* frame = location->frame();
     if (!frame)
         return jsUndefined();
+    if (!allowsAccessFromFrame(exec, frame))
+        return jsUndefined();
 
     const KURL& url = frame->loader()->url();
     if (!url.hasPath())

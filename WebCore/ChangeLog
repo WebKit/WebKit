@@ -1,3 +1,21 @@
+2008-02-27  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Darin.
+
+        Fix for <rdar://problem/5768769>
+
+        - Don't allow cross-origin calls using window.functionName.call(otherFrame)
+          syntax.
+
+        * bindings/js/JSLocation.cpp:
+        (WebCore::jsLocationProtoFuncToString): Do same-origin check.
+        * bindings/js/kjs_window.cpp:
+        (KJS::windowProtoFuncAToB): Ditto.
+        (KJS::windowProtoFuncBToA): Ditto.
+        (KJS::windowProtoFuncOpen): Ditto.
+        (KJS::windowProtoFuncClearTimeout): Ditto.
+        * bindings/scripts/CodeGeneratorJS.pm: Ditto.
+
 2008-02-27  David Hyatt  <hyatt@apple.com>
 
         More cleanup in preparation for fixing the HTML5 spec performance regression.

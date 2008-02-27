@@ -16,13 +16,47 @@ window.onload = function()
 
     log("\n----- tests for calling methods of another frame using Function.call -----\n");
 
-    // undefined value indicates failure
-    shouldBe("setTimeout.call(targetWindow, 'void(0);', 0)", undefined);
-    shouldBe("setInterval.call(targetWindow, 'void(0);', 0)", undefined);
+    // Allowed
+    // void focus();
+    // void blur();
+    // void close();
+    // void postMessage(in DOMString message);
 
-    // these always return undefined so we use the error console to detect failure
-    addEventListener.call(targetWindow, "load", null, false);
-    removeEventListener.call(targetWindow, "load", null, false);
+    // - Tests for the Window object - 
+    // undefined value indicates failure
+    shouldBe("window.setTimeout.call(targetWindow, 'void(0);', 0)", "undefined");
+    shouldBe("window.setInterval.call(targetWindow, 'void(0);', 0)", "undefined");
+    shouldBe("window.getSelection.call(targetWindow)", "undefined");
+    shouldBe("window.find.call(targetWindow, 'string', false, false, false, false, false, false)", "undefined");
+    shouldBe("window.confirm.call(targetWindow, 'message')", "undefined");
+    shouldBe("window.prompt.call(targetWindow, 'message', 'defaultValue')", "undefined");
+    shouldBe("window.getComputedStyle.call(targetWindow, document.body, '')", "undefined");
+    shouldBe("window.getMatchedCSSRules.call(targetWindow, document.body, '', false)", "undefined");
+    shouldBe("window.openDatabase.call(targetWindow, 'name')", "undefined");
+    shouldBe("window.atob.call(targetWindow, 'string')", "undefined");
+    shouldBe("window.btoa.call(targetWindow, 'string')", "undefined");
+    shouldBe("window.open.call(targetWindow, '')", "undefined");
+
+    // These always return undefined so we use the error console to detect failure
+    window.addEventListener.call(targetWindow, "load", null, false);
+    window.removeEventListener.call(targetWindow, "load", null, false);
+    window.clearTimeout.call(targetWindow, 0);
+    window.clearInterval.call(targetWindow, 0);
+    window.print.call(targetWindow);
+    window.stop.call(targetWindow);
+    window.alert.call(targetWindow, 'message');
+    window.scrollBy.call(targetWindow, 0, 0);
+    window.scrollTo.call(targetWindow, 0, 0);
+    window.scroll.call(targetWindow, 0, 0);
+    window.moveBy.call(targetWindow, 0, 0);
+    window.moveTo.call(targetWindow, 0, 0);
+    window.resizeBy.call(targetWindow, 0, 0);
+    window.resizeTo.call(targetWindow, 0, 0);
+    window.showModalDialog.call(targetWindow);
+
+    // - Tests for the Location object -
+    // undefined value indicates failure
+    shouldBe("window.location.toString.call(targetWindow.location)", "undefined");
 
     // Work around DRT bug that causes subsequent tests to fail.
     window.stop();
