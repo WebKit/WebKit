@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,7 +27,6 @@
 #include "ClipboardUtilitiesWin.h"
 
 #include "CString.h"
-#include "DeprecatedCString.h"
 #include "DocumentFragment.h"
 #include "KURL.h"
 #include "PlatformString.h"
@@ -121,93 +120,103 @@ HGLOBAL createGlobalData(const KURL& url, const String& title)
     return cbData;
 }
 
-HGLOBAL createGlobalData(String str)
-{   
-    SIZE_T size = (str.length() + 1) * sizeof(UChar);
-    HGLOBAL cbData = ::GlobalAlloc(GPTR, size);
-    if (cbData) {
-        void* buffer = ::GlobalLock(cbData);
-        memcpy(buffer, str.charactersWithNullTermination(), size);
-        ::GlobalUnlock(cbData);
-    }
-    return cbData;
+HGLOBAL createGlobalData(const String& str)
+{
+    HGLOBAL globalData = ::GlobalAlloc(GPTR, (str.length() + 1) * sizeof(UChar));
+    if (!globalData)
+        return 0;
+    UChar* buffer = static_cast<UChar*>(::GlobalLock(globalData));
+    memcpy(buffer, str.characters(), str.length() * sizeof(UChar));
+    buffer[str.length()] = 0;
+    ::GlobalUnlock(globalData);
+    return globalData;
 }
 
-HGLOBAL createGlobalData(CString str)
+HGLOBAL createGlobalData(const Vector<char>& vector)
 {
-    SIZE_T size = str.length() * sizeof(char);
-    HGLOBAL cbData = ::GlobalAlloc(GPTR, size + 1);
-    if (cbData) {
-        char* buffer = static_cast<char*>(::GlobalLock(cbData));
-        memcpy(buffer, str.data(), size);
-        buffer[size] = 0;
-        ::GlobalUnlock(cbData);
-    }
-    return cbData;
+    HGLOBAL globalData = ::GlobalAlloc(GPTR, vector.size() + 1);
+    if (!globalData)
+        return 0;
+    char* buffer = static_cast<char*>(::GlobalLock(globalData));
+    memcpy(buffer, vector.data(), vector.size());
+    buffer[vector.size()] = 0;
+    ::GlobalUnlock(globalData);
+    return globalData;
+}
+
+static void append(Vector<char>& vector, const char* string)
+{
+    vector.append(string, strlen(string));
+}
+
+static void append(Vector<char>& vector, const CString& string)
+{
+    vector.append(string.data(), string.length());
 }
 
 // Documentation for the CF_HTML format is available at http://msdn.microsoft.com/workshop/networking/clipboard/htmlclipboard.asp
-DeprecatedCString markupToCF_HTML(const String& markup, const String& srcURL)
+void markupToCF_HTML(const String& markup, const String& srcURL, Vector<char>& result)
 {
-    if (!markup.length())
-        return DeprecatedCString();
+    if (markup.isEmpty())
+        return;
 
-    DeprecatedCString cf_html        ("Version:0.9");
-    DeprecatedCString startHTML      ("\nStartHTML:");
-    DeprecatedCString endHTML        ("\nEndHTML:");
-    DeprecatedCString startFragment  ("\nStartFragment:");
-    DeprecatedCString endFragment    ("\nEndFragment:");
-    DeprecatedCString sourceURL      ("\nSourceURL:");
+    #define MAX_DIGITS 10
+    #define MAKE_NUMBER_FORMAT_1(digits) MAKE_NUMBER_FORMAT_2(digits)
+    #define MAKE_NUMBER_FORMAT_2(digits) "%0" #digits "u"
+    #define NUMBER_FORMAT MAKE_NUMBER_FORMAT_1(MAX_DIGITS)
 
-    bool shouldFillSourceURL = !srcURL.isEmpty() && (srcURL != "about:blank");
-    if (shouldFillSourceURL)
-        sourceURL.append(srcURL.utf8().data());
+    const char* header = "Version:0.9\n"
+        "StartHTML:" NUMBER_FORMAT "\n"
+        "EndHTML:" NUMBER_FORMAT "\n"
+        "StartFragment:" NUMBER_FORMAT "\n"
+        "EndFragment:" NUMBER_FORMAT "\n";
+    const char* sourceURLPrefix = "SourceURL:";
 
-    DeprecatedCString startMarkup    ("\n<HTML>\n<BODY>\n<!--StartFragment-->\n");
-    DeprecatedCString endMarkup      ("\n<!--EndFragment-->\n</BODY>\n</HTML>");
+    const char* startMarkup = "<HTML>\n<BODY>\n<!--StartFragment-->\n";
+    const char* endMarkup = "\n<!--EndFragment-->\n</BODY>\n</HTML>";
+
+    CString sourceURLUTF8 = srcURL == blankURL() ? "" : srcURL.utf8();
+    CString markupUTF8 = markup.utf8();
 
     // calculate offsets
-    const unsigned UINT_MAXdigits = 10; // number of digits in UINT_MAX in base 10
-    unsigned startHTMLOffset = cf_html.length() + startHTML.length() + endHTML.length() + startFragment.length() + endFragment.length() + (shouldFillSourceURL ? sourceURL.length() : 0) + (4*UINT_MAXdigits);
-    unsigned startFragmentOffset = startHTMLOffset + startMarkup.length();
-    CString markupUTF8 = markup.utf8();
+    unsigned startHTMLOffset = strlen(header) - strlen(NUMBER_FORMAT) * 4 + MAX_DIGITS * 4;
+    if (sourceURLUTF8.length())
+        startHTMLOffset += strlen(sourceURLPrefix) + sourceURLUTF8.length() + 1;
+    unsigned startFragmentOffset = startHTMLOffset + strlen(startMarkup);
     unsigned endFragmentOffset = startFragmentOffset + markupUTF8.length();
-    unsigned endHTMLOffset = endFragmentOffset + endMarkup.length();
+    unsigned endHTMLOffset = endFragmentOffset + strlen(endMarkup);
 
-    // fill in needed data
-    startHTML.append(String::format("%010u", startHTMLOffset).utf8().data());
-    endHTML.append(String::format("%010u", endHTMLOffset).utf8().data());
-    startFragment.append(String::format("%010u", startFragmentOffset).utf8().data());
-    endFragment.append(String::format("%010u", endFragmentOffset).utf8().data());
-    startMarkup.append(markupUTF8.data());
+    append(result, String::format(header, startHTMLOffset, endHTMLOffset, startFragmentOffset, endFragmentOffset).utf8());
+    if (sourceURLUTF8.length()) {
+        append(result, sourceURLPrefix);
+        append(result, sourceURLUTF8);
+        result.append('\n');
+    }
+    append(result, startMarkup);
+    append(result, markupUTF8);
+    append(result, endMarkup);
 
-    // create full cf_html string from the fragments
-    cf_html.append(startHTML);
-    cf_html.append(endHTML);
-    cf_html.append(startFragment);
-    cf_html.append(endFragment);
-    if (shouldFillSourceURL)
-        cf_html.append(sourceURL);
-    cf_html.append(startMarkup);
-    cf_html.append(endMarkup);
-
-    return cf_html;
+    #undef MAX_DIGITS
+    #undef MAKE_NUMBER_FORMAT_1
+    #undef MAKE_NUMBER_FORMAT_2
+    #undef NUMBER_FORMAT
 }
 
 String urlToMarkup(const KURL& url, const String& title)
 {
-    String markup("<a href=\"");
-    markup.append(url.string());
-    markup.append("\">");
-    markup.append(title);
-    markup.append("</a>");
-    return markup;
+    Vector<UChar> markup;
+    append(markup, "<a href=\"");
+    append(markup, url.string());
+    append(markup, "\">");
+    append(markup, title);
+    append(markup, "</a>");
+    return String::adopt(markup);
 }
 
 void replaceNewlinesWithWindowsStyleNewlines(String& str)
 {
     static const UChar Newline = '\n';
-    static const String WindowsNewline("\r\n");
+    static const char* const WindowsNewline("\r\n");
     str.replace(Newline, WindowsNewline);
 }
 

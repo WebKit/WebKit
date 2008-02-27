@@ -1,3 +1,29 @@
+2008-02-26  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam.
+
+        - remove use of DeprecatedCString from Windows pasteboard code
+
+        * platform/win/ClipboardUtilitiesWin.cpp:
+        (WebCore::createGlobalData): Added an overload for Vector<char>.
+        Streamlined the logic a bit.
+        (WebCore::append): Added. Helper functions for appending to a
+        Vector<char>.
+        (WebCore::markupToCF_HTML): Rewrote to use Vector<char> instead
+        of DeprecatedCString. Also simplified the logic a bit and used
+        macros to handle the integer width.
+        (WebCore::urlToMarkup): Use Vector<UChar> instead of String.
+        (WebCore::replaceNewlinesWithWindowsStyleNewlines): Tweaked.
+        * platform/win/ClipboardUtilitiesWin.h: Update type of return
+        value from markupToCF_HTML. Did a bit of streamlining too.
+        * platform/win/ClipboardWin.cpp:
+        (WebCore::writeURL): Update for above changes.
+        (WebCore::ClipboardWin::declareAndWriteDragImage): Ditto.
+        (WebCore::ClipboardWin::writeRange): Ditto.
+        * platform/win/PasteboardWin.cpp:
+        (WebCore::Pasteboard::writeSelection): Ditto.
+        (WebCore::Pasteboard::writeURL): Ditto.
+
 2008-02-26  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Adam Roben.
