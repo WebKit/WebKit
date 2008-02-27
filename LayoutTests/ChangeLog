@@ -1,3 +1,14 @@
+2008-02-27  Kevin McCullough  <kmccullough@apple.com>
+
+        Landing test that was forgotten in the original patch (r30087).
+
+        Test for: http://bugs.webkit.org/show_bug.cgi?id=17191
+        HTML5: Client-side database queries should return values of type number
+
+        * storage/sql-data-types-expected.txt: Added.
+        * storage/sql-data-types.html: Added.
+        * storage/sql-data-types.js: Added.
+
 2008-02-27  Julien Chaffraix <julien.chaffraix@gmail.com>
 
         Reviewed by Alexey.
