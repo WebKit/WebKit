@@ -1,3 +1,15 @@
+2008-02-27  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Simon.
+
+        Cleanup coding style. Still on my way to fix dynamic updates of all SVG elements.
+        Currently at SVGF*. SVGDefs/DescElement don't need any dyn update fixes but cleanups.
+
+        * svg/SVGDefsElement.cpp:
+        (WebCore::SVGDefsElement::createRenderer):
+        * svg/SVGDefsElement.h:
+        * svg/SVGDescElement.h:
+
 2008-02-26  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Darin.

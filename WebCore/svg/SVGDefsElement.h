@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
+    Copyright (C) 2004, 2005 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005, 2006 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
@@ -22,26 +22,25 @@
 
 #ifndef SVGDefsElement_h
 #define SVGDefsElement_h
-#if ENABLE(SVG)
 
+#if ENABLE(SVG)
 #include "SVGExternalResourcesRequired.h"
 #include "SVGLangSpace.h"
 #include "SVGStyledTransformableElement.h"
 #include "SVGTests.h"
 
-namespace WebCore
-{
+namespace WebCore {
+
     class SVGDefsElement : public SVGStyledTransformableElement,
                            public SVGTests,
                            public SVGLangSpace,
-                           public SVGExternalResourcesRequired
-    {
+                           public SVGExternalResourcesRequired {
     public:
         SVGDefsElement(const QualifiedName&, Document*);
         virtual ~SVGDefsElement();
-        
+
         virtual bool isValid() const;
-        
+
         virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
     
     protected:
@@ -55,5 +54,3 @@ namespace WebCore
 
 #endif // ENABLE(SVG)
 #endif
-
-// vim:ts=4:noet
