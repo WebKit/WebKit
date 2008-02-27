@@ -282,7 +282,7 @@ void NamedAttrMap::addAttribute(PassRefPtr<Attribute> prpAttribute)
         // Because of our updateStyleAttributeIfNeeded() style modification events are never sent at the right time, so don't bother sending them.
         if (attribute->name() != styleAttr) {
             element->dispatchAttrAdditionEvent(attribute);
-            element->dispatchSubtreeModifiedEvent(false);
+            element->dispatchSubtreeModifiedEvent();
         }
     }
 }
@@ -328,7 +328,7 @@ void NamedAttrMap::removeAttribute(const QualifiedName& name)
     }
     if (element) {
         element->dispatchAttrRemovalEvent(attr);
-        element->dispatchSubtreeModifiedEvent(false);
+        element->dispatchSubtreeModifiedEvent();
     }
     attr->deref();
 }

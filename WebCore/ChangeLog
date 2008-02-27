@@ -1,3 +1,27 @@
+2008-02-26  David Hyatt  <hyatt@apple.com>
+
+        Cleanup of childrenChanged in preparation for fixing the HTML5 spec slowdown.
+
+        Reviewed by Sam Weinig
+
+        * dom/Attr.cpp:
+        (WebCore::Attr::childrenChanged):
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::insertBefore):
+        (WebCore::ContainerNode::replaceChild):
+        (WebCore::ContainerNode::removeChild):
+        (WebCore::ContainerNode::removeChildren):
+        (WebCore::ContainerNode::appendChild):
+        (WebCore::ContainerNode::addChild):
+        (WebCore::ContainerNode::childrenChanged):
+        * dom/ContainerNode.h:
+        * dom/EventTargetNode.cpp:
+        (WebCore::EventTargetNode::dispatchSubtreeModifiedEvent):
+        * dom/EventTargetNode.h:
+        * dom/NamedAttrMap.cpp:
+        (WebCore::NamedAttrMap::addAttribute):
+        (WebCore::NamedAttrMap::removeAttribute):
+
 2008-02-26  Darin Adler  <darin@apple.com>
 
         Reviewed by Sam.

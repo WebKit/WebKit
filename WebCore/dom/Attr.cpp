@@ -151,11 +151,11 @@ bool Attr::childTypeAllowed(NodeType type)
 
 void Attr::childrenChanged(bool changedByParser)
 {
-    Node::childrenChanged(changedByParser);
-    
     if (m_ignoreChildrenChanged > 0)
         return;
-    
+ 
+    Node::childrenChanged(changedByParser);
+
     // FIXME: We should include entity references in the value
     
     String val = "";

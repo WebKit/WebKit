@@ -219,6 +219,7 @@ bool ContainerNode::insertBefore(PassRefPtr<Node> newChild, Node* refChild, Exce
     }
 
     document()->setDocumentChanged(true);
+    childrenChanged();
     dispatchSubtreeModifiedEvent();
     return true;
 }
@@ -324,6 +325,7 @@ bool ContainerNode::replaceChild(PassRefPtr<Node> newChild, Node* oldChild, Exce
     }
 
     document()->setDocumentChanged(true);
+    childrenChanged();
     dispatchSubtreeModifiedEvent();
     return true;
 }
@@ -426,6 +428,7 @@ bool ContainerNode::removeChild(Node* oldChild, ExceptionCode& ec)
     document()->setDocumentChanged(true);
 
     // Dispatch post-removal mutation events
+    childrenChanged();
     dispatchSubtreeModifiedEvent();
 
     if (child->inDocument())
@@ -479,6 +482,7 @@ bool ContainerNode::removeChildren()
     allowEventDispatch();
 
     // Dispatch a single post-removal mutation event denoting a modified subtree.
+    childrenChanged();
     dispatchSubtreeModifiedEvent();
 
     return true;
@@ -548,6 +552,7 @@ bool ContainerNode::appendChild(PassRefPtr<Node> newChild, ExceptionCode& ec)
     }
 
     document()->setDocumentChanged(true);
+    childrenChanged();
     dispatchSubtreeModifiedEvent();
     return true;
 }
@@ -579,8 +584,6 @@ ContainerNode* ContainerNode::addChild(PassRefPtr<Node> newChild)
     document()->incDOMTreeVersion();
     if (inDocument())
         newChild->insertedIntoDocument();
-    if (document()->hasNodeLists())
-        notifyNodeListsChildrenChanged();
     childrenChanged(true);
     
     if (newChild->isElementNode())
@@ -672,6 +675,13 @@ void ContainerNode::removedFromTree(bool deep)
         for (Node *child = m_firstChild; child; child = child->nextSibling())
             child->removedFromTree(deep);
     }
+}
+
+void ContainerNode::childrenChanged(bool createdByParser)
+{
+    Node::childrenChanged(createdByParser);
+    if (document()->hasNodeLists())
+        notifyNodeListsChildrenChanged();
 }
 
 void ContainerNode::cloneChildNodes(ContainerNode *clone)

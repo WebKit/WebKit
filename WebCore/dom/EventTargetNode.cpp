@@ -114,18 +114,13 @@ bool EventTargetNode::dispatchEvent(PassRefPtr<Event> e, ExceptionCode& ec, bool
     return dispatchGenericEvent(eventTarget, evt.release(), ec, tempEvent);
 }
 
-bool EventTargetNode::dispatchSubtreeModifiedEvent(bool sendChildrenChanged)
+bool EventTargetNode::dispatchSubtreeModifiedEvent()
 {
     ASSERT(!eventDispatchForbidden());
     
     document()->incDOMTreeVersion();
 
-    // FIXME: Pull this whole if clause out of this function.
-    if (sendChildrenChanged) {
-        notifyNodeListsChildrenChanged();
-        childrenChanged();
-    } else
-        notifyNodeListsAttributeChanged(); // FIXME: Can do better some day. Really only care about the name attribute changing.
+    notifyNodeListsAttributeChanged(); // FIXME: Can do better some day. Really only care about the name attribute changing.
     
     if (!document()->hasListenerType(Document::DOMSUBTREEMODIFIED_LISTENER))
         return false;
