@@ -1,3 +1,27 @@
+2008-02-27  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Mark Rowe
+
+        Test for better fix for <rdar://problem/4930688> (see r19549) and
+        original fix for <rdar://problem/3947312> (and 14 dupes)
+        
+        Crafting custom WebArchives for layout tests is a pain and something that should
+        be resolved if we decide to pursue a new format.
+
+        Using a custom php script to act as a stand in for an image resource, I set its 
+        cache-control header to expire immediately.  Without the fix for the above bugs,
+        the resource will be "expired" and an attempt to fetch it from the network will
+        go out and fail.  This failure will manifest with different ResourceLoadDelegate
+        information, as well as different dimensions in the render tree - the missing 
+        image icon versus the archived image.
+
+        With the fix in place, the response will be ignored and the image will be pulled
+        from the WebArchive.
+
+        * webarchive/loading/cache-expired-subresource-expected.txt: Added.
+        * webarchive/loading/cache-expired-subresource.html: Added.
+        * webarchive/loading/resources/cache-expired-subresource.webarchive: Added.
+
 2008-02-27  Kevin McCullough  <kmccullough@apple.com>
 
         Landing test that was forgotten in the original patch (r30087).

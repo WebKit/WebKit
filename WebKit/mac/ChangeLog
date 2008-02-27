@@ -1,3 +1,50 @@
+2008-02-27  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Mark Rowe (code) and Darin (concept)
+
+        Much better fix for <rdar://problem/4930688> (see r19549)
+        Original fix for <rdar://problem/3947312> (and 14 dupes)
+        
+        Let me tell you a story:
+        A long time ago, in a cvs repository far, far away, loader code was almost all up in WebKit.
+        WebArchive code was intertwined with that code in bizarre and complex ways.
+        During the months long loader re-factoring where we pushed much loader code down into WebCore,
+        many portions of the WebKit loader were thinned out until they ceased to exist.  Others remained
+        with a sole purpose.
+
+        One such section of code whose lineage traces back from WebFrameLoaderClient to WebFrameLoader
+        to WebLoader was originally rooted in the method [WebLoader loadRequest:].  This method was the 
+        single entry point for almost all loading (network or web archives)
+
+        This method would check various headers and other fields on the NSURLRequest and NSURLResponse 
+        to make decisions about the load.  If the cache control fields were expired or other conditions 
+        in the headers were met, the load would be forced to go out to the network.
+
+        As the loader was moved and tweaked repeatedly, most of this code was pruned or re-factored.  
+        At some point, all that remained was the special cases for loading WebArchives.  
+        
+        Somewhere in the r16,000s, this remaining responsibility was noticed and related methods we renamed
+        to be WebArchive specific, further cementing the assumed design.
+
+        Problem is, the design was bad.  A WebArchive is meant to be a static snapshot of a WebPage at a
+        specific point in time.  Referring to the request to see if the resource should be reloaded seems
+        nonsensical, as does referring to the response headers to see if the resource is "expired".  In the 
+        context of loading a WebArchive, available data should *always* be loaded from the WebArchive, at least
+        during the initial load!
+
+        After discovering the secret to reproducing all of these bugs is both emptying our your Foundation 
+        cache and disconnecting your network, it was easy to reproduce the 16 individually reported cases 
+        that were all symptoms of this bug, and easy to verify that they are fixed with this patch.
+
+        * WebCoreSupport/WebFrameLoaderClient.h:
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::willUseArchive): Do not call either form of "canUseArchivedResource()" that
+          inspect the request or response objects - We are loading from a WebArchive, and we should never
+          make the decision to go out to the network when we actually have the resource available.
+
+        * WebCoreSupport/WebSystemInterface.m:
+        (InitWebCoreSystemInterface):  Remove two methods that are no longer used anywhere in WebKit
+
 2008-02-27  Matt Lilek  <webkit@mattlilek.com>
 
         Reviewed by Adam Roben.

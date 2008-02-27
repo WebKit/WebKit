@@ -199,8 +199,6 @@ private:
     virtual void registerForIconNotification(bool listen);
 
     void deliverArchivedResourcesAfterDelay() const;
-    bool canUseArchivedResource(NSURLRequest *) const;
-    bool canUseArchivedResource(NSURLResponse *) const;
     void deliverArchivedResources(WebCore::Timer<WebFrameLoaderClient>*);
 
     void setOriginalURLForDownload(WebDownload *, const WebCore::ResourceRequest&) const;

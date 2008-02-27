@@ -71,9 +71,7 @@ void InitWebCoreSystemInterface(void)
     INIT(GetGlyphVectorRecordSize);
     INIT(GetMIMETypeForExtension);
     INIT(GetNSFontATSUFontId);
-    INIT(GetNSURLResponseCalculatedExpiration);
     INIT(GetNSURLResponseLastModifiedDate);
-    INIT(GetNSURLResponseMustRevalidate);
     INIT(GetPreferredExtensionForMIMEType);
     INIT(GetWheelEventDeltas);
     INIT(InitializeGlyphVector);

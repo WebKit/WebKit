@@ -778,16 +778,15 @@ bool WebFrameLoaderClient::willUseArchive(ResourceLoader* loader, const Resource
 {
     if (request.url() != originalURL)
         return false;
-    if (!canUseArchivedResource(request.nsURLRequest()))
-        return false;
+
     WebResource *resource = [dataSource(core(m_webFrame.get())->loader()->activeDocumentLoader()) _archivedSubresourceForURL:originalURL];
     if (!resource)
         return false;
-    if (!canUseArchivedResource([resource _response]))
-        return false;
+
     m_pendingArchivedResources.set(loader, resource);
     // Deliver the resource after a delay because callers don't expect to receive callbacks while calling this method.
     deliverArchivedResourcesAfterDelay();
+
     return true;
 }
 
@@ -938,37 +937,6 @@ void WebFrameLoaderClient::setTitle(const String& title, const KURL& URL)
         return;
     NSString *titleNSString = title;
     [[[WebHistory optionalSharedHistory] itemForURL:nsURL] setTitle:titleNSString];
-}
-
-// The following 2 functions are copied from [NSHTTPURLProtocol _cachedResponsePassesValidityChecks] and modified for our needs.
-// FIXME: It would be nice to eventually to share this logic somehow.
-bool WebFrameLoaderClient::canUseArchivedResource(NSURLRequest *request) const
-{
-    NSURLRequestCachePolicy policy = [request cachePolicy];
-    if (policy == NSURLRequestReturnCacheDataElseLoad)
-        return true;
-    if (policy == NSURLRequestReturnCacheDataDontLoad)
-        return true;
-    if ([request valueForHTTPHeaderField:@"must-revalidate"] != nil)
-        return false;
-    if ([request valueForHTTPHeaderField:@"proxy-revalidate"] != nil)
-        return false;
-    if ([request valueForHTTPHeaderField:@"If-Modified-Since"] != nil)
-        return false;
-    if ([request valueForHTTPHeaderField:@"Cache-Control"] != nil)
-        return false;
-    if ([@"POST" _webkit_isCaseInsensitiveEqualToString:[request HTTPMethod]])
-        return false;
-    return true;
-}
-
-bool WebFrameLoaderClient::canUseArchivedResource(NSURLResponse *response) const
-{
-    if (WKGetNSURLResponseMustRevalidate(response))
-        return false;
-    if (WKGetNSURLResponseCalculatedExpiration(response) - CFAbsoluteTimeGetCurrent() < 1)
-        return false;
-    return true;
 }
 
 void WebFrameLoaderClient::deliverArchivedResourcesAfterDelay() const
