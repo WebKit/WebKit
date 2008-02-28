@@ -1,3 +1,12 @@
+2008-02-27  Brady Eidson  <beidson@apple.com>
+
+        Updated resource used in the layout test I landed yesterday.
+        Due to a difference between Foundation on Tiger vs Leopard, the resource generated on
+        Leopard caused different results on Leopard and Tiger.
+        Regenerating the resource on Tiger, however, agrees with Leopard.
+
+        * webarchive/loading/resources/cache-expired-subresource.webarchive:
+
 2008-02-27  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.
