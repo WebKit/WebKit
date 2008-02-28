@@ -1,3 +1,14 @@
+2008-02-28  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Dan Bernstein
+        
+        Small editing speed up.
+        
+        * dom/Position.cpp:
+        (WebCore::Position::upstream): Don't check for a change in editability
+        if the current node hasn't changed.
+        (WebCore::Position::downstream): Ditto.
+
 2008-02-27  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by John Sullivan.
