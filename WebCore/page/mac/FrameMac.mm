@@ -296,10 +296,13 @@ NSString* Frame::searchForLabelsBeforeElement(NSArray* labels, Element* element)
 NSString* Frame::matchLabelsAgainstElement(NSArray* labels, Element* element)
 {
     String name = element->getAttribute(nameAttr);
+    if (name.isEmpty())
+        return nil;
+
     // Make numbers and _'s in field names behave like word boundaries, e.g., "address2"
     replace(name, RegularExpression("\\d"), " ");
     name.replace('_', ' ');
-    
+
     RegularExpression* regExp = regExpForLabels(labels);
     // Use the largest match we can find in the whole name string
     int pos;
@@ -315,7 +318,7 @@ NSString* Frame::matchLabelsAgainstElement(NSArray* labels, Element* element)
                 bestPos = pos;
                 bestLength = length;
             }
-            start = pos+1;
+            start = pos + 1;
         }
     } while (pos != -1);
 

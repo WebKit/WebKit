@@ -1,3 +1,14 @@
+2008-02-28  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=17590
+          ASSERTION FAILED: subject in jsRegExpExecute()
+
+        * page/mac/FrameMac.mm:
+        (WebCore::Frame::matchLabelsAgainstElement): Added an early return in
+        case the element name is empty.
+
 2008-02-28  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Dan Bernstein
