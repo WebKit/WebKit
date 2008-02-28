@@ -1,3 +1,14 @@
+2008-02-27  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by John Sullivan.
+
+        - test for <rdar://problem/5607547> Single letter surrounded by soft hyphens can disappear
+
+        * fast/text/soft-hyphen-2.html: Added.
+        * platform/mac/fast/text/soft-hyphen-2-expected.checksum: Added.
+        * platform/mac/fast/text/soft-hyphen-2-expected.png: Added.
+        * platform/mac/fast/text/soft-hyphen-2-expected.txt: Added.
+
 2008-02-27  Brady Eidson  <beidson@apple.com>
 
         Updated resource used in the layout test I landed yesterday.

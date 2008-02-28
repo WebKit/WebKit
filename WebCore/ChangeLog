@@ -1,5 +1,18 @@
 2008-02-27  Dan Bernstein  <mitz@apple.com>
 
+        Reviewed by John Sullivan.
+
+        - fix <rdar://problem/5607547> Single letter surrounded by soft hyphens can disappear
+
+        Test: fast/text/soft-hyphen-2.html
+
+        * rendering/bidi.cpp:
+        (WebCore::chopMidpointsAt): Changed to iterate midpoints backwards, so
+        that if there are two midpoints at the given position, only the last one
+        will be chopped off.
+
+2008-02-27  Dan Bernstein  <mitz@apple.com>
+
         Reviewed by Darin Adler.
 
         - make centered text in right-to-left blocks spill over to the left

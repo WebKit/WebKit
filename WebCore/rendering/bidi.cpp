@@ -325,7 +325,7 @@ static void chopMidpointsAt(RenderObject* obj, unsigned pos)
     if (!sNumMidpoints)
         return;
     BidiIterator* midpoints = smidpoints->data();
-    for (unsigned i = 0; i < sNumMidpoints; i++) {
+    for (int i = sNumMidpoints - 1; i >= 0; i--) {
         const BidiIterator& point = midpoints[i];
         if (point.obj == obj && point.pos == pos) {
             sNumMidpoints = i;
