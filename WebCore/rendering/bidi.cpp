@@ -644,8 +644,10 @@ void RenderBlock::computeHorizontalPositionsForLine(RootInlineBox* lineBox, Bidi
             break;
         case CENTER:
         case WEBKIT_CENTER:
-            // FIXME: It is inconsistent to pin to the left even in RTL blocks.
-            x += max((availableWidth - totWidth) / 2, 0);
+            if (style()->direction() == LTR)
+                x += max((availableWidth - totWidth) / 2, 0);
+            else
+                x += totWidth > availableWidth ? (availableWidth - totWidth) : (availableWidth - totWidth) / 2;
             break;
     }
 

@@ -2,6 +2,17 @@
 
         Reviewed by Darin Adler.
 
+        - make centered text in right-to-left blocks spill over to the left
+
+        Test: fast/text/align-center-rtl-spill.html
+
+        * rendering/bidi.cpp:
+        (WebCore::RenderBlock::computeHorizontalPositionsForLine):
+
+2008-02-27  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
         - more bidi.cpp cleanup
 
         * platform/text/BidiResolver.h:

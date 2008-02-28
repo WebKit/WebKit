@@ -1,3 +1,14 @@
+2008-02-27  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        - test that centered text in right-to-left blocks spills over to the left
+
+        * fast/text/align-center-rtl-spill.html: Added.
+        * platform/mac/fast/text/align-center-rtl-spill-expected.checksum: Added.
+        * platform/mac/fast/text/align-center-rtl-spill-expected.png: Added.
+        * platform/mac/fast/text/align-center-rtl-spill-expected.txt: Added.
+
 2008-02-27  Eric Seidel  <eric@webkit.org>
 
         Rubber-stamped by Adam.
