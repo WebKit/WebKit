@@ -1,3 +1,72 @@
+2008-02-28  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Darin Adler.
+        
+        <rdar://problem/4930986> REGRESSION: Paste As Quotation pastes black text instead of blue
+
+        Demonstrates the bug:
+        * editing/pasteboard/4930986-1-expected.txt: Added.
+        * editing/pasteboard/4930986-1.html: Added.
+        * editing/pasteboard/4930986-2-expected.txt: Added.
+        * editing/pasteboard/4930986-2.html: Added.
+        
+        Demonstrates a problem with the first version of the patch:
+        * editing/pasteboard/4930986-3-expected.txt: Added.
+        * editing/pasteboard/4930986-3.html: Added.
+        
+        Visual problem fixed.  An anonymous renderer changed position, DOM remains unchanged:
+        * editing/execCommand/5144139-1.html:
+        * platform/mac/editing/execCommand/5144139-1-expected.checksum:
+        * platform/mac/editing/execCommand/5144139-1-expected.png:
+        * platform/mac/editing/execCommand/5144139-1-expected.txt:
+
+        Removed unnecessary style spans, visual result unchanged:
+        * platform/mac/editing/pasteboard/merge-end-blockquote-expected.checksum:
+        * platform/mac/editing/pasteboard/merge-end-blockquote-expected.png:
+        * platform/mac/editing/pasteboard/merge-end-blockquote-expected.txt:
+        * platform/mac/editing/style/font-family-with-space-expected.checksum:
+        * platform/mac/editing/style/font-family-with-space-expected.png:
+        * platform/mac/editing/style/font-family-with-space-expected.txt:
+        
+        A style span isn't removed because at paste time because we don't anticipate 
+        encountering styles on style spans that are non-inheritable, because we don't 
+        create style spans like that at copy time. Turned this into a text only 
+        test. Test remains visually unchanged:
+        * editing/pasteboard/5245519-expected.txt: Added.
+        * editing/pasteboard/5245519.html:
+        * platform/mac/editing/pasteboard/5245519-expected.checksum: Removed.
+        * platform/mac/editing/pasteboard/5245519-expected.png: Removed.
+        * platform/mac/editing/pasteboard/5245519-expected.txt: Removed.
+
+        Added an extra empty anonymous renderer, DOM and visual result remain unchanged:
+        * platform/mac/editing/execCommand/create-list-with-hr-expected.checksum:
+        * platform/mac/editing/execCommand/create-list-with-hr-expected.png:
+        * platform/mac/editing/execCommand/create-list-with-hr-expected.txt:
+        * platform/mac/editing/pasteboard/paste-list-001-expected.checksum:
+        * platform/mac/editing/pasteboard/paste-list-001-expected.png:
+        * platform/mac/editing/pasteboard/paste-list-001-expected.txt:
+        * platform/mac/editing/pasteboard/paste-table-001-expected.checksum:
+        * platform/mac/editing/pasteboard/paste-table-001-expected.png:
+        * platform/mac/editing/pasteboard/paste-table-001-expected.txt:
+        * platform/mac/editing/pasteboard/paste-text-003-expected.checksum:
+        * platform/mac/editing/pasteboard/paste-text-003-expected.png:
+        * platform/mac/editing/pasteboard/paste-text-003-expected.txt:
+        
+        Reflects changes to CSSComputedStyleDeclaration::getPropertyCSSValue:
+        * fast/css/computed-style-expected.txt:
+        * fast/css/computed-style-without-renderer-expected.txt:
+        
+        We don't remove styles from style spans that are overridden by all of their 
+        children, even though they are unnecessary. We've never done this, but now
+        that there can be two style spans at paste time we are more likely to have 
+        a style span left over because of this problem.  Mentioned this in the test 
+        case and turned this into a text only test:
+        * editing/pasteboard/4840662.html:
+        * editing/pasteboard/4840662-expected.txt: Added.
+        * platform/mac/editing/pasteboard/4840662-expected.checksum: Removed.
+        * platform/mac/editing/pasteboard/4840662-expected.png: Removed.
+        * platform/mac/editing/pasteboard/4840662-expected.txt: Removed.
+        
 2008-02-27  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by John Sullivan.

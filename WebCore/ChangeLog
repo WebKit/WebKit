@@ -1,3 +1,46 @@
+2008-02-28  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/4930986> REGRESSION: Paste As Quotation pastes black text instead of blue
+        
+        Add a second style span at copy time to hold document default styles.  This helps us
+        differentiate between those and user applied styles at paste time, where we'll want
+        to let Mail's Paste As Quotation blockquote override document default styles, but
+        not others.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue): Changed the unit type used 
+        for -webkit-text-stroke-width from CSS_NUMBER to CSS_PX, to match other properties that 
+        are thick | medium | thin | <length>.  Before, there was a mismatch between the unit 
+        type of -webkit-text-stroke-width property values in a CSSComputedStyleDeclaration for 
+        an element and that element's inlineStyleDecl(), causing identical values to always appear 
+        different to diff().
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplaceSelectionCommand::handlePasteAsQuotationNode): Fixed.  Don't just change
+        the class to an empty string, completely remove it, it's no longer needed.
+        (WebCore::handleStyleSpansBeforeInsertion): Moved the optimization from doApply here.
+        (WebCore::ReplaceSelectionCommand::handleStyleSpans): 
+        Added, replaces removeRedundantStyles.
+        We aren't (yet) removing all redundant styles, just those on style spans, so I removed the
+        unused code and renamed the function.
+        There won't be more than two style spans that we need to consider, the one with the 
+        source document's default styles and styles on the commonAncestor of the copied Range, 
+        so don't look for more than two.
+        Let elements that wrap the incoming fragment override the source document's styles.
+        (WebCore::ReplaceSelectionCommand::doApply): Moved code to handleStyleSpansBeforeInsertion
+        and call the renamed handleStyleSpans.
+        * editing/ReplaceSelectionCommand.h:
+        * editing/markup.cpp:
+        (WebCore::removeDefaultStyles): Added.  Don't add document defaults to the style span
+        that holds user applied styles, since they'll be added to their own style span.
+        (WebCore::createMarkup):
+        Add a second style span that holds just the document defaults. This lets us differentiate
+        between those and user applied styles at paste time.
+        Mail blockquotes are just another type of special element, moved their handling there. This
+        also lets paste code make assumptions about the position of the two style spans (they are 
+        *always* parent-child).
+
 2008-02-28  Brent Fulgham <bfulgham@gmail.com>
 
         http://bugs.webkit.org/show_bug.cgi?id=17576

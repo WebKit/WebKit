@@ -290,6 +290,15 @@ static void removeEnclosingMailBlockquoteStyle(CSSMutableStyleDeclaration* style
     blockquoteStyle->diff(style);
 }
 
+static void removeDefaultStyles(CSSMutableStyleDeclaration* style, Document* document)
+{
+    if (!document || !document->documentElement())
+        return;
+            
+    RefPtr<CSSMutableStyleDeclaration> documentStyle = computedStyle(document->documentElement())->copyInheritableProperties();
+    documentStyle->diff(style);
+}
+
 static bool shouldAddNamespaceElem(const Element* elem)
 {
     // Don't add namespace attribute if it is already defined for this elem.
@@ -763,6 +772,16 @@ String createMarkup(const Range* range, Vector<Node*>* nodes, EAnnotateForInterc
             specialCommonAncestor = commonAncestorBlock;
     }
     
+    bool selectedOneOrMoreParagraphs = startOfParagraph(visibleStart) != startOfParagraph(visibleEnd) ||
+                                       isStartOfParagraph(visibleStart) && isEndOfParagraph(visibleEnd);
+                                      
+    // Retain the Mail quote level by including all ancestor mail block quotes.
+    if (lastClosed && annotate && selectedOneOrMoreParagraphs) {
+        for (Node *ancestor = lastClosed->parentNode(); ancestor; ancestor = ancestor->parentNode())
+            if (isMailBlockquote(ancestor))
+                specialCommonAncestor = ancestor;
+    }
+    
     Node* checkAncestor = specialCommonAncestor ? specialCommonAncestor : commonAncestor;
     if (checkAncestor->renderer()) {
         RefPtr<CSSMutableStyleDeclaration> checkAncestorStyle = computedStyle(checkAncestor)->copyInheritableProperties();
@@ -818,6 +837,9 @@ String createMarkup(const Range* range, Vector<Node*>* nodes, EAnnotateForInterc
         }
     }
     
+    static const String styleSpanOpen = String("<span class=\"" AppleStyleSpanClass "\" style=\"");
+    static const String styleSpanClose("</span>");
+    
     // Add a wrapper span with the styles that all of the nodes in the markup inherit.
     Node* parentOfLastClosed = lastClosed ? lastClosed->parentNode() : 0;
     if (parentOfLastClosed && parentOfLastClosed->renderer()) {
@@ -828,6 +850,9 @@ String createMarkup(const Range* range, Vector<Node*>* nodes, EAnnotateForInterc
         // get the color of content pasted into blockquotes right.
         removeEnclosingMailBlockquoteStyle(style.get(), parentOfLastClosed);
         
+        // Document default styles will be added on another wrapper span.
+        removeDefaultStyles(style.get(), document);
+        
         // Since we are converting blocks to inlines, remove any inherited block properties that are in the style.
         // This cuts out meaningless properties and prevents properties from magically affecting blocks later
         // if the style is cloned for a new block element during a future editing operation.
@@ -836,35 +861,37 @@ String createMarkup(const Range* range, Vector<Node*>* nodes, EAnnotateForInterc
 
         if (style->length() > 0) {
             Vector<UChar> openTag;
-            const String spanClassStyle = String("<span class=\"" AppleStyleSpanClass "\" style=\"");
-            append(openTag, spanClassStyle);
+            append(openTag, styleSpanOpen);
             appendAttributeValue(openTag, style->cssText());
             openTag.append('\"');
             openTag.append('>');
             preMarkups.append(String::adopt(openTag));
             
-            static const String spanCloseTag("</span>");
-            markups.append(spanCloseTag);
+            markups.append(styleSpanClose);
+        }
+    }
+    
+    if (lastClosed && lastClosed != document->documentElement()) {
+        // Add a style span with the document's default styles.  We add these in a separate
+        // span so that at paste time we can differentiate between document defaults and user
+        // applied styles.
+        RefPtr<CSSMutableStyleDeclaration> defaultStyle = computedStyle(document->documentElement())->copyInheritableProperties();
+        
+        if (defaultStyle->length() > 0) {
+            Vector<UChar> openTag;
+            append(openTag, styleSpanOpen);
+            appendAttributeValue(openTag, defaultStyle->cssText());
+            openTag.append('\"');
+            openTag.append('>');
+            preMarkups.append(String::adopt(openTag));
+            markups.append(styleSpanClose);
         }
     }
 
     // FIXME: The interchange newline should be placed in the block that it's in, not after all of the content, unconditionally.
     if (annotate && needInterchangeNewlineAfter(visibleEnd.previous()))
         markups.append(interchangeNewlineString);
-
-    bool selectedOneOrMoreParagraphs = startOfParagraph(visibleStart) != startOfParagraph(visibleEnd) ||
-                                       isStartOfParagraph(visibleStart) && isEndOfParagraph(visibleEnd);
-                                      
-    // Retain the Mail quote level by including all ancestor mail block quotes.
-    if (lastClosed && annotate && selectedOneOrMoreParagraphs) {
-        for (Node *ancestor = lastClosed->parentNode(); ancestor; ancestor = ancestor->parentNode()) {
-            if (isMailBlockquote(ancestor)) {
-                preMarkups.append(getStartMarkup(ancestor, updatedRange.get(), annotate));
-                markups.append(getEndMarkup(ancestor));
-            }
-        }
-    }
-
+    
     if (deleteButton)
         deleteButton->enable();
 

@@ -1,0 +1,2 @@
+This tests for a crash when pasting content that contains Apple-style-spans that don't have renderers.' You should see 'Hello World!' We don't currently remove the empty invisible style span at paste time because it doesn't anticipate encountering non-inheritable styles on style spans, because we never create those at copy time.
+Hello <span style="display: none; " class="Apple-style-span"></span>World!

@@ -727,7 +727,7 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
         case CSS_PROP__WEBKIT_TEXT_STROKE_COLOR:
             return currentColorOrValidColor(style, style->textStrokeColor());
         case CSS_PROP__WEBKIT_TEXT_STROKE_WIDTH:
-            return new CSSPrimitiveValue(style->textStrokeWidth(), CSSPrimitiveValue::CSS_NUMBER);
+            return new CSSPrimitiveValue(style->textStrokeWidth(), CSSPrimitiveValue::CSS_PX);
         case CSS_PROP_TEXT_TRANSFORM:
             return new CSSPrimitiveValue(style->textTransform());
         case CSS_PROP_TOP:
