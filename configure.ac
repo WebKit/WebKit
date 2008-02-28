@@ -305,7 +305,7 @@ AC_ARG_ENABLE(svg,
 AC_MSG_RESULT([$enable_svg])
 
 # check whether to enable support for SVG animation
-AC_MSG_CHECKING([whether to enable support for SVG animataion])
+AC_MSG_CHECKING([whether to enable support for SVG animation])
 AC_ARG_ENABLE(svg_animation,
               AC_HELP_STRING([--enable-svg-animation],
                              [enable support for SVG animation (experimental) [default=no]]),

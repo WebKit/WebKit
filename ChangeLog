@@ -1,3 +1,9 @@
+2008-02-28  Alp Toker  <alp@atoker.com>
+
+        Fix a configure script typo spotted by Kalle Vahlman.
+
+        * configure.ac:
+
 2008-02-26  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Darin Adler.
