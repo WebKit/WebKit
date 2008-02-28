@@ -1,3 +1,14 @@
+2008-02-28  Brent Fulgham <bfulgham@gmail.com>
+
+        http://bugs.webkit.org/show_bug.cgi?id=17576
+        Modify RenderThemeWin to use SOFT_LINK
+
+        Reviewed by Adam Roben.
+
+        * rendering/RenderThemeWin.h: Remove unneeded library handle
+        * rendering/RenderThemeWin.cpp: Change to use SOFT_LINK
+          rather than hand-coded load library calls.
+
 2008-02-28  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.

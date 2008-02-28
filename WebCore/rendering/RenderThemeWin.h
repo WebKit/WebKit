@@ -1,7 +1,7 @@
 /*
  * This file is part of the WebKit project.
  *
- * Copyright (C) 2006 Apple Computer, Inc.
+ * Copyright (C) 2006, 2008 Apple Computer, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -88,7 +88,6 @@ private:
 
     ThemeData getThemeData(RenderObject*);
     
-    HMODULE m_themeDLL;
     mutable HANDLE m_buttonTheme;
     mutable HANDLE m_textFieldTheme;
     mutable HANDLE m_menuListTheme;
