@@ -1,3 +1,15 @@
+2008-02-27  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Mark Rowe
+
+        Removed some unused methods:
+        WKGetNSURLResponseCalculatedExpiration
+        WKGetNSURLResponseMustRevalidate
+
+        * WebKitSystemInterface.h:
+        * libWebKitSystemInterfaceLeopard.a:
+        * libWebKitSystemInterfaceTiger.a:
+
 2008-02-13  Adam Roben  <aroben@apple.com>
 
         * win/tools/scripts/auto-version.sh: Removed a redundant symbol.

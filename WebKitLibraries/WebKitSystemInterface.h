@@ -31,8 +31,6 @@ NSString *WKGetMIMETypeForExtension(NSString *extension);
 
 NSDate *WKGetNSURLResponseLastModifiedDate(NSURLResponse *response);
 NSTimeInterval WKGetNSURLResponseFreshnessLifetime(NSURLResponse *response);
-NSTimeInterval WKGetNSURLResponseCalculatedExpiration(NSURLResponse *response);
-BOOL WKGetNSURLResponseMustRevalidate(NSURLResponse *response);
 
 CFStringEncoding WKGetWebDefaultCFStringEncoding(void);
 
