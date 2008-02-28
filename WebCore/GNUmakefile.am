@@ -850,6 +850,7 @@ webcore_sources += \
 	WebCore/platform/Widget.cpp \
 	WebCore/plugins/PluginDatabase.cpp \
 	WebCore/plugins/PluginInfoStore.cpp \
+	WebCore/plugins/PluginPackage.cpp \
 	WebCore/plugins/PluginStream.cpp \
 	WebCore/rendering/AutoTableLayout.cpp \
 	WebCore/rendering/bidi.cpp \

@@ -790,6 +790,7 @@ SOURCES += \
     platform/Widget.cpp \
     plugins/PluginDatabase.cpp \
     plugins/PluginInfoStore.cpp \
+    plugins/PluginPackage.cpp \
     plugins/PluginStream.cpp \
     rendering/AutoTableLayout.cpp \
     rendering/bidi.cpp \

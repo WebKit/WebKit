@@ -126,7 +126,6 @@ bool PluginPackage::fetchInfo() { notImplemented(); return false; }
 unsigned PluginPackage::hash() const { notImplemented(); return 0; }
 bool PluginPackage::equal(const PluginPackage&, const PluginPackage&) { notImplemented(); return false; }
 bool PluginPackage::load() { notImplemented(); return false; }
-PluginPackage::~PluginPackage() { notImplemented(); }
 
 void Widget::setIsSelected(bool) { notImplemented(); }
 

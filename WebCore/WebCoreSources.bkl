@@ -635,6 +635,7 @@ This file contains the list of files needed to build WebCore.
     <set append="1" var="WEBCORE_SOURCES_PLUGINS">
         plugins/PluginDatabase.cpp
         plugins/PluginInfoStore.cpp
+        plugins/PluginPackage.cpp
         plugins/PluginStream.cpp
     </set>
 

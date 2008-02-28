@@ -37,11 +37,6 @@
 
 namespace WebCore {
 
-PluginPackage::~PluginPackage()
-{
-    ASSERT(!m_isLoaded);
-}
-
 static String getVersionInfo(const LPVOID versionInfoData, const String& info)
 {
     LPVOID buffer;
@@ -55,38 +50,6 @@ static String getVersionInfo(const LPVOID versionInfoData, const String& info)
 
     // Subtract 1 from the length; we don't want the trailing null character.
     return String(reinterpret_cast<UChar*>(buffer), bufferLength - 1);
-}
-
-void PluginPackage::freeLibrarySoon()
-{
-    ASSERT(!m_freeLibraryTimer.isActive());
-    ASSERT(m_module);
-    ASSERT(m_loadCount == 0);
-
-    m_freeLibraryTimer.startOneShot(0);
-}
-
-void PluginPackage::freeLibraryTimerFired(Timer<PluginPackage>*)
-{
-    ASSERT(m_module);
-    ASSERT(m_loadCount == 0);
-
-    ::FreeLibrary(m_module);
-    m_module = 0;
-}
-
-PluginPackage::PluginPackage(const String& path, const FILETIME& lastModified)
-    : RefCounted<PluginPackage>(0)
-    , m_path(path)
-    , m_moduleVersion(0)
-    , m_module(0)
-    , m_lastModified(lastModified)
-    , m_isLoaded(false)
-    , m_loadCount(0)
-    , m_freeLibraryTimer(this, &PluginPackage::freeLibraryTimerFired)
-{
-    m_fileName = String(PathFindFileName(m_path.charactersWithNullTermination()));
-    m_parentDirectory = m_path.left(m_path.length() - m_fileName.length() - 1);
 }
 
 int PluginPackage::compareFileVersion(const PlatformModuleVersion& compareVersion) const
@@ -358,50 +321,6 @@ bool PluginPackage::load()
 abort:
     unloadWithoutShutdown();
     return false;
-}
-
-void PluginPackage::unload()
-{
-    if (!m_isLoaded)
-        return;
-
-    if (--m_loadCount > 0)
-        return;
-
-    m_NPP_Shutdown();
-
-    unloadWithoutShutdown();
-}
-
-void PluginPackage::unloadWithoutShutdown()
-{
-    if (!m_isLoaded)
-        return;
-
-    ASSERT(m_loadCount == 0);
-    ASSERT(m_module);
-
-    // <rdar://5530519>: Crash when closing tab with pdf file (Reader 7 only)
-    // If the plugin has subclassed its parent window, as with Reader 7, we may have
-    // gotten here by way of the plugin's internal window proc forwarding a message to our
-    // original window proc. If we free the plugin library from here, we will jump back
-    // to code we just freed when we return, so delay calling FreeLibrary at least until
-    // the next message loop
-    freeLibrarySoon();
-
-    m_isLoaded = false;
-}
-
-PluginPackage* PluginPackage::createPackage(const String& path, const FILETIME& lastModified)
-{
-    PluginPackage* package = new PluginPackage(path, lastModified);
-
-    if (!package->fetchInfo()) {
-        delete package;
-        return 0;
-    }
-    
-    return package;
 }
 
 unsigned PluginPackage::hash() const

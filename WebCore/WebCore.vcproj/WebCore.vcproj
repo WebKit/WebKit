@@ -7989,6 +7989,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\plugins\PluginPackage.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\plugins\PluginPackage.h"
 				>
 			</File>

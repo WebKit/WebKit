@@ -1,3 +1,24 @@
+2008-02-28  Rodney Dawes  <dobey@wayofthemonkey.com>
+
+        Reviewed by Adam Roben.
+
+        Copy PluginPackageWin.cpp to shared PluginPackage.cpp.
+        Add PluginPackage.cpp to build configurations.
+        Remove PluginPackage destructor from TemporaryLinkStubs.cpp.
+        Use cross-platform pathGetFilename method.
+        Remove platform-specific code from shared PluginPackage implementation.
+        Remove shared code from PluginPackageWin.cpp.
+
+        * GNUmakefile.am:
+        * WebCore.pro:
+        * WebCoreSources.bkl:
+        * WebCore.vcproj/WebCore.vcproj:
+        * platform/gtk/TemporaryLinkStubs.cpp:
+        * platform/qt/TemporaryLinkStubs.cpp:
+        * platform/wx/TemporaryLinkStubs.cpp:
+        * plugins/PluginPackage.cpp:
+        * plugins/win/PluginPackageWin.cpp:
+
 2008-02-28  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Darin Adler.
