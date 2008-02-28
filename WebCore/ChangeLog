@@ -1,3 +1,36 @@
+2008-02-27  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        - more bidi.cpp cleanup
+
+        * platform/text/BidiResolver.h:
+        (WebCore::BidiCharacterRun::destroy): Added. Overridden by BidiRun .
+        (WebCore::BidiResolver<Iterator, Run>::addRun): Moved BidiState::addRun()
+        here.
+        (WebCore::BidiResolver<Iterator, Run>::appendRun): Changed to use
+        addRun().
+        (WebCore::BidiResolver<Iterator, Run>::deleteRuns): Changed to use
+        destroy(), avoiding the need to specialize this method in BidiState.
+        * rendering/bidi.cpp:
+        (WebCore::BidiRun::destroy): Removed the RenderArena parameter.
+        (WebCore::BidiState::deleteRuns): Removed now-unnecessary specialization.
+        (WebCore::BidiState::addRun): Removed now-unnecessary specialization.
+        (WebCore::RenderBlock::createLineBoxes): 
+        (WebCore::RenderBlock::constructLine):
+        (WebCore::RenderBlock::computeHorizontalPositionsForLine): Added a FIXME.
+        (WebCore::RenderBlock::computeVerticalPositionsForLine):
+        (WebCore::buildCompactRuns):
+        (WebCore::RenderBlock::layoutInlineChildren):
+        (WebCore::RenderBlock::determineStartPosition):
+        (WebCore::RenderBlock::determineEndPosition):
+        (WebCore::RenderBlock::matchedEndLine):
+        (WebCore::skipNonBreakingSpace):
+        (WebCore::RenderBlock::skipWhitespace):
+        (WebCore::shouldSkipWhitespaceAfterStartObject):
+        * rendering/bidi.h:
+        (WebCore::BidiRun): Added m_ prefixes to several member variables. 
+
 2008-02-27  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Darin.

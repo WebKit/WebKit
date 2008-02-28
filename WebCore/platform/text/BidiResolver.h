@@ -85,6 +85,8 @@ struct BidiCharacterRun {
         }
     }
 
+    void destroy() { delete this; }
+
     int start() const { return m_start; }
     int stop() const { return m_stop; }
     unsigned char level() const { return m_level; }
@@ -164,18 +166,23 @@ protected:
 };
 
 template <class Iterator, class Run>
+inline void BidiResolver<Iterator, Run>::addRun(Run* run)
+{
+    if (!m_firstRun)
+        m_firstRun = run;
+    else
+        m_lastRun->m_next = run;
+    m_lastRun = run;
+    m_runCount++;
+}
+
+template <class Iterator, class Run>
 void BidiResolver<Iterator, Run>::appendRun()
 {
     if (emptyRun || eor.atEnd())
         return;
 
-    Run* bidiRun = new Run(sor.offset(), eor.offset() + 1, context(), m_direction);
-    if (!m_firstRun)
-        m_firstRun = bidiRun;
-    else
-        m_lastRun->m_next = bidiRun;
-    m_lastRun = bidiRun;
-    m_runCount++;
+    addRun(new Run(sor.offset(), eor.offset() + 1, context(), m_direction));
 
     eor.increment(*this);
     sor = eor;
@@ -315,8 +322,8 @@ void BidiResolver<Iterator, Run>::deleteRuns()
 
     Run* curr = m_firstRun;
     while (curr) {
-        Run* s = curr->m_next;
-        delete curr;
+        Run* s = curr->next();
+        curr->destroy();
         curr = s;
     }
 
