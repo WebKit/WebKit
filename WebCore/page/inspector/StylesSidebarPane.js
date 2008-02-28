@@ -218,7 +218,7 @@ WebInspector.StylePropertiesSection = function(styleRule, subtitle, computedStyl
     this.editable = (editable && !computedStyle);
 
     // Prevent editing the user agent rules.
-    if (this.styleRule.parentStyleSheet && !this.styleRule.parentStyleSheet.ownerNode)
+    if (this.styleRule.parentStyleSheet && !this.styleRule.parentStyleSheet.ownerNode && !this.styleRule.parentStyleSheet.href)
         this.editable = false;
 
     this._usedProperties = usedProperties;

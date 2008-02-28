@@ -1,3 +1,17 @@
+2008-02-28  Matt Lilek  <webkit@mattlilek.com>
+
+        Reviewed by Tim Hatcher.
+
+        Bug 16535: Stylesheets loaded with @import are not editable
+        http://bugs.webkit.org/show_bug.cgi?id=16535
+        <rdar://problem/5712899>
+
+        Sheets loaded using @import were incorrectly being flagged as non-editable
+        user agent sheets because their parent sheet doesn't have an ownerNode. We now
+        check to make sure sheets also don't have a href before restricting their editability.
+
+        * page/inspector/StylesSidebarPane.js:
+
 2008-02-28  Rodney Dawes  <dobey@wayofthemonkey.com>
 
         Reviewed by Adam Roben.
