@@ -1,3 +1,12 @@
+2008-02-28  Eric Christopher  <echristo@apple.com>
+
+        Reviewed by Geoffrey Garen.
+
+        ** TOTAL **:          1.005x as fast    2867.6ms +/- 0.4%  2853.2ms +/- 0.3%    significant
+
+        * kjs/nodes.cpp: Tell the compiler that exceptions are unexpected (for
+        the sake of branch prediction and code organization).
+
 2008-02-27  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Sam Weinig.

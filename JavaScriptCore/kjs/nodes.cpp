@@ -50,30 +50,37 @@ public:
     virtual JSValue* execute(ExecState*) KJS_FAST_CALL;
 };
 
+#if COMPILER(GCC)
+#define UNLIKELY(x) \
+  __builtin_expect ((x), 0)
+#else
+#define UNLIKELY(x) x
+#endif
+    
 #define KJS_CHECKEXCEPTION \
-if (exec->hadException()) \
+if (UNLIKELY(exec->hadException())) \
     return rethrowException(exec);
 
 #define KJS_CHECKEXCEPTIONVALUE \
-if (exec->hadException()) { \
+if (UNLIKELY(exec->hadException())) { \
     handleException(exec); \
     return jsUndefined(); \
 }
 
 #define KJS_CHECKEXCEPTIONNUMBER \
-if (exec->hadException()) { \
+if (UNLIKELY(exec->hadException())) { \
     handleException(exec); \
     return 0; \
 }
 
 #define KJS_CHECKEXCEPTIONBOOLEAN \
-if (exec->hadException()) { \
+if (UNLIKELY(exec->hadException())) { \
     handleException(exec); \
     return false; \
 }
 
 #define KJS_CHECKEXCEPTIONVOID \
-if (exec->hadException()) { \
+if (UNLIKELY(exec->hadException())) { \
     handleException(exec); \
     return; \
 }
