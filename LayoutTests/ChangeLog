@@ -1,3 +1,12 @@
+2008-02-27  Eric Seidel  <eric@webkit.org>
+
+        Rubber-stamped by Adam.
+
+        Fix svn:eol-style on all LayoutTest results
+        I simply ran:
+        cd LayoutTests
+        find . -name "*-expected.txt" | xargs svn ps svn:eol-style native
+
 2008-02-27  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Darin.
