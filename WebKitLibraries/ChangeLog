@@ -1,5 +1,11 @@
 2008-02-27  Brady Eidson  <beidson@apple.com>
 
+        Tiger build fix
+
+        * libWebKitSystemInterfaceTiger.a:
+
+2008-02-27  Brady Eidson  <beidson@apple.com>
+
         Reviewed by Mark Rowe
 
         Removed some unused methods:
