@@ -625,32 +625,30 @@ bool XMLHttpRequest::responseIsXML() const
 
 int XMLHttpRequest::getStatus(ExceptionCode& ec) const
 {
-    if (m_state == Uninitialized)
-        return 0;
-    
-    if (m_response.httpStatusCode() == 0) {
-        if (m_state != Receiving && m_state != Loaded)
-            // status MUST be available in these states, but we don't get any headers from non-HTTP requests
-            ec = INVALID_STATE_ERR;
+    if (m_response.httpStatusCode())
+        return m_response.httpStatusCode();
+
+    if (m_state == Open) {
+        // Firefox only raises an exception in this state; we match it.
+        // Note the case of local file requests, where we have no HTTP response code! Firefox never raises an exception for those, but we match HTTP case for consistency.
+        ec = INVALID_STATE_ERR;
     }
 
-    return m_response.httpStatusCode();
+    return 0;
 }
 
 String XMLHttpRequest::getStatusText(ExceptionCode& ec) const
 {
-    if (m_state == Uninitialized)
-        return "";
-    
-    if (m_response.httpStatusCode() == 0) {
-        if (m_state != Receiving && m_state != Loaded)
-            // statusText MUST be available in these states, but we don't get any headers from non-HTTP requests
-            ec = INVALID_STATE_ERR;
-        return String();
+    // FIXME: <http://bugs.webkit.org/show_bug.cgi?id=3547> XMLHttpRequest.statusText returns always "OK".
+    if (m_response.httpStatusCode())
+        return "OK";
+
+    if (m_state == Open) {
+        // See comments in getStatus() above.
+        ec = INVALID_STATE_ERR;
     }
 
-    // FIXME: should try to preserve status text in response
-    return "OK";
+    return String();
 }
 
 void XMLHttpRequest::processSyncLoadResults(const Vector<char>& data, const ResourceResponse& response)

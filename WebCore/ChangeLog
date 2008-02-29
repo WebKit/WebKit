@@ -1,3 +1,16 @@
+2008-02-29  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        <rdar://problem/5766352> REGRESSION (r27151): XMLHttpRequest.abort() resets response status
+
+        Test: http/tests/xmlhttprequest/status-after-abort.html
+
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::getStatus):
+        (WebCore::XMLHttpRequest::getStatusText):
+        Changed to match Firefox more closely (IE just raises an exception in most of those cases).
+
 2008-02-29  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.

@@ -1,3 +1,12 @@
+2008-02-29  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        <rdar://problem/5766352> REGRESSION (r27151): XMLHttpRequest.abort() resets response status
+
+        * http/tests/xmlhttprequest/status-after-abort-expected.txt: Added.
+        * http/tests/xmlhttprequest/status-after-abort.html: Added.
+
 2008-02-29  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.
