@@ -1,3 +1,24 @@
+2008-02-29  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Adam.
+
+        Move a bunch of files from bridge/mac to page/mac.
+        
+        * WebCore.xcodeproj/project.pbxproj:
+        * bridge/mac: Removed.
+        * bridge/mac/AXObjectCacheMac.mm: Removed.
+        * bridge/mac/GlobalHistoryMac.mm: Removed.
+        * bridge/mac/WebCoreAXObject.h: Removed.
+        * bridge/mac/WebCoreAXObject.mm: Removed.
+        * bridge/mac/WebCoreScriptDebugger.h: Removed.
+        * bridge/mac/WebCoreScriptDebugger.mm: Removed.
+        * page/mac/AXObjectCacheMac.mm: Copied from bridge/mac/AXObjectCacheMac.mm.
+        * page/mac/GlobalHistoryMac.mm: Copied from bridge/mac/GlobalHistoryMac.mm.
+        * page/mac/WebCoreAXObject.h: Copied from bridge/mac/WebCoreAXObject.h.
+        * page/mac/WebCoreAXObject.mm: Copied from bridge/mac/WebCoreAXObject.mm.
+        * page/mac/WebCoreScriptDebugger.h: Copied from bridge/mac/WebCoreScriptDebugger.h.
+        * page/mac/WebCoreScriptDebugger.mm: Copied from bridge/mac/WebCoreScriptDebugger.mm.
+
 2008-02-29  David Hyatt  <hyatt@apple.com>
 
         Fix for http://bugs.webkit.org/show_bug.cgi?id=17559, media query tests crashing under
