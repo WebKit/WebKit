@@ -1,3 +1,9 @@
+2008-02-29  Mark Rowe  <mrowe@apple.com>
+
+        Build fix.  Only declare pathFromFont in debug builds as it is unused in release builds.
+
+        * platform/graphics/mac/SimpleFontDataMac.mm:
+
 2008-02-29  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Adam.

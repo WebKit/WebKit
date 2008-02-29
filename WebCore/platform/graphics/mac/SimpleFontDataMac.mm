@@ -96,6 +96,7 @@ static NSString *webFallbackFontFamily(void)
     return webFallbackFontFamily.get();
 }
 
+#if !ERROR_DISABLED
 static NSString* pathFromFont(NSFont *font)
 {
     ATSFontRef atsFont = FMGetATSFontRefFromFont(wkGetNSFontATSUFontId(font));
@@ -123,7 +124,7 @@ static NSString* pathFromFont(NSFont *font)
 
     return nil;
 }
-
+#endif
 
 void SimpleFontData::platformInit()
 {
