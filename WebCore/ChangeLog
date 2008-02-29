@@ -1,3 +1,30 @@
+2008-02-29  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Adam.
+        
+        Copy the remaining files in bridge/ over to page/
+
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bridge: Removed.
+        * bridge/AXObjectCache.h: Removed.
+        * bridge/EditorClient.h: Removed.
+        * bridge/GlobalHistory.h: Removed.
+        * bridge/win: Removed.
+        * bridge/win/FrameCGWin.cpp: Removed.
+        * bridge/win/FrameCairoWin.cpp: Removed.
+        * bridge/win/FrameWin.cpp: Removed.
+        * bridge/win/FrameWin.h: Removed.
+        * bridge/win/GlobalHistoryWin.cpp: Removed.
+        * bridge/win/PageWin.cpp: Removed.
+        * page/AXObjectCache.h: Copied from bridge/AXObjectCache.h.
+        * page/EditorClient.h: Copied from bridge/EditorClient.h.
+        * page/GlobalHistory.h: Copied from bridge/GlobalHistory.h.
+        * page/win/FrameCGWin.cpp: Copied from bridge/win/FrameCGWin.cpp.
+        * page/win/FrameCairoWin.cpp: Copied from bridge/win/FrameCairoWin.cpp.
+        * page/win/FrameWin.cpp: Copied from bridge/win/FrameWin.cpp.
+        * page/win/FrameWin.h: Copied from bridge/win/FrameWin.h.
+
 2008-02-29  Robert Blaut  <webkit@blaut.biz>
 
         Reviewed by Darin Adler.

@@ -2606,6 +2606,42 @@
 		<Filter
 			Name="page"
 			>
+			<Filter
+				Name="win"
+				>
+				<File
+					RelativePath="..\page\win\FrameCGWin.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\page\win\FrameWin.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\page\win\FrameWin.h"
+					>
+				</File>
+				<File
+					RelativePath="..\page\win\GlobalHistoryWin.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\page\win\PageWin.cpp"
+					>
+				</File>
+			</Filter>			
+			<File
+				RelativePath="..\bridge\AXObjectCache.h"
+				>
+			</File>
+			<File
+				RelativePath="..\bridge\EditorClient.h"
+				>
+			</File>
+			<File
+				RelativePath="..\bridge\GlobalHistory.h"
+				>
+			</File>
 			<File
 				RelativePath="..\page\AnimationController.cpp"
 				>
@@ -6396,46 +6432,6 @@
 				RelativePath="..\dom\XMLTokenizer.h"
 				>
 			</File>
-		</Filter>
-		<Filter
-			Name="bridge"
-			>
-			<File
-				RelativePath="..\bridge\AXObjectCache.h"
-				>
-			</File>
-			<File
-				RelativePath="..\bridge\EditorClient.h"
-				>
-			</File>
-			<File
-				RelativePath="..\bridge\GlobalHistory.h"
-				>
-			</File>
-			<Filter
-				Name="win"
-				>
-				<File
-					RelativePath="..\bridge\win\FrameCGWin.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\bridge\win\FrameWin.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\bridge\win\FrameWin.h"
-					>
-				</File>
-				<File
-					RelativePath="..\bridge\win\GlobalHistoryWin.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\bridge\win\PageWin.cpp"
-					>
-				</File>
-			</Filter>
 		</Filter>
 		<Filter
 			Name="editing"
