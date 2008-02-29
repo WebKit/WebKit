@@ -1,5 +1,19 @@
 2008-02-29  David Hyatt  <hyatt@apple.com>
 
+        Fix for http://bugs.webkit.org/show_bug.cgi?id=17559, media query tests crashing under
+        guard malloc.  Pass along the style selector so it can be accessed, since it has not yet
+        been assigned into the document's member variable.
+
+        Reviewed by aroben
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSRuleSet::addRulesFromSheet):
+        * css/MediaQueryEvaluator.cpp:
+        (WebCore::MediaQueryEvaluator::eval):
+        * css/MediaQueryEvaluator.h:
+
+2008-02-29  David Hyatt  <hyatt@apple.com>
+
         <rdar://problem/5755916> REGRESSION: Loading HTML5 spec is 5x slower on TOT than in 3.0.4
 
         Improve the performance of dynamic sibling and CSS3 selectors so that there is no slowdown any more.

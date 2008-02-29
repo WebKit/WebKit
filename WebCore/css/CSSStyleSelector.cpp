@@ -2204,7 +2204,7 @@ void CSSRuleSet::addRulesFromSheet(CSSStyleSheet* sheet, const MediaQueryEvaluat
 
     // No media implies "all", but if a media list exists it must
     // contain our current medium
-    if (sheet->media() && !medium.eval(sheet->media()))
+    if (sheet->media() && !medium.eval(sheet->media(), styleSelector))
         return; // the style sheet doesn't apply
 
     int len = sheet->length();
@@ -2218,14 +2218,14 @@ void CSSRuleSet::addRulesFromSheet(CSSStyleSheet* sheet, const MediaQueryEvaluat
         }
         else if (item->isImportRule()) {
             CSSImportRule* import = static_cast<CSSImportRule*>(item);
-            if (!import->media() || medium.eval(import->media()))
+            if (!import->media() || medium.eval(import->media(), styleSelector))
                 addRulesFromSheet(import->styleSheet(), medium, styleSelector);
         }
         else if (item->isMediaRule()) {
             CSSMediaRule* r = static_cast<CSSMediaRule*>(item);
             CSSRuleList* rules = r->cssRules();
 
-            if ((!r->media() || medium.eval(r->media())) && rules) {
+            if ((!r->media() || medium.eval(r->media(), styleSelector)) && rules) {
                 // Traverse child elements of the @media rule.
                 for (unsigned j = 0; j < rules->length(); j++) {
                     CSSRule *childItem = rules->item(j);

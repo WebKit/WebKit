@@ -31,6 +31,7 @@
 #include "PlatformString.h"
 
 namespace WebCore {
+class CSSStyleSelector;
 class Frame;
 class RenderStyle;
 class MediaList;
@@ -74,10 +75,10 @@ public:
     bool mediaTypeMatchSpecific(const char* mediaTypeToMatch) const;
 
     /** Evaluates a list of media queries */
-    bool eval(const MediaList* query) const;
+    bool eval(const MediaList*, CSSStyleSelector* = 0) const;
 
     /** Evaluates media query subexpression, ie "and (media-feature: value)" part */
-    bool eval(const MediaQueryExp* expr) const;
+    bool eval(const MediaQueryExp*) const;
 
 private:
     String m_mediaType;
