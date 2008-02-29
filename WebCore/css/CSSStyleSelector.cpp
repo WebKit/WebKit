@@ -1429,7 +1429,7 @@ CSSStyleSelector::SelectorMatch CSSStyleSelector::checkSelector(CSSSelector* sel
             if (!m_collectRulesOnly && e->parentNode() && e->parentNode()->isElementNode()) {
                 RenderStyle* parentStyle = (m_element == e) ? m_parentStyle : e->parentNode()->renderStyle();
                 if (parentStyle)
-                    parentStyle->setChildrenAffectedByForwardPositionalRules();
+                    parentStyle->setChildrenAffectedByDirectAdjacentRules();
             }
             Node* n = e->previousSibling();
             while (n && !n->isElementNode())

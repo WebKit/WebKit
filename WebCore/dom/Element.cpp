@@ -706,8 +706,7 @@ void Element::recalcStyle(StyleChange change)
 {
     RenderStyle* currentStyle = renderStyle();
     bool hasParentStyle = parentNode() ? parentNode()->renderStyle() : false;
-    bool hasPositionalChildren = currentStyle && (currentStyle->childrenAffectedByFirstChildRules() || currentStyle->childrenAffectedByLastChildRules() ||
-                                                  currentStyle->childrenAffectedByForwardPositionalRules() || currentStyle->childrenAffectedByBackwardPositionalRules());
+    bool hasPositionalRules = changed() && currentStyle && currentStyle->childrenAffectedByPositionalRules();
 
 #if ENABLE(SVG)
     if (!hasParentStyle && isShadowNode() && isSVGElement())
@@ -750,6 +749,8 @@ void Element::recalcStyle(StyleChange change)
                 newStyle->setChildrenAffectedByFirstChildRules();
             if (currentStyle->childrenAffectedByLastChildRules())
                 newStyle->setChildrenAffectedByLastChildRules();
+            if (currentStyle->childrenAffectedByDirectAdjacentRules())
+                newStyle->setChildrenAffectedByDirectAdjacentRules();
         }
 
         if (ch != NoChange)
@@ -768,7 +769,7 @@ void Element::recalcStyle(StyleChange change)
         newStyle->deref(document()->renderArena());
 
         if (change != Force) {
-            if ((document()->usesDescendantRules() || hasPositionalChildren) && styleChangeType() == FullStyleChange)
+            if ((document()->usesDescendantRules() || hasPositionalRules) && styleChangeType() == FullStyleChange)
                 change = Force;
             else
                 change = ch;
@@ -800,81 +801,98 @@ bool Element::childTypeAllowed(NodeType type)
     }
 }
 
-static void checkFirstChildRules(Element* e, RenderStyle* style)
+static void checkForSiblingStyleChanges(Element* e, RenderStyle* style, bool finishedParsingCallback,
+                                        Node* beforeChange, Node* afterChange, int childCountDelta)
 {
-    if (style->childrenAffectedByFirstChildRules()) {
-        // Check our first two children.  They need to be true and false respectively.
-        bool checkingFirstChild = true;
-        for (Node* n = e->firstChild(); n; n = n->nextSibling()) {
-            if (n->isElementNode()) {
-                if (checkingFirstChild) {
-                    if (n->attached() && n->renderStyle() && !n->renderStyle()->firstChildState())
-                        n->setChanged();
-                    checkingFirstChild = false;
-                } else {
-                    if (n->attached() && n->renderStyle() && n->renderStyle()->firstChildState())
-                        n->setChanged();
-                    break;
-                }
-            }
-        }
-    } 
-}
-
-static void checkLastChildRules(Element* e, RenderStyle* style)
-{
-    if (style->childrenAffectedByLastChildRules()) {
-        // Check our last two children.  They need to be true and false respectively.
-        bool checkingLastChild = true;
-        for (Node* n = e->lastChild(); n; n = n->previousSibling()) {
-            if (n->isElementNode()) {
-                if (checkingLastChild) {
-                    if (n->attached() && n->renderStyle() && !n->renderStyle()->lastChildState())
-                        n->setChanged();
-                    checkingLastChild = false;
-                } else {
-                    if (n->attached() && n->renderStyle() && n->renderStyle()->lastChildState())
-                        n->setChanged();
-                    break;
-                }
-            }
-        }
-    }
-}
-
-static bool checkEmptyRules(Element* e, RenderStyle* style)
-{
-    return style->affectedByEmpty() && (!style->emptyState() || e->hasChildNodes());
-}
-
-static void checkStyleRules(Element* e, RenderStyle* style, bool changedByParser)
-{
-    if (e->changed() || !style)
+    if (!style || (e->changed() && style->childrenAffectedByPositionalRules()))
         return;
 
-    if (style->childrenAffectedByBackwardPositionalRules() || 
-        (!changedByParser && style->childrenAffectedByForwardPositionalRules()) ||
-        checkEmptyRules(e, style)) {
+    // :first-child.  In the parser callback case, we don't have to check anything, since we were right the first time.
+    // In the DOM case, we only need to do something if |afterChange| is not 0.
+    // |afterChange| is 0 in the parser case, so it works out that we'll skip this block.
+    if (style->childrenAffectedByFirstChildRules() && afterChange) {
+        // Find our new first child.
+        Node* newFirstChild = 0;
+        for (newFirstChild = e->firstChild(); newFirstChild && !newFirstChild->isElementNode(); newFirstChild = newFirstChild->nextSibling()) {};
+        
+        // Find the first element node following |afterChange|
+        Node* firstElementAfterInsertion = 0;
+        for (firstElementAfterInsertion = afterChange;
+             firstElementAfterInsertion && !firstElementAfterInsertion->isElementNode();
+             firstElementAfterInsertion = firstElementAfterInsertion->nextSibling()) {};
+        
+        // This is the insert/append case.
+        if (newFirstChild != firstElementAfterInsertion && firstElementAfterInsertion && firstElementAfterInsertion->attached() &&
+            firstElementAfterInsertion->renderStyle() && firstElementAfterInsertion->renderStyle()->firstChildState())
+            firstElementAfterInsertion->setChanged();
+            
+        // We also have to handle node removal.
+        if (childCountDelta < 0 && newFirstChild == firstElementAfterInsertion && newFirstChild && newFirstChild->renderStyle() && !newFirstChild->renderStyle()->firstChildState())
+            newFirstChild->setChanged();
+    }
+
+    // :last-child.  In the parser callback case, we don't have to check anything, since we were right the first time.
+    // In the DOM case, we only need to do something if |afterChange| is not 0.
+    if (style->childrenAffectedByLastChildRules() && beforeChange) {
+        // Find our new last child.
+        Node* newLastChild = 0;
+        for (newLastChild = e->lastChild(); newLastChild && !newLastChild->isElementNode(); newLastChild = newLastChild->previousSibling()) {};
+        
+        // Find the last element node going backwards from |beforeChange|
+        Node* lastElementBeforeInsertion = 0;
+        for (lastElementBeforeInsertion = beforeChange;
+             lastElementBeforeInsertion && !lastElementBeforeInsertion->isElementNode();
+             lastElementBeforeInsertion = lastElementBeforeInsertion->previousSibling()) {};
+        
+        if (newLastChild != lastElementBeforeInsertion && lastElementBeforeInsertion && lastElementBeforeInsertion->attached() &&
+            lastElementBeforeInsertion->renderStyle() && lastElementBeforeInsertion->renderStyle()->lastChildState())
+            lastElementBeforeInsertion->setChanged();
+            
+        // We also have to handle node removal.  The parser callback case is similar to node removal as well in that we need to change the last child
+        // to match now.
+        if ((childCountDelta < 0 || finishedParsingCallback) && newLastChild == lastElementBeforeInsertion && newLastChild && newLastChild->renderStyle() && !newLastChild->renderStyle()->lastChildState())
+            newLastChild->setChanged();
+    }
+
+    // The + selector.  We need to invalidate the first element following the insertion point.  It is the only possible element
+    // that could be affected by this DOM change.
+    if (style->childrenAffectedByDirectAdjacentRules() && afterChange) {
+        Node* firstElementAfterInsertion = 0;
+        for (firstElementAfterInsertion = afterChange;
+             firstElementAfterInsertion && !firstElementAfterInsertion->isElementNode();
+             firstElementAfterInsertion = firstElementAfterInsertion->nextSibling()) {};
+        if (firstElementAfterInsertion && firstElementAfterInsertion->attached())
+            firstElementAfterInsertion->setChanged();
+    }
+
+    // Forward positional selectors include the ~ selector, nth-child, nth-of-type, first-of-type and only-of-type.
+    // Backward positional selectors include nth-last-child, nth-last-of-type, last-of-type and only-of-type.
+    // We have to invalidate everything following the insertion point in the forward case, and everything before the insertion point in the
+    // backward case.
+    // |afterChange| is 0 in the parser callback case, so we won't do any work for the forward case if we don't have to.
+    // For performance reasons we just mark the parent node as changed, since we don't want to make childrenChanged O(n^2) by crawling all our kids
+    // here.  recalcStyle will then force a walk of the children when it sees that this has happened.
+    if ((style->childrenAffectedByForwardPositionalRules() && afterChange) ||
+        (style->childrenAffectedByBackwardPositionalRules() && beforeChange))
         e->setChanged();
-        return;
-    }
-
-    checkFirstChildRules(e, style);
-    checkLastChildRules(e, style);
+    
+    // :empty selector.
+    if (style->affectedByEmpty() && (!style->emptyState() || e->hasChildNodes()))
+        e->setChanged();
 }
 
 void Element::childrenChanged(bool changedByParser, Node* beforeChange, Node* afterChange, int childCountDelta)
 {
     ContainerNode::childrenChanged(changedByParser, beforeChange, afterChange, childCountDelta);
     if (!changedByParser)
-        checkStyleRules(this, renderStyle(), false);
+        checkForSiblingStyleChanges(this, renderStyle(), false, beforeChange, afterChange, childCountDelta);
 }
 
 void Element::finishParsingChildren()
 {
     ContainerNode::finishParsingChildren();
     m_parsingChildrenFinished = true;
-    checkStyleRules(this, renderStyle(), true);
+    checkForSiblingStyleChanges(this, renderStyle(), true, lastChild(), 0, 0);
 }
 
 void Element::dispatchAttrRemovalEvent(Attribute*)
