@@ -1,3 +1,15 @@
+2008-02-29  Robert Blaut  <webkit@blaut.biz>
+
+        Reviewed by Darin Adler.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=17532
+          Webkit imports styles from <link> element which doesn't have rel=stylesheet defined
+
+        Test: fast/html/link-rel-stylesheet.html
+
+        * html/HTMLLinkElement.cpp:
+        (WebCore::HTMLLinkElement::process):
+
 2008-02-29  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Anders Carlsson.

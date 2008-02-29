@@ -165,7 +165,7 @@ void HTMLLinkElement::process()
 
     // Stylesheet
     // This was buggy and would incorrectly match <link rel="alternate">, which has a different specified meaning. -dwh
-    if (m_disabledState != 2 && (type.contains("text/css") || m_isStyleSheet) && document()->frame()) {
+    if (m_disabledState != 2 && m_isStyleSheet && document()->frame()) {
         // no need to load style sheets which aren't for the screen output
         // ### there may be in some situations e.g. for an editor or script to manipulate
         // also, don't load style sheets for standalone documents
