@@ -1,3 +1,12 @@
+2008-02-28  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        Make use of new CGFont APIs on Leopard rather than making a WebKitSystemInterface call.
+
+        * WebCoreSupport/WebSystemInterface.m:
+        (InitWebCoreSystemInterface): Only initialize wkGetFontMetrics on Tiger.
+
 2008-02-27  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Mark Rowe (code) and Darin (concept)

@@ -1,3 +1,17 @@
+2008-02-28  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        Make use of new CGFont APIs on Leopard rather than making a WebKitSystemInterface call.
+
+        * DerivedSources.make:  Add Tiger-only symbols to the export file when running on Tiger.
+        * WebCore.Tiger.exp:  Added.  Move Tiger-only symbol here from WebCore.base.exp.
+        * WebCore.base.exp:
+        * platform/graphics/mac/SimpleFontDataMac.mm:
+        (WebCore::SimpleFontData::platformInit):  Use Leopard APIs when building on Leopard.
+        * platform/mac/WebCoreSystemInterface.h:  Don't declare wkGetFontMetrics on Leopard as it is unused.
+        * platform/mac/WebCoreSystemInterface.mm:  Ditto.
+
 2008-02-28  Matt Lilek  <webkit@mattlilek.com>
 
         Reviewed by Tim Hatcher.

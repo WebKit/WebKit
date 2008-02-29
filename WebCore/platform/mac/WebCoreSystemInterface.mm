@@ -41,7 +41,6 @@ OSStatus (*wkGetATSStyleGroup)(ATSUStyle, void** styleGroup);
 CGFontRef (*wkGetCGFontFromNSFont)(NSFont*);
 NSFont* (*wkGetFontInLanguageForRange)(NSFont*, NSString*, NSRange);
 NSFont* (*wkGetFontInLanguageForCharacter)(NSFont*, UniChar);
-void (*wkGetFontMetrics)(CGFontRef, int* ascent, int* descent, int* lineGap, unsigned* unitsPerEm);
 BOOL (*wkGetGlyphTransformedAdvances)(CGFontRef, NSFont*, CGAffineTransform*, ATSGlyphRef*, CGSize* advance);
 ATSLayoutRecord* (*wkGetGlyphVectorFirstRecord)(void* glyphVector);
 int (*wkGetGlyphVectorNumGlyphs)(void* glyphVector);
@@ -92,3 +91,7 @@ void (*wkSetNSURLRequestShouldContentSniff)(NSMutableURLRequest *, BOOL);
 id (*wkCreateNSURLConnectionDelegateProxy)(void);
 BOOL (*wkSupportsMultipartXMixedReplace)(NSMutableURLRequest *);
 float (*wkSecondsSinceLastInputEvent)(void);
+
+#ifdef BUILDING_ON_TIGER
+void (*wkGetFontMetrics)(CGFontRef, int* ascent, int* descent, int* lineGap, unsigned* unitsPerEm);
+#endif

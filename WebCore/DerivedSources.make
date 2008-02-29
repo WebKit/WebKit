@@ -709,9 +709,14 @@ XMLNames.cpp : dom/make_names.pl xml/xmlattrs.in
 	perl $< --attrs $(WebCore)/xml/xmlattrs.in \
             --namespace XML --cppNamespace WebCore --namespaceURI "http://www.w3.org/XML/1998/namespace" --output .
 
+
+ifeq ($(findstring 10.4,$(MACOSX_DEPLOYMENT_TARGET)), 10.4)
+    WEBCORE_EXPORT_DEPENDENCIES := $(WEBCORE_EXPORT_DEPENDENCIES) WebCore.Tiger.exp
+endif
+
 ifeq ($(findstring ENABLE_SVG,$(FEATURE_DEFINES)), ENABLE_SVG)
 
-WEBCORE_EXPORT_DEPENDENCIES := WebCore.SVG.exp
+WEBCORE_EXPORT_DEPENDENCIES := $(WEBCORE_EXPORT_DEPENDENCIES) WebCore.SVG.exp
 
 ifeq ($(findstring ENABLE_SVG_USE,$(FEATURE_DEFINES)), ENABLE_SVG_USE)
     SVG_FLAGS := $(SVG_FLAGS) ENABLE_SVG_USE=1
@@ -736,8 +741,8 @@ ifeq ($(findstring ENABLE_SVG_ANIMATION,$(FEATURE_DEFINES)), ENABLE_SVG_ANIMATIO
 endif
 
 ifeq ($(findstring ENABLE_SVG_FOREIGN_OBJECT,$(FEATURE_DEFINES)), ENABLE_SVG_FOREIGN_OBJECT)
-	SVG_FLAGS := $(SVG_FLAGS) ENABLE_SVG_FOREIGN_OBJECT=1
-	WEBCORE_EXPORT_DEPENDENCIES := $(WEBCORE_EXPORT_DEPENDENCIES) WebCore.SVG.ForeignObject.exp
+    SVG_FLAGS := $(SVG_FLAGS) ENABLE_SVG_FOREIGN_OBJECT=1
+    WEBCORE_EXPORT_DEPENDENCIES := $(WEBCORE_EXPORT_DEPENDENCIES) WebCore.SVG.ForeignObject.exp
 endif
 
 # SVG tag and attribute names (need to pass an extra flag if svg experimental features are enabled)
@@ -756,10 +761,6 @@ XLinkNames.cpp : dom/make_names.pl svg/xlinkattrs.in
 	perl $< --attrs $(WebCore)/svg/xlinkattrs.in \
             --namespace XLink --cppNamespace WebCore --namespaceURI "http://www.w3.org/1999/xlink" --output .
 
-# Add SVG Symbols to the WebCore exported symbols file
-WebCore.exp : WebCore.base.exp $(WEBCORE_EXPORT_DEPENDENCIES)
-	cat $^ > $@
-
 else
 
 SVGElementFactory.cpp :
@@ -771,10 +772,11 @@ SVGNames.cpp :
 XLinkNames.cpp :
 	echo > $@
 
-WebCore.exp : WebCore.base.exp
-	cat $^ > $@
-
 endif
+
+# Add any conditionally-included symbols to the WebCore exported symbols file
+WebCore.exp : WebCore.base.exp $(WEBCORE_EXPORT_DEPENDENCIES)
+	cat $^ > $@
 
 # new-style Objective-C bindings
 

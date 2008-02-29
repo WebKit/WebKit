@@ -1,3 +1,12 @@
+2008-02-28  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        Make use of new CGFont APIs on Leopard rather than making a WebKitSystemInterface call.
+
+        * WebKitSystemInterface.h:  Only declare WKGetFontMetrics on Tiger.
+        * libWebKitSystemInterfaceLeopard.a:  Update for removal of WKGetFontMetrics.
+
 2008-02-27  Brady Eidson  <beidson@apple.com>
 
         Tiger build fix

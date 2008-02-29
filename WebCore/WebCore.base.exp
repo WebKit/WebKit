@@ -720,7 +720,6 @@ _wkGetCGFontFromNSFont
 _wkGetExtensionsForMIMEType
 _wkGetFontInLanguageForCharacter
 _wkGetFontInLanguageForRange
-_wkGetFontMetrics
 _wkGetGlyphTransformedAdvances
 _wkGetGlyphVectorFirstRecord
 _wkGetGlyphVectorNumGlyphs

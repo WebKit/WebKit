@@ -165,7 +165,15 @@ void SimpleFontData::platformInit()
     int iAscent;
     int iDescent;
     int iLineGap;
-    wkGetFontMetrics(m_font.m_cgFont, &iAscent, &iDescent, &iLineGap, &m_unitsPerEm); 
+#ifdef BUILDING_ON_TIGER
+    wkGetFontMetrics(m_font.m_cgFont, &iAscent, &iDescent, &iLineGap, &m_unitsPerEm);
+#else
+    iAscent = CGFontGetAscent(m_font.m_cgFont);
+    iDescent = CGFontGetDescent(m_font.m_cgFont);
+    iLineGap = CGFontGetLeading(m_font.m_cgFont);
+    m_unitsPerEm = CGFontGetUnitsPerEm(m_font.m_cgFont);
+#endif
+
     float pointSize = m_font.m_size;
     float fAscent = scaleEmToUnits(iAscent, m_unitsPerEm) * pointSize;
     float fDescent = -scaleEmToUnits(iDescent, m_unitsPerEm) * pointSize;

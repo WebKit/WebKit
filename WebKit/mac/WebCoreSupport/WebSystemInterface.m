@@ -64,7 +64,6 @@ void InitWebCoreSystemInterface(void)
     INIT(GetExtensionsForMIMEType);
     INIT(GetFontInLanguageForCharacter);
     INIT(GetFontInLanguageForRange);
-    INIT(GetFontMetrics);
     INIT(GetGlyphTransformedAdvances);
     INIT(GetGlyphVectorFirstRecord);
     INIT(GetGlyphVectorNumGlyphs);
@@ -94,6 +93,9 @@ void InitWebCoreSystemInterface(void)
     INIT(QTMovieMaxTimeLoaded);
     INIT(QTMovieViewSetDrawSynchronously);
 
-    
+#ifdef BUILDING_ON_TIGER
+    INIT(GetFontMetrics);
+#endif
+
     didInit = true;
 }
