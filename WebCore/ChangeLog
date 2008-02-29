@@ -1,3 +1,18 @@
+2008-02-29  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        - fix a bug where explicit embedding past the end of a line could
+          affect text that line
+
+        Test: fast/text/embed-at-end-of-pre-wrap-line.html
+
+        * rendering/bidi.cpp:
+        (WebCore::RenderBlock::skipWhitespace): Removed calls to
+        setAdjustEmbedding().
+        (WebCore::RenderBlock::findNextLineBreak): Added calls to
+        setAdjustEmbedding() around skipWhitespace() only where needed.
+
 2008-02-29  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Oliver Hunt.

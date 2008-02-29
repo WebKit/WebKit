@@ -1227,7 +1227,6 @@ int RenderBlock::skipWhitespace(BidiIterator& it, BidiState& bidi)
     // elements quite right.  In other words, we need to build this function's work into the normal line
     // object iteration process.
     int w = lineWidth(m_height);
-    bidi.setAdjustEmbedding(true);
 
     while (!it.atEnd() && !requiresLineBox(it)) {
         RenderObject* o = it.obj;
@@ -1260,7 +1259,6 @@ int RenderBlock::skipWhitespace(BidiIterator& it, BidiState& bidi)
         it.increment(bidi);
     }
 
-    bidi.setAdjustEmbedding(false);
     return w;
 }
 
@@ -1309,8 +1307,9 @@ BidiIterator RenderBlock::findNextLineBreak(BidiIterator &start, BidiState &bidi
 {
     bool appliedStartWidth = start.pos > 0;
 
-    // eliminate spaces at beginning of line
+    bidi.setAdjustEmbedding(true);
     int width = skipWhitespace(start, bidi);
+    bidi.setAdjustEmbedding(false);
     int w = 0;
     int tmpW = 0;
 

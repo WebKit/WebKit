@@ -1,3 +1,15 @@
+2008-02-29  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        - test for a bug where explicit embedding past the end of a line could
+          affect text that line
+
+        * fast/text/embed-at-end-of-pre-wrap-line.html: Added.
+        * platform/mac-leopard/fast/text/embed-at-end-of-pre-wrap-line-expected.checksum: Added.
+        * platform/mac-leopard/fast/text/embed-at-end-of-pre-wrap-line-expected.png: Added.
+        * platform/mac/fast/text/embed-at-end-of-pre-wrap-line-expected.txt: Added.
+
 2008-02-28  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Darin Adler.
