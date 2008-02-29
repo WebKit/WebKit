@@ -74,7 +74,6 @@ void InitWebCoreSystemInterface(void)
     INIT(GetPreferredExtensionForMIMEType);
     INIT(GetWheelEventDeltas);
     INIT(InitializeGlyphVector);
-    INIT(PathFromFont);
     INIT(PopupMenu);
     INIT(ReleaseStyleGroup);
     INIT(SetCGFontRenderingMode);

@@ -732,7 +732,6 @@ _wkGetNSURLResponseMustRevalidate
 _wkGetPreferredExtensionForMIMEType
 _wkGetWheelEventDeltas
 _wkInitializeGlyphVector
-_wkPathFromFont
 _wkPopupMenu
 _wkQTMovieDataRate
 _wkQTMovieMaxTimeLoaded

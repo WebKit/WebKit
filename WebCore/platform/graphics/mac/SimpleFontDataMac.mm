@@ -62,7 +62,7 @@ bool initFontData(SimpleFontData* fontData)
     ATSUStyle fontStyle;
     if (ATSUCreateStyle(&fontStyle) != noErr)
         return false;
-    
+
     ATSUFontID fontId = fontData->m_font.m_atsuFontID;
     if (!fontId) {
         ATSUDisposeStyle(fontStyle);
@@ -96,6 +96,35 @@ static NSString *webFallbackFontFamily(void)
     return webFallbackFontFamily.get();
 }
 
+static NSString* pathFromFont(NSFont *font)
+{
+    ATSFontRef atsFont = FMGetATSFontRefFromFont(wkGetNSFontATSUFontId(font));
+    FSRef fileRef;
+
+#ifndef BUILDING_ON_TIGER
+    OSStatus status = ATSFontGetFileReference(atsFont, &fileRef);
+    if (status != noErr)
+        return nil;
+#else
+    FSSpec oFile;
+    OSStatus status = ATSFontGetFileSpecification(atsFont, &oFile);
+    if (status != noErr)
+        return nil;
+
+    status = FSpMakeFSRef(&oFile, &fileRef);
+    if (status != noErr)
+        return nil;
+#endif
+
+    UInt8 filePathBuffer[PATH_MAX];
+    status = FSRefMakePath(&fileRef, filePathBuffer, PATH_MAX);
+    if (status == noErr)
+        return [NSString stringWithUTF8String:(const char*)filePathBuffer];
+
+    return nil;
+}
+
+
 void SimpleFontData::platformInit()
 {
     m_styleGroup = 0;
@@ -128,7 +157,7 @@ void SimpleFontData::platformInit()
 #endif
         m_font.setFont([[NSFontManager sharedFontManager] convertFont:m_font.font() toFamily:fallbackFontFamily]);
 #if !ERROR_DISABLED
-        NSString *filePath = wkPathFromFont(initialFont.get());
+        NSString *filePath = pathFromFont(initialFont.get());
         if (!filePath)
             filePath = @"not known";
 #endif

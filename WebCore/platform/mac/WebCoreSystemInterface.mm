@@ -63,7 +63,6 @@ NSDate *(*wkGetNSURLResponseLastModifiedDate)(NSURLResponse *response);
 BOOL (*wkGetNSURLResponseMustRevalidate)(NSURLResponse *response);
 void (*wkGetWheelEventDeltas)(NSEvent*, float* deltaX, float* deltaY, BOOL* continuous);
 OSStatus (*wkInitializeGlyphVector)(int count, void* glyphs);
-NSString* (*wkPathFromFont)(NSFont*);
 void (*wkPopupMenu)(NSMenu*, NSPoint location, float width, NSView*, int selectedItem, NSFont*);
 int (*wkQTMovieDataRate)(QTMovie*);
 float (*wkQTMovieMaxTimeLoaded)(QTMovie*);

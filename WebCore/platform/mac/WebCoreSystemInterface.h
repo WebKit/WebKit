@@ -120,7 +120,6 @@ extern NSDate *(*wkGetNSURLResponseLastModifiedDate)(NSURLResponse *response);
 extern BOOL (*wkGetNSURLResponseMustRevalidate)(NSURLResponse *response);
 extern void (*wkGetWheelEventDeltas)(NSEvent*, float* deltaX, float* deltaY, BOOL* continuous);
 extern OSStatus (*wkInitializeGlyphVector)(int count, void* glyphs);
-extern NSString* (*wkPathFromFont)(NSFont*);
 extern void (*wkPopupMenu)(NSMenu*, NSPoint location, float width, NSView*, int selectedItem, NSFont*);
 extern int (*wkQTMovieDataRate)(QTMovie*);
 extern float (*wkQTMovieMaxTimeLoaded)(QTMovie*);

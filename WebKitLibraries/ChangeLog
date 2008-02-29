@@ -1,5 +1,15 @@
 2008-02-29  Mark Rowe  <mrowe@apple.com>
 
+        Reviewed by Anders Carlsson.
+
+        Replace use of WKPathFromFont with implementation in terms of public API.
+
+        * WebKitSystemInterface.h:  Remove unused symbol.
+        * libWebKitSystemInterfaceLeopard.a:
+        * libWebKitSystemInterfaceTiger.a:
+
+2008-02-29  Mark Rowe  <mrowe@apple.com>
+
         Reviewed by Oliver Hunt.
 
         Fix spelling of "request" in name of WKNSURLProtocolClassForRequest.

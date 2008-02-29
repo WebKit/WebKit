@@ -152,8 +152,6 @@ void WKNSWindowMakeBottomCornersSquare(NSWindow *);
 BOOL WKSupportsMultipartXMixedReplace(NSMutableURLRequest *request);
 #endif
 
-NSString* WKPathFromFont(NSFont *font);
-
 BOOL WKCGContextIsBitmapContext(CGContextRef context);
 
 void WKGetWheelEventDeltas(NSEvent *, float *deltaX, float *deltaY, BOOL *continuous);
