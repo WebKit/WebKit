@@ -97,6 +97,14 @@ static NSString *webFallbackFontFamily(void)
 }
 
 #if !ERROR_DISABLED
+#ifdef __LP64__
+static NSString* pathFromFont(NSFont*)
+{
+    // FMGetATSFontRefFromFont is not available in 64-bit. As pathFromFont is only used for debugging
+    // purposes, returning nil is acceptable.
+    return nil;
+}
+#else
 static NSString* pathFromFont(NSFont *font)
 {
     ATSFontRef atsFont = FMGetATSFontRefFromFont(wkGetNSFontATSUFontId(font));
@@ -124,7 +132,8 @@ static NSString* pathFromFont(NSFont *font)
 
     return nil;
 }
-#endif
+#endif // __LP64__
+#endif // !ERROR_DISABLED
 
 void SimpleFontData::platformInit()
 {

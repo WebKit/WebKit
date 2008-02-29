@@ -1,5 +1,15 @@
 2008-02-29  Mark Rowe  <mrowe@apple.com>
 
+        Reviewed by Tim Hatcher.
+
+        64-bit build fix.
+
+        * platform/graphics/mac/SimpleFontDataMac.mm:
+        (WebCore::pathFromFont): Provide stub implementation of pathFromFont for 64-bit as
+        FMGetATSFontRefFromFont is not available.
+
+2008-02-29  Mark Rowe  <mrowe@apple.com>
+
         Build fix.  Only declare pathFromFont in debug builds as it is unused in release builds.
 
         * platform/graphics/mac/SimpleFontDataMac.mm:
