@@ -1,5 +1,16 @@
 2008-02-29  David Kilzer  <ddkilzer@apple.com>
 
+        Pass the correct configuration switch (--Debug|--Release) to build-testkjs.
+
+        Reviewed by Dan.
+
+        Originally broken in r26838.
+
+        * Scripts/run-javascriptcore-tests: Push configuration switch onto @xcodeArgs
+        not local, unused @args variable.
+
+2008-02-29  David Kilzer  <ddkilzer@apple.com>
+
         Bug 15754: webarchive layout tests fail when WebKit directory path contains symlinks
 
         <http://bugs.webkit.org/show_bug.cgi?id=15754>
