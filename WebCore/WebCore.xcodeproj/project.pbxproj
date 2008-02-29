@@ -245,10 +245,10 @@
 		1AF326470D78B5530068F0C4 /* GlobalHistoryMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1AF326410D78B5530068F0C4 /* GlobalHistoryMac.mm */; };
 		1AF326480D78B5530068F0C4 /* WebCoreAXObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AF326420D78B5530068F0C4 /* WebCoreAXObject.h */; };
 		1AF326490D78B5530068F0C4 /* WebCoreAXObject.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1AF326430D78B5530068F0C4 /* WebCoreAXObject.mm */; };
-		1AF3264A0D78B5530068F0C4 /* WebCoreScriptDebugger.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AF326440D78B5530068F0C4 /* WebCoreScriptDebugger.h */; };
+		1AF3264A0D78B5530068F0C4 /* WebCoreScriptDebugger.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AF326440D78B5530068F0C4 /* WebCoreScriptDebugger.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1AF3264B0D78B5530068F0C4 /* WebCoreScriptDebugger.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1AF326450D78B5530068F0C4 /* WebCoreScriptDebugger.mm */; };
 		1AF326780D78B9440068F0C4 /* AXObjectCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AF326760D78B9440068F0C4 /* AXObjectCache.h */; };
-		1AF326790D78B9440068F0C4 /* EditorClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AF326770D78B9440068F0C4 /* EditorClient.h */; };
+		1AF326790D78B9440068F0C4 /* EditorClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AF326770D78B9440068F0C4 /* EditorClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1AF3267B0D78B94E0068F0C4 /* GlobalHistory.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AF3267A0D78B94E0068F0C4 /* GlobalHistory.h */; };
 		1AFE117D0CBFFB36003017FA /* SQLResultSetRowList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AFE117B0CBFFB36003017FA /* SQLResultSetRowList.cpp */; };
 		1AFE117E0CBFFB36003017FA /* SQLResultSetRowList.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AFE117C0CBFFB36003017FA /* SQLResultSetRowList.h */; };
@@ -13212,6 +13212,7 @@
 				93309DE4099E64920056E581 /* EditCommand.h in Headers */,
 				6550B6A4099DF0270090D781 /* EditingText.h in Headers */,
 				4B3043CD0AE0373B00A82647 /* Editor.h in Headers */,
+				1AF326790D78B9440068F0C4 /* EditorClient.h in Headers */,
 				4BAE95B10B2FA9CE00AED8A0 /* EditorDeleteAction.h in Headers */,
 				93FDAFCA0B11307400E2746F /* EditorInsertAction.h in Headers */,
 				A8C4A80709D563270003AC8D /* Element.h in Headers */,
@@ -14237,7 +14238,6 @@
 				1AF326480D78B5530068F0C4 /* WebCoreAXObject.h in Headers */,
 				1AF3264A0D78B5530068F0C4 /* WebCoreScriptDebugger.h in Headers */,
 				1AF326780D78B9440068F0C4 /* AXObjectCache.h in Headers */,
-				1AF326790D78B9440068F0C4 /* EditorClient.h in Headers */,
 				1AF3267B0D78B94E0068F0C4 /* GlobalHistory.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
