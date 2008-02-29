@@ -1,3 +1,32 @@
+2008-02-29  David Kilzer  <ddkilzer@apple.com>
+
+        Bug 15754: webarchive layout tests fail when WebKit directory path contains symlinks
+
+        <http://bugs.webkit.org/show_bug.cgi?id=15754>
+
+        Reviewed by Geoff and Darin.
+
+        We were using -[NSFileManager currentDirectoryPath] to get the current working directory,
+        then removing that path from all file:/// URLs in the WebArchive output so these tests
+        would pass no matter where they were run.
+
+        The problem was that -[NSFileManager currentDirectoryPath] resolves symlinks in the
+        current working directory, but the WebArchive does not.  This left the current working
+        directory in all file:/// URLs in the test output, and thus all tests failed, for any
+        developer that used symlinks to get to their WebKit source directory.
+
+        The fix is to look backwards for "/LayoutTests/" in the URL we're passed, and simply
+        remove the current working directory path (no matter what it is) after "file://" but
+        before "/LayoutTests/".  
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (normalizeWebResourceURL): Removed unused oldURLBase argument.  We now replace the
+        current working directory as described above.
+        (convertWebResourceResponseToDictionary): Remove unused oldURLBase argument.  Update
+        calls to normalizeWebResourceURL().
+        (serializeWebArchiveToXML): Removed now unused cwdURL variable.  Update calls to
+        normalizeWebResourceURL() and convertWebResourceResponseToDictionary().
+
 2008-02-26  Robin Dunn <robin@alldunn.com>
 
         Reviewed by Kevin Ollivier.
