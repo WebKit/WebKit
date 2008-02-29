@@ -66,6 +66,7 @@ pthread_once_t globalObjectKeyOnce = PTHREAD_ONCE_INIT;
 
 static void unprotectGlobalObject(void* data) 
 {
+    JSLock lock;
     gcUnprotect(static_cast<JSGlobalObject*>(data));
 }
 

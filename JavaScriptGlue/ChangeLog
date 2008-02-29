@@ -1,3 +1,13 @@
+2008-02-29  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by David Harrison.
+        
+        Fixed <rdar://problem/5765063> TOT REGRESSION: Software Update crash in
+        KJS::Collector::collect() (missing JSLock)
+
+        * JSValueWrapper.cpp:
+        (unprotectGlobalObject): Added missing JSLock.
+
 2008-02-05  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Oliver Hunt.
