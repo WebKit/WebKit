@@ -147,7 +147,11 @@ void WKNSWindowRestoreCGContext(NSWindow *, CGContextRef);
 
 void WKNSWindowMakeBottomCornersSquare(NSWindow *);
 
+#ifdef BUILDING_ON_TIGER
+// WKSupportsMultipartXMixedReplace is not required on Leopard as multipart/x-mixed-replace is always handled by NSURLRequest
 BOOL WKSupportsMultipartXMixedReplace(NSMutableURLRequest *request);
+#endif
+
 NSString* WKPathFromFont(NSFont *font);
 
 BOOL WKCGContextIsBitmapContext(CGContextRef context);

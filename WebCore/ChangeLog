@@ -1,5 +1,18 @@
 2008-02-29  Mark Rowe  <mrowe@apple.com>
 
+        Reviewed by Oliver Hunt.
+
+        Don't use WKSupportsMultipartXMixedReplace on Leopard as multipart/x-mixed-replace is always handled by NSURLRequest.
+
+        * platform/mac/WebCoreSystemInterface.h: Don't declare WKSupportsMultipartXMixedReplace on Leopard.
+        * platform/mac/WebCoreSystemInterface.mm: Ditto.
+        * platform/network/mac/ResourceRequestMac.mm:
+        (WebCore::ResourceRequest::doUpdatePlatformRequest): Don't call WKSupportsMultipartXMixedReplace on Leopard.
+        * WebCore.Tiger.exp: Move Tiger-only symbol here.
+        * WebCore.base.exp:
+
+2008-02-29  Mark Rowe  <mrowe@apple.com>
+
         Rubber-stamped by Eric Seidel.
 
         Remove unneeded includes of WebCoreSystemInterface.h.

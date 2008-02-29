@@ -87,13 +87,13 @@ void InitWebCoreSystemInterface(void)
     INIT(SignalCFReadStreamEnd);
     INIT(SignalCFReadStreamError);
     INIT(SignalCFReadStreamHasBytes);
-    INIT(SupportsMultipartXMixedReplace);
     INIT(QTMovieDataRate);
     INIT(QTMovieMaxTimeLoaded);
     INIT(QTMovieViewSetDrawSynchronously);
 
 #ifdef BUILDING_ON_TIGER
     INIT(GetFontMetrics);
+    INIT(SupportsMultipartXMixedReplace);
 #endif
 
     didInit = true;

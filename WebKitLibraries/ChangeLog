@@ -1,5 +1,14 @@
 2008-02-29  Mark Rowe  <mrowe@apple.com>
 
+        Reviewed by Oliver Hunt.
+
+        Don't use WKSupportsMultipartXMixedReplace on Leopard as multipart/x-mixed-replace is always handled by NSURLRequest.
+
+        * WebKitSystemInterface.h:
+        * libWebKitSystemInterfaceLeopard.a:
+
+2008-02-29  Mark Rowe  <mrowe@apple.com>
+
         Reviewed by Oliver Hunt and Oliver Hunt.
 
         <rdar://problem/4753845> WebKit should use CGEventSourceSecondsSinceLastEventType in place of WKSecondsSinceLastInputEvent SPI.

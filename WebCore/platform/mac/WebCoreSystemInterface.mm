@@ -89,8 +89,8 @@ CFReadStreamRef (*wkCreateCustomCFReadStream)(void *(*formCreate)(CFReadStreamRe
 void (*wkSetNSURLConnectionDefersCallbacks)(NSURLConnection *, BOOL);
 void (*wkSetNSURLRequestShouldContentSniff)(NSMutableURLRequest *, BOOL);
 id (*wkCreateNSURLConnectionDelegateProxy)(void);
-BOOL (*wkSupportsMultipartXMixedReplace)(NSMutableURLRequest *);
 
 #ifdef BUILDING_ON_TIGER
 void (*wkGetFontMetrics)(CGFontRef, int* ascent, int* descent, int* lineGap, unsigned* unitsPerEm);
+BOOL (*wkSupportsMultipartXMixedReplace)(NSMutableURLRequest *);
 #endif

@@ -136,10 +136,10 @@ extern void (*wkSetUpFontCache)(size_t);
 extern void (*wkSignalCFReadStreamEnd)(CFReadStreamRef stream);
 extern void (*wkSignalCFReadStreamError)(CFReadStreamRef stream, CFStreamError *error);
 extern void (*wkSignalCFReadStreamHasBytes)(CFReadStreamRef stream);
-extern BOOL (*wkSupportsMultipartXMixedReplace)(NSMutableURLRequest *);
 
 #ifdef BUILDING_ON_TIGER
 extern void (*wkGetFontMetrics)(CGFontRef, int* ascent, int* descent, int* lineGap, unsigned* unitsPerEm);
+extern BOOL (*wkSupportsMultipartXMixedReplace)(NSMutableURLRequest *);
 #endif
 
 #ifdef __cplusplus

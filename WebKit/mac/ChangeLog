@@ -2,6 +2,15 @@
 
         Reviewed by Oliver Hunt.
 
+        Don't use WKSupportsMultipartXMixedReplace on Leopard as multipart/x-mixed-replace is always handled by NSURLRequest.
+
+        * WebCoreSupport/WebSystemInterface.m:
+        (InitWebCoreSystemInterface):
+
+2008-02-29  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Oliver Hunt.
+
         Remove obsolete code that had been left intact to support users running WebKit with older versions of Safari.
 
         * Misc/WebNSViewExtras.m:  Remove _web_superviewOfClass:stoppingAtClass:.

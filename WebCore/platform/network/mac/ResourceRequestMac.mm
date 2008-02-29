@@ -78,8 +78,10 @@ void ResourceRequest::doUpdatePlatformRequest()
         [nsRequest setURL:url()];
     else
         nsRequest = [[NSMutableURLRequest alloc] initWithURL:url()];
-    
+
+#ifdef BUILDING_ON_TIGER
     wkSupportsMultipartXMixedReplace(nsRequest);
+#endif
 
     [nsRequest setCachePolicy:(NSURLRequestCachePolicy)cachePolicy()];
     [nsRequest setTimeoutInterval:timeoutInterval()];
