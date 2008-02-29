@@ -1,3 +1,14 @@
+2008-02-29  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Oliver Hunt and Oliver Hunt.
+
+        <rdar://problem/4753845> WebKit should use CGEventSourceSecondsSinceLastEventType in place of WKSecondsSinceLastInputEvent SPI.
+
+        * platform/mac/SystemTimeMac.cpp:  Replace use of WKSecondsSinceLastInputEvent with CGEventSourceSecondsSinceLastEventType.
+        * platform/mac/WebCoreSystemInterface.h:  Remove unused symbol.
+        * platform/mac/WebCoreSystemInterface.mm:  Ditto.
+        * WebCore.base.exp:  Ditto.
+
 2008-02-28  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Dave Hyatt.

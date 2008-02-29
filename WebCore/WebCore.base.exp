@@ -738,7 +738,6 @@ _wkQTMovieDataRate
 _wkQTMovieMaxTimeLoaded
 _wkQTMovieViewSetDrawSynchronously
 _wkReleaseStyleGroup
-_wkSecondsSinceLastInputEvent
 _wkSetCGFontRenderingMode
 _wkSetDragImage
 _wkSetNSURLConnectionDefersCallbacks

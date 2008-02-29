@@ -34,8 +34,6 @@ NSTimeInterval WKGetNSURLResponseFreshnessLifetime(NSURLResponse *response);
 
 CFStringEncoding WKGetWebDefaultCFStringEncoding(void);
 
-float WKSecondsSinceLastInputEvent(void);
-
 void WKSetMetadataURL(NSString *URLString, NSString *referrer, NSString *path);
 void WKSetNSURLConnectionDefersCallbacks(NSURLConnection *connection, BOOL defers);
 

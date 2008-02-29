@@ -77,7 +77,6 @@ void InitWebCoreSystemInterface(void)
     INIT(PathFromFont);
     INIT(PopupMenu);
     INIT(ReleaseStyleGroup);
-    INIT(SecondsSinceLastInputEvent);
     INIT(SetCGFontRenderingMode);
     INIT(SetDragImage);
     INIT(SetNSURLConnectionDefersCallbacks);
