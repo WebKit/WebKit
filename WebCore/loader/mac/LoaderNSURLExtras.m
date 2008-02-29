@@ -37,7 +37,6 @@
 #import "MIMETypeRegistry.h"
 #import "PlatformString.h"
 #import "WebCoreNSStringExtras.h"
-#import "WebCoreSystemInterface.h"
 
 using namespace WebCore;
 

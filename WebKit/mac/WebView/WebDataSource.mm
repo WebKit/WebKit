@@ -58,7 +58,6 @@
 #import <WebCore/WebCoreURLResponse.h>
 #import <WebKit/DOMHTML.h>
 #import <WebKit/DOMPrivate.h>
-#import <WebKitSystemInterface.h>
 
 using namespace WebCore;
 

@@ -83,7 +83,6 @@
 #import "TextResourceDecoder.h"
 #import "UserStyleSheetLoader.h"
 #import "WebCoreFrameBridge.h"
-#import "WebCoreSystemInterface.h"
 #import "WebCoreViewFactory.h"
 #import "WebDashboardRegion.h"
 #import "WebScriptObjectPrivate.h"

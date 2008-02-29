@@ -1,5 +1,18 @@
 2008-02-29  Mark Rowe  <mrowe@apple.com>
 
+        Rubber-stamped by Eric Seidel.
+
+        Remove unneeded includes of WebCoreSystemInterface.h.
+
+        * loader/mac/LoaderNSURLExtras.m:
+        * page/mac/FrameMac.mm:
+        * page/mac/WebCoreFrameBridge.mm:
+        * platform/MIMETypeRegistry.cpp:
+        * platform/graphics/mac/ImageMac.mm:
+        * platform/mac/PasteboardMac.mm:
+
+2008-02-29  Mark Rowe  <mrowe@apple.com>
+
         Reviewed by Oliver Hunt and Oliver Hunt.
 
         <rdar://problem/4753845> WebKit should use CGEventSourceSecondsSinceLastEventType in place of WKSecondsSinceLastInputEvent SPI.

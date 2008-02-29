@@ -1,5 +1,17 @@
 2008-02-29  Mark Rowe  <mrowe@apple.com>
 
+        Rubber-stamped by Eric Seidel.
+
+        Remove unneeded includes of WebKitSystemInterface.h.
+
+        * History/WebHistoryItem.mm:
+        * Misc/WebNSViewExtras.m:
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        * WebView/WebDataSource.mm:
+        * WebView/WebPDFView.mm:
+
+2008-02-29  Mark Rowe  <mrowe@apple.com>
+
         Reviewed by Oliver Hunt and Oliver Hunt.
 
         <rdar://problem/4753845> WebKit should use CGEventSourceSecondsSinceLastEventType in place of WKSecondsSinceLastInputEvent SPI.

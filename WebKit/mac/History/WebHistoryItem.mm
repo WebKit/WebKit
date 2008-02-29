@@ -51,7 +51,6 @@
 #import <WebCore/PlatformString.h>
 #import <WebCore/ThreadCheck.h>
 #import <WebCore/WebCoreObjCExtras.h>
-#import <WebKitSystemInterface.h>
 
 // Private keys used in the WebHistoryItem's dictionary representation.
 // see 3245793 for explanation of "lastVisitedDate"

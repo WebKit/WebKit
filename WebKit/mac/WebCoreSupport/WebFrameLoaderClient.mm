@@ -98,7 +98,6 @@
 #import <WebCore/Widget.h>
 #import <WebKit/DOMElement.h>
 #import <WebKit/DOMHTMLFormElement.h>
-#import <WebKitSystemInterface.h>
 #import <wtf/PassRefPtr.h>
 
 using namespace WebCore;

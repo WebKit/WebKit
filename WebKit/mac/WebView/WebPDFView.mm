@@ -53,7 +53,6 @@
 #import <WebCore/KeyboardEvent.h>
 #import <WebCore/MouseEvent.h>
 #import <WebCore/PlatformKeyboardEvent.h>
-#import <WebKitSystemInterface.h>
 
 using namespace WebCore;
 using namespace EventNames;

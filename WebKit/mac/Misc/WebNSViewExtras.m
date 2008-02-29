@@ -36,7 +36,6 @@
 #import <WebKit/WebNSPasteboardExtras.h>
 #import <WebKit/WebNSURLExtras.h>
 #import <WebKit/WebView.h>
-#import <WebKitSystemInterface.h>
 
 #define WebDragStartHysteresisX                 5.0f
 #define WebDragStartHysteresisY                 5.0f

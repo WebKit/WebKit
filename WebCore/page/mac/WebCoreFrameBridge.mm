@@ -81,7 +81,6 @@
 #import "TextIterator.h"
 #import "TextResourceDecoder.h"
 #import "TypingCommand.h"
-#import "WebCoreSystemInterface.h"
 #import "WebCoreViewFactory.h"
 #import "XMLTokenizer.h"
 #import "htmlediting.h"
