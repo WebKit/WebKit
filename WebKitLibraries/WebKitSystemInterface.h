@@ -35,11 +35,9 @@ NSTimeInterval WKGetNSURLResponseFreshnessLifetime(NSURLResponse *response);
 CFStringEncoding WKGetWebDefaultCFStringEncoding(void);
 
 float WKSecondsSinceLastInputEvent(void);
-CFStringRef WKPreferRGB32Key(void);
 
 void WKSetMetadataURL(NSString *URLString, NSString *referrer, NSString *path);
 void WKSetNSURLConnectionDefersCallbacks(NSURLConnection *connection, BOOL defers);
-float WKSecondsSinceLastInputEvent(void);
 
 void WKShowKeyAndMain(void);
 #ifndef __LP64__
@@ -139,7 +137,6 @@ void WKClearGlyphVector(WKGlyphVectorRef glyphs);
 int WKGetGlyphVectorNumGlyphs(WKGlyphVectorRef glyphVector);
 ATSLayoutRecord *WKGetGlyphVectorFirstRecord(WKGlyphVectorRef glyphVector);
 size_t WKGetGlyphVectorRecordSize(WKGlyphVectorRef glyphVector);
-ATSGlyphRef WKGetDefaultGlyphForChar(NSFont *font, UniChar c);
 
 #ifndef __LP64__
 NSEvent *WKCreateNSEventWithCarbonEvent(EventRef eventRef);

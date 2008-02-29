@@ -1,5 +1,16 @@
 2008-02-28  Mark Rowe  <mrowe@apple.com>
 
+        Reviewed by Dan Bernstein.
+
+        Remove two unused functions from WebKitSystemInterface.
+
+        * WebKitSystemInterface.h:  Remove WKPreferRGB32Key and WKGetDefaultGlyphForChar as they are unused. Also remove
+        a duplicate declaration of WKSecondsSinceLastInputEvent.
+        * libWebKitSystemInterfaceLeopard.a:
+        * libWebKitSystemInterfaceTiger.a:
+
+2008-02-28  Mark Rowe  <mrowe@apple.com>
+
         Reviewed by Dave Hyatt.
 
         Make use of new CGFont APIs on Leopard rather than making a WebKitSystemInterface call.
