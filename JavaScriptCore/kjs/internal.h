@@ -103,14 +103,9 @@ namespace KJS {
 
     DebuggerImp() {
       globalObjects = 0;
-      isAborted = false;
     }
 
-    void abort() { isAborted = true; }
-    bool aborted() const { return isAborted; }
-
     AttachedGlobalObject* globalObjects;
-    bool isAborted;
   };
 
 #ifndef NDEBUG

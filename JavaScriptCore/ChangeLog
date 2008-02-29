@@ -1,3 +1,17 @@
+2008-02-29  Adam Roben  <aroben@apple.com>
+
+        Remove unused DebuggerImp::abort and DebuggerImp::aborted
+
+        Reviewed by Tim and Sam.
+
+        * kjs/function_object.cpp:
+        (KJS::FunctionObjectImp::construct):
+        * kjs/internal.h:
+        (KJS::DebuggerImp::DebuggerImp):
+        * kjs/nodes.cpp:
+        (KJS::Node::handleException):
+        (KJS::FunctionBodyNodeWithDebuggerHooks::execute):
+
 2008-02-28  Eric Christopher  <echristo@apple.com>
 
         Reviewed by Geoffrey Garen.

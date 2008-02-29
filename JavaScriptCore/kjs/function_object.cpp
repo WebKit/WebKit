@@ -168,15 +168,10 @@ JSObject* FunctionObjectImp::construct(ExecState* exec, const List& args, const 
     RefPtr<FunctionBodyNode> functionBody = parser().parse<FunctionBodyNode>(sourceURL, lineNumber, body.data(), body.size(), &sourceId, &errLine, &errMsg);
 
     // notify debugger that source has been parsed
+    // send empty sourceURL to indicate constructed code
     Debugger* dbg = exec->dynamicGlobalObject()->debugger();
-    if (dbg) {
-        // send empty sourceURL to indicate constructed code
-        bool cont = dbg->sourceParsed(exec, sourceId, UString(), body, lineNumber, errLine, errMsg);
-        if (!cont) {
-            dbg->imp()->abort();
-            return new JSObject();
-        }
-    }
+    if (dbg && !dbg->sourceParsed(exec, sourceId, UString(), body, lineNumber, errLine, errMsg))
+        return new JSObject();
 
     // No program node == syntax error - throw a syntax error
     if (!functionBody)
