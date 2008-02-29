@@ -154,6 +154,6 @@ HRESULT STDMETHODCALLTYPE WebActionPropertyBag::Write(LPCOLESTR pszPropName, VAR
 {
     if (!pszPropName || !pVar)
         return E_POINTER;
-    VariantClear(pVar);
+
     return E_FAIL;
 }

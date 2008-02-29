@@ -188,6 +188,6 @@ HRESULT STDMETHODCALLTYPE WebElementPropertyBag::Write(LPCOLESTR pszPropName, VA
 {
     if (!pszPropName || !pVar)
         return E_POINTER;
-    VariantClear(pVar);
+
     return E_FAIL;
 }

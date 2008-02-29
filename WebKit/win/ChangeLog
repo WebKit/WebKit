@@ -1,3 +1,15 @@
+2008-02-29  Steve Falkenburg  <sfalken@apple.com>
+
+        Don't free the VARIANT passed into Write, since it is an input parameter owned by the caller.
+        Found via code inspection.
+        
+        Reviewed by Adam.
+
+        * WebActionPropertyBag.cpp:
+        (WebActionPropertyBag::Write):
+        * WebElementPropertyBag.cpp:
+        (WebElementPropertyBag::Write):
+
 2008-02-27  Matt Lilek  <webkit@mattlilek.com>
 
         Reviewed by Adam Roben.
