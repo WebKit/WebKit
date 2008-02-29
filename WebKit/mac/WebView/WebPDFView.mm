@@ -883,13 +883,6 @@ static BOOL _PDFSelectionsAreEqual(PDFSelection *selectionA, PDFSelection *selec
     return selectionImage;
 }
 
-- (NSImage *)selectionImageForcingWhiteText:(BOOL)forceWhiteText
-{
-    // NOTE: this method is obsolete and doesn't behave as its name suggests.
-    // See comment in WebDocumentPrivate.h.
-    return [self selectionImageForcingBlackText:forceWhiteText];
-}
-
 - (NSRect)selectionImageRect
 {
     // FIXME: deal with clipping?

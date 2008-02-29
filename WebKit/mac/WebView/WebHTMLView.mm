@@ -5551,13 +5551,6 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
     return nil;
 }
 
-- (NSImage *)selectionImageForcingWhiteText:(BOOL)forceWhiteText
-{
-    // NOTE: this method is obsolete and doesn't behave as its name suggests.
-    // See comment in WebDocumentPrivate.h.
-    return [self selectionImageForcingBlackText:forceWhiteText];
-}
-
 - (NSRect)selectionImageRect
 {
     if ([self _hasSelection])

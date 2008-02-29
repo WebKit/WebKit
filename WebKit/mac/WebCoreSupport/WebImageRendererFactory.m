@@ -26,9 +26,9 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// Have to leave this class with these two methods in because old versions of
-// Safari call the methods from the Debug menu. Once we don't need compatibility
-// with those old versions of Safari, we can remove this.
+// Have to leave this class with these two methods in because versions of Safari up to 3.0.4
+// call the methods from the Debug menu. Once we don't need compatibility with those versions
+// of Safari, we can remove this.
 
 @interface WebImageRendererFactory : NSObject
 @end

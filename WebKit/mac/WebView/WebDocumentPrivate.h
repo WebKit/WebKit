@@ -55,14 +55,6 @@
 // The text is all black according to the parameter.
 - (NSImage *)selectionImageForcingBlackText:(BOOL)forceBlackText;
 
-// NSImage of the portion of the selection that's in view. This does not draw backgrounds. 
-// The text is all white according to the parameter.
-// NOTE: This method is deprecated. It has been supplanted by selectionImageForcingBlackText:, 
-// and implementations typically just call that method, so its name no longer matches its
-// behavior. It will be removed when doing so won't cause trouble for people using the latest
-// WebKit with beta releases of Safari 3.0.
-- (NSImage *)selectionImageForcingWhiteText:(BOOL)forceWhiteText;
-
 // Rect tightly enclosing the entire selected area, in coordinates of selectionView.
 // NOTE: This method is equivalent to selectionRect and shouldn't be used; use selectionRect instead.
 - (NSRect)selectionImageRect;

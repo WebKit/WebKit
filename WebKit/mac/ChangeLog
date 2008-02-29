@@ -1,5 +1,23 @@
 2008-02-29  Mark Rowe  <mrowe@apple.com>
 
+        Reviewed by Oliver Hunt.
+
+        Remove obsolete code that had been left intact to support users running WebKit with older versions of Safari.
+
+        * Misc/WebNSViewExtras.m:  Remove _web_superviewOfClass:stoppingAtClass:.
+        * Misc/WebNSWindowExtras.m:  Remove _webkit_displayThrottledWindows.
+        * Misc/WebSearchableTextView.m:  Remove selectionImageForcingWhiteText:.
+        * WebCoreSupport/WebImageRendererFactory.m:  Update comment to mention the last version of Safari that
+        requires this class.
+        * WebInspector/WebInspector.mm:  Remove sharedWebInspector and update comments to mention the last version
+        of Safari that calls other obsolete methods.
+        * WebView/WebDocumentPrivate.h:  Remove selectionImageForcingWhiteText:.
+        * WebView/WebHTMLView.mm:  Ditto.
+        * WebView/WebPDFView.mm:  Ditto.
+        * WebView/WebView.mm:  Update comment to mentoin the last version of Safari that requires the obsolete method.
+
+2008-02-29  Mark Rowe  <mrowe@apple.com>
+
         Rubber-stamped by Eric Seidel.
 
         Remove unneeded includes of WebKitSystemInterface.h.
