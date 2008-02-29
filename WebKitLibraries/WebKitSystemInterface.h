@@ -52,7 +52,7 @@ WKNSURLConnectionDelegateProxyPtr WKCreateNSURLConnectionDelegateProxy(void);
 
 void WKDisableCGDeferredUpdates(void);
 
-Class WKNSURLProtocolClassForReqest(NSURLRequest *request);
+Class WKNSURLProtocolClassForRequest(NSURLRequest *request);
 void WKSetNSURLRequestShouldContentSniff(NSMutableURLRequest *request, BOOL shouldContentSniff);
 
 unsigned WKGetNSAutoreleasePoolCount(void);

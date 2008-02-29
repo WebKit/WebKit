@@ -562,7 +562,7 @@ static NSString *mapHostNames(NSString *string, BOOL encode)
 - (NSURL *)_webkit_canonicalize
 {    
     NSURLRequest *request = [[NSURLRequest alloc] initWithURL:self];
-    Class concreteClass = WKNSURLProtocolClassForReqest(request);
+    Class concreteClass = WKNSURLProtocolClassForRequest(request);
     if (!concreteClass) {
         [request release];
         return self;

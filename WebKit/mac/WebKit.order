@@ -278,7 +278,7 @@ _WKMouseMovedNotification
 __Z12mapHostNamesP8NSStringa
 +[NSURL(WebNSURLExtras) _web_URLWithData:relativeToURL:]
 -[NSURL(WebNSURLExtras) _webkit_canonicalize]
-_WKNSURLProtocolClassForReqest
+_WKNSURLProtocolClassForRequest
 -[NSURL(WebNSURLExtras) _web_originalDataAsString]
 +[NSURL(WebNSURLExtras) _web_URLWithDataAsString:]
 +[NSURL(WebNSURLExtras) _web_URLWithDataAsString:relativeToURL:]

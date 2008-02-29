@@ -2,6 +2,16 @@
 
         Reviewed by Oliver Hunt.
 
+        Fix spelling of "request" in name of WKNSURLProtocolClassForRequest.
+
+        * WebKitSystemInterface.h:
+        * libWebKitSystemInterfaceLeopard.a:
+        * libWebKitSystemInterfaceTiger.a:
+
+2008-02-29  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Oliver Hunt.
+
         Don't use WKSupportsMultipartXMixedReplace on Leopard as multipart/x-mixed-replace is always handled by NSURLRequest.
 
         * WebKitSystemInterface.h:
