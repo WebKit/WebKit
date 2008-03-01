@@ -1,5 +1,22 @@
 2008-02-27  Adam Roben  <aroben@apple.com>
 
+        Add WebPreferences::setValueForKey
+
+        This is just a small refactoring of some duplicated logic into a
+        shared method.
+
+        Reviewed by Sam.
+
+        * WebPreferences.cpp:
+        (WebPreferences::setValueForKey): Added.
+        (WebPreferences::setStringValue): Call setValueForKey.
+        (WebPreferences::setIntegerValue): Ditto.
+        (WebPreferences::setBoolValue): Ditto.
+        (WebPreferences::setLongLongValue): Ditto.
+        * WebPreferences.h:
+
+2008-02-27  Adam Roben  <aroben@apple.com>
+
         Remove WebPreferences' static members
 
         s_defaultSettings is now a file-level static, and
