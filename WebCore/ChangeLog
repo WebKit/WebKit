@@ -1,5 +1,13 @@
 2008-03-01  Sam Weinig  <sam@webkit.org>
 
+        Rubber-stamped by Mark Rowe.
+
+        Remove reference to the now non-existent bridge directory.
+
+        * WebCore.xcodeproj/project.pbxproj:
+
+2008-03-01  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Darin Adler.
 
         Search the entire prototype chain when doing early prototype lookup in

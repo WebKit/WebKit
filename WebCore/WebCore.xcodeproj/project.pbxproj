@@ -7971,7 +7971,6 @@
 				93F19B1908245E59001E9ABC /* Info.plist */,
 				F58EF58E02DFDFB7018635CA /* WebCore.base.exp */,
 				BC1A3790097C6F970019F3D8 /* bindings */,
-				65BF021F097480EF00C43196 /* bridge */,
 				F523D18402DE42E8018635CA /* css */,
 				F523D32402DE4478018635CA /* dom */,
 				93309D86099E64910056E581 /* editing */,
@@ -8445,15 +8444,6 @@
 				BC8243E70D0CFD7500460C8F /* WindowFeatures.h */,
 			);
 			path = page;
-			sourceTree = "<group>";
-			tabWidth = 4;
-			usesTabs = 0;
-		};
-		65BF021F097480EF00C43196 /* bridge */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = bridge;
 			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 0;
