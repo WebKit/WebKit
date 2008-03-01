@@ -1,3 +1,9 @@
+2008-02-29  Mark Rowe  <mrowe@apple.com>
+
+        Update Tiger version of WebKitSystemInterface to match r30690.
+
+        * libWebKitSystemInterfaceTiger.a:
+
 2008-02-29  Adele Peterson  <adele@apple.com>
 
         Reviewed by Mark.
