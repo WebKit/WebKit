@@ -1,3 +1,15 @@
+2008-03-01  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Search the entire prototype chain when doing early prototype lookup in
+        the Window's getOwnPropertySlot method.
+
+        Makes fast/dom/Window/window-function-name-getter-precedence.html pass all tests.
+
+        * bindings/js/kjs_window.cpp:
+        (KJS::Window::getOwnPropertySlot):
+
 2008-03-01  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Oliver.

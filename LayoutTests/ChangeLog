@@ -1,3 +1,11 @@
+2008-03-01  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Update test result.
+
+        * fast/dom/Window/window-function-name-getter-precedence-expected.txt:
+
 2008-03-01  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Oliver.
