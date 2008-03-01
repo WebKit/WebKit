@@ -1,3 +1,12 @@
+2008-02-29  Brent Fulgham  <bfulgham@gmail.com>
+
+        http://bugs.webkit.org/show_bug.cgi?id=17483
+        Implement scrollbars on Windows (Cairo)
+
+        Reviewed by Adam Roben.
+
+        * wtf/Platform.h:
+
 2008-02-29  Adam Roben  <aroben@apple.com>
 
         Remove unused DebuggerImp::abort and DebuggerImp::aborted

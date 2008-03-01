@@ -1,3 +1,15 @@
+2008-02-29  Brent Fulgham  <bfulgham@gmail.com>
+
+        http://bugs.webkit.org/show_bug.cgi?id=17483
+        Implement scrollbars on Windows (Cairo)
+
+        Reviewed by Adam Roben.
+
+        * platform/win/PlatfromScrollBarWin.cpp: Duplicate implementation
+          from PlatformScrollBarWinSafari.cpp, then modify to use the
+          native Windows theme engine.  Use SOFT_LINK.  Use platform
+          'GetSystemMetrics' call to decide size of scrollbars and buttons.
+
 2008-02-29  Adam Roben  <aroben@apple.com>
 
         Windows build fix
