@@ -1,3 +1,11 @@
+2008-02-29  Adam Roben  <aroben@apple.com>
+
+        Delete an unused file
+
+        Rubberstamped by Brady.
+
+        * Interfaces/IWebScriptScope.idl: Removed.
+
 2008-02-28  Adam Roben  <aroben@apple.com>
 
         Change WebPreferences to be backed by CFPreferences
