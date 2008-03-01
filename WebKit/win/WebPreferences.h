@@ -316,7 +316,7 @@ public:
 
 protected:
     void setValueForKey(CFStringRef key, CFPropertyListRef value);
-    const void* valueForKey(CFStringRef key);
+    RetainPtr<CFPropertyListRef> valueForKey(CFStringRef key);
     BSTR stringValueForKey(CFStringRef key);
     int integerValueForKey(CFStringRef key);
     BOOL boolValueForKey(CFStringRef key);
@@ -330,8 +330,8 @@ protected:
     static void initializeDefaultSettings();
     void save();
     void load();
-    void migrateDefaultSettingsFromSafari3Beta();
-    void removeValuesMatchingDefaultSettings();
+    void migrateWebKitPreferencesToCFPreferences();
+    void copyWebKitPreferencesToCFPreferences(CFDictionaryRef);
 
 protected:
     ULONG m_refCount;

@@ -1,5 +1,37 @@
 2008-02-28  Adam Roben  <aroben@apple.com>
 
+        Change WebPreferences to be backed by CFPreferences
+
+        Reviewed by Ada, Geoff, Steve, and Darin.
+
+        * WebPreferenceKeysPrivate.h:
+        * WebPreferences.cpp:
+        (WebPreferences::sharedStandardPreferences): Changed to call
+        setAutoSaves(TRUE) before calling load(). This ensures that the
+        preferences being migrated to CFPreferences are saved to disk.
+        (WebPreferences::valueForKey): Changed to return a RetainPtr to ensure
+        that the refcount is managed properly. Now attempts to retrieve a
+        value from CFPreferences before falling back to the default settings.
+        (WebPreferences::setValueForKey): Now saves the value in
+        CFPreferences if m_autoSaves is true.
+        (WebPreferences::stringValueForKey): Updated for valueForKey changes.
+        (WebPreferences::integerValueForKey): DItto.
+        (WebPreferences::boolValueForKey): Ditto.
+        (WebPreferences::floatValueForKey): Ditto.
+        (WebPreferences::save): Now simply calls CFPreferencesAppSynchronize.
+        (WebPreferences::load): Always initializes m_privatePrefs to an empty
+        CFMutableDictionary.
+        (WebPreferences::migrateWebKitPreferencesToCFPreferences): Migrates
+        preferences from our old custom plist to CFPreferences and then
+        deletes our custom plist, if the migration has never occurred before.
+        (WebPreferences::copyWebKitPreferencesToCFPreferences): Copies
+        preferences to CFPreferences. If we've never migrated the default
+        settings from Safari 3 Beta before, we omit them from this copying
+        procedure.
+        * WebPreferences.h:
+
+2008-02-28  Adam Roben  <aroben@apple.com>
+
         Refactor value <-> CFNumber conversions into some helper functions
 
         Reviewed by Jon.
