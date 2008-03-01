@@ -1,3 +1,20 @@
+2008-02-27  Adam Roben  <aroben@apple.com>
+
+        Remove WebPreferences' static members
+
+        s_defaultSettings is now a file-level static, and
+        s_standardPreferences has been removed completely (it wasn't being
+        used).
+
+        Reviewed by Sam.
+
+        * WebPreferences.cpp:
+        (WebPreferences::initializeDefaultSettings):
+        (WebPreferences::valueForKey):
+        (WebPreferences::migrateDefaultSettingsFromSafari3Beta):
+        (WebPreferences::removeValuesMatchingDefaultSettings):
+        * WebPreferences.h:
+
 2008-02-29  Steve Falkenburg  <sfalken@apple.com>
 
         Don't free the VARIANT passed into Write, since it is an input parameter owned by the caller.

@@ -61,7 +61,7 @@ static String preferencesPath()
 
 // WebPreferences ----------------------------------------------------------------
 
-CFDictionaryRef WebPreferences::s_defaultSettings = 0;
+static CFDictionaryRef defaultSettings;
 
 static HashMap<WebCore::String, WebPreferences*> webPreferencesInstances;
 
@@ -138,7 +138,7 @@ void WebPreferences::removeReferenceForIdentifier(BSTR identifier)
 
 void WebPreferences::initializeDefaultSettings()
 {
-    if (s_defaultSettings)
+    if (defaultSettings)
         return;
 
     CFMutableDictionaryRef defaults = CFDictionaryCreateMutable(0, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
@@ -194,14 +194,14 @@ void WebPreferences::initializeDefaultSettings()
 
     CFDictionaryAddValue(defaults, CFSTR(WebKitAuthorAndUserStylesEnabledPreferenceKey), kCFBooleanTrue);
 
-    s_defaultSettings = defaults;
+    defaultSettings = defaults;
 }
 
 const void* WebPreferences::valueForKey(CFStringRef key)
 {
     const void* value = CFDictionaryGetValue(m_privatePrefs.get(), key);
     if (!value)
-        value = CFDictionaryGetValue(s_defaultSettings, key);
+        value = CFDictionaryGetValue(defaultSettings, key);
 
     return value;
 }
@@ -425,7 +425,7 @@ void WebPreferences::migrateDefaultSettingsFromSafari3Beta()
     // The "migration" happening here is a one-time removal of any default values
     // that were stored in the user's preferences due to <rdar://problem/5214504>.
 
-    ASSERT(s_defaultSettings);
+    ASSERT(defaultSettings);
     if (!m_privatePrefs)
         return;
 
@@ -457,7 +457,7 @@ void WebPreferences::removeValuesMatchingDefaultSettings()
         if (!values[i])
             continue;
 
-        CFTypeRef defaultValue = CFDictionaryGetValue(s_defaultSettings, keys[i]);
+        CFTypeRef defaultValue = CFDictionaryGetValue(defaultSettings, keys[i]);
         if (!defaultValue)
             continue;
 
