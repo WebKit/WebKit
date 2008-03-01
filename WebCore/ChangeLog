@@ -1,3 +1,26 @@
+2008-03-01  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Oliver.
+
+        Fixes: http://bugs.webkit.org/show_bug.cgi?id=17568 (SVGForeignObjectElement can't react to width/height SVG DOM changes)
+
+        As the bug title says, fix all dynamic update problems that occour with SVGForeignObjectElement.
+
+        Tests: svg/dynamic-updates/SVGForeignObjectElement-dom-height-attr.html
+               svg/dynamic-updates/SVGForeignObjectElement-dom-width-attr.html
+               svg/dynamic-updates/SVGForeignObjectElement-dom-x-attr.html
+               svg/dynamic-updates/SVGForeignObjectElement-dom-y-attr.html
+               svg/dynamic-updates/SVGForeignObjectElement-svgdom-height-prop.html
+               svg/dynamic-updates/SVGForeignObjectElement-svgdom-width-prop.html
+               svg/dynamic-updates/SVGForeignObjectElement-svgdom-x-prop.html
+               svg/dynamic-updates/SVGForeignObjectElement-svgdom-y-prop.html
+
+        * svg/SVGForeignObjectElement.cpp:
+        (WebCore::SVGForeignObjectElement::parseMappedAttribute):
+        (WebCore::addCSSPropertyAndNotifyAttributeMap):
+        (WebCore::SVGForeignObjectElement::svgAttributeChanged):
+        * svg/SVGForeignObjectElement.h:
+
 2008-02-29  Brady Eidson  <beidson@apple.com>
 
         Reviewed by build-fix karma

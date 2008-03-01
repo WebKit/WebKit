@@ -1,3 +1,51 @@
+2008-03-01  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Oliver.
+
+        Add new set of dynamic updates tests, this time for SVGForeignObjectElement.
+
+        * platform/mac-leopard/svg/dynamic-updates/SVGForeignObjectElement-dom-height-attr-expected.checksum: Added.
+        * platform/mac-leopard/svg/dynamic-updates/SVGForeignObjectElement-dom-height-attr-expected.png: Added.
+        * platform/mac-leopard/svg/dynamic-updates/SVGForeignObjectElement-dom-width-attr-expected.checksum: Added.
+        * platform/mac-leopard/svg/dynamic-updates/SVGForeignObjectElement-dom-width-attr-expected.png: Added.
+        * platform/mac-leopard/svg/dynamic-updates/SVGForeignObjectElement-dom-x-attr-expected.checksum: Added.
+        * platform/mac-leopard/svg/dynamic-updates/SVGForeignObjectElement-dom-x-attr-expected.png: Added.
+        * platform/mac-leopard/svg/dynamic-updates/SVGForeignObjectElement-dom-y-attr-expected.checksum: Added.
+        * platform/mac-leopard/svg/dynamic-updates/SVGForeignObjectElement-dom-y-attr-expected.png: Added.
+        * platform/mac-leopard/svg/dynamic-updates/SVGForeignObjectElement-svgdom-height-prop-expected.checksum: Added.
+        * platform/mac-leopard/svg/dynamic-updates/SVGForeignObjectElement-svgdom-height-prop-expected.png: Added.
+        * platform/mac-leopard/svg/dynamic-updates/SVGForeignObjectElement-svgdom-width-prop-expected.checksum: Added.
+        * platform/mac-leopard/svg/dynamic-updates/SVGForeignObjectElement-svgdom-width-prop-expected.png: Added.
+        * platform/mac-leopard/svg/dynamic-updates/SVGForeignObjectElement-svgdom-x-prop-expected.checksum: Added.
+        * platform/mac-leopard/svg/dynamic-updates/SVGForeignObjectElement-svgdom-x-prop-expected.png: Added.
+        * platform/mac-leopard/svg/dynamic-updates/SVGForeignObjectElement-svgdom-y-prop-expected.checksum: Added.
+        * platform/mac-leopard/svg/dynamic-updates/SVGForeignObjectElement-svgdom-y-prop-expected.png: Added.
+        * svg/dynamic-updates/SVGForeignObjectElement-dom-height-attr-expected.txt: Added.
+        * svg/dynamic-updates/SVGForeignObjectElement-dom-height-attr.html: Added.
+        * svg/dynamic-updates/SVGForeignObjectElement-dom-width-attr-expected.txt: Added.
+        * svg/dynamic-updates/SVGForeignObjectElement-dom-width-attr.html: Added.
+        * svg/dynamic-updates/SVGForeignObjectElement-dom-x-attr-expected.txt: Added.
+        * svg/dynamic-updates/SVGForeignObjectElement-dom-x-attr.html: Added.
+        * svg/dynamic-updates/SVGForeignObjectElement-dom-y-attr-expected.txt: Added.
+        * svg/dynamic-updates/SVGForeignObjectElement-dom-y-attr.html: Added.
+        * svg/dynamic-updates/SVGForeignObjectElement-svgdom-height-prop-expected.txt: Added.
+        * svg/dynamic-updates/SVGForeignObjectElement-svgdom-height-prop.html: Added.
+        * svg/dynamic-updates/SVGForeignObjectElement-svgdom-width-prop-expected.txt: Added.
+        * svg/dynamic-updates/SVGForeignObjectElement-svgdom-width-prop.html: Added.
+        * svg/dynamic-updates/SVGForeignObjectElement-svgdom-x-prop-expected.txt: Added.
+        * svg/dynamic-updates/SVGForeignObjectElement-svgdom-x-prop.html: Added.
+        * svg/dynamic-updates/SVGForeignObjectElement-svgdom-y-prop-expected.txt: Added.
+        * svg/dynamic-updates/SVGForeignObjectElement-svgdom-y-prop.html: Added.
+        * svg/dynamic-updates/resources/SVGForeignObjectElement-dom-height-attr.js: Added.
+        * svg/dynamic-updates/resources/SVGForeignObjectElement-dom-width-attr.js: Added.
+        * svg/dynamic-updates/resources/SVGForeignObjectElement-dom-x-attr.js: Added.
+        * svg/dynamic-updates/resources/SVGForeignObjectElement-dom-y-attr.js: Added.
+        * svg/dynamic-updates/resources/SVGForeignObjectElement-svgdom-height-prop.js: Added.
+        * svg/dynamic-updates/resources/SVGForeignObjectElement-svgdom-width-prop.js: Added.
+        * svg/dynamic-updates/resources/SVGForeignObjectElement-svgdom-x-prop.js: Added.
+        * svg/dynamic-updates/resources/SVGForeignObjectElement-svgdom-y-prop.js: Added.
+        * svg/dynamic-updates/resources/SVGTestCase.js: Add xhtml namespace 'xhtmlNS'.
+
 2008-02-29  Dan Bernstein  <mitz@apple.com>
 
         Rubber-stamped by Sam Weinig.

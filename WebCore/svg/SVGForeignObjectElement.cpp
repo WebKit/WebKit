@@ -1,5 +1,6 @@
 /*
     Copyright (C) 2006 Apple Computer, Inc.
+              (C) 2008 Nikolas Zimmermann <zimmermann@kde.org>
 
     This file is part of the WebKit project
 
@@ -54,20 +55,18 @@ ANIMATED_PROPERTY_DEFINITIONS(SVGForeignObjectElement, SVGLength, Length, length
 ANIMATED_PROPERTY_DEFINITIONS(SVGForeignObjectElement, SVGLength, Length, length, Width, width, SVGNames::widthAttr, m_width)
 ANIMATED_PROPERTY_DEFINITIONS(SVGForeignObjectElement, SVGLength, Length, length, Height, height, SVGNames::heightAttr, m_height)
 
-void SVGForeignObjectElement::parseMappedAttribute(MappedAttribute *attr)
+void SVGForeignObjectElement::parseMappedAttribute(MappedAttribute* attr)
 {
     const AtomicString& value = attr->value();
     if (attr->name() == SVGNames::xAttr)
         setXBaseValue(SVGLength(this, LengthModeWidth, value));
     else if (attr->name() == SVGNames::yAttr)
         setYBaseValue(SVGLength(this, LengthModeHeight, value));
-    else if (attr->name() == SVGNames::widthAttr) {
+    else if (attr->name() == SVGNames::widthAttr)
         setWidthBaseValue(SVGLength(this, LengthModeWidth, value));
-        addCSSProperty(attr, CSS_PROP_WIDTH, value);
-    } else if (attr->name() == SVGNames::heightAttr) {
+    else if (attr->name() == SVGNames::heightAttr)
         setHeightBaseValue(SVGLength(this, LengthModeHeight, value));
-        addCSSProperty(attr, CSS_PROP_HEIGHT, value);
-    } else {
+    else {
         if (SVGTests::parseMappedAttribute(attr))
             return;
         if (SVGLangSpace::parseMappedAttribute(attr))
@@ -76,6 +75,83 @@ void SVGForeignObjectElement::parseMappedAttribute(MappedAttribute *attr)
             return;
         SVGStyledTransformableElement::parseMappedAttribute(attr);
     }
+}
+
+// TODO: Move this function in some SVG*Element base class, as SVGSVGElement / SVGImageElement will need the same logic!
+
+// This function mimics addCSSProperty and StyledElement::attributeChanged.
+// In HTML code, you'd always call addCSSProperty from your derived parseMappedAttribute()
+// function - though in SVG code we need to move this logic into svgAttributeChanged, in
+// order to support SVG DOM changes (which don't use the parseMappedAttribute/attributeChanged).
+// If we'd ignore SVG DOM, we could use _exactly_ the same logic as HTML.
+static inline void addCSSPropertyAndNotifyAttributeMap(StyledElement* element, const QualifiedName& name, int cssProperty, const String& value)
+{
+    ASSERT(element);
+
+    if (!element)
+        return;
+
+    NamedMappedAttrMap* attrs = element->mappedAttributes();
+    ASSERT(attrs);
+
+    if (!attrs)
+        return;
+
+    MappedAttribute* mappedAttr = attrs->getAttributeItem(name);
+    if (!mappedAttr)
+        return;
+
+    // This logic is only meant to be used for entries that have to be parsed and are mapped to eNone. Assert that.
+    MappedAttributeEntry entry;
+    bool needToParse = element->mapToEntry(mappedAttr->name(), entry);
+
+    ASSERT(needToParse);
+    ASSERT(entry == eNone);
+
+    if (!needToParse || entry != eNone) 
+        return;
+
+    if (mappedAttr->decl()) {
+        mappedAttr->setDecl(0);
+        attrs->declRemoved();
+    }
+
+    element->setChanged();
+    element->addCSSProperty(mappedAttr, cssProperty, value);
+
+    if (CSSMappedAttributeDeclaration* decl = mappedAttr->decl()) {
+        // Add the decl to the table in the appropriate spot.
+        element->setMappedAttributeDecl(entry, mappedAttr, decl);
+
+        decl->setMappedState(entry, mappedAttr->name(), mappedAttr->value());
+        decl->setParent(0);
+        decl->setNode(0);
+
+        attrs->declAdded();
+    }
+}
+
+void SVGForeignObjectElement::svgAttributeChanged(const QualifiedName& attrName)
+{
+    SVGStyledTransformableElement::svgAttributeChanged(attrName);
+
+    if (attrName == SVGNames::widthAttr) {
+        addCSSPropertyAndNotifyAttributeMap(this, attrName, CSS_PROP_WIDTH, width().valueAsString());
+        return;
+    } else if (attrName == SVGNames::heightAttr) {
+        addCSSPropertyAndNotifyAttributeMap(this, attrName, CSS_PROP_HEIGHT, height().valueAsString());
+        return;
+    }
+
+    if (!renderer())
+        return;
+
+    if (attrName == SVGNames::xAttr || attrName == SVGNames::yAttr ||
+        SVGTests::isKnownAttribute(attrName) ||
+        SVGLangSpace::isKnownAttribute(attrName) ||
+        SVGExternalResourcesRequired::isKnownAttribute(attrName) ||
+        SVGStyledTransformableElement::isKnownAttribute(attrName))
+        renderer()->setNeedsLayout(true);
 }
 
 RenderObject* SVGForeignObjectElement::createRenderer(RenderArena* arena, RenderStyle* style)
@@ -92,5 +168,3 @@ bool SVGForeignObjectElement::childShouldCreateRenderer(Node* child) const
 } // namespace WebCore
 
 #endif // ENABLE(SVG) && ENABLE(SVG_FOREIGN_OBJECT)
-
-// vim:ts=4:noet
