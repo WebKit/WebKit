@@ -1,3 +1,24 @@
+2008-02-28  Adam Roben  <aroben@apple.com>
+
+        Refactor value <-> CFNumber conversions into some helper functions
+
+        Reviewed by Jon.
+
+        * WebPreferences.cpp:
+        (preferencesPath): Changed to return a const String&.
+        (numberValueForPreferencesValue): Converts a value from preferences to
+        a native numeric type.
+        (cfNumber): Converts a native numeric value to a CFNumberRef.
+        (booleanValueForPreferencesValue): Converts a value from preferences
+        to a native boolean.
+        (WebPreferences::integerValueForKey): Changed to call
+        numberValueForPreferencesValue.
+        (WebPreferences::floatValueForKey): Ditto.
+        (WebPreferences::boolValueForKey): Changed to call
+        booleanValueForPreferencesValue.
+        (WebPreferences::setIntegerValue): Changed to call cfNumber.
+        (WebPreferences::setLongLongValue): Ditto.
+
 2008-02-27  Adam Roben  <aroben@apple.com>
 
         Add WebPreferences::setValueForKey

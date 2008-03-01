@@ -53,10 +53,47 @@
 
 using namespace WebCore;
 
-static String preferencesPath()
+static const String& preferencesPath()
 {
     static String path = pathByAppendingComponent(roamingUserSpecificStorageDirectory(), "WebKitPreferences.plist");
     return path;
+}
+
+template<typename NumberType> struct CFNumberTraits { static const unsigned Type; };
+template<> struct CFNumberTraits<int> { static const unsigned Type = kCFNumberSInt32Type; };
+template<> struct CFNumberTraits<LONGLONG> { static const unsigned Type = kCFNumberLongLongType; };
+template<> struct CFNumberTraits<float> { static const unsigned Type = kCFNumberFloat32Type; };
+
+template<typename NumberType>
+static NumberType numberValueForPreferencesValue(CFPropertyListRef value)
+{
+    if (!value)
+        return 0;
+
+    CFTypeID cfType = CFGetTypeID(value);
+    if (cfType == CFStringGetTypeID())
+        return static_cast<NumberType>(CFStringGetIntValue(static_cast<CFStringRef>(value)));
+    else if (cfType == CFBooleanGetTypeID()) {
+        Boolean boolVal = CFBooleanGetValue(static_cast<CFBooleanRef>(value));
+        return boolVal ? 1 : 0;
+    } else if (cfType == CFNumberGetTypeID()) {
+        NumberType val = 0;
+        CFNumberGetValue(static_cast<CFNumberRef>(value), CFNumberTraits<NumberType>::Type, &val);
+        return val;
+    }
+
+    return 0;
+}
+
+template<typename NumberType>
+static RetainPtr<CFNumberRef> cfNumber(NumberType value)
+{
+    return RetainPtr<CFNumberRef>(AdoptCF, CFNumberCreate(0, CFNumberTraits<NumberType>::Type, &value));
+}
+
+static bool booleanValueForPreferencesValue(CFPropertyListRef value)
+{
+    return numberValueForPreferencesValue<int>(value);
 }
 
 // WebPreferences ----------------------------------------------------------------
@@ -240,73 +277,22 @@ BSTR WebPreferences::stringValueForKey(CFStringRef key)
 
 int WebPreferences::integerValueForKey(CFStringRef key)
 {
-    CFTypeRef cfVal = (CFStringRef)valueForKey(key);
-    if (!cfVal)
-        return 0;
-
-    CFTypeID cfType = CFGetTypeID(cfVal);
-    if (cfType == CFStringGetTypeID())
-        return CFStringGetIntValue((CFStringRef)cfVal);
-    else if (cfType == CFBooleanGetTypeID()) {
-        Boolean boolVal = CFBooleanGetValue((CFBooleanRef)cfVal);
-        return (boolVal) ? 1 : 0;
-    }
-    else if (cfType == CFNumberGetTypeID()) {
-        int val = 0;
-        CFNumberGetValue((CFNumberRef)cfVal, kCFNumberSInt32Type, &val);
-        return val;
-    }
-
-    return 0;
+    return numberValueForPreferencesValue<int>(valueForKey(key));
 }
 
 BOOL WebPreferences::boolValueForKey(CFStringRef key)
 {
-    return (integerValueForKey(key) != 0);
+    return booleanValueForPreferencesValue(valueForKey(key));
 }
 
 float WebPreferences::floatValueForKey(CFStringRef key)
 {
-    CFTypeRef cfVal = (CFStringRef)valueForKey(key);
-    if (!cfVal)
-        return 0.0;
-
-    CFTypeID cfType = CFGetTypeID(cfVal);
-    if (cfType == CFStringGetTypeID())
-        return (float)CFStringGetDoubleValue((CFStringRef)cfVal);
-    else if (cfType == CFBooleanGetTypeID()) {
-        Boolean boolVal = CFBooleanGetValue((CFBooleanRef)cfVal);
-        return (boolVal) ? 1.0f : 0.0f;
-    }
-    else if (cfType == CFNumberGetTypeID()) {
-        float val = 0.0;
-        CFNumberGetValue((CFNumberRef)cfVal, kCFNumberFloatType, &val);
-        return val;
-    }
-
-    return 0.0;
+    return numberValueForPreferencesValue<float>(valueForKey(key));
 }
 
 LONGLONG WebPreferences::longlongValueForKey(CFStringRef key)
 {
-    CFTypeRef cfVal = (CFTypeRef) valueForKey(key);
-    if (!cfVal)
-        return 0;
-
-    CFTypeID cfType = CFGetTypeID(cfVal);
-    if (cfType == CFStringGetTypeID())
-        return (LONGLONG) CFStringGetIntValue((CFStringRef)cfVal);
-    else if (cfType == CFBooleanGetTypeID()) {
-        Boolean boolVal = CFBooleanGetValue((CFBooleanRef)cfVal);
-        return (boolVal) ? 1 : 0;
-    }
-    else if (cfType == CFNumberGetTypeID()) {
-        LONGLONG val = 0;
-        CFNumberGetValue((CFNumberRef)cfVal, kCFNumberLongLongType, &val);
-        return val;
-    }
-
-    return 0;
+    return numberValueForPreferencesValue<LONGLONG>(valueForKey(key));
 }
 
 void WebPreferences::setStringValue(CFStringRef key, LPCTSTR value)
@@ -328,8 +314,7 @@ void WebPreferences::setIntegerValue(CFStringRef key, int value)
     if (integerValueForKey(key) == value)
         return;
 
-    RetainPtr<CFNumberRef> valueRef(AdoptCF, CFNumberCreate(0, kCFNumberSInt32Type, &value));
-    setValueForKey(key, valueRef.get());
+    setValueForKey(key, cfNumber(value).get());
 
     postPreferencesChangesNotification();
 }
@@ -349,8 +334,7 @@ void WebPreferences::setLongLongValue(CFStringRef key, LONGLONG value)
     if (longlongValueForKey(key) == value)
         return;
 
-    RetainPtr<CFNumberRef> valueRef(AdoptCF, CFNumberCreate(0, kCFNumberLongLongType, &value));
-    setValueForKey(key, valueRef.get());
+    setValueForKey(key, cfNumber(value).get());
 
     postPreferencesChangesNotification();
 }
