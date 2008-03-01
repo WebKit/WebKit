@@ -1,3 +1,13 @@
+2008-02-29  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Darin
+        
+        <rdar://problem/5771227> - Incorrect password handling text in credential sheet
+
+        * platform/network/ProtectionSpace.cpp:
+        (WebCore::ProtectionSpace::receivesCredentialSecurely): Call functional CFNetwork method to 
+          get "secureness" of the auth challenge instead of figuring it out ourselves
+
 2008-02-29  Brent Fulgham  <bfulgham@gmail.com>
 
         http://bugs.webkit.org/show_bug.cgi?id=17483
