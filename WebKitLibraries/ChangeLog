@@ -1,3 +1,11 @@
+2008-02-29  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Mark.
+
+        Auto-generate image arrays.
+
+        * libWebKitSystemInterfaceLeopard.a:
+
 2008-02-29  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Anders Carlsson.
