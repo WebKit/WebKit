@@ -4,8 +4,8 @@ libdir=@libdir@
 includedir=@includedir@
 
 Name: WebKit
-Description: Web content engine for GTK+ applications
+Description: Web content engine for GTK+
 Version: @VERSION@
 Requires: gtk+-2.0
-Libs: -L${libdir} -lWebKitGtk
-Cflags: -I${includedir}/WebKit
+Libs: -L${libdir} -lwebkit-1.0
+Cflags: -I${includedir}/webkit-1.0
