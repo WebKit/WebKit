@@ -27,9 +27,10 @@
 #include "config.h"
 #include "PluginDatabase.h"
 
-#include "KURL.h"
 #include "Frame.h"
+#include "KURL.h"
 #include "PluginPackage.h"
+#include <stdlib.h>
 
 namespace WebCore {
 
@@ -128,24 +129,35 @@ Vector<PluginPackage*> PluginDatabase::plugins() const
     return result;
 }
 
+int PluginDatabase::preferredPluginCompare(const void* a, const void* b)
+{
+    PluginPackage* pluginA = *static_cast<PluginPackage* const*>(a);
+    PluginPackage* pluginB = *static_cast<PluginPackage* const*>(b);
+
+    return pluginA->compare(*pluginB);
+}
+
 PluginPackage* PluginDatabase::pluginForMIMEType(const String& mimeType)
 {
     if (mimeType.isEmpty())
         return 0;
 
     String key = mimeType.lower();
-    PluginPackage* plugin = 0;
     PluginSet::const_iterator end = m_plugins.end();
 
+    Vector<PluginPackage*, 2> pluginChoices;
+
     for (PluginSet::const_iterator it = m_plugins.begin(); it != end; ++it) {
-        if ((*it)->mimeToDescriptions().contains(key)) {
-            plugin = (*it).get();
-            if (isPreferredPluginPath(plugin->parentDirectory()))
-                break;
-        }
+        if ((*it)->mimeToDescriptions().contains(key))
+            pluginChoices.append((*it).get());
     }
 
-    return plugin;
+    if (pluginChoices.isEmpty())
+        return 0;
+
+    qsort(pluginChoices.data(), pluginChoices.size(), sizeof(PluginPackage*), PluginDatabase::preferredPluginCompare);
+
+    return pluginChoices[0];
 }
 
 String PluginDatabase::MIMETypeForExtension(const String& extension) const
@@ -155,25 +167,35 @@ String PluginDatabase::MIMETypeForExtension(const String& extension) const
 
     PluginSet::const_iterator end = m_plugins.end();
     String mimeType;
-    PluginPackage* plugin = 0;
+    Vector<PluginPackage*, 2> pluginChoices;
+    HashMap<PluginPackage*, String> mimeTypeForPlugin;
 
     for (PluginSet::const_iterator it = m_plugins.begin(); it != end; ++it) {
         MIMEToExtensionsMap::const_iterator mime_end = (*it)->mimeToExtensions().end();
 
         for (MIMEToExtensionsMap::const_iterator mime_it = (*it)->mimeToExtensions().begin(); mime_it != mime_end; ++mime_it) {
             const Vector<String>& extensions = mime_it->second;
+            bool foundMapping = false;
             for (unsigned i = 0; i < extensions.size(); i++) {
                 if (equalIgnoringCase(extensions[i], extension)) {
-                    mimeType = mime_it->first;
-                    plugin = (*it).get();
-                    if (isPreferredPluginPath(plugin->parentDirectory()))
-                        break;
+                    PluginPackage* plugin = (*it).get();
+                    pluginChoices.append(plugin);
+                    mimeTypeForPlugin.add(plugin, mime_it->first);
+                    foundMapping = true;
+                    break;
                 }
             }
+            if (foundMapping)
+                break;
         }
     }
 
-    return mimeType;
+    if (pluginChoices.isEmpty())
+        return String();
+
+    qsort(pluginChoices.data(), pluginChoices.size(), sizeof(PluginPackage*), PluginDatabase::preferredPluginCompare);
+
+    return mimeTypeForPlugin.get(pluginChoices[0]);
 }
 
 PluginPackage* PluginDatabase::findPlugin(const KURL& url, String& mimeType)

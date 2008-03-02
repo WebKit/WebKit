@@ -51,7 +51,9 @@ namespace WebCore {
         Vector<PluginPackage*> plugins() const;
         bool isMIMETypeRegistered(const String& mimeType);
         void addExtraPluginPath(const String&);
-        bool isPreferredPluginPath(const String& path) const;
+
+        static bool isPreferredPluginPath(const String& path);
+        static int preferredPluginCompare(const void*, const void*);
 
         PluginPackage* findPlugin(const KURL&, String& mimeType);
 

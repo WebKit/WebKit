@@ -1,3 +1,56 @@
+2008-03-01  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Reviewed by Darin.
+
+        <rdar://problem/5772987> Crashing viewing page with two VLC plug-in
+        instances
+
+        The VLC Netscape plug-in crashes if more than one instance is created.
+
+        Added a quirk that disallows a plug-in from having more than one
+        instance and set this for the VLC plug-in.
+
+        In addition, we now sort plug-ins that handle the same MIME
+        type to choose the most appropriate one. This sorting first sorts by
+        whether a plug-in has an issue that should put it at the end of the
+        list, then whether it appears in a "preferred" plug-in directory.
+
+        * plugins/PluginQuirkSet.h: Added PluginQuirkDontAllowMultipleInstances.
+        * plugins/PluginDatabase.cpp:
+        (WebCore::PluginDatabase::preferredPluginCompare): Comparator for
+        sorting plug-ins; calls PluginPackage::compare().
+        (WebCore::PluginDatabase::pluginForMIMEType): Add all of the plug-ins
+        that handle this MIME type to a list, sort the list, and return the
+        first item.
+        (WebCore::PluginDatabase::MIMETypeForExtension): Add all of the plug-ins
+        that handle this extension to a list, sort the list, and return the MIME
+        type used by the plug-in at the beginning of the list.
+        * plugins/PluginDatabase.h:
+        * plugins/PluginPackage.h:
+        (WebCore::PluginPackage::version): Added; returns the module version.
+        * plugins/win/PluginDatabaseWin.cpp:
+        (WebCore::PluginDatabase::isPreferredPluginPath): Made static; removed
+        const.
+        * plugins/win/PluginPackageWin.cpp:
+        (WebCore::PluginPackage::compare): Sorts plug-ins with known issues to
+        the end, then plug-ins in preferred directories to the beginning, then
+        alphabetically by file name, numerically by version, and alphabetically
+        by parent directory.
+        (WebCore::PluginPackage::determineQuirks): Set the "don't allow multiple
+        instances" quirk for VLC.
+        (WebCore::PluginPackage::load): Return false if the plug-in library has
+        already been loaded and the "don't allow multiple instances" quirk is
+        set.
+        * platform/gtk/TemporaryLinkStubs.cpp:
+        (PluginPackage::compare): Added stub.
+        (PluginDatabase::IsPreferredPluginPath): Update the GTK stub.
+        * platform/qt/TemporaryLinkStubs.cpp:
+        (PluginPackage::compare): Added stub.
+        (PluginDatabase::IsPreferredPluginPath): Update the Qt stub.
+        * platform/wx/TemporaryLinkStubs.cpp:
+        (PluginPackage::compare): Added stub.
+        (PluginDatabase::IsPreferredPluginPath): Update the wx stub.
+
 2008-03-01  Sam Weinig  <sam@webkit.org>
 
         Rubber-stamped by Mark Rowe.

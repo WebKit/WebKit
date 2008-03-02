@@ -44,6 +44,7 @@ namespace WebCore {
         PluginQuirkFlashURLNotifyBug = 1 << 8,
         PluginQuirkDontClipToZeroRectWhenScrolling = 1 << 9,
         PluginQuirkDontSetNullWindowHandleOnDestroy = 1 << 10,
+        PluginQuirkDontAllowMultipleInstances = 1 << 11,
     };
 
     class PluginQuirkSet {

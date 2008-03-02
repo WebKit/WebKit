@@ -29,10 +29,13 @@
 #include "config.h"
 #include "PluginPackage.h"
 
+#include "CString.h"
 #include "MIMETypeRegistry.h"
+#include "PluginDatabase.h"
 #include "PluginDebug.h"
 #include "Timer.h"
 #include "npruntime_impl.h"
+#include <string.h>
 #include <wtf/OwnArrayPtr.h>
 
 namespace WebCore {
@@ -61,6 +64,30 @@ int PluginPackage::compareFileVersion(const PlatformModuleVersion& compareVersio
     if (m_moduleVersion.leastSig != compareVersion.leastSig)
         return m_moduleVersion.leastSig > compareVersion.leastSig ? 1 : -1;
     return 0;
+}
+
+int PluginPackage::compare(const PluginPackage& compareTo) const
+{
+    // Sort plug-ins that allow multiple instances first.
+    bool AallowsMultipleInstances = !quirks().contains(PluginQuirkDontAllowMultipleInstances);
+    bool BallowsMultipleInstances = !compareTo.quirks().contains(PluginQuirkDontAllowMultipleInstances);
+    if (AallowsMultipleInstances != BallowsMultipleInstances)
+        return AallowsMultipleInstances ? -1 : 1;
+
+    // Sort plug-ins in a preferred path first.
+    bool AisInPreferredPath = PluginDatabase::isPreferredPluginPath(parentDirectory());
+    bool BisInPreferredPath = PluginDatabase::isPreferredPluginPath(compareTo.parentDirectory());
+    if (AisInPreferredPath != BisInPreferredPath)
+        return AisInPreferredPath ? -1 : 1;
+
+    int diff = strcmp(name().utf8().data(), compareTo.name().utf8().data());
+    if (diff)
+        return diff;
+
+    if (diff = compareFileVersion(compareTo.version()))
+        return diff;
+
+    return strcmp(parentDirectory().utf8().data(), compareTo.parentDirectory().utf8().data());
 }
 
 bool PluginPackage::isPluginBlacklisted()
@@ -109,9 +136,15 @@ void PluginPackage::determineQuirks(const String& mimeType)
         m_quirks.add(PluginQuirkHasModalMessageLoop);
     }
 
-    // VLC hangs on NPP_Destroy if we call NPP_SetWindow with a null window handle
-    if (name() == "VLC Multimedia Plugin")
+    if (name() == "VLC Multimedia Plugin") {
+        // VLC hangs on NPP_Destroy if we call NPP_SetWindow with a null window handle
         m_quirks.add(PluginQuirkDontSetNullWindowHandleOnDestroy);
+
+        // VLC 0.8.6d and 0.8.6e crash if multiple instances are created.
+        // <rdar://problem/5773070> tracks allowing multiple instances when this
+        // bug is fixed.
+        m_quirks.add(PluginQuirkDontAllowMultipleInstances);
+    }
 
     // The DivX plugin sets its size on the first NPP_SetWindow call and never updates its size, so
     // call SetWindow when the plugin view has a correct size
@@ -213,6 +246,8 @@ bool PluginPackage::load()
         ASSERT(m_module);
         m_freeLibraryTimer.stop();
     } else if (m_isLoaded) {
+        if (m_quirks.contains(PluginQuirkDontAllowMultipleInstances))
+            return false;
         m_loadCount++;
         return true;
     } else {

@@ -351,7 +351,7 @@ Vector<String> PluginDatabase::defaultPluginPaths()
     return paths;
 }
 
-bool PluginDatabase::isPreferredPluginPath(const String& path) const
+bool PluginDatabase::isPreferredPluginPath(const String& path)
 {
     String ourPath = safariPluginsPath();
 

@@ -62,7 +62,8 @@ bool WebCore::historyContains(const UChar*, unsigned) { return false; }
 
 PluginSet PluginDatabase::getPluginsInPaths() const { notImplemented(); return PluginSet(); }
 Vector<String> PluginDatabase::defaultPluginPaths() { notImplemented(); return Vector<String>(); }
-bool PluginDatabase::isPreferredPluginPath(const String&) const { notImplemented(); return false; }
+bool PluginDatabase::isPreferredPluginPath(const String&) { notImplemented(); return false; }
+int PluginPackage::compare(const PluginPackage&) const { notImplemented(); return 0; }
 bool PluginPackage::fetchInfo() { notImplemented(); return false; }
 unsigned PluginPackage::hash() const { notImplemented(); return 0; }
 bool PluginPackage::equal(const PluginPackage&, const PluginPackage&) { notImplemented(); return false; }
