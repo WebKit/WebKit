@@ -1202,4 +1202,55 @@ PassRefPtr<ImageData> CanvasRenderingContext2D::getImageData(float sx, float sy,
     return buffer->getImageData(scaledRect);
 }
 
+void CanvasRenderingContext2D::putImageData(ImageData* data, float dx, float dy, ExceptionCode& ec)
+{
+    if (!data) {
+        ec = TYPE_MISMATCH_ERR;
+        return;
+    }
+    putImageData(data, dx, dy, 0, 0, data->width(), data->height(), ec);
+}
+
+void CanvasRenderingContext2D::putImageData(ImageData* data, float dx, float dy, float dirtyX, float dirtyY, 
+                                            float dirtyWidth, float dirtyHeight, ExceptionCode& ec)
+{
+    if (!data) {
+        ec = TYPE_MISMATCH_ERR;
+        return;
+    }
+    if (!isfinite(dx) || !isfinite(dy) || !isfinite(dirtyX) || 
+        !isfinite(dirtyY) || !isfinite(dirtyWidth) || !isfinite(dirtyHeight)) {
+        ec = INDEX_SIZE_ERR;
+        return;
+    }
+
+    ImageBuffer* buffer = m_canvas ? m_canvas->buffer() : 0;
+    if (!buffer)
+        return;
+
+    if (dirtyWidth < 0) {
+        dirtyX += dirtyWidth;
+        dirtyWidth = -dirtyWidth;
+    }
+
+    if (dirtyHeight < 0) {
+        dirtyY += dirtyHeight;
+        dirtyHeight = -dirtyHeight;
+    }
+
+    FloatRect clipRect(dirtyX, dirtyY, dirtyWidth, dirtyHeight);
+    clipRect.intersect(IntRect(0, 0, data->width(), data->height()));
+    IntSize destOffset(static_cast<int>(dx), static_cast<int>(dy));
+    IntRect sourceRect = enclosingIntRect(clipRect);
+    sourceRect.move(destOffset);
+    sourceRect.intersect(IntRect(IntPoint(), buffer->size()));
+    if (sourceRect.isEmpty())
+        return;
+    willDraw(sourceRect);
+    sourceRect.move(-destOffset);
+    IntPoint destPoint(destOffset.width(), destOffset.height());
+    
+    buffer->putImageData(data, sourceRect, destPoint);
+}
+
 } // namespace WebCore

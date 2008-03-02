@@ -1,3 +1,15 @@
+2008-03-01  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Bug 16954: Support putImageData
+
+        Nice simple testcase for putImageData covering the exciting 
+        little bits of behaviour present in the current spec.
+
+        * fast/canvas/canvas-putImageData-expected.txt: Added.
+        * fast/canvas/canvas-putImageData.html: Added.
+
 2008-03-01  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Darin Adler.

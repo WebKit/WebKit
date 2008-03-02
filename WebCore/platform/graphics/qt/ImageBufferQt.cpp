@@ -77,4 +77,9 @@ PassRefPtr<ImageData> ImageBuffer::getImageData(const IntRect&) const
     return 0;
 }
 
+void ImageBuffer::putImageData(ImageData*, const IntRect&, const IntPoint&)
+{
+    notImplemented();
+}
+
 }

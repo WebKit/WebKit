@@ -75,6 +75,7 @@ ImageBuffer::ImageBuffer(void* imageData, const IntSize& size, auto_ptr<Graphics
     , m_context(context.release())
     , m_cgImage(0)
 {
+    ASSERT((reinterpret_cast<size_t>(imageData) & 2) == 0);
 }
 
 ImageBuffer::~ImageBuffer()
@@ -136,7 +137,7 @@ PassRefPtr<ImageData> ImageBuffer::getImageData(const IntRect& rect) const
     unsigned srcBytesPerRow = 4 * m_size.width();
     unsigned destBytesPerRow = 4 * rect.width();
     
-    // -originy to handle the accursed flipped y axis
+    // m_size.height() - originy to handle the accursed flipped y axis in CG backing store
     unsigned char* srcRows = reinterpret_cast<unsigned char*>(m_data) + (m_size.height() - originy - 1) * srcBytesPerRow + originx * 4;
     unsigned char* destRows = data + desty * destBytesPerRow + destx * 4;
     for (int y = 0; y < numRows; ++y) {
@@ -154,6 +155,58 @@ PassRefPtr<ImageData> ImageBuffer::getImageData(const IntRect& rect) const
         srcRows -= srcBytesPerRow;
     }
     return result;
+}
+
+void ImageBuffer::putImageData(ImageData* source, const IntRect& sourceRect, const IntPoint& destPoint)
+{
+    ASSERT(sourceRect.width() > 0);
+    ASSERT(sourceRect.height() > 0);
+
+    int originx = sourceRect.x();
+    int destx = destPoint.x() + sourceRect.x();
+    ASSERT(destx >= 0);
+    ASSERT(destx < m_size.width());
+    ASSERT(originx >= 0);
+    ASSERT(originx <= sourceRect.right());
+
+    int endx = destPoint.x() + sourceRect.right();
+    ASSERT(endx <= m_size.width());
+
+    int numColumns = endx - destx;
+    
+    int originy = sourceRect.y();
+    int desty = destPoint.y() + sourceRect.y();
+    ASSERT(desty >= 0);
+    ASSERT(desty < m_size.height());
+    ASSERT(originy >= 0);
+    ASSERT(originy <= sourceRect.bottom());
+
+    int endy = destPoint.y() + sourceRect.bottom();
+    ASSERT(endx <= m_size.height());
+    int numRows = endy - desty;
+
+    unsigned srcBytesPerRow = 4 * source->width();
+    unsigned destBytesPerRow = 4 * m_size.width();
+    
+    unsigned char* srcRows = source->data()->data().data() + originy * srcBytesPerRow + originx * 4;
+
+    // -desty to handle the accursed flipped y axis
+    unsigned char* destRows = reinterpret_cast<unsigned char*>(m_data) + (m_size.height() - desty - 1) * destBytesPerRow + destx * 4;
+    for (int y = 0; y < numRows; ++y) {
+        for (int x = 0; x < numColumns; x++) {
+            unsigned char alpha = srcRows[x * 4 + 3];
+            if (alpha != 255) {
+                destRows[x * 4 + 0] = (srcRows[0] * alpha) / 255;
+                destRows[x * 4 + 1] = (srcRows[1] * alpha) / 255;
+                destRows[x * 4 + 2] = (srcRows[2] * alpha) / 255;
+                destRows[x * 4 + 3] = alpha;
+            } else {
+                reinterpret_cast<uint32_t*>(destRows + x * 4)[0] = reinterpret_cast<uint32_t*>(srcRows + x * 4)[0];
+            }
+        }
+        destRows -= destBytesPerRow;
+        srcRows += srcBytesPerRow;
+    }
 }
 
 }

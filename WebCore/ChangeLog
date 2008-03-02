@@ -1,3 +1,26 @@
+2008-03-01  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Bug 16954: Support putImageData
+        
+        Implement support for HTML5's putImageData for the CG port.  All other ports
+        are currently just using stubs for the final blit.
+
+        Test: fast/canvas/canvas-putImageData.html
+
+        * bindings/js/JSCanvasRenderingContext2DCustom.cpp:
+        (WebCore::JSCanvasRenderingContext2D::putImageData):
+        * html/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::putImageData):
+        * html/CanvasRenderingContext2D.h:
+        * platform/graphics/ImageBuffer.h:
+        * platform/graphics/cairo/ImageBufferCairo.cpp:
+        * platform/graphics/cg/ImageBufferCG.cpp:
+        (WebCore::ImageBuffer::putImageData):
+        * platform/graphics/qt/ImageBufferQt.cpp:
+        * platform/graphics/wx/ImageBufferWx.cpp:
+
 2008-03-01  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Reviewed by Darin.

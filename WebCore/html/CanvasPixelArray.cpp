@@ -39,6 +39,7 @@ PassRefPtr<CanvasPixelArray> CanvasPixelArray::create(unsigned size)
 CanvasPixelArray::CanvasPixelArray(unsigned size)
     : m_data(size)
 {
+    ASSERT((reinterpret_cast<size_t>(m_data.data()) & 3) == 0);
 }
 
 }

@@ -49,6 +49,7 @@ namespace WebCore {
 
     class GraphicsContext;
     class ImageData;
+    class IntPoint;
     class IntRect;
     class RenderObject;
 
@@ -67,8 +68,10 @@ namespace WebCore {
 #elif PLATFORM(CAIRO)
         cairo_surface_t* surface() const;
 #endif
-
+        
         PassRefPtr<ImageData> getImageData(const IntRect& rect) const;
+        void putImageData(ImageData* source, const IntRect& sourceRect, const IntPoint& destPoint);
+
     private:
         void* m_data;
         IntSize m_size;

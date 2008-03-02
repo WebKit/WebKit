@@ -28,10 +28,12 @@
 #include "FloatRect.h"
 #include "HTMLCanvasElement.h"
 #include "HTMLImageElement.h"
+#include "ImageData.h"
 #include "JSCanvasGradient.h"
 #include "JSCanvasPattern.h"
 #include "JSHTMLCanvasElement.h"
 #include "JSHTMLImageElement.h"
+#include "JSImageData.h"
 #include "kjs_html.h"
 
 using namespace KJS;
@@ -335,6 +337,19 @@ JSValue* JSCanvasRenderingContext2D::createPattern(ExecState* exec, const List& 
 
 JSValue* JSCanvasRenderingContext2D::putImageData(ExecState* exec, const List& args)
 {
+    // putImageData has two variants
+    // putImageData(ImageData, x, y)
+    // putImageData(ImageData, x, y, dirtyX, dirtyY, dirtyWidth, dirtyHeight)
+    CanvasRenderingContext2D* context = impl();
+
+    ExceptionCode ec = 0;
+    if (args.size() >= 7)
+        context->putImageData(toImageData(args[0]), args[1]->toFloat(exec), args[2]->toFloat(exec), 
+                              args[3]->toFloat(exec), args[4]->toFloat(exec), args[5]->toFloat(exec), args[6]->toFloat(exec), ec);
+    else
+        context->putImageData(toImageData(args[0]), args[1]->toFloat(exec), args[2]->toFloat(exec), ec);
+
+    setDOMException(exec, ec);
     return jsUndefined();
 }
 
