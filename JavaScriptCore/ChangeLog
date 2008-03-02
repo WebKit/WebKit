@@ -1,3 +1,12 @@
+2008-03-01  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Tim Hatcher.
+
+        Update Xcode configuration to support building debug and release from the mysterious future.
+
+        * Configurations/Base.xcconfig:
+        * Configurations/DebugRelease.xcconfig:
+
 2008-02-29  Brent Fulgham  <bfulgham@gmail.com>
 
         http://bugs.webkit.org/show_bug.cgi?id=17483
