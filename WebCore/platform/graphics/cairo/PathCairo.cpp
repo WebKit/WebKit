@@ -76,15 +76,15 @@ void Path::clear()
 
 bool Path::isEmpty() const
 {
-    // FIXME: if/when the patch to get current pt return status is applied
-    // double dx,dy;
-    // return cairo_get_current_point(cr, &dx, &dy);
-
     cairo_t* cr = platformPath()->m_cr;
+#if CAIRO_VERSION >= CAIRO_VERSION_ENCODE(1,5,10)
+    return !cairo_has_current_point(cr);
+#else
     cairo_path_t* p = cairo_copy_path(cr);
     bool hasData = p->num_data;
     cairo_path_destroy(p);
     return !hasData;
+#endif
 }
 
 void Path::translate(const FloatSize& p)
