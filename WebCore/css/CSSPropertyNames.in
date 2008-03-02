@@ -2,7 +2,7 @@
 # CSS property names
 #
 # Some properties are used internally, but are not part of CSS. They are used to get
-# HTML4 compatibilty in the rendering engine.
+# HTML4 compatibility in the rendering engine.
 #
 # Microsoft extensions are documented here:
 # http://msdn.microsoft.com/workshop/author/css/reference/attributes.asp
