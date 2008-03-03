@@ -592,7 +592,9 @@ void FrameLoader::stopLoading(bool sendUnload)
         
         XMLHttpRequest::cancelRequests(doc);
         
+#if ENABLE(DATABASE)
         doc->stopDatabases();
+#endif
     }
 
     // tell all subframes to stop as well
