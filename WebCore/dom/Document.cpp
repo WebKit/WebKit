@@ -35,7 +35,6 @@
 #include "ClassNodeList.h"
 #include "Comment.h"
 #include "CookieJar.h"
-#include "Database.h"
 #include "DOMImplementation.h"
 #include "DocLoader.h"
 #include "DocumentFragment.h"
@@ -110,6 +109,7 @@
 #include "kjs_proxy.h"
 
 #if ENABLE(DATABASE)
+#include "Database.h"
 #include "DatabaseThread.h"
 #endif
 
