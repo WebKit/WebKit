@@ -28,11 +28,17 @@
 
 #import "WebScriptObject.h"
 
-#include <JavaScriptCore/internal.h>
-#include <JavaScriptCore/object.h>
-#include <JavaScriptCore/runtime_root.h>
-#include <JavaScriptCore/APICast.h>
+#import <wtf/PassRefPtr.h>
 
+namespace KJS {
+    
+    class JSObject;
+    class JSValue;
+    
+    namespace Bindings {
+        class RootObject;
+    }
+}
 namespace WebCore {
     NSObject* getJSWrapper(KJS::JSObject*);
     void addJSWrapper(NSObject* wrapper, KJS::JSObject*);

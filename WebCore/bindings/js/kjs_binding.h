@@ -26,10 +26,6 @@
 #include <kjs/lookup.h>
 #include <wtf/Noncopyable.h>
 
-#if PLATFORM(MAC)
-#include <JavaScriptCore/runtime.h>
-#endif
-
 namespace WebCore {
 
     class AtomicString;

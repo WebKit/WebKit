@@ -91,7 +91,8 @@
 #import <OpenScripting/ASRegistry.h>
 #import <JavaScriptCore/array_instance.h>
 #import <JavaScriptCore/date_object.h>
-#import <JavaScriptCore/runtime_root.h>
+#import <bindings/runtime_root.h>
+#import <bindings/runtime.h>
 #import <wtf/RetainPtr.h>
 
 @class NSView;

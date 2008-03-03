@@ -40,6 +40,7 @@
 #if USE(NPOBJECT)
 #include <bindings/NP_jsobject.h>
 #include <bindings/npruntime_impl.h>
+#include <bindings/runtime.h>
 #include <bindings/runtime_root.h>
 #endif
 

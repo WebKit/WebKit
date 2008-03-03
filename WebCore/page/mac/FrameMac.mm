@@ -90,8 +90,11 @@
 #import "kjs_window.h"
 #import "visible_units.h"
 #import <Carbon/Carbon.h>
-#import <JavaScriptCore/NP_jsobject.h>
-#import <JavaScriptCore/npruntime_impl.h>
+#import <JavaScriptCore/APICast.h>
+#import <bindings/NP_jsobject.h>
+#import <bindings/npruntime_impl.h>
+#import <bindings/runtime_root.h>
+#import <bindings/runtime.h>
 
 #undef _webcore_TIMING
 

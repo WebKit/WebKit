@@ -32,10 +32,6 @@
 #import <WebCore/TextAffinity.h>
 #import <WebCore/TextGranularity.h>
 
-#if USE(NPOBJECT)
-#import <JavaScriptCore/npruntime.h>
-#endif
-
 namespace WebCore {
     class Frame;
     class HTMLFrameOwnerElement;

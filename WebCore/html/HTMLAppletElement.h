@@ -28,9 +28,11 @@
 #include "HTMLPlugInElement.h"
 
 #if USE(JAVASCRIPTCORE_BINDINGS)
-#include <bindings/runtime.h>
-#else
-namespace KJS { namespace Bindings { class Instance; } }
+namespace KJS { 
+    namespace Bindings { 
+        class Instance;
+    } 
+}
 #endif
 
 namespace WebCore {

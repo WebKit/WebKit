@@ -28,11 +28,15 @@
 #include "HTMLFrameOwnerElement.h"
 
 #if USE(JAVASCRIPTCORE_BINDINGS)
-#include <bindings/runtime.h>
+namespace KJS {
+    namespace Bindings {
+        class Instance;
+    }
+}
 #endif
 
 #if USE(NPOBJECT)
-#include <bindings/npruntime_internal.h>
+struct NPObject;
 #endif
 
 namespace WebCore {

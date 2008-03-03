@@ -1,3 +1,34 @@
+2008-03-03  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Darin and Sam.
+
+        Include fixes, in preparation of using the headers in WebCore/bridge.
+        
+        * bindings/js/kjs_binding.h:
+        * bindings/js/kjs_dom.cpp:
+        * bindings/objc/DOMInternal.mm:
+        * bindings/objc/DOMUtility.mm:
+        * bindings/objc/WebScriptObject.mm:
+        * bindings/objc/WebScriptObjectPrivate.h:
+        * bridge/objc/objc_class.h:
+        * bridge/objc/objc_instance.h:
+        * bridge/objc/objc_runtime.h:
+        * bridge/objc/objc_utility.h:
+        * bridge/runtime.h:
+        * bridge/runtime_object.h:
+        * bridge/runtime_root.h:
+        * html/HTMLAppletElement.cpp:
+        * html/HTMLAppletElement.h:
+        * html/HTMLEmbedElement.cpp:
+        * html/HTMLEmbedElement.h:
+        * html/HTMLObjectElement.cpp:
+        * html/HTMLPlugInElement.cpp:
+        * html/HTMLPlugInElement.h:
+        * page/mac/FrameMac.mm:
+        * page/mac/WebCoreFrameBridge.h:
+        * page/mac/WebCoreFrameBridge.mm:
+        * page/mac/WebCoreScriptDebugger.mm:
+
 2008-03-03  David Hyatt  <hyatt@apple.com>
 
         Full page zoom plumbing.  Add a notion of whether or not a zoom is text only or a full zoom to the

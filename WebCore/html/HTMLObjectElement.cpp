@@ -42,6 +42,10 @@
 #include "RenderWidget.h"
 #include "Text.h"
 
+#if USE(JAVASCRIPTCORE_BINDINGS)
+#include <bindings/runtime.h>
+#endif
+
 namespace WebCore {
 
 using namespace EventNames;

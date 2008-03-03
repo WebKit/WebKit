@@ -55,6 +55,7 @@
 #import "kjs_html.h"
 #import "kjs_window.h"
 #import <objc/objc-runtime.h>
+#import <bindings/runtime_root.h>
 
 // This file makes use of both the ObjC DOM API and the C++ DOM API, so we need to be careful about what
 // headers are included and what namespaces we use to avoid naming conflicts.
