@@ -1,3 +1,15 @@
+2008-03-03  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        - test that :first-letter applies to the first letter in normal flow,
+          skipping floats and positioned objects
+
+        * fast/css/first-letter-skip-out-of-flow.html: Added.
+        * platform/mac-leopard/fast/css/first-letter-skip-out-of-flow-expected.checksum: Added.
+        * platform/mac-leopard/fast/css/first-letter-skip-out-of-flow-expected.png: Added.
+        * platform/mac/fast/css/first-letter-skip-out-of-flow-expected.txt: Added.
+
 2008-03-03  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Dan Bernstein.

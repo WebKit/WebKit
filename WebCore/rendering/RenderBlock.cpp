@@ -4081,19 +4081,23 @@ void RenderBlock::updateFirstLetter()
 
     if (!hasPseudoStyle) 
         return;
-    
+
     // Drill into inlines looking for our first text child.
     RenderObject* currChild = firstLetterBlock->firstChild();
-    while (currChild && currChild->needsLayout() && !currChild->isReplaced() && !currChild->isText()) 
-        currChild = currChild->firstChild();
+    while (currChild && currChild->needsLayout() && (!currChild->isReplaced() || currChild->isFloatingOrPositioned()) && !currChild->isText()) {
+        if (currChild->isFloatingOrPositioned())
+            currChild = currChild->nextSibling();
+        else
+            currChild = currChild->firstChild();
+    }
 
     // Get list markers out of the way.
     while (currChild && currChild->isListMarker())
         currChild = currChild->nextSibling();
-    
+
     if (!currChild)
         return;
-    
+
     RenderObject* firstLetterContainer = currChild->parent();
 
     // If the child already has style, then it has already been created, so we just want
