@@ -1,3 +1,20 @@
+2008-03-03  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        - remove CSSMutableStyleDeclaration::setChanged()'s change type
+          parameter
+
+        * css/CSSMutableStyleDeclaration.cpp:
+        (WebCore::CSSMutableStyleDeclaration::setChanged): Removed the change
+        type parameter and made this function determine the correct change type
+        based on whether this is an inline style declaration.
+        (WebCore::CSSMutableStyleDeclaration::setProperty):
+        * css/CSSMutableStyleDeclaration.h:
+        (WebCore::CSSMutableStyleDeclaration::clear): Removed this unused
+        method.
+        (WebCore::CSSMutableStyleDeclaration::setChanged): Made private.
+
 2008-03-03  Darin Adler  <darin@apple.com>
 
         Reviewed by Adam.

@@ -446,21 +446,18 @@ String CSSMutableStyleDeclaration::removeProperty(int propertyID, bool notifyCha
     return value;
 }
 
-void CSSMutableStyleDeclaration::clear()
-{
-    m_values.clear();
-    setChanged();
-}
-
-void CSSMutableStyleDeclaration::setChanged(StyleChangeType changeType)
+void CSSMutableStyleDeclaration::setChanged()
 {
     if (m_node) {
-        m_node->setChanged(changeType);
         // FIXME: Ideally, this should be factored better and there
         // should be a subclass of CSSMutableStyleDeclaration just
         // for inline style declarations that handles this
-        if (m_node->isStyledElement() && this == static_cast<StyledElement*>(m_node)->inlineStyleDecl())
+        bool isInlineStyleDeclaration = m_node->isStyledElement() && this == static_cast<StyledElement*>(m_node)->inlineStyleDecl();
+        if (isInlineStyleDeclaration) {
+            m_node->setChanged(InlineStyleChange);
             static_cast<StyledElement*>(m_node)->invalidateStyleAttribute();
+        } else
+            m_node->setChanged(FullStyleChange);
         return;
     }
 
@@ -531,7 +528,7 @@ bool CSSMutableStyleDeclaration::setProperty(int propertyID, const String& value
         // CSS DOM requires raising SYNTAX_ERR here, but this is too dangerous for compatibility,
         // see <http://bugs.webkit.org/show_bug.cgi?id=7296>.
     } else if (notifyChanged)
-        setChanged(InlineStyleChange);
+        setChanged();
     ASSERT(!ec);
     return success;
 }
