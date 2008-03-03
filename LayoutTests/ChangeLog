@@ -1,3 +1,13 @@
+2008-03-02  Kevin Ollivier  <kevino@theolliviers.com>
+
+        Reviewed by Dave Hyatt.
+
+        Gracefully handle a CSS rule containing an invalid value.
+        (Fixes http://bugs.webkit.org/show_bug.cgi?id=16898)
+
+        * fast/css/invalid-rule-value-expected.txt: Added.
+        * fast/css/invalid-rule-value.html: Added.
+
 2008-03-01  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Sam Weinig.

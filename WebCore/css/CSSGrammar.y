@@ -985,6 +985,11 @@ declaration:
         /* div { font-family: } Just reduce away this property with no value. */
         $$ = false;
     }
+    |
+    property ':' maybe_space error {
+        /* if we come across rules with invalid values like this case: p { weight: *; }, just discard the rule */
+        $$ = false;
+    }
   ;
 
 property:
