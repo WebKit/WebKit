@@ -221,4 +221,17 @@ shouldThrow("context.putImageData(buffer, 0, 0, 0, undefined, 0, 0)", "'Error: I
 shouldThrow("context.putImageData(buffer, 0, 0, 0, 0, undefined, 0)", "'Error: INDEX_SIZE_ERR: DOM Exception 1'");
 shouldThrow("context.putImageData(buffer, 0, 0, 0, 0, 0, undefined)", "'Error: INDEX_SIZE_ERR: DOM Exception 1'");
 
+// Ensure we don't mess up bounds clipping checks
+var rectcanvas = document.createElement("canvas");
+rectcanvas.width = 20;
+rectcanvas.height = 10;
+var rectbuffer = rectcanvas.getContext("2d");
+rectbuffer.putImageData(smallbuffer, 10, 0);
+
+var rectcanvas = document.createElement("canvas");
+rectcanvas.width = 10;
+rectcanvas.height = 20;
+var rectbuffer = rectcanvas.getContext("2d");
+rectbuffer.putImageData(smallbuffer, 0, 10);
+
 var successfullyParsed = true;
