@@ -68,7 +68,6 @@ public:
         win->Connect(wxEVT_SCROLLWIN_PAGEDOWN,     wxScrollWinEventHandler(ScrollViewPrivate::OnScrollWinEvents), NULL, this);
         win->Connect(wxEVT_SCROLLWIN_THUMBTRACK,   wxScrollWinEventHandler(ScrollViewPrivate::OnScrollWinEvents), NULL, this);
         win->Connect(wxEVT_SCROLLWIN_THUMBRELEASE, wxScrollWinEventHandler(ScrollViewPrivate::OnScrollWinEvents), NULL, this);
-        win->Connect(wxEVT_SCROLLWIN_TOP,          wxScrollWinEventHandler(ScrollViewPrivate::OnScrollWinEvents), NULL, this);
     }
     
     void OnScrollWinEvents(wxScrollWinEvent& e)
@@ -84,17 +83,29 @@ public:
             else       
                 pos.y = e.GetPosition();
         }
-        else if ( scrollType == wxEVT_SCROLLWIN_LINEDOWN ) {
+        else if (scrollType == wxEVT_SCROLLWIN_LINEDOWN) {
             if (horiz) 
                 pos.x += LINE_STEP;
             else       
                 pos.y += LINE_STEP;
         }
-        else if ( scrollType == wxEVT_SCROLLWIN_LINEUP ) {
+        else if (scrollType == wxEVT_SCROLLWIN_LINEUP) {
             if (horiz) 
                 pos.x -= LINE_STEP;
             else       
                 pos.y -= LINE_STEP;
+        }
+        else if (scrollType == wxEVT_SCROLLWIN_PAGEUP) {
+            if (horiz) 
+                pos.x -= m_scrollView->visibleWidth() - PAGE_KEEP;
+            else       
+                pos.y -= m_scrollView->visibleHeight() - PAGE_KEEP;
+        }
+        else if (scrollType == wxEVT_SCROLLWIN_PAGEDOWN) {
+            if (horiz) 
+                pos.x += m_scrollView->visibleWidth() - PAGE_KEEP;
+            else       
+                pos.y += m_scrollView->visibleHeight() - PAGE_KEEP;
         }
         else
             return e.Skip();

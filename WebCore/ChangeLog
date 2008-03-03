@@ -1,3 +1,19 @@
+2008-03-02  Kevin Ollivier  <kevino@theolliviers.com>
+
+        Reviewed by Alp Toker.
+
+        Scrolling fixes. Implement page scrolling, initialize mouse wheel
+        event variables, and remove duplicate event binding for TOP
+        scrolling event.
+
+        http://bugs.webkit.org/show_bug.cgi?id=17643
+
+        * platform/wx/MouseWheelEventWx.cpp:
+        (WebCore::PlatformWheelEvent::PlatformWheelEvent):
+        * platform/wx/ScrollViewWx.cpp:
+        (WebCore::ScrollView::ScrollViewPrivate::bindEvents):
+        (WebCore::ScrollView::ScrollViewPrivate::OnScrollWinEvents):
+
 2008-03-02  Alp Toker  <alp@atoker.com>
 
         Fix building without database support after changes in r30331.
