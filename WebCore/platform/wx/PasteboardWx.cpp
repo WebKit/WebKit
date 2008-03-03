@@ -28,6 +28,7 @@
 #include "Pasteboard.h"
 #include "DocumentFragment.h"
 #include "Editor.h"
+#include "Frame.h"
 #include "KURL.h"
 #include "markup.h"
 #include "PlatformString.h"

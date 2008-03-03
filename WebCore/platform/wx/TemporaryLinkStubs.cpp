@@ -46,6 +46,7 @@
 #include "EventHandler.h"
 #include "FileChooser.h"
 #include "Font.h"
+#include "Frame.h"
 #include "FrameLoader.h"
 #include "FrameView.h"
 #include "Icon.h"

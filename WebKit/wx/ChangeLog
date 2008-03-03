@@ -1,3 +1,11 @@
+2008-03-03  Kevin Ollivier  <kevino@theolliviers.com>
+
+        wx build fix after Frame::setZoomFactor API change.
+
+        * WebView.cpp:
+        (wxWebView::IncreaseTextSize):
+        (wxWebView::DecreaseTextSize):
+
 2008-02-24  Darin Adler  <darin@apple.com>
 
         Reviewed by Sam.
