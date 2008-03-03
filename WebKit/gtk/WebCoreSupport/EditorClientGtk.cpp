@@ -37,7 +37,7 @@ namespace WebKit {
 static void imContextCommitted(GtkIMContext* context, const char* str, EditorClient* client)
 {
     Frame* frame = core(client->m_webView)->focusController()->focusedOrMainFrame();
-    frame->editor()->insertTextWithoutSendingTextEvent(String::fromUTF8(str), false);
+    frame->editor()->insertTextWithoutSendingTextEvent(String::fromUTF8(str), false, 0);
 }
 
 bool EditorClient::shouldDeleteRange(Range*)
