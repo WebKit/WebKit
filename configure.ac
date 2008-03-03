@@ -33,6 +33,9 @@ case "$host" in
      *-*-freebsd*)
        os_freebsd=yes
        ;;
+     *-*-darwin*)
+       os_darwin=yes
+       ;;
 esac
 
 # If CXXFLAGS and CFLAGS are unset, default to -O2
@@ -127,6 +130,10 @@ if test "$PKG_CONFIG" = "no"; then
 fi
 
 # check for icu-config
+if test "$os_darwin" = "yes"; then
+ICU_CPPFLAGS="-I\$(srcdir)/JavaScriptCore/icu -I\$(srcdir)/WebCore/icu"
+ICU_LIBS="-licucore"
+else
 AC_PATH_PROG(icu_config, icu-config, no)
 if test "$icu_config" = "no"; then
    AC_MSG_ERROR([Cannot find icu-config. ICU library is needed.])
@@ -139,6 +146,7 @@ ICU_CPPFLAGS=`$icu_config --cppflags`
 ICU_LIBS=`$icu_config --ldflags`
 AC_SUBST([ICU_CPPFLAGS])
 AC_SUBST([ICU_LIBS])
+fi
 
 # determine the GDK/GTK+ target
 AC_MSG_CHECKING([the target windowing system])

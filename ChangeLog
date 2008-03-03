@@ -1,3 +1,15 @@
+2008-03-03  Brent Fulgham  <bfulgham@gmail.com>
+
+        Reviewed by Alp Toker.
+
+        http://bugs.webkit.org/show_bug.cgi?id=17644
+        Build GTK on Mac OS X using native ICU library
+
+        Use Apple native ICU libraries when building GTK
+        webkit on Mac OS.
+
+        * configure.ac:
+
 2008-03-02  Brent Fulgham  <bfulgham@gmail.com>
 
         Reviewed by Alp Toker.
