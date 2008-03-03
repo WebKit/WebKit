@@ -2,6 +2,15 @@
 
         Reviewed by Mark Rowe.
 
+        Add check to make sure we return all the data in a row.
+
+        * fast/canvas/canvas-getImageData-expected.txt:
+        * fast/canvas/canvas-getImageData.html:
+
+2008-03-03  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Mark Rowe.
+
         Test case for incorrect assertions
 
         * fast/canvas/canvas-putImageData.js:

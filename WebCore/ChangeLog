@@ -2,6 +2,18 @@
 
         Reviewed by Mark Rowe.
 
+        Bug 17620: getImageData lies
+        http://bugs.webkit.org/show_bug.cgi?id=17620
+
+        Correct logic to actually iterate over the source row
+
+        * platform/graphics/cg/ImageBufferCG.cpp:
+        (WebCore::ImageBuffer::getImageData):
+
+2008-03-03  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Mark Rowe.
+
         Correct incorrect assertion
 
         * platform/graphics/cg/ImageBufferCG.cpp:

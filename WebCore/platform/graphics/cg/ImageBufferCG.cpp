@@ -142,10 +142,11 @@ PassRefPtr<ImageData> ImageBuffer::getImageData(const IntRect& rect) const
     unsigned char* destRows = data + desty * destBytesPerRow + destx * 4;
     for (int y = 0; y < numRows; ++y) {
         for (int x = 0; x < numColumns; x++) {
-            if (unsigned char alpha = srcRows[3]) {
-                destRows[0] = (srcRows[0] * 255) / alpha;
-                destRows[1] = (srcRows[1] * 255) / alpha;
-                destRows[2] = (srcRows[2] * 255) / alpha;
+            int basex = x * 4;
+            if (unsigned char alpha = srcRows[basex + 3]) {
+                destRows[0] = (srcRows[basex] * 255) / alpha;
+                destRows[1] = (srcRows[basex + 1] * 255) / alpha;
+                destRows[2] = (srcRows[basex + 2] * 255) / alpha;
                 destRows[3] = alpha;
             } else {
                 reinterpret_cast<uint32_t*>(destRows)[0] = reinterpret_cast<uint32_t*>(srcRows)[0];

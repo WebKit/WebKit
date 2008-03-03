@@ -25,6 +25,7 @@ PASS: pixel at (88,0) was [0,234,0,255]
 PASS: pixel at (92,0) was [0,244,0,255]
 PASS: pixel at (96,0) was [0,255,0,255]
 PASS: pixel at (5,5) was [64,128,191,255]
+PASS: Correctly retrieved every pixel in a row
 PASS: Correct data for content outside canvas bounds
 PASS: pixel at (50,50) was [0,0,0,0]
 PASS: pixel at (50,54) was [0,0,0,1]
