@@ -111,7 +111,11 @@ enum VerticalPositionHint {
 struct DashboardRegionValue {
     bool operator==(const DashboardRegionValue& o) const
     {
-        return type == o.type && bounds == o.bounds && label == o.label;
+        return type == o.type && bounds == o.bounds && clip == o.clip && label == o.label;
+    }
+    bool operator!=(const DashboardRegionValue& o) const
+    {
+        return !(*this == o);
     }
 
     String label;

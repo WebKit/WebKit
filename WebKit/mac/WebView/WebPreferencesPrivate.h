@@ -29,9 +29,8 @@
 #import <WebKit/WebPreferences.h>
 #import <Quartz/Quartz.h>
 
-// WebKitEditableLinkBehavior needs to match the EditableLinkBehavior enum in WebCore
 typedef enum {
-    WebKitEditableLinkDefaultBehavior = 0,
+    WebKitEditableLinkDefaultBehavior,
     WebKitEditableLinkAlwaysLive,
     WebKitEditableLinkOnlyLiveWithShiftKey,
     WebKitEditableLinkLiveWhenNotFocused,

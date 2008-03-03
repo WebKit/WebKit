@@ -1,3 +1,51 @@
+2008-03-03  Darin Adler  <darin@apple.com>
+
+        Reviewed by Adam.
+
+        - some "cleanup" on the path to removing WebCoreFrameBridge
+
+        * WebCore.base.exp: Exported some stuff we either already use or
+        I am about to use in an upcoming patch.
+
+        * WebCore.xcodeproj/project.pbxproj: Made FileChooser.h private rather
+        than project, for future use in WebKit.
+
+        * bindings/objc/WebScriptObject.mm: Removed some dead code.
+
+        * dom/ContainerNode.cpp: Added a now-needed or soon-to-be-needed include.
+        * editing/Editor.cpp: Ditto.
+
+        * editing/Editor.h: Removed many unneeded declarations and includes.
+        Removed the unused userVisibleString function.
+
+        * editing/EditorCommand.cpp:
+        (WebCore::executeYank): Added parameter for triggeringEvent, which no
+        longer has a default value.
+        (WebCore::executeYankAndSelect): Ditto.
+
+        * editing/mac/EditorMac.mm: Removed userVisibleString.
+
+        * page/mac/EventHandlerMac.mm:
+        (WebCore::isKeyboardOptionTab): Tweaked formattin.
+
+        * page/mac/WebCoreFrameBridge.mm:
+        (-[WebCoreFrameBridge dragSourceMovedTo:]): Get window from -[NSView window]
+        rather than from the bridge. There's no special value in the bridge's window
+        method and we can use NSView directly.
+        (-[WebCoreFrameBridge dragSourceEndedAt:operation:]): Ditto.
+
+        * platform/graphics/mac/ImageMac.mm:
+        (WebCore::Image::loadPlatformResource): Use a new WebCoreBundleFinder class to
+        find the bundle rather than using WebCoreFrameBridge.
+
+        * platform/mac/ClipboardMac.mm: Added a now-needed or soon-to-be-needed include.
+        * platform/mac/PasteboardMac.mm: Ditto.
+
+        * rendering/RenderObject.h:
+        (WebCore::DashboardRegionValue::operator==): Fixed mistake where this wasn't
+        comparing the clip rectangle.
+        (WebCore::DashboardRegionValue::operator!=): Added. Needed by my future work.
+
 2008-03-03  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Mark Rowe.

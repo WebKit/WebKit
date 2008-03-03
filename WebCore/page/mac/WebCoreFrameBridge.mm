@@ -1130,22 +1130,28 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
 
 - (void)dragSourceMovedTo:(NSPoint)windowLoc
 {
-    if (m_frame) {
-        // FIXME: Fake modifier keys here.
-        PlatformMouseEvent event(IntPoint(windowLoc), globalPoint(windowLoc, [self window]),
-            LeftButton, MouseEventMoved, 0, false, false, false, false, currentTime());
-        m_frame->eventHandler()->dragSourceMovedTo(event);
-    }
+    if (!m_frame)
+        return;
+    FrameView* view = m_frame->view();
+    if (!view)
+        return;
+    // FIXME: These are fake modifier keys here, but they should be real ones instead.
+    PlatformMouseEvent event(IntPoint(windowLoc), globalPoint(windowLoc, [view->getView() window]),
+        LeftButton, MouseEventMoved, 0, false, false, false, false, currentTime());
+    m_frame->eventHandler()->dragSourceMovedTo(event);
 }
 
 - (void)dragSourceEndedAt:(NSPoint)windowLoc operation:(NSDragOperation)operation
 {
-    if (m_frame) {
-        // FIXME: Fake modifier keys here.
-        PlatformMouseEvent event(IntPoint(windowLoc), globalPoint(windowLoc, [self window]),
-            LeftButton, MouseEventMoved, 0, false, false, false, false, currentTime());
-        m_frame->eventHandler()->dragSourceEndedAt(event, (DragOperation)operation);
-    }
+    if (!m_frame)
+        return;
+    FrameView* view = m_frame->view();
+    if (!view)
+        return;
+    // FIXME: These are fake modifier keys here, but they should be real ones instead.
+    PlatformMouseEvent event(IntPoint(windowLoc), globalPoint(windowLoc, [view->getView() window]),
+        LeftButton, MouseEventMoved, 0, false, false, false, false, currentTime());
+    m_frame->eventHandler()->dragSourceEndedAt(event, (DragOperation)operation);
 }
 
 - (BOOL)getData:(NSData **)data andResponse:(NSURLResponse **)response forURL:(NSString *)url

@@ -26,6 +26,8 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "WebSecurityOriginPrivate.h"
+
 namespace WebCore {
     class SecurityOrigin;
 }

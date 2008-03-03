@@ -30,7 +30,6 @@
 #import "WebDatabaseManagerInternal.h"
 
 #import "WebDatabaseTrackerClient.h"
-#import "WebSecurityOriginPrivate.h"
 #import "WebSecurityOriginInternal.h"
 
 #import <WebCore/DatabaseTracker.h>

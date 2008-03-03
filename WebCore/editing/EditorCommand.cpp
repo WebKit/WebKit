@@ -34,6 +34,7 @@
 #include "EditorClient.h"
 #include "Event.h"
 #include "EventHandler.h"
+#include "Frame.h"
 #include "FormatBlockCommand.h"
 #include "HTMLFontElement.h"
 #include "HTMLImageElement.h"
@@ -938,14 +939,14 @@ static bool executeUnselect(Frame* frame, Event*, EditorCommandSource, const Str
 
 static bool executeYank(Frame* frame, Event*, EditorCommandSource, const String&)
 {
-    frame->editor()->insertTextWithoutSendingTextEvent(frame->editor()->yankFromKillRing(), false);
+    frame->editor()->insertTextWithoutSendingTextEvent(frame->editor()->yankFromKillRing(), false, 0);
     frame->editor()->setKillRingToYankedState();
     return true;
 }
 
 static bool executeYankAndSelect(Frame* frame, Event*, EditorCommandSource, const String&)
 {
-    frame->editor()->insertTextWithoutSendingTextEvent(frame->editor()->yankFromKillRing(), true);
+    frame->editor()->insertTextWithoutSendingTextEvent(frame->editor()->yankFromKillRing(), true, 0);
     frame->editor()->setKillRingToYankedState();
     return true;
 }

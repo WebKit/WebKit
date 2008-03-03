@@ -33,7 +33,7 @@
 		06693DBB0BFBA2F400216072 /* InspectorController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 06693DB80BFBA2F400216072 /* InspectorController.cpp */; };
 		06693DBC0BFBA2F400216072 /* InspectorController.h in Headers */ = {isa = PBXBuildFile; fileRef = 06693DB90BFBA2F400216072 /* InspectorController.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		06693F7B0BFBC91700216072 /* inspector in Resources */ = {isa = PBXBuildFile; fileRef = 06693F450BFBC91600216072 /* inspector */; };
-		066C772B0AB603B700238CC4 /* FileChooser.h in Headers */ = {isa = PBXBuildFile; fileRef = 066C772A0AB603B700238CC4 /* FileChooser.h */; };
+		066C772B0AB603B700238CC4 /* FileChooser.h in Headers */ = {isa = PBXBuildFile; fileRef = 066C772A0AB603B700238CC4 /* FileChooser.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		066C772D0AB603D200238CC4 /* FileChooserMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 066C772C0AB603D200238CC4 /* FileChooserMac.mm */; };
 		066C77300AB603FD00238CC4 /* RenderFileUploadControl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 066C772E0AB603FD00238CC4 /* RenderFileUploadControl.cpp */; };
 		066C77310AB603FD00238CC4 /* RenderFileUploadControl.h in Headers */ = {isa = PBXBuildFile; fileRef = 066C772F0AB603FD00238CC4 /* RenderFileUploadControl.h */; };

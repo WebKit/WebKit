@@ -29,7 +29,6 @@
 #import "WebDatabaseTrackerClient.h"
 
 #import "WebDatabaseManagerPrivate.h"
-#import "WebSecurityOriginPrivate.h"
 #import "WebSecurityOriginInternal.h"
 #import <wtf/RetainPtr.h>
 #import <WebCore/SecurityOrigin.h>

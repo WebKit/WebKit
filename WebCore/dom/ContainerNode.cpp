@@ -28,6 +28,7 @@
 #include "Editor.h"
 #include "EventNames.h"
 #include "ExceptionCode.h"
+#include "Frame.h"
 #include "FrameView.h"
 #include "InlineTextBox.h"
 #include "MutationEvent.h"

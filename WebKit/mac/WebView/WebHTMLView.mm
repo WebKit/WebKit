@@ -179,7 +179,7 @@ extern NSString *NSTextInputReplacementRangeAttributeName;
 
 }
 
-@interface NSView (AppKitSecretsIKnowAbout)
+@interface NSView (WebNSViewDetails)
 - (void)_recursiveDisplayRectIfNeededIgnoringOpacity:(NSRect)rect isVisibleRect:(BOOL)isVisibleRect rectIsVisibleRectForView:(NSView *)visibleView topView:(BOOL)topView;
 - (void)_recursiveDisplayAllDirtyWithLockFocus:(BOOL)needsLockFocus visRect:(NSRect)visRect;
 - (NSRect)_dirtyRect;
@@ -188,21 +188,21 @@ extern NSString *NSTextInputReplacementRangeAttributeName;
 - (void)_windowChangedKeyState;
 @end
 
-@interface NSApplication (AppKitSecretsIKnowAbout)
+@interface NSApplication (WebNSApplicationDetails)
 - (void)speakString:(NSString *)string;
 @end
 
-@interface NSWindow (AppKitSecretsIKnowAbout)
+@interface NSWindow (WebNSWindowDetails)
 - (id)_newFirstResponderAfterResigning;
 - (void)_setForceActiveControls:(BOOL)flag;
 @end
 
-@interface NSAttributedString (AppKitSecretsIKnowAbout)
-- (id)_initWithDOMRange:(DOMRange *)domRange;
+@interface NSAttributedString (WebNSAttributedStringDetails)
+- (id)_initWithDOMRange:(DOMRange *)range;
 - (DOMDocumentFragment *)_documentFromRange:(NSRange)range document:(DOMDocument *)document documentAttributes:(NSDictionary *)dict subresources:(NSArray **)subresources;
 @end
 
-@interface NSSpellChecker (CurrentlyPrivateForTextView)
+@interface NSSpellChecker (WebNSSpellCheckerDetails)
 - (void)learnWord:(NSString *)word;
 @end
 
@@ -359,6 +359,65 @@ struct WebHTMLViewInterpretKeyEventsParameters {
     // which case we should not bubble the event up the DOM
     BOOL consumedByIM;
 };
+
+@interface WebHTMLViewPrivate : NSObject {
+@public
+    BOOL closed;
+    BOOL needsLayout;
+    BOOL needsToApplyStyles;
+    BOOL ignoringMouseDraggedEvents;
+    BOOL printing;
+    BOOL avoidingPrintOrphan;
+    
+    id savedSubviews;
+    BOOL subviewsSetAside;
+
+    NSEvent *mouseDownEvent; // Kept after handling the event.
+    BOOL handlingMouseDownEvent;
+    NSEvent *keyDownEvent; // Kept after handling the event.
+    
+    NSSize lastLayoutSize;
+    
+    NSPoint lastScrollPosition;
+
+    WebPluginController *pluginController;
+    
+    NSString *toolTip;
+    NSToolTipTag lastToolTipTag;
+    id trackingRectOwner;
+    void *trackingRectUserData;
+    
+    NSTimer *autoscrollTimer;
+    NSEvent *autoscrollTriggerEvent;
+    
+    NSArray* pageRects;
+
+    NSMutableDictionary* highlighters;
+
+    BOOL resigningFirstResponder;
+    BOOL nextResponderDisabledOnce;
+    
+    WebTextCompleteController *compController;
+    
+    BOOL transparentBackground;
+
+    WebHTMLViewInterpretKeyEventsParameters *interpretKeyEventsParameters;
+    BOOL receivedNOOP;
+    
+    WebDataSource *dataSource;
+    WebCore::CachedImage *promisedDragTIFFDataSource;
+    
+    CFRunLoopTimerRef updateFocusedAndActiveStateTimer;
+    CFRunLoopTimerRef updateMouseoverTimer;
+
+    SEL selectorForDoCommandBySelector;
+
+#ifndef NDEBUG
+    BOOL enumeratingSubviews;
+#endif
+}
+- (void)clear;
+@end
 
 static NSCellStateValue kit(TriState state)
 {

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2007, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,7 +27,9 @@
 #import "Editor.h"
 
 #import "ClipboardMac.h"
-#import "EditorClient.h"
+#import "DocLoader.h"
+#import "Frame.h"
+#import "FrameView.h"
 
 namespace WebCore {
 
@@ -47,13 +49,6 @@ void _NSSetKillRingToYankedState();
 PassRefPtr<Clipboard> Editor::newGeneralClipboard(ClipboardAccessPolicy policy)
 {
     return new ClipboardMac(false, [NSPasteboard generalPasteboard], policy);
-}
-
-NSString* Editor::userVisibleString(NSURL* nsURL)
-{
-    if (client())
-        return client()->userVisibleString(nsURL);
-    return nil;
 }
 
 static void initializeKillRingIfNeeded()

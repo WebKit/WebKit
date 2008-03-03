@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,78 +28,14 @@
 
 // Things internal to the WebKit framework; not SPI.
 
-#import <WebKit/WebHTMLViewPrivate.h>
+#import "WebHTMLViewPrivate.h"
 
-@class WebTextCompleteController;
-@class DOMDocumentFragment;
-@class DOMElement;
+@class WebFrame;
 
 namespace WebCore {
-    class KeyboardEvent;
     class CachedImage;
+    class KeyboardEvent;
 }
-
-struct WebHTMLViewInterpretKeyEventsParameters;
-
-@interface WebHTMLViewPrivate : NSObject
-{
-@public
-    BOOL closed;
-    BOOL needsLayout;
-    BOOL needsToApplyStyles;
-    BOOL ignoringMouseDraggedEvents;
-    BOOL printing;
-    BOOL avoidingPrintOrphan;
-    
-    id savedSubviews;
-    BOOL subviewsSetAside;
-
-    NSEvent *mouseDownEvent; // Kept after handling the event.
-    BOOL handlingMouseDownEvent;
-    NSEvent *keyDownEvent; // Kept after handling the event.
-    
-    NSSize lastLayoutSize;
-    
-    NSPoint lastScrollPosition;
-
-    WebPluginController *pluginController;
-    
-    NSString *toolTip;
-    NSToolTipTag lastToolTipTag;
-    id trackingRectOwner;
-    void *trackingRectUserData;
-    
-    NSTimer *autoscrollTimer;
-    NSEvent *autoscrollTriggerEvent;
-    
-    NSArray* pageRects;
-
-    NSMutableDictionary* highlighters;
-
-    BOOL resigningFirstResponder;
-    BOOL nextResponderDisabledOnce;
-    
-    WebTextCompleteController *compController;
-    
-    BOOL transparentBackground;
-
-    WebHTMLViewInterpretKeyEventsParameters *interpretKeyEventsParameters;
-    BOOL receivedNOOP;
-    
-    WebDataSource *dataSource;
-    WebCore::CachedImage *promisedDragTIFFDataSource;
-    
-    CFRunLoopTimerRef updateFocusedAndActiveStateTimer;
-    CFRunLoopTimerRef updateMouseoverTimer;
-
-    SEL selectorForDoCommandBySelector;
-
-#ifndef NDEBUG
-    BOOL enumeratingSubviews;
-#endif
-}
-- (void)clear;
-@end
 
 @interface WebHTMLView (WebInternal)
 - (void)_selectionChanged;
@@ -109,14 +45,13 @@ struct WebHTMLViewInterpretKeyEventsParameters;
 - (void)_pauseNullEventsForAllNetscapePlugins;
 - (void)_resumeNullEventsForAllNetscapePlugins;
 #endif
-- (id<WebHTMLHighlighter>)_highlighterForType:(NSString*)type;
+- (id <WebHTMLHighlighter>)_highlighterForType:(NSString*)type;
 - (WebFrame *)_frame;
 - (void)paste:(id)sender;
-- (void)closeIfNotCurrentView;
 - (void)_lookUpInDictionaryFromMenu:(id)sender;
 - (void)_hoverFeedbackSuspendedChanged;
 - (BOOL)_interceptEditingKeyEvent:(WebCore::KeyboardEvent *)event shouldSaveCommand:(BOOL)shouldSave;
-- (DOMDocumentFragment*)_documentFragmentFromPasteboard:(NSPasteboard *)pasteboard;
+- (DOMDocumentFragment *)_documentFragmentFromPasteboard:(NSPasteboard *)pasteboard;
 - (NSEvent *)_mouseDownEvent;
 #ifndef BUILDING_ON_TIGER
 - (BOOL)isGrammarCheckingEnabled;

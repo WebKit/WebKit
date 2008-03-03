@@ -33,6 +33,7 @@
 #import "DocumentFragment.h"
 #import "Editor.h"
 #import "EditorClient.h"
+#import "Frame.h"
 #import "HitTestResult.h"
 #import "Image.h"
 #import "KURL.h"

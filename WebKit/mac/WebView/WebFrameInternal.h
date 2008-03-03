@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -89,17 +89,13 @@ WebCore::Page* core(WebView *);
 WebView *kit(WebCore::Page*);
 
 WebCore::EditableLinkBehavior core(WebKitEditableLinkBehavior);
-WebKitEditableLinkBehavior kit(WebCore::EditableLinkBehavior);
 
 WebView *getWebView(WebFrame *webFrame);
 
-@interface WebFramePrivate : NSObject
-{
+@interface WebFramePrivate : NSObject {
 @public
     WebFrameView *webFrameView;
-
     WebFrameBridge *bridge;
-
     WebScriptDebugger *scriptDebugger;
     id internalLoadDelegate;
 }

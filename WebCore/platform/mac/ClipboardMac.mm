@@ -31,6 +31,7 @@
 #import "DragController.h"
 #import "Editor.h"
 #import "FoundationExtras.h"
+#import "Frame.h"
 #import "Image.h"
 #import "Page.h"
 #import "Pasteboard.h"

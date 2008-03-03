@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -217,18 +217,25 @@ DOMRange *kit(Range* range)
     return [DOMRange _wrapRange:range];
 }
 
-WebCore::EditableLinkBehavior core(WebKitEditableLinkBehavior editableLinkBehavior)
+EditableLinkBehavior core(WebKitEditableLinkBehavior editableLinkBehavior)
 {
-    return static_cast<WebCore::EditableLinkBehavior>(editableLinkBehavior);
-}
-
-WebKitEditableLinkBehavior kit(WebCore::EditableLinkBehavior editableLinkBehavior)
-{
-    return static_cast<WebKitEditableLinkBehavior>(editableLinkBehavior);
+    switch (editableLinkBehavior) {
+        case WebKitEditableLinkDefaultBehavior:
+            return EditableLinkDefaultBehavior;
+        case WebKitEditableLinkAlwaysLive:
+            return EditableLinkAlwaysLive;
+        case WebKitEditableLinkOnlyLiveWithShiftKey:
+            return EditableLinkOnlyLiveWithShiftKey;
+        case WebKitEditableLinkLiveWhenNotFocused:
+            return EditableLinkLiveWhenNotFocused;
+        case WebKitEditableLinkNeverLive:
+            return EditableLinkNeverLive;
+    }
+    ASSERT_NOT_REACHED();
+    return EditableLinkDefaultBehavior;
 }
 
 @implementation WebFrame (WebInternal)
-
 
 static inline WebFrame *frame(WebCoreFrameBridge *bridge)
 {

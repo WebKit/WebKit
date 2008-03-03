@@ -30,7 +30,6 @@
 #import "Frame.h"
 #import "PlatformString.h"
 #import "WebCoreObjCExtras.h"
-#import "WebCoreFrameBridge.h"
 #import <JavaScriptCore/ExecState.h>
 #import <JavaScriptCore/objc_instance.h>
 #import <JavaScriptCore/runtime_object.h>
@@ -45,10 +44,6 @@ using namespace WebCore;
 #define LOG_EXCEPTION(exec) \
     if (Interpreter::shouldPrintExceptions()) \
         printf("%s:%d:[%d]  JavaScript exception:  %s\n", __FILE__, __LINE__, getpid(), exec->exception()->toObject(exec)->get(exec, exec->propertyNames().message)->toString(exec).ascii());
-
-@interface WebFrame
-- (WebCoreFrameBridge *)_bridge; // implemented in WebKit
-@end
 
 namespace WebCore {
 
