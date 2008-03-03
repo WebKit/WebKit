@@ -1,3 +1,22 @@
+2008-03-03  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Fix http://bugs.webkit.org/show_bug.cgi?id=17313
+        Bug 17313: querySelectorAll() causing crashes when called via dojo.query() wrapper
+
+        Node::querySelector and SelectorNodeList were not sufficiently initializing the CSSStyleSelector
+        before using it to resolve styles, which lead to it having a stale m_style member in some situations.
+        This stale m_style member resulted in a wild store that would write over whatever object now resided
+        at the location m_style pointed to.
+
+        Test: fast/dom/SelectorAPI/bug-17313.html
+
+        * dom/Node.cpp:
+        (WebCore::Node::querySelector): Call initForStyleResolve to further initialize the CSSStyleSelector.
+        * dom/SelectorNodeList.cpp:
+        (WebCore::SelectorNodeList::SelectorNodeList): Ditto.
+
 2008-03-03  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Darin and Sam.

@@ -1222,6 +1222,7 @@ PassRefPtr<Element> Node::querySelector(const String& selectors, ExceptionCode& 
         if (n->isElementNode()) {
             Element* element = static_cast<Element*>(n);
             styleSelector->initElementAndPseudoState(element);
+            styleSelector->initForStyleResolve(element, 0);
             for (CSSSelector* selector = querySelector; selector; selector = selector->next()) {
                 if (styleSelector->checkSelector(selector))
                     return element;
