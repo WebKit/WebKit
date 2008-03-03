@@ -1,3 +1,16 @@
+2008-03-03  David Hyatt  <hyatt@apple.com>
+
+        Fix for <rdar://problem/5776161> REGRESSION: Google Docs Spreadsheet crash
+
+        This is also http://bugs.webkit.org/show_bug.cgi?id=17543, fixed table layout corrupts heap.
+
+        Make sure not to access position -1 of the size 0 vectors.
+
+        Reviewed by ggaren
+
+        * rendering/FixedTableLayout.cpp:
+        (WebCore::FixedTableLayout::layout):
+
 2008-03-03  David D. Kilzer  <ddkilzer@webkit.org>
 
         Dynamically inserting CSS rule with @media query fails with DOM Exception 12

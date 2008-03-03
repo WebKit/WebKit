@@ -285,7 +285,8 @@ void FixedTableLayout::layout()
             remainingWidth -= w;
             calcWidth[--total] += w;
         }
-        calcWidth[nEffCols - 1] += remainingWidth;
+        if (nEffCols > 0)
+            calcWidth[nEffCols - 1] += remainingWidth;
     }
     
     int pos = 0;
@@ -294,7 +295,9 @@ void FixedTableLayout::layout()
         m_table->columnPositions()[i] = pos;
         pos += calcWidth[i] + hspacing;
     }
-    m_table->columnPositions()[m_table->columnPositions().size() - 1] = pos;
+    int colPositionsSize = m_table->columnPositions().size();
+    if (colPositionsSize > 0)
+        m_table->columnPositions()[colPositionsSize - 1] = pos;
 }
 
 } // namespace WebCore
