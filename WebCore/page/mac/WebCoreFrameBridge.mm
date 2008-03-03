@@ -683,7 +683,7 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
     if (m_frame->zoomFactor() == newZoomFactor) {
         return;
     }
-    m_frame->setZoomFactor(newZoomFactor);
+    m_frame->setZoomFactor(newZoomFactor, true);
 }
 
 - (NSString *)stringByEvaluatingJavaScriptFromString:(NSString *)string

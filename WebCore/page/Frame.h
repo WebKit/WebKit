@@ -239,8 +239,9 @@ public:
 
     void adjustPageHeight(float* newBottom, float oldTop, float oldBottom, float bottomLimit);
 
-    void setZoomFactor(int percent);
-    int zoomFactor() const; // FIXME: This is a multiplier for text size only; needs a better name.
+    void setZoomFactor(int percent, bool isTextOnly);
+    int zoomFactor() const;
+    bool isZoomFactorTextOnly() const;
 
     bool prohibitsScrolling() const;
     void setProhibitsScrolling(const bool);

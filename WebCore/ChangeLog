@@ -1,5 +1,24 @@
 2008-03-03  David Hyatt  <hyatt@apple.com>
 
+        Full page zoom plumbing.  Add a notion of whether or not a zoom is text only or a full zoom to the
+        Frame.  setTextSizeMultiplier does a text only zoom.
+
+        Reviewed by Tim H.
+
+        * page/Frame.cpp:
+        (WebCore::Frame::zoomFactor):
+        (WebCore::Frame::isZoomFactorTextOnly):
+        (WebCore::Frame::setZoomFactor):
+        (WebCore::FramePrivate::FramePrivate):
+        * page/Frame.h:
+        * page/FramePrivate.h:
+        * page/mac/WebCoreFrameBridge.mm:
+        (-[WebCoreFrameBridge setTextSizeMultiplier:]):
+        * svg/SVGSVGElement.cpp:
+        (WebCore::SVGSVGElement::setCurrentScale):
+
+2008-03-03  David Hyatt  <hyatt@apple.com>
+
         Fix for <rdar://problem/5776161> REGRESSION: Google Docs Spreadsheet crash
 
         This is also http://bugs.webkit.org/show_bug.cgi?id=17543, fixed table layout corrupts heap.

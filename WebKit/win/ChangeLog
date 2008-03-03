@@ -1,3 +1,13 @@
+2008-03-03  David Hyatt  <hyatt@apple.com>
+
+        Full page zoom work.  Make setting of a zoom factor take a boolean saying whether it is a text only
+        or full page zoom.
+
+        Reviewed by Tim H.
+
+        * WebFrame.cpp:
+        (WebFrame::setTextSizeMultiplier):
+
 2008-02-29  Adam Roben  <aroben@apple.com>
 
         Delete an unused file

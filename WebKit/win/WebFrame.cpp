@@ -871,7 +871,7 @@ void WebFrame::setTextSizeMultiplier(float multiplier)
     if (coreFrame->zoomFactor() == newZoomFactor)
         return;
 
-    coreFrame->setZoomFactor(newZoomFactor);
+    coreFrame->setZoomFactor(newZoomFactor, true);
 }
 
 HRESULT WebFrame::inViewSourceMode(BOOL* flag)
