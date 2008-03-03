@@ -159,8 +159,7 @@ Programs_minidom_CXXFLAGS = \
 	$(GLOBALDEPS_CFLAGS)
 Programs_minidom_LDADD = \
 	 libJavaScriptCore.la \
-	$(GLOBALDEPS_LIBS) \
-	$(ICU_LIBS)
+	 -lstdc++
 Programs_minidom_LDFLAGS = -rpath $(CURDIR)/.libs
 
 # testkjs
@@ -171,9 +170,7 @@ Programs_testkjs_CXXFLAGS = \
 	$(global_cflags) \
 	$(GLOBALDEPS_CFLAGS)
 Programs_testkjs_LDADD = \
-	libJavaScriptCore.la \
-	$(GLOBALDEPS_LIBS) \
-	$(ICU_LIBS)
+	libJavaScriptCore.la
 Programs_testkjs_LDFLAGS = -rpath $(CURDIR)/.libs
 
 # Clean rules for JavaScriptCore

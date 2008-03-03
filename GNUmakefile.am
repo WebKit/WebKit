@@ -175,10 +175,10 @@ libWebCore_la_CFLAGS = \
 	$(HILDON_CFLAGS)
 
 libWebCore_la_CPPFLAGS = \
+	$(ICU_CPPFLAGS) \
 	$(global_cppflags) \
 	$(webcore_cppflags) \
-	$(webkitgtk_cppflags) \
-	$(ICU_CPPFLAGS)
+	$(webkitgtk_cppflags)
 
 libWebCore_la_LIBADD = \
 	libJavaScriptCore.la \

@@ -1,3 +1,15 @@
+2008-03-02  Brent Fulgham  <bfulgham@gmail.com>
+
+        Reviewed by Alp Toker.
+
+        http://bugs.webkit.org/show_bug.cgi?id=17415
+        GTK Build (using autotools) on Mac OS (DarwinPorts) Fails
+
+        Add -lstdc++ to link flags for minidom program.  This corrects
+        a build error for the GTK+ on Mac OS.
+
+        * GNUmakefile.am:
+
 2008-03-01  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Tim Hatcher.
