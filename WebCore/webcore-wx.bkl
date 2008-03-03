@@ -114,7 +114,7 @@ wxWebCore port Bakefile project file.
                 platform/wx/wxcode/win/non-kerned-drawing.cpp
                 <!-- grab the windows port's SharedTimer implementation -->
                 platform/win/SharedTimerWin.cpp
-                bridge/win/PageWin.cpp
+                page/win/PageWin.cpp
             </if>
         </set>
         

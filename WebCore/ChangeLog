@@ -1,5 +1,11 @@
 2008-03-02  Kevin Ollivier  <kevino@theolliviers.com>
 
+        wx build fix for Windows after PageWin.cpp move.
+
+        * webcore-wx.bkl:
+
+2008-03-02  Kevin Ollivier  <kevino@theolliviers.com>
+
         Reviewed by Dave Hyatt.
 
         Gracefully handle a CSS rule containing an invalid value.
