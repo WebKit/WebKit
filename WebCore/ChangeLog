@@ -1,3 +1,11 @@
+2008-03-03  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam.
+
+        Copy JSC bindings directory over to WebCore/bridge.
+
+        * bridge: Copied from ../JavaScriptCore/bindings.
+
 2008-03-03  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.
