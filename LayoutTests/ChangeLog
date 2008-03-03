@@ -1,3 +1,15 @@
+2008-03-03  David D. Kilzer  <ddkilzer@webkit.org>
+
+        Dynamically inserting CSS rule with @media query fails with DOM Exception 12
+        <http://bugs.webkit.org/show_bug.cgi?id=15986>
+
+        Reviewed by Darin.
+
+        * fast/css/insertRule-font-face.html: Added.
+        * fast/css/insertRule-media.html: Added.
+        * fast/css/resources/insertRule-font-face.js: Added.
+        * fast/css/resources/insertRule-media.js: Added.
+
 2008-03-03  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Mark Rowe.

@@ -148,7 +148,7 @@ static int cssyylex(YYSTYPE* yylval) { return CSSParser::current()->lex(yylval);
 
 %type <rule> charset
 %type <rule> ruleset
-%type <rule> ruleset_or_import
+%type <rule> valid_rule_or_import
 %type <rule> media
 %type <rule> import
 %type <rule> page
@@ -157,6 +157,7 @@ static int cssyylex(YYSTYPE* yylval) { return CSSParser::current()->lex(yylval);
 %type <rule> invalid_at
 %type <rule> invalid_import
 %type <rule> rule
+%type <rule> valid_rule
 
 %type <string> maybe_ns_prefix
 
@@ -219,13 +220,13 @@ stylesheet:
   | webkit_mediaquery maybe_space
   ;
 
-ruleset_or_import:
-   ruleset |
-   import
-;
+valid_rule_or_import:
+    valid_rule
+  | import
+  ;
 
 webkit_rule:
-    WEBKIT_RULE_SYM '{' maybe_space ruleset_or_import maybe_space '}' {
+    WEBKIT_RULE_SYM '{' maybe_space valid_rule_or_import maybe_space '}' {
         static_cast<CSSParser*>(parser)->rule = $4;
     }
 ;
@@ -310,15 +311,19 @@ rule_list:
  }
  ;
 
-rule:
+valid_rule:
     ruleset
   | media
   | page
   | font_face
+  ;
+
+rule:
+    valid_rule
   | invalid_rule
   | invalid_at
   | invalid_import
-    ;
+  ;
 
 import:
     IMPORT_SYM maybe_space string_or_uri maybe_space maybe_media_list ';' {

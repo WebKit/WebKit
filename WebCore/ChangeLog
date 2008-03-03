@@ -1,3 +1,21 @@
+2008-03-03  David D. Kilzer  <ddkilzer@webkit.org>
+
+        Dynamically inserting CSS rule with @media query fails with DOM Exception 12
+        <http://bugs.webkit.org/show_bug.cgi?id=15986>
+
+        Reviewed by Darin.
+
+        Allow any valid rule (@font-face, @import, @media, @page or style) to be
+        parsed when using CSSStyleSheet.insertRule().  Previously only import and
+        style rules were allowed.  Note that @page rules always throw an exception
+        because they're not implemented yet, so no test case was added for them.
+
+        Tests: fast/css/insertRule-font-face.html
+               fast/css/insertRule-media.html
+
+        * css/CSSGrammar.y: Extracted 'valid_rule' out of 'rule'.  Renamed
+        'ruleset_or_import' to 'valid_rule_or_import' and changed its definition.
+
 2008-03-03  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam.
