@@ -26,9 +26,11 @@
 #include "config.h"
 #include "JSNamedNodeMap.h"
 
+#include "JSNode.h"
 #include "NamedNodeMap.h"
+#include "Node.h"
+#include "PlatformString.h"
 #include "kjs_binding.h"
-#include "kjs_dom.h"
 
 using namespace KJS;
 

@@ -21,7 +21,7 @@
 #ifndef kjs_html_h
 #define kjs_html_h
 
-#include "kjs_dom.h"
+#include "kjs_binding.h"
 
 namespace WebCore {
 
@@ -29,6 +29,7 @@ namespace WebCore {
     class HTMLCollection;
     class HTMLElement;
     class JSHTMLElement;
+    class Node;
 
     class ImageConstructorImp : public DOMObject {
     public:
@@ -45,6 +46,7 @@ namespace WebCore {
     // Runtime object support code for JSHTMLAppletElement, JSHTMLEmbedElement and JSHTMLObjectElement.
     // FIXME: Move these to a more appropriate place.
 
+    KJS::JSObject* getRuntimeObject(KJS::ExecState*, Node*);
     KJS::JSValue* runtimeObjectGetter(KJS::ExecState*, KJS::JSObject*, const KJS::Identifier&, const KJS::PropertySlot&);
     KJS::JSValue* runtimeObjectPropertyGetter(KJS::ExecState*, KJS::JSObject*, const KJS::Identifier&, const KJS::PropertySlot&);
     bool runtimeObjectCustomGetOwnPropertySlot(KJS::ExecState*, const KJS::Identifier&, KJS::PropertySlot&, JSHTMLElement*, HTMLElement*);

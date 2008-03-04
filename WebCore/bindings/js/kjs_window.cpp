@@ -44,6 +44,7 @@
 #include "JSHTMLCollection.h"
 #include "JSHTMLOptionElementConstructor.h"
 #include "JSLocation.h"
+#include "JSNode.h"
 #include "JSXMLHttpRequest.h"
 #include "Logging.h"
 #include "MediaPlayer.h"

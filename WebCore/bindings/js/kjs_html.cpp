@@ -24,14 +24,22 @@
 
 #include "Frame.h"
 #include "FrameLoader.h"
-#include "JSHTMLElement.h"
 #include "HTMLDocument.h"
 #include "HTMLImageElement.h"
+#include "HTMLNames.h"
+#include "JSHTMLElement.h"
 #include "kjs_proxy.h"
+#include "HTMLPlugInElement.h"
+
+#if USE(JAVASCRIPTCORE_BINDINGS)
+#include <bindings/runtime.h>
+#endif
+
+using namespace KJS;
 
 namespace WebCore {
 
-using namespace KJS;
+using namespace HTMLNames;
 
 ImageConstructorImp::ImageConstructorImp(ExecState* exec, Document* doc)
     : DOMObject(exec->lexicalGlobalObject()->objectPrototype())
@@ -79,6 +87,24 @@ JSObject* ImageConstructorImp::construct(ExecState*  exec, const List& list)
 // -------------------------------------------------------------------------
 
 // Runtime object support code for JSHTMLAppletElement, JSHTMLEmbedElement and JSHTMLObjectElement.
+
+JSObject* getRuntimeObject(ExecState* exec, Node* node)
+{
+    if (!node)
+        return 0;
+
+#if USE(JAVASCRIPTCORE_BINDINGS)
+    if (node->hasTagName(objectTag) || node->hasTagName(embedTag) || node->hasTagName(appletTag)) {
+        HTMLPlugInElement* plugInElement = static_cast<HTMLPlugInElement*>(node);
+        if (plugInElement->getInstance() && plugInElement->getInstance()->rootObject())
+            // The instance is owned by the PlugIn element.
+            return KJS::Bindings::Instance::createRuntimeObject(plugInElement->getInstance());
+    }
+#endif
+
+    // If we don't have a runtime object return 0.
+    return 0;
+}
 
 JSValue* runtimeObjectGetter(ExecState* exec, JSObject* originalObject, const Identifier& propertyName, const PropertySlot& slot)
 {

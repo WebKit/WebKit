@@ -34,7 +34,7 @@
 #include "ExceptionCode.h"
 #include "HTMLFrameElementBase.h"
 #include "HTMLNames.h"
-#include "kjs_dom.h"
+#include "JSAttr.h"
 
 using namespace KJS;
 
@@ -70,9 +70,8 @@ JSValue* JSElement::setAttribute(ExecState* exec, const List& args)
 JSValue* JSElement::setAttributeNode(ExecState* exec, const List& args)
 {
     ExceptionCode ec = 0;
-    bool newAttrOk;
-    Attr* newAttr = toAttr(args[0], newAttrOk);
-    if (!newAttrOk) {
+    Attr* newAttr = toAttr(args[0]);
+    if (!newAttr) {
         setDOMException(exec, TYPE_MISMATCH_ERR);
         return jsUndefined();
     }
@@ -105,9 +104,8 @@ JSValue* JSElement::setAttributeNS(ExecState* exec, const List& args)
 JSValue* JSElement::setAttributeNodeNS(ExecState* exec, const List& args)
 {
     ExceptionCode ec = 0;
-    bool newAttrOk;
-    Attr* newAttr = toAttr(args[0], newAttrOk);
-    if (!newAttrOk) {
+    Attr* newAttr = toAttr(args[0]);
+    if (!newAttr) {
         setDOMException(exec, TYPE_MISMATCH_ERR);
         return jsUndefined();
     }

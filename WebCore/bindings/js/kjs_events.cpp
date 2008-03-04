@@ -32,7 +32,6 @@
 #include "JSEvent.h"
 #include "JSEventTargetNode.h"
 #include "Page.h"
-#include "kjs_dom.h"
 #include "kjs_proxy.h"
 #include "kjs_window.h"
 #include <kjs/function_object.h>

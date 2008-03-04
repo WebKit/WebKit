@@ -498,7 +498,6 @@ webcore_sources += \
 	WebCore/bindings/js/JSXSLTProcessor.cpp \
 	WebCore/bindings/js/kjs_binding.cpp \
 	WebCore/bindings/js/kjs_css.cpp \
-	WebCore/bindings/js/kjs_dom.cpp \
 	WebCore/bindings/js/kjs_events.cpp \
 	WebCore/bindings/js/kjs_html.cpp \
 	WebCore/bindings/js/kjs_navigator.cpp \

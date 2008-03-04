@@ -1589,8 +1589,6 @@
 		93B70D6409EB0C7C009D8468 /* kjs_binding.h in Headers */ = {isa = PBXBuildFile; fileRef = 93B70D4809EB0C7C009D8468 /* kjs_binding.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		93B70D6509EB0C7C009D8468 /* kjs_css.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93B70D4909EB0C7C009D8468 /* kjs_css.cpp */; };
 		93B70D6609EB0C7C009D8468 /* kjs_css.h in Headers */ = {isa = PBXBuildFile; fileRef = 93B70D4A09EB0C7C009D8468 /* kjs_css.h */; };
-		93B70D6709EB0C7C009D8468 /* kjs_dom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93B70D4B09EB0C7C009D8468 /* kjs_dom.cpp */; };
-		93B70D6809EB0C7C009D8468 /* kjs_dom.h in Headers */ = {isa = PBXBuildFile; fileRef = 93B70D4C09EB0C7C009D8468 /* kjs_dom.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		93B70D6909EB0C7C009D8468 /* kjs_events.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93B70D4D09EB0C7C009D8468 /* kjs_events.cpp */; };
 		93B70D6A09EB0C7C009D8468 /* kjs_events.h in Headers */ = {isa = PBXBuildFile; fileRef = 93B70D4E09EB0C7C009D8468 /* kjs_events.h */; };
 		93B70D6B09EB0C7C009D8468 /* kjs_html.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93B70D4F09EB0C7C009D8468 /* kjs_html.cpp */; };
@@ -5826,8 +5824,6 @@
 		93B70D4809EB0C7C009D8468 /* kjs_binding.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = kjs_binding.h; sourceTree = "<group>"; };
 		93B70D4909EB0C7C009D8468 /* kjs_css.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = kjs_css.cpp; sourceTree = "<group>"; };
 		93B70D4A09EB0C7C009D8468 /* kjs_css.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = kjs_css.h; sourceTree = "<group>"; };
-		93B70D4B09EB0C7C009D8468 /* kjs_dom.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = kjs_dom.cpp; sourceTree = "<group>"; };
-		93B70D4C09EB0C7C009D8468 /* kjs_dom.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = kjs_dom.h; sourceTree = "<group>"; };
 		93B70D4D09EB0C7C009D8468 /* kjs_events.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = kjs_events.cpp; sourceTree = "<group>"; };
 		93B70D4E09EB0C7C009D8468 /* kjs_events.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = kjs_events.h; sourceTree = "<group>"; };
 		93B70D4F09EB0C7C009D8468 /* kjs_html.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = kjs_html.cpp; sourceTree = "<group>"; };
@@ -11461,8 +11457,6 @@
 				93B70D4809EB0C7C009D8468 /* kjs_binding.h */,
 				93B70D4909EB0C7C009D8468 /* kjs_css.cpp */,
 				93B70D4A09EB0C7C009D8468 /* kjs_css.h */,
-				93B70D4B09EB0C7C009D8468 /* kjs_dom.cpp */,
-				93B70D4C09EB0C7C009D8468 /* kjs_dom.h */,
 				93B70D4D09EB0C7C009D8468 /* kjs_events.cpp */,
 				93B70D4E09EB0C7C009D8468 /* kjs_events.h */,
 				93B70D4F09EB0C7C009D8468 /* kjs_html.cpp */,
@@ -14160,7 +14154,6 @@
 				93B70D6409EB0C7C009D8468 /* kjs_binding.h in Headers */,
 				93B70D6609EB0C7C009D8468 /* kjs_css.h in Headers */,
 				656581F109D1508D000E61D7 /* kjs_css.lut.h in Headers */,
-				93B70D6809EB0C7C009D8468 /* kjs_dom.h in Headers */,
 				93B70D6A09EB0C7C009D8468 /* kjs_events.h in Headers */,
 				93B70D6C09EB0C7C009D8468 /* kjs_html.h in Headers */,
 				93B70D6E09EB0C7C009D8468 /* kjs_navigator.h in Headers */,
@@ -15772,7 +15765,6 @@
 				93309DE7099E64920056E581 /* htmlediting.cpp in Sources */,
 				93B70D6309EB0C7C009D8468 /* kjs_binding.cpp in Sources */,
 				93B70D6509EB0C7C009D8468 /* kjs_css.cpp in Sources */,
-				93B70D6709EB0C7C009D8468 /* kjs_dom.cpp in Sources */,
 				93B70D6909EB0C7C009D8468 /* kjs_events.cpp in Sources */,
 				93B70D6B09EB0C7C009D8468 /* kjs_html.cpp in Sources */,
 				93B70D6D09EB0C7C009D8468 /* kjs_navigator.cpp in Sources */,

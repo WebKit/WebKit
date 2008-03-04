@@ -27,7 +27,6 @@
 #include "JSHTMLObjectElement.h"
 
 #include "HTMLObjectElement.h"
-#include "kjs_dom.h"
 #include "kjs_html.h"
 
 namespace WebCore {

@@ -30,11 +30,11 @@
 #include "FrameLoader.h"
 #include "FrameTree.h"
 #include "HTMLNames.h"
+#include "JSNode.h"
 #include "Page.h"
 #include "RenderWidget.h"
 #include "Settings.h"
 #include "Widget.h"
-#include "kjs_dom.h"
 #include "kjs_proxy.h"
 
 #if USE(NPOBJECT)

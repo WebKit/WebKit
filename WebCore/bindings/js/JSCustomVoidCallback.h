@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,14 +35,9 @@
 #include <kjs/protect.h>
 #include <wtf/Forward.h>
 
-namespace KJS {
-    class JSObject;
-}
-
 namespace WebCore {
     
     class Frame;
-    class SQLError;
     
     class JSCustomVoidCallback : public VoidCallback {
     public:
@@ -53,8 +48,9 @@ namespace WebCore {
         KJS::ProtectedPtr<KJS::JSObject> m_callback;
         RefPtr<Frame> m_frame;
     };
-   
-    VoidCallback* toVoidCallback(KJS::ExecState*, KJS::JSValue*, bool& ok);
-}
+
+    VoidCallback* toVoidCallback(KJS::ExecState*, KJS::JSValue*);
+
+} // namespace WebCore
 
 #endif // JSCustomVoidCallback_h

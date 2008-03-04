@@ -100,10 +100,8 @@ void JSCustomVoidCallback::handleEvent()
     Document::updateDocumentsRendering();
 }
  
-VoidCallback* toVoidCallback(ExecState* exec, JSValue* value, bool& ok)
+VoidCallback* toVoidCallback(ExecState* exec, JSValue* value)
 {
-    ok = false;
-    
     JSObject* object = value->getObject();
     if (!object)
         return 0;
@@ -112,7 +110,6 @@ VoidCallback* toVoidCallback(ExecState* exec, JSValue* value, bool& ok)
     if (!frame)
         return 0;
     
-    ok = true;
     return new JSCustomVoidCallback(object, frame);
 }
 

@@ -28,7 +28,6 @@
 
 #include "Document.h"
 #include "HTMLFormElement.h"
-#include "kjs_dom.h"
 
 namespace WebCore {
 

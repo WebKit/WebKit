@@ -26,7 +26,6 @@
 
 #include "CSSPrimitiveValue.h"
 #include "JSCSSPrimitiveValue.h"
-#include "kjs_dom.h"
 
 #include "kjs_css.lut.h"
 

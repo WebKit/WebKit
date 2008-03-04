@@ -31,6 +31,10 @@
 #include "JSEventTargetNode.h"
 #include "kjs_window.h"
 
+#if ENABLE(SVG)
+#include "JSSVGElementInstance.h"
+#endif
+
 #include "JSEventTargetBase.lut.h"
 
 using namespace KJS;
@@ -241,6 +245,32 @@ AtomicString eventNameForPropertyToken(int token)
     }
 
     return AtomicString();
+}
+
+JSValue* toJS(ExecState* exec, EventTarget* target)
+{
+    if (!target)
+        return jsNull();
+    
+#if ENABLE(SVG)
+    // SVGElementInstance supports both toSVGElementInstance and toNode since so much mouse handling code depends on toNode returning a valid node.
+    SVGElementInstance* instance = target->toSVGElementInstance();
+    if (instance)
+        return toJS(exec, instance);
+#endif
+    
+    Node* node = target->toNode();
+    if (node)
+        return toJS(exec, node);
+
+    if (XMLHttpRequest* xhr = target->toXMLHttpRequest())
+        // XMLHttpRequest is always created via JS, so we don't need to use cacheDOMObject() here.
+        return ScriptInterpreter::getDOMObject(xhr);
+
+    // There are two kinds of EventTargets: EventTargetNode and XMLHttpRequest.
+    // If SVG support is enabled, there is also SVGElementInstance.
+    ASSERT_NOT_REACHED();
+    return jsNull();
 }
 
 } // namespace WebCore

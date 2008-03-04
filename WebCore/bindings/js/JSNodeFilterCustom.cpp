@@ -26,10 +26,10 @@
 #include "config.h"
 #include "JSNodeFilter.h"
 
+#include "JSNode.h"
 #include "JSNodeFilterCondition.h"
 #include "NodeFilter.h"
 #include "kjs_binding.h"
-#include "kjs_dom.h"
 
 using namespace KJS;
 

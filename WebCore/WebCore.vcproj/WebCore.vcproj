@@ -7896,14 +7896,6 @@
 					>
 				</File>
 				<File
-					RelativePath="..\bindings\js\kjs_dom.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\bindings\js\kjs_dom.h"
-					>
-				</File>
-				<File
 					RelativePath="..\bindings\js\kjs_events.cpp"
 					>
 				</File>

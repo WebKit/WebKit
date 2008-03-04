@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2007, 2008 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
  *
  * This library is free software; you can redistribute it and/or
@@ -22,6 +22,7 @@ module core {
 
     interface [
         GenerateConstructor,
+        GenerateNativeConverter,
         InterfaceUUID=EEE8E22B-22C3-4e50-95F4-5E0B8AAD8231,
         ImplementationUUID=41B16348-D8E7-4d21-BFDB-125705B7E91F
     ] Attr : EventTargetNode {

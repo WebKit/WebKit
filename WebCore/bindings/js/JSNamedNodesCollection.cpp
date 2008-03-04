@@ -27,9 +27,9 @@
 #include "JSNamedNodesCollection.h"
 
 #include "AtomicString.h"
+#include "JSNode.h"
 #include "NamedAttrMap.h"
 #include "Node.h"
-#include "kjs_dom.h"
 
 namespace WebCore {
 

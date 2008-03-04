@@ -27,7 +27,6 @@
 #include "JSHTMLEmbedElement.h"
 
 #include "HTMLEmbedElement.h"
-#include "kjs_dom.h"
 #include "kjs_html.h"
 
 namespace WebCore {

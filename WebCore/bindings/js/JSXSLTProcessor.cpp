@@ -29,11 +29,10 @@
 
 #include "JSXSLTProcessor.h"
 
-#include "XSLTProcessor.h"
-#include "kjs_dom.h"
-#include "JSDocument.h"
 #include "Document.h"
 #include "DocumentFragment.h"
+#include "JSDocument.h"
+#include "XSLTProcessor.h"
 
 using namespace KJS;
 using namespace WebCore;

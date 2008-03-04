@@ -75,9 +75,8 @@ JSValue* JSDatabase::changeVersion(ExecState* exec, const List& args)
     
     RefPtr<VoidCallback> successCallback;
     if (!args[4]->isNull()) {
-        bool ok;
-        successCallback = toVoidCallback(exec, args[4], ok);
-        if (!ok) {
+        successCallback = toVoidCallback(exec, args[4]);
+        if (!successCallback) {
             setDOMException(exec, TYPE_MISMATCH_ERR);
             return jsUndefined();
         }
@@ -115,9 +114,8 @@ JSValue* JSDatabase::transaction(ExecState* exec, const List& args)
 
     RefPtr<VoidCallback> successCallback;
     if (args.size() > 2 && !args[2]->isNull()) {
-        bool ok;
-        successCallback = toVoidCallback(exec, args[2], ok);
-        if (!ok) {
+        successCallback = toVoidCallback(exec, args[2]);
+        if (!successCallback) {
             setDOMException(exec, TYPE_MISMATCH_ERR);
             return jsUndefined();
         }

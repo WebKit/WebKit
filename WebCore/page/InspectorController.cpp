@@ -45,6 +45,7 @@
 #include "HTMLFrameOwnerElement.h"
 #include "InspectorClient.h"
 #include "JSDOMWindow.h"
+#include "JSNode.h"
 #include "JSRange.h"
 #include "Page.h"
 #include "Range.h"
@@ -55,7 +56,6 @@
 #include "SystemTime.h"
 #include "TextEncoding.h"
 #include "TextIterator.h"
-#include "kjs_dom.h"
 #include "kjs_proxy.h"
 #include "kjs_window.h"
 #include <JavaScriptCore/APICast.h>

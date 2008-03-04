@@ -29,7 +29,6 @@
 #include "HTMLCollection.h"
 #include "HTMLFormElement.h"
 #include "JSNamedNodesCollection.h"
-#include "kjs_dom.h"
 
 using namespace KJS;
 

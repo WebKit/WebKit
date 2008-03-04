@@ -1,3 +1,63 @@
+2008-03-04  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Remove kjs_dom.{h,cpp}.
+
+        - Removed custom toAttr, which took a boolean ok, and teach CodeGeneratorJS.pm
+          to us a null return value as an indication of failure. (This new logic is used
+          for toVoidCallback as well.)
+        - Move getRuntimeObject to kjs_html where a bunch of other runtime object related
+          functions currently live.
+        - Move checkNodeSecurity to kjs_binding, where other frame security functions 
+          currently live.
+        - Remove getNodeConstructor.  It had no implementation.
+
+        * GNUmakefile.am:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * WebCoreSources.bkl:
+        * bindings/js/JSAttrCustom.cpp:
+        * bindings/js/JSCustomVoidCallback.cpp:
+        (WebCore::toVoidCallback):
+        * bindings/js/JSCustomVoidCallback.h:
+        * bindings/js/JSDatabaseCustom.cpp:
+        (WebCore::JSDatabase::changeVersion):
+        (WebCore::JSDatabase::transaction):
+        * bindings/js/JSElementCustom.cpp:
+        (WebCore::JSElement::setAttributeNode):
+        (WebCore::JSElement::setAttributeNodeNS):
+        * bindings/js/JSEventTargetBase.cpp:
+        (WebCore::toJS):
+        * bindings/js/JSEventTargetBase.h:
+        * bindings/js/JSHTMLAppletElementCustom.cpp:
+        * bindings/js/JSHTMLElementCustom.cpp:
+        * bindings/js/JSHTMLEmbedElementCustom.cpp:
+        * bindings/js/JSHTMLFormElementCustom.cpp:
+        * bindings/js/JSHTMLFrameElementCustom.cpp:
+        * bindings/js/JSHTMLIFrameElementCustom.cpp:
+        * bindings/js/JSHTMLObjectElementCustom.cpp:
+        * bindings/js/JSNamedNodeMapCustom.cpp:
+        * bindings/js/JSNamedNodesCollection.cpp:
+        * bindings/js/JSNodeFilterCustom.cpp:
+        * bindings/js/JSXSLTProcessor.cpp:
+        * bindings/js/kjs_binding.cpp:
+        (WebCore::checkNodeSecurity):
+        * bindings/js/kjs_binding.h:
+        * bindings/js/kjs_css.cpp:
+        * bindings/js/kjs_dom.cpp: Removed.
+        * bindings/js/kjs_dom.h: Removed.
+        * bindings/js/kjs_events.cpp:
+        * bindings/js/kjs_html.cpp:
+        (WebCore::getRuntimeObject):
+        * bindings/js/kjs_html.h:
+        * bindings/js/kjs_window.cpp:
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * dom/Attr.idl:
+        * html/HTMLPlugInElement.cpp:
+        * page/InspectorController.cpp:
+
 2008-03-04  Adam Roben  <aroben@apple.com>
 
         Win/Qt/GTK+/wx build fix after r30740
