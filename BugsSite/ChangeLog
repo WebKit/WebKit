@@ -1,0 +1,5 @@
+2008-03-04  Adam Roben  <aroben@apple.com>
+
+        * PrettyPatch/PrettyPatch.rb: Allow the extent of the previous file to
+        be omitted from the hunk header.
+

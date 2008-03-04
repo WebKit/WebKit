@@ -36,7 +36,7 @@ private
         /^diff/
     ]
 
-    START_OF_SECTION_FORMAT = /^@@ -(\d+),\d+ \+(\d+)(?:,\d+)? @@\s*(.*)/
+    START_OF_SECTION_FORMAT = /^@@ -(\d+)(?:,\d+)? \+(\d+)(?:,\d+)? @@\s*(.*)/
 
     START_OF_EXTENT_STRING = "%c" % 0
     END_OF_EXTENT_STRING = "%c" % 1
