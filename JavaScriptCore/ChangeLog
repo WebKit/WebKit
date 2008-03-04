@@ -1,3 +1,9 @@
+2008-03-04  Mark Rowe  <mrowe@apple.com>
+
+        Mac build fix.
+
+        * JavaScriptCore.exp:  Add new symbol to exports file.
+
 2008-03-03  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Anders.
