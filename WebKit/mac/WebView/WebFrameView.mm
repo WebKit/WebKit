@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -61,6 +61,7 @@
 #import <WebCore/FrameView.h>
 #import <WebCore/HistoryItem.h>
 #import <WebCore/Page.h>
+#import <WebCore/RenderPart.h>
 #import <WebCore/ThreadCheck.h>
 #import <WebCore/WebCoreFrameView.h>
 #import <WebCore/WebCoreView.h>
@@ -283,6 +284,33 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
 {
     Class viewClass;
     return [WebView _viewClass:&viewClass andRepresentationClass:nil forMIMEType:MIMEType] ? viewClass : nil;
+}
+
+- (void)_install
+{
+    ASSERT(_private->webFrame);
+    ASSERT(_private->frameScrollView);
+
+    Frame* frame = core(_private->webFrame);
+
+    ASSERT(frame);
+    ASSERT(frame->page());
+
+    // If this isn't the main frame, it must have an owner element set, or it
+    // won't ever get installed in the view hierarchy.
+    ASSERT(frame == frame->page()->mainFrame() || frame->ownerElement());
+
+    FrameView* view = frame->view();
+
+    view->setView(_private->frameScrollView);
+
+    // FIXME: Frame tries to do this too. Is this code needed?
+    if (RenderPart* owner = frame->ownerRenderer()) {
+        owner->setWidget(view);
+        // Now the render part owns the view, so we don't any more.
+    }
+
+    view->initScrollbars();
 }
 
 @end
@@ -928,33 +956,34 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
     ASSERT([customClass isSubclassOfClass:[WebDynamicScrollBarsView class]]);
     if (customClass == [_private->frameScrollView class])
         return;
-    if ([customClass isSubclassOfClass:[WebDynamicScrollBarsView class]]) {
-        WebDynamicScrollBarsView *oldScrollView = _private->frameScrollView; // already retained
-        NSView <WebDocumentView> *documentView = [[self documentView] retain];
+    if (![customClass isSubclassOfClass:[WebDynamicScrollBarsView class]])
+        return;
 
-        WebDynamicScrollBarsView *scrollView  = [[customClass alloc] initWithFrame:[oldScrollView frame]];
-        [scrollView setContentView:[[[WebClipView alloc] initWithFrame:[scrollView bounds]] autorelease]];
-        [scrollView setDrawsBackground:[oldScrollView drawsBackground]];
-        [scrollView setHasVerticalScroller:[oldScrollView hasVerticalScroller]];
-        [scrollView setHasHorizontalScroller:[oldScrollView hasHorizontalScroller]];
-        [scrollView setAutoresizingMask:[oldScrollView autoresizingMask]];
-        [scrollView setLineScroll:[oldScrollView lineScroll]];
-        [self addSubview:scrollView];
+    WebDynamicScrollBarsView *oldScrollView = _private->frameScrollView; // already retained
+    NSView <WebDocumentView> *documentView = [[self documentView] retain];
 
-        // don't call our overridden version here; we need to make the standard NSView link between us
-        // and our subview so that previousKeyView and previousValidKeyView work as expected. This works
-        // together with our becomeFirstResponder and setNextKeyView overrides.
-        [super setNextKeyView:scrollView];
+    WebDynamicScrollBarsView *scrollView  = [[customClass alloc] initWithFrame:[oldScrollView frame]];
+    [scrollView setContentView:[[[WebClipView alloc] initWithFrame:[scrollView bounds]] autorelease]];
+    [scrollView setDrawsBackground:[oldScrollView drawsBackground]];
+    [scrollView setHasVerticalScroller:[oldScrollView hasVerticalScroller]];
+    [scrollView setHasHorizontalScroller:[oldScrollView hasHorizontalScroller]];
+    [scrollView setAutoresizingMask:[oldScrollView autoresizingMask]];
+    [scrollView setLineScroll:[oldScrollView lineScroll]];
+    [self addSubview:scrollView];
 
-        _private->frameScrollView = scrollView;
+    // don't call our overridden version here; we need to make the standard NSView link between us
+    // and our subview so that previousKeyView and previousValidKeyView work as expected. This works
+    // together with our becomeFirstResponder and setNextKeyView overrides.
+    [super setNextKeyView:scrollView];
 
-        [self _setDocumentView:documentView];
-        [[self _bridge] installInFrame:scrollView];
+    _private->frameScrollView = scrollView;
 
-        [oldScrollView removeFromSuperview];
-        [oldScrollView release];
-        [documentView release];
-    }
+    [self _setDocumentView:documentView];
+    [self _install];
+
+    [oldScrollView removeFromSuperview];
+    [oldScrollView release];
+    [documentView release];
 }
 
 @end

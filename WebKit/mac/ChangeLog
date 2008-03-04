@@ -2,6 +2,23 @@
 
         Reviewed by Adam.
 
+        - remove WebCoreFrameBridge installInFrame: method
+
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::transitionToCommittedForNewPage): Call
+        -[WebFrameView _install] instead of -[WebCoreFrameBridge installInFrame:].
+        * WebView/WebFrameView.mm:
+        (-[WebFrameView _install]): Added. Has code from -[WebCoreFrameBridge installInFrame:].
+        (-[WebFrameView _setCustomScrollViewClass:]): Used early return idiom so the entire
+        method isn't nested inside an if statement. Call
+        -[WebFrameView _install] instead of -[WebCoreFrameBridge installInFrame:].
+        * WebView/WebFrameViewInternal.h: Added declaration of _install method so it can be
+        used in WebFrameLoaderClient.mm.
+
+2008-03-04  Darin Adler  <darin@apple.com>
+
+        Reviewed by Adam.
+
         - remove WebCoreFrameBridge window method
 
         * WebCoreSupport/WebFrameBridge.mm: Removed window method.

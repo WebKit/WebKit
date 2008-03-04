@@ -103,8 +103,6 @@ enum WebScrollGranularity {
 
 - (NSURL *)baseURL;
 
-- (void)installInFrame:(NSView *)view;
-
 - (BOOL)scrollOverflowInDirection:(WebScrollDirection)direction granularity:(WebScrollGranularity)granularity;
 
 - (void)createFrameViewWithNSView:(NSView *)view marginWidth:(int)mw marginHeight:(int)mh;

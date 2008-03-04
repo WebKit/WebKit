@@ -46,5 +46,6 @@
 + (Class)_viewClassForMIMEType:(NSString *)MIMEType;
 + (BOOL)_canShowMIMETypeAsHTML:(NSString *)MIMEType;
 - (WebDynamicScrollBarsView *)_scrollView;
+- (void)_install;
 
 @end

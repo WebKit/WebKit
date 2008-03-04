@@ -2102,10 +2102,10 @@
 		A871DED40A1530C700B12A68 /* RenderFrame.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A871DECC0A1530C700B12A68 /* RenderFrame.cpp */; };
 		A871DED50A1530C700B12A68 /* RenderPartObject.h in Headers */ = {isa = PBXBuildFile; fileRef = A871DECD0A1530C700B12A68 /* RenderPartObject.h */; };
 		A871DED60A1530C700B12A68 /* RenderPartObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A871DECE0A1530C700B12A68 /* RenderPartObject.cpp */; };
-		A871DED70A1530C700B12A68 /* RenderPart.h in Headers */ = {isa = PBXBuildFile; fileRef = A871DECF0A1530C700B12A68 /* RenderPart.h */; };
+		A871DED70A1530C700B12A68 /* RenderPart.h in Headers */ = {isa = PBXBuildFile; fileRef = A871DECF0A1530C700B12A68 /* RenderPart.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A871DFE20A15376B00B12A68 /* RenderReplaced.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A871DFDE0A15376B00B12A68 /* RenderReplaced.cpp */; };
 		A871DFE30A15376B00B12A68 /* RenderReplaced.h in Headers */ = {isa = PBXBuildFile; fileRef = A871DFDF0A15376B00B12A68 /* RenderReplaced.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		A871DFE40A15376B00B12A68 /* RenderWidget.h in Headers */ = {isa = PBXBuildFile; fileRef = A871DFE00A15376B00B12A68 /* RenderWidget.h */; };
+		A871DFE40A15376B00B12A68 /* RenderWidget.h in Headers */ = {isa = PBXBuildFile; fileRef = A871DFE00A15376B00B12A68 /* RenderWidget.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A871DFE50A15376B00B12A68 /* RenderWidget.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A871DFE10A15376B00B12A68 /* RenderWidget.cpp */; };
 		A88AD52F09524B92001DD196 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A85D7A2F0879EBA9006A9172 /* QuartzCore.framework */; };
 		A88DD4870B4629A300C02990 /* PathTraversalState.h in Headers */ = {isa = PBXBuildFile; fileRef = A88DD4860B4629A300C02990 /* PathTraversalState.h */; };

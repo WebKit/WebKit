@@ -1013,12 +1013,10 @@ void WebFrameLoaderClient::transitionToCommittedForNewPage()
     if (!documentView)
         return;
 
-    WebFrameBridge *bridge = m_webFrame->_private->bridge;
-
     // FIXME: We could save work and not do this for a top-level view that is not a WebHTMLView.
-    [bridge createFrameViewWithNSView:documentView marginWidth:[v _marginWidth] marginHeight:[v _marginHeight]];
+    [m_webFrame->_private->bridge createFrameViewWithNSView:documentView marginWidth:[v _marginWidth] marginHeight:[v _marginHeight]];
     [m_webFrame.get() _updateBackground];
-    [bridge installInFrame:[v _scrollView]];
+    [v _install];
 
     // Call setDataSource on the document view after it has been placed in the view hierarchy.
     // This what we for the top-level view, so should do this for views in subframes as well.

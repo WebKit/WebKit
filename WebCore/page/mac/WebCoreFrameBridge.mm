@@ -510,22 +510,6 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
     return [self copyRenderNode:renderer copier:copier];
 }
 
-- (void)installInFrame:(NSView *)view
-{
-    // If this isn't the main frame, it must have a render m_frame set, or it
-    // won't ever get installed in the view hierarchy.
-    ASSERT(m_frame == m_frame->page()->mainFrame() || m_frame->ownerElement());
-
-    m_frame->view()->setView(view);
-    // FIXME: frame tries to do this too, is it needed?
-    if (m_frame->ownerRenderer()) {
-        m_frame->ownerRenderer()->setWidget(m_frame->view());
-        // Now the render part owns the view, so we don't any more.
-    }
-
-    m_frame->view()->initScrollbars();
-}
-
 static HTMLInputElement* inputElementFromDOMElement(DOMElement* element)
 {
     Node* node = [element _node];

@@ -2,6 +2,17 @@
 
         Reviewed by Adam.
 
+        - remove WebCoreFrameBridge installInFrame: method
+
+        * WebCore.base.exp: Export a few symbols.
+        * WebCore.xcodeproj/project.pbxproj: Export a few files.
+        * page/mac/WebCoreFrameBridge.h: Remove installInFrame:.
+        * page/mac/WebCoreFrameBridge.mm: Ditto.
+
+2008-03-04  Darin Adler  <darin@apple.com>
+
+        Reviewed by Adam.
+
         - remove WebCoreFrameBridge window method
 
         * page/mac/EventHandlerMac.mm:
