@@ -1,3 +1,48 @@
+2008-03-03  Adam Roben  <aroben@apple.com>
+
+        Generate WebScriptCallFrame instances dynamically
+
+        WebScriptDebugger no longer holds a reference to the topmost call
+        frame, and WebScriptCallFrame no longer holds a reference to its
+        caller. We now generate WebScriptCallFrame instances as needed by
+        walking the callingExecState chain.
+
+        By making WebKit no longer responsible for keeping track of the call
+        stack, we get one step closer to moving most JS debugging code out of
+        WebKit entirely.
+
+        This incidentally fixes a bug in Drosera where we'd never show the
+        global scope in the call stack.
+
+        Reviewed by Sam and Kevin M.
+
+        * WebScriptCallFrame.cpp:
+        (callingFunctionOrGlobalExecState): Finds the nearest calling
+        ExecState that is a FunctionExecState or GlobalExecState, if any, and
+        returns it.
+        (WebScriptCallFrame::WebScriptCallFrame):
+          - No longer takes a caller parameter.
+          - Sets m_state to the callingFunctionOrGlobalExecState of the
+            ExecState passed in.
+        (WebScriptCallFrame::createInstance): Removed the caller parameter.
+        (WebScriptCallFrame::caller): Generate a new WebScriptCallFrame on the
+        fly from our ExecState.
+        * WebScriptCallFrame.h: No longer holds a reference to the caller.
+        * WebScriptDebugger.cpp:
+        (WebScriptDebugger::WebScriptDebugger): Removed the call to callEvent
+        that was supposed to set up the global scope call frame, but never
+        worked because m_callingServer was set to true, which would cause
+        callEvent to return early without doing anything. Also removed the
+        m_callingServer guards since we're not calling callEvent anymore.
+        (WebScriptDebugger::callEvent): Create a WebScriptCallFrame on the
+        fly from the passed-in ExecState.
+        (WebScriptDebugger::atStatement): Ditto.
+        (WebScriptDebugger::returnEvent): Ditto, but use the callingExecState.
+        This is equivalent to what calling leaveFrame() did before.
+        (WebScriptDebugger::exception): Ditto, using the passed-in ExecState.
+        * WebScriptDebugger.h: Removed m_topStackFrame member and
+        enterFrame/leaveFrame methods.
+
 2008-03-03  Sam Weinig  <sam@webkit.org>
 
         Windows build fix.

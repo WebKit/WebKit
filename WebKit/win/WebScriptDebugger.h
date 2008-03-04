@@ -59,13 +59,9 @@ public:
     bool exception(KJS::ExecState*, int sourceId, int lineno, KJS::JSValue* exception);
 
 private:
-    void enterFrame(KJS::ExecState*);
-    void leaveFrame();
     bool m_callingServer;
-
     WebFrame* m_frame;
     COMPtr<IWebView> m_webView;
-    COMPtr<IWebScriptCallFrame> m_topStackFrame; 
 };
 
 #endif
