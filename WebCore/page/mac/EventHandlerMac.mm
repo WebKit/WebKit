@@ -535,6 +535,10 @@ void EventHandler::mouseUp(NSEvent *event)
  */
 void EventHandler::sendFakeEventsAfterWidgetTracking(NSEvent *initiatingEvent)
 {
+    FrameView* view = m_frame->view();
+    if (!view)
+        return;
+
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
     m_sendingEventToSubview = false;
@@ -543,34 +547,34 @@ void EventHandler::sendFakeEventsAfterWidgetTracking(NSEvent *initiatingEvent)
         NSEvent *fakeEvent = nil;
         if (eventType == NSLeftMouseDown) {
             fakeEvent = [NSEvent mouseEventWithType:NSLeftMouseUp
-                                    location:[initiatingEvent locationInWindow]
-                                modifierFlags:[initiatingEvent modifierFlags]
-                                    timestamp:[initiatingEvent timestamp]
-                                windowNumber:[initiatingEvent windowNumber]
-                                        context:[initiatingEvent context]
-                                    eventNumber:[initiatingEvent eventNumber]
-                                    clickCount:[initiatingEvent clickCount]
-                                    pressure:[initiatingEvent pressure]];
+                                           location:[initiatingEvent locationInWindow]
+                                      modifierFlags:[initiatingEvent modifierFlags]
+                                          timestamp:[initiatingEvent timestamp]
+                                       windowNumber:[initiatingEvent windowNumber]
+                                            context:[initiatingEvent context]
+                                        eventNumber:[initiatingEvent eventNumber]
+                                         clickCount:[initiatingEvent clickCount]
+                                           pressure:[initiatingEvent pressure]];
         
             [NSApp postEvent:fakeEvent atStart:YES];
         } else { // eventType == NSKeyDown
             fakeEvent = [NSEvent keyEventWithType:NSKeyUp
-                                    location:[initiatingEvent locationInWindow]
-                               modifierFlags:[initiatingEvent modifierFlags]
-                                   timestamp:[initiatingEvent timestamp]
-                                windowNumber:[initiatingEvent windowNumber]
-                                     context:[initiatingEvent context]
-                                  characters:[initiatingEvent characters] 
-                 charactersIgnoringModifiers:[initiatingEvent charactersIgnoringModifiers] 
-                                   isARepeat:[initiatingEvent isARepeat] 
-                                     keyCode:[initiatingEvent keyCode]];
+                                         location:[initiatingEvent locationInWindow]
+                                    modifierFlags:[initiatingEvent modifierFlags]
+                                        timestamp:[initiatingEvent timestamp]
+                                     windowNumber:[initiatingEvent windowNumber]
+                                          context:[initiatingEvent context]
+                                       characters:[initiatingEvent characters] 
+                      charactersIgnoringModifiers:[initiatingEvent charactersIgnoringModifiers] 
+                                        isARepeat:[initiatingEvent isARepeat] 
+                                          keyCode:[initiatingEvent keyCode]];
             [NSApp postEvent:fakeEvent atStart:YES];
         }
-        // FIXME:  We should really get the current modifierFlags here, but there's no way to poll
+        // FIXME: We should really get the current modifierFlags here, but there's no way to poll
         // them in Cocoa, and because the event stream was stolen by the Carbon menu code we have
         // no up-to-date cache of them anywhere.
         fakeEvent = [NSEvent mouseEventWithType:NSMouseMoved
-                                       location:[[m_frame->bridge() window] convertScreenToBase:[NSEvent mouseLocation]]
+                                       location:[[view->getView() window] convertScreenToBase:[NSEvent mouseLocation]]
                                   modifierFlags:[initiatingEvent modifierFlags]
                                       timestamp:[initiatingEvent timestamp]
                                    windowNumber:[initiatingEvent windowNumber]

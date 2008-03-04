@@ -258,12 +258,6 @@ using namespace WebCore;
     [webView _popPerformingProgrammaticFocus];
 }
 
-- (NSWindow *)window
-{
-    ASSERT(_frame != nil);
-    return [[_frame frameView] window];
-}
-
 - (void)runOpenPanelForFileButtonWithResultListener:(id<WebCoreOpenPanelResultListener>)resultListener
 {
     WebView *wv = [self webView];

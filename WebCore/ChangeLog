@@ -2,6 +2,19 @@
 
         Reviewed by Adam.
 
+        - remove WebCoreFrameBridge window method
+
+        * page/mac/EventHandlerMac.mm:
+        (WebCore::EventHandler::sendFakeEventsAfterWidgetTracking): Get the window by calling
+        window on the NSView instead of using the bridge. The WebKit side wasn't doing anything
+        special, so a call to -[NSView window] is fine.
+
+        * page/mac/WebCoreFrameBridge.h: Removed the window method.
+
+2008-03-04  Darin Adler  <darin@apple.com>
+
+        Reviewed by Adam.
+
         - remove -[WebCoreFrameBridge dashboardRegionsChanged:]
 
         * WebCore.base.exp: Updated.

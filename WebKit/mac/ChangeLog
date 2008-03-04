@@ -2,6 +2,14 @@
 
         Reviewed by Adam.
 
+        - remove WebCoreFrameBridge window method
+
+        * WebCoreSupport/WebFrameBridge.mm: Removed window method.
+
+2008-03-04  Darin Adler  <darin@apple.com>
+
+        Reviewed by Adam.
+
         - move code from WebFrameBridge into WebFrameLoaderClient
 
         * WebCoreSupport/WebFrameBridge.h: Removed unused fields, changed frame name parameters
