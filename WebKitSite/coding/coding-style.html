@@ -201,7 +201,7 @@ if (condition) doIt();
 </pre>
 </li>
 
-<li>An else statement should go on the same line as a preceding close brace.
+<li>An <code>else</code> statement should go on the same line as a preceding close brace.
 <h4 class="right">Right:</h4>
 <pre class="code">
 if (condition) {
@@ -217,6 +217,29 @@ if (condition) {
     ...
 }
 else {
+    ...
+}
+</pre>
+</li>
+
+<li>An <code>else if</code> statement should be written as an <code>if</code> statement when the prior <code>if</code> concludes with a <code>return</code> statement.
+<h4 class="right">Right:</h4>
+<pre class="code">
+if (condition) {
+    ...
+    return someValue;
+}
+if (condition) {
+    ...
+}
+</pre>
+
+<h4 class="wrong">Wrong:</h4>
+<pre class="code">
+if (condition) {
+    ...
+    return someValue;
+} else if (condition) {
     ...
 }
 </pre>

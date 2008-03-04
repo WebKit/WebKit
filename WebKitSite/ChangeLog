@@ -1,3 +1,11 @@
+2008-03-04  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Add a note about preferring if over else if when the previous if is terminated by a return statement.
+
+        * coding/coding-style.html:
+
 2008-02-08  Adam Roben  <aroben@apple.com>
 
         * perf/slickspeed/config.ini: Fixed version number.
