@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2004, 2005, 2007 Nikolas Zimmermann <zimmermann@kde.org>
+    Copyright (C) 2004, 2005, 2007, 2008 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005, 2006, 2007 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
@@ -63,6 +63,9 @@ ANIMATED_PROPERTY_DEFINITIONS(SVGTextContentElement, int, Enumeration, enumerati
 static inline float cummulatedCharacterRangeLength(const Vector<SVGChar>::iterator& start, const Vector<SVGChar>::iterator& end, SVGInlineTextBox* textBox,
                                                    int startOffset, long startPosition, long length, bool isVerticalText, long& atCharacter)
 {
+    if (!length)
+        return 0.0f;
+
     float textLength = 0.0f;
     RenderStyle* style = textBox->textObject()->style();
 
@@ -83,10 +86,10 @@ static inline float cummulatedCharacterRangeLength(const Vector<SVGChar>::iterat
         }
 
         if (!usesFullRange) {
-            if (atCharacter < startPosition + length)
-                atCharacter++;
-            else if (atCharacter == startPosition + length)
+            if (atCharacter == startPosition + length - 1)
                 break;
+
+            atCharacter++;
         }
     }
 
@@ -371,9 +374,21 @@ float SVGTextContentElement::getComputedTextLength() const
     return executeTextQuery(this, SVGInlineTextBoxQueryWalker::TextLength).floatResult();
 }
 
-float SVGTextContentElement::getSubStringLength(long charnum, unsigned long nchars, ExceptionCode& ec) const
+float SVGTextContentElement::getSubStringLength(long charnum, long nchars, ExceptionCode& ec) const
 {
-    if (charnum < 0 || charnum > getNumberOfChars()) {
+    // Differences to SVG 1.1 spec, as the spec is clearly wrong. TODO: Raise SVG WG issue!
+    // #1: We accept a 'long nchars' parameter instead of 'unsigned long nchars' to be able
+    //     to catch cases where someone called us with a negative 'nchars' value - in those
+    //     cases we'll just throw a 'INDEX_SIZE_ERR' (acid3 implicitly agrees with us)
+    //
+    // #2: We only throw if 'charnum + nchars' is greater than the number of characters, not
+    //     if it's equal, as this really doesn't make any sense (no way to measure the last character!)
+    //
+    // #3: If 'charnum' is greater than or equal to 'numberOfChars', we're throwing an exception here
+    //     as the result is undefined for every other value of 'nchars' than '0'.
+
+    long numberOfChars = getNumberOfChars();
+    if (charnum < 0 || nchars < 0 || numberOfChars <= charnum || charnum + nchars > numberOfChars) {
         ec = INDEX_SIZE_ERR;
         return 0.0f;
     }
@@ -492,5 +507,3 @@ void SVGTextContentElement::parseMappedAttribute(MappedAttribute* attr)
 }
 
 #endif // ENABLE(SVG)
-
-// vim:ts=4:noet

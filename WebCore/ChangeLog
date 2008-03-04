@@ -1,3 +1,19 @@
+2008-03-04  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Eric & David.
+
+        Fixes: http://bugs.webkit.org/show_bug.cgi?id=17078
+
+        Fix getSubStringLength() handling, verified by Acid3 test 77.
+        Brings up Acid3 score to 88/100.
+
+        Added test: svg/custom/acid3-test-77.html
+                    svg/custom/getSubStringLength.html
+
+        * svg/SVGTextContentElement.cpp:
+        (WebCore::cummulatedCharacterRangeLength): Simplify some code.
+        (WebCore::SVGTextContentElement::getSubStringLength):
+
 2008-03-04  Anders Carlsson  <andersca@apple.com>
 
         Mac build fix. Neither me, Sam nor Adam know why we need to do this though :(

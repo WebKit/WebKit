@@ -1,3 +1,24 @@
+2008-03-04  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Eric & David.
+
+        Add new layout test for Acid3 - test 77.
+        Update result for svg/custom/text-dom-01-f.svg.
+
+        * platform/mac-leopard/svg/custom/acid3-test-77-expected.checksum: Added.
+        * platform/mac-leopard/svg/custom/acid3-test-77-expected.png: Added.
+        * platform/mac-leopard/svg/custom/getSubStringLength-expected.checksum: Added.
+        * platform/mac-leopard/svg/custom/getSubStringLength-expected.png: Added.
+        * platform/mac-leopard/svg/custom/text-dom-01-f-expected.checksum:
+        * platform/mac-leopard/svg/custom/text-dom-01-f-expected.png:
+        * svg/custom/acid3-test-77-expected.txt: Added.
+        * svg/custom/acid3-test-77.html: Added.
+        * svg/custom/getSubStringLength-expected.txt: Added.
+        * svg/custom/getSubStringLength.html: Added.
+        * svg/custom/resources/Acid3Font-loader.svg: Added.
+        * svg/custom/resources/Acid3Font.svg: Added.
+        * svg/custom/resources/getSubStringLength.js: Added.
+
 2008-03-04  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Darin Adler.

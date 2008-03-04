@@ -9,7 +9,7 @@ layer at (0,0) size 480x360
         RenderPath {line} at (62,29.50) size 356x1 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [data="M62.00,30.00L418.00,30.00"]
         RenderPath {line} at (132.50,15) size 1x15 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [data="M133.00,30.00L133.00,15.00"]
         RenderPath {line} at (124.50,15) size 1x15 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [data="M125.00,30.00L125.00,15.00"]
-        RenderPath {line} at (189,29.50) size 60x1 [stroke={[type=SOLID] [color=#00FF00]}] [fill={[type=SOLID] [color=#000000]}] [data="M189.00,30.00L249.00,30.00"]
+        RenderPath {line} at (189,29.50) size 56x1 [stroke={[type=SOLID] [color=#00FF00]}] [fill={[type=SOLID] [color=#000000]}] [data="M189.00,30.00L245.00,30.00"]
         RenderSVGText {text} at (62,30) size 356x22 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,-14) size 32x17
             chunk 1 (middle anchor) text run 1 at (62.00,30.00) startOffset 0 endOffset 5 width 32.00: "This "
@@ -41,7 +41,7 @@ layer at (0,0) size 480x360
             chunk 1 text run 1 at (30.00,180.00) startOffset 0 endOffset 48 width 301.00: ".getStartPositionOfChar(11) result ('e'): 125,30"
         RenderSVGText {text} at (30,200) size 310x17 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,-14) size 310x17
-            chunk 1 text run 1 at (30.00,200.00) startOffset 0 endOffset 50 width 310.00: ".getSubStringLength(22,9) result ('interface'): 60"
+            chunk 1 text run 1 at (30.00,200.00) startOffset 0 endOffset 50 width 310.00: ".getSubStringLength(22,9) result ('interface'): 56"
         RenderSVGText {text} at (30,220) size 405x17 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,-14) size 405x17
             chunk 1 text run 1 at (30.00,220.00) startOffset 0 endOffset 64 width 405.00: ".selectSubString(18,3) result: the word 'the' should be selected"
