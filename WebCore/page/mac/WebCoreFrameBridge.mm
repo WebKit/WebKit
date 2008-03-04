@@ -301,23 +301,6 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
     m_frame = 0;
 }
 
-- (void)createFrameViewWithNSView:(NSView *)view marginWidth:(int)mw marginHeight:(int)mh
-{
-    // If we own the view, delete the old one - otherwise the render m_frame will take care of deleting the view.
-    if (m_frame)
-        m_frame->setView(0);
-
-    FrameView* frameView = new FrameView(m_frame);
-    m_frame->setView(frameView);
-    frameView->deref();
-
-    frameView->setView(view);
-    if (mw >= 0)
-        frameView->setMarginWidth(mw);
-    if (mh >= 0)
-        frameView->setMarginHeight(mh);
-}
-
 - (NSString *)_stringWithDocumentTypeStringAndMarkupString:(NSString *)markupString
 {
     return m_frame->documentTypeString() + markupString;

@@ -2,6 +2,16 @@
 
         Reviewed by Adam.
 
+        - eliminate WebCoreFrameBridge createFrameViewWithNSView
+
+        * WebCore.base.exp: Added some more exports.
+        * page/mac/WebCoreFrameBridge.h: Deleted createFrameViewWithNSView.
+        * page/mac/WebCoreFrameBridge.mm: Ditto.
+
+2008-03-04  Darin Adler  <darin@apple.com>
+
+        Reviewed by Adam.
+
         - removed WebCoreFrameBridge scrollOverflowInDirection
 
         * WebCore.base.exp: Export function needed by WebKit.

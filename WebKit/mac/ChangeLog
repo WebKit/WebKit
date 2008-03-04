@@ -2,6 +2,16 @@
 
         Reviewed by Adam.
 
+        - eliminate WebCoreFrameBridge createFrameViewWithNSView
+
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::transitionToCommittedForNewPage):
+        Moved code here from createFrameViewWithNSView.
+
+2008-03-04  Darin Adler  <darin@apple.com>
+
+        Reviewed by Adam.
+
         - removed WebCoreFrameBridge scrollOverflowInDirection
 
         * WebView/WebFrameView.mm:

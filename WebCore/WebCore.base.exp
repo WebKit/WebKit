@@ -754,3 +754,6 @@ _wkSetUpFontCache
 _wkSignalCFReadStreamEnd
 _wkSignalCFReadStreamError
 _wkSignalCFReadStreamHasBytes
+__ZN7WebCore9FrameView15setMarginHeightEi
+__ZN7WebCore9FrameViewC1EPNS_5FrameE
+__ZN7WebCore9FrameView14setMarginWidthEi

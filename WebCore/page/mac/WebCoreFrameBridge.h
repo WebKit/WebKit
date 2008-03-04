@@ -89,8 +89,6 @@ enum WebCoreDeviceType {
 
 - (NSURL *)baseURL;
 
-- (void)createFrameViewWithNSView:(NSView *)view marginWidth:(int)mw marginHeight:(int)mh;
-
 - (void)reapplyStylesForDeviceType:(WebCoreDeviceType)deviceType;
 - (void)forceLayoutAdjustingViewSize:(BOOL)adjustSizeFlag;
 - (void)forceLayoutWithMinimumPageWidth:(float)minPageWidth maximumPageWidth:(float)maxPageWidth adjustingViewSize:(BOOL)adjustSizeFlag;

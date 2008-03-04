@@ -87,6 +87,7 @@
 #import <WebCore/FrameLoader.h>
 #import <WebCore/FrameLoaderTypes.h>
 #import <WebCore/FrameTree.h>
+#import <WebCore/FrameView.h>
 #import <WebCore/HTMLFormElement.h>
 #import <WebCore/HistoryItem.h>
 #import <WebCore/HitTestResult.h>
@@ -1013,9 +1014,23 @@ void WebFrameLoaderClient::transitionToCommittedForNewPage()
     if (!documentView)
         return;
 
-    // FIXME: We could save work and not do this for a top-level view that is not a WebHTMLView.
-    [m_webFrame->_private->bridge createFrameViewWithNSView:documentView marginWidth:[v _marginWidth] marginHeight:[v _marginHeight]];
+    // FIXME: Could we skip some of this work for a top-level view that is not a WebHTMLView?
+
+    // If we own the view, delete the old one - otherwise the render m_frame will take care of deleting the view.
+    Frame* coreFrame = core(m_webFrame.get());
+    coreFrame->setView(0);
+    RefPtr<FrameView> coreView = new FrameView(coreFrame);
+    coreFrame->setView(coreView.get());
+    coreView->setView(documentView);
+    int marginWidth = [v _marginWidth];
+    if (marginWidth >= 0)
+        coreView->setMarginWidth(marginWidth);
+    int marginHeight = [v _marginHeight];
+    if (marginHeight >= 0)
+        coreView->setMarginHeight(marginHeight);
+
     [m_webFrame.get() _updateBackground];
+
     [v _install];
 
     // Call setDataSource on the document view after it has been placed in the view hierarchy.
