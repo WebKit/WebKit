@@ -1,3 +1,10 @@
+2008-03-03  Sam Weinig  <sam@webkit.org>
+
+        Windows build fix.
+
+        * WebFrame.cpp:
+        (WebFrame::windowObjectCleared):
+
 2008-03-03  David Hyatt  <hyatt@apple.com>
 
         Full page zoom work.  Make setting of a zoom factor take a boolean saying whether it is a text only

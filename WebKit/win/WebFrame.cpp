@@ -72,6 +72,7 @@
 #include <WebCore/HTMLGenericFormElement.h>
 #include <WebCore/HTMLInputElement.h>
 #include <WebCore/HTMLNames.h>
+#include <WebCore/JSDOMWindow.h>
 #include <WebCore/KeyboardEvent.h>
 #include <WebCore/MIMETypeRegistry.h>
 #include <WebCore/MouseRelatedEvent.h>
@@ -1533,7 +1534,7 @@ void WebFrame::windowObjectCleared()
         COMPtr<IWebFrameLoadDelegate2> frameLoadDelegate2(Query, frameLoadDelegate);
 
         JSContextRef context = toRef(coreFrame->scriptProxy()->globalObject()->globalExec());
-        JSObjectRef windowObject = toRef(KJS::Window::retrieve(coreFrame)->getObject());
+        JSObjectRef windowObject = toRef(coreFrame->scriptProxy()->globalObject());
         ASSERT(windowObject);
 
         if (!frameLoadDelegate2 || 
