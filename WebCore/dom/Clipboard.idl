@@ -1,18 +1,18 @@
 /*
- * Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
  * are met:
  *
  * 1.  Redistributions of source code must retain the above copyright
- *     notice, this list of conditions and the following disclaimer. 
+ *     notice, this list of conditions and the following disclaimer.
  * 2.  Redistributions in binary form must reproduce the above copyright
  *     notice, this list of conditions and the following disclaimer in the
- *     documentation and/or other materials provided with the distribution. 
+ *     documentation and/or other materials provided with the distribution.
  * 3.  Neither the name of Apple Computer, Inc. ("Apple") nor the names of
  *     its contributors may be used to endorse or promote products derived
- *     from this software without specific prior written permission. 
+ *     from this software without specific prior written permission.
  *
  * THIS SOFTWARE IS PROVIDED BY APPLE AND ITS CONTRIBUTORS "AS IS" AND ANY
  * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -26,36 +26,23 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "JSAttr.h"
+module core {
 
-#include "CSSHelper.h"
-#include "HTMLFrameElementBase.h"
-#include "HTMLNames.h"
-#include "kjs_dom.h"
+    interface [
+        GenerateConstructor
+    ] Clipboard {
+                 attribute [ConvertNullStringTo=Undefined] DOMString dropEffect;
+                 attribute [ConvertNullStringTo=Undefined] DOMString effectAllowed;
+        readonly attribute [CustomGetter] Array types;
 
-using namespace KJS;
+        [Custom] void clearData(in [Optional] DOMString type)
+            raises(DOMException);
+        [Custom] void getData(in DOMString type)
+            raises(DOMException);
+        [Custom] void setData(in DOMString type, in DOMString data)
+            raises(DOMException);
+        [Custom] void setDragImage(in HTMLImageElement image, in long x, in long y)
+            raises(DOMException);
+    };
 
-namespace WebCore {
-
-using namespace HTMLNames;
-
-void JSAttr::setValue(ExecState* exec, JSValue* value)
-{
-    Attr* imp = static_cast<Attr*>(impl());
-    String attrValue = valueToStringWithNullCheck(exec, value);
-
-    Element* ownerElement = imp->ownerElement();
-    if (ownerElement && (ownerElement->hasTagName(iframeTag) || ownerElement->hasTagName(frameTag))) {
-        if (equalIgnoringCase(imp->name(), "src") && protocolIs(parseURL(attrValue), "javascript")) {
-            if (!checkNodeSecurity(exec, static_cast<HTMLFrameElementBase*>(ownerElement)->contentDocument()))
-                return;
-        }
-    }
-
-    ExceptionCode ec = 0;
-    imp->setValue(attrValue, ec);
-    setDOMException(exec, ec);
 }
-
-} // namespace WebCore

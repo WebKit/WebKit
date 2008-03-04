@@ -249,7 +249,6 @@ LUT_FILES += \
     bindings/js/JSXMLHttpRequest.cpp \
     bindings/js/JSXSLTProcessor.cpp \
     bindings/js/kjs_css.cpp \
-    bindings/js/kjs_events.cpp \
     bindings/js/kjs_navigator.cpp \
     bindings/js/kjs_window.cpp
 
@@ -277,6 +276,7 @@ IDL_BINDINGS += \
     css/StyleSheetList.idl \
     dom/Attr.idl \
     dom/CharacterData.idl \
+    dom/Clipboard.idl \
     dom/CDATASection.idl \
     dom/Comment.idl \
     dom/DocumentFragment.idl \
@@ -391,6 +391,7 @@ SOURCES += \
     bindings/js/JSAttrCustom.cpp \
     bindings/js/JSCanvasPixelArrayCustom.cpp \
     bindings/js/JSCanvasRenderingContext2DCustom.cpp \
+    bindings/js/JSClipboardCustom.cpp \
     bindings/js/JSCSSRuleCustom.cpp \
     bindings/js/JSCSSStyleDeclarationCustom.cpp \
     bindings/js/JSCSSValueCustom.cpp \

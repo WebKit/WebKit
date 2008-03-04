@@ -22,23 +22,19 @@
 
 #include "CString.h"
 #include "Chrome.h"
-#include "Clipboard.h"
-#include "ClipboardEvent.h"
 #include "DOMWindow.h"
 #include "Document.h"
 #include "Event.h"
 #include "EventNames.h"
 #include "Frame.h"
 #include "FrameLoader.h"
-#include "HTMLImageElement.h"
-#include "HTMLNames.h"
 #include "JSDOMWindow.h"
 #include "JSEvent.h"
 #include "JSEventTargetNode.h"
 #include "Page.h"
+#include "kjs_dom.h"
 #include "kjs_proxy.h"
 #include "kjs_window.h"
-#include <kjs/array_object.h>
 #include <kjs/function_object.h>
 
 #include "kjs_events.lut.h"
@@ -48,7 +44,6 @@ using namespace KJS;
 namespace WebCore {
 
 using namespace EventNames;
-using namespace HTMLNames;
 
 JSAbstractEventListener::JSAbstractEventListener(bool html)
     : m_html(html)
@@ -339,182 +334,6 @@ JSValue* getNodeEventListener(EventTargetNode* n, const AtomicString& eventType)
             return obj;
     }
     return jsNull();
-}
-
-// -------------------------------------------------------------------------
-
-const ClassInfo JSClipboard::info = { "Clipboard", 0, &JSClipboardTable };
-
-/* Source for JSClipboardTable. Use "make hashtables" to regenerate.
-@begin JSClipboardTable 3
-  dropEffect    WebCore::JSClipboard::DropEffect                           DontDelete
-  effectAllowed WebCore::JSClipboard::EffectAllowed                        DontDelete
-  types         WebCore::JSClipboard::Types                                DontDelete|ReadOnly
-@end
-@begin JSClipboardPrototypeTable 4
-  clearData     WebCore::jsClipboardPrototypeFunctionClearData    DontDelete|Function 0
-  getData       WebCore::jsClipboardPrototypeFunctionGetData      DontDelete|Function 1
-  setData       WebCore::jsClipboardPrototypeFunctionSetData      DontDelete|Function 2
-  setDragImage  WebCore::jsClipboardPrototypeFunctionSetDragImage DontDelete|Function 3
-@end
-*/
-
-KJS_DEFINE_PROTOTYPE(JSClipboardPrototype)
-KJS_IMPLEMENT_PROTOTYPE("Clipboard", JSClipboardPrototype)
-
-JSClipboard::JSClipboard(JSObject* prototype, Clipboard* clipboard)
-    : DOMObject(prototype)
-    , m_impl(clipboard)
-{
-}
-
-JSClipboard::~JSClipboard()
-{
-    ScriptInterpreter::forgetDOMObject(m_impl.get());
-}
-
-bool JSClipboard::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
-{
-    return getStaticValueSlot<JSClipboard, DOMObject>(exec, &JSClipboardTable, this, propertyName, slot);
-}
-
-JSValue* JSClipboard::getValueProperty(ExecState* exec, int token) const
-{
-    Clipboard* clipboard = impl();
-    switch (token) {
-        case DropEffect:
-            ASSERT(clipboard->isForDragging() || clipboard->dropEffect().isNull());
-            return jsStringOrUndefined(clipboard->dropEffect());
-        case EffectAllowed:
-            ASSERT(clipboard->isForDragging() || clipboard->effectAllowed().isNull());
-            return jsStringOrUndefined(clipboard->effectAllowed());
-        case Types:
-        {
-            HashSet<String> types = clipboard->types();
-            if (types.isEmpty())
-                return jsNull();
-            else {
-                List list;
-                HashSet<String>::const_iterator end = types.end();
-                for (HashSet<String>::const_iterator it = types.begin(); it != end; ++it)
-                    list.append(jsString(UString(*it)));
-                return exec->lexicalGlobalObject()->arrayConstructor()->construct(exec, list);
-            }
-        }
-        default:
-            return 0;
-    }
-}
-
-void JSClipboard::put(ExecState* exec, const Identifier& propertyName, JSValue* value)
-{
-    lookupPut<JSClipboard, DOMObject>(exec, propertyName, value, &JSClipboardTable, this);
-}
-
-void JSClipboard::putValueProperty(ExecState* exec, int token, JSValue* value)
-{
-    Clipboard* clipboard = impl();
-    switch (token) {
-        case DropEffect:
-            // can never set this when not for dragging, thus getting always returns NULL string
-            if (clipboard->isForDragging())
-                clipboard->setDropEffect(value->toString(exec));
-            break;
-        case EffectAllowed:
-            // can never set this when not for dragging, thus getting always returns NULL string
-            if (clipboard->isForDragging())
-                clipboard->setEffectAllowed(value->toString(exec));
-            break;
-    }
-}
-
-JSValue* jsClipboardPrototypeFunctionClearData(ExecState* exec, JSObject* thisObj, const List& args)
-{
-    if (!thisObj->inherits(&JSClipboard::info))
-        return throwError(exec, TypeError);
-
-    Clipboard* clipboard = static_cast<JSClipboard*>(thisObj)->impl();
-
-    if (args.size() == 0) {
-        clipboard->clearAllData();
-        return jsUndefined();
-    } else if (args.size() == 1) {
-        clipboard->clearData(args[0]->toString(exec));
-        return jsUndefined();
-    } else
-        return throwError(exec, SyntaxError, "clearData: Invalid number of arguments");
-}
-
-JSValue* jsClipboardPrototypeFunctionGetData(ExecState* exec, JSObject* thisObj, const List& args)
-{
-    if (!thisObj->inherits(&JSClipboard::info))
-        return throwError(exec, TypeError);
-
-    Clipboard* clipboard = static_cast<JSClipboard*>(thisObj)->impl();
-
-    if (args.size() == 1) {
-        bool success;
-        String result = clipboard->getData(args[0]->toString(exec), success);
-        if (success)
-            return jsString(result);
-        return jsUndefined();
-    } else
-        return throwError(exec, SyntaxError, "getData: Invalid number of arguments");
-}
-
-JSValue* jsClipboardPrototypeFunctionSetData(ExecState* exec, JSObject* thisObj, const List& args)
-{
-    if (!thisObj->inherits(&JSClipboard::info))
-        return throwError(exec, TypeError);
-
-    Clipboard* clipboard = static_cast<JSClipboard*>(thisObj)->impl();
-
-    if (args.size() == 2)
-        return jsBoolean(clipboard->setData(args[0]->toString(exec), args[1]->toString(exec)));
-    return throwError(exec, SyntaxError, "setData: Invalid number of arguments");
-}
-
-JSValue* jsClipboardPrototypeFunctionSetDragImage(ExecState* exec, JSObject* thisObj, const List& args)
-{
-    if (!thisObj->inherits(&JSClipboard::info))
-        return throwError(exec, TypeError);
-
-    Clipboard* clipboard = static_cast<JSClipboard*>(thisObj)->impl();
-
-    if (!clipboard->isForDragging())
-        return jsUndefined();
-
-    if (args.size() != 3)
-        return throwError(exec, SyntaxError, "setDragImage: Invalid number of arguments");
-
-    int x = args[1]->toInt32(exec);
-    int y = args[2]->toInt32(exec);
-
-    // See if they passed us a node
-    Node* node = toNode(args[0]);
-    if (!node)
-        return throwError(exec, TypeError);
-
-    if (!node->isElementNode())
-        return throwError(exec, SyntaxError, "setDragImageFromElement: Invalid first argument");
-
-    if (static_cast<Element*>(node)->hasLocalName(imgTag) &&
-        !node->inDocument())
-        clipboard->setDragImage(static_cast<HTMLImageElement*>(node)->cachedImage(), IntPoint(x, y));
-    else
-        clipboard->setDragImageElement(node, IntPoint(x, y));
-
-    return jsUndefined();
-}
-
-JSValue* toJS(ExecState* exec, Clipboard* obj)
-{
-    return cacheDOMObject<Clipboard, JSClipboard, JSClipboardPrototype>(exec, obj);
-}
-
-Clipboard* toClipboard(JSValue* val)
-{
-    return val->isObject(&JSClipboard::info) ? static_cast<JSClipboard*>(val)->impl() : 0;
 }
 
 } // namespace WebCore

@@ -321,6 +321,7 @@ all : \
     JSCSSPrimitiveValue.h \
     JSCSSRule.h \
     JSCSSRuleList.h \
+    JSCSSStyleDeclaration.h \
     JSCSSStyleRule.h \
     JSCSSStyleSheet.h \
     JSCSSValue.h \
@@ -330,10 +331,10 @@ all : \
     JSCanvasPixelArray.h \
     JSCanvasRenderingContext2D.h \
     JSCharacterData.h \
+    JSClipboard.h \
     JSComment.h \
     JSConsole.h \
     JSCounter.h \
-    JSCSSStyleDeclaration.h \
     JSDOMCoreException.h \
     JSDOMImplementation.h \
     JSDOMParser.h \
@@ -599,7 +600,6 @@ all : \
     XMLNames.cpp \
     XPathGrammar.cpp \
     kjs_css.lut.h \
-    kjs_events.lut.h \
     kjs_navigator.lut.h \
     kjs_window.lut.h \
     tokenizer.cpp \

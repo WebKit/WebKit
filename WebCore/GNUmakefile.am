@@ -53,7 +53,6 @@ webcore_built_nosources += \
 	WebCore/bindings/js/JSXMLHttpRequest.lut.h \
 	WebCore/bindings/js/JSXSLTProcessor.lut.h \
 	WebCore/bindings/js/kjs_css.lut.h \
-	WebCore/bindings/js/kjs_events.lut.h \
 	WebCore/bindings/js/kjs_navigator.lut.h \
 	WebCore/bindings/js/kjs_window.lut.h \
 	WebCore/bindings/js/JSHTMLInputElementBaseTable.cpp
@@ -91,6 +90,7 @@ webcore_built_sources += \
 	DerivedSources/JSCanvasPixelArray.h \
 	DerivedSources/JSCanvasRenderingContext2D.h \
 	DerivedSources/JSCharacterData.h \
+	DerivedSources/JSClipboard.h \
 	DerivedSources/JSComment.h \
 	DerivedSources/JSConsole.h \
 	DerivedSources/JSCounter.h \
@@ -342,6 +342,7 @@ IDL_BINDINGS +=  \
 	WebCore/css/StyleSheetList.idl \
 	WebCore/dom/Attr.idl \
 	WebCore/dom/CharacterData.idl \
+	WebCore/dom/Clipboard.idl \
 	WebCore/dom/CDATASection.idl \
 	WebCore/dom/Comment.idl \
 	WebCore/dom/DocumentFragment.idl \
@@ -454,6 +455,7 @@ webcore_sources += \
 	WebCore/bindings/js/JSAttrCustom.cpp \
 	WebCore/bindings/js/JSCanvasPixelArrayCustom.cpp \
 	WebCore/bindings/js/JSCanvasRenderingContext2DCustom.cpp \
+	WebCore/bindings/js/JSClipboardCustom.cpp \
 	WebCore/bindings/js/JSCSSRuleCustom.cpp \
 	WebCore/bindings/js/JSCSSStyleDeclarationCustom.cpp \
 	WebCore/bindings/js/JSCSSValueCustom.cpp \
@@ -2054,7 +2056,6 @@ CLEANFILES += \
 	JSXMLHttpRequest.lut.h \
 	JSXSLTProcessor.lut.h \
 	kjs_css.lut.h \
-	kjs_events.lut.h \
 	kjs_navigator.lut.h \
 	kjs_window.lut.h
 

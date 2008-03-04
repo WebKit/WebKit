@@ -31,6 +31,7 @@
 
 #include "CSSHelper.h"
 #include "HTMLIFrameElement.h"
+#include "kjs_dom.h"
 
 using namespace KJS;
 

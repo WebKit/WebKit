@@ -264,6 +264,8 @@ module window {
         attribute WheelEventConstructor WheelEvent;
         attribute EventExceptionConstructor EventException;
 
+        attribute ClipboardConstructor Clipboard;
+
         attribute NodeFilterConstructor NodeFilter;
         attribute RangeConstructor Range;
         attribute RangeExceptionConstructor RangeException;

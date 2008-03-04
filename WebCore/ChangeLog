@@ -1,5 +1,37 @@
 2008-03-03  Sam Weinig  <sam@webkit.org>
 
+        Reviewed by Mark Rowe.
+
+        Move JSClipboard into its own file.
+
+        * DerivedSources.make:
+        * GNUmakefile.am:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * WebCoreSources.bkl:
+        * bindings/js/JSAttrCustom.cpp:
+        * bindings/js/JSClipboardCustom.cpp: Added.
+        (WebCore::JSClipboard::types):
+        (WebCore::JSClipboard::clearData):
+        (WebCore::JSClipboard::getData):
+        (WebCore::JSClipboard::setData):
+        (WebCore::JSClipboard::setDragImage):
+        * bindings/js/JSElementCustom.cpp:
+        * bindings/js/JSEventCustom.cpp:
+        * bindings/js/JSHTMLFrameElementCustom.cpp:
+        * bindings/js/JSHTMLIFrameElementCustom.cpp:
+        * bindings/js/kjs_events.cpp:
+        * bindings/js/kjs_events.h:
+        * bindings/js/kjs_window.cpp:
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * dom/Clipboard.cpp:
+        (WebCore::Clipboard::setDropEffect):
+        (WebCore::Clipboard::setEffectAllowed):
+        * dom/Clipboard.idl: Added.
+
+2008-03-03  Sam Weinig  <sam@webkit.org>
+
         Windows build-fix.
 
         * page/Chrome.cpp:

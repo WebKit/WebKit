@@ -125,15 +125,20 @@ void Clipboard::setDestinationOperation(DragOperation op)
 
 void Clipboard::setDropEffect(const String &effect)
 {
-    if (m_policy == ClipboardReadable || m_policy == ClipboardTypesReadable) {
+    if (!m_forDragging)
+        return;
+
+    if (m_policy == ClipboardReadable || m_policy == ClipboardTypesReadable)
         m_dropEffect = effect;
-    }
 }
 
 void Clipboard::setEffectAllowed(const String &effect)
 {
+    if (!m_forDragging)
+        return;
+
     if (m_policy == ClipboardWritable)
         m_effectAllowed = effect;
 }
 
-}
+} // namespace WebCore

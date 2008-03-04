@@ -1571,9 +1571,6 @@ sub NativeToJSValue
         $implIncludes{"kjs_window.h"} = 1;
     } elsif ($type eq "DOMObject") {
         $implIncludes{"JSCanvasRenderingContext2D.h"} = 1;
-    } elsif ($type eq "Clipboard") {
-        $implIncludes{"kjs_events.h"} = 1;
-        $implIncludes{"Clipboard.h"} = 1;
     } elsif ($type =~ /SVGPathSeg/) {
         $implIncludes{"JS$type.h"} = 1;
         $joinedName = $type;

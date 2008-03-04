@@ -1,7 +1,6 @@
 /*
- *  This file is part of the KDE libraries
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2003 Apple Computer, Inc.
+ *  Copyright (C) 2003, 2008 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -23,15 +22,13 @@
 
 #include "EventListener.h"
 #include "PlatformString.h"
-#include "kjs_dom.h"
-#include "kjs_html.h"
 #include <kjs/protect.h>
 
 namespace WebCore {
 
-    class Clipboard;
     class Event;
     class JSDOMWindow;
+    class Node;
 
     class JSAbstractEventListener : public EventListener {
     public:
@@ -55,6 +52,7 @@ namespace WebCore {
         virtual JSDOMWindow* windowObj() const;
         void clearWindowObj();
         void mark();
+
     private:
         KJS::JSObject* m_listener;
         JSDOMWindow* m_win;
@@ -93,36 +91,6 @@ namespace WebCore {
     };
 
     KJS::JSValue* getNodeEventListener(Node*, const AtomicString& eventType);
-
-    class JSClipboard : public DOMObject {
-    public:
-        JSClipboard(KJS::JSObject* prototype, Clipboard*);
-        virtual ~JSClipboard();
-
-        virtual bool getOwnPropertySlot(KJS::ExecState*, const KJS::Identifier&, KJS::PropertySlot&);
-        KJS::JSValue* getValueProperty(KJS::ExecState*, int token) const;
-        virtual void put(KJS::ExecState*, const KJS::Identifier&, KJS::JSValue*);
-        void putValueProperty(KJS::ExecState*, int token, KJS::JSValue*);
-
-        virtual const KJS::ClassInfo* classInfo() const { return &info; }
-        static const KJS::ClassInfo info;
-
-        enum { ClearData, GetData, SetData, Types, SetDragImage, DropEffect, EffectAllowed };
-
-        Clipboard* impl() const { return m_impl.get(); }
-
-    private:
-        RefPtr<Clipboard> m_impl;
-    };
-
-    KJS::JSValue* toJS(KJS::ExecState*, Clipboard*);
-    Clipboard* toClipboard(KJS::JSValue*);
-
-    // Functions
-    KJS::JSValue* jsClipboardPrototypeFunctionClearData(KJS::ExecState*, KJS::JSObject*, const KJS::List&);
-    KJS::JSValue* jsClipboardPrototypeFunctionGetData(KJS::ExecState*, KJS::JSObject*, const KJS::List&);
-    KJS::JSValue* jsClipboardPrototypeFunctionSetData(KJS::ExecState*, KJS::JSObject*, const KJS::List&);
-    KJS::JSValue* jsClipboardPrototypeFunctionSetDragImage(KJS::ExecState*, KJS::JSObject*, const KJS::List&);
 
 } // namespace WebCore
 

@@ -31,6 +31,7 @@
 
 #include "Clipboard.h"
 #include "Event.h"
+#include "JSClipboard.h"
 #include "JSKeyboardEvent.h"
 #include "JSMouseEvent.h"
 #include "JSMutationEvent.h"

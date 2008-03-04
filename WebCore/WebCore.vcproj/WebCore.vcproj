@@ -373,6 +373,14 @@
 				>
 			</File>
 			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSClipboard.cpp"
+				>
+			</File>
+			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSClipboard.h"
+				>
+			</File>
+			<File
 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSComment.cpp"
 				>
 			</File>
@@ -2510,10 +2518,6 @@
 			</File>
 			<File
 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\kjs_css.lut.h"
-				>
-			</File>
-			<File
-				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\kjs_events.lut.h"
 				>
 			</File>
 			<File
@@ -7569,6 +7573,10 @@
 				</File>
 				<File
 					RelativePath="..\bindings\js\JSCanvasRenderingContext2DCustom.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\bindings\js\JSClipboardCustom.cpp"
 					>
 				</File>
 				<File

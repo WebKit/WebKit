@@ -34,6 +34,7 @@
 #include "ExceptionCode.h"
 #include "HTMLFrameElementBase.h"
 #include "HTMLNames.h"
+#include "kjs_dom.h"
 
 using namespace KJS;
 

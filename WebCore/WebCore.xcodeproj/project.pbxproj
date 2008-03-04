@@ -477,7 +477,6 @@
 		656581EE09D1508D000E61D7 /* JSXMLHttpRequest.lut.h in Headers */ = {isa = PBXBuildFile; fileRef = 656581D709D1508D000E61D7 /* JSXMLHttpRequest.lut.h */; };
 		656581F009D1508D000E61D7 /* JSXSLTProcessor.lut.h in Headers */ = {isa = PBXBuildFile; fileRef = 656581D909D1508D000E61D7 /* JSXSLTProcessor.lut.h */; };
 		656581F109D1508D000E61D7 /* kjs_css.lut.h in Headers */ = {isa = PBXBuildFile; fileRef = 656581DA09D1508D000E61D7 /* kjs_css.lut.h */; };
-		656581F309D1508D000E61D7 /* kjs_events.lut.h in Headers */ = {isa = PBXBuildFile; fileRef = 656581DC09D1508D000E61D7 /* kjs_events.lut.h */; };
 		656581F509D1508D000E61D7 /* kjs_navigator.lut.h in Headers */ = {isa = PBXBuildFile; fileRef = 656581DE09D1508D000E61D7 /* kjs_navigator.lut.h */; };
 		656581F809D1508D000E61D7 /* kjs_window.lut.h in Headers */ = {isa = PBXBuildFile; fileRef = 656581E109D1508D000E61D7 /* kjs_window.lut.h */; };
 		656581FE09D1508D000E61D7 /* SVGElementFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = 656581E709D1508D000E61D7 /* SVGElementFactory.h */; };
@@ -3566,6 +3565,10 @@
 		BCA379140D163E5500B793D6 /* JSLocation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCA379120D163E5500B793D6 /* JSLocation.cpp */; };
 		BCA379150D163E5500B793D6 /* JSLocation.h in Headers */ = {isa = PBXBuildFile; fileRef = BCA379130D163E5500B793D6 /* JSLocation.h */; };
 		BCA3793F0D1647E000B793D6 /* JSLocation.lut.h in Headers */ = {isa = PBXBuildFile; fileRef = BCA3793E0D1647E000B793D6 /* JSLocation.lut.h */; };
+		BCA83E370D7CDC4E003421A8 /* Clipboard.idl in Resources */ = {isa = PBXBuildFile; fileRef = BCA83E360D7CDC4E003421A8 /* Clipboard.idl */; };
+		BCA83E4F0D7CE1E9003421A8 /* JSClipboard.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCA83E4D0D7CE1E9003421A8 /* JSClipboard.cpp */; };
+		BCA83E500D7CE1E9003421A8 /* JSClipboard.h in Headers */ = {isa = PBXBuildFile; fileRef = BCA83E4E0D7CE1E9003421A8 /* JSClipboard.h */; };
+		BCA83E520D7CE205003421A8 /* JSClipboardCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCA83E510D7CE205003421A8 /* JSClipboardCustom.cpp */; };
 		BCA85A100C3AEAF4006F8308 /* DOMSVGNumberInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = BCA85A0F0C3AEAF4006F8308 /* DOMSVGNumberInternal.h */; };
 		BCAA90C30A7EBA60008B1229 /* ScrollBar.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCAA90C20A7EBA60008B1229 /* ScrollBar.cpp */; };
 		BCB16C170979C3BD00467741 /* Cache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCB16BFE0979C3BD00467741 /* Cache.cpp */; };
@@ -3621,7 +3624,6 @@
 		BCD9C2C10C17B69E005C90A2 /* JSNamedNodeMap.h in Headers */ = {isa = PBXBuildFile; fileRef = BCD9C2BD0C17B69E005C90A2 /* JSNamedNodeMap.h */; };
 		BCD9C2C20C17B69E005C90A2 /* JSNodeList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCD9C2BE0C17B69E005C90A2 /* JSNodeList.cpp */; };
 		BCD9C2C30C17B69E005C90A2 /* JSNodeList.h in Headers */ = {isa = PBXBuildFile; fileRef = BCD9C2BF0C17B69E005C90A2 /* JSNodeList.h */; };
-		BCD9C2C60C17B6EC005C90A2 /* JSDOMExceptionConstructor.lut.h in Headers */ = {isa = PBXBuildFile; fileRef = BCD9C2C40C17B6EC005C90A2 /* JSDOMExceptionConstructor.lut.h */; };
 		BCE0139A0C0BEF180043860A /* JSStyleSheet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCE013980C0BEF180043860A /* JSStyleSheet.cpp */; };
 		BCE0139B0C0BEF180043860A /* JSStyleSheet.h in Headers */ = {isa = PBXBuildFile; fileRef = BCE013990C0BEF180043860A /* JSStyleSheet.h */; };
 		BCE3BEC20D222B1D007E06E4 /* TagNodeList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCE3BEC00D222B1D007E06E4 /* TagNodeList.cpp */; };
@@ -4760,7 +4762,6 @@
 		656581D709D1508D000E61D7 /* JSXMLHttpRequest.lut.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSXMLHttpRequest.lut.h; sourceTree = "<group>"; };
 		656581D909D1508D000E61D7 /* JSXSLTProcessor.lut.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSXSLTProcessor.lut.h; sourceTree = "<group>"; };
 		656581DA09D1508D000E61D7 /* kjs_css.lut.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = kjs_css.lut.h; sourceTree = "<group>"; };
-		656581DC09D1508D000E61D7 /* kjs_events.lut.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = kjs_events.lut.h; sourceTree = "<group>"; };
 		656581DE09D1508D000E61D7 /* kjs_navigator.lut.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = kjs_navigator.lut.h; sourceTree = "<group>"; };
 		656581E109D1508D000E61D7 /* kjs_window.lut.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = kjs_window.lut.h; sourceTree = "<group>"; };
 		656581E609D1508D000E61D7 /* SVGElementFactory.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = SVGElementFactory.cpp; sourceTree = "<group>"; };
@@ -7670,6 +7671,10 @@
 		BCA379120D163E5500B793D6 /* JSLocation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSLocation.cpp; sourceTree = "<group>"; };
 		BCA379130D163E5500B793D6 /* JSLocation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSLocation.h; sourceTree = "<group>"; };
 		BCA3793E0D1647E000B793D6 /* JSLocation.lut.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSLocation.lut.h; sourceTree = "<group>"; };
+		BCA83E360D7CDC4E003421A8 /* Clipboard.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Clipboard.idl; sourceTree = "<group>"; };
+		BCA83E4D0D7CE1E9003421A8 /* JSClipboard.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSClipboard.cpp; sourceTree = "<group>"; };
+		BCA83E4E0D7CE1E9003421A8 /* JSClipboard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSClipboard.h; sourceTree = "<group>"; };
+		BCA83E510D7CE205003421A8 /* JSClipboardCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSClipboardCustom.cpp; sourceTree = "<group>"; };
 		BCA85A0F0C3AEAF4006F8308 /* DOMSVGNumberInternal.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DOMSVGNumberInternal.h; sourceTree = "<group>"; };
 		BCAA90C20A7EBA60008B1229 /* ScrollBar.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = ScrollBar.cpp; path = platform/ScrollBar.cpp; sourceTree = SOURCE_ROOT; };
 		BCB16BFE0979C3BD00467741 /* Cache.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = Cache.cpp; sourceTree = "<group>"; };
@@ -7723,7 +7728,6 @@
 		BCD9C2BD0C17B69E005C90A2 /* JSNamedNodeMap.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSNamedNodeMap.h; sourceTree = "<group>"; };
 		BCD9C2BE0C17B69E005C90A2 /* JSNodeList.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSNodeList.cpp; sourceTree = "<group>"; };
 		BCD9C2BF0C17B69E005C90A2 /* JSNodeList.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSNodeList.h; sourceTree = "<group>"; };
-		BCD9C2C40C17B6EC005C90A2 /* JSDOMExceptionConstructor.lut.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSDOMExceptionConstructor.lut.h; sourceTree = "<group>"; };
 		BCE013980C0BEF180043860A /* JSStyleSheet.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSStyleSheet.cpp; sourceTree = "<group>"; };
 		BCE013990C0BEF180043860A /* JSStyleSheet.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSStyleSheet.h; sourceTree = "<group>"; };
 		BCE3BEC00D222B1D007E06E4 /* TagNodeList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TagNodeList.cpp; sourceTree = "<group>"; };
@@ -8236,10 +8240,8 @@
 				6565814B09D13043000E61D7 /* HTMLEntityNames.c */,
 				A8D06B380A265DCD005E7203 /* HTMLNames.cpp */,
 				A8D06B370A265DCD005E7203 /* HTMLNames.h */,
-				BCD9C2C40C17B6EC005C90A2 /* JSDOMExceptionConstructor.lut.h */,
 				BCA3793E0D1647E000B793D6 /* JSLocation.lut.h */,
 				656581DA09D1508D000E61D7 /* kjs_css.lut.h */,
-				656581DC09D1508D000E61D7 /* kjs_events.lut.h */,
 				656581DE09D1508D000E61D7 /* kjs_navigator.lut.h */,
 				656581E109D1508D000E61D7 /* kjs_window.lut.h */,
 				656581E609D1508D000E61D7 /* SVGElementFactory.cpp */,
@@ -10503,6 +10505,8 @@
 				93F9B79F0BA6032600854064 /* JSCDATASection.h */,
 				65DF31DF09D1CC60000BE325 /* JSCharacterData.cpp */,
 				65DF31E009D1CC60000BE325 /* JSCharacterData.h */,
+				BCA83E4D0D7CE1E9003421A8 /* JSClipboard.cpp */,
+				BCA83E4E0D7CE1E9003421A8 /* JSClipboard.h */,
 				93F9B6DE0BA0FB7200854064 /* JSComment.cpp */,
 				93F9B6DF0BA0FB7200854064 /* JSComment.h */,
 				659DDC8009E198BA001BF3C6 /* JSDocument.cpp */,
@@ -11521,9 +11525,10 @@
 		BC4EDEF70C08F414007EDD49 /* Custom */ = {
 			isa = PBXGroup;
 			children = (
-				A766F3520D6BDE3500ABDDB3 /* JSCanvasPixelArrayCustom.cpp */,
 				BC2ED6BB0C6BD2F000920BFF /* JSAttrCustom.cpp */,
+				A766F3520D6BDE3500ABDDB3 /* JSCanvasPixelArrayCustom.cpp */,
 				1A9EF4560A1B957D00332B63 /* JSCanvasRenderingContext2DCustom.cpp */,
+				BCA83E510D7CE205003421A8 /* JSClipboardCustom.cpp */,
 				BC46C1ED0C0DDBDF0020CFC3 /* JSCSSRuleCustom.cpp */,
 				BC5825F20C0B89380053F1B5 /* JSCSSStyleDeclarationCustom.cpp */,
 				BC20FB7E0C0E8E6C00D1447F /* JSCSSValueCustom.cpp */,
@@ -12195,6 +12200,7 @@
 				BC904B730D10998F00680D32 /* ClassNodeList.h */,
 				A784941A0B5FE507001E237A /* Clipboard.cpp */,
 				85031B280A44EFC700F992E0 /* Clipboard.h */,
+				BCA83E360D7CDC4E003421A8 /* Clipboard.idl */,
 				4B8AF4A90B1CE02B00687690 /* ClipboardAccessPolicy.h */,
 				85031B290A44EFC700F992E0 /* ClipboardEvent.cpp */,
 				85031B2A0A44EFC700F992E0 /* ClipboardEvent.h */,
@@ -13405,7 +13411,6 @@
 				51EC926A0CE90DD400F90308 /* JSCustomSQLTransactionErrorCallback.h in Headers */,
 				1A3417C90CECFF250049CBDE /* JSCustomVoidCallback.h in Headers */,
 				E10B937C0B73C00A003ED890 /* JSCustomXPathNSResolver.h in Headers */,
-				BCD9C2C60C17B6EC005C90A2 /* JSDOMExceptionConstructor.lut.h in Headers */,
 				65DF31F809D1CC60000BE325 /* JSDOMImplementation.h in Headers */,
 				1ACE53E00A8D18810022947D /* JSDOMParser.h in Headers */,
 				BC5A86B60C3367E800EEA649 /* JSDOMSelection.h in Headers */,
@@ -14157,7 +14162,6 @@
 				656581F109D1508D000E61D7 /* kjs_css.lut.h in Headers */,
 				93B70D6809EB0C7C009D8468 /* kjs_dom.h in Headers */,
 				93B70D6A09EB0C7C009D8468 /* kjs_events.h in Headers */,
-				656581F309D1508D000E61D7 /* kjs_events.lut.h in Headers */,
 				93B70D6C09EB0C7C009D8468 /* kjs_html.h in Headers */,
 				93B70D6E09EB0C7C009D8468 /* kjs_navigator.h in Headers */,
 				656581F509D1508D000E61D7 /* kjs_navigator.lut.h in Headers */,
@@ -14229,6 +14233,7 @@
 				1AF3264A0D78B5530068F0C4 /* WebCoreScriptDebugger.h in Headers */,
 				1AF326780D78B9440068F0C4 /* AXObjectCache.h in Headers */,
 				1AF3267B0D78B94E0068F0C4 /* GlobalHistory.h in Headers */,
+				BCA83E500D7CE1E9003421A8 /* JSClipboard.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -14343,6 +14348,7 @@
 				1AB1AE7B0C051FDE00139F4F /* zoomOutCursor.png in Resources */,
 				A77979180D6B9D0C003851B9 /* CanvasPixelArray.idl in Resources */,
 				A779791B0D6B9D0C003851B9 /* ImageData.idl in Resources */,
+				BCA83E370D7CDC4E003421A8 /* Clipboard.idl in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -15824,6 +15830,8 @@
 				1AF326470D78B5530068F0C4 /* GlobalHistoryMac.mm in Sources */,
 				1AF326490D78B5530068F0C4 /* WebCoreAXObject.mm in Sources */,
 				1AF3264B0D78B5530068F0C4 /* WebCoreScriptDebugger.mm in Sources */,
+				BCA83E4F0D7CE1E9003421A8 /* JSClipboard.cpp in Sources */,
+				BCA83E520D7CE205003421A8 /* JSClipboardCustom.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
