@@ -2,6 +2,15 @@
 
         Reviewed by Adam.
 
+        - remove WebCoreFrameBridge reapplyStyles method
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView reapplyStyles]): Moved code to reapply styles here from the bridge.
+
+2008-03-04  Darin Adler  <darin@apple.com>
+
+        Reviewed by Adam.
+
         - eliminate WebCoreFrameBridge createFrameViewWithNSView
 
         * WebCoreSupport/WebFrameLoaderClient.mm:

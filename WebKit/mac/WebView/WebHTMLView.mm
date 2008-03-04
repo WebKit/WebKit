@@ -2681,18 +2681,21 @@ static void _updateFocusedAndActiveStateTimerCallback(CFRunLoopTimerRef timer, v
 
 - (void)reapplyStyles
 {
-    if (!_private->needsToApplyStyles) {
+    if (!_private->needsToApplyStyles)
         return;
-    }
     
-#ifdef _KWQ_TIMING        
+#ifdef LOG_TIMES
     double start = CFAbsoluteTimeGetCurrent();
 #endif
 
-    [[self _bridge] reapplyStylesForDeviceType:
-        _private->printing ? WebCoreDevicePrinter : WebCoreDeviceScreen];
+    Frame* coreFrame = core([self _frame]);
+    if (FrameView* coreView = coreFrame->view())
+        coreView->setMediaType(_private->printing ? "print" : "screen");
+    if (Document* document = coreFrame->document())
+        document->setPrinting(_private->printing);
+    coreFrame->reapplyStyles();
     
-#ifdef _KWQ_TIMING        
+#ifdef LOG_TIMES        
     double thisTime = CFAbsoluteTimeGetCurrent() - start;
     LOG(Timing, "%s apply style seconds = %f", [self URL], thisTime);
 #endif
@@ -2709,7 +2712,7 @@ static void _updateFocusedAndActiveStateTimerCallback(CFRunLoopTimerRef timer, v
     if (!_private->needsLayout && ![[self _bridge] needsLayout])
         return;
 
-#ifdef _KWQ_TIMING        
+#ifdef LOG_TIMES        
     double start = CFAbsoluteTimeGetCurrent();
 #endif
 
@@ -2725,7 +2728,7 @@ static void _updateFocusedAndActiveStateTimerCallback(CFRunLoopTimerRef timer, v
     if (!_private->printing)
         _private->lastLayoutSize = [(NSClipView *)[self superview] documentVisibleRect].size;
 
-#ifdef _KWQ_TIMING        
+#ifdef LOG_TIMES        
     double thisTime = CFAbsoluteTimeGetCurrent() - start;
     LOG(Timing, "%s layout seconds = %f", [self URL], thisTime);
 #endif
@@ -2867,7 +2870,7 @@ static void _updateFocusedAndActiveStateTimerCallback(CFRunLoopTimerRef timer, v
     if (subviewsWereSetAside)
         [self _restoreSubviews];
 
-#ifdef _KWQ_TIMING
+#ifdef LOG_TIMES
     double start = CFAbsoluteTimeGetCurrent();
 #endif
 
@@ -2897,7 +2900,7 @@ static void _updateFocusedAndActiveStateTimerCallback(CFRunLoopTimerRef timer, v
         for (int i = 0; i < count; ++i)
             [self drawSingleRect:rects[i]];
 
-#ifdef _KWQ_TIMING
+#ifdef LOG_TIMES
     double thisTime = CFAbsoluteTimeGetCurrent() - start;
     LOG(Timing, "%s draw seconds = %f", widget->part()->baseURL().URL().latin1(), thisTime);
 #endif

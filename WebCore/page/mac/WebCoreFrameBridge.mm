@@ -363,16 +363,6 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
     return [[[NSString alloc] initWithCharactersNoCopy:buf length:length freeWhenDone:YES] autorelease];
 }
 
-- (void)reapplyStylesForDeviceType:(WebCoreDeviceType)deviceType
-{
-    if (m_frame->view())
-        m_frame->view()->setMediaType(deviceType == WebCoreDeviceScreen ? "screen" : "print");
-    Document *doc = m_frame->document();
-    if (doc)
-        doc->setPrinting(deviceType == WebCoreDevicePrinter);
-    m_frame->reapplyStyles();
-}
-
 - (void)forceLayoutAdjustingViewSize:(BOOL)flag
 {
     m_frame->forceLayout(!flag);

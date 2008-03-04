@@ -2,6 +2,17 @@
 
         Reviewed by Adam.
 
+        - remove WebCoreFrameBridge reapplyStyles method
+
+        * WebCore.base.exp: Added exports.
+        * page/mac/WebCoreFrameBridge.h: Removed WebCoreDeviceType and
+        reapplyStylesForDeviceType: method.
+        * page/mac/WebCoreFrameBridge.mm: Ditto.
+
+2008-03-04  Darin Adler  <darin@apple.com>
+
+        Reviewed by Adam.
+
         - eliminate WebCoreFrameBridge createFrameViewWithNSView
 
         * WebCore.base.exp: Added some more exports.

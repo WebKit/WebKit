@@ -51,11 +51,6 @@ namespace WebCore {
 
 @protocol WebCoreRenderTreeCopier;
 
-enum WebCoreDeviceType {
-    WebCoreDeviceScreen,
-    WebCoreDevicePrinter
-};
-
 @protocol WebCoreOpenPanelResultListener <NSObject>
 - (void)chooseFilename:(NSString *)fileName;
 - (void)cancel;
@@ -89,7 +84,6 @@ enum WebCoreDeviceType {
 
 - (NSURL *)baseURL;
 
-- (void)reapplyStylesForDeviceType:(WebCoreDeviceType)deviceType;
 - (void)forceLayoutAdjustingViewSize:(BOOL)adjustSizeFlag;
 - (void)forceLayoutWithMinimumPageWidth:(float)minPageWidth maximumPageWidth:(float)maxPageWidth adjustingViewSize:(BOOL)adjustSizeFlag;
 - (void)sendScrollEvent;
