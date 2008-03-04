@@ -1,3 +1,10 @@
+2008-03-04  Adam Roben  <aroben@apple.com>
+
+        Fix an uninitialized value warning in CodeGeneratorJS.pm
+
+        * bindings/scripts/CodeGeneratorJS.pm: Remove reference to
+        non-existent $maybeOkParam (this was removed in r30753).
+
 2008-03-04  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Darin Adler.
