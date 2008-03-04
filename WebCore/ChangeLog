@@ -1,3 +1,13 @@
+2008-03-04  Anders Carlsson  <andersca@apple.com>
+
+        Mac build fix. Neither me, Sam nor Adam know why we need to do this though :(
+
+        * bindings/js/kjs_proxy.cpp:
+        (WebCore::KJSProxy::attachDebugger):
+        * page/Page.cpp:
+        (WebCore::Page::setDebuggerForAllPages):
+        (WebCore::Page::setDebugger):
+
 2008-03-04  Adam Roben  <aroben@apple.com>
 
         Make it possible to set a KJS::Debugger on all Frames in a Page and

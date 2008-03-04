@@ -47,8 +47,6 @@
 #include <kjs/JSLock.h>
 #include <wtf/HashMap.h>
 
-using namespace KJS;
-
 namespace WebCore {
 
 static HashSet<Page*>* allPages;
@@ -362,7 +360,7 @@ const String& Page::userStyleSheet() const
     return m_userStyleSheet;
 }
 
-void Page::setDebuggerForAllPages(Debugger* debugger)
+void Page::setDebuggerForAllPages(KJS::Debugger* debugger)
 {
     ASSERT(allPages);
 
@@ -371,7 +369,7 @@ void Page::setDebuggerForAllPages(Debugger* debugger)
         (*it)->setDebugger(debugger);
 }
 
-void Page::setDebugger(Debugger* debugger)
+void Page::setDebugger(KJS::Debugger* debugger)
 {
     if (m_debugger == debugger)
         return;

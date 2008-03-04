@@ -198,14 +198,14 @@ bool KJSProxy::isEnabled()
     return (settings && settings->isJavaScriptEnabled());
 }
 
-void KJSProxy::attachDebugger(Debugger* debugger)
+void KJSProxy::attachDebugger(KJS::Debugger* debugger)
 {
     if (!m_globalObject)
         return;
 
     if (debugger)
         debugger->attach(m_globalObject);
-    else if (Debugger* currentDebugger = m_globalObject->debugger())
+    else if (KJS::Debugger* currentDebugger = m_globalObject->debugger())
         currentDebugger->detach(m_globalObject);
 }
 
