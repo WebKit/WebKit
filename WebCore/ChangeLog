@@ -1,3 +1,12 @@
+2008-03-04  Adam Roben  <aroben@apple.com>
+
+        Win/Qt/GTK+/wx build fix after r30740
+
+        * editing/Editor.cpp: Added missing #include.
+        * page/qt/FrameQt.cpp: Removed Frame::dashboardRegionsChanged.
+        * page/win/FrameWin.cpp: Ditto.
+        * platform/wx/TemporaryLinkStubs.cpp: Ditto.
+
 2008-03-04  Alp Toker  <alp@atoker.com>
 
         GTK+ build fix for breakage introduced in r30740.

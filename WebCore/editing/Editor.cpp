@@ -35,6 +35,7 @@
 #include "ClipboardEvent.h"
 #include "DeleteButtonController.h"
 #include "DeleteSelectionCommand.h"
+#include "DocLoader.h"
 #include "DocumentFragment.h"
 #include "EditorClient.h"
 #include "EventHandler.h"
