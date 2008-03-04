@@ -1,3 +1,16 @@
+2008-03-04  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Beth.
+
+        Fix for <rdar://problem/5779718> focus() does not work for anchor elements with no content
+
+        If an anchor has zero size, don't exclude it from being focusable from JS, just exclude it
+        from being keyboard focusable (using the tab key).
+
+        * html/HTMLAnchorElement.cpp:
+        (WebCore::HTMLAnchorElement::isFocusable):
+        (WebCore::HTMLAnchorElement::isKeyboardFocusable):
+
 2008-03-04  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Darin Adler.

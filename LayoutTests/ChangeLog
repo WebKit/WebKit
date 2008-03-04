@@ -1,3 +1,12 @@
+2008-03-04  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Beth.
+
+        Test for <rdar://problem/5779718> focus() does not work for anchor elements with no content
+
+        * fast/events/anchor-empty-focus-expected.txt: Added.
+        * fast/events/anchor-empty-focus.html: Added.
+
 2008-03-04  Dan Bernstein  <mitz@apple.com>
 
         - test for <rdar://problem/5622336> Burmese text does not render on http://www.myanmarbible.com/bible/Judson/html/index.html

@@ -83,6 +83,25 @@ bool HTMLAnchorElement::isFocusable() const
     if (!(m_isLink && renderer() && renderer()->style()->visibility() == VISIBLE))
         return false;
 
+    return true;
+}
+
+bool HTMLAnchorElement::isMouseFocusable() const
+{
+    return false;
+}
+
+bool HTMLAnchorElement::isKeyboardFocusable(KeyboardEvent* event) const
+{
+    if (!isFocusable())
+        return false;
+    
+    if (!document()->frame())
+        return false;
+
+    if (!document()->frame()->eventHandler()->tabsToLinks(event))
+        return false;
+
     // Before calling absoluteRects, check for the common case where the renderer
     // or one of the continuations is non-empty, since this is a faster check and
     // almost always returns true.
@@ -100,22 +119,6 @@ bool HTMLAnchorElement::isFocusable() const
             return true;
 
     return false;
-}
-
-bool HTMLAnchorElement::isMouseFocusable() const
-{
-    return false;
-}
-
-bool HTMLAnchorElement::isKeyboardFocusable(KeyboardEvent* event) const
-{
-    if (!isFocusable())
-        return false;
-    
-    if (!document()->frame())
-        return false;
-
-    return document()->frame()->eventHandler()->tabsToLinks(event);
 }
 
 void HTMLAnchorElement::defaultEventHandler(Event* evt)
