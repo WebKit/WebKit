@@ -1,5 +1,14 @@
 2008-03-04  Alp Toker  <alp@atoker.com>
 
+        GTK+ build fix for breakage introduced in r30740.
+
+        Remove Frame::dashboardRegionsChanged(). There's now a default
+        implementation at ChromeClient::dashboardRegionsChanged().
+
+        * page/gtk/FrameGtk.cpp:
+
+2008-03-04  Alp Toker  <alp@atoker.com>
+
         GTK+ build fix suggested by aroben. Remove an unused Mac-specific
         included introduced in r30740.
 
