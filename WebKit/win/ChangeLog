@@ -1,5 +1,20 @@
 2008-03-04  Adam Roben  <aroben@apple.com>
 
+        Change WebView's string-finding methods to call through to Page
+
+        These methods were added to Page back in r28878 (and the
+        implementation was copied from WebView!) but we never switched over to
+        using them.
+
+        Reviewed by Sam.
+
+        * WebView.cpp:
+        (WebView::searchFor): Call through to Page::findString.
+        (WebView::markAllMatchesForText): Call through to Page.
+        (WebView::unmarkAllTextMatches): Ditto.
+
+2008-03-04  Adam Roben  <aroben@apple.com>
+
         Actually pause the process while Drosera is at a breakpoint
 
         WebScriptDebugServer::suspendProcessIfPaused is supposed to pause the

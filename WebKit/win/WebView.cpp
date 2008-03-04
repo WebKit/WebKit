@@ -2672,29 +2672,7 @@ HRESULT STDMETHODCALLTYPE WebView::searchFor(
     if (!str || !SysStringLen(str))
         return E_INVALIDARG;
 
-    String search(str, SysStringLen(str));
-
-
-    WebCore::Frame* frame = m_page->focusController()->focusedOrMainFrame();
-    WebCore::Frame* startFrame = frame;
-    do {
-        *found = frame->findString(search, !!forward, !!caseFlag, false, true);
-        if (*found) {
-            if (frame != startFrame)
-                startFrame->selectionController()->clear();
-            m_page->focusController()->setFocusedFrame(frame);
-            return S_OK;
-        }
-        frame = incrementFrame(frame, !!forward, !!wrapFlag);
-    } while (frame && frame != startFrame);
-
-    // Search contents of startFrame, on the other side of the selection that we did earlier.
-    // We cheat a bit and just research with wrap on
-    if (wrapFlag && !startFrame->selectionController()->isNone()) {
-        *found = startFrame->findString(search, !!forward, !!caseFlag, true, true);
-        m_page->focusController()->setFocusedFrame(frame);
-    }
-
+    *found = m_page->findString(String(str, SysStringLen(str)), caseFlag ? TextCaseSensitive : TextCaseInsensitive, forward ? FindDirectionForward : FindDirectionBackward, wrapFlag);
     return S_OK;
 }
 
@@ -2738,18 +2716,8 @@ HRESULT STDMETHODCALLTYPE WebView::markAllMatchesForText(
     if (!str || !SysStringLen(str))
         return E_INVALIDARG;
 
-    String search(str, SysStringLen(str));
-    *matches = 0;
-
-    WebCore::Frame* frame = m_page->mainFrame();
-    do {
-        frame->setMarkedTextMatchesAreHighlighted(!!highlight);
-        *matches += frame->markAllMatchesForText(search, !!caseSensitive, (limit == 0)? 0 : (limit - *matches));
-        frame = incrementFrame(frame, true, false);
-    } while (frame);
-
+    *matches = m_page->markAllMatchesForText(String(str, SysStringLen(str)), caseSensitive ? TextCaseSensitive : TextCaseInsensitive, highlight, limit);
     return S_OK;
-
 }
 
 HRESULT STDMETHODCALLTYPE WebView::unmarkAllTextMatches()
@@ -2757,14 +2725,7 @@ HRESULT STDMETHODCALLTYPE WebView::unmarkAllTextMatches()
     if (!m_page || !m_page->mainFrame())
         return E_UNEXPECTED;
 
-    WebCore::Frame* frame = m_page->mainFrame();
-    do {
-        if (Document* document = frame->document())
-            document->removeMarkers(DocumentMarker::TextMatch);
-        frame = incrementFrame(frame, true, false);
-    } while (frame);
-
-
+    m_page->unmarkAllTextMatches();
     return S_OK;
 }
 
