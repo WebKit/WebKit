@@ -1430,9 +1430,6 @@ Widget* WebFrameLoaderClient::createJavaAppletWidget(const IntSize& size, Elemen
                 [values addObject:[NSString stringWithFormat:@"%d", size.width()]];
             }
             view = pluginView(m_webFrame.get(), (WebPluginPackage *)pluginPackage, names, values, baseURL, kit(element), NO);
-            [names release];
-            [values release];
-            
         } 
 #ifndef __LP64__
         else if ([pluginPackage isKindOfClass:[WebNetscapePluginPackage class]]) {

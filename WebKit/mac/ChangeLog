@@ -1,3 +1,12 @@
+2008-03-04  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Darin.
+
+        Fix crash that happens when trying to load a page with a Java applet.
+        
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        Don't release the names and values array - the kit method returns an autoreleased array.
+
 2008-03-04  Darin Adler  <darin@apple.com>
 
         Reviewed by Adam.
