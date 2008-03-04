@@ -29,6 +29,7 @@
 #import <WebCore/WebCoreFrameBridge.h>
 
 namespace WebCore {
+    class HTMLFrameOwnerElement;
     class Page;
 }
 
@@ -37,45 +38,19 @@ namespace WebCore {
 
 @protocol WebOpenPanelResultListener;
 
-@interface WebFrameBridge : WebCoreFrameBridge <WebCoreFrameBridge>
-{
+@interface WebFrameBridge : WebCoreFrameBridge <WebCoreFrameBridge> {
 @public
     WebFrame *_frame;
 
 @private
     WebCore::KeyboardUIMode _keyboardUIMode;
     BOOL _keyboardUIModeAccessed;
-    BOOL _doingClientRedirect;
-    BOOL _haveUndoRedoOperations;
 }
 
-- (id)initMainFrameWithPage:(WebCore::Page*)page frameName:(NSString *)name frameView:(WebFrameView *)frameView;
+- (id)initMainFrameWithPage:(WebCore::Page*)page frameName:(const WebCore::String&)name frameView:(WebFrameView *)frameView;
+- (id)initSubframeWithOwnerElement:(WebCore::HTMLFrameOwnerElement*)ownerElement frameName:(const WebCore::String&)name frameView:(WebFrameView *)frameView;
 - (void)close;
 
 - (WebFrame *)webFrame;
-
-// The following methods can all move off the bridge; they're used on the WebKit side only.
-
-- (NSView *)viewForPluginWithFrame:(NSRect)frame
-                               URL:(NSURL *)URL
-                    attributeNames:(NSArray *)attributeNames
-                   attributeValues:(NSArray *)attributeValues
-                          MIMEType:(NSString *)MIMEType
-                        DOMElement:(DOMElement *)element
-                      loadManually:(BOOL)loadManually;
-- (NSView *)viewForJavaAppletWithFrame:(NSRect)frame
-                        attributeNames:(NSArray *)attributeNames
-                       attributeValues:(NSArray *)attributeValues
-                               baseURL:(NSURL *)baseURL
-                            DOMElement:(DOMElement *)element;
-
-- (WebCore::Frame*)createChildFrameNamed:(NSString *)frameName withURL:(NSURL *)URL referrer:(const WebCore::String&)referrer
-    ownerElement:(WebCore::HTMLFrameOwnerElement *)ownerElement allowsScrolling:(BOOL)allowsScrolling marginWidth:(int)width marginHeight:(int)height;
-
-- (void)redirectDataToPlugin:(NSView *)pluginView;
-
-- (WebCore::ObjectContentType)determineObjectFromMIMEType:(NSString*)MIMEType URL:(NSURL*)URL;
-
-- (void)windowObjectCleared;
 
 @end

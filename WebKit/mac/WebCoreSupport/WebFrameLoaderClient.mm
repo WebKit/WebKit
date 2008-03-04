@@ -38,7 +38,6 @@
 #import "WebCachedPagePlatformData.h"
 #import "WebChromeClient.h"
 #import "WebDataSourceInternal.h"
-#import "WebPolicyDelegatePrivate.h"
 #import "WebDocumentInternal.h"
 #import "WebDocumentLoaderMac.h"
 #import "WebDownloadInternal.h"
@@ -49,8 +48,8 @@
 #import "WebFrameInternal.h"
 #import "WebFrameLoadDelegate.h"
 #import "WebFrameViewInternal.h"
-#import "WebHTMLRepresentation.h"
-#import "WebHTMLView.h"
+#import "WebHTMLRepresentationPrivate.h"
+#import "WebHTMLViewInternal.h"
 #import "WebHistoryItemInternal.h"
 #import "WebHistoryItemPrivate.h"
 #import "WebHistoryPrivate.h"
@@ -59,8 +58,15 @@
 #import "WebKitLogging.h"
 #import "WebKitNSStringExtras.h"
 #import "WebNSURLExtras.h"
+#import "WebNetscapePluginEmbeddedView.h"
+#import "WebNetscapePluginPackage.h"
+#import "WebNullPluginView.h"
 #import "WebPanelAuthenticationHandler.h"
+#import "WebPluginController.h"
+#import "WebPluginPackage.h"
+#import "WebPluginViewFactoryPrivate.h"
 #import "WebPolicyDelegate.h"
+#import "WebPolicyDelegatePrivate.h"
 #import "WebPreferences.h"
 #import "WebResourceLoadDelegate.h"
 #import "WebResourcePrivate.h"
@@ -68,6 +74,7 @@
 #import "WebUIDelegate.h"
 #import "WebUIDelegatePrivate.h"
 #import "WebViewInternal.h"
+#import <WebKitSystemInterface.h>
 #import <WebCore/AuthenticationMac.h>
 #import <WebCore/BlockExceptions.h>
 #import <WebCore/CachedPage.h>
@@ -76,15 +83,16 @@
 #import <WebCore/DocumentLoader.h>
 #import <WebCore/EventHandler.h>
 #import <WebCore/FormState.h>
+#import <WebCore/Frame.h>
 #import <WebCore/FrameLoader.h>
 #import <WebCore/FrameLoaderTypes.h>
-#import <WebCore/Frame.h>
 #import <WebCore/FrameTree.h>
+#import <WebCore/HTMLFormElement.h>
 #import <WebCore/HistoryItem.h>
 #import <WebCore/HitTestResult.h>
-#import <WebCore/HTMLFormElement.h>
 #import <WebCore/IconDatabase.h>
 #import <WebCore/LoaderNSURLExtras.h>
+#import <WebCore/MIMETypeRegistry.h>
 #import <WebCore/MouseEvent.h>
 #import <WebCore/Page.h>
 #import <WebCore/PlatformString.h>
@@ -92,9 +100,9 @@
 #import <WebCore/ResourceHandle.h>
 #import <WebCore/ResourceLoader.h>
 #import <WebCore/ResourceRequest.h>
+#import <WebCore/SharedBuffer.h>
 #import <WebCore/WebCoreFrameBridge.h>
 #import <WebCore/WebCoreObjCExtras.h>
-#import <WebCore/SharedBuffer.h>
 #import <WebCore/Widget.h>
 #import <WebKit/DOMElement.h>
 #import <WebKit/DOMHTMLFormElement.h>
@@ -104,16 +112,16 @@ using namespace WebCore;
 
 // SPI for NSURLDownload
 // Needed for <rdar://problem/5121850> 
-@interface NSURLDownload (NSURLDownloadPrivate)
+@interface NSURLDownload (WebNSURLDownloadDetails)
 - (void)_setOriginatingURL:(NSURL *)originatingURL;
 @end
 
-@interface WebHistoryItem (WebHistoryItemPrivate)
-- (BOOL)_wasUserGesture;
-@end
+// For backwards compatibility with older WebKit plug-ins.
+NSString *WebPluginBaseURLKey = @"WebPluginBaseURL";
+NSString *WebPluginAttributesKey = @"WebPluginAttributes";
+NSString *WebPluginContainerKey = @"WebPluginContainer";
 
-@interface WebFramePolicyListener : NSObject <WebPolicyDecisionListener, WebFormSubmissionListener>
-{
+@interface WebFramePolicyListener : NSObject <WebPolicyDecisionListener, WebFormSubmissionListener> {
     Frame* m_frame;
 }
 - (id)initWithWebCoreFrame:(Frame*)frame;
@@ -146,7 +154,6 @@ bool WebFrameLoaderClient::hasFrameView() const
 {
     return m_webFrame->_private->webFrameView != nil;
 }
-
 
 void WebFrameLoaderClient::makeRepresentation(DocumentLoader* loader)
 {
@@ -232,9 +239,9 @@ void WebFrameLoaderClient::setOriginalURLForDownload(WebDownload *download, cons
         WebBackForwardList *history = [webView backForwardList];
         int backListCount = [history backListCount];
         for (int backIndex = 0; backIndex <= backListCount && !originalURL; backIndex++) {
-            WebHistoryItem *currentItem = [history itemAtIndex:-backIndex];
-            if (![currentItem respondsToSelector:@selector(_wasUserGesture)] || [currentItem _wasUserGesture])
-                originalURL = [currentItem URL];
+            // FIXME: At one point we had code here to check a "was user gesture" flag.
+            // Do we need to restore that logic?
+            originalURL = [[history itemAtIndex:-backIndex] URL];
         }
     }
 
@@ -1101,33 +1108,101 @@ bool WebFrameLoaderClient::canCachePage() const
 }
 
 PassRefPtr<Frame> WebFrameLoaderClient::createFrame(const KURL& url, const String& name, HTMLFrameOwnerElement* ownerElement,
-                                         const String& referrer, bool allowsScrolling, int marginWidth, int marginHeight)
+    const String& referrer, bool allowsScrolling, int marginWidth, int marginHeight)
 {
-    WebFrameBridge* bridge = m_webFrame->_private->bridge;
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
     
-    return [bridge createChildFrameNamed:name
-                   withURL:url
-                   referrer:referrer 
-                   ownerElement:ownerElement
-                   allowsScrolling:allowsScrolling
-                   marginWidth:marginWidth
-                   marginHeight:marginHeight];
+    ASSERT(m_webFrame);
+    
+    WebFrameView *childView = [[WebFrameView alloc] init];
+    [childView setAllowsScrolling:allowsScrolling];
+    [childView _setMarginWidth:marginWidth];
+    [childView _setMarginHeight:marginHeight];
+
+    WebFrameBridge *newBridge = [[WebFrameBridge alloc] initSubframeWithOwnerElement:ownerElement frameName:name frameView:childView];
+    [childView release];
+
+    if (!newBridge)
+        return 0;
+
+    [m_webFrame.get() _addChild:[newBridge webFrame]];
+    [newBridge release];
+
+    RefPtr<Frame> newFrame = [newBridge _frame];
+    
+    [m_webFrame.get() _loadURL:url referrer:referrer intoChild:kit(newFrame.get())];
+
+    // The frame's onload handler may have removed it from the document.
+    if (!newFrame->tree()->parent())
+        return 0;
+
+    return newFrame.get();
 
     END_BLOCK_OBJC_EXCEPTIONS;
+
     return 0;
 }
 
 ObjectContentType WebFrameLoaderClient::objectContentType(const KURL& url, const String& mimeType)
 {
-    WebFrameBridge* bridge = m_webFrame->_private->bridge;
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    return [bridge determineObjectFromMIMEType:mimeType URL:url];
+
+    // This is a quirk that ensures Tiger Mail's WebKit plug-in will load during layout
+    // and not attach time. (5520541)
+    static BOOL isTigerMail = WKAppVersionCheckLessThan(@"com.apple.mail", -1, 3.0);
+    if (isTigerMail && mimeType == "application/x-apple-msg-attachment")
+        return ObjectContentNetscapePlugin;
+
+    String type = mimeType;
+
+    if (type.isEmpty()) {
+        // Try to guess the MIME type based off the extension.
+        NSURL *URL = url;
+        NSString *extension = [[URL path] pathExtension];
+        if ([extension length] > 0) {
+            type = WKGetMIMETypeForExtension(extension);
+            if (type.isEmpty()) {
+                // If no MIME type is specified, use a plug-in if we have one that can handle the extension.
+                if (WebBasePluginPackage *package = [getWebView(m_webFrame.get()) _pluginForExtension:extension]) {
+                    if ([package isKindOfClass:[WebPluginPackage class]]) 
+                        return ObjectContentOtherPlugin;
+#ifndef __LP64__
+                    else {
+                        ASSERT([package isKindOfClass:[WebNetscapePluginPackage class]]);
+                        return ObjectContentNetscapePlugin;
+                    }
+#endif
+                }
+            }
+        }
+    }
+
+    if (type.isEmpty())
+        return ObjectContentFrame; // Go ahead and hope that we can display the content.
+
+    if (MIMETypeRegistry::isSupportedImageMIMEType(type))
+        return ObjectContentImage;
+
+    if (WebBasePluginPackage *package = [getWebView(m_webFrame.get()) _pluginForMIMEType:type]) {
+#ifndef __LP64__
+        if ([package isKindOfClass:[WebNetscapePluginPackage class]])
+            return ObjectContentNetscapePlugin;
+#endif
+        ASSERT([package isKindOfClass:[WebPluginPackage class]]);
+        return ObjectContentOtherPlugin;
+    }
+
+    if ([WebFrameView _viewClassForMIMEType:type])
+        return ObjectContentFrame;
+    
+    return ObjectContentNone;
+
     END_BLOCK_OBJC_EXCEPTIONS;
+
     return ObjectContentNone;
 }
 
-static NSArray* nsArray(const Vector<String>& vector)
+static NSMutableArray* kit(const Vector<String>& vector)
 {
     unsigned len = vector.size();
     NSMutableArray* array = [NSMutableArray arrayWithCapacity:len];
@@ -1136,19 +1211,156 @@ static NSArray* nsArray(const Vector<String>& vector)
     return array;
 }
 
-Widget* WebFrameLoaderClient::createPlugin(const IntSize& size, Element* element, const KURL& url, const Vector<String>& paramNames,
-                                           const Vector<String>& paramValues, const String& mimeType, bool loadManually)
+static String parameterValue(const Vector<String>& paramNames, const Vector<String>& paramValues, const String& name)
 {
-    WebFrameBridge* bridge = m_webFrame->_private->bridge;
+    size_t size = paramNames.size();
+    ASSERT(size == paramValues.size());
+    for (size_t i = 0; i < size; ++i) {
+        if (equalIgnoringCase(paramNames[i], name))
+            return paramValues[i];
+    }
+    return String();
+}
 
+static NSView *pluginView(WebFrame *frame, WebPluginPackage *pluginPackage,
+    NSArray *attributeNames, NSArray *attributeValues, NSURL *baseURL,
+    DOMElement *element, BOOL loadManually)
+{
+    WebHTMLView *docView = (WebHTMLView *)[[frame frameView] documentView];
+    ASSERT([docView isKindOfClass:[WebHTMLView class]]);
+        
+    WebPluginController *pluginController = [docView _pluginController];
+    
+    // Store attributes in a dictionary so they can be passed to WebPlugins.
+    NSMutableDictionary *attributes = [[NSMutableDictionary alloc] initWithObjects:attributeValues forKeys:attributeNames];
+    
+    [pluginPackage load];
+    Class viewFactory = [pluginPackage viewFactory];
+    
+    NSView *view = nil;
+    NSDictionary *arguments = nil;
+    
+    if ([viewFactory respondsToSelector:@selector(plugInViewWithArguments:)]) {
+        arguments = [NSDictionary dictionaryWithObjectsAndKeys:
+            baseURL, WebPlugInBaseURLKey,
+            attributes, WebPlugInAttributesKey,
+            pluginController, WebPlugInContainerKey,
+            [NSNumber numberWithInt:loadManually ? WebPlugInModeFull : WebPlugInModeEmbed], WebPlugInModeKey,
+            [NSNumber numberWithBool:!loadManually], WebPlugInShouldLoadMainResourceKey,
+            element, WebPlugInContainingElementKey,
+            nil];
+        LOG(Plugins, "arguments:\n%@", arguments);
+    } else if ([viewFactory respondsToSelector:@selector(pluginViewWithArguments:)]) {
+        arguments = [NSDictionary dictionaryWithObjectsAndKeys:
+            baseURL, WebPluginBaseURLKey,
+            attributes, WebPluginAttributesKey,
+            pluginController, WebPluginContainerKey,
+            element, WebPlugInContainingElementKey,
+            nil];
+        LOG(Plugins, "arguments:\n%@", arguments);
+    }
+
+    view = [WebPluginController plugInViewWithArguments:arguments fromPluginPackage:pluginPackage];
+    [attributes release];
+    return view;
+}
+
+Widget* WebFrameLoaderClient::createPlugin(const IntSize& size, Element* element, const KURL& url,
+    const Vector<String>& paramNames, const Vector<String>& paramValues, const String& mimeType, bool loadManually)
+{
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    return new Widget([bridge viewForPluginWithFrame:NSMakeRect(0, 0, size.width(), size.height())
-                                                 URL:url
-                                      attributeNames:nsArray(paramNames)
-                                     attributeValues:nsArray(paramValues)
-                                            MIMEType:mimeType
-                                          DOMElement:[DOMElement _wrapElement:element]
-                                        loadManually:loadManually]);
+
+    ASSERT(paramNames.size() == paramValues.size());
+
+    int errorCode = 0;
+
+    WebView *webView = getWebView(m_webFrame.get());
+    SEL selector = @selector(webView:plugInViewWithArguments:);
+    NSURL *URL = url;
+
+    if ([[webView UIDelegate] respondsToSelector:selector]) {
+        NSMutableDictionary *attributes = [[NSMutableDictionary alloc] initWithObjects:kit(paramNames) forKeys:kit(paramValues)];
+        NSDictionary *arguments = [[NSDictionary alloc] initWithObjectsAndKeys:
+            attributes, WebPlugInAttributesKey,
+            [NSNumber numberWithInt:loadManually ? WebPlugInModeFull : WebPlugInModeEmbed], WebPlugInModeKey,
+            [NSNumber numberWithBool:!loadManually], WebPlugInShouldLoadMainResourceKey,
+            element, WebPlugInContainingElementKey,
+            URL, WebPlugInBaseURLKey, // URL might be nil, so add it last
+            nil];
+
+        NSView *view = CallUIDelegate(webView, selector, arguments);
+
+        [attributes release];
+        [arguments release];
+
+        if (view)
+            return new Widget(view);
+    }
+
+    NSString *MIMEType;
+    WebBasePluginPackage *pluginPackage;
+    if (mimeType.isEmpty()) {
+        MIMEType = nil;
+        pluginPackage = nil;
+    } else {
+        MIMEType = mimeType;
+        pluginPackage = [webView _pluginForMIMEType:mimeType];
+    }
+    
+    NSString *extension = [[URL path] pathExtension];
+    if (!pluginPackage && [extension length] != 0) {
+        pluginPackage = [webView _pluginForExtension:extension];
+        if (pluginPackage) {
+            NSString *newMIMEType = [pluginPackage MIMETypeForExtension:extension];
+            if ([newMIMEType length] != 0)
+                MIMEType = newMIMEType;
+        }
+    }
+
+    NSView *view = nil;
+
+    Document* document = core(m_webFrame.get())->document();
+    NSURL *baseURL = document->baseURL();
+    if (pluginPackage) {
+        if ([pluginPackage isKindOfClass:[WebPluginPackage class]])
+            view = pluginView(m_webFrame.get(), (WebPluginPackage *)pluginPackage, kit(paramNames), kit(paramValues), baseURL, kit(element), loadManually);
+            
+#ifndef __LP64__
+        else if ([pluginPackage isKindOfClass:[WebNetscapePluginPackage class]]) {
+            WebNetscapePluginEmbeddedView *embeddedView = [[[WebNetscapePluginEmbeddedView alloc]
+                initWithFrame:NSMakeRect(0, 0, size.width(), size.height())
+                pluginPackage:(WebNetscapePluginPackage *)pluginPackage
+                URL:URL
+                baseURL:baseURL
+                MIMEType:MIMEType
+                attributeKeys:kit(paramNames)
+                attributeValues:kit(paramValues)
+                loadManually:loadManually
+                DOMElement:kit(element)] autorelease];
+            view = embeddedView;
+        } 
+#endif
+    } else
+        errorCode = WebKitErrorCannotFindPlugIn;
+
+    if (!errorCode && !view)
+        errorCode = WebKitErrorCannotLoadPlugIn;
+
+    if (errorCode) {
+        NSError *error = [[NSError alloc] _initWithPluginErrorCode:errorCode
+            contentURL:URL
+            pluginPageURL:document->completeURL(parseURL(parameterValue(paramNames, paramValues, "pluginspage")))
+            pluginName:[pluginPackage name]
+            MIMEType:MIMEType];
+        WebNullPluginView *nullView = [[[WebNullPluginView alloc] initWithFrame:NSMakeRect(0, 0, size.width(), size.height())
+            error:error DOMElement:kit(element)] autorelease];
+        view = nullView;
+        [error release];
+    }
+    
+    ASSERT(view);
+    return new Widget(view);
+
     END_BLOCK_OBJC_EXCEPTIONS;
 
     return 0;
@@ -1157,25 +1369,91 @@ Widget* WebFrameLoaderClient::createPlugin(const IntSize& size, Element* element
 void WebFrameLoaderClient::redirectDataToPlugin(Widget* pluginWidget)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    [m_webFrame->_private->bridge redirectDataToPlugin:pluginWidget->getView()];
+
+    WebHTMLRepresentation *representation = (WebHTMLRepresentation *)[[m_webFrame.get() _dataSource] representation];
+
+    NSView *pluginView = pluginWidget->getView();
+
+#ifndef __LP64__
+    if ([pluginView isKindOfClass:[WebNetscapePluginEmbeddedView class]])
+        [representation _redirectDataToManualLoader:(WebNetscapePluginEmbeddedView *)pluginView forPluginView:pluginView];
+    else {
+#else
+    {
+#endif
+        WebHTMLView *documentView = (WebHTMLView *)[[m_webFrame.get() frameView] documentView];
+        ASSERT([documentView isKindOfClass:[WebHTMLView class]]);
+        [representation _redirectDataToManualLoader:[documentView _pluginController] forPluginView:pluginView];
+    }
+
     END_BLOCK_OBJC_EXCEPTIONS;
 }
 
 Widget* WebFrameLoaderClient::createJavaAppletWidget(const IntSize& size, Element* element, const KURL& baseURL, 
-                                                              const Vector<String>& paramNames, const Vector<String>& paramValues)
+    const Vector<String>& paramNames, const Vector<String>& paramValues)
 {
-    Widget* result = new Widget;
-    
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    WebFrameBridge* bridge = m_webFrame->_private->bridge;
-    result->setView([bridge viewForJavaAppletWithFrame:NSMakeRect(0, 0, size.width(), size.height())
-                            attributeNames:nsArray(paramNames)
-                            attributeValues:nsArray(paramValues)
-                            baseURL:baseURL
-                            DOMElement:[DOMElement _wrapElement:element]]);    
+
+    NSView *view = nil;
+
+    NSString *MIMEType = @"application/x-java-applet";
+    
+    WebView *webView = getWebView(m_webFrame.get());
+
+    WebBasePluginPackage *pluginPackage = [webView _pluginForMIMEType:MIMEType];
+
+    if (pluginPackage) {
+        if ([pluginPackage isKindOfClass:[WebPluginPackage class]]) {
+            // For some reason, the Java plug-in requires that we pass the dimension of the plug-in as attributes.
+            NSMutableArray *names = kit(paramNames);
+            NSMutableArray *values = kit(paramValues);
+            if (parameterValue(paramNames, paramValues, "width").isNull()) {
+                [names addObject:@"width"];
+                [values addObject:[NSString stringWithFormat:@"%d", size.width()]];
+            }
+            if (parameterValue(paramNames, paramValues, "height").isNull()) {
+                [names addObject:@"height"];
+                [values addObject:[NSString stringWithFormat:@"%d", size.width()]];
+            }
+            view = pluginView(m_webFrame.get(), (WebPluginPackage *)pluginPackage, names, values, baseURL, kit(element), NO);
+            [names release];
+            [values release];
+            
+        } 
+#ifndef __LP64__
+        else if ([pluginPackage isKindOfClass:[WebNetscapePluginPackage class]]) {
+            view = [[[WebNetscapePluginEmbeddedView alloc] initWithFrame:NSMakeRect(0, 0, size.width(), size.height())
+                pluginPackage:(WebNetscapePluginPackage *)pluginPackage
+                URL:nil
+                baseURL:baseURL
+                MIMEType:MIMEType
+                attributeKeys:kit(paramNames)
+                attributeValues:kit(paramValues)
+                loadManually:NO
+                DOMElement:kit(element)] autorelease];
+        } else {
+            ASSERT_NOT_REACHED();
+        }
+#endif
+    }
+
+    if (!view) {
+        NSError *error = [[NSError alloc] _initWithPluginErrorCode:WebKitErrorJavaUnavailable
+            contentURL:nil
+            pluginPageURL:nil
+            pluginName:[pluginPackage name]
+            MIMEType:MIMEType];
+        view = [[[WebNullPluginView alloc] initWithFrame:NSMakeRect(0, 0, size.width(), size.height())
+            error:error DOMElement:kit(element)] autorelease];
+        [error release];
+    }
+
+    ASSERT(view);
+    return new Widget(view);
+
     END_BLOCK_OBJC_EXCEPTIONS;
     
-    return result;
+    return new Widget;
 }
 
 String WebFrameLoaderClient::overrideMediaType() const
@@ -1188,7 +1466,21 @@ String WebFrameLoaderClient::overrideMediaType() const
 
 void WebFrameLoaderClient::windowObjectCleared()
 {
-    [m_webFrame->_private->bridge windowObjectCleared];
+    Frame *frame = core(m_webFrame.get());
+    WebView *webView = getWebView(m_webFrame.get());
+    WebFrameLoadDelegateImplementationCache* implementations = WebViewGetFrameLoadDelegateImplementations(webView);
+    if (implementations->didClearWindowObjectForFrameFunc) {
+        CallFrameLoadDelegate(implementations->didClearWindowObjectForFrameFunc, webView, @selector(webView:didClearWindowObject:forFrame:),
+            frame->windowScriptObject(), m_webFrame.get());
+    } else if (implementations->windowScriptObjectAvailableFunc) {
+        CallFrameLoadDelegate(implementations->windowScriptObjectAvailableFunc, webView, @selector(webView:windowScriptObjectAvailable:),
+            frame->windowScriptObject());
+    }
+
+    if ([webView scriptDebugDelegate] || [WebScriptDebugServer listenerCount]) {
+        [m_webFrame.get() _detachScriptDebugger];
+        [m_webFrame.get() _attachScriptDebugger];
+    }
 }
 
 void WebFrameLoaderClient::registerForIconNotification(bool listen)

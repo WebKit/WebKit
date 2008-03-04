@@ -2,6 +2,31 @@
 
         Reviewed by Adam.
 
+        - move code from WebFrameBridge into WebFrameLoaderClient
+
+        * WebCoreSupport/WebFrameBridge.h: Removed unused fields, changed frame name parameters
+        to use WebCore::String instead of NSString, add initSubframeWithOwnerElement declaration,
+        removed viewForPluginWithFrame, viewForJavaAppletWithFrame, createChildFrameNamed,
+        redirectDataToPlugin, determineObjectFromMIMEType, and windowObjectCleared methods.
+        * WebCoreSupport/WebFrameBridge.mm:
+        (-[WebFrameBridge finishInitializingWithPage:frameName:WebCore::frameView:ownerElement:]):
+        Changed to use WebCore::String.
+        (-[WebFrameBridge initMainFrameWithPage:frameName:WebCore::frameView:]): Ditto.
+        (-[WebFrameBridge initSubframeWithOwnerElement:frameName:WebCore::frameView:]): Ditto.
+
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::setOriginalURLForDownload): Removed some dead code I found here
+        and added a FIXME.
+        (WebFrameLoaderClient::createFrame): Moved the code from WebFrameBridge here.
+        (WebFrameLoaderClient::objectContentType): Ditto.
+        (parameterValue): Added.  Helper function, based on code originally in WebFrameBridge.
+        (pluginView): Ditto.
+        (WebFrameLoaderClient::createPlugin): Moved the code from WebFrameBridge here.
+
+2008-03-04  Darin Adler  <darin@apple.com>
+
+        Reviewed by Adam.
+
         - remove -[WebCoreFrameBridge dashboardRegionsChanged:]
 
         * WebCoreSupport/WebChromeClient.h:

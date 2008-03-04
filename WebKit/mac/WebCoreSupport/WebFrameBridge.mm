@@ -106,10 +106,6 @@
 
 using namespace WebCore;
 
-NSString *WebPluginBaseURLKey =     @"WebPluginBaseURL";
-NSString *WebPluginAttributesKey =  @"WebPluginAttributes";
-NSString *WebPluginContainerKey =   @"WebPluginContainer";
-
 #define KeyboardUIModeDidChangeNotification @"com.apple.KeyboardUIModeDidChange"
 #define AppleKeyboardUIMode CFSTR("AppleKeyboardUIMode")
 #define UniversalAccessDomain CFSTR("com.apple.universalaccess")
@@ -131,7 +127,7 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
     return kit(m_frame->page());
 }
 
-- (void)finishInitializingWithPage:(Page*)page frameName:(NSString *)name frameView:(WebFrameView *)frameView ownerElement:(HTMLFrameOwnerElement*)ownerElement
+- (void)finishInitializingWithPage:(Page*)page frameName:(const WebCore::String&)name frameView:(WebFrameView *)frameView ownerElement:(HTMLFrameOwnerElement*)ownerElement
 {
     ++WebBridgeCount;
 
@@ -147,14 +143,14 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
     [self setTextSizeMultiplier:[webView textSizeMultiplier]];
 }
 
-- (id)initMainFrameWithPage:(Page*)page frameName:(NSString *)name frameView:(WebFrameView *)frameView
+- (id)initMainFrameWithPage:(Page*)page frameName:(const WebCore::String&)name frameView:(WebFrameView *)frameView
 {
     self = [super init];
     [self finishInitializingWithPage:page frameName:name frameView:frameView ownerElement:0];
     return self;
 }
 
-- (id)initSubframeWithOwnerElement:(HTMLFrameOwnerElement*)ownerElement frameName:(NSString *)name frameView:(WebFrameView *)frameView
+- (id)initSubframeWithOwnerElement:(HTMLFrameOwnerElement*)ownerElement frameName:(const WebCore::String&)name frameView:(WebFrameView *)frameView
 {
     self = [super init];
     [self finishInitializingWithPage:ownerElement->document()->frame()->page() frameName:name frameView:frameView ownerElement:ownerElement];
@@ -291,335 +287,6 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
     _frame = nil;
 }
 
-- (Frame*)createChildFrameNamed:(NSString *)frameName 
-                                      withURL:(NSURL *)URL
-                                     referrer:(const String&)referrer
-                                 ownerElement:(HTMLFrameOwnerElement*)ownerElement
-                              allowsScrolling:(BOOL)allowsScrolling 
-                                  marginWidth:(int)width
-                                 marginHeight:(int)height
-{
-    ASSERT(_frame);
-    
-    WebFrameView *childView = [[WebFrameView alloc] initWithFrame:NSMakeRect(0,0,0,0)];
-    [childView setAllowsScrolling:allowsScrolling];
-    [childView _setMarginWidth:width];
-    [childView _setMarginHeight:height];
-
-    WebFrameBridge *newBridge = [[WebFrameBridge alloc] initSubframeWithOwnerElement:ownerElement frameName:frameName frameView:childView];
-    [childView release];
-
-    if (!newBridge)
-        return 0;
-
-    [_frame _addChild:[newBridge webFrame]];
-    [newBridge release];
-
-    RefPtr<Frame> newFrame = [newBridge _frame];
-    
-    [_frame _loadURL:URL referrer:referrer intoChild:kit(newFrame.get())];
-
-    // The frame's onload handler may have removed it from the document.
-    if (!newFrame->tree()->parent())
-        return 0;
-
-    return newFrame.get();
-}
-
-- (NSView *)pluginViewWithPackage:(WebPluginPackage *)pluginPackage
-                   attributeNames:(NSArray *)attributeNames
-                  attributeValues:(NSArray *)attributeValues
-                          baseURL:(NSURL *)baseURL
-                       DOMElement:(DOMElement *)element
-                     loadManually:(BOOL)loadManually
-{
-    WebHTMLView *docView = (WebHTMLView *)[[_frame frameView] documentView];
-    ASSERT([docView isKindOfClass:[WebHTMLView class]]);
-        
-    WebPluginController *pluginController = [docView _pluginController];
-    
-    // Store attributes in a dictionary so they can be passed to WebPlugins.
-    NSMutableDictionary *attributes = [[NSMutableDictionary alloc] initWithObjects:attributeValues forKeys:attributeNames];
-    
-    [pluginPackage load];
-    Class viewFactory = [pluginPackage viewFactory];
-    
-    NSView *view = nil;
-    NSDictionary *arguments = nil;
-    
-    if ([viewFactory respondsToSelector:@selector(plugInViewWithArguments:)]) {
-        arguments = [NSDictionary dictionaryWithObjectsAndKeys:
-            baseURL, WebPlugInBaseURLKey,
-            attributes, WebPlugInAttributesKey,
-            pluginController, WebPlugInContainerKey,
-            [NSNumber numberWithInt:loadManually ? WebPlugInModeFull : WebPlugInModeEmbed], WebPlugInModeKey,
-            [NSNumber numberWithBool:!loadManually], WebPlugInShouldLoadMainResourceKey,
-            element, WebPlugInContainingElementKey,
-            nil];
-        LOG(Plugins, "arguments:\n%@", arguments);
-    } else if ([viewFactory respondsToSelector:@selector(pluginViewWithArguments:)]) {
-        arguments = [NSDictionary dictionaryWithObjectsAndKeys:
-            baseURL, WebPluginBaseURLKey,
-            attributes, WebPluginAttributesKey,
-            pluginController, WebPluginContainerKey,
-            element, WebPlugInContainingElementKey,
-            nil];
-        LOG(Plugins, "arguments:\n%@", arguments);
-    }
-
-    view = [WebPluginController plugInViewWithArguments:arguments fromPluginPackage:pluginPackage];
-    [attributes release];
-    return view;
-}
-
-- (NSString *)valueForKey:(NSString *)key keys:(NSArray *)keys values:(NSArray *)values
-{
-    unsigned count = [keys count];
-    unsigned i;
-    for (i = 0; i < count; i++)
-        if ([[keys objectAtIndex:i] _webkit_isCaseInsensitiveEqualToString:key])
-            return [values objectAtIndex:i];
-    return nil;
-}
-
-- (NSView *)viewForPluginWithFrame:(NSRect)frame
-                               URL:(NSURL *)URL
-                    attributeNames:(NSArray *)attributeNames
-                   attributeValues:(NSArray *)attributeValues
-                          MIMEType:(NSString *)MIMEType
-                        DOMElement:(DOMElement *)element
-                      loadManually:(BOOL)loadManually
-{
-    ASSERT([attributeNames count] == [attributeValues count]);
-
-    WebBasePluginPackage *pluginPackage = nil;
-    NSView *view = nil;
-    int errorCode = 0;
-
-    WebView *webView = [self webView];
-    SEL selector = @selector(webView:plugInViewWithArguments:);
-
-    if ([[webView UIDelegate] respondsToSelector:selector]) {
-        NSMutableDictionary *attributes = [[NSMutableDictionary alloc] initWithObjects:attributeValues forKeys:attributeNames];
-        NSDictionary *arguments = [[NSDictionary alloc] initWithObjectsAndKeys:
-            attributes, WebPlugInAttributesKey,
-            [NSNumber numberWithInt:loadManually ? WebPlugInModeFull : WebPlugInModeEmbed], WebPlugInModeKey,
-            [NSNumber numberWithBool:!loadManually], WebPlugInShouldLoadMainResourceKey,
-            element, WebPlugInContainingElementKey,
-            URL, WebPlugInBaseURLKey, // URL might be nil, so add it last
-            nil];
-
-        view = CallUIDelegate(webView, selector, arguments);
-
-        [attributes release];
-        [arguments release];
-
-        if (view)
-            return view;
-    }
-
-    if ([MIMEType length] != 0)
-        pluginPackage = [[self webView] _pluginForMIMEType:MIMEType];
-    else
-        MIMEType = nil;
-    
-    NSString *extension = [[URL path] pathExtension];
-    if (!pluginPackage && [extension length] != 0) {
-        pluginPackage = [[self webView] _pluginForExtension:extension];
-        if (pluginPackage) {
-            NSString *newMIMEType = [pluginPackage MIMETypeForExtension:extension];
-            if ([newMIMEType length] != 0)
-                MIMEType = newMIMEType;
-        }
-    }
-
-    NSURL *baseURL = [self baseURL];
-    if (pluginPackage) {
-        if ([pluginPackage isKindOfClass:[WebPluginPackage class]]) {
-            view = [self pluginViewWithPackage:(WebPluginPackage *)pluginPackage
-                                attributeNames:attributeNames
-                               attributeValues:attributeValues
-                                       baseURL:baseURL
-                                    DOMElement:element
-                                  loadManually:loadManually];
-            
-        }
-#ifndef __LP64__
-        else if ([pluginPackage isKindOfClass:[WebNetscapePluginPackage class]]) {
-            WebNetscapePluginEmbeddedView *embeddedView = [[[WebNetscapePluginEmbeddedView alloc] initWithFrame:frame
-                                                           pluginPackage:(WebNetscapePluginPackage *)pluginPackage
-                                                                     URL:URL
-                                                                 baseURL:baseURL
-                                                                MIMEType:MIMEType
-                                                           attributeKeys:attributeNames
-                                                         attributeValues:attributeValues
-                                                            loadManually:loadManually
-                                                              DOMElement:element] autorelease];
-            view = embeddedView;
-        } 
-#endif
-    } else
-        errorCode = WebKitErrorCannotFindPlugIn;
-
-    if (!errorCode && !view)
-        errorCode = WebKitErrorCannotLoadPlugIn;
-
-    if (errorCode) {
-        NSString *pluginPage = [self valueForKey:@"pluginspage" keys:attributeNames values:attributeValues];
-        NSURL *pluginPageURL = pluginPage != nil ? [self URLWithAttributeString:pluginPage] : nil;
-        NSError *error = [[NSError alloc] _initWithPluginErrorCode:errorCode
-                                                        contentURL:URL
-                                                     pluginPageURL:pluginPageURL
-                                                        pluginName:[pluginPackage name]
-                                                          MIMEType:MIMEType];
-        WebNullPluginView *nullView = [[[WebNullPluginView alloc] initWithFrame:frame error:error DOMElement:element] autorelease];
-        view = nullView;
-        [error release];
-    }
-    
-    ASSERT(view);
-    return view;
-}
-
-- (void)redirectDataToPlugin:(NSView *)pluginView
-{
-    WebHTMLRepresentation *representation = (WebHTMLRepresentation *)[[_frame _dataSource] representation];
-
-#ifndef __LP64__
-    if ([pluginView isKindOfClass:[WebNetscapePluginEmbeddedView class]])
-        [representation _redirectDataToManualLoader:(WebNetscapePluginEmbeddedView *)pluginView forPluginView:pluginView];
-    else {
-#else
-    {
-#endif
-        WebHTMLView *docView = (WebHTMLView *)[[_frame frameView] documentView];
-        ASSERT([docView isKindOfClass:[WebHTMLView class]]);
-        
-        WebPluginController *pluginController = [docView _pluginController];
-        [representation _redirectDataToManualLoader:pluginController forPluginView:pluginView];
-    }
-
-}
-
-- (NSView *)viewForJavaAppletWithFrame:(NSRect)theFrame
-                        attributeNames:(NSArray *)attributeNames
-                       attributeValues:(NSArray *)attributeValues
-                               baseURL:(NSURL *)baseURL
-                            DOMElement:(DOMElement *)element
-{
-    NSString *MIMEType = @"application/x-java-applet";
-    WebBasePluginPackage *pluginPackage;
-    NSView *view = nil;
-    
-    pluginPackage = [[self webView] _pluginForMIMEType:MIMEType];
-
-    if (pluginPackage) {
-        if ([pluginPackage isKindOfClass:[WebPluginPackage class]]) {
-            // For some reason, the Java plug-in requires that we pass the dimension of the plug-in as attributes.
-            NSMutableArray *names = [attributeNames mutableCopy];
-            NSMutableArray *values = [attributeValues mutableCopy];
-            if ([self valueForKey:@"width" keys:attributeNames values:attributeValues] == nil) {
-                [names addObject:@"width"];
-                [values addObject:[NSString stringWithFormat:@"%d", (int)theFrame.size.width]];
-            }
-            if ([self valueForKey:@"height" keys:attributeNames values:attributeValues] == nil) {
-                [names addObject:@"height"];
-                [values addObject:[NSString stringWithFormat:@"%d", (int)theFrame.size.height]];
-            }
-            view = [self pluginViewWithPackage:(WebPluginPackage *)pluginPackage
-                                attributeNames:names
-                               attributeValues:values
-                                       baseURL:baseURL
-                                    DOMElement:element
-                                  loadManually:NO];
-            [names release];
-            [values release];
-            
-        } 
-#ifndef __LP64__
-        else if ([pluginPackage isKindOfClass:[WebNetscapePluginPackage class]]) {
-            view = [[[WebNetscapePluginEmbeddedView alloc] initWithFrame:theFrame
-                                                           pluginPackage:(WebNetscapePluginPackage *)pluginPackage
-                                                                     URL:nil
-                                                                 baseURL:baseURL
-                                                                MIMEType:MIMEType
-                                                           attributeKeys:attributeNames
-                                                         attributeValues:attributeValues
-                                                            loadManually:NO
-                                                              DOMElement:element] autorelease];
-        } else {
-            ASSERT_NOT_REACHED();
-        }
-#endif
-    }
-
-    if (!view) {
-        NSError *error = [[NSError alloc] _initWithPluginErrorCode:WebKitErrorJavaUnavailable
-                                                        contentURL:nil
-                                                     pluginPageURL:nil
-                                                        pluginName:[pluginPackage name]
-                                                          MIMEType:MIMEType];
-        view = [[[WebNullPluginView alloc] initWithFrame:theFrame error:error DOMElement:element] autorelease];
-        [error release];
-    }
-
-    ASSERT(view);
-
-    return view;
-}
-
-- (ObjectContentType)determineObjectFromMIMEType:(NSString*)MIMEType URL:(NSURL*)URL
-{
-    // This is a quirk that ensures Tiger Mail's WebKit plug-in will load during layout
-    // and not attach time. (5520541)
-    static BOOL isTigerMail = WKAppVersionCheckLessThan(@"com.apple.mail", -1, 3.0);
-    if (isTigerMail && [MIMEType isEqualToString:@"application/x-apple-msg-attachment"])
-        return ObjectContentNetscapePlugin;
-    
-    if ([MIMEType length] == 0) {
-        // Try to guess the MIME type based off the extension.
-        NSString *extension = [[URL path] pathExtension];
-        if ([extension length] > 0) {
-            MIMEType = WKGetMIMETypeForExtension(extension);
-            if ([MIMEType length] == 0) {
-                // If no MIME type is specified, use a plug-in if we have one that can handle the extension.
-                if (WebBasePluginPackage *package = [[self webView] _pluginForExtension:extension]) {
-                    if ([package isKindOfClass:[WebPluginPackage class]]) 
-                        return ObjectContentOtherPlugin;
-#ifndef __LP64__
-                    else {
-                        ASSERT([package isKindOfClass:[WebNetscapePluginPackage class]]);
-                        return ObjectContentNetscapePlugin;
-                    }
-#endif
-                }
-            }
-        }
-    }
-
-    if ([MIMEType length] == 0)
-        return ObjectContentFrame; // Go ahead and hope that we can display the content.
-
-    if (MIMETypeRegistry::isSupportedImageMIMEType(MIMEType))
-        return ObjectContentImage;
-
-    if (WebBasePluginPackage *package = [[self webView] _pluginForMIMEType:MIMEType]) {
-        if ([package isKindOfClass:[WebPluginPackage class]]) 
-            return ObjectContentOtherPlugin;
-#ifndef __LP64__
-        else {
-            ASSERT([package isKindOfClass:[WebNetscapePluginPackage class]]);
-            return ObjectContentNetscapePlugin;
-        }
-#endif
-    }
-
-    if ([WebFrameView _viewClassForMIMEType:MIMEType])
-        return ObjectContentFrame;
-    
-    return ObjectContentNone;
-}
-
 - (jobject)getAppletInView:(NSView *)view
 {
     if ([view respondsToSelector:@selector(webPlugInGetApplet)])
@@ -661,21 +328,6 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
         [view webPlugInSetIsSelected:isSelected];
     else if ([view respondsToSelector:@selector(setIsSelected:)])
         [view setIsSelected:isSelected];
-}
-
-- (void)windowObjectCleared
-{
-    WebView *webView = getWebView(_frame);
-    WebFrameLoadDelegateImplementationCache* implementations = WebViewGetFrameLoadDelegateImplementations(webView);
-    if (implementations->didClearWindowObjectForFrameFunc)
-        CallFrameLoadDelegate(implementations->didClearWindowObjectForFrameFunc, webView, @selector(webView:didClearWindowObject:forFrame:), m_frame->windowScriptObject(), _frame);
-    else if (implementations->windowScriptObjectAvailableFunc)
-        CallFrameLoadDelegate(implementations->windowScriptObjectAvailableFunc, webView, @selector(webView:windowScriptObjectAvailable:), m_frame->windowScriptObject());
-
-    if ([webView scriptDebugDelegate] || [WebScriptDebugServer listenerCount]) {
-        [_frame _detachScriptDebugger];
-        [_frame _attachScriptDebugger];
-    }
 }
 
 - (void)willPopupMenu:(NSMenu *)menu
