@@ -363,9 +363,7 @@ static int blockquoteLevel(RenderObject* renderer)
 
 static int headingLevel(RenderObject* renderer)
 {
-    if (!renderer->isBlockFlow())
-        return 0;
-        
+    // headings can be in block flow and non-block flow
     Node* node = renderer->element();
     if (!node)
         return 0;
@@ -841,6 +839,9 @@ static IntRect boundingBoxRect(RenderObject* obj)
     if ([self isAttachment])
         return [[self attachmentView] accessibilityIsIgnored];
         
+    if ([self isHeading])
+        return NO;
+    
     if (m_areaElement || (m_renderer->element() && m_renderer->element()->isLink()))
         return NO;
 

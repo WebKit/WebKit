@@ -1,3 +1,13 @@
+2008-03-04  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Darin Adler.
+
+        - fix <rdar://problem/5119360> ER - Seed: Google results do not have AXHeading information
+
+        * page/mac/WebCoreAXObject.mm:
+        (headingLevel):
+        (-[WebCoreAXObject accessibilityIsIgnored]):
+
 2008-03-04  Sam Weinig  <sam@webkit.org>
 
         GTK+ build fix.
