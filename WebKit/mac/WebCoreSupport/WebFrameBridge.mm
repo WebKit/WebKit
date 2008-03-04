@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -176,7 +176,6 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
 
 - (void)dealloc
 {
-    [lastDashboardRegions release];
     [_frame release];
     
     [self fini];
@@ -676,24 +675,6 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
     if ([webView scriptDebugDelegate] || [WebScriptDebugServer listenerCount]) {
         [_frame _detachScriptDebugger];
         [_frame _attachScriptDebugger];
-    }
-}
-
-- (BOOL)_compareDashboardRegions:(NSDictionary *)regions
-{
-    return [lastDashboardRegions isEqualToDictionary:regions];
-}
-
-- (void)dashboardRegionsChanged:(NSMutableDictionary *)regions
-{
-    WebView *webView = [self webView];
-    [webView _addScrollerDashboardRegions:regions];
-
-    if (![self _compareDashboardRegions:regions]) {
-        CallUIDelegate(webView, @selector(webView:dashboardRegionsChanged:), regions);
-
-        [lastDashboardRegions release];
-        lastDashboardRegions = [regions retain];
     }
 }
 

@@ -102,6 +102,8 @@ public:
 
     virtual void exceededDatabaseQuota(WebCore::Frame*, const WebCore::String& databaseName);
 
+    virtual void dashboardRegionsChanged();
+
 private:
     WebView *m_webView;
 };

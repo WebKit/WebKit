@@ -3,7 +3,7 @@
  *                     1999 Lars Knoll <knoll@kde.org>
  *                     1999 Antti Koivisto <koivisto@kde.org>
  *                     2000 Dirk Mueller <mueller@kde.org>
- * Copyright (C) 2004, 2005, 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
  *           (C) 2006 Graham Dennis (graham.dennis@gmail.com)
  *           (C) 2006 Alexey Proskuryakov (ap@nypop.com)
  *
@@ -28,6 +28,7 @@
 
 #include "AXObjectCache.h"
 #include "CSSStyleSelector.h"
+#include "ChromeClient.h"
 #include "EventHandler.h"
 #include "FloatRect.h"
 #include "Frame.h"
@@ -38,6 +39,7 @@
 #include "HTMLFrameSetElement.h"
 #include "HTMLNames.h"
 #include "OverflowEvent.h"
+#include "Page.h"
 #include "RenderPart.h"
 #include "RenderPartObject.h"
 #include "RenderTheme.h"
@@ -1020,13 +1022,18 @@ IntRect FrameView::windowClipRectForLayer(const RenderLayer* layer, bool clipToL
 
 void FrameView::updateDashboardRegions()
 {
-    Document* doc = m_frame->document();
-    if (doc->hasDashboardRegions()) {
-        Vector<DashboardRegionValue> newRegions;
-        doc->renderer()->collectDashboardRegions(newRegions);
-        doc->setDashboardRegions(newRegions);
-        m_frame.get()->dashboardRegionsChanged();
-    }
+    Document* document = m_frame->document();
+    if (!document->hasDashboardRegions())
+        return;
+    Vector<DashboardRegionValue> newRegions;
+    document->renderer()->collectDashboardRegions(newRegions);
+    if (newRegions == document->dashboardRegions())
+        return;
+    document->setDashboardRegions(newRegions);
+    Page* page = m_frame->page();
+    if (!page)
+        return;
+    page->chrome()->client()->dashboardRegionsChanged();
 }
 
 void FrameView::updateControlTints()

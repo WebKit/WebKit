@@ -425,4 +425,11 @@ void WebChromeClient::exceededDatabaseQuota(Frame* frame, const String& database
         CallUIDelegate(m_webView, @selector(webView:frame:exceededDatabaseQuotaForSecurityOrigin:database:), kit(frame), webOrigin, (NSString *)databaseName);
     [webOrigin release];
 }
-    
+
+void WebChromeClient::dashboardRegionsChanged()
+{
+    NSMutableDictionary *regions = core([m_webView mainFrame])->dashboardRegionsDictionary();
+    [m_webView _addScrollerDashboardRegions:regions];
+
+    CallUIDelegate(m_webView, @selector(webView:dashboardRegionsChanged:), regions);
+}

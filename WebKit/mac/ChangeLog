@@ -2,6 +2,21 @@
 
         Reviewed by Adam.
 
+        - remove -[WebCoreFrameBridge dashboardRegionsChanged:]
+
+        * WebCoreSupport/WebChromeClient.h:
+        * WebCoreSupport/WebChromeClient.mm:
+        (WebChromeClient::dashboardRegionsChanged): Moved code here from the bridge.
+        The WebCore side now calls this only when there's an actual change.
+        * WebCoreSupport/WebFrameBridge.h: Removed lastDashboardRegions.
+        * WebCoreSupport/WebFrameBridge.mm:
+        (-[WebFrameBridge dealloc]): Removed code to release lastDashboardRegions.
+        Removed _compareDashboardRegions: and dashboardRegionsChanged: methods.
+
+2008-03-04  Darin Adler  <darin@apple.com>
+
+        Reviewed by Adam.
+
         - remove WebCoreFrameBridge issuePasteComand method
 
         * WebCoreSupport/WebFrameBridge.mm: Removed issuePasteCommand method.

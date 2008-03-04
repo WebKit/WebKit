@@ -201,8 +201,6 @@ public:
 
     String documentTypeString() const;
 
-    void dashboardRegionsChanged();
-
     void clearScriptProxy();
     void clearDOMWindow();
 

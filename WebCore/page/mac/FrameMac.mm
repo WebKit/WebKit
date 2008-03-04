@@ -557,12 +557,6 @@ NSMutableDictionary* Frame::dashboardRegionsDictionary()
     return webRegions;
 }
 
-void Frame::dashboardRegionsChanged()
-{
-    NSMutableDictionary *webRegions = dashboardRegionsDictionary();
-    [d->m_bridge dashboardRegionsChanged:webRegions];
-}
-
 void Frame::willPopupMenu(NSMenu * menu)
 {
     [d->m_bridge willPopupMenu:menu];

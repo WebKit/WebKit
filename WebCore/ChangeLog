@@ -2,6 +2,23 @@
 
         Reviewed by Adam.
 
+        - remove -[WebCoreFrameBridge dashboardRegionsChanged:]
+
+        * WebCore.base.exp: Updated.
+        * page/Chrome.cpp:
+        (WebCore::ChromeClient::dashboardRegionsChanged): Added.
+        * page/ChromeClient.h: Added virtual function for dashboardRegionsChanged.
+        * page/Frame.h: Removed dashboardRegionsChanged function.
+        * page/FrameView.cpp:
+        (WebCore::FrameView::updateDashboardRegions): Changed to call dashboardRegionsChanged
+        on ChromeClient and to only call it when the regions actually changed.
+        * page/mac/FrameMac.mm: Removed dashboardRegionsChanged function.
+        * page/mac/WebCoreFrameBridge.h: Removed dashboardRegionsChanged: method.
+
+2008-03-04  Darin Adler  <darin@apple.com>
+
+        Reviewed by Adam.
+
         - remove WebCoreFrameBridge issuePasteComand method
 
         * editing/Editor.cpp:

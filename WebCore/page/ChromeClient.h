@@ -22,19 +22,35 @@
 #define ChromeClient_h
 
 #include "FocusDirection.h"
+#include "WebCoreKeyboardUIMode.h"
+#include <wtf/Forward.h>
+#include <wtf/Vector.h>
+
+typedef class _jobject* jobject;
+
+#ifndef __OBJC__
+class NSMenu;
+class NSResponder;
+class NSView;
+#endif
 
 namespace WebCore {
 
+    class AtomicString;
+    class FileChooser;
     class FloatRect;
     class Frame;
     class HitTestResult;
     class IntRect;
+    class Node;
     class Page;
     class String;
+    class Widget;
     
+    struct DashboardRegionValue;
     struct FrameLoadRequest;
     struct WindowFeatures;
-    
+
     class ChromeClient {
     public:
         virtual void chromeDestroyed() = 0;
@@ -103,6 +119,8 @@ namespace WebCore {
         virtual void print(Frame*) = 0;
 
         virtual void exceededDatabaseQuota(Frame*, const String& databaseName) = 0;
+
+        virtual void dashboardRegionsChanged();
 
     protected:
         virtual ~ChromeClient() { }
