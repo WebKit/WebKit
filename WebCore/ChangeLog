@@ -1,3 +1,9 @@
+2008-03-04  Sam Weinig  <sam@webkit.org>
+
+        Build fix.
+
+        * bindings/js/kjs_events.cpp:
+
 2008-03-03  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Mark Rowe.

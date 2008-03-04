@@ -37,8 +37,6 @@
 #include "kjs_window.h"
 #include <kjs/function_object.h>
 
-#include "kjs_events.lut.h"
-
 using namespace KJS;
 
 namespace WebCore {
