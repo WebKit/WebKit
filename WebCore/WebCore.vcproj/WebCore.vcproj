@@ -7760,6 +7760,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\bindings\js\JSImageConstructor.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\bindings\js\JSImageConstructor.h"
+					>
+				</File>
+				<File
 					RelativePath="..\bindings\js\JSLocation.cpp"
 					>
 				</File>

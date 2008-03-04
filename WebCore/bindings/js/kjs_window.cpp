@@ -43,6 +43,7 @@
 #include "JSEvent.h"
 #include "JSHTMLCollection.h"
 #include "JSHTMLOptionElementConstructor.h"
+#include "JSImageConstructor.h"
 #include "JSLocation.h"
 #include "JSNode.h"
 #include "JSXMLHttpRequest.h"
@@ -60,7 +61,6 @@
 #include "htmlediting.h"
 #include "kjs_css.h"
 #include "kjs_events.h"
-#include "kjs_html.h"
 #include "kjs_navigator.h"
 #include "kjs_proxy.h"
 #include <wtf/AlwaysInline.h>
@@ -471,7 +471,7 @@ JSValue *JSDOMWindowBase::getValueProperty(ExecState *exec, int token) const
         return jsUndefined();
       // FIXME: this property (and the few below) probably shouldn't create a new object every
       // time
-      return new ImageConstructorImp(exec, impl()->frame()->document());
+      return new JSImageConstructor(exec, impl()->frame()->document());
     case Option:
       if (!allowsAccessFrom(exec))
         return jsUndefined();

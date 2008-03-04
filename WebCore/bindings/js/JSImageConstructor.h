@@ -17,27 +17,26 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef kjs_html_h
-#define kjs_html_h
+#ifndef JSImageConstructor_h
+#define JSImageConstructor_h
 
 #include "kjs_binding.h"
 
 namespace WebCore {
 
-    class HTMLElement;
-    class JSHTMLElement;
-    class Node;
+    class Document;
 
-    // Runtime object support code for JSHTMLAppletElement, JSHTMLEmbedElement and JSHTMLObjectElement.
-    // FIXME: Move these to a more appropriate place.
+    class JSImageConstructor : public DOMObject {
+    public:
+        JSImageConstructor(KJS::ExecState*, Document*);
 
-    KJS::JSValue* runtimeObjectGetter(KJS::ExecState*, KJS::JSObject*, const KJS::Identifier&, const KJS::PropertySlot&);
-    KJS::JSValue* runtimeObjectPropertyGetter(KJS::ExecState*, KJS::JSObject*, const KJS::Identifier&, const KJS::PropertySlot&);
-    bool runtimeObjectCustomGetOwnPropertySlot(KJS::ExecState*, const KJS::Identifier&, KJS::PropertySlot&, JSHTMLElement*, HTMLElement*);
-    bool runtimeObjectCustomPut(KJS::ExecState*, const KJS::Identifier&, KJS::JSValue*, HTMLElement*);
-    bool runtimeObjectImplementsCall(HTMLElement*);
-    KJS::JSValue* runtimeObjectCallAsFunction(KJS::ExecState*, KJS::JSObject*, const KJS::List&, HTMLElement*);
+        virtual bool implementsConstruct() const { return true; }
+        virtual KJS::JSObject* construct(KJS::ExecState*, const KJS::List&);
+
+    private:
+        RefPtr<Document> m_document;
+    };
 
 } // namespace WebCore
 
-#endif // kjs_html_h
+#endif // JSImageConstructor_h

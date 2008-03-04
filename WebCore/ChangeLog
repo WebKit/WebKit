@@ -1,3 +1,26 @@
+2008-03-04  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Remame ImageConstructorImp to JSImageConstructor and move it into its
+        own file.
+
+        * GNUmakefile.am:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * WebCoreSources.bkl:
+        * bindings/js/JSImageConstructor.cpp: Copied from bindings/js/kjs_html.cpp.
+        (WebCore::JSImageConstructor::JSImageConstructor):
+        (WebCore::JSImageConstructor::construct):
+        * bindings/js/JSImageConstructor.h: Copied from bindings/js/kjs_html.h.
+        * bindings/js/kjs_html.cpp:
+        (WebCore::getRuntimeObject): Make this function static since it is only used
+        in this file.
+        * bindings/js/kjs_html.h:
+        * bindings/js/kjs_window.cpp:
+        (WebCore::JSDOMWindowBase::getValueProperty):
+
 2008-03-04  Adam Roben  <aroben@apple.com>
 
         Fix an uninitialized value warning in CodeGeneratorJS.pm
