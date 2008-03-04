@@ -1,3 +1,13 @@
+2008-03-04  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Oliver Hunt and Geoffrey Garen.
+
+        - extended test to cover http://bugs.webkit.org/show_bug.cgi?id=17667
+          <rdar://problem/5779658> REGRESSION (r30587): Document::implicitClose() not called when done loading page (Image does not get scaled to fit)
+
+        * http/tests/misc/missing-style-sheet-expected.txt:
+        * http/tests/misc/missing-style-sheet.html:
+
 2008-03-04  Adele Peterson  <adele@apple.com>
 
         Reviewed by Beth.

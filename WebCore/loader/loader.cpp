@@ -114,9 +114,10 @@ void Loader::didFinishLoading(SubresourceLoader* loader)
     if (!object->errorOccurred()) {
         docLoader->setLoadInProgress(true);
         object->data(loader->resourceData(), true);
-        docLoader->setLoadInProgress(false);
         object->finish();
     }
+
+    docLoader->setLoadInProgress(false);
 
     delete req;
 

@@ -1,3 +1,15 @@
+2008-03-04  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Oliver Hunt and Geoffrey Garen.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=17667
+          <rdar://problem/5779658> REGRESSION (r30587): Document::implicitClose() not called when done loading page (Image does not get scaled to fit)
+
+        * loader/loader.cpp:
+        (WebCore::Loader::didFinishLoading): Changed to call
+        setLoadInProgress(false) even for 4xx errors, because that triggers
+        load completion check.
+
 2008-03-04  Adele Peterson  <adele@apple.com>
 
         Reviewed by Beth.
