@@ -67,7 +67,6 @@ using KJS::JSLock;
 using KJS::JSObject;
 using KJS::JSValue;
 using KJS::UString;
-using KJS::Window;
 
 using std::min;
 

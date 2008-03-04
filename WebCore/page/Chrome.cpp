@@ -31,13 +31,14 @@
 #include "HTMLNames.h"
 #include "HitTestResult.h"
 #include "InspectorController.h"
+#include "JSDOMWindow.h"
 #include "Page.h"
+#include "PausedTimeouts.h"
 #include "ResourceHandle.h"
+#include "SecurityOrigin.h"
 #include "Settings.h"
 #include "WindowFeatures.h"
 #include "kjs_window.h"
-#include "PausedTimeouts.h"
-#include "SecurityOrigin.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>

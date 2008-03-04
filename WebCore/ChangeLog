@@ -1,5 +1,12 @@
 2008-03-03  Sam Weinig  <sam@webkit.org>
 
+        Windows build-fix.
+
+        * page/Chrome.cpp:
+        * plugins/win/PluginViewWin.cpp:
+
+2008-03-03  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Darin Adler.
 
         Cleanup and plumbing in preparation for the great Window split.
