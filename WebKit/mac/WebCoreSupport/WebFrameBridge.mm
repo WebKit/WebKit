@@ -656,13 +656,6 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
     return [[self webView] undoManager];
 }
 
-- (void)issuePasteCommand
-{
-    NSView* documentView = [[_frame frameView] documentView];
-    if ([documentView isKindOfClass:[WebHTMLView class]])
-        [(WebHTMLView*)documentView paste:nil];
-}
-
 - (void)setIsSelected:(BOOL)isSelected forView:(NSView *)view
 {
     if ([view respondsToSelector:@selector(webPlugInSetIsSelected:)])

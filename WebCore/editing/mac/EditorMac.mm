@@ -105,4 +105,20 @@ void Editor::showColorPanel()
     [[NSApplication sharedApplication] orderFrontColorPanel:nil];
 }
 
+// FIXME: We want to use the platform-independent code instead. But when we last
+// tried to do so it seemed that we first need to move more of the logic from
+// -[WebHTMLView.cpp _documentFragmentFromPasteboard] into PasteboardMac.
+
+void Editor::paste()
+{
+    ASSERT(m_frame->document());
+    FrameView* view = m_frame->view();
+    if (!view)
+        return;
+    DocLoader* loader = m_frame->document()->docLoader();
+    loader->setAllowStaleResources(true);
+    [view->getDocumentView() tryToPerform:@selector(paste:) with:nil];
+    loader->setAllowStaleResources(false);
+}
+
 } // namespace WebCore

@@ -381,7 +381,6 @@ public:
 public:
     NSDictionary* fontAttributesForSelectionStart() const;
     NSWritingDirection baseWritingDirectionForSelectionStart() const;
-    void issuePasteCommand();
 
 #endif
 

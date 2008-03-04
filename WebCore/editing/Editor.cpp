@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2007, 2008 Apple Inc. All rights reserved.
  * Copyright (C) 2007 Trolltech ASA
  *
  * Redistribution and use in source and binary forms, with or without
@@ -35,13 +35,11 @@
 #include "ClipboardEvent.h"
 #include "DeleteButtonController.h"
 #include "DeleteSelectionCommand.h"
-#include "DocLoader.h"
 #include "DocumentFragment.h"
 #include "EditorClient.h"
 #include "EventHandler.h"
 #include "EventNames.h"
 #include "FocusController.h"
-#include "FontData.h"
 #include "Frame.h"
 #include "FrameView.h"
 #include "HTMLInputElement.h"
@@ -950,29 +948,25 @@ void Editor::copy()
     didWriteSelectionToPasteboard();
 }
 
+#if !PLATFORM(MAC)
+
 void Editor::paste()
 {
     ASSERT(m_frame->document());
-    DocLoader* loader = m_frame->document()->docLoader();
-#if PLATFORM(MAC)
-    // using the platform independent code below requires moving all of
-    // WEBHTMLView: _documentFragmentFromPasteboard over to PasteboardMac.
-    loader->setAllowStaleResources(true);
-    m_frame->issuePasteCommand();
-    loader->setAllowStaleResources(false);
-#else
     if (tryDHTMLPaste())
         return;     // DHTML did the whole operation
     if (!canPaste())
         return;
+    DocLoader* loader = m_frame->document()->docLoader();
     loader->setAllowStaleResources(true);
     if (m_frame->selectionController()->isContentRichlyEditable())
         pasteWithPasteboard(Pasteboard::generalPasteboard(), true);
     else
         pasteAsPlainTextWithPasteboard(Pasteboard::generalPasteboard());
     loader->setAllowStaleResources(false);
-#endif
 }
+
+#endif
 
 void Editor::pasteAsPlainText()
 {

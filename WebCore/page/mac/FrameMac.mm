@@ -97,9 +97,7 @@
 #import <bindings/runtime_root.h>
 #import <bindings/runtime.h>
 
-#undef _webcore_TIMING
-
-@interface NSObject (WebPlugIn)
+@interface NSObject (WebPlugin)
 - (id)objectForWebScript;
 - (NPObject *)createPluginScriptableObject;
 @end
@@ -495,11 +493,6 @@ NSWritingDirection Frame::baseWritingDirectionForSelectionStart() const
     }
 
     return result;
-}
-
-void Frame::issuePasteCommand()
-{
-    [d->m_bridge issuePasteCommand];
 }
 
 const short enableRomanKeyboardsOnly = -23;

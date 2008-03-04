@@ -1,3 +1,18 @@
+2008-03-04  Darin Adler  <darin@apple.com>
+
+        Reviewed by Adam.
+
+        - remove WebCoreFrameBridge issuePasteComand method
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::paste): Moved the Mac-specific part of this to EditorMac.
+        * editing/mac/EditorMac.mm:
+        (WebCore::Editor::paste): Added. Calls paste: on the document view (normally a
+        WebHTMLView). We should get rid of this eventually.
+        * page/Frame.h: Removed issuePasteCommand.
+        * page/mac/FrameMac.mm: Ditto.
+        * page/mac/WebCoreFrameBridge.h: Ditto.
+
 2008-03-04  Alexey Proskuryakov  <ap@webkit.org>
 
         Suggested by Darin, rubber-stamped by Mark.
