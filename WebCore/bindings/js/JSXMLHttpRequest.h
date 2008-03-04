@@ -27,15 +27,18 @@ namespace WebCore {
 class XMLHttpRequest;
 class Document;
 
-class JSXMLHttpRequestConstructorImp : public DOMObject {
+class JSXMLHttpRequestConstructor : public DOMObject {
 public:
-    JSXMLHttpRequestConstructorImp(KJS::ExecState*, Document*);
+    JSXMLHttpRequestConstructor(KJS::ExecState*, Document*);
 
     virtual bool implementsConstruct() const;
     virtual KJS::JSObject* construct(KJS::ExecState*, const KJS::List&);
 
+    virtual const KJS::ClassInfo* classInfo() const { return &info; }
+    static const KJS::ClassInfo info;
+
 private:
-    RefPtr<Document> doc;
+    RefPtr<Document> m_document;
 };
 
 class JSXMLHttpRequest : public DOMObject {

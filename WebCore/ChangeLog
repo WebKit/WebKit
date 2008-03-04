@@ -1,3 +1,56 @@
+2008-03-04  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Add ClassInfo to custom constructors so that they toString properly
+
+        - Take this chance to remove the "Imp" from the end of JSXMLHttpRequestConstructorImp,
+          and XSLTProcessorConstructorImp and prefix all the classes with JS. 
+
+        * bindings/js/JSAudioConstructor.cpp:
+        (WebCore::): Added ClassInfo definition.
+        (WebCore::JSAudioConstructor::JSAudioConstructor):
+        (WebCore::JSAudioConstructor::construct): Cleanup.
+        * bindings/js/JSAudioConstructor.h: Rename m_doc to m_document.
+        (WebCore::JSAudioConstructor::classInfo): Added.
+
+        * bindings/js/JSHTMLInputElementBase.cpp: Rename HTMLInputElementBasePrototype 
+        to JSHTMLInputElementBasePrototype as seen if toString'ed.
+        (WebCore::):
+
+        * bindings/js/JSHTMLOptionElementConstructor.cpp:
+        (WebCore::): Added ClassInfo definition.
+        * bindings/js/JSHTMLOptionElementConstructor.h:
+        (WebCore::JSHTMLOptionElementConstructor::classInfo): Added.
+
+        * bindings/js/JSImageConstructor.cpp:
+        (WebCore::): Added ClassInfo definition.
+        (WebCore::JSImageConstructor::implementsConstruct): Moved here from header.
+        * bindings/js/JSImageConstructor.h:
+        (WebCore::JSImageConstructor::classInfo): Added.
+
+        * bindings/js/JSXMLHttpRequest.cpp:
+        (WebCore::): Rename XMLHttpRequestPrototype  to JSXMLHttpRequestPrototype 
+        as seen if toString'ed.
+        (WebCore::JSXMLHttpRequestConstructor::JSXMLHttpRequestConstructor):
+        (WebCore::JSXMLHttpRequestConstructor::implementsConstruct):
+        (WebCore::JSXMLHttpRequestConstructor::construct):
+        * bindings/js/JSXMLHttpRequest.h: Renamed JSXMLHttpRequestConstructorImp to
+        JSXMLHttpRequestConstructor and doc to m_document and 
+        (WebCore::JSXMLHttpRequestConstructor::classInfo): Added.
+
+        * bindings/js/JSXSLTProcessor.cpp:
+        (WebCore::): Renamed XSLTProcessorPrototype to JSXSLTProcessorPrototype and 
+        XSLTProcessorConstructorImp to JSXSLTProcessorConstructor.
+        (WebCore::JSXSLTProcessorConstructor::JSXSLTProcessorConstructor):
+        (WebCore::JSXSLTProcessorConstructor::implementsConstruct):
+        (WebCore::JSXSLTProcessorConstructor::construct):
+        * bindings/js/JSXSLTProcessor.h:
+        (WebCore::JSXSLTProcessorConstructor::classInfo): Added.
+
+        * bindings/js/kjs_window.cpp:
+        (WebCore::JSDOMWindowBase::getValueProperty): Fixed to work with the new class names.
+
 2008-03-04  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Oliver Hunt and Geoffrey Garen.

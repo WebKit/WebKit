@@ -1,3 +1,13 @@
+2008-03-04  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Update results for fixed class names.
+
+        * fast/dom/Window/window-properties-expected.txt:
+        * fast/dom/xmlhttprequest-get-expected.txt:
+        * http/tests/xmlhttprequest/event-target-expected.txt:
+
 2008-03-04  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Oliver Hunt and Geoffrey Garen.

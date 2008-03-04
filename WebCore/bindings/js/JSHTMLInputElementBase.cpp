@@ -40,7 +40,7 @@ namespace WebCore {
 @end
 */
 
-KJS_IMPLEMENT_PROTOTYPE("JSHTMLInputElementBase", JSHTMLInputElementBasePrototype)
+KJS_IMPLEMENT_PROTOTYPE("HTMLInputElementBase", JSHTMLInputElementBasePrototype)
 
 JSValue* jsHTMLInputElementBaseFunctionSetSelectionRange(ExecState* exec, JSObject* thisObj, const List& args)
 {
@@ -49,7 +49,7 @@ JSValue* jsHTMLInputElementBaseFunctionSetSelectionRange(ExecState* exec, JSObje
     return jsUndefined();
 }
 
-const ClassInfo JSHTMLInputElementBase::info = { "JSHTMLInputElementBase", &JSHTMLElement::info, &JSHTMLInputElementBaseTable };
+const ClassInfo JSHTMLInputElementBase::info = { "HTMLInputElementBase", &JSHTMLElement::info, &JSHTMLInputElementBaseTable };
 
 JSHTMLInputElementBase::JSHTMLInputElementBase(KJS::JSObject* prototype, PassRefPtr<HTMLInputElement> e)
     : JSHTMLElement(prototype, e.get())

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2007, 2008 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -37,9 +37,11 @@ using namespace KJS;
 
 namespace WebCore {
 
-JSAudioConstructor::JSAudioConstructor(ExecState* exec, Document* d)
+const ClassInfo JSAudioConstructor::info = { "AudioConstructor", 0, 0 };
+
+JSAudioConstructor::JSAudioConstructor(ExecState* exec, Document* document)
     : DOMObject(exec->lexicalGlobalObject()->objectPrototype())
-    , m_doc(d)
+    , m_document(document)
 {
     putDirect(exec->propertyNames().length, jsNumber(1), ReadOnly|DontDelete|DontEnum);
 }
@@ -51,13 +53,12 @@ bool JSAudioConstructor::implementsConstruct() const
 
 JSObject* JSAudioConstructor::construct(ExecState* exec, const List& args)
 {
-    int exception = 0;
-    RefPtr<Element> el(m_doc->createElement("audio", exception));
+    ExceptionCode exception = 0;
+    RefPtr<Element> element = m_document->createElement("audio", exception);
     HTMLAudioElement* audio = 0;
-    if (el && !exception) {
-        audio = static_cast<HTMLAudioElement*>(el.get());
-        int sz = args.size();
-        if (sz > 0) {
+    if (element && !exception) {
+        audio = static_cast<HTMLAudioElement*>(element.get());
+        if (args.size() > 0) {
             audio->setSrc(args[0]->toString(exec));
             audio->scheduleLoad();
         }
@@ -67,5 +68,6 @@ JSObject* JSAudioConstructor::construct(ExecState* exec, const List& args)
     return static_cast<JSObject*>(toJS(exec, audio));
 }
 
-}
-#endif
+} // namespace WebCore
+
+#endif // ENABLE(VIDEO)

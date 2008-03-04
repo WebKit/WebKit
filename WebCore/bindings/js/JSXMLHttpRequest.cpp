@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2004, 2007 Apple Inc. All rights reserved.
+ *  Copyright (C) 2004, 2007, 2008 Apple Inc. All rights reserved.
  *  Copyright (C) 2005, 2006 Alexey Proskuryakov <ap@nypop.com>
  *
  *  This library is free software; you can redistribute it and/or
@@ -56,26 +56,28 @@ namespace WebCore {
 @end
 */
 KJS_DEFINE_PROTOTYPE(JSXMLHttpRequestPrototype)
-KJS_IMPLEMENT_PROTOTYPE("JSXMLHttpRequest", JSXMLHttpRequestPrototype)
+KJS_IMPLEMENT_PROTOTYPE("XMLHttpRequest", JSXMLHttpRequestPrototype)
 
-JSXMLHttpRequestConstructorImp::JSXMLHttpRequestConstructorImp(ExecState* exec, Document* d)
+const ClassInfo JSXMLHttpRequestConstructor::info = { "XMLHttpRequestConstructor", 0, 0 };
+
+JSXMLHttpRequestConstructor::JSXMLHttpRequestConstructor(ExecState* exec, Document* document)
     : DOMObject(exec->lexicalGlobalObject()->objectPrototype())
-    , doc(d)
+    , m_document(document)
 {
     putDirect(exec->propertyNames().prototype, JSXMLHttpRequestPrototype::self(exec), None);
 }
 
-bool JSXMLHttpRequestConstructorImp::implementsConstruct() const
+bool JSXMLHttpRequestConstructor::implementsConstruct() const
 {
     return true;
 }
 
-JSObject* JSXMLHttpRequestConstructorImp::construct(ExecState* exec, const List&)
+JSObject* JSXMLHttpRequestConstructor::construct(ExecState* exec, const List&)
 {
-    return new JSXMLHttpRequest(JSXMLHttpRequestPrototype::self(exec), doc.get());
+    return new JSXMLHttpRequest(JSXMLHttpRequestPrototype::self(exec), m_document.get());
 }
 
-const ClassInfo JSXMLHttpRequest::info = { "JSXMLHttpRequest", 0, &JSXMLHttpRequestTable };
+const ClassInfo JSXMLHttpRequest::info = { "XMLHttpRequest", 0, &JSXMLHttpRequestTable };
 
 /* Source for JSXMLHttpRequestTable.
 @begin JSXMLHttpRequestTable 7

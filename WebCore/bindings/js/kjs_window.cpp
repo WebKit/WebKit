@@ -479,7 +479,7 @@ JSValue *JSDOMWindowBase::getValueProperty(ExecState *exec, int token) const
     case XMLHttpRequest:
       if (!allowsAccessFrom(exec))
         return jsUndefined();
-      return new JSXMLHttpRequestConstructorImp(exec, impl()->frame()->document());
+      return new JSXMLHttpRequestConstructor(exec, impl()->frame()->document());
     case Audio:
 #if ENABLE(VIDEO)
       if (!allowsAccessFrom(exec))
@@ -490,13 +490,12 @@ JSValue *JSDOMWindowBase::getValueProperty(ExecState *exec, int token) const
 #else
       return jsUndefined();
 #endif
-#if ENABLE(XSLT)
     case XSLTProcessor_:
+#if ENABLE(XSLT)
       if (!allowsAccessFrom(exec))
         return jsUndefined();
-      return new XSLTProcessorConstructorImp(exec);
+      return new JSXSLTProcessorConstructor(exec);
 #else
-    case XSLTProcessor_:
       return jsUndefined();
 #endif
    }

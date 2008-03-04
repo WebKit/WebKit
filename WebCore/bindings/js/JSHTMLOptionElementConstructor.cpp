@@ -29,6 +29,8 @@ using namespace KJS;
 
 namespace WebCore {
 
+const ClassInfo JSHTMLOptionElementConstructor::info = { "OptionConstructor", 0, 0 };
+
 JSHTMLOptionElementConstructor::JSHTMLOptionElementConstructor(ExecState* exec, Document* document)
     : DOMObject(exec->lexicalGlobalObject()->objectPrototype())
     , m_document(document)

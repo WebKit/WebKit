@@ -28,12 +28,17 @@ namespace WebCore {
     class JSHTMLOptionElementConstructor : public DOMObject {
     public:
         JSHTMLOptionElementConstructor(KJS::ExecState*, Document*);
+
         virtual bool implementsConstruct() const;
-        virtual KJS::JSObject* construct(KJS::ExecState*, const KJS::List& args);
+        virtual KJS::JSObject* construct(KJS::ExecState*, const KJS::List&);
+
+        virtual const KJS::ClassInfo* classInfo() const { return &info; }
+        static const KJS::ClassInfo info;
+
     private:
         RefPtr<Document> m_document;
     };
 
-}
+} // namespace WebCore
 
-#endif
+#endif // JSHTMLOptionElementConstructor_h
