@@ -144,7 +144,7 @@ JSValue* JSDOMWindow::postMessage(ExecState* exec, const List& args)
 {
     DOMWindow* window = impl();
     
-    DOMWindow* source = static_cast<JSDOMWindow*>(exec->dynamicGlobalObject())->impl();
+    DOMWindow* source = toJSDOMWindow(exec->dynamicGlobalObject())->impl();
     String domain = source->frame()->loader()->url().host();
     String uri = source->frame()->loader()->url().string();
     String message = args[0]->toString(exec);

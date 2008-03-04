@@ -45,13 +45,14 @@
 #include "FrameLoader.h"
 #include "FrameView.h"
 #include "GraphicsContext.h"
-#include "HitTestResult.h"
 #include "HTMLDocument.h"
 #include "HTMLFormElement.h"
 #include "HTMLFrameElementBase.h"
 #include "HTMLGenericFormElement.h"
 #include "HTMLNames.h"
 #include "HTMLTableCellElement.h"
+#include "HitTestResult.h"
+#include "JSDOMWindow.h"
 #include "Logging.h"
 #include "MediaFeatureNames.h"
 #include "NodeList.h"
@@ -71,7 +72,6 @@
 #include "bindings/npruntime_impl.h"
 #include "bindings/runtime_root.h"
 #include "kjs_proxy.h"
-#include "kjs_window.h"
 #include "visible_units.h"
 
 #if FRAME_LOADS_USER_STYLESHEET
@@ -170,7 +170,7 @@ Frame::~Frame()
 #endif
 
     if (d->m_jscript && d->m_jscript->haveGlobalObject())
-        static_cast<KJS::Window*>(d->m_jscript->globalObject())->disconnectFrame();
+        static_cast<JSDOMWindow*>(d->m_jscript->globalObject())->disconnectFrame();
 
     disconnectOwnerElement();
     
@@ -1071,7 +1071,7 @@ NPObject* Frame::windowScriptNPObject()
             // JavaScript is enabled, so there is a JavaScript window object.  Return an NPObject bound to the window
             // object.
             KJS::JSLock lock;
-            KJS::JSObject* win = KJS::Window::retrieveWindow(this);
+            KJS::JSObject* win = toJSDOMWindow(this);
             ASSERT(win);
             KJS::Bindings::RootObject* root = bindingRootObject();
             d->m_windowScriptNPObject = _NPN_CreateScriptObject(0, win, root);
@@ -1679,7 +1679,7 @@ void Frame::pageDestroyed()
 
     // This will stop any JS timers
     if (d->m_jscript && d->m_jscript->haveGlobalObject())
-        if (KJS::Window* w = KJS::Window::retrieveWindow(this))
+        if (JSDOMWindow* w = toJSDOMWindow(this))
             w->disconnectFrame();
 
     clearScriptObjects();

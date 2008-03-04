@@ -58,6 +58,7 @@
 #import "HTMLNames.h"
 #import "HitTestResult.h"
 #import "Image.h"
+#import "JSDOMWindow.h"
 #import "LoaderNSURLExtras.h"
 #import "MoveSelectionCommand.h"
 #import "Page.h"
@@ -88,11 +89,11 @@
 #import "kjs_window.h"
 #import "markup.h"
 #import "visible_units.h"
-#import <OpenScripting/ASRegistry.h>
 #import <JavaScriptCore/array_instance.h>
 #import <JavaScriptCore/date_object.h>
 #import <bindings/runtime_root.h>
 #import <bindings/runtime.h>
+#import <OpenScripting/ASRegistry.h>
 #import <wtf/RetainPtr.h>
 
 @class NSView;
@@ -118,7 +119,6 @@ using KJS::SavedProperties;
 using KJS::StringType;
 using KJS::UndefinedType;
 using KJS::UnspecifiedType;
-using KJS::Window;
 
 using KJS::Bindings::RootObject;
 
@@ -143,7 +143,7 @@ static void updateRenderingForBindings(ExecState* exec, JSObject* rootObject)
     if (!rootObject)
         return;
         
-    Window* window = static_cast<Window*>(rootObject);
+    JSDOMWindow* window = static_cast<JSDOMWindow*>(rootObject);
     if (!window)
         return;
 

@@ -25,6 +25,7 @@
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "HTMLDocument.h"
+#include "JSDOMWindow.h"
 #include "JSDocument.h"
 #include "JSEvent.h"
 #include "XMLHttpRequest.h"
@@ -153,7 +154,7 @@ void JSXMLHttpRequest::putValueProperty(ExecState* exec, int token, JSValue* val
             Frame* frame = doc->frame();
             if (!frame)
                 return;
-            m_impl->setOnReadyStateChangeListener(KJS::Window::retrieveWindow(frame)->findOrCreateJSUnprotectedEventListener(value, true));
+            m_impl->setOnReadyStateChangeListener(toJSDOMWindow(frame)->findOrCreateJSUnprotectedEventListener(value, true));
             break;
         }
         case Onload: {
@@ -163,7 +164,7 @@ void JSXMLHttpRequest::putValueProperty(ExecState* exec, int token, JSValue* val
             Frame* frame = doc->frame();
             if (!frame)
                 return;
-            m_impl->setOnLoadListener(KJS::Window::retrieveWindow(frame)->findOrCreateJSUnprotectedEventListener(value, true));
+            m_impl->setOnLoadListener(toJSDOMWindow(frame)->findOrCreateJSUnprotectedEventListener(value, true));
             break;
         }
     }
@@ -261,7 +262,7 @@ JSValue* jsXMLHttpRequestPrototypeFunctionOpen(ExecState* exec, JSObject* thisOb
         return throwError(exec, SyntaxError, "Not enough arguments");
 
     String method = args[0]->toString(exec);
-    Frame* frame = Window::retrieveActive(exec)->impl()->frame();
+    Frame* frame = toJSDOMWindow(exec->dynamicGlobalObject())->impl()->frame();
     if (!frame)
         return jsUndefined();
     KURL url = frame->loader()->completeURL(args[1]->toString(exec));
@@ -357,7 +358,7 @@ JSValue* jsXMLHttpRequestPrototypeFunctionAddEventListener(ExecState* exec, JSOb
     Frame* frame = doc->frame();
     if (!frame)
         return jsUndefined();
-    JSUnprotectedEventListener* listener = KJS::Window::retrieveWindow(frame)->findOrCreateJSUnprotectedEventListener(args[1], true);
+    JSUnprotectedEventListener* listener = toJSDOMWindow(frame)->findOrCreateJSUnprotectedEventListener(args[1], true);
     if (!listener)
         return jsUndefined();
     request->impl()->addEventListener(args[0]->toString(exec), listener, args[2]->toBoolean(exec));
@@ -377,7 +378,7 @@ JSValue* jsXMLHttpRequestPrototypeFunctionRemoveEventListener(ExecState* exec, J
     Frame* frame = doc->frame();
     if (!frame)
         return jsUndefined();
-    JSUnprotectedEventListener* listener = KJS::Window::retrieveWindow(frame)->findOrCreateJSUnprotectedEventListener(args[1], true);
+    JSUnprotectedEventListener* listener = toJSDOMWindow(frame)->findOrCreateJSUnprotectedEventListener(args[1], true);
     if (!listener)
         return jsUndefined();
     request->impl()->removeEventListener(args[0]->toString(exec), listener, args[2]->toBoolean(exec));

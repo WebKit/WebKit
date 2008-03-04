@@ -1,3 +1,163 @@
+2008-03-03  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Cleanup and plumbing in preparation for the great Window split.
+
+        - Rename KJS::Window to WebCore::JSDOMWindowBase.
+        - Remove KJS::Window::retrieve() and KJS::Window::retrieveWindow() and replace
+          with the new toJSDOMWindow().
+        - Remove KJS::Window::retrieveActive() and replace with explicit call to 
+          exec->dynamicGlobalObject() and toJSDOMWindow().
+
+        * bindings/js/JSCustomVoidCallback.cpp:
+        (WebCore::toVoidCallback):.
+        * bindings/js/JSCustomXPathNSResolver.cpp:
+        (WebCore::JSCustomXPathNSResolver::create):
+        * bindings/js/JSDatabaseCustom.cpp:
+        (WebCore::JSDatabase::changeVersion):
+        (WebCore::JSDatabase::transaction):
+        * bindings/js/JSDocumentCustom.cpp:
+        (WebCore::JSDocument::location):
+        (WebCore::toJS):
+        * bindings/js/JSEventTargetBase.cpp:
+        (WebCore::jsEventTargetAddEventListener):
+        (WebCore::jsEventTargetRemoveEventListener):
+        * bindings/js/JSEventTargetNode.cpp:
+        (WebCore::JSEventTargetNode::setListener):
+        * bindings/js/JSHTMLDocumentCustom.cpp:
+        (WebCore::JSHTMLDocument::nameGetter):
+        (WebCore::JSHTMLDocument::open):
+        * bindings/js/JSHTMLFrameSetElementCustom.cpp:
+        (WebCore::JSHTMLFrameSetElement::nameGetter):
+        * bindings/js/JSLocation.cpp:
+        (WebCore::JSLocation::put):
+        (WebCore::jsLocationProtoFuncReplace):
+        (WebCore::jsLocationProtoFuncReload):
+        (WebCore::jsLocationProtoFuncAssign):
+        * bindings/js/JSLocation.h:
+        * bindings/js/JSSQLTransactionCustom.cpp:
+        (WebCore::JSSQLTransaction::executeSql):
+        * bindings/js/JSSVGLazyEventListener.cpp:
+        (WebCore::JSSVGLazyEventListener::JSSVGLazyEventListener):
+        (WebCore::JSSVGLazyEventListener::eventParameterName):
+        * bindings/js/JSSVGLazyEventListener.h:
+        * bindings/js/JSXMLHttpRequest.cpp:
+        (WebCore::JSXMLHttpRequest::putValueProperty):
+        (WebCore::jsXMLHttpRequestPrototypeFunctionOpen):
+        (WebCore::jsXMLHttpRequestPrototypeFunctionAddEventListener):
+        (WebCore::jsXMLHttpRequestPrototypeFunctionRemoveEventListener):
+        * bindings/js/ScheduledAction.cpp:
+        (WebCore::ScheduledAction::execute):
+        * bindings/js/ScheduledAction.h:
+        * bindings/js/kjs_binding.cpp:
+        (WebCore::allowsAccessFromFrame):
+        (WebCore::printErrorMessageForFrame):
+        * bindings/js/kjs_events.cpp:
+        (WebCore::JSAbstractEventListener::handleEvent):
+        (WebCore::JSUnprotectedEventListener::JSUnprotectedEventListener):
+        (WebCore::JSUnprotectedEventListener::~JSUnprotectedEventListener):
+        (WebCore::JSUnprotectedEventListener::windowObj):
+        (WebCore::JSEventListener::JSEventListener):
+        (WebCore::JSEventListener::~JSEventListener):
+        (WebCore::JSEventListener::windowObj):
+        (WebCore::JSLazyEventListener::JSLazyEventListener):
+        (WebCore::JSLazyEventListener::parseCode):
+        * bindings/js/kjs_events.h:
+        * bindings/js/kjs_navigator.cpp:
+        (WebCore::MimeType::getValueProperty):
+        * bindings/js/kjs_proxy.cpp:
+        (WebCore::KJSProxy::evaluate):
+        (WebCore::KJSProxy::createHTMLEventHandler):
+        (WebCore::KJSProxy::createSVGEventHandler):
+        * bindings/js/kjs_window.cpp:
+        (WebCore::JSDOMWindowBasePrivate::JSDOMWindowBasePrivate):
+        (WebCore::DOMWindowTimer::DOMWindowTimer):
+        (WebCore::DOMWindowTimer::action):
+        (WebCore::DOMWindowTimer::takeAction):
+        (WebCore::):
+        (WebCore::JSDOMWindowBase::JSDOMWindowBase):
+        (WebCore::JSDOMWindowBase::~JSDOMWindowBase):
+        (WebCore::JSDOMWindowBase::location):
+        (WebCore::JSDOMWindowBase::mark):
+        (WebCore::allowPopUp):
+        (WebCore::createWindow):
+        (WebCore::showModalDialog):
+        (WebCore::JSDOMWindowBase::getValueProperty):
+        (WebCore::JSDOMWindowBase::childFrameGetter):
+        (WebCore::JSDOMWindowBase::indexGetter):
+        (WebCore::JSDOMWindowBase::namedItemGetter):
+        (WebCore::JSDOMWindowBase::getOwnPropertySlot):
+        (WebCore::JSDOMWindowBase::put):
+        (WebCore::JSDOMWindowBase::allowsAccessFrom):
+        (WebCore::JSDOMWindowBase::allowsAccessFromNoErrorMessage):
+        (WebCore::JSDOMWindowBase::allowsAccessFromPrivate):
+        (WebCore::JSDOMWindowBase::crossDomainAccessErrorMessage):
+        (WebCore::JSDOMWindowBase::printErrorMessage):
+        (WebCore::JSDOMWindowBase::globalExec):
+        (WebCore::JSDOMWindowBase::shouldInterruptScript):
+        (WebCore::JSDOMWindowBase::setListener):
+        (WebCore::JSDOMWindowBase::getListener):
+        (WebCore::JSDOMWindowBase::findJSEventListener):
+        (WebCore::JSDOMWindowBase::findOrCreateJSEventListener):
+        (WebCore::JSDOMWindowBase::findJSUnprotectedEventListener):
+        (WebCore::JSDOMWindowBase::findOrCreateJSUnprotectedEventListener):
+        (WebCore::JSDOMWindowBase::clearHelperObjectProperties):
+        (WebCore::JSDOMWindowBase::clear):
+        (WebCore::JSDOMWindowBase::setCurrentEvent):
+        (WebCore::JSDOMWindowBase::currentEvent):
+        (WebCore::windowProtoFuncAToB):
+        (WebCore::windowProtoFuncBToA):
+        (WebCore::windowProtoFuncOpen):
+        (WebCore::windowProtoFuncSetTimeout):
+        (WebCore::windowProtoFuncClearTimeout):
+        (WebCore::windowProtoFuncSetInterval):
+        (WebCore::windowProtoFuncAddEventListener):
+        (WebCore::windowProtoFuncRemoveEventListener):
+        (WebCore::windowProtoFuncShowModalDialog):
+        (WebCore::windowProtoFuncNotImplemented):
+        (WebCore::JSDOMWindowBase::setReturnValueSlot):
+        (WebCore::JSDOMWindowBase::clearAllTimeouts):
+        (WebCore::JSDOMWindowBase::installTimeout):
+        (WebCore::JSDOMWindowBase::pauseTimeouts):
+        (WebCore::JSDOMWindowBase::resumeTimeouts):
+        (WebCore::JSDOMWindowBase::clearTimeout):
+        (WebCore::JSDOMWindowBase::timerFired):
+        (WebCore::JSDOMWindowBase::disconnectFrame):
+        (WebCore::JSDOMWindowBase::jsEventListeners):
+        (WebCore::JSDOMWindowBase::jsHTMLEventListeners):
+        (WebCore::JSDOMWindowBase::jsUnprotectedEventListeners):
+        (WebCore::JSDOMWindowBase::jsUnprotectedHTMLEventListeners):
+        (WebCore::toJS):
+        (WebCore::toJSDOMWindow):
+        (WebCore::toJSDOMWindow):
+        * bindings/js/kjs_window.h:
+        (WebCore::JSDOMWindowBase::impl):
+        (WebCore::JSDOMWindowBase::classInfo):
+        (WebCore::JSDOMWindowBase::):
+        * bindings/objc/DOMUtility.mm:
+        (KJS::createDOMWrapper):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * history/CachedPage.cpp:
+        (WebCore::CachedPage::CachedPage):
+        (WebCore::CachedPage::restore):
+        * page/Chrome.cpp:
+        (WebCore::PageGroupLoadDeferrer::PageGroupLoadDeferrer):
+        (WebCore::PageGroupLoadDeferrer::~PageGroupLoadDeferrer):
+        * page/DOMWindow.idl:
+        * page/Frame.cpp:
+        (WebCore::Frame::~Frame):
+        (WebCore::Frame::windowScriptNPObject):
+        (WebCore::Frame::pageDestroyed):
+        * page/InspectorController.cpp:
+        (WebCore::inspectedWindow):
+        * page/mac/FrameMac.mm:
+        (WebCore::Frame::windowScriptObject):
+        * page/mac/WebCoreFrameBridge.mm:
+        (updateRenderingForBindings):
+        * platform/SecurityOrigin.cpp:
+        (WebCore::SecurityOrigin::canAccess):
+
 2008-03-03  Kevin Ollivier  <kevino@theolliviers.com>
 
         wx build fixes after recent Frame-related changes.

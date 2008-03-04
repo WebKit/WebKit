@@ -29,16 +29,17 @@
 #include "config.h"
 #include "JSDatabase.h"
 
+#include "DOMWindow.h"
 #include "Database.h"
 #include "Document.h"
-#include "DOMWindow.h"
 #include "ExceptionCode.h"
-#include "kjs_window.h"
 #include "JSCustomSQLTransactionCallback.h"
 #include "JSCustomSQLTransactionErrorCallback.h"
 #include "JSCustomVoidCallback.h"
+#include "JSDOMWindow.h"
 #include "PlatformString.h"
 #include "SQLValue.h"
+#include "kjs_window.h"
 #include <kjs/array_instance.h>
 
 namespace WebCore {
@@ -50,7 +51,7 @@ JSValue* JSDatabase::changeVersion(ExecState* exec, const List& args)
     String oldVersion = args[0]->toString(exec);
     String newVersion = args[1]->toString(exec);
 
-    Frame* frame = Window::retrieveActive(exec)->impl()->frame();
+    Frame* frame = toJSDOMWindow(exec->dynamicGlobalObject())->impl()->frame();
     if (!frame)
         return jsUndefined();
     
@@ -96,7 +97,7 @@ JSValue* JSDatabase::transaction(ExecState* exec, const List& args)
         return jsUndefined();
     }        
  
-    Frame* frame = Window::retrieveActive(exec)->impl()->frame();
+    Frame* frame = toJSDOMWindow(exec->dynamicGlobalObject())->impl()->frame();
     if (!frame)
         return jsUndefined();
     

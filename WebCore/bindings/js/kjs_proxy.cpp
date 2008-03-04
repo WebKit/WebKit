@@ -80,9 +80,10 @@ JSValue* KJSProxy::evaluate(const String& filename, int baseLine, const String& 
     // Evaluating the JavaScript could cause the frame to be deallocated
     // so we start the keep alive timer here.
     m_frame->keepAlive();
-    
-    JSValue* thisNode = Window::retrieve(m_frame);
-  
+
+    // FIXME: Can this call to toJSDOMWindow be replaced by using m_globalObject.
+    JSValue* thisNode = toJSDOMWindow(m_frame);
+
     m_globalObject->startTimeoutCheck();
     Completion comp = Interpreter::evaluate(exec, filename, baseLine, reinterpret_cast<const KJS::UChar*>(str.characters()), str.length(), thisNode);
     m_globalObject->stopTimeoutCheck();
@@ -117,7 +118,7 @@ EventListener* KJSProxy::createHTMLEventHandler(const String& functionName, cons
 {
     initScriptIfNeeded();
     JSLock lock;
-    return new JSLazyEventListener(functionName, code, Window::retrieveWindow(m_frame), node, m_handlerLineno);
+    return new JSLazyEventListener(functionName, code, toJSDOMWindow(m_frame), node, m_handlerLineno);
 }
 
 #if ENABLE(SVG)
@@ -125,7 +126,7 @@ EventListener* KJSProxy::createSVGEventHandler(const String& functionName, const
 {
     initScriptIfNeeded();
     JSLock lock;
-    return new JSSVGLazyEventListener(functionName, code, Window::retrieveWindow(m_frame), node, m_handlerLineno);
+    return new JSSVGLazyEventListener(functionName, code, toJSDOMWindow(m_frame), node, m_handlerLineno);
 }
 #endif
 
@@ -149,7 +150,7 @@ void KJSProxy::initScript()
 
     m_frame->loader()->dispatchWindowObjectAvailable();
 }
-    
+
 void KJSProxy::clearDocumentWrapper() 
 {
     if (!m_globalObject)

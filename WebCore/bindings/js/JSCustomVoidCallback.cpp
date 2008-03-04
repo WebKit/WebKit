@@ -32,10 +32,11 @@
 #include "CString.h"
 #include "DOMWindow.h"
 #include "Frame.h"
+#include "JSDOMWindow.h"
+#include "Page.h"
 #include "kjs_binding.h"
 #include "kjs_proxy.h"
 #include "kjs_window.h"
-#include "Page.h"
 
 namespace WebCore {
     
@@ -107,7 +108,7 @@ VoidCallback* toVoidCallback(ExecState* exec, JSValue* value, bool& ok)
     if (!object)
         return 0;
     
-    Frame* frame = Window::retrieveActive(exec)->impl()->frame();
+    Frame* frame = toJSDOMWindow(exec->dynamicGlobalObject())->impl()->frame();
     if (!frame)
         return 0;
     

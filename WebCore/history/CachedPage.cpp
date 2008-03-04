@@ -37,20 +37,21 @@
 #include "FrameLoader.h"
 #include "FrameView.h"
 #include "GCController.h"
+#include "JSDOMWindow.h"
 #include "JSLocation.h"
 #include "Logging.h"
 #include "Page.h"
 #include "PausedTimeouts.h"
 #include "SystemTime.h"
-#if ENABLE(SVG)
-#include "SVGDocumentExtensions.h"
-#endif
-
 #include "kjs_proxy.h"
 #include "kjs_window.h"
 #include <kjs/JSLock.h>
 #include <kjs/SavedBuiltins.h>
 #include <kjs/property_map.h>
+
+#if ENABLE(SVG)
+#include "SVGDocumentExtensions.h"
+#endif
 
 using namespace KJS;
 
@@ -95,7 +96,7 @@ CachedPage::CachedPage(Page* page)
     m_document->willSaveToCache(); 
     
     Frame* mainFrame = page->mainFrame();
-    Window* window = Window::retrieveWindow(mainFrame);
+    JSDOMWindow* window = toJSDOMWindow(mainFrame);
 
     mainFrame->clearTimers();
 
@@ -131,7 +132,7 @@ void CachedPage::restore(Page* page)
     ASSERT(m_document->view() == m_view);
 
     Frame* mainFrame = page->mainFrame();
-    Window* window = Window::retrieveWindow(mainFrame);
+    JSDOMWindow* window = toJSDOMWindow(mainFrame);
 
     JSLock lock;
 

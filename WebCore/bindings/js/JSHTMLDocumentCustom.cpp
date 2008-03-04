@@ -33,6 +33,7 @@
 #include "HTMLElement.h"
 #include "HTMLIFrameElement.h"
 #include "HTMLNames.h"
+#include "JSDOMWindow.h"
 #include "JSHTMLCollection.h"
 #include "kjs_html.h"
 #include "kjs_window.h"
@@ -64,7 +65,7 @@ JSValue* JSHTMLDocument::nameGetter(ExecState* exec, JSObject* originalObject, c
 
         Frame* frame;
         if (node->hasTagName(iframeTag) && (frame = static_cast<HTMLIFrameElement*>(node)->contentFrame()))
-            return KJS::Window::retrieve(frame);
+            return toJSDOMWindow(frame);
 
         return toJS(exec, node);
     } 
@@ -97,7 +98,7 @@ JSValue* JSHTMLDocument::open(ExecState* exec, const List& args)
     if (args.size() > 2) {
         Frame* frame = static_cast<HTMLDocument*>(impl())->frame();
         if (frame) {
-            KJS::Window* window = KJS::Window::retrieveWindow(frame);
+            JSDOMWindow* window = toJSDOMWindow(frame);
             if (window) {
                 JSObject* functionObject = window->get(exec, "open")->getObject();
                 if (!functionObject || !functionObject->implementsCall())

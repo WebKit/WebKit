@@ -26,6 +26,7 @@
 #include "DOMWindow.h"
 #include "Frame.h"
 #include "FrameLoader.h"
+#include "JSDOMWindow.h"
 #include "kjs_proxy.h"
 #include "kjs_window.h"
 
@@ -152,7 +153,7 @@ void JSLocation::put(ExecState* exec, const Identifier& propertyName, JSValue* v
       switch (entry->value.intValue) {
       case Href: {
           // FIXME: Why isn't this security check needed for the other properties, like Host, below?
-          Frame* frame = Window::retrieveActive(exec)->impl()->frame();
+          Frame* frame = toJSDOMWindow(exec->dynamicGlobalObject())->impl()->frame();
           if (!frame)
               return;
           if (!frame->loader()->shouldAllowNavigation(m_frame))
@@ -201,7 +202,7 @@ void JSLocation::put(ExecState* exec, const Identifier& propertyName, JSValue* v
       return;
   }
 
-  Frame* activeFrame = Window::retrieveActive(exec)->impl()->frame();
+  Frame* activeFrame = toJSDOMWindow(exec->dynamicGlobalObject())->impl()->frame();
   if (!url.protocolIs("javascript") || sameDomainAccess) {
     bool userGesture = activeFrame->scriptProxy()->processingUserGesture();
     m_frame->loader()->scheduleLocationChange(url.string(), activeFrame->loader()->outgoingReferrer(), false, userGesture);
@@ -233,12 +234,12 @@ JSValue* jsLocationProtoFuncReplace(ExecState* exec, JSObject* thisObj, const Li
     if (!frame)
         return jsUndefined();
 
-    Frame* activeFrame = Window::retrieveActive(exec)->impl()->frame();
+    Frame* activeFrame = toJSDOMWindow(exec->dynamicGlobalObject())->impl()->frame();
     if (activeFrame) {
         if (!activeFrame->loader()->shouldAllowNavigation(frame))
             return jsUndefined();
         String str = args[0]->toString(exec);
-        const Window* window = Window::retrieveWindow(frame);
+        const JSDOMWindow* window = toJSDOMWindow(frame);
         if (!protocolIs(str, "javascript") || (window && window->allowsAccessFrom(exec))) {
             bool userGesture = activeFrame->scriptProxy()->processingUserGesture();
             frame->loader()->scheduleLocationChange(activeFrame->loader()->completeURL(str).string(), activeFrame->loader()->outgoingReferrer(), true, userGesture);
@@ -257,12 +258,12 @@ JSValue* jsLocationProtoFuncReload(ExecState* exec, JSObject* thisObj, const Lis
     if (!frame)
         return jsUndefined();
 
-    Window* window = Window::retrieveWindow(frame);
+    JSDOMWindow* window = toJSDOMWindow(frame);
     if (!window->allowsAccessFrom(exec))
         return jsUndefined();
 
     if (!frame->loader()->url().protocolIs("javascript") || (window && window->allowsAccessFrom(exec))) {
-        bool userGesture = Window::retrieveActive(exec)->impl()->frame()->scriptProxy()->processingUserGesture();
+        bool userGesture = toJSDOMWindow(exec->dynamicGlobalObject())->impl()->frame()->scriptProxy()->processingUserGesture();
         frame->loader()->scheduleRefresh(userGesture);
     }
     return jsUndefined();
@@ -277,11 +278,11 @@ JSValue* jsLocationProtoFuncAssign(ExecState* exec, JSObject* thisObj, const Lis
     if (!frame)
         return jsUndefined();
 
-    Frame* activeFrame = Window::retrieveActive(exec)->impl()->frame();
+    Frame* activeFrame = toJSDOMWindow(exec->dynamicGlobalObject())->impl()->frame();
     if (activeFrame) {
         if (!activeFrame->loader()->shouldAllowNavigation(frame))
             return jsUndefined();
-        const Window* window = Window::retrieveWindow(frame);
+        const JSDOMWindow* window = toJSDOMWindow(frame);
         String dstUrl = activeFrame->loader()->completeURL(args[0]->toString(exec)).string();
         if (!protocolIs(dstUrl, "javascript") || (window && window->allowsAccessFrom(exec))) {
             bool userGesture = activeFrame->scriptProxy()->processingUserGesture();

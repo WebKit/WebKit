@@ -61,6 +61,7 @@
 #import "HTMLTableCellElement.h"
 #import "HitTestRequest.h"
 #import "HitTestResult.h"
+#import "JSDOMWindow.h"
 #import "KeyboardEvent.h"
 #import "Logging.h"
 #import "MouseEventWithHitTestResults.h"
@@ -646,7 +647,7 @@ WebScriptObject* Frame::windowScriptObject()
 
     if (!d->m_windowScriptObject) {
         KJS::JSLock lock;
-        KJS::JSObject* win = KJS::Window::retrieveWindow(this);
+        KJS::JSObject* win = toJSDOMWindow(this);
         KJS::Bindings::RootObject *root = bindingRootObject();
         d->m_windowScriptObject = [WebScriptObject scriptObjectForJSObject:toRef(win) originRootObject:root rootObject:root];
     }

@@ -28,6 +28,7 @@
 #include "Document.h"
 #include "Frame.h"
 #include "FrameLoader.h"
+#include "JSDOMWindow.h"
 #include "Language.h"
 #include "Page.h"
 #include "PluginInfoStore.h"
@@ -584,7 +585,7 @@ JSValue* MimeType::getValueProperty(ExecState* exec, int token) const
     case Description:
         return jsString(m_info->desc);
     case EnabledPlugin: {
-        Frame* frame = Window::retrieveActive(exec)->impl()->frame();
+        Frame* frame = toJSDOMWindow(exec->dynamicGlobalObject())->impl()->frame();
         ASSERT(frame);
         Settings* settings = frame->settings();
         if (settings && settings->arePluginsEnabled())

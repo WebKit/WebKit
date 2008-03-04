@@ -26,7 +26,7 @@
 module window {
 
     interface [
-        LegacyParent=KJS::Window,
+        LegacyParent=JSDOMWindowBase,
         DoNotCache,
         CheckDomainSecurity,
         GenerateNativeConverter,

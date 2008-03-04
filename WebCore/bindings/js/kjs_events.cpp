@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2003, 2004, 2005, 2006, 2007 Apple Inc. All Rights Reserved.
+ *  Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008 Apple Inc. All Rights Reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -32,6 +32,7 @@
 #include "FrameLoader.h"
 #include "HTMLImageElement.h"
 #include "HTMLNames.h"
+#include "JSDOMWindow.h"
 #include "JSEvent.h"
 #include "JSEventTargetNode.h"
 #include "Page.h"
@@ -42,9 +43,10 @@
 
 #include "kjs_events.lut.h"
 
+using namespace KJS;
+
 namespace WebCore {
 
-using namespace KJS;
 using namespace EventNames;
 using namespace HTMLNames;
 
@@ -66,12 +68,12 @@ void JSAbstractEventListener::handleEvent(Event* ele, bool isWindowEvent)
     if (!listener)
         return;
 
-    KJS::Window* window = windowObj();
+    JSDOMWindow* window = windowObj();
     // Null check as clearWindowObj() can clear this and we still get called back by
     // xmlhttprequest objects. See http://bugs.webkit.org/show_bug.cgi?id=13275
     if (!window)
         return;
-    Frame *frame = window->impl()->frame();
+    Frame* frame = window->impl()->frame();
     if (!frame)
         return;
     if (!frame->scriptProxy()->isEnabled())
@@ -147,13 +149,13 @@ bool JSAbstractEventListener::isHTMLEventListener() const
 
 // -------------------------------------------------------------------------
 
-JSUnprotectedEventListener::JSUnprotectedEventListener(JSObject* listener, KJS::Window* win, bool html)
+JSUnprotectedEventListener::JSUnprotectedEventListener(JSObject* listener, JSDOMWindow* win, bool html)
     : JSAbstractEventListener(html)
     , m_listener(listener)
     , m_win(win)
 {
     if (m_listener) {
-        KJS::Window::UnprotectedListenersMap& listeners = html
+        JSDOMWindow::UnprotectedListenersMap& listeners = html
             ? m_win->jsUnprotectedHTMLEventListeners() : m_win->jsUnprotectedEventListeners();
         listeners.set(m_listener, this);
     }
@@ -162,7 +164,7 @@ JSUnprotectedEventListener::JSUnprotectedEventListener(JSObject* listener, KJS::
 JSUnprotectedEventListener::~JSUnprotectedEventListener()
 {
     if (m_listener && m_win) {
-        KJS::Window::UnprotectedListenersMap& listeners = isHTMLEventListener()
+        JSDOMWindow::UnprotectedListenersMap& listeners = isHTMLEventListener()
             ? m_win->jsUnprotectedHTMLEventListeners() : m_win->jsUnprotectedEventListeners();
         listeners.remove(m_listener);
     }
@@ -173,7 +175,7 @@ JSObject* JSUnprotectedEventListener::listenerObj() const
     return m_listener;
 }
 
-KJS::Window* JSUnprotectedEventListener::windowObj() const
+JSDOMWindow* JSUnprotectedEventListener::windowObj() const
 {
     return m_win;
 }
@@ -209,13 +211,13 @@ static EventListenerCounter eventListenerCounter;
 
 // -------------------------------------------------------------------------
 
-JSEventListener::JSEventListener(JSObject* listener, KJS::Window* win, bool html)
+JSEventListener::JSEventListener(JSObject* listener, JSDOMWindow* win, bool html)
     : JSAbstractEventListener(html)
     , m_listener(listener)
     , m_win(win)
 {
     if (m_listener) {
-        KJS::Window::ListenersMap& listeners = html
+        JSDOMWindow::ListenersMap& listeners = html
             ? m_win->jsHTMLEventListeners() : m_win->jsEventListeners();
         listeners.set(m_listener, this);
     }
@@ -227,7 +229,7 @@ JSEventListener::JSEventListener(JSObject* listener, KJS::Window* win, bool html
 JSEventListener::~JSEventListener()
 {
     if (m_listener && m_win) {
-        KJS::Window::ListenersMap& listeners = isHTMLEventListener()
+        JSDOMWindow::ListenersMap& listeners = isHTMLEventListener()
             ? m_win->jsHTMLEventListeners() : m_win->jsEventListeners();
         listeners.remove(m_listener);
     }
@@ -241,7 +243,7 @@ JSObject* JSEventListener::listenerObj() const
     return m_listener;
 }
 
-KJS::Window* JSEventListener::windowObj() const
+JSDOMWindow* JSEventListener::windowObj() const
 {
     return m_win;
 }
@@ -253,7 +255,7 @@ void JSEventListener::clearWindowObj()
 
 // -------------------------------------------------------------------------
 
-JSLazyEventListener::JSLazyEventListener(const String& functionName, const String& code, KJS::Window* win, Node* node, int lineNumber)
+JSLazyEventListener::JSLazyEventListener(const String& functionName, const String& code, JSDOMWindow* win, Node* node, int lineNumber)
     : JSEventListener(0, win, true)
     , m_functionName(functionName)
     , m_code(code)
@@ -324,7 +326,7 @@ void JSLazyEventListener::parseCode() const
     m_code = String();
 
     if (m_listener) {
-        KJS::Window::ListenersMap& listeners = isHTMLEventListener()
+        JSDOMWindow::ListenersMap& listeners = isHTMLEventListener()
             ? windowObj()->jsHTMLEventListeners() : windowObj()->jsEventListeners();
         listeners.set(m_listener, const_cast<JSLazyEventListener*>(this));
     }

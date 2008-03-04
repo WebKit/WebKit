@@ -32,6 +32,7 @@
 #include "HTMLImageElement.h"
 #include "HTMLNames.h"
 #include "JSDOMCoreException.h"
+#include "JSDOMWindow.h"
 #include "JSEventException.h"
 #include "JSNode.h"
 #include "JSRangeException.h"
@@ -344,7 +345,7 @@ bool allowsAccessFromFrame(ExecState* exec, Frame* frame)
 {
     if (!frame)
         return false;
-    Window* window = Window::retrieveWindow(frame);
+    JSDOMWindow* window = toJSDOMWindow(frame);
     return window && window->allowsAccessFrom(exec);
 }
 
@@ -352,7 +353,7 @@ bool allowsAccessFromFrame(ExecState* exec, Frame* frame, String& message)
 {
     if (!frame)
         return false;
-    Window* window = Window::retrieveWindow(frame);
+    JSDOMWindow* window = toJSDOMWindow(frame);
     return window && window->allowsAccessFrom(exec, message);
 }
 
@@ -360,7 +361,7 @@ void printErrorMessageForFrame(Frame* frame, const String& message)
 {
     if (!frame)
         return;
-    if (Window* window = Window::retrieveWindow(frame))
+    if (JSDOMWindow* window = toJSDOMWindow(frame))
         window->printErrorMessage(message);
 }
 

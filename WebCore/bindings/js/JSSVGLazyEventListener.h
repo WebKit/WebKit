@@ -29,14 +29,13 @@ namespace WebCore {
 
     class JSSVGLazyEventListener : public JSLazyEventListener {
     public:
-        JSSVGLazyEventListener(const String& functionName, const String& code, KJS::Window*, Node*, int lineno = 0);
+        JSSVGLazyEventListener(const String& functionName, const String& code, JSDOMWindow*, Node*, int lineNumber = 0);
+
     private:
         virtual KJS::JSValue* eventParameterName() const;
     };
 
-}
+} // namespace WebCore
 
 #endif // ENABLE(SVG)
-#endif
-
-// vim:ts=4:noet
+#endif // JSSVGLazyEventListener_h

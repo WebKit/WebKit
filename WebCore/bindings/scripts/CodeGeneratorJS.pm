@@ -125,7 +125,7 @@ sub GetLegacyHeaderIncludes
     my $legacyParent = shift;
 
     return "#include \"JSHTMLInputElementBase.h\"\n\n" if $legacyParent eq "JSHTMLInputElementBase";
-    return "#include \"kjs_window.h\"\n\n" if $legacyParent eq "KJS::Window";
+    return "#include \"kjs_window.h\"\n\n" if $legacyParent eq "JSDOMWindowBase";
     return "#include \"kjs_events.h\"\n\n" if $module eq "events";
     return "#include \"kjs_css.h\"\n\n" if $module eq "css";
     return "#include \"kjs_html.h\"\n\n" if $module eq "html";

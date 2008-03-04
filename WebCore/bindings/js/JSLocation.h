@@ -22,18 +22,15 @@
 
 #include "kjs_binding.h"
 
-namespace KJS {
-    class Window;
-}
-
 namespace WebCore {
 
     class Frame;
+    class JSDOMWindowBase;
 
     class JSLocation : public DOMObject {
         typedef DOMObject Base;
 
-        friend class KJS::Window;
+        friend class JSDOMWindowBase;
     public:
         JSLocation(KJS::JSObject* protoype, Frame*);
     

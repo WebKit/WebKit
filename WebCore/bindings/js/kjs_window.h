@@ -21,171 +21,161 @@
 #define kjs_window_h
 
 #include "PlatformString.h"
+#include "SecurityOrigin.h"
 #include "kjs_binding.h"
 #include <kjs/protect.h>
-#include "SecurityOrigin.h"
 #include <wtf/HashMap.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/OwnPtr.h>
 
 namespace WebCore {
+
     class AtomicString;
     class DOMWindow;
+    class DOMWindowTimer;
     class Frame;
+    class JSDOMWindow;
     class JSEventListener;
     class JSLocation;
     class JSUnprotectedEventListener;
     class PausedTimeouts;
     class ScheduledAction;
-}
 
-namespace KJS {
+    class JSDOMWindowBasePrivate;
 
-    class DOMWindowTimer;
-    class WindowPrivate;
+    // This is the only WebCore JS binding which does not inherit from DOMObject
+    class JSDOMWindowBase : public KJS::JSGlobalObject {
+        typedef KJS::JSGlobalObject Base;
 
-  // This is the only WebCore JS binding which does not inherit from DOMObject
-  class Window : public JSGlobalObject {
-    typedef JSGlobalObject Base;
+        friend class ScheduledAction;
+    protected:
+        JSDOMWindowBase(KJS::JSObject* prototype, DOMWindow*);
 
-    friend class WebCore::ScheduledAction;
-  protected:
-    Window(JSObject* prototype, WebCore::DOMWindow*);
+    public:
+        virtual ~JSDOMWindowBase();
 
-  public:
-    virtual ~Window();
+        DOMWindow* impl() const { return m_impl.get(); }
 
-    WebCore::DOMWindow* impl() const { return m_impl.get(); }
+        void disconnectFrame();
 
-    void disconnectFrame();
+        virtual void mark();
 
-    // Returns and registers a window object. In case there's already a Window
-    // for the specified frame p this will be returned in order to have unique
-    // bindings.
-    static JSValue* retrieve(WebCore::Frame*);
+        virtual bool getOwnPropertySlot(KJS::ExecState*, const KJS::Identifier&, KJS::PropertySlot&);
+        KJS::JSValue* getValueProperty(KJS::ExecState*, int token) const;
+        virtual void put(KJS::ExecState*, const KJS::Identifier& propertyName, KJS::JSValue*);
 
-    // Returns the Window object for a given HTML frame
-    static Window* retrieveWindow(WebCore::Frame*);
+        int installTimeout(const KJS::UString& handler, int t, bool singleShot);
+        int installTimeout(KJS::JSValue* function, const KJS::List& args, int t, bool singleShot);
+        void clearTimeout(int timerId, bool delAction = true);
+        PausedTimeouts* pauseTimeouts();
+        void resumeTimeouts(PausedTimeouts*);
 
-    // Returns a pointer to the Window object this javascript interpreting instance 
-    // was called from.
-    static Window* retrieveActive(ExecState*);
+        void timerFired(DOMWindowTimer*);
 
-    virtual void mark();
+        JSLocation* location() const;
 
-    virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
-    JSValue* getValueProperty(ExecState*, int token) const;
-    virtual void put(ExecState*, const Identifier& propertyName, JSValue*);
+        // Finds a wrapper of a JS EventListener, returns 0 if no existing one.
+        JSEventListener* findJSEventListener(KJS::JSValue*, bool html = false);
 
-    int installTimeout(const UString& handler, int t, bool singleShot);
-    int installTimeout(JSValue* function, const List& args, int t, bool singleShot);
-    void clearTimeout(int timerId, bool delAction = true);
-    WebCore::PausedTimeouts* pauseTimeouts();
-    void resumeTimeouts(WebCore::PausedTimeouts*);
+        // Finds or creates a wrapper of a JS EventListener. JS EventListener object is GC-protected.
+        JSEventListener* findOrCreateJSEventListener(KJS::JSValue*, bool html = false);
 
-    void timerFired(DOMWindowTimer*);
+        // Finds a wrapper of a GC-unprotected JS EventListener, returns 0 if no existing one.
+        JSUnprotectedEventListener* findJSUnprotectedEventListener(KJS::JSValue*, bool html = false);
 
-    WebCore::JSLocation* location() const;
+        // Finds or creates a wrapper of a JS EventListener. JS EventListener object is *NOT* GC-protected.
+        JSUnprotectedEventListener* findOrCreateJSUnprotectedEventListener(KJS::JSValue*, bool html = false);
 
-    // Finds a wrapper of a JS EventListener, returns 0 if no existing one.
-    WebCore::JSEventListener* findJSEventListener(JSValue*, bool html = false);
+        void clear();
 
-    // Finds or creates a wrapper of a JS EventListener. JS EventListener object is GC-protected.
-    WebCore::JSEventListener *findOrCreateJSEventListener(JSValue*, bool html = false);
+        void setCurrentEvent(Event*);
+        Event* currentEvent();
 
-    // Finds a wrapper of a GC-unprotected JS EventListener, returns 0 if no existing one.
-    WebCore::JSUnprotectedEventListener* findJSUnprotectedEventListener(JSValue*, bool html = false);
+        // Set a place to put a dialog return value when the window is cleared.
+        void setReturnValueSlot(KJS::JSValue** slot);
 
-    // Finds or creates a wrapper of a JS EventListener. JS EventListener object is *NOT* GC-protected.
-    WebCore::JSUnprotectedEventListener *findOrCreateJSUnprotectedEventListener(JSValue*, bool html = false);
+        typedef HashMap<KJS::JSObject*, JSEventListener*> ListenersMap;
+        typedef HashMap<KJS::JSObject*, JSUnprotectedEventListener*> UnprotectedListenersMap;
 
-    void clear();
+        ListenersMap& jsEventListeners();
+        ListenersMap& jsHTMLEventListeners();
+        UnprotectedListenersMap& jsUnprotectedEventListeners();
+        UnprotectedListenersMap& jsUnprotectedHTMLEventListeners();
 
-    void setCurrentEvent(WebCore::Event*);
-    WebCore::Event* currentEvent();
+        virtual const KJS::ClassInfo* classInfo() const { return &info; }
+        static const KJS::ClassInfo info;
 
-    // Set a place to put a dialog return value when the window is cleared.
-    void setReturnValueSlot(JSValue** slot);
+        virtual KJS::ExecState* globalExec();
 
-    typedef HashMap<JSObject*, WebCore::JSEventListener*> ListenersMap;
-    typedef HashMap<JSObject*, WebCore::JSUnprotectedEventListener*> UnprotectedListenersMap;
-    
-    ListenersMap& jsEventListeners();
-    ListenersMap& jsHTMLEventListeners();
-    UnprotectedListenersMap& jsUnprotectedEventListeners();
-    UnprotectedListenersMap& jsUnprotectedHTMLEventListeners();
-    
-    virtual const ClassInfo* classInfo() const { return &info; }
-    static const ClassInfo info;
+        virtual bool shouldInterruptScript() const;
 
-    virtual ExecState* globalExec();
+        bool allowsAccessFrom(KJS::ExecState*) const;
+        bool allowsAccessFromNoErrorMessage(KJS::ExecState*) const;
+        bool allowsAccessFrom(KJS::ExecState*, String& message) const;
 
-    virtual bool shouldInterruptScript() const;
+        void printErrorMessage(const String&) const;
 
-    bool allowsAccessFrom(ExecState*) const;
-    bool allowsAccessFromNoErrorMessage(ExecState*) const;
-    bool allowsAccessFrom(ExecState*, WebCore::String& message) const;
+        // Don't call this version of allowsAccessFrom -- it's a slightly incorrect implementation used only by WebScriptObject
+        virtual bool allowsAccessFrom(const KJS::JSGlobalObject*) const;
 
-    void printErrorMessage(const WebCore::String&) const;
+        enum {
+            // Attributes
+            Crypto, Event_, Location_, Navigator_,
+            ClientInformation,
 
-    // Don't call this version of allowsAccessFrom -- it's a slightly incorrect implementation used only by WebScriptObject
-    virtual bool allowsAccessFrom(const JSGlobalObject*) const;
+            // Event Listeners
+            Onabort, Onblur, Onchange, Onclick,
+            Ondblclick, Onerror, Onfocus, Onkeydown,
+            Onkeypress, Onkeyup, Onload, Onmousedown,
+            Onmousemove, Onmouseout, Onmouseover, Onmouseup,
+            OnWindowMouseWheel, Onreset, Onresize, Onscroll,
+            Onsearch, Onselect, Onsubmit, Onunload,
+            Onbeforeunload,
 
-    enum {
-        // Attributes
-        Crypto, Event_, Location_, Navigator_,
-        ClientInformation,
+            // Constructors
+            DOMException, Audio, Image, Option, XMLHttpRequest,
+            XSLTProcessor_
+        };
 
-        // Event Listeners
-        Onabort, Onblur, Onchange, Onclick,
-        Ondblclick, Onerror, Onfocus, Onkeydown,
-        Onkeypress, Onkeyup, Onload, Onmousedown,
-        Onmousemove, Onmouseout, Onmouseover, Onmouseup,
-        OnWindowMouseWheel, Onreset, Onresize, Onscroll,
-        Onsearch, Onselect, Onsubmit, Onunload,
-        Onbeforeunload,
+    private:
+        KJS::JSValue* getListener(KJS::ExecState*, const AtomicString& eventType) const;
+        void setListener(KJS::ExecState*, const AtomicString& eventType, KJS::JSValue* function);
 
-        // Constructors
-        DOMException, Audio, Image, Option, XMLHttpRequest,
-        XSLTProcessor_
+        static KJS::JSValue* childFrameGetter(KJS::ExecState*, KJS::JSObject*, const KJS::Identifier&, const KJS::PropertySlot&);
+        static KJS::JSValue* indexGetter(KJS::ExecState*, KJS::JSObject*, const KJS::Identifier&, const KJS::PropertySlot&);
+        static KJS::JSValue* namedItemGetter(KJS::ExecState*, KJS::JSObject*, const KJS::Identifier&, const KJS::PropertySlot&);
+
+        void clearHelperObjectProperties();
+        void clearAllTimeouts();
+        int installTimeout(ScheduledAction*, int interval, bool singleShot);
+
+        bool allowsAccessFromPrivate(const KJS::JSGlobalObject*, SecurityOrigin::Reason&) const;
+        bool allowsAccessFromPrivate(const KJS::ExecState*, SecurityOrigin::Reason&) const;
+        String crossDomainAccessErrorMessage(const KJS::JSGlobalObject*, SecurityOrigin::Reason) const;
+
+        RefPtr<DOMWindow> m_impl;
+        OwnPtr<JSDOMWindowBasePrivate> d;
     };
 
-  private:
-    JSValue* getListener(ExecState*, const WebCore::AtomicString& eventType) const;
-    void setListener(ExecState*, const WebCore::AtomicString& eventType, JSValue* func);
+    // Functions
+    KJS::JSValue* windowProtoFuncAToB(KJS::ExecState*, KJS::JSObject*, const KJS::List&);
+    KJS::JSValue* windowProtoFuncBToA(KJS::ExecState*, KJS::JSObject*, const KJS::List&);
+    KJS::JSValue* windowProtoFuncOpen(KJS::ExecState*, KJS::JSObject*, const KJS::List&);
+    KJS::JSValue* windowProtoFuncSetTimeout(KJS::ExecState*, KJS::JSObject*, const KJS::List&);
+    KJS::JSValue* windowProtoFuncClearTimeout(KJS::ExecState*, KJS::JSObject*, const KJS::List&);
+    KJS::JSValue* windowProtoFuncSetInterval(KJS::ExecState*, KJS::JSObject*, const KJS::List&);
+    KJS::JSValue* windowProtoFuncAddEventListener(KJS::ExecState*, KJS::JSObject*, const KJS::List&);
+    KJS::JSValue* windowProtoFuncRemoveEventListener(KJS::ExecState*, KJS::JSObject*, const KJS::List&);
+    KJS::JSValue* windowProtoFuncShowModalDialog(KJS::ExecState*, KJS::JSObject*, const KJS::List&);
+    KJS::JSValue* windowProtoFuncNotImplemented(KJS::ExecState*, KJS::JSObject*, const KJS::List&);
 
-    static JSValue* childFrameGetter(ExecState*, JSObject*, const Identifier&, const PropertySlot&);
-    static JSValue* indexGetter(ExecState*, JSObject*, const Identifier&, const PropertySlot&);
-    static JSValue* namedItemGetter(ExecState*, JSObject*, const Identifier&, const PropertySlot&);
-
-    void clearHelperObjectProperties();
-    void clearAllTimeouts();
-    int installTimeout(WebCore::ScheduledAction*, int interval, bool singleShot);
-
-    bool allowsAccessFromPrivate(const JSGlobalObject*, WebCore::SecurityOrigin::Reason&) const;
-    bool allowsAccessFromPrivate(const ExecState*, WebCore::SecurityOrigin::Reason&) const;
-    WebCore::String crossDomainAccessErrorMessage(const JSGlobalObject*, WebCore::SecurityOrigin::Reason) const;
-
-    RefPtr<WebCore::DOMWindow> m_impl;
-    OwnPtr<WindowPrivate> d;
-  };
-
-  // Functions
-  JSValue* windowProtoFuncAToB(ExecState*, JSObject*, const List&);
-  JSValue* windowProtoFuncBToA(ExecState*, JSObject*, const List&);
-  JSValue* windowProtoFuncOpen(ExecState*, JSObject*, const List&);
-  JSValue* windowProtoFuncSetTimeout(ExecState*, JSObject*, const List&);
-  JSValue* windowProtoFuncClearTimeout(ExecState*, JSObject*, const List&);
-  JSValue* windowProtoFuncSetInterval(ExecState*, JSObject*, const List&);
-  JSValue* windowProtoFuncAddEventListener(ExecState*, JSObject*, const List&);
-  JSValue* windowProtoFuncRemoveEventListener(ExecState*, JSObject*, const List&);
-  JSValue* windowProtoFuncShowModalDialog(ExecState*, JSObject*, const List&);
-  JSValue* windowProtoFuncNotImplemented(ExecState*, JSObject*, const List&);
-
-} // namespace KJS
-
-namespace WebCore {
+    // Returns a JSDOMWindow or jsNull()
     KJS::JSValue* toJS(KJS::ExecState*, DOMWindow*);
+
+    // Returns JSDOMWindow or 0
+    JSDOMWindow* toJSDOMWindow(Frame*);
+    JSDOMWindow* toJSDOMWindow(KJS::JSGlobalObject*);
+
 } // namespace WebCore
 
 #endif // kjs_window_h

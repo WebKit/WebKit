@@ -28,19 +28,17 @@ using namespace KJS;
 
 namespace WebCore {
 
-JSSVGLazyEventListener::JSSVGLazyEventListener(const String& functionName, const String& code, KJS::Window* win, Node* node, int lineno)
-    : JSLazyEventListener(functionName, code, win, node, lineno)
+JSSVGLazyEventListener::JSSVGLazyEventListener(const String& functionName, const String& code, JSDOMWindow* win, Node* node, int lineNumber)
+    : JSLazyEventListener(functionName, code, win, node, lineNumber)
 {
 }
 
-JSValue *JSSVGLazyEventListener::eventParameterName() const
+JSValue* JSSVGLazyEventListener::eventParameterName() const
 {
     static ProtectedPtr<JSValue> eventString = jsString("evt");
     return eventString.get();
 }
 
-}
+} // namespace WebCore
 
 #endif // ENABLE(SVG)
-
-// vim:ts=4:noet

@@ -359,7 +359,7 @@ PageGroupLoadDeferrer::PageGroupLoadDeferrer(Page* page, bool deferSelf)
 
 #if !PLATFORM(MAC)
             for (Frame* frame = otherPage->mainFrame(); frame; frame = frame->tree()->traverseNext()) {
-                if (KJS::Window* window = KJS::Window::retrieveWindow(frame)) {
+                if (JSDOMWindow* window = toJSDOMWindow(frame)) {
                     PausedTimeouts* timeouts = window->pauseTimeouts();
 
                     m_pausedTimeouts.append(make_pair(frame, timeouts));
@@ -386,7 +386,7 @@ PageGroupLoadDeferrer::~PageGroupLoadDeferrer()
     count = m_pausedTimeouts.size();
 
     for (size_t i = 0; i < count; i++) {
-        KJS::Window* window = KJS::Window::retrieveWindow(m_pausedTimeouts[i].first.get());
+        JSDOMWindow* window = toJSDOMWindow(m_pausedTimeouts[i].first.get());
         if (window)
             window->resumeTimeouts(m_pausedTimeouts[i].second);
         delete m_pausedTimeouts[i].second;

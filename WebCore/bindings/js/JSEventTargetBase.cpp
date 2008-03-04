@@ -27,7 +27,9 @@
 #include "config.h"
 #include "JSEventTargetBase.h"
 
+#include "JSDOMWindow.h"
 #include "JSEventTargetNode.h"
+#include "kjs_window.h"
 
 #include "JSEventTargetBase.lut.h"
 
@@ -101,7 +103,7 @@ JSValue* jsEventTargetAddEventListener(ExecState* exec, JSObject* thisObj, const
     if (!frame)
         return jsUndefined();
 
-    if (JSEventListener* listener = Window::retrieveWindow(frame)->findOrCreateJSEventListener(args[1]))
+    if (JSEventListener* listener = toJSDOMWindow(frame)->findOrCreateJSEventListener(args[1]))
         eventTarget->addEventListener(args[0]->toString(exec), listener, args[2]->toBoolean(exec));
 
     return jsUndefined();
@@ -120,7 +122,7 @@ JSValue* jsEventTargetRemoveEventListener(ExecState* exec, JSObject* thisObj, co
     if (!frame)
         return jsUndefined();
 
-    if (JSEventListener* listener = Window::retrieveWindow(frame)->findJSEventListener(args[1]))
+    if (JSEventListener* listener = toJSDOMWindow(frame)->findJSEventListener(args[1]))
         eventTarget->removeEventListener(args[0]->toString(exec), listener, args[2]->toBoolean(exec));
 
     return jsUndefined();
