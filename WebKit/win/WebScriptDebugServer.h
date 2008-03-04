@@ -33,6 +33,10 @@
 #include <WebCore/COMPtr.h>
 #pragma warning(pop)
 
+namespace WebCore {
+    class Page;
+}
+
 interface IWebView;
 
 class WebScriptDebugServer : public IWebScriptDebugServer, public IWebScriptDebugListener
@@ -40,6 +44,8 @@ class WebScriptDebugServer : public IWebScriptDebugServer, public IWebScriptDebu
 public:
     static WebScriptDebugServer* createInstance();
     static WebScriptDebugServer* sharedWebScriptDebugServer();
+
+    static void pageCreated(WebCore::Page*);
 
 private:
     WebScriptDebugServer();

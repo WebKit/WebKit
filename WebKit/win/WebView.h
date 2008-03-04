@@ -41,6 +41,7 @@ class WebBackForwardList;
 class WebInspector;
 class WebInspectorClient;
 
+WebView* kit(WebCore::Page*);
 WebCore::Page* core(IWebView*);
 
 interface IDropTargetHelper;

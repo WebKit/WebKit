@@ -61,11 +61,6 @@
 using namespace WebCore;
 using namespace HTMLNames;
 
-WebView* kit(Page* page)
-{
-    return page ? static_cast<WebChromeClient*>(page->chrome()->client())->webView() : 0;
-}
-
 static WebDataSource* getWebDataSource(DocumentLoader* loader)
 {
     return loader ? static_cast<WebDocumentLoader*>(loader)->dataSource() : 0;

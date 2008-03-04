@@ -28,9 +28,14 @@
 #include "WebKitDLL.h"
 #include "WebScriptDebugServer.h"
 
-#include "WebView.h"
+#include "WebScriptDebugger.h"
+#pragma warning(push, 0)
+#include <WebCore/Page.h>
+#pragma warning(pop)
 #include <wtf/Assertions.h>
 #include <wtf/Vector.h>
+
+using namespace WebCore;
 
 typedef HashSet<COMPtr<IWebScriptDebugListener> > ListenerSet;
 
@@ -73,6 +78,13 @@ WebScriptDebugServer* WebScriptDebugServer::sharedWebScriptDebugServer()
     return s_SharedWebScriptDebugServer.get();
 }
 
+void WebScriptDebugServer::pageCreated(Page* page)
+{
+    ASSERT_ARG(page, page);
+
+    if (s_ListenerCount > 0)
+        page->setDebugger(&WebScriptDebugger::shared());
+}
 
 // IUnknown -------------------------------------------------------------------
 
@@ -127,6 +139,9 @@ HRESULT STDMETHODCALLTYPE WebScriptDebugServer::addListener(
     if (!listener)
         return E_POINTER;
 
+    if (!s_ListenerCount)
+        Page::setDebuggerForAllPages(&WebScriptDebugger::shared());
+
     ++s_ListenerCount;
     s_Listeners.add(listener);
 
@@ -148,8 +163,10 @@ HRESULT STDMETHODCALLTYPE WebScriptDebugServer::removeListener(
     s_Listeners.remove(listener);
 
     ASSERT(s_ListenerCount >= 1);
-    if (--s_ListenerCount == 0)
+    if (--s_ListenerCount == 0) {
+        Page::setDebuggerForAllPages(0);
         resume();
+    }
 
     return S_OK;
 }

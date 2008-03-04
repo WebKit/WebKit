@@ -29,8 +29,6 @@
 #ifndef WebScriptDebugger_H
 #define WebScriptDebugger_H
 
-#include "WebKit.h"
-
 #include <JavaScriptCore/debugger.h>
 #pragma warning(push, 0)
 #include <WebCore/COMPtr.h>
@@ -48,7 +46,7 @@ namespace KJS {
 
 class WebScriptDebugger : public KJS::Debugger {
 public:
-    WebScriptDebugger(WebFrame*);
+    static WebScriptDebugger& shared();
 
     bool sourceParsed(KJS::ExecState*, int sourceId, const KJS::UString& sourceURL,
         const KJS::UString& source, int startingLineNumber, int errorLine, const KJS::UString& errorMsg);
@@ -59,6 +57,9 @@ public:
     bool exception(KJS::ExecState*, int sourceId, int lineno, KJS::JSValue* exception);
 
 private:
+    WebScriptDebugger();
+    ~WebScriptDebugger();
+
     bool m_callingServer;
     WebFrame* m_frame;
     COMPtr<IWebView> m_webView;

@@ -1,5 +1,47 @@
 2008-03-04  Adam Roben  <aroben@apple.com>
 
+        Use WebCore's new debugger-attaching code
+
+        Reviewed by Kevin M.
+
+        * WebCoreSupport/WebFrameLoaderClient.cpp: Moved a kit() function to
+        WebView.{cpp,h} so that other files can call it.
+        * WebFrame.cpp:
+        (WebFrame::WebFrame): Removed m_scriptDebugger member.
+        (WebFrame::windowObjectCleared): Removed attach/detach calls. This is
+        no longer needed because WebScriptDebugger no longer stores any
+        per-WebFrame state.
+        * WebFrame.h:
+        * WebScriptDebugServer.cpp:
+        (WebScriptDebugServer::pageCreated): Added. Attaches our shared
+        debugger to the Page if we have any listeners.
+        (WebScriptDebugServer::addListener): Sets our shared debugger for all
+        Pages when we get our first listener.
+        (WebScriptDebugServer::removeListener): Removes our shared debugger
+        from all Pages when we lose our last listener.
+        * WebScriptDebugServer.h:
+        * WebScriptDebugger.cpp:
+        (WebScriptDebugger::shared): Added.
+        (WebScriptDebugger::WebScriptDebugger): Removed m_frame member.
+        (WebScriptDebugger::~WebScriptDebugger): Added.
+        (frame): Gets a Frame from an ExecState.
+        (webFrame): Gets a WebFrame from an ExecState.
+        (webView): Gets a WebView from an ExecState.
+        (WebScriptDebugger::sourceParsed): Changed to call webFrame() and
+        webView() instead of using m_frame and m_webView members.
+        (WebScriptDebugger::callEvent): Ditto.
+        (WebScriptDebugger::atStatement): Ditto.
+        (WebScriptDebugger::returnEvent): Ditto.
+        (WebScriptDebugger::exception): Ditto.
+        * WebScriptDebugger.h:
+        * WebView.cpp:
+        (kit): Moved here from WebFrameLoaderClient.cpp.
+        (WebView::initWithFrame): Tell the WebScriptDebugServer about the new
+        Page so it can attach a debugger if needed.
+        * WebView.h:
+
+2008-03-04  Adam Roben  <aroben@apple.com>
+
         Change WebView's string-finding methods to call through to Page
 
         These methods were added to Page back in r28878 (and the

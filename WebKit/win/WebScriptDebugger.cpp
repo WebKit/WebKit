@@ -34,9 +34,11 @@
 #include "WebFrame.h"
 #include "WebScriptCallFrame.h"
 #include "WebScriptDebugServer.h"
+#include "WebView.h"
 
 #pragma warning(push, 0)
 #include <WebCore/BString.h>
+#include <WebCore/DOMWindow.h>
 #include <WebCore/kjs_binding.h>
 #include <WebCore/kjs_proxy.h>
 #include <WebCore/PlatformString.h>
@@ -45,24 +47,38 @@
 using namespace WebCore;
 using namespace KJS;
 
-WebScriptDebugger::WebScriptDebugger(WebFrame* frame)
-    : m_frame(frame)
-    , m_callingServer(false)
+WebScriptDebugger& WebScriptDebugger::shared()
 {
-    ASSERT(m_frame);
-
-    KJSProxy* proxy = core(m_frame)->scriptProxy();
-    if (!proxy)
-        return;
-
-    JSGlobalObject* globalObject = proxy->globalObject();
-    attach(globalObject);
-
-    m_frame->webView(&m_webView);
-    ASSERT(m_webView);
+    static WebScriptDebugger debugger;
+    return debugger;
 }
 
-bool WebScriptDebugger::sourceParsed(ExecState*, int sourceId, const UString& sourceURL,
+WebScriptDebugger::WebScriptDebugger()
+    : m_callingServer(false)
+{
+}
+
+WebScriptDebugger::~WebScriptDebugger()
+{
+}
+
+static Frame* frame(ExecState* exec)
+{
+    JSDOMWindow* window = static_cast<JSDOMWindow*>(exec->dynamicGlobalObject());
+    return window->impl()->frame();
+}
+
+static WebFrame* webFrame(ExecState* exec)
+{
+    return kit(frame(exec));
+}
+
+static WebView* webView(ExecState* exec)
+{
+    return kit(frame(exec)->page());
+}
+
+bool WebScriptDebugger::sourceParsed(ExecState* exec, int sourceId, const UString& sourceURL,
                   const UString& source, int startingLineNumber, int errorLine, const UString& /*errorMsg*/)
 {
     if (m_callingServer)
@@ -77,22 +93,22 @@ bool WebScriptDebugger::sourceParsed(ExecState*, int sourceId, const UString& so
     BString bSourceURL = String(sourceURL);
     
     if (errorLine == -1) {
-        WebScriptDebugServer::sharedWebScriptDebugServer()->didParseSource(m_webView.get(),
+        WebScriptDebugServer::sharedWebScriptDebugServer()->didParseSource(webView(exec),
             bSource,
             startingLineNumber,
             bSourceURL,
             sourceId,
-            m_frame);
+            webFrame(exec));
     } else {
         // FIXME: the error var should be made with the information in the errorMsg.  It is not a simple
         // UString to BSTR conversion there is some logic involved that I don't fully understand yet.
         BString error(L"An Error Occurred.");
-        WebScriptDebugServer::sharedWebScriptDebugServer()->failedToParseSource(m_webView.get(),
+        WebScriptDebugServer::sharedWebScriptDebugServer()->failedToParseSource(webView(exec),
             bSource,
             startingLineNumber,
             bSourceURL,
             error,
-            m_frame);
+            webFrame(exec));
     }
 
     m_callingServer = false;
@@ -107,7 +123,7 @@ bool WebScriptDebugger::callEvent(ExecState* exec, int sourceId, int lineno, JSO
     m_callingServer = true;
 
     COMPtr<WebScriptCallFrame> callFrame(AdoptCOM, WebScriptCallFrame::createInstance(exec));
-    WebScriptDebugServer::sharedWebScriptDebugServer()->didEnterCallFrame(m_webView.get(), callFrame.get(), sourceId, lineno, m_frame);
+    WebScriptDebugServer::sharedWebScriptDebugServer()->didEnterCallFrame(webView(exec), callFrame.get(), sourceId, lineno, webFrame(exec));
 
     m_callingServer = false;
 
@@ -122,7 +138,7 @@ bool WebScriptDebugger::atStatement(ExecState* exec, int sourceId, int firstLine
     m_callingServer = true;
 
     COMPtr<WebScriptCallFrame> callFrame(AdoptCOM, WebScriptCallFrame::createInstance(exec));
-    WebScriptDebugServer::sharedWebScriptDebugServer()->willExecuteStatement(m_webView.get(), callFrame.get(), sourceId, firstLine, m_frame);
+    WebScriptDebugServer::sharedWebScriptDebugServer()->willExecuteStatement(webView(exec), callFrame.get(), sourceId, firstLine, webFrame(exec));
 
     m_callingServer = false;
 
@@ -137,7 +153,7 @@ bool WebScriptDebugger::returnEvent(ExecState* exec, int sourceId, int lineno, J
     m_callingServer = true;
 
     COMPtr<WebScriptCallFrame> callFrame(AdoptCOM, WebScriptCallFrame::createInstance(exec->callingExecState()));
-    WebScriptDebugServer::sharedWebScriptDebugServer()->willLeaveCallFrame(m_webView.get(), callFrame.get(), sourceId, lineno, m_frame);
+    WebScriptDebugServer::sharedWebScriptDebugServer()->willLeaveCallFrame(webView(exec), callFrame.get(), sourceId, lineno, webFrame(exec));
 
     m_callingServer = false;
 
@@ -152,7 +168,7 @@ bool WebScriptDebugger::exception(ExecState* exec, int sourceId, int lineno, JSV
     m_callingServer = true;
 
     COMPtr<WebScriptCallFrame> callFrame(AdoptCOM, WebScriptCallFrame::createInstance(exec));
-    WebScriptDebugServer::sharedWebScriptDebugServer()->exceptionWasRaised(m_webView.get(), callFrame.get(), sourceId, lineno, m_frame);
+    WebScriptDebugServer::sharedWebScriptDebugServer()->exceptionWasRaised(webView(exec), callFrame.get(), sourceId, lineno, webFrame(exec));
 
     m_callingServer = false;
 

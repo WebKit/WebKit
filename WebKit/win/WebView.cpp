@@ -112,6 +112,11 @@ using KJS::JSLock;
 using std::min;
 using std::max;
 
+WebView* kit(Page* page)
+{
+    return page ? static_cast<WebChromeClient*>(page->chrome()->client())->webView() : 0;
+}
+
 class PreferencesChangedOrRemovedObserver : public IWebNotificationObserver {
 public:
     static PreferencesChangedOrRemovedObserver* sharedInstance();
@@ -2053,6 +2058,8 @@ HRESULT STDMETHODCALLTYPE WebView::initWithFrame(
     WebKitSetWebDatabasesPathIfNecessary();
 
     m_page = new Page(new WebChromeClient(this), new WebContextMenuClient(this), new WebEditorClient(this), new WebDragClient(this), new WebInspectorClient(this));
+
+    WebScriptDebugServer::pageCreated(m_page);
 
     if (m_uiDelegate) {
         COMPtr<IWebUIDelegate2> uiDelegate2;

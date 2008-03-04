@@ -1,3 +1,25 @@
+2008-03-04  Adam Roben  <aroben@apple.com>
+
+        Make it possible to set a KJS::Debugger on all Frames in a Page and
+        all Pages in the process
+
+        Reviewed by Kevin M.
+
+        * ForwardingHeaders/kjs/debugger.h: Added.
+        * bindings/js/kjs_proxy.cpp:
+        (WebCore::KJSProxy::initScript): Attach the Page's debugger if there
+        is one.
+        (WebCore::KJSProxy::attachDebugger): Attach the passed-in debugger, or
+        detach any existing debugger if none was passed in.
+        * bindings/js/kjs_proxy.h:
+        * page/Page.cpp:
+        (WebCore::Page::Page): Initialize new member.
+        (WebCore::Page::setDebuggerForAllPages): Call setDebugger on each Page
+        in the process.
+        (WebCore::Page::setDebugger): Store the debugger and pass it off to
+        all our Frames.
+        * page/Page.h:
+
 2008-03-04  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Darin Adler.

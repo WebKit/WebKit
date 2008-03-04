@@ -68,6 +68,8 @@ public:
 
     bool isEnabled();
 
+    void attachDebugger(KJS::Debugger*);
+
 private:
     void initScriptIfNeeded()
     {

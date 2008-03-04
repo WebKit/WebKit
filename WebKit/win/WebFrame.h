@@ -60,7 +60,6 @@ typedef struct OpaqueJSValue* JSObjectRef;
 class WebFrame;
 class WebFramePolicyListener;
 class WebHistory;
-class WebScriptDebugger;
 class WebView;
 
 interface IWebHistoryItemPrivate;
@@ -301,9 +300,6 @@ public:
 
     WebCore::KURL url() const;
 
-    virtual void attachScriptDebugger();
-    virtual void detachScriptDebugger();
-
     WebView* webView() const;
 
 protected:
@@ -323,9 +319,6 @@ protected:
     bool                m_inPrintingMode;
     Vector<WebCore::IntRect> m_pageRects;
     int m_pageHeight;   // height of the page adjusted by margins
-
-private:
-    OwnPtr<WebScriptDebugger> m_scriptDebugger;
 };
 
 #endif
