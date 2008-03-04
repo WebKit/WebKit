@@ -4028,6 +4028,9 @@ JSValue* ForInNode::execute(ExecState* exec)
         exec->popIteration();
         if (statementValue)
             value = statementValue;
+        
+        if (exec->dynamicGlobalObject()->timedOut())
+            return exec->setInterruptedCompletion();
 
         if (exec->completionType() != Normal) {
             if (exec->completionType() == Continue && m_labelStack.contains(exec->breakOrContinueTarget()))
