@@ -2,6 +2,19 @@
 
         Reviewed by Adam.
 
+        - fix 200+ failing regression tests
+        - fix http://bugs.webkit.org/show_bug.cgi?id=17668
+          Vertical scrollbar at slashdot.org is randomly not shown
+
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::transitionToCommittedForNewPage): Changed the refcounting
+        code here to exactly match the way it was before it was moved from WebCore. I had
+        introduced a storage leak and that was causing problems with scroll bars!
+
+2008-03-04  Darin Adler  <darin@apple.com>
+
+        Reviewed by Adam.
+
         - remove WebCoreFrameBridge reapplyStyles method
 
         * WebView/WebHTMLView.mm:

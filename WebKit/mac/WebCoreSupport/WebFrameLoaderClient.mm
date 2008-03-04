@@ -1019,8 +1019,9 @@ void WebFrameLoaderClient::transitionToCommittedForNewPage()
     // If we own the view, delete the old one - otherwise the render m_frame will take care of deleting the view.
     Frame* coreFrame = core(m_webFrame.get());
     coreFrame->setView(0);
-    RefPtr<FrameView> coreView = new FrameView(coreFrame);
-    coreFrame->setView(coreView.get());
+    FrameView* coreView = new FrameView(coreFrame);
+    coreFrame->setView(coreView);
+    coreView->deref(); // FIXME: Eliminate this crazy refcounting!
     coreView->setView(documentView);
     int marginWidth = [v _marginWidth];
     if (marginWidth >= 0)
