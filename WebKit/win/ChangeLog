@@ -1,3 +1,23 @@
+2008-03-04  Adam Roben  <aroben@apple.com>
+
+        Actually pause the process while Drosera is at a breakpoint
+
+        WebScriptDebugServer::suspendProcessIfPaused is supposed to pause the
+        process while Drosera is at a breakpoint. Previously we were just
+        starting a message pump that would deliver messages to all windows in
+        the process, allowing mouse events, JS timers, etc. to execute.
+
+        Now we only deliver messages to COM's message window, which is all we
+        need to allow RPC to function.
+
+        Reviewed by Anders.
+
+        * WebScriptDebugServer.cpp:
+        (comMessageWindow): Added. Finds COM's message window.
+        (WebScriptDebugServer::suspendProcessIfPaused): Only deliver messages
+        to COM's message window so that mouse events, JS timers, etc., won't
+        execute.
+
 2008-03-03  Adam Roben  <aroben@apple.com>
 
         Generate WebScriptCallFrame instances dynamically

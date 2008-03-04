@@ -188,6 +188,28 @@ HRESULT STDMETHODCALLTYPE WebScriptDebugServer::isPaused(
     return S_OK;
 }
 
+static HWND comMessageWindow()
+{
+    static bool initialized;
+    static HWND window;
+
+    if (initialized)
+        return window;
+    initialized = true;
+
+    static LPCTSTR windowClass = TEXT("OleMainThreadWndClass");
+    static LPCTSTR windowText = TEXT("OleMainThreadWndName");
+    static const DWORD currentProcess = GetCurrentProcessId();
+
+    window = 0;
+    DWORD windowProcess = 0;
+    do {
+        window = FindWindowEx(HWND_MESSAGE, window, windowClass, windowText);
+        GetWindowThreadProcessId(window, &windowProcess);
+    } while (window && windowProcess != currentProcess);
+
+    return window;
+}
 
 void WebScriptDebugServer::suspendProcessIfPaused()
 {
@@ -198,8 +220,13 @@ void WebScriptDebugServer::suspendProcessIfPaused()
 
     alreadyHere = true;
 
+    // We only deliver messages to COM's message window to pause the process while still allowing RPC to work.
+    // FIXME: It would be nice if we could keep delivering WM_[NC]PAINT messages to all windows to keep them painting on XP.
+
+    HWND messageWindow = comMessageWindow();
+
     MSG msg;
-    while (m_paused && GetMessage(&msg, 0, 0, 0)) {
+    while (m_paused && GetMessage(&msg, messageWindow, 0, 0)) {
         TranslateMessage(&msg);
         DispatchMessage(&msg);
     }
