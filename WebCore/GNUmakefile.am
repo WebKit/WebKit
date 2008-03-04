@@ -216,6 +216,7 @@ webcore_built_sources += \
 	DerivedSources/JSCanvasPixelArray.cpp \
 	DerivedSources/JSCanvasRenderingContext2D.cpp \
 	DerivedSources/JSCharacterData.cpp \
+	DerivedSources/JSClipboard.cpp \
 	DerivedSources/JSComment.cpp \
 	DerivedSources/JSConsole.cpp \
 	DerivedSources/JSCounter.cpp \

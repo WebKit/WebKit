@@ -1,5 +1,11 @@
 2008-03-04  Sam Weinig  <sam@webkit.org>
 
+        GTK+ build fix.
+
+        * GNUmakefile.am:
+
+2008-03-04  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Darin Adler.
 
         Remame ImageConstructorImp to JSImageConstructor and move it into its
