@@ -422,25 +422,9 @@ bool UniscribeController::shape(const UChar* str, int len, SCRIPT_ITEM item, con
 
     if (FAILED(shapeResult))
         return false;
-    
-    // FIXME: We need to do better than this.  Falling back on the entire item is not good enough.
-    // We may still have missing glyphs even if we succeeded.  We need to treat missing glyphs as
-    // a failure so that we will fall back to another font.
-    bool containsMissingGlyphs = false;
-    SCRIPT_FONTPROPERTIES* fontProperties = fontData->scriptFontProperties();
-    for (int i = 0; i < glyphCount; i++) {
-        WORD glyph = glyphs[i];
-        if (glyph == fontProperties->wgDefault) {
-            containsMissingGlyphs = true;
-            break;
-        }
-    }
 
-    if (containsMissingGlyphs)
-        return false;
-
-    glyphs.resize(glyphCount);
-    visualAttributes.resize(glyphCount);
+    glyphs.shrink(glyphCount);
+    visualAttributes.shrink(glyphCount);
 
     return true;
 }

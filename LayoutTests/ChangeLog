@@ -1,3 +1,10 @@
+2008-03-04  Dan Bernstein  <mitz@apple.com>
+
+        - test for <rdar://problem/5622336> Burmese text does not render on http://www.myanmarbible.com/bible/Judson/html/index.html
+
+        * platform/win/fast/text/uniscribe-missing-glyph-expected.txt: Added.
+        * platform/win/fast/text/uniscribe-missing-glyph.html: Added.
+
 2008-03-04  Alexey Proskuryakov  <ap@webkit.org>
 
         Suggested by Darin, rubber-stamped by Mark.

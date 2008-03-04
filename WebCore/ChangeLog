@@ -1,3 +1,26 @@
+2008-03-04  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        - fix <rdar://problem/5622336> Burmese text does not render on http://www.myanmarbible.com/bible/Judson/html/index.html
+
+        Test: platform/win/fast/text/uniscribe-missing-glyph.html
+
+        Note that default installations of Windows do not have Myanmar fonts.
+        What this patch does is ensure that the Myanmar and other complex
+        scripts are rendered as missing glyphs rather than not rendered at all.
+        The particular page in the bug measures the relative widths of two
+        rendered strings and, if they are rendered as missing glyphs, detects
+        that a Myanmar fonts is not available and substitutes the text with
+        images. By not rendering (and measuring) missing glyphs, WebKit was
+        throwing the page's detection code off.
+
+        * platform/graphics/win/UniscribeController.cpp:
+        (WebCore::UniscribeController::shape): Removed an early return in case
+        shaping resulted in missing glyphs. This is now expected if font
+        fallback failed to produce a font containing glyphs for the character.
+        Also changed two resize()s to shrink()s.
+
 2008-03-04  Darin Adler  <darin@apple.com>
 
         Reviewed by Adam.
