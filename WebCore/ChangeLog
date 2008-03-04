@@ -1,3 +1,17 @@
+2008-03-04  Alexey Proskuryakov  <ap@webkit.org>
+
+        Suggested by Darin, rubber-stamped by Mark.
+
+        http://bugs.webkit.org/show_bug.cgi?id=17569
+        REGRESSION (r30571): Buzzword.com doesn't load
+
+        Rolling out r30571, as determining what is wrong with it proved tricky.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::load):
+        (WebCore::FrameLoader::tokenizerProcessedData):
+        (WebCore::FrameLoader::continueFragmentScrollAfterNavigationPolicy):
+
 2008-03-04  Sam Weinig  <sam@webkit.org>
 
         Build fix.

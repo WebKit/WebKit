@@ -1,9 +1,0 @@
-This tests whether clicking on a link to an anchor stops meta refresh reloads; it should not!
-
-We'll let the subframe load 10 times, then click the link, then let it refresh 10 more.
-
-Times subframe has loaded: 20.
-
-Test passed.
-
-

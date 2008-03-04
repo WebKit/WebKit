@@ -2013,18 +2013,18 @@ void FrameLoader::load(const KURL& newURL, const String& referrer, FrameLoadType
     // exactly the same so pages with '#' links and DHTML side effects
     // work properly.
     if (!isFormSubmission
-            && newLoadType != FrameLoadTypeRedirectWithLockedHistory
-            && newLoadType != FrameLoadTypeReload
-            && newLoadType != FrameLoadTypeSame
-            && !shouldReload(newURL, url())
-            && !m_frame->isFrameSet()) {
+        && newLoadType != FrameLoadTypeReload
+        && newLoadType != FrameLoadTypeSame
+        && !shouldReload(newURL, url())
+        // We don't want to just scroll if a link from within a
+        // frameset is trying to reload the frameset into _top.
+        && !m_frame->isFrameSet()) {
 
         // Just do anchor navigation within the existing content.
         
         // We don't do this if we are submitting a form, explicitly reloading,
         // currently displaying a frameset, or if the new URL does not have a fragment.
-
-        // These rules were originally based on what KHTML was doing in KHTMLPart::openURL.
+        // These rules are based on what KHTML was doing in KHTMLPart::openURL.
         
         // FIXME: What about load types other than Standard and Reload?
         
@@ -2033,19 +2033,18 @@ void FrameLoader::load(const KURL& newURL, const String& referrer, FrameLoadType
         checkNavigationPolicy(request, oldDocumentLoader.get(), formState,
             callContinueFragmentScrollAfterNavigationPolicy, this);
     } else {
-        // must grab m_quickRedirectComing now, since this load may stop the previous load and clear this flag.
+        // must grab this now, since this load may stop the previous load and clear this flag
         bool isRedirect = m_quickRedirectComing;
         load(request, action, newLoadType, formState);
         if (isRedirect) {
             m_quickRedirectComing = false;
             if (m_provisionalDocumentLoader)
                 m_provisionalDocumentLoader->setIsClientRedirect(true);
-        } else if (sameURL) {
+        } else if (sameURL)
             // Example of this case are sites that reload the same URL with a different cookie
             // driving the generated content, or a master frame with links that drive a target
             // frame, where the user has clicked on the same link repeatedly.
             m_loadType = FrameLoadTypeSame;
-        }
     }
 }
 
@@ -3150,6 +3149,9 @@ String FrameLoader::userAgent(const KURL& url) const
 
 void FrameLoader::tokenizerProcessedData()
 {
+//    ASSERT(m_frame->page());
+//    ASSERT(m_frame->document());
+
     checkCompleted();
 }
 
@@ -3394,8 +3396,9 @@ void FrameLoader::callContinueFragmentScrollAfterNavigationPolicy(void* argument
 
 void FrameLoader::continueFragmentScrollAfterNavigationPolicy(const ResourceRequest& request, bool shouldContinue)
 {
-    // FIXME: Some functions check m_quickRedirectComing, and others check for
-    // FrameLoadTypeRedirectWithLockedHistory; need to unify these.  
+    // FIXME:
+    // some functions check m_quickRedirectComing, and others check for
+    // FrameLoadTypeRedirectWithLockedHistory.  
     bool isRedirect = m_quickRedirectComing || m_policyLoadType == FrameLoadTypeRedirectWithLockedHistory;
     m_quickRedirectComing = false;
 
@@ -3422,18 +3425,14 @@ void FrameLoader::continueFragmentScrollAfterNavigationPolicy(const ResourceRequ
     
     scrollToAnchor(url);
     
-    if (!isRedirect) {
+    if (!isRedirect)
         // This will clear previousItem from the rest of the frame tree that didn't
         // doing any loading. We need to make a pass on this now, since for anchor nav
         // we'll not go through a real load and reach Completed state.
         checkLoadComplete();
-    }
  
     m_client->dispatchDidChangeLocationWithinPage();
     m_client->didFinishLoad();
-
-    if (m_scheduledRedirection && !m_redirectionTimer.isActive())
-        startRedirectionTimer();
 }
 
 void FrameLoader::opened()
