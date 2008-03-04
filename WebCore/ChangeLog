@@ -2,6 +2,17 @@
 
         Reviewed by Adam.
 
+        - removed WebCoreFrameBridge scrollOverflowInDirection
+
+        * WebCore.base.exp: Export function needed by WebKit.
+        * page/mac/WebCoreFrameBridge.h: Removed WebScrollDirection, WebScrollGranularity,
+        and scrollOverflowInDirection.
+        * page/mac/WebCoreFrameBridge.mm: Removed method.
+
+2008-03-04  Darin Adler  <darin@apple.com>
+
+        Reviewed by Adam.
+
         - remove WebCoreFrameBridge installInFrame: method
 
         * WebCore.base.exp: Export a few symbols.

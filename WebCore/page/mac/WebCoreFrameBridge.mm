@@ -296,13 +296,6 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
     }
 }
 
-- (BOOL)scrollOverflowInDirection:(WebScrollDirection)direction granularity:(WebScrollGranularity)granularity
-{
-    if (!m_frame)
-        return NO;
-    return m_frame->eventHandler()->scrollOverflow((ScrollDirection)direction, (ScrollGranularity)granularity);
-}
-
 - (void)clearFrame
 {
     m_frame = 0;

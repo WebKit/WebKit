@@ -2,6 +2,23 @@
 
         Reviewed by Adam.
 
+        - removed WebCoreFrameBridge scrollOverflowInDirection
+
+        * WebView/WebFrameView.mm:
+        (-[WebFrameView _scrollOverflowInDirection:granularity:]): Changed to call
+        EventHandler directly instead of using the bridge.
+        (-[WebFrameView scrollToBeginningOfDocument:]): Updated to use WebCore enums instead
+        of the ones from the bridge.
+        (-[WebFrameView scrollToEndOfDocument:]): Ditto.
+        (-[WebFrameView _pageVertically:]): Ditto.
+        (-[WebFrameView _pageHorizontally:]): Ditto.
+        (-[WebFrameView _scrollLineVertically:]): Ditto.
+        (-[WebFrameView _scrollLineHorizontally:]): Ditto.
+
+2008-03-04  Darin Adler  <darin@apple.com>
+
+        Reviewed by Adam.
+
         - remove WebCoreFrameBridge installInFrame: method
 
         * WebCoreSupport/WebFrameLoaderClient.mm:

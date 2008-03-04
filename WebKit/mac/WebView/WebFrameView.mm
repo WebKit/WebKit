@@ -57,6 +57,7 @@
 #import <Foundation/NSURLRequest.h>
 #import <JavaScriptCore/Assertions.h>
 #import <WebCore/DragController.h>
+#import <WebCore/EventHandler.h>
 #import <WebCore/Frame.h>
 #import <WebCore/FrameView.h>
 #import <WebCore/HistoryItem.h>
@@ -508,15 +509,20 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
     return [[self webFrame] _bridge];
 }
 
-- (BOOL)_scrollOverflowInDirection:(WebScrollDirection)direction granularity:(WebScrollGranularity)granularity
+- (BOOL)_scrollOverflowInDirection:(ScrollDirection)direction granularity:(ScrollGranularity)granularity
 {
     // scrolling overflows is only applicable if we're dealing with an WebHTMLView
-    return ([[self documentView] isKindOfClass:[WebHTMLView class]] && [[self _bridge] scrollOverflowInDirection:direction granularity:granularity]);
+    if (![[self documentView] isKindOfClass:[WebHTMLView class]])
+        return NO;
+    Frame* frame = core([self webFrame]);
+    if (!frame)
+        return NO;
+    return frame->eventHandler()->scrollOverflow(direction, granularity);
 }
 
 - (void)scrollToBeginningOfDocument:(id)sender
 {
-    if (![self _scrollOverflowInDirection:WebScrollUp granularity:WebScrollDocument]) {
+    if (![self _scrollOverflowInDirection:ScrollUp granularity:ScrollByDocument]) {
 
         if (![self _hasScrollBars]) {
             [[self _largestChildWithScrollBars] scrollToBeginningOfDocument:sender];
@@ -529,7 +535,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
 
 - (void)scrollToEndOfDocument:(id)sender
 {
-    if (![self _scrollOverflowInDirection:WebScrollDown granularity:WebScrollDocument]) {
+    if (![self _scrollOverflowInDirection:ScrollDown granularity:ScrollByDocument]) {
 
         if (![self _hasScrollBars]) {
             [[self _largestChildWithScrollBars] scrollToEndOfDocument:sender];
@@ -585,7 +591,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
 
 - (BOOL)_pageVertically:(BOOL)up
 {
-    if ([self _scrollOverflowInDirection:up ? WebScrollUp : WebScrollDown granularity:WebScrollPage])
+    if ([self _scrollOverflowInDirection:up ? ScrollUp : ScrollDown granularity:ScrollByPage])
         return YES;
     
     if (![self _hasScrollBars])
@@ -597,7 +603,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
 
 - (BOOL)_pageHorizontally:(BOOL)left
 {
-    if ([self _scrollOverflowInDirection:left ? WebScrollLeft : WebScrollRight granularity:WebScrollPage])
+    if ([self _scrollOverflowInDirection:left ? ScrollLeft : ScrollRight granularity:ScrollByPage])
         return YES;
 
     if (![self _hasScrollBars])
@@ -609,7 +615,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
 
 - (BOOL)_scrollLineVertically:(BOOL)up
 {
-    if ([self _scrollOverflowInDirection:up ? WebScrollUp : WebScrollDown granularity:WebScrollLine])
+    if ([self _scrollOverflowInDirection:up ? ScrollUp : ScrollDown granularity:ScrollByLine])
         return YES;
 
     if (![self _hasScrollBars])
@@ -621,7 +627,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
 
 - (BOOL)_scrollLineHorizontally:(BOOL)left
 {
-    if ([self _scrollOverflowInDirection:left ? WebScrollLeft : WebScrollRight granularity:WebScrollLine])
+    if ([self _scrollOverflowInDirection:left ? ScrollLeft : ScrollRight granularity:ScrollByLine])
         return YES;
 
     if (![self _hasScrollBars])
