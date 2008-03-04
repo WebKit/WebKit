@@ -1,3 +1,10 @@
+2008-03-04  Alp Toker  <alp@atoker.com>
+
+        GTK+ build fix suggested by aroben. Remove an unused Mac-specific
+        included introduced in r30740.
+
+        * page/ChromeClient.h:
+
 2008-03-04  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Sam Weinig.

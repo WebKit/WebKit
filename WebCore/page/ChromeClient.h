@@ -22,7 +22,6 @@
 #define ChromeClient_h
 
 #include "FocusDirection.h"
-#include "WebCoreKeyboardUIMode.h"
 #include <wtf/Forward.h>
 #include <wtf/Vector.h>
 
