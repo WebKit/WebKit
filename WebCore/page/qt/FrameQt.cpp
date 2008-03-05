@@ -65,7 +65,7 @@
 #include "JSLock.h"
 #include "runtime_root.h"
 #include "runtime.h"
-#include "JSDOMWindow"
+#include "JSDOMWindow.h"
 #include <QScrollArea>
 #include "NotImplemented.h"
 
