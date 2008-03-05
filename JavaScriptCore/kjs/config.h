@@ -21,10 +21,6 @@
 
 #include <wtf/Platform.h>
 
-#if PLATFORM(MAC)
-#define HAVE_JNI 1
-#endif
-
 #if PLATFORM(DARWIN)
 
 #define HAVE_ERRNO_H 1

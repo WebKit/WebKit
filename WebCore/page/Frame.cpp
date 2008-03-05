@@ -68,9 +68,9 @@
 #include "TextIterator.h"
 #include "TextResourceDecoder.h"
 #include "XMLNames.h"
-#include "bindings/NP_jsobject.h"
-#include "bindings/npruntime_impl.h"
-#include "bindings/runtime_root.h"
+#include "NP_jsobject.h"
+#include "npruntime_impl.h"
+#include "runtime_root.h"
 #include "kjs_proxy.h"
 #include "visible_units.h"
 

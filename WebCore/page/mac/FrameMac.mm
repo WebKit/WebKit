@@ -91,10 +91,10 @@
 #import "visible_units.h"
 #import <Carbon/Carbon.h>
 #import <JavaScriptCore/APICast.h>
-#import <bindings/NP_jsobject.h>
-#import <bindings/npruntime_impl.h>
-#import <bindings/runtime_root.h>
-#import <bindings/runtime.h>
+#import "NP_jsobject.h"
+#import "npruntime_impl.h"
+#import "runtime_root.h"
+#import "runtime.h"
 
 @interface NSObject (WebPlugin)
 - (id)objectForWebScript;

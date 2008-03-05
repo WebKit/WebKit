@@ -33,7 +33,7 @@
 #import "WebKitNSStringExtras.h"
 #import "WebNSObjectExtras.h"
 #import "WebNetscapeDeprecatedFunctions.h"
-#import <JavaScriptCore/npruntime_impl.h>
+#import <WebCore/npruntime_impl.h>
 
 #ifdef SUPPORT_CFM
 typedef void (* FunctionPointer)(void);

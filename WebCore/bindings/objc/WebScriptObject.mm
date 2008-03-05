@@ -34,10 +34,10 @@
 #import <JavaScriptCore/APICast.h>
 #import <JavaScriptCore/JSGlobalObject.h>
 #import <JavaScriptCore/interpreter.h>
-#import <JavaScriptCore/objc_instance.h>
-#import <bindings/runtime_root.h>
-#import <bindings/runtime.h>
-#import <bindings/runtime_object.h>
+#import "objc_instance.h"
+#import "runtime_root.h"
+#import "runtime.h"
+#import "runtime_object.h"
 
 using namespace KJS;
 using namespace KJS::Bindings;

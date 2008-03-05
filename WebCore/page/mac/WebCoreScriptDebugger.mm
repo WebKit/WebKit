@@ -38,7 +38,7 @@
 #import <JavaScriptCore/debugger.h>
 #import <JavaScriptCore/function.h>
 #import <JavaScriptCore/interpreter.h>
-#import <bindings/runtime_root.h>
+#import "runtime_root.h"
 
 using namespace KJS;
 using namespace WebCore;

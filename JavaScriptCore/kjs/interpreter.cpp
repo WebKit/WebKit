@@ -42,7 +42,6 @@
 #include "object_object.h"
 #include "operations.h"
 #include "regexp_object.h"
-#include "runtime.h"
 #include "string_object.h"
 #include "types.h"
 #include "value.h"

@@ -57,7 +57,7 @@
 #include "npruntime_impl.h"
 #include "runtime_root.h"
 #include "Settings.h"
-#include <bindings/runtime.h>
+#include "runtime.h"
 #include <kjs/JSLock.h>
 #include <kjs/value.h>
 #include <wtf/ASCIICType.h>

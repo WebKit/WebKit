@@ -1,3 +1,31 @@
+2008-03-05  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Geoff.
+
+        * WebCore.base.exp:
+        Add the NPN and KJS methods.
+        
+        * WebCore.xcodeproj/project.pbxproj:
+        Bring in bridge/
+
+        * config.h:
+        Add HAVE_JNI define.
+        
+        * bindings/js/kjs_html.cpp:
+        * bindings/objc/DOMInternal.mm:
+        * bindings/objc/DOMUtility.mm:
+        * bindings/objc/WebScriptObject.mm:
+        * html/HTMLAppletElement.cpp:
+        * html/HTMLEmbedElement.cpp:
+        * html/HTMLObjectElement.cpp:
+        * html/HTMLPlugInElement.cpp:
+        * page/Frame.cpp:
+        * page/mac/FrameMac.mm:
+        * page/mac/WebCoreFrameBridge.mm:
+        * page/mac/WebCoreScriptDebugger.mm:
+        * plugins/win/PluginViewWin.cpp:
+        Include file changes.
+
 2008-03-04  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam.

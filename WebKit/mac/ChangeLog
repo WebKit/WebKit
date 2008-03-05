@@ -1,3 +1,12 @@
+2008-03-05  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Geoff.
+
+        Include file changes.
+        
+        * Plugins/WebBaseNetscapePluginView.mm:
+        * Plugins/WebNetscapePluginPackage.m:
+
 2008-03-04  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Darin Adler.

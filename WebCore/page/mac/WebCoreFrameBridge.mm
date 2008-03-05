@@ -90,8 +90,8 @@
 #import "visible_units.h"
 #import <JavaScriptCore/array_instance.h>
 #import <JavaScriptCore/date_object.h>
-#import <bindings/runtime_root.h>
-#import <bindings/runtime.h>
+#import "runtime_root.h"
+#import "runtime.h"
 #import <OpenScripting/ASRegistry.h>
 #import <wtf/RetainPtr.h>
 

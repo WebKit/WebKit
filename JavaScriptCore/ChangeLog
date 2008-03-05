@@ -1,3 +1,21 @@
+2008-03-05  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Geoff.
+
+        Don't build JavaScriptCore/bindings.
+        
+        * JavaScriptCore.exp:
+        Export a couple of new functions. 
+        
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        Remove bindings/
+        
+        * kjs/config.h:
+        No need to define HAVE_JNI anymore.
+        
+        * kjs/interpreter.cpp:
+        Remove unnecessary include.
+
 2008-03-04  David D. Kilzer  <ddkilzer@apple.com>
 
         Allow override of default script file name using command-line argument.

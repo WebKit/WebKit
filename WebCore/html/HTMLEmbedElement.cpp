@@ -34,7 +34,7 @@
 #include "RenderPartObject.h"
 
 #if USE(JAVASCRIPTCORE_BINDINGS)
-#include <bindings/runtime.h>
+#include "runtime.h"
 #endif
 
 namespace WebCore {

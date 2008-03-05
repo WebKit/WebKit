@@ -54,7 +54,7 @@
 #import <Carbon/Carbon.h>
 #import <JavaScriptCore/Assertions.h>
 #import <JavaScriptCore/JSLock.h>
-#import <JavaScriptCore/npruntime_impl.h>
+#import <WebCore/npruntime_impl.h>
 #import <WebCore/Document.h>
 #import <WebCore/Element.h>
 #import <WebCore/Frame.h> 

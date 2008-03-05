@@ -53,7 +53,7 @@
 #import "JSXPathResult.h"
 #import "Node.h"
 #import "WebScriptObjectPrivate.h"
-#import <bindings/runtime_root.h>
+#import "runtime_root.h"
 #import <objc/objc-runtime.h>
 
 // This file makes use of both the ObjC DOM API and the C++ DOM API, so we need to be careful about what

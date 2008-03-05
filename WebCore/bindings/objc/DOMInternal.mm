@@ -38,7 +38,7 @@
 #import "WebScriptObjectPrivate.h"
 #import "XPathEvaluator.h"
 #import "kjs_proxy.h"
-#import <bindings/runtime_root.h>
+#import "runtime_root.h"
 
 //------------------------------------------------------------------------------------------
 // Wrapping WebCore implementation objects

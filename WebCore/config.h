@@ -104,6 +104,7 @@
 
 #if PLATFORM(MAC)
 #define WTF_USE_JAVASCRIPTCORE_BINDINGS 1
+#define HAVE_JNI 1
 #ifdef __LP64__
 #define WTF_USE_NPOBJECT 0
 #else
