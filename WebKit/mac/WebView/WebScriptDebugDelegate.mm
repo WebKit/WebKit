@@ -36,7 +36,9 @@
 #import "WebScriptDebugServerPrivate.h"
 #import "WebViewInternal.h"
 #import <JavaScriptCore/ExecState.h>
+#import <JavaScriptCore/JSGlobalObject.h>
 #import <JavaScriptCore/function.h>
+#import <JavaScriptCore/interpreter.h>
 #import <WebCore/Frame.h>
 
 using namespace KJS;
@@ -216,14 +218,63 @@ NSString * const WebScriptErrorLineNumberKey = @"WebScriptErrorLineNumber";
     return toNSString(fn.ustring());
 }
 
+// Returns the pending exception for this frame (nil if none).
+
 - (id)exception
 {
-    return [_private exception];
+    ExecState* state = [_private state];
+    if (!state->hadException())
+        return nil;
+    return [_private _convertValueToObjcValue:state->exception()];
 }
 
+// Evaluate some JavaScript code in the context of this frame.
+// The code is evaluated as if by "eval", and the result is returned.
+// If there is an (uncaught) exception, it is returned as though _it_ were the result.
+// Calling this method on the global frame is not quite the same as calling the WebScriptObject
+// method of the same name, due to the treatment of exceptions.
+
+// FIXME: If "script" contains var declarations, the machinery to handle local variables
+// efficiently in JavaScriptCore will not work properly. This could lead to crashes or
+// incorrect variable values. So this is not appropriate for evaluating arbitrary script.
 - (id)evaluateWebScript:(NSString *)script
 {
-    return [_private evaluateWebScript:script];
+    JSLock lock;
+
+    UString code = String(script);
+
+    ExecState* state = [_private state];
+    JSGlobalObject* globalObject = state->dynamicGlobalObject();
+
+    // find "eval"
+    JSObject* eval = NULL;
+    if (state->scopeNode()) {  // "eval" won't work without context (i.e. at global scope)
+        JSValue* v = globalObject->get(state, "eval");
+        if (v->isObject() && static_cast<JSObject*>(v)->implementsCall())
+            eval = static_cast<JSObject*>(v);
+        else
+            // no "eval" - fallback operates on global exec state
+            state = globalObject->globalExec();
+    }
+
+    JSValue* savedException = state->exception();
+    state->clearException();
+
+    // evaluate
+    JSValue* result;
+    if (eval) {
+        List args;
+        args.append(jsString(code));
+        result = eval->call(state, 0, args);
+    } else
+        // no "eval", or no context (i.e. global scope) - use global fallback
+        result = Interpreter::evaluate(state, UString(), 0, code.data(), code.size(), globalObject).value();
+
+    if (state->hadException())
+        result = state->exception();    // (may be redundant depending on which eval path was used)
+    state->setException(savedException);
+
+    return [_private _convertValueToObjcValue:result];
 }
 
 @end

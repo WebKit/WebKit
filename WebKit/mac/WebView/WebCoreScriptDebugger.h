@@ -90,8 +90,6 @@ NSString *toNSString(const KJS::UString&);
 - (WebCoreScriptCallFrame *)caller;
 - (KJS::ExecState*)state;
 
-- (id)exception;
-- (id)evaluateWebScript:(NSString *)script;
 - (id)_convertValueToObjcValue:(KJS::JSValue*)value;
 
 @end

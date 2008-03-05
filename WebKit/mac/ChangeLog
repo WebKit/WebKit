@@ -1,5 +1,21 @@
 2008-03-05  Adam Roben  <aroben@apple.com>
 
+        Move -exception and -evaluateWebScript: to WebScriptCallFrame
+
+        Reviewed by Darin.
+
+        * WebView/WebCoreScriptDebugger.h: Removed declarations of -exception
+        and -evaluateWebScript:.
+        * WebView/WebCoreScriptDebugger.mm: Removed -exception and
+        -evaluateWebScript:.
+        * WebView/WebScriptDebugDelegate.mm:
+        (-[WebScriptCallFrame exception]): Added. Code came from
+        -[WebCoreScriptCallFrame exception].
+        (-[WebScriptCallFrame evaluateWebScript:]): Added. Code came from
+        -[WebCoreScriptCallFrame evaluateWebScript:].
+
+2008-03-05  Adam Roben  <aroben@apple.com>
+
         Move -scopeChain to WebScriptCallFrame
 
         Reviewed by Darin.
