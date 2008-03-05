@@ -108,7 +108,6 @@
 .objc_class_name_WebCoreFrameBridge
 .objc_class_name_WebCoreHistory
 .objc_class_name_WebCoreKeyGenerator
-.objc_class_name_WebCoreScriptDebugger
 .objc_class_name_WebCoreViewFactory
 .objc_class_name_WebDashboardRegion
 .objc_class_name_WebScriptObject
