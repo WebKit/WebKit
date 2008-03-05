@@ -1,3 +1,17 @@
+2008-03-04  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=17676
+          <rdar://problem/5781091> REGRESSION (r30240-r30267): href attribute values with non-ASCII characters in the host part do not work
+
+        Test: fast/encoding/url-host-name-non-ascii.html
+
+        * platform/KURL.cpp:
+        (WebCore::appendEncodedHostname): Added an early return in the all-ASCII
+        case to avoid copying the host name twice and corrected the error
+        checking after calling uidna_IDNToASCII().
+
 2008-03-04  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Dan Bernstein.

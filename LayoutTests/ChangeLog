@@ -1,3 +1,11 @@
+2008-03-04  Dan Bernstein  <mitz@apple.com>
+
+        - test for http://bugs.webkit.org/show_bug.cgi?id=17676
+          <rdar://problem/5781091> REGRESSION (r30240-r30267): href attribute values with non-ASCII characters in the host part do not work
+
+        * fast/encoding/url-host-name-non-ascii-expected.txt: Added.
+        * fast/encoding/url-host-name-non-ascii.html: Added.
+
 2008-03-04  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Eric.
