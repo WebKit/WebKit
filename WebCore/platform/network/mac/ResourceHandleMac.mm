@@ -209,6 +209,7 @@ void ResourceHandle::setDefersLoading(bool defers)
 
 void ResourceHandle::schedule(SchedulePair* pair)
 {
+#ifndef BUILDING_ON_TIGER
     NSRunLoop *runLoop = pair->nsRunLoop();
     if (!runLoop)
         return;
@@ -217,12 +218,15 @@ void ResourceHandle::schedule(SchedulePair* pair)
         [d->m_connection.get() start];
         d->m_startWhenScheduled = false;
     }
+#endif
 }
 
 void ResourceHandle::unschedule(SchedulePair* pair)
 {
+#ifndef BUILDING_ON_TIGER
     if (NSRunLoop *runLoop = pair->nsRunLoop())
         [d->m_connection.get() unscheduleFromRunLoop:runLoop forMode:(NSString *)pair->mode()];
+#endif
 }
 
 WebCoreResourceHandleAsDelegate *ResourceHandle::delegate()
