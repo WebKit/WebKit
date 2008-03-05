@@ -40,6 +40,7 @@
 #import <JavaScriptCore/function.h>
 #import <JavaScriptCore/interpreter.h>
 #import <WebCore/Frame.h>
+#import <WebCore/WebScriptObjectPrivate.h>
 
 using namespace KJS;
 using namespace WebCore;
@@ -52,6 +53,7 @@ NSString * const WebScriptErrorLineNumberKey = @"WebScriptErrorLineNumber";
 @interface WebScriptCallFrame (WebScriptDebugDelegateInternal)
 
 - (WebScriptCallFrame *)_initWithFrame:(WebCoreScriptCallFrame *)frame;
+- (id)_convertValueToObjcValue:(JSValue *)value;
 
 @end
 
@@ -147,6 +149,26 @@ NSString * const WebScriptErrorLineNumberKey = @"WebScriptErrorLineNumber";
     return self;
 }
 
+- (id)_convertValueToObjcValue:(JSValue *)value
+{
+    if (!value)
+        return nil;
+
+    WebScriptObject *globalObject = [_private globalObject];
+    if (value == [globalObject _imp])
+        return globalObject;
+
+    Bindings::RootObject* root1 = [globalObject _originRootObject];
+    if (!root1)
+        return nil;
+
+    Bindings::RootObject* root2 = [globalObject _rootObject];
+    if (!root2)
+        return nil;
+
+    return [WebScriptObject _convertValueToObjcValue:value originRootObject:root1 rootObject:root2];
+}
+
 @end
 
 
@@ -192,7 +214,7 @@ NSString * const WebScriptErrorLineNumberKey = @"WebScriptErrorLineNumber";
     NSMutableArray *scopes = [[NSMutableArray alloc] init];
 
     while (!chain.isEmpty()) {
-        [scopes addObject:[_private _convertValueToObjcValue:chain.top()]];
+        [scopes addObject:[self _convertValueToObjcValue:chain.top()]];
         chain.pop();
     }
 
@@ -225,7 +247,7 @@ NSString * const WebScriptErrorLineNumberKey = @"WebScriptErrorLineNumber";
     ExecState* state = [_private state];
     if (!state->hadException())
         return nil;
-    return [_private _convertValueToObjcValue:state->exception()];
+    return [self _convertValueToObjcValue:state->exception()];
 }
 
 // Evaluate some JavaScript code in the context of this frame.
@@ -274,7 +296,7 @@ NSString * const WebScriptErrorLineNumberKey = @"WebScriptErrorLineNumber";
         result = state->exception();    // (may be redundant depending on which eval path was used)
     state->setException(savedException);
 
-    return [_private _convertValueToObjcValue:result];
+    return [self _convertValueToObjcValue:result];
 }
 
 @end

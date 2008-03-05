@@ -236,25 +236,6 @@ class WebCoreScriptDebuggerImp : public KJS::Debugger {
 
 @implementation WebCoreScriptCallFrame
 
-- (id)_convertValueToObjcValue:(JSValue *)value
-{
-    if (!value)
-        return nil;
-
-    if (value == [_globalObj _imp])
-        return _globalObj;
-
-    Bindings::RootObject* root1 = [_globalObj _originRootObject];
-    if (!root1)
-        return nil;
-
-    Bindings::RootObject* root2 = [_globalObj _rootObject];
-    if (!root2)
-        return nil;
-
-    return [WebScriptObject _convertValueToObjcValue:value originRootObject:root1 rootObject:root2];
-}
-
 - (void)dealloc
 {
     [_wrapper release];

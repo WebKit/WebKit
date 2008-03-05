@@ -1,5 +1,22 @@
 2008-03-05  Adam Roben  <aroben@apple.com>
 
+        Move -_convertValueToObjcValue to WebScriptCallFrame
+
+        Reviewed by Darin.
+
+        * WebView/WebCoreScriptDebugger.h: Removed declaration of
+        -_convertValueToObjcValue.
+        * WebView/WebCoreScriptDebugger.mm: Removed -_convertValueToObjcValue.
+        * WebView/WebScriptDebugDelegate.mm:
+        (-[WebScriptCallFrame _convertValueToObjcValue:]): Added. Code came
+        from -[WebCoreScriptCallFrame _convertValueToObjcValue].
+        (-[WebScriptCallFrame scopeChain]): Changed to call
+        -_convertValueToObjcValue on self instead of _private.
+        (-[WebScriptCallFrame exception]): Ditto.
+        (-[WebScriptCallFrame evaluateWebScript:]): Ditto.
+
+2008-03-05  Adam Roben  <aroben@apple.com>
+
         Move -exception and -evaluateWebScript: to WebScriptCallFrame
 
         Reviewed by Darin.
