@@ -27,7 +27,7 @@
 #define WebScriptDebugServer_H
 
 #include "WebKit.h"
-#include "WebScriptDebugger.h"
+#include <kjs/debugger.h>
 
 #include <wtf/HashSet.h>
 #pragma warning(push, 0)
@@ -40,7 +40,7 @@ namespace WebCore {
 
 interface IWebView;
 
-class WebScriptDebugServer : public IWebScriptDebugServer, public WebScriptDebugger {
+class WebScriptDebugServer : public IWebScriptDebugServer, public KJS::Debugger {
 public:
     static WebScriptDebugServer* createInstance();
     static WebScriptDebugServer* sharedWebScriptDebugServer();
@@ -102,6 +102,7 @@ public:
 private:
     bool m_paused;
     bool m_step;
+    bool m_callingServer;
 
     ULONG m_refCount;
 };

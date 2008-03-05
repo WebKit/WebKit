@@ -1,5 +1,23 @@
 2008-03-04  Adam Roben  <aroben@apple.com>
 
+        Remove WebScriptDebugger
+
+        Reviewed by Anders.
+
+        * WebKit.vcproj/WebKit.vcproj: Removed files from project.
+        * WebScriptDebugServer.cpp:
+        (frame): Moved here from WebScriptDebugger.cpp.
+        (webFrame): Ditto.
+        (webView): Ditto.
+        (WebScriptDebugServer::WebScriptDebugServer): Initialize new member.
+        * WebScriptDebugServer.h: Changed to inherit directly from
+        KJS::Debugger instead of from WebScriptDebugger, and added
+        m_callingServer member that WebScriptDebugger used to own.
+        * WebScriptDebugger.cpp: Removed.
+        * WebScriptDebugger.h: Removed.
+
+2008-03-04  Adam Roben  <aroben@apple.com>
+
         Move sourceParsed to WebScriptDebugServer
 
         Reviewed by Anders.
