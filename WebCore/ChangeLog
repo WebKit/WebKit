@@ -1,3 +1,17 @@
+2008-03-04  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Sam and Oliver.
+
+        - fixed http://bugs.webkit.org/show_bug.cgi?id=16289
+        - fixed Acid3 tests 26 and 27 (not exactly the same issue but related)
+
+        * bindings/js/JSNodeCustom.cpp:
+        (WebCore::JSNode::mark): When marking a node that's in-document,
+        mark the owner document if it hasn't been already. This means holding on
+        to a single node from an unreferenced document now keeps the whole document alive.
+        
+        We are now at 90/100 on Acid3.
+
 2008-03-04  Sam Weinig  <sam@webkit.org>
 
         Qt build fix.

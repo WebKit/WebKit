@@ -1,3 +1,17 @@
+2008-03-04  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Sam and Oliver.
+
+        - test for http://bugs.webkit.org/show_bug.cgi?id=16289
+        - test for Acid3 tests 26 and 27 (not exactly the same issue but related)
+
+        * fast/dom/gc-11-expected.txt: Added. Test case from bug 16289.
+        * fast/dom/gc-11.html: Added.
+        * fast/dom/gc-acid3.html: Added. DOM garbage collection part of Acid3.
+        * fast/dom/gc-acid3-expected.txt: Added.
+        * fast/dom/gc-6-expected.txt: Updated results. The old assumptions of this test
+        were in conflict with the requirements of Acid3.
+
 2008-03-04  Dan Bernstein  <mitz@apple.com>
 
         - test for http://bugs.webkit.org/show_bug.cgi?id=17676

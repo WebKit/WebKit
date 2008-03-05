@@ -115,6 +115,12 @@ void JSNode::mark()
     // Nodes in the document are kept alive by ScriptInterpreter::mark,
     // so we have no special responsibilities and can just call the base class here.
     if (node->inDocument()) {
+        // But if the document isn't marked we have to mark it to ensure that
+        // nodes reachable from this one are also marked
+        if (Document* doc = node->ownerDocument())
+            if (DOMObject* docWrapper = ScriptInterpreter::getDOMObject(doc))
+                if (!docWrapper->marked())
+                    docWrapper->mark();
         DOMObject::mark();
         return;
     }

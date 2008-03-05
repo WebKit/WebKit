@@ -4,6 +4,6 @@ The output should be the following pieces of text on lines by themselves: "B", "
 
 B
 [object HTMLElement]
-null
+[object HTMLElement]
 [object HTMLDocument]
 
