@@ -27,6 +27,7 @@
 #define WebScriptDebugServer_H
 
 #include "WebKit.h"
+#include "WebScriptDebugger.h"
 
 #include <wtf/HashSet.h>
 #pragma warning(push, 0)
@@ -39,8 +40,7 @@ namespace WebCore {
 
 interface IWebView;
 
-class WebScriptDebugServer : public IWebScriptDebugServer, public IWebScriptDebugListener
-{
+class WebScriptDebugServer : public IWebScriptDebugServer, public IWebScriptDebugListener, public WebScriptDebugger {
 public:
     static WebScriptDebugServer* createInstance();
     static WebScriptDebugServer* sharedWebScriptDebugServer();

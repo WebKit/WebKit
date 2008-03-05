@@ -47,12 +47,6 @@
 using namespace WebCore;
 using namespace KJS;
 
-WebScriptDebugger& WebScriptDebugger::shared()
-{
-    static WebScriptDebugger debugger;
-    return debugger;
-}
-
 WebScriptDebugger::WebScriptDebugger()
     : m_callingServer(false)
 {

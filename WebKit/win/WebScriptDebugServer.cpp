@@ -83,7 +83,7 @@ void WebScriptDebugServer::pageCreated(Page* page)
     ASSERT_ARG(page, page);
 
     if (s_ListenerCount > 0)
-        page->setDebugger(&WebScriptDebugger::shared());
+        page->setDebugger(sharedWebScriptDebugServer());
 }
 
 // IUnknown -------------------------------------------------------------------
@@ -140,7 +140,7 @@ HRESULT STDMETHODCALLTYPE WebScriptDebugServer::addListener(
         return E_POINTER;
 
     if (!s_ListenerCount)
-        Page::setDebuggerForAllPages(&WebScriptDebugger::shared());
+        Page::setDebuggerForAllPages(sharedWebScriptDebugServer());
 
     ++s_ListenerCount;
     s_Listeners.add(listener);

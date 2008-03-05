@@ -1,5 +1,23 @@
 2008-03-04  Adam Roben  <aroben@apple.com>
 
+        Start to merge WebScriptDebugger and WebScriptDebugServer
+
+        WebScriptDebugServer now inherits from WebScriptDebugger.
+
+        Reviewed by Anders.
+
+        * WebScriptDebugServer.cpp:
+        (WebScriptDebugServer::pageCreated): Use sharedWebScriptDebugServer
+        instead of WebScriptDebugger::shared.
+        (WebScriptDebugServer::addListener): Ditto.
+        (WebScriptDebugServer::removeListener): Ditto.
+        * WebScriptDebugServer.h: Changed to inherit from WebScriptDebugger.
+        * WebScriptDebugger.cpp: Removed shared method.
+        * WebScriptDebugger.h: Made constructor/destructor protected, and
+        removed shared method.
+
+2008-03-04  Adam Roben  <aroben@apple.com>
+
         Use WebCore's new debugger-attaching code
 
         Reviewed by Kevin M.

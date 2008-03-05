@@ -46,8 +46,6 @@ namespace KJS {
 
 class WebScriptDebugger : public KJS::Debugger {
 public:
-    static WebScriptDebugger& shared();
-
     bool sourceParsed(KJS::ExecState*, int sourceId, const KJS::UString& sourceURL,
         const KJS::UString& source, int startingLineNumber, int errorLine, const KJS::UString& errorMsg);
 
@@ -56,10 +54,11 @@ public:
     bool returnEvent(KJS::ExecState*, int sourceId, int lineno, KJS::JSObject* function);
     bool exception(KJS::ExecState*, int sourceId, int lineno, KJS::JSValue* exception);
 
-private:
+protected:
     WebScriptDebugger();
     ~WebScriptDebugger();
 
+private:
     bool m_callingServer;
     WebFrame* m_frame;
     COMPtr<IWebView> m_webView;
