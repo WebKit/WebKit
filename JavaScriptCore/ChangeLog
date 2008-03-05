@@ -1,3 +1,11 @@
+2008-03-05  David D. Kilzer  <ddkilzer@apple.com>
+
+        Remove unused header includes from interpreter.cpp.
+
+        Reviewed by Darin.
+
+        * kjs/interpreter.cpp: Remove unused header includes.
+
 2008-03-05  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam.
