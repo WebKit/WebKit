@@ -1289,6 +1289,10 @@
 				>
 			</File>
 			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSRGBColor.lut.h"
+				>
+			</File>
+			<File
 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSRect.cpp"
 				>
 			</File>
@@ -2514,14 +2518,6 @@
 			</File>
 			<File
 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSXSLTProcessor.lut.h"
-				>
-			</File>
-			<File
-				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\kjs_css.lut.h"
-				>
-			</File>
-			<File
-				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\kjs_html.lut.h"
 				>
 			</File>
 			<File
@@ -7812,6 +7808,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\bindings\js\JSRGBColor.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\bindings\js\JSRGBColor.h"
+					>
+				</File>
+				<File
 					RelativePath="..\bindings\js\JSSQLResultSetRowListCustom.cpp"
 					>
 				</File>
@@ -7893,14 +7897,6 @@
 				</File>
 				<File
 					RelativePath="..\bindings\js\kjs_binding.h"
-					>
-				</File>
-				<File
-					RelativePath="..\bindings\js\kjs_css.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\bindings\js\kjs_css.h"
 					>
 				</File>
 				<File

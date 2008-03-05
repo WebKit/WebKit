@@ -126,11 +126,8 @@ sub GetLegacyHeaderIncludes
 
     return "#include \"JSHTMLInputElementBase.h\"\n\n" if $legacyParent eq "JSHTMLInputElementBase";
     return "#include \"kjs_window.h\"\n\n" if $legacyParent eq "JSDOMWindowBase";
-    return "#include \"kjs_events.h\"\n\n" if $module eq "events";
-    return "#include \"kjs_css.h\"\n\n" if $module eq "css";
-    return "#include \"kjs_html.h\"\n\n" if $module eq "html";
 
-    die "Don't know what headers to include for module $module";
+    die "Don't know what headers to include for legacy parent $legacyParent";
 }
 
 sub GetVisibleClassName
@@ -1505,7 +1502,7 @@ sub NativeToJSValue
     }
 
     if ($type eq "RGBColor") {
-        $implIncludes{"kjs_css.h"} = 1;
+        $implIncludes{"JS$type.h"} = 1;
         return "getJSRGBColor(exec, $value)";
     }
 

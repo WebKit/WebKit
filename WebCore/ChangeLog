@@ -1,3 +1,23 @@
+2008-03-04  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Rename kjs_css to JSRGBColor.
+
+        * DerivedSources.make:
+        * GNUmakefile.am:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * WebCoreSources.bkl:
+        * bindings/js/JSRGBColor.cpp: Copied from bindings/js/kjs_css.cpp.
+        * bindings/js/JSRGBColor.h: Copied from bindings/js/kjs_css.h.
+        * bindings/js/kjs_css.cpp: Removed.
+        * bindings/js/kjs_css.h: Removed.
+        * bindings/js/kjs_window.cpp:
+        * bindings/objc/DOMUtility.mm:
+        * bindings/scripts/CodeGeneratorJS.pm:
+
 2008-03-04  Anders Carlsson  <andersca@apple.com>
 
         Fix 64-bit build.

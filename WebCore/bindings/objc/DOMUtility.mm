@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2005, 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
  * Copyright (C) 2006 James G. Speth (speth@end.com)
  *
  * Redistribution and use in source and binary forms, with or without
@@ -43,6 +43,7 @@
 #import "JSNode.h"
 #import "JSNodeIterator.h"
 #import "JSNodeList.h"
+#import "JSRGBColor.h"
 #import "JSRange.h"
 #import "JSRect.h"
 #import "JSStyleSheet.h"
@@ -52,10 +53,8 @@
 #import "JSXPathResult.h"
 #import "Node.h"
 #import "WebScriptObjectPrivate.h"
-#import "kjs_css.h"
-#import "kjs_html.h"
-#import <objc/objc-runtime.h>
 #import <bindings/runtime_root.h>
+#import <objc/objc-runtime.h>
 
 // This file makes use of both the ObjC DOM API and the C++ DOM API, so we need to be careful about what
 // headers are included and what namespaces we use to avoid naming conflicts.

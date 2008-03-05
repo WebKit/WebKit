@@ -433,6 +433,7 @@ all : \
     JSOverflowEvent.h \
     JSProcessingInstruction.h \
     JSProgressEvent.h \
+    JSRGBColor.lut.h \
     JSRange.h \
     JSRangeException.h \
     JSRect.h \
@@ -599,7 +600,6 @@ all : \
     XLinkNames.cpp \
     XMLNames.cpp \
     XPathGrammar.cpp \
-    kjs_css.lut.h \
     kjs_navigator.lut.h \
     kjs_window.lut.h \
     tokenizer.cpp \

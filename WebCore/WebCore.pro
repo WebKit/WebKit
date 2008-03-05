@@ -246,9 +246,9 @@ STYLESHEETS_EMBED = $$PWD/css/html4.css
 LUT_FILES += \
     bindings/js/JSEventTargetBase.cpp \
     bindings/js/JSLocation.cpp \
+    bindings/js/JSRGBColor.cpp \
     bindings/js/JSXMLHttpRequest.cpp \
     bindings/js/JSXSLTProcessor.cpp \
-    bindings/js/kjs_css.cpp \
     bindings/js/kjs_navigator.cpp \
     bindings/js/kjs_window.cpp
 
@@ -428,13 +428,13 @@ SOURCES += \
     bindings/js/JSNodeFilterCustom.cpp \
     bindings/js/JSNodeIteratorCustom.cpp \
     bindings/js/JSNodeListCustom.cpp \
+    bindings/js/JSRGBColor.cpp \
     bindings/js/JSStyleSheetCustom.cpp \
     bindings/js/JSStyleSheetListCustom.cpp \
     bindings/js/JSTreeWalkerCustom.cpp \
     bindings/js/JSXMLHttpRequest.cpp \
     bindings/js/JSXSLTProcessor.cpp \
     bindings/js/kjs_binding.cpp \
-    bindings/js/kjs_css.cpp \
     bindings/js/kjs_events.cpp \
     bindings/js/kjs_html.cpp \
     bindings/js/kjs_navigator.cpp \

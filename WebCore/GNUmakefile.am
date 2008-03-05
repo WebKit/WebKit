@@ -50,9 +50,9 @@ webcore_built_nosources += \
 	DerivedSources/ColorData.c \
 	WebCore/bindings/js/JSEventTargetBase.lut.h \
 	WebCore/bindings/js/JSLocation.lut.h \
+	WebCore/bindings/js/JSRGBColor.lut.h \
 	WebCore/bindings/js/JSXMLHttpRequest.lut.h \
 	WebCore/bindings/js/JSXSLTProcessor.lut.h \
-	WebCore/bindings/js/kjs_css.lut.h \
 	WebCore/bindings/js/kjs_navigator.lut.h \
 	WebCore/bindings/js/kjs_window.lut.h \
 	WebCore/bindings/js/JSHTMLInputElementBaseTable.cpp
@@ -493,13 +493,13 @@ webcore_sources += \
 	WebCore/bindings/js/JSNodeFilterCustom.cpp \
 	WebCore/bindings/js/JSNodeIteratorCustom.cpp \
 	WebCore/bindings/js/JSNodeListCustom.cpp \
+	WebCore/bindings/js/JSRGBColor.cpp \
 	WebCore/bindings/js/JSStyleSheetCustom.cpp \
 	WebCore/bindings/js/JSStyleSheetListCustom.cpp \
 	WebCore/bindings/js/JSTreeWalkerCustom.cpp \
 	WebCore/bindings/js/JSXMLHttpRequest.cpp \
 	WebCore/bindings/js/JSXSLTProcessor.cpp \
 	WebCore/bindings/js/kjs_binding.cpp \
-	WebCore/bindings/js/kjs_css.cpp \
 	WebCore/bindings/js/kjs_events.cpp \
 	WebCore/bindings/js/kjs_html.cpp \
 	WebCore/bindings/js/kjs_navigator.cpp \
@@ -2054,9 +2054,9 @@ CLEANFILES += \
 	WebCore/bindings/js/JSEventTargetBase.lut.h \
 	WebCore/bindings/js/JSHTMLInputElementBaseTable.cpp \
 	WebCore/bindings/js/JSLocation.lut.h \
+	JSRGBColor.lut.h \
 	JSXMLHttpRequest.lut.h \
 	JSXSLTProcessor.lut.h \
-	kjs_css.lut.h \
 	kjs_navigator.lut.h \
 	kjs_window.lut.h
 

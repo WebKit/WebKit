@@ -1,8 +1,7 @@
-// -*- c-basic-offset: 2 -*-
 /*
  *  Copyright (C) 2000 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2004, 2005, 2006, 2007 Apple Inc. All rights reserved.
+ *  Copyright (C) 2004, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
  *  Copyright (C) 2006 James G. Speth (speth@end.com)
  *  Copyright (C) 2006 Samuel Weinig (sam@webkit.org)
  *
@@ -22,16 +21,16 @@
  */
 
 #include "config.h"
-#include "kjs_css.h"
+#include "JSRGBColor.h"
 
 #include "CSSPrimitiveValue.h"
 #include "JSCSSPrimitiveValue.h"
 
-#include "kjs_css.lut.h"
-
-namespace WebCore {
+#include "JSRGBColor.lut.h"
 
 using namespace KJS;
+
+namespace WebCore {
 
 const ClassInfo JSRGBColor::info = { "RGBColor", 0, &JSRGBColorTable };
 

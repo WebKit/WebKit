@@ -59,7 +59,6 @@
 #include "Settings.h"
 #include "WindowFeatures.h"
 #include "htmlediting.h"
-#include "kjs_css.h"
 #include "kjs_events.h"
 #include "kjs_navigator.h"
 #include "kjs_proxy.h"
