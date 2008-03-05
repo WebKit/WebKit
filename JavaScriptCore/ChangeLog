@@ -30,7 +30,7 @@
         * kjs/interpreter.cpp:
         Remove unnecessary include.
 
-2008-03-04  David D. Kilzer  <ddkilzer@apple.com>
+2008-03-05  David D. Kilzer  <ddkilzer@apple.com>
 
         Allow override of default script file name using command-line argument.
 
