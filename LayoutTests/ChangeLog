@@ -1,5 +1,14 @@
 2008-03-04  Nikolas Zimmermann  <zimmermann@kde.org>
 
+        Reviewed by Eric.
+
+        Fix svg/dynamic-updates time-dependancy problem. Remove unneeded setTimeout() call.
+
+        * svg/custom/acid3-test-77.html: Remove uneeded variables 'svgns' / 'xlinkns'
+        * svg/dynamic-updates/resources/SVGTestCase.js:
+
+2008-03-04  Nikolas Zimmermann  <zimmermann@kde.org>
+
         Reviewed by Eric & David.
 
         Add new layout test for Acid3 - test 77.

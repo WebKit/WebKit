@@ -20,16 +20,12 @@ function createSVGTestCase() {
     bodyElement.insertBefore(rootSVGElement, document.getElementById("description"));
 }
 
-function sendMouseEvent() {
+function triggerUpdate() {
     if (window.eventSender) {
         eventSender.mouseMoveTo(150, 200);
         eventSender.mouseDown();
         eventSender.mouseUp();
     }
-}
-
-function triggerUpdate() {
-    window.setTimeout("sendMouseEvent()", 0);
 }
 
 function waitForClickEvent(obj) {
