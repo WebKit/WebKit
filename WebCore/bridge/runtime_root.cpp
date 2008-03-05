@@ -70,12 +70,16 @@ RootObject* findRootObject(JSGlobalObject* globalObject)
 }
 
 #if PLATFORM(MAC)
+    
+static CFRunLoopSourceRef _performJavaScriptSource;
+static CFRunLoopRef _runLoop;
+
 // May only be set by dispatchToJavaScriptThread().
 static CFRunLoopSourceRef completionSource;
 
 static void completedJavaScriptAccess (void *i)
 {
-    assert (CFRunLoopGetCurrent() != RootObject::runLoop());
+    assert (CFRunLoopGetCurrent() != _runLoop);
 
     JSObjectCallContext *callContext = (JSObjectCallContext *)i;
     CFRunLoopRef runLoop = (CFRunLoopRef)callContext->originatingLoop;
@@ -113,7 +117,6 @@ static inline void unlockJavaScriptAccess()
     pthread_mutex_unlock(&javaScriptAccessLock);
 }
 
-
 void RootObject::dispatchToJavaScriptThread(JSObjectCallContext *context)
 {
     // This lock guarantees that only one thread can invoke
@@ -123,7 +126,7 @@ void RootObject::dispatchToJavaScriptThread(JSObjectCallContext *context)
 
     CFRunLoopRef currentRunLoop = CFRunLoopGetCurrent();
 
-    assert (currentRunLoop != RootObject::runLoop());
+    assert (currentRunLoop != _runLoop);
 
     // Setup a source to signal once the invocation of the JavaScript
     // call completes.
@@ -137,10 +140,9 @@ void RootObject::dispatchToJavaScriptThread(JSObjectCallContext *context)
     CFRunLoopAddSource(currentRunLoop, completionSource, kCFRunLoopDefaultMode);
 
     // Wakeup JavaScript access thread and make it do it's work.
-    CFRunLoopSourceSignal(RootObject::performJavaScriptSource());
-    if (CFRunLoopIsWaiting(RootObject::runLoop())) {
-        CFRunLoopWakeUp(RootObject::runLoop());
-    }
+    CFRunLoopSourceSignal(_performJavaScriptSource);
+    if (CFRunLoopIsWaiting(_runLoop))
+        CFRunLoopWakeUp(_runLoop);
     
     // Wait until the JavaScript access thread is done.
     CFRunLoopRun ();
@@ -153,7 +155,7 @@ void RootObject::dispatchToJavaScriptThread(JSObjectCallContext *context)
 
 static void performJavaScriptAccess(void*)
 {
-    assert (CFRunLoopGetCurrent() == RootObject::runLoop());
+    assert (CFRunLoopGetCurrent() == _runLoop);
     
     // Dispatch JavaScript calls here.
     CFRunLoopSourceContext sourceContext;
@@ -165,14 +167,21 @@ static void performJavaScriptAccess(void*)
     
     // Signal the originating thread that we're done.
     CFRunLoopSourceSignal (completionSource);
-    if (CFRunLoopIsWaiting(originatingLoop)) {
+    if (CFRunLoopIsWaiting(originatingLoop))
         CFRunLoopWakeUp(originatingLoop);
-    }
 }
 
-CreateRootObjectFunction RootObject::_createRootObject = 0;
-CFRunLoopRef RootObject::_runLoop = 0;
-CFRunLoopSourceRef RootObject::_performJavaScriptSource = 0;
+static CreateRootObjectFunction _createRootObject;
+    
+CreateRootObjectFunction RootObject::createRootObject()
+{
+    return _createRootObject;
+}
+
+CFRunLoopRef RootObject::runLoop()
+{
+    return _runLoop;
+}        
 
 // Must be called from the thread that will be used to access JavaScript.
 void RootObject::setCreateRootObject(CreateRootObjectFunction createRootObject) {
@@ -188,8 +197,8 @@ void RootObject::setCreateRootObject(CreateRootObjectFunction createRootObject) 
     // Setup a source the other threads can use to signal the _runLoop
     // thread that a JavaScript call needs to be invoked.
     CFRunLoopSourceContext sourceContext = {0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, performJavaScriptAccess};
-    RootObject::_performJavaScriptSource = CFRunLoopSourceCreate(NULL, 0, &sourceContext);
-    CFRunLoopAddSource(RootObject::_runLoop, RootObject::_performJavaScriptSource, kCFRunLoopDefaultMode);
+    _performJavaScriptSource = CFRunLoopSourceCreate(NULL, 0, &sourceContext);
+    CFRunLoopAddSource(_runLoop, _performJavaScriptSource, kCFRunLoopDefaultMode);
 }
 
 #endif

@@ -1,3 +1,19 @@
+2008-03-05  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam.
+
+        Change some static class variables to be regular static variables,
+        making it easier to move the chunk of mac-specific code out of runtime_root.[cpp|h]
+
+        * bridge/runtime_root.cpp:
+        (KJS::Bindings::completedJavaScriptAccess):
+        (KJS::Bindings::RootObject::dispatchToJavaScriptThread):
+        (KJS::Bindings::performJavaScriptAccess):
+        (KJS::Bindings::RootObject::createRootObject):
+        (KJS::Bindings::RootObject::runLoop):
+        (KJS::Bindings::RootObject::setCreateRootObject):
+        * bridge/runtime_root.h:
+
 2008-03-05  Brent Fulgham <bfulgham@gmail.com>
 
         Reviewed by Adam Roben.
