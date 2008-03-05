@@ -42,7 +42,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="&quot;$(WebKitOutputDir)\obj\JavaScriptCore\DerivedSources\&quot;;../../;&quot;../../os-win32/&quot;;../../pcre/;../../kjs/;../../wtf/;&quot;$(WebKitLibrariesDir)\include&quot;;&quot;$(WebKitLibrariesDir)\include\icu&quot;;../../../icu/include;../../bindings;../../bindings/c;../../bindings/jni;&quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;;&quot;$(WebKitLibrariesDir)\include\pthreads&quot;;&quot;$(WebKitLibrariesDir)\Include\CoreFoundation\OSXCompatibilityHeaders&quot;"
+				AdditionalIncludeDirectories="&quot;$(WebKitOutputDir)\obj\JavaScriptCore\DerivedSources\&quot;;../../;&quot;../../os-win32/&quot;;../../pcre/;../../kjs/;../../wtf/;&quot;$(WebKitLibrariesDir)\include&quot;;&quot;$(WebKitLibrariesDir)\include\icu&quot;;../../../icu/include;&quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;;&quot;$(WebKitLibrariesDir)\include\pthreads&quot;;&quot;$(WebKitLibrariesDir)\Include\CoreFoundation\OSXCompatibilityHeaders&quot;"
 				PreprocessorDefinitions="HAVE_CONFIG_H;__STD_C"
 				ForcedIncludeFiles=""
 			/>
@@ -73,7 +73,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="mkdir 2&gt;NUL &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\wtf\*.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\wtf\unicode\*.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\wtf\unicode\icu\*.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\os-win32\*.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\kjs\*.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\kjs\create_hash_table&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\pcre\pcre.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\bindings\npruntime.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\bindings\npapi.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\bindings\npruntime_internal.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\bindings\npruntime_impl.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\bindings\NP_jsobject.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\bindings\runtime_object.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\bindings\runtime_root.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\bindings\runtime.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;"
+				CommandLine="mkdir 2&gt;NUL &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\wtf\*.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\wtf\unicode\*.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\wtf\unicode\icu\*.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\os-win32\*.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\kjs\*.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\kjs\create_hash_table&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\pcre\pcre.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;&#x0D;&#x0A;"
 			/>
 		</Configuration>
 		<Configuration
@@ -135,7 +135,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="mkdir 2&gt;NUL &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\wtf\*.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\wtf\unicode\*.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\wtf\unicode\icu\*.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\os-win32\*.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\kjs\*.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\kjs\create_hash_table&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\pcre\pcre.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\bindings\npruntime.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\bindings\npapi.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\bindings\npruntime_internal.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\bindings\npruntime_impl.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\bindings\NP_jsobject.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\bindings\runtime_object.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\bindings\runtime_root.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\bindings\runtime.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;"
+				CommandLine="mkdir 2&gt;NUL &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\wtf\*.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\wtf\unicode\*.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\wtf\unicode\icu\*.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\os-win32\*.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\kjs\*.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\kjs\create_hash_table&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\pcre\pcre.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;&#x0D;&#x0A;"
 			/>
 		</Configuration>
 		<Configuration
@@ -196,7 +196,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="mkdir 2&gt;NUL &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\wtf\*.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\wtf\unicode\*.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\wtf\unicode\icu\*.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\os-win32\*.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\kjs\*.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\kjs\create_hash_table&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\pcre\pcre.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\bindings\npruntime.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\bindings\npapi.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\bindings\npruntime_internal.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\bindings\npruntime_impl.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\bindings\NP_jsobject.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\bindings\runtime_object.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\bindings\runtime_root.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\bindings\runtime.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;"
+				CommandLine="mkdir 2&gt;NUL &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\wtf\*.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\wtf\unicode\*.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\wtf\unicode\icu\*.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\os-win32\*.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\kjs\*.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\kjs\create_hash_table&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\pcre\pcre.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;&#x0D;&#x0A;&#x0D;&#x0A;"
 			/>
 		</Configuration>
 	</Configurations>
@@ -664,110 +664,6 @@
 			</File>
 			<File
 				RelativePath="..\..\pcre\ucpinternal.h"
-				>
-			</File>
-		</Filter>
-		<Filter
-			Name="Bindings"
-			>
-			<File
-				RelativePath="..\..\bindings\c\c_class.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\bindings\c\c_class.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\bindings\c\c_instance.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\bindings\c\c_instance.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\bindings\c\c_runtime.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\bindings\c\c_runtime.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\bindings\c\c_utility.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\bindings\c\c_utility.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\bindings\NP_jsobject.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\bindings\NP_jsobject.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\bindings\npapi.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\bindings\npruntime.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\bindings\npruntime.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\bindings\npruntime_impl.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\bindings\npruntime_priv.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\bindings\runtime.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\bindings\runtime.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\bindings\runtime_array.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\bindings\runtime_array.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\bindings\runtime_method.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\bindings\runtime_method.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\bindings\runtime_object.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\bindings\runtime_object.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\bindings\runtime_root.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\bindings\runtime_root.h"
 				>
 			</File>
 		</Filter>
