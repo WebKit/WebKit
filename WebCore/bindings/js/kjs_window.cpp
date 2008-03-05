@@ -1399,7 +1399,7 @@ void JSDOMWindowBase::timerFired(DOMWindowTimer* timer)
     if (timer->isActive()) {
         int timeoutId = timer->timeoutId();
 
-        timer->action()->execute(this);
+        timer->action()->execute(toJSDOMWindow(this));
         // The DOMWindowTimer object may have been deleted or replaced during execution,
         // so we re-fetch it.
         timer = d->m_timeouts.get(timeoutId);
@@ -1418,7 +1418,7 @@ void JSDOMWindowBase::timerFired(DOMWindowTimer* timer)
     ScheduledAction* action = timer->takeAction();
     d->m_timeouts.remove(timer->timeoutId());
     delete timer;
-    action->execute(this);
+    action->execute(toJSDOMWindow(this));
 
     JSLock lock;
     delete action;

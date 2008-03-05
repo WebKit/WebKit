@@ -47,7 +47,7 @@ ScheduledAction::ScheduledAction(JSValue* func, const List& args)
 }
 
 
-void ScheduledAction::execute(JSDOMWindowBase* window)
+void ScheduledAction::execute(JSDOMWindow* window)
 {
     RefPtr<Frame> frame = window->impl()->frame();
     if (!frame)

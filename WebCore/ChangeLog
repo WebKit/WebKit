@@ -1,3 +1,15 @@
+2008-03-04  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Dan Bernstein.
+
+        Use JSDOMWindow exclusively instead of JSDOMWindowBase.
+
+        * bindings/js/ScheduledAction.cpp:
+        (WebCore::ScheduledAction::execute):
+        * bindings/js/ScheduledAction.h:
+        * bindings/js/kjs_window.cpp:
+        (WebCore::JSDOMWindowBase::timerFired):
+
 2008-03-04  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Darin Adler.
