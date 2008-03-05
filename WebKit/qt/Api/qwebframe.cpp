@@ -167,7 +167,7 @@ QWebFrame::~QWebFrame()
 void QWebFrame::addToJSWindowObject(const QString &name, QObject *object)
 {
       KJS::JSLock lock;
-      KJS::Window *window = KJS::Window::retrieveWindow(d->frame.get());
+      JSDOMWindow *window = toJSDOMWindow(d->frame.get());
       KJS::Bindings::RootObject *root = d->frame->bindingRootObject();
       if (!window) {
           qDebug() << "Warning: couldn't get window object";
