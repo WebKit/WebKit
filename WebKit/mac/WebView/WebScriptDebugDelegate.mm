@@ -175,9 +175,28 @@ NSString * const WebScriptErrorLineNumberKey = @"WebScriptErrorLineNumber";
     return [[_private caller] wrapper];
 }
 
+// Returns an array of scope objects (most local first).
+// The properties of each scope object are the variables for that scope.
+// Note that the last entry in the array will _always_ be the global object (windowScriptObject),
+// whose properties are the global variables.
+
 - (NSArray *)scopeChain
 {
-    return [_private scopeChain];
+    ExecState* state = [_private state];
+    if (!state->scopeNode())  // global frame
+        return [NSArray arrayWithObject:[_private globalObject]];
+
+    ScopeChain      chain  = state->scopeChain();
+    NSMutableArray *scopes = [[NSMutableArray alloc] init];
+
+    while (!chain.isEmpty()) {
+        [scopes addObject:[_private _convertValueToObjcValue:chain.top()]];
+        chain.pop();
+    }
+
+    NSArray *result = [NSArray arrayWithArray:scopes];
+    [scopes release];
+    return result;
 }
 
 // Returns the name of the function for this frame, if available.

@@ -1,5 +1,22 @@
 2008-03-05  Adam Roben  <aroben@apple.com>
 
+        Move -scopeChain to WebScriptCallFrame
+
+        Reviewed by Darin.
+
+        * WebView/WebCoreScriptDebugger.h:
+          - Added declarations of -globalObject and -_convertValueToObjcValue:
+            to WebCoreScriptCallFrame
+          - Removed declaration of -scopeChain.
+        * WebView/WebCoreScriptDebugger.mm: Moved -_convertValueToObjcValue
+        within the main WebCoreScriptCallFrame implementation.
+        (-[WebCoreScriptCallFrame globalObject]): Added.
+        * WebView/WebScriptDebugDelegate.mm:
+        (-[WebScriptCallFrame scopeChain]): Added. Code came from
+        -[WebCoreScriptCallFrame scopeChain].
+
+2008-03-05  Adam Roben  <aroben@apple.com>
+
         Move -functionName from WebCoreScriptCallFrame to WebScriptCallFrame
 
         Reviewed by Darin.

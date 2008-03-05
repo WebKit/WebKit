@@ -36,6 +36,7 @@
 class WebCoreScriptDebuggerImp;
 namespace KJS {
     class ExecState;
+    class JSValue;
     class UString;
 }
 
@@ -85,11 +86,12 @@ NSString *toNSString(const KJS::UString&);
 }
 
 - (id)wrapper;
+- (WebScriptObject *)globalObject;
 - (WebCoreScriptCallFrame *)caller;
 - (KJS::ExecState*)state;
 
-- (NSArray *)scopeChain;
 - (id)exception;
 - (id)evaluateWebScript:(NSString *)script;
+- (id)_convertValueToObjcValue:(KJS::JSValue*)value;
 
 @end

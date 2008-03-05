@@ -57,7 +57,6 @@ using namespace WebCore;
 
 - (WebCoreScriptCallFrame *)_initWithGlobalObject:(WebScriptObject *)globalObj caller:(WebCoreScriptCallFrame *)caller state:(ExecState *)state;
 - (void)_setWrapper:(id)wrapper;
-- (id)_convertValueToObjcValue:(JSValue *)value;
 
 @end
 
@@ -233,6 +232,10 @@ class WebCoreScriptDebuggerImp : public KJS::Debugger {
     _wrapper = wrapper;     // (already retained)
 }
 
+@end
+
+@implementation WebCoreScriptCallFrame
+
 - (id)_convertValueToObjcValue:(JSValue *)value
 {
     if (!value)
@@ -252,10 +255,6 @@ class WebCoreScriptDebuggerImp : public KJS::Debugger {
     return [WebScriptObject _convertValueToObjcValue:value originRootObject:root1 rootObject:root2];
 }
 
-@end
-
-@implementation WebCoreScriptCallFrame
-
 - (void)dealloc
 {
     [_wrapper release];
@@ -268,6 +267,11 @@ class WebCoreScriptDebuggerImp : public KJS::Debugger {
     return _wrapper;
 }
 
+- (WebScriptObject *)globalObject
+{
+    return _globalObj;
+}
+
 - (WebCoreScriptCallFrame *)caller
 {
     return _caller;
@@ -276,30 +280,6 @@ class WebCoreScriptDebuggerImp : public KJS::Debugger {
 - (ExecState*)state
 {
     return _state;
-}
-
-// Returns an array of scope objects (most local first).
-// The properties of each scope object are the variables for that scope.
-// Note that the last entry in the array will _always_ be the global object (windowScriptObject),
-// whose properties are the global variables.
-
-- (NSArray *)scopeChain
-{
-    if (!_state->scopeNode()) {  // global frame
-        return [NSArray arrayWithObject:_globalObj];
-    }
-
-    ScopeChain      chain  = _state->scopeChain();
-    NSMutableArray *scopes = [[NSMutableArray alloc] init];
-
-    while (!chain.isEmpty()) {
-        [scopes addObject:[self _convertValueToObjcValue:chain.top()]];
-        chain.pop();
-    }
-
-    NSArray *result = [NSArray arrayWithArray:scopes];
-    [scopes release];
-    return result;
 }
 
 // Returns the pending exception for this frame (nil if none).
