@@ -1,3 +1,9 @@
+2008-03-04  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Adele.
+
+        * bindings/js/JSXMLHttpRequest.h: Remove unnecessary override of toBoolean.
+
 2008-03-04  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Sam and Oliver.
