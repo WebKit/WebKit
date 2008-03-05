@@ -27,7 +27,7 @@
  */
 
 #import <WebKit/WebScriptDebugDelegate.h>
-#import <WebCore/WebCoreScriptDebugger.h>
+#import <WebKit/WebCoreScriptDebugger.h>
 
 @interface WebScriptDebugger : NSObject <WebScriptDebugger>
 {

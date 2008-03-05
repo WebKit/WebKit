@@ -28,6 +28,7 @@
 
 #import "WebScriptDebugDelegatePrivate.h"
 
+#import "WebCoreScriptDebugger.h"
 #import "WebDataSource.h"
 #import "WebDataSourceInternal.h"
 #import "WebFrameBridge.h"
@@ -35,7 +36,6 @@
 #import "WebScriptDebugServerPrivate.h"
 #import "WebViewInternal.h"
 #import <WebCore/Frame.h>
-#import <WebCore/WebCoreScriptDebugger.h>
 
 using namespace WebCore;
 

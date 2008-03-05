@@ -1,3 +1,17 @@
+2008-03-05  Adam Roben  <aroben@apple.com>
+
+        Move WebCoreScriptDebugger up to WebKit
+
+        Reviewed by Darin.
+
+        * WebCore.base.exp: Exported some functions used by
+        WebCoreScriptDebugger, and sorted the list.
+        * WebCore.xcodeproj/project.pbxproj: Removed
+        WebCoreScriptDebugger.{h,mm} from the project and marked
+        a few headers private so that WebKit can use them.
+        * page/mac/WebCoreScriptDebugger.h: Removed.
+        * page/mac/WebCoreScriptDebugger.mm: Removed.
+
 2008-03-05  Anders Carlsson  <andersca@apple.com>
 
         Build bridge/. Copy some headers over to WebKit as part of the post-build step.

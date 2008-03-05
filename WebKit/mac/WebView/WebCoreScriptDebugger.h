@@ -26,6 +26,10 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// FIXME: This file and the classes in it should have the prefix "Web" instead
+// of "WebCore". The best way to fix this is to merge WebCoreScriptCallFrame
+// with WebScriptCallFrame and WebCoreScriptDebugger with WebScriptDebugger.
+
 @class WebScriptObject;         // from JavaScriptCore
 @class WebCoreScriptCallFrame;  // below
 

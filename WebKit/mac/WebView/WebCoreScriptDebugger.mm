@@ -26,19 +26,22 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
+// FIXME: This file and the classes in it should have the prefix "Web" instead
+// of "WebCore". The best way to fix this is to merge WebCoreScriptCallFrame
+// with WebScriptCallFrame and WebCoreScriptDebugger with WebScriptDebugger.
+
 #import "WebCoreScriptDebugger.h"
 
-#import "KURL.h"
-#import "PlatformString.h"
-#import "WebCoreObjCExtras.h"
-#import "WebScriptObjectPrivate.h"
 #import <JavaScriptCore/ExecState.h>
 #import <JavaScriptCore/JSGlobalObject.h>
 #import <JavaScriptCore/debugger.h>
 #import <JavaScriptCore/function.h>
 #import <JavaScriptCore/interpreter.h>
-#import "runtime_root.h"
+#import <WebCore/KURL.h>
+#import <WebCore/PlatformString.h>
+#import <WebCore/WebCoreObjCExtras.h>
+#import <WebCore/WebScriptObjectPrivate.h>
+#import <WebCore/runtime_root.h>
 
 using namespace KJS;
 using namespace WebCore;

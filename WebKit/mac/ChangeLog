@@ -1,3 +1,39 @@
+2008-03-05  Adam Roben  <aroben@apple.com>
+
+        Move WebCoreScriptDebugger to WebKit
+
+        Reviewed by Darin.
+
+        * WebView/WebCoreScriptDebugger.h: Renamed from WebCore/page/mac/WebCoreScriptDebugger.h.
+        * WebView/WebCoreScriptDebugger.mm: Renamed from WebCore/page/mac/WebCoreScriptDebugger.mm.
+        (toNSString):
+        (toNSURL):
+        (WebCoreScriptDebuggerImp::WebCoreScriptDebuggerImp):
+        (WebCoreScriptDebuggerImp::sourceParsed):
+        (WebCoreScriptDebuggerImp::callEvent):
+        (WebCoreScriptDebuggerImp::atStatement):
+        (WebCoreScriptDebuggerImp::returnEvent):
+        (WebCoreScriptDebuggerImp::exception):
+        (+[WebCoreScriptDebugger initialize]):
+        (-[WebCoreScriptDebugger initWithDelegate:]):
+        (-[WebCoreScriptDebugger dealloc]):
+        (-[WebCoreScriptDebugger finalize]):
+        (-[WebCoreScriptDebugger delegate]):
+        (-[WebCoreScriptDebugger _enterFrame:]):
+        (-[WebCoreScriptDebugger _leaveFrame]):
+        (-[WebCoreScriptCallFrame _initWithGlobalObject:caller:state:]):
+        (-[WebCoreScriptCallFrame _setWrapper:]):
+        (-[WebCoreScriptCallFrame _convertValueToObjcValue:]):
+        (-[WebCoreScriptCallFrame dealloc]):
+        (-[WebCoreScriptCallFrame wrapper]):
+        (-[WebCoreScriptCallFrame caller]):
+        (-[WebCoreScriptCallFrame scopeChain]):
+        (-[WebCoreScriptCallFrame functionName]):
+        (-[WebCoreScriptCallFrame exception]):
+        (-[WebCoreScriptCallFrame evaluateWebScript:]):
+        * WebView/WebScriptDebugDelegate.mm: Updated header path.
+        * WebView/WebScriptDebugDelegatePrivate.h: Ditto.
+
 2008-03-05  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Geoff.

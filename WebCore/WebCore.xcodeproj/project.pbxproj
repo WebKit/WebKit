@@ -122,7 +122,7 @@
 		1A569D010D7E2B82007C3983 /* jni_instance.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A569CD10D7E2B82007C3983 /* jni_instance.cpp */; };
 		1A569D020D7E2B82007C3983 /* jni_instance.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A569CD20D7E2B82007C3983 /* jni_instance.h */; };
 		1A569D030D7E2B82007C3983 /* jni_jsobject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A569CD30D7E2B82007C3983 /* jni_jsobject.cpp */; };
-		1A569D040D7E2B82007C3983 /* jni_jsobject.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A569CD40D7E2B82007C3983 /* jni_jsobject.h */; };
+		1A569D040D7E2B82007C3983 /* jni_jsobject.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A569CD40D7E2B82007C3983 /* jni_jsobject.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1A569D050D7E2B82007C3983 /* jni_objc.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1A569CD50D7E2B82007C3983 /* jni_objc.mm */; };
 		1A569D060D7E2B82007C3983 /* jni_runtime.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A569CD60D7E2B82007C3983 /* jni_runtime.cpp */; };
 		1A569D070D7E2B82007C3983 /* jni_runtime.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A569CD70D7E2B82007C3983 /* jni_runtime.h */; };
@@ -155,7 +155,7 @@
 		1A569D220D7E2B82007C3983 /* runtime_object.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A569CF30D7E2B82007C3983 /* runtime_object.cpp */; };
 		1A569D230D7E2B82007C3983 /* runtime_object.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A569CF40D7E2B82007C3983 /* runtime_object.h */; };
 		1A569D240D7E2B82007C3983 /* runtime_root.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A569CF50D7E2B82007C3983 /* runtime_root.cpp */; };
-		1A569D250D7E2B82007C3983 /* runtime_root.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A569CF60D7E2B82007C3983 /* runtime_root.h */; };
+		1A569D250D7E2B82007C3983 /* runtime_root.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A569CF60D7E2B82007C3983 /* runtime_root.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1A6938010A11100A00C127FE /* TextDocument.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A6937FF0A11100A00C127FE /* TextDocument.cpp */; };
 		1A6938020A11100A00C127FE /* TextDocument.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A6938000A11100A00C127FE /* TextDocument.h */; };
 		1A750D5C0A90DEE1000FF215 /* JSTreeWalker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A750D5A0A90DEE1000FF215 /* JSTreeWalker.cpp */; };
@@ -292,8 +292,6 @@
 		1AF326470D78B5530068F0C4 /* GlobalHistoryMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1AF326410D78B5530068F0C4 /* GlobalHistoryMac.mm */; };
 		1AF326480D78B5530068F0C4 /* WebCoreAXObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AF326420D78B5530068F0C4 /* WebCoreAXObject.h */; };
 		1AF326490D78B5530068F0C4 /* WebCoreAXObject.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1AF326430D78B5530068F0C4 /* WebCoreAXObject.mm */; };
-		1AF3264A0D78B5530068F0C4 /* WebCoreScriptDebugger.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AF326440D78B5530068F0C4 /* WebCoreScriptDebugger.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		1AF3264B0D78B5530068F0C4 /* WebCoreScriptDebugger.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1AF326450D78B5530068F0C4 /* WebCoreScriptDebugger.mm */; };
 		1AF326780D78B9440068F0C4 /* AXObjectCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AF326760D78B9440068F0C4 /* AXObjectCache.h */; };
 		1AF326790D78B9440068F0C4 /* EditorClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AF326770D78B9440068F0C4 /* EditorClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1AF3267B0D78B94E0068F0C4 /* GlobalHistory.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AF3267A0D78B94E0068F0C4 /* GlobalHistory.h */; };
@@ -330,7 +328,7 @@
 		1C6B7C9A0CEFC9D00076DE61 /* InspectorLocalizedStrings.js in Resources */ = {isa = PBXBuildFile; fileRef = 1C6B7C980CEFC9BE0076DE61 /* InspectorLocalizedStrings.js */; };
 		1CAF34810A6C405200ABE06E /* WebScriptObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 1CAF347E0A6C405200ABE06E /* WebScriptObject.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1CAF34820A6C405200ABE06E /* WebScriptObject.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1CAF347F0A6C405200ABE06E /* WebScriptObject.mm */; };
-		1CAF34830A6C405200ABE06E /* WebScriptObjectPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 1CAF34800A6C405200ABE06E /* WebScriptObjectPrivate.h */; settings = {ATTRIBUTES = (); }; };
+		1CAF34830A6C405200ABE06E /* WebScriptObjectPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 1CAF34800A6C405200ABE06E /* WebScriptObjectPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1CB4214A0AF2B2CA0085AD91 /* DOMDocumentInternal.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 85E711460AC5D5340053270F /* DOMDocumentInternal.h */; };
 		1CB4214B0AF2B2CA0085AD91 /* DOMElementInternal.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 85E711490AC5D5340053270F /* DOMElementInternal.h */; };
 		1CB4214C0AF2B2CA0085AD91 /* DOMHTMLElementInternal.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 85E711580AC5D5340053270F /* DOMHTMLElementInternal.h */; };
@@ -4627,8 +4625,6 @@
 		1AF326410D78B5530068F0C4 /* GlobalHistoryMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = GlobalHistoryMac.mm; sourceTree = "<group>"; };
 		1AF326420D78B5530068F0C4 /* WebCoreAXObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebCoreAXObject.h; sourceTree = "<group>"; };
 		1AF326430D78B5530068F0C4 /* WebCoreAXObject.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebCoreAXObject.mm; sourceTree = "<group>"; };
-		1AF326440D78B5530068F0C4 /* WebCoreScriptDebugger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebCoreScriptDebugger.h; sourceTree = "<group>"; };
-		1AF326450D78B5530068F0C4 /* WebCoreScriptDebugger.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebCoreScriptDebugger.mm; sourceTree = "<group>"; };
 		1AF326760D78B9440068F0C4 /* AXObjectCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AXObjectCache.h; sourceTree = "<group>"; };
 		1AF326770D78B9440068F0C4 /* EditorClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EditorClient.h; sourceTree = "<group>"; };
 		1AF3267A0D78B94E0068F0C4 /* GlobalHistory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GlobalHistory.h; sourceTree = "<group>"; };
@@ -9922,8 +9918,6 @@
 				1AF326410D78B5530068F0C4 /* GlobalHistoryMac.mm */,
 				1AF326420D78B5530068F0C4 /* WebCoreAXObject.h */,
 				1AF326430D78B5530068F0C4 /* WebCoreAXObject.mm */,
-				1AF326440D78B5530068F0C4 /* WebCoreScriptDebugger.h */,
-				1AF326450D78B5530068F0C4 /* WebCoreScriptDebugger.mm */,
 				ABAF22070C03B1C700B0BCF0 /* ChromeMac.mm */,
 				93C09A7E0B064EEF005ABD4D /* EventHandlerMac.mm */,
 				A718788F0B2D04AC00A16ECE /* DragControllerMac.mm */,
@@ -14414,7 +14408,6 @@
 				A77979290D6B9E64003851B9 /* JSImageData.h in Headers */,
 				1CEFC9B90D78DC8C007D2579 /* SchedulePair.h in Headers */,
 				1AF326480D78B5530068F0C4 /* WebCoreAXObject.h in Headers */,
-				1AF3264A0D78B5530068F0C4 /* WebCoreScriptDebugger.h in Headers */,
 				1AF326780D78B9440068F0C4 /* AXObjectCache.h in Headers */,
 				1AF3267B0D78B94E0068F0C4 /* GlobalHistory.h in Headers */,
 				BCA83E500D7CE1E9003421A8 /* JSClipboard.h in Headers */,
@@ -16041,7 +16034,6 @@
 				1AF326460D78B5530068F0C4 /* AXObjectCacheMac.mm in Sources */,
 				1AF326470D78B5530068F0C4 /* GlobalHistoryMac.mm in Sources */,
 				1AF326490D78B5530068F0C4 /* WebCoreAXObject.mm in Sources */,
-				1AF3264B0D78B5530068F0C4 /* WebCoreScriptDebugger.mm in Sources */,
 				1CE24F970D7CAF0E007E04C2 /* SchedulePairMac.mm in Sources */,
 				BCA83E4F0D7CE1E9003421A8 /* JSClipboard.cpp in Sources */,
 				BCA83E520D7CE205003421A8 /* JSClipboardCustom.cpp in Sources */,
