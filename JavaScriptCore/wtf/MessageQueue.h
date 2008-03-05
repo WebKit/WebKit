@@ -75,11 +75,10 @@ namespace WTF {
     inline bool MessageQueue<DataType>::waitForMessage(DataType& result)
     {
         MutexLocker lock(m_mutex);
-        if (m_killed)
-            return false;
         
-        if (m_queue.isEmpty())
+        while (!m_killed && m_queue.isEmpty())
             m_condition.wait(m_mutex);
+
         if (m_killed)
             return false;
 

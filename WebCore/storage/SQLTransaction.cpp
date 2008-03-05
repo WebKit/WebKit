@@ -308,7 +308,7 @@ bool SQLTransaction::runCurrentStatement()
         
     m_database->m_databaseAuthorizer->reset();
     
-    if (m_currentStatement->execute(m_database)) {
+    if (m_currentStatement->execute(m_database.get())) {
         if (m_database->m_databaseAuthorizer->lastActionChangedDatabase()) {
             // Flag this transaction as having changed the database for later delegate notification
             m_modifiedDatabase = true;
@@ -316,7 +316,7 @@ bool SQLTransaction::runCurrentStatement()
             OriginQuotaManager& manager(DatabaseTracker::tracker().originQuotaManager());
             Locker<OriginQuotaManager> locker(manager);
             
-            manager.markDatabase(m_database);
+            manager.markDatabase(m_database.get());
         }
             
         if (m_currentStatement->hasStatementCallback()) {

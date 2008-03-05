@@ -1,3 +1,29 @@
+2008-03-05  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Alexey and Mark Rowe
+
+        Fix for <rdar://problem/5778247> - Reproducible crash on storage/execute-sql-args.html
+
+        DatabaseThread::unscheduleDatabaseTasks() manually filters through a MessageQueue,
+        removing particular items for Databases that were shutting down.
+
+        This filtering operation is not atomic, and therefore causes a race condition with the
+        database thread waking up and reading from the message queue.  
+
+        The end result was an attempt to dereference a null DatabaseTask.  Timing-wise, this never
+        seemed to happen in a debug build, otherwise an assertion would've caught it.  Replacing that
+        assertion with a crash in a release build is what revealed this bug.
+
+        The fix for the above symptom was entirely in WTF::MessageQueue in JSCore.  With this fix in 
+        place, another crash popped up in the layout tests that was related to dereferencing a 
+        deallocated object - simply because SQLTransaction had a raw pointer to it's Database object 
+        when it needed to be a ref pointer.
+
+        * storage/SQLTransaction.cpp:
+        (WebCore::SQLTransaction::runCurrentStatement):
+        * storage/SQLTransaction.h: Change m_database to be a RefPtr
+        (WebCore::SQLTransaction::database):
+
 2008-03-05  Mark Rowe  <mrowe@apple.com>
 
         Build fix.

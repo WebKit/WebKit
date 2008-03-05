@@ -73,7 +73,7 @@ public:
     bool performNextStep();
     void performPendingCallback();
     
-    Database* database() { return m_database; }
+    Database* database() { return m_database.get(); }
 
 private:
     typedef void (SQLTransaction::*TransactionStepMethod)();
@@ -107,7 +107,7 @@ private:
     
     bool m_executeSqlAllowed;
     
-    Database* m_database;
+    RefPtr<Database> m_database;
     RefPtr<SQLTransactionWrapper> m_wrapper;
     RefPtr<SQLTransactionCallback> m_callback;
     RefPtr<VoidCallback> m_successCallback;

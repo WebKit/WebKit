@@ -1,3 +1,23 @@
+2008-03-05  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Alexey and Mark Rowe
+
+        Fix for <rdar://problem/5778247> - Reproducible crash on storage/execute-sql-args.html
+
+        DatabaseThread::unscheduleDatabaseTasks() manually filters through a MessageQueue,
+        removing particular items for Databases that were shutting down.
+
+        This filtering operation is not atomic, and therefore causes a race condition with the
+        MessageQueue waking up and reading from the message queue.  
+
+        The end result was an attempt to dereference a null DatabaseTask.  Timing-wise, this never
+        seemed to happen in a debug build, otherwise an assertion would've caught it.  Replacing that
+        assertion with a crash in a release build is what revealed this bug.
+
+        * wtf/MessageQueue.h:
+        (WTF::::waitForMessage): Tweak the waiting logic to check the queue's empty state then go back
+          to sleep if the queue was empty - checking m_killed each time it wakes up.
+
 2008-03-05  David D. Kilzer  <ddkilzer@apple.com>
 
         Remove unused header includes from interpreter.cpp.

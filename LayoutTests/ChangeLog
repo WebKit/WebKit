@@ -1,3 +1,15 @@
+2008-03-05  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Alexey + Mark Rowe
+
+        Fix for <rdar://problem/5778247> - Reproducible crash on storage/execute-sql-args.html
+
+        This test takes its best shot at handling two databases on a single database thread at once,
+        then having one of those databases go away completely (garbage collection and everything)
+
+        * storage/multiple-databases-garbage-collection-expected.txt: Added.
+        * storage/multiple-databases-garbage-collection.html: Added.
+
 2008-03-04  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Sam and Oliver.
