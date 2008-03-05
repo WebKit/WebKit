@@ -1,5 +1,29 @@
 2008-03-04  Adam Roben  <aroben@apple.com>
 
+        WebScriptDebugServer cleanup
+
+        Reviewed by Anders.
+
+        * WebScriptDebugServer.cpp: Renamed m_callingServer to
+        m_callingListeners.
+        (WebScriptDebugServer::WebScriptDebugServer):
+        (WebScriptDebugServer::sharedWebScriptDebugServer): Changed to keep
+        the shared instance as a function-level static.
+        (WebScriptDebugServer::didLoadMainResourceForDataSource): Made return
+        void.
+        (WebScriptDebugServer::sourceParsed):
+        (WebScriptDebugServer::callEvent):
+        (WebScriptDebugServer::atStatement):
+        (WebScriptDebugServer::returnEvent):
+        (WebScriptDebugServer::exception):
+        (WebScriptDebugServer::serverDidDie): Made return void.
+        * WebScriptDebugServer.h:
+          - Removed unnecessary #includes
+          - Made inheritance from KJS::Debugger private
+          - Made some methods private
+
+2008-03-04  Adam Roben  <aroben@apple.com>
+
         Remove WebScriptDebugger
 
         Reviewed by Anders.

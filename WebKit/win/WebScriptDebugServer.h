@@ -29,29 +29,18 @@
 #include "WebKit.h"
 #include <kjs/debugger.h>
 
-#include <wtf/HashSet.h>
-#pragma warning(push, 0)
-#include <WebCore/COMPtr.h>
-#pragma warning(pop)
-
 namespace WebCore {
     class Page;
 }
 
 interface IWebView;
 
-class WebScriptDebugServer : public IWebScriptDebugServer, public KJS::Debugger {
+class WebScriptDebugServer : public IWebScriptDebugServer, KJS::Debugger {
 public:
     static WebScriptDebugServer* createInstance();
     static WebScriptDebugServer* sharedWebScriptDebugServer();
 
     static void pageCreated(WebCore::Page*);
-
-private:
-    WebScriptDebugServer();
-
-public:
-    virtual ~WebScriptDebugServer();
 
     // IUnknown
     virtual HRESULT STDMETHODCALLTYPE QueryInterface( 
@@ -81,28 +70,28 @@ public:
     virtual HRESULT STDMETHODCALLTYPE isPaused(
         /* [out, retval] */ BOOL* isPaused);
 
-    // KJS::Debugger
-    bool sourceParsed(KJS::ExecState*, int sourceID, const KJS::UString& sourceURL,
-        const KJS::UString& source, int startingLineNumber, int errorLine, const KJS::UString& errorMsg);
-    bool callEvent(KJS::ExecState*, int sourceID, int lineNumber, KJS::JSObject* function, const KJS::List& args);
-    bool atStatement(KJS::ExecState*, int sourceID, int firstLine, int lastLine);
-    bool returnEvent(KJS::ExecState*, int sourceID, int lineNumber, KJS::JSObject* function);
-    bool exception(KJS::ExecState*, int sourceID, int lineNumber, KJS::JSValue* exception);
+    void didLoadMainResourceForDataSource(IWebView*, IWebDataSource*);
+    void serverDidDie();
 
-    // IWebScriptDebugListener
-    virtual HRESULT STDMETHODCALLTYPE didLoadMainResourceForDataSource(
-        /* [in] */ IWebView* webView,
-        /* [in] */ IWebDataSource* dataSource);
-
-    virtual HRESULT STDMETHODCALLTYPE serverDidDie();
-
-    void suspendProcessIfPaused();
     static unsigned listenerCount();
 
 private:
+    WebScriptDebugServer();
+    ~WebScriptDebugServer();
+
+    void suspendProcessIfPaused();
+
+    // KJS::Debugger
+    virtual bool sourceParsed(KJS::ExecState*, int sourceID, const KJS::UString& sourceURL,
+        const KJS::UString& source, int startingLineNumber, int errorLine, const KJS::UString& errorMsg);
+    virtual bool callEvent(KJS::ExecState*, int sourceID, int lineNumber, KJS::JSObject* function, const KJS::List& args);
+    virtual bool atStatement(KJS::ExecState*, int sourceID, int firstLine, int lastLine);
+    virtual bool returnEvent(KJS::ExecState*, int sourceID, int lineNumber, KJS::JSObject* function);
+    virtual bool exception(KJS::ExecState*, int sourceID, int lineNumber, KJS::JSValue* exception);
+
     bool m_paused;
     bool m_step;
-    bool m_callingServer;
+    bool m_callingListeners;
 
     ULONG m_refCount;
 };

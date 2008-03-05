@@ -46,7 +46,6 @@ typedef HashSet<COMPtr<IWebScriptDebugListener> > ListenerSet;
 
 static ListenerSet s_Listeners;
 static unsigned s_ListenerCount = 0;
-static OwnPtr<WebScriptDebugServer> s_SharedWebScriptDebugServer;
 static bool s_dying = false;
 
 static Frame* frame(ExecState* exec)
@@ -73,7 +72,7 @@ WebScriptDebugServer::WebScriptDebugServer()
     : m_refCount(0)
     , m_paused(false)
     , m_step(false)
-    , m_callingServer(false)
+    , m_callingListeners(false)
 {
     gClassCount++;
 }
@@ -92,12 +91,14 @@ WebScriptDebugServer* WebScriptDebugServer::createInstance()
 
 WebScriptDebugServer* WebScriptDebugServer::sharedWebScriptDebugServer()
 {
-    if (!s_SharedWebScriptDebugServer) {
+    static WebScriptDebugServer* server;
+
+    if (!server) {
         s_dying = false;
-        s_SharedWebScriptDebugServer.set(WebScriptDebugServer::createInstance());
+        server = WebScriptDebugServer::createInstance();
     }
 
-    return s_SharedWebScriptDebugServer.get();
+    return server;
 }
 
 void WebScriptDebugServer::pageCreated(Page* page)
@@ -146,7 +147,7 @@ HRESULT STDMETHODCALLTYPE WebScriptDebugServer::sharedWebScriptDebugServer(
     if (!server)
         return E_POINTER;
 
-    *server = WebScriptDebugServer::sharedWebScriptDebugServer();
+    *server = sharedWebScriptDebugServer();
     (*server)->AddRef();
 
     return S_OK;
@@ -278,29 +279,24 @@ void WebScriptDebugServer::suspendProcessIfPaused()
     alreadyHere = false;
 }
 
-// IWebScriptDebugListener
-HRESULT STDMETHODCALLTYPE WebScriptDebugServer::didLoadMainResourceForDataSource(
-    /* [in] */ IWebView* webView,
-    /* [in] */ IWebDataSource* dataSource)
+void WebScriptDebugServer::didLoadMainResourceForDataSource(IWebView* webView, IWebDataSource* dataSource)
 {
     if (!webView || !dataSource)
-        return E_FAIL;
+        return;
 
     ListenerSet listenersCopy = s_Listeners;
     ListenerSet::iterator end = listenersCopy.end();
     for (ListenerSet::iterator it = listenersCopy.begin(); it != end; ++it)
         (**it).didLoadMainResourceForDataSource(webView, dataSource);
-
-    return S_OK;
 }
 
 bool WebScriptDebugServer::sourceParsed(ExecState* exec, int sourceID, const UString& sourceURL,
                   const UString& source, int startingLineNumber, int errorLine, const UString& /*errorMsg*/)
 {
-    if (m_callingServer)
+    if (m_callingListeners)
         return true;
 
-    m_callingServer = true;
+    m_callingListeners = true;
 
     if (listenerCount() <= 0)
         return true;
@@ -321,16 +317,16 @@ bool WebScriptDebugServer::sourceParsed(ExecState* exec, int sourceID, const USt
             (**it).failedToParseSource(webView(exec), bSource, startingLineNumber, bSourceURL, error, webFrame(exec));
     }
 
-    m_callingServer = false;
+    m_callingListeners = false;
     return true;
 }
 
 bool WebScriptDebugServer::callEvent(ExecState* exec, int sourceID, int lineNumber, JSObject* /*function*/, const List &/*args*/)
 {
-    if (m_callingServer)
+    if (m_callingListeners)
         return true;
 
-    m_callingServer = true;
+    m_callingListeners = true;
 
     COMPtr<WebScriptCallFrame> callFrame(AdoptCOM, WebScriptCallFrame::createInstance(exec));
     ListenerSet listenersCopy = s_Listeners;
@@ -340,17 +336,17 @@ bool WebScriptDebugServer::callEvent(ExecState* exec, int sourceID, int lineNumb
 
     suspendProcessIfPaused();
 
-    m_callingServer = false;
+    m_callingListeners = false;
 
     return true;
 }
 
 bool WebScriptDebugServer::atStatement(ExecState* exec, int sourceID, int firstLine, int /*lastLine*/)
 {
-    if (m_callingServer)
+    if (m_callingListeners)
         return true;
 
-    m_callingServer = true;
+    m_callingListeners = true;
 
     COMPtr<WebScriptCallFrame> callFrame(AdoptCOM, WebScriptCallFrame::createInstance(exec));
     ListenerSet listenersCopy = s_Listeners;
@@ -360,17 +356,17 @@ bool WebScriptDebugServer::atStatement(ExecState* exec, int sourceID, int firstL
 
     suspendProcessIfPaused();
 
-    m_callingServer = false;
+    m_callingListeners = false;
 
     return true;
 }
 
 bool WebScriptDebugServer::returnEvent(ExecState* exec, int sourceID, int lineNumber, JSObject* /*function*/)
 {
-    if (m_callingServer)
+    if (m_callingListeners)
         return true;
 
-    m_callingServer = true;
+    m_callingListeners = true;
 
     COMPtr<WebScriptCallFrame> callFrame(AdoptCOM, WebScriptCallFrame::createInstance(exec->callingExecState()));
     ListenerSet listenersCopy = s_Listeners;
@@ -380,17 +376,17 @@ bool WebScriptDebugServer::returnEvent(ExecState* exec, int sourceID, int lineNu
 
     suspendProcessIfPaused();
 
-    m_callingServer = false;
+    m_callingListeners = false;
 
     return true;
 }
 
 bool WebScriptDebugServer::exception(ExecState* exec, int sourceID, int lineNumber, JSValue* /*exception */)
 {
-    if (m_callingServer)
+    if (m_callingListeners)
         return true;
 
-    m_callingServer = true;
+    m_callingListeners = true;
 
     COMPtr<WebScriptCallFrame> callFrame(AdoptCOM, WebScriptCallFrame::createInstance(exec));
     ListenerSet listenersCopy = s_Listeners;
@@ -400,12 +396,12 @@ bool WebScriptDebugServer::exception(ExecState* exec, int sourceID, int lineNumb
 
     suspendProcessIfPaused();
 
-    m_callingServer = false;
+    m_callingListeners = false;
 
     return true;
 }
 
-HRESULT STDMETHODCALLTYPE WebScriptDebugServer::serverDidDie()
+void WebScriptDebugServer::serverDidDie()
 {
     s_dying = true;
 
@@ -415,6 +411,4 @@ HRESULT STDMETHODCALLTYPE WebScriptDebugServer::serverDidDie()
         (**it).serverDidDie();
         s_Listeners.remove((*it).get());
     }
-
-    return S_OK;
 }
