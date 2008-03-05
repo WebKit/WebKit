@@ -1,3 +1,12 @@
+2008-03-05  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Alexey P.
+
+        Small performance improvement to putImageData (3-5% on assignment in my tests)
+
+        * html/CanvasPixelArray.h:
+        (WebCore::CanvasPixelArray::set):
+
 2008-03-04  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Adele.
