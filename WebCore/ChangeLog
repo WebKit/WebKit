@@ -1,3 +1,44 @@
+2008-03-04  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/5720160> Browser windows "do nothing" while modal
+        dialog or menu is up due to run loop modes (or while scrolling)
+
+        Adds a new SchedulePair object that holds a runloop and the mode to use.
+        A HashSet of SchedulePairs is tracked by Page so it can be used for resource
+        loading and, in the future, maybe SharedTimerMac.
+
+        * WebCore.base.exp: Add new exports for WebKit.
+        * WebCore.xcodeproj/project.pbxproj: Add new files.
+        * loader/mac/DocumentLoaderMac.cpp: Added.
+        (WebCore::scheduleAll): Call schedule all the ResourceLoader handles.
+        (WebCore::unscheduleAll): Call unschedule all the ResourceLoader handles.
+        (WebCore::DocumentLoader::schedule): Schedule all the ResourceLoaders owned by the DocumentLoader.
+        (WebCore::DocumentLoader::unschedule): Unschedule all the ResourceLoaders owned by the DocumentLoader.
+        * loader/DocumentLoader.h:
+        * page/Page.h:
+        (WebCore::Page::scheduledRunLoopPairs): Return m_scheduledRunLoopPairs.
+        * page/mac/PageMac.cpp:
+        (WebCore::Page::addSchedulePair): Add a SchedulePair to m_scheduledRunLoopPairs.
+        (WebCore::Page::removeSchedulePair): Removes a SchedulePair from m_scheduledRunLoopPairs.
+        * platform/cf/SchedulePair.cpp: Added.
+        * platform/cf/SchedulePair.h: Added.
+        * platform/mac/SchedulePairMac.mm: Added.
+        * platform/network/ResourceHandle.h:
+        * platform/network/mac/FormDataStreamMac.mm:
+        (WebCore::advanceCurrentStream): Use the new SchedulePair.
+        (WebCore::formCreate): Ditto.
+        (WebCore::formFinalize): Ditto.
+        (WebCore::formSchedule): Ditto.
+        (WebCore::formUnschedule): Ditto.
+        * platform/network/mac/ResourceHandleMac.mm:
+        (WebCore::ResourceHandle::start): Schedule the connection with all the SchedulePairs
+        that Page holds. If Page has no SchedulePairs, schedule with the current runloop, and
+        pick the mode based on ResourceHandle::loadsDuringCommonRunLoopModes.
+        (WebCore::ResourceHandle::schedule):
+        (WebCore::ResourceHandle::unschedule):
+
 2008-03-04  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Darin Adler.

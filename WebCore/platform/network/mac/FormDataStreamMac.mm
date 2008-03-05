@@ -33,6 +33,7 @@
 
 #import "CString.h"
 #import "FormData.h"
+#import "SchedulePair.h"
 #import "WebCoreSystemInterface.h"
 #import <sys/stat.h>
 #import <sys/types.h>
@@ -50,52 +51,12 @@ static HashMap<CFReadStreamRef, RefPtr<FormData> >& getStreamFormDatas()
 static void formEventCallback(CFReadStreamRef stream, CFStreamEventType type, void* context);
 
 struct FormStreamFields {
-    CFMutableSetRef scheduledRunLoopPairs;
+    SchedulePairHashSet scheduledRunLoopPairs;
     Vector<FormDataElement> remainingElements; // in reverse order
     CFReadStreamRef currentStream;
     char* currentData;
     CFReadStreamRef formStream;
 };
-
-struct SchedulePair {
-    CFRunLoopRef runLoop;
-    CFStringRef mode;
-};
-
-static const void* pairRetain(CFAllocatorRef alloc, const void* value)
-{
-    const SchedulePair* pair = static_cast<const SchedulePair*>(value);
-
-    SchedulePair* result = new SchedulePair;
-    CFRetain(pair->runLoop);
-    result->runLoop = pair->runLoop;
-    result->mode = CFStringCreateCopy(alloc, pair->mode);
-    return result;
-}
-
-static void pairRelease(CFAllocatorRef alloc, const void* value)
-{
-    const SchedulePair* pair = static_cast<const SchedulePair*>(value);
-
-    CFRelease(pair->runLoop);
-    CFRelease(pair->mode);
-    delete pair;
-}
-
-static Boolean pairEqual(const void* a, const void* b)
-{
-    const SchedulePair* pairA = static_cast<const SchedulePair*>(a);
-    const SchedulePair* pairB = static_cast<const SchedulePair*>(b);
-
-    return pairA->runLoop == pairB->runLoop && CFEqual(pairA->mode, pairB->mode);
-}
-
-static CFHashCode pairHash(const void* value)
-{
-    const SchedulePair* pair = static_cast<const SchedulePair*>(value);
-
-    return (CFHashCode)pair->runLoop ^ CFHash(pair->mode);
-}
 
 static void closeCurrentStream(FormStreamFields *form)
 {
@@ -109,14 +70,6 @@ static void closeCurrentStream(FormStreamFields *form)
         fastFree(form->currentData);
         form->currentData = 0;
     }
-}
-
-static void scheduleWithPair(const void* value, void* context)
-{
-    const SchedulePair* pair = static_cast<const SchedulePair*>(value);
-    CFReadStreamRef stream = (CFReadStreamRef)context;
-
-    CFReadStreamScheduleWithRunLoop(stream, pair->runLoop, pair->mode);
 }
 
 static void advanceCurrentStream(FormStreamFields *form)
@@ -148,7 +101,9 @@ static void advanceCurrentStream(FormStreamFields *form)
         formEventCallback, &context);
 
     // Schedule with the current set of run loops.
-    CFSetApplyFunction(form->scheduledRunLoopPairs, scheduleWithPair, form->currentStream);
+    SchedulePairHashSet::iterator end = form->scheduledRunLoopPairs.end();
+    for (SchedulePairHashSet::iterator it = form->scheduledRunLoopPairs.begin(); it != end; ++it)
+        CFReadStreamScheduleWithRunLoop(form->currentStream, (*it)->runLoop(), (*it)->mode());
 }
 
 static void openNextStream(FormStreamFields* form)
@@ -165,10 +120,7 @@ static void* formCreate(CFReadStreamRef stream, void* context)
 {
     FormData* formData = static_cast<FormData*>(context);
 
-    CFSetCallBacks runLoopAndModeCallBacks = { 0, pairRetain, pairRelease, NULL, pairEqual, pairHash };
-
     FormStreamFields* newInfo = new FormStreamFields;
-    newInfo->scheduledRunLoopPairs = CFSetCreateMutable(0, 0, &runLoopAndModeCallBacks);
     newInfo->currentStream = NULL;
     newInfo->currentData = 0;
     newInfo->formStream = stream; // Don't retain. That would create a reference cycle.
@@ -191,7 +143,6 @@ static void formFinalize(CFReadStreamRef stream, void* context)
     getStreamFormDatas().remove(stream);
 
     closeCurrentStream(form);
-    CFRelease(form->scheduledRunLoopPairs);
     delete form;
 }
 
@@ -256,8 +207,7 @@ static void formSchedule(CFReadStreamRef stream, CFRunLoopRef runLoop, CFStringR
 
     if (form->currentStream)
         CFReadStreamScheduleWithRunLoop(form->currentStream, runLoop, runLoopMode);
-    SchedulePair pair = { runLoop, runLoopMode };
-    CFSetAddValue(form->scheduledRunLoopPairs, &pair);
+    form->scheduledRunLoopPairs.add(SchedulePair::create(runLoop, runLoopMode));
 }
 
 static void formUnschedule(CFReadStreamRef stream, CFRunLoopRef runLoop, CFStringRef runLoopMode, void* context)
@@ -266,8 +216,7 @@ static void formUnschedule(CFReadStreamRef stream, CFRunLoopRef runLoop, CFStrin
 
     if (form->currentStream)
         CFReadStreamUnscheduleFromRunLoop(form->currentStream, runLoop, runLoopMode);
-    SchedulePair pair = { runLoop, runLoopMode };
-    CFSetRemoveValue(form->scheduledRunLoopPairs, &pair);
+    form->scheduledRunLoopPairs.remove(SchedulePair::create(runLoop, runLoopMode));
 }
 
 static void formEventCallback(CFReadStreamRef stream, CFStreamEventType type, void* context)

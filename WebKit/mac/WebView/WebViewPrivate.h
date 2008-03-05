@@ -84,6 +84,9 @@ typedef enum {
 
 @interface WebView (WebPendingPublic)
 
+- (void)scheduleInRunLoop:(NSRunLoop *)runLoop forMode:(NSString *)mode;
+- (void)unscheduleFromRunLoop:(NSRunLoop *)runLoop forMode:(NSString *)mode;
+
 /*!
 @method searchFor:direction:caseSensitive:wrap:startInSelection:
  @abstract Searches a document view for a string and highlights the string if it is found.

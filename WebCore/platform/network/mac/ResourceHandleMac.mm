@@ -32,8 +32,10 @@
 #import "DocLoader.h"
 #import "Frame.h"
 #import "FrameLoader.h"
+#import "Page.h"
 #import "ResourceError.h"
 #import "ResourceResponse.h"
+#import "SchedulePair.h"
 #import "SharedBuffer.h"
 #import "SubresourceLoader.h"
 #import "AuthenticationChallenge.h"
@@ -119,9 +121,10 @@ bool ResourceHandle::start(Frame* frame)
 
     // If we are no longer attached to a Page, this must be an attempted load from an
     // onUnload handler, so let's just block it.
-    if (!frame->page())
+    Page* page = frame->page();
+    if (!page)
         return false;
-  
+
 #ifndef NDEBUG
     isInitializingConnection = YES;
 #endif
@@ -141,15 +144,42 @@ bool ResourceHandle::start(Frame* frame)
     NSURLConnection *connection;
     
     if (d->m_shouldContentSniff) 
+#ifdef BUILDING_ON_TIGER
         connection = [[NSURLConnection alloc] initWithRequest:d->m_request.nsURLRequest() delegate:delegate];
+#else
+        connection = [[NSURLConnection alloc] initWithRequest:d->m_request.nsURLRequest() delegate:delegate startImmediately:NO];
+#endif
     else {
         NSMutableURLRequest *request = [d->m_request.nsURLRequest() mutableCopy];
         wkSetNSURLRequestShouldContentSniff(request, NO);
+#ifdef BUILDING_ON_TIGER
         connection = [[NSURLConnection alloc] initWithRequest:request delegate:delegate];
+#else
+        connection = [[NSURLConnection alloc] initWithRequest:request delegate:delegate startImmediately:NO];
+#endif
         [request release];
     }
-    
-    
+
+#ifndef BUILDING_ON_TIGER
+    bool scheduled = false;
+    if (SchedulePairHashSet* scheduledPairs = page->scheduledRunLoopPairs()) {
+        SchedulePairHashSet::iterator end = scheduledPairs->end();
+        for (SchedulePairHashSet::iterator it = scheduledPairs->begin(); it != end; ++it) {
+            if (NSRunLoop *runLoop = (*it)->nsRunLoop()) {
+                [connection scheduleInRunLoop:runLoop forMode:(NSString *)(*it)->mode()];
+                scheduled = true;
+            }
+        }
+    }
+
+    // Start the connection if we did schedule with at least one runloop.
+    // We can't start the connection until we have one runloop scheduled.
+    if (scheduled)
+        [connection start];
+    else
+        d->m_startWhenScheduled = true;
+#endif
+
 #ifndef NDEBUG
     isInitializingConnection = NO;
 #endif
@@ -157,7 +187,7 @@ bool ResourceHandle::start(Frame* frame)
     [connection release];
     if (d->m_defersLoading)
         wkSetNSURLConnectionDefersCallbacks(d->m_connection.get(), YES);
-    
+
     if (d->m_connection)
         return true;
 
@@ -175,6 +205,24 @@ void ResourceHandle::setDefersLoading(bool defers)
 {
     d->m_defersLoading = defers;
     wkSetNSURLConnectionDefersCallbacks(d->m_connection.get(), defers);
+}
+
+void ResourceHandle::schedule(SchedulePair* pair)
+{
+    NSRunLoop *runLoop = pair->nsRunLoop();
+    if (!runLoop)
+        return;
+    [d->m_connection.get() scheduleInRunLoop:runLoop forMode:(NSString *)pair->mode()];
+    if (d->m_startWhenScheduled) {
+        [d->m_connection.get() start];
+        d->m_startWhenScheduled = false;
+    }
+}
+
+void ResourceHandle::unschedule(SchedulePair* pair)
+{
+    if (NSRunLoop *runLoop = pair->nsRunLoop())
+        [d->m_connection.get() unscheduleFromRunLoop:runLoop forMode:(NSString *)pair->mode()];
 }
 
 WebCoreResourceHandleAsDelegate *ResourceHandle::delegate()

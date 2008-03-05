@@ -276,6 +276,8 @@
 		1C11CCC80AA6093700DADB20 /* DOMHTMLElement.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 85DF2EEB0AA387CB00AD64C5 /* DOMHTMLElement.h */; };
 		1C14E76B0AD8C81C00B6158B /* deleteButtonPressed.tiff in Resources */ = {isa = PBXBuildFile; fileRef = 1C14E7690AD8C81C00B6158B /* deleteButtonPressed.tiff */; };
 		1C14E76C0AD8C81C00B6158B /* deleteButton.tiff in Resources */ = {isa = PBXBuildFile; fileRef = 1C14E76A0AD8C81C00B6158B /* deleteButton.tiff */; };
+		1C26497A0D7E248A00BD10F2 /* DocumentLoaderMac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C2649790D7E248A00BD10F2 /* DocumentLoaderMac.cpp */; };
+		1C26497C0D7E24EC00BD10F2 /* PageMac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C26497B0D7E24EC00BD10F2 /* PageMac.cpp */; };
 		1C4C8F020AD85D87009475CE /* DeleteButtonController.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C4C8F000AD85D87009475CE /* DeleteButtonController.h */; };
 		1C4C8F660AD8655D009475CE /* DeleteButton.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C4C8F640AD8655D009475CE /* DeleteButton.h */; };
 		1C6B7C9A0CEFC9D00076DE61 /* InspectorLocalizedStrings.js in Resources */ = {isa = PBXBuildFile; fileRef = 1C6B7C980CEFC9BE0076DE61 /* InspectorLocalizedStrings.js */; };
@@ -286,8 +288,11 @@
 		1CB4214B0AF2B2CA0085AD91 /* DOMElementInternal.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 85E711490AC5D5340053270F /* DOMElementInternal.h */; };
 		1CB4214C0AF2B2CA0085AD91 /* DOMHTMLElementInternal.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 85E711580AC5D5340053270F /* DOMHTMLElementInternal.h */; };
 		1CB4214D0AF2B2CA0085AD91 /* DOMRangeInternal.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 8538F05A0AD722F1006A81D1 /* DOMRangeInternal.h */; };
+		1CE24F970D7CAF0E007E04C2 /* SchedulePairMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1CE24F960D7CAF0E007E04C2 /* SchedulePairMac.mm */; };
 		1CE83AC30ADAFFD7009354F6 /* DeleteButtonController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C4C8EFF0AD85D87009475CE /* DeleteButtonController.cpp */; };
 		1CE83AC40ADAFFD8009354F6 /* DeleteButton.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C4C8F630AD8655D009475CE /* DeleteButton.cpp */; };
+		1CEFC9B90D78DC8C007D2579 /* SchedulePair.h in Headers */ = {isa = PBXBuildFile; fileRef = 1CEFC9B70D78DC8C007D2579 /* SchedulePair.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		1CEFC9BA0D78DC8C007D2579 /* SchedulePair.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1CEFC9B80D78DC8C007D2579 /* SchedulePair.cpp */; };
 		1CFAE3230A6D6A3F0032593D /* libobjc.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1CFAE3220A6D6A3F0032593D /* libobjc.dylib */; };
 		1CFCEE960AACC40100348750 /* DOMHTMLBodyElementPrivate.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 1CFCEE8D0AACC3CD00348750 /* DOMHTMLBodyElementPrivate.h */; };
 		1CFCEE970AACC40100348750 /* DOMHTMLButtonElementPrivate.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 1CFCEE8E0AACC3CD00348750 /* DOMHTMLButtonElementPrivate.h */; };
@@ -4541,6 +4546,8 @@
 		1AFE11980CBFFCC4003017FA /* JSSQLResultSetRowList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSSQLResultSetRowList.h; sourceTree = "<group>"; };
 		1C14E7690AD8C81C00B6158B /* deleteButtonPressed.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = deleteButtonPressed.tiff; sourceTree = "<group>"; };
 		1C14E76A0AD8C81C00B6158B /* deleteButton.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = deleteButton.tiff; sourceTree = "<group>"; };
+		1C2649790D7E248A00BD10F2 /* DocumentLoaderMac.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DocumentLoaderMac.cpp; sourceTree = "<group>"; };
+		1C26497B0D7E24EC00BD10F2 /* PageMac.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PageMac.cpp; sourceTree = "<group>"; };
 		1C4C8EFF0AD85D87009475CE /* DeleteButtonController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DeleteButtonController.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		1C4C8F000AD85D87009475CE /* DeleteButtonController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeleteButtonController.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		1C4C8F630AD8655D009475CE /* DeleteButton.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DeleteButton.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -4554,6 +4561,9 @@
 		1CDD45E40BA9C84600F90147 /* DebugRelease.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = DebugRelease.xcconfig; sourceTree = "<group>"; };
 		1CDD45E50BA9C84600F90147 /* WebCore.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = WebCore.xcconfig; sourceTree = "<group>"; };
 		1CDD45E60BA9C84600F90147 /* Base.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Base.xcconfig; sourceTree = "<group>"; };
+		1CE24F960D7CAF0E007E04C2 /* SchedulePairMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SchedulePairMac.mm; sourceTree = "<group>"; };
+		1CEFC9B70D78DC8C007D2579 /* SchedulePair.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SchedulePair.h; sourceTree = "<group>"; };
+		1CEFC9B80D78DC8C007D2579 /* SchedulePair.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SchedulePair.cpp; sourceTree = "<group>"; };
 		1CFAE3220A6D6A3F0032593D /* libobjc.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libobjc.dylib; path = /usr/lib/libobjc.dylib; sourceTree = "<absolute>"; };
 		1CFCEE7F0AACC3B300348750 /* DOMHTMLAnchorElementPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMHTMLAnchorElementPrivate.h; sourceTree = "<group>"; };
 		1CFCEE880AACC3C000348750 /* DOMHTMLAreaElementPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMHTMLAreaElementPrivate.h; sourceTree = "<group>"; };
@@ -8095,6 +8105,8 @@
 		1AE42F670AA4B8CB00C8612D /* cf */ = {
 			isa = PBXGroup;
 			children = (
+				1CEFC9B70D78DC8C007D2579 /* SchedulePair.h */,
+				1CEFC9B80D78DC8C007D2579 /* SchedulePair.cpp */,
 				1A98956A0AA78F80005EF5EF /* KURLCFNet.cpp */,
 				5160306B0CC4362300C8AC25 /* FileSystemCF.cpp */,
 			);
@@ -8346,6 +8358,7 @@
 				BC7B2AF90450824100A8000F /* PlatformScrollBarMac.mm */,
 				A82398A709B3ACF500B60641 /* PlugInInfoStoreMac.mm */,
 				0668E18E0ADD9640004128E0 /* PopupMenuMac.mm */,
+				1CE24F960D7CAF0E007E04C2 /* SchedulePairMac.mm */,
 				BCAA90C20A7EBA60008B1229 /* ScrollBar.cpp */,
 				9353676A09AED88B00D35CD6 /* ScrollViewMac.mm */,
 				AB71709F0B31193B0017123E /* SearchPopupMenuMac.mm */,
@@ -9720,6 +9733,7 @@
 		93A1EAA20A5634D8006960A0 /* mac */ = {
 			isa = PBXGroup;
 			children = (
+				1C2649790D7E248A00BD10F2 /* DocumentLoaderMac.cpp */,
 				656D371A0ADBA5DE00A4554D /* LoaderNSURLExtras.h */,
 				656D371B0ADBA5DE00A4554D /* LoaderNSURLExtras.m */,
 				51AA3F6E0BD5AA9E00892971 /* ResourceLoaderMac.mm */,
@@ -9742,6 +9756,7 @@
 				93C09A7E0B064EEF005ABD4D /* EventHandlerMac.mm */,
 				A718788F0B2D04AC00A16ECE /* DragControllerMac.mm */,
 				65BF023C0974819000C43196 /* FrameMac.mm */,
+				1C26497B0D7E24EC00BD10F2 /* PageMac.cpp */,
 				654EC60F097778F500DAB52C /* WebCoreFrameBridge.h */,
 				654EC610097778F500DAB52C /* WebCoreFrameBridge.mm */,
 				F587854C02DE375901EA4122 /* WebCoreFrameView.h */,
@@ -14226,6 +14241,7 @@
 				A779791A0D6B9D0C003851B9 /* ImageData.h in Headers */,
 				A77979270D6B9E64003851B9 /* JSCanvasPixelArray.h in Headers */,
 				A77979290D6B9E64003851B9 /* JSImageData.h in Headers */,
+				1CEFC9B90D78DC8C007D2579 /* SchedulePair.h in Headers */,
 				1AF326480D78B5530068F0C4 /* WebCoreAXObject.h in Headers */,
 				1AF3264A0D78B5530068F0C4 /* WebCoreScriptDebugger.h in Headers */,
 				1AF326780D78B9440068F0C4 /* AXObjectCache.h in Headers */,
@@ -15824,13 +15840,17 @@
 				A77979260D6B9E64003851B9 /* JSCanvasPixelArray.cpp in Sources */,
 				A77979280D6B9E64003851B9 /* JSImageData.cpp in Sources */,
 				A766F3530D6BDE3500ABDDB3 /* JSCanvasPixelArrayCustom.cpp in Sources */,
+				1CEFC9BA0D78DC8C007D2579 /* SchedulePair.cpp in Sources */,
 				1AF326460D78B5530068F0C4 /* AXObjectCacheMac.mm in Sources */,
 				1AF326470D78B5530068F0C4 /* GlobalHistoryMac.mm in Sources */,
 				1AF326490D78B5530068F0C4 /* WebCoreAXObject.mm in Sources */,
 				1AF3264B0D78B5530068F0C4 /* WebCoreScriptDebugger.mm in Sources */,
+				1CE24F970D7CAF0E007E04C2 /* SchedulePairMac.mm in Sources */,
 				BCA83E4F0D7CE1E9003421A8 /* JSClipboard.cpp in Sources */,
 				BCA83E520D7CE205003421A8 /* JSClipboardCustom.cpp in Sources */,
 				BC6C49F30D7DBA0500FFA558 /* JSImageConstructor.cpp in Sources */,
+				1C26497A0D7E248A00BD10F2 /* DocumentLoaderMac.cpp in Sources */,
+				1C26497C0D7E24EC00BD10F2 /* PageMac.cpp in Sources */,
 				BC3452430D7E00EA0016574A /* JSRGBColor.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

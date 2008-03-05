@@ -1,3 +1,22 @@
+2008-03-04  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/5720160> Browser windows "do nothing" while modal
+        dialog or menu is up due to run loop modes (or while scrolling)
+
+        Add new API that lets a WebView be scheduled with multiple runloops and modes.
+        This lets loading continue when in a nested runloop or in a different mode.
+
+        * Misc/WebKitVersionChecks.h: Add a new version define:
+        WEBKIT_FIRST_VERSION_WITH_LOADING_DURING_COMMON_RUNLOOP_MODES.
+        * WebView/WebView.mm:
+        (-[WebView _commonInitializationWithFrameName:groupName:]): Schedule in the main runloop and with
+        the default runloop mode if we are linked on an earlier WebKit version, use common modes otherwise.
+        (-[WebView scheduleInRunLoop:forMode:]): New API, that calls through to Page.
+        (-[WebView unscheduleFromRunLoop:forMode:]): Ditto.
+        * WebView/WebViewPrivate.h: Add the new pending API methods.
+
 2008-03-04  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Darin.

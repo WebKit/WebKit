@@ -1823,6 +1823,11 @@ WebFrameLoadDelegateImplementationCache* WebViewGetFrameLoadDelegateImplementati
     _private->page = new Page(new WebChromeClient(self), new WebContextMenuClient(self), new WebEditorClient(self), new WebDragClient(self), new WebInspectorClient(self));
     [[[WebFrameBridge alloc] initMainFrameWithPage:_private->page frameName:frameName frameView:frameView] release];
 
+    if (WebKitLinkedOnOrAfter(WEBKIT_FIRST_VERSION_WITH_LOADING_DURING_COMMON_RUNLOOP_MODES))
+        [self scheduleInRunLoop:[NSRunLoop mainRunLoop] forMode:NSRunLoopCommonModes];
+    else
+        [self scheduleInRunLoop:[NSRunLoop mainRunLoop] forMode:NSDefaultRunLoopMode];
+
     [self _addToAllWebViewsSet];
     [self setGroupName:groupName];
     
@@ -1831,9 +1836,8 @@ WebFrameLoadDelegateImplementationCache* WebViewGetFrameLoadDelegateImplementati
     // contained frame view. This works together with our becomeFirstResponder 
     // and setNextKeyView overrides.
     NSView *nextKeyView = [self nextKeyView];
-    if (nextKeyView != nil && nextKeyView != frameView) {
+    if (nextKeyView && nextKeyView != frameView)
         [frameView setNextKeyView:nextKeyView];
-    }
     [super setNextKeyView:frameView];
 
     ++WebViewCount;
@@ -2837,6 +2841,18 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 @end
 
 @implementation WebView (WebPendingPublic)
+
+- (void)scheduleInRunLoop:(NSRunLoop *)runLoop forMode:(NSString *)mode
+{
+    if (runLoop && mode)
+        core(self)->addSchedulePair(SchedulePair::create(runLoop, (CFStringRef)mode));
+}
+
+- (void)unscheduleFromRunLoop:(NSRunLoop *)runLoop forMode:(NSString *)mode
+{
+    if (runLoop && mode)
+        core(self)->removeSchedulePair(SchedulePair::create(runLoop, (CFStringRef)mode));
+}
 
 - (BOOL)searchFor:(NSString *)string direction:(BOOL)forward caseSensitive:(BOOL)caseFlag wrap:(BOOL)wrapFlag startInSelection:(BOOL)startInSelection
 {

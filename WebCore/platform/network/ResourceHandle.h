@@ -78,6 +78,7 @@ class ResourceHandleClient;
 class ResourceHandleInternal;
 class ResourceRequest;
 class ResourceResponse;
+class SchedulePair;
 class SharedBuffer;
 class SubresourceLoader;
 class SubresourceLoaderClient;
@@ -103,11 +104,16 @@ public:
     void receivedRequestToContinueWithoutCredential(const AuthenticationChallenge&);
     void receivedCancellation(const AuthenticationChallenge&);
 #endif
+
 #if PLATFORM(MAC)
     void didCancelAuthenticationChallenge(const AuthenticationChallenge&);
     NSURLConnection *connection() const;
     WebCoreResourceHandleAsDelegate *delegate();
     void releaseDelegate();
+    id releaseProxy();
+
+    void schedule(SchedulePair*);
+    void unschedule(SchedulePair*);
 #elif USE(CFNETWORK)
     static CFRunLoopRef loaderRunLoop();
     CFURLConnectionRef connection() const;
@@ -116,12 +122,9 @@ public:
     static void setHostAllowsAnyHTTPSCertificate(const String&);
     static void setClientCertificate(const String& host, CFDataRef);
 #endif
+
     PassRefPtr<SharedBuffer> bufferedData();
     static bool supportsBufferedData();
-    
-#if PLATFORM(MAC)
-    id releaseProxy();
-#endif
 
 #if USE(WININET)
     void setHasReceivedResponse(bool = true);
