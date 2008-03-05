@@ -49,8 +49,6 @@ WebView* webView(KJS::ExecState*);
 
 class WebScriptDebugger : public KJS::Debugger {
 public:
-    bool sourceParsed(KJS::ExecState*, int sourceId, const KJS::UString& sourceURL,
-        const KJS::UString& source, int startingLineNumber, int errorLine, const KJS::UString& errorMsg);
 
 protected:
     WebScriptDebugger();

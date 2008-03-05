@@ -82,6 +82,8 @@ public:
         /* [out, retval] */ BOOL* isPaused);
 
     // KJS::Debugger
+    bool sourceParsed(KJS::ExecState*, int sourceID, const KJS::UString& sourceURL,
+        const KJS::UString& source, int startingLineNumber, int errorLine, const KJS::UString& errorMsg);
     bool callEvent(KJS::ExecState*, int sourceID, int lineNumber, KJS::JSObject* function, const KJS::List& args);
     bool atStatement(KJS::ExecState*, int sourceID, int firstLine, int lastLine);
     bool returnEvent(KJS::ExecState*, int sourceID, int lineNumber, KJS::JSObject* function);
@@ -91,22 +93,6 @@ public:
     virtual HRESULT STDMETHODCALLTYPE didLoadMainResourceForDataSource(
         /* [in] */ IWebView* webView,
         /* [in] */ IWebDataSource* dataSource);
-
-    virtual HRESULT STDMETHODCALLTYPE didParseSource(
-        /* [in] */ IWebView* webView,
-        /* [in] */ BSTR sourceCode,
-        /* [in] */ UINT baseLineNumber,
-        /* [in] */ BSTR url,
-        /* [in] */ int sourceID,
-        /* [in] */ IWebFrame* webFrame);
-
-    virtual HRESULT STDMETHODCALLTYPE failedToParseSource(
-        /* [in] */ IWebView* webView,
-        /* [in] */ BSTR sourceCode,
-        /* [in] */ UINT baseLineNumber,
-        /* [in] */ BSTR url,
-        /* [in] */ BSTR error,
-        /* [in] */ IWebFrame*);
 
     virtual HRESULT STDMETHODCALLTYPE serverDidDie();
 

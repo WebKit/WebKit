@@ -72,39 +72,3 @@ WebView* webView(ExecState* exec)
     return kit(frame(exec)->page());
 }
 
-bool WebScriptDebugger::sourceParsed(ExecState* exec, int sourceId, const UString& sourceURL,
-                  const UString& source, int startingLineNumber, int errorLine, const UString& /*errorMsg*/)
-{
-    if (m_callingServer)
-        return true;
-
-    m_callingServer = true;
-
-    if (WebScriptDebugServer::listenerCount() <= 0)
-        return true;
-
-    BString bSource = String(source);
-    BString bSourceURL = String(sourceURL);
-    
-    if (errorLine == -1) {
-        WebScriptDebugServer::sharedWebScriptDebugServer()->didParseSource(webView(exec),
-            bSource,
-            startingLineNumber,
-            bSourceURL,
-            sourceId,
-            webFrame(exec));
-    } else {
-        // FIXME: the error var should be made with the information in the errorMsg.  It is not a simple
-        // UString to BSTR conversion there is some logic involved that I don't fully understand yet.
-        BString error(L"An Error Occurred.");
-        WebScriptDebugServer::sharedWebScriptDebugServer()->failedToParseSource(webView(exec),
-            bSource,
-            startingLineNumber,
-            bSourceURL,
-            error,
-            webFrame(exec));
-    }
-
-    m_callingServer = false;
-    return true;
-}

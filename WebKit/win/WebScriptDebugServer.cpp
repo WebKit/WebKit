@@ -276,42 +276,35 @@ HRESULT STDMETHODCALLTYPE WebScriptDebugServer::didLoadMainResourceForDataSource
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE WebScriptDebugServer::didParseSource(
-    /* [in] */ IWebView* webView,
-    /* [in] */ BSTR sourceCode,
-    /* [in] */ UINT baseLineNumber,
-    /* [in] */ BSTR url,
-    /* [in] */ int sourceID,
-    /* [in] */ IWebFrame* webFrame)
+bool WebScriptDebugServer::sourceParsed(ExecState* exec, int sourceID, const UString& sourceURL,
+                  const UString& source, int startingLineNumber, int errorLine, const UString& /*errorMsg*/)
 {
-    if (!webView || !sourceCode || !url || !webFrame)
-        return E_FAIL;
+    if (m_callingServer)
+        return true;
 
+    m_callingServer = true;
+
+    if (listenerCount() <= 0)
+        return true;
+
+    BString bSource = String(source);
+    BString bSourceURL = String(sourceURL);
+    
     ListenerSet listenersCopy = s_Listeners;
     ListenerSet::iterator end = listenersCopy.end();
-    for (ListenerSet::iterator it = listenersCopy.begin(); it != end; ++it)
-        (**it).didParseSource(webView, sourceCode, baseLineNumber, url, sourceID, webFrame);
+    if (errorLine == -1) {
+        for (ListenerSet::iterator it = listenersCopy.begin(); it != end; ++it)
+            (**it).didParseSource(webView(exec), bSource, startingLineNumber, bSourceURL, sourceID, webFrame(exec));
+    } else {
+        // FIXME: the error var should be made with the information in the errorMsg.  It is not a simple
+        // UString to BSTR conversion there is some logic involved that I don't fully understand yet.
+        BString error(L"An Error Occurred.");
+        for (ListenerSet::iterator it = listenersCopy.begin(); it != end; ++it)
+            (**it).failedToParseSource(webView(exec), bSource, startingLineNumber, bSourceURL, error, webFrame(exec));
+    }
 
-    return S_OK;
-}
-
-HRESULT STDMETHODCALLTYPE WebScriptDebugServer::failedToParseSource(
-    /* [in] */ IWebView* webView,
-    /* [in] */ BSTR sourceCode,
-    /* [in] */ UINT baseLineNumber,
-    /* [in] */ BSTR url,
-    /* [in] */ BSTR error,
-    /* [in] */ IWebFrame* webFrame)
-{
-    if (!webView || !sourceCode || !url || !error || !webFrame)
-        return E_FAIL;
-
-    ListenerSet listenersCopy = s_Listeners;
-    ListenerSet::iterator end = listenersCopy.end();
-    for (ListenerSet::iterator it = listenersCopy.begin(); it != end; ++it)
-        (**it).failedToParseSource(webView, sourceCode, baseLineNumber, url, error, webFrame);
-
-    return S_OK;
+    m_callingServer = false;
+    return true;
 }
 
 bool WebScriptDebugServer::callEvent(ExecState* exec, int sourceID, int lineNumber, JSObject* /*function*/, const List &/*args*/)

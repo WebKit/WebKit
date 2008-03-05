@@ -1,5 +1,18 @@
 2008-03-04  Adam Roben  <aroben@apple.com>
 
+        Move sourceParsed to WebScriptDebugServer
+
+        Reviewed by Anders.
+
+        * WebScriptDebugServer.cpp:
+        (WebScriptDebugServer::sourceParsed): Moved here from
+        WebScriptDebugger and merged with didParseSource/failedToParseSource.
+        * WebScriptDebugServer.h: Removed didParseSource/failedToParseSource.
+        * WebScriptDebugger.cpp: Removed sourceParsed.
+        * WebScriptDebugger.h: Ditto.
+
+2008-03-04  Adam Roben  <aroben@apple.com>
+
         Move callEvent, returnEvent, and exception to WebScriptDebugServer
 
         Reviewed by Anders.
