@@ -1,5 +1,22 @@
 2008-03-04  Adam Roben  <aroben@apple.com>
 
+        Move callEvent, returnEvent, and exception to WebScriptDebugServer
+
+        Reviewed by Anders.
+
+        * WebScriptDebugServer.cpp:
+        (WebScriptDebugServer::callEvent): Moved here from WebScriptDebugger
+        and merged with didEnterCallFrame.
+        (WebScriptDebugServer::returnEvent): Ditto for willLeaveCallFrame.
+        (WebScriptDebugServer::exception): Ditto for exceptionWasRaised.
+        * WebScriptDebugServer.h: Removed didEnterCallFrame,
+        willLeaveCallFrame, and exceptionWasRaised.
+        * WebScriptDebugger.cpp: Removed callEvent, returnEvent, and
+        exception.
+        * WebScriptDebugger.h: Ditto.
+
+2008-03-04  Adam Roben  <aroben@apple.com>
+
         Move atStatement to WebScriptDebugServer
 
         Reviewed by Anders.

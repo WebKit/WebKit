@@ -82,7 +82,10 @@ public:
         /* [out, retval] */ BOOL* isPaused);
 
     // KJS::Debugger
-    bool atStatement(KJS::ExecState*, int sourceId, int firstLine, int lastLine);
+    bool callEvent(KJS::ExecState*, int sourceID, int lineNumber, KJS::JSObject* function, const KJS::List& args);
+    bool atStatement(KJS::ExecState*, int sourceID, int firstLine, int lastLine);
+    bool returnEvent(KJS::ExecState*, int sourceID, int lineNumber, KJS::JSObject* function);
+    bool exception(KJS::ExecState*, int sourceID, int lineNumber, KJS::JSValue* exception);
 
     // IWebScriptDebugListener
     virtual HRESULT STDMETHODCALLTYPE didLoadMainResourceForDataSource(
@@ -103,27 +106,6 @@ public:
         /* [in] */ UINT baseLineNumber,
         /* [in] */ BSTR url,
         /* [in] */ BSTR error,
-        /* [in] */ IWebFrame*);
-
-    virtual HRESULT STDMETHODCALLTYPE didEnterCallFrame(
-        /* [in] */ IWebView* webView,
-        /* [in] */ IWebScriptCallFrame* frame,
-        /* [in] */ int sourceID,
-        /* [in] */ int lineNumber,
-        /* [in] */ IWebFrame*);
-
-    virtual HRESULT STDMETHODCALLTYPE willLeaveCallFrame(
-        /* [in] */ IWebView* webView,
-        /* [in] */ IWebScriptCallFrame* frame,
-        /* [in] */ int sourceID,
-        /* [in] */ int lineNumber,
-        /* [in] */ IWebFrame*);
-
-    virtual HRESULT STDMETHODCALLTYPE exceptionWasRaised(
-        /* [in] */ IWebView* webView,
-        /* [in] */ IWebScriptCallFrame*,
-        /* [in] */ int sourceID,
-        /* [in] */ int lineNumber,
         /* [in] */ IWebFrame*);
 
     virtual HRESULT STDMETHODCALLTYPE serverDidDie();

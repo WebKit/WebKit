@@ -34,6 +34,7 @@
 #pragma warning(push, 0)
 #include <WebCore/Page.h>
 #pragma warning(pop)
+#include <kjs/ExecState.h>
 #include <wtf/Assertions.h>
 #include <wtf/Vector.h>
 
@@ -313,24 +314,24 @@ HRESULT STDMETHODCALLTYPE WebScriptDebugServer::failedToParseSource(
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE WebScriptDebugServer::didEnterCallFrame(
-    /* [in] */ IWebView* webView,
-    /* [in] */ IWebScriptCallFrame* frame,
-    /* [in] */ int sourceID,
-    /* [in] */ int lineNumber,
-    /* [in] */ IWebFrame* webFrame)
+bool WebScriptDebugServer::callEvent(ExecState* exec, int sourceID, int lineNumber, JSObject* /*function*/, const List &/*args*/)
 {
-    if (!webView || !frame || !webFrame)
-        return E_FAIL;
+    if (m_callingServer)
+        return true;
 
+    m_callingServer = true;
+
+    COMPtr<WebScriptCallFrame> callFrame(AdoptCOM, WebScriptCallFrame::createInstance(exec));
     ListenerSet listenersCopy = s_Listeners;
     ListenerSet::iterator end = listenersCopy.end();
     for (ListenerSet::iterator it = listenersCopy.begin(); it != end; ++it)
-        (**it).didEnterCallFrame(webView, frame, sourceID, lineNumber, webFrame);
+        (**it).didEnterCallFrame(webView(exec), callFrame.get(), sourceID, lineNumber, webFrame(exec));
 
     suspendProcessIfPaused();
 
-    return S_OK;
+    m_callingServer = false;
+
+    return true;
 }
 
 bool WebScriptDebugServer::atStatement(ExecState* exec, int sourceID, int firstLine, int /*lastLine*/)
@@ -353,44 +354,44 @@ bool WebScriptDebugServer::atStatement(ExecState* exec, int sourceID, int firstL
     return true;
 }
 
-HRESULT STDMETHODCALLTYPE WebScriptDebugServer::willLeaveCallFrame(
-    /* [in] */ IWebView* webView,
-    /* [in] */ IWebScriptCallFrame* frame,
-    /* [in] */ int sourceID,
-    /* [in] */ int lineNumber,
-    /* [in] */ IWebFrame* webFrame)
+bool WebScriptDebugServer::returnEvent(ExecState* exec, int sourceID, int lineNumber, JSObject* /*function*/)
 {
-    if (!webView || !frame || !webFrame)
-        return E_FAIL;
+    if (m_callingServer)
+        return true;
 
+    m_callingServer = true;
+
+    COMPtr<WebScriptCallFrame> callFrame(AdoptCOM, WebScriptCallFrame::createInstance(exec->callingExecState()));
     ListenerSet listenersCopy = s_Listeners;
     ListenerSet::iterator end = listenersCopy.end();
     for (ListenerSet::iterator it = listenersCopy.begin(); it != end; ++it)
-        (**it).willLeaveCallFrame(webView, frame, sourceID, lineNumber, webFrame);
+        (**it).willLeaveCallFrame(webView(exec), callFrame.get(), sourceID, lineNumber, webFrame(exec));
 
     suspendProcessIfPaused();
 
-    return S_OK;
+    m_callingServer = false;
+
+    return true;
 }
 
-HRESULT STDMETHODCALLTYPE WebScriptDebugServer::exceptionWasRaised(
-    /* [in] */ IWebView* webView,
-    /* [in] */ IWebScriptCallFrame* frame,
-    /* [in] */ int sourceID,
-    /* [in] */ int lineNumber,
-    /* [in] */ IWebFrame* webFrame)
+bool WebScriptDebugServer::exception(ExecState* exec, int sourceID, int lineNumber, JSValue* /*exception */)
 {
-    if (!webView || !frame || !webFrame)
-        return E_FAIL;
+    if (m_callingServer)
+        return true;
 
+    m_callingServer = true;
+
+    COMPtr<WebScriptCallFrame> callFrame(AdoptCOM, WebScriptCallFrame::createInstance(exec));
     ListenerSet listenersCopy = s_Listeners;
     ListenerSet::iterator end = listenersCopy.end();
     for (ListenerSet::iterator it = listenersCopy.begin(); it != end; ++it)
-        (**it).exceptionWasRaised(webView, frame, sourceID, lineNumber, webFrame);
+        (**it).exceptionWasRaised(webView(exec), callFrame.get(), sourceID, lineNumber, webFrame(exec));
 
     suspendProcessIfPaused();
 
-    return S_OK;
+    m_callingServer = false;
+
+    return true;
 }
 
 HRESULT STDMETHODCALLTYPE WebScriptDebugServer::serverDidDie()

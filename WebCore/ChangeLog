@@ -26,6 +26,16 @@
 
 2008-03-04  Adam Roben  <aroben@apple.com>
 
+        Add ExecState.h to ForwardingHeaders
+
+        Reviewed by Anders.
+
+        * ForwardingHeaders/kjs/ExecState.h: Added.
+        * page/Page.cpp: Touch this to force WebCore to build and the headers
+        to be copied.
+
+2008-03-04  Adam Roben  <aroben@apple.com>
+
         Make it possible to set a KJS::Debugger on all Frames in a Page and
         all Pages in the process
 
