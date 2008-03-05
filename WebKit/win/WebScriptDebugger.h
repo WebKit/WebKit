@@ -44,13 +44,15 @@ namespace KJS {
     class List;
 }
 
+WebFrame* webFrame(KJS::ExecState*);
+WebView* webView(KJS::ExecState*);
+
 class WebScriptDebugger : public KJS::Debugger {
 public:
     bool sourceParsed(KJS::ExecState*, int sourceId, const KJS::UString& sourceURL,
         const KJS::UString& source, int startingLineNumber, int errorLine, const KJS::UString& errorMsg);
 
     bool callEvent(KJS::ExecState*, int sourceId, int lineno, KJS::JSObject* function, const KJS::List& args);
-    bool atStatement(KJS::ExecState*, int sourceId, int firstLine, int lastLine);
     bool returnEvent(KJS::ExecState*, int sourceId, int lineno, KJS::JSObject* function);
     bool exception(KJS::ExecState*, int sourceId, int lineno, KJS::JSValue* exception);
 
@@ -58,10 +60,7 @@ protected:
     WebScriptDebugger();
     ~WebScriptDebugger();
 
-private:
     bool m_callingServer;
-    WebFrame* m_frame;
-    COMPtr<IWebView> m_webView;
 };
 
 #endif

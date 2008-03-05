@@ -28,13 +28,16 @@
 #include "WebKitDLL.h"
 #include "WebScriptDebugServer.h"
 
+#include "WebScriptCallFrame.h"
 #include "WebScriptDebugger.h"
+#include "WebView.h"
 #pragma warning(push, 0)
 #include <WebCore/Page.h>
 #pragma warning(pop)
 #include <wtf/Assertions.h>
 #include <wtf/Vector.h>
 
+using namespace KJS;
 using namespace WebCore;
 
 typedef HashSet<COMPtr<IWebScriptDebugListener> > ListenerSet;
@@ -330,24 +333,24 @@ HRESULT STDMETHODCALLTYPE WebScriptDebugServer::didEnterCallFrame(
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE WebScriptDebugServer::willExecuteStatement(
-    /* [in] */ IWebView* webView,
-    /* [in] */ IWebScriptCallFrame* frame,
-    /* [in] */ int sourceID,
-    /* [in] */ int lineNumber,
-    /* [in] */ IWebFrame* webFrame)
+bool WebScriptDebugServer::atStatement(ExecState* exec, int sourceID, int firstLine, int /*lastLine*/)
 {
-    if (!webView || !frame || !webFrame)
-        return E_FAIL;
+    if (m_callingServer)
+        return true;
 
+    m_callingServer = true;
+
+    COMPtr<WebScriptCallFrame> callFrame(AdoptCOM, WebScriptCallFrame::createInstance(exec));
     ListenerSet listenersCopy = s_Listeners;
     ListenerSet::iterator end = listenersCopy.end();
     for (ListenerSet::iterator it = listenersCopy.begin(); it != end; ++it)
-        (**it).willExecuteStatement(webView, frame, sourceID, lineNumber, webFrame);
+        (**it).willExecuteStatement(webView(exec), callFrame.get(), sourceID, firstLine, webFrame(exec));
 
     suspendProcessIfPaused();
 
-    return S_OK;
+    m_callingServer = false;
+
+    return true;
 }
 
 HRESULT STDMETHODCALLTYPE WebScriptDebugServer::willLeaveCallFrame(

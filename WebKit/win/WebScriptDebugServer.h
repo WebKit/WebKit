@@ -40,7 +40,7 @@ namespace WebCore {
 
 interface IWebView;
 
-class WebScriptDebugServer : public IWebScriptDebugServer, public IWebScriptDebugListener, public WebScriptDebugger {
+class WebScriptDebugServer : public IWebScriptDebugServer, public WebScriptDebugger {
 public:
     static WebScriptDebugServer* createInstance();
     static WebScriptDebugServer* sharedWebScriptDebugServer();
@@ -81,6 +81,9 @@ public:
     virtual HRESULT STDMETHODCALLTYPE isPaused(
         /* [out, retval] */ BOOL* isPaused);
 
+    // KJS::Debugger
+    bool atStatement(KJS::ExecState*, int sourceId, int firstLine, int lastLine);
+
     // IWebScriptDebugListener
     virtual HRESULT STDMETHODCALLTYPE didLoadMainResourceForDataSource(
         /* [in] */ IWebView* webView,
@@ -105,13 +108,6 @@ public:
     virtual HRESULT STDMETHODCALLTYPE didEnterCallFrame(
         /* [in] */ IWebView* webView,
         /* [in] */ IWebScriptCallFrame* frame,
-        /* [in] */ int sourceID,
-        /* [in] */ int lineNumber,
-        /* [in] */ IWebFrame*);
-
-    virtual HRESULT STDMETHODCALLTYPE willExecuteStatement(
-        /* [in] */ IWebView*,
-        /* [in] */ IWebScriptCallFrame*,
         /* [in] */ int sourceID,
         /* [in] */ int lineNumber,
         /* [in] */ IWebFrame*);

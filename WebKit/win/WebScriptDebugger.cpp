@@ -62,12 +62,12 @@ static Frame* frame(ExecState* exec)
     return window->impl()->frame();
 }
 
-static WebFrame* webFrame(ExecState* exec)
+WebFrame* webFrame(ExecState* exec)
 {
     return kit(frame(exec));
 }
 
-static WebView* webView(ExecState* exec)
+WebView* webView(ExecState* exec)
 {
     return kit(frame(exec)->page());
 }
@@ -118,21 +118,6 @@ bool WebScriptDebugger::callEvent(ExecState* exec, int sourceId, int lineno, JSO
 
     COMPtr<WebScriptCallFrame> callFrame(AdoptCOM, WebScriptCallFrame::createInstance(exec));
     WebScriptDebugServer::sharedWebScriptDebugServer()->didEnterCallFrame(webView(exec), callFrame.get(), sourceId, lineno, webFrame(exec));
-
-    m_callingServer = false;
-
-    return true;
-}
-
-bool WebScriptDebugger::atStatement(ExecState* exec, int sourceId, int firstLine, int /*lastLine*/)
-{
-    if (m_callingServer)
-        return true;
-
-    m_callingServer = true;
-
-    COMPtr<WebScriptCallFrame> callFrame(AdoptCOM, WebScriptCallFrame::createInstance(exec));
-    WebScriptDebugServer::sharedWebScriptDebugServer()->willExecuteStatement(webView(exec), callFrame.get(), sourceId, firstLine, webFrame(exec));
 
     m_callingServer = false;
 

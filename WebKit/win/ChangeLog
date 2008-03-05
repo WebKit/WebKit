@@ -1,5 +1,23 @@
 2008-03-04  Adam Roben  <aroben@apple.com>
 
+        Move atStatement to WebScriptDebugServer
+
+        Reviewed by Anders.
+
+        * WebScriptDebugServer.cpp:
+        (WebScriptDebugServer::atStatement): Moved here and merged with the
+        old willExecuteStatement method.
+        * WebScriptDebugServer.h: Removed inheritance from
+        IWebScriptDebugListener, which no one was relying on.
+        * WebScriptDebugger.cpp:
+        (webFrame): Made non-static.
+        (webView): Ditto.
+        * WebScriptDebugger.h: Added declarations of webFrame and webView
+        methods for WebScriptDebugServer's benefit. Removed unused m_webView
+        and m_frame members.
+
+2008-03-04  Adam Roben  <aroben@apple.com>
+
         Start to merge WebScriptDebugger and WebScriptDebugServer
 
         WebScriptDebugServer now inherits from WebScriptDebugger.
