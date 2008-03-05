@@ -30,6 +30,10 @@
 
 #include "npruntime_internal.h"
 
+namespace WebCore {
+    class String;
+}
+
 namespace KJS {
 
 class ExecState;
@@ -52,7 +56,7 @@ enum NP_ValueType {
     NP_InvalidValueType
 };
 
-void convertNPStringToUTF16(const NPString*, NPUTF16** UTF16Chars, unsigned int* UTF16Length);
+WebCore::String convertNPStringToUTF16(const NPString *string);
 void convertValueToNPVariant(ExecState*, JSValue*, NPVariant* result);
 JSValue* convertNPVariantToValue(ExecState*, const NPVariant*, RootObject*);
 Identifier identifierFromNPIdentifier(const NPUTF8* name);

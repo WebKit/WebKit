@@ -1,3 +1,18 @@
+2008-03-04  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam.
+
+        Rewrite NPRuntime string conversion routines to use WebCore::String
+        
+        * bridge/NP_jsobject.cpp:
+        (_NPN_Evaluate):
+        * bridge/c/c_utility.cpp:
+        (KJS::Bindings::convertUTF8ToUTF16WithLatin1Fallback):
+        (KJS::Bindings::convertNPVariantToValue):
+        (KJS::Bindings::convertNPStringToUTF16):
+        (KJS::Bindings::identifierFromNPIdentifier):
+        * bridge/c/c_utility.h:
+
 2008-03-05  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Alexey P.
