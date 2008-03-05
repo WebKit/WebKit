@@ -1,3 +1,13 @@
+2008-03-05  Brent Fulgham  <bfulgham@gmail.com>
+
+        Reviewed by Adam Roben.
+
+        Remove definition of WTF_USE_SAFARI_THEME from wtf/Platform.h
+        because the PLATFORM(CG) flag is not set until config.h has
+        already included this file.
+
+        * wtf/Platform.h:  Remove useless definition of WTF_USE_SAFARI_THEME
+
 2008-03-05  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Alexey and Mark Rowe

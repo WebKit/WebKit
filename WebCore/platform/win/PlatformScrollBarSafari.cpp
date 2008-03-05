@@ -25,7 +25,7 @@
 
 #include "config.h"
 
-#ifdef USE_SAFARI_THEME 
+#if USE(SAFARI_THEME)
 
 #include "PlatformScrollBar.h"
 
@@ -657,4 +657,4 @@ void PlatformScrollbar::themeChanged()
 
 }
 
-#endif // defined(USE_SAFARI_THEME)
+#endif // USE(SAFARI_THEME)

@@ -1,3 +1,15 @@
+2008-03-05  Brent Fulgham <bfulgham@gmail.com>
+
+        Reviewed by Adam Roben.
+
+        Modify source files to use the USE(SAFARI_THEME) macro, rather than
+        USE_SAFARI_THEME.  (http://bugs.webkit.org/show_bug.cgi?id=17683)
+
+        * WebCore/platform/win/PlatformScrollBarSafari.cpp
+        * WebCore/rendering/RenderThemeSafari.cpp
+        * WebCore/rendering/RenderThemeSafari.h
+        * config.h: Move definition of WTF_USE_SAFARI_THEME here 
+
 2008-03-05  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Alexey and Mark Rowe

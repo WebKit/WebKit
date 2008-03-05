@@ -146,3 +146,7 @@ typedef float CGFloat;
 #undef ENABLE_FTPDIR
 #define ENABLE_FTPDIR 0
 #endif
+
+#if PLATFORM(WIN) && PLATFORM(CG)
+#define WTF_USE_SAFARI_THEME 1
+#endif

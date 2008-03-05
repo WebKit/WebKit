@@ -21,7 +21,7 @@
 #include "config.h"
 #include "RenderThemeSafari.h"
 
-#ifdef USE_SAFARI_THEME
+#if USE(SAFARI_THEME)
 
 #include "CSSValueKeywords.h"
 #include "Document.h"
@@ -1224,4 +1224,4 @@ bool RenderThemeSafari::paintMediaSliderThumb(RenderObject* o, const RenderObjec
 
 } // namespace WebCore
 
-#endif // defined(USE_SAFARI_THEME)
+#endif // #if USE(SAFARI_THEME)

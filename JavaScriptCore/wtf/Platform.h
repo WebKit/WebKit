@@ -112,10 +112,6 @@
 #define WTF_PLATFORM_CAIRO 1
 #endif
 
-#if PLATFORM(WIN)&& PLATFORM(CG)
-#define WTF_USE_SAFARI_THEME 1
-#endif
-
 #ifdef __S60__
 // we are cross-compiling, it is not really windows
 #undef WTF_PLATFORM_WIN_OS
