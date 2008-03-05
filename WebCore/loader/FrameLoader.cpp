@@ -82,7 +82,6 @@
 #include "XMLTokenizer.h"
 #include "kjs_binding.h"
 #include "kjs_proxy.h"
-#include "kjs_window.h"
 #include <kjs/JSLock.h>
 #include <kjs/object.h>
 

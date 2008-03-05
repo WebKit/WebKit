@@ -37,7 +37,6 @@
 #include "Page.h"
 #include "kjs_binding.h"
 #include "kjs_proxy.h"
-#include "kjs_window.h"
 
 namespace WebCore {
 

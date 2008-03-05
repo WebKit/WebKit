@@ -581,6 +581,10 @@
 				>
 			</File>
 			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSDOMWindowBase.lut.h"
+				>
+			</File>
+			<File
 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSElement.cpp"
 				>
 			</File>
@@ -2522,10 +2526,6 @@
 			</File>
 			<File
 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\kjs_navigator.lut.h"
-				>
-			</File>
-			<File
-				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\kjs_window.lut.h"
 				>
 			</File>
 			<File
@@ -7644,6 +7644,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\bindings\js\JSDOMWindowBase.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\bindings\js\JSDOMWindowBase.h"
+					>
+				</File>
+				<File
 					RelativePath="..\bindings\js\JSDOMWindowCustom.cpp"
 					>
 				</File>
@@ -7929,14 +7937,6 @@
 				</File>
 				<File
 					RelativePath="..\bindings\js\kjs_proxy.h"
-					>
-				</File>
-				<File
-					RelativePath="..\bindings\js\kjs_window.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\bindings\js\kjs_window.h"
 					>
 				</File>
 				<File

@@ -32,7 +32,6 @@
 #include "JSDOMWindow.h"
 #include "Page.h"
 #include "kjs_proxy.h"
-#include "kjs_window.h"
 
 using namespace KJS;
 

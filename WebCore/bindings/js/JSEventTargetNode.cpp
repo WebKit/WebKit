@@ -28,7 +28,6 @@
 #include "JSEventTargetNode.h"
 
 #include "JSDOMWindow.h"
-#include "kjs_window.h"
 
 namespace WebCore {
 

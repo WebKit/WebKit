@@ -29,7 +29,6 @@
 
 #include "JSDOMWindow.h"
 #include "JSEventTargetNode.h"
-#include "kjs_window.h"
 
 #if ENABLE(SVG)
 #include "JSSVGElementInstance.h"

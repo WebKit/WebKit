@@ -32,7 +32,6 @@
 #include "HTMLNames.h"
 #include "JSDOMWindow.h"
 #include "kjs_binding.h"
-#include "kjs_window.h"
 
 namespace WebCore {
 

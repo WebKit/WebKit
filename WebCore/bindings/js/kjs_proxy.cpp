@@ -33,7 +33,6 @@
 #include "Page.h"
 #include "Settings.h"
 #include "kjs_events.h"
-#include "kjs_window.h"
 #include <kjs/debugger.h>
 
 #if ENABLE(SVG)

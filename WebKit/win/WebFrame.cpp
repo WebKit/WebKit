@@ -89,7 +89,6 @@
 #include <WebCore/TextIterator.h>
 #include <WebCore/kjs_binding.h>
 #include <WebCore/kjs_proxy.h>
-#include <WebCore/kjs_window.h>
 #include <JavaScriptCore/APICast.h>
 #include <wtf/MathExtras.h>
 #pragma warning(pop)

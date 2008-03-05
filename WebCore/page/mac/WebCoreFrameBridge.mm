@@ -86,7 +86,6 @@
 #import "XMLTokenizer.h"
 #import "htmlediting.h"
 #import "kjs_proxy.h"
-#import "kjs_window.h"
 #import "markup.h"
 #import "visible_units.h"
 #import <JavaScriptCore/array_instance.h>

@@ -38,7 +38,6 @@
 #include "SecurityOrigin.h"
 #include "Settings.h"
 #include "WindowFeatures.h"
-#include "kjs_window.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>

@@ -57,7 +57,6 @@
 #include "TextEncoding.h"
 #include "TextIterator.h"
 #include "kjs_proxy.h"
-#include "kjs_window.h"
 #include <JavaScriptCore/APICast.h>
 #include <JavaScriptCore/JSLock.h>
 #include <JavaScriptCore/JSRetainPtr.h>

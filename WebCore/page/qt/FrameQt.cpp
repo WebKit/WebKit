@@ -63,9 +63,9 @@
 #include "kjs_proxy.h"
 #include "TypingCommand.h"
 #include "JSLock.h"
-#include "kjs_window.h"
 #include "runtime_root.h"
 #include "runtime.h"
+#include "JSDOMWindow"
 #include <QScrollArea>
 #include "NotImplemented.h"
 

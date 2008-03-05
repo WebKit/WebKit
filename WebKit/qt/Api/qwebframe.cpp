@@ -54,8 +54,8 @@
 
 #include "bindings/runtime.h"
 #include "bindings/runtime_root.h"
+#include "JSDOMWindow.h"
 #include "kjs_proxy.h"
-#include "kjs_window.h"
 #include "kjs_binding.h"
 #include "ExecState.h"
 #include "object.h"

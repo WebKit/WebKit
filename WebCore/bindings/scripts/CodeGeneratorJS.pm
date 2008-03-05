@@ -120,16 +120,6 @@ sub GetParentClassName
     return "JS" . $codeGenerator->StripModule($dataNode->parents(0));
 }
 
-sub GetLegacyHeaderIncludes
-{
-    my $legacyParent = shift;
-
-    return "#include \"JSHTMLInputElementBase.h\"\n\n" if $legacyParent eq "JSHTMLInputElementBase";
-    return "#include \"kjs_window.h\"\n\n" if $legacyParent eq "JSDOMWindowBase";
-
-    die "Don't know what headers to include for legacy parent $legacyParent";
-}
-
 sub GetVisibleClassName
 {
     my $className = shift;
@@ -288,16 +278,12 @@ sub GenerateHeader
         push(@headerContent, "\n#if ${conditionalString}\n\n");
     }
 
-    if (exists $dataNode->extendedAttributes->{"LegacyParent"}) {
-        push(@headerContent, GetLegacyHeaderIncludes($dataNode->extendedAttributes->{"LegacyParent"}));
+    if ($hasParent) {
+        push(@headerContent, "#include \"$parentClassName.h\"\n");
     } else {
-        if ($hasParent) {
-            push(@headerContent, "#include \"$parentClassName.h\"\n");
-        } else {
-            push(@headerContent, "#include \"kjs_binding.h\"\n");
-            push(@headerContent, "#include <kjs/JSGlobalObject.h>\n");
-            push(@headerContent, "#include <kjs/object_object.h>\n");
-        }
+        push(@headerContent, "#include \"kjs_binding.h\"\n");
+        push(@headerContent, "#include <kjs/JSGlobalObject.h>\n");
+        push(@headerContent, "#include <kjs/object_object.h>\n");
     }
 
     # Get correct pass/store types respecting PODType flag
@@ -1552,8 +1538,6 @@ sub NativeToJSValue
     if ($type eq "EventTarget") {
         $implIncludes{"EventTargetNode.h"} = 1;
         $implIncludes{"JSEventTargetNode.h"} = 1;
-    } elsif ($type eq "DOMWindow") {
-        $implIncludes{"kjs_window.h"} = 1;
     } elsif ($type eq "DOMObject") {
         $implIncludes{"JSCanvasRenderingContext2D.h"} = 1;
     } elsif ($type =~ /SVGPathSeg/) {

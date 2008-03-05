@@ -34,10 +34,10 @@
 #include "FrameView.h"
 #include "GraphicsContext.h"
 #include "HTMLFrameOwnerElement.h"
+#include "JSDOMWindow.h"
 #include "RenderView.h"
 #include "kjs_binding.h"
 #include "kjs_proxy.h"
-#include "kjs_window.h"
 
 #include <JavaScriptCore/APICast.h>
 

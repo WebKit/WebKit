@@ -17,15 +17,14 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef kjs_window_h
-#define kjs_window_h
+#ifndef JSDOMWindowBase_h
+#define JSDOMWindowBase_h
 
 #include "PlatformString.h"
 #include "SecurityOrigin.h"
 #include "kjs_binding.h"
 #include <kjs/protect.h>
 #include <wtf/HashMap.h>
-#include <wtf/Noncopyable.h>
 #include <wtf/OwnPtr.h>
 
 namespace WebCore {
@@ -178,4 +177,4 @@ namespace WebCore {
 
 } // namespace WebCore
 
-#endif // kjs_window_h
+#endif // JSDOMWindowBase_h

@@ -44,7 +44,6 @@
 #include "PausedTimeouts.h"
 #include "SystemTime.h"
 #include "kjs_proxy.h"
-#include "kjs_window.h"
 #include <kjs/JSLock.h>
 #include <kjs/SavedBuiltins.h>
 #include <kjs/property_map.h>

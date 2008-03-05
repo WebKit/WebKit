@@ -27,7 +27,6 @@
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "FrameTree.h"
-#include "kjs_window.h"
 #include <kjs/object.h>
 
 using namespace KJS;

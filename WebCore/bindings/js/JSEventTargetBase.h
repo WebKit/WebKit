@@ -32,7 +32,6 @@
 #include "EventNames.h"
 #include "JSEvent.h"
 #include "kjs_events.h"
-#include "kjs_window.h"
 
 namespace KJS {
 

@@ -33,7 +33,6 @@
 #include "Page.h"
 #include "PluginInfoStore.h"
 #include "Settings.h"
-#include "kjs_window.h"
 #include <kjs/object_object.h>
 
 #ifndef WEBCORE_NAVIGATOR_PLATFORM

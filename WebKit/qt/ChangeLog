@@ -1,3 +1,13 @@
+2008-03-04  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Mark Rowe.
+
+        - Remove all unnecessary includes of JSDOMWindowBase.h, we prefer including
+          JSDOMWindow.h
+
+        * Api/qwebframe.cpp:
+        (QWebFrame::addToJSWindowObject):
+
 2008-03-04  Mark Rowe  <mrowe@apple.com>
 
         Another go at fixing the Qt build.

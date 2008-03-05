@@ -30,7 +30,6 @@
 #include "JSEvent.h"
 #include "XMLHttpRequest.h"
 #include "kjs_events.h"
-#include "kjs_window.h"
 
 using namespace KJS;
 using namespace WebCore;

@@ -36,11 +36,11 @@
 #include "JSDOMWindow.h"
 #include "JSHTMLCollection.h"
 #include "kjs_html.h"
-#include "kjs_window.h"
+
+using namespace KJS;
 
 namespace WebCore {
 
-using namespace KJS;
 using namespace HTMLNames;
 
 bool JSHTMLDocument::canGetItemsForName(ExecState*, HTMLDocument* doc, const Identifier& propertyName)

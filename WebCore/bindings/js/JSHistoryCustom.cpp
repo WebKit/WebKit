@@ -31,7 +31,6 @@
 
 #include "Frame.h"
 #include "History.h"
-#include "kjs_window.h"
 
 using namespace KJS;
 

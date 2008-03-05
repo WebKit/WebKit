@@ -48,13 +48,13 @@ webcore_built_nosources += \
 	DerivedSources/DocTypeStrings.cpp \
 	DerivedSources/tokenizer.cpp \
 	DerivedSources/ColorData.c \
+	WebCore/bindings/js/JSDOMWindowBase.lut.h \
 	WebCore/bindings/js/JSEventTargetBase.lut.h \
 	WebCore/bindings/js/JSLocation.lut.h \
 	WebCore/bindings/js/JSRGBColor.lut.h \
 	WebCore/bindings/js/JSXMLHttpRequest.lut.h \
 	WebCore/bindings/js/JSXSLTProcessor.lut.h \
 	WebCore/bindings/js/kjs_navigator.lut.h \
-	WebCore/bindings/js/kjs_window.lut.h \
 	WebCore/bindings/js/JSHTMLInputElementBaseTable.cpp
 
 webcore_built_sources += \
@@ -463,6 +463,7 @@ webcore_sources += \
 	WebCore/bindings/js/JSCustomVoidCallback.cpp \
 	WebCore/bindings/js/JSCustomXPathNSResolver.cpp \
 	WebCore/bindings/js/JSDocumentCustom.cpp \
+	WebCore/bindings/js/JSDOMWindowBase.cpp \
 	WebCore/bindings/js/JSDOMWindowCustom.cpp \
 	WebCore/bindings/js/JSElementCustom.cpp \
 	WebCore/bindings/js/JSEventCustom.cpp \
@@ -504,7 +505,6 @@ webcore_sources += \
 	WebCore/bindings/js/kjs_html.cpp \
 	WebCore/bindings/js/kjs_navigator.cpp \
 	WebCore/bindings/js/kjs_proxy.cpp \
-	WebCore/bindings/js/kjs_window.cpp \
 	WebCore/bindings/js/PausedTimeouts.cpp \
 	WebCore/bindings/js/ScheduledAction.cpp \
 	WebCore/css/CSSBorderImageValue.cpp \
@@ -2054,9 +2054,9 @@ CLEANFILES += \
 	WebCore/bindings/js/JSEventTargetBase.lut.h \
 	WebCore/bindings/js/JSHTMLInputElementBaseTable.cpp \
 	WebCore/bindings/js/JSLocation.lut.h \
+	JSDOMWindowBase.lut.h \
 	JSRGBColor.lut.h \
 	JSXMLHttpRequest.lut.h \
 	JSXSLTProcessor.lut.h \
-	kjs_navigator.lut.h \
-	kjs_window.lut.h
+	kjs_navigator.lut.h
 

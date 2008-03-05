@@ -28,7 +28,6 @@
 #include "FrameLoader.h"
 #include "JSDOMWindow.h"
 #include "kjs_proxy.h"
-#include "kjs_window.h"
 
 #include "JSLocation.lut.h"
 

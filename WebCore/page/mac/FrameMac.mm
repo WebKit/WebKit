@@ -88,7 +88,6 @@
 #import "WebDashboardRegion.h"
 #import "WebScriptObjectPrivate.h"
 #import "kjs_proxy.h"
-#import "kjs_window.h"
 #import "visible_units.h"
 #import <Carbon/Carbon.h>
 #import <JavaScriptCore/APICast.h>

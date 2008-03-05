@@ -1,3 +1,13 @@
+2008-03-04  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Mark Rowe.
+
+        - Remove all unnecessary includes of JSDOMWindowBase.h, we prefer including
+          JSDOMWindow.h
+
+        * WebCoreSupport/FrameLoaderClientGtk.cpp:
+        * webkit/webkitwebframe.cpp:
+
 2008-03-03  Sam Weinig  <sam@webkit.org>
 
         GTK+ build fix.

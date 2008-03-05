@@ -50,6 +50,7 @@ This file contains the list of files needed to build WebCore.
         bindings/js/JSCustomVoidCallback.cpp
         bindings/js/JSCustomXPathNSResolver.cpp
         bindings/js/JSDatabaseCustom.cpp
+        bindings/js/JSDOMWindowBase.cpp
         bindings/js/JSDOMWindowCustom.cpp
         bindings/js/JSDocumentCustom.cpp
         bindings/js/JSElementCustom.cpp
@@ -94,7 +95,6 @@ This file contains the list of files needed to build WebCore.
         bindings/js/kjs_html.cpp
         bindings/js/kjs_navigator.cpp
         bindings/js/kjs_proxy.cpp
-        bindings/js/kjs_window.cpp
         bindings/js/PausedTimeouts.cpp
         bindings/js/ScheduledAction.cpp
     </set>

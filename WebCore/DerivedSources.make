@@ -340,6 +340,7 @@ all : \
     JSDOMParser.h \
     JSDOMSelection.h \
     JSDOMWindow.h \
+    JSDOMWindowBase.lut.h \
     JSDatabase.h \
     JSDocument.h \
     JSDocumentFragment.h \
@@ -601,7 +602,6 @@ all : \
     XMLNames.cpp \
     XPathGrammar.cpp \
     kjs_navigator.lut.h \
-    kjs_window.lut.h \
     tokenizer.cpp \
     WebCore.exp \
 #

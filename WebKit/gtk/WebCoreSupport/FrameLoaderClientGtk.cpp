@@ -39,7 +39,6 @@
 #include "ProgressTracker.h"
 #include "kjs_binding.h"
 #include "kjs_proxy.h"
-#include "kjs_window.h"
 #include "webkitwebview.h"
 #include "webkitwebframe.h"
 #include "webkitprivate.h"

@@ -244,13 +244,13 @@ SVGCSSVALUES = $$PWD/css/SVGCSSValueKeywords.in
 STYLESHEETS_EMBED = $$PWD/css/html4.css
 
 LUT_FILES += \
+    bindings/js/JSDOMWindowBase.cpp \
     bindings/js/JSEventTargetBase.cpp \
     bindings/js/JSLocation.cpp \
     bindings/js/JSRGBColor.cpp \
     bindings/js/JSXMLHttpRequest.cpp \
     bindings/js/JSXSLTProcessor.cpp \
-    bindings/js/kjs_navigator.cpp \
-    bindings/js/kjs_window.cpp
+    bindings/js/kjs_navigator.cpp
 
 LUT_TABLE_FILES += \
     bindings/js/JSHTMLInputElementBase.cpp
@@ -398,6 +398,7 @@ SOURCES += \
     bindings/js/JSCustomVoidCallback.cpp \
     bindings/js/JSCustomXPathNSResolver.cpp \
     bindings/js/JSDocumentCustom.cpp \
+    bindings/js/JSDOMWindowBase.cpp \
     bindings/js/JSDOMWindowCustom.cpp \
     bindings/js/JSElementCustom.cpp \
     bindings/js/JSEventCustom.cpp \
@@ -439,7 +440,6 @@ SOURCES += \
     bindings/js/kjs_html.cpp \
     bindings/js/kjs_navigator.cpp \
     bindings/js/kjs_proxy.cpp \
-    bindings/js/kjs_window.cpp \
     bindings/js/PausedTimeouts.cpp \
     bindings/js/ScheduledAction.cpp \
     css/CSSBorderImageValue.cpp \

@@ -35,7 +35,6 @@
 #include "JSCustomSQLStatementErrorCallback.h"
 #include "JSDOMWindow.h"
 #include "SQLTransaction.h"
-#include "kjs_window.h"
 
 using namespace KJS;
 
