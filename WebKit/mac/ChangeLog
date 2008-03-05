@@ -1,5 +1,41 @@
 2008-03-05  Adam Roben  <aroben@apple.com>
 
+        Remove WebCoreScriptCallFrame
+
+        Reviewed by Tim.
+
+        * WebView/WebCoreScriptDebugger.h:
+          - Replaced WebCoreScriptCallFrame with WebScriptCallFrame
+          - Replaced -newWrapperForFrame: with
+            -newFrameWithGlobalObject:caller:state:
+          - Removed WebCoreScriptCallFrame interface.
+        * WebView/WebCoreScriptDebugger.mm: Replaced WebCoreScriptCallFrame
+        with WebScriptCallFrame.
+        (-[WebCoreScriptDebugger _enterFrame:]): Changed to call
+        -newFrameWithGlobalObject:caller:state.
+        (-[WebCoreScriptDebugger _leaveFrame]):
+        * WebView/WebScriptDebugDelegate.h: Changed WebScriptCallFrame's
+        _private ivar to be of type WebScriptCallFramePrivate*.
+        * WebView/WebScriptDebugDelegate.mm:
+          - Replaced WebCoreScriptCallFrame with WebScriptCallFrame
+          - Added WebScriptCallFramePrivate
+        (-[WebScriptDebugger enteredFrame:sourceId:line:]):
+        (-[WebScriptDebugger hitStatement:sourceId:line:]):
+        (-[WebScriptDebugger leavingFrame:sourceId:line:]):
+        (-[WebScriptDebugger exceptionRaised:sourceId:line:]):
+        (-[WebScriptCallFramePrivate dealloc]): Added.
+        (-[WebScriptCallFrame _initWithGlobalObject:caller:state:]): Added.
+        Code came from WebCoreScriptCallFrame.
+        (-[WebScriptCallFrame dealloc]): Added a call to release the _private
+        ivar.
+        (-[WebScriptCallFrame _convertValueToObjcValue:]): Replaced calls to
+        _private with direct access of _private's ivars.
+        (-[WebScriptCallFrame caller]): Ditto.
+        (-[WebScriptCallFrame scopeChain]): Ditto.
+        (-[WebScriptCallFrame evaluateWebScript:]): Ditto.
+
+2008-03-05  Adam Roben  <aroben@apple.com>
+
         Move -_convertValueToObjcValue to WebScriptCallFrame
 
         Reviewed by Darin.

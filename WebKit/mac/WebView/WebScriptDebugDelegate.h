@@ -37,7 +37,8 @@
 @class WebView;
 @class WebFrame;
 @class WebScriptCallFrame;
-@class WebCoreScriptCallFrame;
+@class WebScriptCallFramePrivate;
+@class WebScriptObject;
 
 extern NSString * const WebScriptErrorDomain;
 extern NSString * const WebScriptErrorDescriptionKey;
@@ -106,8 +107,8 @@ enum {
 @interface WebScriptCallFrame : NSObject
 {
 @private
-    WebCoreScriptCallFrame *_private;
-    id                      _userInfo;
+    WebScriptCallFramePrivate* _private;
+    id                         _userInfo;
 }
 
 // associate user info with frame

@@ -52,7 +52,7 @@ NSString * const WebScriptErrorLineNumberKey = @"WebScriptErrorLineNumber";
 
 @interface WebScriptCallFrame (WebScriptDebugDelegateInternal)
 
-- (WebScriptCallFrame *)_initWithFrame:(WebCoreScriptCallFrame *)frame;
+- (WebScriptCallFrame *)_initWithGlobalObject:(WebScriptObject *)globalObj caller:(WebScriptCallFrame *)caller state:(ExecState *)state;
 - (id)_convertValueToObjcValue:(JSValue *)value;
 
 @end
@@ -79,9 +79,9 @@ NSString * const WebScriptErrorLineNumberKey = @"WebScriptErrorLineNumber";
     return core(_webFrame)->windowScriptObject();
 }
 
-- (id)newWrapperForFrame:(WebCoreScriptCallFrame *)frame
+- (WebScriptCallFrame *)newFrameWithGlobalObject:(WebScriptObject *)globalObj caller:(WebScriptCallFrame *)caller state:(ExecState*)state
 {
-    return [[WebScriptCallFrame alloc] _initWithFrame:frame];
+    return [[WebScriptCallFrame alloc] _initWithGlobalObject:globalObj caller:caller state:state];
 }
 
 - (void)parsedSource:(NSString *)source fromURL:(NSURL *)url sourceId:(int)sid startLine:(int)startLine errorLine:(int)errorLine errorMessage:(NSString *)errorMessage
@@ -103,48 +103,74 @@ NSString * const WebScriptErrorLineNumberKey = @"WebScriptErrorLineNumber";
     }
 }
 
-- (void)enteredFrame:(WebCoreScriptCallFrame *)frame sourceId:(int)sid line:(int)lineno
+- (void)enteredFrame:(WebScriptCallFrame *)frame sourceId:(int)sid line:(int)lineno
 {
     WebView *webView = [_webFrame webView];
-    [[webView _scriptDebugDelegateForwarder] webView:webView didEnterCallFrame:[frame wrapper] sourceId:sid line:lineno forWebFrame:_webFrame];
+    [[webView _scriptDebugDelegateForwarder] webView:webView didEnterCallFrame:frame sourceId:sid line:lineno forWebFrame:_webFrame];
     if ([WebScriptDebugServer listenerCount])
-        [[WebScriptDebugServer sharedScriptDebugServer] webView:webView didEnterCallFrame:[frame wrapper] sourceId:sid line:lineno forWebFrame:_webFrame];
+        [[WebScriptDebugServer sharedScriptDebugServer] webView:webView didEnterCallFrame:frame sourceId:sid line:lineno forWebFrame:_webFrame];
 }
 
-- (void)hitStatement:(WebCoreScriptCallFrame *)frame sourceId:(int)sid line:(int)lineno
+- (void)hitStatement:(WebScriptCallFrame *)frame sourceId:(int)sid line:(int)lineno
 {
     WebView *webView = [_webFrame webView];
-    [[webView _scriptDebugDelegateForwarder] webView:webView willExecuteStatement:[frame wrapper] sourceId:sid line:lineno forWebFrame:_webFrame];
+    [[webView _scriptDebugDelegateForwarder] webView:webView willExecuteStatement:frame sourceId:sid line:lineno forWebFrame:_webFrame];
     if ([WebScriptDebugServer listenerCount])
-        [[WebScriptDebugServer sharedScriptDebugServer] webView:webView willExecuteStatement:[frame wrapper] sourceId:sid line:lineno forWebFrame:_webFrame];
+        [[WebScriptDebugServer sharedScriptDebugServer] webView:webView willExecuteStatement:frame sourceId:sid line:lineno forWebFrame:_webFrame];
 }
 
-- (void)leavingFrame:(WebCoreScriptCallFrame *)frame sourceId:(int)sid line:(int)lineno
+- (void)leavingFrame:(WebScriptCallFrame *)frame sourceId:(int)sid line:(int)lineno
 {
     WebView *webView = [_webFrame webView];
-    [[webView _scriptDebugDelegateForwarder] webView:webView willLeaveCallFrame:[frame wrapper] sourceId:sid line:lineno forWebFrame:_webFrame];
+    [[webView _scriptDebugDelegateForwarder] webView:webView willLeaveCallFrame:frame sourceId:sid line:lineno forWebFrame:_webFrame];
     if ([WebScriptDebugServer listenerCount])
-        [[WebScriptDebugServer sharedScriptDebugServer] webView:webView willLeaveCallFrame:[frame wrapper] sourceId:sid line:lineno forWebFrame:_webFrame];
+        [[WebScriptDebugServer sharedScriptDebugServer] webView:webView willLeaveCallFrame:frame sourceId:sid line:lineno forWebFrame:_webFrame];
 }
 
-- (void)exceptionRaised:(WebCoreScriptCallFrame *)frame sourceId:(int)sid line:(int)lineno
+- (void)exceptionRaised:(WebScriptCallFrame *)frame sourceId:(int)sid line:(int)lineno
 {
     WebView *webView = [_webFrame webView];
-    [[webView _scriptDebugDelegateForwarder] webView:webView exceptionWasRaised:[frame wrapper] sourceId:sid line:lineno forWebFrame:_webFrame];
+    [[webView _scriptDebugDelegateForwarder] webView:webView exceptionWasRaised:frame sourceId:sid line:lineno forWebFrame:_webFrame];
     if ([WebScriptDebugServer listenerCount])
-        [[WebScriptDebugServer sharedScriptDebugServer] webView:webView exceptionWasRaised:[frame wrapper] sourceId:sid line:lineno forWebFrame:_webFrame];
+        [[WebScriptDebugServer sharedScriptDebugServer] webView:webView exceptionWasRaised:frame sourceId:sid line:lineno forWebFrame:_webFrame];
 }
 
 @end
 
+@interface WebScriptCallFramePrivate : NSObject {
+@public
+    WebScriptObject        *globalObject;   // the global object's proxy (not retained)
+    WebScriptCallFrame     *caller;         // previous stack frame
+    KJS::ExecState         *state;
+}
+@end
 
+@implementation WebScriptCallFramePrivate
+- (void)dealloc
+{
+    [caller release];
+    [super dealloc];
+}
+@end
+
+// WebScriptCallFrame
+//
+// One of these is created to represent each stack frame.  Additionally, there is a "global"
+// frame to represent the outermost scope.  This global frame is always the last frame in
+// the chain of callers.
+//
+// The delegate can assign a "wrapper" to each frame object so it can relay calls through its
+// own exported interface.  This class is private to WebCore (and the delegate).
 
 @implementation WebScriptCallFrame (WebScriptDebugDelegateInternal)
 
-- (WebScriptCallFrame *)_initWithFrame:(WebCoreScriptCallFrame *)frame
+- (WebScriptCallFrame *)_initWithGlobalObject:(WebScriptObject *)globalObj caller:(WebScriptCallFrame *)caller state:(ExecState *)state
 {
     if ((self = [super init])) {
-        _private = frame;
+        _private = [[WebScriptCallFramePrivate alloc] init];
+        _private->globalObject = globalObj;
+        _private->caller = caller; // (already retained)
+        _private->state = state;
     }
     return self;
 }
@@ -154,7 +180,7 @@ NSString * const WebScriptErrorLineNumberKey = @"WebScriptErrorLineNumber";
     if (!value)
         return nil;
 
-    WebScriptObject *globalObject = [_private globalObject];
+    WebScriptObject *globalObject = _private->globalObject;
     if (value == [globalObject _imp])
         return globalObject;
 
@@ -178,6 +204,7 @@ NSString * const WebScriptErrorLineNumberKey = @"WebScriptErrorLineNumber";
 - (void) dealloc
 {
     [_userInfo release];
+    [_private release];
     [super dealloc];
 }
 
@@ -196,7 +223,7 @@ NSString * const WebScriptErrorLineNumberKey = @"WebScriptErrorLineNumber";
 
 - (WebScriptCallFrame *)caller
 {
-    return [[_private caller] wrapper];
+    return _private->caller;
 }
 
 // Returns an array of scope objects (most local first).
@@ -206,9 +233,9 @@ NSString * const WebScriptErrorLineNumberKey = @"WebScriptErrorLineNumber";
 
 - (NSArray *)scopeChain
 {
-    ExecState* state = [_private state];
+    ExecState* state = _private->state;
     if (!state->scopeNode())  // global frame
-        return [NSArray arrayWithObject:[_private globalObject]];
+        return [NSArray arrayWithObject:_private->globalObject];
 
     ScopeChain      chain  = state->scopeChain();
     NSMutableArray *scopes = [[NSMutableArray alloc] init];
@@ -228,7 +255,7 @@ NSString * const WebScriptErrorLineNumberKey = @"WebScriptErrorLineNumber";
 
 - (NSString *)functionName
 {
-    ExecState* state = [_private state];
+    ExecState* state = _private->state;
     if (!state->scopeNode())
         return nil;
 
@@ -244,7 +271,7 @@ NSString * const WebScriptErrorLineNumberKey = @"WebScriptErrorLineNumber";
 
 - (id)exception
 {
-    ExecState* state = [_private state];
+    ExecState* state = _private->state;
     if (!state->hadException())
         return nil;
     return [self _convertValueToObjcValue:state->exception()];
@@ -265,7 +292,7 @@ NSString * const WebScriptErrorLineNumberKey = @"WebScriptErrorLineNumber";
 
     UString code = String(script);
 
-    ExecState* state = [_private state];
+    ExecState* state = _private->state;
     JSGlobalObject* globalObject = state->dynamicGlobalObject();
 
     // find "eval"

@@ -31,7 +31,7 @@
 // with WebScriptCallFrame and WebCoreScriptDebugger with WebScriptDebugger.
 
 @class WebScriptObject;         // from JavaScriptCore
-@class WebCoreScriptCallFrame;  // below
+@class WebScriptCallFrame;
 
 class WebCoreScriptDebuggerImp;
 namespace KJS {
@@ -47,14 +47,14 @@ NSString *toNSString(const KJS::UString&);
 @protocol WebScriptDebugger
 
 - (WebScriptObject *)globalObject;                          // return the WebView's windowScriptObject
-- (id)newWrapperForFrame:(WebCoreScriptCallFrame *)frame;   // return a (retained) stack-frame object
+- (WebScriptCallFrame *)newFrameWithGlobalObject:(WebScriptObject *)globalObj caller:(WebScriptCallFrame *)caller state:(KJS::ExecState*)state;
 
 // debugger callbacks
 - (void)parsedSource:(NSString *)source fromURL:(NSURL *)url sourceId:(int)sid startLine:(int)startLine errorLine:(int)errorLine errorMessage:(NSString *)errorMessage;
-- (void)enteredFrame:(WebCoreScriptCallFrame *)frame sourceId:(int)sid line:(int)lineno;
-- (void)hitStatement:(WebCoreScriptCallFrame *)frame sourceId:(int)sid line:(int)lineno;
-- (void)leavingFrame:(WebCoreScriptCallFrame *)frame sourceId:(int)sid line:(int)lineno;
-- (void)exceptionRaised:(WebCoreScriptCallFrame *)frame sourceId:(int)sid line:(int)lineno;
+- (void)enteredFrame:(WebScriptCallFrame *)frame sourceId:(int)sid line:(int)lineno;
+- (void)hitStatement:(WebScriptCallFrame *)frame sourceId:(int)sid line:(int)lineno;
+- (void)leavingFrame:(WebScriptCallFrame *)frame sourceId:(int)sid line:(int)lineno;
+- (void)exceptionRaised:(WebScriptCallFrame *)frame sourceId:(int)sid line:(int)lineno;
 
 @end
 
@@ -65,29 +65,11 @@ NSString *toNSString(const KJS::UString&);
 @private
     id<WebScriptDebugger>     _delegate;      // interface to WebKit (not retained)
     WebScriptObject          *_globalObj;     // the global object's proxy (not retained)
-    WebCoreScriptCallFrame   *_current;       // top of stack
+    WebScriptCallFrame       *_current;       // top of stack
     WebCoreScriptDebuggerImp *_debugger;      // [KJS::Debugger]
 }
 
 - (WebCoreScriptDebugger *)initWithDelegate:(id<WebScriptDebugger>)delegate;
 - (id<WebScriptDebugger>)delegate;
-
-@end
-
-
-
-@interface WebCoreScriptCallFrame : NSObject
-{
-@private
-    id                        _wrapper;       // WebKit's version of this object
-    WebScriptObject          *_globalObj;     // the global object's proxy (not retained)
-    WebCoreScriptCallFrame   *_caller;        // previous stack frame
-    KJS::ExecState           *_state;
-}
-
-- (id)wrapper;
-- (WebScriptObject *)globalObject;
-- (WebCoreScriptCallFrame *)caller;
-- (KJS::ExecState*)state;
 
 @end

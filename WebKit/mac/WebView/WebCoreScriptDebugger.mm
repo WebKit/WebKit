@@ -32,6 +32,7 @@
 
 #import "WebCoreScriptDebugger.h"
 
+#import "WebScriptDebugDelegate.h"
 #import <JavaScriptCore/ExecState.h>
 #import <JavaScriptCore/JSGlobalObject.h>
 #import <JavaScriptCore/debugger.h>
@@ -48,15 +49,8 @@ using namespace WebCore;
 
 @interface WebCoreScriptDebugger (WebCoreScriptDebuggerInternal)
 
-- (WebCoreScriptCallFrame *)_enterFrame:(ExecState *)state;
-- (WebCoreScriptCallFrame *)_leaveFrame;
-
-@end
-
-@interface WebCoreScriptCallFrame (WebCoreScriptDebuggerInternal)
-
-- (WebCoreScriptCallFrame *)_initWithGlobalObject:(WebScriptObject *)globalObj caller:(WebCoreScriptCallFrame *)caller state:(ExecState *)state;
-- (void)_setWrapper:(id)wrapper;
+- (WebScriptCallFrame *)_enterFrame:(ExecState *)state;
+- (WebScriptCallFrame *)_leaveFrame;
 
 @end
 
@@ -83,7 +77,7 @@ class WebCoreScriptDebuggerImp : public KJS::Debugger {
   private:
     WebCoreScriptDebugger  *_objc;      // our ObjC half
     bool                    _nested;    // true => this is a nested call
-    WebCoreScriptCallFrame *_current;   // top stack frame (copy of same field from ObjC side)
+    WebScriptCallFrame *_current;   // top stack frame (copy of same field from ObjC side)
 
   public:
     // constructor
@@ -190,77 +184,17 @@ class WebCoreScriptDebuggerImp : public KJS::Debugger {
 
 @implementation WebCoreScriptDebugger (WebCoreScriptDebuggerInternal)
 
-- (WebCoreScriptCallFrame *)_enterFrame:(ExecState *)state;
+- (WebScriptCallFrame *)_enterFrame:(ExecState *)state;
 {
-    WebCoreScriptCallFrame *callee = [[WebCoreScriptCallFrame alloc] _initWithGlobalObject:_globalObj caller:_current state:state];
-    [callee _setWrapper:[_delegate newWrapperForFrame:callee]];
-    return _current = callee;
+    _current = [_delegate newFrameWithGlobalObject:_globalObj caller:_current state:state];
+    return _current;
 }
 
-- (WebCoreScriptCallFrame *)_leaveFrame;
+- (WebScriptCallFrame *)_leaveFrame;
 {
-    WebCoreScriptCallFrame *caller = [[_current caller] retain];
+    WebScriptCallFrame *caller = [[_current caller] retain];
     [_current release];
     return _current = caller;
-}
-
-@end
-
-// WebCoreScriptCallFrame
-//
-// One of these is created to represent each stack frame.  Additionally, there is a "global"
-// frame to represent the outermost scope.  This global frame is always the last frame in
-// the chain of callers.
-//
-// The delegate can assign a "wrapper" to each frame object so it can relay calls through its
-// own exported interface.  This class is private to WebCore (and the delegate).
-
-@implementation WebCoreScriptCallFrame (WebCoreScriptDebuggerInternal)
-
-- (WebCoreScriptCallFrame *)_initWithGlobalObject:(WebScriptObject *)globalObj caller:(WebCoreScriptCallFrame *)caller state:(ExecState *)state
-{
-    if ((self = [super init])) {
-        _globalObj = globalObj;
-        _caller    = caller;    // (already retained)
-        _state     = state;
-    }
-    return self;
-}
-
-- (void)_setWrapper:(id)wrapper
-{
-    _wrapper = wrapper;     // (already retained)
-}
-
-@end
-
-@implementation WebCoreScriptCallFrame
-
-- (void)dealloc
-{
-    [_wrapper release];
-    [_caller release];
-    [super dealloc];
-}
-
-- (id)wrapper
-{
-    return _wrapper;
-}
-
-- (WebScriptObject *)globalObject
-{
-    return _globalObj;
-}
-
-- (WebCoreScriptCallFrame *)caller
-{
-    return _caller;
-}
-
-- (ExecState*)state
-{
-    return _state;
 }
 
 @end
