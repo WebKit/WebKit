@@ -266,10 +266,10 @@ my $productDir = productDir();
 $productDir .= "/bin" if (isQt());
 
 if (isGtk()) {
-    if ($ENV{WEBKITAUTOTOOLS}) {
-        $productDir .= "/Programs";
-    } else {
+    if (useQmake()) {
         $productDir .= "/WebKitTools/DumpRenderTree/gtk";
+    } else {
+        $productDir .= "/Programs";
     }
 }
 

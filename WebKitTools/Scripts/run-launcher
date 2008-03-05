@@ -45,7 +45,7 @@ my @args = @ARGV;
 checkFrameworks();
 
 # Set paths according to the build system used
-if (!$ENV{WEBKITAUTOTOOLS}) {
+if (useQmake()) {
     my $libDir = catdir(productDir(), 'lib');
 
     if (isGtk()) {

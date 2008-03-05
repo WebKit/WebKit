@@ -206,7 +206,7 @@ if ($buildSixtyFourBit && isOSX()) {
 }
 
 # enable autotool options accordingly
-if ($ENV{WEBKITAUTOTOOLS}) {
+if (isGtk() && !useQmake()) {
     push @options, autotoolsFlag($crossDocumentMessagingSupport, "cross-document-messaging");
     push @options, autotoolsFlag($databaseSupport, "database");
     push @options, autotoolsFlag($iconDatabaseSupport, "icon-database");
@@ -268,7 +268,7 @@ if (isOSX()) {
     }
 }
 
-if (isGtk() && isDarwin() && !$ENV{WEBKITAUTOTOOLS} && !$ENV{QMAKESPEC}) {
+if (isGtk() && isDarwin() && useQmake() && !$ENV{QMAKESPEC}) {
     # The qmake from Trolltech's binary "QT for Mac" distribution tries to
     # create xcode projects, not Makefiles
     $ENV{QMAKESPEC} = "macx-g++";

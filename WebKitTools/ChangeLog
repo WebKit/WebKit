@@ -1,3 +1,16 @@
+2008-03-04  Alp Toker  <alp@atoker.com>
+
+        Reviewed by Mark Rowe.
+
+        Switch the default GTK+ build system from qmake to autotools.
+
+        qmake can still be used by defining WEBKIT_BUILD_SYSTEM=qmake
+
+        * Scripts/build-webkit:
+        * Scripts/run-launcher:
+        * Scripts/run-webkit-tests:
+        * Scripts/webkitdirs.pm:
+
 2008-03-04  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Darin Adler.

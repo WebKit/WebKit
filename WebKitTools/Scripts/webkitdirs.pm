@@ -390,8 +390,11 @@ sub hasSVGSupport
     }
 
     if (isGtk() and $path =~ /WebCore/) {
-        $path .= "/../lib/libWebKitGtk.so" if !$ENV{WEBKITAUTOTOOLS};
-        $path .= "/../.libs/libWebKitGtk.so" if $ENV{WEBKITAUTOTOOLS};
+        if (useQmake()) {
+            $path .= "/../lib/libWebKitGtk.so";
+        } else {
+            $path .= "/../.libs/webkit-1.0.so";
+        }
     }
 
     my $hasSVGSupport = 0;
@@ -464,6 +467,13 @@ sub determineIsQt()
     }
     
     $isQt = defined($ENV{'QTDIR'});
+}
+
+sub useQmake()
+{
+    return 1 if isQt();
+    return 0 if !defined($ENV{WEBKIT_BUILD_SYSTEM});
+    return $ENV{WEBKIT_BUILD_SYSTEM} eq "qmake";
 }
 
 sub isGtk()
@@ -852,11 +862,11 @@ sub buildGtkProject($$@)
         die "The Gtk port builds JavaScriptCore, WebCore and WebKit in one shot! Only call it for 'WebKit'.\n";
     }
 
-    if ($ENV{WEBKITAUTOTOOLS}) {
-        return buildAutotoolsProject($clean, @buildArgs);
-    } else {
+    if (useQmake()) {
         my @buildArgs = ("CONFIG+=gtk-port", "CONFIG-=qt");
         return buildQMakeProject($clean, @buildArgs);
+    } else {
+        return buildAutotoolsProject($clean, @buildArgs);
     }
 }
 
