@@ -1,5 +1,13 @@
 2008-03-05  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Sam.
+        
+        Remove bindings/.
+
+        * bindings: Removed.
+
+2008-03-05  Anders Carlsson  <andersca@apple.com>
+
         Don't build bindings/ anymore.
         
         * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
