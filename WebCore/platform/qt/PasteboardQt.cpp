@@ -30,6 +30,7 @@
 
 #include "DocumentFragment.h"
 #include "Editor.h"
+#include "Frame.h"
 #include "Image.h"
 #include "markup.h"
 #include "RenderImage.h"
