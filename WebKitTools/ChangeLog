@@ -1,5 +1,13 @@
 2008-03-05  Alp Toker  <alp@atoker.com>
 
+        Re-attempt to switch to the autotools build system for GTK+.
+
+        Change scripts to continue when distclean fails.
+
+        * Scripts/webkitdirs.pm:
+
+2008-03-05  Alp Toker  <alp@atoker.com>
+
         Force qmake for the GTK+ build until we get the build bot to succeed
         with autotools (currently dies at make distclean)
 

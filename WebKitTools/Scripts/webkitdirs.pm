@@ -471,9 +471,6 @@ sub determineIsQt()
 
 sub useQmake()
 {
-    # Force qmake until the build bot succeeds with autotools
-    return 1;
-
     return 1 if isQt();
     return 0 if !defined($ENV{WEBKIT_BUILD_SYSTEM});
     return $ENV{WEBKIT_BUILD_SYSTEM} eq "qmake";
@@ -764,7 +761,7 @@ sub buildAutotoolsProject($@)
     my $result;
     if ($clean) {
         $result = system $make, "distclean";
-        return $result;
+        return 0;
     }
 
     print "Calling configure in " . $dir . "\n\n";
