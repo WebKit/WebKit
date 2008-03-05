@@ -35,8 +35,11 @@
 #import "WebFrameInternal.h"
 #import "WebScriptDebugServerPrivate.h"
 #import "WebViewInternal.h"
+#import <JavaScriptCore/ExecState.h>
+#import <JavaScriptCore/function.h>
 #import <WebCore/Frame.h>
 
+using namespace KJS;
 using namespace WebCore;
 
 // FIXME: these error strings should be public for future use by WebScriptObject and in WebScriptObject.h
@@ -177,9 +180,21 @@ NSString * const WebScriptErrorLineNumberKey = @"WebScriptErrorLineNumber";
     return [_private scopeChain];
 }
 
+// Returns the name of the function for this frame, if available.
+// Returns nil for anonymous functions and for the global frame.
+
 - (NSString *)functionName
 {
-    return [_private functionName];
+    ExecState* state = [_private state];
+    if (!state->scopeNode())
+        return nil;
+
+    FunctionImp* func = state->function();
+    if (!func)
+        return nil;
+
+    Identifier fn = func->functionName();
+    return toNSString(fn.ustring());
 }
 
 - (id)exception

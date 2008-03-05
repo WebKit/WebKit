@@ -1,5 +1,29 @@
 2008-03-05  Adam Roben  <aroben@apple.com>
 
+        Move -functionName from WebCoreScriptCallFrame to WebScriptCallFrame
+
+        Reviewed by Darin.
+
+        * WebView/WebCoreScriptDebugger.h:
+          - Removed #else case of #ifdef __cplusplus since this file is only
+            ever used by C++ Objective-C files
+          - Removed 'using KJS::ExecState' statement since we prefer not to
+            have using statements in header files
+          - Consequently prefixed uses of ExecState with KJS::
+          - Added declaration of toNSString method that takes a const
+            UString&
+          - Added declaration of -[WebCoreScriptCallFrame state]
+          - Removed declaration of -[WebCoreScriptCallFrame functionName]
+        * WebView/WebCoreScriptDebugger.mm:
+        (toNSString): Made this no longer static.
+        (-[WebCoreScriptCallFrame state]): Added.
+        * WebView/WebScriptDebugDelegate.mm:
+        (-[WebScriptCallFrame functionName]): Added. Code came from
+        -[WebCoreScriptCallFrame functionName], though I changed some nested
+        ifs into early returns.
+
+2008-03-05  Adam Roben  <aroben@apple.com>
+
         Move WebCoreScriptDebugger to WebKit
 
         Reviewed by Darin.

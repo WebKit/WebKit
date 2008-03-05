@@ -62,7 +62,7 @@ using namespace WebCore;
 @end
 
 // convert UString to NSString
-static NSString *toNSString(const UString& s)
+NSString *toNSString(const UString& s)
 {
     if (s.isEmpty())
         return nil;
@@ -273,6 +273,11 @@ class WebCoreScriptDebuggerImp : public KJS::Debugger {
     return _caller;
 }
 
+- (ExecState*)state
+{
+    return _state;
+}
+
 // Returns an array of scope objects (most local first).
 // The properties of each scope object are the variables for that scope.
 // Note that the last entry in the array will _always_ be the global object (windowScriptObject),
@@ -295,21 +300,6 @@ class WebCoreScriptDebuggerImp : public KJS::Debugger {
     NSArray *result = [NSArray arrayWithArray:scopes];
     [scopes release];
     return result;
-}
-
-// Returns the name of the function for this frame, if available.
-// Returns nil for anonymous functions and for the global frame.
-
-- (NSString *)functionName
-{
-    if (_state->scopeNode()) {
-        FunctionImp* func = _state->function();
-        if (func) {
-            Identifier fn = func->functionName();
-            return toNSString(fn.ustring());
-        }
-    }
-    return nil;
 }
 
 // Returns the pending exception for this frame (nil if none).

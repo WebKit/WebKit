@@ -33,16 +33,13 @@
 @class WebScriptObject;         // from JavaScriptCore
 @class WebCoreScriptCallFrame;  // below
 
-#ifdef __cplusplus
 class WebCoreScriptDebuggerImp;
-namespace KJS { class ExecState; }
-using KJS::ExecState;
-#else
-@class WebCoreScriptDebuggerImp;
-@class ExecState;
-#endif
+namespace KJS {
+    class ExecState;
+    class UString;
+}
 
-
+NSString *toNSString(const KJS::UString&);
 
 // "WebScriptDebugger" protocol - must be implemented by a delegate
 
@@ -84,14 +81,14 @@ using KJS::ExecState;
     id                        _wrapper;       // WebKit's version of this object
     WebScriptObject          *_globalObj;     // the global object's proxy (not retained)
     WebCoreScriptCallFrame   *_caller;        // previous stack frame
-    ExecState                *_state;         // [KJS::ExecState]
+    KJS::ExecState           *_state;
 }
 
 - (id)wrapper;
 - (WebCoreScriptCallFrame *)caller;
+- (KJS::ExecState*)state;
 
 - (NSArray *)scopeChain;
-- (NSString *)functionName;
 - (id)exception;
 - (id)evaluateWebScript:(NSString *)script;
 
