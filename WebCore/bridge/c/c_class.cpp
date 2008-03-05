@@ -31,8 +31,8 @@
 
 #include "c_instance.h"
 #include "c_runtime.h"
-#include "identifier.h"
 #include "npruntime_impl.h"
+#include <kjs/identifier.h>
 
 namespace KJS { namespace Bindings {
 

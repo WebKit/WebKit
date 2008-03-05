@@ -31,9 +31,9 @@
 #include "npruntime_impl.h"
 #include "npruntime_priv.h"
 
-#include "JSLock.h"
 #include "c_utility.h"
-#include "identifier.h"
+#include <kjs/identifier.h>
+#include <kjs/JSLock.h>
 #include <wtf/Assertions.h>
 #include <wtf/HashMap.h>
 

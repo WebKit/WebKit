@@ -26,9 +26,8 @@
 #ifndef RUNTIME_FUNCTION_H_
 #define RUNTIME_FUNCTION_H_
 
-#include "function.h"
+#include <kjs/function.h>
 #include "runtime.h"
-#include "object.h"
 
 namespace KJS {
 

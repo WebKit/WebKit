@@ -25,8 +25,6 @@
 #ifndef _JNI_UTILITY_H_
 #define _JNI_UTILITY_H_
 
-#include <list.h>
-
 #include <JavaVM/jni.h>
 
 // The order of these items can not be modified as they are tightly
@@ -50,6 +48,10 @@ typedef enum {
 } JNIType;
 
 namespace KJS {
+
+class ExecState;
+class JSObject;    
+class JSValue;
 
 namespace Bindings {
 

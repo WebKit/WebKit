@@ -32,10 +32,10 @@
 #include "c_class.h"
 #include "c_runtime.h"
 #include "c_utility.h"
-#include "list.h"
 #include "npruntime_impl.h"
-#include "PropertyNameArray.h"
 #include "runtime_root.h"
+#include <kjs/ExecState.h>
+#include <kjs/PropertyNameArray.h>
 #include <wtf/Assertions.h>
 #include <wtf/StringExtras.h>
 #include <wtf/Vector.h>

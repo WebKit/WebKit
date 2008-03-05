@@ -27,10 +27,10 @@
 #include "objc_utility.h"
 
 #include "objc_instance.h"
-#include "JSGlobalObject.h"
 #include "runtime_array.h"
 #include "runtime_object.h"
 #include "WebScriptObject.h"
+#include <kjs/JSGlobalObject.h>
 #include <wtf/Assertions.h>
 
 #if !defined(_C_LNG_LNG)

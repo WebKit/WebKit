@@ -26,8 +26,7 @@
 #include "config.h"
 #include "runtime_array.h"
 
-#include "JSGlobalObject.h"
-#include "array_object.h"
+#include <kjs/array_object.h>
 
 using namespace KJS;
 

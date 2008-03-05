@@ -25,10 +25,9 @@
 #include "config.h"
 #include "runtime_root.h"
 
-#include "JSGlobalObject.h"
-#include "object.h"
 #include "runtime.h"
 #include "runtime_object.h"
+#include <kjs/JSGlobalObject.h>
 #include <wtf/HashCountedSet.h>
 #include <wtf/HashSet.h>
 

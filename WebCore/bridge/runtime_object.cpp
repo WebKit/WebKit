@@ -26,8 +26,6 @@
 #include "config.h"
 #include "runtime_object.h"
 
-#include "error_object.h"
-#include "operations.h"
 #include "runtime_method.h"
 #include "runtime_root.h"
 

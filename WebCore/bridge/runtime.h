@@ -26,7 +26,7 @@
 #ifndef JAVASCRIPTCORE_BINDINGS_RUNTIME_H
 #define JAVASCRIPTCORE_BINDINGS_RUNTIME_H
 
-#include "value.h"
+#include <kjs/value.h>
 
 #include <wtf/Noncopyable.h>
 #include <wtf/HashMap.h>

@@ -25,7 +25,6 @@
 
 #import <Foundation/Foundation.h>
 
-#include "internal.h"
 #include "runtime_root.h"
 
 @class WebUndefined;

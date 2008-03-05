@@ -27,9 +27,9 @@
 #define KJS_BINDINGS_OBJC_RUNTIME_H
 
 #include <CoreFoundation/CoreFoundation.h>
-#include <JavaScriptCore/objc_header.h>
-#include <JavaScriptCore/object.h>
-#include <JavaScriptCore/runtime.h>
+#include <kjs/object.h>
+#include "objc_header.h"
+#include "runtime.h"
 
 #include <wtf/RetainPtr.h>
 

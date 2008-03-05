@@ -26,8 +26,9 @@
 #ifndef KJS_RUNTIME_OBJECT_H
 #define KJS_RUNTIME_OBJECT_H
 
+#include <kjs/object.h>
+
 #include "runtime.h"
-#include "object.h"
 
 #include <wtf/Noncopyable.h>
 

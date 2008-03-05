@@ -29,13 +29,13 @@
 
 #include "NP_jsobject.h"
 
-#include "JSGlobalObject.h"
-#include "PropertyNameArray.h"
+#include <kjs/JSGlobalObject.h>
+#include <kjs/PropertyNameArray.h>
 #include "c_utility.h"
-#include "interpreter.h"
+#include <kjs/interpreter.h>
 #include "npruntime_impl.h"
 #include "npruntime_priv.h"
-#include "object.h"
+
 #include "runtime_root.h"
 
 using namespace KJS;

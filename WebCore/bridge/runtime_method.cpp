@@ -26,10 +26,8 @@
 #include "config.h"
 #include "runtime_method.h"
 
-#include "ExecState.h"
-#include "JSGlobalObject.h"
+#include <kjs/JSGlobalObject.h>
 #include "runtime_object.h"
-#include "function_object.h"
 
 using namespace KJS::Bindings;
 using namespace KJS;

@@ -26,7 +26,6 @@
 #include "config.h"
 #include "runtime.h"
 
-#include "JSLock.h"
 #include "NP_jsobject.h"
 #include "c_instance.h"
 #include "runtime_object.h"

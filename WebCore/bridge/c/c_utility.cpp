@@ -32,22 +32,24 @@
 
 #include "NP_jsobject.h"
 #include "c_instance.h"
-#include "JSGlobalObject.h"
+#include <kjs/JSGlobalObject.h>
 #include "npruntime_impl.h"
 #include "npruntime_priv.h"
 #include "runtime_object.h"
 #include "runtime_root.h"
-#include "Platform.h"
 #include <wtf/Assertions.h>
-#include <wtf/unicode/UTF8.h>
 
-using namespace WTF::Unicode;
+// FIXME: Rewrite convertUTF8ToUTF16WithLatin1Fallback to not use the WTF UTF-8 support.
+#if 0
+#include <wtf/unicode/UTF8.h>
+#endif
 
 namespace KJS { namespace Bindings {
 
 // Requires free() of returned UTF16Chars.
 static void convertUTF8ToUTF16WithLatin1Fallback(const NPUTF8* UTF8Chars, int UTF8Length, NPUTF16** UTF16Chars, unsigned int* UTF16Length)
 {
+#if 0
     ASSERT(UTF8Chars || UTF8Length == 0);
     ASSERT(UTF16Chars);
     
@@ -80,6 +82,7 @@ static void convertUTF8ToUTF16WithLatin1Fallback(const NPUTF8* UTF8Chars, int UT
         for (unsigned i = 0; i < *UTF16Length; i++)
             (*UTF16Chars)[i] = UTF8Chars[i] & 0xFF;
     }
+#endif
 }
 
 // Variant value must be released with NPReleaseVariantValue()

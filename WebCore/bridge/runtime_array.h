@@ -28,7 +28,7 @@
 
 #include <wtf/OwnPtr.h>
 
-#include "array_instance.h"
+#include <kjs/object.h>
 #include "runtime.h"
 
 namespace KJS {

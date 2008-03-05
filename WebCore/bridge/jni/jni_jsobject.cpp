@@ -23,18 +23,17 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 #include "config.h"
-
-#include "identifier.h"
-#include "internal.h"
-#include "interpreter.h"
 #include "jni_jsobject.h"
+
 #include "jni_runtime.h"
 #include "jni_utility.h"
-#include "JSGlobalObject.h"
-#include "list.h"
 #include "runtime_object.h"
 #include "runtime_root.h"
 #include <CoreFoundation/CoreFoundation.h>
+#include <kjs/ExecState.h>
+#include <kjs/JSGlobalObject.h>
+#include <kjs/interpreter.h>
+
 #include <wtf/Assertions.h>
 
 using namespace KJS::Bindings;

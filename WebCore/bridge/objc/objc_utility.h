@@ -28,7 +28,7 @@
 
 #include <CoreFoundation/CoreFoundation.h>
 
-#include "object.h"
+#include <kjs/object.h>
 #include "objc_header.h"
 
 #ifdef __OBJC__

@@ -24,8 +24,8 @@
  */
 #include "config.h"
 #import <Foundation/Foundation.h>
-#import <JavaScriptCore/jni_utility.h>
-#import <JavaScriptCore/objc_utility.h>
+#import "jni_utility.h"
+#import "objc_utility.h"
 
 using namespace KJS::Bindings;
 

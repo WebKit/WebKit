@@ -1,3 +1,40 @@
+2008-03-04  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam.
+
+        Update include paths. This code is not used yet.
+
+        * bridge/NP_jsobject.cpp:
+        * bridge/c/c_class.cpp:
+        * bridge/c/c_instance.cpp:
+        * bridge/c/c_utility.cpp:
+        (KJS::Bindings::convertUTF8ToUTF16WithLatin1Fallback):
+        #if 0 this out for now. 
+        
+        * bridge/jni/jni_class.cpp:
+        * bridge/jni/jni_jsobject.cpp:
+        * bridge/jni/jni_objc.mm:
+        * bridge/jni/jni_runtime.cpp:
+        * bridge/jni/jni_utility.cpp:
+        * bridge/jni/jni_utility.h:
+        * bridge/npruntime.cpp:
+        * bridge/objc/WebScriptObject.h:
+        * bridge/objc/objc_class.h:
+        * bridge/objc/objc_instance.h:
+        * bridge/objc/objc_runtime.h:
+        * bridge/objc/objc_utility.h:
+        * bridge/objc/objc_utility.mm:
+        * bridge/runtime.cpp:
+        * bridge/runtime.h:
+        * bridge/runtime_array.cpp:
+        * bridge/runtime_array.h:
+        * bridge/runtime_method.cpp:
+        * bridge/runtime_method.h:
+        * bridge/runtime_object.cpp:
+        * bridge/runtime_object.h:
+        * bridge/runtime_root.cpp:
+        * bridge/runtime_root.h:
+
 2008-03-04  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.

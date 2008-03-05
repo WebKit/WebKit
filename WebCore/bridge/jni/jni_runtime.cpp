@@ -23,16 +23,13 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 #include "config.h"
-#include <internal.h>
-#include <ustring.h>
-#include <value.h>
 
 #include <jni_utility.h>
 #include <jni_runtime.h>
 
-#include <runtime_array.h>
-#include <runtime_object.h>
-#include <runtime_root.h>
+#include "runtime_array.h"
+#include "runtime_object.h"
+#include "runtime_root.h"
 
 #ifdef NDEBUG
 #define JS_LOG(formatAndArgs...) ((void)0)

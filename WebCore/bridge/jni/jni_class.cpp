@@ -23,11 +23,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 #include "config.h"
-#include <jni_class.h>
+#include "jni_class.h"
 
-#include "identifier.h"
-#include <jni_utility.h>
-#include <jni_runtime.h>
+#include <kjs/identifier.h>
+#include "jni_utility.h"
+#include "jni_runtime.h"
 
 using namespace KJS::Bindings;
 

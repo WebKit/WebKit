@@ -26,10 +26,10 @@
 #include "config.h"
 #include "jni_utility.h"
 
-#include "list.h"
 #include "jni_runtime.h"
 #include "runtime_array.h"
 #include "runtime_object.h"
+#include <kjs/array_instance.h>
 #include <dlfcn.h>
 
 namespace KJS {
