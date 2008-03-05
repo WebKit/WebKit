@@ -39,8 +39,10 @@ static JSValueRef print(JSContextRef context, JSObjectRef object, JSObjectRef th
 
 int main(int argc, char* argv[])
 {
-    UNUSED_PARAM(argc);
-    UNUSED_PARAM(argv);
+    const char *scriptPath = "minidom.js";
+    if (argc > 1) {
+        scriptPath = argv[1];
+    }
     
     JSGlobalContextRef context = JSGlobalContextCreate(NULL);
     JSObjectRef globalObject = JSContextGetGlobalObject(context);
@@ -53,7 +55,7 @@ int main(int argc, char* argv[])
     JSObjectSetProperty(context, globalObject, node, JSObjectMakeConstructor(context, JSNode_class(context), JSNode_construct), kJSPropertyAttributeNone, NULL);
     JSStringRelease(node);
     
-    char* scriptUTF8 = createStringWithContentsOfFile("minidom.js");
+    char* scriptUTF8 = createStringWithContentsOfFile(scriptPath);
     JSStringRef script = JSStringCreateWithUTF8CString(scriptUTF8);
     JSValueRef exception;
     JSValueRef result = JSEvaluateScript(context, script, NULL, NULL, 0, &exception);

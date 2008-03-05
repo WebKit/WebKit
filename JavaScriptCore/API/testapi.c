@@ -539,8 +539,10 @@ static void testInitializeFinalize()
 
 int main(int argc, char* argv[])
 {
-    UNUSED_PARAM(argc);
-    UNUSED_PARAM(argv);
+    const char *scriptPath = "testapi.js";
+    if (argc > 1) {
+        scriptPath = argv[1];
+    }
     
     // Test garbage collection with a fresh context
     context = JSGlobalContextCreate(NULL);
@@ -868,7 +870,7 @@ int main(int argc, char* argv[])
     v = JSObjectCallAsFunction(context, function, o, 0, NULL, NULL);
     ASSERT(JSValueIsEqual(context, v, o, NULL));
     
-    char* scriptUTF8 = createStringWithContentsOfFile("testapi.js");
+    char* scriptUTF8 = createStringWithContentsOfFile(scriptPath);
     if (!scriptUTF8)
         printf("FAIL: Test script could not be loaded.\n");
     else {
