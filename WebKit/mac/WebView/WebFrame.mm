@@ -380,7 +380,7 @@ WebView *getWebView(WebFrame *webFrame)
     if (!globalObject)
         return;
 
-    _private->scriptDebugger = new WebCoreScriptDebuggerImp(globalObject);
+    _private->scriptDebugger = new WebScriptDebugger(globalObject);
 }
 
 - (void)_detachScriptDebugger

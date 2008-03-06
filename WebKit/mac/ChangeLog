@@ -1,5 +1,17 @@
 2008-03-05  Adam Roben  <aroben@apple.com>
 
+        Rename WebCoreScriptDebuggerImp to WebScriptDebugger
+
+        Reviewed by Kevin M.
+
+        * WebView/WebCoreScriptDebuggerImp.h:
+        * WebView/WebCoreScriptDebuggerImp.mm:
+        * WebView/WebFrame.mm:
+        (-[WebFrame _attachScriptDebugger]):
+        * WebView/WebFrameInternal.h:
+
+2008-03-05  Adam Roben  <aroben@apple.com>
+
         Remove WebScriptDebugger
 
         Uses of WebScriptDebugger have been replaced with

@@ -26,8 +26,6 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// FIXME: This file and class should be renamed WebScriptDebugger
-
 #include "WebCoreScriptDebuggerImp.h"
 
 #include "WebFrameInternal.h"
@@ -70,7 +68,7 @@ static WebFrame *toWebFrame(ExecState* state)
     return kit(window->impl()->frame());
 }
 
-WebCoreScriptDebuggerImp::WebCoreScriptDebuggerImp(JSGlobalObject* globalObject)
+WebScriptDebugger::WebScriptDebugger(JSGlobalObject* globalObject)
     : m_callingDelegate(false)
 {
     attach(globalObject);
@@ -79,7 +77,7 @@ WebCoreScriptDebuggerImp::WebCoreScriptDebuggerImp(JSGlobalObject* globalObject)
 }
 
 // callbacks - relay to delegate
-bool WebCoreScriptDebuggerImp::sourceParsed(ExecState* state, int sourceID, const UString& url, const UString& source, int lineNumber, int errorLine, const UString& errorMsg)
+bool WebScriptDebugger::sourceParsed(ExecState* state, int sourceID, const UString& url, const UString& source, int lineNumber, int errorLine, const UString& errorMsg)
 {
     if (m_callingDelegate)
         return true;
@@ -112,7 +110,7 @@ bool WebCoreScriptDebuggerImp::sourceParsed(ExecState* state, int sourceID, cons
     return true;
 }
 
-bool WebCoreScriptDebuggerImp::callEvent(ExecState* state, int sourceID, int lineNumber, JSObject*, const List&)
+bool WebScriptDebugger::callEvent(ExecState* state, int sourceID, int lineNumber, JSObject*, const List&)
 {
     if (m_callingDelegate)
         return true;
@@ -133,7 +131,7 @@ bool WebCoreScriptDebuggerImp::callEvent(ExecState* state, int sourceID, int lin
     return true;
 }
 
-bool WebCoreScriptDebuggerImp::atStatement(ExecState* state, int sourceID, int lineNumber, int)
+bool WebScriptDebugger::atStatement(ExecState* state, int sourceID, int lineNumber, int)
 {
     if (m_callingDelegate)
         return true;
@@ -151,7 +149,7 @@ bool WebCoreScriptDebuggerImp::atStatement(ExecState* state, int sourceID, int l
     return true;
 }
 
-bool WebCoreScriptDebuggerImp::returnEvent(ExecState* state, int sourceID, int lineNumber, JSObject*)
+bool WebScriptDebugger::returnEvent(ExecState* state, int sourceID, int lineNumber, JSObject*)
 {
     if (m_callingDelegate)
         return true;
@@ -171,7 +169,7 @@ bool WebCoreScriptDebuggerImp::returnEvent(ExecState* state, int sourceID, int l
     return true;
 }
 
-bool WebCoreScriptDebuggerImp::exception(ExecState* state, int sourceID, int lineNumber, JSValue*)
+bool WebScriptDebugger::exception(ExecState* state, int sourceID, int lineNumber, JSValue*)
 {
     if (m_callingDelegate)
         return true;

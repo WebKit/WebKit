@@ -26,8 +26,6 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// FIXME: This file and class should be renamed WebScriptDebugger
-
 #ifndef WebCoreScriptDebuggerImp_h
 #define WebCoreScriptDebuggerImp_h
 
@@ -48,9 +46,9 @@ namespace KJS {
 
 NSString *toNSString(const KJS::UString&);
 
-class WebCoreScriptDebuggerImp : public KJS::Debugger {
+class WebScriptDebugger : public KJS::Debugger {
 public:
-    WebCoreScriptDebuggerImp(KJS::JSGlobalObject*);
+    WebScriptDebugger(KJS::JSGlobalObject*);
 
     virtual bool sourceParsed(KJS::ExecState*, int sourceID, const KJS::UString& sourceURL, const KJS::UString& source, int lineNumber, int errorLine, const KJS::UString& errorMsg);
     virtual bool callEvent(KJS::ExecState*, int sourceID, int lineNumber, KJS::JSObject* function, const KJS::List& args);
