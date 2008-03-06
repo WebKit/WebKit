@@ -36,6 +36,7 @@
 #import "DOMRangeInternal.h"
 #import "WebBackForwardList.h"
 #import "WebChromeClient.h"
+#import "WebCoreScriptDebuggerImp.h"
 #import "WebDataSourceInternal.h"
 #import "WebDocumentInternal.h"
 #import "WebDocumentLoaderMac.h"
@@ -56,7 +57,6 @@
 #import "WebPlugin.h"
 #import "WebPluginController.h"
 #import "WebPreferencesPrivate.h"
-#import "WebScriptDebugDelegatePrivate.h"
 #import "WebViewInternal.h"
 #import <WebCore/Chrome.h>
 #import <WebCore/ColorMac.h>
@@ -138,7 +138,7 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
 {
     [webFrameView release];
     
-    [scriptDebugger release];
+    delete scriptDebugger;
 
     [super dealloc];
 }
@@ -373,17 +373,23 @@ WebView *getWebView(WebFrame *webFrame)
 
 - (void)_attachScriptDebugger
 {
-    if (!_private->scriptDebugger && core(self)->scriptProxy()->haveGlobalObject())
-        _private->scriptDebugger = [[WebScriptDebugger alloc] initWithWebFrame:self];
+    if (_private->scriptDebugger)
+        return;
+
+    KJS::JSGlobalObject* globalObject = core(self)->scriptProxy()->globalObject();
+    if (!globalObject)
+        return;
+
+    _private->scriptDebugger = new WebCoreScriptDebuggerImp(globalObject);
 }
 
 - (void)_detachScriptDebugger
 {
-    if (_private->scriptDebugger) {
-        id old = _private->scriptDebugger;
-        _private->scriptDebugger = nil;
-        [old release];
-    }
+    if (!_private->scriptDebugger)
+        return;
+
+    delete _private->scriptDebugger;
+    _private->scriptDebugger = 0;
 }
 
 - (id)_initWithWebFrameView:(WebFrameView *)fv webView:(WebView *)v bridge:(WebFrameBridge *)bridge

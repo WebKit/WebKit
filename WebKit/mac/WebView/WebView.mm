@@ -87,7 +87,6 @@
 #import "WebPolicyDelegate.h"
 #import "WebPreferenceKeysPrivate.h"
 #import "WebPreferencesPrivate.h"
-#import "WebScriptDebugDelegatePrivate.h"
 #import "WebScriptDebugServerPrivate.h"
 #import "WebUIDelegate.h"
 #import "WebUIDelegatePrivate.h"

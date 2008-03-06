@@ -83,7 +83,6 @@
 		7E6FEF0208985A3E00C44C3F /* WebDefaultScriptDebugDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 7E6FEF0008985A3E00C44C3F /* WebDefaultScriptDebugDelegate.m */; };
 		7E6FEF0808985A7200C44C3F /* WebScriptDebugDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 7E6FEF0508985A7200C44C3F /* WebScriptDebugDelegate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7E6FEF0908985A7200C44C3F /* WebScriptDebugDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7E6FEF0608985A7200C44C3F /* WebScriptDebugDelegate.mm */; };
-		7E6FEF0A08985A7200C44C3F /* WebScriptDebugDelegatePrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 7E6FEF0708985A7200C44C3F /* WebScriptDebugDelegatePrivate.h */; };
 		9304B3000B02341500F7850D /* WebIconDatabaseInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 9304B2FF0B02341500F7850D /* WebIconDatabaseInternal.h */; };
 		931633EB0AEDFF930062B92D /* WebFrameLoaderClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 931633EA0AEDFF930062B92D /* WebFrameLoaderClient.h */; };
 		931633EF0AEDFFAE0062B92D /* WebFrameLoaderClient.mm in Sources */ = {isa = PBXBuildFile; fileRef = 931633EE0AEDFFAE0062B92D /* WebFrameLoaderClient.mm */; };
@@ -453,7 +452,6 @@
 		7E6FEF0008985A3E00C44C3F /* WebDefaultScriptDebugDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = WebDefaultScriptDebugDelegate.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		7E6FEF0508985A7200C44C3F /* WebScriptDebugDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebScriptDebugDelegate.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		7E6FEF0608985A7200C44C3F /* WebScriptDebugDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebScriptDebugDelegate.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		7E6FEF0708985A7200C44C3F /* WebScriptDebugDelegatePrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebScriptDebugDelegatePrivate.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		830E81E005853AC000AD0891 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = /System/Library/Frameworks/Security.framework; sourceTree = "<absolute>"; };
 		833987810543012D00EE146E /* WebDocumentPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebDocumentPrivate.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		83402EFA035A58D100BE770A /* WebNetscapePluginStream.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebNetscapePluginStream.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -972,7 +970,6 @@
 				513D422E034CF55A00CA2ACD /* WebResourceLoadDelegate.h */,
 				656D333D0AF21AE900212169 /* WebResourceLoadDelegatePrivate.h */,
 				7E6FEF0508985A7200C44C3F /* WebScriptDebugDelegate.h */,
-				7E6FEF0708985A7200C44C3F /* WebScriptDebugDelegatePrivate.h */,
 				515E27CC0458C86500CA2D3A /* WebUIDelegate.h */,
 				65A7D44A0568AB2600E70EF6 /* WebUIDelegatePrivate.h */,
 				650F74E209E488F70020118A /* WebUnarchivingState.h */,
@@ -1305,7 +1302,6 @@
 				656D333E0AF21AE900212169 /* WebResourceLoadDelegatePrivate.h in Headers */,
 				939810890824BF01008DF038 /* WebResourcePrivate.h in Headers */,
 				7E6FEF0808985A7200C44C3F /* WebScriptDebugDelegate.h in Headers */,
-				7E6FEF0A08985A7200C44C3F /* WebScriptDebugDelegatePrivate.h in Headers */,
 				1C0706630A431E01001078F6 /* WebScriptDebugServer.h in Headers */,
 				1C07079A0A433E22001078F6 /* WebScriptDebugServerPrivate.h in Headers */,
 				939810260824BF01008DF038 /* WebSearchableTextView.h in Headers */,

@@ -1,5 +1,25 @@
 2008-03-05  Adam Roben  <aroben@apple.com>
 
+        Remove WebScriptDebugger
+
+        Uses of WebScriptDebugger have been replaced with
+        WebCoreScriptDebuggerImp.
+
+        Reviewed by Kevin M.
+
+        * WebView/WebFrame.mm:
+        (-[WebFramePrivate dealloc]): Use delete instead of release since
+        WebCoreScriptDebuggerImp is a C++ class.
+        (-[WebFrame _attachScriptDebugger]): Updated to use early returns and
+        WebCoreScriptDebuggerImp.
+        (-[WebFrame _detachScriptDebugger]): Ditto.
+        * WebView/WebFrameInternal.h:
+        * WebView/WebScriptDebugDelegate.mm: Removed WebScriptDebugger
+        * WebView/WebScriptDebugDelegatePrivate.h: Removed.
+        * WebView/WebView.mm:
+
+2008-03-05  Adam Roben  <aroben@apple.com>
+
         Remove -webFrame and -globalObject from WebScriptDebugger
 
         WebCoreScriptDebuggerImp is now unaware of WebScriptDebugger

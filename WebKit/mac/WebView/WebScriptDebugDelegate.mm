@@ -26,8 +26,6 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "WebScriptDebugDelegatePrivate.h"
-
 #import "WebCoreScriptDebuggerImp.h"
 #import "WebDataSource.h"
 #import "WebDataSourceInternal.h"
@@ -55,25 +53,6 @@ NSString * const WebScriptErrorLineNumberKey = @"WebScriptErrorLineNumber";
 @interface WebScriptCallFrame (WebScriptDebugDelegateInternal)
 
 - (id)_convertValueToObjcValue:(JSValue *)value;
-
-@end
-
-@implementation WebScriptDebugger
-
-- (WebScriptDebugger *)initWithWebFrame:(WebFrame *)webFrame
-{
-    if ((self = [super init])) {
-        _webFrame = webFrame;
-        _debugger = new WebCoreScriptDebuggerImp(core(webFrame)->scriptProxy()->globalObject());
-    }
-    return self;
-}
-
-- (void)dealloc
-{
-    delete _debugger;
-    [super dealloc];
-}
 
 @end
 
