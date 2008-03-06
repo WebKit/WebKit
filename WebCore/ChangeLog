@@ -26,7 +26,7 @@
 
         - add functions giving offsets within a KURL, slated to replace the
           EncodedURL object in CSSStyleSelector (in a future "visited link" change)
-        - chagned all KURL data members names to use the traditional m_ prefix
+        - changed all KURL data members names to use the traditional m_ prefix
         - initialize all members to 0 in invalid KURLs rather than having all
           functions check m_isValid
 
