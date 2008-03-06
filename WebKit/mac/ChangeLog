@@ -1,3 +1,14 @@
+2008-03-06  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        - fix a regression from r30741: a crash under
+          WebFrameLoaderClient::createPlugin() when showing a Mail message with
+          an attachment
+
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::createPlugin):
+
 2008-03-06  Darin Adler  <darin@apple.com>
 
         - fix Tiger build

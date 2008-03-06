@@ -1295,7 +1295,7 @@ Widget* WebFrameLoaderClient::createPlugin(const IntSize& size, Element* element
             attributes, WebPlugInAttributesKey,
             [NSNumber numberWithInt:loadManually ? WebPlugInModeFull : WebPlugInModeEmbed], WebPlugInModeKey,
             [NSNumber numberWithBool:!loadManually], WebPlugInShouldLoadMainResourceKey,
-            element, WebPlugInContainingElementKey,
+            kit(element), WebPlugInContainingElementKey,
             URL, WebPlugInBaseURLKey, // URL might be nil, so add it last
             nil];
 
