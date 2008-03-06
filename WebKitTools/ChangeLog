@@ -1,3 +1,14 @@
+2008-03-06  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Sam and Tim.
+
+        <rdar://5631450> Drosera: breakpoint indicators disappear after the
+        script is finished running.
+        - If there is a pre-existing breakpoint on a line when the file is
+        updated we need to redraw it.
+
+        * Drosera/debugger.js:
+
 2008-03-06  Brady Eidson  <beidson@apple.com>
 
         Tiger build fix...?

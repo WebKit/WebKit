@@ -1006,6 +1006,11 @@ function loadFile(fileIndex, manageNavLists)
             td.addEventListener("mousedown", moveBreakPoint, true);
             tr.appendChild(td);
 
+            if( file.breakpoints[i + 1]) {
+                file.breakpoints[i + 1].row = tr
+                tr.addStyleClass("breakpoint");
+            }
+
             td = sourcesDocument.createElement("td");
             td.className = "source";
             td.innerHTML = (lines[i].length ? lines[i] : "&nbsp;");
