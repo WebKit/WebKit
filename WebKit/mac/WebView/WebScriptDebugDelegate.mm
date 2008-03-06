@@ -71,6 +71,7 @@ NSString * const WebScriptErrorLineNumberKey = @"WebScriptErrorLineNumber";
 - (void)dealloc
 {
     [_debugger release];
+    [_current release];
     [super dealloc];
 }
 
@@ -79,9 +80,17 @@ NSString * const WebScriptErrorLineNumberKey = @"WebScriptErrorLineNumber";
     return core(_webFrame)->windowScriptObject();
 }
 
-- (WebScriptCallFrame *)newFrameWithGlobalObject:(WebScriptObject *)globalObj caller:(WebScriptCallFrame *)caller state:(ExecState*)state
+- (WebScriptCallFrame *)enterFrame:(ExecState*)state;
 {
-    return [[WebScriptCallFrame alloc] _initWithGlobalObject:globalObj caller:caller state:state];
+    _current = [[WebScriptCallFrame alloc] _initWithGlobalObject:[self globalObject] caller:_current state:state];
+    return _current;
+}
+
+- (WebScriptCallFrame *)leaveFrame;
+{
+    WebScriptCallFrame *caller = [[_current caller] retain];
+    [_current release];
+    return _current = caller;
 }
 
 - (void)parsedSource:(NSString *)source fromURL:(NSURL *)url sourceId:(int)sid startLine:(int)startLine errorLine:(int)errorLine errorMessage:(NSString *)errorMessage

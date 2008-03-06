@@ -47,13 +47,6 @@
 using namespace KJS;
 using namespace WebCore;
 
-@interface WebCoreScriptDebugger (WebCoreScriptDebuggerInternal)
-
-- (WebScriptCallFrame *)_enterFrame:(ExecState *)state;
-- (WebScriptCallFrame *)_leaveFrame;
-
-@end
-
 // convert UString to NSString
 NSString *toNSString(const UString& s)
 {
@@ -83,7 +76,7 @@ class WebCoreScriptDebuggerImp : public KJS::Debugger {
     // constructor
     WebCoreScriptDebuggerImp(WebCoreScriptDebugger *objc, JSGlobalObject* globalObject) : _objc(objc) {
         _nested = true;
-        _current = [_objc _enterFrame:globalObject->globalExec()];
+        _current = [[_objc delegate] enterFrame:globalObject->globalExec()];
         attach(globalObject);
         [[_objc delegate] enteredFrame:_current sourceId:-1 line:-1];
         _nested = false;
@@ -101,7 +94,7 @@ class WebCoreScriptDebuggerImp : public KJS::Debugger {
     virtual bool callEvent(ExecState *state, int sid, int lineno, JSObject *func, const List &args) {
         if (!_nested) {
             _nested = true;
-            _current = [_objc _enterFrame:state];
+            _current = [[_objc delegate] enterFrame:state];
             [[_objc delegate] enteredFrame:_current sourceId:sid line:lineno];
             _nested = false;
         }
@@ -119,7 +112,7 @@ class WebCoreScriptDebuggerImp : public KJS::Debugger {
         if (!_nested) {
             _nested = true;
             [[_objc delegate] leavingFrame:_current sourceId:sid line:lineno];
-            _current = [_objc _leaveFrame];
+            _current = [[_objc delegate] leaveFrame];
             _nested = false;
         }
         return true;
@@ -164,7 +157,6 @@ class WebCoreScriptDebuggerImp : public KJS::Debugger {
 
 - (void)dealloc
 {
-    [_current release];
     delete _debugger;
     [super dealloc];
 }
@@ -178,23 +170,6 @@ class WebCoreScriptDebuggerImp : public KJS::Debugger {
 - (id<WebScriptDebugger>)delegate
 {
     return _delegate;
-}
-
-@end
-
-@implementation WebCoreScriptDebugger (WebCoreScriptDebuggerInternal)
-
-- (WebScriptCallFrame *)_enterFrame:(ExecState *)state;
-{
-    _current = [_delegate newFrameWithGlobalObject:_globalObj caller:_current state:state];
-    return _current;
-}
-
-- (WebScriptCallFrame *)_leaveFrame;
-{
-    WebScriptCallFrame *caller = [[_current caller] retain];
-    [_current release];
-    return _current = caller;
 }
 
 @end
