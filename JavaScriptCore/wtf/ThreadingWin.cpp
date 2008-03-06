@@ -285,6 +285,12 @@ void ThreadCondition::wait(Mutex& mutex)
     ::EnterCriticalSection (&cs.m_internalMutex);
 }
 
+bool ThreadCondition::timedWait(Mutex& mutex, double interval)
+{
+    // Empty for now
+    ASSERT(false);
+}
+
 void ThreadCondition::signal()
 {
     unsigned signals = 0;

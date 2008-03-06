@@ -32,6 +32,7 @@
 #include <wtf/HashMap.h>
 
 #include <errno.h>
+#include <time.h>
 
 namespace WTF {
 
@@ -184,7 +185,33 @@ void ThreadCondition::wait(Mutex& mutex)
     if (pthread_cond_wait(&m_condition, &mutex.impl()) != 0)
         ASSERT(false);
 }
+
+bool ThreadCondition::timedWait(Mutex& mutex, double interval)
+{
+    if (interval < 0.0) {
+        wait(mutex);
+        return true;
+    }
     
+    int intervalSeconds = static_cast<int>(interval);
+    int intervalMicroseconds = static_cast<int>((interval - intervalSeconds) * 1000000.0);
+    
+    // Current time comes in sec/microsec
+    timeval currentTime;
+    gettimeofday(&currentTime, NULL);
+    
+    // Target time comes in sec/nanosec
+    timespec targetTime;
+    targetTime.tv_sec = currentTime.tv_sec + intervalSeconds;
+    targetTime.tv_nsec = (currentTime.tv_usec + intervalMicroseconds) * 1000;
+    if (targetTime.tv_nsec > 1000000000) {
+        targetTime.tv_nsec -= 1000000000;
+        targetTime.tv_sec++;
+    }
+
+    return pthread_cond_timedwait(&m_condition, &mutex.impl(), &targetTime) == 0;
+}
+
 void ThreadCondition::signal()
 {
     if (pthread_cond_signal(&m_condition) != 0)

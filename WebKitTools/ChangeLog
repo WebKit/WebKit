@@ -1,3 +1,46 @@
+2008-03-06  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Darin
+
+        Added a cross-platform Watchdog thread to DRT.
+
+        The current watchdog in both DRTWin and DRTMac is Timer based.  Therefore, deadlocks and long running
+        main thread hangs still affect DRT.
+
+        By placing the watchdog on a thread and having DRT "check in" after each test, long-running hangs
+        and true deadlocks can be caught.
+
+        There is one hook for platform specific code.  As I did my development and testing on Mac, and Mac has
+        `sample` available, the Mac implementation of this hook samples the process before it is killed.
+
+        I arbitrarily chose 30 seconds as the timeout for now - this can be tweaked easily if we find a need.
+
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj:
+        * DumpRenderTree/mac/Configurations/Base.xcconfig: Added LINKER_DISPLAYS_MANGLED_NAMES
+
+        * DumpRenderTree/ForwardingHeaders/wtf/Locker.h: Added.
+        * DumpRenderTree/ForwardingHeaders/wtf/Threading.h: Added.
+
+        * DumpRenderTree/Watchdog.cpp: Added.
+        (Watchdog::Watchdog):
+        (Watchdog::~Watchdog):
+        (Watchdog::start):
+        (Watchdog::stop):
+        (Watchdog::checkIn):
+        (Watchdog::setWatchdogInterval):
+        (Watchdog::handleHang):
+        (Watchdog::watchdogThreadStart):
+        (Watchdog::watchdogThread):
+        * DumpRenderTree/Watchdog.h: Added.
+
+        * DumpRenderTree/mac/WatchdogMac.h: Added.
+        * DumpRenderTree/mac/WatchdogMac.mm: Added.
+        (WatchdogMac::handleHang): Sample the process and write it out to a file
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (dumpRenderTree): Setup and start the watchdog before running any tests
+        (runTest): Checkin with the watchdog after each test
+
 2008-03-05  Alp Toker  <alp@atoker.com>
 
         Attempt to get the autotools build working again on the bot with

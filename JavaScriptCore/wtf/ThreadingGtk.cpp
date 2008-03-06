@@ -176,6 +176,29 @@ void ThreadCondition::wait(Mutex& mutex)
     g_cond_wait(m_condition, mutex.impl());
 }
 
+bool ThreadCondition::timedWait(Mutex& mutex, double interval)
+{
+    if (interval < 0.0) {
+        wait(mutex);
+        return true;
+    }
+    
+    int intervalSeconds = static_cast<int>(interval);
+    int intervalMicroseconds = static_cast<int>((interval - intervalSeconds) * 1000000.0);
+    
+    GTimeVal targetTime;
+    g_get_current_time(&targetTime);
+        
+    targetTime.tv_sec += intervalSeconds;
+    targetTime.tv_usec += intervalMicroseconds;
+    if (targetTime.tv_usec > 1000000) {
+        targetTime.tv_usec -= 1000000;
+        targetTime.tv_sec++;
+    }
+
+    return g_cond_timedwait(m_condition, mutex.impl(), &targetTime);
+}
+
 void ThreadCondition::signal()
 {
     g_cond_signal(m_condition);

@@ -158,6 +158,8 @@ public:
     ~ThreadCondition();
     
     void wait(Mutex& mutex);
+    // Returns true if the condition was signaled before the timeout, false if the timeout was reached
+    bool timedWait(Mutex&, double interval);
     void signal();
     void broadcast();
     

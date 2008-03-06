@@ -1,3 +1,25 @@
+2008-03-06  Brady Eidson <beidson@apple.com>
+
+        Reviewed by Darin
+
+        Add a timedWait() method to ThreadCondition
+
+        * JavaScriptCore.exp:
+
+        * wtf/Threading.h:
+
+        * wtf/ThreadingGtk.cpp:
+        (WTF::ThreadCondition::timedWait):
+
+        * wtf/ThreadingNone.cpp:
+        (WTF::ThreadCondition::timedWait):
+
+        * wtf/ThreadingPthreads.cpp:
+        (WTF::ThreadCondition::timedWait):
+
+        * wtf/ThreadingWin.cpp:
+        (WTF::ThreadCondition::timedWait): Needs implementation
+
 2008-03-06  Alexey Proskuryakov  <ap@webkit.org>
 
         More build fixes.

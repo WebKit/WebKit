@@ -44,6 +44,7 @@
 #import "PolicyDelegate.h"
 #import "ResourceLoadDelegate.h"
 #import "UIDelegate.h"
+#import "WatchdogMac.h"
 #import "WorkQueue.h"
 #import "WorkQueueItem.h"
 #import <CoreFoundation/CoreFoundation.h>
@@ -69,6 +70,7 @@
 #import <objc/objc-runtime.h>
 #import <wtf/Assertions.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/OwnPtr.h>
 
 @interface DumpRenderTreeEvent : NSEvent
 @end
@@ -97,6 +99,7 @@ WebFrame *topLoadingFrame = nil;     // !nil iff a load is in progress
 
 CFMutableSetRef disallowedURLs = 0;
 CFRunLoopTimerRef waitToDumpWatchdog = 0;
+OwnPtr<Watchdog> watchdog;
 
 // Delegates
 static FrameLoadDelegate *frameLoadDelegate;
@@ -408,6 +411,9 @@ void dumpRenderTree(int argc, const char *argv[])
     if (threaded)
         startJavaScriptThreads();
 
+    watchdog.set(new WatchdogMac());
+    watchdog->start();
+
     if (useLongRunningServerMode(argc, argv)) {
         printSeparators = YES;
         runTestingServerLoop();
@@ -416,6 +422,8 @@ void dumpRenderTree(int argc, const char *argv[])
         for (int i = optind; i != argc; ++i)
             runTest(argv[i]);
     }
+    watchdog->stop();
+    watchdog.clear();
 
     if (threaded)
         stopJavaScriptThreads();
@@ -909,6 +917,9 @@ static void runTest(const char *pathOrURL)
 
     if (_shouldIgnoreWebCoreNodeLeaks)
         [WebCoreStatistics stopIgnoringWebCoreNodeLeaks];
+        
+    // Check-in with the watchdog after every test is complete
+    watchdog->checkIn();
 }
 
 void displayWebView()
