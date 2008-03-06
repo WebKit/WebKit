@@ -764,10 +764,19 @@ sub buildAutotoolsProject($@)
         return 0;
     }
 
+    print "Calling autogen.sh in " . $dir . "\n\n";
+    print "Installation directory: $prefix\n" if(defined($prefix));
+
+    $result = system "$sourceDir/autogen.sh --help";
+    if ($result ne 0) {
+        die "Failed to setup build environment using 'autotools'!\n";
+    }
+
     print "Calling configure in " . $dir . "\n\n";
     print "Installation directory: $prefix\n" if(defined($prefix));
-     
-    $result = system "$sourceDir/autogen.sh", @buildArgs;
+
+    # The autotools configure script requires bash explicitly at time of writing
+    $result = system "/bin/bash", "$sourceDir/configure", @buildArgs;
     if ($result ne 0) {
         die "Failed to setup build environment using 'autotools'!\n";
     }

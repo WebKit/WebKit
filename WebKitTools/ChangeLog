@@ -1,5 +1,15 @@
 2008-03-05  Alp Toker  <alp@atoker.com>
 
+        Attempt to get the autotools build working again on the bot with
+        build-webkit.
+
+        Force the use of /bin/bash since we seem to have bash-isms in the
+        configure script right now.
+
+        * Scripts/webkitdirs.pm:
+
+2008-03-05  Alp Toker  <alp@atoker.com>
+
         Re-attempt to switch to the autotools build system for GTK+.
 
         Change scripts to continue when distclean fails.
