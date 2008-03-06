@@ -26,7 +26,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "WebCoreScriptDebuggerImp.h"
+#import "WebScriptDebugger.h"
 #import "WebDataSource.h"
 #import "WebDataSourceInternal.h"
 #import "WebFrameBridge.h"

@@ -36,7 +36,7 @@
 #import "DOMRangeInternal.h"
 #import "WebBackForwardList.h"
 #import "WebChromeClient.h"
-#import "WebCoreScriptDebuggerImp.h"
+#import "WebScriptDebugger.h"
 #import "WebDataSourceInternal.h"
 #import "WebDocumentInternal.h"
 #import "WebDocumentLoaderMac.h"

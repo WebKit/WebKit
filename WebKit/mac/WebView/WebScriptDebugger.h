@@ -26,8 +26,8 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebCoreScriptDebuggerImp_h
-#define WebCoreScriptDebuggerImp_h
+#ifndef WebScriptDebugger_h
+#define WebScriptDebugger_h
 
 #include <JavaScriptCore/debugger.h>
 
@@ -61,4 +61,4 @@ private:
     RetainPtr<WebScriptCallFrame> m_topCallFrame;
 };
 
-#endif // WebCoreScriptDebuggerImp_h
+#endif // WebScriptDebugger_h

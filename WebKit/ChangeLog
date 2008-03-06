@@ -16,6 +16,14 @@
 
 2008-03-05  Adam Roben  <aroben@apple.com>
 
+        Rename WebCoreScriptDebuggerImp.{h,mm} to WebScriptDebugger.{h,mm}
+
+        Reviewed by Kevin M.
+
+        * WebKit.xcodeproj/project.pbxproj:
+
+2008-03-05  Adam Roben  <aroben@apple.com>
+
         Remove WebScriptDebugger
 
         Reviewed by Kevin M.

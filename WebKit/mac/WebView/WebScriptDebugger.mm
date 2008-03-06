@@ -26,7 +26,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "WebCoreScriptDebuggerImp.h"
+#include "WebScriptDebugger.h"
 
 #include "WebFrameInternal.h"
 #include "WebViewInternal.h"
