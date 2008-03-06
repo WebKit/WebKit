@@ -1,5 +1,11 @@
 2008-03-06  Darin Adler  <darin@apple.com>
 
+        - try to fix the GTK build
+
+        * GNUmakefile.am: Add a -I for the unicode directory.
+
+2008-03-06  Darin Adler  <darin@apple.com>
+
         - try to fix the Mac build
 
         * icu/unicode/parseerr.h: Copied from ../WebCore/icu/unicode/parseerr.h.
