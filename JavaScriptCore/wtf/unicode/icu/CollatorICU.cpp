@@ -36,7 +36,7 @@
 #include <unicode/ucol.h>
 
 #if PLATFORM(DARWIN)
-#include <Corefoundation/CoreFoundation.h>
+#include <CoreFoundation/CoreFoundation.h>
 #endif
 
 namespace WTF {

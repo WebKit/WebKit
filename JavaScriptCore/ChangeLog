@@ -1,3 +1,12 @@
+2008-03-06  Alexey Proskuryakov  <ap@webkit.org>
+
+        More build fixes.
+
+        * jscore.bkl: Add the wtf/unicode directory.
+        * wtf/unicode/CollatorDefault.cpp:
+        (WTF::Collator::userDefault): Use a constructor that does exist.
+        * wtf/unicode/icu/CollatorICU.cpp: Mac build fix for case-sensitive file systems.
+
 2008-03-06  Darin Adler  <darin@apple.com>
 
         - try to fix the Qt build
