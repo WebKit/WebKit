@@ -287,7 +287,7 @@ WebHistoryDateKey timeIntervalForBeginningOfDay(NSTimeInterval interval)
 - (void)setLastVisitedTimeInterval:(NSTimeInterval)time forItem:(WebHistoryItem *)entry
 {
 #if ASSERT_DISABLED
-    [self _removeItemFromDateCaches:entry];
+    [self removeItemFromDateCaches:entry];
 #else
     BOOL entryWasPresent = [self removeItemFromDateCaches:entry];
     ASSERT(entryWasPresent);
@@ -562,14 +562,18 @@ WebHistoryDateKey timeIntervalForBeginningOfDay(NSTimeInterval interval)
 
 - (BOOL)loadFromURL:(NSURL *)URL collectDiscardedItemsInto:(NSMutableArray *)discardedItems error:(NSError **)error
 {
+#if !LOG_DISABLED
     double start = CFAbsoluteTimeGetCurrent();
+#endif
 
     int numberOfItems;
     if (![self loadHistoryGutsFromURL:URL savedItemsCount:&numberOfItems collectDiscardedItemsInto:discardedItems error:error])
         return NO;
 
+#if !LOG_DISABLED
     double duration = CFAbsoluteTimeGetCurrent() - start;
     LOG(Timing, "loading %d history entries from %@ took %f seconds", numberOfItems, URL, duration);
+#endif
 
     return YES;
 }
@@ -595,14 +599,18 @@ WebHistoryDateKey timeIntervalForBeginningOfDay(NSTimeInterval interval)
 
 - (BOOL)saveToURL:(NSURL *)URL error:(NSError **)error
 {
+#if !LOG_DISABLED
     double start = CFAbsoluteTimeGetCurrent();
+#endif
 
     int numberOfItems;
     if (![self saveHistoryGuts:&numberOfItems URL:URL error:error])
         return NO;
 
+#if !LOG_DISABLED
     double duration = CFAbsoluteTimeGetCurrent() - start;
     LOG(Timing, "saving %d history entries to %@ took %f seconds", numberOfItems, URL, duration);
+#endif
 
     return YES;
 }

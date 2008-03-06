@@ -1,5 +1,14 @@
 2008-03-06  Darin Adler  <darin@apple.com>
 
+        - fix Release build
+
+        * History/WebHistory.mm:
+        (-[WebHistoryPrivate setLastVisitedTimeInterval:forItem:]): Removed underscore.
+        (-[WebHistoryPrivate loadFromURL:collectDiscardedItemsInto:error:]): Added #if.
+        (-[WebHistoryPrivate saveToURL:error:]): Ditto.
+
+2008-03-06  Darin Adler  <darin@apple.com>
+
         Reviewed by Mitz.
 
         - fix http://bugs.webkit.org/show_bug.cgi?id=17526
