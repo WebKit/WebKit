@@ -1,3 +1,11 @@
+2008-03-05  Alp Toker  <alp@atoker.com>
+
+        GTK+ build fix for breakage introduced in r30800.
+
+        Track moved bridge sources from JavaScriptCore to WebCore.
+
+        * GNUmakefile.am:
+
 2008-03-05  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Darin.

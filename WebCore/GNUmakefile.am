@@ -5,7 +5,6 @@ FEATURE_DEFINES_JAVASCRIPT := LANGUAGE_JAVASCRIPT=1
 SVG_FEATURES :=
 
 webcore_cppflags += \
-	-I$(srcdir)/JavaScriptCore/bindings \
 	-I$(srcdir)/WebCore \
 	-I$(srcdir)/WebCore/ForwardingHeaders \
 	-I$(srcdir)/WebCore/platform \
@@ -18,6 +17,7 @@ webcore_cppflags += \
 	-I$(srcdir)/WebCore/dom \
 	-I$(srcdir)/WebCore/page \
 	-I$(srcdir)/WebCore/bridge \
+	-I$(srcdir)/WebCore/bridge/c \
 	-I$(srcdir)/WebCore/editing \
 	-I$(srcdir)/WebCore/history \
 	-I$(srcdir)/WebCore/xml \
@@ -507,6 +507,17 @@ webcore_sources += \
 	WebCore/bindings/js/kjs_proxy.cpp \
 	WebCore/bindings/js/PausedTimeouts.cpp \
 	WebCore/bindings/js/ScheduledAction.cpp \
+	WebCore/bridge/NP_jsobject.cpp \
+	WebCore/bridge/c/c_class.cpp \
+	WebCore/bridge/c/c_instance.cpp \
+	WebCore/bridge/c/c_runtime.cpp \
+	WebCore/bridge/c/c_utility.cpp \
+	WebCore/bridge/npruntime.cpp \
+	WebCore/bridge/runtime.cpp \
+	WebCore/bridge/runtime_array.cpp \
+	WebCore/bridge/runtime_method.cpp \
+	WebCore/bridge/runtime_object.cpp \
+	WebCore/bridge/runtime_root.cpp \
 	WebCore/css/CSSBorderImageValue.cpp \
 	WebCore/css/CSSCharsetRule.cpp \
 	WebCore/css/CSSComputedStyleDeclaration.cpp \

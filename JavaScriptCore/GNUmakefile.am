@@ -4,8 +4,6 @@ nodist_EXTRA_libJavaScriptCore_la_SOURCES = \
 
 javascriptcore_cppflags += \
 	-I$(srcdir)/JavaScriptCore/ForwardingHeaders \
-	-I$(srcdir)/JavaScriptCore/bindings \
-	-I$(srcdir)/JavaScriptCore/bindings/c \
 	-I$(top_builddir)/JavaScriptCore/pcre \
 	-I$(top_builddir)/JavaScriptCore/kjs
 
@@ -40,17 +38,6 @@ javascriptcore_sources += \
 	JavaScriptCore/API/JSObjectRef.cpp \
 	JavaScriptCore/API/JSStringRef.cpp \
 	JavaScriptCore/API/JSValueRef.cpp \
-	JavaScriptCore/bindings/NP_jsobject.cpp \
-	JavaScriptCore/bindings/c/c_class.cpp \
-	JavaScriptCore/bindings/c/c_instance.cpp \
-	JavaScriptCore/bindings/c/c_runtime.cpp \
-	JavaScriptCore/bindings/c/c_utility.cpp \
-	JavaScriptCore/bindings/npruntime.cpp \
-	JavaScriptCore/bindings/runtime.cpp \
-	JavaScriptCore/bindings/runtime_array.cpp \
-	JavaScriptCore/bindings/runtime_method.cpp \
-	JavaScriptCore/bindings/runtime_object.cpp \
-	JavaScriptCore/bindings/runtime_root.cpp \
 	JavaScriptCore/kjs/JSGlobalObject.cpp \
 	JavaScriptCore/kjs/JSVariableObject.cpp \
 	JavaScriptCore/pcre/pcre_compile.cpp \
