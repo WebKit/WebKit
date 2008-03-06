@@ -68,14 +68,6 @@ public:
     const void* nativeHandle() const;
     JSGlobalObject* globalObject() const;
 
-#if PLATFORM(MAC)
-    // Must be called from the thread that will be used to access JavaScript.
-    static void initializeJNIThreading();
-    
-    static CFRunLoopRef runLoop();
-    static void dispatchToJavaScriptThread(JSObjectCallContext *context);
-#endif
-
     void addRuntimeObject(RuntimeObjectImp*);
     void removeRuntimeObject(RuntimeObjectImp*);
 private:

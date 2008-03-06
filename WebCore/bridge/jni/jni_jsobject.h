@@ -94,6 +94,8 @@ public:
     
     RootObject* rootObject() const;
     
+    // Must be called from the thread that will be used to access JavaScript.
+    static void initializeJNIThreading();
 private:
     RefPtr<RootObject> _rootObject;
     JSObject* _imp;

@@ -1,3 +1,25 @@
+2008-03-05  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Darin.
+
+        Move JNI specific code from runtime_root over to jni_jsobject, where it is used.
+
+        * bridge/jni/jni_jsobject.cpp:
+        (completedJavaScriptAccess):
+        (initializeJavaScriptAccessLock):
+        (lockJavaScriptAccess):
+        (unlockJavaScriptAccess):
+        (dispatchToJavaScriptThread):
+        (performJavaScriptAccess):
+        (JavaJSObject::initializeJNIThreading):
+        (isJavaScriptThread):
+        (JavaJSObject::invoke):
+        * bridge/jni/jni_jsobject.h:
+        * bridge/runtime_root.cpp:
+        * bridge/runtime_root.h:
+        * page/mac/WebCoreFrameBridge.mm:
+        (-[WebCoreFrameBridge init]):
+
 2008-03-05  Darin Adler  <darin@apple.com>
 
         Reviewed by Sam.

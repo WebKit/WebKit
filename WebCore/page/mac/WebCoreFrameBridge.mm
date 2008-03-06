@@ -90,6 +90,7 @@
 #import "visible_units.h"
 #import <JavaScriptCore/array_instance.h>
 #import <JavaScriptCore/date_object.h>
+#import "jni_jsobject.h"
 #import "runtime_root.h"
 #import "runtime.h"
 #import <OpenScripting/ASRegistry.h>
@@ -119,7 +120,7 @@ using KJS::StringType;
 using KJS::UndefinedType;
 using KJS::UnspecifiedType;
 
-using KJS::Bindings::RootObject;
+using KJS::Bindings::JavaJSObject;
 
 static pthread_t mainThread = 0;
 
@@ -241,7 +242,7 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
         initializedKJS = true;
 
         mainThread = pthread_self();
-        RootObject::initializeJNIThreading();
+        JavaJSObject::initializeJNIThreading();
         KJS::Bindings::Instance::setDidExecuteFunction(updateRenderingForBindings);
     }
     

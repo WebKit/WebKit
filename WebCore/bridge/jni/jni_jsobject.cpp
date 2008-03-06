@@ -48,19 +48,135 @@ using namespace KJS;
 #define JS_LOG(formatAndArgs...) ((void)0)
 #else
 #define JS_LOG(formatAndArgs...) { \
-    fprintf (stderr, "%s(%p,%p):  ", __PRETTY_FUNCTION__, RootObject::runLoop(), CFRunLoopGetCurrent()); \
+    fprintf (stderr, "%s(%p,%p):  ", __PRETTY_FUNCTION__, _performJavaScriptRunLoop, CFRunLoopGetCurrent()); \
     fprintf(stderr, formatAndArgs); \
 }
 #endif
 
 #define UndefinedHandle 1
 
-static bool isJavaScriptThread()
+static CFRunLoopSourceRef _performJavaScriptSource;
+static CFRunLoopRef _performJavaScriptRunLoop;
+
+// May only be set by dispatchToJavaScriptThread().
+static CFRunLoopSourceRef completionSource;
+
+static void completedJavaScriptAccess (void *i)
 {
-    return (RootObject::runLoop() == CFRunLoopGetCurrent());
+    assert (CFRunLoopGetCurrent() != _performJavaScriptRunLoop);
+    
+    JSObjectCallContext *callContext = (JSObjectCallContext *)i;
+    CFRunLoopRef runLoop = (CFRunLoopRef)callContext->originatingLoop;
+    
+    assert (CFRunLoopGetCurrent() == runLoop);
+    
+    CFRunLoopStop(runLoop);
 }
 
-jvalue JavaJSObject::invoke (JSObjectCallContext *context)
+static pthread_once_t javaScriptAccessLockOnce = PTHREAD_ONCE_INIT;
+static pthread_mutex_t javaScriptAccessLock;
+static int javaScriptAccessLockCount = 0;
+
+static void initializeJavaScriptAccessLock()
+{
+    pthread_mutexattr_t attr;
+    
+    pthread_mutexattr_init(&attr);
+    pthread_mutexattr_settype (&attr, PTHREAD_MUTEX_RECURSIVE);
+    
+    pthread_mutex_init(&javaScriptAccessLock, &attr);
+}
+
+static inline void lockJavaScriptAccess()
+{
+    // Perhaps add deadlock detection?
+    pthread_once(&javaScriptAccessLockOnce, initializeJavaScriptAccessLock);
+    pthread_mutex_lock(&javaScriptAccessLock);
+    javaScriptAccessLockCount++;
+}
+
+static inline void unlockJavaScriptAccess()
+{
+    javaScriptAccessLockCount--;
+    pthread_mutex_unlock(&javaScriptAccessLock);
+}
+
+static void dispatchToJavaScriptThread(JSObjectCallContext *context)
+{
+    // This lock guarantees that only one thread can invoke
+    // at a time, and also guarantees that completionSource;
+    // won't get clobbered.
+    lockJavaScriptAccess();
+    
+    CFRunLoopRef currentRunLoop = CFRunLoopGetCurrent();
+    
+    assert (currentRunLoop != _performJavaScriptRunLoop);
+    
+    // Setup a source to signal once the invocation of the JavaScript
+    // call completes.
+    //
+    // FIXME:  This could be a potential performance issue.  Creating and
+    // adding run loop sources is expensive.  We could create one source 
+    // per thread, as needed, instead.
+    context->originatingLoop = currentRunLoop;
+    CFRunLoopSourceContext sourceContext = {0, context, NULL, NULL, NULL, NULL, NULL, NULL, NULL, completedJavaScriptAccess};
+    completionSource = CFRunLoopSourceCreate(NULL, 0, &sourceContext);
+    CFRunLoopAddSource(currentRunLoop, completionSource, kCFRunLoopDefaultMode);
+    
+    // Wakeup JavaScript access thread and make it do it's work.
+    CFRunLoopSourceSignal(_performJavaScriptSource);
+    if (CFRunLoopIsWaiting(_performJavaScriptRunLoop))
+        CFRunLoopWakeUp(_performJavaScriptRunLoop);
+    
+    // Wait until the JavaScript access thread is done.
+    CFRunLoopRun ();
+    
+    CFRunLoopRemoveSource(currentRunLoop, completionSource, kCFRunLoopDefaultMode);
+    CFRelease (completionSource);
+    
+    unlockJavaScriptAccess();
+}
+
+static void performJavaScriptAccess(void*)
+{
+    assert (CFRunLoopGetCurrent() == _performJavaScriptRunLoop);
+    
+    // Dispatch JavaScript calls here.
+    CFRunLoopSourceContext sourceContext;
+    CFRunLoopSourceGetContext (completionSource, &sourceContext);
+    JSObjectCallContext *callContext = (JSObjectCallContext *)sourceContext.info;    
+    CFRunLoopRef originatingLoop = callContext->originatingLoop;
+    
+    JavaJSObject::invoke (callContext);
+    
+    // Signal the originating thread that we're done.
+    CFRunLoopSourceSignal (completionSource);
+    if (CFRunLoopIsWaiting(originatingLoop))
+        CFRunLoopWakeUp(originatingLoop);
+}
+
+// Must be called from the thread that will be used to access JavaScript.
+void JavaJSObject::initializeJNIThreading() {
+    // Should only be called once.
+    ASSERT(!_performJavaScriptRunLoop);
+    
+    // Assume that we can retain this run loop forever.  It'll most 
+    // likely (always?) be the main loop.
+    _performJavaScriptRunLoop = (CFRunLoopRef)CFRetain(CFRunLoopGetCurrent());
+    
+    // Setup a source the other threads can use to signal the _runLoop
+    // thread that a JavaScript call needs to be invoked.
+    CFRunLoopSourceContext sourceContext = {0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, performJavaScriptAccess};
+    _performJavaScriptSource = CFRunLoopSourceCreate(NULL, 0, &sourceContext);
+    CFRunLoopAddSource(_performJavaScriptRunLoop, _performJavaScriptSource, kCFRunLoopDefaultMode);
+}
+
+static bool isJavaScriptThread()
+{
+    return (_performJavaScriptRunLoop == CFRunLoopGetCurrent());
+}
+
+jvalue JavaJSObject::invoke(JSObjectCallContext *context)
 {
     jvalue result;
 
@@ -69,7 +185,7 @@ jvalue JavaJSObject::invoke (JSObjectCallContext *context)
     if (!isJavaScriptThread()) {        
         // Send the call context to the thread that is allowed to
         // call JavaScript.
-        RootObject::dispatchToJavaScriptThread(context);
+        dispatchToJavaScriptThread(context);
         result = context->result;
     }
     else {
