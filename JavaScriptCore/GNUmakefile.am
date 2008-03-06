@@ -4,9 +4,9 @@ nodist_EXTRA_libJavaScriptCore_la_SOURCES = \
 
 javascriptcore_cppflags += \
 	-I$(srcdir)/JavaScriptCore/ForwardingHeaders \
+	-I$(srcdir)/JavaScriptCore/wtf/unicode \
 	-I$(top_builddir)/JavaScriptCore/pcre \
-	-I$(top_builddir)/JavaScriptCore/kjs \
-	-I$(top_builddir)/JavaScriptCore/wtf/unicode
+	-I$(top_builddir)/JavaScriptCore/kjs
 
 javascriptcore_h_api += \
 	JavaScriptCore/API/JavaScript.h \

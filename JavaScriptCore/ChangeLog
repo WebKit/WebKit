@@ -1,3 +1,9 @@
+2008-03-06  Alp Toker  <alp@atoker.com>
+
+        Fix the build fix in r30845 to support out-of-tree builds.
+
+        * GNUmakefile.am:
+
 2008-03-06  Steve Falkenburg  <sfalken@apple.com>
 
         Build fix.
