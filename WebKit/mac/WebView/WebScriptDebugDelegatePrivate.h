@@ -41,8 +41,5 @@ class WebCoreScriptDebuggerImp;
 }
 
 - (WebScriptDebugger *)initWithWebFrame:(WebFrame *)webFrame;
-- (WebFrame *)webFrame;
-
-- (WebScriptObject *)globalObject;                          // return the WebView's windowScriptObject
 
 @end

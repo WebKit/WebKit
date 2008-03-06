@@ -229,6 +229,15 @@
 
 2008-03-05  Adam Roben  <aroben@apple.com>
 
+        Export a header/symbol for WebKit
+
+        Reviewed by Kevin M.
+
+        * WebCore.base.exp:
+        * WebCore.xcodeproj/project.pbxproj:
+
+2008-03-05  Adam Roben  <aroben@apple.com>
+
         Move WebCoreScriptDebugger up to WebKit
 
         Reviewed by Darin.

@@ -1,5 +1,30 @@
 2008-03-05  Adam Roben  <aroben@apple.com>
 
+        Remove -webFrame and -globalObject from WebScriptDebugger
+
+        WebCoreScriptDebuggerImp is now unaware of WebScriptDebugger
+
+        Reviewed by Kevin M.
+
+        * WebView/WebCoreScriptDebuggerImp.h: Removed WebScriptDebugger*
+        parameter to the constructor.
+        * WebView/WebCoreScriptDebuggerImp.mm:
+        (toWebFrame): Added.
+        (WebCoreScriptDebuggerImp::sourceParsed): Call toWebFrame.
+        (WebCoreScriptDebuggerImp::callEvent): Ditto, and get the Frame's
+        WindowScriptObject ourselves instead of asking WebScriptDebugger for
+        it.
+        (WebCoreScriptDebuggerImp::atStatement): Call toWebFrame.
+        (WebCoreScriptDebuggerImp::returnEvent): Ditto.
+        (WebCoreScriptDebuggerImp::exception): Ditto.
+        * WebView/WebScriptDebugDelegate.mm:
+        (-[WebScriptDebugger initWithWebFrame:]): Updated for change to
+        WebScriptDebuggerImp's constructor.
+        * WebView/WebScriptDebugDelegatePrivate.h: Removed
+        -webFrame/-globalObject.
+
+2008-03-05  Adam Roben  <aroben@apple.com>
+
         Remove -enterFrame: and -leaveFrame from WebScriptDebugger
 
         Reviewed by Kevin M.

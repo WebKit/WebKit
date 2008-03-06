@@ -41,6 +41,7 @@
 #import <JavaScriptCore/interpreter.h>
 #import <WebCore/Frame.h>
 #import <WebCore/WebScriptObjectPrivate.h>
+#import <WebCore/kjs_proxy.h>
 #import <WebCore/runtime_root.h>
 
 using namespace KJS;
@@ -63,7 +64,7 @@ NSString * const WebScriptErrorLineNumberKey = @"WebScriptErrorLineNumber";
 {
     if ((self = [super init])) {
         _webFrame = webFrame;
-        _debugger = new WebCoreScriptDebuggerImp(self, [[self globalObject] _rootObject]->globalObject());
+        _debugger = new WebCoreScriptDebuggerImp(core(webFrame)->scriptProxy()->globalObject());
     }
     return self;
 }
@@ -72,16 +73,6 @@ NSString * const WebScriptErrorLineNumberKey = @"WebScriptErrorLineNumber";
 {
     delete _debugger;
     [super dealloc];
-}
-
-- (WebFrame *)webFrame
-{
-    return _webFrame;
-}
-
-- (WebScriptObject *)globalObject
-{
-    return core(_webFrame)->windowScriptObject();
 }
 
 @end

@@ -41,7 +41,7 @@
 		06E81EEC0AB5DA9700C87837 /* LocalCurrentGraphicsContext.mm in Sources */ = {isa = PBXBuildFile; fileRef = 06E81EEB0AB5DA9700C87837 /* LocalCurrentGraphicsContext.mm */; };
 		0A4844990CA44CB200B7BD48 /* SoftLinking.h in Headers */ = {isa = PBXBuildFile; fileRef = 0A4844980CA44CB200B7BD48 /* SoftLinking.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1402645E0AFDC19B005919E2 /* LoggingMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1402645D0AFDC19B005919E2 /* LoggingMac.mm */; };
-		1403B99709EB13AF00797C7F /* DOMWindow.h in Headers */ = {isa = PBXBuildFile; fileRef = 1403B99509EB13AF00797C7F /* DOMWindow.h */; };
+		1403B99709EB13AF00797C7F /* DOMWindow.h in Headers */ = {isa = PBXBuildFile; fileRef = 1403B99509EB13AF00797C7F /* DOMWindow.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1403B99809EB13AF00797C7F /* DOMWindow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1403B99609EB13AF00797C7F /* DOMWindow.cpp */; };
 		1403BA0C09EB18C700797C7F /* JSDOMWindow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1403BA0B09EB18C700797C7F /* JSDOMWindow.cpp */; };
 		1403BA0F09EB18F900797C7F /* JSDOMWindow.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 1403BA0E09EB18F800797C7F /* JSDOMWindow.h */; settings = {ATTRIBUTES = (Private, ); }; };
