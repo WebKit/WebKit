@@ -1343,7 +1343,7 @@
 				939810BB0824BF01008DF038 /* Sources */,
 				939D054F09DA02D500984996 /* Check For Global Initializers */,
 				939811270824BF01008DF038 /* Frameworks */,
-				1C395DE20C6BE8E0000D1E52 /* ShellScript */,
+				1C395DE20C6BE8E0000D1E52 /* Generate 64-bit Export File */,
 			);
 			buildRules = (
 				1C8715500B0BA41000E3CB7B /* PBXBuildRule */,
@@ -1404,7 +1404,7 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		1C395DE20C6BE8E0000D1E52 /* ShellScript */ = {
+		1C395DE20C6BE8E0000D1E52 /* Generate 64-bit Export File */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -1412,6 +1412,7 @@
 			inputPaths = (
 				"$(PROJECT_DIR)/mac/WebKit.exp",
 			);
+			name = "Generate 64-bit Export File";
 			outputPaths = (
 				"$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebKit.LP64.exp",
 			);

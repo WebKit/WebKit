@@ -1,3 +1,11 @@
+2008-03-06  David D. Kilzer  <ddkilzer@apple.com>
+
+        Name the WebKit build phase script that generates WebKit.LP64.exp.
+
+        * WebKit.xcodeproj/project.pbxproj: Name the build phase script
+        that generates the 64-bit export file to match the corresponding
+        build phase script in WebCore.
+
 2008-03-05  Adam Roben  <aroben@apple.com>
 
         Move WebCoreScriptDebugger to WebKit
