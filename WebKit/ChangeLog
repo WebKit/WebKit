@@ -8,6 +8,14 @@
 
 2008-03-05  Adam Roben  <aroben@apple.com>
 
+        Move WebCoreScriptDebuggerImp to its own source files
+
+        Reviewed by Kevin M.
+
+        * WebKit.xcodeproj/project.pbxproj: Added new files to the project.
+
+2008-03-05  Adam Roben  <aroben@apple.com>
+
         Move WebCoreScriptDebugger to WebKit
 
         Reviewed by Darin.

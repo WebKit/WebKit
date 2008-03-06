@@ -32,6 +32,7 @@
 
 #import "WebCoreScriptDebugger.h"
 
+#import "WebCoreScriptDebuggerImp.h"
 #import "WebScriptDebugDelegate.h"
 #import <JavaScriptCore/ExecState.h>
 #import <JavaScriptCore/JSGlobalObject.h>
@@ -56,77 +57,13 @@ NSString *toNSString(const UString& s)
 }
 
 // convert UString to NSURL
-static NSURL *toNSURL(const UString& s)
+NSURL *toNSURL(const UString& s)
 {
     if (s.isEmpty())
         return nil;
     return KURL(s);
 }
 
-// C++ interface to KJS debugger callbacks
-
-class WebCoreScriptDebuggerImp : public KJS::Debugger {
-
-  private:
-    WebCoreScriptDebugger  *_objc;      // our ObjC half
-    bool                    _nested;    // true => this is a nested call
-    WebScriptCallFrame *_current;   // top stack frame (copy of same field from ObjC side)
-
-  public:
-    // constructor
-    WebCoreScriptDebuggerImp(WebCoreScriptDebugger *objc, JSGlobalObject* globalObject) : _objc(objc) {
-        _nested = true;
-        _current = [[_objc delegate] enterFrame:globalObject->globalExec()];
-        attach(globalObject);
-        [[_objc delegate] enteredFrame:_current sourceId:-1 line:-1];
-        _nested = false;
-    }
-
-    // callbacks - relay to delegate
-    virtual bool sourceParsed(ExecState *state, int sid, const UString &url, const UString &source, int lineNumber, int errorLine, const UString &errorMsg) {
-        if (!_nested) {
-            _nested = true;
-            [[_objc delegate] parsedSource:toNSString(source) fromURL:toNSURL(url) sourceId:sid startLine:lineNumber errorLine:errorLine errorMessage:toNSString(errorMsg)];
-            _nested = false;
-        }
-        return true;
-    }
-    virtual bool callEvent(ExecState *state, int sid, int lineno, JSObject *func, const List &args) {
-        if (!_nested) {
-            _nested = true;
-            _current = [[_objc delegate] enterFrame:state];
-            [[_objc delegate] enteredFrame:_current sourceId:sid line:lineno];
-            _nested = false;
-        }
-        return true;
-    }
-    virtual bool atStatement(ExecState *state, int sid, int lineno, int lastLine) {
-        if (!_nested) {
-            _nested = true;
-            [[_objc delegate] hitStatement:_current sourceId:sid line:lineno];
-            _nested = false;
-        }
-        return true;
-    }
-    virtual bool returnEvent(ExecState *state, int sid, int lineno, JSObject *func) {
-        if (!_nested) {
-            _nested = true;
-            [[_objc delegate] leavingFrame:_current sourceId:sid line:lineno];
-            _current = [[_objc delegate] leaveFrame];
-            _nested = false;
-        }
-        return true;
-    }
-    virtual bool exception(ExecState *state, int sid, int lineno, JSValue *exception) {
-        if (!_nested) {
-            _nested = true;
-            [[_objc delegate] exceptionRaised:_current sourceId:sid line:lineno];
-            _nested = false;
-        }
-        return true;
-    }
-
-};
 
 // WebCoreScriptDebugger
 //

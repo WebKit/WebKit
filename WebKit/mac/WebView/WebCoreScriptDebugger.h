@@ -41,6 +41,7 @@ namespace KJS {
 }
 
 NSString *toNSString(const KJS::UString&);
+NSURL *toNSURL(const KJS::UString&);
 
 // "WebScriptDebugger" protocol - must be implemented by a delegate
 
