@@ -27,16 +27,31 @@
  */
 
 #import <WebKit/WebScriptDebugDelegate.h>
-#import <WebKit/WebCoreScriptDebugger.h>
 
-@interface WebScriptDebugger : NSObject <WebScriptDebugger>
-{
+namespace KJS {
+    class ExecState;
+}
+
+class WebCoreScriptDebuggerImp;
+
+@interface WebScriptDebugger : NSObject {
 @private
-    WebFrame               *_webFrame;
-    WebCoreScriptDebugger  *_debugger;
-    WebScriptCallFrame     *_current;       // top of stack
+    WebFrame                  *_webFrame;
+    WebCoreScriptDebuggerImp  *_debugger;
+    WebScriptCallFrame        *_current;       // top of stack
 }
 
 - (WebScriptDebugger *)initWithWebFrame:(WebFrame *)webFrame;
+
+- (WebScriptObject *)globalObject;                          // return the WebView's windowScriptObject
+- (WebScriptCallFrame *)enterFrame:(KJS::ExecState*)state;
+- (WebScriptCallFrame *)leaveFrame;
+
+// debugger callbacks
+- (void)parsedSource:(NSString *)source fromURL:(NSURL *)url sourceId:(int)sid startLine:(int)startLine errorLine:(int)errorLine errorMessage:(NSString *)errorMessage;
+- (void)enteredFrame:(WebScriptCallFrame *)frame sourceId:(int)sid line:(int)lineno;
+- (void)hitStatement:(WebScriptCallFrame *)frame sourceId:(int)sid line:(int)lineno;
+- (void)leavingFrame:(WebScriptCallFrame *)frame sourceId:(int)sid line:(int)lineno;
+- (void)exceptionRaised:(WebScriptCallFrame *)frame sourceId:(int)sid line:(int)lineno;
 
 @end

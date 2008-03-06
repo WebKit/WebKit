@@ -42,12 +42,14 @@ namespace KJS {
     class UString;
 }
 
-@class WebCoreScriptDebugger;
 @class WebScriptCallFrame;
+@class WebScriptDebugger;
+
+NSString *toNSString(const KJS::UString&);
 
 class WebCoreScriptDebuggerImp : public KJS::Debugger {
 public:
-    WebCoreScriptDebuggerImp(WebCoreScriptDebugger*, KJS::JSGlobalObject*);
+    WebCoreScriptDebuggerImp(WebScriptDebugger*, KJS::JSGlobalObject*);
 
     virtual bool sourceParsed(KJS::ExecState*, int sourceID, const KJS::UString& sourceURL, const KJS::UString& source, int lineNumber, int errorLine, const KJS::UString& errorMsg);
     virtual bool callEvent(KJS::ExecState*, int sourceID, int lineNumber, KJS::JSObject* function, const KJS::List& args);
@@ -56,7 +58,7 @@ public:
     virtual bool exception(KJS::ExecState*, int sourceID, int lineNumber, KJS::JSValue* exception);
 
 private:
-    WebCoreScriptDebugger *m_debugger;
+    WebScriptDebugger *m_debugger;
     bool m_callingDelegate;
     WebScriptCallFrame *m_topCallFrame;
 };

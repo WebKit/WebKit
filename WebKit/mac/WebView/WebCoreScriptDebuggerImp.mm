@@ -30,18 +30,36 @@
 
 #include "WebCoreScriptDebuggerImp.h"
 
-#include "WebCoreScriptDebugger.h"
+#include "WebScriptDebugDelegatePrivate.h"
 #include <JavaScriptCore/JSGlobalObject.h>
+#include <WebCore/KURL.h>
 
 using namespace KJS;
+using namespace WebCore;
 
-WebCoreScriptDebuggerImp::WebCoreScriptDebuggerImp(WebCoreScriptDebugger *debugger, JSGlobalObject* globalObject)
+// convert UString to NSString
+NSString *toNSString(const UString& s)
+{
+    if (s.isEmpty())
+        return nil;
+    return [NSString stringWithCharacters:reinterpret_cast<const unichar*>(s.data()) length:s.size()];
+}
+
+// convert UString to NSURL
+static NSURL *toNSURL(const UString& s)
+{
+    if (s.isEmpty())
+        return nil;
+    return KURL(s);
+}
+
+WebCoreScriptDebuggerImp::WebCoreScriptDebuggerImp(WebScriptDebugger *debugger, JSGlobalObject* globalObject)
     : m_debugger(debugger)
 {
     m_callingDelegate = true;
-    m_topCallFrame = [[m_debugger delegate] enterFrame:globalObject->globalExec()];
+    m_topCallFrame = [m_debugger enterFrame:globalObject->globalExec()];
     attach(globalObject);
-    [[m_debugger delegate] enteredFrame:m_topCallFrame sourceId:-1 line:-1];
+    [m_debugger enteredFrame:m_topCallFrame sourceId:-1 line:-1];
     m_callingDelegate = false;
 }
 
@@ -52,7 +70,7 @@ bool WebCoreScriptDebuggerImp::sourceParsed(ExecState* state, int sourceID, cons
         return true;
 
     m_callingDelegate = true;
-    [[m_debugger delegate] parsedSource:toNSString(source) fromURL:toNSURL(url) sourceId:sourceID startLine:lineNumber errorLine:errorLine errorMessage:toNSString(errorMsg)];
+    [m_debugger parsedSource:toNSString(source) fromURL:toNSURL(url) sourceId:sourceID startLine:lineNumber errorLine:errorLine errorMessage:toNSString(errorMsg)];
     m_callingDelegate = false;
 
     return true;
@@ -64,8 +82,8 @@ bool WebCoreScriptDebuggerImp::callEvent(ExecState* state, int sourceID, int lin
         return true;
 
     m_callingDelegate = true;
-    m_topCallFrame = [[m_debugger delegate] enterFrame:state];
-    [[m_debugger delegate] enteredFrame:m_topCallFrame sourceId:sourceID line:lineNumber];
+    m_topCallFrame = [m_debugger enterFrame:state];
+    [m_debugger enteredFrame:m_topCallFrame sourceId:sourceID line:lineNumber];
     m_callingDelegate = false;
 
     return true;
@@ -77,7 +95,7 @@ bool WebCoreScriptDebuggerImp::atStatement(ExecState* state, int sourceID, int l
         return true;
 
     m_callingDelegate = true;
-    [[m_debugger delegate] hitStatement:m_topCallFrame sourceId:sourceID line:lineNumber];
+    [m_debugger hitStatement:m_topCallFrame sourceId:sourceID line:lineNumber];
     m_callingDelegate = false;
 
     return true;
@@ -89,8 +107,8 @@ bool WebCoreScriptDebuggerImp::returnEvent(ExecState* state, int sourceID, int l
         return true;
 
     m_callingDelegate = true;
-    [[m_debugger delegate] leavingFrame:m_topCallFrame sourceId:sourceID line:lineNumber];
-    m_topCallFrame = [[m_debugger delegate] leaveFrame];
+    [m_debugger leavingFrame:m_topCallFrame sourceId:sourceID line:lineNumber];
+    m_topCallFrame = [m_debugger leaveFrame];
     m_callingDelegate = false;
 
     return true;
@@ -102,7 +120,7 @@ bool WebCoreScriptDebuggerImp::exception(ExecState* state, int sourceID, int lin
         return true;
 
     m_callingDelegate = true;
-    [[m_debugger delegate] exceptionRaised:m_topCallFrame sourceId:sourceID line:lineNumber];
+    [m_debugger exceptionRaised:m_topCallFrame sourceId:sourceID line:lineNumber];
     m_callingDelegate = false;
 
     return true;

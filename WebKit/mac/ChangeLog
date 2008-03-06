@@ -1,5 +1,31 @@
 2008-03-05  Adam Roben  <aroben@apple.com>
 
+        Remove WebCoreScriptDebugger
+
+        Reviewed by Kevin M.
+
+        * WebView/WebCoreScriptDebugger.h: Removed.
+        * WebView/WebCoreScriptDebugger.mm: Removed.
+        * WebView/WebCoreScriptDebuggerImp.h: Replaced WebCoreScriptDebugger
+        with WebScriptDebugger.
+        * WebView/WebCoreScriptDebuggerImp.mm: Ditto, and replaced [m_debugger
+        delegate] with just m_debugger.
+        (toNSString): Moved here from WebCoreScriptDebugger.mm.
+        (toNSURL): Ditto.
+        (WebCoreScriptDebuggerImp::WebCoreScriptDebuggerImp):
+        (WebCoreScriptDebuggerImp::sourceParsed):
+        (WebCoreScriptDebuggerImp::callEvent):
+        (WebCoreScriptDebuggerImp::atStatement):
+        (WebCoreScriptDebuggerImp::returnEvent):
+        (WebCoreScriptDebuggerImp::exception):
+        * WebView/WebScriptDebugDelegate.mm:
+        (-[WebScriptDebugger initWithWebFrame:]): _debugger now holds a
+        WebCoreScriptDebuggerImp, so initialize it properly.
+        * WebView/WebScriptDebugDelegatePrivate.h: Changed _debugger to hold a
+        WebCoreScriptDebuggerImp.
+
+2008-03-05  Adam Roben  <aroben@apple.com>
+
         Move WebCoreScriptDebuggerImp to its own source files
 
         Also changed WebCoreScriptDebuggerImp coding style to match our style

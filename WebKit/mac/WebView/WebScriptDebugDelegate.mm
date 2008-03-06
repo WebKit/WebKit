@@ -28,7 +28,7 @@
 
 #import "WebScriptDebugDelegatePrivate.h"
 
-#import "WebCoreScriptDebugger.h"
+#import "WebCoreScriptDebuggerImp.h"
 #import "WebDataSource.h"
 #import "WebDataSourceInternal.h"
 #import "WebFrameBridge.h"
@@ -41,6 +41,7 @@
 #import <JavaScriptCore/interpreter.h>
 #import <WebCore/Frame.h>
 #import <WebCore/WebScriptObjectPrivate.h>
+#import <WebCore/runtime_root.h>
 
 using namespace KJS;
 using namespace WebCore;
@@ -63,14 +64,14 @@ NSString * const WebScriptErrorLineNumberKey = @"WebScriptErrorLineNumber";
 {
     if ((self = [super init])) {
         _webFrame = webFrame;
-        _debugger = [[WebCoreScriptDebugger alloc] initWithDelegate:self];
+        _debugger = new WebCoreScriptDebuggerImp(self, [[self globalObject] _rootObject]->globalObject());
     }
     return self;
 }
 
 - (void)dealloc
 {
-    [_debugger release];
+    delete _debugger;
     [_current release];
     [super dealloc];
 }
