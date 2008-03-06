@@ -51,8 +51,7 @@
 #import "WebHTMLRepresentationPrivate.h"
 #import "WebHTMLViewInternal.h"
 #import "WebHistoryItemInternal.h"
-#import "WebHistoryItemPrivate.h"
-#import "WebHistoryPrivate.h"
+#import "WebHistoryInternal.h"
 #import "WebIconDatabaseInternal.h"
 #import "WebKitErrorsPrivate.h"
 #import "WebKitLogging.h"
@@ -723,10 +722,8 @@ void WebFrameLoaderClient::finalSetupForReplace(DocumentLoader* loader)
 void WebFrameLoaderClient::updateGlobalHistory(const KURL& url)
 {
     NSURL *cocoaURL = url;
-    WebHistoryItem *entry = [[WebHistory optionalSharedHistory] addItemForURL:cocoaURL];
     const String& pageTitle = core(m_webFrame.get())->loader()->documentLoader()->title();
-    if (!pageTitle.isEmpty())
-        [entry setTitle:pageTitle];
+    [[WebHistory optionalSharedHistory] _addItemForURL:cocoaURL title:pageTitle];
 }
  
 bool WebFrameLoaderClient::shouldGoToHistoryItem(HistoryItem* item) const

@@ -49,7 +49,6 @@
 #include "FileSystem.h"
 #include "FrameView.h"
 #include "GraphicsContext.h"
-#include "GlobalHistory.h"
 #include "IconLoader.h"
 #include "IntPoint.h"
 #include "KURL.h"

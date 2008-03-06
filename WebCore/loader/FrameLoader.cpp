@@ -66,6 +66,7 @@
 #include "MainResourceLoader.h"
 #include "Page.h"
 #include "PageCache.h"
+#include "PageGroup.h"
 #include "PluginInfoStore.h"
 #include "ProgressTracker.h"
 #include "RenderPart.h"
@@ -3848,21 +3849,25 @@ PassRefPtr<HistoryItem> FrameLoader::createHistoryItem(bool useOriginal)
 
 void FrameLoader::addBackForwardItemClippedAtTarget(bool doClip)
 {
-    if (Page* page = m_frame->page())
-        if (!documentLoader()->urlForHistory().isEmpty()) {
-            Frame* mainFrame = page->mainFrame();
-            ASSERT(mainFrame);
-            FrameLoader* frameLoader = mainFrame->loader();
+    Page* page = m_frame->page();
+    if (!page)
+        return;
 
-            if (!frameLoader->m_didPerformFirstNavigation && page->backForwardList()->entries().size() == 1) {
-                frameLoader->m_didPerformFirstNavigation = true;
-                m_client->didPerformFirstNavigation();
-            }
+    if (documentLoader()->urlForHistory().isEmpty())
+        return;
 
-            RefPtr<HistoryItem> item = frameLoader->createHistoryItemTree(m_frame, doClip);
-            LOG(BackForward, "WebCoreBackForward - Adding backforward item %p for frame %s", item.get(), documentLoader()->url().string().ascii().data());
-            page->backForwardList()->addItem(item);
-        }
+    Frame* mainFrame = page->mainFrame();
+    ASSERT(mainFrame);
+    FrameLoader* frameLoader = mainFrame->loader();
+
+    if (!frameLoader->m_didPerformFirstNavigation && page->backForwardList()->entries().size() == 1) {
+        frameLoader->m_didPerformFirstNavigation = true;
+        m_client->didPerformFirstNavigation();
+    }
+
+    RefPtr<HistoryItem> item = frameLoader->createHistoryItemTree(m_frame, doClip);
+    LOG(BackForward, "WebCoreBackForward - Adding backforward item %p for frame %s", item.get(), documentLoader()->url().string().ascii().data());
+    page->backForwardList()->addItem(item);
 }
 
 PassRefPtr<HistoryItem> FrameLoader::createHistoryItemTree(Frame* targetFrame, bool clipAtTarget)
@@ -4110,13 +4115,12 @@ void FrameLoader::loadItem(HistoryItem* item, FrameLoadType loadType)
 // Walk the frame tree and ensure that the URLs match the URLs in the item.
 bool FrameLoader::urlsMatchItem(HistoryItem* item) const
 {
-    KURL currentURL = documentLoader()->url();
-    
+    const KURL& currentURL = documentLoader()->url();
     if (!equalIgnoringRef(currentURL, item->url()))
         return false;
-    
+
     const HistoryItemVector& childItems = item->children();
-    
+
     unsigned size = childItems.size();
     for (unsigned i = 0; i < size; ++i) {
         Frame* childFrame = m_frame->tree()->child(childItems[i]->target());
@@ -4137,17 +4141,19 @@ void FrameLoader::goToItem(HistoryItem* targetItem, FrameLoadType type)
     // <rdar://problem/3951283> can view pages from the back/forward cache that should be disallowed by Parental Controls
     // Ultimately, history item navigations should go through the policy delegate. That's covered in:
     // <rdar://problem/3979539> back/forward cache navigations should consult policy delegate
-    if (Page* page = m_frame->page())
-        if (m_client->shouldGoToHistoryItem(targetItem)) {
-            BackForwardList* bfList = page->backForwardList();
-            HistoryItem* currentItem = bfList->currentItem();
-            
-            // Set the BF cursor before commit, which lets the user quickly click back/forward again.
-            // - plus, it only makes sense for the top level of the operation through the frametree,
-            // as opposed to happening for some/one of the page commits that might happen soon
-            bfList->goToItem(targetItem);
-            recursiveGoToItem(targetItem, currentItem, type);
-        }
+    Page* page = m_frame->page();
+    if (!page)
+        return;
+    if (!m_client->shouldGoToHistoryItem(targetItem))
+        return;
+
+    // Set the BF cursor before commit, which lets the user quickly click back/forward again.
+    // - plus, it only makes sense for the top level of the operation through the frametree,
+    // as opposed to happening for some/one of the page commits that might happen soon
+    BackForwardList* bfList = page->backForwardList();
+    HistoryItem* currentItem = bfList->currentItem();    
+    bfList->goToItem(targetItem);
+    recursiveGoToItem(targetItem, currentItem, type);
 }
 
 // The general idea here is to traverse the frame tree and the item tree in parallel,
@@ -4225,25 +4231,23 @@ bool FrameLoader::childFramesMatchItem(HistoryItem* item) const
     return true;
 }
 
-void FrameLoader::updateGlobalHistory()
-{
-    Settings* settings = m_frame->settings();
-    if (!settings)
-        return;
-    if (settings->privateBrowsingEnabled())
-        return;
-    const KURL& url = documentLoader()->urlForHistory();
-    if (url.isEmpty())
-        return;
-    m_client->updateGlobalHistory(url);
-}
+// There are 3 things you might think of as "history", all of which are handled by these functions.
+//
+//     1) Back/forward: The m_currentHistoryItem is part of this mechanism.
+//     2) Global history: Handled by the client.
+//     3) Visited links: Handled by the PageGroup.
 
 void FrameLoader::updateHistoryForStandardLoad()
 {
     LOG(History, "WebCoreHistory: Updating History for Standard Load in frame %s", documentLoader()->url().string().ascii().data());
-    
+
+    Settings* settings = m_frame->settings();
+    bool needPrivacy = !settings || settings->privateBrowsingEnabled();
+    const KURL& historyURL = documentLoader()->urlForHistory();
+
     // If the navigation occured during load and this is a subframe, update the current
-    // history item rather than adding a new one. <rdar://problem/5333496>
+    // back/forward item rather than adding a new one and don't add the new URL to global
+    // history at all. But do add it to visited links. <rdar://problem/5333496>
     bool frameNavigationDuringLoad = false;
     if (m_navigationDuringLoad) {
         HTMLFrameOwnerElement* owner = m_frame->ownerElement();
@@ -4252,14 +4256,20 @@ void FrameLoader::updateHistoryForStandardLoad()
     }
 
     if (!frameNavigationDuringLoad && !documentLoader()->isClientRedirect()) {
-        if (!documentLoader()->urlForHistory().isEmpty())
+        if (!historyURL.isEmpty()) {
             addBackForwardItemClippedAtTarget(true);
+            if (!needPrivacy)
+                m_client->updateGlobalHistory(historyURL);
+        }
     } else if (documentLoader()->unreachableURL().isEmpty() && m_currentHistoryItem) {
         m_currentHistoryItem->setURL(documentLoader()->url());
         m_currentHistoryItem->setFormInfoFromRequest(documentLoader()->request());
     }
 
-    updateGlobalHistory();
+    if (!historyURL.isEmpty() && !needPrivacy) {
+        if (Page* page = m_frame->page())
+            page->group().addVisitedLink(historyURL);
+    }
 }
 
 void FrameLoader::updateHistoryForClientRedirect()
@@ -4276,7 +4286,14 @@ void FrameLoader::updateHistoryForClientRedirect()
         m_currentHistoryItem->clearScrollPoint();
     }
 
-    // FIXME: Should we call updateGlobalHistory here?
+    Settings* settings = m_frame->settings();
+    bool needPrivacy = !settings || settings->privateBrowsingEnabled();
+    const KURL& historyURL = documentLoader()->urlForHistory();
+
+    if (!historyURL.isEmpty() && !needPrivacy) {
+        if (Page* page = m_frame->page())
+            page->group().addVisitedLink(historyURL);
+    }
 }
 
 void FrameLoader::updateHistoryForBackForwardNavigation()
@@ -4288,8 +4305,6 @@ void FrameLoader::updateHistoryForBackForwardNavigation()
 
     // Must grab the current scroll position before disturbing it
     saveScrollPositionAndViewStateToItem(m_previousHistoryItem.get());
-
-    // FIXME: Should we call updateGlobalHistory here?
 }
 
 void FrameLoader::updateHistoryForReload()
@@ -4309,8 +4324,6 @@ void FrameLoader::updateHistoryForReload()
         if (documentLoader()->unreachableURL().isEmpty())
             m_currentHistoryItem->setURL(documentLoader()->requestURL());
     }
-    
-    updateGlobalHistory();
 }
 
 void FrameLoader::updateHistoryForRedirectWithLockedHistory()
@@ -4320,9 +4333,16 @@ void FrameLoader::updateHistoryForRedirectWithLockedHistory()
         LOG(History, "WebCoreHistory: Updating History for internal load in frame %s", documentLoader()->title().utf8().data());
 #endif
     
+    Settings* settings = m_frame->settings();
+    bool needPrivacy = !settings || settings->privateBrowsingEnabled();
+    const KURL& historyURL = documentLoader()->urlForHistory();
+
     if (documentLoader()->isClientRedirect()) {
-        if (!m_currentHistoryItem && !m_frame->tree()->parent())
+        if (!m_currentHistoryItem && !m_frame->tree()->parent()) {
             addBackForwardItemClippedAtTarget(true);
+            if (!needPrivacy && !historyURL.isEmpty())
+                m_client->updateGlobalHistory(historyURL);
+        }
         if (m_currentHistoryItem) {
             m_currentHistoryItem->setURL(documentLoader()->url());
             m_currentHistoryItem->setFormInfoFromRequest(documentLoader()->request());
@@ -4333,7 +4353,10 @@ void FrameLoader::updateHistoryForRedirectWithLockedHistory()
             parentFrame->loader()->m_currentHistoryItem->addChildItem(createHistoryItem(true));
     }
 
-    updateGlobalHistory();
+    if (!historyURL.isEmpty() && !needPrivacy) {
+        if (Page* page = m_frame->page())
+            page->group().addVisitedLink(historyURL);
+    }
 }
 
 void FrameLoader::updateHistoryForCommit()

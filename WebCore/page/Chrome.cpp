@@ -33,6 +33,7 @@
 #include "InspectorController.h"
 #include "JSDOMWindow.h"
 #include "Page.h"
+#include "PageGroup.h"
 #include "PausedTimeouts.h"
 #include "ResourceHandle.h"
 #include "SecurityOrigin.h"
@@ -349,17 +350,18 @@ void ChromeClient::dashboardRegionsChanged()
 {
 }
 
+void ChromeClient::populateVisitedLinks()
+{
+}
+
 // --------
 
 PageGroupLoadDeferrer::PageGroupLoadDeferrer(Page* page, bool deferSelf)
 {
-    const HashSet<Page*>* group = page->frameNamespace();
+    const HashSet<Page*>& pages = page->group().pages();
 
-    if (!group)
-        return;
-
-    HashSet<Page*>::const_iterator end = group->end();
-    for (HashSet<Page*>::const_iterator it = group->begin(); it != end; ++it) {
+    HashSet<Page*>::const_iterator end = pages.end();
+    for (HashSet<Page*>::const_iterator it = pages.begin(); it != end; ++it) {
         Page* otherPage = *it;
         if ((deferSelf || otherPage != page)) {
             if (!otherPage->defersLoading())

@@ -49,13 +49,14 @@
 #include "FontValue.h"
 #include "Frame.h"
 #include "FrameView.h"
-#include "GlobalHistory.h"
 #include "HTMLDocument.h"
 #include "HTMLElement.h"
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
 #include "MediaList.h"
 #include "MediaQueryEvaluator.h"
+#include "Page.h"
+#include "PageGroup.h"
 #include "Pair.h"
 #include "Rect.h"
 #include "RenderTheme.h"
@@ -228,7 +229,6 @@ CSSStyleSheet* CSSStyleSelector::m_viewSourceSheet = 0;
 CSSStyleSheet *CSSStyleSelector::m_svgSheet = 0;
 #endif
 
-static CSSStyleSelector::EncodedURL* currentEncodedURL = 0;
 static PseudoState pseudoState;
 
 static const MediaQueryEvaluator& screenEval()
@@ -312,28 +312,10 @@ void CSSStyleSelector::init()
     m_medium = 0;
 }
 
-void CSSStyleSelector::setEncodedURL(const KURL& url)
-{
-    KURL u = url;
-
-    u.setQuery(String());
-    u.setRef(String());
-    m_encodedURL.file = u.string();
-    int pos = m_encodedURL.file.reverseFind('/');
-    m_encodedURL.path = m_encodedURL.file;
-    if (pos > 0) {
-        m_encodedURL.path.truncate(pos);
-        m_encodedURL.path.append('/');
-    }
-    u.setPath(String());
-    m_encodedURL.prefix = u.string();
-}
-
 CSSStyleSelector::~CSSStyleSelector()
 {
     delete m_medium;
-    ::delete m_rootDefaultStyle;
-
+    delete m_rootDefaultStyle;
     delete m_authorStyle;
     delete m_userStyle;
 }
@@ -533,7 +515,6 @@ void CSSStyleSelector::initElementAndPseudoState(Element* e)
         m_styledElement = static_cast<StyledElement*>(m_element);
     else
         m_styledElement = 0;
-    currentEncodedURL = &m_encodedURL;
     pseudoState = PseudoUnknown;
 }
 
@@ -564,81 +545,7 @@ void CSSStyleSelector::initForStyleResolve(Element* e, RenderStyle* defaultParen
     m_fontDirty = false;
 }
 
-static inline int findSlashDotDotSlash(const UChar* characters, size_t length)
-{
-    unsigned loopLimit = length < 4 ? 0 : length - 3;
-    for (unsigned i = 0; i < loopLimit; ++i) {
-        if (characters[i] == '/' && characters[i + 1] == '.' && characters[i + 2] == '.' && characters[i + 3] == '/')
-            return i;
-    }
-    return -1;
-}
-
-static inline int findSlashSlash(const UChar* characters, size_t length, int position)
-{
-    unsigned loopLimit = length < 2 ? 0 : length - 1;
-    for (unsigned i = position; i < loopLimit; ++i) {
-        if (characters[i] == '/' && characters[i + 1] == '/')
-            return i;
-    }
-    return -1;
-}
-
-static inline int findSlashDotSlash(const UChar* characters, size_t length)
-{
-    unsigned loopLimit = length < 3 ? 0 : length - 2;
-    for (unsigned i = 0; i < loopLimit; ++i) {
-        if (characters[i] == '/' && characters[i + 1] == '.' && characters[i + 2] == '/')
-            return i;
-    }
-    return -1;
-}
-
-static inline bool containsColonSlashSlash(const UChar* characters, unsigned length)
-{
-    unsigned loopLimit = length < 3 ? 0 : length - 2;
-    for (unsigned i = 0; i < loopLimit; ++i)
-        if (characters[i] == ':' && characters[i + 1] == '/' && characters[i + 2] == '/')
-            return true;
-    return false;
-}
-
-static void cleanPath(Vector<UChar, 512>& path)
-{
-    int pos;
-    while ((pos = findSlashDotDotSlash(path.data(), path.size())) != -1) {
-        int prev = reverseFind(path.data(), path.size(), '/', pos - 1);
-        // don't remove the host, i.e. http://foo.org/../foo.html
-        if (prev < 0 || (prev > 3 && path[prev - 2] == ':' && path[prev - 1] == '/'))
-            path.remove(pos, 3);
-        else
-            path.remove(prev, pos - prev + 3);
-    }
-
-    // Don't remove "//" from an anchor identifier. -rjw
-    // Set refPos to -2 to mean "I haven't looked for the anchor yet".
-    // We don't want to waste a function call on the search for the the anchor
-    // in the vast majority of cases where there is no "//" in the path.
-    pos = 0;
-    int refPos = -2;
-    while ((pos = findSlashSlash(path.data(), path.size(), pos)) != -1) {
-        if (refPos == -2)
-            refPos = find(path.data(), path.size(), '#');
-        if (refPos > 0 && pos >= refPos)
-            break;
-
-        if (pos == 0 || path[pos - 1] != ':')
-            path.remove(pos);
-        else
-            pos += 2;
-    }
-
-    // FIXME: We don't want to remove "/./" from an anchor identifier either.
-    while ((pos = findSlashDotSlash(path.data(), path.size())) != -1)
-        path.remove(pos, 2);
-}
-
-static void checkPseudoState(Element *e, bool checkVisited = true)
+static void checkPseudoState(Element* e, bool checkVisited = true)
 {
     if (!e->isLink()) {
         pseudoState = PseudoNone;
@@ -667,26 +574,21 @@ static void checkPseudoState(Element *e, bool checkVisited = true)
         return;
     }
 
-    const UChar* characters = attr->characters();
-    unsigned length = attr->length();
+    Document* document = e->document();
 
-    if (containsColonSlashSlash(characters, length)) {
-        // FIXME: Strange to not clean the path just beacause it has "://" in it.
-        pseudoState = historyContains(characters, length) ? PseudoVisited : PseudoLink;
+    Frame* frame = document->frame();
+    if (!frame) {
+        pseudoState = PseudoLink;
         return;
     }
 
-    Vector<UChar, 512> buffer;
-    if (length && characters[0] == '/') {
-        buffer.append(currentEncodedURL->prefix.characters(), currentEncodedURL->prefix.length());
-    } else if (length && characters[0] == '#') {
-        buffer.append(currentEncodedURL->file.characters(), currentEncodedURL->file.length());
-    } else {
-        buffer.append(currentEncodedURL->path.characters(), currentEncodedURL->path.length());
+    Page* page = frame->page();
+    if (!page) {
+        pseudoState = PseudoLink;
+        return;
     }
-    buffer.append(characters, length);
-    cleanPath(buffer);
-    pseudoState = historyContains(buffer.data(), buffer.size()) ? PseudoVisited : PseudoLink;
+
+    pseudoState = page->group().isLinkVisited(document, *attr) ? PseudoVisited : PseudoLink;
 }
 
 // a helper function for parsing nth-arguments
@@ -825,12 +727,14 @@ bool CSSStyleSelector::canShareStyleWithElement(Node* n)
                     mappedAttrsMatch = s->mappedAttributes()->mapsEquivalent(m_styledElement->mappedAttributes());
                 if (mappedAttrsMatch) {
                     bool linksMatch = true;
+
                     if (s->isLink()) {
                         // We need to check to see if the visited state matches.
-                        Color linkColor = m_element->document()->linkColor();
-                        Color visitedColor = m_element->document()->visitedLinkColor();
-                        if (pseudoState == PseudoUnknown)
+                        if (pseudoState == PseudoUnknown) {
+                            const Color& linkColor = m_element->document()->linkColor();
+                            const Color& visitedColor = m_element->document()->visitedLinkColor();
                             checkPseudoState(m_element, style->pseudoState() != PseudoAnyLink || linkColor != visitedColor);
+                        }
                         linksMatch = (pseudoState == style->pseudoState());
                     }
                     
@@ -5130,8 +5034,8 @@ Color CSSStyleSelector::getColorFromPrimitiveValue(CSSPrimitiveValue* primitiveV
         if (ident == CSS_VAL__WEBKIT_TEXT)
             col = m_element->document()->textColor();
         else if (ident == CSS_VAL__WEBKIT_LINK) {
-            Color linkColor = m_element->document()->linkColor();
-            Color visitedColor = m_element->document()->visitedLinkColor();
+            const Color& linkColor = m_element->document()->linkColor();
+            const Color& visitedColor = m_element->document()->visitedLinkColor();
             if (linkColor == visitedColor)
                 col = linkColor;
             else {

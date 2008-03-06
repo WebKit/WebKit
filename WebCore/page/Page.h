@@ -1,6 +1,6 @@
 // -*- mode: c++; c-basic-offset: 4 -*-
 /*
- * Copyright (C) 2006 Apple Computer, Inc.
+ * Copyright (C) 2006, 2008 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -40,22 +40,13 @@ namespace KJS {
     class Debugger;
 }
 
-typedef enum TextCaseSensitivity {
-    TextCaseSensitive,
-    TextCaseInsensitive
-};
-
-typedef enum FindDirection {
-    FindDirectionForward,
-    FindDirectionBackward
-};
-
 namespace WebCore {
 
     class Chrome;
     class ChromeClient;
     class ContextMenuClient;
     class ContextMenuController;
+    class Document;
     class DragClient;
     class DragController;
     class EditorClient;
@@ -64,15 +55,19 @@ namespace WebCore {
     class InspectorClient;
     class InspectorController;
     class Node;
+    class PageGroup;
     class ProgressTracker;
     class Selection;
     class SelectionController;
     class Settings;
+    class KURL;
+
+    enum TextCaseSensitivity { TextCaseSensitive, TextCaseInsensitive };
+    enum FindDirection { FindDirectionForward, FindDirectionBackward };
 
     class Page : Noncopyable {
     public:
         static void setNeedsReapplyStyles();
-        static const HashSet<Page*>* frameNamespace(const String&);
 
         Page(ChromeClient*, ContextMenuClient*, EditorClient*, DragClient*, InspectorClient*);
         ~Page();
@@ -93,9 +88,10 @@ namespace WebCore {
         void goToItem(HistoryItem*, FrameLoadType);
         
         void setGroupName(const String&);
-        String groupName() const { return m_groupName; }
+        const String& groupName() const { return m_groupName; }
 
-        const HashSet<Page*>* frameNamespace() const;
+        PageGroup& group() { if (!m_group) initGroup(); return *m_group; }
+        PageGroup* groupPtr() { return m_group; } // can return 0
 
         void incrementFrameCount() { ++m_frameCount; }
         void decrementFrameCount() { --m_frameCount; }
@@ -151,7 +147,11 @@ namespace WebCore {
         static HINSTANCE instanceHandle() { return s_instanceHandle; }
 #endif
 
+        static void removeAllVisitedLinks();
+
     private:
+        void initGroup();
+
         OwnPtr<Chrome> m_chrome;
         OwnPtr<SelectionController> m_dragCaretController;
         OwnPtr<DragController> m_dragController;
@@ -181,6 +181,9 @@ namespace WebCore {
         mutable String m_userStyleSheet;
         mutable bool m_didLoadUserStyleSheet;
         mutable time_t m_userStyleSheetModificationTime;
+
+        OwnPtr<PageGroup> m_singlePageGroup;
+        PageGroup* m_group;
 
         KJS::Debugger* m_debugger;
 

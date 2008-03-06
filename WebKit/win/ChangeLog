@@ -1,3 +1,44 @@
+2008-03-06  Darin Adler  <darin@apple.com>
+
+        Reviewed by Mitz.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=17526
+          REGRESSION: iframes are added to Safari's History menu
+          by separating the visited link machinery from global history
+
+        * WebCoreSupport/WebChromeClient.cpp:
+        (WebChromeClient::populateVisitedLinks): Added a call to the new
+        WebHistory::addVisitedLinksToPageGroup function.
+        * WebCoreSupport/WebChromeClient.h: Added populateVisitedLinks.
+        Also fixed the webView function to be non-virtual.
+
+        * WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebFrameLoaderClient::updateGlobalHistory): Changed to use the
+        new WebHistory::addItem function.
+        (WebFrameLoaderClient::webHistory): Changed to return a WebHistory*,
+        there's no reason to AddRef the result from this function.
+        * WebCoreSupport/WebFrameLoaderClient.h: Ditto.
+
+        * WebHistory.cpp: Removed IWebHistoryPrivate and _WebCoreHistoryProvider.
+        (WebHistory::QueryInterface): Removed IWebHistoryPrivate.
+        (sharedHistoryStorage): Added.
+        (WebHistory::sharedHistory): Added.
+        (WebHistory::optionalSharedHistory): Changed to use sharedHistory().
+        (WebHistory::setOptionalSharedHistory): Changed to require a WebHistory
+        object, not just an IWebHistory.
+        (WebHistory::removeAllItems): Call PageGroup::removeAllVisitedLinks.
+        (WebHistory::addItem): Changed parameter types since this is called with
+        arguments from WebCore -- at some point this could allow better efficiency.
+        (WebHistory::removeItemForURLString):  Call PageGroup::removeAllVisitedLinks
+        if the last URL is being removed.
+        (addVisitedLinkToPageGroup): Added. Helper. Adds a single link to a group's
+        visited link set.
+        (WebHistory::addVisitedLinksToPageGroup): Added. Adds all links to a group's
+        visited link.
+        * WebHistory.h: Removed IWebHistoryPrivate. Removed optionalSharedHistoryInternal
+        and added sharedHistory. Replaced addItemForURL and containsItemForURLString with
+        non-virtual addItem and addVisitedLinksToPageGroup functions.
+
 2008-03-05  Anders Carlsson  <andersca@apple.com>
 
         Build fix.

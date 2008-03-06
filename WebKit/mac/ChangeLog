@@ -1,3 +1,54 @@
+2008-03-06  Darin Adler  <darin@apple.com>
+
+        Reviewed by Mitz.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=17526
+          REGRESSION: iframes are added to Safari's History menu
+          by separating the visited link machinery from global history
+
+        * History/WebHistory.mm: Moved WebHistoryPrivate inside this file.
+        (-[WebHistoryPrivate removeItemFromDateCaches:]): Removed the underscore from this
+        method name, since it's on a private object.
+        (-[WebHistoryPrivate removeItemForURLString:]): Added a call to the
+        PageGroup::removeAllVisitedLinks function if the last URL was removed.
+        (-[WebHistoryPrivate addItemToDateCaches:]): Removed the underscore from this
+        method name, since it's on a private object.
+        (-[WebHistoryPrivate removeAllItems]): Call PageGroup::removeAllVisitedLinks.
+        (-[WebHistoryPrivate ageLimitDate]): Removed the underscore from this
+        method name, since it's on a private object.
+        (-[WebHistoryPrivate loadHistoryGutsFromURL:savedItemsCount:collectDiscardedItemsInto:error:]):
+        Ditto.
+        (-[WebHistoryPrivate saveHistoryGuts:URL:error:]): Ditto. Also changed this
+        to correctly return the error by using the newer version of writeToURL: and
+        removed the FIXME about that.
+        (-[WebHistoryPrivate addVisitedLinksToPageGroup:]): Added. Calls addVisitedLink
+        for every link in the history.
+        (-[WebHistory saveToURL:error:]): Removed the FIXME, since we do get the error now.
+        (-[WebHistory addItem:]): Moved into the WebPrivate category.
+        (-[WebHistory addItemForURL:]): Ditto.
+        (-[WebHistory _addItemForURL:title:]): Added. Used for the normal case where we
+        create an item and already know its title.
+        (-[WebHistory ageLimitDate]): Moved into the WebPrivate category.
+        (-[WebHistory containsItemForURLString:]): Ditto.
+        (-[WebHistory removeItem:]): Ditto.
+        (-[WebHistory setLastVisitedTimeInterval:forItem:]): Ditto.
+        (-[WebHistory _itemForURLString:]): Ditto.
+        (-[WebHistory _addVisitedLinksToPageGroup:]): Added. For use only inside WebKit.
+
+        * History/WebHistoryInternal.h: Added.
+        * History/WebHistoryItemInternal.h: Tweaked formatting and includes.
+        * History/WebHistoryPrivate.h: Moved the WebHistoryPrivate class out of this header.
+        Also reorganized what was left behind.
+
+        * WebCoreSupport/WebChromeClient.h: Added populateVisitedLinks.
+        * WebCoreSupport/WebChromeClient.mm:
+        (WebChromeClient::populateVisitedLinks): Added a call to the new
+        -[WebHistory _addVisitedLinksToPageGroup:] method.
+
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::updateGlobalHistory): Changed code to use the new
+        -[WebHistory _addItemForURL:title:] method.
+
 2008-03-05  Adam Roben  <aroben@apple.com>
 
         Rename WebCoreScriptDebuggerImp.{h,mm} to WebScriptDebugger.{h,mm}

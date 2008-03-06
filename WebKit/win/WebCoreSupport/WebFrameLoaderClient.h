@@ -108,7 +108,7 @@ private:
     PassRefPtr<WebCore::Frame> createFrame(const WebCore::KURL&, const WebCore::String& name, WebCore::HTMLFrameOwnerElement*, const WebCore::String& referrer);
     void loadURLIntoChild(const WebCore::KURL&, const WebCore::String& referrer, WebFrame* childFrame);
     void receivedData(const char*, int, const WebCore::String&);
-    COMPtr<WebHistory> webHistory() const;
+    WebHistory* webHistory() const;
 
     WebFrame* m_webFrame;
 

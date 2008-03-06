@@ -1,3 +1,93 @@
+2008-03-06  Darin Adler  <darin@apple.com>
+
+        Reviewed by Mitz.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=17526
+          REGRESSION: iframes are added to Safari's History menu
+          by separating the visited link machinery from global history
+
+        This should also make page loading faster due to more efficient visited link coloring.
+
+        * WebCore.base.exp: Updated.
+        * WebCore.vcproj/WebCore.vcproj: Added PageGroup.h/cpp, removed GlobalHistory.h/cpp.
+        * WebCore.xcodeproj/project.pbxproj: Ditto. Also removed WebCoreHistory.h/m.
+
+        * css/CSSStyleSelector.cpp: Updated includes.
+        (WebCore::CSSStyleSelector::initElementAndPseudoState): Eliminated code to set
+        currentEncodedURL.
+        (WebCore::checkPseudoState): Moved most of the code inside a new
+        PageGroup::isLinkVisited function.
+        (WebCore::CSSStyleSelector::canShareStyleWithElement): Tightened code a bit by using
+        references and only getting colors when needed.
+        (WebCore::CSSStyleSelector::getColorFromPrimitiveValue): Ditto.
+        * css/CSSStyleSelector.h: Removed EncodedURL, m_encodedURL, and setEncodedURL.
+
+        * dom/Document.cpp:
+        (WebCore::Document::attach): Removed call to setEncodedURL.
+        (WebCore::Document::setURL): Ditto.
+        (WebCore::Document::recalcStyleSelector): Ditto.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::addBackForwardItemClippedAtTarget): Changed code to use
+        early exit idiom to be a little more readable.
+        (WebCore::FrameLoader::urlsMatchItem): Change to use a reference for slightly
+        better efficiency.
+        (WebCore::FrameLoader::goToItem): Use early exit idiom to be a little more
+        readable.
+        (WebCore::FrameLoader::updateHistoryForStandardLoad): Moved history code back
+        in here and got rid of the helper function updateGlobalHistory, restoring the
+        logic before r30549. Also added a call to the new addVisitedLink function.
+        (WebCore::FrameLoader::updateHistoryForClientRedirect): Added code to call
+        addVisitedLink here.
+        (WebCore::FrameLoader::updateHistoryForBackForwardNavigation): Removed comment.
+        (WebCore::FrameLoader::updateHistoryForReload): Removed call to
+        updateGlobalHistory; we can just go without updating global history or
+        visited links here, at least for now, since it's not clear that a reload
+        is a "history event".
+        (WebCore::FrameLoader::updateHistoryForRedirectWithLockedHistory): Moved
+        history code back where it was, and added the call to addVisitedLink, just
+        as in updateHistoryForStandardLoad above.
+        * loader/FrameLoader.h: Removed updateGlobalHistory function.
+
+        * page/Chrome.cpp:
+        (WebCore::ChromeClient::populateVisitedLinks): Added. Empty placeholder so we
+        don't have to implement this for every port all at once.
+        (WebCore::PageGroupLoadDeferrer::PageGroupLoadDeferrer): Changed to use the
+        new PageGroup class.
+        * page/ChromeClient.h: Added populateVisitedLinks function, used to fill the
+        visited links set from the global history at application startup time.
+
+        * page/FrameTree.cpp:
+        (WebCore::FrameTree::find): Updated to use the new PageGroup class.
+
+        * page/GlobalHistory.h: Removed.
+        * page/win/GlobalHistoryWin.cpp: Removed.
+        * page/mac/GlobalHistoryMac.mm: Removed.
+        * platform/mac/WebCoreHistory.h: Removed.
+        * platform/mac/WebCoreHistory.m: Removed.
+        * platform/win/WebCoreHistory.cpp: Removed.
+        * platform/win/WebCoreHistory.h: Removed.
+
+        * page/Page.cpp:
+        (WebCore::Page::Page): Set m_group to 0.
+        (WebCore::Page::setGroupName): Set up m_group. If the page is not in any
+        group, set it to 0 for now to postpone the cost of creating a group.
+        (WebCore::Page::initGroup): Added. Sets m_group to point to a single-page
+        group; used when getting a group.
+        (WebCore::Page::removeAllVisitedLinks): Added. Calls removeVisitedLinks
+        on all page groups.
+        * page/Page.h: Moved enums inside the WebCore namespace. Removed the
+        frameNamespace function and instead added the group and groupPtr functions.
+
+        * page/PageGroup.cpp: Added. Contains all the visited code from the
+        CSSStyleSelector in the isVisitedLink function, but more efficient because
+        we don't allocate memory for the buffer.
+        * page/PageGroup.h: Added.
+
+        * platform/gtk/TemporaryLinkStubs.cpp: Removed historyContains.
+        * platform/qt/TemporaryLinkStubs.cpp: Removed unneeded include.
+        * platform/wx/TemporaryLinkStubs.cpp: Removed historyContains.
+
 2008-03-06  Mark Rowe  <mrowe@apple.com>
 
         Fix 64-bit Mac build.

@@ -110,14 +110,6 @@ public:
 
         bool strictParsing;
 
-        struct EncodedURL {
-            String prefix; // protocol, host, etc.
-            String path;
-            String file;
-        } m_encodedURL;
-
-        void setEncodedURL(const KURL& url);
-
         // Given a CSS keyword in the range (xx-small to -webkit-xxx-large), this function will return
         // the correct font size scaled relative to the user's default (medium).
         float fontSizeForKeyword(int keyword, bool quirksMode, bool monospace) const;
@@ -250,11 +242,8 @@ public:
         bool m_matchAuthorAndUserStyles;
 
         RefPtr<CSSFontSelector> m_fontSelector;
-
         HashSet<AtomicStringImpl*> m_selectorAttrs;
-        
         Vector<CSSMutableStyleDeclaration*> m_additionalAttributeStyleDecls;
-        
         Vector<MediaQueryResult*> m_viewportDependentMediaQueryResults;
 
         void applyProperty(int id, CSSValue*);

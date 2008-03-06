@@ -35,9 +35,9 @@
 #import "WebFrameView.h"
 #import "WebHTMLView.h"
 #import "WebHTMLViewPrivate.h"
+#import "WebHistoryInternal.h"
 #import "WebKitSystemInterface.h"
 #import "WebNSURLRequestExtras.h"
-#import "WebSecurityOriginPrivate.h"
 #import "WebSecurityOriginInternal.h"
 #import "WebUIDelegate.h"
 #import "WebUIDelegatePrivate.h"
@@ -49,6 +49,7 @@
 #import <WebCore/FrameLoadRequest.h>
 #import <WebCore/HitTestResult.h>
 #import <WebCore/IntRect.h>
+#import <WebCore/Page.h>
 #import <WebCore/PlatformScreen.h>
 #import <WebCore/PlatformString.h>
 #import <WebCore/ResourceRequest.h>
@@ -424,6 +425,11 @@ void WebChromeClient::exceededDatabaseQuota(Frame* frame, const String& database
     } else
         CallUIDelegate(m_webView, @selector(webView:frame:exceededDatabaseQuotaForSecurityOrigin:database:), kit(frame), webOrigin, (NSString *)databaseName);
     [webOrigin release];
+}
+    
+void WebChromeClient::populateVisitedLinks()
+{
+    [[WebHistory optionalSharedHistory] _addVisitedLinksToPageGroup:[m_webView page]->group()];
 }
 
 void WebChromeClient::dashboardRegionsChanged()

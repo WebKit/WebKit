@@ -56,6 +56,7 @@
 #include <WebCore/PluginPackage.h>
 #include <WebCore/PluginView.h>
 #include <WebCore/RenderPart.h>
+#include <WebCore/ResourceHandle.h>
 #pragma warning(pop)
 
 using namespace WebCore;
@@ -428,10 +429,7 @@ void WebFrameLoaderClient::finishedLoading(DocumentLoader* loader)
 
 void WebFrameLoaderClient::updateGlobalHistory(const KURL& url)
 {
-    COMPtr<WebHistory> history = webHistory();
-    if (!history)
-        return;
-    history->addItemForURL(BString(url.string()), 0);                 
+    WebHistory::sharedHistory()->addItem(url, core(m_webFrame)->loader()->documentLoader()->title());                 
 }
 
 bool WebFrameLoaderClient::shouldGoToHistoryItem(HistoryItem*) const
@@ -697,14 +695,10 @@ void WebFrameLoaderClient::redirectDataToPlugin(Widget* pluginWidget)
     m_pluginView = static_cast<PluginView*>(pluginWidget);
 }
 
-COMPtr<WebHistory> WebFrameLoaderClient::webHistory() const
+WebHistory* WebFrameLoaderClient::webHistory() const
 {
     if (m_webFrame != m_webFrame->webView()->topLevelFrame())
         return 0;
 
-    IWebHistoryPrivate* historyInternal = WebHistory::optionalSharedHistoryInternal(); // does not add a ref
-    if (!historyInternal)
-        return 0;
-
-    return COMPtr<WebHistory>(Query, historyInternal);
+    return WebHistory::sharedHistory();
 }

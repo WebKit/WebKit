@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2006, 2007, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,6 +28,7 @@
 
 #include "WebElementPropertyBag.h"
 #include "WebFrame.h"
+#include "WebHistory.h"
 #include "WebMutableURLRequest.h"
 #include "WebSecurityOrigin.h"
 #include "WebView.h"
@@ -37,6 +38,7 @@
 #include <WebCore/FloatRect.h>
 #include <WebCore/FrameLoadRequest.h>
 #include <WebCore/FrameView.h>
+#include <WebCore/Page.h>
 #include <WebCore/WindowFeatures.h>
 #pragma warning(pop)
 
@@ -494,6 +496,11 @@ void WebChromeClient::exceededDatabaseQuota(Frame* frame, const String& database
             }
         }
     }
+}
+
+void WebChromeClient::populateVisitedLinks()
+{
+    WebHistory::sharedHistory()->addVisitedLinksToPageGroup(m_webView->page()->group());
 }
 
 COMPtr<IWebUIDelegate> WebChromeClient::uiDelegate()

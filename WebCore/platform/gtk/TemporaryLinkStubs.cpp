@@ -31,7 +31,6 @@
 #include "Editor.h"
 #include "FrameView.h"
 #include "FTPDirectoryDocument.h"
-#include "GlobalHistory.h"
 #include "KURL.h"
 #include "NotImplemented.h"
 #include "PluginDatabase.h"
@@ -57,8 +56,6 @@ Vector<char> loadResourceIntoArray(const char* resourceName)
 /********************************************************/
 /* Completely empty stubs (mostly to allow DRT to run): */
 /********************************************************/
-
-bool WebCore::historyContains(const UChar*, unsigned) { return false; }
 
 PluginSet PluginDatabase::getPluginsInPaths() const { notImplemented(); return PluginSet(); }
 Vector<String> PluginDatabase::defaultPluginPaths() { notImplemented(); return Vector<String>(); }

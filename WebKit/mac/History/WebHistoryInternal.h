@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,27 +26,13 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit/WebHistory.h>
+#import "WebHistoryPrivate.h"
 
-/*
-    @constant WebHistoryItemsDiscardedWhileLoadingNotification Posted from loadFromURL:error:.  
-    This notification comes with a userInfo dictionary that contains the array of
-    items discarded due to the date limit or item limit. The key for the array is WebHistoryItemsKey.
-*/
-// FIXME: This notification should become public API.
-extern NSString *WebHistoryItemsDiscardedWhileLoadingNotification;
+namespace WebCore {
+    class PageGroup;
+}
 
-@interface WebHistory (WebPrivate)
-
-// FIXME: The following SPI is used by Safari. Should it be made into public API?
-- (WebHistoryItem *)_itemForURLString:(NSString *)URLString;
-
-// FIXME: neither Safari nor WebKit use the following SPI -- do we still need them?
-- (void)addItem:(WebHistoryItem *)entry;
-- (WebHistoryItem *)addItemForURL:(NSURL *)URL;
-- (NSCalendarDate *)ageLimitDate;
-- (BOOL)containsItemForURLString:(NSString *)URLString;
-- (void)removeItem:(WebHistoryItem *)entry;
-- (void)setLastVisitedTimeInterval:(NSTimeInterval)time forItem:(WebHistoryItem *)item;
-
+@interface WebHistory (WebInternal)
+- (void)_addItemForURL:(NSURL *)URL title:(NSString *)title;
+- (void)_addVisitedLinksToPageGroup:(WebCore::PageGroup&)group;
 @end

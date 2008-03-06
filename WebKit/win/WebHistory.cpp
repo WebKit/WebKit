@@ -35,29 +35,18 @@
 #include "WebNotificationCenter.h"
 #include "WebPreferences.h"
 #include <CoreFoundation/CoreFoundation.h>
-#include <WebCore/WebCoreHistory.h>
 #pragma warning( push, 0 )
 #include <wtf/Vector.h>
+#include <WebCore/KURL.h>
+#include <WebCore/PageGroup.h>
 #pragma warning( pop )
+
+using namespace WebCore;
 
 CFStringRef DatesArrayKey = CFSTR("WebHistoryDates");
 CFStringRef FileVersionKey = CFSTR("WebHistoryFileVersion");
 
-const IID IID_IWebHistoryPrivate = { 0x3de04e59, 0x93f9, 0x4369, { 0x8b, 0x43, 0x97, 0x64, 0x58, 0xd7, 0xe3, 0x19 } };
-
 #define currentFileVersion 1
-
-class _WebCoreHistoryProvider : public WebCore::WebCoreHistoryProvider {
-public:
-    _WebCoreHistoryProvider(IWebHistory* history);
-    ~_WebCoreHistoryProvider();
-
-    virtual bool containsURL(const UChar* unicode, unsigned length);
-
-private:
-    IWebHistory* m_history;
-    IWebHistoryPrivate* m_historyPrivate;
-};
 
 static bool areEqualOrClose(double d1, double d2)
 {
@@ -96,8 +85,6 @@ static void releaseUserInfo(CFDictionaryPropertyBag* userInfo)
 }
 
 // WebHistory -----------------------------------------------------------------
-
-IWebHistory* WebHistory::m_optionalSharedHistory = 0;
 
 WebHistory::WebHistory()
 : m_refCount(0)
@@ -159,8 +146,6 @@ HRESULT STDMETHODCALLTYPE WebHistory::QueryInterface(REFIID riid, void** ppvObje
         *ppvObject = static_cast<IWebHistory*>(this);
     else if (IsEqualGUID(riid, IID_IWebHistory))
         *ppvObject = static_cast<IWebHistory*>(this);
-    else if (IsEqualGUID(riid, IID_IWebHistoryPrivate))
-        *ppvObject = static_cast<IWebHistoryPrivate*>(this);
     else
         return E_NOINTERFACE;
 
@@ -184,32 +169,30 @@ ULONG STDMETHODCALLTYPE WebHistory::Release(void)
 
 // IWebHistory ----------------------------------------------------------------
 
+static inline COMPtr<WebHistory>& sharedHistoryStorage()
+{
+    static COMPtr<WebHistory> sharedHistory;
+    return sharedHistory;
+}
+
+WebHistory* WebHistory::sharedHistory()
+{
+    return sharedHistoryStorage().get();
+}
+
 HRESULT STDMETHODCALLTYPE WebHistory::optionalSharedHistory( 
     /* [retval][out] */ IWebHistory** history)
 {
-    *history = m_optionalSharedHistory;
-    if (m_optionalSharedHistory)
-        m_optionalSharedHistory->AddRef();
-
+    *history = sharedHistory();
+    if (*history)
+        (*history)->AddRef();
     return S_OK;
 }
 
 HRESULT STDMETHODCALLTYPE WebHistory::setOptionalSharedHistory( 
     /* [in] */ IWebHistory* history)
 {
-    if (m_optionalSharedHistory) {
-        m_optionalSharedHistory->Release();
-        m_optionalSharedHistory = 0;        
-    }
-
-    _WebCoreHistoryProvider* coreHistory = 0;
-    m_optionalSharedHistory = history;
-    if (history) {
-        history->AddRef();
-        coreHistory = new _WebCoreHistoryProvider(history);
-    }
-    WebCore::WebCoreHistory::setHistoryProvider(coreHistory);
-
+    sharedHistoryStorage().query(history);
     return S_OK;
 }
 
@@ -467,6 +450,8 @@ HRESULT STDMETHODCALLTYPE WebHistory::removeAllItems( void)
     CFArrayRemoveAllValues(m_datesWithEntries.get());
     CFDictionaryRemoveAllValues(m_entriesByURL.get());
 
+    PageGroup::removeAllVisitedLinks();
+
     return postNotification(kWebHistoryAllItemsRemovedNotification);
 }
 
@@ -646,27 +631,27 @@ HRESULT WebHistory::addItem(IWebHistoryItem* entry)
     return hr;
 }
 
-HRESULT WebHistory::addItemForURL(BSTR url, BSTR title)
+void WebHistory::addItem(const KURL& url, const String& title)
 {
     COMPtr<WebHistoryItem> item(AdoptCOM, WebHistoryItem::createInstance());
     if (!item)
-        return E_FAIL;
+        return;
 
     SYSTEMTIME currentTime;
     GetSystemTime(&currentTime);
     DATE lastVisited;
     if (!SystemTimeToVariantTime(&currentTime, &lastVisited))
-        return E_FAIL;
+        return;
 
-    HRESULT hr = item->initWithURLString(url, title, 0);
+    HRESULT hr = item->initWithURLString(BString(url.string()), BString(title), 0);
     if (FAILED(hr))
-        return hr;
+        return;
 
     hr = item->setLastVisitedTimeInterval(lastVisited); // also increments visitedCount
     if (FAILED(hr))
-        return hr;
+        return;
 
-    return addItem(item.get());
+    addItem(item.get());
 }
 
 HRESULT WebHistory::itemForURLString(
@@ -694,22 +679,6 @@ HRESULT STDMETHODCALLTYPE WebHistory::itemForURL(
     return itemForURLString(urlString.get(), item);
 }
 
-HRESULT WebHistory::containsItemForURLString(
-    /* [in] */ void* urlCFString,
-    /* [retval][out] */ BOOL* contains)
-{
-    IWebHistoryItem* item = 0;
-    HRESULT hr;
-    if (SUCCEEDED(hr = itemForURLString((CFStringRef)urlCFString, &item))) {
-        *contains = TRUE;
-        // itemForURLString refs the returned item, so we need to balance that 
-        item->Release();
-    } else
-        *contains = FALSE;
-
-    return hr;
-}
-
 HRESULT WebHistory::removeItemForURLString(CFStringRef urlString)
 {
     IWebHistoryItem* entry = (IWebHistoryItem*) CFDictionaryGetValue(m_entriesByURL.get(), urlString);
@@ -718,6 +687,9 @@ HRESULT WebHistory::removeItemForURLString(CFStringRef urlString)
 
     HRESULT hr = removeItemFromDateCaches(entry);
     CFDictionaryRemoveValue(m_entriesByURL.get(), urlString);
+
+    if (!CFDictionaryGetCount(m_entriesByURL.get()))
+        PageGroup::removeAllVisitedLinks();
 
     return hr;
 }
@@ -856,101 +828,23 @@ HRESULT WebHistory::ageLimitDate(CFAbsoluteTime* time)
     return S_OK;
 }
 
-IWebHistoryPrivate* WebHistory::optionalSharedHistoryInternal()
+static void addVisitedLinkToPageGroup(const void* key, const void*, void* context)
 {
-    if (!m_optionalSharedHistory)
-        return 0;
+    CFStringRef url = static_cast<CFStringRef>(key);
+    PageGroup* group = static_cast<PageGroup*>(context);
 
-    IWebHistoryPrivate* historyPrivate;
-    if (FAILED(m_optionalSharedHistory->QueryInterface(IID_IWebHistoryPrivate, (void**)&historyPrivate)))
-        return 0;
-
-    historyPrivate->Release(); // don't add an additional ref for this internal call
-    return historyPrivate;
-}
-
-// _WebCoreHistoryProvider ----------------------------------------------------------------
-
-_WebCoreHistoryProvider::_WebCoreHistoryProvider(IWebHistory* history)
-    : m_history(history)
-    , m_historyPrivate(0)
-{
-}
-
-_WebCoreHistoryProvider::~_WebCoreHistoryProvider()
-{
-}
-
-static inline bool matchLetter(char c, char lowercaseLetter)
-{
-    return (c | 0x20) == lowercaseLetter;
-}
-
-static inline bool matchUnicodeLetter(UniChar c, UniChar lowercaseLetter)
-{
-    return (c | 0x20) == lowercaseLetter;
-}
-
-bool _WebCoreHistoryProvider::containsURL(const UChar* unicode, unsigned length)
-{
-    const int bufferSize = 1024;
-    const UChar *unicodeStr = unicode;
-    UChar staticStrBuffer[bufferSize];
-    UChar *strBuffer = 0;
-    bool needToAddSlash = false;
-
-    if (length >= 6 &&
-        matchUnicodeLetter(unicode[0], 'h') &&
-        matchUnicodeLetter(unicode[1], 't') &&
-        matchUnicodeLetter(unicode[2], 't') &&
-        matchUnicodeLetter(unicode[3], 'p') &&
-        (unicode[4] == ':' 
-        || (matchUnicodeLetter(unicode[4], 's') && unicode[5] == ':'))) {
-
-            unsigned pos = unicode[4] == ':' ? 5 : 6;
-
-            // skip possible initial two slashes
-            if (pos + 1 < length && unicode[pos] == '/' && unicode[pos + 1] == '/')
-                pos += 2;
-
-            while (pos < length && unicode[pos] != '/')
-                pos++;
-
-            if (pos == length)
-                needToAddSlash = true;
+    CFIndex length = CFStringGetLength(url);
+    const UChar* characters = reinterpret_cast<const UChar*>(CFStringGetCharactersPtr(url));
+    if (characters)
+        group->addVisitedLink(characters, length);
+    else {
+        Vector<UChar, 512> buffer(length);
+        CFStringGetCharacters(url, CFRangeMake(0, length), reinterpret_cast<UniChar*>(buffer.data()));
+        group->addVisitedLink(buffer.data(), length);
     }
+}
 
-    if (needToAddSlash) {
-        if (length + 1 <= bufferSize)
-            strBuffer = staticStrBuffer;
-        else
-            strBuffer = (UChar*)malloc(sizeof(UChar) * (length + 1));
-        memcpy(strBuffer, unicode, 2 * length);
-        strBuffer[length] = '/';
-        length++;
-
-        unicodeStr = strBuffer;
-    }
-
-    if (!m_historyPrivate) {
-        if (SUCCEEDED(m_history->QueryInterface(IID_IWebHistoryPrivate, (void**)&m_historyPrivate))) {
-            // don't hold a ref - we're owned by IWebHistory/IWebHistoryPrivate
-            m_historyPrivate->Release();
-        } else {
-            if (strBuffer != staticStrBuffer)
-                free(strBuffer);
-            m_historyPrivate = 0;
-            return false;
-        }
-    }
-
-    CFStringRef str = CFStringCreateWithCharactersNoCopy(NULL, (const UniChar*)unicodeStr, length, kCFAllocatorNull);
-    BOOL result = FALSE;
-    m_historyPrivate->containsItemForURLString((void*)str, &result);
-    CFRelease(str);
-
-    if (strBuffer != staticStrBuffer)
-        free(strBuffer);
-
-    return !!result;
+void WebHistory::addVisitedLinksToPageGroup(PageGroup& group)
+{
+    CFDictionaryApplyFunction(m_entriesByURL.get(), addVisitedLinkToPageGroup, &group);
 }

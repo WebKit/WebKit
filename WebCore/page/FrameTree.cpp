@@ -23,6 +23,7 @@
 
 #include "Frame.h"
 #include "Page.h"
+#include "PageGroup.h"
 #include <stdarg.h>
 #include <wtf/Platform.h>
 #include <wtf/StringExtras.h>
@@ -182,16 +183,17 @@ Frame* FrameTree::find(const AtomicString& name) const
         if (frame->tree()->name() == name)
             return frame;
 
-    // Search the entire tree for all other pages in this namespace.
-    const HashSet<Page*>* pages = page->frameNamespace();
-    if (pages) {
-        HashSet<Page*>::const_iterator end = pages->end();
-        for (HashSet<Page*>::const_iterator it = pages->begin(); it != end; ++it) {
-            Page* otherPage = *it;
-            if (otherPage != page)
-                for (Frame* frame = otherPage->mainFrame(); frame; frame = frame->tree()->traverseNext())
-                    if (frame->tree()->name() == name)
-                        return frame;
+    // Search the entire tree of each of the other pages in this namespace.
+    // FIXME: Is random order OK?
+    const HashSet<Page*>& pages = page->group().pages();
+    HashSet<Page*>::const_iterator end = pages.end();
+    for (HashSet<Page*>::const_iterator it = pages.begin(); it != end; ++it) {
+        Page* otherPage = *it;
+        if (otherPage != page) {
+            for (Frame* frame = otherPage->mainFrame(); frame; frame = frame->tree()->traverseNext()) {
+                if (frame->tree()->name() == name)
+                    return frame;
+            }
         }
     }
 

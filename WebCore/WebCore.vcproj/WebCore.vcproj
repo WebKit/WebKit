@@ -2755,10 +2755,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\bridge\GlobalHistory.h"
-				>
-			</File>
-			<File
 				RelativePath="..\page\History.cpp"
 				>
 			</File>
@@ -2792,6 +2788,14 @@
 			</File>
 			<File
 				RelativePath="..\page\Page.h"
+				>
+			</File>
+			<File
+				RelativePath="..\page\PageGroup.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\page\PageGroup.h"
 				>
 			</File>
 			<File
@@ -2835,10 +2839,6 @@
 				</File>
 				<File
 					RelativePath="..\page\win\FrameWin.h"
-					>
-				</File>
-				<File
-					RelativePath="..\page\win\GlobalHistoryWin.cpp"
 					>
 				</File>
 				<File
@@ -3566,14 +3566,6 @@
 				</File>
 				<File
 					RelativePath="..\platform\win\WCDataObject.h"
-					>
-				</File>
-				<File
-					RelativePath="..\platform\win\WebCoreHistory.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\platform\win\WebCoreHistory.h"
 					>
 				</File>
 				<File

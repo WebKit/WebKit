@@ -35,6 +35,7 @@
 #include "HistoryItem.h"
 #include "InspectorController.h"
 #include "Logging.h"
+#include "PageGroup.h"
 #include "ProgressTracker.h"
 #include "RenderWidget.h"
 #include "SelectionController.h"
@@ -49,8 +50,10 @@
 
 namespace WebCore {
 
+typedef HashMap<String, PageGroup*> PageGroupMap;
+
 static HashSet<Page*>* allPages;
-static HashMap<String, HashSet<Page*>*>* frameNamespaces;
+static PageGroupMap* pageGroups;
 
 #ifndef NDEBUG
 WTFLogChannel LogWebCorePageLeaks =  { 0x00000000, "", WTFLogChannelOn };
@@ -85,6 +88,7 @@ Page::Page(ChromeClient* chromeClient, ContextMenuClient* contextMenuClient, Edi
     , m_parentInspectorController(0)
     , m_didLoadUserStyleSheet(false)
     , m_userStyleSheetModificationTime(0)
+    , m_group(0)
     , m_debugger(0)
 {
     if (!allPages) {
@@ -165,37 +169,41 @@ void Page::goToItem(HistoryItem* item, FrameLoadType type)
 
 void Page::setGroupName(const String& name)
 {
-    if (frameNamespaces && !m_groupName.isEmpty()) {
-        HashSet<Page*>* oldNamespace = frameNamespaces->get(m_groupName);
-        if (oldNamespace) {
-            oldNamespace->remove(this);
-            if (oldNamespace->isEmpty()) {
-                frameNamespaces->remove(m_groupName);
-                delete oldNamespace;
-            }
-        }
+    if (!m_groupName.isEmpty()) {
+        ASSERT(!m_singlePageGroup);
+        ASSERT(m_group);
+        ASSERT(pageGroups);
+        ASSERT(pageGroups->get(m_groupName) == m_group);
+        m_group->removePage(this);
+        if (m_group->pages().isEmpty())
+            pageGroups->remove(m_groupName);
     }
     m_groupName = name;
-    if (!name.isEmpty()) {
-        if (!frameNamespaces)
-            frameNamespaces = new HashMap<String, HashSet<Page*>*>;
-        HashSet<Page*>* newNamespace = frameNamespaces->get(name);
-        if (!newNamespace) {
-            newNamespace = new HashSet<Page*>;
-            frameNamespaces->add(name, newNamespace);
+    if (name.isEmpty())
+        m_group = 0;
+    else {
+        m_singlePageGroup.clear();
+        if (!pageGroups)
+            pageGroups = new PageGroupMap;
+        pair<PageGroupMap::iterator, bool> result = pageGroups->add(name, 0);
+        if (!result.second) {
+            ASSERT(result.first->second);
+            m_group = result.first->second;
+            m_group->addPage(this);
+        } else {
+            ASSERT(!result.first->second);
+            m_group = new PageGroup(this);
+            result.first->second = m_group;
         }
-        newNamespace->add(this);
     }
 }
 
-const HashSet<Page*>* Page::frameNamespace() const
+void Page::initGroup()
 {
-    return (frameNamespaces && !m_groupName.isEmpty()) ? frameNamespaces->get(m_groupName) : 0;
-}
-
-const HashSet<Page*>* Page::frameNamespace(const String& groupName)
-{
-    return (frameNamespaces && !groupName.isEmpty()) ? frameNamespaces->get(groupName) : 0;
+    ASSERT(!m_singlePageGroup);
+    ASSERT(!m_group);
+    m_singlePageGroup.set(new PageGroup(this));
+    m_group = m_singlePageGroup.get();
 }
 
 void Page::setNeedsReapplyStyles()
@@ -358,6 +366,21 @@ const String& Page::userStyleSheet() const
     m_userStyleSheet = TextResourceDecoder("text/css").decode(data->data(), data->size());
 
     return m_userStyleSheet;
+}
+
+void Page::removeAllVisitedLinks()
+{
+    if (!allPages)
+        return;
+    HashSet<PageGroup*> groups;
+    HashSet<Page*>::iterator pagesEnd = allPages->end();
+    for (HashSet<Page*>::iterator it = allPages->begin(); it != pagesEnd; ++it) {
+        if (PageGroup* group = (*it)->groupPtr())
+            groups.add(group);
+    }
+    HashSet<PageGroup*>::iterator groupsEnd = groups.end();
+    for (HashSet<PageGroup*>::iterator it = groups.begin(); it != groupsEnd; ++it)
+        (*it)->removeVisitedLinks();
 }
 
 void Page::setDebuggerForAllPages(KJS::Debugger* debugger)
