@@ -50,8 +50,5 @@ class WebCoreScriptDebuggerImp;
 
 // debugger callbacks
 - (void)parsedSource:(NSString *)source fromURL:(NSURL *)url sourceId:(int)sid startLine:(int)startLine errorLine:(int)errorLine errorMessage:(NSString *)errorMessage;
-- (void)enteredFrame:(WebScriptCallFrame *)frame sourceId:(int)sid line:(int)lineno;
-- (void)leavingFrame:(WebScriptCallFrame *)frame sourceId:(int)sid line:(int)lineno;
-- (void)exceptionRaised:(WebScriptCallFrame *)frame sourceId:(int)sid line:(int)lineno;
 
 @end

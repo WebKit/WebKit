@@ -1,5 +1,24 @@
 2008-03-05  Adam Roben  <aroben@apple.com>
 
+        Remove -enteredFrame:, -leavingFrame:, and -exceptionRaised: from WebScriptDebugger
+
+        Reviewed by Kevin M.
+
+        * WebView/WebCoreScriptDebuggerImp.mm:
+        (WebCoreScriptDebuggerImp::WebCoreScriptDebuggerImp): Changed to call
+        trhough to callEvent instead of duplicating its code here.
+        (WebCoreScriptDebuggerImp::callEvent): Moved code from
+        -[WebScriptDebugger enteredFrame:sourceId:line:] here.
+        (WebCoreScriptDebuggerImp::returnEvent): Moved code from
+        -[WebScriptDebugger leavingFrame:sourceId:line:] here.
+        (WebCoreScriptDebuggerImp::exception): Moved code from
+        -[WebScriptDebugger exceptionRaised:sourceId:line:] here.
+        * WebView/WebScriptDebugDelegate.mm: Removed -enteredFrame:,
+        -leavingFrame:, and -exceptionRaised:.
+        * WebView/WebScriptDebugDelegatePrivate.h: Ditto.
+
+2008-03-05  Adam Roben  <aroben@apple.com>
+
         Remove -[WebScriptDebugger hitStatement:sourceId:line:]
 
         Reviewed by Kevin M.

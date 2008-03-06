@@ -58,12 +58,12 @@ static NSURL *toNSURL(const UString& s)
 
 WebCoreScriptDebuggerImp::WebCoreScriptDebuggerImp(WebScriptDebugger *debugger, JSGlobalObject* globalObject)
     : m_debugger(debugger)
+    , m_callingDelegate(false)
+    , m_topCallFrame(nil)
 {
-    m_callingDelegate = true;
-    m_topCallFrame = [m_debugger enterFrame:globalObject->globalExec()];
     attach(globalObject);
-    [m_debugger enteredFrame:m_topCallFrame sourceId:-1 line:-1];
-    m_callingDelegate = false;
+    List emptyList;
+    callEvent(globalObject->globalExec(), -1, -1, 0, emptyList);
 }
 
 // callbacks - relay to delegate
@@ -86,7 +86,13 @@ bool WebCoreScriptDebuggerImp::callEvent(ExecState* state, int sourceID, int lin
 
     m_callingDelegate = true;
     m_topCallFrame = [m_debugger enterFrame:state];
-    [m_debugger enteredFrame:m_topCallFrame sourceId:sourceID line:lineNumber];
+
+    WebFrame *webFrame = [m_debugger webFrame];
+    WebView *webView = [webFrame webView];
+    [[webView _scriptDebugDelegateForwarder] webView:webView didEnterCallFrame:m_topCallFrame sourceId:sourceID line:lineNumber forWebFrame:webFrame];
+    if ([WebScriptDebugServer listenerCount])
+        [[WebScriptDebugServer sharedScriptDebugServer] webView:webView didEnterCallFrame:m_topCallFrame sourceId:sourceID line:lineNumber forWebFrame:webFrame];
+
     m_callingDelegate = false;
 
     return true;
@@ -116,7 +122,13 @@ bool WebCoreScriptDebuggerImp::returnEvent(ExecState* state, int sourceID, int l
         return true;
 
     m_callingDelegate = true;
-    [m_debugger leavingFrame:m_topCallFrame sourceId:sourceID line:lineNumber];
+
+    WebFrame *webFrame = [m_debugger webFrame];
+    WebView *webView = [webFrame webView];
+    [[webView _scriptDebugDelegateForwarder] webView:webView willLeaveCallFrame:m_topCallFrame sourceId:sourceID line:lineNumber forWebFrame:webFrame];
+    if ([WebScriptDebugServer listenerCount])
+        [[WebScriptDebugServer sharedScriptDebugServer] webView:webView willLeaveCallFrame:m_topCallFrame sourceId:sourceID line:lineNumber forWebFrame:webFrame];
+
     m_topCallFrame = [m_debugger leaveFrame];
     m_callingDelegate = false;
 
@@ -129,7 +141,13 @@ bool WebCoreScriptDebuggerImp::exception(ExecState* state, int sourceID, int lin
         return true;
 
     m_callingDelegate = true;
-    [m_debugger exceptionRaised:m_topCallFrame sourceId:sourceID line:lineNumber];
+
+    WebFrame *webFrame = [m_debugger webFrame];
+    WebView *webView = [webFrame webView];
+    [[webView _scriptDebugDelegateForwarder] webView:webView exceptionWasRaised:m_topCallFrame sourceId:sourceID line:lineNumber forWebFrame:webFrame];
+    if ([WebScriptDebugServer listenerCount])
+        [[WebScriptDebugServer sharedScriptDebugServer] webView:webView exceptionWasRaised:m_topCallFrame sourceId:sourceID line:lineNumber forWebFrame:webFrame];
+
     m_callingDelegate = false;
 
     return true;

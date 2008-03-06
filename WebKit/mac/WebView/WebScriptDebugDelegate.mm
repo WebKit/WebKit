@@ -118,30 +118,6 @@ NSString * const WebScriptErrorLineNumberKey = @"WebScriptErrorLineNumber";
     }
 }
 
-- (void)enteredFrame:(WebScriptCallFrame *)frame sourceId:(int)sid line:(int)lineno
-{
-    WebView *webView = [_webFrame webView];
-    [[webView _scriptDebugDelegateForwarder] webView:webView didEnterCallFrame:frame sourceId:sid line:lineno forWebFrame:_webFrame];
-    if ([WebScriptDebugServer listenerCount])
-        [[WebScriptDebugServer sharedScriptDebugServer] webView:webView didEnterCallFrame:frame sourceId:sid line:lineno forWebFrame:_webFrame];
-}
-
-- (void)leavingFrame:(WebScriptCallFrame *)frame sourceId:(int)sid line:(int)lineno
-{
-    WebView *webView = [_webFrame webView];
-    [[webView _scriptDebugDelegateForwarder] webView:webView willLeaveCallFrame:frame sourceId:sid line:lineno forWebFrame:_webFrame];
-    if ([WebScriptDebugServer listenerCount])
-        [[WebScriptDebugServer sharedScriptDebugServer] webView:webView willLeaveCallFrame:frame sourceId:sid line:lineno forWebFrame:_webFrame];
-}
-
-- (void)exceptionRaised:(WebScriptCallFrame *)frame sourceId:(int)sid line:(int)lineno
-{
-    WebView *webView = [_webFrame webView];
-    [[webView _scriptDebugDelegateForwarder] webView:webView exceptionWasRaised:frame sourceId:sid line:lineno forWebFrame:_webFrame];
-    if ([WebScriptDebugServer listenerCount])
-        [[WebScriptDebugServer sharedScriptDebugServer] webView:webView exceptionWasRaised:frame sourceId:sid line:lineno forWebFrame:_webFrame];
-}
-
 @end
 
 @interface WebScriptCallFramePrivate : NSObject {
