@@ -57,7 +57,7 @@ Collator::Collator(const char* locale)
 
 std::auto_ptr<Collator> Collator::userDefault()
 {
-#if PLATFORM(DARWIN)
+#if PLATFORM(DARWIN) && PLATFORM(CF)
     // Mac OS X doesn't set UNIX locale to match user-selected one, so ICU default doesn't work.
     CFStringRef collationOrder = (CFStringRef)CFPreferencesCopyValue(CFSTR("AppleCollationOrder"), kCFPreferencesAnyApplication, kCFPreferencesCurrentUser, kCFPreferencesAnyHost);
     char buf[256];

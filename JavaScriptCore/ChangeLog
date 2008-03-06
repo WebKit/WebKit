@@ -1,3 +1,11 @@
+2008-03-06  Alexey Proskuryakov  <ap@webkit.org>
+
+        Wx build fix.
+
+        * wtf/unicode/icu/CollatorICU.cpp:
+        (WTF::Collator::userDefault): Put ICU workaround under both PLATFORM(DARWIN) and
+        PLATFORM(CF) checks, so that each port can decide if it wants to use CF on Mac for it.
+
 2008-03-06  Brady Eidson <beidson@apple.com>
 
         Reviewed by Darin
