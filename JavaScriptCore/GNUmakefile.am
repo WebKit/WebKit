@@ -48,6 +48,8 @@ javascriptcore_sources += \
 	JavaScriptCore/wtf/Assertions.cpp \
 	JavaScriptCore/wtf/HashTable.cpp \
 	JavaScriptCore/wtf/ThreadingGtk.cpp \
+	JavaScriptCore/wtf/unicode/CollatorDefault.cpp \
+	JavaScriptCore/wtf/unicode/icu/CollatorICU.cpp \
 	JavaScriptCore/wtf/unicode/UTF8.cpp
 
 # Debug build

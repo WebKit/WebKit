@@ -1,19 +1,18 @@
 /*
- * Copyright (C) 2007 Apple Inc. All rights reserved.
- * Copyright (C) 2007 Justin Haygood (jhaygood@reaktix.com)
+ * Copyright (C) 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
  * are met:
  *
  * 1.  Redistributions of source code must retain the above copyright
- *     notice, this list of conditions and the following disclaimer. 
+ *     notice, this list of conditions and the following disclaimer.
  * 2.  Redistributions in binary form must reproduce the above copyright
  *     notice, this list of conditions and the following disclaimer in the
- *     documentation and/or other materials provided with the distribution. 
+ *     documentation and/or other materials provided with the distribution.
  * 3.  Neither the name of Apple Computer, Inc. ("Apple") nor the names of
  *     its contributors may be used to endorse or promote products derived
- *     from this software without specific prior written permission. 
+ *     from this software without specific prior written permission.
  *
  * THIS SOFTWARE IS PROVIDED BY APPLE AND ITS CONTRIBUTORS "AS IS" AND ANY
  * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -26,28 +25,51 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 #include "config.h"
-#include "Threading.h"
+#include "Collator.h"
+
+#if !USE(ICU_UNICODE) || UCONFIG_NO_COLLATION
 
 namespace WTF {
 
-Mutex* atomicallyInitializedStaticMutex;
+Collator::Collator(const char*)
+{
+}
 
-ThreadIdentifier createThread(ThreadFunction, void*) { return 0; }
-int waitForThreadCompletion(ThreadIdentifier, void**) { return 0; }
-void detachThread(ThreadIdentifier) { }
-ThreadIdentifier currentThread() { return 0; }
+Collator::~Collator()
+{
+}
 
-Mutex::Mutex() {}
-Mutex::~Mutex() {}
-void Mutex::lock() {}
-bool Mutex::tryLock() { return false; }
-void Mutex::unlock() {};
+void Collator::setOrderLowerFirst(bool)
+{
+}
 
-ThreadCondition::ThreadCondition() {}
-ThreadCondition::~ThreadCondition() {}
-void ThreadCondition::wait(Mutex& mutex) {}
-void ThreadCondition::signal() {}
-void ThreadCondition::broadcast() {}
+std::auto_ptr<Collator> Collator::userDefault()
+{
+    return std::auto_ptr<Collator>(new Collator);
+}
 
-} // namespace WebCore
+// A default implementation for platforms that lack Unicode-aware collation.
+Collator::Result Collator::collate(const UChar* lhs, size_t lhsLength, const UChar* rhs, size_t rhsLength) const
+{
+    int lmin = lhsLength < rhsLength ? lhsLength : rhsLength;
+    int l = 0;
+    while (l < lmin && *lhs == *rhs) {
+        lhs++;
+        rhs++;
+        l++;
+    }
+
+    if (l < lmin)
+        return (*lhs > *rhs) ? Greater : Less;
+
+    if (lhsLength == rhsLength)
+        return Equal;
+
+    return (lhsLength > rhsLength) ? Greater : Less;
+}
+
+}
+
+#endif

@@ -1,3 +1,44 @@
+2008-03-06  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        <rdar://problem/5687269> Need to create a Collator abstraction for WebCore and JavaScriptCore
+
+        * wtf/Threading.h:
+        (WTF::initializeThreading):
+        * wtf/ThreadingGtk.cpp:
+        (WTF::initializeThreading):
+        * wtf/ThreadingNone.cpp:
+        * wtf/ThreadingPthreads.cpp:
+        * wtf/ThreadingWin.cpp:
+        Added AtomicallyInitializedStatic.
+
+        * kjs/string_object.cpp: (KJS::localeCompare): Changed to use Collator.
+
+        * GNUmakefile.am:
+        * JavaScriptCore.exp:
+        * JavaScriptCore.pri:
+        * JavaScriptCore.vcproj/WTF/WTF.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * JavaScriptCoreSources.bkl:
+        Added new fiiles to projects.
+
+        * wtf/unicode/Collator.h: Added.
+        (WTF::Collator::):
+        * wtf/unicode/CollatorDefault.cpp: Added.
+        (WTF::Collator::Collator):
+        (WTF::Collator::~Collator):
+        (WTF::Collator::setOrderLowerFirst):
+        (WTF::Collator::collate):
+        * wtf/unicode/icu/CollatorICU.cpp: Added.
+        (WTF::cachedCollatorMutex):
+        (WTF::Collator::Collator):
+        (WTF::Collator::~Collator):
+        (WTF::Collator::setOrderLowerFirst):
+        (WTF::Collator::collate):
+        (WTF::Collator::createCollator):
+        (WTF::Collator::releaseCollator):
+
 2008-03-05  Kevin Ollivier  <kevino@theolliviers.com>
 
         Fix the wx build after the bindings move.

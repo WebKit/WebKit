@@ -31,15 +31,12 @@
 
 #if ENABLE(XSLT)
 
+#include "PlatformString.h"
+
 #include <libxslt/templates.h>
 #include <libxslt/xsltutils.h>
 
-#if USE(ICU_UNICODE)
-#include <unicode/ucnv.h>
-#include <unicode/ucol.h>
-#include <unicode/ustring.h>
-#define WTF_USE_ICU_COLLATION !UCONFIG_NO_COLLATION
-#endif
+#include <wtf/unicode/Collator.h>
 
 #if PLATFORM(MAC)
 #include "SoftLinking.h"
@@ -122,14 +119,6 @@ void xsltUnicodeSortFunction(xsltTransformContextPtr ctxt, xmlNodePtr *sorts, in
     xmlXPathObjectPtr tmp;    
     int tempstype[XSLT_MAX_SORT], temporder[XSLT_MAX_SORT];
 
-#if USE(ICU_COLLATION)
-    UCollator *coll = 0;
-    UConverter *conv;
-    UErrorCode status;
-    UChar *target,*target2;
-    int targetlen, target2len;
-#endif
-
     if ((ctxt == NULL) || (sorts == NULL) || (nbsorts <= 0) ||
         (nbsorts >= XSLT_MAX_SORT))
         return;
@@ -201,28 +190,12 @@ void xsltUnicodeSortFunction(xsltTransformContextPtr ctxt, xmlNodePtr *sorts, in
     if (results == NULL)
         return;
 
-#if USE(ICU_COLLATION)
-    status = U_ZERO_ERROR;
-    conv = ucnv_open("UTF8", &status);
-    if (U_FAILURE(status))
-        xsltTransformError(ctxt, NULL, NULL, "xsltICUSortFunction: Error opening converter\n");
-
-    if (comp->has_lang) 
-        coll = ucol_open((const char*)comp->lang, &status);
-    if (U_FAILURE(status) || !comp->has_lang) {
-        status = U_ZERO_ERROR;
-        coll = ucol_open("en", &status);
-    }
-    if (U_FAILURE(status))
-        xsltTransformError(ctxt, NULL, NULL, "xsltICUSortFunction: Error opening collator\n");
-
-    if (comp->lower_first) 
-        ucol_setAttribute(coll,UCOL_CASE_FIRST,UCOL_LOWER_FIRST,&status);
-    else 
-        ucol_setAttribute(coll,UCOL_CASE_FIRST,UCOL_UPPER_FIRST,&status);
-    if (U_FAILURE(status))
-        xsltTransformError(ctxt, NULL, NULL, "xsltICUSortFunction: Error setting collator attribute\n");
-#endif
+    // We are passing a language identifier to a function that expects a locale identifier.
+    // The implementation of Collator should be lenient, and accept both "en-US" and "en_US", for example.
+    // This lets an author to really specify sorting rules, e.g. "de_DE@collation=phonebook", which isn't
+    // possible with language alone.
+    Collator collator(comp->has_lang ? (const char*)comp->lang : "en");
+    collator.setOrderLowerFirst(comp->lower_first);
 
     /* Shell's sort of node-set */
     for (incr = len / 2; incr > 0; incr /= 2) {
@@ -253,20 +226,9 @@ void xsltUnicodeSortFunction(xsltTransformContextPtr ctxt, xmlNodePtr *sorts, in
                             tst = 1;
                         else tst = -1;
                     } else {
-#if USE(ICU_COLLATION)
-                        targetlen = xmlStrlen(results[j]->stringval) + 1;
-                        target2len = xmlStrlen(results[j + incr]->stringval) + 1;
-                        target = (UChar*)xmlMalloc(targetlen * sizeof(UChar));
-                        target2 = (UChar*)xmlMalloc(target2len * sizeof(UChar));
-                        targetlen = ucnv_toUChars(conv, target, targetlen, (const char*)results[j]->stringval, -1, &status);
-                        target2len = ucnv_toUChars(conv, target2, target2len, (const char*)results[j+incr]->stringval, -1, &status);
-                        tst = ucol_strcoll(coll, target, u_strlen(target), target2, u_strlen(target2));
-                        xmlFree(target);
-                        xmlFree(target2);
-#else
-                        tst = xmlStrcmp(results[j]->stringval,
-                            results[j + incr]->stringval); 
-#endif
+                        String str1 = String::fromUTF8((const char*)results[j]->stringval);
+                        String str2 = String::fromUTF8((const char*)results[j + incr]->stringval);
+                        tst = collator.collate(str1.characters(), str1.length(), str2.characters(), str2.length());
                     }
                     if (descending)
                         tst = -tst;
@@ -319,20 +281,9 @@ void xsltUnicodeSortFunction(xsltTransformContextPtr ctxt, xmlNodePtr *sorts, in
                                     tst = 1;
                                 else tst = -1;
                             } else {
-#if USE(ICU_COLLATION)
-                                targetlen = xmlStrlen(res[j]->stringval) + 1;
-                                target2len = xmlStrlen(res[j + incr]->stringval) + 1;
-                                target = (UChar*)xmlMalloc(targetlen * sizeof(UChar));
-                                target2 = (UChar*)xmlMalloc(target2len * sizeof(UChar));
-                                targetlen = ucnv_toUChars(conv, target, targetlen, (const char*)res[j]->stringval, -1, &status);
-                                target2len = ucnv_toUChars(conv, target2, target2len, (const char*)res[j+incr]->stringval, -1, &status);
-                                tst = ucol_strcoll(coll, target, u_strlen(target), target2, u_strlen(target2));
-                                xmlFree(target);
-                                xmlFree(target2);
-#else
-                                tst = xmlStrcmp(res[j]->stringval,
-                                    res[j + incr]->stringval); 
-#endif
+                                String str1 = String::fromUTF8((const char*)res[j]->stringval);
+                                String str2 = String::fromUTF8((const char*)res[j + incr]->stringval);
+                                tst = collator.collate(str1.characters(), str1.length(), str2.characters(), str2.length());
                             }
                             if (desc)
                                 tst = -tst;
@@ -375,11 +326,6 @@ void xsltUnicodeSortFunction(xsltTransformContextPtr ctxt, xmlNodePtr *sorts, in
             }
         }
     }
-
-#if USE(ICU_COLLATION)
-    ucol_close(coll);
-    ucnv_close(conv);
-#endif
 
     for (j = 0; j < nbsorts; j++) {
         comp = static_cast<xsltStylePreComp*>(sorts[j]->psvi);

@@ -362,6 +362,18 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\wtf\unicode\Collator.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\wtf\unicode\CollatorDefault.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\wtf\unicode\icu\CollatorICU.cpp"
+			>
+		</File>
+		<File
 			RelativePath="..\..\wtf\unicode\icu\UnicodeIcu.h"
 			>
 		</File>

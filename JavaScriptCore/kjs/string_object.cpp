@@ -30,13 +30,7 @@
 #include "operations.h"
 #include "regexp_object.h"
 #include <wtf/MathExtras.h>
-#include <wtf/unicode/Unicode.h>
-
-#if PLATFORM(CF)
-#include <CoreFoundation/CoreFoundation.h>
-#elif PLATFORM(WIN_OS)
-#include <windows.h>
-#endif
+#include <wtf/unicode/Collator.h>
 
 using namespace WTF;
 
@@ -294,26 +288,10 @@ static inline UString substituteBackreferences(const UString &replacement, const
 
   return substitutedReplacement;
 }
+
 static inline int localeCompare(const UString& a, const UString& b)
 {
-#if PLATFORM(WIN_OS)
-    int retval = CompareStringW(LOCALE_USER_DEFAULT, 0,
-                                reinterpret_cast<LPCWSTR>(a.data()), a.size(),
-                                reinterpret_cast<LPCWSTR>(b.data()), b.size());
-    return !retval ? retval : retval - 2;
-#elif PLATFORM(CF)
-    CFStringRef sa = CFStringCreateWithCharactersNoCopy(kCFAllocatorDefault, reinterpret_cast<const UniChar*>(a.data()), a.size(), kCFAllocatorNull);
-    CFStringRef sb = CFStringCreateWithCharactersNoCopy(kCFAllocatorDefault, reinterpret_cast<const UniChar*>(b.data()), b.size(), kCFAllocatorNull);
-
-    int retval = CFStringCompare(sa, sb, kCFCompareLocalized);
-
-    CFRelease(sa);
-    CFRelease(sb);
-
-    return retval;
-#else
-    return compare(a, b);
-#endif
+    return Collator::userDefault()->collate(reinterpret_cast<const ::UChar*>(a.data()), a.size(), reinterpret_cast<const ::UChar*>(b.data()), b.size());
 }
 
 static JSValue *replace(ExecState *exec, StringImp* sourceVal, JSValue *pattern, JSValue *replacement)

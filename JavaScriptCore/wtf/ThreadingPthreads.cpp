@@ -35,6 +35,8 @@
 
 namespace WTF {
 
+Mutex* atomicallyInitializedStaticMutex;
+
 static Mutex& threadMapMutex()
 {
     static Mutex mutex;

@@ -36,6 +36,8 @@ KJSBISON += \
 SOURCES += \
     wtf/Assertions.cpp \
     wtf/HashTable.cpp \
+    wtf/unicode/CollatorDefault.cpp \
+    wtf/unicode/icu/CollatorICU.cpp \
     wtf/unicode/UTF8.cpp \
     bindings/NP_jsobject.cpp \
     bindings/npruntime.cpp \

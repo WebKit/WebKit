@@ -1,19 +1,18 @@
 /*
- * Copyright (C) 2007 Apple Inc. All rights reserved.
- * Copyright (C) 2007 Justin Haygood (jhaygood@reaktix.com)
+ * Copyright (C) 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
  * are met:
  *
  * 1.  Redistributions of source code must retain the above copyright
- *     notice, this list of conditions and the following disclaimer. 
+ *     notice, this list of conditions and the following disclaimer.
  * 2.  Redistributions in binary form must reproduce the above copyright
  *     notice, this list of conditions and the following disclaimer in the
- *     documentation and/or other materials provided with the distribution. 
+ *     documentation and/or other materials provided with the distribution.
  * 3.  Neither the name of Apple Computer, Inc. ("Apple") nor the names of
  *     its contributors may be used to endorse or promote products derived
- *     from this software without specific prior written permission. 
+ *     from this software without specific prior written permission.
  *
  * THIS SOFTWARE IS PROVIDED BY APPLE AND ITS CONTRIBUTORS "AS IS" AND ANY
  * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -26,28 +25,43 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-#include "config.h"
-#include "Threading.h"
+
+#ifndef WTF_Collator_h
+#define WTF_Collator_h
+
+#include <memory>
+#include <wtf/Noncopyable.h>
+#include <wtf/unicode/Unicode.h>
+
+#if USE(ICU_UNICODE) && !UCONFIG_NO_COLLATION
+struct UCollator;
+#endif
 
 namespace WTF {
 
-Mutex* atomicallyInitializedStaticMutex;
+    class Collator : Noncopyable {
+    public:
+        enum Result { Equal = 0, Greater = 1, Less = -1 };
 
-ThreadIdentifier createThread(ThreadFunction, void*) { return 0; }
-int waitForThreadCompletion(ThreadIdentifier, void**) { return 0; }
-void detachThread(ThreadIdentifier) { }
-ThreadIdentifier currentThread() { return 0; }
+        Collator(const char* locale); // Parsing is lenient; e.g. language identifiers (such as "en-US") are accepted, too.
+        ~Collator();
+        void setOrderLowerFirst(bool);
 
-Mutex::Mutex() {}
-Mutex::~Mutex() {}
-void Mutex::lock() {}
-bool Mutex::tryLock() { return false; }
-void Mutex::unlock() {};
+        static std::auto_ptr<Collator> userDefault();
 
-ThreadCondition::ThreadCondition() {}
-ThreadCondition::~ThreadCondition() {}
-void ThreadCondition::wait(Mutex& mutex) {}
-void ThreadCondition::signal() {}
-void ThreadCondition::broadcast() {}
+        Result collate(const ::UChar*, size_t, const ::UChar*, size_t) const;
 
-} // namespace WebCore
+    private:
+#if USE(ICU_UNICODE) && !UCONFIG_NO_COLLATION
+        void createCollator() const;
+        void releaseCollator();
+        mutable UCollator* m_collator;
+#endif
+        char* m_locale;
+        bool m_lowerFirst;
+    };
+}
+
+using WTF::Collator;
+
+#endif

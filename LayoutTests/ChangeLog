@@ -1,3 +1,15 @@
+2008-03-06  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        <rdar://problem/5687269> Need to create a Collator abstraction for WebCore and JavaScriptCore
+
+        Added a test to verify that collation is indeed locale-sensitive, and not just UCA.
+
+        * fast/xsl/sort-locale-expected.txt: Added.
+        * fast/xsl/sort-locale.xml: Added.
+        * fast/xsl/sort-locale.xsl: Added.
+
 2008-03-06  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Adele.

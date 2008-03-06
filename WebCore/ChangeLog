@@ -1,3 +1,14 @@
+2008-03-05  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        <rdar://problem/5687269> Need to create a Collator abstraction for WebCore and JavaScriptCore
+        
+        * ForwardingHeaders/wtf/unicode/Collator.h: Added.
+        * xml/XSLTUnicodeSort.cpp:
+        (WebCore::xsltUnicodeSortFunction):
+        * xml/XSLTUnicodeSort.h:
+
 2008-03-06  Darin Adler  <darin@apple.com>
 
         Reviewed by Mitz.
