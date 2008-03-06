@@ -1,3 +1,12 @@
+2008-03-06  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Adele.
+
+        - add test for r30823 (background-position: inherit)
+
+        * fast/css/background-position-inherit-expected.txt: Added.
+        * fast/css/background-position-inherit.html: Added.
+
 2008-03-05  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Darin.
