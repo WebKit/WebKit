@@ -1,5 +1,18 @@
 2008-03-05  Adam Roben  <aroben@apple.com>
 
+        Remove -[WebScriptDebugger hitStatement:sourceId:line:]
+
+        Reviewed by Kevin M.
+
+        * WebView/WebCoreScriptDebuggerImp.mm:
+        (WebCoreScriptDebuggerImp::atStatement): Moved code here from
+        -[WebScriptDebugger hitStatement:sourceId:line:].
+        * WebView/WebScriptDebugDelegate.mm:
+        (-[WebScriptDebugger webFrame]): Added.
+        * WebView/WebScriptDebugDelegatePrivate.h:
+
+2008-03-05  Adam Roben  <aroben@apple.com>
+
         Remove WebCoreScriptDebugger
 
         Reviewed by Kevin M.

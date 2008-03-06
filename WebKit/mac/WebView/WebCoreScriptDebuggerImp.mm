@@ -30,7 +30,10 @@
 
 #include "WebCoreScriptDebuggerImp.h"
 
+#include "WebFrameInternal.h"
+#include "WebViewInternal.h"
 #include "WebScriptDebugDelegatePrivate.h"
+#include "WebScriptDebugServerPrivate.h"
 #include <JavaScriptCore/JSGlobalObject.h>
 #include <WebCore/KURL.h>
 
@@ -95,7 +98,13 @@ bool WebCoreScriptDebuggerImp::atStatement(ExecState* state, int sourceID, int l
         return true;
 
     m_callingDelegate = true;
-    [m_debugger hitStatement:m_topCallFrame sourceId:sourceID line:lineNumber];
+
+    WebFrame *webFrame = [m_debugger webFrame];
+    WebView *webView = [webFrame webView];
+    [[webView _scriptDebugDelegateForwarder] webView:webView willExecuteStatement:m_topCallFrame sourceId:sourceID line:lineNumber forWebFrame:webFrame];
+    if ([WebScriptDebugServer listenerCount])
+        [[WebScriptDebugServer sharedScriptDebugServer] webView:webView willExecuteStatement:m_topCallFrame sourceId:sourceID line:lineNumber forWebFrame:webFrame];
+
     m_callingDelegate = false;
 
     return true;

@@ -42,6 +42,7 @@ class WebCoreScriptDebuggerImp;
 }
 
 - (WebScriptDebugger *)initWithWebFrame:(WebFrame *)webFrame;
+- (WebFrame *)webFrame;
 
 - (WebScriptObject *)globalObject;                          // return the WebView's windowScriptObject
 - (WebScriptCallFrame *)enterFrame:(KJS::ExecState*)state;
@@ -50,7 +51,6 @@ class WebCoreScriptDebuggerImp;
 // debugger callbacks
 - (void)parsedSource:(NSString *)source fromURL:(NSURL *)url sourceId:(int)sid startLine:(int)startLine errorLine:(int)errorLine errorMessage:(NSString *)errorMessage;
 - (void)enteredFrame:(WebScriptCallFrame *)frame sourceId:(int)sid line:(int)lineno;
-- (void)hitStatement:(WebScriptCallFrame *)frame sourceId:(int)sid line:(int)lineno;
 - (void)leavingFrame:(WebScriptCallFrame *)frame sourceId:(int)sid line:(int)lineno;
 - (void)exceptionRaised:(WebScriptCallFrame *)frame sourceId:(int)sid line:(int)lineno;
 

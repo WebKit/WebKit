@@ -76,6 +76,11 @@ NSString * const WebScriptErrorLineNumberKey = @"WebScriptErrorLineNumber";
     [super dealloc];
 }
 
+- (WebFrame *)webFrame
+{
+    return _webFrame;
+}
+
 - (WebScriptObject *)globalObject
 {
     return core(_webFrame)->windowScriptObject();
@@ -119,14 +124,6 @@ NSString * const WebScriptErrorLineNumberKey = @"WebScriptErrorLineNumber";
     [[webView _scriptDebugDelegateForwarder] webView:webView didEnterCallFrame:frame sourceId:sid line:lineno forWebFrame:_webFrame];
     if ([WebScriptDebugServer listenerCount])
         [[WebScriptDebugServer sharedScriptDebugServer] webView:webView didEnterCallFrame:frame sourceId:sid line:lineno forWebFrame:_webFrame];
-}
-
-- (void)hitStatement:(WebScriptCallFrame *)frame sourceId:(int)sid line:(int)lineno
-{
-    WebView *webView = [_webFrame webView];
-    [[webView _scriptDebugDelegateForwarder] webView:webView willExecuteStatement:frame sourceId:sid line:lineno forWebFrame:_webFrame];
-    if ([WebScriptDebugServer listenerCount])
-        [[WebScriptDebugServer sharedScriptDebugServer] webView:webView willExecuteStatement:frame sourceId:sid line:lineno forWebFrame:_webFrame];
 }
 
 - (void)leavingFrame:(WebScriptCallFrame *)frame sourceId:(int)sid line:(int)lineno
