@@ -2,8 +2,8 @@
 VPATH += $$PWD
 
 INCLUDEPATH += tmp
-INCLUDEPATH += $$PWD $$PWD/kjs $$PWD/bindings $$PWD/bindings/c $$PWD/wtf
-DEPENDPATH += $$PWD $$PWD/kjs $$PWD/bindings $$PWD/bindings/c $$PWD/wtf
+INCLUDEPATH += $$PWD $$PWD/kjs $$PWD/bindings $$PWD/bindings/c $$PWD/wtf $$PWD/wtf/unicode
+DEPENDPATH += $$PWD $$PWD/kjs $$PWD/bindings $$PWD/bindings/c $$PWD/wtf $$PWD/wtf/unicode
 DEFINES -= KJS_IDENTIFIER_HIDE_GLOBALS 
 qt-port:INCLUDEPATH += $$PWD/bindings/qt
 qt-port:DEFINES += BUILDING_QT__

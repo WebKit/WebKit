@@ -1,8 +1,14 @@
 2008-03-06  Darin Adler  <darin@apple.com>
 
+        - try to fix the Qt build
+
+        * JavaScriptCore.pri: Add the wtf/unicode directory.
+
+2008-03-06  Darin Adler  <darin@apple.com>
+
         - try to fix the GTK build
 
-        * GNUmakefile.am: Add a -I for the unicode directory.
+        * GNUmakefile.am: Add a -I for the wtf/unicode directory.
 
 2008-03-06  Darin Adler  <darin@apple.com>
 
