@@ -571,6 +571,7 @@ This file contains the list of files needed to build WebCore.
         page/InspectorController.cpp
         page/MouseEventWithHitTestResults.cpp
         page/Page.cpp
+        page/PageGroup.cpp
         page/Screen.cpp
         page/Settings.cpp
         page/WindowFeatures.cpp

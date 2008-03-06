@@ -31,14 +31,15 @@
 #import "WebHistoryItemInternal.h"
 #import "WebKitLogging.h"
 #import "WebNSURLExtras.h"
-#import <WebCore/KURL.h>
-#import <WebCore/Page.h>
-#import <WebCore/PageGroup.h>
+#import "WebTypesInternal.h"
 #import <Foundation/NSError.h>
 #import <JavaScriptCore/Assertions.h>
 #import <JavaScriptCore/HashMap.h>
 #import <JavaScriptCore/RetainPtr.h>
 #import <JavaScriptCore/Vector.h>
+#import <WebCore/KURL.h>
+#import <WebCore/Page.h>
+#import <WebCore/PageGroup.h>
 
 using namespace WebCore;
 

@@ -1,5 +1,11 @@
 2008-03-06  Darin Adler  <darin@apple.com>
 
+        - fix Tiger build
+
+        * History/WebHistory.mm: Added include of WebTypesInternal.h.
+
+2008-03-06  Darin Adler  <darin@apple.com>
+
         - fix Release build
 
         * History/WebHistory.mm:

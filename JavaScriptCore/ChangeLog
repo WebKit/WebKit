@@ -1,3 +1,9 @@
+2008-03-06  Darin Adler  <darin@apple.com>
+
+        - a small step towards fixing the Qt build
+
+        * JavaScriptCore.pri: Remove references to files no longer present in JavaScriptCore/bindings.
+
 2008-03-06  Brady Eidson  <beidson@apple.com>
 
         Gtk Build fix

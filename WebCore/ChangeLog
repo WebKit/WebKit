@@ -1,5 +1,11 @@
 2008-03-06  Darin Adler  <darin@apple.com>
 
+        - try to fix Wx build
+
+        * WebCoreSources.bkl: Added PageGroup.cpp.
+
+2008-03-06  Darin Adler  <darin@apple.com>
+
         - fix some builds
 
         * GNUmakefile.am: Added PageGroup.cpp.

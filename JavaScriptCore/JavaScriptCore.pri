@@ -39,17 +39,6 @@ SOURCES += \
     wtf/unicode/CollatorDefault.cpp \
     wtf/unicode/icu/CollatorICU.cpp \
     wtf/unicode/UTF8.cpp \
-    bindings/NP_jsobject.cpp \
-    bindings/npruntime.cpp \
-    bindings/runtime_array.cpp \
-    bindings/runtime.cpp \
-    bindings/runtime_method.cpp \
-    bindings/runtime_object.cpp \
-    bindings/runtime_root.cpp \
-    bindings/c/c_class.cpp \
-    bindings/c/c_instance.cpp \
-    bindings/c/c_runtime.cpp \
-    bindings/c/c_utility.cpp \
     API/JSBase.cpp \
     API/JSCallbackConstructor.cpp \
     API/JSCallbackFunction.cpp \
