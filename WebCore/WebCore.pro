@@ -727,6 +727,7 @@ SOURCES += \
     page/InspectorController.cpp \
     page/MouseEventWithHitTestResults.cpp \
     page/Page.cpp \
+    page/PageGroup.cpp \
     page/Screen.cpp \
     page/Settings.cpp \
     page/WindowFeatures.cpp \

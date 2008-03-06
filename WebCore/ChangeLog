@@ -1,4 +1,12 @@
-2008-03-05  Alexey Proskuryakov  <ap@webkit.org>
+2008-03-06  Darin Adler  <darin@apple.com>
+
+        - fix some builds
+
+        * GNUmakefile.am: Added PageGroup.cpp.
+        * WebCore.base.exp: Removed WebCoreHistory.
+        * WebCore.pro: Added PageGroup.cpp.
+
+2008-03-06  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin.
 

@@ -803,6 +803,7 @@ webcore_sources += \
 	WebCore/page/InspectorController.cpp \
 	WebCore/page/MouseEventWithHitTestResults.cpp \
 	WebCore/page/Page.cpp \
+	WebCore/page/PageGroup.cpp \
 	WebCore/page/Screen.cpp \
 	WebCore/page/Settings.cpp \
 	WebCore/page/WindowFeatures.cpp \
