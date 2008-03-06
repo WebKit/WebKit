@@ -1,5 +1,37 @@
 2008-03-05  Adam Roben  <aroben@apple.com>
 
+        Remove -enterFrame: and -leaveFrame from WebScriptDebugger
+
+        Reviewed by Kevin M.
+
+        * WebView/WebCoreScriptDebuggerImp.h: Changed to store m_topCallFrame
+        in a RetainPtr, now that WebCoreScriptDebuggerImp is in charge of its
+        lifetime.
+        * WebView/WebCoreScriptDebuggerImp.mm:
+          - Added declaration of -[WebScriptCallFrame
+            _initWithGlobalObject:caller:state:].
+          - Changed most uses of m_topCallFrame to m_topCallFrame.get()
+        (WebCoreScriptDebuggerImp::WebCoreScriptDebuggerImp): Removed
+        now-unnecessary initialization of m_topCallFrame.
+        (WebCoreScriptDebuggerImp::callEvent): Replaced call to enterFrame:
+        with its implementation. The one difference between this
+        implementation and the old enterFrame: method is that we don't hand
+        our reference to m_topCallFrame to _initWithGlobalObject: -- that
+        method must now retain the passed-in WebScriptCallFrame manually.
+        (WebCoreScriptDebuggerImp::atStatement):
+        (WebCoreScriptDebuggerImp::returnEvent): Replaced call to leaveFrame
+        with its implementation.
+        (WebCoreScriptDebuggerImp::exception):
+        * WebView/WebScriptDebugDelegate.mm: Removed declaration of
+        -[WebScriptCallFrame _initWithGlobalObject:caller:state:].
+        (-[WebScriptCallFrame _initWithGlobalObject:caller:state:]): Changed
+        to retain the passed-in caller.
+        * WebView/WebScriptDebugDelegatePrivate.h:
+          - Removed _current ivar
+          - Removed enterFrame:/leaveFrame declarations.
+
+2008-03-05  Adam Roben  <aroben@apple.com>
+
         Remove -parsedSource: from WebScriptDebugger
 
         Reviewed by Kevin M.

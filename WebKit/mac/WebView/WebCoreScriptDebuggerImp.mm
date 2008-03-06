@@ -40,6 +40,12 @@
 using namespace KJS;
 using namespace WebCore;
 
+@interface WebScriptCallFrame (WebScriptDebugDelegateInternal)
+
+- (WebScriptCallFrame *)_initWithGlobalObject:(WebScriptObject *)globalObj caller:(WebScriptCallFrame *)caller state:(ExecState *)state;
+
+@end
+
 // convert UString to NSString
 NSString *toNSString(const UString& s)
 {
@@ -59,7 +65,6 @@ static NSURL *toNSURL(const UString& s)
 WebCoreScriptDebuggerImp::WebCoreScriptDebuggerImp(WebScriptDebugger *debugger, JSGlobalObject* globalObject)
     : m_debugger(debugger)
     , m_callingDelegate(false)
-    , m_topCallFrame(nil)
 {
     attach(globalObject);
     List emptyList;
@@ -106,13 +111,14 @@ bool WebCoreScriptDebuggerImp::callEvent(ExecState* state, int sourceID, int lin
         return true;
 
     m_callingDelegate = true;
-    m_topCallFrame = [m_debugger enterFrame:state];
+
+    m_topCallFrame.adoptNS([[WebScriptCallFrame alloc] _initWithGlobalObject:[m_debugger globalObject] caller:m_topCallFrame.get() state:state]);
 
     WebFrame *webFrame = [m_debugger webFrame];
     WebView *webView = [webFrame webView];
-    [[webView _scriptDebugDelegateForwarder] webView:webView didEnterCallFrame:m_topCallFrame sourceId:sourceID line:lineNumber forWebFrame:webFrame];
+    [[webView _scriptDebugDelegateForwarder] webView:webView didEnterCallFrame:m_topCallFrame.get() sourceId:sourceID line:lineNumber forWebFrame:webFrame];
     if ([WebScriptDebugServer listenerCount])
-        [[WebScriptDebugServer sharedScriptDebugServer] webView:webView didEnterCallFrame:m_topCallFrame sourceId:sourceID line:lineNumber forWebFrame:webFrame];
+        [[WebScriptDebugServer sharedScriptDebugServer] webView:webView didEnterCallFrame:m_topCallFrame.get() sourceId:sourceID line:lineNumber forWebFrame:webFrame];
 
     m_callingDelegate = false;
 
@@ -128,9 +134,9 @@ bool WebCoreScriptDebuggerImp::atStatement(ExecState* state, int sourceID, int l
 
     WebFrame *webFrame = [m_debugger webFrame];
     WebView *webView = [webFrame webView];
-    [[webView _scriptDebugDelegateForwarder] webView:webView willExecuteStatement:m_topCallFrame sourceId:sourceID line:lineNumber forWebFrame:webFrame];
+    [[webView _scriptDebugDelegateForwarder] webView:webView willExecuteStatement:m_topCallFrame.get() sourceId:sourceID line:lineNumber forWebFrame:webFrame];
     if ([WebScriptDebugServer listenerCount])
-        [[WebScriptDebugServer sharedScriptDebugServer] webView:webView willExecuteStatement:m_topCallFrame sourceId:sourceID line:lineNumber forWebFrame:webFrame];
+        [[WebScriptDebugServer sharedScriptDebugServer] webView:webView willExecuteStatement:m_topCallFrame.get() sourceId:sourceID line:lineNumber forWebFrame:webFrame];
 
     m_callingDelegate = false;
 
@@ -146,11 +152,12 @@ bool WebCoreScriptDebuggerImp::returnEvent(ExecState* state, int sourceID, int l
 
     WebFrame *webFrame = [m_debugger webFrame];
     WebView *webView = [webFrame webView];
-    [[webView _scriptDebugDelegateForwarder] webView:webView willLeaveCallFrame:m_topCallFrame sourceId:sourceID line:lineNumber forWebFrame:webFrame];
+    [[webView _scriptDebugDelegateForwarder] webView:webView willLeaveCallFrame:m_topCallFrame.get() sourceId:sourceID line:lineNumber forWebFrame:webFrame];
     if ([WebScriptDebugServer listenerCount])
-        [[WebScriptDebugServer sharedScriptDebugServer] webView:webView willLeaveCallFrame:m_topCallFrame sourceId:sourceID line:lineNumber forWebFrame:webFrame];
+        [[WebScriptDebugServer sharedScriptDebugServer] webView:webView willLeaveCallFrame:m_topCallFrame.get() sourceId:sourceID line:lineNumber forWebFrame:webFrame];
 
-    m_topCallFrame = [m_debugger leaveFrame];
+    m_topCallFrame = [m_topCallFrame.get() caller];
+
     m_callingDelegate = false;
 
     return true;
@@ -165,9 +172,9 @@ bool WebCoreScriptDebuggerImp::exception(ExecState* state, int sourceID, int lin
 
     WebFrame *webFrame = [m_debugger webFrame];
     WebView *webView = [webFrame webView];
-    [[webView _scriptDebugDelegateForwarder] webView:webView exceptionWasRaised:m_topCallFrame sourceId:sourceID line:lineNumber forWebFrame:webFrame];
+    [[webView _scriptDebugDelegateForwarder] webView:webView exceptionWasRaised:m_topCallFrame.get() sourceId:sourceID line:lineNumber forWebFrame:webFrame];
     if ([WebScriptDebugServer listenerCount])
-        [[WebScriptDebugServer sharedScriptDebugServer] webView:webView exceptionWasRaised:m_topCallFrame sourceId:sourceID line:lineNumber forWebFrame:webFrame];
+        [[WebScriptDebugServer sharedScriptDebugServer] webView:webView exceptionWasRaised:m_topCallFrame.get() sourceId:sourceID line:lineNumber forWebFrame:webFrame];
 
     m_callingDelegate = false;
 

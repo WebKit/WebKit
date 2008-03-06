@@ -53,7 +53,6 @@ NSString * const WebScriptErrorLineNumberKey = @"WebScriptErrorLineNumber";
 
 @interface WebScriptCallFrame (WebScriptDebugDelegateInternal)
 
-- (WebScriptCallFrame *)_initWithGlobalObject:(WebScriptObject *)globalObj caller:(WebScriptCallFrame *)caller state:(ExecState *)state;
 - (id)_convertValueToObjcValue:(JSValue *)value;
 
 @end
@@ -72,7 +71,6 @@ NSString * const WebScriptErrorLineNumberKey = @"WebScriptErrorLineNumber";
 - (void)dealloc
 {
     delete _debugger;
-    [_current release];
     [super dealloc];
 }
 
@@ -84,19 +82,6 @@ NSString * const WebScriptErrorLineNumberKey = @"WebScriptErrorLineNumber";
 - (WebScriptObject *)globalObject
 {
     return core(_webFrame)->windowScriptObject();
-}
-
-- (WebScriptCallFrame *)enterFrame:(ExecState*)state;
-{
-    _current = [[WebScriptCallFrame alloc] _initWithGlobalObject:[self globalObject] caller:_current state:state];
-    return _current;
-}
-
-- (WebScriptCallFrame *)leaveFrame;
-{
-    WebScriptCallFrame *caller = [[_current caller] retain];
-    [_current release];
-    return _current = caller;
 }
 
 @end
@@ -133,7 +118,7 @@ NSString * const WebScriptErrorLineNumberKey = @"WebScriptErrorLineNumber";
     if ((self = [super init])) {
         _private = [[WebScriptCallFramePrivate alloc] init];
         _private->globalObject = globalObj;
-        _private->caller = caller; // (already retained)
+        _private->caller = [caller retain];
         _private->state = state;
     }
     return self;

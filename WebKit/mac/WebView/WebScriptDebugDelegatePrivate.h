@@ -38,14 +38,11 @@ class WebCoreScriptDebuggerImp;
 @private
     WebFrame                  *_webFrame;
     WebCoreScriptDebuggerImp  *_debugger;
-    WebScriptCallFrame        *_current;       // top of stack
 }
 
 - (WebScriptDebugger *)initWithWebFrame:(WebFrame *)webFrame;
 - (WebFrame *)webFrame;
 
 - (WebScriptObject *)globalObject;                          // return the WebView's windowScriptObject
-- (WebScriptCallFrame *)enterFrame:(KJS::ExecState*)state;
-- (WebScriptCallFrame *)leaveFrame;
 
 @end
