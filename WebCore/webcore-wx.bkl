@@ -41,10 +41,7 @@ wxWebCore port Bakefile project file.
         <include>$(SRCDIR)/platform/graphics/wx</include>
         <include>$(SRCDIR)/platform/wx</include>
         <include>$(SRCDIR)/platform/wx/wxcode</include>
-        <include>$(SRCDIR)/bridge/wx</include>
         <include>$(SRCDIR)/page/wx</include>
-        <include>$(WK_ROOT)/libpng</include>
-        <include>$(WK_ROOT)/libjpeg</include>
         
         <sources>
             editing/wx/EditorWx.cpp

@@ -1,3 +1,11 @@
+2008-03-05  Kevin Ollivier  <kevino@theolliviers.com>
+
+        Fix the wx build after the bindings move.
+
+        * WebCoreSources.bkl:
+        * webcore-base.bkl:
+        * webcore-wx.bkl:
+
 2008-03-05  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Adele Peterson.

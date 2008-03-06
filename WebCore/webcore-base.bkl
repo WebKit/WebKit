@@ -35,6 +35,7 @@ wxWebCore port Bakefile project file.
 
     <set var="WEBCORE_BASE_SOURCES">
         $(WEBCORE_SOURCES_BMP)
+        $(WEBCORE_SOURCES_BRIDGE)
         $(WEBCORE_SOURCES_CSS)
         $(WEBCORE_SOURCES_DERIVEDSOURCES)
         $(WEBCORE_SOURCES_DOM)
@@ -64,6 +65,8 @@ wxWebCore port Bakefile project file.
         <include>$(SRCDIR)</include>
         <include>$(SRCDIR)/bindings/js</include>
         <include>$(SRCDIR)/bridge</include>
+        <include>$(SRCDIR)/bridge/c</include>
+        <include>$(SRCDIR)/bridge/jni</include>
         <include>$(SRCDIR)/css</include>
         <include>$(SRCDIR)/DerivedSources/WebCore</include>
         <include>$(SRCDIR)/dom</include>
