@@ -289,6 +289,7 @@ bool ThreadCondition::timedWait(Mutex& mutex, double interval)
 {
     // Empty for now
     ASSERT(false);
+    return false;
 }
 
 void ThreadCondition::signal()
