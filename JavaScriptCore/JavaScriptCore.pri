@@ -2,10 +2,9 @@
 VPATH += $$PWD
 
 INCLUDEPATH += tmp
-INCLUDEPATH += $$PWD $$PWD/kjs $$PWD/bindings $$PWD/bindings/c $$PWD/wtf $$PWD/wtf/unicode
-DEPENDPATH += $$PWD $$PWD/kjs $$PWD/bindings $$PWD/bindings/c $$PWD/wtf $$PWD/wtf/unicode
+INCLUDEPATH += $$PWD $$PWD/kjs $$PWD/wtf $$PWD/wtf/unicode
+DEPENDPATH += $$PWD $$PWD/kjs $$PWD/wtf $$PWD/wtf/unicode
 DEFINES -= KJS_IDENTIFIER_HIDE_GLOBALS 
-qt-port:INCLUDEPATH += $$PWD/bindings/qt
 qt-port:DEFINES += BUILDING_QT__
 gtk-port:DEFINES += BUILDING_GTK__
 
@@ -102,11 +101,6 @@ SOURCES += \
 !qt-port:SOURCES += \
     wtf/TCSystemAlloc.cpp
 }
-
-qt-port:SOURCES += \
-    bindings/qt/qt_class.cpp \
-    bindings/qt/qt_instance.cpp \
-    bindings/qt/qt_runtime.cpp
 
 gtk-port:SOURCES += \
     wtf/ThreadingGtk.cpp

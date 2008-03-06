@@ -1,5 +1,11 @@
 2008-03-06  Darin Adler  <darin@apple.com>
 
+        - another small step towards fixing the Qt build
+
+        * JavaScriptCore.pri: Remove more references to the now-obsolete bindings directory.
+
+2008-03-06  Darin Adler  <darin@apple.com>
+
         - a small step towards fixing the Qt build
 
         * JavaScriptCore.pri: Remove references to files no longer present in JavaScriptCore/bindings.
