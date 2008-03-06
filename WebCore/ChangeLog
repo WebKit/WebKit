@@ -1,3 +1,14 @@
+2008-03-05  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Adele Peterson.
+
+        - fix "background-position: inherit"
+
+        * css/CSSStyleSelector.cpp:
+        Made HANDLE_MULTILAYER_INHERIT_AND_INITIAL fall through and added
+        a return statement in HANDLE_MULTILAYER_VALUE. Also removed an unused
+        macro.
+
 2008-03-05  Alp Toker  <alp@atoker.com>
 
         Add a missing make dependency for derived sources to improve
