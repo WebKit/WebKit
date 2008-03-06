@@ -776,7 +776,7 @@ sub buildAutotoolsProject($@)
     print "Installation directory: $prefix\n" if(defined($prefix));
 
     # The autotools configure script requires bash explicitly at time of writing
-    $result = system "/bin/bash", "$sourceDir/configure", @buildArgs;
+    $result = system "/bin/bash", "$sourceDir/configure", "SHELL=/bin/bash", @buildArgs;
     if ($result ne 0) {
         die "Failed to setup build environment using 'autotools'!\n";
     }
