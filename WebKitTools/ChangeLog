@@ -1,5 +1,11 @@
 2008-03-06  Brady Eidson  <beidson@apple.com>
 
+        Tiger build fix...?
+
+        * DumpRenderTree/mac/WatchdogMac.mm:
+
+2008-03-06  Brady Eidson  <beidson@apple.com>
+
         Reviewed by Darin
 
         Added a cross-platform Watchdog thread to DRT.

@@ -29,6 +29,9 @@
 
 #import <Cocoa/Cocoa.h>
 
+#import <sys/types.h>
+#import <unistd.h>
+
 void WatchdogMac::handleHang()
 {
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
