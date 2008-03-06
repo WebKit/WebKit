@@ -1879,7 +1879,7 @@ DerivedSources/CSSPropertyNames.h: $(WebCore)/css/CSSPropertyNames.in $(WebCore)
 	mv CSSPropertyNames.* $(GENSOURCES)
 
 # Lower case all the values, as CSS values are case-insensitive
-DerivedSources/CSSValueKeywords.h : $(WebCore)/css/CSSValueKeywords.in $(WebCore)/css/SVGCSSValueKeywords.in
+DerivedSources/CSSValueKeywords.h : $(WebCore)/css/CSSValueKeywords.in $(WebCore)/css/SVGCSSValueKeywords.in $(WebCore)/css/makevalues.pl
 	$(PERL) -ne 'print lc' $(WebCore)/css/SVGCSSValueKeywords.in > SVGCSSValueKeywords.in
 	if sort $< SVGCSSValueKeywords.in | uniq -d | grep -E '^[^#]'; then echo 'Duplicate value!'; exit 1; fi
 	cat $< SVGCSSValueKeywords.in > CSSValueKeywords.in

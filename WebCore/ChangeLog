@@ -1,5 +1,14 @@
 2008-03-05  Alp Toker  <alp@atoker.com>
 
+        Add a missing make dependency for derived sources to improve
+        autotools build dependency tracking.
+
+        Issue spotted by Ori Bernstein.
+
+        * GNUmakefile.am:
+
+2008-03-05  Alp Toker  <alp@atoker.com>
+
         GTK+ build fix for breakage introduced in r30800.
 
         Track moved bridge sources from JavaScriptCore to WebCore.
