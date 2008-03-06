@@ -196,7 +196,7 @@ bool ThreadCondition::timedWait(Mutex& mutex, double interval)
         targetTime.tv_sec++;
     }
 
-    return g_cond_timedwait(m_condition, mutex.impl(), &targetTime);
+    return g_cond_timed_wait(m_condition, mutex.impl(), &targetTime);
 }
 
 void ThreadCondition::signal()
