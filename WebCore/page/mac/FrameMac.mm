@@ -586,8 +586,7 @@ KJS::Bindings::Instance* Frame::createScriptInstanceForWidget(WebCore::Widget* w
         return 0;
 
     void* nativeHandle = aView;
-    CreateRootObjectFunction createRootObject = RootObject::createRootObject();
-    RefPtr<RootObject> rootObject = createRootObject(nativeHandle);
+    RefPtr<RootObject> rootObject = createRootObject(nativeHandle, scriptProxy()->globalObject());
 
     if ([aView respondsToSelector:@selector(objectForWebScript)]) {
         id objectForWebScript = [aView objectForWebScript];

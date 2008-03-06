@@ -25,6 +25,10 @@
 #include "config.h"
 #include "jni_jsobject.h"
 
+#include "Frame.h"
+#include "kjs_proxy.h"
+#include "WebCoreFrameBridge.h"
+#include "WebCoreViewFactory.h"
 #include "jni_runtime.h"
 #include "jni_utility.h"
 #include "runtime_object.h"
@@ -33,8 +37,9 @@
 #include <kjs/ExecState.h>
 #include <kjs/JSGlobalObject.h>
 #include <kjs/interpreter.h>
-
 #include <wtf/Assertions.h>
+
+using WebCore::Frame;
 
 using namespace KJS::Bindings;
 using namespace KJS;
@@ -316,6 +321,17 @@ void JavaJSObject::finalize() const
         rootObject->gcUnprotect(_imp);
 }
 
+static PassRefPtr<RootObject> createRootObject(void* nativeHandle)
+{
+    NSView *view = (NSView *)nativeHandle;
+    WebCoreFrameBridge *bridge = [[WebCoreViewFactory sharedFactory] bridgeForView:view];
+    if (!bridge)
+        return 0;
+    
+    Frame* frame = [bridge _frame];
+    return frame->createRootObject(nativeHandle, frame->scriptProxy()->globalObject());
+}
+
 // We're either creating a 'Root' object (via a call to JavaJSObject.getWindow()), or
 // another JavaJSObject.
 jlong JavaJSObject::createNative(jlong nativeHandle)
@@ -327,10 +343,6 @@ jlong JavaJSObject::createNative(jlong nativeHandle)
 
     if (findProtectingRootObject(jlong_to_impptr(nativeHandle)))
         return nativeHandle;
-
-    CreateRootObjectFunction createRootObject = RootObject::createRootObject();
-    if (!createRootObject)
-        return ptr_to_jlong(0);
 
     RefPtr<RootObject> rootObject = createRootObject(jlong_to_ptr(nativeHandle));
 

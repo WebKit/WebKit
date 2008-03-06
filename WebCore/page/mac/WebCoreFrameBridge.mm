@@ -121,17 +121,6 @@ using KJS::UnspecifiedType;
 
 using KJS::Bindings::RootObject;
 
-static PassRefPtr<RootObject> createRootObject(void* nativeHandle)
-{
-    NSView *view = (NSView *)nativeHandle;
-    WebCoreFrameBridge *bridge = [[WebCoreViewFactory sharedFactory] bridgeForView:view];
-    if (!bridge)
-        return 0;
-
-    Frame* frame = [bridge _frame];
-    return frame->createRootObject(nativeHandle, frame->scriptProxy()->globalObject());
-}
-
 static pthread_t mainThread = 0;
 
 static void updateRenderingForBindings(ExecState* exec, JSObject* rootObject)
@@ -252,7 +241,7 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
         initializedKJS = true;
 
         mainThread = pthread_self();
-        RootObject::setCreateRootObject(createRootObject);
+        RootObject::initializeJNIThreading();
         KJS::Bindings::Instance::setDidExecuteFunction(updateRenderingForBindings);
     }
     

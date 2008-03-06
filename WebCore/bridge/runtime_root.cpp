@@ -171,28 +171,19 @@ static void performJavaScriptAccess(void*)
         CFRunLoopWakeUp(originatingLoop);
 }
 
-static CreateRootObjectFunction _createRootObject;
-    
-CreateRootObjectFunction RootObject::createRootObject()
-{
-    return _createRootObject;
-}
-
 CFRunLoopRef RootObject::runLoop()
 {
     return _runLoop;
 }        
 
 // Must be called from the thread that will be used to access JavaScript.
-void RootObject::setCreateRootObject(CreateRootObjectFunction createRootObject) {
+void RootObject::initializeJNIThreading() {
     // Should only be called once.
-    ASSERT(!_createRootObject);
+    ASSERT(!_runLoop);
 
-    _createRootObject = createRootObject;
-    
     // Assume that we can retain this run loop forever.  It'll most 
     // likely (always?) be the main loop.
-    _runLoop = (CFRunLoopRef)CFRetain (CFRunLoopGetCurrent ());
+    _runLoop = (CFRunLoopRef)CFRetain (CFRunLoopGetCurrent());
 
     // Setup a source the other threads can use to signal the _runLoop
     // thread that a JavaScript call needs to be invoked.

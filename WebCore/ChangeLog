@@ -2,6 +2,34 @@
 
         Reviewed by Sam.
 
+        * WebCore.xcodeproj/project.pbxproj:
+        Change jni_jsobject.cpp to be Obj-C++ for now. The plan is to merge 
+        this with jni_objc.mm and create jni_jsobject.mm.
+        
+        * bridge/jni/jni_jsobject.cpp:
+        (createRootObject):
+        Move createRootObject here from WebCoreFrameBridge.
+        
+        (JavaJSObject::createNative):
+        Call the newly added createRootObject function.
+        
+        * bridge/runtime_root.cpp:
+        (KJS::Bindings::RootObject::initializeJNIThreading):
+        * bridge/runtime_root.h:
+        setCreateRootObject no longer takes a root object, rename it to initializeJNIThreading.
+
+        * page/mac/FrameMac.mm:
+        (WebCore::Frame::createScriptInstanceForWidget):
+        Just call Frame::createRootObject here.
+        
+        * page/mac/WebCoreFrameBridge.mm:
+        (-[WebCoreFrameBridge init]):
+        Call initializeJNIThreading.
+
+2008-03-05  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam.
+
         Change some static class variables to be regular static variables,
         making it easier to move the chunk of mac-specific code out of runtime_root.[cpp|h]
 

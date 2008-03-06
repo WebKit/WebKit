@@ -4413,7 +4413,7 @@
 		1A569CD00D7E2B82007C3983 /* jni_class.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = jni_class.h; sourceTree = "<group>"; };
 		1A569CD10D7E2B82007C3983 /* jni_instance.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = jni_instance.cpp; sourceTree = "<group>"; };
 		1A569CD20D7E2B82007C3983 /* jni_instance.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = jni_instance.h; sourceTree = "<group>"; };
-		1A569CD30D7E2B82007C3983 /* jni_jsobject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = jni_jsobject.cpp; sourceTree = "<group>"; };
+		1A569CD30D7E2B82007C3983 /* jni_jsobject.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = jni_jsobject.cpp; sourceTree = "<group>"; };
 		1A569CD40D7E2B82007C3983 /* jni_jsobject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = jni_jsobject.h; sourceTree = "<group>"; };
 		1A569CD50D7E2B82007C3983 /* jni_objc.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = jni_objc.mm; sourceTree = "<group>"; };
 		1A569CD60D7E2B82007C3983 /* jni_runtime.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = jni_runtime.cpp; sourceTree = "<group>"; };
