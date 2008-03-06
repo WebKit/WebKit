@@ -1,3 +1,62 @@
+2008-03-05  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam.
+
+        - add functions giving offsets within a KURL, slated to replace the
+          EncodedURL object in CSSStyleSelector (in a future "visited link" change)
+        - chagned all KURL data members names to use the traditional m_ prefix
+        - initialize all members to 0 in invalid KURLs rather than having all
+          functions check m_isValid
+
+        * platform/KURL.cpp:
+        (WebCore::KURL::invalidate): Added. Initializes all the fields except for
+        m_string to the "invalid" values. For use in the empty constructor and
+        in the init and parse functions.
+        (WebCore::KURL::init): Tweaked comments. Changed all code paths that return
+        early to use the invalidate() function. Updated for member variable name
+        changes.
+        (WebCore::KURL::hasPath): Updated for member variable name changes.
+        Remove now-unneeded check of m_isValid.
+        (WebCore::KURL::lastPathComponent): Ditto.
+        (WebCore::KURL::protocol): Ditto.
+        (WebCore::KURL::host): Ditto.
+        (WebCore::KURL::port): Ditto.
+        (WebCore::KURL::pass): Ditto.
+        (WebCore::KURL::user): Ditto.
+        (WebCore::KURL::ref): Ditto.
+        (WebCore::KURL::hasRef): Ditto.
+        (WebCore::KURL::protocolIs): Ditto.
+        (WebCore::KURL::query): Ditto.
+        (WebCore::KURL::path): Ditto.
+        (WebCore::KURL::setProtocol): Ditto.
+        (WebCore::KURL::setHost): Ditto.
+        (WebCore::KURL::setPort): Ditto.
+        (WebCore::KURL::setHostAndPort): Ditto.
+        (WebCore::KURL::setUser): Ditto.
+        (WebCore::KURL::setPass): Ditto.
+        (WebCore::KURL::setRef): Ditto.
+        (WebCore::KURL::setQuery): Ditto.
+        (WebCore::KURL::setPath): Ditto.
+        (WebCore::KURL::prettyURL): Ditto.
+        (WebCore::copyPathRemovingDots): Removed braces to match our code style.
+        (WebCore::KURL::parse): Changed all code paths that return early to use
+        the invalidate function. Moved code to set m_isValid to true to the very
+        end of the function. Removed braces to match our code style. Removed an
+        extra copy of the path/query/fragment code (there were two identical copies
+        in the two sides of an if statement). Removed some commented-out code.
+        Reversed an if statment. Added code to set the new m_pathAfterLastSlash
+        field. Updated for member variable name changes.
+        (WebCore::equalIgnoringRef): Updated for member variable name changes.
+        (WebCore::KURL::isHierarchical): Ditto.
+
+        * platform/KURL.h: Added a FIXME about ref vs. fragment. Made the empty
+        constructor inline and called the new invalidate function. Added new
+        pathStart, pathEnd, and pathAfterLastSlash functions, for use in the
+        new visited link code. Added an invalidate function. Renamed all the
+        data members to use the m_ prefix.
+
+        * WebCore.base.exp: Updated.
+
 2008-03-05  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam.

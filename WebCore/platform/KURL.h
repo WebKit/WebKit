@@ -48,10 +48,15 @@ namespace WebCore {
 
 class TextEncoding;
 
+// FIXME: Our terminology here is a bit inconsistent. We refer to the part
+// after the "#" as the "fragment" in some places and the "ref" in others.
+// We should fix the terminology to match the URL and URI RFCs as closely
+// as possible to resolve this.
+
 class KURL {
 public:
     // Generates a URL which contains a null string.
-    KURL();
+    KURL() { invalidate(); }
 
     // The argument is an absolute URL string. The string is assumed to be
     // already encoded.
@@ -140,6 +145,10 @@ public:
     operator const String&() const { return m_string; }
     operator KJS::UString() const { return m_string; }
 
+    unsigned pathStart() const { return m_portEnd; }
+    unsigned pathEnd() const { return m_pathEnd; }
+    unsigned pathAfterLastSlash() const { return m_pathAfterLastSlash; }
+
 #if PLATFORM(CF)
     KURL(CFURLRef);
     CFURLRef createCFURL() const;
@@ -163,6 +172,7 @@ public:
 #endif
 
 private:
+    void invalidate();
     bool isHierarchical() const;
     void init(const KURL&, const String&, const TextEncoding&);
     static bool protocolIs(const String&, const char*);
@@ -176,15 +186,16 @@ private:
 
     String m_string;
     bool m_isValid;
-    int schemeEndPos;
-    int userStartPos;
-    int userEndPos;
-    int passwordEndPos;
-    int hostEndPos;
-    int portEndPos;
-    int pathEndPos;
-    int queryEndPos;
-    int fragmentEndPos;
+    int m_schemeEnd;
+    int m_userStart;
+    int m_userEnd;
+    int m_passwordEnd;
+    int m_hostEnd;
+    int m_portEnd;
+    int m_pathAfterLastSlash;
+    int m_pathEnd;
+    int m_queryEnd;
+    int m_fragmentEnd;
 };
 
 bool operator==(const KURL&, const KURL&);
