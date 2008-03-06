@@ -1,3 +1,14 @@
+2008-03-05  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Darin.
+
+        One part of fix for:
+        <rdar://problem/5780697> Copying content with percentage based rules in a style sheet will cause fidelity issues
+
+        * editing/markup.cpp:
+        (WebCore::appendStartMarkup): Styles from matched rules should take precedence over those in
+        inline style declarations, not the other way around. 
+
 2008-03-05  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Darin.
