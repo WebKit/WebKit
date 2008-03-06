@@ -73,7 +73,28 @@ bool WebCoreScriptDebuggerImp::sourceParsed(ExecState* state, int sourceID, cons
         return true;
 
     m_callingDelegate = true;
-    [m_debugger parsedSource:toNSString(source) fromURL:toNSURL(url) sourceId:sourceID startLine:lineNumber errorLine:errorLine errorMessage:toNSString(errorMsg)];
+
+    NSString *nsSource = toNSString(source);
+    NSURL *nsURL = toNSURL(url);
+
+    WebFrame *webFrame = [m_debugger webFrame];
+    WebView *webView = [webFrame webView];
+    if (errorLine == -1) {
+        [[webView _scriptDebugDelegateForwarder] webView:webView didParseSource:nsSource baseLineNumber:lineNumber fromURL:nsURL sourceId:sourceID forWebFrame:webFrame];
+        [[webView _scriptDebugDelegateForwarder] webView:webView didParseSource:nsSource fromURL:[nsURL absoluteString] sourceId:sourceID forWebFrame:webFrame]; // deprecated delegate method
+        if ([WebScriptDebugServer listenerCount])
+            [[WebScriptDebugServer sharedScriptDebugServer] webView:webView didParseSource:nsSource baseLineNumber:lineNumber fromURL:nsURL sourceId:sourceID forWebFrame:webFrame];
+    } else {
+        NSString* nsErrorMessage = toNSString(errorMsg);
+        NSDictionary *info = [[NSDictionary alloc] initWithObjectsAndKeys:nsErrorMessage, WebScriptErrorDescriptionKey, [NSNumber numberWithUnsignedInt:errorLine], WebScriptErrorLineNumberKey, nil];
+        NSError *error = [[NSError alloc] initWithDomain:WebScriptErrorDomain code:WebScriptGeneralErrorCode userInfo:info];
+        [[webView _scriptDebugDelegateForwarder] webView:webView failedToParseSource:nsSource baseLineNumber:lineNumber fromURL:nsURL withError:error forWebFrame:webFrame];
+        if ([WebScriptDebugServer listenerCount])
+            [[WebScriptDebugServer sharedScriptDebugServer] webView:webView failedToParseSource:nsSource baseLineNumber:lineNumber fromURL:nsURL withError:error forWebFrame:webFrame];
+        [error release];
+        [info release];
+    }
+
     m_callingDelegate = false;
 
     return true;

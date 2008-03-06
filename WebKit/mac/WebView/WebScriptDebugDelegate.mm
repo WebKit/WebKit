@@ -99,25 +99,6 @@ NSString * const WebScriptErrorLineNumberKey = @"WebScriptErrorLineNumber";
     return _current = caller;
 }
 
-- (void)parsedSource:(NSString *)source fromURL:(NSURL *)url sourceId:(int)sid startLine:(int)startLine errorLine:(int)errorLine errorMessage:(NSString *)errorMessage
-{
-    WebView *webView = [_webFrame webView];
-    if (errorLine == -1) {
-        [[webView _scriptDebugDelegateForwarder] webView:webView didParseSource:source baseLineNumber:startLine fromURL:url sourceId:sid forWebFrame:_webFrame];
-        [[webView _scriptDebugDelegateForwarder] webView:webView didParseSource:source fromURL:[url absoluteString] sourceId:sid forWebFrame:_webFrame]; // deprecated delegate method
-        if ([WebScriptDebugServer listenerCount])
-            [[WebScriptDebugServer sharedScriptDebugServer] webView:webView didParseSource:source baseLineNumber:startLine fromURL:url sourceId:sid forWebFrame:_webFrame];
-    } else {
-        NSDictionary *info = [[NSDictionary alloc] initWithObjectsAndKeys:errorMessage, WebScriptErrorDescriptionKey, [NSNumber numberWithUnsignedInt:errorLine], WebScriptErrorLineNumberKey, nil];
-        NSError *error = [[NSError alloc] initWithDomain:WebScriptErrorDomain code:WebScriptGeneralErrorCode userInfo:info];
-        [[webView _scriptDebugDelegateForwarder] webView:webView failedToParseSource:source baseLineNumber:startLine fromURL:url withError:error forWebFrame:_webFrame];
-        if ([WebScriptDebugServer listenerCount])
-            [[WebScriptDebugServer sharedScriptDebugServer] webView:webView failedToParseSource:source baseLineNumber:startLine fromURL:url withError:error forWebFrame:_webFrame];
-        [error release];
-        [info release];
-    }
-}
-
 @end
 
 @interface WebScriptCallFramePrivate : NSObject {

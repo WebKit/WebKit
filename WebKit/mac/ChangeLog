@@ -1,5 +1,17 @@
 2008-03-05  Adam Roben  <aroben@apple.com>
 
+        Remove -parsedSource: from WebScriptDebugger
+
+        Reviewed by Kevin M.
+
+        * WebView/WebCoreScriptDebuggerImp.mm:
+        (WebCoreScriptDebuggerImp::sourceParsed): Moved code here from
+        -[WebScriptDebugger parsedSource:fromURL:sourceId:startLine:errorLine:errorMessage:]
+        * WebView/WebScriptDebugDelegate.mm: Removed -parsedSource:.
+        * WebView/WebScriptDebugDelegatePrivate.h: Ditto.
+
+2008-03-05  Adam Roben  <aroben@apple.com>
+
         Remove -enteredFrame:, -leavingFrame:, and -exceptionRaised: from WebScriptDebugger
 
         Reviewed by Kevin M.

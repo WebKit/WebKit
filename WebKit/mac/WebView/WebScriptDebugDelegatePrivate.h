@@ -48,7 +48,4 @@ class WebCoreScriptDebuggerImp;
 - (WebScriptCallFrame *)enterFrame:(KJS::ExecState*)state;
 - (WebScriptCallFrame *)leaveFrame;
 
-// debugger callbacks
-- (void)parsedSource:(NSString *)source fromURL:(NSURL *)url sourceId:(int)sid startLine:(int)startLine errorLine:(int)errorLine errorMessage:(NSString *)errorMessage;
-
 @end
