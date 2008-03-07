@@ -778,12 +778,14 @@ void dump()
 
         if (printSeparators)
             puts("#EOF");
+            fputs("#EOF\n", stderr);            
     }
     
     if (dumpPixels)
         dumpWebViewAsPixelsAndCompareWithExpected([currentTest UTF8String], dumpAllPixels);
 
     fflush(stdout);
+    fflush(stderr);
 
     done = YES;
 }

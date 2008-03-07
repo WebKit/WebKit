@@ -1,3 +1,13 @@
+2008-03-07  Stephanie  <slewis@apple.com>
+
+        Reviewed by Geoff.
+
+        <rdar://problem/5693690> run-webkit-tests swallows STDERR output, including WebCore LEAK messages
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (dump): push EOF to stderr after every test
+        * Scripts/run-webkit-tests: collect stderr output and print it
+
 2008-03-07  Steve Falkenburg  <sfalken@apple.com>
 
         Get pdevenv working with Visual Studio Express.

@@ -558,6 +558,12 @@ for my $test (@tests) {
         $actual .= $_;
     }
 
+    my $error = "";
+    while (<ERROR>) {
+       last if /#EOF/;
+       $error .= $_;
+    }
+
     my $isText = isTextOnlyTest($actual);
 
     $durations{$test} = time - $startTime if $report10Slowest;
@@ -721,7 +727,7 @@ for my $test (@tests) {
         deleteExpectedAndActualResults($base);
 
         open CRASH, ">", "$testResultsDirectory/$base-$errorTag.txt" or die;
-        print CRASH <ERROR>;
+        print CRASH $error;
         close CRASH;
 
         recordActualResultsAndDiff($base, $actual);
@@ -862,6 +868,19 @@ for my $test (@tests) {
 
         closeDumpTool();
     }
+    
+    if ($error) {
+        my $dir = "$testResultsDirectory/$base";
+        $dir =~ s|/([^/]+)$|| or die "Failed to find test name from base\n";
+        mkpath $dir;
+        
+        open ERROR_OUT, ">", "$testResultsDirectory/$base-$errorTag.txt" or die;
+        print ERROR_OUT $error;
+        close ERROR_OUT;
+        
+        $counts{error}++;
+        push @{$tests{error}}, $test;
+    }
 
     $count++;
     $counts{$result}++;
@@ -927,9 +946,10 @@ my %text = (
     mismatch => "had incorrect layout",
     new => "were new",
     crash => "crashed",
+    error => "had stderr output"
 );
 
-for my $type ("match", "mismatch", "new", "crash") {
+for my $type ("match", "mismatch", "new", "crash", "error") {
     my $c = $counts{$type};
     if ($c) {
         my $t = $text{$type};
@@ -980,6 +1000,21 @@ if ($counts{crash}) {
     print HTML "<p>Tests that caused the DumpRenderTree tool to crash:</p>\n";
     print HTML "<table>\n";
     for my $test (@{$tests{crash}}) {
+        my $base = stripExtension($test);
+        my $expectedDir = $expectedResultDirectory{$base};
+        print HTML "<tr>\n";
+        print HTML "<td><a href=\"" . toURL("$testDirectory/$test") . "\">$base</a></td>\n";
+        print HTML htmlForExpectedAndActualResults($base);
+        print HTML "<td><a href=\"$base-$errorTag.txt\">stderr</a></td>\n";
+        print HTML "</tr>\n";
+    }
+    print HTML "</table>\n";
+}
+
+if ($counts{error}) {
+    print HTML "<p>Tests that had stderr output:</p>\n";
+    print HTML "<table>\n";
+    for my $test (@{$tests{error}}) {
         my $base = stripExtension($test);
         my $expectedDir = $expectedResultDirectory{$base};
         print HTML "<tr>\n";
